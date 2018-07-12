@@ -37,21 +37,21 @@ https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf
 * filename should be in lower case. The underscore represent depndency. For example "aa_bb.cpp" means this is a implementation of class "aaa" and it depends on a class "bbb"
 * The function name should be written in camel case notation that sarts with upper case letter (e.g., Verb_Object_Adverb)
 * Geometric Operator
-** Nearest
-** Intersection
-** IsInside
-** Volume
-** Area
+  * Nearest
+  * Intersection
+  * IsInside
+  * Volume
+  * Area
 * Read Write
-Read <-> Write
-Load <-> Save
+  * Read <-> Write
+  * Load <-> Save
 * Naming Point
-** CAD Vertex -> Vertex
-** Mesh Point -> Point
-** point index inside element (may be on edge or on face) -> Node
+  * CAD Vertex -> Vertex
+  * Mesh Point -> Point
+  * point index inside element (may be on edge or on face) -> Node
 * How to call a mesh?
-** MeshTri3D
-** MeshQuad2D
-** MeshHex3D
-** MeshMix3D
-** MeshElem3D
+  * MeshTri3D
+  * MeshQuad2D
+  * MeshHex3D
+  * MeshMix3D
+  * MeshElem3D
