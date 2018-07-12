@@ -1,0 +1,55 @@
+box: ubuntu
+platform: ubuntu@12.04
+name: delfem2
+
+command-timeout: 60
+no-response-timeout: 30
+
+build:
+  steps:
+    - script:
+        name: install packages
+        code: |
+          sudo apt-get clean && apt-get update
+          sudo apt-get install -y git cmake build-essential 
+          sudo apt-get install -y libxmu-dev libxi-dev xorg-dev
+          sudo apt-get install -y freeglut3-dev libglfw3-dev libglew-dev 
+    - script:
+        name: download submodules
+        code: |
+          git submodule init
+          git submodule update
+    - script:
+        name: compile glfw
+        code: |
+          cd external/glfw
+          cmake .
+          make
+    - script:
+        name: compile gtest
+        code: |
+          cd test/googletest
+          mkdir build
+          cd build
+          cmake ..
+          make
+    - script:
+        name: test
+        code: |
+          cd test
+          ls googletest/build/googlemock/gtest
+          mkdir buildMake
+          cd buildMake
+          cmake ..
+          make
+          make test          
+    - script:
+        name: compile-example
+        code: |
+          cd examples
+          mkdir buildMake
+          cd buildMake
+          cmake ..
+          make -i
+          cd ..
+          ls bin/ 
