@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(delfem2)
+
+add_subdirectory(projects/viewer3d_glut)
+add_subdirectory(projects/convhull)
+add_subdirectory(projects/edge_collapse)
+add_subdirectory(projects/noise2d)
+add_subdirectory(projects/noise3d)
+add_subdirectory(projects/paramgeo3d)
+add_subdirectory(projects/paramgeo2d)
+
