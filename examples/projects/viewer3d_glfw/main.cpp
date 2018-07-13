@@ -1,11 +1,3 @@
-//
-//  main.cpp
-//  rigid_joint
-//
-//  Created by Nobuyuki Umetani on 11/3/13.
-//  Copyright (c) 2013 Nobuyuki Umetani. All rights reserved.
-//
-
 #include <iostream>
 #include <math.h>
 
