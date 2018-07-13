@@ -9,4 +9,5 @@ add_subdirectory(projects/noise2d)
 add_subdirectory(projects/noise3d)
 add_subdirectory(projects/paramgeo3d)
 add_subdirectory(projects/paramgeo2d)
-
+add_subdirectory(projects/viewer3d_glfw)
+add_subdirectory(projects/triangulation)

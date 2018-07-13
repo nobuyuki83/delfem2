@@ -10,7 +10,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/paramgeo_v23.h"
 
-#include "delfem2/vec23_gl.h"
+#include "delfem2/v23_gl.h"
 #include "delfem2/camera_gl.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

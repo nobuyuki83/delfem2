@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cassert>
 
-#include "delfem2/vec23_gl.h"
+#include "delfem2/v23_gl.h"
 
 void myGlVertex(const CVector3& v)
 {

@@ -27,6 +27,7 @@ cmake-build-release
 .idea
 buildXcode
 buildMake
+build
 trash
 external/fbx
 examples/bin
