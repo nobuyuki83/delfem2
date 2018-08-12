@@ -380,6 +380,14 @@ void myGlVertex2d
   ::glVertex2d(aXY[ixy*2+0], aXY[ixy*2+1] );
 }
 
+void myGlNorm3d
+(unsigned int ixyz,
+ const std::vector<double>& aNorm )
+{
+  ::glNormal3d(aNorm[ixyz*3+0], aNorm[ixyz*3+1], aNorm[ixyz*3+2] );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void drawLoop2d
 (const std::vector<double>& vec)
@@ -400,13 +408,80 @@ void drawLoop2d
   ::glEnd();
 }
 
-
-void myGlNorm3d
-(unsigned int ixyz,
- const std::vector<double>& aNorm )
+void DrawPoints2D_Vectors
+(std::vector<double>& aXY,
+ std::vector<double>& aVal,
+ int nstride,
+ int noffset,
+ double mag)
 {
-  ::glNormal3d(aNorm[ixyz*3+0], aNorm[ixyz*3+1], aNorm[ixyz*3+2] );
+  //  const int ntri = (int)aTri.size()/3;
+  const int nxys = (int)aXY.size()/2;
+  ////
+  ::glBegin(GL_LINES);
+  for(int ino=0;ino<nxys;ino++){
+    const double vx = aVal[ino*nstride+noffset+0]*mag;
+    const double vy = aVal[ino*nstride+noffset+1]*mag;
+    const double p0[2] = { aXY[ino*2+0],    aXY[ino*2+1]    };
+    const double p1[2] = { aXY[ino*2+0]+vx, aXY[ino*2+1]+vy };
+    ::glVertex2dv( p0 );
+    ::glVertex2dv( p1 );
+  }
+  ::glEnd();
 }
+
+void DrawPoints2D_Points(std::vector<double>& aXY)
+{
+  const int nxys = (int)aXY.size()/2;
+  ::glBegin(GL_POINTS);
+  for(int ino=0;ino<nxys;ino++){
+    const double p0[2] = { aXY[ino*2+0], aXY[ino*2+1] };
+    ::glVertex2dv( p0 );
+  }
+  ::glEnd();
+}
+
+void DrawPoints3D_Points(std::vector<double>& aXYZ)
+{
+  const int nxyz = (int)aXYZ.size()/3;
+  ::glBegin(GL_POINTS);
+  for(int ino=0;ino<nxyz;ino++){
+    const double p0[3] = { aXYZ[ino*3+0], aXYZ[ino*3+1], aXYZ[ino*3+2]};
+    ::glVertex3dv( p0 );
+  }
+  ::glEnd();
+}
+
+void DrawAABB3D_Edge(double cx, double cy, double cz, double wx, double wy, double wz)
+{
+  const double pxyz[3] = {cx-0.5*wx,cy-0.5*wy,cz-0.5*wz};
+  const double pxyZ[3] = {cx-0.5*wx,cy-0.5*wy,cz+0.5*wz};
+  const double pxYz[3] = {cx-0.5*wx,cy+0.5*wy,cz-0.5*wz};
+  const double pxYZ[3] = {cx-0.5*wx,cy+0.5*wy,cz+0.5*wz};
+  const double pXyz[3] = {cx+0.5*wx,cy-0.5*wy,cz-0.5*wz};
+  const double pXyZ[3] = {cx+0.5*wx,cy-0.5*wy,cz+0.5*wz};
+  const double pXYz[3] = {cx+0.5*wx,cy+0.5*wy,cz-0.5*wz};
+  const double pXYZ[3] = {cx+0.5*wx,cy+0.5*wy,cz+0.5*wz};
+  ::glBegin(GL_LINES);
+  ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
+  ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
+  ::glVertex3dv(pXyz); ::glVertex3dv(pXyZ);
+  ::glVertex3dv(pXYz); ::glVertex3dv(pXYZ);
+  ////
+  ::glVertex3dv(pxyz); ::glVertex3dv(pXyz);
+  ::glVertex3dv(pxyZ); ::glVertex3dv(pXyZ);
+  ::glVertex3dv(pxYz); ::glVertex3dv(pXYz);
+  ::glVertex3dv(pxYZ); ::glVertex3dv(pXYZ);
+  ////
+  ::glVertex3dv(pxyz); ::glVertex3dv(pxYz);
+  ::glVertex3dv(pxyZ); ::glVertex3dv(pxYZ);
+  ::glVertex3dv(pXyz); ::glVertex3dv(pXYz);
+  ::glVertex3dv(pXyZ); ::glVertex3dv(pXYZ);
+  ::glEnd();
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DrawSingleTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
@@ -890,49 +965,7 @@ void DrawMeshTri2D_Edge
   ::glEnd();
 }
 
-void DrawPoints2D_Vectors
-(std::vector<double>& aXY,
- std::vector<double>& aVal,
- int nstride,
- int noffset,
- double mag)
-{
-  //  const int ntri = (int)aTri.size()/3;
-  const int nxys = (int)aXY.size()/2;
-  ////
-  ::glBegin(GL_LINES);
-  for(int ino=0;ino<nxys;ino++){
-    const double vx = aVal[ino*nstride+noffset+0]*mag;
-    const double vy = aVal[ino*nstride+noffset+1]*mag;
-    const double p0[2] = { aXY[ino*2+0],    aXY[ino*2+1]    };
-    const double p1[2] = { aXY[ino*2+0]+vx, aXY[ino*2+1]+vy };
-    ::glVertex2dv( p0 );
-    ::glVertex2dv( p1 );
-  }
-  ::glEnd();
-}
 
-void DrawPoints2D_Points(std::vector<double>& aXY)
-{
-  const int nxys = (int)aXY.size()/2;
-  ::glBegin(GL_POINTS);
-  for(int ino=0;ino<nxys;ino++){
-    const double p0[2] = { aXY[ino*2+0], aXY[ino*2+1] };
-    ::glVertex2dv( p0 );
-  }
-  ::glEnd();
-}
-
-void DrawPoints3D_Points(std::vector<double>& aXYZ)
-{
-  const int nxyz = (int)aXYZ.size()/3;
-  ::glBegin(GL_POINTS);
-  for(int ino=0;ino<nxyz;ino++){
-    const double p0[3] = { aXYZ[ino*3+0], aXYZ[ino*3+1], aXYZ[ino*3+2]};
-    ::glVertex3dv( p0 );
-  }
-  ::glEnd();
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 

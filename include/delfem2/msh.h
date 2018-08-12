@@ -42,6 +42,9 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
                          const double lex[3],
                          const double ley[3],
                          const double lez[3]);
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Bryant angle
 void Rotate(std::vector<double>& aXYZ,
             double radx, double rady, double radz);
@@ -110,8 +113,8 @@ void ExtrudeTri2Tet(int nlayer, double h,
                     const std::vector<double>& aXY,
                     const std::vector<int>& aTri);
 
+//////////////////////////////////////////////////////////////////////
 
-///////////////////
 void makeSolidAngle(std::vector<double>& aSolidAngle,
                     const std::vector<double>& aXYZ,
                     const std::vector<int>& aTri);
