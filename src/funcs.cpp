@@ -9,7 +9,7 @@
 #include <cstring>
 #include <algorithm>
 
-#include "geosim/funcs.h"
+#include "delfem2/funcs.h"
 
 // probably std::stroi is safer to use but it is only for C++11
 static int myStoi(const std::string& str){
