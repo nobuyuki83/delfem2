@@ -21,7 +21,7 @@ public:
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(geosim, m) {
+PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 example plugin";
   //////
   py::class_<CMeshTri>(m, "CMeshTri")
