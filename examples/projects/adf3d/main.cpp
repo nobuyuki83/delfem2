@@ -94,7 +94,7 @@ void SetProblem()
     };
     CMesh mesh;
     {
-      Load_Ply("models/bunny_1k.ply", aXYZ, aTri);
+      Load_Ply("../test_inputs/bunny_1k.ply", aXYZ, aTri);
       Normalize(aXYZ,1.7);
       mesh.sdf.SetMesh(aTri, aXYZ);
       std::cout<<"bulding boxel:start"<<std::endl;

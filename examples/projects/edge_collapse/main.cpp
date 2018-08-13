@@ -50,7 +50,7 @@ void SetNewProblem()
     unsigned int ntri;
     unsigned int* aTriInd = 0;
     //    Load_Ply("homer.ply" ,nnode,pXYZs, ntri,aTriInd);
-    Load_Ply("models/arm_16k.ply" ,nnode,pXYZs, ntri,aTriInd);
+    Load_Ply("../test_inputs/arm_16k.ply" ,nnode,pXYZs, ntri,aTriInd);
     {
       double cx,cy,cz, wx,wy,wz;
       GetCenterWidth(cx,cy,cz, wx,wy,wz,
