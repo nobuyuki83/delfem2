@@ -15,12 +15,6 @@ def glut_print(x, y, font, text, color):
   for ch in text:
     glutBitmapCharacter(font, ctypes.c_int(ord(ch)))
 
-
-def screenProjection(v0, scale, Rot, trans):
-  v1 = utility_gl.mult_mat_vec_3(Rot, v0)
-  v2 = [trans[0] + scale * v1[0], trans[1] - scale * v1[1], v1[2] * scale]
-  return v2
-
 def draw_sphere(pos, rad, color):
   if pos is None:
     return
@@ -28,59 +22,6 @@ def draw_sphere(pos, rad, color):
   glTranslatef(+pos[0], +pos[1], +pos[2])
   glutSolidSphere(rad, 32, 32)
   glTranslatef(-pos[0], -pos[1], -pos[2])
-
-def draw_axis(size=1.0):
-  glBegin(GL_LINES)
-  glColor3d(1,0,0)
-  glVertex3d(0,0,0)
-  glVertex3d(size,0,0)
-  ####
-  glColor3d(0,1,0)
-  glVertex3d(0,0,0)
-  glVertex3d(0,size,0)
-  ####
-  glColor3d(0,0,1)
-  glVertex3d(0,0,0)
-  glVertex3d(0,0,size)
-  glEnd()
-
-
-def draw_pyramid(lenWh, lenHh, lenZ, Rot, trans):
-  pos0 = [-lenWh,-lenHh,+lenZ]
-  pos1 = [+lenWh,-lenHh,+lenZ]
-  pos2 = [+lenWh,+lenHh,+lenZ]
-  pos3 = [-lenWh,+lenHh,+lenZ]
-  pos4 = [0.0, 0.0, 0.0]
-  pos0 = utility_gl.rot_trans(pos0,Rot,trans)
-  pos1 = utility_gl.rot_trans(pos1,Rot,trans)
-  pos2 = utility_gl.rot_trans(pos2,Rot,trans)
-  pos3 = utility_gl.rot_trans(pos3,Rot,trans)
-  pos4 = utility_gl.rot_trans(pos4,Rot,trans)
-  glBegin(GL_LINES)
-  glVertex3dv(pos0)
-  glVertex3dv(pos1)
-  glVertex3dv(pos1)
-  glVertex3dv(pos2)
-  glVertex3dv(pos2)
-  glVertex3dv(pos3)
-  glVertex3dv(pos3)
-  glVertex3dv(pos0)
-  glVertex3dv(pos0)
-  glVertex3dv(pos4)
-  glVertex3dv(pos1)
-  glVertex3dv(pos4)
-  glVertex3dv(pos2)
-  glVertex3dv(pos4)
-  glVertex3dv(pos3)
-  glVertex3dv(pos4)
-  glEnd()
-
-
-def draw_rect(w0, h0, cx, cy, off_z):
-  glVertex3d(-0.5 * w0 + cx, -0.5 * h0 + cy, off_z)
-  glVertex3d(+0.5 * w0 + cx, -0.5 * h0 + cy, off_z)
-  glVertex3d(+0.5 * w0 + cx, +0.5 * h0 + cy, off_z)
-  glVertex3d(-0.5 * w0 + cx, +0.5 * h0 + cy, off_z)
 
 camera = None
 modifier = 0
@@ -96,22 +37,10 @@ def display():
   ####
   camera.set_gl_camera(600, 600)
   ####
-  w0 = 0.27
-  h0 = 0.19
-  off_z = -0.001
-  glBegin(GL_QUADS)
-  glColor3d(1, 1, 1)
-  draw_rect(w0, h0, 0, 0, off_z)
-  #glColor3d(0, 0, 0)
-  #draw_rect(0.03, 0.03, -0.12, +0.08, 0.0)
-  #draw_rect(0.03, 0.03, +0.12, +0.08, 0.0)
-  #draw_rect(0.03, 0.03, -0.12, -0.08, 0.0)
-  #draw_rect(0.03, 0.03, +0.12, -0.08, 0.0)
-  glEnd()
-
+  glColor3d(1, 0, 0)
+  glutSolidTeapot(0.1)
   glLineWidth(3)
-  draw_axis(size=0.1)
-
+  utility_gl.draw_axis(size=0.2)
   glutSwapBuffers()
 
 

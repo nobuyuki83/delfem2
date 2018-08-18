@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "delfem2/mshio.h"
+#include "delfem2/msh.h"
 #include "delfem2/funcs_gl.h"
 
 class CMeshTri{
@@ -13,6 +14,9 @@ public:
   }
   void Draw(){
     DrawMeshTri3D_FaceNorm(aPos, aTri);
+  }
+  void ScaleXYZ(double s){
+    Scale(s,aPos);
   }
 public:
   std::vector<int> aTri;
@@ -28,6 +32,7 @@ PYBIND11_MODULE(dfm2, m) {
   .def(py::init<>())
   .def("Read", &CMeshTri::Read)
   .def("Draw", &CMeshTri::Draw)
+  .def("ScaleXYZ",&CMeshTri::ScaleXYZ)
   .def_readwrite("aTri", &CMeshTri::aTri);
 }
 
