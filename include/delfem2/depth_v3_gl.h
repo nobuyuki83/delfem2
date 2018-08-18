@@ -13,11 +13,10 @@
 
 #include "delfem2/vec3.h"
 
-// class for Offline Rendering with Frame Buffer Object
-class CContextDepth
+class CDepthContext
 {
 public:
-  CContextDepth(){
+  CDepthContext(){
     id_framebuffer = -1;
     id_depth_texture = -1;
   }

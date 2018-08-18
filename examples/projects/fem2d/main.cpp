@@ -1,8 +1,3 @@
-//#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
-
-//#pragma warning( disable : 4786 )
-//#define for if(0);else for
-
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>

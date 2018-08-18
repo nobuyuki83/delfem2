@@ -29,7 +29,7 @@
 
 //////////////////////////////////////
 
-void CContextDepth::DeleteFrameBuffer()
+void CDepthContext::DeleteFrameBuffer()
 {
   if( id_framebuffer != -1 ){
     glDeleteFramebuffers(1, &id_framebuffer);
@@ -42,7 +42,7 @@ void CContextDepth::DeleteFrameBuffer()
   }
 }
 
-void CContextDepth::SetFrameBufferSize
+void CDepthContext::SetFrameBufferSize
 (int width, int height)
 {
   DeleteFrameBuffer();

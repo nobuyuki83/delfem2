@@ -19,20 +19,18 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 double cur_time = 0.0;
-void Draw(){
-  ::glRotated(+cur_time, 1,0,0);
-  glutSolidTeapot(1.0);
-  ::glRotated(-cur_time, 1,0,0);
-}
 
 class CInputDepth0: public CInputDepth
 {
+public:
   void Draw() const {
-    ::Draw();
+    ::glRotated(+cur_time, 1,0,0);
+    glutSolidTeapot(1.0);
+    ::glRotated(-cur_time, 1,0,0);
   }
 } input;
 CDepth depth;
-CContextDepth depth_context;
+CDepthContext depth_context;
 bool is_animation = false;
 
 bool is_depth = false;
@@ -51,7 +49,7 @@ void myGlutDisplay(void)
 //  ::glDisable(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1,1,1);
-  Draw();
+  input.Draw();
   
   ///////
 
