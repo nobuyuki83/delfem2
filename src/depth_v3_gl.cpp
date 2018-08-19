@@ -31,14 +31,14 @@
 
 void CDepthContext::DeleteFrameBuffer()
 {
-  if( id_framebuffer != -1 ){
+  if( id_framebuffer > 0 ){
     glDeleteFramebuffers(1, &id_framebuffer);
-    id_framebuffer = -1;
+    id_framebuffer = 0;
   }
   // TODO: delete depth_texture here
-  if( id_depth_render_buffer != -1  ){
+  if( id_depth_render_buffer > 0  ){
     glDeleteRenderbuffersEXT(1, &id_depth_render_buffer);
-    id_depth_render_buffer = -1;
+    id_depth_render_buffer = 0;
   }
 }
 
@@ -131,7 +131,7 @@ void CDepth::TakeDepthShot
 void CDepth::Draw_Point(bool is_draw_miss) const
 {
   ::glDisable(GL_LIGHTING);
-  if( aDepth.size() != nResW*nResH ) return;
+  if( (int)aDepth.size() != nResW*nResH ) return;
   ::glColor3dv(color);
   ::glBegin(GL_POINTS);
   CVector3 o;
