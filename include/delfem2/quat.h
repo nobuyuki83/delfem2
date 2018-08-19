@@ -1,5 +1,5 @@
-#ifndef QUATERNION_H
-#define QUATERNION_H
+#ifndef QUAT_H
+#define QUAT_H
 
 void QuatSetIdentity(double q[]);
 void QuatCopy(double r[], const double p[]);

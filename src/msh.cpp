@@ -244,6 +244,14 @@ const std::vector<double>& aXYZ)
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
+void GetCenterWidth
+(double cw[6],
+ const std::vector<double>& aXYZ)
+{
+  GetCenterWidth(cw[0],cw[1],cw[2],cw[3],cw[4],cw[5],
+                 aXYZ);
+}
+
 void GetCenterWidthGroup
 (double& cx, double& cy, double& cz,
  double& wx, double& wy, double& wz,

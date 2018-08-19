@@ -1,5 +1,5 @@
-#ifndef utility_gl_h
-#define utility_gl_h
+#ifndef FUNCS_GL_H
+#define FUNCS_GL_H
 
 #include <string>
 #include <vector>
@@ -102,6 +102,7 @@ void DrawBox_MinMaxXYZ(double x_min, double x_max,
 void DrawBox_MinMaxXYZ(double aabbMinMaxXYZ[6]);
 void DrawAABB3D_Edge(double cx, double cy, double cz,
                      double wx, double wy, double wz);
+void DrawAABB3D_Edge(double cw[6]);
 
 ///////////////
 // Draw Point

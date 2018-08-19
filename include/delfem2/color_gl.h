@@ -1,5 +1,5 @@
-#ifndef utility_glcolor_h
-#define utility_glcolor_h
+#ifndef COLOR_GL_H
+#define COLOR_GL_H
 
 // OpenGL dependency (not GLUT)
 // this file should not depend anything other than OpenGL

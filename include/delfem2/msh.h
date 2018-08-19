@@ -1,5 +1,5 @@
-#if !defined(SURFACE_MESH_READER_H)
-#define SURFACE_MESH_READER_H
+#ifndef MSH_H
+#define MSH_H
 
 #include <string>
 #include <vector>
@@ -13,6 +13,8 @@ void GetCenterWidth(double& cx, double& cy, double& cz,
                     const int nXYZ, const double* paXYZ);
 void GetCenterWidth(double& cx, double& cy, double& cz,
                     double& wx, double& wy, double& wz,
+                    const std::vector<double>& aXYZ);
+void GetCenterWidth(double cw[6],
                     const std::vector<double>& aXYZ);
 void GetCenterWidthGroup(double& cx, double& cy, double& cz,
                          double& wx, double& wy, double& wz,
@@ -43,7 +45,7 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
                          const double ley[3],
                          const double lez[3]);
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////
 
 // Bryant angle
 void Rotate(std::vector<double>& aXYZ,
@@ -54,13 +56,17 @@ void Translate(double tx, double ty, double tz,
                std::vector<double>& aXYZ);
 void Translate(std::vector<double>& aXYZ,
                double tx, double ty, double tz);
+void Translate(double tx, double ty, double tz,
+               const unsigned int nnode_, double* pXYZs_);
 void Scale(double s,
            std::vector<double>& aXYZ);
+void Scale(double s,
+           const unsigned int nnode_, double* pXYZs_);
 double Size(const std::vector<double>& aXYZ);
 void Normalize(std::vector<double>& aXYZ,
                double s = 1.0);
 
-//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 void CenterOfGravity_Tri(double& cgx, double& cgy, double& cgz,
                          int itri,
@@ -84,8 +90,9 @@ void RemoveUnreferencedPoints3D(std::vector<double>& aXYZOut,
 void MakeNormal(std::vector<double>& aNorm,
                 const std::vector<double>& aXYZ,
                 const std::vector<int>& aTri);
-
-////////////////////////////////////////////////////////////////////////
+void MakeNormal(double*& aNorm_,
+                const unsigned int nnode_, const double* pXYZs_,
+                const unsigned int ntri_,  const unsigned int* aTri_);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -140,17 +147,7 @@ void SubdivisionMovePoints_QuadCatmullClark(std::vector<double>& aXYZ1,
 //////////////////////////////////////////////////////////////
 // raw mesh functions
 
-void MakeNormal
-(double*& aNorm_,
- const unsigned int nnode_, const double* pXYZs_,
- const unsigned int ntri_,  const unsigned int* aTri_);
 
-void Translate
-(double tx, double ty, double tz,
- const unsigned int nnode_, double* pXYZs_);
 
-void Scale
-(double s,
- const unsigned int nnode_, double* pXYZs_);
 
 #endif
