@@ -1,13 +1,5 @@
-//
-//  depth.hpp
-//  depthDataset
-//
-//  Created by Nobuyuki Umetani on 2017-08-04.
-//
-//
-
-#ifndef depth_hpp
-#define depth_hpp
+#ifndef DEPTH_H
+#define DEPTH_H
 
 #include <stdio.h>
 

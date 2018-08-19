@@ -1,5 +1,5 @@
-#if !defined(VECTOR_2D_H)
-#define VECTOR_2D_H
+#ifndef VEC2_h
+#define VEC2_H
 
 #include <cstdlib>
 #include <cassert>

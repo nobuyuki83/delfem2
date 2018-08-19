@@ -1,5 +1,5 @@
-#ifndef vec23mat3quat_hpp
-#define vec23mat3quat_hpp
+#ifndef V23M3Q_H
+#define V23M3Q_H
 
 #include <stdio.h>
 

@@ -1,5 +1,5 @@
-#ifndef PHYSICS_MATRIX_3D_H
-#define PHYSICS_MATRIX_3D_H
+#ifndef MAT3_H
+#define MAT3_H
 
 #include <vector>
 #include <cassert>

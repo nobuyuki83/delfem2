@@ -1,4 +1,4 @@
-#if !defined(QUATERNION_H)
+#ifndef QUATERNION_H
 #define QUATERNION_H
 
 void QuatSetIdentity(double q[]);

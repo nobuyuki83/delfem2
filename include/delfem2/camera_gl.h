@@ -1,5 +1,5 @@
-#ifndef forward_utility_glcamera_h
-#define forward_utility_glcamera_h
+#ifndef CAMERA_GL_H
+#define CAMERA_GL_H
 
 #include <math.h>
 #include <stdio.h> // memcpy

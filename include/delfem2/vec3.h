@@ -1,5 +1,5 @@
-#ifndef PHYSICS_VECTOR_3D_H
-#define PHYSICS_VECTOR_3D_H
+#ifndef VEC3_H
+#define VEC3_H
 
 #include <cassert>
 #include <math.h>
