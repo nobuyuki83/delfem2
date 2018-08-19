@@ -1,5 +1,5 @@
-#ifndef paramgeo_vec23_hpp
-#define paramgeo_vec23_hpp
+#ifndef PARAMGEO_V23_H
+#define PARAMGEO_V23_H
 
 #include <stdio.h>
 

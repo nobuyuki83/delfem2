@@ -1,5 +1,5 @@
-#ifndef collisionTri_BvhVec3_hpp
-#define collisionTri_BvhVec3_hpp
+#ifndef COLLISIONTRI_V3BVH_H
+#define COLLISIONTRI_V3BVH_H
 
 #include <stdio.h>
 

@@ -1,6 +1,6 @@
 #include "delfem2/collisiontri_v3bvh.h"
 
-// VFの距離
+// distance VF
 double DistanceFaceVertex
 (const CVector3& p0, const CVector3& p1, const CVector3& p2,
  const CVector3& p3,
@@ -22,7 +22,7 @@ double DistanceFaceVertex
   return (pw-p3).Length();
 }
 
-//　EEの距離
+//　distance EE
 double DistanceEdgeEdge
 (const CVector3& p0, const CVector3& p1,
  const CVector3& q0, const CVector3& q1,

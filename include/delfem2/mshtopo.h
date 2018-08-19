@@ -1,5 +1,5 @@
-#ifndef meshtopo_hpp
-#define meshtopo_hpp
+#ifndef MSHTOPO_H
+#define MSHTOPO_H
 
 #include <stdio.h>
 

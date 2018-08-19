@@ -1,5 +1,5 @@
-#ifndef fem_utility_h
-#define fem_utility_h
+#ifndef FEM_H
+#define FEM_H
 
 #include <cassert>
 #include <vector>

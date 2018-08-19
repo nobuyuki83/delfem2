@@ -1,5 +1,5 @@
-#ifndef bvh_aabb_h
-#define bvh_aabb_h
+#ifndef BVH_AABB_H
+#define BVH_AABB_H
 
 #include <stack>
 #include <vector>
