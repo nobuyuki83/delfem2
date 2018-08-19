@@ -480,7 +480,7 @@ void DrawAABB3D_Edge(double cx, double cy, double cz, double wx, double wy, doub
   ::glEnd();
 }
 
-void DrawAABB3D_Edge(double cw[6])
+void DrawAABB3D_Edge(const double cw[6])
 {
   DrawAABB3D_Edge(cw[0], cw[1], cw[2], cw[3],cw[4], cw[5]);
 }

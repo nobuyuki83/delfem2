@@ -7,7 +7,7 @@
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/glu.h>
+  #include <GL/gl.h>
 #elif defined(WIN32) // windows
   #include <windows.h>
   #include <GL/gl.h>
@@ -24,10 +24,8 @@
 #include <vector>
 #include <assert.h>
 
-
-void GetRGB_HSV
-(float&r, float& g, float& b,
- float h, float s, float v);
+void GetRGB_HSV(float&r, float& g, float& b,
+                float h, float s, float v);
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -136,7 +134,8 @@ void heatmap(double input,double* color);
 void heatmap_glColor(double input);
 void heatmap_glDiffuse(double input);
 
-#include <vector>
+////////////////////////////////////////////////////////////////////////////////////
+// vector from here
 
 void heatmap(double input, const std::vector<std::pair<double, CColor> >& colorMap);
 CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap);
@@ -198,12 +197,11 @@ void DrawMeshTet3D_ScalarP1(const std::vector<double>& aXYZ,
 
 ////////////////////////////////////
 
-void Write_Ply_Tri2DMesh_HeightColor
-(const std::string& fname,
- const std::vector<int>& aTri1,
- const std::vector<double>& aXY1,
- const std::vector<double>& aVal,
- std::vector< std::pair<double,CColor> >& colorMap);
+void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,
+                                     const std::vector<int>& aTri1,
+                                     const std::vector<double>& aXY1,
+                                     const std::vector<double>& aVal,
+                                     std::vector< std::pair<double,CColor> >& colorMap);
 
 
 ////////////////////////////////////
@@ -223,8 +221,7 @@ public:
   void GL() const;
 };
 
-void Load_Mtl
-(const std::string& fname,
- std::vector<CMaterial>& aMtl);
+void Load_Mtl(const std::string& fname,
+              std::vector<CMaterial>& aMtl);
 
 #endif

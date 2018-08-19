@@ -6,17 +6,15 @@
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
-void DrawCharacter
-(int* pChr,
- double ax, double bx,
- double ay, double by);
+void DrawCharacter(int* pChr,
+                   double ax, double bx,
+                   double ay, double by);
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
-void DrawCharacter
-(char ic,
- double ax, double bx,
- double ay, double by);
+void DrawCharacter(char ic,
+                   double ax, double bx,
+                   double ay, double by);
 
 
 void setSomeLighting();
@@ -31,10 +29,9 @@ void showdepth();
 //////////////////////////////////////////////////////////////////////////////
 // texture related funcitons
 
-void LoadImage_PPM
-(const std::string& filename,
- std::vector<unsigned char>& image,
- int& width, int& height);
+void LoadImage_PPM(const std::string& filename,
+                   std::vector<unsigned char>& image,
+                   int& width, int& height);
 
 void SaveImage(const std::string& path);
 
@@ -102,7 +99,7 @@ void DrawBox_MinMaxXYZ(double x_min, double x_max,
 void DrawBox_MinMaxXYZ(double aabbMinMaxXYZ[6]);
 void DrawAABB3D_Edge(double cx, double cy, double cz,
                      double wx, double wy, double wz);
-void DrawAABB3D_Edge(double cw[6]);
+void DrawAABB3D_Edge(const double cw[6]);
 
 ///////////////
 // Draw Point
