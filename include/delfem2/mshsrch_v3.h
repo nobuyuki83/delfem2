@@ -1,5 +1,5 @@
-#ifndef search_mesh_hpp
-#define search_mesh_hpp
+#ifndef MSHSRCH_V3_H
+#define MSHSRCH_V3_H
 
 #include <stdio.h>
 

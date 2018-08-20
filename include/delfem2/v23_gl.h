@@ -1,5 +1,5 @@
-#ifndef UTILITY_GLVECTOR_H
-#define UTILITY_GLVECTOR_H
+#ifndef V23_GL_H
+#define V23_GL_H
 
 #include <vector>
 
