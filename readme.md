@@ -18,10 +18,14 @@ The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM
 
 ## Examples
 
-- working directory is in the folder "examples"
-- binary is put in the folder "example/bin"
-- input file is put in the folder "example/models"
-- The script to run the executable is put in "example/script"
+- working directory is in the folder `examples/`
+- binary is put in the folder `example/bin/`
+- input file is put in the folder `test_inputs/`
+- The script to run the executable is put in `example/script/`
+
+- triangulation ![triangulation](img/screenshot_triangulation.png)
+
+- transform_handler ![handler](img/screenshot_handler.png)
 
 
 ## Element Index Rule
