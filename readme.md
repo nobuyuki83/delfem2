@@ -19,18 +19,17 @@ The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM
 ## Examples
 
 - working directory is in the folder `examples/`
-- binary is put in the folder `example/bin/`
+- binary is put in the folder `examples/bin/`
 - input file is put in the folder `test_inputs/`
-- The script to run the executable is put in `example/script/`
+- The script to run the executable is put in `examples/script/`
 
-- triangulation ![triangulation](img/screenshot_triangulation.png)
-
-- transform_handler ![handler](img/screenshot_handler.png)
+| triangulation | ![triangulation](img/screenshot_triangulation.png) |
+| transform_handler  | ![handler](img/screenshot_handler.png) |
 
 
 ## Element Index Rule
 
-https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+Based on the elemnt index rule in VTK( https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf )
 
 ![element index](./img/element_index.png)
 
