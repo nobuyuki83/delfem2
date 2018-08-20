@@ -23,6 +23,8 @@ The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM
 - input file is put in the folder `test_inputs/`
 - The script to run the executable is put in `examples/script/`
 
+| Name | Screen Shot |
+| ------------- | ------------- |
 | triangulation | ![triangulation](img/screenshot_triangulation.png) |
 | transform_handler  | ![handler](img/screenshot_handler.png) |
 
