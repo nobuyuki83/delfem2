@@ -3,8 +3,10 @@ from OpenGL.GLUT import *
 
 import numpy as np
 
-import utility_gl
+import sys
+sys.path.append("../python")
 import dfm2
+import utility_gl
 
 def glut_print(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)

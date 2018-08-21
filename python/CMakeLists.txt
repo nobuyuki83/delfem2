@@ -20,19 +20,19 @@ include_directories(
 )
 
 pybind11_add_module(dfm2 
-  ${DELFEM2_SRC}/vec2.cpp          ${DELFEM2_INC}/vec2.h
-  ${DELFEM2_SRC}/vec3.cpp          ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/mat3.cpp          ${DELFEM2_INC}/mat3.h
-  ${DELFEM2_SRC}/quat.cpp          ${DELFEM2_INC}/quat.h
-  ${DELFEM2_SRC}/msh.cpp           ${DELFEM2_INC}/msh.h
-  ${DELFEM2_SRC}/mshio.cpp         ${DELFEM2_INC}/mshio.h
-  ${DELFEM2_SRC}/funcs.cpp         ${DELFEM2_INC}/funcs.h
+  ${DELFEM2_SRC}/vec2.cpp        ${DELFEM2_INC}/vec2.h
+  ${DELFEM2_SRC}/vec3.cpp        ${DELFEM2_INC}/vec3.h
+  ${DELFEM2_SRC}/mat3.cpp        ${DELFEM2_INC}/mat3.h
+  ${DELFEM2_SRC}/quat.cpp        ${DELFEM2_INC}/quat.h
+  ${DELFEM2_SRC}/msh.cpp         ${DELFEM2_INC}/msh.h
+  ${DELFEM2_SRC}/mshio.cpp       ${DELFEM2_INC}/mshio.h
+  ${DELFEM2_SRC}/funcs.cpp       ${DELFEM2_INC}/funcs.h
 
-  ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h
+  ${DELFEM2_SRC}/v23m3q.cpp      ${DELFEM2_INC}/v23m3q.h
 
-  ${DELFEM2_SRC}/v23_gl.cpp        ${DELFEM2_INC}/v23_gl.h
-  ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
-  ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
+  ${DELFEM2_SRC}/v23_gl.cpp      ${DELFEM2_INC}/v23_gl.h
+  ${DELFEM2_SRC}/funcs_gl.cpp    ${DELFEM2_INC}/funcs_gl.h
+  ${DELFEM2_SRC}/color_gl.cpp    ${DELFEM2_INC}/color_gl.h
 
   py_delfem2.cpp
 )
@@ -47,6 +47,6 @@ add_custom_command(TARGET dfm2
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
   ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dfm2.*
-  ${PROJECT_SOURCE_DIR}/../examples_py/dfm2.so
+  ${PROJECT_SOURCE_DIR}/dfm2.so
   COMMENT "Post Event"
 )
