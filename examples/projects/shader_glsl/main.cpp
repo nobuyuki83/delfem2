@@ -70,16 +70,16 @@ void setShaderProgram(int isp){
 void myGlutDisplay(void)
 {
   //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
   ::glClearStencil(0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   ::glEnable(GL_LIGHTING);
-
+  
   win.SetGL_Camera();
   
   {
@@ -117,25 +117,25 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   ::glViewport(0,0,w,h);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
   win.glutSpecial(Key, x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
   win.glutMotion(x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
   win.glutMouse(button, state, x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 
@@ -164,20 +164,20 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 
 int main(int argc,char* argv[])
 {
-	// Initialize GLUT window 3D
+  // Initialize GLUT window 3D
   glutInit(&argc, argv);
   glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
+  glutInitWindowSize(400, 300);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
   glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutSpecialFunc(myGlutSpecial);
+  glutDisplayFunc(myGlutDisplay);
+  glutIdleFunc(myGlutIdle);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutSpecialFunc(myGlutSpecial);
   glutKeyboardFunc(myGlutKeyboard);
-
+  
   ////////////////////////
 #ifndef __MACH__
   glewInit();
@@ -221,11 +221,11 @@ int main(int argc,char* argv[])
                  tga_normal.imageWidth, tga_normal.imageHeight,
                  0, GL_RGBA,
                  GL_UNSIGNED_BYTE, tga_normal.imageData);
-
+  
   ::glEnable(GL_TEXTURE_2D);
-   
+  
   glutMainLoop();
-	return 0;
+  return 0;
 }
 
 

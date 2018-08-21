@@ -138,7 +138,7 @@ void drawMesh
   const unsigned int nxys = aXY.size()/2;
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-//  double mag = 20;
+  //  double mag = 20;
   for(unsigned int itri=0;itri<ntri;itri++){
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
@@ -195,30 +195,30 @@ void myGlutResize(int w, int h)
     w = view[2];
     h = view[3];
   }
-	glViewport(0, 0, w, h);
-	::glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	::glOrtho(-w/300.0*mag,w/300.0*mag, -h/300.0*mag,h/300.0*mag, -1,1);
-	glutPostRedisplay();
+  glViewport(0, 0, w, h);
+  ::glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  ::glOrtho(-w/300.0*mag,w/300.0*mag, -h/300.0*mag,h/300.0*mag, -1,1);
+  glutPostRedisplay();
 }
 
 
 
 void myGlutDisplay(void)
 {
-//	::glClearColor(0.2, .7, 0.7, 1.0);
-	::glClearColor(0.0, .0, 0.0, 1.0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  //	::glClearColor(0.2, .7, 0.7, 1.0);
+  ::glClearColor(0.0, .0, 0.0, 1.0);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1, 4.0 );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1, 4.0 );
   
-	::glMatrixMode(GL_MODELVIEW);
-	::glLoadIdentity();
+  ::glMatrixMode(GL_MODELVIEW);
+  ::glLoadIdentity();
   
   ::glPointSize(5);
-
+  
   // yerrow: input
   ::glLineWidth(1);
   ::glPointSize(5);
@@ -226,38 +226,38 @@ void myGlutDisplay(void)
   drawCurve(aVecCurve0,aVecCurve0);
   drawMesh(aTri1,aXY1);
   /*
-  ::glLineWidth(3);
-  ::glColor3d(0,1,0);
-  drawCurve(aCV0);
-  */
-
+   ::glLineWidth(3);
+   ::glColor3d(0,1,0);
+   drawCurve(aCV0);
+   */
+  
   /*
-  ::glLineWidth(3);
-  ::glColor3d(0,0,1);
-  drawCurve(aCV1);  
-  */
-
+   ::glLineWidth(3);
+   ::glColor3d(0,0,1);
+   drawCurve(aCV1);  
+   */
+  
   // magenda: last
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,0,1);
-
+  
   /*
-  ::glLineWidth(1);
-  ::glColor3d(1,1,1);
-  ::glBegin(GL_LINES);
-  if( aVecCurve1.size()/2 == map1to0a.size() ){
-    for(unsigned int jv=0;jv<aVecCurve1.size()/2;jv++){
-      unsigned int iv = map1to0a[jv];
-      myGlVertex2D(aVecCurve1a,jv);
-      myGlVertex2D(aVecCurve0a,iv);	
-    }
-  }
-  */
+   ::glLineWidth(1);
+   ::glColor3d(1,1,1);
+   ::glBegin(GL_LINES);
+   if( aVecCurve1.size()/2 == map1to0a.size() ){
+   for(unsigned int jv=0;jv<aVecCurve1.size()/2;jv++){
+   unsigned int iv = map1to0a[jv];
+   myGlVertex2D(aVecCurve1a,jv);
+   myGlVertex2D(aVecCurve0a,iv);	
+   }
+   }
+   */
   ::glEnd();
   
   
-	glutSwapBuffers();
+  glutSwapBuffers();
 }
 
 void myGlutIdle(){
@@ -272,34 +272,34 @@ void myGlutIdle(){
                                     0.03,true,aVecAry);
     if( !res ){ std::cout << "error in triangulation" << std::endl;}
   }
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y ){
-	GLint viewport[4];
-	::glGetIntegerv(GL_VIEWPORT,viewport);
-	const int win_w = viewport[2];
-	const int win_h = viewport[3];
-	const double mov_end_x = (2.0*x-win_w)/win_w;
-	const double mov_end_y = (win_h-2.0*y)/win_h;
-	mov_begin_x = mov_end_x;
-	mov_begin_y = mov_end_y;
-	::glutPostRedisplay();
+  GLint viewport[4];
+  ::glGetIntegerv(GL_VIEWPORT,viewport);
+  const int win_w = viewport[2];
+  const int win_h = viewport[3];
+  const double mov_end_x = (2.0*x-win_w)/win_w;
+  const double mov_end_y = (win_h-2.0*y)/win_h;
+  mov_begin_x = mov_end_x;
+  mov_begin_y = mov_end_y;
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-	GLint viewport[4];
-	::glGetIntegerv(GL_VIEWPORT,viewport);
-	const int win_w = viewport[2];
-	const int win_h = viewport[3];
-	mov_begin_x = (2.0*x-win_w)/win_w;
-	mov_begin_y = (win_h-2.0*y)/win_h;
-	press_button = button;
-	if( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ){
+  GLint viewport[4];
+  ::glGetIntegerv(GL_VIEWPORT,viewport);
+  const int win_w = viewport[2];
+  const int win_h = viewport[3];
+  mov_begin_x = (2.0*x-win_w)/win_w;
+  mov_begin_y = (win_h-2.0*y)/win_h;
+  press_button = button;
+  if( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ){
   }
-	else if( button == GLUT_LEFT_BUTTON && state == GLUT_UP){
-		press_button = -1;
+  else if( button == GLUT_LEFT_BUTTON && state == GLUT_UP){
+    press_button = -1;
   }
 }
 
@@ -323,12 +323,12 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 
 void myGlutSpecial(int key, int x, int y){
   switch(key){
-  case GLUT_KEY_PAGE_UP:
-    mag *= 1.0/0.9;
-    break;
-  case GLUT_KEY_PAGE_DOWN:
-    mag *= 0.9;
-    break;
+    case GLUT_KEY_PAGE_UP:
+      mag *= 1.0/0.9;
+      break;
+    case GLUT_KEY_PAGE_DOWN:
+      mag *= 0.9;
+      break;
   }
   ::myGlutResize(-1,-1);
   ::glutPostRedisplay();
@@ -336,23 +336,23 @@ void myGlutSpecial(int key, int x, int y){
 
 int main(int argc,char* argv[])
 {
-	// Initailze GLUT
-	::glutInitWindowPosition(200,200);
-	::glutInitWindowSize(400, 300);
-	::glutInit(&argc, argv);
-	::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	::glutCreateWindow("Cad View");
+  // Initailze GLUT
+  ::glutInitWindowPosition(200,200);
+  ::glutInitWindowSize(400, 300);
+  ::glutInit(&argc, argv);
+  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  ::glutCreateWindow("Cad View");
   
-	// Set callback function
-	::glutMotionFunc(myGlutMotion);
-	::glutMouseFunc(myGlutMouse);
-	::glutDisplayFunc(myGlutDisplay);
-	::glutReshapeFunc(myGlutResize);
-	::glutKeyboardFunc(myGlutKeyboard);
+  // Set callback function
+  ::glutMotionFunc(myGlutMotion);
+  ::glutMouseFunc(myGlutMouse);
+  ::glutDisplayFunc(myGlutDisplay);
+  ::glutReshapeFunc(myGlutResize);
+  ::glutKeyboardFunc(myGlutKeyboard);
   ::glutSpecialFunc(myGlutSpecial);
-	::glutIdleFunc(myGlutIdle);
+  ::glutIdleFunc(myGlutIdle);
   
-	// Enter main loop
-	::glutMainLoop();
-	return 0;
+  // Enter main loop
+  ::glutMainLoop();
+  return 0;
 }

@@ -26,20 +26,20 @@ std::vector<double> aV;
 
 void myGlutResize(int w, int h)
 {
-	glViewport(0, 0, w, h);
-	glutPostRedisplay();
+  glViewport(0, 0, w, h);
+  glutPostRedisplay();
 }
 
 void myGlutDisplay(void)
 {
   
-//	::glClearColor(0.2, .7, 0.7, 1.0);
-	::glClearColor(0.0, .0, 0.0, 1.0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  //	::glClearColor(0.2, .7, 0.7, 1.0);
+  ::glClearColor(0.0, .0, 0.0, 1.0);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1, 4.0 );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1, 4.0 );
   
   setGL_Camera2D();
   
@@ -53,7 +53,7 @@ void myGlutDisplay(void)
   
   std::vector<std::pair<double, CColor> > colorMap;
   makeHeatMap_BlueCyanGreenYellowRed(colorMap, -0.5, +0.5);
-//  makeHeatMap_BlueGrayRed(colorMap, -0.8, +0.8);
+  //  makeHeatMap_BlueGrayRed(colorMap, -0.8, +0.8);
   ::glBegin(GL_QUADS);
   for(int jh=0;jh<nH-1;++jh){
     for(int jw=0;jw<nW-1;++jw){
@@ -78,26 +78,26 @@ void myGlutDisplay(void)
   ::glEnd();
   
   ::glPointSize(5);
-
+  
   // yerrow: input
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,1,0);
-
+  
   // magenda: last
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,0,1);
   
-	glutSwapBuffers();
+  glutSwapBuffers();
 }
 
 void myGlutIdle(){
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y ){
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
@@ -115,22 +115,22 @@ void ComputePerlin(){
   aGrad.clear();
   
   /*
-  for(int i=0;i<12;++i){
-    double x = (rand()/(RAND_MAX+1.0))-0.5;
-    double y = (rand()/(RAND_MAX+1.0))-0.5;
-    double len_inv = 1.0/sqrt(x*x+y*y);
-    x *= len_inv;
-    y *= len_inv;
-    aGrad.push_back(x);
-    aGrad.push_back(y);
-  }
+   for(int i=0;i<12;++i){
+   double x = (rand()/(RAND_MAX+1.0))-0.5;
+   double y = (rand()/(RAND_MAX+1.0))-0.5;
+   double len_inv = 1.0/sqrt(x*x+y*y);
+   x *= len_inv;
+   y *= len_inv;
+   aGrad.push_back(x);
+   aGrad.push_back(y);
+   }
    */
-   
+  
   aGrad.push_back(-1); aGrad.push_back(-1);
   aGrad.push_back(-1); aGrad.push_back(+1);
   aGrad.push_back(+1); aGrad.push_back(-1);
   aGrad.push_back(+1); aGrad.push_back(+1);
-   
+  
   
   nH = 256;
   nW = 256;
@@ -165,10 +165,10 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 
 void myGlutSpecial(int key, int x, int y){
   switch(key){
-  case GLUT_KEY_PAGE_UP:
-    break;
-  case GLUT_KEY_PAGE_DOWN:
-    break;
+    case GLUT_KEY_PAGE_UP:
+      break;
+    case GLUT_KEY_PAGE_DOWN:
+      break;
   }
   ::myGlutResize(-1,-1);
   ::glutPostRedisplay();
@@ -176,25 +176,25 @@ void myGlutSpecial(int key, int x, int y){
 
 int main(int argc,char* argv[])
 {
-	// Initailze GLUT
-	::glutInitWindowPosition(200,200);
-	::glutInitWindowSize(400, 300);
-	::glutInit(&argc, argv);
-	::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	::glutCreateWindow("Cad View");
+  // Initailze GLUT
+  ::glutInitWindowPosition(200,200);
+  ::glutInitWindowSize(400, 300);
+  ::glutInit(&argc, argv);
+  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  ::glutCreateWindow("Cad View");
   
-	// Set callback function
-	::glutMotionFunc(myGlutMotion);
-	::glutMouseFunc(myGlutMouse);
-	::glutDisplayFunc(myGlutDisplay);
-	::glutReshapeFunc(myGlutResize);
-	::glutKeyboardFunc(myGlutKeyboard);
+  // Set callback function
+  ::glutMotionFunc(myGlutMotion);
+  ::glutMouseFunc(myGlutMouse);
+  ::glutDisplayFunc(myGlutDisplay);
+  ::glutReshapeFunc(myGlutResize);
+  ::glutKeyboardFunc(myGlutKeyboard);
   ::glutSpecialFunc(myGlutSpecial);
-	::glutIdleFunc(myGlutIdle);
-
+  ::glutIdleFunc(myGlutIdle);
+  
   ComputePerlin();
   
-	// Enter main loop
-	::glutMainLoop();
-	return 0;
+  // Enter main loop
+  ::glutMainLoop();
+  return 0;
 }

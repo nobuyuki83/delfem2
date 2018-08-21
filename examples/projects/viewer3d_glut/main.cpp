@@ -26,17 +26,17 @@ void drawObject(){ // for shadow
 void myGlutDisplay(void)
 {
   //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
   ::glClearStencil(0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   window.SetGL_Camera();
   
   DrawBackground();
-
+  
   ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
@@ -44,19 +44,19 @@ void myGlutDisplay(void)
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1,1,1);
   ::glutSolidTeapot(1.0);
-
+  
   /*
-  {
-    glDisable(GL_LIGHTING);
-    float plane[4] = {0,1,0,5-0.001};
-    float lpos[4] = {0,5,0,1};
-    float m_shadow[16]; ShadowMatrix(m_shadow, plane, lpos);
-    glPushMatrix();
-    glMultMatrixf(m_shadow);
-    glColor3d(0,0,0);
-    glutSolidTeapot(1.0);
-    glPopMatrix();
-
+   {
+   glDisable(GL_LIGHTING);
+   float plane[4] = {0,1,0,5-0.001};
+   float lpos[4] = {0,5,0,1};
+   float m_shadow[16]; ShadowMatrix(m_shadow, plane, lpos);
+   glPushMatrix();
+   glMultMatrixf(m_shadow);
+   glColor3d(0,0,0);
+   glutSolidTeapot(1.0);
+   glPopMatrix();
+   
    ::glEnable(GL_LIGHTING);
    ::glBegin(GL_QUADS);
    ::glColor3d(1,1,1);
@@ -66,9 +66,9 @@ void myGlutDisplay(void)
    ::glVertex3d(+20,-5,+20);
    ::glVertex3d(-20,-5,+20);
    ::glEnd();
-  }
+   }
    */
- 
+  
   ::drawFloorShadow(drawObject, -5, 20);
   
   ShowFPS();
@@ -86,31 +86,31 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   ::glViewport(0,0,w,h);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
   window.glutSpecial(Key, x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
   window.glutMotion(x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
   window.glutMouse(button, state, x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key)
-	{
+  switch(Key)
+  {
     case 'q':
     case 'Q':
     case '\033':
@@ -142,7 +142,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       if( ifile >= 8 ){ ifile=0; }
     }
   }
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 
@@ -150,27 +150,27 @@ int main(int argc,char* argv[])
 {
   glutInit(&argc, argv);
   
-	// Initialize GLUT window 3D
+  // Initialize GLUT window 3D
   glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
+  glutInitWindowSize(400, 300);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
   glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
+  glutDisplayFunc(myGlutDisplay);
+  glutIdleFunc(myGlutIdle);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutSpecialFunc(myGlutSpecial);
   
   ////////////////////////
   
   window.camera.view_height = 2.0;
   
   setSomeLighting();
- 
+  
   glutMainLoop();
-	return 0;
+  return 0;
 }
 
 

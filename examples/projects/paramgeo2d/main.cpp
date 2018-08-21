@@ -58,16 +58,16 @@ void SetExample
 void myGlutDisplay(void)
 {
   //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
   ::glClearStencil(0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset(1.1f, 4.0f);
-
+  
   setGL_Camera2D();
-
+  
   ::glDisable(GL_LIGHTING);
   
   ::glLineWidth(2);
@@ -82,7 +82,7 @@ void myGlutDisplay(void)
   ::glPointSize(2);
   ::glColor3d(0,0,0);
   drawPolyLine2D(polyline0);
-
+  
   ::glutSwapBuffers();
 }
 
@@ -94,7 +94,7 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   ::glViewport(0,0,w,h);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion(int x, int y)
@@ -106,7 +106,7 @@ void myGlutMotion(int x, int y)
     aCtrlPoint[ipoint_picked].y = pos_cur[1];
   }
   SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
@@ -124,7 +124,7 @@ void myGlutMouse(int button, int state, int x, int y)
   else{
     ipoint_picked = -1;
   }
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 
@@ -140,21 +140,21 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case 'a': //
       break;
       /*
-    case '1':
-    {
-      --nsmpl_bezier;
-      if( nsmpl_bezier == 0 ){
-        nsmpl_bezier = 1;
-      }
-      updatedCV();
-    }
-      break;
-    case '2':
-    {
-      ++nsmpl_bezier;
-      updatedCV();
-    }
-      break;
+       case '1':
+       {
+       --nsmpl_bezier;
+       if( nsmpl_bezier == 0 ){
+       nsmpl_bezier = 1;
+       }
+       updatedCV();
+       }
+       break;
+       case '2':
+       {
+       ++nsmpl_bezier;
+       updatedCV();
+       }
+       break;
        */
     case ' ':
     {
@@ -171,28 +171,28 @@ int main(int argc,char* argv[])
 {
   glutInit(&argc, argv);
   
-	// Initialize GLUT window 3D
+  // Initialize GLUT window 3D
   glutInitWindowPosition(100,100);
-	glutInitWindowSize(1000, 600);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
+  glutInitWindowSize(1000, 600);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
   glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
+  glutDisplayFunc(myGlutDisplay);
+  glutIdleFunc(myGlutIdle);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
   glutKeyboardFunc(myGlutKeyboard);
   
   ////////////////////////
-
-
+  
+  
   SetExample(3,6);
   SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
-
+  
   ////////////////////////
- 
+  
   glutMainLoop();
-	return 0;
+  return 0;
 }
 
 
