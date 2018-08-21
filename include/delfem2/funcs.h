@@ -43,9 +43,13 @@ std::vector<std::string> Split(const std::string& str,
                                const std::string& par);
 std::string GetEnclosed(const std::string& str,
                         const std::string& par);
+std::string Replace(const std::string& str,
+                    const char cf, const char ct);
 std::string Remove(const std::string& str,
                    const std::string& del);
 std::string RemoveSpace(const std::string& str);
+std::string RemoveBeginning(const std::string& str,
+                            const std::string& del);
 
 std::map<std::string, std::string> ReadDictionary(const std::string& path);
 std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn);

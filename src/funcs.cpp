@@ -120,6 +120,21 @@ std::string GetEnclosed
   return std::string();
 }
 
+std::string Replace
+(const std::string& str,
+ const char cf,
+ const char ct)
+{
+  const int n = str.size();
+  ///
+  std::string ss(str);
+  for(int i=0;i<n;++i){
+    if( ss[i] != cf ){ continue; }
+    ss[i] = ct;
+  }
+  return ss;
+}
+
 std::string Remove
 (const std::string& str,
  const std::string& del)
@@ -149,6 +164,29 @@ std::string RemoveSpace
 (const std::string& str)
 {
   return Remove(str," ");
+}
+
+std::string RemoveBeginning
+(const std::string& str,
+ const std::string& del)
+{
+  const int n = str.size();
+  const int ndel = del.size();
+  ///
+  int istat = 0;
+  for(int i=0;i<n;++i){
+    bool is_del = false;
+    for(int idel=0;idel<ndel;++idel){
+      if( str[i] != del[idel] ){ continue; }
+      is_del = true;
+      break;
+    }
+    if( is_del ) continue;
+    istat = i;
+    break;
+  }
+  std::string ss(str.begin()+istat,str.end());
+  return ss;
 }
 
 // Read somehting like this {"command":"meshing_polygon","aXY_vertex":"0,0,0,30,30,30,30,0"}
