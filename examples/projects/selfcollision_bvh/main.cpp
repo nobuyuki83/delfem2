@@ -159,7 +159,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 int main(int argc,char* argv[])
 {
   {
-    setSphereMesh(aXYZ0, aTri, 1.0, 16, 16);
+    MeshTri3D_Sphere(aXYZ0, aTri, 1.0, 16, 16);
     Rotate(aXYZ0, 0.2, 0.3, 0.4);
     aXYZ = aXYZ0;
     {

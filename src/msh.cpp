@@ -611,11 +611,11 @@ void Scale
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void setDiskMesh
+void MeshTri3D_Disk
 (std::vector<double>& aXYZ, 
 std::vector<int>& aTri,
  double r, int nr, int nth)
@@ -665,7 +665,7 @@ std::vector<int>& aTri,
 
 
 
-void setOpenCylinderMesh
+void MeshTri3D_OpenCylinder
 (std::vector<double>& aXYZ, 
 std::vector<int>& aTri,
 double r, double l,
@@ -708,7 +708,7 @@ int nr, int nl)
   }
 }
 
-void setClosedCylinderMesh
+void MeshTri3D_ClosedCylinder
 (std::vector<double>& aXYZ, 
 std::vector<int>& aTri,
 double r, double l,
@@ -785,7 +785,7 @@ int nlo, int nl)
 */ 
 }
 
-void setSphereMesh
+void MeshTri3D_Sphere
 (std::vector<double>& aXYZ,
  std::vector<int>& aTri,
  double r,
@@ -853,7 +853,7 @@ void setSphereMesh
 // f3: +y
 // f4: -z
 // f5: +z
-void setQuad_CubeTopo(std::vector<int>& aQuad)
+void SetTopoQuad_CubeVox(std::vector<int>& aQuad)
 {
   aQuad.resize(6*4);
   aQuad[0*4+0] = 0;    aQuad[0*4+1] = 4;   aQuad[0*4+2] = 6;   aQuad[0*4+3] = 2;
@@ -864,7 +864,26 @@ void setQuad_CubeTopo(std::vector<int>& aQuad)
   aQuad[5*4+0] = 4;    aQuad[5*4+1] = 5;   aQuad[5*4+2] = 7;   aQuad[5*4+3] = 6;
 }
 
-void setCubeMesh
+void MeshQuad3D_CubeVox
+(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+ double x_min, double x_max,
+ double y_min, double y_max,
+ double z_min, double z_max)
+{
+  aXYZ.resize(0);
+  aXYZ.reserve(8*3);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_min);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_min);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_max);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_max);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_min);    aXYZ.push_back(z_max);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_min);    aXYZ.push_back(z_max);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_max);    aXYZ.push_back(z_max);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_max);    aXYZ.push_back(z_max);
+  SetTopoQuad_CubeVox(aQuad);
+}
+
+void MeshTri3D_Cube
 (std::vector<double>& aXYZ,
  std::vector<int>& aTri,
  int n)

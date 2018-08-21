@@ -138,7 +138,7 @@ void drawMesh
   const unsigned int nxys = aXY.size()/2;
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  double mag = 20;
+//  double mag = 20;
   for(unsigned int itri=0;itri<ntri;itri++){
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
@@ -270,6 +270,7 @@ void myGlutIdle(){
     std::vector<int> aIndVtxLoop;
     bool res = GenerateTesselation2(aTri1,aXY1,aInd_IndVtxLoop,aIndVtxLoop,
                                     0.03,true,aVecAry);
+    if( !res ){ std::cout << "error in triangulation" << std::endl;}
   }
 	::glutPostRedisplay();
 }

@@ -1,6 +1,8 @@
 #ifndef QUAT_H
 #define QUAT_H
 
+// stand alone implementation of the quaternion function and class
+
 void QuatSetIdentity(double q[]);
 void QuatCopy(double r[], const double p[]);
 void QuatMult(double r[], const double p[], const double q[]);

@@ -50,8 +50,6 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
 // Bryant angle
 void Rotate(std::vector<double>& aXYZ,
             double radx, double rady, double radz);
-void CenterOfGravity(double& cgx, double& cgy, double& cgz,
-                     const std::vector<double>& aXYZ);
 void Translate(double tx, double ty, double tz,
                std::vector<double>& aXYZ);
 void Translate(std::vector<double>& aXYZ,
@@ -68,6 +66,8 @@ void Normalize(std::vector<double>& aXYZ,
 
 ////////////////////////////////////////////////////////////////////////////////////
 
+void CenterOfGravity(double& cgx, double& cgy, double& cgz,
+                     const std::vector<double>& aXYZ);
 void CenterOfGravity_Tri(double& cgx, double& cgy, double& cgz,
                          int itri,
                          const std::vector<double>& aXYZ,
@@ -83,6 +83,9 @@ void CenterOfGravity_Shell(double& cgx, double& cgy, double& cgz,
 void CenterOfGravity_Solid(double& cgx, double& cgy, double& cgz,
                            const std::vector<double>& aXYZ,
                            const std::vector<int>& aTri);
+
+////////////////////////////////////////////////////////////////////////////////////
+
 void RemoveUnreferencedPoints3D(std::vector<double>& aXYZOut,
                                 std::vector<int>& aTriOut,
                                 const std::vector<double>& aXYZIn,
@@ -99,21 +102,25 @@ void MakeNormal(double*& aNorm_,
 // set primitive mesh
 
 // y axis is the pole
-void setSphereMesh(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                   double r,
-                   int nla, int nlo);
+void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<int>& aTri,
+                    double r,
+                    int nla, int nlo);
 // y axis is the axis of cylinder
-void setOpenCylinderMesh(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                         double r, double l,
-                         int nr, int nl);
-void setClosedCylinderMesh(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                           double r, double l,
-                           int nr, int nl);
-void setQuad_CubeTopo(std::vector<int>& aQuad);
-void setCubeMesh(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                 int n);
-void setDiskMesh(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                 double r, int nr, int nth);
+void MeshTri3D_OpenCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
+                          double r, double l,
+                          int nr, int nl);
+void MeshTri3D_ClosedCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
+                            double r, double l,
+                            int nr, int nl);
+void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<int>& aTri,
+                  int n);
+void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<int>& aTri,
+                  double r, int nr, int nth);
+void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+                        double x_min, double x_max,
+                        double y_min, double y_max,
+                        double z_min, double z_max);
+void SetTopoQuad_CubeVox(std::vector<int>& aQuad);
 void ExtrudeTri2Tet(int nlayer, double h,
                     std::vector<double>& aXYZ,
                     std::vector<int>& aTet,
@@ -125,16 +132,16 @@ void ExtrudeTri2Tet(int nlayer, double h,
 void makeSolidAngle(std::vector<double>& aSolidAngle,
                     const std::vector<double>& aXYZ,
                     const std::vector<int>& aTri);
-void LaplacianSmoothing(std::vector<double>& aXYZ,
-                        const std::vector<int>& aTri,
-                        const std::vector<int>& elsup_ind,
-                        const std::vector<int> elsup);
 void makeSolidAngle(std::vector<double>& aSolidAngle,
                     const std::vector<double>& aXYZ,
                     const std::vector<int>& aTri,
                     const std::vector<double>& aNorm,
                     std::vector<int>& elsup_ind,
                     std::vector<int>& elsup);
+void LaplacianSmoothing(std::vector<double>& aXYZ,
+                        const std::vector<int>& aTri,
+                        const std::vector<int>& elsup_ind,
+                        const std::vector<int> elsup);
 void SubdivisionMovePoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                             ///
                                             const std::vector<int>& aQuad1,

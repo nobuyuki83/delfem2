@@ -1,7 +1,7 @@
 project(triangulation)
 
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_C_FLAGS -Wall -Wno-deprecated-declarations -g )
+set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
 
 set(DELFEM2_INCLUDE_DIR "../../../include")
 set(DELFEM2_SRC         "../../../src")
@@ -16,9 +16,9 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  main.cpp
   ${DELFEM2_SRC}/vec3.cpp           ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/dyntri_v3.cpp
+  ${DELFEM2_SRC}/dyntri_v3.cpp      ${DELFEM2_INC}/dyntri_v3.h
+  main.cpp  
 )
 
 target_link_libraries(${PROJECT_NAME}  

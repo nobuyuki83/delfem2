@@ -1,26 +1,26 @@
 project(viewer3d_glut)
 
 cmake_minimum_required(VERSION 2.8)
-set( CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
+set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
 
-set(DELFEM2_INCLUDE "../../../include")
-set(DELFEM2_SRC     "../../../src")
+set(DELFEM2_INCLUDE_DIR "../../../include")
+set(DELFEM2_SRC         "../../../src")
+set(DELFEM2_INC         "../../../include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE}
+  ${DELFEM2_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
+  ${DELFEM2_SRC}/quat.cpp          ${DELFEM2_INC}/quat.h
+  ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
+  ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
+  ${DELFEM2_SRC}/camera_gl.cpp     ${DELFEM2_INC}/camera_gl.h
   main.cpp
-  ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_SRC}/color_gl.cpp
-  ${DELFEM2_SRC}/camera_gl.cpp           
-  ${DELFEM2_INCLUDE}/delfem2/camera_gl.h
 )
 
 target_link_libraries(${PROJECT_NAME} 

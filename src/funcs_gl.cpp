@@ -525,10 +525,10 @@ void DrawSingleQuad3D_FaceNorm
     assert(i1==-1 && i2==-1 && i3 ==-1);
     return;
   }
-  double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
-  double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-  double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
-  double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
+  const double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
+  const double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
+  const double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
+  const double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
   {
     double un0[3], area; UnitNormalAreaTri3D(un0,area,  p0, p1, p3);
     if( pUV != 0 ){ ::glTexCoord2d(pUV[0],pUV[1]); }
@@ -1011,6 +1011,19 @@ void DrawMeshQuad3D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
+
+void DrawMeshQuad3D_FaceNorm
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aQuad)
+{
+  const unsigned int nQuad = aQuad.size()/4;
+  ::glBegin(GL_QUADS);
+  for(unsigned int iq=0;iq<nQuad;++iq){
+    DrawSingleQuad3D_FaceNorm(aXYZ, aQuad.data()+iq*4, 0);
+  }
+  ::glEnd();
+}
+
 ///////////////////////////////////////////
 
 void DrawMeshTet3DSurface_FaceNorm
@@ -1445,6 +1458,9 @@ void DrawBox_MinMaxXYZ
                     aabbMinMaxXYZ[4], aabbMinMaxXYZ[5]);
 }
 
+
+
+/////////////////////////////////////////////////////////////////////////////////////
 
 void SaveImage(const std::string& path)
 {

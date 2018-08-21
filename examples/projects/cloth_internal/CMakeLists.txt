@@ -1,7 +1,7 @@
 project(cloth_internal)
 
 cmake_minimum_required(VERSION 2.8)
-set( CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -std=c++11" )
+set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -std=c++11" )
 
 set(DELFEM2_INCLUDE_DIR "../../../include")
 set(DELFEM2_SRC         "../../../src")
@@ -17,14 +17,14 @@ include_directories(
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mshtopo.cpp       ${DELFEM2_INC}/mshtopo.h
-  ${DELFEM2_SRC}/msh.cpp
+  ${DELFEM2_SRC}/msh.cpp           ${DELFEM2_INC}/msh.h
 
-  ${DELFEM2_SRC}/fem_ematrix.cpp
-  ${DELFEM2_SRC}/matrix_sparse.cpp
-  ${DELFEM2_SRC}/ilu_sparse.cpp
+  ${DELFEM2_SRC}/fem_ematrix.cpp   ${DELFEM2_INC}/fem_ematrix.h
+  ${DELFEM2_SRC}/matrix_sparse.cpp ${DELFEM2_INC}/matrix_sparse.h
+  ${DELFEM2_SRC}/ilu_sparse.cpp    ${DELFEM2_INC}/ilu_sparse.h
   ${DELFEM2_SRC}/fem.cpp           ${DELFEM2_INC}/fem.h
 
-  ${DELFEM2_SRC}/funcs_gl.cpp
+  ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/camera_gl.cpp     ${DELFEM2_INC}/camera_gl.h
 
   main.cpp
