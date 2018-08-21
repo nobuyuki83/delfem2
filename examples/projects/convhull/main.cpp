@@ -45,12 +45,12 @@ static void myGlVertex3d(int i, const std::vector<CVector3>& aV)
 void myGlutDisplay(void)
 {
   //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   win.SetGL_Camera();
   
@@ -97,9 +97,9 @@ void myGlutDisplay(void)
     }
     ::glEnd();
   }
-
+  
   ShowFPS();
-
+  
   ::glutSwapBuffers();
 }
 
@@ -111,12 +111,12 @@ void myGlutIdle()
     return;
   }
   ::glutPostRedisplay();
-  }
+}
 
 void myGlutResize(int w, int h)
 {
-	::glViewport(0, 0, w, h);
-	::glutPostRedisplay();  
+  ::glViewport(0, 0, w, h);
+  ::glutPostRedisplay();  
 }
 
 void myGlutMotion( int x, int y )
@@ -132,8 +132,8 @@ void myGlutMouse(int ibutton, int state, int x, int y)
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key)
-	{
+  switch(Key)
+  {
     case 'q':
     case 'Q':
       exit(0);  /* '\033' ? ESC ? ASCII ??? */
@@ -155,7 +155,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       ConvexHull(aTri,aXYZ);
       break;
     }
-	}
+  }
   ::glutPostRedisplay();
 }
 
@@ -170,20 +170,20 @@ int main(int argc,char* argv[])
 {
   ::glutInit(&argc, argv);
   
-	// Initialize GLUT
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("Initial");
+  // Initialize GLUT
+  glutInitWindowPosition(200,200);
+  glutInitWindowSize(400, 300);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  glutCreateWindow("Initial");
   
-	// Define callback functions
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-	glutIdleFunc(myGlutIdle);
+  // Define callback functions
+  glutDisplayFunc(myGlutDisplay);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutSpecialFunc(myGlutSpecial);
+  glutIdleFunc(myGlutIdle);
   
   win.camera.view_height = 1.5;
   
@@ -198,5 +198,5 @@ int main(int argc,char* argv[])
   ConvexHull(aTri,aXYZ);
   
   glutMainLoop();
-	return 0;
+  return 0;
 }

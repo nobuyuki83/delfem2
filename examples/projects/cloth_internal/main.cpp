@@ -188,24 +188,24 @@ void StepTime()
 void myGlutDisplay(void)
 {
   //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   win.SetGL_Camera();
-/*
-	::glMatrixMode(GL_MODELVIEW);
-	::glLoadIdentity();
-  ::glTranslated(camera_trans[0],camera_trans[1],camera_trans[2]);
-  {
-    double R_view_3d[16];
-    QuatRot(R_view_3d, camera_qrot);
-    ::glMultMatrixd(R_view_3d);
-  }
-*/
+  /*
+   ::glMatrixMode(GL_MODELVIEW);
+   ::glLoadIdentity();
+   ::glTranslated(camera_trans[0],camera_trans[1],camera_trans[2]);
+   {
+   double R_view_3d[16];
+   QuatRot(R_view_3d, camera_qrot);
+   ::glMultMatrixd(R_view_3d);
+   }
+   */
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
   { // draw triangle edge
@@ -295,7 +295,7 @@ void myGlutDisplay(void)
     ::glutWireSphere(0.3, 16, 16);
     ::glPopMatrix();
   }
-    
+  
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }  
   
@@ -303,7 +303,7 @@ void myGlutDisplay(void)
 }
 
 void myGlutIdle(){
-    
+  
   if( is_animation ){
     StepTime();
   }
@@ -315,19 +315,19 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   glViewport(0,0, w, h);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
   win.glutSpecial(Key, x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 
 void myGlutMotion( int x, int y ){
   win.glutMotion(x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y){
@@ -336,8 +336,8 @@ void myGlutMouse(int button, int state, int x, int y){
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key)
-	{
+  switch(Key)
+  {
     case 'q':
     case 'Q':
     case '\033':
@@ -363,7 +363,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       }
       break;
   }
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 int main(int argc,char* argv[])
@@ -389,18 +389,18 @@ int main(int argc,char* argv[])
   
   glutInit(&argc, argv);
   
-	// Initialize GLUT window 3D
+  // Initialize GLUT window 3D
   glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  glutInitWindowSize(400, 300);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
   glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
+  glutDisplayFunc(myGlutDisplay);
+  glutIdleFunc(myGlutIdle);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutSpecialFunc(myGlutSpecial);
   
   ////////////////////////
   
@@ -411,10 +411,10 @@ int main(int argc,char* argv[])
   win.camera.psi = 3.1415*0.2;
   win.camera.theta = 3.1415*0.1;
   win.camera.view_height = 2;
-
- 
+  
+  
   glutMainLoop();
-	return 0;
+  return 0;
 }
 
 

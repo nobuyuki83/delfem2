@@ -120,14 +120,14 @@ void myGlutIdle(){
       if( aTri.size() <= 100 ) break;
     }
   }
-	glutPostRedisplay();
+  glutPostRedisplay();
 }
 
 void myGlutResize(int w, int h)
 {
-	glViewport(0, 0, w, h);
-	::glMatrixMode(GL_PROJECTION);
-	glutPostRedisplay();
+  glViewport(0, 0, w, h);
+  ::glMatrixMode(GL_PROJECTION);
+  glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y ){
@@ -145,12 +145,12 @@ void myGlutSpecial(int Key, int x, int y)
 
 void myGlutDisplay(void)
 {
-	::glClearColor(0.2f, .7f, .7f,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClearColor(0.2f, .7f, .7f,1.0f);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   DrawBackground();
   win.SetGL_Camera();
@@ -160,7 +160,7 @@ void myGlutDisplay(void)
   GLboolean is_texture  = ::glIsEnabled(GL_TEXTURE_2D);
   ::glDisable(GL_TEXTURE_2D);    
   {
-//    float gray[4] = {0.3,0.3,0.3,1};
+    //    float gray[4] = {0.3,0.3,0.3,1};
     float gray[4] = {0.9f,0.9f,0.9f,1.f};    
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, gray);
     float shine[4] = {0,0,0,0};
@@ -198,16 +198,16 @@ void myGlutDisplay(void)
   else{              ::glDisable(GL_LIGHTING); }
   if(  is_texture  ){ ::glEnable(GL_TEXTURE_2D); } 
   
-	if( is_animation  ){
-		cur_time += dt;
-	}
-	ShowFPS();
+  if( is_animation  ){
+    cur_time += dt;
+  }
+  ShowFPS();
   glutSwapBuffers();
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key){
+  switch(Key){
     case 'q':
     case 'Q':
     case '\033':
@@ -220,7 +220,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       SetNewProblem();      
       ::glMatrixMode(GL_PROJECTION);
       ::glLoadIdentity();
-//      Com::View::SetProjectionTransform(camera);
+      //      Com::View::SetProjectionTransform(camera);
       break;
     case 'l':
       is_lighting = !is_lighting;
@@ -232,31 +232,31 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         ::glDisable(GL_LIGHTING);
       }
       break;
-	}
+  }
   
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 int main(int argc,char* argv[])
 {
-	// initialize glut
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("Surface Mesh Edge Collapse");
+  // initialize glut
+  glutInitWindowPosition(200,200);
+  glutInitWindowSize(400, 300);
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  glutCreateWindow("Surface Mesh Edge Collapse");
   
-	// define call back functions
-	glutIdleFunc(myGlutIdle);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutSpecialFunc(myGlutSpecial);;
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	
+  // define call back functions
+  glutIdleFunc(myGlutIdle);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutDisplayFunc(myGlutDisplay);
+  glutReshapeFunc(myGlutResize);
+  glutSpecialFunc(myGlutSpecial);;
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  
   setSomeLighting();
-	SetNewProblem();
+  SetNewProblem();
   
   win.camera.view_height = 1.5;
   
@@ -273,6 +273,6 @@ int main(int argc,char* argv[])
     ::glLightfv(GL_LIGHT1, GL_POSITION, light1pos);      
     ::glLightfv(GL_LIGHT1, GL_DIFFUSE, white);        
   }
-	glutMainLoop();
-	return 0;
+  glutMainLoop();
+  return 0;
 }

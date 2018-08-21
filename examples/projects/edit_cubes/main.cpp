@@ -23,7 +23,7 @@
 #include "delfem2/funcs_glut.h"
 
 #ifndef M_PI
-  #define M_PI 3.141592653589793
+#define M_PI 3.141592653589793
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,12 +52,12 @@ int iface_picked;
 
 void myGlutDisplay(void)
 {
-  	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-//	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
+  //	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   ::DrawBackground(CColor(0.2, 0.7, 0.7));
   
@@ -73,7 +73,7 @@ void myGlutDisplay(void)
   if( edit_mode == EDIT_DELETE ){
     DrawMessage_LeftTop("mode delete");
   }
-
+  
   
   ::glLineWidth(1);
   ::DrawAxis(1);
@@ -88,7 +88,7 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   glViewport(0, 0, w, h);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutSpecial(int Key, int x, int y)
@@ -122,7 +122,7 @@ void myGlutMouse(int button, int state, int x, int y)
     if( edit_mode == EDIT_ADD ){
       int ivx1,ivy1,ivz1;
       Adj_CubeGrid(ivx1,ivy1,ivz1,
-             ivox_picked,iface_picked,aCubeGrid);
+                   ivox_picked,iface_picked,aCubeGrid);
       Add_CubeGrid(aCubeGrid,ivx1,ivy1,ivz1);
       if( imode_sym == 1 ){ Add_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1-1); }
       if( imode_sym == 2 ){ Add_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1); }
@@ -140,8 +140,8 @@ void myGlutMouse(int button, int state, int x, int y)
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key)
-	{
+  switch(Key)
+  {
     case 'q':
     case 'Q':
     case '\033':
@@ -173,18 +173,18 @@ int main(int argc,char* argv[])
 {
   glutInit(&argc, argv);
   
-	// Initialize GLUT window 3D
+  // Initialize GLUT window 3D
   glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  glutInitWindowSize(400, 300);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
   glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
+  glutDisplayFunc(myGlutDisplay);
+  glutIdleFunc(myGlutIdle);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutSpecialFunc(myGlutSpecial);
   
   ////////////////////////
   win.camera.view_height = 2.0;
@@ -196,7 +196,7 @@ int main(int argc,char* argv[])
   aCubeGrid.push_back( CCubeGrid(0,0,0) );
   
   glutMainLoop();
-	return 0;
+  return 0;
 }
 
 

@@ -185,7 +185,7 @@ void MakeMesh(){
     aVecAry[0].push_back(-len); aVecAry[0].push_back(+len);
   }
   aVecAry.push_back(aVecCurve0);
-//  bool res = GenerateTesselation2(aTri1, aXY1, aInd_IdVtxLoop,aIdVtxLoop, 0.045, true,aVecAry);
+  //  bool res = GenerateTesselation2(aTri1, aXY1, aInd_IdVtxLoop,aIdVtxLoop, 0.045, true,aVecAry);
   bool res = GenerateTesselation2(aTri1, aXY1, aInd_IdVtxLoop, aIdVtxLoop, 0.05, true, aVecAry);
   if( !res ){
     std::cout << "meshing failed" << std::endl;
@@ -212,9 +212,9 @@ void InitializeProblem_Scalar()
   }
   //////
   /*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
-  crs.Sort();
+   CJaggedArray crs;
+   crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
+   crs.Sort();
    */
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
@@ -265,10 +265,10 @@ void SolveProblem_Diffusion()
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_Diffusion2D(mat_A,vec_b,
-    alpha, rho, source,                        
-    dt_timestep, gamma_newmark,
-    aXY1,aTri1,
-    aVal,aVelo);
+                          alpha, rho, source,                        
+                          dt_timestep, gamma_newmark,
+                          aXY1,aTri1,
+                          aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
@@ -322,12 +322,12 @@ void InitializeProblem_Solid()
   addMasterSlavePattern(aMSFlag,
                         2,psup_ind,psup);
   SortIndexedArray(psup_ind, psup);
-/*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
-  crs.addMasterSlavePattern(aMSFlag,2);
-  crs.Sort();
- */
+  /*
+   CJaggedArray crs;
+   crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
+   crs.addMasterSlavePattern(aMSFlag,2);
+   crs.Sort();
+   */
   ////
   mat_A.Initialize(np, 2, true);
   mat_A.SetPattern(psup_ind, psup);
@@ -349,9 +349,9 @@ void SolveProblem_LinearSolid_Static()
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_LienarSolid2D_Static(
-    mat_A,vec_b,
-    myu,lambda,rho,g_x,g_y,
-    aXY1,aTri1,aVal);
+                                   mat_A,vec_b,
+                                   myu,lambda,rho,g_x,g_y,
+                                   aXY1,aTri1,aVal);
   mat_A.SetBoundaryCondition(aBCFlag);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -386,11 +386,11 @@ void SolveProblem_LinearSolid_Dynamic()
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_LinearSolid2D_Dynamic(
-    mat_A,vec_b,
-    myu,lambda,rho,g_x,g_y,
-    dt_timestep,gamma_newmark,beta_newmark,
-    aXY1,aTri1,
-    aVal,aVelo,aAcc);
+                                    mat_A,vec_b,
+                                    myu,lambda,rho,g_x,g_y,
+                                    dt_timestep,gamma_newmark,beta_newmark,
+                                    aXY1,aTri1,
+                                    aVal,aVelo,aAcc);
   mat_A.SetBoundaryCondition(aBCFlag);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -457,16 +457,16 @@ void InitializeProblem_Fluid()
   makeOneRingNeighborhood(psup_ind, psup,
                           aTri1, 3, (int)aXY1.size()/2);
   SortIndexedArray(psup_ind, psup);
-/*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
-  crs.Sort();
- */
+  /*
+   CJaggedArray crs;
+   crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
+   crs.Sort();
+   */
   ////
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind, psup);
   ilu_A.Initialize_ILU0(mat_A);
-//  ilu_A.Initialize_ILUk(mat_A, 5);
+  //  ilu_A.Initialize_ILUk(mat_A, 5);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -496,7 +496,7 @@ void InitializeProblem_Fluid2()
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }
-//  aBCFlag[0*3+2] = 1;
+  //  aBCFlag[0*3+2] = 1;
   //////
   aMSFlag.assign(nDoF, -1);
   { // master slave
@@ -524,10 +524,10 @@ void InitializeProblem_Fluid2()
   SortIndexedArray(psup_ind, psup);
   //////
   /*
-  CJaggedArray crs;
-  crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
-  crs.addMasterSlavePattern(aMSFlag,3);
-  crs.Sort();
+   CJaggedArray crs;
+   crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
+   crs.addMasterSlavePattern(aMSFlag,3);
+   crs.Sort();
    */
   ////
   mat_A.Initialize(np, 3, true);
@@ -550,10 +550,10 @@ void SolveProblem_Stokes_Static()
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_Stokes2D_Static(
-    mat_A,vec_b,
-    myu,rho,g_x,g_y,
-    aXY1,aTri1,
-    aVal,aVelo);
+                              mat_A,vec_b,
+                              myu,rho,g_x,g_y,
+                              aXY1,aTri1,
+                              aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -589,11 +589,11 @@ void SolveProblem_Stokes_Dynamic()
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_Stokes2D_Dynamic(
-    mat_A,vec_b,
-    myu,rho,g_x,g_y,
-    dt_timestep,gamma_newmark,
-    aXY1,aTri1,                             
-    aVal,aVelo);
+                               mat_A,vec_b,
+                               myu,rho,g_x,g_y,
+                               dt_timestep,gamma_newmark,
+                               aXY1,aTri1,                             
+                               aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -634,11 +634,11 @@ void SolveProblem_NavierStokes_Dynamic()
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_NavierStokes2D_Dynamic(
-    mat_A,vec_b,
-    myu,rho,g_x,g_y,
-    dt_timestep,gamma_newmark,
-    aXY1,aTri1,
-    aVal,aVelo);
+                                     mat_A,vec_b,
+                                     myu,rho,g_x,g_y,
+                                     dt_timestep,gamma_newmark,
+                                     aXY1,aTri1,
+                                     aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -672,18 +672,18 @@ void SolveProblem_NavierStokes_Dynamic()
 void myGlutResize(int w, int h)
 {
   glViewport(0, 0, w, h);
-	glutPostRedisplay();
+  glutPostRedisplay();
 }
 
 void myGlutDisplay(void)
 {
-	::glClearColor(0.2, .7, 0.7, 1.0);
-//	::glClearColor(0.0, .0, 0.0, 1.0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClearColor(0.2, .7, 0.7, 1.0);
+  //	::glClearColor(0.0, .0, 0.0, 1.0);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1, 4.0 );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1, 4.0 );
   
   setGL_Camera2D();
   
@@ -716,7 +716,7 @@ void myGlutDisplay(void)
   
   ShowFPS();
   
-	glutSwapBuffers();
+  glutSwapBuffers();
 }
 
 void myGlutIdle(){
@@ -734,34 +734,34 @@ void myGlutIdle(){
       SolveProblem_NavierStokes_Dynamic();
     }
   }
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y ){
-	GLint viewport[4];
-	::glGetIntegerv(GL_VIEWPORT,viewport);
-	const int win_w = viewport[2];
-	const int win_h = viewport[3];
-	const double mov_end_x = (2.0*x-win_w)/win_w;
-	const double mov_end_y = (win_h-2.0*y)/win_h;
-	mov_begin_x = mov_end_x;
-	mov_begin_y = mov_end_y;
-	::glutPostRedisplay();
+  GLint viewport[4];
+  ::glGetIntegerv(GL_VIEWPORT,viewport);
+  const int win_w = viewport[2];
+  const int win_h = viewport[3];
+  const double mov_end_x = (2.0*x-win_w)/win_w;
+  const double mov_end_y = (win_h-2.0*y)/win_h;
+  mov_begin_x = mov_end_x;
+  mov_begin_y = mov_end_y;
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-	GLint viewport[4];
-	::glGetIntegerv(GL_VIEWPORT,viewport);
-	const int win_w = viewport[2];
-	const int win_h = viewport[3];
-	mov_begin_x = (2.0*x-win_w)/win_w;
-	mov_begin_y = (win_h-2.0*y)/win_h;
-	press_button = button;
-	if( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ){
+  GLint viewport[4];
+  ::glGetIntegerv(GL_VIEWPORT,viewport);
+  const int win_w = viewport[2];
+  const int win_h = viewport[3];
+  mov_begin_x = (2.0*x-win_w)/win_w;
+  mov_begin_y = (win_h-2.0*y)/win_h;
+  press_button = button;
+  if( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ){
   }
-	else if( button == GLUT_LEFT_BUTTON && state == GLUT_UP){
-		press_button = -1;
+  else if( button == GLUT_LEFT_BUTTON && state == GLUT_UP){
+    press_button = -1;
   }
 }
 
@@ -863,12 +863,12 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 
 void myGlutSpecial(int key, int x, int y){
   switch(key){
-  case GLUT_KEY_PAGE_UP:
-    mag *= 1.0/0.9;
-    break;
-  case GLUT_KEY_PAGE_DOWN:
-    mag *= 0.9;
-    break;
+    case GLUT_KEY_PAGE_UP:
+      mag *= 1.0/0.9;
+      break;
+    case GLUT_KEY_PAGE_DOWN:
+      mag *= 0.9;
+      break;
   }
   ::myGlutResize(-1,-1);
   ::glutPostRedisplay();
@@ -876,33 +876,33 @@ void myGlutSpecial(int key, int x, int y){
 
 int main(int argc,char* argv[])
 {
-	// Initailze GLUT
-	::glutInitWindowPosition(200,200);
-	::glutInitWindowSize(1000, 500);
-	::glutInit(&argc, argv);
-	::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	::glutCreateWindow("Cad View");
+  // Initailze GLUT
+  ::glutInitWindowPosition(200,200);
+  ::glutInitWindowSize(1000, 500);
+  ::glutInit(&argc, argv);
+  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  ::glutCreateWindow("Cad View");
   
-	// Set callback function
-	::glutMotionFunc(myGlutMotion);
-	::glutMouseFunc(myGlutMouse);
-	::glutDisplayFunc(myGlutDisplay);
-	::glutReshapeFunc(myGlutResize);
-	::glutKeyboardFunc(myGlutKeyboard);
+  // Set callback function
+  ::glutMotionFunc(myGlutMotion);
+  ::glutMouseFunc(myGlutMouse);
+  ::glutDisplayFunc(myGlutDisplay);
+  ::glutReshapeFunc(myGlutResize);
+  ::glutKeyboardFunc(myGlutKeyboard);
   ::glutSpecialFunc(myGlutSpecial);
   ::glutIdleFunc(myGlutIdle);
-
+  
   MakeMesh();
   Solve(false);
-//  InitializeProblem_Scalar();
-//  SolveProblem_Poisson();
+  //  InitializeProblem_Scalar();
+  //  SolveProblem_Poisson();
   //InitializeProblem_LinearSolid_Static();
   //SolveProblem_LinearSolid_Static();
-//  InitializeProblem_LinearSolid_Dynamic();
-//  SolveProblem_LinearSolid_Dynamic();
+  //  InitializeProblem_LinearSolid_Dynamic();
+  //  SolveProblem_LinearSolid_Dynamic();
   iproblem = 0;
   
-	// Enter main loop
-	::glutMainLoop();
-	return 0;
+  // Enter main loop
+  ::glutMainLoop();
+  return 0;
 }

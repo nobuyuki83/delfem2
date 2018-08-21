@@ -114,7 +114,7 @@ void SetProblem()
 
 void myGlutResize(int w, int h)
 {
-	::glViewport(0, 0, w, h);
+  ::glViewport(0, 0, w, h);
 }
 
 void myGlutMotion( int x, int y )
@@ -129,22 +129,22 @@ void myGlutMouse(int button, int state, int x, int y)
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key)
-	{
-		case 'q':
-		case 'Q':
-		case '\033':
-			exit(0);  /* '\033' ? ESC ? ASCII ??? */
-		case 'a':
-			is_animation = !is_animation;
-			break;
-		case 'd':
+  switch(Key)
+  {
+    case 'q':
+    case 'Q':
+    case '\033':
+      exit(0);  /* '\033' ? ESC ? ASCII ??? */
+    case 'a':
+      is_animation = !is_animation;
+      break;
+    case 'd':
       imode_display = (imode_display+1)%3;
-			break;
-		case ' ':	
-			SetProblem();
-			break;
-	}
+      break;
+    case ' ':	
+      SetProblem();
+      break;
+  }
 }
 
 void myGlutSpecial(int Key, int x, int y)
@@ -153,20 +153,20 @@ void myGlutSpecial(int Key, int x, int y)
 }
 
 void myGlutIdle(){
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutDisplay(void)
 {
-	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-	
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
+  
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   win.SetGL_Camera();
-
+  
   if( imode_display == 0 ){
     adf.SetShowCage(false);
     adf.Draw();
@@ -176,13 +176,13 @@ void myGlutDisplay(void)
     adf.Draw();
   }
   else if( imode_display == 2 ){
-//    DrawTri3D_SurfaceNorm(aXYZ, aTri);
+    //    DrawTri3D_SurfaceNorm(aXYZ, aTri);
     DrawMeshTri3D_FaceNorm(aXYZ,aTri);
-//    Draw_Edge(aXYZ, aTri);
+    //    Draw_Edge(aXYZ, aTri);
   }
-	
-	ShowFPS();
-	::glutSwapBuffers();
+  
+  ShowFPS();
+  ::glutSwapBuffers();
 }
 
 ////////////////////////////////////////////////////////////////
@@ -190,27 +190,27 @@ void myGlutDisplay(void)
 
 int main(int argc,char* argv[])
 {	
-	// Initialize GLUT
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("FEM View");
-	
-	// Setting call back function
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-	glutIdleFunc(myGlutIdle);
-	
+  // Initialize GLUT
+  glutInitWindowPosition(200,200);
+  glutInitWindowSize(400, 300);
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  glutCreateWindow("FEM View");
+  
+  // Setting call back function
+  glutDisplayFunc(myGlutDisplay);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutSpecialFunc(myGlutSpecial);
+  glutIdleFunc(myGlutIdle);
+  
   win.camera.view_height = 2.0;
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-	SetProblem();
+  SetProblem();
   setSomeLighting();
-	glutMainLoop();
-	return 0;
+  glutMainLoop();
+  return 0;
 }

@@ -58,7 +58,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 static void window_size_callback(GLFWwindow* window, int width, int height) {
-//  draw(window);
+  //  draw(window);
   glViewport(0, 0, width, height);
 }
 

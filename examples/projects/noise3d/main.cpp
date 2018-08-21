@@ -32,21 +32,21 @@ std::vector<unsigned char> aV;
 
 void myGlutResize(int w, int h)
 {
-	glViewport(0, 0, w, h);
-	glutPostRedisplay();
+  glViewport(0, 0, w, h);
+  glutPostRedisplay();
 }
 
 void myGlutDisplay(void)
 {
   int viewport[4]; glGetIntegerv(GL_VIEWPORT,viewport);
   
-	::glClearColor(0.2, .7, 0.7, 1.0);
-//	::glClearColor(0.0, .0, 0.0, 1.0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClearColor(0.2, .7, 0.7, 1.0);
+  //	::glClearColor(0.0, .0, 0.0, 1.0);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1, 4.0 );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1, 4.0 );
   
   win.SetGL_Camera();
   
@@ -56,23 +56,23 @@ void myGlutDisplay(void)
   glEnable(GL_TEXTURE_GEN_T);
   glEnable(GL_TEXTURE_GEN_R);
   ::glutSolidTeapot(1.0);
-//    glutSolidSphere(1.0, 32, 16);
-//  glutSolidDodecahedron();
+  //    glutSolidSphere(1.0, 32, 16);
+  //  glutSolidDodecahedron();
   ::glDisable(GL_TEXTURE_3D);
   glDisable(GL_TEXTURE_GEN_S);
   glDisable(GL_TEXTURE_GEN_T);
   glDisable(GL_TEXTURE_GEN_R);
   
-	glutSwapBuffers();
+  glutSwapBuffers();
 }
 
 void myGlutIdle(){
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y ){
   win.glutMotion(x,y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
@@ -91,17 +91,17 @@ void ComputePerlin(){
   aGrad.clear();
   
   /*
-  for(int i=0;i<12;++i){
-    double x = (rand()/(RAND_MAX+1.0))-0.5;
-    double y = (rand()/(RAND_MAX+1.0))-0.5;
-    double len_inv = 1.0/sqrt(x*x+y*y);
-    x *= len_inv;
-    y *= len_inv;
-    aGrad.push_back(x);
-    aGrad.push_back(y);
-  }
+   for(int i=0;i<12;++i){
+   double x = (rand()/(RAND_MAX+1.0))-0.5;
+   double y = (rand()/(RAND_MAX+1.0))-0.5;
+   double len_inv = 1.0/sqrt(x*x+y*y);
+   x *= len_inv;
+   y *= len_inv;
+   aGrad.push_back(x);
+   aGrad.push_back(y);
+   }
    */
-   
+  
   aGrad.push_back(-1); aGrad.push_back(-1); aGrad.push_back(+0);
   aGrad.push_back(-1); aGrad.push_back(+1); aGrad.push_back(+0);
   aGrad.push_back(+1); aGrad.push_back(-1); aGrad.push_back(+0);
@@ -114,7 +114,7 @@ void ComputePerlin(){
   aGrad.push_back(-1); aGrad.push_back(+0); aGrad.push_back(+1);
   aGrad.push_back(+1); aGrad.push_back(+0); aGrad.push_back(-1);
   aGrad.push_back(+1); aGrad.push_back(+0); aGrad.push_back(+1);
-
+  
   
   nH = 128;
   nW = 128;
@@ -128,7 +128,7 @@ void ComputePerlin(){
         double y = (double)ih/nW*nrep;
         double z = (double)id/nD*nrep;
         double v = noise_perlin_3d_oct(x,y,z,nrep, 4,0.5, aGrad,aP);
-//        double v = noise_perlin_3d(x,y,z, aGrad,aP);
+        //        double v = noise_perlin_3d(x,y,z, aGrad,aP);
         double v0 = v*128+128;
         if( v0 < 0   ){ v0 =   0; }
         if( v0 > 255 ){ v0 = 255; }
@@ -142,26 +142,26 @@ void ComputePerlin(){
   }
   
   /*
-  Noise3 noise(5, 5, 5);
-  for (int id = 0; id < nD; ++id) {
-    double p = (double)id / (double)nD;
-    for (int ih = 0; ih < nH; ++ih) {
-      double q = (double)ih / (double)nH;
-      for (int iw = 0; iw < nW; ++iw) {
-        double r = (double)iw / (double)nW;
-        GLubyte ub = (GLubyte)(noise.noise(p, q, r) * 127.5 + 127.5);
-//        texture[k][j][i][0] = texture[k][j][i][1] = texture[k][j][i][2] = ub;
-//        texture[k][j][i][3] = 255;
-        aV[(id*nW*nH+ih*nW+iw)*4+0] = ub;
-        aV[(id*nW*nH+ih*nW+iw)*4+1] = ub;
-        aV[(id*nW*nH+ih*nW+iw)*4+2] = ub;
-        aV[(id*nW*nH+ih*nW+iw)*4+3] = 255;
-      }
-    }
-  }
+   Noise3 noise(5, 5, 5);
+   for (int id = 0; id < nD; ++id) {
+   double p = (double)id / (double)nD;
+   for (int ih = 0; ih < nH; ++ih) {
+   double q = (double)ih / (double)nH;
+   for (int iw = 0; iw < nW; ++iw) {
+   double r = (double)iw / (double)nW;
+   GLubyte ub = (GLubyte)(noise.noise(p, q, r) * 127.5 + 127.5);
+   //        texture[k][j][i][0] = texture[k][j][i][1] = texture[k][j][i][2] = ub;
+   //        texture[k][j][i][3] = 255;
+   aV[(id*nW*nH+ih*nW+iw)*4+0] = ub;
+   aV[(id*nW*nH+ih*nW+iw)*4+1] = ub;
+   aV[(id*nW*nH+ih*nW+iw)*4+2] = ub;
+   aV[(id*nW*nH+ih*nW+iw)*4+3] = 255;
+   }
+   }
+   }
    */
 }
-  
+
 
 void myGlutKeyboard(unsigned char key, int x, int y)
 {
@@ -186,10 +186,10 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 void myGlutSpecial(int key, int x, int y){
   win.glutSpecial(key, x, y);
   switch(key){
-  case GLUT_KEY_PAGE_UP:
-    break;
-  case GLUT_KEY_PAGE_DOWN:
-    break;
+    case GLUT_KEY_PAGE_UP:
+      break;
+    case GLUT_KEY_PAGE_DOWN:
+      break;
   }
   ::myGlutResize(-1,-1);
   ::glutPostRedisplay();
@@ -197,22 +197,22 @@ void myGlutSpecial(int key, int x, int y){
 
 int main(int argc,char* argv[])
 {
-	// Initailze GLUT
-	::glutInitWindowPosition(200,200);
-	::glutInitWindowSize(400, 300);
-	::glutInit(&argc, argv);
-	::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	::glutCreateWindow("Cad View");
+  // Initailze GLUT
+  ::glutInitWindowPosition(200,200);
+  ::glutInitWindowSize(400, 300);
+  ::glutInit(&argc, argv);
+  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
+  ::glutCreateWindow("Cad View");
   
-	// Set callback function
-	::glutMotionFunc(myGlutMotion);
-	::glutMouseFunc(myGlutMouse);
-	::glutDisplayFunc(myGlutDisplay);
-	::glutReshapeFunc(myGlutResize);
-	::glutKeyboardFunc(myGlutKeyboard);
+  // Set callback function
+  ::glutMotionFunc(myGlutMotion);
+  ::glutMouseFunc(myGlutMouse);
+  ::glutDisplayFunc(myGlutDisplay);
+  ::glutReshapeFunc(myGlutResize);
+  ::glutKeyboardFunc(myGlutKeyboard);
   ::glutSpecialFunc(myGlutSpecial);
-	::glutIdleFunc(myGlutIdle);
-
+  ::glutIdleFunc(myGlutIdle);
+  
   ComputePerlin();
   
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -237,10 +237,10 @@ int main(int argc,char* argv[])
                GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
   
   win.camera.view_height = 2.0;
-
+  
   setSomeLighting();
   
-	// Enter main loop
-	::glutMainLoop();
-	return 0;
+  // Enter main loop
+  ::glutMainLoop();
+  return 0;
 }

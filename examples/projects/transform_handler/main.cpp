@@ -66,13 +66,13 @@ CGlutWindowManager window;
 void myGlutDisplay(void)
 {
   //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
   ::glClearStencil(0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+  ::glEnable(GL_DEPTH_TEST);
   
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
+  ::glEnable(GL_POLYGON_OFFSET_FILL );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   DrawBackground(CColor::Blue());
   
@@ -109,13 +109,13 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   ::glViewport(0,0,w,h);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
   window.glutSpecial(Key, x, y);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
@@ -129,7 +129,7 @@ void myGlutMotion( int x, int y )
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   hndlr_rot.Drag(sp0x,sp0y,sp1x,sp1y,mMV,mPj);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
@@ -141,13 +141,13 @@ void myGlutMouse(int button, int state, int x, int y)
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   hndlr_rot.Pick(state==GLUT_DOWN,spx,spy,mMV,mPj,0.05);
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
-	switch(Key)
-	{
+  switch(Key)
+  {
     case 'q':
     case 'Q':
     case '\033':
@@ -177,7 +177,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       if( ifile >= 8 ){ ifile=0; }
     }
   }
-	::glutPostRedisplay();
+  ::glutPostRedisplay();
 }
 
 
@@ -185,18 +185,18 @@ int main(int argc,char* argv[])
 {
   glutInit(&argc, argv);
   
-	// Initialize GLUT window 3D
+  // Initialize GLUT window 3D
   glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
+  glutInitWindowSize(400, 300);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
   glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
+  glutDisplayFunc(myGlutDisplay);
+  glutIdleFunc(myGlutIdle);
+  glutReshapeFunc(myGlutResize);
+  glutMotionFunc(myGlutMotion);
+  glutMouseFunc(myGlutMouse);
+  glutKeyboardFunc(myGlutKeyboard);
+  glutSpecialFunc(myGlutSpecial);
   
   ////////////////////////
   
@@ -204,9 +204,9 @@ int main(int argc,char* argv[])
   window.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   setSomeLighting();
- 
+  
   glutMainLoop();
-	return 0;
+  return 0;
 }
 
 

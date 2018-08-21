@@ -1,7 +1,7 @@
 project(edit_cubes)
 
 cmake_minimum_required(VERSION 2.8)
-set( CMAKE_C_FLAGS "-Wall -Wno-deprecated-declarations -g -std=c++11" )
+set( CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g -std=c++11" )
 add_definitions(-DUSE_GL)
 
 set(DELFEM2_INCLUDE_DIR "../../../include")
