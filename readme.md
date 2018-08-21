@@ -21,6 +21,7 @@ The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM
 | transform_handler  | ![handler](img/screenshot_handler.png) |
 | cloth_internal | ![cloth_internal](img/screenshot_clothinternal.png) |
 | subdiv | ![subdiv](img/screenshot_subdiv.png) |
+| read_bvh | ![read_bvh](img/screenshot_readbvh.png) |
 
 
 
