@@ -24,6 +24,7 @@ The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM
 | read_bvh | ![read_bvh](img/screenshot_readbvh.png) |
 | exponential_map | ![expmap](img/screenshot_expmap.png) |
 | selfcollision_bvh | ![selfcollisionbvh](img/screenshot_selfcollisionbvh.png) |
+| edge_collapse | ![edgecollapse](img/screenshot_edgecollapse.png) |
 
 
 ## Coding
