@@ -8,12 +8,34 @@ A handy toolset for coding geometry processing and fem simulation
 The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
 
+## How to Build
+
+### Build Examples
+```
+cd examples
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+```
+
+### Build Python Binding
+```
+cd python
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+```
+
+
 ## Examples
 
 - working directory is in the folder `examples/`
 - binary files are put in the folder `examples/bin/`
 - input files are put in the folder `test_inputs/`
 - The scripts to run the executable is put in `examples/script/`
+
 
 | Name | Screen Shot |
 | ------------- | ------------- |
