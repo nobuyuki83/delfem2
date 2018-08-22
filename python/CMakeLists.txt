@@ -47,6 +47,6 @@ add_custom_command(TARGET dfm2
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
   ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dfm2.*
-  ${PROJECT_SOURCE_DIR}/dfm2.so
+  ${PROJECT_SOURCE_DIR}/dfm2/dfm2.so
   COMMENT "Post Event"
 )
