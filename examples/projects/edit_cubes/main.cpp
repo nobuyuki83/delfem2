@@ -45,7 +45,7 @@ int imode_sym = 2;
 const double elen = 1.0;
 const CVector3 org(0,0,0);
 std::vector<CCubeGrid> aCubeGrid;
-int ivox_picked;
+int icube_picked;
 int iface_picked;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,9 @@ void myGlutDisplay(void)
   
   CVector3 offsym(0,0,0);
   if( imode_sym == 2 ){ offsym.z = -elen*0.5; }
-  Draw_CubeGrid(ivox_picked, iface_picked, elen, org+offsym, aCubeGrid);
+  for(int ic=0;ic<aCubeGrid.size();++ic){
+    Draw_CubeGrid(ic==icube_picked, iface_picked, elen, org+offsym, aCubeGrid[ic]);
+  }
   
   if( edit_mode == EDIT_ADD ){
     DrawMessage_LeftTop("mode add");
@@ -117,20 +119,20 @@ void myGlutMouse(int button, int state, int x, int y)
   if( state == GLUT_DOWN ){
     CVector3 offsym(0,0,0);
     if( imode_sym == 2 ){ offsym.z = -elen*0.5; }
-    Pick_CubeGrid(ivox_picked, iface_picked,
+    Pick_CubeGrid(icube_picked, iface_picked,
                   src_pick,dir_pick, elen, offsym, aCubeGrid);
     if( edit_mode == EDIT_ADD ){
       int ivx1,ivy1,ivz1;
       Adj_CubeGrid(ivx1,ivy1,ivz1,
-                   ivox_picked,iface_picked,aCubeGrid);
+                   icube_picked,iface_picked,aCubeGrid);
       Add_CubeGrid(aCubeGrid,ivx1,ivy1,ivz1);
       if( imode_sym == 1 ){ Add_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1-1); }
       if( imode_sym == 2 ){ Add_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1); }
     }
     if( edit_mode == EDIT_DELETE ){
-      int ivx1 = aCubeGrid[ivox_picked].ivx;
-      int ivy1 = aCubeGrid[ivox_picked].ivy;
-      int ivz1 = aCubeGrid[ivox_picked].ivz;
+      int ivx1 = aCubeGrid[icube_picked].ivx;
+      int ivy1 = aCubeGrid[icube_picked].ivy;
+      int ivz1 = aCubeGrid[icube_picked].ivz;
       Del_CubeGrid(aCubeGrid,ivx1,ivy1,ivz1);
       if( imode_sym == 1 ){ Del_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1-1); }
       if( imode_sym == 2 ){ Del_CubeGrid(aCubeGrid,ivx1,ivy1,-ivz1); }
@@ -189,8 +191,7 @@ int main(int argc,char* argv[])
   ////////////////////////
   win.camera.view_height = 2.0;
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  
-  
+   
   setSomeLighting();
   
   aCubeGrid.push_back( CCubeGrid(0,0,0) );

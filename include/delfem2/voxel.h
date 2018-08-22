@@ -24,15 +24,22 @@ public:
     this->ivz = k;
     is_active = true;
   }
+  bool operator<(const CCubeGrid& rhs) const
+  {
+    if( this->ivx != rhs.ivx ){ return this->ivx < rhs.ivx; }
+    if( this->ivy != rhs.ivy ){ return this->ivy < rhs.ivy; }
+    if( this->ivz != rhs.ivz ){ return this->ivz < rhs.ivz; }
+    return false;
+  }
 public:
   int ivx, ivy, ivz;
   bool is_active;
 };
 
 void Draw_CubeGrid
-(int icube_picked, int iface_picked,
+(bool is_picked, int iface_picked,
  double elen, const CVector3& org,
- const std::vector<CCubeGrid>& aCube);
+ const CCubeGrid& cube);
 
 void Pick_CubeGrid
 (int& icube_pic, int& iface_pic,
