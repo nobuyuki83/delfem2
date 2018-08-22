@@ -6,7 +6,7 @@ import numpy as np
 import sys
 sys.path.append("../python")
 import dfm2
-import utility_gl
+#import dfm2.gl
 
 def glut_print(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)
@@ -47,7 +47,7 @@ def display():
   mshtri.Draw()
 
   glLineWidth(3)
-  utility_gl.draw_axis(size=0.5)
+  dfm2.gl.draw_axis(size=0.5)
   glutSwapBuffers()
 
 
@@ -79,18 +79,18 @@ def special(key, x, y):
 def mouse(button, state, x, y):
   global modifier, mouse_x, mouse_y
   modifier = glutGetModifiers()
-  mouse_x, mouse_y = utility_gl.mouse(x, y)
+  mouse_x, mouse_y = dfm2.gl.mouse(x, y)
   glutPostRedisplay()
 
 
 def motion(x, y):
   global camera, mouse_x, mouse_y
   if modifier == 1:
-    mouse_x, mouse_y, camera.quat, camera.trans = utility_gl.motion("ROT", x, y, mouse_x, mouse_y, camera.quat,
+    mouse_x, mouse_y, camera.quat, camera.trans = dfm2.gl.motion("ROT", x, y, mouse_x, mouse_y, camera.quat,
                                                                     camera.trans, camera.view_height)
   if modifier == 2:
-    mouse_x, mouse_y, camera.quat, camera.trans = utility_gl.motion("TRANS", x, y, mouse_x, mouse_y, camera.quat,
-                                                                    camera.trans, camera.view_height)
+    mouse_x, mouse_y, camera.quat, camera.trans = dfm2.gl.motion("TRANS", x, y, mouse_x, mouse_y, camera.quat,
+                                                                        camera.trans, camera.view_height)
   glutPostRedisplay()
 
 
@@ -112,8 +112,8 @@ def main():
   glutSpecialFunc(special)
   glutIdleFunc(idle)
 
-  camera = utility_gl.Camera(1.0)
-  mshtri = dfm2.CMeshTri();
+  camera = dfm2.gl.Camera(1.0)
+  mshtri = dfm2.dfm2.CMeshTri();
   mshtri.Read("../test_inputs/bunny_1k.ply")
   mshtri.ScaleXYZ(0.01)
 
