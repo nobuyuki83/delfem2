@@ -16,16 +16,15 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
-
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/vec2.cpp
-  ${DELFEM2_SRC}/vec3.cpp
-  ${DELFEM2_SRC}/mat3.cpp
-  ${DELFEM2_SRC}/quat.cpp
+  ${DELFEM2_SRC}/vec2.cpp        ${DELFEM2_INC}/vec2.h
+  ${DELFEM2_SRC}/vec3.cpp        ${DELFEM2_INC}/vec3.h
+  ${DELFEM2_SRC}/mat3.cpp        ${DELFEM2_INC}/mat3.h
+  ${DELFEM2_SRC}/quat.cpp        ${DELFEM2_INC}/quat.h
 
-  ${DELFEM2_SRC}/v23_gl.cpp
-  ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_SRC}/color_gl.cpp
+  ${DELFEM2_SRC}/v23_gl.cpp      ${DELFEM2_INC}/v23_gl.h
+  ${DELFEM2_SRC}/funcs_gl.cpp    ${DELFEM2_INC}/funcs_gl.h
+  ${DELFEM2_SRC}/color_gl.cpp    ${DELFEM2_INC}/color_gl.h
   ${DELFEM2_SRC}/camera_gl.cpp   ${DELFEM2_INC}/camera_gl.h
 
   ${DELFEM2_SRC}/voxel.cpp       ${DELFEM2_INC}/voxel.h
