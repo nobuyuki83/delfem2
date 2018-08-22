@@ -38,11 +38,16 @@ The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM
 - use double space for a tab
 
 
-### Element Index Rule
+### Element Indexing Rule
 
 Based on the elemnt index rule in VTK( https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf )
 
 ![element index](./img/element_index.png)
+
+
+### Coordinate for the Depth Computation
+
+![depth_coord](./img/depth.png)
 
 
 ### Naming Convention
