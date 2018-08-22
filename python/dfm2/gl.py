@@ -262,32 +262,36 @@ def QuatMult(p, q):
   return r
 
 
-def motion(edit_mode, x, y, mouse_x, mouse_y, quat, trans, view_height):
+def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height):
   assert len(trans) == 2
   assert len(quat) == 4
-  viewport = glGetIntegerv(GL_VIEWPORT)
-  win_w = viewport[2]
-  win_h = viewport[3]
-  mov_end_x = (2.0 * x - win_w) / win_w
-  mov_end_y = (win_h - 2.0 * y) / win_h
+  mov_end_x,mov_end_y = mouse_screen_pos(x,y)  
   dx = mov_end_x - mouse_x
   dy = mov_end_y - mouse_y
-  if edit_mode == "ROT":
-    a = math.sqrt(dx * dx + dy * dy)
-    ar = a * 0.5
-    dq = [math.cos(ar), -dy * math.sin(ar) / a, dx * math.sin(ar) / a, 0.0]
-    if a != 0.0:
-      quat = QuatMult(dq, quat)
-  elif edit_mode == "TRANS":
-    trans[0] += dx * view_height * 0.5
-    trans[1] += dy * view_height * 0.5
-
+  a = math.sqrt(dx * dx + dy * dy)
+  ar = a * 0.5
+  dq = [math.cos(ar), -dy * math.sin(ar) / a, dx * math.sin(ar) / a, 0.0]
+  if a != 0.0:
+    quat = QuatMult(dq, quat)
   mouse_x = mov_end_x
   mouse_y = mov_end_y
   return mouse_x, mouse_y, quat, trans
 
 
-def mouse(x, y):
+def motion_trans(x, y, mouse_x, mouse_y, quat, trans, view_height):
+  assert len(trans) == 2
+  assert len(quat) == 4
+  mov_end_x,mov_end_y = mouse_screen_pos(x,y)
+  dx = mov_end_x - mouse_x
+  dy = mov_end_y - mouse_y
+  trans[0] += dx * view_height * 0.5
+  trans[1] += dy * view_height * 0.5
+  mouse_x = mov_end_x
+  mouse_y = mov_end_y
+  return mouse_x, mouse_y, quat, trans  
+
+
+def mouse_screen_pos(x, y):
   viewport = glGetIntegerv(GL_VIEWPORT)
   win_w = viewport[2]
   win_h = viewport[3]
@@ -322,3 +326,6 @@ class Camera:
 
     Rview = affine_matrix_quaternion(self.quat)
     glMultMatrixd(Rview)
+
+
+
