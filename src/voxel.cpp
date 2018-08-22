@@ -1,12 +1,9 @@
 #if defined(USE_GL)
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
-#include "delfem2/color_gl.h"
-#include "delfem2/v23_gl.h"
+  #if defined(__APPLE__) && defined(__MACH__)
+    #include <GLUT/glut.h>
+  #else
+    #include <GL/glut.h>
+  #endif
 #endif
 
 #include "delfem2/vec3.h"
@@ -32,6 +29,15 @@ const CVector3 normalHexFace[6] = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef USE_GL
+
+static void myGlNormal(const CVector3& n){ ::glNormal3d(n.x,n.y,n.z); }
+static void myGlVertex(const CVector3& v){ ::glVertex3d(v.x,v.y,v.z); }
+static void myGlColorDiffuse(float r, float g, float b, float a){
+  ::glColor4d(r, g, b, a );
+  float c[4] = {r, g, b, a};
+  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+}
+
 void Draw_CubeGrid
 (bool is_picked, int iface_picked,
  double elen, const CVector3& org,
@@ -54,10 +60,10 @@ void Draw_CubeGrid
   ::glBegin(GL_QUADS);
   for(int iface=0;iface<6;++iface){
     if( is_picked && iface_picked == iface ){
-      ::myGlColorDiffuse(CColor::Yellow());
+      ::myGlColorDiffuse(1,1,0,1);
     }
     else{
-      ::myGlColorDiffuse(CColor::Gray());
+      ::myGlColorDiffuse(0.8,0.8,0.8,1);
     }
     myGlNormal(normalHexFace[iface]);
     myGlVertex(aP[noelElemFace_Vox[iface][0]]);
@@ -66,6 +72,7 @@ void Draw_CubeGrid
     myGlVertex(aP[noelElemFace_Vox[iface][3]]);
   }
   ::glEnd();
+  //////////////////////////////
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINE_STRIP);
@@ -220,4 +227,30 @@ void Del_CubeGrid
       }
     }
   }
+}
+
+
+void AABB_CubeGrid
+(int aabb[6],
+ const std::vector<CCubeGrid>& aCube)
+{
+  if( aCube.size() == 0 ){
+    aabb[0] = +1; aabb[1] = -1;
+    aabb[2] = +1; aabb[3] = -1;
+    aabb[4] = +1; aabb[5] = -1;
+    return;
+  }
+  aabb[0] = aCube[0].ivx;  aabb[1] = aabb[0]+1;
+  aabb[2] = aCube[0].ivy;  aabb[3] = aabb[0]+1;
+  aabb[4] = aCube[0].ivz;  aabb[5] = aabb[0]+1;
+
+  for(unsigned int ic=1;ic<aCube.size();++ic){
+    if( aCube[ic].ivx+0 < aabb[0] ){ aabb[0] = aCube[ic].ivx+0; }
+    if( aCube[ic].ivx+1 > aabb[1] ){ aabb[1] = aCube[ic].ivx+1; }
+    if( aCube[ic].ivy+0 < aabb[2] ){ aabb[2] = aCube[ic].ivy+0; }
+    if( aCube[ic].ivy+1 > aabb[3] ){ aabb[3] = aCube[ic].ivy+1; }
+    if( aCube[ic].ivz+0 < aabb[4] ){ aabb[4] = aCube[ic].ivz+0; }
+    if( aCube[ic].ivz+1 > aabb[5] ){ aabb[5] = aCube[ic].ivz+1; }
+  }
+  
 }
