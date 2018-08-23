@@ -308,7 +308,10 @@ class Camera:
     self.quat = [1, 0, 0, 0]
     self.fovy = 60  # degree
 
-  def set_gl_camera(self, win_w, win_h):
+  def set_gl_camera(self):
+    viewport = glGetIntegerv(GL_VIEWPORT)
+    win_w = viewport[2]
+    win_h = viewport[3]
     depth = self.view_height / (self.scale * math.tan(0.5 * self.fovy * 3.1415 / 180.0))
     asp = float(win_w) / win_h
     glMatrixMode(GL_PROJECTION)
