@@ -7,6 +7,7 @@
 #include "delfem2/msh.h"
 
 #include "delfem2/funcs_gl.h"
+//#include "delfem2/funcs_glut.h"
 
 class CMeshTri{
 public:
@@ -37,6 +38,6 @@ PYBIND11_MODULE(dfm2, m) {
   .def_readonly("array_tri", &CMeshTri::aTri)
   .def_readonly("array_xyz", &CMeshTri::aPos);
   
-  m.def("set_some_lighitng", &setSomeLighting);
+  m.def("set_some_lighting", &setSomeLighting);
 }
 
