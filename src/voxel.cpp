@@ -93,7 +93,7 @@ void Draw_CubeGrid
   myGlVertex(aP[3]); myGlVertex(aP[7]);
   ::glEnd();
 }
-#elseif
+#else
 void Draw_CubeGrid
 (bool is_picked, int iface_picked,
  double elen, const CVector3& org,
