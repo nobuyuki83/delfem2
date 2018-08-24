@@ -5,16 +5,16 @@
 
 enum MESHELEM_TYPE
 {
-  FEMELEM_TRI = 0,
-  FEMELEM_TET = 1,
-  FEMELEM_QUAD = 2,
-  FEMELEM_HEX = 3,
-  FEMELEM_PYRAMID = 4,
-  FEMELEM_WEDGE = 5,
-  FEMELEM_VOX = 6,
+  MESHELEM_TRI = 0,
+  MESHELEM_TET = 1,
+  MESHELEM_QUAD = 2,
+  MESHELEM_HEX = 3,
+  MESHELEM_PYRAMID = 4,
+  MESHELEM_WEDGE = 5,
+  MESHELEM_VOX = 6,
 };
 ////
-const int mapFEMElemType2NNodeElem[7] = {
+const int mapMeshElemType2NNodeElem[7] = {
   3, // TRI
   4, // TET
   4, // QUAD
@@ -24,7 +24,7 @@ const int mapFEMElemType2NNodeElem[7] = {
   8  // VOX
 };
 ////
-const int mapFEMElemType2NFaceElem[7] = {
+const int mapMeshElemType2NFaceElem[7] = {
   3, // TRI
   4, // TET
   4, // QUAD
@@ -34,7 +34,7 @@ const int mapFEMElemType2NFaceElem[7] = {
   6  // VOX
 };
 ////
-const int mapFEMElemTypeIndFace2NNoelElemFace[7][6] =
+const int mapMeshElemTypeIndFace2NNoelElemFace[7][6] =
 {
   {2,2,2,-1,-1,-1}, // TRI
   {3,3,3, 3,-1,-1}, // TET
@@ -95,13 +95,13 @@ const int noelElemFace_Wed[5][4] = {
 
 /////////////////////////////////////////////
 inline int nNodeElem(MESHELEM_TYPE type){
-  return mapFEMElemType2NNodeElem[type];
+  return mapMeshElemType2NNodeElem[type];
 }
 inline int nFaceElem(MESHELEM_TYPE type){
-  return mapFEMElemType2NFaceElem[type];
+  return mapMeshElemType2NFaceElem[type];
 }
 inline int nNodeElemFace(MESHELEM_TYPE type,int iface){
-  return mapFEMElemTypeIndFace2NNoelElemFace[type][iface];
+  return mapMeshElemTypeIndFace2NNoelElemFace[type][iface];
 }
 inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
 {

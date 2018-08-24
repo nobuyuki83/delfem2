@@ -93,7 +93,7 @@ void Draw_CubeGrid
   myGlVertex(aP[3]); myGlVertex(aP[7]);
   ::glEnd();
 }
-#elif
+#elseif
 void Draw_CubeGrid
 (bool is_picked, int iface_picked,
  double elen, const CVector3& org,
@@ -135,7 +135,7 @@ void Pick_CubeGrid
 {
   icube_pic = -1;
   double depth_min = 0;
-  for(int ivox=0;ivox<aCube.size();++ivox){
+  for(unsigned int ivox=0;ivox<aCube.size();++ivox){
     if( !aCube[ivox].is_active ) continue;
     int ih = aCube[ivox].ivx;
     int jh = aCube[ivox].ivy;
@@ -195,7 +195,7 @@ void Add_CubeGrid
 (std::vector<CCubeGrid>& aCube,
  int ivx1, int ivy1, int ivz1)
 {
-  for(int ic=0;ic<aCube.size();++ic){
+  for(unsigned int ic=0;ic<aCube.size();++ic){
     if( aCube[ic].ivx == ivx1 && aCube[ic].ivy == ivy1 && aCube[ic].ivz == ivz1 ){
       if( aCube[ic].is_active ){
         return;
@@ -216,7 +216,7 @@ void Del_CubeGrid
 (std::vector<CCubeGrid>& aCube,
  int i1, int j1, int k1)
 {
-  for(int ic=0;ic<aCube.size();++ic){
+  for(unsigned int ic=0;ic<aCube.size();++ic){
     if( aCube[ic].ivx == i1 && aCube[ic].ivy == j1 && aCube[ic].ivz == k1 ){
       if( aCube[ic].is_active ){
         aCube[ic].is_active = false;
@@ -279,12 +279,12 @@ void GetQuad_VoxelGrid
     }
   }
   //////
-  assert( aIsVox.size() == ndivx*ndivy*ndivz );
+  assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
   for(int igvx=0;igvx<ndivx;++igvx){
     for(int igvy=0;igvy<ndivy;++igvy){
       for(int igvz=0;igvz<ndivz;++igvz){
         const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
-        assert( ivoxel < aIsVox.size() );
+        assert( ivoxel < (int)aIsVox.size() );
         if( aIsVox[ivoxel] == 0 ){ continue; }
         /////
         int aIGP_Vox[8] = {0,0,0,0, 0,0,0,0};
@@ -301,7 +301,7 @@ void GetQuad_VoxelGrid
         for(int iface=0;iface<6;++iface){
           const int jgv0 = Adj_Grid(ivoxel, iface, ndivx, ndivy, ndivz);
           if( jgv0 >= 0 ){
-            assert( jgv0 < aIsVox.size() );
+            assert( jgv0 < (int)aIsVox.size() );
             if( aIsVox[jgv0] == 1 ){ continue; } // facing to adjacent voxel -> no outward face.
           }
           /////

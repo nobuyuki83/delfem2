@@ -69,6 +69,11 @@ void AABB_CubeGrid(int aabb[6],
 class CVoxelGrid
 {
 public:
+  CVoxelGrid(){
+    ndivx = ndivy = ndivz = 0;
+    iorgx = iorgy = iorgz = 0;
+    aIsVox.clear();
+  }
   void Init_AABB(const int aabb[6]){
     ndivx = aabb[1]-aabb[0];
     ndivy = aabb[3]-aabb[2];

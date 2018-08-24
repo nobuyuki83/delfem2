@@ -172,7 +172,7 @@ int main(int argc,char* argv[])
         aElemCenter[itri*3+2] = p0.z;
       }
       std::vector<int> aTriSurRel;
-      makeSurroundingRelationship(aTriSurRel, aTri, FEMELEM_TRI, aXYZ.size()/3);
+      makeSurroundingRelationship(aTriSurRel, aTri, MESHELEM_TRI, aXYZ.size()/3);
       std::vector<int> aElemSurInd(ntri+1);
       aElemSurInd[0] = 0;
       for(int itri=0;itri<ntri;++itri){
