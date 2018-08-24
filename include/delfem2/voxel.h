@@ -88,7 +88,6 @@ public:
     aIsVox.assign(nvoxel,0);
   }
   void AABB(int aabb[8]) const {
-    bool is_initial = true;
     aabb[0] = +1;
     aabb[1] = -1;
     for(int igvx=0;igvx<ndivx;++igvx){
@@ -142,7 +141,7 @@ public:
     const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
     aIsVox[ivoxel] = isVox;
   }
-  void GetQuad(std::vector<double>& aXYZ, std::vector<int>& aQuad){
+  void GetQuad(std::vector<double>& aXYZ, std::vector<int>& aQuad) const {
     GetQuad_VoxelGrid(aXYZ, aQuad,
                       ndivx, ndivy, ndivz,
                       iorgx, iorgy, iorgz,

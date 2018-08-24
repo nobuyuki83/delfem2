@@ -18,13 +18,16 @@ public:
     this->Read(fpath);
   }
   void Read(const std::string& fname){
-    Read_Ply(fname, aPos, aTri);
+    Read_Ply(fname, aPos, aElem);
     elem_type = MESHELEM_TRI;
     ndim = 3;
   }
   void Draw(){
     if( elem_type == MESHELEM_TRI ){
-      if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aTri); }
+      if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aElem); }
+    }
+    else if( elem_type == MESHELEM_QUAD ){
+      if( ndim == 3 ){ DrawMeshQuad3D_FaceNorm(aPos, aElem); }
     }
   }
   void ScaleXYZ(double s){
@@ -32,11 +35,19 @@ public:
   }
 public:
   MESHELEM_TYPE elem_type;
-  std::vector<int> aTri;
+  std::vector<int> aElem;
   /////
   int ndim;
   std::vector<double> aPos;
 };
+
+CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
+  CMeshElem me;
+  vg.GetQuad(me.aPos, me.aElem);
+  me.elem_type = MESHELEM_QUAD;
+  me.ndim = 3;
+  return me;
+}
 
 namespace py = pybind11;
 
@@ -49,12 +60,13 @@ PYBIND11_MODULE(dfm2, m) {
   .def("read", &CMeshElem::Read)
   .def("draw", &CMeshElem::Draw)
   .def("scale_xyz",&CMeshElem::ScaleXYZ)
-  .def_readonly("array_tri", &CMeshElem::aTri)
+  .def_readonly("array_tri", &CMeshElem::aElem)
   .def_readonly("array_pos", &CMeshElem::aPos)
   .def_readonly("elem_type", &CMeshElem::elem_type);
   
   py::class_<CVoxelGrid>(m, "VoxelGrid")
-  .def(py::init<>());
+  .def(py::init<>())
+  .def("add",&CVoxelGrid::Add);
   
   py::enum_<MESHELEM_TYPE>(m, "FemElemType")
   .value("Tri",     MESHELEM_TYPE::MESHELEM_TRI)
@@ -66,5 +78,6 @@ PYBIND11_MODULE(dfm2, m) {
   .export_values();
   
   m.def("set_some_lighting", &setSomeLighting);
+  m.def("mesh_quad_3d_voxel_grid", &MeshQuad3D_VoxelGrid);
 }
 
