@@ -252,5 +252,71 @@ void AABB_CubeGrid
     if( aCube[ic].ivz+0 < aabb[4] ){ aabb[4] = aCube[ic].ivz+0; }
     if( aCube[ic].ivz+1 > aabb[5] ){ aabb[5] = aCube[ic].ivz+1; }
   }
-  
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+
+
+void GetQuad_VoxelGrid
+(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+ int ndivx, int ndivy, int ndivz,
+ int ioffx, int ioffy, int ioffz,
+ const std::vector<int>& aIsVox)
+{
+  aQuad.clear();
+  aXYZ.clear();
+  //////
+  const int mdivx = ndivx+1;
+  const int mdivy = ndivy+1;
+  const int mdivz = ndivz+1;
+  for(int igpx=0;igpx<mdivx;++igpx){
+    for(int igpy=0;igpy<mdivy;++igpy){
+      for(int igpz=0;igpz<mdivz;++igpz){
+        aXYZ.push_back( igpx+ioffx );
+        aXYZ.push_back( igpy+ioffy );
+        aXYZ.push_back( igpz+ioffz );
+      }
+    }
+  }
+  //////
+  assert( aIsVox.size() == ndivx*ndivy*ndivz );
+  for(int igvx=0;igvx<ndivx;++igvx){
+    for(int igvy=0;igvy<ndivy;++igvy){
+      for(int igvz=0;igvz<ndivz;++igvz){
+        const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+        assert( ivoxel < aIsVox.size() );
+        if( aIsVox[ivoxel] == 0 ){ continue; }
+        /////
+        int aIGP_Vox[8] = {0,0,0,0, 0,0,0,0};
+        {
+          aIGP_Vox[0] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
+          aIGP_Vox[1] = (igvx+1)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
+          aIGP_Vox[2] = (igvx+0)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+0);
+          aIGP_Vox[3] = (igvx+1)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+0);
+          aIGP_Vox[4] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+1);
+          aIGP_Vox[5] = (igvx+1)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+1);
+          aIGP_Vox[6] = (igvx+0)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+1);
+          aIGP_Vox[7] = (igvx+1)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+1);
+        }
+        for(int iface=0;iface<6;++iface){
+          const int jgv0 = Adj_Grid(ivoxel, iface, ndivx, ndivy, ndivz);
+          if( jgv0 >= 0 ){
+            assert( jgv0 < aIsVox.size() );
+            if( aIsVox[jgv0] == 1 ){ continue; } // facing to adjacent voxel -> no outward face.
+          }
+          /////
+          const int aIGP0 = aIGP_Vox[ noelElemFace_Vox[iface][0] ];
+          const int aIGP1 = aIGP_Vox[ noelElemFace_Vox[iface][1] ];
+          const int aIGP2 = aIGP_Vox[ noelElemFace_Vox[iface][2] ];
+          const int aIGP3 = aIGP_Vox[ noelElemFace_Vox[iface][3] ];
+          aQuad.push_back(aIGP0);
+          aQuad.push_back(aIGP1);
+          aQuad.push_back(aIGP2);
+          aQuad.push_back(aIGP3);
+        }
+      }
+    }
+  }
+  //////
+}
+

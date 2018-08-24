@@ -3,11 +3,20 @@
 
 #include <vector>
 
+// TODO: remove dependency to vec3
 #include "vec3.h"
 
 int Adj_Grid
 (int ivox_picked, int iface_picked,
  int ndivx, int ndivy, int ndivz);
+
+void GetQuad_VoxelGrid
+(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+ int ndivx, int ndivy, int ndivz,
+ int iorgx, int iorgy, int iorgz,
+ const std::vector<int>& aIsVox);
+
+////////////////////////////////////////////////////////////////////
 
 class CCubeGrid
 {
@@ -56,6 +65,7 @@ void AABB_CubeGrid(int aabb[6],
 
 ////////////////////////////////////////////////////////////////////////////////////
 
+
 class CVoxelGrid
 {
 public:
@@ -66,19 +76,24 @@ public:
     iorgx = aabb[0];
     iorgy = aabb[2];
     iorgz = aabb[4];
-    const int ngridvx = ndivx*ndivy*ndivz;
-    aIsVox.assign(ngridvx,0);
+    const int nvoxel = ndivx*ndivy*ndivz;
+    aIsVox.assign(nvoxel,0);
   }
   void Set(int ivx, int ivy, int ivz, int isVox){
     int igvx = ivx-iorgx;
     int igvy = ivy-iorgy;
     int igvz = ivz-iorgz;
-    std::cout << "  " << igvx << " " << igvy << " " << igvz << std::endl;
     if( igvx<0 || igvx>ndivx ){ return; }
     if( igvy<0 || igvy>ndivy ){ return; }
     if( igvz<0 || igvz>ndivz ){ return; }
-    int igv = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
-    aIsVox[igv] = isVox;
+    const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+    aIsVox[ivoxel] = isVox;
+  }
+  void GetQuad(std::vector<double>& aXYZ, std::vector<int>& aQuad){
+    GetQuad_VoxelGrid(aXYZ, aQuad,
+                      ndivx, ndivy, ndivz,
+                      iorgx, iorgy, iorgz,
+                      aIsVox);
   }
 public:
   int ndivx, ndivy, ndivz;
