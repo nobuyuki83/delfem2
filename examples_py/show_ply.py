@@ -7,21 +7,20 @@ import sys
 sys.path.append("../python")
 import dfm2
 
-mshtri = None
+mshelm = None
 
 def display():
   glEnable(GL_LIGHTING)
-  mshtri.draw()
+  mshelm.draw()
 
   glDisable(GL_LIGHTING)
   glLineWidth(3)
   dfm2.gl.draw_axis(size=0.5)
 
 def main():
-  global mshtri
-  mshtri = dfm2.dfm2.MeshTri();
-  mshtri.read("../test_inputs/bunny_2k.ply")
-  mshtri.scale_xyz(0.01)
+  global mshelm
+  mshelm = dfm2.dfm2.MeshElem("../test_inputs/bunny_2k.ply");
+  mshelm.scale_xyz(0.01)
 
   win = dfm2.glut.GlutWindow(1.0)
   dfm2.dfm2.set_some_lighting()

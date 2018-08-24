@@ -28,6 +28,7 @@ pybind11_add_module(dfm2
   ${DELFEM2_SRC}/mshtopo.cpp     ${DELFEM2_INC}/mshtopo.h  
   ${DELFEM2_SRC}/mshio.cpp       ${DELFEM2_INC}/mshio.h
   ${DELFEM2_SRC}/funcs.cpp       ${DELFEM2_INC}/funcs.h
+  ${DELFEM2_SRC}/voxel.cpp       ${DELFEM2_INC}/voxel.h
 
   ${DELFEM2_SRC}/v23m3q.cpp      ${DELFEM2_INC}/v23m3q.h
 

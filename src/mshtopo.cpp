@@ -385,8 +385,8 @@ void makeBoundary
       if( aElemFaceRel[iiface*2+0] != -1 ) continue;
       const int iface = iiface-aElemFaceInd[ielem];
       const int nnofa_i = nNodeElemFace(type_i,iface);
-      if(      nnofa_i == 3 ){ aElemType_Bound.push_back(FEMELEM_TRI ); }
-      else if( nnofa_i == 4 ){ aElemType_Bound.push_back(FEMELEM_QUAD); }
+      if(      nnofa_i == 3 ){ aElemType_Bound.push_back(MESHELEM_TRI ); }
+      else if( nnofa_i == 4 ){ aElemType_Bound.push_back(MESHELEM_QUAD); }
       aElemInd_Bound.push_back(nnofa_i);
       for(int inofa=0;inofa<nnofa_i;++inofa){
         const int ino0 = noelElemFace(type_i)[iface][inofa];
@@ -1283,7 +1283,7 @@ void HexSubdiv
   {
     std::vector<int> aHexSurRel0;
     makeSurroundingRelationship(aHexSurRel0,
-                                aHex0,FEMELEM_HEX,
+                                aHex0,MESHELEM_HEX,
                                 elsupIndHex0,elsupHex0);
     for(unsigned int ih=0;ih<aHex0.size()/8;++ih){
       for(int ifh=0;ifh<6;++ifh){
