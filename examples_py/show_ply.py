@@ -7,7 +7,6 @@ import sys
 sys.path.append("../python")
 import dfm2
 
-
 mshtri = None
 
 def display():
