@@ -12,6 +12,8 @@ mshelm = None
 def display():
   glEnable(GL_LIGHTING)
   mshelm.drawFace_elemWiseNorm()
+  glDisable(GL_LIGHTING)
+  mshelm.drawEdge()
 
   glDisable(GL_LIGHTING)
   glLineWidth(3)  
@@ -22,9 +24,11 @@ def main():
 
   voxelgrid = dfm2.dfm2.VoxelGrid()
   voxelgrid.add(0,0,0)
-  voxelgrid.add(1,0,0)
+  voxelgrid.add(1,0,0)  
 
   mshelm = dfm2.dfm2.meshQuad3d_voxelGrid(voxelgrid)
+  mshelm = mshelm.subdiv()
+  mshelm = mshelm.subdiv()  
 
   win = dfm2.glut.GlutWindow(2.0)
   dfm2.dfm2.setSomeLighting()
