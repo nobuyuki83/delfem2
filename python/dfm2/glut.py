@@ -13,6 +13,7 @@ def print(x, y, font, text, color):
   for ch in text:
     glutBitmapCharacter(font, ctypes.c_int(ord(ch)))
 
+
 def draw_sphere(pos, rad, color):
   if pos is None:
     return
@@ -73,30 +74,28 @@ class GlutWindow:
   def display(self):
     glClearColor(0.3, 0.5, 0.8, 1.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glEnable(GL_DEPTH_TEST)
-  
+    glEnable(GL_DEPTH_TEST)  
     self.wm.camera.set_gl_camera()
-
     self.draw_func()
-
     glutSwapBuffers()  
 
   def reshape(self, width, height):
     glViewport(0, 0, width, height)
 
-
   def idle(self):
     glutPostRedisplay()
 
-
   def special(self,key, x, y):  
     self.wm.special(key,x,y)
+    glutPostRedisplay()    
 
   def mouse(self,button, state, x, y):
     self.wm.mouse(button,state,x,y)
+    glutPostRedisplay()    
 
   def motion(self,x, y):
     self.wm.motion(x,y)    
+    glutPostRedisplay()  
 
   def draw_loop(self,draw_func0):  
 
