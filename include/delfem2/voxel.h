@@ -84,6 +84,41 @@ public:
     const int nvoxel = ndivx*ndivy*ndivz;
     aIsVox.assign(nvoxel,0);
   }
+  void AABB(int aabb[8]) const {
+    bool is_initial = true;
+    aabb[0] = +1;
+    aabb[1] = -1;
+    for(int igvx=0;igvx<ndivx;++igvx){
+      for(int igvy=0;igvy<ndivy;++igvy){
+        for(int igvz=0;igvz<ndivz;++igvz){
+          const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+          if( aIsVox [ivoxel] ==0 ){ continue; }
+          const int igpx0 = igvx+iorgx+0;  const int igpx1 = igvx+iorgx+1;
+          const int igpy0 = igvy+iorgy+0;  const int igpy1 = igvy+iorgy+1;
+          const int igpz0 = igvz+iorgz+0;  const int igpz1 = igvz+iorgz+1;
+          if( is_initial ){
+            aabb[0] = igpx0;  aabb[1] = igpx1;
+            aabb[2] = igpy0;  aabb[3] = igpy1;
+            aabb[4] = igpz0;  aabb[5] = igpz1;
+          }
+          else{
+            if( igpx0 < aabb[0] ){ aabb[0] = igpx0; }
+            if( igpx1 > aabb[1] ){ aabb[1] = igpx1; }
+            if( igpy0 < aabb[2] ){ aabb[2] = igpy0; }
+            if( igpy1 > aabb[3] ){ aabb[3] = igpy1; }
+            if( igpz0 < aabb[4] ){ aabb[4] = igpz0; }
+            if( igpz1 > aabb[5] ){ aabb[5] = igpz1; }
+          }
+        }
+      }
+    }
+  }
+  /*
+  void Add(int ivx, int ivy, int ivz){
+    int aabb[6];
+    
+  }
+   */
   void Set(int ivx, int ivy, int ivz, int isVox){
     int igvx = ivx-iorgx;
     int igvy = ivy-iorgy;

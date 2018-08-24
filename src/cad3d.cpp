@@ -1294,7 +1294,7 @@ void BuildTriMesh
     }
   }
   makeSurroundingRelationship(aTriSurRel,
-                              aTri,FEMELEM_TRI,
+                              aTri,MESHELEM_TRI,
                               (int)aXYZ.size()/3);
   MakeNormal(aNorm, aXYZ, aTri);
 }
