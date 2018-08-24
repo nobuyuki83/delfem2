@@ -207,7 +207,7 @@ void SetNewProblem()
   static unsigned int iprob = 0;
   
   {
-    Load_Ply("../test_inputs/bunny_2k.ply", aXYZ, aTri);
+    Read_Ply("../test_inputs/bunny_2k.ply", aXYZ, aTri);
     {
       double cx,cy,cz, wx,wy,wz;
       GetCenterWidth(cx,cy,cz,

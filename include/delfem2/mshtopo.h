@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-enum FEMELEM_TYPE
+enum MESHELEM_TYPE
 {
   FEMELEM_TRI = 0,
   FEMELEM_TET = 1,
@@ -94,16 +94,16 @@ const int noelElemFace_Wed[5][4] = {
 };
 
 /////////////////////////////////////////////
-inline int nNodeElem(FEMELEM_TYPE type){
+inline int nNodeElem(MESHELEM_TYPE type){
   return mapFEMElemType2NNodeElem[type];
 }
-inline int nFaceElem(FEMELEM_TYPE type){
+inline int nFaceElem(MESHELEM_TYPE type){
   return mapFEMElemType2NFaceElem[type];
 }
-inline int nNodeElemFace(FEMELEM_TYPE type,int iface){
+inline int nNodeElemFace(MESHELEM_TYPE type,int iface){
   return mapFEMElemTypeIndFace2NNoelElemFace[type][iface];
 }
-inline const int (*noelElemFace(FEMELEM_TYPE type))[4]
+inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
 {
   const int (*noelElemFace0[7])[4] = {
     noelElemFace_Tri,
@@ -128,12 +128,12 @@ void addMasterSlavePattern
  std::vector<int>& array);
 
 //////////////////////////////////////
-void AddElement(const FEMELEM_TYPE& femelem_type,
+void AddElement(const MESHELEM_TYPE& femelem_type,
                 const std::vector<int>& aElemIn,
                 ////
                 std::vector<int>& aElemInd,
                 std::vector<int>& aElem,
-                std::vector<FEMELEM_TYPE>& aElemType);
+                std::vector<MESHELEM_TYPE>& aElemType);
 
 ////
 void convert2Tri_Quad(std::vector<int>& aTri,
@@ -142,7 +142,7 @@ void convert2Tri(std::vector<int>& aTri,
                  ////
                  const std::vector<int>& aElemInd,
                  const std::vector<int>& aElem,
-                 const std::vector<FEMELEM_TYPE>& aElemType);
+                 const std::vector<MESHELEM_TYPE>& aElemType);
 
 ////
 void FlipElement_Tri(std::vector<int>& aTri);
@@ -150,7 +150,7 @@ void FlipElement(std::vector<int>& aElem_Flip,
           ////
           const std::vector<int>& aElemInd,
           const std::vector<int>& aElem,
-          const std::vector<FEMELEM_TYPE>& aElemType);
+          const std::vector<MESHELEM_TYPE>& aElemType);
 
 ////////////////////////////////////////
 // make elsup
@@ -184,24 +184,24 @@ void makeSurroundingRelationship(std::vector<int>& aElSurRel,
                                  const int noelElemFace[][4]);
 void makeSurroundingRelationship(std::vector<int>& aElemSurRel,
                                  const std::vector<int>& aElem,
-                                 FEMELEM_TYPE type,
+                                 MESHELEM_TYPE type,
                                  const int nXYZ);
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
                                  const std::vector<int>& aEl,
-                                 FEMELEM_TYPE type,
+                                 MESHELEM_TYPE type,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup);
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,
                                  const std::vector<int>& aElem,
-                                 const std::vector<FEMELEM_TYPE>& aElemType,
+                                 const std::vector<MESHELEM_TYPE>& aElemType,
                                  const int nPo);
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,
                                  const std::vector<int>& aElem,
-                                 const std::vector<FEMELEM_TYPE>& aElemType,
+                                 const std::vector<MESHELEM_TYPE>& aElemType,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup);
 
@@ -209,11 +209,11 @@ void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
 // make boundary
 void makeBoundary(std::vector<int>& aElemInd_Bound,
                   std::vector<int>& aElem_Bound,
-                  std::vector<FEMELEM_TYPE>& aElemType_Bound,
+                  std::vector<MESHELEM_TYPE>& aElemType_Bound,
                   ////
                   const std::vector<int>& aElemInd,
                   const std::vector<int>& aElem,
-                  const std::vector<FEMELEM_TYPE>& aElemType,
+                  const std::vector<MESHELEM_TYPE>& aElemType,
                   const std::vector<int>& aElemFaceInd,
                   const std::vector<int>& aElemFaceRel);
 
@@ -291,15 +291,15 @@ void MakeGroupElem
  /////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  int nPo);
 void ClipGroup(std::vector<int>& aElemInd1,
                std::vector<int>& aElem1,
-               std::vector<FEMELEM_TYPE>& aElemType1,
+               std::vector<MESHELEM_TYPE>& aElemType1,
                ///
                const std::vector<int>& aElemInd,
                const std::vector<int>& aElem,
-               const std::vector<FEMELEM_TYPE>& aElemType,
+               const std::vector<MESHELEM_TYPE>& aElemType,
                int igroup,
                const std::vector<int>& aIndGroup);
 
@@ -332,7 +332,7 @@ public:
   CElemMixed(){
     aElemInd.resize(1,0);
   }
-  void AddElement(const FEMELEM_TYPE& femelem_type, const std::vector<int>& aElemIn){
+  void AddElement(const MESHELEM_TYPE& femelem_type, const std::vector<int>& aElemIn){
     ::AddElement(femelem_type,aElemIn,
                  aElemInd,aElem,aElemType);
   }
@@ -406,7 +406,7 @@ private:
 public:
   std::vector<int> aElemInd;
   std::vector<int> aElem;
-  std::vector<FEMELEM_TYPE> aElemType;
+  std::vector<MESHELEM_TYPE> aElemType;
 };
 
 #endif /* meshtopo_hpp */

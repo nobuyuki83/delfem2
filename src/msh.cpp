@@ -1065,11 +1065,9 @@ void ExtrudeTri2Tet
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void LaplacianSmoothing
 (std::vector<double>& aXYZ,
@@ -1268,7 +1266,7 @@ void makeSolidAngle
 }
 
 // TODO: make this handle open surface (average face & edge independently)
-void SubdivisionMovePoints_QuadCatmullClark
+void SubdivisionPoints_QuadCatmullClark
 (std::vector<double>& aXYZ1,
  ///
  const std::vector<int>& aQuad1,
@@ -1345,4 +1343,48 @@ void SubdivisionMovePoints_QuadCatmullClark
   }
 }
 
-
+void SubdivisionPoints_Quad
+(std::vector<double>& aXYZ1,
+ ///
+ const std::vector<int>& aQuad1,
+ const std::vector<int>& aEdgeFace0,
+ const std::vector<int>& psupIndQuad0,
+ const std::vector<int>& psupQuad0,
+ const std::vector<int>& aQuad0,
+ const std::vector<double>& aXYZ0)
+{
+  /*
+   std::vector<int> aEdgeFace0;
+   std::vector<int> psupIndQuad0, psupQuad0;
+   
+   QuadSubdiv(aQuad1,
+   psupIndQuad0,psupQuad0, aEdgeFace0,
+   aQuad0, nv0);
+   */
+  const int nv0 = (int)aXYZ0.size()/3;
+  const int ne0 = (int)psupQuad0.size();
+  const int nq0 = (int)aQuad0.size()/4;
+  assert( (int)aEdgeFace0.size() == ne0*4 );
+  aXYZ1.resize((nv0+ne0+nq0)*3);
+  for(int iv=0;iv<nv0;++iv){
+    aXYZ1[iv*3+0] = aXYZ0[iv*3+0];
+    aXYZ1[iv*3+1] = aXYZ0[iv*3+1];
+    aXYZ1[iv*3+2] = aXYZ0[iv*3+2];
+  }
+  for(int ie=0;ie<ne0;++ie){
+    const int iv0 = aEdgeFace0[ie*4+0];
+    const int iv1 = aEdgeFace0[ie*4+1];
+    aXYZ1[(nv0+ie)*3+0] = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0])*0.5;
+    aXYZ1[(nv0+ie)*3+1] = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1])*0.5;
+    aXYZ1[(nv0+ie)*3+2] = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2])*0.5;
+  }
+  for(int iq=0;iq<nq0;++iq){
+    const int iv0 = aQuad0[iq*4+0];
+    const int iv1 = aQuad0[iq*4+1];
+    const int iv2 = aQuad0[iq*4+2];
+    const int iv3 = aQuad0[iq*4+3];
+    aXYZ1[(nv0+ne0+iq)*3+0] = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0] + aXYZ0[iv2*3+0] + aXYZ0[iv3*3+0])*0.25;
+    aXYZ1[(nv0+ne0+iq)*3+1] = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1] + aXYZ0[iv2*3+1] + aXYZ0[iv3*3+1])*0.25;
+    aXYZ1[(nv0+ne0+iq)*3+2] = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
+  }
+}

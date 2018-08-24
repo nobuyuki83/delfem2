@@ -6,21 +6,21 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // IO functions
 
-void saveMesh(std::ofstream& fout,
-              const std::vector<double>& aXYZ,
-              const std::vector<int>& aTri,
+void Write_MeshTri3D(std::ofstream& fout,
+                    const std::vector<double>& aXYZ,
+                    const std::vector<int>& aTri,
               int ndim=3);
-void loadMesh(std::ifstream& fin,
-              std::vector<double>& aXYZ,
-              std::vector<int>& aTri);
+void Read_MeshTri3D(std::ifstream& fin,
+                    std::vector<double>& aXYZ,
+                    std::vector<int>& aTri);
 
 /////////////
 // TetGen
 
-void Load_TetMesh_TetGen(const std::string& fname,
-                         std::vector<double>& aXYZ,
-                         std::vector<int>& aTet,
-                         std::vector<int>& aTri);
+void Read_MeshTet3D_TetGen(const std::string& fname,
+                           std::vector<double>& aXYZ,
+                           std::vector<int>& aTet,
+                           std::vector<int>& aTri);
 
 /////////////
 // STL
@@ -36,15 +36,15 @@ void Write_STL(const std::string& str,
 void Write_Ply(const std::string& fname,
                const std::vector<double>& aXYZ,
                const std::vector<int>& aTri);
-void Load_Ply(const std::string& fname,
-              std::vector<double>& aXYZ,
-              std::vector<int>& aTri);
 void Write_Ply(const std::string& fname,
                unsigned int nXYZ, double* paXYZ,
                unsigned int nTri, unsigned int* paTri);
-void Load_Ply(const std::string& fname,
+void Read_Ply(const std::string& fname,
               unsigned int& nnode_, double*& pXYZs_,
               unsigned int& ntri_,  unsigned int*& aTri_);
+void Read_Ply(const std::string& fname,
+              std::vector<double>& aXYZ,
+              std::vector<int>& aTri);
 
 /////////////
 // Obj
@@ -61,16 +61,16 @@ void Write_Obj(const std::string& str, // mixed elem
                const std::vector<int>& aElem);
 void Write_Obj(const std::string& str,
                const std::vector< std::pair< std::vector<double>, std::vector<int> > >& aMesh);
-void Load_Obj(const std::string& fname,
+void Read_Obj(const std::string& fname,
               std::vector<double>& aXYZ,
               std::vector<int>& aTri);
-void Load_Obj_Quad(const std::string& fname,
+void Read_Obj_Quad(const std::string& fname,
                    std::vector<double>& aXYZ,
                    std::vector<int>& aQuad);
-void Load_Obj2(const std::string& fname,
+void Read_Obj2(const std::string& fname,
                std::vector<double>& aXYZ,
                std::vector<int>& aTri);
-void Load_Obj(std::stringstream& ssobj,
+void Read_Obj(std::stringstream& ssobj,
               std::vector<double>& aXYZ,
               std::vector<int>& aTri);
 
