@@ -104,9 +104,9 @@ public:
     int igvx = ivx-iorgx;
     int igvy = ivy-iorgy;
     int igvz = ivz-iorgz;
-    if( igvx<0 || igvx>ndivx ){ return false; }
-    if( igvy<0 || igvy>ndivy ){ return false; }
-    if( igvz<0 || igvz>ndivz ){ return false; }
+    if( igvx<0 || igvx>=ndivx ){ return false; }
+    if( igvy<0 || igvy>=ndivy ){ return false; }
+    if( igvz<0 || igvz>=ndivz ){ return false; }
     return true;
   }
   void Add(int ivx, int ivy, int ivz){
@@ -118,16 +118,18 @@ public:
       Add_AABB(aabb,ivx,ivy,ivz);
       CVoxelGrid vg0 = (*this);
       this->Init_AABB(aabb);
+      Set(ivx,ivy,ivz,1);
       for(int igvx0=0;igvx0<vg0.ndivx;++igvx0){
       for(int igvy0=0;igvy0<vg0.ndivy;++igvy0){
       for(int igvz0=0;igvz0<vg0.ndivz;++igvz0){
         const int ivoxel0 = igvx0*(vg0.ndivy*vg0.ndivz)+igvy0*vg0.ndivz+igvz0;
+        std::cout << ivoxel0 << std::endl;
         if( vg0.aIsVox[ivoxel0] == 0 ) continue;
-        int ivx = igvx0+vg0.iorgx;
-        int ivy = igvy0+vg0.iorgy;
-        int ivz = igvz0+vg0.iorgz;
-        assert( IsInclude(ivx,ivy,ivz) );
-        Set(ivx,ivy,ivz,1);
+        int ivx1 = igvx0+vg0.iorgx;
+        int ivy1 = igvy0+vg0.iorgy;
+        int ivz1 = igvz0+vg0.iorgz;
+        assert( IsInclude(ivx1,ivy1,ivz1) );
+        Set(ivx1,ivy1,ivz1,1);
       }
       }
       }
