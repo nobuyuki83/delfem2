@@ -108,7 +108,6 @@ class GlutWindow:
     glutSpecialFunc(self.special)
     glutIdleFunc(self.idle)
 
-    dfm2.dfm2.set_some_lighting()
     self.draw_func = draw_func0
     glutMainLoop()
 
