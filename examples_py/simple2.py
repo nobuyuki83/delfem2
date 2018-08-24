@@ -13,6 +13,7 @@ def draw_func():
 
 def main():
   draw = dfm2.glut.GlutWindow(1.0);
+  dfm2.dfm2.setSomeLighting()
   draw.draw_loop(draw_func)
 
 if __name__ == "__main__":  

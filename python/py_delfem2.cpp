@@ -22,7 +22,7 @@ public:
     elem_type = MESHELEM_TRI;
     ndim = 3;
   }
-  void Draw(){
+  void DrawFace_ElemWiseNorm(){
     if( elem_type == MESHELEM_TRI ){
       if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aElem); }
     }
@@ -58,11 +58,11 @@ PYBIND11_MODULE(dfm2, m) {
   .def(py::init<>())
   .def(py::init<const std::string&>())
   .def("read", &CMeshElem::Read)
-  .def("draw", &CMeshElem::Draw)
-  .def("scale_xyz",&CMeshElem::ScaleXYZ)
-  .def_readonly("array_tri", &CMeshElem::aElem)
-  .def_readonly("array_pos", &CMeshElem::aPos)
-  .def_readonly("elem_type", &CMeshElem::elem_type);
+  .def("drawFace_elemWiseNorm", &CMeshElem::DrawFace_ElemWiseNorm)
+  .def("scaleXYZ",&CMeshElem::ScaleXYZ)
+  .def_readonly("listElem", &CMeshElem::aElem)
+  .def_readonly("listPos",  &CMeshElem::aPos)
+  .def_readonly("elemType", &CMeshElem::elem_type);
   
   py::class_<CVoxelGrid>(m, "VoxelGrid")
   .def(py::init<>())
@@ -77,7 +77,7 @@ PYBIND11_MODULE(dfm2, m) {
   .value("Hex",     MESHELEM_TYPE::MESHELEM_HEX)
   .export_values();
   
-  m.def("set_some_lighting", &setSomeLighting);
-  m.def("mesh_quad_3d_voxel_grid", &MeshQuad3D_VoxelGrid);
+  m.def("setSomeLighting", &setSomeLighting);
+  m.def("meshQuad3d_voxelGrid", &MeshQuad3D_VoxelGrid);
 }
 
