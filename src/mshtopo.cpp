@@ -27,7 +27,7 @@ void convert2Tri
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType)
+ const std::vector<MESHELEM_TYPE>& aElemType)
 {
   const long nElem0 = aElemInd.size()-1;
   aTri.clear();
@@ -63,7 +63,7 @@ void FlipElement
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType)
+ const std::vector<MESHELEM_TYPE>& aElemType)
 {
   aElem_Flip.resize(aElem.size());
   assert(!aElemInd.empty());
@@ -83,12 +83,12 @@ void FlipElement
 /////////////////////////////////////////////////////////////////////////
 
 void AddElement
-(const FEMELEM_TYPE& femelem_type,
+(const MESHELEM_TYPE& femelem_type,
  const std::vector<int>& aElemIn,
  ////
  std::vector<int>& aElemInd,
  std::vector<int>& aElem,
- std::vector<FEMELEM_TYPE>& aElemType)
+ std::vector<MESHELEM_TYPE>& aElemType)
 {
   const int nnoel = nNodeElem(femelem_type);
   const int nElemIn = aElemIn.size()/nnoel;
@@ -253,7 +253,7 @@ void makeSurroundingRelationship
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
  const std::vector<int>& aEl,
- FEMELEM_TYPE type,
+ MESHELEM_TYPE type,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
@@ -268,7 +268,7 @@ void makeSurroundingRelationship
 void makeSurroundingRelationship
 (std::vector<int>& aElemSurRel,
  const std::vector<int>& aElem,
- FEMELEM_TYPE type,
+ MESHELEM_TYPE type,
  const int nXYZ)
 {
   const int nnoel = nNodeElem(type);
@@ -282,7 +282,7 @@ void makeSurroundingRelationship
  std::vector<int>& aElemFaceRel,
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  const int nXYZ)
 {
   std::vector<int> elsup_ind, elsup;
@@ -300,7 +300,7 @@ void makeSurroundingRelationship
  ///
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
@@ -319,7 +319,7 @@ void makeSurroundingRelationship
   aElemFaceRel.assign(nface*2,-1);
   std::vector<int> aFlg(np,-1);
   for(unsigned int ielem=0;ielem<nelem;++ielem){
-    const FEMELEM_TYPE type_i = aElemType[ielem];
+    const MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem] == nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
       const int iface = iiface-aElemFaceInd[ielem];
@@ -335,7 +335,7 @@ void makeSurroundingRelationship
       for(int jelsup=elsup_ind[ip0];jelsup<elsup_ind[ip0+1];++jelsup){
         const int je0 = elsup[jelsup];
         if( (int)ielem == je0 ) continue;
-        const FEMELEM_TYPE type_j = aElemType[je0];
+        const MESHELEM_TYPE type_j = aElemType[je0];
         for(int ijface=aElemFaceInd[je0];ijface<aElemFaceInd[je0+1];++ijface){
           const int jface = ijface-aElemFaceInd[je0];
           const int nnofa_j = nNodeElemFace(type_j,jface);
@@ -365,11 +365,11 @@ void makeSurroundingRelationship
 void makeBoundary
 (std::vector<int>& aElemInd_Bound,
  std::vector<int>& aElem_Bound,
- std::vector<FEMELEM_TYPE>& aElemType_Bound,
+ std::vector<MESHELEM_TYPE>& aElemType_Bound,
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  const std::vector<int>& aElemFaceInd,
  const std::vector<int>& aElemFaceRel)
 {
@@ -379,7 +379,7 @@ void makeBoundary
   aElemInd_Bound.push_back(0);
   const int nelem = aElemInd.size()-1;
   for(int ielem=0;ielem<nelem;++ielem){
-    const FEMELEM_TYPE type_i = aElemType[ielem];
+    const MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem]==nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
       if( aElemFaceRel[iiface*2+0] != -1 ) continue;
@@ -946,7 +946,7 @@ void MakeGroupElem
  /////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<FEMELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  int nPo)
 {
   std::vector<int> elsup_ind, elsup;
@@ -962,11 +962,11 @@ void MakeGroupElem
 
 void ClipGroup(std::vector<int>& aElemInd1,
                std::vector<int>& aElem1,
-               std::vector<FEMELEM_TYPE>& aElemType1,
+               std::vector<MESHELEM_TYPE>& aElemType1,
                ///
                const std::vector<int>& aElemInd,
                const std::vector<int>& aElem,
-               const std::vector<FEMELEM_TYPE>& aElemType,
+               const std::vector<MESHELEM_TYPE>& aElemType,
                int igroup,
                const std::vector<int>& aIndGroup)
 {
@@ -977,7 +977,7 @@ void ClipGroup(std::vector<int>& aElemInd1,
   int nelem = aElemInd.size()-1;
   for(int ie=0;ie<nelem;++ie){
     if( aIndGroup[ie] != igroup ) continue;
-    FEMELEM_TYPE type = aElemType[ie];
+    MESHELEM_TYPE type = aElemType[ie];
     aElemType1.push_back(type);
     aElemInd1.push_back( nNodeElem(type) );
     for(int iip=aElemInd[ie];iip<aElemInd[ie+1];++iip){

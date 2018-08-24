@@ -103,19 +103,19 @@ void MakeNormal(double*& aNorm_,
 
 // y axis is the pole
 void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                    double r,
-                    int nla, int nlo);
+                      double r,
+                      int nla, int nlo);
 // y axis is the axis of cylinder
 void MeshTri3D_OpenCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                          double r, double l,
-                          int nr, int nl);
-void MeshTri3D_ClosedCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
                             double r, double l,
                             int nr, int nl);
+void MeshTri3D_ClosedCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
+                              double r, double l,
+                              int nr, int nl);
 void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                  int n);
+                    int n);
 void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<int>& aTri,
-                  double r, int nr, int nth);
+                    double r, int nr, int nth);
 void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<int>& aQuad,
                         double x_min, double x_max,
                         double y_min, double y_max,
@@ -142,14 +142,22 @@ void LaplacianSmoothing(std::vector<double>& aXYZ,
                         const std::vector<int>& aTri,
                         const std::vector<int>& elsup_ind,
                         const std::vector<int> elsup);
-void SubdivisionMovePoints_QuadCatmullClark(std::vector<double>& aXYZ1,
-                                            ///
-                                            const std::vector<int>& aQuad1,
-                                            const std::vector<int>& aEdgeFace0,
-                                            const std::vector<int>& psupIndQuad0,
-                                            const std::vector<int>& psupQuad0,
-                                            const std::vector<int>& aQuad0,
-                                            const std::vector<double>& aXYZ0);
+void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
+                                        ///
+                                        const std::vector<int>& aQuad1,
+                                        const std::vector<int>& aEdgeFace0,
+                                        const std::vector<int>& psupIndQuad0,
+                                        const std::vector<int>& psupQuad0,
+                                        const std::vector<int>& aQuad0,
+                                        const std::vector<double>& aXYZ0);
+void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
+                            ///
+                            const std::vector<int>& aQuad1,
+                            const std::vector<int>& aEdgeFace0,
+                            const std::vector<int>& psupIndQuad0,
+                            const std::vector<int>& psupQuad0,
+                            const std::vector<int>& aQuad0,
+                            const std::vector<double>& aXYZ0);
 
 //////////////////////////////////////////////////////////////
 // raw mesh functions

@@ -126,8 +126,8 @@ int main(int argc,char* argv[])
                aQuad0, aXYZ0.size()/3);
     ///////
     std::vector<double>& aXYZ1 = aaXYZ[il+1];
-    SubdivisionMovePoints_QuadCatmullClark(aXYZ1,
-                                           aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,aQuad0,aXYZ0);
+    SubdivisionPoints_QuadCatmullClark(aXYZ1,
+                                       aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,aQuad0,aXYZ0);
   }
   
   window.camera.view_height = 2.0;

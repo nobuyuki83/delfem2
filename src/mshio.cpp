@@ -63,7 +63,7 @@ void Write_STL
   fout<<"endsolid"<<std::endl;
 }
 
-void Load_Ply
+void Read_Ply
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -183,7 +183,7 @@ void Write_Ply
 }
 
 
-void Load_Ply
+void Read_Ply
 (const std::string& fname,
  unsigned int& nnode_, double*& pXYZs_,
  unsigned int& ntri_, unsigned int*& aTri_)
@@ -334,7 +334,7 @@ void Write_Obj
   }
 }
 
-void Load_Obj
+void Read_Obj
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -370,7 +370,7 @@ void Load_Obj
   }
 }
 
-void Load_Obj_Quad
+void Read_Obj_Quad
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aQuad)
@@ -407,7 +407,7 @@ void Load_Obj_Quad
   }
 }
 
-void Load_Obj2
+void Read_Obj2
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -450,7 +450,7 @@ void Load_Obj2
   }
 }
 
-void Load_Obj
+void Read_Obj
 (std::stringstream& ssobj,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -680,7 +680,7 @@ void Load_Obj
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-void Load_TetMesh_TetGen
+void Read_MeshTet3D_TetGen
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTet,
@@ -747,7 +747,7 @@ void Load_TetMesh_TetGen
 
 /////////////////////////////////
 
-void saveMesh
+void Write_MeshTri3D
 (std::ofstream& fout,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
@@ -766,7 +766,7 @@ void saveMesh
   }
 }
 
-void loadMesh
+void Read_MeshTri3D
 (std::ifstream& fin,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
