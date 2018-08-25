@@ -1,11 +1,3 @@
-//
-//  matrix_sparse.h
-//
-//  Created by Nobuyuki Umetani on 11/7/13.
-//  Copyright (c) 2013 Nobuyuki Umetani. All rights reserved.
-//
-
-
 #if !defined(MATRIX_SQUARE_SPARSE_H)
 #define MATRIX_SQUARE_SPARSE_H
 

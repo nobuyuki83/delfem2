@@ -1,11 +1,3 @@
-//
-//  funcs_glcolorvec3.hpp
-//  viewer3d_glfw
-//
-//  Created by Nobuyuki Umetani on 1/24/18.
-//
-//
-
 #ifndef funcs_glcolorvec3_hpp
 #define funcs_glcolorvec3_hpp
 

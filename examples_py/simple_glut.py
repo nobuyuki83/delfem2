@@ -1,21 +1,19 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
-import numpy as np
-
 import sys
 sys.path.append("../python")
 import dfm2
 
-win = None
+win_man_glut = None
 
 def display():
-  global win
+  global win_man_glut
   glClearColor(0.3, 0.5, 0.8, 1.0)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
   glEnable(GL_DEPTH_TEST)
   
-  win.camera.set_gl_camera()
+  win_man_glut.camera.set_gl_camera()
 
   glEnable(GL_LIGHTING)
   glutSolidTeapot(0.1)
@@ -28,32 +26,30 @@ def display():
 def reshape(width, height):
   glViewport(0, 0, width, height)
 
-
 def idle():
   glutPostRedisplay()
 
-
 def keyboard(bkey, x, y):
-  global win
+  global win_man_glut
   key = bkey.decode("utf-8")
   if key == 'q':
     exit()
   glutPostRedisplay()
 
 def special(key, x, y):
-  global win
-  win.special(key,x,y)
+  global win_man_glut
+  win_man_glut.special(key, x, y)
 
 def mouse(button, state, x, y):
-  global win
-  win.mouse(button,state,x,y)
+  global win_man_glut
+  win_man_glut.mouse(button, state, x, y)
 
 def motion(x, y):
-  global win
-  win.motion(x,y)
+  global win_man_glut
+  win_man_glut.motion(x, y)
 
 def main():
-  global win
+  global win_man_glut
 
   ###################33
   # GLUT Window Initialization
@@ -61,7 +57,7 @@ def main():
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)  # zBuffer
   glutInitWindowSize(600, 600)
   glutInitWindowPosition(100, 100)
-  glutCreateWindow("Visualizzatore_2.0")
+  glutCreateWindow("Simple GLUT")
 
   # Register callbacks
   glutReshapeFunc(reshape)
@@ -72,9 +68,9 @@ def main():
   glutSpecialFunc(special)
   glutIdleFunc(idle)
 
-  win = dfm2.glut.WindowManager(0.3)
+  win_man_glut = dfm2.glut.WindowManager(0.3)
 
-  dfm2.dfm2.set_some_lighting()
+  dfm2.dfm2.setSomeLighting()
 
   ####
   # Turn the flow of control over to GLUT

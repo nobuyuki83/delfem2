@@ -262,10 +262,10 @@ def QuatMult(p, q):
   return r
 
 
-def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height):
+def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
   assert len(trans) == 2
   assert len(quat) == 4
-  mov_end_x,mov_end_y = mouse_screen_pos(x,y)  
+  mov_end_x,mov_end_y = mouse_screen_pos(x,y,win_w,win_h)  
   dx = mov_end_x - mouse_x
   dy = mov_end_y - mouse_y
   a = math.sqrt(dx * dx + dy * dy)
@@ -278,10 +278,10 @@ def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height):
   return mouse_x, mouse_y, quat, trans
 
 
-def motion_trans(x, y, mouse_x, mouse_y, quat, trans, view_height):
+def motion_trans(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
   assert len(trans) == 2
   assert len(quat) == 4
-  mov_end_x,mov_end_y = mouse_screen_pos(x,y)
+  mov_end_x,mov_end_y = mouse_screen_pos(x,y,win_w,win_h)
   dx = mov_end_x - mouse_x
   dy = mov_end_y - mouse_y
   trans[0] += dx * view_height * 0.5
@@ -291,10 +291,7 @@ def motion_trans(x, y, mouse_x, mouse_y, quat, trans, view_height):
   return mouse_x, mouse_y, quat, trans  
 
 
-def mouse_screen_pos(x, y):
-  viewport = glGetIntegerv(GL_VIEWPORT)
-  win_w = viewport[2]
-  win_h = viewport[3]
+def mouse_screen_pos(x, y, win_w,win_h):
   mouse_x = (2.0 * x - win_w) / win_w
   mouse_y = (win_h - 2.0 * y) / win_h
   return mouse_x, mouse_y
@@ -330,5 +327,15 @@ class Camera:
     Rview = affine_matrix_quaternion(self.quat)
     glMultMatrixd(Rview)
 
+  def rotation(self,x,y,sx,sy,win_w,win_h):
+    sx0, sy0, self.quat, self.trans = motion_rot(
+      x, y, sx, sy, self.quat,self.trans,self.view_height,
+      win_w,win_h)
+    return sx0,sy0
 
-
+  def translation(self,x,y,sx,sy,win_w,win_h):
+    sx0, sy0, self.quat, self.trans = motion_trans(
+      x, y, sx, sy, self.quat,
+      self.trans, self.view_height,
+      win_w,win_h)
+    return sx0,sy0
