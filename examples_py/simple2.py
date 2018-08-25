@@ -5,7 +5,7 @@ import sys
 sys.path.append("../python")
 import dfm2
 
-win = None
+win_man_glut = None
 
 def draw_func():
   glEnable(GL_LIGHTING)

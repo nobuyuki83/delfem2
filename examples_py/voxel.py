@@ -1,8 +1,6 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
-import numpy as np
-
 import sys
 sys.path.append("../python")
 import dfm2
@@ -29,9 +27,12 @@ def main():
   mshelm = dfm2.dfm2.meshQuad3d_voxelGrid(voxelgrid)
   mshelm = mshelm.subdiv()
   mshelm = mshelm.subdiv()  
+  mshelm = mshelm.subdiv()  
 
   win = dfm2.glut.GlutWindow(2.0)
   dfm2.dfm2.setSomeLighting()
+  glEnable(GL_POLYGON_OFFSET_FILL );
+  glPolygonOffset( 1.1, 4.0 );
   win.draw_loop(display)
 
 if __name__ == "__main__":

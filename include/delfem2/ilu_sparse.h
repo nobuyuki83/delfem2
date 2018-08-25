@@ -1,11 +1,3 @@
-﻿//
-//  ilu_sparse.h
-//  internal_cloth_sparse
-//
-//  Created by Nobuyuki Umetani on 11/18/13.
-//  Copyright (c) 2013 Nobuyuki Umetani. All rights reserved.
-//
-
 #ifndef __internal_cloth_sparse__ilu_sparse__
 #define __internal_cloth_sparse__ilu_sparse__
 

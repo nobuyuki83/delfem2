@@ -1,29 +1,8 @@
 from OpenGL.GL import *
-from OpenGL.GLUT import *
+import glfw
 import dfm2
 
-
-def draw_text(x, y, font, text, color):
-  glMatrixMode(GL_PROJECTION)
-  glLoadIdentity()
-  glMatrixMode(GL_MODELVIEW)
-  glLoadIdentity()
-  glColor3f(color[0], color[1], color[2])
-  glRasterPos2f(x, y)
-  for ch in text:
-    glutBitmapCharacter(font, ctypes.c_int(ord(ch)))
-
-
-def draw_sphere(pos, rad, color):
-  if pos is None:
-    return
-  glColor3d(color[0], color[1], color[2])
-  glTranslatef(+pos[0], +pos[1], +pos[2])
-  glutSolidSphere(rad, 32, 32)
-  glTranslatef(-pos[0], -pos[1], -pos[2])
-
-
-class WindowManager:
+class WindowManagerGLFW:
   def __init__(self,view_height):
     self.camera = dfm2.gl.Camera(view_height)
     self.modifier = 0
@@ -38,24 +17,22 @@ class WindowManager:
     glutPostRedisplay()
 
   def mouse(self,button, state, x, y):
-    viewport = glGetIntegerv(GL_VIEWPORT)
     self.modifier = glutGetModifiers()
-    self.mouse_x, self.mouse_y = dfm2.gl.mouse_screen_pos(x, y, viewport[2],viewport[3])
+    self.mouse_x, self.mouse_y = dfm2.gl.mouse_screen_pos(x, y)
     glutPostRedisplay()
 
   def motion(self,x, y):  
-    viewport = glGetIntegerv(GL_VIEWPORT)
-    if self.modifier == 2 or self.modifier == 4:  # ctrl or cmnd+alt
-      self.mouse_x, self.mouse_y = self.camera.rotation(
-          x, y, self.mouse_x, self.mouse_y,
-          viewport[2],viewport[3])
-    ####
-    if self.modifier == 1:  # shift
-      self.mouse_x, self.mouse_y = self.camera.translation(
-          x, y, self.mouse_x, self.mouse_y,
-          viewport[2],viewport[3])
+    if self.modifier == 2 or self.modifier == 4: # shift
+      self.mouse_x, self.mouse_y, self.camera.quat, self.camera.trans = dfm2.gl.motion_rot(
+          x, y, self.mouse_x, self.mouse_y, self.camera.quat,
+          self.camera.trans, self.camera.view_height)
+    if self.modifier == 1 # ctrl or cmnd+alt
+      self.mouse_x, self.mouse_y, self.camera.quat, self.camera.trans = dfm2.gl.motion_trans(
+          x, y, self.mouse_x, self.mouse_y, self.camera.quat,
+          self.camera.trans, self.camera.view_height)
     glutPostRedisplay()
 
+'''
 class GlutWindow:
   def __init__(self,view_height):
     self.wm = WindowManager(view_height)
@@ -113,5 +90,5 @@ class GlutWindow:
 
     self.draw_func = draw_func0
     glutMainLoop()
-
+'''
 

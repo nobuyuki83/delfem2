@@ -1,13 +1,5 @@
-//
-//  utility_glfw.h
-//  viewer3d_glfw
-//
-//  Created by Nobuyuki Umetani on 2017-09-20.
-//
-//
-
-#ifndef utility_glfw_h
-#define utility_glfw_h
+#ifndef FUNCS_GLFW_H
+#define FUNCS_GLFW_H
 
 #include "camera_gl.h"
 
