@@ -1,7 +1,4 @@
 from OpenGL.GL import *
-from OpenGL.GLUT import *
-
-import numpy as np
 
 import sys
 sys.path.append("../python")
@@ -22,7 +19,7 @@ def main():
   mshelm = dfm2.dfm2.MeshElem("../test_inputs/bunny_2k.ply");
   mshelm.scaleXYZ(0.01)
 
-  win = dfm2.glut.GlutWindow(1.0)
+  win = dfm2.gl_fw.WindowGLFW(0.5)
   dfm2.dfm2.setSomeLighting()
   win.draw_loop(display)
 
