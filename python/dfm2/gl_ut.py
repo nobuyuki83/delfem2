@@ -23,7 +23,7 @@ def draw_sphere(pos, rad, color):
   glTranslatef(-pos[0], -pos[1], -pos[2])
 
 
-class WindowManager:
+class WindowManagerGLUT:
   def __init__(self,view_height):
     self.camera = dfm2.gl.Camera(view_height)
     self.modifier = 0
@@ -56,17 +56,15 @@ class WindowManager:
           viewport[2],viewport[3])
     glutPostRedisplay()
 
-class GlutWindow:
+class WindowGLUT:
   def __init__(self,view_height):
-    self.wm = WindowManager(view_height)
+    self.wm = WindowManagerGLUT(view_height)
     self.draw_func = None
-
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)  # zBuffer
     glutInitWindowSize(600, 600)
     glutInitWindowPosition(100, 100)
     glutCreateWindow("Visualizzatore_2.0")
-
 
   def keyboard(self, bkey, x, y):
     key = bkey.decode("utf-8")

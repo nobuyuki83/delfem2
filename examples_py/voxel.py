@@ -1,5 +1,4 @@
 from OpenGL.GL import *
-from OpenGL.GLUT import *
 
 import sys
 sys.path.append("../python")
@@ -21,19 +20,21 @@ def main():
   global mshelm
 
   voxelgrid = dfm2.dfm2.VoxelGrid()
-  voxelgrid.add(0,0,0)
-  voxelgrid.add(1,0,0)  
+  voxelgrid.add(0, 0, 0)
+  voxelgrid.add(1, 0, 0)
+  voxelgrid.add(0, 1, 0)
 
   mshelm = dfm2.dfm2.meshQuad3d_voxelGrid(voxelgrid)
   mshelm = mshelm.subdiv()
   mshelm = mshelm.subdiv()  
   mshelm = mshelm.subdiv()  
 
-  win = dfm2.glut.GlutWindow(2.0)
+  win = dfm2.gl_fw.WindowGLFW(1.0)
   dfm2.dfm2.setSomeLighting()
   glEnable(GL_POLYGON_OFFSET_FILL );
   glPolygonOffset( 1.1, 4.0 );
   win.draw_loop(display)
+
 
 if __name__ == "__main__":
   main()

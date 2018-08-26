@@ -5,15 +5,15 @@ import sys
 sys.path.append("../python")
 import dfm2
 
-win_man_glut = None
+wmngr_glut = None
 
 def display():
-  global win_man_glut
+  global wmngr_glut
   glClearColor(0.3, 0.5, 0.8, 1.0)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
   glEnable(GL_DEPTH_TEST)
   
-  win_man_glut.camera.set_gl_camera()
+  wmngr_glut.camera.set_gl_camera()
 
   glEnable(GL_LIGHTING)
   glutSolidTeapot(0.1)
@@ -30,26 +30,26 @@ def idle():
   glutPostRedisplay()
 
 def keyboard(bkey, x, y):
-  global win_man_glut
+  global wmngr_glut
   key = bkey.decode("utf-8")
   if key == 'q':
     exit()
   glutPostRedisplay()
 
 def special(key, x, y):
-  global win_man_glut
-  win_man_glut.special(key, x, y)
+  global wmngr_glut
+  wmngr_glut.special(key, x, y)
 
 def mouse(button, state, x, y):
-  global win_man_glut
-  win_man_glut.mouse(button, state, x, y)
+  global wmngr_glut
+  wmngr_glut.mouse(button, state, x, y)
 
 def motion(x, y):
-  global win_man_glut
-  win_man_glut.motion(x, y)
+  global wmngr_glut
+  wmngr_glut.motion(x, y)
 
 def main():
-  global win_man_glut
+  global wmngr_glut
 
   ###################33
   # GLUT Window Initialization
@@ -68,7 +68,7 @@ def main():
   glutSpecialFunc(special)
   glutIdleFunc(idle)
 
-  win_man_glut = dfm2.glut.WindowManager(0.3)
+  wmngr_glut = dfm2.gl_ut.WindowManagerGLUT(0.3)
 
   dfm2.dfm2.setSomeLighting()
 
