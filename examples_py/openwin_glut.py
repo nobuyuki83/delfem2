@@ -20,7 +20,7 @@ def display():
 
   glDisable(GL_LIGHTING)
   glLineWidth(3)  
-  dfm2.gl.draw_axis(size=0.2)
+  dfm2.draw_axis(size=0.2)
   glutSwapBuffers()
 
 def reshape(width, height):
@@ -68,14 +68,13 @@ def main():
   glutSpecialFunc(special)
   glutIdleFunc(idle)
 
-  wmngr_glut = dfm2.gl_ut.WindowManagerGLUT(0.3)
+  wmngr_glut = dfm2.WindowManagerGLUT(0.3)
 
-  dfm2.dfm2.setSomeLighting()
+  dfm2.setSomeLighting()
 
   ####
   # Turn the flow of control over to GLUT
   glutMainLoop()
-
 
 if __name__ == "__main__":
   main()

@@ -12,8 +12,8 @@ def draw_func():
   glutSolidTeapot(0.5)
 
 def main():
-  draw = dfm2.gl_ut.WindowGLUT(1.0);
-  dfm2.dfm2.setSomeLighting()
+  draw = dfm2.WindowGLUT(1.0);
+  dfm2.setSomeLighting()
   draw.draw_loop(draw_func)
 
 if __name__ == "__main__":  

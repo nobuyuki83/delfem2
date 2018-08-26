@@ -1,10 +1,10 @@
 from OpenGL.GL import *
 import glfw
-import dfm2
+from .dfm2_gl import Camera
 
 class WindowManagerGLFW:
   def __init__(self,view_height):
-    self.camera = dfm2.gl.Camera(view_height)
+    self.camera = Camera(view_height)
     self.modifier = 0
     self.mouse_x = 0.0
     self.mouse_y = 0.0
@@ -47,7 +47,6 @@ class WindowGLFW:
     ###
     self.wm = WindowManagerGLFW(view_height)
     self.draw_func = None
-    dfm2.setSomeLighting()
     glEnable(GL_DEPTH_TEST)
 
   def draw_loop(self,render):

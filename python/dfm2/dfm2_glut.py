@@ -1,7 +1,6 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-import dfm2
-
+from .dfm2_gl import Camera
 
 def draw_text(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)
@@ -12,7 +11,6 @@ def draw_text(x, y, font, text, color):
   glRasterPos2f(x, y)
   for ch in text:
     glutBitmapCharacter(font, ctypes.c_int(ord(ch)))
-
 
 def draw_sphere(pos, rad, color):
   if pos is None:
@@ -25,7 +23,7 @@ def draw_sphere(pos, rad, color):
 
 class WindowManagerGLUT:
   def __init__(self,view_height):
-    self.camera = dfm2.gl.Camera(view_height)
+    self.camera = Camera(view_height)
     self.modifier = 0
     self.mouse_x = 0.0
     self.mouse_y = 0.0
@@ -40,7 +38,9 @@ class WindowManagerGLUT:
   def mouse(self,button, state, x, y):
     viewport = glGetIntegerv(GL_VIEWPORT)
     self.modifier = glutGetModifiers()
-    self.mouse_x, self.mouse_y = dfm2.gl.mouse_screen_pos(x, y, viewport[2],viewport[3])
+    (win_w,win_h) = viewport[2:4]
+    self.mouse_x = (2.0 * x - win_w) / win_w
+    self.mouse_y = (win_h - 2.0 * y) / win_h
     glutPostRedisplay()
 
   def motion(self,x, y):  
