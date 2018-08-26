@@ -8,7 +8,6 @@ import dfm2
 mshelm = None
 wmngr_glfw = None
 
-
 def mouseButtonCB(win_glfw,btn,action,mods):
   wmngr_glfw.mouse(win_glfw,btn,action,mods)
 
@@ -25,10 +24,10 @@ def render():
 
 def main():
   global mshelm, wmngr_glfw
-  mshelm = dfm2.dfm2.MeshElem("../test_inputs/bunny_2k.ply");
+  mshelm = dfm2.MeshElem("../test_inputs/bunny_2k.ply");
   mshelm.scaleXYZ(0.02)
 
-  wmngr_glfw = dfm2.gl_fw.WindowManagerGLFW(1.0)
+  wmngr_glfw = dfm2.WindowManagerGLFW(1.0)
 
   glfw.init()
   win_glfw = glfw.create_window(640, 480, 'Hello World', None, None)

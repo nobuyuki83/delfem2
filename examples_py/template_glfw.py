@@ -10,8 +10,8 @@ def draw_func():
   glutSolidTeapot(0.5)
 
 def main():
-  win = dfm2.gl_fw.WindowGLFW(1.0);
-  dfm2.dfm2.setSomeLighting()
+  win = dfm2.WindowGLFW(1.0);
+  dfm2.setSomeLighting()
   win.draw_loop(draw_func)
 
 if __name__ == "__main__":  
