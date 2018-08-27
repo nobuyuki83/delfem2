@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 import glfw
 from .dfm2_gl import Camera
+from ._dfm2 import *
 
 class WindowManagerGLFW:
   def __init__(self,view_height):
@@ -40,9 +41,9 @@ class WindowManagerGLFW:
 
 
 class WindowGLFW:
-  def __init__(self,view_height):
+  def __init__(self,view_height,winsize=(400,300)):
     glfw.init()
-    self.win = glfw.create_window(640, 480, '3D Window', None, None)
+    self.win = glfw.create_window(winsize[0], winsize[1], '3D Window', None, None)
     glfw.make_context_current(self.win)
     ###
     self.wm = WindowManagerGLFW(view_height)
@@ -73,3 +74,10 @@ class WindowGLFW:
 
   def keyinput(self,win0,key,scancode,action,mods):
     self.wm.keyinput(win0,key,scancode,action,mods)
+
+def winDraw3d(obj,winsize=(400,300)):
+  window = WindowGLFW(1.0,winsize);
+  setSomeLighting()  
+  glEnable(GL_POLYGON_OFFSET_FILL );
+  glPolygonOffset( 1.1, 4.0 );
+  window.draw_loop(obj.draw)

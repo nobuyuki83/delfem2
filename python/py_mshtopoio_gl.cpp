@@ -23,6 +23,7 @@ void init_mshtopoio_gl(py::module &m){
   .def("read", &CMeshElem::Read)
   .def("drawFace_elemWiseNorm", &CMeshElem::DrawFace_ElemWiseNorm)
   .def("drawEdge", &CMeshElem::DrawEdge)
+  .def("draw", &CMeshElem::Draw)
   .def("scaleXYZ", &CMeshElem::ScaleXYZ)
   .def("subdiv",   &CMeshElem::Subdiv)
   .def_readonly("listElem", &CMeshElem::aElem)
