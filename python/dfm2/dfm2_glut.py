@@ -57,12 +57,12 @@ class WindowManagerGLUT:
     glutPostRedisplay()
 
 class WindowGLUT:
-  def __init__(self,view_height):
+  def __init__(self,view_height,winsize=(400,300)):
     self.wm = WindowManagerGLUT(view_height)
     self.draw_func = None
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)  # zBuffer
-    glutInitWindowSize(600, 600)
+    glutInitWindowSize(winsize[0], winsize[1])
     glutInitWindowPosition(100, 100)
     glutCreateWindow("Visualizzatore_2.0")
 

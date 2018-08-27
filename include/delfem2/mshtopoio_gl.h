@@ -5,6 +5,20 @@
 #include <vector>
 #include <fstream>
 
+#if defined(__APPLE__) && defined(__MACH__) // Mac
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/glu.h>
+#elif defined(WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#else // linux
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
@@ -36,6 +50,13 @@ public:
     else if( elem_type == MESHELEM_QUAD ){
       if( ndim == 3 ){ DrawMeshQuad3D_Edge(aPos, aElem); }
     }
+  }
+  void Draw(){
+    glEnable(GL_LIGHTING);
+    this->DrawFace_ElemWiseNorm();
+    glDisable(GL_LIGHTING);
+    glLineWidth(1);
+    this->DrawEdge();
   }
   CMeshElem Subdiv(){
     CMeshElem em;

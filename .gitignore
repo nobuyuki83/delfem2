@@ -25,6 +25,7 @@ CMakeFiles
 cmake-build-debug
 cmake-build-release
 .idea
+.ipynb_checkpoints
 buildXcode
 buildMake
 build
