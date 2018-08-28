@@ -38,6 +38,7 @@ public:
   void DrawFace_ElemWiseNorm(){
     if( elem_type == MESHELEM_TRI ){
       if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aElem); }
+      if( ndim == 2 ){ DrawMeshTri2D_Face(aElem,aPos); }
     }
     else if( elem_type == MESHELEM_QUAD ){
       if( ndim == 3 ){ DrawMeshQuad3D_FaceNorm(aPos, aElem); }
@@ -46,6 +47,7 @@ public:
   void DrawEdge(){
     if( elem_type == MESHELEM_TRI ){
       if( ndim == 3 ){ DrawMeshTri3D_Edge(aPos, aElem); }
+      if( ndim == 2 ){ DrawMeshTri2D_Edge(aElem, aPos); }
     }
     else if( elem_type == MESHELEM_QUAD ){
       if( ndim == 3 ){ DrawMeshQuad3D_Edge(aPos, aElem); }
@@ -88,5 +90,16 @@ public:
   int ndim;
   std::vector<double> aPos;
 };
+
+class CTriangulationOutput
+{
+public:
+  CMeshElem me;
+  std::vector<int> aPtrVtxInd;
+  std::vector<int> aVtxInd;
+};
+
+CTriangulationOutput Triangulation(const std::vector<double>& aXY,
+                                   double edge_length);
 
 #endif

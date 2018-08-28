@@ -906,6 +906,29 @@ void DrawMeshTri3D_FaceEdge
 
 /////////////////////////////////////
 
+void DrawMeshTri2D_Face
+(std::vector<int>& aTri,
+ std::vector<double>& aXY)
+{
+  const int ntri = (int)aTri.size()/3;
+  //  const int nxys = (int)aXY.size()/2;
+  ::glColor3d(1,1,1);
+  ::glBegin(GL_TRIANGLES);
+  for(int itri=0;itri<ntri;itri++){
+    //      double color[3];
+    const int i0 = aTri[itri*3+0];
+    const int i1 = aTri[itri*3+1];
+    const int i2 = aTri[itri*3+2];
+    const double p0[2] = { aXY[i0*2+0], aXY[i0*2+1] };
+    const double p1[2] = { aXY[i1*2+0], aXY[i1*2+1] };
+    const double p2[2] = { aXY[i2*2+0], aXY[i2*2+1] };
+    ::glVertex2dv( p0 );
+    ::glVertex2dv( p1 );
+    ::glVertex2dv( p2 );
+  }
+  ::glEnd();
+}
+
 void DrawMeshTri2D_FaceDisp2D
 (std::vector<int>& aTri,
  std::vector<double>& aXY,
