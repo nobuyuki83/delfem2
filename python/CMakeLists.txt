@@ -31,12 +31,13 @@ pybind11_add_module(dfm2
   ${DELFEM2_SRC}/voxel.cpp       ${DELFEM2_INC}/voxel.h
 
   ${DELFEM2_SRC}/v23m3q.cpp      ${DELFEM2_INC}/v23m3q.h
+  ${DELFEM2_SRC}/dyntri_v3.cpp   ${DELFEM2_INC}/dyntri_v3.h
 
   ${DELFEM2_SRC}/v23_gl.cpp      ${DELFEM2_INC}/v23_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp    ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/color_gl.cpp    ${DELFEM2_INC}/color_gl.h
 
-  ${DELFEM2_INC}/mshtopoio_gl.h
+  ${DELFEM2_SRC}/mshtopoio_gl.cpp  ${DELFEM2_INC}/mshtopoio_gl.h
   py_mshtopoio_gl.cpp
   py_delfem2.cpp
 )

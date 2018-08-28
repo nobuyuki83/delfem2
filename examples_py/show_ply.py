@@ -4,24 +4,7 @@ import sys
 sys.path.append("../python")
 import dfm2
 
-mshelm = None
-
-def display():
-  glEnable(GL_LIGHTING)
-  mshelm.drawFace_elemWiseNorm()
-
-  glDisable(GL_LIGHTING)
-  glLineWidth(3)
-  dfm2.draw_axis(size=0.5)
-
-def main():
-  global mshelm
+if __name__ == "__main__":
   mshelm = dfm2.MeshElem("../test_inputs/bunny_2k.ply");
   mshelm.scaleXYZ(0.01)
-
-  win = dfm2.WindowGLFW(0.5)
-  dfm2.setSomeLighting()
-  win.draw_loop(display)
-
-if __name__ == "__main__":
-  main()
+  dfm2.winDraw3d(mshelm)
