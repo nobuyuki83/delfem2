@@ -1,4 +1,5 @@
-[![wercker status](https://app.wercker.com/status/03b6d924ec82270e22a04c3584fbf4de/s/master "wercker status")](https://app.wercker.com/project/byKey/03b6d924ec82270e22a04c3584fbf4de)    [![Documentation Status](https://readthedocs.org/projects/delfem2/badge/?version=latest)](https://delfem2.readthedocs.io/en/latest/?badge=latest)
+[![wercker status](https://app.wercker.com/status/03b6d924ec82270e22a04c3584fbf4de/s/master "wercker status")](https://app.wercker.com/project/byKey/03b6d924ec82270e22a04c3584fbf4de)     [![Documentation Status](https://readthedocs.org/projects/delfem2/badge/?version=latest)](https://delfem2.readthedocs.io/en/latest/?badge=latest)
+
 
 # DelFEM2
 
