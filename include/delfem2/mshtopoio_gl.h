@@ -23,12 +23,31 @@
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/funcs_gl.h"
+#include "delfem2/bv.h"
 
 class CMeshElem{
 public:
   CMeshElem(){}
   CMeshElem(const std::string& fpath){
     this->Read(fpath);
+  }
+  void Draw(){
+    glEnable(GL_LIGHTING);
+    this->DrawFace_ElemWiseNorm();
+    glDisable(GL_LIGHTING);
+    glLineWidth(1);
+    this->DrawEdge();
+  }
+  CBV3D_AABB AABB3() const{
+    CBV3D_AABB aabb;
+    double cw[6]; GetCenterWidth(cw, aPos);
+    aabb.x_min = cw[0]-0.5*cw[3];
+    aabb.x_max = cw[0]+0.5*cw[3];
+    aabb.y_min = cw[1]-0.5*cw[4];
+    aabb.y_max = cw[1]+0.5*cw[4];
+    aabb.z_min = cw[2]-0.5*cw[5];
+    aabb.z_max = cw[2]+0.5*cw[5];
+    return aabb;
   }
   void Read(const std::string& fname){
     Read_Ply(fname, aPos, aElem);
@@ -52,13 +71,6 @@ public:
     else if( elem_type == MESHELEM_QUAD ){
       if( ndim == 3 ){ DrawMeshQuad3D_Edge(aPos, aElem); }
     }
-  }
-  void Draw(){
-    glEnable(GL_LIGHTING);
-    this->DrawFace_ElemWiseNorm();
-    glDisable(GL_LIGHTING);
-    glLineWidth(1);
-    this->DrawEdge();
   }
   CMeshElem Subdiv(){
     CMeshElem em;

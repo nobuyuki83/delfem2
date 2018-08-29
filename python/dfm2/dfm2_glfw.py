@@ -80,33 +80,41 @@ class WindowGLFW:
   def keyinput(self,win0,key,scancode,action,mods):
     self.wm.keyinput(win0,key,scancode,action,mods)
 
+
+
 def winDraw3d(obj,winsize=(400,300)):
-  window = WindowGLFW(1.0,winsize)
+  #### initialize window
+  window = WindowGLFW(1.0,winsize=winsize)
+  #### initalizing opengl
   setSomeLighting()  
   glEnable(GL_POLYGON_OFFSET_FILL )
   glPolygonOffset( 1.1, 4.0 )
+  #### enter loop
   window.draw_loop(obj.draw)
 
 
 def imgDraw3d(obj,winsize=(400,300)):
+  aabb3 = obj.aabb3()
+  #### initialize window
   window = WindowGLFW(1.0,winsize=winsize,isVisible=False)
+  #### initialize opengl
   setSomeLighting()
   glEnable(GL_POLYGON_OFFSET_FILL )
   glPolygonOffset( 1.1, 4.0 )
-  ####
+  #### draw
   glClearColor(1, 1, 1, 1)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
   window.wm.camera.set_gl_camera()
   obj.draw()
   glFlush()
-#  glfw.poll_events()
-  ####
+  #### read pixel to img
   glPixelStorei(GL_PACK_ALIGNMENT, 1)
-  bytes_img = glReadPixels(0, 0, winsize[0], winsize[1], GL_RGB, GL_UNSIGNED_BYTE)
+  (buff_w,buff_h) = glGetIntegerv(GL_VIEWPORT)[2:]
+  bytes_img = glReadPixels(0, 0, buff_w, buff_h, GL_RGB, GL_UNSIGNED_BYTE)
   img = numpy.frombuffer(bytes_img, dtype=numpy.uint8)
+  #### terminate window
   glfw.destroy_window(window.win)
   glfw.terminate()
-  img = numpy.reshape(img,(winsize[1],winsize[0],3))
-#  img = numpy.zeros((winsize[1],winsize[0],3))
-  #img[:,:,0] = 0.5
+  #### reshape the img array
+  img = numpy.reshape(img,(buff_h,buff_w,3))
   return img
