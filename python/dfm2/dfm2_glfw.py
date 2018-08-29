@@ -43,6 +43,9 @@ class WindowManagerGLFW:
 
 
 class WindowGLFW:
+  """
+  class to manage the glfw window
+  """
   def __init__(self,view_height,winsize=(400,300),isVisible=True):
     if glfw.init() == GL_FALSE:
       print("GLFW couldn't not initialize!")
@@ -94,6 +97,13 @@ def winDraw3d(obj,winsize=(400,300)):
 
 
 def imgDraw3d(obj,winsize=(400,300)):
+  """
+  draw a this object into Numpy uint8 array
+
+  obj -- the object to draw
+
+  winsize -- the size of the window
+  """
   #### set camera
   aabb3 = obj.aabb3()
   mmxy = aabb3.minMaxLocXY([1.,0.,0.],[0.,1.,0.])

@@ -28,20 +28,29 @@ void init_mshtopoio_gl(py::module &m);
 PYBIND11_MODULE(_dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
   // aabb
-  py::class_<CBV3D_AABB>(m,"AABB")
+  py::class_<CBV3D_AABB>(m,"AABB3",
+                         "three dimensional axis aligned bounding box class")
   .def(py::init<>())
-  .def("minMaxLocXY",&CBV3D_AABB::MinMaxLocXY);
+  .def("minMaxLocXY",
+       &CBV3D_AABB::MinMaxLocXY,
+       "get range of the x and y local coordiante");
   
   // mesh
   init_mshtopoio_gl(m);
   
   // voxel
-  py::class_<CVoxelGrid>(m, "VoxelGrid")
+  py::class_<CVoxelGrid>(m, "VoxelGrid",
+                         "voxel grid class")
   .def(py::init<>())
-  .def("add",&CVoxelGrid::Add);
-  m.def("meshQuad3d_voxelGrid", &MeshQuad3D_VoxelGrid);
+  .def("add",&CVoxelGrid::Add,"add voxel at the integer coordinate");
+  
+  m.def("meshQuad3d_voxelGrid",
+        &MeshQuad3D_VoxelGrid,
+        "get quad mesh from voxel grid");
   
   // gl misc
-  m.def("setSomeLighting", &setSomeLighting);
+  m.def("setSomeLighting",
+        &setSomeLighting,
+        "set some lighting that looks good for me");
 }
 

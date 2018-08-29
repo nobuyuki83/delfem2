@@ -22,8 +22,24 @@ Indices and tables
 * :ref:`search`
 
 
+Rule
+====
 Coding and naming rule can be found here: :doc:`coding_rule`
 
 
-.. automodule:: dfm2
-   :members:
+Refence
+=======
+
+.. autofunction:: dfm2.winDraw3d
+
+.. autofunction:: dfm2.imgDraw3d
+
+.. autofunction:: dfm2.setSomeLighting
+
+.. autoclass::  dfm2.AABB3
+   :undoc-members:
+
+.. autoclass:: dfm2.VoxelGrid
+   :undoc-members:
+
+.. autofunction:: dfm2.meshQuad3d_voxelGrid
