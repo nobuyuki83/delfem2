@@ -9,10 +9,7 @@ def draw_func():
   glEnable(GL_LIGHTING)
   glutSolidTeapot(0.5)
 
-def main():
-  win = dfm2.WindowGLUT(1.0,winsize=(400,300));
-  dfm2.setSomeLighting()
-  win.draw_loop(draw_func)
+win = dfm2.WindowGLUT(1.0,winsize=(400,300));
+dfm2.setSomeLighting()
+win.draw_loop(draw_func)
 
-if __name__ == "__main__":  
-  main()
