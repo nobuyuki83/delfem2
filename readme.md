@@ -39,14 +39,14 @@ make
 
 | Name | Screen Shot |
 | ------------- | ------------- |
-| triangulation | ![triangulation](img/screenshot_triangulation.png) |
-| transform_handler  | ![handler](img/screenshot_handler.png) |
-| cloth_internal | ![cloth_internal](img/screenshot_clothinternal.png) |
-| subdiv | ![subdiv](img/screenshot_subdiv.png) |
-| read_bvh | ![read_bvh](img/screenshot_readbvh.png) |
-| exponential_map | ![expmap](img/screenshot_expmap.png) |
-| selfcollision_bvh | ![selfcollisionbvh](img/screenshot_selfcollisionbvh.png) |
-| edge_collapse | ![edgecollapse](img/screenshot_edgecollapse.png) |
+| triangulation | ![triangulation](docs/screenshot_triangulation.png) |
+| transform_handler  | ![handler](docs/screenshot_handler.png) |
+| cloth_internal | ![cloth_internal](docs/screenshot_clothinternal.png) |
+| subdiv | ![subdiv](docs/screenshot_subdiv.png) |
+| read_bvh | ![read_bvh](docs/screenshot_readbvh.png) |
+| exponential_map | ![expmap](docs/screenshot_expmap.png) |
+| selfcollision_bvh | ![selfcollisionbvh](docs/screenshot_selfcollisionbvh.png) |
+| edge_collapse | ![edgecollapse](docs/screenshot_edgecollapse.png) |
 
 
 ## Coding
@@ -64,15 +64,15 @@ make
 
 Based on the elemnt index rule in VTK( https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf )
 
-![element index](./img/element_index.png)
+![element index](./docs/element_index.png)
 
 
 ### Coordinate for the Depth Computation
 
-![depth_coord](./img/depth.png)
+![depth_coord](./docs/depth.png)
 
 
-### Naming Convention
+### Naming Convention (cpp)
 * use the extension ".h" instead of ".hpp"
 * filename should be in lower case. The underscore represent depndency. For example "aa_bb.cpp" means this is a implementation of class "aaa" and it depends on a class "bbb"
 * The function name should be written in camel case notation that sarts with upper case letter (e.g., Verb_Object_Adverb)
@@ -82,13 +82,13 @@ Based on the elemnt index rule in VTK( https://www.vtk.org/wp-content/uploads/20
   * IsInside
   * Volume
   * Area
-* Read Write
-  * Read <-> Write
-  * Load <-> Save
+* Use Read <-> Write for the file io. Don't use Load <-> Save
 * Naming Point
-  * CAD Vertex -> Vertex
-  * Mesh Point -> Point
-  * point index inside element (may be on edge or on face) -> Node
+  * aXY -> general 2D point
+  * aXYZ-> general 3D point
+  * CAD vertex -> Vertex
+  * Mesh corner point -> Point
+  * FEM points it can be inside an element (may be on edge or on face) -> Node
 * How to call a mesh?
   * MeshTri3D
   * MeshQuad2D
