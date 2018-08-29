@@ -29,7 +29,8 @@ PYBIND11_MODULE(_dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
   // aabb
   py::class_<CBV3D_AABB>(m,"AABB")
-  .def(py::init<>());
+  .def(py::init<>())
+  .def("minMaxLocXY",&CBV3D_AABB::MinMaxLocXY);
   
   // mesh
   init_mshtopoio_gl(m);
