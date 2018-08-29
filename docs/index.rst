@@ -3,12 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to delfem2's documentation!
-===================================
+DelFEM2 toolset for geometry processing and FEM
+===============================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   coding_rule
 
 
 
@@ -18,3 +20,10 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+Coding and naming rule can be found here: :doc:`coding_rule`
+
+
+.. automodule:: dfm2
+   :members:
