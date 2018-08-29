@@ -36,3 +36,4 @@ examples/models/fbx
 examples/models/step
 examples/models/bvh
 projects_sub
+docs/_build/

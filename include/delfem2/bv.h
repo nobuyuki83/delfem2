@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <assert.h>
+#include <vector>
 
 //! 3D bounding box class
 class CBV3D_AABB
@@ -137,6 +138,15 @@ public:
       && y >= y_min && y <= y_max
       && z >= z_min && z <= z_max ) return true;
    return false;
+  }
+  std::vector<double> MinMaxLocXY(const std::vector<double>& a,
+                                  const std::vector<double>& b) const
+  {
+    std::cout << a[0] << " " << a[1] << " " << a[2] << std::endl;
+    std::cout << b[0] << " " << b[1] << " " << b[2] << std::endl;
+    std::vector<double> mmxy;
+    mmxy.push_back(0.0);
+    return mmxy;
   }
 public:
 	double x_min,x_max,  y_min,y_max,  z_min,z_max;

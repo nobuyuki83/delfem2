@@ -94,7 +94,10 @@ def winDraw3d(obj,winsize=(400,300)):
 
 
 def imgDraw3d(obj,winsize=(400,300)):
+  #### set camera
   aabb3 = obj.aabb3()
+  mmxy = aabb3.minMaxLocXY([1.,0.,0.],[0.,1.,0.])
+  print(mmxy)
   #### initialize window
   window = WindowGLFW(1.0,winsize=winsize,isVisible=False)
   #### initialize opengl
