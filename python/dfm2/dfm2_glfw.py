@@ -1,4 +1,6 @@
 from OpenGL.GL import *
+import numpy
+
 import glfw
 from .dfm2_gl import Camera
 from ._dfm2 import *
@@ -41,8 +43,11 @@ class WindowManagerGLFW:
 
 
 class WindowGLFW:
-  def __init__(self,view_height,winsize=(400,300)):
-    glfw.init()
+  def __init__(self,view_height,winsize=(400,300),isVisible=True):
+    if glfw.init() == GL_FALSE:
+      print("GLFW couldn't not initialize!")
+    if not isVisible:
+      glfw.window_hint(glfw.VISIBLE, False)
     self.win = glfw.create_window(winsize[0], winsize[1], '3D Window', None, None)
     glfw.make_context_current(self.win)
     ###
@@ -76,8 +81,32 @@ class WindowGLFW:
     self.wm.keyinput(win0,key,scancode,action,mods)
 
 def winDraw3d(obj,winsize=(400,300)):
-  window = WindowGLFW(1.0,winsize);
+  window = WindowGLFW(1.0,winsize)
   setSomeLighting()  
-  glEnable(GL_POLYGON_OFFSET_FILL );
-  glPolygonOffset( 1.1, 4.0 );
+  glEnable(GL_POLYGON_OFFSET_FILL )
+  glPolygonOffset( 1.1, 4.0 )
   window.draw_loop(obj.draw)
+
+
+def imgDraw3d(obj,winsize=(400,300)):
+  window = WindowGLFW(1.0,winsize=winsize,isVisible=False)
+  setSomeLighting()
+  glEnable(GL_POLYGON_OFFSET_FILL )
+  glPolygonOffset( 1.1, 4.0 )
+  ####
+  glClearColor(1, 1, 1, 1)
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+  window.wm.camera.set_gl_camera()
+  obj.draw()
+  glFlush()
+#  glfw.poll_events()
+  ####
+  glPixelStorei(GL_PACK_ALIGNMENT, 1)
+  bytes_img = glReadPixels(0, 0, winsize[0], winsize[1], GL_RGB, GL_UNSIGNED_BYTE)
+  img = numpy.frombuffer(bytes_img, dtype=numpy.uint8)
+  glfw.destroy_window(window.win)
+  glfw.terminate()
+  img = numpy.reshape(img,(winsize[1],winsize[0],3))
+#  img = numpy.zeros((winsize[1],winsize[0],3))
+  #img[:,:,0] = 0.5
+  return img
