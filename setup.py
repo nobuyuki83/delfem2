@@ -5,4 +5,4 @@ setup(name='delfem2',
       description='a codebase for geometry processing and finite element method simulation',
       author='Nobuyuki Umetani',
       author_email='n.umetani@gmail.com',
-      url='http://nobuyuki.umetani.com')
+      url='https://delfem2.readthedocs.io/')
