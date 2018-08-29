@@ -16,6 +16,7 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+from recommonmark.parser import CommonMarkParser
 
 # -- Project information -----------------------------------------------------
 
@@ -24,9 +25,9 @@ copyright = '2018, Nobuyuki Umetani'
 author = 'Nobuyuki Umetani'
 
 # The short X.Y version
-version = 'ver 0.0'
+version = '0.0.0'
 # The full version, including alpha/beta/rc tags
-release = 'ver 0.0'
+release = '0.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -44,11 +45,15 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+ source_suffix = ['.rst', '.md']
+#source_suffix = '.rst'
+source_parsers = {
+    '.md': CommonMarkParser,
+}
 
 # The master toctree document.
 master_doc = 'index'
