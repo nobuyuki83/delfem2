@@ -7,9 +7,9 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -O2")
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
-set(DELFEM2_INCLUDE_DIR "../include")
-set(DELFEM2_SRC         "../src")
-set(DELFEM2_INC         "../include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
+set(DELFEM2_SRC         "../src_cpp/cpp")
+set(DELFEM2_INC         "../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
