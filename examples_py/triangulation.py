@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 
 import sys
-sys.path.append("../python")
+sys.path.append("../module_py")
 import dfm2
 
 aXYVertexOuterLoop = [0,0, 1,0, 1,1, 0,1]

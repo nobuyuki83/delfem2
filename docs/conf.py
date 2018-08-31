@@ -14,8 +14,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../python'))
-print(sys.path)
+sys.path.insert(0, os.path.abspath('../module_py'))
 
 # -- Project information -----------------------------------------------------
 

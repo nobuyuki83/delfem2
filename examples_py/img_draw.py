@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import sys
-sys.path.append("../python")
+sys.path.append("../module_py")
 import dfm2
 
 mshelm = dfm2.MeshElem("../test_inputs/bunny_2k.ply")

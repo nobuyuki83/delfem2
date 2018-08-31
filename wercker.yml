@@ -47,7 +47,7 @@ build:
     - script: 
         name: compile python binding
         code: |
-          cd python
+          cd module_py
           mkdir buildMake
           cd buildMake
           cmake ..

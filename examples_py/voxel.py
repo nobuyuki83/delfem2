@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 
 import sys
-sys.path.append("../python")
+sys.path.append("../module_py")
 import dfm2
 
 mshelm = None
