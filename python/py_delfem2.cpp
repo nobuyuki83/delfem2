@@ -25,7 +25,7 @@ namespace py = pybind11;
 
 void init_mshtopoio_gl(py::module &m);
 
-PYBIND11_MODULE(_dfm2, m) {
+PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
   // aabb
   py::class_<CBV3D_AABB>(m,"AABB3",
