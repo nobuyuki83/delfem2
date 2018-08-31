@@ -23,7 +23,7 @@ build:
     - script:
         name: compile glfw
         code: |
-          cd external/glfw
+          cd src_cpp/external/glfw
           cmake .
           make
     - script:
