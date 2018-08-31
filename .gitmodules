@@ -7,3 +7,6 @@
 [submodule "module_py/pybind11"]
 	path = module_py/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "src_cpp/external/glfw"]
+	path = src_cpp/external/glfw
+	url = https://github.com/glfw/glfw.git
