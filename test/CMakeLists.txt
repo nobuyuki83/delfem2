@@ -4,9 +4,9 @@ project(testGeoSim)
 # Setup testing
 enable_testing()
 
-set(DELFEM2_INCLUDE_DIR "../include")
-set(DELFEM2_INC         "../include/delfem2")
-set(DELFEM2_SRC         "../src")
+set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
+set(DELFEM2_INC         "../src_cpp/include/delfem2")
+set(DELFEM2_SRC         "../src_cpp/cpp")
 
 set(GTEST_INCLUDE_DIR  "googletest/googletest/include")
 

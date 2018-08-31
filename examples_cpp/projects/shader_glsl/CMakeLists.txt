@@ -3,9 +3,9 @@ project(test_glsl)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g -std=c++11" )
 
-set(DELFEM2_INCLUDE "../../../include")
-set(DELFEM2_SRC     "../../../src")
-set(DELFEM2_INC     "../../../include/delfem2")
+set(DELFEM2_INCLUDE "../../../src_cpp/include")
+set(DELFEM2_SRC     "../../../src_cpp/cpp")
+set(DELFEM2_INC     "../../../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
