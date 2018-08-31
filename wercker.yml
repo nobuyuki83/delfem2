@@ -55,7 +55,7 @@ build:
     - script:
         name: compile cpp examples
         code: |
-          cd examples
+          cd examples_cpp
           mkdir buildMake
           cd buildMake
           cmake ..

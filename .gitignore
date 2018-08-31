@@ -38,3 +38,4 @@ examples/models/step
 examples/models/bvh
 projects_sub
 docs/_build/
+examples_cpp/bin
