@@ -3,7 +3,7 @@ import numpy
 
 import glfw
 from .dfm2_gl import Camera
-from ._dfm2 import *
+from .dfm2 import *
 
 class WindowManagerGLFW:
   def __init__(self,view_height):
