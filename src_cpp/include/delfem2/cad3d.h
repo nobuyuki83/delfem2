@@ -83,13 +83,13 @@ public:
       aP[ip] = getPointCubicBezierCurve(t, p0, q0, q1, p1);
     }
   }
-  void Initialize(const std::vector<CCad3D_Vertex>& aCP, double elen){
-    p0 = aCP[iv0].pos;
-    p1 = aCP[iv1].pos;
+  void Initialize(const std::vector<CCad3D_Vertex>& aVertex, double elen){
+    p0 = aVertex[iv0].pos;
+    p1 = aVertex[iv1].pos;
     double len = Distance(p0, p1);
     const int ndiv = len/elen;
     aP.resize((ndiv+1));
-    MovePoints(aCP);
+    MovePoints(aVertex);
   }
   bool isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const;
   bool GetParameterIntersection(double& t, const CVector3& org, const CVector3& nrm) const {

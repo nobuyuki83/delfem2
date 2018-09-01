@@ -907,12 +907,11 @@ void DrawMeshTri3D_FaceEdge
 /////////////////////////////////////
 
 void DrawMeshTri2D_Face
-(std::vector<int>& aTri,
- std::vector<double>& aXY)
+(const std::vector<int>& aTri,
+ const std::vector<double>& aXY)
 {
   const int ntri = (int)aTri.size()/3;
   //  const int nxys = (int)aXY.size()/2;
-  ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
   for(int itri=0;itri<ntri;itri++){
     //      double color[3];
@@ -930,9 +929,9 @@ void DrawMeshTri2D_Face
 }
 
 void DrawMeshTri2D_FaceDisp2D
-(std::vector<int>& aTri,
- std::vector<double>& aXY,
- std::vector<double>& aDisp)
+(const std::vector<int>& aTri,
+ const std::vector<double>& aXY,
+ const std::vector<double>& aDisp)
 {
   const int ntri = (int)aTri.size()/3;
   //  const int nxys = (int)aXY.size()/2;
@@ -970,8 +969,8 @@ void DrawMeshTri2D_FaceDisp2D
 
 
 void DrawMeshTri2D_Edge
-(std::vector<int>& aTri,
- std::vector<double>& aXY)
+(const std::vector<int>& aTri,
+ const std::vector<double>& aXY)
 {
   const unsigned int ntri = (int)aTri.size()/3;
   //  const unsigned int nxys = (int)aXY.size()/2;

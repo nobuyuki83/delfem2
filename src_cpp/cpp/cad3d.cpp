@@ -162,7 +162,7 @@ void FaceCenterNormal(
 ///////////////////////////////////////
 
 void CCad3D_Face::Initialize
-(const std::vector<CCad3D_Vertex>& aCtrlPoint,
+(const std::vector<CCad3D_Vertex>& aVertex,
  const std::vector<CCad3D_Edge>& aEdge,
  double elen)
 {
@@ -245,7 +245,7 @@ void CCad3D_Face::Initialize
     MeanValueCoordinate2D(pinfo.aW1,x0,y0,aXY_B1);
     aPInfo.push_back(pinfo);
   }
-  MovePoints(aCtrlPoint,aEdge);
+  MovePoints(aVertex,aEdge);
 }
 
 void CCad3D_Face::MovePoints
