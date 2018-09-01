@@ -22,7 +22,7 @@
 
 #include "delfem2/cad3d.h"
 
-void CVertex::Draw(bool is_selected, int ielem, double view_height) const
+void CCad3D_Vertex::Draw(bool is_selected, int ielem, double view_height) const
 {
   ::glDisable(GL_LIGHTING);
   if( is_selected ){
@@ -61,7 +61,7 @@ void CVertex::Draw(bool is_selected, int ielem, double view_height) const
 //  ::DrawArrow(pos, -norm*0.15);
 }
 
-void CEdge::DrawLine(bool is_picked, double view_height) const
+void CCad3D_Edge::DrawLine(bool is_picked, double view_height) const
 {
   ::glDisable(GL_LIGHTING);
   if( is_picked ){
@@ -79,7 +79,7 @@ void CEdge::DrawLine(bool is_picked, double view_height) const
   ::glEnd();
 }
 
-void CEdge::DrawHandler(int ielem_picked, double view_height) const
+void CCad3D_Edge::DrawHandler(int ielem_picked, double view_height) const
 {
   ::glColor3d(0,1,0);
   DrawCylinder(p0, q0, view_height*0.01);
@@ -108,7 +108,7 @@ void CEdge::DrawHandler(int ielem_picked, double view_height) const
 }
 
 
-bool CEdge::isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const
+bool CCad3D_Edge::isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const
 {
   const int np = (int)aP.size();
   for(int ie=0;ie<np-1;ie++){
@@ -131,7 +131,7 @@ void FaceCenterNormal(
   CVector3& cg, 
   CVector3& nf,
   const std::vector< std::pair<int,bool> >& aIE,
-  const std::vector<CEdge>& aEdge)
+  const std::vector<CCad3D_Edge>& aEdge)
 {
   const  int nIE = aIE.size();
   cg.SetZero();
@@ -161,9 +161,9 @@ void FaceCenterNormal(
 
 ///////////////////////////////////////
 
-void CFace::Initialize
-(const std::vector<CVertex>& aCtrlPoint,
- const std::vector<CEdge>& aEdge,
+void CCad3D_Face::Initialize
+(const std::vector<CCad3D_Vertex>& aCtrlPoint,
+ const std::vector<CCad3D_Edge>& aEdge,
  double elen)
 {
   aPInfo.resize(0);
@@ -173,7 +173,7 @@ void CFace::Initialize
   for(int iie=0;iie<aIE.size();++iie){
     int ie0 = aIE[iie].first;
     assert( ie0>=0 && ie0<aEdge.size() );
-    const CEdge& e0 = aEdge[ie0];
+    const CCad3D_Edge& e0 = aEdge[ie0];
     const bool dir0 = aIE[iie].second;
     int iv0 = (dir0) ? e0.iv0 : e0.iv1;
     {
@@ -207,7 +207,7 @@ void CFace::Initialize
       int iie1 = (iie+ne-1)%ne; // back
       int ie1 = aIE[iie1].first;
       assert( ie1>=0 && ie1<aEdge.size() );
-      const CEdge& e1 = aEdge[ie1];
+      const CCad3D_Edge& e1 = aEdge[ie1];
       bool dir1 = aIE[iie1].second;
       int iv1 = (dir1) ? e1.iv1 : e1.iv0;
       assert( iv0 == iv1 );
@@ -248,9 +248,9 @@ void CFace::Initialize
   MovePoints(aCtrlPoint,aEdge);
 }
 
-void CFace::MovePoints
-(const std::vector<CVertex>& aVertex,
- const std::vector<CEdge>& aEdge)
+void CCad3D_Face::MovePoints
+(const std::vector<CCad3D_Vertex>& aVertex,
+ const std::vector<CCad3D_Edge>& aEdge)
 {
   aXYZ.resize(aPInfo.size()*3);
   for(int ip=0;ip<aPInfo.size();++ip){
@@ -358,19 +358,19 @@ void CFace::MovePoints
   MakeNormal(aNorm, aXYZ, aTri);
 }
 
-void CFace::DrawFace() const
+void CCad3D_Face::DrawFace() const
 {
   DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
 }
 
-void CFace::DrawBackFace() const
+void CCad3D_Face::DrawBackFace() const
 {
   ::glEnable(GL_LIGHTING);
   ::myGlColorDiffuse(CColor::Gray(0.9));
   DrawMeshTri3D_FaceNorm_XYsym(aXYZ, aTri);
 }
 
-void CFace::DrawEdge() const
+void CCad3D_Face::DrawEdge() const
 {
   ::glLineWidth(1);
   DrawMeshTri3D_Edge(aXYZ, aTri);
@@ -381,9 +381,9 @@ void CFace::DrawEdge() const
 
 int AddPointEdge
 (int ie_div, double ratio_edge,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen)
 {
   if( ie_div < 0 || ie_div >= aEdge.size() ) return -1;
@@ -392,7 +392,7 @@ int AddPointEdge
   {
     CVector3 nv;
     for (int ifc = 0; ifc<aFace.size(); ++ifc){       
-      const CFace& fc = aFace[ifc];       
+      const CCad3D_Face& fc = aFace[ifc];       
       for (int ie = 0; ie<fc.aIE.size(); ++ie){
         if (fc.aIE[ie].first!=ie_div) continue;         
         CVector3 cg, nf;
@@ -403,7 +403,7 @@ int AddPointEdge
     nv.SetNormalizedVector();
     //////
     CVector3 p = aEdge[ie_div].GetPosInEdge(ratio_edge);
-    CVertex v(p);
+    CCad3D_Vertex v(p);
     {
       int ien = aEdge[ie_div].inorm;
       v.isConst[ien] = true;
@@ -419,11 +419,11 @@ int AddPointEdge
     aEdge[ie_div].Initialize(aVertex,elen);
   }
   const int ie_new = (int)aEdge.size();
-  aEdge.push_back( CEdge(iv_new,iv1,aEdge[ie_div].is_sim,aEdge[ie_div].inorm) );
+  aEdge.push_back( CCad3D_Edge(iv_new,iv1,aEdge[ie_div].is_sim,aEdge[ie_div].inorm) );
   aEdge[ie_new].Initialize(aVertex,elen);
   
   for(int ifc=0;ifc<aFace.size();++ifc){
-    CFace& fc = aFace[ifc];
+    CCad3D_Face& fc = aFace[ifc];
     for(int ie=0;ie<fc.aIE.size();++ie){
       if(fc.aIE[ie].first!=ie_div) continue;
       if(fc.aIE[ie].second){
@@ -441,9 +441,9 @@ int AddPointEdge
 
 void ConectEdge
 (int iv0, int iv1, int iface_div, int inorm_new,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen)
 {
   if( iface_div < 0 || iface_div >= (int)aFace.size() ) return;
@@ -470,7 +470,7 @@ void ConectEdge
   }
   ////////////
   const int ie_new = (int)aEdge.size();
-  aEdge.push_back( CEdge(iv0,iv1,false,inorm_new) );
+  aEdge.push_back( CCad3D_Edge(iv0,iv1,false,inorm_new) );
   aEdge[ie_new].Initialize(aVertex,elen);
   
   const std::vector< std::pair<int,bool> > aIE = aFace[iface_div].aIE;
@@ -490,7 +490,7 @@ void ConectEdge
     for(int iie=iie0;iie%nie!=iie1;++iie){
       aIE0.push_back( aIE[iie%nie] );
     }
-    CFace face(aIE0);
+    CCad3D_Face face(aIE0);
     face.Initialize(aVertex, aEdge, elen);
     aFace.push_back(face);
   }
@@ -503,9 +503,9 @@ void ConectEdge
 }
 
 void MakeItSmooth
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace)
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace)
 {
   for(int iv=0;iv<aVertex.size();++iv){
     aVertex[iv].norm.SetZero();
@@ -543,8 +543,8 @@ void MakeItSmooth
 void findEdgeGroup
 (std::vector< std::pair<int,bool> >& aIE,
  int iedge0,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge)
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge)
 {
   aIE.clear();
   if( iedge0 < 0 || iedge0 >= aEdge.size() ) return;
@@ -595,28 +595,28 @@ void findEdgeGroup
 }
 
 void AddSphere_ZSym
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen)
 {
   int icp0 = (int)aVertex.size();
-  aVertex.push_back( CVertex(CVector3(-1, 0, 0)) ); // icp0+0
-  aVertex.push_back( CVertex(CVector3( 0,+1, 0)) ); // icp0+1
-  aVertex.push_back( CVertex(CVector3(+1, 0, 0)) ); // icp0+2
-  aVertex.push_back( CVertex(CVector3( 0,-1, 0)) ); // icp0+3
-  aVertex.push_back( CVertex(CVector3( 0, 0,+1)) ); // icp0+4
+  aVertex.push_back( CCad3D_Vertex(CVector3(-1, 0, 0)) ); // icp0+0
+  aVertex.push_back( CCad3D_Vertex(CVector3( 0,+1, 0)) ); // icp0+1
+  aVertex.push_back( CCad3D_Vertex(CVector3(+1, 0, 0)) ); // icp0+2
+  aVertex.push_back( CCad3D_Vertex(CVector3( 0,-1, 0)) ); // icp0+3
+  aVertex.push_back( CCad3D_Vertex(CVector3( 0, 0,+1)) ); // icp0+4
   ////
   ////
   int ie0 = (int)aEdge.size();
-  CEdge e0(icp0+0,icp0+1,true,2);
-  CEdge e1(icp0+1,icp0+2,true,2);
-  CEdge e2(icp0+2,icp0+3,true,2);
-  CEdge e3(icp0+3,icp0+0,true,2);
-  CEdge e4(icp0+4,icp0+0,false,1);
-  CEdge e5(icp0+4,icp0+1,false,0);
-  CEdge e6(icp0+2,icp0+4,false,1);
-  CEdge e7(icp0+3,icp0+4,false,0);
+  CCad3D_Edge e0(icp0+0,icp0+1,true,2);
+  CCad3D_Edge e1(icp0+1,icp0+2,true,2);
+  CCad3D_Edge e2(icp0+2,icp0+3,true,2);
+  CCad3D_Edge e3(icp0+3,icp0+0,true,2);
+  CCad3D_Edge e4(icp0+4,icp0+0,false,1);
+  CCad3D_Edge e5(icp0+4,icp0+1,false,0);
+  CCad3D_Edge e6(icp0+2,icp0+4,false,1);
+  CCad3D_Edge e7(icp0+3,icp0+4,false,0);
   aEdge.push_back(e0);
   aEdge.push_back(e1);
   aEdge.push_back(e2);
@@ -632,28 +632,28 @@ void AddSphere_ZSym
     aIE.push_back( std::make_pair(ie0+0,false) );
     aIE.push_back( std::make_pair(ie0+4,false ) );
     aIE.push_back( std::make_pair(ie0+5,true) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
     aIE.push_back( std::make_pair(ie0+1,false) );
     aIE.push_back( std::make_pair(ie0+5,false) );
     aIE.push_back( std::make_pair(ie0+6,false) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
     aIE.push_back( std::make_pair(ie0+2,false) );
     aIE.push_back( std::make_pair(ie0+6,true ) );
     aIE.push_back( std::make_pair(ie0+7,false) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
     aIE.push_back( std::make_pair(ie0+3,false) );
     aIE.push_back( std::make_pair(ie0+7,true ) );
     aIE.push_back( std::make_pair(ie0+4,true) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   {
     for(int iv=0;iv<aVertex.size();++iv){
@@ -681,20 +681,20 @@ void AddSphere_ZSym
 }
 
 void AddTorus_XSym
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen)
 {
   int icp0 = (int)aVertex.size();
-  aVertex.push_back( CVertex(CVector3(0,-1.0, 0.0)) ); // icp0+0
-  aVertex.push_back( CVertex(CVector3(0,-0.3, 0.0)) ); // icp0+0
-  aVertex.push_back( CVertex(CVector3(0, 0.0,+1.0)) ); // icp0+1
-  aVertex.push_back( CVertex(CVector3(0, 0.0,+0.3)) ); // icp0+1
-  aVertex.push_back( CVertex(CVector3(0,+1.0, 0.0)) ); // icp0+2
-  aVertex.push_back( CVertex(CVector3(0,+0.3, 0.0)) ); // icp0+2
-  aVertex.push_back( CVertex(CVector3(0, 0.0,-1.0)) ); // icp0+3
-  aVertex.push_back( CVertex(CVector3(0, 0.0,-0.3)) ); // icp0+3
+  aVertex.push_back( CCad3D_Vertex(CVector3(0,-1.0, 0.0)) ); // icp0+0
+  aVertex.push_back( CCad3D_Vertex(CVector3(0,-0.3, 0.0)) ); // icp0+0
+  aVertex.push_back( CCad3D_Vertex(CVector3(0, 0.0,+1.0)) ); // icp0+1
+  aVertex.push_back( CCad3D_Vertex(CVector3(0, 0.0,+0.3)) ); // icp0+1
+  aVertex.push_back( CCad3D_Vertex(CVector3(0,+1.0, 0.0)) ); // icp0+2
+  aVertex.push_back( CCad3D_Vertex(CVector3(0,+0.3, 0.0)) ); // icp0+2
+  aVertex.push_back( CCad3D_Vertex(CVector3(0, 0.0,-1.0)) ); // icp0+3
+  aVertex.push_back( CCad3D_Vertex(CVector3(0, 0.0,-0.3)) ); // icp0+3
   aVertex[icp0+0].norm = CVector3(0,-1,0);
   aVertex[icp0+1].norm = CVector3(0,+1,0);
   aVertex[icp0+2].norm = CVector3(0,0,+1);
@@ -705,18 +705,18 @@ void AddTorus_XSym
   aVertex[icp0+7].norm = CVector3(0,0,+1);
   /////
   int ie0 = (int)aEdge.size();
-  aEdge.push_back( CEdge(icp0+0,icp0+2,true,0) ); // 0
-  aEdge.push_back( CEdge(icp0+2,icp0+4,true,0) ); // 1
-  aEdge.push_back( CEdge(icp0+4,icp0+6,true,0) ); // 2
-  aEdge.push_back( CEdge(icp0+6,icp0+0,true,0) ); // 3
-  aEdge.push_back( CEdge(icp0+3,icp0+1,true,0) ); // 4
-  aEdge.push_back( CEdge(icp0+5,icp0+3,true,0) ); // 5
-  aEdge.push_back( CEdge(icp0+7,icp0+5,true,0) ); // 6
-  aEdge.push_back( CEdge(icp0+1,icp0+7,true,0) ); // 7
-  aEdge.push_back( CEdge(icp0+1,icp0+0,false,2) ); // 8
-  aEdge.push_back( CEdge(icp0+3,icp0+2,false,1) ); // 9
-  aEdge.push_back( CEdge(icp0+4,icp0+5,false,2) ); // 10
-  aEdge.push_back( CEdge(icp0+6,icp0+7,false,1) ); // 11
+  aEdge.push_back( CCad3D_Edge(icp0+0,icp0+2,true,0) ); // 0
+  aEdge.push_back( CCad3D_Edge(icp0+2,icp0+4,true,0) ); // 1
+  aEdge.push_back( CCad3D_Edge(icp0+4,icp0+6,true,0) ); // 2
+  aEdge.push_back( CCad3D_Edge(icp0+6,icp0+0,true,0) ); // 3
+  aEdge.push_back( CCad3D_Edge(icp0+3,icp0+1,true,0) ); // 4
+  aEdge.push_back( CCad3D_Edge(icp0+5,icp0+3,true,0) ); // 5
+  aEdge.push_back( CCad3D_Edge(icp0+7,icp0+5,true,0) ); // 6
+  aEdge.push_back( CCad3D_Edge(icp0+1,icp0+7,true,0) ); // 7
+  aEdge.push_back( CCad3D_Edge(icp0+1,icp0+0,false,2) ); // 8
+  aEdge.push_back( CCad3D_Edge(icp0+3,icp0+2,false,1) ); // 9
+  aEdge.push_back( CCad3D_Edge(icp0+4,icp0+5,false,2) ); // 10
+  aEdge.push_back( CCad3D_Edge(icp0+6,icp0+7,false,1) ); // 11
   for(int ie=ie0+8;ie<ie0+12;++ie){
     aEdge[ie].r0 = 1;
     aEdge[ie].r1 = 1;
@@ -732,7 +732,7 @@ void AddTorus_XSym
     aIE.push_back( std::make_pair(ie0+8,false) );
     aIE.push_back( std::make_pair(ie0+4,false) );
     aIE.push_back( std::make_pair(ie0+9,true ) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
@@ -740,7 +740,7 @@ void AddTorus_XSym
     aIE.push_back( std::make_pair(ie0+9,false) );
     aIE.push_back( std::make_pair(ie0+5,false) );
     aIE.push_back( std::make_pair(ie0+10,false ) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
@@ -748,7 +748,7 @@ void AddTorus_XSym
     aIE.push_back( std::make_pair(ie0+10,true) );
     aIE.push_back( std::make_pair(ie0+6,false) );
     aIE.push_back( std::make_pair(ie0+11,false ) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
@@ -756,7 +756,7 @@ void AddTorus_XSym
     aIE.push_back( std::make_pair(ie0+11,true) );
     aIE.push_back( std::make_pair(ie0+7,false) );
     aIE.push_back( std::make_pair(ie0+8,true ) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   {
     for(int iv=0;iv<aVertex.size();++iv){
@@ -781,28 +781,28 @@ void AddTorus_XSym
 
 
 void AddSphere_XSym
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen)
 {
   int icp0 = (int)aVertex.size();
-  aVertex.push_back( CVertex(CVector3(0,-1, 0)) ); // icp0+0
-  aVertex.push_back( CVertex(CVector3(0, 0,+1)) ); // icp0+1
-  aVertex.push_back( CVertex(CVector3(0,+1, 0)) ); // icp0+2
-  aVertex.push_back( CVertex(CVector3(0, 0,-1)) ); // icp0+3
-  aVertex.push_back( CVertex(CVector3(1, 0, 0)) ); // icp0+4
+  aVertex.push_back( CCad3D_Vertex(CVector3(0,-1, 0)) ); // icp0+0
+  aVertex.push_back( CCad3D_Vertex(CVector3(0, 0,+1)) ); // icp0+1
+  aVertex.push_back( CCad3D_Vertex(CVector3(0,+1, 0)) ); // icp0+2
+  aVertex.push_back( CCad3D_Vertex(CVector3(0, 0,-1)) ); // icp0+3
+  aVertex.push_back( CCad3D_Vertex(CVector3(1, 0, 0)) ); // icp0+4
   ////
   ////
   int ie0 = (int)aEdge.size();
-  CEdge e0(icp0+0,icp0+1,true,0);
-  CEdge e1(icp0+1,icp0+2,true,0);
-  CEdge e2(icp0+2,icp0+3,true,0);
-  CEdge e3(icp0+3,icp0+0,true,0);
-  CEdge e4(icp0+4,icp0+0,false,2);
-  CEdge e5(icp0+4,icp0+1,false,1);
-  CEdge e6(icp0+2,icp0+4,false,2);
-  CEdge e7(icp0+3,icp0+4,false,1);
+  CCad3D_Edge e0(icp0+0,icp0+1,true,0);
+  CCad3D_Edge e1(icp0+1,icp0+2,true,0);
+  CCad3D_Edge e2(icp0+2,icp0+3,true,0);
+  CCad3D_Edge e3(icp0+3,icp0+0,true,0);
+  CCad3D_Edge e4(icp0+4,icp0+0,false,2);
+  CCad3D_Edge e5(icp0+4,icp0+1,false,1);
+  CCad3D_Edge e6(icp0+2,icp0+4,false,2);
+  CCad3D_Edge e7(icp0+3,icp0+4,false,1);
   aEdge.push_back(e0);
   aEdge.push_back(e1);
   aEdge.push_back(e2);
@@ -818,28 +818,28 @@ void AddSphere_XSym
     aIE.push_back( std::make_pair(ie0+0,false) );
     aIE.push_back( std::make_pair(ie0+4,false ) );
     aIE.push_back( std::make_pair(ie0+5,true) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
     aIE.push_back( std::make_pair(ie0+1,false) );
     aIE.push_back( std::make_pair(ie0+5,false) );
     aIE.push_back( std::make_pair(ie0+6,false) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
     aIE.push_back( std::make_pair(ie0+2,false) );
     aIE.push_back( std::make_pair(ie0+6,true ) );
     aIE.push_back( std::make_pair(ie0+7,false) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
     aIE.push_back( std::make_pair(ie0+3,false) );
     aIE.push_back( std::make_pair(ie0+7,true ) );
     aIE.push_back( std::make_pair(ie0+4,true) );
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   {
     for(int iv=0;iv<aVertex.size();++iv){
@@ -869,36 +869,36 @@ void AddSphere_XSym
 
 
 void AddCube
-(std::vector<CVertex>& aVertex,
-std::vector<CEdge>& aEdge,
-std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+std::vector<CCad3D_Edge>& aEdge,
+std::vector<CCad3D_Face>& aFace,
 double elen)
 {
   int iv0 = (int)aVertex.size();
-  aVertex.push_back(CVertex(CVector3(-1, -1, -1))); // icp0+0
-  aVertex.push_back(CVertex(CVector3(-1, -1, +1))); // icp0+1
-  aVertex.push_back(CVertex(CVector3(-1, +1, -1))); // icp0+2
-  aVertex.push_back(CVertex(CVector3(-1, +1, +1))); // icp0+3
-  aVertex.push_back(CVertex(CVector3(+1, -1, -1))); // icp0+4
-  aVertex.push_back(CVertex(CVector3(+1, -1, +1))); // icp0+5
-  aVertex.push_back(CVertex(CVector3(+1, +1, -1))); // icp0+6
-  aVertex.push_back(CVertex(CVector3(+1, +1, +1))); // icp0+7
+  aVertex.push_back(CCad3D_Vertex(CVector3(-1, -1, -1))); // icp0+0
+  aVertex.push_back(CCad3D_Vertex(CVector3(-1, -1, +1))); // icp0+1
+  aVertex.push_back(CCad3D_Vertex(CVector3(-1, +1, -1))); // icp0+2
+  aVertex.push_back(CCad3D_Vertex(CVector3(-1, +1, +1))); // icp0+3
+  aVertex.push_back(CCad3D_Vertex(CVector3(+1, -1, -1))); // icp0+4
+  aVertex.push_back(CCad3D_Vertex(CVector3(+1, -1, +1))); // icp0+5
+  aVertex.push_back(CCad3D_Vertex(CVector3(+1, +1, -1))); // icp0+6
+  aVertex.push_back(CCad3D_Vertex(CVector3(+1, +1, +1))); // icp0+7
   ////
   int ie0 = (int)aEdge.size();
-  aEdge.push_back(CEdge(iv0+0, iv0+1, false, 0)); // 0
-  aEdge.push_back(CEdge(iv0+1, iv0+3, false, 0)); // 1
-  aEdge.push_back(CEdge(iv0+3, iv0+2, false, 0)); // 2
-  aEdge.push_back(CEdge(iv0+2, iv0+0, false, 0)); // 3
+  aEdge.push_back(CCad3D_Edge(iv0+0, iv0+1, false, 0)); // 0
+  aEdge.push_back(CCad3D_Edge(iv0+1, iv0+3, false, 0)); // 1
+  aEdge.push_back(CCad3D_Edge(iv0+3, iv0+2, false, 0)); // 2
+  aEdge.push_back(CCad3D_Edge(iv0+2, iv0+0, false, 0)); // 3
   /////
-  aEdge.push_back(CEdge(iv0+6, iv0+4, false, 0)); // 4
-  aEdge.push_back(CEdge(iv0+7, iv0+6, false, 0)); // 5
-  aEdge.push_back(CEdge(iv0+5, iv0+7, false, 0)); // 6
-  aEdge.push_back(CEdge(iv0+4, iv0+5, false, 0)); // 7
+  aEdge.push_back(CCad3D_Edge(iv0+6, iv0+4, false, 0)); // 4
+  aEdge.push_back(CCad3D_Edge(iv0+7, iv0+6, false, 0)); // 5
+  aEdge.push_back(CCad3D_Edge(iv0+5, iv0+7, false, 0)); // 6
+  aEdge.push_back(CCad3D_Edge(iv0+4, iv0+5, false, 0)); // 7
   /////
-  aEdge.push_back(CEdge(iv0+0, iv0+4, false, 1)); // 8
-  aEdge.push_back(CEdge(iv0+5, iv0+1, false, 1)); // 9
-  aEdge.push_back(CEdge(iv0+2, iv0+6, false, 1)); // 10
-  aEdge.push_back(CEdge(iv0+7, iv0+3, false, 1)); // 11
+  aEdge.push_back(CCad3D_Edge(iv0+0, iv0+4, false, 1)); // 8
+  aEdge.push_back(CCad3D_Edge(iv0+5, iv0+1, false, 1)); // 9
+  aEdge.push_back(CCad3D_Edge(iv0+2, iv0+6, false, 1)); // 10
+  aEdge.push_back(CCad3D_Edge(iv0+7, iv0+3, false, 1)); // 11
   /////  
   int ifc0 = (int)aFace.size();
   { // face0132
@@ -907,7 +907,7 @@ double elen)
     aIE.push_back(std::make_pair(ie0+1, true));
     aIE.push_back(std::make_pair(ie0+2, true));
     aIE.push_back(std::make_pair(ie0+3, true));
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face4567
     std::vector< std::pair<int, bool> > aIE;
@@ -915,7 +915,7 @@ double elen)
     aIE.push_back(std::make_pair(ie0+5, false));
     aIE.push_back(std::make_pair(ie0+6, false));
     aIE.push_back(std::make_pair(ie0+7, false));
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face0451
     std::vector< std::pair<int, bool> > aIE;
@@ -923,7 +923,7 @@ double elen)
     aIE.push_back(std::make_pair(ie0+8, true));
     aIE.push_back(std::make_pair(ie0+7, true));
     aIE.push_back(std::make_pair(ie0+9, true));
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041
     std::vector< std::pair<int, bool> > aIE;
@@ -931,7 +931,7 @@ double elen)
     aIE.push_back(std::make_pair(ie0+11, false));
     aIE.push_back(std::make_pair(ie0+5,  true));
     aIE.push_back(std::make_pair(ie0+10, false));
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041     
     std::vector< std::pair<int, bool> > aIE;
@@ -939,7 +939,7 @@ double elen)
     aIE.push_back(std::make_pair(ie0+10, true));
     aIE.push_back(std::make_pair(ie0+4,  true));
     aIE.push_back(std::make_pair(ie0+8,  false));
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   { // face041     
     std::vector< std::pair<int, bool> > aIE;
@@ -947,7 +947,7 @@ double elen)
     aIE.push_back(std::make_pair(ie0+9,  false));
     aIE.push_back(std::make_pair(ie0+6,  true));
     aIE.push_back(std::make_pair(ie0+11, true));
-    aFace.push_back(CFace(aIE));
+    aFace.push_back(CCad3D_Face(aIE));
   }
   {
     for (int iv = iv0; iv<iv0+8; ++iv){
@@ -1035,7 +1035,7 @@ bool FindFittingPoint
 
 std::vector<int> getPointsInEdges
 (const std::vector< std::pair<int,bool > >& aIE_picked,
- const std::vector<CEdge>& aEdge)
+ const std::vector<CCad3D_Edge>& aEdge)
 {
   std::vector<int> aIP;
   for(int iie=0;iie<aIE_picked.size()+1;++iie){
@@ -1055,9 +1055,9 @@ std::vector<int> getPointsInEdges
 }
 
 bool MovePointsAlongSketch
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  const std::vector<CVector2>& aStroke,
  const std::vector< std::pair<int,bool > >& aIE_picked,
  const CVector3& plane_org, int inorm,
@@ -1081,7 +1081,7 @@ bool MovePointsAlongSketch
   std::vector<int> aIP = getPointsInEdges(aIE_picked,aEdge);
   for(int iip=0;iip<aIP.size();++iip){
     int iv0 = aIP[iip];
-    CVertex& v = aVertex[iv0];
+    CCad3D_Vertex& v = aVertex[iv0];
     CVector2 p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
     const bool isConstX = v.isConst[(inorm+1)%3];
     const bool isConstY = v.isConst[(inorm+2)%3];
@@ -1112,9 +1112,9 @@ bool MovePointsAlongSketch
 void DivideFace
 (int ifc,
  const CVector3& org, int inorm,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen)
 {
   if( inorm == -1 ) return;
@@ -1154,14 +1154,14 @@ void BuildTriMesh
  std::vector<int>& aTri,
  std::vector<int>& aTriSurRel,
  std::vector<double>& aNorm,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  int isym)
 {
   std::vector<int> aIsSymVtx(aVertex.size(),0);
   for(int ie=0;ie<aEdge.size();++ie){
-    const CEdge& e = aEdge[ie];
+    const CCad3D_Edge& e = aEdge[ie];
     if( e.is_sim ){
       assert( e.inorm == isym );
       int iv0 = e.iv0;
@@ -1172,7 +1172,7 @@ void BuildTriMesh
   }
   aXYZ.resize(0);
   for(int iv=0;iv<aVertex.size();++iv){
-    CVertex& v = aVertex[iv];
+    CCad3D_Vertex& v = aVertex[iv];
     int iq0 = (int)aXYZ.size()/3;
     aXYZ.push_back(+v.pos.x);
     aXYZ.push_back(+v.pos.y);
@@ -1196,7 +1196,7 @@ void BuildTriMesh
     }
   }
   for(int ie=0;ie<aEdge.size();++ie){
-    CEdge& e = aEdge[ie];
+    CCad3D_Edge& e = aEdge[ie];
     const int iv0 = e.iv0;
     const int iv1 = e.iv1;
     assert( iv0>=0 && iv0<aVertex.size() );
@@ -1233,10 +1233,10 @@ void BuildTriMesh
     }
   }
   for(int ifc=0;ifc<aFace.size();++ifc){
-    CFace& fc = aFace[ifc];
+    CCad3D_Face& fc = aFace[ifc];
     int np = (int)fc.aPInfo.size();
     for(int ip=0;ip<np;++ip){
-      CFace::CFacePointInfo& pinfo = fc.aPInfo[ip];
+      CCad3D_Face::CFacePointInfo& pinfo = fc.aPInfo[ip];
       if( pinfo.itype == 0 ){
         int iv0 = pinfo.iv;
         pinfo.iq_right = aVertex[iv0].iq_right;
@@ -1271,7 +1271,7 @@ void BuildTriMesh
   }
   aTri.resize(0);
   for(int ifc=0;ifc<aFace.size();++ifc){
-    CFace& fc = aFace[ifc];
+    CCad3D_Face& fc = aFace[ifc];
     for(int it=0;it<fc.aTri.size()/3;++it){
       int ip0 = fc.aTri[it*3+0];
       int ip1 = fc.aTri[it*3+1];
@@ -1286,7 +1286,7 @@ void BuildTriMesh
     }
   }
   for(int ie=0;ie<aEdge.size();++ie){
-    const CEdge& e = aEdge[ie];
+    const CCad3D_Edge& e = aEdge[ie];
     if( !e.is_sim ){ continue; }
     for(int ip=0;ip<e.aP.size();++ip){
       int iq0 = e.aIQ_RightLeft[ip*2+0];
@@ -1303,13 +1303,13 @@ void UpdateTriMesh
 (std::vector<double>& aXYZ, std::vector<double>& aNorm,
  /////
  const std::vector<int>& aTri,
- const std::vector<CVertex>& aVertex,
- const std::vector<CEdge>& aEdge,
- const std::vector<CFace>& aFace,
+ const std::vector<CCad3D_Vertex>& aVertex,
+ const std::vector<CCad3D_Edge>& aEdge,
+ const std::vector<CCad3D_Face>& aFace,
  int isym)
 {
   for(int ifc=0;ifc<aFace.size();++ifc){
-    const CFace& fc = aFace[ifc];
+    const CCad3D_Face& fc = aFace[ifc];
     for(int ip=0;ip<fc.aPInfo.size();++ip){
       int iq0 = fc.aPInfo[ip].iq_right;
       int iq1 = fc.aPInfo[ip].iq_left;
@@ -1331,7 +1331,7 @@ void UpdateTriMesh
     }
   }
   for(int ie=0;ie<aEdge.size();++ie){
-    const CEdge& e = aEdge[ie];
+    const CCad3D_Edge& e = aEdge[ie];
     if( !e.is_sim ){ continue; }
     for(int ip=0;ip<e.aP.size();++ip){
       int iq0 = e.aIQ_RightLeft[ip*2+0];

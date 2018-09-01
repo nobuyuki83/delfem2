@@ -7,15 +7,15 @@
 #include "delfem2/paramgeo_v23.h"
 #include "delfem2/mshsrch_v3.h"
 
-class CVertex{
+class CCad3D_Vertex{
 public:
-  CVertex(){
+  CCad3D_Vertex(){
     pos = CVector3(0,0,0);
     isConst[0] = false;
     isConst[1] = false;
     isConst[2] = false;
   }
-  CVertex(const CVector3& p){
+  CCad3D_Vertex(const CVector3& p){
     pos = p;
     isConst[0] = false;
     isConst[1] = false;
@@ -39,9 +39,9 @@ public:
 };
 
 
-class CEdge{
+class CCad3D_Edge{
 public:
-  CEdge(){
+  CCad3D_Edge(){
     this->iv0 = -1;
     this->iv1 = -1;
     this->inorm = 0;
@@ -49,7 +49,7 @@ public:
     r0 = 0.35;
     r1 = 0.35;
   }
-  CEdge(int icp0, int icp1, bool is_sim, int inorm){
+  CCad3D_Edge(int icp0, int icp1, bool is_sim, int inorm){
     this->iv0 = icp0;
     this->iv1 = icp1;
     this->inorm = inorm;
@@ -65,7 +65,7 @@ public:
     }
     return CVector3(0,1,0);
   }
-  void MovePoints(const std::vector<CVertex>& aVertex){
+  void MovePoints(const std::vector<CCad3D_Vertex>& aVertex){
     if( aP.size()<2 ) return;
     p0 = aVertex[iv0].pos;
     p1 = aVertex[iv1].pos;
@@ -83,7 +83,7 @@ public:
       aP[ip] = getPointCubicBezierCurve(t, p0, q0, q1, p1);
     }
   }
-  void Initialize(const std::vector<CVertex>& aCP, double elen){
+  void Initialize(const std::vector<CCad3D_Vertex>& aCP, double elen){
     p0 = aCP[iv0].pos;
     p1 = aCP[iv1].pos;
     double len = Distance(p0, p1);
@@ -144,18 +144,18 @@ public:
   std::vector<int> aIQ_RightLeft;
 };
 
-class CFace{
+class CCad3D_Face{
 public:
-  CFace(){
+  CCad3D_Face(){
   }
-  CFace(const std::vector< std::pair<int,bool> >& aIE0){
+  CCad3D_Face(const std::vector< std::pair<int,bool> >& aIE0){
     aIE = aIE0;
   }
-  int findIIE_CP(int icp_in, const std::vector<CEdge>& aEdge) const {
+  int findIIE_CP(int icp_in, const std::vector<CCad3D_Edge>& aEdge) const {
     for(int iie=0;iie<aIE.size();++iie){
       int ie0 = aIE[iie].first;
       assert( ie0>=0 && ie0<aEdge.size() );
-      const CEdge& e0 = aEdge[ie0];
+      const CCad3D_Edge& e0 = aEdge[ie0];
       const bool dir0 = aIE[iie].second;
       int icp0 = (dir0) ? e0.iv0 : e0.iv1;
       if( icp0 == icp_in ){ return iie; }
@@ -163,16 +163,16 @@ public:
     return -1;
   }
   void Initialize
-  (const std::vector<CVertex>& aCtrlPoint,
-   const std::vector<CEdge>& aEdge,
+  (const std::vector<CCad3D_Vertex>& aCtrlPoint,
+   const std::vector<CCad3D_Edge>& aEdge,
    double elen);
   bool isPick(const CVector3& org, const CVector3& dir){
     CPointElemSurf pes = intersect_Ray_MeshTri3D(org,dir, aTri,aXYZ);
     if( pes.itri != -1 ){ return true; }
     return false;
   }
-  void MovePoints(const std::vector<CVertex>& aVertex,
-                  const std::vector<CEdge>& aEdge);
+  void MovePoints(const std::vector<CCad3D_Vertex>& aVertex,
+                  const std::vector<CCad3D_Edge>& aEdge);
   void DrawFace() const;
   void DrawBackFace() const;
   void DrawEdge() const;
@@ -219,49 +219,49 @@ public:
 
 int AddPointEdge
 (int ie_div, double ratio_edge,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen);
 
 void ConectEdge
 (int iv0, int iv1, int iface_div, int inorm_new,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen);
 
 void MakeItSmooth
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace);
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace);
 
 void findEdgeGroup
 (std::vector< std::pair<int,bool> >& aIE,
  int iedge0,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge);
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge);
 
 void AddSphere_XSym
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen);
 void AddSphere_ZSym
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen);
 void AddTorus_XSym
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen);
 
 void AddCube
-(std::vector<CVertex>& aVertex,
-std::vector<CEdge>& aEdge,
-std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+std::vector<CCad3D_Edge>& aEdge,
+std::vector<CCad3D_Face>& aFace,
 double elen);
 
 bool FindFittingPoint
@@ -274,12 +274,12 @@ bool FindFittingPoint
 
 std::vector<int> getPointsInEdges
 (const std::vector< std::pair<int,bool > >& aIE_picked,
- const std::vector<CEdge>& aEdge);
+ const std::vector<CCad3D_Edge>& aEdge);
 
 bool MovePointsAlongSketch
-(std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+(std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  const std::vector<CVector2>& aStroke,
  const std::vector< std::pair<int,bool > >& aIE_picked,
  const CVector3& plane_org, int inorm,
@@ -288,9 +288,9 @@ bool MovePointsAlongSketch
 void DivideFace
 (int ifc,
  const CVector3& org, int inorm,
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  double elen);
 
 void BuildTriMesh
@@ -299,18 +299,18 @@ void BuildTriMesh
  std::vector<int>& aTriSurRel,
  std::vector<double>& aNorm,
  ////
- std::vector<CVertex>& aVertex,
- std::vector<CEdge>& aEdge,
- std::vector<CFace>& aFace,
+ std::vector<CCad3D_Vertex>& aVertex,
+ std::vector<CCad3D_Edge>& aEdge,
+ std::vector<CCad3D_Face>& aFace,
  int isym);
 
 void UpdateTriMesh
 (std::vector<double>& aXYZ,
  std::vector<double>& aNorm,
  const std::vector<int>& aTri,
- const std::vector<CVertex>& aVertex,
- const std::vector<CEdge>& aEdge,
- const std::vector<CFace>& aFace,
+ const std::vector<CCad3D_Vertex>& aVertex,
+ const std::vector<CCad3D_Edge>& aEdge,
+ const std::vector<CCad3D_Face>& aFace,
  int isym);
 
 
@@ -398,9 +398,9 @@ public:
   ////////////////////////////////
   // fundamental data
   int isym;
-  std::vector<CVertex> aVertex;
-  std::vector<CEdge> aEdge;
-  std::vector<CFace> aFace;
+  std::vector<CCad3D_Vertex> aVertex;
+  std::vector<CCad3D_Edge> aEdge;
+  std::vector<CCad3D_Face> aFace;
 
   ////////////////////////////////
   // aux data
