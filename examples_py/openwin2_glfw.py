@@ -11,4 +11,4 @@ def draw_func():
 
 win = dfm2.WindowGLFW(1.0,winsize=(400,300));
 dfm2.setSomeLighting()
-win.draw_loop(draw_func)
+win.draw_loop([draw_func])

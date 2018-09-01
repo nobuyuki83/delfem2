@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(pydelfem2)
 set(PYBIND11_CPP_STANDARD -std=c++14)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -O2")
+add_definitions(-DUSE_GL)
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)

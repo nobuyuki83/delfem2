@@ -5,6 +5,22 @@
 #include <assert.h>
 #include <vector>
 
+#ifdef USE_GL
+#if defined(__APPLE__) && defined(__MACH__) // Mac
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/glu.h>
+#elif defined(WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#else // linux
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+#endif
+
 //! 3D bounding box class
 class CBV3D_AABB
 {
@@ -27,11 +43,23 @@ public:
 		assert( z_min <= z_max );
 		is_active = true;
 	}
-	CBV3D_AABB( const CBV3D_AABB& bb )
+	CBV3D_AABB(const CBV3D_AABB& bb )
   : x_min(bb.x_min),x_max(bb.x_max),
   y_min(bb.y_min),y_max(bb.y_max),
   z_min(bb.z_min),z_max(bb.z_max),
-  is_active(bb.is_active){}
+  is_active(bb.is_active){
+  }
+  CBV3D_AABB(const std::vector<double>& minmaxXYZ)
+  {
+    x_min = minmaxXYZ[0];
+    x_max = minmaxXYZ[1];
+    y_min = minmaxXYZ[2];
+    y_max = minmaxXYZ[3];
+    z_min = minmaxXYZ[4];
+    z_max = minmaxXYZ[5];
+    is_active = true;
+  }
+  
   void SetCenterWidth(double cx, double cy, double cz,
                       double wx, double wy, double wz)
   {
@@ -67,6 +95,10 @@ public:
 		z_min = ( z_min < bb.z_min ) ? z_min : bb.z_min;
 		return *this;
 	}
+  void Add_AABBMinMax(const std::vector<double>& aabb){
+    CBV3D_AABB aabb0(aabb);
+    (*this) += aabb0;
+  }
   bool IsIntersect(const CBV3D_AABB& bb) const
   {
     if( !is_active ) return false;
@@ -139,15 +171,44 @@ public:
       && z >= z_min && z <= z_max ) return true;
    return false;
   }
-  std::vector<double> MinMaxLocXY(const std::vector<double>& a,
-                                  const std::vector<double>& b) const
-  {
-    std::cout << a[0] << " " << a[1] << " " << a[2] << std::endl;
-    std::cout << b[0] << " " << b[1] << " " << b[2] << std::endl;
-    std::vector<double> mmxy;
-    mmxy.push_back(0.0);
-    return mmxy;
+  std::vector<double> minmaxXYZ(){
+    std::vector<double> mm(6);
+    mm[0] = x_min;  mm[1] = x_max;
+    mm[2] = y_min;  mm[3] = y_max;
+    mm[4] = z_min;  mm[5] = z_max;
+    return mm;
   }
+#ifdef USE_GL
+  void draw(){
+    const double pxyz[3] = {x_min,y_min,z_min};
+    const double pxyZ[3] = {x_min,y_min,z_max};
+    const double pxYz[3] = {x_min,y_max,z_min};
+    const double pxYZ[3] = {x_min,y_max,z_max};
+    const double pXyz[3] = {x_max,y_min,z_min};
+    const double pXyZ[3] = {x_max,y_min,z_max};
+    const double pXYz[3] = {x_max,y_max,z_min};
+    const double pXYZ[3] = {x_max,y_max,z_max};
+    ::glBegin(GL_LINES);
+    ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
+    ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
+    ::glVertex3dv(pXyz); ::glVertex3dv(pXyZ);
+    ::glVertex3dv(pXYz); ::glVertex3dv(pXYZ);
+    ////
+    ::glVertex3dv(pxyz); ::glVertex3dv(pXyz);
+    ::glVertex3dv(pxyZ); ::glVertex3dv(pXyZ);
+    ::glVertex3dv(pxYz); ::glVertex3dv(pXYz);
+    ::glVertex3dv(pxYZ); ::glVertex3dv(pXYZ);
+    ////
+    ::glVertex3dv(pxyz); ::glVertex3dv(pxYz);
+    ::glVertex3dv(pxyZ); ::glVertex3dv(pxYZ);
+    ::glVertex3dv(pXyz); ::glVertex3dv(pXYz);
+    ::glVertex3dv(pXyZ); ::glVertex3dv(pXYZ);
+    ::glEnd();
+  }
+#else
+  void draw(){
+  }
+#endif
 public:
 	double x_min,x_max,  y_min,y_max,  z_min,z_max;
 	bool is_active;	//!< false if there is nothing inside

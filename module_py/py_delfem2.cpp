@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include<pybind11/numpy.h>
+#include <pybind11/numpy.h>
 
 #include <vector>
 
@@ -27,13 +27,14 @@ void init_mshtopoio_gl(py::module &m);
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
-  // aabb
+  
   py::class_<CBV3D_AABB>(m,"AABB3",
                          "three dimensional axis aligned bounding box class")
   .def(py::init<>())
-  .def("minMaxLocXY",
-       &CBV3D_AABB::MinMaxLocXY,
-       "get range of the x and y local coordiante");
+  .def(py::init<const std::vector<double>&>())
+  .def("add", &CBV3D_AABB::Add_AABBMinMax)
+  .def("aabb3",&CBV3D_AABB::minmaxXYZ)
+  .def("draw",&CBV3D_AABB::draw);
   
   // mesh
   init_mshtopoio_gl(m);
