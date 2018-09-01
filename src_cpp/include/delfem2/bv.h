@@ -51,6 +51,13 @@ public:
   }
   CBV3D_AABB(const std::vector<double>& minmaxXYZ)
   {
+    if( minmaxXYZ[0] > minmaxXYZ[1] ){
+      x_min=0;  x_max=0;
+      y_min=0;  y_max=0;
+      z_min=0;  z_max=0;
+      is_active = false;
+      return;
+    }
     x_min = minmaxXYZ[0];
     x_max = minmaxXYZ[1];
     y_min = minmaxXYZ[2];
@@ -59,7 +66,14 @@ public:
     z_max = minmaxXYZ[5];
     is_active = true;
   }
-  
+  void SetMinMaxXYZ(double x_min, double x_max,
+                    double y_min, double y_max,
+                    double z_min, double z_max)
+  {
+    this->x_min = x_min;  this->x_max = x_max;
+    this->y_min = y_min;  this->y_max = y_max;
+    this->z_min = z_min;  this->z_max = z_max;
+  }
   void SetCenterWidth(double cx, double cy, double cz,
                       double wx, double wy, double wz)
   {
@@ -87,15 +101,16 @@ public:
       this->is_active = bb.is_active;
 			return *this;
 		}
+    x_min = ( x_min < bb.x_min ) ? x_min : bb.x_min;
 		x_max = ( x_max > bb.x_max ) ? x_max : bb.x_max;
-		x_min = ( x_min < bb.x_min ) ? x_min : bb.x_min;
+    y_min = ( y_min < bb.y_min ) ? y_min : bb.y_min;
 		y_max = ( y_max > bb.y_max ) ? y_max : bb.y_max;
-		y_min = ( y_min < bb.y_min ) ? y_min : bb.y_min;
+    z_min = ( z_min < bb.z_min ) ? z_min : bb.z_min;
 		z_max = ( z_max > bb.z_max ) ? z_max : bb.z_max;
-		z_min = ( z_min < bb.z_min ) ? z_min : bb.z_min;
 		return *this;
 	}
   void Add_AABBMinMax(const std::vector<double>& aabb){
+    assert(aabb.size()==6);
     CBV3D_AABB aabb0(aabb);
     (*this) += aabb0;
   }
@@ -103,12 +118,12 @@ public:
   {
     if( !is_active ) return false;
     if( !bb.is_active ) return false;
-    if( x_max < bb.x_min ) return false;
     if( x_min > bb.x_max ) return false;
-    if( y_max < bb.y_min ) return false;
+    if( x_max < bb.x_min ) return false;
     if( y_min > bb.y_max ) return false;
-    if( z_max < bb.z_min ) return false;
+    if( y_max < bb.y_min ) return false;
     if( z_min > bb.z_max ) return false;
+    if( z_max < bb.z_min ) return false;
     return true;
   }
   CBV3D_AABB& operator+=(const double v[3])
@@ -120,32 +135,29 @@ public:
       this->is_active = true;
 			return *this;
 		}
+    x_min = ( x_min < v[0] ) ? x_min : v[0];
 		x_max = ( x_max > v[0] ) ? x_max : v[0];
-		x_min = ( x_min < v[0] ) ? x_min : v[0];
+    y_min = ( y_min < v[1] ) ? y_min : v[1];
 		y_max = ( y_max > v[1] ) ? y_max : v[1];
-		y_min = ( y_min < v[1] ) ? y_min : v[1];
+    z_min = ( z_min < v[2] ) ? z_min : v[2];
 		z_max = ( z_max > v[2] ) ? z_max : v[2];
-		z_min = ( z_min < v[2] ) ? z_min : v[2];
 		return *this;
 	}
   void AddPoint(double x, double y, double z, double eps){
     if( eps <= 0 ){ return; }
     if( is_active ){ // something inside
       x_min = ( x_min < x-eps ) ? x_min : x-eps;
-      y_min = ( y_min < y-eps ) ? y_min : y-eps;
-      z_min = ( z_min < z-eps ) ? z_min : z-eps;
       x_max = ( x_max > x+eps ) ? x_max : x+eps;
+      y_min = ( y_min < y-eps ) ? y_min : y-eps;
       y_max = ( y_max > y+eps ) ? y_max : y+eps;
+      z_min = ( z_min < z-eps ) ? z_min : z-eps;
       z_max = ( z_max > z+eps ) ? z_max : z+eps;
     }
     else{ // empty
       is_active = true;
-      x_min = x-eps;
-      y_min = y-eps;
-      z_min = z-eps;
-      x_max = x+eps;
-      y_max = y+eps;
-      z_max = z+eps;
+      x_min = x-eps;  x_max = x+eps;
+      y_min = y-eps;  y_max = y+eps;
+      z_min = z-eps;  z_max = z+eps;
     }
     return;
   }
@@ -171,8 +183,13 @@ public:
       && z >= z_min && z <= z_max ) return true;
    return false;
   }
-  std::vector<double> minmaxXYZ(){
+  std::vector<double> MinMaxXYZ(){
     std::vector<double> mm(6);
+    if( !this->is_active ){
+      mm[0] = +1;
+      mm[1] = -1;
+      return mm;
+    }
     mm[0] = x_min;  mm[1] = x_max;
     mm[2] = y_min;  mm[3] = y_max;
     mm[4] = z_min;  mm[5] = z_max;
@@ -191,7 +208,7 @@ public:
     return aP;
   }
 #ifdef USE_GL
-  void draw(){
+  void Draw(){
     const double pxyz[3] = {x_min,y_min,z_min};
     const double pxyZ[3] = {x_min,y_min,z_max};
     const double pxYz[3] = {x_min,y_max,z_min};
