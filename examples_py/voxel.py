@@ -16,6 +16,7 @@ def display():
   glLineWidth(3)  
   dfm2.draw_axis(size=0.5)
 
+
 def main():
   global mshelm
 
@@ -29,11 +30,15 @@ def main():
   mshelm = mshelm.subdiv()  
   mshelm = mshelm.subdiv()  
 
+  dfm2.winDraw3d([mshelm],(400,400))
+"""
   win = dfm2.WindowGLFW(1.0)
   dfm2.setSomeLighting()
-  glEnable(GL_POLYGON_OFFSET_FILL );
-  glPolygonOffset( 1.1, 4.0 );
+  glEnable(GL_POLYGON_OFFSET_FILL)
+  glPolygonOffset( 1.1, 4.0 )  
   win.draw_loop(display)
+"""
+
 
 if __name__ == "__main__":
   main()

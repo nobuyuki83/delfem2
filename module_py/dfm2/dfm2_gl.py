@@ -2,50 +2,7 @@ import math
 from OpenGL.GL import *
 
 
-def draw_axis(size=1.0):
-  glBegin(GL_LINES)
-  glColor3d(1,0,0)
-  glVertex3d(0,0,0)
-  glVertex3d(size,0,0)
-  ####
-  glColor3d(0,1,0)
-  glVertex3d(0,0,0)
-  glVertex3d(0,size,0)
-  ####
-  glColor3d(0,0,1)
-  glVertex3d(0,0,0)
-  glVertex3d(0,0,size)
-  glEnd()
 
-def draw_pyramid(lenWh, lenHh, lenZ, Rot, trans):
-  pos0 = [-lenWh,-lenHh,+lenZ]
-  pos1 = [+lenWh,-lenHh,+lenZ]
-  pos2 = [+lenWh,+lenHh,+lenZ]
-  pos3 = [-lenWh,+lenHh,+lenZ]
-  pos4 = [0.0, 0.0, 0.0]
-  pos0 = rot_trans(pos0,Rot,trans)
-  pos1 = rot_trans(pos1,Rot,trans)
-  pos2 = rot_trans(pos2,Rot,trans)
-  pos3 = rot_trans(pos3,Rot,trans)
-  pos4 = rot_trans(pos4,Rot,trans)
-  glBegin(GL_LINES)
-  glVertex3dv(pos0)
-  glVertex3dv(pos1)
-  glVertex3dv(pos1)
-  glVertex3dv(pos2)
-  glVertex3dv(pos2)
-  glVertex3dv(pos3)
-  glVertex3dv(pos3)
-  glVertex3dv(pos0)
-  glVertex3dv(pos0)
-  glVertex3dv(pos4)
-  glVertex3dv(pos1)
-  glVertex3dv(pos4)
-  glVertex3dv(pos2)
-  glVertex3dv(pos4)
-  glVertex3dv(pos3)
-  glVertex3dv(pos4)
-  glEnd()
 
 
 def rot_matrix_cartesian(vec):
@@ -194,6 +151,12 @@ def scale_vec3(a,d):
   v = [a[0]*d,a[1]*d,a[2]*d]
   return v
 
+def dot(a,d):
+  assert len(a) == len(d)
+  sum:float = 0.0
+  for i in range(len(a)):
+    sum += a[i]*d[i]
+  return sum
 
 def average_vec3(list_pos):
   ave = [0,0,0]
@@ -261,6 +224,25 @@ def QuatMult(p, q):
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0]
   return r
 
+def minMaxLoc(aP:list,e:list):
+  ndim:int = len(e)
+  assert len(aP) % ndim == 0
+  nP:int = int(len(aP) / ndim)
+  min: float = 0.0
+  max: float = 0.0
+  for ip in range(nP):
+    p = aP[ip*ndim:ip*ndim+ndim]
+    pe = dot(p,e)
+    if ip == 0:
+      min = pe
+      max = pe
+    else:
+      if pe < min : min = pe
+      if pe > max : max = pe
+  assert min <= max
+  print(aP,min,max)
+  return [min,max]
+
 
 def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
   assert len(trans) == 2
@@ -297,11 +279,60 @@ def mouse_screen_pos(x, y, win_w,win_h):
   return mouse_x, mouse_y
 
 
+#########################################################################
+## function actually use OpenGL from here
+
+def draw_axis(size=1.0):
+  glBegin(GL_LINES)
+  glColor3d(1,0,0)
+  glVertex3d(0,0,0)
+  glVertex3d(size,0,0)
+  ####
+  glColor3d(0,1,0)
+  glVertex3d(0,0,0)
+  glVertex3d(0,size,0)
+  ####
+  glColor3d(0,0,1)
+  glVertex3d(0,0,0)
+  glVertex3d(0,0,size)
+  glEnd()
+
+def draw_pyramid(lenWh, lenHh, lenZ, Rot, trans):
+  pos0 = [-lenWh,-lenHh,+lenZ]
+  pos1 = [+lenWh,-lenHh,+lenZ]
+  pos2 = [+lenWh,+lenHh,+lenZ]
+  pos3 = [-lenWh,+lenHh,+lenZ]
+  pos4 = [0.0, 0.0, 0.0]
+  pos0 = rot_trans(pos0,Rot,trans)
+  pos1 = rot_trans(pos1,Rot,trans)
+  pos2 = rot_trans(pos2,Rot,trans)
+  pos3 = rot_trans(pos3,Rot,trans)
+  pos4 = rot_trans(pos4,Rot,trans)
+  glBegin(GL_LINES)
+  glVertex3dv(pos0)
+  glVertex3dv(pos1)
+  glVertex3dv(pos1)
+  glVertex3dv(pos2)
+  glVertex3dv(pos2)
+  glVertex3dv(pos3)
+  glVertex3dv(pos3)
+  glVertex3dv(pos0)
+  glVertex3dv(pos0)
+  glVertex3dv(pos4)
+  glVertex3dv(pos1)
+  glVertex3dv(pos4)
+  glVertex3dv(pos2)
+  glVertex3dv(pos4)
+  glVertex3dv(pos3)
+  glVertex3dv(pos4)
+  glEnd()
+
 class Camera:
   def __init__(self, view_height):
     self.view_height = view_height
     self.scale = 1.0
-    self.trans = [0, 0]
+    self.scr_trans = [0., 0.] # position of the pivot in the screen
+    self.pivot = [0., 0., 0,] # pivot location
     self.quat = [1, 0, 0, 0]
     self.fovy = 60  # degree
 
@@ -320,22 +351,38 @@ class Camera:
             -depth * 10,
             +depth * 10)
 
+    ####
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    glTranslated(self.trans[0], self.trans[1], -depth)
-
+    glTranslated(self.scr_trans[0], self.scr_trans[1], -depth)
     Rview = affine_matrix_quaternion(self.quat)
     glMultMatrixd(Rview)
+    glTranslated(self.pivot[0], self.pivot[1], self.pivot[2])
 
   def rotation(self,x,y,sx,sy,win_w,win_h):
     sx0, sy0, self.quat, self.trans = motion_rot(
-      x, y, sx, sy, self.quat,self.trans,self.view_height,
+      x, y, sx, sy, self.quat,self.scr_trans,self.view_height,
       win_w,win_h)
     return sx0,sy0
 
   def translation(self,x,y,sx,sy,win_w,win_h):
     sx0, sy0, self.quat, self.trans = motion_trans(
       x, y, sx, sy, self.quat,
-      self.trans, self.view_height,
+      self.scr_trans, self.view_height,
       win_w,win_h)
     return sx0,sy0
+
+  def adjust_scale_trans(self, aPos):
+    minmax_x = minMaxLoc(aPos, [1., 0., 0.])
+    minmax_y = minMaxLoc(aPos, [0., 1., 0.])
+    minmax_z = minMaxLoc(aPos, [0., 0., 1.])
+    self.pivot[0] = -0.5*(minmax_x[0]+minmax_x[1])
+    self.pivot[1] = -0.5*(minmax_y[0]+minmax_y[1])
+    self.pivot[2] = -0.5*(minmax_z[0]+minmax_z[1])
+    self.scr_trans[0] = 0.0
+    self.scr_trans[1] = 0.0
+    self.view_height = (minmax_y[1]-minmax_y[0])
+    self.scale = 1.0
+    print(aPos)
+    print(self.pivot)
+    pass

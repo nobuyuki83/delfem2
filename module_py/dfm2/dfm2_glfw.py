@@ -46,7 +46,7 @@ class WindowGLFW:
   """
   class to manage the glfw window
   """
-  def __init__(self,view_height,winsize=(400,300),isVisible=True):
+  def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
     if glfw.init() == GL_FALSE:
       print("GLFW couldn't not initialize!")
     if not isVisible:
@@ -58,7 +58,12 @@ class WindowGLFW:
     self.draw_func = None
     glEnable(GL_DEPTH_TEST)
 
-  def draw_loop(self,render):
+  def draw_loop(self,list_draw_func):
+    """
+    Enter the draw loop
+
+    render -- a function to render
+    """
     glfw.set_mouse_button_callback(self.win, self.mouse)
     glfw.set_cursor_pos_callback(self.win, self.motion)
     glfw.set_key_callback(self.win, self.keyinput)
@@ -66,7 +71,8 @@ class WindowGLFW:
       glClearColor(1, 1, 1, 1)
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
       self.wm.camera.set_gl_camera()
-      render()
+      for draw_func in list_draw_func:
+        draw_func()
       glfw.swap_buffers(self.win)
       glfw.poll_events()
       if self.wm.isClose:
@@ -85,31 +91,45 @@ class WindowGLFW:
 
 
 
-def winDraw3d(obj,winsize=(400,300)):
+def winDraw3d(list_obj,winsize=(400,300)):
+  """
+  draw the input object into openGL window
+
+  obj -- the object to draw.
+    this object need to have a method "draw()"
+
+  winsize -- the size of the window (width,height)
+  """
   #### initialize window
-  window = WindowGLFW(1.0,winsize=winsize)
+  window = WindowGLFW(winsize=winsize)
+  #### adjust scale
+  aabb3 = AABB3()
+  for obj in list_obj:
+    aabb3.add(obj.aabb3())
+  window.wm.camera.adjust_scale_trans(aabb3.aabb3())
   #### initalizing opengl
   setSomeLighting()  
   glEnable(GL_POLYGON_OFFSET_FILL )
   glPolygonOffset( 1.1, 4.0 )
   #### enter loop
-  window.draw_loop(obj.draw)
+  window.draw_loop([x.draw for x in list_obj])
 
 
-def imgDraw3d(obj,winsize=(400,300)):
+def imgDraw3d(list_obj,winsize=(400,300)):
   """
-  draw a this object into Numpy uint8 array
+  draw the input object into Numpy uint8 array
 
   obj -- the object to draw
 
   winsize -- the size of the window
   """
-  #### set camera
-  aabb3 = obj.aabb3()
-  mmxy = aabb3.minMaxLocXY([1.,0.,0.],[0.,1.,0.])
-  print(mmxy)
   #### initialize window
   window = WindowGLFW(1.0,winsize=winsize,isVisible=False)
+  #### set camera
+  aabb3 = AABB3()
+  for obj in list_obj:
+    aabb3.add(obj.aabb3())
+  window.wm.camera.adjust_scale_trans(aabb3.aabb3())
   #### initialize opengl
   setSomeLighting()
   glEnable(GL_POLYGON_OFFSET_FILL )
@@ -118,7 +138,8 @@ def imgDraw3d(obj,winsize=(400,300)):
   glClearColor(1, 1, 1, 1)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
   window.wm.camera.set_gl_camera()
-  obj.draw()
+  for obj in list_obj:
+    obj.draw()
   glFlush()
   #### read pixel to img
   glPixelStorei(GL_PACK_ALIGNMENT, 1)
