@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "delfem2/voxel.h"
-//#include "delfem2/funcs_glut.h"
 
 #include "delfem2/mshtopoio_gl.h"
 #include "delfem2/bv.h"
@@ -28,14 +27,15 @@ void init_mshtopoio_gl(py::module &m);
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
   
+  // axis arrigned boudning box
   py::class_<CBV3D_AABB>(m,"AABB3",
                          "three dimensional axis aligned bounding box class")
   .def(py::init<>())
   .def(py::init<const std::vector<double>&>())
-  .def("add_minmax", &CBV3D_AABB::Add_AABBMinMax)
   .def("minmax_xyz",&CBV3D_AABB::minmaxXYZ)
   .def("draw",&CBV3D_AABB::draw)
-  .def("list_xyz",&CBV3D_AABB::Point3D_Vox, "array of xyz coords of the corner in voxel point ordering");
+  .def("add_minmax", &CBV3D_AABB::Add_AABBMinMax)
+  .def("list_xyz",&CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order");
   
   // mesh
   init_mshtopoio_gl(m);
@@ -55,4 +55,3 @@ PYBIND11_MODULE(dfm2, m) {
         &setSomeLighting,
         "set some lighting that looks good for me");
 }
-
