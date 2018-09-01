@@ -10,8 +10,8 @@ DelFEM2 toolset for geometry processing and FEM
    :maxdepth: 2
    :caption: Contents:
 
-   coding_rule
-
+   examples
+   coding_rule   
 
 
 Indices and tables
@@ -21,6 +21,29 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Building Python Module
+======================
+
+:: 
+  
+  cd module_py
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make
+
+You can also use ``pip`` to　install the module_py using the ``setup.py``
+
+::
+
+  pip install . -e
+
+
+
+Examples
+========
+The examples of the project built with DelFEM2 can be find in :doc:`examples`
 
 Rule
 ====
