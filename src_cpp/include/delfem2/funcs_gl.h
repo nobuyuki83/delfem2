@@ -116,13 +116,13 @@ void DrawPoints3D_Points(std::vector<double>& aXYZ);
 // Draw Tri
 
 
-void DrawMeshTri2D_Face(std::vector<int>& aTri,
-                        std::vector<double>& aXY);
-void DrawMeshTri2D_FaceDisp2D(std::vector<int>& aTri,
-                          std::vector<double>& aXY,
-                          std::vector<double>& aDisp);
-void DrawMeshTri2D_Edge(std::vector<int>& aTri,
-                    std::vector<double>& aXY);
+void DrawMeshTri2D_Face(const std::vector<int>& aTri,
+                        const std::vector<double>& aXY);
+void DrawMeshTri2D_FaceDisp2D(const std::vector<int>& aTri,
+                              const std::vector<double>& aXY,
+                              const std::vector<double>& aDisp);
+void DrawMeshTri2D_Edge(const std::vector<int>& aTri,
+                        const std::vector<double>& aXY);
 
 void DrawMeshTri3D_FaceEdge(const std::vector<double>& aXYZ,
                         const std::vector<int>& aTri);
