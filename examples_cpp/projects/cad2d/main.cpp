@@ -244,7 +244,7 @@ int main(int argc,char* argv[])
   
   setSomeLighting();
   
-  cad.Initialize_Square();
+  cad.Add_Square();
   
   glutMainLoop();
 	return 0;

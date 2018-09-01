@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mat3.cpp           ${DELFEM2_INC}/mat3.h
   ${DELFEM2_SRC}/mshtopo.cpp        ${DELFEM2_INC}/mshtopo.h
   ${DELFEM2_SRC}/msh.cpp            ${DELFEM2_INC}/msh.h
+                                    ${DELFEM2_INC}/bv.h
 
   ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
 

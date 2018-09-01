@@ -54,7 +54,7 @@ public:
 };
 class CCad2D_EdgeGeo{
 public:
-  void GenMesh(int iedge, const CCadTopo& topo,
+  void GenMesh(unsigned int iedge, const CCadTopo& topo,
                std::vector<CCad2D_VtxGeo>& aVtxGeo);
 public:
   CVector2 p0,p1;
@@ -66,7 +66,7 @@ public:
   std::vector<int> aTri;
   std::vector<double> aXY;
 public:
-  void GenMesh(const CCadTopo& topo,int iface0,
+  void GenMesh(unsigned int iface0, const CCadTopo& topo, 
                std::vector<CCad2D_EdgeGeo>& aEdgeGeo);
 };
 
@@ -81,8 +81,10 @@ public:
     aFace.clear();
     topo.Clear();
   }
-  void Initialize_Square();
   void Draw() const;
+  std::vector<double> MinMaxXYZ() const;
+  ////
+  void Add_Square();
 public:
 public:
 public:
