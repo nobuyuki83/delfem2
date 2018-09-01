@@ -21,7 +21,7 @@ void init_mshtopoio_gl(py::module &m){
   .def(py::init<>())
   .def(py::init<const std::string&>())
   .def("draw", &CMeshElem::Draw) //
-  .def("aabb3", &CMeshElem::AABB3_MinMax)
+  .def("minmax_xyz", &CMeshElem::AABB3_MinMax)
   .def("read", &CMeshElem::Read)
   .def("drawFace_elemWiseNorm", &CMeshElem::DrawFace_ElemWiseNorm)
   .def("drawEdge", &CMeshElem::DrawEdge)

@@ -31,13 +31,6 @@ def main():
   mshelm = mshelm.subdiv()  
 
   dfm2.winDraw3d([mshelm],(400,400))
-"""
-  win = dfm2.WindowGLFW(1.0)
-  dfm2.setSomeLighting()
-  glEnable(GL_POLYGON_OFFSET_FILL)
-  glPolygonOffset( 1.1, 4.0 )  
-  win.draw_loop(display)
-"""
 
 
 if __name__ == "__main__":
