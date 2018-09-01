@@ -32,9 +32,10 @@ PYBIND11_MODULE(dfm2, m) {
                          "three dimensional axis aligned bounding box class")
   .def(py::init<>())
   .def(py::init<const std::vector<double>&>())
-  .def("add", &CBV3D_AABB::Add_AABBMinMax)
-  .def("aabb3",&CBV3D_AABB::minmaxXYZ)
-  .def("draw",&CBV3D_AABB::draw);
+  .def("add_minmax", &CBV3D_AABB::Add_AABBMinMax)
+  .def("minmax_xyz",&CBV3D_AABB::minmaxXYZ)
+  .def("draw",&CBV3D_AABB::draw)
+  .def("list_xyz",&CBV3D_AABB::Point3D_Vox, "array of xyz coords of the corner in voxel point ordering");
   
   // mesh
   init_mshtopoio_gl(m);

@@ -105,8 +105,8 @@ def winDraw3d(list_obj,winsize=(400,300)):
   #### adjust scale
   aabb3 = AABB3()
   for obj in list_obj:
-    aabb3.add(obj.aabb3())
-  window.wm.camera.adjust_scale_trans(aabb3.aabb3())
+    aabb3.add_minmax(obj.minmax_xyz())
+  window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
   #### initalizing opengl
   setSomeLighting()  
   glEnable(GL_POLYGON_OFFSET_FILL )
@@ -128,8 +128,8 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   #### set camera
   aabb3 = AABB3()
   for obj in list_obj:
-    aabb3.add(obj.aabb3())
-  window.wm.camera.adjust_scale_trans(aabb3.aabb3())
+    aabb3.add_minmax(obj.minmax_xyz())
+  window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
   #### initialize opengl
   setSomeLighting()
   glEnable(GL_POLYGON_OFFSET_FILL )

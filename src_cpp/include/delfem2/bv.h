@@ -178,6 +178,18 @@ public:
     mm[4] = z_min;  mm[5] = z_max;
     return mm;
   }
+  std::vector<double> Point3D_Vox(){
+    std::vector<double> aP(3*8);
+    aP[0*3+0]=x_min; aP[0*3+1]=y_min; aP[0*3+2]=z_min;
+    aP[1*3+0]=x_max; aP[1*3+1]=y_min; aP[1*3+2]=z_min;
+    aP[2*3+0]=x_min; aP[2*3+1]=y_max; aP[2*3+2]=z_min;
+    aP[3*3+0]=x_max; aP[3*3+1]=y_max; aP[3*3+2]=z_min;
+    aP[4*3+0]=x_min; aP[4*3+1]=y_min; aP[4*3+2]=z_max;
+    aP[5*3+0]=x_max; aP[5*3+1]=y_min; aP[5*3+2]=z_max;
+    aP[6*3+0]=x_min; aP[6*3+1]=y_max; aP[6*3+2]=z_max;
+    aP[7*3+0]=x_max; aP[7*3+1]=y_max; aP[7*3+2]=z_max;
+    return aP;
+  }
 #ifdef USE_GL
   void draw(){
     const double pxyz[3] = {x_min,y_min,z_min};

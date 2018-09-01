@@ -224,24 +224,24 @@ def QuatMult(p, q):
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0]
   return r
 
+
 def minMaxLoc(aP:list,e:list):
   ndim:int = len(e)
   assert len(aP) % ndim == 0
   nP:int = int(len(aP) / ndim)
-  min: float = 0.0
-  max: float = 0.0
+  min0: float = 0.0
+  max0: float = 0.0
   for ip in range(nP):
     p = aP[ip*ndim:ip*ndim+ndim]
     pe = dot(p,e)
     if ip == 0:
-      min = pe
-      max = pe
+      min0 = pe
+      max0 = pe
     else:
-      if pe < min : min = pe
-      if pe > max : max = pe
-  assert min <= max
-  print(aP,min,max)
-  return [min,max]
+      if pe < min0 : min0 = pe
+      if pe > max0 : max0 = pe
+  assert min0 <= max0
+  return [min0,max0]
 
 
 def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
@@ -328,11 +328,11 @@ def draw_pyramid(lenWh, lenHh, lenZ, Rot, trans):
   glEnd()
 
 class Camera:
-  def __init__(self, view_height):
+  def __init__(self, view_height=1.0):
     self.view_height = view_height
     self.scale = 1.0
     self.scr_trans = [0., 0.] # position of the pivot in the screen
-    self.pivot = [0., 0., 0,] # pivot location
+    self.pivot = [0., 0., 0.] # pivot location
     self.quat = [1, 0, 0, 0]
     self.fovy = 60  # degree
 
@@ -342,6 +342,7 @@ class Camera:
     win_h = viewport[3]
     depth = self.view_height / (self.scale * math.tan(0.5 * self.fovy * 3.1415 / 180.0))
     asp = float(win_w) / win_h
+    ####
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     glOrtho(-self.view_height / self.scale * asp,
@@ -383,6 +384,3 @@ class Camera:
     self.scr_trans[1] = 0.0
     self.view_height = (minmax_y[1]-minmax_y[0])
     self.scale = 1.0
-    print(aPos)
-    print(self.pivot)
-    pass
