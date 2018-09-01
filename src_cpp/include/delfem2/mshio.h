@@ -1,5 +1,5 @@
-#ifndef meshio_hpp
-#define meshio_hpp
+#ifndef MSHIO_H
+#define MSHIO_H
 
 #include <stdio.h>
 

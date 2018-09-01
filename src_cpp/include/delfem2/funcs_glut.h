@@ -1,6 +1,5 @@
-
-#ifndef forward_utility_glut_h
-#define forward_utility_glut_h
+#ifndef FUNCS_GLUT_H
+#define FUNCS_GLUT_H
 
 #include <fstream>
 #include <string>
@@ -8,9 +7,9 @@
 #include <iomanip>  // for the format
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "camera_gl.h"

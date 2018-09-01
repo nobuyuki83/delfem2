@@ -2,6 +2,7 @@
 #define MSHTOPO_H
 
 #include <stdio.h>
+#include <vector>
 
 enum MESHELEM_TYPE
 {

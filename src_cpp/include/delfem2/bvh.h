@@ -1,12 +1,10 @@
-#ifndef BVH_AABB_H
-#define BVH_AABB_H
+#ifndef BVH_H
+#define BVH_H
 
 #include <stack>
 #include <vector>
 #include <set>
 #include <assert.h>
-
-//#include "vector3.h"
 
 class CNodeBVH
 {

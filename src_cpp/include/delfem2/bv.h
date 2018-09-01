@@ -1,5 +1,5 @@
-#ifndef aabb_h
-#define aabb_h
+#ifndef BV_H
+#define BV_H
 
 #include <math.h>
 #include <assert.h>

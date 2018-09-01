@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mshsrch_v3.cpp     ${DELFEM2_INC}/mshsrch_v3.h
   ${DELFEM2_SRC}/paramgeo_v23.cpp   ${DELFEM2_INC}/paramgeo_v23.h
   ${DELFEM2_SRC}/dyntri_v3.cpp      ${DELFEM2_INC}/dyntri_v3.h
+  ${DELFEM2_SRC}/cad2d.cpp          ${DELFEM2_INC}/cad2d.h
 
   ${DELFEM2_SRC}/funcs_gl.cpp
   ${DELFEM2_SRC}/v23_gl.cpp         ${DELFEM2_INC}/v23_gl.h

@@ -1,7 +1,5 @@
-
-
-#ifndef funcs_glew_h
-#define funcs_glew_h
+#ifndef FUNCS_GLEW_H
+#define FUNCS_GLEW_H
 
 static int compileShader
 (const std::string& str_glsl_vert,
