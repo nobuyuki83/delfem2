@@ -1,7 +1,8 @@
+#include <vector>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <vector>
+
 
 #include "delfem2/mshtopoio_gl.h"
 

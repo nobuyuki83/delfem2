@@ -1,6 +1,17 @@
 #include <cstdio>
 #include <cassert>
 
+#if defined(__APPLE__) && defined(__MACH__) // mac
+#include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/glu.h>
+#elif defined(WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#else // linux
+#include <GL/gl.h>
+#endif
+
 #include "delfem2/v23_gl.h"
 
 void myGlVertex(const CVector3& v)

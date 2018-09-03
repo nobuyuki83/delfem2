@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-
-
 class CInputDepth
 {
 public:
