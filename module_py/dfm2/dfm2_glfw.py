@@ -77,6 +77,8 @@ class WindowGLFW:
       glfw.poll_events()
       if self.wm.isClose:
         break
+
+  def close(self):
     glfw.destroy_window(self.win)
     glfw.terminate()
 
@@ -130,7 +132,7 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   #### set camera
   aabb3 = AABB3()
   for obj in list_obj:
-    aabb3.add_minmax(obj.minmax_xyz())
+    aabb3.add_minmax_xyz(obj.minmax_xyz())
   window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
   #### initialize opengl
   setSomeLighting()
@@ -154,3 +156,22 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   #### reshape the img array
   img = numpy.reshape(img,(buff_h,buff_w,3))
   return img
+
+class DepthContext:
+  def __init__(self,win_size):
+    self.win = WindowGLFW(isVisible=False)
+    self.contxt = DepthContext_(win_size)
+  def start(self):
+    self.contxt.start()
+  def end(self):
+    self.contxt.end()
+  def close(self):
+    self.end()
+    self.win.close()
+
+def take_depth_shot(render,depth,depth_context):
+  depth_context.start()
+  depth.start()
+  render()
+  depth.end()
+  depth_context.end()

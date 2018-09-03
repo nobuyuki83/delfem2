@@ -19,7 +19,7 @@ void init_mshtopoio_gl(py::module &m){
   
   py::class_<CMeshElem>(m, "MeshElem")
   .def(py::init<>())
-  .def(py::init<const std::string&>())
+  .def(py::init<const std::string&>(),"open the file in the path")
   .def("draw", &CMeshElem::Draw) //
   .def("minmax_xyz", &CMeshElem::AABB3_MinMax)
   .def("read", &CMeshElem::Read)
