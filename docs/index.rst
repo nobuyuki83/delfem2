@@ -12,6 +12,7 @@ DelFEM2 toolset for geometry processing and FEM
 
    examples
    coding_rule   
+   dfm2
 
 
 Indices and tables
@@ -50,8 +51,8 @@ Rule
 Coding and naming rule can be found here: :doc:`coding_rule`
 
 
-Refence
-=======
+API Reference
+=============
 
 .. autofunction:: dfm2.winDraw3d
 
@@ -61,8 +62,22 @@ Refence
 
 .. autoclass::  dfm2.AABB3
    :undoc-members:
+   :members:
+   :private-members:
 
 .. autoclass:: dfm2.VoxelGrid
    :undoc-members:
+   :members:
+   :private-members:
+
+.. autoclass:: dfm2.AxisXYZ
+   :undoc-members:
+   :members:
+   :private-members:
+
+.. autoclass:: dfm2.Depth
+   :undoc-members:
+   :members:
+   :private-members:
 
 .. autofunction:: dfm2.meshQuad3d_voxelGrid

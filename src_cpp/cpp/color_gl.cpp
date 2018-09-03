@@ -45,6 +45,40 @@ inline void myGlVertex3d(int i, const std::vector<double>& aV)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+void myGlMaterialDiffuse(const CColor& color){
+  float c[4];
+  c[0] = color.r;
+  c[1] = color.g;
+  c[2] = color.b;
+  c[3] = color.a;
+  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+}
+
+void myGlColor(const CColor& c){
+  ::glColor4d(c.r, c.g, c.b, c.a );
+}
+
+void myGlColorDiffuse(const CColor& color){
+  ::glColor4d(color.r, color.g, color.b, color.a );
+  float c[4] = {color.r, color.g, color.b, color.a};
+  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+}
+
+void myGlDiffuse(const CColor& color){
+  float c[4] = {color.r, color.g, color.b, color.a};
+  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+}
+
+void CColor::glColor() const {
+  ::glColor4d(r, g, b, a);
+}
+
+void CColor::glMaterialDiffuse() const {
+  float cf[4] = {r,g,b,a};
+  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cf);
+}
+
 void GetRGB_HSV
 (float&r, float& g, float& b,
  float h, float s, float v)

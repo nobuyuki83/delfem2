@@ -44,9 +44,20 @@ public:
   double line_width;
 };
 
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 namespace py = pybind11;
+
+py::array_t<float> depth_buffer(CDepth& depth)
+{
+  std::vector<size_t> strides = {sizeof(float),sizeof(float)*depth.nResW};
+  std::vector<size_t> shape = {(size_t)depth.nResW,(size_t)depth.nResH};
+  size_t ndim = 2;
+  return py::array(py::buffer_info(depth.aDepth.data(), sizeof(float),
+                                   py::format_descriptor<float>::format(),
+                                   ndim, shape, strides));
+}
 
 void init_mshtopoio_gl(py::module &m);
 
@@ -119,6 +130,8 @@ PYBIND11_MODULE(dfm2, m) {
   .def("start",      &CDepth::Start)
   .def("end",        &CDepth::End)
   .def_readwrite("color",  &CDepth::color);
+  
+  m.def("depth_buffer", &depth_buffer);
 
   ///////////////////////////////////
   // gl misc
