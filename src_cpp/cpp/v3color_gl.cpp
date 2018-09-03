@@ -1,8 +1,18 @@
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/gl.h>
+#elif defined(WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
 #include "delfem2/v3color_gl.h"
 #include "delfem2/color_gl.h"
 #include "delfem2/vec3.h"
 #include "delfem2/v23_gl.h"
-
 
 void DrawQuad_ScalarQ1
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
