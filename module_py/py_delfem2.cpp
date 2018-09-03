@@ -4,14 +4,13 @@
 
 #include <vector>
 
-#include "delfem2/voxel.h"
-
-#include "delfem2/bv.h"
-#include "delfem2/cad2d.h"
-
-#include "delfem2/funcs_glew.h"
+#include "delfem2/funcs_glew.h" // have to be included in the beginning
 #include "delfem2/depth_v3_gl.h"
 #include "delfem2/mshtopoio_gl.h"
+
+#include "delfem2/voxel.h"
+#include "delfem2/bv.h"    // include gl
+#include "delfem2/cad2d.h"
 
 
 // TODO:Make a wrapper class of the VoxelGrid?
