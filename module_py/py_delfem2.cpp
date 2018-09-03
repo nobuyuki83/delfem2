@@ -6,11 +6,13 @@
 
 #include "delfem2/voxel.h"
 
-#include "delfem2/mshtopoio_gl.h"
 #include "delfem2/bv.h"
 #include "delfem2/cad2d.h"
-#include "delfem2/depth_v3_gl.h"
+
 #include "delfem2/funcs_glew.h"
+#include "delfem2/depth_v3_gl.h"
+#include "delfem2/mshtopoio_gl.h"
+
 
 // TODO:Make a wrapper class of the VoxelGrid?
 CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
