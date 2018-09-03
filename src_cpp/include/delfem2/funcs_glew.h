@@ -1,6 +1,11 @@
 #ifndef FUNCS_GLEW_H
 #define FUNCS_GLEW_H
 
+#if defined(__APPLE__) && defined(__MACH__)
+#else
+#include <GL/glew.h>
+#endif
+
 static int compileShader
 (const std::string& str_glsl_vert,
  int shaderType)
