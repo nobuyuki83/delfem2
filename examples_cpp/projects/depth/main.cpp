@@ -27,7 +27,7 @@ void Draw(){
 }
 
 CDepth depth;
-CDepthContext depth_context;
+CFrameBufferManager depth_context;
 bool is_animation = true;
 
 bool is_depth = false;

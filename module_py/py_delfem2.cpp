@@ -10,6 +10,7 @@
 #include "delfem2/bv.h"
 #include "delfem2/cad2d.h"
 #include "delfem2/depth_v3_gl.h"
+#include "delfem2/funcs_glew.h"
 
 // TODO:Make a wrapper class of the VoxelGrid?
 CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
@@ -97,12 +98,12 @@ PYBIND11_MODULE(dfm2, m) {
   ///////////////////////////////////
   // depth
   
-  py::class_<CDepthContext>(m,"DepthContext_", "Buffer Class for Depth")
+  py::class_<CFrameBufferManager>(m,"FrameBufferManager", "Buffer Class for Depth")
   .def(py::init<>())
   .def(py::init<const std::vector<int>&>(),py::arg("win_size"))
-  .def("set_buffer_size", &CDepthContext::Init)
-  .def("start",           &CDepthContext::Start)
-  .def("end",             &CDepthContext::End);
+  .def("set_buffer_size", &CFrameBufferManager::Init)
+  .def("start",           &CFrameBufferManager::Start)
+  .def("end",             &CFrameBufferManager::End);
   
   py::class_<CDepth>(m,"Depth","Depth projection class")
   .def(py::init<>())

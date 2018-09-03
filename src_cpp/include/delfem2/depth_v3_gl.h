@@ -3,37 +3,7 @@
 
 #include <stdio.h>
 
-class CDepthContext
-{
-public:
-  CDepthContext(){
-    id_framebuffer = -1;
-    id_depth_texture = -1;
-  }
-  CDepthContext(const std::vector<int>& winSize){
-    this->Init(winSize[0],winSize[1]);
-  }
-  void Init(int width, int height){
-    this->width = width;
-    this->height = height;
-    this->SetFrameBufferSize(width,height);
-  }
-  void DeleteFrameBuffer();
-  void SetFrameBufferSize(int width, int height);
-  void Start() const{
-    glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, id_depth_render_buffer);
-  }
-  void End() const {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  }
-public:
-  unsigned int id_framebuffer;
-  unsigned int id_depth_texture;
-  unsigned int id_depth_render_buffer;
-  int width;
-  int height;
-};
+
 
 class CInputDepth
 {
