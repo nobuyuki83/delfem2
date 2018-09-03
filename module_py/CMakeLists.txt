@@ -33,6 +33,7 @@ pybind11_add_module(dfm2
   ${DELFEM2_SRC}/dyntri_v3.cpp     ${DELFEM2_INC}/dyntri_v3.h
   ${DELFEM2_SRC}/mshtopoio_gl.cpp  ${DELFEM2_INC}/mshtopoio_gl.h
   ${DELFEM2_SRC}/cad2d.cpp         ${DELFEM2_INC}/cad2d.h
+  ${DELFEM2_SRC}/depth_v3_gl.cpp   ${DELFEM2_INC}/depth_v3_gl.h  
 
   ${DELFEM2_SRC}/v23_gl.cpp        ${DELFEM2_INC}/v23_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h

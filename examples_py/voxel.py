@@ -6,17 +6,6 @@ import dfm2
 
 mshelm = None
 
-def display():
-  glEnable(GL_LIGHTING)
-  mshelm.drawFace_elemWiseNorm()
-  glDisable(GL_LIGHTING)
-  mshelm.drawEdge()
-
-  glDisable(GL_LIGHTING)
-  glLineWidth(3)  
-  dfm2.draw_axis(size=0.5)
-
-
 def main():
   global mshelm
 
@@ -27,10 +16,12 @@ def main():
 
   mshelm = dfm2.meshQuad3d_voxelGrid(voxelgrid)
   mshelm = mshelm.subdiv()
-  mshelm = mshelm.subdiv()  
-  mshelm = mshelm.subdiv()  
+  mshelm = mshelm.subdiv()
+  mshelm = mshelm.subdiv()
 
-  dfm2.winDraw3d([mshelm],(400,400))
+  axis = dfm2.AxisXYZ()
+
+  dfm2.winDraw3d([mshelm,axis],(400,400))
 
 
 if __name__ == "__main__":

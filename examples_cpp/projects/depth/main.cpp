@@ -20,18 +20,15 @@
 
 double cur_time = 0.0;
 
-class CInputDepth0: public CInputDepth
-{
-public:
-  void Draw() const {
-    ::glRotated(+cur_time, 1,0,0);
-    glutSolidTeapot(1.0);
-    ::glRotated(-cur_time, 1,0,0);
-  }
-} input;
+void Draw(){
+  ::glRotated(+cur_time, 1,0,0);
+  glutSolidTeapot(1.0);
+  ::glRotated(-cur_time, 1,0,0);
+}
+
 CDepth depth;
 CDepthContext depth_context;
-bool is_animation = false;
+bool is_animation = true;
 
 bool is_depth = false;
 CGlutWindowManager window;
@@ -49,12 +46,12 @@ void myGlutDisplay(void)
 //  ::glDisable(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1,1,1);
-  input.Draw();
+  Draw();
   
   ///////
 
   glPointSize(3);
-  depth.Draw_Point(false);
+  depth.Draw_Point();
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -63,10 +60,11 @@ void myGlutDisplay(void)
 
 void myGlutIdle(){
   if(is_animation){
-    glBindFramebuffer(GL_FRAMEBUFFER, depth_context.id_framebuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, depth_context.id_depth_render_buffer);
-    depth.TakeDepthShot(input);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    depth_context.Start();
+    depth.Start();
+    Draw();
+    depth.End();
+    depth_context.End();
     cur_time += 1;
   }
   ::glutPostRedisplay();
@@ -160,15 +158,15 @@ int main(int argc,char* argv[])
   setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
-  depth_context.Init(500, 500);
+  depth_context.Init(512, 512);
   
-  depth.nResW = 500;
-  depth.nResH = 500;
+  depth.nResW = 512;
+  depth.nResH = 512;
   depth.lengrid = 0.005;
   depth.depth_max = 4.0;
-  depth.dirPrj = CVector3(0,0,-1);
-  depth.dirWidth = CVector3(1,0,0);
-  depth.orgPrj = CVector3(0,0,-2);
+  CVector3(0,0,-1).CopyValueTo(depth.dirPrj);
+  CVector3(1,0,0).CopyValueTo(depth.dirWidth);
+  CVector3(0,0,-2).CopyValueTo(depth.orgPrj);
   depth.SetColor(1, 0, 0);
  
   glutMainLoop();

@@ -9,6 +9,7 @@
 #include "delfem2/mshtopoio_gl.h"
 #include "delfem2/bv.h"
 #include "delfem2/cad2d.h"
+#include "delfem2/depth_v3_gl.h"
 
 // TODO:Make a wrapper class of the VoxelGrid?
 CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
@@ -18,6 +19,28 @@ CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
   me.ndim = 3;
   return me;
 }
+
+class CAxisXYZ {
+public:
+  CAxisXYZ(): len(1.0){
+    line_width = 1.0;
+  }
+  CAxisXYZ(double len): len(len){
+    line_width=1.0;
+  }
+  void Draw() const{
+    glLineWidth(line_width);
+    DrawAxis(len);
+  }
+  std::vector<double> MinMaxXYZ() const{
+    std::vector<double> mm(6,0);
+    mm[1] = len;  mm[3] = len;  mm[5] = len;
+    return mm;
+  }
+public:
+  double len;
+  double line_width;
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +61,15 @@ PYBIND11_MODULE(dfm2, m) {
   .def("draw",              &CBV3D_AABB::Draw)
   .def("add_minmax_xyz",    &CBV3D_AABB::Add_AABBMinMax)
   .def("list_xyz",          &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
-  .def_readonly("isActive", &CBV3D_AABB::is_active);
+  .def_readwrite("isActive", &CBV3D_AABB::is_active);
+  
+  py::class_<CAxisXYZ>(m,"AxisXYZ","3D axis class")
+  .def(py::init<>())
+  .def(py::init<double>(), py::arg("len"))
+  .def("draw",       &CAxisXYZ::Draw)
+  .def("minmax_xyz", &CAxisXYZ::MinMaxXYZ)
+  .def_readwrite("len", &CAxisXYZ::len)
+  .def_readwrite("line_width", &CAxisXYZ::line_width);
   
   ///////////////////////////////////
   // mesh
@@ -54,7 +85,6 @@ PYBIND11_MODULE(dfm2, m) {
         &MeshQuad3D_VoxelGrid,
         "get quad mesh from voxel grid");
   
-  
   ///////////////////////////////////
   // cad
   
@@ -63,6 +93,30 @@ PYBIND11_MODULE(dfm2, m) {
   .def("add_square", &CCad2D::Add_Square)
   .def("draw",       &CCad2D::Draw)
   .def("minmax_xyz", &CCad2D::MinMaxXYZ);
+  
+  ///////////////////////////////////
+  // depth
+  
+  py::class_<CDepthContext>(m,"DepthContext_", "Buffer Class for Depth")
+  .def(py::init<>())
+  .def(py::init<const std::vector<int>&>(),py::arg("win_size"))
+  .def("set_buffer_size", &CDepthContext::Init)
+  .def("start",           &CDepthContext::Start)
+  .def("end",             &CDepthContext::End);
+  
+  py::class_<CDepth>(m,"Depth","Depth projection class")
+  .def(py::init<>())
+  .def(py::init<int,int,double,double,const std::vector<double>&,std::vector<double>&,std::vector<double>&>(),
+       py::arg("size_res_width"),py::arg("size_res_height"),py::arg("len_grid"),py::arg("depth_max"),
+       py::arg("org"), py::arg("dir_prj"), py::arg("dir_width"))
+  .def("set_coordinate", &CDepth::SetCoord,
+       py::arg("size_res_width"),py::arg("size_res_height"),py::arg("len_grid"),py::arg("depth_max"),
+       py::arg("org"), py::arg("dir_prj"), py::arg("dir_width"))
+  .def("draw",       &CDepth::Draw)
+  .def("minmax_xyz", &CDepth::MinMaxXYZ)
+  .def("start",      &CDepth::Start)
+  .def("end",        &CDepth::End)
+  .def_readwrite("color",  &CDepth::color);
 
   ///////////////////////////////////
   // gl misc
