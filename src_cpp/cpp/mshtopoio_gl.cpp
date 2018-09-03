@@ -25,6 +25,14 @@
 
 #include "delfem2/mshtopoio_gl.h"
 
+void CMeshElem::Draw() const{
+  glEnable(GL_LIGHTING);
+  this->DrawFace_ElemWiseNorm();
+  glDisable(GL_LIGHTING);
+  glLineWidth(1);
+  this->DrawEdge();
+}
+
 CTriangulationOutput Triangulation
 (const std::vector<double>& aXY,
  double edge_length)

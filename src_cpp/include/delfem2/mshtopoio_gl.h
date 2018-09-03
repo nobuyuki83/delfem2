@@ -5,20 +5,6 @@
 #include <vector>
 #include <fstream>
 
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
-#elif defined(WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else // linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
@@ -31,13 +17,7 @@ public:
   CMeshElem(const std::string& fpath){
     this->Read(fpath);
   }
-  void Draw(){
-    glEnable(GL_LIGHTING);
-    this->DrawFace_ElemWiseNorm();
-    glDisable(GL_LIGHTING);
-    glLineWidth(1);
-    this->DrawEdge();
-  }
+  void Draw() const;
   std::vector<double> AABB3_MinMax() const{
     double cw[6]; GetCenterWidth(cw, aPos);
     std::vector<double> aabb(6);
@@ -54,7 +34,7 @@ public:
     elem_type = MESHELEM_TRI;
     ndim = 3;
   }
-  void DrawFace_ElemWiseNorm(){
+  void DrawFace_ElemWiseNorm() const{
     if( elem_type == MESHELEM_TRI ){
       if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aElem); }
       if( ndim == 2 ){ DrawMeshTri2D_Face(aElem,aPos); }
@@ -63,7 +43,7 @@ public:
       if( ndim == 3 ){ DrawMeshQuad3D_FaceNorm(aPos, aElem); }
     }
   }
-  void DrawEdge(){
+  void DrawEdge() const {
     if( elem_type == MESHELEM_TRI ){
       if( ndim == 3 ){ DrawMeshTri3D_Edge(aPos, aElem); }
       if( ndim == 2 ){ DrawMeshTri2D_Edge(aElem, aPos); }
