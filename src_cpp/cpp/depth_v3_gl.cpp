@@ -23,56 +23,9 @@
 #include "delfem2/v23m3q.h"
 
 #include "delfem2/v23_gl.h"  // vec3, mat3
-#include "delfem2/funcs_glew.h"           // shader
 
 #include "delfem2/depth_v3_gl.h"
 
-//////////////////////////////////////
-
-void CDepthContext::DeleteFrameBuffer()
-{
-  if( id_framebuffer > 0 ){
-    glDeleteFramebuffers(1, &id_framebuffer);
-    id_framebuffer = 0;
-  }
-  // TODO: delete depth_texture here
-  if( id_depth_render_buffer > 0  ){
-    glDeleteRenderbuffersEXT(1, &id_depth_render_buffer);
-    id_depth_render_buffer = 0;
-  }
-}
-
-void CDepthContext::SetFrameBufferSize
-(int width, int height)
-{
-  DeleteFrameBuffer();
-  glGenFramebuffers(1, &id_framebuffer);
-  glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
-  ////
-  glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
-  ////
-  glGenRenderbuffers(1, &id_depth_render_buffer);
-  glBindRenderbuffer(GL_RENDERBUFFER, id_depth_render_buffer);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, width, height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id_depth_render_buffer);
-  ////
-  GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER) ;
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  if(status != GL_FRAMEBUFFER_COMPLETE){
-    std::cout << "error!: " << status << std::endl;
-    std::cout << GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT << std::endl;
-    std::cout << GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT << std::endl;
-    std::cout << GL_FRAMEBUFFER_UNSUPPORTED << std::endl;
-    std::cout << GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER << std::endl;
-    std::cout << GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE << std::endl;
-    std::cout << GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT << std::endl;
-    std::cout << GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER << std::endl;
-    std::cout << GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER << std::endl;
-    return;
-  }
-}
 
 /////////////////////////////////
 

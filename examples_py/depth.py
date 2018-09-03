@@ -4,7 +4,6 @@ import sys
 sys.path.append("../module_py")
 import dfm2
 
-
 def main():
   mshelm = dfm2.MeshElem("../test_inputs/bunny_2k.ply");
   aabb = dfm2.AABB3( mshelm.minmax_xyz() )

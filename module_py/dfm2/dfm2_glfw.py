@@ -160,11 +160,11 @@ def imgDraw3d(list_obj,winsize=(400,300)):
 class DepthContext:
   def __init__(self,win_size):
     self.win = WindowGLFW(isVisible=False)
-    self.contxt = DepthContext_(win_size)
+    self.fbm = FrameBufferManager(win_size)
   def start(self):
-    self.contxt.start()
+    self.fbm.start()
   def end(self):
-    self.contxt.end()
+    self.fbm.end()
   def close(self):
     self.end()
     self.win.close()
