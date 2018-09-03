@@ -13,8 +13,10 @@ set(DELFEM2_SRC         "../src_cpp/cpp")
 set(DELFEM2_INC         "../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
+  ${GLEW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
 )
 
@@ -47,6 +49,7 @@ pybind11_add_module(dfm2
 target_link_libraries(dfm2
 PRIVATE
   ${OPENGL_LIBRARY}
+  ${GLEW_LIBRARY}
 )
 
 add_custom_command(TARGET dfm2
