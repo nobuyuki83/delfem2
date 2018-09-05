@@ -37,6 +37,8 @@ build:
     - script:
         name: pip setup py moudule
         code: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python get-pip.py
           pip install . -e
     - script:
         name: test
