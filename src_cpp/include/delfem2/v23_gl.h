@@ -6,7 +6,6 @@
 // eventually, I would like to split vec2 and vec3 dependent part.
 #include "vec2.h"
 #include "vec3.h"
-#include "quat.h"
 
 void myGlVertex(const CVector3& v);
 void myGlTranslate(const CVector3& v);
@@ -14,6 +13,8 @@ void myGlNormal(const CVector3& n);
 void myGlNormal(const CVector3& a, const CVector3& b, const CVector3& c);
 void myGlVertex(int i, const std::vector<CVector3>& aV);
 void myGlVertex(int i, const std::vector<double>& vec);
+void ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin);
+void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin);
 
 ///////////////////////////////////////////////////
 

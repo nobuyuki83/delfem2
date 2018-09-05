@@ -100,6 +100,9 @@ void DrawBox_MinMaxXYZ(double aabbMinMaxXYZ[6]);
 void DrawAABB3D_Edge(double cx, double cy, double cz,
                      double wx, double wy, double wz);
 void DrawAABB3D_Edge(const double cw[6]);
+void Draw_AABB3D_MinMaxXYZ_Edge(double x_min, double x_max,
+                                double y_min, double y_max,
+                                double z_min, double z_max);
 
 ///////////////
 // Draw Point

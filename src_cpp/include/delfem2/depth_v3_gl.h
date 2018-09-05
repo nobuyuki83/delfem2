@@ -15,12 +15,13 @@ public:
   CDepth(){
     color.resize(4);
     color[0] = 1;  color[1] = 0;  color[2] = 0;  color[3] = 1;
-    nResW = 256;
-    nResH = 256;
+    nResX = 256;
+    nResY = 256;
     lengrid = 0.01;
-    orgPrj[  0]=0; orgPrj[  1]=0; orgPrj[  2]=0;
-    dirPrj[  0]=0; dirPrj[  1]=0; dirPrj[  2]=1;
-    dirWidth[0]=1; dirWidth[1]=0; dirWidth[2]=0;
+    origin[  0]=0; origin[  1]=0; origin[  2]=0;
+    z_axis[  0]=0; z_axis[  1]=0; z_axis[  2]=1;
+    x_axis[0]=1; x_axis[1]=0; x_axis[2]=0;
+    draw_len_axis = 1.0;
   }
   CDepth(int nw, int nh, double l, double dm,
          const std::vector<double>& org,
@@ -37,9 +38,11 @@ public:
     return mm;
   }
   /////
+  void Draw_Axis() const;
   void Draw_Point() const;
+  void Draw_BoundingBox() const;
   void SetView();
-  void getGPos(double p[3], int i, double depth) const;
+  void getGPos(double p[3], int ix, int iy, double depth) const;
   ////
   void SetColor(double r, double g, double b);
   void SaveDepthCSV(const std::string& path) const;
@@ -51,15 +54,17 @@ public:
   void Start();
   void End();
 public:
-  int nResW;
-  int nResH;
+  int nResX;
+  int nResY;
   double lengrid;
-  double depth_max;
-  double dirPrj[3];
-  double dirWidth[3];
-  double orgPrj[3];
-  std::vector<float> aDepth;
+  double z_range;
+  double z_axis[3];
+  double x_axis[3];
+  double origin[3];
+  std::vector<float> aZ;
+  /////
   std::vector<double> color;
+  double draw_len_axis;
 private:
   GLint view[4];
 };

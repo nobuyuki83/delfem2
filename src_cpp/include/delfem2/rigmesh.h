@@ -1,5 +1,5 @@
-#ifndef rigmesh_hpp
-#define rigmesh_hpp
+#ifndef RIGMESH_H
+#define RIGMESH_H
 
 #include <stdio.h>
 #include <iostream>
