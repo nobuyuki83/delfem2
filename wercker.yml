@@ -37,6 +37,9 @@ build:
     - script:
         name: pip setup py moudule
         code: |
+          sudo add-apt-repository ppa:jonathonf/python-3.6
+          sudo apt-get update
+          sudo apt-get install python3.6 python3.6-dev
           sudo apt-get install curl
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python get-pip.py
