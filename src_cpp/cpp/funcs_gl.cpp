@@ -485,6 +485,37 @@ void DrawAABB3D_Edge(const double cw[6])
   DrawAABB3D_Edge(cw[0], cw[1], cw[2], cw[3],cw[4], cw[5]);
 }
 
+void Draw_AABB3D_MinMaxXYZ_Edge
+(double x_min, double x_max,
+ double y_min, double y_max,
+ double z_min, double z_max)
+{
+  const double pxyz[3] = {x_min,y_min,z_min};
+  const double pxyZ[3] = {x_min,y_min,z_max};
+  const double pxYz[3] = {x_min,y_max,z_min};
+  const double pxYZ[3] = {x_min,y_max,z_max};
+  const double pXyz[3] = {x_max,y_min,z_min};
+  const double pXyZ[3] = {x_max,y_min,z_max};
+  const double pXYz[3] = {x_max,y_max,z_min};
+  const double pXYZ[3] = {x_max,y_max,z_max};
+  ::glBegin(GL_LINES);
+  ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
+  ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
+  ::glVertex3dv(pXyz); ::glVertex3dv(pXyZ);
+  ::glVertex3dv(pXYz); ::glVertex3dv(pXYZ);
+  ////
+  ::glVertex3dv(pxyz); ::glVertex3dv(pXyz);
+  ::glVertex3dv(pxyZ); ::glVertex3dv(pXyZ);
+  ::glVertex3dv(pxYz); ::glVertex3dv(pXYz);
+  ::glVertex3dv(pxYZ); ::glVertex3dv(pXYZ);
+  ////
+  ::glVertex3dv(pxyz); ::glVertex3dv(pxYz);
+  ::glVertex3dv(pxyZ); ::glVertex3dv(pxYZ);
+  ::glVertex3dv(pXyz); ::glVertex3dv(pXYz);
+  ::glVertex3dv(pXyZ); ::glVertex3dv(pXYZ);
+  ::glEnd();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DrawSingleTri3D_FaceNorm

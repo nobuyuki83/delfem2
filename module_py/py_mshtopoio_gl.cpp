@@ -2,8 +2,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-
-
 #include "delfem2/mshtopoio_gl.h"
 
 namespace py = pybind11;
@@ -31,7 +29,7 @@ void init_mshtopoio_gl(py::module &m){
   .def_readonly("listElem", &CMeshElem::aElem)
   .def_readonly("listPos",  &CMeshElem::aPos)
   .def_readonly("elemType", &CMeshElem::elem_type)
-  .def_readonly("nDim",     &CMeshElem::ndim);
+  .def_readonly("nDim",     &CMeshElem::ndim); 
   
   py::class_<CTriangulationOutput>(m, "TriangulationOutput")
   .def(py::init<>())

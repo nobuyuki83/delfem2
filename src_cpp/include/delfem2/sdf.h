@@ -1,5 +1,5 @@
-#if !defined(SIGNED_DISTANCE_FUNCTION_H)
-#define SIGNED_DISTANCE_FUNCTION_H
+#ifndef SDF_H
+#define SDF_H
 
 class CSignedDistanceField3D
 {

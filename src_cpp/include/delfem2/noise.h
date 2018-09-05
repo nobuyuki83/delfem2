@@ -1,5 +1,5 @@
-#ifndef noise_h
-#define noise_h
+#ifndef NOISE_H
+#define NOISE_H
 
 void Shuffle(std::vector<int>& X)
 {

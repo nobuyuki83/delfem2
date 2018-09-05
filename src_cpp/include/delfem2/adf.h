@@ -1,6 +1,5 @@
-
-#ifndef adaptive_distance_field_h
-#define adaptive_distance_field_h
+#ifndef ADF_H
+#define ADF_H
 
 #include <vector>
 

@@ -17,11 +17,12 @@
 #include <GL/glu.h>
 #endif
 
+#include "delfem2/funcs_gl.h"
+#include "delfem2/dyntri_v3.h"
+
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/funcs_gl.h"
-#include "delfem2/dyntri_v3.h"
 
 #include "delfem2/mshtopoio_gl.h"
 

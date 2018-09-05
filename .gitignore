@@ -33,10 +33,7 @@ buildMake
 build
 trash
 external/fbx
-examples/bin
-examples/models/fbx
-examples/models/step
-examples/models/bvh
 projects_sub
 docs/_build/
 examples_cpp/bin
+test_inputs_private

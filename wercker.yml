@@ -35,6 +35,10 @@ build:
           cmake ..
           make
     - script:
+        name: pip setup py moudule
+        code: |
+          pip install . -e
+    - script:
         name: test
         code: |
           cd test

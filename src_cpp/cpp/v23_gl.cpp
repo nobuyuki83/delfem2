@@ -12,6 +12,8 @@
 #include <GL/gl.h>
 #endif
 
+
+#include "delfem2/quat.h"
 #include "delfem2/v23_gl.h"
 
 void myGlVertex(const CVector3& v)
@@ -44,6 +46,30 @@ void myGlVertex(int i, const std::vector<CVector3>& aV)
 void myGlVertex(int i, const std::vector<double>& vec)
 {
   ::glVertex3d(vec[i*2], vec[i*2+1], +0.0);
+}
+
+void ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin)
+{
+  const CVector3& dy = Cross(dz,dx);
+  const CVector3& o = origin;
+  double A[16];
+  A[ 0] = dx.x;  A[ 1] = dx.y;  A[ 2] = dx.z;  A[ 3] = 0;
+  A[ 4] = dy.x;  A[ 5] = dy.y;  A[ 6] = dy.z;  A[ 7] = 0;
+  A[ 8] = dz.x;  A[ 9] = dz.y;  A[10] = dz.z;  A[11] = 0;
+  A[12] = +o.x;  A[13] =  +o.y; A[14] = +o.z;  A[15] = 1;
+  ::glMultMatrixd(A);
+}
+
+void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin)
+{
+  const CVector3& dy = Cross(dz,dx);
+  CVector3 o(dx*origin,dy*origin,dz*origin);
+  double A[16];
+  A[ 0] = dx.x;  A[ 1] = dy.x;  A[ 2] = dz.x;  A[ 3] = 0;
+  A[ 4] = dx.y;  A[ 5] = dy.y;  A[ 6] = dz.y;  A[ 7] = 0;
+  A[ 8] = dx.z;  A[ 9] = dy.z;  A[10] = dz.z;  A[11] = 0;
+  A[12] = -o.x;  A[13] = -o.y;  A[14] = -o.z;  A[15] = 1;
+  ::glMultMatrixd(A);
 }
 
 ///////////////////////////////////////////////

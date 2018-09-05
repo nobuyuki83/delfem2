@@ -7,3 +7,6 @@
 [submodule "src_cpp/external/glfw"]
 	path = src_cpp/external/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "src_cpp/external/stb"]
+	path = src_cpp/external/stb
+	url = https://github.com/nothings/stb

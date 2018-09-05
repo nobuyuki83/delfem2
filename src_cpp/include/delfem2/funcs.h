@@ -1,5 +1,5 @@
-#ifndef funcs_h
-#define funcs_h
+#ifndef FUNCS_H
+#define FUNCS_H
 
 #include <map>
 
@@ -61,16 +61,13 @@ void ReadVector_CSV(std::vector<double>& str, const std::string& strIn);
 
 std::map<std::string, std::string> ReadDictionary_Python(const std::string& buff);
 
-bool LoadNumpy_2DimF
-(int& ndim0, int& ndim1, std::vector<float>& aData,
- const std::string& path);
-bool LoadNumpy_2DimD
-(int& ndim0, int& ndim1, std::vector<double>& aData,
- const std::string& path);
+bool LoadNumpy_2DimF(int& ndim0, int& ndim1, std::vector<float>& aData,
+                     const std::string& path);
+bool LoadNumpy_2DimD(int& ndim0, int& ndim1, std::vector<double>& aData,
+                     const std::string& path);
 
-bool LoadNumpy_1DimF
-(int& ndim0, std::vector<float>& aData,
- const std::string& path);
+bool LoadNumpy_1DimF(int& ndim0, std::vector<float>& aData,
+                     const std::string& path);
 
 
 #endif /* fem_utility_h */

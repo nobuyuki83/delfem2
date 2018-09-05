@@ -51,10 +51,10 @@ namespace py = pybind11;
 
 py::array_t<float> depth_buffer(CDepth& depth)
 {
-  std::vector<size_t> strides = {sizeof(float),sizeof(float)*depth.nResW};
-  std::vector<size_t> shape = {(size_t)depth.nResW,(size_t)depth.nResH};
+  std::vector<size_t> strides = {sizeof(float)*depth.nResX,sizeof(float)};
+  std::vector<size_t> shape = {(size_t)depth.nResY,(size_t)depth.nResX};
   size_t ndim = 2;
-  return py::array(py::buffer_info(depth.aDepth.data(), sizeof(float),
+  return py::array(py::buffer_info(depth.aZ.data(), sizeof(float),
                                    py::format_descriptor<float>::format(),
                                    ndim, shape, strides));
 }
@@ -69,19 +69,20 @@ PYBIND11_MODULE(dfm2, m) {
   py::class_<CBV3D_AABB>(m,"AABB3", "3D axis aligned bounding box class")
   .def(py::init<>())
   .def(py::init<const std::vector<double>&>())
-  .def("minmax_xyz",        &CBV3D_AABB::MinMaxXYZ)
-  .def("set_minmax_xyz",    &CBV3D_AABB::SetMinMaxXYZ)
-  .def("draw",              &CBV3D_AABB::Draw)
-  .def("add_minmax_xyz",    &CBV3D_AABB::Add_AABBMinMax)
-  .def("list_xyz",          &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
+  .def("__str__",            &CBV3D_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
+  .def("minmax_xyz",         &CBV3D_AABB::MinMaxXYZ)
+  .def("draw",               &CBV3D_AABB::Draw, "draw edge of the bounding box to opengl")
+  .def("set_minmax_xyz",     &CBV3D_AABB::SetMinMaxXYZ)
+  .def("add_minmax_xyz",     &CBV3D_AABB::Add_AABBMinMax)
+  .def("list_xyz",           &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
   .def_readwrite("isActive", &CBV3D_AABB::is_active);
   
   py::class_<CAxisXYZ>(m,"AxisXYZ","3D axis class")
   .def(py::init<>())
   .def(py::init<double>(), py::arg("len"))
-  .def("draw",       &CAxisXYZ::Draw)
-  .def("minmax_xyz", &CAxisXYZ::MinMaxXYZ)
-  .def_readwrite("len", &CAxisXYZ::len)
+  .def("draw",                 &CAxisXYZ::Draw)
+  .def("minmax_xyz",           &CAxisXYZ::MinMaxXYZ)
+  .def_readwrite("len",        &CAxisXYZ::len)
   .def_readwrite("line_width", &CAxisXYZ::line_width);
   
   ///////////////////////////////////
@@ -94,9 +95,7 @@ PYBIND11_MODULE(dfm2, m) {
   .def(py::init<>())
   .def("add",&CVoxelGrid::Add,"add voxel at the integer coordinate");
   
-  m.def("meshQuad3d_voxelGrid",
-        &MeshQuad3D_VoxelGrid,
-        "get quad mesh from voxel grid");
+  m.def("meshQuad3d_voxelGrid",  &MeshQuad3D_VoxelGrid, "get quad mesh from voxel grid");
   
   ///////////////////////////////////
   // cad
@@ -129,13 +128,12 @@ PYBIND11_MODULE(dfm2, m) {
   .def("minmax_xyz", &CDepth::MinMaxXYZ)
   .def("start",      &CDepth::Start)
   .def("end",        &CDepth::End)
-  .def_readwrite("color",  &CDepth::color);
+  .def_readwrite("color",  &CDepth::color)
+  .def_readwrite("len_axis",  &CDepth::draw_len_axis);
   
   m.def("depth_buffer", &depth_buffer);
 
   ///////////////////////////////////
   // gl misc
-  m.def("setSomeLighting",
-        &setSomeLighting,
-        "set some lighting that looks good for me");
+  m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
 }

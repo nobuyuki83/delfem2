@@ -51,7 +51,7 @@ void myGlutDisplay(void)
   ///////
 
   glPointSize(3);
-  depth.Draw_Point();
+  depth.Draw();
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -160,14 +160,17 @@ int main(int argc,char* argv[])
   
   depth_context.Init(512, 512);
   
-  depth.nResW = 512;
-  depth.nResH = 512;
-  depth.lengrid = 0.005;
-  depth.depth_max = 4.0;
-  CVector3(0,0,-1).CopyValueTo(depth.dirPrj);
-  CVector3(1,0,0).CopyValueTo(depth.dirWidth);
-  CVector3(0,0,-2).CopyValueTo(depth.orgPrj);
+  int nres = 512;
+  double elen = 0.005;
+  depth.nResX = nres;
+  depth.nResY = nres;
+  depth.lengrid = elen;
+  depth.z_range = 4.0;
+  CVector3(0,0,-1).CopyValueTo(depth.z_axis);
+  CVector3(1,0,0).CopyValueTo(depth.x_axis);
+  CVector3(-nres*elen*0.5, nres*elen*0.5,-2).CopyValueTo(depth.origin);
   depth.SetColor(1, 0, 0);
+  depth.draw_len_axis = 1.0;
  
   glutMainLoop();
 	return 0;

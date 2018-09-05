@@ -4,6 +4,7 @@
 #include <math.h>
 #include <assert.h>
 #include <vector>
+#include <iostream>
 
 #ifdef USE_GL
 #if defined(__APPLE__) && defined(__MACH__) // Mac
@@ -206,6 +207,11 @@ public:
     aP[6*3+0]=x_min; aP[6*3+1]=y_max; aP[6*3+2]=z_max;
     aP[7*3+0]=x_max; aP[7*3+1]=y_max; aP[7*3+2]=z_max;
     return aP;
+  }
+  std::string str(){
+    return std::string(std::to_string(x_min)+" "+std::to_string(x_max)+" "+
+                       std::to_string(y_min)+" "+std::to_string(y_max)+" "+
+                       std::to_string(z_min)+" "+std::to_string(z_max));
   }
 #ifdef USE_GL
   void Draw(){
