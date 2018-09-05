@@ -38,7 +38,7 @@ build:
         name: pip setup py moudule
         code: |
           sudo apt-get -y install python-pip python-dev build-essential
-          pip install . -e
+          pip install -e .
     - script:
         name: test
         code: |
