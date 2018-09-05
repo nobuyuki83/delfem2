@@ -23,6 +23,7 @@
 #include "delfem2/quat.h"
 #include "delfem2/funcs.h" // isFileExists
 #include "delfem2/v23m3q.h"
+#include "delfem2/msh.h"
 
 #include "delfem2/funcs_gl.h"
 #include "delfem2/color_gl.h"
@@ -463,7 +464,7 @@ void DrawBoneTarget
 {
   double bone_rad = 6;
   ::glDisable(GL_LIGHTING);
-  for(int itrg=0;itrg<aBoneGoal.size();++itrg){
+  for(unsigned int itrg=0;itrg<aBoneGoal.size();++itrg){
     const CBoneGoal& bg = aBoneGoal[itrg];
     if( bg.itype == 0 ){ ::glColor3d(0,0,1); }
     if( bg.itype == 1 ){ ::glColor3d(0,0,0); }
@@ -488,9 +489,9 @@ void CSkin_RigMsh::Finalize(const int npoint)
 {
   // making point 2 bone indexing
   aPoint2BoneInd.assign(npoint+1,0);
-  for(int ibone=0;ibone<aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const CBoneWeight_RigMsh& bone = aBone[ibone];
-    for(int iip=0;iip<bone.aIpWeight.size();++iip){
+    for(unsigned int iip=0;iip<bone.aIpWeight.size();++iip){
       int ip0 = bone.aIpWeight[iip].first;
       assert( ip0 >= 0 && ip0 < npoint );
       aPoint2BoneInd[ip0+1] += 1;
@@ -502,9 +503,9 @@ void CSkin_RigMsh::Finalize(const int npoint)
   const int np2bi = aPoint2BoneInd[npoint];
   aPoint2Bone.resize(np2bi);
   aPoint2BoneWeight.resize(np2bi);
-  for(int ibone=0;ibone<aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const CBoneWeight_RigMsh& bone = aBone[ibone];
-    for(int iip=0;iip<bone.aIpWeight.size();++iip){
+    for(unsigned int iip=0;iip<bone.aIpWeight.size();++iip){
       int ip0 = bone.aIpWeight[iip].first;
       int ip2bi = aPoint2BoneInd[ip0];
       aPoint2BoneWeight[ip2bi] = bone.aIpWeight[iip].second;
@@ -557,13 +558,13 @@ void CSkin_RigMsh::SetSkeleton
 {
   assert(aXYZ.size()==aXYZ_ini.size());
   std::vector<int> LB2GB(aBone.size(),-1);
-  for(int ilb=0;ilb<aBone.size();++ilb){
-    for(int igb=0;igb<aGBone.size();++igb){
+  for(unsigned int ilb=0;ilb<aBone.size();++ilb){
+    for(unsigned int igb=0;igb<aGBone.size();++igb){
       if( aGBone[igb].name == aBone[ilb].name ){ LB2GB[ilb] = igb; break; }
     }
   }
   const int np = aXYZ.size()/3;
-  assert( aPoint2BoneInd.size() == np+1 );
+  assert( (int)aPoint2BoneInd.size() == np+1 );
   aXYZ.assign(np*3,0.0);
   for(int ip=0;ip<np;++ip){
     for(int iilb=aPoint2BoneInd[ip];iilb<aPoint2BoneInd[ip+1];++iilb){
@@ -586,12 +587,13 @@ void CSkin_RigMsh::SetSkeleton
 
 //////////////////////////////////
 
+
 void CMesh_RigMsh::DrawLayerWithTex(int ilayer,const CTexManager& tex_manager, bool is_ini) const
 {
   assert(aXYZ_ini.size()==aXYZ.size());
   const std::vector<double>& aXYZ0 = (is_ini)?aXYZ_ini:aXYZ;
   
-  if( ilayer < 0 || ilayer >= aLayer.size() ){ return; }
+  if( ilayer < 0 || ilayer >= (int)aLayer.size() ){ return; }
   const CLayer_RigMsh& layer = aLayer[ilayer];
   if(layer.material_mapping_mode == "ALL_SAME" or layer.material_mapping_mode == "" ){
     if( this->isTextureWithUVSetName(layer.uv_setname) ){
@@ -610,7 +612,7 @@ void CMesh_RigMsh::DrawLayerWithTex(int ilayer,const CTexManager& tex_manager, b
   else if(layer.material_mapping_mode == "BY_FACE" ){
     assert( layer.material_mapping_face.size() == aElemInd.size()-1 );
     const int nmat = layer.material_mapping_mat2face.size();
-    assert( nmat == aMaterial.size() );
+    assert( nmat == (int)aMaterial.size() );
     for(int imat=0;imat<nmat;++imat){
       const std::vector<int>& part = layer.material_mapping_mat2face[imat];
       const CMaterial_RigMsh& mat = aMaterial[imat];
@@ -639,6 +641,18 @@ void CMesh_RigMsh::DrawLayerWithTex(int ilayer,const CTexManager& tex_manager, b
   }
 }
 
+////////////////////////////////////////////////////////////////
+
+std::vector<double> CRigMsh::MinMaxXYZ() const
+{
+  double mm[6] = {+1,-1, 0,0, 0,0};
+  for(int imesh=0;imesh<(int)this->aMesh.size();++imesh){
+    const CMesh_RigMsh& mesh = aMesh[imesh];
+    ::MinMaxXYZ(mm,mesh.aXYZ_ini);
+  }
+  return std::vector<double>(mm,mm+6);
+}
+
 void CRigMsh::Draw(const CTexManager& tex_manager) const{
   if( is_draw_weight ){
     std::vector< std::pair<double,CColor> > colorMap;
@@ -665,7 +679,7 @@ void CRigMsh::Draw(const CTexManager& tex_manager) const{
   
   if( is_draw_bone ){
     glDisable(GL_DEPTH_TEST);
-    DrawBone(aBone,ibone_selected,ielem_selected,1.0);
+    DrawBone(aBone,ibone_selected,ielem_selected,0.01);
   }
   glEnable(GL_DEPTH_TEST);
 }
@@ -676,7 +690,7 @@ void CRigMsh::Drag(double spx, double spy, double dsx, double dsy)
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   CVector2 sp0(spx,spy);
   CVector2 sp1(spx+dsx, spy+dsy);
-  if( ibone_selected>=0 && ibone_selected<aBone.size() ){
+  if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
     CBone_RigMsh& bone = aBone[ibone_selected];
     bool is_updated = DragHandlerRot(bone.quat_joint,
                                      ielem_selected, sp0, sp1, bone.pos,
@@ -712,17 +726,17 @@ void CRigMsh::Pick(double spx, double spy)
 }
 
 void CMesh_RigMsh::SetSleketon(const std::vector<CBone_RigMsh>& aGBone){
-  if( iskin_active < 0 || iskin_active >= aSkin.size() ) return;
+  if( iskin_active < 0 || iskin_active >= (int)aSkin.size() ) return;
   CSkin_RigMsh& skin = aSkin[iskin_active];
   skin.SetSkeleton(aXYZ,aGBone,aXYZ_ini);
 }
 
 std::vector<std::string> CRigMsh::GetArrayTexPath() const {
   std::set<std::string> setTexPath;
-  for(int imesh=0;imesh<aMesh.size();++imesh){
-    for( int imaterial=0;imaterial<aMesh[imesh].aMaterial.size();++imaterial){
+  for(unsigned int imesh=0;imesh<aMesh.size();++imesh){
+    for(unsigned int imaterial=0;imaterial<aMesh[imesh].aMaterial.size();++imaterial){
       const CMaterial_RigMsh& material = aMesh[imesh].aMaterial[imaterial];
-      for(int itex=0;itex<material.aTexture_Diffuse.size();++itex){
+      for(unsigned int itex=0;itex<material.aTexture_Diffuse.size();++itex){
         const CTextureInfo_RigMsh& mat_tex = material.aTexture_Diffuse[itex];
         std::string path = mat_tex.full_path;
         setTexPath.insert(path);
@@ -736,7 +750,7 @@ std::vector<std::string> CRigMsh::GetArrayTexPath() const {
 void CRigMsh::UpdateBonePos()
 {
   UpdateBoneRotTrans(aBone);
-  for(int imesh=0;imesh<aMesh.size();++imesh){
+  for(unsigned int imesh=0;imesh<aMesh.size();++imesh){
     aMesh[imesh].SetSleketon(aBone);
   }
 }

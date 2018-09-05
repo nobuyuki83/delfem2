@@ -256,12 +256,15 @@ public:
 class CRigMsh
 {
 public:
-    CRigMsh(){
-      ibone_selected = 1;
-      ielem_selected = 0;
-      is_draw_bone = true;
-      is_draw_weight = false;
-    }
+  CRigMsh(){
+    ibone_selected = 1;
+    ielem_selected = 0;
+    is_draw_bone = true;
+    is_draw_weight = false;
+  }
+  void Draw(const CTexManager& tex_manager) const;
+  std::vector<double> MinMaxXYZ() const;
+  ////
   void Clear(){
     ibone_selected = -1;
     ielem_selected = -1;
@@ -270,7 +273,6 @@ public:
     aBone.clear();
   }
   void UpdateBonePos();
-  void Draw(const CTexManager& tex_manager) const;
   std::vector<std::string> GetArrayTexPath() const;
   void Pick(double spx, double spy);
   void Drag(double spx, double spy, double dsx, double dsy);

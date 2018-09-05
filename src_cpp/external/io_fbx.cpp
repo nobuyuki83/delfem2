@@ -303,7 +303,7 @@ void getUV_Geom(FbxMesh* pMesh)
     const int lIndexCount= (lUseIndex) ? pGeomElemUV->GetIndexArray().GetCount() : 0;
     
     const int nelem = pMesh->GetPolygonCount();
-    std::cout << "  nface: " << nelem << " " << "npoint: " << lIndexCount << std::endl;
+//    std::cout << "  nface: " << nelem << " " << "npoint: " << lIndexCount << std::endl;
     
     if( pGeomElemUV->GetMappingMode() == FbxGeometryElement::eByControlPoint ){
       for( int ielem = 0; ielem < nelem; ++ielem ){
@@ -425,7 +425,7 @@ void getRigging
         }
         {
           FbxVector4 scale = matTrans.GetS();
-          std::cout << scale[0] << " " << scale[1] << " " << scale[2] << std::endl;
+//          std::cout << scale[0] << " " << scale[1] << " " << scale[2] << std::endl;
         }
 //        pos1[0] += matTrans.GetT()[0];
 //        pos1[1] += matTrans.GetT()[1];

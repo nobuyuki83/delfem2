@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mat3.cpp           ${DELFEM2_INC}/mat3.h
   ${DELFEM2_SRC}/quat.cpp           ${DELFEM2_INC}/quat.h
   ${DELFEM2_SRC}/mshio.cpp          ${DELFEM2_INC}/mshio.h
+  ${DELFEM2_SRC}/msh.cpp          ${DELFEM2_INC}/msh.h
 
   ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
   ${DELFEM2_SRC}/rigmesh.cpp        ${DELFEM2_INC}/rigmesh.h

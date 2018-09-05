@@ -12,7 +12,6 @@
 #include "delfem2/bv.h"    // include gl
 #include "delfem2/cad2d.h"
 
-
 // TODO:Make a wrapper class of the VoxelGrid?
 CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
   CMeshElem me;
@@ -60,9 +59,15 @@ py::array_t<float> depth_buffer(CDepth& depth)
 }
 
 void init_mshtopoio_gl(py::module &m);
+void init_fbx(py::module &m);
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
+  ///////////////////////////////////
+  
+#ifdef USE_FBX
+  init_fbx(m);
+#endif
 
   ///////////////////////////////////
   // axis arrigned boudning box

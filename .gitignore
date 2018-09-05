@@ -36,4 +36,4 @@ external/fbx
 projects_sub
 docs/_build/
 examples_cpp/bin
-test_inputs_private
+private_examples
