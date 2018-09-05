@@ -104,6 +104,9 @@ def winDraw3d(list_obj,winsize=(400,300)):
   """
   #### initialize window
   window = WindowGLFW(winsize=winsize)
+  for obj in list_obj:
+    if hasattr(obj, 'init_gl'):
+      obj.init_gl()  
   #### adjust scale
   aabb3 = AABB3()
   for obj in list_obj:

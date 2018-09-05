@@ -252,6 +252,17 @@ void GetCenterWidth
                  aXYZ);
 }
 
+void MinMaxXYZ(double mm[6],
+               const std::vector<double>& aXYZ)
+{
+  mm[0] = +1;
+  mm[1] = -1;
+  for(unsigned int ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+    updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
+                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
+  }
+}
+
 void GetCenterWidthGroup
 (double& cx, double& cy, double& cz,
  double& wx, double& wy, double& wz,

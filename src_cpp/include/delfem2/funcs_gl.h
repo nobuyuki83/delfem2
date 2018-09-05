@@ -73,14 +73,31 @@ public:
                   int width, int height, int bpp)
   {
     const int id_tex_gl = LoadTexture(pixels, width,height,bpp);
-//    std::cout << "adding texture: " << path << " " << width << " " << height << " " << bpp << std::endl;
     CTextureInfo texinfo;
     texinfo.full_path = path;
     texinfo.height = height;
     texinfo.width = width;
     texinfo.bpp = bpp;
     texinfo.id_tex_gl = id_tex_gl;
-    aTexInfo.push_back(texinfo);
+    /////
+    bool is_new = true;
+    for(int itex=0;itex<(int)aTexInfo.size();++itex){
+      if( aTexInfo[itex].full_path != path ) continue;
+      aTexInfo[itex] = texinfo;
+      is_new = false;
+    }
+    if( is_new ){
+      aTexInfo.push_back(texinfo);
+    }
+  }
+  void AddPath(const std::string& path){
+    CTextureInfo tex;
+    tex.width = -1;
+    tex.height = -1;
+    tex.bpp = -1;
+    tex.id_tex_gl = -1;
+    tex.full_path = path;
+    aTexInfo.push_back(tex);
   }
   void BindTexturePath(const std::string& path) const;
 public:

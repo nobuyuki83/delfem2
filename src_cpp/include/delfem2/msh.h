@@ -44,6 +44,9 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
                          const double lex[3],
                          const double ley[3],
                          const double lez[3]);
+void MinMaxXYZ(double mm[6],
+               const std::vector<double>& aXYZ);
+
 
 //////////////////////
 
