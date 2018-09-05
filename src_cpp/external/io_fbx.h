@@ -1,10 +1,10 @@
-#ifndef ioFBX_hpp
-#define ioFBX_hpp
+#ifndef FBX_H
+#define FBX_H
 
 #include <vector>
 #include <stdio.h>
 
-#include "geosim/rigmesh.h"
+#include "delfem2/rigmesh.h"
 
 void Read_FBX(const std::string& path, CRigMsh& RigMsh);
 

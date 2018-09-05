@@ -5,7 +5,7 @@
 
 #include "fbxsdk.h"
 
-#include "geosim/io_fbx.h"
+#include "delfem2/../../external/io_fbx.h"
 
 class CVal3
 {
