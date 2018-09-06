@@ -174,7 +174,7 @@ void GetMaterialProperty
       aMatTex.push_back(mat_tex);
     }
     if( aMatTex.size() == 0 ){
-      std::cout << "no texture this material" << std::endl;
+//      std::cout << "no texture this material" << std::endl;
     }
   }
   
@@ -503,7 +503,7 @@ void Read_FBX(const std::string& path, CRigMsh& rigmsh)
     }
   }
   std::vector< std::vector<CVal3> > aPosBone(rigmsh.aBone.size());
-  for(int imesh=0;imesh<apMesh.size();++imesh){
+  for(unsigned int imesh=0;imesh<apMesh.size();++imesh){
     CMesh_RigMsh& mesh = rigmsh.aMesh[imesh];
     getXYZElem_Mesh(apMesh[imesh],mesh.aXYZ_ini,mesh.aElemInd,mesh.aElem);
     mesh.aXYZ = mesh.aXYZ_ini;
