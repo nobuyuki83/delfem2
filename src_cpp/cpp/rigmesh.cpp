@@ -44,6 +44,29 @@ static int myStoi(const std::string& str){
   return (int)d;
 }
 
+bool isActive_AABB(const double aabb[6]){
+  if( aabb[0]>aabb[1] ) return false;
+  return true;
+}
+
+void copy_AABB(double aabb[6], const double aabb0[6]){
+  if( aabb == aabb0 ) return;
+  for(int i=0;i<6;++i){ aabb[i] = aabb0[i]; }
+}
+
+void myAdd_AABB(double aabb[6], const double aabb0[6], const double aabb1[6])
+{
+  if( !isActive_AABB(aabb0) && !isActive_AABB(aabb1) ){ aabb[0]=1; aabb[1]=-1; return; }
+  if( !isActive_AABB(aabb0) ){ copy_AABB(aabb, aabb1); return; }
+  if( !isActive_AABB(aabb1) ){ copy_AABB(aabb, aabb0); return; }
+  aabb[0] = ( aabb0[0] < aabb1[0] ) ? aabb0[0] : aabb1[0];
+  aabb[1] = ( aabb0[1] > aabb1[1] ) ? aabb0[1] : aabb1[1];
+  aabb[2] = ( aabb0[2] < aabb1[2] ) ? aabb0[2] : aabb1[2];
+  aabb[3] = ( aabb0[3] > aabb1[3] ) ? aabb0[3] : aabb1[3];
+  aabb[4] = ( aabb0[4] < aabb1[4] ) ? aabb0[4] : aabb1[4];
+  aabb[5] = ( aabb0[5] > aabb1[5] ) ? aabb0[5] : aabb1[5];
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void CBone_RigMsh::Draw
@@ -61,7 +84,7 @@ void CBone_RigMsh::Draw
   if(is_selected){
     const CVector3 p0(pos);
     DrawHandlerRotation(p0, quat, 15, ielem_selected);
-    if( ibone_parent>=0&&ibone_parent<aBone.size() && aBone[ibone_parent].is_active ){
+    if( ibone_parent>=0&&ibone_parent<(int)aBone.size() && aBone[ibone_parent].is_active ){
       const CVector3 pp(aBone[ibone_parent].pos);
 //      double len = (p0-pp).Length();
 //      drawCircle((p0-pp).Normalize(), p0, len*1.5);
@@ -171,7 +194,7 @@ void ReadBVH
       aBone[ib].pos_ini[2] = myStod(aToken[3]);
       if( stackIndBone.size() > 1 ){
         const int ibp = stackIndBone[stackIndBone.size()-2];
-        assert(ibp<aBone.size());
+        assert(ibp<(int)aBone.size());
         aBone[ib].pos_ini[0] += aBone[ibp].pos_ini[0];
         aBone[ib].pos_ini[1] += aBone[ibp].pos_ini[1];
         aBone[ib].pos_ini[2] += aBone[ibp].pos_ini[2];
@@ -180,7 +203,7 @@ void ReadBVH
     else if( aToken[0] == "CHANNELS" ){
       assert(aToken.size()>=2);
       int nch = myStoi(aToken[1]);
-      assert(aToken.size()==nch+2);
+      assert((int)aToken.size()==nch+2);
       const int ib = aBone.size()-1;
       for(int ich=0;ich<nch;++ich){
         const std::string& type_ch = aToken[ich+2];
@@ -245,7 +268,7 @@ void ReadBVH
 void InitializeBone
 (std::vector<CBone_RigMsh>& aBone)
 {
-  for(int ib=0;ib<aBone.size();++ib){
+  for(unsigned int ib=0;ib<aBone.size();++ib){
     CBone_RigMsh& bone = aBone[ib];
     bone.pos[0] = bone.pos_ini[0];
     bone.pos[1] = bone.pos_ini[1];
@@ -264,9 +287,9 @@ void InitializeBone
 void UpdateBoneRotTrans
 (std::vector<CBone_RigMsh>& aBone)
 {
-  for(int ibone=0;ibone<aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
-    if( ibone_p < 0 || ibone_p >= aBone.size() ){ // root bone
+    if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
       QuatCopy(aBone[ibone].quat,aBone[ibone].quat_joint);
       continue;
     }
@@ -290,7 +313,7 @@ void SetRotTransBVH
     const int iaxis = aChannelRotTransBone[ich].iaxis;
     const bool isrot = aChannelRotTransBone[ich].isrot;
     const double val = aVal[ich];
-    assert(ibone<aBone.size());
+    assert(ibone<(int)aBone.size());
     assert(iaxis>=0&&iaxis<3);
     if( !isrot ){
       aBone[ibone].pos[iaxis] = val;
@@ -316,13 +339,13 @@ void PickBone
  double rad_hndlr,
  double tol)
 {
-  if( ibone_selected>=0 && ibone_selected<aBone.size() ){
+  if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
     const CBone_RigMsh& bone = aBone[ibone_selected];
     ielem_selected = bone.PickHandler(src,dir,rad_hndlr,tol);
   }
   if( ielem_selected == -1 ){
     ibone_selected = -1;
-    for(int ibone=0;ibone<aBone.size();++ibone){
+    for(int ibone=0;ibone<(int)aBone.size();++ibone){
       CVector3 pos(aBone[ibone].pos);
       double distance = Distance(nearest_Line_Point(pos, src, dir),pos);
       if( distance < tol ){
@@ -385,13 +408,13 @@ void BoneOptimization
   if( aBoneGoal.empty() ) return;
   ///
   std::vector< std::vector<int> > src2trg(aBone.size());
-  for(int itrg=0;itrg<aBoneGoal.size();++itrg){
+  for(int itrg=0;itrg<(int)aBoneGoal.size();++itrg){
     int ib0 = aBoneGoal[itrg].ibone;
     //  src2trg[ib0].push_back(itrg); // this should be added if we set goal apart from the bone
     for(;;){
       int ib1 = aBone[ib0].ibone_parent;
       if( ib1 < 0 ){ break; }
-      assert( ib1 < aBoneGoal.size() );
+      assert( ib1 < (int)aBoneGoal.size() );
       src2trg[ib1].push_back(itrg);
       ib0 = ib1;
     }
@@ -407,7 +430,7 @@ void BoneOptimization
    std::cout << std::endl;
    }
    */
-  for(int ibone=0;ibone<aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     //  for(int ibone=aBone.size()-1;ibone>=0;--ibone){
     if( src2trg[ibone].empty() ){ continue; }
     //    std::cout << "optimize bone:" << ibone << std::endl;
@@ -415,7 +438,7 @@ void BoneOptimization
       const CVector3 org(aBone[ibone].pos);
       CMatrix3 A;
       double len = 0.0;
-      for(int iitrg=0;iitrg<src2trg[ibone].size();++iitrg){
+      for(unsigned int iitrg=0;iitrg<src2trg[ibone].size();++iitrg){
         const int itrg = src2trg[ibone][iitrg];
         const int ib0 = aBoneGoal[itrg].ibone;
         double pos_goal[3];
@@ -436,7 +459,7 @@ void BoneOptimization
     {
       double off[3] = {0,0,0};
       double w = 0;
-      for(int itrg=0;itrg<aBoneGoal.size();++itrg){
+      for(unsigned int itrg=0;itrg<aBoneGoal.size();++itrg){
         const int ib0 = aBoneGoal[itrg].ibone;
         double pos_goal[3];
         aBoneGoal[itrg].GetGoalPos(pos_goal,
@@ -449,7 +472,7 @@ void BoneOptimization
       off[0] /= w;
       off[1] /= w;
       off[2] /= w;
-      for(int jbone=0;jbone<aBone.size();++jbone){
+      for(unsigned int jbone=0;jbone<aBone.size();++jbone){
         aBone[jbone].pos[0] -= off[0];
         aBone[jbone].pos[1] -= off[1];
         aBone[jbone].pos[2] -= off[2];
@@ -648,7 +671,8 @@ std::vector<double> CRigMsh::MinMaxXYZ() const
   double mm[6] = {+1,-1, 0,0, 0,0};
   for(int imesh=0;imesh<(int)this->aMesh.size();++imesh){
     const CMesh_RigMsh& mesh = aMesh[imesh];
-    ::MinMaxXYZ(mm,mesh.aXYZ_ini);
+    double mm0[6]; ::MinMaxXYZ(mm0,mesh.aXYZ_ini);
+    myAdd_AABB(mm, mm, mm0);
   }
   return std::vector<double>(mm,mm+6);
 }
@@ -679,7 +703,7 @@ void CRigMsh::Draw(const CTexManager& tex_manager) const{
   
   if( is_draw_bone ){
     glDisable(GL_DEPTH_TEST);
-    DrawBone(aBone,ibone_selected,ielem_selected,0.01);
+    DrawBone(aBone,ibone_selected,ielem_selected,draw_rep_length*0.005);
   }
   glEnable(GL_DEPTH_TEST);
 }
@@ -757,11 +781,11 @@ void CRigMsh::UpdateBonePos()
 
 void CRigMsh::FixTexPath(const std::string& path_fbx)
 {
-  for(int imesh=0;imesh<aMesh.size();++imesh){
+  for(unsigned int imesh=0;imesh<aMesh.size();++imesh){
     CMesh_RigMsh& mesh = aMesh[imesh];
-    for(int imat=0;imat<mesh.aMaterial.size();++imat){
+    for(unsigned int imat=0;imat<mesh.aMaterial.size();++imat){
       CMaterial_RigMsh& mat = mesh.aMaterial[imat];
-      for(int itex=0;itex<mat.aTexture_Diffuse.size();++itex){
+      for(unsigned int itex=0;itex<mat.aTexture_Diffuse.size();++itex){
         std::string path_tex = mat.aTexture_Diffuse[itex].full_path;
         if( isFileExists(path_tex) ){ continue; }
         std::string path_dir = getPathDir(path_fbx);
@@ -806,17 +830,17 @@ void CRigMsh::PrintInfo() const
     }
     
     std::cout << "  material info" << std::endl;
-    for( int imaterial=0;imaterial<mesh.aMaterial.size();++imaterial){
+    for(unsigned int imaterial=0;imaterial<mesh.aMaterial.size();++imaterial){
       const CMaterial_RigMsh& material = mesh.aMaterial[imaterial];
-      for(int itex=0;itex<material.aTexture_Diffuse.size();++itex){
+      for(unsigned int itex=0;itex<material.aTexture_Diffuse.size();++itex){
         const CTextureInfo_RigMsh& mat_tex = material.aTexture_Diffuse[itex];
         std::cout << "    diffuse: " << imaterial << " " << itex << " " << mat_tex.uv_setname << " " << mat_tex.full_path << std::endl;
       }
     }
     std::cout << "  skin info" << std::endl;
-    for( int iskin = 0; iskin<mesh.aSkin.size();++iskin){
+    for(unsigned  int iskin = 0; iskin<mesh.aSkin.size();++iskin){
       const CSkin_RigMsh& skin = mesh.aSkin[iskin];
-      for( int ibone=0;ibone<skin.aBone.size();++ibone){
+      for(unsigned int ibone=0;ibone<skin.aBone.size();++ibone){
         const CBoneWeight_RigMsh& bone = skin.aBone[ibone];
         std::cout << "    bone: " << ibone << " in skin: " << iskin << " has points: " << bone.aIpWeight.size() << " name: " << bone.name << std::endl;
       }

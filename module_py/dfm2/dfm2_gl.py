@@ -373,10 +373,14 @@ class Camera:
     minmax_x = minMaxLoc(aPos, [1., 0., 0.])
     minmax_y = minMaxLoc(aPos, [0., 1., 0.])
     minmax_z = minMaxLoc(aPos, [0., 0., 1.])
+    (win_w,win_h) = glGetIntegerv(GL_VIEWPORT)[2:]
+    asp = float(win_w) / win_h
+    vh1 = (minmax_x[1]-minmax_x[0])/asp
+    vh0 = (minmax_y[1]-minmax_y[0])
     self.pivot[0] = -0.5*(minmax_x[0]+minmax_x[1])
     self.pivot[1] = -0.5*(minmax_y[0]+minmax_y[1])
     self.pivot[2] = -0.5*(minmax_z[0]+minmax_z[1])
     self.scr_trans[0] = 0.0
     self.scr_trans[1] = 0.0
-    self.view_height = (minmax_y[1]-minmax_y[0])
+    self.view_height = max(vh0,vh1)
     self.scale = 1.0

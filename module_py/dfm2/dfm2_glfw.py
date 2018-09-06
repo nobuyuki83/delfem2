@@ -77,6 +77,7 @@ class WindowGLFW:
       glfw.poll_events()
       if self.wm.isClose:
         break
+    self.close()
 
   def close(self):
     glfw.destroy_window(self.win)
