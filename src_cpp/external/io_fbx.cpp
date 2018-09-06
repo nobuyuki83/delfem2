@@ -527,14 +527,14 @@ void Read_FBX(const std::string& path, CRigMsh& rigmsh)
     { // rigging information
       getRigging(apMesh[imesh],
                  mesh.aSkin, aPosBone, mapName2Indb);
-      for(int iskin=0;iskin<mesh.aSkin.size();++iskin){
+      for(unsigned int iskin=0;iskin<mesh.aSkin.size();++iskin){
         mesh.aSkin[iskin].Finalize(mesh.aXYZ_ini.size()/3);
       }
     }
   }
-  for(int ibone=0;ibone<aPosBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aPosBone.size();++ibone){
     double x=0.0, y=0.0, z=0.0;
-    for(int iv=0;iv<aPosBone[ibone].size();++iv){
+    for(unsigned int iv=0;iv<aPosBone[ibone].size();++iv){
       x += aPosBone[ibone][iv].v0;
       y += aPosBone[ibone][iv].v1;
       z += aPosBone[ibone][iv].v2;
@@ -561,4 +561,5 @@ void Read_FBX(const std::string& path, CRigMsh& rigmsh)
     rigmsh.aBone[ibone].quat_joint[3] = 0;
   }
   rigmsh.UpdateBonePos();
+  rigmsh.Initialize();
 }

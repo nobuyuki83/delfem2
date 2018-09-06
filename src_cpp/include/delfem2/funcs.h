@@ -28,8 +28,6 @@ bool WriteParam(const std::string& fname,
                 const std::vector<float>& aPara);
 std::string LoadFile(const std::string& fname);
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 // string handling
 

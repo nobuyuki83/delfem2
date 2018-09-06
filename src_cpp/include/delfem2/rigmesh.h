@@ -259,6 +259,7 @@ public:
   CRigMsh(){
     ibone_selected = 1;
     ielem_selected = 0;
+    draw_rep_length = -1;
     is_draw_bone = true;
     is_draw_weight = false;
   }
@@ -272,6 +273,13 @@ public:
     aMesh.clear();
     aBone.clear();
   }
+  void Initialize(){
+    const std::vector<double>& mm = this->MinMaxXYZ();
+    double lx = mm[1]-mm[0];
+    double ly = mm[3]-mm[2];
+    double lz = mm[5]-mm[4];
+    draw_rep_length = sqrt(lx*lx+ly*ly+lz*lz);
+  }
   void UpdateBonePos();
   std::vector<std::string> GetArrayTexPath() const;
   void Pick(double spx, double spy);
@@ -282,6 +290,7 @@ public:
   int ibone_selected;
   int ielem_selected;
   ////
+  double draw_rep_length; // diagonal length of the bounding box，set in the Initialize()
   bool is_draw_bone;
   bool is_draw_weight;
   std::vector<CMesh_RigMsh> aMesh;
