@@ -30,6 +30,10 @@ CTexManager GetTexManager(const std::vector<std::string>& aPath){
 
 class CRigMshTex{
 public:
+  CRigMshTex(){}
+  CRigMshTex(const std::string& fpath){
+    this->Read(fpath);
+  }
   void Draw(){
     rigmsh.Draw(tm);
   }
@@ -71,6 +75,7 @@ namespace py = pybind11;
 void init_fbx(py::module &m){
   py::class_<CRigMshTex>(m, "RigMshTex")
   .def(py::init<>())
+  .def(py::init<const std::string&>())
   .def("draw",          &CRigMshTex::Draw)
   .def("minmax_xyz",    &CRigMshTex::MinMaxXYZ)
   .def("init_gl",       &CRigMshTex::LoadTex)
