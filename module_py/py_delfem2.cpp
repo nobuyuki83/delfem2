@@ -80,6 +80,8 @@ PYBIND11_MODULE(dfm2, m) {
   .def("set_minmax_xyz",     &CBV3D_AABB::SetMinMaxXYZ)
   .def("add_minmax_xyz",     &CBV3D_AABB::Add_AABBMinMax)
   .def("list_xyz",           &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
+  .def("diagonal_length",    &CBV3D_AABB::DiagonalLength, "diagonal length of the bounding box")
+  .def("max_length",         &CBV3D_AABB::MaxLength, "diagonal length of the bounding box")
   .def_readwrite("isActive", &CBV3D_AABB::is_active);
   
   py::class_<CAxisXYZ>(m,"AxisXYZ","3D axis class")

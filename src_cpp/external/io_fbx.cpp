@@ -151,8 +151,8 @@ void GetMaterialProperty
   /*
   {
     const FbxProperty mpc = material_propaty.GetDstProperty();
-    std::cout << mpc.GetName() << std::endl;
     const int ntexture = mpc.GetSrcObjectCount<FbxFileTexture>();
+    std::cout << "  Dst ntex" << ntexture << " " << mpc.GetName() << std::endl;
     for(int itexture=0;itexture<ntexture;itexture++){
       const FbxFileTexture* pFileTex = mpc.GetSrcObject<FbxFileTexture>(itexture);
       if(!pFileTex){ continue; }
@@ -160,18 +160,47 @@ void GetMaterialProperty
     }
   }
    */
+  /*
+  {
+    std::cout << material_propaty.GetDstObjectCount() << std::endl;
+    std::cout << material_propaty.GetSrcObjectCount() << std::endl;
+    const FbxProperty mpc0 = material_propaty.GetDstProperty();
+    std::cout << mpc0.GetDstObjectCount() << std::endl;
+    std::cout << mpc0.GetSrcObjectCount() << std::endl;
+    const FbxProperty mpc1 = material_propaty.GetSrcProperty();
+    std::cout << mpc1.GetDstObjectCount() << std::endl;
+    std::cout << mpc1.GetSrcObjectCount() << std::endl;
+//    const FbxFileTexture* pFileTex  = material_propaty
+//    std::cout << pFileTex << std::endl;
+//    if(pFileTex){
+//      std::cout << pFileTex->GetFileName() << " " << pFileTex->GetName() << std::endl;
+//    }
+    {
+      const int ntexture = material_propaty.GetDstObjectCount<FbxFileTexture>();
+      std::cout << "  Dst FileTex ntex" << ntexture << std::endl;
+    }
+    {
+      const int ntexture = material_propaty.GetDstObjectCount<FbxProceduralTexture>();
+      std::cout << "  Dst Proc ntex" << ntexture << std::endl;
+    }
+  }
+   */
+  
   {
     aMatTex.clear();
     const int ntexture = material_propaty.GetSrcObjectCount<FbxFileTexture>();
+//    std::cout << "  Src ntex" << ntexture << std::endl;
     for(int itexture=0;itexture<ntexture;itexture++){
       const FbxFileTexture* pFileTex = material_propaty.GetSrcObject<FbxFileTexture>(itexture);
       if(!pFileTex){ continue; }
+//      std::cout << "        " << itexture << std::endl;
       CTextureInfo_RigMsh mat_tex;
 //      mat_tex.full_path = pFileTex->GetFileName();
       mat_tex.full_path = pFileTex->GetFileName();
       mat_tex.name = pFileTex->GetName();
       mat_tex.uv_setname = pFileTex->UVSet.Get();
       aMatTex.push_back(mat_tex);
+//      std::cout << mat_tex.name << " " << mat_tex.full_path << std::endl;
     }
     if( aMatTex.size() == 0 ){
 //      std::cout << "no texture this material" << std::endl;
@@ -203,15 +232,36 @@ void getMaterial(FbxMesh* pMesh,std::vector<CMaterial_RigMsh>& aMaterial)
   FbxNode* node = pMesh->GetNode();
   if ( node == 0 ) { return; }
   const int nmaterial = node->GetMaterialCount();
+//  std::cout << "nmaterial" << nmaterial << std::endl;
   aMaterial.resize(nmaterial);
-  for( int imaterial = 0; imaterial < nmaterial; ++imaterial ) {
+  for(int imaterial = 0; imaterial < nmaterial; ++imaterial ) {
     const FbxSurfaceMaterial* pSurfMat = node->GetMaterial( imaterial );
     if ( pSurfMat == 0 ) { continue; }
+//    std::cout << "   imat:" << imaterial << std::endl;
     GetMaterialProperty(pSurfMat,
                         FbxSurfaceMaterial::sDiffuse,
                         FbxSurfaceMaterial::sDiffuseFactor,
                         aMaterial[imaterial].RGB_Diffuse,
                         aMaterial[imaterial].aTexture_Diffuse);
+    /*
+    {
+      const FbxProperty material_propaty = pSurfMat->FindProperty(FbxSurfaceMaterial::sMultiLayer);
+      std::cout << material_propaty.GetSrcObjectCount() << std::endl;
+    }
+     */
+    /*
+    std::cout << "hogehoge" << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sDiffuse).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sAmbient).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sSpecular).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sShadingModel).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sNormalMap).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sMultiLayer).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sEmissive).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sDisplacementColor).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sVectorDisplacementColor).GetSrcObjectCount() << std::endl;
+    std::cout << pSurfMat->FindProperty(FbxSurfaceMaterial::sTransparentColor).GetSrcObjectCount() << std::endl;
+     */
   }
 }
 
@@ -533,13 +583,11 @@ void Read_FBX(const std::string& path, CRigMsh& rigmsh)
     }
   }
   for(unsigned int ibone=0;ibone<aPosBone.size();++ibone){
-    double x=0.0, y=0.0, z=0.0;
+    /*
     for(unsigned int iv=0;iv<aPosBone[ibone].size();++iv){
-      x += aPosBone[ibone][iv].v0;
-      y += aPosBone[ibone][iv].v1;
-      z += aPosBone[ibone][iv].v2;
-//      std::cout << ibone << "   (" << aPosBone[ibone][iv].v0 << " " << aPosBone[ibone][iv].v1 << " " << aPosBone[ibone][iv].v2 << ") " << std::endl;
+      std::cout << ibone << "   (" << aPosBone[ibone][iv].v0 << " " << aPosBone[ibone][iv].v1 << " " << aPosBone[ibone][iv].v2 << ") " << std::endl;
     }
+     */
     if( aPosBone[ibone].size() > 0 ){
       rigmsh.aBone[ibone].is_active = true;
 //      rigmsh.aBone[ibone].pos_ini[0] = x/aPosBone[ibone].size();
@@ -550,6 +598,9 @@ void Read_FBX(const std::string& path, CRigMsh& rigmsh)
       rigmsh.aBone[ibone].pos_ini[2] = aPosBone[ibone][0].v2;
     }
     else{
+      rigmsh.aBone[ibone].pos_ini[0] = 0.0;
+      rigmsh.aBone[ibone].pos_ini[1] = 0.0;
+      rigmsh.aBone[ibone].pos_ini[2] = 0.0;
       rigmsh.aBone[ibone].is_active = false;
     }
     rigmsh.aBone[ibone].pos[0] = rigmsh.aBone[ibone].pos_ini[0];
@@ -559,6 +610,7 @@ void Read_FBX(const std::string& path, CRigMsh& rigmsh)
     rigmsh.aBone[ibone].quat_joint[1] = 0;
     rigmsh.aBone[ibone].quat_joint[2] = 0;
     rigmsh.aBone[ibone].quat_joint[3] = 0;
+//    std::cout << "    " << rigmsh.aBone[ibone].pos[0] << " " << rigmsh.aBone[ibone].pos[1] << " " << rigmsh.aBone[ibone].pos[2] << std::endl;
   }
   rigmsh.UpdateBonePos();
   rigmsh.Initialize();

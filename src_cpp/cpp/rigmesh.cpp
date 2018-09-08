@@ -787,21 +787,22 @@ void CRigMsh::FixTexPath(const std::string& path_fbx)
       CMaterial_RigMsh& mat = mesh.aMaterial[imat];
       for(unsigned int itex=0;itex<mat.aTexture_Diffuse.size();++itex){
         std::string path_tex = mat.aTexture_Diffuse[itex].full_path;
+//        std::cout << imesh << " " << imat << " " << path_tex << std::endl;
         if( isFileExists(path_tex) ){ continue; }
         std::string path_dir = getPathDir(path_fbx);
-        if( path_tex.find('/') != -1 ){
+        if( path_tex.find('/') != std::string::npos ){
           int iloc = path_tex.find_last_of('/');
           std::string bn(path_tex.begin()+iloc+1,path_tex.end());
           mat.aTexture_Diffuse[itex].full_path = path_dir + "/" + bn;
         }
-        else if( path_tex.find('\\') != -1 ){
+        else if( path_tex.find('\\') != std::string::npos ){
           int iloc = path_tex.find_last_of('\\');
           std::string bn(path_tex.begin()+iloc+1,path_tex.end());
           mat.aTexture_Diffuse[itex].full_path = path_dir + "/" + bn;
         }
         else{ // this is base name
           mat.aTexture_Diffuse[itex].full_path = path_dir + "/" + path_tex;
-          std::cout << mat.aTexture_Diffuse[itex].full_path << std::endl;
+//          std::cout << mat.aTexture_Diffuse[itex].full_path << std::endl;
         }
         path_tex = mat.aTexture_Diffuse[itex].full_path;
         if( !isFileExists(path_tex) ){
