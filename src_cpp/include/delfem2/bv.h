@@ -67,6 +67,20 @@ public:
     z_max = minmaxXYZ[5];
     is_active = true;
   }
+  double DiagonalLength() const{
+    double x0 = x_max - x_min;
+    double y0 = y_max - y_min;
+    double z0 = z_max - z_min;
+    return sqrt(x0*x0+y0*y0+z0*z0);
+  }
+  double MaxLength() const{
+    double x0 = x_max - x_min;
+    double y0 = y_max - y_min;
+    double z0 = z_max - z_min;
+    if( x0 > y0 && x0 > z0 ){ return x0; }
+    else if( y0 > x0 && y0 > z0 ){ return y0; }
+    return z0;
+  }
   void SetMinMaxXYZ(double x_min, double x_max,
                     double y_min, double y_max,
                     double z_min, double z_max)
@@ -223,6 +237,8 @@ public:
     const double pXyZ[3] = {x_max,y_min,z_max};
     const double pXYz[3] = {x_max,y_max,z_min};
     const double pXYZ[3] = {x_max,y_max,z_max};
+    ::glColor3d(0,0,0);
+    ::glLineWidth(1);
     ::glBegin(GL_LINES);
     ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
     ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
