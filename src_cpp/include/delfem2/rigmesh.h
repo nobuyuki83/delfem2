@@ -31,6 +31,22 @@ public:
   int PickHandler(const CVector3& org, const CVector3& dir,
                   double rad_handlr,
                   double tol) const;
+  void Scale(double scale){
+    pos_ini[0] *= scale;
+    pos_ini[1] *= scale;
+    pos_ini[2] *= scale;
+    pos[0] *= scale;
+    pos[1] *= scale;
+    pos[2] *= scale;
+  }
+  void Translate(double dx, double dy, double dz){
+    pos_ini[0] += dx;
+    pos_ini[1] += dy;
+    pos_ini[2] += dz;
+    pos[0] += dx;
+    pos[1] += dy;
+    pos[2] += dz;
+  }
 public:
   std::string name;
   int ibone_parent;
@@ -238,7 +254,23 @@ public:
     const CSkin_RigMsh& skin = aSkin[iskin_active];
     skin.computeWeight(aWeight,name_bone_active,aXYZ_ini.size()/3);
   }
-  void SetSleketon(const std::vector<CBone_RigMsh>& aSkeleton);
+  void SetSleketon(const std::vector<CBone_RigMsh>& aSkeleton); // initialize aWeight and aXYZ
+  void Scale(double scale){
+    for(unsigned int i=0;i<aXYZ_ini.size();++i){ aXYZ_ini[i] *= scale; }
+    for(unsigned int i=0;i<aXYZ.size();    ++i){ aXYZ[i]     *= scale; }
+  }
+  void Translate(double dx, double dy, double dz){
+    for(unsigned int ixyz=0;ixyz<aXYZ_ini.size()/3;++ixyz){
+      aXYZ_ini[ixyz*3+0] += dx;
+      aXYZ_ini[ixyz*3+1] += dy;
+      aXYZ_ini[ixyz*3+2] += dz;
+    }
+    for(unsigned int ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+      aXYZ[ixyz*3+0] += dx;
+      aXYZ[ixyz*3+1] += dy;
+      aXYZ[ixyz*3+2] += dz;
+    }
+  }
 public:
   std::vector<double> aXYZ_ini;
   std::vector<int> aElemInd,aElem;
@@ -266,6 +298,15 @@ public:
   void Draw(const CTexManager& tex_manager) const;
   std::vector<double> MinMaxXYZ() const;
   ////
+  void Scale(double s){
+    for(unsigned int im=0;im<aMesh.size();++im){ aMesh[im].Scale(s); }
+    for(unsigned int ib=0;ib<aBone.size();++ib){ aBone[ib].Scale(s); }
+    draw_rep_length *= s;
+  }
+  void Translate(double dx, double dy, double dz){
+    for(unsigned int im=0;im<aMesh.size();++im){ aMesh[im].Translate(dx,dy,dz); }
+    for(unsigned int ib=0;ib<aBone.size();++ib){ aBone[ib].Translate(dx,dy,dz); }
+  }
   void Clear(){
     ibone_selected = -1;
     ielem_selected = -1;

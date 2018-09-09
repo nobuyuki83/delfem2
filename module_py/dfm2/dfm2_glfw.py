@@ -58,7 +58,7 @@ class WindowGLFW:
     self.draw_func = None
     glEnable(GL_DEPTH_TEST)
 
-  def draw_loop(self,list_draw_func):
+  def draw_loop(self,list_draw_func,bgcolor=(1,1,1)):
     """
     Enter the draw loop
 
@@ -68,7 +68,7 @@ class WindowGLFW:
     glfw.set_cursor_pos_callback(self.win, self.motion)
     glfw.set_key_callback(self.win, self.keyinput)
     while not glfw.window_should_close(self.win):
-      glClearColor(1, 1, 1, 1)
+      glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0)
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
       self.wm.camera.set_gl_camera()
       for draw_func in list_draw_func:
@@ -94,7 +94,7 @@ class WindowGLFW:
 
 
 
-def winDraw3d(list_obj,winsize=(400,300)):
+def winDraw3d(list_obj,winsize=(400,300),bgcolor=(1,1,1)):
   """
   draw the input object into openGL window
 
@@ -121,7 +121,7 @@ def winDraw3d(list_obj,winsize=(400,300)):
   glEnable(GL_POLYGON_OFFSET_FILL )
   glPolygonOffset( 1.1, 4.0 )
   #### enter loop
-  window.draw_loop([x.draw for x in list_obj])
+  window.draw_loop([x.draw for x in list_obj],bgcolor=bgcolor)
 
 
 def imgDraw3d(list_obj,winsize=(400,300)):
