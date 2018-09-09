@@ -70,6 +70,11 @@ PYBIND11_MODULE(dfm2, m) {
 #endif
 
   ///////////////////////////////////
+  // mesh
+  init_mshtopoio_gl(m);
+  
+  
+  ///////////////////////////////////
   // axis arrigned boudning box
   py::class_<CBV3D_AABB>(m,"AABB3", "3D axis aligned bounding box class")
   .def(py::init<>())
@@ -82,6 +87,7 @@ PYBIND11_MODULE(dfm2, m) {
   .def("list_xyz",           &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
   .def("diagonal_length",    &CBV3D_AABB::DiagonalLength, "diagonal length of the bounding box")
   .def("max_length",         &CBV3D_AABB::MaxLength, "diagonal length of the bounding box")
+  .def("center",             &CBV3D_AABB::Center, "center position")
   .def_readwrite("isActive", &CBV3D_AABB::is_active);
   
   py::class_<CAxisXYZ>(m,"AxisXYZ","3D axis class")
@@ -91,10 +97,6 @@ PYBIND11_MODULE(dfm2, m) {
   .def("minmax_xyz",           &CAxisXYZ::MinMaxXYZ)
   .def_readwrite("len",        &CAxisXYZ::len)
   .def_readwrite("line_width", &CAxisXYZ::line_width);
-  
-  ///////////////////////////////////
-  // mesh
-  init_mshtopoio_gl(m);
   
   ///////////////////////////////////
   // voxel

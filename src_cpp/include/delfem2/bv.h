@@ -210,6 +210,13 @@ public:
     mm[4] = z_min;  mm[5] = z_max;
     return mm;
   }
+  std::vector<double> Center(){
+    std::vector<double> mm(3);
+    mm[0] = (x_min+x_max)*0.5;
+    mm[1] = (y_min+y_max)*0.5;
+    mm[2] = (z_min+z_max)*0.5;
+    return mm;
+  }
   std::vector<double> Point3D_Vox(){
     std::vector<double> aP(3*8);
     aP[0*3+0]=x_min; aP[0*3+1]=y_min; aP[0*3+2]=z_min;
