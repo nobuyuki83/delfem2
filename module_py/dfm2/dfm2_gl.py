@@ -149,7 +149,7 @@ def scale_vec3(a,d):
 
 def dot(a,d):
   assert len(a) == len(d)
-  sum:float = 0.0
+  sum = 0.0
   for i in range(len(a)):
     sum += a[i]*d[i]
   return sum
@@ -222,11 +222,11 @@ def QuatMult(p, q):
 
 
 def minMaxLoc(aP:list,e:list):
-  ndim:int = len(e)
+  ndim = len(e)
   assert len(aP) % ndim == 0
-  nP:int = int(len(aP) / ndim)
-  min0: float = 0.0
-  max0: float = 0.0
+  nP = int(len(aP) / ndim)
+  min0 = 0.0
+  max0 = 0.0
   for ip in range(nP):
     p = aP[ip*ndim:ip*ndim+ndim]
     pe = dot(p,e)
