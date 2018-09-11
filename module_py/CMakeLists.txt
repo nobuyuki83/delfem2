@@ -41,6 +41,9 @@ set(INPUT_SRC
   py_delfem2.cpp
 )
 
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+
 set(INPUT_INCLUDE_DIR
   ${OPENGL_INCLUDE_DIR}
   ${GLEW_INCLUDE_DIR}
@@ -51,8 +54,6 @@ set(INPUT_LIBRARY
   ${GLEW_LIBRARY}
 )
 
-find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 
 ########################### start use FBX
 if(USE_FBX) 
