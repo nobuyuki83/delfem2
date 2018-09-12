@@ -29,7 +29,8 @@ void init_mshtopoio_gl(py::module &m){
   .def_readonly("listElem", &CMeshElem::aElem)
   .def_readonly("listPos",  &CMeshElem::aPos)
   .def_readonly("elemType", &CMeshElem::elem_type)
-  .def_readonly("nDim",     &CMeshElem::ndim); 
+  .def_readonly("nDim",     &CMeshElem::ndim)
+  .def_readwrite("color_face",  &CMeshElem::color_face);
   
   py::class_<CTriangulationOutput>(m, "TriangulationOutput")
   .def(py::init<>())

@@ -162,10 +162,10 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   img = numpy.reshape(img,(buff_h,buff_w,3))
   return img
 
-class DepthContext:
-  def __init__(self,win_size):
+class DepthColorBuffer:
+  def __init__(self,win_size,is_color,is_depth):
     self.win = WindowGLFW(isVisible=False)
-    self.fbm = FrameBufferManager(win_size)
+    self.fbm = FrameBufferManager(win_size,is_color,is_depth)
   def start(self):
     self.fbm.start()
   def end(self):

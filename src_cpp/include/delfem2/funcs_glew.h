@@ -58,40 +58,49 @@ class CFrameBufferManager
 {
 public:
   CFrameBufferManager(){
-    id_framebuffer = -1;
-    id_depth_texture = -1;
+    id_framebuffer = 0;
   }
-  CFrameBufferManager(const std::vector<int>& winSize){
-    this->Init(winSize[0],winSize[1]);
-  }
-  void Init(int width, int height){
-    this->width = width;
-    this->height = height;
-    this->SetFrameBufferSize(width,height);
+  CFrameBufferManager(const std::vector<int>& winSize, bool isColor, bool isDepth){
+    this->Init(winSize[0],winSize[1],isColor,isDepth);
   }
   void DeleteFrameBuffer(){
     if( id_framebuffer > 0 ){
       glDeleteFramebuffers(1, &id_framebuffer);
       id_framebuffer = 0;
     }
-    // TODO: delete depth_texture here
     if( id_depth_render_buffer > 0  ){
       glDeleteRenderbuffersEXT(1, &id_depth_render_buffer);
       id_depth_render_buffer = 0;
     }
+    if( id_color_render_buffer > 0  ){
+      glDeleteRenderbuffersEXT(1, &id_color_render_buffer);
+      id_color_render_buffer = 0;
+    }
   }
-  void SetFrameBufferSize(int width, int height){
+  void Init(int width, int height, bool isColor, bool isDepth)
+  {
     DeleteFrameBuffer();
     glGenFramebuffers(1, &id_framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
     ////
-    glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
-    ////
-    glGenRenderbuffers(1, &id_depth_render_buffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, id_depth_render_buffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id_depth_render_buffer);
+    //// depth
+    if( isDepth ){
+      glGenRenderbuffers(1, &id_depth_render_buffer);
+      glBindRenderbuffer(GL_RENDERBUFFER, id_depth_render_buffer);
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, width, height);
+      glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id_depth_render_buffer);
+    }
+    /// color
+    if( isColor ){
+      glGenRenderbuffers(1, &id_color_render_buffer);
+      glBindRenderbuffer(GL_RENDERBUFFER, id_color_render_buffer);
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+      glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, id_color_render_buffer);
+    }
+    else{
+      glDrawBuffer(GL_NONE); // not sure why do I need this...
+    }
     ////
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER) ;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -112,14 +121,16 @@ public:
   void Start() const{
     glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, id_depth_render_buffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, id_color_render_buffer);
+
   }
   void End() const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 public:
-  unsigned int id_framebuffer;
-  unsigned int id_depth_texture;
-  unsigned int id_depth_render_buffer;
+  unsigned int id_framebuffer; // id of this frame buffer
+  unsigned int id_depth_render_buffer; // depth buffer
+  unsigned int id_color_render_buffer; // color buffer
   int width;
   int height;
 };

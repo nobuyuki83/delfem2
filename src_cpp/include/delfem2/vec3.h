@@ -54,6 +54,11 @@ public:
   CVector3(const std::vector<double>& v){ x = v[0]; y = v[1]; z = v[2]; }
 	virtual ~CVector3(){}
 
+  std::vector<double> stlvec() const {
+    std::vector<double> d(3);
+    d[0] = x; d[1] = y; d[2] = z;
+    return d;
+  }
 	void SetVector(double vx, double vy, double vz){ x = vx; y = vy; z = vz; }
   void CopyValueTo(double* v) const { v[0]=x; v[1]=y; v[2]=z; }
 

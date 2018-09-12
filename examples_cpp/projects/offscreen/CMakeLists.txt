@@ -1,4 +1,4 @@
-project(depth)
+project(offscreen)
 
 cmake_minimum_required(VERSION 2.8)
 set( CMAKE_CXX_FLAGS "-Wall  -Wno-deprecated-declarations -g" )
@@ -28,8 +28,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
   ${DELFEM2_SRC}/depth_v3_gl.cpp    ${DELFEM2_INC}/depth_v3_gl.h
 
-  ${DELFEM2_SRC}/funcs_gl.cpp       ${DELFEM_INC}/funcs_gl.h
-  ${DELFEM2_SRC}/v3color_gl.cpp     ${DELFEM_SRC}/v3color_gl.h
+  ${DELFEM2_SRC}/funcs_gl.cpp       ${DELFEM2_INC}/funcs_gl.h
+  ${DELFEM2_SRC}/v3color_gl.cpp     ${DELFEM2_INC}/v3color_gl.h
   ${DELFEM2_SRC}/v23_gl.cpp
   ${DELFEM2_SRC}/color_gl.cpp  
   ${DELFEM2_SRC}/camera_gl.cpp      ${DELFEM2_INC}/camera_gl.h
