@@ -27,7 +27,14 @@
 #include "delfem2/mshtopoio_gl.h"
 
 void CMeshElem::Draw() const{
-  glEnable(GL_LIGHTING);
+  if( color_face.size() == 4 ){
+    glColor4d(color_face[0], color_face[1], color_face[2], color_face[4]);
+  }
+  else if( color_face.size() == 3 ){
+    glColor4d(color_face[0], color_face[1], color_face[2], 1.0);
+  }
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_face.data());
+  /////
   this->DrawFace_ElemWiseNorm();
   glDisable(GL_LIGHTING);
   glLineWidth(1);

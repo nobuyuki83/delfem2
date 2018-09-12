@@ -9,26 +9,29 @@ public:
   virtual void Draw() const = 0;
 };
 
-class CDepth
+class CGPUSampler
 {
 public:
-  CDepth(){
+  CGPUSampler(){
+    nResX = 0;
+    nResY = 0;
+    isColor = false;
+    isDepth = false;
+    id_tex_color = 0;
+    //////
     color.resize(4);
     color[0] = 1;  color[1] = 0;  color[2] = 0;  color[3] = 1;
-    nResX = 256;
-    nResY = 256;
     lengrid = 0.01;
     origin[  0]=0; origin[  1]=0; origin[  2]=0;
     z_axis[  0]=0; z_axis[  1]=0; z_axis[  2]=1;
     x_axis[0]=1; x_axis[1]=0; x_axis[2]=0;
     draw_len_axis = 1.0;
   }
-  CDepth(int nw, int nh, double l, double dm,
-         const std::vector<double>& org,
-         const std::vector<double>& dirP,
-         const std::vector<double>& dirW){
-    this->SetCoord(nw,nh,l,dm,org,dirP,dirW);
+  CGPUSampler(int nw, int nh, bool isColor, bool isDepth){
+    this->Init(nw,nh,isColor,isDepth);
   }
+  void Init(int nw, int nh, bool isColor, bool isDepth);
+  void LoadTex();
   /////
   void Draw() const;
   std::vector<double> MinMaxXYZ() const {
@@ -46,14 +49,15 @@ public:
   ////
   void SetColor(double r, double g, double b);
   void SaveDepthCSV(const std::string& path) const;
-  void SetCoord(int nresw, int nresh, double elen,
-                double depth_max,
+  void SetCoord(double elen, double depth_max,
                 const std::vector<double>& orgPrj,
                 const std::vector<double>& dirPrj,
                 const std::vector<double>& dirWidth);
   void Start();
   void End();
 public:
+  bool isColor;
+  bool isDepth;
   int nResX;
   int nResY;
   double lengrid;
@@ -62,9 +66,11 @@ public:
   double x_axis[3];
   double origin[3];
   std::vector<float> aZ;
+  std::vector<unsigned char> aRGBA;
   /////
   std::vector<double> color;
   double draw_len_axis;
+  unsigned int id_tex_color;
 private:
   GLint view[4];
 };

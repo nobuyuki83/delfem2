@@ -26,8 +26,8 @@ void Draw(){
   ::glRotated(-cur_time, 1,0,0);
 }
 
-CDepth depth;
-CFrameBufferManager depth_context;
+CGPUSampler sampler;
+CFrameBufferManager fbm;
 bool is_animation = true;
 
 bool is_depth = false;
@@ -45,13 +45,14 @@ void myGlutDisplay(void)
   DrawBackground( CColor(0.2,0.7,0.7) );
 //  ::glDisable(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
+  
   ::glColor3d(1,1,1);
   Draw();
   
   ///////
 
   glPointSize(3);
-  depth.Draw();
+  sampler.Draw();
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -60,11 +61,15 @@ void myGlutDisplay(void)
 
 void myGlutIdle(){
   if(is_animation){
-    depth_context.Start();
-    depth.Start();
+    fbm.Start();
+    sampler.Start();
+    ::glDisable(GL_LIGHTING);
+    ::glColor3d(1,1,1);
+    ::glEnable(GL_LIGHTING);
     Draw();
-    depth.End();
-    depth_context.End();
+    sampler.End();
+    sampler.LoadTex(); // move the sampled image to a texture
+    fbm.End();
     cur_time += 1;
   }
   ::glutPostRedisplay();
@@ -158,19 +163,17 @@ int main(int argc,char* argv[])
   setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
-  depth_context.Init(512, 512);
+  fbm.Init(512, 512, true,true);
   
-  int nres = 512;
-  double elen = 0.005;
-  depth.nResX = nres;
-  depth.nResY = nres;
-  depth.lengrid = elen;
-  depth.z_range = 4.0;
-  CVector3(0,0,-1).CopyValueTo(depth.z_axis);
-  CVector3(1,0,0).CopyValueTo(depth.x_axis);
-  CVector3(-nres*elen*0.5, nres*elen*0.5,-2).CopyValueTo(depth.origin);
-  depth.SetColor(1, 0, 0);
-  depth.draw_len_axis = 1.0;
+  int nres = 128;
+  double elen = 0.02;
+  sampler.Init(nres, nres, true,true);
+  sampler.SetCoord(elen, 4.0,
+                   CVector3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
+                   CVector3(0,0,-1).stlvec(),
+                   CVector3(1,0,0).stlvec() );
+  sampler.SetColor(1, 0, 0);
+  sampler.draw_len_axis = 1.0;
  
   glutMainLoop();
 	return 0;

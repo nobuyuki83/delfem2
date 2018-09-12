@@ -13,8 +13,19 @@
 
 class CMeshElem{
 public:
-  CMeshElem(){}
+  CMeshElem(){
+    color_face.resize(4);
+    color_face[0] = 0.8;
+    color_face[1] = 0.8;
+    color_face[2] = 0.8;
+    color_face[3] = 1.0;
+  }
   CMeshElem(const std::string& fpath){
+    color_face.resize(4);
+    color_face[0] = 0.8;
+    color_face[1] = 0.8;
+    color_face[2] = 0.8;
+    color_face[3] = 1.0;
     this->Read(fpath);
   }
   void Draw() const;
@@ -81,6 +92,8 @@ public:
   /////
   int ndim;
   std::vector<double> aPos;
+  /////
+  std::vector<float> color_face;
 };
 
 class CTriangulationOutput

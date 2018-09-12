@@ -26,20 +26,36 @@
 
 /////////////////////////////////
 
-void CDepth::SetColor(double r, double g, double b){
+void CGPUSampler::SetColor(double r, double g, double b){
   color[0] = r;
   color[1] = g;
   color[2] = b;
 }
 
-void CDepth::SetCoord
-(int nresw, int nresh, double elen, double depth_max,
+void CGPUSampler::Init(int nw, int nh, bool isColor, bool isDepth)
+{
+  this->nResX = nw;
+  this->nResY = nh;
+  this->isColor = isColor;
+  this->isDepth = isDepth;
+  const int npix = nw*nh;
+  /////
+  if( isDepth ){ aZ.resize(npix,0); }
+  else{ aZ.clear(); }
+  ////
+  if( isColor ){ aRGBA.resize(npix*4,128); }
+  else{ aRGBA.clear(); }
+  ////////
+  if( id_tex_color > 0 ){ glDeleteTextures(1, &id_tex_color); }
+  id_tex_color = 0;
+}
+
+void CGPUSampler::SetCoord
+(double elen, double depth_max,
  const std::vector<double>& org_prj,
  const std::vector<double>& dir_prj,
  const std::vector<double>& dir_width)
 {
-  this->nResX = nresw;
-  this->nResY = nresh;
   this->lengrid = elen;
   this->z_range = depth_max;
   z_axis[0] = dir_prj[0];  z_axis[1] = dir_prj[1];  z_axis[2] = dir_prj[2];
@@ -47,7 +63,7 @@ void CDepth::SetCoord
   x_axis[0] = dir_width[0];  x_axis[1] = dir_width[1];  x_axis[2] = dir_width[2];
 }
 
-void CDepth::SetView(){
+void CGPUSampler::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
   ViewTransformation(x_axis,z_axis,origin);
@@ -59,7 +75,7 @@ void CDepth::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
 }
 
-void CDepth::Start()
+void CGPUSampler::Start()
 {
   glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0, nResX, nResY);
@@ -71,20 +87,51 @@ void CDepth::Start()
   this->SetView();
 }
 
-void CDepth::End()
+void CGPUSampler::End()
 {
-  //  glFinish();
-  aZ.resize(nResX*nResY);
+  const int npix = nResX*nResY;
   
-  glReadBuffer(GL_DEPTH_ATTACHMENT);
-  glReadPixels(0, 0, nResX, nResY, GL_DEPTH_COMPONENT, GL_FLOAT, aZ.data());
-  int n = nResX*nResY;
-  for(int i=0;i<n;++i){ aZ[i] *= (-1.0*z_range); }
+  if( isDepth ){
+    assert( (int)aZ.size() == npix );
+    glReadBuffer(GL_DEPTH_ATTACHMENT);
+    glReadPixels(0, 0, nResX, nResY, GL_DEPTH_COMPONENT, GL_FLOAT, aZ.data());
+    for(int i=0;i<npix;++i){ aZ[i] *= (-1.0*z_range); }
+  }
+  else{ aZ.clear(); }
+  
+  ///////
+  if( isColor ){
+    assert( (int)aRGBA.size() == npix*4 );
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadPixels(0, 0, nResX, nResY, GL_RGBA, GL_UNSIGNED_BYTE, aRGBA.data());
+  }
+  else{ aRGBA.clear(); }
   
   ::glViewport(view[0], view[1], view[2], view[3]);
 }
 
-void CDepth::Draw() const {
+void CGPUSampler::LoadTex()
+{
+  if( id_tex_color == 0 ){
+    glGenTextures(1, &id_tex_color);
+  }
+  glBindTexture(GL_TEXTURE_2D, id_tex_color);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+  glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+  if( (int)aRGBA.size() == nResX*nResY*4 ){
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 nResX, nResY, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 aRGBA.data());
+  }
+  glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void CGPUSampler::Draw() const {
   
   ::glPointSize(1);
   this->Draw_Point();
@@ -95,9 +142,32 @@ void CDepth::Draw() const {
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
   this->Draw_BoundingBox();
+  
+  if( id_tex_color > 0 ){
+    const CVector3& dx = x_axis;
+    const CVector3& dy = Cross(z_axis,dx);
+    const double lx = lengrid*nResX;
+    const double ly = lengrid*nResY;
+    CVector3 p0 = origin;
+    CVector3 p1 = origin + lx*dx;
+    CVector3 p2 = origin + lx*dx + ly*dy;
+    CVector3 p3 = origin + ly*dy;
+    ::glEnable(GL_TEXTURE_2D);
+    ::glDisable(GL_LIGHTING);
+    ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
+    ::glColor3d(1,1,1);
+    ::glBegin(GL_QUADS);
+    ::glTexCoord2d(0.0, 0.0); myGlVertex(p0);
+    ::glTexCoord2d(1.0, 0.0); myGlVertex(p1);
+    ::glTexCoord2d(1.0, 1.0); myGlVertex(p2);
+    ::glTexCoord2d(0.0, 1.0); myGlVertex(p3);
+    ::glEnd();
+    ::glBindTexture(GL_TEXTURE_2D, 0);
+    ::glDisable(GL_TEXTURE_2D);
+  }
 }
 
-void CDepth::Draw_Axis() const
+void CGPUSampler::Draw_Axis() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -106,7 +176,7 @@ void CDepth::Draw_Axis() const
     ::glPopMatrix();
 }
 
-void CDepth::Draw_BoundingBox() const
+void CGPUSampler::Draw_BoundingBox() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -116,7 +186,7 @@ void CDepth::Draw_BoundingBox() const
   ::glPopMatrix();
 }
 
-void CDepth::Draw_Point() const
+void CGPUSampler::Draw_Point() const
 {
   ::glDisable(GL_LIGHTING);
   if( (int)aZ.size() != nResX*nResY ) return;
@@ -133,7 +203,7 @@ void CDepth::Draw_Point() const
   ::glEnd();
 }
 
-void CDepth::getGPos(double p[3], int ix, int iy, double depth) const
+void CGPUSampler::getGPos(double p[3], int ix, int iy, double depth) const
 {
   const CVector3& dx = x_axis;
   const CVector3& dz = z_axis;
