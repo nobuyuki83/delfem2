@@ -6,7 +6,7 @@
 #include "delfem2/funcs_gl.h"
 
 #include "delfem2/mshio.h"
-
+#include "delfem2/mat3.h"
 #include "delfem2/rigmesh.h"
 #include "delfem2/bv.h"    // include gl
 
@@ -31,21 +31,43 @@ CTexManager GetTexManager(const std::vector<std::string>& aPath){
 
 class CRigMshTex{
 public:
-  CRigMshTex(){}
+  CRigMshTex(){
+    is_draw_skeleton = true;
+    color_bone_weight.assign(4, 0.0);
+    color_bone_weight[0] = 1;
+    color_bone_weight[3] = 1;
+    color_bone_weight_back.assign(4, 1.0);
+  }
   CRigMshTex(const std::string& fpath){
+    is_draw_skeleton = true;
+    color_bone_weight.assign(4, 0.0);
+    color_bone_weight[0] = 1;
+    color_bone_weight[3] = 1;
+    color_bone_weight_back.assign(4, 1.0);
     this->Read(fpath);
   }
   void Draw(){
+    rigmsh.is_draw_bone = is_draw_skeleton;
+    rigmsh.color_bone_weight_back = color_bone_weight_back;
+    rigmsh.color_bone_weight = color_bone_weight;
     rigmsh.Draw(tm);
   }
   std::vector<double> MinMaxXYZ(){
     return rigmsh.MinMaxXYZ();
   }
   void Scale(double scale){
-    rigmsh.Scale(scale);
+    double A[16]; SetAffine_Scale(A,scale);
+    rigmsh.Affine(A);
   }
   void Translate(double dx, double dy, double dz){
-    rigmsh.Translate(dx,dy,dz);
+    double A[16]; SetAffine_Trans(A,
+                                  dx,dy,dz);
+    rigmsh.Affine(A);
+  }
+  void Rotate(double dx, double dy, double dz){
+    double A[16]; SetAffine_Rotate_Rodriguez(A,
+                                             dx,dy,dz);
+    rigmsh.Affine(A);
   }
   void Read(const std::string& fpath){
     Read_FBX(fpath,rigmsh);
@@ -76,9 +98,15 @@ public:
     std::vector<double> minmax_xyz = this->MinMaxXYZ();
     return CBV3D_AABB(minmax_xyz);
   }
+  void SetBone_DrawBoneWeightOnMesh(int ibone){
+    rigmsh.DisplayBoneWeightOnMesh(ibone);
+  }
 public:
   CRigMsh rigmsh;
   CTexManager tm;
+  bool is_draw_skeleton;
+  std::vector<double> color_bone_weight_back;
+  std::vector<double> color_bone_weight;
 };
 
 namespace py = pybind11;
@@ -93,9 +121,15 @@ void init_fbx(py::module &m){
   .def("open",          &CRigMshTex::Read)
   .def("scale",         &CRigMshTex::Scale)
   .def("translate",     &CRigMshTex::Translate)
+  .def("rotate",        &CRigMshTex::Rotate)
   .def("aabb",          &CRigMshTex::AABB3D)
-  .def("info",          &CRigMshTex::PrintInfo);
+  .def("info",          &CRigMshTex::PrintInfo)
+  .def("set_bone_draw_bone_weight", &CRigMshTex::SetBone_DrawBoneWeightOnMesh)
+  .def_readwrite("is_draw_skeleton", &CRigMshTex::is_draw_skeleton)
+  .def_readwrite("color_bone_weight", &CRigMshTex::color_bone_weight)
+  .def_readwrite("color_bone_weight_back", &CRigMshTex::color_bone_weight_back);
 
+  
   m.def("get_texture_manager",GetTexManager);
   py::class_<CTexManager>(m,"TexManager")
   .def(py::init<>());

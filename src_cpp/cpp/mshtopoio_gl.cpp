@@ -26,14 +26,16 @@
 
 #include "delfem2/mshtopoio_gl.h"
 
-void CMeshElem::Draw() const{
-  if( color_face.size() == 4 ){
+void CMeshElem::Draw() const {
+  if(      color_face.size() == 4 ){
     glColor4d(color_face[0], color_face[1], color_face[2], color_face[4]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_face.data());
   }
   else if( color_face.size() == 3 ){
-    glColor4d(color_face[0], color_face[1], color_face[2], 1.0);
+    const float color[4] = {color_face[0], color_face[1], color_face[2], 1.0};
+    glColor4fv(color);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
   }
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_face.data());
   /////
   this->DrawFace_ElemWiseNorm();
   glDisable(GL_LIGHTING);

@@ -79,8 +79,11 @@ void CGPUSampler::Start()
 {
   glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0, nResX, nResY);
-  
-  ::glClearColor(0.0f, 0.0f, 0.0f ,1.0f);
+
+  if(      bgcolor.size() == 4 ){ ::glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], bgcolor[3]); }
+  else if( bgcolor.size() == 3 ){ ::glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0); }
+  else if( bgcolor.size() > 0  ){ ::glClearColor(bgcolor[0], bgcolor[0], bgcolor[0], 1.0 ); }
+  else{                           ::glClearColor(1.0, 1.0, 1.0, 1.0 ); }
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
   ::glDisable(GL_BLEND);
   ::glEnable(GL_DEPTH_TEST);

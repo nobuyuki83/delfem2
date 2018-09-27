@@ -708,7 +708,7 @@ int nr, int nl)
       const int i2 = (il+0)*nr+(ir+1)%nr;
       const int i3 = (il+1)*nr+(ir+1)%nr;
       const int i4 = (il+1)*nr+(ir+0)%nr;
-      std::cout<<i1<<" "<<i2<<" "<<i3<<" "<<i4<<" "<<npo<<std::endl;
+//      std::cout<<i1<<" "<<i2<<" "<<i3<<" "<<i4<<" "<<npo<<std::endl;
       aTri.push_back(i3);
       aTri.push_back(i2);
       aTri.push_back(i1);

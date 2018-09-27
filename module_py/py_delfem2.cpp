@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "delfem2/funcs_glew.h" // have to be included in the beginning
-#include "delfem2/depth_v3_gl.h"
 #include "delfem2/mshtopoio_gl.h"
 
 #include "delfem2/voxel.h"
@@ -48,18 +47,12 @@ public:
 
 namespace py = pybind11;
 
-py::array_t<float> depth_buffer(CGPUSampler& depth)
-{
-  std::vector<size_t> strides = {sizeof(float)*depth.nResX,sizeof(float)};
-  std::vector<size_t> shape = {(size_t)depth.nResY,(size_t)depth.nResX};
-  size_t ndim = 2;
-  return py::array(py::buffer_info(depth.aZ.data(), sizeof(float),
-                                   py::format_descriptor<float>::format(),
-                                   ndim, shape, strides));
-}
+
 
 void init_mshtopoio_gl(py::module &m);
+void init_sampler(py::module &m);
 void init_fbx(py::module &m);
+
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -73,6 +66,8 @@ PYBIND11_MODULE(dfm2, m) {
   // mesh
   init_mshtopoio_gl(m);
   
+  ///////////////////////////////////
+  init_sampler(m);
   
   ///////////////////////////////////
   // axis arrigned boudning box
@@ -114,31 +109,6 @@ PYBIND11_MODULE(dfm2, m) {
   .def("draw",       &CCad2D::Draw)
   .def("minmax_xyz", &CCad2D::MinMaxXYZ);
   
-  ///////////////////////////////////
-  // depth
-  py::class_<CFrameBufferManager>(m,"FrameBufferManager", "Buffer Class for Depth")
-  .def(py::init<>())
-  .def(py::init<const std::vector<int>&,bool,bool>(),
-       py::arg("win_size"),py::arg("is_color"),py::arg("is_depth"))
-  .def("set_buffer_size", &CFrameBufferManager::Init)
-  .def("start",           &CFrameBufferManager::Start)
-  .def("end",             &CFrameBufferManager::End);
-  
-  py::class_<CGPUSampler>(m,"GPUSampler","sample color and depth in the frame buffer")
-  .def(py::init<>())
-  .def("init",       &CGPUSampler::Init,
-       py::arg("size_res_width"),py::arg("size_res_height"),py::arg("is_color"),py::arg("is_depth"))
-  .def("set_coordinate", &CGPUSampler::SetCoord,
-       py::arg("len_grid"),py::arg("depth_max"), py::arg("org"), py::arg("dir_prj"), py::arg("dir_width"))
-  .def("draw",       &CGPUSampler::Draw)
-  .def("minmax_xyz", &CGPUSampler::MinMaxXYZ)
-  .def("start",      &CGPUSampler::Start)
-  .def("end",        &CGPUSampler::End)
-  .def("init_gl",    &CGPUSampler::LoadTex)
-  .def_readwrite("color",  &CGPUSampler::color)
-  .def_readwrite("len_axis",  &CGPUSampler::draw_len_axis);
-  
-  m.def("depth_buffer", &depth_buffer);
 
   ///////////////////////////////////
   // gl misc

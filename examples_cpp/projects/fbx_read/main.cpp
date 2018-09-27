@@ -127,11 +127,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       rigmsh.is_draw_bone = !rigmsh.is_draw_bone;
       break;
     }
-    case 'w':
-    {
-      rigmsh.is_draw_weight = !rigmsh.is_draw_weight;
-      break;
-    }
     case 'W':
     {
       int nbone = rigmsh.aBone.size();
