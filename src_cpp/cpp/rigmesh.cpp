@@ -106,6 +106,34 @@ int CBone_RigMsh::PickHandler
                              tol);
 }
 
+
+
+
+void CBone_RigMsh::Affine(const double A[16])
+{
+  Affine3D(pos_ini, A, pos_ini);
+  Affine3D(pos, A, pos);
+}
+
+/*
+ void Scale(double scale){
+ pos_ini[0] *= scale;
+ pos_ini[1] *= scale;
+ pos_ini[2] *= scale;
+ pos[0] *= scale;
+ pos[1] *= scale;
+ pos[2] *= scale;
+ }
+ void Translate(double dx, double dy, double dz){
+ pos_ini[0] += dx;
+ pos_ini[1] += dy;
+ pos_ini[2] += dz;
+ pos[0] += dx;
+ pos[1] += dy;
+ pos[2] += dz;
+ }
+ */
+
 ////////////////////////////////////////////////////////////////////////////
 // from here std::vector<CBone_RigMsh>
 
@@ -664,7 +692,25 @@ void CMesh_RigMsh::DrawLayerWithTex(int ilayer,const CTexManager& tex_manager, b
   }
 }
 
+void CMesh_RigMsh::Affine(const double A[16])
+{
+  for(int ip=0;ip<(int)aXYZ_ini.size()/3;++ip){
+    double* p =  aXYZ_ini.data()+ip*3;
+    Affine3D(p, A, p);
+  }
+  for(int ip=0;ip<(int)aXYZ.size()/3;++ip){
+    double* p =  aXYZ.data()+ip*3;
+    Affine3D(p, A, p);
+  }
+}
+
 ////////////////////////////////////////////////////////////////
+
+void CRigMsh::Affine(const double A[16])
+{
+  for(unsigned int im=0;im<aMesh.size();++im){ aMesh[im].Affine(A); }
+  for(unsigned int ib=0;ib<aBone.size();++ib){ aBone[ib].Affine(A); }
+}
 
 std::vector<double> CRigMsh::MinMaxXYZ() const
 {
@@ -680,8 +726,8 @@ std::vector<double> CRigMsh::MinMaxXYZ() const
 void CRigMsh::Draw(const CTexManager& tex_manager) const{
   if( is_draw_weight ){
     std::vector< std::pair<double,CColor> > colorMap;
-    colorMap.push_back( std::make_pair(0.0,CColor::Gray(0.9) ) );
-    colorMap.push_back( std::make_pair(1.0,CColor::Red() ) );
+    colorMap.push_back( std::make_pair(0.0,CColor(color_bone_weight_back) ) );
+    colorMap.push_back( std::make_pair(1.0,CColor(color_bone_weight) ) );
     for(int imesh=0;imesh<(int)this->aMesh.size();++imesh){
       const CMesh_RigMsh& mesh = aMesh[imesh];
       if( mesh.aWeight.size() != mesh.aXYZ_ini.size()/3 ){ return; }

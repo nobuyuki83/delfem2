@@ -19,8 +19,8 @@ public:
     isDepth = false;
     id_tex_color = 0;
     //////
-    color.resize(4);
-    color[0] = 1;  color[1] = 0;  color[2] = 0;  color[3] = 1;
+    color.resize(4);  color[0] = 1;  color[1] = 0;  color[2] = 0;  color[3] = 1;
+    bgcolor.resize(4);  bgcolor[0] = 1;  bgcolor[1] = 1;  bgcolor[2] = 1;  bgcolor[3] = 1;
     lengrid = 0.01;
     origin[  0]=0; origin[  1]=0; origin[  2]=0;
     z_axis[  0]=0; z_axis[  1]=0; z_axis[  2]=1;
@@ -68,6 +68,7 @@ public:
   std::vector<float> aZ;
   std::vector<unsigned char> aRGBA;
   /////
+  std::vector<double> bgcolor;
   std::vector<double> color;
   double draw_len_axis;
   unsigned int id_tex_color;

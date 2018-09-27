@@ -39,6 +39,28 @@ public:
     this->b = b;
     this->a = a;
   }
+  CColor(const std::vector<double>& v){
+    this->r = 1.0;
+    this->g = 1.0;
+    this->b = 1.0;
+    this->a = 1.0;
+    if( v.size() == 4 ){
+      this->r = v[0];
+      this->g = v[1];
+      this->b = v[2];
+      this->a = v[3];
+    }
+    else if( v.size() == 3 ){
+      this->r = v[0];
+      this->g = v[1];
+      this->b = v[2];
+    }
+    else if( v.size() > 0 ){
+      this->r = v[0];
+      this->g = v[0];
+      this->b = v[0];
+    }
+  }
   void setRandomColor(){
     r = (float)rand()/(RAND_MAX+1.0f);
     g = (float)rand()/(RAND_MAX+1.0f);

@@ -38,6 +38,7 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/camera_gl.cpp     ${DELFEM2_INC}/camera_gl.h
 
   py_mshtopoio_gl.cpp
+  py_sampler.cpp
   py_delfem2.cpp
 )
 
