@@ -8,8 +8,8 @@
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/funcs_gl.h"
-//#include "delfem2/bv.h"
+//#include "delfem2/funcs_gl.h"
+#include "delfem2/color_gl.h"
 
 class CMeshElem{
 public:
@@ -45,24 +45,8 @@ public:
     elem_type = MESHELEM_TRI;
     ndim = 3;
   }
-  void DrawFace_ElemWiseNorm() const{
-    if( elem_type == MESHELEM_TRI ){
-      if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aElem); }
-      if( ndim == 2 ){ DrawMeshTri2D_Face(aElem,aPos); }
-    }
-    else if( elem_type == MESHELEM_QUAD ){
-      if( ndim == 3 ){ DrawMeshQuad3D_FaceNorm(aPos, aElem); }
-    }
-  }
-  void DrawEdge() const {
-    if( elem_type == MESHELEM_TRI ){
-      if( ndim == 3 ){ DrawMeshTri3D_Edge(aPos, aElem); }
-      if( ndim == 2 ){ DrawMeshTri2D_Edge(aElem, aPos); }
-    }
-    else if( elem_type == MESHELEM_QUAD ){
-      if( ndim == 3 ){ DrawMeshQuad3D_Edge(aPos, aElem); }
-    }
-  }
+  void DrawFace_ElemWiseNorm() const;
+  void DrawEdge() const;
   CMeshElem Subdiv(){
     CMeshElem em;
     if( elem_type == MESHELEM_QUAD ){
@@ -95,6 +79,20 @@ public:
   /////
   std::vector<float> color_face;
 };
+
+class CMeshMultiElem{
+public:
+  void ReadObj(const std::string& fname);
+  void Draw() const;
+  std::vector<double> AABB3_MinMax() const;
+public:
+  std::vector<double> aXYZ;
+  std::vector<double> aNorm;
+  std::vector<CTriGroup> aObjGroupTri;
+  std::vector<CMaterial> aMaterial;
+};
+
+///////////////////////////////////
 
 class CTriangulationOutput
 {
