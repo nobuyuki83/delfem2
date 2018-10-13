@@ -32,6 +32,12 @@ void init_mshtopoio_gl(py::module &m){
   .def_readonly("nDim",     &CMeshElem::ndim)
   .def_readwrite("color_face",  &CMeshElem::color_face);
   
+  py::class_<CMeshMultiElem>(m,"MeshMultiElem")
+  .def(py::init<>())
+  .def("read_obj", &CMeshMultiElem::ReadObj)
+  .def("minmax_xyz", &CMeshMultiElem::AABB3_MinMax)
+  .def("draw",&CMeshMultiElem::Draw);
+  
   py::class_<CTriangulationOutput>(m, "TriangulationOutput")
   .def(py::init<>())
   .def_readonly("meshElem", &CTriangulationOutput::me);

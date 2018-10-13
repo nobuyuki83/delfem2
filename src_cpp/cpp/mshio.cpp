@@ -597,7 +597,7 @@ void Load_Obj
   std::ifstream fin;
   fin.open(fname.c_str());
   if (fin.fail()){
-    std::cout<<"File Read Fail"<<std::endl;
+    std::cout<<"File Read Fail: "<< fname << std::endl;
     return;
   }
   aXYZ.clear();
