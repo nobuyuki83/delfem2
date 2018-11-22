@@ -1029,6 +1029,52 @@ void MeshTri3D_Cube
   }
 }
 
+
+void MeshTri3D_Icosahedron
+(std::vector<double>& aXYZ,
+ std::vector<int>& aTri)
+{
+  double p = (1+sqrt(5))*0.5;
+  aXYZ.resize(12*3);
+  aXYZ[ 0*3+0]= 0;    aXYZ[ 0*3+1]=-1;   aXYZ[ 0*3+2]=-p;
+  aXYZ[ 1*3+0]= 0;    aXYZ[ 1*3+1]=-1;   aXYZ[ 1*3+2]=+p;
+  aXYZ[ 2*3+0]= 0;    aXYZ[ 2*3+1]=+1;   aXYZ[ 2*3+2]=-p;
+  aXYZ[ 3*3+0]= 0;    aXYZ[ 3*3+1]=+1;   aXYZ[ 3*3+2]=+p;
+  aXYZ[ 4*3+0]=-p;    aXYZ[ 4*3+1]= 0;   aXYZ[ 4*3+2]=-1;
+  aXYZ[ 5*3+0]=+p;    aXYZ[ 5*3+1]= 0;   aXYZ[ 5*3+2]=-1;
+  aXYZ[ 6*3+0]=-p;    aXYZ[ 6*3+1]= 0;   aXYZ[ 6*3+2]=+1;
+  aXYZ[ 7*3+0]=+p;    aXYZ[ 7*3+1]= 0;   aXYZ[ 7*3+2]=+1;
+  aXYZ[ 8*3+0]=-1;    aXYZ[ 8*3+1]=-p;   aXYZ[ 8*3+2]= 0;
+  aXYZ[ 9*3+0]=-1;    aXYZ[ 9*3+1]=+p;   aXYZ[ 9*3+2]= 0;
+  aXYZ[10*3+0]=+1;    aXYZ[10*3+1]=-p;   aXYZ[10*3+2]= 0;
+  aXYZ[11*3+0]=+1;    aXYZ[11*3+1]=+p;   aXYZ[11*3+2]= 0;
+  /////
+  aTri.resize(20*3);
+  aTri[ 0*3+0]= 7; aTri[ 0*3+1]=11; aTri[ 0*3+2]= 3;
+  aTri[ 1*3+0]=11; aTri[ 1*3+1]= 9; aTri[ 1*3+2]= 3;
+  aTri[ 2*3+0]= 9; aTri[ 2*3+1]= 6; aTri[ 2*3+2]= 3;
+  aTri[ 3*3+0]= 6; aTri[ 3*3+1]= 1; aTri[ 3*3+2]= 3;
+  aTri[ 4*3+0]= 1; aTri[ 4*3+1]= 7; aTri[ 4*3+2]= 3;
+  /////
+  aTri[ 5*3+0]= 2; aTri[ 5*3+1]= 5; aTri[ 5*3+2]= 0;
+  aTri[ 6*3+0]= 4; aTri[ 6*3+1]= 2; aTri[ 6*3+2]= 0;
+  aTri[ 7*3+0]= 8; aTri[ 7*3+1]= 4; aTri[ 7*3+2]= 0;
+  aTri[ 8*3+0]=10; aTri[ 8*3+1]= 8; aTri[ 8*3+2]= 0;
+  aTri[ 9*3+0]= 5; aTri[ 9*3+1]=10; aTri[ 9*3+2]= 0;
+  /////
+  aTri[10*3+0]=11; aTri[10*3+1]= 7; aTri[10*3+2]= 5;
+  aTri[11*3+0]= 9; aTri[11*3+1]=11; aTri[11*3+2]= 2;
+  aTri[12*3+0]= 6; aTri[12*3+1]= 9; aTri[12*3+2]= 4;
+  aTri[13*3+0]= 1; aTri[13*3+1]= 6; aTri[13*3+2]= 8;
+  aTri[14*3+0]= 7; aTri[14*3+1]= 1; aTri[14*3+2]=10;
+  /////
+  aTri[15*3+0]= 5; aTri[15*3+1]= 2; aTri[15*3+2]=11;
+  aTri[16*3+0]= 2; aTri[16*3+1]= 4; aTri[16*3+2]= 9;
+  aTri[17*3+0]= 4; aTri[17*3+1]= 8; aTri[17*3+2]= 6;
+  aTri[18*3+0]= 8; aTri[18*3+1]=10; aTri[18*3+2]= 1;
+  aTri[19*3+0]=10; aTri[19*3+1]= 5; aTri[19*3+2]= 7;
+}
+
 void ExtrudeTri2Tet
 (int nlayer, double h,
  std::vector<double>& aXYZ,

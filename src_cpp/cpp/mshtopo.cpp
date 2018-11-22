@@ -6,6 +6,46 @@
 
 #include "delfem2/mshtopo.h"
 
+void Print_IndexedArray
+(const std::vector<int>& index,
+ const std::vector<int>& array)
+{
+  const int np = index.size()-1;
+  for(int ip=0;ip<np;++ip){
+    std::cout << ip << " --> ";
+    for(int ipsup=index[ip];ipsup<index[ip+1];++ipsup){
+      std::cout << array[ipsup] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+void SortIndexedArray
+(std::vector<int>& index,
+ std::vector<int>& array)
+{
+  if( index.size() == 0 ) return;
+  const int size = (int)index.size()-1;
+  for(int ipoin=0;ipoin<size;ipoin++){
+    const int is = index[ipoin  ];
+    const int ie = index[ipoin+1];
+    if( is == ie ) continue;
+    assert( is < ie );
+    int itmp;
+    for(int i=is;i<ie-1;i++){
+      for(int j=ie-1;j>i;j--){
+        if( array[j] < array[j-1] ){
+          itmp = array[j];
+          array[j] = array[j-1];
+          array[j-1] = itmp;
+        }
+      }
+    }
+  }
+}
+
+/////
+
 void convert2Tri_Quad
 (std::vector<int>& aTri,
  const std::vector<int>& aQuad)
@@ -515,58 +555,47 @@ void makeOneRingNeighborhood_TriFan
     }
     psup_ind[ipoint+1] = (int)psup.size();
   }
-  
 }
 
-/*
-void makeEdgeElem
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
- ///
- const std::vector<int>& aElem,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
- int nPoEl,
- int nPo,
- bool is_dia)
+void makeEdge
+(std::vector<int>& edge_ind,
+ std::vector<int>& edge,
+ /////
+ const std::vector<int>& psup_ind,
+ const std::vector<int>& psup)
 {
-  std::vector<int> aFlgPoint;
-  aFlgPoint.resize(nPo,-1);
-  psup_ind.resize(nPo+1,0);
-  for(int ipo=0;ipo<nPo;ipo++){
-    if( !is_dia ){ aFlgPoint[ipo] = ipo; }
-    for(int ielsup=elsup_ind[ipo];ielsup<elsup_ind[ipo+1];ielsup++){
-      int jelem = elsup[ielsup];
-      for(int jpoel=0;jpoel<nPoEl;jpoel++){
-        int jpoint = aElem[jelem*nPoEl+jpoel];
-        if( aFlgPoint[jpoint] == ipo ){ continue; }
-        aFlgPoint[jpoint] = ipo;
-        psup_ind[ipo+1]++;
-      }
+  const int np = psup_ind.size()-1;
+  edge_ind.resize(np+1);
+  edge_ind[0] = 0;
+  edge.clear();
+  ////
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      int ip0 = psup[ipsup];
+      if( ip0 <= ip ) continue;
+      edge_ind[ip+1]++;
     }
   }
-  for(int ipo=0;ipo<nPo;ipo++){ psup_ind[ipo+1] += psup_ind[ipo]; }
-  const int nelsup = psup_ind[nPo];
-  psup.resize(nelsup);
-  for(int ipo=0;ipo<nPo;ipo++){ aFlgPoint[ipo] = -1; }
-  for(int ipo=0;ipo<nPo;ipo++){
-    if( !is_dia ){ aFlgPoint[ipo] = ipo; }
-    for(int ielsup=elsup_ind[ipo];ielsup<elsup_ind[ipo+1];ielsup++){
-      int jelem = elsup[ielsup];
-      for(int jpoel=0;jpoel<nPoEl;jpoel++){
-        int jnode = aElem[jelem*nPoEl+jpoel];
-        if( aFlgPoint[jnode] == ipo ){ continue; }
-        aFlgPoint[jnode] = ipo;
-        const int ipsup = psup_ind[ipo];
-        psup[ipsup] = jnode;
-        psup_ind[ipo]++;
-      }
+  for(int ip=0;ip<np;ip++){
+    edge_ind[ip+1] += edge_ind[ip];
+  }
+  const int nedge = edge_ind[np];
+  edge.resize(nedge);
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const int ip0 = psup[ipsup];
+      if( ip0 <= ip ) continue;
+      const int iedge = edge_ind[ip];
+      edge[iedge] = ip0;
+      edge_ind[ip]++;
     }
   }
-  for(int ipo=nPo;ipo>0;ipo--){ psup_ind[ipo] = psup_ind[ipo-1]; }
-  psup_ind[0] = 0;
+  for(int ip=np;ip>0;ip--){
+    edge_ind[ip] = edge_ind[ip-1];
+  }
+  edge_ind[0] = 0;
 }
- */
+
 
 
 void makeEdgeQuad
@@ -585,8 +614,8 @@ void makeEdgeQuad
     for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
       int iq0 = elsup[ielsup];
       for(int ie=0;ie<4;++ie){
-        int ip0 = aQuad0[iq0*4+(ie+0)%4];
-        int ip1 = aQuad0[iq0*4+(ie+1)%4];
+        const int ip0 = aQuad0[iq0*4+(ie+0)%4];
+        const int ip1 = aQuad0[iq0*4+(ie+1)%4];
         if( (ip0-ip)*(ip1-ip) != 0 ) continue; // risk of overflow
         if( ip0 == ip ){
           if( ip1 > ip ){ setIP.insert(ip1); }
@@ -686,29 +715,7 @@ void makeEdgeVox
   }
 }
 
-void SortIndexedArray
-(std::vector<int>& index,
- std::vector<int>& array)
-{
-  if( index.size() == 0 ) return;
-  const int size = (int)index.size()-1;
-  for(int ipoin=0;ipoin<size;ipoin++){
-    const int is = index[ipoin  ];
-    const int ie = index[ipoin+1];
-    if( is == ie ) continue;
-    assert( is < ie );
-    int itmp;
-    for(int i=is;i<ie-1;i++){
-      for(int j=ie-1;j>i;j--){
-        if( array[j] < array[j-1] ){
-          itmp = array[j];
-          array[j] = array[j-1];
-          array[j-1] = itmp;
-        }
-      }
-    }
-  }
-}
+
 
 
 void addMasterSlavePattern

@@ -128,7 +128,6 @@ void init_fbx(py::module &m){
   .def_readwrite("is_draw_skeleton", &CRigMshTex::is_draw_skeleton)
   .def_readwrite("color_bone_weight", &CRigMshTex::color_bone_weight)
   .def_readwrite("color_bone_weight_back", &CRigMshTex::color_bone_weight_back);
-
   
   m.def("get_texture_manager",GetTexManager);
   py::class_<CTexManager>(m,"TexManager")

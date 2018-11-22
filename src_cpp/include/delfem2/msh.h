@@ -123,6 +123,8 @@ void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<int>& aQuad,
                         double x_min, double x_max,
                         double y_min, double y_max,
                         double z_min, double z_max);
+void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
+                           std::vector<int>& aTri);
 void SetTopoQuad_CubeVox(std::vector<int>& aQuad);
 void ExtrudeTri2Tet(int nlayer, double h,
                     std::vector<double>& aXYZ,
