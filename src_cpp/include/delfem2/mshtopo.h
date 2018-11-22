@@ -122,6 +122,10 @@ void SortIndexedArray
 (std::vector<int>& index,
  std::vector<int>& array);
 
+void Print_IndexedArray
+(const std::vector<int>& index,
+ const std::vector<int>& array);
+
 void addMasterSlavePattern
 (const std::vector<int>& aMSFlag,
  int ndim,
@@ -242,6 +246,11 @@ void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     const std::vector<int>& elsup_ind,
                                     const std::vector<int>& elsup,
                                     int np);
+void makeEdge(std::vector<int>& edge_ind,
+              std::vector<int>& edge,
+              /////
+              const std::vector<int>& psup_ind,
+              const std::vector<int>& psup);
 void makeEdgeHex(std::vector<int>& psup_ind,
                  std::vector<int>& psup,
                  ////
