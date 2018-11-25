@@ -166,6 +166,12 @@ void DrawMeshTri3D_FaceNorm_XYsym(const std::vector<double>& aXYZ,
                               const std::vector<int>& aTri);
 void DrawMeshTri3D_FaceNormEdge(const std::vector<double>& aXYZ,
                             const std::vector<int>& aTri);
+void DrawMeshTri3D_FaceNorm_TexFace(const std::vector<double>& aXYZ,
+                                    const std::vector<int>& aTri,
+                                    const std::vector<double>& aTex);
+void DrawMeshTri3D_FaceNorm_TexVtx(const std::vector<double>& aXYZ,
+                                   const std::vector<int>& aTri,
+                                   const std::vector<double>& aTex);
 void DrawMeshTri3D_Edge(const std::vector<double>& aXYZ,
                     const std::vector<int>& aTri);
 void DrawMeshTriMap3D_Edge(const std::vector<double>& aXYZ,

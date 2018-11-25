@@ -11,6 +11,9 @@
 //#include "delfem2/funcs_gl.h"
 #include "delfem2/color_gl.h"
 
+void MeshTri3D_GeodesicPolyhedron(std::vector<double>& aXYZ1,
+                                  std::vector<int>& aTri1);
+
 class CMeshElem{
 public:
   CMeshElem(){

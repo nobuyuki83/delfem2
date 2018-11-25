@@ -26,6 +26,70 @@
 
 #include "delfem2/mshtopoio_gl.h"
 
+
+void MeshTri3D_GeodesicPolyhedron
+(std::vector<double>& aXYZ1,
+ std::vector<int>& aTri1)
+{
+  std::vector<double> aXYZ0;
+  std::vector<int> aTri0;
+  MeshTri3D_Icosahedron(aXYZ0, aTri0);
+  ////
+  const int np0 = aXYZ0.size()/3;
+  std::vector<int> elsup_ind, elsup;
+  makeElemSurroundingPoint(elsup_ind, elsup,
+                           aTri0, 3, np0);
+  ////
+  std::vector<int> psup_ind, psup;
+  makeOneRingNeighborhood(psup_ind, psup,
+                          aTri0,
+                          elsup_ind, elsup,
+                          3, np0);
+  //  std::cout << "psup" << std::endl;
+  //  Print_IndexedArray(psup_ind, psup);
+  /////
+  std::vector<int> edge_ind, edge;
+  makeEdge(edge_ind, edge,
+           psup_ind,psup);
+  //  std::cout << "edge" << std::endl;
+  //  Print_IndexedArray(edge_ind, edge);
+  ////
+  double r0 = sqrt((5+sqrt(5))*0.5);
+  aXYZ1 = aXYZ0;
+  for(int ip=0;ip<np0;++ip){
+    for(int iedge=edge_ind[ip];iedge<edge_ind[ip+1];++iedge){
+      const int ip0 = edge[iedge];
+      const double x1 = (aXYZ1[ip*3+0] + aXYZ1[ip0*3+0])*0.5;
+      const double y1 = (aXYZ1[ip*3+1] + aXYZ1[ip0*3+1])*0.5;
+      const double z1 = (aXYZ1[ip*3+2] + aXYZ1[ip0*3+2])*0.5;
+      double mag = r0/sqrt(x1*x1+y1*y1+z1*z1);
+      aXYZ1.push_back(x1*mag);
+      aXYZ1.push_back(y1*mag);
+      aXYZ1.push_back(z1*mag);
+    }
+  }
+  aTri1.clear();
+  aTri1.reserve(aTri0.size()*3);
+  for(int itri=0;itri<aTri0.size()/3;++itri){
+    const int ip0 = aTri0[itri*3+0];
+    const int ip1 = aTri0[itri*3+1];
+    const int ip2 = aTri0[itri*3+2];
+    int iedge01,iedge12,iedge20;
+    {
+      if( ip0 < ip1 ){ iedge01 = findEdge(ip0,ip1, edge_ind,edge); }
+      else {           iedge01 = findEdge(ip1,ip0, edge_ind,edge); }
+      if( ip1 < ip2 ){ iedge12 = findEdge(ip1,ip2, edge_ind,edge); }
+      else {           iedge12 = findEdge(ip2,ip1, edge_ind,edge); }
+      if( ip2 < ip0 ){ iedge20 = findEdge(ip2,ip0, edge_ind,edge); }
+      else {           iedge20 = findEdge(ip0,ip2, edge_ind,edge); }
+    }
+    aTri1.push_back(ip0); aTri1.push_back(iedge01+np0); aTri1.push_back(iedge20+np0);
+    aTri1.push_back(ip1); aTri1.push_back(iedge12+np0); aTri1.push_back(iedge01+np0);
+    aTri1.push_back(ip2); aTri1.push_back(iedge20+np0); aTri1.push_back(iedge12+np0);
+    aTri1.push_back(iedge01+np0); aTri1.push_back(iedge12+np0); aTri1.push_back(iedge20+np0);
+  }
+}
+
 void CMeshElem::DrawFace_ElemWiseNorm() const
 {
   if( elem_type == MESHELEM_TRI ){

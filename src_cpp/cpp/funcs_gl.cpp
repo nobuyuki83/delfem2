@@ -599,6 +599,47 @@ void DrawMeshTri3D_FaceNorm
   ::glEnd();
 }
 
+
+void DrawMeshTri3D_FaceNorm_TexVtx
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aTri,
+ const std::vector<double>& aTex)
+{
+  const int nTri = (int)aTri.size()/3;
+  /////
+  double uv[6];
+  ::glBegin(GL_TRIANGLES);
+  for(int itri=0;itri<nTri;++itri){
+    const int ip0 = aTri[itri*3+0];
+    const int ip1 = aTri[itri*3+1];
+    const int ip2 = aTri[itri*3+2];
+    uv[0] = aTex[ip0*2+0];
+    uv[1] = aTex[ip0*2+1];
+    uv[2] = aTex[ip1*2+0];
+    uv[3] = aTex[ip1*2+1];
+    uv[4] = aTex[ip2*2+0];
+    uv[5] = aTex[ip2*2+1];
+    DrawSingleTri3D_FaceNorm(aXYZ, aTri.data()+itri*3,uv);
+  }
+  ::glEnd();
+}
+
+void DrawMeshTri3D_FaceNorm_TexFace
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aTri,
+ const std::vector<double>& aTex)
+{
+  const int nTri = (int)aTri.size()/3;
+  /////
+  ::glBegin(GL_TRIANGLES);
+  for(int itri=0;itri<nTri;++itri){
+    DrawSingleTri3D_FaceNorm(aXYZ,
+                             aTri.data()+itri*3,
+                             aTex.data()+itri*6);
+  }
+  ::glEnd();
+}
+
 void DrawMeshElem3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aElemInd,
