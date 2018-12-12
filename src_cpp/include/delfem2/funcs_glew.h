@@ -59,8 +59,15 @@ class CFrameBufferManager
 public:
   CFrameBufferManager(){
     id_framebuffer = 0;
+    id_depth_render_buffer = 0;
+    id_color_render_buffer = 0;    
+    glewInit(); // should be removed for Mac? It is necessary for Ubuntu, otherwise crash
   }
   CFrameBufferManager(const std::vector<int>& winSize, bool isColor, bool isDepth){
+    id_framebuffer = 0;
+    id_depth_render_buffer = 0;
+    id_color_render_buffer = 0;    
+    glewInit(); // should be removed for Mac? It is necessary for Ubuntu, otherwise crash
     this->Init(winSize[0],winSize[1],isColor,isDepth);
   }
   void DeleteFrameBuffer(){
