@@ -2,6 +2,7 @@
 #define FUNCS_GLEW_H
 
 #if defined(__APPLE__) && defined(__MACH__)
+#include <GL/glew.h>
 #include <OpenGL/gl.h>
 #else
 #include <GL/glew.h>
