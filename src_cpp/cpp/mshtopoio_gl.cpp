@@ -70,7 +70,7 @@ void MeshTri3D_GeodesicPolyhedron
   }
   aTri1.clear();
   aTri1.reserve(aTri0.size()*3);
-  for(int itri=0;itri<aTri0.size()/3;++itri){
+  for(unsigned int itri=0;itri<aTri0.size()/3;++itri){
     const int ip0 = aTri0[itri*3+0];
     const int ip1 = aTri0[itri*3+1];
     const int ip2 = aTri0[itri*3+2];
@@ -98,6 +98,7 @@ void CMeshElem::DrawFace_ElemWiseNorm() const
   }
   else if( elem_type == MESHELEM_QUAD ){
     if( ndim == 3 ){ DrawMeshQuad3D_FaceNorm(aPos, aElem); }
+    if( ndim == 2 ){ DrawMeshQuad2D_Edge(aPos, aElem); }
   }
 }
 

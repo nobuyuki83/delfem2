@@ -104,6 +104,8 @@ void MakeNormal(double*& aNorm_,
 ///////////////////////////////////////////////////////////////////////////////
 // set primitive mesh
 
+void MeshTri2D_Grid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+                    int nx, int ny);
 // y axis is the pole
 void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<int>& aTri,
                       double r,
