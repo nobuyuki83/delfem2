@@ -1066,6 +1066,7 @@ void DrawMeshTri2D_Edge
 
 
 ////////////////////////////////////////////////////////////////////////////////
+/// Quad
 
 void DrawMeshQuad3D_Edge
 (const std::vector<double>& aXYZ,
@@ -1116,6 +1117,45 @@ void DrawMeshQuad3D_FaceNorm
     DrawSingleQuad3D_FaceNorm(aXYZ, aQuad.data()+iq*4, 0);
   }
   ::glEnd();
+}
+
+
+void DrawMeshQuad2D_Edge
+(const std::vector<double>& aXY,
+ const std::vector<int>& aQuad)
+{
+  GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
+  ////
+  const int nQuad = (int)aQuad.size()/4;
+  const int nXY = (int)aXY.size()/2;
+  /////
+  ::glDisable(GL_LIGHTING);
+  ::glBegin(GL_LINES);
+  ::glColor3d(0, 0, 0);
+  for (int iq = 0; iq<nQuad; ++iq){
+    const int i1 = aQuad[iq*4+0];
+    const int i2 = aQuad[iq*4+1];
+    const int i3 = aQuad[iq*4+2];
+    const int i4 = aQuad[iq*4+3];
+    if( i1 == -1 ){
+      assert(i2==-1); assert(i3==-1);
+      continue;
+    }
+    assert(i1>=0&&i1<nXY);
+    assert(i2>=0&&i2<nXY);
+    assert(i3>=0&&i3<nXY);
+    assert(i4>=0&&i4<nXY);
+    double p1[2] = { aXY[i1*2+0], aXY[i1*2+1] };
+    double p2[2] = { aXY[i2*2+0], aXY[i2*2+1] };
+    double p3[2] = { aXY[i3*2+0], aXY[i3*2+1] };
+    double p4[2] = { aXY[i4*2+0], aXY[i4*2+1] };
+    ::glVertex2dv(p1); ::glVertex2dv(p2);
+    ::glVertex2dv(p2); ::glVertex2dv(p3);
+    ::glVertex2dv(p3); ::glVertex2dv(p4);
+    ::glVertex2dv(p4); ::glVertex2dv(p1);
+  }
+  ::glEnd();
+  if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
 ///////////////////////////////////////////

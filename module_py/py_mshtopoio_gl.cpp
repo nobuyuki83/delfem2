@@ -1,10 +1,40 @@
 #include <vector>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 
 #include "delfem2/mshtopoio_gl.h"
 
 namespace py = pybind11;
+
+CMeshElem HightMap(py::array_t<double> input0){
+  py::buffer_info buf1 = input0.request();
+  if (buf1.ndim != 2 ){
+    throw std::runtime_error("Number of dimensions must be one");
+  }
+  const int nx = buf1.shape[0];
+  const int ny = buf1.shape[1];
+  CMeshElem msh;
+  msh.elem_type = MESHELEM_QUAD;
+  msh.ndim = 3;
+  {
+    double *ptr1 = (double *) buf1.ptr;
+    std::vector<double> aXY;
+    MeshTri2D_Grid(aXY, msh.aElem,
+                   nx-1, ny-1);
+    const int np = aXY.size()/2;
+    msh.aPos.resize(np*3);
+    for(int iy=0;iy<ny;++iy){
+      for(int ix=0;ix<nx;++ix){
+        int ip = iy*nx+ix;
+        msh.aPos[ip*3+0] = aXY[ip*2+0];
+        msh.aPos[ip*3+1] = aXY[ip*2+1];
+        msh.aPos[ip*3+2] = ptr1[ip];
+      }
+    }
+  }
+  return msh;
+}
 
 void init_mshtopoio_gl(py::module &m){
   py::enum_<MESHELEM_TYPE>(m, "MeshElemType")
@@ -45,5 +75,7 @@ void init_mshtopoio_gl(py::module &m){
   m.def("triangulation",&Triangulation,
         py::arg("aXY"),
         py::arg("edge_length")=0.03);
+  
+  m.def("hight_map", &HightMap);
   
 }

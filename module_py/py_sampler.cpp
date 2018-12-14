@@ -32,6 +32,9 @@ py::array_t<unsigned char> color_buffer(CGPUSampler& sampler)
                                    ndim, shape, strides));
 }
 
+
+
+
 void init_sampler(py::module &m){
   ///////////////////////////////////
   // FrameBuffer

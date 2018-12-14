@@ -626,9 +626,35 @@ void Scale
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void MeshTri2D_Grid
+(std::vector<double>& aXYZ,
+ std::vector<int>& aQuad,
+ int nx, int ny)
+{
+  int np = (nx+1)*(ny+1);
+  aXYZ.resize(np*2);
+  for(int ix=0;ix<nx+1;++ix){
+    for(int iy=0;iy<ny+1;++iy){
+      int ip = iy*(nx+1)+ix;
+      aXYZ[ip*2+0] = ix;
+      aXYZ[ip*2+1] = iy;
+    }
+  }
+  aQuad.resize(nx*ny*4);
+  for(int ix=0;ix<nx;++ix){
+    for(int iy=0;iy<ny;++iy){
+      int iq = iy*nx+ix;
+      aQuad[iq*4+0] = (iy+0)*(nx+1)+(ix+0);
+      aQuad[iq*4+1] = (iy+0)*(nx+1)+(ix+1);
+      aQuad[iq*4+2] = (iy+1)*(nx+1)+(ix+1);
+      aQuad[iq*4+3] = (iy+1)*(nx+1)+(ix+0);
+    }
+  }
+}
+
 void MeshTri3D_Disk
 (std::vector<double>& aXYZ, 
-std::vector<int>& aTri,
+ std::vector<int>& aTri,
  double r, int nr, int nth)
 {
   aXYZ.clear();

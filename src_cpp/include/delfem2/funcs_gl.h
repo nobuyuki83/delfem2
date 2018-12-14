@@ -185,6 +185,8 @@ void DrawMeshQuad3D_Edge(const std::vector<double>& aXYZ,
                      const std::vector<int>& aQuad);
 void DrawMeshQuad3D_FaceNorm(const std::vector<double>& aXYZ,
                              const std::vector<int>& aQuad);
+void DrawMeshQuad2D_Edge(const std::vector<double>& aXY,
+                         const std::vector<int>& aQuad);
 
 ///////////////
 // Draw Tet
