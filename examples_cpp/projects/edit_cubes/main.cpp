@@ -17,7 +17,7 @@
 #include "delfem2/voxel.h"
 
 #include "delfem2/funcs_gl.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 #include "delfem2/color_gl.h"
 #include "delfem2/camera_gl.h"
 #include "delfem2/funcs_glut.h"

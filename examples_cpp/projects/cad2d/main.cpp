@@ -17,7 +17,7 @@
 
 #include "delfem2/funcs_glut.h"
 #include "delfem2/funcs_gl.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793

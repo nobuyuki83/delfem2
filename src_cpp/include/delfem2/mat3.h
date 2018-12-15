@@ -243,78 +243,17 @@ public:
 
 /////////////////////////////////////////////////////////////////////
 
-static void MatVec4
-(double v[4],
- const double A[16],
- const double x[4])
-{
-  v[0] = A[0*4+0]*x[0] + A[0*4+1]*x[1] + A[0*4+2]*x[2] + A[0*4+3]*x[3];
-  v[1] = A[1*4+0]*x[0] + A[1*4+1]*x[1] + A[1*4+2]*x[2] + A[1*4+3]*x[3];
-  v[2] = A[2*4+0]*x[0] + A[2*4+1]*x[1] + A[2*4+2]*x[2] + A[2*4+3]*x[3];
-  v[3] = A[3*4+0]*x[0] + A[3*4+1]*x[1] + A[3*4+2]*x[2] + A[3*4+3]*x[3];
-}
-
-static void Affine3D
-(double y0[3],
- const double a[16],
- const double x0[3])
-{
-  const double x1[4] = {x0[0], x0[1], x0[2], 1.0};
-  double y1[4]; MatVec4(y1,a,x1);
-  y0[0] = y1[0]/y1[3];
-  y0[1] = y1[1]/y1[3];
-  y0[2] = y1[2]/y1[3];
-}
-
-static void SetAffine_Scale
-(double A[16],
- double s)
-{
-  for(int i=0;i<16;++i){ A[i] = 0.0; }
-  A[0*4+0] = s;
-  A[1*4+1] = s;
-  A[2*4+2] = s;
-  A[3*4+3] = 1.0;
-}
-
-static void SetAffine_Trans
-(double A[16],
- double dx, double dy, double dz)
-{
-  for(int i=0;i<16;++i){ A[i] = 0.0; }
-  for(int i=0;i<4;++i){ A[i*4+i] = 1.0; }
-  A[0*4+3] = dx;
-  A[1*4+3] = dy;
-  A[2*4+3] = dz;
-}
-
-static void SetAffine_Rotate_Rodriguez
-(double A[16],
- double dx, double dy, double dz)
-{
-  for(int i=0;i<16;++i){ A[i] = 0.0; }
-  ////
-  const double sqlen = dx*dx+dy*dy+dz*dz;
-  const double tmp1 = 1.0/(1+0.25*sqlen);
-  A[0*4+0] = 1+tmp1*(+0.5*dx*dx-0.5*sqlen);
-  A[0*4+1] =  +tmp1*(-dz+0.5*dx*dy);
-  A[0*4+2] =  +tmp1*(+dy+0.5*dx*dz);
-  A[0*4+3] = 0.0;
-  ////
-  A[1*4+0] =  +tmp1*(+dz+0.5*dy*dx);
-  A[1*4+1] = 1+tmp1*(+0.5*dy*dy-0.5*sqlen);
-  A[1*4+2] =  +tmp1*(-dx+0.5*dy*dz);
-  A[1*4+3] = 0.0;
-  ////
-  A[2*4+0] =  +tmp1*(-dy+0.5*dz*dx);
-  A[2*4+1] =  +tmp1*(+dx+0.5*dz*dy);
-  A[2*4+2] = 1+tmp1*(+0.5*dz*dz-0.5*sqlen);
-  A[2*4+3] = 0.0;
-  ////
-  A[3*4+0] = 0.0;
-  A[3*4+1] = 0.0;
-  A[3*4+2] = 0.0;
-  A[3*4+3] = 1.0;
-}
+void MatVec4(double v[4],
+             const double A[16],
+             const double x[4]);
+void Affine3D(double y0[3],
+              const double a[16],
+              const double x0[3]);
+void SetAffine_Scale(double A[16],
+                     double s);
+void SetAffine_Trans(double A[16],
+                     double dx, double dy, double dz);
+void SetAffine_Rotate_Rodriguez(double A[16],
+                                double dx, double dy, double dz);
 
 #endif

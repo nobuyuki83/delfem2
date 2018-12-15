@@ -10,7 +10,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/paramgeo_v23.h"
 
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 #include "delfem2/camera_gl.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ void SetExample
 (int ndeg, int ncp)
 {
   ndegree = ndeg;
-  const int nk = ncp+ndeg+1;
+//  const int nk = ncp+ndeg+1;
   const int ndiv = ncp-ndeg;
   aKnot.assign(ndiv+1,0);
   for(int idiv=0;idiv<ndiv+1;++idiv){

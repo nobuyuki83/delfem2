@@ -24,7 +24,7 @@
 
 #include "delfem2/funcs_glut.h"
 #include "delfem2/funcs_gl.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 #include "delfem2/cad3d.h"
 
 #ifndef M_PI

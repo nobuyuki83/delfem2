@@ -12,9 +12,8 @@
 #include <GL/gl.h>
 #endif
 
-
 #include "delfem2/quat.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 
 void myGlVertex(const CVector3& v)
 {
