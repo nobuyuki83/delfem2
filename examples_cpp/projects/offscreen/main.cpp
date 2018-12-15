@@ -2,6 +2,7 @@
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
+#include <GL/glew.h>
 #include <GLUT/glut.h>
 #else
 #include <GL/glew.h>
@@ -11,7 +12,7 @@
 #include "delfem2/funcs_glut.h"
 #include "delfem2/funcs_gl.h"
 #include "delfem2/funcs_glew.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 #include "delfem2/color_gl.h"
 
 #include "delfem2/depth_v3_gl.h"

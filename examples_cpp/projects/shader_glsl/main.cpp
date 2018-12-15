@@ -4,15 +4,17 @@
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
+#include <GL/glew.h>
 #include <GLUT/glut.h>
 #else
 #include <GL/glew.h>
 #include <GL/glut.h>
 #endif
 
+#include "delfem2/funcs_glew.h" 
 #include "delfem2/funcs_glut.h"
 #include "delfem2/funcs_gl.h"
-#include "delfem2/funcs_glew.h"
+
 
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////

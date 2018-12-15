@@ -23,7 +23,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/camera_gl.cpp           ${DELFEM2_INC}/camera_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp
   ${DELFEM2_SRC}/color_gl.cpp
-  ${DELFEM2_SRC}/v23_gl.cpp              ${DELFEM2_INC}/v23_gl.h
+  ${DELFEM2_SRC}/v23q_gl.cpp              ${DELFEM2_INC}/v23q_gl.h
   ${DELFEM2_SRC}/camera_gl.cpp           ${DELFEM2_INC}/camera_gl.h
   main.cpp
 )

@@ -1,12 +1,16 @@
 #ifndef FUNCS_GLEW_H
 #define FUNCS_GLEW_H
 
+#include <vector>
+
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GL/glew.h>
 #include <OpenGL/gl.h>
 #else
 #include <GL/glew.h>
 #endif
+
+
 
 static int compileShader
 (const std::string& str_glsl_vert,

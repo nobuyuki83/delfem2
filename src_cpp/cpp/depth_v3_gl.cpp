@@ -20,7 +20,7 @@
 #endif
 ////
 #include "delfem2/funcs_gl.h"
-#include "delfem2/v23_gl.h"  // vec3, mat3
+#include "delfem2/v23q_gl.h"  // vec3, mat3
 
 #include "delfem2/depth_v3_gl.h"
 

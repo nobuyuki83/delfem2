@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/funcs_gl.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 #include "delfem2/color_gl.h"
 
 #include "delfem2/funcs_glfw.h"

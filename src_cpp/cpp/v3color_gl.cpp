@@ -12,7 +12,7 @@
 #include "delfem2/v3color_gl.h"
 #include "delfem2/color_gl.h"
 #include "delfem2/vec3.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 
 void DrawQuad_ScalarQ1
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
