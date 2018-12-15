@@ -31,7 +31,7 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/depth_v3_gl.cpp   ${DELFEM2_INC}/depth_v3_gl.h  
   ${DELFEM2_SRC}/rigmesh.cpp        ${DELFEM2_INC}/rigmesh.h  
 
-  ${DELFEM2_SRC}/v23_gl.cpp        ${DELFEM2_INC}/v23_gl.h
+  ${DELFEM2_SRC}/v23q_gl.cpp        ${DELFEM2_INC}/v23q_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
                                    ${DELFEM2_INC}/funcs_glew.h
