@@ -247,8 +247,10 @@ def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
   dx = mov_end_x - mouse_x
   dy = mov_end_y - mouse_y
   a = math.sqrt(dx * dx + dy * dy)
-  ar = a * 0.5
-  dq = [math.cos(ar), -dy * math.sin(ar) / a, dx * math.sin(ar) / a, 0.0]
+  if a > 1.0e-3:
+    dq = [math.cos(a*0.5), -dy * math.sin(a*0.5) / a, dx * math.sin(a*0.5) / a, 0.0]
+  else:
+    dq = [1,-dy,dx,0.0]
   if a != 0.0:
     quat = QuatMult(dq, quat)
   mouse_x = mov_end_x
