@@ -67,6 +67,7 @@ class WindowGLFW:
     glfw.set_mouse_button_callback(self.win, self.mouse)
     glfw.set_cursor_pos_callback(self.win, self.motion)
     glfw.set_key_callback(self.win, self.keyinput)
+    glfw.set_window_size_callback(self.win, self.window_size)
     while not glfw.window_should_close(self.win):
       glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0)
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -91,6 +92,9 @@ class WindowGLFW:
 
   def keyinput(self,win0,key,scancode,action,mods):
     self.wm.keyinput(win0,key,scancode,action,mods)
+
+  def window_size(self,win0,w,h):
+    glViewport(0,0,w,h)
 
 
 
