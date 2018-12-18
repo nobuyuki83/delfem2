@@ -303,7 +303,7 @@ std::string pathRemoveExtension(const std::string& fpath)
   std::vector<std::string> aToken;
   Split(aToken, fpath, '.');
   std::string sRes;
-  for(int it=0;it<aToken.size()-1;++it){
+  for(int it=0;it<(int)aToken.size()-1;++it){
     sRes = sRes + aToken[it];
   }
   return sRes;
@@ -344,7 +344,7 @@ bool WriteParam
   std::ofstream fout;
   fout.open(fname.c_str());
   if( !fout.is_open() ) return false;
-  for(int ip=0;ip<aPara.size();++ip){
+  for(unsigned int ip=0;ip<aPara.size();++ip){
     fout << aPara[ip] << std::endl;
   }
   return true;

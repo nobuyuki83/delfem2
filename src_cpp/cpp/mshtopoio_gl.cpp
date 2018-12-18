@@ -165,7 +165,7 @@ void CMeshMultiElem::Draw() const
     if( imtl>=0 && imtl<(int)aMaterial.size() ){ aMaterial[imtl].GL(); }
     else{ ::myGlColorDiffuse(CColor::White()); }
     DrawMeshTri3D_FaceNorm(aXYZ, aObjGroupTri[iogt].aTriVtx,
-                           aNorm, aObjGroupTri[iogt].aTriNrm);
+                          aNorm, aObjGroupTri[iogt].aTriNrm);
   }
 }
 
@@ -181,6 +181,17 @@ std::vector<double> CMeshMultiElem::AABB3_MinMax() const
   aabb[5] = cw[2]+0.5*cw[5];
   return aabb;
 }
+
+void CMeshMultiElem::ScaleXYZ(double s)
+{
+  Scale(s,aXYZ);
+}
+
+void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
+{
+  Translate(x,y,z, aXYZ);
+}
+
 
 /////////
 

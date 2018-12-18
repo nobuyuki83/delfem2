@@ -88,6 +88,8 @@ public:
   void ReadObj(const std::string& fname);
   void Draw() const;
   std::vector<double> AABB3_MinMax() const;
+  void ScaleXYZ(double s);
+  void TranslateXYZ(double x, double y, double z);
 public:
   std::vector<double> aXYZ;
   std::vector<double> aNorm;

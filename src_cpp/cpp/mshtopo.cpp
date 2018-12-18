@@ -111,7 +111,7 @@ void FlipElement
   for(unsigned int ie=0;ie<nelem;++ie){
     const int nnoel = aElemInd[ie+1]-aElemInd[ie];
     assert( nnoel == 3 || nnoel == 4 );
-    for(unsigned int inoel=0;inoel<nnoel;++inoel){
+    for(int inoel=0;inoel<nnoel;++inoel){
       const int ip0 = aElem[ aElemInd[ie]+inoel ];
       const int jnoel = nnoel-inoel-1;
       aElem_Flip[ aElemInd[ie]+jnoel ] = ip0;

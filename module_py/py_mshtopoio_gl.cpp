@@ -66,7 +66,9 @@ void init_mshtopoio_gl(py::module &m){
   .def(py::init<>())
   .def("read_obj", &CMeshMultiElem::ReadObj)
   .def("minmax_xyz", &CMeshMultiElem::AABB3_MinMax)
-  .def("draw",&CMeshMultiElem::Draw);
+  .def("draw",&CMeshMultiElem::Draw)
+  .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
+  .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
   py::class_<CTriangulationOutput>(m, "TriangulationOutput")
   .def(py::init<>())
