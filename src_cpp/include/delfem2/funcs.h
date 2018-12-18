@@ -16,6 +16,7 @@ bool cmdOptionExists(char** begin, char** end, const std::string& option);
 
 bool isFileExists(const std::string& fpath);
 std::string pathRemoveExtension(const std::string& fpath);
+std::string pathGetExtension(const std::string& fpath);
 std::string getPathDir(const std::string& fpath);
 
 ///////////////////////////////////////////////////
