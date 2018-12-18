@@ -91,7 +91,7 @@ void CCad2D_EdgeGeo::GenMesh
 (unsigned int iedge, const CCadTopo& topo,
  std::vector<CCad2D_VtxGeo>& aVtxGeo)
 {
-  assert( iedge>=0 && iedge<topo.aEdge.size() );
+  assert( iedge<topo.aEdge.size() );
   const int iv0 = topo.aEdge[iedge].iv0;
   const int iv1 = topo.aEdge[iedge].iv1;
   this->p0 = aVtxGeo[iv0].pos;
@@ -104,12 +104,12 @@ void CCad2D_FaceGeo::GenMesh
 (unsigned int iface0, const CCadTopo& topo,
  std::vector<CCad2D_EdgeGeo>& aEdgeGeo)
 {
-  assert( iface0>=0 && iface0<topo.aFace.size() );
+  assert( iface0<topo.aFace.size() );
   const std::vector< std::pair<int,bool> >& aIE = topo.aFace[iface0].aIE;
   std::vector<double> aXY_corner;
   for(unsigned int iie=0;iie<aIE.size();++iie){
     const unsigned int ie0 = (unsigned int)aIE[iie].first;
-    assert( ie0>=0 && ie0<topo.aEdge.size() );
+    assert( ie0<topo.aEdge.size() );
     const bool dir0 = aIE[iie].second;
 //    int iv0 = (dir0) ? topo.aEdge[ie0].iv0 : topo.aEdge[ie0].iv1;
     {

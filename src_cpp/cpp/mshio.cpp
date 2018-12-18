@@ -659,14 +659,15 @@ void Load_Obj
       }
       char str[256], str0[256], str1[256], str2[256];
       sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
+//      std::cout << str0 << " " << str1 << " " << str2 << std::endl;
       int ip0,it0,in0; ParseVtx(ip0,it0,in0, str0);
       int ip1,it1,in1; ParseVtx(ip1,it1,in1, str1);
       int ip2,it2,in2; ParseVtx(ip2,it2,in2, str2);
       aTriGroup[iogt0].aTriVtx.push_back(ip0);
       aTriGroup[iogt0].aTriVtx.push_back(ip1);
       aTriGroup[iogt0].aTriVtx.push_back(ip2);
-      if( in0 != -1 ){
-        assert( in1 != -1 && in2 != -1 );
+//     if( in0 != -1 && in1 != -1 && in2 != -1 ){
+      {
         aTriGroup[iogt0].aTriNrm.push_back(in0);
         aTriGroup[iogt0].aTriNrm.push_back(in1);
         aTriGroup[iogt0].aTriNrm.push_back(in2);
