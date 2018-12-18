@@ -309,6 +309,17 @@ std::string pathRemoveExtension(const std::string& fpath)
   return sRes;
 }
 
+std::string pathGetExtension(const std::string& fpath)
+{
+  std::vector<std::string> aToken;
+  Split(aToken, fpath, '.');
+  std::string sRes;
+  if( !aToken.empty() ){
+    sRes = aToken[aToken.size()-1];
+  }
+  return sRes;
+}
+
 std::string getPathDir(const std::string& fpath)
 {
   const int iloc = fpath.find_last_of('/');

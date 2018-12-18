@@ -10,6 +10,7 @@
 #include "delfem2/mshtopo.h"
 //#include "delfem2/funcs_gl.h"
 #include "delfem2/color_gl.h"
+#include "delfem2/funcs.h"
 
 void MeshTri3D_GeodesicPolyhedron(std::vector<double>& aXYZ1,
                                   std::vector<int>& aTri1);
@@ -44,7 +45,13 @@ public:
     return aabb;
   }
   void Read(const std::string& fname){
-    Read_Ply(fname, aPos, aElem);
+    std::string sExt = pathGetExtension(fname);
+    if( sExt == "ply") {
+      Read_Ply(fname, aPos, aElem);
+    }
+    else if( sExt == "obj") {
+      Read_Obj(fname, aPos, aElem);
+    }
     elem_type = MESHELEM_TRI;
     ndim = 3;
   }
