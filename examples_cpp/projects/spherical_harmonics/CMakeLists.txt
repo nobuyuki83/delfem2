@@ -19,7 +19,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/quat.cpp               ${DELFEM2_INC}/quat.h
   ${DELFEM2_SRC}/vec2.cpp               ${DELFEM2_INC}/vec2.h
   ${DELFEM2_SRC}/vec3.cpp               ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/special_functions.cpp
+  ${DELFEM2_SRC}/mathfuncs.cpp
   ${DELFEM2_SRC}/v23q_gl.cpp
 
   ${DELFEM2_SRC}/color_gl.cpp

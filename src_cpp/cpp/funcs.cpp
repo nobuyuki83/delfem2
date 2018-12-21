@@ -285,6 +285,10 @@ std::string LoadFile
 {
   std::ifstream inputFile1;
   inputFile1.open(fname.c_str());
+  if( !inputFile1.is_open() ){
+    std::cout << "Error! --> cannot open the file: " << fname << std::endl;
+    return "";
+  }
   std::istreambuf_iterator<char> vdataBegin(inputFile1);
   std::istreambuf_iterator<char> vdataEnd;
   return std::string(vdataBegin,vdataEnd);

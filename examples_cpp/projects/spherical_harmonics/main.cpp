@@ -8,10 +8,10 @@
 #endif
 
 #include "delfem2/funcs_glut.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/v23q_gl.h"
 #include "delfem2/color_gl.h"
 #include "delfem2/funcs_gl.h"
-#include "delfem2/special_functions.h"
+#include "delfem2/mathfuncs.h"
 
 static void drawShphere_Heatmap
 (double (*value)(double,double,double),
