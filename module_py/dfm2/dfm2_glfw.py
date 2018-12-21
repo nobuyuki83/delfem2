@@ -98,7 +98,11 @@ class WindowGLFW:
 
 
 
-def winDraw3d(list_obj,winsize=(400,300),bgcolor=(1,1,1)):
+def winDraw3d(list_obj,
+              winsize=(400,300),
+              bgcolor=(1,1,1),
+              glsl_vrt="",
+              glsl_frg=""):
   """
   draw the input object into openGL window
 
@@ -111,7 +115,12 @@ def winDraw3d(list_obj,winsize=(400,300),bgcolor=(1,1,1)):
   window = WindowGLFW(winsize=winsize)
   for obj in list_obj:
     if hasattr(obj, 'init_gl'):
-      obj.init_gl()  
+      obj.init_gl()
+  #### glsl compile
+  id_shader_program = 0
+  if glsl_vrt != "" and glsl_frg != "":
+    glew_init()
+    id_shader_program = setup_glsl(glsl_vrt,glsl_frg)
   #### adjust scale
   aabb3 = AABB3()
   for obj in list_obj:
@@ -124,6 +133,7 @@ def winDraw3d(list_obj,winsize=(400,300),bgcolor=(1,1,1)):
   setSomeLighting()  
   glEnable(GL_POLYGON_OFFSET_FILL )
   glPolygonOffset( 1.1, 4.0 )
+  glUseProgram(id_shader_program)
   #### enter loop
   window.draw_loop([x.draw for x in list_obj],bgcolor=bgcolor)
 

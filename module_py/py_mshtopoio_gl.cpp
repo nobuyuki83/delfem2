@@ -60,7 +60,8 @@ void init_mshtopoio_gl(py::module &m){
   .def_readonly("listPos",  &CMeshElem::aPos)
   .def_readonly("elemType", &CMeshElem::elem_type)
   .def_readonly("nDim",     &CMeshElem::ndim)
-  .def_readwrite("color_face",  &CMeshElem::color_face);
+  .def_readwrite("color_face",  &CMeshElem::color_face)
+  .def_readwrite("is_draw_edge", &CMeshElem::is_draw_edge);
   
   py::class_<CMeshMultiElem>(m,"MeshMultiElem")
   .def(py::init<>())
