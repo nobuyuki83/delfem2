@@ -167,9 +167,12 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   return img
 
 class DepthColorBuffer:
-  def __init__(self,win_size,is_color,is_depth):
+  def __init__(self,
+    win_size:list,
+    format_color:str,
+    is_depth:bool):
     self.win = WindowGLFW(isVisible=False)
-    self.fbm = FrameBufferManager(win_size,is_color,is_depth)
+    self.fbm = FrameBufferManager(win_size,format_color,is_depth)
   def start(self):
     self.fbm.start()
   def end(self):
