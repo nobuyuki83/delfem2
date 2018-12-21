@@ -108,9 +108,10 @@ PYBIND11_MODULE(dfm2, m) {
   .def("add_square", &CCad2D::Add_Square)
   .def("draw",       &CCad2D::Draw)
   .def("minmax_xyz", &CCad2D::MinMaxXYZ);
-  
 
   ///////////////////////////////////
   // gl misc
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
+  m.def("setup_glsl", setUpGLSL, "compile shader program");
+  m.def("glew_init", glewInit);
 }

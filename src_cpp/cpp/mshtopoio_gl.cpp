@@ -124,9 +124,11 @@ void CMeshElem::Draw() const {
   }
   /////
   this->DrawFace_ElemWiseNorm();
-  glDisable(GL_LIGHTING);
-  glLineWidth(1);
-  this->DrawEdge();
+  if( this->is_draw_edge ) {
+    glDisable(GL_LIGHTING);
+    glLineWidth(1);
+    this->DrawEdge();
+  }
 }
 
 ////////

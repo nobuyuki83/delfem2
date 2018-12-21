@@ -23,6 +23,7 @@ public:
     color_face[1] = 0.8;
     color_face[2] = 0.8;
     color_face[3] = 1.0;
+    is_draw_edge = true;
   }
   CMeshElem(const std::string& fpath){
     color_face.resize(4);
@@ -30,6 +31,7 @@ public:
     color_face[1] = 0.8;
     color_face[2] = 0.8;
     color_face[3] = 1.0;
+    is_draw_edge = true;
     this->Read(fpath);
   }
   void Draw() const;
@@ -88,6 +90,7 @@ public:
   std::vector<double> aPos;
   /////
   std::vector<float> color_face;
+  bool is_draw_edge;
 };
 
 class CMeshMultiElem{

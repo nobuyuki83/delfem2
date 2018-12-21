@@ -42,7 +42,8 @@ static int setUpGLSL
 {
   int vShaderId = compileShader(str_glsl_vert, GL_VERTEX_SHADER);
   int fShaderId = compileShader(str_glsl_frag, GL_FRAGMENT_SHADER);
-  
+
+
   int id_program = glCreateProgram();
   glAttachShader(id_program,vShaderId);
   glAttachShader(id_program,fShaderId);

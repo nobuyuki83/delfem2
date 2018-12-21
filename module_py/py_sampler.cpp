@@ -21,7 +21,7 @@ py::array_t<float> depth_buffer(CGPUSampler& sampler)
                                    ndim, shape, strides));
 }
 
-py::array_t<unsigned char> color_buffer(CGPUSampler& sampler)
+py::array_t<unsigned char> color_buffer_4byte(CGPUSampler& sampler)
 {
   assert((int)sampler.aUC_RGBA.size()==sampler.nResY*sampler.nResX*4);
   std::vector<size_t> strides = {sizeof(unsigned char)*sampler.nResX*4,sizeof(unsigned char)*4,sizeof(unsigned char)};
@@ -32,7 +32,16 @@ py::array_t<unsigned char> color_buffer(CGPUSampler& sampler)
                                    ndim, shape, strides));
 }
 
-
+py::array_t<float> color_buffer_4float(CGPUSampler& sampler)
+{
+  assert((int)sampler.aF_RGBA.size()==sampler.nResY*sampler.nResX*4);
+  std::vector<size_t> strides = {sizeof(float)*sampler.nResX*4,sizeof(float)*4,sizeof(float)};
+  std::vector<size_t> shape = {(size_t)sampler.nResY,(size_t)sampler.nResX,4};
+  size_t ndim = 3;
+  return py::array(py::buffer_info(sampler.aF_RGBA.data(), sizeof(float),
+                                   py::format_descriptor<float>::format(),
+                                   ndim, shape, strides));
+}
 
 
 void init_sampler(py::module &m){
@@ -64,5 +73,6 @@ void init_sampler(py::module &m){
   .def_readwrite("len_axis",  &CGPUSampler::draw_len_axis);
   
   m.def("depth_buffer", &depth_buffer);
-  m.def("color_buffer", &color_buffer);
+  m.def("color_buffer_4byte", &color_buffer_4byte);
+  m.def("color_buffer_4float", &color_buffer_4float);
 }
