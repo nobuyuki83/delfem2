@@ -10,8 +10,6 @@
 #include <GL/glew.h>
 #endif
 
-
-
 static int compileShader
 (const std::string& str_glsl_vert,
  int shaderType)
@@ -55,9 +53,22 @@ static int setUpGLSL
   if(linked == GL_FALSE)
   {
     std::cerr << "Link Err.\n";
+    GLint maxLength = 0;
+    glGetProgramiv(id_program, GL_INFO_LOG_LENGTH, &maxLength);
+    // The maxLength includes the NULL character
+    std::vector<GLchar> infoLog(maxLength);
+    glGetProgramInfoLog(id_program, maxLength, &maxLength, &infoLog[0]);
+    for(unsigned int i=0;i<infoLog.size();++i){
+      std::cout << infoLog[i];
+    }
+    std::cout << std::endl;
+    glDeleteProgram(id_program); // The program is useless now. So delete it.
+    return 0;
   }
   return id_program;
 }
+
+//////////////////////////////////////////////
 
 class CFrameBufferManager
 {
@@ -68,12 +79,17 @@ public:
     id_color_render_buffer = 0;    
     glewInit(); // should be removed for Mac? It is necessary for Ubuntu, otherwise crash
   }
-  CFrameBufferManager(const std::vector<int>& winSize, bool isColor, bool isDepth){
+  CFrameBufferManager(const std::vector<int>& winSize,
+                      std::string sFormatPixelColor,
+                      bool isDepth)
+  {
     id_framebuffer = 0;
     id_depth_render_buffer = 0;
     id_color_render_buffer = 0;    
     glewInit(); // should be removed for Mac? It is necessary for Ubuntu, otherwise crash
-    this->Init(winSize[0],winSize[1],isColor,isDepth);
+    this->Init(winSize[0],winSize[1],
+               sFormatPixelColor,
+               isDepth);
   }
   void DeleteFrameBuffer(){
     if( id_framebuffer > 0 ){
@@ -89,8 +105,11 @@ public:
       id_color_render_buffer = 0;
     }
   }
-  void Init(int width, int height, bool isColor, bool isDepth)
+  void Init(int width, int height,
+            std::string sFormatPixelColor,
+            bool isDepth)
   {
+    this->sFormatPixelColor = sFormatPixelColor;
     DeleteFrameBuffer();
     glGenFramebuffers(1, &id_framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
@@ -104,10 +123,15 @@ public:
       glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, id_depth_render_buffer);
     }
     /// color
-    if( isColor ){
+    if( sFormatPixelColor=="4byte" || sFormatPixelColor=="4float" ){
       glGenRenderbuffers(1, &id_color_render_buffer);
       glBindRenderbuffer(GL_RENDERBUFFER, id_color_render_buffer);
-      glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+      if(      sFormatPixelColor == "4byte" ){
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, width, height);
+      }
+      else if( sFormatPixelColor == "4float" ){
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA32F, width, height);
+      }
       glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, id_color_render_buffer);
     }
     else{
@@ -145,6 +169,7 @@ public:
   unsigned int id_color_render_buffer; // color buffer
   int width;
   int height;
+  std::string sFormatPixelColor;
 };
 
 #endif /* utility_glew_h */

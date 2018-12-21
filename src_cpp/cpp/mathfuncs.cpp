@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cmath>
 
-#include "delfem2/special_functions.h"
+#include "delfem2/mathfuncs.h"
 
 const double pi = 3.1415926535;
 const double invpi = 1.0/pi;

@@ -181,9 +181,9 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   
   ////////////////////////
-#ifndef __MACH__
+//#ifndef __MACH__
   glewInit();
-#endif
+//#endif
   
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';
   std::cout<<"GPU: "<<glGetString(GL_RENDERER)<<'\n';

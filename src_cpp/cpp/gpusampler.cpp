@@ -21,8 +21,7 @@
 ////
 #include "delfem2/funcs_gl.h"
 #include "delfem2/v23q_gl.h"  // vec3, mat3
-
-#include "delfem2/depth_v3_gl.h"
+#include "delfem2/gpusampler.h"
 
 /////////////////////////////////
 
@@ -32,19 +31,22 @@ void CGPUSampler::SetColor(double r, double g, double b){
   color[2] = b;
 }
 
-void CGPUSampler::Init(int nw, int nh, bool isColor, bool isDepth)
+void CGPUSampler::Init(int nw, int nh,
+                       std::string sFormatPixelColor, bool isDepth)
 {
   this->nResX = nw;
   this->nResY = nh;
-  this->isColor = isColor;
+  this->sFormatPixelColor = sFormatPixelColor;
   this->isDepth = isDepth;
   const int npix = nw*nh;
   /////
   if( isDepth ){ aZ.resize(npix,0); }
   else{ aZ.clear(); }
   ////
-  if( isColor ){ aRGBA.resize(npix*4,128); }
-  else{ aRGBA.clear(); }
+  aF_RGBA.clear();
+  aUC_RGBA.clear();
+  if( sFormatPixelColor == "4byte"  ){ aUC_RGBA.resize(npix*4,128); }
+  else if( sFormatPixelColor == "4float" ){ aF_RGBA.resize(npix*4,128); }
   ////////
   if( id_tex_color > 0 ){ glDeleteTextures(1, &id_tex_color); }
   id_tex_color = 0;
@@ -84,7 +86,7 @@ void CGPUSampler::Start()
   else if( bgcolor.size() == 3 ){ ::glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0); }
   else if( bgcolor.size() > 0  ){ ::glClearColor(bgcolor[0], bgcolor[0], bgcolor[0], 1.0 ); }
   else{                           ::glClearColor(1.0, 1.0, 1.0, 1.0 ); }
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   ::glDisable(GL_BLEND);
   ::glEnable(GL_DEPTH_TEST);
   this->SetView();
@@ -100,15 +102,27 @@ void CGPUSampler::End()
     glReadPixels(0, 0, nResX, nResY, GL_DEPTH_COMPONENT, GL_FLOAT, aZ.data());
     for(int i=0;i<npix;++i){ aZ[i] *= (-1.0*z_range); }
   }
-  else{ aZ.clear(); }
-  
-  ///////
-  if( isColor ){
-    assert( (int)aRGBA.size() == npix*4 );
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glReadPixels(0, 0, nResX, nResY, GL_RGBA, GL_UNSIGNED_BYTE, aRGBA.data());
+  else{
+    aZ.clear();
   }
-  else{ aRGBA.clear(); }
+  ///////
+  if( sFormatPixelColor == "4byte" || sFormatPixelColor == "4float" ){
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    if( sFormatPixelColor == "4byte" ){
+      assert( (int)aUC_RGBA.size() == npix*4 );
+      glReadPixels(0, 0, nResX, nResY, GL_RGBA, GL_UNSIGNED_BYTE, aUC_RGBA.data());
+      aF_RGBA.clear();
+    }
+    if( sFormatPixelColor == "4float" ){
+      assert( (int)aF_RGBA.size() == npix*4 );
+      glReadPixels(0, 0, nResX, nResY, GL_RGBA, GL_FLOAT, aF_RGBA.data());
+      aUC_RGBA.clear();
+    }
+  }
+  else{
+    aUC_RGBA.clear();
+    aF_RGBA.clear();
+  }
   
   ::glViewport(view[0], view[1], view[2], view[3]);
 }
@@ -126,10 +140,17 @@ void CGPUSampler::LoadTex()
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-  if( (int)aRGBA.size() == nResX*nResY*4 ){
+  if( sFormatPixelColor == "4byte" ){
+    assert( (int)aUC_RGBA.size() == nResX*nResY*4 );
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  nResX, nResY, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 aRGBA.data());
+                 aUC_RGBA.data());
+  }
+  else if( sFormatPixelColor == "4float" ){
+    assert( (int)aF_RGBA.size() == nResX*nResY*4 );
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 nResX, nResY, 0, GL_RGBA, GL_FLOAT,
+                 aF_RGBA.data());
   }
   glBindTexture(GL_TEXTURE_2D, 0);
 }

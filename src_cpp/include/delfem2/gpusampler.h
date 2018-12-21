@@ -15,7 +15,7 @@ public:
   CGPUSampler(){
     nResX = 0;
     nResY = 0;
-    isColor = false;
+    sFormatPixelColor = "";
     isDepth = false;
     id_tex_color = 0;
     //////
@@ -27,10 +27,10 @@ public:
     x_axis[0]=1; x_axis[1]=0; x_axis[2]=0;
     draw_len_axis = 1.0;
   }
-  CGPUSampler(int nw, int nh, bool isColor, bool isDepth){
-    this->Init(nw,nh,isColor,isDepth);
+  CGPUSampler(int nw, int nh, std::string sFormatPixelColor, bool isDepth){
+    this->Init(nw,nh,sFormatPixelColor,isDepth);
   }
-  void Init(int nw, int nh, bool isColor, bool isDepth);
+  void Init(int nw, int nh, std::string sFormatPixelColor, bool isDepth);
   void LoadTex();
   /////
   void Draw() const;
@@ -56,7 +56,7 @@ public:
   void Start();
   void End();
 public:
-  bool isColor;
+  std::string sFormatPixelColor;
   bool isDepth;
   int nResX;
   int nResY;
@@ -66,7 +66,8 @@ public:
   double x_axis[3];
   double origin[3];
   std::vector<float> aZ;
-  std::vector<unsigned char> aRGBA;
+  std::vector<float> aF_RGBA;
+  std::vector<unsigned char> aUC_RGBA;
   /////
   std::vector<double> bgcolor;
   std::vector<double> color;
