@@ -26,7 +26,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/quat.cpp           ${DELFEM2_INC}/quat.h
 
   ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
-  ${DELFEM2_SRC}/depth_v3_gl.cpp    ${DELFEM2_INC}/depth_v3_gl.h
+  ${DELFEM2_SRC}/gpusampling.cpp    ${DELFEM2_INC}/gpusampling.h
 
   ${DELFEM2_SRC}/funcs_gl.cpp       ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/v3color_gl.cpp     ${DELFEM2_INC}/v3color_gl.h
