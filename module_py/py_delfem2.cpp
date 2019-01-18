@@ -244,6 +244,66 @@ std::vector<std::vector<int> > getLevelSet(const py::array_t<float>& a, double m
 }
 
 
+double distance
+(int i0, int i1, int i2,
+ const std::vector<int>& aXY)
+{
+  const int np = aXY.size()/2;
+  assert(i0>=0&&i0<np);
+  assert(i1>=0&&i1<np);
+  assert(i2>=0&&i2<np);
+  CVector2 v0(aXY[i0*2+0], aXY[i0*2+1]);
+  CVector2 v1(aXY[i1*2+0], aXY[i1*2+1]);
+  CVector2 v2(aXY[i2*2+0], aXY[i2*2+1]);
+  CVector2 vn = GetNearest_LineSeg_Point(v2,v0,v1);
+  return Distance(vn,v2);
+}
+
+void set_flag_douglas_peucker
+(std::vector<bool>& aFlg,
+ const std::vector<int>& aXY,
+ int i0, int i1, double eps)
+{
+  assert(i0<i1);
+  assert(i0>=0&&i0<(int)aFlg.size()&&aFlg[i0]);
+  assert(i1>=0&&i1<(int)aFlg.size()&&aFlg[i1]);
+  int ifar = -1;
+  double max_dist = 0.0;
+  for(int i2=i0+1;i2<i1;++i2){
+    assert( aFlg[i2] );
+    double dist = distance(i0,i1,i2,aXY);
+    if( ifar == -1 || dist > max_dist ){
+      max_dist = dist;
+      ifar = i2;
+    }
+  }
+  if( max_dist < eps ){
+    for(int i2=i0+1;i2<i1;++i2){ aFlg[i2] = false; }
+  }
+  else{
+    if( ifar-i0 >= 2 ){ set_flag_douglas_peucker(aFlg, aXY, i0, ifar, eps); }
+    if( i1-ifar >= 2 ){ set_flag_douglas_peucker(aFlg, aXY, ifar, i1, eps); }
+  }
+}
+
+
+std::vector<int> simplifyPolyloop(std::vector<int>& aXY_in, double eps)
+{
+  int np = aXY_in.size()/2;
+  std::vector<bool> aFlg(np,true);
+  set_flag_douglas_peucker(aFlg, aXY_in, 0, np/2, eps);
+  set_flag_douglas_peucker(aFlg, aXY_in, np/2,np-1, eps);
+  std::vector<int> aXY_out;
+  for(int ip=0;ip<np;++ip){
+    if( !aFlg[ip] ) continue;
+    aXY_out.push_back(aXY_in[ip*2+0]);
+    aXY_out.push_back(aXY_in[ip*2+1]);
+  }
+  return aXY_out;
+}
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -316,4 +376,5 @@ PYBIND11_MODULE(dfm2, m) {
   m.def("glew_init", glewInit);
   
   m.def("get_level_set", getLevelSet);
+  m.def("simplify_polyloop",simplifyPolyloop);
 }
