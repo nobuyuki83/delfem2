@@ -57,6 +57,9 @@ public:
     elem_type = MESHELEM_TRI;
     ndim = 3;
   }
+  void Write_Obj(const std::string& fname){
+    ::Write_Obj(fname, aPos, aElem);
+  }
   void DrawFace_ElemWiseNorm() const;
   void DrawEdge() const;
   CMeshElem Subdiv(){
