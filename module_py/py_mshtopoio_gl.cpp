@@ -52,6 +52,7 @@ void init_mshtopoio_gl(py::module &m){
   .def("draw", &CMeshElem::Draw) //
   .def("minmax_xyz", &CMeshElem::AABB3_MinMax)
   .def("read", &CMeshElem::Read)
+  .def("write_obj",&CMeshElem::Write_Obj)
   .def("drawFace_elemWiseNorm", &CMeshElem::DrawFace_ElemWiseNorm)
   .def("drawEdge", &CMeshElem::DrawEdge)
   .def("scaleXYZ", &CMeshElem::ScaleXYZ)
