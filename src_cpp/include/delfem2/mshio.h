@@ -130,4 +130,8 @@ void ReadVTK(std::vector<double>& aXYZ,
              std::vector<double>& aPointVal,
              const std::string& fpath);
 
+void Read_MeshTri3D_Nas(std::vector<double>& aXYZ,
+                        std::vector<int>& aTri,
+                        const char* path);
+
 #endif /* meshio_hpp */

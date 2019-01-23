@@ -93,6 +93,8 @@ public:
   bool is_draw_edge;
 };
 
+CMeshElem Read_MeshTri3D_Nas_CMeshElem(std::string& fpath);
+
 class CMeshMultiElem{
 public:
   void ReadObj(const std::string& fname);

@@ -63,6 +63,8 @@ void init_mshtopoio_gl(py::module &m){
   .def_readwrite("color_face",  &CMeshElem::color_face)
   .def_readwrite("is_draw_edge", &CMeshElem::is_draw_edge);
   
+  m.def("read_nastran_triangle",&Read_MeshTri3D_Nas_CMeshElem);
+  
   py::class_<CMeshMultiElem>(m,"MeshMultiElem")
   .def(py::init<>())
   .def("read_obj", &CMeshMultiElem::ReadObj)

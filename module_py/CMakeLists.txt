@@ -39,6 +39,7 @@ set(INPUT_SRC
 
   py_mshtopoio_gl.cpp
   py_sampler.cpp
+  py_polyline.cpp
   py_delfem2.cpp
 )
 

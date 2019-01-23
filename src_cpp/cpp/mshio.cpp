@@ -1195,3 +1195,59 @@ void ReadVTK
     }
   }
 }
+
+
+
+void Read_MeshTri3D_Nas
+(std::vector<double>& aXYZ,
+ std::vector<int>& aTri,
+ const char* path)
+{
+  aXYZ.clear();
+  aTri.clear();
+  /////
+  FILE *fp = fopen(path,"r");
+  if(fp==NULL){
+    printf("fail to open file");
+    return;
+  }
+  /////
+  size_t nbuff = 256;
+  char* buff = new char [nbuff];
+  char buff1[16], buff2[16], buff3[16], buff4[16], buff5[16];
+  while(1){
+    ssize_t res = getline(&buff,&nbuff,fp);
+    if( res == -1 ){ break; } // eof
+    if( buff[0]=='G' && buff[1]=='R' && buff[2]=='I' && buff[3]=='D' ){
+      for(int i=0;i<8;++i){ buff1[i] = buff[i +8]; } buff1[8] = '\0';
+      for(int i=0;i<8;++i){ buff2[i] = buff[i+24]; } buff2[8] = '\0';
+      for(int i=0;i<8;++i){ buff3[i] = buff[i+32]; } buff3[8] = '\0';
+      for(int i=0;i<8;++i){ buff4[i] = buff[i+40]; } buff4[8] = '\0';
+      const int i0 = atoi(buff1);
+      const double f2 = atof(buff2);
+      const double f3 = atof(buff3);
+      const double f4 = atof(buff4);
+      assert( i0-1 == (int)aXYZ.size()/3 );
+      aXYZ.push_back(f2);
+      aXYZ.push_back(f3);
+      aXYZ.push_back(f4);
+      continue;
+    }
+    if( buff[0]=='C' && buff[1]=='T' && buff[2]=='R' && buff[3]=='I' && buff[4]=='A' && buff[5]=='3'){
+      for(int i=0;i<8;++i){ buff1[i] = buff[i+ 8]; } buff1[8] = '\0';
+      for(int i=0;i<8;++i){ buff2[i] = buff[i+16]; } buff2[8] = '\0';
+      for(int i=0;i<8;++i){ buff3[i] = buff[i+24]; } buff3[8] = '\0';
+      for(int i=0;i<8;++i){ buff4[i] = buff[i+32]; } buff4[8] = '\0';
+      for(int i=0;i<8;++i){ buff5[i] = buff[i+40]; } buff5[8] = '\0';
+      const int i3 = atoi(buff3)-1;
+      const int i4 = atoi(buff4)-1;
+      const int i5 = atoi(buff5)-1;
+      aTri.push_back(i3);
+      aTri.push_back(i4);
+      aTri.push_back(i5);
+      continue;
+    }
+  }
+  fclose(fp);
+}
+
