@@ -142,6 +142,25 @@ def rot_trans(v,R,t):
     v1 = add_scaled_3(v0,t,+1.0)
   return v1
 
+################################################
+
+def v3_length(v):
+  return math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
+
+def v3_scale(v,d):
+  v = [v[0]*d,v[1]*d,v[2]*d]
+  return v
+
+def v3_normalize(v):
+  li = 1.0/v3_length(v)
+  return v3_scale(v,li)
+
+def v3_cross(a,b):
+  x = a[1]*b[2]-a[2]*b[1]
+  y = a[2]*b[0]-a[0]*b[2]
+  z = a[0]*b[1]-a[1]*b[0]
+  return [x,y,z]
+
 
 def scale_vec3(a,d):
   v = [a[0]*d,a[1]*d,a[2]*d]
@@ -360,6 +379,15 @@ class Camera:
     Rview = affine_matrix_quaternion(self.quat)
     glMultMatrixd(Rview)
     glTranslated(self.pivot[0], self.pivot[1], self.pivot[2])
+
+  def set_rotation(self, camera_eye_up):
+    vz = camera_eye_up[0:3]
+    vy = camera_eye_up[3:6]
+    vz = v3_scale(v3_normalize(vz),-1.0)
+    vy = v3_normalize(vy)
+    vx = v3_cross(vy,vz)
+    mat = [vx,vy,vz]
+    self.quat = get_quaternion_rot_matrix(mat)
 
   def rotation(self,x,y,sx,sy,win_w,win_h):
     sx0, sy0, self.quat, self.trans = motion_rot(
