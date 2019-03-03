@@ -98,11 +98,13 @@ class WindowGLFW:
 
 
 
-def winDraw3d(list_obj,
+def winDraw3d(list_obj:list,
               winsize=(400,300),
               bgcolor=(1,1,1),
               glsl_vrt="",
-              glsl_frg=""):
+              glsl_frg="",
+              camera_eye_up=[+0.0,+0.0,-1.0, +0.0,+1.0,+0.0]):
+
   """
   draw the input object into openGL window
 
@@ -129,8 +131,11 @@ def winDraw3d(list_obj,
   if not aabb3.isActive:
     aabb3.set_minmax_xyz(-1,+1, -1,+1, -1,+1)
   window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
+  #### set camera rotation
+  if len(camera_eye_up) == 6:
+    window.wm.camera.set_rotation(camera_eye_up)
   #### initalizing opengl
-  setSomeLighting()  
+  setSomeLighting()
   glEnable(GL_POLYGON_OFFSET_FILL )
   glPolygonOffset( 1.1, 4.0 )
   glUseProgram(id_shader_program)
