@@ -161,11 +161,6 @@ def v3_cross(a,b):
   z = a[0]*b[1]-a[1]*b[0]
   return [x,y,z]
 
-
-def scale_vec3(a,d):
-  v = [a[0]*d,a[1]*d,a[2]*d]
-  return v
-
 def dot(a,d):
   assert len(a) == len(d)
   sum = 0.0
