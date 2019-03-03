@@ -258,14 +258,17 @@ def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
   return mouse_x, mouse_y, quat, trans
 
 
-def motion_trans(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
+def motion_trans(x, y, 
+  mouse_x, mouse_y, 
+  quat, trans, view_height, win_w,win_h, 
+  scale:float):
   assert len(trans) == 2
   assert len(quat) == 4
   mov_end_x,mov_end_y = mouse_screen_pos(x,y,win_w,win_h)
   dx = mov_end_x - mouse_x
   dy = mov_end_y - mouse_y
-  trans[0] += dx * view_height * 0.5
-  trans[1] += dy * view_height * 0.5
+  trans[0] += dx * view_height * 0.5 / scale
+  trans[1] += dy * view_height * 0.5 / scale
   mouse_x = mov_end_x
   mouse_y = mov_end_y
   return mouse_x, mouse_y, quat, trans  
@@ -368,7 +371,7 @@ class Camera:
     sx0, sy0, self.quat, self.trans = motion_trans(
       x, y, sx, sy, self.quat,
       self.scr_trans, self.view_height,
-      win_w,win_h)
+      win_w,win_h, self.scale)
     return sx0,sy0
 
   def adjust_scale_trans(self, aPos):
