@@ -79,7 +79,7 @@ void CBone_RigMsh::Draw
   { // draw point
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
-    DrawSphere(32, 32, bone_rad, pos[0],pos[1],pos[2]);
+    DrawSphereAt(32, 32, bone_rad, pos[0],pos[1],pos[2]);
   }
   if(is_selected){
     const CVector3 p0(pos);
@@ -520,7 +520,7 @@ void DrawBoneTarget
     if( bg.itype == 0 ){ ::glColor3d(0,0,1); }
     if( bg.itype == 1 ){ ::glColor3d(0,0,0); }
     const double* pos = bg.pos;
-    DrawSphere(32, 32, bone_rad, pos[0],pos[1],pos[2]);
+    DrawSphereAt(32, 32, bone_rad, pos[0],pos[1],pos[2]);
     if( bg.itype == 1 ){
       CVector3 dir(bg.dir);
       CVector3 src(bg.pos);

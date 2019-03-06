@@ -103,7 +103,8 @@ def winDraw3d(list_obj:list,
               bgcolor=(1,1,1),
               glsl_vrt="",
               glsl_frg="",
-              camera_eye_up=[+0.0,+0.0,-1.0, +0.0,+1.0,+0.0]):
+              camera_eye_up=[+0.0,+0.0,-1.0, +0.0,+1.0,+0.0],
+              camera_scale=1.0):
 
   """
   draw the input object into openGL window
@@ -131,6 +132,7 @@ def winDraw3d(list_obj:list,
   if not aabb3.isActive:
     aabb3.set_minmax_xyz(-1,+1, -1,+1, -1,+1)
   window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
+  window.wm.camera.scale = camera_scale
   #### set camera rotation
   if len(camera_eye_up) == 6:
     window.wm.camera.set_rotation(camera_eye_up)

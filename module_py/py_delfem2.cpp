@@ -7,6 +7,7 @@
 #include <deque>
 
 #include "delfem2/funcs_glew.h" // have to be included in the beginning
+#include "delfem2/funcs_gl.h"
 #include "delfem2/mshtopoio_gl.h"
 
 #include "delfem2/voxel.h"
@@ -116,5 +117,5 @@ PYBIND11_MODULE(dfm2, m) {
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
   m.def("setup_glsl", setUpGLSL, "compile shader program");
   m.def("glew_init", glewInit);
- 
+  m.def("draw_sphere", DrawSphereAt );
 }
