@@ -69,7 +69,7 @@ void DrawSphere
   ::glEnd();
 }
 
-void DrawSphere(int nla, int nlo, double rad, double x, double y, double z)
+void DrawSphereAt(int nla, int nlo, double rad, double x, double y, double z)
 {
   ::glTranslated(+x,+y,+z);
   ::glScaled(rad, rad, rad);

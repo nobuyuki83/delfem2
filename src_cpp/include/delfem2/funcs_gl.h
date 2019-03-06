@@ -109,7 +109,7 @@ public:
 
 void DrawAxis(double s);
 void DrawSphere(int nla, int nlo);
-void DrawSphere(int nla, int nlo, double rad, double x, double y, double z);
+void DrawSphereAt(int nla, int nlo, double rad, double x, double y, double z);
 void DrawBox_MinMaxXYZ(double x_min, double x_max,
                        double y_min, double y_max,
                        double z_min, double z_max);
