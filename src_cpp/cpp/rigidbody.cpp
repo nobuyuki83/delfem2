@@ -499,7 +499,7 @@ void CheckDiff_Joint()
 ///////////////////////////////////////////////////////////////////////////
 
 
-CPhysics::CPhysics()
+CRigidBodyAssembly_Static::CRigidBodyAssembly_Static()
 {
   nitr = 30;
   damping_ratio = 0.01;
@@ -520,9 +520,15 @@ CPhysics::CPhysics()
   is_draw_section = true; //true;
   is_draw_grid = false; //true;
   is_draw_section_moment = false; //false;
+  
+  SetExample();
+  this->Solve();
+  this->is_draw_skeleton = true;
+  this->is_draw_force = true;
+  this->is_draw_grid = true;
 }
 
-void CPhysics::AddRigidBody(const double centre_of_mass[3],
+void CRigidBodyAssembly_Static::AddRigidBody(const double centre_of_mass[3],
                   const double mass,
                   const std::vector<double>& contact_points)
 {
@@ -537,7 +543,7 @@ void CPhysics::AddRigidBody(const double centre_of_mass[3],
   aRigidBody.push_back(rb);
 }
 
-void CPhysics::AddJoint(const double position[3],
+void CRigidBodyAssembly_Static::AddJoint(const double position[3],
               const int body_index1,
               const int body_index2){
   CJoint j;
@@ -547,7 +553,7 @@ void CPhysics::AddJoint(const double position[3],
   aJoint.push_back(j);
 }
 
-void CPhysics::ClearProblem(){
+void CRigidBodyAssembly_Static::ClearProblem(){
   aRigidBody.clear();
   aJoint.clear();
 //  aPlate.clear();
@@ -726,7 +732,7 @@ void EdEddE_Total
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 // solve one iteration
-void CPhysics::SolveOneIteration()
+void CRigidBodyAssembly_Static::SolveOneIteration()
 /*
 (
  std::vector<CRigidBody>& aRigidBody,
@@ -773,7 +779,7 @@ void CPhysics::SolveOneIteration()
   }
 }
 
-void CPhysics::Solve_InterPlane()
+void CRigidBodyAssembly_Static::Solve_InterPlane()
 /*
 (std::vector<CRigidBody>& aRigidBody,
  std::vector<CJoint>& aJoint,
@@ -795,7 +801,7 @@ void CPhysics::Solve_InterPlane()
   ComputeForces();
 }
 
-void CPhysics::ComputeForces()
+void CRigidBodyAssembly_Static::ComputeForces()
 /*
 (std::vector<CRigidBody>& aRigidBody,
  std::vector<CJoint>& aJoint,
@@ -859,7 +865,7 @@ void CPhysics::ComputeForces()
   }
 }
 
-void CPhysics::PrintJointForce()
+void CRigidBodyAssembly_Static::PrintJointForce()
 /*
 (const std::vector<CRigidBody>& aRigidBody,
  const std::vector<CJoint>& aJoint,
@@ -916,7 +922,7 @@ void CPhysics::PrintJointForce()
 
 
 // Setting problem here
-void CPhysics::SetExample()
+void CRigidBodyAssembly_Static::SetExample()
 {
   aRigidBody.clear();
   aJoint.clear();
@@ -996,14 +1002,14 @@ static void myGlVertex3d(const CVector3& v){
   ::glVertex3d(v.x,v.y,v.z);
 }
 
-void CPhysics::DrawGL()
+void CRigidBodyAssembly_Static::Draw()
 {
   const double small_rad = 0.1;
   const double big_rad = 0.1;
   GLUquadricObj *quadricSphere=gluNewQuadric();  
   
   ::glDisable(GL_LIGHTING);
-  for(int irb=0;irb<aRigidBody.size();irb++){
+  for(unsigned int irb=0;irb<aRigidBody.size();irb++){
     const CRigidBody rb = aRigidBody[irb];
     CVector3 cg = rb.cg;
     if( is_draw_deformed ){
@@ -1132,7 +1138,7 @@ void CPhysics::DrawGL()
 
 
 
-void CPhysics::DrawFloorGL() {
+void CRigidBodyAssembly_Static::DrawFloorGL() {
   
   if( is_draw_grid ) {
     // draw floor
