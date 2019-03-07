@@ -28,9 +28,25 @@
 class CRigidBody
 {
 public:
+  /*
   CRigidBody(){
     u = CVector3(0,0,0);
     R.SetIdentity();
+  }
+   */
+  CRigidBody(double m, std::vector<double> xyz_cg){
+    assert(xyz_cg.size()==3);
+    this->m = m;
+    cg.x = xyz_cg[0];
+    cg.y = xyz_cg[1];
+    cg.z = xyz_cg[2];
+    u = CVector3(0,0,0);
+    R.SetIdentity();
+  }
+  void addCP(std::vector<double> p){
+    assert( aCP.size() == aCForce.size() );
+    aCP.push_back(p);
+    aCForce.resize(aCForce.size()+1);
   }
 public:
   CVector3 cg; // the center of gravity.
@@ -44,6 +60,15 @@ public:
 };
 
 class CJoint {
+public:
+  CJoint(int irb0, int irb1, std::vector<double> xyz_p){
+    assert(xyz_p.size()==3);
+    this->irb0 = irb0;
+    this->irb1 = irb1;
+    p.x = xyz_p[0];
+    p.y = xyz_p[1];
+    p.z = xyz_p[2];
+  }
 public:
   CVector3 p; // position
   int irb0;    // id of rigid body
@@ -62,6 +87,8 @@ class CRigidBodyAssembly_Static
 public:
     
   CRigidBodyAssembly_Static();
+  CRigidBodyAssembly_Static(const std::vector<CRigidBody>& aRB,
+                            const std::vector<CJoint>& aJ);
   
   void AddRigidBody(const double centre_of_mass[3],
                     const double mass,
@@ -80,8 +107,9 @@ public:
     Solve_InterPlane();
   }
   void ComputeForces();
+  std::vector<double> MinMaxXYZ() const;
 
-  void PrintJointForce();
+//  void PrintJointForce();
   
   //display
   void Draw();

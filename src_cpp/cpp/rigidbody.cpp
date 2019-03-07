@@ -3,6 +3,28 @@
 #include "delfem2/rigidbody.h"
 #include "delfem2/v23m3q.h"
 
+void myUpdateMinMaxXYZ
+(double bb[6],
+ const CVector3 p)
+{
+  const double x = p.x;
+  const double y = p.y;
+  const double z = p.z;
+  if( bb[0] > bb[1] ){
+    bb[0] = bb[1] = x;
+    bb[2] = bb[3] = y;
+    bb[4] = bb[5] = z;
+    return;
+  }
+  bb[0] = (bb[0] < x) ? bb[0] : x;
+  bb[1] = (bb[1] > x) ? bb[1] : x;
+  bb[2] = (bb[2] < y) ? bb[2] : y;
+  bb[3] = (bb[3] > y) ? bb[3] : y;
+  bb[4] = (bb[4] < z) ? bb[4] : z;
+  bb[5] = (bb[5] > z) ? bb[5] : z;
+}
+
+///////////////////////////////////////////////////////////////////////
 
 void EdEd_Potential
 (double& energy,
@@ -521,7 +543,33 @@ CRigidBodyAssembly_Static::CRigidBodyAssembly_Static()
   is_draw_grid = false; //true;
   is_draw_section_moment = false; //false;
   
-  SetExample();
+//  SetExample();
+  this->Solve();
+  this->is_draw_skeleton = true;
+  this->is_draw_force = true;
+  this->is_draw_grid = true;
+}
+
+CRigidBodyAssembly_Static::CRigidBodyAssembly_Static
+(const std::vector<CRigidBody>& aRB,
+ const std::vector<CJoint>& aJ)
+{
+  
+  nitr = 30;
+  damping_ratio = 0.01;
+  ////
+  n = CVector3(0,1,0); // normal direction of floor (should be an unit vector)
+  gravity = CVector3(0,-10,0); // gravity
+  ////
+  cont_stiff = 1.0e+4; // contact_stiffness (insensitive)
+  trans_stiff = 1.0e+4; // joint_translation_stiffness (insensitive)
+  rot_stiff = 1.0e+9; // joint_rotation_stiffness (insensitive)
+  
+  scale_force = 0.10; //0.5;
+  scale_torque = 0.05; //0.5;
+  
+  this->aRigidBody = aRB;
+  this->aJoint = aJ;
   this->Solve();
   this->is_draw_skeleton = true;
   this->is_draw_force = true;
@@ -532,9 +580,8 @@ void CRigidBodyAssembly_Static::AddRigidBody(const double centre_of_mass[3],
                   const double mass,
                   const std::vector<double>& contact_points)
 {
-  CRigidBody rb;
-  rb.cg = CVector3(centre_of_mass[0], centre_of_mass[1], centre_of_mass[2] );
-  rb.m = mass;
+  const std::vector<double> pcg(centre_of_mass,centre_of_mass+3);
+  CRigidBody rb(mass, pcg);
   const int ncp = (int)contact_points.size()/3;
   for(int icp=0;icp<ncp;icp++) {
     CVector3 pc(contact_points[icp*3+0],contact_points[icp*3+1],contact_points[icp*3+2]);
@@ -546,10 +593,11 @@ void CRigidBodyAssembly_Static::AddRigidBody(const double centre_of_mass[3],
 void CRigidBodyAssembly_Static::AddJoint(const double position[3],
               const int body_index1,
               const int body_index2){
-  CJoint j;
-  j.p = CVector3(position[0], position[1], position[2]);
-  j.irb0 = body_index1;
-  j.irb1 = body_index2;
+  CJoint j(body_index1, body_index2,
+           std::vector<double>(position,position+3) );
+//  j.p = CVector3(position[0], position[1], position[2]);
+//  j.irb0 = body_index1;
+//  j.irb1 = body_index2;
   aJoint.push_back(j);
 }
 
@@ -813,7 +861,7 @@ void CRigidBodyAssembly_Static::ComputeForces()
  */
 {
   
-  for(int irb=0;irb<aRigidBody.size();irb++){
+  for(unsigned int irb=0;irb<aRigidBody.size();irb++){
     CRigidBody& rb = aRigidBody[irb];
     const int ncp = (int)aRigidBody[irb].aCP.size();
     rb.aCForce.resize(ncp);
@@ -824,7 +872,7 @@ void CRigidBodyAssembly_Static::ComputeForces()
       rb.aCForce[icp] = ((cq*n)*cont_stiff)*n;
     }
   }  
-  for(int ij=0;ij<aJoint.size();ij++){
+  for(unsigned int ij=0;ij<aJoint.size();ij++){
     CJoint& joint = aJoint[ij];
     CVector3 pj = joint.p;
     int irb0 = joint.irb0;
@@ -865,7 +913,7 @@ void CRigidBodyAssembly_Static::ComputeForces()
   }
 }
 
-void CRigidBodyAssembly_Static::PrintJointForce()
+//void CRigidBodyAssembly_Static::PrintJointForce()
 /*
 (const std::vector<CRigidBody>& aRigidBody,
  const std::vector<CJoint>& aJoint,
@@ -873,6 +921,7 @@ void CRigidBodyAssembly_Static::PrintJointForce()
  const double trans_stiff,
  const double rot_stiff)
  */
+/*
 {
   std::cout << "force on joint" << std::endl;
     
@@ -918,6 +967,7 @@ void CRigidBodyAssembly_Static::PrintJointForce()
     std::cout << "  torque_force: " << torque_f.x << " " << torque_f.y << " " << torque_f.z << std::endl;
   }
 }
+ */
 
 
 
@@ -928,71 +978,45 @@ void CRigidBodyAssembly_Static::SetExample()
   aJoint.clear();
   
   { // making plane 0
-    CRigidBody rb;
-    rb.cg = CVector3( 0, 1,0);
-    rb.m  = 1.0;
+    CRigidBody rb(1.0, CVector3(0,1,0).stlvec() );
     aRigidBody.push_back(rb);
   }
   { // making plane 1
-    CRigidBody rb;
-    rb.cg = CVector3(-1,0.5,-1);
-    rb.aCP.push_back( CVector3(-1.1,0,-1.1) );
-    rb.aCForce.resize(1);
-    rb.m  = 0.1;
+    CRigidBody rb(0.1, CVector3(-1, 0.5, -1).stlvec());
+    rb.addCP(CVector3(-1.1,0,-1.1).stlvec());
     aRigidBody.push_back(rb);
   }
   { // making plane 2
-    CRigidBody rb;
-    rb.cg = CVector3(-1,0.5,+1);
-    rb.aCP.push_back( CVector3(-1.1,0,+1.1) );
-    rb.aCForce.resize(1);
-    rb.m  = 0.1;
+    CRigidBody rb(0.1, CVector3(-1,0.5,+1).stlvec() );
+    rb.addCP( CVector3(-1.1,0,+1.1).stlvec() );
     aRigidBody.push_back(rb);
   }
   { // making plane 3
-    CRigidBody rb;
-    rb.cg = CVector3(+1,0.5,-1);
-    rb.aCP.push_back( CVector3(+1.1,0,-1.1) );
-    rb.aCForce.resize(1);
-    rb.m  = 0.1;
+    CRigidBody rb(0.1, CVector3(+1,0.5,-1).stlvec() );
+    rb.addCP( CVector3(+1.1,0,-1.1).stlvec() );
     aRigidBody.push_back(rb);
   }
   { // making plane 4
-    CRigidBody rb;
-    rb.cg = CVector3(+1,0.5,+1);
-    rb.aCP.push_back( CVector3(+1.1,0,+1.1) );
-    rb.aCForce.resize(1);
-    rb.m  = 0.1;
+    CRigidBody rb(0.1, CVector3(+1,0.5,+1).stlvec() );
+    rb.addCP( CVector3(+1.1,0,+1.1).stlvec() );
     aRigidBody.push_back(rb);
   }
   
   
   { // joint 0
-    CJoint jt;
-    jt.p = CVector3(-1,+1,-1);
-    jt.irb0 = 0;
-    jt.irb1 = 1;
+    CJoint jt(0,1, CVector3(-1,+1,-1).stlvec() );
     aJoint.push_back(jt);
   }
   { // joint 1
-    CJoint jt;
-    jt.p = CVector3(-1,+1,+1);
-    jt.irb0 = 0;
-    jt.irb1 = 2;
+    CJoint jt(0,2, CVector3(-1,+1,+1).stlvec() );
     aJoint.push_back(jt);
   }
   { // joint 2
-    CJoint jt;
-    jt.p = CVector3(+1,+1,-1);
-    jt.irb0 = 0;
-    jt.irb1 = 3;
+    CJoint jt(0,3, CVector3(+1,+1,-1).stlvec() );
     aJoint.push_back(jt);
   }
   { // joint 3
-    CJoint jt;
-    jt.p = CVector3(+1,+1,+1);
-    jt.irb0 = 0;
-    jt.irb1 = 4;
+    CJoint jt(0,4, CVector3(+1,+1,+1).stlvec() );
     aJoint.push_back(jt);
   }
 }
@@ -1000,6 +1024,21 @@ void CRigidBodyAssembly_Static::SetExample()
 
 static void myGlVertex3d(const CVector3& v){
   ::glVertex3d(v.x,v.y,v.z);
+}
+
+std::vector<double> CRigidBodyAssembly_Static::MinMaxXYZ() const
+{
+  double bb[6] = {1,-1, 0,0, 0,0};
+  for(unsigned int irb=0;irb<aRigidBody.size();++irb){
+    const CRigidBody& rb = aRigidBody[irb];
+    myUpdateMinMaxXYZ(bb, rb.cg);
+  }
+  for(unsigned int ij=0;ij<aJoint.size();++ij){
+    const CJoint& j = aJoint[ij];
+    myUpdateMinMaxXYZ(bb, j.p);
+  }
+  std::vector<double> res(bb,bb+6);
+  return res;
 }
 
 void CRigidBodyAssembly_Static::Draw()

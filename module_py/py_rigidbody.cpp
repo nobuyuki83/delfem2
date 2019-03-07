@@ -11,7 +11,16 @@ namespace py = pybind11;
 void init_rigidbody(py::module &m){
   py::class_<CRigidBodyAssembly_Static>(m,"RigidBodyAssembly_Static")
   .def(py::init<>())
-  .def("draw",&CRigidBodyAssembly_Static::Draw);
+  .def(py::init<std::vector<CRigidBody>,std::vector<CJoint>>())
+  .def("draw",&CRigidBodyAssembly_Static::Draw)
+  .def("minmax_xyz",&CRigidBodyAssembly_Static::MinMaxXYZ);
 //  .def("init_gl",&CTexture::LoadTex)
 //  .def("minmax_xyz",&CTexture::MinMaxXYZ);
+  
+  py::class_<CRigidBody>(m,"RigidBody")
+  .def(py::init<double, std::vector<double>>())
+  .def("add_contact_point",&CRigidBody::addCP);
+  
+  py::class_<CJoint>(m,"Joint")
+  .def(py::init<int,int, std::vector<double>>());
 }
