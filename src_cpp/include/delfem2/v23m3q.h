@@ -24,6 +24,7 @@ CMatrix3 Mat3(const CVector3& vec0,
               const CVector3& vec2);
 CMatrix3 OuterProduct(const CVector3& vec0,
                       const CVector3& vec1 );
+CMatrix3 Spin(const CVector3& vec0);
 CMatrix3 ParallelTransport(const CVector3& p0,
                            const CVector3& p1,
                            const CVector3& q0,
