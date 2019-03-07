@@ -10,3 +10,6 @@
 [submodule "src_cpp/external/stb"]
 	path = src_cpp/external/stb
 	url = https://github.com/nothings/stb
+[submodule "src_cpp/external/eigen-git-mirror"]
+	path = src_cpp/external/eigen-git-mirror
+	url = https://github.com/eigenteam/eigen-git-mirror.git
