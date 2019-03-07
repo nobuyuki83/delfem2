@@ -55,6 +55,7 @@ void init_mshtopoio_gl(py::module &m);
 void init_sampler(py::module &m);
 void init_fbx(py::module &m);
 void init_texture(py::module &m);
+void init_rigidbody(py::module &m);
 
 
 PYBIND11_MODULE(dfm2, m) {
@@ -70,7 +71,7 @@ PYBIND11_MODULE(dfm2, m) {
   init_sampler(m);
   init_polyline(m);
   init_texture(m);
-  
+  init_rigidbody(m);
   
   ///////////////////////////////////
   // axis arrigned boudning box

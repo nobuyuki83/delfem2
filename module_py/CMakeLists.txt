@@ -29,9 +29,10 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/mshtopoio_gl.cpp  ${DELFEM2_INC}/mshtopoio_gl.h
   ${DELFEM2_SRC}/cad2d.cpp         ${DELFEM2_INC}/cad2d.h
   ${DELFEM2_SRC}/gpusampler.cpp    ${DELFEM2_INC}/gpusampler.h  
-  ${DELFEM2_SRC}/rigmesh.cpp        ${DELFEM2_INC}/rigmesh.h  
+  ${DELFEM2_SRC}/rigmesh.cpp       ${DELFEM2_INC}/rigmesh.h  
+  ${DELFEM2_SRC}/rigidbody.cpp     ${DELFEM2_INC}/rigidbody.h  
 
-  ${DELFEM2_SRC}/v23q_gl.cpp        ${DELFEM2_INC}/v23q_gl.h
+  ${DELFEM2_SRC}/v23q_gl.cpp       ${DELFEM2_INC}/v23q_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
                                    ${DELFEM2_INC}/funcs_glew.h
@@ -39,7 +40,9 @@ set(INPUT_SRC
 
   py_mshtopoio_gl.cpp
   py_sampler.cpp
-  py_polyline.cpp
+  py_polyline.cpp 
+  py_texture.cpp 
+  py_rigidbody.cpp
   py_delfem2.cpp
 )
 
@@ -50,6 +53,7 @@ set(INPUT_INCLUDE_DIR
   ${OPENGL_INCLUDE_DIR}
   ${GLEW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  "../src_cpp/external/eigen-git-mirror"
 )
 set(INPUT_LIBRARY
   ${OPENGL_LIBRARY}

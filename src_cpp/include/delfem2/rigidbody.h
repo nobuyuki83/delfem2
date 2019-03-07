@@ -57,10 +57,11 @@ public:
 };
 
       
-class CPhysics {
+class CRigidBodyAssembly_Static
+{
 public:
     
-  CPhysics();
+  CRigidBodyAssembly_Static();
   
   void AddRigidBody(const double centre_of_mass[3],
                     const double mass,
@@ -83,7 +84,7 @@ public:
   void PrintJointForce();
   
   //display
-  void DrawGL();
+  void Draw();
   void DrawFloorGL();
   
 private: // non-static private functions
