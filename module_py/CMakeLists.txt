@@ -23,6 +23,7 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/funcs.cpp         ${DELFEM2_INC}/funcs.h
   ${DELFEM2_SRC}/voxel.cpp         ${DELFEM2_INC}/voxel.h
                                    ${DELFEM2_INC}/bv.h
+                                   ${DELFEM2_INC}/tex.h
 
   ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h
   ${DELFEM2_SRC}/dyntri_v3.cpp     ${DELFEM2_INC}/dyntri_v3.h

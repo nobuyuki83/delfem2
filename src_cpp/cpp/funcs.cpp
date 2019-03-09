@@ -352,18 +352,6 @@ bool ReadParam
   return true;
 }
 
-bool WriteParam
-(const std::string& fname,
- const std::vector<float>& aPara)
-{
-  std::ofstream fout;
-  fout.open(fname.c_str());
-  if( !fout.is_open() ) return false;
-  for(unsigned int ip=0;ip<aPara.size();++ip){
-    fout << aPara[ip] << std::endl;
-  }
-  return true;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

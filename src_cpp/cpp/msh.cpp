@@ -111,25 +111,26 @@ void GetCenterWidth_MinMaxXYZ
 void RemoveUnreferencedPoints3D
 (std::vector<double>& aXYZ1,
  std::vector<int>& aElem1,
+ std::vector<int>& aMap01,
  const std::vector<double>& aXYZ0,
  const std::vector<int>& aElem0)
 {
   int np0 = aXYZ0.size()/3;
-  std::vector<int> aFlg(np0,-2);
+  aMap01.assign(np0,-2);
   for(unsigned int it=0;it<aElem0.size();++it){
     int ip = aElem0[it];
-    aFlg[ip] = -1;
+    aMap01[ip] = -1;
   }
   int npj = 0;
   for(int ip=0;ip<np0;++ip){
-    if( aFlg[ip] == -2 ) continue;
-    aFlg[ip] = npj;
+    if( aMap01[ip] == -2 ) continue;
+    aMap01[ip] = npj;
     npj++;
   }
   aXYZ1.resize(npj*3);
   for(int ip=0;ip<np0;++ip){
-    if( aFlg[ip] == -2 ) continue;
-    int jp = aFlg[ip];
+    if( aMap01[ip] == -2 ) continue;
+    int jp = aMap01[ip];
     aXYZ1[jp*3+0] = aXYZ0[ip*3+0];
     aXYZ1[jp*3+1] = aXYZ0[ip*3+1];
     aXYZ1[jp*3+2] = aXYZ0[ip*3+2];
@@ -137,7 +138,7 @@ void RemoveUnreferencedPoints3D
   aElem1.resize(aElem0.size());
   for(unsigned int it=0;it<aElem0.size();++it){
     int ip = aElem0[it];
-    int jp = aFlg[ip];
+    int jp = aMap01[ip];
     aElem1[it] = jp;
   }
 }
