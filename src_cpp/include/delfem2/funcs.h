@@ -1,6 +1,7 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
+#include <fstream>
 #include <map>
 
 ///////////////////////////////////////////////////
@@ -25,8 +26,20 @@ std::string getPathDir(const std::string& fpath);
 bool ReadParam(std::vector<float>& aPara,
                const std::string& fname);
 
-bool WriteParam(const std::string& fname,
-                const std::vector<float>& aPara);
+template <typename T>
+bool WriteParam
+(const std::string& fname,
+ const std::vector<T>& aPara)
+{
+  std::ofstream fout;
+  fout.open(fname.c_str());
+  if( !fout.is_open() ) return false;
+  for(unsigned int ip=0;ip<aPara.size();++ip){
+    fout << aPara[ip] << std::endl;
+  }
+  return true;
+}
+
 std::string LoadFile(const std::string& fname);
 
 //////////////////////////////////////////////////////////////////////////////

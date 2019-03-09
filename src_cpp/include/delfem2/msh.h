@@ -91,6 +91,7 @@ void CenterOfGravity_Solid(double& cgx, double& cgy, double& cgz,
 
 void RemoveUnreferencedPoints3D(std::vector<double>& aXYZOut,
                                 std::vector<int>& aTriOut,
+                                std::vector<int>& aMapInOut,
                                 const std::vector<double>& aXYZIn,
                                 const std::vector<int>& aTriIn);
 void MakeNormal(std::vector<double>& aNorm,
