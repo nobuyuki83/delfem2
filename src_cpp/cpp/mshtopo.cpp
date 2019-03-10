@@ -597,7 +597,6 @@ void makeEdge
 }
 
 
-
 void makeEdgeQuad
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,

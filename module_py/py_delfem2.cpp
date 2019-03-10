@@ -16,17 +16,6 @@
 
 namespace py = pybind11;
 
-// TODO:Make a wrapper class of the VoxelGrid?
-CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
-  CMeshElem me;
-  vg.GetQuad(me.aPos, me.aElem);
-  me.elem_type = MESHELEM_QUAD;
-  me.ndim = 3;
-  return me;
-}
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -37,6 +26,17 @@ void init_fbx(py::module &m);
 void init_texture(py::module &m);
 void init_rigidbody(py::module &m);
 void init_field(py::module &m);
+
+std::tuple<std::vector<double>,std::vector<int>> GetMesh_VoxelGrid
+(const CVoxelGrid& vg)
+{
+  std::vector<double> aXYZ;
+  std::vector<int> aQuad;
+  vg.GetQuad(aXYZ, aQuad);
+  return std::tie(aXYZ,aQuad);
+}
+
+
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -84,7 +84,7 @@ PYBIND11_MODULE(dfm2, m) {
   .def(py::init<>())
   .def("add",&CVoxelGrid::Add,"add voxel at the integer coordinate");
   
-  m.def("meshQuad3d_voxelGrid",  &MeshQuad3D_VoxelGrid, "get quad mesh from voxel grid");
+  m.def("getmesh_voxelgrid",&GetMesh_VoxelGrid);
   
   ///////////////////////////////////
   // cad

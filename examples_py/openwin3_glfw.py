@@ -4,6 +4,6 @@ import sys
 sys.path.append("../module_py")
 import dfm2
 
-mshelm = dfm2.MeshElem("../test_inputs/bunny_2k.ply");
-mshelm.scaleXYZ(0.03)
-dfm2.winDraw3d([mshelm],winsize=(400,300))
+msh = dfm2.Mesh("../test_inputs/bunny_2k.ply");
+msh.scale_xyz(0.03)
+dfm2.winDraw3d([msh],winsize=(400,300))

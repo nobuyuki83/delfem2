@@ -334,7 +334,7 @@ void DrawMeshTri2D_ScalarP0
 
 
 void DrawSingleTri3D_Scalar_Vtx
-(const std::vector<double>& aXYZ,
+(const double* aXYZ,
  const int* tri,
  const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
@@ -346,9 +346,9 @@ void DrawSingleTri3D_Scalar_Vtx
     assert(i1==-1); assert(i2==-1);
     return;
   }
-  assert(i0>=0&&i0<(int)aXYZ.size()/3);
-  assert(i1>=0&&i1<(int)aXYZ.size()/3);
-  assert(i2>=0&&i2<(int)aXYZ.size()/3);
+//  assert(i0>=0&&i0<(int)aXYZ.size()/3);
+//  assert(i1>=0&&i1<(int)aXYZ.size()/3);
+//  assert(i2>=0&&i2<(int)aXYZ.size()/3);
   const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
   const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
   const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -402,6 +402,20 @@ void DrawSingleQuad3D_Scalar_Vtx
 
 // vetex value
 void DrawMeshTri3D_ScalarP1
+(const double* aXYZ, int nXYZ,
+ const int* aTri, int nTri,
+ const double* aValSrf,
+ const std::vector<std::pair<double, CColor> >& colorMap)
+{
+  ::glBegin(GL_TRIANGLES);
+  for (int itri = 0; itri<nTri; ++itri){
+    DrawSingleTri3D_Scalar_Vtx(aXYZ, aTri+itri*3, aValSrf, colorMap);
+  }
+  ::glEnd();
+}
+
+// vetex value
+void DrawMeshTri3D_ScalarP1
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
  const double* aValSrf,
@@ -409,11 +423,10 @@ void DrawMeshTri3D_ScalarP1
 {
   const int nTri = (int)aTri.size()/3;
   const int nXYZ = (int)aXYZ.size()/3;
-  ::glBegin(GL_TRIANGLES);
-  for (int itri = 0; itri<nTri; ++itri){
-    DrawSingleTri3D_Scalar_Vtx(aXYZ, aTri.data()+itri*3, aValSrf, colorMap);
-  }
-  ::glEnd();
+  DrawMeshTri3D_ScalarP1(aXYZ.data(), nXYZ,
+                         aTri.data(), nTri,
+                         aValSrf,
+                         colorMap);
 }
 
 // vetex value
@@ -431,7 +444,7 @@ void DrawMeshElem3D_Scalar_Vtx
     const int ielemind1 = aElemInd[ielem+1];
     if( ielemind1 - ielemind0 == 3 ){
       ::glBegin(GL_TRIANGLES);
-      DrawSingleTri3D_Scalar_Vtx(aXYZ,
+      DrawSingleTri3D_Scalar_Vtx(aXYZ.data(),
                                  aElem.data()+ielemind0,
                                  aValVtx,
                                  colorMap);

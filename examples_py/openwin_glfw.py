@@ -5,7 +5,7 @@ import sys
 sys.path.append("../module_py")
 import dfm2
 
-mshelm = None
+msh = None
 wmngr_glfw = None
 
 def mouseButtonCB(win_glfw,btn,action,mods):
@@ -20,12 +20,12 @@ def keyFunCB(win_glfw,key,scancode,action,mods):
 def render():
   glColor3d(1, 0, 0)
   glEnable(GL_LIGHTING)
-  mshelm.drawFace_elemWiseNorm()
+  msh.draw()
 
 def main():
-  global mshelm, wmngr_glfw
-  mshelm = dfm2.MeshElem("../test_inputs/bunny_2k.ply");
-  mshelm.scaleXYZ(0.02)
+  global msh, wmngr_glfw
+  msh = dfm2.Mesh("../test_inputs/bunny_2k.ply");
+  msh.scale_xyz(0.02)
 
   wmngr_glfw = dfm2.WindowManagerGLFW(1.0)
 

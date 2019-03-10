@@ -4,24 +4,24 @@ import sys
 sys.path.append("../module_py")
 import dfm2
 
-mshelm = None
+msh = None
 
 def main():
-  global mshelm
+  global msh
 
   voxelgrid = dfm2.VoxelGrid()
   voxelgrid.add(0, 0, 0)
   voxelgrid.add(1, 0, 0)
   voxelgrid.add(0, 1, 0)
 
-  mshelm = dfm2.meshQuad3d_voxelGrid(voxelgrid)
-  mshelm = mshelm.subdiv()
-  mshelm = mshelm.subdiv()
-  mshelm = mshelm.subdiv()
+  msh = dfm2.Mesh(voxelgrid=voxelgrid)
+  msh = msh.subdiv()
+  msh = msh.subdiv()
+  msh = msh.subdiv()
 
   axis = dfm2.AxisXYZ()
 
-  dfm2.winDraw3d([mshelm,axis],(400,400))
+  dfm2.winDraw3d([msh, axis], (400, 400))
 
 
 if __name__ == "__main__":

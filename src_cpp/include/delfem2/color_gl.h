@@ -174,6 +174,10 @@ void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
                         const std::vector< std::pair<double,CColor> >& colorMap);
 
 // 3D value -- vtx value
+void DrawMeshTri3D_ScalarP1(const double* aXYZ, int nXYZ,
+                            const int* aTri, int nTri,
+                            const double* aValSrf,
+                            const std::vector<std::pair<double, CColor> >& colorMap);
 void DrawMeshTri3D_ScalarP1(const std::vector<double>& aXYZ,
                         const std::vector<int>& aTri,
                         const double* aValSrf,
