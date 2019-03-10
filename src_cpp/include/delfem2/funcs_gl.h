@@ -26,83 +26,6 @@ void drawFloorShadow(void (*DrawObject)(), float yfloor, float wfloor);
 void DrawRectangle_FullCanvas();
 void showdepth();
 
-//////////////////////////////////////////////////////////////////////////////
-// texture related funcitons
-
-void LoadImage_PPM(const std::string& filename,
-                   std::vector<unsigned char>& image,
-                   int& width, int& height);
-
-void SaveImage(const std::string& path);
-
-class SFile_TGA
-{
-public:
-  unsigned char imageTypeCode;
-  short int imageWidth;
-  short int imageHeight;
-  unsigned char bitCount;
-  unsigned char *imageData;
-};
-
-bool LoadTGAFile(const char *filename, SFile_TGA *tgaFile);
-int ReadPPM_SetTexture(const std::string& fname);
-
-unsigned int LoadTexture(const unsigned char* image,
-                   const int width, const int height, const int bpp);
-void DrawTextureBackground(const unsigned int tex,
-                           const int imgWidth,
-                           const int imgHeight,
-                           const int winWidth,
-                           const int winHeight);
-
-class CTextureInfo
-{
-public:
-  std::string full_path;
-  int width, height, bpp; // byte par pixel
-  int id_tex_gl;
-};
-
-class CTexManager
-{
-public:
-  void Clear();
-  void AddTexture(const unsigned char* pixels,
-                  const std::string& path,
-                  int width, int height, int bpp)
-  {
-    const int id_tex_gl = LoadTexture(pixels, width,height,bpp);
-    CTextureInfo texinfo;
-    texinfo.full_path = path;
-    texinfo.height = height;
-    texinfo.width = width;
-    texinfo.bpp = bpp;
-    texinfo.id_tex_gl = id_tex_gl;
-    /////
-    bool is_new = true;
-    for(int itex=0;itex<(int)aTexInfo.size();++itex){
-      if( aTexInfo[itex].full_path != path ) continue;
-      aTexInfo[itex] = texinfo;
-      is_new = false;
-    }
-    if( is_new ){
-      aTexInfo.push_back(texinfo);
-    }
-  }
-  void AddPath(const std::string& path){
-    CTextureInfo tex;
-    tex.width = -1;
-    tex.height = -1;
-    tex.bpp = -1;
-    tex.id_tex_gl = -1;
-    tex.full_path = path;
-    aTexInfo.push_back(tex);
-  }
-  void BindTexturePath(const std::string& path) const;
-public:
-  std::vector<CTextureInfo> aTexInfo;
-};
 
 ////////////////////////////////////////////////////////////////////////
 // draw functions
@@ -120,6 +43,25 @@ void DrawAABB3D_Edge(const double cw[6]);
 void Draw_AABB3D_MinMaxXYZ_Edge(double x_min, double x_max,
                                 double y_min, double y_max,
                                 double z_min, double z_max);
+
+class CAxisXYZ {
+public:
+  CAxisXYZ(): len(1.0){
+    line_width = 1.0;
+  }
+  CAxisXYZ(double len): len(len){
+    line_width=1.0;
+  }
+  void Draw() const;
+  std::vector<double> MinMaxXYZ() const{
+    std::vector<double> mm(6,0);
+    mm[1] = len;  mm[3] = len;  mm[5] = len;
+    return mm;
+  }
+public:
+  double len;
+  double line_width;
+};
 
 ///////////////
 // Draw Point

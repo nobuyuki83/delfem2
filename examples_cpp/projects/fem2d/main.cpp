@@ -691,7 +691,7 @@ void myGlutDisplay(void)
     {
       std::vector< std::pair<double,CColor> > colorMap;
       makeHeatMap_BlueGrayRed(colorMap, 0, +0.1);
-      DrawMeshTri2D_ScalarP1(aTri1,aXY1,aVal,1,0,colorMap);
+      DrawMeshTri2D_ScalarP1(aXY1,aTri1,aVal.data(),1,0,colorMap);
     }
     DrawMeshTri2D_Edge(aTri1,aXY1);
     ::glPointSize(2);
@@ -706,7 +706,7 @@ void myGlutDisplay(void)
   {
     std::vector< std::pair<double,CColor> > colorMap;
     makeHeatMap_BlueGrayRed(colorMap, -30, +30);
-    DrawMeshTri2D_ScalarP1(aTri1,aXY1,aVal,3,2,colorMap);
+    DrawMeshTri2D_ScalarP1(aXY1,aTri1,aVal.data(),3,2,colorMap);
     ::glColor3d(0,0,0);    
     DrawPoints2D_Vectors(aXY1,aVal,3,0, 0.1);
     ::glPointSize(2);

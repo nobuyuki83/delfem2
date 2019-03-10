@@ -22,8 +22,8 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/mshio.cpp         ${DELFEM2_INC}/mshio.h
   ${DELFEM2_SRC}/funcs.cpp         ${DELFEM2_INC}/funcs.h
   ${DELFEM2_SRC}/voxel.cpp         ${DELFEM2_INC}/voxel.h
+  ${DELFEM2_SRC}/tex.cpp           ${DELFEM2_INC}/tex.h
                                    ${DELFEM2_INC}/bv.h
-                                   ${DELFEM2_INC}/tex.h
 
   ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h
   ${DELFEM2_SRC}/dyntri_v3.cpp     ${DELFEM2_INC}/dyntri_v3.h
@@ -44,6 +44,7 @@ set(INPUT_SRC
   py_polyline.cpp 
   py_texture.cpp 
   py_rigidbody.cpp
+  py_field.cpp
   py_delfem2.cpp
 )
 

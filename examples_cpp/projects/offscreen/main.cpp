@@ -15,7 +15,7 @@
 #include "delfem2/v23q_gl.h"
 #include "delfem2/color_gl.h"
 
-#include "delfem2/depth_v3_gl.h"
+#include "delfem2/gpusampler.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,11 +164,11 @@ int main(int argc,char* argv[])
   setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
-  fbm.Init(512, 512, true,true);
+  fbm.Init(512, 512, "4byte",true);
   
   int nres = 128;
   double elen = 0.02;
-  sampler.Init(nres, nres, true,true);
+  sampler.Init(nres, nres, "4byte",true);
   sampler.SetCoord(elen, 4.0,
                    CVector3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
                    CVector3(0,0,-1).stlvec(),

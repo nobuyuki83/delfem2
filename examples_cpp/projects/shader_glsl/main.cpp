@@ -14,6 +14,7 @@
 #include "delfem2/funcs_glew.h" 
 #include "delfem2/funcs_glut.h"
 #include "delfem2/funcs_gl.h"
+#include "delfem2/tex.h"
 
 
 /////////////////////////////////////////////////////////

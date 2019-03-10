@@ -24,6 +24,7 @@
 #include "delfem2/funcs.h" // isFileExists
 #include "delfem2/v23m3q.h"
 #include "delfem2/msh.h"
+#include "delfem2/tex.h"
 
 #include "delfem2/funcs_gl.h"
 #include "delfem2/color_gl.h"
@@ -733,7 +734,7 @@ void CRigMsh::Draw(const CTexManager& tex_manager) const{
       if( mesh.aWeight.size() != mesh.aXYZ_ini.size()/3 ){ return; }
       glEnable(GL_DEPTH_TEST);
       glDisable(GL_LIGHTING);
-      DrawMeshElem3D_Scalar_Vtx(mesh.aXYZ_ini, mesh.aElemInd, mesh.aElem, mesh.aWeight,colorMap);
+      DrawMeshElem3D_Scalar_Vtx(mesh.aXYZ_ini, mesh.aElemInd, mesh.aElem, mesh.aWeight.data(),colorMap);
     }
   }
   else{

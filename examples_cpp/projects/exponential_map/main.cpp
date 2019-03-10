@@ -19,6 +19,7 @@
 #include "delfem2/vec3.h"
 
 #include "delfem2/funcs_gl.h"
+#include "delfem2/tex.h"
 #include "delfem2/color_gl.h"
 #include "delfem2/funcs_glut.h"
 
