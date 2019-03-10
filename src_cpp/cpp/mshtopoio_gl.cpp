@@ -202,21 +202,3 @@ void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
   Translate(x,y,z, aXYZ);
 }
 
-
-/////////
-
-CTriangulationOutput Triangulation
-(const std::vector<double>& aXY,
- double edge_length)
-{
-  CTriangulationOutput out;
-  std::vector< std::vector<double> > aaXY;
-  aaXY.push_back(aXY);
-  GenerateTesselation2(out.me.aElem, out.me.aPos,
-                       out.aPtrVtxInd, out.aVtxInd,
-                       edge_length, true, aaXY);
-  out.me.ndim = 2;
-  out.me.elem_type = MESHELEM_TRI;
-  return out;
-}
-

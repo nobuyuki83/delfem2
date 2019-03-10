@@ -524,13 +524,13 @@ void Draw_AABB3D_MinMaxXYZ_Edge
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DrawSingleTri3D_FaceNorm
-(const std::vector<double>& aXYZ,
+(const double* aXYZ,
  const int* aIndXYZ,
  const double* pUV)
 {
-  const int i0 = aIndXYZ[0]; assert( i0>=0&&i0<(int)aXYZ.size()/3 );
-  const int i1 = aIndXYZ[1]; assert( i1>=0&&i1<(int)aXYZ.size()/3 );
-  const int i2 = aIndXYZ[2]; assert( i2>=0&&i2<(int)aXYZ.size()/3 );
+  const int i0 = aIndXYZ[0]; //assert( i0>=0&&i0<(int)aXYZ.size()/3 );
+  const int i1 = aIndXYZ[1]; //assert( i1>=0&&i1<(int)aXYZ.size()/3 );
+  const int i2 = aIndXYZ[2]; //assert( i2>=0&&i2<(int)aXYZ.size()/3 );
   if( i0 == -1 ){
     assert(i1==-1); assert(i2==-1);
     return;
@@ -549,14 +549,14 @@ void DrawSingleTri3D_FaceNorm
 }
 
 void DrawSingleQuad3D_FaceNorm
-(const std::vector<double>& aXYZ,
+(const double* aXYZ,
  const int* aIndXYZ,
  const double* pUV)
 {
-  const int i0 = aIndXYZ[0]; assert( i0 >= 0 && i0 < (int)aXYZ.size()/3 );
-  const int i1 = aIndXYZ[1]; assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
-  const int i2 = aIndXYZ[2]; assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
-  const int i3 = aIndXYZ[3]; assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
+  const int i0 = aIndXYZ[0]; //assert( i0 >= 0 && i0 < (int)aXYZ.size()/3 );
+  const int i1 = aIndXYZ[1]; //assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
+  const int i2 = aIndXYZ[2]; //assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
+  const int i3 = aIndXYZ[3]; //assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
   if( i0 == -1 ){
     assert(i1==-1 && i2==-1 && i3 ==-1);
     return;
@@ -592,16 +592,22 @@ void DrawSingleQuad3D_FaceNorm
 }
 
 void DrawMeshTri3D_FaceNorm
+(const double* paXYZ,
+ const int* paTri,
+ int nTri)
+{
+  ::glBegin(GL_TRIANGLES);
+  for(int itri=0;itri<nTri;++itri){
+    DrawSingleTri3D_FaceNorm(paXYZ, paTri+itri*3,0);
+  }
+  ::glEnd();
+}
+
+void DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
 {
-  const int nTri = (int)aTri.size()/3;
-  /////
-  ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;++itri){
-    DrawSingleTri3D_FaceNorm(aXYZ, aTri.data()+itri*3,0);
-  }
-  ::glEnd();
+  DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
 }
 
 
@@ -624,7 +630,7 @@ void DrawMeshTri3D_FaceNorm_TexVtx
     uv[3] = aTex[ip1*2+1];
     uv[4] = aTex[ip2*2+0];
     uv[5] = aTex[ip2*2+1];
-    DrawSingleTri3D_FaceNorm(aXYZ, aTri.data()+itri*3,uv);
+    DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data()+itri*3,uv);
   }
   ::glEnd();
 }
@@ -638,7 +644,7 @@ void DrawMeshTri3D_FaceNorm_TexFace
   /////
   ::glBegin(GL_TRIANGLES);
   for(int itri=0;itri<nTri;++itri){
-    DrawSingleTri3D_FaceNorm(aXYZ,
+    DrawSingleTri3D_FaceNorm(aXYZ.data(),
                              aTri.data()+itri*3,
                              aTex.data()+itri*6);
   }
@@ -656,12 +662,12 @@ void DrawMeshElem3D_FaceNorm
     const int ielemind1 = aElemInd[ielem+1];
     if( ielemind1 - ielemind0 == 3 ){
       ::glBegin(GL_TRIANGLES);
-      DrawSingleTri3D_FaceNorm(aXYZ, aElem.data()+ielemind0,0);
+      DrawSingleTri3D_FaceNorm(aXYZ.data(), aElem.data()+ielemind0,0);
       ::glEnd();
     }
     else if(ielemind1-ielemind0 == 4){
       ::glBegin(GL_QUADS);
-      DrawSingleQuad3D_FaceNorm(aXYZ,aElem.data()+ielemind0,0);
+      DrawSingleQuad3D_FaceNorm(aXYZ.data(),aElem.data()+ielemind0,0);
       ::glEnd();
     }
   }
@@ -679,14 +685,14 @@ void DrawMeshElem3D_FaceNorm
     const int ielemind1 = aElemInd[ielem+1];
     if( ielemind1 - ielemind0 == 3 ){
       ::glBegin(GL_TRIANGLES);
-      DrawSingleTri3D_FaceNorm(aXYZ,
+      DrawSingleTri3D_FaceNorm(aXYZ.data(),
                                aElem.data()+ielemind0,
                                aUV.data()+ielemind0*2);
       ::glEnd();
     }
     else if(ielemind1-ielemind0 == 4){
       ::glBegin(GL_QUADS);
-      DrawSingleQuad3D_FaceNorm(aXYZ,
+      DrawSingleQuad3D_FaceNorm(aXYZ.data(),
                                 aElem.data()+ielemind0,
                                 aUV.data()+ielemind0*2);
       ::glEnd();
@@ -709,14 +715,14 @@ void DrawMeshElemPart3D_FaceNorm_TexPoEl
     const double* pUV = isUV ? aUV.data()+ielemind0*2:0;
     if( ielemind1 - ielemind0 == 3 ){
       ::glBegin(GL_TRIANGLES);
-      DrawSingleTri3D_FaceNorm(aXYZ,
+      DrawSingleTri3D_FaceNorm(aXYZ.data(),
                                aElem.data()+ielemind0,
                                pUV);
       ::glEnd();
     }
     else if(ielemind1-ielemind0 == 4){
       ::glBegin(GL_QUADS);
-      DrawSingleQuad3D_FaceNorm(aXYZ,
+      DrawSingleQuad3D_FaceNorm(aXYZ.data(),
                                 aElem.data()+ielemind0,
                                 pUV);
       ::glEnd();
@@ -765,7 +771,7 @@ void DrawMeshTri3DPart_FaceNorm
   for(int iitri=0;iitri<(int)aIndTri.size();++iitri){
     const int itri = aIndTri[iitri];
     assert( itri>=0&&itri<(int)aTri.size()/3 );
-    DrawSingleTri3D_FaceNorm(aXYZ, aTri.data()+itri*3,0);
+    DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data()+itri*3,0);
   }
   ::glEnd();
 }
@@ -783,7 +789,7 @@ void DrawMeshTri3D_FaceNorm_Flg
   for(int itri=0;itri<nTri;++itri){
     const int iflg0 = aFlgTri[itri];
     if( iflg0 != iflg ) continue;
-    DrawSingleTri3D_FaceNorm(aXYZ, aTri.data()+itri*3,0);
+    DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data()+itri*3,0);
   }
   ::glEnd();
 }
@@ -798,7 +804,7 @@ void DrawMeshTri3D_FaceNormEdge
   /////
   ::glBegin(GL_TRIANGLES);
   for (int itri=0; itri<nTri; ++itri){
-    DrawSingleTri3D_FaceNorm(aXYZ, aTri.data()+itri*3,0);
+    DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data()+itri*3,0);
   }
   ::glEnd();
 
@@ -828,15 +834,14 @@ void DrawMeshTri3D_FaceNormEdge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-
 void DrawMeshTri3D_Edge
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+(const double* aXYZ, int nXYZ,
+ const int* aTri, int nTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
-  const int nTri = (int)aTri.size()/3;
-  const int nXYZ = (int)aXYZ.size()/3;
+//  const int nTri = (int)aTri.size()/3;
+//  const int nXYZ = (int)aXYZ.size()/3;
   /////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
@@ -860,8 +865,16 @@ void DrawMeshTri3D_Edge
     ::glVertex3dv(p3); ::glVertex3dv(p1);
   }
   ::glEnd();
-
+  
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
+}
+
+void DrawMeshTri3D_Edge
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aTri)
+{
+  DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
+                     aTri.data(), aTri.size()/3);
 }
 
 void DrawMeshTriMap3D_Edge
@@ -1061,15 +1074,14 @@ void DrawMeshTri2D_FaceDisp2D
 
 
 void DrawMeshTri2D_Edge
-(const std::vector<int>& aTri,
- const std::vector<double>& aXY)
+(const double* aXY, int nXY,
+ const int* aTri, int nTri)
 {
-  const unsigned int ntri = (int)aTri.size()/3;
   //  const unsigned int nxys = (int)aXY.size()/2;
   ////////////////
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(unsigned int itri=0;itri<ntri;itri++){
+  for(int itri=0;itri<nTri;itri++){
     const unsigned int ino0 = aTri[itri*3+0];
     const unsigned int ino1 = aTri[itri*3+1];
     const unsigned int ino2 = aTri[itri*3+2];
@@ -1083,20 +1095,25 @@ void DrawMeshTri2D_Edge
   ::glEnd();
 }
 
+void DrawMeshTri2D_Edge
+(const std::vector<int>& aTri,
+ const std::vector<double>& aXY)
+{
+  DrawMeshTri2D_Edge(aXY.data(), aXY.size()/2,
+                     aTri.data(), aTri.size()/3);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Quad
 
 void DrawMeshQuad3D_Edge
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aQuad)
+(const double* aXYZ, int nXYZ,
+ const int* aQuad, int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
-  const int nQuad = (int)aQuad.size()/4;
-  const int nXYZ = (int)aXYZ.size()/3;
-  /////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
@@ -1126,28 +1143,39 @@ void DrawMeshQuad3D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
+void DrawMeshQuad3D_Edge
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aQuad)
+{
+  DrawMeshQuad3D_Edge(aXYZ.data(), aXYZ.size()/3,
+                      aQuad.data(), aQuad.size()/4);
+}
+
+
+void DrawMeshQuad3D_FaceNorm
+(const double* aXYZ,
+ const int* aQuad, const int nQuad)
+{
+  ::glBegin(GL_QUADS);
+  for(unsigned int iq=0;iq<nQuad;++iq){
+    DrawSingleQuad3D_FaceNorm(aXYZ, aQuad+iq*4, 0);
+  }
+  ::glEnd();
+}
 
 void DrawMeshQuad3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aQuad)
 {
-  const unsigned int nQuad = aQuad.size()/4;
-  ::glBegin(GL_QUADS);
-  for(unsigned int iq=0;iq<nQuad;++iq){
-    DrawSingleQuad3D_FaceNorm(aXYZ, aQuad.data()+iq*4, 0);
-  }
-  ::glEnd();
+  DrawMeshQuad3D_FaceNorm(aXYZ.data(),aQuad.data(),aQuad.size()/4);
 }
 
 
 void DrawMeshQuad2D_Edge
-(const std::vector<double>& aXY,
- const std::vector<int>& aQuad)
+(const double* aXY, int nXY,
+ const int* aQuad, int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
-  ////
-  const int nQuad = (int)aQuad.size()/4;
-  const int nXY = (int)aXY.size()/2;
   /////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
@@ -1176,6 +1204,14 @@ void DrawMeshQuad2D_Edge
   }
   ::glEnd();
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
+}
+
+void DrawMeshQuad2D_Edge
+(const std::vector<double>& aXY,
+ const std::vector<int>& aQuad)
+{
+  DrawMeshQuad2D_Edge(aXY.data(), aXY.size()/2,
+                      aQuad.data(), aQuad.size()/4);
 }
 
 ///////////////////////////////////////////

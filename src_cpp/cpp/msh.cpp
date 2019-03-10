@@ -627,7 +627,7 @@ void Scale
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MeshTri2D_Grid
+void MeshQuad2D_Grid
 (std::vector<double>& aXYZ,
  std::vector<int>& aQuad,
  int nx, int ny)
@@ -1416,6 +1416,7 @@ void SubdivisionPoints_QuadCatmullClark
   }
   for(int iv=0;iv<nv0;++iv){
     const int iw = aW[iv];
+    if( iw == 0 ){ continue; }
     const double tmp0 = 1.0/(iw*iw);
     aXYZ1[iv*3+0] *= tmp0;
     aXYZ1[iv*3+1] *= tmp0;

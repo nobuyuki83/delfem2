@@ -112,17 +112,4 @@ public:
   std::vector<CMaterial> aMaterial;
 };
 
-///////////////////////////////////
-
-class CTriangulationOutput
-{
-public:
-  CMeshElem me;
-  std::vector<int> aPtrVtxInd;
-  std::vector<int> aVtxInd;
-};
-
-CTriangulationOutput Triangulation(const std::vector<double>& aXY,
-                                   double edge_length);
-
 #endif
