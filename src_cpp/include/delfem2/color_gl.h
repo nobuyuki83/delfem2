@@ -132,6 +132,16 @@ void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, 
 void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha=1);
 void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max);
 
+class CColorMap
+{
+public:
+  CColorMap(){}
+  CColorMap(double min, double max){
+    makeHeatMap_BlueCyanGreenYellowRed(aColor, min, max);
+  }
+public:
+  std::vector< std::pair<double,CColor> > aColor;
+};
 
 // 0: no, 1:lighting, 2:no-lighting
 void DrawMeshTri3D_VtxColor(const std::vector<double>& aXYZ,
@@ -149,12 +159,12 @@ void DrawMeshTri_ScalarP0(const std::vector<double>& aXYZ,
                           const std::vector<double>& aValSrf,
                           const std::vector<std::pair<double, CColor> >& colorMap);
 
-void DrawMeshTri2D_ScalarP1(std::vector<int>& aTri,
-                        std::vector<double>& aXY,
-                        std::vector<double>& aVal,
-                        int nstride,
-                        int noffset,
-                        const std::vector< std::pair<double,CColor> >& colorMap);
+void DrawMeshTri2D_ScalarP1(const std::vector<double>& aXY,
+                            const std::vector<int>& aTri,
+                            const double* aVal,
+                            int nstride,
+                            int noffset,
+                            const std::vector< std::pair<double,CColor> >& colorMap);
 
 void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
                         std::vector<double>& aXY,
@@ -166,14 +176,14 @@ void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
 // 3D value -- vtx value
 void DrawMeshTri3D_ScalarP1(const std::vector<double>& aXYZ,
                         const std::vector<int>& aTri,
-                        const std::vector<double>& aValSrf,
+                        const double* aValSrf,
                         const std::vector<std::pair<double, CColor> >& colorMap);
 
 // scalar value on 3D mesh (mixed elem).
 void DrawMeshElem3D_Scalar_Vtx(const std::vector<double>& aXYZ,
                                const std::vector<int>& aElemInd,
                                const std::vector<int>& aElem,
-                               const std::vector<double>& aValVtx,
+                               const double* aValVtx,
                                const std::vector<std::pair<double, CColor> >& colorMap);
 
 // 3D value

@@ -25,27 +25,7 @@ CMeshElem MeshQuad3D_VoxelGrid(const CVoxelGrid& vg){
   return me;
 }
 
-class CAxisXYZ {
-public:
-  CAxisXYZ(): len(1.0){
-    line_width = 1.0;
-  }
-  CAxisXYZ(double len): len(len){
-    line_width=1.0;
-  }
-  void Draw() const{
-    glLineWidth(line_width);
-    DrawAxis(len);
-  }
-  std::vector<double> MinMaxXYZ() const{
-    std::vector<double> mm(6,0);
-    mm[1] = len;  mm[3] = len;  mm[5] = len;
-    return mm;
-  }
-public:
-  double len;
-  double line_width;
-};
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +36,7 @@ void init_sampler(py::module &m);
 void init_fbx(py::module &m);
 void init_texture(py::module &m);
 void init_rigidbody(py::module &m);
-
+void init_field(py::module &m);
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -72,6 +52,7 @@ PYBIND11_MODULE(dfm2, m) {
   init_polyline(m);
   init_texture(m);
   init_rigidbody(m);
+  init_field(m);
   
   ///////////////////////////////////
   // axis arrigned boudning box
@@ -112,6 +93,11 @@ PYBIND11_MODULE(dfm2, m) {
   .def("add_square", &CCad2D::Add_Square)
   .def("draw",       &CCad2D::Draw)
   .def("minmax_xyz", &CCad2D::MinMaxXYZ);
+  
+  
+  py::class_<CColorMap>(m,"ColorMap")
+  .def(py::init<>())
+  .def(py::init<double, double>());
 
   ///////////////////////////////////
   // gl misc

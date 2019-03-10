@@ -1,6 +1,9 @@
 #ifndef tex_h
 #define tex_h
 
+#include <vector>
+#include <string>
+
 class CTexture
 {
 public:
@@ -30,51 +33,9 @@ public:
     id_tex = 0;
   }
   
-  void LoadTex()
-  {
-    if( id_tex == 0 ){
-      ::glGenTextures(1, &id_tex);
-    }
-    glBindTexture(GL_TEXTURE_2D, id_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-    assert( (int)aRGB.size() == w*h*3 );
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                 w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                 aRGB.data() );
-    glBindTexture(GL_TEXTURE_2D, 0);
-  }
+  void LoadTex();
   
-  void Draw(){
-    if( id_tex == 0 ){ return; }
-    /*
-     const CVector3& dx = x_axis;
-     const CVector3& dy = Cross(z_axis,dx);
-     const double lx = lengrid*nResX;
-     const double ly = lengrid*nResY;
-     CVector3 p0 = origin;
-     CVector3 p1 = origin + lx*dx;
-     CVector3 p2 = origin + lx*dx + ly*dy;
-     CVector3 p3 = origin + ly*dy;
-     */
-    ::glEnable(GL_TEXTURE_2D);
-    ::glDisable(GL_LIGHTING);
-    ::glBindTexture(GL_TEXTURE_2D, id_tex);
-    ::glColor3d(1,1,1);
-    ::glBegin(GL_QUADS);
-    ::glTexCoord2d(0.0, 0.0); ::glVertex3d(0,0,0);
-    ::glTexCoord2d(1.0, 0.0); ::glVertex3d(w,0,0);
-    ::glTexCoord2d(1.0, 1.0); ::glVertex3d(w,h,0);
-    ::glTexCoord2d(0.0, 1.0); ::glVertex3d(0,h,0);
-    ::glEnd();
-    ::glBindTexture(GL_TEXTURE_2D, 0);
-    ::glDisable(GL_TEXTURE_2D);
-  }
+  void Draw();
   
   std::vector<double>  MinMaxXYZ(){
     std::vector<double> m(6,0.0);
@@ -86,6 +47,85 @@ public:
     m[5] = 0;
     return m;
   }
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+// texture related funcitons
+
+void LoadImage_PPM(const std::string& filename,
+                   std::vector<unsigned char>& image,
+                   int& width, int& height);
+
+void SaveImage(const std::string& path);
+
+class SFile_TGA
+{
+public:
+  unsigned char imageTypeCode;
+  short int imageWidth;
+  short int imageHeight;
+  unsigned char bitCount;
+  unsigned char *imageData;
+};
+
+bool LoadTGAFile(const char *filename, SFile_TGA *tgaFile);
+int ReadPPM_SetTexture(const std::string& fname);
+
+unsigned int LoadTexture(const unsigned char* image,
+                         const int width, const int height, const int bpp);
+void DrawTextureBackground(const unsigned int tex,
+                           const int imgWidth,
+                           const int imgHeight,
+                           const int winWidth,
+                           const int winHeight);
+
+class CTextureInfo
+{
+public:
+  std::string full_path;
+  int width, height, bpp; // byte par pixel
+  int id_tex_gl;
+};
+
+class CTexManager
+{
+public:
+  void Clear();
+  void AddTexture(const unsigned char* pixels,
+                  const std::string& path,
+                  int width, int height, int bpp)
+  {
+    const int id_tex_gl = LoadTexture(pixels, width,height,bpp);
+    CTextureInfo texinfo;
+    texinfo.full_path = path;
+    texinfo.height = height;
+    texinfo.width = width;
+    texinfo.bpp = bpp;
+    texinfo.id_tex_gl = id_tex_gl;
+    /////
+    bool is_new = true;
+    for(int itex=0;itex<(int)aTexInfo.size();++itex){
+      if( aTexInfo[itex].full_path != path ) continue;
+      aTexInfo[itex] = texinfo;
+      is_new = false;
+    }
+    if( is_new ){
+      aTexInfo.push_back(texinfo);
+    }
+  }
+  void AddPath(const std::string& path){
+    CTextureInfo tex;
+    tex.width = -1;
+    tex.height = -1;
+    tex.bpp = -1;
+    tex.id_tex_gl = -1;
+    tex.full_path = path;
+    aTexInfo.push_back(tex);
+  }
+  void BindTexturePath(const std::string& path) const;
+public:
+  std::vector<CTextureInfo> aTexInfo;
 };
 
 #endif

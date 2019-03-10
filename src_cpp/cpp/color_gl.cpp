@@ -283,9 +283,9 @@ void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >&
 //////////////////////////
 
 void DrawMeshTri2D_ScalarP1
-(std::vector<int>& aTri,
- std::vector<double>& aXY,
- std::vector<double>& aVal,
+(const std::vector<double>& aXY,
+ const std::vector<int>& aTri,
+ const double* paVal,
  int nstride,
  int noffset,
  const std::vector< std::pair<double,CColor> >& colorMap)
@@ -298,9 +298,9 @@ void DrawMeshTri2D_ScalarP1
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
     const int ino2 = aTri[itri*3+2];
-    const double v0 = aVal[ino0*nstride+noffset];
-    const double v1 = aVal[ino1*nstride+noffset];
-    const double v2 = aVal[ino2*nstride+noffset];
+    const double v0 = paVal[ino0*nstride+noffset];
+    const double v1 = paVal[ino1*nstride+noffset];
+    const double v2 = paVal[ino2*nstride+noffset];
     heatmap(v0,colorMap); ::glVertex2d( aXY[ino0*2+0], aXY[ino0*2+1] );
     heatmap(v1,colorMap); ::glVertex2d( aXY[ino1*2+0], aXY[ino1*2+1] );
     heatmap(v2,colorMap); ::glVertex2d( aXY[ino2*2+0], aXY[ino2*2+1] );
@@ -336,7 +336,7 @@ void DrawMeshTri2D_ScalarP0
 void DrawSingleTri3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
  const int* tri,
- const std::vector<double>& aValVtx,
+ const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const int i0 = tri[0];
@@ -367,7 +367,7 @@ void DrawSingleTri3D_Scalar_Vtx
 void DrawSingleQuad3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
  const int* quad,
- const std::vector<double>& aValVtx,
+ const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const int i0 = quad[0];
@@ -404,12 +404,11 @@ void DrawSingleQuad3D_Scalar_Vtx
 void DrawMeshTri3D_ScalarP1
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
- const std::vector<double>& aValSrf,
+ const double* aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const int nTri = (int)aTri.size()/3;
   const int nXYZ = (int)aXYZ.size()/3;
-  if ((int)aValSrf.size()!=nXYZ) return;
   ::glBegin(GL_TRIANGLES);
   for (int itri = 0; itri<nTri; ++itri){
     DrawSingleTri3D_Scalar_Vtx(aXYZ, aTri.data()+itri*3, aValSrf, colorMap);
@@ -422,7 +421,7 @@ void DrawMeshElem3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<double>& aValVtx,
+ const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
   if( aElemInd.size() == 0 ) return;
