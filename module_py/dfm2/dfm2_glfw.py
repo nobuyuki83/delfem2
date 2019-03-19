@@ -198,9 +198,9 @@ class DepthColorBuffer:
     self.end()
     self.win.close()
 
-def take_depth_shot(render,depth,depth_context):
-  depth_context.start()
-  depth.start()
-  render()
-  depth.end()
-  depth_context.end()
+def take_depth_shot(render_func, sampler:GPUSampler, buffer:DepthColorBuffer):
+  buffer.start()
+  sampler.start()
+  render_func()
+  sampler.end()
+  buffer.end()

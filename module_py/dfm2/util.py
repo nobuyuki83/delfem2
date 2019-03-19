@@ -11,7 +11,7 @@ def normalize_rigmsh(rigmsh):
 
 class Mesh():
   def __init__(self,path_file="",voxelgrid=None):
-    self.color_face = [0.8, 0.8, 0.8, 1]
+    self.color_face = [0.8, 0.8, 0.8, 1.0]
     self.is_draw_edge = True
     self.np_pos = numpy.empty((0,3),dtype=numpy.float32)
     self.np_elm = numpy.empty((0,3),dtype=numpy.int)
@@ -21,6 +21,11 @@ class Mesh():
         list_xyz, list_tri = read_ply(path_file)
         self.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
         self.np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+      if ext == 'obj':
+        list_xyz, list_tri = read_obj(path_file)
+        self.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+        self.np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+        print(self.np_pos.shape, self.np_elm.shape)
     if voxelgrid is not None:
       list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
       self.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
@@ -85,9 +90,11 @@ class Field():
     self.val = val
     self.draw_val_min = val.min()
     self.draw_val_max = val.max()
-    self.color_map = ColorMap(self.draw_val_min,self.draw_val_max)
+    self.color_mode = 'bcgyr'
+
 
   def draw(self):
+    self.color_map = ColorMap(self.draw_val_min,self.draw_val_max,self.color_mode)
     draw_field(self.mesh.np_pos, self.mesh.np_elm,
                self.val,
                self.color_map)

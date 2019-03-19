@@ -60,6 +60,15 @@ std::tuple<std::vector<double>,std::vector<int>> ReadMesh_Ply
   return std::tie(aXYZ,aTri);
 }
 
+std::tuple<std::vector<double>,std::vector<int>> ReadMesh_Obj
+(const std::string& fname)
+{
+  std::vector<double> aXYZ;
+  std::vector<int> aTri;
+  Read_Obj(fname, aXYZ, aTri);
+  return std::tie(aXYZ,aTri);
+}
+
 void PyDrawMesh_FaceNorm
 (const py::array_t<double>& pos,
  const py::array_t<int>& elm)
@@ -176,6 +185,7 @@ void init_mshtopoio_gl(py::module &m){
 //  m.def("hight_map", &HightMap);
 
   m.def("read_ply",&ReadMesh_Ply);
+  m.def("read_obj",&ReadMesh_Obj);
   
   m.def("draw_mesh_facenorm", &PyDrawMesh_FaceNorm);
   m.def("draw_mesh_edge", &PyDrawMesh_Edge);

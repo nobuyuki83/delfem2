@@ -136,8 +136,13 @@ class CColorMap
 {
 public:
   CColorMap(){}
-  CColorMap(double min, double max){
-    makeHeatMap_BlueCyanGreenYellowRed(aColor, min, max);
+  CColorMap(double min, double max, const std::string& str){
+    if( str == "bgr" ){
+      makeHeatMap_BlueGrayRed(aColor, min, max);
+    }
+    else{
+      makeHeatMap_BlueCyanGreenYellowRed(aColor, min, max);
+    }
   }
 public:
   std::vector< std::pair<double,CColor> > aColor;
