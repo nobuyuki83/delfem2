@@ -97,7 +97,7 @@ PYBIND11_MODULE(dfm2, m) {
   
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())
-  .def(py::init<double, double>());
+  .def(py::init<double, double, const std::string&>());
 
   ///////////////////////////////////
   // gl misc

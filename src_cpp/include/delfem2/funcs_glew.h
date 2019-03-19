@@ -159,7 +159,6 @@ public:
     glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, id_depth_render_buffer);
     glBindRenderbuffer(GL_RENDERBUFFER, id_color_render_buffer);
-
   }
   void End() const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

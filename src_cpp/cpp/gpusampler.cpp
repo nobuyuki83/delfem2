@@ -95,10 +95,9 @@ void CGPUSampler::Start()
 void CGPUSampler::End()
 {
   const int npix = nResX*nResY;
-  
   if( isDepth ){
     assert( (int)aZ.size() == npix );
-    glReadBuffer(GL_DEPTH_ATTACHMENT);
+//    glReadBuffer(GL_DEPTH_ATTACHMENT); // this caused crash in PyOpenGL. I didn't understand but I comment this out.
     glReadPixels(0, 0, nResX, nResY, GL_DEPTH_COMPONENT, GL_FLOAT, aZ.data());
     for(int i=0;i<npix;++i){ aZ[i] *= (-1.0*z_range); }
   }
@@ -106,6 +105,7 @@ void CGPUSampler::End()
     aZ.clear();
   }
   ///////
+  
   if( sFormatPixelColor == "4byte" || sFormatPixelColor == "4float" ){
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     if( sFormatPixelColor == "4byte" ){
