@@ -140,6 +140,36 @@ std::vector<double> CCad2D::MinMaxXYZ() const
   return aabb.MinMaxXYZ();
 }
 
+void CCad2D::Meshing
+(std::vector<double>& aXY,
+ std::vector<int>& aTri,
+ double len) const
+{
+  const int iface0 = 0;
+  assert( iface0<topo.aFace.size() );
+  const std::vector< std::pair<int,bool> >& aIE = topo.aFace[iface0].aIE;
+  std::vector<double> aXY_corner;
+  for(unsigned int iie=0;iie<aIE.size();++iie){
+    const unsigned int ie0 = (unsigned int)aIE[iie].first;
+    assert( ie0<topo.aEdge.size() );
+    const bool dir0 = aIE[iie].second;
+    //    int iv0 = (dir0) ? topo.aEdge[ie0].iv0 : topo.aEdge[ie0].iv1;
+    {
+      const CCad2D_EdgeGeo& eg0 = aEdge[ie0];
+      CVector2 p0 = (dir0) ? eg0.p0 : eg0.p1;
+      aXY_corner.push_back(p0.x);
+      aXY_corner.push_back(p0.y);
+    }
+  }
+  {
+    std::vector<int> aPtrVtxInd,aVtxInd;
+    std::vector< std::vector<double> > aVecAry0;
+    aVecAry0.push_back(aXY_corner);
+    GenerateTesselation2(aTri, aXY,  aPtrVtxInd,aVtxInd,
+                         len, true, aVecAry0);
+  }
+}
+
 ///////////////////////////////////////////////////////////
 
 void CCad2D_EdgeGeo::GenMesh

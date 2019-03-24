@@ -14,7 +14,7 @@ def main():
   voxelgrid.add(1, 0, 0)
   voxelgrid.add(0, 1, 0)
 
-  msh = dfm2.Mesh(voxelgrid=voxelgrid)
+  msh = dfm2.mesh_voxelgrid(voxelgrid=voxelgrid)
   msh = msh.subdiv()
   msh = msh.subdiv()
   msh = msh.subdiv()
