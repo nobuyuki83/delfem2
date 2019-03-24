@@ -244,7 +244,8 @@ int main(int argc,char* argv[])
   
   setSomeLighting();
   
-  cad.Add_Square();
+  const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
+  cad.AddPolygon(std::vector<double>(poly,poly+8));
   
   glutMainLoop();
 	return 0;
