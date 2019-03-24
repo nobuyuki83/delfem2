@@ -94,6 +94,9 @@ public:
               const std::vector<double>& dir);
   std::vector<double> MinMaxXYZ() const;
   void AddPolygon(const std::vector<double>& aXY);
+  void Meshing(std::vector<double>& aXY,
+               std::vector<int>& aTri,
+               double len) const;
 public:
 public:
 public:

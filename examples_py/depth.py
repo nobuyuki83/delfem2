@@ -5,7 +5,7 @@ sys.path.append("../module_py")
 import dfm2
 
 def main():
-  mshelm = dfm2.Mesh("../test_inputs/bunny_2k.ply");
+  mshelm = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
   mshelm.color_face = [1,1,1,1]
 
   aabb = dfm2.AABB3( mshelm.minmax_xyz() )

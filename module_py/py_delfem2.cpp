@@ -37,6 +37,18 @@ std::tuple<std::vector<double>,std::vector<int>> GetMesh_VoxelGrid
 }
 
 
+std::tuple<py::array_t<double>, py::array_t<int>> GetMesh_Cad
+(const CCad2D& cad, double len)
+{
+  std::vector<double> aXY;
+  std::vector<int> aTri;
+  cad.Meshing(aXY,aTri, len);
+  ////
+  py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
+  py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  return std::tie(npXY,npTri);
+}
+
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -85,6 +97,7 @@ PYBIND11_MODULE(dfm2, m) {
   .def("add",&CVoxelGrid::Add,"add voxel at the integer coordinate");
   
   m.def("getmesh_voxelgrid",&GetMesh_VoxelGrid);
+  m.def("getMesh_cad",&GetMesh_Cad);
   
   ///////////////////////////////////
   // cad
@@ -94,7 +107,8 @@ PYBIND11_MODULE(dfm2, m) {
   .def("draw",       &CCad2D::Draw)
   .def("mouse",      &CCad2D::Mouse)
   .def("motion",      &CCad2D::Motion)
-  .def("minmax_xyz", &CCad2D::MinMaxXYZ);
+  .def("minmax_xyz", &CCad2D::MinMaxXYZ)
+  .def("meshing",&CCad2D::Meshing);
   
   
   py::class_<CColorMap>(m,"ColorMap")

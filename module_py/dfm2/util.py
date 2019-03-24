@@ -8,28 +8,37 @@ def normalize_rigmsh(rigmsh):
   rigmsh.translate(-center[0],-center[1],-center[2])
   rigmsh.scale(1.0/aabb.max_length())
 
+def mesh_read(path_file=""):
+  if os.path.isfile(path_file):
+    ext = path_file.rsplit(".", 1)[1]
+    if ext == 'ply':
+      list_xyz, list_tri = read_ply(path_file)
+      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+    if ext == 'obj':
+      list_xyz, list_tri = read_obj(path_file)
+      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+#      print(self.np_pos.shape, self.np_elm.shape)
+  return Mesh(np_pos,np_elm)
+
+def mesh_voxelgrid(voxelgrid):
+  list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
+  np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+  np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 4))
+  return Mesh(np_pos,np_elm)
 
 class Mesh():
-  def __init__(self,path_file="",voxelgrid=None):
+
+  def __init__(self,
+               np_pos=numpy.ndarray((0,3),dtype=numpy.float32),
+               np_elm=numpy.ndarray((0,3),dtype=numpy.int)):
+    assert type(np_pos) == numpy.ndarray
+    assert type(np_elm) == numpy.ndarray
     self.color_face = [0.8, 0.8, 0.8, 1.0]
     self.is_draw_edge = True
-    self.np_pos = numpy.empty((0,3),dtype=numpy.float32)
-    self.np_elm = numpy.empty((0,3),dtype=numpy.int)
-    if os.path.isfile(path_file):
-      ext = path_file.rsplit(".",1)[1]
-      if ext == 'ply':
-        list_xyz, list_tri = read_ply(path_file)
-        self.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-        self.np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
-      if ext == 'obj':
-        list_xyz, list_tri = read_obj(path_file)
-        self.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-        self.np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
-        print(self.np_pos.shape, self.np_elm.shape)
-    if voxelgrid is not None:
-      list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
-      self.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-      self.np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 4))
+    self.np_pos = np_pos
+    self.np_elm = np_elm
 
   def ndim(self):
     return self.np_pos.shape[1]
@@ -72,7 +81,7 @@ class Mesh():
     self.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 2))
     self.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 3))
 
-def grid_mesh(shape) -> Mesh:
+def mesh_grid(shape) -> Mesh:
   h = shape[0]
   w = shape[1]
   list_xyz,list_elm = get_mesh_grid(h,w)
