@@ -51,7 +51,7 @@ def motion(x, y):
 def main():
   global wmngr_glut
 
-  ###################33
+  ###################
   # GLUT Window Initialization
   glutInit()
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)  # zBuffer

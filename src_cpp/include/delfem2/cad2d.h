@@ -75,6 +75,9 @@ public:
 class CCad2D
 {
 public:
+  CCad2D(){
+    ivtx_picked = -1;
+  }
   void Clear(){
     aVtx.clear();
     aEdge.clear();
@@ -82,9 +85,15 @@ public:
     topo.Clear();
   }
   void Draw() const;
+  void Mouse(int btn,int action,int mods,
+             const std::vector<double>& src,
+             const std::vector<double>& dir,
+             double view_height);
+  void Motion(const std::vector<double>& src0,
+              const std::vector<double>& src1,
+              const std::vector<double>& dir);
   std::vector<double> MinMaxXYZ() const;
-  ////
-  void Add_Square();
+  void AddPolygon(const std::vector<double>& aXY);
 public:
 public:
 public:
@@ -93,6 +102,7 @@ public:
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
+  int ivtx_picked;
 };
 
 

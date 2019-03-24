@@ -1,4 +1,4 @@
-import math
+import math, numpy
 from OpenGL.GL import *
 
 def rot_matrix_cartesian(vec):
@@ -292,6 +292,44 @@ def mouse_screen_pos(x, y, win_w,win_h):
   mouse_x = (2.0 * x - win_w) / win_w
   mouse_y = (win_h - 2.0 * y) / win_h
   return mouse_x, mouse_y
+
+
+def solve_GlAffineMatrix(m:numpy.ndarray,
+                         p:numpy.ndarray):
+  v = p - numpy.array([m[3][0],m[3][1],m[3][2]])
+  M = numpy.transpose(m[:3,:3]) # not sure this transpose is necessary
+  return numpy.dot(numpy.linalg.inv(M),v)
+
+def solve_GlAffineMatrixDirection(m:numpy.ndarray,
+                                  v:numpy.ndarray):
+  M = numpy.transpose(m[:3,:3]) # not sure this transpose is necessary
+#  print("m",m)
+#  print("M",M)
+  return numpy.dot(numpy.linalg.inv(M),v)
+
+def screenUnProjection(v:numpy.ndarray,
+                       mMV:numpy.ndarray,
+                       mPj:numpy.ndarray):
+  D = mPj[3][2] + mPj[3][3] # z is 1 after model view
+  v0 = numpy.array([D*v[0], D*v[1], 0.0])
+  v1 = solve_GlAffineMatrix(mPj, v0)
+  v1[2] = 1
+  v2 = solve_GlAffineMatrix(mMV, v1)
+  return v2
+
+def screenUnProjectionDirection(v:numpy.ndarray,
+                                mMV:numpy.ndarray,
+                                mPj:numpy.ndarray):
+#  print("v",v)
+#  print("projection")
+  v0 = solve_GlAffineMatrixDirection(mPj, v)
+#  print("v0",v0)
+#  print("modelview")
+  v1 = solve_GlAffineMatrixDirection(mMV, v0)
+#  print(v1)
+  v1 = v1/numpy.linalg.norm(v1)
+  return v1
+
 
 
 #########################################################################

@@ -24,10 +24,11 @@
 void CCad2D::Draw() const
 {
   ::glDisable(GL_LIGHTING);
-  ::glColor3d(1,0,0);
   ::glPointSize(6);
   ::glBegin(GL_POINTS);
   for(unsigned int iv=0;iv<aVtx.size();++iv){
+    if( iv == ivtx_picked ){ ::glColor3d(1,1,0); }
+    else{ ::glColor3d(1,0,0); }
     ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
   }
   ::glEnd();
@@ -54,24 +55,78 @@ void CCad2D::Draw() const
   glTranslated(0,0,+0.2);
 }
 
-void CCad2D::Add_Square(){
-  topo.AddPolygon(4);
-  aVtx.push_back(CVector2(-1.0, -1.0));
-  aVtx.push_back(CVector2(+1.0, -1.0));
-  aVtx.push_back(CVector2(+1.0, +1.0));
-  aVtx.push_back(CVector2(-1.0, +1.0));
-  int iedge0 = aEdge.size();
-  aEdge.push_back(CCad2D_EdgeGeo());
-  aEdge.push_back(CCad2D_EdgeGeo());
-  aEdge.push_back(CCad2D_EdgeGeo());
-  aEdge.push_back(CCad2D_EdgeGeo());
-  int iface0 = aFace.size();
+void CCad2D::Mouse(int btn, int action, int mods,
+                   const std::vector<double>& src,
+                   const std::vector<double>& dir,
+                   double view_height)
+{
+//  std::cout << "mouse called btn:" << btn << "   action:" << action << " mods:" << mods << std::endl;
+//  std::cout << src[0] << " " << src[1] << " " << src[2] << std::endl;
+//  std::cout << dir[0] << " " << dir[1] << " " << dir[2] << std::endl;
+  if( action == 1 ){ //press
+    const double x0 = src[0];
+    const double y0 = src[1];
+    this->ivtx_picked = -1;
+    for(unsigned int ivtx=0;ivtx<aVtx.size();++ivtx){
+      double x1 = aVtx[ivtx].pos.x;
+      double y1 = aVtx[ivtx].pos.y;
+      double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
+      if( dist < view_height*0.05 ){
+        this->ivtx_picked = ivtx;
+        return;
+      }
+    }
+  }
+  else{
+    ivtx_picked = -1;
+  }
+}
+
+void CCad2D::Motion(const std::vector<double>& src0,
+                    const std::vector<double>& src1,
+                    const std::vector<double>& dir)
+{
+//  std::cout << src0[0] << " " << src0[1] << " " << src0[2] << std::endl;
+//  std::cout << src1[0] << " " << src1[1] << " " << src1[2] << std::endl;
+//  std::cout << dir[0] << " " << dir[1] << " " << dir[2] << std::endl;
+  if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
+    aVtx[ivtx_picked].pos.x = src1[0];
+    aVtx[ivtx_picked].pos.y = src1[1];
+  }
+  for(unsigned int ie=0;ie<topo.aEdge.size();++ie){
+    const CCadTopo::CEdge& e = topo.aEdge[ie];
+    if( e.iv0 == ivtx_picked || e.iv1 == ivtx_picked ){
+      aEdge[ie].GenMesh(ie,topo,aVtx);
+    }
+  }
+  /*
+  for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
+    const CCadTopo::CFace& fc = topo.aFace[ifc];
+  }
+   */
+  for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
+    aFace[ifc].GenMesh(ifc, topo, aEdge);
+  }
+}
+
+void CCad2D::AddPolygon(const std::vector<double>& aXY)
+{
+  const int np = aXY.size()/2;
+  topo.AddPolygon(np);
+  for(int ip=0;ip<np;++ip){
+    aVtx.push_back(CVector2(aXY[ip*2+0], aXY[ip*2+1]));
+  }
+  ////
+  const int iedge0 = aEdge.size();
+  const int iface0 = aFace.size();
+  for(int ie=0;ie<np;++ie){
+    aEdge.push_back(CCad2D_EdgeGeo());
+  }
   aFace.push_back(CCad2D_FaceGeo());
   ////
-  aEdge[iedge0+0].GenMesh(iedge0+0,topo,aVtx);
-  aEdge[iedge0+1].GenMesh(iedge0+1,topo,aVtx);
-  aEdge[iedge0+2].GenMesh(iedge0+2,topo,aVtx);
-  aEdge[iedge0+3].GenMesh(iedge0+3,topo,aVtx);
+  for(int ie=0;ie<np;++ie){
+    aEdge[iedge0+ie].GenMesh(iedge0+ie,topo,aVtx);
+  }
   aFace[iface0].GenMesh(iface0, topo, aEdge);
 }
 

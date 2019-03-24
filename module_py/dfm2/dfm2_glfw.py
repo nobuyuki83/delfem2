@@ -2,7 +2,7 @@ from OpenGL.GL import *
 import numpy
 
 import glfw
-from .dfm2_gl import Camera
+from .dfm2_gl import *
 from .dfm2 import *
 
 class WindowManagerGLFW:
@@ -11,6 +11,8 @@ class WindowManagerGLFW:
     self.modifier = 0
     self.mouse_x = 0.0
     self.mouse_y = 0.0
+    self.mouse_pre_x = 0.0
+    self.mouse_pre_y = 0.0
     self.button = -1
     self.isClose = False
 
@@ -35,11 +37,16 @@ class WindowManagerGLFW:
 
   def motion(self,win_glfw, x, y):
     (win_w, win_h) = glfw.get_window_size(win_glfw)
+    self.mouse_pre_x,self.mouse_pre_y = self.mouse_x, self.mouse_y
+    (x, y) = glfw.get_cursor_pos(win_glfw)
+    self.mouse_x = (2.0 * x - win_w) / win_w
+    self.mouse_y = (win_h - 2.0 * y) / win_h
     if self.button == glfw.MOUSE_BUTTON_LEFT:
       if self.modifier == glfw.MOD_ALT:  # shift
         self.mouse_x, self.mouse_y = self.camera.rotation(x, y, self.mouse_x, self.mouse_y, win_w, win_h)
       if self.modifier == glfw.MOD_SHIFT:
         self.mouse_x, self.mouse_y = self.camera.translation(x, y, self.mouse_x, self.mouse_y, win_w, win_h)
+
 
 
 class WindowGLFW:
@@ -57,6 +64,8 @@ class WindowGLFW:
     self.wm = WindowManagerGLFW(view_height)
     self.draw_func = None
     glEnable(GL_DEPTH_TEST)
+    self.list_func_mouse = []
+    self.list_func_motion = []
 
   def draw_loop(self,list_draw_func,bgcolor=(1,1,1)):
     """
@@ -86,9 +95,28 @@ class WindowGLFW:
 
   def mouse(self, win0,btn,action,mods):
     self.wm.mouse(win0,btn,action,mods)
+    mMV = glGetFloatv(GL_MODELVIEW_MATRIX)
+    mPj = glGetFloatv(GL_PROJECTION_MATRIX)
+    src = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
+                             mMV, mPj)
+    dir = screenUnProjectionDirection((0,0,1), mMV,mPj)
+    for func_mouse in self.list_func_mouse:
+      func_mouse(btn,action,mods, src, dir, self.wm.camera.view_height)
 
   def motion(self,win0,x,y):
+    if self.wm.button == -1:
+      return
     self.wm.motion(win0,x,y)
+    mMV = glGetFloatv(GL_MODELVIEW_MATRIX)
+    mPj = glGetFloatv(GL_PROJECTION_MATRIX)
+    src0 = screenUnProjection(numpy.array([float(self.wm.mouse_pre_x),float(self.wm.mouse_pre_y),0.0]),
+                             mMV, mPj)
+    src1 = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
+                             mMV, mPj)
+    dir = screenUnProjectionDirection((0,0,1), mMV,mPj)
+#    print(src0,src1,dir)
+    for func_motion in self.list_func_motion:
+      func_motion(src0,src1,dir)
 
   def keyinput(self,win0,key,scancode,action,mods):
     self.wm.keyinput(win0,key,scancode,action,mods)
@@ -119,6 +147,10 @@ def winDraw3d(list_obj:list,
   for obj in list_obj:
     if hasattr(obj, 'init_gl'):
       obj.init_gl()
+    if hasattr(obj, 'mouse'):
+      window.list_func_mouse.append(obj.mouse)
+    if hasattr(obj, 'motion'):
+      window.list_func_motion.append(obj.motion)
   #### glsl compile
   id_shader_program = 0
   if glsl_vrt != "" and glsl_frg != "":
