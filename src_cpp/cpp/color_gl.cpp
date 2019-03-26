@@ -283,18 +283,18 @@ void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >&
 //////////////////////////
 
 void DrawMeshTri2D_ScalarP1
-(const std::vector<double>& aXY,
- const std::vector<int>& aTri,
+(const double* aXY, int nXY,
+ const int* aTri, int nTri,
  const double* paVal,
  int nstride,
  int noffset,
  const std::vector< std::pair<double,CColor> >& colorMap)
 {
-  const unsigned int ntri = (int)aTri.size()/3;
+//  const unsigned int ntri = (int)aTri.size()/3;
 //  const unsigned int nxys = (int)aXY.size()/2;
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(unsigned int itri=0;itri<ntri;++itri){
+  for(int itri=0;itri<nTri;++itri){
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
     const int ino2 = aTri[itri*3+2];

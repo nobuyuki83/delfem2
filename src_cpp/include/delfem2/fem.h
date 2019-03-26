@@ -10,7 +10,7 @@
 void FetchData(double* val_to,
                int nno, int ndim,
                const int* aIP,
-               const std::vector<double>& val_from, int nstride, int noffset);
+               const double* val_from, int nstride, int noffset);
 
 void XPlusAY(std::vector<double>& X,
              const int nDoF,
@@ -44,7 +44,7 @@ void setRHS_Zero(std::vector<double>& vec_b,
 void setRHS_MasterSlave(std::vector<double>& vec_b,
                         const std::vector<int>& aMSFlag);
 
-void SolveLinSys_PCG(CMatrixSquareSparse& mat_A,
+void SolveLinSys_PCG(const CMatrixSquareSparse& mat_A,
                      std::vector<double>& vec_b,
                      std::vector<double>& vec_x,
                      CPreconditionerILU& ilu_A,
@@ -61,12 +61,12 @@ bool SolveLinSys_BiCGStab(CMatrixSquareSparse& mat_A,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MergeLinSys_Poission2D(CMatrixSquareSparse& mat_A,
-                            std::vector<double>& vec_b,
+                            double* vec_b,
                             const double alpha,
                             const double source,
-                            const std::vector<double>& aXY1,
-                            const std::vector<int>& aTri1,
-                            const std::vector<double>& aVal);
+                            const double* aXY1, int np,
+                            const int* aTri1, int nTri,
+                            const double* aVal);
 
 void MergeLinSys_Poission3D(CMatrixSquareSparse& mat_A,
                             std::vector<double>& vec_b,

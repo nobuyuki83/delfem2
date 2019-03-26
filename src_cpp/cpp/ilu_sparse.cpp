@@ -95,13 +95,29 @@ static inline void CalcInvMat3(double a[], double t[] )
 
 CPreconditionerILU::CPreconditionerILU()
 {
-  
+  std::cout << "CPreconditionerILU -- construct" << std::endl;
+  m_diaInd = 0;
 }
+
+
+CPreconditionerILU::CPreconditionerILU(const CPreconditionerILU& p)
+{
+  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
+  this->mat = p.mat; // deep copy
+  const int nblk = this->mat.m_nblk_col;
+  this->m_diaInd = new int [nblk];
+  for(int iblk=0;iblk<nblk;++iblk){
+    this->m_diaInd[iblk] = p.m_diaInd[iblk];
+  }
+}
+
 
 
 CPreconditionerILU::~CPreconditionerILU()
 {
-  if( m_diaInd != 0 ){ delete[] m_diaInd; m_diaInd = 0; }
+  std::cout << "CPreconditionerILU -- destroy" << std::endl;
+  if( m_diaInd != 0 ){ delete[] m_diaInd; }
+  std::cout << "CPreconditionerILU -- destroy end" << std::endl;
 }
 
 
@@ -110,9 +126,10 @@ void CPreconditionerILU::Initialize_ILU0
 {
   this->mat = m;
   const int nblk = m.m_nblk_col;
-  
+
   if( m_diaInd != 0 ){ delete[] m_diaInd; m_diaInd = 0; }
-  m_diaInd = new int [nblk];  
+  m_diaInd = new int [nblk];
+  
   for(int iblk=0;iblk<nblk;iblk++){
     m_diaInd[iblk] = mat.m_colInd[iblk+1];
     for(int icrs=mat.m_colInd[iblk];icrs<mat.m_colInd[iblk+1];icrs++){
@@ -457,6 +474,7 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 			for(int ijcrs=m_diaInd[iblk];ijcrs<colind[iblk+1];ijcrs++){
 				assert( ijcrs<mat.m_ncrs );
 				const int jblk0 = rowptr[ijcrs];
+//        std::cout << jblk0 << " " << iblk << " " << nblk << std::endl;
 				assert( jblk0>(int)iblk && jblk0<nblk );
 				lvec_i -=  vcrs[ijcrs]*vec[jblk0];
 			}
@@ -858,44 +876,45 @@ bool CPreconditionerILU::DoILUDecomp()
 
 
 void Solve_PCG
-(double& conv_ratio,
- int& iteration,
+(double* r_vec,
+ double* x_vec,
+ double conv_ratio,
+ int iteration,
  const CMatrixSquareSparse& mat,
- const CPreconditionerILU& ilu,
- std::vector<double>& r_vec,
- std::vector<double>& x_vec)
+ const CPreconditionerILU& ilu)
 {
 	const double conv_ratio_tol = conv_ratio;
 	const int mx_iter = iteration;
     
 	const int nblk = mat.m_nblk_col;
   const int len = mat.m_len_col;
-  assert(r_vec.size() == nblk*len);
+//  assert(r_vec.size() == nblk*len);
   const int ndof = nblk*len;  
   
   // {x} = 0
-  x_vec.resize(ndof);
+//  x_vec.resize(ndof);
   for(int i=0;i<ndof;i++){ x_vec[i] = 0; }
   
 	double inv_sqnorm_res0;
 	{
-		const double sqnorm_res0 = InnerProduct(r_vec,r_vec);
+		const double sqnorm_res0 = InnerProduct(r_vec,r_vec,ndof);
 		if( sqnorm_res0 < 1.0e-30 ){
 			conv_ratio = 0.0;
 			iteration = 0;
 			return;
 		}
 		inv_sqnorm_res0 = 1.0 / sqnorm_res0;
+    std::cout << "sqnorm_res0:" << sqnorm_res0 << std::endl;
 	}
   
   // {Pr} = [P]{r}
-  std::vector<double> Pr_vec = r_vec;
+  std::vector<double> Pr_vec(r_vec,r_vec+ndof);
   ilu.Solve(Pr_vec);
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
   
   // rPr = ({r},{Pr})
-	double rPr = InnerProduct(r_vec,Pr_vec);
+	double rPr = InnerProduct(r_vec,Pr_vec.data(),ndof);
 	for(int iitr=0;iitr<mx_iter;iitr++){
     
 		{
@@ -906,14 +925,14 @@ void Solve_PCG
 			const double pAp = InnerProduct(p_vec,Ap_vec);
 			double alpha = rPr / pAp;
       // {r} = -alpha*{Ap} + {r}
-      AXPY(-alpha,Ap_vec,r_vec);
+      AXPY(-alpha,Ap_vec.data(),r_vec, ndof);
       // {x} = +alpha*{p } + {x}
-      AXPY(+alpha,p_vec, x_vec);
+      AXPY(+alpha,p_vec.data(), x_vec, ndof);
     }
     
 		{	// Converge Judgement
-			double sqnorm_res = InnerProduct(r_vec,r_vec);
-      // std::cout << iitr << " " << sqrt(sq_norm_res * sq_inv_norm_res0) << std::endl;
+			double sqnorm_res = InnerProduct(r_vec,r_vec,ndof);
+       std::cout << iitr << " " << sqrt(sqnorm_res) << std::endl;
 			if( sqnorm_res * inv_sqnorm_res0 < conv_ratio_tol*conv_ratio_tol ){
 				conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res0 );
 				iteration = iitr;
@@ -926,7 +945,7 @@ void Solve_PCG
       for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
 			ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
-			const double rPr1 = InnerProduct(r_vec,Pr_vec);
+			const double rPr1 = InnerProduct(r_vec,Pr_vec.data(),ndof);
       // beta = rPr1/rPr
 			double beta = rPr1/rPr;
 			rPr = rPr1;
@@ -935,7 +954,7 @@ void Solve_PCG
     }
 	}
 	// Converge Judgement
-  double sq_norm_res = InnerProduct(r_vec,r_vec);
+  double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
   conv_ratio = sqrt( sq_norm_res * inv_sqnorm_res0 );
   return;
 }

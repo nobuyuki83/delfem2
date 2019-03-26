@@ -218,11 +218,11 @@ void InitializeProblem_Scalar()
    */
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
-                          aTri1, 3, (int)aXY1.size()/2);
+                          aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   SortIndexedArray(psup_ind, psup);
   ////
   mat_A.Initialize(np, 1, true);
-  mat_A.SetPattern(psup_ind, psup);
+  mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
   ilu_A.Initialize_ILU0(mat_A);
 }
 
@@ -237,10 +237,12 @@ void SolveProblem_Poisson()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Poission2D(mat_A,vec_b,
+  MergeLinSys_Poission2D(mat_A,vec_b.data(),
                          alpha,source,
-                         aXY1,aTri1,aVal);
-  mat_A.SetBoundaryCondition(aBCFlag);
+                         aXY1.data(),aXY1.size()/2,
+                         aTri1.data(),aTri1.size()/3,
+                         aVal.data());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////////////
   std::vector<double> vec_x;
@@ -269,7 +271,7 @@ void SolveProblem_Diffusion()
                           dt_timestep, gamma_newmark,
                           aXY1,aTri1,
                           aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
   std::vector<double> vec_x;
@@ -303,7 +305,7 @@ void InitializeProblem_Solid()
   { // master slave
     int iseed = -1;
     for(int ip=0;ip<np;++ip){
-      const double px = aXY1[ip*2+0];
+//      const double px = aXY1[ip*2+0];
       const double py = aXY1[ip*2+1];
       if( fabs(py+len) > 0.0001 ){ continue; }
       if( iseed == -1 ){
@@ -318,7 +320,7 @@ void InitializeProblem_Solid()
   //////
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
-                          aTri1, 3, (int)aXY1.size()/2);
+                          aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   addMasterSlavePattern(aMSFlag,
                         2,psup_ind,psup);
   SortIndexedArray(psup_ind, psup);
@@ -330,7 +332,7 @@ void InitializeProblem_Solid()
    */
   ////
   mat_A.Initialize(np, 2, true);
-  mat_A.SetPattern(psup_ind, psup);
+  mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
   ilu_A.Initialize_ILU0(mat_A);
 }
 
@@ -352,7 +354,7 @@ void SolveProblem_LinearSolid_Static()
                                    mat_A,vec_b,
                                    myu,lambda,rho,g_x,g_y,
                                    aXY1,aTri1,aVal);
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -391,7 +393,7 @@ void SolveProblem_LinearSolid_Dynamic()
                                     dt_timestep,gamma_newmark,beta_newmark,
                                     aXY1,aTri1,
                                     aVal,aVelo,aAcc);
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -446,7 +448,7 @@ void InitializeProblem_Fluid()
   aMSFlag.clear();
   //////
   for(int ip=0;ip<np;++ip){
-    const double px = aXY1[ip*2+0];
+//    const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(py-len) < 0.0001 && aBCFlag[ip*3+0] == 1 ){
       aVal[ip*3+0] = 10;
@@ -455,7 +457,7 @@ void InitializeProblem_Fluid()
   //////
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
-                          aTri1, 3, (int)aXY1.size()/2);
+                          aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   SortIndexedArray(psup_ind, psup);
   /*
    CJaggedArray crs;
@@ -464,7 +466,7 @@ void InitializeProblem_Fluid()
    */
   ////
   mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind, psup);
+  mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
   ilu_A.Initialize_ILU0(mat_A);
   //  ilu_A.Initialize_ILUk(mat_A, 5);
 }
@@ -503,7 +505,7 @@ void InitializeProblem_Fluid2()
     int iseed = -1;
     for(int ip=0;ip<np;++ip){
       const double px = aXY1[ip*2+0];
-      const double py = aXY1[ip*2+1];
+//      const double py = aXY1[ip*2+1];
       if( fabs(px+len) > 0.0001 || aBCFlag[ip*3+0] == 1 ){ continue; }
       if( iseed == -1 ){
         iseed = ip;
@@ -518,7 +520,7 @@ void InitializeProblem_Fluid2()
   ///////
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
-                          aTri1, 3, (int)aXY1.size()/2);
+                          aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   addMasterSlavePattern(aMSFlag,
                         3, psup_ind, psup);
   SortIndexedArray(psup_ind, psup);
@@ -531,7 +533,7 @@ void InitializeProblem_Fluid2()
    */
   ////
   mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind, psup);
+  mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
   ilu_A.Initialize_ILU0(mat_A);
   //  ilu_A.Initialize_ILUk(mat_A, 5);
 }
@@ -554,7 +556,7 @@ void SolveProblem_Stokes_Static()
                               myu,rho,g_x,g_y,
                               aXY1,aTri1,
                               aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -594,7 +596,7 @@ void SolveProblem_Stokes_Dynamic()
                                dt_timestep,gamma_newmark,
                                aXY1,aTri1,                             
                                aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -639,7 +641,7 @@ void SolveProblem_NavierStokes_Dynamic()
                                      dt_timestep,gamma_newmark,
                                      aXY1,aTri1,
                                      aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -691,7 +693,9 @@ void myGlutDisplay(void)
     {
       std::vector< std::pair<double,CColor> > colorMap;
       makeHeatMap_BlueGrayRed(colorMap, 0, +0.1);
-      DrawMeshTri2D_ScalarP1(aXY1,aTri1,aVal.data(),1,0,colorMap);
+      DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+                             aTri1.data(),aTri1.size()/3,
+                             aVal.data(),1,0,colorMap);
     }
     DrawMeshTri2D_Edge(aTri1,aXY1);
     ::glPointSize(2);
@@ -706,7 +710,9 @@ void myGlutDisplay(void)
   {
     std::vector< std::pair<double,CColor> > colorMap;
     makeHeatMap_BlueGrayRed(colorMap, -30, +30);
-    DrawMeshTri2D_ScalarP1(aXY1,aTri1,aVal.data(),3,2,colorMap);
+    DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+                           aTri1.data(),aTri1.size()/3,
+                           aVal.data(),3,2,colorMap);
     ::glColor3d(0,0,0);    
     DrawPoints2D_Vectors(aXY1,aVal,3,0, 0.1);
     ::glPointSize(2);

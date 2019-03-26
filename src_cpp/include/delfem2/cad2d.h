@@ -56,6 +56,7 @@ class CCad2D_EdgeGeo{
 public:
   void GenMesh(unsigned int iedge, const CCadTopo& topo,
                std::vector<CCad2D_VtxGeo>& aVtxGeo);
+  double Distance(double x, double y) const;
 public:
   CVector2 p0,p1;
   std::vector<CVector2> aP;
@@ -97,6 +98,10 @@ public:
   void Meshing(std::vector<double>& aXY,
                std::vector<int>& aTri,
                double len) const;
+  void setBCFlagEdge(int* pBC,
+                     const double* pXY, int nXY,
+                     const std::vector<int>& aIE,
+                     int iflag, double torelance) const;
 public:
 public:
 public:

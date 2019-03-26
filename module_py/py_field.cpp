@@ -29,6 +29,10 @@ void DrawField(const py::array_t<double>& pos,
                            color_map.aColor);
   }
   else if( ndim == 2 ){
+    DrawMeshTri2D_ScalarP1(pos.data(), np,
+                           elm.data(), nelm,
+                           val.data(), 1,0,
+                           color_map.aColor);
   }
 }
 

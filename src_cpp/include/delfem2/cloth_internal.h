@@ -217,7 +217,7 @@ void StepTime_InternalDynamics
     mat_A.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
     mat_A.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
   for(unsigned int ip=0;ip<np;ip++){
     if( aBCFlag[ip] == 0 ) continue;
     vec_b[ip*3+0] = 0;
@@ -288,7 +288,7 @@ void StepTime_InternalDynamicsILU
     mat_A.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
     mat_A.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
-  mat_A.SetBoundaryCondition(aBCFlag);
+  mat_A.SetBoundaryCondition(aBCFlag.data(), aBCFlag.size());
   for(unsigned int i=0;i<nDof;i++){
     if( aBCFlag[i] == 0 ) continue;
     vec_b[i] = 0;
@@ -296,10 +296,11 @@ void StepTime_InternalDynamicsILU
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   // solve linear system，連立一次方程式を解く
-  std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 100;
-  Solve_PCG(conv_ratio, iteration, mat_A,ilu_A, vec_b,vec_x);
+  std::vector<double> vec_x(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio, iteration, mat_A,ilu_A);
   std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position，頂点位置の更新
   for(int i=0;i<nDof;i++){

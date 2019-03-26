@@ -38,11 +38,11 @@ void MeshTri3D_GeodesicPolyhedron
   const int np0 = aXYZ0.size()/3;
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind, elsup,
-                           aTri0, 3, np0);
+                           aTri0.data(), aTri0.size()/3, 3, np0);
   ////
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
-                          aTri0,
+                          aTri0.data(),
                           elsup_ind, elsup,
                           3, np0);
   //  std::cout << "psup" << std::endl;
