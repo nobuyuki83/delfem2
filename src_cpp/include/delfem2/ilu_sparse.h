@@ -9,6 +9,7 @@ class CPreconditionerILU
 {
 public:
   CPreconditionerILU();
+  CPreconditionerILU(const CPreconditionerILU&); // copy
   ~CPreconditionerILU();
   void Initialize_ILU0(const CMatrixSquareSparse& m);
   void Initialize_ILUk(const CMatrixSquareSparse& m, int fill_level);
@@ -28,12 +29,12 @@ public:
 
 
 void Solve_PCG
-(double& conv_ratio,
- int& iteration,
+(double* r_vec,
+ double* u_vec,
+ double conv_ratio,
+ int iteration,
  const CMatrixSquareSparse& mat,
- const CPreconditionerILU& ilu,
- std::vector<double>& r_vec,
- std::vector<double>& u_vec);
+ const CPreconditionerILU& ilu);
 
 void Solve_PBiCGSTAB
 (double& conv_ratio, int& num_iter,

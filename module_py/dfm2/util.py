@@ -8,25 +8,7 @@ def normalize_rigmsh(rigmsh):
   rigmsh.translate(-center[0],-center[1],-center[2])
   rigmsh.scale(1.0/aabb.max_length())
 
-def mesh_read(path_file=""):
-  if os.path.isfile(path_file):
-    ext = path_file.rsplit(".", 1)[1]
-    if ext == 'ply':
-      list_xyz, list_tri = read_ply(path_file)
-      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
-    if ext == 'obj':
-      list_xyz, list_tri = read_obj(path_file)
-      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
-#      print(self.np_pos.shape, self.np_elm.shape)
-  return Mesh(np_pos,np_elm)
-
-def mesh_voxelgrid(voxelgrid):
-  list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
-  np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-  np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 4))
-  return Mesh(np_pos,np_elm)
+####################
 
 class Mesh():
 
@@ -81,6 +63,32 @@ class Mesh():
     self.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 2))
     self.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 3))
 
+  def psup(self):
+    res = get_psup(self.np_elm, self.np_pos.shape[0])
+    return res
+
+#######################################
+
+def mesh_read(path_file="") -> Mesh:
+  if os.path.isfile(path_file):
+    ext = path_file.rsplit(".", 1)[1]
+    if ext == 'ply':
+      list_xyz, list_tri = read_ply(path_file)
+      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+    if ext == 'obj':
+      list_xyz, list_tri = read_obj(path_file)
+      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+#      print(self.np_pos.shape, self.np_elm.shape)
+  return Mesh(np_pos,np_elm)
+
+def mesh_voxelgrid(voxelgrid) -> Mesh:
+  list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
+  np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
+  np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 4))
+  return Mesh(np_pos,np_elm)
+
 def mesh_grid(shape) -> Mesh:
   h = shape[0]
   w = shape[1]
@@ -90,6 +98,12 @@ def mesh_grid(shape) -> Mesh:
   msh0.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 4))
   return msh0
 
+def mesh_cad(cad,len) -> Mesh:
+  xy,tri = getMesh_cad(cad,len)
+  mesh = Mesh(xy,tri)
+  return mesh
+
+#####################################################
 
 class Field():
   def __init__(self,
@@ -107,4 +121,18 @@ class Field():
     draw_field(self.mesh.np_pos, self.mesh.np_elm,
                self.val,
                self.color_map)
+
+  def minmax_xyz(self):
+    return self.mesh.minmax_xyz()
+
+######################################################
+
+
+class FEM():
+  def __init__(self,
+               mesh: Mesh):
+    self.mesh = mesh
+#    self.mat = MatrixSquareSparse(mesh.np_pos.shape[0],1)
+
+
 

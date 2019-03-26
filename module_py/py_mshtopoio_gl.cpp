@@ -136,6 +136,20 @@ Triangulation
   return std::tie(aPos,aElm, aPtrVtxInd,aVtxInd);
 }
 
+std::tuple<py::array_t<int>, py::array_t<int>>
+GetPsup(const py::array_t<int>& elm, int npoint)
+{
+  std::vector<int> psup_ind, psup;
+  makeOneRingNeighborhood(psup_ind, psup,
+                          elm.data(), elm.shape()[0], elm.shape()[1], npoint);
+  py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
+  py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
+  return std::tie(np_psup_ind, np_psup);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+
 void init_mshtopoio_gl(py::module &m){
   py::enum_<MESHELEM_TYPE>(m, "MeshElemType")
   .value("Tri",     MESHELEM_TYPE::MESHELEM_TRI)
@@ -166,6 +180,8 @@ void init_mshtopoio_gl(py::module &m){
   .def_readwrite("is_draw_edge", &CMeshElem::is_draw_edge);
    */
   
+  
+  
   m.def("read_nastran_triangle",&Read_MeshTri3D_Nas_CMeshElem);
   
   py::class_<CMeshMultiElem>(m,"MeshMultiElem")
@@ -183,6 +199,8 @@ void init_mshtopoio_gl(py::module &m){
         py::arg("edge_length")=0.03);
   
 //  m.def("hight_map", &HightMap);
+  
+  m.def("get_psup",&GetPsup);
 
   m.def("read_ply",&ReadMesh_Ply);
   m.def("read_obj",&ReadMesh_Obj);

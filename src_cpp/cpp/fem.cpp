@@ -6,11 +6,12 @@
 #include "delfem2/ilu_sparse.h"
 
 
-inline void FetchData
+void FetchData
 (double* val_to,
  int nno, int ndim,
  const int* aIP,
- const std::vector<double>& val_from, int nstride, int noffset)
+ const double* val_from,
+ int nstride, int noffset)
 {
   assert( nstride >= ndim );
   for(int ino=0;ino<nno;++ino){
@@ -100,7 +101,7 @@ void setRHS_MasterSlave
 
 
 void SolveLinSys_PCG
-(CMatrixSquareSparse& mat_A,
+(const CMatrixSquareSparse& mat_A,
  std::vector<double>& vec_b,
  std::vector<double>& vec_x,
  CPreconditionerILU& ilu_A,
@@ -114,7 +115,8 @@ void SolveLinSys_PCG
   //Solve_CG(conv_ratio, iteration, mat_A, vec_b, vec_x);
   //  Solve_BiCGSTAB(conv_ratio, iteration, mat_A, vec_b, vec_x);
   //  Solve_PBiCGSTAB(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
-  Solve_PCG(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(), vec_x.data(), conv_ratio, iteration, mat_A, ilu_A);
   std::cout<<"  conv_ratio:"<<conv_ratio<<"  iteration:"<<iteration<<std::endl;
 }
 
@@ -143,18 +145,25 @@ bool SolveLinSys_BiCGStab
 
 void MergeLinSys_Poission2D
 (CMatrixSquareSparse& mat_A,
- std::vector<double>& vec_b,
+ double* vec_b,
  const double alpha,
  const double source,
- const std::vector<double>& aXY1,
- const std::vector<int>& aTri1,
- const std::vector<double>& aVal)
+ const double* aXY1, int np,
+ const int* aTri1, int nTri,
+ const double* aVal)
 {
-  const int np = (int)aXY1.size()/2;
   const int nDoF = np;
   /////
+  /*
+  {
+    double sum = 0.0;
+    for(int ip=0;ip<np;++ip){ sum += vec_b[ip]*vec_b[ip]; }
+    std::cout << "sum0: " << sum <<  std::endl;
+  }
+   */
+  /////
   std::vector<int> tmp_buffer(nDoF, -1);
-  for (int iel = 0; iel<(int)aTri1.size()/3; ++iel){
+  for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
@@ -175,7 +184,15 @@ void MergeLinSys_Poission2D
     // marge dde
     mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
   }
+  /*
+  {
+    double sum = 0.0;
+    for(int ip=0;ip<np;++ip){ sum += vec_b[ip]*vec_b[ip]; }
+    std::cout << "sum1: " << sum <<  std::endl;
+  }
+   */
 }
+
 
 void MergeLinSys_Poission3D
 (CMatrixSquareSparse& mat_A,
@@ -195,7 +212,7 @@ void MergeLinSys_Poission3D
     const int i2 = aTet[itet*4+2];
     const int i3 = aTet[itet*4+3];
     const int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
     ////
     double eres[4], emat[4][4];
@@ -236,7 +253,7 @@ void MergeLinSys_Diffusion2D
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
     const double value[3] = { aVal[ i0], aVal[ i1], aVal[ i2] };
     const double velo[ 3] = { aVelo[i0], aVelo[i1], aVelo[i2] };
     ////
@@ -280,7 +297,7 @@ void MergeLinSys_Diffusion3D
     const int i2 = aTet[iel*4+2];
     const int i3 = aTet[iel*4+3];
     const int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
     const double value[4] = { aVal[ i0], aVal[ i1], aVal[ i2], aVal[ i3] };
     const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
     ////
@@ -322,8 +339,8 @@ void MergeLinSys_LienarSolid2D_Static
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal,2,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
+    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal.data(),2,0);
     ////
     double eres[3][2];
     double emat[3][3][2][2];
@@ -370,10 +387,10 @@ void MergeLinSys_LinearSolid2D_Dynamic
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal,2,0);
-    double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo,2,0);
-    double accs[3][2]; FetchData(&accs[0][0],3,2,aIP, aAcc,2,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
+    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal.data(),2,0);
+    double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo.data(),2,0);
+    double accs[3][2]; FetchData(&accs[0][0],3,2,aIP, aAcc.data(),2,0);
     ////
     double eres[3][2];
     double emat[3][3][2][2];
@@ -417,8 +434,8 @@ void MergeLinSys_Stokes2D_Static
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
-    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal,3,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
+    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal.data(),3,0);
     ////
     double eres[3][3];
     double emat[3][3][3][3];
@@ -460,9 +477,9 @@ void MergeLinSys_Stokes2D_Dynamic
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
-    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal,3,0);
-    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo,3,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
+    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal.data(),3,0);
+    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo.data(),3,0);
     ////
     double eres[3][3];
     double emat[3][3][3][3];
@@ -506,9 +523,9 @@ void MergeLinSys_NavierStokes2D_Dynamic
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
-    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal,3,0);
-    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo,3,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
+    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal.data(),3,0);
+    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo.data(),3,0);
     ////
     double eres[3][3], emat[3][3][3][3];
     MakeMat_NavierStokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
@@ -665,8 +682,8 @@ void MergeLinSys_LinearSolid3D_Static_P1
     const int i2 = aTet[iel*4+2];
     const int i3 = aTet[iel*4+3];
     const int aIP[4] = { i0, i1, i2, i3 };
-    double coords[4][3]; FetchData(&coords[0][0], 4, 3, aIP, aXYZ, 3, 0);
-    double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aVal, 3, 0);
+    double coords[4][3]; FetchData(&coords[0][0], 4, 3, aIP, aXYZ.data(), 3, 0);
+    double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aVal.data(), 3, 0);
     ////
     double eres[4][3];
     double emat[4][4][3][3];
@@ -715,8 +732,8 @@ void MergeLinSys_LinearSolid3D_Static_Q1
     const int i6 = aHex[iel*8+6];
     const int i7 = aHex[iel*8+7];
     const int aIP[8] = { i0, i1, i2, i3, i4, i5, i6, i7 };
-    double coords[8][3]; FetchData(&coords[0][0], 8, 3, aIP, aXYZ, 3, 0);
-    double disps[8][3]; FetchData(&disps[0][0], 8, 3, aIP, aVal, 3, 0);
+    double coords[8][3]; FetchData(&coords[0][0], 8, 3, aIP, aXYZ.data(), 3, 0);
+    double disps[8][3]; FetchData(&disps[0][0], 8, 3, aIP, aVal.data(), 3, 0);
     ////
     double eres[8][3];
     double emat[8][8][3][3];
@@ -766,10 +783,10 @@ void MergeLinSys_LinearSolid3D_Dynamic
     const int i2 = aTet[iel*4+2];
     const int i3 = aTet[iel*4+3];
     const int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ, 3,0);
-    double disps[4][3];  FetchData(&disps[0][0], 4,3,aIP, aVal, 3,0);
-    double velos[4][3];  FetchData(&velos[0][0], 4,3,aIP, aVelo,3,0);
-    double accs[4][3];   FetchData(&accs[0][0],  4,3,aIP, aAcc, 3,0);
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(), 3,0);
+    double disps[4][3];  FetchData(&disps[0][0], 4,3,aIP, aVal.data(), 3,0);
+    double velos[4][3];  FetchData(&velos[0][0], 4,3,aIP, aVelo.data(),3,0);
+    double accs[4][3];   FetchData(&accs[0][0],  4,3,aIP, aAcc.data(), 3,0);
     ////
     double eres[4][3], emat[4][4][3][3];
     MakeMat_LinearSolid3D_Dynamic_P1
@@ -817,8 +834,8 @@ void MergeLinSys_Stokes3D_Static
     const int i2 = aTet[itet*4+2];
     const int i3 = aTet[itet*4+3];
     const int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal,4,0);
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
+    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data(),4,0);
     ////
     double eres[4][4];
     double emat[4][4][4][4];
@@ -865,9 +882,9 @@ void MergeLinSys_Stokes3D_Dynamic
     const int i2 = aTet[iel*4+2];
     const int i3 = aTet[iel*4+3];
     const int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal, 4,0);
-    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo,4,0);
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
+    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data(), 4,0);
+    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data(),4,0);
     ////
     double eres[4][4];
     double emat[4][4][4][4];
@@ -913,9 +930,9 @@ void MergeLinSys_NavierStokes3D_Dynamic
     const int i2 = aTet[iel*4+2];
     const int i3 = aTet[iel*4+3];
     const int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal, 4,0);
-    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo,4,0);
+    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
+    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data(), 4,0);
+    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data(),4,0);
     ////
     double eres[4][4], emat[4][4][4][4];
     MakeMat_NavierStokes3D_Dynamic_P1(myu, rho,  g_x, g_y,g_z,

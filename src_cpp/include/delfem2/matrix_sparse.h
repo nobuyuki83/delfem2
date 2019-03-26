@@ -6,14 +6,13 @@
 class CMatrixSquareSparse
 {
 public:
-	CMatrixSquareSparse(int nblk, int len);
-  
 	CMatrixSquareSparse();
 	virtual ~CMatrixSquareSparse();
   
   void Initialize(int nblk, int len, bool is_dia);
   void operator = (const CMatrixSquareSparse& m);
-  void SetPattern(const std::vector<int>& colind, const std::vector<int>& rowptr);
+  void SetPattern(const int* colind, int ncolind,
+                  const int* rowptr, int nrowptr);
 
 	bool SetZero();
 	bool Mearge(int nblkel_col, const int* blkel_col,
@@ -26,7 +25,7 @@ public:
               const std::vector<double>& x,
               double beta,
               std::vector<double>& y) const;
-  void SetBoundaryCondition(const std::vector<int>& bc_flag);
+  void SetBoundaryCondition(const int* pBCFlag, int nBCFlag);
   void SetMasterSlave(const std::vector<int>& aMSFlag);
   double CheckSymmetry() const;
 public:
@@ -45,13 +44,19 @@ public:
 	double* m_valDia;
 };
 
-double InnerProduct
-(std::vector<double>& r_vec,
- std::vector<double>& u_vec);
+double InnerProduct(const std::vector<double>& r_vec,
+                    const std::vector<double>& u_vec);
+double InnerProduct(const double* r_vec,
+                    const double* u_vec,
+                    int ndof);
 
 void AXPY(double a,
           const std::vector<double>& x,
           std::vector<double>& y);
+void AXPY(double a,
+          const double* x,
+          double* y,
+          int n);
 
 void Solve_CG
 (double& conv_ratio,

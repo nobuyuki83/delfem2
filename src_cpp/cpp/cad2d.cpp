@@ -170,6 +170,24 @@ void CCad2D::Meshing
   }
 }
 
+void CCad2D::setBCFlagEdge
+(int* pBC,
+ const double* pXY, int np,
+ const std::vector<int>& aIE,
+ int iflag, double tolerance ) const
+{
+  for(int ip=0;ip<np;++ip){
+    if( pBC[ip] == iflag ){ continue; } // flag already set for this point
+    const double x = pXY[ip*2+0];
+    const double y = pXY[ip*2+1];
+    for(unsigned int ie=0;ie<aIE.size();++ie){
+      const CCad2D_EdgeGeo& eg = this->aEdge[ie];
+      const double dist = eg.Distance(x,y);
+      if( dist < tolerance ){ pBC[ip] = iflag; }
+    }
+  }
+}
+
 ///////////////////////////////////////////////////////////
 
 void CCad2D_EdgeGeo::GenMesh
@@ -181,6 +199,13 @@ void CCad2D_EdgeGeo::GenMesh
   const int iv1 = topo.aEdge[iedge].iv1;
   this->p0 = aVtxGeo[iv0].pos;
   this->p1 = aVtxGeo[iv1].pos;
+}
+
+double CCad2D_EdgeGeo::Distance(double x, double y) const
+{
+  CVector2 pn = GetNearest_LineSeg_Point(CVector2(x,y),
+                                         this->p0,this->p1);
+  return ::Distance(pn,CVector2(x,y));
 }
 
 ///////////////////////////////////////////////////////////

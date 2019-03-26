@@ -8,6 +8,7 @@
 
 CMatrixSquareSparse::CMatrixSquareSparse()
 {
+  std::cout << "MatrixSquareSparse -- construct" << std::endl;
 	m_nblk_col = 0;
 	m_len_col = 0;
   
@@ -59,6 +60,7 @@ void CMatrixSquareSparse::Initialize(int nblk, int len, bool is_dia)
 
 void CMatrixSquareSparse::operator = (const CMatrixSquareSparse& m)
 {
+  std::cout << "CMatrixSquareSparse -- copy" << std::endl;
   if( is_dia ){
     assert( m_nblk_col == m_nblk_row );
     assert( m_len_col == m_len_row );
@@ -163,23 +165,24 @@ bool CMatrixSquareSparse::Mearge
 }
 
 void CMatrixSquareSparse::SetPattern
-(const std::vector<int>& colind,
- const std::vector<int>& rowptr)
+(const int* pColInd, int ncolind,
+ const int* pRowPtr, int nrowptr)
 {
   assert( m_colInd != 0 );
 	assert( m_ncrs == 0 );
   assert( m_rowPtr == 0 );
   
-  assert( colind.size() == m_nblk_col+1 );
+  assert( ncolind == m_nblk_col+1 );
   for(int iblk=0;iblk<m_nblk_col+1;iblk++){
-    m_colInd[iblk] = colind[iblk];
+    m_colInd[iblk] = pColInd[iblk];
   }
-  m_ncrs = colind[m_nblk_col];
+  m_ncrs = pColInd[m_nblk_col];
+  assert( m_ncrs == nrowptr );
   ////
   if( m_rowPtr != 0 ){ delete[] m_rowPtr; m_rowPtr = 0; }
   m_rowPtr = new int [m_ncrs];
   for(int icrs=0;icrs<m_ncrs;icrs++){
-    m_rowPtr[icrs] = rowptr[icrs];
+    m_rowPtr[icrs] = pRowPtr[icrs];
   }
   ////
   const int blksize = m_len_col*m_len_row;
@@ -336,13 +339,13 @@ void CMatrixSquareSparse::MatVec
 }
 
 void CMatrixSquareSparse::SetBoundaryCondition
-(const std::vector<int>& bc_flag)
+(const int* bc_flag, int nbc_flag)
 {
   assert( this->is_dia );
   assert( this->m_nblk_row == this->m_nblk_col );
   assert( this->m_len_row == this->m_len_col );
 	const int blksize = m_len_col*m_len_row;
-  assert(bc_flag.size() == m_nblk_col*m_len_col );
+  assert( nbc_flag == m_nblk_col*m_len_col );
 	
 	for(int iblk=0;iblk<m_nblk_col;iblk++){ // set diagonal
 		for(int ilen=0;ilen<m_len_col;ilen++){
@@ -599,11 +602,23 @@ double CMatrixSquareSparse::CheckSymmetry() const
 //////////////////////////////////////////////////////////////////////////
 
 double InnerProduct
-(std::vector<double>& r_vec,
- std::vector<double>& u_vec)
+(const std::vector<double>& r_vec,
+ const std::vector<double>& u_vec)
 {
-  const int n = (int)r_vec.size();
+  const unsigned int n = r_vec.size();
   assert( u_vec.size() == n );
+  double r = 0.0;
+  for(unsigned int i=0;i<n;i++){
+    r += r_vec[i]*u_vec[i];
+  }
+  return r;
+}
+
+double InnerProduct
+(const double* r_vec,
+ const double* u_vec,
+ int n)
+{
   double r = 0.0;
   for(int i=0;i<n;i++){
     r += r_vec[i]*u_vec[i];
@@ -612,12 +627,25 @@ double InnerProduct
 }
 
 // {y} = {y} + a * {x}
-void AXPY(double a,
-          const std::vector<double>& x,
-          std::vector<double>& y)
+void AXPY
+(double a,
+ const std::vector<double>& x,
+ std::vector<double>& y)
 {
   const int n = (int)x.size();
   assert( y.size() == n );
+  for(int i=0;i<n;i++){
+    y[i] += a*x[i];
+  }
+}
+
+// {y} = {y} + a * {x}
+void AXPY
+(double a,
+ const double* x,
+ double* y,
+ int n)
+{
   for(int i=0;i<n;i++){
     y[i] += a*x[i];
   }

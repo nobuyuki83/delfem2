@@ -224,8 +224,10 @@ void SetNewProblem()
   }
   {
     std::vector<int> elsup_ind, elsup;
-    makeElemSurroundingPoint(elsup_ind, elsup, aTri, 3, aXYZ.size()/3);
-    makeOneRingNeighborhood(psup_ind, psup, aTri, elsup_ind, elsup, 3, aXYZ.size()/3);
+    makeElemSurroundingPoint(elsup_ind, elsup,
+                             aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
+    makeOneRingNeighborhood(psup_ind, psup,
+                            aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
   }
   {
     std::vector<double> aNorm;

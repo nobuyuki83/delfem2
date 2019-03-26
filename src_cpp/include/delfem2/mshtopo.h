@@ -118,19 +118,18 @@ inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
   return noelElemFace0[type];
 }
 
-void SortIndexedArray
-(std::vector<int>& index,
- std::vector<int>& array);
+void SortIndexedArray(const std::vector<int>& index,
+                      std::vector<int>& array);
+void SortIndexedArray(const int* index, const int size,
+                      int* array);
 
-void Print_IndexedArray
-(const std::vector<int>& index,
- const std::vector<int>& array);
+void Print_IndexedArray(const std::vector<int>& index,
+                        const std::vector<int>& array);
 
-void addMasterSlavePattern
-(const std::vector<int>& aMSFlag,
- int ndim,
- std::vector<int>& index,
- std::vector<int>& array);
+void addMasterSlavePattern(const std::vector<int>& aMSFlag,
+                           int ndim,
+                           std::vector<int>& index,
+                           std::vector<int>& array);
 
 //////////////////////////////////////
 void AddElement(const MESHELEM_TYPE& femelem_type,
@@ -162,7 +161,8 @@ void FlipElement(std::vector<int>& aElem_Flip,
 void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
                               ////
-                              const std::vector<int>& aElem,
+                              const int* aElem,
+                              int nEl,
                               int nPoEl,
                               int nPo);
 void makeElemSurroundingPoint_Tri(std::vector<int>& elsup_ind,
@@ -227,7 +227,7 @@ void makeBoundary(std::vector<int>& aElemInd_Bound,
 void makeOneRingNeighborhood(std::vector<int>& psup_ind,
                              std::vector<int>& psup,
                              ////
-                             const std::vector<int>& aElem,
+                             const int* pElem,
                              const std::vector<int>& elsup_ind,
                              const std::vector<int>& elsup,
                              int nnoel,
@@ -235,7 +235,8 @@ void makeOneRingNeighborhood(std::vector<int>& psup_ind,
 void makeOneRingNeighborhood(std::vector<int>& psup_ind,
                              std::vector<int>& psup,
                              ////
-                             const std::vector<int>& aElem,
+                             const int* pElem,
+                             int nEl,
                              int nPoEl,
                              int nPo);
 void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,

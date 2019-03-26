@@ -14,6 +14,10 @@
 #include "delfem2/bv.h"    // include gl
 #include "delfem2/cad2d.h"
 
+#include "delfem2/matrix_sparse.h"
+#include "delfem2/ilu_sparse.h"
+#include "delfem2/fem.h"
+
 namespace py = pybind11;
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +51,93 @@ std::tuple<py::array_t<double>, py::array_t<int>> GetMesh_Cad
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
   py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::tie(npXY,npTri);
+}
+
+
+void MatrixSquareSparse_SetPattern
+(CMatrixSquareSparse& mss,
+ const py::array_t<int>& psup_ind,
+ const py::array_t<int>& psup)
+{
+  assert( psup_ind.ndim()  == 1 );
+  assert( psup.ndim()  == 1 );
+  const int np = mss.m_nblk_col;
+  assert( psup_ind.shape()[0] == np+1 );
+  mss.SetPattern(psup_ind.data(), psup_ind.shape()[0],
+                 psup.data(),     psup.shape()[0]);
+}
+
+void MatrixSquareSparse_SetFixBC
+(CMatrixSquareSparse& mss,
+ const py::array_t<int>& flagbc)
+{
+  mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0]);
+}
+
+
+void PrecondILU0
+(CPreconditionerILU&  mat_ilu,
+ const CMatrixSquareSparse& mss)
+{
+  mat_ilu.Initialize_ILU0(mss);
+}
+
+void PyMergeLinSys_Poission2D
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double alpha, double source,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& aTri,
+ const py::array_t<double>& aVal)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_Poission2D(mss, (double*)buff_vecb.ptr,
+                         alpha, source,
+                         aXY.data(), aXY.shape()[0],
+                         aTri.data(), aTri.shape()[0],
+                         aVal.data());
+}
+
+
+void PySolve_PCG
+(py::array_t<double>& vec_b,
+ py::array_t<double>& vec_x,
+ double conv_ratio, double iteration,
+ const CMatrixSquareSparse& mat_A,
+ const CPreconditionerILU& ilu_A)
+{
+//  std::cout << "solve pcg" << std::endl;
+  auto buff_vecb = vec_b.request();
+  auto buff_vecx = vec_x.request();
+  Solve_PCG((double*)buff_vecb.ptr,
+            (double*)buff_vecx.ptr,
+            conv_ratio,iteration,
+            mat_A,ilu_A);
+}
+
+void PySortIndexedArray
+(py::array_t<int>& psup_ind,
+ py::array_t<int>& psup)
+{
+//  std::cout << "hoge " << psup_ind.size() << " " << psup.size() << std::endl;
+  auto buff_psup = psup.request();
+  SortIndexedArray(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
+}
+
+void PyCad_SetBCFlagEdge
+(py::array_t<int>& vec_bc,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& np_ie,
+ const CCad2D& cad,
+ int iflag,
+ double torelance)
+{
+//  std::cout << "cad_SetBCFlagEdge" << std::endl;
+  auto buff_bc = vec_bc.request();
+  std::vector<int> aIE(np_ie.data(),np_ie.data()+np_ie.shape()[0]);
+  cad.setBCFlagEdge((int*)buff_bc.ptr,
+                    aXY.data(), aXY.shape()[0],
+                    aIE,iflag,torelance);
 }
 
 
@@ -114,6 +205,26 @@ PYBIND11_MODULE(dfm2, m) {
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())
   .def(py::init<double, double, const std::string&>());
+  
+  py::class_<CMatrixSquareSparse>(m,"MatrixSquareSparse")
+  .def(py::init<>())
+  .def("initialize", &CMatrixSquareSparse::Initialize)
+  .def("setZero",    &CMatrixSquareSparse::SetZero);
+  
+  py::class_<CPreconditionerILU>(m,"PreconditionerILU")
+  .def(py::init<>())
+  .def("ilu_decomp", &CPreconditionerILU::DoILUDecomp)
+  .def("set_value", &CPreconditionerILU::SetValueILU);
+//  .def(py::init<const CPreconditionerILU&>);
+  
+  m.def("matrixSquareSparse_setPattern", &MatrixSquareSparse_SetPattern);
+  m.def("matrixSquareSparse_setFixBC", &MatrixSquareSparse_SetFixBC);
+  m.def("precond_ilu0",  &PrecondILU0);
+  m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
+  m.def("linsys_solve_pcg", &PySolve_PCG);
+  m.def("sortIndexedArray", &PySortIndexedArray);
+  m.def("cad_setBCFlagEdge",&PyCad_SetBCFlagEdge);
+
 
   ///////////////////////////////////
   // gl misc

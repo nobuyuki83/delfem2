@@ -21,11 +21,36 @@ void Print_IndexedArray
 }
 
 void SortIndexedArray
-(std::vector<int>& index,
+(const std::vector<int>& index,
  std::vector<int>& array)
 {
   if( index.size() == 0 ) return;
   const int size = (int)index.size()-1;
+  for(int ipoin=0;ipoin<size;ipoin++){
+    const int is = index[ipoin  ];
+    const int ie = index[ipoin+1];
+    if( is == ie ) continue;
+    assert( is < ie );
+    int itmp;
+    for(int i=is;i<ie-1;i++){
+      for(int j=ie-1;j>i;j--){
+        if( array[j] < array[j-1] ){
+          itmp = array[j];
+          array[j] = array[j-1];
+          array[j-1] = itmp;
+        }
+      }
+    }
+  }
+}
+
+void SortIndexedArray
+(const int* index, const int size,
+ int* array)
+{
+  if( size == 0 ) return;
+//  if( index.size() == 0 ) return;
+//  const int size = (int)index.size()-1;
   for(int ipoin=0;ipoin<size;ipoin++){
     const int is = index[ipoin  ];
     const int ie = index[ipoin+1];
@@ -148,15 +173,16 @@ void makeElemSurroundingPoint
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
- const std::vector<int>& aElem,
+ const int* pElem,
+ int nElem,
  int nPoEl,
  int nPo)
 {
-  const int nElem = (int)aElem.size()/nPoEl;
+//  const int nElem = (int)aElem.size()/nPoEl;
   elsup_ind.assign(nPo+1,0);
   for(int ielem=0;ielem<nElem;ielem++){
     for(int inoel=0;inoel<nPoEl;inoel++){
-      const int ino1 = aElem[ielem*nPoEl+inoel];
+      const int ino1 = pElem[ielem*nPoEl+inoel];
       if( ino1 == -1 ){ break; }
       elsup_ind[ino1+1] += 1;
     }
@@ -168,7 +194,7 @@ void makeElemSurroundingPoint
   elsup.resize(nelsup);
   for(int ielem=0;ielem<nElem;ielem++){
     for(int inoel=0;inoel<nPoEl;inoel++){
-      int ino1 = aElem[ielem*nPoEl+inoel];
+      int ino1 = pElem[ielem*nPoEl+inoel];
       if( ino1 == -1 ){ break; }
       int ind1 = elsup_ind[ino1];
       elsup[ind1] = ielem;
@@ -188,7 +214,7 @@ void makeElemSurroundingPoint_Tri
  const std::vector<int>& aTri,
  int nXYZ)
 {
-  makeElemSurroundingPoint(elsup_ind, elsup, aTri, 3, nXYZ);
+  makeElemSurroundingPoint(elsup_ind, elsup, aTri.data(), aTri.size()/3, 3, nXYZ);
 }
 
 void makeElemSurroundingPoint
@@ -313,7 +339,7 @@ void makeSurroundingRelationship
 {
   const int nnoel = nNodeElem(type);
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup, aElem, nnoel, nXYZ);
+  makeElemSurroundingPoint(elsup_ind, elsup, aElem.data(), aElem.size()/nnoel, nnoel, nXYZ);
   makeSurroundingRelationship(aElemSurRel, aElem, type, elsup_ind,elsup);
 }
 
@@ -450,7 +476,7 @@ void makeOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const std::vector<int>& aElem,
+ const int* pElem,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nnoel,
@@ -463,7 +489,7 @@ void makeOneRingNeighborhood
     for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       int jelem = elsup[ielsup];
       for(int jnoel=0;jnoel<nnoel;jnoel++){
-        int jnode = aElem[jelem*nnoel+jnoel];
+        int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
           aflg[jnode] = ipoint;
           psup_ind[ipoint+1]++;
@@ -482,7 +508,7 @@ void makeOneRingNeighborhood
     for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       int jelem = elsup[ielsup];
       for(int jnoel=0;jnoel<nnoel;jnoel++){
-        int jnode = aElem[jelem*nnoel+jnoel];
+        int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
           aflg[jnode] = ipoint;
           const int ind = psup_ind[ipoint];
@@ -502,15 +528,16 @@ void makeOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const std::vector<int>& aElem,
+ const int* pElem,
+ int nEl,
  int nPoEl,
  int nPo)
 {
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind, elsup,
-                           aElem,nPoEl, nPo);
+                           pElem, nEl, nPoEl, nPo);
   makeOneRingNeighborhood(psup_ind, psup,
-                          aElem, elsup_ind,elsup, nPoEl, nPo);
+                          pElem, elsup_ind,elsup, nPoEl, nPo);
 }
 
 void makeOneRingNeighborhood_TriFan
@@ -1056,7 +1083,7 @@ void QuadSubdiv
   const int nq0 = (int)aQuad0.size()/4;
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind,elsup,
-                           aQuad0,4,nPoint0);
+                           aQuad0.data(),aQuad0.size()/4,4,nPoint0);
   makeEdgeQuad(psup_ind,psup,
                aQuad0, elsup_ind, elsup, nPoint0);
   const unsigned int ne0 = (int)psup.size();
@@ -1278,7 +1305,7 @@ void HexSubdiv
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
   std::vector<int> elsupIndHex0, elsupHex0;
   makeElemSurroundingPoint(elsupIndHex0, elsupHex0,
-                           aHex0,8,nhp0);
+                           aHex0.data(),aHex0.size()/8,8,nhp0);
   
   //edge
   makeEdgeHex(psupIndHex0, psupHex0,
@@ -1305,7 +1332,7 @@ void HexSubdiv
   }
   std::vector<int> elsupIndQuadHex0, elsupQuadHex0;
   makeElemSurroundingPoint(elsupIndQuadHex0,elsupQuadHex0,
-                           aQuadHex0,4,nhp0);
+                           aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   
   const int neh0 = (int)psupHex0.size();
   const int nfh0 = (int)aQuadHex0.size()/4;
