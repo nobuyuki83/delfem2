@@ -71,7 +71,7 @@ void MatrixSquareSparse_SetFixBC
 (CMatrixSquareSparse& mss,
  const py::array_t<int>& flagbc)
 {
-  mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0]);
+  mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0],flagbc.shape()[1]);
 }
 
 
@@ -99,7 +99,26 @@ void PyMergeLinSys_Poission2D
 }
 
 
-void PySolve_PCG
+void PyMergeLinSys_LinearSolid2DStatic
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double myu, double lambda, double rho, double g_x, double g_y,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& aTri,
+ const py::array_t<double>& aVal)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_LinearSolid2D_Static(mss, (double*)buff_vecb.ptr,
+                                   myu,lambda,rho,g_x,g_y,
+                                   aXY.data(), aXY.shape()[0],
+                                   aTri.data(), aTri.shape()[0],
+                                   aVal.data());
+
+}
+
+
+
+std::vector<double> PySolve_PCG
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
  double conv_ratio, double iteration,
@@ -109,10 +128,10 @@ void PySolve_PCG
 //  std::cout << "solve pcg" << std::endl;
   auto buff_vecb = vec_b.request();
   auto buff_vecx = vec_x.request();
-  Solve_PCG((double*)buff_vecb.ptr,
-            (double*)buff_vecx.ptr,
-            conv_ratio,iteration,
-            mat_A,ilu_A);
+  return Solve_PCG((double*)buff_vecb.ptr,
+                   (double*)buff_vecx.ptr,
+                   conv_ratio,iteration,
+                   mat_A,ilu_A);
 }
 
 void PySortIndexedArray
@@ -129,15 +148,18 @@ void PyCad_SetBCFlagEdge
  const py::array_t<double>& aXY,
  const py::array_t<int>& np_ie,
  const CCad2D& cad,
+ const py::array_t<int>& npDimValFlag,
  int iflag,
  double torelance)
 {
 //  std::cout << "cad_SetBCFlagEdge" << std::endl;
   auto buff_bc = vec_bc.request();
   std::vector<int> aIE(np_ie.data(),np_ie.data()+np_ie.shape()[0]);
-  cad.setBCFlagEdge((int*)buff_bc.ptr,
-                    aXY.data(), aXY.shape()[0],
-                    aIE,iflag,torelance);
+  std::vector<int> aDimValFlag(npDimValFlag.data(),npDimValFlag.data()+npDimValFlag.shape()[0]);
+  cad.setBCFlagEdge((int*)buff_bc.ptr, vec_bc.shape()[0], vec_bc.shape()[1],
+                    aXY.data(),
+                    aIE,aDimValFlag,
+                    iflag,torelance);
 }
 
 
@@ -221,10 +243,10 @@ PYBIND11_MODULE(dfm2, m) {
   m.def("matrixSquareSparse_setFixBC", &MatrixSquareSparse_SetFixBC);
   m.def("precond_ilu0",  &PrecondILU0);
   m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
+  m.def("mergeLinSys_linearSolid2DStatic",&PyMergeLinSys_LinearSolid2DStatic);
   m.def("linsys_solve_pcg", &PySolve_PCG);
   m.def("sortIndexedArray", &PySortIndexedArray);
   m.def("cad_setBCFlagEdge",&PyCad_SetBCFlagEdge);
-
 
   ///////////////////////////////////
   // gl misc

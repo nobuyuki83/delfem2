@@ -1034,15 +1034,14 @@ void DrawMeshTri2D_Face
 }
 
 void DrawMeshTri2D_FaceDisp2D
-(const std::vector<int>& aTri,
- const std::vector<double>& aXY,
- const std::vector<double>& aDisp)
+(const double* aXY, int nXY,
+ const int* aTri, int nTri,
+ const double* aDisp)
 {
-  const int ntri = (int)aTri.size()/3;
   //  const int nxys = (int)aXY.size()/2;
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<ntri;itri++){
+  for(int itri=0;itri<nTri;itri++){
     //      double color[3];
     const int i0 = aTri[itri*3+0];
     const int i1 = aTri[itri*3+1];
@@ -1056,9 +1055,10 @@ void DrawMeshTri2D_FaceDisp2D
   }
   ::glEnd();
   ////////////////
+  ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(int itri=0;itri<ntri;itri++){
+  for(int itri=0;itri<nTri;itri++){
     const int i0 = aTri[itri*3+0];
     const int i1 = aTri[itri*3+1];
     const int i2 = aTri[itri*3+2];

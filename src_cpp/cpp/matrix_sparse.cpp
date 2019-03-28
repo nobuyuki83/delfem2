@@ -339,13 +339,14 @@ void CMatrixSquareSparse::MatVec
 }
 
 void CMatrixSquareSparse::SetBoundaryCondition
-(const int* bc_flag, int nbc_flag)
+(const int* bc_flag, int np, int ndimval)
 {
   assert( this->is_dia );
   assert( this->m_nblk_row == this->m_nblk_col );
   assert( this->m_len_row == this->m_len_col );
 	const int blksize = m_len_col*m_len_row;
-  assert( nbc_flag == m_nblk_col*m_len_col );
+  assert( np == m_nblk_col );
+  assert( ndimval == m_len_col );
 	
 	for(int iblk=0;iblk<m_nblk_col;iblk++){ // set diagonal
 		for(int ilen=0;ilen<m_len_col;ilen++){

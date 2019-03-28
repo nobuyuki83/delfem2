@@ -316,31 +316,31 @@ void MergeLinSys_Diffusion3D
   }
 }
 
-void MergeLinSys_LienarSolid2D_Static
+void MergeLinSys_LinearSolid2D_Static
 (CMatrixSquareSparse& mat_A,
- std::vector<double>& vec_b,
+ double* vec_b,
  const double myu,
  const double lambda,
  const double rho,
  const double g_x,
  const double g_y,
- const std::vector<double>& aXY1,
- const std::vector<int>& aTri1,
- const std::vector<double>& aVal)
+ const double* aXY1, int nXY,
+ const int* aTri1, int nTri,
+ const double* aVal)
 {
-  const int np = (int)aXY1.size()/2;
+  const int np = nXY;
   const int nDoF = np*2;
   ////
   mat_A.SetZero();
-  vec_b.assign(nDoF, 0.0);
+  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<(int)aTri1.size()/3; ++iel){
+  for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal.data(),2,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
+    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal,2,0);
     ////
     double eres[3][2];
     double emat[3][3][2][2];

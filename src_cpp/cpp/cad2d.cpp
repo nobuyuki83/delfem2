@@ -171,19 +171,26 @@ void CCad2D::Meshing
 }
 
 void CCad2D::setBCFlagEdge
-(int* pBC,
- const double* pXY, int np,
+(int* pBC, int np, int nDimVal,
+ const double* pXY,
  const std::vector<int>& aIE,
+ const std::vector<int>& aDimValFlag,
  int iflag, double tolerance ) const
 {
   for(int ip=0;ip<np;++ip){
-    if( pBC[ip] == iflag ){ continue; } // flag already set for this point
+//    if( pBC[ip*nDimVal+idimVal] == iflag ){ continue; } // flag already set for this point
     const double x = pXY[ip*2+0];
     const double y = pXY[ip*2+1];
-    for(unsigned int ie=0;ie<aIE.size();++ie){
-      const CCad2D_EdgeGeo& eg = this->aEdge[ie];
+    for(unsigned int iie=0;iie<aIE.size();++iie){
+      const int ie0 = aIE[iie];
+      const CCad2D_EdgeGeo& eg = this->aEdge[ie0];
       const double dist = eg.Distance(x,y);
-      if( dist < tolerance ){ pBC[ip] = iflag; }
+      if( dist > tolerance ){ continue; }
+      for(unsigned int idvf=0;idvf<aDimValFlag.size();++idvf){
+        int idimval = aDimValFlag[idvf];
+        assert(idimval>=0&&idimval<nDimVal);
+        pBC[ip*nDimVal+idimval] = iflag;
+      }
     }
   }
 }
