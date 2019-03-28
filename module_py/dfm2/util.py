@@ -15,6 +15,7 @@ class Mesh():
   def __init__(self,
                np_pos=numpy.ndarray((0,3),dtype=numpy.float32),
                np_elm=numpy.ndarray((0,3),dtype=numpy.int)):
+    print("PyMesh -- construct")
     assert type(np_pos) == numpy.ndarray
     assert type(np_elm) == numpy.ndarray
     self.color_face = [0.8, 0.8, 0.8, 1.0]
@@ -108,31 +109,101 @@ def mesh_cad(cad,len) -> Mesh:
 class Field():
   def __init__(self,
                mesh: Mesh,
-               val: numpy.ndarray):
+               val_color= None,
+               val_disp=None):
     self.mesh = mesh
-    self.val = val
-    self.draw_val_min = val.min()
-    self.draw_val_max = val.max()
-    self.color_mode = 'bcgyr'
-
+    self.val_color = val_color
+    if type(val_color) == numpy.ndarray:
+      self.draw_val_min = val_color.min()
+      self.draw_val_max = val_color.max()
+      self.color_mode = 'bcgyr'
+    self.val_disp = val_disp
 
   def draw(self):
-    self.color_map = ColorMap(self.draw_val_min,self.draw_val_max,self.color_mode)
-    draw_field(self.mesh.np_pos, self.mesh.np_elm,
-               self.val,
-               self.color_map)
+    if type(self.val_color) == numpy.ndarray:
+      self.color_map = ColorMap(self.draw_val_min,self.draw_val_max,self.color_mode)
+      drawField_colorMap(self.mesh.np_pos, self.mesh.np_elm,
+                         self.val_color,
+                         self.color_map)
+    if type(self.val_disp) == numpy.ndarray:
+      drawField_disp(self.mesh.np_pos, self.mesh.np_elm,
+                     self.val_disp)
 
   def minmax_xyz(self):
     return self.mesh.minmax_xyz()
 
 ######################################################
 
+class FEM_LinSys():
+  def __init__(self,
+               np:int, ndimval:int, pattern:tuple):
+    # vectors
+    self.vec_bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
+    self.vec_f = numpy.zeros((np,ndimval), dtype=numpy.float64)
+    self.vec_x = numpy.zeros((np,ndimval), dtype=numpy.float64)
 
-class FEM():
+    # matrix
+    self.mat = MatrixSquareSparse()
+    self.mat.initialize(np, ndimval, True)
+    psup_ind,psup = pattern[0],pattern[1]
+    sortIndexedArray(psup_ind, psup)
+    matrixSquareSparse_setPattern(self.mat, psup_ind, psup)
+
+    # preconditioner
+    self.mat_prec = PreconditionerILU()
+    precond_ilu0(self.mat_prec, self.mat)
+
+    self.conv_hist = []
+
+  def SetZero(self):
+    self.mat.setZero()
+    self.vec_f[:,:] = 0.0
+
+  def Solve(self):
+    #### setting bc
+    self.vec_f[self.vec_bc != 0] = 0.0
+    matrixSquareSparse_setFixBC(self.mat, self.vec_bc)
+
+    #### solving matrix
+    self.mat_prec.set_value(self.mat)
+    self.mat_prec.ilu_decomp()
+    self.conv_hist = linsys_solve_pcg(self.vec_f, self.vec_x,
+                                 0.0001, 100, self.mat, self.mat_prec)
+    self.vec_x[self.vec_bc != 0] = 0.0
+
+########################################
+
+
+class FEM_LinearSolid2DStatic():
   def __init__(self,
                mesh: Mesh):
     self.mesh = mesh
-#    self.mat = MatrixSquareSparse(mesh.np_pos.shape[0],1)
+    np = mesh.np_pos.shape[0]
+    self.ls = FEM_LinSys(np,2,pattern=mesh.psup())
+    self.vec_val = numpy.zeros((np,2), dtype=numpy.float64)  # initial guess is zero
+
+  def solve(self):
+    self.ls.SetZero()
+    mergeLinSys_linearSolid2DStatic(self.ls.mat, self.ls.vec_f,
+                                    1.0, 0.0, 1.0, 0.0, -0.1,
+                                    self.mesh.np_pos, self.mesh.np_elm, self.vec_val)
+    self.ls.Solve()
+    self.vec_val += self.ls.vec_x
 
 
+class FEM_Poisson2D():
+  def __init__(self,
+               mesh: Mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    self.ls = FEM_LinSys(np,1,mesh.psup())
+    self.vec_val = numpy.zeros((np,1), dtype=numpy.float64)  # initial guess is zero
 
+  def solve(self):
+    self.ls.SetZero()
+
+    mergeLinSys_poission2D(self.ls.mat, self.ls.vec_f,
+                           1.0, 0.1,
+                           self.mesh.np_pos, self.mesh.np_elm, self.vec_val)
+    self.ls.Solve()
+    self.vec_val += self.ls.vec_x

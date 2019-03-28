@@ -77,6 +77,7 @@ class CCad2D
 {
 public:
   CCad2D(){
+    std::cout << "CCAD2D -- construct" << std::endl;
     ivtx_picked = -1;
   }
   void Clear(){
@@ -98,9 +99,10 @@ public:
   void Meshing(std::vector<double>& aXY,
                std::vector<int>& aTri,
                double len) const;
-  void setBCFlagEdge(int* pBC,
-                     const double* pXY, int nXY,
+  void setBCFlagEdge(int* pBC, int np, int nDimVal,
+                     const double* pXY,
                      const std::vector<int>& aIE,
+                     const std::vector<int>& aDimValFlag,
                      int iflag, double torelance) const;
 public:
 public:

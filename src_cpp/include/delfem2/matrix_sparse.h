@@ -25,7 +25,7 @@ public:
               const std::vector<double>& x,
               double beta,
               std::vector<double>& y) const;
-  void SetBoundaryCondition(const int* pBCFlag, int nBCFlag);
+  void SetBoundaryCondition(const int* pBCFlag, int nP, int ndimVal);
   void SetMasterSlave(const std::vector<int>& aMSFlag);
   double CheckSymmetry() const;
 public:

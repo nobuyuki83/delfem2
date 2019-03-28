@@ -10,10 +10,11 @@
 namespace py = pybind11;
 
 
-void DrawField(const py::array_t<double>& pos,
-               const py::array_t<int>& elm,
-               const py::array_t<double>& val,
-               const CColorMap& color_map)
+void DrawField_ColorMap
+(const py::array_t<double>& pos,
+ const py::array_t<int>& elm,
+ const py::array_t<double>& val,
+ const CColorMap& color_map)
 {
 //  DrawMeshTri2D_ScalarP1(me.aPos,me.aElem,a.data(),1,0,colorMap);
   const int np = pos.shape()[0];
@@ -36,6 +37,29 @@ void DrawField(const py::array_t<double>& pos,
   }
 }
 
+void DrawField_Disp
+(const py::array_t<double>& pos,
+ const py::array_t<int>& elm,
+ const py::array_t<double>& disp)
+{
+  //  DrawMeshTri2D_ScalarP1(me.aPos,me.aElem,a.data(),1,0,colorMap);
+  const int np = pos.shape()[0];
+  const int ndim = pos.shape()[1];
+  const int nelm = elm.shape()[0];
+  const int nnoelm = elm.shape()[1];
+  const int ndimv = disp.shape()[1];
+  assert( disp.shape()[0] == np );
+  assert( disp.shape()[1] == ndim );
+  if( ndim == 3 ){
+  }
+  else if( ndim == 2 ){
+    DrawMeshTri2D_FaceDisp2D(pos.data(), np,
+                             elm.data(), nelm,
+                             disp.data());
+  }
+}
+
 void init_field(py::module &m){
-  m.def("draw_field",&DrawField);
+  m.def("drawField_colorMap",&DrawField_ColorMap);
+  m.def("drawField_disp",&DrawField_Disp);
 }

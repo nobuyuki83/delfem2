@@ -62,10 +62,10 @@ class WindowGLFW:
     glfw.make_context_current(self.win)
     ###
     self.wm = WindowManagerGLFW(view_height)
-    self.draw_func = None
-    glEnable(GL_DEPTH_TEST)
+#    self.draw_func = None
     self.list_func_mouse = []
     self.list_func_motion = []
+    glEnable(GL_DEPTH_TEST)
 
   def draw_loop(self,list_draw_func,bgcolor=(1,1,1)):
     """
@@ -131,7 +131,7 @@ def winDraw3d(list_obj:list,
               bgcolor=(1,1,1),
               glsl_vrt="",
               glsl_frg="",
-              camera_eye_up=[+0.0,+0.0,-1.0, +0.0,+1.0,+0.0],
+              camera_eye_up=(+0.0,+0.0,-1.0, +0.0,+1.0,+0.0),
               camera_scale=1.0):
 
   """

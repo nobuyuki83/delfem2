@@ -875,7 +875,7 @@ bool CPreconditionerILU::DoILUDecomp()
 
 
 
-void Solve_PCG
+std::vector<double> Solve_PCG
 (double* r_vec,
  double* x_vec,
  double conv_ratio,
@@ -883,13 +883,11 @@ void Solve_PCG
  const CMatrixSquareSparse& mat,
  const CPreconditionerILU& ilu)
 {
-	const double conv_ratio_tol = conv_ratio;
-	const int mx_iter = iteration;
-    
 	const int nblk = mat.m_nblk_col;
   const int len = mat.m_len_col;
 //  assert(r_vec.size() == nblk*len);
-  const int ndof = nblk*len;  
+  const int ndof = nblk*len;
+  std::vector<double> aResHistry;
   
   // {x} = 0
 //  x_vec.resize(ndof);
@@ -898,13 +896,9 @@ void Solve_PCG
 	double inv_sqnorm_res0;
 	{
 		const double sqnorm_res0 = InnerProduct(r_vec,r_vec,ndof);
-		if( sqnorm_res0 < 1.0e-30 ){
-			conv_ratio = 0.0;
-			iteration = 0;
-			return;
-		}
+    aResHistry.push_back(sqnorm_res0);
+		if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
 		inv_sqnorm_res0 = 1.0 / sqnorm_res0;
-    std::cout << "sqnorm_res0:" << sqnorm_res0 << std::endl;
 	}
   
   // {Pr} = [P]{r}
@@ -915,7 +909,7 @@ void Solve_PCG
   
   // rPr = ({r},{Pr})
 	double rPr = InnerProduct(r_vec,Pr_vec.data(),ndof);
-	for(int iitr=0;iitr<mx_iter;iitr++){
+	for(int iitr=0;iitr<iteration;iitr++){
     
 		{
       std::vector<double>& Ap_vec = Pr_vec;      
@@ -932,11 +926,9 @@ void Solve_PCG
     
 		{	// Converge Judgement
 			double sqnorm_res = InnerProduct(r_vec,r_vec,ndof);
-       std::cout << iitr << " " << sqrt(sqnorm_res) << std::endl;
-			if( sqnorm_res * inv_sqnorm_res0 < conv_ratio_tol*conv_ratio_tol ){
-				conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res0 );
-				iteration = iitr;
-				return;
+      aResHistry.push_back(sqrt(sqnorm_res));
+			if( sqnorm_res * inv_sqnorm_res0 < conv_ratio*conv_ratio ){
+				return aResHistry;
 			}
 		}
     
@@ -955,8 +947,7 @@ void Solve_PCG
 	}
 	// Converge Judgement
   double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
-  conv_ratio = sqrt( sq_norm_res * inv_sqnorm_res0 );
-  return;
+  return aResHistry;
 }
 
 

@@ -100,16 +100,16 @@ void MergeLinSys_Diffusion3D(CMatrixSquareSparse& mat_A,
                              const std::vector<double>& aVal,
                              const std::vector<double>& aVelo);
 
-void MergeLinSys_LienarSolid2D_Static(CMatrixSquareSparse& mat_A,
-                                      std::vector<double>& vec_b,
+void MergeLinSys_LinearSolid2D_Static(CMatrixSquareSparse& mat_A,
+                                      double* vec_b,
                                       const double myu,
                                       const double lambda,
                                       const double rho,
                                       const double g_x,
                                       const double g_y,
-                                      const std::vector<double>& aXY1,
-                                      const std::vector<int>& aTri1,
-                                      const std::vector<double>& aVal);
+                                      const double* aXY1, int nXY,
+                                      const int* aTri1, int nTri,
+                                      const double* aVal);
 
 void MergeLinSys_LinearSolid2D_Dynamic(CMatrixSquareSparse& mat_A,
                                       std::vector<double>& vec_b,

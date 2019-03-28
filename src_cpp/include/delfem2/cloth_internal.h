@@ -217,7 +217,7 @@ void StepTime_InternalDynamics
     mat_A.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
     mat_A.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   for(unsigned int ip=0;ip<np;ip++){
     if( aBCFlag[ip] == 0 ) continue;
     vec_b[ip*3+0] = 0;
@@ -288,7 +288,7 @@ void StepTime_InternalDynamicsILU
     mat_A.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
     mat_A.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
-  mat_A.SetBoundaryCondition(aBCFlag.data(), aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(), aBCFlag.size()/3,3);
   for(unsigned int i=0;i<nDof;i++){
     if( aBCFlag[i] == 0 ) continue;
     vec_b[i] = 0;

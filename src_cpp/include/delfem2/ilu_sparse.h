@@ -28,19 +28,17 @@ public:
 };
 
 
-void Solve_PCG
-(double* r_vec,
- double* u_vec,
- double conv_ratio,
- int iteration,
- const CMatrixSquareSparse& mat,
- const CPreconditionerILU& ilu);
+std::vector<double> Solve_PCG(double* r_vec,
+                              double* u_vec,
+                              double conv_ratio,
+                              int iteration,
+                              const CMatrixSquareSparse& mat,
+                              const CPreconditionerILU& ilu);
 
-void Solve_PBiCGSTAB
-(double& conv_ratio, int& num_iter,
- const CMatrixSquareSparse& mat,
- const CPreconditionerILU& ilu,
- std::vector<double>& r_vec,
- std::vector<double>& x_vec);
+void Solve_PBiCGSTAB(double& conv_ratio, int& num_iter,
+                     const CMatrixSquareSparse& mat,
+                     const CPreconditionerILU& ilu,
+                     std::vector<double>& r_vec,
+                     std::vector<double>& x_vec);
 
 #endif /* defined(__internal_cloth_sparse__ilu_sparse__) */

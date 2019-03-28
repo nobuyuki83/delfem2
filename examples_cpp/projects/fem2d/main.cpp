@@ -242,7 +242,7 @@ void SolveProblem_Poisson()
                          aXY1.data(),aXY1.size()/2,
                          aTri1.data(),aTri1.size()/3,
                          aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////////////
   std::vector<double> vec_x;
@@ -271,7 +271,7 @@ void SolveProblem_Diffusion()
                           dt_timestep, gamma_newmark,
                           aXY1,aTri1,
                           aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
   std::vector<double> vec_x;
@@ -350,11 +350,12 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LienarSolid2D_Static(
-                                   mat_A,vec_b,
+  MergeLinSys_LinearSolid2D_Static(mat_A,vec_b.data(),
                                    myu,lambda,rho,g_x,g_y,
-                                   aXY1,aTri1,aVal);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+                                   aXY1.data(), aXY1.size()/2,
+                                   aTri1.data(), aTri1.size()/3,
+                                   aVal.data());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -393,7 +394,7 @@ void SolveProblem_LinearSolid_Dynamic()
                                     dt_timestep,gamma_newmark,beta_newmark,
                                     aXY1,aTri1,
                                     aVal,aVelo,aAcc);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -556,7 +557,7 @@ void SolveProblem_Stokes_Static()
                               myu,rho,g_x,g_y,
                               aXY1,aTri1,
                               aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -596,7 +597,7 @@ void SolveProblem_Stokes_Dynamic()
                                dt_timestep,gamma_newmark,
                                aXY1,aTri1,                             
                                aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -641,7 +642,7 @@ void SolveProblem_NavierStokes_Dynamic()
                                      dt_timestep,gamma_newmark,
                                      aXY1,aTri1,
                                      aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
   setRHS_MasterSlave(vec_b,aMSFlag);
@@ -703,7 +704,9 @@ void myGlutDisplay(void)
     DrawPoints2D_Points(aXY1);
   }
   else if( iproblem == 2 || iproblem == 3 ){
-    DrawMeshTri2D_FaceDisp2D(aTri1,aXY1,aVal);
+    DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
+                             aTri1.data(), aTri1.size()/3,
+                             aVal.data());
   }
   else if( iproblem == 4 || iproblem == 5 || iproblem == 6
           || iproblem == 7 || iproblem == 8 || iproblem == 9 )
