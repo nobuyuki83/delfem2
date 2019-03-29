@@ -123,7 +123,7 @@ void PyMergeLinSys_Diffuse2D
 
 
 
-void PyMergeLinSys_LinearSolid2DStatic
+void PyMergeLinSys_LinearSolidStatic2D
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
  double myu, double lambda, double rho, double g_x, double g_y,
@@ -139,6 +139,29 @@ void PyMergeLinSys_LinearSolid2DStatic
                                    aVal.data());
 
 }
+
+
+void PyMergeLinSys_LinearSolidDynamic2D
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double myu, double lambda, double rho, double g_x, double g_y,
+ double dt_timestep, double gamma_newmark, double beta_newmark,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& aTri,
+ const py::array_t<double>& aVal,
+ const py::array_t<double>& aVelo,
+ const py::array_t<double>& aAcc)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_LinearSolid2D_Dynamic(mss,(double*)buff_vecb.ptr,
+                                    myu,lambda,rho,g_x,g_y,
+                                    dt_timestep,gamma_newmark,beta_newmark,
+                                    aXY.data(), aXY.shape()[0],
+                                    aTri.data(), aTri.shape()[0],
+                                    aVal.data(),aVelo.data(),aAcc.data());
+}
+
+
 
 
 
@@ -271,7 +294,8 @@ PYBIND11_MODULE(dfm2, m) {
   m.def("cad_setBCFlagEdge",&PyCad_SetBCFlagEdge);
   
   m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
-  m.def("mergeLinSys_linearSolid2DStatic",&PyMergeLinSys_LinearSolid2DStatic);
+  m.def("mergeLinSys_linearSolidStatic2D",&PyMergeLinSys_LinearSolidStatic2D);
+  m.def("mergeLinSys_linearSolidDynamic2D",&PyMergeLinSys_LinearSolidDynamic2D);
   m.def("mergeLinSys_diffuse2D",&PyMergeLinSys_Diffuse2D);
 
   ///////////////////////////////////

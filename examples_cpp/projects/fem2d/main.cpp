@@ -389,12 +389,12 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolid2D_Dynamic(
-                                    mat_A,vec_b,
+  MergeLinSys_LinearSolid2D_Dynamic(mat_A,vec_b.data(),
                                     myu,lambda,rho,g_x,g_y,
                                     dt_timestep,gamma_newmark,beta_newmark,
-                                    aXY1,aTri1,
-                                    aVal,aVelo,aAcc);
+                                    aXY1.data(), aXY1.size()/2,
+                                    aTri1.data(), aTri1.size()/3,
+                                    aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);

@@ -112,7 +112,7 @@ void MergeLinSys_LinearSolid2D_Static(CMatrixSquareSparse& mat_A,
                                       const double* aVal);
 
 void MergeLinSys_LinearSolid2D_Dynamic(CMatrixSquareSparse& mat_A,
-                                      std::vector<double>& vec_b,
+                                      double* vec_b,
                                       const double myu,
                                       const double lambda,
                                       const double rho,
@@ -121,11 +121,11 @@ void MergeLinSys_LinearSolid2D_Dynamic(CMatrixSquareSparse& mat_A,
                                       const double dt_timestep,
                                       const double gamma_newmark,
                                       const double beta_newmark,
-                                      const std::vector<double>& aXY1,
-                                      const std::vector<int>& aTri1,
-                                      const std::vector<double>& aVal,
-                                      const std::vector<double>& aVelo,
-                                      const std::vector<double>& aAcc);
+                                      const double* aXY1, int nXY1,
+                                      const int* aTri1, int nTri,
+                                      const double* aVal,
+                                      const double* aVelo,
+                                      const double* aAcc);
 
 void MergeLinSys_Stokes2D_Static(CMatrixSquareSparse& mat_A,
                                  std::vector<double>& vec_b,

@@ -30,7 +30,7 @@ def diffuse(cad,mesh):
 
 
 def linear_solid_static(cad,mesh):
-  fem = dfm2.FEM_LinearSolid2DStatic(mesh)
+  fem = dfm2.FEM_LinearSolidStatic2D(mesh)
   dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
                          mesh.np_pos, [3], cad, [0,1], 1, 1.0e-10)
   fem.solve()
@@ -42,7 +42,15 @@ def linear_solid_static(cad,mesh):
 
 
 def linear_solid_dynamic(cad,mesh):
-  pass
+  fem = dfm2.FEM_LinearSolidDynamic2D(mesh)
+  dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
+                         mesh.np_pos, [3], cad, [0,1], 1, 1.0e-10)
+  fem.solve()
+  print(fem.ls.conv_hist)
+  ####
+  field = dfm2.Field(mesh,val_disp=fem.vec_val)
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.winDraw3d([fem,field,axis])
 
 
 def main():
@@ -53,6 +61,7 @@ def main():
   poisson(cad,mesh)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)
+  linear_solid_dynamic(cad,mesh)
 
 
 if __name__ == "__main__":
