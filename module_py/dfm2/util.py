@@ -201,9 +201,35 @@ class FEM_Poisson2D():
 
   def solve(self):
     self.ls.SetZero()
-
     mergeLinSys_poission2D(self.ls.mat, self.ls.vec_f,
                            1.0, 0.1,
-                           self.mesh.np_pos, self.mesh.np_elm, self.vec_val)
+                           self.mesh.np_pos, self.mesh.np_elm,
+                           self.vec_val)
     self.ls.Solve()
     self.vec_val += self.ls.vec_x
+
+
+class FEM_Diffuse2D():
+  def __init__(self,
+               mesh: Mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    self.ls = FEM_LinSys(np,1,mesh.psup())
+    self.vec_val = numpy.zeros((np,1), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,1), dtype=numpy.float64)  # initial guess is zero
+    self.dt = 0.01
+    self.gamma_newmark = 0.6
+
+  def solve(self):
+    self.ls.SetZero()
+    mergeLinSys_diffuse2D(self.ls.mat, self.ls.vec_f,
+                          1.0, 1.0, 1.0,
+                          self.dt, self.gamma_newmark,
+                          self.mesh.np_pos, self.mesh.np_elm,
+                          self.vec_val, self.vec_velo)
+    self.ls.Solve()
+    self.vec_val += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.vec_velo)*self.dt
+    self.vec_velo += self.ls.vec_x
+
+  def step_time(self):
+    self.solve()

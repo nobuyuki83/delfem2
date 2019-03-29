@@ -266,11 +266,12 @@ void SolveProblem_Diffusion()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Diffusion2D(mat_A,vec_b,
+  MergeLinSys_Diffusion2D(mat_A, vec_b.data(),
                           alpha, rho, source,                        
                           dt_timestep, gamma_newmark,
-                          aXY1,aTri1,
-                          aVal,aVelo);
+                          aXY1.data(), aXY1.size()/2,
+                          aTri1.data(), aTri1.size()/3,
+                          aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////

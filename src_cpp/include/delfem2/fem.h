@@ -77,16 +77,16 @@ void MergeLinSys_Poission3D(CMatrixSquareSparse& mat_A,
                             const std::vector<double>& aVal);
 
 void MergeLinSys_Diffusion2D(CMatrixSquareSparse& mat_A,
-                             std::vector<double>& vec_b,
+                             double* vec_b,
                              const double alpha,
                              const double rho,
                              const double source,
                              const double dt_timestep,
                              const double gamma_newmark,
-                             const std::vector<double>& aXY1,
-                             const std::vector<int>& aTri1,
-                             const std::vector<double>& aVal,
-                             const std::vector<double>& aVelo);
+                             const double* aXY1, int nXY,
+                             const int* aTri1, int nTri,
+                             const double* aVal,
+                             const double* aVelo);
 
 void MergeLinSys_Diffusion3D(CMatrixSquareSparse& mat_A,
                              std::vector<double>& vec_b,
