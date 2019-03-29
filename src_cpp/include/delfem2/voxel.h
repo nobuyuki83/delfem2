@@ -123,7 +123,6 @@ public:
       for(int igvy0=0;igvy0<vg0.ndivy;++igvy0){
       for(int igvz0=0;igvz0<vg0.ndivz;++igvz0){
         const int ivoxel0 = igvx0*(vg0.ndivy*vg0.ndivz)+igvy0*vg0.ndivz+igvz0;
-        std::cout << ivoxel0 << std::endl;
         if( vg0.aIsVox[ivoxel0] == 0 ) continue;
         int ivx1 = igvx0+vg0.iorgx;
         int ivy1 = igvy0+vg0.iorgy;

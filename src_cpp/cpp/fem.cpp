@@ -231,29 +231,28 @@ void MergeLinSys_Poission3D
 
 void MergeLinSys_Diffusion2D
 (CMatrixSquareSparse& mat_A,
- std::vector<double>& vec_b,
+ double* vec_b,
  const double alpha,
  const double rho,
  const double source,
  const double dt_timestep,
  const double gamma_newmark,
- const std::vector<double>& aXY1,
- const std::vector<int>& aTri1,
- const std::vector<double>& aVal,
- const std::vector<double>& aVelo)
+ const double* aXY1, int nXY,
+ const int* aTri1, int nTri,
+ const double* aVal,
+ const double* aVelo)
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np;
+  const int nDoF = nXY;
   ////
   mat_A.SetZero();
-  vec_b.assign(nDoF, 0.0);
-  std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<(int)aTri1.size()/3; ++iel){
+  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
+  std::vector<int> tmp_buffer(nXY, -1);
+  for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1, 2,0);
     const double value[3] = { aVal[ i0], aVal[ i1], aVal[ i2] };
     const double velo[ 3] = { aVelo[i0], aVelo[i1], aVelo[i2] };
     ////

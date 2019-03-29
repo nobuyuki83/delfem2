@@ -12,5 +12,6 @@ msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply")
 msh.scale_xyz(0.03)
 
 win = dfm2.WindowGLFW(1.0,winsize=(400,300))
+win.list_func_draw.append(draw_func)
 dfm2.setSomeLighting()
-win.draw_loop([draw_func])
+win.draw_loop()

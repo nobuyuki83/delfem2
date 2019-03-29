@@ -62,12 +62,14 @@ class WindowGLFW:
     glfw.make_context_current(self.win)
     ###
     self.wm = WindowManagerGLFW(view_height)
-#    self.draw_func = None
     self.list_func_mouse = []
     self.list_func_motion = []
+    self.list_func_step_time = []
+    self.list_func_draw = []
+    self.color_bg = (1,1,1)
     glEnable(GL_DEPTH_TEST)
 
-  def draw_loop(self,list_draw_func,bgcolor=(1,1,1)):
+  def draw_loop(self):
     """
     Enter the draw loop
 
@@ -78,10 +80,12 @@ class WindowGLFW:
     glfw.set_key_callback(self.win, self.keyinput)
     glfw.set_window_size_callback(self.win, self.window_size)
     while not glfw.window_should_close(self.win):
-      glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0)
+      glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
       self.wm.camera.set_gl_camera()
-      for draw_func in list_draw_func:
+      for func_step_time in self.list_func_step_time:
+        func_step_time()
+      for draw_func in self.list_func_draw:
         draw_func()
       glfw.swap_buffers(self.win)
       glfw.poll_events()
@@ -144,6 +148,7 @@ def winDraw3d(list_obj:list,
   """
   #### initialize window
   window = WindowGLFW(winsize=winsize)
+  window.color_bg = bgcolor
   for obj in list_obj:
     if hasattr(obj, 'init_gl'):
       obj.init_gl()
@@ -151,6 +156,10 @@ def winDraw3d(list_obj:list,
       window.list_func_mouse.append(obj.mouse)
     if hasattr(obj, 'motion'):
       window.list_func_motion.append(obj.motion)
+    if hasattr(obj, "draw"):
+      window.list_func_draw.append(obj.draw)
+    if hasattr(obj, "step_time"):
+      window.list_func_step_time.append(obj.step_time)
   #### glsl compile
   id_shader_program = 0
   if glsl_vrt != "" and glsl_frg != "":
@@ -174,7 +183,7 @@ def winDraw3d(list_obj:list,
   glPolygonOffset( 1.1, 4.0 )
   glUseProgram(id_shader_program)
   #### enter loop
-  window.draw_loop([x.draw for x in list_obj],bgcolor=bgcolor)
+  window.draw_loop()
 
 
 def imgDraw3d(list_obj,winsize=(400,300)):

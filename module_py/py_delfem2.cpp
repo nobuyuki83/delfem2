@@ -99,6 +99,30 @@ void PyMergeLinSys_Poission2D
 }
 
 
+
+
+void PyMergeLinSys_Diffuse2D
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double alpha, double rho, double source,
+ double dt_timestep, double gamma_newmark,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& aTri,
+ const py::array_t<double>& aVal,
+ const py::array_t<double>& aVelo)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_Diffusion2D(mss, (double*)buff_vecb.ptr,
+                          alpha, rho, source,
+                          dt_timestep, gamma_newmark,
+                          aXY.data(), aXY.shape()[0],
+                          aTri.data(), aTri.shape()[0],
+                          aVal.data(), aVelo.data());
+}
+
+
+
+
 void PyMergeLinSys_LinearSolid2DStatic
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
@@ -242,11 +266,13 @@ PYBIND11_MODULE(dfm2, m) {
   m.def("matrixSquareSparse_setPattern", &MatrixSquareSparse_SetPattern);
   m.def("matrixSquareSparse_setFixBC", &MatrixSquareSparse_SetFixBC);
   m.def("precond_ilu0",  &PrecondILU0);
-  m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
-  m.def("mergeLinSys_linearSolid2DStatic",&PyMergeLinSys_LinearSolid2DStatic);
   m.def("linsys_solve_pcg", &PySolve_PCG);
   m.def("sortIndexedArray", &PySortIndexedArray);
   m.def("cad_setBCFlagEdge",&PyCad_SetBCFlagEdge);
+  
+  m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
+  m.def("mergeLinSys_linearSolid2DStatic",&PyMergeLinSys_LinearSolid2DStatic);
+  m.def("mergeLinSys_diffuse2D",&PyMergeLinSys_Diffuse2D);
 
   ///////////////////////////////////
   // gl misc

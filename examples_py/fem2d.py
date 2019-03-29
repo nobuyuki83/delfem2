@@ -14,8 +14,19 @@ def poisson(cad,mesh):
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([field,axis])
 
-def deffuse(cad,mesh):
-  pass
+
+def diffuse(cad,mesh):
+  fem = dfm2.FEM_Diffuse2D(mesh)
+  dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
+                         mesh.np_pos, [0, 1, 2, 3], cad, [0], 1, 1.0e-10)
+  fem.solve()
+  print(fem.ls.conv_hist)
+  ####
+  field = dfm2.Field(mesh,val_color=fem.vec_val)
+  field.draw_val_min = 0.0
+  field.draw_val_max = 0.3
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.winDraw3d([fem,field,axis])
 
 
 def linear_solid_static(cad,mesh):
@@ -40,6 +51,7 @@ def main():
   mesh = dfm2.mesh_cad(cad,0.05)
   #  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
+  diffuse(cad,mesh)
   linear_solid_static(cad,mesh)
 
 
