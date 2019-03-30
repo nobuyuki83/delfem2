@@ -5,20 +5,20 @@ import dfm2
 
 def poisson(cad,mesh):
   fem = dfm2.FEM_Poisson2D(mesh)
-  dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
-                         mesh.np_pos, [0, 1, 2, 3], cad, [0], 1, 1.0e-10)
+  npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP] = 1
   fem.solve()
   print(fem.ls.conv_hist)
   ####
-  field = dfm2.Field(mesh,val_color=fem.vec_val)
+  field = dfm2.Field(mesh,val_color=fem.vec_val[:,0])
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([field,axis])
 
 
 def diffuse(cad,mesh):
   fem = dfm2.FEM_Diffuse2D(mesh)
-  dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
-                         mesh.np_pos, [0, 1, 2, 3], cad, [0], 1, 1.0e-10)
+  npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10);
+  fem.ls.vec_bc[npIdP] = 1
   fem.solve()
   print(fem.ls.conv_hist)
   ####
@@ -31,8 +31,8 @@ def diffuse(cad,mesh):
 
 def linear_solid_static(cad,mesh):
   fem = dfm2.FEM_LinearSolidStatic2D(mesh)
-  dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
-                         mesh.np_pos, [3], cad, [0,1], 1, 1.0e-10)
+  npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
   print(fem.ls.conv_hist)
   ####
@@ -43,8 +43,8 @@ def linear_solid_static(cad,mesh):
 
 def linear_solid_dynamic(cad,mesh):
   fem = dfm2.FEM_LinearSolidDynamic2D(mesh)
-  dfm2.cad_setBCFlagEdge(fem.ls.vec_bc,
-                         mesh.np_pos, [3], cad, [0,1], 1, 1.0e-10)
+  npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
   print(fem.ls.conv_hist)
   ####
@@ -53,16 +53,45 @@ def linear_solid_dynamic(cad,mesh):
   dfm2.winDraw3d([fem,field,axis])
 
 
+def storks_static(cad,mesh):
+  fem = dfm2.FEM_StorksStatic2D(mesh)
+  npIdP0 = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP0,0:2] = 1
+  npIdP1 = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  fem.vec_val[npIdP1,0] = 1.0
+  fem.solve()
+  print(fem.ls.conv_hist)
+  ####
+  field = dfm2.Field(mesh, val_color=fem.vec_val[:,2], val_disp=fem.vec_val[:,:2], disp_mode='hedgehog')
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.winDraw3d([field,axis])
+
+
+def storks_dynamic(cad,mesh):
+  fem = dfm2.FEM_StorksDynamic2D(mesh)
+  npIdP0 = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP0,0:2] = 1
+  npIdP1 = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  fem.vec_val[npIdP1,0] = 1.0
+  fem.solve()
+  print(fem.ls.conv_hist)
+  ####
+  field = dfm2.Field(mesh, val_color=fem.vec_val[:,2], val_disp=fem.vec_val[:,:2], disp_mode='hedgehog')
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.winDraw3d([fem,field,axis])
+
+
 def main():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = dfm2.mesh_cad(cad,0.05)
+  mesh = dfm2.mesh_cad(cad,0.1)
   #  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)
+  storks_static(cad,mesh)
+  storks_dynamic(cad,mesh)
   linear_solid_static(cad,mesh)
   linear_solid_dynamic(cad,mesh)
-
 
 if __name__ == "__main__":
   main()

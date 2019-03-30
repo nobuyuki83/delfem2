@@ -127,29 +127,27 @@ void MergeLinSys_LinearSolid2D_Dynamic(CMatrixSquareSparse& mat_A,
                                       const double* aVelo,
                                       const double* aAcc);
 
-void MergeLinSys_Stokes2D_Static(CMatrixSquareSparse& mat_A,
-                                 std::vector<double>& vec_b,
-                                 const double myu,
-                                 const double rho,
-                                 const double g_x,
-                                 const double g_y,
-                                 const std::vector<double>& aXY1,
-                                 const std::vector<int>& aTri1,
-                                 const std::vector<double>& aVal,
-                                 const std::vector<double>& aVelo);
+void MergeLinSys_StokesStatic2D(CMatrixSquareSparse& mat_A,
+                                double* vec_b,
+                                const double myu,
+                                const double g_x,
+                                const double g_y,
+                                const double* aXY1, int nXY1,
+                                const int* aTri1, int nTri1,
+                                const double* aVal);
 
-void MergeLinSys_Stokes2D_Dynamic(CMatrixSquareSparse& mat_A,
-                                  std::vector<double>& vec_b,
+void MergeLinSys_StokesDynamic2D(CMatrixSquareSparse& mat_A,
+                                  double* vec_b,
                                   const double myu,
                                   const double rho,
                                   const double g_x,
                                   const double g_y,
                                   const double dt_timestep,
                                   const double gamma_newmark,
-                                  const std::vector<double>& aXY1,
-                                  const std::vector<int>& aTri1,
-                                  const std::vector<double>& aVal,
-                                  const std::vector<double>& aVelo);
+                                  const double* aXY1, int nXY1,
+                                  const int* aTri1, int nTri1,
+                                  const double* aVal,
+                                  const double* aVelo);
 
 void MergeLinSys_NavierStokes2D_Dynamic(CMatrixSquareSparse& mat_A,
                                         std::vector<double>& vec_b,

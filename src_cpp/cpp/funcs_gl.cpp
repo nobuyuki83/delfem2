@@ -414,17 +414,14 @@ void drawLoop2d
 }
 
 void DrawPoints2D_Vectors
-(std::vector<double>& aXY,
- std::vector<double>& aVal,
+(const double* aXY, int nXY,
+ const double* aVal,
  int nstride,
  int noffset,
  double mag)
 {
-  //  const int ntri = (int)aTri.size()/3;
-  const int nxys = (int)aXY.size()/2;
-  ////
   ::glBegin(GL_LINES);
-  for(int ino=0;ino<nxys;ino++){
+  for(int ino=0;ino<nXY;ino++){
     const double vx = aVal[ino*nstride+noffset+0]*mag;
     const double vy = aVal[ino*nstride+noffset+1]*mag;
     const double p0[2] = { aXY[ino*2+0],    aXY[ino*2+1]    };
@@ -1036,7 +1033,7 @@ void DrawMeshTri2D_Face
 void DrawMeshTri2D_FaceDisp2D
 (const double* aXY, int nXY,
  const int* aTri, int nTri,
- const double* aDisp)
+ const double* aDisp, int nstride)
 {
   //  const int nxys = (int)aXY.size()/2;
   ::glColor3d(1,1,1);
@@ -1046,9 +1043,9 @@ void DrawMeshTri2D_FaceDisp2D
     const int i0 = aTri[itri*3+0];
     const int i1 = aTri[itri*3+1];
     const int i2 = aTri[itri*3+2];
-    const double p0[2] = { aXY[i0*2+0]+aDisp[i0*2+0], aXY[i0*2+1]+aDisp[i0*2+1] };
-    const double p1[2] = { aXY[i1*2+0]+aDisp[i1*2+0], aXY[i1*2+1]+aDisp[i1*2+1] };
-    const double p2[2] = { aXY[i2*2+0]+aDisp[i2*2+0], aXY[i2*2+1]+aDisp[i2*2+1] };
+    const double p0[2] = { aXY[i0*2+0]+aDisp[i0*nstride+0], aXY[i0*2+1]+aDisp[i0*nstride+1] };
+    const double p1[2] = { aXY[i1*2+0]+aDisp[i1*nstride+0], aXY[i1*2+1]+aDisp[i1*nstride+1] };
+    const double p2[2] = { aXY[i2*2+0]+aDisp[i2*nstride+0], aXY[i2*2+1]+aDisp[i2*nstride+1] };
     ::glVertex2dv( p0 );
     ::glVertex2dv( p1 );
     ::glVertex2dv( p2 );
@@ -1062,9 +1059,9 @@ void DrawMeshTri2D_FaceDisp2D
     const int i0 = aTri[itri*3+0];
     const int i1 = aTri[itri*3+1];
     const int i2 = aTri[itri*3+2];
-    const double p0[2] = { aXY[i0*2+0]+aDisp[i0*2+0], aXY[i0*2+1]+aDisp[i0*2+1] };
-    const double p1[2] = { aXY[i1*2+0]+aDisp[i1*2+0], aXY[i1*2+1]+aDisp[i1*2+1] };
-    const double p2[2] = { aXY[i2*2+0]+aDisp[i2*2+0], aXY[i2*2+1]+aDisp[i2*2+1] };
+    const double p0[2] = { aXY[i0*2+0]+aDisp[i0*nstride+0], aXY[i0*2+1]+aDisp[i0*nstride+1] };
+    const double p1[2] = { aXY[i1*2+0]+aDisp[i1*nstride+0], aXY[i1*2+1]+aDisp[i1*nstride+1] };
+    const double p2[2] = { aXY[i2*2+0]+aDisp[i2*nstride+0], aXY[i2*2+1]+aDisp[i2*nstride+1] };
     ::glVertex2dv( p0 ); ::glVertex2dv( p1 );
     ::glVertex2dv( p1 ); ::glVertex2dv( p2 );
     ::glVertex2dv( p2 ); ::glVertex2dv( p0 );

@@ -553,11 +553,11 @@ void SolveProblem_Stokes_Static()
   double g_y = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Stokes2D_Static(
-                              mat_A,vec_b,
-                              myu,rho,g_x,g_y,
-                              aXY1,aTri1,
-                              aVal,aVelo);
+  MergeLinSys_StokesStatic2D( mat_A,vec_b.data(),
+                              myu,g_x,g_y,
+                              aXY1.data(), aXY1.size()/2,
+                              aTri1.data(), aTri1.size()/3,
+                              aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -707,7 +707,7 @@ void myGlutDisplay(void)
   else if( iproblem == 2 || iproblem == 3 ){
     DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
                              aTri1.data(), aTri1.size()/3,
-                             aVal.data());
+                             aVal.data(), 2);
   }
   else if( iproblem == 4 || iproblem == 5 || iproblem == 6
           || iproblem == 7 || iproblem == 8 || iproblem == 9 )

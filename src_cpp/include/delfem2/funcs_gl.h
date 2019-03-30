@@ -66,8 +66,8 @@ public:
 ///////////////
 // Draw Point
 
-void DrawPoints2D_Vectors(std::vector<double>& aXY,
-                          std::vector<double>& aVal,
+void DrawPoints2D_Vectors(const double* aXY, int nXY,
+                          const double* aVal,
                           int nstride,
                           int noffset,
                           double mag);
@@ -82,7 +82,7 @@ void DrawMeshTri2D_Face(const std::vector<int>& aTri,
                         const std::vector<double>& aXY);
 void DrawMeshTri2D_FaceDisp2D(const double* aXY, int nXY,
                               const int* aTri, int nTri,
-                              const double* aDisp);
+                              const double* aDisp, int nstride);
 void DrawMeshTri2D_Edge(const double* aXY, int nXY,
                         const int* aTri, int nTri);
 void DrawMeshTri2D_Edge(const std::vector<int>& aTri,

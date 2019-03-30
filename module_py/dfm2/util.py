@@ -110,9 +110,11 @@ class Field():
   def __init__(self,
                mesh: Mesh,
                val_color= None,
-               val_disp=None):
+               val_disp=None,
+               disp_mode = 'disp'):
     self.mesh = mesh
     self.val_color = val_color
+    self.disp_mode = disp_mode
     if type(val_color) == numpy.ndarray:
       self.draw_val_min = val_color.min()
       self.draw_val_max = val_color.max()
@@ -126,8 +128,13 @@ class Field():
                          self.val_color,
                          self.color_map)
     if type(self.val_disp) == numpy.ndarray:
-      drawField_disp(self.mesh.np_pos, self.mesh.np_elm,
-                     self.val_disp)
+      if self.disp_mode == 'disp':
+        drawField_disp(self.mesh.np_pos, self.mesh.np_elm,
+                       self.val_disp)
+      if self.disp_mode == 'hedgehog':
+        gl.glDisable(gl.GL_LIGHTING)
+        gl.glColor3d(0,0,0)
+        drawField_hedgehog(self.mesh.np_pos, self.val_disp, 1.0)
 
   def minmax_xyz(self):
     return self.mesh.minmax_xyz()
@@ -137,6 +144,9 @@ class Field():
 class FEM_LinSys():
   def __init__(self,
                np:int, ndimval:int, pattern:tuple):
+    self.nitr = 1000
+    self.conv_ratio = 1.0e-4
+
     # vectors
     self.vec_bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
     self.vec_f = numpy.zeros((np,ndimval), dtype=numpy.float64)
@@ -168,7 +178,8 @@ class FEM_LinSys():
     self.mat_prec.set_value(self.mat)
     self.mat_prec.ilu_decomp()
     self.conv_hist = linsys_solve_pcg(self.vec_f, self.vec_x,
-                                 0.0001, 100, self.mat, self.mat_prec)
+                                      self.conv_ratio, self.nitr,
+                                      self.mat, self.mat_prec)
     self.vec_x[self.vec_bc != 0] = 0.0
 
 ########################################
@@ -243,9 +254,10 @@ class FEM_Diffuse2D():
                mesh: Mesh):
     self.mesh = mesh
     np = mesh.np_pos.shape[0]
-    self.ls = FEM_LinSys(np,1,mesh.psup())
-    self.vec_val = numpy.zeros((np,1), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,1), dtype=numpy.float64)  # initial guess is zero
+    ndimval = 1
+    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.dt = 0.01
     self.gamma_newmark = 0.6
 
@@ -256,6 +268,55 @@ class FEM_Diffuse2D():
                           self.dt, self.gamma_newmark,
                           self.mesh.np_pos, self.mesh.np_elm,
                           self.vec_val, self.vec_velo)
+    self.ls.Solve()
+    self.vec_val += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.vec_velo)*self.dt
+    self.vec_velo += self.ls.vec_x
+
+  def step_time(self):
+    self.solve()
+
+
+class FEM_StorksStatic2D():
+  def __init__(self,
+               mesh: Mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    ndimval = 3
+    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+
+  def solve(self):
+    self.ls.SetZero()
+    mergeLinSys_storksStatic2D(self.ls.mat, self.ls.vec_f,
+                               1.0, 0.0, 0.0,
+                               self.mesh.np_pos, self.mesh.np_elm,
+                               self.vec_val)
+    self.ls.Solve()
+    self.vec_val += self.ls.vec_x
+
+  def step_time(self):
+    self.solve()
+
+
+class FEM_StorksDynamic2D():
+  def __init__(self,
+               mesh: Mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    ndimval = 3
+    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.dt = 0.005
+    self.gamma_newmark = 0.6
+
+  def solve(self):
+    self.ls.SetZero()
+    mergeLinSys_storksDynamic2D(self.ls.mat, self.ls.vec_f,
+                                1.0, 1.0, 0.0, 0.0,
+                                self.dt, self.gamma_newmark,
+                                self.mesh.np_pos, self.mesh.np_elm,
+                                self.vec_val, self.vec_velo)
     self.ls.Solve()
     self.vec_val += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.vec_velo)*self.dt
     self.vec_velo += self.ls.vec_x
