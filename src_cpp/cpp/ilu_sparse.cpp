@@ -1095,6 +1095,6 @@ std::vector<double> Solve_PBiCGStab
     AXPY(-beta*omega,AMp_vec,p_vec);
   }
   
-  return;
+  return aResHistry;
 }
 
