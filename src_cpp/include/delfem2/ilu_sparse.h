@@ -35,10 +35,11 @@ std::vector<double> Solve_PCG(double* r_vec,
                               const CMatrixSquareSparse& mat,
                               const CPreconditionerILU& ilu);
 
-void Solve_PBiCGSTAB(double& conv_ratio, int& num_iter,
-                     const CMatrixSquareSparse& mat,
-                     const CPreconditionerILU& ilu,
-                     std::vector<double>& r_vec,
-                     std::vector<double>& x_vec);
+std::vector<double> Solve_PBiCGStab(double* r_vec,
+                                    double* x_vec,
+                                    double conv_ratio,
+                                    int num_iter,
+                                    const CMatrixSquareSparse& mat,
+                                    const CPreconditionerILU& ilu);
 
-#endif /* defined(__internal_cloth_sparse__ilu_sparse__) */
+#endif 

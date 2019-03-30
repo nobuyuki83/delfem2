@@ -137,7 +137,7 @@ bool SolveLinSys_BiCGStab
   //  int iteration = 1000;
   //  Solve_CG(conv_ratio, iteration, mat_A, vec_b, vec_x);
   //  Solve_BiCGSTAB(conv_ratio, iteration, mat_A, vec_b, vec_x);
-  Solve_PBiCGSTAB(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
+  Solve_PBiCGStab(vec_b.data(), vec_x.data(), conv_ratio, iteration, mat_A, ilu_A);
   /// Solve_PCG(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
   //  std::cout<<"  interative solver --- conv_ratio:"<<conv_ratio<<"  iteration:"<<iteration<<std::endl;
   return true;
@@ -495,34 +495,34 @@ void MergeLinSys_StokesDynamic2D
   }
 }
 
-void MergeLinSys_NavierStokes2D_Dynamic
+void MergeLinSys_NavierStokes2D
 (CMatrixSquareSparse& mat_A,
- std::vector<double>& vec_b,
+ double* vec_b,
  const double myu,
  const double rho,
  const double g_x,
  const double g_y,
  const double dt_timestep,
  const double gamma_newmark,
- const std::vector<double>& aXY1,
- const std::vector<int>& aTri1,
- const std::vector<double>& aVal,
- const std::vector<double>& aVelo)
+ const double* aXY1, int nXY,
+ const int* aTri1, int nTri,
+ const double* aVal,
+ const double* aVelo)
 {
-  const int np = (int)aXY1.size()/2;
+  const int np = nXY;
   const int nDoF = np*3;
   ////
   mat_A.SetZero();
-  vec_b.assign(nDoF, 0.0);
+  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<(int)aTri1.size()/3; ++iel){
+  for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
     const int i1 = aTri1[iel*3+1];
     const int i2 = aTri1[iel*3+2];
     const int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1.data(),2,0);
-    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal.data(),3,0);
-    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo.data(),3,0);
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
+    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal,3,0);
+    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo, 3,0);
     ////
     double eres[3][3], emat[3][3][3][3];
     MakeMat_NavierStokes2D_Dynamic_P1(myu, rho,  g_x, g_y,

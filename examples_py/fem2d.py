@@ -81,6 +81,18 @@ def storks_dynamic(cad,mesh):
   dfm2.winDraw3d([fem,field,axis])
 
 
+def navir_storks(cad,mesh):
+  fem = dfm2.FEM_NavierStorks2D(mesh)
+  npIdP0 = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP0,0:2] = 1
+  npIdP1 = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  fem.vec_val[npIdP1,0] = 1.0
+  ####
+  field = dfm2.Field(mesh, val_color=fem.vec_val[:,2], val_disp=fem.vec_val[:,:2], disp_mode='hedgehog')
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.winDraw3d([fem,field,axis])
+
+
 def main():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
@@ -88,10 +100,11 @@ def main():
   #  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)
-  storks_static(cad,mesh)
-  storks_dynamic(cad,mesh)
   linear_solid_static(cad,mesh)
   linear_solid_dynamic(cad,mesh)
+  storks_static(cad,mesh)
+  storks_dynamic(cad,mesh)
+  navir_storks(cad,mesh)
 
 if __name__ == "__main__":
   main()

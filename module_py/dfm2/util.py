@@ -169,7 +169,7 @@ class FEM_LinSys():
     self.mat.setZero()
     self.vec_f[:,:] = 0.0
 
-  def Solve(self):
+  def Solve(self,is_asymmetric=False):
     #### setting bc
     self.vec_f[self.vec_bc != 0] = 0.0
     matrixSquareSparse_setFixBC(self.mat, self.vec_bc)
@@ -177,9 +177,14 @@ class FEM_LinSys():
     #### solving matrix
     self.mat_prec.set_value(self.mat)
     self.mat_prec.ilu_decomp()
-    self.conv_hist = linsys_solve_pcg(self.vec_f, self.vec_x,
-                                      self.conv_ratio, self.nitr,
-                                      self.mat, self.mat_prec)
+    if not is_asymmetric:
+      self.conv_hist = linsys_solve_pcg(self.vec_f, self.vec_x,
+                                        self.conv_ratio, self.nitr,
+                                        self.mat, self.mat_prec)
+    else:
+      self.conv_hist = linsys_solve_bicgstab(self.vec_f, self.vec_x,
+                                             self.conv_ratio, self.nitr,
+                                             self.mat, self.mat_prec)
     self.vec_x[self.vec_bc != 0] = 0.0
 
 ########################################
@@ -318,6 +323,33 @@ class FEM_StorksDynamic2D():
                                 self.mesh.np_pos, self.mesh.np_elm,
                                 self.vec_val, self.vec_velo)
     self.ls.Solve()
+    self.vec_val += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.vec_velo)*self.dt
+    self.vec_velo += self.ls.vec_x
+
+  def step_time(self):
+    self.solve()
+
+
+class FEM_NavierStorks2D():
+  def __init__(self,
+               mesh: Mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    ndimval = 3
+    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.dt = 0.1
+    self.gamma_newmark = 0.6
+
+  def solve(self):
+    self.ls.SetZero()
+    mergeLinSys_navierStorks2D(self.ls.mat, self.ls.vec_f,
+                                1.0, 1000.0, 0.0, 0.0,
+                                self.dt, self.gamma_newmark,
+                                self.mesh.np_pos, self.mesh.np_elm,
+                                self.vec_val, self.vec_velo)
+    self.ls.Solve(is_asymmetric=True)
     self.vec_val += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.vec_velo)*self.dt
     self.vec_velo += self.ls.vec_x
 
