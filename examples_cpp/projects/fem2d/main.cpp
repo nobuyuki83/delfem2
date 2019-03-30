@@ -592,12 +592,12 @@ void SolveProblem_Stokes_Dynamic()
   double g_y = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Stokes2D_Dynamic(
-                               mat_A,vec_b,
-                               myu,rho,g_x,g_y,
-                               dt_timestep,gamma_newmark,
-                               aXY1,aTri1,                             
-                               aVal,aVelo);
+  MergeLinSys_StokesDynamic2D(mat_A,vec_b.data(),
+                              myu,rho,g_x,g_y,
+                              dt_timestep,gamma_newmark,
+                              aXY1.data(), aXY1.size()/2,
+                              aTri1.data(), aTri1.size()/3,
+                              aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);
@@ -718,7 +718,7 @@ void myGlutDisplay(void)
                            aTri1.data(),aTri1.size()/3,
                            aVal.data(),3,2,colorMap);
     ::glColor3d(0,0,0);    
-    DrawPoints2D_Vectors(aXY1,aVal,3,0, 0.1);
+    DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
     ::glPointSize(2);
     ::glColor3d(0,0,0);
     DrawPoints2D_Points(aXY1);
