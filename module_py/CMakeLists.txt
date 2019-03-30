@@ -50,6 +50,7 @@ set(INPUT_SRC
   py_texture.cpp 
   py_rigidbody.cpp
   py_field.cpp
+  py_fem.cpp
   py_delfem2.cpp
 )
 

@@ -951,12 +951,13 @@ std::vector<double> Solve_PCG
 }
 
 
-void Solve_PBiCGSTAB
-(double& conv_ratio, int& num_iter,
+std::vector<double> Solve_PBiCGStab
+(double* r_vec,
+ double* x_vec,
+ double conv_ratio,
+ int num_iter,
  const CMatrixSquareSparse& mat,
- const CPreconditionerILU& ilu,
- std::vector<double>& r_vec,
- std::vector<double>& x_vec)
+ const CPreconditionerILU& ilu)
 {
   assert( mat.is_dia );
   assert( mat.m_nblk_col == mat.m_nblk_row );
@@ -964,23 +965,22 @@ void Solve_PBiCGSTAB
   
   const int nblk = mat.m_nblk_col;
   const int len = mat.m_len_col;
-  assert(r_vec.size() == nblk*len);
+//  assert(r_vec.size() == nblk*len);
   const int ndof = nblk*len;
+  std::vector<double> aResHistry;
   
   const unsigned int max_iter = num_iter;
   const double tolerance = conv_ratio;
  
   // {u} = 0
-  x_vec.assign(ndof,0.0);
+  for(int i=0;i<ndof;++i){ x_vec[i] = 0.0; }
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = InnerProduct(r_vec,r_vec);
+    const double sq_norm_res_ini = InnerProduct(r_vec,r_vec,ndof);
     if( sq_norm_res_ini < 1.0e-60 ){
-      conv_ratio = sqrt( sq_norm_res_ini );
-      num_iter = 0;
-//      return true;
-      return;
+      aResHistry.push_back( sqrt( sq_norm_res_ini ) );
+      return aResHistry;
     }
     sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
   }
@@ -996,10 +996,10 @@ void Solve_PBiCGSTAB
   std::vector<double> r2_vec(ndof);
   
   // {r2} = {r}
-  r2_vec = r_vec;
+  r2_vec.assign(r_vec,r_vec+ndof);
   
   // {p} = {r}
-  p_vec = r_vec;
+  p_vec.assign(r_vec,r_vec+ndof);
   
   num_iter = max_iter;
   for(unsigned int iitr=1;iitr<max_iter;iitr++)
@@ -1011,7 +1011,7 @@ void Solve_PBiCGSTAB
     ilu.Solve(Mp_vec);
     
     // calc (r,r0*)
-    const double r_r2 = InnerProduct(r_vec,r2_vec);
+    const double r_r2 = InnerProduct(r_vec,r2_vec.data(),ndof);
     
     //        std::cout << "r_r2 : " << r_r2 << std::endl;
     
@@ -1028,7 +1028,7 @@ void Solve_PBiCGSTAB
     //        std::cout << "Alpha : " << alpha << std::endl;
     
     // calc s_vector
-    s_vec = r_vec;
+    s_vec.assign(r_vec,r_vec+ndof);
     AXPY(-alpha,AMp_vec,s_vec);
 //    ls.COPY(ir,is);
 //    ls.AXPY(-alpha,iAMp,is);
@@ -1059,30 +1059,30 @@ void Solve_PBiCGSTAB
     
     // update solution
 //    ls.AXPY(alpha,iMp,ix);
-    AXPY(alpha,Mp_vec,x_vec);
+    AXPY(alpha,Mp_vec.data(),x_vec,ndof);
 //    ls.AXPY(omega,iMs,ix);
-    AXPY(omega,Ms_vec,x_vec);
+    AXPY(omega,Ms_vec.data(),x_vec,ndof);
     
     // update residual
 //    ls.COPY(is,ir);
-    r_vec = s_vec;
+    for(int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; }
+    
 //    ls.AXPY(-omega,iAMs,ir);
-    AXPY(-omega,AMs_vec,r_vec);
+    AXPY(-omega,AMs_vec.data(),r_vec,ndof);
     
     {
-      const double sq_norm_res = InnerProduct(r_vec,r_vec);
+      const double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
       const double sq_conv_ratio = sq_norm_res * sq_inv_norm_res_ini;
 //      std::cout << iitr << " " << sqrt(sq_conv_ratio) << " " << sqrt(sq_norm_res) << std::endl;
       if( sq_conv_ratio < tolerance * tolerance ){
-        conv_ratio = sqrt( sq_norm_res * sq_inv_norm_res_ini );
-        num_iter = iitr;
-        return;
+        aResHistry.push_back( sqrt( sq_norm_res ) );
+        return aResHistry;
       }
     }
     
     double beta;
     {	// calc beta
-      const double tmp1 = InnerProduct(r_vec,r2_vec);
+      const double tmp1 = InnerProduct(r_vec,r2_vec.data(),ndof);
       beta = tmp1 * alpha / (r_r2*omega);
     }
     
@@ -1090,7 +1090,7 @@ void Solve_PBiCGSTAB
 //    ls.SCAL(beta,ip);
     for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
 //    ls.AXPY(1.0,ir,ip);
-    AXPY(1.0,r_vec,p_vec);
+    AXPY(1.0,r_vec,p_vec.data(),ndof);
 //    ls.AXPY(-beta*omega,iAMp,ip);
     AXPY(-beta*omega,AMp_vec,p_vec);
   }
