@@ -99,13 +99,10 @@ public:
   void Meshing(std::vector<double>& aXY,
                std::vector<int>& aTri,
                double len) const;
-  void setBCFlagEdge(int* pBC, int np, int nDimVal,
-                     const double* pXY,
+  void GetPointsEdge(std::vector<int>& aIdP,
+                     const double* pXY, int np,
                      const std::vector<int>& aIE,
-                     const std::vector<int>& aDimValFlag,
-                     int iflag, double torelance) const;
-public:
-public:
+                     double tolerance ) const;
 public:
   CCadTopo topo;
   /////

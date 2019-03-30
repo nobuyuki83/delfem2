@@ -162,7 +162,40 @@ void PyMergeLinSys_LinearSolidDynamic2D
 }
 
 
+void PyMergeLinSys_StorksStatic2D
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double myu, double g_x, double g_y,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& aTri,
+ const py::array_t<double>& aVal)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_StokesStatic2D(mss,(double*)buff_vecb.ptr,
+                             myu,g_x,g_y,
+                             aXY.data(), aXY.shape()[0],
+                             aTri.data(), aTri.shape()[0],
+                             aVal.data());
+}
 
+void PyMergeLinSys_StorksDynamic2D
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double myu, double rho, double g_x, double g_y,
+ double dt_timestep, double gamma_newmark,
+ const py::array_t<double>& aXY,
+ const py::array_t<int>& aTri,
+ const py::array_t<double>& aVal,
+ const py::array_t<double>& aVelo)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_StokesDynamic2D(mss,(double*)buff_vecb.ptr,
+                              myu,rho,g_x,g_y,
+                              dt_timestep, gamma_newmark,
+                              aXY.data(), aXY.shape()[0],
+                              aTri.data(), aTri.shape()[0],
+                              aVal.data(),aVelo.data());
+}
 
 
 std::vector<double> PySolve_PCG
@@ -190,23 +223,20 @@ void PySortIndexedArray
   SortIndexedArray(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
 }
 
-void PyCad_SetBCFlagEdge
-(py::array_t<int>& vec_bc,
+py::array_t<int> PyCad_GetPointsEdge
+(const CCad2D& cad,
+ const std::vector<int>& aIE,
  const py::array_t<double>& aXY,
- const py::array_t<int>& np_ie,
- const CCad2D& cad,
- const py::array_t<int>& npDimValFlag,
- int iflag,
  double torelance)
 {
-//  std::cout << "cad_SetBCFlagEdge" << std::endl;
-  auto buff_bc = vec_bc.request();
-  std::vector<int> aIE(np_ie.data(),np_ie.data()+np_ie.shape()[0]);
-  std::vector<int> aDimValFlag(npDimValFlag.data(),npDimValFlag.data()+npDimValFlag.shape()[0]);
-  cad.setBCFlagEdge((int*)buff_bc.ptr, vec_bc.shape()[0], vec_bc.shape()[1],
-                    aXY.data(),
-                    aIE,aDimValFlag,
-                    iflag,torelance);
+  std::vector<int> aIdP;
+  cad.GetPointsEdge(aIdP,
+                    aXY.data(), aXY.shape()[0],
+                    aIE,torelance);
+  std::set<int> setIdP(aIdP.begin(),aIdP.end());
+  aIdP.assign(setIdP.begin(),setIdP.end());
+  py::array_t<int> npIdP((int)aIdP.size(), aIdP.data());
+  return npIdP;
 }
 
 
@@ -269,7 +299,8 @@ PYBIND11_MODULE(dfm2, m) {
   .def("motion",      &CCad2D::Motion)
   .def("minmax_xyz", &CCad2D::MinMaxXYZ)
   .def("meshing",&CCad2D::Meshing);
-  
+
+  m.def("cad_getPointsEdge",&PyCad_GetPointsEdge);
   
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())
@@ -291,12 +322,13 @@ PYBIND11_MODULE(dfm2, m) {
   m.def("precond_ilu0",  &PrecondILU0);
   m.def("linsys_solve_pcg", &PySolve_PCG);
   m.def("sortIndexedArray", &PySortIndexedArray);
-  m.def("cad_setBCFlagEdge",&PyCad_SetBCFlagEdge);
   
   m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
+  m.def("mergeLinSys_diffuse2D",&PyMergeLinSys_Diffuse2D);
   m.def("mergeLinSys_linearSolidStatic2D",&PyMergeLinSys_LinearSolidStatic2D);
   m.def("mergeLinSys_linearSolidDynamic2D",&PyMergeLinSys_LinearSolidDynamic2D);
-  m.def("mergeLinSys_diffuse2D",&PyMergeLinSys_Diffuse2D);
+  m.def("mergeLinSys_storksStatic2D",&PyMergeLinSys_StorksStatic2D);
+  m.def("mergeLinSys_storksDynamic2D",&PyMergeLinSys_StorksDynamic2D);
 
   ///////////////////////////////////
   // gl misc
