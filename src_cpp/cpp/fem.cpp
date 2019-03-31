@@ -528,20 +528,6 @@ void MergeLinSys_NavierStokes2D
 }
 
 
-void AddWdW_Gravity
-(double& W, // (out) energy
- std::vector<double>& dW, // (out) first derivative of energy
- ////
- const std::vector<double>& aXYZ, // (in) deformed vertex positions，現在の頂点の座標配列
- const double gravity[3], // (in) gravitational accerelation，重力加速度
- double mass_point // (in) mass of a point，頂点の質量
-)
-{
-  // marge potential energy
-  // 重力ポテンシャル・エネルギーを追加
-
-}
-
 // compute total energy and its first and second derivatives
 double MergeLinSys_Cloth
 (CMatrixSquareSparse& ddW, // (out) second derivative of energy
