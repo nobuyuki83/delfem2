@@ -13,11 +13,13 @@ def normalize_rigmsh(rigmsh):
 class Mesh():
 
   def __init__(self,
-               np_pos=numpy.ndarray((0,3),dtype=numpy.float32),
-               np_elm=numpy.ndarray((0,3),dtype=numpy.int)):
+               np_pos=numpy.ndarray((0,3),dtype=numpy.float64),
+               np_elm=numpy.ndarray((0,3),dtype=numpy.int32)):
     print("PyMesh -- construct")
     assert type(np_pos) == numpy.ndarray
     assert type(np_elm) == numpy.ndarray
+    assert np_pos.dtype == numpy.float64
+    assert np_elm.dtype == numpy.int32
     self.color_face = [0.8, 0.8, 0.8, 1.0]
     self.is_draw_edge = True
     self.np_pos = np_pos
@@ -242,29 +244,31 @@ class FEM_Cloth():
   def __init__(self,mesh):
     self.mesh = mesh
     np = mesh.np_pos.shape[0]
-    ndimval = 2
+    ndimval = 3
     ####
-    np_quad = elemQuad_dihedralTri(mesh.np_elm, np)
+    self.np_quad = elemQuad_dihedralTri(mesh.np_elm, np)
     ####
-    self.ls = FEM_LinSys(np,ndimval,pattern=psup_mesh(np_quad, np))
+    self.ls = FEM_LinSys(np,ndimval,pattern=psup_mesh(self.np_quad, np))
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_acc = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.dt = 0.1
-    self.gamma_newmark = 0.6
-    self.beta_newmark = 0.36
+    self.vec_val[:,:2] = mesh.np_pos
+    self.vec_val[:,2] = 1.0
 
   def solve(self):
     self.ls.SetZero()
-    mergeLinSys_linearSolidDynamic2D(self.ls.mat, self.ls.vec_f,
-                                     1.0, 0.0, 1.0, 0.0, -0.1,
-                                     self.dt, self.gamma_newmark, self.beta_newmark,
-                                     self.mesh.np_pos, self.mesh.np_elm,
-                                     self.vec_val, self.vec_velo, self.vec_acc)
+    mergeLinSys_cloth(self.ls.mat, self.ls.vec_f,
+                      0.0, 100.0, self.dt,
+                      self.mesh.np_pos, self.mesh.np_elm,
+                      self.np_quad,
+                      self.vec_val)
+    mergeLinSys_massPoint(self.ls.mat, self.ls.vec_f,
+                          1.0, self.dt,
+                          [0,0,-1],
+                          self.vec_val, self.vec_velo)
     self.ls.Solve()
-    self.vec_val += (self.dt)*self.vec_velo + (0.5*self.dt*self.dt)*self.vec_acc + (self.dt*self.dt*self.beta_newmark)*self.ls.vec_x
-    self.vec_velo += (self.dt*self.gamma_newmark)*self.ls.vec_x + (self.dt)*self.vec_acc
-    self.vec_acc += self.ls.vec_x
+    self.vec_val += self.ls.vec_x
+    self.vec_velo = (1.0/self.dt)*self.ls.vec_x
 
   def step_time(self):
     self.solve()

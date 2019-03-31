@@ -54,8 +54,8 @@ void DrawField_Disp
   }
   else if( ndim == 2 ){
     DrawMeshTri2D_FaceDisp2D(pos.data(), np,
-                             elm.data(), nelm,
-                             disp.data(), nstride);
+                               elm.data(), nelm,
+                               disp.data(), nstride);
   }
 }
 

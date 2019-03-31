@@ -211,6 +211,57 @@ void PyMergeLinSys_NavierStorks2D
                              aVal.data(), aVelo.data());
 }
 
+double PyMergeLinSys_Cloth
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double lambda, double myu, double stiff_bend,
+ const py::array_t<double>& aPosIni,
+ const py::array_t<int>& aTri,
+ const py::array_t<int>& aQuad,
+ const py::array_t<double>& aXYZ)
+{
+  auto buff_vecb = vec_b.request();
+  double W = MergeLinSys_Cloth(mss,(double*)buff_vecb.ptr,
+                               lambda, myu, stiff_bend,
+                               aPosIni.data(), aPosIni.shape()[0], aPosIni.shape()[1],
+                               aTri.data(), aTri.shape()[0],
+                               aQuad.data(), aQuad.shape()[0],
+                               aXYZ.data());
+  return W;
+}
+
+double PyMergeLinSys_MassPoint
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ double mass_point,
+ double dt,
+ const std::vector<double>& gravity,
+ const py::array_t<double>& aXYZ,
+ const py::array_t<double>& aUVW)
+{
+  double* pB = (double*)(vec_b.request().ptr);
+  double W = 0.0;
+  const int np = aXYZ.shape()[0];
+  assert(aUVW.shape()[0] == np);
+  for(int ip=0;ip<np;ip++){
+    const double c[3] = {aXYZ.at(ip,0),aXYZ.at(ip,1),aXYZ.at(ip,2)};
+    W -= mass_point*( c[0]*gravity[0] + c[1]*gravity[1] + c[2]*gravity[2] );
+    pB[ip*3+0] -= mass_point*gravity[0];
+    pB[ip*3+1] -= mass_point*gravity[1];
+    pB[ip*3+2] -= mass_point*gravity[2];
+  }
+  const int ndof = aXYZ.size();
+  const double* pUVW = aUVW.data();
+  for(int i=0;i<ndof;i++){
+    pB[i] = -pB[i] + mass_point*pUVW[i]/dt;
+  }
+  for(int ip=0;ip<np;ip++){
+    mss.m_valDia[ip*9+0*3+0] += mass_point / (dt*dt);
+    mss.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
+    mss.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
+  }
+  return W;
+}
 
 
 void init_fem(py::module &m){
@@ -238,5 +289,7 @@ void init_fem(py::module &m){
   m.def("mergeLinSys_storksStatic2D",&PyMergeLinSys_StorksStatic2D);
   m.def("mergeLinSys_storksDynamic2D",&PyMergeLinSys_StorksDynamic2D);
   m.def("mergeLinSys_navierStorks2D",&PyMergeLinSys_NavierStorks2D);
+  m.def("mergeLinSys_cloth", &PyMergeLinSys_Cloth);
+  m.def("mergeLinSys_massPoint",&PyMergeLinSys_MassPoint);
 
 }
