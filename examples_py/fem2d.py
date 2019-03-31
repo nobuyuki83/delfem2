@@ -93,11 +93,23 @@ def navir_storks(cad,mesh):
   dfm2.winDraw3d([fem,field,axis])
 
 
+def cloth(cad,mesh):
+  fem = dfm2.FEM_Cloth(mesh)
+  npIdP = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  fem.ls.vec_bc[npIdP,0:3] = 1
+  ####
+  print(fem.vec_val.shape)
+  field = dfm2.Field(mesh, val_disp=fem.vec_val)
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.winDraw3d([fem,field,axis])
+
+
 def main():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesh = dfm2.mesh_cad(cad,0.1)
   #  dfm2.winDraw3d([cad,mesh])
+  # cloth(cad,mesh)
   poisson(cad,mesh)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)

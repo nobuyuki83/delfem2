@@ -65,7 +65,7 @@ class Mesh():
     self.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 3))
 
   def psup(self):
-    res = get_psup(self.np_elm, self.np_pos.shape[0])
+    res = psup_mesh(self.np_elm, self.np_pos.shape[0])
     return res
 
 #######################################
@@ -194,9 +194,10 @@ class FEM_LinearSolidStatic2D():
   def __init__(self,
                mesh: Mesh):
     self.mesh = mesh
+    ndimval = 2
     np = mesh.np_pos.shape[0]
-    self.ls = FEM_LinSys(np,2,pattern=mesh.psup())
-    self.vec_val = numpy.zeros((np,2), dtype=numpy.float64)  # initial guess is zero
+    self.ls = FEM_LinSys(np,ndimval,pattern=mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
 
   def solve(self):
     self.ls.SetZero()
@@ -212,10 +213,43 @@ class FEM_LinearSolidDynamic2D():
                mesh: Mesh):
     self.mesh = mesh
     np = mesh.np_pos.shape[0]
-    self.ls = FEM_LinSys(np,2,pattern=mesh.psup())
-    self.vec_val = numpy.zeros((np,2), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,2), dtype=numpy.float64)  # initial guess is zero
-    self.vec_acc = numpy.zeros((np,2), dtype=numpy.float64)  # initial guess is zero
+    ndimval = 2
+    self.ls = FEM_LinSys(np,ndimval,pattern=mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_acc = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.dt = 0.1
+    self.gamma_newmark = 0.6
+    self.beta_newmark = 0.36
+
+  def solve(self):
+    self.ls.SetZero()
+    mergeLinSys_linearSolidDynamic2D(self.ls.mat, self.ls.vec_f,
+                                     1.0, 0.0, 1.0, 0.0, -0.1,
+                                     self.dt, self.gamma_newmark, self.beta_newmark,
+                                     self.mesh.np_pos, self.mesh.np_elm,
+                                     self.vec_val, self.vec_velo, self.vec_acc)
+    self.ls.Solve()
+    self.vec_val += (self.dt)*self.vec_velo + (0.5*self.dt*self.dt)*self.vec_acc + (self.dt*self.dt*self.beta_newmark)*self.ls.vec_x
+    self.vec_velo += (self.dt*self.gamma_newmark)*self.ls.vec_x + (self.dt)*self.vec_acc
+    self.vec_acc += self.ls.vec_x
+
+  def step_time(self):
+    self.solve()
+
+
+class FEM_Cloth():
+  def __init__(self,mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    ndimval = 2
+    ####
+    np_quad = elemQuad_dihedralTri(mesh.np_elm, np)
+    ####
+    self.ls = FEM_LinSys(np,ndimval,pattern=psup_mesh(np_quad, np))
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_acc = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.dt = 0.1
     self.gamma_newmark = 0.6
     self.beta_newmark = 0.36
@@ -241,8 +275,9 @@ class FEM_Poisson2D():
                mesh: Mesh):
     self.mesh = mesh
     np = mesh.np_pos.shape[0]
-    self.ls = FEM_LinSys(np,1,mesh.psup())
-    self.vec_val = numpy.zeros((np,1), dtype=numpy.float64)  # initial guess is zero
+    ndimval = 1
+    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
 
   def solve(self):
     self.ls.SetZero()
@@ -355,3 +390,5 @@ class FEM_NavierStorks2D():
 
   def step_time(self):
     self.solve()
+
+

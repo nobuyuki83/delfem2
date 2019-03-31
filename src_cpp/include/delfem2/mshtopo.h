@@ -180,22 +180,23 @@ void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
 ////////////////////////////////////////
 // elem sur elem
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
-                                 const std::vector<int>& aEl,
+                                 const int* aEl, int nEl, int nNoEl,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup,
                                  const int nfael,
                                  const int nnofa,
-                                 const int nnoel,
                                  const int noelElemFace[][4]);
 void makeSurroundingRelationship(std::vector<int>& aElemSurRel,
-                                 const std::vector<int>& aElem,
+                                 const int* aElem, int nEl, 
                                  MESHELEM_TYPE type,
                                  const int nXYZ);
+/*
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
-                                 const std::vector<int>& aEl,
+                                 const int* aEl, int nEl, int nNoEl,
                                  MESHELEM_TYPE type,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup);
+ */
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,

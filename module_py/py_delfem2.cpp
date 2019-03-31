@@ -50,14 +50,7 @@ std::tuple<py::array_t<double>, py::array_t<int>> GetMesh_Cad
   return std::tie(npXY,npTri);
 }
 
-void PySortIndexedArray
-(py::array_t<int>& psup_ind,
- py::array_t<int>& psup)
-{
-  //  std::cout << "hoge " << psup_ind.size() << " " << psup.size() << std::endl;
-  auto buff_psup = psup.request();
-  SortIndexedArray(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
-}
+
 
 py::array_t<int> PyCad_GetPointsEdge
 (const CCad2D& cad,
@@ -143,9 +136,7 @@ PYBIND11_MODULE(dfm2, m) {
   .def(py::init<>())
   .def(py::init<double, double, const std::string&>());
   
-  m.def("sortIndexedArray", &PySortIndexedArray);
-  
-  ///////////////////////////////////
+   ///////////////////////////////////
   // gl misc
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
   m.def("setup_glsl", setUpGLSL, "compile shader program");

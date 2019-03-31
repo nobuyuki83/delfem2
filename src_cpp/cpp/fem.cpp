@@ -143,6 +143,10 @@ bool SolveLinSys_BiCGStab
   return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
 void MergeLinSys_Poission2D
 (CMatrixSquareSparse& mat_A,
  double* vec_b,
@@ -153,14 +157,6 @@ void MergeLinSys_Poission2D
  const double* aVal)
 {
   const int nDoF = np;
-  /////
-  /*
-  {
-    double sum = 0.0;
-    for(int ip=0;ip<np;++ip){ sum += vec_b[ip]*vec_b[ip]; }
-    std::cout << "sum0: " << sum <<  std::endl;
-  }
-   */
   /////
   std::vector<int> tmp_buffer(nDoF, -1);
   for (int iel = 0; iel<nTri; ++iel){
@@ -181,18 +177,9 @@ void MergeLinSys_Poission2D
       const int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    // marge dde
     mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
   }
-  /*
-  {
-    double sum = 0.0;
-    for(int ip=0;ip<np;++ip){ sum += vec_b[ip]*vec_b[ip]; }
-    std::cout << "sum1: " << sum <<  std::endl;
-  }
-   */
 }
-
 
 void MergeLinSys_Poission3D
 (CMatrixSquareSparse& mat_A,
