@@ -162,6 +162,16 @@ void MergeLinSys_NavierStokes2D(CMatrixSquareSparse& mat_A,
                                 const double* aVal,
                                 const double* aVelo);
 
+double MergeLinSys_Cloth(CMatrixSquareSparse& mat_A, // (out) second derivative of energy
+                         double* vec_b, // (out) first derivative of energy
+                         ////
+                         double lambda, // (in) Lame's 1st parameter
+                         double myu,  // (in) Lame's 2nd parameter
+                         double stiff_bend, // (in) bending stiffness
+                         const double* aPosIni, int np, int ndim,
+                         const int* aTri, int nTri, // (in) triangle index
+                         const int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
+                         const double* aXYZ);
 
 
 /*

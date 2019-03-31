@@ -99,9 +99,9 @@ def cloth(cad,mesh):
   fem.ls.vec_bc[npIdP,0:3] = 1
   ####
   print(fem.vec_val.shape)
-  field = dfm2.Field(mesh, val_disp=fem.vec_val)
+  mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([fem,field,axis])
+  dfm2.winDraw3d([fem,mesh2,axis])
 
 
 def main():
@@ -109,7 +109,6 @@ def main():
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesh = dfm2.mesh_cad(cad,0.1)
   #  dfm2.winDraw3d([cad,mesh])
-  # cloth(cad,mesh)
   poisson(cad,mesh)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)
@@ -117,6 +116,7 @@ def main():
   storks_static(cad,mesh)
   storks_dynamic(cad,mesh)
   navir_storks(cad,mesh)
+  cloth(cad,mesh)
 
 if __name__ == "__main__":
   main()

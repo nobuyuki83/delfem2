@@ -137,6 +137,7 @@ bool SolveLinSys_BiCGStab
   //  int iteration = 1000;
   //  Solve_CG(conv_ratio, iteration, mat_A, vec_b, vec_x);
   //  Solve_BiCGSTAB(conv_ratio, iteration, mat_A, vec_b, vec_x);
+  vec_x.resize(vec_b.size());
   Solve_PBiCGStab(vec_b.data(), vec_x.data(), conv_ratio, iteration, mat_A, ilu_A);
   /// Solve_PCG(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
   //  std::cout<<"  interative solver --- conv_ratio:"<<conv_ratio<<"  iteration:"<<iteration<<std::endl;
@@ -229,10 +230,10 @@ void MergeLinSys_Diffusion2D
  const double* aVal,
  const double* aVelo)
 {
-  const int nDoF = nXY;
+//  const int nDoF = nXY;
   ////
-  mat_A.SetZero();
-  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
+//  mat_A.SetZero();
+//  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(nXY, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
@@ -272,10 +273,10 @@ void MergeLinSys_Diffusion3D
  const std::vector<double>& aVelo)
 {
   const int np = (int)aXYZ.size()/3;
-  const int nDoF = np;
+//  const int nDoF = np;
   ////
-  mat_A.SetZero();
-  vec_b.assign(nDoF, 0.0);
+//  mat_A.SetZero();
+//  vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
     const int i0 = aTet[iel*4+0];
@@ -315,10 +316,10 @@ void MergeLinSys_LinearSolid2D_Static
  const double* aVal)
 {
   const int np = nXY;
-  const int nDoF = np*2;
+//  const int nDoF = np*2;
   ////
-  mat_A.SetZero();
-  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
+//  mat_A.SetZero();
+//  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
@@ -365,8 +366,8 @@ void MergeLinSys_LinearSolid2D_Dynamic
   const int np = nXY;
   const int nDoF = np*2;
   ////
-  mat_A.SetZero();
-  for(int idof=0;idof<nDoF;idof++){ vec_b[idof] = 0.0; }
+//  mat_A.SetZero();
+//  for(int idof=0;idof<nDoF;idof++){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
@@ -408,10 +409,10 @@ void MergeLinSys_StokesStatic2D
  const double* aVal)
 {
   const int np = nXY;
-  const int nDoF = np*3;
+//  const int nDoF = np*3;
   ////
-  mat_A.SetZero();
-  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
+//  mat_A.SetZero();
+//  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
@@ -451,10 +452,10 @@ void MergeLinSys_StokesDynamic2D
  const double* aVelo)
 {
   const int np = nXY;
-  const int nDoF = np*3;
+//  const int nDoF = np*3;
   ////
-  mat_A.SetZero();
-  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
+//  mat_A.SetZero();
+//  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
@@ -497,10 +498,10 @@ void MergeLinSys_NavierStokes2D
  const double* aVelo)
 {
   const int np = nXY;
-  const int nDoF = np*3;
+//  const int nDoF = np*3;
   ////
-  mat_A.SetZero();
-  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
+//  mat_A.SetZero();
+//  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const int i0 = aTri1[iel*3+0];
@@ -527,6 +528,82 @@ void MergeLinSys_NavierStokes2D
 }
 
 
+void AddWdW_Gravity
+(double& W, // (out) energy
+ std::vector<double>& dW, // (out) first derivative of energy
+ ////
+ const std::vector<double>& aXYZ, // (in) deformed vertex positions，現在の頂点の座標配列
+ const double gravity[3], // (in) gravitational accerelation，重力加速度
+ double mass_point // (in) mass of a point，頂点の質量
+)
+{
+  // marge potential energy
+  // 重力ポテンシャル・エネルギーを追加
+
+}
+
+// compute total energy and its first and second derivatives
+double MergeLinSys_Cloth
+(CMatrixSquareSparse& ddW, // (out) second derivative of energy
+ double* dW, // (out) first derivative of energy
+ ////
+ double lambda, // (in) Lame's 1st parameter
+ double myu,  // (in) Lame's 2nd parameter
+ double stiff_bend, // (in) bending stiffness
+ const double* aPosIni, int np, int ndim,
+ const int* aTri, int nTri, // (in) triangle index
+ const int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
+ const double* aXYZ
+ )
+{
+  double W = 0;
+  std::vector<int> tmp_buffer(np,-1);
+  
+  // marge element in-plane strain energy
+  for(int itri=0;itri<nTri;itri++){
+    const int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
+    double C[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+    double c[3][3];
+    for(int ino=0;ino<3;ino++){
+      const int ip = aIP[ino];
+      for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
+      for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
+    }
+    double e, de[3][3], dde[3][3][3][3];
+    WdWddW_CST( e,de,dde, C,c, lambda,myu );
+    W += e;  // marge energy
+    // marge de
+    for(int ino=0;ino<3;ino++){
+      const int ip = aIP[ino];
+      for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
+    }
+    // marge dde
+    ddW.Mearge(3, aIP, 3, aIP, 9, &dde[0][0][0][0], tmp_buffer);
+  }
+//  std::cout << "cst:" << W << std::endl;
+  // marge element bending energy
+  for(int iq=0;iq<nQuad;iq++){
+    const int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
+    double C[4][3] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
+    double c[4][3];
+    for(int ino=0;ino<4;ino++){
+      const int ip = aIP[ino];
+      for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
+      for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
+    }
+    double e, de[4][3], dde[4][4][3][3];
+    WdWddW_Bend( e,de,dde, C,c, stiff_bend );
+    W += e;  // marge energy
+    // marge de
+    for(int ino=0;ino<4;ino++){
+      const int ip = aIP[ino];
+      for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
+    }
+    // marge dde
+    ddW.Mearge(4, aIP, 4, aIP, 9, &dde[0][0][0][0], tmp_buffer);
+  }
+  return W;
+}
 
 
 /*
