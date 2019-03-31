@@ -260,17 +260,15 @@ void makeElemSurroundingPoint
 
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
- const std::vector<int>& aEl,
+ const int* aEl, int nEl, int nNoEl,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  const int nfael,
  const int nnofa,
- const int nnoel,
  const int noelElemFace[][4])
 {
 //  std::cout << nfael << " " << nnofa << " " << nnoel << std::endl;
   const int np = (int)elsup_ind.size()-1;
-  const int nEl = (int)aEl.size()/nnoel;
   
   aElSurRel.assign(nEl*nfael*2,-1);
   
@@ -280,7 +278,7 @@ void makeSurroundingRelationship
     for (int ifael=0; ifael<nfael; ifael++){
       for (int ipofa=0; ipofa<nnofa; ipofa++){
         int int0 = noelElemFace[ifael][ipofa];
-        const int ip = aEl[iel*nnoel+int0];
+        const int ip = aEl[iel*nNoEl+int0];
         assert( ip>=0 && ip<np );
         inpofa[ipofa] = ip;
         tmp_poin[ip] = 1;
@@ -294,7 +292,7 @@ void makeSurroundingRelationship
           iflg = true;
           for (int jpofa = 0; jpofa<nnofa; jpofa++){
             int jnt0 = noelElemFace[jfael][jpofa];
-            const int jpoin0 = aEl[jelem0*nnoel+jnt0];
+            const int jpoin0 = aEl[jelem0*nNoEl+jnt0];
             if (tmp_poin[jpoin0]==0){ iflg = false; break; }
           }
           if (iflg){
@@ -316,32 +314,42 @@ void makeSurroundingRelationship
   }
 }
 
+/*
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
- const std::vector<int>& aEl,
+ const int* aEl, int nEl, int nNoEl,
  MESHELEM_TYPE type,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
   const int nfael = nFaceElem(type);
   const int nnofa = nNodeElemFace(type, 0);
-  const int nnoel = nNodeElem(type);
+  assert( nNoEl == nNodeElem(type) );
   makeSurroundingRelationship(aElSurRel,
-                              aEl,
+                              aEl, nEl, nNoEl,
                               elsup_ind, elsup,
-                              nfael, nnofa, nnoel, noelElemFace(type));
+                              nfael, nnofa, noelElemFace(type));
 }
+ */
+
 void makeSurroundingRelationship
 (std::vector<int>& aElemSurRel,
- const std::vector<int>& aElem,
+ const int* aElem, int nElem,
  MESHELEM_TYPE type,
  const int nXYZ)
 {
-  const int nnoel = nNodeElem(type);
+  const int nNoEl = nNodeElem(type);
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup, aElem.data(), aElem.size()/nnoel, nnoel, nXYZ);
-  makeSurroundingRelationship(aElemSurRel, aElem, type, elsup_ind,elsup);
+  makeElemSurroundingPoint(elsup_ind, elsup,
+                           aElem, nElem, nNoEl, nXYZ);
+  const int nfael = nFaceElem(type);
+  const int nnofa = nNodeElemFace(type, 0);
+  makeSurroundingRelationship(aElemSurRel,
+                              aElem, nElem, nNoEl,
+                              elsup_ind,elsup,
+                              nfael, nnofa, noelElemFace(type));
 }
+
 
 void makeSurroundingRelationship
 (std::vector<int>& aElemFaceInd,
@@ -1316,8 +1324,11 @@ void HexSubdiv
   {
     std::vector<int> aHexSurRel0;
     makeSurroundingRelationship(aHexSurRel0,
-                                aHex0,MESHELEM_HEX,
-                                elsupIndHex0,elsupHex0);
+                                aHex0.data(),aHex0.size()/8,8,
+                                elsupIndHex0,elsupHex0,
+                                nFaceElem(MESHELEM_HEX),
+                                nNodeElemFace(MESHELEM_HEX, 0),
+                                noelElemFace(MESHELEM_HEX));
     for(unsigned int ih=0;ih<aHex0.size()/8;++ih){
       for(int ifh=0;ifh<6;++ifh){
         int jh0 = aHexSurRel0[ih*6*2+ifh*2+0];
