@@ -23,6 +23,20 @@
 
 #include "delfem2/funcs_gl.h"
 
+static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
+{
+  n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
+  n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
+  n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
+  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
+  const double invlen = 0.5/a;
+  n[0]*=invlen;  n[1]*=invlen;  n[2]*=invlen;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
 void DrawAxis(double s)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -361,15 +375,6 @@ void DrawCharacter
   }
 }
 
-static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
-{
-  n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-  n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-  n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const double invlen = 0.5/a;
-  n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
-}
 
 void myGlVertex3d
 (unsigned int ixyz,
@@ -1541,8 +1546,6 @@ void DrawMeshTet3D_FaceNormDisp
     ::glEnd();
   }
 }
-
-
 
 
 

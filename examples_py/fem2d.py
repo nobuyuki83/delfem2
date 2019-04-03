@@ -98,7 +98,6 @@ def cloth(cad,mesh):
   npIdP = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
   fem.ls.vec_bc[npIdP,0:3] = 1
   ####
-  print(fem.vec_val.shape)
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([fem,mesh2,axis])
@@ -107,7 +106,7 @@ def cloth(cad,mesh):
 def main():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = dfm2.mesh_cad(cad,0.1)
+  mesh = dfm2.mesh_cad(cad,0.05)
   #  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)
