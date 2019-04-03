@@ -258,7 +258,7 @@ class FEM_Cloth():
   def solve(self):
     self.ls.SetZero()
     mergeLinSys_cloth(self.ls.mat, self.ls.vec_f,
-                      0.0, 100.0, self.dt,
+                      10.0, 500.0, self.dt,
                       self.mesh.np_pos, self.mesh.np_elm,
                       self.np_quad,
                       self.vec_val)

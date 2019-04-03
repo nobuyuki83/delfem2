@@ -201,6 +201,11 @@ void DrawMeshTet3D_ScalarP1(const std::vector<double>& aXYZ,
                         const std::vector<double>& aValSrf,
                         const std::vector<std::pair<double, CColor> >& colorMap);
 
+void DrawMeshTet3D_Cut(const std::vector<double>& aXYZ,
+                       const std::vector<int>& aTet,
+                       const std::vector<CColor>& aColor,
+                       const double org[3], const double n[3]);
+
 ////////////////////////////////////
 
 void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,

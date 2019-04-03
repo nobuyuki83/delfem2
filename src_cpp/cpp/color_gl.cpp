@@ -497,62 +497,7 @@ void drawMeshTri3D_ScalarP0
   ::glEnd();
 }
 
-// 3D value
-void DrawMeshTet3D_ScalarP1
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
- const std::vector<double>& aValSrf,
- const std::vector<std::pair<double, CColor> >& colorMap)
-{
-  const int nTet = (int)aTet.size()/4;
-  const int nXYZ = (int)aXYZ.size()/3;
-  if ((int)aValSrf.size()!=nXYZ) return;
-  /////
-  ::glBegin(GL_TRIANGLES);
-  for (int itri = 0; itri<nTet; ++itri){
-    const int i0 = aTet[itri*4+0];
-    const int i1 = aTet[itri*4+1];
-    const int i2 = aTet[itri*4+2];
-    const int i3 = aTet[itri*4+3];
-    if (i0==-1){
-      assert(i1==-1); assert(i2==-1);
-      continue;
-    }
-    assert(i0>=0&&i0<nXYZ);
-    assert(i1>=0&&i1<nXYZ);
-    assert(i2>=0&&i2<nXYZ);
-    assert(i3>=0&&i3<nXYZ);
-    const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
-    const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-    const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double un0[3], a0; UnitNormalAreaTri3D(un0,a0, p1,p2,p3);
-    double un1[3], a1; UnitNormalAreaTri3D(un1,a1, p2,p0,p3);
-    double un2[3], a2; UnitNormalAreaTri3D(un2,a2, p3,p0,p1);
-    double un3[3], a3; UnitNormalAreaTri3D(un3,a3, p0,p2,p1);
-    const double vt0 = aValSrf[i0];
-    const double vt1 = aValSrf[i1];
-    const double vt2 = aValSrf[i2];
-    const double vt3 = aValSrf[i3];
-    ::glNormal3dv(un0);
-    heatmap(vt1, colorMap); glVertex3dv(p1);
-    heatmap(vt2, colorMap); glVertex3dv(p2);
-    heatmap(vt3, colorMap); glVertex3dv(p3);
-    ::glNormal3dv(un1);
-    heatmap(vt2, colorMap); glVertex3dv(p2);
-    heatmap(vt3, colorMap); glVertex3dv(p3);
-    heatmap(vt0, colorMap); glVertex3dv(p0);
-    ::glNormal3dv(un2);
-    heatmap(vt3, colorMap); glVertex3dv(p3);
-    heatmap(vt0, colorMap); glVertex3dv(p0);
-    heatmap(vt1, colorMap); glVertex3dv(p1);
-    ::glNormal3dv(un3);
-    heatmap(vt0, colorMap); glVertex3dv(p0);
-    heatmap(vt1, colorMap); glVertex3dv(p1);
-    heatmap(vt2, colorMap); glVertex3dv(p2);
-  }
-  ::glEnd();
-}
+
 
 void DrawMeshTri3D_VtxColor
 (const std::vector<double>& aXYZ,
@@ -625,6 +570,172 @@ void DrawMeshTri3DFlag_FaceNorm
     ::glEnd();
   }
 }
+
+
+//////////////////////////////////////////////////////////
+// tet from here
+
+// 3D value
+void DrawMeshTet3D_ScalarP1
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aTet,
+ const std::vector<double>& aValSrf,
+ const std::vector<std::pair<double, CColor> >& colorMap)
+{
+  const int nTet = (int)aTet.size()/4;
+  const int nXYZ = (int)aXYZ.size()/3;
+  if ((int)aValSrf.size()!=nXYZ) return;
+  /////
+  ::glBegin(GL_TRIANGLES);
+  for (int itri = 0; itri<nTet; ++itri){
+    const int i0 = aTet[itri*4+0];
+    const int i1 = aTet[itri*4+1];
+    const int i2 = aTet[itri*4+2];
+    const int i3 = aTet[itri*4+3];
+    if (i0==-1){
+      assert(i1==-1); assert(i2==-1);
+      continue;
+    }
+    assert(i0>=0&&i0<nXYZ);
+    assert(i1>=0&&i1<nXYZ);
+    assert(i2>=0&&i2<nXYZ);
+    assert(i3>=0&&i3<nXYZ);
+    const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
+    const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+    const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+    const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
+    double un0[3], a0; UnitNormalAreaTri3D(un0,a0, p1,p2,p3);
+    double un1[3], a1; UnitNormalAreaTri3D(un1,a1, p2,p0,p3);
+    double un2[3], a2; UnitNormalAreaTri3D(un2,a2, p3,p0,p1);
+    double un3[3], a3; UnitNormalAreaTri3D(un3,a3, p0,p2,p1);
+    const double vt0 = aValSrf[i0];
+    const double vt1 = aValSrf[i1];
+    const double vt2 = aValSrf[i2];
+    const double vt3 = aValSrf[i3];
+    ::glNormal3dv(un0);
+    heatmap(vt1, colorMap); glVertex3dv(p1);
+    heatmap(vt2, colorMap); glVertex3dv(p2);
+    heatmap(vt3, colorMap); glVertex3dv(p3);
+    ::glNormal3dv(un1);
+    heatmap(vt2, colorMap); glVertex3dv(p2);
+    heatmap(vt3, colorMap); glVertex3dv(p3);
+    heatmap(vt0, colorMap); glVertex3dv(p0);
+    ::glNormal3dv(un2);
+    heatmap(vt3, colorMap); glVertex3dv(p3);
+    heatmap(vt0, colorMap); glVertex3dv(p0);
+    heatmap(vt1, colorMap); glVertex3dv(p1);
+    ::glNormal3dv(un3);
+    heatmap(vt0, colorMap); glVertex3dv(p0);
+    heatmap(vt1, colorMap); glVertex3dv(p1);
+    heatmap(vt2, colorMap); glVertex3dv(p2);
+  }
+  ::glEnd();
+}
+
+static bool IsAbovePlane(const double p[3], const double org[3], const double n[3])
+{
+  const double dot = (p[0]-org[0])*n[0] + (p[1]-org[1])*n[1] + (p[2]-org[2])*n[2];
+  return dot > 0;
+}
+
+
+void DrawMeshTet3D_Cut
+(const std::vector<double>& aXYZ,
+ const std::vector<int>& aTet,
+ const std::vector<CColor>& aColor,
+ const double org[3], const double n[3])
+{
+  glEnable(GL_COLOR_MATERIAL);
+  glColorMaterial(GL_FRONT, GL_DIFFUSE);
+  ::glColor3d(1,1,1);
+  ::glBegin(GL_TRIANGLES);
+  for(unsigned int itet=0;itet<(int)aTet.size()/4;itet++){
+    const int ino0 = aTet[itet*4+0];
+    const int ino1 = aTet[itet*4+1];
+    const int ino2 = aTet[itet*4+2];
+    const int ino3 = aTet[itet*4+3];
+    const double p0[3] = {aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2]};
+    const double p1[3] = {aXYZ[ino1*3+0], aXYZ[ino1*3+1], aXYZ[ino1*3+2]};
+    const double p2[3] = {aXYZ[ino2*3+0], aXYZ[ino2*3+1], aXYZ[ino2*3+2]};
+    const double p3[3] = {aXYZ[ino3*3+0], aXYZ[ino3*3+1], aXYZ[ino3*3+2]};
+    if( IsAbovePlane(p0, org, n) ) continue;
+    if( IsAbovePlane(p1, org, n) ) continue;
+    if( IsAbovePlane(p2, org, n) ) continue;
+    if( IsAbovePlane(p3, org, n) ) continue;
+    //    ::glColor3d(1,1,0);
+    aColor[itet].glColorDiffuse();
+    ////
+    double n[3], area;
+    UnitNormalAreaTri3D(n, area, p0, p2, p1);
+    ::glNormal3dv(n);
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p2);
+    ::glVertex3dv(p1);
+    /////
+    UnitNormalAreaTri3D(n, area, p0, p1, p3);
+    ::glNormal3dv(n);
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p1);
+    ::glVertex3dv(p3);
+    /////
+    UnitNormalAreaTri3D(n, area, p1, p2, p3);
+    ::glNormal3dv(n);
+    ::glVertex3dv(p1);
+    ::glVertex3dv(p2);
+    ::glVertex3dv(p3);
+    /////
+    UnitNormalAreaTri3D(n, area, p2, p0, p3);
+    ::glNormal3dv(n);
+    ::glVertex3dv(p2);
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p3);
+  }
+  ::glEnd();
+  bool is_lighting = glIsEnabled(GL_LIGHTING);
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(0,0,0);
+  ::glBegin(GL_LINES);
+  for(unsigned int itet=0;itet<aTet.size()/4;itet++){
+    const int ino0 = aTet[itet*4+0];
+    const int ino1 = aTet[itet*4+1];
+    const int ino2 = aTet[itet*4+2];
+    const int ino3 = aTet[itet*4+3];
+    const double p0[3] = {aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2]};
+    const double p1[3] = {aXYZ[ino1*3+0], aXYZ[ino1*3+1], aXYZ[ino1*3+2]};
+    const double p2[3] = {aXYZ[ino2*3+0], aXYZ[ino2*3+1], aXYZ[ino2*3+2]};
+    const double p3[3] = {aXYZ[ino3*3+0], aXYZ[ino3*3+1], aXYZ[ino3*3+2]};
+    if( IsAbovePlane(p0, org, n) ) continue;
+    if( IsAbovePlane(p1, org, n) ) continue;
+    if( IsAbovePlane(p2, org, n) ) continue;
+    if( IsAbovePlane(p3, org, n) ) continue;
+    ////
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p1);
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p2);
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p3);
+    ::glVertex3dv(p1);
+    ::glVertex3dv(p2);
+    ::glVertex3dv(p1);
+    ::glVertex3dv(p3);
+    ::glVertex3dv(p2);
+    ::glVertex3dv(p3);
+  }
+  ::glEnd();
+  ////
+  /*
+   ::glColor3d(0,0,0);
+   ::glPointSize(3);
+   ::glBegin(GL_POINTS);
+   for(unsigned int ino=0;ino<nXYZ_;ino++){
+   ::glVertex3dv(pXYZ_+ino*3);
+   }
+   ::glEnd();
+   */
+  if( is_lighting ){ glEnable(GL_LIGHTING); }
+}
+
 
 
 /////////////
