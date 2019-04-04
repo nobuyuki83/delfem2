@@ -130,8 +130,8 @@ static void makeOneRingNeighborhood
 int GetCutNode(unsigned int iln0, unsigned int iln1,
                const std::vector<int>& aCutInd, const std::vector<int>& aCut)
 {
-  for(unsigned int ind0=aCutInd[iln0];ind0<aCutInd[iln0+1];ind0++){
-    if( aCut[ind0*2+0] != iln1 ) continue;
+  for(int ind0=aCutInd[iln0];ind0<aCutInd[iln0+1];ind0++){
+    if( aCut[ind0*2+0] != (int)iln1 ) continue;
     return aCut[ind0*2+1];
   }
   return -1;
@@ -558,7 +558,7 @@ void makeChild_Face
 (std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
  const CInputIsosurfaceStuffing& input, int icell, int iface)
 {
-  assert( icell >= 0 && icell < aCell.size() );
+  assert( icell >= 0 && icell < (int)aCell.size() );
   const int faceHex[6][4] = {
     {0,4,6,2},
     {1,3,7,5},
@@ -839,7 +839,7 @@ void addEdgeFacePoints
   {
     for(int ilevel=0;;++ilevel){
       int icnt = 0;
-      for(int icell=0;icell<aCell.size();++icell){
+      for(int icell=0;icell<(int)aCell.size();++icell){
         if( aCell[icell].ilevel == ilevel ){
           orderCell.push_back(icell);
           icnt++;

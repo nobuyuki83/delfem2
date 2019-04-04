@@ -24,19 +24,18 @@ static inline double Length3D(const double p0[3], const double p1[3]){
 }
  */
 
-/*
 static void Cross3D(double r[3], const double v1[3], const double v2[3]){
 	r[0] = v1[1]*v2[2] - v2[1]*v1[2];
 	r[1] = v1[2]*v2[0] - v2[2]*v1[0];
 	r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
- */
+
 
 static inline double Dot3D(const double p0[3], const double p1[3]){
 	return p0[0]*p1[0]+p0[1]*p1[1]+p0[2]*p1[2];
 }
 
-/*
+
 static inline double Length3D(const double v[3]){
 	return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
 }
@@ -44,7 +43,6 @@ static inline double Length3D(const double v[3]){
 static inline double SqLength3D(const double v[3]){
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 }
- */
 
 static double Distance3D(const double p0[3], const double p1[3]){
   return sqrt((p1[0]-p0[0])*(p1[0]-p0[0])+(p1[1]-p0[1])*(p1[1]-p0[1])+(p1[2]-p0[2])*(p1[2]-p0[2]));
@@ -97,7 +95,6 @@ inline double ScalarTripleProduct3D(const double v1[3], const double v2[3], cons
 	return x+y+z;
 }
 
-/*
 static bool GetVertical2Vector3D(const double vec0[3], double vec1[3], double vec2[3])
 {
   double vec_a[3] = { vec0[0], vec0[1], vec0[2] };
@@ -125,7 +122,6 @@ static bool GetVertical2Vector3D(const double vec0[3], double vec1[3], double ve
   }
   return true;
 }
- */
 
 static void GetNearest_LineSegPoint3D
 (double pn[3],
@@ -212,7 +208,7 @@ const double q2[3])
   return;
 }
 
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
 CSignedDistanceField3D_Plane::CSignedDistanceField3D_Plane(double n[3], double o[3])
 {

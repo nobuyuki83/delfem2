@@ -77,12 +77,12 @@ def mesh_read(path_file="") -> Mesh:
     ext = path_file.rsplit(".", 1)[1]
     if ext == 'ply':
       list_xyz, list_tri = read_ply(path_file)
-      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+      np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
+      np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 3))
     if ext == 'obj':
       list_xyz, list_tri = read_obj(path_file)
-      np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-      np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 3))
+      np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
+      np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 3))
 #      print(self.np_pos.shape, self.np_elm.shape)
   return Mesh(np_pos,np_elm)
 
@@ -105,6 +105,21 @@ def mesh_cad(cad,len) -> Mesh:
   xy,tri = getMesh_cad(cad,len)
   mesh = Mesh(xy,tri)
   return mesh
+
+#####################################################
+
+class SDF():
+  def __init__(self):
+    self.list_sdf = []
+
+  def add_sphere(self, xyz:list, rad:float):
+    sdf = SDF_Sphere()
+    self.list_sdf.append(sdf)
+
+  def draw(self):
+    for sdf in self.list_sdf:
+      sdf.draw()
+
 
 #####################################################
 
@@ -291,6 +306,9 @@ class FEM_Poisson2D():
                            self.vec_val)
     self.ls.Solve()
     self.vec_val += self.ls.vec_x
+
+
+
 
 
 class FEM_Diffuse2D():

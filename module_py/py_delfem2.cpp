@@ -13,6 +13,8 @@
 #include "delfem2/voxel.h"
 #include "delfem2/bv.h"    // include gl
 #include "delfem2/cad2d.h"
+#include "delfem2/sdf.h"
+#include "delfem2/isosurface_stuffing.h"
 
 namespace py = pybind11;
 
@@ -68,6 +70,50 @@ py::array_t<int> PyCad_GetPointsEdge
   return npIdP;
 }
 
+std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
+(const std::vector<const CSignedDistanceField3D*>& apSDF)
+{
+  class CMyInput : public CInputIsosurfaceStuffing
+  {
+  public:
+    CMyInput(const std::vector<const CSignedDistanceField3D*>& apSDF){
+      this->apSDF = apSDF;
+    }
+    virtual double SignedDistance(double px, double py, double pz) const{
+      double n[3];
+      return this->apSDF[0]->Projection(px,py,pz,n);
+    }
+    virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
+                       double px, double py, double pz) const
+    {
+      sdf = this->SignedDistance(px,py,pz);
+      /*
+      const double rad0 = sp.radius_;
+      const double rad1 = sqrt(px*px+py*py+pz*pz);
+      if( rad1 > rad0*0.5 ){ ilevel_vol = 0; }
+      else{ ilevel_vol = 1; }
+       */
+      ilevel_srf = 1;
+      nlayer = 1;
+      ilevel_vol = -1;
+    }
+  public:
+    std::vector<const CSignedDistanceField3D*> apSDF;
+  } input(apSDF);
+  
+  std::vector<double> aXYZ;
+  std::vector<int> aTet;
+  std::vector<int> aIsOnSurfXYZ;
+  double rad = 1.5;
+  double cent[3] = {0,0,0};
+  IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
+                     input, 0.2, rad*4.0, cent);
+  
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  py::array_t<int> npTet({(int)aTet.size()/4,4}, aTet.data());
+  return std::tie(npXYZ,npTet);
+}
+
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -118,6 +164,17 @@ PYBIND11_MODULE(dfm2, m) {
   
   m.def("getmesh_voxelgrid",&GetMesh_VoxelGrid);
   m.def("getMesh_cad",&GetMesh_Cad);
+  
+  ///////////////////////////////////
+  // SDF
+  
+  py::class_<CSignedDistanceField3D>(m, "SDF");
+  
+  py::class_<CSignedDistanceField3D_Sphere, CSignedDistanceField3D>(m, "SDF_Sphere")
+  .def(py::init<>())
+  .def("draw",  &CSignedDistanceField3D_Sphere::Draw);
+  
+  m.def("isosurface", &PyIsoSurface);
   
   ///////////////////////////////////
   // cad
