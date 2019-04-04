@@ -6,13 +6,18 @@
 #include <fstream>
 #include <time.h>
 
-#if defined(USE_GL)
-  #if defined(__APPLE__) && defined(__MACH__)
-  #include <OpenGL/gl.h>
-  #else
-  #include <windows.h>
-  #include <GL/gl.h>
-  #endif
+#if defined(__APPLE__) && defined(__MACH__) // Mac
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/glu.h>
+#elif defined(WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#else // linux
+#include <GL/gl.h>
+#include <GL/glu.h>
 #endif
 
 #include "delfem2/sdf.h"
