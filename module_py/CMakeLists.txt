@@ -36,7 +36,10 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/cad2d.cpp         ${DELFEM2_INC}/cad2d.h
   ${DELFEM2_SRC}/gpusampler.cpp    ${DELFEM2_INC}/gpusampler.h  
   ${DELFEM2_SRC}/rigmesh.cpp       ${DELFEM2_INC}/rigmesh.h  
-  ${DELFEM2_SRC}/rigidbody.cpp     ${DELFEM2_INC}/rigidbody.h  
+  ${DELFEM2_SRC}/rigidbody.cpp     ${DELFEM2_INC}/rigidbody.h
+  ${DELFEM2_SRC}/isosurface_stuffing.cpp  ${DELFEM2_INC}/isosurface_stuffing.h
+  ${DELFEM2_SRC}/sdf.cpp           ${DELFEM2_INC}/sdf.h
+  ${DELFEM2_SRC}/hash3d.cpp        ${DELFEM2_INC}/hash3d.h
 
   ${DELFEM2_SRC}/v23q_gl.cpp       ${DELFEM2_INC}/v23q_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
