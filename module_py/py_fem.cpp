@@ -6,6 +6,7 @@
 #include "delfem2/matrix_sparse.h"
 #include "delfem2/ilu_sparse.h"
 #include "delfem2/fem.h"
+#include "delfem2/mshtopo.h"
 
 namespace py = pybind11;
 
@@ -77,83 +78,150 @@ std::vector<double> PySolve_PBiCGStab
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void PyMergeLinSys_Poission2D
+void PyMergeLinSys_Poission
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
  double alpha, double source,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<int>& aElm,
+ MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal)
 {
+  assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
+  assert( nNodeElem(elem_type) == aElm.shape()[1] );
   auto buff_vecb = vec_b.request();
-  MergeLinSys_Poission2D(mss, (double*)buff_vecb.ptr,
-                         alpha, source,
-                         aXY.data(), aXY.shape()[0],
-                         aTri.data(), aTri.shape()[0],
-                         aVal.data());
+  if( aXY.shape()[1] == 2 ){
+    if( elem_type == MESHELEM_TRI ){
+      MergeLinSys_Poission_MeshTri2D(mss, (double*)buff_vecb.ptr,
+                                     alpha, source,
+                                     aXY.data(), aXY.shape()[0],
+                                     aElm.data(), aElm.shape()[0],
+                                     aVal.data());
+    }
+  }
+  if( aXY.shape()[1] == 3 ){
+    if( elem_type == MESHELEM_TET ){
+      MergeLinSys_Poission_MeshTet3D(mss, (double*)buff_vecb.ptr,
+                                     alpha, source,
+                                     aXY.data(), aXY.shape()[0],
+                                     aElm.data(), aElm.shape()[0],
+                                     aVal.data());
+    }
+  }
 }
 
 
-
-
-void PyMergeLinSys_Diffuse2D
+void PyMergeLinSys_Diffuse
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
  double alpha, double rho, double source,
  double dt_timestep, double gamma_newmark,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<int>& aElm,
+ MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo)
 {
+  assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
+  assert( nNodeElem(elem_type) == aElm.shape()[1] );
   auto buff_vecb = vec_b.request();
-  MergeLinSys_Diffusion2D(mss, (double*)buff_vecb.ptr,
-                          alpha, rho, source,
-                          dt_timestep, gamma_newmark,
-                          aXY.data(), aXY.shape()[0],
-                          aTri.data(), aTri.shape()[0],
-                          aVal.data(), aVelo.data());
+  if( aXY.shape()[1] == 2 ){
+    if( elem_type == MESHELEM_TRI ){
+      MergeLinSys_Diffusion_MeshTri2D(mss, (double*)buff_vecb.ptr,
+                                      alpha, rho, source,
+                                      dt_timestep, gamma_newmark,
+                                      aXY.data(), aXY.shape()[0],
+                                      aElm.data(), aElm.shape()[0],
+                                      aVal.data(), aVelo.data());
+    }
+  }
+  else if( aXY.shape()[1] == 3 ){
+    if( elem_type == MESHELEM_TET ){
+      MergeLinSys_Diffusion_MeshTet3D(mss, (double*)buff_vecb.ptr,
+                                      alpha, rho, source,
+                                      dt_timestep, gamma_newmark,
+                                      aXY.data(), aXY.shape()[0],
+                                      aElm.data(), aElm.shape()[0],
+                                      aVal.data(), aVelo.data());
+    }
+  }
 }
 
 
 
 
-void PyMergeLinSys_LinearSolidStatic2D
+void PyMergeLinSys_LinearSolidStatic
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
- double myu, double lambda, double rho, double g_x, double g_y,
+ double myu, double lambda, double rho,
+ std::vector<double>& gravity,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<int>& aElm,
+ MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal)
 {
+  assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
+  assert( nNodeElem(elem_type) == aElm.shape()[1] );
   auto buff_vecb = vec_b.request();
-  MergeLinSys_LinearSolid2D_Static(mss, (double*)buff_vecb.ptr,
-                                   myu,lambda,rho,g_x,g_y,
-                                   aXY.data(), aXY.shape()[0],
-                                   aTri.data(), aTri.shape()[0],
-                                   aVal.data());
-  
+  if( aXY.shape()[1] == 2 ){
+    if( elem_type == MESHELEM_TRI ){
+      MergeLinSys_SolidStaticLinear_MeshTri2D(mss, (double*)buff_vecb.ptr,
+                                              myu,lambda,rho,
+                                              gravity[0], gravity[1],
+                                              aXY.data(), aXY.shape()[0],
+                                              aElm.data(), aElm.shape()[0],
+                                              aVal.data());
+    }
+  }
+  if( aXY.shape()[1] == 3 ){
+    if( elem_type == MESHELEM_TET ){
+      MergeLinSys_SolidStaticLinear_MeshTet3D(mss, (double*)buff_vecb.ptr,
+                                              myu,lambda,rho,
+                                              gravity[0],gravity[1],gravity[2],
+                                              aXY.data(), aXY.shape()[0],
+                                              aElm.data(), aElm.shape()[0],
+                                              aVal.data());
+    }
+  }
 }
 
 
-void PyMergeLinSys_LinearSolidDynamic2D
+void PyMergeLinSys_LinearSolidDynamic
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
- double myu, double lambda, double rho, double g_x, double g_y,
+ double myu, double lambda, double rho,
+ std::vector<double>& gravity,
  double dt_timestep, double gamma_newmark, double beta_newmark,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<int>& aElm,
+ MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo,
  const py::array_t<double>& aAcc)
 {
   auto buff_vecb = vec_b.request();
-  MergeLinSys_LinearSolid2D_Dynamic(mss,(double*)buff_vecb.ptr,
-                                    myu,lambda,rho,g_x,g_y,
-                                    dt_timestep,gamma_newmark,beta_newmark,
-                                    aXY.data(), aXY.shape()[0],
-                                    aTri.data(), aTri.shape()[0],
-                                    aVal.data(),aVelo.data(),aAcc.data());
+  assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
+  assert( nNodeElem(elem_type) == aElm.shape()[1] );
+  if( aXY.shape()[1] == 2 ){
+    if( elem_type == MESHELEM_TRI ){
+      MergeLinSys_SolidDynamicLinear_MeshTri2D(mss,(double*)buff_vecb.ptr,
+                                               myu,lambda,rho,gravity[0],gravity[1],
+                                               dt_timestep,gamma_newmark,beta_newmark,
+                                               aXY.data(), aXY.shape()[0],
+                                               aElm.data(), aElm.shape()[0],
+                                               aVal.data(),aVelo.data(),aAcc.data());
+    }
+  }
+  if( aXY.shape()[1] == 3 ){
+    if( elem_type == MESHELEM_TET ){
+      MergeLinSys_SolidDynamicLinear_MeshTet3D(mss,(double*)buff_vecb.ptr,
+                                               myu,lambda,rho,gravity[0],gravity[1],gravity[2],
+                                               dt_timestep,gamma_newmark,beta_newmark,
+                                               aXY.data(), aXY.shape()[0],
+                                               aElm.data(), aElm.shape()[0],
+                                               aVal.data(),aVelo.data(),aAcc.data());
+    }
+  }
 }
 
 
@@ -282,10 +350,10 @@ void init_fem(py::module &m){
   m.def("linsys_solve_pcg", &PySolve_PCG);
   m.def("linsys_solve_bicgstab",&PySolve_PBiCGStab);
   
-  m.def("mergeLinSys_poission2D", &PyMergeLinSys_Poission2D);
-  m.def("mergeLinSys_diffuse2D",&PyMergeLinSys_Diffuse2D);
-  m.def("mergeLinSys_linearSolidStatic2D",&PyMergeLinSys_LinearSolidStatic2D);
-  m.def("mergeLinSys_linearSolidDynamic2D",&PyMergeLinSys_LinearSolidDynamic2D);
+  m.def("mergeLinSys_poission", &PyMergeLinSys_Poission);
+  m.def("mergeLinSys_diffuse",&PyMergeLinSys_Diffuse);
+  m.def("mergeLinSys_linearSolidStatic",&PyMergeLinSys_LinearSolidStatic);
+  m.def("mergeLinSys_linearSolidDynamic",&PyMergeLinSys_LinearSolidDynamic);
   m.def("mergeLinSys_storksStatic2D",&PyMergeLinSys_StorksStatic2D);
   m.def("mergeLinSys_storksDynamic2D",&PyMergeLinSys_StorksDynamic2D);
   m.def("mergeLinSys_navierStorks2D",&PyMergeLinSys_NavierStorks2D);

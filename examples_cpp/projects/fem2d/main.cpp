@@ -237,7 +237,7 @@ void SolveProblem_Poisson()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Poission2D(mat_A,vec_b.data(),
+  MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
                          alpha,source,
                          aXY1.data(),aXY1.size()/2,
                          aTri1.data(),aTri1.size()/3,
@@ -266,12 +266,12 @@ void SolveProblem_Diffusion()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Diffusion2D(mat_A, vec_b.data(),
-                          alpha, rho, source,                        
-                          dt_timestep, gamma_newmark,
-                          aXY1.data(), aXY1.size()/2,
-                          aTri1.data(), aTri1.size()/3,
-                          aVal.data(),aVelo.data());
+  MergeLinSys_Diffusion_MeshTri2D(mat_A, vec_b.data(),
+                                  alpha, rho, source,
+                                  dt_timestep, gamma_newmark,
+                                  aXY1.data(), aXY1.size()/2,
+                                  aTri1.data(), aTri1.size()/3,
+                                  aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
@@ -351,11 +351,11 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolid2D_Static(mat_A,vec_b.data(),
-                                   myu,lambda,rho,g_x,g_y,
-                                   aXY1.data(), aXY1.size()/2,
-                                   aTri1.data(), aTri1.size()/3,
-                                   aVal.data());
+  MergeLinSys_LinearSolidStatic_MeshTri2D(mat_A,vec_b.data(),
+                                          myu,lambda,rho,g_x,g_y,
+                                          aXY1.data(), aXY1.size()/2,
+                                          aTri1.data(), aTri1.size()/3,
+                                          aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   mat_A.SetMasterSlave(aMSFlag);

@@ -36,6 +36,14 @@ void DrawField_ColorMap
                              color_map.aColor);
     }
   }
+  if( elm.shape()[1] == 4 ){
+    if( ndim == 3 ){
+      DrawMeshTet3D_ScalarP1(pos.data(), np,
+                             elm.data(), nelm,
+                             val.data(),
+                             color_map.aColor);
+    }
+  }
 }
 
 void DrawField_Disp
@@ -51,6 +59,9 @@ void DrawField_Disp
   assert( disp.shape()[1] == ndim );
   const int nstride = disp.strides()[0] / sizeof(double);
   if( ndim == 3 ){
+    DrawMeshTet3D_FaceNormDisp(pos.data(), np,
+                               elm.data(), nelm,
+                               disp.data());
   }
   else if( ndim == 2 ){
     DrawMeshTri2D_FaceDisp2D(pos.data(), np,

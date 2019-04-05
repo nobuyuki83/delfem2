@@ -118,9 +118,11 @@ void SolveProblem_Poisson()
   const double source = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Poission3D(mat_A,vec_b,
+  MergeLinSys_Poission_MeshTet3D(mat_A,vec_b.data(),
                          alpha,source,
-                         aXYZ,aTet,aVal);
+                         aXYZ.data(), aXYZ.size()/3,
+                         aTet.data(), aTet.size()/4,
+                         aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,1);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -183,11 +185,12 @@ void SolveProblem_Diffusion()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Diffusion3D(mat_A,vec_b,
-                          alpha, rho, source,
-                          dt_timestep, gamma_newmark,
-                          aXYZ,aTet,
-                          aVal,aVelo);
+  MergeLinSys_Diffusion_MeshTet3D(mat_A,vec_b.data(),
+                                  alpha, rho, source,
+                                  dt_timestep, gamma_newmark,
+                                  aXYZ.data(), aXYZ.size()/3,
+                                  aTet.data(), aTet.size()/4,
+                                  aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,1);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -254,9 +257,11 @@ void SolveProblem_LinearSolid_Static()
   double g_z = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolid3D_Static_P1(mat_A, vec_b,
-    myu, lambda, rho, g_x, g_y, g_z,
-    aXYZ, aTet, aVal);
+  MergeLinSys_LinearSolidStatic_MeshTet3D(mat_A, vec_b.data(),
+                                          myu, lambda, rho, g_x, g_y, g_z,
+                                          aXYZ.data(), aXYZ.size()/3,
+                                          aTet.data(), aTet.size()/4,
+                                          aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   ////////////////////////////////////////////
@@ -325,11 +330,12 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_z = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolid3D_Dynamic(mat_A,vec_b,
+  MergeLinSys_LinearSolid3D_Dynamic(mat_A,vec_b.data(),
                                     myu,lambda,rho,g_x,g_y,g_z,
                                     dt_timestep,gamma_newmark,beta_newmark,
-                                    aXYZ,aTet,
-                                    aVal,aVelo,aAcc);
+                                    aXYZ.data(), aXYZ.size()/3,
+                                    aTet.data(), aTet.size()/4,
+                                    aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -775,7 +781,10 @@ void myGlutDisplay(void)
     {
       std::vector< std::pair<double,CColor> > colorMap;
       makeHeatMap_BlueGrayRed(colorMap, 0, 1.0);
-      DrawMeshTet3D_ScalarP1(aXYZ, aTet, aVal, colorMap);
+      DrawMeshTet3D_ScalarP1(aXYZ.data(), aXYZ.size()/3,
+                             aTet.data(), aTet.size()/4,
+                             aVal.data(),
+                             colorMap);
     }
   }
   if (iphysics==2||iphysics==3){
@@ -788,7 +797,9 @@ void myGlutDisplay(void)
       ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
       glShadeModel(GL_FLAT);
     }
-    DrawMeshTet3D_FaceNormDisp(aXYZ, aTet, aVal);
+    DrawMeshTet3D_FaceNormDisp(aXYZ.data(), aXYZ.size()/3,
+                               aTet.data(), aTet.size()/4,
+                               aVal.data());
   }
   if( iphysics == 4 || iphysics == 5 || iphysics == 6 ){
     ::glEnable(GL_LIGHTING);

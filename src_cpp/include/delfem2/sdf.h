@@ -1,10 +1,10 @@
 #ifndef SDF_H
 #define SDF_H
 
-class CSignedDistanceField3D
+class CSDF3
 {
 public:
-  virtual ~CSignedDistanceField3D(){};
+  virtual ~CSDF3(){};
   virtual void Draw() const = 0;
   virtual double Projection
   (double px, double py, double pz,
@@ -17,7 +17,7 @@ public:
                        double elen) const = 0;
 };
 
-class CSignedDistanceField3D_Plane : public CSignedDistanceField3D
+class CSignedDistanceField3D_Plane : public CSDF3
 {
 public:
 	CSignedDistanceField3D_Plane(double norm[3], double orgn[3]);
@@ -32,7 +32,7 @@ public:
 	double origin_[3];
 };
 
-class CSignedDistanceField3D_Sphere : public CSignedDistanceField3D
+class CSignedDistanceField3D_Sphere : public CSDF3
 {
 public:
   CSignedDistanceField3D_Sphere(){
@@ -42,7 +42,7 @@ public:
     cent_[2] = 0.0;
     is_out_ = true;
   }
-	CSignedDistanceField3D_Sphere(double rad, double cent[3], bool is_out);
+	CSignedDistanceField3D_Sphere(double rad, const std::vector<double>& c, bool is_out);
 	virtual void Draw() const;	
 	// return penetration depth (inside is positive)
 	virtual double Projection
@@ -59,7 +59,7 @@ public:
 	bool is_out_;	// true:normal points outward
 };
 
-class CSignedDistanceField3D_Cylinder : public CSignedDistanceField3D
+class CSignedDistanceField3D_Cylinder : public CSDF3
 {
 public:
   CSignedDistanceField3D_Cylinder()
@@ -94,7 +94,7 @@ public:
 };
 
 
-class CSignedDistanceField3D_Torus : public CSignedDistanceField3D
+class CSignedDistanceField3D_Torus : public CSDF3
 {
 public:
 	CSignedDistanceField3D_Torus();
@@ -115,7 +115,7 @@ public:
 	double radius_tube_;
 };
 
-class CSignedDistanceField3D_Box : public CSignedDistanceField3D
+class CSignedDistanceField3D_Box : public CSDF3
 {
 public:
   virtual double Projection(double x, double y, double z,
@@ -176,7 +176,7 @@ public:
   double hwz; // half z width
 };
 
-class CSignedDistanceField3D_Combine : public CSignedDistanceField3D
+class CSignedDistanceField3D_Combine : public CSDF3
 {
 public:
 	 CSignedDistanceField3D_Combine(){}
@@ -193,13 +193,13 @@ public:
    const double org[3], const double dir[3]) const { return  true; }
   virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
 private:
-  std::vector<CSignedDistanceField3D*> apCT;    
+  std::vector<CSDF3*> apCT;    
 };
 
-class CSignedDistanceField3D_Transform : public CSignedDistanceField3D
+class CSignedDistanceField3D_Transform : public CSDF3
 {
 public:
-	CSignedDistanceField3D_Transform(CSignedDistanceField3D* pCT){ 
+	CSignedDistanceField3D_Transform(CSDF3* pCT){ 
 		phi = 0; theta = 0; psi = 0;		
 		trans[0]=0; trans[1]=0;	trans[2]=0;
 		this->pCT = pCT; 
@@ -225,7 +225,7 @@ public:
 private:
 	double phi, theta, psi;	// Bryant Angle
 	double trans[3];
-	CSignedDistanceField3D* pCT;
+	CSDF3* pCT;
 };
 
 
@@ -233,7 +233,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 class CSpatialHash_Grid3D;
-class CSignedDistanceField3D_Mesh : public CSignedDistanceField3D
+class CSignedDistanceField3D_Mesh : public CSDF3
 {
 public:
   CSignedDistanceField3D_Mesh();

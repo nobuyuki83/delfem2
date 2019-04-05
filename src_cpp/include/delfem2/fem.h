@@ -60,7 +60,7 @@ bool SolveLinSys_BiCGStab(CMatrixSquareSparse& mat_A,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MergeLinSys_Poission2D(CMatrixSquareSparse& mat_A,
+void MergeLinSys_Poission_MeshTri2D(CMatrixSquareSparse& mat_A,
                             double* vec_b,
                             const double alpha,
                             const double source,
@@ -68,15 +68,15 @@ void MergeLinSys_Poission2D(CMatrixSquareSparse& mat_A,
                             const int* aTri1, int nTri,
                             const double* aVal);
 
-void MergeLinSys_Poission3D(CMatrixSquareSparse& mat_A,
-                            std::vector<double>& vec_b,
+void MergeLinSys_Poission_MeshTet3D(CMatrixSquareSparse& mat_A,
+                            double* vec_b,
                             const double alpha,
                             const double source,
-                            const std::vector<double>& aXYZ,
-                            const std::vector<int>& aTet,
-                            const std::vector<double>& aVal);
+                            const double* aXYZ, int nXYZ,
+                            const int* aTet, int nTet,
+                            const double* aVal);
 
-void MergeLinSys_Diffusion2D(CMatrixSquareSparse& mat_A,
+void MergeLinSys_Diffusion_MeshTri2D(CMatrixSquareSparse& mat_A,
                              double* vec_b,
                              const double alpha,
                              const double rho,
@@ -88,19 +88,19 @@ void MergeLinSys_Diffusion2D(CMatrixSquareSparse& mat_A,
                              const double* aVal,
                              const double* aVelo);
 
-void MergeLinSys_Diffusion3D(CMatrixSquareSparse& mat_A,
-                             std::vector<double>& vec_b,
+void MergeLinSys_Diffusion_MeshTet3D(CMatrixSquareSparse& mat_A,
+                             double* vec_b,
                              const double alpha,
                              const double rho,
                              const double source,
                              const double dt_timestep,
                              const double gamma_newmark,
-                             const std::vector<double>& aXYZ,
-                             const std::vector<int>& aTet,
-                             const std::vector<double>& aVal,
-                             const std::vector<double>& aVelo);
+                             const double* aXYZ, int nXYZ,
+                             const int* aTet, int nTet,
+                             const double* aVal,
+                             const double* aVelo);
 
-void MergeLinSys_LinearSolid2D_Static(CMatrixSquareSparse& mat_A,
+void MergeLinSys_SolidStaticLinear_MeshTri2D(CMatrixSquareSparse& mat_A,
                                       double* vec_b,
                                       const double myu,
                                       const double lambda,
@@ -111,7 +111,7 @@ void MergeLinSys_LinearSolid2D_Static(CMatrixSquareSparse& mat_A,
                                       const int* aTri1, int nTri,
                                       const double* aVal);
 
-void MergeLinSys_LinearSolid2D_Dynamic(CMatrixSquareSparse& mat_A,
+void MergeLinSys_SolidDynamicLinear_MeshTri2D(CMatrixSquareSparse& mat_A,
                                       double* vec_b,
                                       const double myu,
                                       const double lambda,
@@ -285,18 +285,17 @@ aDisp[ip*3+i] += Rhs(ip*3+i);
 }
 */
 
-
-void MergeLinSys_LinearSolid3D_Static_P1(CMatrixSquareSparse& mat_A,
-                                         std::vector<double>& vec_b,
+void MergeLinSys_SolidStaticLinear_MeshTet3D(CMatrixSquareSparse& mat_A,
+                                         double* vec_b,
                                          const double myu,
                                          const double lambda,
                                          const double rho,
                                          const double g_x,
                                          const double g_y,
                                          const double g_z,
-                                         const std::vector<double>& aXYZ,
-                                         const std::vector<int>& aTet,
-                                         const std::vector<double>& aVal);
+                                         const double* aXYZ, int nXYZ,
+                                         const int* aTet, int nTet,
+                                         const double* aVal);
 
 void MergeLinSys_LinearSolid3D_Static_Q1(CMatrixSquareSparse& mat_A,
                                          std::vector<double>& vec_b,
@@ -310,8 +309,8 @@ void MergeLinSys_LinearSolid3D_Static_Q1(CMatrixSquareSparse& mat_A,
                                          const std::vector<int>& aHex,
                                          const std::vector<double>& aVal);
 
-void MergeLinSys_LinearSolid3D_Dynamic(CMatrixSquareSparse& mat_A,
-                                       std::vector<double>& vec_b,
+void MergeLinSys_SolidDynamicLinear_MeshTet3D(CMatrixSquareSparse& mat_A,
+                                       double* vec_b,
                                        const double myu,
                                        const double lambda,
                                        const double rho,
@@ -321,11 +320,11 @@ void MergeLinSys_LinearSolid3D_Dynamic(CMatrixSquareSparse& mat_A,
                                        const double dt_timestep,
                                        const double gamma_newmark,
                                        const double beta_newmark,
-                                       const std::vector<double>& aXYZ,
-                                       const std::vector<int>& aTet,
-                                       const std::vector<double>& aVal,
-                                       const std::vector<double>& aVelo,
-                                       const std::vector<double>& aAcc);
+                                       const double* aXYZ, int nXYZ,
+                                       const int* aTet, int nTet,
+                                       const double* aVal,
+                                       const double* aVelo,
+                                       const double* aAcc);
 
 void MergeLinSys_Stokes3D_Static(CMatrixSquareSparse& mat_A,
                                  std::vector<double>& vec_b,
