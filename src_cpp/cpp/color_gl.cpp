@@ -577,14 +577,11 @@ void DrawMeshTri3DFlag_FaceNorm
 
 // 3D value
 void DrawMeshTet3D_ScalarP1
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
- const std::vector<double>& aValSrf,
+(const double* aXYZ, int nXYZ,
+ const int* aTet, int nTet,
+ const double* aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
-  const int nTet = (int)aTet.size()/4;
-  const int nXYZ = (int)aXYZ.size()/3;
-  if ((int)aValSrf.size()!=nXYZ) return;
   /////
   ::glBegin(GL_TRIANGLES);
   for (int itri = 0; itri<nTet; ++itri){

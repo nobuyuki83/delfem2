@@ -1520,11 +1520,11 @@ void DrawHex3D_Edge
 }
 
 void DrawMeshTet3D_FaceNormDisp
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
- const std::vector<double>& aDisp)
+(const double* aXYZ, int nXYZ,
+ const int* aTet, int nTet,
+ const double* aDisp)
 {
-  for (int itet = 0; itet<(int)aTet.size()/4; itet++){
+  for (int itet = 0; itet<nTet; itet++){
     const int i0 = aTet[itet*4+0];
     const int i1 = aTet[itet*4+1];
     const int i2 = aTet[itet*4+2];

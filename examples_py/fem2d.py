@@ -4,7 +4,7 @@ import dfm2
 
 
 def poisson(cad,mesh):
-  fem = dfm2.FEM_Poisson2D(mesh)
+  fem = dfm2.FEM_Poisson(mesh,source=1.0)
   npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
   fem.ls.vec_bc[npIdP] = 1
   fem.solve()
@@ -16,7 +16,7 @@ def poisson(cad,mesh):
 
 
 def diffuse(cad,mesh):
-  fem = dfm2.FEM_Diffuse2D(mesh)
+  fem = dfm2.FEM_Diffuse(mesh,source=1.0)
   npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10);
   fem.ls.vec_bc[npIdP] = 1
   fem.solve()
@@ -30,7 +30,7 @@ def diffuse(cad,mesh):
 
 
 def linear_solid_static(cad,mesh):
-  fem = dfm2.FEM_LinearSolidStatic2D(mesh)
+  fem = dfm2.FEM_LinearSolidStatic(mesh,gravity=[0,-0.1])
   npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
   fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
@@ -42,7 +42,7 @@ def linear_solid_static(cad,mesh):
 
 
 def linear_solid_dynamic(cad,mesh):
-  fem = dfm2.FEM_LinearSolidDynamic2D(mesh)
+  fem = dfm2.FEM_LinearSolidDynamic(mesh,gravity=[0,-0.1])
   npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
   fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()

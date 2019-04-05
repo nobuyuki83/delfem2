@@ -71,17 +71,27 @@ py::array_t<int> PyCad_GetPointsEdge
 }
 
 std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
-(const std::vector<const CSignedDistanceField3D*>& apSDF)
+(const std::vector<const CSDF3*>& apSDF)
 {
   class CMyInput : public CInputIsosurfaceStuffing
   {
   public:
-    CMyInput(const std::vector<const CSignedDistanceField3D*>& apSDF){
+    CMyInput(const std::vector<const CSDF3*>& apSDF){
       this->apSDF = apSDF;
     }
     virtual double SignedDistance(double px, double py, double pz) const{
       double n[3];
-      return this->apSDF[0]->Projection(px,py,pz,n);
+      double max_dist = apSDF[0]->Projection(px,py,pz, n);
+      for(unsigned int ipct=1;ipct<apSDF.size();ipct++){
+        double dist0,n0[3];
+        dist0 = apSDF[ipct]->Projection(px,py,pz, n0);
+        if( dist0 < max_dist ) continue;
+        max_dist = dist0;
+        n[0] = n0[0];
+        n[1] = n0[1];
+        n[2] = n0[2];
+      }
+      return max_dist;
     }
     virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                        double px, double py, double pz) const
@@ -98,7 +108,7 @@ std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
       ilevel_vol = -1;
     }
   public:
-    std::vector<const CSignedDistanceField3D*> apSDF;
+    std::vector<const CSDF3*> apSDF;
   } input(apSDF);
   
   std::vector<double> aXYZ;
@@ -168,10 +178,11 @@ PYBIND11_MODULE(dfm2, m) {
   ///////////////////////////////////
   // SDF
   
-  py::class_<CSignedDistanceField3D>(m, "SDF");
+  py::class_<CSDF3>(m, "SDF");
   
-  py::class_<CSignedDistanceField3D_Sphere, CSignedDistanceField3D>(m, "SDF_Sphere")
+  py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "SDF_Sphere")
   .def(py::init<>())
+  .def(py::init<double,const std::vector<double>&,bool>())
   .def("draw",  &CSignedDistanceField3D_Sphere::Draw);
   
   m.def("isosurface", &PyIsoSurface);

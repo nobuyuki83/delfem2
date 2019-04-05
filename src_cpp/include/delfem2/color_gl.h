@@ -196,10 +196,10 @@ void DrawMeshElem3D_Scalar_Vtx(const std::vector<double>& aXYZ,
                                const std::vector<std::pair<double, CColor> >& colorMap);
 
 // 3D value
-void DrawMeshTet3D_ScalarP1(const std::vector<double>& aXYZ,
-                        const std::vector<int>& aTet,
-                        const std::vector<double>& aValSrf,
-                        const std::vector<std::pair<double, CColor> >& colorMap);
+void DrawMeshTet3D_ScalarP1(const double* aXYZ, int nXYZ,
+                            const int* aTet, int nTet,
+                            const double* aValSrf,
+                            const std::vector<std::pair<double, CColor> >& colorMap);
 
 void DrawMeshTet3D_Cut(const std::vector<double>& aXYZ,
                        const std::vector<int>& aTet,
