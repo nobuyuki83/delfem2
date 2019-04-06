@@ -8,11 +8,8 @@ def poisson(cad,mesh):
   npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
   fem.ls.vec_bc[npIdP] = 1
   fem.solve()
-  print(fem.ls.conv_hist)
-  ####
   field = dfm2.Field(mesh,val_color=fem.vec_val[:,0])
-  axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([field,axis])
+  dfm2.winDraw3d([field])
 
 
 def diffuse(cad,mesh):
@@ -34,11 +31,8 @@ def linear_solid_static(cad,mesh):
   npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
   fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
-  print(fem.ls.conv_hist)
-  ####
   field = dfm2.Field(mesh,val_disp=fem.vec_val)
-  axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([field,axis])
+  dfm2.winDraw3d([field])
 
 
 def linear_solid_dynamic(cad,mesh):

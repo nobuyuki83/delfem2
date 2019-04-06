@@ -7,12 +7,11 @@ Build Examples
 
 :: 
 
-   cd examples
+   cd examples_cpp
    mkdir buildMake
    cd buildMake
    cmake ..
    make
-
 
 
 Examples
