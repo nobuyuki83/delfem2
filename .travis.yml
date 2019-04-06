@@ -7,12 +7,22 @@ branches:
 env:
 - PYTHON_BUILD_VERSION=3
 
+addons:
+  apt:
+    packages:
+    - git 
+    - cmake 
+    - build-essential 
+    - libxmu-dev 
+    - libxi-dev 
+    - xorg-dev
+    - freeglut3-dev 
+    - libglfw3-dev 
+    - libglew-dev
+    - python3-dev 
+    - python3-pip
+
 script: |
-  sudo apt-get clean && apt-get update
-  sudo apt-get install -y git cmake build-essential 
-  sudo apt-get install -y libxmu-dev libxi-dev xorg-dev
-  sudo apt-get install -y freeglut3-dev libglfw3-dev libglew-dev
-  sudo apt-get install -y python3-dev python3-pip
   git submodule init
   git submodule update
   cd src_cpp/external/glfw
@@ -34,13 +44,13 @@ script: |
   make
   make test          
   cd ../../
-#  cd examples_cpp
-#  mkdir buildMake
-#  cd buildMake
-#  cmake ..
-#  make -i
-#  cd ..
-#  ls bin/   
+  cd examples_cpp
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make -i
+  cd ..
+  ls bin/   
 #  cd module_py
 #  mkdir buildMake
 #  cd buildMake
