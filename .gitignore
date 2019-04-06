@@ -34,6 +34,6 @@ build
 trash
 external/fbx
 projects_sub
-docs/_build/
+docs/site/
 examples_cpp/bin
 private_examples
