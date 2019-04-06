@@ -1,0 +1,7 @@
+language: cpp
+script: |
+  sudo apt-get clean && apt-get update
+  sudo apt-get install -y git cmake build-essential 
+  sudo apt-get install -y libxmu-dev libxi-dev xorg-dev
+  sudo apt-get install -y freeglut3-dev libglfw3-dev libglew-dev
+  sudo apt-get install -y python3-dev
