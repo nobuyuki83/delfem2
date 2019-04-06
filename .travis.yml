@@ -31,3 +31,16 @@ script: |
   make
   make test          
   cd ../../
+  cd module_py
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make  
+  cd ../../
+  cd examples_cpp
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make -i
+  cd ..
+  ls bin/   
