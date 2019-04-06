@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include <cstdlib>
 
 #include "delfem2/tex.h"
 
