@@ -52,11 +52,11 @@ script: |
   cmake ..
   make -i
   cd ..
-  ls bin/   
-#  cd module_py
-#  mkdir buildMake
-#  cd buildMake
-#  cmake ..
-#  make  
-#  cd ../../
-
+  ls bin/  
+  cd .. 
+  cd module_py
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make  
+  cd ../../
