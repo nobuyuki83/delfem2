@@ -19,6 +19,6 @@ theme:
 
 pages:
 - Home: 'index.md'
-- 'example_cpp.md'  
 - 'example_py.md'  
+- 'example_cpp.md'  
 - 'coding.md'

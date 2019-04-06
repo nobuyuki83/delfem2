@@ -1,5 +1,8 @@
 # Top
 
+[![wercker status](https://app.wercker.com/status/03b6d924ec82270e22a04c3584fbf4de/s/master "wercker status")](https://app.wercker.com/project/byKey/03b6d924ec82270e22a04c3584fbf4de)
+
+
 DelFEM2 is a toolset for Finite Element Analsys with Python/C++
 
 - Seemless integration with Numpy.
