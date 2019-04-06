@@ -1,10 +1,15 @@
 language: cpp
+
+branches:
+  only: 
+    - master
+
 script: |
   sudo apt-get clean && apt-get update
   sudo apt-get install -y git cmake build-essential 
   sudo apt-get install -y libxmu-dev libxi-dev xorg-dev
   sudo apt-get install -y freeglut3-dev libglfw3-dev libglew-dev
-  sudo apt-get install -y python3-dev
+  sudo apt-get install -y python3-dev python-pip
   git submodule init
   git submodule update
   cd src_cpp/external/glfw
@@ -16,6 +21,13 @@ script: |
   cd build
   cmake ..
   make
-  cd ../../
-  sudo apt-get -y install python-pip python-dev build-essential
+  cd ../../../
   pip install -e .
+  cd test
+  ls googletest/build/googlemock/gtest
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make
+  make test          
+  cd ../../
