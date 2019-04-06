@@ -5,9 +5,10 @@ branches:
     - master
 
 env:
-- PYTHON_BUILD_VERSION=3
+- PYTHON_BUILD_VERSION=3.7
 
 dist: xenial
+sudo: false
 
 addons:
   apt:
@@ -23,6 +24,7 @@ addons:
     - libglew-dev
     - python3-dev 
     - python3-pip
+    - python3-setuptools
 
 script: |
   git submodule init
