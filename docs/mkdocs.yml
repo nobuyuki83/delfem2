@@ -1,0 +1,24 @@
+site_name: DelFEM2
+site_description: 'C++/Python library of Finite Element Method'
+site_author: 'Nobuyuki Umetani'
+site_url: 'https://nobuyuki83.github.io/delfem2'
+
+
+repo_name: 'nobuyuki83/delfem2'
+repo_url: 'https://github.com/nobuyuki83/delfem2'
+
+
+copyright: 'Copyright &copy; 2018 - 2019 Nobuyuki Umetani'
+
+markdown_extensions:
+  - codehilite
+
+theme:
+  name: 'material'
+
+
+pages:
+- Home: 'index.md'
+- 'example_py.md'  
+- 'example_cpp.md'  
+- 'coding.md'
