@@ -351,7 +351,7 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolidStatic_MeshTri2D(mat_A,vec_b.data(),
+  MergeLinSys_SolidStaticLinear_MeshTri2D(mat_A,vec_b.data(),
                                           myu,lambda,rho,g_x,g_y,
                                           aXY1.data(), aXY1.size()/2,
                                           aTri1.data(), aTri1.size()/3,
@@ -389,7 +389,7 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolid2D_Dynamic(mat_A,vec_b.data(),
+  MergeLinSys_SolidDynamicLinear_MeshTri2D(mat_A,vec_b.data(),
                                     myu,lambda,rho,g_x,g_y,
                                     dt_timestep,gamma_newmark,beta_newmark,
                                     aXY1.data(), aXY1.size()/2,

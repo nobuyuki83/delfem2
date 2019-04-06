@@ -257,7 +257,7 @@ void SolveProblem_LinearSolid_Static()
   double g_z = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolidStatic_MeshTet3D(mat_A, vec_b.data(),
+  MergeLinSys_SolidStaticLinear_MeshTet3D(mat_A, vec_b.data(),
                                           myu, lambda, rho, g_x, g_y, g_z,
                                           aXYZ.data(), aXYZ.size()/3,
                                           aTet.data(), aTet.size()/4,
@@ -330,7 +330,7 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_z = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_LinearSolid3D_Dynamic(mat_A,vec_b.data(),
+  MergeLinSys_SolidDynamicLinear_MeshTet3D(mat_A,vec_b.data(),
                                     myu,lambda,rho,g_x,g_y,g_z,
                                     dt_timestep,gamma_newmark,beta_newmark,
                                     aXYZ.data(), aXYZ.size()/3,

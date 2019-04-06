@@ -17,8 +17,8 @@ theme:
   name: 'material'
 
 
-pages:
-- Home: 'index.md'
+nav:
+- 'Home': 'index.md'
 - 'example_py.md'  
 - 'example_cpp.md'  
 - 'coding.md'
