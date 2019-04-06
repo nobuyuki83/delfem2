@@ -7,6 +7,8 @@ branches:
 env:
 - PYTHON_BUILD_VERSION=3
 
+dist: xenial
+
 addons:
   apt:
     packages:
