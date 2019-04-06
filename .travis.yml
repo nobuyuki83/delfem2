@@ -5,8 +5,7 @@ branches:
     - master
 
 env:
-- PYTHON_BUILD_VERSION=3.8-dev
-- PYTHON_BUILD_VERSION=3.7.2    
+- PYTHON_BUILD_VERSION=3
 
 script: |
   sudo apt-get clean && apt-get update
@@ -35,14 +34,13 @@ script: |
   make
   make test          
   cd ../../
-  cd examples_cpp
-  mkdir buildMake
-  cd buildMake
-  cmake ..
-  make -i
-  cd ..
-  ls bin/   
-
+#  cd examples_cpp
+#  mkdir buildMake
+#  cd buildMake
+#  cmake ..
+#  make -i
+#  cd ..
+#  ls bin/   
 #  cd module_py
 #  mkdir buildMake
 #  cd buildMake
