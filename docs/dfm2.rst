@@ -4,6 +4,14 @@ dfm2 package
 Submodules
 ----------
 
+dfm2.dfm2\util module
+----------------------
+
+.. automodule:: dfm2.util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 dfm2.dfm2\_gl module
 --------------------
 
