@@ -8,6 +8,9 @@
 class CCadTopo
 {
 public:
+  CCadTopo(){
+	nVertex = 0;
+  }
   void Clear(){
     nVertex = 0;
     aEdge.clear();

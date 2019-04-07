@@ -205,6 +205,8 @@ void CCad2D_EdgeGeo::GenMesh
   assert( iedge<topo.aEdge.size() );
   const int iv0 = topo.aEdge[iedge].iv0;
   const int iv1 = topo.aEdge[iedge].iv1;
+  assert(iv0 >= 0 && iv0 < aVtxGeo.size());
+  assert(iv1 >= 0 && iv1 < aVtxGeo.size());
   this->p0 = aVtxGeo[iv0].pos;
   this->p1 = aVtxGeo[iv1].pos;
 }
