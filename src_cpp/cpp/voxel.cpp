@@ -1,9 +1,12 @@
-#if defined(USE_GL)
-  #if defined(__APPLE__) && defined(__MACH__)
-    #include <GLUT/glut.h>
-  #else
-    #include <GL/glut.h>
-  #endif
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/glu.h>
+#elif defined(_WIN32)
+#include <windows.h>
+#include <GL/glu.h>
+#else
+#include <GL/glu.h>
 #endif
 
 #include "delfem2/vec3.h"

@@ -192,11 +192,11 @@ PYBIND11_MODULE(dfm2, m) {
   py::class_<CCad2D>(m, "Cad2D", "2D CAD class")
   .def(py::init<>())
   .def("add_polygon", &CCad2D::AddPolygon)
-  .def("draw",       &CCad2D::Draw)
-  .def("mouse",      &CCad2D::Mouse)
+  .def("draw",        &CCad2D::Draw)
+  .def("mouse",       &CCad2D::Mouse)
   .def("motion",      &CCad2D::Motion)
-  .def("minmax_xyz", &CCad2D::MinMaxXYZ)
-  .def("meshing",&CCad2D::Meshing);
+  .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
+  .def("meshing",     &CCad2D::Meshing);
 
   m.def("cad_getPointsEdge",&PyCad_GetPointsEdge);
   
