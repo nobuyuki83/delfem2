@@ -7,7 +7,7 @@
 #include <OpenGL/glu.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
 #include <GL/glu.h>
-#elif defined(WIN32) // windows
+#elif defined(_WIN32) // windows
 #include <windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -31,6 +31,10 @@
 #include "delfem2/v23q_gl.h"
 
 #include "delfem2/rigmesh.h"
+
+#ifndef M_PI 
+#define M_PI 3.1415926535
+#endif
 
 static double myStod(const std::string& str){
   char* e;
@@ -647,7 +651,7 @@ void CMesh_RigMsh::DrawLayerWithTex(int ilayer,const CTexManager& tex_manager, b
   
   if( ilayer < 0 || ilayer >= (int)aLayer.size() ){ return; }
   const CLayer_RigMsh& layer = aLayer[ilayer];
-  if(layer.material_mapping_mode == "ALL_SAME" or layer.material_mapping_mode == "" ){
+  if(layer.material_mapping_mode == "ALL_SAME" || layer.material_mapping_mode == "" ){
     if( this->isTextureWithUVSetName(layer.uv_setname) ){
       const CTextureInfo_RigMsh& tex = this->getTextureWithUVSetName(layer.uv_setname);
       tex_manager.BindTexturePath(tex.full_path);
