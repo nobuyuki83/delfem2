@@ -16,6 +16,10 @@ markdown_extensions:
 theme:
   name: 'material'
 
+google_analytics: 
+  - 'UA-866616-6'
+  - 'nobuyuki83.github.io/delfem2'
+
 
 nav:
 - 'Home': 'index.md'

@@ -40,13 +40,13 @@ script: |
   make
   cd ../../../
   pip3 install -e .
-  cd test
+  cd test_cpp
   ls googletest/build/googlemock/gtest
   mkdir buildMake
   cd buildMake
   cmake ..
   make
-  make test          
+  make test 
   cd ../../
   cd examples_cpp
   mkdir buildMake
