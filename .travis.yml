@@ -63,4 +63,5 @@ script: |
   make  
   cd ../../
   cd test
+  python3 -m pip install numpy
   python3 test.py
