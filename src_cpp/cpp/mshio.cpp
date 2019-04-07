@@ -1206,18 +1206,19 @@ void Read_MeshTri3D_Nas
   aXYZ.clear();
   aTri.clear();
   /////
-  FILE *fp = fopen(path,"r");
-  if(fp==NULL){
+//  FILE *fp = fopen(path,"r");
+  std::ifstream fin(path);
+  if(!fin.is_open()){
     printf("fail to open file");
     return;
   }
   /////
-  size_t nbuff = 256;
-  char* buff = new char [nbuff];
+  const int nbuff = 256;
+  std::vector<char> buff(nbuff);
   char buff1[16], buff2[16], buff3[16], buff4[16], buff5[16];
   while(1){
-    ssize_t res = getline(&buff,&nbuff,fp);
-    if( res == -1 ){ break; } // eof
+    fin.getline(buff.data(),nbuff);
+    if( fin.eof() ){ break; } // eof
     if( buff[0]=='G' && buff[1]=='R' && buff[2]=='I' && buff[3]=='D' ){
       for(int i=0;i<8;++i){ buff1[i] = buff[i +8]; } buff1[8] = '\0';
       for(int i=0;i<8;++i){ buff2[i] = buff[i+24]; } buff2[8] = '\0';
@@ -1248,6 +1249,5 @@ void Read_MeshTri3D_Nas
       continue;
     }
   }
-  fclose(fp);
 }
 
