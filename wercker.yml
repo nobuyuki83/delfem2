@@ -40,9 +40,9 @@ build:
           sudo apt-get -y install python-pip python-dev build-essential
           pip install -e .
     - script:
-        name: test_cpp
+        name: test
         code: |
-          cd test_cpp
+          cd test
           ls googletest/build/googlemock/gtest
           mkdir buildMake
           cd buildMake
@@ -57,6 +57,11 @@ build:
           cd buildMake
           cmake ..
           make
+    - script: 
+        name: python unit test
+        code: |
+          cd test
+          python3 test.py
     - script:
         name: compile cpp examples
         code: |
