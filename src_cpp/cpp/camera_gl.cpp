@@ -7,7 +7,7 @@
   #include <OpenGL/gl.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
   #include <GL/glu.h>
-#elif defined(WIN32)
+#elif defined(_WIN32)
   #include <windows.h>
   #include <GL/glu.h>
 #else
