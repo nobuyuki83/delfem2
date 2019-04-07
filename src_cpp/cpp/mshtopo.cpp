@@ -273,7 +273,7 @@ void makeSurroundingRelationship
   aElSurRel.assign(nEl*nfael*2,-1);
   
   std::vector<int> tmp_poin(np,0);
-  int inpofa[nnofa];
+  std::vector<int> inpofa(nnofa);
   for (int iel = 0; iel<nEl; iel++){
     for (int ifael=0; ifael<nfael; ifael++){
       for (int ipofa=0; ipofa<nnofa; ipofa++){
