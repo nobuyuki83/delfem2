@@ -13,6 +13,7 @@
   #include <GL/glu.h>
 #elif defined(_WIN32) // windows
   #include <windows.h>
+  #include <GL/glew.h>
   #include <GL/gl.h>
 #else
   #include <GL/glew.h>

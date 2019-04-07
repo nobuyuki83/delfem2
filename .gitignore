@@ -21,6 +21,8 @@
 *.so
 *.vcxproj
 *.pyc
+*.dll
+*.pyd
 CMakeFiles
 cmake-build-debug
 cmake-build-release
