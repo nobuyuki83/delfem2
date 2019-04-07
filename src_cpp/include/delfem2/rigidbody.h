@@ -6,12 +6,6 @@
 #include <cstdio>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
-#if defined(__APPLE__) && defined(__MACH__)
 #include "Eigen/Dense"
 #else
 #include <Eigen/Dense>
