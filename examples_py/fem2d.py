@@ -5,7 +5,7 @@ import dfm2
 
 def poisson(cad,mesh):
   fem = dfm2.FEM_Poisson(mesh,source=1.0)
-  npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.vec_bc[npIdP] = 1
   fem.solve()
   field = dfm2.Field(mesh,val_color=fem.vec_val[:,0])
@@ -14,7 +14,7 @@ def poisson(cad,mesh):
 
 def diffuse(cad,mesh):
   fem = dfm2.FEM_Diffuse(mesh,source=1.0)
-  npIdP = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10);
+  npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.vec_bc[npIdP] = 1
   fem.solve()
   print(fem.ls.conv_hist)
@@ -28,7 +28,7 @@ def diffuse(cad,mesh):
 
 def linear_solid_static(cad,mesh):
   fem = dfm2.FEM_LinearSolidStatic(mesh,gravity=[0,-0.1])
-  npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
+  npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
   field = dfm2.Field(mesh,val_disp=fem.vec_val)
@@ -37,7 +37,7 @@ def linear_solid_static(cad,mesh):
 
 def linear_solid_dynamic(cad,mesh):
   fem = dfm2.FEM_LinearSolidDynamic(mesh,gravity=[0,-0.1])
-  npIdP = dfm2.cad_getPointsEdge(cad,[3], mesh.np_pos, 1.0e-10)
+  npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
   print(fem.ls.conv_hist)
@@ -49,9 +49,9 @@ def linear_solid_dynamic(cad,mesh):
 
 def storks_static(cad,mesh):
   fem = dfm2.FEM_StorksStatic2D(mesh)
-  npIdP0 = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.vec_bc[npIdP0,0:2] = 1
-  npIdP1 = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  npIdP1 = cad.points_edge([2], mesh.np_pos)
   fem.vec_val[npIdP1,0] = 1.0
   fem.solve()
   print(fem.ls.conv_hist)
@@ -63,9 +63,9 @@ def storks_static(cad,mesh):
 
 def storks_dynamic(cad,mesh):
   fem = dfm2.FEM_StorksDynamic2D(mesh)
-  npIdP0 = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.vec_bc[npIdP0,0:2] = 1
-  npIdP1 = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  npIdP1 = cad.points_edge([2], mesh.np_pos)
   fem.vec_val[npIdP1,0] = 1.0
   fem.solve()
   print(fem.ls.conv_hist)
@@ -77,9 +77,9 @@ def storks_dynamic(cad,mesh):
 
 def navir_storks(cad,mesh):
   fem = dfm2.FEM_NavierStorks2D(mesh)
-  npIdP0 = dfm2.cad_getPointsEdge(cad,[0,1,2,3], mesh.np_pos, 1.0e-10)
+  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.vec_bc[npIdP0,0:2] = 1
-  npIdP1 = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  npIdP1 = cad.points_edge([2], mesh.np_pos)
   fem.vec_val[npIdP1,0] = 1.0
   ####
   field = dfm2.Field(mesh, val_color=fem.vec_val[:,2], val_disp=fem.vec_val[:,:2], disp_mode='hedgehog')
@@ -89,7 +89,7 @@ def navir_storks(cad,mesh):
 
 def cloth(cad,mesh):
   fem = dfm2.FEM_Cloth(mesh)
-  npIdP = dfm2.cad_getPointsEdge(cad,[2], mesh.np_pos, 1.0e-10)
+  npIdP = cad.points_edge([2], mesh.np_pos)
   fem.ls.vec_bc[npIdP,0:3] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
@@ -98,9 +98,8 @@ def cloth(cad,mesh):
 
 
 def main():
-  cad = dfm2.Cad2D()
-  cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = dfm2.mesh_cad(cad,0.05)
+  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
+  mesh = cad.mesh(0.05)
   #  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)

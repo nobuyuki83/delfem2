@@ -10,6 +10,33 @@ def normalize_rigmsh(rigmsh):
 
 ####################
 
+class Cad2D():
+  def __init__(self,list_xy=None):
+    self.cad = CppCad2D()
+    if not list_xy is None:
+      self.cad.add_polygon(list_xy)
+
+  def add_polygon(self,list_xy):
+    self.cad.add_polygon(list_xy)
+
+  def mesh(self,len):
+    return mesh_cad(self.cad, 0.05)
+
+  def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
+    return cad_getPointsEdge(self.cad,list_edge_index, np_xy, tolerance=tolerance)
+
+  def draw(self):
+    self.cad.draw()
+
+  def mouse(self,btn,action,mods,src,dir,view_height):
+    self.cad.mouse(btn,action,mods,src,dir,view_height)
+
+  def motion(self,src0,src1,dir):
+    self.cad.motion(src0,src1,dir)
+
+
+####################
+
 class Mesh():
 
   def __init__(self,

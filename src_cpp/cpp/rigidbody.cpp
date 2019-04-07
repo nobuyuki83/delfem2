@@ -556,7 +556,7 @@ CRigidBodyAssembly_Static::CRigidBodyAssembly_Static()
   is_draw_section_moment = false; //false;
   
 //  SetExample();
-  this->Solve();
+//  this->Solve();
   this->is_draw_skeleton = true;
   this->is_draw_force = true;
   this->is_draw_grid = true;
@@ -582,7 +582,7 @@ CRigidBodyAssembly_Static::CRigidBodyAssembly_Static
   
   this->aRigidBody = aRB;
   this->aJoint = aJ;
-  this->Solve();
+//  this->Solve();
   this->is_draw_skeleton = true;
   this->is_draw_force = true;
   this->is_draw_grid = true;

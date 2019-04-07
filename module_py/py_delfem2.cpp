@@ -53,8 +53,7 @@ std::tuple<py::array_t<double>, py::array_t<int>> GetMesh_Cad
 }
 
 
-
-py::array_t<int> PyCad_GetPointsEdge
+py::array_t<int> PyCad2D_GetPointsEdge
 (const CCad2D& cad,
  const std::vector<int>& aIE,
  const py::array_t<double>& aXY,
@@ -189,7 +188,7 @@ PYBIND11_MODULE(dfm2, m) {
   
   ///////////////////////////////////
   // cad
-  py::class_<CCad2D>(m, "Cad2D", "2D CAD class")
+  py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
   .def("add_polygon", &CCad2D::AddPolygon)
   .def("draw",        &CCad2D::Draw)
@@ -198,7 +197,12 @@ PYBIND11_MODULE(dfm2, m) {
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
   .def("meshing",     &CCad2D::Meshing);
 
-  m.def("cad_getPointsEdge",&PyCad_GetPointsEdge);
+  m.def("cad_getPointsEdge",
+        &PyCad2D_GetPointsEdge,
+        py::arg("cad"),
+        py::arg("list_edge_index"),
+        py::arg("np_xy"),
+        py::arg("tolerance") = 0.001);
   
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())

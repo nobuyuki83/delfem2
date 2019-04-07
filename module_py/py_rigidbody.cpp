@@ -12,6 +12,7 @@ void init_rigidbody(py::module &m){
   py::class_<CRigidBodyAssembly_Static>(m,"RigidBodyAssembly_Static")
   .def(py::init<>())
   .def(py::init<std::vector<CRigidBody>,std::vector<CJoint>>())
+  .def("solve", &CRigidBodyAssembly_Static::Solve)
   .def("draw",&CRigidBodyAssembly_Static::Draw)
   .def("minmax_xyz",&CRigidBodyAssembly_Static::MinMaxXYZ);
 //  .def("init_gl",&CTexture::LoadTex)
