@@ -61,6 +61,7 @@ build:
         name: python unit test
         code: |
           cd test
+          python3 -m pip install numpy
           python3 test.py
     - script:
         name: compile cpp examples
