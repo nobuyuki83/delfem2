@@ -1,6 +1,4 @@
-from OpenGL.GL import *
-
-import sys
+import sys, numpy
 sys.path.append("../module_py")
 import dfm2
 
@@ -13,36 +11,27 @@ def make_mesh():
   msh = dfm2.Mesh(np_xyz,np_tet,dfm2.Tet)
   return msh
 
-def poission(msh):
+def poission(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Poisson(msh)
+  fem.ls.vec_bc[npIdP0] = 1
+  fem.ls.vec_bc[npIdP1] = 2
   fem.vec_val[:] = 0.5
-  np = msh.np_pos.shape[0]
-  for ip in range(np):
-    if msh.np_pos[ip,0] > 1:
-      fem.ls.vec_bc[ip,0] = 1
-      fem.vec_val[ip] = 0
-    elif msh.np_pos[ip,0] < -1:
-      fem.ls.vec_bc[ip,0] = 2
-      fem.vec_val[ip,0] = 1
-  print(fem.ls.conv_hist)
+  fem.vec_val[npIdP0] = 0.0
+  fem.vec_val[npIdP1] = 1.0
   fem.solve()
+  print(fem.ls.conv_hist)
   ####
   field = dfm2.Field(msh,val_color=fem.vec_val[:,0])
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([field,axis])
 
-def diffuse(msh):
+def diffuse(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Diffuse(msh)
+  fem.ls.vec_bc[npIdP0] = 1
+  fem.ls.vec_bc[npIdP1] = 2
   fem.vec_val[:] = 0.5
-  np = msh.np_pos.shape[0]
-  for ip in range(np):
-    if msh.np_pos[ip,0] > 1:
-      fem.ls.vec_bc[ip,0] = 1
-      fem.vec_val[ip] = 0
-    elif msh.np_pos[ip,0] < -1:
-      fem.ls.vec_bc[ip,0] = 2
-      fem.vec_val[ip,0] = 1
-  print(fem.ls.conv_hist)
+  fem.vec_val[npIdP0] = 0.0
+  fem.vec_val[npIdP1] = 1.0
   ####
   field = dfm2.Field(msh,val_color=fem.vec_val[:,0])
   field.draw_val_min = 0.0
@@ -51,34 +40,34 @@ def diffuse(msh):
   dfm2.winDraw3d([fem,field,axis])
 
 
-def linear_solid_static(msh):
+def linear_solid_static(msh,npIdP):
   fem = dfm2.FEM_LinearSolidStatic(msh,gravity=[0.3,0,0])
-  for ip in range(msh.np_pos.shape[0]):
-    if msh.np_pos[ip,0] < -1:
-      fem.ls.vec_bc[ip,:] = 1
-      fem.vec_val[ip,:] = 0.0
-  print(fem.ls.conv_hist)
+  fem.ls.vec_bc[npIdP,:] = 1
   fem.solve()
+  print(fem.ls.conv_hist)
   ####
   field = dfm2.Field(msh,val_disp=fem.vec_val)
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([field,axis])
 
-def linear_solid_dynamic(msh):
+def linear_solid_dynamic(msh,npIdP):
   fem = dfm2.FEM_LinearSolidDynamic(msh,gravity=[0.3,0,0])
-  for ip in range(msh.np_pos.shape[0]):
-    if msh.np_pos[ip,0] < -1:
-      fem.ls.vec_bc[ip,:] = 1
-      fem.vec_val[ip,:] = 0.0
-  print(fem.ls.conv_hist)
+  fem.ls.vec_bc[npIdP,:] = 1
   ####
   field = dfm2.Field(msh,val_disp=fem.vec_val)
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([fem,field,axis])
 
-if __name__ == "__main__":
+
+def main():
   msh = make_mesh()
-  poission(msh)
-  diffuse(msh)
-  linear_solid_static(msh)
-  linear_solid_dynamic(msh)
+  npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
+  npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
+  poission(msh,npIdP0,npIdP1)
+  diffuse(msh,npIdP0,npIdP1)
+  linear_solid_static(msh,npIdP1)
+  linear_solid_dynamic(msh,npIdP1)
+
+
+if __name__ == "__main__":
+  main()
