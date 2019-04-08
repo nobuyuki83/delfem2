@@ -16,8 +16,6 @@ def diffuse(cad,mesh):
   fem = dfm2.FEM_Diffuse(mesh,source=1.0)
   npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.vec_bc[npIdP] = 1
-  fem.solve()
-  print(fem.ls.conv_hist)
   ####
   field = dfm2.Field(mesh,val_color=fem.vec_val)
   field.draw_val_min = 0.0
@@ -39,7 +37,6 @@ def linear_solid_dynamic(cad,mesh):
   fem = dfm2.FEM_LinearSolidDynamic(mesh,gravity=[0,-0.1])
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.vec_bc[npIdP,:] = 1
-  fem.solve()
   print(fem.ls.conv_hist)
   ####
   field = dfm2.Field(mesh,val_disp=fem.vec_val)
