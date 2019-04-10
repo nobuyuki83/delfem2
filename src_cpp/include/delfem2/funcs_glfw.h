@@ -15,7 +15,7 @@ public:
     int win_h = 500;//viewport[3];
     imodifier = mods;
     double x, y;  glfwGetCursorPos (window, &x,&y);
-    std::cout << " pos: " << x << " " << y << " " << win_w << " " << win_h << std::endl;
+//    std::cout << " pos: " << x << " " << y << " " << win_w << " " << win_h << std::endl;
     mouse_x = (2.0*x-win_w)/win_w;
     mouse_y = (win_h-2.0*y)/win_h;
     if( action == 0 ){

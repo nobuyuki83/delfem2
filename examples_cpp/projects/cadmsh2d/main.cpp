@@ -32,7 +32,9 @@ CGlutWindowManager win;
 const double view_height = 2.0;
 bool is_animation = false;
 int imode_draw = 0;
-
+std::vector<double> aXY;
+std::vector<int> aTri;
+std::vector<double> aW;
 CCad2D cad;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,12 +51,13 @@ void myGlutDisplay(void)
   
   win.SetGL_Camera();
   
-//  if(      imode_draw == 0 ){ cad.DrawFace_RightSelected(false); }
-//  else if( imode_draw == 1 ){ cad.DrawFace_RightSelected(true); }
-//  else if( imode_draw == 2 ){ cad.DrawFace_LeftRight(); }
-//  cad.DrawVtxEdgeHandler(win.camera.view_height);
-  
   cad.Draw();
+  
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(0.8, 0.8, 0.8);
+  DrawMeshTri2D_Face(aTri,aXY);
+  ::glLineWidth(1);
+  DrawMeshTri2D_Edge(aTri,aXY);
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -92,6 +95,18 @@ void myGlutMotion( int x, int y ){
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   /////
   cad.Motion(src_pick0.stlvec(), src_pick1.stlvec(), dir_pick.stlvec());
+  ////
+  std::vector<double> aXY_bound = cad.GetVertexXY_Face(0);
+  int npb = aXY_bound.size()/2;
+  int np = aXY.size()/2;
+  for(int ip=0;ip<np;++ip){
+    aXY[ip*2+0] = 0.0;
+    aXY[ip*2+1] = 0.0;
+    for(int ipb=0;ipb<npb;++ipb){
+      aXY[ip*+2+0] += aW[ip*npb+ipb]*aXY_bound[ipb*2+0];
+      aXY[ip*+2+1] += aW[ip*npb+ipb]*aXY_bound[ipb*2+1];
+    }
+  }
 }
 
 void myGlutMouse(int button, int state, int x, int y)
@@ -253,7 +268,23 @@ int main(int argc,char* argv[])
   
   const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
   cad.AddPolygon(std::vector<double>(poly,poly+8));
+  cad.is_draw_face = false;
+  cad.Meshing(aXY,aTri,0.1);
   
+  const int nv = 4;
+  std::vector<double> aXY_bound = cad.GetVertexXY_Face(0);
+  const int nXY = aXY.size()/2;
+  aW.resize(nXY*nv);
+  for(int ip=0;ip<nXY;++ip){
+    MeanValueCoordinate2D(aW.data()+nv*ip,
+                          aXY[ip*2+0], aXY[ip*2+1],
+                          aXY_bound.data(), aXY_bound.size()/2);
+    double sum = 0.0;
+    for(int ipb=0;ipb<aXY_bound.size()/2;++ipb){
+      sum += aW[nv*ip+ipb];
+    }
+    assert( fabs(sum-1)<1.0e-10 );
+  }
   glutMainLoop();
 	return 0;
 }

@@ -88,33 +88,7 @@ void VLVt2(double A[4], double l0, double l1, const double V[4])
   A[3] = l0*V[2]*V[2]+l1*V[3]*V[3];
 }
 
-void MeanValueCoordinate2D
-(std::vector<double>& aW,
- double px, double py,
- std::vector<double>& aXY)
-{
-  const int nv = (int)aXY.size()/2;
-  aW.assign(nv,0.0);
-  double sum = 0;
-  for(int ie=0;ie<nv;++ie){
-    int iv0 = (ie+0)%nv;
-    int iv1 = (ie+1)%nv;
-    int iv2 = (ie+2)%nv;
-    CVector2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
-    CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
-    CVector2 v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
-    double c01 = (v0*v1)/(v0.Length()*v1.Length());
-    double c12 = (v1*v2)/(v1.Length()*v2.Length());
-    double t01 = sqrt((1-c01)/(1+c01));
-    double t12 = sqrt((1-c12)/(1+c12));
-    double w1 =  (t01+t12)/v1.Length();
-    aW[iv1] = w1;
-    sum += w1;
-  }
-  for(int iv=0;iv<nv;++iv){
-    aW[iv] /= sum;
-  }
-}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -463,6 +437,51 @@ void MeanValueCoordinate
     CVector2 v0 = aVtx[iv0]-p;
     CVector2 v1 = aVtx[iv1]-p;
     CVector2 v2 = aVtx[iv2]-p;
+    double c01 = (v0*v1)/(v0.Length()*v1.Length());
+    double c12 = (v1*v2)/(v1.Length()*v2.Length());
+    double t01 = sqrt((1-c01)/(1+c01));
+    double t12 = sqrt((1-c12)/(1+c12));
+    double w1 =  (t01+t12)/v1.Length();
+    aW[iv1] = w1;
+    sum += w1;
+  }
+  for(int iv=0;iv<nv;++iv){
+    aW[iv] /= sum;
+  }
+}
+
+void MeanValueCoordinate2D
+(double* aW,
+ double px, double py,
+ const double* aXY, int nv)
+{
+  for(int iv=0;iv<nv;++iv){ aW[iv] = 0.0; }
+  for(int iv=0;iv<nv;++iv){
+    CVector2 v0(aXY[iv*2+0]-px,aXY[iv*2+1]-py);
+    if( v0.Length() > 1.0e-10 ){ continue; }
+    aW[iv] = 1.0;
+    return;
+  }
+  for(int ie=0;ie<nv;++ie){
+    int iv0 = (ie+0)%nv;
+    int iv1 = (ie+1)%nv;
+    CVector2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
+    CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
+    const double l0 = v0.Length();
+    const double l1 = v1.Length();
+    if( abs((v0*v1)/(l0*l1)+1) > 1.0e-10 ){ continue; }
+    aW[iv0] = l1/(l0+l1);
+    aW[iv1] = l0/(l0+l1);
+    return;
+  }
+  double sum = 0;
+  for(int ie=0;ie<nv;++ie){
+    int iv0 = (ie+0)%nv;
+    int iv1 = (ie+1)%nv;
+    int iv2 = (ie+2)%nv;
+    CVector2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
+    CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
+    CVector2 v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
     double c01 = (v0*v1)/(v0.Length()*v1.Length());
     double c12 = (v1*v2)/(v1.Length()*v2.Length());
     double t01 = sqrt((1-c01)/(1+c01));

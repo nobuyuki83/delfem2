@@ -20,9 +20,6 @@ double len2(const double v[2]);
 double sqLen2(const double v[2]);
 void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);
-void MeanValueCoordinate2D(std::vector<double>& aW,
-                           double px, double py,
-                           std::vector<double>& aXY);
 
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -216,6 +213,9 @@ std::vector<CVector2> resampleLoop(const std::vector<CVector2>& stroke0,
 std::vector<CVector2> resampleStroke(const std::vector<CVector2>& stroke0,
                                      double l);
 
+void MeanValueCoordinate2D(double* aW,
+                           double px, double py,
+                           const double* aXY, int nXY);
 void MeanValueCoordinate(std::vector<double>& aW,
                          CVector2& p,
                          std::vector<CVector2>& aVtx);

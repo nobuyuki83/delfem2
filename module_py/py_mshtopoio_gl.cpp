@@ -197,13 +197,13 @@ py::array_t<int> GetElemQuad_DihedralTri
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void init_mshtopoio_gl(py::module &m){
-  py::enum_<MESHELEM_TYPE>(m, "MeshElemType")
-  .value("Tri",     MESHELEM_TYPE::MESHELEM_TRI)
-  .value("Quad",    MESHELEM_TYPE::MESHELEM_QUAD)
-  .value("Tet",     MESHELEM_TYPE::MESHELEM_TET)
-  .value("Pyramid", MESHELEM_TYPE::MESHELEM_PYRAMID)
-  .value("Wedge",   MESHELEM_TYPE::MESHELEM_WEDGE)
-  .value("Hex",     MESHELEM_TYPE::MESHELEM_HEX)
+  py::enum_<MESHELEM_TYPE>(m, "MESH_ELEM_TYPE")
+  .value("TRI",     MESHELEM_TYPE::MESHELEM_TRI)
+  .value("QUAD",    MESHELEM_TYPE::MESHELEM_QUAD)
+  .value("TET",     MESHELEM_TYPE::MESHELEM_TET)
+  .value("PYRAMID", MESHELEM_TYPE::MESHELEM_PYRAMID)
+  .value("WEDGE",   MESHELEM_TYPE::MESHELEM_WEDGE)
+  .value("HEX",     MESHELEM_TYPE::MESHELEM_HEX)
   .export_values();
   
   /*

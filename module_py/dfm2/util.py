@@ -10,33 +10,6 @@ def normalize_rigmsh(rigmsh):
 
 ####################
 
-class Cad2D():
-  def __init__(self,list_xy=None):
-    self.cad = CppCad2D()
-    if not list_xy is None:
-      self.cad.add_polygon(list_xy)
-
-  def add_polygon(self,list_xy):
-    self.cad.add_polygon(list_xy)
-
-  def mesh(self,len):
-    return mesh_cad(self.cad, 0.05)
-
-  def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
-    return cad_getPointsEdge(self.cad,list_edge_index, np_xy, tolerance=tolerance)
-
-  def draw(self):
-    self.cad.draw()
-
-  def mouse(self,btn,action,mods,src,dir,view_height):
-    self.cad.mouse(btn,action,mods,src,dir,view_height)
-
-  def motion(self,src0,src1,dir):
-    self.cad.motion(src0,src1,dir)
-
-
-####################
-
 class Mesh():
 
   def __init__(self,
@@ -117,8 +90,8 @@ def mesh_read(path_file="") -> Mesh:
 
 def mesh_voxelgrid(voxelgrid) -> Mesh:
   list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
-  np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 3))
-  np_elm = numpy.array(list_tri, dtype=numpy.int).reshape((-1, 4))
+  np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
+  np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 4))
   return Mesh(np_pos,np_elm)
 
 def mesh_grid(shape) -> Mesh:
@@ -132,8 +105,70 @@ def mesh_grid(shape) -> Mesh:
 
 def mesh_cad(cad,len) -> Mesh:
   xy,tri = getMesh_cad(cad,len)
-  mesh = Mesh(xy,tri,Tri)
+  mesh = Mesh(xy,tri,TRI)
   return mesh
+
+
+####################
+
+class Cad2D():
+  def __init__(self,list_xy=None):
+    self.cad = CppCad2D()
+    if not list_xy is None:
+      self.cad.add_polygon(list_xy)
+
+  def draw(self):
+    self.cad.draw()
+
+  def mouse(self,btn,action,mods,src,dir,view_height):
+    self.cad.mouse(btn,action,mods,src,dir,view_height)
+
+  def motion(self,src0,src1,dir):
+    self.cad.motion(src0,src1,dir)
+
+  def add_polygon(self,list_xy):
+    self.cad.add_polygon(list_xy)
+
+  def mesh(self,edge_len=0.05) -> Mesh:
+    return mesh_cad(self.cad, edge_len)
+
+  def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
+    return cad_getPointsEdge(self.cad,list_edge_index, np_xy, tolerance=tolerance)
+
+  def getVertexXY_face(self,iface:int):
+    list_xy_bound = self.cad.getVertexXY_face(0)
+    return numpy.array(list_xy_bound).reshape((len(list_xy_bound)//2,2))
+
+  def mvc(self,msh:Mesh):
+    np_xy_bound = self.getVertexXY_face(0)
+    W = mvc(msh.np_pos, np_xy_bound)
+    assert W.shape[0] == msh.np_pos.shape[0]
+    assert W.shape[1] == np_xy_bound.shape[0]
+    return W
+
+
+class CadMeshLinked():
+  def __init__(self,cad,elen):
+    self.cad = cad
+    self.cad.cad.is_draw_face = False
+    self.msh = cad.mesh(edge_len=elen)
+    self.W = self.cad.mvc(self.msh)
+    n0 = numpy.linalg.norm(self.W.sum(axis=1)-numpy.ones((self.W.shape[0])))
+    print(n0)
+
+  def draw(self):
+    self.cad.draw()
+    self.msh.draw()
+
+  def mouse(self,btn,action,mods,src,dir,view_height):
+    self.cad.mouse(btn,action,mods,src,dir,view_height)
+
+  def motion(self,src0,src1,dir):
+    self.cad.motion(src0,src1,dir)
+    np_xy_bound = self.cad.getVetexXY_face(0)
+    self.msh.np_pos = numpy.dot(self.W,np_xy_bound)
+
+
 
 #####################################################
 

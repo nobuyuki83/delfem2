@@ -123,6 +123,26 @@ std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
   return std::tie(npXYZ,npTet);
 }
 
+py::array_t<double> PyMVC
+(const py::array_t<double>& XY,
+ const py::array_t<double>& XY_bound)
+{
+  assert(XY.ndim()==2);
+  assert(XY.shape()[1]==2);
+  assert(XY_bound.ndim()==2);
+  assert(XY_bound.shape()[1]==2);
+  const int np = XY.shape()[0];
+  const int npb = XY_bound.shape()[0];
+  py::array_t<double> aW({np,npb});
+  auto buff_w = aW.request();
+  for(int ip=0;ip<np;++ip){
+    MeanValueCoordinate2D((double*)buff_w.ptr+ip*npb,
+                          XY.at(ip,0), XY.at(ip,1),
+                          XY_bound.data(), npb);
+  }
+  return aW;
+}
+
 
 PYBIND11_MODULE(dfm2, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -190,12 +210,14 @@ PYBIND11_MODULE(dfm2, m) {
   // cad
   py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
-  .def("add_polygon", &CCad2D::AddPolygon)
   .def("draw",        &CCad2D::Draw)
   .def("mouse",       &CCad2D::Mouse)
   .def("motion",      &CCad2D::Motion)
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
-  .def("meshing",     &CCad2D::Meshing);
+  .def("add_polygon", &CCad2D::AddPolygon)
+  .def("meshing",     &CCad2D::Meshing)
+  .def("getVertexXY_face", &CCad2D::GetVertexXY_Face)
+  .def_readwrite("is_draw_face", &CCad2D::is_draw_face);
 
   m.def("cad_getPointsEdge",
         &PyCad2D_GetPointsEdge,
@@ -211,7 +233,8 @@ PYBIND11_MODULE(dfm2, m) {
    ///////////////////////////////////
   // gl misc
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
-  m.def("setup_glsl", setUpGLSL, "compile shader program");
-  m.def("glew_init", glewInit);
-  m.def("draw_sphere", DrawSphereAt );
+  m.def("setup_glsl", &setUpGLSL, "compile shader program");
+  m.def("glew_init", &glewInit);
+  m.def("draw_sphere", &DrawSphereAt );
+  m.def("mvc",     &PyMVC);
 }
