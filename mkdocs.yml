@@ -18,7 +18,7 @@ theme:
 
 google_analytics: 
   - 'UA-866616-6'
-  - 'nobuyuki83.github.io/delfem2'
+  - 'auto'
 
 
 nav:

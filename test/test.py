@@ -14,6 +14,13 @@ class Test_Cad2D(unittest.TestCase):
   def test3(self):
     cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
     msh = cad.mesh(0.02)
+    self.assertEqual(msh.np_pos.shape[1],2)
+    W = cad.mvc(msh)
+    self.assertEqual(W.ndim,2)
+    self.assertEqual(W.shape[0],msh.np_pos.shape[0])
+    self.assertEqual(W.shape[1],cad.getVertexXY_face(0).shape[0])
+    self.assertLess(numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0]))),1.0e-3)
+
 
 
 class Test_Mesh(unittest.TestCase):
@@ -37,7 +44,7 @@ class TetFEMPoission3D(unittest.TestCase):
     sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [-0.5, 0, 0], True))
     sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [+0.5, 0, 0], True))
     np_xyz, np_tet = dfm2.isosurface(sdf.list_sdf)
-    msh = dfm2.Mesh(np_xyz, np_tet, dfm2.Tet)
+    msh = dfm2.Mesh(np_xyz, np_tet, dfm2.TET)
     npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
     npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
     fem = dfm2.FEM_Poisson(msh)
@@ -61,21 +68,22 @@ class Test_FEMDiffuse2D(unittest.TestCase):
 
 
 class Test_FemDiffuse3D(unittest.TestCase):
-  sdf = dfm2.SDF()
-  sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [-0.5, 0, 0], True))
-  sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [+0.5, 0, 0], True))
-  np_xyz, np_tet = dfm2.isosurface(sdf.list_sdf)
-  msh = dfm2.Mesh(np_xyz, np_tet, dfm2.Tet)
-  npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
-  npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
-  fem = dfm2.FEM_Diffuse(msh)
-  fem.ls.vec_bc[npIdP0] = 1
-  fem.ls.vec_bc[npIdP1] = 2
-  fem.vec_val[:] = 0.5
-  fem.vec_val[npIdP0] = 0.0
-  fem.vec_val[npIdP1] = 1.0
-  for itr in range(100):
-    fem.step_time()
+  def test1(self):
+    sdf = dfm2.SDF()
+    sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [-0.5, 0, 0], True))
+    sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [+0.5, 0, 0], True))
+    np_xyz, np_tet = dfm2.isosurface(sdf.list_sdf)
+    msh = dfm2.Mesh(np_xyz, np_tet, dfm2.TET)
+    npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
+    npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
+    fem = dfm2.FEM_Diffuse(msh)
+    fem.ls.vec_bc[npIdP0] = 1
+    fem.ls.vec_bc[npIdP1] = 2
+    fem.vec_val[:] = 0.5
+    fem.vec_val[npIdP0] = 0.0
+    fem.vec_val[npIdP1] = 1.0
+    for itr in range(100):
+      fem.step_time()
 
 
 class TestFEM_SolidLLinearStatic2D(unittest.TestCase):
@@ -120,8 +128,6 @@ class Test_FEMCloth(unittest.TestCase):
     fem.ls.vec_bc[npIdP,0:3] = 1
     for itr in range(100):
       fem.step_time()
-
-
 
 
 if __name__ == "__main__":

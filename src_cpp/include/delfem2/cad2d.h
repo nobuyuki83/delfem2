@@ -39,6 +39,18 @@ public:
   };
   class CFace{
   public:
+    std::vector<int> GetArray_IdVertex(const std::vector<CEdge>& aEdge) const
+    {
+      std::vector<int> res;
+      for(int ie=0;ie<aIE.size();++ie){
+        const int ie0 = aIE[ie].first;
+        const bool dir = aIE[ie].second;
+        const int iv0 = dir ? aEdge[ie0].iv0 : aEdge[ie0].iv1;
+        res.push_back(iv0);
+      }
+      return res;
+    }
+  public:
     std::vector< std::pair<int,bool> > aIE; // index of edge, is this edge ccw?
   };
 public:
@@ -82,6 +94,7 @@ public:
   CCad2D(){
     std::cout << "CCAD2D -- construct" << std::endl;
     ivtx_picked = -1;
+    is_draw_face = true;
   }
   void Clear(){
     aVtx.clear();
@@ -90,6 +103,8 @@ public:
     topo.Clear();
   }
   void Draw() const;
+  // btn-- left:0, middle:2, right:1
+  // action-- down:1, up:0
   void Mouse(int btn,int action,int mods,
              const std::vector<double>& src,
              const std::vector<double>& dir,
@@ -106,6 +121,7 @@ public:
                      const double* pXY, int np,
                      const std::vector<int>& aIE,
                      double tolerance ) const;
+  std::vector<double> GetVertexXY_Face(int iface) const;
 public:
   CCadTopo topo;
   /////
@@ -113,6 +129,8 @@ public:
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
   int ivtx_picked;
+  
+  bool is_draw_face;
 };
 
 

@@ -30,6 +30,13 @@ field = dfm2.Field(mesh,val_color=fem.vec_val[:,0])
 dfm2.winDraw3d([field])
 ```
 ![poission](imgs/poisson.png)
+
+The code is implemented based o the note I wrote: [Finite Element Method: Solving Poission's Equation](https://www.overleaf.com/read/qbyxxkyvzrgs).
+
+
+
+
+
 * * *
 
 ## Solving Linear Solid Static 2D
@@ -49,3 +56,5 @@ field = dfm2.Field(mesh,val_disp=fem.vec_val)
 dfm2.winDraw3d([field])
 ```
 ![linear solid](imgs/linearsolid.png)
+
+The code is implementaed based on the note I wrote [Finite Element Method: Solving Linear Solid Euqation](https://www.overleaf.com/read/vftvqkbgrfys). 

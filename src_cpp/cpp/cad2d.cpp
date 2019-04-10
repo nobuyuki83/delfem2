@@ -32,7 +32,7 @@ void CCad2D::Draw() const
   ::glPointSize(6);
   ::glBegin(GL_POINTS);
   for(unsigned int iv=0;iv<aVtx.size();++iv){
-    if( iv == ivtx_picked ){ ::glColor3d(1,1,0); }
+    if( (int)iv == ivtx_picked ){ ::glColor3d(1,1,0); }
     else{ ::glColor3d(1,0,0); }
     ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
   }
@@ -49,15 +49,17 @@ void CCad2D::Draw() const
   }
   ::glEnd();
   //////
-  ::glColor3d(0.8,0.8,0.8);
-  ::glLineWidth(1);
-  glTranslated(0,0,-0.2);
-  for(unsigned int iface=0;iface<aFace.size();++iface){
-    const CCad2D_FaceGeo& face = aFace[iface];
-    DrawMeshTri2D_Face(face.aTri, face.aXY);
-    DrawMeshTri2D_Edge(face.aTri, face.aXY);
+  if( is_draw_face ){
+    ::glColor3d(0.8,0.8,0.8);
+    ::glLineWidth(1);
+    glTranslated(0,0,-0.2);
+    for(unsigned int iface=0;iface<aFace.size();++iface){
+      const CCad2D_FaceGeo& face = aFace[iface];
+      DrawMeshTri2D_Face(face.aTri, face.aXY);
+      DrawMeshTri2D_Edge(face.aTri, face.aXY);
+    }
+    glTranslated(0,0,+0.2);
   }
-  glTranslated(0,0,+0.2);
 }
 
 void CCad2D::Mouse(int btn, int action, int mods,
@@ -196,6 +198,18 @@ void CCad2D::GetPointsEdge
   }
 }
 
+std::vector<double> CCad2D::GetVertexXY_Face
+(int iface) const
+{
+  std::vector<double> aXY;
+  std::vector<int> aIdV = topo.aFace[iface].GetArray_IdVertex(topo.aEdge);
+  for(unsigned int iv=0;iv<aIdV.size();++iv){
+    aXY.push_back( aVtx[iv].pos.x );
+    aXY.push_back( aVtx[iv].pos.y );
+  }
+  return aXY;
+}
+
 ///////////////////////////////////////////////////////////
 
 void CCad2D_EdgeGeo::GenMesh
@@ -205,8 +219,8 @@ void CCad2D_EdgeGeo::GenMesh
   assert( iedge<topo.aEdge.size() );
   const int iv0 = topo.aEdge[iedge].iv0;
   const int iv1 = topo.aEdge[iedge].iv1;
-  assert(iv0 >= 0 && iv0 < aVtxGeo.size());
-  assert(iv1 >= 0 && iv1 < aVtxGeo.size());
+  assert(iv0 >= 0 && iv0 < (int)aVtxGeo.size());
+  assert(iv1 >= 0 && iv1 < (int)aVtxGeo.size());
   this->p0 = aVtxGeo[iv0].pos;
   this->p1 = aVtxGeo[iv1].pos;
 }
