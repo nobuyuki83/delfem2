@@ -319,11 +319,13 @@ void InitializeProblem_Solid()
     }
   }
   //////
-  std::vector<int> psup_ind, psup;
-  makeOneRingNeighborhood(psup_ind, psup,
+  std::vector<int> psup_ind0, psup0;
+  makeOneRingNeighborhood(psup_ind0, psup0,
                           aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  addMasterSlavePattern(aMSFlag,
-                        2,psup_ind,psup);
+  std::vector<int> psup_ind, psup;
+  addMasterSlavePattern(psup_ind, psup,
+                        aMSFlag.data(),2,
+                        psup_ind0.data(), psup_ind0.size(), psup0.data());
   SortIndexedArray(psup_ind, psup);
   /*
    CJaggedArray crs;
@@ -358,8 +360,8 @@ void SolveProblem_LinearSolid_Static()
                                           aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag);
-  setRHS_MasterSlave(vec_b,aMSFlag);
+  mat_A.SetMasterSlave(aMSFlag.data());
+  setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   //////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -397,8 +399,8 @@ void SolveProblem_LinearSolid_Dynamic()
                                     aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag);
-  setRHS_MasterSlave(vec_b,aMSFlag);
+  mat_A.SetMasterSlave(aMSFlag.data());
+  setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   //////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -520,11 +522,13 @@ void InitializeProblem_Fluid2()
     }
   }
   ///////
-  std::vector<int> psup_ind, psup;
-  makeOneRingNeighborhood(psup_ind, psup,
+  std::vector<int> psup_ind0, psup0;
+  makeOneRingNeighborhood(psup_ind0, psup0,
                           aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  addMasterSlavePattern(aMSFlag,
-                        3, psup_ind, psup);
+  std::vector<int> psup_ind, psup;
+  addMasterSlavePattern(psup_ind, psup,
+                        aMSFlag.data(),3,
+                        psup_ind0.data(), psup_ind0.size(), psup0.data());
   SortIndexedArray(psup_ind, psup);
   //////
   /*
@@ -559,8 +563,10 @@ void SolveProblem_Stokes_Static()
                               aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag);
-  setRHS_MasterSlave(vec_b,aMSFlag);
+  if( aMSFlag.size() == vec_b.size() ){
+    mat_A.SetMasterSlave(aMSFlag.data());
+    setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+  }
   //////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -599,8 +605,10 @@ void SolveProblem_Stokes_Dynamic()
                               aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag);
-  setRHS_MasterSlave(vec_b,aMSFlag);
+  if( aMSFlag.size() == vec_b.size() ){
+    mat_A.SetMasterSlave(aMSFlag.data());
+    setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+  }
   //////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -644,8 +652,10 @@ void SolveProblem_NavierStokes_Dynamic()
                              aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag);
-  setRHS_MasterSlave(vec_b,aMSFlag);
+  if( aMSFlag.size() == vec_b.size() ){
+    mat_A.SetMasterSlave(aMSFlag.data());
+    setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+  }
   //////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;

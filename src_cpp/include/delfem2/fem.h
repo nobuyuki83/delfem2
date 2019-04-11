@@ -41,8 +41,9 @@ void setRHS_Zero(std::vector<double>& vec_b,
                  const std::vector<int>& aBCFlag,
                  int iflag_nonzero);
 
-void setRHS_MasterSlave(std::vector<double>& vec_b,
-                        const std::vector<int>& aMSFlag);
+void setRHS_MasterSlave(double* vec_b,
+                        int nDoF,
+                        const int* aMSFlag);
 
 void SolveLinSys_PCG(const CMatrixSquareSparse& mat_A,
                      std::vector<double>& vec_b,

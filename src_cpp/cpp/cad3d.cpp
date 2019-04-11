@@ -241,8 +241,8 @@ void CCad3D_Face::Initialize
     double y0 = aXY_out[ip*2+1];
     CFacePointInfo pinfo;
     pinfo.itype = 2;
-    MeanValueCoordinate2D(pinfo.aW0,x0,y0,aXY_B0);
-    MeanValueCoordinate2D(pinfo.aW1,x0,y0,aXY_B1);
+    MeanValueCoordinate2D(pinfo.aW0.data(),x0,y0,aXY_B0.data(),aXY_B0.size()/2);
+    MeanValueCoordinate2D(pinfo.aW1.data(),x0,y0,aXY_B1.data(),aXY_B1.size()/2);
     aPInfo.push_back(pinfo);
   }
   MovePoints(aVertex,aEdge);

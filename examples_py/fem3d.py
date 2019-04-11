@@ -27,10 +27,8 @@ def poission(msh,npIdP0,npIdP1):
 
 def diffuse(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Diffuse(msh)
-  fem.ls.vec_bc[npIdP0] = 1
-  fem.ls.vec_bc[npIdP1] = 2
-  fem.vec_val[:] = 0.5
-  fem.vec_val[npIdP0] = 0.0
+  fem.ls.vec_bc[npIdP1] = 1
+  fem.vec_val[:] = 0.0
   fem.vec_val[npIdP1] = 1.0
   ####
   field = dfm2.Field(msh,val_color=fem.vec_val[:,0])
