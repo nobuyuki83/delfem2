@@ -81,13 +81,11 @@ void setRHS_Zero
 }
 
 void setRHS_MasterSlave
-(std::vector<double>& vec_b,
- const std::vector<int>& aMSFlag)
+(double* vec_b,
+ int nDoF,
+ const int* aMSFlag)
 {
-  const unsigned int nDoF = vec_b.size();
-  if( aMSFlag.size() != nDoF ) return;
-  ////
-  for(unsigned int idof=0;idof<nDoF;++idof){
+  for(int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
     if( jdof == -1 ) continue;
     vec_b[jdof] += vec_b[idof];

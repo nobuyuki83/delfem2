@@ -126,10 +126,13 @@ void SortIndexedArray(const int* index, const int size,
 void Print_IndexedArray(const std::vector<int>& index,
                         const std::vector<int>& array);
 
-void addMasterSlavePattern(const std::vector<int>& aMSFlag,
+void addMasterSlavePattern(std::vector<int>& index,
+                           std::vector<int>& array,
+                           const int*aMSFlag,
                            int ndim,
-                           std::vector<int>& index,
-                           std::vector<int>& array);
+                           const int* psup_ind0,
+                           const int npsup_ind0,
+                           const int* psup);
 
 //////////////////////////////////////
 void AddElement(const MESHELEM_TYPE& femelem_type,

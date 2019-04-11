@@ -753,16 +753,19 @@ void makeEdgeVox
 
 
 void addMasterSlavePattern
-(const std::vector<int>& aMSFlag,
+(std::vector<int>& index,
+ std::vector<int>& array,
+ const int* aMSFlag,
  int ndim,
- std::vector<int>& index,
- std::vector<int>& array)
+ const int* psup_ind0,
+ int npsup_ind0,
+ const int* psup0)
 {
-  assert(index.size()>0);
-  const unsigned int nno = index.size()-1;
-  assert( aMSFlag.size() == nno*ndim );
+  assert(npsup_ind0>0);
+  const int nno = npsup_ind0-1;
+  //assert( aMSFlag.size() == nno*ndim );
   std::vector< std::vector<int> > mapM2S(nno);
-  for(unsigned int ino1=0;ino1<nno;++ino1){
+  for(int ino1=0;ino1<nno;++ino1){
     for(int idim1=0;idim1<ndim;++idim1){
       int idof0 = aMSFlag[ino1*ndim+idim1];
       if( idof0 == -1 ){ continue; }
@@ -774,35 +777,33 @@ void addMasterSlavePattern
     }
   }
   ////
-  const std::vector<int> index_old = index;
-  const std::vector<int> array_old = array;
   index.assign(nno+1,0);
   array.clear();
   std::vector<int> aflg(nno,-1);
   /////
-  for(unsigned int ino0=0;ino0<nno;++ino0){
+  for(int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
-    for(int icrs=index_old[ino0];icrs<index_old[ino0+1];++icrs){
-      const int jno = array_old[icrs];
+    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const int jno = psup0[icrs];
       if( aflg[jno] == ino0 ){ continue; }
       aflg[jno] = ino0;
       index[ino0+1]++;
     }
-    for(unsigned int iino1=0;iino1<mapM2S[ino0].size();++iino1){
+    for(int iino1=0;iino1<(int)mapM2S[ino0].size();++iino1){
       const int ino1 = mapM2S[ino0][iino1];
       if( aflg[ino1] != ino0 ){
         aflg[ino1] = ino0;
         index[ino0+1]++;
       }
-      for(int jcrs=index_old[ino1];jcrs<index_old[ino1+1];++jcrs){
-        const int jno1 = array_old[jcrs];
+      for(int jcrs=psup_ind0[ino1];jcrs<psup_ind0[ino1+1];++jcrs){
+        const int jno1 = psup0[jcrs];
         if( aflg[jno1] == ino0 ){ continue; }
         aflg[jno1] = ino0;
         index[ino0+1]++;
       }
     }
-    for(int icrs=index_old[ino0];icrs<index_old[ino0+1];++icrs){
-      const int jno = array_old[icrs];
+    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const int jno = psup0[icrs];
       for(int jdim=0;jdim<ndim;++jdim){
         int kdof = aMSFlag[jno*ndim+jdim];
         if( kdof == -1 ) continue;
@@ -821,8 +822,8 @@ void addMasterSlavePattern
   ////
   for(unsigned int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
-    for(int icrs=index_old[ino0];icrs<index_old[ino0+1];++icrs){
-      const int jno = array_old[icrs];
+    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const int jno = psup0[icrs];
       if( aflg[jno] == ino0 ){ continue; }
       aflg[jno] = ino0;
       const int ind = index[ino0];
@@ -837,8 +838,8 @@ void addMasterSlavePattern
         array[ind] = jno;
         index[ino0]++;
       }
-      for(int jcrs=index_old[jno];jcrs<index_old[jno+1];++jcrs){
-        const int kno = array_old[jcrs];
+      for(int jcrs=psup_ind0[jno];jcrs<psup_ind0[jno+1];++jcrs){
+        const int kno = psup0[jcrs];
         if( aflg[kno] == ino0 ){ continue; }
         aflg[kno] = ino0;
         const int ind = index[ino0];
@@ -846,8 +847,8 @@ void addMasterSlavePattern
         index[ino0]++;
       }
     }
-    for(int icrs=index_old[ino0];icrs<index_old[ino0+1];++icrs){
-      const int jno = array_old[icrs];
+    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const int jno = psup0[icrs];
       for(int jdim=0;jdim<ndim;++jdim){
         int kdof = aMSFlag[jno*ndim+jdim];
         if( kdof == -1 ) continue;

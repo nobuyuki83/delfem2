@@ -228,29 +228,37 @@ class Field():
 
 class FEM_LinSys():
   def __init__(self,
-               np:int, ndimval:int, pattern:tuple):
-    self.nitr = 1000
-    self.conv_ratio = 1.0e-4
-
+               np:int, ndimval:int):
     # vectors
-    self.vec_bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
+    self.np = np
+    self.ndimval = ndimval
     self.vec_f = numpy.zeros((np,ndimval), dtype=numpy.float64)
     self.vec_x = numpy.zeros((np,ndimval), dtype=numpy.float64)
+    self.vec_bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
+    self.vec_ms = numpy.ndarray((np,ndimval), dtype=numpy.int32)
+    self.vec_ms.fill(-1)
 
+    self.mat = None
+    self.mat_prec = None
+
+    self.nitr = 1000
+    self.conv_ratio = 1.0e-4
+    self.conv_hist = []
+
+  def set_pattern(self, pattern:tuple):
     # matrix
     self.mat = MatrixSquareSparse()
-    self.mat.initialize(np, ndimval, True)
+    self.mat.initialize(self.np, self.ndimval, True)
     psup_ind,psup = pattern[0],pattern[1]
-    sortIndexedArray(psup_ind, psup)
-    matrixSquareSparse_setPattern(self.mat, psup_ind, psup)
+    psup_ind1,psup1 = addMasterSlavePattern(self.vec_ms,psup_ind,psup)
+    sortIndexedArray(psup_ind1, psup1)
+    matrixSquareSparse_setPattern(self.mat, psup_ind1, psup1)
 
     # preconditioner
     self.mat_prec = PreconditionerILU()
     precond_ilu0(self.mat_prec, self.mat)
 
-    self.conv_hist = []
-
-  def SetZero(self):
+  def set_zero(self):
     self.mat.setZero()
     self.vec_f[:,:] = 0.0
 
@@ -258,6 +266,7 @@ class FEM_LinSys():
     #### setting bc
     self.vec_f[self.vec_bc != 0] = 0.0
     matrixSquareSparse_setFixBC(self.mat, self.vec_bc)
+    linearSystem_setMasterSlave(self.mat,self.vec_f, self.vec_ms)
 
     #### solving matrix
     self.mat_prec.set_value(self.mat)
@@ -306,36 +315,46 @@ class FEM_Poisson():
   def updated_mesh(self):
     np = self.mesh.np_pos.shape[0]
     ndimval = 1
-    self.ls = FEM_LinSys(np,ndimval,self.mesh.psup())
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_poission(self.ls.mat, self.ls.vec_f,
                          self.alpha, self.source,
                          self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                          self.vec_val)
     self.ls.Solve()
     self.vec_val += self.ls.vec_x
+    masterSlave_distributeValue(self.vec_val, self.ls.vec_ms)
+
+
 
 class FEM_Diffuse():
   def __init__(self,
                mesh: Mesh,
                source=0.0):
     self.mesh = mesh
-    np = mesh.np_pos.shape[0]
-    ndimval = 1
-    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.dt = 0.01
     self.gamma_newmark = 0.6
     self.alpha = 1.0
     self.rho = 1.0
     self.source = source
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
+    ndimval = 1
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_diffuse(self.ls.mat, self.ls.vec_f,
                         self.alpha, self.rho, self.source,
                         self.dt, self.gamma_newmark,
@@ -349,21 +368,25 @@ class FEM_Diffuse():
     self.solve()
 
 
-
-
 class FEM_LinearSolidStatic():
   def __init__(self,
                mesh: Mesh,
                gravity = [0,0,0]):
     self.mesh = mesh
-    self.np = mesh.np_pos.shape[0]
-    self.ndimval = mesh.np_pos.shape[1]
-    self.ls = FEM_LinSys(self.np, self.ndimval, pattern=mesh.psup())
-    self.vec_val = numpy.zeros((self.np,self.ndimval), dtype=numpy.float64)  # initial guess is zero
     self.gravity = gravity
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
+    ndimval = self.mesh.np_pos.shape[1]
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls = FEM_LinSys(np, ndimval)
+
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_linearSolidStatic(self.ls.mat, self.ls.vec_f,
                                   1.0, 0.0, 1.0, self.gravity,
                                   self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
@@ -377,19 +400,24 @@ class FEM_LinearSolidDynamic():
                mesh: Mesh,
                gravity=[0, 0, 0]):
     self.mesh = mesh
-    self.np = mesh.np_pos.shape[0]
-    self.ndimval = mesh.np_pos.shape[1]
-    self.ls = FEM_LinSys(self.np, self.ndimval, pattern=mesh.psup())
-    self.vec_val = numpy.zeros((self.np,self.ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((self.np,self.ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_acc = numpy.zeros((self.np,self.ndimval), dtype=numpy.float64)  # initial guess is zero
     self.gravity = gravity
     self.dt = 0.1
     self.gamma_newmark = 0.6
     self.beta_newmark = 0.36
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
+    ndimval = self.mesh.np_pos.shape[1]
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_acc = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls = FEM_LinSys(np, ndimval)
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_linearSolidDynamic(self.ls.mat, self.ls.vec_f,
                                    1.0, 0.0, 1.0, self.gravity,
                                    self.dt, self.gamma_newmark, self.beta_newmark,
@@ -406,21 +434,24 @@ class FEM_LinearSolidDynamic():
 
 class FEM_Cloth():
   def __init__(self,mesh):
+    self.dt = 0.1
     self.mesh = mesh
-    np = mesh.np_pos.shape[0]
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
     ndimval = 3
-    ####
-    self.np_quad = elemQuad_dihedralTri(mesh.np_elm, np)
-    ####
-    self.ls = FEM_LinSys(np,ndimval,pattern=psup_mesh(self.np_quad, np))
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.dt = 0.1
-    self.vec_val[:,:2] = mesh.np_pos
-    self.vec_val[:,2] = 1.0
+    self.vec_val[:,:2] = self.mesh.np_pos
+    self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      np = self.mesh.np_pos.shape[0]
+      self.np_quad = elemQuad_dihedralTri(self.mesh.np_elm, np)
+      self.ls.set_pattern(psup_mesh(self.np_quad, np))
+    self.ls.set_zero()
     mergeLinSys_cloth(self.ls.mat, self.ls.vec_f,
                       10.0, 500.0, self.dt,
                       self.mesh.np_pos, self.mesh.np_elm,
@@ -442,13 +473,18 @@ class FEM_StorksStatic2D():
   def __init__(self,
                mesh: Mesh):
     self.mesh = mesh
-    np = mesh.np_pos.shape[0]
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
     ndimval = 3
-    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
+    self.ls = FEM_LinSys(np,ndimval)
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_storksStatic2D(self.ls.mat, self.ls.vec_f,
                                1.0, 0.0, 0.0,
                                self.mesh.np_pos, self.mesh.np_elm,
@@ -463,17 +499,22 @@ class FEM_StorksStatic2D():
 class FEM_StorksDynamic2D():
   def __init__(self,
                mesh: Mesh):
-    self.mesh = mesh
-    np = mesh.np_pos.shape[0]
-    ndimval = 3
-    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.dt = 0.005
     self.gamma_newmark = 0.6
+    self.mesh = mesh
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
+    ndimval = 3
+    self.ls = FEM_LinSys(np,ndimval)
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_storksDynamic2D(self.ls.mat, self.ls.vec_f,
                                 1.0, 1.0, 0.0, 0.0,
                                 self.dt, self.gamma_newmark,
@@ -490,17 +531,22 @@ class FEM_StorksDynamic2D():
 class FEM_NavierStorks2D():
   def __init__(self,
                mesh: Mesh):
-    self.mesh = mesh
-    np = mesh.np_pos.shape[0]
-    ndimval = 3
-    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.dt = 0.1
     self.gamma_newmark = 0.6
+    self.mesh = mesh
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
+    ndimval = 3
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):
-    self.ls.SetZero()
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.ls.set_zero()
     mergeLinSys_navierStorks2D(self.ls.mat, self.ls.vec_f,
                                 1.0, 1000.0, 0.0, 0.0,
                                 self.dt, self.gamma_newmark,

@@ -30,6 +30,25 @@ void MatrixSquareSparse_SetFixBC
   mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0],flagbc.shape()[1]);
 }
 
+void LinearSystem_SetMasterSlave
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& np_b,
+ const py::array_t<int>& np_ms)
+{
+  assert( mss.m_nblk_col == mss.m_nblk_row );
+  assert( mss.m_len_col == mss.m_len_row );
+  assert( np_b.ndim() == 2 );
+  assert( np_b.shape()[0] == mss.m_nblk_col );
+  assert( np_b.shape()[1] == mss.m_len_col );
+  assert( np_ms.ndim() == 2 );
+  assert( np_ms.shape()[0] == np_b.shape()[0] );
+  assert( np_ms.shape()[1] == np_b.shape()[1] );
+  mss.SetMasterSlave(np_ms.data());
+  auto buff_b = np_b.request();
+  setRHS_MasterSlave((double*)buff_b.ptr,
+                     np_b.shape()[0]*np_b.shape()[1], np_ms.data());
+}
+
 
 void PrecondILU0
 (CPreconditionerILU&  mat_ilu,
@@ -331,6 +350,36 @@ double PyMergeLinSys_MassPoint
   return W;
 }
 
+std::tuple<py::array_t<int>,py::array_t<int>> PyAddMasterSlavePattern
+(const py::array_t<int>& ms_flag,
+ const py::array_t<int>& np_psup_ind0,
+ const py::array_t<int>& np_psup0)
+{
+  assert(ms_flag.shape()[0] == np_psup_ind0.shape()[0]-1);
+  assert(ms_flag.ndim() == 2 );
+  std::vector<int> psup_ind, psup;
+  addMasterSlavePattern(psup_ind, psup,
+                        ms_flag.data(), ms_flag.shape()[1],
+                        np_psup_ind0.data(), np_psup_ind0.shape()[0], np_psup0.data());
+  std::cout << np_psup0.size() << " " << psup.size() << std::endl;
+  py::array_t<int> np_psup_ind((int)psup_ind.size(),psup_ind.data());
+  py::array_t<int> np_psup((int)psup.size(),psup.data());
+  return std::tie(np_psup_ind,np_psup);
+}
+
+void PyMasterSlave_DistributeValue
+(py::array_t<double>& val,
+ const py::array_t<int>& ms_flag)
+{
+  double* pVal = (double*)(val.request().ptr);
+  const int nDoF = ms_flag.size();
+  for(int idof=0;idof<nDoF;++idof){
+    int jdof = ms_flag.data()[idof];
+    if( jdof == -1 ) continue;
+    assert( jdof >= 0 && jdof < nDoF );
+    pVal[ idof] = pVal[ jdof];
+  }
+}
 
 void init_fem(py::module &m){
   py::class_<CMatrixSquareSparse>(m,"MatrixSquareSparse")
@@ -346,9 +395,12 @@ void init_fem(py::module &m){
   
   m.def("matrixSquareSparse_setPattern", &MatrixSquareSparse_SetPattern);
   m.def("matrixSquareSparse_setFixBC", &MatrixSquareSparse_SetFixBC);
+  m.def("addMasterSlavePattern",&PyAddMasterSlavePattern);
   m.def("precond_ilu0",  &PrecondILU0);
   m.def("linsys_solve_pcg", &PySolve_PCG);
   m.def("linsys_solve_bicgstab",&PySolve_PBiCGStab);
+  m.def("linearSystem_setMasterSlave",&LinearSystem_SetMasterSlave);
+  m.def("masterSlave_distributeValue",&PyMasterSlave_DistributeValue);
   
   m.def("mergeLinSys_poission", &PyMergeLinSys_Poission);
   m.def("mergeLinSys_diffuse",&PyMergeLinSys_Diffuse);

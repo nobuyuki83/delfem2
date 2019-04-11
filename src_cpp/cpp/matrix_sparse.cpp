@@ -382,14 +382,13 @@ void CMatrixSquareSparse::SetBoundaryCondition
 }
 
 void CMatrixSquareSparse::SetMasterSlave
-(const std::vector<int>& aMSFlag)
+(const int* aMSFlag)
 {
   assert( this->is_dia );
   assert( this->m_nblk_row == this->m_nblk_col );
   assert( this->m_len_row == this->m_len_col );
   const int blksize = m_len_col*m_len_row;
   const int ndof = m_nblk_col*m_len_col;
-  if(aMSFlag.size() != m_nblk_col*m_len_col ){ return; }
   /////
   std::vector<int> row2crs(m_nblk_row,-1);
   for(int idof1=0;idof1<ndof;++idof1){ // add row

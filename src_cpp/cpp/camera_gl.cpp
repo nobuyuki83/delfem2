@@ -132,7 +132,7 @@ void setGL_Camera2D()
   double asp = w/h;
   ::glMatrixMode(GL_PROJECTION);
   ::glLoadIdentity();
-  ::glOrtho(-asp, +asp, -1, +1, -10, +10);
+  ::glOrtho(-asp*2, +asp*2, -2, +2, -10, +10);
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
 }

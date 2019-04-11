@@ -12,6 +12,19 @@ def poisson(cad,mesh):
   dfm2.winDraw3d([field])
 
 
+def poisson2(cad,mesh):
+  fem = dfm2.FEM_Poisson(mesh,source=1.0)
+  npIdP_fix = cad.points_edge([2], mesh.np_pos)
+  fem.ls.vec_bc[npIdP_fix] = 1
+  npIdP_ms = cad.points_edge([0], mesh.np_pos)
+  fem.ls.vec_ms[:] = -1
+  fem.ls.vec_ms[npIdP_ms] = npIdP_ms[0]
+  fem.ls.vec_ms[npIdP_ms[0]] = -1
+  fem.solve()
+  field = dfm2.Field(mesh,val_color=fem.vec_val[:,0])
+  dfm2.winDraw3d([field])
+
+
 def diffuse(cad,mesh):
   fem = dfm2.FEM_Diffuse(mesh,source=1.0)
   npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
@@ -106,6 +119,10 @@ def main():
   storks_dynamic(cad,mesh)
   navir_storks(cad,mesh)
   cloth(cad,mesh)
+
+  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
+  mesh = cad.mesh(0.05)
+  poisson2(cad,mesh)
 
 if __name__ == "__main__":
   main()
