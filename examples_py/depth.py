@@ -1,5 +1,3 @@
-from OpenGL.GL import *
-import numpy
 import sys
 sys.path.append("../module_py")
 import dfm2

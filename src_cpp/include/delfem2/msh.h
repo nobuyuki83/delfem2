@@ -100,7 +100,9 @@ void MakeNormal(std::vector<double>& aNorm,
 void MakeNormal(double*& aNorm_,
                 const unsigned int nnode_, const double* pXYZs_,
                 const unsigned int ntri_,  const unsigned int* aTri_);
-
+void Quality_MeshTri2D(double& max_aspect, double& min_area,
+                       const double* aXY,
+                       const int* aTri, int nTri);
 
 ///////////////////////////////////////////////////////////////////////////////
 // set primitive mesh

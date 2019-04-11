@@ -193,6 +193,19 @@ py::array_t<int> GetElemQuad_DihedralTri
   return npQuad;
 }
 
+std::tuple<double,double>
+PyQuality_MeshTri2D
+(const py::array_t<double>& np_xy,
+ const py::array_t<int>& np_tri)
+{
+  double max_aspect;
+  double min_area;
+  Quality_MeshTri2D(max_aspect, min_area,
+                    np_xy.data(),
+                    np_tri.data(), np_tri.shape()[0]);
+   return std::tie(max_aspect, min_area);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -258,5 +271,5 @@ void init_mshtopoio_gl(py::module &m){
   m.def("draw_mesh_edge", &PyDrawMesh_Edge);
   m.def("subdiv",&PySubviv);
   m.def("get_mesh_grid",&PyGetMesh_Grid);
-  
+  m.def("quality_meshTri2D",&PyQuality_MeshTri2D);
 }

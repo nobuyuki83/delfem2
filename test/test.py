@@ -122,7 +122,7 @@ class Test_FEMSorkes2D(unittest.TestCase):
 class Test_FEMCloth(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(0.02)
+    msh = cad.mesh(edge_len=0.05)
     fem = dfm2.FEM_Cloth(msh)
     npIdP = cad.points_edge([2], msh.np_pos)
     fem.ls.vec_bc[npIdP,0:3] = 1
