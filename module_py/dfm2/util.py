@@ -137,7 +137,7 @@ class Cad2D():
 
   def getVertexXY_face(self,iface:int):
     list_xy_bound = self.cad.getVertexXY_face(0)
-    return numpy.array(list_xy_bound).reshape((len(list_xy_bound)//2,2))
+    return numpy.array(list_xy_bound).reshape([-1,2])
 
   def mvc(self,msh:Mesh):
     np_xy_bound = self.getVertexXY_face(0)
@@ -147,14 +147,13 @@ class Cad2D():
     return W
 
 
-class CadMeshLinked():
-  def __init__(self,cad,elen):
+class CadMesh2D():
+  def __init__(self,cad,edge_length:float):
     self.cad = cad
     self.cad.cad.is_draw_face = False
-    self.msh = cad.mesh(edge_len=elen)
+    self.edge_length = edge_length
+    self.msh = cad.mesh(edge_len=self.edge_length)
     self.W = self.cad.mvc(self.msh)
-    n0 = numpy.linalg.norm(self.W.sum(axis=1)-numpy.ones((self.W.shape[0])))
-    print(n0)
 
   def draw(self):
     self.cad.draw()
@@ -165,9 +164,17 @@ class CadMeshLinked():
 
   def motion(self,src0,src1,dir):
     self.cad.motion(src0,src1,dir)
-    np_xy_bound = self.cad.getVetexXY_face(0)
+    np_xy_bound = self.cad.getVertexXY_face(0)
     self.msh.np_pos = numpy.dot(self.W,np_xy_bound)
+    max_asp,min_area = quality_meshTri2D(self.msh.np_pos,self.msh.np_elm)
+    if max_asp > 5.0 or min_area < 0.0:
+      self.remesh()
 
+  def remesh(self):
+    msh1 = self.cad.mesh(edge_len=self.edge_length)
+    self.msh.np_pos = msh1.np_pos
+    self.msh.np_elm = msh1.np_elm
+    self.W = self.cad.mvc(self.msh)
 
 
 #####################################################
@@ -201,6 +208,7 @@ class Field():
   def draw(self):
     if type(self.val_color) == numpy.ndarray:
       self.color_map = ColorMap(self.draw_val_min,self.draw_val_max,self.color_mode)
+#      print(self.mesh.np_pos.shape,self.val_color.shape)
       drawField_colorMap(self.mesh.np_pos, self.mesh.np_elm,
                          self.val_color,
                          self.color_map)
@@ -267,17 +275,39 @@ class FEM_LinSys():
 ##########################################################################
 
 
+class VisFEM_Color():
+  def __init__(self):
+    self.draw_val_min = 0.0
+    self.draw_val_max = 1.0
+    self.color_mode = 'bcgyr'
+    self.is_update_min_max = True
+    self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
+
+  def update(self,mesh,val_color):
+    if self.is_update_min_max:
+      self.draw_val_min = val_color.min()
+      self.draw_val_max = val_color.max()
+      self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
+
+  def draw(self,mesh,val_color):
+    drawField_colorMap(mesh.np_pos, mesh.np_elm,
+                       val_color,
+                       self.color_map)
+
 class FEM_Poisson():
   def __init__(self,
                mesh: Mesh,
                source=0.0):
-    self.mesh = mesh
-    np = mesh.np_pos.shape[0]
-    ndimval = 1
-    self.ls = FEM_LinSys(np,ndimval,mesh.psup())
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.alpha = 1.0
     self.source = source
+    self.mesh = mesh
+    self.updated_mesh()
+
+  def updated_mesh(self):
+    np = self.mesh.np_pos.shape[0]
+    ndimval = 1
+    self.ls = FEM_LinSys(np,ndimval,self.mesh.psup())
+    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
 
   def solve(self):
     self.ls.SetZero()
@@ -287,7 +317,6 @@ class FEM_Poisson():
                          self.vec_val)
     self.ls.Solve()
     self.vec_val += self.ls.vec_x
-
 
 class FEM_Diffuse():
   def __init__(self,

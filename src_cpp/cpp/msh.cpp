@@ -25,6 +25,10 @@ static void Cross3D(double r[3], const double v1[3], const double v2[3]){
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
 
+static double TriArea2D(const double p0[], const double p1[], const double p2[]){
+  return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
+}
+
 static double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
   double n[3];
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
@@ -58,8 +62,12 @@ static void VecMat3(const double x[3], const double m[9],  double y[3]){
 }
  */
 
-inline double Distance3D(const double p0[3], const double p1[3]){
+static inline double Distance3D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+static inline double Distance2D(const double p0[3], const double p1[3]){
+  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) );
 }
 
 static double Dot(const double p0[3], const double p1[3]){
@@ -202,6 +210,38 @@ void MakeNormal
     aNorm_[ino*3+0] *= invlen;
     aNorm_[ino*3+1] *= invlen;
     aNorm_[ino*3+2] *= invlen;
+  }
+}
+
+
+void Quality_MeshTri2D
+(double& max_aspect, double& min_area,
+ const double* aXY,
+ const int* aTri, int nTri)
+{
+  max_aspect = 0;
+  min_area = 0;
+  for(int itri=0;itri<nTri;itri++){
+    const int i0 = aTri[itri*3+0];
+    const int i1 = aTri[itri*3+1];
+    const int i2 = aTri[itri*3+2];
+    const double* p0 = aXY+i0*2;
+    const double* p1 = aXY+i1*2;
+    const double* p2 = aXY+i2*2;
+    const double area = TriArea2D(p0,p1,p2);
+    const double len01 = Distance2D(p0,p1);
+    const double len12 = Distance2D(p1,p2);
+    const double len20 = Distance2D(p2,p0);
+    const double len_ave = (len01+len12+len20)/3.0;
+    const double aspect = len_ave * len_ave / area;
+    if( itri == 0 ){
+      max_aspect = aspect;
+      min_area = area;
+    }
+    else{
+      if( aspect > max_aspect ){ max_aspect = aspect; }
+      if( area < min_area ){ min_area = area; }
+    }
   }
 }
 
