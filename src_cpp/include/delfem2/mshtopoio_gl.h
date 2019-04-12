@@ -74,11 +74,13 @@ public:
       std::vector<int> psupIndQuad0, psupQuad0;
       QuadSubdiv(aQuad1,
                  psupIndQuad0,psupQuad0, aEdgeFace0,
-                 aQuad0, aXYZ0.size()/3);
+                 aQuad0.data(), aQuad0.size()/4, aXYZ0.size()/3);
       ///////
       std::vector<double>& aXYZ1 = em.aPos;
       SubdivisionPoints_QuadCatmullClark(aXYZ1,
-                                         aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,aQuad0,aXYZ0);
+                                         aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
+                                         aQuad0.data(),aQuad0.size()/4,
+                                         aXYZ0.data(),aXYZ0.size()/3);
     }
     return em;
   }

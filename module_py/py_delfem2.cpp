@@ -65,8 +65,7 @@ py::array_t<int> PyCad2D_GetPointsEdge
                     aIE,torelance);
   std::set<int> setIdP(aIdP.begin(),aIdP.end());
   aIdP.assign(setIdP.begin(),setIdP.end());
-  py::array_t<int> npIdP((int)aIdP.size(), aIdP.data());
-  return npIdP;
+  return py::array_t<int>((int)aIdP.size(), aIdP.data());
 }
 
 std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
@@ -224,8 +223,9 @@ PYBIND11_MODULE(dfm2, m) {
         py::arg("cad"),
         py::arg("list_edge_index"),
         py::arg("np_xy"),
-        py::arg("tolerance") = 0.001);
-  
+        py::arg("tolerance") = 0.001,
+        py::return_value_policy::move);
+
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())
   .def(py::init<double, double, const std::string&>());

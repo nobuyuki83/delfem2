@@ -386,7 +386,7 @@ bool FindRayTriangleMeshIntersectionClosestToPoint
   
 	// Find the point that is the closest to the target point
 	float minSquareDistance = 1.0e16;
-	for (int i = 0; i < intersectionPoints.size(); i++)
+	for (unsigned int i = 0; i < intersectionPoints.size(); i++)
 	{
 		float currSquareDistance = 
     (intersectionPoints[i].x - targetPoint.x) * (intersectionPoints[i].x - targetPoint.x) +
@@ -413,7 +413,7 @@ bool FindRayTriangleMeshIntersections
 	intersectionPoints.clear();
   
 	// Find all the intersection points between this ray and all triangles in the mesh
-	for (int i = 0; i < aTri.size(); i++)
+	for (unsigned int i = 0; i < aTri.size(); i++)
 	{
 		CVector3 intersectionPoint;
 		if (isRayIntersectingTriangle(line0, line1,

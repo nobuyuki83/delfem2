@@ -1183,7 +1183,7 @@ void CSignedDistanceField3D_Mesh::Draw() const
 {  
   ::glColor3d(1,0,0);
   ::glBegin(GL_LINES);
-  for(int itri=0;itri<ntri_;itri++){
+  for(unsigned int itri=0;itri<ntri_;itri++){
     int i1 = aTri_[itri*3+0];
     int i2 = aTri_[itri*3+1];
     int i3 = aTri_[itri*3+2];

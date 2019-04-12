@@ -323,7 +323,7 @@ void QuadSubdiv(std::vector<int>& aQuad1,
                 std::vector<int>& psup_ind,
                 std::vector<int>& psup,
                 std::vector<int>& aEdgeFace0,
-                const std::vector<int>& aQuad0,
+                const int* aQuad0, int nQuad0,
                 unsigned int nPo0);
 void HexSubdiv(std::vector<int>& aHex1,
                std::vector<int>& psupIndHex0,
