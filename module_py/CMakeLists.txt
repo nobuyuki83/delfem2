@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.0)
 
 project(pydelfem2)
 set(PYBIND11_CPP_STANDARD -std=c++14)
+if(WIN32)
+set(CMAKE_CXX_FLAGS "-Wall -O2")
+else()
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -O2")
+endif()		
 add_definitions(-DUSE_GL)
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/pybind11)
@@ -102,6 +106,8 @@ include_directories( ${INPUT_INCLUDE_DIR} )
 pybind11_add_module(dfm2 ${INPUT_SRC} )
 target_link_libraries(dfm2  PRIVATE ${INPUT_LIBRARY})
 
+if(WIN32)
+else()
 add_custom_command(TARGET dfm2
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
@@ -109,3 +115,4 @@ POST_BUILD
   ${PROJECT_SOURCE_DIR}/dfm2/dfm2.so
   COMMENT "Post Event"
 )
+endif()
