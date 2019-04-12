@@ -131,7 +131,7 @@ void CMeshElem::Draw() const {
   }
 }
 
-CMeshElem Read_MeshTri3D_Nas_CMeshElem(std::string& fpath){
+CMeshElem Read_MeshTri3D_Nas_CMeshElem(const std::string& fpath){
   CMeshElem em;
   em.elem_type = MESHELEM_TRI;
   em.ndim = 3;
