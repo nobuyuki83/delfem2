@@ -9,64 +9,67 @@
 
 namespace py = pybind11;
 
-/*
-CMeshElem HightMap(py::array_t<double> input0){
-  py::buffer_info buf1 = input0.request();
-  if (buf1.ndim != 2 ){
-    throw std::runtime_error("Number of dimensions must be one");
-  }
-  const int nx = buf1.shape[0];
-  const int ny = buf1.shape[1];
-  CMeshElem msh;
-  msh.elem_type = MESHELEM_QUAD;
-  msh.ndim = 3;
-  {
-    double *ptr1 = (double *) buf1.ptr;
-    std::vector<double> aXY;
-    MeshQuad2D_Grid(aXY, msh.aElem,
-                   nx-1, ny-1);
-    const int np = aXY.size()/2;
-    msh.aPos.resize(np*3);
-    for(int iy=0;iy<ny;++iy){
-      for(int ix=0;ix<nx;++ix){
-        int ip = iy*nx+ix;
-        msh.aPos[ip*3+0] = aXY[ip*2+0];
-        msh.aPos[ip*3+1] = aXY[ip*2+1];
-        msh.aPos[ip*3+2] = ptr1[ip];
-      }
-    }
-  }
-  return msh;
-}
- */
-
-std::tuple<std::vector<double>,std::vector<int>>
-PyGetMesh_Grid
+std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad2D_Grid
 (int mx, int my)
 {
   std::vector<double> aXY;
   std::vector<int> aQuad;
   MeshQuad2D_Grid(aXY, aQuad,
                   mx-1, my-1);
-  return std::tie(aXY,aQuad);
+  py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
+  py::array_t<int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
+  return std::forward_as_tuple(npXY,npQuad);
 }
 
-std::tuple<std::vector<double>,std::vector<int>> ReadMesh_Ply
+std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadPly
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
   std::vector<int> aTri;
   Read_Ply(fname, aXYZ, aTri);
-  return std::tie(aXYZ,aTri);
+  py::array_t<double> np_XYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  py::array_t<int> np_Tri({(int)aTri.size()/3,3}, aTri.data());
+  return std::forward_as_tuple(np_XYZ,np_Tri);
 }
 
-std::tuple<std::vector<double>,std::vector<int>> ReadMesh_Obj
+std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadObj
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
   std::vector<int> aTri;
   Read_Obj(fname, aXYZ, aTri);
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  return std::forward_as_tuple(npXYZ,npTri);
+}
+
+std::tuple<std::vector<double>,std::vector<int>> PyMeshTri3D_ReadNastran
+(const std::string& fname)
+{
+  std::vector<double> aXYZ;
+  std::vector<int> aTri;
+  Read_MeshTri3D_Nas(aXYZ, aTri, fname.c_str());
   return std::tie(aXYZ,aTri);
+}
+
+std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
+(const py::array_t<double>& aXYZ0, const py::array_t<int>& aQuad0)
+{
+  std::vector<int> aQuad1;
+  std::vector<int> aEdgeFace0;
+  std::vector<int> psupIndQuad0, psupQuad0;
+  QuadSubdiv(aQuad1,
+             psupIndQuad0,psupQuad0, aEdgeFace0,
+             aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
+  ///////
+  std::vector<double> aXYZ1;
+  SubdivisionPoints_QuadCatmullClark(aXYZ1,
+                                     aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
+                                     aQuad0.data(),aQuad0.shape()[0],
+                                     aXYZ0.data(), aXYZ0.shape()[0]);
+  py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
+  py::array_t<int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
+  return std::forward_as_tuple(npXYZ1,npQuad1);
 }
 
 void PyDrawMesh_FaceNorm
@@ -101,22 +104,7 @@ void PyDrawMesh_Edge
   }
 }
 
-std::tuple<std::vector<double>,std::vector<int>>
-PySubviv
-(const std::vector<double>& aXYZ0, const std::vector<int>& aQuad0)
-{
-  std::vector<int> aQuad1;
-  std::vector<int> aEdgeFace0;
-  std::vector<int> psupIndQuad0, psupQuad0;
-  QuadSubdiv(aQuad1,
-             psupIndQuad0,psupQuad0, aEdgeFace0,
-             aQuad0, aXYZ0.size()/3);
-  ///////
-  std::vector<double> aXYZ1;
-  SubdivisionPoints_QuadCatmullClark(aXYZ1,
-                                     aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,aQuad0,aXYZ0);
-  return std::tie(aXYZ1,aQuad1);
-}
+
 
 std::tuple<std::vector<double>,std::vector<int>,std::vector<int>,std::vector<int>>
 Triangulation
@@ -219,30 +207,6 @@ void init_mshtopoio_gl(py::module &m){
   .value("HEX",     MESHELEM_TYPE::MESHELEM_HEX)
   .export_values();
   
-  /*
-  py::class_<CMeshElem>(m, "MeshElem")
-  .def(py::init<>())
-  .def(py::init<const std::string&>(),"open the file in the path")
-  .def("draw", &CMeshElem::Draw) //
-  .def("minmax_xyz", &CMeshElem::AABB3_MinMax)
-  .def("read", &CMeshElem::Read)
-  .def("write_obj",&CMeshElem::Write_Obj)
-  .def("drawFace_elemWiseNorm", &CMeshElem::DrawFace_ElemWiseNorm)
-  .def("drawEdge", &CMeshElem::DrawEdge)
-  .def("scaleXYZ", &CMeshElem::ScaleXYZ)
-  .def("subdiv",   &CMeshElem::Subdiv)
-  .def_readonly("listElem", &CMeshElem::aElem)
-  .def_readonly("listPos",  &CMeshElem::aPos)
-  .def_readonly("elemType", &CMeshElem::elem_type)
-  .def_readonly("nDim",     &CMeshElem::ndim)
-  .def_readwrite("color_face",  &CMeshElem::color_face)
-  .def_readwrite("is_draw_edge", &CMeshElem::is_draw_edge);
-   */
-  
-  
-  
-  m.def("read_nastran_triangle",&Read_MeshTri3D_Nas_CMeshElem);
-  
   py::class_<CMeshMultiElem>(m,"MeshMultiElem")
   .def(py::init<>())
   .def("read_obj", &CMeshMultiElem::ReadObj)
@@ -251,25 +215,21 @@ void init_mshtopoio_gl(py::module &m){
   .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
-  m.def("triangulation",&Triangulation);
+  m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
+  m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);
+  m.def("meshtri3d_read_nastran", &PyMeshTri3D_ReadNastran, py::return_value_policy::move);
+  m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
+  m.def("meshquad3d_subdiv",      &PyMeshQuad3D_Subviv,     py::return_value_policy::move);
   
+  m.def("triangulation",&Triangulation);
   m.def("triangulation",&Triangulation,
         py::arg("aXY"),
         py::arg("edge_length")=0.03);
   
-//  m.def("hight_map", &HightMap);
-  
-  m.def("psup_mesh",&PyPsup_Mesh);
+  m.def("psup_mesh",&PyPsup_Mesh, py::return_value_policy::move);
   m.def("sortIndexedArray", &PySortIndexedArray);
-  
   m.def("elemQuad_dihedralTri",&GetElemQuad_DihedralTri);
-
-  m.def("read_ply",&ReadMesh_Ply);
-  m.def("read_obj",&ReadMesh_Obj);
-  
   m.def("draw_mesh_facenorm", &PyDrawMesh_FaceNorm);
   m.def("draw_mesh_edge", &PyDrawMesh_Edge);
-  m.def("subdiv",&PySubviv);
-  m.def("get_mesh_grid",&PyGetMesh_Grid);
   m.def("quality_meshTri2D",&PyQuality_MeshTri2D);
 }

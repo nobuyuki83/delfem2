@@ -362,7 +362,7 @@ void MergeLinSys_SolidDynamicLinear_MeshTri2D
  const double* aAcc)
 {
   const int np = nXY;
-  const int nDoF = np*2;
+//  const int nDoF = np*2;
   ////
 //  mat_A.SetZero();
 //  for(int idof=0;idof<nDoF;idof++){ vec_b[idof] = 0.0; }
@@ -716,7 +716,7 @@ void MergeLinSys_SolidStaticLinear_MeshTet3D
  const double* aVal)
 {
   const int np = nXYZ;
-  const int nDoF = np*3;
+//  const int nDoF = np*3;
   //////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
@@ -813,7 +813,7 @@ void MergeLinSys_SolidDynamicLinear_MeshTet3D
  const double* aAcc)
 {
   const int np = nXYZ;
-  const int nDoF = np*3;
+//  const int nDoF = np*3;
   ////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){

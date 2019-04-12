@@ -636,7 +636,7 @@ void makeEdgeQuad
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const std::vector<int>& aQuad0,
+ const int* aQuad0,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nPo0)
@@ -815,12 +815,12 @@ void addMasterSlavePattern
     }
   }
   ////
-  for(unsigned int ino=0;ino<nno;ino++){ index[ino+1] += index[ino]; }
+  for(int ino=0;ino<nno;ino++){ index[ino+1] += index[ino]; }
   const int narray = index[nno];
   array.resize(narray);
-  for(unsigned int ino=0;ino<nno;ino++){ aflg[ino] = -1; }
+  for(int ino=0;ino<nno;ino++){ aflg[ino] = -1; }
   ////
-  for(unsigned int ino0=0;ino0<nno;++ino0){
+  for(int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
     for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
       const int jno = psup0[icrs];
@@ -1086,13 +1086,13 @@ void QuadSubdiv
  std::vector<int>& psup_ind,
  std::vector<int>& psup,
  std::vector<int>& aEdgeFace0, // two points on the edge and two quads touching the edge
- const std::vector<int>& aQuad0,
+ const int* aQuad0, int nQuad0,
  unsigned int nPoint0)
 {
-  const int nq0 = (int)aQuad0.size()/4;
+  const int nq0 = nQuad0;
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind,elsup,
-                           aQuad0.data(),aQuad0.size()/4,4,nPoint0);
+                           aQuad0,nQuad0,4,nPoint0);
   makeEdgeQuad(psup_ind,psup,
                aQuad0, elsup_ind, elsup, nPoint0);
   const unsigned int ne0 = (int)psup.size();
@@ -1124,7 +1124,7 @@ void QuadSubdiv
     }
   }
   aQuad1.resize(0);
-  aQuad1.reserve(aQuad0.size()*4);
+  aQuad1.reserve(nQuad0*4);
   for(int iq=0;iq<nq0;++iq){
     int ip0 = aQuad0[iq*4+0];
     int ip1 = aQuad0[iq*4+1];

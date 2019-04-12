@@ -646,7 +646,7 @@ void DrawMeshTet3D_Cut
   glColorMaterial(GL_FRONT, GL_DIFFUSE);
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(unsigned int itet=0;itet<(int)aTet.size()/4;itet++){
+  for(unsigned int itet=0;itet<aTet.size()/4;itet++){
     const int ino0 = aTet[itet*4+0];
     const int ino1 = aTet[itet*4+1];
     const int ino2 = aTet[itet*4+2];

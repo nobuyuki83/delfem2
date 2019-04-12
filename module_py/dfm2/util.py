@@ -56,13 +56,8 @@ class Mesh():
       draw_mesh_edge(self.np_pos,self.np_elm)
 
   def subdiv(self):
-    list_pos = numpy.ravel(self.np_pos).tolist()
-    list_elm = numpy.ravel(self.np_elm).tolist()
-    list_pos,list_elm = subdiv(list_pos,list_elm)
-    msh0 = Mesh()
-    msh0.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 3))
-    msh0.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 4))
-    return msh0
+    np_pos1,np_quad1 = meshquad3d_subdiv(self.np_pos,self.np_elm)
+    return Mesh(np_pos1,np_quad1,QUAD)
 
   def meshtri2d(self,list_pos,list_elm):
     self.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 2))
@@ -78,15 +73,13 @@ def mesh_read(path_file="") -> Mesh:
   if os.path.isfile(path_file):
     ext = path_file.rsplit(".", 1)[1]
     if ext == 'ply':
-      list_xyz, list_tri = read_ply(path_file)
-      np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
-      np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 3))
+      np_pos, np_elm = meshtri3d_read_ply(path_file)
     if ext == 'obj':
-      list_xyz, list_tri = read_obj(path_file)
-      np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
-      np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 3))
-#      print(self.np_pos.shape, self.np_elm.shape)
-  return Mesh(np_pos,np_elm)
+      np_pos, np_elm = meshtri3d_read_obj(path_file)
+    if ext == 'nas' or ext == 'bdf':
+      np_pos, np_elm = meshtri3d_read_nastran(path_file)
+    return Mesh(np_pos,np_elm,TRI)
+  return None
 
 def mesh_voxelgrid(voxelgrid) -> Mesh:
   list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
@@ -95,13 +88,8 @@ def mesh_voxelgrid(voxelgrid) -> Mesh:
   return Mesh(np_pos,np_elm)
 
 def mesh_grid(shape) -> Mesh:
-  h = shape[0]
-  w = shape[1]
-  list_xyz,list_elm = get_mesh_grid(h,w)
-  msh0 = Mesh()
-  msh0.np_pos = numpy.array(list_xyz, dtype=numpy.float32).reshape((-1, 2))
-  msh0.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 4))
-  return msh0
+  np_pos,np_quad = meshquad2d_grid(shape[0],shape[1])
+  return Mesh(np_pos,np_quad,QUAD)
 
 def mesh_cad(cad,len) -> Mesh:
   xy,tri = getMesh_cad(cad,len)

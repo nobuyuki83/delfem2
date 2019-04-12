@@ -27,6 +27,21 @@ class Test_Mesh(unittest.TestCase):
   def test1(self):
     msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
 
+  def test2(self):
+    msh = dfm2.mesh_read("../test_inputs/bunny_1k.obj");
+
+  def test3(self):
+    msh = dfm2.mesh_grid((32,64))
+
+  def test4(self):
+    voxelgrid = dfm2.VoxelGrid()
+    voxelgrid.add(0, 0, 0)
+    voxelgrid.add(1, 0, 0)
+    voxelgrid.add(0, 1, 0)
+    msh = dfm2.mesh_voxelgrid(voxelgrid=voxelgrid)
+    msh = msh.subdiv()
+    msh = msh.subdiv()
+    msh = msh.subdiv()
 
 class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):

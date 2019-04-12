@@ -1397,8 +1397,8 @@ void SubdivisionPoints_QuadCatmullClark
  const std::vector<int>& aEdgeFace0,
  const std::vector<int>& psupIndQuad0,
  const std::vector<int>& psupQuad0,
- const std::vector<int>& aQuad0,
- const std::vector<double>& aXYZ0)
+ const int* aQuad0, int nQuad0,
+ const double* aXYZ0, int nXYZ0)
 {
   /*
   std::vector<int> aEdgeFace0;
@@ -1408,9 +1408,9 @@ void SubdivisionPoints_QuadCatmullClark
              psupIndQuad0,psupQuad0, aEdgeFace0,
              aQuad0, nv0);
    */
-  const int nv0 = (int)aXYZ0.size()/3;
+  const int nv0 = nXYZ0;
   const int ne0 = (int)psupQuad0.size();
-  const int nq0 = (int)aQuad0.size()/4;
+  const int nq0 = nQuad0;
   assert( (int)aEdgeFace0.size() == ne0*4 );
   aXYZ1.resize((nv0+ne0+nq0)*3);
   std::vector<int> aW(nv0,0);
