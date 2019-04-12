@@ -43,13 +43,15 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadObj
   return std::forward_as_tuple(npXYZ,npTri);
 }
 
-std::tuple<std::vector<double>,std::vector<int>> PyMeshTri3D_ReadNastran
+std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadNastran
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
   std::vector<int> aTri;
   Read_MeshTri3D_Nas(aXYZ, aTri, fname.c_str());
-  return std::tie(aXYZ,aTri);
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  return std::forward_as_tuple(npXYZ,npTri);
 }
 
 std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
@@ -71,6 +73,9 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
   py::array_t<int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
   return std::forward_as_tuple(npXYZ1,npQuad1);
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
 
 void PyDrawMesh_FaceNorm
 (const py::array_t<double>& pos,

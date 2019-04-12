@@ -1213,6 +1213,7 @@ void Read_MeshTri3D_Nas
     return;
   }
   /////
+  std::vector<int> map01;
   const int nbuff = 256;
   std::vector<char> buff(nbuff);
   char buff1[16], buff2[16], buff3[16], buff4[16], buff5[16];
@@ -1224,11 +1225,11 @@ void Read_MeshTri3D_Nas
       for(int i=0;i<8;++i){ buff2[i] = buff[i+24]; } buff2[8] = '\0';
       for(int i=0;i<8;++i){ buff3[i] = buff[i+32]; } buff3[8] = '\0';
       for(int i=0;i<8;++i){ buff4[i] = buff[i+40]; } buff4[8] = '\0';
-      const int i0 = atoi(buff1);
+      const int i0 = atoi(buff1)-1;
       const double f2 = atof(buff2);
       const double f3 = atof(buff3);
       const double f4 = atof(buff4);
-      assert( i0-1 == (int)aXYZ.size()/3 );
+      map01.push_back(i0);
       aXYZ.push_back(f2);
       aXYZ.push_back(f3);
       aXYZ.push_back(f4);
@@ -1248,6 +1249,21 @@ void Read_MeshTri3D_Nas
       aTri.push_back(i5);
       continue;
     }
+  }
+  int np1 = map01[0];
+  for(unsigned int ip0=0;ip0<map01.size();++ip0){
+    int ip1 = map01[ip0];
+    np1 = (ip1>np1)?ip1:np1;
+  }
+  np1 += 1;
+  std::vector<int> map10(np1,-1);
+  for(unsigned int ip0=0;ip0<map01.size();++ip0){
+    int ip1 = map01[ip0];
+    map10[ip1] = ip0;
+  }
+  for(unsigned int i=0;i<aTri.size();++i){
+    int j1 = aTri[i];
+    aTri[i] = map10[j1];
   }
 }
 
