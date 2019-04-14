@@ -25,13 +25,16 @@ class Test_Cad2D(unittest.TestCase):
 
 class Test_Mesh(unittest.TestCase):
   def test1(self):
-    msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
+    msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply")
+    self.assertIsNot(msh,None)
 
   def test2(self):
     msh = dfm2.mesh_read("../test_inputs/bunny_1k.obj");
+    self.assertIsNot(msh,None)
 
   def test3(self):
     msh = dfm2.mesh_grid((32,64))
+    self.assertIsNot(msh,None)
 
   def test4(self):
     voxelgrid = dfm2.VoxelGrid()
@@ -42,6 +45,8 @@ class Test_Mesh(unittest.TestCase):
     msh = msh.subdiv()
     msh = msh.subdiv()
     msh = msh.subdiv()
+    self.assertIsNot(msh,None)
+
 
 class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):

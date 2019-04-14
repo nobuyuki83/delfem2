@@ -787,16 +787,28 @@ void Read_MeshTri3D
 void WriteVTK_Points
 (std::ofstream& fout,
  const std::string& name,
- const std::vector<double>& aXYZ)
+ const double* aXYZ,
+ int nXYZ,
+ int nDim)
 {
   fout << "# vtk DataFile Version 2.0" << std::endl;
   fout << name << std::endl;
   fout << "ASCII" << std::endl;
   fout << "DATASET UNSTRUCTURED_GRID" << std::endl;
-  const int np = aXYZ.size()/3;
+  const int np = nXYZ;
   fout << "POINTS " << np << " float" << std::endl;
-  for(int ip=0;ip<np;++ip){
-    fout << aXYZ[ip*3+0] << " " << aXYZ[ip*3+1] << " " << aXYZ[ip*3+2] << std::endl;
+  if( nDim == 3 ){
+    for(int ip=0;ip<np;++ip){
+      fout << aXYZ[ip*3+0] << " " << aXYZ[ip*3+1] << " " << aXYZ[ip*3+2] << std::endl;
+    }
+  }
+  else if( nDim == 2 ){
+    for(int ip=0;ip<np;++ip){
+      fout << aXYZ[ip*2+0] << " " << aXYZ[ip*2+1] << " " << 0.0 << std::endl;
+    }
+  }
+  else{
+    assert(0);
   }
 }
 
@@ -808,18 +820,19 @@ void WriteVTK_Points
 // 14: VTK_PYRAMD
 void WriteVTK_Cells
 (std::ofstream& fout,
- int elem_type,
- const std::vector<int>& aElem)
+ int vtk_elem_type,
+ const int* aElem,
+ const int nElem)
 {
   ////
   int nnoel = -1;
-  if(      elem_type == 12 ){ nnoel = 8; }
-  else if( elem_type == 5  ){ nnoel = 3; }
-  else if( elem_type == 10 ){ nnoel = 4; }
-  else if( elem_type == 9  ){ nnoel = 4; } 
-  const int nelem = aElem.size()/nnoel;
+  if(      vtk_elem_type == 12 ){ nnoel = 8; }
+  else if( vtk_elem_type == 5  ){ nnoel = 3; }
+  else if( vtk_elem_type == 10 ){ nnoel = 4; }
+  else if( vtk_elem_type == 9  ){ nnoel = 4; } 
+  const int nelem = nElem;
   fout << "CELLS " << nelem << " " << nelem*(nnoel+1) << std::endl;
-  if( elem_type == 12 ){
+  if( vtk_elem_type == 12 ){
     for(int ie=0;ie<nelem;++ie){
       fout << nnoel << " ";
       fout << aElem[ie*8+0] << " " << aElem[ie*8+1] << " " << aElem[ie*8+2] << " " << aElem[ie*8+3] << " ";
@@ -828,7 +841,7 @@ void WriteVTK_Cells
     fout << "CELL_TYPES " << nelem << std::endl;
     for(int ie=0;ie<nelem;++ie){ fout << "12" << std::endl; }
   }
-  else if( elem_type == 10 ){
+  else if( vtk_elem_type == 10 ){
     for(int ie=0;ie<nelem;++ie){
       fout << nnoel << " ";
       fout <<aElem[ie*4+0] << " " << aElem[ie*4+1] << " " << aElem[ie*4+2] << " " << aElem[ie*4+3] << std::endl;
@@ -836,7 +849,7 @@ void WriteVTK_Cells
     fout << "CELL_TYPES " << nelem << std::endl;
     for(int ie=0;ie<nelem;++ie){ fout << "10" << std::endl; }
   }
-  else if( elem_type == 5 ){
+  else if( vtk_elem_type == 5 ){
     for(int ie=0;ie<nelem;++ie){
       fout << nnoel << " ";
       fout << aElem[ie*3+0] << " " << aElem[ie*3+1] << " " << aElem[ie*3+2] << std::endl;
@@ -844,7 +857,7 @@ void WriteVTK_Cells
     fout << "CELL_TYPES " << nelem << std::endl;
     for(int ie=0;ie<nelem;++ie){ fout << "5" << std::endl; }
   }
-  else if( elem_type == 9 ){
+  else if( vtk_elem_type == 9 ){
     for(int ie=0;ie<nelem;++ie){
       fout << nnoel << " ";
       fout << aElem[ie*4+0] << " " << aElem[ie*4+1] << " " << aElem[ie*4+2] << " " << aElem[ie*4+3] << std::endl;
@@ -912,14 +925,14 @@ void WriteVTK_Data_PointVec
 
 void WriteVTK_Data_PointScalar
 (std::ofstream& fout,
+ const double* aVal,
  int np,
- const std::vector<double>& aVal,
- int nStrideVal, int nOffset)
+ int nStrideVal)
 {
   fout << "SCALARS point_scalars float 1" << std::endl;
   fout << "LOOKUP_TABLE default" << std::endl;
   for(int ip=0;ip<np;++ip){
-    fout << aVal[ip*nStrideVal+nOffset] << std::endl;
+    fout << aVal[ip*nStrideVal] << std::endl;
   }
 }
 

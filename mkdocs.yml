@@ -23,6 +23,7 @@ google_analytics:
 
 nav:
 - 'Home': 'index.md'
+- 'Building Instruction': 'install.md'
 - 'example_py.md'  
 - 'example_cpp.md'  
 - 'coding.md'
