@@ -6,7 +6,9 @@
 #include "delfem2/matrix_sparse.h"
 #include "delfem2/ilu_sparse.h"
 #include "delfem2/fem.h"
+#include "delfem2/fem_ematrix.h"
 #include "delfem2/mshtopo.h"
+#include "delfem2/sdf.h"
 
 namespace py = pybind11;
 
@@ -317,6 +319,52 @@ double PyMergeLinSys_Cloth
   return W;
 }
 
+
+double PyMergeLinSys_Contact
+(CMatrixSquareSparse& mss,
+ py::array_t<double>& vec_b,
+ ////
+ double stiff_contact,
+ double contact_clearance,
+ const std::vector<const CSDF3*>& apSDF,
+ const py::array_t<double>& aXYZ)
+{
+  class CMyInput : public CInput_Contact
+  {
+  public:
+    CMyInput(const std::vector<const CSDF3*>& apSDF){ this->apSDF = apSDF; }
+    virtual double penetrationNormal(double& nx, double& ny, double& nz,
+                                     double px, double py, double pz) const
+    {
+      double n[3];
+      double max_pd = apSDF[0]->Projection(px,py,pz, n);
+      /*
+      for(unsigned int ipct=1;ipct<apSDF.size();ipct++){
+        double dist0,n0[3];
+        dist0 = apSDF[ipct]->Projection(px,py,pz, n0);
+        if( dist0 < max_pd ) continue;
+        max_pd = dist0;
+        n[0] = n0[0];
+        n[1] = n0[1];
+        n[2] = n0[2];
+      }
+       */
+      nx = -n[0];
+      ny = -n[1];
+      nz = -n[2];
+      return max_pd;
+    }
+  public:
+    std::vector<const CSDF3*> apSDF;
+  } input(apSDF);
+  auto buff_vecb = vec_b.request();
+  double W = AddWdWddW_Contact(mss, (double*)buff_vecb.ptr,
+                               stiff_contact,contact_clearance,
+                               input,
+                               aXYZ.data(), aXYZ.shape()[0]);
+  return W;
+}
+
 double PyMergeLinSys_MassPoint
 (CMatrixSquareSparse& mss,
  py::array_t<double>& vec_b,
@@ -401,14 +449,15 @@ void init_fem(py::module &m){
   m.def("linearSystem_setMasterSlave",&LinearSystem_SetMasterSlave);
   m.def("masterSlave_distributeValue",&PyMasterSlave_DistributeValue);
   
-  m.def("mergeLinSys_poission", &PyMergeLinSys_Poission);
-  m.def("mergeLinSys_diffuse",&PyMergeLinSys_Diffuse);
-  m.def("mergeLinSys_linearSolidStatic",&PyMergeLinSys_LinearSolidStatic);
+  m.def("mergeLinSys_poission",          &PyMergeLinSys_Poission);
+  m.def("mergeLinSys_diffuse",           &PyMergeLinSys_Diffuse);
+  m.def("mergeLinSys_linearSolidStatic", &PyMergeLinSys_LinearSolidStatic);
   m.def("mergeLinSys_linearSolidDynamic",&PyMergeLinSys_LinearSolidDynamic);
-  m.def("mergeLinSys_storksStatic2D",&PyMergeLinSys_StorksStatic2D);
-  m.def("mergeLinSys_storksDynamic2D",&PyMergeLinSys_StorksDynamic2D);
-  m.def("mergeLinSys_navierStorks2D",&PyMergeLinSys_NavierStorks2D);
-  m.def("mergeLinSys_cloth", &PyMergeLinSys_Cloth);
-  m.def("mergeLinSys_massPoint",&PyMergeLinSys_MassPoint);
+  m.def("mergeLinSys_storksStatic2D",    &PyMergeLinSys_StorksStatic2D);
+  m.def("mergeLinSys_storksDynamic2D",   &PyMergeLinSys_StorksDynamic2D);
+  m.def("mergeLinSys_navierStorks2D",    &PyMergeLinSys_NavierStorks2D);
+  m.def("mergeLinSys_cloth",             &PyMergeLinSys_Cloth);
+  m.def("mergeLinSys_massPoint",         &PyMergeLinSys_MassPoint);
+  m.def("mergeLinSys_contact",           &PyMergeLinSys_Contact);
 
 }

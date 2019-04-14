@@ -590,6 +590,34 @@ double MergeLinSys_Cloth
 }
 
 
+
+
+double AddWdWddW_Contact
+(CMatrixSquareSparse& ddW,
+ double* dW,
+ ////
+ double stiff_contact,
+ double contact_clearance,
+ const CInput_Contact& input,
+ const double* aXYZ,
+ int nXYZ)
+{
+  const int np = nXYZ;
+  std::vector<int> tmp_buffer(np,-1);
+  double W = 0;
+  for(int ip=0;ip<np;ip++){
+    double c[3] = { aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2] };
+    double e, de[3], dde[3][3];
+    WdWddW_Contact( e,de,dde, c, stiff_contact,contact_clearance, input );
+    W += e;  // marge energy
+    // marge de
+    for(int i =0;i<3;i++){ dW[ip*3+i] += de[i]; }
+    // marge dde
+    ddW.Mearge(1, &ip, 1, &ip, 9, &dde[0][0], tmp_buffer);
+  }
+  return W;
+}
+
 /*
  void Solve_LinearSolid_TetP1()
  {

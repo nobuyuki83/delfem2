@@ -99,32 +99,44 @@ void SetClothShape_Square
 }
 
 
-// active if( imode_contact == 0 )
-void penetrationDepth_Nothing(double& pd, double* n, const double* p)
+
+class CInput_ContactNothing: public CInput_Contact
 {
-  pd = -100;
+public:
+  double penetrationNormal(double& nx, double &ny, double& nz,
+                           double px, double py, double pz) const
+  {
+    return -100;
+  }
 };
 
-// active if( imode_contact == 1 )
-void penetrationDepth_Plane(double& pd, double* n, const double* p)
+
+class CInput_ContactPlane: public CInput_Contact
 {
-  n[0] = 0.0;  n[1] = 0.0;  n[2] = 1.0; // normal of the plane
-  pd = -0.5 - p[2]; // penetration depth
+  double penetrationNormal(double& nx, double &ny, double& nz,
+                                double px, double py, double pz) const
+  {
+    nx = 0.0;  ny = 0.0;  nz = 1.0; // normal of the plane
+    return -0.5 - pz; // penetration depth
+  }
 };
 
-// active if( imode_contact == 2 )
-void penetrationDepth_Sphere(double& pd, double* n, const double* p)
+class CInput_ContactSphere: public CInput_Contact
 {
-  const double center[3] = { 0.1, 0.5, -0.8 };
-  const double radius = 0.3;
-  n[0] = p[0]-center[0];
-  n[1] = p[1]-center[1];
-  n[2] = p[2]-center[2];
-  double len = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2]);
-  n[0] /= len;
-  n[1] /= len;
-  n[2] /= len;
-  pd = radius-len; // penetration depth
+  double penetrationNormal(double& nx, double &ny, double& nz,
+                           double px, double py, double pz) const
+  {
+    const double center[3] = { 0.1, 0.5, -0.8 };
+    const double radius = 0.3;
+    nx = px-center[0];
+    ny = py-center[1];
+    nz = pz-center[2];
+    double len = sqrt(nx*nx+ny*ny+nz*nz);
+    nx /= len;
+    ny /= len;
+    nz /= len;
+    return radius-len; // penetration depth
+  }
 };
 
 
@@ -164,16 +176,13 @@ int imode_draw = 0;
 
 void StepTime()
 {
-  void (*penetrationDepth)(double& , double* , const double*);
-  if(      imode_contact == 0 ){ // contact with nothing
-    penetrationDepth = penetrationDepth_Nothing;
-  }
-  if(      imode_contact == 1 ){ // contact with plane
-    penetrationDepth = penetrationDepth_Plane;
-  }
-  if(      imode_contact == 2 ){ // contact with sphere
-    penetrationDepth = penetrationDepth_Sphere;
-  }
+  CInput_ContactPlane c0;
+  CInput_ContactNothing c1;
+  CInput_ContactSphere c2;
+  CInput_Contact* ic = 0;
+  if(      imode_contact == 1 ){ ic = &c0; }
+  if(      imode_contact == 0 ){ ic = &c1; }
+  if(      imode_contact == 2 ){ ic = &c2; }
   // solving lienar system using conjugate gradient method with ILU(0) preconditioner
   StepTime_InternalDynamicsILU(aXYZ, aUVW, mat_A, ilu_A,
                                aXYZ0, aBCFlag,
@@ -181,7 +190,7 @@ void StepTime()
                                time_step_size,
                                lambda, myu, stiff_bend,
                                gravity, mass_point,
-                               stiff_contact,contact_clearance,penetrationDepth);
+                               stiff_contact,contact_clearance,*ic);
   MakeNormal(aNormal, aXYZ, aTri);
 }
 

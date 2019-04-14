@@ -68,6 +68,8 @@ py::array_t<int> PyCad2D_GetPointsEdge
   return py::array_t<int>((int)aIdP.size(), aIdP.data());
 }
 
+
+
 std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
 (const std::vector<const CSDF3*>& apSDF)
 {

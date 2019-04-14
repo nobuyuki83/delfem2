@@ -1758,10 +1758,10 @@ void WdWddW_Contact
  const double c[3], // (in) deformed triangle vertex positions
  double stiff_contact,
  double contact_clearance,
- void (*penetrationDepth)(double& , double* , const double*) )
+ const CInput_Contact& input )
 {
-  double pd, n[3];
-  penetrationDepth(pd,n,c);
+  double n[3];
+  double pd = input.penetrationNormal(n[0],n[1],n[2], c[0],c[1],c[2]);
   pd += contact_clearance;
   if( pd  < 0 ){
     W = 0;

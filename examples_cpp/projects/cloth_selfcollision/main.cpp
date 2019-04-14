@@ -99,31 +99,7 @@ void SetClothShape_Square
 }
 
 
-// active if( imode_contact == 0 )
-void penetrationDepth_Plane(double& pd, double* n, const double* p)
-{
-  n[0] = 0.0;  n[1] = 0.0;  n[2] = 1.0; // normal of the plane
-  pd = -0.5 - p[2]; // penetration depth
-};
 
-// active if( imode_contact == 1 )
-void penetrationDepth_Sphere(double& pd, double* n, const double* p)
-{
-  const double center[3] = { 0.5, 0.0, +2 };
-  const double radius = 3.0;
-  n[0] = p[0]-center[0];
-  n[1] = p[1]-center[1];
-  n[2] = p[2]-center[2];
-  double len = Length3D(n);
-  n[0] /= len;
-  n[1] /= len;
-  n[2] /= len;
-  pd = radius-len; // penetration depth
-  n[0] *= -1;
-  n[1] *= -1;
-  n[2] *= -1;
-  pd *= -1;
-};
 
 
 /* ------------------------------------------------------------------------ */
@@ -197,17 +173,43 @@ void MakeNormal()
   }
 }
 
+class CInput_ContactPlane: public CInput_Contact
+{
+  double penetrationNormal(double& nx, double &ny, double& nz,
+                           double px, double py, double pz) const
+  {
+    nx = 0.0;  ny = 0.0;  nz = 1.0; // normal of the plane
+    return -0.5-pz; // penetration depth
+  }
+};
+
+class CInput_ContactSphere: public CInput_Contact
+{
+  double penetrationNormal(double& nx, double &ny, double& nz,
+                           double px, double py, double pz) const
+  {
+    const double center[3] = { 0.5, 0.0, +2 };
+    const double radius = 3.0;
+    nx = px-center[0];
+    ny = py-center[1];
+    nz = pz-center[2];
+    double len = sqrt(nx*nx+ny*ny+nz*nz);
+    nx /= -len;
+    ny /= -len;
+    nz /= -len;
+    return -(radius-len); // penetration depth
+  }
+};
+
+
 void StepTime()
 {
-  
-  void(*penetrationDepth)(double&, double*, const double*) = 0;
-  if(      imode_contact == 0 ){ // contact with plane，床との衝突
-    penetrationDepth = penetrationDepth_Plane;
-  }
-  if(      imode_contact == 1 ){ // contact with sphere，球との衝突
-    penetrationDepth = penetrationDepth_Sphere;
-  }
-  
+  CInput_ContactPlane c0;
+  CInput_ContactSphere c1;
+  CInput_Contact* ic = 0;
+  if(      imode_contact == 0 ){ ic = &c0; }
+  if(      imode_contact == 1 ){ ic = &c1; }
+  /////
   std::vector<double> aXYZ1 = aXYZ;
   ::StepTime_InternalDynamicsILU
   (aXYZ, aUVW, mat_A, ilu_A,
@@ -216,7 +218,7 @@ void StepTime()
    time_step_size,
    lambda, myu, stiff_bend,
    gravity, mass_point,
-   stiff_contact,contact_clearance,penetrationDepth);
+   stiff_contact,contact_clearance,*ic);
   ////
   bool is_impulse_applied;
   GetIntermidiateVelocityContactResolved
