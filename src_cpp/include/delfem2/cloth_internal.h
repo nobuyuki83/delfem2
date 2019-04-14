@@ -4,6 +4,7 @@
 #include "delfem2/matrix_sparse.h"
 #include "delfem2/ilu_sparse.h"
 #include "delfem2/fem_ematrix.h"
+#include "delfem2/fem.h"
 
 // compute total energy and its first and second derivatives
 void AddWdWddW_Cloth
@@ -120,32 +121,6 @@ void AddWdW_Cloth
 
 
 // compute total energy and its first and second derivatives
-void AddWdWddW_Contact
-(double& W, // (out) energy
- std::vector<double>& dW, // (out) first derivative of energy
- CMatrixSquareSparse& ddW, // (out) second derivative of energy
- std::vector<int>& tmp_buffer,
- ////
- const std::vector<double>& aXYZ, // (in) deformed vertex positions
- double stiff_contact,
- double contact_clearance,
- void (*penetrationDepth)(double& , double* , const double*)
- )
-{
-  // marge point-wise external contact energy
-  for(int ip=0;ip<aXYZ.size()/3;ip++){
-    double c[3] = { aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2] };
-    double e, de[3], dde[3][3];
-    WdWddW_Contact( e,de,dde, c, stiff_contact,contact_clearance, penetrationDepth );
-    W += e;  // marge energy
-    // marge de
-    for(int i =0;i<3;i++){ dW[ip*3+i] += de[i]; }
-    // marge dde
-    ddW.Mearge(1, &ip, 1, &ip, 9, &dde[0][0], tmp_buffer);
-  }
-}
-
-// compute total energy and its first and second derivatives
 void AddWdW_Gravity
 (double& W, // (out) energy
  std::vector<double>& dW, // (out) first derivative of energy
@@ -184,8 +159,7 @@ void StepTime_InternalDynamics
  double mass_point, // (in) mass for a point
  double stiff_contact,
  double contact_clearance,
- void (*penetrationDepth)(double& , double* , const double*)
- )
+ const CInput_Contact& input_contact)
 {
   const int np = (int)aXYZ.size()/3; // number of point，頂点数
   const int nDof = np*3; // degree of freedom，全自由度数
@@ -200,9 +174,10 @@ void StepTime_InternalDynamics
                   aXYZ,aXYZ0,
                   aTri,aQuad,
                   lambda,myu,stiff_bend);
-  AddWdWddW_Contact(W,vec_b,mat_A,tmp_buffer,
-                    aXYZ,
-                    stiff_contact,contact_clearance,penetrationDepth);
+  AddWdWddW_Contact(mat_A, vec_b.data(),
+                    stiff_contact,contact_clearance,
+                    input_contact,
+                    aXYZ.data(), aXYZ.size()/3);
   AddWdW_Gravity(W,vec_b,
                  aXYZ,
                  gravity,mass_point);
@@ -255,8 +230,7 @@ void StepTime_InternalDynamicsILU
  double mass_point, // (in) mass for a point，頂点あたりの質量
  double stiff_contact,
  double contact_clearance,
- void (*penetrationDepth)(double& , double* , const double*)
- )
+ const CInput_Contact& input_contact)
 {
   const unsigned int np = aXYZ.size()/3; // number of point，頂点数
   const unsigned int nDof = np*3; // degree of freedom，全自由度数
@@ -271,9 +245,10 @@ void StepTime_InternalDynamicsILU
                   aXYZ,aXYZ0,
                   aTri,aQuad,
                   lambda,myu,stiff_bend);
-  AddWdWddW_Contact(W,vec_b,mat_A,tmp_buffer,
-                    aXYZ,
-                    stiff_contact,contact_clearance,penetrationDepth);
+  AddWdWddW_Contact(mat_A,vec_b.data(),
+                    stiff_contact,contact_clearance,
+                    input_contact,
+                    aXYZ.data(), aXYZ.size()/3);
   AddWdW_Gravity(W,vec_b,
                  aXYZ,
                  gravity,mass_point);

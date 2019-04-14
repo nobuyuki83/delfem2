@@ -6,6 +6,7 @@
 
 #include "delfem2/matrix_sparse.h"
 #include "delfem2/ilu_sparse.h"
+#include "delfem2/fem_ematrix.h"
 
 void FetchData(double* val_to,
                int nno, int ndim,
@@ -174,6 +175,13 @@ double MergeLinSys_Cloth(CMatrixSquareSparse& mat_A, // (out) second derivative 
                          const int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
                          const double* aXYZ);
 
+double AddWdWddW_Contact(CMatrixSquareSparse& ddW,
+                         double* dW, // (out) first derivative of energy
+                         ////
+                         double stiff_contact,
+                         double contact_clearance,
+                         const CInput_Contact& input,
+                         const double* aXYZ,  int nXYZ);
 
 /*
 void Solve_LinearSolid_TetP1()

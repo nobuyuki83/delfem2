@@ -436,6 +436,7 @@ class FEM_Cloth():
   def __init__(self,mesh):
     self.dt = 0.1
     self.mesh = mesh
+    self.sdf = SDF()
     self.updated_mesh()
 
   def updated_mesh(self):
@@ -461,6 +462,10 @@ class FEM_Cloth():
                           1.0, self.dt,
                           [0,0,-1],
                           self.vec_val, self.vec_velo)
+    mergeLinSys_contact(self.ls.mat, self.ls.vec_f,
+                        10000, 0.1,
+                        self.sdf.list_sdf,
+                        self.vec_val)
     self.ls.Solve()
     self.vec_val += self.ls.vec_x
     self.vec_velo = (1.0/self.dt)*self.ls.vec_x
@@ -468,6 +473,9 @@ class FEM_Cloth():
   def step_time(self):
     self.solve()
 
+
+##########################
+## fluid from here
 
 class FEM_StorksStatic2D():
   def __init__(self,

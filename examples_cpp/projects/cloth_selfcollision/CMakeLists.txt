@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/collisiontri_v3bvh.cpp    ${DELFEM2_INC}/collisiontri_v3bvh.h
 
   ${DELFEM2_SRC}/fem_ematrix.cpp
+  ${DELFEM2_SRC}/fem.cpp
   ${DELFEM2_SRC}/matrix_sparse.cpp
   ${DELFEM2_SRC}/ilu_sparse.cpp
 

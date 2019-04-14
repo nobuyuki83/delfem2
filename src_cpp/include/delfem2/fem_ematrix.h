@@ -94,6 +94,14 @@ void WdWddW_CST
  const double myu);   // (in) Lame's 2nd parameter
 
 // compute energy and its 1st and 2nd derivative for contact against object
+
+class CInput_Contact
+{
+public:
+  virtual double penetrationNormal(double& nx, double& ny, double& nz,
+                                   double px, double py, double pz) const = 0;
+};
+
 void WdWddW_Contact
 (double& W,  // (out) energy
  double dW[3], // (out) 1st derivative of energy
@@ -102,7 +110,7 @@ void WdWddW_Contact
  const double c[3], // (in) deformed triangle vertex positions
  double stiff_contact,
  double contact_clearance,
- void (*penetrationDepth)(double& , double* , const double*) );
+ const CInput_Contact& input);
 
 
 
