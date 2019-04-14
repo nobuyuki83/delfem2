@@ -329,6 +329,7 @@ double PyMergeLinSys_Contact
  const std::vector<const CSDF3*>& apSDF,
  const py::array_t<double>& aXYZ)
 {
+  if( apSDF.size() == 0 ) return 0;
   class CMyInput : public CInput_Contact
   {
   public:
