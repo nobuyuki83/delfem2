@@ -212,6 +212,36 @@ class Field():
   def minmax_xyz(self):
     return self.mesh.minmax_xyz()
 
+  def write_vtk(self, path_vtk, message=""):
+    write_vtk_meshpoint(path_vtk,"foobar", self.mesh.np_pos)
+    write_vtk_meshelem(path_vtk, self.mesh.np_elm, self.mesh.elem_type)
+    open(path_vtk, "a+").write("POINT_DATA {0}\n".format(self.val_color.shape[0]))
+    print(self.val_color.shape)
+    if self.val_color.ndim == 1:
+      write_vtk_pointscalar(path_vtk, self.val_color)
+    if self.val_color.ndim == 2 and self.val_color.shape[1] == 1:
+      write_vtk_pointscalar(path_vtk, self.val_color)
+
+
+class VisFEM_Color():
+  def __init__(self):
+    self.draw_val_min = 0.0
+    self.draw_val_max = 1.0
+    self.color_mode = 'bcgyr'
+    self.is_update_min_max = True
+    self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
+
+  def update(self,mesh,val_color):
+    if self.is_update_min_max:
+      self.draw_val_min = val_color.min()
+      self.draw_val_max = val_color.max()
+      self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
+
+  def draw(self,mesh,val_color):
+    drawField_colorMap(mesh.np_pos, mesh.np_elm,
+                       val_color,
+                       self.color_map)
+
 ######################################################
 
 class FEM_LinSys():
@@ -272,24 +302,6 @@ class FEM_LinSys():
 ##########################################################################
 
 
-class VisFEM_Color():
-  def __init__(self):
-    self.draw_val_min = 0.0
-    self.draw_val_max = 1.0
-    self.color_mode = 'bcgyr'
-    self.is_update_min_max = True
-    self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
-
-  def update(self,mesh,val_color):
-    if self.is_update_min_max:
-      self.draw_val_min = val_color.min()
-      self.draw_val_max = val_color.max()
-      self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
-
-  def draw(self,mesh,val_color):
-    drawField_colorMap(mesh.np_pos, mesh.np_elm,
-                       val_color,
-                       self.color_map)
 
 class FEM_Poisson():
   def __init__(self,

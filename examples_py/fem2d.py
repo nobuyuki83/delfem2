@@ -10,6 +10,7 @@ def poisson(cad,mesh):
   fem.solve()
   field = dfm2.Field(mesh,val_color=fem.vec_val[:,0])
   dfm2.winDraw3d([field])
+  field.write_vtk("poisson.vtk")
 
 
 def poisson2(cad,mesh):

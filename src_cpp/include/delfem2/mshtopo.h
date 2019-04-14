@@ -14,6 +14,14 @@ enum MESHELEM_TYPE
   MESHELEM_WEDGE = 5,
   MESHELEM_VOX = 6,
 };
+
+// 5 : VTK_TRIANGLE
+// 9 : VTK_QUAD
+// 10: VTK_TETRA
+// 12: VTK_HEXAHEDRON
+// 13: VTK_WEDGE
+// 14: VTK_PYRAMD
+
 ////
 const int mapMeshElemType2NNodeElem[7] = {
   3, // TRI

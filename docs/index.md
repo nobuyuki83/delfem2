@@ -25,10 +25,12 @@ Please download the latest project by cloning the [GitHub repository](https://gi
     example_cpp    # Cpp examples
     example_py     # Python examples
 
-
 ## Python
 
-See the [python examples](example_py)
+To build the python module pleese see [building instruction](install).
+
+For the examples see [python examples](example_py).
+
 
 ## C++
 

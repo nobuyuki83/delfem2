@@ -2,7 +2,6 @@
 *.xcscheme
 *.plist
 *.xccheckout
-*.obj
 *.filters
 *.o
 *.xcworkspacedata
@@ -41,3 +40,4 @@ site
 examples_cpp/bin
 private_examples
 desktop.ini
+examples_py/*.vtk

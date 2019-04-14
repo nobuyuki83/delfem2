@@ -94,7 +94,11 @@ void Load_Obj(const std::string& fname,
 
 void WriteVTK_Points(std::ofstream& fout,
                      const std::string& name,
-                     const std::vector<double>& aXYZ);
+                     const double* pXYZ,
+                     int nXYZ,
+                     int nDim);
+
+
 
 // 5 : VTK_TRIANGLE
 // 9 : VTK_QUAD
@@ -103,20 +107,21 @@ void WriteVTK_Points(std::ofstream& fout,
 // 13: VTK_WEDGE
 // 14: VTK_PYRAMD
 void WriteVTK_Cells(std::ofstream& fout,
-                    int elem_type,
-                    const std::vector<int>& aElem);
+                    int vtk_elem_type,
+                    const int* aElem,
+                    const int nElem);
 void WriteVTK_Cells(std::ofstream& fout,
                     const std::vector<int>& aTet,
                     const std::vector<int>& aPyrm,
                     const std::vector<int>& aPrsm);
 void WriteVTK_Data_PointVec(std::ofstream& fout,
+                            const double* aVal,
                             int np,
-                            const std::vector<double>& aVal,
-                            int nStrideVal=3, int nOffset=0);
+                            int nStrideVal=3);
 void WriteVTK_Data_PointScalar(std::ofstream& fout,
+                               const double* aVal,
                                int np,
-                               const std::vector<double>& aVal,
-                               int nStrideVal=1, int nOffset=0);
+                               int nStrideVal=1);
 void WriteVTK_MapTriScalar(const std::string& fpath,
                            const std::string& name,
                            const std::vector<double>& aXYZ,

@@ -361,7 +361,6 @@ std::tuple<py::array_t<int>,py::array_t<int>> PyAddMasterSlavePattern
   addMasterSlavePattern(psup_ind, psup,
                         ms_flag.data(), ms_flag.shape()[1],
                         np_psup_ind0.data(), np_psup_ind0.shape()[0], np_psup0.data());
-  std::cout << np_psup0.size() << " " << psup.size() << std::endl;
   py::array_t<int> np_psup_ind((int)psup_ind.size(),psup_ind.data());
   py::array_t<int> np_psup((int)psup.size(),psup.data());
   return std::tie(np_psup_ind,np_psup);
