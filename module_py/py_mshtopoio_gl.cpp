@@ -133,8 +133,8 @@ std::tuple<py::array_t<int>, py::array_t<int>>
 PyPsup_Mesh(const py::array_t<int>& elm, int npoint)
 {
   std::vector<int> psup_ind, psup;
-  makeOneRingNeighborhood(psup_ind, psup,
-                          elm.data(), elm.shape()[0], elm.shape()[1], npoint);
+  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+                                      elm.data(), elm.shape()[0], elm.shape()[1], npoint);
   py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::tie(np_psup_ind, np_psup);
