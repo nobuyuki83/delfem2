@@ -175,7 +175,7 @@ double MergeLinSys_Cloth(CMatrixSquareSparse& mat_A, // (out) second derivative 
                          const int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
                          const double* aXYZ);
 
-double AddWdWddW_Contact(CMatrixSquareSparse& ddW,
+double MergeLinSys_Contact(CMatrixSquareSparse& ddW,
                          double* dW, // (out) first derivative of energy
                          ////
                          double stiff_contact,

@@ -592,7 +592,7 @@ double MergeLinSys_Cloth
 
 
 
-double AddWdWddW_Contact
+double MergeLinSys_Contact
 (CMatrixSquareSparse& ddW,
  double* dW,
  ////

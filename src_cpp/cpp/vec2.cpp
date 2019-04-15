@@ -89,6 +89,58 @@ void VLVt2(double A[4], double l0, double l1, const double V[4])
 }
 
 
+void RotationalComponentOfMatrix2(double R[4], const double M[4])
+{
+  const double eps = 1.0e-20;
+  double A[4];
+  {
+    double s = fabs(M[0])+fabs(M[1])+fabs(M[2])+fabs(M[3]);
+    if (s<1.0e-10){
+      R[0] = 1.0;  R[1] = 0.0; R[2] = 0.0; R[3] = 1.0;
+      return;
+    }
+    double invs = 1.0/s;
+    A[0] = invs*M[0];
+    A[1] = invs*M[1];
+    A[2] = invs*M[2];
+    A[3] = invs*M[3];
+  }
+  double G[4]; gramian2(G, A);
+  double l0, l1;
+  double v0[2], v1[2];
+  {
+    double b = G[0]+G[3];
+    double c = G[0]*G[3]-G[1]*G[2];
+    double d = b*b-4*c;
+    if (d<eps){
+      l0 = 0.5*b;
+      l1 = 0.5*b;
+      v0[0] = 0;
+      v0[1] = 1;
+      v1[0] = 1;
+      v1[1] = 0;
+    }
+    else{
+      d = sqrt(d);
+      l0 = 0.5*(b+d);
+      l1 = 0.5*(b-d);
+      v0[0] = G[1];
+      v0[1] = G[3]-l1;
+      if (sqLen2(v0)>eps){ setNormalized2(v0); }
+      v1[0] = G[0]-l0;
+      v1[1] = G[2];
+      if (sqLen2(v1)>eps){ setNormalized2(v1); }
+    }
+  }
+  double V[4] = { v0[0], v1[0], v0[1], v1[1] };
+  if (l0<eps){ l0 = 1; }
+  if (l1<eps){ l1 = 1; }
+  double il0 = 1.0/sqrt(l0);
+  double il1 = 1.0/sqrt(l1);
+  double invS[4]; VLVt2(invS, il0, il1, V);
+  matMat2(R, A, invS);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 

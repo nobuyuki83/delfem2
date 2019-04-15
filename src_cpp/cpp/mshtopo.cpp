@@ -6,7 +6,7 @@
 
 #include "delfem2/mshtopo.h"
 
-void Print_IndexedArray
+void JaggedArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
 {
@@ -67,6 +67,57 @@ void SortIndexedArray
       }
     }
   }
+}
+
+void JaggedArray_AddDiagonal
+(std::vector<int >& psup_ind1,
+ std::vector<int >& psup1,
+ const std::vector<int >& psup_ind0,
+ const std::vector<int >& psup0)
+{
+  const int np = psup_ind0.size()-1;
+  std::vector<int> tmp(np,-1);
+  psup_ind1.assign(np+1,0);
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
+      const int jp = psup0[ipsup];
+      assert( tmp[jp] != ip );
+      tmp[jp] = ip;
+      psup_ind1[ip+1] += 1;
+    }
+    if( tmp[ip] != ip ){
+      tmp[ip] = ip;
+      psup_ind1[ip+1] += 1;
+    }
+  }
+  /////
+  for(int ip=0;ip<np;++ip){
+    psup_ind1[ip+1] += psup_ind1[ip];
+  }
+  const int npsup = psup_ind1[np];
+  psup1.resize(npsup);
+  tmp.assign(np,-1);
+  /////
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
+      const int jp = psup0[ipsup];
+      assert( tmp[jp] != ip );
+      tmp[jp] = ip;
+      int iclstr  = psup_ind1[ip];
+      psup1[ iclstr ] = jp;
+      psup_ind1[ip] += 1;
+    }
+    if( tmp[ip] != ip ){
+      int iclstr  = psup_ind1[ip];
+      psup1[ iclstr ] = ip;
+      psup_ind1[ip] += 1;
+    }
+  }
+  //////
+  for(int ip=np-1;ip>=0;--ip){
+    psup_ind1[ip+1] = psup_ind1[ip];
+  }
+  psup_ind1[0] = 0;
 }
 
 /////
@@ -532,7 +583,7 @@ void makeOneRingNeighborhood
   psup_ind[0] = 0;
 }
 
-void makeOneRingNeighborhood
+void JaggedArray_MeshOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////

@@ -131,7 +131,12 @@ void SortIndexedArray(const std::vector<int>& index,
 void SortIndexedArray(const int* index, const int size,
                       int* array);
 
-void Print_IndexedArray(const std::vector<int>& index,
+void JaggedArray_AddDiagonal(std::vector<int >& psup_ind1,
+                      std::vector<int >& psup1,
+                      const std::vector<int >& psup_ind0,
+                      const std::vector<int >& psup0);
+
+void JaggedArray_Print(const std::vector<int>& index,
                         const std::vector<int>& array);
 
 void addMasterSlavePattern(std::vector<int>& index,
@@ -244,7 +249,7 @@ void makeOneRingNeighborhood(std::vector<int>& psup_ind,
                              const std::vector<int>& elsup,
                              int nnoel,
                              int nnode);
-void makeOneRingNeighborhood(std::vector<int>& psup_ind,
+void JaggedArray_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                              std::vector<int>& psup,
                              ////
                              const int* pElem,

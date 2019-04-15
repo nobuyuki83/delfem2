@@ -6,66 +6,6 @@
 #include "delfem2/fem_ematrix.h"
 #include "delfem2/fem.h"
 
-// compute total energy and its first and second derivatives
-void AddWdWddW_Cloth
-(double& W, // (out) energy
- std::vector<double>& dW, // (out) first derivative of energy
- CMatrixSquareSparse& ddW, // (out) second derivative of energy
- std::vector<int>& tmp_buffer,
- ////
- const std::vector<double>& aXYZ, // (in) deformed vertex positions
- const std::vector<double>& aXYZ0, // (in) initial vertex positions
- const std::vector<int>& aTri, // (in) triangle index
- const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending
- double lambda, // (in) Lame's 1st parameter
- double myu,  // (in) Lame's 2nd parameter
- double stiff_bend // (in) bending stiffness
- )
-{
-  // marge element in-plane strain energy
-  for(int itri=0;itri<aTri.size()/3;itri++){
-    const int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
-    double C[3][3]; double c[3][3];
-    for(int ino=0;ino<3;ino++){
-      const int ip = aIP[ino];
-      for(int i=0;i<3;i++){ C[ino][i] = aXYZ0[ip*3+i]; }
-      for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
-    }
-    double e, de[3][3], dde[3][3][3][3];
-    WdWddW_CST( e,de,dde, C,c, lambda,myu );
-    W += e;  // marge energy
-    // marge de
-    for(int ino=0;ino<3;ino++){
-      const int ip = aIP[ino];
-      for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
-    }
-    // marge dde
-    ddW.Mearge(3, aIP, 3, aIP, 9, &dde[0][0][0][0], tmp_buffer);
-  }
-  std::cout << "cst:" << W << std::endl;
-  // marge element bending energy
-  for(int iq=0;iq<aQuad.size()/4;iq++){
-    const int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
-    double C[4][3]; double c[4][3];
-    for(int ino=0;ino<4;ino++){
-      const int ip = aIP[ino];
-      for(int i=0;i<3;i++){ C[ino][i] = aXYZ0[ip*3+i]; }
-      for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
-    }
-    double e, de[4][3], dde[4][4][3][3];
-    WdWddW_Bend( e,de,dde, C,c, stiff_bend );
-    W += e;  // marge energy
-    // marge de
-    for(int ino=0;ino<4;ino++){
-      const int ip = aIP[ino];
-      for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
-    }
-    // marge dde
-    ddW.Mearge(4, aIP, 4, aIP, 9, &dde[0][0][0][0], tmp_buffer);
-  }
-  std::cout << "bend:" << W << std::endl;
-}
-
 
 // compute total energy and its first and second derivatives
 void AddWdW_Cloth
@@ -169,15 +109,16 @@ void StepTime_InternalDynamics
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
   std::vector<int> tmp_buffer(np,-1);
-  AddWdWddW_Cloth(W,vec_b,mat_A,
-                  tmp_buffer,
-                  aXYZ,aXYZ0,
-                  aTri,aQuad,
-                  lambda,myu,stiff_bend);
-  AddWdWddW_Contact(mat_A, vec_b.data(),
-                    stiff_contact,contact_clearance,
-                    input_contact,
-                    aXYZ.data(), aXYZ.size()/3);
+  W += MergeLinSys_Cloth(mat_A,vec_b.data(),
+                         lambda,myu,stiff_bend,
+                         aXYZ0.data(), aXYZ0.size()/3, 3,
+                         aTri.data(), aTri.size()/3,
+                         aQuad.data(), aQuad.size()/4,
+                         aXYZ.data());
+  W += MergeLinSys_Contact(mat_A, vec_b.data(),
+                           stiff_contact,contact_clearance,
+                           input_contact,
+                           aXYZ.data(), aXYZ.size()/3);
   AddWdW_Gravity(W,vec_b,
                  aXYZ,
                  gravity,mass_point);
@@ -240,15 +181,16 @@ void StepTime_InternalDynamicsILU
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
   std::vector<int> tmp_buffer(np,-1);
-  AddWdWddW_Cloth(W,vec_b,mat_A,
-                  tmp_buffer,
-                  aXYZ,aXYZ0,
-                  aTri,aQuad,
-                  lambda,myu,stiff_bend);
-  AddWdWddW_Contact(mat_A,vec_b.data(),
-                    stiff_contact,contact_clearance,
-                    input_contact,
-                    aXYZ.data(), aXYZ.size()/3);
+  W += MergeLinSys_Cloth(mat_A,vec_b.data(),
+                         lambda,myu,stiff_bend,
+                         aXYZ0.data(), aXYZ0.size()/3, 3,
+                         aTri.data(), aTri.size()/3,
+                         aQuad.data(), aQuad.size()/4,
+                         aXYZ.data());
+  W += MergeLinSys_Contact(mat_A,vec_b.data(),
+                           stiff_contact,contact_clearance,
+                           input_contact,
+                           aXYZ.data(), aXYZ.size()/3);
   AddWdW_Gravity(W,vec_b,
                  aXYZ,
                  gravity,mass_point);
