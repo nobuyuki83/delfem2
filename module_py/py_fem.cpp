@@ -359,7 +359,7 @@ double PyMergeLinSys_Contact
     std::vector<const CSDF3*> apSDF;
   } input(apSDF);
   auto buff_vecb = vec_b.request();
-  double W = AddWdWddW_Contact(mss, (double*)buff_vecb.ptr,
+  double W = MergeLinSys_Contact(mss, (double*)buff_vecb.ptr,
                                stiff_contact,contact_clearance,
                                input,
                                aXYZ.data(), aXYZ.shape()[0]);
@@ -460,5 +460,4 @@ void init_fem(py::module &m){
   m.def("mergeLinSys_cloth",             &PyMergeLinSys_Cloth);
   m.def("mergeLinSys_massPoint",         &PyMergeLinSys_MassPoint);
   m.def("mergeLinSys_contact",           &PyMergeLinSys_Contact);
-
 }

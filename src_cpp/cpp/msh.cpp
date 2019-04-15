@@ -61,10 +61,11 @@ static void VecMat3(const double x[3], const double m[9],  double y[3]){
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
  */
-
+/*
 static inline double Distance3D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
+ */
 
 static inline double Distance2D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) );
@@ -674,16 +675,16 @@ void MeshQuad2D_Grid
 {
   int np = (nx+1)*(ny+1);
   aXYZ.resize(np*2);
-  for(int ix=0;ix<nx+1;++ix){
-    for(int iy=0;iy<ny+1;++iy){
+  for(int iy=0;iy<ny+1;++iy){
+    for(int ix=0;ix<nx+1;++ix){
       int ip = iy*(nx+1)+ix;
       aXYZ[ip*2+0] = ix;
       aXYZ[ip*2+1] = iy;
     }
   }
   aQuad.resize(nx*ny*4);
-  for(int ix=0;ix<nx;++ix){
-    for(int iy=0;iy<ny;++iy){
+  for(int iy=0;iy<ny;++iy){
+    for(int ix=0;ix<nx;++ix){
       int iq = iy*nx+ix;
       aQuad[iq*4+0] = (iy+0)*(nx+1)+(ix+0);
       aQuad[iq*4+1] = (iy+0)*(nx+1)+(ix+1);

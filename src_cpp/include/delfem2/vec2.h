@@ -20,6 +20,7 @@ double len2(const double v[2]);
 double sqLen2(const double v[2]);
 void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);
+void RotationalComponentOfMatrix2(double R[4], const double M[4]);
 
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
