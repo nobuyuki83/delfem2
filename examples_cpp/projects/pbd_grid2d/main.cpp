@@ -11,8 +11,6 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
 #include "delfem2/funcs_gl.h"
-#include "Griddeformer.h"
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +66,7 @@ void stepTime
  int nitr,
  const std::vector<int>& clstr_ind,
  const std::vector<int>& clstr,
+ const std::vector<int>& aBC,
  const std::vector<int>& aQuad,
  const std::vector<double>& aXY0)
 {
@@ -75,11 +74,21 @@ void stepTime
   for (int idof=0; idof<ndof; idof++){
     aTmp[idof] = aXY1[idof]+aUV1[idof]*dt;
   }
+  for(int ip=0;ip<aXY0.size()/2;++ip){
+    if( aBC[ip] == 0 ){ continue; }
+    aTmp[ip*2+0] = aXY1[ip*2+0];
+    aTmp[ip*2+1] = aXY1[ip*2+1];
+  }
   { // deform
     for (int itr=0; itr<nitr; itr++){
       ConstraintProjection2D_Rigid(aTmp,
                  0.5, clstr_ind, clstr, aXY0);
     }
+  }
+  for(int ip=0;ip<aXY0.size()/2;++ip){
+    if( aBC[ip] == 0 ){ continue; }
+    aTmp[ip*2+0] = aXY1[ip*2+0];
+    aTmp[ip*2+1] = aXY1[ip*2+1];
   }
   for (int idof=0; idof<ndof; ++idof){
     aUV1[idof] = (aTmp[idof]-aXY1[idof])*(1.0/dt);
@@ -89,14 +98,15 @@ void stepTime
   }
 }
 
-const int nX = 5;
-const int nY = 5;
+const int nX = 8;
+const int nY = 8;
 std::vector<double> aXY0;
 std::vector<double> aXY1;
 std::vector<double> aUV1;
 std::vector<double> aXYt;
 std::vector<int> aQuad;
 std::vector<int> clstr_ind, clstr;
+std::vector<int> aBC;
 
 void myGlutDisplay(void)
 {
@@ -133,11 +143,14 @@ void myGlutIdle(){
   double dt = 0.1;
   static double t = 0;
   t += dt;
-  aXY1[0] = 5*sin(t*0.5);
-  aXY1[1] = 0;
+  for(int ix=0;ix<nX+1;++ix){
+    aXY1[ix*2+0] = ix + 2*sin(t*4);
+    aXY1[ix*2+1] = 0;
+  }
   stepTime(aXY1, aUV1, aXYt,
            dt, 1,
            clstr_ind, clstr,
+           aBC,
            aQuad, aXY0);
   ::glutPostRedisplay();
 }
@@ -205,6 +218,10 @@ int main(int argc,char* argv[])
                           psup_ind, psup);
   JaggedArray_Print(clstr_ind, clstr);
   
+  aBC.assign(aXY0.size()/2,0);
+  for(int ix=0;ix<nX+1;++ix){
+    aBC[ix] = 1;
+  }
   
   glutMainLoop();
 	return 0;
