@@ -219,7 +219,7 @@ void InitializeProblem_Scalar()
   std::vector<int> psup_ind, psup;
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 1, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
@@ -326,7 +326,7 @@ void InitializeProblem_Solid()
   addMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),2,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
    crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
@@ -462,7 +462,7 @@ void InitializeProblem_Fluid()
   std::vector<int> psup_ind, psup;
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
    crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
@@ -529,7 +529,7 @@ void InitializeProblem_Fluid2()
   addMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),3,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   //////
   /*
    CJaggedArray crs;

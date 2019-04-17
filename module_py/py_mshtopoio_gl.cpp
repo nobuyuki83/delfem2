@@ -146,7 +146,7 @@ void PySortIndexedArray
 {
   //  std::cout << "hoge " << psup_ind.size() << " " << psup.size() << std::endl;
   auto buff_psup = psup.request();
-  SortIndexedArray(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
+  JaggedArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
 }
 
 

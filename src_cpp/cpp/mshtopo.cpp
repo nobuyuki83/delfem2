@@ -20,7 +20,7 @@ void JaggedArray_Print
   }
 }
 
-void SortIndexedArray
+void JaggedArray_Sort
 (const std::vector<int>& index,
  std::vector<int>& array)
 {
@@ -44,7 +44,7 @@ void SortIndexedArray
   }
 }
 
-void SortIndexedArray
+void JaggedArray_Sort
 (const int* index, const int size,
  int* array)
 {

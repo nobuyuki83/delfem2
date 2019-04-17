@@ -2,7 +2,6 @@ import sys
 sys.path.append("../module_py")
 import dfm2
 
-
 def poisson(cad,mesh):
   fem = dfm2.FEM_Poisson(mesh,source=1.0)
   npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
