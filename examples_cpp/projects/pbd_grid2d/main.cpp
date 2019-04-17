@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void ConstraintProjection2D_Rigid
+void ConstraintProjection_Rigid2D
 (std::vector<double>& aXYt,
  double stiffness,
  const std::vector<int>& clstr_ind,
@@ -81,7 +81,7 @@ void stepTime
   }
   { // deform
     for (int itr=0; itr<nitr; itr++){
-      ConstraintProjection2D_Rigid(aTmp,
+      ConstraintProjection_Rigid2D(aTmp,
                  0.5, clstr_ind, clstr, aXY0);
     }
   }

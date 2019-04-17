@@ -95,7 +95,7 @@ void InitializeProblem_Poisson()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -162,7 +162,7 @@ void InitializeProblem_Diffusion()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -231,7 +231,7 @@ void InitializeProblem_LinearSolid_Static()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, np, false);
@@ -302,7 +302,7 @@ void InitializeProblem_LinearSolid_Dynamic()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -397,7 +397,7 @@ void InitializeProblem_Stokes_Static()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -476,7 +476,7 @@ void InitializeProblem_Stokes_Dynamic()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -563,7 +563,7 @@ void InitializeProblem_NavierStokes_Dynamic()
   JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  SortIndexedArray(psup_ind, psup);
+  JaggedArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),

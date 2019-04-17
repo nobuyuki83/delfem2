@@ -126,9 +126,9 @@ inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
   return noelElemFace0[type];
 }
 
-void SortIndexedArray(const std::vector<int>& index,
+void JaggedArray_Sort(const std::vector<int>& index,
                       std::vector<int>& array);
-void SortIndexedArray(const int* index, const int size,
+void JaggedArray_Sort(const int* index, const int size,
                       int* array);
 
 void JaggedArray_AddDiagonal(std::vector<int >& psup_ind1,
