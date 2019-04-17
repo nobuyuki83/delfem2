@@ -9,6 +9,7 @@
 #include "delfem2/fem_ematrix.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/sdf.h"
+#include "delfem2/vec2.h"
 
 namespace py = pybind11;
 
@@ -429,6 +430,37 @@ void PyMasterSlave_DistributeValue
   }
 }
 
+
+void PyConstraintProjection_Rigid2D
+(py::array_t<double>& npXYt,
+ double stiffness,
+ const py::array_t<int>& npClstrInd,
+ const py::array_t<int>& npClstr,
+ const py::array_t<double>& npXY)
+{
+  ConstraintProjection_Rigid2D((double*)(npXYt.request().ptr),
+                               stiffness,
+                               npClstrInd.data(), npClstrInd.size(),
+                               npClstr.data(),    npClstr.size(),
+                               npXY.data(),       npXY.shape()[0]);
+}
+
+void PyPointFixBC
+(py::array_t<double>& aTmp,
+ const py::array_t<int>& aBC,
+ const py::array_t<double>& npXY1)
+{
+  assert( aTmp.ndim() == 2 );
+  assert( npXY1.ndim() == 2 );
+  const int np = aTmp.shape()[0];
+  double* ptr = (double*)(aTmp.request().ptr);
+  for(int ip=0;ip<np;++ip){
+    if( aBC.at(ip) == 0 ){ continue; }
+    ptr[ip*2+0] = npXY1.at(ip,0);
+    ptr[ip*2+1] = npXY1.at(ip,1);
+  }
+}
+
 void init_fem(py::module &m){
   py::class_<CMatrixSquareSparse>(m,"MatrixSquareSparse")
   .def(py::init<>())
@@ -460,4 +492,7 @@ void init_fem(py::module &m){
   m.def("mergeLinSys_cloth",             &PyMergeLinSys_Cloth);
   m.def("mergeLinSys_massPoint",         &PyMergeLinSys_MassPoint);
   m.def("mergeLinSys_contact",           &PyMergeLinSys_Contact);
+  
+  m.def("proj_rigid2d",                  &PyConstraintProjection_Rigid2D);
+  m.def("pointFixBC", &PyPointFixBC);
 }

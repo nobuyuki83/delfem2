@@ -92,10 +92,10 @@ void InitializeProblem_Poisson()
   }
   //////
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -159,10 +159,10 @@ void InitializeProblem_Diffusion()
   }
   //////
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -228,10 +228,10 @@ void InitializeProblem_LinearSolid_Static()
   }
   //////
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, np, false);
@@ -299,10 +299,10 @@ void InitializeProblem_LinearSolid_Dynamic()
   }
   //////
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
-                                      aTet.data(), aTet.size()/4, 4,
-                                      (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
+                                 aTet.data(), aTet.size()/4, 4,
+                                 (int)aXYZ.size()/3);
+  JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -394,10 +394,10 @@ void InitializeProblem_Stokes_Static()
   crs.Sort();
    */
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -473,10 +473,10 @@ void InitializeProblem_Stokes_Dynamic()
   crs.Sort();
    */
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
-                                      aTet.data(), aTet.size()/4, 4,
-                                      (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
+                                 aTet.data(), aTet.size()/4, 4,
+                                 (int)aXYZ.size()/3);
+  JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -560,10 +560,10 @@ void InitializeProblem_NavierStokes_Dynamic()
   crs.Sort();
    */
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTet.data(), aTet.size()/4, 4,
                                       (int)aXYZ.size()/3);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),

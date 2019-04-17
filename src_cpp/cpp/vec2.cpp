@@ -658,3 +658,45 @@ std::vector<CVector2> resampleLoop
   //  stroke.push_back( stroke0.back() );
   return stroke;
 }
+
+void ConstraintProjection_Rigid2D
+(double* aXYt,
+ double stiffness,
+ const int* clstr_ind, int nclstr_ind,
+ const int* clstr,     int nclstr0,
+ const double* aXY0,   int nXY0)
+{
+  const int nclstr = nclstr_ind-1;
+  for(int iclstr=0;iclstr<nclstr;++iclstr){
+    CVector2 pc(0, 0), qc(0, 0);
+    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
+      const int ip = clstr[iip];
+      qc += CVector2(aXY0[ip*2+0],aXY0[ip*2+1]);
+      pc += CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
+    }
+    qc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
+    pc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
+    
+    double A[4] = { 0, 0, 0, 0 };
+    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
+      const int ip = clstr[iip];
+      const CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc; // undeform
+      const CVector2 dp = CVector2(aXYt[ip*2+0],aXYt[ip*2+1])-pc; // deform
+      A[0*2+0] += dp[0]*dq[0];
+      A[0*2+1] += dp[0]*dq[1];
+      A[1*2+0] += dp[1]*dq[0];
+      A[1*2+1] += dp[1]*dq[1];
+    }
+    double R[4]; RotationalComponentOfMatrix2(R,A);
+//    std::cout << R[0] << " " << R[1] << " " << R[2] << " " << R[3] << std::endl;
+    
+    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
+      const int ip = clstr[iip];
+      CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
+      CVector2 pg = pc+matVec(R, dq); // goal position
+      CVector2 pg2 = stiffness*pg+(1-stiffness)*CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
+      aXYt[ip*2+0] = pg2.x;
+      aXYt[ip*2+1] = pg2.y;
+    }
+  }
+}

@@ -217,9 +217,9 @@ void InitializeProblem_Scalar()
    crs.Sort();
    */
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 1, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
@@ -320,13 +320,13 @@ void InitializeProblem_Solid()
   }
   //////
   std::vector<int> psup_ind0, psup0;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind0, psup0,
-                                      aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArray_MeshOneRingNeighborhood(psup_ind0, psup0,
+                                 aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<int> psup_ind, psup;
   addMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),2,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
    crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
@@ -460,9 +460,9 @@ void InitializeProblem_Fluid()
   }
   //////
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
-                                      aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
+                                 aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
    crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
@@ -523,13 +523,13 @@ void InitializeProblem_Fluid2()
   }
   ///////
   std::vector<int> psup_ind0, psup0;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind0, psup0,
-                                      aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArray_MeshOneRingNeighborhood(psup_ind0, psup0,
+                                 aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<int> psup_ind, psup;
   addMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),3,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
-  JaggedArray_Sort(psup_ind, psup);
+  JArray_Sort(psup_ind, psup);
   //////
   /*
    CJaggedArray crs;

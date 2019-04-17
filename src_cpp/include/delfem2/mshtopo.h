@@ -126,17 +126,17 @@ inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
   return noelElemFace0[type];
 }
 
-void JaggedArray_Sort(const std::vector<int>& index,
-                      std::vector<int>& array);
-void JaggedArray_Sort(const int* index, const int size,
-                      int* array);
+void JArray_Sort(const std::vector<int>& index,
+                 std::vector<int>& array);
+void JArray_Sort(const int* index, const int size,
+                 int* array);
 
-void JaggedArray_AddDiagonal(std::vector<int >& psup_ind1,
+void JArray_AddDiagonal(std::vector<int >& psup_ind1,
                       std::vector<int >& psup1,
-                      const std::vector<int >& psup_ind0,
-                      const std::vector<int >& psup0);
+                      const int* psup_ind0, int npsup_ind0,
+                      const int* psup0, int npsup0);
 
-void JaggedArray_Print(const std::vector<int>& index,
+void JArray_Print(const std::vector<int>& index,
                         const std::vector<int>& array);
 
 void addMasterSlavePattern(std::vector<int>& index,
@@ -249,7 +249,7 @@ void makeOneRingNeighborhood(std::vector<int>& psup_ind,
                              const std::vector<int>& elsup,
                              int nnoel,
                              int nnode);
-void JaggedArray_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
+void JArray_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                              std::vector<int>& psup,
                              ////
                              const int* pElem,

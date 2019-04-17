@@ -6,7 +6,7 @@
 
 #include "delfem2/mshtopo.h"
 
-void JaggedArray_Print
+void JArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
 {
@@ -20,7 +20,7 @@ void JaggedArray_Print
   }
 }
 
-void JaggedArray_Sort
+void JArray_Sort
 (const std::vector<int>& index,
  std::vector<int>& array)
 {
@@ -44,7 +44,7 @@ void JaggedArray_Sort
   }
 }
 
-void JaggedArray_Sort
+void JArray_Sort
 (const int* index, const int size,
  int* array)
 {
@@ -69,13 +69,13 @@ void JaggedArray_Sort
   }
 }
 
-void JaggedArray_AddDiagonal
+void JArray_AddDiagonal
 (std::vector<int >& psup_ind1,
  std::vector<int >& psup1,
- const std::vector<int >& psup_ind0,
- const std::vector<int >& psup0)
+ const int* psup_ind0, int npsup_ind0,
+ const int* psup0, int npsup0)
 {
-  const int np = psup_ind0.size()-1;
+  const int np = npsup_ind0-1;
   std::vector<int> tmp(np,-1);
   psup_ind1.assign(np+1,0);
   for(int ip=0;ip<np;++ip){
@@ -583,7 +583,7 @@ void makeOneRingNeighborhood
   psup_ind[0] = 0;
 }
 
-void JaggedArray_MeshOneRingNeighborhood
+void JArray_MeshOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////

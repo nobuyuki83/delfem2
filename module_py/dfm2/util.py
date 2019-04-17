@@ -64,7 +64,7 @@ class Mesh():
     self.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 3))
 
   def psup(self):
-    res = psup_mesh(self.np_elm, self.np_pos.shape[0])
+    res = jarray_mesh_psup(self.np_elm, self.np_pos.shape[0])
     return res
 
 #######################################
@@ -222,7 +222,6 @@ class Field():
     if self.val_color.ndim == 2 and self.val_color.shape[1] == 1:
       write_vtk_pointscalar(path_vtk, self.val_color)
 
-
 class VisFEM_Color():
   def __init__(self):
     self.draw_val_min = 0.0
@@ -241,6 +240,40 @@ class VisFEM_Color():
     drawField_colorMap(mesh.np_pos, mesh.np_elm,
                        val_color,
                        self.color_map)
+
+class FieldValueSetter():
+  def __init__(self,
+               val:numpy.ndarray,
+               idim:int,
+               mathexp:str,
+               npIdP:numpy.ndarray,
+               mesh:Mesh,
+               dt:float):
+    self.mesh = mesh
+    self.val = val
+    self.idim = idim
+    self.mathexp = mathexp
+    self.npIdP = npIdP
+    self.eval = MathExpressionEvaluator()
+    self.dt = dt
+    self.time_cur = 0.0
+    #####
+    self.eval.set_key("x",0.0)
+    self.eval.set_key("y",0.0)
+    self.eval.set_key("t",0.0)
+    self.eval.set_expression(self.mathexp)
+
+  def step_time(self):
+    self.time_cur += self.dt
+    for ip in self.npIdP:
+      x0 = self.mesh.np_pos[ip,0]
+      y0 = self.mesh.np_pos[ip,1]
+      self.eval.set_key("x",x0)
+      self.eval.set_key("y",y0)
+      self.eval.set_key("t",self.time_cur)
+      val = self.eval.eval()
+      self.val[ip,self.idim] = self.mesh.np_pos[ip,self.idim] + val
+    pass
 
 ######################################################
 
@@ -269,7 +302,7 @@ class FEM_LinSys():
     self.mat.initialize(self.np, self.ndimval, True)
     psup_ind,psup = pattern[0],pattern[1]
     psup_ind1,psup1 = addMasterSlavePattern(self.vec_ms,psup_ind,psup)
-    sortIndexedArray(psup_ind1, psup1)
+    jarray_sort(psup_ind1, psup1)
     matrixSquareSparse_setPattern(self.mat, psup_ind1, psup1)
 
     # preconditioner
@@ -451,7 +484,7 @@ class FEM_Cloth():
     if self.ls.mat is None:
       np = self.mesh.np_pos.shape[0]
       self.np_quad = elemQuad_dihedralTri(self.mesh.np_elm, np)
-      self.ls.set_pattern(psup_mesh(self.np_quad, np))
+      self.ls.set_pattern(jarray_mesh_psup(self.np_quad, np))
     self.ls.set_zero()
     mergeLinSys_cloth(self.ls.mat, self.ls.vec_f,
                       10.0, 500.0, self.dt,
@@ -567,4 +600,28 @@ class FEM_NavierStorks2D():
   def step_time(self):
     self.solve()
 
+
+class PBD2D():
+  def __init__(self,
+               mesh: Mesh):
+    np = mesh.np_pos.shape[0]
+    self.mesh = mesh
+    self.vec_bc = numpy.zeros((np,), dtype=numpy.int32)
+    self.vec_val = mesh.np_pos.copy()
+    self.vec_velo = numpy.zeros_like(self.vec_val, dtype=numpy.float64)
+    self.vec_tpos = mesh.np_pos.copy()
+    self.dt = 0.01
+    self.psup = mesh.psup()
+    self.psup = jarray_add_diagonal(*self.psup)
+
+  def step_time(self):
+    self.vec_tpos[:] = self.vec_val + self.dt * self.vec_velo
+    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    for itr in range(1):
+      proj_rigid2d(self.vec_tpos,
+                   0.5, self.psup[0], self.psup[1],
+                   self.mesh.np_pos)
+    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
+    self.vec_val[:] = self.vec_tpos
 
