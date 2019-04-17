@@ -17,46 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void ConstraintProjection_Rigid2D
-(std::vector<double>& aXYt,
- double stiffness,
- const std::vector<int>& clstr_ind,
- const std::vector<int>& clstr,
- const std::vector<double>& aXY0)
-{
-  const int nclstr = clstr_ind.size()-1;
-  for(int iclstr=0;iclstr<nclstr;++iclstr){
-    CVector2 pc(0, 0), qc(0, 0);
-    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
-      const int ip = clstr[iip];
-      qc += CVector2(aXY0[ip*2+0],aXY0[ip*2+1]);
-      pc += CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
-    }
-    qc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
-    pc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
-    
-    double A[4] = { 0, 0, 0, 0 };
-    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
-      const int ip = clstr[iip];
-      const CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc; // undeform
-      const CVector2 dp = CVector2(aXYt[ip*2+0],aXYt[ip*2+1])-pc; // deform
-      A[0*2+0] += dp[0]*dq[0];
-      A[0*2+1] += dp[0]*dq[1];
-      A[1*2+0] += dp[1]*dq[0];
-      A[1*2+1] += dp[1]*dq[1];
-    }
-    double R[4]; RotationalComponentOfMatrix2(R,A);
-    
-    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
-      const int ip = clstr[iip];
-      CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
-      CVector2 pg = pc+matVec(R, dq); // goal position
-      CVector2 pg2 = stiffness*pg+(1-stiffness)*CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
-      aXYt[ip*2+0] = pg2.x;
-      aXYt[ip*2+1] = pg2.y;
-    }
-  }
-}
+
 
 void stepTime
 (std::vector<double>& aXY1,
@@ -81,8 +42,11 @@ void stepTime
   }
   { // deform
     for (int itr=0; itr<nitr; itr++){
-      ConstraintProjection_Rigid2D(aTmp,
-                 0.5, clstr_ind, clstr, aXY0);
+      ConstraintProjection_Rigid2D(aTmp.data(),
+                                   0.5,
+                                   clstr_ind.data(), clstr_ind.size(),
+                                   clstr.data(), clstr.size(),
+                                   aXY0.data(), aXY0.size());
     }
   }
   for(int ip=0;ip<aXY0.size()/2;++ip){
@@ -210,13 +174,13 @@ int main(int argc,char* argv[])
   aUV1.resize(aXY0.size());
   
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aQuad.data(), aQuad.size()/4, 4,
                                       aXY0.size()/2);
 //  Print_IndexedArray(psup_ind, psup);
-  JaggedArray_AddDiagonal(clstr_ind, clstr,
-                          psup_ind, psup);
-  JaggedArray_Print(clstr_ind, clstr);
+  JArray_AddDiagonal(clstr_ind, clstr,
+                          psup_ind.data(), psup_ind.size(),  psup.data(), psup.size());
+  JArray_Print(clstr_ind, clstr);
   
   aBC.assign(aXY0.size()/2,0);
   for(int ix=0;ix<nX+1;++ix){

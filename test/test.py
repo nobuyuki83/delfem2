@@ -22,6 +22,13 @@ class Test_Cad2D(unittest.TestCase):
     self.assertLess(numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0]))),1.0e-3)
 
 
+class TetMathExpression(unittest.TestCase):
+  def test1(self):
+    mee = dfm2.MathExpressionEvaluator()
+    mee.set_key("x",3)
+    mee.set_expression("x+3")
+    mee.set_key("x",6)
+    self.assertLess( mee.eval()-9.0, 1.0e-30 )
 
 class Test_Mesh(unittest.TestCase):
   def test1(self):

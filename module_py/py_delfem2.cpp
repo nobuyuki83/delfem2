@@ -15,6 +15,7 @@
 #include "delfem2/cad2d.h"
 #include "delfem2/sdf.h"
 #include "delfem2/isosurface_stuffing.h"
+#include "delfem2/mathexpeval.h"
 
 namespace py = pybind11;
 
@@ -232,11 +233,17 @@ PYBIND11_MODULE(dfm2, m) {
   .def(py::init<>())
   .def(py::init<double, double, const std::string&>());
   
+  py::class_<CMathExpressionEvaluator>(m,"MathExpressionEvaluator")
+  .def(py::init<>())
+  .def("set_expression",&CMathExpressionEvaluator::SetExp)
+  .def("set_key",       &CMathExpressionEvaluator::SetKey)
+  .def("eval",          &CMathExpressionEvaluator::Eval);
+  
    ///////////////////////////////////
   // gl misc
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
-  m.def("setup_glsl", &setUpGLSL, "compile shader program");
-  m.def("glew_init", &glewInit);
-  m.def("draw_sphere", &DrawSphereAt );
-  m.def("mvc",     &PyMVC);
+  m.def("setup_glsl",       &setUpGLSL, "compile shader program");
+  m.def("glew_init",        &glewInit);
+  m.def("draw_sphere",      &DrawSphereAt );
+  m.def("mvc",              &PyMVC);
 }

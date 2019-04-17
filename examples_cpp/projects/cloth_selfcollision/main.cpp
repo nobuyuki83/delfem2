@@ -467,9 +467,9 @@ int main(int argc,char* argv[])
     }
     std::cout << "aNodeBVH.size(): " << aNodeBVH.size() << std::endl;
 //    aEdge.SetEdgeOfElem(aTri,(int)aTri.size()/3,3, np,false);
-    JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+    JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                         aQuad.data(), aQuad.size()/4, 4, np);
-    JaggedArray_Sort(psup_ind, psup);
+    JArray_Sort(psup_ind, psup);
     mat_A.Initialize(np,3,true);
     /*
     CJaggedArray crs;

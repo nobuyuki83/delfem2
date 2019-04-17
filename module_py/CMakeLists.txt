@@ -28,11 +28,13 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/voxel.cpp         ${DELFEM2_INC}/voxel.h
   ${DELFEM2_SRC}/tex.cpp           ${DELFEM2_INC}/tex.h
                                    ${DELFEM2_INC}/bv.h
+  ${DELFEM2_SRC}/mathexpeval.cpp   ${DELFEM2_INC}/mathexpeval.h 
 
   ${DELFEM2_SRC}/matrix_sparse.cpp ${DELFEM2_INC}/matrix_sparse.h
   ${DELFEM2_SRC}/ilu_sparse.cpp    ${DELFEM2_INC}/ilu_sparse.h
   ${DELFEM2_SRC}/fem.cpp           ${DELFEM2_INC}/fem.h
   ${DELFEM2_SRC}/fem_ematrix.cpp   ${DELFEM2_INC}/fem_ematrix.h
+
 
   ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h
   ${DELFEM2_SRC}/dyntri_v3.cpp     ${DELFEM2_INC}/dyntri_v3.h

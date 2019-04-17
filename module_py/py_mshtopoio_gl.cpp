@@ -130,23 +130,34 @@ Triangulation
 }
 
 std::tuple<py::array_t<int>, py::array_t<int>>
-PyPsup_Mesh(const py::array_t<int>& elm, int npoint)
+PyJArray_MeshPsup(const py::array_t<int>& elm, int npoint)
 {
   std::vector<int> psup_ind, psup;
-  JaggedArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       elm.data(), elm.shape()[0], elm.shape()[1], npoint);
   py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::tie(np_psup_ind, np_psup);
 }
 
-void PySortIndexedArray
+void PyJArray_Sort
 (py::array_t<int>& psup_ind,
  py::array_t<int>& psup)
 {
   //  std::cout << "hoge " << psup_ind.size() << " " << psup.size() << std::endl;
   auto buff_psup = psup.request();
-  JaggedArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
+  JArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
+}
+
+std::tuple<py::array_t<int>, py::array_t<int>>
+PyJArray_AddDiagonal(py::array_t<int>& psup_ind0, py::array_t<int>& psup0)
+{
+  std::vector<int> psup_ind, psup;
+  JArray_AddDiagonal(psup_ind,psup,
+                          psup_ind0.data(),psup_ind0.shape()[0], psup0.data(),psup0.shape()[0]);
+  py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
+  py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
+  return std::forward_as_tuple(np_psup_ind, np_psup);
 }
 
 
@@ -232,10 +243,11 @@ void init_mshtopoio_gl(py::module &m){
         py::arg("aXY"),
         py::arg("edge_length")=0.03);
   
-  m.def("psup_mesh",&PyPsup_Mesh, py::return_value_policy::move);
-  m.def("sortIndexedArray", &PySortIndexedArray);
+  m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);
+  m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);
+  m.def("jarray_sort",         &PyJArray_Sort);
   m.def("elemQuad_dihedralTri",&GetElemQuad_DihedralTri);
-  m.def("draw_mesh_facenorm", &PyDrawMesh_FaceNorm);
-  m.def("draw_mesh_edge", &PyDrawMesh_Edge);
-  m.def("quality_meshTri2D",&PyQuality_MeshTri2D);
+  m.def("draw_mesh_facenorm",  &PyDrawMesh_FaceNorm);
+  m.def("draw_mesh_edge",      &PyDrawMesh_Edge);
+  m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
 }
