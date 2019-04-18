@@ -139,7 +139,7 @@ void JArray_AddDiagonal(std::vector<int >& psup_ind1,
 void JArray_Print(const std::vector<int>& index,
                         const std::vector<int>& array);
 
-void addMasterSlavePattern(std::vector<int>& index,
+void JArray_AddMasterSlavePattern(std::vector<int>& index,
                            std::vector<int>& array,
                            const int*aMSFlag,
                            int ndim,

@@ -47,6 +47,8 @@ def linear_solid_static(msh,npIdP):
   field = dfm2.Field(msh,val_disp=fem.vec_val)
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([field,axis])
+  field.write_vtk("linearsolid3d.vtk")
+
 
 def linear_solid_dynamic(msh,npIdP):
   fem = dfm2.FEM_LinearSolidDynamic(msh,gravity=[0.3,0,0])

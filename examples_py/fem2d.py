@@ -44,6 +44,7 @@ def linear_solid_static(cad,mesh):
   fem.solve()
   field = dfm2.Field(mesh,val_disp=fem.vec_val)
   dfm2.winDraw3d([field])
+  field.write_vtk("linearsolid2d.vtk")
 
 
 def linear_solid_dynamic(cad,mesh):
@@ -69,7 +70,6 @@ def storks_static(cad,mesh):
   field = dfm2.Field(mesh, val_color=fem.vec_val[:,2], val_disp=fem.vec_val[:,:2], disp_mode='hedgehog')
   axis = dfm2.AxisXYZ(1.0)
   dfm2.winDraw3d([field,axis])
-
 
 def storks_dynamic(cad,mesh):
   fem = dfm2.FEM_StorksDynamic2D(mesh)
@@ -107,23 +107,18 @@ def cloth(cad,mesh):
   dfm2.winDraw3d([fem,mesh2,axis])
 
 
-
-
 def pbd1(cad,mesh):
   pbd = dfm2.PBD2D(mesh)
   npIdP = cad.points_edge([0], mesh.np_pos)
   pbd.vec_bc[npIdP] = 1
-  fvs = dfm2.FieldValueSetter(pbd.vec_val,0,"0.3*sin(15*t)",npIdP,mesh,pbd.dt)
+  fvs = dfm2.FieldValueSetter("0.3*sin(20*t)", pbd.vec_val, 0,
+                              mesh=mesh, npIdP=npIdP, dt=pbd.dt)
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   dfm2.winDraw3d([fvs,pbd,mesh2])
 
 
 def main():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = cad.mesh(0.2)
-  pbd1(cad,mesh)
-  exit()
 
   cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesh = cad.mesh(0.05)
@@ -141,6 +136,9 @@ def main():
   mesh = cad.mesh(0.05)
   poisson_ms(cad, mesh)
 
+  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
+  mesh = cad.mesh(0.2)
+  pbd1(cad,mesh)
 
 
 if __name__ == "__main__":

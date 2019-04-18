@@ -24,6 +24,11 @@ class CadMesh_Poisson(dfm2.CadMesh2D):
     self.fem.solve()
     self.vis_color.update(self.msh,self.fem.vec_val)
 
+  def motion(self,src0,src1,dir):
+    super().motion(src0,src1,dir)
+    self.fem.solve()
+    self.vis_color.update(self.msh,self.fem.vec_val)
+
   def draw(self):
     self.cad.draw()
     self.vis_color.draw(self.msh,self.fem.vec_val)

@@ -911,15 +911,25 @@ void WriteVTK_Cells
 
 void WriteVTK_Data_PointVec
 (std::ofstream& fout,
+ const double* aVal,
  int np,
- const std::vector<double>& aVal,
- int nStrideVal, int nOffset)
+ int nStrideVal,
+ int ndim)
 {
   fout << "VECTORS point_vectors float" << std::endl;
-  for(int ip=0;ip<np;++ip){
-    fout << aVal[ip*nStrideVal+nOffset+0] << " ";
-    fout << aVal[ip*nStrideVal+nOffset+1] << " ";
-    fout << aVal[ip*nStrideVal+nOffset+2] << std::endl;
+  if( ndim == 3 ){
+    for(int ip=0;ip<np;++ip){
+      fout << aVal[ip*nStrideVal+0] << " ";
+      fout << aVal[ip*nStrideVal+1] << " ";
+      fout << aVal[ip*nStrideVal+2] << std::endl;
+    }
+  }
+  if( ndim == 2 ){
+    for(int ip=0;ip<np;++ip){
+      fout << aVal[ip*nStrideVal+0] << " ";
+      fout << aVal[ip*nStrideVal+1] << " ";
+      fout << 0.0 << std::endl;
+    }
   }
 }
 
