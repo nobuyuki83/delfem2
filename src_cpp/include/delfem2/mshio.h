@@ -117,7 +117,8 @@ void WriteVTK_Cells(std::ofstream& fout,
 void WriteVTK_Data_PointVec(std::ofstream& fout,
                             const double* aVal,
                             int np,
-                            int nStrideVal=3);
+                            int nStrideVal,
+                            int ndim);
 void WriteVTK_Data_PointScalar(std::ofstream& fout,
                                const double* aVal,
                                int np,

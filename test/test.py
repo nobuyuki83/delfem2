@@ -22,13 +22,14 @@ class Test_Cad2D(unittest.TestCase):
     self.assertLess(numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0]))),1.0e-3)
 
 
-class TetMathExpression(unittest.TestCase):
+class Test_MathExpression(unittest.TestCase):
   def test1(self):
     mee = dfm2.MathExpressionEvaluator()
     mee.set_key("x",3)
     mee.set_expression("x+3")
     mee.set_key("x",6)
     self.assertLess( mee.eval()-9.0, 1.0e-30 )
+
 
 class Test_Mesh(unittest.TestCase):
   def test1(self):
@@ -54,6 +55,18 @@ class Test_Mesh(unittest.TestCase):
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
 
+class Test_PBD(unittest.TestCase):
+  def test1(self):
+    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    mesh = cad.mesh(edge_len=0.2)
+    pbd = dfm2.PBD2D(mesh)
+    npIdP = cad.points_edge([0], mesh.np_pos)
+    pbd.vec_bc[npIdP] = 1
+    fvs = dfm2.FieldValueSetter("0.3*sin(20*t)", pbd.vec_val, 0,
+                                mesh=mesh, npIdP=npIdP, dt=pbd.dt)
+    for itr in range(100):
+      fvs.step_time()
+      pbd.step_time()
 
 class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):
@@ -65,7 +78,7 @@ class Test_FEMPoission2D(unittest.TestCase):
     fem.solve()
 
 
-class TetFEMPoission3D(unittest.TestCase):
+class Test_FEMPoission3D(unittest.TestCase):
   def test1(self):
     sdf = dfm2.SDF()
     sdf.list_sdf.append(dfm2.SDF_Sphere(0.55, [-0.5, 0, 0], True))
@@ -113,7 +126,7 @@ class Test_FemDiffuse3D(unittest.TestCase):
       fem.step_time()
 
 
-class TestFEM_SolidLLinearStatic2D(unittest.TestCase):
+class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     msh = cad.mesh(0.02)
@@ -123,7 +136,7 @@ class TestFEM_SolidLLinearStatic2D(unittest.TestCase):
     fem.solve()
 
 
-class TestFEM_SolidLLinearDynamic2D(unittest.TestCase):
+class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     msh = cad.mesh(0.02)
@@ -155,6 +168,8 @@ class Test_FEMCloth(unittest.TestCase):
     fem.ls.vec_bc[npIdP,0:3] = 1
     for itr in range(100):
       fem.step_time()
+
+
 
 
 if __name__ == "__main__":

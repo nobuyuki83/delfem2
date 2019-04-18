@@ -215,12 +215,14 @@ class Field():
   def write_vtk(self, path_vtk, message=""):
     write_vtk_meshpoint(path_vtk,"foobar", self.mesh.np_pos)
     write_vtk_meshelem(path_vtk, self.mesh.np_elm, self.mesh.elem_type)
-    open(path_vtk, "a+").write("POINT_DATA {0}\n".format(self.val_color.shape[0]))
-    print(self.val_color.shape)
-    if self.val_color.ndim == 1:
-      write_vtk_pointscalar(path_vtk, self.val_color)
-    if self.val_color.ndim == 2 and self.val_color.shape[1] == 1:
-      write_vtk_pointscalar(path_vtk, self.val_color)
+    open(path_vtk, "a+").write("POINT_DATA {0}\n".format(self.mesh.np_pos.shape[0]))
+    if self.val_color is not None:
+      if self.val_color.ndim == 1 or (self.val_color.ndim == 2 and self.val_color.shape[1] == 1):
+        write_vtk_pointscalar(path_vtk, self.val_color)
+    elif self.val_disp is not None:
+      if self.val_disp.ndim == 2 and self.val_disp.shape[1] == self.mesh.np_pos.shape[1]:
+        write_vtk_pointvector(path_vtk, self.val_disp)
+
 
 class VisFEM_Color():
   def __init__(self):
@@ -243,11 +245,11 @@ class VisFEM_Color():
 
 class FieldValueSetter():
   def __init__(self,
+               mathexp: str,
                val:numpy.ndarray,
                idim:int,
-               mathexp:str,
-               npIdP:numpy.ndarray,
                mesh:Mesh,
+               npIdP: numpy.ndarray,
                dt:float):
     self.mesh = mesh
     self.val = val

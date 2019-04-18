@@ -125,9 +125,8 @@ void PyWrite_VTK_MeshElem
 {
   std::ofstream fout(file_path, std::ios_base::app);
   int vtk_elem_type = 0;
-  if( meshelem_type == MESHELEM_TRI ){
-    vtk_elem_type = 5;
-  }
+  if( meshelem_type == MESHELEM_TRI ){  vtk_elem_type = 5;  }
+  if( meshelem_type == MESHELEM_TET ){  vtk_elem_type = 10;  }
   WriteVTK_Cells(fout, vtk_elem_type, aElem.data(), aElem.shape()[0]);
 }
 
@@ -140,6 +139,16 @@ void PyWrite_VTK_PointScalar
                             aVal.data(), aVal.shape()[0]);
 }
 
+void PyWrite_VTK_PointVector
+(const std::string& file_path,
+ const py::array_t<double>& aVal)
+{
+  std::ofstream fout(file_path, std::ios_base::app);
+  WriteVTK_Data_PointVec(fout,
+                         aVal.data(),
+                         aVal.shape()[0], aVal.shape()[1], aVal.shape()[1]);
+}
+
 void init_field(py::module &m){
   m.def("drawField_colorMap",   &DrawField_ColorMap);
   m.def("drawField_disp",       &DrawField_Disp);
@@ -147,4 +156,5 @@ void init_field(py::module &m){
   m.def("write_vtk_meshelem",   &PyWrite_VTK_MeshElem);
   m.def("write_vtk_meshpoint",  &PyWrite_VTK_MeshPoint);
   m.def("write_vtk_pointscalar",&PyWrite_VTK_PointScalar);
+  m.def("write_vtk_pointvector",&PyWrite_VTK_PointVector);
 }

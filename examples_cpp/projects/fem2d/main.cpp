@@ -323,7 +323,7 @@ void InitializeProblem_Solid()
   JArray_MeshOneRingNeighborhood(psup_ind0, psup0,
                                  aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<int> psup_ind, psup;
-  addMasterSlavePattern(psup_ind, psup,
+  JArray_AddMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),2,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
   JArray_Sort(psup_ind, psup);
@@ -526,7 +526,7 @@ void InitializeProblem_Fluid2()
   JArray_MeshOneRingNeighborhood(psup_ind0, psup0,
                                  aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<int> psup_ind, psup;
-  addMasterSlavePattern(psup_ind, psup,
+  JArray_AddMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),3,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
   JArray_Sort(psup_ind, psup);

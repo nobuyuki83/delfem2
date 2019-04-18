@@ -803,7 +803,7 @@ void makeEdgeVox
 
 
 
-void addMasterSlavePattern
+void JArray_AddMasterSlavePattern
 (std::vector<int>& index,
  std::vector<int>& array,
  const int* aMSFlag,
