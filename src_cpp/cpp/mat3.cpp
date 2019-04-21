@@ -531,6 +531,10 @@ void CMatrix3::SetIdentity(double scale)
   mat[6] = 0;     mat[7] = 0;     mat[8] = scale;
 }
 
+
+
+
+
 /////////////////////////////////////////////////////
 // 4x4 matrix
 

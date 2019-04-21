@@ -108,10 +108,10 @@ def cloth(cad,mesh):
 
 
 def pbd1(cad,mesh):
-  pbd = dfm2.PBD2D(mesh)
+  pbd = dfm2.PBD(mesh)
   npIdP = cad.points_edge([0], mesh.np_pos)
   pbd.vec_bc[npIdP] = 1
-  fvs = dfm2.FieldValueSetter("0.3*sin(20*t)", pbd.vec_val, 0,
+  fvs = dfm2.FieldValueSetter("0.3*sin(2*t)", pbd.vec_val, 0,
                               mesh=mesh, npIdP=npIdP, dt=pbd.dt)
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)

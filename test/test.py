@@ -64,11 +64,12 @@ class Test_Mesh(unittest.TestCase):
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
 
+
 class Test_PBD(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesh = cad.mesh(edge_len=0.2)
-    pbd = dfm2.PBD2D(mesh)
+    pbd = dfm2.PBD(mesh)
     npIdP = cad.points_edge([0], mesh.np_pos)
     pbd.vec_bc[npIdP] = 1
     fvs = dfm2.FieldValueSetter("0.3*sin(20*t)", pbd.vec_val, 0,
@@ -76,6 +77,23 @@ class Test_PBD(unittest.TestCase):
     for itr in range(100):
       fvs.step_time()
       pbd.step_time()
+
+  def test_pbd_hex(voxelgrid):
+    voxelgrid = dfm2.Grid3D()
+    voxelgrid.add(0, 0, 0)
+    voxelgrid.add(1, 0, 0)
+    voxelgrid.add(2, 0, 0)
+    voxelgrid.add(1, 1, 0)
+    msh = voxelgrid.mesh_hex3d()
+    pbd = dfm2.PBD(msh)
+    npIdP = numpy.array([0, 1, 2, 3], dtype=numpy.int32)
+    pbd.vec_bc[npIdP] = 1
+    fvs = dfm2.FieldValueSetter("0.4*sin(0.8*t)", pbd.vec_val, 1,
+                                mesh=msh, npIdP=npIdP, dt=pbd.dt)
+    for itr in range(100):
+      fvs.step_time()
+      pbd.step_time()
+
 
 class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):

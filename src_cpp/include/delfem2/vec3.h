@@ -419,4 +419,5 @@ std::istream &operator>>(std::istream &input, std::vector<CVector3>& aV);
 
 
 
+
 #endif // PHYSICS_VECTOR_3D_H
