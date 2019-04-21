@@ -264,7 +264,7 @@ void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     const std::vector<int>& elsup_ind,
                                     const std::vector<int>& elsup,
                                     int np);
-void makeEdge(std::vector<int>& edge_ind,
+void JArray_MakeEdgeFromPsup(std::vector<int>& edge_ind,
               std::vector<int>& edge,
               /////
               const std::vector<int>& psup_ind,
@@ -276,7 +276,7 @@ void makeEdgeHex(std::vector<int>& psup_ind,
                  const std::vector<int>& elsup_ind,
                  const std::vector<int>& elsup,
                  int nPo0);
-void makeEdgeVox(std::vector<int>& psup_ind,
+void JArray_MakeEdgeVox(std::vector<int>& psup_ind,
                  std::vector<int>& psup,
                  ////
                  const std::vector<int>& aVox0,
@@ -342,7 +342,7 @@ void HexSubdiv(std::vector<int>& aHex1,
                std::vector<int>& psupIndHex0,
                std::vector<int>& psupHex0,
                std::vector<int>& aQuadHex0,
-               const std::vector<int>& aHex0,
+               const int* aHex0, int nHex0,
                const int nhp0);
 int findEdge(int ip0, int ip1,
              const std::vector<int>& psup_ind,

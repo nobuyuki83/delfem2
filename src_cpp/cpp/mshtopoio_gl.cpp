@@ -49,7 +49,7 @@ void MeshTri3D_GeodesicPolyhedron
   //  Print_IndexedArray(psup_ind, psup);
   /////
   std::vector<int> edge_ind, edge;
-  makeEdge(edge_ind, edge,
+  JArray_MakeEdgeFromPsup(edge_ind, edge,
            psup_ind,psup);
   //  std::cout << "edge" << std::endl;
   //  Print_IndexedArray(edge_ind, edge);

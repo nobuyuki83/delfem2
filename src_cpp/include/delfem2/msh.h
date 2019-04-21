@@ -169,6 +169,14 @@ void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
                             const std::vector<int>& aQuad0,
                             const std::vector<double>& aXYZ0);
 
+void SubdivisionPoints_Hex(std::vector<double>& aXYZ1,
+                           ///
+                           const std::vector<int>& psupHex0,
+                           const std::vector<int>& psupIndHex0,
+                           const std::vector<int>& aQuadHex0,
+                           const int* aHex0, int nHex0,
+                           const double* aXYZ0, int nXYZ0);
+
 //////////////////////////////////////////////////////////////
 // raw mesh functions
 
