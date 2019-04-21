@@ -160,6 +160,44 @@ void JArray_MakeEdgeFromPsup
   edge_ind[0] = 0;
 }
 
+void makeElemSurroundingPoint
+(std::vector<int>& elsup_ind,
+ std::vector<int>& elsup,
+ ////
+ const int* pElem,
+ int nElem,
+ int nPoEl,
+ int nPo)
+{
+  //  const int nElem = (int)aElem.size()/nPoEl;
+  elsup_ind.assign(nPo+1,0);
+  for(int ielem=0;ielem<nElem;ielem++){
+    for(int inoel=0;inoel<nPoEl;inoel++){
+      const int ino1 = pElem[ielem*nPoEl+inoel];
+      if( ino1 == -1 ){ break; }
+      elsup_ind[ino1+1] += 1;
+    }
+  }
+  for(int ino=0;ino<nPo;++ino){
+    elsup_ind[ino+1] += elsup_ind[ino];
+  }
+  int nelsup = elsup_ind[nPo];
+  elsup.resize(nelsup);
+  for(int ielem=0;ielem<nElem;ielem++){
+    for(int inoel=0;inoel<nPoEl;inoel++){
+      int ino1 = pElem[ielem*nPoEl+inoel];
+      if( ino1 == -1 ){ break; }
+      int ind1 = elsup_ind[ino1];
+      elsup[ind1] = ielem;
+      elsup_ind[ino1] += 1;
+    }
+  }
+  for(int ino=nPo;ino>=1;ino--){
+    elsup_ind[ino] = elsup_ind[ino-1];
+  }
+  elsup_ind[0] = 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void convert2Tri_Quad
@@ -260,43 +298,7 @@ void AddElement
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-void makeElemSurroundingPoint
-(std::vector<int>& elsup_ind,
- std::vector<int>& elsup,
- ////
- const int* pElem,
- int nElem,
- int nPoEl,
- int nPo)
-{
-//  const int nElem = (int)aElem.size()/nPoEl;
-  elsup_ind.assign(nPo+1,0);
-  for(int ielem=0;ielem<nElem;ielem++){
-    for(int inoel=0;inoel<nPoEl;inoel++){
-      const int ino1 = pElem[ielem*nPoEl+inoel];
-      if( ino1 == -1 ){ break; }
-      elsup_ind[ino1+1] += 1;
-    }
-  }
-  for(int ino=0;ino<nPo;++ino){
-    elsup_ind[ino+1] += elsup_ind[ino];
-  }
-  int nelsup = elsup_ind[nPo];
-  elsup.resize(nelsup);
-  for(int ielem=0;ielem<nElem;ielem++){
-    for(int inoel=0;inoel<nPoEl;inoel++){
-      int ino1 = pElem[ielem*nPoEl+inoel];
-      if( ino1 == -1 ){ break; }
-      int ind1 = elsup_ind[ino1];
-      elsup[ind1] = ielem;
-      elsup_ind[ino1] += 1;
-    }
-  }
-  for(int ino=nPo;ino>=1;ino--){
-    elsup_ind[ino] = elsup_ind[ino-1];
-  }
-  elsup_ind[0] = 0;
-}
+
 
 void makeElemSurroundingPoint_Tri
 (std::vector<int>& elsup_ind,

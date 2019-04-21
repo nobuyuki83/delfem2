@@ -17,6 +17,19 @@ void Energy_MIPS(double& E, double dE[3][3], double ddE[3][3][3][3],
                  const double c[3][3],
                  const double C[3][3]);
 
+void ConstraintProjection_Rigid2D(double* aXYt,
+                                  double stiffness,
+                                  const int* clstr_ind, int nclstr_ind,
+                                  const int* clstr,     int nclstr0,
+                                  const double* aXY0,   int nXY0);
+
+void ConstraintProjection_Rigid3D(double* aXYZt,
+                                  double stiffness,
+                                  const int* clstr_ind, int nclstr_ind,
+                                  const int* clstr,     int nclstr0,
+                                  const double* aXYZ0,   int nXYZ0);
+
+
 ///////////////////////////////////////////////
 
 CMatrix3 Mat3(const CVector3& vec0,

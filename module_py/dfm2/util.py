@@ -286,20 +286,21 @@ class FieldValueSetter():
     #####
     self.eval.set_key("x",0.0)
     self.eval.set_key("y",0.0)
+    self.eval.set_key("z",0.0)
     self.eval.set_key("t",0.0)
     self.eval.set_expression(self.mathexp)
 
   def step_time(self):
     self.time_cur += self.dt
     for ip in self.npIdP:
-      x0 = self.mesh.np_pos[ip,0]
-      y0 = self.mesh.np_pos[ip,1]
-      self.eval.set_key("x",x0)
-      self.eval.set_key("y",y0)
       self.eval.set_key("t",self.time_cur)
+      if self.mesh.np_pos.shape[1] >= 2:
+        self.eval.set_key("x",self.mesh.np_pos[ip,0])
+        self.eval.set_key("y",self.mesh.np_pos[ip,1])
+      if self.mesh.np_pos.shape[1] == 3:
+        self.eval.set_key("z",self.mesh.np_pos[ip,2])
       val = self.eval.eval()
       self.val[ip,self.idim] = self.mesh.np_pos[ip,self.idim] + val
-    pass
 
 ######################################################
 
@@ -627,7 +628,7 @@ class FEM_NavierStorks2D():
     self.solve()
 
 
-class PBD2D():
+class PBD():
   def __init__(self,
                mesh: Mesh):
     np = mesh.np_pos.shape[0]
@@ -636,7 +637,7 @@ class PBD2D():
     self.vec_val = mesh.np_pos.copy()
     self.vec_velo = numpy.zeros_like(self.vec_val, dtype=numpy.float64)
     self.vec_tpos = mesh.np_pos.copy()
-    self.dt = 0.01
+    self.dt = 0.1
     self.psup = mesh.psup()
     self.psup = jarray_add_diagonal(*self.psup)
 
@@ -644,9 +645,14 @@ class PBD2D():
     self.vec_tpos[:] = self.vec_val + self.dt * self.vec_velo
     pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
     for itr in range(1):
-      proj_rigid2d(self.vec_tpos,
-                   0.5, self.psup[0], self.psup[1],
-                   self.mesh.np_pos)
+      if self.mesh.np_pos.shape[1] == 2:
+        proj_rigid2d(self.vec_tpos,
+                     0.5, self.psup[0], self.psup[1],
+                     self.mesh.np_pos)
+      if self.mesh.np_pos.shape[1] == 3:
+        proj_rigid3d(self.vec_tpos,
+                     0.5, self.psup[0], self.psup[1],
+                     self.mesh.np_pos)
     pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos

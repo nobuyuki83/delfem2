@@ -228,12 +228,6 @@ void makeRandomLoop(unsigned int nCV,
 
 void makeSplineLoop(const std::vector<double>& aCV,
                     std::vector<double>& aVecCurve);
-
-void ConstraintProjection_Rigid2D(double* aXYt,
-                                  double stiffness,
-                                  const int* clstr_ind, int nclstr_ind,
-                                  const int* clstr,     int nclstr0,
-                                  const double* aXY0,   int nXY0);
   
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////

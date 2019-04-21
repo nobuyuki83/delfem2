@@ -9,7 +9,10 @@
 #include "delfem2/fem_ematrix.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/sdf.h"
-#include "delfem2/vec2.h"
+//#include "delfem2/vec2.h"
+//#include "delfem2/vec3.h"
+//#include "delfem2/mat3.h"
+#include "delfem2/v23m3q.h"
 
 namespace py = pybind11;
 
@@ -445,6 +448,21 @@ void PyConstraintProjection_Rigid2D
                                npXY.data(),       npXY.shape()[0]);
 }
 
+
+void PyConstraintProjection_Rigid3D
+(py::array_t<double>& npXYZt,
+ double stiffness,
+ const py::array_t<int>& npClstrInd,
+ const py::array_t<int>& npClstr,
+ const py::array_t<double>& npXYZ)
+{
+  ConstraintProjection_Rigid3D((double*)(npXYZt.request().ptr),
+                               stiffness,
+                               npClstrInd.data(), npClstrInd.size(),
+                               npClstr.data(),    npClstr.size(),
+                               npXYZ.data(),      npXYZ.shape()[0]);
+}
+
 void PyPointFixBC
 (py::array_t<double>& aTmp,
  const py::array_t<int>& aBC,
@@ -452,12 +470,23 @@ void PyPointFixBC
 {
   assert( aTmp.ndim() == 2 );
   assert( npXY1.ndim() == 2 );
+  assert( aTmp.shape()[1] == npXY1.shape()[1] );
   const int np = aTmp.shape()[0];
   double* ptr = (double*)(aTmp.request().ptr);
-  for(int ip=0;ip<np;++ip){
-    if( aBC.at(ip) == 0 ){ continue; }
-    ptr[ip*2+0] = npXY1.at(ip,0);
-    ptr[ip*2+1] = npXY1.at(ip,1);
+  if( npXY1.shape()[1] == 2 ){
+    for(int ip=0;ip<np;++ip){
+      if( aBC.at(ip) == 0 ){ continue; }
+      ptr[ip*2+0] = npXY1.at(ip,0);
+      ptr[ip*2+1] = npXY1.at(ip,1);
+    }
+  }
+  if( npXY1.shape()[1] == 3 ){
+    for(int ip=0;ip<np;++ip){
+      if( aBC.at(ip) == 0 ){ continue; }
+      ptr[ip*3+0] = npXY1.at(ip,0);
+      ptr[ip*3+1] = npXY1.at(ip,1);
+      ptr[ip*3+2] = npXY1.at(ip,2);
+    }
   }
 }
 
@@ -474,13 +503,13 @@ void init_fem(py::module &m){
   //  .def(py::init<const CPreconditionerILU&>);
   
   m.def("matrixSquareSparse_setPattern", &MatrixSquareSparse_SetPattern);
-  m.def("matrixSquareSparse_setFixBC", &MatrixSquareSparse_SetFixBC);
-  m.def("addMasterSlavePattern",&PyAddMasterSlavePattern);
-  m.def("precond_ilu0",  &PrecondILU0);
-  m.def("linsys_solve_pcg", &PySolve_PCG);
-  m.def("linsys_solve_bicgstab",&PySolve_PBiCGStab);
-  m.def("linearSystem_setMasterSlave",&LinearSystem_SetMasterSlave);
-  m.def("masterSlave_distributeValue",&PyMasterSlave_DistributeValue);
+  m.def("matrixSquareSparse_setFixBC",   &MatrixSquareSparse_SetFixBC);
+  m.def("addMasterSlavePattern",         &PyAddMasterSlavePattern);
+  m.def("precond_ilu0",                  &PrecondILU0);
+  m.def("linsys_solve_pcg",              &PySolve_PCG);
+  m.def("linsys_solve_bicgstab",         &PySolve_PBiCGStab);
+  m.def("linearSystem_setMasterSlave",   &LinearSystem_SetMasterSlave);
+  m.def("masterSlave_distributeValue",   &PyMasterSlave_DistributeValue);
   
   m.def("mergeLinSys_poission",          &PyMergeLinSys_Poission);
   m.def("mergeLinSys_diffuse",           &PyMergeLinSys_Diffuse);
@@ -494,5 +523,6 @@ void init_fem(py::module &m){
   m.def("mergeLinSys_contact",           &PyMergeLinSys_Contact);
   
   m.def("proj_rigid2d",                  &PyConstraintProjection_Rigid2D);
-  m.def("pointFixBC", &PyPointFixBC);
+  m.def("proj_rigid3d",                  &PyConstraintProjection_Rigid3D);
+  m.def("pointFixBC",                    &PyPointFixBC);
 }
