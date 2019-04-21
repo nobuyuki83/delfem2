@@ -23,6 +23,7 @@ class Mesh():
     assert np_elm.dtype == numpy.int32
     self.color_face = [0.8, 0.8, 0.8, 1.0]
     self.is_draw_edge = True
+    self.is_draw_face = True
     self.np_pos = np_pos
     self.np_elm = np_elm
     self.elem_type = elem_type
@@ -47,17 +48,23 @@ class Mesh():
     return [x_min,x_max, y_min,y_max, z_min,z_max]
 
   def draw(self):
-    gl.glColor4d(self.color_face[0], self.color_face[1], self.color_face[2], self.color_face[3])
-    gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, self.color_face)
-    draw_mesh_facenorm(self.np_pos,self.np_elm)
+    if self.is_draw_face:
+      gl.glColor4d(self.color_face[0], self.color_face[1], self.color_face[2], self.color_face[3])
+      gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, self.color_face)
+      draw_mesh_facenorm(self.np_pos,self.np_elm)
     if self.is_draw_edge:
       gl.glDisable(gl.GL_LIGHTING)
       gl.glLineWidth(1)
+      gl.glColor3d(0,0,0)
       draw_mesh_edge(self.np_pos,self.np_elm)
 
   def subdiv(self):
-    np_pos1,np_quad1 = meshquad3d_subdiv(self.np_pos,self.np_elm)
-    return Mesh(np_pos1,np_quad1,QUAD)
+    if self.elem_type == QUAD:
+      np_pos1,np_quad1 = meshquad3d_subdiv(self.np_pos,self.np_elm)
+      return Mesh(np_pos1,np_quad1,QUAD)
+    if self.elem_type == HEX:
+      np_pos1,np_quad1 = meshhex3d_subdiv(self.np_pos,self.np_elm)
+      return Mesh(np_pos1,np_quad1,HEX)
 
   def meshtri2d(self,list_pos,list_elm):
     self.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 2))
@@ -81,12 +88,6 @@ def mesh_read(path_file="") -> Mesh:
     return Mesh(np_pos,np_elm,TRI)
   return None
 
-def mesh_voxelgrid(voxelgrid) -> Mesh:
-  list_xyz, list_tri = getmesh_voxelgrid(voxelgrid)
-  np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
-  np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 4))
-  return Mesh(np_pos,np_elm)
-
 def mesh_grid(shape) -> Mesh:
   np_pos,np_quad = meshquad2d_grid(shape[0],shape[1])
   return Mesh(np_pos,np_quad,QUAD)
@@ -95,6 +96,29 @@ def mesh_cad(cad,len) -> Mesh:
   xy,tri = getMesh_cad(cad,len)
   mesh = Mesh(xy,tri,TRI)
   return mesh
+
+
+###########################################################################
+
+class Grid3D:
+  def __init__(self):
+    self.vg = CppVoxelGrid()
+
+  def add(self,ix,iy,iz):
+    self.vg.add(ix,iy,iz)
+
+  def mesh_quad3d(self) -> Mesh:
+    list_xyz, list_tri = meshquad3d_voxelgrid(self.vg)
+    np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
+    np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 4))
+    return Mesh(np_pos, np_elm, QUAD)
+
+  def mesh_hex3d(self) -> Mesh:
+    list_xyz, list_tri = meshhex3d_voxelgrid(self.vg)
+    np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
+    np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 8))
+    return Mesh(np_pos, np_elm, HEX)
+
 
 
 ####################

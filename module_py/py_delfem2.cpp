@@ -31,15 +31,23 @@ void init_rigidbody(py::module &m);
 void init_field(py::module &m);
 void init_fem(py::module &m);
 
-std::tuple<std::vector<double>,std::vector<int>> GetMesh_VoxelGrid
+std::tuple<std::vector<double>,std::vector<int>> PyMeshQuad3D_VoxelGrid
 (const CVoxelGrid& vg)
 {
   std::vector<double> aXYZ;
   std::vector<int> aQuad;
   vg.GetQuad(aXYZ, aQuad);
-  return std::tie(aXYZ,aQuad);
+  return std::forward_as_tuple(aXYZ,aQuad);
 }
 
+std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
+(const CVoxelGrid& vg)
+{
+  std::vector<double> aXYZ;
+  std::vector<int> aHex;
+  vg.GetHex(aXYZ, aHex);
+  return std::forward_as_tuple(aXYZ,aHex);
+}
 
 std::tuple<py::array_t<double>, py::array_t<int>> GetMesh_Cad
 (const CCad2D& cad, double len)
@@ -189,16 +197,15 @@ PYBIND11_MODULE(dfm2, m) {
   
   ///////////////////////////////////
   // voxel
-  py::class_<CVoxelGrid>(m, "VoxelGrid", "voxel grid class")
+  py::class_<CVoxelGrid>(m, "CppVoxelGrid", "voxel grid class")
   .def(py::init<>())
   .def("add",&CVoxelGrid::Add,"add voxel at the integer coordinate");
   
-  m.def("getmesh_voxelgrid",&GetMesh_VoxelGrid);
-  m.def("getMesh_cad",&GetMesh_Cad);
+  m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
+  m.def("meshhex3d_voxelgrid",&PyMeshHex3D_VoxelGrid);
   
   ///////////////////////////////////
   // SDF
-  
   py::class_<CSDF3>(m, "SDF");
   
   py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "SDF_Sphere")
@@ -228,6 +235,10 @@ PYBIND11_MODULE(dfm2, m) {
         py::arg("np_xy"),
         py::arg("tolerance") = 0.001,
         py::return_value_policy::move);
+  
+  m.def("getMesh_cad",&GetMesh_Cad);
+  
+  ////////////////////////////////////
 
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())

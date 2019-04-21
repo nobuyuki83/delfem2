@@ -120,7 +120,47 @@ void JArray_AddDiagonal
   psup_ind1[0] = 0;
 }
 
-/////
+// in the edge ip -> jp, it holds (ip < jp)
+void JArray_MakeEdgeFromPsup
+(std::vector<int>& edge_ind,
+ std::vector<int>& edge,
+ /////
+ const std::vector<int>& psup_ind,
+ const std::vector<int>& psup)
+{
+  const int np = psup_ind.size()-1;
+  edge_ind.resize(np+1);
+  edge_ind[0] = 0;
+  edge.clear();
+  ////
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      int ip0 = psup[ipsup];
+      if( ip0 <= ip ) continue;
+      edge_ind[ip+1]++;
+    }
+  }
+  for(int ip=0;ip<np;ip++){
+    edge_ind[ip+1] += edge_ind[ip];
+  }
+  const int nedge = edge_ind[np];
+  edge.resize(nedge);
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const int ip0 = psup[ipsup];
+      if( ip0 <= ip ) continue;
+      const int iedge = edge_ind[ip];
+      edge[iedge] = ip0;
+      edge_ind[ip]++;
+    }
+  }
+  for(int ip=np;ip>0;ip--){
+    edge_ind[ip] = edge_ind[ip-1];
+  }
+  edge_ind[0] = 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 void convert2Tri_Quad
 (std::vector<int>& aTri,
@@ -643,47 +683,8 @@ void makeOneRingNeighborhood_TriFan
   }
 }
 
-void makeEdge
-(std::vector<int>& edge_ind,
- std::vector<int>& edge,
- /////
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
-{
-  const int np = psup_ind.size()-1;
-  edge_ind.resize(np+1);
-  edge_ind[0] = 0;
-  edge.clear();
-  ////
-  for(int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
-      int ip0 = psup[ipsup];
-      if( ip0 <= ip ) continue;
-      edge_ind[ip+1]++;
-    }
-  }
-  for(int ip=0;ip<np;ip++){
-    edge_ind[ip+1] += edge_ind[ip];
-  }
-  const int nedge = edge_ind[np];
-  edge.resize(nedge);
-  for(int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
-      const int ip0 = psup[ipsup];
-      if( ip0 <= ip ) continue;
-      const int iedge = edge_ind[ip];
-      edge[iedge] = ip0;
-      edge_ind[ip]++;
-    }
-  }
-  for(int ip=np;ip>0;ip--){
-    edge_ind[ip] = edge_ind[ip-1];
-  }
-  edge_ind[0] = 0;
-}
 
-
-void makeEdgeQuad
+void JArray_MakeEdgeQuad
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
@@ -717,11 +718,11 @@ void makeEdgeQuad
   }
 }
 
-void makeEdgeHex
+void JArray_MakeEdgeHex
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const std::vector<int>& aHex0,
+ const int* aHex0,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nPoint0)
@@ -759,7 +760,7 @@ void makeEdgeHex
 }
 
 
-void makeEdgeVox
+void JArray_MakeEdgeVox
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
@@ -799,8 +800,6 @@ void makeEdgeVox
     psup_ind[ipoint+1] = psup_ind[ipoint] + (int)setIP.size();
   }
 }
-
-
 
 
 void JArray_AddMasterSlavePattern
@@ -1144,7 +1143,7 @@ void QuadSubdiv
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind,elsup,
                            aQuad0,nQuad0,4,nPoint0);
-  makeEdgeQuad(psup_ind,psup,
+  JArray_MakeEdgeQuad(psup_ind,psup,
                aQuad0, elsup_ind, elsup, nPoint0);
   const unsigned int ne0 = (int)psup.size();
   aEdgeFace0.resize(0);
@@ -1359,16 +1358,16 @@ void HexSubdiv
  std::vector<int>& psupHex0,
  std::vector<int>& aQuadHex0,
  ///
- const std::vector<int>& aHex0,
+ const int* aHex0, int nHex0,
  const int nhp0)
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
   std::vector<int> elsupIndHex0, elsupHex0;
   makeElemSurroundingPoint(elsupIndHex0, elsupHex0,
-                           aHex0.data(),aHex0.size()/8,8,nhp0);
+                           aHex0,nHex0,8,nhp0);
   
   //edge
-  makeEdgeHex(psupIndHex0, psupHex0,
+  JArray_MakeEdgeHex(psupIndHex0, psupHex0,
               aHex0, elsupIndHex0,elsupHex0, nhp0);
   
   //face
@@ -1376,12 +1375,12 @@ void HexSubdiv
   {
     std::vector<int> aHexSurRel0;
     makeSurroundingRelationship(aHexSurRel0,
-                                aHex0.data(),aHex0.size()/8,8,
+                                aHex0,nHex0,8,
                                 elsupIndHex0,elsupHex0,
                                 nFaceElem(MESHELEM_HEX),
                                 nNodeElemFace(MESHELEM_HEX, 0),
                                 noelElemFace(MESHELEM_HEX));
-    for(unsigned int ih=0;ih<aHex0.size()/8;++ih){
+    for(unsigned int ih=0;ih<nHex0;++ih){
       for(int ifh=0;ifh<6;++ifh){
         int jh0 = aHexSurRel0[ih*6*2+ifh*2+0];
         if( jh0!=-1 && (int)ih>jh0 ) continue;
@@ -1420,7 +1419,7 @@ void HexSubdiv
   
   // making hex
   aHex1.clear();
-  for(unsigned int ih=0;ih<aHex0.size()/8;++ih){
+  for(int ih=0;ih<nHex0;++ih){
     int ihc0 = aHex0[ih*8+0];
     int ihc1 = aHex0[ih*8+1];
     int ihc2 = aHex0[ih*8+2];

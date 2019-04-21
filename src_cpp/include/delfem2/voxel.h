@@ -6,15 +6,18 @@
 // TODO: remove dependency to vec3
 #include "vec3.h"
 
-int Adj_Grid
-(int ivox_picked, int iface_picked,
- int ndivx, int ndivy, int ndivz);
+int Adj_Grid(int ivox_picked, int iface_picked,
+             int ndivx, int ndivy, int ndivz);
 
-void GetQuad_VoxelGrid
-(std::vector<double>& aXYZ, std::vector<int>& aQuad,
- int ndivx, int ndivy, int ndivz,
- int iorgx, int iorgy, int iorgz,
- const std::vector<int>& aIsVox);
+void MeshQuad3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+                          int ndivx, int ndivy, int ndivz,
+                          int iorgx, int iorgy, int iorgz,
+                          const std::vector<int>& aIsVox);
+
+void MeshHex3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+                         int ndivx, int ndivy, int ndivz,
+                         int ioffx, int ioffy, int ioffz,
+                         const std::vector<int>& aIsVox);
 
 bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz);
 void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
@@ -143,7 +146,13 @@ public:
     aIsVox[ivoxel] = isVox;
   }
   void GetQuad(std::vector<double>& aXYZ, std::vector<int>& aQuad) const {
-    GetQuad_VoxelGrid(aXYZ, aQuad,
+    MeshQuad3D_VoxelGrid(aXYZ, aQuad,
+                      ndivx, ndivy, ndivz,
+                      iorgx, iorgy, iorgz,
+                      aIsVox);
+  }
+  void GetHex(std::vector<double>& aXYZ, std::vector<int>& aHex) const {
+    MeshHex3D_VoxelGrid(aXYZ, aHex,
                       ndivx, ndivy, ndivz,
                       iorgx, iorgy, iorgz,
                       aIsVox);

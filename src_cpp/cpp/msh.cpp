@@ -1514,3 +1514,55 @@ void SubdivisionPoints_Quad
     aXYZ1[(nv0+ne0+iq)*3+2] = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
   }
 }
+
+
+void SubdivisionPoints_Hex
+(std::vector<double>& aXYZ1,
+ ///
+ const std::vector<int>& psupIndHex0,
+ const std::vector<int>& psupHex0,
+ const std::vector<int>& aQuadHex0,
+ const int* aHex0, int nHex0,
+ const double* aXYZ0, int nXYZ0)
+{
+  const int nv0 = nXYZ0;
+  const int ne0 = (int)psupHex0.size();
+  const int nq0 = (int)aQuadHex0.size()/4;
+  const int nh0 = nHex0;
+  aXYZ1.resize((nv0+ne0+nq0+nh0)*3);
+  for(int iv=0;iv<nv0;++iv){
+    aXYZ1[iv*3+0] = aXYZ0[iv*3+0];
+    aXYZ1[iv*3+1] = aXYZ0[iv*3+1];
+    aXYZ1[iv*3+2] = aXYZ0[iv*3+2];
+  }
+  for(int iv=0;iv<nv0;++iv){
+    for(int ipsup=psupIndHex0[iv];ipsup<psupIndHex0[iv+1];++ipsup){
+      int jv = psupHex0[ipsup];
+      aXYZ1[(nv0+ipsup)*3+0] = (aXYZ0[iv*3+0] + aXYZ0[jv*3+0])*0.5;
+      aXYZ1[(nv0+ipsup)*3+1] = (aXYZ0[iv*3+1] + aXYZ0[jv*3+1])*0.5;
+      aXYZ1[(nv0+ipsup)*3+2] = (aXYZ0[iv*3+2] + aXYZ0[jv*3+2])*0.5;
+    }
+  }
+  for(int iq=0;iq<nq0;++iq){
+    const int iv0 = aQuadHex0[iq*4+0];
+    const int iv1 = aQuadHex0[iq*4+1];
+    const int iv2 = aQuadHex0[iq*4+2];
+    const int iv3 = aQuadHex0[iq*4+3];
+    aXYZ1[(nv0+ne0+iq)*3+0] = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0] + aXYZ0[iv2*3+0] + aXYZ0[iv3*3+0])*0.25;
+    aXYZ1[(nv0+ne0+iq)*3+1] = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1] + aXYZ0[iv2*3+1] + aXYZ0[iv3*3+1])*0.25;
+    aXYZ1[(nv0+ne0+iq)*3+2] = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
+  }
+  for(int ih=0;ih<nh0;++ih){
+    const int iv0 = aHex0[ih*8+0];
+    const int iv1 = aHex0[ih*8+1];
+    const int iv2 = aHex0[ih*8+2];
+    const int iv3 = aHex0[ih*8+3];
+    const int iv4 = aHex0[ih*8+4];
+    const int iv5 = aHex0[ih*8+5];
+    const int iv6 = aHex0[ih*8+6];
+    const int iv7 = aHex0[ih*8+7];
+    aXYZ1[(nv0+ne0+nq0+ih)*3+0] = (aXYZ0[iv0*3+0]+aXYZ0[iv1*3+0]+aXYZ0[iv2*3+0]+aXYZ0[iv3*3+0]+aXYZ0[iv4*3+0]+aXYZ0[iv5*3+0]+aXYZ0[iv6*3+0]+aXYZ0[iv7*3+0])*0.125;
+    aXYZ1[(nv0+ne0+nq0+ih)*3+1] = (aXYZ0[iv0*3+1]+aXYZ0[iv1*3+1]+aXYZ0[iv2*3+1]+aXYZ0[iv3*3+1]+aXYZ0[iv4*3+1]+aXYZ0[iv5*3+1]+aXYZ0[iv6*3+1]+aXYZ0[iv7*3+1])*0.125;
+    aXYZ1[(nv0+ne0+nq0+ih)*3+2] = (aXYZ0[iv0*3+2]+aXYZ0[iv1*3+2]+aXYZ0[iv2*3+2]+aXYZ0[iv3*3+2]+aXYZ0[iv4*3+2]+aXYZ0[iv5*3+2]+aXYZ0[iv6*3+2]+aXYZ0[iv7*3+2])*0.125;
+  }
+}

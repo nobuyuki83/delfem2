@@ -58,7 +58,7 @@ void Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 }
 
 
-void GetQuad_VoxelGrid
+void MeshQuad3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<int>& aQuad,
  int ndivx, int ndivy, int ndivz,
  int ioffx, int ioffy, int ioffz,
@@ -120,6 +120,60 @@ void GetQuad_VoxelGrid
   }
 }
 
+void MeshHex3D_VoxelGrid
+(std::vector<double>& aXYZ, std::vector<int>& aHex,
+ int ndivx, int ndivy, int ndivz,
+ int ioffx, int ioffy, int ioffz,
+ const std::vector<int>& aIsVox)
+{
+  aHex.clear();
+  aXYZ.clear();
+  //////
+  const int mdivx = ndivx+1;
+  const int mdivy = ndivy+1;
+  const int mdivz = ndivz+1;
+  for(int igpx=0;igpx<mdivx;++igpx){
+    for(int igpy=0;igpy<mdivy;++igpy){
+      for(int igpz=0;igpz<mdivz;++igpz){
+        aXYZ.push_back( igpx+ioffx );
+        aXYZ.push_back( igpy+ioffy );
+        aXYZ.push_back( igpz+ioffz );
+      }
+    }
+  }
+  //////
+  assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
+  for(int igvx=0;igvx<ndivx;++igvx){
+    for(int igvy=0;igvy<ndivy;++igvy){
+      for(int igvz=0;igvz<ndivz;++igvz){
+        const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+        assert( ivoxel < (int)aIsVox.size() );
+        if( aIsVox[ivoxel] == 0 ){ continue; }
+        /////
+        int aIGP_Hex[8] = {0,0,0,0, 0,0,0,0};
+        {
+          aIGP_Hex[0] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
+          aIGP_Hex[1] = (igvx+1)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
+          aIGP_Hex[2] = (igvx+1)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+0);
+          aIGP_Hex[3] = (igvx+0)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+0);
+          aIGP_Hex[4] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+1);
+          aIGP_Hex[5] = (igvx+1)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+1);
+          aIGP_Hex[6] = (igvx+1)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+1);
+          aIGP_Hex[7] = (igvx+0)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+1);
+        }
+        aHex.push_back(aIGP_Hex[0]);
+        aHex.push_back(aIGP_Hex[1]);
+        aHex.push_back(aIGP_Hex[2]);
+        aHex.push_back(aIGP_Hex[3]);
+        aHex.push_back(aIGP_Hex[4]);
+        aHex.push_back(aIGP_Hex[5]);
+        aHex.push_back(aIGP_Hex[6]);
+        aHex.push_back(aIGP_Hex[7]);
+      }
+    }
+  }
+}
+
 int Adj_Grid
 (int igridvox, int iface,
  int ndivx, int ndivy, int ndivz)
@@ -141,82 +195,6 @@ int Adj_Grid
   return igv1;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#ifdef USE_GL
-
-static void myGlNormal(const CVector3& n){ ::glNormal3d(n.x,n.y,n.z); }
-static void myGlVertex(const CVector3& v){ ::glVertex3d(v.x,v.y,v.z); }
-static void myGlColorDiffuse(float r, float g, float b, float a){
-  ::glColor4d(r, g, b, a );
-  float c[4] = {r, g, b, a};
-  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
-}
-
-void Draw_CubeGrid
-(bool is_picked, int iface_picked,
- double elen, const CVector3& org,
- const CCubeGrid& cube)
-{
-  if( !cube.is_active ) return;
-  int ih = cube.ivx;
-  int jh = cube.ivy;
-  int kh = cube.ivz;
-  CVector3 aP[8] = {
-    org + elen*CVector3(ih+0,jh+0,kh+0),
-    org + elen*CVector3(ih+1,jh+0,kh+0),
-    org + elen*CVector3(ih+0,jh+1,kh+0),
-    org + elen*CVector3(ih+1,jh+1,kh+0),
-    org + elen*CVector3(ih+0,jh+0,kh+1),
-    org + elen*CVector3(ih+1,jh+0,kh+1),
-    org + elen*CVector3(ih+0,jh+1,kh+1),
-    org + elen*CVector3(ih+1,jh+1,kh+1) };
-  ::glEnable(GL_LIGHTING);
-  ::glBegin(GL_QUADS);
-  for(int iface=0;iface<6;++iface){
-    if( is_picked && iface_picked == iface ){
-      ::myGlColorDiffuse(1,1,0,1);
-    }
-    else{
-      ::myGlColorDiffuse(0.8,0.8,0.8,1);
-    }
-    myGlNormal(normalHexFace[iface]);
-    myGlVertex(aP[noelElemFace_Vox[iface][0]]);
-    myGlVertex(aP[noelElemFace_Vox[iface][1]]);
-    myGlVertex(aP[noelElemFace_Vox[iface][2]]);
-    myGlVertex(aP[noelElemFace_Vox[iface][3]]);
-  }
-  ::glEnd();
-  //////////////////////////////
-  ::glDisable(GL_LIGHTING);
-  ::glColor3d(0,0,0);
-  ::glBegin(GL_LINE_STRIP);
-  myGlVertex(aP[0]);
-  myGlVertex(aP[1]);
-  myGlVertex(aP[3]);
-  myGlVertex(aP[2]);
-  myGlVertex(aP[0]);
-  myGlVertex(aP[4]);
-  myGlVertex(aP[5]);
-  myGlVertex(aP[7]);
-  myGlVertex(aP[6]);
-  myGlVertex(aP[4]);
-  glEnd();
-  ::glBegin(GL_LINES);
-  myGlVertex(aP[1]); myGlVertex(aP[5]);
-  myGlVertex(aP[2]); myGlVertex(aP[6]);
-  myGlVertex(aP[3]); myGlVertex(aP[7]);
-  ::glEnd();
-}
-#else
-void Draw_CubeGrid
-(bool is_picked, int iface_picked,
- double elen, const CVector3& org,
- const CCubeGrid& cube)
-{
-  std::cout << "Error!->define #USE_GL to use this funciton" << std::endl;
-}
-#endif
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -354,3 +332,87 @@ void AABB_CubeGrid
 
 
 
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef USE_GL
+
+static void myGlNormal(const CVector3& n){ ::glNormal3d(n.x,n.y,n.z); }
+static void myGlVertex(const CVector3& v){ ::glVertex3d(v.x,v.y,v.z); }
+static void myGlColorDiffuse(float r, float g, float b, float a){
+  ::glColor4d(r, g, b, a );
+  float c[4] = {r, g, b, a};
+  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+}
+
+void Draw_CubeGrid
+(bool is_picked, int iface_picked,
+ double elen, const CVector3& org,
+ const CCubeGrid& cube)
+{
+  if( !cube.is_active ) return;
+  int ih = cube.ivx;
+  int jh = cube.ivy;
+  int kh = cube.ivz;
+  CVector3 aP[8] = {
+    org + elen*CVector3(ih+0,jh+0,kh+0),
+    org + elen*CVector3(ih+1,jh+0,kh+0),
+    org + elen*CVector3(ih+0,jh+1,kh+0),
+    org + elen*CVector3(ih+1,jh+1,kh+0),
+    org + elen*CVector3(ih+0,jh+0,kh+1),
+    org + elen*CVector3(ih+1,jh+0,kh+1),
+    org + elen*CVector3(ih+0,jh+1,kh+1),
+    org + elen*CVector3(ih+1,jh+1,kh+1) };
+  ::glEnable(GL_LIGHTING);
+  ::glBegin(GL_QUADS);
+  for(int iface=0;iface<6;++iface){
+    if( is_picked && iface_picked == iface ){
+      ::myGlColorDiffuse(1,1,0,1);
+    }
+    else{
+      ::myGlColorDiffuse(0.8,0.8,0.8,1);
+    }
+    myGlNormal(normalHexFace[iface]);
+    myGlVertex(aP[noelElemFace_Vox[iface][0]]);
+    myGlVertex(aP[noelElemFace_Vox[iface][1]]);
+    myGlVertex(aP[noelElemFace_Vox[iface][2]]);
+    myGlVertex(aP[noelElemFace_Vox[iface][3]]);
+  }
+  ::glEnd();
+  //////////////////////////////
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(0,0,0);
+  ::glBegin(GL_LINE_STRIP);
+  myGlVertex(aP[0]);
+  myGlVertex(aP[1]);
+  myGlVertex(aP[3]);
+  myGlVertex(aP[2]);
+  myGlVertex(aP[0]);
+  myGlVertex(aP[4]);
+  myGlVertex(aP[5]);
+  myGlVertex(aP[7]);
+  myGlVertex(aP[6]);
+  myGlVertex(aP[4]);
+  glEnd();
+  ::glBegin(GL_LINES);
+  myGlVertex(aP[1]); myGlVertex(aP[5]);
+  myGlVertex(aP[2]); myGlVertex(aP[6]);
+  myGlVertex(aP[3]); myGlVertex(aP[7]);
+  ::glEnd();
+}
+#else
+void Draw_CubeGrid
+(bool is_picked, int iface_picked,
+ double elen, const CVector3& org,
+ const CCubeGrid& cube)
+{
+  std::cout << "Error!->define #USE_GL to use this funciton" << std::endl;
+}
+#endif

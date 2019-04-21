@@ -1382,9 +1382,9 @@ void DrawMeshTet3D_FaceNormal
   }
 }
 
-void DrawHex3D_FaceNorm
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aHex)
+void DrawMeshHex3D_FaceNorm
+(const double* aXYZ,
+ const int* aHex, int nHex)
 {
   const int noelElemFace_Hex[8][4] = { // this is corresponds to VTK_VOXEL
     { 0, 4, 7, 3 }, // -x
@@ -1395,7 +1395,7 @@ void DrawHex3D_FaceNorm
     { 4, 5, 6, 7 }  // +z
   };
   ::glBegin(GL_TRIANGLES);
-  for (int ihex = 0; ihex<(int)aHex.size()/8; ihex++){
+  for (int ihex = 0; ihex<nHex; ihex++){
     const int i0 = aHex[ihex*8+0];
     const int i1 = aHex[ihex*8+1];
     const int i2 = aHex[ihex*8+2];
@@ -1482,16 +1482,16 @@ void DrawHex3D_FaceNormDirp
   ::glEnd();
 }
 
-void DrawHex3D_Edge
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aHex)
+void DrawMeshHex3D_Edge
+(const double* aXYZ, int nXYZ,
+ const int* aHex, int nHex)
 {
   const int noelEdge_Hex[12][2] = {
     {0,1},{3,2},{4,5},{7,6},
     {0,3},{1,2},{4,7},{5,6},
     {0,4},{1,5},{3,7},{2,6} };
   ::glBegin(GL_LINES);
-  for (int ihex = 0; ihex<(int)aHex.size()/8; ihex++){
+  for (int ihex = 0; ihex<nHex; ihex++){
     const int i0 = aHex[ihex*8+0];
     const int i1 = aHex[ihex*8+1];
     const int i2 = aHex[ihex*8+2];

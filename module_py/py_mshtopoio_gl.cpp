@@ -58,8 +58,8 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
 (const py::array_t<double>& aXYZ0, const py::array_t<int>& aQuad0)
 {
   std::vector<int> aQuad1;
-  std::vector<int> aEdgeFace0;
   std::vector<int> psupIndQuad0, psupQuad0;
+  std::vector<int> aEdgeFace0;
   QuadSubdiv(aQuad1,
              psupIndQuad0,psupQuad0, aEdgeFace0,
              aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
@@ -72,6 +72,28 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
   py::array_t<int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
   return std::forward_as_tuple(npXYZ1,npQuad1);
+}
+
+std::tuple<py::array_t<double>,py::array_t<int>> PyMeshHex3D_Subviv
+(const py::array_t<double>& aXYZ0, const py::array_t<int>& aHex0)
+{
+  std::vector<int> aHex1;
+  std::vector<int> psupIndHex0, psupHex0;
+  std::vector<int> aQuadHex0;
+  HexSubdiv(aHex1,
+            psupIndHex0, psupHex0,
+            aQuadHex0,
+            ///
+            aHex0.data(), aHex0.shape()[0], aXYZ0.shape()[0]);
+  ///////
+  std::vector<double> aXYZ1;
+  SubdivisionPoints_Hex(aXYZ1,
+                        psupIndHex0,psupHex0,aQuadHex0,
+                        aHex0.data(), aHex0.shape()[0],
+                        aXYZ0.data(), aXYZ0.shape()[0]);
+  py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
+  py::array_t<int> npHex1({(int)aHex1.size()/8,8}, aHex1.data());
+  return std::forward_as_tuple(npXYZ1,npHex1);
 }
 
 
@@ -88,6 +110,7 @@ void PyDrawMesh_FaceNorm
   if( shape_pos[1] == 3 ){ // 3D Mesh
     if( shape_elm[1] == 3 ){  DrawMeshTri3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
     if( shape_elm[1] == 4 ){  DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
+    if( shape_elm[1] == 8 ){  DrawMeshHex3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
   }
 }
 
@@ -102,8 +125,9 @@ void PyDrawMesh_Edge
   if( shape_pos[1] == 3 ){ // 3D Mesh
     if( shape_elm[1] == 3 ){  DrawMeshTri3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
     if( shape_elm[1] == 4 ){  DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( shape_elm[1] == 8 ){  DrawMeshHex3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]);  }
   }
-  if( shape_pos[1] == 2 ){ // 3D Mesh
+  if( shape_pos[1] == 2 ){ // 2D Mesh
     if( shape_elm[1] == 3 ){  DrawMeshTri2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
     if( shape_elm[1] == 4 ){  DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
@@ -126,7 +150,7 @@ Triangulation
   GenerateTesselation2(aElm, aPos,
                        aPtrVtxInd, aVtxInd,
                        edge_length, true, aaXY);
-  return std::tie(aPos,aElm, aPtrVtxInd,aVtxInd);
+  return std::forward_as_tuple(aPos,aElm, aPtrVtxInd,aVtxInd);
 }
 
 std::tuple<py::array_t<int>, py::array_t<int>>
@@ -137,7 +161,7 @@ PyJArray_MeshPsup(const py::array_t<int>& elm, int npoint)
                                       elm.data(), elm.shape()[0], elm.shape()[1], npoint);
   py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
-  return std::tie(np_psup_ind, np_psup);
+  return std::forward_as_tuple(np_psup_ind, np_psup);
 }
 
 void PyJArray_Sort
@@ -235,8 +259,9 @@ void init_mshtopoio_gl(py::module &m){
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);
   m.def("meshtri3d_read_nastran", &PyMeshTri3D_ReadNastran, py::return_value_policy::move);
-  m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
   m.def("meshquad3d_subdiv",      &PyMeshQuad3D_Subviv,     py::return_value_policy::move);
+  m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
+  m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
   
   m.def("triangulation",&Triangulation);
   m.def("triangulation",&Triangulation,
@@ -247,7 +272,7 @@ void init_mshtopoio_gl(py::module &m){
   m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);
   m.def("jarray_sort",         &PyJArray_Sort);
   m.def("elemQuad_dihedralTri",&GetElemQuad_DihedralTri);
+  m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
   m.def("draw_mesh_facenorm",  &PyDrawMesh_FaceNorm);
   m.def("draw_mesh_edge",      &PyDrawMesh_Edge);
-  m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
 }

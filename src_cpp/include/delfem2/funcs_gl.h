@@ -168,10 +168,10 @@ void DrawMeshTet3D_FaceNormDisp(const double* aXYZ, int nXYZ,
 ///////////////
 // Draw Hex
 
-void DrawHex3D_Edge(const std::vector<double>& aXYZ,
-                    const std::vector<int>& aHex);
-void DrawHex3D_FaceNorm(const std::vector<double>& aXYZ,
-                        const std::vector<int>& aHex);
+void DrawMeshHex3D_Edge(const double* aXYZ, int nXYZ,
+                        const int* aHex, int nHex);
+void DrawMeshHex3D_FaceNorm(const double* aXYZ,
+                            const int* aHex, int nHex);
 void Draw_HexMeshFaceDisp(const std::vector<double>& aXYZ,
                           const std::vector<int>& aHex,
                           const std::vector<double>& aDisp);
