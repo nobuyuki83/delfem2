@@ -12,7 +12,7 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/dyntri_v2.h"
 #include "delfem2/cad2d.h"
 
 #include "delfem2/funcs_glut.h"

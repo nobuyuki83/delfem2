@@ -945,8 +945,11 @@ std::vector<double> Solve_PCG
       for(int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
     }
 	}
-	// Converge Judgement
-  double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
+  {
+    // Converge Judgement
+    double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
+    aResHistry.push_back(sqrt(sq_norm_res));
+  }
   return aResHistry;
 }
 

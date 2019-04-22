@@ -8,15 +8,15 @@ def main0():
   dmesh = dfm2.CppMeshDynTri()
   dfm2.meshdyntri3d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
   dmesh.check()
-  dfm2.winDraw3d([dmesh],winsize=(400,300))
+  dfm2.winDraw3d([dmesh,dfm2.AxisXYZ()],winsize=(400,300))
 
 def main1():
   cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = cad.mesh(0.2)
+  mesh = cad.mesh(0.3)
   dmesh = dfm2.CppMeshDynTri()
   dfm2.meshdyntri3d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
   dmesh.check()
-  for itr in range(100):
+  for itr in range(1000):
     itri0 = random.randint(0,dmesh.ntri()-1)
     r0 = random.uniform(0.02, 0.98)
     r1 = random.uniform(0.01, 0.99-r0)

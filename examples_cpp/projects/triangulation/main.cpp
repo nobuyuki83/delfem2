@@ -10,7 +10,7 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/dyntri_v2.h"
 
 static double TriArea2D(const double v1[], const double v2[], const double v3[]){
   return 0.5*( (v2[0]-v1[0])*(v3[1]-v1[1]) - (v3[0]-v1[0])*(v2[1]-v1[1]) );

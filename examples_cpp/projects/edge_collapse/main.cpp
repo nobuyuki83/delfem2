@@ -15,6 +15,7 @@
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
 #include "delfem2/dyntri_v3.h"
+#include "delfem2/dyntri.h"
 
 #include "delfem2/funcs_gl.h"
 #include "delfem2/color_gl.h"
@@ -31,7 +32,7 @@ void MyGlNormal3dv(CVector3& n){
 
 double cur_time = 0.0;
 double dt = 0.1;
-std::vector<CEPo2<void*> > aPo;
+std::vector<CEPo2> aPo;
 std::vector<ETri> aTri;
 
 CGlutWindowManager win;
@@ -68,9 +69,6 @@ void SetNewProblem()
       aPo[ipo].p.x = pXYZs[ipo*3+0];
       aPo[ipo].p.y = pXYZs[ipo*3+1];
       aPo[ipo].p.z = pXYZs[ipo*3+2];
-      aPo[ipo].n.x = aNorm[ipo*3+0];
-      aPo[ipo].n.y = aNorm[ipo*3+1];
-      aPo[ipo].n.z = aNorm[ipo*3+2];
     }
     aTri.resize(ntri);
     for(unsigned int itri=0;itri<aTri.size();itri++){
@@ -174,9 +172,9 @@ void myGlutDisplay(void)
     const unsigned int i1 = aTri[itri].v[0];
     const unsigned int i2 = aTri[itri].v[1];
     const unsigned int i3 = aTri[itri].v[2];
-    MyGlNormal3dv(aPo[i1].n); MyGlVertex3dv(aPo[i1].p);
-    MyGlNormal3dv(aPo[i2].n); MyGlVertex3dv(aPo[i2].p);
-    MyGlNormal3dv(aPo[i3].n); MyGlVertex3dv(aPo[i3].p);
+    MyGlVertex3dv(aPo[i1].p);
+    MyGlVertex3dv(aPo[i2].p);
+    MyGlVertex3dv(aPo[i3].p);
   }
   ::glEnd();        
   

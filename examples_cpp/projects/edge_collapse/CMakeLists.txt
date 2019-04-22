@@ -20,9 +20,10 @@ add_executable(${PROJECT_NAME}
   main.cpp
   ${DELFEM2_SRC}/vec3.cpp             ${DELFEM2_INC}/vec3.h
   ${DELFEM2_SRC}/msh.cpp              ${DELFEM2_INC}/msh.h
-  ${DELFEM2_SRC}/mshio.cpp
+  ${DELFEM2_SRC}/mshio.cpp            ${DELFEM2_INC}/mshio.h
 
-  ${DELFEM2_SRC}/dyntri_v3.cpp
+  ${DELFEM2_SRC}/dyntri_v3.cpp        ${DELFEM2_INC}/dyntri.h
+  ${DELFEM2_SRC}/dyntri.cpp           ${DELFEM2_INC}/dyntri_v3.h
 
   ${DELFEM2_SRC}/funcs_gl.cpp
   ${DELFEM2_SRC}/color_gl.cpp
