@@ -57,7 +57,9 @@ public:
     ndim = 3;
   }
   void Write_Obj(const std::string& fname){
-    ::Write_Obj(fname, aPos, aElem);
+    ::Write_Obj(fname,
+                aPos.data(), aPos.size()/3,
+                aElem.data(), aElem.size()/3);
   }
   void DrawFace_ElemWiseNorm() const;
   void DrawEdge() const;

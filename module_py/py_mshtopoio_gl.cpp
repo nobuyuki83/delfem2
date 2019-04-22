@@ -43,6 +43,16 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadObj
   return std::forward_as_tuple(npXYZ,npTri);
 }
 
+void PyMeshTri3D_WriteObj
+(const std::string& fname,
+ const py::array_t<double>& aXYZ,
+ const py::array_t<int>& aTri)
+{
+  Write_Obj(fname,
+            aXYZ.data(), aXYZ.shape()[0],
+            aTri.data(), aTri.shape()[0]);
+}
+
 std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadNastran
 (const std::string& fname)
 {
@@ -368,6 +378,7 @@ void init_mshtopoio_gl(py::module &m){
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);
   m.def("meshtri3d_read_nastran", &PyMeshTri3D_ReadNastran, py::return_value_policy::move);
+  m.def("meshtri3d_write_obj",    &PyMeshTri3D_WriteObj);
   m.def("meshquad3d_subdiv",      &PyMeshQuad3D_Subviv,     py::return_value_policy::move);
   m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
   m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);

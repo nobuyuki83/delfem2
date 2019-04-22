@@ -74,6 +74,9 @@ class Mesh():
     res = jarray_mesh_psup(self.np_elm, self.np_pos.shape[0])
     return res
 
+  def write_obj(self,path_file):
+    meshtri3d_write_obj(path_file, self.np_pos, self.np_elm)
+
 #######################################
 
 def mesh_read(path_file="") -> Mesh:
