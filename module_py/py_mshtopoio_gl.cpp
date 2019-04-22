@@ -97,6 +97,101 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshHex3D_Subviv
 }
 
 
+class CMeshDynTri{
+public:
+  void Initialize(const double* aPo, int nPo, int ndim,
+                  const int* aTri, int nTri)
+  {
+    aEPo.resize(nPo);
+    for(int ipo=0;ipo<nPo;ipo++){
+      if( ndim == 3 ){
+        aEPo[ipo].p.x = aPo[ipo*3+0];
+        aEPo[ipo].p.y = aPo[ipo*3+1];
+        aEPo[ipo].p.z = aPo[ipo*3+2];
+      }
+      else if( ndim == 2 ){
+        aEPo[ipo].p.x = aPo[ipo*2+0];
+        aEPo[ipo].p.y = aPo[ipo*2+1];
+        aEPo[ipo].p.z = 0.0;
+      }
+    }
+    for(int itri=0;itri<nTri;itri++){
+      unsigned int i1 = aTri[itri*3+0];
+      unsigned int i2 = aTri[itri*3+1];
+      unsigned int i3 = aTri[itri*3+2];
+      aEPo[i1].e = itri; aEPo[i1].d = 0;
+      aEPo[i2].e = itri; aEPo[i2].d = 1;
+      aEPo[i3].e = itri; aEPo[i3].d = 2;
+    }
+    /////////////////
+    aETri.resize(nTri);
+    for(int itri=0;itri<nTri;itri++){
+      aETri[itri].v[0] = aTri[itri*3+0];
+      aETri[itri].v[1] = aTri[itri*3+1];
+      aETri[itri].v[2] = aTri[itri*3+2];
+    }
+    {
+      unsigned int* elsup_ind = new unsigned int [aEPo.size()+1];
+      unsigned int nelsup;
+      unsigned int* elsup;
+      MakePointSurTri(aETri, (int)aEPo.size(), elsup_ind, nelsup, elsup);
+      MakeInnerRelationTri(aETri, (int)aEPo.size(),  elsup_ind, nelsup, elsup);
+      delete[] elsup_ind;
+      delete[] elsup;
+    }
+  }
+  void Check()
+  {
+    CheckTri(aETri);
+    CheckTri(aEPo, aETri);
+  }
+  std::vector<double> MinMax_XYZ() const {
+    double x_min,x_max, y_min,y_max, z_min,z_max;
+    x_min=x_max=aEPo[0].p.x;
+    y_min=y_max=aEPo[0].p.y;
+    z_min=z_max=aEPo[0].p.z;
+    for(unsigned int ipo=0;ipo<aEPo.size();ipo++){
+      updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
+                      aEPo[ipo].p.x, aEPo[ipo].p.y, aEPo[ipo].p.z);
+    }
+    return {x_min,x_max, y_min,y_max, z_min,z_max};
+  }
+  int insertPointElem(int itri0, double r0, double r1){
+    const int ipo0 = aEPo.size();
+    CEPo2<void*> p0;
+    {
+      int i0 = aETri[itri0].v[0];
+      int i1 = aETri[itri0].v[1];
+      int i2 = aETri[itri0].v[2];
+      p0.p = r0*aEPo[i0].p+r1*aEPo[i1].p+(1-r0-r1)*aEPo[i2].p;
+    }
+    aEPo.push_back(p0);
+    InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
+    return ipo0;
+  }
+  void DelaunayAroundPoint(int ipo){
+    ::DelaunayAroundPoint(ipo, aEPo, aETri);
+  }
+  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aEPo,aETri); }
+  void Draw_Edge() const { DrawMeshDynTri_Edge(aEPo,aETri); }
+  void draw() const { this->Draw_Edge(); }
+  int nTri() const { return aETri.size(); }
+  void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
+public:
+  std::vector< CEPo2<void*> > aEPo;
+  std::vector<ETri> aETri;
+};
+
+void PyMeshDynTri3D_Initialize
+(CMeshDynTri& mesh,
+ const py::array_t<double>& po,
+ const py::array_t<int>& tri)
+{
+  mesh.Initialize(po.data(), po.shape()[0], po.shape()[1],
+                  tri.data(), tri.shape()[0]);
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 void PyDrawMesh_FaceNorm
@@ -255,6 +350,20 @@ void init_mshtopoio_gl(py::module &m){
   .def("draw",&CMeshMultiElem::Draw)
   .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
+  
+  py::class_<CMeshDynTri>(m, "CppMeshDynTri")
+  .def(py::init<>())
+  .def("draw", &CMeshDynTri::draw)
+  .def("draw_face", &CMeshDynTri::Draw_FaceNorm)
+  .def("draw_edge", &CMeshDynTri::Draw_Edge)
+  .def("check", &CMeshDynTri::Check)
+  .def("ntri",  &CMeshDynTri::nTri)
+  .def("delete_tri_edge", &CMeshDynTri::DeleteTriEdge)
+  .def("minmax_xyz",      &CMeshDynTri::MinMax_XYZ)
+  .def("insert_point_elem", &CMeshDynTri::insertPointElem)
+  .def("delaunay_around_point", &CMeshDynTri::DelaunayAroundPoint);
+  
+  m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);

@@ -369,6 +369,16 @@ void MeanValueCoordinate(double w[3],
                          const CVector3& v1,
                          const CVector3& v2);
 
+CVector3 ProjectPointOnTriangle(const CVector3 &p0,
+                                const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3);
+bool isPointInsideTriangle(const CVector3 &p0,
+                           const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3);
+bool isPointSameSide(const CVector3 &p0, const CVector3 &p1,
+                     const CVector3 &line_p0, const CVector3 &line_p1);
+bool isRayIntersectingTriangle(const CVector3 &line0, const CVector3 &line1,
+                               const CVector3 &tri0, const CVector3 &tri1, const CVector3 &tri2,
+                               CVector3 &intersectionPoint);
+
 
 ///////////////////
 // here starts std::vector<CVector3>

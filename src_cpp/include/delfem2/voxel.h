@@ -72,10 +72,10 @@ void AABB_CubeGrid(int aabb[6],
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-class CVoxelGrid
+class CGrid3D
 {
 public:
-  CVoxelGrid(){
+  CGrid3D(){
     ndivx = ndivy = ndivz = 0;
     iorgx = iorgy = iorgz = 0;
     aIsVox.clear();
@@ -119,7 +119,7 @@ public:
     else{
       int aabb[8]; this->AABB(aabb);
       Add_AABB(aabb,ivx,ivy,ivz);
-      CVoxelGrid vg0 = (*this);
+      CGrid3D vg0 = (*this);
       this->Init_AABB(aabb);
       Set(ivx,ivy,ivz,1);
       for(int igvx0=0;igvx0<vg0.ndivx;++igvx0){

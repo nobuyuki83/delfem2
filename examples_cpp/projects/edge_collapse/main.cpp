@@ -31,7 +31,7 @@ void MyGlNormal3dv(CVector3& n){
 
 double cur_time = 0.0;
 double dt = 0.1;
-std::vector<CEPo<void*> > aPo;
+std::vector<CEPo2<void*> > aPo;
 std::vector<ETri> aTri;
 
 CGlutWindowManager win;

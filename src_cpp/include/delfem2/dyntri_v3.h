@@ -25,17 +25,17 @@ public:
 };
 
 template <typename TYPE>
-class CEPo{
+class CEPo2{
 public:
-	CEPo(){
+	CEPo2(){
     e = -1;
     d = 0;
   }
-	CEPo( const CEPo& rhs )
+	CEPo2( const CEPo2& rhs )
 		: e(rhs.e), d(rhs.d), p(rhs.p), n(rhs.n), t(rhs.t){}
-  CEPo(const CVector3 p, int ielem, unsigned int idir)
+  CEPo2(const CVector3 p, int ielem, unsigned int idir)
     : p(p), e(ielem), d(idir){}
-  CEPo(const CVector3& p, const CVector3& n) :
+  CEPo2(const CVector3& p, const CVector3& n) :
     p(p), n(n), e(-1), d(0){}
 public:
   int e;  
@@ -47,36 +47,21 @@ public:
   TYPE t;
 };
 
-bool MakePointSurTri
-( const std::vector<ETri>& aTri, const unsigned int npoin,
- unsigned int* const elsup_ind, unsigned int& nelsup, unsigned int*& elsup );
+bool MakePointSurTri(const std::vector<ETri>& aTri, const unsigned int npoin,
+                     unsigned int* const elsup_ind, unsigned int& nelsup, unsigned int*& elsup );
 
-void MakeEdge
-(unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
-const std::vector<ETri>& aTri, const unsigned int npoin,
-const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup);
+void MakeEdge(unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
+              const std::vector<ETri>& aTri, const unsigned int npoin,
+              const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup);
 
-bool MakeInnerRelationTri
-(std::vector<ETri>& aTri, const unsigned int npoin,
-const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup);
-
-CVector3 ProjectPointOnTriangle
-(const CVector3 &p0,
-const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3);
-
-bool isPointInsideTriangle(const CVector3 &p0,
-  const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3);
-bool isPointSameSide(const CVector3 &p0, const CVector3 &p1,
-  const CVector3 &line_p0, const CVector3 &line_p1);
-bool isRayIntersectingTriangle(const CVector3 &line0, const CVector3 &line1,
-  const CVector3 &tri0, const CVector3 &tri1, const CVector3 &tri2,
-  CVector3 &intersectionPoint);
+bool MakeInnerRelationTri(std::vector<ETri>& aTri, const unsigned int npoin,
+                          const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup);
 
 bool CheckTri(const std::vector<ETri>& aTri);
 
 template <typename TYPE>
 bool CheckTri
-(const std::vector< CEPo<TYPE> >& aPo3D,
+(const std::vector< CEPo2<TYPE> >& aPo3D,
  const std::vector<ETri>& aSTri,
  bool is_assert=true)
 {
@@ -103,16 +88,16 @@ bool CheckTri
       return false;
     }
     ////
-    if( tri0.s2[0]==tri0.s2[1] ){ // assert(tri0.s2[0]!=tri0.s2[2]);
+    if( (tri0.s2[0]==tri0.s2[1]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[0]!=tri0.s2[2]);
 //      std::cout << tri0.s2[0] << " " << tri0.s2[1] << std::endl;
       if( is_assert ){ assert(0); }
       return false;
     }
-    if( tri0.s2[1]==tri0.s2[2] ){ // assert(tri0.s2[1]!=tri0.s2[2]);
+    if( (tri0.s2[1]==tri0.s2[2]) && tri0.s2[1] >= 0 ){ // assert(tri0.s2[1]!=tri0.s2[2]);
       if( is_assert ){ assert(0); }
       return false;
     }
-    if( tri0.s2[2]==tri0.s2[0] ){ // assert(tri0.s2[2]!=tri0.s2[0]);
+    if( (tri0.s2[2]==tri0.s2[0]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[2]!=tri0.s2[0]);
       if( is_assert ){ assert(0); }
       return false;
     }
@@ -176,7 +161,7 @@ bool FindEdge
 (int& itri0, int& inotri0, int& inotri1,
 ///
 const int ipo0, const int ipo1,
-const std::vector< CEPo<TYPE> >& aPo, const std::vector<ETri>& aTri)
+const std::vector< CEPo2<TYPE> >& aPo, const std::vector<ETri>& aTri)
 {
   const int itri_ini = aPo[ipo0].e;
   const int inotri_ini = aPo[ipo0].d;
@@ -244,7 +229,7 @@ const std::vector< CEPo<TYPE> >& aPo, const std::vector<ETri>& aTri)
 
 template <typename TYPE>
 void makeNormal(
-    std::vector<CEPo<TYPE> >& aPo3D,
+    std::vector<CEPo2<TYPE> >& aPo3D,
     const std::vector<ETri>& aSTri)
 {
   for (int ip = 0; ip<(int)aPo3D.size(); ip++){
@@ -275,7 +260,7 @@ void makeNormal(
 template <typename TYPE>
 CVector3 normalTri
 (int itri0,
- const std::vector<CEPo<TYPE> >& aPo3D,
+ const std::vector<CEPo2<TYPE> >& aPo3D,
  const std::vector<ETri>& aSTri)
 {
   int i0 = aSTri[itri0].v[0];
@@ -293,7 +278,7 @@ bool InsertPoint_ElemEdge
 (const int ipo_ins,    //the index of the new point
  const int itri_ins,  //triangle index				
  const int ied_ins,  //edge index
- std::vector<CEPo<TYPE> >& aPo,
+ std::vector<CEPo2<TYPE> >& aPo,
  std::vector<ETri>& aTri )
 {
   assert(itri_ins < (int)aTri.size());
@@ -427,7 +412,7 @@ template <typename TYPE>
 bool InsertPoint_Elem
 (const int ipo_ins,
 const int itri_ins,
-std::vector<CEPo<TYPE> >& aPo,
+std::vector<CEPo2<TYPE> >& aPo,
 std::vector<ETri>& aTri)
 {
   assert(itri_ins < (int)aTri.size());
@@ -514,7 +499,7 @@ int InsertPoint_Mesh
 (const int itri0,
  double& r0,
  double& r1,
- std::vector<CEPo<TYPE> >& aPo3D,
+ std::vector<CEPo2<TYPE> >& aPo3D,
  std::vector<ETri>& aSTri)
 {
   if (itri0==-1) return -1;
@@ -529,7 +514,7 @@ int InsertPoint_Mesh
     pos = r0*p0 + r1*p1 + (1-r0-r1)*p2;
     UnitNormal(norm, p0, p1, p2);
   }
-  CEPo<void*> q(pos, norm);
+  CEPo2<void*> q(pos, norm);
   int ipo_ins = (int)aPo3D.size();
   aPo3D.push_back(q);
 //  if( ptri.iedge == -1 ){ // inside tri
@@ -545,7 +530,7 @@ int InsertPoint_Mesh
 
 template <typename TYPE>
 bool FlipEdge(int itri0, int ied0,
-  std::vector<CEPo<TYPE> >& aPo, std::vector<ETri>& aTri)
+  std::vector<CEPo2<TYPE> >& aPo, std::vector<ETri>& aTri)
 {
   assert(itri0 < (int)aTri.size());
   assert(ied0 < 3);
@@ -656,7 +641,7 @@ bool FlipEdge(int itri0, int ied0,
 template <typename TYPE>
 void MoveCCW(int& itri_cur, int& inotri_cur, bool& flag_is_wall,
 //             const int itri0, const int ipo0,
-             std::vector<CEPo<TYPE> >& aPo, std::vector<ETri>& aTri)
+             std::vector<CEPo2<TYPE> >& aPo, std::vector<ETri>& aTri)
 {
   const int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
   if (aTri[itri_cur].s2[inotri1]==-1){ flag_is_wall = true; return; }
@@ -670,7 +655,7 @@ void MoveCCW(int& itri_cur, int& inotri_cur, bool& flag_is_wall,
 
 template <typename TYPE>
 bool DelaunayAroundPoint(int ipo0,
-  std::vector<CEPo<TYPE> >& aPo, std::vector<ETri>& aTri)
+  std::vector<CEPo2<TYPE> >& aPo, std::vector<ETri>& aTri)
 {
   assert(ipo0 < (int)aPo.size());
   if (aPo[ipo0].e==-1) return true;
@@ -783,7 +768,7 @@ bool DelaunayAroundPoint(int ipo0,
 template <typename TYPE>
 bool DeleteTri
 (unsigned int itri_to,
-std::vector<CEPo<TYPE> >& aPo,
+std::vector<CEPo2<TYPE> >& aPo,
 std::vector<ETri>& aTri)
 {
   if (itri_to>=aTri.size()) return true;
@@ -819,7 +804,7 @@ std::vector<ETri>& aTri)
 template <typename TYPE>
 bool Collapse_ElemEdge
 (const int itri_del, const int ied_del,
-std::vector<CEPo<TYPE> >& aPo, std::vector<ETri>& aTri)
+std::vector<CEPo2<TYPE> >& aPo, std::vector<ETri>& aTri)
 {
   assert(itri_del < (int)aTri.size());
   if (aTri[itri_del].s2[ied_del]==-1){
@@ -1071,7 +1056,7 @@ template <typename TYPE>
 void GetTriAryAroundPoint
 (int ipoin,
  std::vector< std::pair<unsigned int,unsigned int> >& aTriSurPo,
- const std::vector<CEPo<TYPE> >& aPo, const std::vector<ETri>& aTri)
+ const std::vector<CEPo2<TYPE> >& aPo, const std::vector<ETri>& aTri)
 {
   const unsigned int itri_ini = aPo[ipoin].e;
   const unsigned int inoel_c_ini = aPo[ipoin].d;
@@ -1109,7 +1094,7 @@ bool FindRayTriangleMeshIntersections
 (const CVector3 &line0,
  const CVector3 &line1,
  const std::vector<ETri>& aTri,
- const std::vector<CEPo<TYPE> > &aPoint3D,
+ const std::vector<CEPo2<TYPE> > &aPoint3D,
  std::vector<CVector3> &intersectionPoints);
 
 template <typename TYPE>
@@ -1117,7 +1102,7 @@ bool FindRayTriangleMeshIntersectionClosestToPoint
 (const CVector3 &line0,
  const CVector3 &line1,
  const std::vector<ETri>& aTri,
- const std::vector<CEPo<TYPE> > &aPoint3D,
+ const std::vector<CEPo2<TYPE> > &aPoint3D,
  const CVector3 &targetPoint,
  CVector3 &intersectionPoint);
 
@@ -1126,7 +1111,7 @@ bool FindRayTriangleMeshIntersectionClosestToPoint
 
 template <typename TYPE>
 void InitializeMesh
-(std::vector<CEPo<TYPE> >& aPo3D,
+(std::vector<CEPo2<TYPE> >& aPo3D,
 std::vector<ETri>& aSTri,
 ////
 const std::vector<double>& aXYZ,
@@ -1178,7 +1163,7 @@ int pickTriangle
 (CVector3& p,
 const CVector3& org, const CVector3& dir,
 int itri_start, // starting triangle
-const std::vector<CEPo<TYPE> >& aPo3D,
+const std::vector<CEPo2<TYPE> >& aPo3D,
 const std::vector<ETri>& aSTri)
 {
   int itri1 = itri_start;
@@ -1223,7 +1208,7 @@ bool pickMesh(CVector3& p,
               const CVector3& org,
               const CVector3& dir,
               int itri_start, // starting triangle
-              const std::vector<CEPo<TYPE> >& aPo3D,
+              const std::vector<CEPo2<TYPE> >& aPo3D,
               const std::vector<ETri>& aSTri)
 {
   int itri1 = itri_start;
@@ -1329,7 +1314,7 @@ bool GenerateTesselation2(std::vector<int>& aTri_out, // out
                           const std::vector< std::vector<double> >& aVecAry0); // in
 
 
-#ifdef USE_OPENGL
+#ifdef USE_GL
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
 #include <OpenGL/gl.h>
@@ -1342,8 +1327,8 @@ bool GenerateTesselation2(std::vector<int>& aTri_out, // out
 #endif
 
 template <typename TYPE>
-void drawEditableMesh
-(const std::vector< CEPo<TYPE> >& aPo3D,
+void DrawMeshDynTri_FaceNorm
+(const std::vector< CEPo2<TYPE> >& aPo3D,
  const std::vector<ETri>& aSTri )
 {
   //  ::glPushAttrib(GL_ENABLE_BIT);
@@ -1378,7 +1363,13 @@ void drawEditableMesh
     }
   }
   ::glEnd();
-  
+}
+
+template <typename TYPE>
+void DrawMeshDynTri_Edge
+(const std::vector< CEPo2<TYPE> >& aPo3D,
+ const std::vector<ETri>& aSTri )
+{
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
@@ -1391,9 +1382,17 @@ void drawEditableMesh
       assert( i1 == -1 );
       assert( i2 == -1 );
     }
-    myGlVertex(aPo3D[i0].p);     myGlVertex(aPo3D[i1].p);
-    myGlVertex(aPo3D[i1].p);     myGlVertex(aPo3D[i2].p);
-    myGlVertex(aPo3D[i2].p);     myGlVertex(aPo3D[i0].p);
+    const CVector3& p0 = aPo3D[i0].p;
+    const CVector3& p1 = aPo3D[i1].p;
+    const CVector3& p2 = aPo3D[i2].p;
+    glVertex3d(p0.x,p0.y,p0.z);
+    glVertex3d(p1.x,p1.y,p1.z);
+    
+    glVertex3d(p1.x,p1.y,p1.z);
+    glVertex3d(p2.x,p2.y,p2.z);
+
+    glVertex3d(p2.x,p2.y,p2.z);
+    glVertex3d(p0.x,p0.y,p0.z);
   }
   ::glEnd();
 }
