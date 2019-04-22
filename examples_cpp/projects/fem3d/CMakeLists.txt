@@ -24,8 +24,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/msh.cpp
   ${DELFEM2_SRC}/mshtopo.cpp        ${DELFEM2_INC}/mshtopo.h
 
-  ${DELFEM2_SRC}/dyntri_v3.cpp
-
   ${DELFEM2_SRC}/isosurface_stuffing.cpp
   ${DELFEM2_SRC}/sdf.cpp
   ${DELFEM2_SRC}/hash3d.cpp

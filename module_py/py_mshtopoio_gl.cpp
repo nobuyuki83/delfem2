@@ -5,6 +5,8 @@
 
 #include "delfem2/mshtopoio_gl.h"
 #include "delfem2/funcs_gl.h"
+#include "delfem2/dyntri.h"
+#include "delfem2/dyntri_v2.h"
 #include "delfem2/dyntri_v3.h"
 
 namespace py = pybind11;
@@ -168,7 +170,7 @@ public:
   }
   int insertPointElem(int itri0, double r0, double r1){
     const int ipo0 = aEPo.size();
-    CEPo2<void*> p0;
+    CEPo2 p0;
     {
       int i0 = aETri[itri0].v[0];
       int i1 = aETri[itri0].v[1];
@@ -188,7 +190,7 @@ public:
   int nTri() const { return aETri.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
 public:
-  std::vector< CEPo2<void*> > aEPo;
+  std::vector<CEPo2> aEPo;
   std::vector<ETri> aETri;
 };
 
