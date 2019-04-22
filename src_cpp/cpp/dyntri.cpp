@@ -3,6 +3,7 @@
 #include <map>
 #include <stack>
 #include <iostream>
+#include <cassert>
 
 #include "delfem2/dyntri.h"
 
