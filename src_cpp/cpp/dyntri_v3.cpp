@@ -318,13 +318,13 @@ void InitializeMesh
 (std::vector<CEPo2>& aPo3D,
  std::vector<ETri>& aSTri,
  ////
- const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const double* aXYZ, int nXYZ,
+ const int* aTri,    int nTri)
 {
   aPo3D.clear();
   aSTri.clear();
   /////
-  aPo3D.resize(aXYZ.size()/3);
+  aPo3D.resize(nXYZ);
   //  std::cout << aPo3D.size() << std::endl;
   for (int ipo = 0; ipo<(int)aPo3D.size(); ++ipo){
     aPo3D[ipo].p.x = aXYZ[ipo*3+0];
@@ -333,7 +333,7 @@ void InitializeMesh
     aPo3D[ipo].e = -1; // for unreffered point
     aPo3D[ipo].d = 0;
   }
-  aSTri.resize(aTri.size()/3);
+  aSTri.resize(nTri);
   for (int itri = 0; itri<(int)aSTri.size(); itri++){
     aSTri[itri].v[0] = aTri[itri*3+0];
     aSTri[itri].v[1] = aTri[itri*3+1];
@@ -348,13 +348,11 @@ void InitializeMesh
     aPo3D[i3].e = itri; aPo3D[i3].d = 2;
   }
   {
-    unsigned int* elsup_ind = new unsigned int[aPo3D.size()+1];
-    unsigned int nelsup;
-    unsigned int* elsup;
-    MakePointSurTri(aSTri, (int)aPo3D.size(), elsup_ind, nelsup, elsup);
-    MakeInnerRelationTri(aSTri, (int)aPo3D.size(), elsup_ind, nelsup, elsup);
-    delete[] elsup_ind;
-    delete[] elsup;
+    std::vector<int> elsup_ind, elsup;
+    JArray_MakeElSuP(elsup_ind, elsup,
+                    aSTri, (int)aPo3D.size());
+    MakeInnerRelationTri(aSTri, (int)aPo3D.size(),
+                         elsup_ind,elsup);
   }
 }
 

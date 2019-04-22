@@ -16,6 +16,12 @@ bool CheckTri(const std::vector<CEPo2>& aPo3D,
               const std::vector<ETri>& aSTri,
               bool is_assert=true);
 
+void InitializeMesh(std::vector<CEPo2>& aPo3D,
+                    std::vector<ETri>& aSTri,
+                    ////
+                    const double* aXYZ, int nXYZ,
+                    const int* aTri,    int nTri);
+
 bool FindRayTriangleMeshIntersections(const CVector3 &line0,
                                       const CVector3 &line1,
                                       const std::vector<ETri>& aTri,

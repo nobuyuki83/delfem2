@@ -91,13 +91,11 @@ void SetNewProblem()
     }
   }
   {
-    unsigned int* elsup_ind = new unsigned int [aPo.size()+1];
-    unsigned int nelsup;
-    unsigned int* elsup;
-    MakePointSurTri(aTri, (int)aPo.size(), elsup_ind, nelsup, elsup);
-    MakeInnerRelationTri(aTri, (int)aPo.size(),  elsup_ind, nelsup, elsup);
-    delete[] elsup_ind;
-    delete[] elsup;
+    std::vector<int> elsup_ind, elsup;
+    JArray_MakeElSuP(elsup_ind, elsup,
+                     aTri, (int)aPo.size());
+    MakeInnerRelationTri(aTri, (int)aPo.size(),
+                         elsup_ind, elsup);
   }
   CheckTri(aTri);
   CheckTri(aPo, aTri);
