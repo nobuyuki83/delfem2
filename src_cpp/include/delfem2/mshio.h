@@ -50,8 +50,8 @@ void Read_Ply(const std::string& fname,
 // Obj
 
 void Write_Obj(const std::string& str,
-               const std::vector<double>& aXYZ,
-               const std::vector<int>& aTri);
+               const double* aXYZ, int nXYZ,
+               const int* aTri, int nTri);
 void Write_Obj_Quad(const std::string& str,
                     const std::vector<double>& aXYZ,
                     const std::vector<int>& aQuad);

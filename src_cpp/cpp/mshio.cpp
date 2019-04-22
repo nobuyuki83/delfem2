@@ -254,11 +254,11 @@ void Read_Ply
 
 void Write_Obj
 (const std::string& str,
- const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const double* aXYZ, int nXYZ,
+ const int* aTri, int nTri)
 {
-  int np = (int)aXYZ.size()/3;
-  int nt = (int)aTri.size()/3;
+  int np = nXYZ;
+  int nt = nTri;
   std::ofstream fout(str.c_str(), std::ofstream::out);
   for (int ip = 0; ip<np; ip++){
     fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
