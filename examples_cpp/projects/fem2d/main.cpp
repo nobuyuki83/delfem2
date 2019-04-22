@@ -22,10 +22,6 @@
 #include "delfem2/funcs_gl.h"
 #include "delfem2/funcs_glut.h"
 
-static double TriArea2D(const double v1[], const double v2[], const double v3[]){
-  return 0.5*( (v2[0]-v1[0])*(v3[1]-v1[1]) - (v3[0]-v1[0])*(v2[1]-v1[1]) );
-}
-
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {
   const unsigned int nCV = (int)aCV.size()/2;

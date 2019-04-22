@@ -34,6 +34,7 @@ double cur_time = 0.0;
 double dt = 0.1;
 std::vector<CEPo2> aPo;
 std::vector<ETri> aTri;
+std::vector<CVector3> aVec3;
 
 CGlutWindowManager win;
 bool is_animation = true;
@@ -65,10 +66,11 @@ void SetNewProblem()
     }
     MakeNormal(aNorm,     nnode,pXYZs, ntri,aTriInd);
     aPo.resize(nnode);
+    aVec3.resize(nnode);
     for(unsigned int ipo=0;ipo<aPo.size();ipo++){
-      aPo[ipo].p.x = pXYZs[ipo*3+0];
-      aPo[ipo].p.y = pXYZs[ipo*3+1];
-      aPo[ipo].p.z = pXYZs[ipo*3+2];
+      aVec3[ipo].x = pXYZs[ipo*3+0];
+      aVec3[ipo].y = pXYZs[ipo*3+1];
+      aVec3[ipo].z = pXYZs[ipo*3+2];
     }
     aTri.resize(ntri);
     for(unsigned int itri=0;itri<aTri.size();itri++){
@@ -99,6 +101,7 @@ void SetNewProblem()
   }
   CheckTri(aTri);
   CheckTri(aPo, aTri);
+  CheckTri(aPo, aTri, aVec3);
   
   iprob++;
   if( iprob == nprob ){ iprob = 0; }
@@ -170,9 +173,9 @@ void myGlutDisplay(void)
     const unsigned int i1 = aTri[itri].v[0];
     const unsigned int i2 = aTri[itri].v[1];
     const unsigned int i3 = aTri[itri].v[2];
-    MyGlVertex3dv(aPo[i1].p);
-    MyGlVertex3dv(aPo[i2].p);
-    MyGlVertex3dv(aPo[i3].p);
+    MyGlVertex3dv(aVec3[i1]);
+    MyGlVertex3dv(aVec3[i2]);
+    MyGlVertex3dv(aVec3[i3]);
   }
   ::glEnd();        
   
@@ -183,9 +186,9 @@ void myGlutDisplay(void)
     const unsigned int i1 = aTri[itri].v[0];
     const unsigned int i2 = aTri[itri].v[1];
     const unsigned int i3 = aTri[itri].v[2];
-    MyGlVertex3dv(aPo[i1].p);     MyGlVertex3dv(aPo[i2].p); 
-    MyGlVertex3dv(aPo[i2].p);     MyGlVertex3dv(aPo[i3].p); 
-    MyGlVertex3dv(aPo[i3].p);     MyGlVertex3dv(aPo[i1].p); 
+    MyGlVertex3dv(aVec3[i1]);     MyGlVertex3dv(aVec3[i2]);
+    MyGlVertex3dv(aVec3[i2]);     MyGlVertex3dv(aVec3[i3]);
+    MyGlVertex3dv(aVec3[i3]);     MyGlVertex3dv(aVec3[i1]);
   }
   ::glEnd();        
   

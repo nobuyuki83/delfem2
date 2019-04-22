@@ -1,11 +1,7 @@
 #ifndef DYNTRI_H
 #define DYNTRI_H
 
-#include <map>
-#include <algorithm>
-#include <stack>
-
-#include "delfem2/vec3.h"
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,16 +24,14 @@ class CEPo2{
 public:
 	CEPo2(){ e = -1; d = 0; }
 	CEPo2( const CEPo2& rhs )
-		: e(rhs.e), d(rhs.d), p(rhs.p) {}
-  CEPo2(const CVector3 p, int ielem, unsigned int idir)
-    : e(ielem), d(idir), p(p){}
-  CEPo2(const CVector3& p) :
-    e(-1), d(0), p(p){}
+		: e(rhs.e), d(rhs.d) {}
+  CEPo2(int ielem, unsigned int idir)
+    : e(ielem), d(idir) {}
 public:
   int e;  
   int d; 
   ////
-  CVector3 p; // position
+//  CVector3 p; // position
 };
 
 bool JArray_MakeElSuP(std::vector<int>& elsup_ind, std::vector<int>& elsup,
@@ -52,7 +46,9 @@ void JArray_PSuP(unsigned int* const edge_ind, unsigned int& nedge, unsigned int
               const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
 
 bool CheckTri(const std::vector<ETri>& aTri);
-
+bool CheckTri(const std::vector<CEPo2>& aPo3D,
+              const std::vector<ETri>& aSTri,
+              bool is_assert=true);
 
 bool FindEdge(int& itri0, int& inotri0, int& inotri1,
               ///
@@ -75,10 +71,6 @@ bool InsertPoint_Elem(const int ipo_ins,
                       std::vector<CEPo2>& aPo,
                       std::vector<ETri>& aTri);
 
-bool DelaunayAroundPoint(int ipo0,
-                         std::vector<CEPo2>& aPo,
-                         std::vector<ETri>& aTri);
-
 bool FlipEdge(int itri0, int ied0,
               std::vector<CEPo2>& aPo,
               std::vector<ETri>& aTri);
@@ -89,10 +81,6 @@ void MoveCCW(int& itri_cur,
              ////
              std::vector<CEPo2>& aPo,
              std::vector<ETri>& aTri);
-
-bool DelaunayAroundPoint(int ipo0,
-                         std::vector<CEPo2>& aPo,
-                         std::vector<ETri>& aTri);
 
 bool DeleteTri(unsigned int itri_to,
                std::vector<CEPo2>& aPo,

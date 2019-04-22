@@ -4,9 +4,11 @@
 #include "delfem2/dyntri_v2.h"
 
 
+/*
 static inline double TriArea2D(const double v1[], const double v2[], const double v3[]){
   return 0.5*( (v2[0]-v1[0])*(v3[1]-v1[1]) - (v3[0]-v1[0])*(v2[1]-v1[1]) );
 }
+ */
 
 static bool IsCrossLines(const double po_s0[], const double po_e0[],
                          const double po_s1[], const double po_e1[] )
@@ -20,10 +22,7 @@ static bool IsCrossLines(const double po_s0[], const double po_e0[],
   return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
+/*
 double DistanceXY(const CVector3& p0, const CVector3& p1 )
 {
   const double dx = p0.x-p1.x;
@@ -78,12 +77,16 @@ static inline int DetDelaunayXY
   }
   return 0;
 }
+ */
 
+//////////////////////////////////////////////////////////////////////////////////
 
 bool FindEdgePoint_AcrossEdge2
 (int& itri0, int& inotri0, int& inotri1, double& ratio,
  const int& ipo0, const int& ipo1,
- std::vector<CEPo2>& po, std::vector<ETri>& tri )
+ std::vector<CEPo2>& po,
+ std::vector<ETri>& tri,
+ std::vector<CVector2>& aVec2)
 {
   const unsigned int itri_ini = po[ipo0].e;
   const unsigned int inotri_ini = po[ipo0].d;
@@ -94,9 +97,13 @@ bool FindEdgePoint_AcrossEdge2
     {
       const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
       const unsigned int inotri3 = (inotri_cur+2)%3;//  indexRot3[2][inotri_cur];
-      double area0 = TriArea( po[ipo0].p, po[ tri[itri_cur].v[inotri2] ].p, po[ipo1].p );
+      double area0 = TriArea(aVec2[ipo0],
+                             aVec2[ tri[itri_cur].v[inotri2] ],
+                             aVec2[ipo1] );
       if( area0 > -1.0e-20 ){
-        double area1 =  TriArea( po[ipo0].p, po[ipo1].p, po[ tri[itri_cur].v[inotri3] ].p );
+        double area1 =  TriArea(aVec2[ipo0],
+                                aVec2[ipo1],
+                                aVec2[ tri[itri_cur].v[inotri3] ] );
         if( area1 > -1.0e-20 ){
           assert( area0 + area1 > 1.0e-20 );
           ratio = area0 / ( area0 + area1 );
@@ -134,9 +141,13 @@ bool FindEdgePoint_AcrossEdge2
     {
       const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
       const unsigned int inotri3 = (inotri_cur+2)%3; // indexRot3[2][inotri_cur];
-      double area0 = TriArea( po[ipo0].p, po[ tri[itri_cur].v[inotri2] ].p, po[ipo1].p );
+      double area0 = TriArea(aVec2[ipo0],
+                             aVec2[ tri[itri_cur].v[inotri2] ],
+                             aVec2[ipo1] );
       if( area0 > -1.0e-20 ){
-        double area1 =  TriArea( po[ipo0].p, po[ipo1].p, po[ tri[itri_cur].v[inotri3] ].p );
+        double area1 =  TriArea(aVec2[ipo0],
+                                aVec2[ipo1],
+                                aVec2[ tri[itri_cur].v[inotri3] ] );
         if( area1 > -1.0e-20 ){
           assert( area0 + area1 > 1.0e-20 );
           ratio = area0 / ( area0 + area1 );
@@ -174,7 +185,8 @@ bool FindEdgePoint_AcrossEdge2
 bool DelaunayAroundPoint2
 (int ipo0,
  std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri)
+ std::vector<ETri>& aTri,
+ std::vector<CVector2>& aVec2)
 {
   assert(ipo0 < (int)aPo.size());
   if (aPo[ipo0].e==-1) return true;
@@ -198,10 +210,10 @@ bool DelaunayAroundPoint2
       const int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunayXY(aPo[aTri[itri_cur].v[0]].p,
-                        aPo[aTri[itri_cur].v[1]].p,
-                        aPo[aTri[itri_cur].v[2]].p,
-                        aPo[ipo_dia].p)==0)
+      if (DetDelaunay(aVec2[aTri[itri_cur].v[0]],
+                      aVec2[aTri[itri_cur].v[1]],
+                      aVec2[aTri[itri_cur].v[2]],
+                      aVec2[ipo_dia])==0)
       {
         bool res = FlipEdge(itri_cur, inotri_cur, aPo, aTri);
         if( res ){
@@ -252,10 +264,10 @@ bool DelaunayAroundPoint2
       const int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunayXY(aPo[aTri[itri_cur].v[0]].p,
-                        aPo[aTri[itri_cur].v[1]].p,
-                        aPo[aTri[itri_cur].v[2]].p,
-                        aPo[ipo_dia].p)==0)	// Delaunay condition is not satisfiled
+      if (DetDelaunay(aVec2[aTri[itri_cur].v[0]],
+                      aVec2[aTri[itri_cur].v[1]],
+                      aVec2[aTri[itri_cur].v[2]],
+                      aVec2[ipo_dia])==0)	// Delaunay condition is not satisfiled
       {
         FlipEdge(itri_cur, inotri_cur, aPo, aTri);
         itri_cur = itri_dia;
@@ -284,7 +296,8 @@ bool DelaunayAroundPoint2
 
 
 void LaplacianSmoothing2
-(std::vector<CEPo2>& aPo,
+(std::vector<CVector2>& aVec2,
+ const std::vector<CEPo2>& aPo,
  const std::vector<ETri>& aTri,
  const std::vector<int>& aflg_isnt_move)
 {
@@ -308,16 +321,15 @@ void LaplacianSmoothing2
     int inoel_c0 = inoel_c_ini;
     int inoel_b0 = (inoel_c0+1)%3;
     bool is_bound_flg = false;
-    CVector3 vec_delta = aPo[ipoin].p;
+    CVector2 vec_delta = aVec2[ipoin];
     unsigned int ntri_around = 1;
     for(;;){
       assert( itri0 < (int)aTri.size() );
       assert( inoel_c0 < 3 );
       assert( aTri[itri0].v[inoel_c0] == ipoin );
       {
-        vec_delta.x += aPo[ aTri[itri0].v[inoel_b0] ].p.x;
-        vec_delta.y += aPo[ aTri[itri0].v[inoel_b0] ].p.y;
-        vec_delta.z = 0;
+        vec_delta.x += aVec2[ aTri[itri0].v[inoel_b0] ].x;
+        vec_delta.y += aVec2[ aTri[itri0].v[inoel_b0] ].y;
         ntri_around++;
       }
       if( aTri[itri0].s2[inoel_b0] >= 0 ){
@@ -339,15 +351,15 @@ void LaplacianSmoothing2
       }
     }
     if( is_bound_flg ) continue;
-    aPo[ipoin].p.x = vec_delta.x / ntri_around;
-    aPo[ipoin].p.y = vec_delta.y / ntri_around;
-    aPo[ipoin].p.z = 0.0;
+    aVec2[ipoin].x = vec_delta.x / ntri_around;
+    aVec2[ipoin].y = vec_delta.y / ntri_around;
   }
 }
 
 
 void LaplaceDelaunaySmoothing2
-(std::vector<CEPo2>& aPo,
+(std::vector<CVector2>& aVec2,
+ std::vector<CEPo2>& aPo,
  std::vector<ETri>& aTri,
  const std::vector<int>& aflg_isnt_move )
 {
@@ -364,15 +376,15 @@ void LaplaceDelaunaySmoothing2
     unsigned int inoel_c0 = inoel_c_ini;
     unsigned int inoel_b0 = (inoel_c0+1)%3;
     bool is_bound_flg = false;
-    CVector3 vec_delta = aPo[ipoin].p;
+    CVector2 vec_delta = aVec2[ipoin];
     unsigned int ntri_around = 1;
     for(;;){
       assert( itri0 < aTri.size() );
       assert( inoel_c0 < 3 );
       assert( aTri[itri0].v[inoel_c0] == (int)ipoin );
       {
-        vec_delta.x += aPo[ aTri[itri0].v[inoel_b0] ].p.x;
-        vec_delta.y += aPo[ aTri[itri0].v[inoel_b0] ].p.y;
+        vec_delta.x += aVec2[ aTri[itri0].v[inoel_b0] ].x;
+        vec_delta.y += aVec2[ aTri[itri0].v[inoel_b0] ].y;
         ntri_around++;
       }
       if( aTri[itri0].s2[inoel_b0] >= 0 ){
@@ -394,15 +406,16 @@ void LaplaceDelaunaySmoothing2
       }
     }
     if( is_bound_flg ) continue;
-    aPo[ipoin].p.x = vec_delta.x / ntri_around;
-    aPo[ipoin].p.y = vec_delta.y / ntri_around;
-    DelaunayAroundPoint(ipoin,aPo,aTri);
+    aVec2[ipoin].x = vec_delta.x / ntri_around;
+    aVec2[ipoin].y = vec_delta.y / ntri_around;
+    DelaunayAroundPoint2(ipoin,aPo,aTri,aVec2);
   }
 }
 
 void MeshingInside2
 (std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri,
+ std::vector<CVector2>& aVec2,
  const std::vector<int>& aVtxInd,
  const double len,
  const CMeshDensity& mesh_density)
@@ -421,26 +434,26 @@ void MeshingInside2
     for(;;){
       int nadd = 0;
       for(int itri=0;itri<(int)aTri.size();itri++){
-        const double area = TriAreaXY(aPo2D[aTri[itri].v[0]].p,
-                                      aPo2D[aTri[itri].v[1]].p,
-                                      aPo2D[aTri[itri].v[2]].p);
+        const double area = TriArea(aVec2[aTri[itri].v[0]],
+                                    aVec2[aTri[itri].v[1]],
+                                    aVec2[aTri[itri].v[2]]);
         const double pcnt[2] = {
-          (aPo2D[aTri[itri].v[0]].p.x + aPo2D[aTri[itri].v[1]].p.x + aPo2D[aTri[itri].v[2]].p.x)/3.0,
-          (aPo2D[aTri[itri].v[0]].p.y + aPo2D[aTri[itri].v[1]].p.y + aPo2D[aTri[itri].v[2]].p.y)/3.0
+          (aVec2[aTri[itri].v[0]].x + aVec2[aTri[itri].v[1]].x + aVec2[aTri[itri].v[2]].x)/3.0,
+          (aVec2[aTri[itri].v[0]].y + aVec2[aTri[itri].v[1]].y + aVec2[aTri[itri].v[2]].y)/3.0
         };
         double len2 = len*mesh_density.edgeLengthRatio(pcnt[0], pcnt[1]);
         if( area > len2 * len2 * ratio ){
           const int ipo0 = (int)aPo2D.size();
           aPo2D.resize( aPo2D.size()+1 );
-          aPo2D[ipo0].p.x = (aPo2D[aTri[itri].v[0]].p.x+aPo2D[aTri[itri].v[1]].p.x+aPo2D[aTri[itri].v[2]].p.x)/3.0;
-          aPo2D[ipo0].p.y = (aPo2D[aTri[itri].v[0]].p.y+aPo2D[aTri[itri].v[1]].p.y+aPo2D[aTri[itri].v[2]].p.y)/3.0;
-          aPo2D[ipo0].p.z = 0.0;
+          aVec2.resize( aVec2.size()+1 );
+          aVec2[ipo0].x = (aVec2[aTri[itri].v[0]].x+aVec2[aTri[itri].v[1]].x+aVec2[aTri[itri].v[2]].x)/3.0;
+          aVec2[ipo0].y = (aVec2[aTri[itri].v[0]].y+aVec2[aTri[itri].v[1]].y+aVec2[aTri[itri].v[2]].y)/3.0;
           InsertPoint_Elem(ipo0,itri,aPo2D,aTri);
-          DelaunayAroundPoint(ipo0,aPo2D,aTri);
+          DelaunayAroundPoint2(ipo0,aPo2D,aTri,aVec2);
           nadd++;
         }
       }
-      LaplacianSmoothing2(aPo2D,aTri,aflag_isnt_move);
+      LaplacianSmoothing2(aVec2, aPo2D,aTri,aflag_isnt_move);
       //			LaplaceDelaunaySmoothing(aPo2D,aTri);
       if( nadd != 0 ){ ratio *= 0.8; }
       else{ ratio *= 0.5; }
@@ -448,16 +461,19 @@ void MeshingInside2
     }
   }
   
-  LaplaceDelaunaySmoothing2(aPo2D,aTri,aflag_isnt_move);
+  LaplaceDelaunaySmoothing2(aVec2, aPo2D,aTri,aflag_isnt_move);
 }
 
 
 bool TriangulateOuterLoop2
 (std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri_in,
+ std::vector<CVector2>& aVec2,
  const std::vector<int>& aPtrVtxInd,
  const std::vector<int>& aVtxInd)
 {
+  assert( aPo2D.size() == aVec2.size() );
+  
   std::vector<ETri> aTri;
   std::vector<int> aPoDel;
   { // super triangle
@@ -465,15 +481,15 @@ bool TriangulateOuterLoop2
     double center[2];
     {
       double bound_2d[4];
-      bound_2d[0] = aPo2D[0].p.x;
-      bound_2d[1] = aPo2D[0].p.x;
-      bound_2d[2] = aPo2D[0].p.y;
-      bound_2d[3] = aPo2D[0].p.y;
+      bound_2d[0] = aVec2[0].x;
+      bound_2d[1] = aVec2[0].x;
+      bound_2d[2] = aVec2[0].y;
+      bound_2d[3] = aVec2[0].y;
       for(int ipoin=1;ipoin<(int)aPo2D.size();ipoin++){
-        if( aPo2D[ipoin].p.x < bound_2d[0] ){ bound_2d[0] = aPo2D[ipoin].p.x; }
-        if( aPo2D[ipoin].p.x > bound_2d[1] ){ bound_2d[1] = aPo2D[ipoin].p.x; }
-        if( aPo2D[ipoin].p.y < bound_2d[2] ){ bound_2d[2] = aPo2D[ipoin].p.y; }
-        if( aPo2D[ipoin].p.y > bound_2d[3] ){ bound_2d[3] = aPo2D[ipoin].p.y; }
+        if( aVec2[ipoin].x < bound_2d[0] ){ bound_2d[0] = aVec2[ipoin].x; }
+        if( aVec2[ipoin].x > bound_2d[1] ){ bound_2d[1] = aVec2[ipoin].x; }
+        if( aVec2[ipoin].y < bound_2d[2] ){ bound_2d[2] = aVec2[ipoin].y; }
+        if( aVec2[ipoin].y > bound_2d[3] ){ bound_2d[3] = aVec2[ipoin].y; }
       }
       max_len = (bound_2d[1]-bound_2d[0]>bound_2d[3]-bound_2d[2]) ? bound_2d[1]-bound_2d[0] : bound_2d[3]-bound_2d[2];
       center[0] = (bound_2d[1]+bound_2d[0])*0.5;
@@ -488,14 +504,12 @@ bool TriangulateOuterLoop2
     aPoDel.push_back( (int)aPo2D.size()+1 );
     aPoDel.push_back( (int)aPo2D.size()+2 );
     aPo2D.resize(npo+3);
-    aPo2D[npo+0].p.x = center[0];
-    aPo2D[npo+0].p.y = center[1]+2.0*tmp_len;
+    aVec2.resize(npo+3);
+    aVec2[npo+0] = CVector2(center[0], center[1]+2.0*tmp_len);
     aPo2D[npo+0].e = 0;	aPo2D[npo+0].d = 0;
-    aPo2D[npo+1].p.x = center[0]-0.5*tri_len;
-    aPo2D[npo+1].p.y = center[1]-tmp_len;
+    aVec2[npo+1] = CVector2(center[0]-0.5*tri_len, center[1]-tmp_len);
     aPo2D[npo+1].e = 0;	aPo2D[npo+1].d = 1;
-    aPo2D[npo+2].p.x = center[0]+0.5*tri_len;
-    aPo2D[npo+2].p.y = center[1]-tmp_len;
+    aVec2[npo+2] = CVector2(center[0]+0.5*tri_len, center[1]-tmp_len);
     aPo2D[npo+2].e = 0;	aPo2D[npo+2].d = 2;
     
     aTri.resize(1);
@@ -514,20 +528,20 @@ bool TriangulateOuterLoop2
   // Make Delaunay Division
   for(int ipoin=0;ipoin<(int)aPo2D.size();ipoin++){
     if( aPo2D[ipoin].e >= 0 ) continue;	// already added
-    const CVector3& po_add = aPo2D[ipoin].p;
+    const CVector2& po_add = aVec2[ipoin];
     int itri_in = -1;
     int iedge = -1;
     int iflg1 = 0, iflg2 = 0;
     for(int itri=0;itri<(int)aTri.size();itri++){
       iflg1 = 0; iflg2 = 0;
       const ETri& ref_tri = aTri[itri];
-      if( TriAreaXY(po_add, aPo2D[ref_tri.v[1]].p, aPo2D[ref_tri.v[2]].p ) > MIN_TRI_AREA ){
+      if( TriArea(po_add, aVec2[ref_tri.v[1]], aVec2[ref_tri.v[2]] ) > MIN_TRI_AREA ){
         iflg1++; iflg2 += 0;
       }
-      if( TriAreaXY(po_add, aPo2D[ref_tri.v[2]].p, aPo2D[ref_tri.v[0]].p ) > MIN_TRI_AREA ){
+      if( TriArea(po_add, aVec2[ref_tri.v[2]], aVec2[ref_tri.v[0]] ) > MIN_TRI_AREA ){
         iflg1++; iflg2 += 1;
       }
-      if( TriAreaXY(po_add, aPo2D[ref_tri.v[0]].p, aPo2D[ref_tri.v[1]].p ) > MIN_TRI_AREA ){
+      if( TriArea(po_add, aVec2[ref_tri.v[0]], aVec2[ref_tri.v[1]] ) > MIN_TRI_AREA ){
         iflg1++; iflg2 += 2;
       }
       if( iflg1 == 3 ){
@@ -545,11 +559,11 @@ bool TriangulateOuterLoop2
         const int inoel_d = rel[ied0];
         assert( aTri[itri_s].s2[inoel_d] == itri );
         const int ipo_d = aTri[itri_s].v[inoel_d];
-        assert( TriAreaXY( po_add, aPo2D[ipo_e1].p, aPo2D[ aTri[itri].v[ied0] ].p ) > MIN_TRI_AREA );
-        assert( TriAreaXY( po_add, aPo2D[ aTri[itri].v[ied0] ].p, aPo2D[ipo_e0].p ) > MIN_TRI_AREA );
-        if( TriAreaXY( po_add, aPo2D[ipo_e0].p, aPo2D[ipo_d ].p ) < MIN_TRI_AREA ){ continue;	}
-        if( TriAreaXY( po_add, aPo2D[ipo_d ].p, aPo2D[ipo_e1].p ) < MIN_TRI_AREA ){ continue; }
-        const int det_d =  DetDelaunayXY(po_add,aPo2D[ipo_e0].p,aPo2D[ipo_e1].p,aPo2D[ipo_d].p);
+        assert( TriArea( po_add, aVec2[ipo_e1], aVec2[ aTri[itri].v[ied0] ] ) > MIN_TRI_AREA );
+        assert( TriArea( po_add, aVec2[ aTri[itri].v[ied0] ], aVec2[ipo_e0] ) > MIN_TRI_AREA );
+        if( TriArea( po_add, aVec2[ipo_e0], aVec2[ipo_d ] ) < MIN_TRI_AREA ){ continue;	}
+        if( TriArea( po_add, aVec2[ipo_d ], aVec2[ipo_e1] ) < MIN_TRI_AREA ){ continue; }
+        const int det_d =  DetDelaunay(po_add,aVec2[ipo_e0],aVec2[ipo_e1],aVec2[ipo_d]);
         if( det_d == 2 || det_d == 1 ) continue;
         itri_in = itri;
         iedge = ied0;
@@ -568,7 +582,7 @@ bool TriangulateOuterLoop2
     else{
       InsertPoint_ElemEdge(ipoin,itri_in,iedge,aPo2D,aTri);
     }
-    DelaunayAroundPoint2(ipoin,aPo2D,aTri);
+    DelaunayAroundPoint2(ipoin,aPo2D,aTri,aVec2);
   }
   
   int itri0_ker  = (int)aTri.size(); // one internal triangle
@@ -609,10 +623,10 @@ bool TriangulateOuterLoop2
             double ratio;
             if( !FindEdgePoint_AcrossEdge2(itri0,inotri0,inotri1,ratio,
                                            ipoi0,ipoi1,
-                                           aPo2D,aTri) ){ assert(0); }
+                                           aPo2D,aTri,aVec2) ){ assert(0); }
             assert( ratio > -1.0e-20 && ratio < 1.0+1.0e-20 );
-            assert( TriAreaXY( aPo2D[ipoi0].p, aPo2D[ aTri[itri0].v[inotri0] ].p, aPo2D[ipoi1].p ) > 1.0e-20 );
-            assert( TriAreaXY( aPo2D[ipoi0].p, aPo2D[ipoi1].p, aPo2D[ aTri[itri0].v[inotri1] ].p ) > 1.0e-20 );
+            assert( TriArea( aVec2[ipoi0], aVec2[ aTri[itri0].v[inotri0] ], aVec2[ipoi1] ) > 1.0e-20 );
+            assert( TriArea( aVec2[ipoi0], aVec2[ipoi1], aVec2[ aTri[itri0].v[inotri1] ] ) > 1.0e-20 );
             //						std::cout << ratio << std::endl;
             if( ratio < 1.0e-20 ){
               assert(0);
@@ -891,11 +905,11 @@ int delaunay_triangulation2
   
   int nxys_presum = aIndXYs[nloop];
   std::vector<CEPo2> aPo2D;
+  std::vector<CVector2> aVec2;
   aPo2D.resize(nxys_presum);
+  aVec2.resize(nxys_presum);
   for(int ixys=0;ixys<nxys_presum;ixys++){
-    aPo2D[ixys].p.x = aXY_in[ixys*2+0];
-    aPo2D[ixys].p.y = aXY_in[ixys*2+1];
-    aPo2D[ixys].p.z = 0.0;
+    aVec2[ixys] = CVector2(aXY_in[ixys*2+0], aXY_in[ixys*2+1]);
     aPo2D[ixys].e = -1;
     aPo2D[ixys].d = -1;
   }
@@ -913,21 +927,22 @@ int delaunay_triangulation2
         int ipo0 = aIndXYs[iloop]+ibar;
         int ipo1 = aIndXYs[iloop]+ibar+1;
         if( ibar == nbar-1 ){ ipo1 = aIndXYs[iloop]; }
-        const double len = DistanceXY( aPo2D[ipo0].p, aPo2D[ipo1].p );
+        const double len = Distance( aVec2[ipo0], aVec2[ipo1] );
         nadd = (int)(len / max_edge_length);
         if( nadd == 0 || !is_add_point_boundary ) continue;
         const int ndiv = nadd+1;
-        const double delx = (aPo2D[ipo1].p.x - aPo2D[ipo0].p.x)/ndiv;
-        const double dely = (aPo2D[ipo1].p.y - aPo2D[ipo0].p.y)/ndiv;
+        const double delx = (aVec2[ipo1].x - aVec2[ipo0].x)/ndiv;
+        const double dely = (aVec2[ipo1].y - aVec2[ipo0].y)/ndiv;
         for(int iadd=0;iadd<nadd;++iadd){
           const unsigned int ipo = (int)aPo2D.size();
+          CVector2 v2;
+          v2.x = aVec2[ipo0].x + delx*(iadd+1);
+          v2.y = aVec2[ipo0].y + dely*(iadd+1);
           CEPo2 po;
-          po.p.x = aPo2D[ipo0].p.x + delx*(iadd+1);
-          po.p.y = aPo2D[ipo0].p.y + dely*(iadd+1);
-          po.p.z = 0.0;
           po.e = -1;
           po.d = -1;
           aPo2D.push_back(po);
+          aVec2.push_back(v2);
           aPoInEd[ aIndXYs[iloop]+ibar ].push_back(ipo);
         }
       }
@@ -953,13 +968,13 @@ int delaunay_triangulation2
       for(int iloop=0;iloop<nloop;iloop++){
         double area_loop = 0;
         { // area of this loop
-          CVector3 vtmp(0,0,0);
+          CVector2 vtmp(0,0);
           const int nbar = aPtrVtxInd[iloop+1]-aPtrVtxInd[iloop];
           for(int ibar=0;ibar<nbar;ibar++){
             int ipo0 = aPtrVtxInd[iloop]+ibar;
             int ipo1 = aPtrVtxInd[iloop]+ibar+1;
             if( ibar == nbar-1 ){ ipo1 = aPtrVtxInd[iloop]; }
-            area_loop += TriArea( vtmp, aPo2D[ipo0].p, aPo2D[ipo1].p );
+            area_loop += TriArea( vtmp, aVec2[ipo0], aVec2[ipo1] );
           }
         }
         const int nbar0 = aIndXYs[iloop+1]-aIndXYs[iloop];
@@ -989,11 +1004,11 @@ int delaunay_triangulation2
   }
   ////////////////////////////////
   std::vector<ETri> aTri_in;
-  if( !TriangulateOuterLoop2(aPo2D,aTri_in,    aPtrVtxInd, aVtxInd) ){
+  if( !TriangulateOuterLoop2(aPo2D,aTri_in,aVec2,    aPtrVtxInd, aVtxInd) ){
     return true;
   }
   if( max_edge_length > 0 ){
-    MeshingInside2(aPo2D,aTri_in, aVtxInd,max_edge_length,mesh_density);
+    MeshingInside2(aPo2D,aTri_in,aVec2, aVtxInd,max_edge_length,mesh_density);
   }
   
   ////////////////////////////////
@@ -1008,8 +1023,8 @@ int delaunay_triangulation2
   const int nxy_out = (int)aPo2D.size();
   aXY_out.resize(nxy_out*2);
   for(int ixy=0;ixy<nxy_out;ixy++){
-    aXY_out[ixy*2+0] = aPo2D[ixy].p.x;
-    aXY_out[ixy*2+1] = aPo2D[ixy].p.y;
+    aXY_out[ixy*2+0] = aVec2[ixy].x;
+    aXY_out[ixy*2+1] = aVec2[ixy].y;
   }
   return true;
 }
