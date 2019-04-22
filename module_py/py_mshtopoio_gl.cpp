@@ -143,13 +143,11 @@ public:
       aETri[itri].v[2] = aTri[itri*3+2];
     }
     {
-      unsigned int* elsup_ind = new unsigned int [aEPo.size()+1];
-      unsigned int nelsup;
-      unsigned int* elsup;
-      MakePointSurTri(aETri, (int)aEPo.size(), elsup_ind, nelsup, elsup);
-      MakeInnerRelationTri(aETri, (int)aEPo.size(),  elsup_ind, nelsup, elsup);
-      delete[] elsup_ind;
-      delete[] elsup;
+      std::vector<int> elsup_ind, elsup;
+      JArray_MakeElSuP(elsup_ind, elsup,
+                      aETri, (int)aEPo.size());
+      MakeInnerRelationTri(aETri, (int)aEPo.size(),
+                           elsup_ind, elsup);
     }
   }
   void Check()

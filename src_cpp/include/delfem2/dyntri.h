@@ -26,10 +26,7 @@ public:
 
 class CEPo2{
 public:
-	CEPo2(){
-    e = -1;
-    d = 0;
-  }
+	CEPo2(){ e = -1; d = 0; }
 	CEPo2( const CEPo2& rhs )
 		: e(rhs.e), d(rhs.d), p(rhs.p) {}
   CEPo2(const CVector3 p, int ielem, unsigned int idir)
@@ -43,15 +40,16 @@ public:
   CVector3 p; // position
 };
 
-bool MakePointSurTri(const std::vector<ETri>& aTri, const unsigned int npoin,
-                     unsigned int* const elsup_ind, unsigned int& nelsup, unsigned int*& elsup );
-
-void MakeEdge(unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
-              const std::vector<ETri>& aTri, const unsigned int npoin,
-              const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup);
+bool JArray_MakeElSuP(std::vector<int>& elsup_ind, std::vector<int>& elsup,
+                     const std::vector<ETri>& aTri, const unsigned int npoin);
 
 bool MakeInnerRelationTri(std::vector<ETri>& aTri, const unsigned int npoin,
-                          const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup);
+                          const std::vector<int>& elsup_ind,
+                          const std::vector<int>& elsup);
+
+void JArray_PSuP(unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
+              const std::vector<ETri>& aTri, const unsigned int npoin,
+              const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
 
 bool CheckTri(const std::vector<ETri>& aTri);
 

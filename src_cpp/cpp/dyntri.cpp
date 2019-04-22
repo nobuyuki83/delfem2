@@ -3,6 +3,138 @@
 
 #include "delfem2/dyntri.h"
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+bool MakeInnerRelationTri
+(std::vector<ETri>& aTri, const unsigned int npoin,
+ const std::vector<int>& elsup_ind,
+ const std::vector<int>& elsup)
+{
+  const unsigned int EdEd2Rel[3][3] = {
+    { 0, 2, 1 },
+    { 2, 1, 0 },
+    { 1, 0, 2 } };
+  
+  unsigned int* tmp_poin = new unsigned int [npoin];
+  for(unsigned int ipoin=0;ipoin<npoin;ipoin++){ tmp_poin[ipoin] = 0; }
+  unsigned int inpofa[2];
+  
+  const unsigned int nTri = (int)aTri.size();
+  for(unsigned int itri=0;itri<nTri;itri++){
+    for(unsigned int iedtri=0;iedtri<3;iedtri++){
+      for(unsigned int ipoed=0;ipoed<2;ipoed++){
+        inpofa[ipoed] = aTri[itri].v[ (iedtri+1+ipoed)%3 ];
+        tmp_poin[ inpofa[ipoed] ] = 1;
+      }
+      const unsigned int ipoin0= inpofa[0];
+      bool iflg = false;
+      for(unsigned int ielsup=elsup_ind[ipoin0];ielsup<elsup_ind[ipoin0+1];ielsup++){
+        const unsigned int jtri0 = elsup[ielsup];
+        if( jtri0 == itri ) continue;
+        for(unsigned int jedtri=0;jedtri<3;jedtri++){
+          iflg = true;
+          for(unsigned int jpoed=0;jpoed<2;jpoed++){
+            const unsigned int jpoin0 =  aTri[jtri0].v[ (jedtri+1+jpoed)%3 ];
+            if( tmp_poin[ jpoin0 ] == 0 ){ iflg = false; break; }
+          }
+          if( iflg ){
+            //            aTri[itri].g2[iedtri] = -2;
+            aTri[itri].s2[iedtri] = jtri0;
+            aTri[itri].r2[iedtri] = EdEd2Rel[iedtri][jedtri];
+            break;
+          }
+        }
+        if( iflg ) break;
+      }
+      if( !iflg ){
+        aTri[itri].s2[iedtri] = -1;
+      }
+      for(unsigned int ipofa=0;ipofa<2;ipofa++){
+        tmp_poin[ inpofa[ipofa] ] = 0;
+      }
+    }
+  }
+  
+  delete[] tmp_poin;
+  return true;
+}
+
+bool JArray_MakeElSuP
+(std::vector<int>& elsup_ind, std::vector<int>& elsup,
+ const std::vector<ETri>& aTri, const unsigned int npoin)
+{
+  const unsigned int nnotri = 3;
+  
+  elsup_ind.assign(npoin+1, 0);
+  for(unsigned int itri=0;itri<aTri.size();itri++){
+    for(unsigned int inotri=0;inotri<nnotri;inotri++){
+      elsup_ind[ aTri[itri].v[inotri]+1 ]++;
+    }
+  }
+  for(unsigned int ipoin=0;ipoin<npoin;ipoin++){
+    elsup_ind[ipoin+1] += elsup_ind[ipoin];
+  }
+  const int nelsup = elsup_ind[npoin];
+  elsup.resize(nelsup);
+  for(unsigned int itri=0;itri<aTri.size();itri++){
+    for(unsigned int inotri=0;inotri<nnotri;inotri++){
+      const unsigned int ipoin0 = aTri[itri].v[inotri];
+      const unsigned int ielsup = elsup_ind[ipoin0];
+      elsup[ielsup] = itri;
+      elsup_ind[ipoin0]++;
+    }
+  }
+  for(int ipoin=npoin;ipoin>0;ipoin--){
+    elsup_ind[ipoin] = elsup_ind[ipoin-1];
+  }
+  elsup_ind[0] = 0;
+  return true;
+}
+
+void JArray_PSuP
+(std::vector<int>& psup_ind, std::vector<int>& psup,
+ const std::vector<ETri>& aTri, const unsigned int npoin,
+ const std::vector<int>& elsup_ind, const std::vector<int>& elsup)
+{
+  std::vector<int> aflg(npoin,0);
+  psup_ind[0] = 0;
+  for (unsigned int ino = 0; ino<npoin; ino++){
+    psup_ind[ino+1] = psup_ind[ino];
+    aflg[ino] = ino;
+    for (int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
+      unsigned int itri1 = elsup[ielsup];
+      for (unsigned int inotri = 0; inotri<3; inotri++){
+        unsigned int ino1 = aTri[itri1].v[inotri];
+        if (aflg[ino1]==ino) continue;
+        psup_ind[ino+1]++;
+        aflg[ino1] = ino;
+      }
+    }
+  }
+  const int npsup = psup_ind[npoin];
+  psup.resize(npsup);
+  for (unsigned int ino = 0; ino<npoin; ino++){ aflg[ino] = 0; }
+  unsigned int iedge = 0;
+  for (unsigned int ino = 0; ino<npoin; ino++){
+    assert(psup_ind[ino]==iedge);
+    aflg[ino] = ino;
+    for (int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
+      unsigned int itri1 = elsup[ielsup];
+      for (unsigned int inotri = 0; inotri<3; inotri++){
+        unsigned int ino1 = aTri[itri1].v[inotri];
+        if (aflg[ino1]==ino) continue;
+        psup[iedge] = ino1;
+        iedge++;
+        aflg[ino1] = ino;
+      }
+    }
+  }
+  assert(iedge==npsup);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -464,10 +596,6 @@ void MoveCCW
   inotri_cur = inotri_nex;
 }
 
-bool DelaunayAroundPoint(int ipo0,
-                         std::vector<CEPo2>& aPo,
-                         std::vector<ETri>& aTri);
-
 
 bool DeleteTri
 (unsigned int itri_to,
@@ -795,235 +923,8 @@ void GetTriAryAroundPoint
 }
 
 
-bool MakeInnerRelationTri
-(std::vector<ETri>& aTri, const unsigned int npoin,
- const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup )
-{
-	const unsigned int EdEd2Rel[3][3] = {
-    { 0, 2, 1 },
-    { 2, 1, 0 },
-    { 1, 0, 2 } };
-  
-	unsigned int* tmp_poin = new unsigned int [npoin];
-	for(unsigned int ipoin=0;ipoin<npoin;ipoin++){ tmp_poin[ipoin] = 0; }
-	unsigned int inpofa[2];
-  
-	const unsigned int nTri = (int)aTri.size();
-	for(unsigned int itri=0;itri<nTri;itri++){
-		for(unsigned int iedtri=0;iedtri<3;iedtri++){
-			for(unsigned int ipoed=0;ipoed<2;ipoed++){
-				inpofa[ipoed] = aTri[itri].v[ (iedtri+1+ipoed)%3 ];
-				tmp_poin[ inpofa[ipoed] ] = 1;
-			}
-			const unsigned int ipoin0= inpofa[0];
-			bool iflg = false;
-			for(unsigned int ielsup=elsup_ind[ipoin0];ielsup<elsup_ind[ipoin0+1];ielsup++){
-				const unsigned int jtri0 = elsup[ielsup];
-				if( jtri0 == itri ) continue;
-				for(unsigned int jedtri=0;jedtri<3;jedtri++){
-					iflg = true;
-					for(unsigned int jpoed=0;jpoed<2;jpoed++){
-						const unsigned int jpoin0 =  aTri[jtri0].v[ (jedtri+1+jpoed)%3 ];
-						if( tmp_poin[ jpoin0 ] == 0 ){ iflg = false; break; }
-					}
-					if( iflg ){
-//						aTri[itri].g2[iedtri] = -2;
-						aTri[itri].s2[iedtri] = jtri0;
-						aTri[itri].r2[iedtri] = EdEd2Rel[iedtri][jedtri];
-						break;
-					}
-				}
-				if( iflg ) break;
-			}
-			if( !iflg ){ 
-				aTri[itri].s2[iedtri] = -1;
-			}
-			for(unsigned int ipofa=0;ipofa<2;ipofa++){
-				tmp_poin[ inpofa[ipofa] ] = 0;
-			}
-		}
-	}
-  
-	delete[] tmp_poin;
-	return true;
-}
 
-bool MakePointSurTri
-(const std::vector<ETri>& aTri, const unsigned int npoin,
- unsigned int* const elsup_ind, unsigned int& nelsup, unsigned int*& elsup )
-{
-	const unsigned int nnotri = 3;
-  
-	for(unsigned int ipoin=0;ipoin<npoin+1;ipoin++){
-		elsup_ind[ipoin] = 0;
-	}
-	for(unsigned int itri=0;itri<aTri.size();itri++){
-		for(unsigned int inotri=0;inotri<nnotri;inotri++){
-			elsup_ind[ aTri[itri].v[inotri]+1 ]++;
-		}
-	}
-	for(unsigned int ipoin=0;ipoin<npoin;ipoin++){
-		elsup_ind[ipoin+1] += elsup_ind[ipoin];
-	}
-	nelsup = elsup_ind[npoin];
-	elsup = new unsigned int [nelsup];
-	for(unsigned int itri=0;itri<aTri.size();itri++){
-		for(unsigned int inotri=0;inotri<nnotri;inotri++){
-			const unsigned int ipoin0 = aTri[itri].v[inotri];
-			const unsigned int ielsup = elsup_ind[ipoin0];
-			elsup[ielsup] = itri;
-			elsup_ind[ipoin0]++;
-		}
-	}
-	for(int ipoin=npoin;ipoin>0;ipoin--){
-		elsup_ind[ipoin] = elsup_ind[ipoin-1];
-	}
-	elsup_ind[0] = 0;
-  /*
-   for(unsigned int ipoin=0;ipoin<npoin;ipoin++){
-   std::cout << ipoin << " ";
-   for(unsigned int ielsup=elsup_ind[ipoin];ielsup<elsup_ind[ipoin+1];ielsup++){
-   std::cout << elsup[ielsup] << " ";
-   }
-   std::cout << std::endl;
-   }
-   */
-	return true;
-}
 
-void MakeEdge
-(unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
-const std::vector<ETri>& aTri, const unsigned int npoin,
-const unsigned int* elsup_ind, const unsigned int nelsup, const unsigned int* elsup)
-{
-  assert(elsup_ind!=0);
-  assert(elsup!=0);
-  unsigned int* aflg = new unsigned int[npoin];
-  for (unsigned int ino = 0; ino<npoin; ino++){ aflg[ino] = 0; }
-//  edge_ind = new unsigned int[npoin+1];
-  edge_ind[0] = 0;
-  for (unsigned int ino = 0; ino<npoin; ino++){
-    edge_ind[ino+1] = edge_ind[ino];
-    aflg[ino] = ino;
-    for (unsigned int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
-      unsigned int itri1 = elsup[ielsup];
-      for (unsigned int inotri = 0; inotri<3; inotri++){
-        unsigned int ino1 = aTri[itri1].v[inotri];
-        if (aflg[ino1]==ino) continue;
-        edge_ind[ino+1]++;
-        aflg[ino1] = ino;
-      }
-    }
-  }
-  nedge = edge_ind[npoin];
-  //  std::cout << "nedge : " << nedge_ << std::endl;∫
-  edge = new unsigned int[nedge];
-  for (unsigned int ino = 0; ino<npoin; ino++){ aflg[ino] = 0; }
-  unsigned int iedge = 0;
-  for (unsigned int ino = 0; ino<npoin; ino++){
-    assert(edge_ind[ino]==iedge);
-    aflg[ino] = ino;
-    for (unsigned int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
-      unsigned int itri1 = elsup[ielsup];
-      for (unsigned int inotri = 0; inotri<3; inotri++){
-        unsigned int ino1 = aTri[itri1].v[inotri];
-        if (aflg[ino1]==ino) continue;
-        edge[iedge] = ino1;
-        iedge++;
-        aflg[ino1] = ino;
-      }
-    }
-  }
-  assert(iedge==nedge);
-
-  delete[] aflg;
-
-  /*
-  for(unsigned int ino=0;ino<npoin;ino++){
-  std::cout << ino << "  -->   ";
-  for(unsigned int iedge=edge_ind[ino];iedge<edge_ind[ino+1];iedge++){
-  unsigned int ino1 = edge[iedge];
-  std::cout << ino1 << " ";
-  }
-  std::cout << std::endl;
-  }
-  */
-  
-}
-
-/*
-template <typename TYPE>
-bool FindEdge
-(unsigned int& itri0, unsigned int& inotri0, unsigned int& inotri1,
- ///
- const unsigned int& ipo0, const unsigned int& ipo1,  
- const std::vector<CEPo<TYPE>>& po, const std::vector<STri2D>& tri)
-{
-  const unsigned int itri_ini = po[ipo0].e;
-  const unsigned int inotri_ini = po[ipo0].d;
-  unsigned int inotri_cur = inotri_ini;
-  unsigned int itri_cur = itri_ini;
-  for (;;){	
-    assert(tri[itri_cur].v[inotri_cur]==ipo0);
-    {	
-      const unsigned int inotri2 = indexRot3[1][inotri_cur];
-      if (tri[itri_cur].v[inotri2]==ipo1){
-        itri0 = itri_cur;
-        inotri0 = inotri_cur;
-        inotri1 = inotri2;
-        assert(tri[itri0].v[inotri0]==ipo0);
-        assert(tri[itri0].v[inotri1]==ipo1);
-        return true;
-      }
-    }
-    {	
-      const unsigned int inotri2 = indexRot3[2][inotri_cur];
-      if (tri[itri_cur].s2[inotri2]==-1){ break; }
-      const unsigned int itri_nex = tri[itri_cur].s2[inotri2];
-      const unsigned int* rel = relTriTri[tri[itri_cur].r2[inotri2]];
-      const unsigned int inotri3 = rel[inotri_cur];
-      assert(tri[itri_nex].v[inotri3]==ipo0);
-      if (itri_nex==itri_ini) return false;
-      itri_cur = itri_nex;
-      inotri_cur = inotri3;
-    }
-  }
-
-  inotri_cur = inotri_ini;
-  itri_cur = itri_ini;
-  for (;;){	
-    assert(tri[itri_cur].v[inotri_cur]==ipo0);
-    {
-      const unsigned int inotri2 = indexRot3[1][inotri_cur];
-      if (tri[itri_cur].s2[inotri2]==-1){ break; }
-      const unsigned int itri_nex = tri[itri_cur].s2[inotri2];
-      const unsigned int* rel = relTriTri[tri[itri_cur].r2[inotri2]];
-      const unsigned int inotri3 = rel[inotri_cur];
-      assert(tri[itri_nex].v[inotri3]==ipo0);
-      if (itri_nex==itri_ini){	// 
-        itri0 = 0;
-        inotri0 = 0; inotri1 = 0;
-        return false;
-      }
-      itri_cur = itri_nex;
-      inotri_cur = inotri3;
-    }
-    {
-      const unsigned int inotri2 = indexRot3[1][inotri_cur];
-      if (tri[itri_cur].v[inotri2]==ipo1){
-        itri0 = itri_cur;
-        inotri0 = inotri_cur;
-        inotri1 = inotri2;
-        assert(tri[itri0].v[inotri0]==ipo0);
-        assert(tri[itri0].v[inotri1]==ipo1);
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-*/
 
 
 void extractHoles
@@ -1108,8 +1009,7 @@ bool DelaunayAroundPoint
       const int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunay(
-                      aPo[aTri[itri_cur].v[0]].p,
+      if (DetDelaunay(aPo[aTri[itri_cur].v[0]].p,
                       aPo[aTri[itri_cur].v[1]].p,
                       aPo[aTri[itri_cur].v[2]].p,
                       aPo[ipo_dia].p)==0)
@@ -1163,8 +1063,7 @@ bool DelaunayAroundPoint
       const int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunay(
-                      aPo[aTri[itri_cur].v[0]].p,
+      if (DetDelaunay(aPo[aTri[itri_cur].v[0]].p,
                       aPo[aTri[itri_cur].v[1]].p,
                       aPo[aTri[itri_cur].v[2]].p,
                       aPo[ipo_dia].p)==0)  // Delaunay condition is not satisfiled
