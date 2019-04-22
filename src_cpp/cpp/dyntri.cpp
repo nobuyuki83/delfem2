@@ -1,5 +1,8 @@
 #include <set>
 #include <algorithm>
+#include <map>
+#include <stack>
+#include <iostream>
 
 #include "delfem2/dyntri.h"
 
@@ -578,6 +581,91 @@ bool CheckTri( const std::vector<ETri>& aTri )
 	return true;
 }
 
+bool CheckTri
+(const std::vector<CEPo2>& aPo3D,
+ const std::vector<ETri>& aSTri,
+ bool is_assert)
+{
+  const int npo = (int)aPo3D.size();
+  const int ntri = (int)aSTri.size();
+  
+  for (int itri = 0; itri<ntri; itri++){
+    const ETri& tri0 = aSTri[itri];
+    if( tri0.v[0] == -1 ){
+      assert(tri0.v[1] == -1);
+      assert(tri0.v[2] == -1);
+      continue;
+    }
+    if (tri0.v[0]==tri0.v[1]){ //     assert(tri0.v[2]!=tri0.v[0]);
+      if( is_assert ){ assert(0); }
+      return false;
+    }
+    if (tri0.v[1]==tri0.v[2]){ //     assert(tri0.v[2]!=tri0.v[0]);
+      if( is_assert ){ assert(0); }
+      return false;
+    }
+    if (tri0.v[2]==tri0.v[0]){ //     assert(tri0.v[2]!=tri0.v[0]);
+      if( is_assert ){ assert(0); }
+      return false;
+    }
+    ////
+    if( (tri0.s2[0]==tri0.s2[1]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[0]!=tri0.s2[2]);
+      //      std::cout << tri0.s2[0] << " " << tri0.s2[1] << std::endl;
+      if( is_assert ){ assert(0); }
+      return false;
+    }
+    if( (tri0.s2[1]==tri0.s2[2]) && tri0.s2[1] >= 0 ){ // assert(tri0.s2[1]!=tri0.s2[2]);
+      if( is_assert ){ assert(0); }
+      return false;
+    }
+    if( (tri0.s2[2]==tri0.s2[0]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[2]!=tri0.s2[0]);
+      if( is_assert ){ assert(0); }
+      return false;
+    }
+    /////
+    for (unsigned int inotri = 0; inotri<3; inotri++){
+      assert(tri0.v[inotri] < npo);
+    }
+    for (int iedtri = 0; iedtri<3; iedtri++){
+      if (tri0.s2[iedtri]>=0&&tri0.s2[iedtri]<ntri){
+        const int itri_s = tri0.s2[iedtri];
+        const int irel = tri0.r2[iedtri];
+        assert(itri_s < ntri);
+        assert(irel < 3);
+        {
+          const int noel_dia = relTriTri[irel][iedtri];
+          assert(noel_dia < 3);
+          if (aSTri[itri_s].s2[noel_dia]!=itri){ // neibough relation broken
+            //            std::cout << itri << " " << itri_s << " " << noel_dia << std::endl;
+          }
+          assert(aSTri[itri_s].s2[noel_dia]==itri);
+        }
+        // check relation
+        for (int inoed = 0; inoed<2; inoed++){
+          const int inoel = (iedtri+1+inoed)%3;//noelTriEdge[iedtri][inoed];
+          if (tri0.v[inoel]!=aSTri[itri_s].v[(int)relTriTri[irel][inoel]]){
+          }
+          assert(tri0.v[inoel]==aSTri[itri_s].v[(int)relTriTri[irel][inoel]]);
+        }
+      }
+    }
+  }
+  for (int ipoin = 0; ipoin<npo; ++ipoin){
+    const int itri0 = aPo3D[ipoin].e;
+    const int inoel0 = aPo3D[ipoin].d;
+    if (aPo3D[ipoin].e>=0){
+      assert(aPo3D[ipoin].d>=0&&aPo3D[ipoin].d < 3);
+      if (aSTri[itri0].v[inoel0]!=ipoin){}
+      assert(aSTri[itri0].v[inoel0]==ipoin);
+    }
+  }
+  return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
 void MoveCCW
 (int& itri_cur,
  int& inotri_cur,
@@ -750,7 +838,9 @@ bool Collapse_ElemEdge
     sort(ring1.begin(), ring1.end());
     sort(ring2.begin(), ring2.end());
     std::vector<int> insc(ring1.size());
-    std::vector<int>::iterator it = set_intersection(ring1.begin(), ring1.end(), ring2.begin(), ring2.end(), insc.begin());
+    std::vector<int>::iterator it = set_intersection(ring1.begin(), ring1.end(),
+                                                     ring2.begin(), ring2.end(),
+                                                     insc.begin());
     if (it!=insc.begin()){ return  false; }
   }
   
@@ -982,113 +1072,3 @@ void extractHoles
 
 
 
-bool DelaunayAroundPoint
-(int ipo0,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri)
-{
-  assert(ipo0 < (int)aPo.size());
-  if (aPo[ipo0].e==-1) return true;
-  
-  assert(aPo[ipo0].e>=0&&(int)aPo[ipo0].e < (int)aTri.size());
-  assert(aTri[aPo[ipo0].e].v[aPo[ipo0].d]==ipo0);
-  
-  const int itri0 = aPo[ipo0].e;
-  int inotri0 = aPo[ipo0].d;
-  
-  int itri_cur = itri0;
-  int inotri_cur = aPo[ipo0].d;
-  bool flag_is_wall = false;
-  for (;;){
-    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-    if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
-      assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-      // check opposing element
-      const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const int inotri_dia = rel_dia[inotri_cur];
-      assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
-      const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunay(aPo[aTri[itri_cur].v[0]].p,
-                      aPo[aTri[itri_cur].v[1]].p,
-                      aPo[aTri[itri_cur].v[2]].p,
-                      aPo[ipo_dia].p)==0)
-      {
-        bool res = FlipEdge(itri_cur, inotri_cur, aPo, aTri);
-        if( res ){
-          inotri_cur = 2;
-          assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-          if (itri_cur==itri0) inotri0 = inotri_cur;
-          continue;
-        }
-        else{
-          break;
-        }
-      }
-    }
-    MoveCCW(itri_cur, inotri_cur, flag_is_wall, aPo,aTri);
-    if( flag_is_wall ) break;
-    if( itri_cur == itri0 ) break;
-    /*
-     {  // next element
-     const int inotri1 = indexRot3[1][inotri_cur];
-     if (aTri[itri_cur].s2[inotri1]==-1){
-     flag_is_wall = true;
-     break;
-     }
-     const int itri_nex = aTri[itri_cur].s2[inotri1];
-     const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri1]];
-     const int inotri_nex = rel_nex[inotri_cur];
-     assert(aTri[itri_nex].v[inotri_nex]==ipo0);
-     if (itri_nex==itri0) break;  // finish if we reach starting elemnt
-     itri_cur = itri_nex;
-     inotri_cur = inotri_nex;
-     }
-     */
-  }
-  if (!flag_is_wall) return true;
-  
-  ////////////////////////////////
-  // rotate counter clock-wise
-  
-  itri_cur = itri0;
-  inotri_cur = inotri0;
-  for (;;){
-    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-    
-    if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
-      // check elements in opposing side
-      const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const int inotri_dia = rel_dia[inotri_cur];
-      assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
-      const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunay(aPo[aTri[itri_cur].v[0]].p,
-                      aPo[aTri[itri_cur].v[1]].p,
-                      aPo[aTri[itri_cur].v[2]].p,
-                      aPo[ipo_dia].p)==0)  // Delaunay condition is not satisfiled
-      {
-        FlipEdge(itri_cur, inotri_cur, aPo, aTri);
-        itri_cur = itri_dia;
-        inotri_cur = 1;
-        assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-        continue;
-      }
-    }
-    
-    {
-      const int inotri2 = (inotri_cur+2)%3; //  indexRot3[2][inotri_cur];
-      if (aTri[itri_cur].s2[inotri2]==-1){
-        return true;
-      }
-      const int itri_nex = aTri[itri_cur].s2[inotri2];
-      const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const int inotri_nex = rel_nex[inotri_cur];
-      assert(aTri[itri_nex].v[inotri_nex]==ipo0);
-      assert(itri_nex!=itri0);  // finsih if reach starting elemnet
-      itri_cur = itri_nex;
-      inotri_cur = inotri_nex;
-    }
-  }
-  return true;
-}

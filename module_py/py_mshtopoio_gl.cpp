@@ -115,16 +115,17 @@ public:
                   const int* aTri, int nTri)
   {
     aEPo.resize(nPo);
+    aVec3.resize(nPo);
     for(int ipo=0;ipo<nPo;ipo++){
       if( ndim == 3 ){
-        aEPo[ipo].p.x = aPo[ipo*3+0];
-        aEPo[ipo].p.y = aPo[ipo*3+1];
-        aEPo[ipo].p.z = aPo[ipo*3+2];
+        aVec3[ipo].x = aPo[ipo*3+0];
+        aVec3[ipo].y = aPo[ipo*3+1];
+        aVec3[ipo].z = aPo[ipo*3+2];
       }
       else if( ndim == 2 ){
-        aEPo[ipo].p.x = aPo[ipo*2+0];
-        aEPo[ipo].p.y = aPo[ipo*2+1];
-        aEPo[ipo].p.z = 0.0;
+        aVec3[ipo].x = aPo[ipo*2+0];
+        aVec3[ipo].y = aPo[ipo*2+1];
+        aVec3[ipo].z = 0.0;
       }
     }
     for(int itri=0;itri<nTri;itri++){
@@ -157,39 +158,41 @@ public:
   }
   std::vector<double> MinMax_XYZ() const {
     double x_min,x_max, y_min,y_max, z_min,z_max;
-    x_min=x_max=aEPo[0].p.x;
-    y_min=y_max=aEPo[0].p.y;
-    z_min=z_max=aEPo[0].p.z;
+    x_min=x_max=aVec3[0].x;
+    y_min=y_max=aVec3[0].y;
+    z_min=z_max=aVec3[0].z;
     for(unsigned int ipo=0;ipo<aEPo.size();ipo++){
       updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                      aEPo[ipo].p.x, aEPo[ipo].p.y, aEPo[ipo].p.z);
+                      aVec3[ipo].x, aVec3[ipo].y, aVec3[ipo].z);
     }
     return {x_min,x_max, y_min,y_max, z_min,z_max};
   }
   int insertPointElem(int itri0, double r0, double r1){
     const int ipo0 = aEPo.size();
     CEPo2 p0;
+    CVector3 v3;
     {
       int i0 = aETri[itri0].v[0];
       int i1 = aETri[itri0].v[1];
       int i2 = aETri[itri0].v[2];
-      p0.p = r0*aEPo[i0].p+r1*aEPo[i1].p+(1-r0-r1)*aEPo[i2].p;
+      v3 = r0*aVec3[i0]+r1*aVec3[i1]+(1-r0-r1)*aVec3[i2];
     }
     aEPo.push_back(p0);
     InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
     return ipo0;
   }
   void DelaunayAroundPoint(int ipo){
-    ::DelaunayAroundPoint(ipo, aEPo, aETri);
+    ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
   }
-  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aEPo,aETri); }
-  void Draw_Edge() const { DrawMeshDynTri_Edge(aEPo,aETri); }
+  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aEPo,aETri,aVec3); }
+  void Draw_Edge() const { DrawMeshDynTri_Edge(aEPo,aETri,aVec3); }
   void draw() const { this->Draw_Edge(); }
   int nTri() const { return aETri.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CEPo2> aEPo;
   std::vector<ETri> aETri;
+  std::vector<CVector3> aVec3;
 };
 
 void PyMeshDynTri3D_Initialize

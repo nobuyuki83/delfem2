@@ -7,12 +7,13 @@
 CVector3 normalTri
 (int itri0,
  const std::vector<CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri)
+ const std::vector<ETri>& aSTri,
+ const std::vector<CVector3>& aXYZ)
 {
   int i0 = aSTri[itri0].v[0];
   int i1 = aSTri[itri0].v[1];
   int i2 = aSTri[itri0].v[2];
-  CVector3 n = Normal(aPo3D[i0].p, aPo3D[i1].p, aPo3D[i2].p);
+  CVector3 n = Normal(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
   return n.Normalize();
 }
 
@@ -20,83 +21,10 @@ CVector3 normalTri
 bool CheckTri
 (const std::vector<CEPo2>& aPo3D,
  const std::vector<ETri>& aSTri,
+ const std::vector<CVector3>& aXYZ,
  bool is_assert)
 {
-  const int npo = (int)aPo3D.size();
-  const int ntri = (int)aSTri.size();
-  
-  for (int itri = 0; itri<ntri; itri++){
-    const ETri& tri0 = aSTri[itri];
-    if( tri0.v[0] == -1 ){
-      assert(tri0.v[1] == -1);
-      assert(tri0.v[2] == -1);
-      continue;
-    }
-    if (tri0.v[0]==tri0.v[1]){ //     assert(tri0.v[2]!=tri0.v[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if (tri0.v[1]==tri0.v[2]){ //     assert(tri0.v[2]!=tri0.v[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if (tri0.v[2]==tri0.v[0]){ //     assert(tri0.v[2]!=tri0.v[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    ////
-    if( (tri0.s2[0]==tri0.s2[1]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[0]!=tri0.s2[2]);
-      //      std::cout << tri0.s2[0] << " " << tri0.s2[1] << std::endl;
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if( (tri0.s2[1]==tri0.s2[2]) && tri0.s2[1] >= 0 ){ // assert(tri0.s2[1]!=tri0.s2[2]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if( (tri0.s2[2]==tri0.s2[0]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[2]!=tri0.s2[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    /////
-    for (unsigned int inotri = 0; inotri<3; inotri++){
-      assert(tri0.v[inotri] < npo);
-    }
-    for (int iedtri = 0; iedtri<3; iedtri++){
-      if (tri0.s2[iedtri]>=0&&tri0.s2[iedtri]<ntri){
-        const int itri_s = tri0.s2[iedtri];
-        const int irel = tri0.r2[iedtri];
-        assert(itri_s < ntri);
-        assert(irel < 3);
-        {
-          const int noel_dia = relTriTri[irel][iedtri];
-          assert(noel_dia < 3);
-          if (aSTri[itri_s].s2[noel_dia]!=itri){ // neibough relation broken
-            //            std::cout << itri << " " << itri_s << " " << noel_dia << std::endl;
-          }
-          assert(aSTri[itri_s].s2[noel_dia]==itri);
-        }
-        // check relation
-        for (int inoed = 0; inoed<2; inoed++){
-          const int inoel = (iedtri+1+inoed)%3;//noelTriEdge[iedtri][inoed];
-          if (tri0.v[inoel]!=aSTri[itri_s].v[(int)relTriTri[irel][inoel]]){
-          }
-          assert(tri0.v[inoel]==aSTri[itri_s].v[(int)relTriTri[irel][inoel]]);
-        }
-      }
-    }
-  }
-  for (int ipoin = 0; ipoin<npo; ++ipoin){
-    const int itri0 = aPo3D[ipoin].e;
-    const int inoel0 = aPo3D[ipoin].d;
-    if (aPo3D[ipoin].e>=0){
-      assert(aPo3D[ipoin].d>=0&&aPo3D[ipoin].d < 3);
-      if (aSTri[itri0].v[inoel0]!=ipoin){}
-      assert(aSTri[itri0].v[inoel0]==ipoin);
-    }
-  }
-  
-  for (int itri = 0; itri<ntri; itri++){
+  for (int itri = 0; itri<aSTri.size(); itri++){
     const ETri& ref_tri = aSTri[itri];
     const int i0 = ref_tri.v[0];
     if( i0 == -1 ) continue;
@@ -105,7 +33,7 @@ bool CheckTri
     assert( i0 >=0 && i0 < (int)aPo3D.size() );
     assert( i1 >=0 && i1 < (int)aPo3D.size() );
     assert( i2 >=0 && i2 < (int)aPo3D.size() );
-    double area = TriArea(aPo3D[i0].p, aPo3D[i1].p, aPo3D[i2].p);
+    double area = TriArea(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
     if (area<1.0e-10){ // negative volume
     }
   }
@@ -216,7 +144,8 @@ int InsertPoint_Mesh
  double& r0,
  double& r1,
  std::vector<CEPo2>& aPo3D,
- std::vector<ETri>& aSTri)
+ std::vector<ETri>& aSTri,
+ std::vector<CVector3>& aXYZ)
 {
   if (itri0==-1) return -1;
   CVector3 pos,norm;
@@ -224,15 +153,15 @@ int InsertPoint_Mesh
     const int i0 = aSTri[itri0].v[0];
     const int i1 = aSTri[itri0].v[1];
     const int i2 = aSTri[itri0].v[2];
-    const CVector3& p0 = aPo3D[i0].p;
-    const CVector3& p1 = aPo3D[i1].p;
-    const CVector3& p2 = aPo3D[i2].p;
+    const CVector3& p0 = aXYZ[i0];
+    const CVector3& p1 = aXYZ[i1];
+    const CVector3& p2 = aXYZ[i2];
     pos = r0*p0 + r1*p1 + (1-r0-r1)*p2;
     UnitNormal(norm, p0, p1, p2);
   }
-  CEPo2 q(pos);
   int ipo_ins = (int)aPo3D.size();
-  aPo3D.push_back(q);
+  aPo3D.push_back( CEPo2());
+  aXYZ.push_back(pos);
   //  if( ptri.iedge == -1 ){ // inside tri
   InsertPoint_Elem(ipo_ins, itri0, aPo3D, aSTri);
   /*
@@ -255,7 +184,8 @@ bool pickMesh
  const CVector3& dir,
  int itri_start, // starting triangle
  const std::vector<CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri)
+ const std::vector<ETri>& aSTri,
+ std::vector<CVector3>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -263,9 +193,9 @@ bool pickMesh
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const CVector3& tp0 = aPo3D[ip0].p;
-    const CVector3& p1 = aPo3D[ip1].p;
-    const CVector3& p2 = aPo3D[ip2].p;
+    const CVector3& tp0 = aXYZ[ip0];
+    const CVector3& p1 = aXYZ[ip1];
+    const CVector3& p2 = aXYZ[ip2];
     const double v0 = volume_Tet(p1, p2, org, org+dir);
     const double v1 = volume_Tet(p2, tp0, org, org+dir);
     const double v2 = volume_Tet(tp0, p1, org, org+dir);
@@ -317,6 +247,7 @@ bool pickMesh
 void InitializeMesh
 (std::vector<CEPo2>& aPo3D,
  std::vector<ETri>& aSTri,
+ std::vector<CVector3>& aVec3,
  ////
  const double* aXYZ, int nXYZ,
  const int* aTri,    int nTri)
@@ -325,11 +256,11 @@ void InitializeMesh
   aSTri.clear();
   /////
   aPo3D.resize(nXYZ);
-  //  std::cout << aPo3D.size() << std::endl;
+  aVec3.resize(nXYZ);
   for (int ipo = 0; ipo<(int)aPo3D.size(); ++ipo){
-    aPo3D[ipo].p.x = aXYZ[ipo*3+0];
-    aPo3D[ipo].p.y = aXYZ[ipo*3+1];
-    aPo3D[ipo].p.z = aXYZ[ipo*3+2];
+    aVec3[ipo].x = aXYZ[ipo*3+0];
+    aVec3[ipo].y = aXYZ[ipo*3+1];
+    aVec3[ipo].z = aXYZ[ipo*3+2];
     aPo3D[ipo].e = -1; // for unreffered point
     aPo3D[ipo].d = 0;
   }
@@ -362,7 +293,8 @@ int pickTriangle
  const CVector3& org, const CVector3& dir,
  int itri_start, // starting triangle
  const std::vector<CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri)
+ const std::vector<ETri>& aSTri,
+ const std::vector<CVector3>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -370,9 +302,9 @@ int pickTriangle
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const CVector3& tp0 = aPo3D[ip0].p;
-    const CVector3& p1 = aPo3D[ip1].p;
-    const CVector3& p2 = aPo3D[ip2].p;
+    const CVector3& tp0 = aXYZ[ip0];
+    const CVector3& p1 = aXYZ[ip1];
+    const CVector3& p2 = aXYZ[ip2];
     double v0 = volume_Tet(p1, p2, org, org+dir);
     double v1 = volume_Tet(p2, tp0, org, org+dir);
     double v2 = volume_Tet(tp0, p1, org, org+dir);
@@ -402,11 +334,14 @@ bool FindRayTriangleMeshIntersectionClosestToPoint
  const CVector3 &line1,
  const std::vector<ETri>& aTri,
  const std::vector<CEPo2> &aPoint3D,
+ std::vector<CVector3>& aVec3,
  const CVector3 &targetPoint,
  CVector3 &intersectionPoint)
 {
 	std::vector<CVector3> intersectionPoints;
-	if (!FindRayTriangleMeshIntersections(line0, line1, aTri, aPoint3D, intersectionPoints))
+	if (!FindRayTriangleMeshIntersections(line0, line1,
+                                        aTri, aPoint3D, aVec3,
+                                        intersectionPoints))
 	{
 		return false;
 	}
@@ -435,6 +370,7 @@ bool FindRayTriangleMeshIntersections
  const CVector3 &line1,
  const std::vector<ETri>& aTri,
  const std::vector<CEPo2> &aPoint3D,
+ std::vector<CVector3>& aVec3,
  std::vector<CVector3> &intersectionPoints)
 {
 	intersectionPoints.clear();
@@ -444,9 +380,9 @@ bool FindRayTriangleMeshIntersections
 	{
 		CVector3 intersectionPoint;
 		if (isRayIntersectingTriangle(line0, line1,
-                                  aPoint3D[aTri[i].v[0]].p,
-                                  aPoint3D[aTri[i].v[1]].p,
-                                  aPoint3D[aTri[i].v[2]].p,
+                                  aVec3[aTri[i].v[0]],
+                                  aVec3[aTri[i].v[1]],
+                                  aVec3[aTri[i].v[2]],
                                   intersectionPoint))
 		{
 			intersectionPoints.push_back(intersectionPoint);
@@ -460,6 +396,123 @@ bool FindRayTriangleMeshIntersections
 	}  
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool DelaunayAroundPoint
+(int ipo0,
+ std::vector<CEPo2>& aPo,
+ std::vector<ETri>& aTri,
+ const std::vector<CVector3>& aVec3)
+{
+  assert(ipo0 < (int)aPo.size());
+  if (aPo[ipo0].e==-1) return true;
+  
+  assert(aPo[ipo0].e>=0&&(int)aPo[ipo0].e < (int)aTri.size());
+  assert(aTri[aPo[ipo0].e].v[aPo[ipo0].d]==ipo0);
+  
+  const int itri0 = aPo[ipo0].e;
+  int inotri0 = aPo[ipo0].d;
+  
+  int itri_cur = itri0;
+  int inotri_cur = aPo[ipo0].d;
+  bool flag_is_wall = false;
+  for (;;){
+    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
+    if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
+      assert(aTri[itri_cur].v[inotri_cur]==ipo0);
+      // check opposing element
+      const int itri_dia = aTri[itri_cur].s2[inotri_cur];
+      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
+      const int inotri_dia = rel_dia[inotri_cur];
+      assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
+      const int ipo_dia = aTri[itri_dia].v[inotri_dia];
+      if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],
+                      aVec3[aTri[itri_cur].v[1]],
+                      aVec3[aTri[itri_cur].v[2]],
+                      aVec3[ipo_dia])==0)
+      {
+        bool res = FlipEdge(itri_cur, inotri_cur, aPo, aTri);
+        if( res ){
+          inotri_cur = 2;
+          assert(aTri[itri_cur].v[inotri_cur]==ipo0);
+          if (itri_cur==itri0) inotri0 = inotri_cur;
+          continue;
+        }
+        else{
+          break;
+        }
+      }
+    }
+    MoveCCW(itri_cur, inotri_cur, flag_is_wall, aPo,aTri);
+    if( flag_is_wall ) break;
+    if( itri_cur == itri0 ) break;
+    /*
+     {  // next element
+     const int inotri1 = indexRot3[1][inotri_cur];
+     if (aTri[itri_cur].s2[inotri1]==-1){
+     flag_is_wall = true;
+     break;
+     }
+     const int itri_nex = aTri[itri_cur].s2[inotri1];
+     const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri1]];
+     const int inotri_nex = rel_nex[inotri_cur];
+     assert(aTri[itri_nex].v[inotri_nex]==ipo0);
+     if (itri_nex==itri0) break;  // finish if we reach starting elemnt
+     itri_cur = itri_nex;
+     inotri_cur = inotri_nex;
+     }
+     */
+  }
+  if (!flag_is_wall) return true;
+  
+  ////////////////////////////////
+  // rotate counter clock-wise
+  
+  itri_cur = itri0;
+  inotri_cur = inotri0;
+  for (;;){
+    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
+    
+    if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
+      // check elements in opposing side
+      const int itri_dia = aTri[itri_cur].s2[inotri_cur];
+      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
+      const int inotri_dia = rel_dia[inotri_cur];
+      assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
+      const int ipo_dia = aTri[itri_dia].v[inotri_dia];
+      if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],
+                      aVec3[aTri[itri_cur].v[1]],
+                      aVec3[aTri[itri_cur].v[2]],
+                      aVec3[ipo_dia])==0)  // Delaunay condition is not satisfiled
+      {
+        FlipEdge(itri_cur, inotri_cur, aPo, aTri);
+        itri_cur = itri_dia;
+        inotri_cur = 1;
+        assert(aTri[itri_cur].v[inotri_cur]==ipo0);
+        continue;
+      }
+    }
+    
+    {
+      const int inotri2 = (inotri_cur+2)%3; //  indexRot3[2][inotri_cur];
+      if (aTri[itri_cur].s2[inotri2]==-1){
+        return true;
+      }
+      const int itri_nex = aTri[itri_cur].s2[inotri2];
+      const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
+      const int inotri_nex = rel_nex[inotri_cur];
+      assert(aTri[itri_nex].v[inotri_nex]==ipo0);
+      assert(itri_nex!=itri0);  // finsih if reach starting elemnet
+      itri_cur = itri_nex;
+      inotri_cur = inotri_nex;
+    }
+  }
+  return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 /*
 template <typename TYPE>
 void GetTriAryAroundPoint
@@ -516,7 +569,8 @@ void GetTriAryAroundPoint
 
 void DrawMeshDynTri_FaceNorm
 (const std::vector< CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri )
+ const std::vector<ETri>& aSTri,
+ const std::vector<CVector3>& aVec3)
 {
   //  ::glPushAttrib(GL_ENABLE_BIT);
   
@@ -533,19 +587,19 @@ void DrawMeshDynTri_FaceNorm
       continue;
     }
     {
-      CVector3 n; UnitNormal(n, aPo3D[i0].p, aPo3D[i1].p, aPo3D[i2].p);
+      CVector3 n; UnitNormal(n, aVec3[i0], aVec3[i1], aVec3[i2]);
       ::glNormal3d(n.x,n.y,n.z);
     }
     {
-      CVector3 p0 = aPo3D[i0].p;
+      CVector3 p0 = aVec3[i0];
       ::glVertex3d(p0.x,p0.y,p0.z);
     }
     {
-      CVector3 p1 = aPo3D[i1].p;
+      CVector3 p1 = aVec3[i1];
       ::glVertex3d(p1.x,p1.y,p1.z);
     }
     {
-      CVector3 p2 = aPo3D[i2].p;
+      CVector3 p2 = aVec3[i2];
       ::glVertex3d(p2.x,p2.y,p2.z);
     }
   }
@@ -554,7 +608,8 @@ void DrawMeshDynTri_FaceNorm
 
 void DrawMeshDynTri_Edge
 (const std::vector< CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri )
+ const std::vector<ETri>& aSTri,
+ const std::vector<CVector3>& aVec3)
 {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
@@ -568,9 +623,9 @@ void DrawMeshDynTri_Edge
       assert( i1 == -1 );
       assert( i2 == -1 );
     }
-    const CVector3& p0 = aPo3D[i0].p;
-    const CVector3& p1 = aPo3D[i1].p;
-    const CVector3& p2 = aPo3D[i2].p;
+    const CVector3& p0 = aVec3[i0];
+    const CVector3& p1 = aVec3[i1];
+    const CVector3& p2 = aVec3[i2];
     glVertex3d(p0.x,p0.y,p0.z);
     glVertex3d(p1.x,p1.y,p1.z);
     
