@@ -3,6 +3,25 @@
 
 #include "delfem2/dyntri_v3.h"
 
+
+static inline double TriArea2D(const double v1[], const double v2[], const double v3[]){
+  return 0.5*( (v2[0]-v1[0])*(v3[1]-v1[1]) - (v3[0]-v1[0])*(v2[1]-v1[1]) );
+}
+
+static bool IsCrossLines(const double po_s0[], const double po_e0[],
+                         const double po_s1[], const double po_e1[] )
+{
+  const double area1 = TriArea2D(po_s0,po_e0,po_s1);
+  const double area2 = TriArea2D(po_s0,po_e0,po_e1);
+  if( area1 * area2 > 0.0 ) return false;
+  const double area3 = TriArea2D(po_s1,po_e1,po_s0);
+  const double area4 = TriArea2D(po_s1,po_e1,po_e0);
+  if( area3 * area4 > 0.0 ) return false;
+  return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*
 template <typename TYPE>
 void makeNormal
@@ -345,6 +364,7 @@ void extractHoles
 }
 
 
+/*
 int SignofNumber(float a)
 {
 	if(a > 0)
@@ -355,26 +375,16 @@ int SignofNumber(float a)
 		return 0;
   return -1;
 }
+ */
 
 
-CVector3 ProjectPointOnTriangle
-(const CVector3 &p0,
- const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3)
-{
-	CVector3 normal = Cross(tri_p2 - tri_p1, tri_p3 - tri_p1);
-	double cosAlpha = Dot(p0 - tri_p1, normal) / (Length(p0 - tri_p1) * Length(normal));
-	double lenP0ProjectedP0 = Length(tri_p1 - p0) * cosAlpha;
-	CVector3 p0ProjectedP0 = -1 * lenP0ProjectedP0 * normal / Length(normal);
-  
-	return p0 + p0ProjectedP0;
-}
 
 template <typename TYPE>
 bool FindRayTriangleMeshIntersectionClosestToPoint
 (const CVector3 &line0,
  const CVector3 &line1,
  const std::vector<ETri>& aTri,
- const std::vector<CEPo<TYPE> > &aPoint3D,
+ const std::vector<CEPo2<TYPE> > &aPoint3D,
  const CVector3 &targetPoint,
  CVector3 &intersectionPoint)
 {
@@ -407,7 +417,7 @@ bool FindRayTriangleMeshIntersections
 (const CVector3 &line0,
  const CVector3 &line1,
  const std::vector<ETri>& aTri,
- const std::vector<CEPo<TYPE> > &aPoint3D,
+ const std::vector<CEPo2<TYPE> > &aPoint3D,
  std::vector<CVector3> &intersectionPoints)
 {
 	intersectionPoints.clear();
@@ -431,68 +441,6 @@ bool FindRayTriangleMeshIntersections
 	} else {
 		return true;
 	}  
-}
-
-bool isRayIntersectingTriangle
-(const CVector3 &line0, const CVector3 &line1,
- const CVector3 &tri0, const CVector3 &tri1, const CVector3 &tri2,
- CVector3 &intersectionPoint)
-{
-	CVector3 normal = Cross(tri1 - tri0, tri2 - tri0);
-  
-	// The ray is parallel to the triangle plane
-	if (Dot(normal, line1 - line0) == 0)
-	{
-		return false;
-	}
-  
-	double r = Dot(normal, tri0 - line0) / Dot(normal, line1 - line0);
-  
-	// The ray does not intersect the triangle plane
-	if (r < 0)
-	{
-		return false;
-	}
-  
-	// Find the intersection point
-	intersectionPoint = line0 + r * (line1 - line0);
-  
-	if (!isPointInsideTriangle(intersectionPoint,
-                             tri0, tri1, tri2))
-	{
-		return false;
-	}
-  
-	return true;
-}
-
-bool isPointInsideTriangle
-(const CVector3 &p0,
- const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3)
-{
-	if (isPointSameSide(p0, tri_p1, tri_p2, tri_p3)
-      && isPointSameSide(p0, tri_p2, tri_p1, tri_p3)
-      && isPointSameSide(p0, tri_p3, tri_p1, tri_p2))
-	{
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool isPointSameSide
-(const CVector3 &p0, const CVector3 &p1,
- const CVector3 &line_p0, const CVector3 &line_p1)
-{
-	CVector3 crossProd1 = Cross(line_p1 - line_p0, p0 - line_p0);
-	CVector3 crossProd2 = Cross(line_p1 - line_p0, p1 - line_p0);
-  
-	if (Dot(crossProd1, crossProd2) >= 0)
-	{
-		return true;
-	} else {
-		return false;
-	}
 }
 
 /*
@@ -608,7 +556,7 @@ static inline int DetDelaunayXY
 bool FindEdgePoint_AcrossEdge2
 (int& itri0, int& inotri0, int& inotri1, double& ratio,
  const int& ipo0, const int& ipo1,
- std::vector<CEPo<void*> >& po, std::vector<ETri>& tri )
+ std::vector<CEPo2<void*> >& po, std::vector<ETri>& tri )
 {
   const unsigned int itri_ini = po[ipo0].e;
   const unsigned int inotri_ini = po[ipo0].d;
@@ -698,7 +646,7 @@ bool FindEdgePoint_AcrossEdge2
 
 bool DelaunayAroundPoint2
 (int ipo0,
- std::vector<CEPo<void*> >& aPo, std::vector<ETri>& aTri)
+ std::vector<CEPo2<void*> >& aPo, std::vector<ETri>& aTri)
 {
   assert(ipo0 < (int)aPo.size());
   if (aPo[ipo0].e==-1) return true;
@@ -808,7 +756,7 @@ bool DelaunayAroundPoint2
 
 
 void LaplacianSmoothing2
-( std::vector<CEPo<void*> >& aPo, const std::vector<ETri>& aTri,
+( std::vector<CEPo2<void*> >& aPo, const std::vector<ETri>& aTri,
  const std::vector<int>& aflg_isnt_move)
 {
   /*
@@ -870,7 +818,7 @@ void LaplacianSmoothing2
 
 
 void LaplaceDelaunaySmoothing2
-( std::vector<CEPo<void*> >& aPo, std::vector<ETri>& aTri,
+( std::vector<CEPo2<void*> >& aPo, std::vector<ETri>& aTri,
  const std::vector<int>& aflg_isnt_move )
 {
   for(unsigned int ipoin=0;ipoin<aPo.size();ipoin++){	// ì_é¸ÇËÇÃì_ÇíTçıÇµÇƒí≤Ç◊ÇÈÅB
@@ -923,7 +871,7 @@ void LaplaceDelaunaySmoothing2
 }
 
 void MeshingInside2
-(std::vector<CEPo<void*> >& aPo2D,
+(std::vector<CEPo2<void*> >& aPo2D,
  std::vector<ETri>& aTri,
  const std::vector<int>& aVtxInd,
  const double len,
@@ -975,7 +923,7 @@ void MeshingInside2
 
 
 bool TriangulateOuterLoop2
-(std::vector<CEPo<void*> >& aPo2D,
+(std::vector<CEPo2<void*> >& aPo2D,
  std::vector<ETri>& aTri_in,
  const std::vector<int>& aPtrVtxInd,
  const std::vector<int>& aVtxInd)
@@ -1219,7 +1167,7 @@ bool TriangulateOuterLoop2
     }
   }
   {
-    std::vector<CEPo<void*> > aPo_tmp = aPo2D;
+    std::vector<CEPo2<void*> > aPo_tmp = aPo2D;
     aPo2D.resize( npo_pos );
     for(int ipo=0;ipo<(int)map_po_del.size();ipo++){
       if( map_po_del[ipo] == -2 ) continue;
@@ -1240,22 +1188,6 @@ bool TriangulateOuterLoop2
   return true;
 }
 
-
-static inline double TriArea2D(const double v1[], const double v2[], const double v3[]){
-  return 0.5*( (v2[0]-v1[0])*(v3[1]-v1[1]) - (v3[0]-v1[0])*(v2[1]-v1[1]) );
-}
-
-static bool IsCrossLines(const double po_s0[], const double po_e0[],
-                         const double po_s1[], const double po_e1[] )
-{
-  const double area1 = TriArea2D(po_s0,po_e0,po_s1);
-  const double area2 = TriArea2D(po_s0,po_e0,po_e1);
-  if( area1 * area2 > 0.0 ) return false;
-  const double area3 = TriArea2D(po_s1,po_e1,po_s0);
-  const double area4 = TriArea2D(po_s1,po_e1,po_e0);
-  if( area3 * area4 > 0.0 ) return false;
-  return true;
-}
 
 bool IsInclude_Loop
 (const double co[],
@@ -1428,7 +1360,7 @@ int delaunay_triangulation2
   if( !isOuterShapeOK(nloop,aXY_in,aIndXYs) ) return false;
   
   int nxys_presum = aIndXYs[nloop];
-  std::vector<CEPo<void*> > aPo2D;
+  std::vector<CEPo2<void*> > aPo2D;
   aPo2D.resize(nxys_presum);
   for(int ixys=0;ixys<nxys_presum;ixys++){
     aPo2D[ixys].p.x = aXY_in[ixys*2+0];
@@ -1459,7 +1391,7 @@ int delaunay_triangulation2
         const double dely = (aPo2D[ipo1].p.y - aPo2D[ipo0].p.y)/ndiv;
         for(int iadd=0;iadd<nadd;++iadd){
           const unsigned int ipo = (int)aPo2D.size();
-          CEPo<void*> po;
+          CEPo2<void*> po;
           po.p.x = aPo2D[ipo0].p.x + delx*(iadd+1);
           po.p.y = aPo2D[ipo0].p.y + dely*(iadd+1);
           po.p.z = 0.0;

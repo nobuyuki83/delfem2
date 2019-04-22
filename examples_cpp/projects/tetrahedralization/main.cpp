@@ -338,8 +338,8 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
                                        aTri.data(),aTri.size()/3,3,(int)aXYZ.size()/3);
         std::vector<int> edge_ind;
         std::vector<int> edge;
-        makeEdge(edge_ind, edge,
-                 psup_ind, psup);
+        JArray_MakeEdgeFromPsup(edge_ind, edge,
+                                psup_ind, psup);
 //        CJaggedArray edge;
 //        edge.SetEdgeOfElem(aTri, (int)aTri.size()/3, 3, (int)aXYZ.size()/3, false);
         for(int ixyz=0;ixyz<(int)aXYZ.size()/3;++ixyz){

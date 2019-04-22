@@ -31,15 +31,15 @@ def show_quad(voxelgrid):
   dfm2.winDraw3d([msh, axis], (400, 400))
 
 def main():
-  voxelgrid = dfm2.Grid3D()
-  voxelgrid.add(0, 0, 0)
-  voxelgrid.add(1, 0, 0)
-  voxelgrid.add(2, 0, 0)
-  voxelgrid.add(1, 1, 0)
+  grid3d = dfm2.Grid3D()
+  grid3d.add(0, 0, 0)
+  grid3d.add(1, 0, 0)
+  grid3d.add(2, 0, 0)
+  grid3d.add(1, 1, 0)
   ###
-  show_quad(voxelgrid)
-  show_hex(voxelgrid)
-  pbd_hex(voxelgrid)
+  show_quad(grid3d)
+  show_hex(grid3d)
+  pbd_hex(grid3d)
 
 
 if __name__ == "__main__":

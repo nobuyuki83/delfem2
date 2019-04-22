@@ -8,7 +8,6 @@
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
-//#include "delfem2/funcs_gl.h"
 #include "delfem2/color_gl.h"
 #include "delfem2/funcs.h"
 

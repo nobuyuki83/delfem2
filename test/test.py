@@ -1,4 +1,4 @@
-import unittest, numpy
+import unittest, numpy, random
 import sys
 sys.path.append("../module_py")
 import dfm2
@@ -63,6 +63,38 @@ class Test_Mesh(unittest.TestCase):
     msh = voxelgrid.mesh_hex3d()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
+
+class Test_DynamicMesh(unittest.TestCase):
+  def test0(self):
+    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
+    mesh = cad.mesh(0.1)
+    dmesh = dfm2.CppMeshDynTri()
+    dfm2.meshdyntri3d_initialize(dmesh, mesh.np_pos, mesh.np_elm)
+    dmesh.check()
+
+  def test1(self):
+    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
+    mesh = cad.mesh(0.2)
+    dmesh = dfm2.CppMeshDynTri()
+    dfm2.meshdyntri3d_initialize(dmesh, mesh.np_pos, mesh.np_elm)
+    dmesh.check()
+    for itr in range(100):
+      itri0 = random.randint(0, dmesh.ntri() - 1)
+      r0 = random.uniform(0.02, 0.98)
+      r1 = random.uniform(0.01, 0.99 - r0)
+      ipo = dmesh.insert_point_elem(itri0, r0, r1)
+      dmesh.delaunay_around_point(ipo)
+      dmesh.check()
+
+  def main2(self):
+    msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
+    dmesh = dfm2.CppMeshDynTri()
+    dfm2.meshdyntri3d_initialize(dmesh, msh.np_pos, msh.np_elm)
+    dmesh.check()
+    for itr in range(1000):
+      itri0 = random.randint(0, dmesh.ntri() - 1)
+      iedge0 = random.randint(0, 2)
+      dmesh.delete_tri_edge(itri0, iedge0)
 
 
 class Test_PBD(unittest.TestCase):

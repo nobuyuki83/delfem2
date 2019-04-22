@@ -1627,6 +1627,81 @@ void MeanValueCoordinate
 ////////////////////////////////////////////////
 
 
+
+CVector3 ProjectPointOnTriangle
+(const CVector3 &p0,
+ const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3)
+{
+  CVector3 normal = Cross(tri_p2 - tri_p1, tri_p3 - tri_p1);
+  double cosAlpha = Dot(p0 - tri_p1, normal) / (Length(p0 - tri_p1) * Length(normal));
+  double lenP0ProjectedP0 = Length(tri_p1 - p0) * cosAlpha;
+  CVector3 p0ProjectedP0 = -1 * lenP0ProjectedP0 * normal / Length(normal);
+  
+  return p0 + p0ProjectedP0;
+}
+
+bool isRayIntersectingTriangle
+(const CVector3 &line0, const CVector3 &line1,
+ const CVector3 &tri0, const CVector3 &tri1, const CVector3 &tri2,
+ CVector3 &intersectionPoint)
+{
+  CVector3 normal = Cross(tri1 - tri0, tri2 - tri0);
+  
+  // The ray is parallel to the triangle plane
+  if (Dot(normal, line1 - line0) == 0)
+  {
+    return false;
+  }
+  
+  double r = Dot(normal, tri0 - line0) / Dot(normal, line1 - line0);
+  
+  // The ray does not intersect the triangle plane
+  if (r < 0)
+  {
+    return false;
+  }
+  
+  // Find the intersection point
+  intersectionPoint = line0 + r * (line1 - line0);
+  
+  if (!isPointInsideTriangle(intersectionPoint,
+                             tri0, tri1, tri2))
+  {
+    return false;
+  }
+  
+  return true;
+}
+
+bool isPointInsideTriangle
+(const CVector3 &p0,
+ const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3)
+{
+  if (isPointSameSide(p0, tri_p1, tri_p2, tri_p3)
+      && isPointSameSide(p0, tri_p2, tri_p1, tri_p3)
+      && isPointSameSide(p0, tri_p3, tri_p1, tri_p2))
+  {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool isPointSameSide
+(const CVector3 &p0, const CVector3 &p1,
+ const CVector3 &line_p0, const CVector3 &line_p1)
+{
+  CVector3 crossProd1 = Cross(line_p1 - line_p0, p0 - line_p0);
+  CVector3 crossProd2 = Cross(line_p1 - line_p0, p1 - line_p0);
+  
+  if (Dot(crossProd1, crossProd2) >= 0)
+  {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 ////////////////////////////////
 
 //! check if Delaunay condition satisfied

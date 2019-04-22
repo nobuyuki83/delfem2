@@ -638,9 +638,6 @@ void CenterOfGravity_Tri
 
 
 
-
-
-
 void Translate
 (double tx, double ty, double tz,
  const unsigned int nnode_, double* pXYZs_)
