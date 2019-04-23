@@ -244,50 +244,6 @@ bool pickMesh
 }
 
 
-void InitializeMesh
-(std::vector<CEPo2>& aPo3D,
- std::vector<ETri>& aSTri,
- std::vector<CVector3>& aVec3,
- ////
- const double* aXYZ, int nXYZ,
- const int* aTri,    int nTri)
-{
-  aPo3D.clear();
-  aSTri.clear();
-  /////
-  aPo3D.resize(nXYZ);
-  aVec3.resize(nXYZ);
-  for (int ipo = 0; ipo<(int)aPo3D.size(); ++ipo){
-    aVec3[ipo].x = aXYZ[ipo*3+0];
-    aVec3[ipo].y = aXYZ[ipo*3+1];
-    aVec3[ipo].z = aXYZ[ipo*3+2];
-    aPo3D[ipo].e = -1; // for unreffered point
-    aPo3D[ipo].d = 0;
-  }
-  aSTri.resize(nTri);
-  for (int itri = 0; itri<(int)aSTri.size(); itri++){
-    aSTri[itri].v[0] = aTri[itri*3+0];
-    aSTri[itri].v[1] = aTri[itri*3+1];
-    aSTri[itri].v[2] = aTri[itri*3+2];
-  }
-  for (int itri = 0; itri<(int)aSTri.size(); itri++){
-    unsigned int i1 = aSTri[itri].v[0];
-    unsigned int i2 = aSTri[itri].v[1];
-    unsigned int i3 = aSTri[itri].v[2];
-    aPo3D[i1].e = itri; aPo3D[i1].d = 0;
-    aPo3D[i2].e = itri; aPo3D[i2].d = 1;
-    aPo3D[i3].e = itri; aPo3D[i3].d = 2;
-  }
-  {
-    std::vector<int> elsup_ind, elsup;
-    JArray_MakeElSuP(elsup_ind, elsup,
-                    aSTri, (int)aPo3D.size());
-    MakeInnerRelationTri(aSTri, (int)aPo3D.size(),
-                         elsup_ind,elsup);
-  }
-}
-
-
 int pickTriangle
 (CVector3& p,
  const CVector3& org, const CVector3& dir,
@@ -550,6 +506,8 @@ void GetTriAryAroundPoint
 		inoel_b0 = inoel_b1;
 	}
 }*/
+
+
 
 
 

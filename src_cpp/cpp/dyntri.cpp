@@ -664,6 +664,43 @@ bool CheckTri
 }
 
 
+
+void InitializeMesh
+(std::vector<CEPo2>& aPo3D,
+ std::vector<ETri>& aSTri,
+ ////
+ const int* aTri,    int nTri,
+ int nXYZ)
+{
+  aPo3D.resize(nXYZ);
+  for (int ipo = 0; ipo<nXYZ; ++ipo){
+    aPo3D[ipo].e = -1; // for unreffered point
+    aPo3D[ipo].d = 0;
+  }
+  aSTri.resize(nTri);
+  for (int itri = 0; itri<nTri; itri++){
+    aSTri[itri].v[0] = aTri[itri*3+0];
+    aSTri[itri].v[1] = aTri[itri*3+1];
+    aSTri[itri].v[2] = aTri[itri*3+2];
+  }
+  for (int itri = 0; itri<nTri; itri++){
+    unsigned int i1 = aSTri[itri].v[0];
+    unsigned int i2 = aSTri[itri].v[1];
+    unsigned int i3 = aSTri[itri].v[2];
+    aPo3D[i1].e = itri; aPo3D[i1].d = 0;
+    aPo3D[i2].e = itri; aPo3D[i2].d = 1;
+    aPo3D[i3].e = itri; aPo3D[i3].d = 2;
+  }
+  {
+    std::vector<int> elsup_ind, elsup;
+    JArray_MakeElSuP(elsup_ind, elsup,
+                     aSTri, (int)aPo3D.size());
+    MakeInnerRelationTri(aSTri, (int)aPo3D.size(),
+                         elsup_ind,elsup);
+  }
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
