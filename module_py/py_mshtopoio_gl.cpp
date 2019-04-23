@@ -108,95 +108,8 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshHex3D_Subviv
   return std::forward_as_tuple(npXYZ1,npHex1);
 }
 
-
-class CMeshDynTri{
-public:
-  void Initialize(const double* aPo, int nPo, int ndim,
-                  const int* aTri, int nTri)
-  {
-    aEPo.resize(nPo);
-    aVec3.resize(nPo);
-    for(int ipo=0;ipo<nPo;ipo++){
-      if( ndim == 3 ){
-        aVec3[ipo].x = aPo[ipo*3+0];
-        aVec3[ipo].y = aPo[ipo*3+1];
-        aVec3[ipo].z = aPo[ipo*3+2];
-      }
-      else if( ndim == 2 ){
-        aVec3[ipo].x = aPo[ipo*2+0];
-        aVec3[ipo].y = aPo[ipo*2+1];
-        aVec3[ipo].z = 0.0;
-      }
-    }
-    for(int itri=0;itri<nTri;itri++){
-      unsigned int i1 = aTri[itri*3+0];
-      unsigned int i2 = aTri[itri*3+1];
-      unsigned int i3 = aTri[itri*3+2];
-      aEPo[i1].e = itri; aEPo[i1].d = 0;
-      aEPo[i2].e = itri; aEPo[i2].d = 1;
-      aEPo[i3].e = itri; aEPo[i3].d = 2;
-    }
-    /////////////////
-    aETri.resize(nTri);
-    for(int itri=0;itri<nTri;itri++){
-      aETri[itri].v[0] = aTri[itri*3+0];
-      aETri[itri].v[1] = aTri[itri*3+1];
-      aETri[itri].v[2] = aTri[itri*3+2];
-    }
-    {
-      std::vector<int> elsup_ind, elsup;
-      JArray_MakeElSuP(elsup_ind, elsup,
-                      aETri, (int)aEPo.size());
-      MakeInnerRelationTri(aETri, (int)aEPo.size(),
-                           elsup_ind, elsup);
-    }
-  }
-  void Check()
-  {
-    CheckTri(aETri);
-    CheckTri(aEPo, aETri);
-  }
-  std::vector<double> MinMax_XYZ() const {
-    double x_min,x_max, y_min,y_max, z_min,z_max;
-    x_min=x_max=aVec3[0].x;
-    y_min=y_max=aVec3[0].y;
-    z_min=z_max=aVec3[0].z;
-    for(unsigned int ipo=0;ipo<aEPo.size();ipo++){
-      updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                      aVec3[ipo].x, aVec3[ipo].y, aVec3[ipo].z);
-    }
-    return {x_min,x_max, y_min,y_max, z_min,z_max};
-  }
-  int insertPointElem(int itri0, double r0, double r1){
-    const int ipo0 = aEPo.size();
-    CEPo2 p0;
-    CVector3 v3;
-    {
-      int i0 = aETri[itri0].v[0];
-      int i1 = aETri[itri0].v[1];
-      int i2 = aETri[itri0].v[2];
-      v3 = r0*aVec3[i0]+r1*aVec3[i1]+(1-r0-r1)*aVec3[i2];
-    }
-    aEPo.push_back(p0);
-    InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
-    return ipo0;
-  }
-  void DelaunayAroundPoint(int ipo){
-    ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
-  }
-  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aEPo,aETri,aVec3); }
-  void Draw_Edge() const { DrawMeshDynTri_Edge(aEPo,aETri,aVec3); }
-  void draw() const { this->Draw_Edge(); }
-  int nTri() const { return aETri.size(); }
-  void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
-public:
-  std::vector<CEPo2> aEPo;
-  std::vector<ETri> aETri;
-  std::vector<CVector3> aVec3;
-};
-
 void PyMeshDynTri3D_Initialize
-(CMeshDynTri& mesh,
+(CMeshDynTri3D& mesh,
  const py::array_t<double>& po,
  const py::array_t<int>& tri)
 {
@@ -364,17 +277,17 @@ void init_mshtopoio_gl(py::module &m){
   .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
-  py::class_<CMeshDynTri>(m, "CppMeshDynTri")
+  py::class_<CMeshDynTri3D>(m, "CppMeshDynTri")
   .def(py::init<>())
-  .def("draw", &CMeshDynTri::draw)
-  .def("draw_face", &CMeshDynTri::Draw_FaceNorm)
-  .def("draw_edge", &CMeshDynTri::Draw_Edge)
-  .def("check", &CMeshDynTri::Check)
-  .def("ntri",  &CMeshDynTri::nTri)
-  .def("delete_tri_edge", &CMeshDynTri::DeleteTriEdge)
-  .def("minmax_xyz",      &CMeshDynTri::MinMax_XYZ)
-  .def("insert_point_elem", &CMeshDynTri::insertPointElem)
-  .def("delaunay_around_point", &CMeshDynTri::DelaunayAroundPoint);
+  .def("draw",              &CMeshDynTri3D::draw)
+  .def("draw_face",         &CMeshDynTri3D::Draw_FaceNorm)
+  .def("draw_edge",         &CMeshDynTri3D::Draw_Edge)
+  .def("check",             &CMeshDynTri3D::Check)
+  .def("ntri",              &CMeshDynTri3D::nTri)
+  .def("delete_tri_edge",   &CMeshDynTri3D::DeleteTriEdge)
+  .def("minmax_xyz",        &CMeshDynTri3D::MinMax_XYZ)
+  .def("insert_point_elem", &CMeshDynTri3D::insertPointElem)
+  .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
   
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   

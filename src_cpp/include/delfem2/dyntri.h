@@ -50,6 +50,11 @@ bool CheckTri(const std::vector<CEPo2>& aPo3D,
               const std::vector<ETri>& aSTri,
               bool is_assert=true);
 
+void InitializeMesh(std::vector<CEPo2>& aPo3D,
+                    std::vector<ETri>& aSTri,
+                    const int* aTri,    int nTri,
+                    int nXYZ);
+
 bool FindEdge(int& itri0, int& inotri0, int& inotri1,
               ///
               const int ipo0, const int ipo1,
