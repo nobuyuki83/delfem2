@@ -117,6 +117,16 @@ void PyMeshDynTri3D_Initialize
                   tri.data(), tri.shape()[0]);
 }
 
+void PyMeshDynTri2D_Initialize
+(CMeshDynTri2D& mesh,
+ const py::array_t<double>& po,
+ const py::array_t<int>& tri)
+{
+  assert(po.shape()[1]==2);
+  mesh.Initialize(po.data(), po.shape()[0],
+                  tri.data(), tri.shape()[0]);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -277,7 +287,7 @@ void init_mshtopoio_gl(py::module &m){
   .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
-  py::class_<CMeshDynTri3D>(m, "CppMeshDynTri")
+  py::class_<CMeshDynTri3D>(m, "CppMeshDynTri3D")
   .def(py::init<>())
   .def("draw",              &CMeshDynTri3D::draw)
   .def("draw_face",         &CMeshDynTri3D::Draw_FaceNorm)
@@ -289,7 +299,20 @@ void init_mshtopoio_gl(py::module &m){
   .def("insert_point_elem", &CMeshDynTri3D::insertPointElem)
   .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
   
+  py::class_<CMeshDynTri2D>(m, "CppMeshDynTri2D")
+  .def(py::init<>())
+  .def("draw",              &CMeshDynTri2D::draw)
+  .def("draw_face",         &CMeshDynTri2D::Draw_FaceNorm)
+  .def("draw_edge",         &CMeshDynTri2D::Draw_Edge)
+  .def("check",             &CMeshDynTri2D::Check)
+  .def("ntri",              &CMeshDynTri2D::nTri)
+  .def("delete_tri_edge",   &CMeshDynTri2D::DeleteTriEdge)
+  .def("minmax_xyz",        &CMeshDynTri2D::MinMax_XYZ)
+  .def("insert_point_elem", &CMeshDynTri2D::insertPointElem)
+  .def("delaunay_around_point", &CMeshDynTri2D::DelaunayAroundPoint);
+  
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
+  m.def("meshdyntri2d_initialize",&PyMeshDynTri2D_Initialize);
   
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);
