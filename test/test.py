@@ -68,14 +68,14 @@ class Test_DynamicMesh(unittest.TestCase):
   def test0(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
     mesh = cad.mesh(0.1)
-    dmesh = dfm2.CppMeshDynTri()
+    dmesh = dfm2.CppMeshDynTri3D()
     dfm2.meshdyntri3d_initialize(dmesh, mesh.np_pos, mesh.np_elm)
     dmesh.check()
 
   def test1(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
     mesh = cad.mesh(0.2)
-    dmesh = dfm2.CppMeshDynTri()
+    dmesh = dfm2.CppMeshDynTri3D()
     dfm2.meshdyntri3d_initialize(dmesh, mesh.np_pos, mesh.np_elm)
     dmesh.check()
     for itr in range(100):
@@ -88,7 +88,7 @@ class Test_DynamicMesh(unittest.TestCase):
 
   def main2(self):
     msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
-    dmesh = dfm2.CppMeshDynTri()
+    dmesh = dfm2.CppMeshDynTri3D()
     dfm2.meshdyntri3d_initialize(dmesh, msh.np_pos, msh.np_elm)
     dmesh.check()
     for itr in range(1000):

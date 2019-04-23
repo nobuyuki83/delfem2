@@ -385,6 +385,8 @@ void AddPointsMesh
  int ipoin,
  double MIN_TRI_AREA)
 {
+  assert( aPo2D.size() == aVec2.size() );
+
   // Make Delaunay Division
   if( aPo2D[ipoin].e >= 0 ) return;  // already added
   const CVector2& po_add = aVec2[ipoin];
@@ -451,6 +453,8 @@ void EnforceEdge
  const std::vector<int>& aPtrVtxInd,
  const std::vector<int>& aVtxInd)
 { // enforce edge
+  assert( aPo2D.size() == aVec2.size() );
+  
   const int nloop = (int)aPtrVtxInd.size()-1;
   for(int iloop=0;iloop<nloop;iloop++){
     const int nbar = aPtrVtxInd[iloop+1]-aPtrVtxInd[iloop];
@@ -565,41 +569,13 @@ void DeleteNotConnected
 }
 
 
-bool TriangulateOuterLoop2
-(std::vector<CEPo2>& aPo2D,
+void DeletePoints
+(std::vector<CVector2>& aVec2,
+ std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri_in,
- std::vector<CVector2>& aVec2,
- const std::vector<int>& aPtrVtxInd,
- const std::vector<int>& aVtxInd)
+ const std::vector<int>& aPoDel)
 {
   assert( aPo2D.size() == aVec2.size() );
-  
-  std::vector<ETri> aTri;
-  std::vector<int> aPoDel;
-  {
-    const int npo = (int)aPo2D.size();
-    aPoDel.push_back( npo+0 );
-    aPoDel.push_back( npo+1 );
-    aPoDel.push_back( npo+2 );
-    MakeSuperTriangle(aVec2, aPo2D, aTri);
-  }
-
-  {
-    const double MIN_TRI_AREA = 1.0e-10;
-    for(unsigned int ip=0;ip<aPo2D.size();++ip){
-      AddPointsMesh(aVec2,aPo2D,aTri,
-                    ip,MIN_TRI_AREA);
-    }
-  }
-  
-  int itri0_ker  = (int)aTri.size(); // one internal triangle
-  EnforceEdge(itri0_ker, aVec2,aPo2D,aTri, aPtrVtxInd,aVtxInd);
-  assert( aPo2D.size() == aVec2.size() );
-  
-  DeleteNotConnected(aTri_in,
-                     itri0_ker,aTri);
-  assert( aPo2D.size() == aVec2.size() );
-  ////////////////
   std::vector<int> map_po_del;
   int npo_pos;
   {
@@ -635,6 +611,44 @@ bool TriangulateOuterLoop2
       aPo2D[ipo].d = ifatri;
     }
   }
+}
+
+bool TriangulateOuterLoop2
+(std::vector<CEPo2>& aPo2D,
+ std::vector<ETri>& aTri_in,
+ std::vector<CVector2>& aVec2,
+ const std::vector<int>& aPtrVtxInd,
+ const std::vector<int>& aVtxInd)
+{
+  assert( aPo2D.size() == aVec2.size() );
+  
+  std::vector<ETri> aTri;
+  std::vector<int> aPoDel;
+  {
+    const int npo = (int)aPo2D.size();
+    aPoDel.push_back( npo+0 );
+    aPoDel.push_back( npo+1 );
+    aPoDel.push_back( npo+2 );
+    MakeSuperTriangle(aVec2, aPo2D, aTri);
+  }
+
+  {
+    const double MIN_TRI_AREA = 1.0e-10;
+    for(unsigned int ip=0;ip<aPo2D.size();++ip){
+      AddPointsMesh(aVec2,aPo2D,aTri,
+                    ip,MIN_TRI_AREA);
+    }
+  }
+  
+  int itri0_ker  = (int)aTri.size(); // one internal triangle
+  EnforceEdge(itri0_ker, aVec2,aPo2D,aTri, aPtrVtxInd,aVtxInd);
+  
+  DeleteNotConnected(aTri_in,
+                     itri0_ker,aTri);
+  ////////////////
+
+  DeletePoints(aVec2,aPo2D,aTri_in,
+               aPoDel);
   assert( aVec2.size() == aPo2D.size() );
   return true;
 }
@@ -1011,4 +1025,76 @@ bool GenerateTesselation2
                               aVecAry0);
 }
 
+
+
+
+
+#ifdef USE_GL
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/gl.h>
+#elif defined(_WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
+void DrawMeshDynTri_FaceNorm
+(const std::vector<ETri>& aSTri,
+ const std::vector<CVector2>& aVec2)
+{
+  //  ::glPushAttrib(GL_ENABLE_BIT);
+  
+  ::glEnable(GL_LIGHTING);
+  //  ::myGlColorDiffuse(CColor::Orange());
+  ::glBegin(GL_TRIANGLES);
+  for (unsigned int itri=0; itri<aSTri.size(); ++itri){
+    const int i0 = aSTri[itri].v[0];
+    const int i1 = aSTri[itri].v[1];
+    const int i2 = aSTri[itri].v[2];
+    if( i0 == -1 ){
+      assert( i1 == -1 );
+      assert( i2 == -1 );
+      continue;
+    }
+    const CVector2& p0 = aVec2[i0];
+    const CVector2& p1 = aVec2[i1];
+    const CVector2& p2 = aVec2[i2];
+    ::glVertex2d(p0.x,p0.y);
+    ::glVertex2d(p1.x,p1.y);
+    ::glVertex2d(p2.x,p2.y);
+  }
+  ::glEnd();
+}
+
+void DrawMeshDynTri_Edge
+(const std::vector<ETri>& aSTri,
+ const std::vector<CVector2>& aVec2)
+{
+  ::glDisable(GL_LIGHTING);
+  ::glLineWidth(1);
+  ::glColor3d(0,0,0);
+  ::glBegin(GL_LINES);
+  for (unsigned int itri = 0; itri<aSTri.size(); ++itri){
+    const int i0 = aSTri[itri].v[0];
+    const int i1 = aSTri[itri].v[1];
+    const int i2 = aSTri[itri].v[2];
+    if( i0 == -1 ){
+      assert( i1 == -1 );
+      assert( i2 == -1 );
+    }
+    const CVector2& p0 = aVec2[i0];
+    const CVector2& p1 = aVec2[i1];
+    const CVector2& p2 = aVec2[i2];
+    glVertex2d(p0.x,p0.y);  glVertex2d(p1.x,p1.y);
+    glVertex2d(p1.x,p1.y);  glVertex2d(p2.x,p2.y);
+    glVertex2d(p2.x,p2.y);  glVertex2d(p0.x,p0.y);
+  }
+  ::glEnd();
+}
+
+#endif
 
