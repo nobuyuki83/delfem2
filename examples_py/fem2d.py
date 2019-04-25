@@ -120,9 +120,9 @@ def pbd1(cad,mesh):
 
 def main():
 
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
+  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   mesh = cad.mesh(0.05)
-  #  dfm2.winDraw3d([cad,mesh])
+#  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)

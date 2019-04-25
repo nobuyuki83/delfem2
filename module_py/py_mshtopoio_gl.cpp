@@ -167,21 +167,30 @@ void PyDrawMesh_Edge
 
 
 std::tuple<std::vector<double>,std::vector<int>,std::vector<int>,std::vector<int>>
-Triangulation
+PyTriangulation
 (const std::vector< std::vector<double> >& aaXY,
  double edge_length)
 {
-//  CTriangulationOutput out;
-//  std::vector< std::vector<double> > aaXY;
-//  aaXY.push_back(aXY);
-  std::vector<int> aPtrVtxInd;
-  std::vector<int> aVtxInd;
-  std::vector<int> aElm;
+  std::vector<int> loop1_ind,loop1;
+  std::vector<double> aXY0;
+  JArray_FromVecVec_XY(loop1_ind,aXY0,
+                       aaXY);
+  assert( CheckInputBoundaryForTriangulation(loop1_ind,aXY0) );
+  /////
+  loop1.resize(aXY0.size()/2);
+  for(unsigned int ip=0;ip<aXY0.size()/2;++ip){ loop1[ip] = ip; }
+  /////
+  FixLoopOrientation(loop1,
+                     loop1_ind,aXY0);
+  ResamplingLoop(loop1_ind,loop1,aXY0,
+                 edge_length );
   std::vector<double> aPos;
-  GenerateTesselation2(aElm, aPos,
-                       aPtrVtxInd, aVtxInd,
-                       edge_length, true, aaXY);
-  return std::forward_as_tuple(aPos,aElm, aPtrVtxInd,aVtxInd);
+  std::vector<int> aElm;
+  CInputTriangulation_Uniform param(1.0);
+  Triangulation(aElm, aPos,
+                loop1_ind, loop1,
+                edge_length, param, aXY0);
+  return std::forward_as_tuple(aPos,aElm, loop1_ind,loop1);
 }
 
 std::tuple<py::array_t<int>, py::array_t<int>>
@@ -322,8 +331,7 @@ void init_mshtopoio_gl(py::module &m){
   m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
   m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
   
-  m.def("triangulation",&Triangulation);
-  m.def("triangulation",&Triangulation,
+  m.def("triangulation",&PyTriangulation,
         py::arg("aXY"),
         py::arg("edge_length")=0.03);
   

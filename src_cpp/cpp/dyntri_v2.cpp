@@ -4,6 +4,29 @@
 #include "delfem2/dyntri_v2.h"
 
 
+bool CheckTri
+(const std::vector<CEPo2>& aPo3D,
+ const std::vector<ETri>& aSTri,
+ const std::vector<CVector2>& aXYZ)
+{
+  for (unsigned int itri = 0; itri<aSTri.size(); itri++){
+    const ETri& ref_tri = aSTri[itri];
+    const int i0 = ref_tri.v[0];
+    if( i0 == -1 ) continue;
+    const int i1 = ref_tri.v[1];
+    const int i2 = ref_tri.v[2];
+    assert( i0 >=0 && i0 < (int)aPo3D.size() );
+    assert( i1 >=0 && i1 < (int)aPo3D.size() );
+    assert( i2 >=0 && i2 < (int)aPo3D.size() );
+    double area = TriArea(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
+    if (area<1.0e-10){ // very small volume
+      assert(0);
+      abort();
+    }
+  }
+  return true;
+}
+
 static bool IsCrossLines(const double po_s0[], const double po_e0[],
                          const double po_s1[], const double po_e1[] )
 {
@@ -118,6 +141,7 @@ bool FindEdgePoint_AcrossEdge
   return false;
 }
 
+
 bool DelaunayAroundPoint
 (int ipo0,
  std::vector<CEPo2>& aPo,
@@ -164,7 +188,8 @@ bool DelaunayAroundPoint
         }
       }
     }
-    MoveCCW(itri_cur, inotri_cur, flag_is_wall, aPo,aTri);
+    MoveCCW(itri_cur, inotri_cur, flag_is_wall,
+            aTri);
     if( flag_is_wall ) break;
     if( itri_cur == itri0 ) break;
   }
@@ -274,7 +299,7 @@ void MeshingInside2
  std::vector<CVector2>& aVec2,
  const std::vector<int>& aVtxInd,
  const double len,
- const CMeshDensity& mesh_density)
+ const CInputTriangulation& mesh_density)
 {
   assert( aVec2.size() == aPo2D.size() );
   std::vector<int> aflag_isnt_move;
@@ -613,7 +638,7 @@ void DeletePoints
   }
 }
 
-bool TriangulateOuterLoop2
+bool MeshingOuterLoop
 (std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri_in,
  std::vector<CVector2>& aVec2,
@@ -696,27 +721,28 @@ bool IsInclude_Loop
   return false;
 }
 
-bool isOuterShapeOK
-(int nloop,
- const std::vector<double>& aXY,
- const std::vector<int>& aIndXYs)
+bool CheckInputBoundaryForTriangulation
+(const std::vector<int>& loopIP_ind,
+ const std::vector<double>& aXY)
 {
   ////////////////////////////////
   // enter Input check section
   
+  const int nloop = loopIP_ind.size()-1;
+  
   { // make sure every loop has at least 3 points
     for(int iloop=0;iloop<nloop;iloop++){
-      if( aIndXYs[iloop+1]-aIndXYs[iloop] < 3 ) return false;
+      if( loopIP_ind[iloop+1]-loopIP_ind[iloop] < 3 ) return false;
     }
   }
   {
     ////////////////////////////////
     // check inclusion of loops
     for(int iloop=1;iloop<nloop;iloop++){
-      for(int ipo=aIndXYs[iloop];ipo<aIndXYs[iloop+1];ipo++){
+      for(int ipo=loopIP_ind[iloop];ipo<loopIP_ind[iloop+1];ipo++){
         const double pi[2] = {aXY[ipo*2+0],aXY[ipo*2+1]};
         if( !IsInclude_Loop(pi,
-                            aIndXYs[0],aIndXYs[1],
+                            loopIP_ind[0],loopIP_ind[1],
                             aXY) ) return false;
       }
     }
@@ -724,10 +750,10 @@ bool isOuterShapeOK
     for(int iloop=1;iloop<nloop;iloop++){
       for(int jloop=0;jloop<nloop;jloop++){
         if( iloop == jloop ) continue;
-        for(int jpo=aIndXYs[jloop];jpo<aIndXYs[jloop+1];jpo++){
+        for(int jpo=loopIP_ind[jloop];jpo<loopIP_ind[jloop+1];jpo++){
           const double pj[2] = {aXY[jpo*2+0],aXY[jpo*2+1]};
           if( IsInclude_Loop(pj,
-                             aIndXYs[iloop],aIndXYs[iloop+1],
+                             loopIP_ind[iloop],loopIP_ind[iloop+1],
                              aXY) ) return false;
         }
       }
@@ -736,11 +762,10 @@ bool isOuterShapeOK
   { // check intersection
     bool is_intersect = false;
     for(int iloop=0;iloop<nloop;iloop++){
-      const int nbar_i = aIndXYs[iloop+1]-aIndXYs[iloop];
+      const int nbar_i = loopIP_ind[iloop+1]-loopIP_ind[iloop];
       for(int ibar=0;ibar<nbar_i;ibar++){
-        const int ipo0 = aIndXYs[iloop] + ibar;
-        int ipo1 = aIndXYs[iloop] + ibar+1;
-        if( ibar == nbar_i-1 ){ ipo1 = aIndXYs[iloop]; }
+        const int ipo0 = loopIP_ind[iloop] + (ibar+0)%nbar_i;
+        const int ipo1 = loopIP_ind[iloop] + (ibar+1)%nbar_i;
         const double pi0[2] = {aXY[ipo0*2+0],aXY[ipo0*2+1]};
         const double pi1[2] = {aXY[ipo1*2+0],aXY[ipo1*2+1]};
         const double xmax_i = ( pi1[0] > pi0[0] ) ? pi1[0] : pi0[0];
@@ -748,18 +773,14 @@ bool isOuterShapeOK
         const double ymax_i = ( pi1[1] > pi0[1] ) ? pi1[1] : pi0[1];
         const double ymin_i = ( pi1[1] < pi0[1] ) ? pi1[1] : pi0[1];
         for(int jbar=ibar+2;jbar<nbar_i;jbar++){
-          const int jpo0 = aIndXYs[iloop] + jbar;
-          int jpo1 = aIndXYs[iloop] + jbar+1;
+          const int jpo0 = loopIP_ind[iloop] + jbar;
+          int jpo1 = loopIP_ind[iloop] + jbar+1;
           if( jbar == nbar_i-1 ){
             if( ibar == 0 ) continue;
-            jpo1 = aIndXYs[iloop];
+            jpo1 = loopIP_ind[iloop];
           }
           const double pj0[2] = {aXY[jpo0*2+0],aXY[jpo0*2+1]};
           const double pj1[2] = {aXY[jpo1*2+0],aXY[jpo1*2+1]};
-//          const double xmax_j = ( xys[jpo1*2+0] > xys[jpo0*2+0] ) ? xys[jpo1*2+0] : xys[jpo0*2+0];
-//          const double xmin_j = ( xys[jpo1*2+0] < xys[jpo0*2+0] ) ? xys[jpo1*2+0] : xys[jpo0*2+0];
-//          const double ymax_j = ( xys[jpo1*2+1] > xys[jpo0*2+1] ) ? xys[jpo1*2+1] : xys[jpo0*2+1];
-//          const double ymin_j = ( xys[jpo1*2+1] < xys[jpo0*2+1] ) ? xys[jpo1*2+1] : xys[jpo0*2+1];
           const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
           const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
           const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
@@ -773,21 +794,17 @@ bool isOuterShapeOK
         }
         if( is_intersect ) break;
         for(int jloop=iloop+1;jloop<nloop;jloop++){
-          const int nbar_j = aIndXYs[jloop+1]-aIndXYs[jloop];
+          const int nbar_j = loopIP_ind[jloop+1]-loopIP_ind[jloop];
           for(int jbar=0;jbar<nbar_j;jbar++){
-            const int jpo0 = aIndXYs[jloop] + jbar;
-            int jpo1 = aIndXYs[jloop] + jbar+1;
-            if( jbar == nbar_j-1 ){ jpo1 = aIndXYs[jloop]; }
+            const int jpo0 = loopIP_ind[jloop] + jbar;
+            int jpo1 = loopIP_ind[jloop] + jbar+1;
+            if( jbar == nbar_j-1 ){ jpo1 = loopIP_ind[jloop]; }
             const double pj0[2] = {aXY[jpo0*2+0],aXY[jpo0*2+1]};
             const double pj1[2] = {aXY[jpo1*2+0],aXY[jpo1*2+1]};
             const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
             const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
             const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
             const double ymin_j = ( pj1[1] < pj0[1] ) ? pj1[1] : pj0[1];
-            //            const double xmax_j = ( xys[jpo1*2+0] > xys[jpo0*2+0] ) ? xys[jpo1*2+0] : xys[jpo0*2+0];
-            //            const double xmin_j = ( xys[jpo1*2+0] < xys[jpo0*2+0] ) ? xys[jpo1*2+0] : xys[jpo0*2+0];
-            //            const double ymax_j = ( xys[jpo1*2+1] > xys[jpo0*2+1] ) ? xys[jpo1*2+1] : xys[jpo0*2+1];
-            //            const double ymin_j = ( xys[jpo1*2+1] < xys[jpo0*2+1] ) ? xys[jpo1*2+1] : xys[jpo0*2+1];
             if( xmin_j > xmax_i || xmax_j < xmin_i ) continue;	// åçˆÇ™Ç†ÇËÇ¶Ç»Ç¢ÉpÉ^Å[ÉìÇèúäO
             if( ymin_j > ymax_i || ymax_j < ymin_i ) continue;	// è„Ç…ìØÇ∂
             if( IsCrossLines(pi0,pi1,  pj0,pj1) ){
@@ -808,23 +825,221 @@ bool isOuterShapeOK
   return true;
 }
 
-int delaunay_triangulation2
+
+/*
+ ////////////////////////////////
+ // resampling
+ // no resampling edge if(max_edge_length < 0)
+ std::vector< std::vector<int> > aPoInEd;
+ aPoInEd.resize(nxys_presum);
+ if( max_edge_length > 0 ){
+ for(int iloop=0;iloop<nloop;++iloop){
+ int nadd = 0;
+ const int nbar = loop_ind[iloop+1]-loop_ind[iloop];
+ for(int ibar=0;ibar<nbar;ibar++){
+ int ipo0 = loop_ind[iloop]+ibar;
+ int ipo1 = loop_ind[iloop]+ibar+1;
+ if( ibar == nbar-1 ){ ipo1 = loop_ind[iloop]; }
+ const double len = Distance( aVec2[ipo0], aVec2[ipo1] );
+ nadd = (int)(len / max_edge_length);
+ if( nadd == 0 || !is_add_point_boundary ) continue;
+ const int ndiv = nadd+1;
+ const double delx = (aVec2[ipo1].x - aVec2[ipo0].x)/ndiv;
+ const double dely = (aVec2[ipo1].y - aVec2[ipo0].y)/ndiv;
+ for(int iadd=0;iadd<nadd;++iadd){
+ const unsigned int ipo = (int)aPo2D.size();
+ CVector2 v2;
+ v2.x = aVec2[ipo0].x + delx*(iadd+1);
+ v2.y = aVec2[ipo0].y + dely*(iadd+1);
+ CEPo2 po;
+ po.e = -1;
+ po.d = -1;
+ aPo2D.push_back(po);
+ aVec2.push_back(v2);
+ aPoInEd[ loop_ind[iloop]+ibar ].push_back(ipo);
+ }
+ }
+ }
+ }
+ 
+ ////////////////////////////////
+ // invert the index if negative area
+ {
+ aPtrVtxInd.resize(nloop+1);
+ aPtrVtxInd[0] = 0;
+ for(int iloop=0;iloop<nloop;++iloop){
+ const int nbar0 = loop_ind[iloop+1]-loop_ind[iloop];
+ int nbar1 = nbar0;
+ for(int ibar=0;ibar<nbar0;ibar++){
+ nbar1 += aPoInEd[ loop_ind[iloop]+ibar].size();
+ }
+ aPtrVtxInd[iloop+1] = aPtrVtxInd[iloop] + nbar1;
+ }
+ // adding new vertices on the outline
+ aVtxInd.resize(aPtrVtxInd[nloop]);
+ {
+ int ivtx0 = 0;
+ for(int iloop=0;iloop<nloop;iloop++){
+ double area_loop = 0;
+ { // area of this loop
+ CVector2 vtmp(0,0);
+ const int nbar = aPtrVtxInd[iloop+1]-aPtrVtxInd[iloop];
+ for(int ibar=0;ibar<nbar;ibar++){
+ int ipo0 = aPtrVtxInd[iloop]+ibar;
+ int ipo1 = aPtrVtxInd[iloop]+ibar+1;
+ if( ibar == nbar-1 ){ ipo1 = aPtrVtxInd[iloop]; }
+ area_loop += TriArea( vtmp, aVec2[ipo0], aVec2[ipo1] );
+ }
+ }
+ const int nbar0 = loop_ind[iloop+1]-loop_ind[iloop];
+ if( (area_loop > 0) == (iloop == 0) ){ // outer loop
+ for(int ibar=0;ibar<nbar0;ibar++){
+ int ie = loop_ind[iloop] + ibar;
+ const std::vector<int>& add = aPoInEd[ie];
+ aVtxInd[ivtx0] = ie;  ivtx0++;
+ for(unsigned int iadd=0;iadd<add.size();iadd++){
+ aVtxInd[ivtx0] = add[iadd];  ivtx0++;
+ }
+ }
+ }
+ else{
+ for(int ibar=0;ibar<nbar0;ibar++){ // inner loop
+ int ie = loop_ind[iloop+1] - 1 - ibar;
+ const std::vector<int>& add = aPoInEd[ie];
+ const int nadd = (int)add.size();
+ for(int iadd=0;iadd<nadd;iadd++){
+ aVtxInd[ivtx0] = add[nadd-1-iadd];  ivtx0++;
+ }
+ aVtxInd[ivtx0] = ie;  ivtx0++;
+ }
+ }
+ }
+ }
+ }
+ */
+
+/*
+void PrepareInput
+(std::vector<int>& loop1_ind, // out
+ std::vector<int>& loop1,
+ const std::vector<int>& loop0_ind,
+ const std::vector<double>& aXY)
+{
+  const int nloop = loop0_ind.size()-1;
+  const int nxy = aXY.size()/2;
+  std::vector< std::vector<int> > aPoInEd;
+  aPoInEd.resize(nxy);
+  loop1_ind.resize(nloop+1);
+  loop1_ind[0] = 0;
+  for(int iloop=0;iloop<nloop;++iloop){
+    const int nbar0 = loop0_ind[iloop+1]-loop0_ind[iloop];
+    int nbar1 = nbar0;
+    for(int ibar=0;ibar<nbar0;ibar++){
+      nbar1 += aPoInEd[ loop0_ind[iloop]+ibar].size();
+    }
+    loop1_ind[iloop+1] = loop1_ind[iloop] + nbar1;
+  }
+  // adding new vertices on the outline
+  loop1.resize(loop1_ind[nloop]);
+  {
+    int ivtx0 = 0;
+    for(int iloop=0;iloop<nloop;iloop++){
+      double area_loop = 0;
+      { // area of this loop
+        CVector2 vtmp(0,0);
+        const int nbar = loop1_ind[iloop+1]-loop1_ind[iloop];
+        for(int ibar=0;ibar<nbar;ibar++){
+          int ipo0 = loop1_ind[iloop]+ibar;
+          int ipo1 = loop1_ind[iloop]+ibar+1;
+          if( ibar == nbar-1 ){ ipo1 = loop1_ind[iloop]; }
+          area_loop += TriArea(vtmp,
+                               CVector2(aXY[ipo0*2+0],aXY[ipo0*2+1]),
+                               CVector2(aXY[ipo1*2+0],aXY[ipo0*2+1]) );
+        }
+      }
+      const int nbar0 = loop0_ind[iloop+1]-loop0_ind[iloop];
+      if( (area_loop > 0) == (iloop == 0) ){ // outer loop
+        for(int ibar=0;ibar<nbar0;ibar++){
+          int ie = loop0_ind[iloop] + ibar;
+          const std::vector<int>& add = aPoInEd[ie];
+          loop1[ivtx0] = ie;  ivtx0++;
+          for(unsigned int iadd=0;iadd<add.size();iadd++){
+            loop1[ivtx0] = add[iadd];  ivtx0++;
+          }
+        }
+      }
+      else{
+        for(int ibar=0;ibar<nbar0;ibar++){ // inner loop
+          int ie = loop0_ind[iloop+1] - 1 - ibar;
+          const std::vector<int>& add = aPoInEd[ie];
+          const int nadd = (int)add.size();
+          for(int iadd=0;iadd<nadd;iadd++){
+            loop1[ivtx0] = add[nadd-1-iadd];  ivtx0++;
+          }
+          loop1[ivtx0] = ie;  ivtx0++;
+        }
+      }
+    }
+  }
+}
+ */
+
+void FixLoopOrientation
+(std::vector<int>& loopIP,
+ const std::vector<int>& loopIP_ind,
+ const std::vector<double>& aXY)
+{
+  const std::vector<int> loop_old = loopIP;
+  const int nloop = loopIP_ind.size()-1;
+  int ivtx0 = 0;
+  for(int iloop=0;iloop<nloop;iloop++){
+    double area_loop = 0;
+    { // area of this loop
+      CVector2 vtmp(0,0);
+      const int nbar = loopIP_ind[iloop+1]-loopIP_ind[iloop];
+      for(int ibar=0;ibar<nbar;ibar++){
+        const int iipo0 = loopIP_ind[iloop]+(ibar+0)%nbar;
+        const int iipo1 = loopIP_ind[iloop]+(ibar+1)%nbar;
+        const int ipo0 = loop_old[iipo0];
+        const int ipo1 = loop_old[iipo1];
+        area_loop += TriArea(vtmp,
+                             CVector2(aXY[ipo0*2+0],aXY[ipo0*2+1]),
+                             CVector2(aXY[ipo1*2+0],aXY[ipo0*2+1]) );
+      }
+    }
+    const int nbar0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];
+    if( (area_loop > 0) == (iloop == 0) ){ // outer loop
+      for(int ibar=0;ibar<nbar0;ibar++){
+        const int iipo = loopIP_ind[iloop] + ibar;
+        const int ipo = loop_old[iipo];
+        loopIP[ivtx0] = ipo;
+        ivtx0++;
+      }
+    }
+    else{
+      for(int ibar=0;ibar<nbar0;ibar++){ // inner loop
+        const int iipo = loopIP_ind[iloop+1] - 1 - ibar;
+        const int ipo = loop_old[iipo];
+        loopIP[ivtx0] = ipo;
+        ivtx0++;
+      }
+    }
+  }
+}
+
+
+bool Triangulation
 (std::vector<int>& aTri_out,		// out
  std::vector<double>& aXY_out, // out
- std::vector<int>& aPtrVtxInd, // out
- std::vector<int>& aVtxInd, // out
+ const std::vector<int>& aPtrVtxInd, // out
+ const std::vector<int>& aVtxInd, // out
  ////
- const bool is_add_point_boundary,
- const std::vector<int>& aIndXYs, // in
- const std::vector<double>& aXY_in, // ind
  const double max_edge_length, // ind
- const CMeshDensity& mesh_density) // ind
+ const CInputTriangulation& mesh_density,
+ const std::vector<double>& aXY_in) // ind
 {
-  const int nloop = (int)aIndXYs.size()-1;
- 
-  if( !isOuterShapeOK(nloop,aXY_in,aIndXYs) ) return false;
   
-  int nxys_presum = aIndXYs[nloop];
+  const int nxys_presum = aXY_in.size()/2;
   std::vector<CEPo2> aPo2D;
   std::vector<CVector2> aVec2;
   aPo2D.resize(nxys_presum);
@@ -836,96 +1051,8 @@ int delaunay_triangulation2
   }
   
   ////////////////////////////////
-  // resampling
-  // no resampling edge if(max_edge_length < 0)
-  std::vector< std::vector<int> > aPoInEd;
-  aPoInEd.resize(nxys_presum);
-  if( max_edge_length > 0 ){
-    for(int iloop=0;iloop<nloop;++iloop){
-      int nadd = 0;
-      const int nbar = aIndXYs[iloop+1]-aIndXYs[iloop];
-      for(int ibar=0;ibar<nbar;ibar++){
-        int ipo0 = aIndXYs[iloop]+ibar;
-        int ipo1 = aIndXYs[iloop]+ibar+1;
-        if( ibar == nbar-1 ){ ipo1 = aIndXYs[iloop]; }
-        const double len = Distance( aVec2[ipo0], aVec2[ipo1] );
-        nadd = (int)(len / max_edge_length);
-        if( nadd == 0 || !is_add_point_boundary ) continue;
-        const int ndiv = nadd+1;
-        const double delx = (aVec2[ipo1].x - aVec2[ipo0].x)/ndiv;
-        const double dely = (aVec2[ipo1].y - aVec2[ipo0].y)/ndiv;
-        for(int iadd=0;iadd<nadd;++iadd){
-          const unsigned int ipo = (int)aPo2D.size();
-          CVector2 v2;
-          v2.x = aVec2[ipo0].x + delx*(iadd+1);
-          v2.y = aVec2[ipo0].y + dely*(iadd+1);
-          CEPo2 po;
-          po.e = -1;
-          po.d = -1;
-          aPo2D.push_back(po);
-          aVec2.push_back(v2);
-          aPoInEd[ aIndXYs[iloop]+ibar ].push_back(ipo);
-        }
-      }
-    }
-  }
-  
-  ////////////////////////////////
-  {
-    aPtrVtxInd.resize(nloop+1);
-    aPtrVtxInd[0] = 0;
-    for(int iloop=0;iloop<nloop;++iloop){
-      const int nbar0 = aIndXYs[iloop+1]-aIndXYs[iloop];
-      int nbar1 = nbar0;
-      for(int ibar=0;ibar<nbar0;ibar++){
-        nbar1 += aPoInEd[ aIndXYs[iloop]+ibar].size();
-      }
-      aPtrVtxInd[iloop+1] = aPtrVtxInd[iloop] + nbar1;
-    }
-    // adding new vertices on the outline
-    aVtxInd.resize(aPtrVtxInd[nloop]);
-    {
-      int ivtx0 = 0;
-      for(int iloop=0;iloop<nloop;iloop++){
-        double area_loop = 0;
-        { // area of this loop
-          CVector2 vtmp(0,0);
-          const int nbar = aPtrVtxInd[iloop+1]-aPtrVtxInd[iloop];
-          for(int ibar=0;ibar<nbar;ibar++){
-            int ipo0 = aPtrVtxInd[iloop]+ibar;
-            int ipo1 = aPtrVtxInd[iloop]+ibar+1;
-            if( ibar == nbar-1 ){ ipo1 = aPtrVtxInd[iloop]; }
-            area_loop += TriArea( vtmp, aVec2[ipo0], aVec2[ipo1] );
-          }
-        }
-        const int nbar0 = aIndXYs[iloop+1]-aIndXYs[iloop];
-        if( (area_loop > 0) == (iloop == 0) ){ // outer loop
-          for(int ibar=0;ibar<nbar0;ibar++){
-            int ie = aIndXYs[iloop] + ibar;
-            const std::vector<int>& add = aPoInEd[ie];
-            aVtxInd[ivtx0] = ie;	ivtx0++;
-            for(unsigned int iadd=0;iadd<add.size();iadd++){
-              aVtxInd[ivtx0] = add[iadd];	ivtx0++;
-            }
-          }
-        }
-        else{
-          for(int ibar=0;ibar<nbar0;ibar++){ // inner loop
-            int ie = aIndXYs[iloop+1] - 1 - ibar;
-            const std::vector<int>& add = aPoInEd[ie];
-            const int nadd = (int)add.size();
-            for(int iadd=0;iadd<nadd;iadd++){
-              aVtxInd[ivtx0] = add[nadd-1-iadd];	ivtx0++;
-            }
-            aVtxInd[ivtx0] = ie;	ivtx0++;
-          }
-        }
-      }
-    }
-  }
-  ////////////////////////////////
   std::vector<ETri> aTri_in;
-  if( !TriangulateOuterLoop2(aPo2D,aTri_in,aVec2,    aPtrVtxInd, aVtxInd) ){
+  if( !MeshingOuterLoop(aPo2D,aTri_in,aVec2,    aPtrVtxInd, aVtxInd) ){
     return true;
   }
   if( max_edge_length > 0 ){
@@ -934,6 +1061,8 @@ int delaunay_triangulation2
   
   ////////////////////////////////
   // pushing back to STL vector
+  aTri_out.clear();
+  aXY_out.clear();
   const int ntri = (int)aTri_in.size();
   aTri_out.resize(ntri*3);
   for(int itri=0;itri<ntri;itri++){
@@ -950,83 +1079,113 @@ int delaunay_triangulation2
   return true;
 }
 
-
-bool GenerateTesselation2
-(std::vector<int>& aTri_out, // out
- std::vector<double>& aXY_out, // out
- std::vector<int>& aInd_InVtxLoop,
- std::vector<int>& aIndVtxLoop,
- double elen,
- const CMeshDensity& mesh_density, 
- bool is_resample,
- const std::vector< std::vector<double> >& aVecAry0) // in
+void JArray_FromVecVec_XY
+(std::vector<int>& aIndXYs,
+ std::vector<double>& aXY,
+ const std::vector< std::vector<double> >& aVecAry0)
 {
-  if( aVecAry0.empty() ) return false;
-  if( aVecAry0[0].size() < 3 ) return false;
-  
-  ////////////////////////////////
-  std::vector<double> aXY;
-  std::vector<int> aIndXYs;
-  {
-    const int nloop = (int)aVecAry0.size();
-    aIndXYs.resize(nloop+1);
-    aIndXYs[0] = 0;
-    int npo_sum = 0;
-    for(int iloop=0;iloop<(int)nloop;iloop++){
-      const int npo = (int)aVecAry0[iloop].size()/2;
-      aIndXYs[iloop+1] = aIndXYs[iloop]+npo;
-      npo_sum += npo;
+  const int nloop = (int)aVecAry0.size();
+  aIndXYs.resize(nloop+1);
+  aIndXYs[0] = 0;
+  int npo_sum = 0;
+  for(int iloop=0;iloop<(int)nloop;iloop++){
+    const int npo = (int)aVecAry0[iloop].size()/2;
+    aIndXYs[iloop+1] = aIndXYs[iloop]+npo;
+    npo_sum += npo;
+  }
+  aXY.resize(npo_sum*2);
+  npo_sum = 0;
+  for(int iloop=0;iloop<(int)nloop;iloop++){
+    const int nxys = (int)aVecAry0[iloop].size()/2;
+    for(int ixys=0;ixys<nxys;ixys++){
+      aXY[npo_sum*2+0] = aVecAry0[iloop][ixys*2+0];
+      aXY[npo_sum*2+1] = aVecAry0[iloop][ixys*2+1];
+      npo_sum++;
     }
-    aXY.resize(npo_sum*2);
-    npo_sum = 0;
-    for(int iloop=0;iloop<(int)nloop;iloop++){
-      const int nxys = (int)aVecAry0[iloop].size()/2;
-      for(int ixys=0;ixys<nxys;ixys++){
-        aXY[npo_sum*2+0] = aVecAry0[iloop][ixys*2+0];
-        aXY[npo_sum*2+1] = aVecAry0[iloop][ixys*2+1];
-        npo_sum++;
+  }
+}
+
+
+void ResamplingLoop
+(std::vector<int>& loopIP1_ind,
+ std::vector<int>& loopIP1,
+ std::vector<double>& aXY,
+ double max_edge_length)
+{
+  const std::vector<int> loopIP0_ind = loopIP1_ind;
+  const std::vector<int> loopIP0 = loopIP1;
+  const int nloop = loopIP0_ind.size()-1;
+  std::vector< std::vector<int> > aPoInEd(loopIP0.size());
+  {
+    for(int iloop=0;iloop<nloop;++iloop){
+      const int np = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
+      for(int ip=0;ip<np;ip++){
+        const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np;
+        const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np;
+        const int ipo0 = loopIP0[iipo0];
+        const int ipo1 = loopIP0[iipo1];
+        const CVector2 po0(aXY[ipo0*2+0],aXY[ipo0*2+1]);
+        const CVector2 po1(aXY[ipo1*2+0],aXY[ipo1*2+1]);
+        const int nadd = (int)( Distance( po0, po1 ) / max_edge_length);
+        if( nadd == 0 ) continue;
+        for(int iadd=0;iadd<nadd;++iadd){
+          double r2 = (double)(iadd+1)/(nadd+1);
+          CVector2 v2 = (1-r2)*po0 + r2*po1;
+          const int ipo2 = aXY.size()/2;
+          aXY.push_back(v2.x);
+          aXY.push_back(v2.y);
+          aPoInEd[ iipo0 ].push_back(ipo2);
+        }
       }
     }
   }
-  aTri_out.clear();
-  aXY_out.clear();
-  aInd_InVtxLoop.clear();
-  aIndVtxLoop.clear();
-  int res = delaunay_triangulation2(aTri_out,aXY_out,
-                                     aInd_InVtxLoop,aIndVtxLoop,
-                                     is_resample,
-                                     aIndXYs,aXY,
-                                     elen,mesh_density);
-
-  return res;
-}
-
-bool GenerateTesselation2
-(std::vector<int>& aTri_out, // out
- std::vector<double>& aXY_out, // out
- std::vector<int>& aPtrVtxInd,
- std::vector<int>& aVtxInd,
- ////
- double elen,
- bool is_uniform_resample_loop, // good for polyline curve
- const std::vector< std::vector<double> >& aVecAry0) // in
-{
-  class CMeshDensity_Uni : public CMeshDensity {
-      virtual double edgeLengthRatio(double px, double py) const {
-        return 1.0;
+  ////
+  loopIP1_ind.resize(nloop+1);
+  loopIP1_ind[0] = 0;
+  for(int iloop=0;iloop<nloop;++iloop){
+    const int nbar0 = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
+    int nbar1 = nbar0;
+    for(int ibar=0;ibar<nbar0;ibar++){
+      nbar1 += aPoInEd[ loopIP0_ind[iloop]+ibar ].size();
+    }
+    loopIP1_ind[iloop+1] = loopIP1_ind[iloop] + nbar1;
+  }
+  // adding new vertices on the outline
+  loopIP1.resize(loopIP1_ind[nloop]);
+  int ivtx0 = 0;
+  for(int iloop=0;iloop<nloop;iloop++){
+    const int nbar0 = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
+    for(int ibar=0;ibar<nbar0;ibar++){
+      int ie = loopIP0_ind[iloop] + ibar;
+      loopIP1[ivtx0] = loopIP0[ie];
+      ivtx0++;
+      for(unsigned int iadd=0;iadd<aPoInEd[ie].size();iadd++){
+        loopIP1[ivtx0] = aPoInEd[ie][iadd];
+        ivtx0++;
       }
-  } mdu;
-  return GenerateTesselation2(aTri_out,aXY_out,
-                              aPtrVtxInd,aVtxInd,
-          ///
-                              elen,
-                              mdu,
-                              is_uniform_resample_loop,
-                              aVecAry0);
+    }
+  }
 }
 
 
 
+// TODO: implement this function
+void GenerateEdgeRefine
+(std::vector<CCmd_RefineMesh2D>& aCmd,
+ const CInputTriangulation& elenFlield)
+{
+  
+}
+
+// TODO: implement this function
+void RefineMesh
+(std::vector<CEPo2>& aPo3D,
+ std::vector<ETri>& aSTri,
+ std::vector<CVector2>& aVec2,
+ const std::vector<CCmd_RefineMesh2D>& aCmd)
+{
+  
+}
 
 
 #ifdef USE_GL
