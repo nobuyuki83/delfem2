@@ -11,32 +11,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-class CMeshDensity
-{
-public:
-  virtual double edgeLengthRatio(double px, double py) const = 0;
-};
-
-// TODO: there should be three optoions for adding point on edge, 0:none, 1:only between input points, 2: resample everything
-bool GenerateTesselation2(std::vector<int>& aTri_out, // out
-                          std::vector<double>& aXY_out, // out
-                          std::vector<int>& aPtrVtxInd,
-                          std::vector<int>& aVtxInd,
-                          ////
-                          double elen,
-                          const CMeshDensity& mesh_density,
-                          bool is_uniform_resample_loop, // good for polyline curve in
-                          const std::vector< std::vector<double> >& aVecAry0); // in
-
-
-bool GenerateTesselation2(std::vector<int>& aTri_out, // out
-                          std::vector<double>& aXY_out, // out
-                          std::vector<int>& aPtrVtxInd,
-                          std::vector<int>& aVtxInd,
-                          ////
-                          double elen,
-                          bool is_uniform_resample_loop, // good for polyline curve
-                          const std::vector< std::vector<double> >& aVecAry0); // in
+bool CheckTri(const std::vector<CEPo2>& aPo3D,
+              const std::vector<ETri>& aSTri,
+              const std::vector<CVector2>& aXYZ);
 
 bool DelaunayAroundPoint(int ipo0,
                          std::vector<CEPo2>& aPo,
@@ -48,6 +25,87 @@ void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
 
 void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
                              const std::vector<CVector2>& aVec2);
+
+
+void JArray_FromVecVec_XY(std::vector<int>& aIndXYs,
+                         std::vector<double>& aXY,
+                         const std::vector< std::vector<double> >& aaXY);
+
+bool CheckInputBoundaryForTriangulation(const std::vector<int>& loop_ind,
+                                        const std::vector<double>& aXY);
+
+class CInputTriangulation
+{
+public:
+  virtual double edgeLengthRatio(double px, double py) const = 0;
+};
+
+class CInputTriangulation_Uniform : public CInputTriangulation {
+public:
+  CInputTriangulation_Uniform(double elen): elen(elen){}
+  virtual double edgeLengthRatio(double px, double py) const {
+    return 1.0;
+  }
+public:
+  double elen;
+};
+
+// TODO: there should be three optoions for adding point on edge, 0:none, 1:only between input points, 2: resample everything
+/*
+bool Triangulation(std::vector<int>& aTri_out, // out
+                   std::vector<double>& aXY_out, // out
+                   std::vector<int>& aPtrVtxInd,
+                   std::vector<int>& aVtxInd,
+                   ////
+                   double elen,
+                   const CInputTriangulation& mesh_density,
+                   bool is_uniform_resample_loop, // good for polyline curve in
+                   const std::vector<int>& loop_ind,
+                   const std::vector<double>& aXY); // in); // in
+*/
+bool Triangulation(std::vector<int>& aTri_out,    // out
+                   std::vector<double>& aXY_out, // out
+                   const std::vector<int>& aPtrVtxInd, // out
+                   const std::vector<int>& aVtxInd, // out
+                   const double max_edge_length, // ind
+                   const CInputTriangulation& mesh_density,
+                   const std::vector<double>& aXY_in); // ind
+
+void FixLoopOrientation(std::vector<int>& loopIP,
+                        const std::vector<int>& loopIP_ind,
+                        const std::vector<double>& aXY);
+
+void ResamplingLoop(std::vector<int>& loopIP1_ind,
+                    std::vector<int>& loopIP1,
+                    std::vector<double>& aXY,
+                    double max_edge_length);
+
+/*
+void PrepareInput(std::vector<int>& aPtrVtxInd, // out
+                  std::vector<int>& aVtxInd,
+                  const std::vector<int>& loop_ind,
+                  const std::vector<double>& aXY);
+*/
+ 
+class CCmd_RefineMesh2D
+{
+public:
+  int ipo_new;
+  int ipo0, ipo1;
+  double r0, r1;
+};
+
+// TODO: implement this function
+void GenerateEdgeRefine
+(std::vector<CCmd_RefineMesh2D>& aCmd,
+ const CInputTriangulation& elenFlield);
+
+// TODO: implement this function
+void RefineMesh
+(std::vector<CEPo2>& aPo3D,
+ std::vector<ETri>& aSTri,
+ std::vector<CVector2>& aVec2,
+ const std::vector<CCmd_RefineMesh2D>& aCmd);
 
 class CMeshDynTri2D{
 public:
@@ -66,6 +124,7 @@ public:
   {
     CheckTri(aETri);
     CheckTri(aEPo, aETri);
+    CheckTri(aEPo, aETri, aVec2);
   }
   std::vector<double> MinMax_XYZ() const {
     double x_min,x_max, y_min,y_max;

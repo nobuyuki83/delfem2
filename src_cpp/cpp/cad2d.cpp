@@ -170,11 +170,24 @@ void CCad2D::Meshing
     }
   }
   {
-    std::vector<int> aPtrVtxInd,aVtxInd;
     std::vector< std::vector<double> > aVecAry0;
     aVecAry0.push_back(aXY_corner);
-    GenerateTesselation2(aTri, aXY,  aPtrVtxInd,aVtxInd,
-                         len, true, aVecAry0);
+    std::vector<int> loop_ind;
+    std::vector<double> aXY0;
+    JArray_FromVecVec_XY(loop_ind,aXY0,
+                        aVecAry0);
+    assert( CheckInputBoundaryForTriangulation(loop_ind,aXY0) );
+    /////
+    std::vector<int> loop(aXY0.size()/2);
+    for(unsigned int ip=0;ip<aXY0.size()/2;++ip){ loop[ip] = ip; }
+    /////
+    FixLoopOrientation(loop,
+                       loop_ind,aXY0);
+    ResamplingLoop(loop_ind,loop,aXY0,
+                   len );
+    CInputTriangulation_Uniform param(1.0);
+    Triangulation(aTri, aXY,  loop_ind, loop,
+                  len, param, aXY0);
   }
 }
 
@@ -254,18 +267,23 @@ void CCad2D_FaceGeo::GenMesh
       aXY_corner.push_back(p0.y);
     }
   }
-  /*
-   for(int ixy=0;ixy<aXY_corner.size()/2;++ixy){
-   std::cout << aXY_corner[ixy*2+0] << " " << aXY_corner[ixy*2+1] << std::endl;
-   }
-   */
   {
-    std::vector<int> aPtrVtxInd,aVtxInd;
     std::vector< std::vector<double> > aVecAry0;
     aVecAry0.push_back(aXY_corner);
-    GenerateTesselation2(aTri, aXY,  aPtrVtxInd,aVtxInd,
-                         -1, false, aVecAry0);
+    std::vector<int> loop_ind;
+    std::vector<double> aXY0;
+    JArray_FromVecVec_XY(loop_ind,aXY0,
+                        aVecAry0);
+    assert( CheckInputBoundaryForTriangulation(loop_ind,aXY0) );
+    ////
+    std::vector<int> loop0(aXY0.size()/2);
+    for(unsigned int ip=0;ip<aXY0.size()/2;++ip){ loop0[ip] = ip; }
+    /////
+    FixLoopOrientation(loop0,
+                       loop_ind,aXY0);
+    CInputTriangulation_Uniform param(1.0);
+    Triangulation(aTri, aXY,  loop_ind,loop0,
+                  -1, param, aXY0);
   }
-  //      std::cout << aTri.size() << std::endl;
 }
 

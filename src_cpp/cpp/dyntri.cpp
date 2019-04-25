@@ -11,7 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-bool MakeInnerRelationTri
+void MakeInnerRelationTri
 (std::vector<ETri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
@@ -21,8 +21,7 @@ bool MakeInnerRelationTri
     { 2, 1, 0 },
     { 1, 0, 2 } };
   
-  unsigned int* tmp_poin = new unsigned int [npoin];
-  for(unsigned int ipoin=0;ipoin<npoin;ipoin++){ tmp_poin[ipoin] = 0; }
+  std::vector<int> tmp_poin(npoin,0);
   unsigned int inpofa[2];
   
   const unsigned int nTri = (int)aTri.size();
@@ -34,7 +33,7 @@ bool MakeInnerRelationTri
       }
       const unsigned int ipoin0= inpofa[0];
       bool iflg = false;
-      for(unsigned int ielsup=elsup_ind[ipoin0];ielsup<elsup_ind[ipoin0+1];ielsup++){
+      for(int ielsup=elsup_ind[ipoin0];ielsup<elsup_ind[ipoin0+1];ielsup++){
         const unsigned int jtri0 = elsup[ielsup];
         if( jtri0 == itri ) continue;
         for(unsigned int jedtri=0;jedtri<3;jedtri++){
@@ -60,9 +59,6 @@ bool MakeInnerRelationTri
       }
     }
   }
-  
-  delete[] tmp_poin;
-  return true;
 }
 
 bool JArray_MakeElSuP
@@ -102,7 +98,7 @@ void JArray_PSuP
  const std::vector<ETri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind, const std::vector<int>& elsup)
 {
-  std::vector<int> aflg(npoin,0);
+  std::vector<unsigned int> aflg(npoin,0);
   psup_ind[0] = 0;
   for (unsigned int ino = 0; ino<npoin; ino++){
     psup_ind[ino+1] = psup_ind[ino];
@@ -122,7 +118,7 @@ void JArray_PSuP
   for (unsigned int ino = 0; ino<npoin; ino++){ aflg[ino] = 0; }
   unsigned int iedge = 0;
   for (unsigned int ino = 0; ino<npoin; ino++){
-    assert(psup_ind[ino]==iedge);
+    assert(psup_ind[ino]==(int)iedge);
     aflg[ino] = ino;
     for (int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
       unsigned int itri1 = elsup[ielsup];
@@ -135,7 +131,7 @@ void JArray_PSuP
       }
     }
   }
-  assert(iedge==npsup);
+  assert((int)iedge==npsup);
 }
 
 
@@ -709,7 +705,6 @@ void MoveCCW
  int& inotri_cur,
  bool& flag_is_wall,
  ////
- std::vector<CEPo2>& aPo,
  std::vector<ETri>& aTri)
 {
   const int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
@@ -724,17 +719,17 @@ void MoveCCW
 
 
 bool DeleteTri
-(unsigned int itri_to,
+(int itri_to,
  std::vector<CEPo2>& aPo,
  std::vector<ETri>& aTri)
 {
-  if (itri_to>=aTri.size()) return true;
+  if (itri_to>=(int)aTri.size()) return true;
   {
     assert(aTri[itri_to].s2[0]==-1);
     assert(aTri[itri_to].s2[1]==-1);
     assert(aTri[itri_to].s2[2]==-1);
   }
-  const unsigned int itri_from = (int)aTri.size()-1;
+  const int itri_from = (int)aTri.size()-1;
   if (itri_to==itri_from){
     aTri.resize(aTri.size()-1);
     return true;
@@ -1041,7 +1036,7 @@ void GetTriAryAroundPoint
     const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
     const unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
     assert(itri1 < aTri.size());
-    assert(aTri[itri1].s2[relTriTri[rel01][inoel_b0]]==itri0);
+    assert(aTri[itri1].s2[relTriTri[rel01][inoel_b0]]==(int)itri0);
     assert(aTri[itri1].v[inoel_c1]==ipoin);
     if (itri1==itri_ini) return;
     itri0 = itri1;

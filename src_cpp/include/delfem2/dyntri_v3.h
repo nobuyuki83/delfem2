@@ -9,21 +9,18 @@
 #include "delfem2/dyntri.h"
 
 CVector3 normalTri(int itri0,
-                   const std::vector<CEPo2>& aPo3D,
                    const std::vector<ETri>& aSTri,
                    const std::vector<CVector3>& aVec3);
 
 bool CheckTri(const std::vector<CEPo2>& aPo3D,
               const std::vector<ETri>& aSTri,
-              const std::vector<CVector3>& aVec3,
-              bool is_assert=true);
+              const std::vector<CVector3>& aVec3);
 
-bool FindRayTriangleMeshIntersections(const CVector3 &line0,
+bool FindRayTriangleMeshIntersections(std::vector<CVector3> &intersectionPoints,
+                                      const CVector3 &line0,
                                       const CVector3 &line1,
                                       const std::vector<ETri>& aTri,
-                                      const std::vector<CEPo2> &aPoint3D,
-                                      std::vector<CVector3>& aVec3,
-                                      std::vector<CVector3> &intersectionPoints);
+                                      const std::vector<CVector3>& aVec3);
 
 bool DelaunayAroundPoint(int ipo0,
                          std::vector<CEPo2>& aPo,
@@ -33,12 +30,10 @@ bool DelaunayAroundPoint(int ipo0,
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void DrawMeshDynTri_FaceNorm(const std::vector< CEPo2>& aPo3D,
-                             const std::vector<ETri>& aSTri,
+void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
                              const std::vector<CVector3>& aVec3);
 
-void DrawMeshDynTri_Edge(const std::vector< CEPo2>& aPo3D,
-                         const std::vector<ETri>& aSTri,
+void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
                          const std::vector<CVector3>& aVec3);
 
 
@@ -111,8 +106,8 @@ public:
   void DelaunayAroundPoint(int ipo){
     ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
   }
-  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aEPo,aETri,aVec3); }
-  void Draw_Edge() const { DrawMeshDynTri_Edge(aEPo,aETri,aVec3); }
+  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec3); }
+  void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec3); }
   void draw() const { this->Draw_Edge(); }
   int nTri() const { return aETri.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }

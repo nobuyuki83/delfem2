@@ -230,10 +230,23 @@ void CCad3D_Face::Initialize
   }
   std::vector<double> aXY_out;
   {
-    std::vector<int> aPtrVtxInd,aVtxInd;
     std::vector< std::vector<double> > aVecAry0;
     aVecAry0.push_back(aXY_B0);
-    GenerateTesselation2(aTri, aXY_out, aPtrVtxInd,aVtxInd, elen, false, aVecAry0);
+    std::vector<int> loop_ind0;
+    std::vector<double> aXY0;
+    JArray_FromVecVec_XY(loop_ind0,aXY0,
+                        aVecAry0);
+    assert( CheckInputBoundaryForTriangulation(loop_ind0,aXY0) );
+    std::vector<int> loop0(aXY0.size()/2);
+    for(int ip=0;ip<aXY0.size()/2;++ip){ loop0[ip] = ip; }
+    /////
+    FixLoopOrientation(loop0,
+                       loop_ind0,aXY0);
+    ResamplingLoop(loop_ind0,loop0,aXY0,
+                   elen );
+    CInputTriangulation_Uniform param(1.0);
+    Triangulation(aTri, aXY_out, loop_ind0,loop0,
+                  elen, param, aXY0);
   }
   const int nxy_bound = (int)aXY_B0.size()/2;
   for(int ip=nxy_bound;ip<aXY_out.size()/2;++ip){
@@ -241,6 +254,8 @@ void CCad3D_Face::Initialize
     double y0 = aXY_out[ip*2+1];
     CFacePointInfo pinfo;
     pinfo.itype = 2;
+    pinfo.aW0.resize(aXY_B0.size()/2);
+    pinfo.aW1.resize(aXY_B1.size()/2);
     MeanValueCoordinate2D(pinfo.aW0.data(),x0,y0,aXY_B0.data(),aXY_B0.size()/2);
     MeanValueCoordinate2D(pinfo.aW1.data(),x0,y0,aXY_B1.data(),aXY_B1.size()/2);
     aPInfo.push_back(pinfo);

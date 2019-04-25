@@ -144,7 +144,7 @@ std::vector<double> aVecCurve0; // current test
 
 std::vector<int> aTri1;
 std::vector<double> aXY1;
-std::vector<int> aInd_IdVtxLoop, aIdVtxLoop; // vtx on loop
+std::vector<int> loop1_ind, loop1; // vtx on loop
 
 std::vector<double> aVal;
 std::vector<double> aVelo;
@@ -182,8 +182,22 @@ void MakeMesh(){
     aVecAry[0].push_back(-len); aVecAry[0].push_back(+len);
   }
   aVecAry.push_back(aVecCurve0);
-  //  bool res = GenerateTesselation2(aTri1, aXY1, aInd_IdVtxLoop,aIdVtxLoop, 0.045, true,aVecAry);
-  bool res = GenerateTesselation2(aTri1, aXY1, aInd_IdVtxLoop, aIdVtxLoop, 0.05, true, aVecAry);
+  std::vector<double> aXY0;
+  JArray_FromVecVec_XY(loop1_ind,aXY0,
+                      aVecAry);
+  assert( CheckInputBoundaryForTriangulation(loop1_ind,aXY0) );
+  /////
+  loop1.resize(aXY0.size()/2);
+  for(int ip=0;ip<aXY0.size()/2;++ip){ loop1[ip] = ip; }
+  /////
+  FixLoopOrientation(loop1,
+                     loop1_ind,aXY0);
+  ResamplingLoop(loop1_ind,loop1,aXY0,
+                 0.05 );
+  CInputTriangulation_Uniform param(1.0);
+  bool res = Triangulation(aTri1, aXY1,
+                           loop1_ind, loop1,
+                           0.05, param, aXY0);
   if( !res ){
     std::cout << "meshing failed" << std::endl;
   }
@@ -203,8 +217,8 @@ void InitializeProblem_Scalar()
       aBCFlag[ip] = 1;
     }
   }
-  for(int iip=aInd_IdVtxLoop[1];iip<aInd_IdVtxLoop[2];++iip){
-    int ip0 = aIdVtxLoop[iip];
+  for(int iip=loop1_ind[1];iip<loop1_ind[2];++iip){
+    int ip0 = loop1[iip];
     aBCFlag[ip0] = 1;
   }
   //////
@@ -439,8 +453,8 @@ void InitializeProblem_Fluid()
       aBCFlag[ip*3+1] = 1;
     }
   }
-  for(int iip=aInd_IdVtxLoop[1];iip<aInd_IdVtxLoop[2];++iip){
-    int ip0 = aIdVtxLoop[iip];
+  for(int iip=loop1_ind[1];iip<loop1_ind[2];++iip){
+    int ip0 = loop1[iip];
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }
@@ -494,8 +508,8 @@ void InitializeProblem_Fluid2()
       aVal[ip*3+0] = 1;
     }
   }
-  for(int iip=aInd_IdVtxLoop[1];iip<aInd_IdVtxLoop[2];++iip){
-    int ip0 = aIdVtxLoop[iip];
+  for(int iip=loop1_ind[1];iip<loop1_ind[2];++iip){
+    int ip0 = loop1[iip];
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }

@@ -177,6 +177,9 @@ std::vector<double> aVecCurve0; // current test
 std::vector<int> aTri1;
 std::vector<double> aXY1;
 
+std::vector<int> loopIP3_ind, loopIP3;
+std::vector<double> aXY3;
+
 int idp_nearest = -1;
 
 int press_button = -1;
@@ -219,7 +222,7 @@ void myGlutDisplay(void)
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,1,0);
-  drawCurve(aVecCurve0,aVecCurve0);
+//  drawCurve(aVecCurve0,aVecCurve0);
   drawMesh(aTri1,aXY1);
   /*
    ::glLineWidth(3);
@@ -232,6 +235,31 @@ void myGlutDisplay(void)
    ::glColor3d(0,0,1);
    drawCurve(aCV1);  
    */
+  
+  
+  if( loopIP3.size() > 0 ){
+    ::glLineWidth(3);
+    ::glColor3d(1,0,1);
+    for(int iloop=0;iloop<loopIP3_ind.size()-1;++iloop){
+      const int np = loopIP3_ind[iloop+1]-loopIP3_ind[iloop];
+      for(int ip=0;ip<np;ip++){
+        const int iipo0 = loopIP3_ind[iloop]+(ip+0)%np;
+        const int iipo1 = loopIP3_ind[iloop]+(ip+1)%np;
+        const int ipo0 = loopIP3[iipo0];
+        const int ipo1 = loopIP3[iipo1];
+        const CVector2 po0(aXY3[ipo0*2+0],aXY3[ipo0*2+1]);
+        const CVector2 po1(aXY3[ipo1*2+0],aXY3[ipo1*2+1]);
+        ::glBegin(GL_LINES);
+        ::glVertex3d(po0.x,po0.y,0.0);
+        ::glVertex3d(po1.x,po1.y,0.0);
+        ::glEnd();
+        ::glBegin(GL_POINTS);
+        ::glVertex3d(po0.x,po0.y,0.0);
+        ::glVertex3d(po1.x,po1.y,0.0);
+        ::glEnd();
+      }
+    }
+  }
   
   // magenda: last
   ::glLineWidth(1);
@@ -256,17 +284,36 @@ void myGlutDisplay(void)
   glutSwapBuffers();
 }
 
+
 void myGlutIdle(){
   if( is_animation ){  
     std::vector<double> aCV0; MakeRandomCV(8,aCV0); // current cv
     MakeCurveSpline(aCV0,aVecCurve0); // current curve
-    std::vector< std::vector<double> > aVecAry;
-    aVecAry.push_back( aVecCurve0 );
-    std::vector<int> aInd_IndVtxLoop;
-    std::vector<int> aIndVtxLoop;
-    bool res = GenerateTesselation2(aTri1,aXY1,aInd_IndVtxLoop,aIndVtxLoop,
-                                    0.03,true,aVecAry);
-    if( !res ){ std::cout << "error in triangulation" << std::endl;}
+    ////
+    std::vector< std::vector<double> > aaXY;
+    aaXY.push_back( aVecCurve0 );
+    ////
+    std::vector<int> loopIP0_ind;
+    std::vector<double> aXY;
+    JArray_FromVecVec_XY(loopIP0_ind,aXY,
+                        aaXY);
+    std::vector<int> loopIP0(aXY.size()/2);
+    for(int ip=0;ip<aXY.size()/2;++ip){ loopIP0[ip] = ip; }
+    /////
+    assert( CheckInputBoundaryForTriangulation(loopIP0_ind,aXY) );
+    ////
+    FixLoopOrientation(loopIP0,
+                       loopIP0_ind,aXY);
+    ResamplingLoop(loopIP0_ind,loopIP0,aXY,
+                   0.03 );
+    aXY3 = aXY;
+    loopIP3_ind = loopIP0_ind;
+    loopIP3 = loopIP0;
+    CInputTriangulation_Uniform param(1.0);
+    bool res = Triangulation(aTri1,aXY1,
+                             loopIP0_ind,loopIP0,
+                             0.03,param,aXY);
+//    if( !res ){ std::cout << "error in triangulation" << std::endl;}
   }
   ::glutPostRedisplay();
 }

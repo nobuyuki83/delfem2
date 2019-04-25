@@ -33,11 +33,13 @@ class Test_MathExpression(unittest.TestCase):
 
 class Test_Mesh(unittest.TestCase):
   def test1(self):
-    msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply")
+    msh = dfm2.Mesh()
+    msh.read("../test_inputs/bunny_2k.ply")
     self.assertIsNot(msh,None)
 
   def test2(self):
-    msh = dfm2.mesh_read("../test_inputs/bunny_1k.obj");
+    msh = dfm2.Mesh()
+    msh.read("../test_inputs/bunny_1k.obj");
     self.assertIsNot(msh,None)
 
   def test3(self):
@@ -64,7 +66,7 @@ class Test_Mesh(unittest.TestCase):
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
 
-class Test_DynamicMesh(unittest.TestCase):
+class Test_CppMeshDynTri3D(unittest.TestCase):
   def test0(self):
     cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
     mesh = cad.mesh(0.1)
