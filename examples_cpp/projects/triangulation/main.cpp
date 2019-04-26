@@ -170,15 +170,14 @@ void drawMesh
   
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<double> aVecCurve0; // current test
-
-std::vector<int> aTri1;
-std::vector<double> aXY1;
-
-std::vector<int> loopIP3_ind, loopIP3;
-std::vector<double> aXY3;
+std::vector<CEPo2> aPo2D;
+std::vector<CVector2> aVec2;
+std::vector<ETri> aETri;
+std::vector<int> loopIP_ind, loopIP;
 
 int idp_nearest = -1;
 
@@ -186,6 +185,21 @@ int press_button = -1;
 double mov_begin_x, mov_begin_y;
 bool is_animation = true;
 double mag = 1.0;
+
+//////////////////////////////////
+
+void GenMesh(){
+  std::vector<double> aCV0; MakeRandomCV(8,aCV0); // current cv
+  std::vector<double> aVecCurve0;  MakeCurveSpline(aCV0,aVecCurve0); // current curve
+  ////
+  std::vector< std::vector<double> > aaXY;
+  aaXY.push_back( aVecCurve0 );
+  ////
+  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
+                                 aaXY, 0.03);
+}
+
+//////////////////////////////////
 
 void myGlutResize(int w, int h)
 {
@@ -205,8 +219,8 @@ void myGlutResize(int w, int h)
 
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2, .7, 0.7, 1.0);
-  ::glClearColor(0.0, .0, 0.0, 1.0);
+  ::glClearColor(1.0, 1.0, 1.0, 1.0);
+  //  ::glClearColor(0.0, .0, 0.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   
@@ -217,69 +231,25 @@ void myGlutDisplay(void)
   ::glLoadIdentity();
   
   ::glPointSize(5);
-  
-  // yerrow: input
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,1,0);
-//  drawCurve(aVecCurve0,aVecCurve0);
-  drawMesh(aTri1,aXY1);
-  /*
-   ::glLineWidth(3);
-   ::glColor3d(0,1,0);
-   drawCurve(aCV0);
-   */
   
-  /*
-   ::glLineWidth(3);
-   ::glColor3d(0,0,1);
-   drawCurve(aCV1);  
-   */
+  DrawMeshDynTri_Edge(aETri, aVec2);
+  ::glColor3d(0.8, 0.8, 0.8);
+  DrawMeshDynTri_FaceNorm(aETri, aVec2);
   
   
-  if( loopIP3.size() > 0 ){
-    ::glLineWidth(3);
-    ::glColor3d(1,0,1);
-    for(int iloop=0;iloop<loopIP3_ind.size()-1;++iloop){
-      const int np = loopIP3_ind[iloop+1]-loopIP3_ind[iloop];
-      for(int ip=0;ip<np;ip++){
-        const int iipo0 = loopIP3_ind[iloop]+(ip+0)%np;
-        const int iipo1 = loopIP3_ind[iloop]+(ip+1)%np;
-        const int ipo0 = loopIP3[iipo0];
-        const int ipo1 = loopIP3[iipo1];
-        const CVector2 po0(aXY3[ipo0*2+0],aXY3[ipo0*2+1]);
-        const CVector2 po1(aXY3[ipo1*2+0],aXY3[ipo1*2+1]);
-        ::glBegin(GL_LINES);
-        ::glVertex3d(po0.x,po0.y,0.0);
-        ::glVertex3d(po1.x,po1.y,0.0);
-        ::glEnd();
-        ::glBegin(GL_POINTS);
-        ::glVertex3d(po0.x,po0.y,0.0);
-        ::glVertex3d(po1.x,po1.y,0.0);
-        ::glEnd();
-      }
+  ::glLineWidth(3);
+  ::glColor3d(0,0,0);
+  for(int iloop=0;iloop<(int)loopIP_ind.size()-1;iloop++){
+    ::glBegin(GL_LINE_LOOP);
+    for(int iip=loopIP_ind[iloop];iip<loopIP_ind[iloop+1];iip++){
+      const int ip = loopIP[iip];
+      ::glVertex3d(aVec2[ip].x, aVec2[ip].y, 0.1);
     }
+    ::glEnd();
   }
-  
-  // magenda: last
-  ::glLineWidth(1);
-  ::glPointSize(5);
-  ::glColor3d(1,0,1);
-  
-  /*
-   ::glLineWidth(1);
-   ::glColor3d(1,1,1);
-   ::glBegin(GL_LINES);
-   if( aVecCurve1.size()/2 == map1to0a.size() ){
-   for(unsigned int jv=0;jv<aVecCurve1.size()/2;jv++){
-   unsigned int iv = map1to0a[jv];
-   myGlVertex2D(aVecCurve1a,jv);
-   myGlVertex2D(aVecCurve0a,iv);	
-   }
-   }
-   */
-  ::glEnd();
-  
   
   glutSwapBuffers();
 }
@@ -287,33 +257,7 @@ void myGlutDisplay(void)
 
 void myGlutIdle(){
   if( is_animation ){  
-    std::vector<double> aCV0; MakeRandomCV(8,aCV0); // current cv
-    MakeCurveSpline(aCV0,aVecCurve0); // current curve
-    ////
-    std::vector< std::vector<double> > aaXY;
-    aaXY.push_back( aVecCurve0 );
-    ////
-    std::vector<int> loopIP0_ind;
-    std::vector<double> aXY;
-    JArray_FromVecVec_XY(loopIP0_ind,aXY,
-                        aaXY);
-    std::vector<int> loopIP0(aXY.size()/2);
-    for(int ip=0;ip<aXY.size()/2;++ip){ loopIP0[ip] = ip; }
-    /////
-    assert( CheckInputBoundaryForTriangulation(loopIP0_ind,aXY) );
-    ////
-    FixLoopOrientation(loopIP0,
-                       loopIP0_ind,aXY);
-    ResamplingLoop(loopIP0_ind,loopIP0,aXY,
-                   0.03 );
-    aXY3 = aXY;
-    loopIP3_ind = loopIP0_ind;
-    loopIP3 = loopIP0;
-    CInputTriangulation_Uniform param(1.0);
-    bool res = Triangulation(aTri1,aXY1,
-                             loopIP0_ind,loopIP0,
-                             0.03,param,aXY);
-//    if( !res ){ std::cout << "error in triangulation" << std::endl;}
+    GenMesh();
   }
   ::glutPostRedisplay();
 }
@@ -355,10 +299,10 @@ void myGlutKeyboard(unsigned char key, int x, int y)
       exit(0);
       break;
     case 'a':
-      is_animation = !is_animation; 
+    {
+      is_animation = !is_animation;
       break;
-    case ' ':
-      break;
+    }
     default:
       break;
   }

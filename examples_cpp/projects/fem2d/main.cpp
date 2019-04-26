@@ -140,11 +140,9 @@ void drawCurve
 ////////////////////////////////////////////////////////////////////////////////////
 
 double len = 1.1;
-std::vector<double> aVecCurve0; // current test
-
 std::vector<int> aTri1;
 std::vector<double> aXY1;
-std::vector<int> loop1_ind, loop1; // vtx on loop
+std::vector<int> loopIP1_ind, loopIP1; // vtx on loop
 
 std::vector<double> aVal;
 std::vector<double> aVelo;
@@ -172,34 +170,24 @@ double beta_newmark = 0.36;
 
 void MakeMesh(){
   std::vector<double> aCV0; MakeRandomCV(8, aCV0); // current cv
-  MakeCurveSpline(aCV0, aVecCurve0,20); // current curve
-  std::vector< std::vector<double> > aVecAry;
-  {
-    aVecAry.resize(1);
-    aVecAry[0].push_back(-len); aVecAry[0].push_back(-len);
-    aVecAry[0].push_back(+len); aVecAry[0].push_back(-len);
-    aVecAry[0].push_back(+len); aVecAry[0].push_back(+len);
-    aVecAry[0].push_back(-len); aVecAry[0].push_back(+len);
-  }
-  aVecAry.push_back(aVecCurve0);
   std::vector<double> aXY0;
-  JArray_FromVecVec_XY(loop1_ind,aXY0,
-                      aVecAry);
-  assert( CheckInputBoundaryForTriangulation(loop1_ind,aXY0) );
-  /////
-  loop1.resize(aXY0.size()/2);
-  for(int ip=0;ip<aXY0.size()/2;++ip){ loop1[ip] = ip; }
-  /////
-  FixLoopOrientation(loop1,
-                     loop1_ind,aXY0);
-  ResamplingLoop(loop1_ind,loop1,aXY0,
-                 0.05 );
-  CInputTriangulation_Uniform param(1.0);
-  bool res = Triangulation(aTri1, aXY1,
-                           loop1_ind, loop1,
-                           0.05, param, aXY0);
-  if( !res ){
-    std::cout << "meshing failed" << std::endl;
+  MakeCurveSpline(aCV0, aXY0,20); // current curve
+  std::vector< std::vector<double> > aaXY;
+  {
+    aaXY.resize(1);
+    aaXY[0].push_back(-len); aaXY[0].push_back(-len);
+    aaXY[0].push_back(+len); aaXY[0].push_back(-len);
+    aaXY[0].push_back(+len); aaXY[0].push_back(+len);
+    aaXY[0].push_back(-len); aaXY[0].push_back(+len);
+  }
+  aaXY.push_back(aXY0);
+  {
+    std::vector<CEPo2> aPo2D;
+    std::vector<CVector2> aVec2;
+    std::vector<ETri> aETri;
+    Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
+                                   aaXY,0.05);
+    MeshTri2D_Export(aXY1,aTri1, aVec2,aETri);
   }
   std::cout<<"  ntri;"<<aTri1.size()/3<<"  nXY:"<<aXY1.size()/2<<std::endl;
 }
@@ -217,8 +205,8 @@ void InitializeProblem_Scalar()
       aBCFlag[ip] = 1;
     }
   }
-  for(int iip=loop1_ind[1];iip<loop1_ind[2];++iip){
-    int ip0 = loop1[iip];
+  for(int iip=loopIP1_ind[1];iip<loopIP1_ind[2];++iip){
+    int ip0 = loopIP1[iip];
     aBCFlag[ip0] = 1;
   }
   //////
@@ -453,8 +441,8 @@ void InitializeProblem_Fluid()
       aBCFlag[ip*3+1] = 1;
     }
   }
-  for(int iip=loop1_ind[1];iip<loop1_ind[2];++iip){
-    int ip0 = loop1[iip];
+  for(int iip=loopIP1_ind[1];iip<loopIP1_ind[2];++iip){
+    int ip0 = loopIP1[iip];
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }
@@ -508,8 +496,8 @@ void InitializeProblem_Fluid2()
       aVal[ip*3+0] = 1;
     }
   }
-  for(int iip=loop1_ind[1];iip<loop1_ind[2];++iip){
-    int ip0 = loop1[iip];
+  for(int iip=loopIP1_ind[1];iip<loopIP1_ind[2];++iip){
+    int ip0 = loopIP1[iip];
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }

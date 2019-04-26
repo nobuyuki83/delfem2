@@ -74,13 +74,11 @@ bool FindEdgePoint_AcrossEdge
       }
     }
     {
-      const unsigned int inotri2 = (inotri_cur+1)%3;// indexRot3[1][inotri_cur];
-      //      if( tri[itri_cur].g2[inotri2] != -2 && tri[itri_cur].g2[inotri2] != -3 ){
-      //        break;
-      //      }
-      unsigned int itri_nex = tri[itri_cur].s2[inotri2];
+      const unsigned int inotri2 = (inotri_cur+1)%3;
+      int itri_nex = tri[itri_cur].s2[inotri2];
       const unsigned int* rel = relTriTri[ tri[itri_cur].r2[inotri2] ];
       const unsigned int inotri3 = rel[inotri_cur];
+      assert( itri_nex < tri.size() );
       assert( tri[itri_nex].v[inotri3] == ipo0 );
       if( itri_nex == itri_ini ){
         itri0 = 0;
@@ -293,7 +291,7 @@ bool LaplacianArroundPoint
 }
 
 
-void MeshingInside2
+void MeshingInside
 (std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri,
  std::vector<CVector2>& aVec2,
@@ -339,7 +337,6 @@ void MeshingInside2
         if( aflag_isnt_move[ip] == 1 ) continue;
         LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
       }
-      //			LaplaceDelaunaySmoothing(aPo2D,aTri);
       if( nadd != 0 ){ ratio *= 0.8; }
       else{ ratio *= 0.5; }
       if( ratio < 0.65 ) break;
@@ -358,6 +355,8 @@ void MakeSuperTriangle
  std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri)
 { // super triangle
+  assert( aVec2.size() == aPo2D.size() );
+  ////
   double max_len;
   double center[2];
   {
@@ -411,9 +410,7 @@ void AddPointsMesh
  double MIN_TRI_AREA)
 {
   assert( aPo2D.size() == aVec2.size() );
-
-  // Make Delaunay Division
-  if( aPo2D[ipoin].e >= 0 ) return;  // already added
+  if( aPo2D[ipoin].e >= 0 ){ return;  } // already added
   const CVector2& po_add = aVec2[ipoin];
   int itri_in = -1;
   int iedge = -1;
@@ -470,31 +467,24 @@ void AddPointsMesh
   DelaunayAroundPoint(ipoin,aPo2D,aTri,aVec2);
 }
 
-void EnforceEdge
-(int &itri0_ker,
- const std::vector<CVector2>& aVec2,
+void EnforceEdge 
+(const std::vector<CVector2>& aVec2,
  std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri,
- const std::vector<int>& aPtrVtxInd,
- const std::vector<int>& aVtxInd)
+ const std::vector<int>& loopIP_ind,
+ const std::vector<int>& loopIP)
 { // enforce edge
   assert( aPo2D.size() == aVec2.size() );
-  
-  const int nloop = (int)aPtrVtxInd.size()-1;
+  const int nloop = (int)loopIP_ind.size()-1;
   for(int iloop=0;iloop<nloop;iloop++){
-    const int nbar = aPtrVtxInd[iloop+1]-aPtrVtxInd[iloop];
+    const int nbar = loopIP_ind[iloop+1]-loopIP_ind[iloop];
     for(int ibar=0;ibar<nbar;ibar++){
+      const int ipoi0 = loopIP[loopIP_ind[iloop]+(ibar+0)%nbar];
+      const int ipoi1 = loopIP[loopIP_ind[iloop]+(ibar+1)%nbar];
+      assert( ipoi0 < (int)aPo2D.size() );
+      assert( ipoi1 < (int)aPo2D.size() );
       for(;;){
-        int ipoi0, ipoi1;
-        {
-          int ind0 = aPtrVtxInd[iloop];
-          ipoi0 = aVtxInd[ind0+ibar];
-          if( ibar != nbar-1 ){ ipoi1 = aVtxInd[ind0+ibar+1]; }
-          else{ ipoi1 = aVtxInd[ind0]; }
-        }
-        assert( ipoi0 < (int)aPo2D.size() ); assert( ipoi1 < (int)aPo2D.size() );
-        int itri0;
-        int inotri0,inotri1;
+        int itri0,inotri0,inotri1;
         if( FindEdge(itri0,inotri0,inotri1,ipoi0,ipoi1,aPo2D,aTri) ){ // this edge divide outside and inside
           assert( inotri0 != inotri1 );
           assert( inotri0 < 3 );
@@ -509,7 +499,6 @@ void EnforceEdge
             aTri[itri1].s2[ied1] = -1;
             aTri[itri0].s2[ied0] = -1;
           }
-          itri0_ker = itri0;
           break;
         }
         else{ // this edge is devided from connection outer triangle
@@ -544,18 +533,15 @@ void EnforceEdge
   }
 }
 
-void DeleteNotConnected
+void DeleteConnected
 (std::vector<ETri>& aTri_in,
- int itri0_ker,
- const std::vector<ETri>& aTri)
+ int itri0_ker)
 {
-  aTri_in.clear();
   int ntri_in;
   std::vector<int> inout_flg;
   {
-    inout_flg.resize(aTri.size(),-1);
-    inout_flg[itri0_ker] = 0;
-    ntri_in = 1;
+    inout_flg.resize(aTri_in.size(),-2);
+    inout_flg[itri0_ker] = -1;
     std::stack<int> ind_stack;
     ind_stack.push(itri0_ker);
     for(;;){
@@ -563,16 +549,24 @@ void DeleteNotConnected
       const int itri_cur = ind_stack.top();
       ind_stack.pop();
       for(int inotri=0;inotri<3;inotri++){
-        if( aTri[itri_cur].s2[inotri] == -1 ) continue;
-        const int itri_s = aTri[itri_cur].s2[inotri];
-        if( inout_flg[itri_s] == -1 ){
-          inout_flg[itri_s] = ntri_in;
-          ntri_in++;
+        if( aTri_in[itri_cur].s2[inotri] == -1 ) continue;
+        const int itri_s = aTri_in[itri_cur].s2[inotri];
+        if( inout_flg[itri_s] == -2 ){
+          inout_flg[itri_s] = -1;
           ind_stack.push(itri_s);
         }
       }
     }
   }
+  ntri_in = 0;
+  for(int itri=0;itri<aTri_in.size();++itri){
+    if( inout_flg[itri] == -2 ){
+      inout_flg[itri] = ntri_in;
+      ntri_in++;
+    }
+  }
+  const std::vector<ETri> aTri = aTri_in;
+  aTri_in.clear();
   aTri_in.resize( ntri_in );
   for(int itri=0;itri<(int)aTri.size();itri++){
     if( inout_flg[itri] != -1 ){
@@ -594,7 +588,7 @@ void DeleteNotConnected
 }
 
 
-void DeletePoints
+void DeleteUnrefPoints
 (std::vector<CVector2>& aVec2,
  std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri_in,
@@ -638,51 +632,33 @@ void DeletePoints
   }
 }
 
-bool MeshingOuterLoop
+void Meshing_Initialize
 (std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri_in,
- std::vector<CVector2>& aVec2,
- const std::vector<int>& aPtrVtxInd,
- const std::vector<int>& aVtxInd)
+ std::vector<ETri>& aTri,
+ std::vector<CVector2>& aVec2)
 {
-  assert( aPo2D.size() == aVec2.size() );
-  
-  std::vector<ETri> aTri;
-  std::vector<int> aPoDel;
+  aPo2D.resize(aVec2.size());
+  for(int ixys=0;ixys<aVec2.size();ixys++){
+    aPo2D[ixys].e = -1;
+    aPo2D[ixys].d = -1;
+  }
   {
-    const int npo = (int)aPo2D.size();
-    aPoDel.push_back( npo+0 );
-    aPoDel.push_back( npo+1 );
-    aPoDel.push_back( npo+2 );
     MakeSuperTriangle(aVec2, aPo2D, aTri);
   }
-
   {
     const double MIN_TRI_AREA = 1.0e-10;
-    for(unsigned int ip=0;ip<aPo2D.size();++ip){
+    for(unsigned int ip=0;ip<aPo2D.size()-3;++ip){
       AddPointsMesh(aVec2,aPo2D,aTri,
                     ip,MIN_TRI_AREA);
     }
   }
-  
-  int itri0_ker  = (int)aTri.size(); // one internal triangle
-  EnforceEdge(itri0_ker, aVec2,aPo2D,aTri, aPtrVtxInd,aVtxInd);
-  
-  DeleteNotConnected(aTri_in,
-                     itri0_ker,aTri);
-  ////////////////
-
-  DeletePoints(aVec2,aPo2D,aTri_in,
-               aPoDel);
-  assert( aVec2.size() == aPo2D.size() );
-  return true;
 }
 
 
 bool IsInclude_Loop
 (const double co[],
  const int ixy_stt, const int ixy_end,
- const std::vector<double>& aXY)
+ const std::vector<CVector2>& aXY)
 {
   int inum_cross = 0;
   for(int itr=0;itr<10;itr++){
@@ -694,8 +670,8 @@ bool IsInclude_Loop
       const int ipo0 = ixys;
       int ipo1 = ixys+1;
       if( ipo1 == ixy_end ){ ipo1 = ixy_stt; }
-      const double p0[2] = {aXY[ipo0*2+0],aXY[ipo0*2+1]};
-      const double p1[2] = {aXY[ipo1*2+0],aXY[ipo1*2+1]};
+      const double p0[2] = {aXY[ipo0].x,aXY[ipo0].y};
+      const double p1[2] = {aXY[ipo1].x,aXY[ipo1].y};
       const double area0 = TriArea2D(co,codir,p0);
       const double area1 = TriArea2D(co,p1,codir);
       double r1 =  area0 / (area0+area1);
@@ -709,7 +685,9 @@ bool IsInclude_Loop
         break;
       }
       if( r0*r1 < 0 ){ continue; }
-      double po2[2] = { r0*aXY[ipo0*2  ]+r1*aXY[ipo1*2  ],  r0*aXY[ipo0*2+1]+r1*aXY[ipo1*2+1] };
+      double po2[2] = {
+        r0*aXY[ipo0].x+r1*aXY[ipo1].x,
+        r0*aXY[ipo0].y+r1*aXY[ipo1].y };
 //      const double area2 = TriArea2D(co,codir,po2);
       double d = (po2[0]-co[0])*dir[0] + (po2[1]-co[1])*dir[1];
       if( d > 0 ) inum_cross++;
@@ -723,7 +701,7 @@ bool IsInclude_Loop
 
 bool CheckInputBoundaryForTriangulation
 (const std::vector<int>& loopIP_ind,
- const std::vector<double>& aXY)
+ const std::vector<CVector2>& aXY)
 {
   ////////////////////////////////
   // enter Input check section
@@ -740,7 +718,7 @@ bool CheckInputBoundaryForTriangulation
     // check inclusion of loops
     for(int iloop=1;iloop<nloop;iloop++){
       for(int ipo=loopIP_ind[iloop];ipo<loopIP_ind[iloop+1];ipo++){
-        const double pi[2] = {aXY[ipo*2+0],aXY[ipo*2+1]};
+        const double pi[2] = {aXY[ipo].x,aXY[ipo].y};
         if( !IsInclude_Loop(pi,
                             loopIP_ind[0],loopIP_ind[1],
                             aXY) ) return false;
@@ -751,7 +729,7 @@ bool CheckInputBoundaryForTriangulation
       for(int jloop=0;jloop<nloop;jloop++){
         if( iloop == jloop ) continue;
         for(int jpo=loopIP_ind[jloop];jpo<loopIP_ind[jloop+1];jpo++){
-          const double pj[2] = {aXY[jpo*2+0],aXY[jpo*2+1]};
+          const double pj[2] = {aXY[jpo].x,aXY[jpo].y};
           if( IsInclude_Loop(pj,
                              loopIP_ind[iloop],loopIP_ind[iloop+1],
                              aXY) ) return false;
@@ -766,8 +744,8 @@ bool CheckInputBoundaryForTriangulation
       for(int ibar=0;ibar<nbar_i;ibar++){
         const int ipo0 = loopIP_ind[iloop] + (ibar+0)%nbar_i;
         const int ipo1 = loopIP_ind[iloop] + (ibar+1)%nbar_i;
-        const double pi0[2] = {aXY[ipo0*2+0],aXY[ipo0*2+1]};
-        const double pi1[2] = {aXY[ipo1*2+0],aXY[ipo1*2+1]};
+        const double pi0[2] = {aXY[ipo0].x,aXY[ipo0].y};
+        const double pi1[2] = {aXY[ipo1].x,aXY[ipo1].y};
         const double xmax_i = ( pi1[0] > pi0[0] ) ? pi1[0] : pi0[0];
         const double xmin_i = ( pi1[0] < pi0[0] ) ? pi1[0] : pi0[0];
         const double ymax_i = ( pi1[1] > pi0[1] ) ? pi1[1] : pi0[1];
@@ -779,8 +757,8 @@ bool CheckInputBoundaryForTriangulation
             if( ibar == 0 ) continue;
             jpo1 = loopIP_ind[iloop];
           }
-          const double pj0[2] = {aXY[jpo0*2+0],aXY[jpo0*2+1]};
-          const double pj1[2] = {aXY[jpo1*2+0],aXY[jpo1*2+1]};
+          const double pj0[2] = {aXY[jpo0].x,aXY[jpo0].y};
+          const double pj1[2] = {aXY[jpo1].x,aXY[jpo1].y};
           const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
           const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
           const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
@@ -799,8 +777,8 @@ bool CheckInputBoundaryForTriangulation
             const int jpo0 = loopIP_ind[jloop] + jbar;
             int jpo1 = loopIP_ind[jloop] + jbar+1;
             if( jbar == nbar_j-1 ){ jpo1 = loopIP_ind[jloop]; }
-            const double pj0[2] = {aXY[jpo0*2+0],aXY[jpo0*2+1]};
-            const double pj1[2] = {aXY[jpo1*2+0],aXY[jpo1*2+1]};
+            const double pj0[2] = {aXY[jpo0].x,aXY[jpo0].y};
+            const double pj1[2] = {aXY[jpo1].y,aXY[jpo1].y};
             const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
             const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
             const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
@@ -984,10 +962,60 @@ void PrepareInput
 }
  */
 
+
+void Meshing_SingleConnectedShape2D
+(std::vector<CEPo2>& aPo2D,
+ std::vector<CVector2>& aVec2,
+ std::vector<ETri>& aETri,
+ const std::vector< std::vector<double> >& aaXY,
+ double elen)
+{
+  std::vector<int> loopIP_ind, loopIP;
+  JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                       aaXY);
+  /////
+  assert( CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) );
+  ////
+  FixLoopOrientation(loopIP,
+                     loopIP_ind,aVec2);
+  if( elen > 10e-10 ){
+    ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                   elen );
+  }
+  /////
+  std::vector<int> aPoDel;
+  {
+    const int npo = (int)aVec2.size();
+    aPoDel.push_back( npo+0 );
+    aPoDel.push_back( npo+1 );
+    aPoDel.push_back( npo+2 );
+  }
+  Meshing_Initialize(aPo2D,aETri,aVec2);
+  EnforceEdge(aVec2,aPo2D,aETri,
+              loopIP_ind,loopIP);
+  {
+    int itri0_ker;
+    {
+      int inotri0, inotri1;
+      FindEdge(itri0_ker, inotri0, inotri1,
+               aPoDel[0], aPoDel[1], aPo2D, aETri);
+    }
+    DeleteConnected(aETri,
+                    itri0_ker);
+  }
+  DeleteUnrefPoints(aVec2,aPo2D,aETri,
+                    aPoDel);
+  if( elen > 1.0e-10 ){
+    CInputTriangulation_Uniform param(1.0);
+    MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                  elen, param);
+  }
+}
+
 void FixLoopOrientation
 (std::vector<int>& loopIP,
  const std::vector<int>& loopIP_ind,
- const std::vector<double>& aXY)
+ const std::vector<CVector2>& aXY)
 {
   const std::vector<int> loop_old = loopIP;
   const int nloop = loopIP_ind.size()-1;
@@ -1002,9 +1030,7 @@ void FixLoopOrientation
         const int iipo1 = loopIP_ind[iloop]+(ibar+1)%nbar;
         const int ipo0 = loop_old[iipo0];
         const int ipo1 = loop_old[iipo1];
-        area_loop += TriArea(vtmp,
-                             CVector2(aXY[ipo0*2+0],aXY[ipo0*2+1]),
-                             CVector2(aXY[ipo1*2+0],aXY[ipo0*2+1]) );
+        area_loop += TriArea(vtmp, aXY[ipo0], aXY[ipo1]);
       }
     }
     const int nbar0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];
@@ -1027,24 +1053,23 @@ void FixLoopOrientation
   }
 }
 
-
+/*
 bool Triangulation
 (std::vector<int>& aTri_out,		// out
- std::vector<double>& aXY_out, // out
+ std::vector<double>& aVec, // out
  const std::vector<int>& aPtrVtxInd, // out
  const std::vector<int>& aVtxInd, // out
  ////
  const double max_edge_length, // ind
- const CInputTriangulation& mesh_density,
- const std::vector<double>& aXY_in) // ind
+ const CInputTriangulation& mesh_density)
 {
   
-  const int nxys_presum = aXY_in.size()/2;
+  const int nxy = aXY_in.size()/2;
   std::vector<CEPo2> aPo2D;
   std::vector<CVector2> aVec2;
-  aPo2D.resize(nxys_presum);
-  aVec2.resize(nxys_presum);
-  for(int ixys=0;ixys<nxys_presum;ixys++){
+  aPo2D.resize(nxy);
+  aVec2.resize(nxy);
+  for(int ixys=0;ixys<nxy;ixys++){
     aVec2[ixys] = CVector2(aXY_in[ixys*2+0], aXY_in[ixys*2+1]);
     aPo2D[ixys].e = -1;
     aPo2D[ixys].d = -1;
@@ -1061,6 +1086,17 @@ bool Triangulation
   
   ////////////////////////////////
   // pushing back to STL vector
+
+  return true;
+}
+ */
+
+void MeshTri2D_Export
+(std::vector<double>& aXY_out,
+ std::vector<int>& aTri_out,
+ const std::vector<CVector2>& aVec2,
+ const std::vector<ETri>& aTri_in)
+{
   aTri_out.clear();
   aXY_out.clear();
   const int ntri = (int)aTri_in.size();
@@ -1070,18 +1106,19 @@ bool Triangulation
     aTri_out[itri*3+1] = aTri_in[itri].v[1];
     aTri_out[itri*3+2] = aTri_in[itri].v[2];
   }
-  const int nxy_out = (int)aPo2D.size();
+  const int nxy_out = (int)aVec2.size();
   aXY_out.resize(nxy_out*2);
   for(int ixy=0;ixy<nxy_out;ixy++){
     aXY_out[ixy*2+0] = aVec2[ixy].x;
     aXY_out[ixy*2+1] = aVec2[ixy].y;
   }
-  return true;
 }
+
 
 void JArray_FromVecVec_XY
 (std::vector<int>& aIndXYs,
- std::vector<double>& aXY,
+ std::vector<int>& loopIP0,
+ std::vector<CVector2>& aXY,
  const std::vector< std::vector<double> >& aVecAry0)
 {
   const int nloop = (int)aVecAry0.size();
@@ -1093,25 +1130,28 @@ void JArray_FromVecVec_XY
     aIndXYs[iloop+1] = aIndXYs[iloop]+npo;
     npo_sum += npo;
   }
-  aXY.resize(npo_sum*2);
+  aXY.resize(npo_sum);
   npo_sum = 0;
   for(int iloop=0;iloop<(int)nloop;iloop++){
     const int nxys = (int)aVecAry0[iloop].size()/2;
     for(int ixys=0;ixys<nxys;ixys++){
-      aXY[npo_sum*2+0] = aVecAry0[iloop][ixys*2+0];
-      aXY[npo_sum*2+1] = aVecAry0[iloop][ixys*2+1];
+      aXY[npo_sum].x = aVecAry0[iloop][ixys*2+0];
+      aXY[npo_sum].y = aVecAry0[iloop][ixys*2+1];
       npo_sum++;
     }
   }
+  loopIP0.resize(aXY.size());
+  for(int ip=0;ip<aXY.size();++ip){ loopIP0[ip] = ip; }
 }
 
 
 void ResamplingLoop
 (std::vector<int>& loopIP1_ind,
  std::vector<int>& loopIP1,
- std::vector<double>& aXY,
+ std::vector<CVector2>& aVec2,
  double max_edge_length)
 {
+  assert( aVec2.size() == loopIP1.size() );
   const std::vector<int> loopIP0_ind = loopIP1_ind;
   const std::vector<int> loopIP0 = loopIP1;
   const int nloop = loopIP0_ind.size()-1;
@@ -1120,20 +1160,20 @@ void ResamplingLoop
     for(int iloop=0;iloop<nloop;++iloop){
       const int np = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
       for(int ip=0;ip<np;ip++){
-        const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np;
-        const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np;
-        const int ipo0 = loopIP0[iipo0];
-        const int ipo1 = loopIP0[iipo1];
-        const CVector2 po0(aXY[ipo0*2+0],aXY[ipo0*2+1]);
-        const CVector2 po1(aXY[ipo1*2+0],aXY[ipo1*2+1]);
+        const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np; assert( iipo0>=0 && iipo0<loopIP0.size() );
+        const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np; assert( iipo1>=0 && iipo1<loopIP0.size() );
+        const int ipo0 = loopIP0[iipo0]; assert(ipo0>=0&&ipo0<aVec2.size());
+        const int ipo1 = loopIP0[iipo1]; assert(ipo1>=0&&ipo1<aVec2.size());
+        const CVector2 po0 = aVec2[ipo0]; // never use reference here because aVec2 will resize afterward
+        const CVector2 po1 = aVec2[ipo1]; // never use reference here because aVec2 will resize afterward
         const int nadd = (int)( Distance( po0, po1 ) / max_edge_length);
         if( nadd == 0 ) continue;
         for(int iadd=0;iadd<nadd;++iadd){
           double r2 = (double)(iadd+1)/(nadd+1);
           CVector2 v2 = (1-r2)*po0 + r2*po1;
-          const int ipo2 = aXY.size()/2;
-          aXY.push_back(v2.x);
-          aXY.push_back(v2.y);
+          const int ipo2 = aVec2.size();
+          aVec2.push_back(v2);
+          assert( iipo0>=0 && iipo0<aPoInEd.size() );
           aPoInEd[ iipo0 ].push_back(ipo2);
         }
       }
@@ -1146,7 +1186,8 @@ void ResamplingLoop
     const int nbar0 = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
     int nbar1 = nbar0;
     for(int ibar=0;ibar<nbar0;ibar++){
-      nbar1 += aPoInEd[ loopIP0_ind[iloop]+ibar ].size();
+      const int iip_loop = loopIP0_ind[iloop]+ibar;
+      nbar1 += aPoInEd[iip_loop].size();
     }
     loopIP1_ind[iloop+1] = loopIP1_ind[iloop] + nbar1;
   }
@@ -1154,17 +1195,18 @@ void ResamplingLoop
   loopIP1.resize(loopIP1_ind[nloop]);
   int ivtx0 = 0;
   for(int iloop=0;iloop<nloop;iloop++){
-    const int nbar0 = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
-    for(int ibar=0;ibar<nbar0;ibar++){
-      int ie = loopIP0_ind[iloop] + ibar;
-      loopIP1[ivtx0] = loopIP0[ie];
+    for(int iip_loop=loopIP0_ind[iloop];iip_loop<loopIP0_ind[iloop+1];iip_loop++){
+      const int ip_loop = loopIP0[iip_loop];
+      loopIP1[ivtx0] = ip_loop;
       ivtx0++;
-      for(unsigned int iadd=0;iadd<aPoInEd[ie].size();iadd++){
-        loopIP1[ivtx0] = aPoInEd[ie][iadd];
+      for(unsigned int iadd=0;iadd<aPoInEd[ip_loop].size();iadd++){
+        loopIP1[ivtx0] = aPoInEd[iip_loop][iadd];
         ivtx0++;
       }
     }
   }
+  assert( loopIP1.size() == aVec2.size() );
+  assert( loopIP1.size() == ivtx0 );
 }
 
 
@@ -1188,8 +1230,6 @@ void RefineMesh
 }
 
 
-#ifdef USE_GL
-
 #if defined(__APPLE__) && defined(__MACH__)
 #include <OpenGL/gl.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
@@ -1205,10 +1245,7 @@ void DrawMeshDynTri_FaceNorm
 (const std::vector<ETri>& aSTri,
  const std::vector<CVector2>& aVec2)
 {
-  //  ::glPushAttrib(GL_ENABLE_BIT);
-  
-  ::glEnable(GL_LIGHTING);
-  //  ::myGlColorDiffuse(CColor::Orange());
+  ::glDisable(GL_LIGHTING);
   ::glBegin(GL_TRIANGLES);
   for (unsigned int itri=0; itri<aSTri.size(); ++itri){
     const int i0 = aSTri[itri].v[0];
@@ -1255,5 +1292,4 @@ void DrawMeshDynTri_Edge
   ::glEnd();
 }
 
-#endif
 

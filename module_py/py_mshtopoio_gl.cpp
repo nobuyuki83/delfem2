@@ -166,31 +166,20 @@ void PyDrawMesh_Edge
 
 
 
-std::tuple<std::vector<double>,std::vector<int>,std::vector<int>,std::vector<int>>
+std::tuple<std::vector<double>,std::vector<int>>
 PyTriangulation
 (const std::vector< std::vector<double> >& aaXY,
  double edge_length)
 {
-  std::vector<int> loop1_ind,loop1;
-  std::vector<double> aXY0;
-  JArray_FromVecVec_XY(loop1_ind,aXY0,
-                       aaXY);
-  assert( CheckInputBoundaryForTriangulation(loop1_ind,aXY0) );
-  /////
-  loop1.resize(aXY0.size()/2);
-  for(unsigned int ip=0;ip<aXY0.size()/2;++ip){ loop1[ip] = ip; }
-  /////
-  FixLoopOrientation(loop1,
-                     loop1_ind,aXY0);
-  ResamplingLoop(loop1_ind,loop1,aXY0,
-                 edge_length );
-  std::vector<double> aPos;
-  std::vector<int> aElm;
-  CInputTriangulation_Uniform param(1.0);
-  Triangulation(aElm, aPos,
-                loop1_ind, loop1,
-                edge_length, param, aXY0);
-  return std::forward_as_tuple(aPos,aElm, loop1_ind,loop1);
+  std::vector<CEPo2> aPo2D;
+  std::vector<CVector2> aVec2;
+  std::vector<ETri> aETri;
+  Meshing_SingleConnectedShape2D(aPo2D, aVec2,
+                                 aETri, aaXY, edge_length);
+  std::vector<double> aXY;
+  std::vector<int> aTri;
+  MeshTri2D_Export(aXY,aTri, aVec2,aETri);
+  return std::forward_as_tuple(aXY,aTri);
 }
 
 std::tuple<py::array_t<int>, py::array_t<int>>
