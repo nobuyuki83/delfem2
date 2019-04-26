@@ -230,23 +230,16 @@ void CCad3D_Face::Initialize
   }
   std::vector<double> aXY_out;
   {
-    std::vector< std::vector<double> > aVecAry0;
-    aVecAry0.push_back(aXY_B0);
-    std::vector<int> loop_ind0;
-    std::vector<double> aXY0;
-    JArray_FromVecVec_XY(loop_ind0,aXY0,
-                        aVecAry0);
-    assert( CheckInputBoundaryForTriangulation(loop_ind0,aXY0) );
-    std::vector<int> loop0(aXY0.size()/2);
-    for(int ip=0;ip<aXY0.size()/2;++ip){ loop0[ip] = ip; }
-    /////
-    FixLoopOrientation(loop0,
-                       loop_ind0,aXY0);
-    ResamplingLoop(loop_ind0,loop0,aXY0,
-                   elen );
-    CInputTriangulation_Uniform param(1.0);
-    Triangulation(aTri, aXY_out, loop_ind0,loop0,
-                  elen, param, aXY0);
+    std::vector< std::vector<double> > aaXY;
+    aaXY.push_back(aXY_B0);
+    {
+      std::vector<CEPo2> aPo2D;
+      std::vector<CVector2> aVec2;
+      std::vector<ETri> aETri;
+      Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
+                                     aaXY,0.05);
+      MeshTri2D_Export(aXY_out,aTri, aVec2,aETri);
+    }
   }
   const int nxy_bound = (int)aXY_B0.size()/2;
   for(int ip=nxy_bound;ip<aXY_out.size()/2;++ip){

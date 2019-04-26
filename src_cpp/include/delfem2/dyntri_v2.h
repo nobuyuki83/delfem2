@@ -26,13 +26,42 @@ void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
 void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
                              const std::vector<CVector2>& aVec2);
 
+void MeshTri2D_Export(std::vector<double>& aXY_out,
+                      std::vector<int>& aTri_out,
+                      const std::vector<CVector2>& aVec2,
+                      const std::vector<ETri>& aTri_in);
 
 void JArray_FromVecVec_XY(std::vector<int>& aIndXYs,
-                         std::vector<double>& aXY,
+                          std::vector<int>& loopIP0,
+                         std::vector<CVector2>& aXY,
                          const std::vector< std::vector<double> >& aaXY);
 
+void Meshing_SingleConnectedShape2D(std::vector<CEPo2>& aPo2D,
+                                    std::vector<CVector2>& aVec2,
+                                    std::vector<ETri>& aETri,
+                                    const std::vector< std::vector<double> >& aaXY,
+                                    double elen);
+
 bool CheckInputBoundaryForTriangulation(const std::vector<int>& loop_ind,
-                                        const std::vector<double>& aXY);
+                                        const std::vector<CVector2>& aXY);
+
+void Meshing_Initialize(std::vector<CEPo2>& aPo2D,
+                        std::vector<ETri>& aTri,
+                        std::vector<CVector2>& aVec2);
+
+void DeleteConnected(std::vector<ETri>& aTri_in,
+                        int itri0_ker);
+
+void EnforceEdge(const std::vector<CVector2>& aVec2,
+                 std::vector<CEPo2>& aPo2D,
+                 std::vector<ETri>& aTri,
+                 const std::vector<int>& aPtrVtxInd,
+                 const std::vector<int>& aVtxInd);
+
+void DeleteUnrefPoints(std::vector<CVector2>& aVec2,
+                  std::vector<CEPo2>& aPo2D,
+                  std::vector<ETri>& aTri_in,
+                  const std::vector<int>& aPoDel);
 
 class CInputTriangulation
 {
@@ -50,43 +79,23 @@ public:
   double elen;
 };
 
-// TODO: there should be three optoions for adding point on edge, 0:none, 1:only between input points, 2: resample everything
-/*
-bool Triangulation(std::vector<int>& aTri_out, // out
-                   std::vector<double>& aXY_out, // out
-                   std::vector<int>& aPtrVtxInd,
-                   std::vector<int>& aVtxInd,
-                   ////
-                   double elen,
-                   const CInputTriangulation& mesh_density,
-                   bool is_uniform_resample_loop, // good for polyline curve in
-                   const std::vector<int>& loop_ind,
-                   const std::vector<double>& aXY); // in); // in
-*/
-bool Triangulation(std::vector<int>& aTri_out,    // out
-                   std::vector<double>& aXY_out, // out
-                   const std::vector<int>& aPtrVtxInd, // out
-                   const std::vector<int>& aVtxInd, // out
-                   const double max_edge_length, // ind
-                   const CInputTriangulation& mesh_density,
-                   const std::vector<double>& aXY_in); // ind
+void MeshingInside(std::vector<CEPo2>& aPo2D,
+                    std::vector<ETri>& aTri,
+                    std::vector<CVector2>& aVec2,
+                    const std::vector<int>& aVtxInd,
+                    const double len,
+                    const CInputTriangulation& mesh_density);
 
 void FixLoopOrientation(std::vector<int>& loopIP,
                         const std::vector<int>& loopIP_ind,
-                        const std::vector<double>& aXY);
+                        const std::vector<CVector2>& aXY);
 
 void ResamplingLoop(std::vector<int>& loopIP1_ind,
                     std::vector<int>& loopIP1,
-                    std::vector<double>& aXY,
+                    std::vector<CVector2>& aXY,
                     double max_edge_length);
 
-/*
-void PrepareInput(std::vector<int>& aPtrVtxInd, // out
-                  std::vector<int>& aVtxInd,
-                  const std::vector<int>& loop_ind,
-                  const std::vector<double>& aXY);
-*/
- 
+
 class CCmd_RefineMesh2D
 {
 public:
