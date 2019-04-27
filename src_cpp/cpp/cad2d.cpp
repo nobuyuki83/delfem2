@@ -151,7 +151,7 @@ std::vector<double> CCad2D::MinMaxXYZ() const
 void CCad2D::Meshing
 (std::vector<double>& aXY,
  std::vector<int>& aTri,
- double len) const
+ double elen) const
 {
   const int iface0 = 0;
   assert( iface0<topo.aFace.size() );
@@ -170,12 +170,31 @@ void CCad2D::Meshing
       aaXY[0].push_back(p0.y);
     }
   }
+  std::vector<int> loopIP_ind,loopIP;
+  std::vector<CVector2> aVec2;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      return;
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+    if( elen > 10e-10 ){
+      ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                     elen );
+    }
+  }
   {
     std::vector<CEPo2> aPo2D;
-    std::vector<CVector2> aVec2;
     std::vector<ETri> aETri;
     Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                   aaXY,len);
+                                   loopIP_ind,loopIP);
+    if( elen > 1.0e-10 ){
+      CInputTriangulation_Uniform param(1.0);
+      MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                    elen, param);
+    }
     MeshTri2D_Export(aXY,aTri, aVec2,aETri);
   }
 }
@@ -257,12 +276,22 @@ void CCad2D_FaceGeo::GenMesh
       aaXY[0].push_back(p0.y);
     }
   }
+  std::vector<int> loopIP_ind,loopIP;
+  std::vector<CVector2> aVec2;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      return;
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+  }
   {
     std::vector<CEPo2> aPo2D;
-    std::vector<CVector2> aVec2;
     std::vector<ETri> aETri;
     Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                   aaXY,-1);
+                                   loopIP_ind, loopIP);
     MeshTri2D_Export(aXY,aTri, aVec2,aETri);
   }
 }

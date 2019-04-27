@@ -194,9 +194,29 @@ void GenMesh(){
   ////
   std::vector< std::vector<double> > aaXY;
   aaXY.push_back( aVecCurve0 );
+  /////
+  const double elen = 0.03;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      return;
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+    if( elen > 10e-10 ){
+      ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                     elen );
+    }
+  }
   ////
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                 aaXY, 0.03);
+                                 loopIP_ind,loopIP);
+  if( elen > 1.0e-10 ){
+    CInputTriangulation_Uniform param(1.0);
+    MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                  elen, param);
+  }
 }
 
 //////////////////////////////////

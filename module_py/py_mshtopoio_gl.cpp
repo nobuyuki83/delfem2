@@ -171,11 +171,32 @@ PyTriangulation
 (const std::vector< std::vector<double> >& aaXY,
  double edge_length)
 {
-  std::vector<CEPo2> aPo2D;
+  std::vector<int> loopIP_ind,loopIP;
   std::vector<CVector2> aVec2;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      std::vector<double> aXY;
+      std::vector<int> aTri;
+      return std::forward_as_tuple(aXY,aTri);
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+    if( edge_length > 10e-10 ){
+      ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                     edge_length );
+    }
+  }
+  std::vector<CEPo2> aPo2D;
   std::vector<ETri> aETri;
-  Meshing_SingleConnectedShape2D(aPo2D, aVec2,
-                                 aETri, aaXY, edge_length);
+  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
+                                 loopIP_ind, loopIP);
+  if( edge_length > 1.0e-10 ){
+    CInputTriangulation_Uniform param(1.0);
+    MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                  edge_length, param);
+  }
   std::vector<double> aXY;
   std::vector<int> aTri;
   MeshTri2D_Export(aXY,aTri, aVec2,aETri);

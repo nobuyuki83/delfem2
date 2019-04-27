@@ -9,6 +9,21 @@
 #include "delfem2/dyntri.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FixLoopOrientation(std::vector<int>& loopIP,
+                        const std::vector<int>& loopIP_ind,
+                        const std::vector<CVector2>& aXY);
+
+void ResamplingLoop(std::vector<int>& loopIP1_ind,
+                    std::vector<int>& loopIP1,
+                    std::vector<CVector2>& aXY,
+                    double max_edge_length);
+
+void JArray_FromVecVec_XY(std::vector<int>& aIndXYs,
+                          std::vector<int>& loopIP0,
+                          std::vector<CVector2>& aXY,
+                          const std::vector< std::vector<double> >& aaXY);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool CheckTri(const std::vector<CEPo2>& aPo3D,
@@ -31,17 +46,6 @@ void MeshTri2D_Export(std::vector<double>& aXY_out,
                       const std::vector<CVector2>& aVec2,
                       const std::vector<ETri>& aTri_in);
 
-void JArray_FromVecVec_XY(std::vector<int>& aIndXYs,
-                          std::vector<int>& loopIP0,
-                         std::vector<CVector2>& aXY,
-                         const std::vector< std::vector<double> >& aaXY);
-
-void Meshing_SingleConnectedShape2D(std::vector<CEPo2>& aPo2D,
-                                    std::vector<CVector2>& aVec2,
-                                    std::vector<ETri>& aETri,
-                                    const std::vector< std::vector<double> >& aaXY,
-                                    double elen);
-
 bool CheckInputBoundaryForTriangulation(const std::vector<int>& loop_ind,
                                         const std::vector<CVector2>& aXY);
 
@@ -49,14 +53,26 @@ void Meshing_Initialize(std::vector<CEPo2>& aPo2D,
                         std::vector<ETri>& aTri,
                         std::vector<CVector2>& aVec2);
 
-void DeleteConnected(std::vector<ETri>& aTri_in,
-                        int itri0_ker);
+void FlagConnected(std::vector<int>& inout_flg,
+                   const std::vector<ETri>& aTri_in,
+                   int itri0_ker,
+                   int iflag);
+
+void DeleteTriFlag(std::vector<ETri>& aTri_in,
+                    const std::vector<int>& inout_flg,
+                    int flag);
 
 void EnforceEdge(const std::vector<CVector2>& aVec2,
                  std::vector<CEPo2>& aPo2D,
                  std::vector<ETri>& aTri,
                  const std::vector<int>& aPtrVtxInd,
                  const std::vector<int>& aVtxInd);
+
+void Meshing_SingleConnectedShape2D(std::vector<CEPo2>& aPo2D,
+                                    std::vector<CVector2>& aVec2,
+                                    std::vector<ETri>& aETri,
+                                    const std::vector<int>& loopIP_ind,
+                                    const std::vector<int>& loopIP);
 
 void DeleteUnrefPoints(std::vector<CVector2>& aVec2,
                   std::vector<CEPo2>& aPo2D,
@@ -85,16 +101,6 @@ void MeshingInside(std::vector<CEPo2>& aPo2D,
                     const std::vector<int>& aVtxInd,
                     const double len,
                     const CInputTriangulation& mesh_density);
-
-void FixLoopOrientation(std::vector<int>& loopIP,
-                        const std::vector<int>& loopIP_ind,
-                        const std::vector<CVector2>& aXY);
-
-void ResamplingLoop(std::vector<int>& loopIP1_ind,
-                    std::vector<int>& loopIP1,
-                    std::vector<CVector2>& aXY,
-                    double max_edge_length);
-
 
 class CCmd_RefineMesh2D
 {

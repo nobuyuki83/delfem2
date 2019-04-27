@@ -142,7 +142,7 @@ void drawCurve
 double len = 1.1;
 std::vector<int> aTri1;
 std::vector<double> aXY1;
-std::vector<int> loopIP1_ind, loopIP1; // vtx on loop
+std::vector<int> loopIP_ind, loopIP; // vtx on loop
 
 std::vector<double> aVal;
 std::vector<double> aVelo;
@@ -176,18 +176,39 @@ void MakeMesh(){
   {
     aaXY.resize(1);
     aaXY[0].push_back(-len); aaXY[0].push_back(-len);
-    aaXY[0].push_back(+len); aaXY[0].push_back(-len);
-    aaXY[0].push_back(+len); aaXY[0].push_back(+len);
     aaXY[0].push_back(-len); aaXY[0].push_back(+len);
+    aaXY[0].push_back(+len); aaXY[0].push_back(+len);
+    aaXY[0].push_back(+len); aaXY[0].push_back(-len);
   }
   aaXY.push_back(aXY0);
+  //////////////////////////////
+  std::vector<CVector2> aVec2;
+  const double elen = 0.05;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      return;
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+    if( elen > 10e-10 ){
+      ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                     elen );
+    }
+  }
   {
     std::vector<CEPo2> aPo2D;
-    std::vector<CVector2> aVec2;
     std::vector<ETri> aETri;
     Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                   aaXY,0.05);
-    MeshTri2D_Export(aXY1,aTri1, aVec2,aETri);
+                                   loopIP_ind,loopIP);
+    if( elen > 1.0e-10 ){
+      CInputTriangulation_Uniform param(1.0);
+      MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                    elen, param);
+    }
+    MeshTri2D_Export(aXY1,aTri1,
+                     aVec2,aETri);
   }
   std::cout<<"  ntri;"<<aTri1.size()/3<<"  nXY:"<<aXY1.size()/2<<std::endl;
 }
@@ -205,16 +226,13 @@ void InitializeProblem_Scalar()
       aBCFlag[ip] = 1;
     }
   }
+  /*
   for(int iip=loopIP1_ind[1];iip<loopIP1_ind[2];++iip){
     int ip0 = loopIP1[iip];
     aBCFlag[ip0] = 1;
   }
-  //////
-  /*
-   CJaggedArray crs;
-   crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
-   crs.Sort();
    */
+  //////
   std::vector<int> psup_ind, psup;
   JArray_MeshOneRingNeighborhood(psup_ind, psup,
                                       aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
@@ -441,8 +459,8 @@ void InitializeProblem_Fluid()
       aBCFlag[ip*3+1] = 1;
     }
   }
-  for(int iip=loopIP1_ind[1];iip<loopIP1_ind[2];++iip){
-    int ip0 = loopIP1[iip];
+  for(int iip=loopIP_ind[1];iip<loopIP_ind[2];++iip){
+    int ip0 = loopIP[iip];
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }
@@ -496,8 +514,8 @@ void InitializeProblem_Fluid2()
       aVal[ip*3+0] = 1;
     }
   }
-  for(int iip=loopIP1_ind[1];iip<loopIP1_ind[2];++iip){
-    int ip0 = loopIP1[iip];
+  for(int iip=loopIP_ind[1];iip<loopIP_ind[2];++iip){
+    int ip0 = loopIP[iip];
     aBCFlag[ip0*3+0] = 1;
     aBCFlag[ip0*3+1] = 1;
   }
