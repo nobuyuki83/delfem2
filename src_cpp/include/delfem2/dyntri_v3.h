@@ -110,6 +110,7 @@ public:
   void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec3); }
   void draw() const { this->Draw_Edge(); }
   int nTri() const { return aETri.size(); }
+  int nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CEPo2> aEPo;

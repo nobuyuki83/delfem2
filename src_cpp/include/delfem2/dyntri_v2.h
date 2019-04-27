@@ -179,10 +179,37 @@ public:
   void DelaunayAroundPoint(int ipo){
     ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec2);
   }
+  void meshing_loops(const std::vector< std::vector<double> >& aaXY,
+                     double edge_length)
+  {
+    std::vector<int> loopIP_ind, loopIP;
+    {
+      JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                           aaXY);
+      if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+        return;
+      }
+      FixLoopOrientation(loopIP,
+                         loopIP_ind,aVec2);
+      if( edge_length > 10e-10 ){
+        ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                       edge_length );
+      }
+    }
+    ////
+    Meshing_SingleConnectedShape2D(aEPo, aVec2, aETri,
+                                   loopIP_ind,loopIP);
+    if( edge_length > 1.0e-10 ){
+      CInputTriangulation_Uniform param(1.0);
+      MeshingInside(aEPo,aETri,aVec2, loopIP,
+                    edge_length, param);
+    }
+  }
   void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec2); }
   void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec2); }
   void draw() const { this->Draw_Edge(); }
   int nTri() const { return aETri.size(); }
+  int nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CEPo2> aEPo;

@@ -66,4 +66,5 @@ script: |
   python3 -m pip install numpy
   python3 -m pip install PyOpenGL
   python3 -m pip install glfw
-  python3 test.py
+  python3 test_cadmsh.py
+  python3 test_fem.py

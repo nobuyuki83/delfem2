@@ -128,6 +128,37 @@ void PyMeshDynTri2D_Initialize
 }
 
 
+
+void PyCopyMeshDynTri2D
+(py::array_t<double>& npPos,
+ py::array_t<int>& npElm,
+ const CMeshDynTri2D& mesh)
+{
+  assert(npPos.ndim()==2);
+  assert(npElm.ndim()==2);
+  assert(npPos.shape()[1]==2);
+  assert(npElm.shape()[1]==3);
+  const int np = mesh.aEPo.size();
+  const int ntri = mesh.aETri.size();
+  assert(npPos.shape()[0]==np);
+  assert(npElm.shape()[0]==ntri);
+  {
+    double* pP = (double*)(npPos.request().ptr);
+    for(int ip=0;ip<np;++ip){
+      pP[ip*2+0] = mesh.aVec2[ip].x;
+      pP[ip*2+1] = mesh.aVec2[ip].y;
+    }
+  }
+  {
+    int* pT = (int*)(npElm.request().ptr);
+    for(int it=0;it<ntri;++it){
+      pT[it*3+0] = mesh.aETri[it].v[0];
+      pT[it*3+1] = mesh.aETri[it].v[1];
+      pT[it*3+2] = mesh.aETri[it].v[2];
+    }
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 void PyDrawMesh_FaceNorm
@@ -325,13 +356,17 @@ void init_mshtopoio_gl(py::module &m){
   .def("draw_edge",         &CMeshDynTri2D::Draw_Edge)
   .def("check",             &CMeshDynTri2D::Check)
   .def("ntri",              &CMeshDynTri2D::nTri)
+  .def("npoint",            &CMeshDynTri2D::nPoint)
   .def("delete_tri_edge",   &CMeshDynTri2D::DeleteTriEdge)
   .def("minmax_xyz",        &CMeshDynTri2D::MinMax_XYZ)
   .def("insert_point_elem", &CMeshDynTri2D::insertPointElem)
-  .def("delaunay_around_point", &CMeshDynTri2D::DelaunayAroundPoint);
+  .def("delaunay_around_point", &CMeshDynTri2D::DelaunayAroundPoint)
+  .def("meshing_loops",     &CMeshDynTri2D::meshing_loops);
+  
   
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   m.def("meshdyntri2d_initialize",&PyMeshDynTri2D_Initialize);
+  m.def("copyMeshDynTri2D",       &PyCopyMeshDynTri2D);
   
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);
