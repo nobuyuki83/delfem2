@@ -29,6 +29,7 @@ cmake-build-release
 .ipynb_checkpoints
 .vscode
 .python-version
+.pytest_cache/
 delfem2.egg-info
 buildXcode
 buildMake

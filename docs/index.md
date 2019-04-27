@@ -9,6 +9,29 @@ DelFEM2 is a toolset for Finite Element Analsys with Python/C++
 - Integrated CAD / Mesher / Solver / Visualizer
 
 
+## Features
+
+- Mesh Generation
+	- 2D Triangle Mesh (Delaunay Triangulation)
+	- 3D Triangle Mesh (IsoSurface Stuffing)
+- Poission's Equation
+	- 2D Triangle Mesh
+	- 3D Tetrahedra Mesh
+- Diffusion Equation
+	- 2D Triangle Mesh
+	- 3D Tetrahedra Mesh
+- Linear Solid Equation
+	- 2D Trianlge Mesh
+	- 3D Tetrahedra Mesh
+- Simulation of Cloth
+	- 3D Triangle Mesh
+- Storkes Equation
+	- 2D Trianlge Mesh
+	- 3D Tetrahedra Mesh
+- Navier Storkes Equation
+	- 2D Trianlge Mesh
+
+
 ## Download
 
 Please download the latest project by cloning the [GitHub repository](https://github.com/nobuyuki83/delfem2)

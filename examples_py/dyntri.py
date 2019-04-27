@@ -17,7 +17,7 @@ def main_CppMeshDynTri2D_1():
   dmesh = dfm2.CppMeshDynTri2D()
   dfm2.meshdyntri2d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
   dmesh.check()
-  for itr in range(1000):
+  for itr in range(10):
     itri0 = random.randint(0,dmesh.ntri()-1)
     r0 = random.uniform(0.02, 0.98)
     r1 = random.uniform(0.01, 0.99-r0)
@@ -25,18 +25,6 @@ def main_CppMeshDynTri2D_1():
     dmesh.delaunay_around_point(ipo)
     dmesh.check()
   dfm2.winDraw3d([dmesh],winsize=(400,300))
-
-
-def main_MeshDynTri2D_0():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  dmsh = dfm2.MeshDynTri2D(cad.mesh(0.1))
-  fem = dfm2.FEM_Poisson(dmsh,source=1.0)
-  npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
-  fem.ls.vec_bc[npIdP] = 1
-  fem.solve()
-  field = dfm2.Field(dmsh,val_color=fem.vec_val[:,0])
-  dfm2.winDraw3d([field,dmsh])
-  ####
 
 
 
@@ -52,10 +40,32 @@ def main_CppMeshDynTri3D():
     dmesh.delete_tri_edge(itri0,iedge0)
   dfm2.winDraw3d([dmesh],winsize=(400,300))
 
+
+def main_MeshDynTri2D_0():
+  dmsh = dfm2.MeshDynTri2D()
+  dmsh.meshing_loops([[-1,-1, +1,-1, +1,+1, -1,+1],
+                      [-0.5, -0.5, +0.5, -0.5, 0.0, +0.5]],
+                     edge_length=0.2)
+  dfm2.winDraw3d([dmsh])
+
+
+def main_MeshDynTri2D_1():
+  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
+  dmsh = dfm2.MeshDynTri2D()
+  dmsh.set_mesh(cad.mesh(0.1))
+  fem = dfm2.FEM_Poisson(dmsh,source=1.0)
+  npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
+  fem.ls.vec_bc[npIdP] = 1
+  fem.solve()
+  field = dfm2.Field(dmsh,val_color=fem.vec_val[:,0])
+  dfm2.winDraw3d([field,dmsh])
+  ####
+
 if __name__ == "__main__":
   main_CppMeshDynTri2D_0()
   main_CppMeshDynTri2D_1()
 
   main_CppMeshDynTri3D()
 
+  main_MeshDynTri2D_1()
   main_MeshDynTri2D_0()

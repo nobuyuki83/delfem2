@@ -28,6 +28,8 @@ class Mesh():
     self.np_pos *= scale
 
   def minmax_xyz(self):
+    if self.np_pos.shape[0] == 0:
+      return [1,-1, 0,0, 0,0]
     x_min = numpy.min(self.np_pos[:,0])
     x_max = numpy.max(self.np_pos[:,0])
     y_min = numpy.min(self.np_pos[:,1])
@@ -95,14 +97,28 @@ def mesh_cad(cad,len) -> Mesh:
 ###########################################################################
 
 class MeshDynTri2D(Mesh):
-  def __init__(self,
-               msh:Mesh):
+  def __init__(self):
+    super().__init__()
+    self.elem_type = TRI
+    self.np_pos = numpy.ndarray((0,2),dtype=numpy.float64)
+    self.np_elm = numpy.ndarray((0,3),dtype=numpy.int32)
+    self.dmsh = CppMeshDynTri2D()
+
+  def set_mesh(self,msh=Mesh):
     assert msh.elem_type == TRI
     assert msh.np_pos.shape[1] == 2
-    super().__init__(msh.np_pos, msh.np_elm, TRI)
-    self.dmsh = CppMeshDynTri2D()
+    self.np_pos.resize(msh.np_pos.shape)
+    self.np_elm.resize(msh.np_elm.shape)
+    self.np_pos[:,:] = msh.np_pos
+    self.np_elm[:,:] = msh.np_elm
+    self.elem_type = msh.elem_type
     meshdyntri2d_initialize(self.dmsh, self.np_pos, self.np_elm)
 
+  def meshing_loops(self,loops:list,edge_length:float):
+    self.dmsh.meshing_loops(loops,edge_length)
+    self.np_pos.resize((self.dmsh.npoint(),2))
+    self.np_elm.resize((self.dmsh.ntri(),3))
+    copyMeshDynTri2D(self.np_pos,self.np_elm, self.dmsh)
 
 ###########################################################################
 
