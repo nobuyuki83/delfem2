@@ -485,7 +485,7 @@ void EnforceEdge
       assert( ipoi1 < (int)aPo2D.size() );
       for(;;){
         int itri0,inotri0,inotri1;
-        if( FindEdge(itri0,inotri0,inotri1,ipoi0,ipoi1,aPo2D,aTri) ){ // this edge divide outside and inside
+        if( FindEdge_LookAroundPoint(itri0,inotri0,inotri1,ipoi0,ipoi1,aPo2D,aTri) ){ // this edge divide outside and inside
           assert( inotri0 != inotri1 );
           assert( inotri0 < 3 );
           assert( inotri1 < 3 );
@@ -533,56 +533,64 @@ void EnforceEdge
   }
 }
 
-void DeleteConnected
-(std::vector<ETri>& aTri_in,
- int itri0_ker)
+void FlagConnected
+(std::vector<int>& inout_flg,
+ const std::vector<ETri>& aTri_in,
+ int itri0_ker, int iflag)
 {
-  int ntri_in;
-  std::vector<int> inout_flg;
-  {
-    inout_flg.resize(aTri_in.size(),-2);
-    inout_flg[itri0_ker] = -1;
-    std::stack<int> ind_stack;
-    ind_stack.push(itri0_ker);
-    for(;;){
-      if( ind_stack.empty() ) break;
-      const int itri_cur = ind_stack.top();
-      ind_stack.pop();
-      for(int inotri=0;inotri<3;inotri++){
-        if( aTri_in[itri_cur].s2[inotri] == -1 ) continue;
-        const int itri_s = aTri_in[itri_cur].s2[inotri];
-        if( inout_flg[itri_s] == -2 ){
-          inout_flg[itri_s] = -1;
-          ind_stack.push(itri_s);
-        }
+  const int ntri = aTri_in.size();
+  assert( inout_flg.size() == ntri );
+  assert( itri0_ker>= 0 && itri0_ker<inout_flg.size() );
+  inout_flg[itri0_ker] = iflag;
+  std::stack<int> ind_stack;
+  ind_stack.push(itri0_ker);
+  for(;;){
+    if( ind_stack.empty() ) break;
+    const int itri_cur = ind_stack.top();
+    ind_stack.pop();
+    for(int inotri=0;inotri<3;inotri++){
+      if( aTri_in[itri_cur].s2[inotri] == -1 ) continue;
+      const int itri_s = aTri_in[itri_cur].s2[inotri];
+      if( inout_flg[itri_s] != iflag ){
+        inout_flg[itri_s] = iflag;
+        ind_stack.push(itri_s);
       }
     }
   }
-  ntri_in = 0;
-  for(int itri=0;itri<aTri_in.size();++itri){
-    if( inout_flg[itri] == -2 ){
-      inout_flg[itri] = ntri_in;
-      ntri_in++;
+}
+
+void DeleteTriFlag
+(std::vector<ETri>& aTri1,
+ const std::vector<int>& aflg0,
+ int iflag)
+{
+  const int ntri0 = aTri1.size();
+  std::vector<int> map01(ntri0,-1);
+  int ntri1 = 0;
+  for(int itri=0;itri<ntri0;++itri){
+    if( aflg0[itri] != iflag ){
+      map01[itri] = ntri1;
+      ntri1++;
     }
   }
-  const std::vector<ETri> aTri = aTri_in;
-  aTri_in.clear();
-  aTri_in.resize( ntri_in );
-  for(int itri=0;itri<(int)aTri.size();itri++){
-    if( inout_flg[itri] != -1 ){
-      int itri_in = inout_flg[itri];
-      assert( itri_in >= 0 && (int)itri_in < ntri_in );
-      aTri_in[itri_in] = aTri[itri];
+  const std::vector<ETri> aTri0 = aTri1;
+  aTri1.clear();
+  aTri1.resize( ntri1 );
+  for(int itri0=0;itri0<(int)aTri0.size();itri0++){
+    if( map01[itri0] != -1 ){
+      int itri1 = map01[itri0];
+      assert( itri1 >= 0 && (int)itri1 < ntri1 );
+      aTri1[itri1] = aTri0[itri0];
     }
   }
-  for(int itri=0;itri<(int)aTri_in.size();itri++){
+  for(int itri1=0;itri1<ntri1;itri1++){
     for(int ifatri=0;ifatri<3;ifatri++){
-      if( aTri_in[itri].s2[ifatri] == -1 ) continue;
-      int itri_s0 = aTri_in[itri].s2[ifatri];
-      assert( itri_s0 >= 0 && (int)itri_s0 < (int)aTri.size() );
-      int itri_in_s0 = inout_flg[itri_s0];
-      assert( itri_in_s0 >= 0 && (int)itri_in_s0 < (int)aTri_in.size() );
-      aTri_in[itri].s2[ifatri] = itri_in_s0;
+      if( aTri1[itri1].s2[ifatri] == -1 ) continue;
+      int itri_s0 = aTri1[itri1].s2[ifatri];
+      assert( itri_s0 >= 0 && (int)itri_s0 < (int)aTri0.size() );
+      int itri1_s0 = map01[itri_s0];
+      assert( itri1_s0 >= 0 && (int)itri1_s0 < (int)aTri1.size() );
+      aTri1[itri1].s2[ifatri] = itri1_s0;
     }
   }
 }
@@ -967,21 +975,9 @@ void Meshing_SingleConnectedShape2D
 (std::vector<CEPo2>& aPo2D,
  std::vector<CVector2>& aVec2,
  std::vector<ETri>& aETri,
- const std::vector< std::vector<double> >& aaXY,
- double elen)
+ const std::vector<int>& loopIP_ind,
+ const std::vector<int>& loopIP)
 {
-  std::vector<int> loopIP_ind, loopIP;
-  JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
-                       aaXY);
-  /////
-  assert( CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) );
-  ////
-  FixLoopOrientation(loopIP,
-                     loopIP_ind,aVec2);
-  if( elen > 10e-10 ){
-    ResamplingLoop(loopIP_ind,loopIP,aVec2,
-                   elen );
-  }
   /////
   std::vector<int> aPoDel;
   {
@@ -994,22 +990,21 @@ void Meshing_SingleConnectedShape2D
   EnforceEdge(aVec2,aPo2D,aETri,
               loopIP_ind,loopIP);
   {
+    std::vector<int> aflg(aETri.size(),0);
     int itri0_ker;
     {
-      int inotri0, inotri1;
-      FindEdge(itri0_ker, inotri0, inotri1,
-               aPoDel[0], aPoDel[1], aPo2D, aETri);
+      int iedtri;
+      FindEdge_LookAllTriangles(itri0_ker, iedtri,
+                                loopIP[0], loopIP[1], aETri);
+      assert(itri0_ker>=0&&itri0_ker<aETri.size());
+      FlagConnected(aflg,
+                    aETri, itri0_ker,1);
     }
-    DeleteConnected(aETri,
-                    itri0_ker);
+    DeleteTriFlag(aETri,
+                  aflg, 0);
   }
   DeleteUnrefPoints(aVec2,aPo2D,aETri,
                     aPoDel);
-  if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
-    MeshingInside(aPo2D,aETri,aVec2, loopIP,
-                  elen, param);
-  }
 }
 
 void FixLoopOrientation

@@ -471,7 +471,7 @@ bool FlipEdge
   return true;
 }
 
-bool FindEdge
+bool FindEdge_LookAroundPoint
 (int& itri0, int& inotri0, int& inotri1,
  ///
  const int ipo0, const int ipo1,
@@ -542,6 +542,27 @@ bool FindEdge
   return false;
 }
 
+
+
+bool FindEdge_LookAllTriangles
+(int& itri0, int& iedtri0,
+ ///
+ const int ipo0, const int ipo1,
+ const std::vector<ETri>& aTri)
+{
+  for(int itri=0;itri<aTri.size();++itri){
+    for(int iedtri=0;iedtri<3;++iedtri){
+      int jpo0 = aTri[itri].v[(iedtri+0)%3];
+      int jpo1 = aTri[itri].v[(iedtri+1)%3];
+      if( jpo0 == ipo0 && jpo1 == ipo1 ){
+        itri0 = itri;
+        iedtri0 = iedtri;
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 bool CheckTri( const std::vector<ETri>& aTri )
 {

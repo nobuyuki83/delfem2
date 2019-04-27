@@ -232,12 +232,29 @@ void CCad3D_Face::Initialize
   {
     std::vector< std::vector<double> > aaXY;
     aaXY.push_back(aXY_B0);
+    /////
+    std::vector<int> loopIP_ind,loopIP;
+    std::vector<CVector2> aVec2;
+    double elen = 0.05;
+    {
+      JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                           aaXY);
+      if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+        return;
+      }
+      FixLoopOrientation(loopIP,
+                         loopIP_ind,aVec2);
+    }
     {
       std::vector<CEPo2> aPo2D;
-      std::vector<CVector2> aVec2;
       std::vector<ETri> aETri;
       Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                     aaXY,0.05);
+                                     loopIP_ind,loopIP);
+      if( elen > 1.0e-10 ){
+        CInputTriangulation_Uniform param(1.0);
+        MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                      elen, param);
+      }
       MeshTri2D_Export(aXY_out,aTri, aVec2,aETri);
     }
   }

@@ -52,12 +52,16 @@ void InitializeMesh(std::vector<CEPo2>& aPo3D,
                     const int* aTri,    int nTri,
                     int nXYZ);
 
-bool FindEdge(int& itri0, int& inotri0, int& inotri1,
+bool FindEdge_LookAroundPoint(int& itri0, int& inotri0, int& inotri1,
               ///
               const int ipo0, const int ipo1,
               const std::vector<CEPo2>& aPo,
               const std::vector<ETri>& aTri);
 
+bool FindEdge_LookAllTriangles(int& itri0, int& iedtri0,
+                               ///
+                               const int ipo0, const int ipo1,
+                               const std::vector<ETri>& aTri);
 
 ///////////////////////////////////////////////////////////////
 // topology edit
