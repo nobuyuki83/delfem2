@@ -105,22 +105,38 @@ void MeshingInside(std::vector<CEPo2>& aPo2D,
 class CCmd_RefineMesh2D
 {
 public:
+  CCmd_RefineMesh2D(int i0, int i1, double s0){
+    if( i0 < i1 ){
+      ipo0 = i0;
+      ipo1 = i1;
+      r0 = s0;
+      r1 = 1-s0;
+    }
+    else{
+      ipo0 = i1;
+      ipo1 = i0;
+      r0 = 1-s0;
+      r1 = s0;
+    }
+  }
+  bool operator < (const CCmd_RefineMesh2D& rhs) const {
+    if( ipo0 != rhs.ipo0 ){
+      return ipo0 < rhs.ipo0;
+    }
+    return ipo1 < rhs.ipo1;
+  }
+public:
   int ipo_new;
   int ipo0, ipo1;
   double r0, r1;
 };
 
 // TODO: implement this function
-void GenerateEdgeRefine
-(std::vector<CCmd_RefineMesh2D>& aCmd,
- const CInputTriangulation& elenFlield);
-
-// TODO: implement this function
 void RefineMesh
 (std::vector<CEPo2>& aPo3D,
  std::vector<ETri>& aSTri,
  std::vector<CVector2>& aVec2,
- const std::vector<CCmd_RefineMesh2D>& aCmd);
+ std::vector<CCmd_RefineMesh2D>& aCmd);
 
 class CMeshDynTri2D{
 public:

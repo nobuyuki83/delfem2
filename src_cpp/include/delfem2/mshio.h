@@ -40,8 +40,8 @@ void Write_Ply(const std::string& fname,
                unsigned int nXYZ, double* paXYZ,
                unsigned int nTri, unsigned int* paTri);
 void Read_Ply(const std::string& fname,
-              unsigned int& nnode_, double*& pXYZs_,
-              unsigned int& ntri_,  unsigned int*& aTri_);
+              int& nnode_, double*& pXYZs_,
+              int& ntri_,  int*& aTri_);
 void Read_Ply(const std::string& fname,
               std::vector<double>& aXYZ,
               std::vector<int>& aTri);

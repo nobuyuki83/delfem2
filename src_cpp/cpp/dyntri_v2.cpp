@@ -1207,21 +1207,26 @@ void ResamplingLoop
 
 
 // TODO: implement this function
-void GenerateEdgeRefine
-(std::vector<CCmd_RefineMesh2D>& aCmd,
- const CInputTriangulation& elenFlield)
-{
-  
-}
-
-// TODO: implement this function
 void RefineMesh
-(std::vector<CEPo2>& aPo3D,
+(std::vector<CEPo2>& aEPo2,
  std::vector<ETri>& aSTri,
  std::vector<CVector2>& aVec2,
- const std::vector<CCmd_RefineMesh2D>& aCmd)
+ std::vector<CCmd_RefineMesh2D>& aCmd)
 {
-  
+  assert( aVec2.size() == aEPo2.size() );
+  const int np0 = aVec2.size();
+  for(int icmd=0;icmd<aCmd.size();++icmd){
+    int i0= aCmd[icmd].ipo0;
+    int i1= aCmd[icmd].ipo1;
+    CVector2 v01 = aCmd[icmd].r0*aVec2[i0] + (1-aCmd[icmd].r0)*aVec2[i1];
+    int ipo = aVec2.size();
+    aEPo2.push_back(CEPo2());
+    aVec2.push_back(v01);
+    aCmd[icmd].ipo_new = ipo;
+  }
+  for(int icmd=0;icmd<aCmd.size();++icmd){
+    AddPointsMesh(aVec2, aEPo2, aSTri, icmd+np0, 1.0e-10);
+  }
 }
 
 

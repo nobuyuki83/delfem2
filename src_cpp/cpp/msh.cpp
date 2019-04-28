@@ -188,31 +188,6 @@ void MakeNormal
   }  
 }
 
-void MakeNormal
-(double*& aNorm_,
- const unsigned int nnode_, const double* pXYZs_,
- const unsigned int ntri_,  const unsigned int* aTri_)
-{
-  if( aNorm_ != 0 ){ delete[] aNorm_; }
-  aNorm_ = new double [nnode_*3];
-  for(unsigned int i=0;i<nnode_*3;i++){ aNorm_[i] = 0; }
-  for(unsigned int itri=0;itri<ntri_;itri++){
-    unsigned int i1 = aTri_[itri*3+0];
-    unsigned int i2 = aTri_[itri*3+1];
-    unsigned int i3 = aTri_[itri*3+2];
-    double un[3], area;
-    UnitNormalAreaTri3D(un,area, pXYZs_+i1*3, pXYZs_+i2*3, pXYZs_+i3*3);
-    aNorm_[i1*3+0] += un[0];  aNorm_[i1*3+1] += un[1];  aNorm_[i1*3+2] += un[2];
-    aNorm_[i2*3+0] += un[0];  aNorm_[i2*3+1] += un[1];  aNorm_[i2*3+2] += un[2];
-    aNorm_[i3*3+0] += un[0];  aNorm_[i3*3+1] += un[1];  aNorm_[i3*3+2] += un[2];
-  }
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    double invlen = 1.0/Length3D(aNorm_+ino*3);
-    aNorm_[ino*3+0] *= invlen;
-    aNorm_[ino*3+1] *= invlen;
-    aNorm_[ino*3+2] *= invlen;
-  }
-}
 
 
 void Quality_MeshTri2D
