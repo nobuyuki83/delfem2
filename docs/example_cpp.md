@@ -12,6 +12,11 @@
 ## triangulation
 ![](imgs/screenshot_triangulation.png)
 
+
+## Dynamic Remesh
+
+![](imgs/remesh.gif)
+
 ##  Transform Handler
 ![](imgs/screenshot_handler.png)
 

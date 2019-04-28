@@ -1,4 +1,4 @@
-project(triangulation)
+project(dyntri2d_triangulation)
 
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")

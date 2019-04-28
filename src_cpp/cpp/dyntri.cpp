@@ -1029,33 +1029,32 @@ bool Collapse_ElemEdge
   return true;
 }
 
-void GetTriAryAroundPoint
-(int ipoin,
- std::vector< std::pair<unsigned int,unsigned int> >& aTriSurPo,
+void GetTriArrayAroundPoint
+(std::vector< std::pair<int,int> >& aTriSurPo,
+ int ipoin,
  const std::vector<CEPo2>& aPo,
  const std::vector<ETri>& aTri)
 {
-  const unsigned int itri_ini = aPo[ipoin].e;
-  const unsigned int inoel_c_ini = aPo[ipoin].d;
+  const int itri_ini = aPo[ipoin].e;
+  const int inoel_c_ini = aPo[ipoin].d;
   assert(itri_ini < aTri.size());
   assert(inoel_c_ini < 3);
   assert(aTri[itri_ini].v[inoel_c_ini]==ipoin);
-  unsigned int itri0 = itri_ini;
-  unsigned int inoel_c0 = inoel_c_ini;
-  unsigned int inoel_b0 = (inoel_c0+1)%3;
+  int itri0 = itri_ini;
+  int inoel_c0 = inoel_c_ini;
+  int inoel_b0 = (inoel_c0+1)%3;
   for (;;){
     assert(itri0 < aTri.size());
     assert(inoel_c0 < 3);
     assert(aTri[itri0].v[inoel_c0]==ipoin);
     aTriSurPo.push_back(std::make_pair(itri0, inoel_c0));
     /////
-    //    std::cout << ipoin << " " << itri0 << " " << inoel_b0 << " " << aTri.size() << " " << aTri[itri0].s2[inoel_b0] << std::endl;
     if (aTri[itri0].s2[inoel_b0]==-1){ break; }
     assert(aTri[itri0].s2[inoel_b0]>=0&&aTri[itri0].s2[inoel_b0] < (int)aTri.size());
-    unsigned int itri1 = aTri[itri0].s2[inoel_b0];
-    const unsigned int rel01 = aTri[itri0].r2[inoel_b0];
-    const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
-    const unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
+    int itri1 = aTri[itri0].s2[inoel_b0];
+    const int rel01 = aTri[itri0].r2[inoel_b0];
+    const int inoel_c1 = relTriTri[rel01][inoel_c0];
+    const int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
     assert(itri1 < aTri.size());
     assert(aTri[itri1].s2[relTriTri[rel01][inoel_b0]]==(int)itri0);
     assert(aTri[itri1].v[inoel_c1]==ipoin);

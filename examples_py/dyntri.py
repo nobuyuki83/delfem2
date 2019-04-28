@@ -48,8 +48,13 @@ def main_MeshDynTri2D_0():
                      edge_length=0.2)
   dfm2.winDraw3d([dmsh])
 
-
 def main_MeshDynTri2D_1():
+  dmsh = dfm2.MeshDynTri2D()
+  dmsh.meshing_loops([[-1,-1, +1,-1, +1,+1, -1,+1]],
+                     edge_length=0.2)
+  dfm2.winDraw3d([dmsh])
+
+def main_MeshDynTri2D_2():
   cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
   dmsh = dfm2.MeshDynTri2D()
   dmsh.set_mesh(cad.mesh(0.1))
@@ -67,5 +72,6 @@ if __name__ == "__main__":
 
   main_CppMeshDynTri3D()
 
-  main_MeshDynTri2D_1()
   main_MeshDynTri2D_0()
+  main_MeshDynTri2D_1()
+  main_MeshDynTri2D_2()

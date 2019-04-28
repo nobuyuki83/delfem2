@@ -1,4 +1,4 @@
-project(edge_collapse)
+project(dyntri3d_edgecollapse)
 
 cmake_minimum_required(VERSION 2.8)
 set( CMAKE_CXX_FLAGS "-Wall  -Wno-deprecated-declarations -std=c++11")

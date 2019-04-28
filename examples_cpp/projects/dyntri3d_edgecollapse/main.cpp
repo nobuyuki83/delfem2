@@ -42,15 +42,10 @@ bool is_lighting = false;
 
 void SetNewProblem()
 {
-  const unsigned int nprob = 2;
-  static unsigned int iprob = 0;
-  
-  {
-    unsigned int nnode;
+    int nnode;
     double* pXYZs = 0;
-    double* aNorm = 0;
-    unsigned int ntri;
-    unsigned int* aTriInd = 0;
+    int ntri;
+    int* aTriInd = 0;
     //    Load_Ply("homer.ply" ,nnode,pXYZs, ntri,aTriInd);
     Read_Ply("../test_inputs/arm_16k.ply" ,nnode,pXYZs, ntri,aTriInd);
     {
@@ -64,7 +59,6 @@ void SetNewProblem()
       wm = ( wz > wm ) ? wz : wm;
       Scale(2.0/wm,nnode,pXYZs);
     }
-    MakeNormal(aNorm,     nnode,pXYZs, ntri,aTriInd);
     aPo.resize(nnode);
     aVec3.resize(nnode);
     for(unsigned int ipo=0;ipo<aPo.size();ipo++){
@@ -72,39 +66,14 @@ void SetNewProblem()
       aVec3[ipo].y = pXYZs[ipo*3+1];
       aVec3[ipo].z = pXYZs[ipo*3+2];
     }
-    aTri.resize(ntri);
-    for(unsigned int itri=0;itri<aTri.size();itri++){
-      aTri[itri].v[0] = aTriInd[itri*3+0];
-      aTri[itri].v[1] = aTriInd[itri*3+1];
-      aTri[itri].v[2] = aTriInd[itri*3+2];
-    }
+    InitializeMesh(aPo, aTri,
+                   aTriInd,ntri,aVec3.size());
     delete[] pXYZs;
-    delete[] aNorm;
     delete[] aTriInd;
-  }
-  {
-    for(unsigned int itri=0;itri<aTri.size();itri++){
-      unsigned int i1 = aTri[itri].v[0];
-      unsigned int i2 = aTri[itri].v[1];
-      unsigned int i3 = aTri[itri].v[2];
-      aPo[i1].e = itri; aPo[i1].d = 0;
-      aPo[i2].e = itri; aPo[i2].d = 1;
-      aPo[i3].e = itri; aPo[i3].d = 2;
-    }
-  }
-  {
-    std::vector<int> elsup_ind, elsup;
-    JArray_MakeElSuP(elsup_ind, elsup,
-                     aTri, (int)aPo.size());
-    MakeInnerRelationTri(aTri, (int)aPo.size(),
-                         elsup_ind, elsup);
-  }
+  
   CheckTri(aTri);
   CheckTri(aPo, aTri);
   CheckTri(aPo, aTri, aVec3);
-  
-  iprob++;
-  if( iprob == nprob ){ iprob = 0; }
 }
 
 //////////////////////////////////////////////////////////////
@@ -168,6 +137,8 @@ void myGlutDisplay(void)
     //    ::glColor3d(1,1,1);
   }
   
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
   for(unsigned int itri=0;itri<aTri.size();itri++){  
     const unsigned int i1 = aTri[itri].v[0];
@@ -179,7 +150,6 @@ void myGlutDisplay(void)
   }
   ::glEnd();        
   
-  ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
   for(unsigned int itri=0;itri<aTri.size();itri++){  

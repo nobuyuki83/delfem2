@@ -185,8 +185,8 @@ void Write_Ply
 
 void Read_Ply
 (const std::string& fname,
- unsigned int& nnode_, double*& pXYZs_,
- unsigned int& ntri_, unsigned int*& aTri_)
+ int& nnode_, double*& pXYZs_,
+ int& ntri_, int*& aTri_)
 {
   std::cout<<"File load "<<fname<<std::endl;
   std::ifstream fin;
@@ -237,7 +237,7 @@ void Read_Ply
     pXYZs_[ino*3+1] = y;
     pXYZs_[ino*3+2] = z;
   }
-  aTri_ = new unsigned int[ntri_*3];
+  aTri_ = new int [ntri_*3];
   for (int itri = 0; itri<(int)ntri_; ++itri){
     int itmp, i1, i2, i3;
     fin>>itmp>>i1>>i2>>i3;

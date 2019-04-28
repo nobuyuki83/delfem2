@@ -42,64 +42,70 @@ void JArray_PSuP(unsigned int* const edge_ind, unsigned int& nedge, unsigned int
               const std::vector<ETri>& aTri, const unsigned int npoin,
               const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
 
-bool CheckTri(const std::vector<ETri>& aTri);
-bool CheckTri(const std::vector<CEPo2>& aPo3D,
-              const std::vector<ETri>& aSTri,
+bool CheckTri(const std::vector<ETri>& aETri);
+bool CheckTri(const std::vector<CEPo2>& aEPo2,
+              const std::vector<ETri>& aETri,
               bool is_assert=true);
 
-void InitializeMesh(std::vector<CEPo2>& aPo3D,
-                    std::vector<ETri>& aSTri,
+void InitializeMesh(std::vector<CEPo2>& aEPo2,
+                    std::vector<ETri>& aETri,
                     const int* aTri,    int nTri,
                     int nXYZ);
 
 bool FindEdge_LookAroundPoint(int& itri0, int& inotri0, int& inotri1,
               ///
               const int ipo0, const int ipo1,
-              const std::vector<CEPo2>& aPo,
-              const std::vector<ETri>& aTri);
+              const std::vector<CEPo2>& aEPo2,
+              const std::vector<ETri>& aETri);
 
 bool FindEdge_LookAllTriangles(int& itri0, int& iedtri0,
                                ///
                                const int ipo0, const int ipo1,
-                               const std::vector<ETri>& aTri);
+                               const std::vector<ETri>& aETri);
 
-///////////////////////////////////////////////////////////////
-// topology edit
-
-bool InsertPoint_ElemEdge(const int ipo_ins,    //the index of the new point
-                          const int itri_ins,  //triangle index
-                          const int ied_ins,  //edge index
-                          std::vector<CEPo2>& aPo,
-                          std::vector<ETri>& aTri );
-
-bool InsertPoint_Elem(const int ipo_ins,
-                      const int itri_ins,
-                      std::vector<CEPo2>& aPo,
-                      std::vector<ETri>& aTri);
-
-bool FlipEdge(int itri0, int ied0,
-              std::vector<CEPo2>& aPo,
-              std::vector<ETri>& aTri);
+void GetTriArrayAroundPoint(std::vector< std::pair<int,int> >& aTriSurPo,
+                          int ipoin,
+                          const std::vector<CEPo2>& aEPo2,
+                          const std::vector<ETri>& aETri);
 
 void MoveCCW(int& itri_cur,
              int& inotri_cur,
              bool& flag_is_wall,
              ////
-             std::vector<ETri>& aTri);
+             std::vector<ETri>& aETri);
+
+///////////////////////////////////////////////////////////////
+// topology edit
+
+bool FlipEdge(int itri0, int ied0,
+              std::vector<CEPo2>& aEPo2,
+              std::vector<ETri>& aETri);
+
+////////////////
+// insert point
+
+bool InsertPoint_ElemEdge(const int ipo_ins,    //the index of the new point
+                          const int itri_ins,  //triangle index
+                          const int ied_ins,  //edge index
+                          std::vector<CEPo2>& aEPo2,
+                          std::vector<ETri>& aETri );
+
+bool InsertPoint_Elem(const int ipo_ins,
+                      const int itri_ins,
+                      std::vector<CEPo2>& aEPo2,
+                      std::vector<ETri>& aETri);
+
+////////////////
+// delete point
 
 bool DeleteTri(int itri_to,
-               std::vector<CEPo2>& aPo,
-               std::vector<ETri>& aTri);
+               std::vector<CEPo2>& aEPo2,
+               std::vector<ETri>& aETri);
 
 bool Collapse_ElemEdge(const int itri_del,
                        const int ied_del,
-                       std::vector<CEPo2>& aPo,
-                       std::vector<ETri>& aTri);
-
-void GetTriAryAroundPoint(int ipoin,
-                          std::vector< std::pair<unsigned int,unsigned int> >& aTriSurPo,
-                          const std::vector<CEPo2>& aPo,
-                          const std::vector<ETri>& aTri);
+                       std::vector<CEPo2>& aEPo2,
+                       std::vector<ETri>& aETri);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
