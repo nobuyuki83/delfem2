@@ -39,7 +39,7 @@ class Test_FEMPoission2D(unittest.TestCase):
     msh = cad.mesh(0.02)
     fem = dfm2.FEM_Poisson(msh,source=1.0)
     npIdP = cad.points_edge([0,1,2,3], msh.np_pos)
-    fem.ls.vec_bc[npIdP] = 1
+    fem.ls.bc[npIdP] = 1
     fem.solve()
 
 
@@ -53,11 +53,11 @@ class Test_FEMPoission3D(unittest.TestCase):
     npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
     npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
     fem = dfm2.FEM_Poisson(msh)
-    fem.ls.vec_bc[npIdP0] = 1
-    fem.ls.vec_bc[npIdP1] = 2
-    fem.vec_val[:] = 0.5
-    fem.vec_val[npIdP0] = 0.0
-    fem.vec_val[npIdP1] = 1.0
+    fem.ls.bc[npIdP0] = 1
+    fem.ls.bc[npIdP1] = 2
+    fem.value[:] = 0.5
+    fem.value[npIdP0] = 0.0
+    fem.value[npIdP1] = 1.0
     fem.solve()
 
 
@@ -67,7 +67,7 @@ class Test_FEMDiffuse2D(unittest.TestCase):
     msh = cad.mesh(0.02)
     fem = dfm2.FEM_Diffuse(msh, source=1.0)
     npIdP = cad.points_edge([0, 1, 2, 3], msh.np_pos)
-    fem.ls.vec_bc[npIdP] = 1
+    fem.ls.bc[npIdP] = 1
     for itr in range(100):
       fem.step_time()
 
@@ -82,11 +82,11 @@ class Test_FemDiffuse3D(unittest.TestCase):
     npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
     npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
     fem = dfm2.FEM_Diffuse(msh)
-    fem.ls.vec_bc[npIdP0] = 1
-    fem.ls.vec_bc[npIdP1] = 2
-    fem.vec_val[:] = 0.5
-    fem.vec_val[npIdP0] = 0.0
-    fem.vec_val[npIdP1] = 1.0
+    fem.ls.bc[npIdP0] = 1
+    fem.ls.bc[npIdP1] = 2
+    fem.value[:] = 0.5
+    fem.value[npIdP0] = 0.0
+    fem.value[npIdP1] = 1.0
     for itr in range(100):
       fem.step_time()
 
@@ -97,7 +97,7 @@ class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
     msh = cad.mesh(0.02)
     fem = dfm2.FEM_LinearSolidStatic(msh,gravity=[0,-0.1])
     npIdP = cad.points_edge([3], msh.np_pos)
-    fem.ls.vec_bc[npIdP,:] = 1
+    fem.ls.bc[npIdP,:] = 1
     fem.solve()
 
 
@@ -107,7 +107,7 @@ class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
     msh = cad.mesh(0.02)
     fem = dfm2.FEM_LinearSolidDynamic(msh, gravity=[0, -0.1])
     npIdP = cad.points_edge([3], msh.np_pos)
-    fem.ls.vec_bc[npIdP, :] = 1
+    fem.ls.bc[npIdP, :] = 1
     for itr in range(100):
       fem.step_time()
 
@@ -118,7 +118,7 @@ class Test_FEMSorkes2D(unittest.TestCase):
     msh = cad.mesh(0.02)
     fem = dfm2.FEM_StorksStatic2D(msh)
     npIdP0 = cad.points_edge([0,1,2,3], msh.np_pos)
-    fem.ls.vec_bc[npIdP0,0:2] = 1
+    fem.ls.bc[npIdP0,0:2] = 1
     npIdP1 = cad.points_edge([2], msh.np_pos)
     fem.vec_val[npIdP1,0] = 1.0
     fem.solve()
@@ -130,7 +130,7 @@ class Test_FEMCloth(unittest.TestCase):
     msh = cad.mesh(edge_len=0.05)
     fem = dfm2.FEM_Cloth(msh)
     npIdP = cad.points_edge([2], msh.np_pos)
-    fem.ls.vec_bc[npIdP,0:3] = 1
+    fem.ls.bc[npIdP,0:3] = 1
     for itr in range(100):
       fem.step_time()
 

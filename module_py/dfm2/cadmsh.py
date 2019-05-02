@@ -65,7 +65,7 @@ class Mesh():
     self.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 2))
     self.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 3))
 
-  def psup(self) -> numpy.ndarray:
+  def psup(self) -> tuple:
     res = jarray_mesh_psup(self.np_elm, self.np_pos.shape[0])
     return res
 
@@ -119,6 +119,15 @@ class MeshDynTri2D(Mesh):
     self.np_pos.resize((self.dmsh.npoint(),2))
     self.np_elm.resize((self.dmsh.ntri(),3))
     copyMeshDynTri2D(self.np_pos,self.np_elm, self.dmsh)
+
+  def refine_EdgeLongerThan_InsideCircle(self,elen,px,py,rad):
+    mpr = CppMapper()
+    self.dmsh.refinementPlan_EdgeLongerThan_InsideCircle(mpr,
+                                                         elen, px, py, rad)
+    self.np_pos.resize((self.dmsh.npoint(),2))
+    self.np_elm.resize((self.dmsh.ntri(),3))
+    copyMeshDynTri2D(self.np_pos,self.np_elm, self.dmsh)
+    return mpr
 
 ###########################################################################
 

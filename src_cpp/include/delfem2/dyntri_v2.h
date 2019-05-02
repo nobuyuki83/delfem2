@@ -131,12 +131,38 @@ public:
   double r0, r1;
 };
 
-// TODO: implement this function
-void RefineMesh
-(std::vector<CEPo2>& aPo3D,
- std::vector<ETri>& aSTri,
- std::vector<CVector2>& aVec2,
- std::vector<CCmd_RefineMesh2D>& aCmd);
+
+class CMapper
+{
+public:
+  void Print(){
+    const int np = iv_ind.size()-1;
+    for(int ip=0;ip<np;++ip){
+      std::cout << ip << " --> ";
+      for(int iip=iv_ind[ip];iip<iv_ind[ip+1];++iip){
+        std::cout << iv[iip] << " " << w[iip] << "    ";
+      }
+      std::cout << std::endl;
+    }
+  }
+public:
+  int nv_in;
+  std::vector<int> iv_ind;
+  std::vector<int> iv;
+  std::vector<double> w;
+};
+
+void RefinementPlan_EdgeLongerThan_InsideCircle(std::vector<CCmd_RefineMesh2D>& aCmd,
+                                                double elen,
+                                                double px, double py, double rad,
+                                                const std::vector<CEPo2>& aPo2D,
+                                                const std::vector<CVector2>& aVec2,
+                                                const std::vector<ETri>& aETri);
+
+void RefineMesh(std::vector<CEPo2>& aPo3D,
+                std::vector<ETri>& aSTri,
+                std::vector<CVector2>& aVec2,
+                std::vector<CCmd_RefineMesh2D>& aCmd);
 
 class CMeshDynTri2D{
 public:
@@ -220,6 +246,55 @@ public:
       MeshingInside(aEPo,aETri,aVec2, loopIP,
                     edge_length, param);
     }
+  }
+  void RefinementPlan_EdgeLongerThan_InsideCircle(CMapper& mpr,
+                                                  double elen,
+                                                  double px, double py, double rad){
+    std::vector<CCmd_RefineMesh2D> aCmd;
+    ::RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
+                                                 elen,px,py, rad,
+                                                 aEPo,aVec2,aETri);
+    const int np0 = aVec2.size();
+    RefineMesh(aEPo, aETri, aVec2, aCmd);
+    assert( aEPo.size() == aVec2.size() );
+    /////
+    const int np = aVec2.size();
+    mpr.nv_in = np0;
+    mpr.iv_ind.resize(np+1);
+    mpr.iv_ind[0] = 0;
+    for(unsigned int icmd=0;icmd<aCmd.size();++icmd){
+      const int ip = aCmd[icmd].ipo_new;
+      mpr.iv_ind[ip+1] = 2;
+    }
+    for(int ip=0;ip<np;++ip){
+      if( mpr.iv_ind[ip+1] == 0 ){ mpr.iv_ind[ip+1] = 1; }
+    }
+    for(int ip=0;ip<np;++ip){
+      mpr.iv_ind[ip+1] += mpr.iv_ind[ip];
+    }
+    const int nmap = mpr.iv_ind[np];
+    mpr.iv.resize(nmap);
+    mpr.w.resize(nmap);
+    for(int ip=0;ip<np;++ip){
+      if( mpr.iv_ind[ip+1] - mpr.iv_ind[ip] != 1 ){ continue; }
+      int i0 = mpr.iv_ind[ip];
+      mpr.iv[i0] = ip;
+      mpr.w[i0] = 1.0;
+      mpr.iv_ind[ip] += 1;
+    }
+    for(unsigned int icmd=0;icmd<aCmd.size();++icmd){
+      const int ip = aCmd[icmd].ipo_new;
+      const int i0 = mpr.iv_ind[ip];
+      mpr.iv[i0+0] = aCmd[icmd].ipo0;
+      mpr.iv[i0+1] = aCmd[icmd].ipo1;
+      mpr.w[i0+0] = aCmd[icmd].r0;
+      mpr.w[i0+1] = aCmd[icmd].r1;
+      mpr.iv_ind[ip] += 2;
+    }
+    for(int ip=np-1;ip>=0;--ip){
+      mpr.iv_ind[ip+1] = mpr.iv_ind[ip];
+    }
+    mpr.iv_ind[0] = 0;
   }
   void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec2); }
   void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec2); }
