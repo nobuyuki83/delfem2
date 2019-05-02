@@ -13,25 +13,24 @@ class CadMesh_Poisson(dfm2.CadMesh2D):
   def __init__(self,cad,edge_length:float):
     super().__init__(cad,edge_length)
     self.fem = dfm2.FEM_Poisson(self.msh,source=1.0)
-    self.vis_color = dfm2.VisFEM_Color()
+    self.field = dfm2.FEM_Field(self.fem,name_color='value')
     self.remesh()
 
   def remesh(self):
     super().remesh()
     self.fem.updated_mesh()
     npIdP = self.cad.points_edge([0, 1, 2, 3], self.msh.np_pos)
-    self.fem.ls.vec_bc[npIdP] = 1
+    self.fem.value[npIdP] = 0.0
+    self.fem.ls.bc[npIdP] = 1
     self.fem.solve()
-    self.vis_color.update(self.msh,self.fem.vec_val)
     
   def motion(self,src0,src1,dir):
     super().motion(src0,src1,dir)
     self.fem.solve()
-    self.vis_color.update(self.msh,self.fem.vec_val)
 
   def draw(self):
     self.cad.draw()
-    self.vis_color.draw(self.msh,self.fem.vec_val)
+    self.field.draw()
 
   def minmax_xyz(self):
     return self.msh.minmax_xyz()

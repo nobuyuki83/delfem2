@@ -427,16 +427,17 @@ void AddPointsMesh
     if( TriArea(po_add, aVec2[ref_tri.v[0]], aVec2[ref_tri.v[1]] ) > MIN_TRI_AREA ){
       iflg1++; iflg2 += 2;
     }
-    if( iflg1 == 3 ){
+    if( iflg1 == 3 ){ // add in triangle
       itri_in = itri;
       break;
     }
-    else if( iflg1 == 2 ){
+    else if( iflg1 == 2 ){ // add in edge
       const int ied0 = 3-iflg2;
       const int ipo_e0 = ref_tri.v[ (ied0+1)%3 ];
       const int ipo_e1 = ref_tri.v[ (ied0+2)%3 ];
       const unsigned int* rel = relTriTri[ ref_tri.r2[ied0] ];
       const int itri_s = ref_tri.s2[ied0];
+      if( itri_s < 0 ){ return; }
       assert( aTri[itri_s].v[ rel[ (ied0+1)%3 ] ] == ipo_e0 );
       assert( aTri[itri_s].v[ rel[ (ied0+2)%3 ] ] == ipo_e1 );
       const int inoel_d = rel[ied0];
@@ -464,7 +465,6 @@ void AddPointsMesh
   else{
     InsertPoint_ElemEdge(ipoin,itri_in,iedge,aPo2D,aTri);
   }
-  DelaunayAroundPoint(ipoin,aPo2D,aTri,aVec2);
 }
 
 void EnforceEdge 
@@ -658,6 +658,7 @@ void Meshing_Initialize
     for(unsigned int ip=0;ip<aPo2D.size()-3;++ip){
       AddPointsMesh(aVec2,aPo2D,aTri,
                     ip,MIN_TRI_AREA);
+      DelaunayAroundPoint(ip,aPo2D,aTri,aVec2);
     }
   }
 }
@@ -1205,6 +1206,36 @@ void ResamplingLoop
 }
 
 
+void RefinementPlan_EdgeLongerThan_InsideCircle
+(std::vector<CCmd_RefineMesh2D>& aCmd,
+ double elen,
+ double px, double py, double rad,
+ const std::vector<CEPo2>& aPo2D,
+ const std::vector<CVector2>& aVec2,
+ const std::vector<ETri>& aETri)
+{
+  std::set<CCmd_RefineMesh2D> setCmd;
+  for(int itri=0;itri<aETri.size();++itri){
+    const int i0 = aETri[itri].v[0];
+    const int i1 = aETri[itri].v[1];
+    const int i2 = aETri[itri].v[2];
+    const CVector2& p0 = aVec2[i0];
+    const CVector2& p1 = aVec2[i1];
+    const CVector2& p2 = aVec2[i2];
+    CVector2 pc = (p0+p1+p2)*0.333333;
+    CVector2 ps = CVector2(px,py);
+    if( Distance(pc,ps) < rad ){
+      const double d01 = Distance(p0,p1);
+      const double d12 = Distance(p1,p2);
+      const double d20 = Distance(p2,p0);
+      if( d01 > elen ){ setCmd.insert(CCmd_RefineMesh2D(i0,i1,0.5)); }
+      if( d12 > elen ){ setCmd.insert(CCmd_RefineMesh2D(i1,i2,0.5)); }
+      if( d20 > elen ){ setCmd.insert(CCmd_RefineMesh2D(i2,i0,0.5)); }
+    }
+  }
+  aCmd.assign(setCmd.begin(),setCmd.end());
+}
+
 
 // TODO: implement this function
 void RefineMesh
@@ -1226,6 +1257,7 @@ void RefineMesh
   }
   for(int icmd=0;icmd<aCmd.size();++icmd){
     AddPointsMesh(aVec2, aEPo2, aSTri, icmd+np0, 1.0e-10);
+    DelaunayAroundPoint(icmd+np0, aEPo2, aSTri, aVec2);
   }
 }
 

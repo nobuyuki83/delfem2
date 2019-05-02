@@ -45,36 +45,61 @@ class Field():
   def minmax_xyz(self):
     return self.mesh.minmax_xyz()
 
-  def write_vtk(self, path_vtk, message=""):
-    write_vtk_meshpoint(path_vtk,"foobar", self.mesh.np_pos)
-    write_vtk_meshelem(path_vtk, self.mesh.np_elm, self.mesh.elem_type)
-    open(path_vtk, "a+").write("POINT_DATA {0}\n".format(self.mesh.np_pos.shape[0]))
-    if self.val_color is not None:
-      if self.val_color.ndim == 1 or (self.val_color.ndim == 2 and self.val_color.shape[1] == 1):
-        write_vtk_pointscalar(path_vtk, self.val_color)
-    elif self.val_disp is not None:
-      if self.val_disp.ndim == 2 and self.val_disp.shape[1] == self.mesh.np_pos.shape[1]:
-        write_vtk_pointvector(path_vtk, self.val_disp)
 
-
-class VisFEM_Color():
-  def __init__(self):
-    self.draw_val_min = 0.0
-    self.draw_val_max = 1.0
+class FEM_Field():
+  def __init__(self, fem,
+               name_color="",
+               name_disp=""):
+    self.fem = fem
+    ####
+    self.name_color = name_color
+    self.color_min = 0.0
+    self.color_max = 0.3
     self.color_mode = 'bcgyr'
-    self.is_update_min_max = True
-    self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
+    ####
+    self.name_disp = name_disp
+    self.disp_mode = 'disp'
 
-  def update(self,mesh,val_color):
-    if self.is_update_min_max:
-      self.draw_val_min = val_color.min()
-      self.draw_val_max = val_color.max()
-      self.color_map = ColorMap(self.draw_val_min, self.draw_val_max, self.color_mode)
+  def minmax_xyz(self):
+    return self.fem.mesh.minmax_xyz()
 
-  def draw(self,mesh,val_color):
-    drawField_colorMap(mesh.np_pos, mesh.np_elm,
-                       val_color,
-                       self.color_map)
+  def draw(self):
+    mesh = self.fem.mesh
+    if hasattr(self.fem, self.name_color):
+      npColor = getattr(self.fem, self.name_color)
+      assert type(npColor) == numpy.ndarray
+      self.color_map = ColorMap(self.color_min,self.color_max,self.color_mode)
+      drawField_colorMap(mesh.np_pos, mesh.np_elm,
+                         npColor,
+                         self.color_map)
+
+    if hasattr(self.fem, self.name_disp):
+      npDisp = getattr(self.fem, self.name_disp)
+      assert type(npDisp) == numpy.ndarray
+      if self.disp_mode == 'disp':
+        drawField_disp(mesh.np_pos, mesh.np_elm,
+                       npDisp)
+      if self.disp_mode == 'hedgehog':
+        gl.glDisable(gl.GL_LIGHTING)
+        gl.glColor3d(0,0,0)
+        drawField_hedgehog(mesh.np_pos, self.val_disp, 1.0)
+
+  def write_vtk(self, path_vtk, message=""):
+    mesh = self.fem.mesh
+    write_vtk_meshpoint(path_vtk,"foobar", mesh.np_pos)
+    write_vtk_meshelem(path_vtk, mesh.np_elm, mesh.elem_type)
+    open(path_vtk, "a+").write("POINT_DATA {0}\n".format(mesh.np_pos.shape[0]))
+    if hasattr(self.fem, self.name_color):
+      npColor = getattr(self.fem, self.name_color)
+      assert type(npColor) == numpy.ndarray
+      if npColor.ndim == 1 or (npColor.ndim == 2 and npColor.shape[1] == 1):
+        write_vtk_pointscalar(path_vtk, npColor)
+    elif hasattr(self.fem, self.name_disp):
+      npDisp = getattr(self.fem, self.name_disp)
+      assert type(npDisp) == numpy.ndarray
+      if npDisp.ndim == 2 and npDisp.shape[1] == mesh.np_pos.shape[1]:
+        write_vtk_pointvector(path_vtk, npDisp)
+
 
 class FieldValueSetter():
   def __init__(self,
@@ -121,7 +146,7 @@ class FEM_LinSys():
     self.ndimval = ndimval
     self.vec_f = numpy.zeros((np,ndimval), dtype=numpy.float64)
     self.vec_x = numpy.zeros((np,ndimval), dtype=numpy.float64)
-    self.vec_bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
+    self.bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
     self.vec_ms = numpy.ndarray((np,ndimval), dtype=numpy.int32)
     self.vec_ms.fill(-1)
 
@@ -151,8 +176,8 @@ class FEM_LinSys():
 
   def Solve(self,is_asymmetric=False):
     #### setting bc
-    self.vec_f[self.vec_bc != 0] = 0.0
-    matrixSquareSparse_setFixBC(self.mat, self.vec_bc)
+    self.vec_f[self.bc != 0] = 0.0
+    matrixSquareSparse_setFixBC(self.mat, self.bc)
     linearSystem_setMasterSlave(self.mat,self.vec_f, self.vec_ms)
 
     #### solving matrix
@@ -166,7 +191,7 @@ class FEM_LinSys():
       self.conv_hist = linsys_solve_bicgstab(self.vec_f, self.vec_x,
                                              self.conv_ratio, self.nitr,
                                              self.mat, self.mat_prec)
-    self.vec_x[self.vec_bc != 0] = 0.0
+    self.vec_x[self.bc != 0] = 0.0
 
 ##########################################################################
 
@@ -181,10 +206,13 @@ class FEM_Poisson():
     self.mesh = mesh
     self.updated_mesh()
 
-  def updated_mesh(self):
+  def updated_mesh(self,mapper=None):
     np = self.mesh.np_pos.shape[0]
     ndimval = 1
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    val_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    if mapper is not None:
+      map_value(val_new,self.vec_val,mapper)
+    self.value = val_new
     self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):
@@ -194,11 +222,10 @@ class FEM_Poisson():
     mergeLinSys_poission(self.ls.mat, self.ls.vec_f,
                          self.alpha, self.source,
                          self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                         self.vec_val)
+                         self.value)
     self.ls.Solve()
-    self.vec_val += self.ls.vec_x
-    masterSlave_distributeValue(self.vec_val, self.ls.vec_ms)
-
+    self.value += self.ls.vec_x
+    masterSlave_distributeValue(self.value, self.ls.vec_ms)
 
 
 class FEM_Diffuse():
@@ -216,8 +243,8 @@ class FEM_Diffuse():
   def updated_mesh(self):
     np = self.mesh.np_pos.shape[0]
     ndimval = 1
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.value = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.velocity = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):
@@ -228,10 +255,10 @@ class FEM_Diffuse():
                         self.alpha, self.rho, self.source,
                         self.dt, self.gamma_newmark,
                         self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                        self.vec_val, self.vec_velo)
+                        self.value, self.velocity)
     self.ls.Solve()
-    self.vec_val += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.vec_velo)*self.dt
-    self.vec_velo += self.ls.vec_x
+    self.value += (self.ls.vec_x)*(self.dt*self.gamma_newmark) + (self.velocity)*self.dt
+    self.velocity += self.ls.vec_x
 
   def step_time(self):
     self.solve()
@@ -308,12 +335,18 @@ class FEM_Cloth():
     self.sdf = SDF()
     self.updated_mesh()
 
-  def updated_mesh(self):
+  def updated_mesh(self,mapper=None):
     np = self.mesh.np_pos.shape[0]
     ndimval = 3
-    self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.vec_val[:,:2] = self.mesh.np_pos
+    vec_val_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    vec_velo_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    if mapper is not None:
+      map_value(vec_val_new,self.vec_val,mapper)
+      map_value(vec_velo_new,self.vec_velo,mapper)
+    else:
+      vec_val_new[:,:2] = self.mesh.np_pos
+    self.vec_val = vec_val_new
+    self.vec_velo = vec_velo_new
     self.ls = FEM_LinSys(np,ndimval)
 
   def solve(self):

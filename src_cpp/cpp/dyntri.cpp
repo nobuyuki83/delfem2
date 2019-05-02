@@ -7,7 +7,6 @@
 
 #include "delfem2/dyntri.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -193,7 +192,7 @@ bool InsertPoint_ElemEdge
   assert(old0.s2[ino0_0]==itri1);
   assert(old1.s2[ino0_1]==itri0);
   
-  aPo[ipo_ins].e = itri0;      aPo[ipo_ins].d = 0;
+  aPo[ipo_ins].e = itri0;         aPo[ipo_ins].d = 0;
   aPo[old0.v[ino2_0]].e = itri0;  aPo[old0.v[ino2_0]].d = 1;
   aPo[old0.v[ino0_0]].e = itri1;  aPo[old0.v[ino0_0]].d = 1;
   aPo[old1.v[ino2_1]].e = itri2;  aPo[old1.v[ino2_1]].d = 1;
@@ -205,7 +204,7 @@ bool InsertPoint_ElemEdge
     ref_tri.v[0] = ipo_ins;          ref_tri.v[1] = old0.v[ino2_0];  ref_tri.v[2] = old0.v[ino0_0];
     ref_tri.s2[0] = old0.s2[ino1_0];  ref_tri.s2[1] = itri1;          ref_tri.s2[2] = itri3;
     ////////////////
-    if (old1.s2[ino1_0]>=0&&old1.s2[ino1_0]<(int)aTri.size()){
+    if (old0.s2[ino1_0]>=0&&old0.s2[ino1_0]<(int)aTri.size()){
       assert(old0.r2[ino1_0] < 3);
       const unsigned int* rel = relTriTri[old0.r2[ino1_0]];
       ref_tri.r2[0] = noel2RelTriTri[rel[ino1_0]*3+rel[ino2_0]];
@@ -223,7 +222,7 @@ bool InsertPoint_ElemEdge
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old0.v[ino0_0];  ref_tri.v[2] = old0.v[ino1_0];
     ref_tri.s2[0] = old0.s2[ino2_0];  ref_tri.s2[1] = itri2;      ref_tri.s2[2] = itri0;
     ////////////////
-    if (old1.s2[ino2_0]>=0&&old1.s2[ino2_0]<(int)aTri.size()){
+    if (old0.s2[ino2_0]>=0&&old0.s2[ino2_0]<(int)aTri.size()){
       assert(old0.r2[ino2_0] < 3);
       const unsigned int* rel = relTriTri[old0.r2[ino2_0]];
       ref_tri.r2[0] = noel2RelTriTri[rel[ino2_0]*3+rel[ino0_0]];
@@ -782,6 +781,7 @@ bool Collapse_ElemEdge
  std::vector<ETri>& aTri)
 {
   assert(itri_del < (int)aTri.size());
+  assert( ied_del >= 0 && ied_del < 3 );
   if (aTri[itri_del].s2[ied_del]==-1){
     std::cout<<"Error!-->Not Implemented: Mesh with hole"<<std::endl;
     assert(0);
@@ -808,18 +808,18 @@ bool Collapse_ElemEdge
   const int ino1_1 = (ino0_1+1)%3;
   const int ino2_1 = (ino0_1+2)%3;
   
-  const unsigned int ino0_2 = relTriTri[(int)aTri[itri0].r2[ino1_0]][ino1_0];
+  const int ino0_2 = relTriTri[(int)aTri[itri0].r2[ino1_0]][ino1_0];
   const int ino1_2 = (ino0_2+1)%3;
   const int ino2_2 = (ino0_2+2)%3;
   
-  const unsigned ino0_3 = relTriTri[(int)aTri[itri0].r2[ino2_0]][ino2_0];
+  const int ino0_3 = relTriTri[(int)aTri[itri0].r2[ino2_0]][ino2_0];
   const int ino1_3 = (ino0_3+1)%3;
   
-  const unsigned ino0_4 = relTriTri[(int)aTri[itri1].r2[ino1_1]][ino1_1];
+  const int ino0_4 = relTriTri[(int)aTri[itri1].r2[ino1_1]][ino1_1];
   const int ino1_4 = (ino0_4+1)%3;
   const int ino2_4 = (ino0_4+2)%3;
   
-  const unsigned ino0_5 = relTriTri[(int)aTri[itri1].r2[ino2_1]][ino2_1];
+  const int ino0_5 = relTriTri[(int)aTri[itri1].r2[ino2_1]][ino2_1];
   const int ino1_5 = (ino0_5+1)%3;
   
   if (aTri[itri2].s2[ino2_2]==itri3) return false;
@@ -834,7 +834,7 @@ bool Collapse_ElemEdge
   int ipo0 = old0.v[ino0_0];
   int ipo1 = old0.v[ino1_0];
   int ipo2 = old1.v[ino0_1];
-  int ipo3 = old1.v[ino1_1];  // to be delete
+  int ipo3 = old1.v[ino1_1];  // point to be deleted
   
   {
     std::vector<int> ring1;

@@ -316,6 +316,29 @@ PyQuality_MeshTri2D
 }
 
 
+void PyMapValue
+(py::array_t<double>& npOut,
+ const py::array_t<double>& npIn,
+ CMapper& mpr)
+{
+  assert(npOut.shape()[0]==(int)mpr.iv_ind.size()-1);
+  assert(npIn.shape()[0]==(int)mpr.nv_in);
+  assert(npIn.shape()[1]==npIn.shape()[1]);
+  const int ndimval = npIn.shape()[1];
+  const int np1 = npOut.shape()[0];
+  double* pV = (double*)(npOut.request().ptr);
+  for(int i=0;i<np1*ndimval;++i){ pV[i] = 0.0; }
+  for(int ip=0;ip<np1;++ip){
+    for(int iip=mpr.iv_ind[ip];iip<mpr.iv_ind[ip+1];++iip){
+      int jp = mpr.iv[iip];
+      double w0 = mpr.w[iip];
+      for(int idim=0;idim<ndimval;++idim){
+        pV[ip*ndimval+idim] += w0*npIn.at(jp,idim);
+      }
+    }
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -349,6 +372,12 @@ void init_mshtopoio_gl(py::module &m){
   .def("insert_point_elem", &CMeshDynTri3D::insertPointElem)
   .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
   
+  
+  py::class_<CMapper>(m, "CppMapper")
+  .def(py::init<>());
+  
+  m.def("map_value",    &PyMapValue);
+  
   py::class_<CMeshDynTri2D>(m, "CppMeshDynTri2D")
   .def(py::init<>())
   .def("draw",              &CMeshDynTri2D::draw)
@@ -361,7 +390,8 @@ void init_mshtopoio_gl(py::module &m){
   .def("minmax_xyz",        &CMeshDynTri2D::MinMax_XYZ)
   .def("insert_point_elem", &CMeshDynTri2D::insertPointElem)
   .def("delaunay_around_point", &CMeshDynTri2D::DelaunayAroundPoint)
-  .def("meshing_loops",     &CMeshDynTri2D::meshing_loops);
+  .def("meshing_loops",     &CMeshDynTri2D::meshing_loops)
+  .def("refinementPlan_EdgeLongerThan_InsideCircle",   &CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
   
   
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);

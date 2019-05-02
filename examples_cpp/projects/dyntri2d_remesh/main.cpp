@@ -13,6 +13,8 @@
 
 #include "delfem2/dyntri_v2.h"
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<CEPo2> aPo2D;
@@ -31,40 +33,12 @@ double mag = 1.0;
 
 void Refine(double px, double py)
 {
-  std::set<CCmd_RefineMesh2D> setCmd;
-  for(int itri=0;itri<aETri.size();++itri){
-    const int i0 = aETri[itri].v[0];
-    const int i1 = aETri[itri].v[1];
-    const int i2 = aETri[itri].v[2];
-    const CVector2& p0 = aVec2[i0];
-    const CVector2& p1 = aVec2[i1];
-    const CVector2& p2 = aVec2[i2];
-    CVector2 pc = (p0+p1+p2)*0.333333;
-    CVector2 ps = CVector2(px,py);
-    if( Distance(pc,ps) < 0.1 ){
-      double d01 = Distance(p0,p1);
-      double d12 = Distance(p1,p2);
-      double d20 = Distance(p2,p0);
-      if( d01 > 0.05 ){ setCmd.insert(CCmd_RefineMesh2D(i0,i1,0.5)); }
-      if( d12 > 0.05 ){ setCmd.insert(CCmd_RefineMesh2D(i1,i2,0.5)); }
-      if( d20 > 0.05 ){ setCmd.insert(CCmd_RefineMesh2D(i2,i0,0.5)); }
-    }
-  }
-  std::vector<CCmd_RefineMesh2D> aCmd(setCmd.begin(),setCmd.end());
+  std::vector<CCmd_RefineMesh2D> aCmd;
+  RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
+                                             0.05, px, py, 0.1,
+                                             aPo2D, aVec2, aETri);
   RefineMesh(aPo2D, aETri, aVec2, aCmd);
 }
-
-/*
-{
-
-  double d01 = Distance(aVec2[ip],aVec2[ip1]);
-  if( d01 < 0.05 ){
-    std::cout << ip << " " << ip1 << " " << d01 << std::endl;
-    Collapse_ElemEdge(itri0, (inotri0+1)%3, aPo2D, aETri);
-    return;
-    }
-}
- */
 
 void Coarse(double px, double py)
 {
@@ -97,14 +71,17 @@ void Coarse(double px, double py)
         mapDistTri.insert( std::make_pair(d01,iit) );
       }
     }
-    const int iit0 = mapDistTri.begin()->second;
-    double dist0 = mapDistTri.begin()->first;
-    if( dist0 < 0.05 ){
-      const int itri0 = aTriSuP[iit0].first;
-      const int inotri0 = aTriSuP[iit0].second;
-      const int ip1 = aETri[itri0].v[ (inotri0+2)%3 ];
-      Collapse_ElemEdge(itri0, (inotri0+1)%3, aPo2D, aETri);
-      DelaunayAroundPoint(ip1, aPo2D, aETri, aVec2);
+    if( mapDistTri.size() > 0 ){
+      const int iit0 = mapDistTri.begin()->second;
+      assert( iit0>=0 && iit0 < aPSuP.size() );
+      double dist0 = mapDistTri.begin()->first;
+      if( dist0 < 0.05 ){
+        const int itri0 = aTriSuP[iit0].first;
+        const int inotri0 = aTriSuP[iit0].second;
+        Collapse_ElemEdge(itri0, (inotri0+1)%3, aPo2D, aETri);
+        const int ip1 = aETri[itri0].v[ (inotri0+2)%3 ];
+        DelaunayAroundPoint(ip1, aPo2D, aETri, aVec2);
+      }
     }
   }
 }

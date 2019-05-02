@@ -13,8 +13,8 @@ def make_mesh():
 
 def poission(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Poisson(msh)
-  fem.ls.vec_bc[npIdP0] = 1
-  fem.ls.vec_bc[npIdP1] = 2
+  fem.ls.bc[npIdP0] = 1
+  fem.ls.bc[npIdP1] = 2
   fem.vec_val[:] = 0.5
   fem.vec_val[npIdP0] = 0.0
   fem.vec_val[npIdP1] = 1.0
@@ -27,7 +27,7 @@ def poission(msh,npIdP0,npIdP1):
 
 def diffuse(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Diffuse(msh)
-  fem.ls.vec_bc[npIdP1] = 1
+  fem.ls.bc[npIdP1] = 1
   fem.vec_val[:] = 0.0
   fem.vec_val[npIdP1] = 1.0
   ####
@@ -40,7 +40,7 @@ def diffuse(msh,npIdP0,npIdP1):
 
 def linear_solid_static(msh,npIdP):
   fem = dfm2.FEM_LinearSolidStatic(msh,gravity=[0.3,0,0])
-  fem.ls.vec_bc[npIdP,:] = 1
+  fem.ls.bc[npIdP,:] = 1
   fem.solve()
   print(fem.ls.conv_hist)
   ####
@@ -52,7 +52,7 @@ def linear_solid_static(msh,npIdP):
 
 def linear_solid_dynamic(msh,npIdP):
   fem = dfm2.FEM_LinearSolidDynamic(msh,gravity=[0.3,0,0])
-  fem.ls.vec_bc[npIdP,:] = 1
+  fem.ls.bc[npIdP,:] = 1
   ####
   field = dfm2.Field(msh,val_disp=fem.vec_val)
   axis = dfm2.AxisXYZ(1.0)
