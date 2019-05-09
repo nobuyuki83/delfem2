@@ -15,27 +15,28 @@ def poission(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Poisson(msh)
   fem.ls.bc[npIdP0] = 1
   fem.ls.bc[npIdP1] = 2
-  fem.vec_val[:] = 0.5
-  fem.vec_val[npIdP0] = 0.0
-  fem.vec_val[npIdP1] = 1.0
+  fem.value[:] = 0.5
+  fem.value[npIdP0] = 0.0
+  fem.value[npIdP1] = 1.0
   fem.solve()
   print(fem.ls.conv_hist)
   ####
-  field = dfm2.Field(msh,val_color=fem.vec_val[:,0])
+  vis_color = dfm2.VisFEM_ColorContour(fem,name_color="value")
+  vis_color.set_color_minmax()
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([field,axis])
+  dfm2.winDraw3d([vis_color,axis])
 
 def diffuse(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Diffuse(msh)
   fem.ls.bc[npIdP1] = 1
-  fem.vec_val[:] = 0.0
-  fem.vec_val[npIdP1] = 1.0
+  fem.value[:] = 0.0
+  fem.value[npIdP1] = 1.0
   ####
-  field = dfm2.Field(msh,val_color=fem.vec_val[:,0])
-  field.draw_val_min = 0.0
-  field.draw_val_max = 1.0
+  vis_color = dfm2.VisFEM_ColorContour(fem,name_color="value")
+  vis_color.draw_val_min = 0.0
+  vis_color.draw_val_max = 1.0
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([fem,field,axis])
+  dfm2.winDraw3d([fem,vis_color,axis])
 
 
 def linear_solid_static(msh,npIdP):
@@ -44,19 +45,19 @@ def linear_solid_static(msh,npIdP):
   fem.solve()
   print(fem.ls.conv_hist)
   ####
-  field = dfm2.Field(msh,val_disp=fem.vec_val)
+  vis_disp = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([field,axis])
-  field.write_vtk("linearsolid3d.vtk")
+  dfm2.winDraw3d([vis_disp,axis])
+  vis_disp.write_vtk("linearsolid3d.vtk")
 
 
 def linear_solid_dynamic(msh,npIdP):
   fem = dfm2.FEM_LinearSolidDynamic(msh,gravity=[0.3,0,0])
   fem.ls.bc[npIdP,:] = 1
   ####
-  field = dfm2.Field(msh,val_disp=fem.vec_val)
+  vis_disp = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([fem,field,axis])
+  dfm2.winDraw3d([fem,vis_disp,axis])
 
 
 def main():

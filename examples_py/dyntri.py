@@ -63,22 +63,20 @@ def main_MeshDynTri2D_2():
   dmsh.set_mesh(cad.mesh(0.1))
   fem = dfm2.FEM_Poisson(dmsh,source=1.0)
   npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
-  fem.vec_val[npIdP] = 0.0
-  fem.ls.vec_bc[npIdP] = 1
+  fem.value[npIdP] = 0.0
+  fem.ls.bc[npIdP] = 1
   fem.solve()
-  field = dfm2.Field(dmsh,val_color=fem.vec_val[:,0])
-  dfm2.winDraw3d([field,dmsh])
+  vis = dfm2.VisFEM_ColorContour(fem,name_color="value")
+  dfm2.winDraw3d([vis,dmsh])
   #####
   res = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
   fem.updated_mesh(res)
-  field = dfm2.Field(dmsh,val_color=fem.vec_val[:,0])
-  dfm2.winDraw3d([field,dmsh])
+  dfm2.winDraw3d([vis,dmsh])
   #####
-  fem.vec_val[npIdP] = 0.0
-  fem.ls.vec_bc[npIdP] = 1
+  fem.value[npIdP] = 0.0
+  fem.ls.bc[npIdP] = 1
   fem.solve()
-  field = dfm2.Field(dmsh,val_color=fem.vec_val[:,0])
-  dfm2.winDraw3d([field,dmsh])
+  dfm2.winDraw3d([vis,dmsh])
 
 
 def main_MeshDynTri2D_3():
@@ -87,14 +85,14 @@ def main_MeshDynTri2D_3():
   dmsh.set_mesh(cad.mesh(0.1))
   fem = dfm2.FEM_Cloth(dmsh)
   npIdP = cad.points_edge([0], dmsh.np_pos)
-  fem.ls.vec_bc[npIdP,:] = 1
+  fem.ls.bc[npIdP,:] = 1
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=dmsh.np_elm)
   dfm2.winDraw3d([fem,mesh2])
   #####
   mesh2 = None
   res = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
   fem.updated_mesh(res)
-  fem.ls.vec_bc[npIdP,:] = 1
+  fem.ls.bc[npIdP,:] = 1
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=dmsh.np_elm)
   dfm2.winDraw3d([fem,mesh2])
   '''  
@@ -118,3 +116,4 @@ if __name__ == "__main__":
   main_MeshDynTri2D_0()
   main_MeshDynTri2D_1()
   main_MeshDynTri2D_2()
+  main_MeshDynTri2D_3()

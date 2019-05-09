@@ -10,7 +10,7 @@ def normalize_rigmsh(rigmsh):
   rigmsh.scale(1.0/aabb.max_length())
 
 #####################################################
-
+'''
 class Field():
   def __init__(self,
                mesh: Mesh,
@@ -44,18 +44,37 @@ class Field():
 
   def minmax_xyz(self):
     return self.mesh.minmax_xyz()
+'''
 
+class VisFEM_Hedgehog():
+  def __init__(self, fem,
+               name_vector=""):
+    self.fem = fem
+    self.name_vector = name_vector
 
-class FEM_Field():
+  def draw(self):
+    mesh = self.fem.mesh
+    if hasattr(self.fem, self.name_vector):
+      npVector = getattr(self.fem, self.name_vector)
+      assert type(npVector) == numpy.ndarray
+      assert npVector.ndim  == 2
+      ndim = self.fem.mesh.np_pos.shape[1]
+      gl.glDisable(gl.GL_LIGHTING)
+      gl.glColor3d(0, 0, 0)
+      drawField_hedgehog(self.fem.mesh.np_pos, npVector[:,0:ndim], 1.0)
+
+class VisFEM_ColorContour():
   def __init__(self, fem,
                name_color="",
-               name_disp=""):
+               name_disp="",
+               idim = 0):
     self.fem = fem
     ####
     self.name_color = name_color
+    self.idim = idim
+    self.color_mode = 'bcgyr'
     self.color_min = 0.0
     self.color_max = 0.3
-    self.color_mode = 'bcgyr'
     ####
     self.name_disp = name_disp
     self.disp_mode = 'disp'
@@ -63,14 +82,23 @@ class FEM_Field():
   def minmax_xyz(self):
     return self.fem.mesh.minmax_xyz()
 
+  def set_color_minmax(self):
+    if hasattr(self.fem, self.name_color):
+      npColor = getattr(self.fem, self.name_color)
+      assert type(npColor) == numpy.ndarray
+      assert npColor.ndim == 2 and self.idim < npColor.shape[1]
+      self.color_min = npColor[:,self.idim].min()
+      self.color_max = npColor[:,self.idim].max()
+
   def draw(self):
     mesh = self.fem.mesh
     if hasattr(self.fem, self.name_color):
       npColor = getattr(self.fem, self.name_color)
       assert type(npColor) == numpy.ndarray
+      assert npColor.ndim == 2 and self.idim < npColor.shape[1]
       self.color_map = ColorMap(self.color_min,self.color_max,self.color_mode)
       drawField_colorMap(mesh.np_pos, mesh.np_elm,
-                         npColor,
+                         npColor[:,self.idim],
                          self.color_map)
 
     if hasattr(self.fem, self.name_disp):
@@ -211,7 +239,7 @@ class FEM_Poisson():
     ndimval = 1
     val_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     if mapper is not None:
-      map_value(val_new,self.vec_val,mapper)
+      map_value(val_new,self.value,mapper)
     self.value = val_new
     self.ls = FEM_LinSys(np,ndimval)
 

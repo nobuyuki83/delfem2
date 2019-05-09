@@ -13,7 +13,7 @@ class CadMesh_Poisson(dfm2.CadMesh2D):
   def __init__(self,cad,edge_length:float):
     super().__init__(cad,edge_length)
     self.fem = dfm2.FEM_Poisson(self.msh,source=1.0)
-    self.field = dfm2.FEM_Field(self.fem,name_color='value')
+    self.vis = dfm2.VisFEM_ColorContour(self.fem,name_color='value')
     self.remesh()
 
   def remesh(self):
@@ -30,7 +30,7 @@ class CadMesh_Poisson(dfm2.CadMesh2D):
 
   def draw(self):
     self.cad.draw()
-    self.field.draw()
+    self.vis.draw()
 
   def minmax_xyz(self):
     return self.msh.minmax_xyz()
