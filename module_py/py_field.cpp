@@ -33,7 +33,7 @@ void DrawField_ColorMap
     else if( ndim == 2 ){
       DrawMeshTri2D_ScalarP1(pos.data(), np,
                              elm.data(), nelm,
-                             val.data(), nstride,0,
+                             val.data(), nstride,
                              color_map.aColor);
     }
   }

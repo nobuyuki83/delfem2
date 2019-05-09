@@ -287,7 +287,6 @@ void DrawMeshTri2D_ScalarP1
  const int* aTri, int nTri,
  const double* paVal,
  int nstride,
- int noffset,
  const std::vector< std::pair<double,CColor> >& colorMap)
 {
 //  const unsigned int ntri = (int)aTri.size()/3;
@@ -298,9 +297,9 @@ void DrawMeshTri2D_ScalarP1
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
     const int ino2 = aTri[itri*3+2];
-    const double v0 = paVal[ino0*nstride+noffset];
-    const double v1 = paVal[ino1*nstride+noffset];
-    const double v2 = paVal[ino2*nstride+noffset];
+    const double v0 = paVal[ino0*nstride];
+    const double v1 = paVal[ino1*nstride];
+    const double v2 = paVal[ino2*nstride];
     heatmap(v0,colorMap); ::glVertex2d( aXY[ino0*2+0], aXY[ino0*2+1] );
     heatmap(v1,colorMap); ::glVertex2d( aXY[ino1*2+0], aXY[ino1*2+1] );
     heatmap(v2,colorMap); ::glVertex2d( aXY[ino2*2+0], aXY[ino2*2+1] );

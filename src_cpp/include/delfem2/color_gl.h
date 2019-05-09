@@ -168,8 +168,7 @@ void DrawMeshTri2D_ScalarP1(const double* aXY, int nXY,
                             const int* aTri, int nTri,
                             const double* aVal,
                             int nstride,
-                            int noffset,
-                            const std::vector< std::pair<double,CColor> >& colorMap);
+                          const std::vector< std::pair<double,CColor> >& colorMap);
 
 void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
                         std::vector<double>& aXY,
