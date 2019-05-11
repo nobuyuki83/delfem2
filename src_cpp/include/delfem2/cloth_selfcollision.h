@@ -9,13 +9,9 @@
 #define contact_self_collision_cloth_h
 
 #include <vector>
-#include <set>
 
-//#include "jagged_array.h"
 #include "bv.h"
 #include "bvh.h"
-
-
 
 // 衝突が解消された中間速度を返す
 void GetIntermidiateVelocityContactResolved

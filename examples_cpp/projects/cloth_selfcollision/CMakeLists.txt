@@ -30,7 +30,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/funcs_gl.cpp
   ${DELFEM2_SRC}/camera_gl.cpp             ${DELFEM2_INC}/camera_gl.h
 
-  ${DELFEM2_SRC}/cloth_selfcollision.cpp   ${DELFEM2_INC}/cloth_selfcollision.h  
+  ${DELFEM2_SRC}/cloth_selfcollision.cpp   ${DELFEM2_INC}/cloth_selfcollision.h
+  ${DELFEM2_INC}/cloth_internal.h  
   main.cpp
 )
 

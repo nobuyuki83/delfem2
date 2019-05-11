@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef MSHTOPO_H
 #define MSHTOPO_H
 
@@ -164,6 +171,9 @@ void convert2Tri(std::vector<int>& aTri,
                  const std::vector<int>& aElem,
                  const std::vector<MESHELEM_TYPE>& aElemType);
 
+void ElemQuad_DihedralTri(std::vector<int>& aQuad,
+                          const int* aTri, int nTri,
+                          int np);
 ////
 void FlipElement_Tri(std::vector<int>& aTri);
 void FlipElement(std::vector<int>& aElem_Flip,

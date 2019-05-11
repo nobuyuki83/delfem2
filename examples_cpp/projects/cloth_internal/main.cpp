@@ -165,7 +165,7 @@ double mass_point; // mass for a point
 CMatrixSquareSparse mat_A; // coefficient matrix
 CPreconditionerILU  ilu_A; // ilu decomposition of the coefficient matrix
 
-std::vector<double> aNormal; // deformed vertex noamals
+//std::vector<double> aNormal; // deformed vertex noamals
 
 // data for camera
 bool is_animation;
@@ -191,7 +191,7 @@ void StepTime()
                                lambda, myu, stiff_bend,
                                gravity, mass_point,
                                stiff_contact,contact_clearance,*ic);
-  MakeNormal(aNormal, aXYZ, aTri);
+//  MakeNormal(aNormal, aXYZ, aTri);
 }
 
 void myGlutDisplay(void)
@@ -217,49 +217,14 @@ void myGlutDisplay(void)
    */
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
-  { // draw triangle edge
-    ::glDisable(GL_LIGHTING);    
-    ::glLineWidth(1);
-    ::glColor3d(0,0,0);
-    ::glBegin(GL_LINES);
-    for(int itri=0;itri<aTri.size()/3;itri++){
-      const int ip0 = aTri[itri*3+0];
-      const int ip1 = aTri[itri*3+1];
-      const int ip2 = aTri[itri*3+2];
-      double c[3][3] = {
-        { aXYZ[ip0*3+0],aXYZ[ip0*3+1],aXYZ[ip0*3+2] },
-        { aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2] },
-        { aXYZ[ip2*3+0],aXYZ[ip2*3+1],aXYZ[ip2*3+2] } };
-      ::glVertex3dv(c[0]);  ::glVertex3dv(c[1]);
-      ::glVertex3dv(c[1]);  ::glVertex3dv(c[2]);
-      ::glVertex3dv(c[2]);  ::glVertex3dv(c[0]);
-    }
-    ::glEnd();
-  }
+  DrawMeshTri3D_Edge(aXYZ, aTri);
   {
-    ::glEnable(GL_LIGHTING);    
+    ::glEnable(GL_LIGHTING);
     float color[4] = {200.0/256.0, 200.0/256.0, 200.0/256.0,1.0f};
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,color);
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
-    ::glShadeModel(GL_SMOOTH);
-    ::glBegin(GL_TRIANGLES);
-    for(int itri=0;itri<aTri.size()/3;itri++){
-      const int ip0 = aTri[itri*3+0];
-      const int ip1 = aTri[itri*3+1];
-      const int ip2 = aTri[itri*3+2];
-      double c[3][3] = {
-        { aXYZ[ip0*3+0],aXYZ[ip0*3+1],aXYZ[ip0*3+2] },
-        { aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2] },
-        { aXYZ[ip2*3+0],aXYZ[ip2*3+1],aXYZ[ip2*3+2] } };
-      ::glNormal3d(aNormal[ip0*3+0],aNormal[ip0*3+1],aNormal[ip0*3+2]);
-      ::glVertex3dv(c[0]);
-      ::glNormal3d(aNormal[ip1*3+0],aNormal[ip1*3+1],aNormal[ip1*3+2]);
-      ::glVertex3dv(c[1]);
-      ::glNormal3d(aNormal[ip2*3+0],aNormal[ip2*3+1],aNormal[ip2*3+2]);
-      ::glVertex3dv(c[2]);
-    }
-    ::glEnd();    
   }
+  DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   
   { // fixed boundary condition
     ::glDisable(GL_LIGHTING);        
@@ -386,7 +351,7 @@ int main(int argc,char* argv[])
     // initialize deformation
     aXYZ = aXYZ0;
     aUVW.assign(np*3,0.0);
-    MakeNormal(aNormal, aXYZ, aTri);
+//    MakeNormal(aNormal, aXYZ, aTri);
     mat_A.Initialize(np,3,true);
     std::vector<int> psup_ind,psup;
     JArray_MeshOneRingNeighborhood(psup_ind, psup,

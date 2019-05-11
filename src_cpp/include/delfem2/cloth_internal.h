@@ -194,7 +194,7 @@ void StepTime_InternalDynamicsILU
   AddWdW_Gravity(W,vec_b,
                  aXYZ,
                  gravity,mass_point);
-  std::cout << "energy : " << W << std::endl;
+//  std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
   for(int i=0;i<nDof;i++){
@@ -218,7 +218,7 @@ void StepTime_InternalDynamicsILU
   std::vector<double> vec_x(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio, iteration, mat_A,ilu_A);
-  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
+//  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position，頂点位置の更新
   for(int i=0;i<nDof;i++){
     if( aBCFlag[i] != 0 ) continue;

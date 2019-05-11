@@ -266,38 +266,16 @@ PyJArray_AddDiagonal(py::array_t<int>& psup_ind0, py::array_t<int>& psup0)
 }
 
 
-py::array_t<int> GetElemQuad_DihedralTri
+
+
+py::array_t<int> PyElemQuad_DihedralTri
 (py::array_t<int>& aTri,
  int np)
 {
   assert( aTri.shape()[1] == 3 );
   const int nTri = aTri.shape()[0];
-  std::vector<int> aElemSurRel;
-  makeSurroundingRelationship(aElemSurRel,
-                              aTri.data(), nTri,
-                              MESHELEM_TRI, np);
-  ////
   std::vector<int> aQuad;
-  for(int itri=0; itri<nTri; ++itri){
-    for(int iedtri=0;iedtri<3;++iedtri){
-      int jtri = aElemSurRel[itri*6+iedtri*2+0];
-      if( jtri == -1 ) continue;
-      if( jtri < itri ) continue;
-      int jedtri = aElemSurRel[itri*6+iedtri*2+1];
-      assert( itri == aElemSurRel[jtri*6+jedtri*2+0] );
-      int ipo0 = aTri.at(itri,iedtri);
-      int ipo1 = aTri.at(jtri,jedtri);
-      int ipo2 = aTri.at(itri,(iedtri+1)%3);
-      int ipo3 = aTri.at(itri,(iedtri+2)%3);
-      assert( aTri.at(jtri,(jedtri+2)%3) == ipo2 );
-      assert( aTri.at(jtri,(jedtri+1)%3) == ipo3 );
-      aQuad.push_back(ipo0);
-      aQuad.push_back(ipo1);
-      aQuad.push_back(ipo2);
-      aQuad.push_back(ipo3);
-    }
-  }
-  ////
+  ElemQuad_DihedralTri(aQuad, aTri.data(), nTri, np);
   py::array_t<int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
   return npQuad;
 }
@@ -413,7 +391,7 @@ void init_mshtopoio_gl(py::module &m){
   m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);
   m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);
   m.def("jarray_sort",         &PyJArray_Sort);
-  m.def("elemQuad_dihedralTri",&GetElemQuad_DihedralTri);
+  m.def("elemQuad_dihedralTri",&PyElemQuad_DihedralTri);
   m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
   m.def("draw_mesh_facenorm",  &PyDrawMesh_FaceNorm);
   m.def("draw_mesh_edge",      &PyDrawMesh_Edge);
