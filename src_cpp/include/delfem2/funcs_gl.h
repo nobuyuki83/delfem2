@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef FUNCS_GL_H
 #define FUNCS_GL_H
 
@@ -88,9 +95,9 @@ void DrawMeshTri2D_Edge(const double* aXY, int nXY,
 void DrawMeshTri2D_Edge(const std::vector<int>& aTri,
                         const std::vector<double>& aXY);
 
-void DrawMeshTri3D_FaceEdge(const std::vector<double>& aXYZ,
-                        const std::vector<int>& aTri);
 ////
+void DrawMeshTri3D_FaceEdge(const std::vector<double>& aXYZ,
+                            const std::vector<int>& aTri);
 void DrawMeshTri3D_FaceNorm(const double* aXYZ,
                             const int* aTri, int ntri);
 void DrawMeshTri3D_FaceNorm(const std::vector<double>& aXYZ,
@@ -120,7 +127,7 @@ void DrawMeshTri3D_FaceNorm_TexFace(const std::vector<double>& aXYZ,
 void DrawMeshTri3D_FaceNorm_TexVtx(const std::vector<double>& aXYZ,
                                    const std::vector<int>& aTri,
                                    const std::vector<double>& aTex);
-////
+// Edge 3D
 void DrawMeshTri3D_Edge(const double* aXYZ, int nXYZ,
                         const int* aTri, int nTri);
 void DrawMeshTri3D_Edge(const std::vector<double>& aXYZ,

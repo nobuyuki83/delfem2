@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <vector>
 #include <cassert>
 #include <stack>
@@ -196,6 +203,39 @@ void makeElemSurroundingPoint
     elsup_ind[ino] = elsup_ind[ino-1];
   }
   elsup_ind[0] = 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void ElemQuad_DihedralTri
+(std::vector<int>& aQuad,
+ const int* aTri, int nTri,
+ int np)
+{
+  std::vector<int> aElemSurRel;
+  makeSurroundingRelationship(aElemSurRel,
+                              aTri, nTri,
+                              MESHELEM_TRI, np);
+  ////
+  for(int itri=0; itri<nTri; ++itri){
+    for(int iedtri=0;iedtri<3;++iedtri){
+      int jtri = aElemSurRel[itri*6+iedtri*2+0];
+      if( jtri == -1 ) continue;
+      if( jtri < itri ) continue;
+      int jedtri = aElemSurRel[itri*6+iedtri*2+1];
+      assert( itri == aElemSurRel[jtri*6+jedtri*2+0] );
+      int ipo0 = aTri[itri*3+iedtri];
+      int ipo1 = aTri[jtri*3+jedtri];
+      int ipo2 = aTri[itri*3+(iedtri+1)%3];
+      int ipo3 = aTri[itri*3+(iedtri+2)%3];
+      assert( aTri[jtri*3+(jedtri+2)%3] == ipo2 );
+      assert( aTri[jtri*3+(jedtri+1)%3] == ipo3 );
+      aQuad.push_back(ipo0);
+      aQuad.push_back(ipo1);
+      aQuad.push_back(ipo2);
+      aQuad.push_back(ipo3);
+    }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

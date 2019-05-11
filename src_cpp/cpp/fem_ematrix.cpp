@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
 #include <math.h>
 #include <assert.h>
 #include <iostream>
@@ -1647,38 +1655,35 @@ void WdWddW_CST
  const double C[3][3], // (in) undeformed triangle vertex positions
  const double c[3][3], // (in) deformed triangle vertex positions
  const double lambda, // (in) Lame's 1st parameter
- const double myu     // (in) Lame's 2nd parameter
-)
+ const double myu)     // (in) Lame's 2nd parameter
 {
-  double D[3][3] = { // undeformed edge vector，変形前の辺ベクトル
+  double Gd[3][3] = { // undeformed edge vector
     { C[1][0]-C[0][0], C[1][1]-C[0][1], C[1][2]-C[0][2] },
     { C[2][0]-C[0][0], C[2][1]-C[0][1], C[2][2]-C[0][2] }, { 0,0,0 } };
   double Area;
-  UnitNormalAreaTri3D(D[2], Area, C[0], C[1], C[2]);
+  UnitNormalAreaTri3D(Gd[2], Area, C[0], C[1], C[2]);
   
-  double G[3][3]; // inverse of D, Dの逆行列
+  double Gu[2][3]; // inverse of Gd
   {
-    Cross3D(G[0], D[1], D[2]);
-    const double invtmp1 = 1.0/Dot3D(G[0],D[0]);
-    G[0][0] *= invtmp1;	G[0][1] *= invtmp1;	G[0][2] *= invtmp1;
+    Cross3D(Gu[0], Gd[1], Gd[2]);
+    const double invtmp1 = 1.0/Dot3D(Gu[0],Gd[0]);
+    Gu[0][0] *= invtmp1;	Gu[0][1] *= invtmp1;	Gu[0][2] *= invtmp1;
     ////
-    Cross3D(G[1], D[2], D[0]);
-    const double invtmp2 = 1.0/Dot3D(G[1],D[1]);
-    G[1][0] *= invtmp2;	G[1][1] *= invtmp2;	G[1][2] *= invtmp2;
+    Cross3D(Gu[1], Gd[2], Gd[0]);
+    const double invtmp2 = 1.0/Dot3D(Gu[1],Gd[1]);
+    Gu[1][0] *= invtmp2;	Gu[1][1] *= invtmp2;	Gu[1][2] *= invtmp2;
   }
   
-  const double d[2][3] = { // deformed edge vector, 変形後の辺ベクトル
+  const double d[2][3] = { // deformed edge vector
     { c[1][0]-c[0][0], c[1][1]-c[0][1], c[1][2]-c[0][2] },
     { c[2][0]-c[0][0], c[2][1]-c[0][1], c[2][2]-c[0][2] } };
   
-  const double dNdr[3][2] = { {-1.0, -1.0}, {+1.0, +0.0}, {+0.0, +1.0} };
-  
-  const double E2[3] = {  // green lagrange strain，グリーンラグランジュ歪(工学歪表記)
-    0.5*( Dot3D(d[0],d[0]) - Dot3D(D[0],D[0]) ),
-    0.5*( Dot3D(d[1],d[1]) - Dot3D(D[1],D[1]) ),
-    1.0*( Dot3D(d[0],d[1]) - Dot3D(D[0],D[1]) ) };
-  const double GuGu2[3] = { Dot3D(G[0],G[0]), Dot3D(G[1],G[1]), Dot3D(G[1],G[0]) };
-  const double Cons2[3][3] = { // constitutive tensor, 構成則テンソル
+  const double E2[3] = {  // green lagrange strain (with engineer's notation)
+    0.5*( Dot3D(d[0],d[0]) - Dot3D(Gd[0],Gd[0]) ),
+    0.5*( Dot3D(d[1],d[1]) - Dot3D(Gd[1],Gd[1]) ),
+    1.0*( Dot3D(d[0],d[1]) - Dot3D(Gd[0],Gd[1]) ) };
+  const double GuGu2[3] = { Dot3D(Gu[0],Gu[0]), Dot3D(Gu[1],Gu[1]), Dot3D(Gu[1],Gu[0]) };
+  const double Cons2[3][3] = { // constitutive tensor
     { lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]),
       lambda*GuGu2[0]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[2]),
       lambda*GuGu2[0]*GuGu2[2] + 2*myu*(GuGu2[0]*GuGu2[2]) },
@@ -1688,15 +1693,16 @@ void WdWddW_CST
     { lambda*GuGu2[2]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[2]),
       lambda*GuGu2[2]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[1]),
       lambda*GuGu2[2]*GuGu2[2] + 1*myu*(GuGu2[0]*GuGu2[1] + GuGu2[2]*GuGu2[2]) } };
-  const double S2[3] = {  // 2nd Piola-Kirchhoff stress，第二ピオラ・キルヒホッフ応力
+  const double S2[3] = {  // 2nd Piola-Kirchhoff stress
     Cons2[0][0]*E2[0] + Cons2[0][1]*E2[1] + Cons2[0][2]*E2[2],
     Cons2[1][0]*E2[0] + Cons2[1][1]*E2[1] + Cons2[1][2]*E2[2],
     Cons2[2][0]*E2[0] + Cons2[2][1]*E2[1] + Cons2[2][2]*E2[2] };
   
-  // compute energy，歪エネルギー
+  // compute energy
   W = 0.5*Area*(E2[0]*S2[0] + E2[1]*S2[1] + E2[2]*S2[2]);
   
-  // compute 1st derivative，エネルギーの一階微分の計算
+  // compute 1st derivative
+  const double dNdr[3][2] = { {-1.0, -1.0}, {+1.0, +0.0}, {+0.0, +1.0} };
   for(int ino=0;ino<3;ino++){
     for(int idim=0;idim<3;idim++){
       dW[ino][idim] = Area*
@@ -1710,7 +1716,7 @@ void WdWddW_CST
   double S3[3] = { S2[0], S2[1], S2[2] };
   MakePositiveDefinite_Sim22(S2,S3);
   
-  // compute second derivative，エネルギーの二階微分の計算
+  // compute second derivative
   for(int ino=0;ino<3;ino++){
     for(int jno=0;jno<3;jno++){
       for(int idim=0;idim<3;idim++){

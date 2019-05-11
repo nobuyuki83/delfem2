@@ -1,5 +1,12 @@
-#ifndef __internal_cloth_sparse__ilu_sparse__
-#define __internal_cloth_sparse__ilu_sparse__
+/**
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#ifndef ILU_SPARSE
+#define ILU_SPARSE
 
 #include <iostream>
 

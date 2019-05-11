@@ -31,5 +31,6 @@ add_subdirectory(projects/mathexpeval)
 
 add_subdirectory(projects/dyntet_tetrahedralization)
 add_subdirectory(projects/dyntri2d_triangulation)
+add_subdirectory(projects/dyntri2d_cloth)
 add_subdirectory(projects/dyntri2d_remesh)
 add_subdirectory(projects/dyntri3d_edgecollapse)

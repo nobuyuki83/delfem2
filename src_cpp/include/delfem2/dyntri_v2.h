@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef DYNTRI_V2_H
 #define DYNTRI_V2_H
 
@@ -7,6 +14,15 @@
 
 #include "delfem2/vec2.h"
 #include "delfem2/dyntri.h"
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// OpenGL dependency! these functions should be removed and put in another file
+
+void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
+                         const std::vector<CVector2>& aVec2);
+
+void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
+                             const std::vector<CVector2>& aVec2);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,12 +50,6 @@ bool DelaunayAroundPoint(int ipo0,
                          std::vector<CEPo2>& aPo,
                          std::vector<ETri>& aTri,
                          const std::vector<CVector2>& aVec2);
-
-void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
-                         const std::vector<CVector2>& aVec2);
-
-void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
-                             const std::vector<CVector2>& aVec2);
 
 void MeshTri2D_Export(std::vector<double>& aXY_out,
                       std::vector<int>& aTri_out,
