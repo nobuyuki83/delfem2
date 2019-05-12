@@ -25,9 +25,12 @@ add_subdirectory(projects/edit_cubes)
 add_subdirectory(projects/offscreen)
 add_subdirectory(projects/spherical_harmonics)
 add_subdirectory(projects/isosurface_stuffing)
-add_subdirectory(projects/cadmsh2d)
-add_subdirectory(projects/pbd_grid2d)
 add_subdirectory(projects/mathexpeval)
+
+add_subdirectory(projects/pbd_grid2d)
+add_subdirectory(projects/pbd_cloth)
+
+add_subdirectory(projects/cadmsh2d)
 
 add_subdirectory(projects/dyntet_tetrahedralization)
 add_subdirectory(projects/dyntri2d_triangulation)

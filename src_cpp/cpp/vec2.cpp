@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -32,7 +32,7 @@ void noise2D(double noise[2])
   noise[1] = y;
 }
 
-bool inverseMat2(double invB[4], const double B[4])
+bool InverseMat2(double invB[4], const double B[4])
 {
   double det = B[0]*B[3]-B[1]*B[2];
   if (fabs(det)<1.0e-10) return false;
@@ -52,7 +52,7 @@ void matMat2(double AB[4], const double A[4], const double B[4])
   AB[1*2+1] = A[1*2+0]*B[0*2+1]+A[1*2+1]*B[1*2+1];
 }
 
-void matVec2(double w[2], const double A[4], const double v[2])
+void MatVec2(double w[2], const double A[4], const double v[2])
 {
   w[0] = A[0*2+0]*v[0]+A[0*2+1]*v[1];
   w[1] = A[1*2+0]*v[0]+A[1*2+1]*v[1];

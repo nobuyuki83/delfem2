@@ -37,6 +37,11 @@ void ConstraintProjection_Rigid3D(double* aXYZt,
                                   const int* clstr,     int nclstr0,
                                   const double* aXYZ0,   int nXYZ0);
 
+void ConstraintProjection_CST(double C[3],
+                              double dCdp[3][9],
+                              const double P[3][2], // (in) undeformed triangle vertex positions
+                              const double p[3][3]); // (in) deformed triangle vertex positions
+
 
 ///////////////////////////////////////////////
 

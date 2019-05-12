@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -120,6 +120,13 @@ bool Collapse_ElemEdge(const int itri_del,
 void extractHoles(std::vector< std::vector<int> >& aIndP_Hole,
                   const int npo,
                   const std::vector<ETri>& aETri);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
+                           const std::vector<ETri>& aSTri);
 
 
 #endif // #endif SURFACE_MESH_H

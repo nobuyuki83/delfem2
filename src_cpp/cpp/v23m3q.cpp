@@ -513,8 +513,83 @@ void ConstraintProjection_Rigid2D
   }
 }
 
+void ConstraintProjection_CST
+(double C[3],
+ double dCdp[3][9],
+ const double P[3][2], // (in) undeformed triangle vertex positions
+ const double p[3][3] // (in) deformed triangle vertex positions
+)
+{
+  const CVector3 Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
+  const CVector3 Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
+  CVector3 Gd2 = Cross(Gd0, Gd1);
+  const double Area = Gd2.Length()*0.5;
+  Gd2 /= (Area*2.0);
+  
+  CVector3 Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
+  CVector3 Gu1 = Cross( Gd2, Gd0 ); Gu1 /= Dot(Gu1,Gd1);
+  
+  const CVector3 gd0( p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2] );
+  const CVector3 gd1( p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2] );
+  
+  const double E2[3] = {  // green lagrange strain (with engineer's notation)
+    0.5*( Dot(gd0,gd0) - Dot(Gd0,Gd0) ),
+    0.5*( Dot(gd1,gd1) - Dot(Gd1,Gd1) ),
+    1.0*( Dot(gd0,gd1) - Dot(Gd0,Gd1) ) };
+  
+  const double GuGu_xx[3] = { Gu0.x*Gu0.x, Gu1.x*Gu1.x, Gu0.x*Gu1.x };
+  const double GuGu_yy[3] = { Gu0.y*Gu0.y, Gu1.y*Gu1.y, Gu0.y*Gu1.y };
+  const double GuGu_xy[3] = { 2.0*Gu0.x*Gu0.y, 2.0*Gu1.x*Gu1.y, Gu0.x*Gu1.y+Gu0.y*Gu1.x };
+  C[0] = E2[0]*GuGu_xx[0] + E2[1]*GuGu_xx[1] + E2[2]*GuGu_xx[2];
+  C[1] = E2[0]*GuGu_yy[0] + E2[1]*GuGu_yy[1] + E2[2]*GuGu_yy[2];
+  C[2] = E2[0]*GuGu_xy[0] + E2[1]*GuGu_xy[1] + E2[2]*GuGu_xy[2];
+  
+  const CVector3 dC0dp0 = -(GuGu_xx[0]+GuGu_xx[2])*gd0 - (GuGu_xx[1]+GuGu_xx[2])*gd1;
+  const CVector3 dC0dp1 = GuGu_xx[0]*gd0 + GuGu_xx[2]*gd1;
+  const CVector3 dC0dp2 = GuGu_xx[1]*gd1 + GuGu_xx[2]*gd0;
+  const CVector3 dC1dp0 = -(GuGu_yy[0]+GuGu_yy[2])*gd0 - (GuGu_yy[1]+GuGu_yy[2])*gd1;
+  const CVector3 dC1dp1 = GuGu_yy[0]*gd0 + GuGu_yy[2]*gd1;
+  const CVector3 dC1dp2 = GuGu_yy[1]*gd1 + GuGu_yy[2]*gd0;
+  const CVector3 dC2dp0 = -(GuGu_xy[0]+GuGu_xy[2])*gd0 - (GuGu_xy[1]+GuGu_xy[2])*gd1;
+  const CVector3 dC2dp1 = GuGu_xy[0]*gd0 + GuGu_xy[2]*gd1;
+  const CVector3 dC2dp2 = GuGu_xy[1]*gd1 + GuGu_xy[2]*gd0;
+  
+  dCdp[0][0*3+0] = dC0dp0.x; dCdp[0][0*3+1] = dC0dp0.y;  dCdp[0][0*3+2] = dC0dp0.z;
+  dCdp[0][1*3+0] = dC0dp1.x; dCdp[0][1*3+1] = dC0dp1.y;  dCdp[0][1*3+2] = dC0dp1.z;
+  dCdp[0][2*3+0] = dC0dp2.x; dCdp[0][2*3+1] = dC0dp2.y;  dCdp[0][2*3+2] = dC0dp2.z;
+  dCdp[1][0*3+0] = dC1dp0.x; dCdp[1][0*3+1] = dC1dp0.y;  dCdp[1][0*3+2] = dC1dp0.z;
+  dCdp[1][1*3+0] = dC1dp1.x; dCdp[1][1*3+1] = dC1dp1.y;  dCdp[1][1*3+2] = dC1dp1.z;
+  dCdp[1][2*3+0] = dC1dp2.x; dCdp[1][2*3+1] = dC1dp2.y;  dCdp[1][2*3+2] = dC1dp2.z;
+  dCdp[2][0*3+0] = dC2dp0.x; dCdp[2][0*3+1] = dC2dp0.y;  dCdp[2][0*3+2] = dC2dp0.z;
+  dCdp[2][1*3+0] = dC2dp1.x; dCdp[2][1*3+1] = dC2dp1.y;  dCdp[2][1*3+2] = dC2dp1.z;
+  dCdp[2][2*3+0] = dC2dp2.x; dCdp[2][2*3+1] = dC2dp2.y;  dCdp[2][2*3+2] = dC2dp2.z;
+}
 
-
+void Check_ConstraintProjection_CST
+(const double P[3][2], // (in) undeformed triangle vertex positions
+ const double p[3][3] // (in) deformed triangle vertex positions)
+)
+{
+  double C[3], dCdp[3][9];
+  ConstraintProjection_CST(C, dCdp, P, p);
+  for(int ine=0;ine<3;++ine){
+    for(int idim=0;idim<3;++idim){
+      double eps = 1.0e-10;
+      double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
+      p1[ine][idim] += eps;
+      double C1[3], dCdp1[3][9];
+      ConstraintProjection_CST(C1, dCdp1, P, p1);
+      double diff0 = (C1[0]-C[0])/eps-dCdp[0][ine*3+idim];
+      double diff1 = (C1[1]-C[1])/eps-dCdp[1][ine*3+idim];
+      double diff2 = (C1[2]-C[2])/eps-dCdp[2][ine*3+idim];
+      diff0 = abs(diff0);
+      diff1 = abs(diff1);
+      diff2 = abs(diff2);
+      std::cout << diff0 << " " << diff1 << " " << diff2 << std::endl;
+    }
+  }
+  
+}
 
 
 
