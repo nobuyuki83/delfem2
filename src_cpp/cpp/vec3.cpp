@@ -94,22 +94,35 @@ double VolumeTet3D(const double v1[3],
 }
 
 // t is a tmporary buffer size of 9
-static void CalcInvMat3(double a[], double t[])
+void InverseMat3(double Ainv[], const double A[])
 {
   const double det =
-  + a[0]*a[4]*a[8] + a[3]*a[7]*a[2] + a[6]*a[1]*a[5]
-  - a[0]*a[7]*a[5] - a[6]*a[4]*a[2] - a[3]*a[1]*a[8];
+  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
+  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
   const double inv_det = 1.0/det;
-  for(int i=0;i<9;i++){ t[i] = a[i]; }
-  a[0] = inv_det*(t[4]*t[8]-t[5]*t[7]);
-  a[1] = inv_det*(t[2]*t[7]-t[1]*t[8]);
-  a[2] = inv_det*(t[1]*t[5]-t[2]*t[4]);
-  a[3] = inv_det*(t[5]*t[6]-t[3]*t[8]);
-  a[4] = inv_det*(t[0]*t[8]-t[2]*t[6]);
-  a[5] = inv_det*(t[2]*t[3]-t[0]*t[5]);
-  a[6] = inv_det*(t[3]*t[7]-t[4]*t[6]);
-  a[7] = inv_det*(t[1]*t[6]-t[0]*t[7]);
-  a[8] = inv_det*(t[0]*t[4]-t[1]*t[3]);
+  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
+  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
+  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
+  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
+  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
+  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
+  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
+  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
+  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
+}
+
+// t is a tmporary buffer size of 9
+void transposeMat3(double t[], const double a[])
+{
+  t[0] = a[0];
+  t[1] = a[3];
+  t[2] = a[6];
+  t[3] = a[1];
+  t[4] = a[4];
+  t[5] = a[7];
+  t[6] = a[2];
+  t[7] = a[5];
+  t[8] = a[8];
 }
 
 /////////////////////////////////////////
@@ -244,7 +257,7 @@ void VecMat3D(const double x[3], const double m[9],  double y[3]){
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-void MatVec3D(const double m[9], const double x[3],  double y[3]){
+void MatVec3(double y[3], const double m[9], const double x[3]){
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
@@ -986,8 +999,8 @@ void iteration_barycentricCoord_Origin_Solid
   const double cyz = dpdr0.y*dpdr0.z + dpdr1.y*dpdr1.z + dpdr2.y*dpdr2.z;
   const double czz = dpdr0.z*dpdr0.z + dpdr1.z*dpdr1.z + dpdr2.z*dpdr2.z;
   double C[9] = {cxx,cxy,cxz, cxy,cyy,cyz, cxz,cyz,czz};
-  double tmp[9]; CalcInvMat3(C, tmp);
-  const CVector3 d = damp*MatVec(C,q);
+  double Cinv[9]; InverseMat3(Cinv, C);
+  const CVector3 d = damp*MatVec(Cinv,q);
   r0 -= dpdr0*d;
   r1 -= dpdr1*d;
   r2 -= dpdr2*d;
@@ -1138,9 +1151,8 @@ CVector3 solve_GlAffineMatrix(const float* m,
     m[0*4+0],m[1*4+0],m[2*4+0],
     m[0*4+1],m[1*4+1],m[2*4+1],
     m[0*4+2],m[1*4+2],m[2*4+2] };
-  double tmp[9];
-  CalcInvMat3(M, tmp);
-  return MatVec(M,v);
+  double Minv[9];  InverseMat3(Minv, M);
+  return MatVec(Minv,v);
 //  CMatrix3 Minv = M.Inverse();  
 //  return Minv*v;
 }
@@ -1152,9 +1164,8 @@ CVector3 solve_GlAffineMatrixDirection(const float* m,
     m[0*4+0],m[1*4+0],m[2*4+0],
     m[0*4+1],m[1*4+1],m[2*4+1],
     m[0*4+2],m[1*4+2],m[2*4+2] };
-  double tmp[9];
-  CalcInvMat3(M, tmp);
-  return MatVec(M,v);
+  double Minv[9];  InverseMat3(Minv, M);
+  return MatVec(Minv,v);
   /*
   CMatrix3 M(m[0*4+0],m[1*4+0],m[2*4+0],
              m[0*4+1],m[1*4+1],m[2*4+1],

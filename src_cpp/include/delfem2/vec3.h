@@ -18,21 +18,26 @@
 
 double ScalarTripleProduct3D(const double a[], const double b[], const double c[]);
 double Dot3D(const double a[], const double b[]);
-void Cross3D(double r[3], const double v1[3], const double v2[3]);
 double Length3D(const double v[3]);
 void Normalize3D(double v[3]);
 double SquareLength3D(const double v[3]);
 double SquareDistance3D(const double p0[3], const double p1[3]);
 double Distance3D(const double p0[3], const double p1[3]);
 double TriArea3D(const double v1[3], const double v2[3], const double v3[3]);
-void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]);
-void NormalTri3D(double n[3], const double v1[3], const double v2[3], const double v3[3]);
-double TetVolume3D(const double v1[3],
-                   const double v2[3],
-                   const double v3[3],
-                   const double v4[3] );
+double TetVolume3D(const double v1[3], const double v2[3], const double v3[3], const double v4[3] );
+void UnitNormalAreaTri3D(double n[3], double& a,
+                         const double v1[3], const double v2[3], const double v3[3]);
+void NormalTri3D(double n[3],
+                 const double v1[3], const double v2[3], const double v3[3]);
+void Cross3D(double r[3],
+             const double v1[3], const double v2[3]);
+void InverseMat3(double Ainv[],
+                 const double A[]);
+void transposeMat3(double At[],
+                   const double A[]);
 void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
-void MatVec3D(const double m[9], const double x[3],  double y[3]);
+void MatVec3(double y[3],
+             const double m[9], const double x[3]);
 void VecMat3D(const double x[3], const double m[9],  double y[3]);
 void GetRotMatrix_Rodrigues3D(double rot[9],
                               const double n[3], double theta);

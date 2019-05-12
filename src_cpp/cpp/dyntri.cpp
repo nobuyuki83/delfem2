@@ -1133,3 +1133,42 @@ void extractHoles
 
 
 
+/////////
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/gl.h>
+#elif defined(_WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
+void DrawMeshDynTri3D_Edge
+(const std::vector<double>& aXYZ,
+ const std::vector<ETri>& aSTri)
+{
+  ::glDisable(GL_LIGHTING);
+  ::glLineWidth(1);
+  ::glColor3d(0,0,0);
+  ::glBegin(GL_LINES);
+  for (unsigned int itri = 0; itri<aSTri.size(); ++itri){
+    const int i0 = aSTri[itri].v[0];
+    const int i1 = aSTri[itri].v[1];
+    const int i2 = aSTri[itri].v[2];
+    if( i0 == -1 ){
+      assert( i1 == -1 );
+      assert( i2 == -1 );
+    }
+    glVertex3d(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+    glVertex3d(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+    glVertex3d(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+    glVertex3d(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+    glVertex3d(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+    glVertex3d(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+  }
+  ::glEnd();
+}
+

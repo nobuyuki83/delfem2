@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -1674,14 +1674,14 @@ void WdWddW_CST
     Gu[1][0] *= invtmp2;	Gu[1][1] *= invtmp2;	Gu[1][2] *= invtmp2;
   }
   
-  const double d[2][3] = { // deformed edge vector
+  const double gd[2][3] = { // deformed edge vector
     { c[1][0]-c[0][0], c[1][1]-c[0][1], c[1][2]-c[0][2] },
     { c[2][0]-c[0][0], c[2][1]-c[0][1], c[2][2]-c[0][2] } };
   
   const double E2[3] = {  // green lagrange strain (with engineer's notation)
-    0.5*( Dot3D(d[0],d[0]) - Dot3D(Gd[0],Gd[0]) ),
-    0.5*( Dot3D(d[1],d[1]) - Dot3D(Gd[1],Gd[1]) ),
-    1.0*( Dot3D(d[0],d[1]) - Dot3D(Gd[0],Gd[1]) ) };
+    0.5*( Dot3D(gd[0],gd[0]) - Dot3D(Gd[0],Gd[0]) ),
+    0.5*( Dot3D(gd[1],gd[1]) - Dot3D(Gd[1],Gd[1]) ),
+    1.0*( Dot3D(gd[0],gd[1]) - Dot3D(Gd[0],Gd[1]) ) };
   const double GuGu2[3] = { Dot3D(Gu[0],Gu[0]), Dot3D(Gu[1],Gu[1]), Dot3D(Gu[1],Gu[0]) };
   const double Cons2[3][3] = { // constitutive tensor
     { lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]),
@@ -1706,10 +1706,10 @@ void WdWddW_CST
   for(int ino=0;ino<3;ino++){
     for(int idim=0;idim<3;idim++){
       dW[ino][idim] = Area*
-      (+S2[0]*d[0][idim]*dNdr[ino][0]
-       +S2[2]*d[0][idim]*dNdr[ino][1]
-       +S2[2]*d[1][idim]*dNdr[ino][0]
-       +S2[1]*d[1][idim]*dNdr[ino][1]);
+      (+S2[0]*gd[0][idim]*dNdr[ino][0]
+       +S2[2]*gd[0][idim]*dNdr[ino][1]
+       +S2[2]*gd[1][idim]*dNdr[ino][0]
+       +S2[1]*gd[1][idim]*dNdr[ino][1]);
     }
   }
   
@@ -1722,22 +1722,22 @@ void WdWddW_CST
       for(int idim=0;idim<3;idim++){
         for(int jdim=0;jdim<3;jdim++){
           double dtmp0 = 0;
-          dtmp0 += d[0][idim]*dNdr[ino][0]*Cons2[0][0]*d[0][jdim]*dNdr[jno][0];
-          dtmp0 += d[0][idim]*dNdr[ino][0]*Cons2[0][1]*d[1][jdim]*dNdr[jno][1];
-          dtmp0 += d[0][idim]*dNdr[ino][0]*Cons2[0][2]*d[0][jdim]*dNdr[jno][1];
-          dtmp0 += d[0][idim]*dNdr[ino][0]*Cons2[0][2]*d[1][jdim]*dNdr[jno][0];
-          dtmp0 += d[1][idim]*dNdr[ino][1]*Cons2[1][0]*d[0][jdim]*dNdr[jno][0];
-          dtmp0 += d[1][idim]*dNdr[ino][1]*Cons2[1][1]*d[1][jdim]*dNdr[jno][1];
-          dtmp0 += d[1][idim]*dNdr[ino][1]*Cons2[1][2]*d[0][jdim]*dNdr[jno][1];
-          dtmp0 += d[1][idim]*dNdr[ino][1]*Cons2[1][2]*d[1][jdim]*dNdr[jno][0];
-          dtmp0 += d[0][idim]*dNdr[ino][1]*Cons2[2][0]*d[0][jdim]*dNdr[jno][0];
-          dtmp0 += d[0][idim]*dNdr[ino][1]*Cons2[2][1]*d[1][jdim]*dNdr[jno][1];
-          dtmp0 += d[0][idim]*dNdr[ino][1]*Cons2[2][2]*d[0][jdim]*dNdr[jno][1];
-          dtmp0 += d[0][idim]*dNdr[ino][1]*Cons2[2][2]*d[1][jdim]*dNdr[jno][0];
-          dtmp0 += d[1][idim]*dNdr[ino][0]*Cons2[2][0]*d[0][jdim]*dNdr[jno][0];
-          dtmp0 += d[1][idim]*dNdr[ino][0]*Cons2[2][1]*d[1][jdim]*dNdr[jno][1];
-          dtmp0 += d[1][idim]*dNdr[ino][0]*Cons2[2][2]*d[0][jdim]*dNdr[jno][1];
-          dtmp0 += d[1][idim]*dNdr[ino][0]*Cons2[2][2]*d[1][jdim]*dNdr[jno][0];
+          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][0]*gd[0][jdim]*dNdr[jno][0];
+          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][1]*gd[1][jdim]*dNdr[jno][1];
+          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][2]*gd[0][jdim]*dNdr[jno][1];
+          dtmp0 += gd[0][idim]*dNdr[ino][0]*Cons2[0][2]*gd[1][jdim]*dNdr[jno][0];
+          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][0]*gd[0][jdim]*dNdr[jno][0];
+          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][1]*gd[1][jdim]*dNdr[jno][1];
+          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][2]*gd[0][jdim]*dNdr[jno][1];
+          dtmp0 += gd[1][idim]*dNdr[ino][1]*Cons2[1][2]*gd[1][jdim]*dNdr[jno][0];
+          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][0]*gd[0][jdim]*dNdr[jno][0];
+          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][1]*gd[1][jdim]*dNdr[jno][1];
+          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][2]*gd[0][jdim]*dNdr[jno][1];
+          dtmp0 += gd[0][idim]*dNdr[ino][1]*Cons2[2][2]*gd[1][jdim]*dNdr[jno][0];
+          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][0]*gd[0][jdim]*dNdr[jno][0];
+          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][1]*gd[1][jdim]*dNdr[jno][1];
+          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][2]*gd[0][jdim]*dNdr[jno][1];
+          dtmp0 += gd[1][idim]*dNdr[ino][0]*Cons2[2][2]*gd[1][jdim]*dNdr[jno][0];
           ddW[ino][jno][idim][jdim] = dtmp0*Area;
         }
       }

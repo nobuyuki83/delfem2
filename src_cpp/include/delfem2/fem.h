@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -15,10 +15,12 @@
 #include "delfem2/ilu_sparse.h"
 #include "delfem2/fem_ematrix.h"
 
+/*
 void FetchData(double* val_to,
                int nno, int ndim,
                const int* aIP,
                const double* val_from, int nstride, int noffset);
+ */
 
 void XPlusAY(std::vector<double>& X,
              const int nDoF,

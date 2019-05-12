@@ -13,7 +13,7 @@
 #include "delfem2/ilu_sparse.h"
 
 
-void FetchData
+static void FetchData
 (double* val_to,
  int nno, int ndim,
  const int* aIP,

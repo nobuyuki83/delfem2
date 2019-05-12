@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -18,9 +18,9 @@ double TriArea2D(const double v1[2], const double v2[2], const double v3[2]);
 double SqDistance2D(const double v1[2], const double v2[2]);
 double Distance2D(const double v1[2], const double v2[2]);
 void noise2D(double noise[2]);
-bool inverseMat2(double invB[4], const double B[4]);
+bool InverseMat2(double invB[4], const double B[4]);
 void matMat2(double AB[4], const double A[4], const double B[4]);
-void matVec2(double w[2], const double A[4], const double v[2]);
+void MatVec2(double w[2], const double A[4], const double v[2]);
 void setNormalized2(double w[2]);
 double dot2(const double w[2], const double v[2]);
 double len2(const double v[2]);

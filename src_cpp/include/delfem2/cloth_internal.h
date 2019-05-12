@@ -7,9 +7,10 @@
 #include "delfem2/fem.h"
 
 
+
 // compute total energy and its first and second derivatives
 void AddWdW_Cloth
-(double& W, // (out) energy，歪エネルギー
+(double& W, // (out) energy
  std::vector<double>& dW, // (out) first derivative of energy
  ////
  const std::vector<double>& aXYZ, // (in) deformed vertex positions
@@ -58,7 +59,6 @@ void AddWdW_Cloth
     }
   }
 }
-
 
 // compute total energy and its first and second derivatives
 void AddWdW_Gravity
@@ -173,10 +173,9 @@ void StepTime_InternalDynamicsILU
  double contact_clearance,
  const CInput_Contact& input_contact)
 {
-  const unsigned int np = aXYZ.size()/3; // number of point，頂点数
-  const unsigned int nDof = np*3; // degree of freedom，全自由度数
+  const unsigned int np = aXYZ.size()/3; 
+  const unsigned int nDof = np*3;
   // compute total energy and its first and second derivatives
-  // 全体のエネルギーとその，節点位置における一階微分，二階微分を計算
   double W = 0;
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
@@ -212,19 +211,19 @@ void StepTime_InternalDynamicsILU
   }
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
-  // solve linear system，連立一次方程式を解く
+  // solve linear system
   double conv_ratio = 1.0e-4;
   int iteration = 100;
   std::vector<double> vec_x(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio, iteration, mat_A,ilu_A);
 //  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
-  // update position，頂点位置の更新
+  // update position
   for(int i=0;i<nDof;i++){
     if( aBCFlag[i] != 0 ) continue;
     aXYZ[i] += vec_x[i];
   }
-  // update velocity，頂点の速度の更新
+  // update velocity
   for(int i=0;i<nDof;i++){
     if( aBCFlag[i] != 0 ) continue;
     aUVW[i] = vec_x[i]/dt;
@@ -233,25 +232,24 @@ void StepTime_InternalDynamicsILU
 
 
 void UpdateIntermidiateVelocity
-(std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
+(std::vector<double>& aUVW, // (in,out) deformed vertex velocity
  ////
- const std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
- const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
- const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)，境界条件フラグの配列
- const std::vector<int>& aTri, // (in) triangle index，三角形の頂点インデックス配列
- const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending，曲げ計算のための４頂点のインデックス配列
- const double dt, // (in) size of time step，時間ステップの大きさ
- double lambda, // (in) Lame's 1st parameter，ラメ第一定数
- double myu, // (in) Lame's 2nd parameter，ラメ第二定数
- double stiff_bend, // (in) bending stiffness 曲げ剛性
- const double gravity[3], // (in) gravitatinal accereration，重力加速度
- double mass_point // (in) mass for a point，頂点あたりの質量
+ const std::vector<double>& aXYZ, // (in,out) deformed vertex positions
+ const std::vector<double>& aXYZ0,// (in) initial vertex positions
+ const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free else:fixed)
+ const std::vector<int>& aTri, // (in) triangle index
+ const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending
+ const double dt, // (in) size of time step
+ double lambda, // (in) Lame's 1st parameter
+ double myu, // (in) Lame's 2nd parameter
+ double stiff_bend, // (in) bending stiffness
+ const double gravity[3], // (in) gravitatinal accereration
+ double mass_point // (in) mass for a point
  )
 {
-  const int np = (int)aXYZ.size()/3; // number of point，頂点数
-  const int nDof = np*3; // degree of freedom，全自由度数
+  const int np = (int)aXYZ.size()/3; // number of point
+  const int nDof = np*3; // degree of freedom
   // compute total energy and its first and second derivatives
-  // 全体のエネルギーとその，節点位置における一階微分，二階微分を計算
   double W = 0;
   std::vector<double> dW(nDof,0);
   AddWdW_Cloth(W,dW,
