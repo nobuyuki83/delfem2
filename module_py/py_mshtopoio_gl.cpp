@@ -295,10 +295,10 @@ PyQuality_MeshTri2D
 
 
 void PyMapValue
-(py::array_t<double>& npOut,
- const py::array_t<double>& npIn,
- CMapper& mpr)
+(py::array_t<double>& npV,
+ CCmdRefineMesh& mpr)
 {
+  /*
   assert(npOut.shape()[0]==(int)mpr.iv_ind.size()-1);
   assert(npIn.shape()[0]==(int)mpr.nv_in);
   assert(npIn.shape()[1]==npIn.shape()[1]);
@@ -315,6 +315,12 @@ void PyMapValue
       }
     }
   }
+   */
+  assert( npV.ndim() == 2 );
+  const int np = npV.shape()[0];
+  const int ndim = npV.shape()[1];
+  double* pV = (double*)(npV.request().ptr);
+  mpr.Interpolate(pV, np, ndim);
 }
 
 
@@ -351,7 +357,7 @@ void init_mshtopoio_gl(py::module &m){
   .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
   
   
-  py::class_<CMapper>(m, "CppMapper")
+  py::class_<CCmdRefineMesh>(m, "CppMapper")
   .def(py::init<>());
   
   m.def("map_value",    &PyMapValue);

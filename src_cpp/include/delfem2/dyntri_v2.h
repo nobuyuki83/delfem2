@@ -112,36 +112,42 @@ void MeshingInside(std::vector<CEPo2>& aPo2D,
                     const double len,
                     const CInputTriangulation& mesh_density);
 
-class CCmd_RefineMesh2D
+
+class CCmdRefineMesh
 {
 public:
-  CCmd_RefineMesh2D(int i0, int i1, double s0){
-    if( i0 < i1 ){
-      ipo0 = i0;
-      ipo1 = i1;
-      r0 = s0;
-      r1 = 1-s0;
+  class CCmdEdge
+  {
+  public:
+    CCmdEdge(int i0, int i1, double s0){
+      if( i0 < i1 ){ ipo0 = i0; ipo1 = i1; r0 = s0;   }
+      else{          ipo0 = i1; ipo1 = i0; r0 = 1-s0; }
     }
-    else{
-      ipo0 = i1;
-      ipo1 = i0;
-      r0 = 1-s0;
-      r1 = s0;
+    bool operator < (const CCmdEdge& rhs) const {
+      if( ipo0 != rhs.ipo0 ){ return ipo0 < rhs.ipo0; }
+      return ipo1 < rhs.ipo1;
     }
-  }
-  bool operator < (const CCmd_RefineMesh2D& rhs) const {
-    if( ipo0 != rhs.ipo0 ){
-      return ipo0 < rhs.ipo0;
+  public:
+    int ipo_new, ipo0, ipo1;
+    double r0;
+  };
+public:
+  void Interpolate(double* pVal, int np, int ndim){
+    for(unsigned int icmd=0;icmd<aCmdEdge.size();++icmd){
+      const int i0 = aCmdEdge[icmd].ipo0; assert( i0>=0 && i0<np );
+      const int i1 = aCmdEdge[icmd].ipo1; assert( i1>=0 && i1<np );
+      const int i2 = aCmdEdge[icmd].ipo_new; assert( i2>=0 && i2<np );
+      double r0 = aCmdEdge[icmd].r0;
+      for(int idim=0;idim<ndim;++idim){
+        pVal[i2*ndim+idim] = r0*pVal[i0*ndim+idim] + (1-r0)*pVal[i1*ndim+idim];
+      }
     }
-    return ipo1 < rhs.ipo1;
   }
 public:
-  int ipo_new;
-  int ipo0, ipo1;
-  double r0, r1;
+  std::vector<CCmdEdge> aCmdEdge;
 };
 
-
+/*
 class CMapper
 {
 public:
@@ -161,8 +167,9 @@ public:
   std::vector<int> iv;
   std::vector<double> w;
 };
+ */
 
-void RefinementPlan_EdgeLongerThan_InsideCircle(std::vector<CCmd_RefineMesh2D>& aCmd,
+void RefinementPlan_EdgeLongerThan_InsideCircle(CCmdRefineMesh& aCmd,
                                                 double elen,
                                                 double px, double py, double rad,
                                                 const std::vector<CEPo2>& aPo2D,
@@ -172,7 +179,7 @@ void RefinementPlan_EdgeLongerThan_InsideCircle(std::vector<CCmd_RefineMesh2D>& 
 void RefineMesh(std::vector<CEPo2>& aPo3D,
                 std::vector<ETri>& aSTri,
                 std::vector<CVector2>& aVec2,
-                std::vector<CCmd_RefineMesh2D>& aCmd);
+                CCmdRefineMesh& aCmd);
 
 class CMeshDynTri2D{
 public:
@@ -257,16 +264,17 @@ public:
                     edge_length, param);
     }
   }
-  void RefinementPlan_EdgeLongerThan_InsideCircle(CMapper& mpr,
+  void RefinementPlan_EdgeLongerThan_InsideCircle(CCmdRefineMesh& aCmd,
                                                   double elen,
                                                   double px, double py, double rad){
-    std::vector<CCmd_RefineMesh2D> aCmd;
+//    CCmdRefineMesh aCmd;
     ::RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
                                                  elen,px,py, rad,
                                                  aEPo,aVec2,aETri);
     const int np0 = aVec2.size();
     RefineMesh(aEPo, aETri, aVec2, aCmd);
     assert( aEPo.size() == aVec2.size() );
+    /*
     /////
     const int np = aVec2.size();
     mpr.nv_in = np0;
@@ -305,6 +313,7 @@ public:
       mpr.iv_ind[ip+1] = mpr.iv_ind[ip];
     }
     mpr.iv_ind[0] = 0;
+     */
   }
   void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec2); }
   void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec2); }

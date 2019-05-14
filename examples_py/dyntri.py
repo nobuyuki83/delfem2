@@ -106,8 +106,6 @@ def main_MeshDynTri2D_3():
 
 
 if __name__ == "__main__":
-  main_MeshDynTri2D_3()
-
   main_CppMeshDynTri2D_0()
   main_CppMeshDynTri2D_1()
 

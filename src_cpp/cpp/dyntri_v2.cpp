@@ -1215,15 +1215,15 @@ void ResamplingLoop
 
 
 void RefinementPlan_EdgeLongerThan_InsideCircle
-(std::vector<CCmd_RefineMesh2D>& aCmd,
+(CCmdRefineMesh& aCmd,
  double elen,
  double px, double py, double rad,
  const std::vector<CEPo2>& aPo2D,
  const std::vector<CVector2>& aVec2,
  const std::vector<ETri>& aETri)
 {
-  std::set<CCmd_RefineMesh2D> setCmd;
-  for(int itri=0;itri<aETri.size();++itri){
+  std::set<CCmdRefineMesh::CCmdEdge> setCmd;
+  for(unsigned int itri=0;itri<aETri.size();++itri){
     const int i0 = aETri[itri].v[0];
     const int i1 = aETri[itri].v[1];
     const int i2 = aETri[itri].v[2];
@@ -1236,12 +1236,12 @@ void RefinementPlan_EdgeLongerThan_InsideCircle
       const double d01 = Distance(p0,p1);
       const double d12 = Distance(p1,p2);
       const double d20 = Distance(p2,p0);
-      if( d01 > elen ){ setCmd.insert(CCmd_RefineMesh2D(i0,i1,0.5)); }
-      if( d12 > elen ){ setCmd.insert(CCmd_RefineMesh2D(i1,i2,0.5)); }
-      if( d20 > elen ){ setCmd.insert(CCmd_RefineMesh2D(i2,i0,0.5)); }
+      if( d01 > elen ){ setCmd.insert(CCmdRefineMesh::CCmdEdge(i0,i1,0.5)); }
+      if( d12 > elen ){ setCmd.insert(CCmdRefineMesh::CCmdEdge(i1,i2,0.5)); }
+      if( d20 > elen ){ setCmd.insert(CCmdRefineMesh::CCmdEdge(i2,i0,0.5)); }
     }
   }
-  aCmd.assign(setCmd.begin(),setCmd.end());
+  aCmd.aCmdEdge.assign(setCmd.begin(),setCmd.end());
 }
 
 
@@ -1250,20 +1250,22 @@ void RefineMesh
 (std::vector<CEPo2>& aEPo2,
  std::vector<ETri>& aSTri,
  std::vector<CVector2>& aVec2,
- std::vector<CCmd_RefineMesh2D>& aCmd)
+ CCmdRefineMesh& aCmd)
 {
   assert( aVec2.size() == aEPo2.size() );
   const int np0 = aVec2.size();
-  for(int icmd=0;icmd<aCmd.size();++icmd){
-    int i0= aCmd[icmd].ipo0;
-    int i1= aCmd[icmd].ipo1;
-    CVector2 v01 = aCmd[icmd].r0*aVec2[i0] + (1-aCmd[icmd].r0)*aVec2[i1];
+  for(int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
+    CCmdRefineMesh::CCmdEdge& cmd = aCmd.aCmdEdge[icmd];
+    int i0= cmd.ipo0;
+    int i1= cmd.ipo1;
+    double r0 = cmd.r0;
+    CVector2 v01 = r0*aVec2[i0] + (1.0-r0)*aVec2[i1];
     int ipo = aVec2.size();
     aEPo2.push_back(CEPo2());
     aVec2.push_back(v01);
-    aCmd[icmd].ipo_new = ipo;
+    cmd.ipo_new = ipo;
   }
-  for(int icmd=0;icmd<aCmd.size();++icmd){
+  for(int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
     AddPointsMesh(aVec2, aEPo2, aSTri, icmd+np0, 1.0e-10);
     DelaunayAroundPoint(icmd+np0, aEPo2, aSTri, aVec2);
   }
