@@ -71,7 +71,6 @@ void AddWdW_Gravity
  )
 {
   // marge potential energy
-  // 重力ポテンシャル・エネルギーを追加
   for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
     const double c[3] = {aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]};
     W -= mass_point*( c[0]*gravity[0] + c[1]*gravity[1] + c[2]*gravity[2] );

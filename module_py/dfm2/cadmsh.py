@@ -124,6 +124,7 @@ class MeshDynTri2D(Mesh):
     mpr = CppMapper()
     self.dmsh.refinementPlan_EdgeLongerThan_InsideCircle(mpr,
                                                          elen, px, py, rad)
+
     self.np_pos.resize((self.dmsh.npoint(),2))
     self.np_elm.resize((self.dmsh.ntri(),3))
     copyMeshDynTri2D(self.np_pos,self.np_elm, self.dmsh)

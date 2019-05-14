@@ -33,7 +33,7 @@ double mag = 1.0;
 
 void Refine(double px, double py)
 {
-  std::vector<CCmd_RefineMesh2D> aCmd;
+  CCmdRefineMesh aCmd;
   RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
                                              0.05, px, py, 0.1,
                                              aPo2D, aVec2, aETri);

@@ -239,7 +239,8 @@ class FEM_Poisson():
     ndimval = 1
     val_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     if mapper is not None:
-      map_value(val_new,self.value,mapper)
+      val_new[:self.value.shape[0],:] = self.value
+      map_value(val_new,mapper)
     self.value = val_new
     self.ls = FEM_LinSys(np,ndimval)
 
@@ -369,8 +370,10 @@ class FEM_Cloth():
     vec_val_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     vec_velo_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     if mapper is not None:
-      map_value(vec_val_new,self.vec_val,mapper)
-      map_value(vec_velo_new,self.vec_velo,mapper)
+      vec_val_new[:self.vec_val.shape[0],:] = self.vec_val
+      vec_velo_new[:self.vec_velo.shape[0],:] = self.vec_velo
+      map_value(vec_val_new,mapper)
+      map_value(vec_velo_new,mapper)
     else:
       vec_val_new[:,:2] = self.mesh.np_pos
     self.vec_val = vec_val_new
