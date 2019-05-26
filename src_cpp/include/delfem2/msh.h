@@ -8,9 +8,7 @@
 #ifndef MSH_H
 #define MSH_H
 
-//#include <string>
 #include <vector>
-//#include <fstream>
 
 ////////////////////////////////////////////////////////////////////////
 // work on points

@@ -1253,21 +1253,35 @@ void RefineMesh
  CCmdRefineMesh& aCmd)
 {
   assert( aVec2.size() == aEPo2.size() );
-  const int np0 = aVec2.size();
+  std::stack<int> aIV_free;
+  for(int ip=0;ip<aEPo2.size();++ip){
+    if( aEPo2[ip].e != -1 ){ continue; }
+    aIV_free.push(ip);
+  }
   for(int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
     CCmdRefineMesh::CCmdEdge& cmd = aCmd.aCmdEdge[icmd];
     int i0= cmd.ipo0;
     int i1= cmd.ipo1;
     double r0 = cmd.r0;
     CVector2 v01 = r0*aVec2[i0] + (1.0-r0)*aVec2[i1];
-    int ipo = aVec2.size();
-    aEPo2.push_back(CEPo2());
-    aVec2.push_back(v01);
-    cmd.ipo_new = ipo;
+    if( aIV_free.empty() ){
+      int ipo = aVec2.size();
+      aVec2.push_back(v01);
+      aEPo2.push_back(CEPo2());
+      cmd.ipo_new = ipo;
+    }
+    else{
+      int ipo = aIV_free.top();
+      aIV_free.pop();
+      aVec2[ipo] = v01;
+      aEPo2[ipo] = CEPo2();
+      cmd.ipo_new = ipo;
+    }
   }
   for(int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
-    AddPointsMesh(aVec2, aEPo2, aSTri, icmd+np0, 1.0e-10);
-    DelaunayAroundPoint(icmd+np0, aEPo2, aSTri, aVec2);
+    const int ip0 = aCmd.aCmdEdge[icmd].ipo_new;
+    AddPointsMesh(aVec2, aEPo2, aSTri, ip0, 1.0e-10);
+    DelaunayAroundPoint(ip0, aEPo2, aSTri, aVec2);
   }
 }
 

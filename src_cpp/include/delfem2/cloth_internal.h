@@ -61,16 +61,15 @@ void AddWdW_Cloth
 }
 
 // compute total energy and its first and second derivatives
-void AddWdW_Gravity
-(double& W, // (out) energy
- std::vector<double>& dW, // (out) first derivative of energy
+double AddWdW_Gravity
+(std::vector<double>& dW, // (out) first derivative of energy
  ////
  const std::vector<double>& aXYZ, // (in) deformed vertex positions，現在の頂点の座標配列
  const double gravity[3], // (in) gravitational accerelation，重力加速度
  double mass_point // (in) mass of a point，頂点の質量
  )
 {
-  // marge potential energy
+  double W = 0;
   for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
     const double c[3] = {aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]};
     W -= mass_point*( c[0]*gravity[0] + c[1]*gravity[1] + c[2]*gravity[2] );
@@ -78,6 +77,7 @@ void AddWdW_Gravity
     dW[ip*3+1] -= mass_point*gravity[1];
     dW[ip*3+2] -= mass_point*gravity[2];
   }
+  return W;
 }
 
 void StepTime_InternalDynamics
@@ -103,7 +103,6 @@ void StepTime_InternalDynamics
   const int np = (int)aXYZ.size()/3; // number of point，頂点数
   const int nDof = np*3; // degree of freedom，全自由度数
   // compute total energy and its first and second derivatives
-  // 全体のエネルギーとその，節点位置における一階微分，二階微分を計算
   double W = 0;
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
@@ -118,10 +117,10 @@ void StepTime_InternalDynamics
                            stiff_contact,contact_clearance,
                            input_contact,
                            aXYZ.data(), aXYZ.size()/3);
-  AddWdW_Gravity(W,vec_b,
-                 aXYZ,
-                 gravity,mass_point);
-  std::cout << "energy : " << W << std::endl;
+  W += AddWdW_Gravity(vec_b,
+                      aXYZ,
+                      gravity,mass_point);
+  //std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
   for(int i=0;i<nDof;i++){
@@ -189,9 +188,9 @@ void StepTime_InternalDynamicsILU
                            stiff_contact,contact_clearance,
                            input_contact,
                            aXYZ.data(), aXYZ.size()/3);
-  AddWdW_Gravity(W,vec_b,
-                 aXYZ,
-                 gravity,mass_point);
+  W += AddWdW_Gravity(vec_b,
+                      aXYZ,
+                      gravity,mass_point);
 //  std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
@@ -255,9 +254,9 @@ void UpdateIntermidiateVelocity
                aXYZ,aXYZ0,
                aTri,aQuad,
                lambda,myu,stiff_bend);
-  AddWdW_Gravity(W,dW,
-                 aXYZ,
-                 gravity,mass_point);
+  W += AddWdW_Gravity(dW,
+                      aXYZ,
+                      gravity,mass_point);
   for(int ip=0;ip<np;ip++){
     if( aBCFlag[ip] == 0 ) continue;
     aUVW[ip*3+0] = 0;
