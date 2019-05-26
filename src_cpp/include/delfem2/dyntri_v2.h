@@ -132,11 +132,12 @@ public:
     double r0;
   };
 public:
-  void Interpolate(double* pVal, int np, int ndim){
+  void Interpolate(double* pVal, int np, int ndim) const {
     for(unsigned int icmd=0;icmd<aCmdEdge.size();++icmd){
       const int i0 = aCmdEdge[icmd].ipo0; assert( i0>=0 && i0<np );
       const int i1 = aCmdEdge[icmd].ipo1; assert( i1>=0 && i1<np );
-      const int i2 = aCmdEdge[icmd].ipo_new; assert( i2>=0 && i2<np );
+      const int i2 = aCmdEdge[icmd].ipo_new;
+      if( i2 >= np || i2 < 0 ){ continue; }
       double r0 = aCmdEdge[icmd].r0;
       for(int idim=0;idim<ndim;++idim){
         pVal[i2*ndim+idim] = r0*pVal[i0*ndim+idim] + (1-r0)*pVal[i1*ndim+idim];

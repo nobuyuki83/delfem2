@@ -788,7 +788,7 @@ bool Collapse_ElemEdge
  std::vector<CEPo2>& aPo,
  std::vector<ETri>& aTri)
 {
-  assert(itri_del < (int)aTri.size());
+  assert( itri_del >= 0 && itri_del < (int)aTri.size() );
   assert( ied_del >= 0 && ied_del < 3 );
   if (aTri[itri_del].s2[ied_del]==-1){
     std::cout<<"Error!-->Not Implemented: Mesh with hole"<<std::endl;
@@ -807,13 +807,17 @@ bool Collapse_ElemEdge
   const int itri3 = aTri[itri0].s2[(ied_del+2)%3];
   const int itri4 = aTri[itri1].s2[(ied_adj+1)%3];
   const int itri5 = aTri[itri1].s2[(ied_adj+2)%3];
+  if( itri2 == -1 ) return false;
+  if( itri3 == -1 ) return false;
+  if( itri4 == -1 ) return false;
+  if( itri5 == -1 ) return false;
   
   const int ino0_0 = ied_del;
   const int ino1_0 = (ino0_0+1)%3;
   const int ino2_0 = (ino0_0+2)%3;
   
   const int ino0_1 = ied_adj;
-  const int ino1_1 = (ino0_1+1)%3;
+  const int ino1_1 = (ino0_1+1)%3; // point to be deleted
   const int ino2_1 = (ino0_1+2)%3;
   
   const int ino0_2 = relTriTri[(int)aTri[itri0].r2[ino1_0]][ino1_0];
@@ -844,6 +848,9 @@ bool Collapse_ElemEdge
   int ipo2 = old1.v[ino0_1];
   int ipo3 = old1.v[ino1_1];  // point to be deleted
   
+  assert(aTri[itri3].v[ino1_3]==ipo1);
+  assert(aTri[itri5].v[ino1_5]==ipo3);
+  
   {
     std::vector<int> ring1;
     { // set triangle index from point 0 to point 1
@@ -854,17 +861,15 @@ bool Collapse_ElemEdge
         assert(jtri < (int)aTri.size());
         assert(jnoel_c < 3);
         assert(aTri[jtri].v[jnoel_c]==ipo3);
-        {
-          int jpo = aTri[jtri].v[(jnoel_c+2)%3];
-          ring1.push_back(jpo);
-        }
-        assert(aTri[jtri].s2[jnoel_b]>=0&&aTri[jtri].s2[jnoel_b]<(int)aTri.size());
-        int ktri = aTri[jtri].s2[jnoel_b];
+        ring1.push_back(aTri[jtri].v[(jnoel_c+2)%3]);
+        const int ktri = aTri[jtri].s2[jnoel_b];
+        if( ktri == -1 ) return false;
+        assert(ktri>=0&&ktri<(int)aTri.size());
         const int rel01 = aTri[jtri].r2[jnoel_b];
         const int knoel_c = relTriTri[rel01][jnoel_c];
         const int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
-        assert(itri1 < (int)aTri.size());
         assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
+        assert(aTri[ktri].v[knoel_c]==ipo3);
         if (ktri==itri2) break;
         jtri = ktri;
         jnoel_c = knoel_c;
@@ -880,17 +885,15 @@ bool Collapse_ElemEdge
         assert(jtri < (int)aTri.size());
         assert(jnoel_c < 3);
         assert(aTri[jtri].v[jnoel_c]==ipo1);
-        {
-          int jpo = aTri[jtri].v[(jnoel_c+2)%3];
-          ring2.push_back(jpo);
-        }
-        assert(aTri[jtri].s2[jnoel_b]>=0&&aTri[jtri].s2[jnoel_b]<(int)aTri.size());
-        int ktri = aTri[jtri].s2[jnoel_b];
+        ring2.push_back(aTri[jtri].v[(jnoel_c+2)%3]);
+        const int ktri = aTri[jtri].s2[jnoel_b];
+        if( ktri == -1 ) return false;
+        assert( ktri>=0 && ktri<(int)aTri.size());
         const int rel01 = aTri[jtri].r2[jnoel_b];
         const int knoel_c = relTriTri[rel01][jnoel_c];
         const int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
-        assert(itri1 < (int)aTri.size());
         assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
+        assert(aTri[ktri].v[knoel_c]==ipo1);
         if (ktri==itri4) break;
         jtri = ktri;
         jnoel_c = knoel_c;
