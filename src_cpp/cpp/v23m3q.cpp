@@ -513,7 +513,7 @@ void ConstraintProjection_Rigid2D
   }
 }
 
-void ConstraintProjection_CST
+void PBD_ConstraintProjection_Strain
 (double C[3],
  double dCdp[3][9],
  const double P[3][2], // (in) undeformed triangle vertex positions
@@ -565,20 +565,20 @@ void ConstraintProjection_CST
   dCdp[2][2*3+0] = dC2dp2.x; dCdp[2][2*3+1] = dC2dp2.y;  dCdp[2][2*3+2] = dC2dp2.z;
 }
 
-void Check_ConstraintProjection_CST
+void Check_ConstraintProjection_Strain
 (const double P[3][2], // (in) undeformed triangle vertex positions
  const double p[3][3] // (in) deformed triangle vertex positions)
 )
 {
   double C[3], dCdp[3][9];
-  ConstraintProjection_CST(C, dCdp, P, p);
+  PBD_ConstraintProjection_Strain(C, dCdp, P, p);
   for(int ine=0;ine<3;++ine){
     for(int idim=0;idim<3;++idim){
       double eps = 1.0e-10;
       double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
       p1[ine][idim] += eps;
       double C1[3], dCdp1[3][9];
-      ConstraintProjection_CST(C1, dCdp1, P, p1);
+      PBD_ConstraintProjection_Strain(C1, dCdp1, P, p1);
       double diff0 = (C1[0]-C[0])/eps-dCdp[0][ine*3+idim];
       double diff1 = (C1[1]-C[1])/eps-dCdp[1][ine*3+idim];
       double diff2 = (C1[2]-C[2])/eps-dCdp[2][ine*3+idim];
@@ -588,10 +588,215 @@ void Check_ConstraintProjection_CST
       std::cout << diff0 << " " << diff1 << " " << diff2 << std::endl;
     }
   }
-  
 }
 
 
 
+void PBD_ConstraintProjection_DistanceTri2D3D
+(double C[3],
+ double dCdp[3][9],
+ const double P[3][2], // (in) undeformed triangle vertex positions
+ const double p[3][3] // (in) deformed triangle vertex positions
+)
+{
+  const double L12 = Distance2D(P[1],P[2]);
+  const double L20 = Distance2D(P[2],P[0]);
+  const double L01 = Distance2D(P[0],P[1]);
+  CVector3 v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
+  CVector3 v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
+  CVector3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
+  const double l12 = v12.Length();
+  const double l20 = v20.Length();
+  const double l01 = v01.Length();
+  C[0] = l12-L12;
+  C[1] = l20-L20;
+  C[2] = l01-L01;
+  v12 /= l12;
+  v20 /= l20;
+  v01 /= l01;
+  for(int i=0;i<27;++i){ (&dCdp[0][0])[i] = 0.0; }
+  v12.CopyValueTo(dCdp[0]+3*1);  v12.CopyValueToScale(dCdp[0]+3*2,-1.0);
+  v20.CopyValueTo(dCdp[1]+3*2);  v20.CopyValueToScale(dCdp[1]+3*0,-1.0);
+  v01.CopyValueTo(dCdp[2]+3*0);  v01.CopyValueToScale(dCdp[2]+3*1,-1.0);
+}
 
 
+void Check_ConstraintProjection_DistanceTri2D3D
+(const double P[3][2], // (in) undeformed triangle vertex positions
+ const double p[3][3] // (in) deformed triangle vertex positions)
+)
+{
+  double C[3], dCdp[3][9];
+  PBD_ConstraintProjection_DistanceTri2D3D(C, dCdp, P, p);
+  for(int ine=0;ine<3;++ine){
+    for(int idim=0;idim<3;++idim){
+      double eps = 1.0e-6;
+      double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
+      p1[ine][idim] += eps;
+      double C1[3], dCdp1[3][9];
+      PBD_ConstraintProjection_DistanceTri2D3D(C1, dCdp1, P, p1);
+      double diff0 = (C1[0]-C[0])/eps-dCdp[0][ine*3+idim];
+      double diff1 = (C1[1]-C[1])/eps-dCdp[1][ine*3+idim];
+      double diff2 = (C1[2]-C[2])/eps-dCdp[2][ine*3+idim];
+      diff0 = abs(diff0);
+      diff1 = abs(diff1);
+      diff2 = abs(diff2);
+      std::cout << ine << " " << idim << "   " << diff0 << " " << diff1 << " " << diff2 << std::endl;
+    }
+  }
+}
+
+void PBD_ConstraintProjection_EnergyStVK
+(double& C, // (out) energy
+ double dCdp[9], // (out) 1st derivative of energy
+ ////
+ const double P[3][2], // (in) undeformed triangle vertex positions
+ const double p[3][3], // (in) deformed triangle vertex positions
+ const double lambda, // (in) Lame's 1st parameter
+ const double myu)     // (in) Lame's 2nd parameter
+{
+  
+  const CVector3 Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
+  const CVector3 Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
+  CVector3 Gd2 = Cross(Gd0, Gd1);
+  const double Area = Gd2.Length()*0.5;
+  Gd2 /= (Area*2.0);
+  
+  CVector3 Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
+  CVector3 Gu1 = Cross( Gd2, Gd0 ); Gu1 /= Dot(Gu1,Gd1);
+  
+  const CVector3 gd0( p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2] );
+  const CVector3 gd1( p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2] );
+  
+  const double E2[3] = {  // green lagrange strain (with engineer's notation)
+    0.5*( Dot(gd0,gd0) - Dot(Gd0,Gd0) ),
+    0.5*( Dot(gd1,gd1) - Dot(Gd1,Gd1) ),
+    1.0*( Dot(gd0,gd1) - Dot(Gd0,Gd1) ) };
+  
+  /*
+  double Gd[3][3] = { // undeformed edge vector
+    { C[1][0]-C[0][0], C[1][1]-C[0][1], C[1][2]-C[0][2] },
+    { C[2][0]-C[0][0], C[2][1]-C[0][1], C[2][2]-C[0][2] }, { 0,0,0 } };
+  double Area;
+  UnitNormalAreaTri3D(Gd[2], Area, C[0], C[1], C[2]);
+  
+  double Gu[2][3]; // inverse of Gd
+  {
+    Cross3D(Gu[0], Gd[1], Gd[2]);
+    const double invtmp1 = 1.0/Dot3D(Gu[0],Gd[0]);
+    Gu[0][0] *= invtmp1;  Gu[0][1] *= invtmp1;  Gu[0][2] *= invtmp1;
+    ////
+    Cross3D(Gu[1], Gd[2], Gd[0]);
+    const double invtmp2 = 1.0/Dot3D(Gu[1],Gd[1]);
+    Gu[1][0] *= invtmp2;  Gu[1][1] *= invtmp2;  Gu[1][2] *= invtmp2;
+  }
+  
+  const double gd[2][3] = { // deformed edge vector
+    { c[1][0]-c[0][0], c[1][1]-c[0][1], c[1][2]-c[0][2] },
+    { c[2][0]-c[0][0], c[2][1]-c[0][1], c[2][2]-c[0][2] } };
+  
+  const double E2[3] = {  // green lagrange strain (with engineer's notation)
+    0.5*( Dot3D(gd[0],gd[0]) - Dot3D(Gd[0],Gd[0]) ),
+    0.5*( Dot3D(gd[1],gd[1]) - Dot3D(Gd[1],Gd[1]) ),
+    1.0*( Dot3D(gd[0],gd[1]) - Dot3D(Gd[0],Gd[1]) ) };
+   */
+  const double GuGu2[3] = { Gu0*Gu0, Gu1*Gu1, Gu1*Gu0 };
+  const double Cons2[3][3] = { // constitutive tensor
+    { lambda*GuGu2[0]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[0]),
+      lambda*GuGu2[0]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[2]),
+      lambda*GuGu2[0]*GuGu2[2] + 2*myu*(GuGu2[0]*GuGu2[2]) },
+    { lambda*GuGu2[1]*GuGu2[0] + 2*myu*(GuGu2[2]*GuGu2[2]),
+      lambda*GuGu2[1]*GuGu2[1] + 2*myu*(GuGu2[1]*GuGu2[1]),
+      lambda*GuGu2[1]*GuGu2[2] + 2*myu*(GuGu2[2]*GuGu2[1]) },
+    { lambda*GuGu2[2]*GuGu2[0] + 2*myu*(GuGu2[0]*GuGu2[2]),
+      lambda*GuGu2[2]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[1]),
+      lambda*GuGu2[2]*GuGu2[2] + 1*myu*(GuGu2[0]*GuGu2[1] + GuGu2[2]*GuGu2[2]) } };
+  const double S2[3] = {  // 2nd Piola-Kirchhoff stress
+    Cons2[0][0]*E2[0] + Cons2[0][1]*E2[1] + Cons2[0][2]*E2[2],
+    Cons2[1][0]*E2[0] + Cons2[1][1]*E2[1] + Cons2[1][2]*E2[2],
+    Cons2[2][0]*E2[0] + Cons2[2][1]*E2[1] + Cons2[2][2]*E2[2] };
+  
+  // compute energy
+  C = 0.5*Area*(E2[0]*S2[0] + E2[1]*S2[1] + E2[2]*S2[2]);
+  
+  // compute 1st derivative
+  const double dNdr[3][2] = { {-1.0, -1.0}, {+1.0, +0.0}, {+0.0, +1.0} };
+  for(int ino=0;ino<3;ino++){
+    dCdp[ino*3+0] = Area*(+S2[0]*gd0[0]*dNdr[ino][0] + S2[2]*gd0[0]*dNdr[ino][1] + S2[2]*gd1[0]*dNdr[ino][0] + S2[1]*gd1[0]*dNdr[ino][1]);
+    dCdp[ino*3+1] = Area*(+S2[0]*gd0[1]*dNdr[ino][0] + S2[2]*gd0[1]*dNdr[ino][1] + S2[2]*gd1[1]*dNdr[ino][0] + S2[1]*gd1[1]*dNdr[ino][1]);
+    dCdp[ino*3+2] = Area*(+S2[0]*gd0[2]*dNdr[ino][0] + S2[2]*gd0[2]*dNdr[ino][1] + S2[2]*gd1[2]*dNdr[ino][0] + S2[1]*gd1[2]*dNdr[ino][1]);
+  }
+}
+
+
+void Check_ConstraintProjection_EnergyStVK
+(const double P[3][2], // (in) undeformed triangle vertex positions
+ const double p[3][3], // (in) deformed triangle vertex positions)
+ const double lambda,
+ const double myu
+)
+{
+  double C, dCdp[9];
+  PBD_ConstraintProjection_EnergyStVK(C, dCdp, P, p, lambda, myu);
+  for(int ine=0;ine<3;++ine){
+    for(int idim=0;idim<3;++idim){
+      double eps = 1.0e-8;
+      double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
+      p1[ine][idim] += eps;
+      double C1, dCdp1[9];
+      PBD_ConstraintProjection_EnergyStVK(C1, dCdp1, P, p1, lambda, myu);
+      double diff0 = (C1-C)/eps-dCdp[ine*3+idim];
+      diff0 = abs(diff0);
+      std::cout << ine << " " << idim << "   " << diff0 << std::endl;
+    }
+  }
+}
+
+
+void PBD_ConstraintProjection_DistanceTet
+(double C[6],
+ double dCdp[6][12],
+ const double P[4][3], // (in) undeformed triangle vertex positions
+ const double p[4][3] // (in) deformed triangle vertex positions
+)
+{
+  const double L01 = Distance3D(P[0],P[1]);
+  const double L02 = Distance3D(P[0],P[2]);
+  const double L03 = Distance3D(P[0],P[3]);
+  const double L12 = Distance3D(P[1],P[2]);
+  const double L13 = Distance3D(P[1],P[3]);
+  const double L23 = Distance3D(P[2],P[3]);
+  CVector3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
+  CVector3 v02(p[0][0]-p[2][0], p[0][1]-p[2][1], p[0][2]-p[2][2]);
+  CVector3 v03(p[0][0]-p[3][0], p[0][1]-p[3][1], p[0][2]-p[3][2]);
+  CVector3 v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
+  CVector3 v13(p[1][0]-p[3][0], p[1][1]-p[3][1], p[1][2]-p[3][2]);
+  CVector3 v23(p[2][0]-p[3][0], p[2][1]-p[3][1], p[2][2]-p[3][2]);
+  const double l01 = v01.Length();
+  const double l02 = v02.Length();
+  const double l03 = v03.Length();
+  const double l12 = v12.Length();
+  const double l13 = v13.Length();
+  const double l23 = v23.Length();
+  C[0] = l01-L01;
+  C[1] = l02-L02;
+  C[2] = l03-L03;
+  C[3] = l12-L12;
+  C[4] = l13-L13;
+  C[5] = l23-L23;
+  ////
+  v01 /= l01;
+  v02 /= l02;
+  v03 /= l03;
+  v12 /= l12;
+  v13 /= l13;
+  v23 /= l23;
+  ////
+  for(int i=0;i<6*3*4;++i){ (&dCdp[0][0])[i] = 0.0; }
+  v01.CopyValueTo(dCdp[0]+0*3);  v01.CopyValueToScale(dCdp[0]+1*3,-1.0);
+  v02.CopyValueTo(dCdp[1]+0*3);  v02.CopyValueToScale(dCdp[1]+2*3,-1.0);
+  v03.CopyValueTo(dCdp[2]+0*3);  v03.CopyValueToScale(dCdp[2]+3*3,-1.0);
+  v12.CopyValueTo(dCdp[3]+1*3);  v12.CopyValueToScale(dCdp[3]+2*3,-1.0);
+  v13.CopyValueTo(dCdp[4]+1*3);  v13.CopyValueToScale(dCdp[4]+3*3,-1.0);
+  v23.CopyValueTo(dCdp[5]+2*3);  v23.CopyValueToScale(dCdp[5]+3*3,-1.0);
+}

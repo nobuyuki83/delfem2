@@ -37,11 +37,33 @@ void ConstraintProjection_Rigid3D(double* aXYZt,
                                   const int* clstr,     int nclstr0,
                                   const double* aXYZ0,   int nXYZ0);
 
-void ConstraintProjection_CST(double C[3],
+void PBD_ConstraintProjection_Strain(double C[3],
                               double dCdp[3][9],
                               const double P[3][2], // (in) undeformed triangle vertex positions
                               const double p[3][3]); // (in) deformed triangle vertex positions
+void PBD_ConstraintProjection_DistanceTri2D3D(double C[3],
+                                              double dCdp[3][9],
+                                              const double P[3][2], // (in) undeformed triangle vertex positions
+                                              const double p[3][3]); // (in) deformed triangle vertex positions
+void PBD_ConstraintProjection_EnergyStVK(double& C,
+                                         double dCdp[9],
+                                         const double P[3][2], // (in) undeformed triangle vertex positions
+                                         const double p[3][3], // (in) deformed triangle vertex positions)
+                                         const double lambda,
+                                         const double myu);
+void PBD_ConstraintProjection_DistanceTet(double C[6],
+                                          double dCdp[6][12],
+                                          const double P[4][3], // (in) undeformed triangle vertex positions
+                                          const double p[4][3]); // (in) deformed triangle vertex positions
 
+void Check_ConstraintProjection_DistanceTri2D3D(const double P[3][2], // (in) undeformed triangle vertex positions
+                                                const double p[3][3]); // (in) deformed triangle vertex positions)
+void Check_ConstraintProjection_Strain(const double P[3][2], // (in) undeformed triangle vertex positions
+                                    const double p[3][3]); // (in) deformed triangle vertex positions)
+void Check_ConstraintProjection_EnergyStVK(const double P[3][2], // (in) undeformed triangle vertex positions
+                                           const double p[3][3], // (in) deformed triangle vertex positions)
+                                           const double lambda,
+                                           const double myu);
 
 ///////////////////////////////////////////////
 

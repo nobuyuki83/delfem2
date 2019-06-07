@@ -74,6 +74,7 @@ public:
   }
 	void SetVector(double vx, double vy, double vz){ x = vx; y = vy; z = vz; }
   void CopyValueTo(double* v) const { v[0]=x; v[1]=y; v[2]=z; }
+  void CopyValueToScale(double* v, double s) const { v[0]=x*s; v[1]=y*s; v[2]=z*s; }
 
 	inline const CVector3 operator-() const{ return -1.0*(*this); }
 	inline const CVector3 operator+() const{ return *this; }  

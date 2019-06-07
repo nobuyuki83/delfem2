@@ -716,6 +716,9 @@ bool IsInclude_Loop
   return false;
 }
 
+
+
+
 bool CheckInputBoundaryForTriangulation
 (const std::vector<int>& loopIP_ind,
  const std::vector<CVector2>& aXY)
@@ -1282,6 +1285,83 @@ void RefineMesh
     const int ip0 = aCmd.aCmdEdge[icmd].ipo_new;
     AddPointsMesh(aVec2, aEPo2, aSTri, ip0, 1.0e-10);
     DelaunayAroundPoint(ip0, aEPo2, aSTri, aVec2);
+  }
+}
+
+
+void MakeInvMassLumped_Tri
+(std::vector<double>& aInvMassLumped,
+ double rho,
+ const std::vector<CVector2>& aVec2,
+ const std::vector<ETri>& aETri)
+{
+  aInvMassLumped.assign(aVec2.size(),0.0);
+  for(int it=0;it<aETri.size();++it){
+    const int aIP[3] = {aETri[it].v[0],aETri[it].v[1],aETri[it].v[2]};
+    double P[3][2] = {
+      {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
+      {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
+      {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
+    const double Area = TriArea2D(P[0], P[1], P[2]);
+    for(int inoel=0;inoel<3;++inoel){
+      const int ip = aIP[inoel];
+      aInvMassLumped[ip] += Area*rho/3.0;
+    }
+  }
+  for(int ip=0;ip<aVec2.size();++ip){
+    double m0 = aInvMassLumped[ip];
+    if( m0 < 1.0e-10 ){ continue; }
+    aInvMassLumped[ip] = 1.0/m0;
+  }
+}
+
+void MinMaxTriArea
+(double& min_area,
+ double& max_area,
+ const std::vector<CVector2>& aVec2,
+ const std::vector<ETri>& aETri)
+{
+  for(int it=0;it<aETri.size();++it){
+    const int i0 = aETri[it].v[0];
+    const int i1 = aETri[it].v[1];
+    const int i2 = aETri[it].v[2];
+    double P[3][2] = {
+      {aVec2[i0].x,aVec2[i0].y},
+      {aVec2[i1].x,aVec2[i1].y},
+      {aVec2[i2].x,aVec2[i2].y} };
+    const double Area = TriArea2D(P[0], P[1], P[2]);
+    if( it == 0 ){
+      min_area = max_area = Area;
+      continue;
+    }
+    if( Area < min_area ){ min_area = Area; }
+    if( Area > max_area ){ max_area = Area; }
+  }
+}
+
+void MakeMassMatrixTri
+(double M[9],
+ double rho,
+ const int aIP[3],
+ const std::vector<CVector2>& aVec2)
+{
+  assert(aIP[0]>=0 && aIP[0]<aVec2.size());
+  assert(aIP[1]>=0 && aIP[1]<aVec2.size());
+  assert(aIP[2]>=0 && aIP[2]<aVec2.size());
+  const double P[3][2] = {
+    {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
+    {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
+    {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
+  const double Area = TriArea2D(P[0], P[1], P[2]);
+  {
+    const double tmp = rho*Area/3.0;
+    M[0] = M[4] = M[8] = tmp;
+    M[1] = M[2] = M[3] = M[5] = M[6] = M[7] = 0.0;
+  }
+  {
+    const double tmp = rho*Area/12.0;
+    M[0] = M[4] = M[8] = tmp*2.0;
+    M[1] = M[2] = M[3] = M[5] = M[6] = M[7] = tmp;
   }
 }
 

@@ -89,6 +89,19 @@ void DeleteUnrefPoints(std::vector<CVector2>& aVec2,
                   std::vector<ETri>& aTri_in,
                   const std::vector<int>& aPoDel);
 
+void MakeInvMassLumped_Tri(std::vector<double>& aInvMassLumped,
+                           double rho,
+                           const std::vector<CVector2>& aVec2,
+                           const std::vector<ETri>& aETri);
+void MinMaxTriArea(double& min_area,
+                   double& max_area,
+                   const std::vector<CVector2>& aVec2,
+                   const std::vector<ETri>& aETri);
+void MakeMassMatrixTri(double M[9],
+                       double rho,
+                       const int aIP[3],
+                       const std::vector<CVector2>& aVec2);
+
 class CInputTriangulation
 {
 public:

@@ -354,6 +354,11 @@ void HexSubdiv(std::vector<int>& aHex1,
                std::vector<int>& aQuadHex0,
                const int* aHex0, int nHex0,
                const int nhp0);
+void TetSubdiv(std::vector<int>& aTet1,
+               std::vector<int>& psup_ind,
+               std::vector<int>& psup,
+               const int* aTet0, int nTet0,
+               unsigned int nPoint0);
 int findEdge(int ip0, int ip1,
              const std::vector<int>& psup_ind,
              const std::vector<int>& psup);

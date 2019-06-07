@@ -20,8 +20,11 @@ void MeshQuad3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
                           int ndivx, int ndivy, int ndivz,
                           int iorgx, int iorgy, int iorgz,
                           const std::vector<int>& aIsVox);
-
 void MeshHex3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+                         int ndivx, int ndivy, int ndivz,
+                         int ioffx, int ioffy, int ioffz,
+                         const std::vector<int>& aIsVox);
+void MeshTet3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aTet,
                          int ndivx, int ndivy, int ndivz,
                          int ioffx, int ioffy, int ioffz,
                          const std::vector<int>& aIsVox);
@@ -163,6 +166,12 @@ public:
                       ndivx, ndivy, ndivz,
                       iorgx, iorgy, iorgz,
                       aIsVox);
+  }
+  void GetTet(std::vector<double>& aXYZ, std::vector<int>& aTet) const {
+    MeshTet3D_VoxelGrid(aXYZ, aTet,
+                        ndivx, ndivy, ndivz,
+                        iorgx, iorgy, iorgz,
+                        aIsVox);
   }
 public:
   int ndivx, ndivy, ndivz;
