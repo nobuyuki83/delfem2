@@ -801,6 +801,46 @@ void JArray_MakeEdgeHex
   }
 }
 
+void JArray_MakeEdgeTet
+(std::vector<int>& psup_ind,
+ std::vector<int>& psup,
+ ////
+ const int* aTet0,
+ const std::vector<int>& elsup_ind,
+ const std::vector<int>& elsup,
+ int nPoint0)
+{
+  const int neTet = 6;
+  const int aNoelEdge[neTet][2] = {
+    {0,1},{0,2},{0,3},
+    {1,2},{1,3},{2,3} };
+  psup_ind.resize(nPoint0+1);
+  psup_ind[0] = 0;
+  for(int ipoint=0;ipoint<nPoint0;++ipoint){
+    std::set<int> setIP;
+    for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];++ielsup){
+      int iq0 = elsup[ielsup];
+      for(int ie=0;ie<neTet;++ie){
+        int inoel0 = aNoelEdge[ie][0];
+        int inoel1 = aNoelEdge[ie][1];
+        int ip0 = aTet0[iq0*4+inoel0];
+        int ip1 = aTet0[iq0*4+inoel1];
+        if( (ip0-ipoint)*(ip1-ipoint) != 0 ) continue;
+        if( ip0 == ipoint ){
+          if( ip1 > ipoint ){ setIP.insert(ip1); }
+        }
+        else{
+          if( ip0 > ipoint ){ setIP.insert(ip0); }
+        }
+      }
+    }
+    for(std::set<int>::iterator itr = setIP.begin();itr!=setIP.end();++itr){
+      psup.push_back(*itr);
+    }
+    psup_ind[ipoint+1] = psup_ind[ipoint] + (int)setIP.size();
+  }
+}
+
 
 void JArray_MakeEdgeVox
 (std::vector<int>& psup_ind,
@@ -1235,6 +1275,51 @@ void QuadSubdiv
     aQuad1.push_back(ip1);   aQuad1.push_back(ip12); aQuad1.push_back(ip0123); aQuad1.push_back(ip01);
     aQuad1.push_back(ip2);   aQuad1.push_back(ip23); aQuad1.push_back(ip0123); aQuad1.push_back(ip12);
     aQuad1.push_back(ip3);   aQuad1.push_back(ip30); aQuad1.push_back(ip0123); aQuad1.push_back(ip23);
+  }
+}
+
+
+// new points is in the order of [old points], [edge points]
+void TetSubdiv
+(std::vector<int>& aTet1,
+ std::vector<int>& psup_ind,
+ std::vector<int>& psup,
+ const int* aTet0, int nTet0,
+ unsigned int nPoint0)
+{
+  const int nt0 = nTet0;
+  std::vector<int> elsup_ind, elsup;
+  makeElemSurroundingPoint(elsup_ind,elsup,
+                           aTet0,nTet0,4,nPoint0);
+  JArray_MakeEdgeTet(psup_ind,psup,
+                     aTet0, elsup_ind, elsup, nPoint0);
+  aTet1.resize(0);
+  aTet1.reserve(nTet0*4);
+  for(int it=0;it<nt0;++it){
+    int ip0 = aTet0[it*4+0];
+    int ip1 = aTet0[it*4+1];
+    int ip2 = aTet0[it*4+2];
+    int ip3 = aTet0[it*4+3];
+    int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != -1 );
+    int ie02 = findEdge(ip0,ip2, psup_ind,psup); assert( ie02 != -1 );
+    int ie03 = findEdge(ip0,ip3, psup_ind,psup); assert( ie03 != -1 );
+    int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != -1 );
+    int ie13 = findEdge(ip1,ip3, psup_ind,psup); assert( ie13 != -1 );
+    int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != -1 );
+    int ip01 = ie01 + nPoint0;
+    int ip02 = ie02 + nPoint0;
+    int ip03 = ie03 + nPoint0;
+    int ip12 = ie12 + nPoint0;
+    int ip13 = ie13 + nPoint0;
+    int ip23 = ie23 + nPoint0;
+    aTet1.push_back(ip0);  aTet1.push_back(ip01); aTet1.push_back(ip02); aTet1.push_back(ip03);
+    aTet1.push_back(ip1);  aTet1.push_back(ip01); aTet1.push_back(ip13); aTet1.push_back(ip12);
+    aTet1.push_back(ip2);  aTet1.push_back(ip02); aTet1.push_back(ip12); aTet1.push_back(ip23);
+    aTet1.push_back(ip3);  aTet1.push_back(ip03); aTet1.push_back(ip23); aTet1.push_back(ip13);
+    aTet1.push_back(ip01); aTet1.push_back(ip23); aTet1.push_back(ip13); aTet1.push_back(ip12);
+    aTet1.push_back(ip01); aTet1.push_back(ip23); aTet1.push_back(ip12); aTet1.push_back(ip02);
+    aTet1.push_back(ip01); aTet1.push_back(ip23); aTet1.push_back(ip02); aTet1.push_back(ip03);
+    aTet1.push_back(ip01); aTet1.push_back(ip23); aTet1.push_back(ip03); aTet1.push_back(ip13);
   }
 }
 

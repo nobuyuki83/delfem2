@@ -182,6 +182,83 @@ void MeshHex3D_VoxelGrid
   }
 }
 
+
+
+void MeshTet3D_VoxelGrid
+(std::vector<double>& aXYZ, std::vector<int>& aTet,
+ int ndivx, int ndivy, int ndivz,
+ int ioffx, int ioffy, int ioffz,
+ const std::vector<int>& aIsVox)
+{
+  aTet.clear();
+  aXYZ.clear();
+  //////
+  const int mdivx = ndivx+1;
+  const int mdivy = ndivy+1;
+  const int mdivz = ndivz+1;
+  for(int igpx=0;igpx<mdivx;++igpx){
+    for(int igpy=0;igpy<mdivy;++igpy){
+      for(int igpz=0;igpz<mdivz;++igpz){
+        aXYZ.push_back( igpx+ioffx );
+        aXYZ.push_back( igpy+ioffy );
+        aXYZ.push_back( igpz+ioffz );
+      }
+    }
+  }
+  //////
+  assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
+  for(int igvx=0;igvx<ndivx;++igvx){
+    for(int igvy=0;igvy<ndivy;++igvy){
+      for(int igvz=0;igvz<ndivz;++igvz){
+        const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+        assert( ivoxel < (int)aIsVox.size() );
+        if( aIsVox[ivoxel] == 0 ){ continue; }
+        /////
+        int aIP[8] = {0,0,0,0, 0,0,0,0};
+        {
+          aIP[0] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
+          aIP[1] = (igvx+1)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
+          aIP[2] = (igvx+1)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+0);
+          aIP[3] = (igvx+0)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+0);
+          aIP[4] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+1);
+          aIP[5] = (igvx+1)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+1);
+          aIP[6] = (igvx+1)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+1);
+          aIP[7] = (igvx+0)*(mdivy*mdivz)+(igvy+1)*mdivz+(igvz+1);
+        }
+        aTet.push_back(aIP[0]);
+        aTet.push_back(aIP[1]);
+        aTet.push_back(aIP[2]);
+        aTet.push_back(aIP[6]);
+        ////
+        aTet.push_back(aIP[0]);
+        aTet.push_back(aIP[1]);
+        aTet.push_back(aIP[6]);
+        aTet.push_back(aIP[5]);
+        ////
+        aTet.push_back(aIP[0]);
+        aTet.push_back(aIP[4]);
+        aTet.push_back(aIP[5]);
+        aTet.push_back(aIP[6]);
+        ////
+        aTet.push_back(aIP[0]);
+        aTet.push_back(aIP[2]);
+        aTet.push_back(aIP[3]);
+        aTet.push_back(aIP[6]);
+        ////
+        aTet.push_back(aIP[0]);
+        aTet.push_back(aIP[3]);
+        aTet.push_back(aIP[7]);
+        aTet.push_back(aIP[6]);
+        ////
+        aTet.push_back(aIP[0]);
+        aTet.push_back(aIP[4]);
+        aTet.push_back(aIP[6]);
+        aTet.push_back(aIP[7]);
+      }
+    }
+  }
+}
+
 int Adj_Grid
 (int igridvox, int iface,
  int ndivx, int ndivy, int ndivz)

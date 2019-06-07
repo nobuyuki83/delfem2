@@ -1546,3 +1546,54 @@ void SubdivisionPoints_Hex
     aXYZ1[(nv0+ne0+nq0+ih)*3+2] = (aXYZ0[iv0*3+2]+aXYZ0[iv1*3+2]+aXYZ0[iv2*3+2]+aXYZ0[iv3*3+2]+aXYZ0[iv4*3+2]+aXYZ0[iv5*3+2]+aXYZ0[iv6*3+2]+aXYZ0[iv7*3+2])*0.125;
   }
 }
+
+
+
+void MakeLumpedMatrixTet
+(std::vector<double>& aMassLumpedF,
+ const std::vector<double>& aXYZF,
+ const std::vector<int>& aTetF,
+ double rho)
+{
+  aMassLumpedF.resize(aXYZF.size()/3);
+  const double* pXYZ = aXYZF.data();
+  for(int it=0;it<aTetF.size()/4;++it){
+    const double* p0 = pXYZ+aTetF[it*4+0]*3;
+    const double* p1 = pXYZ+aTetF[it*4+1]*3;
+    const double* p2 = pXYZ+aTetF[it*4+2]*3;
+    const double* p3 = pXYZ+aTetF[it*4+3]*3;
+    double v = TetVolume3D(p0, p1, p2, p3);
+    aMassLumpedF[aTetF[it*4+0]] += v*rho*0.25;
+    aMassLumpedF[aTetF[it*4+1]] += v*rho*0.25;
+    aMassLumpedF[aTetF[it*4+2]] += v*rho*0.25;
+    aMassLumpedF[aTetF[it*4+3]] += v*rho*0.25;
+  }
+}
+
+
+void CenterOfGravity_Tet
+(double& v_tot,
+ double& cgx, double& cgy, double& cgz,
+ const std::vector<double>& aXYZC,
+ const std::vector<int>& aTetC)
+{
+  cgx = 0.0;
+  cgy = 0.0;
+  cgz = 0.0;
+  v_tot = 0;
+  const double* pXYZ = aXYZC.data();
+  for(int it=0;it<aTetC.size()/4;++it){
+    const double* p0 = pXYZ+aTetC[it*4+0]*3;
+    const double* p1 = pXYZ+aTetC[it*4+1]*3;
+    const double* p2 = pXYZ+aTetC[it*4+2]*3;
+    const double* p3 = pXYZ+aTetC[it*4+3]*3;
+    double v = TetVolume3D(p0, p1, p2, p3);
+    v_tot += v;
+    cgx += v*(p0[0]+p1[0]+p2[0]+p3[0])*0.25;
+    cgy += v*(p0[1]+p1[1]+p2[1]+p3[1])*0.25;
+    cgz += v*(p0[2]+p1[2]+p2[2]+p3[2])*0.25;
+  }
+  cgx /= v_tot;
+  cgy /= v_tot;
+  cgz /= v_tot;
+}

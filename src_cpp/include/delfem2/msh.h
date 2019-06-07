@@ -95,6 +95,18 @@ void CenterOfGravity_Shell(double& cgx, double& cgy, double& cgz,
 void CenterOfGravity_Solid(double& cgx, double& cgy, double& cgz,
                            const std::vector<double>& aXYZ,
                            const std::vector<int>& aTri);
+void CenterOfGravity_Tet(double& v_tot,
+                         double& cgx, double& cgy, double& cgz,
+                         const std::vector<double>& aXYZC,
+                         const std::vector<int>& aTetC);
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+void MakeLumpedMatrixTet(std::vector<double>& aMassLumpedF,
+                         const std::vector<double>& aXYZF,
+                         const std::vector<int>& aTetF,
+                         double rho);
 
 ////////////////////////////////////////////////////////////////////////////////////
 
