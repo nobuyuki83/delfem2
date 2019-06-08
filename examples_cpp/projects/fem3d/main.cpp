@@ -17,9 +17,6 @@
 #include <GL/glut.h>
 #endif
 
-//#include "../vector3.h"
-
-//#include "geosim/jagged_array.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 

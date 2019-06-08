@@ -20,14 +20,12 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mat3.cpp              ${DELFEM2_INC}/mat3.h
   ${DELFEM2_SRC}/vec2.cpp              ${DELFEM2_INC}/vec2.h
   ${DELFEM2_SRC}/vec3.cpp              ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/quat.cpp              ${DELFEM2_INC}/quat.h
   ${DELFEM2_SRC}/msh.cpp               ${DELFEM2_INC}/msh.h  
   ${DELFEM2_SRC}/mshtopo.cpp           ${DELFEM2_INC}/mshtopo.h
 
-  ${DELFEM2_SRC}/v23m3q.cpp            ${DELFEM2_INC}/v23m3q.h  
+  ${DELFEM2_SRC}/objfunc_v23.cpp       ${DELFEM2_INC}/objfunc_v23.h  
 
   ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_SRC}/v23q_gl.cpp
   ${DELFEM2_SRC}/camera_gl.cpp         ${DELFEM2_INC}/camera_gl.h
 
   main.cpp
