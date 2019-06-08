@@ -35,6 +35,7 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/ilu_sparse.cpp    ${DELFEM2_INC}/ilu_sparse.h
   ${DELFEM2_SRC}/fem.cpp           ${DELFEM2_INC}/fem.h
   ${DELFEM2_SRC}/fem_ematrix.cpp   ${DELFEM2_INC}/fem_ematrix.h
+  ${DELFEM2_SRC}/objfunc_v23.cpp   ${DELFEM2_INC}/objfunc_v23.h
 
 
   ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h

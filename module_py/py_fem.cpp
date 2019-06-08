@@ -12,7 +12,8 @@
 //#include "delfem2/vec2.h"
 //#include "delfem2/vec3.h"
 //#include "delfem2/mat3.h"
-#include "delfem2/v23m3q.h"
+//#include "delfem2/v23m3q.h"
+#include "delfem2/objfunc_v23.h"
 
 namespace py = pybind11;
 
@@ -441,11 +442,11 @@ void PyConstraintProjection_Rigid2D
  const py::array_t<int>& npClstr,
  const py::array_t<double>& npXY)
 {
-  ConstraintProjection_Rigid2D((double*)(npXYt.request().ptr),
-                               stiffness,
-                               npClstrInd.data(), npClstrInd.size(),
-                               npClstr.data(),    npClstr.size(),
-                               npXY.data(),       npXY.shape()[0]);
+  PBD_CdC_Rigid2D((double*)(npXYt.request().ptr),
+                  stiffness,
+                  npClstrInd.data(), npClstrInd.size(),
+                  npClstr.data(),    npClstr.size(),
+                  npXY.data(),       npXY.shape()[0]);
 }
 
 

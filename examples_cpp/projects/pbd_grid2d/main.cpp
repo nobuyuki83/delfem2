@@ -10,8 +10,10 @@
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
+
+#include "delfem2/objfunc_v23.h"
+
 #include "delfem2/funcs_gl.h"
-#include "delfem2/v23m3q.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,11 +45,11 @@ void stepTime
   }
   { // deform
     for (int itr=0; itr<nitr; itr++){
-      ConstraintProjection_Rigid2D(aTmp.data(),
-                                   0.5,
-                                   clstr_ind.data(), clstr_ind.size(),
-                                   clstr.data(), clstr.size(),
-                                   aXY0.data(), aXY0.size());
+      PBD_CdC_Rigid2D(aTmp.data(),
+                      0.5,
+                      clstr_ind.data(), clstr_ind.size(),
+                      clstr.data(), clstr.size(),
+                      aXY0.data(), aXY0.size());
     }
   }
   for(int ip=0;ip<aXY0.size()/2;++ip){

@@ -23,9 +23,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/dyntri.cpp         ${DELFEM2_INC}/dyntri.h
   ${DELFEM2_SRC}/mshtopo.cpp        ${DELFEM2_INC}/mshtopo.h
 
-  ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
+  ${DELFEM2_SRC}/objfunc_v23.cpp    ${DELFEM2_INC}/objfunc_v23.h
   ${DELFEM2_SRC}/dyntri_v2.cpp      ${DELFEM2_INC}/dyntri_v2.h
-  ${DELFEM2_INC}/cloth_internal.h
 
   ${DELFEM2_SRC}/funcs_gl.cpp       ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/camera_gl.cpp      ${DELFEM2_INC}/camera_gl.h

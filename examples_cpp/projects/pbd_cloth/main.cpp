@@ -14,7 +14,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 
-#include "delfem2/v23m3q.h"
+#include "delfem2/objfunc_v23.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/mshtopo.h"
 
@@ -27,16 +27,19 @@ static void FetchData
  int nno, int ndim,
  const int* aIP,
  const double* val_from,
- int nstride, int noffset)
+ int nstride)
 {
   assert( nstride >= ndim );
   for(int ino=0;ino<nno;++ino){
     int ip = aIP[ino];
     for(int idim=0;idim<ndim;++idim){
-      val_to[ino*ndim+idim] = val_from[ip*nstride+noffset+idim];
+      val_to[ino*ndim+idim] = val_from[ip*nstride+idim];
     }
   }
 }
+
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +47,6 @@ static void FetchData
 std::vector<CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
 std::vector<ETri> aETri;
-//std::vector<double> aXY0; // undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
@@ -60,80 +62,43 @@ void StepTime()
 {
   const double dt = 0.01;
   const double gravity[3] = {0.0, 0.0, -10.0};
-  const int ndof = aXYZ.size();
-  const int np = ndof/3;
-  for(int ip=0;ip<np;++ip){
-    aUVW[ip*3+0] += dt*gravity[0];
-    aUVW[ip*3+1] += dt*gravity[1];
-    aUVW[ip*3+2] += dt*gravity[2];
-  }
-  for(int idof=0;idof<ndof;++idof){
-    if( aBCFlag[idof] != 0 ){
-      aXYZt[idof] = aXYZ[idof];
-    }
-    else{
-      aXYZt[idof] = aXYZ[idof]+dt*aUVW[idof];
-    }
-  }
+  PBD_Pre3D(aXYZt,
+            dt, gravity, aXYZ, aUVW, aBCFlag);
   for(int it=0;it<aETri.size();++it){
     const int aIP[3] = {aETri[it].v[0],aETri[it].v[1],aETri[it].v[2]};
-    double P[3][2] = {
+    const double P[3][2] = {
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
       {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
       {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
-    double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt.data(), 3, 0);
-    double C[3], dCdp[3][9];  ConstraintProjection_CST(C, dCdp, P, p);
-//    Check(P,p);
-//    break;
-    const double m = 1.0;
-    const double M[9] = {m,0,0, 0,m,0, 0,0,m};
-    double Minv[9]; InverseMat3(Minv, M);
-    double MinvC[3][9];
-    for(int idim=0;idim<3;++idim){
-      const double dC0dpi[3] = {dCdp[0][0*3+idim],dCdp[0][1*3+idim],dCdp[0][2*3+idim]};
-      const double dC1dpi[3] = {dCdp[1][0*3+idim],dCdp[1][1*3+idim],dCdp[1][2*3+idim]};
-      const double dC2dpi[3] = {dCdp[2][0*3+idim],dCdp[2][1*3+idim],dCdp[2][2*3+idim]};
-      double y0[3]; MatVec3(y0, Minv, dC0dpi);
-      double y1[3]; MatVec3(y1, Minv, dC1dpi);
-      double y2[3]; MatVec3(y2, Minv, dC2dpi);
-      MinvC[0][0*3+idim] = y0[0];
-      MinvC[0][1*3+idim] = y0[1];
-      MinvC[0][2*3+idim] = y0[2];
-      MinvC[1][0*3+idim] = y1[0];
-      MinvC[1][1*3+idim] = y1[1];
-      MinvC[1][2*3+idim] = y1[2];
-      MinvC[2][0*3+idim] = y2[0];
-      MinvC[2][1*3+idim] = y2[1];
-      MinvC[2][2*3+idim] = y2[2];
-    }
-    double A[9] = {0,0,0, 0,0,0, 0,0,0};
-    for(int i=0;i<9;++i){
-      A[0*3+0] += MinvC[0][i]*dCdp[0][i];
-      A[0*3+1] += MinvC[0][i]*dCdp[1][i];
-      A[0*3+2] += MinvC[0][i]*dCdp[2][i];
-      A[1*3+0] += MinvC[1][i]*dCdp[0][i];
-      A[1*3+1] += MinvC[1][i]*dCdp[1][i];
-      A[1*3+2] += MinvC[1][i]*dCdp[2][i];
-      A[2*3+0] += MinvC[2][i]*dCdp[0][i];
-      A[2*3+1] += MinvC[2][i]*dCdp[1][i];
-      A[2*3+2] += MinvC[2][i]*dCdp[2][i];
-    }
-    double Ainv[9]; InverseMat3(Ainv, A);
-    double lmd[3]; MatVec3(lmd, Ainv, C);
-    for(int ine=0;ine<3;++ine){
-      aXYZt[aIP[ine]*3+0] -= MinvC[0][ine*3+0]*lmd[0] + MinvC[1][ine*3+0]*lmd[1] + MinvC[2][ine*3+0]*lmd[2];
-      aXYZt[aIP[ine]*3+1] -= MinvC[0][ine*3+1]*lmd[0] + MinvC[1][ine*3+1]*lmd[1] + MinvC[2][ine*3+1]*lmd[2];
-      aXYZt[aIP[ine]*3+2] -= MinvC[0][ine*3+2]*lmd[0] + MinvC[1][ine*3+2]*lmd[1] + MinvC[2][ine*3+2]*lmd[2];
+    double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt.data(), 3);
+    double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
+    double m[3] = {1,1,1};
+    PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
+  }
+  for(int it=0;it<aETri.size();++it){
+    for(int ie=0;ie<3;++ie){
+      const int jt0 = aETri[it].s2[ie];
+      if( jt0 == -1 ){ continue; }
+      if( jt0 > it ){ continue; }
+      const int rt0 = aETri[it].r2[ie];
+      const int je0 = (6-rt0-ie)%3;
+      assert( aETri[jt0].s2[je0] == it);
+      const int aIP[4] = {aETri[it].v[ie],aETri[jt0].v[je0],aETri[it].v[(ie+1)%3],aETri[it].v[(ie+2)%3]};
+      const double P[4][3] = {
+        {aVec2[aIP[0]].x,aVec2[aIP[0]].y, 0.0},
+        {aVec2[aIP[1]].x,aVec2[aIP[1]].y, 0.0},
+        {aVec2[aIP[2]].x,aVec2[aIP[2]].y, 0.0},
+        {aVec2[aIP[3]].x,aVec2[aIP[3]].y, 0.0} };
+      double p[4][3]; FetchData(&p[0][0], 4, 3, aIP, aXYZt.data(), 3);
+      double C[3], dCdp[3][12];
+      PBD_CdC_QuadBend(C, dCdp,
+                       P, p);
+      double m[4] = {1,1,1,1};
+      PBD_Update_Const3(aXYZt, 4,3, m, C, &dCdp[0][0], aIP);
     }
   }
-  for(int idof=0;idof<ndof;++idof){
-    if( aBCFlag[idof] != 0 ) continue;
-    aUVW[idof] = (aXYZt[idof]-aXYZ[idof])/dt;
-  }
-  for(int idof=0;idof<ndof;++idof){
-    if( aBCFlag[idof] != 0 ) continue;
-    aXYZ[idof] = aXYZt[idof];
-  }
+  PBD_Post(aXYZ, aUVW,
+           dt, aXYZt, aBCFlag);
 
 }
 
@@ -229,7 +194,7 @@ void myGlutSpecial(int key, int x, int y){
 void GenMesh(const std::vector< std::vector<double> >& aaXY)
 {
   std::vector<int> loopIP_ind, loopIP;
-  const double elen = 0.07;
+  const double elen = 0.05;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
                          aaXY);
