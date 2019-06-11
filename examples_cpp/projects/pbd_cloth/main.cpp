@@ -38,7 +38,37 @@ static void FetchData
   }
 }
 
-
+void GenMesh
+(std::vector<CEPo2>& aPo2D,
+ std::vector<ETri>& aETri,
+ std::vector<CVector2>& aVec2,
+ const std::vector< std::vector<double> >& aaXY,
+ double resolution_edge,
+ double resolution_face)
+{
+  std::vector<int> loopIP_ind, loopIP;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      return;
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+    if( resolution_edge > 10e-10 ){
+      ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                     resolution_edge );
+    }
+  }
+  ////
+  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
+                                 loopIP_ind,loopIP);
+  if( resolution_face > 1.0e-10 ){
+    CInputTriangulation_Uniform param(1.0);
+    MeshingInside(aPo2D,aETri,aVec2, loopIP,
+                  resolution_face, param);
+  }
+}
 
 
 
@@ -191,32 +221,6 @@ void myGlutSpecial(int key, int x, int y){
   win.glutSpecial(key,x,y);
 }
 
-void GenMesh(const std::vector< std::vector<double> >& aaXY)
-{
-  std::vector<int> loopIP_ind, loopIP;
-  const double elen = 0.05;
-  {
-    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
-                         aaXY);
-    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
-      return;
-    }
-    FixLoopOrientation(loopIP,
-                       loopIP_ind,aVec2);
-    if( elen > 10e-10 ){
-      ResamplingLoop(loopIP_ind,loopIP,aVec2,
-                     elen );
-    }
-  }
-  ////
-  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                 loopIP_ind,loopIP);
-  if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
-    MeshingInside(aPo2D,aETri,aVec2, loopIP,
-                  elen, param);
-  }
-}
 
 int main(int argc,char* argv[])
 {
@@ -242,7 +246,8 @@ int main(int argc,char* argv[])
     aaXY.resize(1);
     double xys[8] = {-0.5,-0.5, +0.5,-0.5, +0.5,+0.5, -0.5,+0.5};
     aaXY[0].assign(xys,xys+8);
-    GenMesh(aaXY);
+    GenMesh(aPo2D,aETri,aVec2,
+            aaXY, 0.05, 0.05);
   }
   /////////
   const int np = aPo2D.size();

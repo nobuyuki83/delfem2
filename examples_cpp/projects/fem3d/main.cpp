@@ -786,7 +786,7 @@ void myGlutDisplay(void)
   }
   if (iphysics==2||iphysics==3){
     ::glColor3d(0,0,0);
-    DrawMeshTet3D_EdgeDisp(aXYZ, aTet, aVal);
+    DrawMeshTet3D_EdgeDisp(aXYZ.data(), aTet.data(), aTet.size()/4, aVal.data(), 1.0);
     ::glEnable(GL_LIGHTING);
     {
       float color[4] = {180.0/256.0, 180.0/256.0, 130.0/256.0,1.0f};

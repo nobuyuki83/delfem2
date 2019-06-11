@@ -1334,11 +1334,12 @@ void DrawMeshTet3D_Edge
 }
 
 void DrawMeshTet3D_EdgeDisp
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
- const std::vector<double>& aDisp)
+(const double* aXYZ,
+ const int* aTet, int nTet,
+ const double* aDisp,
+ double s0)
 {
-  for (int itet = 0; itet<(int)aTet.size()/4; itet++){
+  for (int itet = 0; itet<nTet; itet++){
     const int i0 = aTet[itet*4+0];
     const int i1 = aTet[itet*4+1];
     const int i2 = aTet[itet*4+2];
@@ -1347,10 +1348,10 @@ void DrawMeshTet3D_EdgeDisp
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double q0[3] = { p0[0]+aDisp[i0*3+0], p0[1]+aDisp[i0*3+1], p0[2]+aDisp[i0*3+2] };
-    double q1[3] = { p1[0]+aDisp[i1*3+0], p1[1]+aDisp[i1*3+1], p1[2]+aDisp[i1*3+2] };
-    double q2[3] = { p2[0]+aDisp[i2*3+0], p2[1]+aDisp[i2*3+1], p2[2]+aDisp[i2*3+2] };
-    double q3[3] = { p3[0]+aDisp[i3*3+0], p3[1]+aDisp[i3*3+1], p3[2]+aDisp[i3*3+2] };
+    double q0[3] = { p0[0]+s0*aDisp[i0*3+0], p0[1]+s0*aDisp[i0*3+1], p0[2]+s0*aDisp[i0*3+2] };
+    double q1[3] = { p1[0]+s0*aDisp[i1*3+0], p1[1]+s0*aDisp[i1*3+1], p1[2]+s0*aDisp[i1*3+2] };
+    double q2[3] = { p2[0]+s0*aDisp[i2*3+0], p2[1]+s0*aDisp[i2*3+1], p2[2]+s0*aDisp[i2*3+2] };
+    double q3[3] = { p3[0]+s0*aDisp[i3*3+0], p3[1]+s0*aDisp[i3*3+1], p3[2]+s0*aDisp[i3*3+2] };
     ::glBegin(GL_LINES);
     ::glVertex3dv(q0); ::glVertex3dv(q1);
     ::glVertex3dv(q0); ::glVertex3dv(q2);
@@ -1362,11 +1363,11 @@ void DrawMeshTet3D_EdgeDisp
   }
 }
 
-void DrawMeshTet3D_FaceNormal
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTet)
+void DrawMeshTet3D_FaceNorm
+(const double* aXYZ,
+ const int* aTet, int nTet)
 {
-  for (int itet = 0; itet<(int)aTet.size()/4; itet++){
+  for (int itet = 0; itet<nTet; itet++){
     const int i0 = aTet[itet*4+0];
     const int i1 = aTet[itet*4+1];
     const int i2 = aTet[itet*4+2];

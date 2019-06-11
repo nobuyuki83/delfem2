@@ -102,6 +102,11 @@ void MakeMassMatrixTri(double M[9],
                        const int aIP[3],
                        const std::vector<CVector2>& aVec2);
 
+void CMeshTri2D(std::vector<double>& aXY,
+                std::vector<int>& aTri,
+                std::vector<CVector2>& aVec2,
+                std::vector<ETri>& aETri);
+
 class CInputTriangulation
 {
 public:
