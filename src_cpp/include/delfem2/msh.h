@@ -103,10 +103,10 @@ void CenterOfGravity_Tet(double& v_tot,
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void MakeLumpedMatrixTet(std::vector<double>& aMassLumpedF,
-                         const std::vector<double>& aXYZF,
-                         const std::vector<int>& aTetF,
-                         double rho);
+void MassLumped_Tet3D(std::vector<double>& aMassMatrixLumped,
+                      double rho,
+                      const std::vector<double>& aXYZ,
+                      const std::vector<int>& aTet);
 
 ////////////////////////////////////////////////////////////////////////////////////
 

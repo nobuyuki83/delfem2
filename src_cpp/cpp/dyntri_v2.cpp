@@ -1217,6 +1217,26 @@ void ResamplingLoop
 }
 
 
+void CMeshTri2D
+(std::vector<double>& aXY,
+ std::vector<int>& aTri,
+ std::vector<CVector2>& aVec2,
+ std::vector<ETri>& aETri)
+{
+  aXY.resize(aVec2.size()*2);
+  for(int ip=0;ip<aVec2.size();++ip){
+    aXY[ip*2+0] = aVec2[ip].x;
+    aXY[ip*2+1] = aVec2[ip].y;
+  }
+  aTri.resize(aETri.size()*3);
+  for(int it=0;it<aETri.size();++it){
+    aTri[it*3+0] = aETri[it].v[0];
+    aTri[it*3+1] = aETri[it].v[1];
+    aTri[it*3+2] = aETri[it].v[2];
+  }
+}
+
+
 void RefinementPlan_EdgeLongerThan_InsideCircle
 (CCmdRefineMesh& aCmd,
  double elen,

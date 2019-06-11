@@ -579,7 +579,6 @@ double MatNorm_Assym
 
 double CMatrixSquareSparse::CheckSymmetry() const
 {
-  assert( this->is_dia );
   assert( this->m_nblk_row == this->m_nblk_col );
   assert( this->m_len_row == this->m_len_col );
   const int blksize = m_len_col*m_len_row;
@@ -604,6 +603,40 @@ double CMatrixSquareSparse::CheckSymmetry() const
     sum += MatNorm_Assym(m_valDia+blksize*ino,nlen);
   }
   return sum;
+}
+
+void CMatrixSquareSparse::ScaleLeftRight(const std::vector<double>& scale){
+  assert( this->m_nblk_row == this->m_nblk_col );
+  assert( this->m_len_row == this->m_len_col );
+  assert( scale.size() == this->m_nblk_col );
+  assert( scale.size() == this->m_nblk_row );
+  const int blksize = m_len_col*m_len_row;
+  for(int ino=0;ino<m_nblk_col;++ino){
+    for(int icrs0=m_colInd[ino];icrs0<m_colInd[ino+1];++icrs0){
+      const int jno = m_rowPtr[icrs0];
+      const double s0 = scale[ino]*scale[jno];
+      for(int i=0;i<blksize;++i){ m_valCrs[icrs0*blksize+i] *= s0; }
+    }
+  }
+  if( is_dia ){
+    for(int ino=0;ino<m_nblk_col;++ino){
+      double s0 = scale[ino]*scale[ino];
+      for(int i=0;i<blksize;++i){ m_valDia[ino*blksize+i] *= s0; }
+    }
+  }
+}
+
+void CMatrixSquareSparse::AddDia(double eps){
+  assert( this->m_nblk_row == this->m_nblk_col );
+  assert( this->m_len_row == this->m_len_col );
+  const int blksize = m_len_col*m_len_row;
+  const int nlen = this->m_len_col;
+  if( !is_dia ){ return; }
+  for(int ino=0;ino<m_nblk_col;++ino){
+    for(int ilen=0;ilen<nlen;++ilen){
+      m_valDia[ino*blksize+ilen*nlen+ilen] += eps;
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////

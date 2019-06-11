@@ -1370,6 +1370,33 @@ void makeSolidAngle
   }
 }
 
+
+void MassLumped_Tet3D
+(std::vector<double>& aMassMatrixLumped,
+ double rho,
+ const std::vector<double>& aXYZ,
+ const std::vector<int>& aTet)
+{
+  const int np = aXYZ.size()/3;
+  aMassMatrixLumped.assign(np, 0.0);
+  const double* paXYZ = aXYZ.data();
+  for(int it=0;it<aTet.size()/4;++it){
+    const int i0 = aTet[it*4+0]; assert(i0>=0&&i0<np);
+    const int i1 = aTet[it*4+1]; assert(i1>=0&&i1<np);
+    const int i2 = aTet[it*4+2]; assert(i2>=0&&i2<np);
+    const int i3 = aTet[it*4+3]; assert(i3>=0&&i3<np);
+    const double* p0 = paXYZ+i0*3;
+    const double* p1 = paXYZ+i1*3;
+    const double* p2 = paXYZ+i2*3;
+    const double* p3 = paXYZ+i3*3;
+    const double v0123 = TetVolume3D(p0, p1, p2, p3);
+    aMassMatrixLumped[i0] += 0.25*rho*v0123;
+    aMassMatrixLumped[i1] += 0.25*rho*v0123;
+    aMassMatrixLumped[i2] += 0.25*rho*v0123;
+    aMassMatrixLumped[i3] += 0.25*rho*v0123;
+  }
+}
+
 // TODO: make this handle open surface (average face & edge independently)
 void SubdivisionPoints_QuadCatmullClark
 (std::vector<double>& aXYZ1,
@@ -1549,26 +1576,7 @@ void SubdivisionPoints_Hex
 
 
 
-void MakeLumpedMatrixTet
-(std::vector<double>& aMassLumpedF,
- const std::vector<double>& aXYZF,
- const std::vector<int>& aTetF,
- double rho)
-{
-  aMassLumpedF.resize(aXYZF.size()/3);
-  const double* pXYZ = aXYZF.data();
-  for(int it=0;it<aTetF.size()/4;++it){
-    const double* p0 = pXYZ+aTetF[it*4+0]*3;
-    const double* p1 = pXYZ+aTetF[it*4+1]*3;
-    const double* p2 = pXYZ+aTetF[it*4+2]*3;
-    const double* p3 = pXYZ+aTetF[it*4+3]*3;
-    double v = TetVolume3D(p0, p1, p2, p3);
-    aMassLumpedF[aTetF[it*4+0]] += v*rho*0.25;
-    aMassLumpedF[aTetF[it*4+1]] += v*rho*0.25;
-    aMassLumpedF[aTetF[it*4+2]] += v*rho*0.25;
-    aMassLumpedF[aTetF[it*4+3]] += v*rho*0.25;
-  }
-}
+
 
 
 void CenterOfGravity_Tet
