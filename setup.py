@@ -77,7 +77,7 @@ setup(name='delfem2',
       author_email='n.umetani@gmail.com',
       url='https://github.com/nobuyuki83/delfem2',       
       packages=find_packages('module_py'),
-      package_dir={'dfm2':'module_py/dfm2'},
-      ext_modules=[CMakeExtension('module_py/dfm2/','module_py')], # location of *.so file, cmake file
+      package_dir={'dfm2':'module_py/delfem2'},
+      ext_modules=[CMakeExtension('module_py/delfem2/','module_py')], # location of *.so file, cmake file
       cmdclass=dict(build_ext=CMakeBuild),
 )
