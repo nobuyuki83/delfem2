@@ -13,6 +13,7 @@
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GL/glew.h>
+//#include <OpenGL/glext.h>
 #include <OpenGL/gl.h>
 #else
 #include <GL/glew.h>
@@ -85,20 +86,7 @@ public:
   CFrameBufferManager(){
     id_framebuffer = 0;
     id_depth_render_buffer = 0;
-    id_color_render_buffer = 0;    
-    glewInit(); // should be removed for Mac? It is necessary for Ubuntu, otherwise crash
-  }
-  CFrameBufferManager(const std::vector<int>& winSize,
-                      std::string sFormatPixelColor,
-                      bool isDepth)
-  {
-    id_framebuffer = 0;
-    id_depth_render_buffer = 0;
-    id_color_render_buffer = 0;    
-    glewInit(); // should be removed for Mac? It is necessary for Ubuntu, otherwise crash
-    this->Init(winSize[0],winSize[1],
-               sFormatPixelColor,
-               isDepth);
+    id_color_render_buffer = 0;
   }
   void DeleteFrameBuffer(){
     if( id_framebuffer > 0 ){
@@ -118,6 +106,7 @@ public:
             std::string sFormatPixelColor,
             bool isDepth)
   {
+    // glewInit() should be called beforehand
     this->sFormatPixelColor = sFormatPixelColor;
     DeleteFrameBuffer();
     glGenFramebuffers(1, &id_framebuffer);

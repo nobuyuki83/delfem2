@@ -164,6 +164,7 @@ int main(int argc,char* argv[])
   setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
+  glewInit();
   fbm.Init(512, 512, "4byte",true);
   
   int nres = 128;

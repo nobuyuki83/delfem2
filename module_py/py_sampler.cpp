@@ -49,8 +49,6 @@ void init_sampler(py::module &m){
   // FrameBuffer
   py::class_<CFrameBufferManager>(m,"FrameBufferManager", "Buffer Class for Depth")
   .def(py::init<>())
-  .def(py::init<const std::vector<int>&,std::string,bool>(),
-       py::arg("win_size"),py::arg("is_color"),py::arg("is_depth"))
   .def("set_buffer_size", &CFrameBufferManager::Init)
   .def("start",           &CFrameBufferManager::Start)
   .def("end",             &CFrameBufferManager::End);

@@ -103,14 +103,34 @@ std::vector<double> aXYZ;
 std::vector<double> aMassLumpedSqrtInv;
 std::vector<double> aMassLumpedSqrt;
 std::vector<double> aTmp0;
-std::vector<double> aX;
+std::vector<double> aTmp1;
 std::vector<double> aMode;
 std::vector<double> aModesKer;
+double lamda0 = 0.1;
 
 CMatrixSquareSparse mat_A;
 CPreconditionerILU  ilu_A;
 
 /////////////////////////////////////////////////////////////////////////////
+
+void RemoveKernel()
+{
+  const int nDoF = aXYZ.size();
+  const double* p0 = aModesKer.data()+nDoF*0;
+  const double* p1 = aModesKer.data()+nDoF*1;
+  const double* p2 = aModesKer.data()+nDoF*2;
+  const double* p3 = aModesKer.data()+nDoF*3;
+  const double* p4 = aModesKer.data()+nDoF*4;
+  const double* p5 = aModesKer.data()+nDoF*5;
+  double* p = aTmp0.data();
+  Orthogonalize_ToUnitVector(p, p0, nDoF);
+  Orthogonalize_ToUnitVector(p, p1, nDoF);
+  Orthogonalize_ToUnitVector(p, p2, nDoF);
+  Orthogonalize_ToUnitVector(p, p3, nDoF);
+  Orthogonalize_ToUnitVector(p, p4, nDoF);
+  Orthogonalize_ToUnitVector(p, p5, nDoF);
+  Normalize(p, nDoF);
+}
 
 void InitializeProblem_LinearSolid_Static()
 {
@@ -129,17 +149,7 @@ void InitializeProblem_LinearSolid_Static()
   ilu_A.Initialize_ILU0(mat_A);
   
   ////////////////////////////////////////////
-  double myu = 1.0;
-  double lambda = 1.0;
-  double rho = 1.0;
-  mat_A.SetZero();
-  aMode.assign(nDoF, 0.0);
-  aTmp0.assign(nDoF, 0.0);
-  MergeLinSys_SolidStaticLinear_MeshTet3D(mat_A, aMode.data(),
-                                          myu, lambda, rho, 0.0, 0.0, 0.0,
-                                          aXYZ.data(), aXYZ.size()/3,
-                                          aTet.data(), aTet.size()/4,
-                                          aTmp0.data());
+
   
   MassLumped_Tet3D(aMassLumpedSqrt,
                    1, aXYZ,aTet);
@@ -191,8 +201,19 @@ void InitializeProblem_LinearSolid_Static()
     Normalize(p5,nDoF);
   }
   
+  double myu = 1.0;
+  double lambda = 1.0;
+  double rho = 1.0;
+  mat_A.SetZero();
+  aMode.assign(nDoF, 0.0);
+  aTmp0.assign(nDoF, 0.0);
+  MergeLinSys_SolidStaticLinear_MeshTet3D(mat_A, aMode.data(),
+                                          myu, lambda, rho, 0.0, 0.0, 0.0,
+                                          aXYZ.data(), aXYZ.size()/3,
+                                          aTet.data(), aTet.size()/4,
+                                          aTmp0.data());
   mat_A.ScaleLeftRight(aMassLumpedSqrtInv);
-  mat_A.AddDia(1.0e+1);
+  mat_A.AddDia(0.8);
   
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
@@ -203,41 +224,15 @@ void Solve(){
   const double conv_ratio = 1.0e-5;
   const int iteration = 1000;
   std::vector<double> aConv;
-  aConv = Solve_PCG(aTmp0.data(), aMode.data(),
+  aTmp1 = aTmp0;
+  aConv = Solve_PCG(aTmp1.data(), aMode.data(),
                     conv_ratio, iteration, mat_A, ilu_A);
-  for(int ic=0;ic<aConv.size();++ic){
-    std::cout << ic << " " << aConv[ic] << std::endl;
-  }
+  double lam0 = Dot(aTmp0.data(), aMode.data(), aTmp0.size());
+  std::cout << 1.0/lam0 << std::endl;
   aTmp0 = aMode;
   ////
-  {
-    const int nDoF = aXYZ.size();
-    const double* p0 = aModesKer.data()+nDoF*0;
-    const double* p1 = aModesKer.data()+nDoF*1;
-    const double* p2 = aModesKer.data()+nDoF*2;
-    const double* p3 = aModesKer.data()+nDoF*3;
-    const double* p4 = aModesKer.data()+nDoF*4;
-    const double* p5 = aModesKer.data()+nDoF*5;
-    double* p = aTmp0.data();
-    Orthogonalize_ToUnitVector(p, p0, nDoF);
-    Orthogonalize_ToUnitVector(p, p1, nDoF);
-    Orthogonalize_ToUnitVector(p, p2, nDoF);
-    Orthogonalize_ToUnitVector(p, p3, nDoF);
-    Orthogonalize_ToUnitVector(p, p4, nDoF);
-    Orthogonalize_ToUnitVector(p, p5, nDoF);
-    Normalize(p, nDoF);
-  }
+  RemoveKernel();
 
-  /*
-  double v0 = 0.0;
-  for(int i=0;i<aTmp0.size();++i){
-    v0 += aTmp0[i]*aTmp0[i];
-  }
-  v0 = 1.0/sqrt(v0);
-  for(int i=0;i<aTmp0.size();++i){
-    aTmp0[i] *= v0;
-  }
-   */
   ////
   for(int ip=0;ip<aTmp0.size()/3;++ip){
     const double s0 = aMassLumpedSqrtInv[ip];
@@ -406,6 +401,7 @@ int main(int argc,char* argv[])
   for(int i=0;i<aXYZ.size();++i){
     aTmp0[i] = (rand()+1.0)/(RAND_MAX+1.0);
   }
+  RemoveKernel();
   
   
   win.camera.view_height = 2.0;

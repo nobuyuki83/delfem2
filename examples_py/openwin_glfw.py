@@ -24,7 +24,8 @@ def render():
 
 def main():
   global msh, wmngr_glfw
-  msh = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
+  msh = dfm2.Mesh()
+  msh.read("../test_inputs/bunny_2k.ply")
   msh.scale_xyz(0.02)
 
   wmngr_glfw = dfm2.WindowManagerGLFW(1.0)
