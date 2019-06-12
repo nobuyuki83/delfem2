@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../module_py")
-import dfm2
-import dfm2.glfw
+import delfem2 as dfm2
+import delfem2.glfw
 
 loop = [[0,0, 1,0, 1,1, 0,1]]
 out = dfm2.triangulation(loop,edge_length=0.05)

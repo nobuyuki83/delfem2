@@ -1,7 +1,7 @@
 import sys, cv2
 sys.path.append("../module_py")
-import dfm2
-import dfm2.glfw
+import delfem2 as dfm2
+import delfem2.glfw
 
 def main():
   path_img = "../test_inputs/lenna.png"

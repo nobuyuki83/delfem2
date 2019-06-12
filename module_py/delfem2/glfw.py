@@ -3,7 +3,7 @@ import numpy
 
 import glfw
 from .gl import *
-from .dfm2 import *
+from .libdelfem2 import *
 
 class WindowManagerGLFW:
   def __init__(self,view_height):

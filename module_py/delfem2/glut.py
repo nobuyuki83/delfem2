@@ -1,7 +1,6 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from .gl import *
-from .dfm2 import *
 
 def draw_text(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)

@@ -1,7 +1,33 @@
 import numpy, os
 import OpenGL.GL as gl
-from .dfm2 import *
-from .cadmsh import *
+
+from .libdelfem2 import MatrixSquareSparse, PreconditionerILU
+from .libdelfem2 import addMasterSlavePattern, matrixSquareSparse_setPattern
+from .libdelfem2 import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab, pointFixBC
+from .libdelfem2 import \
+  mergeLinSys_poission, \
+  mergeLinSys_cloth, \
+  mergeLinSys_massPoint, \
+  mergeLinSys_contact, \
+  mergeLinSys_linearSolidStatic, \
+  mergeLinSys_diffuse, \
+  mergeLinSys_linearSolidDynamic, \
+  mergeLinSys_storksStatic2D, \
+  mergeLinSys_storksDynamic2D, \
+  mergeLinSys_navierStorks2D
+from .libdelfem2 import proj_rigid2d, proj_rigid3d
+from .libdelfem2 import matrixSquareSparse_setFixBC
+from .libdelfem2 import drawField_colorMap, drawField_disp, drawField_hedgehog
+from .libdelfem2 import ColorMap
+from .libdelfem2 import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
+from .libdelfem2 import map_value
+from .libdelfem2 import write_vtk_meshpoint, write_vtk_meshelem, write_vtk_pointscalar, write_vtk_pointvector
+from .libdelfem2 import MathExpressionEvaluator
+
+from .cadmsh import SDF
+from .cadmsh import Mesh
+
+
 
 def normalize_rigmsh(rigmsh):
   aabb = rigmsh.aabb()

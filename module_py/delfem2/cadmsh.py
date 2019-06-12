@@ -1,6 +1,18 @@
 import numpy, os
 import OpenGL.GL as gl
-from .dfm2 import *
+from .libdelfem2 import CppCad2D
+from .libdelfem2 import TRI,QUAD, HEX, TET
+from .libdelfem2 import \
+  meshquad2d_grid, \
+  meshquad3d_voxelgrid, \
+  meshquad3d_subdiv, \
+  meshhex3d_voxelgrid, \
+  meshhex3d_subdiv
+from .libdelfem2 import draw_mesh_facenorm, draw_mesh_edge, meshtri3d_read_ply, mvc, meshtri3d_read_obj
+from .libdelfem2 import getMesh_cad, cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
+from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
+from .libdelfem2 import meshdyntri2d_initialize
+from .libdelfem2 import CppVoxelGrid
 
 ####################
 
