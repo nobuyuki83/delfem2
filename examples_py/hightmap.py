@@ -3,6 +3,7 @@ from OpenGL.GL import *
 import sys
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glfw
 
 import numpy, math
 
@@ -16,7 +17,7 @@ def main():
   msh.np_pos = numpy.hstack((msh.np_pos,A0.reshape((-1,1))))
 
   axis = dfm2.AxisXYZ(32)
-  dfm2.winDraw3d([msh,axis],(400,400))
+  dfm2.glfw.winDraw3d([msh,axis],(400,400))
 
 
 if __name__ == "__main__":

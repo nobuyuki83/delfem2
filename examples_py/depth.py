@@ -1,6 +1,7 @@
 import sys
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glfw
 
 def main():
   msh = dfm2.Mesh()
@@ -19,7 +20,7 @@ def main():
   sampler.len_axis = 10
   sampler.bgcolor = [1,1,0,1]
 
-  buffer = dfm2.DepthColorBuffer(win_size=[512,512],format_color="4byte",is_depth=True)
+  buffer = dfm2.glfw.DepthColorBuffer(win_size=[512,512],format_color="4byte",is_depth=True)
   buffer.start()
   sampler.start()
   msh.draw()
@@ -30,7 +31,7 @@ def main():
 #  print(np_depth.shape)
 #  numpy.savetxt("hoge.txt",np_depth)
 
-  dfm2.winDraw3d([msh,aabb,sampler,axis])
+  dfm2.glfw.winDraw3d([msh,aabb,sampler,axis])
 
 if __name__ == "__main__":
   main()

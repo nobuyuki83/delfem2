@@ -4,6 +4,7 @@ import glfw
 import sys
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glfw
 
 msh = None
 wmngr_glfw = None
@@ -28,7 +29,7 @@ def main():
   msh.read("../test_inputs/bunny_2k.ply")
   msh.scale_xyz(0.02)
 
-  wmngr_glfw = dfm2.WindowManagerGLFW(1.0)
+  wmngr_glfw = dfm2.glfw.WindowManagerGLFW(1.0)
 
   glfw.init()
   win_glfw = glfw.create_window(640, 480, 'Hello World', None, None)

@@ -1,12 +1,13 @@
 import sys
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glfw
 
 def mesh():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
   cmf = dfm2.CadMesh2D(cad,edge_length=0.1)
-  dfm2.winDraw3d([cmf])
+  dfm2.glfw.winDraw3d([cmf])
 
 class CadMesh_Poisson(dfm2.CadMesh2D):
 
@@ -40,7 +41,7 @@ def poisson():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
   cmf = CadMesh_Poisson(cad,edge_length=0.1)
-  dfm2.winDraw3d([cmf])
+  dfm2.glfw.winDraw3d([cmf])
 
 if __name__ == "__main__":
   mesh()

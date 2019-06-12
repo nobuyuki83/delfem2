@@ -1,16 +1,16 @@
 import sys, numpy
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glfw
 
 def show_hex(voxelgrid):
   msh = voxelgrid.mesh_hex3d()
   msh = msh.subdiv()
   axis = dfm2.AxisXYZ()
-  dfm2.winDraw3d([msh, axis], (400, 400))
+  dfm2.glfw.winDraw3d([msh, axis], (400, 400))
 
 def pbd_hex(voxelgrid):
   msh = voxelgrid.mesh_hex3d()
-#  msh = msh.subdiv()
   pbd = dfm2.PBD(msh)
   ####
   npIdP = numpy.array([0,1,2,3],dtype=numpy.int32)
@@ -20,17 +20,9 @@ def pbd_hex(voxelgrid):
   ####
   msh_def = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=msh.np_elm)
   axis = dfm2.AxisXYZ()
-  dfm2.winDraw3d([fvs, pbd, msh_def, axis], (400, 400))
+  dfm2.glfw.winDraw3d([fvs, pbd, msh_def, axis], (400, 400))
 
 
-def pbd_hex_2(voxelgrid):
-  msh = voxelgrid.mesh_hex3d()
-#  msh = msh.subdiv()
-  pbd = dfm2.PBD(msh)
-  ####
-  msh_def = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=msh.np_elm)
-  axis = dfm2.AxisXYZ()
-  dfm2.winDraw3d([pbd, msh_def, axis], (400, 400))
 
 
 def show_quad(voxelgrid):
@@ -39,7 +31,7 @@ def show_quad(voxelgrid):
   msh = msh.subdiv()
   msh = msh.subdiv()
   axis = dfm2.AxisXYZ()
-  dfm2.winDraw3d([msh, axis], (400, 400))
+  dfm2.glfw.winDraw3d([msh, axis], (400, 400))
 
 def main():
   grid3d = dfm2.Grid3D()
@@ -51,7 +43,6 @@ def main():
   show_quad(grid3d)
   show_hex(grid3d)
   pbd_hex(grid3d)
-  pbd_hex_2(grid3d)
 
 if __name__ == "__main__":
   main()

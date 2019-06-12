@@ -2,7 +2,7 @@ from OpenGL.GL import *
 import numpy
 
 import glfw
-from .dfm2_gl import *
+from .gl import *
 from .dfm2 import *
 
 class WindowManagerGLFW:

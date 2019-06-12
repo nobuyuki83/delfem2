@@ -3,7 +3,7 @@ from OpenGL.GL import *
 import sys
 sys.path.append("../module_py")
 import dfm2
-
+import dfm2.glfw
 
 def example1():
   sdf = dfm2.SDF()
@@ -12,7 +12,7 @@ def example1():
   np_xyz,np_tet = dfm2.isosurface(sdf.list_sdf)
   print(np_xyz.shape,np_tet.shape)
   msh = dfm2.Mesh(np_xyz,np_tet)
-  dfm2.winDraw3d([sdf,msh],winsize=(400,300))
+  dfm2.glfw.winDraw3d([sdf,msh],winsize=(400,300))
 
 if __name__ == "__main__":
   example1()

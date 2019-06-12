@@ -102,9 +102,6 @@ void CCad2D::Motion(const std::vector<double>& src0,
                     const std::vector<double>& src1,
                     const std::vector<double>& dir)
 {
-//  std::cout << src0[0] << " " << src0[1] << " " << src0[2] << std::endl;
-//  std::cout << src1[0] << " " << src1[1] << " " << src1[2] << std::endl;
-//  std::cout << dir[0] << " " << dir[1] << " " << dir[2] << std::endl;
   if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
     aVtx[ivtx_picked].pos.x = src1[0];
     aVtx[ivtx_picked].pos.y = src1[1];
@@ -115,11 +112,6 @@ void CCad2D::Motion(const std::vector<double>& src0,
       aEdge[ie].GenMesh(ie,topo,aVtx);
     }
   }
-  /*
-  for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
-    const CCadTopo::CFace& fc = topo.aFace[ifc];
-  }
-   */
   for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
     aFace[ifc].GenMesh(ifc, topo, aEdge);
   }
@@ -215,7 +207,6 @@ void CCad2D::GetPointsEdge
 {
   aIdP.clear();
   for(int ip=0;ip<np;++ip){
-//    if( pBC[ip*nDimVal+idimVal] == iflag ){ continue; } // flag already set for this point
     const double x = pXY[ip*2+0];
     const double y = pXY[ip*2+1];
     for(unsigned int iie=0;iie<aIE.size();++iie){
@@ -276,13 +267,10 @@ void CCad2D_FaceGeo::GenMesh
     const unsigned int ie0 = (unsigned int)aIE[iie].first;
     assert( ie0<topo.aEdge.size() );
     const bool dir0 = aIE[iie].second;
-//    int iv0 = (dir0) ? topo.aEdge[ie0].iv0 : topo.aEdge[ie0].iv1;
-    {
-      const CCad2D_EdgeGeo& eg0 = aEdgeGeo[ie0];
-      CVector2 p0 = (dir0) ? eg0.p0 : eg0.p1;
-      aaXY[0].push_back(p0.x);
-      aaXY[0].push_back(p0.y);
-    }
+    const CCad2D_EdgeGeo& eg0 = aEdgeGeo[ie0];
+    CVector2 p0 = (dir0) ? eg0.p0 : eg0.p1;
+    aaXY[0].push_back(p0.x);
+    aaXY[0].push_back(p0.y);
   }
   std::vector<int> loopIP_ind,loopIP;
   std::vector<CVector2> aVec2;
@@ -290,6 +278,7 @@ void CCad2D_FaceGeo::GenMesh
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
                          aaXY);
     if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      std::cout << "loop invalid" << std::endl;
       return;
     }
     FixLoopOrientation(loopIP,

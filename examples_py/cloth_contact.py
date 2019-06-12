@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../module_py")
 import dfm2
-
+import dfm2.glfw
 
 def example1():
   cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
@@ -13,7 +13,7 @@ def example1():
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([fem,mesh2,axis,fem.sdf])
+  dfm2.glfw.winDraw3d([fem,mesh2,axis,fem.sdf])
 
 
 if __name__ == "__main__":

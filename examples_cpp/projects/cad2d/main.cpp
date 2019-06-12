@@ -49,11 +49,6 @@ void myGlutDisplay(void)
   
   win.SetGL_Camera();
   
-//  if(      imode_draw == 0 ){ cad.DrawFace_RightSelected(false); }
-//  else if( imode_draw == 1 ){ cad.DrawFace_RightSelected(true); }
-//  else if( imode_draw == 2 ){ cad.DrawFace_LeftRight(); }
-//  cad.DrawVtxEdgeHandler(win.camera.view_height);
-  
   cad.Draw();
   
   ::glColor3d(0,0,0);
@@ -134,41 +129,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case 'd':
     {
       imode_draw = (imode_draw+1)%3;
-      break;
-    }
-    case 'b':
-    {
-      break;
-    }
-    case 'p':
-    {
-      break;
-    }
-    case 'e':
-    {
-//      MakeItSmooth(cad.aVertex, cad.aEdge, cad.aFace);
-      break;
-    }
-    case 'f':
-    {
-      break;
-    }
-    case 's':
-    {
-//      cad.Initialize_Sphere();
-      break;
-    }
-    case 'c':
-    {
-//      cad.Initialize_Cube();
-      break;
-    }
-    case 'n':
-    {
-      break;
-    }
-    case 't':
-    {
       break;
     }
   }
