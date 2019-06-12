@@ -230,7 +230,9 @@ class DepthColorBuffer:
     format_color:str,
     is_depth:bool):
     self.win = WindowGLFW(isVisible=False)
-    self.fbm = FrameBufferManager(win_size,format_color,is_depth)
+    self.fbm = FrameBufferManager()
+    glew_init()
+    self.fbm.set_buffer_size(win_size[0],win_size[1], format_color,is_depth)
   def start(self):
     self.fbm.start()
   def end(self):
@@ -239,9 +241,5 @@ class DepthColorBuffer:
     self.end()
     self.win.close()
 
-def take_depth_shot(render_func, sampler:GPUSampler, buffer:DepthColorBuffer):
-  buffer.start()
-  sampler.start()
-  render_func()
-  sampler.end()
-  buffer.end()
+#def take_depth_shot(render_func, sampler:GPUSampler, buffer:DepthColorBuffer):
+

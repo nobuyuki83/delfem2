@@ -3,10 +3,11 @@ sys.path.append("../module_py")
 import dfm2
 
 def main():
-  mshelm = dfm2.mesh_read("../test_inputs/bunny_2k.ply");
-  mshelm.color_face = [1,1,1,1]
+  msh = dfm2.Mesh()
+  msh.read("../test_inputs/bunny_2k.ply")
+  msh.color_face = [1,1,1,1]
 
-  aabb = dfm2.AABB3( mshelm.minmax_xyz() )
+  aabb = dfm2.AABB3( msh.minmax_xyz() )
   axis = dfm2.AxisXYZ(100.0)
   axis.line_width=3
 
@@ -19,14 +20,17 @@ def main():
   sampler.bgcolor = [1,1,0,1]
 
   buffer = dfm2.DepthColorBuffer(win_size=[512,512],format_color="4byte",is_depth=True)
-  dfm2.take_depth_shot(mshelm.draw,sampler,buffer)
+  buffer.start()
+  sampler.start()
+  msh.draw()
+  sampler.end()
   buffer.close()
 
 #  np_depth = numpy.array(dfm2.depth_buffer(sampler),copy=True)
 #  print(np_depth.shape)
 #  numpy.savetxt("hoge.txt",np_depth)
 
-  dfm2.winDraw3d([mshelm,aabb,sampler,axis])
+  dfm2.winDraw3d([msh,aabb,sampler,axis])
 
 if __name__ == "__main__":
   main()
