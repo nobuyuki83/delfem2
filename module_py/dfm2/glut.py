@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-from .dfm2_gl import Camera
+from .gl import *
+from .dfm2 import *
 
 def draw_text(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)

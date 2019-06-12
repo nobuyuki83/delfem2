@@ -4,6 +4,7 @@ from OpenGL.GLUT import *
 import sys
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glut
 
 wmngr_glut = None
 
@@ -20,7 +21,7 @@ def display():
 
   glDisable(GL_LIGHTING)
   glLineWidth(3)  
-  dfm2.draw_axis(size=0.2)
+  dfm2.gl.draw_axis(size=0.2)
   glutSwapBuffers()
 
 def reshape(width, height):
@@ -68,7 +69,7 @@ def main():
   glutSpecialFunc(special)
   glutIdleFunc(idle)
 
-  wmngr_glut = dfm2.WindowManagerGLUT(0.3)
+  wmngr_glut = dfm2.glut.WindowManagerGLUT(0.3)
 
   dfm2.setSomeLighting()
 

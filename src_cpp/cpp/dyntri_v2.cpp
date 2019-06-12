@@ -62,8 +62,8 @@ bool FindEdgePoint_AcrossEdge
   for(;;){
     assert( tri[itri_cur].v[inotri_cur] == ipo0 );
     {
-      const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
-      const unsigned int inotri3 = (inotri_cur+2)%3;//  indexRot3[2][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+1)%3;
+      const unsigned int inotri3 = (inotri_cur+2)%3;
       double area0 = TriArea(aVec2[ipo0],
                              aVec2[ tri[itri_cur].v[inotri2] ],
                              aVec2[ipo1] );
@@ -83,10 +83,12 @@ bool FindEdgePoint_AcrossEdge
     }
     {
       const unsigned int inotri2 = (inotri_cur+1)%3;
-      int itri_nex = tri[itri_cur].s2[inotri2];
+      const int itri_nex = tri[itri_cur].s2[inotri2];
+      if( itri_nex == -1 ){ break; }
       const unsigned int* rel = relTriTri[ tri[itri_cur].r2[inotri2] ];
       const unsigned int inotri3 = rel[inotri_cur];
-      assert( itri_nex < tri.size() );
+      assert( itri_nex < (int)tri.size() );
+      assert( itri_nex >= 0 );
       assert( tri[itri_nex].v[inotri3] == ipo0 );
       if( itri_nex == itri_ini ){
         itri0 = 0;
@@ -485,20 +487,20 @@ void EnforceEdge
   assert( aPo2D.size() == aVec2.size() );
   const int nloop = (int)loopIP_ind.size()-1;
   for(int iloop=0;iloop<nloop;iloop++){
-    const int nbar = loopIP_ind[iloop+1]-loopIP_ind[iloop];
-    for(int ibar=0;ibar<nbar;ibar++){
-      const int ipoi0 = loopIP[loopIP_ind[iloop]+(ibar+0)%nbar];
-      const int ipoi1 = loopIP[loopIP_ind[iloop]+(ibar+1)%nbar];
-      assert( ipoi0 < (int)aPo2D.size() );
-      assert( ipoi1 < (int)aPo2D.size() );
+    const int ne = loopIP_ind[iloop+1]-loopIP_ind[iloop];
+    for(int ie=0;ie<ne;ie++){
+      const int i0 = loopIP[loopIP_ind[iloop]+(ie+0)%ne];
+      const int i1 = loopIP[loopIP_ind[iloop]+(ie+1)%ne];
+      assert( i0 < (int)aPo2D.size() );
+      assert( i1 < (int)aPo2D.size() );
       for(;;){
         int itri0,inotri0,inotri1;
-        if( FindEdge_LookAroundPoint(itri0,inotri0,inotri1,ipoi0,ipoi1,aPo2D,aTri) ){ // this edge divide outside and inside
+        if( FindEdge_LookAroundPoint(itri0,inotri0,inotri1,i0,i1,aPo2D,aTri) ){ // this edge divide outside and inside
           assert( inotri0 != inotri1 );
           assert( inotri0 < 3 );
           assert( inotri1 < 3 );
-          assert( aTri[itri0].v[ inotri0 ] == ipoi0 );
-          assert( aTri[itri0].v[ inotri1 ] == ipoi1 );
+          assert( aTri[itri0].v[ inotri0 ] == i0 );
+          assert( aTri[itri0].v[ inotri1 ] == i1 );
           const int ied0 = 3 - inotri0 - inotri1;
           {
             const int itri1 = aTri[itri0].s2[ied0];
@@ -512,11 +514,11 @@ void EnforceEdge
         else{ // this edge is devided from connection outer triangle
           double ratio;
           if( !FindEdgePoint_AcrossEdge(itri0,inotri0,inotri1,ratio,
-                                        ipoi0,ipoi1,
+                                        i0,i1,
                                         aPo2D,aTri,aVec2) ){ assert(0); }
           assert( ratio > -1.0e-20 && ratio < 1.0+1.0e-20 );
-          assert( TriArea( aVec2[ipoi0], aVec2[ aTri[itri0].v[inotri0] ], aVec2[ipoi1] ) > 1.0e-20 );
-          assert( TriArea( aVec2[ipoi0], aVec2[ipoi1], aVec2[ aTri[itri0].v[inotri1] ] ) > 1.0e-20 );
+          assert( TriArea( aVec2[i0], aVec2[ aTri[itri0].v[inotri0] ], aVec2[i1] ) > 1.0e-20 );
+          assert( TriArea( aVec2[i0], aVec2[i1], aVec2[ aTri[itri0].v[inotri1] ] ) > 1.0e-20 );
           //            std::cout << ratio << std::endl;
           if( ratio < 1.0e-20 ){
             assert(0);
@@ -760,31 +762,28 @@ bool CheckInputBoundaryForTriangulation
   { // check intersection
     bool is_intersect = false;
     for(int iloop=0;iloop<nloop;iloop++){
-      const int nbar_i = loopIP_ind[iloop+1]-loopIP_ind[iloop];
-      for(int ibar=0;ibar<nbar_i;ibar++){
-        const int ipo0 = loopIP_ind[iloop] + (ibar+0)%nbar_i;
-        const int ipo1 = loopIP_ind[iloop] + (ibar+1)%nbar_i;
-        const double pi0[2] = {aXY[ipo0].x,aXY[ipo0].y};
-        const double pi1[2] = {aXY[ipo1].x,aXY[ipo1].y};
+      const int nei = loopIP_ind[iloop+1]-loopIP_ind[iloop];
+      for(int ie=0;ie<nei;ie++){
+        const int i0 = loopIP_ind[iloop] + (ie+0)%nei;
+        const int i1 = loopIP_ind[iloop] + (ie+1)%nei;
+        const double pi0[2] = {aXY[i0].x,aXY[i0].y};
+        const double pi1[2] = {aXY[i1].x,aXY[i1].y};
         const double xmax_i = ( pi1[0] > pi0[0] ) ? pi1[0] : pi0[0];
         const double xmin_i = ( pi1[0] < pi0[0] ) ? pi1[0] : pi0[0];
         const double ymax_i = ( pi1[1] > pi0[1] ) ? pi1[1] : pi0[1];
         const double ymin_i = ( pi1[1] < pi0[1] ) ? pi1[1] : pi0[1];
-        for(int jbar=ibar+2;jbar<nbar_i;jbar++){
-          const int jpo0 = loopIP_ind[iloop] + jbar;
-          int jpo1 = loopIP_ind[iloop] + jbar+1;
-          if( jbar == nbar_i-1 ){
-            if( ibar == 0 ) continue;
-            jpo1 = loopIP_ind[iloop];
-          }
-          const double pj0[2] = {aXY[jpo0].x,aXY[jpo0].y};
-          const double pj1[2] = {aXY[jpo1].x,aXY[jpo1].y};
+        for(int je=ie+1;je<nei;je++){
+          const int j0 = loopIP_ind[iloop] + (je+0)%nei;
+          const int j1 = loopIP_ind[iloop] + (je+1)%nei;
+          if( i0 == j0 || i0 == j1 || i1 == j0 || i1 == j1 ){ continue; }
+          const double pj0[2] = {aXY[j0].x,aXY[j0].y};
+          const double pj1[2] = {aXY[j1].x,aXY[j1].y};
           const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
           const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
           const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
           const double ymin_j = ( pj1[1] < pj0[1] ) ? pj1[1] : pj0[1];
-          if( xmin_j > xmax_i || xmax_j < xmin_i ) continue;	// åçˆÇ™Ç†ÇËÇ¶Ç»Ç¢ÉpÉ^Å[ÉìÇèúäO
-          if( ymin_j > ymax_i || ymax_j < ymin_i ) continue;	// è„Ç…ìØÇ∂
+          if( xmin_j > xmax_i || xmax_j < xmin_i ){ continue; }
+          if( ymin_j > ymax_i || ymax_j < ymin_i ){ continue; }
           if( IsCrossLines(pi0,pi1,  pj0,pj1) ){
             is_intersect = true;
             break;

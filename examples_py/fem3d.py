@@ -1,6 +1,7 @@
 import sys, numpy
 sys.path.append("../module_py")
 import dfm2
+import dfm2.glfw
 
 def make_mesh():
   sdf = dfm2.SDF()
@@ -24,7 +25,7 @@ def poission(msh,npIdP0,npIdP1):
   vis_color = dfm2.VisFEM_ColorContour(fem,name_color="value")
   vis_color.set_color_minmax()
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([vis_color,axis])
+  dfm2.glfw.winDraw3d([vis_color,axis])
 
 def diffuse(msh,npIdP0,npIdP1):
   fem = dfm2.FEM_Diffuse(msh)
@@ -36,7 +37,7 @@ def diffuse(msh,npIdP0,npIdP1):
   vis_color.draw_val_min = 0.0
   vis_color.draw_val_max = 1.0
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([fem,vis_color,axis])
+  dfm2.glfw.winDraw3d([fem,vis_color,axis])
 
 
 def linear_solid_static(msh,npIdP):
@@ -47,7 +48,7 @@ def linear_solid_static(msh,npIdP):
   ####
   vis_disp = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([vis_disp,axis])
+  dfm2.glfw.winDraw3d([vis_disp,axis])
   vis_disp.write_vtk("linearsolid3d.vtk")
 
 
@@ -57,7 +58,7 @@ def linear_solid_dynamic(msh,npIdP):
   ####
   vis_disp = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.winDraw3d([fem,vis_disp,axis])
+  dfm2.glfw.winDraw3d([fem,vis_disp,axis])
 
 
 def main():
