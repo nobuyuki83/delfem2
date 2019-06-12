@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../module_py")
-import dfm2
-import dfm2.glfw
+import delfem2 as dfm2
+import delfem2.glfw
 
 def mesh():
   cad = dfm2.Cad2D()

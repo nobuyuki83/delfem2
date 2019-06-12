@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../module_py")
-import dfm2
-import dfm2.glfw
+import delfem2 as dfm2
+import delfem2.glfw
 
 rb0 = dfm2.RigidBody(1.0, [+0.0, 1.0, +0.0])
 rb1 = dfm2.RigidBody(0.1, [-1.0, 0.5, -1.0])

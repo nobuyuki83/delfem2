@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(pydelfem2)
+set(PROJ_NAME libdelfem2)
+
+project(${PROJ_NAME})
 set(PYBIND11_CPP_STANDARD -std=c++14)
 if(WIN32)
 set(CMAKE_CXX_FLAGS "-Wall -O2")
@@ -108,16 +110,20 @@ endif()
 ########################### end use FBS
 
 include_directories( ${INPUT_INCLUDE_DIR} )
-pybind11_add_module(dfm2 ${INPUT_SRC} )
-target_link_libraries(dfm2  PRIVATE ${INPUT_LIBRARY})
+pybind11_add_module(${PROJ_NAME}
+  ${INPUT_SRC} )
+
+target_link_libraries(${PROJ_NAME}
+  PRIVATE ${INPUT_LIBRARY})
+
 
 if(WIN32)
 else()
-add_custom_command(TARGET dfm2
+add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dfm2.*
-  ${PROJECT_SOURCE_DIR}/dfm2/dfm2.so
+  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libdelfem2.*
+  ${PROJECT_SOURCE_DIR}/delfem2/libdelfem2.so
   COMMENT "Post Event"
 )
 endif()

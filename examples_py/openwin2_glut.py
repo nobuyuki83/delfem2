@@ -3,8 +3,8 @@ from OpenGL.GLUT import *
 
 import sys
 sys.path.append("../module_py")
-import dfm2
-import dfm2.glut
+import delfem2 as dfm2
+import delfem2.glut
 
 def draw_func():
   glEnable(GL_LIGHTING)
