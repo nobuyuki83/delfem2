@@ -42,3 +42,4 @@ examples_cpp/bin
 private_examples
 desktop.ini
 examples_py/*.vtk
+myenv
