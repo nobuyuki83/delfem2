@@ -47,6 +47,7 @@ public:
   CCad2D(){
     std::cout << "CCAD2D -- construct" << std::endl;
     ivtx_picked = -1;
+    iedge_picked = -1;
     is_draw_face = true;
   }
   void Clear(){
@@ -56,17 +57,14 @@ public:
     topo.Clear();
   }
   void Draw() const;
-  // btn-- left:0, middle:2, right:1
-  // action-- down:1, up:0
-  void Mouse(int btn,int action,int mods,
-             const std::vector<double>& src,
-             const std::vector<double>& dir,
-             double view_height);
-  void Motion(const std::vector<double>& src0,
-              const std::vector<double>& src1,
-              const std::vector<double>& dir);
+  void Tessellation();
+  void Pick(double x0, double y0,
+            double view_height);
+  void DragPicked(double p1x, double p1y, double p0x, double p0y);
   std::vector<double> MinMaxXYZ() const;
+  void Check() const;
   void AddPolygon(const std::vector<double>& aXY);
+  void AddPointEdge(double x, double y, int ie_add);
   void Meshing(std::vector<double>& aXY,
                std::vector<int>& aTri,
                double len) const;
@@ -82,6 +80,7 @@ public:
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
   int ivtx_picked;
+  int iedge_picked;
   
   bool is_draw_face;
 };

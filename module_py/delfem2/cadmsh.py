@@ -16,10 +16,10 @@ from .libdelfem2 import \
   meshquad3d_subdiv, \
   meshhex3d_voxelgrid, \
   meshhex3d_subdiv
-from .libdelfem2 import draw_mesh_facenorm, draw_mesh_edge, meshtri3d_read_ply, mvc, meshtri3d_read_obj
+from .libdelfem2 import draw_mesh_facenorm, draw_mesh_edge
+from .libdelfem2 import meshtri3d_read_ply, mvc, meshtri3d_read_obj, meshdyntri2d_initialize
 from .libdelfem2 import getMesh_cad, cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
 from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
-from .libdelfem2 import meshdyntri2d_initialize
 from .libdelfem2 import CppVoxelGrid
 
 ####################
@@ -184,13 +184,23 @@ class Cad2D():
     self.cad.draw()
 
   def mouse(self,btn,action,mods,src,dir,view_height):
-    self.cad.mouse(btn,action,mods,src,dir,view_height)
+    if btn == 0:
+      if action == 1:
+        self.cad.pick(src[0],src[1],view_height)
+      elif action == 0:
+        self.cad.ivtx_picked = -1
 
   def motion(self,src0,src1,dir):
-    self.cad.motion(src0,src1,dir)
+    self.cad.motion(src1[0],src1[1], src0[0],src0[1])
+
+  def pick(self, x, y, view_height):
+    self.cad.pick(x,y,view_height)
 
   def add_polygon(self,list_xy):
     self.cad.add_polygon(list_xy)
+
+  def add_point_edge(self, x, y, iedge):
+    self.cad.add_point_edge(x,y,iedge)
 
   def mesh(self,edge_len=0.05) -> Mesh:
     return mesh_cad(self.cad, edge_len)

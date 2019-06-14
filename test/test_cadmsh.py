@@ -7,6 +7,8 @@ class Test_Cad2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
+    cad.cad.check()
+    cad.add_point_edge(0.0,0.0, 0)
 
   def test2(self):
     cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
