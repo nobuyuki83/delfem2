@@ -89,6 +89,7 @@ void CCad2D::Mouse(int btn, int action, int mods,
       double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
       if( dist < view_height*0.05 ){
         this->ivtx_picked = ivtx;
+//        std::cout << "picked" << this->ivtx_picked << std::endl;
         return;
       }
     }

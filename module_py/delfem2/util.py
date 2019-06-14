@@ -1,5 +1,12 @@
+####################################################################
+# Copyright (c) 2019 Nobuyuki Umetani                              #
+#                                                                  #
+# This source code is licensed under the MIT license found in the  #
+# LICENSE file in the root directory of this source tree.          #
+####################################################################
+
 import math, numpy
-from OpenGL.GL import *
+import OpenGL.GL as gl
 
 def rot_matrix_cartesian(vec):
   sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]
@@ -254,12 +261,11 @@ def minMaxLoc(aP:list,e:list):
   return [min0,max0]
 
 
-def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
+def motion_rot(scrnx1, scrny1, scrnx0, scrny0, quat, trans):
   assert len(trans) == 2
   assert len(quat) == 4
-  mov_end_x,mov_end_y = mouse_screen_pos(x,y,win_w,win_h)  
-  dx = mov_end_x - mouse_x
-  dy = mov_end_y - mouse_y
+  dx = scrnx1 - scrnx0
+  dy = scrny1 - scrny0
   a = math.sqrt(dx * dx + dy * dy)
   if a > 1.0e-3:
     dq = [math.cos(a*0.5), -dy * math.sin(a*0.5) / a, dx * math.sin(a*0.5) / a, 0.0]
@@ -267,25 +273,20 @@ def motion_rot(x, y, mouse_x, mouse_y, quat, trans, view_height,win_w,win_h):
     dq = [1,-dy,dx,0.0]
   if a != 0.0:
     quat = QuatMult(dq, quat)
-  mouse_x = mov_end_x
-  mouse_y = mov_end_y
-  return mouse_x, mouse_y, quat, trans
+  return quat, trans
 
 
-def motion_trans(x, y, 
-  mouse_x, mouse_y, 
-  quat, trans, view_height, win_w,win_h, 
+def motion_trans(scrnx1, scrny1,
+  scrnx0, scrny0,
+  quat, trans, view_height,
   scale:float):
   assert len(trans) == 2
   assert len(quat) == 4
-  mov_end_x,mov_end_y = mouse_screen_pos(x,y,win_w,win_h)
-  dx = mov_end_x - mouse_x
-  dy = mov_end_y - mouse_y
+  dx = scrnx1 - scrnx0
+  dy = scrny1 - scrny0
   trans[0] += dx * view_height * 0.5 / scale
   trans[1] += dy * view_height * 0.5 / scale
-  mouse_x = mov_end_x
-  mouse_y = mov_end_y
-  return mouse_x, mouse_y, quat, trans  
+  return quat, trans
 
 
 def mouse_screen_pos(x, y, win_w,win_h):
@@ -303,8 +304,6 @@ def solve_GlAffineMatrix(m:numpy.ndarray,
 def solve_GlAffineMatrixDirection(m:numpy.ndarray,
                                   v:numpy.ndarray):
   M = numpy.transpose(m[:3,:3]) # not sure this transpose is necessary
-#  print("m",m)
-#  print("M",M)
   return numpy.dot(numpy.linalg.inv(M),v)
 
 def screenUnProjection(v:numpy.ndarray,
@@ -320,13 +319,8 @@ def screenUnProjection(v:numpy.ndarray,
 def screenUnProjectionDirection(v:numpy.ndarray,
                                 mMV:numpy.ndarray,
                                 mPj:numpy.ndarray):
-#  print("v",v)
-#  print("projection")
   v0 = solve_GlAffineMatrixDirection(mPj, v)
-#  print("v0",v0)
-#  print("modelview")
   v1 = solve_GlAffineMatrixDirection(mMV, v0)
-#  print(v1)
   v1 = v1/numpy.linalg.norm(v1)
   return v1
 

@@ -1,3 +1,11 @@
+####################################################################
+# Copyright (c) 2019 Nobuyuki Umetani                              #
+#                                                                  #
+# This source code is licensed under the MIT license found in the  #
+# LICENSE file in the root directory of this source tree.          #
+####################################################################
+
+
 from OpenGL.GL import *
 import glfw
 
@@ -7,16 +15,16 @@ import delfem2 as dfm2
 import delfem2.glfw
 
 msh = None
-wmngr_glfw = None
+nav = None
 
 def mouseButtonCB(win_glfw,btn,action,mods):
-  wmngr_glfw.mouse(win_glfw,btn,action,mods)
+  nav.mouse(win_glfw, btn, action, mods)
 
 def mouseMoveCB(win_glfw,x,y):
-  wmngr_glfw.motion(win_glfw,x,y)
+  nav.motion(win_glfw, x, y)
 
 def keyFunCB(win_glfw,key,scancode,action,mods):
-  wmngr_glfw.keyinput(win_glfw,key,scancode,action,mods)
+  nav.keyinput(win_glfw, key, scancode, action, mods)
 
 def render():
   glColor3d(1, 0, 0)
@@ -24,12 +32,12 @@ def render():
   msh.draw()
 
 def main():
-  global msh, wmngr_glfw
+  global msh, nav
   msh = dfm2.Mesh()
   msh.read("../test_inputs/bunny_2k.ply")
   msh.scale_xyz(0.02)
 
-  wmngr_glfw = dfm2.glfw.WindowManagerGLFW(1.0)
+  nav = dfm2.glfw.NavigationGLFW(1.0)
 
   glfw.init()
   win_glfw = glfw.create_window(640, 480, 'Hello World', None, None)
@@ -45,11 +53,11 @@ def main():
   while not glfw.window_should_close(win_glfw):
     glClearColor(1, 1, 1, 1)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    wmngr_glfw.camera.set_gl_camera()
+    nav.camera.set_gl_camera()
     render()
     glfw.swap_buffers(win_glfw)
     glfw.poll_events()
-    if wmngr_glfw.isClose:
+    if nav.isClose:
       break
   glfw.destroy_window(win_glfw)
   glfw.terminate()

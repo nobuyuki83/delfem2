@@ -1,11 +1,18 @@
+####################################################################
+# Copyright (c) 2019 Nobuyuki Umetani                              #
+#                                                                  #
+# This source code is licensed under the MIT license found in the  #
+# LICENSE file in the root directory of this source tree.          #
+####################################################################
+
 import OpenGL.GL as gl
 import numpy
 import glfw
 
 from .gl import Camera, screenUnProjection, screenUnProjectionDirection
-from .libdelfem2 import AABB3, setSomeLighting
+from .libdelfem2 import AABB3, setSomeLighting, FrameBufferManager, glew_init
 
-class WindowManagerGLFW:
+class NavigationGLFW:
   def __init__(self,view_height):
     self.camera = Camera(view_height)
     self.modifier = 0
@@ -38,14 +45,14 @@ class WindowManagerGLFW:
   def motion(self,win_glfw, x, y):
     (win_w, win_h) = glfw.get_window_size(win_glfw)
     self.mouse_pre_x,self.mouse_pre_y = self.mouse_x, self.mouse_y
-    if self.button == glfw.MOUSE_BUTTON_LEFT:
-      if self.modifier == glfw.MOD_ALT:  # shift
-        self.mouse_x, self.mouse_y = self.camera.rotation(x, y, self.mouse_x, self.mouse_y, win_w, win_h)
-      if self.modifier == glfw.MOD_SHIFT:
-        self.mouse_x, self.mouse_y = self.camera.translation(x, y, self.mouse_x, self.mouse_y, win_w, win_h)
     (x, y) = glfw.get_cursor_pos(win_glfw)
     self.mouse_x = (2.0 * x - win_w) / win_w
     self.mouse_y = (win_h - 2.0 * y) / win_h
+    if self.button == glfw.MOUSE_BUTTON_LEFT:
+      if self.modifier == glfw.MOD_ALT:  # shift
+        self.camera.rotation(self.mouse_x, self.mouse_y, self.mouse_pre_x, self.mouse_pre_y)
+      if self.modifier == glfw.MOD_SHIFT:
+        self.camera.translation(self.mouse_x, self.mouse_y, self.mouse_pre_x, self.mouse_pre_y)
 
 
 
@@ -61,7 +68,7 @@ class WindowGLFW:
     self.win = glfw.create_window(winsize[0], winsize[1], '3D Window', None, None)
     glfw.make_context_current(self.win)
     ###
-    self.wm = WindowManagerGLFW(view_height)
+    self.wm = NavigationGLFW(view_height)
     self.list_func_mouse = []
     self.list_func_motion = []
     self.list_func_step_time = []
@@ -101,7 +108,7 @@ class WindowGLFW:
     self.wm.mouse(win0,btn,action,mods)
     mMV = gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX)
     mPj = gl.glGetFloatv(gl.GL_PROJECTION_MATRIX)
-    src = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
+    src = screenUnProjection((float(self.wm.mouse_x),float(self.wm.mouse_y),0.0),
                              mMV, mPj)
     dir = screenUnProjectionDirection((0,0,1), mMV,mPj)
     for func_mouse in self.list_func_mouse:
@@ -202,19 +209,19 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
   #### initialize opengl
   setSomeLighting()
-  glEnable(GL_POLYGON_OFFSET_FILL )
-  glPolygonOffset( 1.1, 4.0 )
+  gl.glEnable(gl.GL_POLYGON_OFFSET_FILL )
+  gl.glPolygonOffset( 1.1, 4.0 )
   #### draw
-  glClearColor(1, 1, 1, 1)
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+  gl.glClearColor(1, 1, 1, 1)
+  gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
   window.wm.camera.set_gl_camera()
   for obj in list_obj:
     obj.draw()
-  glFlush()
+  gl.glFlush()
   #### read pixel to img
-  glPixelStorei(GL_PACK_ALIGNMENT, 1)
-  (buff_w,buff_h) = glGetIntegerv(GL_VIEWPORT)[2:]
-  bytes_img = glReadPixels(0, 0, buff_w, buff_h, GL_RGB, GL_UNSIGNED_BYTE)
+  gl.glPixelStorei(gl.GL_PACK_ALIGNMENT, 1)
+  (buff_w,buff_h) = gl.glGetIntegerv(gl.GL_VIEWPORT)[2:]
+  bytes_img = gl.glReadPixels(0, 0, buff_w, buff_h, gl.GL_RGB, gl.GL_UNSIGNED_BYTE)
   img = numpy.frombuffer(bytes_img, dtype=numpy.uint8)
   #### terminate window
   glfw.destroy_window(window.win)
