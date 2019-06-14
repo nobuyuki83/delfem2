@@ -5,30 +5,19 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import sys
-import PyQt5
-from PyQt5.QtWidgets import QApplication, QWidget
 
-
-class MyWindow(QWidget): 
-  def __init__(self):
-    super().__init__()
-    self.title = 'simple'
-    self.width = 500
-    self.height = 400
-    self.initUI()
-
-  def initUI(self):
-    self.setWindowTitle(self.title)
-    self.setGeometry(0, 0, self.width, self.height)
-    self.show()
-
+import sys, cv2
+sys.path.append("../module_py")
+import delfem2 as dfm2
+import delfem2.glfw
 
 def main():
-  app = QApplication(sys.argv)
-  gui = MyWindow()
-  sys.exit(app.exec_())
-
+  path_img = "../test_inputs/lenna.png"
+  np_img = cv2.imread(path_img)
+  axis = dfm2.AxisXYZ(100)
+  tex = dfm2.get_texture(np_img)
+  dfm2.glfw.winDraw3d([axis,tex],winsize=(400,300),
+                      camera_eye_up=[0,0,+1, 0,-1,0])
 
 if __name__ == "__main__":
   main()

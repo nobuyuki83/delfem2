@@ -5,30 +5,16 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
+
 import sys
-import PyQt5
-from PyQt5.QtWidgets import QApplication, QWidget
-
-
-class MyWindow(QWidget): 
-  def __init__(self):
-    super().__init__()
-    self.title = 'simple'
-    self.width = 500
-    self.height = 400
-    self.initUI()
-
-  def initUI(self):
-    self.setWindowTitle(self.title)
-    self.setGeometry(0, 0, self.width, self.height)
-    self.show()
-
+sys.path.append("../module_py")
+import delfem2 as dfm2
+import delfem2.glfw
 
 def main():
-  app = QApplication(sys.argv)
-  gui = MyWindow()
-  sys.exit(app.exec_())
-
+  cad = dfm2.Cad2D()
+  cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
+  dfm2.glfw.winDraw3d([cad])
 
 if __name__ == "__main__":
   main()

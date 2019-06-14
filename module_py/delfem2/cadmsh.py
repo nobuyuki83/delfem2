@@ -1,3 +1,11 @@
+####################################################################
+# Copyright (c) 2019 Nobuyuki Umetani                              #
+#                                                                  #
+# This source code is licensed under the MIT license found in the  #
+# LICENSE file in the root directory of this source tree.          #
+####################################################################
+
+
 import numpy, os
 import OpenGL.GL as gl
 from .libdelfem2 import CppCad2D
@@ -164,7 +172,6 @@ class Grid3D:
     return Mesh(np_pos, np_elm, HEX)
 
 
-
 ####################
 
 class Cad2D():
@@ -202,6 +209,7 @@ class Cad2D():
     assert W.shape[1] == np_xy_bound.shape[0]
     return W
 
+######################
 
 class CadMesh2D():
   def __init__(self,cad,edge_length:float):

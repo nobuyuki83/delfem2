@@ -1,3 +1,11 @@
+####################################################################
+# Copyright (c) 2019 Nobuyuki Umetani                              #
+#                                                                  #
+# This source code is licensed under the MIT license found in the  #
+# LICENSE file in the root directory of this source tree.          #
+####################################################################
+
+
 import math, numpy
 import OpenGL.GL as gl
 
@@ -107,18 +115,18 @@ class Camera:
     mat = [vx,vy,vz]
     self.quat = get_quaternion_rot_matrix(mat)
 
-  def rotation(self,x,y,sx,sy,win_w,win_h):
-    sx0, sy0, self.quat, self.trans = motion_rot(
-      x, y, sx, sy, self.quat,self.scr_trans,self.view_height,
-      win_w,win_h)
-    return sx0,sy0
+  def rotation(self,sx1,sy1,sx0,sy0):
+    self.quat, self.trans = motion_rot(
+      sx1, sy1, sx0, sy0,
+      self.quat, self.scr_trans)
+    return
 
-  def translation(self,x,y,sx,sy,win_w,win_h):
-    sx0, sy0, self.quat, self.trans = motion_trans(
-      x, y, sx, sy, self.quat,
+  def translation(self,sx1,sy1,sx0,sy0):
+    self.quat, self.trans = motion_trans(
+      sx1, sy1, sx0, sy0, self.quat,
       self.scr_trans, self.view_height,
-      win_w,win_h, self.scale)
-    return sx0,sy0
+      self.scale)
+    return
 
   def adjust_scale_trans(self, aPos):
     minmax_x = minMaxLoc(aPos, [1., 0., 0.])

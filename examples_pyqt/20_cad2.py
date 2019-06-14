@@ -7,8 +7,9 @@
 
 import sys
 
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget,
+from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
                              QWidget, QPushButton)
 
 import OpenGL.GL as gl
@@ -22,16 +23,15 @@ class Window(QWidget):
   def __init__(self):
     super(Window, self).__init__()
 
-    self.msh = dfm2.Mesh()
-    self.msh.read("../test_inputs/bunny_2k.ply");
-    self.msh.scale_xyz(0.03)
+    self.cad = dfm2.Cad2D()
+    self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
     self.glWidget = GLWidget()
-    self.glWidget.msh = self.msh
+    self.glWidget.cad = self.cad
 
     self.btn = QPushButton('Button', self)
 
-    mainLayout = QVBoxLayout()
+    mainLayout = QHBoxLayout()
     mainLayout.addWidget(self.glWidget)
     mainLayout.addWidget(self.btn)
     self.setLayout(mainLayout)
@@ -45,8 +45,8 @@ class Window(QWidget):
 class GLWidget(QOpenGLWidget):
   def __init__(self, parent=None):
     super(GLWidget, self).__init__(parent)
-    self.msh = None
-    self.nav = dfm2.pyqt.NavigationPyQt(view_height=1.0)
+    self.cad = None
+    self.nav = dfm2.pyqt.NavigationPyQt(view_height=2.0)
 
   def minimumSizeHint(self):
     return QSize(300, 300)
@@ -67,16 +67,34 @@ class GLWidget(QOpenGLWidget):
   def paintGL(self):
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
     self.nav.camera.set_gl_camera()
-    self.msh.draw()
+    self.cad.draw()
 
   def resizeGL(self, width, height):
     gl.glViewport(0,0,width,height)
 
   def mousePressEvent(self, event):
+    self.makeCurrent()
     self.nav.mouse(event, self.frameSize())
+    src,dir = self.nav.mouse_src_dir()
+    self.cad.mouse(self.nav.btn(), 1, 0,
+                   src, dir,
+                   self.nav.camera.view_height)
+    self.update()
+
+  def mouseReleaseEvent(self, event):
+    self.makeCurrent()
+    self.nav.mouse(event, self.frameSize())
+    src,dir = self.nav.mouse_src_dir()
+    self.cad.mouse(self.nav.btn(), 0, 0,
+                   src, dir,
+                   self.nav.camera.view_height)
+    self.update()
 
   def mouseMoveEvent(self, event):
+    self.makeCurrent()
     self.nav.motion(event, self.frameSize())
+    src0,src1,dir = self.nav.motion_src_dir()
+    self.cad.motion(src0,src1,dir)
     self.update()
 
 
