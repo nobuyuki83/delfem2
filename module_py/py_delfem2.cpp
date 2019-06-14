@@ -221,13 +221,18 @@ PYBIND11_MODULE(libdelfem2, m) {
   py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
   .def("draw",        &CCad2D::Draw)
-  .def("mouse",       &CCad2D::Mouse)
-  .def("motion",      &CCad2D::Motion)
+  .def("pick",        &CCad2D::Pick)
+  .def("motion",      &CCad2D::DragPicked)
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
   .def("add_polygon", &CCad2D::AddPolygon)
   .def("meshing",     &CCad2D::Meshing)
   .def("getVertexXY_face", &CCad2D::GetVertexXY_Face)
-  .def_readwrite("is_draw_face", &CCad2D::is_draw_face);
+  .def("add_point_edge",   &CCad2D::AddPointEdge)
+  .def("check",       &CCad2D::Check)
+  .def_readwrite("is_draw_face", &CCad2D::is_draw_face)
+  .def_readwrite("ivtx_picked",  &CCad2D::ivtx_picked)
+  .def_readwrite("iedge_picked",  &CCad2D::iedge_picked);
+  
 
   m.def("cad_getPointsEdge",
         &PyCad2D_GetPointsEdge,

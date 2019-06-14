@@ -47,10 +47,11 @@ void CCad2D::Draw() const
   }
   ::glEnd();
   /////
-  ::glColor3d(0,0,0);
   ::glLineWidth(3);
   ::glBegin(GL_LINES);
   for(unsigned int ie=0;ie<aEdge.size();++ie){
+    if( (int)ie == iedge_picked ){ ::glColor3d(1,1,0); }
+    else{ ::glColor3d(0,0,0); }
     int iv0 = topo.aEdge[ie].iv0;
     int iv1 = topo.aEdge[ie].iv1;
     ::glVertex3d( aVtx[iv0].pos.x, aVtx[iv0].pos.y, -0.1);
@@ -71,51 +72,63 @@ void CCad2D::Draw() const
   }
 }
 
-void CCad2D::Mouse(int btn, int action, int mods,
-                   const std::vector<double>& src,
-                   const std::vector<double>& dir,
-                   double view_height)
+void CCad2D::Pick(double x0, double y0,
+                  double view_height)
 {
-//  std::cout << "mouse called btn:" << btn << "   action:" << action << " mods:" << mods << std::endl;
-//  std::cout << src[0] << " " << src[1] << " " << src[2] << std::endl;
-//  std::cout << dir[0] << " " << dir[1] << " " << dir[2] << std::endl;
-  if( action == 1 ){ //press
-    const double x0 = src[0];
-    const double y0 = src[1];
-    this->ivtx_picked = -1;
-    for(unsigned int ivtx=0;ivtx<aVtx.size();++ivtx){
-      double x1 = aVtx[ivtx].pos.x;
-      double y1 = aVtx[ivtx].pos.y;
-      double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
-      if( dist < view_height*0.05 ){
-        this->ivtx_picked = ivtx;
-//        std::cout << "picked" << this->ivtx_picked << std::endl;
-        return;
-      }
+  this->ivtx_picked = -1;
+  this->iedge_picked = -1;
+  for(unsigned int ivtx=0;ivtx<aVtx.size();++ivtx){
+    double x1 = aVtx[ivtx].pos.x;
+    double y1 = aVtx[ivtx].pos.y;
+    double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
+    if( dist < view_height*0.05 ){
+      this->ivtx_picked = ivtx;
+      return;
     }
   }
-  else{
-    ivtx_picked = -1;
+  if( this->iedge_picked != -1 ){ return; }
+  for(unsigned int iedge=0;iedge<aEdge.size();++iedge){
+    double dist = aEdge[iedge].Distance(x0, y0);
+    if( dist < view_height*0.05 ){
+      this->iedge_picked = iedge;
+      return;
+    }
   }
 }
 
-void CCad2D::Motion(const std::vector<double>& src0,
-                    const std::vector<double>& src1,
-                    const std::vector<double>& dir)
+void CCad2D::Tessellation()
 {
-  if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
-    aVtx[ivtx_picked].pos.x = src1[0];
-    aVtx[ivtx_picked].pos.y = src1[1];
-  }
   for(unsigned int ie=0;ie<topo.aEdge.size();++ie){
-    const CCadTopo::CEdge& e = topo.aEdge[ie];
-    if( e.iv0 == ivtx_picked || e.iv1 == ivtx_picked ){
-      aEdge[ie].GenMesh(ie,topo,aVtx);
-    }
+    aEdge[ie].GenMesh(ie,topo,aVtx);
   }
   for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
     aFace[ifc].GenMesh(ifc, topo, aEdge);
   }
+}
+
+void CCad2D::DragPicked(double p1x, double p1y, double p0x, double p0y)
+{
+  if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
+    aVtx[ivtx_picked].pos.x = p1x;
+    aVtx[ivtx_picked].pos.y = p1y;
+    Tessellation();
+    return;
+  }
+  if( iedge_picked >= 0 && iedge_picked < (int)aEdge.size() ){
+    int iv0 = topo.aEdge[iedge_picked].iv0;
+    int iv1 = topo.aEdge[iedge_picked].iv1;
+    aVtx[iv0].pos.x += p1x-p0x;
+    aVtx[iv0].pos.y += p1y-p0y;
+    aVtx[iv1].pos.x += p1x-p0x;
+    aVtx[iv1].pos.y += p1y-p0y;
+    Tessellation();
+    return;
+  }
+}
+
+void CCad2D::Check() const
+{
+  this->topo.Check();
 }
 
 void CCad2D::AddPolygon(const std::vector<double>& aXY)
@@ -137,6 +150,17 @@ void CCad2D::AddPolygon(const std::vector<double>& aXY)
     aEdge[iedge0+ie].GenMesh(iedge0+ie,topo,aVtx);
   }
   aFace[iface0].GenMesh(iface0, topo, aEdge);
+}
+
+
+void CCad2D::AddPointEdge(double x, double y, int ie_add)
+{
+  if( ie_add < 0 || ie_add >= topo.aEdge.size() ){ return; }
+  topo.AddPoint_Edge(ie_add);
+  assert( topo.Check() );
+  aVtx.push_back( CCad2D_VtxGeo(CVector2(x,y)) );
+  aEdge.push_back( CCad2D_EdgeGeo() );
+  Tessellation();
 }
 
 std::vector<double> CCad2D::MinMaxXYZ() const

@@ -7,9 +7,8 @@
 
 import sys
 
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
+from PyQt5.QtCore import QSize
+from PyQt5.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget, QMenu,
                              QWidget, QPushButton)
 
 import OpenGL.GL as gl
@@ -31,7 +30,7 @@ class Window(QWidget):
 
     self.btn = QPushButton('Button', self)
 
-    mainLayout = QHBoxLayout()
+    mainLayout = QVBoxLayout()
     mainLayout.addWidget(self.glWidget)
     mainLayout.addWidget(self.btn)
     self.setLayout(mainLayout)
@@ -76,18 +75,11 @@ class GLWidget(QOpenGLWidget):
     self.makeCurrent()
     self.nav.mouse(event, self.frameSize())
     src,dir = self.nav.mouse_src_dir()
-    self.cad.mouse(self.nav.btn(), 1, 0,
-                   src, dir,
-                   self.nav.camera.view_height)
+    self.cad.cad.pick(src[0],src[1],self.nav.camera.view_height)
     self.update()
 
   def mouseReleaseEvent(self, event):
-    self.makeCurrent()
-    self.nav.mouse(event, self.frameSize())
-    src,dir = self.nav.mouse_src_dir()
-    self.cad.mouse(self.nav.btn(), 0, 0,
-                   src, dir,
-                   self.nav.camera.view_height)
+    self.cad.cad.ivtx_picked = -1
     self.update()
 
   def mouseMoveEvent(self, event):
@@ -96,6 +88,19 @@ class GLWidget(QOpenGLWidget):
     src0,src1,dir = self.nav.motion_src_dir()
     self.cad.motion(src0,src1,dir)
     self.update()
+
+  def contextMenuEvent(self, event):
+    src,dir = self.nav.mouse_src_dir()
+    ###
+    menu = QMenu(self)
+    actionAddPoint = None
+    if self.cad.cad.iedge_picked != -1:
+      actionAddPoint = menu.addAction("add point")
+    action = menu.exec_(self.mapToGlobal(event.pos()))
+    ####
+    if action == actionAddPoint != None:
+      self.cad.add_point_edge(src[0],src[1],self.cad.cad.iedge_picked)
+      self.update()
 
 
 if __name__ == '__main__':

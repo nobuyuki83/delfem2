@@ -94,7 +94,7 @@ void myGlutMotion( int x, int y ){
   const CVector3 src_pick1 = screenUnProjection(CVector3(sp1.x,sp1.y, 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   /////
-  cad.Motion(src_pick0.stlvec(), src_pick1.stlvec(), dir_pick.stlvec());
+  cad.DragPicked(src_pick1[0],src_pick1[1], src_pick0[0],src_pick0[1]);
   ////
   std::vector<double> aXY_bound = cad.GetVertexXY_Face(0);
   int npb = aXY_bound.size()/2;
@@ -119,16 +119,10 @@ void myGlutMouse(int button, int state, int x, int y)
   const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
-    cad.Mouse(0,1,0,
-               src_pick.stlvec(),
-               dir_pick.stlvec(),
-               view_height);
+    cad.Pick(src_pick[0],src_pick[1],view_height);
   }
   if( state == GLUT_UP ){
-    cad.Mouse(0,0,0,
-              src_pick.stlvec(),
-              dir_pick.stlvec(),
-              view_height);
+    cad.ivtx_picked = -1;
   }
 }
 
