@@ -1,9 +1,9 @@
-from OpenGL.GL import *
+import OpenGL.GL as gl
 import numpy
-
 import glfw
-from .gl import *
-from .libdelfem2 import *
+
+from .gl import Camera, screenUnProjection, screenUnProjectionDirection
+from .libdelfem2 import AABB3, setSomeLighting
 
 class WindowManagerGLFW:
   def __init__(self,view_height):
@@ -54,7 +54,7 @@ class WindowGLFW:
   class to manage the glfw window
   """
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
-    if glfw.init() == GL_FALSE:
+    if glfw.init() == gl.GL_FALSE:
       print("GLFW couldn't not initialize!")
     if not isVisible:
       glfw.window_hint(glfw.VISIBLE, False)
@@ -67,7 +67,7 @@ class WindowGLFW:
     self.list_func_step_time = []
     self.list_func_draw = []
     self.color_bg = (1,1,1)
-    glEnable(GL_DEPTH_TEST)
+    gl.glEnable(gl.GL_DEPTH_TEST)
 
   def draw_loop(self):
     """
@@ -80,8 +80,8 @@ class WindowGLFW:
     glfw.set_key_callback(self.win, self.keyinput)
     glfw.set_window_size_callback(self.win, self.window_size)
     while not glfw.window_should_close(self.win):
-      glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+      gl.glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
+      gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
       self.wm.camera.set_gl_camera()
       for func_step_time in self.list_func_step_time:
         func_step_time()
@@ -99,8 +99,8 @@ class WindowGLFW:
 
   def mouse(self, win0,btn,action,mods):
     self.wm.mouse(win0,btn,action,mods)
-    mMV = glGetFloatv(GL_MODELVIEW_MATRIX)
-    mPj = glGetFloatv(GL_PROJECTION_MATRIX)
+    mMV = gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX)
+    mPj = gl.glGetFloatv(gl.GL_PROJECTION_MATRIX)
     src = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
                              mMV, mPj)
     dir = screenUnProjectionDirection((0,0,1), mMV,mPj)
@@ -111,8 +111,8 @@ class WindowGLFW:
     if self.wm.button == -1:
       return
     self.wm.motion(win0,x,y)
-    mMV = glGetFloatv(GL_MODELVIEW_MATRIX)
-    mPj = glGetFloatv(GL_PROJECTION_MATRIX)
+    mMV = gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX)
+    mPj = gl.glGetFloatv(gl.GL_PROJECTION_MATRIX)
     src0 = screenUnProjection(numpy.array([float(self.wm.mouse_pre_x),float(self.wm.mouse_pre_y),0.0]),
                              mMV, mPj)
     src1 = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
@@ -137,7 +137,6 @@ def winDraw3d(list_obj:list,
               glsl_frg="",
               camera_eye_up=(+0.0,+0.0,-1.0, +0.0,+1.0,+0.0),
               camera_scale=1.0):
-
   """
   draw the input object into openGL window
 
@@ -179,9 +178,9 @@ def winDraw3d(list_obj:list,
     window.wm.camera.set_rotation(camera_eye_up)
   #### initalizing opengl
   setSomeLighting()
-  glEnable(GL_POLYGON_OFFSET_FILL )
-  glPolygonOffset( 1.1, 4.0 )
-  glUseProgram(id_shader_program)
+  gl.glEnable(gl.GL_POLYGON_OFFSET_FILL )
+  gl.glPolygonOffset( 1.1, 4.0 )
+  gl.glUseProgram(id_shader_program)
   #### enter loop
   window.draw_loop()
 

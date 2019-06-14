@@ -37,10 +37,10 @@ class WindowManagerGLUT:
 
   def mouse(self,button, state, x, y):
     viewport = glGetIntegerv(GL_VIEWPORT)
-    self.modifier = glutGetModifiers()
     (win_w,win_h) = viewport[2:4]
     self.mouse_x = (2.0 * x - win_w) / win_w
     self.mouse_y = (win_h - 2.0 * y) / win_h
+    self.modifier = glutGetModifiers()
     glutPostRedisplay()
 
   def motion(self,x, y):  
