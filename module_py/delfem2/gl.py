@@ -1,21 +1,39 @@
 import math, numpy
-from OpenGL.GL import *
-from .util import minMaxLoc, v3_scale, v3_normalize, v3_cross, get_quaternion_rot_matrix, affine_matrix_quaternion, screenUnProjection, screenUnProjectionDirection
+import OpenGL.GL as gl
+
+from .util import minMaxLoc, v3_scale, v3_normalize, v3_cross
+from .util import motion_rot, motion_trans
+from .util import get_quaternion_rot_matrix, affine_matrix_quaternion
+from .util import screenUnProjection, screenUnProjectionDirection
+
+def getOpenglInfo():
+  info = """
+    Vendor: {0}
+    Renderer: {1}
+    OpenGL Version: {2}
+    Shader Version: {3}
+  """.format(
+    gl.glGetString(gl.GL_VENDOR),
+    gl.glGetString(gl.GL_RENDERER),
+    gl.glGetString(gl.GL_VERSION),
+    gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION)
+  )
+  return info
 
 def draw_axis(size=1.0):
-  glBegin(GL_LINES)
-  glColor3d(1,0,0)
-  glVertex3d(0,0,0)
-  glVertex3d(size,0,0)
+  gl.glBegin(gl.GL_LINES)
+  gl.glColor3d(1,0,0)
+  gl.glVertex3d(0,0,0)
+  gl.glVertex3d(size,0,0)
   ####
-  glColor3d(0,1,0)
-  glVertex3d(0,0,0)
-  glVertex3d(0,size,0)
+  gl.glColor3d(0,1,0)
+  gl.glVertex3d(0,0,0)
+  gl.glVertex3d(0,size,0)
   ####
-  glColor3d(0,0,1)
-  glVertex3d(0,0,0)
-  glVertex3d(0,0,size)
-  glEnd()
+  gl.glColor3d(0,0,1)
+  gl.glVertex3d(0,0,0)
+  gl.glVertex3d(0,0,size)
+  gl.glEnd()
 
 def draw_pyramid(lenWh, lenHh, lenZ, Rot, trans):
   pos0 = [-lenWh,-lenHh,+lenZ]
@@ -57,28 +75,28 @@ class Camera:
     self.fovy = 60  # degree
 
   def set_gl_camera(self):
-    viewport = glGetIntegerv(GL_VIEWPORT)
+    viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
     win_w = viewport[2]
     win_h = viewport[3]
     depth = self.view_height / (self.scale * math.tan(0.5 * self.fovy * 3.1415 / 180.0))
     asp = float(win_w) / win_h
     ####
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    glOrtho(-self.view_height / self.scale * asp,
-            +self.view_height / self.scale * asp,
-            -self.view_height / self.scale,
-            +self.view_height / self.scale,
-            -depth * 10,
-            +depth * 10)
+    gl.glMatrixMode(gl.GL_PROJECTION)
+    gl.glLoadIdentity()
+    gl.glOrtho(-self.view_height / self.scale * asp,
+              +self.view_height / self.scale * asp,
+              -self.view_height / self.scale,
+              +self.view_height / self.scale,
+              -depth * 10,
+              +depth * 10)
 
     ####
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-    glTranslated(self.scr_trans[0], self.scr_trans[1], -depth)
+    gl.glMatrixMode(gl.GL_MODELVIEW)
+    gl.glLoadIdentity()
+    gl.glTranslated(self.scr_trans[0], self.scr_trans[1], -depth)
     Rview = affine_matrix_quaternion(self.quat)
-    glMultMatrixd(Rview)
-    glTranslated(self.pivot[0], self.pivot[1], self.pivot[2])
+    gl.glMultMatrixd(Rview)
+    gl.glTranslated(self.pivot[0], self.pivot[1], self.pivot[2])
 
   def set_rotation(self, camera_eye_up):
     vz = camera_eye_up[0:3]
@@ -106,7 +124,7 @@ class Camera:
     minmax_x = minMaxLoc(aPos, [1., 0., 0.])
     minmax_y = minMaxLoc(aPos, [0., 1., 0.])
     minmax_z = minMaxLoc(aPos, [0., 0., 1.])
-    (win_w,win_h) = glGetIntegerv(GL_VIEWPORT)[2:]
+    (win_w,win_h) = gl.glGetIntegerv(gl.GL_VIEWPORT)[2:]
     asp = float(win_w) / win_h
     vh1 = (minmax_x[1]-minmax_x[0])/asp
     vh0 = (minmax_y[1]-minmax_y[0])
