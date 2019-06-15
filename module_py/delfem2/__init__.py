@@ -1,4 +1,4 @@
-from .libdelfem2 import SDF_Sphere, AxisXYZ, AABB3, GPUSampler, CppMeshDynTri3D, MathExpressionEvaluator
+from .libdelfem2 import SDF_Sphere, AxisXYZ, AABB3, GPUSampler, CppMeshDynTri3D, MathExpressionEvaluator, CppCad2D
 from .libdelfem2 import meshdyntri3d_initialize, isosurface
 from .libdelfem2 import setSomeLighting
 from .libdelfem2 import RigidBody, Joint, RigidBodyAssembly_Static
@@ -19,4 +19,4 @@ from .fem import \
 from .cadmsh import Cad2D, Grid3D, SDF, Mesh, MeshDynTri2D, CadMesh2D, CppMeshDynTri2D
 from .cadmsh import TET, TRI, HEX, QUAD
 from .cadmsh import mesh_grid
-from .cadmsh import meshdyntri2d_initialize
+from .cadmsh import meshdyntri2d_initialize, WeightMVC_CadMesh

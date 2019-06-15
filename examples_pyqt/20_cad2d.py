@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import sys
+import sys, math
 
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget, QMenu,
@@ -26,7 +26,7 @@ class Window(QWidget):
     self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
     self.glWidget = GLWidget()
-    self.glWidget.cad = self.cad
+    self.glWidget.cadobj = self.cad
 
     self.btn = QPushButton('Button', self)
 
@@ -44,7 +44,7 @@ class Window(QWidget):
 class GLWidget(QOpenGLWidget):
   def __init__(self, parent=None):
     super(GLWidget, self).__init__(parent)
-    self.cad = None
+    self.cadobj = None
     self.nav = dfm2.pyqt.NavigationPyQt(view_height=2.0)
 
   def minimumSizeHint(self):
@@ -66,7 +66,7 @@ class GLWidget(QOpenGLWidget):
   def paintGL(self):
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
     self.nav.camera.set_gl_camera()
-    self.cad.draw()
+    self.cadobj.draw()
 
   def resizeGL(self, width, height):
     gl.glViewport(0,0,width,height)
@@ -75,18 +75,18 @@ class GLWidget(QOpenGLWidget):
     self.makeCurrent()
     self.nav.mouse(event, self.frameSize())
     src,dir = self.nav.mouse_src_dir()
-    self.cad.cad.pick(src[0],src[1],self.nav.camera.view_height)
+    self.cadobj.pick(src[0], src[1], self.nav.camera.view_height)
     self.update()
 
   def mouseReleaseEvent(self, event):
-    self.cad.cad.ivtx_picked = -1
+    self.cadobj.ivtx_picked()
     self.update()
 
   def mouseMoveEvent(self, event):
     self.makeCurrent()
     self.nav.motion(event, self.frameSize())
     src0,src1,dir = self.nav.motion_src_dir()
-    self.cad.motion(src0,src1,dir)
+    self.cadobj.motion(src0, src1, dir)
     self.update()
 
   def contextMenuEvent(self, event):
@@ -94,14 +94,18 @@ class GLWidget(QOpenGLWidget):
     ###
     menu = QMenu(self)
     actionAddPoint = None
-    if self.cad.cad.iedge_picked != -1:
+    if self.cadobj.iedge_picked() != -1:
       actionAddPoint = menu.addAction("add point")
     action = menu.exec_(self.mapToGlobal(event.pos()))
     ####
     if action == actionAddPoint != None:
-      self.cad.add_point_edge(src[0],src[1],self.cad.cad.iedge_picked)
+      self.cadobj.add_point_edge(src[0], src[1], self.cadobj.ccad.iedge_picked)
       self.update()
 
+  def wheelEvent(self,event):
+    v = 0.1*(event.angleDelta().y()/120.0)
+    self.nav.camera.scale *= math.exp(v)
+    self.update()
 
 if __name__ == '__main__':
   app = QApplication(sys.argv)

@@ -222,7 +222,7 @@ PYBIND11_MODULE(libdelfem2, m) {
   .def(py::init<>())
   .def("draw",        &CCad2D::Draw)
   .def("pick",        &CCad2D::Pick)
-  .def("motion",      &CCad2D::DragPicked)
+  .def("drag_picked", &CCad2D::DragPicked)
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
   .def("add_polygon", &CCad2D::AddPolygon)
   .def("meshing",     &CCad2D::Meshing)

@@ -249,7 +249,8 @@ std::vector<double> CCad2D::GetVertexXY_Face
 {
   std::vector<double> aXY;
   std::vector<int> aIdV = topo.aFace[iface].GetArray_IdVertex(topo.aEdge);
-  for(unsigned int iv=0;iv<aIdV.size();++iv){
+  for(unsigned int iiv=0;iiv<aIdV.size();++iiv){
+    const int iv = aIdV[iiv];
     aXY.push_back( aVtx[iv].pos.x );
     aXY.push_back( aVtx[iv].pos.y );
   }
