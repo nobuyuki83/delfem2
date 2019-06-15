@@ -7,7 +7,7 @@ class Test_Cad2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
-    cad.cad.check()
+    cad.ccad.check()
     cad.add_point_edge(0.0,0.0, 0)
 
   def test2(self):
@@ -17,10 +17,10 @@ class Test_Cad2D(unittest.TestCase):
     cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
     msh = cad.mesh(0.02)
     self.assertEqual(msh.np_pos.shape[1],2)
-    W = cad.mvc(msh)
+    W = dfm2.WeightMVC_CadMesh(cad.ccad, msh)
     self.assertEqual(W.ndim,2)
     self.assertEqual(W.shape[0],msh.np_pos.shape[0])
-    self.assertEqual(W.shape[1],cad.getVertexXY_face(0).shape[0])
+    self.assertEqual(W.shape[1],len(cad.ccad.getVertexXY_face(0))/2)
     self.assertLess(numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0]))),1.0e-3)
 
 

@@ -174,81 +174,105 @@ class Grid3D:
 
 ####################
 
+
+
 class Cad2D():
   def __init__(self,list_xy=None):
-    self.cad = CppCad2D()
+    self.ccad = CppCad2D()
     if not list_xy is None:
-      self.cad.add_polygon(list_xy)
+      self.ccad.add_polygon(list_xy)
 
   def draw(self):
-    self.cad.draw()
+    self.ccad.draw()
 
   def mouse(self,btn,action,mods,src,dir,view_height):
     if btn == 0:
       if action == 1:
-        self.cad.pick(src[0],src[1],view_height)
+        self.ccad.pick(src[0],src[1],view_height)
       elif action == 0:
-        self.cad.ivtx_picked = -1
+        self.ccad.ivtx_picked = -1
 
   def motion(self,src0,src1,dir):
-    self.cad.motion(src1[0],src1[1], src0[0],src0[1])
+    self.ccad.drag_picked(src1[0],src1[1], src0[0],src0[1])
 
   def pick(self, x, y, view_height):
-    self.cad.pick(x,y,view_height)
+    self.ccad.pick(x,y,view_height)
 
   def add_polygon(self,list_xy):
-    self.cad.add_polygon(list_xy)
+    self.ccad.add_polygon(list_xy)
 
   def add_point_edge(self, x, y, iedge):
-    self.cad.add_point_edge(x,y,iedge)
+    self.ccad.add_point_edge(x,y,iedge)
 
   def mesh(self,edge_len=0.05) -> Mesh:
-    return mesh_cad(self.cad, edge_len)
+    return mesh_cad(self.ccad, edge_len)
+
+  def iedge_picked(self): return self.ccad.iedge_picked
+  def ivtx_picked(self): return self.ccad.ivtx_picked
 
   def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
-    return cad_getPointsEdge(self.cad,list_edge_index, np_xy, tolerance=tolerance)
-
-  def getVertexXY_face(self,iface:int):
-    list_xy_bound = self.cad.getVertexXY_face(0)
-    return numpy.array(list_xy_bound).reshape([-1,2])
-
-  def mvc(self,msh:Mesh):
-    np_xy_bound = self.getVertexXY_face(0)
-    W = mvc(msh.np_pos, np_xy_bound)
-    assert W.shape[0] == msh.np_pos.shape[0]
-    assert W.shape[1] == np_xy_bound.shape[0]
-    return W
+    return cad_getPointsEdge(self.ccad,list_edge_index, np_xy, tolerance=tolerance)
 
 ######################
 
+def WeightMVC_CadMesh(ccad, msh):
+  list_xy_bound = ccad.getVertexXY_face(0)
+  np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
+  W = mvc(msh.np_pos, np_xy_bound)
+  assert W.shape[0] == msh.np_pos.shape[0]
+  assert W.shape[1] == np_xy_bound.shape[0]
+  return W
+
 class CadMesh2D():
-  def __init__(self,cad,edge_length:float):
-    self.cad = cad
-    self.cad.cad.is_draw_face = False
+  def __init__(self,ccad:CppCad2D,edge_length:float):
+    self.ccad = ccad
+    self.ccad.is_draw_face = False
     self.edge_length = edge_length
-    self.msh = cad.mesh(edge_len=self.edge_length)
-    self.W = self.cad.mvc(self.msh)
+    self.msh = mesh_cad(self.ccad, self.edge_length)
+    self.W = WeightMVC_CadMesh(self.ccad, self.msh)
 
   def draw(self):
-    self.cad.draw()
+    self.ccad.draw()
     self.msh.draw()
 
   def mouse(self,btn,action,mods,src,dir,view_height):
     self.cad.mouse(btn,action,mods,src,dir,view_height)
 
   def motion(self,src0,src1,dir):
-    self.cad.motion(src0,src1,dir)
-    np_xy_bound = self.cad.getVertexXY_face(0)
+    self.drag_picked(src1[0],src1[1], src0[0],src0[1])
+
+  def pick(self, x, y, view_height):
+    self.ccad.pick(x,y,view_height)
+
+  def drag_picked(self, s1x,s1y, s0x,s0y):
+    self.ccad.drag_picked(s1x,s1y, s0x,s0y)
+    list_xy_bound = self.ccad.getVertexXY_face(0)
+    np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
     self.msh.np_pos = numpy.dot(self.W,np_xy_bound)
     max_asp,min_area = quality_meshTri2D(self.msh.np_pos,self.msh.np_elm)
     if max_asp > 5.0 or min_area < 0.0:
       self.remesh()
 
+  def iedge_picked(self):
+    return self.ccad.iedge_picked
+
+  def ivtx_picked(self):
+    return self.ccad.ivtx_picked
+
+  def clean_picked(self):
+    self.ccad.ivtx_picked = -1
+    self.ccad.iedge_picked = -1
+
   def remesh(self):
-    msh1 = self.cad.mesh(edge_len=self.edge_length)
+    msh1 = mesh_cad(self.ccad, self.edge_length)
     self.msh.np_pos = msh1.np_pos
     self.msh.np_elm = msh1.np_elm
-    self.W = self.cad.mvc(self.msh)
+    self.W = WeightMVC_CadMesh(self.ccad, self.msh)
+
+  def add_point_edge(self, x, y, iedge):
+    self.ccad.add_point_edge(x,y,iedge)
+    self.ccad.check()
+    self.remesh()
 
 
 #####################################################
