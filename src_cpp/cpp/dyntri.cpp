@@ -557,7 +557,7 @@ bool FindEdge_LookAllTriangles
  const int ipo0, const int ipo1,
  const std::vector<ETri>& aTri)
 {
-  for(int itri=0;itri<aTri.size();++itri){
+  for(unsigned int itri=0;itri<aTri.size();++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
       int jpo0 = aTri[itri].v[(iedtri+0)%3];
       int jpo1 = aTri[itri].v[(iedtri+1)%3];
@@ -982,8 +982,8 @@ bool Collapse_ElemEdge
       assert(tri.r2[ino0_4]>=0&&tri.r2[ino0_4] < 3);
       aTri[itri5].s2[ino0_5] = itri4;
       aTri[itri5].r2[ino0_5] = invRelTriTri[tri.r2[ino0_4]];
-      assert(relTriTri[(int)aTri[itri4].r2[ino0_4]][ino0_4]==ino0_5);
-      assert(relTriTri[(int)aTri[itri5].r2[ino0_5]][ino0_5]==ino0_4);
+      assert((int)relTriTri[(int)aTri[itri4].r2[ino0_4]][ino0_4]==ino0_5);
+      assert((int)relTriTri[(int)aTri[itri5].r2[ino0_5]][ino0_5]==ino0_4);
     }
   }
   
@@ -999,8 +999,8 @@ bool Collapse_ElemEdge
       assert(tri.r2[ino0_5]>=0&&tri.r2[ino0_5] < 3);
       aTri[itri4].s2[ino0_4] = itri5;
       aTri[itri4].r2[ino0_4] = invRelTriTri[tri.r2[ino0_5]];
-      assert(relTriTri[aTri[itri5].r2[ino0_5]][ino0_5]==ino0_4);
-      assert(relTriTri[aTri[itri4].r2[ino0_4]][ino0_4]==ino0_5);
+      assert((int)relTriTri[aTri[itri5].r2[ino0_5]][ino0_5]==ino0_4);
+      assert((int)relTriTri[aTri[itri4].r2[ino0_4]][ino0_4]==ino0_5);
     }
   }
   
@@ -1048,14 +1048,14 @@ void GetTriArrayAroundPoint
 {
   const int itri_ini = aPo[ipoin].e;
   const int inoel_c_ini = aPo[ipoin].d;
-  assert(itri_ini < aTri.size());
+  assert(itri_ini < (int)aTri.size());
   assert(inoel_c_ini < 3);
   assert(aTri[itri_ini].v[inoel_c_ini]==ipoin);
   int itri0 = itri_ini;
   int inoel_c0 = inoel_c_ini;
   int inoel_b0 = (inoel_c0+1)%3;
   for (;;){
-    assert(itri0 < aTri.size());
+    assert(itri0 < (int)aTri.size());
     assert(inoel_c0 < 3);
     assert(aTri[itri0].v[inoel_c0]==ipoin);
     aTriSurPo.push_back(std::make_pair(itri0, inoel_c0));
@@ -1066,7 +1066,7 @@ void GetTriArrayAroundPoint
     const int rel01 = aTri[itri0].r2[inoel_b0];
     const int inoel_c1 = relTriTri[rel01][inoel_c0];
     const int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
-    assert(itri1 < aTri.size());
+    assert(itri1 < (int)aTri.size());
     assert(aTri[itri1].s2[relTriTri[rel01][inoel_b0]]==(int)itri0);
     assert(aTri[itri1].v[inoel_c1]==ipoin);
     if (itri1==itri_ini) return;

@@ -12,8 +12,9 @@ import delfem2 as dfm2
 import delfem2.glfw
 
 def example1():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = cad.mesh(0.05)
+  cad = dfm2.Cad2D()
+  cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
+  mesh,map_cad2mesh = cad.mesh(0.05)
   fem = dfm2.FEM_Cloth(mesh)
   npIdP = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP,0:3] = 1

@@ -133,9 +133,9 @@ def pbd1(cad,mesh):
 
 
 def main():
-
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-  mesh = cad.mesh(0.05)
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
+  mesh,map_cad2mesh = cad.mesh(0.05)
 #  dfm2.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)
@@ -146,12 +146,14 @@ def main():
   navir_storks(cad,mesh)
   cloth(cad,mesh)
 
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
-  mesh = cad.mesh(0.05)
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
+  mesh,map_cad2mesh = cad.mesh(0.05)
   poisson_ms(cad, mesh)
 
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = cad.mesh(0.2)
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
+  mesh,map_cad2mesh = cad.mesh(0.2)
   pbd1(cad,mesh)
 
 

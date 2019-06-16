@@ -305,55 +305,52 @@ void MeshingInside
 (std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri,
  std::vector<CVector2>& aVec2,
- const std::vector<int>& aVtxInd,
+ std::vector<int>& aFlagPnt,
+ std::vector<int>& aFlagTri,
+ const int nPointFix,
+ const int nflgpnt_offset,
  const double len,
  const CInputTriangulation& mesh_density)
 {
   assert( aVec2.size() == aPo2D.size() );
-  std::vector<int> aflag_isnt_move;
-  {
-    aflag_isnt_move.resize( aPo2D.size(), 0 );
-    for(unsigned int iver=0;iver<aVtxInd.size();iver++){
-      const int ivec = aVtxInd[iver];
-      aflag_isnt_move[ivec] = 1;
+  assert( aFlagPnt.size() == aPo2D.size() );
+  assert( aFlagTri.size() == aTri.size() );
+
+  double ratio = 3.0;
+  for(;;){
+    int nadd = 0;
+    for(int itri=0;itri<(int)aTri.size();itri++){
+      const double area = TriArea(aVec2[aTri[itri].v[0]],
+                                  aVec2[aTri[itri].v[1]],
+                                  aVec2[aTri[itri].v[2]]);
+      const double pcnt[2] = {
+        (aVec2[aTri[itri].v[0]].x + aVec2[aTri[itri].v[1]].x + aVec2[aTri[itri].v[2]].x)/3.0,
+        (aVec2[aTri[itri].v[0]].y + aVec2[aTri[itri].v[1]].y + aVec2[aTri[itri].v[2]].y)/3.0
+      };
+      double len2 = len*mesh_density.edgeLengthRatio(pcnt[0], pcnt[1]);
+      if( area < len2 * len2 * ratio ){ continue; }
+      const int ipo0 = (int)aPo2D.size();
+      aPo2D.resize( aPo2D.size()+1 );
+      aVec2.resize( aVec2.size()+1 );
+      aVec2[ipo0].x = (aVec2[aTri[itri].v[0]].x+aVec2[aTri[itri].v[1]].x+aVec2[aTri[itri].v[2]].x)/3.0;
+      aVec2[ipo0].y = (aVec2[aTri[itri].v[0]].y+aVec2[aTri[itri].v[1]].y+aVec2[aTri[itri].v[2]].y)/3.0;
+      InsertPoint_Elem(ipo0,itri,aPo2D,aTri);
+      const int iflgtri = aFlagTri[itri];
+      aFlagTri.push_back( iflgtri );
+      aFlagTri.push_back( iflgtri );
+      aFlagPnt.push_back( iflgtri+nflgpnt_offset );
+      DelaunayAroundPoint(ipo0,aPo2D,aTri,aVec2);
+      nadd++;
     }
-  }
-  
-  {
-    double ratio = 3.0;
-    for(;;){
-      int nadd = 0;
-      for(int itri=0;itri<(int)aTri.size();itri++){
-        const double area = TriArea(aVec2[aTri[itri].v[0]],
-                                    aVec2[aTri[itri].v[1]],
-                                    aVec2[aTri[itri].v[2]]);
-        const double pcnt[2] = {
-          (aVec2[aTri[itri].v[0]].x + aVec2[aTri[itri].v[1]].x + aVec2[aTri[itri].v[2]].x)/3.0,
-          (aVec2[aTri[itri].v[0]].y + aVec2[aTri[itri].v[1]].y + aVec2[aTri[itri].v[2]].y)/3.0
-        };
-        double len2 = len*mesh_density.edgeLengthRatio(pcnt[0], pcnt[1]);
-        if( area > len2 * len2 * ratio ){
-          const int ipo0 = (int)aPo2D.size();
-          aPo2D.resize( aPo2D.size()+1 );
-          aVec2.resize( aVec2.size()+1 );
-          aVec2[ipo0].x = (aVec2[aTri[itri].v[0]].x+aVec2[aTri[itri].v[1]].x+aVec2[aTri[itri].v[2]].x)/3.0;
-          aVec2[ipo0].y = (aVec2[aTri[itri].v[0]].y+aVec2[aTri[itri].v[1]].y+aVec2[aTri[itri].v[2]].y)/3.0;
-          InsertPoint_Elem(ipo0,itri,aPo2D,aTri);
-          DelaunayAroundPoint(ipo0,aPo2D,aTri,aVec2);
-          nadd++;
-        }
-      }
-      for(unsigned int ip=0;ip<aVec2.size();++ip){
-        if( aflag_isnt_move[ip] == 1 ) continue;
-        LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
-      }
-      if( nadd != 0 ){ ratio *= 0.8; }
-      else{ ratio *= 0.5; }
-      if( ratio < 0.65 ) break;
+    for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
+      LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     }
+    if( nadd != 0 ){ ratio *= 0.8; }
+    else{ ratio *= 0.5; }
+    if( ratio < 0.65 ) break;
   }
-  for(unsigned int ip=0;ip<aVec2.size();++ip){
-    if( aflag_isnt_move[ip] == 1 ) continue;
+
+  for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
     LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     DelaunayAroundPoint(ip, aPo2D, aTri, aVec2);
   }
@@ -478,66 +475,56 @@ void AddPointsMesh
 }
 
 void EnforceEdge 
-(const std::vector<CVector2>& aVec2,
- std::vector<CEPo2>& aPo2D,
+(std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri,
- const std::vector<int>& loopIP_ind,
- const std::vector<int>& loopIP)
+ int i0, int i1,
+ const std::vector<CVector2>& aVec2)
 { // enforce edge
-  assert( aPo2D.size() == aVec2.size() );
-  const int nloop = (int)loopIP_ind.size()-1;
-  for(int iloop=0;iloop<nloop;iloop++){
-    const int ne = loopIP_ind[iloop+1]-loopIP_ind[iloop];
-    for(int ie=0;ie<ne;ie++){
-      const int i0 = loopIP[loopIP_ind[iloop]+(ie+0)%ne];
-      const int i1 = loopIP[loopIP_ind[iloop]+(ie+1)%ne];
-      assert( i0 < (int)aPo2D.size() );
-      assert( i1 < (int)aPo2D.size() );
-      for(;;){
-        int itri0,inotri0,inotri1;
-        if( FindEdge_LookAroundPoint(itri0,inotri0,inotri1,i0,i1,aPo2D,aTri) ){ // this edge divide outside and inside
-          assert( inotri0 != inotri1 );
-          assert( inotri0 < 3 );
-          assert( inotri1 < 3 );
-          assert( aTri[itri0].v[ inotri0 ] == i0 );
-          assert( aTri[itri0].v[ inotri1 ] == i1 );
-          const int ied0 = 3 - inotri0 - inotri1;
-          {
-            const int itri1 = aTri[itri0].s2[ied0];
-            const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
-            assert( aTri[itri1].s2[ied1] == itri0 );
-            aTri[itri1].s2[ied1] = -1;
-            aTri[itri0].s2[ied0] = -1;
-          }
-          break;
-        }
-        else{ // this edge is devided from connection outer triangle
-          double ratio;
-          if( !FindEdgePoint_AcrossEdge(itri0,inotri0,inotri1,ratio,
-                                        i0,i1,
-                                        aPo2D,aTri,aVec2) ){ assert(0); }
-          assert( ratio > -1.0e-20 && ratio < 1.0+1.0e-20 );
-          assert( TriArea( aVec2[i0], aVec2[ aTri[itri0].v[inotri0] ], aVec2[i1] ) > 1.0e-20 );
-          assert( TriArea( aVec2[i0], aVec2[i1], aVec2[ aTri[itri0].v[inotri1] ] ) > 1.0e-20 );
-          //            std::cout << ratio << std::endl;
-          if( ratio < 1.0e-20 ){
-            assert(0);
-            abort();
-          }
-          else if( ratio > 1.0 - 1.0e-10 ){
-            assert(0);
-            abort();
-          }
-          else{
-            const int ied0 = 3 - inotri0 - inotri1;
-            assert( aTri[itri0].s2[ied0] >= 0 );
-            const int itri1 = aTri[itri0].s2[ied0];
-            const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
-            assert( aTri[itri1].s2[ied1] >= itri0 );
-            FlipEdge(itri0,ied0,aPo2D,aTri);
-            continue;
-          }
-        }
+  assert( i0 < (int)aPo2D.size() );
+  assert( i1 < (int)aPo2D.size() );
+  for(;;){
+    int itri0,inotri0,inotri1;
+    if( FindEdge_LookAroundPoint(itri0,inotri0,inotri1,i0,i1,aPo2D,aTri) ){ // this edge divide outside and inside
+      assert( inotri0 != inotri1 );
+      assert( inotri0 < 3 );
+      assert( inotri1 < 3 );
+      assert( aTri[itri0].v[ inotri0 ] == i0 );
+      assert( aTri[itri0].v[ inotri1 ] == i1 );
+      const int ied0 = 3 - inotri0 - inotri1;
+      {
+        const int itri1 = aTri[itri0].s2[ied0];
+        const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+        assert( aTri[itri1].s2[ied1] == itri0 );
+        aTri[itri1].s2[ied1] = -1;
+        aTri[itri0].s2[ied0] = -1;
+      }
+      break;
+    }
+    else{ // this edge is devided from connection outer triangle
+      double ratio;
+      if( !FindEdgePoint_AcrossEdge(itri0,inotri0,inotri1,ratio,
+                                    i0,i1,
+                                    aPo2D,aTri,aVec2) ){ assert(0); }
+      assert( ratio > -1.0e-20 && ratio < 1.0+1.0e-20 );
+      assert( TriArea( aVec2[i0], aVec2[ aTri[itri0].v[inotri0] ], aVec2[i1] ) > 1.0e-20 );
+      assert( TriArea( aVec2[i0], aVec2[i1], aVec2[ aTri[itri0].v[inotri1] ] ) > 1.0e-20 );
+      //            std::cout << ratio << std::endl;
+      if( ratio < 1.0e-20 ){
+        assert(0);
+        abort();
+      }
+      else if( ratio > 1.0 - 1.0e-10 ){
+        assert(0);
+        abort();
+      }
+      else{
+        const int ied0 = 3 - inotri0 - inotri1;
+        assert( aTri[itri0].s2[ied0] >= 0 );
+        const int itri1 = aTri[itri0].s2[ied0];
+        const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+        assert( aTri[itri1].s2[ied1] >= itri0 );
+        FlipEdge(itri0,ied0,aPo2D,aTri);
+        continue;
       }
     }
   }
@@ -571,26 +558,31 @@ void FlagConnected
 
 void DeleteTriFlag
 (std::vector<ETri>& aTri1,
- const std::vector<int>& aflg0,
+ std::vector<int>& aFlg1,
  int iflag)
 {
+  assert(aFlg1.size()==aTri1.size());
   const int ntri0 = aTri1.size();
   std::vector<int> map01(ntri0,-1);
   int ntri1 = 0;
   for(int itri=0;itri<ntri0;++itri){
-    if( aflg0[itri] != iflag ){
+    if( aFlg1[itri] != iflag ){
       map01[itri] = ntri1;
       ntri1++;
     }
   }
   const std::vector<ETri> aTri0 = aTri1;
+  const std::vector<int> aFlg0 = aFlg1;
   aTri1.clear();
   aTri1.resize( ntri1 );
+  aFlg1.resize( ntri1 );
   for(int itri0=0;itri0<(int)aTri0.size();itri0++){
     if( map01[itri0] != -1 ){
       int itri1 = map01[itri0];
       assert( itri1 >= 0 && (int)itri1 < ntri1 );
       aTri1[itri1] = aTri0[itri0];
+      aFlg1[itri1] = aFlg0[itri0];
+      assert(aFlg1[itri1] != iflag );
     }
   }
   for(int itri1=0;itri1<ntri1;itri1++){
@@ -650,13 +642,62 @@ void DeleteUnrefPoints
   }
 }
 
+
+void DeletePointsFlag
+(std::vector<CVector2>& aVec1,
+ std::vector<CEPo2>& aPo1,
+ std::vector<ETri>& aTri,
+ std::vector<int>& aFlgPnt1,
+ int iflg)
+{
+  const unsigned int np0 = aVec1.size();
+  assert( aPo1.size() == np0 );
+  assert( aFlgPnt1.size() == np0 );
+  std::vector<int> map01;
+  int npo1;
+  {
+    map01.resize( np0, -1 );
+    npo1 = 0;
+    for(unsigned int ipo=0;ipo<np0;ipo++){
+      if( aFlgPnt1[ipo] == iflg ) continue;
+      map01[ipo] = npo1;
+      npo1++;
+    }
+  }
+  {
+    std::vector<CEPo2> aPo0 = aPo1;
+    std::vector<CVector2> aVec0 = aVec1;
+    std::vector<int> aFlgPnt0 = aFlgPnt1;
+    aPo1.resize( npo1 );
+    aVec1.resize( npo1 );
+    aFlgPnt1.resize( npo1 );
+    for(unsigned int ipo0=0;ipo0<np0;ipo0++){
+      if( map01[ipo0] == -1 ) continue;
+      int ipo1 = map01[ipo0];
+      assert( ipo1 >=0 && ipo1 < npo1 );
+      aPo1[ipo1] = aPo0[ipo0];
+      aVec1[ipo1] = aVec0[ipo0];
+      aFlgPnt1[ipo1] = aFlgPnt0[ipo0];
+    }
+  }
+  for(int itri=0;itri<(int)aTri.size();itri++){
+    for(int ifatri=0;ifatri<3;ifatri++){
+      assert( aTri[itri].v[ifatri] != iflg );
+      const int ipo = aTri[itri].v[ifatri];
+      aTri[itri].v[ifatri] = map01[ipo];
+      aPo1[ipo].e = itri;
+      aPo1[ipo].d = ifatri;
+    }
+  }
+}
+
 void Meshing_Initialize
 (std::vector<CEPo2>& aPo2D,
  std::vector<ETri>& aTri,
  std::vector<CVector2>& aVec2)
 {
   aPo2D.resize(aVec2.size());
-  for(int ixys=0;ixys<aVec2.size();ixys++){
+  for(unsigned int ixys=0;ixys<aVec2.size();ixys++){
     aPo2D[ixys].e = -1;
     aPo2D[ixys].d = -1;
   }
@@ -998,8 +1039,15 @@ void Meshing_SingleConnectedShape2D
     aPoDel.push_back( npo+2 );
   }
   Meshing_Initialize(aPo2D,aETri,aVec2);
-  EnforceEdge(aVec2,aPo2D,aETri,
-              loopIP_ind,loopIP);
+  for(int iloop=0;iloop<loopIP_ind.size()-1;++iloop){
+    const int np0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];
+    for(int iip=loopIP_ind[iloop];iip<loopIP_ind[iloop+1];++iip){
+      const int ip0 = loopIP[loopIP_ind[iloop]+(iip+0)%np0];
+      const int ip1 = loopIP[loopIP_ind[iloop]+(iip+1)%np0];
+      EnforceEdge(aPo2D,aETri,
+                  ip0,ip1,aVec2);
+    }
+  }
   {
     std::vector<int> aflg(aETri.size(),0);
     int itri0_ker;
@@ -1007,7 +1055,7 @@ void Meshing_SingleConnectedShape2D
       int iedtri;
       FindEdge_LookAllTriangles(itri0_ker, iedtri,
                                 loopIP[0], loopIP[1], aETri);
-      assert(itri0_ker>=0&&itri0_ker<aETri.size());
+      assert(itri0_ker>=0&&itri0_ker<(int)aETri.size());
       FlagConnected(aflg,
                     aETri, itri0_ker,1);
     }

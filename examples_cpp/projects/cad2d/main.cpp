@@ -110,6 +110,8 @@ void myGlutMouse(int button, int state, int x, int y)
   }
   if( state == GLUT_UP ){
     cad.ivtx_picked = -1;
+    cad.iedge_picked = -1;
+    cad.iface_picked = -1;
   }
 }
 
@@ -134,9 +136,18 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     }
     case 'b':
     {
-      cad.AddPointEdge(-0.0, -0.2, 0);
+      cad.AddVtxEdge(-0.0, -0.2, 0);
       break;
     }
+    case 'c':
+    {
+      double x0 = 2.1, y0 = 0.0;
+      const double poly[8] = {x0-1,y0-1, x0+1,y0-1, x0+1,y0+1, x0-1,y0+1};
+      cad.AddPolygon(std::vector<double>(poly,poly+8) );
+      cad.AddVtxEdge(x0, -0.2, 5);
+      break;
+    }
+      
   }
   ::glutPostRedisplay();
 }

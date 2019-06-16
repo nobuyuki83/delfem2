@@ -49,16 +49,23 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   return std::forward_as_tuple(aXYZ,aHex);
 }
 
-std::tuple<py::array_t<double>, py::array_t<int>> GetMesh_Cad
+std::tuple<py::array_t<double>, py::array_t<int>, py::array_t<int>, py::array_t<int>> MeshTri2D_Cad2D
 (const CCad2D& cad, double len)
 {
   std::vector<double> aXY;
   std::vector<int> aTri;
-  cad.Meshing(aXY,aTri, len);
+  std::vector<int> aFlgPnt;
+  std::vector<int> aFlgTri;
+  cad.Meshing(aXY,aTri, aFlgPnt,aFlgTri,
+              len);
+  assert( aFlgPnt.size() == aXY.size()/2 );
+  assert( aFlgTri.size() == aTri.size()/3 );
   ////
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
   py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
-  return std::tie(npXY,npTri);
+  py::array_t<int> npFlgPnt(aFlgPnt.size(), aFlgPnt.data());
+  py::array_t<int> npFlgTri(aFlgTri.size(), aFlgTri.data());
+  return std::forward_as_tuple(npXY,npTri,npFlgPnt,npFlgTri);
 }
 
 
@@ -226,12 +233,18 @@ PYBIND11_MODULE(libdelfem2, m) {
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
   .def("add_polygon", &CCad2D::AddPolygon)
   .def("meshing",     &CCad2D::Meshing)
-  .def("getVertexXY_face", &CCad2D::GetVertexXY_Face)
-  .def("add_point_edge",   &CCad2D::AddPointEdge)
+  .def("xy_vtx_face", &CCad2D::XY_Vtx_Face)
+  .def("ind_vtx_face", &CCad2D::Ind_Vtx_Face)
+  .def("ind_edge_face",&CCad2D::Ind_Edge_Face)
+  .def("add_vtx_edge", &CCad2D::AddVtxEdge)
   .def("check",       &CCad2D::Check)
+  .def("nface",       &CCad2D::nFace)
+  .def("nvtx",        &CCad2D::nVtx)
+  .def("nedge",       &CCad2D::nEdge)
   .def_readwrite("is_draw_face", &CCad2D::is_draw_face)
   .def_readwrite("ivtx_picked",  &CCad2D::ivtx_picked)
-  .def_readwrite("iedge_picked",  &CCad2D::iedge_picked);
+  .def_readwrite("iedge_picked",  &CCad2D::iedge_picked)
+  .def_readwrite("iface_picked",  &CCad2D::iface_picked);
   
 
   m.def("cad_getPointsEdge",
@@ -242,7 +255,7 @@ PYBIND11_MODULE(libdelfem2, m) {
         py::arg("tolerance") = 0.001,
         py::return_value_policy::move);
   
-  m.def("getMesh_cad",&GetMesh_Cad);
+  m.def("meshTri2D_CppCad2D",&MeshTri2D_Cad2D);
   
   ////////////////////////////////////
 
