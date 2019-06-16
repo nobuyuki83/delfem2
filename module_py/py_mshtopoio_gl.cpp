@@ -225,8 +225,10 @@ PyTriangulation
                                  loopIP_ind, loopIP);
   if( edge_length > 1.0e-10 ){
     CInputTriangulation_Uniform param(1.0);
-    MeshingInside(aPo2D,aETri,aVec2, loopIP,
-                  edge_length, param);
+    std::vector<int> aFlgPnt(aVec2.size(),0);  // TODO: make this flag
+    std::vector<int> aFlgTri(aETri.size(),0);
+    MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
+                  aVec2.size(), 0, edge_length, param);
   }
   std::vector<double> aXY;
   std::vector<int> aTri;

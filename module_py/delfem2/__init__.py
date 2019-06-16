@@ -3,7 +3,7 @@ from .libdelfem2 import meshdyntri3d_initialize, isosurface
 from .libdelfem2 import setSomeLighting
 from .libdelfem2 import RigidBody, Joint, RigidBodyAssembly_Static
 from .libdelfem2 import get_texture
-from .libdelfem2 import triangulation
+from .libdelfem2 import triangulation, cad_getPointsEdge, mvc
 
 from .fem import PBD, FieldValueSetter, VisFEM_Hedgehog, VisFEM_ColorContour
 from .fem import \
@@ -19,4 +19,4 @@ from .fem import \
 from .cadmsh import Cad2D, Grid3D, SDF, Mesh, MeshDynTri2D, CadMesh2D, CppMeshDynTri2D
 from .cadmsh import TET, TRI, HEX, QUAD
 from .cadmsh import mesh_grid
-from .cadmsh import meshdyntri2d_initialize, WeightMVC_CadMesh
+from .cadmsh import meshdyntri2d_initialize, mesh_CppCad2D

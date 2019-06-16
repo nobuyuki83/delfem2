@@ -11,8 +11,9 @@ import delfem2 as dfm2
 import delfem2.glfw
 
 def main_CppMeshDynTri2D_0():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = cad.mesh(0.1)
+  cad = dfm2.Cad2D()
+  cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
+  mesh,map_cad2mesh = cad.mesh(0.1)
   dmesh = dfm2.CppMeshDynTri2D()
   dfm2.meshdyntri2d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
   dmesh.check()
@@ -20,8 +21,9 @@ def main_CppMeshDynTri2D_0():
 
 
 def main_CppMeshDynTri2D_1():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh = cad.mesh(0.3)
+  ccad = dfm2.CppCad2D()
+  ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
+  mesh,map_cad2mesh = dfm2.mesh_CppCad2D(ccad,0.3)
   dmesh = dfm2.CppMeshDynTri2D()
   dfm2.meshdyntri2d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
   dmesh.check()
@@ -66,9 +68,10 @@ def main_MeshDynTri2D_1():
 
 
 def main_MeshDynTri2D_2():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
+  cad = dfm2.Cad2D()
+  cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
   dmsh = dfm2.MeshDynTri2D()
-  dmsh.set_mesh(cad.mesh(0.1))
+  dmsh.set_mesh(cad.mesh(0.1)[0])
   fem = dfm2.FEM_Poisson(dmsh,source=1.0)
   npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
   fem.value[npIdP] = 0.0
@@ -88,9 +91,10 @@ def main_MeshDynTri2D_2():
 
 
 def main_MeshDynTri2D_3():
-  cad = dfm2.Cad2D(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   dmsh = dfm2.MeshDynTri2D()
-  dmsh.set_mesh(cad.mesh(0.1))
+  dmsh.set_mesh(cad.mesh(0.1)[0])
   fem = dfm2.FEM_Cloth(dmsh)
   npIdP = cad.points_edge([0], dmsh.np_pos)
   fem.ls.bc[npIdP,:] = 1

@@ -6,9 +6,10 @@
 ####################################################################
 
 
-from OpenGL.GL import *
-from OpenGL.GLUT import *
-from .gl import *
+import OpenGL.GL as gl
+import OpenGL.GLUT as glut
+import delfem2 as dfm2
+import delfem2.gl
 
 def draw_text(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)
@@ -31,10 +32,12 @@ def draw_sphere(pos, rad, color):
 
 class WindowManagerGLUT:
   def __init__(self,view_height):
-    self.camera = Camera(view_height)
+    self.camera = dfm2.gl.Camera(view_height)
     self.modifier = 0
-    self.mouse_x = 0.0
-    self.mouse_y = 0.0
+    self.ratio_x1 = 0.0
+    self.ratio_y1 = 0.0
+    self.ratio_x0 = 0.0
+    self.ratio_y0 = 0.0
 
   def special(self,key,x,y):
     if key == int(GLUT_KEY_PAGE_UP):
@@ -44,35 +47,37 @@ class WindowManagerGLUT:
     glutPostRedisplay()
 
   def mouse(self,button, state, x, y):
-    viewport = glGetIntegerv(GL_VIEWPORT)
+    viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
     (win_w,win_h) = viewport[2:4]
-    self.mouse_x = (2.0 * x - win_w) / win_w
-    self.mouse_y = (win_h - 2.0 * y) / win_h
-    self.modifier = glutGetModifiers()
-    glutPostRedisplay()
+    self.ratio_x1 = (2.0 * x - win_w) / win_w
+    self.ratio_y1 = (win_h - 2.0 * y) / win_h
+    self.modifier = glut.glutGetModifiers()
+    glut.glutPostRedisplay()
 
-  def motion(self,x, y):  
-    viewport = glGetIntegerv(GL_VIEWPORT)
+  def motion(self,x, y):
+    self.ratio_x0,self.ratio_y0 = self.ratio_x1,self.ratio_y1
+    viewport = gl.glGetIntegerv(gl.GL_VIEWPORT)
+    (win_w,win_h) = viewport[2:4]
+    self.ratio_x1 = (2.0 * x - win_w) / win_w
+    self.ratio_y1 = (win_h - 2.0 * y) / win_h
     if self.modifier == 2 or self.modifier == 4:  # ctrl or cmnd+alt
-      self.mouse_x, self.mouse_y = self.camera.rotation(
-          x, y, self.mouse_x, self.mouse_y,
-          viewport[2],viewport[3])
+      self.camera.rotation(
+          self.ratio_x1, self.ratio_y1, self.ratio_x0, self.ratio_y0)
     ####
     if self.modifier == 1:  # shift
-      self.mouse_x, self.mouse_y = self.camera.translation(
-          x, y, self.mouse_x, self.mouse_y,
-          viewport[2],viewport[3])
-    glutPostRedisplay()
+      self.camera.translation(
+        self.ratio_x1, self.ratio_y1, self.ratio_x0, self.ratio_y0)
+    glut.glutPostRedisplay()
 
 class WindowGLUT:
   def __init__(self,view_height,winsize=(400,300)):
     self.wm = WindowManagerGLUT(view_height)
     self.draw_func = None
-    glutInit()
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)  # zBuffer
-    glutInitWindowSize(winsize[0], winsize[1])
-    glutInitWindowPosition(100, 100)
-    glutCreateWindow("Visualizzatore_2.0")
+    glut.glutInit()
+    glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB | glut.GLUT_DEPTH)  # zBuffer
+    glut.glutInitWindowSize(winsize[0], winsize[1])
+    glut.glutInitWindowPosition(100, 100)
+    glut.glutCreateWindow("Visualizzatore_2.0")
 
   def keyboard(self, bkey, x, y):
     key = bkey.decode("utf-8")
@@ -81,43 +86,43 @@ class WindowGLUT:
     glutPostRedisplay()      
 
   def display(self):
-    glClearColor(0.3, 0.5, 0.8, 1.0)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glEnable(GL_DEPTH_TEST)  
+    gl.glClearColor(0.3, 0.5, 0.8, 1.0)
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+    gl.glEnable(gl.GL_DEPTH_TEST)
     self.wm.camera.set_gl_camera()
     self.draw_func()
-    glutSwapBuffers()  
+    glut.glutSwapBuffers()
 
   def reshape(self, width, height):
-    glViewport(0, 0, width, height)
+    gl.glViewport(0, 0, width, height)
 
   def idle(self):
-    glutPostRedisplay()
+    glut.glutPostRedisplay()
 
   def special(self,key, x, y):  
     self.wm.special(key,x,y)
-    glutPostRedisplay()    
+    glut.glutPostRedisplay()
 
   def mouse(self,button, state, x, y):
     self.wm.mouse(button,state,x,y)
-    glutPostRedisplay()    
+    glut.glutPostRedisplay()
 
   def motion(self,x, y):
     self.wm.motion(x,y)    
-    glutPostRedisplay()  
+    glut.glutPostRedisplay()
 
   def draw_loop(self,draw_func0):  
 
     # Register callbacks
-    glutReshapeFunc(self.reshape)
-    glutDisplayFunc(self.display)
-    glutMouseFunc(self.mouse)
-    glutMotionFunc(self.motion)
-    glutKeyboardFunc(self.keyboard)
-    glutSpecialFunc(self.special)
-    glutIdleFunc(self.idle)
+    glut.glutReshapeFunc(self.reshape)
+    glut.glutDisplayFunc(self.display)
+    glut.glutMouseFunc(self.mouse)
+    glut.glutMotionFunc(self.motion)
+    glut.glutKeyboardFunc(self.keyboard)
+    glut.glutSpecialFunc(self.special)
+    glut.glutIdleFunc(self.idle)
 
     self.draw_func = draw_func0
-    glutMainLoop()
+    glut.glutMainLoop()
 
 

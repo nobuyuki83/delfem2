@@ -69,14 +69,13 @@ void FlagConnected(std::vector<int>& inout_flg,
                    int iflag);
 
 void DeleteTriFlag(std::vector<ETri>& aTri_in,
-                    const std::vector<int>& inout_flg,
-                    int flag);
+                   std::vector<int>& aFlg,
+                   int flag);
 
-void EnforceEdge(const std::vector<CVector2>& aVec2,
-                 std::vector<CEPo2>& aPo2D,
+void EnforceEdge(std::vector<CEPo2>& aPo2D,
                  std::vector<ETri>& aTri,
-                 const std::vector<int>& aPtrVtxInd,
-                 const std::vector<int>& aVtxInd);
+                 int i0, int i1,
+                 const std::vector<CVector2>& aVec2);
 
 void Meshing_SingleConnectedShape2D(std::vector<CEPo2>& aPo2D,
                                     std::vector<CVector2>& aVec2,
@@ -88,6 +87,12 @@ void DeleteUnrefPoints(std::vector<CVector2>& aVec2,
                   std::vector<CEPo2>& aPo2D,
                   std::vector<ETri>& aTri_in,
                   const std::vector<int>& aPoDel);
+
+void DeletePointsFlag(std::vector<CVector2>& aVec1,
+                      std::vector<CEPo2>& aPo1,
+                      std::vector<ETri>& aTri,
+                      std::vector<int>& aFlgPnt1,
+                      int iflg);
 
 void MakeInvMassLumped_Tri(std::vector<double>& aInvMassLumped,
                            double rho,
@@ -124,11 +129,15 @@ public:
 };
 
 void MeshingInside(std::vector<CEPo2>& aPo2D,
-                    std::vector<ETri>& aTri,
-                    std::vector<CVector2>& aVec2,
-                    const std::vector<int>& aVtxInd,
-                    const double len,
-                    const CInputTriangulation& mesh_density);
+                   std::vector<ETri>& aTri,
+                   std::vector<CVector2>& aVec2,
+                   std::vector<int>& aFlagPnt,
+                   std::vector<int>& aFlagTri,
+                   ////
+                   const int nPointFix,
+                   const int nflgpnt_offset,
+                   const double len,
+                   const CInputTriangulation& mesh_density);
 
 
 class CCmdRefineMesh
@@ -279,8 +288,10 @@ public:
                                    loopIP_ind,loopIP);
     if( edge_length > 1.0e-10 ){
       CInputTriangulation_Uniform param(1.0);
-      MeshingInside(aEPo,aETri,aVec2, loopIP,
-                    edge_length, param);
+      std::vector<int> aFlgTri(aETri.size(),0);
+      std::vector<int> aFlgPnt(aVec2.size(),0);
+      MeshingInside(aEPo,aETri,aVec2, aFlgPnt,aFlgTri,
+                    aVec2.size(),0, edge_length, param);
     }
   }
   void RefinementPlan_EdgeLongerThan_InsideCircle(CCmdRefineMesh& aCmd,
@@ -290,7 +301,7 @@ public:
     ::RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
                                                  elen,px,py, rad,
                                                  aEPo,aVec2,aETri);
-    const int np0 = aVec2.size();
+//    const int np0 = aVec2.size();
     RefineMesh(aEPo, aETri, aVec2, aCmd);
     assert( aEPo.size() == aVec2.size() );
     /*

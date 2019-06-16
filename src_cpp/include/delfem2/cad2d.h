@@ -24,6 +24,7 @@ class CCad2D_EdgeGeo{
 public:
   void GenMesh(unsigned int iedge, const CCadTopo& topo,
                std::vector<CCad2D_VtxGeo>& aVtxGeo);
+  void GetInternalPoints_ElemLen(std::vector<CVector2>& aV, double elen) const;
   double Distance(double x, double y) const;
 public:
   CVector2 p0,p1;
@@ -31,12 +32,27 @@ public:
 };
 class CCad2D_FaceGeo{
 public:
-  //    std::vector<CVector2> aP;
   std::vector<int> aTri;
   std::vector<double> aXY;
 public:
   void GenMesh(unsigned int iface0, const CCadTopo& topo, 
                std::vector<CCad2D_EdgeGeo>& aEdgeGeo);
+  bool IsInside(double x, double y) const {
+    for(int it=0;it<aTri.size()/3;++it){
+      const double q0[2] = {x,y};
+      const int i0 = aTri[it*3+0];
+      const int i1 = aTri[it*3+1];
+      const int i2 = aTri[it*3+2];
+      const double* p0 = aXY.data()+i0*2;
+      const double* p1 = aXY.data()+i1*2;
+      const double* p2 = aXY.data()+i2*2;
+      double a0 = TriArea2D(q0, p1, p2);
+      double a1 = TriArea2D(p0, q0, p2);
+      double a2 = TriArea2D(p0, p1, q0);
+      if( a0 > 0 && a1 > 0 && a2 > 0 ){ return true; }
+    }
+    return false;
+  }
 };
 
 //////////////////
@@ -48,6 +64,7 @@ public:
     std::cout << "CCAD2D -- construct" << std::endl;
     ivtx_picked = -1;
     iedge_picked = -1;
+    iface_picked = -1;
     is_draw_face = true;
   }
   void Clear(){
@@ -64,15 +81,22 @@ public:
   std::vector<double> MinMaxXYZ() const;
   void Check() const;
   void AddPolygon(const std::vector<double>& aXY);
-  void AddPointEdge(double x, double y, int ie_add);
+  void AddVtxEdge(double x, double y, int ie_add);
   void Meshing(std::vector<double>& aXY,
                std::vector<int>& aTri,
+               std::vector<int>& aFlgPnt,
+               std::vector<int>& aFlgTri,
                double len) const;
   void GetPointsEdge(std::vector<int>& aIdP,
                      const double* pXY, int np,
                      const std::vector<int>& aIE,
                      double tolerance ) const;
-  std::vector<double> GetVertexXY_Face(int iface) const;
+  int nFace() const { return aFace.size(); }
+  int nVtx() const { return aVtx.size(); }
+  int nEdge() const { return aEdge.size(); }
+  std::vector<double> XY_Vtx_Face(int iface) const;
+  std::vector<std::pair<int,bool>>  Ind_Edge_Face(int iface) const;
+  std::vector<int> Ind_Vtx_Face(int iface) const;
 public:
   CCadTopo topo;
   /////
@@ -81,6 +105,7 @@ public:
   std::vector<CCad2D_FaceGeo> aFace;
   int ivtx_picked;
   int iedge_picked;
+  int iface_picked;
   
   bool is_draw_face;
 };

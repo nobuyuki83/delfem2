@@ -96,7 +96,7 @@ void myGlutMotion( int x, int y ){
   /////
   cad.DragPicked(src_pick1[0],src_pick1[1], src_pick0[0],src_pick0[1]);
   ////
-  std::vector<double> aXY_bound = cad.GetVertexXY_Face(0);
+  std::vector<double> aXY_bound = cad.XY_Vtx_Face(0);
   int npb = aXY_bound.size()/2;
   int np = aXY.size()/2;
   for(int ip=0;ip<np;++ip){
@@ -263,10 +263,12 @@ int main(int argc,char* argv[])
   const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
   cad.AddPolygon(std::vector<double>(poly,poly+8));
   cad.is_draw_face = false;
-  cad.Meshing(aXY,aTri,0.1);
+  std::vector<int> aFlgPnt, aFlgTri;
+  cad.Meshing(aXY,aTri, aFlgPnt,aFlgTri,
+              0.5);
   
   const int nv = 4;
-  std::vector<double> aXY_bound = cad.GetVertexXY_Face(0);
+  std::vector<double> aXY_bound = cad.XY_Vtx_Face(0);
   const int nXY = aXY.size()/2;
   aW.resize(nXY*nv);
   for(int ip=0;ip<nXY;++ip){

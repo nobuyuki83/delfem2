@@ -25,6 +25,7 @@ class Window(QWidget):
     self.cad = dfm2.Cad2D()
     self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
+
     self.glWidget = GLWidget()
     self.glWidget.cadobj = self.cad
 
@@ -79,7 +80,7 @@ class GLWidget(QOpenGLWidget):
     self.update()
 
   def mouseReleaseEvent(self, event):
-    self.cadobj.ivtx_picked()
+    self.cadobj.clean_picked()
     self.update()
 
   def mouseMoveEvent(self, event):
@@ -93,14 +94,23 @@ class GLWidget(QOpenGLWidget):
     src,dir = self.nav.mouse_src_dir()
     ###
     menu = QMenu(self)
-    actionAddPoint = None
-    if self.cadobj.iedge_picked() != -1:
-      actionAddPoint = menu.addAction("add point")
+    actionDelVtx = None
+    actionAddVtx = None
+    actionAddSquare = None
+    if self.cadobj.ivtx_picked() != -1:
+      actionDelVtx = menu.addAction("delete vtx")
+    elif self.cadobj.iedge_picked() != -1:
+      actionAddVtx = menu.addAction("add vtx")
+    else:
+      actionAddSquare = menu.addAction("add square")
     action = menu.exec_(self.mapToGlobal(event.pos()))
     ####
-    if action == actionAddPoint != None:
-      self.cadobj.add_point_edge(src[0], src[1], self.cadobj.ccad.iedge_picked)
-      self.update()
+    if action == actionAddVtx != None:
+      self.cadobj.add_vtx_edge(src[0], src[1], self.cadobj.ccad.iedge_picked)
+    if action == actionAddSquare != None:
+      x0,y0 = src[0],src[1]
+      self.cadobj.add_polygon([x0-1, y0-1, x0+1, y0-1, x0+1, y0+1, x0-1, y0+1])
+    self.update()
 
   def wheelEvent(self,event):
     v = 0.1*(event.angleDelta().y()/120.0)

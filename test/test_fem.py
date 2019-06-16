@@ -5,8 +5,9 @@ import delfem2 as dfm2
 
 class Test_PBD(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesh = cad.mesh(edge_len=0.2)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    mesh,map_cad2mesh = cad.mesh(edge_len=0.2)
     pbd = dfm2.PBD(mesh)
     npIdP = cad.points_edge([0], mesh.np_pos)
     pbd.vec_bc[npIdP] = 1
@@ -16,7 +17,7 @@ class Test_PBD(unittest.TestCase):
       fvs.step_time()
       pbd.step_time()
 
-  def test_pbd_hex(voxelgrid):
+  def test_pbd_hex(self):
     voxelgrid = dfm2.Grid3D()
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
@@ -35,8 +36,9 @@ class Test_PBD(unittest.TestCase):
 
 class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(0.02)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    msh,map_cad2msh = cad.mesh(0.02)
     fem = dfm2.FEM_Poisson(msh,source=1.0)
     npIdP = cad.points_edge([0,1,2,3], msh.np_pos)
     fem.ls.bc[npIdP] = 1
@@ -63,8 +65,9 @@ class Test_FEMPoission3D(unittest.TestCase):
 
 class Test_FEMDiffuse2D(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(0.02)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    msh,map_cad2msh = cad.mesh(0.02)
     fem = dfm2.FEM_Diffuse(msh, source=1.0)
     npIdP = cad.points_edge([0, 1, 2, 3], msh.np_pos)
     fem.ls.bc[npIdP] = 1
@@ -93,8 +96,9 @@ class Test_FemDiffuse3D(unittest.TestCase):
 
 class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(0.02)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    msh,map_cad2msh = cad.mesh(0.02)
     fem = dfm2.FEM_LinearSolidStatic(msh,gravity=[0,-0.1])
     npIdP = cad.points_edge([3], msh.np_pos)
     fem.ls.bc[npIdP,:] = 1
@@ -103,8 +107,9 @@ class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
 
 class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(0.02)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    msh,map_cad2msh = cad.mesh(0.02)
     fem = dfm2.FEM_LinearSolidDynamic(msh, gravity=[0, -0.1])
     npIdP = cad.points_edge([3], msh.np_pos)
     fem.ls.bc[npIdP, :] = 1
@@ -114,8 +119,9 @@ class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
 
 class Test_FEMSorkes2D(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(0.02)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    msh,map_cad2msh = cad.mesh(0.02)
     fem = dfm2.FEM_StorksStatic2D(msh)
     npIdP0 = cad.points_edge([0,1,2,3], msh.np_pos)
     fem.ls.bc[npIdP0,0:2] = 1
@@ -126,8 +132,9 @@ class Test_FEMSorkes2D(unittest.TestCase):
 
 class Test_FEMCloth(unittest.TestCase):
   def test1(self):
-    cad = dfm2.Cad2D(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    msh = cad.mesh(edge_len=0.05)
+    cad = dfm2.Cad2D()
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
+    msh,map_cad2msh = cad.mesh(edge_len=0.05)
     fem = dfm2.FEM_Cloth(msh)
     npIdP = cad.points_edge([2], msh.np_pos)
     fem.ls.bc[npIdP,0:3] = 1
