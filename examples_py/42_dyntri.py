@@ -13,28 +13,24 @@ import delfem2.glfw
 def main_CppMeshDynTri2D_0():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
-  mesh,map_cad2mesh = cad.mesh(0.1)
-  dmesh = dfm2.CppMeshDynTri2D()
-  dfm2.meshdyntri2d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
-  dmesh.check()
-  dfm2.glfw.winDraw3d([dmesh,dfm2.AxisXYZ()],winsize=(400,300))
+  cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(cad.ccad,0.1)
+  cdmesh.check()
+  dfm2.glfw.winDraw3d([cdmesh,dfm2.AxisXYZ()],winsize=(400,300))
 
 
 def main_CppMeshDynTri2D_1():
   ccad = dfm2.CppCad2D()
   ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh,map_cad2mesh = dfm2.mesh_CppCad2D(ccad,0.3)
-  dmesh = dfm2.CppMeshDynTri2D()
-  dfm2.meshdyntri2d_initialize(dmesh,mesh.np_pos, mesh.np_elm)
-  dmesh.check()
+  cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(ccad,0.1)
+  cdmesh.check()
   for itr in range(10):
-    itri0 = random.randint(0,dmesh.ntri()-1)
+    itri0 = random.randint(0,cdmesh.ntri()-1)
     r0 = random.uniform(0.02, 0.98)
     r1 = random.uniform(0.01, 0.99-r0)
-    ipo= dmesh.insert_point_elem(itri0,r0,r1)
-    dmesh.delaunay_around_point(ipo)
-    dmesh.check()
-  dfm2.glfw.winDraw3d([dmesh],winsize=(400,300))
+    ipo= cdmesh.insert_point_elem(itri0,r0,r1)
+    cdmesh.delaunay_around_point(ipo)
+    cdmesh.check()
+  dfm2.glfw.winDraw3d([cdmesh],winsize=(400,300))
 
 
 def main_CppMeshDynTri3D():
@@ -70,8 +66,8 @@ def main_MeshDynTri2D_1():
 def main_MeshDynTri2D_2():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
-  dmsh = dfm2.MeshDynTri2D()
-  dmsh.set_mesh(cad.mesh(0.1)[0])
+  dmsh,_ = cad.mesh(0.1)
+  ####
   fem = dfm2.FEM_Poisson(dmsh,source=1.0)
   npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
   fem.value[npIdP] = 0.0

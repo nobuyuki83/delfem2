@@ -20,9 +20,9 @@ from .libdelfem2 import \
   meshhex3d_subdiv
 from .libdelfem2 import draw_mesh_facenorm, draw_mesh_edge
 from .libdelfem2 import meshtri3d_read_ply, mvc, meshtri3d_read_obj, meshdyntri2d_initialize
-from .libdelfem2 import meshTri2D_CppCad2D, cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
+from .libdelfem2 import meshDynTri2D_CppCad2D, cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
 from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
-from .libdelfem2 import CppVoxelGrid
+from .libdelfem2 import CppVoxelGrid, numpyXYTri_MeshDynTri2D
 
 ####################
 
@@ -105,18 +105,15 @@ class Mesh():
         self.np_pos, self.np_elm = meshtri3d_read_nastran(path_file)
       self.elem_type = TRI
 
-#######################################
+##########################################################################
 
 def mesh_grid(shape:list) -> Mesh:
   np_pos,np_quad = meshquad2d_grid(shape[0],shape[1])
   return Mesh(np_pos,np_quad,QUAD)
 
-def mesh_CppCad2D(ccad,len) -> Tuple[Mesh,List[numpy.ndarray]]:
-  xy,tri,flg_pnt,flg_tri = meshTri2D_CppCad2D(ccad,len)
-  mesh = Mesh(xy,tri,TRI)
-  return mesh, [flg_pnt,flg_tri]
 
 ###########################################################################
+
 
 class MeshDynTri2D(Mesh):
   def __init__(self):
@@ -124,7 +121,7 @@ class MeshDynTri2D(Mesh):
     self.elem_type = TRI
     self.np_pos = numpy.ndarray((0,2),dtype=numpy.float64)
     self.np_elm = numpy.ndarray((0,3),dtype=numpy.int32)
-    self.dmsh = CppMeshDynTri2D()
+    self.cdmsh = CppMeshDynTri2D()
 
   def set_mesh(self,msh=Mesh) -> None:
     assert msh.elem_type == TRI
@@ -134,22 +131,23 @@ class MeshDynTri2D(Mesh):
     self.np_pos[:,:] = msh.np_pos
     self.np_elm[:,:] = msh.np_elm
     self.elem_type = msh.elem_type
-    meshdyntri2d_initialize(self.dmsh, self.np_pos, self.np_elm)
+    meshdyntri2d_initialize(self.cdmsh, self.np_pos, self.np_elm)
 
   def meshing_loops(self,loops:list,edge_length:float) -> None:
-    self.dmsh.meshing_loops(loops,edge_length)
-    self.np_pos.resize((self.dmsh.npoint(),2))
-    self.np_elm.resize((self.dmsh.ntri(),3))
-    copyMeshDynTri2D(self.np_pos,self.np_elm, self.dmsh)
+    self.cdmsh.meshing_loops(loops,edge_length)
+    self.np_pos.resize((self.cdmsh.npoint(),2))
+    self.np_elm.resize((self.cdmsh.ntri(),3))
+    copyMeshDynTri2D(self.np_pos,self.np_elm, self.cdmsh)
 
   def refine_EdgeLongerThan_InsideCircle(self,elen,px,py,rad) -> CppMapper:
     mpr = CppMapper()
-    self.dmsh.refinementPlan_EdgeLongerThan_InsideCircle(mpr,
-                                                         elen, px, py, rad)
-    self.np_pos.resize((self.dmsh.npoint(),2))
-    self.np_elm.resize((self.dmsh.ntri(),3))
-    copyMeshDynTri2D(self.np_pos,self.np_elm, self.dmsh)
+    self.cdmsh.refinementPlan_EdgeLongerThan_InsideCircle(mpr,
+                                                          elen, px, py, rad)
+    self.np_pos.resize((self.cdmsh.npoint(),2))
+    self.np_elm.resize((self.cdmsh.ntri(),3))
+    copyMeshDynTri2D(self.np_pos,self.np_elm, self.cdmsh)
     return mpr
+
 
 ###########################################################################
 
@@ -173,8 +171,7 @@ class Grid3D:
     return Mesh(np_pos, np_elm, HEX)
 
 
-####################
-
+###########################################################################
 
 
 class Cad2D():
@@ -194,6 +191,8 @@ class Cad2D():
   def motion(self,src0,src1,dir) -> None:
     self.ccad.drag_picked(src1[0],src1[1], src0[0],src0[1])
 
+  ########
+
   def pick(self, x, y, view_height) -> None:
     self.ccad.pick(x,y,view_height)
 
@@ -206,8 +205,14 @@ class Cad2D():
     self.ccad.check()
 
   def mesh(self,edge_len=0.05) -> Tuple[Mesh,List[numpy.ndarray]]:
-    mesh,map_cad2mesh  = mesh_CppCad2D(self.ccad, edge_len)
-    return mesh,map_cad2mesh
+    cdmsh, flg_pnt, flg_tri = meshDynTri2D_CppCad2D(self.ccad, edge_len)
+    np_pos, np_elm = numpyXYTri_MeshDynTri2D(cdmsh)
+    dmesh = MeshDynTri2D()
+    dmesh.cdmsh = cdmsh
+    dmesh.np_pos = np_pos
+    dmesh.np_elm = np_elm
+    dmesh.elem_type = TRI
+    return dmesh, [flg_pnt, flg_tri]
 
   def iedge_picked(self) -> int:
     return self.ccad.iedge_picked
@@ -233,16 +238,21 @@ class CadMesh2D(Cad2D):
     super().__init__()
     self.ccad.is_draw_face = False
     self.edge_length = edge_length
-    self.msh = Mesh()
+    self.dmsh = MeshDynTri2D()
     self.map_cad2msh = None
     self.listW = list()
 
   def draw(self):
     self.ccad.draw()
-    self.msh.draw()
+    self.dmsh.draw()
 
   def motion(self,src0,src1,dir):
     self.drag_picked(src1[0],src1[1], src0[0],src0[1])
+
+  def minmax_xyz(self):
+    return self.msh.minmax_xyz()
+
+  #####
 
   def drag_picked(self, s1x,s1y, s0x,s0y):
     self.ccad.drag_picked(s1x,s1y, s0x,s0y)
@@ -251,15 +261,16 @@ class CadMesh2D(Cad2D):
       list_xy_bound = self.ccad.xy_vtx_face(iface)
       np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
       np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
-      self.msh.np_pos[self.listW[iface][0]] = np_pos_face
-    max_asp,min_area = quality_meshTri2D(self.msh.np_pos,self.msh.np_elm)
+      self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
+    max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
     if max_asp > 5.0 or min_area < 0.0:
       self.remesh()
 
   def remesh(self):
-    msh1,self.map_cad2msh = mesh_CppCad2D(self.ccad, self.edge_length)
-    self.msh.np_pos = msh1.np_pos
-    self.msh.np_elm = msh1.np_elm
+    self.dmsh.cdmsh, flg_pnt, flg_tri = meshDynTri2D_CppCad2D(self.ccad, self.edge_length)
+    self.dmsh.np_pos, self.dmsh.np_elm = numpyXYTri_MeshDynTri2D(self.dmsh.cdmsh)
+    self.map_cad2msh = [flg_pnt,flg_tri]
+    ####
     self.listW.clear()
     for iface in range(self.ccad.nface()):
       np_ind_face = numpy.where(self.map_cad2msh[0] == self.ccad.nvtx()+self.ccad.nedge()+iface)[0]
@@ -267,7 +278,7 @@ class CadMesh2D(Cad2D):
         np_ind_face = numpy.append(np_ind_face, numpy.where( self.map_cad2msh[0] == self.ccad.nvtx()+ie )[0] )
       for iv in self.ccad.ind_vtx_face(iface):
         np_ind_face = numpy.append(np_ind_face, numpy.where( self.map_cad2msh[0] == iv )[0] )
-      np_pos_face = self.msh.np_pos[np_ind_face]
+      np_pos_face = self.dmsh.np_pos[np_ind_face]
       np_xy_bound = numpy.array(self.ccad.xy_vtx_face(iface)).reshape([-1, 2])
       W = mvc(np_pos_face, np_xy_bound)
       assert W.shape[0] == np_pos_face.shape[0]

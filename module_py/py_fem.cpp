@@ -9,10 +9,6 @@
 #include "delfem2/fem_ematrix.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/sdf.h"
-//#include "delfem2/vec2.h"
-//#include "delfem2/vec3.h"
-//#include "delfem2/mat3.h"
-//#include "delfem2/v23m3q.h"
 #include "delfem2/objfunc_v23.h"
 
 namespace py = pybind11;

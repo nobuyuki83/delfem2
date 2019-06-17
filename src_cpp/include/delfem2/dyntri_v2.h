@@ -345,6 +345,14 @@ public:
     mpr.iv_ind[0] = 0;
      */
   }
+  void Export_StlVectors(std::vector<double>& aXY, std::vector<int>& aTri) const{
+    MeshTri2D_Export(aXY,aTri, aVec2,aETri);
+  }
+  void Clear(){
+    aEPo.clear();
+    aETri.clear();
+    aVec2.clear();
+  }
   void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec2); }
   void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec2); }
   void draw() const { this->Draw_Edge(); }

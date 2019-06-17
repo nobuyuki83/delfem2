@@ -49,25 +49,34 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   return std::forward_as_tuple(aXYZ,aHex);
 }
 
-std::tuple<py::array_t<double>, py::array_t<int>, py::array_t<int>, py::array_t<int>> MeshTri2D_Cad2D
+std::tuple<CMeshDynTri2D, py::array_t<int>, py::array_t<int>> MeshDynTri2D_Cad2D
 (const CCad2D& cad, double len)
+{
+  CMeshDynTri2D dmesh;
+  std::vector<int> aFlgPnt;
+  std::vector<int> aFlgTri;
+  cad.Meshing(dmesh, aFlgPnt,aFlgTri,
+              len);
+  assert( aFlgPnt.size() == dmesh.aVec2.size() );
+  assert( aFlgTri.size() == dmesh.aETri.size() );
+  ////
+  py::array_t<int> npFlgPnt(aFlgPnt.size(), aFlgPnt.data());
+  py::array_t<int> npFlgTri(aFlgTri.size(), aFlgTri.data());
+  return std::forward_as_tuple(dmesh,npFlgPnt,npFlgTri);
+}
+
+
+std::tuple<py::array_t<double>, py::array_t<int>>
+NumpyXYTri_MeshDynTri2D
+(CMeshDynTri2D& dmesh)
 {
   std::vector<double> aXY;
   std::vector<int> aTri;
-  std::vector<int> aFlgPnt;
-  std::vector<int> aFlgTri;
-  cad.Meshing(aXY,aTri, aFlgPnt,aFlgTri,
-              len);
-  assert( aFlgPnt.size() == aXY.size()/2 );
-  assert( aFlgTri.size() == aTri.size()/3 );
-  ////
+  dmesh.Export_StlVectors(aXY,aTri);
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
   py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
-  py::array_t<int> npFlgPnt(aFlgPnt.size(), aFlgPnt.data());
-  py::array_t<int> npFlgTri(aFlgTri.size(), aFlgTri.data());
-  return std::forward_as_tuple(npXY,npTri,npFlgPnt,npFlgTri);
+  return std::tie(npXY,npTri);
 }
-
 
 py::array_t<int> PyCad2D_GetPointsEdge
 (const CCad2D& cad,
@@ -255,7 +264,8 @@ PYBIND11_MODULE(libdelfem2, m) {
         py::arg("tolerance") = 0.001,
         py::return_value_policy::move);
   
-  m.def("meshTri2D_CppCad2D",&MeshTri2D_Cad2D);
+  m.def("meshDynTri2D_CppCad2D",&MeshDynTri2D_Cad2D);
+  m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
   
   ////////////////////////////////////
 

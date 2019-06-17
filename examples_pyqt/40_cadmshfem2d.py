@@ -20,15 +20,13 @@ import delfem2.pyqt
 import delfem2.cadmshfem
 
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QSlider, QHBoxLayout, QLabel,
-                             QWidget, QPushButton)
+from PyQt5.QtWidgets import (QApplication, QWidget)
 
 class Window(QWidget):
   def __init__(self):
     super(Window, self).__init__()
 
-    self.cadmsh = dfm2.cadmshfem.CadMesh2D_Poisson(edge_length=0.2)
+    self.cadmsh = dfm2.cadmshfem.CadMesh2D_Poisson(edge_length=0.05)
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
     self.glWidget = dfm2.pyqt.QOpenGLWidget_Cad2D()
