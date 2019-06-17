@@ -3,26 +3,26 @@ cmake_minimum_required(VERSION 2.8)
 project(delfem2)
 
 add_subdirectory(projects/viewer3d_glut)
-add_subdirectory(projects/convhull)
+add_subdirectory(projects/viewer3d_glfw)
+
 add_subdirectory(projects/noise2d)
 add_subdirectory(projects/noise3d)
+
 add_subdirectory(projects/paramgeo2d)
 add_subdirectory(projects/paramgeo3d)
-add_subdirectory(projects/cad2d)
-add_subdirectory(projects/cad3d)
-add_subdirectory(projects/fem2d)
-add_subdirectory(projects/fem3d)
-add_subdirectory(projects/viewer3d_glfw)
+
+add_subdirectory(projects/transform_handler)
+
 add_subdirectory(projects/adf3d)
 add_subdirectory(projects/selfcollision_bvh)
-add_subdirectory(projects/transform_handler)
-add_subdirectory(projects/cloth_internal)
-add_subdirectory(projects/cloth_selfcollision)
+
+
 add_subdirectory(projects/shader_glsl)
+add_subdirectory(projects/offscreen)
+
 add_subdirectory(projects/subdiv)
 add_subdirectory(projects/exponential_map)
 add_subdirectory(projects/edit_cubes)
-add_subdirectory(projects/offscreen)
 add_subdirectory(projects/spherical_harmonics)
 add_subdirectory(projects/isosurface_stuffing)
 add_subdirectory(projects/mathexpeval)
@@ -32,8 +32,19 @@ add_subdirectory(projects/pbd_cloth)
 
 add_subdirectory(projects/cadmsh2d)
 
+add_subdirectory(projects/convhull)
 add_subdirectory(projects/dyntet_tetrahedralization)
 add_subdirectory(projects/dyntri2d_triangulation)
-add_subdirectory(projects/dyntri2d_cloth)
 add_subdirectory(projects/dyntri2d_remesh)
 add_subdirectory(projects/dyntri3d_edgecollapse)
+
+add_subdirectory(projects/cad2d)
+add_subdirectory(projects/cad3d)
+
+add_subdirectory(projects/fem2d)
+add_subdirectory(projects/fem3d)
+add_subdirectory(projects/fem25d_eigen)
+add_subdirectory(projects/cloth_internal)
+add_subdirectory(projects/cloth_selfcollision)
+
+add_subdirectory(projects/dyntri2d_cloth)

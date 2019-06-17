@@ -12,6 +12,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/funcs_gl.h"
 #include "delfem2/cadtopo.h"
+#include "delfem2/dyntri_v2.h"
 
 
 class CCad2D_VtxGeo{
@@ -38,7 +39,7 @@ public:
   void GenMesh(unsigned int iface0, const CCadTopo& topo, 
                std::vector<CCad2D_EdgeGeo>& aEdgeGeo);
   bool IsInside(double x, double y) const {
-    for(int it=0;it<aTri.size()/3;++it){
+    for(unsigned int it=0;it<aTri.size()/3;++it){
       const double q0[2] = {x,y};
       const int i0 = aTri[it*3+0];
       const int i1 = aTri[it*3+1];
@@ -82,8 +83,7 @@ public:
   void Check() const;
   void AddPolygon(const std::vector<double>& aXY);
   void AddVtxEdge(double x, double y, int ie_add);
-  void Meshing(std::vector<double>& aXY,
-               std::vector<int>& aTri,
+  void Meshing(CMeshDynTri2D& dmesh,
                std::vector<int>& aFlgPnt,
                std::vector<int>& aFlgTri,
                double len) const;

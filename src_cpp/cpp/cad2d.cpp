@@ -195,16 +195,14 @@ std::vector<double> CCad2D::MinMaxXYZ() const
 }
 
 void CCad2D::Meshing
-(std::vector<double>& aXY,
- std::vector<int>& aTri,
+(CMeshDynTri2D& dmesh,
  std::vector<int>& aFlgPnt,
  std::vector<int>& aFlgTri,
  double elen) const
 {
-  aXY.clear();
-  aTri.clear();
+  dmesh.Clear();
   if( aVtx.empty() ){ return; }
-  std::vector<CVector2> aVec2;
+  std::vector<CVector2>& aVec2 = dmesh.aVec2;
   for(unsigned int iv=0;iv<aVtx.size();++iv){
     aVec2.push_back( aVtx[iv].pos );
     aFlgPnt.push_back(iv);
@@ -232,8 +230,8 @@ void CCad2D::Meshing
     std::cout << std::endl;
   }
    */
-  std::vector<CEPo2> aPo2D;
-  std::vector<ETri> aETri;
+  std::vector<CEPo2>& aPo2D = dmesh.aEPo;
+  std::vector<ETri>& aETri = dmesh.aETri;
   Meshing_Initialize(aPo2D,aETri,aVec2);
   {
     aFlgPnt.push_back(-1);
@@ -298,7 +296,7 @@ void CCad2D::Meshing
   assert(aFlgTri.size()==aETri.size());
   assert(aFlgPnt.size()==aVec2.size());
   assert(aFlgPnt.size()==aPo2D.size());
-  MeshTri2D_Export(aXY,aTri, aVec2,aETri);
+//  MeshTri2D_Export(aXY,aTri, aVec2,aETri);
 }
 
 void CCad2D::GetPointsEdge
