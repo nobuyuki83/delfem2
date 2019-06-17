@@ -5,17 +5,14 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import sys
+import sys, math, numpy
+import OpenGL.GL as gl
 
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
-                             QWidget, QPushButton)
-
-import OpenGL.GL as gl
+from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QPushButton, QLabel, QSlider, QHBoxLayout
 
 sys.path.append("../module_py")
-import numpy
 import delfem2 as dfm2
 import delfem2.gl
 
@@ -82,3 +79,112 @@ def setClearColor(c:QColor):
 
 def setColor(c:QColor):
   gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+
+
+class QOpenGLWidget_Cad2D(QOpenGLWidget):
+  def __init__(self, parent=None):
+    super(QOpenGLWidget_Cad2D, self).__init__(parent)
+    self.cadobj = None
+    self.nav = dfm2.pyqt.NavigationPyQt(view_height=2.0)
+
+  def minimumSizeHint(self):
+    return QSize(300, 300)
+
+  def sizeHint(self):
+    return QSize(600, 600)
+
+  def initializeGL(self):
+    print(delfem2.gl.getOpenglInfo())
+    gl.glClearColor(0.8, 0.8, 1.0, 1.0)
+    gl.glEnable(gl.GL_DEPTH_TEST)
+    gl.glEnable(gl.GL_CULL_FACE)
+    gl.glDisable(gl.GL_LIGHTING)
+    gl.glEnable(gl.GL_POLYGON_OFFSET_FILL)
+    gl.glPolygonOffset(1.1, 4.0 )
+
+  def paintGL(self):
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+    self.nav.camera.set_gl_camera()
+    self.cadobj.draw()
+
+  def resizeGL(self, width, height):
+    gl.glViewport(0,0,width,height)
+
+  def mousePressEvent(self, event):
+    self.makeCurrent()
+    self.nav.mouse(event, self.frameSize())
+    src,dir = self.nav.mouse_src_dir()
+    self.cadobj.pick(src[0], src[1], self.nav.camera.view_height)
+    self.update()
+
+  def mouseReleaseEvent(self, event):
+    self.cadobj.clean_picked()
+    self.update()
+
+  def mouseMoveEvent(self, event):
+    self.makeCurrent()
+    self.nav.motion(event, self.frameSize())
+    src0,src1,dir = self.nav.motion_src_dir()
+    self.cadobj.motion(src0, src1, dir)
+    self.update()
+
+  def contextMenuEvent(self, event):
+    src,dir = self.nav.mouse_src_dir()
+    ###
+    menu = QMenu(self)
+    actionDelVtx = None
+    actionAddVtx = None
+    actionAddSquare = None
+    if self.cadobj.ivtx_picked() != -1:
+      actionDelVtx = menu.addAction("delete vtx")
+    elif self.cadobj.iedge_picked() != -1:
+      actionAddVtx = menu.addAction("add vtx")
+    else:
+      actionAddSquare = menu.addAction("add square")
+    action = menu.exec_(self.mapToGlobal(event.pos()))
+    ####
+    if action == actionAddVtx != None:
+      self.cadobj.add_vtx_edge(src[0], src[1], self.cadobj.ccad.iedge_picked)
+    if action == actionAddSquare != None:
+      x0,y0 = src[0],src[1]
+      self.cadobj.add_polygon([x0-1, y0-1, x0+1, y0-1, x0+1, y0+1, x0-1, y0+1])
+    self.update()
+
+  def wheelEvent(self,event):
+    v = 0.1*(event.angleDelta().y()/120.0)
+    self.nav.camera.scale *= math.exp(v)
+    self.update()
+
+
+class QUI_MeshRes(QWidget):
+  def __init__(self,cadmsh:delfem2.CadMesh2D):
+    super(QUI_MeshRes, self).__init__()
+    self.cadmsh = cadmsh
+    self.func_updated = None
+
+    self.btn = QPushButton('remesh', self)
+    self.btn.clicked.connect(lambda: self.button_clicked(self.btn))
+
+    self.lbl = QLabel("50", self)
+
+    self.sp = QSlider(Qt.Horizontal)
+    self.sp.setMinimum(10)
+    self.sp.setMaximum(100)
+    self.sp.setValue(50)
+    self.sp.valueChanged.connect(self.slider_moved)
+
+    self.hl = QHBoxLayout()
+    self.hl.addWidget(self.sp)
+    self.hl.addWidget(self.lbl)
+    self.hl.addWidget(self.btn)
+
+  def slider_moved(self):
+    self.lbl.setText(str(self.sp.value()))
+
+  def button_clicked(self, btn: QPushButton):
+    if btn == self.btn:
+      val = self.sp.value()*0.001
+      self.cadmsh.edge_length = val
+      self.cadmsh.remesh()
+      if self.func_updated is not None:
+        self.func_updated()

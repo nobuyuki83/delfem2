@@ -298,12 +298,13 @@ void DrawMeshTri2D_ScalarP1
 {
 //  const unsigned int ntri = (int)aTri.size()/3;
 //  const unsigned int nxys = (int)aXY.size()/2;
+  glShadeModel(GL_SMOOTH);
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
   for(int itri=0;itri<nTri;++itri){
-    const int ino0 = aTri[itri*3+0];
-    const int ino1 = aTri[itri*3+1];
-    const int ino2 = aTri[itri*3+2];
+    const int ino0 = aTri[itri*3+0]; assert(ino0>=0&&ino0<nXY);
+    const int ino1 = aTri[itri*3+1]; assert(ino1>=0&&ino1<nXY);
+    const int ino2 = aTri[itri*3+2]; assert(ino2>=0&&ino2<nXY);
     const double v0 = paVal[ino0*nstride];
     const double v1 = paVal[ino1*nstride];
     const double v2 = paVal[ino2*nstride];
