@@ -103,10 +103,10 @@ void CenterOfGravity_Tet(double& v_tot,
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void MassLumped_Tet3D(std::vector<double>& aMassMatrixLumped,
+void MassLumped_Tet3D(double* aMassMatrixLumped,
                       double rho,
-                      const std::vector<double>& aXYZ,
-                      const std::vector<int>& aTet);
+                      const double* aXYZ, int nXYZ,
+                      const int* aTet, int nTet);
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -149,6 +149,10 @@ void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<int>& aQuad,
 void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
                            std::vector<int>& aTri);
 void SetTopoQuad_CubeVox(std::vector<int>& aQuad);
+void SetTopology_ExtrudeTri2Tet(int* aTet,
+                                int nXY,
+                                const int* aTri, int nTri,
+                                int nlayer);
 void ExtrudeTri2Tet(int nlayer, double h,
                     std::vector<double>& aXYZ,
                     std::vector<int>& aTet,

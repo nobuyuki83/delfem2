@@ -21,7 +21,7 @@ def main_CppMeshDynTri2D_0():
 def main_CppMeshDynTri2D_1():
   ccad = dfm2.CppCad2D()
   ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(ccad,0.1)
+  cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(ccad,0.3)
   cdmesh.check()
   for itr in range(10):
     itri0 = random.randint(0,cdmesh.ntri()-1)

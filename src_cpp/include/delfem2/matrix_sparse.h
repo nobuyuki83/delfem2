@@ -35,7 +35,7 @@ public:
   void SetBoundaryCondition(const int* pBCFlag, int nP, int ndimVal);
   void SetMasterSlave(const int* aMSFlag);
   double CheckSymmetry() const;
-  void ScaleLeftRight(const std::vector<double>& scale);
+  void ScaleLeftRight(const double* scale);
   void AddDia(double eps);
 public:
 	int m_nblk_col;

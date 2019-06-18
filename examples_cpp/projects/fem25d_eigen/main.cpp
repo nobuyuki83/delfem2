@@ -96,79 +96,30 @@ void Orthogonalize_ToUnitVector(double* p1,
 }
 
 
-/////////////////////////////////////////
-
-CGlutWindowManager win;
-
-std::vector<int> aTet;
-std::vector<double> aXYZ;
-std::vector<double> aMassLumpedSqrtInv;
-std::vector<double> aMassLumpedSqrt;
-std::vector<double> aTmp0;
-std::vector<double> aTmp1;
-std::vector<double> aMode;
-std::vector<double> aModesKer;
-double lamda0 = 0.1;
-
-CMatrixSquareSparse mat_A;
-CPreconditionerILU  ilu_A;
-
-/////////////////////////////////////////////////////////////////////////////
-
-void RemoveKernel()
+void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
+(double* aMassLumpedSqrtInv,
+ double* aModesKer,
+ const double* aXYZ, int nXYZ,
+ const int* aTet, int nTet)
 {
-  const int nDoF = aXYZ.size();
-  const double* p0 = aModesKer.data()+nDoF*0;
-  const double* p1 = aModesKer.data()+nDoF*1;
-  const double* p2 = aModesKer.data()+nDoF*2;
-  const double* p3 = aModesKer.data()+nDoF*3;
-  const double* p4 = aModesKer.data()+nDoF*4;
-  const double* p5 = aModesKer.data()+nDoF*5;
-  double* p = aTmp0.data();
-  Orthogonalize_ToUnitVector(p, p0, nDoF);
-  Orthogonalize_ToUnitVector(p, p1, nDoF);
-  Orthogonalize_ToUnitVector(p, p2, nDoF);
-  Orthogonalize_ToUnitVector(p, p3, nDoF);
-  Orthogonalize_ToUnitVector(p, p4, nDoF);
-  Orthogonalize_ToUnitVector(p, p5, nDoF);
-  Normalize(p, nDoF);
-}
-
-void InitializeProblem_LinearSolid_Static()
-{
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
-  aTmp0.assign(nDoF, 0.0);
-  //////
-  std::vector<int> psup_ind, psup;
-  JArray_MeshOneRingNeighborhood(psup_ind, psup,
-                                      aTet.data(), aTet.size()/4, 4,
-                                      (int)aXYZ.size()/3);
-  JArray_Sort(psup_ind, psup);
-  mat_A.Initialize(np, 3, true);
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
-                   psup.data(),     psup.size());
-  ilu_A.Initialize_ILU0(mat_A);
+  const int nDoF = nXYZ*3;
+  std::vector<double> aMassLumpedSqrt(nXYZ);
+  MassLumped_Tet3D(aMassLumpedSqrt.data(),
+                   1, aXYZ, nXYZ, aTet,nTet);
   
-  ////////////////////////////////////////////
-
-  
-  MassLumped_Tet3D(aMassLumpedSqrt,
-                   1, aXYZ,aTet);
-  aMassLumpedSqrtInv.resize(aMassLumpedSqrt.size());
-  for(int ip=0;ip<aMassLumpedSqrt.size();++ip){
-    aMassLumpedSqrtInv[ip] = 1.0/sqrt(aMassLumpedSqrt[ip]);
+  for(int ip=0;ip<nXYZ;++ip){
+    aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
   }
   
   {
-    aModesKer.assign(nDoF*6,0.0);
-    double* p0 = aModesKer.data()+nDoF*0;
-    double* p1 = aModesKer.data()+nDoF*1;
-    double* p2 = aModesKer.data()+nDoF*2;
-    double* p3 = aModesKer.data()+nDoF*3;
-    double* p4 = aModesKer.data()+nDoF*4;
-    double* p5 = aModesKer.data()+nDoF*5;
-    for(int ip=0;ip<np;++ip){
+    for(int i=0;i<nDoF*6;++i){ aModesKer[i] = 0.0; }
+    double* p0 = aModesKer+nDoF*0;
+    double* p1 = aModesKer+nDoF*1;
+    double* p2 = aModesKer+nDoF*2;
+    double* p3 = aModesKer+nDoF*3;
+    double* p4 = aModesKer+nDoF*4;
+    double* p5 = aModesKer+nDoF*5;
+    for(int ip=0;ip<nXYZ;++ip){
       const double x0 = aXYZ[ip*3+0];
       const double y0 = aXYZ[ip*3+1];
       const double z0 = aXYZ[ip*3+2];
@@ -203,6 +154,78 @@ void InitializeProblem_LinearSolid_Static()
     Normalize(p5,nDoF);
   }
   
+  for(int ip=0;ip<nXYZ;++ip){
+    aMassLumpedSqrtInv[ip] = 1.0/aMassLumpedSqrt[ip];
+  }
+}
+
+
+/////////////////////////////////////////
+
+CGlutWindowManager win;
+
+std::vector<int> aTet;
+std::vector<double> aXYZ;
+std::vector<double> aMassLumpedSqrtInv;
+std::vector<double> aTmp0;
+std::vector<double> aTmp1;
+std::vector<double> aMode;
+std::vector<double> aModesKer;
+double lamda0 = 0.1;
+
+CMatrixSquareSparse mat_A;
+CPreconditionerILU  ilu_A;
+
+/////////////////////////////////////////////////////////////////////////////
+
+void RemoveKernel()
+{
+  const int nDoF = aXYZ.size();
+  const double* p0 = aModesKer.data()+nDoF*0;
+  const double* p1 = aModesKer.data()+nDoF*1;
+  const double* p2 = aModesKer.data()+nDoF*2;
+  const double* p3 = aModesKer.data()+nDoF*3;
+  const double* p4 = aModesKer.data()+nDoF*4;
+  const double* p5 = aModesKer.data()+nDoF*5;
+  double* p = aTmp0.data();
+  Orthogonalize_ToUnitVector(p, p0, nDoF);
+  Orthogonalize_ToUnitVector(p, p1, nDoF);
+  Orthogonalize_ToUnitVector(p, p2, nDoF);
+  Orthogonalize_ToUnitVector(p, p3, nDoF);
+  Orthogonalize_ToUnitVector(p, p4, nDoF);
+  Orthogonalize_ToUnitVector(p, p5, nDoF);
+  Normalize(p, nDoF);
+}
+
+
+
+
+void InitializeProblem_LinearSolidEigen()
+{
+  const int np = (int)aXYZ.size()/3;
+  const int nDoF = np*3;
+  aTmp0.assign(nDoF, 0.0);
+  //////
+  std::vector<int> psup_ind, psup;
+  JArray_MeshOneRingNeighborhood(psup_ind, psup,
+                                      aTet.data(), aTet.size()/4, 4,
+                                      (int)aXYZ.size()/3);
+  JArray_Sort(psup_ind, psup);
+  mat_A.Initialize(np, 3, true);
+  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
+                   psup.data(),     psup.size());
+  ilu_A.Initialize_ILU0(mat_A);
+  
+  ///////////////////////////////////////////
+  aMassLumpedSqrtInv.resize(np);
+  aModesKer.resize(nDoF*6);
+  SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(aMassLumpedSqrtInv.data(),
+                                          aModesKer.data(),
+                                          aXYZ.data(), aXYZ.size()/3,
+                                          aTet.data(), aTet.size()/4);
+  
+  ////////////////////////////////////////////
+  
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
@@ -214,7 +237,7 @@ void InitializeProblem_LinearSolid_Static()
                                           aXYZ.data(), aXYZ.size()/3,
                                           aTet.data(), aTet.size()/4,
                                           aTmp0.data());
-  mat_A.ScaleLeftRight(aMassLumpedSqrtInv);
+  mat_A.ScaleLeftRight(aMassLumpedSqrtInv.data());
   mat_A.AddDia(0.8);
   
   ilu_A.SetValueILU(mat_A);
@@ -398,7 +421,7 @@ int main(int argc,char* argv[])
   aTmp0.assign(aXYZ.size(),0.0);
   aMode.assign(aXYZ.size(),0.0);
   
-  InitializeProblem_LinearSolid_Static();
+  InitializeProblem_LinearSolidEigen();
   
   for(int i=0;i<aXYZ.size();++i){
     aTmp0[i] = (rand()+1.0)/(RAND_MAX+1.0);

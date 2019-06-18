@@ -80,7 +80,8 @@ class Test_Mesh(unittest.TestCase):
     self.assertIsNot(msh,None)
 
   def test3(self):
-    msh = dfm2.mesh_grid((32,64))
+    msh = dfm2.Mesh()
+    msh.grid((32,16))
     self.assertIsNot(msh,None)
 
   def test4(self):

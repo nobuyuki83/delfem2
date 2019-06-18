@@ -133,7 +133,7 @@ class WindowGLFW:
     self.wm.keyinput(win0,key,scancode,action,mods)
 
   def window_size(self,win0,w,h):
-    glViewport(0,0,w,h)
+    gl.glViewport(0,0,w,h)
 
 
 

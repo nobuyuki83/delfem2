@@ -1309,10 +1309,12 @@ void DrawMeshTet3DSurface_Edge
 }
 
 void DrawMeshTet3D_Edge
-(const std::vector<double>& aXYZ,
- const std::vector<int>& aTet)
+(const double* aXYZ,
+ int nXYZ,
+ const int* aTet,
+ int nTet)
 {
-  for (int itet = 0; itet<(int)aTet.size()/4; itet++){
+  for (int itet = 0; itet<nTet; itet++){
     const int i0 = aTet[itet*4+0];
     const int i1 = aTet[itet*4+1];
     const int i2 = aTet[itet*4+2];

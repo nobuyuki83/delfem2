@@ -20,7 +20,7 @@ class CadMesh2D_Poisson(CadMesh2D):
 
   def remesh(self):
     super().remesh()
-    self.fem.updated_mesh()
+    self.fem.updated_topology()
     npIdP = cad_getPointsEdge(self.ccad, [0, 1, 2, 3], self.dmsh.np_pos, 0.001)
     self.fem.value[npIdP] = 0.0
     self.fem.ls.bc[npIdP] = 1
