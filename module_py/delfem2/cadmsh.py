@@ -23,6 +23,8 @@ from .libdelfem2 import meshtri3d_read_ply, mvc, meshtri3d_read_obj, meshdyntri2
 from .libdelfem2 import meshDynTri2D_CppCad2D, cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
 from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
 from .libdelfem2 import CppVoxelGrid, numpyXYTri_MeshDynTri2D
+from .libdelfem2 import setTopology_ExtrudeTri2Tet
+
 
 ####################
 
@@ -43,12 +45,6 @@ class Mesh():
     self.np_elm = np_elm
     self.elem_type = elem_type
 
-  def ndim(self) -> int:
-    return self.np_pos.shape[1]
-
-  def scale_xyz(self,scale:float):
-    self.np_pos *= scale
-
   def minmax_xyz(self):
     if self.np_pos.shape[0] == 0:
       return [1,-1, 0,0, 0,0]
@@ -68,12 +64,20 @@ class Mesh():
     if self.is_draw_face:
       gl.glColor4d(self.color_face[0], self.color_face[1], self.color_face[2], self.color_face[3])
       gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, self.color_face)
-      draw_mesh_facenorm(self.np_pos,self.np_elm)
+      draw_mesh_facenorm(self.np_pos,self.np_elm, self.elem_type)
     if self.is_draw_edge:
       gl.glDisable(gl.GL_LIGHTING)
       gl.glLineWidth(1)
       gl.glColor3d(0,0,0)
-      draw_mesh_edge(self.np_pos,self.np_elm)
+      draw_mesh_edge(self.np_pos,self.np_elm, self.elem_type)
+
+  #####
+
+  def ndim(self) -> int:
+    return self.np_pos.shape[1]
+
+  def scale_xyz(self,scale:float):
+    self.np_pos *= scale
 
   def subdiv(self):
     if self.elem_type == QUAD:
@@ -82,10 +86,6 @@ class Mesh():
     if self.elem_type == HEX:
       np_pos1,np_quad1 = meshhex3d_subdiv(self.np_pos,self.np_elm)
       return Mesh(np_pos1,np_quad1,HEX)
-
-  def meshtri2d(self,list_pos,list_elm):
-    self.np_pos = numpy.array(list_pos, dtype=numpy.float32).reshape((-1, 2))
-    self.np_elm = numpy.array(list_elm, dtype=numpy.int).reshape((-1, 3))
 
   def psup(self) -> tuple:
     res = jarray_mesh_psup(self.np_elm, self.np_pos.shape[0])
@@ -105,11 +105,28 @@ class Mesh():
         self.np_pos, self.np_elm = meshtri3d_read_nastran(path_file)
       self.elem_type = TRI
 
-##########################################################################
+  def grid(self,shape:list):
+    if len(shape) == 2:
+      self.np_pos, self.np_elm = meshquad2d_grid(shape[0], shape[1])
+      self.elem_type = QUAD
 
-def mesh_grid(shape:list) -> Mesh:
-  np_pos,np_quad = meshquad2d_grid(shape[0],shape[1])
-  return Mesh(np_pos,np_quad,QUAD)
+  def set_extrude(self, msh0, nlayer:int):
+    if msh0.elem_type ==TRI:
+      self.elem_type = TET
+      ####
+      np0 = msh0.np_pos.shape[0]
+      if self.np_pos.shape != (np0*(nlayer+1),3):
+        self.np_pos = numpy.ndarray((np0*(nlayer+1),3),dtype=numpy.float64)
+      for idiv in range(nlayer+1):
+        self.np_pos[np0*idiv:np0*(idiv+1),:2] = msh0.np_pos[:,:]
+        self.np_pos[np0*idiv:np0*(idiv+1), 2] = idiv
+      ####
+      ntri0 = msh0.np_elm.shape[0]
+      if self.np_elm.shape != (ntri0*nlayer*3,4):
+        self.np_elm = numpy.ndarray((ntri0*nlayer*3,4),dtype=numpy.int32)
+      setTopology_ExtrudeTri2Tet(self.np_elm,
+                                 nlayer,np0,msh0.np_elm)
+
 
 
 ###########################################################################
@@ -250,7 +267,7 @@ class CadMesh2D(Cad2D):
     self.drag_picked(src1[0],src1[1], src0[0],src0[1])
 
   def minmax_xyz(self):
-    return self.msh.minmax_xyz()
+    return self.dmsh.minmax_xyz()
 
   #####
 

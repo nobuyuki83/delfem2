@@ -605,11 +605,9 @@ double CMatrixSquareSparse::CheckSymmetry() const
   return sum;
 }
 
-void CMatrixSquareSparse::ScaleLeftRight(const std::vector<double>& scale){
+void CMatrixSquareSparse::ScaleLeftRight(const double* scale){
   assert( this->m_nblk_row == this->m_nblk_col );
   assert( this->m_len_row == this->m_len_col );
-  assert( scale.size() == this->m_nblk_col );
-  assert( scale.size() == this->m_nblk_row );
   const int blksize = m_len_col*m_len_row;
   for(int ino=0;ino<m_nblk_col;++ino){
     for(int icrs0=m_colInd[ino];icrs0<m_colInd[ino+1];++icrs0){

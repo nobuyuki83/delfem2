@@ -23,6 +23,19 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad2D_Grid
   return std::forward_as_tuple(npXY,npQuad);
 }
 
+void PySetTopology_ExtrudeTri2Tet
+(py::array_t<int>& npTet,
+ int nlayer, int nXY,
+ const py::array_t<int>& npTri)
+{
+  SetTopology_ExtrudeTri2Tet((int*)(npTet.request().ptr),
+                             nXY,
+                             npTri.data(), npTri.shape()[0],
+                             nlayer);
+}
+
+/////////////////////////////////////////////////////////////////////
+
 std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadPly
 (const std::string& fname)
 {
@@ -108,6 +121,9 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshHex3D_Subviv
   return std::forward_as_tuple(npXYZ1,npHex1);
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////
+
 void PyMeshDynTri3D_Initialize
 (CMeshDynTri3D& mesh,
  const py::array_t<double>& po,
@@ -126,8 +142,6 @@ void PyMeshDynTri2D_Initialize
   mesh.Initialize(po.data(), po.shape()[0],
                   tri.data(), tri.shape()[0]);
 }
-
-
 
 void PyCopyMeshDynTri2D
 (py::array_t<double>& npPos,
@@ -163,40 +177,44 @@ void PyCopyMeshDynTri2D
 
 void PyDrawMesh_FaceNorm
 (const py::array_t<double>& pos,
- const py::array_t<int>& elm)
+ const py::array_t<int>& elm,
+ const MESHELEM_TYPE type)
 {
   assert(pos.ndim()==2);
   assert(elm.ndim()==2);
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( shape_elm[1] == 3 ){  DrawMeshTri3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
-    if( shape_elm[1] == 4 ){  DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
-    if( shape_elm[1] == 8 ){  DrawMeshHex3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TRI  ){  DrawMeshTri3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){  DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_HEX  ){  DrawMeshHex3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TET  ){  DrawMeshTet3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
   }
 }
 
 void PyDrawMesh_Edge
 (const py::array_t<double>& pos,
- const py::array_t<int>& elm)
+ const py::array_t<int>& elm,
+ const MESHELEM_TYPE type)
 {
   assert(pos.ndim()==2);
   assert(elm.ndim()==2);
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( shape_elm[1] == 3 ){  DrawMeshTri3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( shape_elm[1] == 4 ){  DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( shape_elm[1] == 8 ){  DrawMeshHex3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]);  }
+    if( type == MESHELEM_TRI  ){  DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){  DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_HEX  ){  DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TET  ){  DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
   if( shape_pos[1] == 2 ){ // 2D Mesh
-    if( shape_elm[1] == 3 ){  DrawMeshTri2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( shape_elm[1] == 4 ){  DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TRI  ){  DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){  DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
 }
 
 
-
+/*
 std::tuple<std::vector<double>,std::vector<int>>
 PyTriangulation
 (const std::vector< std::vector<double> >& aaXY,
@@ -235,6 +253,7 @@ PyTriangulation
   MeshTri2D_Export(aXY,aTri, aVec2,aETri);
   return std::forward_as_tuple(aXY,aTri);
 }
+ */
 
 std::tuple<py::array_t<int>, py::array_t<int>>
 PyJArray_MeshPsup(const py::array_t<int>& elm, int npoint)
@@ -267,6 +286,26 @@ PyJArray_AddDiagonal(py::array_t<int>& psup_ind0, py::array_t<int>& psup0)
   return std::forward_as_tuple(np_psup_ind, np_psup);
 }
 
+
+void PyMassLumped
+(py::array_t<double>& mass_lumped,
+ double rho,
+ const py::array_t<double>& np_pos,
+ const py::array_t<int>& np_elm,
+ MESHELEM_TYPE elem_type)
+{
+  assert( mass_lumped.ndim() == 1 );
+  assert( np_pos.ndim() == 2 );
+  assert( np_elm.ndim() == 2 );
+  assert( mass_lumped.shape()[0] == np_pos.shape()[0] );
+  if( elem_type ==  MESHELEM_TET ){
+    std::cout << "mass_lumped " << np_pos.shape()[0] << " " << np_elm.shape()[0] << std::endl;
+    MassLumped_Tet3D((double*)(mass_lumped.request().ptr),
+                     rho,
+                     np_pos.data(), np_pos.shape()[0],
+                     np_elm.data(), np_elm.shape()[0]);
+  }
+}
 
 
 
@@ -392,15 +431,24 @@ void init_mshtopoio_gl(py::module &m){
   m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
   m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
   
+  m.def("setTopology_ExtrudeTri2Tet", &PySetTopology_ExtrudeTri2Tet);
+  
+  m.def("mass_lumped", &PyMassLumped);
+  
+  
+  /*
   m.def("triangulation",&PyTriangulation,
         py::arg("aXY"),
         py::arg("edge_length")=0.03);
+   */
   
   m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);
   m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);
   m.def("jarray_sort",         &PyJArray_Sort);
+  
   m.def("elemQuad_dihedralTri",&PyElemQuad_DihedralTri);
   m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
+  
   m.def("draw_mesh_facenorm",  &PyDrawMesh_FaceNorm);
   m.def("draw_mesh_edge",      &PyDrawMesh_Edge);
 }

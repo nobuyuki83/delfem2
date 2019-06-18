@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
+import numpy
 import sys
 sys.path.append("../module_py")
 import delfem2 as dfm2
@@ -21,13 +22,14 @@ def poisson(cad,mesh):
 
 
 def poisson_ms(cad, mesh):
-  fem = dfm2.FEM_Poisson(mesh,source=0.2)
+  npIdP_ms = cad.points_edge([0], mesh.np_pos)
+  vec_ms = numpy.zeros_like(mesh.np_pos)
+  vec_ms[:] = -1
+  vec_ms[npIdP_ms] = npIdP_ms[0]
+  vec_ms[npIdP_ms[0]] = -1
+  fem = dfm2.FEM_Poisson(mesh, source=0.2, master_slave_pattern=vec_ms)
   npIdP_fix = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP_fix] = 1
-  npIdP_ms = cad.points_edge([0], mesh.np_pos)
-  fem.ls.vec_ms[:] = -1
-  fem.ls.vec_ms[npIdP_ms] = npIdP_ms[0]
-  fem.ls.vec_ms[npIdP_ms[0]] = -1
   fem.solve()
   field = dfm2.VisFEM_ColorContour(fem,"value")
   dfm2.glfw.winDraw3d([field])
@@ -53,6 +55,13 @@ def linear_solid_static(cad,mesh):
   field = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
   dfm2.glfw.winDraw3d([field])
   field.write_vtk("linearsolid2d.vtk")
+
+
+def linear_solid_eigen(mesh):
+  fem = dfm2.FEM_LinearSolidEigen(mesh)
+  fem.ls.vec_f[:] = numpy.random.uniform(-1,1, mesh.np_pos.shape )
+  field = dfm2.VisFEM_ColorContour(fem,name_disp="mode")
+  dfm2.glfw.winDraw3d([fem,field])
 
 
 def linear_solid_dynamic(cad,mesh):
@@ -133,10 +142,11 @@ def pbd1(cad,mesh):
 
 
 def main():
+
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   mesh,map_cad2mesh = cad.mesh(0.05)
-#  dfm2.winDraw3d([cad,mesh])
+#  dfm2.glfw.winDraw3d([cad,mesh])
   poisson(cad,mesh)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)
@@ -155,6 +165,14 @@ def main():
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesh,map_cad2mesh = cad.mesh(0.2)
   pbd1(cad,mesh)
+
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
+  msh2,map_cad2mesh = cad.mesh(0.05)
+  msh25 = dfm2.Mesh()
+  msh25.set_extrude(msh2,1)
+  msh25.np_pos[:,2] *= 0.05
+  linear_solid_eigen(msh25)
 
 
 if __name__ == "__main__":

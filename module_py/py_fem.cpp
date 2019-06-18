@@ -18,6 +18,8 @@ void MatrixSquareSparse_SetPattern
  const py::array_t<int>& psup_ind,
  const py::array_t<int>& psup)
 {
+  assert( mss.m_nblk_col == mss.m_nblk_row );
+  assert( mss.m_len_col == mss.m_len_row );
   assert( psup_ind.ndim()  == 1 );
   assert( psup.ndim()  == 1 );
   const int np = mss.m_nblk_col;
@@ -30,7 +32,24 @@ void MatrixSquareSparse_SetFixBC
 (CMatrixSquareSparse& mss,
  const py::array_t<int>& flagbc)
 {
+  assert( mss.m_nblk_col == mss.m_nblk_row );
+  assert( mss.m_len_col == mss.m_len_row );
+  assert( flagbc.ndim() == 2 );
+  assert( flagbc.shape()[0] == mss.m_nblk_col );
+  assert( flagbc.shape()[1] == mss.m_len_col );
   mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0],flagbc.shape()[1]);
+}
+
+
+void MatrixSquareSparse_ScaleLeftRight
+(CMatrixSquareSparse& mss,
+ const py::array_t<double>& scale)
+{
+  assert( mss.m_nblk_col == mss.m_nblk_row );
+  assert( mss.m_len_col == mss.m_len_row );
+  assert( scale.ndim() == 1 );
+  assert( scale.shape()[0] == mss.m_nblk_col );
+  mss.ScaleLeftRight(scale.data());
 }
 
 void LinearSystem_SetMasterSlave
@@ -491,16 +510,18 @@ void init_fem(py::module &m){
   py::class_<CMatrixSquareSparse>(m,"MatrixSquareSparse")
   .def(py::init<>())
   .def("initialize", &CMatrixSquareSparse::Initialize)
-  .def("setZero",    &CMatrixSquareSparse::SetZero);
+  .def("set_zero",    &CMatrixSquareSparse::SetZero)
+  .def("add_dia", &CMatrixSquareSparse::AddDia);
   
   py::class_<CPreconditionerILU>(m,"PreconditionerILU")
   .def(py::init<>())
   .def("ilu_decomp", &CPreconditionerILU::DoILUDecomp)
   .def("set_value", &CPreconditionerILU::SetValueILU);
-  //  .def(py::init<const CPreconditionerILU&>);
   
   m.def("matrixSquareSparse_setPattern", &MatrixSquareSparse_SetPattern);
   m.def("matrixSquareSparse_setFixBC",   &MatrixSquareSparse_SetFixBC);
+  m.def("matrixSquareSparse_ScaleLeftRight", &MatrixSquareSparse_ScaleLeftRight);
+  
   m.def("addMasterSlavePattern",         &PyAddMasterSlavePattern);
   m.def("precond_ilu0",                  &PrecondILU0);
   m.def("linsys_solve_pcg",              &PySolve_PCG);

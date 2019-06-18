@@ -4,7 +4,7 @@ from .libdelfem2 import RigidBody, Joint, RigidBodyAssembly_Static
 from .libdelfem2 import meshdyntri3d_initialize, isosurface
 from .libdelfem2 import setSomeLighting
 from .libdelfem2 import get_texture
-from .libdelfem2 import triangulation, cad_getPointsEdge, mvc
+from .libdelfem2 import cad_getPointsEdge, mvc
 
 from .libdelfem2 import meshDynTri2D_CppCad2D, CppMeshDynTri3D, CppCad2D
 
@@ -16,10 +16,10 @@ from .fem import \
   FEM_Diffuse, \
   FEM_LinearSolidStatic, \
   FEM_LinearSolidDynamic, \
+  FEM_LinearSolidEigen, \
   FEM_StorksStatic2D, \
   FEM_StorksDynamic2D, \
   FEM_NavierStorks2D
 
 from .cadmsh import Cad2D, Grid3D, SDF, Mesh, CadMesh2D, MeshDynTri2D
 from .cadmsh import TET, TRI, HEX, QUAD
-from .cadmsh import mesh_grid

@@ -1123,6 +1123,56 @@ void MeshTri3D_Icosahedron
   aTri[19*3+0]=10; aTri[19*3+1]= 5; aTri[19*3+2]= 7;
 }
 
+void SetTopology_ExtrudeTri2Tet
+(int* aTet,
+ int nXY,
+ const int* aTri, int nTri,
+ int nlayer)
+{
+  for(int il=0;il<nlayer;++il){
+    for(int itri=0;itri<nTri;++itri){
+      int ip0=-1, ip1=-1, ip2=-1;
+      {
+        const int i0 = aTri[itri*3+0];
+        const int i1 = aTri[itri*3+1];
+        const int i2 = aTri[itri*3+2];
+        if( i0 > i1 && i0 > i2 ){ ip0=i0; ip1=i1; ip2=i2; }
+        if( i1 > i0 && i1 > i2 ){ ip0=i1; ip1=i2; ip2=i0; }
+        if( i2 > i0 && i2 > i1 ){ ip0=i2; ip1=i0; ip2=i1; }
+        assert(ip0!=-1);
+      }
+      const int aIQ[6] = {
+        (il+0)*nXY+ip0, (il+1)*nXY+ip0,
+        (il+0)*nXY+ip1, (il+1)*nXY+ip1,
+        (il+0)*nXY+ip2, (il+1)*nXY+ip2 };
+      aTet[il*nTri*12+itri*12+4*0+0] = aIQ[0];
+      aTet[il*nTri*12+itri*12+4*0+1] = aIQ[2];
+      aTet[il*nTri*12+itri*12+4*0+2] = aIQ[4];
+      aTet[il*nTri*12+itri*12+4*0+3] = aIQ[1];
+      if( ip1 > ip2 ){
+        aTet[il*nTri*12+itri*12+4*1+0] = aIQ[1];
+        aTet[il*nTri*12+itri*12+4*1+1] = aIQ[3];
+        aTet[il*nTri*12+itri*12+4*1+2] = aIQ[2];
+        aTet[il*nTri*12+itri*12+4*1+3] = aIQ[4];
+        aTet[il*nTri*12+itri*12+4*2+0] = aIQ[1];
+        aTet[il*nTri*12+itri*12+4*2+1] = aIQ[3];
+        aTet[il*nTri*12+itri*12+4*2+2] = aIQ[4];
+        aTet[il*nTri*12+itri*12+4*2+3] = aIQ[5];
+      }
+      else{
+        aTet[il*nTri*12+itri*12+4*1+0] = aIQ[1];
+        aTet[il*nTri*12+itri*12+4*1+1] = aIQ[2];
+        aTet[il*nTri*12+itri*12+4*1+2] = aIQ[5];
+        aTet[il*nTri*12+itri*12+4*1+3] = aIQ[3];
+        aTet[il*nTri*12+itri*12+4*2+0] = aIQ[1];
+        aTet[il*nTri*12+itri*12+4*2+1] = aIQ[2];
+        aTet[il*nTri*12+itri*12+4*2+2] = aIQ[4];
+        aTet[il*nTri*12+itri*12+4*2+3] = aIQ[5];
+      }
+    }
+  }
+}
+
 void ExtrudeTri2Tet
 (int nlayer, double h,
  std::vector<double>& aXYZ,
@@ -1140,34 +1190,9 @@ void ExtrudeTri2Tet
       aXYZ[il*nXY*3+ixy*3+2] = il*h;
     }
   }
-  aTet.resize(0);
-  for(int il=0;il<nlayer;++il){
-    for(int itri=0;itri<nTri;++itri){
-      int ip0=-1, ip1=-1, ip2=-1;
-      {
-        const int i0 = aTri[itri*3+0];
-        const int i1 = aTri[itri*3+1];
-        const int i2 = aTri[itri*3+2];
-        if( i0 > i1 && i0 > i2 ){ ip0=i0; ip1=i1; ip2=i2; }
-        if( i1 > i0 && i1 > i2 ){ ip0=i1; ip1=i2; ip2=i0; }
-        if( i2 > i0 && i2 > i1 ){ ip0=i2; ip1=i0; ip2=i1; }
-        assert(ip0!=-1);
-      }
-      const int aIQ[6] = {
-        (il+0)*nXY+ip0, (il+1)*nXY+ip0,
-        (il+0)*nXY+ip1, (il+1)*nXY+ip1,
-        (il+0)*nXY+ip2, (il+1)*nXY+ip2 };
-      aTet.push_back(aIQ[0]); aTet.push_back(aIQ[2]); aTet.push_back(aIQ[4]); aTet.push_back(aIQ[1]);
-      if( ip1 > ip2 ){
-        aTet.push_back(aIQ[1]); aTet.push_back(aIQ[3]); aTet.push_back(aIQ[2]); aTet.push_back(aIQ[4]);
-        aTet.push_back(aIQ[1]); aTet.push_back(aIQ[3]); aTet.push_back(aIQ[4]); aTet.push_back(aIQ[5]);
-      }
-      else{
-        aTet.push_back(aIQ[1]); aTet.push_back(aIQ[2]); aTet.push_back(aIQ[5]); aTet.push_back(aIQ[3]);
-        aTet.push_back(aIQ[1]); aTet.push_back(aIQ[2]); aTet.push_back(aIQ[4]); aTet.push_back(aIQ[5]);
-      }
-    }
-  }
+  aTet.resize(nTri*nlayer*3*4);
+  SetTopology_ExtrudeTri2Tet(aTet.data(),
+                             nXY,aTri.data(),nTri,nlayer);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1372,23 +1397,21 @@ void makeSolidAngle
 
 
 void MassLumped_Tet3D
-(std::vector<double>& aMassMatrixLumped,
+(double* aMassMatrixLumped,
  double rho,
- const std::vector<double>& aXYZ,
- const std::vector<int>& aTet)
+ const double* aXYZ, int nXYZ,
+ const int* aTet, int nTet)
 {
-  const int np = aXYZ.size()/3;
-  aMassMatrixLumped.assign(np, 0.0);
-  const double* paXYZ = aXYZ.data();
-  for(int it=0;it<aTet.size()/4;++it){
-    const int i0 = aTet[it*4+0]; assert(i0>=0&&i0<np);
-    const int i1 = aTet[it*4+1]; assert(i1>=0&&i1<np);
-    const int i2 = aTet[it*4+2]; assert(i2>=0&&i2<np);
-    const int i3 = aTet[it*4+3]; assert(i3>=0&&i3<np);
-    const double* p0 = paXYZ+i0*3;
-    const double* p1 = paXYZ+i1*3;
-    const double* p2 = paXYZ+i2*3;
-    const double* p3 = paXYZ+i3*3;
+  for(int i=0;i<nXYZ;++i){ aMassMatrixLumped[i] = 0.0; }
+  for(int it=0;it<nTet;++it){
+    const int i0 = aTet[it*4+0]; assert(i0>=0&&i0<nXYZ);
+    const int i1 = aTet[it*4+1]; assert(i1>=0&&i1<nXYZ);
+    const int i2 = aTet[it*4+2]; assert(i2>=0&&i2<nXYZ);
+    const int i3 = aTet[it*4+3]; assert(i3>=0&&i3<nXYZ);
+    const double* p0 = aXYZ+i0*3;
+    const double* p1 = aXYZ+i1*3;
+    const double* p2 = aXYZ+i2*3;
+    const double* p3 = aXYZ+i3*3;
     const double v0123 = TetVolume3D(p0, p1, p2, p3);
     aMassMatrixLumped[i0] += 0.25*rho*v0123;
     aMassMatrixLumped[i1] += 0.25*rho*v0123;

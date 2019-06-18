@@ -26,12 +26,9 @@ def pbd_hex(voxelgrid):
   fvs = dfm2.FieldValueSetter("0.4*sin(0.8*t)", pbd.vec_val, 1,
                               mesh=msh, npIdP=npIdP, dt=pbd.dt)
   ####
-  msh_def = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=msh.np_elm)
+  msh_def = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=msh.np_elm,elem_type=dfm2.HEX)
   axis = dfm2.AxisXYZ()
   dfm2.glfw.winDraw3d([fvs, pbd, msh_def, axis], (400, 400))
-
-
-
 
 def show_quad(voxelgrid):
   msh = voxelgrid.mesh_quad3d()
