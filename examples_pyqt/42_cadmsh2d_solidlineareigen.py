@@ -7,11 +7,8 @@
 
 import sys, math
 
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget, QMenu,
-                             QWidget, QPushButton)
-
-import OpenGL.GL as gl
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QVBoxLayout
 
 sys.path.append("../module_py")
 import delfem2 as dfm2
@@ -20,14 +17,12 @@ import delfem2.pyqt
 import delfem2.cadmshfem
 
 
-from PyQt5.QtWidgets import (QApplication, QWidget)
-
-class Window(QWidget):
+class Window_SolidLinearEigen(QWidget):
   def __init__(self):
-    super(Window, self).__init__()
+    super(Window_SolidLinearEigen, self).__init__()
 
-    self.cadmsh = dfm2.cadmshfem.CadMesh2D_Poisson(edge_length=0.05)
-    self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    self.cadmsh = dfm2.cadmshfem.CadMesh2D_SolidLinearEigen(edge_length=0.05)
+    self.cadmsh.add_polygon([-1, -0.2, +1, -0.2, +1, +0.2, -1, +0.2])
 
     self.glWidget = dfm2.pyqt.QOpenGLWidget_Cad2D()
     self.glWidget.cadobj = self.cadmsh
@@ -40,15 +35,14 @@ class Window(QWidget):
     mainLayout.addItem(self.ui_meshres.hl)
     self.setLayout(mainLayout)
 
-    self.setWindowTitle("CAD_Mesh_FEM")
+    self.setWindowTitle("CAD_Mesh_SolidLinearEigen")
 
   def keyPressEvent(self, event):
     if event.text() == 'q':
       self.close()
 
-
 if __name__ == '__main__':
   app = QApplication(sys.argv)
-  window = Window()
+  window = Window_SolidLinearEigen()
   window.show()
   sys.exit(app.exec_())

@@ -8,15 +8,15 @@ from .libdelfem2 import cad_getPointsEdge, mvc
 
 from .libdelfem2 import meshDynTri2D_CppCad2D, CppMeshDynTri3D, CppCad2D
 
-
-from .fem import PBD, FieldValueSetter, VisFEM_Hedgehog, VisFEM_ColorContour
+from .fem import VisFEM_Hedgehog, VisFEM_ColorContour
+from .fem import PBD, FieldValueSetter
 from .fem import \
   FEM_Poisson, \
   FEM_Cloth, \
   FEM_Diffuse, \
-  FEM_LinearSolidStatic, \
-  FEM_LinearSolidDynamic, \
-  FEM_LinearSolidEigen, \
+  FEM_SolidLinearStatic, \
+  FEM_SolidLinearDynamic, \
+  FEM_SolidLinearEigen, \
   FEM_StorksStatic2D, \
   FEM_StorksDynamic2D, \
   FEM_NavierStorks2D

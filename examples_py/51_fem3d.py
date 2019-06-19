@@ -49,7 +49,7 @@ def diffuse(msh,npIdP0,npIdP1):
 
 
 def linear_solid_static(msh,npIdP):
-  fem = dfm2.FEM_LinearSolidStatic(msh,gravity=[0.3,0,0])
+  fem = dfm2.FEM_SolidLinearStatic(msh,gravity=[0.3,0,0])
   fem.ls.bc[npIdP,:] = 1
   fem.solve()
   print(fem.ls.conv_hist)
@@ -61,7 +61,7 @@ def linear_solid_static(msh,npIdP):
 
 
 def linear_solid_dynamic(msh,npIdP):
-  fem = dfm2.FEM_LinearSolidDynamic(msh,gravity=[0.3,0,0])
+  fem = dfm2.FEM_SolidLinearDynamic(msh,gravity=[0.3,0,0])
   fem.ls.bc[npIdP,:] = 1
   ####
   vis_disp = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")

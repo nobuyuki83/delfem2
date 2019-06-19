@@ -10,7 +10,7 @@ import OpenGL.GL as gl
 
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QPushButton, QLabel, QSlider, QHBoxLayout
+from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QPushButton, QLabel, QSlider, QHBoxLayout, QCheckBox
 
 sys.path.append("../module_py")
 import delfem2 as dfm2
@@ -173,7 +173,12 @@ class QUI_MeshRes(QWidget):
     self.sp.setValue(50)
     self.sp.valueChanged.connect(self.slider_moved)
 
+    self.b1 = QCheckBox("Sync Mesh To CAD")
+    self.b1.setChecked(True)
+    self.b1.stateChanged.connect(lambda: self.btnstate(self.b1))
+
     self.hl = QHBoxLayout()
+    self.hl.addWidget(self.b1)
     self.hl.addWidget(self.sp)
     self.hl.addWidget(self.lbl)
     self.hl.addWidget(self.btn)
@@ -188,3 +193,7 @@ class QUI_MeshRes(QWidget):
       self.cadmsh.remesh()
       if self.func_updated is not None:
         self.func_updated()
+
+  def btnstate(self, b):
+    if b == self.b1:
+      self.cadmsh.is_sync_mesh = b.isChecked()

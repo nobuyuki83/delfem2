@@ -22,6 +22,18 @@ def poisson():
   cmf.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
   dfm2.glfw.winDraw3d([cmf])
 
+def solid_linear_static():
+  cmf = dfm2.cadmshfem.CadMesh2D_SolidLinearStatic(edge_length=0.1)
+  cmf.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
+  dfm2.glfw.winDraw3d([cmf])
+
+def solid_linear_eigen():
+  cmf = dfm2.cadmshfem.CadMesh2D_SolidLinearEigen(edge_length=0.1)
+  cmf.add_polygon([-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
+  dfm2.glfw.winDraw3d([cmf])
+
 if __name__ == "__main__":
   mesh()
   poisson()
+  solid_linear_static()
+  solid_linear_eigen()
