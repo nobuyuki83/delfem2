@@ -11,8 +11,9 @@ sys.path.append("../module_py")
 import delfem2 as dfm2
 import delfem2.glfw
 
-def poisson(cad,mesh):
-  fem = dfm2.FEM_Poisson(mesh,source=1.0)
+def poisson(cad,mesh,map_cad2mesh):
+  fem = dfm2.FEM_Poisson(source=1.0)
+  fem.updated_topology(mesh)
   npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
   fem.ls.bc[npIdP] = 1
   fem.solve()
@@ -23,11 +24,12 @@ def poisson(cad,mesh):
 
 def poisson_ms(cad, mesh):
   npIdP_ms = cad.points_edge([0], mesh.np_pos)
-  vec_ms = numpy.zeros_like(mesh.np_pos)
+  vec_ms = numpy.zeros((mesh.np_pos.shape[0],1),dtype=numpy.int32)
   vec_ms[:] = -1
   vec_ms[npIdP_ms] = npIdP_ms[0]
   vec_ms[npIdP_ms[0]] = -1
-  fem = dfm2.FEM_Poisson(mesh, source=0.2, master_slave_pattern=vec_ms)
+  fem = dfm2.FEM_Poisson(source=0.2)
+  fem.updated_topology(mesh=mesh, master_slave_pattern=vec_ms)
   npIdP_fix = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP_fix] = 1
   fem.solve()
@@ -48,7 +50,7 @@ def diffuse(cad,mesh):
 
 
 def linear_solid_static(cad,mesh):
-  fem = dfm2.FEM_LinearSolidStatic(mesh,gravity=[0,-0.1])
+  fem = dfm2.FEM_SolidLinearStatic(mesh,gravity=[0,-0.1])
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   fem.solve()
@@ -58,14 +60,14 @@ def linear_solid_static(cad,mesh):
 
 
 def linear_solid_eigen(mesh):
-  fem = dfm2.FEM_LinearSolidEigen(mesh)
-  fem.ls.vec_f[:] = numpy.random.uniform(-1,1, mesh.np_pos.shape )
+  fem = dfm2.FEM_SolidLinearEigen(mesh)
+  fem.ls.f[:] = numpy.random.uniform(-1,1, mesh.np_pos.shape )
   field = dfm2.VisFEM_ColorContour(fem,name_disp="mode")
   dfm2.glfw.winDraw3d([fem,field])
 
 
 def linear_solid_dynamic(cad,mesh):
-  fem = dfm2.FEM_LinearSolidDynamic(mesh,gravity=[0,-0.1])
+  fem = dfm2.FEM_SolidLinearDynamic(mesh,gravity=[0,-0.1])
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   print(fem.ls.conv_hist)
@@ -146,8 +148,7 @@ def main():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   mesh,map_cad2mesh = cad.mesh(0.05)
-#  dfm2.glfw.winDraw3d([cad,mesh])
-  poisson(cad,mesh)
+  poisson(cad,mesh,map_cad2mesh)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)
   linear_solid_dynamic(cad,mesh)

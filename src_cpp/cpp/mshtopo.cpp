@@ -904,6 +904,7 @@ void JArray_AddMasterSlavePattern
       int ino0 = idof0/ndim;
       int idim0 = idof0 - ino0*ndim;
       assert( ino0 < nno && idim0 < ndim );
+//      std::cout << idim1 << " " << idim0 << " " << ndim << std::endl;
       assert( idim1 == idim0 );
       mapM2S[ino0].push_back(ino1);
     }

@@ -337,6 +337,15 @@ std::vector<int> CCad2D::Ind_Vtx_Face(int iface) const
   return topo.aFace[iface].GetArray_IdVertex(topo.aEdge);
 }
 
+std::vector<int> CCad2D::Ind_Vtx_Edge(int iedge) const
+{
+  std::vector<int> aRes;
+  if( iedge < 0 || iedge > (int)topo.aEdge.size() ){ return aRes; }
+  aRes.push_back(topo.aEdge[iedge].iv0);
+  aRes.push_back(topo.aEdge[iedge].iv1);
+  return aRes;
+}
+
 std::vector<std::pair<int,bool> > CCad2D::Ind_Edge_Face(int iface) const
 {
 //  std::vector<int> aIdE;

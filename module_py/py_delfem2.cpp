@@ -245,6 +245,7 @@ PYBIND11_MODULE(libdelfem2, m) {
   .def("xy_vtx_face", &CCad2D::XY_Vtx_Face)
   .def("ind_vtx_face", &CCad2D::Ind_Vtx_Face)
   .def("ind_edge_face",&CCad2D::Ind_Edge_Face)
+  .def("ind_vtx_edge",&CCad2D::Ind_Vtx_Edge)
   .def("add_vtx_edge", &CCad2D::AddVtxEdge)
   .def("check",       &CCad2D::Check)
   .def("nface",       &CCad2D::nFace)
