@@ -339,53 +339,56 @@ class FEM_SolidLinearEigen():
     mass_lumped(self.mass_lumped_sqrt_inv,
                 self.rho, self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
     self.mass_lumped_sqrt_inv = numpy.sqrt(self.mass_lumped_sqrt_inv)
-    self.ker = self.ker.reshape((6,-1,3))
-    self.ker[:,:,:] = 0.0
-    self.ker[0,:,0] = + self.mass_lumped_sqrt_inv[:]
-    self.ker[1,:,1] = + self.mass_lumped_sqrt_inv[:]
-    self.ker[2,:,2] = + self.mass_lumped_sqrt_inv[:]
-    self.ker[3,:,2] = - self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,1]
-    self.ker[3,:,1] = + self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,2]
-    self.ker[4,:,0] = - self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,2]
-    self.ker[4,:,2] = + self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,0]
-    self.ker[5,:,1] = - self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,0]
-    self.ker[5,:,0] = + self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,1]
-    self.ker = self.ker.reshape((6,-1))
-    for i in range(6):
-      self.ker[i] /= numpy.linalg.norm(self.ker[i])
-      for j in range(i+1,6):
-        self.ker[j] -= numpy.dot(self.ker[i], self.ker[j]) * self.ker[i]
-    '''
-    self.ker[0] /= numpy.linalg.norm(self.ker[0])
-    self.ker[1] -= numpy.dot(self.ker[0],self.ker[1]) * self.ker[0]
-    self.ker[2] -= numpy.dot(self.ker[0],self.ker[2]) * self.ker[0]
-    self.ker[3] -= numpy.dot(self.ker[0],self.ker[3]) * self.ker[0]
-    self.ker[4] -= numpy.dot(self.ker[0],self.ker[4]) * self.ker[0]
-    self.ker[5] -= numpy.dot(self.ker[0],self.ker[5]) * self.ker[0]
-    self.ker[1] /= numpy.linalg.norm(self.ker[1])
-    self.ker[2] -= numpy.dot(self.ker[1],self.ker[2]) * self.ker[1]
-    self.ker[3] -= numpy.dot(self.ker[1],self.ker[3]) * self.ker[1]
-    self.ker[4] -= numpy.dot(self.ker[1],self.ker[4]) * self.ker[1]
-    self.ker[5] -= numpy.dot(self.ker[1],self.ker[5]) * self.ker[1]
-    self.ker[2] /= numpy.linalg.norm(self.ker[2])
-    self.ker[3] -= numpy.dot(self.ker[2],self.ker[3]) * self.ker[2]
-    self.ker[4] -= numpy.dot(self.ker[2],self.ker[4]) * self.ker[2]
-    self.ker[5] -= numpy.dot(self.ker[2],self.ker[5]) * self.ker[2]
-    self.ker[3] /= numpy.linalg.norm(self.ker[3])
-    self.ker[4] -= numpy.dot(self.ker[3],self.ker[4]) * self.ker[3]
-    self.ker[5] -= numpy.dot(self.ker[3],self.ker[5]) * self.ker[3]
-    self.ker[4] /= numpy.linalg.norm(self.ker[4])
-    self.ker[5] -= numpy.dot(self.ker[4],self.ker[5]) * self.ker[4]
-    self.ker[5] /= numpy.linalg.norm(self.ker[5])
-    '''
-    '''
-    for i in range(6):
-      for j in range(i,6):
-        print(i,j,numpy.dot(self.ker[i],self.ker[j]))
-    '''
-    self.ker = self.ker.reshape((6,-1,3))
-    self.mass_lumped_sqrt_inv = numpy.reciprocal( self.mass_lumped_sqrt_inv )
-    ####
+    if self.mesh.np_pos.shape[1] == 3:
+      self.ker = self.ker.reshape((6,-1,3))
+      self.ker[:,:,:] = 0.0
+      self.ker[0,:,0] = + self.mass_lumped_sqrt_inv[:]
+      self.ker[1,:,1] = + self.mass_lumped_sqrt_inv[:]
+      self.ker[2,:,2] = + self.mass_lumped_sqrt_inv[:]
+      self.ker[3,:,2] = - self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,1]
+      self.ker[3,:,1] = + self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,2]
+      self.ker[4,:,0] = - self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,2]
+      self.ker[4,:,2] = + self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,0]
+      self.ker[5,:,1] = - self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,0]
+      self.ker[5,:,0] = + self.mass_lumped_sqrt_inv*self.mesh.np_pos[:,1]
+      self.ker = self.ker.reshape((6,-1))
+      for i in range(6):
+        self.ker[i] /= numpy.linalg.norm(self.ker[i])
+        for j in range(i+1,6):
+          self.ker[j] -= numpy.dot(self.ker[i], self.ker[j]) * self.ker[i]
+      '''
+      self.ker[0] /= numpy.linalg.norm(self.ker[0])
+      self.ker[1] -= numpy.dot(self.ker[0],self.ker[1]) * self.ker[0]
+      self.ker[2] -= numpy.dot(self.ker[0],self.ker[2]) * self.ker[0]
+      self.ker[3] -= numpy.dot(self.ker[0],self.ker[3]) * self.ker[0]
+      self.ker[4] -= numpy.dot(self.ker[0],self.ker[4]) * self.ker[0]
+      self.ker[5] -= numpy.dot(self.ker[0],self.ker[5]) * self.ker[0]
+      self.ker[1] /= numpy.linalg.norm(self.ker[1])
+      self.ker[2] -= numpy.dot(self.ker[1],self.ker[2]) * self.ker[1]
+      self.ker[3] -= numpy.dot(self.ker[1],self.ker[3]) * self.ker[1]
+      self.ker[4] -= numpy.dot(self.ker[1],self.ker[4]) * self.ker[1]
+      self.ker[5] -= numpy.dot(self.ker[1],self.ker[5]) * self.ker[1]
+      self.ker[2] /= numpy.linalg.norm(self.ker[2])
+      self.ker[3] -= numpy.dot(self.ker[2],self.ker[3]) * self.ker[2]
+      self.ker[4] -= numpy.dot(self.ker[2],self.ker[4]) * self.ker[2]
+      self.ker[5] -= numpy.dot(self.ker[2],self.ker[5]) * self.ker[2]
+      self.ker[3] /= numpy.linalg.norm(self.ker[3])
+      self.ker[4] -= numpy.dot(self.ker[3],self.ker[4]) * self.ker[3]
+      self.ker[5] -= numpy.dot(self.ker[3],self.ker[5]) * self.ker[3]
+      self.ker[4] /= numpy.linalg.norm(self.ker[4])
+      self.ker[5] -= numpy.dot(self.ker[4],self.ker[5]) * self.ker[4]
+      self.ker[5] /= numpy.linalg.norm(self.ker[5])
+      '''
+      '''
+      for i in range(6):
+        for j in range(i,6):
+          print(i,j,numpy.dot(self.ker[i],self.ker[j]))
+      '''
+      self.ker = self.ker.reshape((6,-1,3))
+      self.mass_lumped_sqrt_inv = numpy.reciprocal( self.mass_lumped_sqrt_inv )
+    else:
+      assert 0
+      pass
     self.ls.set_zero()
     self.mode[:] = 0.0
     mergeLinSys_linearSolidStatic(self.ls.mat, self.ls.f,
@@ -424,16 +427,15 @@ class FEM_SolidLinearEigen():
 
 class FEM_SolidLinearDynamic():
   def __init__(self,
-               mesh: Mesh,
                gravity=(0, 0, 0)):
-    self.mesh = mesh
+    self.mesh = None
     self.gravity = gravity
     self.dt = 0.1
     self.gamma_newmark = 0.6
     self.beta_newmark = 0.36
-    self.updated_topology()
 
-  def updated_topology(self):
+  def updated_topology(self,mesh:Mesh):
+    self.mesh = mesh
     np = self.mesh.np_pos.shape[0]
     ndimval = self.mesh.np_pos.shape[1]
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
@@ -462,13 +464,12 @@ class FEM_SolidLinearDynamic():
 
 
 class FEM_Cloth():
-  def __init__(self,mesh):
+  def __init__(self):
     self.dt = 0.1
-    self.mesh = mesh
     self.sdf = SDF()
-    self.updated_topology()
 
-  def updated_topology(self,mapper=None):
+  def updated_topology(self,mesh:Mesh,mapper=None):
+    self.mesh = mesh
     np = self.mesh.np_pos.shape[0]
     ndimval = 3
     vec_val_new = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero

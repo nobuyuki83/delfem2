@@ -68,7 +68,8 @@ def main_MeshDynTri2D_2():
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
   dmsh,_ = cad.mesh(0.1)
   ####
-  fem = dfm2.FEM_Poisson(dmsh,source=1.0)
+  fem = dfm2.FEM_Poisson(source=1.0)
+  fem.updated_topology(dmsh)
   npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
   fem.value[npIdP] = 0.0
   fem.ls.bc[npIdP] = 1
@@ -76,8 +77,8 @@ def main_MeshDynTri2D_2():
   vis = dfm2.VisFEM_ColorContour(fem,name_color="value")
   dfm2.glfw.winDraw3d([vis,dmsh])
   #####
-  res = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
-  fem.updated_mesh(res)
+  mapper = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
+  fem.updated_topology(dmsh,mapper=mapper)
   dfm2.glfw.winDraw3d([vis,dmsh])
   #####
   fem.value[npIdP] = 0.0
@@ -91,15 +92,16 @@ def main_MeshDynTri2D_3():
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   dmsh = dfm2.MeshDynTri2D()
   dmsh.set_mesh(cad.mesh(0.1)[0])
-  fem = dfm2.FEM_Cloth(dmsh)
+  fem = dfm2.FEM_Cloth()
+  fem.updated_topology(dmsh)
   npIdP = cad.points_edge([0], dmsh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=dmsh.np_elm)
   dfm2.glfw.winDraw3d([fem,mesh2])
   #####
   mesh2 = None
-  res = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
-  fem.updated_mesh(res)
+  mapper = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
+  fem.updated_topology(dmsh,mapper=mapper)
   fem.ls.bc[npIdP,:] = 1
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=dmsh.np_elm)
   dfm2.glfw.winDraw3d([fem,mesh2])

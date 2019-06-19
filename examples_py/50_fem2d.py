@@ -38,8 +38,10 @@ def poisson_ms(cad, mesh):
 
 
 def diffuse(cad,mesh):
-  fem = dfm2.FEM_Diffuse(mesh,source=1.0)
+  fem = dfm2.FEM_Diffuse(source=1.0)
+  fem.updated_topology(mesh)
   npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
+
   fem.ls.bc[npIdP] = 1
   ####
   field = dfm2.VisFEM_ColorContour(fem,name_color="value")
@@ -50,7 +52,8 @@ def diffuse(cad,mesh):
 
 
 def linear_solid_static(cad,mesh):
-  fem = dfm2.FEM_SolidLinearStatic(mesh,gravity=[0,-0.1])
+  fem = dfm2.FEM_SolidLinearStatic(gravity=[0,-0.1])
+  fem.updated_topology(mesh)
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   fem.solve()
@@ -60,14 +63,16 @@ def linear_solid_static(cad,mesh):
 
 
 def linear_solid_eigen(mesh):
-  fem = dfm2.FEM_SolidLinearEigen(mesh)
+  fem = dfm2.FEM_SolidLinearEigen()
+  fem.updated_topology(mesh)
   fem.ls.f[:] = numpy.random.uniform(-1,1, mesh.np_pos.shape )
   field = dfm2.VisFEM_ColorContour(fem,name_disp="mode")
   dfm2.glfw.winDraw3d([fem,field])
 
 
 def linear_solid_dynamic(cad,mesh):
-  fem = dfm2.FEM_SolidLinearDynamic(mesh,gravity=[0,-0.1])
+  fem = dfm2.FEM_SolidLinearDynamic(gravity=[0,-0.1])
+  fem.updated_topology(mesh)
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   print(fem.ls.conv_hist)
