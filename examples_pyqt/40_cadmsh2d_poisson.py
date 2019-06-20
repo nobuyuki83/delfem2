@@ -30,9 +30,13 @@ class Window_Poisson(QWidget):
     self.ui_meshres = dfm2.pyqt.QUI_MeshRes(self.cadmsh)
     self.ui_meshres.func_updated = self.glWidget.update
 
+    self.ui_poisson = dfm2.pyqt.QUI_FEMPoisson(self.cadmsh.fem)
+    self.ui_poisson.func_updated = self.glWidget.update
+
     mainLayout = QVBoxLayout()
     mainLayout.addWidget(self.glWidget)
-    mainLayout.addItem(self.ui_meshres.hl)
+    mainLayout.addWidget(self.ui_meshres)
+    mainLayout.addWidget(self.ui_poisson)
     self.setLayout(mainLayout)
 
     self.setWindowTitle("CAD_Mesh_Poisson")

@@ -32,7 +32,7 @@ class Window_SolidLinearEigen(QWidget):
 
     mainLayout = QVBoxLayout()
     mainLayout.addWidget(self.glWidget)
-    mainLayout.addItem(self.ui_meshres.hl)
+    mainLayout.addWidget(self.ui_meshres)
     self.setLayout(mainLayout)
 
     self.setWindowTitle("CAD_Mesh_SolidLinearEigen")
@@ -40,6 +40,7 @@ class Window_SolidLinearEigen(QWidget):
   def keyPressEvent(self, event):
     if event.text() == 'q':
       self.close()
+
 
 if __name__ == '__main__':
   app = QApplication(sys.argv)

@@ -296,6 +296,9 @@ class FEM_SolidLinearStatic():
   def __init__(self,
                gravity = (0,0,0)):
     self.gravity = gravity
+    self.myu = 1.0
+    self.lmd = 0.0
+    self.rho = 1.0
 
   def updated_topology(self,mesh:Mesh):
     self.mesh = mesh
@@ -309,7 +312,7 @@ class FEM_SolidLinearStatic():
     assert self.ls.mat is not None
     self.ls.set_zero()
     mergeLinSys_linearSolidStatic(self.ls.mat, self.ls.f,
-                                  1.0, 0.0, 1.0, self.gravity,
+                                  self.myu, self.lmd, self.rho, self.gravity,
                                   self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                                   self.vec_val)
     self.ls.set_bc_ms()
