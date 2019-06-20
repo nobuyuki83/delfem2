@@ -10,7 +10,8 @@ import OpenGL.GL as gl
 
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QPushButton, QLabel, QSlider, QHBoxLayout, QCheckBox
+from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget
+from PyQt5.QtWidgets import QPushButton, QLabel, QSlider, QHBoxLayout, QCheckBox, QVBoxLayout, QLabel
 
 sys.path.append("../module_py")
 import delfem2 as dfm2
@@ -182,6 +183,7 @@ class QUI_MeshRes(QWidget):
     self.hl.addWidget(self.sp)
     self.hl.addWidget(self.lbl)
     self.hl.addWidget(self.btn)
+    self.setLayout(self.hl)
 
   def slider_moved(self):
     self.lbl.setText(str(self.sp.value()))
@@ -197,3 +199,125 @@ class QUI_MeshRes(QWidget):
   def btnstate(self, b):
     if b == self.b1:
       self.cadmsh.is_sync_mesh = b.isChecked()
+
+
+class QUI_ValueSlider(QWidget):
+  def __init__(self,txt:str):
+    super(QUI_ValueSlider, self).__init__()
+
+    self.lbl1a = QLabel(txt+":")
+
+    self.sp1 = QSlider(Qt.Horizontal)
+    self.sp1.setMinimum(10)
+    self.sp1.setMaximum(100)
+    self.sp1.setValue(50)
+
+    self.lbl1b = QLabel("50", self)
+
+    self.hl1 = QHBoxLayout()
+    self.hl1.addWidget(self.lbl1a)
+    self.hl1.addWidget(self.sp1)
+    self.hl1.addWidget(self.lbl1b)
+    self.hl1.addStretch()
+    self.setLayout(self.hl1)
+
+class QUI_FEMPoisson(QWidget):
+  def __init__(self,fem:delfem2.FEM_Poisson):
+    super(QUI_FEMPoisson, self).__init__()
+    self.fem = fem
+    self.func_updated = None
+
+#    self.b1 = QCheckBox("Sync Mesh To CAD")
+#    self.b1.setChecked(True)
+#    self.b1.stateChanged.connect(lambda: self.btnstate(self.b1))
+
+    self.btn = QPushButton('solve', self)
+    self.btn.clicked.connect(lambda: self.button_clicked(self.btn))
+
+    self.hl0 = QHBoxLayout()
+    self.hl0.addWidget(self.btn)
+
+    ####
+
+    self.vs1 = QUI_ValueSlider("alpha")
+    self.vs1.sp1.sliderMoved.connect(lambda: self.slider_moved(self.vs1.sp1))
+
+    ####
+
+    self.vl = QVBoxLayout()
+    self.vl.addLayout(self.hl0)
+    self.vl.addWidget(self.vs1)
+    self.setLayout(self.vl)
+
+  def slider_moved(self,sp):
+    if sp == self.vs1.sp1:
+      self.vs1.lbl1b.setText(str(self.vs1.sp1.value()))
+      self.fem.alpha = self.vs1.sp1.value() * 0.01
+
+  def button_clicked(self, btn: QPushButton):
+    if btn == self.btn:
+      self.fem.solve()
+      if self.func_updated is not None:
+        self.func_updated()
+
+
+
+class QUI_FEMSolidLinearStatic(QWidget):
+  def __init__(self,fem:delfem2.FEM_SolidLinearStatic):
+    super(QUI_FEMSolidLinearStatic, self).__init__()
+
+    self.fem = fem
+    self.func_updated = None
+
+    self.btn = QPushButton('solve', self)
+    self.btn.clicked.connect(lambda: self.button_clicked(self.btn))
+
+    self.cb1 = QCheckBox("Sync FEM to Params")
+    self.cb1.setChecked(True)
+
+    self.hl0 = QHBoxLayout()
+    self.hl0.addWidget(self.cb1)
+    self.hl0.addStretch()
+    self.hl0.addWidget(self.btn)
+
+    ####
+
+    self.vs1 = QUI_ValueSlider("myu")
+    self.vs1.sp1.valueChanged.connect(lambda: self.slider_moved(self.vs1.sp1))
+
+    self.vs2 = QUI_ValueSlider("lambda")
+    self.vs2.sp1.valueChanged.connect(lambda: self.slider_moved(self.vs2.sp1))
+
+    self.vs3 = QUI_ValueSlider("rho")
+    self.vs3.sp1.valueChanged.connect(lambda: self.slider_moved(self.vs3.sp1))
+
+    ####
+
+    self.vl = QVBoxLayout()
+    self.vl.addLayout(self.hl0)
+    self.vl.addWidget(self.vs1)
+    self.vl.addWidget(self.vs2)
+    self.vl.addWidget(self.vs3)
+    self.setLayout(self.vl)
+
+
+  def slider_moved(self, sp: QSlider):
+    if sp == self.vs1.sp1:
+      self.vs1.lbl1b.setText(str(self.vs1.sp1.value()))
+      self.fem.myu = self.vs1.sp1.value() * 0.01
+    if sp == self.vs2.sp1:
+      self.vs2.lbl1b.setText(str(self.vs2.sp1.value()))
+      self.fem.lmd = self.vs2.sp1.value() * 0.01
+    if sp == self.vs3.sp1:
+      self.vs3.lbl1b.setText(str(self.vs3.sp1.value()))
+      self.fem.rho = self.vs3.sp1.value() * 0.01
+    if self.cb1.isChecked():
+      self.fem.solve()
+      if self.func_updated is not None:
+        self.func_updated()
+
+  def button_clicked(self, btn: QPushButton):
+    if btn == self.btn:
+      self.fem.solve()
+      if self.func_updated is not None:
+        self.func_updated()

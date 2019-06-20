@@ -30,9 +30,13 @@ class Window_SolidLinearStatic(QWidget):
     self.ui_meshres = dfm2.pyqt.QUI_MeshRes(self.cadmsh)
     self.ui_meshres.func_updated = self.glWidget.update
 
+    self.ui_fem = dfm2.pyqt.QUI_FEMSolidLinearStatic(self.cadmsh.fem)
+    self.ui_fem.func_updated = self.glWidget.update
+
     mainLayout = QVBoxLayout()
     mainLayout.addWidget(self.glWidget)
-    mainLayout.addItem(self.ui_meshres.hl)
+    mainLayout.addWidget(self.ui_meshres)
+    mainLayout.addWidget(self.ui_fem)
     self.setLayout(mainLayout)
 
     self.setWindowTitle("CAD_Mesh_FEM")

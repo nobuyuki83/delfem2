@@ -15,7 +15,6 @@ class CadMesh2D_Poisson(CadMesh2D):
     self.fem = FEM_Poisson(source=1.0)
     self.vis = VisFEM_ColorContour(self.fem,name_color='value')
     self.list_cad_edge_fix = [0,1,2,3]
-    self.remesh()
 
   def draw(self):
     self.ccad.draw()
