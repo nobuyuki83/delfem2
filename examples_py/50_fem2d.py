@@ -127,9 +127,18 @@ def navir_storks(cad,mesh):
   dfm2.glfw.winDraw3d([fem,field_p,field_v,axis])
 
 
-def cloth(cad,mesh):
-  fem = dfm2.FEM_Cloth(mesh)
-  npIdP = cad.points_edge([2], mesh.np_pos)
+def fem_cloth():
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
+  mesh,map_cad2mesh = cad.mesh(0.1)
+  ####
+  fem = dfm2.FEM_Cloth()
+  fem.dt = 0.08
+  fem.lmd = 1000
+  fem.myu = 100
+  fem.gravity = (0,-1,0.01)
+  fem.updated_topology(mesh)
+  npIdP = cad.points_edge([2,4], mesh.np_pos)
   fem.ls.bc[npIdP,0:3] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
@@ -138,7 +147,8 @@ def cloth(cad,mesh):
 
 
 def pbd1(cad,mesh):
-  pbd = dfm2.PBD(mesh)
+  pbd = dfm2.PBD()
+  pbd.updated_topology(mesh)
   npIdP = cad.points_edge([0], mesh.np_pos)
   pbd.vec_bc[npIdP] = 1
   fvs = dfm2.FieldValueSetter("0.3*sin(2*t)", pbd.vec_val, 0,
@@ -146,6 +156,27 @@ def pbd1(cad,mesh):
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   dfm2.glfw.winDraw3d([fvs,pbd,mesh2])
+
+
+def pbd_cloth():
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
+  mesh,map_cad2mesh = cad.mesh(0.1)
+  ####
+  pbd = dfm2.PBD_Cloth()
+  '''
+  pbd.dt = 0.08
+  fem.lmd = 1000
+  fem.myu = 100
+  fem.gravity = (0,-1,0.01)
+  fem.updated_topology(mesh)
+  npIdP = cad.points_edge([2,4], mesh.np_pos)
+  fem.ls.bc[npIdP,0:3] = 1
+  ####
+  mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
+  axis = dfm2.AxisXYZ(1.0)
+  dfm2.glfw.winDraw3d([fem,mesh2,axis])
+  '''
 
 
 def main():
@@ -160,7 +191,8 @@ def main():
   storks_static(cad,mesh)
   storks_dynamic(cad,mesh)
   navir_storks(cad,mesh)
-  cloth(cad,mesh)
+
+  fem_cloth()
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])

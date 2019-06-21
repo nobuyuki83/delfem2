@@ -469,6 +469,10 @@ class FEM_SolidLinearDynamic():
 class FEM_Cloth():
   def __init__(self):
     self.dt = 0.1
+    self.gravity = (0,0,-1)
+    self.rho = 1.0
+    self.myu = 10.0
+    self.lmd = 5000.0
     self.sdf = SDF()
 
   def updated_topology(self,mesh:Mesh,mapper=None):
@@ -494,13 +498,13 @@ class FEM_Cloth():
     assert self.ls.mat is not None
     self.ls.set_zero()
     mergeLinSys_cloth(self.ls.mat, self.ls.f,
-                      10.0, 500.0, self.dt,
+                      self.myu, self.lmd, self.dt,
                       self.mesh.np_pos, self.mesh.np_elm,
                       self.np_quad,
                       self.vec_val)
     mergeLinSys_massPoint(self.ls.mat, self.ls.f,
-                          1.0, self.dt,
-                          [0,0,-1],
+                          self.rho, self.dt,
+                          self.gravity,
                           self.vec_val, self.vec_velo)
     mergeLinSys_contact(self.ls.mat, self.ls.f,
                         10000, 0.1,
@@ -617,6 +621,37 @@ class FEM_NavierStorks2D():
 
 
 class PBD():
+  def __init__(self):
+    self.dt = 0.1
+
+  def updated_topology(self,mesh:Mesh):
+    self.mesh = mesh
+    np = mesh.np_pos.shape[0]
+    self.vec_bc = numpy.zeros((np,), dtype=numpy.int32)
+    self.vec_val = mesh.np_pos.copy()
+    self.vec_velo = numpy.zeros_like(self.vec_val, dtype=numpy.float64)
+    self.vec_tpos = mesh.np_pos.copy()
+    self.psup = mesh.psup()
+    self.psup = jarray_add_diagonal(*self.psup)
+
+  def step_time(self):
+    self.vec_tpos[:] = self.vec_val + self.dt * self.vec_velo
+    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    for itr in range(1):
+      if self.mesh.np_pos.shape[1] == 2:
+        proj_rigid2d(self.vec_tpos,
+                     0.5, self.psup[0], self.psup[1],
+                     self.mesh.np_pos)
+      if self.mesh.np_pos.shape[1] == 3:
+        proj_rigid3d(self.vec_tpos,
+                     0.5, self.psup[0], self.psup[1],
+                     self.mesh.np_pos)
+    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
+    self.vec_val[:] = self.vec_tpos
+
+
+class PBD_Cloth():
   def __init__(self,
                mesh: Mesh):
     np = mesh.np_pos.shape[0]
@@ -644,4 +679,3 @@ class PBD():
     pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos
-

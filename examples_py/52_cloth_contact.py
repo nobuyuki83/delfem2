@@ -15,7 +15,8 @@ def example1():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesh,map_cad2mesh = cad.mesh(0.05)
-  fem = dfm2.FEM_Cloth(mesh)
+  fem = dfm2.FEM_Cloth()
+  fem.updated_topology(mesh)
   npIdP = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP,0:3] = 1
   fem.sdf.list_sdf.append( dfm2.SDF_Sphere(0.55,[0,+0.5,-1.0],True) )
