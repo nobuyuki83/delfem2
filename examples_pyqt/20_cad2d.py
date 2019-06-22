@@ -22,14 +22,11 @@ class Window(QWidget):
     self.cad = dfm2.Cad2D()
     self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
-    self.glWidget = dfm2.pyqt.QOpenGLWidget_Cad2D()
+    self.glWidget = dfm2.pyqt.QGLW_Cad2D()
     self.glWidget.cadobj = self.cad
-
-    self.btn = QPushButton('Button', self)
 
     mainLayout = QVBoxLayout()
     mainLayout.addWidget(self.glWidget)
-    mainLayout.addWidget(self.btn)
     self.setLayout(mainLayout)
 
     self.setWindowTitle("CAD")

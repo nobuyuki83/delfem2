@@ -23,6 +23,10 @@ class MyWindow(QWidget):
     self.setGeometry(0, 0, self.width, self.height)
     self.show()
 
+  def keyPressEvent(self, event):
+    if event.text() == 'q':
+      self.close()
+
 
 def main():
   app = QApplication(sys.argv)

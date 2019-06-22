@@ -226,8 +226,8 @@ class FEM_Poisson():
   def __init__(self,
                source=0.0,
                alpha=1.0):
-    self.source = source
-    self.alpha = alpha
+    self.param_source = source
+    self.param_alpha = alpha
 
   def updated_topology(self,mesh:Mesh,mapper=None,master_slave_pattern=None):
     self.mesh = mesh
@@ -245,7 +245,7 @@ class FEM_Poisson():
     assert self.ls.mat is not None
     self.ls.set_zero()
     mergeLinSys_poission(self.ls.mat, self.ls.f,
-                         self.alpha, self.source,
+                         self.param_alpha, self.param_source,
                          self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                          self.value)
     self.ls.set_bc_ms()
@@ -257,13 +257,12 @@ class FEM_Poisson():
 
 
 class FEM_Diffuse():
-  def __init__(self,
-               source=0.0):
+  def __init__(self):
     self.dt = 0.01
     self.gamma_newmark = 0.6
-    self.alpha = 1.0
-    self.rho = 1.0
-    self.source = source
+    self.param_alpha = 1.0
+    self.param_rho = 1.0
+    self.param_source = 1.0
 
   def updated_topology(self,mesh:Mesh):
     self.mesh = mesh
@@ -274,11 +273,11 @@ class FEM_Diffuse():
     self.ls = FEM_LinSys(np,ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
-  def solve(self):
+  def step_time(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
     mergeLinSys_diffuse(self.ls.mat, self.ls.f,
-                        self.alpha, self.rho, self.source,
+                        self.param_alpha, self.param_rho, self.param_source,
                         self.dt, self.gamma_newmark,
                         self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                         self.value, self.velocity)
@@ -288,17 +287,19 @@ class FEM_Diffuse():
     self.value += (self.ls.x)*(self.dt*self.gamma_newmark) + (self.velocity)*self.dt
     self.velocity += self.ls.x
 
-  def step_time(self):
-    self.solve()
+  def initialize(self):
+    self.value[:] = 0.0
+    self.velocity[:] = 0.0
 
 
 class FEM_SolidLinearStatic():
-  def __init__(self,
-               gravity = (0,0,0)):
-    self.gravity = gravity
-    self.myu = 1.0
-    self.lmd = 0.0
-    self.rho = 1.0
+  def __init__(self):
+    self.param_gravity_x = +0.0
+    self.param_gravity_y = -0.0
+    self.param_gravity_z = +0.0
+    self.param_myu = 1.0
+    self.param_lambda = 0.0
+    self.param_rho = 1.0
 
   def updated_topology(self,mesh:Mesh):
     self.mesh = mesh
@@ -311,8 +312,11 @@ class FEM_SolidLinearStatic():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
+    gravity = [self.param_gravity_x, self.param_gravity_y]
+    if self.mesh.np_pos.shape[1] == 3:
+      gravity = [self.param_gravity_x, self.param_gravity_y, self.param_gravity_z]
     mergeLinSys_linearSolidStatic(self.ls.mat, self.ls.f,
-                                  self.myu, self.lmd, self.rho, self.gravity,
+                                  self.param_myu, self.param_lambda, self.param_rho, gravity,
                                   self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                                   self.vec_val)
     self.ls.set_bc_ms()
@@ -429,10 +433,11 @@ class FEM_SolidLinearEigen():
 
 
 class FEM_SolidLinearDynamic():
-  def __init__(self,
-               gravity=(0, 0, 0)):
+  def __init__(self):
     self.mesh = None
-    self.gravity = gravity
+    self.param_gravity_x = +0.0
+    self.param_gravity_y = -0.0
+    self.param_gravity_z = +0.0
     self.dt = 0.1
     self.gamma_newmark = 0.6
     self.beta_newmark = 0.36
@@ -450,8 +455,11 @@ class FEM_SolidLinearDynamic():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
+    gravity = [self.param_gravity_x, self.param_gravity_y]
+    if self.mesh.np_pos.shape[1] == 3:
+      gravity = [self.param_gravity_x, self.param_gravity_y, self.param_gravity_z]
     mergeLinSys_linearSolidDynamic(self.ls.mat, self.ls.f,
-                                   1.0, 0.0, 1.0, self.gravity,
+                                   1.0, 0.0, 1.0, gravity,
                                    self.dt, self.gamma_newmark, self.beta_newmark,
                                    self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                                    self.vec_val, self.vec_velo, self.vec_acc)
@@ -649,6 +657,10 @@ class PBD():
     pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos
+
+  def initialize(self):
+    self.vec_val[:] = self.mesh.np_pos[:]
+    self.vec_velo[:] = 0.0
 
 
 class PBD_Cloth():

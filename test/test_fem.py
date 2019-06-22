@@ -8,7 +8,8 @@ class Test_PBD(unittest.TestCase):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesh,map_cad2mesh = cad.mesh(edge_len=0.2)
-    pbd = dfm2.PBD(mesh)
+    pbd = dfm2.PBD()
+    pbd.updated_topology(mesh)
     npIdP = cad.points_edge([0], mesh.np_pos)
     pbd.vec_bc[npIdP] = 1
     fvs = dfm2.FieldValueSetter("0.3*sin(20*t)", pbd.vec_val, 0,
@@ -24,7 +25,8 @@ class Test_PBD(unittest.TestCase):
     voxelgrid.add(2, 0, 0)
     voxelgrid.add(1, 1, 0)
     msh = voxelgrid.mesh_hex3d()
-    pbd = dfm2.PBD(msh)
+    pbd = dfm2.PBD()
+    pbd.updated_topology(msh)
     npIdP = numpy.array([0, 1, 2, 3], dtype=numpy.int32)
     pbd.vec_bc[npIdP] = 1
     fvs = dfm2.FieldValueSetter("0.4*sin(0.8*t)", pbd.vec_val, 1,
@@ -70,7 +72,7 @@ class Test_FEMDiffuse2D(unittest.TestCase):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     msh,map_cad2msh = cad.mesh(0.02)
-    fem = dfm2.FEM_Diffuse(source=1.0)
+    fem = dfm2.FEM_Diffuse()
     fem.updated_topology(msh)
     npIdP = cad.points_edge([0, 1, 2, 3], msh.np_pos)
     fem.ls.bc[npIdP] = 1
@@ -103,7 +105,7 @@ class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     msh,map_cad2msh = cad.mesh(0.02)
-    fem = dfm2.FEM_SolidLinearStatic(gravity=[0,-0.1])
+    fem = dfm2.FEM_SolidLinearStatic()
     fem.updated_topology(msh)
     npIdP = cad.points_edge([3], msh.np_pos)
     fem.ls.bc[npIdP,:] = 1
@@ -115,7 +117,8 @@ class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     msh,map_cad2msh = cad.mesh(0.02)
-    fem = dfm2.FEM_SolidLinearDynamic(gravity=[0, -0.1])
+    fem = dfm2.FEM_SolidLinearDynamic()
+    fem.param_gravity_x = -0.01
     fem.updated_topology(msh)
     npIdP = cad.points_edge([3], msh.np_pos)
     fem.ls.bc[npIdP, :] = 1

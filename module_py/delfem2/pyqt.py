@@ -8,15 +8,26 @@
 import sys, math, numpy
 import OpenGL.GL as gl
 
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent
+from typing import List
+
+from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent, QTimer
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QSizePolicy
-from PyQt5.QtWidgets import QPushButton, QLabel, QSlider, QHBoxLayout, QCheckBox, QVBoxLayout, QLabel, QRadioButton,\
+from PyQt5.QtWidgets import \
+  QPushButton, QLabel, QSlider, QHBoxLayout, QCheckBox, QVBoxLayout, QGridLayout, \
+  QLabel, QRadioButton,\
   QButtonGroup
 
 sys.path.append("../module_py")
 import delfem2 as dfm2
 import delfem2.gl
+
+def setClearColor(c:QColor):
+  gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+
+def setColor(c:QColor):
+  gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+
 
 class NavigationPyQt:
   def __init__(self,view_height):
@@ -76,18 +87,12 @@ class NavigationPyQt:
     dir = dfm2.gl.screenUnProjectionDirection((0,0,1), mMV,mPj)
     return src0,src1,dir
 
-def setClearColor(c:QColor):
-  gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
 
-def setColor(c:QColor):
-  gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
-
-
-class QOpenGLWidget_Cad2D(QOpenGLWidget):
-  updated_cadmeshfem = pyqtSignal()
+class QGLW_Cad2D(QOpenGLWidget):
+  updated_cadmshfem = pyqtSignal()
 
   def __init__(self, parent=None):
-    super(QOpenGLWidget_Cad2D, self).__init__(parent)
+    super(QGLW_Cad2D, self).__init__(parent)
     self.cadobj = None
     self.nav = dfm2.pyqt.NavigationPyQt(view_height=2.0)
     self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -121,7 +126,7 @@ class QOpenGLWidget_Cad2D(QOpenGLWidget):
     src,dir = self.nav.mouse_src_dir()
     self.cadobj.pick(src[0], src[1], self.nav.camera.view_height)
     self.update()
-    self.updated_cadmeshfem.emit()
+    self.updated_cadmshfem.emit()
 
   def mouseReleaseEvent(self, event):
     self.cadobj.clean_picked()
@@ -133,7 +138,7 @@ class QOpenGLWidget_Cad2D(QOpenGLWidget):
     src0,src1,dir = self.nav.motion_src_dir()
     self.cadobj.motion(src0, src1, dir)
     self.update()
-    self.updated_cadmeshfem.emit()
+    self.updated_cadmshfem.emit()
 
   def contextMenuEvent(self, event):
     src,dir = self.nav.mouse_src_dir()
@@ -156,7 +161,7 @@ class QOpenGLWidget_Cad2D(QOpenGLWidget):
       x0,y0 = src[0],src[1]
       self.cadobj.add_polygon([x0-1, y0-1, x0+1, y0-1, x0+1, y0+1, x0-1, y0+1])
     self.update()
-    self.updated_cadmeshfem.emit()
+    self.updated_cadmshfem.emit()
 
   def wheelEvent(self,event):
     v = 0.1*(event.angleDelta().y()/120.0)
@@ -164,11 +169,11 @@ class QOpenGLWidget_Cad2D(QOpenGLWidget):
     self.update()
 
 
-class QUI_NumWin(QWidget):
+class QW_NumWin(QWidget):
   changed = pyqtSignal(int)
 
-  def __init__(self):
-    super(QUI_NumWin,self).__init__()
+  def __init__(self, numwin:int):
+    super(QW_NumWin,self).__init__()
     r1=QRadioButton("one window")
     r1.toggled.connect(self.checked)
     r2=QRadioButton("two window")
@@ -177,10 +182,14 @@ class QUI_NumWin(QWidget):
     button_group_numwin.addButton(r1)
     button_group_numwin.addButton(r2)
 
-    self.layout_numwin = QHBoxLayout()
-    self.layout_numwin.addWidget(r1)
-    self.layout_numwin.addWidget(r2)
+    if numwin == 1:
+      r1.setChecked(True)
+    else:
+      r2.setChecked(True)
 
+    self.layout_numwin = QHBoxLayout()
+    self.layout_numwin.addWidget(r1, alignment=Qt.AlignLeft)
+    self.layout_numwin.addWidget(r2, alignment=Qt.AlignLeft)
     self.setLayout(self.layout_numwin)
 
   def checked(self):
@@ -191,12 +200,13 @@ class QUI_NumWin(QWidget):
       self.changed.emit(2)
 
 
+class QW_ValudSlider(QWidget):
+  def __init__(self,name:str):
+    super(QW_ValudSlider, self).__init__()
 
-class QUI_ValueSlider(QWidget):
-  def __init__(self,txt:str):
-    super(QUI_ValueSlider, self).__init__()
+    self.name = name
 
-    self.lbl1a = QLabel(txt+":")
+    self.lbl1a = QLabel(name+":")
 
     self.sp1 = QSlider(Qt.Horizontal)
     self.sp1.setMinimum(10)
@@ -213,11 +223,47 @@ class QUI_ValueSlider(QWidget):
     self.setLayout(self.hl1)
 
 
-class QUI_MeshRes(QWidget):
-  updated_cadmeshfem = pyqtSignal()
+class QW_FemParams(QWidget):
+  valueChanged = pyqtSignal()
+
+  def __init__(self,list_name:List[str],fem):
+    super(QW_FemParams, self).__init__()
+
+    self.list_name = list_name
+    self.fem = fem
+    self.grid = QGridLayout()
+
+    self.list_sldr = []
+    for iname,name in enumerate(list_name):
+      lbl1a = QLabel(name+":")
+      ##
+      sp1 = QSlider(Qt.Horizontal)
+      sp1.setMinimum(10)
+      sp1.setMaximum(100)
+      sp1.setValue(50)
+      sp1.valueChanged.connect(self.sliderValueChanged)
+      self.list_sldr.append(sp1)
+      ##
+      lbl1b = QLabel("50", self)
+      ##
+      self.grid.addWidget(lbl1a, iname,0)
+      self.grid.addWidget(sp1,   iname,1)
+      self.grid.addWidget(lbl1b, iname,2)
+    self.setLayout(self.grid)
+
+  def sliderValueChanged(self,ival:int):
+    slider = self.sender()
+    ilist0 = self.list_sldr.index(slider)
+    name = self.list_name[ilist0]
+    setattr(self.fem, "param_"+name, ival*0.01)
+    self.valueChanged.emit()
+
+
+class QW_MeshRes(QWidget):
+  updated_cadmshfem = pyqtSignal()
 
   def __init__(self,cadmsh:delfem2.CadMesh2D):
-    super(QUI_MeshRes, self).__init__()
+    super(QW_MeshRes, self).__init__()
     self.cadmsh = cadmsh
 
     self.btn = QPushButton('remesh', self)
@@ -227,7 +273,8 @@ class QUI_MeshRes(QWidget):
     self.b1.setChecked(True)
     self.b1.stateChanged.connect(lambda: self.btnstate(self.b1))
 
-    self.vs = QUI_ValueSlider("mesh density")
+    self.vs = QW_ValudSlider("mesh density")
+    self.vs.sp1.valueChanged.connect(self.slider_moved)
 
     self.hl = QHBoxLayout()
     self.hl.addWidget(self.b1, alignment=Qt.AlignLeft)
@@ -240,29 +287,30 @@ class QUI_MeshRes(QWidget):
 
 
   def slider_moved(self):
-    self.lbl.setText(str(self.sp.value()))
+    self.vs.lbl1b.setText(str(self.vs.sp1.value()))
 
   def button_clicked(self, btn: QPushButton):
     if btn == self.btn:
       val = self.vs.sp1.value()*0.001
       self.cadmsh.edge_length = val
       self.cadmsh.remesh()
-      self.updated_cadmeshfem.emit()
+      self.updated_cadmshfem.emit()
 
   def btnstate(self, b):
     if b == self.b1:
       self.cadmsh.is_sync_mesh = b.isChecked()
 
 
+class QW_SolveParam(QWidget):
+  updated_cadmshfem = pyqtSignal()
 
-    
+  def __init__(self,fem):
+    super(QW_SolveParam,self).__init__()
 
-class QUI_SolveParam(QWidget):
-
-  def __init__(self):
-    super(QUI_SolveParam,self).__init__()
+    self.fem = fem
 
     self.btn = QPushButton('solve', self)
+    self.btn.pressed.connect(self.button_clicked)
 
     self.cb1 = QCheckBox("Sync FEM to Params")
     self.cb1.setChecked(True)
@@ -273,24 +321,71 @@ class QUI_SolveParam(QWidget):
     self.hl0.addWidget(self.btn, alignment=Qt.AlignLeft)
     self.setLayout(self.hl0)
 
+  def button_clicked(self):
+    self.fem.solve()
+    self.updated_cadmshfem.emit()
 
-class QUI_FEMPoisson(QWidget):
-  def __init__(self,fem:delfem2.FEM_Poisson):
-    super(QUI_FEMPoisson, self).__init__()
+
+class QW_AnimCntrl(QWidget):
+  updated_cadmshfem = pyqtSignal()
+
+  def __init__(self,fem):
+    super(QW_AnimCntrl,self).__init__()
+
     self.fem = fem
-    self.func_updated = None
+
+    self.tmr_stepTime = QTimer(self)
+    self.tmr_stepTime.setSingleShot(False)
+    self.tmr_stepTime.timeout.connect(self.stepTime)
+
+    self.btn_Initialize = QPushButton("initialize")
+
+    self.btn_Animate = QPushButton("animate")
+    self.btn_Animate.setCheckable(True)
+    self.btn_Animate.toggled.connect(self.btn_Animate_toggled)
+
+    self.btn_Initialize.pressed.connect(self.btn_Initialize_pressed)
+
+    self.hl = QHBoxLayout()
+    self.hl.addWidget(self.btn_Initialize)
+    self.hl.addWidget(self.btn_Animate)
+    self.setLayout(self.hl)
+
+  def btn_Animate_toggled(self):
+    if self.btn_Animate.isChecked():
+      self.tmr_stepTime.start(30)
+    else:
+      self.tmr_stepTime.stop()
+
+  def btn_Initialize_pressed(self):
+    self.fem.initialize()
+    self.updated_cadmshfem.emit()
+
+  def stepTime(self):
+    self.fem.step_time()
+    self.updated_cadmshfem.emit()
+
+##########################################################################################
+
+
+class QW_FEMPoisson(QWidget):
+  updated_cadmshfem = pyqtSignal()
+
+  def __init__(self,fem:delfem2.FEM_Poisson):
+    super(QW_FEMPoisson, self).__init__()
+    self.fem = fem
     
     self.cb1 = QCheckBox("Sync FEM to Params")
     self.cb1.setChecked(True)
     self.cb1.stateChanged.connect(lambda: self.btnstate(self.b1))
 
-    self.qui_sp = QUI_SolveParam()
-    self.qui_sp.btn.clicked.connect(lambda: self.button_clicked(self.qui_sp.btn))
+    self.qui_sp = QW_SolveParam(self.fem)
+    self.qui_sp.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
 
-    #####
+    ####
 
-    self.vs1 = QUI_ValueSlider("alpha")
-    self.vs1.sp1.sliderMoved.connect(lambda: self.slider_moved(self.vs1.sp1))
+    self.vs1 = QW_FemParams(["alpha","source"],self.fem)
+    self.vs1.valueChanged.connect(self.fem_param_changed)
 
     ####
 
@@ -301,61 +396,95 @@ class QUI_FEMPoisson(QWidget):
     self.setLayout(self.vl)
 
 
-  def slider_moved(self,sp):
-    if sp == self.vs1.sp1:
-      self.vs1.lbl1b.setText(str(self.vs1.sp1.value()))
-      self.fem.alpha = self.vs1.sp1.value() * 0.01
-      if self.qui_sp.cb1.isChecked():
-        self.fem.solve()
-        self.func_updated()
-
-  def button_clicked(self, btn: QPushButton):
-    if btn == self.qui_sp.btn:
+  def fem_param_changed(self):
+    if self.qui_sp.cb1.isChecked():
       self.fem.solve()
-      if self.func_updated is not None:
-        self.func_updated()
+      self.updated_cadmshfem.emit()
 
 
 
-class QUI_FEMSolidLinearStatic(QWidget):
+
+class QW_FEMSolidLinearStatic(QWidget):
   updated_cadmshfem = pyqtSignal()
+
   def __init__(self,fem:delfem2.FEM_SolidLinearStatic):
-    super(QUI_FEMSolidLinearStatic, self).__init__()
+    super(QW_FEMSolidLinearStatic, self).__init__()
 
     self.fem = fem
 
-    self.qui_sp = QUI_SolveParam()
-    self.qui_sp.btn.clicked.connect(lambda: self.button_clicked(self.qui_sp.btn))
+    ####
+    self.qui_sp = QW_SolveParam(self.fem)
+    self.qui_sp.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
+    ####
+    self.vs1 = QW_FemParams(["myu","lambda","rho"],self.fem)
+    self.vs1.valueChanged.connect(self.fem_param_changed)
     ####
 
-    self.vs1 = QUI_ValueSlider("myu")
-    self.vs2 = QUI_ValueSlider("lambda")
-    self.vs3 = QUI_ValueSlider("rho")
+    self.vl = QVBoxLayout()
+    self.vl.addWidget(self.qui_sp,  alignment=Qt.AlignLeft)
+    self.vl.addWidget(self.vs1,alignment=Qt.AlignLeft)
+    self.setLayout(self.vl)
 
-    self.vs2.sp1.valueChanged.connect(lambda: self.slider_moved(self.vs2.sp1))
-    self.vs1.sp1.valueChanged.connect(lambda: self.slider_moved(self.vs1.sp1))
-    self.vs3.sp1.valueChanged.connect(lambda: self.slider_moved(self.vs3.sp1))
+  def fem_param_changed(self):
+    if self.qui_sp.cb1.isChecked():
+      self.fem.solve()
+      self.updated_cadmshfem.emit()
+
+
+
+class QW_FEMDiffuse(QWidget):
+  updated_cadmshfem = pyqtSignal()
+
+  def __init__(self,fem:delfem2.FEM_Diffuse):
+    super(QW_FEMDiffuse, self).__init__()
+
+    self.fem = fem
+
+    ####
+
+    self.qui_animctrl = QW_AnimCntrl(self.fem)
+    self.qui_animctrl.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
+
+    self.vs1 = QW_FemParams(["alpha","source"],self.fem)
+    self.vs1.valueChanged.connect(self.fem_param_changed)
 
     ####
 
     self.vl = QVBoxLayout()
-    self.vl.addWidget(self.qui_sp)
+    self.vl.addWidget(self.qui_animctrl, alignment=Qt.AlignLeft)
     self.vl.addWidget(self.vs1,alignment=Qt.AlignLeft)
-    self.vl.addWidget(self.vs2,alignment=Qt.AlignLeft)
-    self.vl.addWidget(self.vs3,alignment=Qt.AlignLeft)
     self.setLayout(self.vl)
 
+  def fem_param_changed(self):
+    self.updated_cadmshfem.emit()
 
-  def slider_moved(self, sp: QSlider):
-    if sp == self.vs1.sp1:
-      self.vs1.lbl1b.setText(str(self.vs1.sp1.value()))
-      self.fem.myu = self.vs1.sp1.value() * 0.01
-    if sp == self.vs2.sp1:
-      self.vs2.lbl1b.setText(str(self.vs2.sp1.value()))
-      self.fem.lmd = self.vs2.sp1.value() * 0.01
-    if sp == self.vs3.sp1:
-      self.vs3.lbl1b.setText(str(self.vs3.sp1.value()))
-      self.fem.rho = self.vs3.sp1.value() * 0.01
+
+#####################################################
+
+
+class QW_Pbd2D(QWidget):
+  updated_cadmshfem = pyqtSignal()
+
+  def __init__(self,fem:delfem2.PBD):
+    super(QW_Pbd2D, self).__init__()
+
+    self.fem = fem
+
+    self.qui_sp = QW_SolveParam(self.fem)
+    self.qui_sp.btn.clicked.connect(lambda: self.button_clicked(self.qui_sp.btn))
+    self.qui_sp.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
+
+    self.qui_InitAnim = QW_AnimCntrl(self.fem)
+    self.qui_InitAnim.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
+
+
+    self.vl = QVBoxLayout()
+    self.vl.addWidget(self.qui_InitAnim)
+#    self.vl.addWidget(self.vs1,alignment=Qt.AlignLeft)
+    self.setLayout(self.vl)
+
+'''    
+  def fem_param_changed(self):
     if self.qui_sp.cb1.isChecked():
       self.fem.solve()
       self.updated_cadmshfem.emit()
@@ -364,3 +493,62 @@ class QUI_FEMSolidLinearStatic(QWidget):
     if btn == self.qui_sp.btn:
       self.fem.solve()
       self.updated_cadmshfem.emit()
+'''
+
+
+
+#####################################################
+
+
+class QW_CadMshFem(QWidget):
+  def __init__(self):
+    super(QW_CadMshFem, self).__init__()
+    self.setWindowTitle("CadMshFem")
+
+  def sizeHint(self):
+    return QSize(1200, 600)
+
+  def init_UI(self):
+    self.glWidget0 = dfm2.pyqt.QGLW_Cad2D()
+    self.glWidget0.cadobj = self.cadmsh
+    self.glWidget0.updated_cadmshfem.connect(self.updated_cadmshfem)
+
+    self.glWidget1 = dfm2.pyqt.QGLW_Cad2D()
+    self.glWidget1.cadobj = self.cadmsh
+    self.glWidget1.updated_cadmshfem.connect(self.updated_cadmshfem)
+
+    self.ui_numwin = dfm2.pyqt.QW_NumWin(1)
+    self.ui_numwin.changed.connect(self.numwin_changed)
+    self.numwin_changed(1)
+
+    self.ui_meshres = dfm2.pyqt.QW_MeshRes(self.cadmsh)
+    self.ui_meshres.updated_cadmshfem.connect(self.updated_cadmshfem)
+
+    self.layout_param = QVBoxLayout()
+    self.layout_param.addWidget(self.ui_numwin,  alignment=Qt.AlignLeft)
+    self.layout_param.addWidget(self.ui_meshres, alignment=Qt.AlignLeft)
+    if hasattr(self,"ui_fem"):
+      self.layout_param.addWidget(self.ui_fem,     alignment=Qt.AlignLeft)
+      self.ui_fem.updated_cadmshfem.connect(self.updated_cadmshfem)
+    self.layout_param.addStretch()
+
+    self.mainLayout = QHBoxLayout()
+    self.mainLayout.addWidget(self.glWidget0, alignment=Qt.AlignLeft, stretch=2)
+    self.mainLayout.addWidget(self.glWidget1, alignment=Qt.AlignLeft, stretch=2)
+    self.mainLayout.addLayout(self.layout_param, stretch=0)
+    self.setLayout(self.mainLayout)
+
+  def updated_cadmshfem(self):
+    self.glWidget0.update()
+    self.glWidget1.update()
+
+  def keyPressEvent(self, event):
+    if event.text() == 'q':
+      self.close()
+
+  def numwin_changed(self,numwin:int):
+    if numwin == 1:
+      self.glWidget1.hide()
+    elif numwin == 2:
+      self.glWidget1.show()
+
