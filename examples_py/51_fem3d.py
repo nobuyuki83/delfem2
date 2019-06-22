@@ -21,7 +21,8 @@ def make_mesh():
   return msh
 
 def poission(msh,npIdP0,npIdP1):
-  fem = dfm2.FEM_Poisson(msh)
+  fem = dfm2.FEM_Poisson()
+  fem.updated_topology(msh)
   fem.ls.bc[npIdP0] = 1
   fem.ls.bc[npIdP1] = 2
   fem.value[:] = 0.5
@@ -36,7 +37,8 @@ def poission(msh,npIdP0,npIdP1):
   dfm2.glfw.winDraw3d([vis_color,axis])
 
 def diffuse(msh,npIdP0,npIdP1):
-  fem = dfm2.FEM_Diffuse(msh)
+  fem = dfm2.FEM_Diffuse()
+  fem.updated_topology(msh)
   fem.ls.bc[npIdP1] = 1
   fem.value[:] = 0.0
   fem.value[npIdP1] = 1.0
@@ -49,7 +51,9 @@ def diffuse(msh,npIdP0,npIdP1):
 
 
 def linear_solid_static(msh,npIdP):
-  fem = dfm2.FEM_SolidLinearStatic(msh,gravity=[0.3,0,0])
+  fem = dfm2.FEM_SolidLinearStatic()
+  fem.param_gravity_x = +0.3
+  fem.updated_topology(msh)
   fem.ls.bc[npIdP,:] = 1
   fem.solve()
   print(fem.ls.conv_hist)
@@ -61,7 +65,9 @@ def linear_solid_static(msh,npIdP):
 
 
 def linear_solid_dynamic(msh,npIdP):
-  fem = dfm2.FEM_SolidLinearDynamic(msh,gravity=[0.3,0,0])
+  fem = dfm2.FEM_SolidLinearDynamic()
+  fem.param_gravity_x = +0.3
+  fem.updated_topology(msh)
   fem.ls.bc[npIdP,:] = 1
   ####
   vis_disp = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")

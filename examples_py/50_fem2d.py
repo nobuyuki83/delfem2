@@ -38,7 +38,7 @@ def poisson_ms(cad, mesh):
 
 
 def diffuse(cad,mesh):
-  fem = dfm2.FEM_Diffuse(source=1.0)
+  fem = dfm2.FEM_Diffuse()
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
 
@@ -52,7 +52,7 @@ def diffuse(cad,mesh):
 
 
 def linear_solid_static(cad,mesh):
-  fem = dfm2.FEM_SolidLinearStatic(gravity=[0,-0.1])
+  fem = dfm2.FEM_SolidLinearStatic()
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1

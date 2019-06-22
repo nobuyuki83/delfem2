@@ -2,7 +2,8 @@ import numpy
 import OpenGL.GL as gl
 
 
-from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen
+from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse, PBD
+from .fem import FieldValueSetter
 from .fem import VisFEM_ColorContour
 
 from .cadmsh import CadMesh2D, cad_getPointsEdge, Mesh
@@ -34,11 +35,34 @@ class CadMesh2D_Poisson(CadMesh2D):
     self.fem.solve()
 
 
+class CadMesh2D_Diffuse(CadMesh2D):
+
+  def __init__(self,edge_length:float):
+    super().__init__(edge_length)
+    self.fem = FEM_Diffuse()
+    self.vis = VisFEM_ColorContour(self.fem,name_color='value')
+    self.list_cad_edge_fix = [0,1,2,3]
+
+  def draw(self):
+    self.ccad.draw()
+    self.vis.draw()
+
+  def motion(self,src0,src1,dir):
+    super().motion(src0,src1,dir)
+
+  def remesh(self):
+    super().remesh()
+    self.fem.updated_topology(self.dmsh)
+    npIdP = cad_getPointsEdge(self.ccad, self.list_cad_edge_fix, self.dmsh.np_pos, 0.001)
+    self.fem.value[npIdP] = 0.0
+    self.fem.ls.bc[npIdP] = 1
+
+
 class CadMesh2D_SolidLinearStatic(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
-    self.fem = FEM_SolidLinearStatic(gravity=[0, -0.1])
+    self.fem = FEM_SolidLinearStatic()
     self.vis = VisFEM_ColorContour(self.fem, name_disp="vec_val")
     self.list_cad_edge_fix = [3]
     self.remesh()
@@ -88,3 +112,28 @@ class CadMesh2D_SolidLinearEigen(CadMesh2D):
     self.fem.updated_topology(self.msh25)
     self.fem.ls.f[:] = numpy.random.uniform(-1, 1, self.msh25.np_pos.shape)
     self.fem.solve()
+
+
+class CadMesh2D_Pbd2D(CadMesh2D):
+
+  def __init__(self,edge_length:float):
+    super().__init__(edge_length)
+    self.pbd = PBD()
+
+  def draw(self):
+    self.ccad.draw()
+    gl.glDisable(gl.GL_LIGHTING)
+    gl.glColor3d(0.8,0.8,0.8)
+    self.vis_mesh.draw()
+
+  def remesh(self):
+    super().remesh()
+    self.pbd.updated_topology(self.dmsh)
+    npIdP = self.map_cad2msh.npIndEdge(0)
+    self.pbd.vec_bc[npIdP] = 1
+#    self.fvs = FieldValueSetter("0.3*sin(2*t)", self.pbd.vec_val, 0,
+#                                mesh=self.dmsh, npIdP=npIdP, dt=self.pbd.dt)
+    self.vis_mesh = Mesh(np_pos=self.pbd.vec_val,np_elm=self.dmsh.np_elm)
+
+  def step_time(self):
+    self.pbd.step_time()

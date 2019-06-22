@@ -32,8 +32,14 @@ def solid_linear_eigen():
   cmf.add_polygon([-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
   dfm2.glfw.winDraw3d([cmf])
 
+def pbd2d():
+  cmf = dfm2.cadmshfem.CadMesh2D_Pbd2D(edge_length=0.2)
+  cmf.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
+  dfm2.glfw.winDraw3d([cmf])
+
 if __name__ == "__main__":
   mesh()
   poisson()
   solid_linear_static()
   solid_linear_eigen()
+  pbd2d()
