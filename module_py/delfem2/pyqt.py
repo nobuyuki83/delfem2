@@ -431,42 +431,55 @@ class QW_FEMSolidLinearStatic(QWidget):
       self.updated_cadmshfem.emit()
 
 
+class QW_FEMSolidLinearEigen(QWidget):
+  updated_cadmshfem = pyqtSignal()
+
+  def __init__(self,fem:delfem2.FEM_SolidLinearEigen):
+    super(QW_FEMSolidLinearEigen, self).__init__()
+    ####
+    self.fem = fem
+    ####
+    self.qui_animctrl = QW_AnimCntrl(self.fem)
+    self.qui_animctrl.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
+    ####
+    self.vs1 = QW_FemParams(["myu","lambda","rho"],self.fem)
+    self.vs1.valueChanged.connect(lambda: self.updated_cadmshfem.emit())
+    ####
+    self.vl = QVBoxLayout()
+    self.vl.addWidget(self.qui_animctrl,  alignment=Qt.AlignLeft)
+    self.vl.addWidget(self.vs1,alignment=Qt.AlignLeft)
+    self.setLayout(self.vl)
+
 
 class QW_FEMDiffuse(QWidget):
   updated_cadmshfem = pyqtSignal()
 
   def __init__(self,fem:delfem2.FEM_Diffuse):
     super(QW_FEMDiffuse, self).__init__()
-
-    self.fem = fem
-
     ####
-
+    self.fem = fem
+    ####
     self.qui_animctrl = QW_AnimCntrl(self.fem)
     self.qui_animctrl.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
-
-    self.vs1 = QW_FemParams(["alpha","source"],self.fem)
-    self.vs1.valueChanged.connect(self.fem_param_changed)
-
     ####
-
+    self.vs1 = QW_FemParams(["alpha","source"],self.fem)
+    self.vs1.valueChanged.connect(lambda: self.updated_cadmshfem.emit())
+    ####
     self.vl = QVBoxLayout()
     self.vl.addWidget(self.qui_animctrl, alignment=Qt.AlignLeft)
     self.vl.addWidget(self.vs1,alignment=Qt.AlignLeft)
     self.setLayout(self.vl)
 
-  def fem_param_changed(self):
-    self.updated_cadmshfem.emit()
 
 
 #####################################################
 
 
-class QW_Pbd2D(QWidget):
+class QW_PBD(QWidget):
   updated_cadmshfem = pyqtSignal()
 
   def __init__(self,fem:delfem2.PBD):
-    super(QW_Pbd2D, self).__init__()
+    super(QW_PBD, self).__init__()
 
     self.fem = fem
 
@@ -495,6 +508,33 @@ class QW_Pbd2D(QWidget):
       self.updated_cadmshfem.emit()
 '''
 
+
+
+class QW_PBDCloth(QWidget):
+  updated_cadmshfem = pyqtSignal()
+
+  def __init__(self,fem:delfem2.PBD_Cloth):
+    super(QW_PBDCloth, self).__init__()
+
+    self.fem = fem
+
+    ####
+
+    self.qui_animctrl = QW_AnimCntrl(self.fem)
+    self.qui_animctrl.updated_cadmshfem.connect(lambda: self.updated_cadmshfem.emit())
+
+#    self.vs1 = QW_FemParams(["alpha","source"],self.fem)
+#    self.vs1.valueChanged.connect(self.fem_param_changed)
+
+    ####
+
+    self.vl = QVBoxLayout()
+    self.vl.addWidget(self.qui_animctrl, alignment=Qt.AlignLeft)
+#    self.vl.addWidget(self.vs1,alignment=Qt.AlignLeft)
+    self.setLayout(self.vl)
+
+  def fem_param_changed(self):
+    self.updated_cadmshfem.emit()
 
 
 #####################################################

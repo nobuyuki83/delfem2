@@ -3,19 +3,19 @@ import OpenGL.GL as gl
 
 from .libdelfem2 import MatrixSquareSparse, PreconditionerILU
 from .libdelfem2 import addMasterSlavePattern, matrixSquareSparse_setPattern, matrixSquareSparse_ScaleLeftRight
-from .libdelfem2 import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab, pointFixBC
+from .libdelfem2 import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
 from .libdelfem2 import \
-  mergeLinSys_poission, \
-  mergeLinSys_cloth, \
-  mergeLinSys_massPoint, \
-  mergeLinSys_contact, \
-  mergeLinSys_linearSolidStatic, \
-  mergeLinSys_diffuse, \
-  mergeLinSys_linearSolidDynamic, \
-  mergeLinSys_storksStatic2D, \
-  mergeLinSys_storksDynamic2D, \
-  mergeLinSys_navierStorks2D
-from .libdelfem2 import proj_rigid2d, proj_rigid3d
+  fem_merge_poission, \
+  fem_merge_cloth, \
+  fem_merge_massPoint, \
+  fem_merge_contact, \
+  fem_merge_linearSolidStatic, \
+  fem_merge_diffuse, \
+  fem_merge_linearSolidDynamic, \
+  fem_merge_storksStatic2D, \
+  fem_merge_storksDynamic2D, \
+  fem_merge_navierStorks2D
+from .libdelfem2 import pbd_proj_rigid2d, pbd_proj_rigid3d, pbd_pointFixBC, pbd_proj_cloth
 from .libdelfem2 import matrixSquareSparse_setFixBC
 from .libdelfem2 import drawField_colorMap, drawField_disp, drawField_hedgehog
 from .libdelfem2 import ColorMap
@@ -25,7 +25,7 @@ from .libdelfem2 import write_vtk_meshpoint, write_vtk_meshelem, write_vtk_point
 from .libdelfem2 import MathExpressionEvaluator, mass_lumped
 
 from .cadmsh import SDF
-from .cadmsh import Mesh
+from .cadmsh import Mesh, MeshDynTri2D
 
 
 
@@ -244,10 +244,10 @@ class FEM_Poisson():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    mergeLinSys_poission(self.ls.mat, self.ls.f,
-                         self.param_alpha, self.param_source,
-                         self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                         self.value)
+    fem_merge_poission(self.ls.mat, self.ls.f,
+                       self.param_alpha, self.param_source,
+                       self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                       self.value)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -276,11 +276,11 @@ class FEM_Diffuse():
   def step_time(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    mergeLinSys_diffuse(self.ls.mat, self.ls.f,
-                        self.param_alpha, self.param_rho, self.param_source,
-                        self.dt, self.gamma_newmark,
-                        self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                        self.value, self.velocity)
+    fem_merge_diffuse(self.ls.mat, self.ls.f,
+                      self.param_alpha, self.param_rho, self.param_source,
+                      self.dt, self.gamma_newmark,
+                      self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                      self.value, self.velocity)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -315,10 +315,10 @@ class FEM_SolidLinearStatic():
     gravity = [self.param_gravity_x, self.param_gravity_y]
     if self.mesh.np_pos.shape[1] == 3:
       gravity = [self.param_gravity_x, self.param_gravity_y, self.param_gravity_z]
-    mergeLinSys_linearSolidStatic(self.ls.mat, self.ls.f,
-                                  self.param_myu, self.param_lambda, self.param_rho, gravity,
-                                  self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                                  self.vec_val)
+    fem_merge_linearSolidStatic(self.ls.mat, self.ls.f,
+                                self.param_myu, self.param_lambda, self.param_rho, gravity,
+                                self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -398,10 +398,10 @@ class FEM_SolidLinearEigen():
       pass
     self.ls.set_zero()
     self.mode[:] = 0.0
-    mergeLinSys_linearSolidStatic(self.ls.mat, self.ls.f,
-                                  1.0, 0.1, 0.0, (0,0,0),
-                                  self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                                  self.mode)
+    fem_merge_linearSolidStatic(self.ls.mat, self.ls.f,
+                                1.0, 0.1, 0.0, (0,0,0),
+                                self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                self.mode)
     matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
     self.ls.mat.add_dia(1.0)
     ####
@@ -431,6 +431,8 @@ class FEM_SolidLinearEigen():
   def step_time(self):
     self.solve()
 
+  def initialize(self):
+    self.ls.f[:] = numpy.random.uniform(-1, 1, self.mesh.np_pos.shape)
 
 class FEM_SolidLinearDynamic():
   def __init__(self):
@@ -458,11 +460,11 @@ class FEM_SolidLinearDynamic():
     gravity = [self.param_gravity_x, self.param_gravity_y]
     if self.mesh.np_pos.shape[1] == 3:
       gravity = [self.param_gravity_x, self.param_gravity_y, self.param_gravity_z]
-    mergeLinSys_linearSolidDynamic(self.ls.mat, self.ls.f,
-                                   1.0, 0.0, 1.0, gravity,
-                                   self.dt, self.gamma_newmark, self.beta_newmark,
-                                   self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                                   self.vec_val, self.vec_velo, self.vec_acc)
+    fem_merge_linearSolidDynamic(self.ls.mat, self.ls.f,
+                                 1.0, 0.0, 1.0, gravity,
+                                 self.dt, self.gamma_newmark, self.beta_newmark,
+                                 self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                 self.vec_val, self.vec_velo, self.vec_acc)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -505,19 +507,19 @@ class FEM_Cloth():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    mergeLinSys_cloth(self.ls.mat, self.ls.f,
-                      self.myu, self.lmd, self.dt,
-                      self.mesh.np_pos, self.mesh.np_elm,
-                      self.np_quad,
+    fem_merge_cloth(self.ls.mat, self.ls.f,
+                    self.myu, self.lmd, self.dt,
+                    self.mesh.np_pos, self.mesh.np_elm,
+                    self.np_quad,
+                    self.vec_val)
+    fem_merge_massPoint(self.ls.mat, self.ls.f,
+                        self.rho, self.dt,
+                        self.gravity,
+                        self.vec_val, self.vec_velo)
+    fem_merge_contact(self.ls.mat, self.ls.f,
+                      10000, 0.1,
+                      self.sdf.list_sdf,
                       self.vec_val)
-    mergeLinSys_massPoint(self.ls.mat, self.ls.f,
-                          self.rho, self.dt,
-                          self.gravity,
-                          self.vec_val, self.vec_velo)
-    mergeLinSys_contact(self.ls.mat, self.ls.f,
-                        10000, 0.1,
-                        self.sdf.list_sdf,
-                        self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -547,10 +549,10 @@ class FEM_StorksStatic2D():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    mergeLinSys_storksStatic2D(self.ls.mat, self.ls.f,
-                               1.0, 0.0, 0.0,
-                               self.mesh.np_pos, self.mesh.np_elm,
-                               self.vec_val)
+    fem_merge_storksStatic2D(self.ls.mat, self.ls.f,
+                             1.0, 0.0, 0.0,
+                             self.mesh.np_pos, self.mesh.np_elm,
+                             self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -579,11 +581,11 @@ class FEM_StorksDynamic2D():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    mergeLinSys_storksDynamic2D(self.ls.mat, self.ls.f,
-                                1.0, 1.0, 0.0, 0.0,
-                                self.dt, self.gamma_newmark,
-                                self.mesh.np_pos, self.mesh.np_elm,
-                                self.vec_val, self.vec_velo)
+    fem_merge_storksDynamic2D(self.ls.mat, self.ls.f,
+                              1.0, 1.0, 0.0, 0.0,
+                              self.dt, self.gamma_newmark,
+                              self.mesh.np_pos, self.mesh.np_elm,
+                              self.vec_val, self.vec_velo)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -613,11 +615,11 @@ class FEM_NavierStorks2D():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    mergeLinSys_navierStorks2D(self.ls.mat, self.ls.f,
-                                1.0, 1000.0, 0.0, 0.0,
-                                self.dt, self.gamma_newmark,
-                                self.mesh.np_pos, self.mesh.np_elm,
-                                self.vec_val, self.vec_velo)
+    fem_merge_navierStorks2D(self.ls.mat, self.ls.f,
+                             1.0, 1000.0, 0.0, 0.0,
+                             self.dt, self.gamma_newmark,
+                             self.mesh.np_pos, self.mesh.np_elm,
+                             self.vec_val, self.vec_velo)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration(is_asymmetric=True)
@@ -644,17 +646,17 @@ class PBD():
 
   def step_time(self):
     self.vec_tpos[:] = self.vec_val + self.dt * self.vec_velo
-    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    pbd_pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
     for itr in range(1):
       if self.mesh.np_pos.shape[1] == 2:
-        proj_rigid2d(self.vec_tpos,
+        pbd_proj_rigid2d(self.vec_tpos,
                      0.5, self.psup[0], self.psup[1],
                      self.mesh.np_pos)
       if self.mesh.np_pos.shape[1] == 3:
-        proj_rigid3d(self.vec_tpos,
+        pbd_proj_rigid3d(self.vec_tpos,
                      0.5, self.psup[0], self.psup[1],
                      self.mesh.np_pos)
-    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    pbd_pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos
 
@@ -664,30 +666,36 @@ class PBD():
 
 
 class PBD_Cloth():
-  def __init__(self,
-               mesh: Mesh):
-    np = mesh.np_pos.shape[0]
-    self.mesh = mesh
-    self.vec_bc = numpy.zeros((np,), dtype=numpy.int32)
-    self.vec_val = mesh.np_pos.copy()
-    self.vec_velo = numpy.zeros_like(self.vec_val, dtype=numpy.float64)
-    self.vec_tpos = mesh.np_pos.copy()
+  def __init__(self):
     self.dt = 0.1
-    self.psup = mesh.psup()
+    self.param_gravity_x = 0.0
+    self.param_gravity_y = 0.0
+    self.param_gravity_z = 0.0
+
+  def updated_topology(self, dmsh:MeshDynTri2D):
+    self.dmsh = dmsh
+    np = dmsh.np_pos.shape[0]
+    self.bc = numpy.zeros((np,), dtype=numpy.int32)
+    self.vec_val = numpy.zeros((np,3), dtype=numpy.float64)
+    self.vec_val[:,:2] = dmsh.np_pos
+    self.vec_velo = numpy.zeros_like(self.vec_val, dtype=numpy.float64)
+    self.vec_tpos = self.vec_val.copy()
+    self.psup = dmsh.psup()
     self.psup = jarray_add_diagonal(*self.psup)
 
   def step_time(self):
     self.vec_tpos[:] = self.vec_val + self.dt * self.vec_velo
-    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+    self.vec_tpos[:,0] += self.dt*self.dt*self.param_gravity_x
+    self.vec_tpos[:,1] += self.dt*self.dt*self.param_gravity_y
+    self.vec_tpos[:,2] += self.dt*self.dt*self.param_gravity_z
+    pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     for itr in range(1):
-      if self.mesh.np_pos.shape[1] == 2:
-        proj_rigid2d(self.vec_tpos,
-                     0.5, self.psup[0], self.psup[1],
-                     self.mesh.np_pos)
-      if self.mesh.np_pos.shape[1] == 3:
-        proj_rigid3d(self.vec_tpos,
-                     0.5, self.psup[0], self.psup[1],
-                     self.mesh.np_pos)
-    pointFixBC(self.vec_tpos, self.vec_bc, self.vec_val)
+      pbd_proj_cloth(self.vec_tpos,self.dmsh.cdmsh)
+    pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos
+
+  def initialize(self):
+    self.vec_val[:,:2] = self.dmsh.np_pos
+    self.vec_val[:,2] = 0.0
+    self.vec_velo[:] = 0.0

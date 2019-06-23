@@ -21,7 +21,8 @@ from .libdelfem2 import \
   meshdyntri2d_initialize
 from .libdelfem2 import draw_mesh_facenorm, draw_mesh_edge
 from .libdelfem2 import meshtri3d_read_ply, mvc, meshtri3d_read_obj
-from .libdelfem2 import meshDynTri2D_CppCad2D, cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
+from .libdelfem2 import meshDynTri2D_CppCad2D, setXY_MeshDynTri2D
+from .libdelfem2 import cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
 from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
 from .libdelfem2 import CppVoxelGrid, numpyXYTri_MeshDynTri2D
 from .libdelfem2 import setTopology_ExtrudeTri2Tet
@@ -166,6 +167,8 @@ class MeshDynTri2D(Mesh):
     copyMeshDynTri2D(self.np_pos,self.np_elm, self.cdmsh)
     return mpr
 
+  def syncXY_from_npPos(self):
+    setXY_MeshDynTri2D(self.cdmsh, self.np_pos)
 
 ###########################################################################
 
@@ -301,6 +304,7 @@ class CadMesh2D(Cad2D):
         np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
         np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
         self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
+        self.dmsh.syncXY_from_npPos()
       max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
       if max_asp > 5.0 or min_area < 0.0:
         self.remesh()

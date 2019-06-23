@@ -774,7 +774,7 @@ void myGlutDisplay(void)
     glShadeModel(GL_SMOOTH);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
-    DrawMeshTet3D_Edge(aXYZ, aTet);
+    DrawMeshTet3D_Edge(aXYZ.data(),aXYZ.size()/3, aTet.data(),aTet.size()/4);
     {
       std::vector< std::pair<double,CColor> > colorMap;
       makeHeatMap_BlueGrayRed(colorMap, 0, 1.0);
