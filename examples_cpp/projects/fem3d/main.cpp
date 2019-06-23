@@ -37,7 +37,7 @@
 
 CGlutWindowManager win;
 
-std::vector<int> aTet;
+std::vector<unsigned int> aTet;
 std::vector<double> aXYZ;
 std::vector<int> aIsSurf;
 
@@ -90,8 +90,8 @@ void InitializeProblem_Poisson()
   //////
   std::vector<int> psup_ind, psup;
   JArray_MeshOneRingNeighborhood(psup_ind, psup,
-                                      aTet.data(), aTet.size()/4, 4,
-                                      (int)aXYZ.size()/3);
+                                 aTet.data(), aTet.size()/4, 4,
+                                 (int)aXYZ.size()/3);
   JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;

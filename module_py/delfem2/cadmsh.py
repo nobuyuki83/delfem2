@@ -34,13 +34,13 @@ from .libdelfem2 import setTopology_ExtrudeTri2Tet
 class Mesh():
   def __init__(self,
                np_pos=numpy.ndarray((0,3),dtype=numpy.float64),
-               np_elm=numpy.ndarray((0,3),dtype=numpy.int32),
+               np_elm=numpy.ndarray((0,3),dtype=numpy.uint32),
                elem_type=TRI):
     print("PyMesh -- construct")
     assert type(np_pos) == numpy.ndarray
     assert type(np_elm) == numpy.ndarray
     assert np_pos.dtype == numpy.float64
-    assert np_elm.dtype == numpy.int32
+    assert np_elm.dtype == numpy.uint32
     self.color_face = [0.8, 0.8, 0.8, 1.0]
     self.is_draw_edge = True
     self.is_draw_face = True
@@ -126,7 +126,7 @@ class Mesh():
       ####
       ntri0 = msh0.np_elm.shape[0]
       if self.np_elm.shape != (ntri0*nlayer*3,4):
-        self.np_elm = numpy.ndarray((ntri0*nlayer*3,4),dtype=numpy.int32)
+        self.np_elm = numpy.ndarray((ntri0*nlayer*3,4),dtype=numpy.uint32)
       setTopology_ExtrudeTri2Tet(self.np_elm,
                                  nlayer,np0,msh0.np_elm)
 
@@ -140,7 +140,7 @@ class MeshDynTri2D(Mesh):
     super().__init__()
     self.elem_type = TRI
     self.np_pos = numpy.ndarray((0,2),dtype=numpy.float64)
-    self.np_elm = numpy.ndarray((0,3),dtype=numpy.int32)
+    self.np_elm = numpy.ndarray((0,3),dtype=numpy.uint32)
     self.cdmsh = CppMeshDynTri2D()
 
   def set_mesh(self,msh:Mesh) -> None:
@@ -183,13 +183,13 @@ class Grid3D:
   def mesh_quad3d(self) -> Mesh:
     list_xyz, list_tri = meshquad3d_voxelgrid(self.vg)
     np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
-    np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 4))
+    np_elm = numpy.array(list_tri, dtype=numpy.uint32).reshape((-1, 4))
     return Mesh(np_pos, np_elm, QUAD)
 
   def mesh_hex3d(self) -> Mesh:
     list_xyz, list_tri = meshhex3d_voxelgrid(self.vg)
     np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
-    np_elm = numpy.array(list_tri, dtype=numpy.int32).reshape((-1, 8))
+    np_elm = numpy.array(list_tri, dtype=numpy.uint32).reshape((-1, 8))
     return Mesh(np_pos, np_elm, HEX)
 
 

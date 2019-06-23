@@ -6,7 +6,7 @@
 ####################################################################
 
 
-from OpenGL.GL import *
+import OpenGL.GL as gl
 
 import sys
 sys.path.append("../module_py")
@@ -15,7 +15,7 @@ import delfem2.glfw
 
 
 def draw_func():
-  glEnable(GL_LIGHTING)
+  gl.glEnable(gl.GL_LIGHTING)
   msh.draw()
 
 msh = dfm2.Mesh()

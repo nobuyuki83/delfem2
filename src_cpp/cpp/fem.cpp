@@ -16,7 +16,7 @@
 static void FetchData
 (double* val_to,
  int nno, int ndim,
- const int* aIP,
+ const unsigned int* aIP,
  const double* val_from,
  int nstride, int noffset)
 {
@@ -159,17 +159,17 @@ void MergeLinSys_Poission_MeshTri2D
  const double alpha,
  const double source,
  const double* aXY1, int np,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal)
 {
   const int nDoF = np;
   /////
   std::vector<int> tmp_buffer(nDoF, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
     const double value[3] = { aVal[i0], aVal[i1], aVal[i2] };
     ////
@@ -193,18 +193,18 @@ void MergeLinSys_Poission_MeshTet3D
  const double alpha,
  const double source,
  const double* aXYZ, int nXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aVal)
 {
   const int np = nXYZ;
   /////
   std::vector<int> tmp_buffer(np, -1);
   for (int itet = 0; itet<nTet; ++itet){
-    const int i0 = aTet[itet*4+0];
-    const int i1 = aTet[itet*4+1];
-    const int i2 = aTet[itet*4+2];
-    const int i3 = aTet[itet*4+3];
-    const int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
     ////
@@ -231,7 +231,7 @@ void MergeLinSys_Diffusion_MeshTri2D
  const double dt_timestep,
  const double gamma_newmark,
  const double* aXY1, int nXY,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal,
  const double* aVelo)
 {
@@ -241,10 +241,10 @@ void MergeLinSys_Diffusion_MeshTri2D
 //  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(nXY, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1, 2,0);
     const double value[3] = { aVal[ i0], aVal[ i1], aVal[ i2] };
     const double velo[ 3] = { aVelo[i0], aVelo[i1], aVelo[i2] };
@@ -273,7 +273,7 @@ void MergeLinSys_Diffusion_MeshTet3D
  const double dt_timestep,
  const double gamma_newmark,
  const double* aXYZ, int nXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aVal,
  const double* aVelo)
 {
@@ -284,11 +284,11 @@ void MergeLinSys_Diffusion_MeshTet3D
 //  vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
-    const int i0 = aTet[iel*4+0];
-    const int i1 = aTet[iel*4+1];
-    const int i2 = aTet[iel*4+2];
-    const int i3 = aTet[iel*4+3];
-    const int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ,3,0);
     const double value[4] = { aVal[ i0], aVal[ i1], aVal[ i2], aVal[ i3] };
     const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
@@ -317,7 +317,7 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D
  const double g_x,
  const double g_y,
  const double* aXY1, int nXY,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal)
 {
   const int np = nXY;
@@ -327,10 +327,10 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D
 //  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
     double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal,2,0);
     ////
@@ -363,7 +363,7 @@ void MergeLinSys_SolidDynamicLinear_MeshTri2D
  const double gamma_newmark,
  const double beta_newmark,
  const double* aXY1, int nXY,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal,
  const double* aVelo,
  const double* aAcc)
@@ -375,10 +375,10 @@ void MergeLinSys_SolidDynamicLinear_MeshTri2D
 //  for(int idof=0;idof<nDoF;idof++){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
     double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal,2,0);
     double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo,2,0);
@@ -410,7 +410,7 @@ void MergeLinSys_StokesStatic2D
  const double g_x,
  const double g_y,
  const double* aXY1, int nXY,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal)
 {
   const int np = nXY;
@@ -420,10 +420,10 @@ void MergeLinSys_StokesStatic2D
 //  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
     double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal,3,0);
     ////
@@ -452,7 +452,7 @@ void MergeLinSys_StokesDynamic2D
  const double dt_timestep,
  const double gamma_newmark,
  const double* aXY1, int nXY,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal,
  const double* aVelo)
 {
@@ -463,10 +463,10 @@ void MergeLinSys_StokesDynamic2D
 //  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
     double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal, 3,0);
     double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo, 3,0);
@@ -498,7 +498,7 @@ void MergeLinSys_NavierStokes2D
  const double dt_timestep,
  const double gamma_newmark,
  const double* aXY1, int nXY,
- const int* aTri1, int nTri,
+ const unsigned int* aTri1, int nTri,
  const double* aVal,
  const double* aVelo)
 {
@@ -509,10 +509,10 @@ void MergeLinSys_NavierStokes2D
 //  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTri; ++iel){
-    const int i0 = aTri1[iel*3+0];
-    const int i1 = aTri1[iel*3+1];
-    const int i2 = aTri1[iel*3+2];
-    const int aIP[3] = {i0,i1,i2};
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
     double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1,2,0);
     double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal,3,0);
     double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo, 3,0);
@@ -542,8 +542,8 @@ double MergeLinSys_Cloth
  double myu,  // (in) Lame's 2nd parameter
  double stiff_bend, // (in) bending stiffness
  const double* aPosIni, int np, int ndim,
- const int* aTri, int nTri, // (in) triangle index
- const int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
+ const unsigned int* aTri, int nTri, // (in) triangle index
+ const unsigned int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
  const double* aXYZ
  )
 {
@@ -552,7 +552,7 @@ double MergeLinSys_Cloth
   
   // marge element in-plane strain energy
   for(int itri=0;itri<nTri;itri++){
-    const int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
+    const unsigned int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
     double C[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
     double c[3][3];
     for(int ino=0;ino<3;ino++){
@@ -574,7 +574,7 @@ double MergeLinSys_Cloth
 //  std::cout << "cst:" << W << std::endl;
   // marge element bending energy
   for(int iq=0;iq<nQuad;iq++){
-    const int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
+    const unsigned int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
     double C[4][3] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
     double c[4][3];
     for(int ino=0;ino<4;ino++){
@@ -612,7 +612,7 @@ double MergeLinSys_Contact
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np,-1);
   double W = 0;
-  for(int ip=0;ip<np;ip++){
+  for(unsigned int ip=0;ip<np;ip++){
     double c[3] = { aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2] };
     double e, de[3], dde[3][3];
     WdWddW_Contact( e,de,dde, c, stiff_contact,contact_clearance, input );
@@ -747,7 +747,7 @@ void MergeLinSys_SolidStaticLinear_MeshTet3D
  const double g_y,
  const double g_z,
  const double* aXYZ, int nXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aVal)
 {
   const int np = nXYZ;
@@ -755,11 +755,11 @@ void MergeLinSys_SolidStaticLinear_MeshTet3D
   //////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
-    const int i0 = aTet[iel*4+0];
-    const int i1 = aTet[iel*4+1];
-    const int i2 = aTet[iel*4+2];
-    const int i3 = aTet[iel*4+3];
-    const int aIP[4] = { i0, i1, i2, i3 };
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = { i0, i1, i2, i3 };
     double coords[4][3]; FetchData(&coords[0][0], 4, 3, aIP, aXYZ, 3, 0);
     double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aVal, 3, 0);
     ////
@@ -800,15 +800,15 @@ void MergeLinSys_LinearSolid3D_Static_Q1
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aHex.size()/8; ++iel){
-    const int i0 = aHex[iel*8+0];
-    const int i1 = aHex[iel*8+1];
-    const int i2 = aHex[iel*8+2];
-    const int i3 = aHex[iel*8+3];
-    const int i4 = aHex[iel*8+4];
-    const int i5 = aHex[iel*8+5];
-    const int i6 = aHex[iel*8+6];
-    const int i7 = aHex[iel*8+7];
-    const int aIP[8] = { i0, i1, i2, i3, i4, i5, i6, i7 };
+    const unsigned int i0 = aHex[iel*8+0];
+    const unsigned int i1 = aHex[iel*8+1];
+    const unsigned int i2 = aHex[iel*8+2];
+    const unsigned int i3 = aHex[iel*8+3];
+    const unsigned int i4 = aHex[iel*8+4];
+    const unsigned int i5 = aHex[iel*8+5];
+    const unsigned int i6 = aHex[iel*8+6];
+    const unsigned int i7 = aHex[iel*8+7];
+    const unsigned int aIP[8] = { i0, i1, i2, i3, i4, i5, i6, i7 };
     double coords[8][3]; FetchData(&coords[0][0], 8, 3, aIP, aXYZ.data(), 3, 0);
     double disps[8][3]; FetchData(&disps[0][0], 8, 3, aIP, aVal.data(), 3, 0);
     ////
@@ -842,7 +842,7 @@ void MergeLinSys_SolidDynamicLinear_MeshTet3D
  const double gamma_newmark,
  const double beta_newmark,
  const double* aXYZ, int nXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aVal,
  const double* aVelo,
  const double* aAcc)
@@ -852,11 +852,11 @@ void MergeLinSys_SolidDynamicLinear_MeshTet3D
   ////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
-    const int i0 = aTet[iel*4+0];
-    const int i1 = aTet[iel*4+1];
-    const int i2 = aTet[iel*4+2];
-    const int i3 = aTet[iel*4+3];
-    const int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ, 3,0);
     double disps[4][3];  FetchData(&disps[0][0], 4,3,aIP, aVal, 3,0);
     double velos[4][3];  FetchData(&velos[0][0], 4,3,aIP, aVelo, 3,0);
@@ -892,7 +892,7 @@ void MergeLinSys_Stokes3D_Static
  const double g_y,
  const double g_z,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
+ const std::vector<unsigned int>& aTet,
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
@@ -903,11 +903,11 @@ void MergeLinSys_Stokes3D_Static
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int itet = 0; itet<(int)aTet.size()/4; ++itet){
-    const int i0 = aTet[itet*4+0];
-    const int i1 = aTet[itet*4+1];
-    const int i2 = aTet[itet*4+2];
-    const int i3 = aTet[itet*4+3];
-    const int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
     double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data(),4,0);
     ////
@@ -940,7 +940,7 @@ void MergeLinSys_Stokes3D_Dynamic
  const double dt_timestep,
  const double gamma_newmark,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
+ const std::vector<unsigned int>& aTet,
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
@@ -951,11 +951,11 @@ void MergeLinSys_Stokes3D_Dynamic
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
-    const int i0 = aTet[iel*4+0];
-    const int i1 = aTet[iel*4+1];
-    const int i2 = aTet[iel*4+2];
-    const int i3 = aTet[iel*4+3];
-    const int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
     double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data(), 4,0);
     double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data(),4,0);
@@ -988,7 +988,7 @@ void MergeLinSys_NavierStokes3D_Dynamic
  const double dt_timestep,
  const double gamma_newmark,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
+ const std::vector<unsigned int>& aTet,
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
@@ -999,11 +999,11 @@ void MergeLinSys_NavierStokes3D_Dynamic
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<(int)aTet.size()/4; ++iel){
-    const int i0 = aTet[iel*4+0];
-    const int i1 = aTet[iel*4+1];
-    const int i2 = aTet[iel*4+2];
-    const int i3 = aTet[iel*4+3];
-    const int aIP[4] = {i0,i1,i2,i3};
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data(),3,0);
     double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data(), 4,0);
     double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data(),4,0);

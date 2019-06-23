@@ -270,7 +270,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case '1':
     {
       std::vector<double> aXYZ;
-      std::vector<int> aTri;
+      std::vector<unsigned int> aTri;
       Read_Obj("models/bunny2k.obj",aXYZ, aTri);
       Normalize(aXYZ);
       Scale(2.0,aXYZ);

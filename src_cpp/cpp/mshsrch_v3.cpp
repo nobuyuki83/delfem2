@@ -267,7 +267,7 @@ CPointElemSurf intersect_Ray_Tri3D
 (double& depth,
  const CVector3& org, const CVector3& dir,
  int itri,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
 {
   const int ip0 = aTri[itri*3+0];  assert(ip0>=0&&ip0<(int)aXYZ.size()/3);
@@ -288,7 +288,7 @@ CPointElemSurf intersect_Ray_Tri3D
 
 CPointElemSurf intersect_Ray_MeshTriFlag3D
 (const CVector3& org, const CVector3& dir,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ,
  int iflag,
  const std::vector<int>& aFlag)
@@ -314,7 +314,7 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D
 
 CPointElemSurf intersect_Ray_MeshTri3D
 (const CVector3& org, const CVector3& dir,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
 {
   std::map<double, CPointElemSurf> pickMap;
@@ -331,7 +331,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
 CPointElemSurf intersect_Ray_MeshTri3D
 (const CVector3& org, const CVector3& dir,
  int itri_start, // starting triangle
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTriSurRel)
 {
@@ -365,7 +365,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
 CPointElemSurf intersect_Ray_MeshTri3D
 (const CVector3& org, const CVector3& dir,
  const CPointElemSurf& ptri0,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTriSurRel)
 {

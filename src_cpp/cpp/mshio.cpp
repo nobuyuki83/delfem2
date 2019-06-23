@@ -73,7 +73,7 @@ void Write_STL
 void Read_Ply
 (const std::string& fname,
  std::vector<double>& aXYZ,
- std::vector<int>& aTri)
+ std::vector<unsigned int>& aTri)
 {
   std::cout<<"File load "<<fname<<std::endl;
   std::ifstream fin;
@@ -262,7 +262,7 @@ void Read_Ply
 void Write_Obj
 (const std::string& str,
  const double* aXYZ, int nXYZ,
- const int* aTri, int nTri)
+ const unsigned int* aTri, int nTri)
 {
   int np = nXYZ;
   int nt = nTri;
@@ -344,7 +344,7 @@ void Write_Obj
 void Read_Obj
 (const std::string& fname,
  std::vector<double>& aXYZ,
- std::vector<int>& aTri)
+ std::vector<unsigned int>& aTri)
 {
   std::ifstream fin;
   fin.open(fname.c_str());
@@ -1230,7 +1230,7 @@ void ReadVTK
 
 void Read_MeshTri3D_Nas
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int>& aTri,
  const char* path)
 {
   aXYZ.clear();

@@ -31,7 +31,7 @@ void stepTime
  const std::vector<int>& clstr_ind,
  const std::vector<int>& clstr,
  const std::vector<int>& aBC,
- const std::vector<int>& aQuad,
+ const std::vector<unsigned int>& aQuad,
  const std::vector<double>& aXY0)
 {
   const int ndof = aXY0.size();
@@ -71,7 +71,7 @@ std::vector<double> aXY0;
 std::vector<double> aXY1;
 std::vector<double> aUV1;
 std::vector<double> aXYt;
-std::vector<int> aQuad;
+std::vector<unsigned int> aQuad;
 std::vector<int> clstr_ind, clstr;
 std::vector<int> aBC;
 

@@ -191,7 +191,7 @@ void MakeExpMap_Point
 //////////////////////////////////////////////////////////////
 
 std::vector<double> aXYZ;
-std::vector<int> aTri;
+std::vector<unsigned int> aTri;
 std::vector<double> aTex;
 std::vector<double> aLocCoord;
 std::vector<int> psup_ind;

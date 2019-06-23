@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CGlutWindowManager window;
-std::vector< std::vector<int> > aaQuad;
+std::vector< std::vector<unsigned int> > aaQuad;
 std::vector< std::vector<double> > aaXYZ;
 const unsigned int nlevel_subdiv = 3;
 
@@ -117,8 +117,8 @@ int main(int argc,char* argv[])
   
   for(unsigned int il=0;il<nlevel_subdiv;++il){
     const std::vector<double>& aXYZ0 = aaXYZ[il];
-    const std::vector<int>& aQuad0 = aaQuad[il];
-    std::vector<int>& aQuad1 = aaQuad[il+1];
+    const std::vector<unsigned int>& aQuad0 = aaQuad[il];
+    std::vector<unsigned int>& aQuad1 = aaQuad[il+1];
     std::vector<int> aEdgeFace0;
     std::vector<int> psupIndQuad0, psupQuad0;
     QuadSubdiv(aQuad1,

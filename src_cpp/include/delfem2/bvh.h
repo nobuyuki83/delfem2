@@ -29,7 +29,7 @@ void BuildBoundingBoxesBVH
 (int ibvh,
  double delta,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElem,
  int nnoel,
  const std::vector<CNodeBVH>& aNodeBVH,
  std::vector<T>& aBB)
@@ -67,8 +67,8 @@ void BuildBoundingBoxesBVH
 (int ibvh,
  double delta,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<CNodeBVH>& aNodeBVH,
  std::vector<T>& aBB)
 {
@@ -105,7 +105,7 @@ void BuildBoundingBoxesBVH_Dynamic
  double dt,
  const std::vector<double>& aXYZ,
  const std::vector<double>& aUVW,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<CNodeBVH>& aNodeBVH,
  std::vector<T>& aBB)
 {

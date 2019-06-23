@@ -1147,7 +1147,7 @@ bool Triangulation
 
 void MeshTri2D_Export
 (std::vector<double>& aXY_out,
- std::vector<int>& aTri_out,
+ std::vector<unsigned int>& aTri_out,
  const std::vector<CVector2>& aVec2,
  const std::vector<ETri>& aTri_in)
 {
@@ -1266,7 +1266,7 @@ void ResamplingLoop
 
 void CMeshTri2D
 (std::vector<double>& aXY,
- std::vector<int>& aTri,
+ std::vector<unsigned int>& aTri,
  std::vector<CVector2>& aVec2,
  std::vector<ETri>& aETri)
 {

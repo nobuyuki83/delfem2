@@ -171,8 +171,8 @@ void convert2Tri(std::vector<int>& aTri,
                  const std::vector<int>& aElem,
                  const std::vector<MESHELEM_TYPE>& aElemType);
 
-void ElemQuad_DihedralTri(std::vector<int>& aQuad,
-                          const int* aTri, int nTri,
+void ElemQuad_DihedralTri(std::vector<unsigned int>& aQuad,
+                          const unsigned int* aTri, int nTri,
                           int np);
 ////
 void FlipElement_Tri(std::vector<int>& aTri);
@@ -187,14 +187,14 @@ void FlipElement(std::vector<int>& aElem_Flip,
 void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
                               ////
-                              const int* aElem,
+                              const unsigned int* aElem,
                               int nEl,
                               int nPoEl,
                               int nPo);
 void makeElemSurroundingPoint_Tri(std::vector<int>& elsup_ind,
                                   std::vector<int>& elsup,
                                   ////
-                                  const std::vector<int>& aTri,
+                                  const std::vector<unsigned int>& aTri,
                                   int nXYZ);
 void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
@@ -206,14 +206,14 @@ void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
 ////////////////////////////////////////
 // elem sur elem
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
-                                 const int* aEl, int nEl, int nNoEl,
+                                 const unsigned int* aEl, int nEl, int nNoEl,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup,
                                  const int nfael,
                                  const int nnofa,
                                  const int noelElemFace[][4]);
 void makeSurroundingRelationship(std::vector<int>& aElemSurRel,
-                                 const int* aElem, int nEl, 
+                                 const unsigned int* aElem, int nEl,
                                  MESHELEM_TYPE type,
                                  const int nXYZ);
 /*
@@ -254,7 +254,7 @@ void makeBoundary(std::vector<int>& aElemInd_Bound,
 void makeOneRingNeighborhood(std::vector<int>& psup_ind,
                              std::vector<int>& psup,
                              ////
-                             const int* pElem,
+                             const unsigned int* pElem,
                              const std::vector<int>& elsup_ind,
                              const std::vector<int>& elsup,
                              int nnoel,
@@ -262,7 +262,7 @@ void makeOneRingNeighborhood(std::vector<int>& psup_ind,
 void JArray_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                              std::vector<int>& psup,
                              ////
-                             const int* pElem,
+                             const unsigned int* pElem,
                              int nEl,
                              int nPoEl,
                              int nPo);
@@ -342,28 +342,28 @@ void ClipGroup(std::vector<int>& aElemInd1,
                const std::vector<int>& aIndGroup);
 
 /////////////////////////////////////////////
-void QuadSubdiv(std::vector<int>& aQuad1,
+void QuadSubdiv(std::vector<unsigned int>& aQuad1,
                 std::vector<int>& psup_ind,
                 std::vector<int>& psup,
                 std::vector<int>& aEdgeFace0,
-                const int* aQuad0, int nQuad0,
+                const unsigned int* aQuad0, int nQuad0,
                 unsigned int nPo0);
-void HexSubdiv(std::vector<int>& aHex1,
+void HexSubdiv(std::vector<unsigned int>& aHex1,
                std::vector<int>& psupIndHex0,
                std::vector<int>& psupHex0,
-               std::vector<int>& aQuadHex0,
-               const int* aHex0, int nHex0,
+               std::vector<unsigned int>& aQuadHex0,
+               const unsigned int* aHex0, int nHex0,
                const int nhp0);
-void TetSubdiv(std::vector<int>& aTet1,
+void TetSubdiv(std::vector<unsigned int>& aTet1,
                std::vector<int>& psup_ind,
                std::vector<int>& psup,
-               const int* aTet0, int nTet0,
+               const unsigned int* aTet0, int nTet0,
                unsigned int nPoint0);
 int findEdge(int ip0, int ip1,
              const std::vector<int>& psup_ind,
              const std::vector<int>& psup);
 int findFace(int ipc0, int ipc1, int ip2, int ip3,
-             const std::vector<int>& aQuad,
+             const std::vector<unsigned int>& aQuad,
              const std::vector<int>& elsupInd,
              const std::vector<int>& elsup);
 

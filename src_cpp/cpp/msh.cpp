@@ -163,7 +163,7 @@ void RemoveUnreferencedPoints3D
 void MakeNormal
 (std::vector<double>& aNorm,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   int nXYZ = (int)aXYZ.size()/3;
   int nTri = (int)aTri.size()/3;
@@ -650,7 +650,7 @@ void Scale
 
 void MeshQuad2D_Grid
 (std::vector<double>& aXYZ,
- std::vector<int>& aQuad,
+ std::vector<unsigned int>& aQuad,
  int nx, int ny)
 {
   int np = (nx+1)*(ny+1);
@@ -846,7 +846,7 @@ int nlo, int nl)
 
 void MeshTri3D_Sphere
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int>& aTri,
  double r,
  int nla, int nlo)
 {
@@ -912,7 +912,7 @@ void MeshTri3D_Sphere
 // f3: +y
 // f4: -z
 // f5: +z
-void SetTopoQuad_CubeVox(std::vector<int>& aQuad)
+void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 {
   aQuad.resize(6*4);
   aQuad[0*4+0] = 0;    aQuad[0*4+1] = 4;   aQuad[0*4+2] = 6;   aQuad[0*4+3] = 2;
@@ -924,7 +924,7 @@ void SetTopoQuad_CubeVox(std::vector<int>& aQuad)
 }
 
 void MeshQuad3D_CubeVox
-(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
  double x_min, double x_max,
  double y_min, double y_max,
  double z_min, double z_max)
@@ -1080,7 +1080,7 @@ void MeshTri3D_Cube
 
 void MeshTri3D_Icosahedron
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri)
+ std::vector<unsigned int>& aTri)
 {
   double p = (1+sqrt(5))*0.5;
   aXYZ.resize(12*3);
@@ -1124,9 +1124,9 @@ void MeshTri3D_Icosahedron
 }
 
 void SetTopology_ExtrudeTri2Tet
-(int* aTet,
+(unsigned int* aTet,
  int nXY,
- const int* aTri, int nTri,
+ const unsigned int* aTri, int nTri,
  int nlayer)
 {
   for(int il=0;il<nlayer;++il){
@@ -1176,9 +1176,9 @@ void SetTopology_ExtrudeTri2Tet
 void ExtrudeTri2Tet
 (int nlayer, double h,
  std::vector<double>& aXYZ,
- std::vector<int>& aTet,
+ std::vector<unsigned int>& aTet,
  const std::vector<double>& aXY,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   const int nXY = (int)aXY.size()/2;
   const int nTri = (int)aTri.size()/3;
@@ -1400,7 +1400,7 @@ void MassLumped_Tet3D
 (double* aMassMatrixLumped,
  double rho,
  const double* aXYZ, int nXYZ,
- const int* aTet, int nTet)
+ const unsigned int* aTet, int nTet)
 {
   for(int i=0;i<nXYZ;++i){ aMassMatrixLumped[i] = 0.0; }
   for(int it=0;it<nTet;++it){
@@ -1424,11 +1424,11 @@ void MassLumped_Tet3D
 void SubdivisionPoints_QuadCatmullClark
 (std::vector<double>& aXYZ1,
  ///
- const std::vector<int>& aQuad1,
+ const std::vector<unsigned int>& aQuad1,
  const std::vector<int>& aEdgeFace0,
  const std::vector<int>& psupIndQuad0,
  const std::vector<int>& psupQuad0,
- const int* aQuad0, int nQuad0,
+ const unsigned int* aQuad0, int nQuad0,
  const double* aXYZ0, int nXYZ0)
 {
   /*
@@ -1551,8 +1551,8 @@ void SubdivisionPoints_Hex
  ///
  const std::vector<int>& psupIndHex0,
  const std::vector<int>& psupHex0,
- const std::vector<int>& aQuadHex0,
- const int* aHex0, int nHex0,
+ const std::vector<unsigned int>& aQuadHex0,
+ const unsigned int* aHex0, int nHex0,
  const double* aXYZ0, int nXYZ0)
 {
   const int nv0 = nXYZ0;

@@ -22,7 +22,7 @@
 std::vector<double> aXYZ0; // undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // vertex deformation modes
-std::vector<int> aTri;  // index of triangles
+std::vector<unsigned int> aTri;  // index of triangles
 
 // variables for self-collision
 int iroot_bvh; // index BVH root node

@@ -11,24 +11,24 @@
 
 namespace py = pybind11;
 
-std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad2D_Grid
+std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshQuad2D_Grid
 (int mx, int my)
 {
   std::vector<double> aXY;
-  std::vector<int> aQuad;
+  std::vector<unsigned int> aQuad;
   MeshQuad2D_Grid(aXY, aQuad,
                   mx-1, my-1);
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
-  py::array_t<int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
+  py::array_t<unsigned int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
   return std::forward_as_tuple(npXY,npQuad);
 }
 
 void PySetTopology_ExtrudeTri2Tet
-(py::array_t<int>& npTet,
+(py::array_t<unsigned int>& npTet,
  int nlayer, int nXY,
- const py::array_t<int>& npTri)
+ const py::array_t<unsigned int>& npTri)
 {
-  SetTopology_ExtrudeTri2Tet((int*)(npTet.request().ptr),
+  SetTopology_ExtrudeTri2Tet((unsigned int*)(npTet.request().ptr),
                              nXY,
                              npTri.data(), npTri.shape()[0],
                              nlayer);
@@ -40,49 +40,49 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadPly
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   Read_Ply(fname, aXYZ, aTri);
   py::array_t<double> np_XYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
-  py::array_t<int> np_Tri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<unsigned int> np_Tri({(int)aTri.size()/3,3}, aTri.data());
   return std::forward_as_tuple(np_XYZ,np_Tri);
 }
 
-std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadObj
+std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadObj
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   Read_Obj(fname, aXYZ, aTri);
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
-  py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::forward_as_tuple(npXYZ,npTri);
 }
 
 void PyMeshTri3D_WriteObj
 (const std::string& fname,
  const py::array_t<double>& aXYZ,
- const py::array_t<int>& aTri)
+ const py::array_t<unsigned int>& aTri)
 {
   Write_Obj(fname,
             aXYZ.data(), aXYZ.shape()[0],
             aTri.data(), aTri.shape()[0]);
 }
 
-std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadNastran
+std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadNastran
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   Read_MeshTri3D_Nas(aXYZ, aTri, fname.c_str());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
-  py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::forward_as_tuple(npXYZ,npTri);
 }
 
-std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
-(const py::array_t<double>& aXYZ0, const py::array_t<int>& aQuad0)
+std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshQuad3D_Subviv
+(const py::array_t<double>& aXYZ0, const py::array_t<unsigned int>& aQuad0)
 {
-  std::vector<int> aQuad1;
+  std::vector<unsigned int> aQuad1;
   std::vector<int> psupIndQuad0, psupQuad0;
   std::vector<int> aEdgeFace0;
   QuadSubdiv(aQuad1,
@@ -95,16 +95,16 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshQuad3D_Subviv
                                      aQuad0.data(),aQuad0.shape()[0],
                                      aXYZ0.data(), aXYZ0.shape()[0]);
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
-  py::array_t<int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
+  py::array_t<unsigned int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
   return std::forward_as_tuple(npXYZ1,npQuad1);
 }
 
-std::tuple<py::array_t<double>,py::array_t<int>> PyMeshHex3D_Subviv
-(const py::array_t<double>& aXYZ0, const py::array_t<int>& aHex0)
+std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshHex3D_Subviv
+(const py::array_t<double>& aXYZ0, const py::array_t<unsigned int>& aHex0)
 {
-  std::vector<int> aHex1;
+  std::vector<unsigned int> aHex1;
   std::vector<int> psupIndHex0, psupHex0;
-  std::vector<int> aQuadHex0;
+  std::vector<unsigned int> aQuadHex0;
   HexSubdiv(aHex1,
             psupIndHex0, psupHex0,
             aQuadHex0,
@@ -117,7 +117,7 @@ std::tuple<py::array_t<double>,py::array_t<int>> PyMeshHex3D_Subviv
                         aHex0.data(), aHex0.shape()[0],
                         aXYZ0.data(), aXYZ0.shape()[0]);
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
-  py::array_t<int> npHex1({(int)aHex1.size()/8,8}, aHex1.data());
+  py::array_t<unsigned int> npHex1({(int)aHex1.size()/8,8}, aHex1.data());
   return std::forward_as_tuple(npXYZ1,npHex1);
 }
 
@@ -153,7 +153,7 @@ void PySetXY_MeshDynTri2D
 
 void PyCopyMeshDynTri2D
 (py::array_t<double>& npPos,
- py::array_t<int>& npElm,
+ py::array_t<unsigned int>& npElm,
  const CMeshDynTri2D& mesh)
 {
   assert(npPos.ndim()==2);
@@ -185,7 +185,7 @@ void PyCopyMeshDynTri2D
 
 void PyDrawMesh_FaceNorm
 (const py::array_t<double>& pos,
- const py::array_t<int>& elm,
+ const py::array_t<unsigned int>& elm,
  const MESHELEM_TYPE type)
 {
   assert(pos.ndim()==2);
@@ -202,7 +202,7 @@ void PyDrawMesh_FaceNorm
 
 void PyDrawMesh_Edge
 (const py::array_t<double>& pos,
- const py::array_t<int>& elm,
+ const py::array_t<unsigned int>& elm,
  const MESHELEM_TYPE type)
 {
   assert(pos.ndim()==2);
@@ -264,7 +264,7 @@ PyTriangulation
  */
 
 std::tuple<py::array_t<int>, py::array_t<int>>
-PyJArray_MeshPsup(const py::array_t<int>& elm, int npoint)
+PyJArray_MeshPsup(const py::array_t<unsigned int>& elm, int npoint)
 {
   std::vector<int> psup_ind, psup;
   JArray_MeshOneRingNeighborhood(psup_ind, psup,
@@ -299,7 +299,7 @@ void PyMassLumped
 (py::array_t<double>& mass_lumped,
  double rho,
  const py::array_t<double>& np_pos,
- const py::array_t<int>& np_elm,
+ const py::array_t<unsigned int>& np_elm,
  MESHELEM_TYPE elem_type)
 {
   assert( mass_lumped.ndim() == 1 );
@@ -317,15 +317,15 @@ void PyMassLumped
 
 
 
-py::array_t<int> PyElemQuad_DihedralTri
-(py::array_t<int>& aTri,
+py::array_t<unsigned int> PyElemQuad_DihedralTri
+(py::array_t<unsigned int>& aTri,
  int np)
 {
   assert( aTri.shape()[1] == 3 );
   const int nTri = aTri.shape()[0];
-  std::vector<int> aQuad;
+  std::vector<unsigned int> aQuad;
   ElemQuad_DihedralTri(aQuad, aTri.data(), nTri, np);
-  py::array_t<int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
+  py::array_t<unsigned int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
   return npQuad;
 }
 
@@ -426,7 +426,6 @@ void init_mshtopoio_gl(py::module &m){
   .def("meshing_loops",     &CMeshDynTri2D::meshing_loops)
   .def("refinementPlan_EdgeLongerThan_InsideCircle",   &CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
   
-  
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   m.def("meshdyntri2d_initialize",&PyMeshDynTri2D_Initialize);
   m.def("copyMeshDynTri2D",       &PyCopyMeshDynTri2D);
@@ -444,12 +443,6 @@ void init_mshtopoio_gl(py::module &m){
   
   m.def("mass_lumped", &PyMassLumped);
   
-  
-  /*
-  m.def("triangulation",&PyTriangulation,
-        py::arg("aXY"),
-        py::arg("edge_length")=0.03);
-   */
   
   m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);
   m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);

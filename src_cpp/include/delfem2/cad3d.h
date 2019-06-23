@@ -213,7 +213,7 @@ public:
   //CVector3 norm;
   std::vector<double> aXYZ;
   std::vector<double> aNorm;
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   std::vector<CFacePointInfo> aPInfo;
 };
 
@@ -295,7 +295,7 @@ void DivideFace
 
 void BuildTriMesh
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int>& aTri,
  std::vector<int>& aTriSurRel,
  std::vector<double>& aNorm,
  ////
@@ -406,7 +406,7 @@ public:
   // aux data
   double elen;
   std::vector<double> aXYZ;
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   std::vector<double> aNorm;
   std::vector<int> aTriSurRel;
 

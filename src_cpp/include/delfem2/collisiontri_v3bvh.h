@@ -33,7 +33,7 @@ bool IsContact_FV_CCD2
 bool isIntersectTriPair
 (CVector3& P0, CVector3& P1,
  int itri, int jtri,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ);
 
 template <typename T>
@@ -146,7 +146,7 @@ void GetContactElement_Proximity
  ////
  double delta,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int ibvh0, int ibvh1,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
@@ -244,7 +244,7 @@ void GetContactElement_Proximity
  ////
  double delta,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int ibvh,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
@@ -287,7 +287,7 @@ void GetContactElement_CCD
  double delta,
  const std::vector<double>& aXYZ,
  const std::vector<double>& aUVW,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int ibvh0, int ibvh1,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
@@ -394,7 +394,7 @@ void GetContactElement_CCD
  double delta,
  const std::vector<double>& aXYZ,
  const std::vector<double>& aUVW,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int ibvh,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
@@ -422,7 +422,7 @@ void GetIntersectTriPairs
 (std::vector<CIntersectTriPair>& aIntersectTriPair,
  ////
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int ibvh0, int ibvh1,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
@@ -471,7 +471,7 @@ void GetIntersectTriPairs
 (std::vector<CIntersectTriPair>& aIntersectTriPair,
  /////
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int ibvh,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)

@@ -52,14 +52,14 @@ void Read_Ply(const std::string& fname,
               int& ntri_,  int*& aTri_);
 void Read_Ply(const std::string& fname,
               std::vector<double>& aXYZ,
-              std::vector<int>& aTri);
+              std::vector<unsigned int>& aTri);
 
 /////////////
 // Obj
 
 void Write_Obj(const std::string& str,
                const double* aXYZ, int nXYZ,
-               const int* aTri, int nTri);
+               const unsigned int* aTri, int nTri);
 void Write_Obj_Quad(const std::string& str,
                     const std::vector<double>& aXYZ,
                     const std::vector<int>& aQuad);
@@ -71,7 +71,7 @@ void Write_Obj(const std::string& str,
                const std::vector< std::pair< std::vector<double>, std::vector<int> > >& aMesh);
 void Read_Obj(const std::string& fname,
               std::vector<double>& aXYZ,
-              std::vector<int>& aTri);
+              std::vector<unsigned int>& aTri);
 void Read_Obj_Quad(const std::string& fname,
                    std::vector<double>& aXYZ,
                    std::vector<int>& aQuad);
@@ -87,8 +87,8 @@ public:
   std::string name_group;
   std::string name_mtl;
   int imtl;
-  std::vector<int> aTriVtx;
-  std::vector<int> aTriNrm;
+  std::vector<unsigned int> aTriVtx;
+  std::vector<unsigned int> aTriNrm;
 };
 
 void Load_Obj(const std::string& fname,
@@ -145,7 +145,7 @@ void ReadVTK(std::vector<double>& aXYZ,
              const std::string& fpath);
 
 void Read_MeshTri3D_Nas(std::vector<double>& aXYZ,
-                        std::vector<int>& aTri,
+                        std::vector<unsigned int>& aTri,
                         const char* path);
 
 #endif /* meshio_hpp */

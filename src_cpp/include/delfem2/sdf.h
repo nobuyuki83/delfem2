@@ -19,7 +19,7 @@ public:
   virtual bool IntersectionPoint
   (double p[3],
    const double org[3], const double dir[3]) const = 0;
-  virtual void GetMesh(std::vector<int>& aTri,
+  virtual void GetMesh(std::vector<unsigned int>& aTri,
                        std::vector<double>& aXYZ,
                        double elen) const = 0;
 };
@@ -33,7 +33,7 @@ public:
                             double n[3]) const; // normal
   virtual bool IntersectionPoint(double p[3], 
                                  const double org[3], const double dir[3]) const { return true; }
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const{}
+  virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const{}
 public:
 	double normal_[3];
 	double origin_[3];
@@ -59,7 +59,7 @@ public:
   virtual bool IntersectionPoint
   (double p[3], 
    const double org[3], const double dir[3]) const;
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
+  virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const;
 public:
 	double cent_[3];
 	double radius_;
@@ -87,7 +87,7 @@ public:
   virtual bool IntersectionPoint
   (double p[3], 
    const double org[3], const double dir[3]) const;
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
+  virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const;
   
   ////
   void SetCenter(const double cnt[3]){ cent_[0]=cnt[0]; cent_[1]=cnt[1]; cent_[2]=cnt[2]; }
@@ -115,7 +115,7 @@ public:
 	virtual unsigned int FindInOut(double px, double py, double pz) const;	
   virtual bool IntersectionPoint
   (double p[3],  const double org[3], const double dir[3]) const { return true; }  
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
+  virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const;
 public:
 	double cent_[3];
 	double radius_;
@@ -174,7 +174,7 @@ public:
   virtual bool IntersectionPoint
   (double p[3],
    const double org[3], const double dir[3]) const { return true; }
-  virtual void GetMesh(std::vector<int>& aTri,
+  virtual void GetMesh(std::vector<unsigned int>& aTri,
                        std::vector<double>& aXYZ,
                        double elen) const {}
 public:
@@ -198,7 +198,7 @@ public:
   virtual bool IntersectionPoint
   (double p[3], 
    const double org[3], const double dir[3]) const { return  true; }
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
+  virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const;
 private:
   std::vector<CSDF3*> apCT;    
 };
@@ -228,7 +228,8 @@ public:
   virtual bool IntersectionPoint
   (double p[3], 
    const double org[3], const double dir[3]) const { return  true; }
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
+  virtual void GetMesh(std::vector<unsigned int>& aTri,
+                       std::vector<double>& aXYZ, double elen) const;
 private:
 	double phi, theta, psi;	// Bryant Angle
 	double trans[3];
@@ -259,8 +260,8 @@ public:
   void Translate(double x, double y, double z);
   void BuildBoxel();
   void SetHole(bool is_hole){	this->is_hole = is_hole; }
-  virtual void GetMesh(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const;
-  void SetMesh(const std::vector<int>& aTri, const std::vector<double>& aXYZ);
+  virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const;
+  void SetMesh(const std::vector<unsigned int>& aTri, const std::vector<double>& aXYZ);
 private:
   unsigned int FindInOut_IntersectionRay
   (double px, double py, double pz,

@@ -15,8 +15,8 @@ void AddWdW_Cloth
  ////
  const std::vector<double>& aXYZ, // (in) deformed vertex positions
  const std::vector<double>& aXYZ0, // (in) initial vertex positions
- const std::vector<int>& aTri, // (in) triangle index
- const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending
+ const std::vector<unsigned int>& aTri, // (in) triangle index
+ const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
  double lambda, // (in) Lame's 1st parameter
  double myu,  // (in) Lame's 2nd parameter
  double stiff_bend // (in) bending stiffness
@@ -24,7 +24,7 @@ void AddWdW_Cloth
 {
   // marge element in-plane strain energy
   for(int itri=0;itri<aTri.size()/3;itri++){
-    const int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
+    const unsigned int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
     double C[3][3]; double c[3][3];
     for(int ino=0;ino<3;ino++){
       const int ip = aIP[ino];
@@ -42,7 +42,7 @@ void AddWdW_Cloth
   }
   // marge element bending energy
   for(int iq=0;iq<aQuad.size()/4;iq++){
-    const int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
+    const unsigned int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
     double C[4][3]; double c[4][3];
     for(int ino=0;ino<4;ino++){
       const int ip = aIP[ino];
@@ -88,8 +88,8 @@ void StepTime_InternalDynamics
  ////
  const std::vector<double>& aXYZ0,// (in) initial vertex positions
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)
- const std::vector<int>& aTri, // (in) triangle index
- const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending
+ const std::vector<unsigned int>& aTri, // (in) triangle index
+ const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
  const double dt, // (in) size of time step
  double lambda, // (in) Lame's 1st parameter
  double myu, // (in) Lame's 2nd parameter
@@ -159,8 +159,8 @@ void StepTime_InternalDynamicsILU
  ////
  const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)，境界条件フラグの配列
- const std::vector<int>& aTri, // (in) triangle index，三角形の頂点インデックス配列
- const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending，曲げ計算のための４頂点のインデックス配列
+ const std::vector<unsigned int>& aTri, // (in) triangle index，三角形の頂点インデックス配列
+ const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending，曲げ計算のための４頂点のインデックス配列
  const double dt, // (in) size of time step，時間ステップの大きさ
  double lambda, // (in) Lame's 1st parameter，ラメ第一定数
  double myu, // (in) Lame's 2nd parameter，ラメ第二定数
@@ -235,8 +235,8 @@ void UpdateIntermidiateVelocity
  const std::vector<double>& aXYZ, // (in,out) deformed vertex positions
  const std::vector<double>& aXYZ0,// (in) initial vertex positions
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free else:fixed)
- const std::vector<int>& aTri, // (in) triangle index
- const std::vector<int>& aQuad, // (in) index of 4 vertices required for bending
+ const std::vector<unsigned int>& aTri, // (in) triangle index
+ const std::vector<unsigned int>& aQuad, // (in) index of 4 vertices required for bending
  const double dt, // (in) size of time step
  double lambda, // (in) Lame's 1st parameter
  double myu, // (in) Lame's 2nd parameter
