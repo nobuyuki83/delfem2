@@ -20,7 +20,8 @@ from .libdelfem2 import \
   meshhex3d_subdiv,\
   meshdyntri2d_initialize
 from .libdelfem2 import draw_mesh_facenorm, draw_mesh_edge
-from .libdelfem2 import meshtri3d_read_ply, mvc, meshtri3d_read_obj
+from .libdelfem2 import meshtri3d_read_ply, meshtri3d_read_obj, meshtri3d_read_nastran, meshtri3d_write_obj
+from .libdelfem2 import mvc
 from .libdelfem2 import meshDynTri2D_CppCad2D, setXY_MeshDynTri2D
 from .libdelfem2 import cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
 from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
@@ -142,7 +143,7 @@ class MeshDynTri2D(Mesh):
     self.np_elm = numpy.ndarray((0,3),dtype=numpy.int32)
     self.cdmsh = CppMeshDynTri2D()
 
-  def set_mesh(self,msh=Mesh) -> None:
+  def set_mesh(self,msh:Mesh) -> None:
     assert msh.elem_type == TRI
     assert msh.np_pos.shape[1] == 2
     self.np_pos.resize(msh.np_pos.shape)
@@ -167,7 +168,7 @@ class MeshDynTri2D(Mesh):
     copyMeshDynTri2D(self.np_pos,self.np_elm, self.cdmsh)
     return mpr
 
-  def syncXY_from_npPos(self):
+  def syncXY_from_npPos(self) -> None:
     setXY_MeshDynTri2D(self.cdmsh, self.np_pos)
 
 ###########################################################################
@@ -200,7 +201,7 @@ class MapCadMesh2D():
     self.flg_pnt = flg_pnt
     self.flg_tri = flg_tri
 
-  def npIndFace(self,iface):
+  def npIndFace(self,iface) -> numpy.ndarray:
     np_ind_face = numpy.where(self.flg_pnt == self.ccad.nvtx() + self.ccad.nedge() + iface)[0]
     for ie, dir in self.ccad.ind_edge_face(iface):
       np_ind_face = numpy.append(np_ind_face, numpy.where(self.flg_pnt == self.ccad.nvtx() + ie)[0])
@@ -208,7 +209,7 @@ class MapCadMesh2D():
       np_ind_face = numpy.append(np_ind_face, numpy.where(self.flg_pnt == iv)[0])
     return np_ind_face
 
-  def npIndEdge(self,iedge):
+  def npIndEdge(self,iedge) -> numpy.ndarray:
     np_ind_edge = numpy.where(self.flg_pnt == self.ccad.nvtx() + iedge)[0]
     list_iv = self.ccad.ind_vtx_edge(iedge)
     for iv in list_iv:
@@ -223,7 +224,7 @@ class Cad2D():
   def draw(self) -> None:
     self.ccad.draw()
 
-  def mouse(self,btn,action,mods,src,dir,view_height):
+  def mouse(self,btn,action,mods,src,dir,view_height) -> None:
     if btn == 0:
       if action == 1:
         self.ccad.pick(src[0],src[1],view_height)
