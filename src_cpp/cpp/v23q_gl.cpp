@@ -448,7 +448,7 @@ void DrawTriMeshNorm
 
 void DrawMeshTri_Edge
 (const std::vector<CVector3>& aP,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
@@ -480,7 +480,7 @@ void DrawMeshTri_Edge
 
 void DrawMeshQuad_Face
 (const std::vector<CVector3>& aPoint,
- const std::vector<int>& aQuad)
+ const std::vector<unsigned int>& aQuad)
 {
   ::glBegin(GL_QUADS);
   for(int iq=0;iq<(int)aQuad.size()/4;++iq){
@@ -515,7 +515,7 @@ void DrawPoint3D
 
 void DrawQuad3D_Edge
 (const std::vector<CVector3>& aPoint,
- const std::vector<int>& aQuad)
+ const std::vector<unsigned int>& aQuad)
 {
   ::glBegin(GL_LINES);
   for(int iq=0;iq<(int)aQuad.size()/4;++iq){

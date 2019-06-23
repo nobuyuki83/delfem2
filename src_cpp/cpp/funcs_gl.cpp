@@ -534,7 +534,7 @@ void Draw_AABB3D_MinMaxXYZ_Edge
 
 void DrawSingleTri3D_FaceNorm
 (const double* aXYZ,
- const int* aIndXYZ,
+ const unsigned int* aIndXYZ,
  const double* pUV)
 {
   const int i0 = aIndXYZ[0]; //assert( i0>=0&&i0<(int)aXYZ.size()/3 );
@@ -559,7 +559,7 @@ void DrawSingleTri3D_FaceNorm
 
 void DrawSingleQuad3D_FaceNorm
 (const double* aXYZ,
- const int* aIndXYZ,
+ const unsigned int* aIndXYZ,
  const double* pUV)
 {
   const int i0 = aIndXYZ[0]; //assert( i0 >= 0 && i0 < (int)aXYZ.size()/3 );
@@ -602,7 +602,7 @@ void DrawSingleQuad3D_FaceNorm
 
 void DrawMeshTri3D_FaceNorm
 (const double* paXYZ,
- const int* paTri,
+ const unsigned int* paTri,
  int nTri)
 {
   ::glBegin(GL_TRIANGLES);
@@ -614,7 +614,7 @@ void DrawMeshTri3D_FaceNorm
 
 void DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
 }
@@ -622,7 +622,7 @@ void DrawMeshTri3D_FaceNorm
 
 void DrawMeshTri3D_FaceNorm_TexVtx
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aTex)
 {
   const int nTri = (int)aTri.size()/3;
@@ -646,7 +646,7 @@ void DrawMeshTri3D_FaceNorm_TexVtx
 
 void DrawMeshTri3D_FaceNorm_TexFace
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aTex)
 {
   const int nTri = (int)aTri.size()/3;
@@ -662,8 +662,8 @@ void DrawMeshTri3D_FaceNorm_TexFace
 
 void DrawMeshElem3D_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem)
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem)
 {
   const int nelem = aElemInd.size()-1;
   for(int ielem=0;ielem<nelem;++ielem){
@@ -684,8 +684,8 @@ void DrawMeshElem3D_FaceNorm
 
 void DrawMeshElem3D_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<double>& aUV)
 {
   const int nelem = aElemInd.size()-1;
@@ -711,8 +711,8 @@ void DrawMeshElem3D_FaceNorm
 
 void DrawMeshElemPart3D_FaceNorm_TexPoEl
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<int>& aIndElemPart,
  const std::vector<double>& aUV)
 {
@@ -741,7 +741,7 @@ void DrawMeshElemPart3D_FaceNorm_TexPoEl
 
 void DrawMeshTri3D_FaceNorm_XYsym
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   const int nTri = (int)aTri.size()/3;
   /////
@@ -773,7 +773,7 @@ void DrawMeshTri3D_FaceNorm_XYsym
 
 void DrawMeshTri3DPart_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<int>& aIndTri)
 {
   ::glBegin(GL_TRIANGLES);
@@ -787,7 +787,7 @@ void DrawMeshTri3DPart_FaceNorm
 
 void DrawMeshTri3D_FaceNorm_Flg
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int iflg,
  const std::vector<int>& aFlgTri)
 {
@@ -805,7 +805,7 @@ void DrawMeshTri3D_FaceNorm_Flg
 
 void DrawMeshTri3D_FaceNormEdge
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
@@ -845,7 +845,7 @@ void DrawMeshTri3D_FaceNormEdge
 
 void DrawMeshTri3D_Edge
 (const double* aXYZ, int nXYZ,
- const int* aTri, int nTri)
+ const unsigned int* aTri, int nTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
@@ -880,7 +880,7 @@ void DrawMeshTri3D_Edge
 
 void DrawMeshTri3D_Edge
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+ const std::vector<unsigned int>& aTri)
 {
   DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
                      aTri.data(), aTri.size()/3);
@@ -927,7 +927,7 @@ void DrawMeshTriMap3D_Edge
 
 void DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm)
 {
   unsigned int nTri = (int)aTri.size()/3;
@@ -947,9 +947,9 @@ void DrawMeshTri3D_FaceNorm
 
 void DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTriVtx,
+ const std::vector<unsigned int>& aTriVtx,
  const std::vector<double>& aNorm,
- const std::vector<int>& aTriNrm)
+ const std::vector<unsigned int>& aTriNrm)
 {
   const int nTri = (int)aTriVtx.size()/3;
   assert( (int)aTriNrm.size() == nTri*3 );
@@ -1021,7 +1021,7 @@ void DrawMeshTri3D_FaceEdge
 /////////////////////////////////////
 
 void DrawMeshTri2D_Face
-(const std::vector<int>& aTri,
+(const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXY)
 {
   const int ntri = (int)aTri.size()/3;
@@ -1044,7 +1044,7 @@ void DrawMeshTri2D_Face
 
 void DrawMeshTri2D_FaceDisp2D
 (const double* aXY, int nXY,
- const int* aTri, int nTri,
+ const unsigned int* aTri, int nTri,
  const double* aDisp, int nstride)
 {
   //  const int nxys = (int)aXY.size()/2;
@@ -1084,7 +1084,7 @@ void DrawMeshTri2D_FaceDisp2D
 
 void DrawMeshTri2D_Edge
 (const double* aXY, int nXY,
- const int* aTri, int nTri)
+ const unsigned int* aTri, int nTri)
 {
   //  const unsigned int nxys = (int)aXY.size()/2;
   ////////////////
@@ -1105,7 +1105,7 @@ void DrawMeshTri2D_Edge
 }
 
 void DrawMeshTri2D_Edge
-(const std::vector<int>& aTri,
+(const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXY)
 {
   DrawMeshTri2D_Edge(aXY.data(), aXY.size()/2,
@@ -1119,7 +1119,7 @@ void DrawMeshTri2D_Edge
 
 void DrawMeshQuad3D_Edge
 (const double* aXYZ, int nXYZ,
- const int* aQuad, int nQuad)
+ const unsigned int* aQuad, int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
@@ -1154,7 +1154,7 @@ void DrawMeshQuad3D_Edge
 
 void DrawMeshQuad3D_Edge
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aQuad)
+ const std::vector<unsigned int>& aQuad)
 {
   DrawMeshQuad3D_Edge(aXYZ.data(), aXYZ.size()/3,
                       aQuad.data(), aQuad.size()/4);
@@ -1163,7 +1163,7 @@ void DrawMeshQuad3D_Edge
 
 void DrawMeshQuad3D_FaceNorm
 (const double* aXYZ,
- const int* aQuad, const int nQuad)
+ const unsigned int* aQuad, const int nQuad)
 {
   ::glBegin(GL_QUADS);
   for(unsigned int iq=0;iq<nQuad;++iq){
@@ -1174,7 +1174,7 @@ void DrawMeshQuad3D_FaceNorm
 
 void DrawMeshQuad3D_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aQuad)
+ const std::vector<unsigned int>& aQuad)
 {
   DrawMeshQuad3D_FaceNorm(aXYZ.data(),aQuad.data(),aQuad.size()/4);
 }
@@ -1182,7 +1182,7 @@ void DrawMeshQuad3D_FaceNorm
 
 void DrawMeshQuad2D_Edge
 (const double* aXY, int nXY,
- const int* aQuad, int nQuad)
+ const unsigned int* aQuad, int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   /////
@@ -1217,7 +1217,7 @@ void DrawMeshQuad2D_Edge
 
 void DrawMeshQuad2D_Edge
 (const std::vector<double>& aXY,
- const std::vector<int>& aQuad)
+ const std::vector<unsigned int>& aQuad)
 {
   DrawMeshQuad2D_Edge(aXY.data(), aXY.size()/2,
                       aQuad.data(), aQuad.size()/4);
@@ -1227,8 +1227,8 @@ void DrawMeshQuad2D_Edge
 
 void DrawMeshTet3DSurface_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
- const std::vector<int>& aTetFace)
+ const std::vector<unsigned int>& aTet,
+ const std::vector<unsigned int>& aTetFace)
 {
   const unsigned int noelTetFace[4][3] = {
     { 1, 2, 3 },
@@ -1267,8 +1267,8 @@ void DrawMeshTet3DSurface_FaceNorm
 
 void DrawMeshTet3DSurface_Edge
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
- const std::vector<int>& aTetFace)
+ const std::vector<unsigned int>& aTet,
+ const std::vector<unsigned int>& aTetFace)
 {
   const unsigned int noelTetFace[4][3] = {
     { 1, 2, 3 },
@@ -1311,7 +1311,7 @@ void DrawMeshTet3DSurface_Edge
 void DrawMeshTet3D_Edge
 (const double* aXYZ,
  int nXYZ,
- const int* aTet,
+ const unsigned int* aTet,
  int nTet)
 {
   for (int itet = 0; itet<nTet; itet++){
@@ -1337,7 +1337,7 @@ void DrawMeshTet3D_Edge
 
 void DrawMeshTet3D_EdgeDisp
 (const double* aXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aDisp,
  double s0)
 {
@@ -1367,7 +1367,7 @@ void DrawMeshTet3D_EdgeDisp
 
 void DrawMeshTet3D_FaceNorm
 (const double* aXYZ,
- const int* aTet, int nTet)
+ const unsigned int* aTet, int nTet)
 {
   for (int itet = 0; itet<nTet; itet++){
     const int i0 = aTet[itet*4+0];
@@ -1394,7 +1394,7 @@ void DrawMeshTet3D_FaceNorm
 
 void DrawMeshHex3D_FaceNorm
 (const double* aXYZ,
- const int* aHex, int nHex)
+ const unsigned int* aHex, int nHex)
 {
   const int noelElemFace_Hex[8][4] = { // this is corresponds to VTK_VOXEL
     { 0, 4, 7, 3 }, // -x
@@ -1494,7 +1494,7 @@ void DrawHex3D_FaceNormDirp
 
 void DrawMeshHex3D_Edge
 (const double* aXYZ, int nXYZ,
- const int* aHex, int nHex)
+ const unsigned int* aHex, int nHex)
 {
   const int noelEdge_Hex[12][2] = {
     {0,1},{3,2},{4,5},{7,6},
@@ -1531,7 +1531,7 @@ void DrawMeshHex3D_Edge
 
 void DrawMeshTet3D_FaceNormDisp
 (const double* aXYZ, int nXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aDisp)
 {
   for (int itet = 0; itet<nTet; itet++){

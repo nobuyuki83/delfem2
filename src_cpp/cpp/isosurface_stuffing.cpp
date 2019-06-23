@@ -44,7 +44,7 @@ static void makeElemSurroundingPoint
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElem,
  int nPoEl,
  int nPo)
 {
@@ -81,7 +81,7 @@ static void makeOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElem,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nnoel,
@@ -1470,7 +1470,7 @@ void addEdgeFacePoints
 }
 
 void makeTetLattice
-(std::vector<int>& aTet,
+(std::vector<unsigned int>& aTet,
  const std::vector<CCell>& aCell)
 {
   aTet.clear();
@@ -1708,9 +1708,9 @@ void MakeCutPoint
 }
 
 void cutoutTetFromLattice
-(std::vector<int>& aTet,
+(std::vector<unsigned int>& aTet,
  const std::vector<CPointLattice>& aPointLattice,
- const std::vector<int>& aTetLattice,
+ const std::vector<unsigned int>& aTetLattice,
  const std::vector<int>& mapLat2Out,
  const std::vector<int>& lat2cut_ind,
  const std::vector<int>& lat2cut)
@@ -1750,7 +1750,7 @@ void cutoutTetFromLattice
 
 /// internal function for debug
 void makeBackgroundLattice
-(std::vector<CPointLattice>& aPointLattice, std::vector<int>& aTetLattice,
+(std::vector<CPointLattice>& aPointLattice, std::vector<unsigned int>& aTetLattice,
  const CInputIsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
 {
   std::vector<CCell> aCell;
@@ -1812,7 +1812,7 @@ void makeBackgroundLattice
 }
 
 bool IsoSurfaceStuffing
-(std::vector<double>& aXYZ, std::vector<int>& aTet, std::vector<int>& aIsOnSurfXYZ,
+(std::vector<double>& aXYZ, std::vector<unsigned int>& aTet, std::vector<int>& aIsOnSurfXYZ,
  const CInputIsosurfaceStuffing& input, double elen_in, double width, const double center[3])
 {
   if( elen_in <= 0 ) return false;
@@ -1823,7 +1823,7 @@ bool IsoSurfaceStuffing
   const double org[3] = { center[0]-0.5*elen*ndiv, center[1]-0.5*elen*ndiv, center[2]-0.5*elen*ndiv };
 
   std::vector<CPointLattice> aPointLattice;
-  std::vector<int> aTetLattice;
+  std::vector<unsigned int> aTetLattice;
   makeBackgroundLattice(aPointLattice, aTetLattice, input, elen, ndiv, org);
   
   std::vector<int> mapLat2Out;

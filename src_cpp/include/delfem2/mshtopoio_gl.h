@@ -75,10 +75,10 @@ public:
     CMeshElem em;
     if( elem_type == MESHELEM_QUAD ){
       const std::vector<double>& aXYZ0 = this->aPos;
-      const std::vector<int>& aQuad0 = this->aElem;
+      const std::vector<unsigned int>& aQuad0 = this->aElem;
       em.elem_type = MESHELEM_QUAD;
       em.ndim = 3;
-      std::vector<int>& aQuad1 = em.aElem;
+      std::vector<unsigned int>& aQuad1 = em.aElem;
       std::vector<int> aEdgeFace0;
       std::vector<int> psupIndQuad0, psupQuad0;
       QuadSubdiv(aQuad1,
@@ -98,7 +98,7 @@ public:
   }
 public:
   MESHELEM_TYPE elem_type;
-  std::vector<int> aElem;
+  std::vector<unsigned int> aElem;
   /////
   int ndim;
   std::vector<double> aPos;

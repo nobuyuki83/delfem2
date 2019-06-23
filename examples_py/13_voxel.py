@@ -19,7 +19,8 @@ def show_hex(voxelgrid):
 
 def pbd_hex(voxelgrid):
   msh = voxelgrid.mesh_hex3d()
-  pbd = dfm2.PBD(msh)
+  pbd = dfm2.PBD()
+  pbd.updated_topology(msh)
   ####
   npIdP = numpy.array([0,1,2,3],dtype=numpy.int32)
   pbd.vec_bc[npIdP] = 1

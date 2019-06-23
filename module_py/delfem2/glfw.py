@@ -89,6 +89,8 @@ class WindowGLFW:
     while not glfw.window_should_close(self.win):
       gl.glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
       gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+      gl.glEnable(gl.GL_POLYGON_OFFSET_FILL)
+      gl.glPolygonOffset(1.1, 4.0)
       self.wm.camera.set_gl_camera()
       for func_step_time in self.list_func_step_time:
         func_step_time()
@@ -108,9 +110,9 @@ class WindowGLFW:
     self.wm.mouse(win0,btn,action,mods)
     mMV = gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX)
     mPj = gl.glGetFloatv(gl.GL_PROJECTION_MATRIX)
-    src = screenUnProjection((float(self.wm.mouse_x),float(self.wm.mouse_y),0.0),
+    src = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
                              mMV, mPj)
-    dir = screenUnProjectionDirection((0,0,1), mMV,mPj)
+    dir = screenUnProjectionDirection(numpy.array([0,0,1]), mMV,mPj)
     for func_mouse in self.list_func_mouse:
       func_mouse(btn,action,mods, src, dir, self.wm.camera.view_height)
 
@@ -124,7 +126,7 @@ class WindowGLFW:
                              mMV, mPj)
     src1 = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
                              mMV, mPj)
-    dir = screenUnProjectionDirection((0,0,1), mMV,mPj)
+    dir = screenUnProjectionDirection(numpy.array([0,0,1]), mMV,mPj)
 #    print(src0,src1,dir)
     for func_motion in self.list_func_motion:
       func_motion(src0,src1,dir)

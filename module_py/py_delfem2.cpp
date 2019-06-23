@@ -66,15 +66,15 @@ std::tuple<CMeshDynTri2D, py::array_t<int>, py::array_t<int>> MeshDynTri2D_Cad2D
 }
 
 
-std::tuple<py::array_t<double>, py::array_t<int>>
+std::tuple<py::array_t<double>, py::array_t<unsigned int>>
 NumpyXYTri_MeshDynTri2D
 (CMeshDynTri2D& dmesh)
 {
   std::vector<double> aXY;
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   dmesh.Export_StlVectors(aXY,aTri);
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
-  py::array_t<int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::tie(npXY,npTri);
 }
 
@@ -95,7 +95,7 @@ py::array_t<int> PyCad2D_GetPointsEdge
 
 
 
-std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
+std::tuple<py::array_t<double>, py::array_t<unsigned int>> PyIsoSurface
 (const std::vector<const CSDF3*>& apSDF)
 {
   class CMyInput : public CInputIsosurfaceStuffing
@@ -137,7 +137,7 @@ std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
   } input(apSDF);
   
   std::vector<double> aXYZ;
-  std::vector<int> aTet;
+  std::vector<unsigned int> aTet;
   std::vector<int> aIsOnSurfXYZ;
   double rad = 1.5;
   double cent[3] = {0,0,0};
@@ -145,7 +145,7 @@ std::tuple<py::array_t<double>, py::array_t<int>> PyIsoSurface
                      input, 0.2, rad*4.0, cent);
   
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
-  py::array_t<int> npTet({(int)aTet.size()/4,4}, aTet.data());
+  py::array_t<unsigned int> npTet({(int)aTet.size()/4,4}, aTet.data());
   return std::tie(npXYZ,npTet);
 }
 

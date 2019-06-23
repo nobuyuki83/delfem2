@@ -126,7 +126,7 @@ void PyMergeLinSys_Poission
  py::array_t<double>& vec_b,
  double alpha, double source,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aElm,
+ const py::array_t<unsigned int>& aElm,
  MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal)
 {
@@ -160,7 +160,7 @@ void PyMergeLinSys_Diffuse
  double alpha, double rho, double source,
  double dt_timestep, double gamma_newmark,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aElm,
+ const py::array_t<unsigned int>& aElm,
  MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo)
@@ -199,7 +199,7 @@ void PyMergeLinSys_LinearSolidStatic
  double myu, double lambda, double rho,
  std::vector<double>& gravity,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aElm,
+ const py::array_t<unsigned int>& aElm,
  MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal)
 {
@@ -236,7 +236,7 @@ void PyMergeLinSys_LinearSolidDynamic
  std::vector<double>& gravity,
  double dt_timestep, double gamma_newmark, double beta_newmark,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aElm,
+ const py::array_t<unsigned int>& aElm,
  MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo,
@@ -273,7 +273,7 @@ void PyMergeLinSys_StorksStatic2D
  py::array_t<double>& vec_b,
  double myu, double g_x, double g_y,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<unsigned int>& aTri,
  const py::array_t<double>& aVal)
 {
   auto buff_vecb = vec_b.request();
@@ -290,7 +290,7 @@ void PyMergeLinSys_StorksDynamic2D
  double myu, double rho, double g_x, double g_y,
  double dt_timestep, double gamma_newmark,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<unsigned int>& aTri,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo)
 {
@@ -309,7 +309,7 @@ void PyMergeLinSys_NavierStorks2D
  double myu, double rho, double g_x, double g_y,
  double dt_timestep, double gamma_newmark,
  const py::array_t<double>& aXY,
- const py::array_t<int>& aTri,
+ const py::array_t<unsigned int>& aTri,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo)
 {
@@ -327,8 +327,8 @@ double PyMergeLinSys_Cloth
  py::array_t<double>& vec_b,
  double lambda, double myu, double stiff_bend,
  const py::array_t<double>& aPosIni,
- const py::array_t<int>& aTri,
- const py::array_t<int>& aQuad,
+ const py::array_t<unsigned int>& aTri,
+ const py::array_t<unsigned int>& aQuad,
  const py::array_t<double>& aXYZ)
 {
   auto buff_vecb = vec_b.request();

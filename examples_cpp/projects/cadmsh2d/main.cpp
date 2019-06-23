@@ -33,7 +33,7 @@ const double view_height = 2.0;
 bool is_animation = false;
 int imode_draw = 0;
 std::vector<double> aXY;
-std::vector<int> aTri;
+std::vector<unsigned int> aTri;
 std::vector<double> aW;
 CCad2D cad;
 

@@ -291,7 +291,7 @@ void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >&
 
 void DrawMeshTri2D_ScalarP1
 (const double* aXY, int nXY,
- const int* aTri, int nTri,
+ const unsigned int* aTri, int nTri,
  const double* paVal,
  int nstride,
  const std::vector< std::pair<double,CColor> >& colorMap)
@@ -342,7 +342,7 @@ void DrawMeshTri2D_ScalarP0
 
 void DrawSingleTri3D_Scalar_Vtx
 (const double* aXYZ,
- const int* tri,
+ const unsigned int* tri,
  const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -373,7 +373,7 @@ void DrawSingleTri3D_Scalar_Vtx
 
 void DrawSingleQuad3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
- const int* quad,
+ const unsigned int* quad,
  const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -410,7 +410,7 @@ void DrawSingleQuad3D_Scalar_Vtx
 // vetex value
 void DrawMeshTri3D_ScalarP1
 (const double* aXYZ, int nXYZ,
- const int* aTri, int nTri,
+ const unsigned int* aTri, int nTri,
  const double* aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -424,7 +424,7 @@ void DrawMeshTri3D_ScalarP1
 // vetex value
 void DrawMeshTri3D_ScalarP1
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const double* aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -439,8 +439,8 @@ void DrawMeshTri3D_ScalarP1
 // vetex value
 void DrawMeshElem3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -471,7 +471,7 @@ void DrawMeshElem3D_Scalar_Vtx
 // element-wise
 void drawMeshTri3D_ScalarP0
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -508,7 +508,7 @@ void drawMeshTri3D_ScalarP0
 
 void DrawMeshTri3D_VtxColor
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  std::vector<CColor>& aColor)
 {
   const int nTri = (int)aTri.size()/3;
@@ -541,7 +541,7 @@ void DrawMeshTri3D_VtxColor
 // 0: no, 1:lighting, 2:no-lighting
 void DrawMeshTri3DFlag_FaceNorm
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<int>& aIndGroup,
  std::vector< std::pair<int,CColor> >& aColor)
 {
@@ -585,7 +585,7 @@ void DrawMeshTri3DFlag_FaceNorm
 // 3D value
 void DrawMeshTet3D_ScalarP1
 (const double* aXYZ, int nXYZ,
- const int* aTet, int nTet,
+ const unsigned int* aTet, int nTet,
  const double* aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
@@ -645,7 +645,7 @@ static bool IsAbovePlane(const double p[3], const double org[3], const double n[
 
 void DrawMeshTet3D_Cut
 (const std::vector<double>& aXYZ,
- const std::vector<int>& aTet,
+ const std::vector<unsigned int>& aTet,
  const std::vector<CColor>& aColor,
  const double org[3], const double n[3])
 {

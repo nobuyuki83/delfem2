@@ -31,7 +31,7 @@ bool is_animation;
 double cur_time = 0;
 
 int imode_display = 0;
-std::vector<int> aTri;
+std::vector<unsigned int> aTri;
 std::vector<double> aXYZ;
 
 /////////////////

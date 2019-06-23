@@ -100,7 +100,7 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 (double* aMassLumpedSqrtInv,
  double* aModesKer,
  const double* aXYZ, int nXYZ,
- const int* aTet, int nTet)
+ const unsigned int* aTet, int nTet)
 {
   const int nDoF = nXYZ*3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
@@ -164,7 +164,7 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 
 CGlutWindowManager win;
 
-std::vector<int> aTet;
+std::vector<unsigned int> aTet;
 std::vector<double> aXYZ;
 std::vector<double> aMassLumpedSqrtInv;
 std::vector<double> aTmp0;
@@ -408,7 +408,7 @@ int main(int argc,char* argv[])
             0.05, aaXY);
     std::cout << aVec2.size() << " " << aPo2D.size() << " " << aETri.size() << std::endl;
     std::vector<double> aXY;
-    std::vector<int> aTri;
+    std::vector<unsigned int> aTri;
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
     

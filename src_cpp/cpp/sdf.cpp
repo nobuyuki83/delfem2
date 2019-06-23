@@ -299,7 +299,7 @@ CSignedDistanceField3D_Sphere::CSignedDistanceField3D_Sphere(double r, const std
 }
 
 void CSignedDistanceField3D_Sphere::GetMesh
-(std::vector<int>& aTri, std::vector<double>& aXYZ, double elen) const
+(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const
 {
   double pi = 3.1415;
   const unsigned int nlg = 32;
@@ -471,7 +471,7 @@ CSignedDistanceField3D_Cylinder::CSignedDistanceField3D_Cylinder
 }
 
 void CSignedDistanceField3D_Cylinder::GetMesh
-(std::vector<int>& aTri,
+(std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
 {
@@ -760,7 +760,7 @@ CSignedDistanceField3D_Torus::CSignedDistanceField3D_Torus(){
 }
 
 void CSignedDistanceField3D_Torus::GetMesh
-(std::vector<int>& aTri,
+(std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
 {
@@ -907,14 +907,14 @@ double CSignedDistanceField3D_Combine::Projection
 }
 
 void CSignedDistanceField3D_Combine::GetMesh
-(std::vector<int>& aTri,
+(std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
 {
   aTri.size();
   aXYZ.size();
   for(unsigned int ipct=0;ipct<apCT.size();ipct++){  
-    std::vector<int> aTri0;
+    std::vector<unsigned int> aTri0;
     std::vector<double> aXYZ0;    
     apCT[ipct]->GetMesh(aTri0,aXYZ0,elen);
     const unsigned int i0 = aXYZ.size();
@@ -972,7 +972,7 @@ double CSignedDistanceField3D_Transform::Projection
 
 
 void CSignedDistanceField3D_Transform::GetMesh
-(std::vector<int>& aTri,
+(std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
 {
@@ -1176,7 +1176,9 @@ void CSignedDistanceField3D_Mesh::GetCenterWidth(double& cx, double& cy, double&
  }
  */
 
-void CSignedDistanceField3D_Mesh::SetMesh(const std::vector<int>& aTri, const std::vector<double>& aXYZ)
+void CSignedDistanceField3D_Mesh::SetMesh
+(const std::vector<unsigned int>& aTri,
+ const std::vector<double>& aXYZ)
 {
   ntri_ = (int)aTri.size()/3;
   aTri_ = new unsigned int [ntri_*3];
@@ -1233,7 +1235,7 @@ double CSignedDistanceField3D_Mesh::Projection
 }
 
 void CSignedDistanceField3D_Mesh::GetMesh
-(std::vector<int>& aTri,
+(std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
 {

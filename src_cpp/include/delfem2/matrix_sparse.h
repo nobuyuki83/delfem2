@@ -22,8 +22,8 @@ public:
                   const int* rowptr, int nrowptr);
 
 	bool SetZero();
-	bool Mearge(int nblkel_col, const int* blkel_col,
-              int nblkel_row, const int* blkel_row,
+	bool Mearge(int nblkel_col, const unsigned int* blkel_col,
+              int nblkel_row, const unsigned int* blkel_row,
               int blksize, const double* emat,
               std::vector<int>& m_marge_tmp_buffer);
   // Calc Matrix Vector Product

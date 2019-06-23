@@ -24,8 +24,8 @@
 void SetClothShape_Square
 (std::vector<double>& aXYZ0, // (out) undeformed vertex positions，変形前の頂点の位置配列
  std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)，境界条件フラグ
- std::vector<int>& aTri, // (out) index of triangles，三角形の頂点インデックス
- std::vector<int>& aQuad, // (out) index of 4 vertices required for bending，曲げ計算のための４頂点の配列
+ std::vector<unsigned int>& aTri, // (out) index of triangles，三角形の頂点インデックス
+ std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending，曲げ計算のための４頂点の配列
  double& total_area, // (out) total area of cloth，布の面積
  ///
  double elem_length, // (in) number of division of the square cloth edge, 一辺の分割数
@@ -111,8 +111,8 @@ std::vector<double> aXYZ0; // undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-std::vector<int> aTri;  // index of triangles
-std::vector<int> aQuad; // index of 4 vertices required for bending
+std::vector<unsigned int> aTri;  // index of triangles
+std::vector<unsigned int> aQuad; // index of 4 vertices required for bending
 const double lambda = 0.0; // Lame's 1st parameter
 const double myu    =30.0; // Lame's 2nd parameter
 const double stiff_bend = 1.0e-2; // bending stiffness

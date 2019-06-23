@@ -247,7 +247,7 @@ bool IsContact_FV_CCD2
 bool isIntersectTriPair
 (CVector3& P0, CVector3& P1,
  int itri, int jtri,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
 {
   const int i0 = aTri[itri*3+0];

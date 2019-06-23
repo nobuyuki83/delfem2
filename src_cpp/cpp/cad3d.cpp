@@ -1177,7 +1177,7 @@ void DivideFace
 
 void BuildTriMesh
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int>& aTri,
  std::vector<int>& aTriSurRel,
  std::vector<double>& aNorm,
  std::vector<CCad3D_Vertex>& aVertex,
@@ -1329,7 +1329,7 @@ void BuildTriMesh
 void UpdateTriMesh
 (std::vector<double>& aXYZ, std::vector<double>& aNorm,
  /////
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<CCad3D_Vertex>& aVertex,
  const std::vector<CCad3D_Edge>& aEdge,
  const std::vector<CCad3D_Face>& aFace,

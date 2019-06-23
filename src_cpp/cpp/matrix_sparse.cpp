@@ -115,8 +115,8 @@ bool CMatrixSquareSparse::SetZero()
 }
 
 bool CMatrixSquareSparse::Mearge
-(int nblkel_col, const int* blkel_col,
- int nblkel_row, const int* blkel_row,
+(int nblkel_col, const unsigned int* blkel_col,
+ int nblkel_row, const unsigned int* blkel_row,
  int blksize, const double* emat,
  std::vector<int>& marge_buffer)
 {

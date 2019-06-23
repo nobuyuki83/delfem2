@@ -13,7 +13,7 @@ namespace py = pybind11;
 
 void DrawField_ColorMap
 (const py::array_t<double>& pos,
- const py::array_t<int>& elm,
+ const py::array_t<unsigned int>& elm,
  const py::array_t<double>& val,
  const CColorMap& color_map)
 {
@@ -49,7 +49,7 @@ void DrawField_ColorMap
 
 void DrawField_Disp
 (const py::array_t<double>& pos,
- const py::array_t<int>& elm,
+ const py::array_t<unsigned int>& elm,
  const py::array_t<double>& disp)
 {
   //  DrawMeshTri2D_ScalarP1(me.aPos,me.aElem,a.data(),1,0,colorMap);

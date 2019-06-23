@@ -26,7 +26,7 @@ public:
 
 bool IsoSurfaceStuffing
 (std::vector<double>& aXYZ,
- std::vector<int>& aTet,
+ std::vector<unsigned int>& aTet,
  std::vector<int>& aIsOnSurfXYZ,
  ////
  const CInputIsosurfaceStuffing& input,
@@ -55,7 +55,7 @@ public:
   int iflg;
 };
 
-void makeBackgroundLattice(std::vector<CPointLattice>& aPoint, std::vector<int>& aTet,
+void makeBackgroundLattice(std::vector<CPointLattice>& aPoint, std::vector<unsigned int>& aTet,
                            const CInputIsosurfaceStuffing& input,
                            double elen, int  ndiv, const double org[3]);
 

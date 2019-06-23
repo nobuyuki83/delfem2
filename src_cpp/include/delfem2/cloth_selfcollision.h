@@ -23,7 +23,7 @@ void GetIntermidiateVelocityContactResolved
  double mass_point,
  double cloth_contact_stiffness,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
 // const CJaggedArray& aEdge,
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup,

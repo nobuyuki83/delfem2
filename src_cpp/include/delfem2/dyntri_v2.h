@@ -52,7 +52,7 @@ bool DelaunayAroundPoint(int ipo0,
                          const std::vector<CVector2>& aVec2);
 
 void MeshTri2D_Export(std::vector<double>& aXY_out,
-                      std::vector<int>& aTri_out,
+                      std::vector<unsigned int>& aTri_out,
                       const std::vector<CVector2>& aVec2,
                       const std::vector<ETri>& aTri_in);
 
@@ -108,7 +108,7 @@ void MakeMassMatrixTri(double M[9],
                        const std::vector<CVector2>& aVec2);
 
 void CMeshTri2D(std::vector<double>& aXY,
-                std::vector<int>& aTri,
+                std::vector<unsigned int>& aTri,
                 std::vector<CVector2>& aVec2,
                 std::vector<ETri>& aETri);
 
@@ -352,7 +352,7 @@ public:
     mpr.iv_ind[0] = 0;
      */
   }
-  void Export_StlVectors(std::vector<double>& aXY, std::vector<int>& aTri) const{
+  void Export_StlVectors(std::vector<double>& aXY, std::vector<unsigned int>& aTri) const{
     MeshTri2D_Export(aXY,aTri, aVec2,aETri);
   }
   void Clear(){

@@ -33,7 +33,7 @@ public:
 };
 class CCad2D_FaceGeo{
 public:
-  std::vector<int> aTri;
+  std::vector<unsigned int> aTri;
   std::vector<double> aXY;
 public:
   void GenMesh(unsigned int iface0, const CCadTopo& topo, 

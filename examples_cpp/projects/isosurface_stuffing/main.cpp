@@ -27,11 +27,11 @@
 
 
 std::vector<double> aXYZ;
-std::vector<int> aTet;
-std::vector<int> aTetSurface;
+std::vector<unsigned int> aTet;
+std::vector<unsigned int> aTetSurface;
 std::vector<CColor> aTetColor;
 
-std::vector<int> aTet1;
+std::vector<unsigned int> aTet1;
 std::vector<CColor> aTetColor1;
 
 CGlutWindowManager win;
@@ -175,7 +175,7 @@ void SetProblem()
       CSignedDistanceField3D_Mesh sdf_mesh;
     } mesh;
     {
-      std::vector<int> aTri;
+      std::vector<unsigned int> aTri;
       std::vector<double> aXYZ_Tri;
       Read_Ply("models/bunny_1k.ply", aXYZ_Tri, aTri);
       Normalize(aXYZ_Tri,2.3);
@@ -222,7 +222,7 @@ void SetProblem()
     double lenx = 3;
     double leny = 3;
     double lenz = 6;
-    std::vector<int> aTriIn;
+    std::vector<unsigned int> aTriIn;
     std::vector<double> aXYZIn;
     Read_Ply("models/car.ply", aXYZIn, aTriIn);
     {

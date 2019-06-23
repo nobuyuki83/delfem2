@@ -171,7 +171,7 @@ void makeElemSurroundingPoint
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
- const int* pElem,
+ const unsigned int* pElem,
  int nElem,
  int nPoEl,
  int nPo)
@@ -208,8 +208,8 @@ void makeElemSurroundingPoint
 ///////////////////////////////////////////////////////////////////////////////
 
 void ElemQuad_DihedralTri
-(std::vector<int>& aQuad,
- const int* aTri, int nTri,
+(std::vector<unsigned int>& aQuad,
+ const unsigned int* aTri, int nTri,
  int np)
 {
   std::vector<int> aElemSurRel;
@@ -224,10 +224,10 @@ void ElemQuad_DihedralTri
       if( jtri < itri ) continue;
       int jedtri = aElemSurRel[itri*6+iedtri*2+1];
       assert( itri == aElemSurRel[jtri*6+jedtri*2+0] );
-      int ipo0 = aTri[itri*3+iedtri];
-      int ipo1 = aTri[jtri*3+jedtri];
-      int ipo2 = aTri[itri*3+(iedtri+1)%3];
-      int ipo3 = aTri[itri*3+(iedtri+2)%3];
+      const unsigned int ipo0 = aTri[itri*3+iedtri];
+      const unsigned int ipo1 = aTri[jtri*3+jedtri];
+      const unsigned int ipo2 = aTri[itri*3+(iedtri+1)%3];
+      const unsigned int ipo3 = aTri[itri*3+(iedtri+2)%3];
       assert( aTri[jtri*3+(jedtri+2)%3] == ipo2 );
       assert( aTri[jtri*3+(jedtri+1)%3] == ipo3 );
       aQuad.push_back(ipo0);
@@ -344,10 +344,11 @@ void makeElemSurroundingPoint_Tri
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  int nXYZ)
 {
-  makeElemSurroundingPoint(elsup_ind, elsup, aTri.data(), aTri.size()/3, 3, nXYZ);
+  makeElemSurroundingPoint(elsup_ind, elsup,
+                           aTri.data(), aTri.size()/3, 3, nXYZ);
 }
 
 void makeElemSurroundingPoint
@@ -393,7 +394,7 @@ void makeElemSurroundingPoint
 
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
- const int* aEl, int nEl, int nNoEl,
+ const unsigned int* aEl, int nEl, int nNoEl,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  const int nfael,
@@ -467,7 +468,7 @@ void makeSurroundingRelationship
 
 void makeSurroundingRelationship
 (std::vector<int>& aElemSurRel,
- const int* aElem, int nElem,
+ const unsigned int* aElem, int nElem,
  MESHELEM_TYPE type,
  const int nXYZ)
 {
@@ -617,7 +618,7 @@ void makeOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const int* pElem,
+ const unsigned int* pElem,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nnoel,
@@ -669,7 +670,7 @@ void JArray_MeshOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const int* pElem,
+ const unsigned int* pElem,
  int nEl,
  int nPoEl,
  int nPo)
@@ -730,7 +731,7 @@ void JArray_MakeEdgeQuad
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const int* aQuad0,
+ const unsigned int* aQuad0,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nPo0)
@@ -764,7 +765,7 @@ void JArray_MakeEdgeHex
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const int* aHex0,
+ const unsigned int* aHex0,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nPoint0)
@@ -805,7 +806,7 @@ void JArray_MakeEdgeTet
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
- const int* aTet0,
+ const unsigned int* aTet0,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  int nPoint0)
@@ -1192,7 +1193,7 @@ int findEdge
 
 int findFace
 (int ip0, int ip1, int ip2, int ip3,
- const std::vector<int>& aQuad,
+ const std::vector<unsigned int>& aQuad,
  const std::vector<int>& elsupInd,
  const std::vector<int>& elsup)
 {
@@ -1215,11 +1216,11 @@ int findFace
 
 // new points is in the order of [old points], [edge points], [face points]
 void QuadSubdiv
-(std::vector<int>& aQuad1,
+(std::vector<unsigned int>& aQuad1,
  std::vector<int>& psup_ind,
  std::vector<int>& psup,
  std::vector<int>& aEdgeFace0, // two points on the edge and two quads touching the edge
- const int* aQuad0, int nQuad0,
+ const unsigned int* aQuad0, int nQuad0,
  unsigned int nPoint0)
 {
   const int nq0 = nQuad0;
@@ -1282,10 +1283,10 @@ void QuadSubdiv
 
 // new points is in the order of [old points], [edge points]
 void TetSubdiv
-(std::vector<int>& aTet1,
+(std::vector<unsigned int>& aTet1,
  std::vector<int>& psup_ind,
  std::vector<int>& psup,
- const int* aTet0, int nTet0,
+ const unsigned int* aTet0, int nTet0,
  unsigned int nPoint0)
 {
   const int nt0 = nTet0;
@@ -1481,12 +1482,12 @@ void VoxSubdiv
 /////////////////////////////////////////////////
 
 void HexSubdiv
-(std::vector<int>& aHex1,
+(std::vector<unsigned int>& aHex1,
  std::vector<int>& psupIndHex0,
  std::vector<int>& psupHex0,
- std::vector<int>& aQuadHex0,
+ std::vector<unsigned int>& aQuadHex0,
  ///
- const int* aHex0, int nHex0,
+ const unsigned int* aHex0, int nHex0,
  const int nhp0)
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
@@ -1508,7 +1509,7 @@ void HexSubdiv
                                 nFaceElem(MESHELEM_HEX),
                                 nNodeElemFace(MESHELEM_HEX, 0),
                                 noelElemFace(MESHELEM_HEX));
-    for(unsigned int ih=0;ih<nHex0;++ih){
+    for(unsigned int ih=0;ih<(unsigned int)nHex0;++ih){
       for(int ifh=0;ifh<6;++ifh){
         int jh0 = aHexSurRel0[ih*6*2+ifh*2+0];
         if( jh0!=-1 && (int)ih>jh0 ) continue;

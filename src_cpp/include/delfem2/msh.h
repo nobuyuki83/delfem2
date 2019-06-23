@@ -106,7 +106,7 @@ void CenterOfGravity_Tet(double& v_tot,
 void MassLumped_Tet3D(double* aMassMatrixLumped,
                       double rho,
                       const double* aXYZ, int nXYZ,
-                      const int* aTet, int nTet);
+                      const unsigned int* aTet, int nTet);
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -117,7 +117,7 @@ void RemoveUnreferencedPoints3D(std::vector<double>& aXYZOut,
                                 const std::vector<int>& aTriIn);
 void MakeNormal(std::vector<double>& aNorm,
                 const std::vector<double>& aXYZ,
-                const std::vector<int>& aTri);
+                const std::vector<unsigned int>& aTri);
 void Quality_MeshTri2D(double& max_aspect, double& min_area,
                        const double* aXY,
                        const int* aTri, int nTri);
@@ -125,10 +125,10 @@ void Quality_MeshTri2D(double& max_aspect, double& min_area,
 ///////////////////////////////////////////////////////////////////////////////
 // set primitive mesh
 
-void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                     int nx, int ny);
 // y axis is the pole
-void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<int>& aTri,
+void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                       double r,
                       int nla, int nlo);
 // y axis is the axis of cylinder
@@ -142,22 +142,22 @@ void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<int>& aTri,
                     int n);
 void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<int>& aTri,
                     double r, int nr, int nth);
-void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                         double x_min, double x_max,
                         double y_min, double y_max,
                         double z_min, double z_max);
 void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
-                           std::vector<int>& aTri);
+                           std::vector<unsigned int>& aTri);
 void SetTopoQuad_CubeVox(std::vector<int>& aQuad);
-void SetTopology_ExtrudeTri2Tet(int* aTet,
+void SetTopology_ExtrudeTri2Tet(unsigned int* aTet,
                                 int nXY,
-                                const int* aTri, int nTri,
+                                const unsigned int* aTri, int nTri,
                                 int nlayer);
 void ExtrudeTri2Tet(int nlayer, double h,
                     std::vector<double>& aXYZ,
-                    std::vector<int>& aTet,
+                    std::vector<unsigned int>& aTet,
                     const std::vector<double>& aXY,
-                    const std::vector<int>& aTri);
+                    const std::vector<unsigned int>& aTri);
 
 //////////////////////////////////////////////////////////////////////
 
@@ -176,11 +176,11 @@ void LaplacianSmoothing(std::vector<double>& aXYZ,
                         const std::vector<int> elsup);
 void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         ///
-                                        const std::vector<int>& aQuad1,
+                                        const std::vector<unsigned int>& aQuad1,
                                         const std::vector<int>& aEdgeFace0,
                                         const std::vector<int>& psupIndQuad0,
                                         const std::vector<int>& psupQuad0,
-                                        const int* aQuad0, int nQuad0,
+                                        const unsigned int* aQuad0, int nQuad0,
                                         const double* aXYZ0, int nXYZ0);
 void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
                             ///
@@ -195,8 +195,8 @@ void SubdivisionPoints_Hex(std::vector<double>& aXYZ1,
                            ///
                            const std::vector<int>& psupHex0,
                            const std::vector<int>& psupIndHex0,
-                           const std::vector<int>& aQuadHex0,
-                           const int* aHex0, int nHex0,
+                           const std::vector<unsigned int>& aQuadHex0,
+                           const unsigned int* aHex0, int nHex0,
                            const double* aXYZ0, int nXYZ0);
 
 //////////////////////////////////////////////////////////////

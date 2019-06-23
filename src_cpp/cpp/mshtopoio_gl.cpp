@@ -37,10 +37,10 @@
 
 void MeshTri3D_GeodesicPolyhedron
 (std::vector<double>& aXYZ1,
- std::vector<int>& aTri1)
+ std::vector<unsigned int>& aTri1)
 {
   std::vector<double> aXYZ0;
-  std::vector<int> aTri0;
+  std::vector<unsigned int> aTri0;
   MeshTri3D_Icosahedron(aXYZ0, aTri0);
   ////
   const int np0 = aXYZ0.size()/3;

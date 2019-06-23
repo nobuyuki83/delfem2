@@ -6,7 +6,7 @@
 ####################################################################
 
 
-from OpenGL.GL import *
+import OpenGL.GL as gl
 import glfw
 
 import sys
@@ -27,14 +27,15 @@ def keyFunCB(win_glfw,key,scancode,action,mods):
   nav.keyinput(win_glfw, key, scancode, action, mods)
 
 def render():
-  glColor3d(1, 0, 0)
-  glEnable(GL_LIGHTING)
+  gl.glColor3d(1, 0, 0)
+  gl.glEnable(gl.GL_LIGHTING)
   msh.draw()
 
 def main():
   global msh, nav
   msh = dfm2.Mesh()
   msh.read("../test_inputs/bunny_2k.ply")
+  print(type(msh.np_pos),msh.np_elm.dtype)
   msh.scale_xyz(0.02)
 
   nav = dfm2.glfw.NavigationGLFW(1.0)
@@ -44,15 +45,18 @@ def main():
   glfw.make_context_current(win_glfw)
 
   dfm2.setSomeLighting()
-  glEnable(GL_DEPTH_TEST)
+  gl.glEnable(gl.GL_DEPTH_TEST)
 
   glfw.set_mouse_button_callback(win_glfw, mouseButtonCB)
   glfw.set_cursor_pos_callback(win_glfw,  mouseMoveCB)
   glfw.set_key_callback(win_glfw, keyFunCB)
 
   while not glfw.window_should_close(win_glfw):
-    glClearColor(1, 1, 1, 1)
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    gl.glClearColor(1, 1, 1, 1)
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+    gl.glEnable(gl.GL_POLYGON_OFFSET_FILL)
+    gl.glPolygonOffset(1.1, 4.0)
+
     nav.camera.set_gl_camera()
     render()
     glfw.swap_buffers(win_glfw)

@@ -251,7 +251,7 @@ public:
   void Affine(const double a[16]);
 public:
   std::vector<double> aXYZ_ini;
-  std::vector<int> aElemInd,aElem;
+  std::vector<unsigned int> aElemInd,aElem;
   std::vector<CLayer_RigMsh> aLayer;
   std::vector<CMaterial_RigMsh> aMaterial;
   std::vector<CSkin_RigMsh> aSkin;

@@ -26,8 +26,8 @@
 void SetClothShape_Square
 (std::vector<double>& aXYZ0, // (out) undeformed vertex positions
  std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)
- std::vector<int>& aTri, // (out) index of triangles
- std::vector<int>& aQuad, // (out) index of 4 vertices required for bending
+ std::vector<unsigned int>& aTri, // (out) index of triangles
+ std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending
  double& total_area, // (out) total area of cloth
  ///
  int ndiv, // (in) number of division of the square cloth edge
@@ -148,8 +148,8 @@ std::vector<double> aXYZ0; // undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-std::vector<int> aTri;  // index of triangles
-std::vector<int> aQuad; // index of 4 vertices required for bending
+std::vector<unsigned int> aTri;  // index of triangles
+std::vector<unsigned int> aQuad; // index of 4 vertices required for bending
 const double lambda = 1.0; // Lame's 1st parameter
 const double myu    = 4.0; // Lame's 2nd parameter
 const double stiff_bend = 1.0e-3; // bending stiffness
