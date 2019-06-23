@@ -7,35 +7,32 @@
 
 import sys, math
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 
 sys.path.append("../module_py")
 import delfem2 as dfm2
 import delfem2.gl
 import delfem2.pyqt
-import delfem2.cadmshfem
-
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
+import delfem2.cadmshsim
 
 
-class Window_Pbd2D(dfm2.pyqt.QW_CadMshFem):
+class Window_SolidLinearEigen(dfm2.pyqt.QW_CadMshFem):
   def __init__(self):
-    super(Window_Pbd2D, self).__init__()
+    super(Window_SolidLinearEigen, self).__init__()
+    self.setWindowTitle("CAD_Mesh_SolidLinearEigen")
 
-    self.setWindowTitle("CAD_Mesh_Pbd2d")
+    self.cadmsh = dfm2.cadmshsim.CadMesh2D_FEMSolidLinearEigen(edge_length=0.05)
+    self.cadmsh.add_polygon([-1, -0.2, +1, -0.2, +1, +0.2, -1, +0.2])
 
-    self.cadmsh = dfm2.cadmshfem.CadMesh2D_Pbd2D(edge_length=0.1)
-    self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
-
-    self.ui_fem = dfm2.pyqt.QW_Pbd2D(self.cadmsh.pbd)
+    self.ui_fem = dfm2.pyqt.QW_FEMSolidLinearEigen(self.cadmsh.fem)
 
     super().init_UI()
 
 
 if __name__ == '__main__':
   app = QApplication(sys.argv)
-  window = Window_Pbd2D()
+  window = Window_SolidLinearEigen()
   window.show()
   sys.exit(app.exec_())

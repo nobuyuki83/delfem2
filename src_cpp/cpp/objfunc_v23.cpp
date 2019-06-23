@@ -55,7 +55,7 @@ void PBD_Pre3D
 
 
 void PBD_Update_Const3
-(std::vector<double>& aXYZt,
+(double* aXYZt,
  const int np,
  const int ndim,
  const double* m,
@@ -100,7 +100,7 @@ void PBD_Update_Const3
   }
 }
 
-void ConstraintProjection_Rigid3D
+void PBD_ConstProj_Rigid3D
 (double* aXYZt,
  double stiffness,
  const int* clstr_ind, int nclstr_ind,
@@ -148,7 +148,7 @@ void ConstraintProjection_Rigid3D
   }
 }
 
-void PBD_CdC_Rigid2D
+void PBD_ConstProj_Rigid2D
 (double* aXYt,
  double stiffness,
  const int* clstr_ind, int nclstr_ind,

@@ -65,8 +65,10 @@ void GenMesh
                                  loopIP_ind,loopIP);
   if( resolution_face > 1.0e-10 ){
     CInputTriangulation_Uniform param(1.0);
-    MeshingInside(aPo2D,aETri,aVec2, loopIP,
-                  resolution_face, param);
+    std::vector<int> flg_pnt(aVec2.size());
+    std::vector<int> flg_tri(aETri.size());
+    MeshingInside(aPo2D,aETri,aVec2, flg_pnt,flg_tri,
+                  aVec2.size(), 0, resolution_face, param);
   }
 }
 
@@ -103,7 +105,7 @@ void StepTime()
     double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt.data(), 3);
     double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
     double m[3] = {1,1,1};
-    PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
+    PBD_Update_Const3(aXYZt.data(), 3, 3, m, C, &dCdp[0][0], aIP);
   }
   for(int it=0;it<aETri.size();++it){
     for(int ie=0;ie<3;++ie){
@@ -124,7 +126,7 @@ void StepTime()
       PBD_CdC_QuadBend(C, dCdp,
                        P, p);
       double m[4] = {1,1,1,1};
-      PBD_Update_Const3(aXYZt, 4,3, m, C, &dCdp[0][0], aIP);
+      PBD_Update_Const3(aXYZt.data(), 4,3, m, C, &dCdp[0][0], aIP);
     }
   }
   PBD_Post(aXYZ, aUVW,

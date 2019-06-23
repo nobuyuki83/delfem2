@@ -7,32 +7,37 @@
 
 import sys, math
 
-from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QWidget, QSizePolicy
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QButtonGroup, QRadioButton
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QVBoxLayout
 
 sys.path.append("../module_py")
 import delfem2 as dfm2
 import delfem2.gl
 import delfem2.pyqt
-import delfem2.cadmshfem
+import delfem2.cadmshsim
+
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 
 
-class Window_Poisson(dfm2.pyqt.QW_CadMshFem):
+class Window_Pbd2D(dfm2.pyqt.QW_CadMshFem):
   def __init__(self):
-    super(Window_Poisson, self).__init__()
-    self.setWindowTitle("CAD_Mesh_Poisson")
+    super(Window_Pbd2D, self).__init__()
 
-    self.cadmsh = dfm2.cadmshfem.CadMesh2D_Poisson(edge_length=0.05)
-    self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    self.setWindowTitle("CAD_Mesh_Pbd2d")
 
-    self.ui_fem = dfm2.pyqt.QW_FEMPoisson(self.cadmsh.fem)
+    self.cadmsh = dfm2.cadmshsim.CadMesh2D_PBDCloth(edge_length=0.1)
+    self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, +0.8,+1, -0.8,+1, -1, +1])
+    self.cadmsh.pbd.param_gravity_y = -0.1
+    self.cadmsh.pbd.dt = 0.1
+
+    self.ui_fem = dfm2.pyqt.QW_PBDCloth(self.cadmsh.pbd)
 
     super().init_UI()
 
 
 if __name__ == '__main__':
   app = QApplication(sys.argv)
-  window = Window_Poisson()
+  window = Window_Pbd2D()
   window.show()
   sys.exit(app.exec_())

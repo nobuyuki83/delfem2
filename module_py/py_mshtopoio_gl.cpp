@@ -143,6 +143,14 @@ void PyMeshDynTri2D_Initialize
                   tri.data(), tri.shape()[0]);
 }
 
+void PySetXY_MeshDynTri2D
+(CMeshDynTri2D& mesh,
+ const py::array_t<double>& npXY)
+{
+  assert(npXY.shape()[1]==2);
+  mesh.setXY(npXY.data(), npXY.shape()[0]);
+}
+
 void PyCopyMeshDynTri2D
 (py::array_t<double>& npPos,
  py::array_t<int>& npElm,
@@ -422,6 +430,7 @@ void init_mshtopoio_gl(py::module &m){
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   m.def("meshdyntri2d_initialize",&PyMeshDynTri2D_Initialize);
   m.def("copyMeshDynTri2D",       &PyCopyMeshDynTri2D);
+  m.def("setXY_MeshDynTri2D",     &PySetXY_MeshDynTri2D);
   
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);

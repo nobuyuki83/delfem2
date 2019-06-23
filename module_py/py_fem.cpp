@@ -9,7 +9,9 @@
 #include "delfem2/fem_ematrix.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/sdf.h"
+
 #include "delfem2/objfunc_v23.h"
+#include "delfem2/dyntri_v2.h"
 
 namespace py = pybind11;
 
@@ -451,14 +453,14 @@ void PyMasterSlave_DistributeValue
 }
 
 
-void PyConstraintProjection_Rigid2D
+void PyPBD_ConstProj_Rigid2D
 (py::array_t<double>& npXYt,
  double stiffness,
  const py::array_t<int>& npClstrInd,
  const py::array_t<int>& npClstr,
  const py::array_t<double>& npXY)
 {
-  PBD_CdC_Rigid2D((double*)(npXYt.request().ptr),
+  PBD_ConstProj_Rigid2D((double*)(npXYt.request().ptr),
                   stiffness,
                   npClstrInd.data(), npClstrInd.size(),
                   npClstr.data(),    npClstr.size(),
@@ -466,18 +468,45 @@ void PyConstraintProjection_Rigid2D
 }
 
 
-void PyConstraintProjection_Rigid3D
+void PyConstProj_Rigid3D
 (py::array_t<double>& npXYZt,
  double stiffness,
  const py::array_t<int>& npClstrInd,
  const py::array_t<int>& npClstr,
  const py::array_t<double>& npXYZ)
 {
-  ConstraintProjection_Rigid3D((double*)(npXYZt.request().ptr),
-                               stiffness,
-                               npClstrInd.data(), npClstrInd.size(),
-                               npClstr.data(),    npClstr.size(),
-                               npXYZ.data(),      npXYZ.shape()[0]);
+  PBD_ConstProj_Rigid3D((double*)(npXYZt.request().ptr),
+                        stiffness,
+                        npClstrInd.data(), npClstrInd.size(),
+                        npClstr.data(),    npClstr.size(),
+                        npXYZ.data(),      npXYZ.shape()[0]);
+}
+
+void PyPBD_ConstProj_Cloth
+(py::array_t<double>& npXYZt,
+ const CMeshDynTri2D& mesh)
+{
+  double* aXYZt = (double*)(npXYZt.request().ptr);
+  const std::vector<ETri>& aETri = mesh.aETri;
+  const std::vector<CVector2>& aVec2 = mesh.aVec2;
+  for(unsigned int it=0;it<aETri.size();++it){
+    const int i0 = aETri[it].v[0];
+    const int i1 = aETri[it].v[1];
+    const int i2 = aETri[it].v[2];
+    const double P[3][2] = {
+      {aVec2[i0].x,aVec2[i0].y},
+      {aVec2[i1].x,aVec2[i1].y},
+      {aVec2[i2].x,aVec2[i2].y} };
+    double p[3][3] = {
+      {aXYZt[i0*3+0], aXYZt[i0*3+1], aXYZt[i0*3+2] },
+      {aXYZt[i1*3+0], aXYZt[i1*3+1], aXYZt[i1*3+2] },
+      {aXYZt[i2*3+0], aXYZt[i2*3+1], aXYZt[i2*3+2] },
+    };
+    double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
+    double m[3] = {1,1,1};
+    const int aIP[3] = {i0,i1,i2};
+    PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
+  }
 }
 
 void PyPointFixBC
@@ -511,16 +540,16 @@ void init_fem(py::module &m){
   py::class_<CMatrixSquareSparse>(m,"MatrixSquareSparse")
   .def(py::init<>())
   .def("initialize", &CMatrixSquareSparse::Initialize)
-  .def("set_zero",    &CMatrixSquareSparse::SetZero)
-  .def("add_dia", &CMatrixSquareSparse::AddDia);
+  .def("set_zero",   &CMatrixSquareSparse::SetZero)
+  .def("add_dia",    &CMatrixSquareSparse::AddDia);
   
   py::class_<CPreconditionerILU>(m,"PreconditionerILU")
   .def(py::init<>())
   .def("ilu_decomp", &CPreconditionerILU::DoILUDecomp)
-  .def("set_value", &CPreconditionerILU::SetValueILU);
+  .def("set_value",  &CPreconditionerILU::SetValueILU);
   
-  m.def("matrixSquareSparse_setPattern", &MatrixSquareSparse_SetPattern);
-  m.def("matrixSquareSparse_setFixBC",   &MatrixSquareSparse_SetFixBC);
+  m.def("matrixSquareSparse_setPattern",     &MatrixSquareSparse_SetPattern);
+  m.def("matrixSquareSparse_setFixBC",       &MatrixSquareSparse_SetFixBC);
   m.def("matrixSquareSparse_ScaleLeftRight", &MatrixSquareSparse_ScaleLeftRight);
   
   m.def("addMasterSlavePattern",         &PyAddMasterSlavePattern);
@@ -530,18 +559,19 @@ void init_fem(py::module &m){
   m.def("linearSystem_setMasterSlave",   &LinearSystem_SetMasterSlave);
   m.def("masterSlave_distributeValue",   &PyMasterSlave_DistributeValue);
   
-  m.def("mergeLinSys_poission",          &PyMergeLinSys_Poission);
-  m.def("mergeLinSys_diffuse",           &PyMergeLinSys_Diffuse);
-  m.def("mergeLinSys_linearSolidStatic", &PyMergeLinSys_LinearSolidStatic);
-  m.def("mergeLinSys_linearSolidDynamic",&PyMergeLinSys_LinearSolidDynamic);
-  m.def("mergeLinSys_storksStatic2D",    &PyMergeLinSys_StorksStatic2D);
-  m.def("mergeLinSys_storksDynamic2D",   &PyMergeLinSys_StorksDynamic2D);
-  m.def("mergeLinSys_navierStorks2D",    &PyMergeLinSys_NavierStorks2D);
-  m.def("mergeLinSys_cloth",             &PyMergeLinSys_Cloth);
-  m.def("mergeLinSys_massPoint",         &PyMergeLinSys_MassPoint);
-  m.def("mergeLinSys_contact",           &PyMergeLinSys_Contact);
+  m.def("fem_merge_poission",          &PyMergeLinSys_Poission);
+  m.def("fem_merge_diffuse",           &PyMergeLinSys_Diffuse);
+  m.def("fem_merge_linearSolidStatic", &PyMergeLinSys_LinearSolidStatic);
+  m.def("fem_merge_linearSolidDynamic",&PyMergeLinSys_LinearSolidDynamic);
+  m.def("fem_merge_storksStatic2D",    &PyMergeLinSys_StorksStatic2D);
+  m.def("fem_merge_storksDynamic2D",   &PyMergeLinSys_StorksDynamic2D);
+  m.def("fem_merge_navierStorks2D",    &PyMergeLinSys_NavierStorks2D);
+  m.def("fem_merge_cloth",             &PyMergeLinSys_Cloth);
+  m.def("fem_merge_massPoint",         &PyMergeLinSys_MassPoint);
+  m.def("fem_merge_contact",           &PyMergeLinSys_Contact);
   
-  m.def("proj_rigid2d",                  &PyConstraintProjection_Rigid2D);
-  m.def("proj_rigid3d",                  &PyConstraintProjection_Rigid3D);
-  m.def("pointFixBC",                    &PyPointFixBC);
+  m.def("pbd_proj_rigid2d",            &PyPBD_ConstProj_Rigid2D);
+  m.def("pbd_proj_rigid3d",            &PyConstProj_Rigid3D);
+  m.def("pbd_pointFixBC",              &PyPointFixBC);
+  m.def("pbd_proj_cloth",              &PyPBD_ConstProj_Cloth);
 }

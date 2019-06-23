@@ -2,14 +2,15 @@ import numpy
 import OpenGL.GL as gl
 
 
-from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse, PBD
+from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse
+from .fem import PBD, PBD_Cloth
 from .fem import FieldValueSetter
 from .fem import VisFEM_ColorContour
 
 from .cadmsh import CadMesh2D, cad_getPointsEdge, Mesh
 
 
-class CadMesh2D_Poisson(CadMesh2D):
+class CadMesh2D_FEMPoisson(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
@@ -35,7 +36,7 @@ class CadMesh2D_Poisson(CadMesh2D):
     self.fem.solve()
 
 
-class CadMesh2D_Diffuse(CadMesh2D):
+class CadMesh2D_FEMDiffuse(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
@@ -58,7 +59,7 @@ class CadMesh2D_Diffuse(CadMesh2D):
     self.fem.ls.bc[npIdP] = 1
 
 
-class CadMesh2D_SolidLinearStatic(CadMesh2D):
+class CadMesh2D_FEMSolidLinearStatic(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
@@ -84,7 +85,7 @@ class CadMesh2D_SolidLinearStatic(CadMesh2D):
     self.fem.solve()
 
 
-class CadMesh2D_SolidLinearEigen(CadMesh2D):
+class CadMesh2D_FEMSolidLinearEigen(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
@@ -114,7 +115,8 @@ class CadMesh2D_SolidLinearEigen(CadMesh2D):
     self.fem.solve()
 
 
-class CadMesh2D_Pbd2D(CadMesh2D):
+
+class CadMesh2D_PBD(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
@@ -133,6 +135,29 @@ class CadMesh2D_Pbd2D(CadMesh2D):
     self.pbd.vec_bc[npIdP] = 1
 #    self.fvs = FieldValueSetter("0.3*sin(2*t)", self.pbd.vec_val, 0,
 #                                mesh=self.dmsh, npIdP=npIdP, dt=self.pbd.dt)
+    self.vis_mesh = Mesh(np_pos=self.pbd.vec_val,np_elm=self.dmsh.np_elm)
+
+  def step_time(self):
+    self.pbd.step_time()
+
+
+class CadMesh2D_PBDCloth(CadMesh2D):
+
+  def __init__(self,edge_length:float):
+    super().__init__(edge_length)
+    self.pbd = PBD_Cloth()
+
+  def draw(self):
+    self.ccad.draw()
+    gl.glDisable(gl.GL_LIGHTING)
+    gl.glColor3d(0.8,0.8,0.8)
+    self.vis_mesh.draw()
+
+  def remesh(self):
+    super().remesh()
+    self.pbd.updated_topology(self.dmsh)
+    npIdP = self.map_cad2msh.npIndEdge(3)
+    self.pbd.bc[npIdP] = 1
     self.vis_mesh = Mesh(np_pos=self.pbd.vec_val,np_elm=self.dmsh.np_elm)
 
   def step_time(self):

@@ -12,7 +12,7 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/dyntri_v2.h"
 #include "delfem2/cad2d.h"
 
 #include "delfem2/funcs_glut.h"
@@ -264,8 +264,10 @@ int main(int argc,char* argv[])
   cad.AddPolygon(std::vector<double>(poly,poly+8));
   cad.is_draw_face = false;
   std::vector<int> aFlgPnt, aFlgTri;
-  cad.Meshing(aXY,aTri, aFlgPnt,aFlgTri,
+  CMeshDynTri2D dmsh;
+  cad.Meshing(dmsh, aFlgPnt,aFlgTri,
               0.5);
+  dmsh.Export_StlVectors(aXY, aTri);
   
   const int nv = 4;
   std::vector<double> aXY_bound = cad.XY_Vtx_Face(0);

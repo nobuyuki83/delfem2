@@ -222,6 +222,13 @@ public:
     InitializeMesh(aEPo, aETri,
                    aTri, nTri, nPo);
   }
+  void setXY(const double* aXY, int nPo){
+    assert((int)aVec2.size()==nPo);
+    for(int ipo=0;ipo<nPo;ipo++){
+      aVec2[ipo].x = aXY[ipo*2+0];
+      aVec2[ipo].y = aXY[ipo*2+1];
+    }
+  }
   void Check()
   {
     CheckTri(aETri);

@@ -33,7 +33,7 @@ void PBD_Update_Const3_Point3_Dim3(std::vector<double>& aXYZt,
                                    const double C[3],
                                    const double dCdp[3][9],
                                    const int aIP[3]);
-void PBD_Update_Const3(std::vector<double>& aXYZt,
+void PBD_Update_Const3(double* aXYZt,
                        const int np,
                        const int ndim,
                        const double* m,
@@ -41,13 +41,13 @@ void PBD_Update_Const3(std::vector<double>& aXYZt,
                        const double* dCdp,
                        const int* aIP);
 
-void PBD_CdC_Rigid2D(double* aXYt,
+void PBD_ConstProj_Rigid2D(double* aXYt,
                                   double stiffness,
                                   const int* clstr_ind, int nclstr_ind,
                                   const int* clstr,     int nclstr0,
                                   const double* aXY0,   int nXY0);
 
-void ConstraintProjection_Rigid3D(double* aXYZt,
+void PBD_ConstProj_Rigid3D(double* aXYZt,
                                   double stiffness,
                                   const int* clstr_ind, int nclstr_ind,
                                   const int* clstr,     int nclstr0,

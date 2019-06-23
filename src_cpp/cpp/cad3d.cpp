@@ -252,8 +252,9 @@ void CCad3D_Face::Initialize
                                      loopIP_ind,loopIP);
       if( elen > 1.0e-10 ){
         CInputTriangulation_Uniform param(1.0);
-        MeshingInside(aPo2D,aETri,aVec2, loopIP,
-                      elen, param);
+        std::vector<int> aFlgPnt, aFlgTri;
+        MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
+                      aVec2.size(), 0, elen, param);
       }
       MeshTri2D_Export(aXY_out,aTri, aVec2,aETri);
     }

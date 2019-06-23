@@ -9,7 +9,8 @@ from .libdelfem2 import cad_getPointsEdge, mvc
 from .libdelfem2 import meshDynTri2D_CppCad2D, CppMeshDynTri3D, CppCad2D
 
 from .fem import VisFEM_Hedgehog, VisFEM_ColorContour
-from .fem import PBD, FieldValueSetter
+from .fem import FieldValueSetter
+from .fem import PBD, PBD_Cloth
 from .fem import \
   FEM_Poisson, \
   FEM_Cloth, \

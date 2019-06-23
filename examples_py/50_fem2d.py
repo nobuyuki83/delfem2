@@ -53,6 +53,7 @@ def diffuse(cad,mesh):
 
 def linear_solid_static(cad,mesh):
   fem = dfm2.FEM_SolidLinearStatic()
+  fem.param_gravity_y = -0.1
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
@@ -71,7 +72,8 @@ def linear_solid_eigen(mesh):
 
 
 def linear_solid_dynamic(cad,mesh):
-  fem = dfm2.FEM_SolidLinearDynamic(gravity=[0,-0.1])
+  fem = dfm2.FEM_SolidLinearDynamic()
+  fem.param_gravity_y = -0.1
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
@@ -164,23 +166,19 @@ def pbd_cloth():
   mesh,map_cad2mesh = cad.mesh(0.1)
   ####
   pbd = dfm2.PBD_Cloth()
-  '''
+  pbd.param_gravity_y = -0.1
+  pbd.param_gravity_z = -0.001
   pbd.dt = 0.08
-  fem.lmd = 1000
-  fem.myu = 100
-  fem.gravity = (0,-1,0.01)
-  fem.updated_topology(mesh)
+  pbd.updated_topology(mesh)
   npIdP = cad.points_edge([2,4], mesh.np_pos)
-  fem.ls.bc[npIdP,0:3] = 1
+  pbd.bc[npIdP] = 1
   ####
-  mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
+  mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.AxisXYZ(1.0)
-  dfm2.glfw.winDraw3d([fem,mesh2,axis])
-  '''
+  dfm2.glfw.winDraw3d([pbd,mesh2,axis])
 
 
 def main():
-
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   mesh,map_cad2mesh = cad.mesh(0.05)
@@ -212,6 +210,7 @@ def main():
   msh25.np_pos[:,2] *= 0.05
   linear_solid_eigen(msh25)
 
+  pbd_cloth()
 
 if __name__ == "__main__":
   main()
