@@ -230,8 +230,9 @@ void SetNewProblem()
                             aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
   }
   {
-    std::vector<double> aNorm;
-    MakeNormal(aNorm, aXYZ,aTri);
+    std::vector<double> aNorm(aXYZ.size());
+    Normal_MeshTri3D(aNorm.data(),
+                     aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
     const int np = aXYZ.size()/3;
     aLocCoord.resize(np*6);
     for(int ip=0;ip<np;++ip){

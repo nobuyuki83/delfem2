@@ -49,7 +49,7 @@ void Write_Ply(const std::string& fname,
                unsigned int nTri, unsigned int* paTri);
 void Read_Ply(const std::string& fname,
               int& nnode_, double*& pXYZs_,
-              int& ntri_,  int*& aTri_);
+              int& ntri_,  unsigned int*& aTri_);
 void Read_Ply(const std::string& fname,
               std::vector<double>& aXYZ,
               std::vector<unsigned int>& aTri);

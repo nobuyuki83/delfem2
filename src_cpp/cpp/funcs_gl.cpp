@@ -1335,6 +1335,24 @@ void DrawMeshTet3D_Edge
   }
 }
 
+void DrawMeshLine3D_Edge
+(const double* aXYZ,
+ int nXYZ,
+ const unsigned int* aLine,
+ int nLine)
+{
+  for (int il = 0; il<nLine; il++){
+    const int i0 = aLine[il*2+0];
+    const int i1 = aLine[il*2+1];
+    const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
+    const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+    //::glColor3d(0, 0, 0);
+    ::glBegin(GL_LINES);
+    ::glVertex3dv(p0); ::glVertex3dv(p1);
+    ::glEnd();
+  }
+}
+
 void DrawMeshTet3D_EdgeDisp
 (const double* aXYZ,
  const unsigned int* aTet, int nTet,

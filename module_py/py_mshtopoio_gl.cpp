@@ -36,7 +36,7 @@ void PySetTopology_ExtrudeTri2Tet
 
 /////////////////////////////////////////////////////////////////////
 
-std::tuple<py::array_t<double>,py::array_t<int>> PyMeshTri3D_ReadPly
+std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadPly
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
@@ -127,7 +127,7 @@ std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshHex3D_Subviv
 void PyMeshDynTri3D_Initialize
 (CMeshDynTri3D& mesh,
  const py::array_t<double>& po,
- const py::array_t<int>& tri)
+ const py::array_t<unsigned int>& tri)
 {
   mesh.Initialize(po.data(), po.shape()[0], po.shape()[1],
                   tri.data(), tri.shape()[0]);
@@ -136,7 +136,7 @@ void PyMeshDynTri3D_Initialize
 void PyMeshDynTri2D_Initialize
 (CMeshDynTri2D& mesh,
  const py::array_t<double>& po,
- const py::array_t<int>& tri)
+ const py::array_t<unsigned int>& tri)
 {
   assert(po.shape()[1]==2);
   mesh.Initialize(po.data(), po.shape()[0],
@@ -210,10 +210,11 @@ void PyDrawMesh_Edge
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){  DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){  DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){  DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TRI  ){ DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){ DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_HEX  ){ DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TET  ){ DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_LINE ){ DrawMeshLine3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
   if( shape_pos[1] == 2 ){ // 2D Mesh
     if( type == MESHELEM_TRI  ){  DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
@@ -373,6 +374,42 @@ void PyMapValue
 }
 
 
+void PyNormalVtx_Mesh
+(py::array_t<double>& nrm,
+ const py::array_t<double>& pos,
+ const py::array_t<unsigned int>& elm,
+ const MESHELEM_TYPE type)
+{
+  assert( nrm.shape()[0] == pos.shape()[0] );
+  assert( nrm.shape()[1] == 3 );
+  if( type == MESHELEM_TRI ){
+    Normal_MeshTri3D((double*)(nrm.request().ptr),
+                     pos.data(),pos.shape()[0],
+                     elm.data(),elm.shape()[0]);
+  }
+}
+
+
+py::array_t<unsigned int> PyEdge_Mesh
+(const py::array_t<double>& pos,
+ const py::array_t<unsigned int>& elm,
+ const MESHELEM_TYPE type)
+{
+  std::vector<int> elsup_ind, elsup;
+  makeElemSurroundingPoint(elsup_ind, elsup,
+                           elm.data(), elm.shape()[0], elm.shape()[1], pos.shape()[0]);
+  std::vector<int> edge_ind, edge;
+  JArrayEdge_MeshElem(edge_ind, edge,
+                       elm.data(), type, elsup_ind, elsup, false);
+  std::vector<unsigned int> aLine;
+  MeshLine_JArrayEdge(aLine,
+                      edge_ind, edge);
+  py::array_t<unsigned int> npLine({(int)aLine.size()/2,2}, aLine.data());
+  return npLine;
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void init_mshtopoio_gl(py::module &m){
@@ -383,6 +420,7 @@ void init_mshtopoio_gl(py::module &m){
   .value("PYRAMID", MESHELEM_TYPE::MESHELEM_PYRAMID)
   .value("WEDGE",   MESHELEM_TYPE::MESHELEM_WEDGE)
   .value("HEX",     MESHELEM_TYPE::MESHELEM_HEX)
+  .value("LINE",    MESHELEM_TYPE::MESHELEM_LINE)
   .export_values();
   
   py::class_<CMeshMultiElem>(m,"MeshMultiElem")
@@ -405,12 +443,6 @@ void init_mshtopoio_gl(py::module &m){
   .def("insert_point_elem", &CMeshDynTri3D::insertPointElem)
   .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
   
-  
-  py::class_<CCmdRefineMesh>(m, "CppMapper")
-  .def(py::init<>());
-  
-  m.def("map_value",    &PyMapValue);
-  
   py::class_<CMeshDynTri2D>(m, "CppMeshDynTri2D")
   .def(py::init<>())
   .def("draw",              &CMeshDynTri2D::draw)
@@ -426,10 +458,18 @@ void init_mshtopoio_gl(py::module &m){
   .def("meshing_loops",     &CMeshDynTri2D::meshing_loops)
   .def("refinementPlan_EdgeLongerThan_InsideCircle",   &CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
   
+  py::class_<CCmdRefineMesh>(m, "CppMapper")
+  .def(py::init<>());
+  
+  m.def("map_value",    &PyMapValue);
+  
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   m.def("meshdyntri2d_initialize",&PyMeshDynTri2D_Initialize);
   m.def("copyMeshDynTri2D",       &PyCopyMeshDynTri2D);
   m.def("setXY_MeshDynTri2D",     &PySetXY_MeshDynTri2D);
+  
+  m.def("cppNormalVtx_Mesh",      &PyNormalVtx_Mesh);
+  m.def("cppEdge_Mesh",           &PyEdge_Mesh);
   
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);

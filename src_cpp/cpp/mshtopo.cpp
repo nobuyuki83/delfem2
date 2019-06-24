@@ -726,164 +726,67 @@ void makeOneRingNeighborhood_TriFan
   }
 }
 
-
-void JArray_MakeEdgeQuad
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
+void JArrayEdge_MeshElem
+(std::vector<int>& edge_ind,
+ std::vector<int>& edge,
  ////
- const unsigned int* aQuad0,
+ const unsigned int* aElm0,
+ MESHELEM_TYPE elem_type,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
- int nPo0)
+ bool is_bidirectional)
 {
-  psup_ind.resize(nPo0+1);
-  psup_ind[0] = 0;
-  for(int ip=0;ip<nPo0;++ip){
+  const int neElm = mapMeshElemType2NEdgeElem[elem_type];
+  const int nnoelElm = mapMeshElemType2NNodeElem[elem_type];
+  const int (*aNoelEdge)[2] = noelElemEdge(elem_type);
+  const int nPoint0 = elsup_ind.size()-1;
+  edge_ind.resize(nPoint0+1);
+  edge_ind[0] = 0;
+  for(int ip=0;ip<nPoint0;++ip){
     std::set<int> setIP;
     for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
       int iq0 = elsup[ielsup];
-      for(int ie=0;ie<4;++ie){
-        const int ip0 = aQuad0[iq0*4+(ie+0)%4];
-        const int ip1 = aQuad0[iq0*4+(ie+1)%4];
-        if( (ip0-ip)*(ip1-ip) != 0 ) continue; // risk of overflow
+      for(int ie=0;ie<neElm;++ie){
+        int inoel0 = aNoelEdge[ie][0];
+        int inoel1 = aNoelEdge[ie][1];
+        int ip0 = aElm0[iq0*nnoelElm+inoel0];
+        int ip1 = aElm0[iq0*nnoelElm+inoel1];
+        if( ip0 != ip && ip1 != ip ) continue;
         if( ip0 == ip ){
-          if( ip1 > ip ){ setIP.insert(ip1); }
+          if( is_bidirectional || ip1 > ip ){ setIP.insert(ip1); }
         }
         else{
-          if( ip0 > ip ){ setIP.insert(ip0); }
+          if( is_bidirectional || ip0 > ip ){ setIP.insert(ip0); }
         }
       }
     }
     for(std::set<int>::iterator itr = setIP.begin();itr!=setIP.end();++itr){
-      psup.push_back(*itr);
+      edge.push_back(*itr);
     }
-    psup_ind[ip+1] = psup_ind[ip] + (int)setIP.size();
+    edge_ind[ip+1] = edge_ind[ip] + (int)setIP.size();
   }
 }
 
-void JArray_MakeEdgeHex
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
+
+void MeshLine_JArrayEdge
+(std::vector<unsigned int>& aLine,
  ////
- const unsigned int* aHex0,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
- int nPoint0)
+ const std::vector<int>& psup_ind,
+ const std::vector<int>& psup)
 {
-  const int neHex = 12;
-  const int aNoelEdge[12][2] = {
-    {0,1},{1,2},{2,3},{3,0},
-    {4,5},{5,6},{6,7},{7,4},
-    {0,4},{1,5},{2,6},{3,7} };
-  psup_ind.resize(nPoint0+1);
-  psup_ind[0] = 0;
-  for(int ipoint=0;ipoint<nPoint0;++ipoint){
-    std::set<int> setIP;
-    for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];++ielsup){
-      int iq0 = elsup[ielsup];
-      for(int ie=0;ie<neHex;++ie){
-        int inoel0 = aNoelEdge[ie][0];
-        int inoel1 = aNoelEdge[ie][1];
-        int ip0 = aHex0[iq0*8+inoel0];
-        int ip1 = aHex0[iq0*8+inoel1];
-        if( (ip0-ipoint)*(ip1-ipoint) != 0 ) continue;
-        if( ip0 == ipoint ){
-          if( ip1 > ipoint ){ setIP.insert(ip1); }
-        }
-        else{
-          if( ip0 > ipoint ){ setIP.insert(ip0); }
-        }
-      }
+  aLine.reserve(psup.size()*2);
+  const int np = psup_ind.size()-1;
+  for(int ip=0;ip<np;++ip){
+    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      int jp = psup[ipsup];
+      aLine.push_back(ip);
+      aLine.push_back(jp);
     }
-    for(std::set<int>::iterator itr = setIP.begin();itr!=setIP.end();++itr){
-      psup.push_back(*itr);
-    }
-    psup_ind[ipoint+1] = psup_ind[ipoint] + (int)setIP.size();
-  }
-}
-
-void JArray_MakeEdgeTet
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
- ////
- const unsigned int* aTet0,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
- int nPoint0)
-{
-  const int neTet = 6;
-  const int aNoelEdge[neTet][2] = {
-    {0,1},{0,2},{0,3},
-    {1,2},{1,3},{2,3} };
-  psup_ind.resize(nPoint0+1);
-  psup_ind[0] = 0;
-  for(int ipoint=0;ipoint<nPoint0;++ipoint){
-    std::set<int> setIP;
-    for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];++ielsup){
-      int iq0 = elsup[ielsup];
-      for(int ie=0;ie<neTet;++ie){
-        int inoel0 = aNoelEdge[ie][0];
-        int inoel1 = aNoelEdge[ie][1];
-        int ip0 = aTet0[iq0*4+inoel0];
-        int ip1 = aTet0[iq0*4+inoel1];
-        if( (ip0-ipoint)*(ip1-ipoint) != 0 ) continue;
-        if( ip0 == ipoint ){
-          if( ip1 > ipoint ){ setIP.insert(ip1); }
-        }
-        else{
-          if( ip0 > ipoint ){ setIP.insert(ip0); }
-        }
-      }
-    }
-    for(std::set<int>::iterator itr = setIP.begin();itr!=setIP.end();++itr){
-      psup.push_back(*itr);
-    }
-    psup_ind[ipoint+1] = psup_ind[ipoint] + (int)setIP.size();
   }
 }
 
 
-void JArray_MakeEdgeVox
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
- ////
- const std::vector<int>& aVox0,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
- int nPoint0)
-{
-  const int neHex = 12;
-  const int aNoelEdge[12][2] = {
-    {0,1},{3,2},{4,5},{7,6},
-    {0,3},{1,2},{4,7},{5,6},
-    {0,4},{1,5},{3,7},{2,6} };
-  psup_ind.resize(nPoint0+1);
-  psup_ind[0] = 0;
-  for(int ipoint=0;ipoint<nPoint0;++ipoint){
-    std::set<int> setIP;
-    for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];++ielsup){
-      int iq0 = elsup[ielsup];
-      for(int ie=0;ie<neHex;++ie){
-        int inoel0 = aNoelEdge[ie][0];
-        int inoel1 = aNoelEdge[ie][1];
-        int ip0 = aVox0[iq0*8+inoel0];
-        int ip1 = aVox0[iq0*8+inoel1];
-        if( (ip0-ipoint)*(ip1-ipoint) != 0 ) continue;
-        if( ip0 == ipoint ){
-          if( ip1 > ipoint ){ setIP.insert(ip1); }
-        }
-        else{
-          if( ip0 > ipoint ){ setIP.insert(ip0); }
-        }
-      }
-    }
-    for(std::set<int>::iterator itr = setIP.begin();itr!=setIP.end();++itr){
-      psup.push_back(*itr);
-    }
-    psup_ind[ipoint+1] = psup_ind[ipoint] + (int)setIP.size();
-  }
-}
-
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 void JArray_AddMasterSlavePattern
 (std::vector<int>& index,
@@ -1227,8 +1130,9 @@ void QuadSubdiv
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind,elsup,
                            aQuad0,nQuad0,4,nPoint0);
-  JArray_MakeEdgeQuad(psup_ind,psup,
-               aQuad0, elsup_ind, elsup, nPoint0);
+  JArrayEdge_MeshElem(psup_ind,psup,
+                       aQuad0, MESHELEM_QUAD, elsup_ind, elsup,
+                       false); // is_bidirectional = false
   const unsigned int ne0 = (int)psup.size();
   aEdgeFace0.resize(0);
   aEdgeFace0.reserve(ne0*4);
@@ -1293,8 +1197,9 @@ void TetSubdiv
   std::vector<int> elsup_ind, elsup;
   makeElemSurroundingPoint(elsup_ind,elsup,
                            aTet0,nTet0,4,nPoint0);
-  JArray_MakeEdgeTet(psup_ind,psup,
-                     aTet0, elsup_ind, elsup, nPoint0);
+  JArrayEdge_MeshElem(psup_ind,psup,
+                       aTet0, MESHELEM_TET, elsup_ind, elsup,
+                       false);
   aTet1.resize(0);
   aTet1.reserve(nTet0*4);
   for(int it=0;it<nt0;++it){
@@ -1496,8 +1401,9 @@ void HexSubdiv
                            aHex0,nHex0,8,nhp0);
   
   //edge
-  JArray_MakeEdgeHex(psupIndHex0, psupHex0,
-              aHex0, elsupIndHex0,elsupHex0, nhp0);
+  JArrayEdge_MeshElem(psupIndHex0, psupHex0,
+                       aHex0, MESHELEM_HEX, elsupIndHex0,elsupHex0,
+                       false); // is_directional = false
   
   //face
   aQuadHex0.clear();

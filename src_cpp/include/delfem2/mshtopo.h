@@ -20,6 +20,7 @@ enum MESHELEM_TYPE
   MESHELEM_PYRAMID = 4,
   MESHELEM_WEDGE = 5,
   MESHELEM_VOX = 6,
+  MESHELEM_LINE = 7,
 };
 
 // 5 : VTK_TRIANGLE
@@ -109,6 +110,45 @@ const int noelElemFace_Wed[5][4] = {
   { 3, 5, 4,-1}
 };
 
+const int mapMeshElemType2NEdgeElem[7] = {
+  3, // TRI
+  6, // TET
+  4, // QUAD
+  12, // HEX
+  8, // PYRAM
+  9, // WEDGE
+  12  // VOX
+};
+const int noelElemEdge_Tri[3][2] = {
+  { 0, 1},
+  { 1, 2},
+  { 2, 0},
+};
+const int noelElemEdge_Tet[6][2] = {
+  { 0, 1},
+  { 0, 2},
+  { 0, 3},
+  { 1, 2},
+  { 1, 3},
+  { 2, 2},
+};
+const int noelElemEdge_Quad[4][2] = {
+  { 0, 1},
+  { 1, 2},
+  { 2, 3},
+  { 3, 0},
+};
+const int noelElemEdge_Hex[12][2] = {
+  {0,1},{1,2},{2,3},{3,0},
+  {4,5},{5,6},{6,7},{7,4},
+  {0,4},{1,5},{2,6},{3,7}
+};
+const int noelElemEdge_Vox[12][2] = {
+  {0,1},{3,2},{4,5},{7,6},
+  {0,3},{1,2},{4,7},{5,6},
+  {0,4},{1,5},{3,7},{2,6} 
+};
+
 /////////////////////////////////////////////
 inline int nNodeElem(MESHELEM_TYPE type){
   return mapMeshElemType2NNodeElem[type];
@@ -131,6 +171,16 @@ inline const int (*noelElemFace(MESHELEM_TYPE type))[4]
     noelElemFace_Vox,
   };
   return noelElemFace0[type];
+}
+inline const int (*noelElemEdge(MESHELEM_TYPE type))[2]
+{
+  const int (*noelElemEdge0[4])[2] = {
+    noelElemEdge_Tri,
+    noelElemEdge_Tet,
+    noelElemEdge_Quad,
+    noelElemEdge_Hex
+  };
+  return noelElemEdge0[type];
 }
 
 void JArray_Sort(const std::vector<int>& index,
@@ -275,31 +325,30 @@ void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     const std::vector<int>& elsup,
                                     int np);
 void JArray_MakeEdgeFromPsup(std::vector<int>& edge_ind,
-              std::vector<int>& edge,
-              /////
-              const std::vector<int>& psup_ind,
-              const std::vector<int>& psup);
-void makeEdgeHex(std::vector<int>& psup_ind,
-                 std::vector<int>& psup,
-                 ////
-                 const std::vector<int>& aHex0,
-                 const std::vector<int>& elsup_ind,
-                 const std::vector<int>& elsup,
-                 int nPo0);
+                             std::vector<int>& edge,
+                             /////
+                             const std::vector<int>& psup_ind,
+                             const std::vector<int>& psup);
 void JArray_MakeEdgeVox(std::vector<int>& psup_ind,
-                 std::vector<int>& psup,
-                 ////
-                 const std::vector<int>& aVox0,
-                 const std::vector<int>& elsup_ind,
-                 const std::vector<int>& elsup,
-                 int nPo0);
-void makeEdgeQuad(std::vector<int>& psup_ind,
-                  std::vector<int>& psup,
-                  ////
-                  const std::vector<int>& aQuad0,
-                  const std::vector<int>& elsup_ind,
-                  const std::vector<int>& elsup,
-                  int nPo0);
+                        std::vector<int>& psup,
+                        ////
+                        const std::vector<int>& aVox0,
+                        const std::vector<int>& elsup_ind,
+                        const std::vector<int>& elsup,
+                        int nPo0);
+void JArrayEdge_MeshElem(std::vector<int>& edge_ind,
+                         std::vector<int>& edge,
+                         ////
+                         const unsigned int* aElm0,
+                         MESHELEM_TYPE elem_type,
+                         const std::vector<int>& elsup_ind,
+                         const std::vector<int>& elsup,
+                         bool is_bidirectional);
+void MeshLine_JArrayEdge(std::vector<unsigned int>& aLine,
+                         ////
+                         const std::vector<int>& psup_ind,
+                         const std::vector<int>& psup);
+
 
 //////////////////////////////////////
 void MarkConnectedElements(std::vector<int>& aIndGroup,

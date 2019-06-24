@@ -5,26 +5,37 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
+
+import OpenGL.GL as gl
+import numpy
+
 import sys
 sys.path.append("../module_py")
 import delfem2 as dfm2
 import delfem2.glfw
 
-import numpy, math
-
 def main():
-  A0 = numpy.zeros((16,32))
-  for iy in range(A0.shape[0]):
-    for ix in range(A0.shape[1]):
-      A0[iy,ix] = 5*math.sin(ix*0.4)*math.cos(iy*0.6) + 5
+  buf_face = None
+  buf_edge = None
+
+  def draw_func():
+    gl.glEnable(gl.GL_LIGHTING)
+    buf_face.draw()
+    gl.glDisable(gl.GL_LIGHTING)
+    gl.glColor3d(0,0,0)
+    buf_edge.draw()
 
   msh = dfm2.Mesh()
-  msh.grid((A0.shape[1],A0.shape[0]))
-  msh.np_pos = numpy.hstack((msh.np_pos,A0.reshape((-1,1))))
-
-  axis = dfm2.AxisXYZ(32)
-  dfm2.glfw.winDraw3d([msh,axis],(400,400))
-
+  msh.read("../test_inputs/bunny_2k.ply")
+  msh.scale_xyz(0.03)
+  msh_edge = msh.mesh_edge()
+  ####
+  win = dfm2.glfw.WindowGLFW(1.0,winsize=(400,300))
+  buf_face = dfm2.GLBufferMesh(msh,is_normal=True)
+  buf_edge = dfm2.GLBufferMesh(msh_edge)
+  win.list_func_draw.append(draw_func)
+  dfm2.setSomeLighting()
+  win.draw_loop()
 
 if __name__ == "__main__":
   main()

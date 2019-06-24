@@ -35,7 +35,6 @@ def main():
   global msh, nav
   msh = dfm2.Mesh()
   msh.read("../test_inputs/bunny_2k.ply")
-  print(type(msh.np_pos),msh.np_elm.dtype)
   msh.scale_xyz(0.02)
 
   nav = dfm2.glfw.NavigationGLFW(1.0)
