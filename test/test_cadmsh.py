@@ -81,26 +81,26 @@ class Test_Mesh(unittest.TestCase):
 
   def test3(self):
     msh = dfm2.Mesh()
-    msh.grid((32,16))
+    msh.set_grid((32,16))
     self.assertIsNot(msh,None)
 
   def test4(self):
-    voxelgrid = dfm2.Grid3D()
+    voxelgrid = dfm2.VoxelGrid()
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
     voxelgrid.add(0, 1, 0)
-    msh = voxelgrid.mesh_quad3d()
+    msh = voxelgrid.mesh_quad()
     msh = msh.subdiv()
     msh = msh.subdiv()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
 
   def test5(self):
-    voxelgrid = dfm2.Grid3D()
+    voxelgrid = dfm2.VoxelGrid()
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
     voxelgrid.add(0, 1, 0)
-    msh = voxelgrid.mesh_hex3d()
+    msh = voxelgrid.mesh_hex()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
 

@@ -152,6 +152,26 @@ void CPreconditionerILU::Initialize_ILU0
 }
 
 
+class CRowLev{
+public:
+  CRowLev() :row(0), lev(0){}
+  CRowLev(int row, int lev) : row(row), lev(lev){}
+  bool operator < (const CRowLev& rhs) const{
+    if (row!=rhs.row) return row < rhs.row;
+    return lev < rhs.lev;
+  }
+public:
+  int row;
+  int lev;
+};
+
+class CRowLevNext{
+public:
+  int row;
+  int lev;
+  int next;
+};
+
 // if(lev_fill == -1){ take all the fills }
 void CPreconditionerILU::Initialize_ILUk
 (const CMatrixSquareSparse& m,
@@ -163,27 +183,9 @@ int lev_fill)
    return;
   }
 
-  class CRowLev{
-  public:
-    CRowLev() :row(0), lev(0){}
-    CRowLev(int row, int lev) : row(row), lev(lev){}
-    bool operator < (const CRowLev& rhs) const{
-      if (row!=rhs.row) return row < rhs.row;
-      return lev < rhs.lev;
-    }
-  public:
-    int row;
-    int lev;
-  };
   std::vector<CRowLev> aRowLev;
   aRowLev.reserve(m.m_ncrs*4);
 
-  class CRowLevNext{
-  public:
-    int row;
-    int lev;
-    int next;
-  };
 
   assert(m.m_nblk_col==m.m_nblk_row);
   const int nblk = m.m_nblk_col;
