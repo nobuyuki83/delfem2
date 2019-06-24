@@ -45,7 +45,7 @@ void SetNewProblem()
     int nnode;
     double* pXYZs = 0;
     int ntri;
-    int* aTriInd = 0;
+    unsigned int* aTriInd = 0;
     //    Load_Ply("homer.ply" ,nnode,pXYZs, ntri,aTriInd);
     Read_Ply("../test_inputs/arm_16k.ply" ,nnode,pXYZs, ntri,aTriInd);
     {

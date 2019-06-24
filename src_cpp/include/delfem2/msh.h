@@ -115,9 +115,9 @@ void RemoveUnreferencedPoints3D(std::vector<double>& aXYZOut,
                                 std::vector<int>& aMapInOut,
                                 const std::vector<double>& aXYZIn,
                                 const std::vector<int>& aTriIn);
-void MakeNormal(std::vector<double>& aNorm,
-                const std::vector<double>& aXYZ,
-                const std::vector<unsigned int>& aTri);
+void Normal_MeshTri3D(double* aNorm,
+                      const double* aXYZ, int nXYZ,
+                      const unsigned int* aTri, int nTri);
 void Quality_MeshTri2D(double& max_aspect, double& min_area,
                        const double* aXY,
                        const int* aTri, int nTri);

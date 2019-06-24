@@ -57,7 +57,7 @@ bool CheckTri(const std::vector<CEPo2>& aEPo2,
 
 void InitializeMesh(std::vector<CEPo2>& aEPo2,
                     std::vector<ETri>& aETri,
-                    const int* aTri,    int nTri,
+                    const unsigned int* aTri,  int nTri,
                     int nXYZ);
 
 bool FindEdge_LookAroundPoint(int& itri0, int& inotri0, int& inotri1,

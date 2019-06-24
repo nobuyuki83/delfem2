@@ -212,7 +212,7 @@ void RefineMesh(std::vector<CEPo2>& aPo3D,
 class CMeshDynTri2D{
 public:
   void Initialize(const double* aXY, int nPo,
-                  const int* aTri, int nTri)
+                  const unsigned int* aTri, int nTri)
   {
     aVec2.resize(nPo);
     for(int ipo=0;ipo<nPo;ipo++){

@@ -47,7 +47,7 @@ void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
 class CMeshDynTri3D{
 public:
   void Initialize(const double* aPo, int nPo, int ndim,
-                  const int* aTri, int nTri)
+                  const unsigned int* aTri, int nTri)
   {
     aVec3.resize(nPo);
     for(int ipo=0;ipo<nPo;ipo++){

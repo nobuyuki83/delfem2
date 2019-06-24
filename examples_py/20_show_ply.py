@@ -12,8 +12,6 @@ import delfem2 as dfm2
 import delfem2.glfw
 
 
-
-
 def main():
   msh = dfm2.Mesh()
   msh.read("../test_inputs/bunny_2k.ply")

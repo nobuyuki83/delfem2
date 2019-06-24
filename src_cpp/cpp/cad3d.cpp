@@ -381,7 +381,10 @@ void CCad3D_Face::MovePoints
        */
     }
   }
-  MakeNormal(aNorm, aXYZ, aTri);
+  aNorm.resize(aXYZ.size());
+  Normal_MeshTri3D(aNorm.data(),
+                   aXYZ.data(), aXYZ.size()/3,
+                   aTri.data(), aTri.size()/3);
 }
 
 void CCad3D_Face::DrawFace() const
@@ -1323,7 +1326,11 @@ void BuildTriMesh
                               aTri.data(),aTri.size()/3,
                               MESHELEM_TRI,
                               (int)aXYZ.size()/3);
-  MakeNormal(aNorm, aXYZ, aTri);
+  aNorm.resize(aXYZ.size());
+  Normal_MeshTri3D(aNorm.data(),
+                   aXYZ.data(), aXYZ.size()/3,
+                   aTri.data(), aTri.size()/3);
+
 }
 
 void UpdateTriMesh
@@ -1365,7 +1372,11 @@ void UpdateTriMesh
       aXYZ[iq0*3+2] += (double)rand()/(RAND_MAX+1.0)*1.0e-5;
     }
   }
-  MakeNormal(aNorm, aXYZ, aTri);
+  aNorm.resize(aXYZ.size());
+  Normal_MeshTri3D(aNorm.data(),
+                   aXYZ.data(), aXYZ.size()/3,
+                   aTri.data(), aTri.size()/3);
+
 }
 
 

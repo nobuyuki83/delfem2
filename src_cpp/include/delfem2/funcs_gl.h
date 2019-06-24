@@ -81,9 +81,14 @@ void DrawPoints2D_Vectors(const double* aXY, int nXY,
 void DrawPoints2D_Points(std::vector<double>& aXY);
 void DrawPoints3D_Points(std::vector<double>& aXYZ);
 
+//////////////
+// Draw Line
+void DrawMeshLine3D_Edge(const double* aXYZ,
+                         int nXYZ,
+                         const unsigned int* aLine,
+                         int nLine);
 ///////////////
 // Draw Tri
-
 
 void DrawMeshTri2D_Face(const std::vector<unsigned int>& aTri,
                         const std::vector<double>& aXY);

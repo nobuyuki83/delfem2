@@ -22,5 +22,5 @@ from .fem import \
   FEM_StorksDynamic2D, \
   FEM_NavierStorks2D
 
-from .cadmsh import Cad2D, Grid3D, SDF, Mesh, CadMesh2D, MeshDynTri2D
+from .cadmsh import Cad2D, VoxelGrid, SDF, Mesh, CadMesh2D, MeshDynTri2D, GLBufferMesh
 from .cadmsh import TET, TRI, HEX, QUAD

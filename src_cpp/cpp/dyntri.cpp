@@ -693,7 +693,7 @@ void InitializeMesh
 (std::vector<CEPo2>& aPo3D,
  std::vector<ETri>& aSTri,
  ////
- const int* aTri,    int nTri,
+ const unsigned int* aTri, int nTri,
  int nXYZ)
 {
   aPo3D.resize(nXYZ);

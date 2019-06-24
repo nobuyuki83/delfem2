@@ -10,8 +10,8 @@ import numpy, os
 import OpenGL.GL as gl
 from typing import Tuple, List
 
-from .libdelfem2 import CppCad2D
-from .libdelfem2 import TRI, QUAD, HEX, TET
+from .libdelfem2 import CppCad2D, CppMeshDynTri2D, CppVoxelGrid, CppMapper
+from .libdelfem2 import TRI, QUAD, HEX, TET, LINE
 from .libdelfem2 import \
   meshquad2d_grid, \
   meshquad3d_voxelgrid, \
@@ -24,10 +24,32 @@ from .libdelfem2 import meshtri3d_read_ply, meshtri3d_read_obj, meshtri3d_read_n
 from .libdelfem2 import mvc
 from .libdelfem2 import meshDynTri2D_CppCad2D, setXY_MeshDynTri2D
 from .libdelfem2 import cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
-from .libdelfem2 import CppMeshDynTri2D, copyMeshDynTri2D, CppMapper
-from .libdelfem2 import CppVoxelGrid, numpyXYTri_MeshDynTri2D
+from .libdelfem2 import copyMeshDynTri2D
+from .libdelfem2 import numpyXYTri_MeshDynTri2D
 from .libdelfem2 import setTopology_ExtrudeTri2Tet
+from .libdelfem2 import cppNormalVtx_Mesh, cppEdge_Mesh
 
+
+def vbo_array(aXY:numpy.ndarray) -> int:
+  assert aXY.dtype == numpy.float64
+  vbo = gl.glGenBuffers(1)
+  gl.glBindBuffer(gl.GL_ARRAY_BUFFER, vbo)
+  gl.glBufferData(gl.GL_ARRAY_BUFFER,
+                  aXY.size * 8,
+                  (gl.ctypes.c_double * aXY.size)(*aXY.flatten()),
+                  gl.GL_STATIC_DRAW)
+  gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
+  return vbo
+
+def ebo_array(aElm:numpy.ndarray) -> int:
+  ebo = gl.glGenBuffers(1)
+  gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, ebo)
+  gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER,
+                  aElm.size*4,
+                  (gl.ctypes.c_uint32 * aElm.size)(*aElm.flatten()),
+                  gl.GL_STATIC_DRAW)
+  gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, 0)
+  return ebo
 
 ####################
 
@@ -42,11 +64,12 @@ class Mesh():
     assert np_pos.dtype == numpy.float64
     assert np_elm.dtype == numpy.uint32
     self.color_face = [0.8, 0.8, 0.8, 1.0]
-    self.is_draw_edge = True
-    self.is_draw_face = True
     self.np_pos = np_pos
     self.np_elm = np_elm
     self.elem_type = elem_type
+    ### draw related functions from here
+    self.is_draw_edge = True
+    self.is_draw_face = True
 
   def minmax_xyz(self):
     if self.np_pos.shape[0] == 0:
@@ -68,6 +91,7 @@ class Mesh():
       gl.glColor4d(self.color_face[0], self.color_face[1], self.color_face[2], self.color_face[3])
       gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, self.color_face)
       draw_mesh_facenorm(self.np_pos,self.np_elm, self.elem_type)
+
     if self.is_draw_edge:
       gl.glDisable(gl.GL_LIGHTING)
       gl.glLineWidth(1)
@@ -107,13 +131,15 @@ class Mesh():
       if ext == 'nas' or ext == 'bdf':
         self.np_pos, self.np_elm = meshtri3d_read_nastran(path_file)
       self.elem_type = TRI
+    assert self.np_elm.dtype == numpy.uint32
+    assert self.np_pos.dtype == numpy.float64
 
-  def grid(self,shape:list):
+  def set_grid(self,shape:List[int]):
     if len(shape) == 2:
       self.np_pos, self.np_elm = meshquad2d_grid(shape[0], shape[1])
       self.elem_type = QUAD
 
-  def set_extrude(self, msh0, nlayer:int):
+  def set_extrude(self, msh0:'Mesh', nlayer:int):
     if msh0.elem_type ==TRI:
       self.elem_type = TET
       ####
@@ -130,7 +156,82 @@ class Mesh():
       setTopology_ExtrudeTri2Tet(self.np_elm,
                                  nlayer,np0,msh0.np_elm)
 
+  def normal_vtx(self) -> numpy.ndarray:
+    assert self.elem_type == TRI
+    np_nrm = numpy.ndarray(self.np_pos.shape,dtype=numpy.float64)
+    cppNormalVtx_Mesh(np_nrm,
+                      self.np_pos, self.np_elm, self.elem_type)
+    return np_nrm
 
+  def mesh_edge(self):
+    np_elem_edge = cppEdge_Mesh(self.np_pos, self.np_elm, self.elem_type)
+    return Mesh(self.np_pos,np_elem_edge,LINE)
+
+
+###########################################################################
+
+class GLBufferMesh():
+  def __init__(self,mesh=None,is_normal=True):
+    self.vbo_pos = 0
+    self.vbo_nrm = 0
+    self.ebo_elm = 0
+    self.ndim = 0
+    self.size_elem = 0
+    self.gl_elem_type = gl.GL_NONE
+
+    if isinstance(mesh,Mesh):
+      self.set_mesh(mesh,is_normal)
+
+  def __del__(self):
+    self.release_buffer()
+
+  def release_buffer(self):
+    if gl.glIsBuffer(self.vbo_pos):
+      gl.glDeleteBuffers(1, self.vbo_pos)
+    self.vbo_pos = 0
+    ##
+    if gl.glIsBuffer(self.vbo_nrm):
+      gl.glDeleteBuffers(1, self.vbo_nrm)
+    self.vbo_nrm = 0
+    ##
+    if gl.glIsBuffer(self.ebo_elm):
+      gl.glDeleteBuffers(1, self.ebo_elm)
+    self.ebo_elm = 0
+
+  def set_mesh(self,msh:Mesh, is_normal:bool):
+    assert msh.elem_type == TRI or msh.elem_type == QUAD or LINE
+    ####
+    self.release_buffer()
+    ####
+    self.vbo_pos = vbo_array(msh.np_pos)
+    self.ebo_elm = ebo_array(msh.np_elm)
+    self.ndim = msh.np_pos.shape[1]
+    self.size_elem = msh.np_elm.size
+    if msh.elem_type == TRI:
+      self.gl_elem_type = gl.GL_TRIANGLES
+    elif msh.elem_type == LINE:
+      self.gl_elem_type = gl.GL_LINES
+    else:
+      assert(0)
+
+    if is_normal and (msh.elem_type == TRI or msh.elem_type == QUAD):
+      nrm = msh.normal_vtx()
+      self.vbo_nrm = vbo_array(nrm)
+
+  def draw(self):
+    assert gl.glIsBuffer(self.vbo_pos)
+    assert gl.glIsBuffer(self.ebo_elm)
+    ####
+    gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
+    gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo_pos)
+    gl.glVertexPointer(self.ndim, gl.GL_DOUBLE, 0, None)
+    if gl.glIsBuffer(self.vbo_nrm):
+      gl.glEnableClientState(gl.GL_NORMAL_ARRAY)
+      gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo_nrm)
+      gl.glNormalPointer(gl.GL_DOUBLE, 0, None)
+    gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.ebo_elm)
+    gl.glDrawElements(self.gl_elem_type, self.size_elem, gl.GL_UNSIGNED_INT, None)
+    gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
 
 ###########################################################################
 
@@ -173,20 +274,20 @@ class MeshDynTri2D(Mesh):
 
 ###########################################################################
 
-class Grid3D:
+class VoxelGrid:
   def __init__(self):
     self.vg = CppVoxelGrid()
 
   def add(self,ix,iy,iz):
     self.vg.add(ix,iy,iz)
 
-  def mesh_quad3d(self) -> Mesh:
+  def mesh_quad(self) -> Mesh:
     list_xyz, list_tri = meshquad3d_voxelgrid(self.vg)
     np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
     np_elm = numpy.array(list_tri, dtype=numpy.uint32).reshape((-1, 4))
     return Mesh(np_pos, np_elm, QUAD)
 
-  def mesh_hex3d(self) -> Mesh:
+  def mesh_hex(self) -> Mesh:
     list_xyz, list_tri = meshhex3d_voxelgrid(self.vg)
     np_pos = numpy.array(list_xyz, dtype=numpy.float64).reshape((-1, 3))
     np_elm = numpy.array(list_tri, dtype=numpy.uint32).reshape((-1, 8))

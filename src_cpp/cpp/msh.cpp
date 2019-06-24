@@ -160,14 +160,11 @@ void RemoveUnreferencedPoints3D
   }
 }
 
-void MakeNormal
-(std::vector<double>& aNorm,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri)
+void Normal_MeshTri3D
+(double* aNorm,
+ const double* aXYZ, int nXYZ,
+ const unsigned int* aTri, int nTri)
 {
-  int nXYZ = (int)aXYZ.size()/3;
-  int nTri = (int)aTri.size()/3;
-  aNorm.resize(nXYZ*3);
   for(int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
   for(int itri=0;itri<nTri;itri++){
     const int i0 = aTri[itri*3+0];
