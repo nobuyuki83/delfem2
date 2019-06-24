@@ -19,12 +19,12 @@ class Test_PBD(unittest.TestCase):
       pbd.step_time()
 
   def test_pbd_hex(self):
-    voxelgrid = dfm2.Grid3D()
+    voxelgrid = dfm2.VoxelGrid()
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
     voxelgrid.add(2, 0, 0)
     voxelgrid.add(1, 1, 0)
-    msh = voxelgrid.mesh_hex3d()
+    msh = voxelgrid.mesh_hex()
     pbd = dfm2.PBD()
     pbd.updated_topology(msh)
     npIdP = numpy.array([0, 1, 2, 3], dtype=numpy.int32)
