@@ -12,13 +12,13 @@ import delfem2 as dfm2
 import delfem2.glfw
 
 def show_hex(voxelgrid):
-  msh = voxelgrid.mesh_hex3d()
+  msh = voxelgrid.mesh_hex()
   msh = msh.subdiv()
-  axis = dfm2.AxisXYZ()
+  axis = dfm2.gl.AxisXYZ()
   dfm2.glfw.winDraw3d([msh, axis], (400, 400))
 
 def pbd_hex(voxelgrid):
-  msh = voxelgrid.mesh_hex3d()
+  msh = voxelgrid.mesh_hex()
   pbd = dfm2.PBD()
   pbd.updated_topology(msh)
   ####
@@ -28,19 +28,19 @@ def pbd_hex(voxelgrid):
                               mesh=msh, npIdP=npIdP, dt=pbd.dt)
   ####
   msh_def = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=msh.np_elm,elem_type=dfm2.HEX)
-  axis = dfm2.AxisXYZ()
+  axis = dfm2.gl.AxisXYZ()
   dfm2.glfw.winDraw3d([fvs, pbd, msh_def, axis], (400, 400))
 
 def show_quad(voxelgrid):
-  msh = voxelgrid.mesh_quad3d()
+  msh = voxelgrid.mesh_quad()
   msh = msh.subdiv()
   msh = msh.subdiv()
   msh = msh.subdiv()
-  axis = dfm2.AxisXYZ()
+  axis = dfm2.gl.AxisXYZ()
   dfm2.glfw.winDraw3d([msh, axis], (400, 400))
 
 def main():
-  grid3d = dfm2.Grid3D()
+  grid3d = dfm2.VoxelGrid()
   grid3d.add(0, 0, 0)
   grid3d.add(1, 0, 0)
   grid3d.add(2, 0, 0)

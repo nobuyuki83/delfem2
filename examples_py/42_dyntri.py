@@ -15,7 +15,7 @@ def main_CppMeshDynTri2D_0():
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
   cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(cad.ccad,0.1)
   cdmesh.check()
-  dfm2.glfw.winDraw3d([cdmesh,dfm2.AxisXYZ()],winsize=(400,300))
+  dfm2.glfw.winDraw3d([cdmesh,dfm2.gl.AxisXYZ()],winsize=(400,300))
 
 
 def main_CppMeshDynTri2D_1():

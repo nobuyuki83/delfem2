@@ -20,5 +20,5 @@ jt2 = dfm2.Joint(0,3, [+1,+1,-1])
 jt3 = dfm2.Joint(0,4, [+1,+1,+1])
 
 rb_asm = dfm2.RigidBodyAssembly_Static([rb0,rb1,rb2,rb3,rb4],[jt0,jt1,jt2,jt3])
-axis = dfm2.AxisXYZ(1)
+axis = dfm2.gl.AxisXYZ(1)
 dfm2.glfw.winDraw3d([axis,rb_asm],winsize=(400,300))
