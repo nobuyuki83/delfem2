@@ -182,20 +182,17 @@ class GLBufferMesh():
     if isinstance(mesh,Mesh):
       self.set_mesh(mesh,is_normal)
 
-  def __del__(self):
-    self.release_buffer()
-
   def release_buffer(self):
     if gl.glIsBuffer(self.vbo_pos):
-      gl.glDeleteBuffers(1, self.vbo_pos)
+      gl.glDeleteBuffers(1, [self.vbo_pos])
     self.vbo_pos = 0
     ##
     if gl.glIsBuffer(self.vbo_nrm):
-      gl.glDeleteBuffers(1, self.vbo_nrm)
+      gl.glDeleteBuffers(1, [self.vbo_nrm])
     self.vbo_nrm = 0
     ##
     if gl.glIsBuffer(self.ebo_elm):
-      gl.glDeleteBuffers(1, self.ebo_elm)
+      gl.glDeleteBuffers(1, [self.ebo_elm])
     self.ebo_elm = 0
 
   def set_mesh(self,msh:Mesh, is_normal:bool):

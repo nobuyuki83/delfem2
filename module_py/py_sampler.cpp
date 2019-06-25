@@ -47,7 +47,7 @@ py::array_t<float> color_buffer_4float(CGPUSampler& sampler)
 void init_sampler(py::module &m){
   ///////////////////////////////////
   // FrameBuffer
-  py::class_<CFrameBufferManager>(m,"FrameBufferManager", "Buffer Class for Depth")
+  py::class_<CFrameBufferManager>(m,"CppFrameBufferManager", "Buffer Class for Depth")
   .def(py::init<>())
   .def("set_buffer_size", &CFrameBufferManager::Init)
   .def("start",           &CFrameBufferManager::Start)
@@ -55,12 +55,19 @@ void init_sampler(py::module &m){
   
   //////////////////////////////////
   // Depth&Color Sampler
-  py::class_<CGPUSampler>(m,"GPUSampler","sample color and depth in the frame buffer")
+  py::class_<CGPUSampler>(m,"CppGPUSampler", "sample color and depth in the frame buffer")
   .def(py::init<>())
   .def("init",       &CGPUSampler::Init,
-       py::arg("size_res_width"),py::arg("size_res_height"),py::arg("format_color"),py::arg("is_depth"))
+       py::arg("size_res_width"),
+       py::arg("size_res_height"),
+       py::arg("format_color"),
+       py::arg("is_depth"))
   .def("set_coordinate", &CGPUSampler::SetCoord,
-       py::arg("len_grid"),py::arg("depth_max"), py::arg("org"), py::arg("dir_prj"), py::arg("dir_width"))
+       py::arg("len_grid"),
+       py::arg("depth_max"),
+       py::arg("org"),
+       py::arg("dir_prj"),
+       py::arg("dir_width"))
   .def("draw",       &CGPUSampler::Draw)
   .def("minmax_xyz", &CGPUSampler::MinMaxXYZ)
   .def("start",      &CGPUSampler::Start)

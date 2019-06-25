@@ -32,6 +32,46 @@
 #include "delfem2/v23q_gl.h"  // vec3, mat3
 #include "delfem2/gpusampler.h"
 
+/*
+double Dot(const std::vector<double>& p0, const std::vector<double>& p1){
+  const int n = p0.size();
+  double v=0;
+  for(int i=0;i<n;++i){ v += p0[i]*p1[i]; }
+  return v;
+}
+
+void Scale(std::vector<double>& p0, double s)
+{
+  const int n = p0.size();
+  for(int i=0;i<n;++i){ p0[i] *= s; }
+}
+
+void Normalize(std::vector<double>& p0)
+{
+  const double ss = Dot(p0,p0);
+  Scale(p0,1.0/sqrt(ss));
+}
+ */
+
+double Dot(const double* p0, const double* p1, int ndof){
+  double v=0;
+  for(int i=0;i<ndof;++i){ v += p0[i]*p1[i]; }
+  return v;
+}
+
+void Scale(double* p0, int n, double s)
+{
+  for(int i=0;i<n;++i){ p0[i] *= s; }
+}
+
+void Normalize(double* p0, int n)
+{
+  const double ss = Dot(p0,p0,n);
+  Scale(p0,n,1.0/sqrt(ss));
+}
+
+
+
 /////////////////////////////////
 
 void CGPUSampler::SetColor(double r, double g, double b){
@@ -72,6 +112,8 @@ void CGPUSampler::SetCoord
   z_axis[0] = dir_prj[0];  z_axis[1] = dir_prj[1];  z_axis[2] = dir_prj[2];
   origin[0] = org_prj[0];  origin[1] = org_prj[1];  origin[2] = org_prj[2];
   x_axis[0] = dir_width[0];  x_axis[1] = dir_width[1];  x_axis[2] = dir_width[2];
+  Normalize(z_axis,3);
+  Normalize(x_axis,3);
 }
 
 void CGPUSampler::SetView(){
