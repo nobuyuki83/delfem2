@@ -27,8 +27,7 @@ def display():
   glutSolidTeapot(0.1)
 
   glDisable(GL_LIGHTING)
-  glLineWidth(3)  
-  dfm2.gl.draw_axis(size=0.2)
+  glLineWidth(3)
   glutSwapBuffers()
 
 def reshape(width, height):

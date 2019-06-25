@@ -47,7 +47,7 @@ def diffuse(cad,mesh):
   field = dfm2.VisFEM_ColorContour(fem,name_color="value")
   field.draw_val_min = 0.0
   field.draw_val_max = 0.3
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([fem,field,axis])
 
 
@@ -80,7 +80,7 @@ def linear_solid_dynamic(cad,mesh):
   print(fem.ls.conv_hist)
   ####
   field = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([fem,field,axis])
 
 
@@ -96,7 +96,7 @@ def storks_static(cad,mesh):
   field_p = dfm2.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
   field_p.set_color_minmax()
   field_v = dfm2.VisFEM_Hedgehog(fem, name_vector="vec_val")
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([field_p,field_v,axis])
 
 def storks_dynamic(cad,mesh):
@@ -111,7 +111,7 @@ def storks_dynamic(cad,mesh):
   field_p = dfm2.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
   field_p.set_color_minmax()
   field_v = dfm2.VisFEM_Hedgehog(fem, name_vector="vec_val")
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([fem,field_p,field_v,axis])
 
 
@@ -125,7 +125,7 @@ def navir_storks(cad,mesh):
   field_p = dfm2.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
   field_p.set_color_minmax()
   field_v = dfm2.VisFEM_Hedgehog(fem, name_vector="vec_val")
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([fem,field_p,field_v,axis])
 
 
@@ -144,7 +144,7 @@ def fem_cloth():
   fem.ls.bc[npIdP,0:3] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([fem,mesh2,axis])
 
 
@@ -174,7 +174,7 @@ def pbd_cloth():
   pbd.bc[npIdP] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([pbd,mesh2,axis])
 
 

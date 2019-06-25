@@ -69,6 +69,7 @@ class VisFEM_ColorContour():
     ####
     self.name_disp = name_disp
     self.disp_mode = 'disp'
+    self.is_lighting = True
 
   def minmax_xyz(self):
     return self.fem.mesh.minmax_xyz()
@@ -83,6 +84,9 @@ class VisFEM_ColorContour():
 
   def draw(self):
     mesh = self.fem.mesh
+    if self.is_lighting:
+      gl.glEnable(gl.GL_LIGHTING)
+
     if hasattr(self.fem, self.name_color):
       npColor = getattr(self.fem, self.name_color)
       assert type(npColor) == numpy.ndarray

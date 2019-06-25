@@ -21,7 +21,7 @@ def height_map():
   msh = dfm2.Mesh()
   msh.set_grid((A0.shape[1],A0.shape[0]))
   msh.np_pos = numpy.hstack((msh.np_pos,A0.reshape((-1,1))))
-  axis = dfm2.AxisXYZ(32)
+  axis = dfm2.gl.AxisXYZ(32)
   print("hight_map")
   dfm2.glfw.winDraw3d([msh,axis],(400,400))
 

@@ -22,7 +22,7 @@ def example1():
   fem.sdf.list_sdf.append( dfm2.SDF_Sphere(0.55,[0,+0.5,-1.0],True) )
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
-  axis = dfm2.AxisXYZ(1.0)
+  axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.glfw.winDraw3d([fem,mesh2,axis,fem.sdf])
 
 
