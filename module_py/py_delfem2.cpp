@@ -204,14 +204,6 @@ PYBIND11_MODULE(libdelfem2, m) {
   .def("center",             &CBV3D_AABB::Center, "center position")
   .def_readwrite("isActive", &CBV3D_AABB::is_active);
   
-  py::class_<CAxisXYZ>(m,"AxisXYZ","3D axis class")
-  .def(py::init<>())
-  .def(py::init<double>(), py::arg("len"))
-  .def("draw",                 &CAxisXYZ::Draw)
-  .def("minmax_xyz",           &CAxisXYZ::MinMaxXYZ)
-  .def_readwrite("len",        &CAxisXYZ::len)
-  .def_readwrite("line_width", &CAxisXYZ::line_width);
-  
   ///////////////////////////////////
   // voxel
   py::class_<CGrid3D>(m, "CppVoxelGrid", "voxel grid class")

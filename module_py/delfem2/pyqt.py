@@ -91,7 +91,6 @@ class NavigationPyQt:
 class QGLW_Nav3D(QOpenGLWidget):
   def __init__(self, parent=None):
     super(QGLW_Nav3D, self).__init__(parent)
-    self.obj = None
     self.nav = NavigationPyQt(view_height=1.0)
 
   def minimumSizeHint(self):
@@ -101,7 +100,6 @@ class QGLW_Nav3D(QOpenGLWidget):
     return QSize(600, 600)
 
   def initializeGL(self):
-    print(delfem2.gl.getOpenglInfo())
     gl.glClearColor(0.8, 0.8, 1.0, 1.0)
     gl.glShadeModel(gl.GL_FLAT)
     gl.glEnable(gl.GL_DEPTH_TEST)
@@ -109,11 +107,11 @@ class QGLW_Nav3D(QOpenGLWidget):
     gl.glDisable(gl.GL_LIGHTING)
     gl.glEnable(gl.GL_POLYGON_OFFSET_FILL)
     gl.glPolygonOffset(1.1, 4.0 )
+    dfm2.setSomeLighting()
 
   def paintGL(self):
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
     self.nav.camera.set_gl_camera()
-    self.obj.draw()
 
   def resizeGL(self, width, height):
     gl.glViewport(0,0,width,height)
@@ -124,6 +122,32 @@ class QGLW_Nav3D(QOpenGLWidget):
   def mouseMoveEvent(self, event):
     self.nav.motion(event, self.frameSize())
     self.update()
+
+  def wheelEvent(self,event):
+    v = 0.1*(event.angleDelta().y()/120.0)
+    self.nav.camera.scale *= math.exp(v)
+    self.update()
+
+
+
+
+class QGLW_Mesh(QGLW_Nav3D):
+  def __init__(self):
+    super(QGLW_Mesh, self).__init__()
+    self.msh = None
+
+  def initializeGL(self):
+    super().initializeGL()
+    self.buff_face = dfm2.GLBufferMesh(self.msh, is_normal=True)
+
+  def paintGL(self):
+    super().paintGL()
+    if self.buff_face is None:
+      self.msh.draw()
+    else:
+      gl.glEnable(gl.GL_LIGHTING)
+      self.buff_face.draw()
+
 
 
 class QGLW_Cad2D(QOpenGLWidget):

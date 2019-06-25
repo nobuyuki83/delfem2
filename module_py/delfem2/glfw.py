@@ -8,9 +8,10 @@
 import OpenGL.GL as gl
 import numpy
 import glfw
+from typing import List
 
 from .gl import Camera, screenUnProjection, screenUnProjectionDirection
-from .libdelfem2 import AABB3, setSomeLighting, FrameBufferManager, glew_init
+from .libdelfem2 import AABB3, setSomeLighting, CppFrameBufferManager, glew_init
 
 class NavigationGLFW:
   def __init__(self,view_height):
@@ -76,6 +77,12 @@ class WindowGLFW:
     self.color_bg = (1,1,1)
     gl.glEnable(gl.GL_DEPTH_TEST)
 
+  def __enter__(self):
+    pass
+
+  def __exit__(self, exc_type, exc_val, exc_tb):
+    self.close()
+
   def draw_loop(self):
     """
     Enter the draw loop
@@ -85,7 +92,7 @@ class WindowGLFW:
     glfw.set_mouse_button_callback(self.win, self.mouse)
     glfw.set_cursor_pos_callback(self.win, self.motion)
     glfw.set_key_callback(self.win, self.keyinput)
-    glfw.set_window_size_callback(self.win, self.window_size)
+#    glfw.set_window_size_callback(self.win, self.window_size)
     while not glfw.window_should_close(self.win):
       gl.glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
       gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
@@ -127,15 +134,14 @@ class WindowGLFW:
     src1 = screenUnProjection(numpy.array([float(self.wm.mouse_x),float(self.wm.mouse_y),0.0]),
                              mMV, mPj)
     dir = screenUnProjectionDirection(numpy.array([0,0,1]), mMV,mPj)
-#    print(src0,src1,dir)
     for func_motion in self.list_func_motion:
       func_motion(src0,src1,dir)
 
   def keyinput(self,win0,key,scancode,action,mods):
     self.wm.keyinput(win0,key,scancode,action,mods)
 
-  def window_size(self,win0,w,h):
-    gl.glViewport(0,0,w,h)
+#  def window_size(self,win0,w,h):
+#    gl.glViewport(0,0,w,h) # because of multisampling this doesn't work
 
 
 
@@ -232,22 +238,32 @@ def imgDraw3d(list_obj,winsize=(400,300)):
   img = numpy.reshape(img,(buff_h,buff_w,3))
   return img
 
-class DepthColorBuffer:
-  def __init__(self,
-    win_size:list,
-    format_color:str,
-    is_depth:bool):
-    self.win = WindowGLFW(isVisible=False)
-    self.fbm = FrameBufferManager()
-    glew_init()
-    self.fbm.set_buffer_size(win_size[0],win_size[1], format_color,is_depth)
-  def start(self):
-    self.fbm.start()
-  def end(self):
-    self.fbm.end()
-  def close(self):
-    self.end()
-    self.win.close()
 
-#def take_depth_shot(render_func, sampler:GPUSampler, buffer:DepthColorBuffer):
+class GPUSamplerBufferGLFW:
+  def __init__(self,
+               win_size: List[int],
+               format_color: str,
+               is_depth: bool):
+    self.win = WindowGLFW(isVisible=False)
+    glew_init()
+    self.fbm = CppFrameBufferManager()
+    self.fbm.set_buffer_size(win_size[0],win_size[1], format_color,is_depth)
+    self.fbm.start()
+    self.is_open = True
+
+  def __enter__(self):
+    return self
+
+  def __exit__(self, ex_type, ex_value, trace):
+    self.close()
+
+  def __del__(self):
+    self.close()
+
+  def close(self):
+    if self.is_open:
+      self.fbm.end()
+      self.win.close()
+    self.is_open = False
+
 
