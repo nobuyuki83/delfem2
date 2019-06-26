@@ -200,8 +200,8 @@ int DetDelaunay(const CVector2& p0,
                 const CVector2& p3);
 
 // move to paramgeo2d?
-CVector2 getPointCubicBezier(double t,
-                             const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
+CVector2 pointCurve_BezierCubic(double t,
+                                const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////

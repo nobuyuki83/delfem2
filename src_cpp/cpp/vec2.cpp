@@ -433,7 +433,7 @@ int DetDelaunay
 	return 0;
 }
 
-CVector2 getPointCubicBezier
+CVector2 pointCurve_BezierCubic
 (double t,
  const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4)
 {
@@ -464,11 +464,13 @@ void getCubicBezierCurve
   for(int is=0;is<ns;is++){
     for(int i=0;i<n;i++){
       double t = (double)i/n;
-      aP[is*n+i] = getPointCubicBezier(t,aCP[is*3+0],aCP[is*3+1],aCP[is*3+2],aCP[is*3+3]);
+      aP[is*n+i] = pointCurve_BezierCubic(t,aCP[is*3+0],aCP[is*3+1],aCP[is*3+2],aCP[is*3+3]);
     }
   }
   aP[ns*n] = aCP[ns*3];
 }
+
+
 
 double getLengthPolyoine
 (const std::vector<CVector2>& aP)
@@ -542,9 +544,11 @@ void MeanValueCoordinate2D
     CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
     CVector2 v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
     double c01 = (v0*v1)/(v0.Length()*v1.Length());
+    double s01 = (Cross(v0,v1)>0)?1:-1;
     double c12 = (v1*v2)/(v1.Length()*v2.Length());
-    double t01 = sqrt((1-c01)/(1+c01));
-    double t12 = sqrt((1-c12)/(1+c12));
+    double s12 = (Cross(v1,v2)>0)?1:-1;
+    double t01 = s01*sqrt((1-c01)/(1+c01));
+    double t12 = s12*sqrt((1-c12)/(1+c12));
     double w1 =  (t01+t12)/v1.Length();
     aW[iv1] = w1;
     sum += w1;

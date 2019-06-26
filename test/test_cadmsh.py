@@ -19,7 +19,7 @@ class Test_Cad2D(unittest.TestCase):
     self.assertEqual(cad.ccad.ind_edge_face(0),[(0,True),(1,True),(2,True),(3,True)])
     cad.ccad.check()
     ####
-    cad.add_vtx_edge(0.0,0.0, 0)
+    cad.add_vtx_edge(0,[0.0,0.0])
     cad.ccad.check()
     self.assertEqual(cad.ccad.ind_vtx_face(0),[0,4,1,2,3])
     self.assertEqual(cad.ccad.ind_edge_face(0),[(0,True),(4,True),(1,True),(2,True),(3,True)])

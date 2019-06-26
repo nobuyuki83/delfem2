@@ -15,6 +15,7 @@ import delfem2.cadmshsim
 def mesh():
   cmf = dfm2.CadMesh2D(edge_length=0.1)
   cmf.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
+  cmf.set_edge_type(0,1,[0.2, 0.3, -0.2, 0.3])
   dfm2.glfw.winDraw3d([cmf])
 
 def poisson():
@@ -45,11 +46,9 @@ def pbd_cloth():
   dfm2.glfw.winDraw3d([cmf])
 
 if __name__ == "__main__":
-  pbd_cloth()
-#  exit()
-
   mesh()
   poisson()
   solid_linear_static()
   solid_linear_eigen()
   pbd2d()
+  pbd_cloth()

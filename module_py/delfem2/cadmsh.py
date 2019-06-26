@@ -326,8 +326,8 @@ class Cad2D():
     if btn == 0:
       if action == 1:
         self.ccad.pick(src[0],src[1],view_height)
-      elif action == 0:
-        self.clean_picked()
+#      elif action == 0:
+#        self.clean_picked()
 
   def motion(self,src0,src1,dir) -> None:
     self.ccad.drag_picked(src1[0],src1[1], src0[0],src0[1])
@@ -339,8 +339,8 @@ class Cad2D():
     self.ccad.add_polygon(list_xy)
     self.ccad.check()
 
-  def add_vtx_edge(self, x, y, iedge) -> None:
-    self.ccad.add_vtx_edge(x,y,iedge)
+  def add_vtx_edge(self, iedge, pos:List[float]) -> None:
+    self.ccad.add_vtx_edge(pos[0],pos[1],iedge)
     self.ccad.check()
 
   def mesh(self,edge_len=0.05) -> Tuple[Mesh,MapCadMesh2D]:
@@ -352,6 +352,12 @@ class Cad2D():
     dmesh.np_elm = np_elm
     dmesh.elem_type = TRI
     return dmesh, MapCadMesh2D(self.ccad,flg_pnt,flg_tri)
+
+  def set_edge_type(self, iedge:int, type:int, param:List[float]):
+    self.ccad.set_edge_type(iedge,type,param)
+
+  def edge_type(self, iedge:int) -> int:
+    return self.ccad.edge_type(iedge)
 
   def iedge_picked(self) -> int:
     return self.ccad.iedge_picked
@@ -404,9 +410,10 @@ class CadMesh2D(Cad2D):
         np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
         self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
         self.dmsh.syncXY_from_npPos()
-      max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
-      if max_asp > 5.0 or min_area < 0.0:
-        self.remesh()
+
+#      max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
+#      if max_asp > 5.0 or min_area < 0.0:
+#        self.remesh()
 
   def remesh(self):
     self.dmsh.cdmsh, flg_pnt, flg_tri = meshDynTri2D_CppCad2D(self.ccad, self.edge_length)
@@ -424,12 +431,16 @@ class CadMesh2D(Cad2D):
       self.listW.append( [np_ind_face,W] )
     assert len(self.listW) == self.ccad.nface()
 
-  def add_vtx_edge(self, x, y, iedge):
-    super().add_vtx_edge(x,y,iedge)
+  def add_vtx_edge(self, iedge:int, pos:List[float]):
+    super().add_vtx_edge(iedge,[pos[0],pos[1]])
     self.remesh()
 
   def add_polygon(self,list_xy):
     self.ccad.add_polygon(list_xy)
+    self.remesh()
+
+  def set_edge_type(self, iedge:int, type:int, param:List[float]):
+    super().set_edge_type(iedge,type,param)
     self.remesh()
 
 #####################################################

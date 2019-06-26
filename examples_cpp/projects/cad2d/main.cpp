@@ -108,11 +108,13 @@ void myGlutMouse(int button, int state, int x, int y)
   if( state == GLUT_DOWN ){
     cad.Pick(src_pick[0],src_pick[1],view_height);
   }
+  /*
   if( state == GLUT_UP ){
     cad.ivtx_picked = -1;
     cad.iedge_picked = -1;
     cad.iface_picked = -1;
   }
+   */
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
@@ -147,7 +149,12 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       cad.AddVtxEdge(x0, -0.2, 5);
       break;
     }
-      
+    case 'e':
+    {
+      double param[4] = {0.2, 0.3, 0.8, 0.3};
+      std::vector<double> vparam(param,param+4);
+      cad.SetEdgeType( 0, 1, vparam );
+    }
   }
   ::glutPostRedisplay();
 }
