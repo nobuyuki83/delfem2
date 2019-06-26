@@ -150,7 +150,7 @@ void FaceCenterNormal(
   nf.SetZero();
   for (int iie = 0; iie<nIE; ++iie){
     int ie0 = aIE[(iie+0)%nIE].first;
-    int ie1 = aIE[(iie+1)%nIE].first;
+//    int ie1 = aIE[(iie+1)%nIE].first;
     bool dir0 = aIE[(iie+0)%nIE].second;
     CVector3 pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
     CVector3 pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
@@ -252,7 +252,7 @@ void CCad3D_Face::Initialize
                                      loopIP_ind,loopIP);
       if( elen > 1.0e-10 ){
         CInputTriangulation_Uniform param(1.0);
-        std::vector<int> aFlgPnt, aFlgTri;
+        std::vector<int> aFlgPnt(aVec2.size()), aFlgTri(aETri.size());
         MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                       aVec2.size(), 0, elen, param);
       }
@@ -1147,8 +1147,8 @@ void DivideFace
  double elen)
 {
   if( inorm == -1 ) return;
-  const CVector3& plane_ex = CVector3::Axis((inorm+1)%3);
-  const CVector3& plane_ey = CVector3::Axis((inorm+2)%3);
+//  const CVector3& plane_ex = CVector3::Axis((inorm+1)%3);
+//  const CVector3& plane_ey = CVector3::Axis((inorm+2)%3);
   const CVector3 n01 = CVector3::Axis(inorm);
   const std::vector< std::pair<int,bool> > aIE = aFace[ifc].aIE;
   const int nie = (int)aIE.size();

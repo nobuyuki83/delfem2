@@ -100,7 +100,7 @@ class VisFEM_ColorContour():
       npDisp = getattr(self.fem, self.name_disp)
       assert type(npDisp) == numpy.ndarray
       if self.disp_mode == 'disp':
-        drawField_disp(mesh.np_pos, mesh.np_elm,
+        drawField_disp(mesh.np_pos, mesh.np_elm, mesh.elem_type,
                        npDisp)
       if self.disp_mode == 'hedgehog':
         gl.glDisable(gl.GL_LIGHTING)

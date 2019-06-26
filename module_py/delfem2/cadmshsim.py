@@ -8,7 +8,7 @@ from .fem import FieldValueSetter
 from .fem import VisFEM_ColorContour
 
 from .cadmsh import CadMesh2D, cad_getPointsEdge, Mesh
-
+from .libdelfem2 import setSomeLighting
 
 class CadMesh2D_FEMPoisson(CadMesh2D):
 
@@ -95,9 +95,12 @@ class CadMesh2D_FEMSolidLinearEigen(CadMesh2D):
 
   def draw(self):
     self.ccad.draw()
-    gl.glDisable(gl.GL_LIGHTING)
+    gl.glEnable(gl.GL_LIGHTING)
+    setSomeLighting()
     gl.glColor3d(0.8,0.8,0.8)
+    gl.glDisable(gl.GL_CULL_FACE)
     self.vis.draw()
+#    self.msh25.draw()
 
   def motion(self,src0,src1,dir):
     super().motion(src0,src1,dir)

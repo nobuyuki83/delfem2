@@ -26,6 +26,7 @@
 #include "delfem2/bv.h"
 
 #include "delfem2/dyntri.h"
+#include "delfem2/vec2.h"
 #include "delfem2/dyntri_v2.h"
 
 #include "delfem2/funcs_gl.h"
@@ -34,6 +35,46 @@
 
 #include "delfem2/cad2d.h"
 
+
+void DrawEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_elem)
+{
+  if( is_selected ){ ::glColor3d(1,1,0); }
+  else{ ::glColor3d(0,0,0); }
+  ::glBegin(GL_LINE_STRIP);
+  ::myGlVertex( edge.p0 );
+  for(unsigned int ip=0;ip<edge.aP.size();++ip){
+    ::myGlVertex( edge.aP[ip] );
+  }
+  ::myGlVertex( edge.p1 );
+  ::glEnd();
+  ////
+  if( is_selected ){
+    if( edge.type_edge == 1 ){
+      assert( edge.param.size() == 4 );
+      const CVector2 lx = (edge.p1 - edge.p0).Normalize();
+      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
+      const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
+      ::glColor3d(0,1,0);
+      ::glBegin(GL_LINES);
+      ::myGlVertex(edge.p0);
+      ::myGlVertex(q0);
+      ::myGlVertex(edge.p1);
+      ::myGlVertex(q1);
+      ::glEnd();
+      if( ipicked_elem == 1 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
+      else{ ::glColor3d(0.0, 0.8, 0.0 ); }
+      ::glBegin(GL_POINTS);
+      ::myGlVertex(q0);
+      ::glEnd();
+      if( ipicked_elem == 2 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
+      else{ ::glColor3d(0.0, 0.8, 0.0 ); }
+      ::glBegin(GL_POINTS);
+      ::myGlVertex(q1);
+      ::glEnd();
+    }
+  }
+}
 
 void CCad2D::Draw() const
 {
@@ -48,16 +89,11 @@ void CCad2D::Draw() const
   ::glEnd();
   /////
   ::glLineWidth(3);
-  ::glBegin(GL_LINES);
   for(unsigned int ie=0;ie<aEdge.size();++ie){
-    if( (int)ie == iedge_picked ){ ::glColor3d(1,1,0); }
-    else{ ::glColor3d(0,0,0); }
-    int iv0 = topo.aEdge[ie].iv0;
-    int iv1 = topo.aEdge[ie].iv1;
-    ::glVertex3d( aVtx[iv0].pos.x, aVtx[iv0].pos.y, -0.1);
-    ::glVertex3d( aVtx[iv1].pos.x, aVtx[iv1].pos.y, -0.1);
+    DrawEdge(aEdge[ie],
+             (int)ie == iedge_picked,
+             this->ipicked_elem);
   }
-  ::glEnd();
   //////
   if( is_draw_face ){
     ::glLineWidth(1);
@@ -74,9 +110,26 @@ void CCad2D::Draw() const
   }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////
+
 void CCad2D::Pick(double x0, double y0,
                   double view_height)
 {
+  CVector2 pin(x0,y0);
+  if( this->iedge_picked != -1 ){
+    const CCad2D_EdgeGeo& edge = aEdge[iedge_picked];
+    if( edge.type_edge == 1 ){
+      assert( edge.param.size() == 4 );
+      const CVector2 lx = (edge.p1 - edge.p0).Normalize();
+      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
+      const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
+      if( Distance(pin, q0) < view_height*0.05 ){ this->ipicked_elem = 1; return; }
+      if( Distance(pin, q1) < view_height*0.05 ){ this->ipicked_elem = 2; return; }
+    }
+  }
+  this->ipicked_elem = 0;
   this->ivtx_picked = -1;
   this->iedge_picked = -1;
   this->iface_picked = -1;
@@ -126,12 +179,30 @@ void CCad2D::DragPicked(double p1x, double p1y, double p0x, double p0y)
     return;
   }
   if( iedge_picked >= 0 && iedge_picked < (int)aEdge.size() ){
-    int iv0 = topo.aEdge[iedge_picked].iv0;
-    int iv1 = topo.aEdge[iedge_picked].iv1;
-    aVtx[iv0].pos.x += p1x-p0x;
-    aVtx[iv0].pos.y += p1y-p0y;
-    aVtx[iv1].pos.x += p1x-p0x;
-    aVtx[iv1].pos.y += p1y-p0y;
+    if( ipicked_elem == 0 ){
+      int iv0 = topo.aEdge[iedge_picked].iv0;
+      int iv1 = topo.aEdge[iedge_picked].iv1;
+      aVtx[iv0].pos.x += p1x-p0x;
+      aVtx[iv0].pos.y += p1y-p0y;
+      aVtx[iv1].pos.x += p1x-p0x;
+      aVtx[iv1].pos.y += p1y-p0y;
+    }
+    else{
+      CCad2D_EdgeGeo& edge = aEdge[iedge_picked];
+      if( edge.type_edge == 1 ){
+        assert( edge.param.size() == 4 );
+        const CVector2 lx = (edge.p1 - edge.p0).Normalize();
+        const CVector2 ly = CVector2(lx.y,-lx.x);
+        if( ipicked_elem == 1 ){
+          edge.param[0] = (CVector2(p1x,p1y)- edge.p0 )*lx;
+          edge.param[1] = (CVector2(p1x,p1y)- edge.p0 )*ly;
+        }
+        else if( ipicked_elem == 2 ){
+          edge.param[2] = (CVector2(p1x,p1y)- edge.p1 )*lx;
+          edge.param[3] = (CVector2(p1x,p1y)- edge.p1 )*ly;
+        }
+      }
+    }
     Tessellation();
     return;
   }
@@ -360,6 +431,7 @@ std::vector<std::pair<int,bool> > CCad2D::Ind_Edge_Face(int iface) const
 
 ///////////////////////////////////////////////////////////
 
+// for visualization
 void CCad2D_EdgeGeo::GenMesh
 (unsigned int iedge, const CCadTopo& topo,
  std::vector<CCad2D_VtxGeo>& aVtxGeo)
@@ -371,26 +443,81 @@ void CCad2D_EdgeGeo::GenMesh
   assert(iv1 >= 0 && iv1 < (int)aVtxGeo.size());
   this->p0 = aVtxGeo[iv0].pos;
   this->p1 = aVtxGeo[iv1].pos;
+  aP.clear();
+  if( this->type_edge == 1 ){
+    const CVector2 lx = (this->p1 - this->p0).Normalize();
+    const CVector2 ly = CVector2(lx.y,-lx.x);
+    const CVector2 q0 = p0 + param[0]*lx + param[1]*ly;
+    const CVector2 q1 = p1 + param[2]*lx + param[3]*ly;
+    const int ndiv = 10;
+    for(int ip=1;ip<ndiv;++ip){
+      double t = (double)ip/ndiv;
+      CVector2 pos = pointCurve_BezierCubic(t, p0, q0, q1, p1);
+      aP.push_back(pos);
+    }
+  }
 }
 
+// for meshing
 void CCad2D_EdgeGeo::GetInternalPoints_ElemLen
 (std::vector<CVector2>& aV, double elen) const
 {
   aV.clear();
-  const int nadd = (int)( ::Distance(p0,p1) / elen);
+  const int nadd = (int)( this->Length() / elen);
   if( nadd == 0 ) return;
-  for(int iadd=0;iadd<nadd;++iadd){
-    double r2 = (double)(iadd+1)/(nadd+1);
-    CVector2 v2 = (1-r2)*p0 + r2*p1;
-    aV.push_back(v2);
+  /////
+  if( type_edge == 0 ){
+    for(int iadd=0;iadd<nadd;++iadd){
+      double r2 = (double)(iadd+1)/(nadd+1);
+      CVector2 v2 = (1-r2)*p0 + r2*p1;
+      aV.push_back(v2);
+    }
+  }
+  else if( type_edge == 1 ){
+    const CVector2 lx = (this->p1 - this->p0).Normalize();
+    const CVector2 ly = CVector2(lx.y,-lx.x);
+    const CVector2 q0 = p0 + param[0]*lx + param[1]*ly;
+    const CVector2 q1 = p1 + param[2]*lx + param[3]*ly;
+    for(int iadd=0;iadd<nadd;++iadd){
+      double t = (double)(iadd+1)/(nadd+1);
+      CVector2 pos = pointCurve_BezierCubic(t, p0, q0, q1, p1);
+      aV.push_back(pos);
+    }
   }
 }
 
 double CCad2D_EdgeGeo::Distance(double x, double y) const
 {
-  CVector2 pn = GetNearest_LineSeg_Point(CVector2(x,y),
-                                         this->p0,this->p1);
-  return ::Distance(pn,CVector2(x,y));
+  const CVector2 q(x,y);
+  if( type_edge == 0 ){
+    const CVector2 pn = GetNearest_LineSeg_Point(q,p0,p1);
+    return ::Distance(pn,q);
+  }
+  else if( type_edge == 1 ){
+    assert( param.size() == 4 );
+    double min_dist = -1;
+    for(unsigned int ie=0;ie<aP.size()+1;++ie){
+      CVector2 q0 = (ie==0) ? p0 : aP[ie];
+      CVector2 q1 = (ie==aP.size()-1) ? p1 : aP[ie+1];
+      double dist = ::Distance(q, GetNearest_LineSeg_Point(q,q0,q1));
+      if( min_dist < 0 || dist < min_dist ){ min_dist = dist; }
+    }
+    return min_dist;
+  }
+  assert(0);
+  return 0;
+}
+
+double CCad2D_EdgeGeo::Length() const
+{
+  double len0 = 0.0;
+  for(unsigned int ie=0;ie<aP.size()+1;++ie){
+    const CVector2 q0 = (ie==0) ? p0 : aP[ie-1];
+    const CVector2 q1 = (ie==aP.size()) ? p1 : aP[ie];
+    double dist0 = ::Distance(q0, q1);
+    len0 += dist0;
+  }
+  return len0;
 }
 
 ///////////////////////////////////////////////////////////
@@ -408,9 +535,22 @@ void CCad2D_FaceGeo::GenMesh
     assert( ie0<topo.aEdge.size() );
     const bool dir0 = aIE[iie].second;
     const CCad2D_EdgeGeo& eg0 = aEdgeGeo[ie0];
-    CVector2 p0 = (dir0) ? eg0.p0 : eg0.p1;
-    aaXY[0].push_back(p0.x);
-    aaXY[0].push_back(p0.y);
+    if( dir0 ){
+      aaXY[0].push_back(eg0.p0.x);
+      aaXY[0].push_back(eg0.p0.y);
+      for(unsigned int ip=0;ip<eg0.aP.size();++ip){
+        aaXY[0].push_back(eg0.aP[ip].x);
+        aaXY[0].push_back(eg0.aP[ip].y);
+      }
+    }
+    else{
+      aaXY[0].push_back(eg0.p1.x);
+      aaXY[0].push_back(eg0.p1.y);
+      for(int ip=eg0.aP.size()-1;ip>=0;++ip){
+        aaXY[0].push_back(eg0.aP[ip].x);
+        aaXY[0].push_back(eg0.aP[ip].y);
+      }
+    }
   }
   std::vector<int> loopIP_ind,loopIP;
   std::vector<CVector2> aVec2;

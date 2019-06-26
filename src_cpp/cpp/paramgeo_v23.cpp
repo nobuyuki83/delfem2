@@ -75,7 +75,6 @@ bool getParameterCubicBezier_IntersectionWithPlane
   double h4 = (p4-org)*nrm;
   double ref = fabs(h1) + fabs(h2) + fabs(h3) + fabs(h4);
   double eps = 1.0e-5;
-  std::cout << h1 << " " << h2 << " " << h3 << " " << h4 << std::endl;
   if( fabs(h1)<ref*eps && fabs(h4)<ref*eps ) return false;
   if( h1*h4>0 ) return false;
   if( fabs(h1)<ref*eps ){ t = 0.0; return true; }

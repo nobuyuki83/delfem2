@@ -50,6 +50,7 @@ void DrawField_ColorMap
 void DrawField_Disp
 (const py::array_t<double>& pos,
  const py::array_t<unsigned int>& elm,
+ MESHELEM_TYPE meshelem_type,
  const py::array_t<double>& disp)
 {
   //  DrawMeshTri2D_ScalarP1(me.aPos,me.aElem,a.data(),1,0,colorMap);
@@ -60,14 +61,18 @@ void DrawField_Disp
   assert( disp.shape()[1] == ndim );
   const int nstride = disp.strides()[0] / sizeof(double);
   if( ndim == 3 ){
-    DrawMeshTet3D_FaceNormDisp(pos.data(), np,
-                               elm.data(), nelm,
-                               disp.data());
+    if( meshelem_type == MESHELEM_TET ){
+      DrawMeshTet3D_FaceNormDisp(pos.data(), np,
+                                 elm.data(), nelm,
+                                 disp.data());
+    }
   }
   else if( ndim == 2 ){
-    DrawMeshTri2D_FaceDisp2D(pos.data(), np,
+    if( meshelem_type == MESHELEM_TRI ){
+      DrawMeshTri2D_FaceDisp2D(pos.data(), np,
                                elm.data(), nelm,
                                disp.data(), nstride);
+    }
   }
 }
 

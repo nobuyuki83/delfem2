@@ -23,12 +23,19 @@ public:
 };
 class CCad2D_EdgeGeo{
 public:
+  CCad2D_EdgeGeo(){
+    type_edge = 0;
+  }
   void GenMesh(unsigned int iedge, const CCadTopo& topo,
                std::vector<CCad2D_VtxGeo>& aVtxGeo);
   void GetInternalPoints_ElemLen(std::vector<CVector2>& aV, double elen) const;
   double Distance(double x, double y) const;
+  double Length() const;
 public:
   CVector2 p0,p1;
+  int type_edge; // 0: line, 1:Cubic Bezier
+  std::vector<double> param;
+  ///
   std::vector<CVector2> aP;
 };
 class CCad2D_FaceGeo{
@@ -91,6 +98,16 @@ public:
                      const double* pXY, int np,
                      const std::vector<int>& aIE,
                      double tolerance ) const;
+  void SetEdgeType(int iedge, int itype, std::vector<double>& param){
+    assert( iedge >= 0 && iedge< (int)aEdge.size() );
+    aEdge[iedge].type_edge = itype;
+    aEdge[iedge].param = param;
+    this->Tessellation();
+  }
+  int GetEdgeType(int iedge) const {
+    assert( iedge >= 0 && iedge< (int)aEdge.size() );
+    return aEdge[iedge].type_edge;
+  }
   int nFace() const { return aFace.size(); }
   int nVtx() const { return aVtx.size(); }
   int nEdge() const { return aEdge.size(); }
@@ -107,6 +124,7 @@ public:
   int ivtx_picked;
   int iedge_picked;
   int iface_picked;
+  int ipicked_elem;
   
   bool is_draw_face;
 };

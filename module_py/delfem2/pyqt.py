@@ -191,8 +191,9 @@ class QGLW_Cad2D(QOpenGLWidget):
     self.updated_cadmshfem.emit()
 
   def mouseReleaseEvent(self, event):
-    self.cadobj.clean_picked()
-    self.update()
+#    self.cadobj.clean_picked()
+#    self.update()
+    pass
 
   def mouseMoveEvent(self, event):
     self.makeCurrent()
@@ -208,20 +209,27 @@ class QGLW_Cad2D(QOpenGLWidget):
     menu = QMenu(self)
     actionDelVtx = None
     actionAddVtx = None
+    actionEdgeBezier = None
     actionAddSquare = None
     if self.cadobj.ivtx_picked() != -1:
       actionDelVtx = menu.addAction("delete vtx")
     elif self.cadobj.iedge_picked() != -1:
       actionAddVtx = menu.addAction("add vtx")
+      edge_type = self.cadobj.edge_type( self.cadobj.iedge_picked() )
+      if edge_type ==0:
+        actionEdgeBezier = menu.addAction("set bezier")
     else:
       actionAddSquare = menu.addAction("add square")
-    action = menu.exec_(self.mapToGlobal(event.pos()))
     ####
+    action = menu.exec_(self.mapToGlobal(event.pos()))
     if action == actionAddVtx != None:
-      self.cadobj.add_vtx_edge(src[0], src[1], self.cadobj.ccad.iedge_picked)
+      self.cadobj.add_vtx_edge(iedge=self.cadobj.ccad.iedge_picked,
+                               pos=[src[0], src[1]] )
     if action == actionAddSquare != None:
       x0,y0 = src[0],src[1]
       self.cadobj.add_polygon([x0-1, y0-1, x0+1, y0-1, x0+1, y0+1, x0-1, y0+1])
+    if action == actionEdgeBezier != None:
+      self.cadobj.set_edge_type( self.cadobj.iedge_picked(), 1, [0.2,0.3,0.8,0.3] )
     self.update()
     self.updated_cadmshfem.emit()
 
@@ -229,6 +237,9 @@ class QGLW_Cad2D(QOpenGLWidget):
     v = 0.1*(event.angleDelta().y()/120.0)
     self.nav.camera.scale *= math.exp(v)
     self.update()
+
+
+
 
 
 class QW_NumWin(QWidget):
