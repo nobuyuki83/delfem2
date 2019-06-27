@@ -307,11 +307,16 @@ class MapCadMesh2D():
       np_ind_face = numpy.append(np_ind_face, numpy.where(self.flg_pnt == iv)[0])
     return np_ind_face
 
-  def npIndEdge(self,iedge) -> numpy.ndarray:
-    np_ind_edge = numpy.where(self.flg_pnt == self.ccad.nvtx() + iedge)[0]
-    list_iv = self.ccad.ind_vtx_edge(iedge)
-    for iv in list_iv:
-      np_ind_edge = numpy.append(np_ind_edge,iv)
+  def npIndEdge(self,list_ind_edge) -> numpy.ndarray:
+    if isinstance(list_ind_edge, int):
+      list_ind_edge = [list_ind_edge]
+    np_ind_edge = numpy.zeros((0),dtype=numpy.uint32)
+    for ie in list_ind_edge:
+      np0 = numpy.where(self.flg_pnt == self.ccad.nvtx() + ie)[0]
+      np_ind_edge = numpy.append(np_ind_edge,np0)
+      list_iv = self.ccad.ind_vtx_edge(ie)
+      for iv in list_iv:
+        np_ind_edge = numpy.append(np_ind_edge,iv)
     return np_ind_edge
 
 
@@ -405,7 +410,7 @@ class CadMesh2D(Cad2D):
     if self.is_sync_mesh:
       assert len(self.listW) == self.ccad.nface()
       for iface in range(self.ccad.nface()):
-        list_xy_bound = self.ccad.xy_vtx_face(iface)
+        list_xy_bound = self.ccad.xy_vtxctrl_face(iface)
         np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
         np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
         self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
@@ -422,13 +427,13 @@ class CadMesh2D(Cad2D):
     ####
     self.listW.clear()
     for iface in range(self.ccad.nface()):
-      np_ind_face = self.map_cad2msh.npIndFace(iface)
-      np_pos_face = self.dmsh.np_pos[np_ind_face]
-      np_xy_bound = numpy.array(self.ccad.xy_vtx_face(iface)).reshape([-1, 2])
-      W = mvc(np_pos_face, np_xy_bound)
-      assert W.shape[0] == np_pos_face.shape[0]
+      npIndPoint_face = self.map_cad2msh.npIndFace(iface)
+      npPosPoint_face = self.dmsh.np_pos[npIndPoint_face]
+      np_xy_bound = numpy.array(self.ccad.xy_vtxctrl_face(iface)).reshape([-1, 2])
+      W = mvc(npPosPoint_face, np_xy_bound)
+      assert W.shape[0] == npPosPoint_face.shape[0]
       assert W.shape[1] == np_xy_bound.shape[0]
-      self.listW.append( [np_ind_face,W] )
+      self.listW.append( [npIndPoint_face,W] )
     assert len(self.listW) == self.ccad.nface()
 
   def add_vtx_edge(self, iedge:int, pos:List[float]):

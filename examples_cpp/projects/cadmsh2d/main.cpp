@@ -96,7 +96,7 @@ void myGlutMotion( int x, int y ){
   /////
   cad.DragPicked(src_pick1[0],src_pick1[1], src_pick0[0],src_pick0[1]);
   ////
-  std::vector<double> aXY_bound = cad.XY_Vtx_Face(0);
+  std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
   int npb = aXY_bound.size()/2;
   int np = aXY.size()/2;
   for(int ip=0;ip<np;++ip){
@@ -270,7 +270,7 @@ int main(int argc,char* argv[])
   dmsh.Export_StlVectors(aXY, aTri);
   
   const int nv = 4;
-  std::vector<double> aXY_bound = cad.XY_Vtx_Face(0);
+  std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
   const int nXY = aXY.size()/2;
   aW.resize(nXY*nv);
   for(int ip=0;ip<nXY;++ip){

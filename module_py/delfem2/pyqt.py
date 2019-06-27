@@ -229,7 +229,7 @@ class QGLW_Cad2D(QOpenGLWidget):
       x0,y0 = src[0],src[1]
       self.cadobj.add_polygon([x0-1, y0-1, x0+1, y0-1, x0+1, y0+1, x0-1, y0+1])
     if action == actionEdgeBezier != None:
-      self.cadobj.set_edge_type( self.cadobj.iedge_picked(), 1, [0.2,0.3,0.8,0.3] )
+      self.cadobj.set_edge_type( self.cadobj.iedge_picked(), 1, [0.2,0.3,-0.2,0.3] )
     self.update()
     self.updated_cadmshfem.emit()
 

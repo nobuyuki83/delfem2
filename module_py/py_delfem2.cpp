@@ -234,7 +234,7 @@ PYBIND11_MODULE(libdelfem2, m) {
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
   .def("add_polygon", &CCad2D::AddPolygon)
   .def("meshing",     &CCad2D::Meshing)
-  .def("xy_vtx_face", &CCad2D::XY_Vtx_Face)
+  .def("xy_vtxctrl_face", &CCad2D::XY_VtxCtrl_Face)
   .def("ind_vtx_face", &CCad2D::Ind_Vtx_Face)
   .def("ind_edge_face",&CCad2D::Ind_Edge_Face)
   .def("ind_vtx_edge", &CCad2D::Ind_Vtx_Edge)

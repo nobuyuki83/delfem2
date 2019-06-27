@@ -390,16 +390,43 @@ void CCad2D::GetPointsEdge
   }
 }
 
-std::vector<double> CCad2D::XY_Vtx_Face
+std::vector<double> CCad2D::XY_VtxCtrl_Face
 (int iface) const
 {
   std::vector<double> aXY;
+  for(unsigned int iie=0;iie<topo.aFace[iface].aIE.size();++iie){
+    int ie0 = topo.aFace[iface].aIE[iie].first;
+    bool dir = topo.aFace[iface].aIE[iie].second;
+    if( dir ){
+      const int iv = topo.aEdge[ie0].iv0;
+      aXY.push_back( aVtx[iv].pos.x );
+      aXY.push_back( aVtx[iv].pos.y );
+      if( aEdge[ie0].type_edge == 1 ){
+        const CCad2D_EdgeGeo& edge = aEdge[ie0];
+        const CVector2 lx = (edge.p1 - edge.p0).Normalize();
+        const CVector2 ly = CVector2(lx.y,-lx.x);
+        const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
+        const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
+        aXY.push_back( q0.x );
+        aXY.push_back( q0.y );
+        aXY.push_back( q1.x );
+        aXY.push_back( q1.y );
+      }
+    }
+    else{
+      const int iv = topo.aEdge[ie0].iv1;
+      aXY.push_back( aVtx[iv].pos.x );
+      aXY.push_back( aVtx[iv].pos.y );
+    }
+  }
+  /*
   std::vector<int> aIdV = topo.aFace[iface].GetArray_IdVertex(topo.aEdge);
   for(unsigned int iiv=0;iiv<aIdV.size();++iiv){
     const int iv = aIdV[iiv];
     aXY.push_back( aVtx[iv].pos.x );
     aXY.push_back( aVtx[iv].pos.y );
   }
+   */
   return aXY;
 }
 
