@@ -16,6 +16,7 @@ class CadMesh2D_FEMPoisson(CadMesh2D):
     super().__init__(edge_length)
     self.fem = FEM_Poisson(source=1.0)
     self.vis = VisFEM_ColorContour(self.fem,name_color='value')
+    self.vis.is_lighting = False
     self.list_cad_edge_fix = [0,1,2,3]
 
   def draw(self):
@@ -30,7 +31,7 @@ class CadMesh2D_FEMPoisson(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.fem.updated_topology(self.dmsh)
-    npIdP = cad_getPointsEdge(self.ccad, self.list_cad_edge_fix, self.dmsh.np_pos, 0.001)
+    npIdP = self.map_cad2msh.npIndEdge(self.list_cad_edge_fix)
     self.fem.value[npIdP] = 0.0
     self.fem.ls.bc[npIdP] = 1
     self.fem.solve()

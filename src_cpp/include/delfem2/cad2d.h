@@ -111,7 +111,7 @@ public:
   int nFace() const { return aFace.size(); }
   int nVtx() const { return aVtx.size(); }
   int nEdge() const { return aEdge.size(); }
-  std::vector<double> XY_Vtx_Face(int iface) const;
+  std::vector<double> XY_VtxCtrl_Face(int iface) const;
   std::vector<std::pair<int,bool>>  Ind_Edge_Face(int iface) const;
   std::vector<int> Ind_Vtx_Face(int iface) const;
   std::vector<int> Ind_Vtx_Edge(int iedge) const;
