@@ -18,9 +18,8 @@ from PyQt5.QtWidgets import \
   QLabel, QRadioButton,\
   QButtonGroup
 
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.gl
+import pydelfem2 as dfm2
+import pydelfem2.gl
 
 def setClearColor(c:QColor):
   gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
@@ -166,7 +165,7 @@ class QGLW_Cad2D(QOpenGLWidget):
     return QSize(2000, 2000)
 
   def initializeGL(self):
-    print(delfem2.gl.getOpenglInfo())
+    print(dfm2.gl.getOpenglInfo())
     gl.glClearColor(0.8, 0.8, 1.0, 1.0)
     gl.glEnable(gl.GL_DEPTH_TEST)
     gl.glEnable(gl.GL_CULL_FACE)
@@ -335,7 +334,7 @@ class QW_FemParams(QWidget):
 class QW_MeshRes(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,cadmsh:delfem2.CadMesh2D):
+  def __init__(self,cadmsh:dfm2.CadMesh2D):
     super(QW_MeshRes, self).__init__()
     self.cadmsh = cadmsh
 
@@ -444,7 +443,7 @@ class QW_AnimCntrl(QWidget):
 class QW_FEMPoisson(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,fem:delfem2.FEM_Poisson):
+  def __init__(self,fem:dfm2.FEM_Poisson):
     super(QW_FEMPoisson, self).__init__()
     self.fem = fem
     
@@ -480,7 +479,7 @@ class QW_FEMPoisson(QWidget):
 class QW_FEMSolidLinearStatic(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,fem:delfem2.FEM_SolidLinearStatic):
+  def __init__(self,fem:dfm2.FEM_SolidLinearStatic):
     super(QW_FEMSolidLinearStatic, self).__init__()
 
     self.fem = fem
@@ -507,7 +506,7 @@ class QW_FEMSolidLinearStatic(QWidget):
 class QW_FEMSolidLinearEigen(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,fem:delfem2.FEM_SolidLinearEigen):
+  def __init__(self,fem:dfm2.FEM_SolidLinearEigen):
     super(QW_FEMSolidLinearEigen, self).__init__()
     ####
     self.fem = fem
@@ -527,7 +526,7 @@ class QW_FEMSolidLinearEigen(QWidget):
 class QW_FEMDiffuse(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,fem:delfem2.FEM_Diffuse):
+  def __init__(self,fem:dfm2.FEM_Diffuse):
     super(QW_FEMDiffuse, self).__init__()
     ####
     self.fem = fem
@@ -551,7 +550,7 @@ class QW_FEMDiffuse(QWidget):
 class QW_PBD(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,fem:delfem2.PBD):
+  def __init__(self,fem:dfm2.PBD):
     super(QW_PBD, self).__init__()
 
     self.fem = fem
@@ -586,7 +585,7 @@ class QW_PBD(QWidget):
 class QW_PBDCloth(QWidget):
   updated_cadmshfem = pyqtSignal()
 
-  def __init__(self,fem:delfem2.PBD_Cloth):
+  def __init__(self,fem:dfm2.PBD_Cloth):
     super(QW_PBDCloth, self).__init__()
 
     self.fem = fem

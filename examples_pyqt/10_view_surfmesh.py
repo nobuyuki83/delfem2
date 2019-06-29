@@ -13,10 +13,10 @@ from PyQt5.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget,
 
 import OpenGL.GL as gl
 
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.gl
-import delfem2.pyqt
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl
+import pydelfem2.pyqt
 
 class Window(QWidget):
   def __init__(self):
@@ -55,7 +55,7 @@ class GLWidget(QOpenGLWidget):
     return QSize(600, 600)
 
   def initializeGL(self):
-    print(delfem2.gl.getOpenglInfo())
+    print(dfm2.gl.getOpenglInfo())
     gl.glClearColor(0.8, 0.8, 1.0, 1.0)
     gl.glShadeModel(gl.GL_FLAT)
     gl.glEnable(gl.GL_DEPTH_TEST)

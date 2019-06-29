@@ -10,10 +10,10 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QVBoxLayout,
                              QWidget, QPushButton)
 
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.gl
-import delfem2.pyqt
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl
+import pydelfem2.pyqt
 
 
 class Window(dfm2.pyqt.QW_CadMshFem):

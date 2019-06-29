@@ -15,7 +15,8 @@ from .c_gl import CppGPUSampler
 from .c_gl import get_texture
 from .c_gl import ColorMap
 
-from ._gl import AxisXYZ
+from ._gl import AxisXYZ, Camera
+from ._gl import getOpenglInfo, screenUnProjection, screenUnProjectionDirection
 
 import OpenGL.GL as gl
 
