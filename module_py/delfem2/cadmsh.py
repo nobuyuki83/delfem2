@@ -28,6 +28,7 @@ from .libdelfem2 import copyMeshDynTri2D
 from .libdelfem2 import numpyXYTri_MeshDynTri2D
 from .libdelfem2 import setTopology_ExtrudeTri2Tet
 from .libdelfem2 import cppNormalVtx_Mesh, cppEdge_Mesh
+from .libdelfem2 import cppMeshTri3D_Cylinder, cppMeshTri3D_Sphere
 
 
 def vbo_array(aXY:numpy.ndarray) -> int:
@@ -167,6 +168,13 @@ class Mesh():
     np_elem_edge = cppEdge_Mesh(self.np_pos, self.np_elm, self.elem_type)
     return Mesh(self.np_pos,np_elem_edge,LINE)
 
+  def set_cylinder(self, r:float, l:float, nr:int, nl:int):
+    self.np_pos, self.np_elm = cppMeshTri3D_Cylinder(r,l, nr, nl)
+    self.elem_type = TRI
+
+  def set_sphere(self, r:float, nla:int, nlo:int):
+    self.np_pos, self.np_elm = cppMeshTri3D_Sphere(r, nla, nlo)
+    self.elem_type = TRI
 
 ###########################################################################
 

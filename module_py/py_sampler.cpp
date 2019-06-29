@@ -73,9 +73,13 @@ void init_sampler(py::module &m){
   .def("start",      &CGPUSampler::Start)
   .def("end",        &CGPUSampler::End)
   .def("init_gl",    &CGPUSampler::LoadTex)
+  .def("get_pos_ray_collide",  &CGPUSampler::getGPos)
   .def_readwrite("bgcolor", &CGPUSampler::bgcolor)
   .def_readwrite("color",  &CGPUSampler::color)
-  .def_readwrite("len_axis",  &CGPUSampler::draw_len_axis);
+  .def_readwrite("len_axis",  &CGPUSampler::draw_len_axis)
+  .def_readwrite("is_draw_tex", &CGPUSampler::isDrawTex)
+  .def_readwrite("point_size",  &CGPUSampler::pointSize);
+  
   
   m.def("depth_buffer", &depth_buffer);
   m.def("color_buffer_4byte", &color_buffer_4byte);

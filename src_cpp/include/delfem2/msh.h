@@ -120,7 +120,7 @@ void Normal_MeshTri3D(double* aNorm,
                       const unsigned int* aTri, int nTri);
 void Quality_MeshTri2D(double& max_aspect, double& min_area,
                        const double* aXY,
-                       const int* aTri, int nTri);
+                       const unsigned int* aTri, int nTri);
 
 ///////////////////////////////////////////////////////////////////////////////
 // set primitive mesh
@@ -135,7 +135,7 @@ void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri
 void MeshTri3D_OpenCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
                             double r, double l,
                             int nr, int nl);
-void MeshTri3D_ClosedCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
+void MeshTri3D_ClosedCylinder(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                               double r, double l,
                               int nr, int nl);
 void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<int>& aTri,

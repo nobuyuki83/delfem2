@@ -111,7 +111,7 @@ CPreconditionerILU::CPreconditionerILU(const CPreconditionerILU& p)
 {
   std::cout << "CPreconditionerILU -- construct copy" << std::endl;
   this->mat = p.mat; // deep copy
-  const int nblk = this->mat.m_nblk_col;
+  const int nblk = this->mat.nblk_col;
   this->m_diaInd = new int [nblk];
   for(int iblk=0;iblk<nblk;++iblk){
     this->m_diaInd[iblk] = p.m_diaInd[iblk];
@@ -129,19 +129,19 @@ CPreconditionerILU::~CPreconditionerILU()
 
 
 void CPreconditionerILU::Initialize_ILU0
-(const CMatrixSquareSparse& m)
+(const CMatrixSparse& m)
 {
   this->mat = m;
-  const int nblk = m.m_nblk_col;
+  const int nblk = m.nblk_col;
 
   if( m_diaInd != 0 ){ delete[] m_diaInd; m_diaInd = 0; }
   m_diaInd = new int [nblk];
   
   for(int iblk=0;iblk<nblk;iblk++){
-    m_diaInd[iblk] = mat.m_colInd[iblk+1];
-    for(int icrs=mat.m_colInd[iblk];icrs<mat.m_colInd[iblk+1];icrs++){
-      assert( icrs < mat.m_ncrs );
-      const int jblk0 = mat.m_rowPtr[icrs];
+    m_diaInd[iblk] = mat.colInd[iblk+1];
+    for(int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
+      assert( icrs < mat.ncrs );
+      const int jblk0 = mat.rowPtr[icrs];
       assert( jblk0 < nblk );
       if( jblk0 > iblk ){
         m_diaInd[iblk] = icrs;
@@ -174,7 +174,7 @@ public:
 
 // if(lev_fill == -1){ take all the fills }
 void CPreconditionerILU::Initialize_ILUk
-(const CMatrixSquareSparse& m,
+(const CMatrixSparse& m,
 int lev_fill)
 {
 
@@ -184,13 +184,13 @@ int lev_fill)
   }
 
   std::vector<CRowLev> aRowLev;
-  aRowLev.reserve(m.m_ncrs*4);
+  aRowLev.reserve(m.ncrs*4);
 
 
-  assert(m.m_nblk_col==m.m_nblk_row);
-  const int nblk = m.m_nblk_col;
-  assert(m.m_len_col==m.m_len_row);
-  const int len = m.m_len_col;
+  assert(m.nblk_col==m.nblk_row);
+  const int nblk = m.nblk_col;
+  assert(m.len_col==m.len_row);
+  const int len = m.len_col;
 
   assert(m.is_dia);
   mat.Initialize(nblk, len, true);
@@ -201,11 +201,11 @@ int lev_fill)
   for (int iblk = 0; iblk<nblk; ++iblk){
     std::vector<CRowLevNext> listNonzero;
     {	// copy row pattern of input matrix into listNonzero
-      listNonzero.resize(m.m_colInd[iblk+1]-m.m_colInd[iblk]);
+      listNonzero.resize(m.colInd[iblk+1]-m.colInd[iblk]);
       int inz = 0;
-      for (int ijcrs = m.m_colInd[iblk]; ijcrs<m.m_colInd[iblk+1]; ijcrs++){
-        assert(ijcrs<m.m_ncrs);
-        const int jblk0 = m.m_rowPtr[ijcrs];
+      for (int ijcrs = m.colInd[iblk]; ijcrs<m.colInd[iblk+1]; ijcrs++){
+        assert(ijcrs<m.ncrs);
+        const int jblk0 = m.rowPtr[ijcrs];
         assert(jblk0<nblk);
         listNonzero[inz].row = jblk0;
         listNonzero[inz].lev = 0;
@@ -228,7 +228,7 @@ int lev_fill)
       if (kblk0>=iblk) break;
 
       int jnz_cur = knz_cur;
-      for (int kjcrs = m_diaInd[kblk0]; kjcrs<mat.m_colInd[kblk0+1]; kjcrs++){
+      for (int kjcrs = m_diaInd[kblk0]; kjcrs<mat.colInd[kblk0+1]; kjcrs++){
         const int kj_lev0 = aRowLev[kjcrs].lev;
         if (kj_lev0+1>lev_fill && lev_fill!=-1) continue;
         const int jblk0 = aRowLev[kjcrs].row;
@@ -271,8 +271,8 @@ int lev_fill)
 //        std::cout<<"		overflow and memory reallocate in ilu frac"<<std::endl;
 //      }
       // copy "listNonzero" to "aRowLev"
-      aRowLev.resize(mat.m_colInd[iblk]+listNonzero.size());
-      int icrs0 = mat.m_colInd[iblk];
+      aRowLev.resize(mat.colInd[iblk]+listNonzero.size());
+      int icrs0 = mat.colInd[iblk];
       for (int inz = 0; inz!=-1; inz = listNonzero[inz].next){
         const int jblk = listNonzero[inz].row;
         const int jlev = listNonzero[inz].lev;
@@ -283,10 +283,10 @@ int lev_fill)
         icrs0++;
       }
 
-      mat.m_colInd[iblk+1] = icrs0;
-      mat.m_ncrs = icrs0;
+      mat.colInd[iblk+1] = icrs0;
+      mat.ncrs = icrs0;
       m_diaInd[iblk] = icrs0;
-      for (int ijcrs = mat.m_colInd[iblk]; ijcrs<mat.m_colInd[iblk+1]; ijcrs++){
+      for (int ijcrs = mat.colInd[iblk]; ijcrs<mat.colInd[iblk+1]; ijcrs++){
         const int jblk0 = aRowLev[ijcrs].row;
         if (jblk0 > iblk){
           m_diaInd[iblk] = ijcrs;
@@ -297,11 +297,11 @@ int lev_fill)
   }
 
   {
-    const int ncrs = mat.m_ncrs;
+    const unsigned int ncrs = mat.ncrs;
     assert(aRowLev.size()==ncrs);
-    mat.m_rowPtr = new int [ncrs];
-    for (int icrs = 0; icrs<ncrs; ++icrs){
-      mat.m_rowPtr[icrs] = aRowLev[icrs].row;
+    mat.rowPtr = new int [ncrs];
+    for (unsigned int icrs = 0; icrs<ncrs; ++icrs){
+      mat.rowPtr[icrs] = aRowLev[icrs].row;
     }
     /*
     for (int iblk = 0; iblk<nblk; ++iblk){
@@ -312,30 +312,30 @@ int lev_fill)
     }
      */
     const int blksize = len*len;
-    mat.m_valCrs = new double[ncrs*blksize];
+    mat.valCrs = new double[ncrs*blksize];
     assert(mat.is_dia);
-    mat.m_valDia = new double[nblk*blksize];
-    for (int i = 0; i<nblk*blksize; i++){ mat.m_valDia[i] = m.m_valDia[i]; }
-    std::cout<<"ncrs: "<<ncrs<<" "<<m.m_ncrs<<std::endl;
+    mat.valDia = new double[nblk*blksize];
+    for (int i = 0; i<nblk*blksize; i++){ mat.valDia[i] = m.valDia[i]; }
+    std::cout<<"ncrs: "<<ncrs<<" "<<m.ncrs<<std::endl;
   }
 
 }
 
 void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 {
-  const int len = mat.m_len_col;
-  const int nblk = mat.m_nblk_col;
+  const int len = mat.len_col;
+  const int nblk = mat.nblk_col;
   
 	if( len == 1 ){
-		const int* colind = mat.m_colInd;
-		const int* rowptr = mat.m_rowPtr;
-		const double* vcrs = mat.m_valCrs;
-		const double* vdia = mat.m_valDia;
+		const int* colind = mat.colInd;
+		const int* rowptr = mat.rowPtr;
+		const double* vcrs = mat.valCrs;
+		const double* vdia = mat.valDia;
 		////////////////    
 		for(int iblk=0;iblk<nblk;iblk++){	// ëOêiè¡ãé
 			double lvec_i = vec[iblk];
 			for(int ijcrs=colind[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
+				assert( ijcrs<mat.ncrs );
 				const int jblk0 = rowptr[ijcrs];
 				assert( jblk0<iblk );
 				lvec_i -= vcrs[ijcrs]*vec[jblk0];
@@ -344,10 +344,10 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 		}
 	}
 	else if( len == 2 ){
-		const int* colind = mat.m_colInd;
-		const int* rowptr = mat.m_rowPtr;
-		const double* vcrs = mat.m_valCrs;
-		const double* vdia = mat.m_valDia;
+		const int* colind = mat.colInd;
+		const int* rowptr = mat.rowPtr;
+		const double* vcrs = mat.valCrs;
+		const double* vdia = mat.valDia;
 		////////////////
 		double pTmpVec[2];
 		for(int iblk=0;iblk<nblk;iblk++){
@@ -356,7 +356,7 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 			const int icrs0 = colind[iblk];
 			const int icrs1 = m_diaInd[iblk];
 			for(int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
+				assert( ijcrs<mat.ncrs );
 				const int jblk0 = rowptr[ijcrs];
 				assert( jblk0<iblk );
 				const double* vij = &vcrs[ijcrs*4];
@@ -371,10 +371,10 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 		}
 	}
 	else if( len == 3 ){
-		const int* colind = mat.m_colInd;
-		const int* rowptr = mat.m_rowPtr;
-		const double* vcrs = mat.m_valCrs;
-		const double* vdia = mat.m_valDia;
+		const int* colind = mat.colInd;
+		const int* rowptr = mat.rowPtr;
+		const double* vcrs = mat.valCrs;
+		const double* vdia = mat.valDia;
 		////////////////
 		double pTmpVec[3];
 		for(int iblk=0;iblk<nblk;iblk++){
@@ -384,7 +384,7 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 			const int icrs0 = colind[iblk];
 			const int icrs1 = m_diaInd[iblk];
 			for(int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
+				assert( ijcrs<mat.ncrs );
 				const int jblk0 = rowptr[ijcrs];
 				assert( jblk0<iblk );
 				const double* vij = &vcrs[ijcrs*9];
@@ -402,10 +402,10 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 		}
 	}
   else if (len==4){
-    const int* colind = mat.m_colInd;
-    const int* rowptr = mat.m_rowPtr;
-    const double* vcrs = mat.m_valCrs;
-    const double* vdia = mat.m_valDia;
+    const int* colind = mat.colInd;
+    const int* rowptr = mat.rowPtr;
+    const double* vcrs = mat.valCrs;
+    const double* vdia = mat.valDia;
     ////////////////
     double pTmpVec[4];
     for (int iblk = 0; iblk<nblk; iblk++){
@@ -416,7 +416,7 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
       const int icrs0 = colind[iblk];
       const int icrs1 = m_diaInd[iblk];
       for (int ijcrs = icrs0; ijcrs<icrs1; ijcrs++){
-        assert(ijcrs<mat.m_ncrs);
+        assert(ijcrs<mat.ncrs);
         const int jblk0 = rowptr[ijcrs];
         assert(jblk0<iblk);
         const double* vij = &vcrs[ijcrs*16];
@@ -443,18 +443,18 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 			for(int idof=0;idof<len;idof++){
 				pTmpVec[idof] = vec[iblk*len+idof];
 			}
-			for(int ijcrs=mat.m_colInd[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
-				const int jblk0 = mat.m_rowPtr[ijcrs];
+			for(int ijcrs=mat.colInd[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
+				assert( ijcrs<mat.ncrs );
+				const int jblk0 = mat.rowPtr[ijcrs];
 				assert( jblk0<iblk );
-				const double* vij = &mat.m_valCrs[ijcrs*blksize];
+				const double* vij = &mat.valCrs[ijcrs*blksize];
 				for(int idof=0;idof<len;idof++){
 					for(int jdof=0;jdof<len;jdof++){
 						pTmpVec[idof] -= vij[idof*len+jdof]*vec[jblk0*len+jdof];
 					}
 				}
 			}
-			const double* vii = &mat.m_valDia[iblk*blksize];
+			const double* vii = &mat.valDia[iblk*blksize];
 			for(int idof=0;idof<len;idof++){
 				double dtmp1 = 0.0;
 				for(int jdof=0;jdof<len;jdof++){
@@ -469,19 +469,19 @@ void CPreconditionerILU::ForwardSubstitution( std::vector<double>& vec ) const
 
 void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 {
-  const int len = mat.m_len_col;
-  const int nblk = mat.m_nblk_col;
+  const int len = mat.len_col;
+  const int nblk = mat.nblk_col;
 
 	if( len == 1 ){
-		const int* colind = mat.m_colInd;
-		const int* rowptr = mat.m_rowPtr;
-		const double* vcrs = mat.m_valCrs;
+		const int* colind = mat.colInd;
+		const int* rowptr = mat.rowPtr;
+		const double* vcrs = mat.valCrs;
 		////////////////
 		for(int iblk=nblk-1;iblk>=0;iblk--){	
 			assert( (int)iblk < nblk );
 			double lvec_i = vec[iblk];
 			for(int ijcrs=m_diaInd[iblk];ijcrs<colind[iblk+1];ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
+				assert( ijcrs<mat.ncrs );
 				const int jblk0 = rowptr[ijcrs];
 //        std::cout << jblk0 << " " << iblk << " " << nblk << std::endl;
 				assert( jblk0>(int)iblk && jblk0<nblk );
@@ -491,9 +491,9 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 		}
 	}
 	else if( len == 2 ){
-		const int* colind = mat.m_colInd;
-		const int* rowptr = mat.m_rowPtr;
-		const double* vcrs = mat.m_valCrs;
+		const int* colind = mat.colInd;
+		const int* rowptr = mat.rowPtr;
+		const double* vcrs = mat.valCrs;
     ////////////////
 		double pTmpVec[2];
 		for(int iblk=nblk-1;iblk>=0;iblk--){
@@ -503,7 +503,7 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 			const int icrs0 = m_diaInd[iblk];
 			const int icrs1 = colind[iblk+1];
 			for(int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
+				assert( ijcrs<mat.ncrs );
 				const int jblk0 = rowptr[ijcrs];
 				assert( jblk0>(int)iblk && jblk0<nblk );
 				const double* vij = &vcrs[ijcrs*4];
@@ -517,9 +517,9 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 		}
 	}
 	else if( len == 3 ){
-    const int* colind = mat.m_colInd;
-		const int* rowptr = mat.m_rowPtr;
-		const double* vcrs = mat.m_valCrs;
+    const int* colind = mat.colInd;
+		const int* rowptr = mat.rowPtr;
+		const double* vcrs = mat.valCrs;
     ////////////////
 		double pTmpVec[3];
 		for(int iblk=nblk-1;iblk>=0;iblk--){
@@ -530,7 +530,7 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 			const int icrs0 = m_diaInd[iblk];
 			const int icrs1 = colind[iblk+1];
 			for(int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
+				assert( ijcrs<mat.ncrs );
 				const int jblk0 = rowptr[ijcrs];
 				assert( jblk0>(int)iblk && jblk0<nblk );
 				const double* vij = &vcrs[ijcrs*9];
@@ -547,9 +547,9 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 		}
 	}
   else if (len==4){
-    const int* colind = mat.m_colInd;
-    const int* rowptr = mat.m_rowPtr;
-    const double* vcrs = mat.m_valCrs;
+    const int* colind = mat.colInd;
+    const int* rowptr = mat.rowPtr;
+    const double* vcrs = mat.valCrs;
     ////////////////
     double pTmpVec[4];
     for (int iblk = nblk-1; iblk>=0; iblk--){
@@ -561,7 +561,7 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
       const int icrs0 = m_diaInd[iblk];
       const int icrs1 = colind[iblk+1];
       for (int ijcrs = icrs0; ijcrs<icrs1; ijcrs++){
-        assert(ijcrs<mat.m_ncrs);
+        assert(ijcrs<mat.ncrs);
         const int jblk0 = rowptr[ijcrs];
         assert(jblk0>(int)iblk && jblk0<nblk);
         const double* vij = &vcrs[ijcrs*16];
@@ -588,11 +588,11 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 			for(int idof=0;idof<len;idof++){
 				pTmpVec[idof] = vec[iblk*len+idof];
 			}
-			for(int ijcrs=m_diaInd[iblk];ijcrs<mat.m_colInd[iblk+1];ijcrs++){
-				assert( ijcrs<mat.m_ncrs );
-				const int jblk0 = mat.m_rowPtr[ijcrs];
+			for(int ijcrs=m_diaInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
+				assert( ijcrs<mat.ncrs );
+				const int jblk0 = mat.rowPtr[ijcrs];
 				assert( jblk0>(int)iblk && jblk0<nblk );
-				const double* vij = &mat.m_valCrs[ijcrs*blksize];
+				const double* vij = &mat.valCrs[ijcrs*blksize];
 				for(int idof=0;idof<len;idof++){
 					for(int jdof=0;jdof<len;jdof++){
 						pTmpVec[idof] -= vij[idof*len+jdof]*vec[jblk0*len+jdof];
@@ -607,38 +607,38 @@ void CPreconditionerILU::BackwardSubstitution( std::vector<double>& vec ) const
 	}
 }
 
-void CPreconditionerILU::SetValueILU(const CMatrixSquareSparse& m)
+void CPreconditionerILU::SetValueILU(const CMatrixSparse& m)
 {
-  const int nblk = mat.m_nblk_col;
-	const int len = mat.m_len_col;
+  const int nblk = mat.nblk_col;
+	const int len = mat.len_col;
 	const int blksize = len*len;
 //  for(int i=0;i<mat.m_ncrs*blksize;i++){ mat.m_valCrs[i] = m.m_valCrs[i]; }
   std::vector<int> row2crs(nblk,-1);
   for(int iblk=0;iblk<nblk;iblk++){
-    for(int ijcrs=mat.m_colInd[iblk];ijcrs<mat.m_colInd[iblk+1];ijcrs++){
-      assert( ijcrs<mat.m_ncrs );
-      const int jblk0 = mat.m_rowPtr[ijcrs];
+    for(int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<mat.ncrs );
+      const int jblk0 = mat.rowPtr[ijcrs];
       assert( jblk0 < nblk );
       row2crs[jblk0] = ijcrs;
     }
-    for(int ijcrs=m.m_colInd[iblk];ijcrs<m.m_colInd[iblk+1];ijcrs++){
-      assert( ijcrs<m.m_ncrs );
-      const int jblk0 = m.m_rowPtr[ijcrs];
+    for(int ijcrs=m.colInd[iblk];ijcrs<m.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<m.ncrs );
+      const int jblk0 = m.rowPtr[ijcrs];
       assert( jblk0<nblk );
       const int ijcrs0 = row2crs[jblk0];
       if( ijcrs0 == -1 ) continue;
-      const double* pval_in = &m.m_valCrs[ijcrs*blksize];
-      double* pval_out = &mat.m_valCrs[ijcrs0*blksize];
+      const double* pval_in = &m.valCrs[ijcrs*blksize];
+      double* pval_out = &mat.valCrs[ijcrs0*blksize];
       for(int i=0;i<blksize;i++){ *(pval_out+i) = *(pval_in+i); }
     }
-    for(int ijcrs=mat.m_colInd[iblk];ijcrs<mat.m_colInd[iblk+1];ijcrs++){
-      assert( ijcrs<mat.m_ncrs );
-      const int jblk0 = mat.m_rowPtr[ijcrs];
+    for(int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<mat.ncrs );
+      const int jblk0 = mat.rowPtr[ijcrs];
       assert( jblk0 < nblk );
       row2crs[jblk0] = -1;
     }
   }
-  for(int i=0;i<nblk*blksize;i++){ mat.m_valDia[i] = m.m_valDia[i]; }
+  for(int i=0;i<nblk*blksize;i++){ mat.valDia[i] = m.valDia[i]; }
 }
 
 // numerical factorization
@@ -647,13 +647,13 @@ bool CPreconditionerILU::DoILUDecomp()
   const int nmax_sing = 10;
 	int icnt_sing = 0;
   
-	const int len = mat.m_len_col;
-  const int nblk = mat.m_nblk_col;
+	const int len = mat.len_col;
+  const int nblk = mat.nblk_col;
 //  const int m_ncrs = mat.m_ncrs;
-  const int* colind = mat.m_colInd;
-  const int* rowptr = mat.m_rowPtr;
-  double* vcrs = mat.m_valCrs;
-  double* vdia = mat.m_valDia;
+  const int* colind = mat.colInd;
+  const int* rowptr = mat.rowPtr;
+  double* vcrs = mat.valCrs;
+  double* vdia = mat.valDia;
   const int m_ncrs = colind[nblk];
   
   std::vector<int> row2crs(nblk,-1);
@@ -889,11 +889,11 @@ std::vector<double> Solve_PCG
  double* x_vec,
  double conv_ratio,
  int iteration,
- const CMatrixSquareSparse& mat,
+ const CMatrixSparse& mat,
  const CPreconditionerILU& ilu)
 {
-	const int nblk = mat.m_nblk_col;
-  const int len = mat.m_len_col;
+	const int nblk = mat.nblk_col;
+  const int len = mat.len_col;
 //  assert(r_vec.size() == nblk*len);
   const int ndof = nblk*len;
   std::vector<double> aResHistry;
@@ -968,15 +968,15 @@ std::vector<double> Solve_PBiCGStab
  double* x_vec,
  double conv_ratio,
  int num_iter,
- const CMatrixSquareSparse& mat,
+ const CMatrixSparse& mat,
  const CPreconditionerILU& ilu)
 {
   assert( mat.is_dia );
-  assert( mat.m_nblk_col == mat.m_nblk_row );
-  assert( mat.m_len_col == mat.m_len_row );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
   
-  const int nblk = mat.m_nblk_col;
-  const int len = mat.m_len_col;
+  const int nblk = mat.nblk_col;
+  const int len = mat.len_col;
 //  assert(r_vec.size() == nblk*len);
   const int ndof = nblk*len;
   std::vector<double> aResHistry;

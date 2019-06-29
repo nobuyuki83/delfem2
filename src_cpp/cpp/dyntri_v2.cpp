@@ -90,7 +90,7 @@ bool FindEdgePoint_AcrossEdge
       assert( itri_nex < (int)tri.size() );
       assert( itri_nex >= 0 );
       assert( tri[itri_nex].v[inotri3] == ipo0 );
-      if( itri_nex == itri_ini ){
+      if( itri_nex == (int)itri_ini ){
         itri0 = 0;
         inotri0 = 0; inotri1 = 0;
         ratio = 0.0;
@@ -533,9 +533,10 @@ void EnforceEdge
 void FlagConnected
 (std::vector<int>& inout_flg,
  const std::vector<ETri>& aTri_in,
- int itri0_ker, int iflag)
+ unsigned int itri0_ker,
+ int iflag)
 {
-  const int ntri = aTri_in.size();
+  const unsigned int ntri = aTri_in.size();
   assert( inout_flg.size() == ntri );
   assert( itri0_ker>= 0 && itri0_ker<inout_flg.size() );
   inout_flg[itri0_ker] = iflag;
@@ -1039,7 +1040,7 @@ void Meshing_SingleConnectedShape2D
     aPoDel.push_back( npo+2 );
   }
   Meshing_Initialize(aPo2D,aETri,aVec2);
-  for(int iloop=0;iloop<loopIP_ind.size()-1;++iloop){
+  for(unsigned int iloop=0;iloop<loopIP_ind.size()-1;++iloop){
     const int np0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];
     for(int iip=loopIP_ind[iloop];iip<loopIP_ind[iloop+1];++iip){
       const int ip0 = loopIP[loopIP_ind[iloop]+(iip+0)%np0];
@@ -1195,7 +1196,7 @@ void JArray_FromVecVec_XY
     }
   }
   loopIP0.resize(aXY.size());
-  for(int ip=0;ip<aXY.size();++ip){ loopIP0[ip] = ip; }
+  for(unsigned int ip=0;ip<aXY.size();++ip){ loopIP0[ip] = ip; }
 }
 
 
@@ -1214,10 +1215,10 @@ void ResamplingLoop
     for(int iloop=0;iloop<nloop;++iloop){
       const int np = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
       for(int ip=0;ip<np;ip++){
-        const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np; assert( iipo0>=0 && iipo0<loopIP0.size() );
-        const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np; assert( iipo1>=0 && iipo1<loopIP0.size() );
-        const int ipo0 = loopIP0[iipo0]; assert(ipo0>=0&&ipo0<aVec2.size());
-        const int ipo1 = loopIP0[iipo1]; assert(ipo1>=0&&ipo1<aVec2.size());
+        const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np; assert( iipo0>=0 && iipo0<(int)loopIP0.size() );
+        const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np; assert( iipo1>=0 && iipo1<(int)loopIP0.size() );
+        const int ipo0 = loopIP0[iipo0]; assert(ipo0>=0&&ipo0<(int)aVec2.size());
+        const int ipo1 = loopIP0[iipo1]; assert(ipo1>=0&&ipo1<(int)aVec2.size());
         const CVector2 po0 = aVec2[ipo0]; // never use reference here because aVec2 will resize afterward
         const CVector2 po1 = aVec2[ipo1]; // never use reference here because aVec2 will resize afterward
         const int nadd = (int)( Distance( po0, po1 ) / max_edge_length);
@@ -1227,7 +1228,7 @@ void ResamplingLoop
           CVector2 v2 = (1-r2)*po0 + r2*po1;
           const int ipo2 = aVec2.size();
           aVec2.push_back(v2);
-          assert( iipo0>=0 && iipo0<aPoInEd.size() );
+          assert( iipo0>=0 && iipo0<(int)aPoInEd.size() );
           aPoInEd[ iipo0 ].push_back(ipo2);
         }
       }
@@ -1247,7 +1248,7 @@ void ResamplingLoop
   }
   // adding new vertices on the outline
   loopIP1.resize(loopIP1_ind[nloop]);
-  int ivtx0 = 0;
+  unsigned int ivtx0 = 0;
   for(int iloop=0;iloop<nloop;iloop++){
     for(int iip_loop=loopIP0_ind[iloop];iip_loop<loopIP0_ind[iloop+1];iip_loop++){
       const int ip_loop = loopIP0[iip_loop];
@@ -1324,11 +1325,11 @@ void RefineMesh
 {
   assert( aVec2.size() == aEPo2.size() );
   std::stack<int> aIV_free;
-  for(int ip=0;ip<aEPo2.size();++ip){
+  for(unsigned int ip=0;ip<aEPo2.size();++ip){
     if( aEPo2[ip].e != -1 ){ continue; }
     aIV_free.push(ip);
   }
-  for(int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
+  for(unsigned int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
     CCmdRefineMesh::CCmdEdge& cmd = aCmd.aCmdEdge[icmd];
     int i0= cmd.ipo0;
     int i1= cmd.ipo1;
@@ -1348,7 +1349,7 @@ void RefineMesh
       cmd.ipo_new = ipo;
     }
   }
-  for(int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
+  for(unsigned int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
     const int ip0 = aCmd.aCmdEdge[icmd].ipo_new;
     AddPointsMesh(aVec2, aEPo2, aSTri, ip0, 1.0e-10);
     DelaunayAroundPoint(ip0, aEPo2, aSTri, aVec2);
@@ -1363,7 +1364,7 @@ void MakeInvMassLumped_Tri
  const std::vector<ETri>& aETri)
 {
   aInvMassLumped.assign(aVec2.size(),0.0);
-  for(int it=0;it<aETri.size();++it){
+  for(unsigned int it=0;it<aETri.size();++it){
     const int aIP[3] = {aETri[it].v[0],aETri[it].v[1],aETri[it].v[2]};
     double P[3][2] = {
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
@@ -1375,7 +1376,7 @@ void MakeInvMassLumped_Tri
       aInvMassLumped[ip] += Area*rho/3.0;
     }
   }
-  for(int ip=0;ip<aVec2.size();++ip){
+  for(unsigned int ip=0;ip<aVec2.size();++ip){
     double m0 = aInvMassLumped[ip];
     if( m0 < 1.0e-10 ){ continue; }
     aInvMassLumped[ip] = 1.0/m0;
@@ -1388,7 +1389,7 @@ void MinMaxTriArea
  const std::vector<CVector2>& aVec2,
  const std::vector<ETri>& aETri)
 {
-  for(int it=0;it<aETri.size();++it){
+  for(unsigned int it=0;it<aETri.size();++it){
     const int i0 = aETri[it].v[0];
     const int i1 = aETri[it].v[1];
     const int i2 = aETri[it].v[2];
@@ -1409,7 +1410,7 @@ void MinMaxTriArea
 void MakeMassMatrixTri
 (double M[9],
  double rho,
- const int aIP[3],
+ const unsigned int aIP[3],
  const std::vector<CVector2>& aVec2)
 {
   assert(aIP[0]>=0 && aIP[0]<aVec2.size());
