@@ -198,7 +198,7 @@ void Normal_MeshTri3D
 void Quality_MeshTri2D
 (double& max_aspect, double& min_area,
  const double* aXY,
- const int* aTri, int nTri)
+ const unsigned int* aTri, int nTri)
 {
   max_aspect = 0;
   min_area = 0;
@@ -766,7 +766,7 @@ int nr, int nl)
 
 void MeshTri3D_ClosedCylinder
 (std::vector<double>& aXYZ, 
-std::vector<int>& aTri,
+std::vector<unsigned int>& aTri,
 double r, double l,
 int nlo, int nl)
 {
@@ -1610,7 +1610,7 @@ void CenterOfGravity_Tet
   cgz = 0.0;
   v_tot = 0;
   const double* pXYZ = aXYZC.data();
-  for(int it=0;it<aTetC.size()/4;++it){
+  for(unsigned int it=0;it<aTetC.size()/4;++it){
     const double* p0 = pXYZ+aTetC[it*4+0]*3;
     const double* p1 = pXYZ+aTetC[it*4+1]*3;
     const double* p2 = pXYZ+aTetC[it*4+2]*3;

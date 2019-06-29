@@ -53,10 +53,16 @@ def edge_quad_hex():
   msh_edge = msh.mesh_edge()
   dfm2.glfw.winDraw3d([msh_edge])
 
+def primitive():
+  msh = dfm2.Mesh()
+  msh.set_cylinder(1.0,1.0, 16, 4)
+  dfm2.glfw.winDraw3d([msh])
 
-
+  msh.set_sphere(1.0,16, 32)
+  dfm2.glfw.winDraw3d([msh])
 
 if __name__ == "__main__":
   height_map()
   edge_tri()
   edge_quad_hex()
+  primitive()

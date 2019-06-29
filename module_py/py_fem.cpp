@@ -16,54 +16,54 @@
 namespace py = pybind11;
 
 void MatrixSquareSparse_SetPattern
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  const py::array_t<int>& psup_ind,
  const py::array_t<int>& psup)
 {
-  assert( mss.m_nblk_col == mss.m_nblk_row );
-  assert( mss.m_len_col == mss.m_len_row );
+  assert( mss.nblk_col == mss.nblk_row );
+  assert( mss.len_col == mss.len_row );
   assert( psup_ind.ndim()  == 1 );
   assert( psup.ndim()  == 1 );
-  const int np = mss.m_nblk_col;
+  const int np = mss.nblk_col;
   assert( psup_ind.shape()[0] == np+1 );
   mss.SetPattern(psup_ind.data(), psup_ind.shape()[0],
                  psup.data(),     psup.shape()[0]);
 }
 
 void MatrixSquareSparse_SetFixBC
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  const py::array_t<int>& flagbc)
 {
-  assert( mss.m_nblk_col == mss.m_nblk_row );
-  assert( mss.m_len_col == mss.m_len_row );
+  assert( mss.nblk_col == mss.nblk_row );
+  assert( mss.len_col == mss.len_row );
   assert( flagbc.ndim() == 2 );
-  assert( flagbc.shape()[0] == mss.m_nblk_col );
-  assert( flagbc.shape()[1] == mss.m_len_col );
+  assert( flagbc.shape()[0] == mss.nblk_col );
+  assert( flagbc.shape()[1] == mss.len_col );
   mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0],flagbc.shape()[1]);
 }
 
 
 void MatrixSquareSparse_ScaleLeftRight
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  const py::array_t<double>& scale)
 {
-  assert( mss.m_nblk_col == mss.m_nblk_row );
-  assert( mss.m_len_col == mss.m_len_row );
+  assert( mss.nblk_col == mss.nblk_row );
+  assert( mss.len_col == mss.len_row );
   assert( scale.ndim() == 1 );
-  assert( scale.shape()[0] == mss.m_nblk_col );
+  assert( scale.shape()[0] == mss.nblk_col );
   mss.ScaleLeftRight(scale.data());
 }
 
 void LinearSystem_SetMasterSlave
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& np_b,
  const py::array_t<int>& np_ms)
 {
-  assert( mss.m_nblk_col == mss.m_nblk_row );
-  assert( mss.m_len_col == mss.m_len_row );
+  assert( mss.nblk_col == mss.nblk_row );
+  assert( mss.len_col == mss.len_row );
   assert( np_b.ndim() == 2 );
-  assert( np_b.shape()[0] == mss.m_nblk_col );
-  assert( np_b.shape()[1] == mss.m_len_col );
+  assert( np_b.shape()[0] == mss.nblk_col );
+  assert( np_b.shape()[1] == mss.len_col );
   assert( np_ms.ndim() == 2 );
   assert( np_ms.shape()[0] == np_b.shape()[0] );
   assert( np_ms.shape()[1] == np_b.shape()[1] );
@@ -76,7 +76,7 @@ void LinearSystem_SetMasterSlave
 
 void PrecondILU0
 (CPreconditionerILU&  mat_ilu,
- const CMatrixSquareSparse& mss)
+ const CMatrixSparse& mss)
 {
   mat_ilu.Initialize_ILU0(mss);
 }
@@ -86,7 +86,7 @@ std::vector<double> PySolve_PCG
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
  double conv_ratio, double iteration,
- const CMatrixSquareSparse& mat_A,
+ const CMatrixSparse& mat_A,
  const CPreconditionerILU& ilu_A)
 {
   //  std::cout << "solve pcg" << std::endl;
@@ -102,7 +102,7 @@ std::vector<double> PySolve_PBiCGStab
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
  double conv_ratio, double iteration,
- const CMatrixSquareSparse& mat_A,
+ const CMatrixSparse& mat_A,
  const CPreconditionerILU& ilu_A)
 {
   //  std::cout << "solve pcg" << std::endl;
@@ -122,7 +122,7 @@ std::vector<double> PySolve_PBiCGStab
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void PyMergeLinSys_Poission
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double alpha, double source,
  const py::array_t<double>& aXY,
@@ -155,7 +155,7 @@ void PyMergeLinSys_Poission
 
 
 void PyMergeLinSys_Diffuse
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double alpha, double rho, double source,
  double dt_timestep, double gamma_newmark,
@@ -194,7 +194,7 @@ void PyMergeLinSys_Diffuse
 
 
 void PyMergeLinSys_LinearSolidStatic
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double myu, double lambda, double rho,
  std::vector<double>& gravity,
@@ -230,7 +230,7 @@ void PyMergeLinSys_LinearSolidStatic
 
 
 void PyMergeLinSys_LinearSolidDynamic
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double myu, double lambda, double rho,
  std::vector<double>& gravity,
@@ -269,7 +269,7 @@ void PyMergeLinSys_LinearSolidDynamic
 
 
 void PyMergeLinSys_StorksStatic2D
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double myu, double g_x, double g_y,
  const py::array_t<double>& aXY,
@@ -285,7 +285,7 @@ void PyMergeLinSys_StorksStatic2D
 }
 
 void PyMergeLinSys_StorksDynamic2D
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double myu, double rho, double g_x, double g_y,
  double dt_timestep, double gamma_newmark,
@@ -304,7 +304,7 @@ void PyMergeLinSys_StorksDynamic2D
 }
 
 void PyMergeLinSys_NavierStorks2D
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double myu, double rho, double g_x, double g_y,
  double dt_timestep, double gamma_newmark,
@@ -323,7 +323,7 @@ void PyMergeLinSys_NavierStorks2D
 }
 
 double PyMergeLinSys_Cloth
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double lambda, double myu, double stiff_bend,
  const py::array_t<double>& aPosIni,
@@ -343,7 +343,7 @@ double PyMergeLinSys_Cloth
 
 
 double PyMergeLinSys_Contact
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  ////
  double stiff_contact,
@@ -389,7 +389,7 @@ double PyMergeLinSys_Contact
 }
 
 double PyMergeLinSys_MassPoint
-(CMatrixSquareSparse& mss,
+(CMatrixSparse& mss,
  py::array_t<double>& vec_b,
  double mass_point,
  double dt,
@@ -414,9 +414,9 @@ double PyMergeLinSys_MassPoint
     pB[i] = -pB[i] + mass_point*pUVW[i]/dt;
   }
   for(int ip=0;ip<np;ip++){
-    mss.m_valDia[ip*9+0*3+0] += mass_point / (dt*dt);
-    mss.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
-    mss.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
+    mss.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
+    mss.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
+    mss.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
   return W;
 }
@@ -537,11 +537,11 @@ void PyPointFixBC
 }
 
 void init_fem(py::module &m){
-  py::class_<CMatrixSquareSparse>(m,"MatrixSquareSparse")
+  py::class_<CMatrixSparse>(m,"MatrixSquareSparse")
   .def(py::init<>())
-  .def("initialize", &CMatrixSquareSparse::Initialize)
-  .def("set_zero",   &CMatrixSquareSparse::SetZero)
-  .def("add_dia",    &CMatrixSquareSparse::AddDia);
+  .def("initialize", &CMatrixSparse::Initialize)
+  .def("set_zero",   &CMatrixSparse::SetZero)
+  .def("add_dia",    &CMatrixSparse::AddDia);
   
   py::class_<CPreconditionerILU>(m,"PreconditionerILU")
   .def(py::init<>())

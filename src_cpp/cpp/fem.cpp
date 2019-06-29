@@ -106,7 +106,7 @@ void setRHS_MasterSlave
 
 
 void SolveLinSys_PCG
-(const CMatrixSquareSparse& mat_A,
+(const CMatrixSparse& mat_A,
  std::vector<double>& vec_b,
  std::vector<double>& vec_x,
  CPreconditionerILU& ilu_A,
@@ -126,7 +126,7 @@ void SolveLinSys_PCG
 }
 
 bool SolveLinSys_BiCGStab
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  std::vector<double>& vec_b,
  std::vector<double>& vec_x,
  CPreconditionerILU& ilu_A,
@@ -154,7 +154,7 @@ bool SolveLinSys_BiCGStab
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void MergeLinSys_Poission_MeshTri2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double alpha,
  const double source,
@@ -188,7 +188,7 @@ void MergeLinSys_Poission_MeshTri2D
 }
 
 void MergeLinSys_Poission_MeshTet3D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double alpha,
  const double source,
@@ -223,7 +223,7 @@ void MergeLinSys_Poission_MeshTet3D
 }
 
 void MergeLinSys_Diffusion_MeshTri2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double alpha,
  const double rho,
@@ -265,7 +265,7 @@ void MergeLinSys_Diffusion_MeshTri2D
 }
 
 void MergeLinSys_Diffusion_MeshTet3D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double alpha,
  const double rho,
@@ -309,7 +309,7 @@ void MergeLinSys_Diffusion_MeshTet3D
 }
 
 void MergeLinSys_SolidStaticLinear_MeshTri2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double lambda,
@@ -352,7 +352,7 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D
 }
 
 void MergeLinSys_SolidDynamicLinear_MeshTri2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double lambda,
@@ -404,7 +404,7 @@ void MergeLinSys_SolidDynamicLinear_MeshTri2D
 }
 
 void MergeLinSys_StokesStatic2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double g_x,
@@ -443,7 +443,7 @@ void MergeLinSys_StokesStatic2D
 }
 
 void MergeLinSys_StokesDynamic2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double rho,
@@ -489,7 +489,7 @@ void MergeLinSys_StokesDynamic2D
 }
 
 void MergeLinSys_NavierStokes2D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double rho,
@@ -535,7 +535,7 @@ void MergeLinSys_NavierStokes2D
 
 // compute total energy and its first and second derivatives
 double MergeLinSys_Cloth
-(CMatrixSquareSparse& ddW, // (out) second derivative of energy
+(CMatrixSparse& ddW, // (out) second derivative of energy
  double* dW, // (out) first derivative of energy
  ////
  double lambda, // (in) Lame's 1st parameter
@@ -600,7 +600,7 @@ double MergeLinSys_Cloth
 
 
 double MergeLinSys_Contact
-(CMatrixSquareSparse& ddW,
+(CMatrixSparse& ddW,
  double* dW,
  ////
  double stiff_contact,
@@ -609,7 +609,7 @@ double MergeLinSys_Contact
  const double* aXYZ,
  int nXYZ)
 {
-  const int np = nXYZ;
+  const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np,-1);
   double W = 0;
   for(unsigned int ip=0;ip<np;ip++){
@@ -738,7 +738,7 @@ double MergeLinSys_Contact
 
 
 void MergeLinSys_SolidStaticLinear_MeshTet3D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double lambda,
@@ -781,7 +781,7 @@ void MergeLinSys_SolidStaticLinear_MeshTet3D
 }
 
 void MergeLinSys_LinearSolid3D_Static_Q1
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  std::vector<double>& vec_b,
  const double myu,
  const double lambda,
@@ -830,7 +830,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1
 }
 
 void MergeLinSys_SolidDynamicLinear_MeshTet3D
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  double* vec_b,
  const double myu,
  const double lambda,
@@ -884,7 +884,7 @@ void MergeLinSys_SolidDynamicLinear_MeshTet3D
 
 
 void MergeLinSys_Stokes3D_Static
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  std::vector<double>& vec_b,
  const double myu,
  const double rho,
@@ -930,7 +930,7 @@ void MergeLinSys_Stokes3D_Static
 }
 
 void MergeLinSys_Stokes3D_Dynamic
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  std::vector<double>& vec_b,
  const double myu,
  const double rho,
@@ -978,7 +978,7 @@ void MergeLinSys_Stokes3D_Dynamic
 }
 
 void MergeLinSys_NavierStokes3D_Dynamic
-(CMatrixSquareSparse& mat_A,
+(CMatrixSparse& mat_A,
  std::vector<double>& vec_b,
  const double myu,
  const double rho,

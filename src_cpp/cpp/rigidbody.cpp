@@ -1116,7 +1116,7 @@ void CRigidBodyAssembly_Static::Draw()
     }
   }
   /////////////////////////////////////////////
-  for(int ij=0;ij<aJoint.size();ij++){
+  for(unsigned int ij=0;ij<aJoint.size();ij++){
     const CJoint& joint = aJoint[ij];
     int irb0 = joint.irb0;
     int irb1 = joint.irb1;
@@ -1206,7 +1206,7 @@ void CRigidBodyAssembly_Static::DrawFloorGL() {
     double grid_x_max = +10;
     double grid_z_min = -10;
     double grid_z_max = +10;
-    int ndiv_grid = 30;
+    unsigned int ndiv_grid = 30;
     for(unsigned int ix=0;ix<ndiv_grid+1;ix++){
       double x0 = (grid_x_max-grid_x_min) / ndiv_grid * ix + grid_x_min;
       ::glVertex3d(x0,0,grid_z_min);

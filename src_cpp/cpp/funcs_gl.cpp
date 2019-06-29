@@ -957,12 +957,12 @@ void DrawMeshTri3D_FaceNorm
   /////
   ::glBegin(GL_TRIANGLES);
   for(int itri=0;itri<nTri;itri++){
-    const int iv1 = aTriVtx[itri*3+0];
-    const int iv2 = aTriVtx[itri*3+1];
-    const int iv3 = aTriVtx[itri*3+2];
-    const int in1 = aTriNrm[itri*3+0];
-    const int in2 = aTriNrm[itri*3+1];
-    const int in3 = aTriNrm[itri*3+2];
+    const unsigned int iv1 = aTriVtx[itri*3+0];
+    const unsigned int iv2 = aTriVtx[itri*3+1];
+    const unsigned int iv3 = aTriVtx[itri*3+2];
+    const unsigned int in1 = aTriNrm[itri*3+0];
+    const unsigned int in2 = aTriNrm[itri*3+1];
+    const unsigned int in3 = aTriNrm[itri*3+2];
     bool bn1=in1>=0&&in1*3<aNorm.size();
     bool bn2=in2>=0&&in2*3<aNorm.size();
     bool bn3=in3>=0&&in3*3<aNorm.size();

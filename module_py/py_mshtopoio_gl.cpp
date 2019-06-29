@@ -333,7 +333,7 @@ py::array_t<unsigned int> PyElemQuad_DihedralTri
 std::tuple<double,double>
 PyQuality_MeshTri2D
 (const py::array_t<double>& np_xy,
- const py::array_t<int>& np_tri)
+ const py::array_t<unsigned int>& np_tri)
 {
   double max_aspect;
   double min_area;
@@ -408,7 +408,27 @@ py::array_t<unsigned int> PyEdge_Mesh
   return npLine;
 }
 
+std::tuple< py::array_t<double>, py::array_t<unsigned int> >
+PyMeshTri3D_Cylinder(double r, double l, int nr, int nl)
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  MeshTri3D_ClosedCylinder(aXYZ, aTri, r, l, nr, nl);
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  return std::forward_as_tuple(npXYZ,npTri);
+}
 
+std::tuple< py::array_t<double>, py::array_t<unsigned int> >
+PyMeshTri3D_Sphere(double r, int nla, int nlo)
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  MeshTri3D_Sphere(aXYZ,aTri, r,nla,nlo);
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  return std::forward_as_tuple(npXYZ,npTri);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -463,6 +483,7 @@ void init_mshtopoio_gl(py::module &m){
   
   m.def("map_value",    &PyMapValue);
   
+  // dyntri
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);
   m.def("meshdyntri2d_initialize",&PyMeshDynTri2D_Initialize);
   m.def("copyMeshDynTri2D",       &PyCopyMeshDynTri2D);
@@ -471,25 +492,31 @@ void init_mshtopoio_gl(py::module &m){
   m.def("cppNormalVtx_Mesh",      &PyNormalVtx_Mesh);
   m.def("cppEdge_Mesh",           &PyEdge_Mesh);
   
+  // io
   m.def("meshtri3d_read_ply",     &PyMeshTri3D_ReadPly,     py::return_value_policy::move);
+  m.def("meshtri3d_write_obj",    &PyMeshTri3D_WriteObj);
   m.def("meshtri3d_read_obj",     &PyMeshTri3D_ReadObj,     py::return_value_policy::move);
   m.def("meshtri3d_read_nastran", &PyMeshTri3D_ReadNastran, py::return_value_policy::move);
-  m.def("meshtri3d_write_obj",    &PyMeshTri3D_WriteObj);
+  m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
+  
+  // subdiv
   m.def("meshquad3d_subdiv",      &PyMeshQuad3D_Subviv,     py::return_value_policy::move);
   m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
-  m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
   
   m.def("setTopology_ExtrudeTri2Tet", &PySetTopology_ExtrudeTri2Tet);
   
   m.def("mass_lumped", &PyMassLumped);
   
-  
+  // jarray
   m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);
   m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);
   m.def("jarray_sort",         &PyJArray_Sort);
   
   m.def("elemQuad_dihedralTri",&PyElemQuad_DihedralTri);
   m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
+  
+  m.def("cppMeshTri3D_Cylinder", &PyMeshTri3D_Cylinder);
+  m.def("cppMeshTri3D_Sphere",   &PyMeshTri3D_Sphere);
   
   m.def("draw_mesh_facenorm",  &PyDrawMesh_FaceNorm);
   m.def("draw_mesh_edge",      &PyDrawMesh_Edge);

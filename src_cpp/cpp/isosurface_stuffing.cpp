@@ -528,7 +528,7 @@ void makeLatticeCoasestLevel
 
 void makeChild
 (std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInputIsosurfaceStuffing& input, int icell, int ichild)
+ const CInputIsosurfaceStuffing& input, unsigned int icell, int ichild)
 {
   assert( icell >=0 && icell < aCell.size() );
   assert( ichild >=0 && ichild < 8 );
@@ -1573,7 +1573,7 @@ void WarpLattice
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup)
 {
-  for(int ip=0;ip<aPointLattice.size();++ip){
+  for(unsigned int ip=0;ip<aPointLattice.size();++ip){
     if( aPointLattice[ip].sdf < 0 ){ aPointLattice[ip].iflg = 1; }  // outside
     else{                            aPointLattice[ip].iflg = 2; } // inside
   }
@@ -1584,7 +1584,7 @@ void WarpLattice
     double min_cut[3];
     for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const int jp = psup[ipsup];
-      assert( jp>=0 && jp<aPointLattice.size() );
+      assert( jp>=0 && jp<(int)aPointLattice.size() );
       if( aPointLattice[ip].iflg == aPointLattice[jp].iflg ) continue;
       if( aPointLattice[ip].iflg == 0 ) continue;
       if( aPointLattice[jp].iflg == 0 ) continue;
@@ -1717,7 +1717,7 @@ void cutoutTetFromLattice
 {
   aTet.clear();
   aTet.reserve(aTetLattice.size());
-  for(int it=0;it<aTetLattice.size()/4;it++){
+  for(unsigned int it=0;it<aTetLattice.size()/4;it++){
     const int iln0 = aTetLattice[it*4+0];
     const int iln1 = aTetLattice[it*4+1];
     const int iln2 = aTetLattice[it*4+2];
@@ -1737,7 +1737,7 @@ void cutoutTetFromLattice
     int tet[3][4];
     unsigned int ntet;
     GetClampTet(tet, ntet, iflg, on);
-    for(int itet=0;itet<ntet;itet++){
+    for(unsigned int itet=0;itet<ntet;itet++){
       aTet.push_back( tet[itet][0] );
       aTet.push_back( tet[itet][1] );
       aTet.push_back( tet[itet][2] );

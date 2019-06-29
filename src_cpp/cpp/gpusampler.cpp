@@ -109,9 +109,9 @@ void CGPUSampler::SetCoord
 {
   this->lengrid = elen;
   this->z_range = depth_max;
-  z_axis[0] = dir_prj[0];  z_axis[1] = dir_prj[1];  z_axis[2] = dir_prj[2];
-  origin[0] = org_prj[0];  origin[1] = org_prj[1];  origin[2] = org_prj[2];
-  x_axis[0] = dir_width[0];  x_axis[1] = dir_width[1];  x_axis[2] = dir_width[2];
+  z_axis[0] = dir_prj[0];   z_axis[1] = dir_prj[1];   z_axis[2] = dir_prj[2];
+  origin[0] = org_prj[0];   origin[1] = org_prj[1];   origin[2] = org_prj[2];
+  x_axis[0] = dir_width[0]; x_axis[1] = dir_width[1]; x_axis[2] = dir_width[2];
   Normalize(z_axis,3);
   Normalize(x_axis,3);
 }
@@ -208,7 +208,7 @@ void CGPUSampler::LoadTex()
 
 void CGPUSampler::Draw() const {
   
-  ::glPointSize(1);
+  ::glPointSize(this->pointSize);
   this->Draw_Point();
   /////
   ::glLineWidth(3);
@@ -218,7 +218,7 @@ void CGPUSampler::Draw() const {
   ::glColor3d(0,0,0);
   this->Draw_BoundingBox();
   
-  if( id_tex_color > 0 ){
+  if( id_tex_color > 0 && this->isDrawTex ){
     const CVector3& dx = x_axis;
     const CVector3& dy = Cross(z_axis,dx);
     const double lx = lengrid*nResX;
@@ -267,27 +267,35 @@ void CGPUSampler::Draw_Point() const
   if( (int)aZ.size() != nResX*nResY ) return;
   if( color.size() == 3 ){ ::glColor3dv(color.data()); }
   if( color.size() == 4 ){ ::glColor4dv(color.data()); }
+  /////
+  const CVector3& dx = x_axis;
+  const CVector3& dz = z_axis;
+  const CVector3& dy = Cross(dz,dx);
   ::glBegin(GL_POINTS);
-  double o[3];
   for(int iy=0;iy<nResY;++iy){
     for(int ix=0;ix<nResX;++ix){
-      this->getGPos(o,ix,iy,aZ[iy*nResX+ix]);
-      ::glVertex3dv(o);
+      double lz = aZ[iy*nResX+ix];
+      double lx = (ix+0.5)*lengrid;
+      double ly = (iy+0.5)*lengrid;
+      CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
+      myGlVertex(vp);
     }
   }
   ::glEnd();
 }
 
-void CGPUSampler::getGPos(double p[3], int ix, int iy, double depth) const
+std::vector<double> CGPUSampler::getGPos(int ix, int iy) const
 {
   const CVector3& dx = x_axis;
   const CVector3& dz = z_axis;
   const CVector3& dy = Cross(dz,dx);
-  double lz = depth;
+  double lz = aZ[iy*nResX+ix];
   double lx = (ix+0.5)*lengrid;
   double ly = (iy+0.5)*lengrid;
   CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
-  p[0] = vp.x;
-  p[1] = vp.y;
-  p[2] = vp.z;
+  std::vector<double> res;
+  res.push_back(vp.x);
+  res.push_back(vp.y);
+  res.push_back(vp.z);
+  return res;
 }

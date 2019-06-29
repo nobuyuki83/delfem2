@@ -21,11 +21,11 @@ void PBD_Post
  const std::vector<double>& aXYZt,
  const std::vector<int>& aBCFlag)
 {
-  const int ndof = aXYZt.size();
+  const unsigned int ndof = aXYZt.size();
   assert( aBCFlag.size() == ndof );
   assert( aXYZ.size() == ndof );
   assert( aUVW.size() == ndof );
-  for(int idof=0;idof<ndof;++idof){
+  for(unsigned int idof=0;idof<ndof;++idof){
     if( aBCFlag[idof] != 0 ) continue;
     aUVW[idof] = (aXYZt[idof]-aXYZ[idof])/dt;
     aXYZ[idof] = aXYZt[idof];
@@ -40,7 +40,7 @@ void PBD_Pre3D
  const std::vector<double>& aUVW,
  const std::vector<int>& aBCFlag)
 {
-  const int np = aXYZ.size()/3;
+  const unsigned int np = aXYZ.size()/3;
   assert( aUVW.size() == np*3 );
   assert( aBCFlag.size() == np*3 );
   aXYZt.resize(np*3);

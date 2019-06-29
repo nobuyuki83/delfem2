@@ -65,7 +65,7 @@ void Meshing_Initialize(std::vector<CEPo2>& aPo2D,
 
 void FlagConnected(std::vector<int>& inout_flg,
                    const std::vector<ETri>& aTri_in,
-                   int itri0_ker,
+                   unsigned int itri0_ker,
                    int iflag);
 
 void DeleteTriFlag(std::vector<ETri>& aTri_in,
@@ -104,7 +104,7 @@ void MinMaxTriArea(double& min_area,
                    const std::vector<ETri>& aETri);
 void MakeMassMatrixTri(double M[9],
                        double rho,
-                       const int aIP[3],
+                       const unsigned int aIP[3],
                        const std::vector<CVector2>& aVec2);
 
 void CMeshTri2D(std::vector<double>& aXY,

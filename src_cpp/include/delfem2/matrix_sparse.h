@@ -10,21 +10,21 @@
 
 #include <vector>
 
-class CMatrixSquareSparse
+class CMatrixSparse
 {
 public:
-	CMatrixSquareSparse();
-	virtual ~CMatrixSquareSparse();
+	CMatrixSparse();
+	virtual ~CMatrixSparse();
   
   void Initialize(int nblk, int len, bool is_dia);
-  void operator = (const CMatrixSquareSparse& m);
-  void SetPattern(const int* colind, int ncolind,
-                  const int* rowptr, int nrowptr);
+  void operator = (const CMatrixSparse& m);
+  void SetPattern(const int* colind, unsigned int ncolind,
+                  const int* rowptr, unsigned int nrowptr);
 
 	bool SetZero();
-	bool Mearge(int nblkel_col, const unsigned int* blkel_col,
-              int nblkel_row, const unsigned int* blkel_row,
-              int blksize, const double* emat,
+	bool Mearge(unsigned int nblkel_col, const unsigned int* blkel_col,
+              unsigned int nblkel_row, const unsigned int* blkel_row,
+              unsigned int blksize, const double* emat,
               std::vector<int>& m_marge_tmp_buffer);
   // Calc Matrix Vector Product
   // {y} = alpha * [A]{x} + beta * {y}  
@@ -38,19 +38,19 @@ public:
   void ScaleLeftRight(const double* scale);
   void AddDia(double eps);
 public:
-	int m_nblk_col;
-	int m_len_col;
-  int m_nblk_row;
-  int m_len_row;
+	unsigned int nblk_col;
+  unsigned int nblk_row;
+  unsigned int len_col;
+  unsigned int len_row;
   
-	int  m_ncrs;
-	int* m_colInd;
-	int* m_rowPtr;
+	unsigned int  ncrs;
+	int* colInd;
+	int* rowPtr;
   
-	double* m_valCrs;
+	double* valCrs;
   
   bool is_dia;
-	double* m_valDia;
+	double* valDia;
 };
 
 double InnerProduct(const std::vector<double>& r_vec,
@@ -70,14 +70,14 @@ void AXPY(double a,
 void Solve_CG
 (double& conv_ratio,
  int& iteration,
- const CMatrixSquareSparse& mat,
+ const CMatrixSparse& mat,
  std::vector<double>& r_vec,
  std::vector<double>& u_vec);
 
 bool Solve_BiCGSTAB
 (double& conv_ratio,
  int& num_iter,
- const CMatrixSquareSparse& mat,
+ const CMatrixSparse& mat,
  std::vector<double>& r_vec,
  std::vector<double>& x_vec);
 

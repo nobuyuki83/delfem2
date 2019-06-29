@@ -1,7 +1,6 @@
 import numpy
 import OpenGL.GL as gl
 
-
 from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse
 from .fem import PBD, PBD_Cloth
 from .fem import FieldValueSetter
