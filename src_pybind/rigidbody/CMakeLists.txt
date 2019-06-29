@@ -86,7 +86,7 @@ else()
 add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/_rigidbody.*
+  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_rigidbody.*
   ${PROJECT_SOURCE_DIR}/../../pydelfem2/rigidbody/
   COMMENT "Post Event"
 )
