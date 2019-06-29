@@ -11,11 +11,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.gl
-import delfem2.pyqt
-import delfem2.cadmshsim
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl
+import pydelfem2.pyqt
+import pydelfem2.cadmshsim
 
 
 class Window_SolidLinearEigen(dfm2.pyqt.QW_CadMshFem):
