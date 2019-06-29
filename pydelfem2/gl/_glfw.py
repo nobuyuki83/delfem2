@@ -10,8 +10,9 @@ import numpy
 import glfw
 from typing import List
 
-from .gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ
-from .libdelfem2 import AABB3, setSomeLighting, CppFrameBufferManager, glew_init
+from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ
+from .c_gl import CppFrameBufferManager
+from ..c_core import AABB3, setSomeLighting, glew_init
 
 class NavigationGLFW:
   def __init__(self,view_height):

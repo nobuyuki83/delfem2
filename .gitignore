@@ -43,3 +43,4 @@ private_examples
 desktop.ini
 examples_py/*.vtk
 pyenv
+__pycache__

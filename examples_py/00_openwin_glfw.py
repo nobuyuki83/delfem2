@@ -10,9 +10,9 @@ import OpenGL.GL as gl
 import glfw
 
 import sys
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.glfw
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl._glfw
 
 msh = None
 nav = None
@@ -37,7 +37,7 @@ def main():
   msh.read("../test_inputs/bunny_2k.ply")
   msh.scale_xyz(0.02)
 
-  nav = dfm2.glfw.NavigationGLFW(1.0)
+  nav = dfm2.gl._glfw.NavigationGLFW(1.0)
 
   glfw.init()
   win_glfw = glfw.create_window(640, 480, 'Hello World', None, None)

@@ -537,7 +537,7 @@ void PyPointFixBC
 }
 
 void init_fem(py::module &m){
-  py::class_<CMatrixSparse>(m,"MatrixSquareSparse")
+  py::class_<CMatrixSparse>(m,"CppMatrixSparse")
   .def(py::init<>())
   .def("initialize", &CMatrixSparse::Initialize)
   .def("set_zero",   &CMatrixSparse::SetZero)

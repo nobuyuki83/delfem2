@@ -5,43 +5,43 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-from OpenGL.GL import *
-from OpenGL.GLUT import *
+import OpenGL.GL as gl
+import OpenGL.GLUT as glut
 
 import sys
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.glut
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl._glut
 
 wmngr_glut = None
 
 def display():
   global wmngr_glut
-  glClearColor(0.3, 0.5, 0.8, 1.0)
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-  glEnable(GL_DEPTH_TEST)
+  gl.glClearColor(0.3, 0.5, 0.8, 1.0)
+  gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+  gl.glEnable(gl.GL_DEPTH_TEST)
   
   wmngr_glut.camera.set_gl_camera()
 
-  glEnable(GL_LIGHTING)
-  glutSolidTeapot(0.1)
+  gl.glEnable(gl.GL_LIGHTING)
+  glut.glutSolidTeapot(0.1)
 
-  glDisable(GL_LIGHTING)
-  glLineWidth(3)
-  glutSwapBuffers()
+  gl.glDisable(gl.GL_LIGHTING)
+  gl.glLineWidth(3)
+  glut.glutSwapBuffers()
 
 def reshape(width, height):
-  glViewport(0, 0, width, height)
+  gl.glViewport(0, 0, width, height)
 
 def idle():
-  glutPostRedisplay()
+  glut.glutPostRedisplay()
 
 def keyboard(bkey, x, y):
   global wmngr_glut
   key = bkey.decode("utf-8")
   if key == 'q':
     exit()
-  glutPostRedisplay()
+  glut.glutPostRedisplay()
 
 def special(key, x, y):
   global wmngr_glut
@@ -60,28 +60,28 @@ def main():
 
   ###################
   # GLUT Window Initialization
-  glutInit()
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)  # zBuffer
-  glutInitWindowSize(600, 600)
-  glutInitWindowPosition(100, 100)
-  glutCreateWindow("Simple GLUT")
+  glut.glutInit()
+  glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB | glut.GLUT_DEPTH)  # zBuffer
+  glut.glutInitWindowSize(600, 600)
+  glut.glutInitWindowPosition(100, 100)
+  glut.glutCreateWindow("Simple GLUT")
 
   # Register callbacks
-  glutReshapeFunc(reshape)
-  glutDisplayFunc(display)
-  glutMouseFunc(mouse)
-  glutMotionFunc(motion)
-  glutKeyboardFunc(keyboard)
-  glutSpecialFunc(special)
-  glutIdleFunc(idle)
+  glut.glutReshapeFunc(reshape)
+  glut.glutDisplayFunc(display)
+  glut.glutMouseFunc(mouse)
+  glut.glutMotionFunc(motion)
+  glut.glutKeyboardFunc(keyboard)
+  glut.glutSpecialFunc(special)
+  glut.glutIdleFunc(idle)
 
-  wmngr_glut = dfm2.glut.WindowManagerGLUT(0.3)
+  wmngr_glut = dfm2.gl._glut.WindowManagerGLUT(0.3)
 
   dfm2.setSomeLighting()
 
   ####
   # Turn the flow of control over to GLUT
-  glutMainLoop()
+  glut.glutMainLoop()
 
 if __name__ == "__main__":
   main()

@@ -6,14 +6,12 @@
 ####################################################################
 
 
-from OpenGL.GL import *
-
 import sys
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.glfw
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl._glfw
 
 msh = dfm2.Mesh()
 msh.read("../test_inputs/bunny_2k.ply")
 msh.scale_xyz(0.03)
-dfm2.glfw.winDraw3d([msh],winsize=(400,300))
+dfm2.gl._glfw.winDraw3d([msh],winsize=(400,300))

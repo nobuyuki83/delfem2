@@ -1,10 +1,10 @@
 import numpy, os
 import OpenGL.GL as gl
 
-from .libdelfem2 import MatrixSquareSparse, PreconditionerILU
-from .libdelfem2 import addMasterSlavePattern, matrixSquareSparse_setPattern, matrixSquareSparse_ScaleLeftRight
-from .libdelfem2 import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
-from .libdelfem2 import \
+from .c_core import CppMatrixSparse, PreconditionerILU
+from .c_core import addMasterSlavePattern, matrixSquareSparse_setPattern, matrixSquareSparse_ScaleLeftRight
+from .c_core import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
+from .c_core import \
   fem_merge_poission, \
   fem_merge_cloth, \
   fem_merge_massPoint, \
@@ -15,18 +15,19 @@ from .libdelfem2 import \
   fem_merge_storksStatic2D, \
   fem_merge_storksDynamic2D, \
   fem_merge_navierStorks2D
-from .libdelfem2 import pbd_proj_rigid2d, pbd_proj_rigid3d, pbd_pointFixBC, pbd_proj_cloth
-from .libdelfem2 import matrixSquareSparse_setFixBC
-from .libdelfem2 import drawField_colorMap, drawField_disp, drawField_hedgehog
-from .libdelfem2 import ColorMap
-from .libdelfem2 import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
-from .libdelfem2 import map_value
-from .libdelfem2 import write_vtk_meshpoint, write_vtk_meshelem, write_vtk_pointscalar, write_vtk_pointvector
-from .libdelfem2 import MathExpressionEvaluator, mass_lumped
+from .c_core import pbd_proj_rigid2d, pbd_proj_rigid3d, pbd_pointFixBC, pbd_proj_cloth
+from .c_core import matrixSquareSparse_setFixBC
+from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
+from .c_core import map_value
+from .c_core import write_vtk_meshpoint, write_vtk_meshelem, write_vtk_pointscalar, write_vtk_pointvector
+from .c_core import MathExpressionEvaluator, mass_lumped
 
 from .cadmsh import SDF
 from .cadmsh import Mesh, MeshDynTri2D
 
+from .c_core import drawField_colorMap, drawField_disp, drawField_hedgehog
+
+from .gl.c_gl import ColorMap
 
 
 def normalize_rigmsh(rigmsh):
@@ -182,7 +183,7 @@ class FEM_LinSys():
   def set_pattern(self, pattern:tuple, master_slave_ptn=None):
     self.vec_ms = master_slave_ptn
     # matrix
-    self.mat = MatrixSquareSparse()
+    self.mat = CppMatrixSparse()
     self.mat.initialize(self.np, self.ndimval, True)
     psup_ind,psup = pattern[0],pattern[1]
     if self.vec_ms is not None:

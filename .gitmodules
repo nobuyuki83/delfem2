@@ -13,3 +13,6 @@
 [submodule "src_cpp/external/eigen-git-mirror"]
 	path = src_cpp/external/eigen-git-mirror
 	url = https://github.com/eigenteam/eigen-git-mirror.git
+[submodule "src_pybind/pybind11"]
+	path = src_pybind/pybind11
+	url = https://github.com/pybind/pybind11.git
