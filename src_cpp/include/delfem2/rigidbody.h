@@ -1,5 +1,5 @@
-#ifndef __inter_plane__rigidbody__
-#define __inter_plane__rigidbody__
+#ifndef RIGIDBODY
+#define RIGIDBODY
 
 #include <iostream>
 #include <set>
@@ -11,8 +11,6 @@
 #include <Eigen/Dense>
 #endif
 
-//#include "physics_vector3d.h"
-//#include "physics_matrix3d.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/v23m3q.h"
@@ -143,4 +141,4 @@ public:
 
 
 
-#endif /* defined(__inter_plane__rigidbody__) */
+#endif

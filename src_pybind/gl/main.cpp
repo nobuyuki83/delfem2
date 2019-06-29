@@ -21,15 +21,8 @@ namespace py = pybind11;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-
-void init_polyline(py::module &m);
-void init_mshtopoio_gl(py::module &m);
 void init_sampler(py::module &m);
-void init_fbx(py::module &m);
 void init_texture(py::module &m);
-void init_rigidbody(py::module &m);
-void init_field(py::module &m);
-void init_fem(py::module &m);
 
 std::tuple<std::vector<double>,std::vector<int>> PyMeshQuad3D_VoxelGrid
 (const CGrid3D& vg)
@@ -171,116 +164,24 @@ py::array_t<double> PyMVC
 
 
 
-PYBIND11_MODULE(libdelfem2, m) {
+PYBIND11_MODULE(c_gl, m) {
   m.doc() = "pybind11 delfem2 binding";
   ///////////////////////////////////
-  
-#ifdef USE_FBX
-  init_fbx(m);
-#endif
-
-  ///////////////////////////////////
-  init_mshtopoio_gl(m);
   init_sampler(m);
-  init_polyline(m);
   init_texture(m);
-  init_rigidbody(m);
-  init_field(m);
-  init_fem(m);
-  
-  ///////////////////////////////////
-  // axis arrigned boudning box
-  py::class_<CBV3D_AABB>(m,"AABB3", "3D axis aligned bounding box class")
-  .def(py::init<>())
-  .def(py::init<const std::vector<double>&>())
-  .def("__str__",            &CBV3D_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
-  .def("minmax_xyz",         &CBV3D_AABB::MinMaxXYZ)
-  .def("draw",               &CBV3D_AABB::Draw, "draw edge of the bounding box to opengl")
-  .def("set_minmax_xyz",     &CBV3D_AABB::SetMinMaxXYZ)
-  .def("add_minmax_xyz",     &CBV3D_AABB::Add_AABBMinMax)
-  .def("list_xyz",           &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
-  .def("diagonal_length",    &CBV3D_AABB::DiagonalLength, "diagonal length of the bounding box")
-  .def("max_length",         &CBV3D_AABB::MaxLength, "diagonal length of the bounding box")
-  .def("center",             &CBV3D_AABB::Center, "center position")
-  .def_readwrite("isActive", &CBV3D_AABB::is_active);
-  
-  ///////////////////////////////////
-  // voxel
-  py::class_<CGrid3D>(m, "CppVoxelGrid", "voxel grid class")
-  .def(py::init<>())
-  .def("add",&CGrid3D::Add,"add voxel at the integer coordinate");
-  
-  m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
-  m.def("meshhex3d_voxelgrid",&PyMeshHex3D_VoxelGrid);
-  
-  ///////////////////////////////////
-  // SDF
-  py::class_<CSDF3>(m, "SDF");
-  
-  py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "SDF_Sphere")
-  .def(py::init<>())
-  .def(py::init<double,const std::vector<double>&,bool>())
-  .def("draw",  &CSignedDistanceField3D_Sphere::Draw);
-  
-  m.def("isosurface", &PyIsoSurface);
-  
-  ///////////////////////////////////
-  // cad
-  py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
-  .def(py::init<>())
-  .def("draw",        &CCad2D::Draw)
-  .def("pick",        &CCad2D::Pick)
-  .def("drag_picked", &CCad2D::DragPicked)
-  .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
-  .def("add_polygon", &CCad2D::AddPolygon)
-  .def("meshing",     &CCad2D::Meshing)
-  .def("xy_vtxctrl_face", &CCad2D::XY_VtxCtrl_Face)
-  .def("ind_vtx_face", &CCad2D::Ind_Vtx_Face)
-  .def("ind_edge_face",&CCad2D::Ind_Edge_Face)
-  .def("ind_vtx_edge", &CCad2D::Ind_Vtx_Edge)
-  .def("add_vtx_edge", &CCad2D::AddVtxEdge)
-  .def("set_edge_type",&CCad2D::SetEdgeType)
-  .def("edge_type",   &CCad2D::GetEdgeType)
-  .def("check",       &CCad2D::Check)
-  .def("nface",       &CCad2D::nFace)
-  .def("nvtx",        &CCad2D::nVtx)
-  .def("nedge",       &CCad2D::nEdge)
-  .def_readwrite("is_draw_face", &CCad2D::is_draw_face)
-  .def_readwrite("ivtx_picked",  &CCad2D::ivtx_picked)
-  .def_readwrite("iedge_picked",  &CCad2D::iedge_picked)
-  .def_readwrite("iface_picked",  &CCad2D::iface_picked);
-  
-
-  m.def("cad_getPointsEdge",
-        &PyCad2D_GetPointsEdge,
-        py::arg("cad"),
-        py::arg("list_edge_index"),
-        py::arg("np_xy"),
-        py::arg("tolerance") = 0.001,
-        py::return_value_policy::move);
-  
-  m.def("meshDynTri2D_CppCad2D",&MeshDynTri2D_Cad2D);
-  m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
-  
-  ////////////////////////////////////
+   
+ ////////////////////////////////////
 
   py::class_<CColorMap>(m,"ColorMap")
   .def(py::init<>())
   .def(py::init<double, double, const std::string&>());
   
-  py::class_<CMathExpressionEvaluator>(m,"MathExpressionEvaluator")
-  .def(py::init<>())
-  .def("set_expression",&CMathExpressionEvaluator::SetExp)
-  .def("set_key",       &CMathExpressionEvaluator::SetKey)
-  .def("eval",          &CMathExpressionEvaluator::Eval);
-  
-   ///////////////////////////////////
+  ///////////////////////////////////
   // gl misc
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
   m.def("setup_glsl",       &setUpGLSL, "compile shader program");
   m.def("glew_init",        &glewInit);
   m.def("draw_sphere",      &DrawSphereAt );
-  m.def("mvc",              &PyMVC);
 }
 
 

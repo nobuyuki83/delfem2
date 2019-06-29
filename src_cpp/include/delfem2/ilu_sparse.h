@@ -31,7 +31,7 @@ private:
   void BackwardSubstitution( std::vector<double>& vec ) const;
 public:
   CMatrixSparse mat;
-  int* m_diaInd;
+  std::vector<unsigned int> m_diaInd;
 };
 
 

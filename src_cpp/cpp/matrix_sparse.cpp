@@ -23,8 +23,6 @@ CMatrixSparse::CMatrixSparse()
   len_row = 0;
   
 	ncrs = 0;
-	colInd = 0;
-	rowPtr = 0;
   
   is_dia = true;
 	valCrs = 0;
@@ -33,8 +31,8 @@ CMatrixSparse::CMatrixSparse()
 
 CMatrixSparse::~CMatrixSparse()
 {
-  if( colInd != 0 ){ delete[] colInd; colInd = 0; }
-	if( rowPtr != 0 ){ delete[] rowPtr; rowPtr = 0; }
+  colInd.clear();
+  rowPtr.clear();
   
 	if( valCrs != 0 ){ delete[] valCrs; valCrs = 0; }
 	if( valDia != 0 ){ delete[] valDia; valDia = 0; }
@@ -56,12 +54,10 @@ void CMatrixSparse::Initialize(int nblk, int len, bool is_dia)
     for(int i=0;i<nblk*blksize;i++){ valDia[i] = 0; }
   }
   ////
-  if( colInd != 0 ){ delete[] colInd; colInd = 0; }
-  colInd = new int [nblk+1];
-  for(int i=0;i<nblk+1;i++){ colInd[i] = 0; }
+  colInd.assign(nblk+1,0);
   ////  
   ncrs = 0;
-	if( rowPtr != 0 ){ delete[] rowPtr; rowPtr = 0; }
+  rowPtr.clear();
 	if( valCrs != 0 ){ delete[] valCrs; valCrs = 0; }  
 }
 
@@ -81,17 +77,17 @@ void CMatrixSparse::operator = (const CMatrixSparse& m)
   this->nblk_row = m.nblk_row;
   this->len_row  = m.len_row;
   const int blksize = len_col*len_row;
-  this->ncrs = m.ncrs;  
-  if( colInd != 0 ){ delete[] colInd; colInd = 0; }
-  if( rowPtr != 0 ){ delete[] rowPtr; rowPtr = 0; }
+  this->ncrs = m.ncrs;
+  colInd.clear();
+  rowPtr.clear();
 	if( valCrs != 0 ){ delete[] valCrs; valCrs = 0; }
   if( valDia != 0 ){ delete[] valDia; valDia = 0; }
-  colInd = new int    [nblk_col+1];
-  rowPtr = new int    [ncrs];
+  colInd.resize(nblk_col+1);
+  rowPtr.resize(ncrs);
   valCrs = new double [ncrs*blksize];
-  for(unsigned int i=0;i<nblk_col+1;      i++){ colInd[i] = m.colInd[i]; }
-  for(int i=0;i<ncrs;        i++){ rowPtr[i] = m.rowPtr[i]; }
-  for(int i=0;i<ncrs*blksize;i++){ valCrs[i] = m.valCrs[i]; }
+  for(unsigned int i=0;i<nblk_col+1;  i++){ colInd[i] = m.colInd[i]; }
+  for(unsigned int i=0;i<ncrs;        i++){ rowPtr[i] = m.rowPtr[i]; }
+  for(unsigned int i=0;i<ncrs*blksize;i++){ valCrs[i] = m.valCrs[i]; }
   ///
   if( m.is_dia ){
     valDia = new double [nblk_col*blksize];
@@ -120,7 +116,7 @@ bool CMatrixSparse::Mearge
  unsigned int blksize, const double* emat,
  std::vector<int>& marge_buffer)
 {
-  assert( colInd != 0 );
+//  assert( colInd != 0 );
 	assert( valCrs != 0 );
 	assert( valDia != 0 );
 
@@ -131,26 +127,26 @@ bool CMatrixSparse::Mearge
     marge_buffer.resize(nblk_row);
   }
 
-	const int* colind = colInd;
-	const int* rowptr = rowPtr;
+	const unsigned int* colind = colInd.data();
+	const unsigned int* rowptr = rowPtr.data();
 	double* vcrs = valCrs;
 	double* vdia = valDia;
 
-	for(int iblkel=0;iblkel<nblkel_col;iblkel++){
+	for(unsigned int iblkel=0;iblkel<nblkel_col;iblkel++){
 		const unsigned int iblk1 = blkel_col[iblkel];
     assert( iblk1 < nblk_col );
-		for(int jpsup=colind[iblk1];jpsup<colind[iblk1+1];jpsup++){
+		for(unsigned int jpsup=colind[iblk1];jpsup<colind[iblk1+1];jpsup++){
 			assert( jpsup < ncrs );
 			const int jblk1 = rowptr[jpsup];
 			marge_buffer[jblk1] = jpsup;
 		}
-		for(int jblkel=0;jblkel<nblkel_row;jblkel++){
+		for(unsigned int jblkel=0;jblkel<nblkel_row;jblkel++){
       const unsigned int jblk1 = blkel_row[jblkel];
       assert( jblk1 < nblk_row );
 			if( iblk1 == jblk1 ){	// Marge Diagonal
 				const double* pval_in = &emat[(iblkel*nblkel_row+iblkel)*blksize];
 				double* pval_out = &vdia[iblk1*blksize];
-				for(int i=0;i<blksize;i++){ pval_out[i] += pval_in[i]; }
+				for(unsigned int i=0;i<blksize;i++){ pval_out[i] += pval_in[i]; }
 			}
 			else{	// Marge Non-Diagonal
 				if( marge_buffer[jblk1] == -1 ) continue;
@@ -159,10 +155,10 @@ bool CMatrixSparse::Mearge
 				assert( rowPtr[jpsup1] == jblk1 );
 				const double* pval_in = &emat[(iblkel*nblkel_row+jblkel)*blksize];
 				double* pval_out = &vcrs[jpsup1*blksize];
-				for(int i=0;i<blksize;i++){ pval_out[i] += pval_in[i]; }
+				for(unsigned int i=0;i<blksize;i++){ pval_out[i] += pval_in[i]; }
 			}
 		}
-		for(int jpsup=colind[iblk1];jpsup<colind[iblk1+1];jpsup++){
+		for(unsigned int jpsup=colind[iblk1];jpsup<colind[iblk1+1];jpsup++){
 			assert( jpsup < ncrs );
 			const int jblk1 = rowptr[jpsup];
 			marge_buffer[jblk1] = -1;
@@ -175,9 +171,9 @@ void CMatrixSparse::SetPattern
 (const int* pColInd, unsigned int ncolind,
  const int* pRowPtr, unsigned int nrowptr)
 {
-  assert( colInd != 0 );
+//  assert( colInd != 0 );
 	assert( ncrs == 0 );
-  assert( rowPtr == 0 );
+//  assert( rowPtr == 0 );
   
   assert( ncolind == nblk_col+1 );
   for(unsigned int iblk=0;iblk<nblk_col+1;iblk++){
@@ -186,8 +182,9 @@ void CMatrixSparse::SetPattern
   ncrs = pColInd[nblk_col];
   assert( ncrs == nrowptr );
   ////
-  if( rowPtr != 0 ){ delete[] rowPtr; rowPtr = 0; }
-  rowPtr = new int [ncrs];
+//  if( rowPtr != 0 ){ delete[] rowPtr; rowPtr = 0; }
+//  rowPtr = new int [ncrs];
+  rowPtr.resize(ncrs);
   for(unsigned int icrs=0;icrs<ncrs;icrs++){
     rowPtr[icrs] = pRowPtr[icrs];
   }
@@ -210,8 +207,8 @@ void CMatrixSparse::MatVec
 	if( len_col == 1 && len_row == 1 ){
 		const double* vcrs  = valCrs;
 		const double* vdia = valDia;
-		const int* colind = colInd;
-		const int* rowptr = rowPtr;
+		const unsigned int* colind = colInd.data();
+		const unsigned int* rowptr = rowPtr.data();
 		////////////////
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			double& vy = y[iblk];
@@ -230,15 +227,15 @@ void CMatrixSparse::MatVec
 	else if( len_col == 2 && len_row == 2 ){
 		const double* vcrs  = valCrs;
 		const double* vdia = valDia;
-		const int* colind = colInd;
-		const int* rowptr = rowPtr;
+		const unsigned int* colind = colInd.data();
+		const unsigned int* rowptr = rowPtr.data();
 		////////////////
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			y[iblk*2+0] *= beta;
 			y[iblk*2+1] *= beta;
 			const unsigned int icrs0 = colind[iblk];
 			const unsigned int icrs1 = colind[iblk+1];
-			for(int icrs=icrs0;icrs<icrs1;icrs++){
+			for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
 				assert( icrs < ncrs );
 				const unsigned int jblk0 = rowptr[icrs];
 				assert( jblk0 < nblk_row );
@@ -252,16 +249,16 @@ void CMatrixSparse::MatVec
 	else if( len_col == 3 && len_row == 3 ){
 		const double* vcrs  = valCrs;
 		const double* vdia = valDia;
-		const int* colind = colInd;
-		const int* rowptr = rowPtr;
+		const unsigned int* colind = colInd.data();
+		const unsigned int* rowptr = rowPtr.data();
 		////////////////
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			y[iblk*3+0] *= beta;
 			y[iblk*3+1] *= beta;
 			y[iblk*3+2] *= beta;
-			const int icrs0 = colind[iblk];
-			const int icrs1 = colind[iblk+1];
-			for(int icrs=icrs0;icrs<icrs1;icrs++){
+			const unsigned int icrs0 = colind[iblk];
+			const unsigned int icrs1 = colind[iblk+1];
+			for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
 				assert( icrs < ncrs );
 				const unsigned int jblk0 = rowptr[icrs];
 				assert( jblk0 < nblk_row );
@@ -284,19 +281,19 @@ void CMatrixSparse::MatVec
   else if( len_col == 4 && len_row == 4 ){
     const double* vcrs  = valCrs;
     const double* vdia = valDia;
-    const int* colind = colInd;
-    const int* rowptr = rowPtr;
+    const unsigned int* colind = colInd.data();
+    const unsigned int* rowptr = rowPtr.data();
     ////////////////
     for(unsigned int iblk=0;iblk<nblk_col;iblk++){
       y[iblk*4+0] *= beta;
       y[iblk*4+1] *= beta;
       y[iblk*4+2] *= beta;
       y[iblk*4+3] *= beta;
-      const int icrs0 = colind[iblk];
-      const int icrs1 = colind[iblk+1];
-      for(int icrs=icrs0;icrs<icrs1;icrs++){
+      const unsigned int icrs0 = colind[iblk];
+      const unsigned int icrs1 = colind[iblk+1];
+      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
         assert( icrs < ncrs );
-        const int jblk0 = rowptr[icrs];
+        const unsigned int jblk0 = rowptr[icrs];
         assert( jblk0 < nblk_row );
         const int i0 = iblk*4;
         const int j0 = jblk0*4;
@@ -319,25 +316,25 @@ void CMatrixSparse::MatVec
 	else{
 		const double* vcrs  = valCrs;
 		const double* vdia = valDia;
-		const int* colind = colInd;
-		const int* rowptr = rowPtr;
+		const unsigned int* colind = colInd.data();
+		const unsigned int* rowptr = rowPtr.data();
 		////////////////
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-			for(int idof=0;idof<len_col;idof++){ y[iblk*len_col+idof] *= beta; }
-			const int colind0 = colind[iblk];
-			const int colind1 = colind[iblk+1];
-			for(int icrs=colind0;icrs<colind1;icrs++){
+			for(unsigned int idof=0;idof<len_col;idof++){ y[iblk*len_col+idof] *= beta; }
+			const unsigned int colind0 = colind[iblk];
+			const unsigned int colind1 = colind[iblk+1];
+			for(unsigned int icrs=colind0;icrs<colind1;icrs++){
 				assert( icrs < ncrs );
-				const int jblk0 = rowptr[icrs];
+				const unsigned int jblk0 = rowptr[icrs];
 				assert( jblk0 < nblk_row );
-				for(int idof=0;idof<len_col;idof++){
-				for(int jdof=0;jdof<len_row;jdof++){
+				for(unsigned int idof=0;idof<len_col;idof++){
+				for(unsigned int jdof=0;jdof<len_row;jdof++){
 					y[iblk*len_col+idof] += alpha * vcrs[icrs*blksize+idof*len_col+jdof] * x[jblk0*len_row+jdof];
 				}
 				}
 			}
-			for(int idof=0;idof<len_col;idof++){
-			for(int jdof=0;jdof<len_row;jdof++){
+			for(unsigned int idof=0;idof<len_col;idof++){
+			for(unsigned int jdof=0;jdof<len_row;jdof++){
 				y[iblk*len_col+idof] += alpha * vdia[iblk*blksize+idof*len_col+jdof] * x[iblk*len_row+jdof];
 			}
 			}
@@ -367,7 +364,7 @@ void CMatrixSparse::SetBoundaryCondition
   }
   /////
   for(unsigned int iblk=0;iblk<nblk_col;iblk++){ // set row
-    for(int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
+    for(unsigned int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
       for(unsigned int ilen=0;ilen<len_col;ilen++){
         if( bc_flag[iblk*len_col+ilen] == 0 ) continue;
         for(unsigned int jlen=0;jlen<len_row;jlen++){
@@ -377,7 +374,7 @@ void CMatrixSparse::SetBoundaryCondition
     }
   }
   /////
-  for(int icrs=0;icrs<ncrs;icrs++){ // set column
+  for(unsigned int icrs=0;icrs<ncrs;icrs++){ // set column
 		const int jblk1 = rowPtr[icrs];
     for(unsigned int jlen=0;jlen<len_row;jlen++){
       if( bc_flag[jblk1*len_row+jlen] == 0 ) continue;
@@ -394,32 +391,33 @@ void CMatrixSparse::SetMasterSlave
   assert( this->is_dia );
   assert( this->nblk_row == this->nblk_col );
   assert( this->len_row == this->len_col );
-  const int blksize = len_col*len_row;
-  const int ndof = nblk_col*len_col;
+  const unsigned int blksize = len_col*len_row;
+  const unsigned int ndof = nblk_col*len_col;
   /////
   std::vector<int> row2crs(nblk_row,-1);
-  for(int idof1=0;idof1<ndof;++idof1){ // add row
+  for(unsigned int idof1=0;idof1<ndof;++idof1){ // add row
     int idof0 = aMSFlag[idof1];
     if( idof0 == -1 ) continue;
     int ino0 = idof0 / len_col;
     int ilen0 = idof0 - ino0*len_col;
-    assert( ilen0 >=0 && ilen0 < len_col );
-    assert( ino0 < nblk_col && ilen0 < len_col );
+    assert( ilen0 >=0 && ilen0 < (int)len_col );
+    assert( ino0 < (int)nblk_col && ilen0 < (int)len_col );
     int ino1 = idof1 / len_col;
     int ilen1 = idof1 - ino1*len_col;
-    assert( ino1 < nblk_col && ilen1 < len_col );
+    assert( ino1 < (int)nblk_col && ilen1 < (int)len_col );
     assert( ilen0 == ilen1 );
-    for(int icrs0=colInd[ino0];icrs0<colInd[ino0+1];++icrs0){
+    for(unsigned int icrs0=colInd[ino0];icrs0<colInd[ino0+1];++icrs0){
       int jno0 = rowPtr[icrs0];
-      assert( jno0 >= 0 && jno0 < nblk_row );
+      assert( jno0 >= 0 && jno0 < (int)nblk_row );
       row2crs[jno0] = icrs0;
     }
-    for(int icrs1=colInd[ino1];icrs1<colInd[ino1+1];++icrs1){
-      int jno1 = rowPtr[icrs1]; assert( jno1 >= 0 && jno1 < nblk_row );
+    for(unsigned int icrs1=colInd[ino1];icrs1<colInd[ino1+1];++icrs1){
+      int jno1 = rowPtr[icrs1];
+      assert( jno1 >= 0 && jno1 < (int)nblk_row );
       assert( jno1 != ino1 );
       if( jno1 != ino0 ){ // add non-diagonal 1 to non-diagonal 0
         const int icrs0 = row2crs[jno1];
-        assert( icrs0 >= 0 && icrs0 < ncrs );
+        assert( icrs0 >= 0 && icrs0 < (int)ncrs );
         for(unsigned int jdim=0;jdim<len_row;++jdim){
           valCrs[icrs0*blksize+ilen0*len_col+jdim] += valCrs[icrs1*blksize+ilen1*len_col+jdim];
         }
@@ -432,22 +430,23 @@ void CMatrixSparse::SetMasterSlave
     }
     { // add diagonal 1 to non-diagonal 0
       const int icrs0 = row2crs[ino1];
-      assert( icrs0 >= 0 && icrs0 < ncrs );
+      assert( icrs0 >= 0 && icrs0 < (int)ncrs );
       for(unsigned int jdim=0;jdim<len_row;++jdim){
         valCrs[icrs0*blksize+ilen0*len_col+jdim] += valDia[ino1*blksize+ilen1*len_col+jdim];
       }
     }
-    for(int icrs0=colInd[ino0];icrs0<colInd[ino0+1];++icrs0){
+    for(unsigned int icrs0=colInd[ino0];icrs0<colInd[ino0+1];++icrs0){
       int jno0 = rowPtr[icrs0];
-      assert( jno0 >= 0 && jno0 < nblk_row );
+      assert( jno0 >= 0 && jno0 < (int)nblk_row );
       row2crs[jno0] = -1;
     }
   }
   //////
   row2crs.assign(nblk_row,-1);
   for(unsigned int ino=0;ino<nblk_col;ino++){
-    for(int icrs=colInd[ino];icrs<colInd[ino+1];++icrs){
-      int jno0 = rowPtr[icrs]; assert( jno0 >= 0 && jno0 < nblk_row );
+    for(unsigned int icrs=colInd[ino];icrs<colInd[ino+1];++icrs){
+      int jno0 = rowPtr[icrs];
+      assert( jno0 >= 0 && jno0 < (int)nblk_row );
       row2crs[jno0] = icrs;
     }
     for(unsigned int jlen1=0;jlen1<len_row;jlen1++){
@@ -456,36 +455,37 @@ void CMatrixSparse::SetMasterSlave
       int jno0 = jdof0/len_row;
       assert( jdof0 - jno0*len_row == jlen1 );
       const int icrs0 = row2crs[jno0];
-      assert( icrs0 >= 0 && icrs0 < ncrs );
+      assert( icrs0 >= 0 && icrs0 < (int)ncrs );
       for(unsigned int ilen=0;ilen<len_col;ilen++){
         valCrs[icrs0*blksize+ilen*len_col+jlen1] +=valDia[ino*blksize+ilen*len_col+jlen1];
       }
     }
-    for(int icrs1=colInd[ino];icrs1<colInd[ino+1];icrs1++){
+    for(unsigned int icrs1=colInd[ino];icrs1<colInd[ino+1];icrs1++){
       const unsigned int jno1 = rowPtr[icrs1];
       assert( jno1 >= 0 && jno1 < nblk_row );
       for(unsigned int jlen1=0;jlen1<len_row;jlen1++){
         int jdof0 = aMSFlag[jno1*len_row+jlen1];
         if( jdof0 == -1 ) continue;
         int jno0 = jdof0/len_row;
-        assert( jno0 >= 0 && jno0 < nblk_row );
+        assert( jno0 >= 0 && jno0 < (int)nblk_row );
         assert( jdof0 - jno0*len_row == jlen1 );
-        if( ino == jno0 ){
-          for(int ilen=0;ilen<len_col;ilen++){
+        if( (int)ino == jno0 ){
+          for(unsigned int ilen=0;ilen<len_col;ilen++){
             valDia[jno0*blksize+ilen*len_col+jlen1] += valCrs[icrs1*blksize+ilen*len_col+jlen1];
           }
         }
         else{
           const int icrs0 = row2crs[jno0];
-          assert( icrs0 >= 0 && icrs0 < ncrs );
+          assert( icrs0 >= 0 && icrs0 < (int)ncrs );
           for(unsigned int ilen=0;ilen<len_col;ilen++){
             valCrs[icrs0*blksize+ilen*len_col+jlen1] += valCrs[icrs1*blksize+ilen*len_col+jlen1];
           }
         }
       }
     }
-    for(int icrs=colInd[ino];icrs<colInd[ino+1];++icrs){
-      int jno0 = rowPtr[icrs]; assert( jno0 >= 0 && jno0 < nblk_row );
+    for(unsigned int icrs=colInd[ino];icrs<colInd[ino+1];++icrs){
+      unsigned int jno0 = rowPtr[icrs];
+      assert( jno0 >= 0 && jno0 < nblk_row );
       row2crs[jno0] = -1;
     }
   }
@@ -503,7 +503,7 @@ void CMatrixSparse::SetMasterSlave
   
   ////
   for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-    for(int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
+    for(unsigned int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
       for(unsigned int idim=0;idim<len_col;idim++){
         int idof0 = aMSFlag[iblk*len_col+idim];
         if( idof0 == -1 ) continue;
@@ -519,7 +519,7 @@ void CMatrixSparse::SetMasterSlave
   }
   /////
   for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-    for(int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
+    for(unsigned int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
       const int jblk1 = rowPtr[icrs];
       for(unsigned int jdim=0;jdim<len_row;jdim++){
         int idof0 = aMSFlag[jblk1*len_row+jdim];
@@ -586,9 +586,9 @@ double CMatrixSparse::CheckSymmetry() const
   ////
   double sum = 0;
   for(unsigned int ino=0;ino<nblk_col;++ino){
-    for(int icrs0=colInd[ino];icrs0<colInd[ino+1];++icrs0){
+    for(unsigned int icrs0=colInd[ino];icrs0<colInd[ino+1];++icrs0){
       int jno = rowPtr[icrs0];
-      int icrs1 = colInd[jno];
+      unsigned int icrs1 = colInd[jno];
       for(;icrs1<colInd[jno+1];++icrs1){
         if( rowPtr[icrs1] == ino ){ break; }
       }
@@ -610,7 +610,7 @@ void CMatrixSparse::ScaleLeftRight(const double* scale){
   assert( this->len_row == this->len_col );
   const int blksize = len_col*len_row;
   for(unsigned int ino=0;ino<nblk_col;++ino){
-    for(int icrs0=colInd[ino];icrs0<colInd[ino+1];++icrs0){
+    for(unsigned int icrs0=colInd[ino];icrs0<colInd[ino+1];++icrs0){
       const int jno = rowPtr[icrs0];
       const double s0 = scale[ino]*scale[jno];
       for(int i=0;i<blksize;++i){ valCrs[icrs0*blksize+i] *= s0; }

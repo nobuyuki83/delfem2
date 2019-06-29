@@ -44,8 +44,8 @@ public:
   unsigned int len_row;
   
 	unsigned int  ncrs;
-	int* colInd;
-	int* rowPtr;
+  std::vector<unsigned int> colInd;
+  std::vector<unsigned int> rowPtr;
   
 	double* valCrs;
   
@@ -67,19 +67,17 @@ void AXPY(double a,
           double* y,
           int n);
 
-void Solve_CG
-(double& conv_ratio,
- int& iteration,
- const CMatrixSparse& mat,
- std::vector<double>& r_vec,
- std::vector<double>& u_vec);
+void Solve_CG(double& conv_ratio,
+              int& iteration,
+              const CMatrixSparse& mat,
+              std::vector<double>& r_vec,
+              std::vector<double>& u_vec);
 
-bool Solve_BiCGSTAB
-(double& conv_ratio,
- int& num_iter,
- const CMatrixSparse& mat,
- std::vector<double>& r_vec,
- std::vector<double>& x_vec);
+bool Solve_BiCGSTAB(double& conv_ratio,
+                    int& num_iter,
+                    const CMatrixSparse& mat,
+                    std::vector<double>& r_vec,
+                    std::vector<double>& x_vec);
 
 
 #endif // MATDIA_CRS_H

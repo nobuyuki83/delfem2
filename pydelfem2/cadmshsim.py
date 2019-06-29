@@ -7,7 +7,10 @@ from .fem import FieldValueSetter
 from .fem import VisFEM_ColorContour
 
 from .cadmsh import CadMesh2D, cad_getPointsEdge, Mesh
-from .libdelfem2 import setSomeLighting
+
+from .gl.c_gl import setSomeLighting
+
+
 
 class CadMesh2D_FEMPoisson(CadMesh2D):
 

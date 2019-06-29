@@ -52,11 +52,25 @@ build:
     - script: 
         name: compile python binding
         code: |
-          cd module_py
+          cd src_pybind
+          cd core
           mkdir buildMake
           cd buildMake
           cmake ..
           make
+          cd ../../          
+          cd gl
+          mkdir buildMake
+          cd buildMake
+          cmake ..
+          make          
+          cd ../../
+          cd rigidbody
+          mkdir buildMake
+          cd buildMake
+          cmake ..
+          make          
+          cd ../../  
     - script: 
         name: python unit test
         code: |

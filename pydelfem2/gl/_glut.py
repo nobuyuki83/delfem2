@@ -8,8 +8,8 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
-import delfem2 as dfm2
-import delfem2.gl
+from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ
+
 
 def draw_text(x, y, font, text, color):
   glMatrixMode(GL_PROJECTION)
@@ -32,7 +32,7 @@ def draw_sphere(pos, rad, color):
 
 class WindowManagerGLUT:
   def __init__(self,view_height):
-    self.camera = dfm2.gl.Camera(view_height)
+    self.camera = Camera(view_height)
     self.modifier = 0
     self.ratio_x1 = 0.0
     self.ratio_y1 = 0.0

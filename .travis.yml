@@ -56,12 +56,28 @@ script: |
   cd ..
   ls bin/  
   cd .. 
-  cd module_py
+
+  cd src_pybind/core
   mkdir buildMake
   cd buildMake
   cmake ..
-  make  
-  cd ../../
+  make    
+  cd ../../../
+
+  cd src_pybind/gl
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make    
+  cd ../../../
+
+  cd src_pybind/rigidbody
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make    
+  cd ../../../
+
   cd test
   python3 -m pip install numpy
   python3 -m pip install PyOpenGL

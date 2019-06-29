@@ -6,7 +6,6 @@
 ####################################################################
 
 import math, numpy
-import OpenGL.GL as gl
 
 def rot_matrix_cartesian(vec):
   sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]

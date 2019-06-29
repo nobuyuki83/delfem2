@@ -1,7 +1,7 @@
 import unittest, numpy, random
 import sys
-sys.path.append("../module_py")
-import delfem2 as dfm2
+sys.path.append("..")
+import pydelfem2 as dfm2
 
 class Test_CppCad2D(unittest.TestCase):
   def test1(self):
@@ -51,11 +51,11 @@ class Test_Cad2D(unittest.TestCase):
     cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
     msh,map_cad2msh = cad.mesh(0.02)
     self.assertEqual(msh.np_pos.shape[1],2)
-    np_xy_bound = numpy.array(cad.ccad.xy_vtx_face(0)).reshape([-1, 2])
+    np_xy_bound = numpy.array(cad.ccad.xy_vtxctrl_face(0)).reshape([-1, 2])
     W = dfm2.mvc(msh.np_pos, np_xy_bound)
     self.assertEqual(W.ndim,2)
     self.assertEqual(W.shape[0],msh.np_pos.shape[0])
-    self.assertEqual(W.shape[1],len(cad.ccad.xy_vtx_face(0))/2)
+    self.assertEqual(W.shape[1],len(cad.ccad.xy_vtxctrl_face(0))/2)
     self.assertLess(numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0]))),1.0e-3)
 
 

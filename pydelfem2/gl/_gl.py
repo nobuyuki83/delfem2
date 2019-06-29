@@ -8,11 +8,13 @@
 
 import math, numpy
 import OpenGL.GL as gl
+import sys
+sys.path.append("..")
 
-from .util import minMaxLoc, v3_scale, v3_normalize, v3_cross
-from .util import motion_rot, motion_trans
-from .util import get_quaternion_rot_matrix, affine_matrix_quaternion
-from .util import screenUnProjection, screenUnProjectionDirection
+from ..util import minMaxLoc, v3_scale, v3_normalize, v3_cross
+from ..util import motion_rot, motion_trans
+from ..util import get_quaternion_rot_matrix, affine_matrix_quaternion
+from ..util import screenUnProjection, screenUnProjectionDirection
 
 def getOpenglInfo():
   info = """

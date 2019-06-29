@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(PROJ_NAME libdelfem2)
+set(PROJ_NAME c_gl)
 
 project(${PROJ_NAME})
 set(PYBIND11_CPP_STANDARD -std=c++14)
@@ -11,12 +11,12 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -O2")
 endif()		
 add_definitions(-DUSE_GL)
 
-set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/pybind11)
+set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
-set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
-set(DELFEM2_SRC         "../src_cpp/cpp")
-set(DELFEM2_INC         "../src_cpp/include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
+set(DELFEM2_SRC         "../../src_cpp/cpp")
+set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 set(INPUT_SRC
   ${DELFEM2_SRC}/vec2.cpp          ${DELFEM2_INC}/vec2.h
@@ -47,7 +47,6 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/cad2d.cpp         ${DELFEM2_INC}/cad2d.h
   ${DELFEM2_SRC}/gpusampler.cpp    ${DELFEM2_INC}/gpusampler.h  
   ${DELFEM2_SRC}/rigmesh.cpp       ${DELFEM2_INC}/rigmesh.h  
-  ${DELFEM2_SRC}/rigidbody.cpp     ${DELFEM2_INC}/rigidbody.h
   ${DELFEM2_SRC}/isosurface_stuffing.cpp  ${DELFEM2_INC}/isosurface_stuffing.h
   ${DELFEM2_SRC}/sdf.cpp           ${DELFEM2_INC}/sdf.h
   ${DELFEM2_SRC}/hash3d.cpp        ${DELFEM2_INC}/hash3d.h
@@ -58,14 +57,9 @@ set(INPUT_SRC
                                    ${DELFEM2_INC}/funcs_glew.h
   ${DELFEM2_SRC}/camera_gl.cpp     ${DELFEM2_INC}/camera_gl.h
 
-  py_mshtopoio_gl.cpp
   py_sampler.cpp
-  py_polyline.cpp 
   py_texture.cpp 
-  py_rigidbody.cpp
-  py_field.cpp
-  py_fem.cpp
-  py_delfem2.cpp
+  main.cpp
 )
 
 find_package(OpenGL REQUIRED)
@@ -122,8 +116,8 @@ else()
 add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libdelfem2.*
-  ${PROJECT_SOURCE_DIR}/delfem2/libdelfem2.so
+  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_gl.*
+  ${PROJECT_SOURCE_DIR}/../../pydelfem2/gl
   COMMENT "Post Event"
 )
 endif()

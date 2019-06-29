@@ -25,3 +25,10 @@ void init_rigidbody(py::module &m){
   py::class_<CJoint>(m,"Joint")
   .def(py::init<int,int, std::vector<double>>());
 }
+
+
+PYBIND11_MODULE(_rigidbody, m) {
+  m.doc() = "pybind11 delfem2 binding";
+  ///////////////////////////////////
+  init_rigidbody(m);
+}

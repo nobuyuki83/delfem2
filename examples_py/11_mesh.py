@@ -6,9 +6,9 @@
 ####################################################################
 
 import sys
-sys.path.append("../module_py")
-import delfem2 as dfm2
-import delfem2.glfw
+sys.path.append("..")
+import pydelfem2 as dfm2
+import pydelfem2.gl._glfw
 
 import numpy, math
 
@@ -23,11 +23,11 @@ def height_map():
   msh.np_pos = numpy.hstack((msh.np_pos,A0.reshape((-1,1))))
   axis = dfm2.gl.AxisXYZ(32)
   print("hight_map")
-  dfm2.glfw.winDraw3d([msh,axis],(400,400))
+  dfm2.gl._glfw.winDraw3d([msh,axis],(400,400))
 
   print("edge_quad_mesh")
   msh_edge = msh.mesh_edge()
-  dfm2.glfw.winDraw3d([msh_edge,axis])
+  dfm2.gl._glfw.winDraw3d([msh_edge,axis])
 
 
 def edge_tri():
@@ -35,7 +35,7 @@ def edge_tri():
   msh.read("../test_inputs/bunny_2k.ply")
   msh_edge = msh.mesh_edge()
   aabb = dfm2.AABB3( msh.minmax_xyz() )
-  dfm2.glfw.winDraw3d([msh_edge,aabb])
+  dfm2.gl._glfw.winDraw3d([msh_edge,aabb])
 
 
 def edge_quad_hex():
@@ -46,20 +46,20 @@ def edge_quad_hex():
   msh = grid.mesh_hex()
   msh = msh.subdiv()
   msh_edge = msh.mesh_edge()
-  dfm2.glfw.winDraw3d([msh_edge])
+  dfm2.gl._glfw.winDraw3d([msh_edge])
 
   msh = grid.mesh_quad()
   msh = msh.subdiv()
   msh_edge = msh.mesh_edge()
-  dfm2.glfw.winDraw3d([msh_edge])
+  dfm2.gl._glfw.winDraw3d([msh_edge])
 
 def primitive():
   msh = dfm2.Mesh()
   msh.set_cylinder(1.0,1.0, 16, 4)
-  dfm2.glfw.winDraw3d([msh])
+  dfm2.gl._glfw.winDraw3d([msh])
 
   msh.set_sphere(1.0,16, 32)
-  dfm2.glfw.winDraw3d([msh])
+  dfm2.gl._glfw.winDraw3d([msh])
 
 if __name__ == "__main__":
   height_map()

@@ -1,7 +1,7 @@
 import unittest, numpy, random
 import sys
-sys.path.append("../module_py")
-import delfem2 as dfm2
+sys.path.append("..")
+import pydelfem2 as dfm2
 
 class Test_PBD(unittest.TestCase):
   def test1(self):
