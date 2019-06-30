@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(PROJ_NAME c_rigidbody)
+set(PROJ_NAME c_eigen)
 
 project(${PROJ_NAME})
 set(PYBIND11_CPP_STANDARD -std=c++14)
@@ -86,8 +86,8 @@ else()
 add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_rigidbody.*
-  ${PROJECT_SOURCE_DIR}/../../pydelfem2/rigidbody/
+  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_eigen.*
+  ${PROJECT_SOURCE_DIR}/../../pydelfem2/eigen/
   COMMENT "Post Event"
 )
 endif()

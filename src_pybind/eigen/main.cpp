@@ -27,7 +27,7 @@ void init_rigidbody(py::module &m){
 }
 
 
-PYBIND11_MODULE(_rigidbody, m) {
+PYBIND11_MODULE(c_eigen, m) {
   m.doc() = "pybind11 delfem2 binding";
   ///////////////////////////////////
   init_rigidbody(m);

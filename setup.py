@@ -83,10 +83,10 @@ setup(name='pydelfem2',
       packages=find_packages('pydelfem2'),
       package_dir={'pydelfem2': 'pydelfem2',
                    'gl': 'pydelfem2/gl',
-                   'rigidbody': 'pydelfem2/rigidbody/'},
+                   'eigen': 'pydelfem2/eigen/'},
       ext_modules=[CMakeExtension('c_core','src_pybind/core'),
                     CMakeExtension('c_gl','src_pybind/gl'),
-                    CMakeExtension('c_rigidbody','src_pybind/rigidbody'),
+                    CMakeExtension('c_eigen','src_pybind/eigen'),
                     ],  # location of *.so file, cmake file
       cmdclass=dict(build_ext=CMakeBuild),
       )

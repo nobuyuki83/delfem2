@@ -46,7 +46,6 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/mshtopoio_gl.cpp  ${DELFEM2_INC}/mshtopoio_gl.h
   ${DELFEM2_SRC}/cad2d.cpp         ${DELFEM2_INC}/cad2d.h
   ${DELFEM2_SRC}/gpusampler.cpp    ${DELFEM2_INC}/gpusampler.h  
-  ${DELFEM2_SRC}/rigmesh.cpp       ${DELFEM2_INC}/rigmesh.h  
   ${DELFEM2_SRC}/isosurface_stuffing.cpp  ${DELFEM2_INC}/isosurface_stuffing.h
   ${DELFEM2_SRC}/sdf.cpp           ${DELFEM2_INC}/sdf.h
   ${DELFEM2_SRC}/hash3d.cpp        ${DELFEM2_INC}/hash3d.h
@@ -55,7 +54,6 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
                                    ${DELFEM2_INC}/funcs_glew.h
-  ${DELFEM2_SRC}/camera_gl.cpp     ${DELFEM2_INC}/camera_gl.h
 
   py_mshtopoio_gl.cpp
   py_polyline.cpp 

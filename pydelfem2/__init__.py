@@ -1,4 +1,6 @@
-from .c_core import SDF_Sphere, AABB3, MathExpressionEvaluator
+from .c_core import AABB3
+from .c_core import SDF_Sphere
+from .c_core import MathExpressionEvaluator
 
 from .c_core import meshdyntri3d_initialize, isosurface
 from .c_core import setSomeLighting, setup_glsl, glew_init
