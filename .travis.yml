@@ -71,7 +71,7 @@ script: |
   make    
   cd ../../../
 
-  cd src_pybind/rigidbody
+  cd src_pybind/eigen
   mkdir buildMake
   cd buildMake
   cmake ..

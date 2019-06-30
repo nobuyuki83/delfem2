@@ -65,7 +65,7 @@ build:
           cmake ..
           make          
           cd ../../
-          cd rigidbody
+          cd eigen
           mkdir buildMake
           cd buildMake
           cmake ..
