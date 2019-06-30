@@ -44,7 +44,7 @@ void PBD_Pre3D
   assert( aUVW.size() == np*3 );
   assert( aBCFlag.size() == np*3 );
   aXYZt.resize(np*3);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
       const int idof = ip*3+idim;
       if( aBCFlag[idof] != 0 ){ aXYZt[idof] = aXYZ[idof]; continue; }
