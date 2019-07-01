@@ -1,19 +1,14 @@
-#from .libdelfem2 import setSomeLighting, setup_glsl, glew_init
-#from .libdelfem2 import get_texture
-#from .libdelfem2 import CppGPUSampler, color_buffer_4byte, color_buffer_4float, depth_buffer, CppFrameBufferManager
-
-#from .fem import VisFEM_Hedgehog, VisFEM_ColorContour
-
 import numpy
 
 from ..cadmsh import Mesh
 
-from ..c_core import draw_mesh_facenorm, draw_mesh_edge
+from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D
 from ..c_core import TRI, QUAD, LINE
 
 from .c_gl import CppGPUSampler
-from .c_gl import get_texture
 from .c_gl import ColorMap
+from .c_gl import get_texture, setSomeLighting, cppDrawEdge_CppMeshDynTri2D, cppDrawEdge_CppMeshDynTri3D, cppDraw_CppCad2D
+from .c_gl import draw_mesh_facenorm, draw_mesh_edge
 
 from ._gl import AxisXYZ, Camera
 from ._gl import getOpenglInfo, screenUnProjection, screenUnProjectionDirection
@@ -81,7 +76,7 @@ class GLBufferMesh():
     gl.glDrawElements(self.gl_elem_type, self.size_elem, gl.GL_UNSIGNED_INT, None)
     gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
 
-def mesh_draw(self):
+def draw_Mesh(self):
   if self.is_draw_face:
     gl.glColor4d(self.color_face[0], self.color_face[1], self.color_face[2], self.color_face[3])
     gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, self.color_face)
@@ -116,5 +111,17 @@ def ebo_array(aElm:numpy.ndarray) -> int:
   return ebo
 
 
+def draw_CppMeshDynTri2D(cdmsh:CppMeshDynTri2D):
+  cppDrawEdge_CppMeshDynTri2D(cdmsh)
 
-setattr(Mesh,"draw",mesh_draw)
+def draw_CppMeshDynTri3D(cdmsh:CppMeshDynTri3D):
+  cppDrawEdge_CppMeshDynTri3D(cdmsh)
+
+def draw_CppCad2D(ccad:CppCad2D):
+  cppDraw_CppCad2D(ccad)
+
+
+setattr(Mesh,"draw",draw_Mesh)
+setattr(CppMeshDynTri2D,"draw",draw_CppMeshDynTri2D)
+setattr(CppMeshDynTri3D,"draw",draw_CppMeshDynTri3D)
+setattr(CppCad2D,"draw",draw_CppCad2D)

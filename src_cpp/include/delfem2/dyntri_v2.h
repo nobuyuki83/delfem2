@@ -18,11 +18,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // OpenGL dependency! these functions should be removed and put in another file
 
-void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
-                         const std::vector<CVector2>& aVec2);
-
-void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
-                             const std::vector<CVector2>& aVec2);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -360,9 +355,6 @@ public:
     aETri.clear();
     aVec2.clear();
   }
-  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec2); }
-  void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec2); }
-  void draw() const { this->Draw_Edge(); }
   int nTri() const { return aETri.size(); }
   int nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }

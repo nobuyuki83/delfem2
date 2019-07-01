@@ -53,7 +53,6 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/v23q_gl.cpp       ${DELFEM2_INC}/v23q_gl.h
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
-                                   ${DELFEM2_INC}/funcs_glew.h
 
   py_mshtopoio_gl.cpp
   py_polyline.cpp 
@@ -63,16 +62,13 @@ set(INPUT_SRC
 )
 
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 
 set(INPUT_INCLUDE_DIR
   ${OPENGL_INCLUDE_DIR}
-  ${GLEW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
 )
 set(INPUT_LIBRARY
   ${OPENGL_LIBRARY}
-  ${GLEW_LIBRARY}
 )
 
 

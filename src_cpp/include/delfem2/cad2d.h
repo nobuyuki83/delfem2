@@ -81,7 +81,6 @@ public:
     aFace.clear();
     topo.Clear();
   }
-  void Draw() const;
   void Tessellation();
   void Pick(double x0, double y0,
             double view_height);
@@ -121,6 +120,7 @@ public:
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
+  
   int ivtx_picked;
   int iedge_picked;
   int iface_picked;

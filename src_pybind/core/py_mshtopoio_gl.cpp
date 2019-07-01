@@ -183,44 +183,6 @@ void PyCopyMeshDynTri2D
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-void PyDrawMesh_FaceNorm
-(const py::array_t<double>& pos,
- const py::array_t<unsigned int>& elm,
- const MESHELEM_TYPE type)
-{
-  assert(pos.ndim()==2);
-  assert(elm.ndim()==2);
-  const auto shape_pos = pos.shape();
-  const auto shape_elm = elm.shape();
-  if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){  DrawMeshTri3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){  DrawMeshHex3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){  DrawMeshTet3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-  }
-}
-
-void PyDrawMesh_Edge
-(const py::array_t<double>& pos,
- const py::array_t<unsigned int>& elm,
- const MESHELEM_TYPE type)
-{
-  assert(pos.ndim()==2);
-  assert(elm.ndim()==2);
-  const auto shape_pos = pos.shape();
-  const auto shape_elm = elm.shape();
-  if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){ DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){ DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){ DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){ DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_LINE ){ DrawMeshLine3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-  }
-  if( shape_pos[1] == 2 ){ // 2D Mesh
-    if( type == MESHELEM_TRI  ){  DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-  }
-}
 
 
 /*
@@ -453,9 +415,6 @@ void init_mshtopoio_gl(py::module &m){
   
   py::class_<CMeshDynTri3D>(m, "CppMeshDynTri3D")
   .def(py::init<>())
-  .def("draw",              &CMeshDynTri3D::draw)
-  .def("draw_face",         &CMeshDynTri3D::Draw_FaceNorm)
-  .def("draw_edge",         &CMeshDynTri3D::Draw_Edge)
   .def("check",             &CMeshDynTri3D::Check)
   .def("ntri",              &CMeshDynTri3D::nTri)
   .def("delete_tri_edge",   &CMeshDynTri3D::DeleteTriEdge)
@@ -465,9 +424,6 @@ void init_mshtopoio_gl(py::module &m){
   
   py::class_<CMeshDynTri2D>(m, "CppMeshDynTri2D")
   .def(py::init<>())
-  .def("draw",              &CMeshDynTri2D::draw)
-  .def("draw_face",         &CMeshDynTri2D::Draw_FaceNorm)
-  .def("draw_edge",         &CMeshDynTri2D::Draw_Edge)
   .def("check",             &CMeshDynTri2D::Check)
   .def("ntri",              &CMeshDynTri2D::nTri)
   .def("npoint",            &CMeshDynTri2D::nPoint)
@@ -517,7 +473,5 @@ void init_mshtopoio_gl(py::module &m){
   
   m.def("cppMeshTri3D_Cylinder", &PyMeshTri3D_Cylinder);
   m.def("cppMeshTri3D_Sphere",   &PyMeshTri3D_Sphere);
-  
-  m.def("draw_mesh_facenorm",  &PyDrawMesh_FaceNorm);
-  m.def("draw_mesh_edge",      &PyDrawMesh_Edge);
+
 }

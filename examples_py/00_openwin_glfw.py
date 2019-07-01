@@ -43,7 +43,7 @@ def main():
   win_glfw = glfw.create_window(640, 480, 'Hello World', None, None)
   glfw.make_context_current(win_glfw)
 
-  dfm2.setSomeLighting()
+  dfm2.gl.setSomeLighting()
   gl.glEnable(gl.GL_DEPTH_TEST)
 
   glfw.set_mouse_button_callback(win_glfw, mouseButtonCB)

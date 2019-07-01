@@ -37,12 +37,6 @@ bool DelaunayAroundPoint(int ipo0,
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
-                             const std::vector<CVector3>& aVec3);
-
-void DrawMeshDynTri_Edge(const std::vector<ETri>& aSTri,
-                         const std::vector<CVector3>& aVec3);
-
 
 class CMeshDynTri3D{
 public:
@@ -113,9 +107,6 @@ public:
   void DelaunayAroundPoint(int ipo){
     ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
   }
-  void Draw_FaceNorm()const { DrawMeshDynTri_FaceNorm(aETri,aVec3); }
-  void Draw_Edge() const { DrawMeshDynTri_Edge(aETri,aVec3); }
-  void draw() const { this->Draw_Edge(); }
   int nTri() const { return aETri.size(); }
   int nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }

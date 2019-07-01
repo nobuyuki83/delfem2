@@ -3,7 +3,6 @@ from .c_core import SDF_Sphere
 from .c_core import MathExpressionEvaluator
 
 from .c_core import meshdyntri3d_initialize, isosurface
-from .c_core import setSomeLighting, setup_glsl, glew_init
 from .c_core import cad_getPointsEdge, mvc
 
 from .c_core import meshDynTri2D_CppCad2D, CppMeshDynTri3D, CppCad2D
