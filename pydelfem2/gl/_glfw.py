@@ -6,13 +6,18 @@
 ####################################################################
 
 import OpenGL.GL as gl
-import numpy
 import glfw
+
+import numpy
 from typing import List
 
 from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ
+
 from .c_gl import CppFrameBufferManager
-from ..c_core import AABB3, setSomeLighting, glew_init
+from .c_gl import glew_init, setSomeLighting
+
+from ..c_core import AABB3
+
 
 class NavigationGLFW:
   def __init__(self,view_height):

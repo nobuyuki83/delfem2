@@ -6,7 +6,7 @@
 #include <map>
 #include <deque>
 
-#include "delfem2/funcs_glew.h" // have to be included in the beginning
+//#include "delfem2/funcs_glew.h" // have to be included in the beginning
 #include "delfem2/funcs_gl.h"
 #include "delfem2/mshtopoio_gl.h"
 
@@ -216,7 +216,6 @@ PYBIND11_MODULE(c_core, m) {
   // cad
   py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
-  .def("draw",        &CCad2D::Draw)
   .def("pick",        &CCad2D::Pick)
   .def("drag_picked", &CCad2D::DragPicked)
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
@@ -260,9 +259,9 @@ PYBIND11_MODULE(c_core, m) {
   
    ///////////////////////////////////
   // gl misc
-  m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
-  m.def("setup_glsl",       &setUpGLSL, "compile shader program");
-  m.def("glew_init",        &glewInit);
+//  m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
+//  m.def("setup_glsl",       &setUpGLSL, "compile shader program");
+//  m.def("glew_init",        &glewInit);
   m.def("draw_sphere",      &DrawSphereAt );
   m.def("mvc",              &PyMVC);
 }

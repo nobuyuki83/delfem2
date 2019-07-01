@@ -29,12 +29,9 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/voxel.cpp         ${DELFEM2_INC}/voxel.h
   ${DELFEM2_SRC}/tex.cpp           ${DELFEM2_INC}/tex.h
                                    ${DELFEM2_INC}/bv.h
-  ${DELFEM2_SRC}/dyntri.cpp        ${DELFEM2_INC}/dyntri.h
 
   ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h
-  ${DELFEM2_SRC}/dyntri_v3.cpp     ${DELFEM2_INC}/dyntri_v3.h
-  ${DELFEM2_SRC}/dyntri_v2.cpp     ${DELFEM2_INC}/dyntri_v2.h
-  ${DELFEM2_SRC}/cad2d.cpp         ${DELFEM2_INC}/cad2d.h
+  ${DELFEM2_SRC}/cad_dyntri_v23_gl.cpp  ${DELFEM2_INC}/cad_dyntri_v23_gl.h
   ${DELFEM2_SRC}/gpusampler.cpp    ${DELFEM2_INC}/gpusampler.h  
 
   ${DELFEM2_SRC}/v23q_gl.cpp       ${DELFEM2_INC}/v23q_gl.h

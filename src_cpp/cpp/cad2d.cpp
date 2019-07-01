@@ -10,17 +10,6 @@
 #include <deque>
 #include <set>
 
-#if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
-#elif defined(_WIN32)
-#include <windows.h>
-#include <GL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
-
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 #include "delfem2/bv.h"
@@ -35,80 +24,6 @@
 
 #include "delfem2/cad2d.h"
 
-
-void DrawEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_elem)
-{
-  if( is_selected ){ ::glColor3d(1,1,0); }
-  else{ ::glColor3d(0,0,0); }
-  ::glBegin(GL_LINE_STRIP);
-  ::myGlVertex( edge.p0 );
-  for(unsigned int ip=0;ip<edge.aP.size();++ip){
-    ::myGlVertex( edge.aP[ip] );
-  }
-  ::myGlVertex( edge.p1 );
-  ::glEnd();
-  ////
-  if( is_selected ){
-    if( edge.type_edge == 1 ){
-      assert( edge.param.size() == 4 );
-      const CVector2 lx = (edge.p1 - edge.p0).Normalize();
-      const CVector2 ly = CVector2(lx.y,-lx.x);
-      const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
-      const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
-      ::glColor3d(0,1,0);
-      ::glBegin(GL_LINES);
-      ::myGlVertex(edge.p0);
-      ::myGlVertex(q0);
-      ::myGlVertex(edge.p1);
-      ::myGlVertex(q1);
-      ::glEnd();
-      if( ipicked_elem == 1 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
-      else{ ::glColor3d(0.0, 0.8, 0.0 ); }
-      ::glBegin(GL_POINTS);
-      ::myGlVertex(q0);
-      ::glEnd();
-      if( ipicked_elem == 2 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
-      else{ ::glColor3d(0.0, 0.8, 0.0 ); }
-      ::glBegin(GL_POINTS);
-      ::myGlVertex(q1);
-      ::glEnd();
-    }
-  }
-}
-
-void CCad2D::Draw() const
-{
-  ::glDisable(GL_LIGHTING);
-  ::glPointSize(6);
-  ::glBegin(GL_POINTS);
-  for(unsigned int iv=0;iv<aVtx.size();++iv){
-    if( (int)iv == ivtx_picked ){ ::glColor3d(1,1,0); }
-    else{ ::glColor3d(1,0,0); }
-    ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
-  }
-  ::glEnd();
-  /////
-  ::glLineWidth(3);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    DrawEdge(aEdge[ie],
-             (int)ie == iedge_picked,
-             this->ipicked_elem);
-  }
-  //////
-  if( is_draw_face ){
-    ::glLineWidth(1);
-    glTranslated(0,0,-0.2);
-    for(unsigned int iface=0;iface<aFace.size();++iface){
-      const CCad2D_FaceGeo& face = aFace[iface];
-      if( (int)iface == iface_picked ){ ::glColor3d(1,1,0); }
-      else{ ::glColor3d(0.8,0.8,0.8); }
-      DrawMeshTri2D_Face(face.aTri, face.aXY);
-      ::glColor3d(0.0,0.0,0.0);
-      DrawMeshTri2D_Edge(face.aTri, face.aXY);
-    }
-    glTranslated(0,0,+0.2);
-  }
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////////

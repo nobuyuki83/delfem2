@@ -126,8 +126,5 @@ void extractHoles(std::vector< std::vector<int> >& aIndP_Hole,
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
-                           const std::vector<ETri>& aSTri);
-
 
 #endif // #endif SURFACE_MESH_H

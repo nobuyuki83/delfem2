@@ -24,5 +24,5 @@ msh.scale_xyz(0.03)
 
 win = dfm2.gl._glfw.WindowGLFW(1.0,winsize=(400,300))
 win.list_func_draw.append(draw_func)
-dfm2.setSomeLighting()
+dfm2.gl.setSomeLighting()
 win.draw_loop()

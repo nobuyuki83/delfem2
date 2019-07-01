@@ -8,7 +8,11 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
+
 from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ
+
+from .c_gl import setSomeLighting
+
 
 
 def draw_text(x, y, font, text, color):

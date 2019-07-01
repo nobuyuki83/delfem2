@@ -34,7 +34,7 @@ def main():
   buf_face = dfm2.gl.GLBufferMesh(msh,is_normal=True)
   buf_edge = dfm2.gl.GLBufferMesh(msh_edge)
   win.list_func_draw.append(draw_func)
-  dfm2.setSomeLighting()
+  dfm2.gl.setSomeLighting()
   win.draw_loop()
 
 if __name__ == "__main__":

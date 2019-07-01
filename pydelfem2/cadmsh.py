@@ -249,8 +249,6 @@ class Cad2D():
     if btn == 0:
       if action == 1:
         self.ccad.pick(src[0],src[1],view_height)
-#      elif action == 0:
-#        self.clean_picked()
 
   def motion(self,src0,src1,dir) -> None:
     self.ccad.drag_picked(src1[0],src1[1], src0[0],src0[1])

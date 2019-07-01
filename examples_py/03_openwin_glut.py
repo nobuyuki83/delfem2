@@ -77,7 +77,7 @@ def main():
 
   wmngr_glut = dfm2.gl._glut.WindowManagerGLUT(0.3)
 
-  dfm2.setSomeLighting()
+  dfm2.gl.setSomeLighting()
 
   ####
   # Turn the flow of control over to GLUT
