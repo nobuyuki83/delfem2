@@ -173,7 +173,7 @@ std::vector<double> aMode;
 std::vector<double> aModesKer;
 double lamda0 = 0.1;
 
-CMatrixSquareSparse mat_A;
+CMatrixSparse mat_A;
 CPreconditionerILU  ilu_A;
 
 /////////////////////////////////////////////////////////////////////////////

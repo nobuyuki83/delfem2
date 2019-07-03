@@ -12,6 +12,7 @@
 #endif
 
 #include "delfem2/dyntri_v2.h"
+#include "delfem2/cad_dyntri_v23_gl.h"
 
 
 

@@ -10,9 +10,6 @@
 
 #include <vector>
 
-// TODO: remove dependency to vec3
-#include "vec3.h"
-
 int Adj_Grid(int ivox_picked, int iface_picked,
              int ndivx, int ndivy, int ndivz);
 
@@ -61,13 +58,11 @@ public:
   bool is_active;
 };
 
-void Draw_CubeGrid(bool is_picked, int iface_picked,
-                   double elen, const CVector3& org,
-                   const CCubeGrid& cube);
+
 void Pick_CubeGrid(int& icube_pic, int& iface_pic,
-                   const CVector3& src_pic, const CVector3& dir_pic,
+                   const double src_pic[3], const double dir_pic_[3],
                    double elen,
-                   const CVector3& org,
+                   const double org[3],
                    const std::vector<CCubeGrid>& aCube);
 void Adj_CubeGrid(int& ivx, int& ivy, int& ivz,
                   int ivox, int iface,

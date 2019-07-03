@@ -41,7 +41,7 @@ public:
     is_draw_edge = true;
     this->Read(fpath);
   }
-  void Draw() const;
+//  void Draw() const;
   std::vector<double> AABB3_MinMax() const{
     double cw[6]; GetCenterWidth(cw, aPos);
     std::vector<double> aabb(6);
@@ -69,8 +69,8 @@ public:
                 aPos.data(), aPos.size()/3,
                 aElem.data(), aElem.size()/3);
   }
-  void DrawFace_ElemWiseNorm() const;
-  void DrawEdge() const;
+//  void DrawFace_ElemWiseNorm() const;
+//  void DrawEdge() const;
   CMeshElem Subdiv(){
     CMeshElem em;
     if( elem_type == MESHELEM_QUAD ){
@@ -109,10 +109,24 @@ public:
 
 CMeshElem Read_MeshTri3D_Nas_CMeshElem(std::string& fpath);
 
+class CMaterial{
+public:
+  std::string name_mtl;
+  float Kd[4];
+  float Ka[4];
+  float Ks[4];
+  float Ke[4];
+  float Ns;
+  int illum;
+  std::string map_Kd;
+public:
+  void GL() const;
+};
+
 class CMeshMultiElem{
 public:
   void ReadObj(const std::string& fname);
-  void Draw() const;
+//  void Draw() const;
   std::vector<double> AABB3_MinMax() const;
   void ScaleXYZ(double s);
   void TranslateXYZ(double x, double y, double z);
@@ -122,5 +136,9 @@ public:
   std::vector<CTriGroup> aObjGroupTri;
   std::vector<CMaterial> aMaterial;
 };
+
+
+void Load_Mtl(const std::string& fname,
+              std::vector<CMaterial>& aMtl);
 
 #endif

@@ -14,22 +14,6 @@
 #include <vector>
 #include <iostream>
 
-#ifdef USE_GL
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
-#elif defined(WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else // linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-#endif
-
 //! 3D bounding box class
 class CBV3D_AABB
 {
@@ -242,39 +226,6 @@ public:
                        std::to_string(y_min)+" "+std::to_string(y_max)+" "+
                        std::to_string(z_min)+" "+std::to_string(z_max));
   }
-#ifdef USE_GL
-  void Draw(){
-    const double pxyz[3] = {x_min,y_min,z_min};
-    const double pxyZ[3] = {x_min,y_min,z_max};
-    const double pxYz[3] = {x_min,y_max,z_min};
-    const double pxYZ[3] = {x_min,y_max,z_max};
-    const double pXyz[3] = {x_max,y_min,z_min};
-    const double pXyZ[3] = {x_max,y_min,z_max};
-    const double pXYz[3] = {x_max,y_max,z_min};
-    const double pXYZ[3] = {x_max,y_max,z_max};
-    ::glColor3d(0,0,0);
-    ::glLineWidth(1);
-    ::glBegin(GL_LINES);
-    ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
-    ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
-    ::glVertex3dv(pXyz); ::glVertex3dv(pXyZ);
-    ::glVertex3dv(pXYz); ::glVertex3dv(pXYZ);
-    ////
-    ::glVertex3dv(pxyz); ::glVertex3dv(pXyz);
-    ::glVertex3dv(pxyZ); ::glVertex3dv(pXyZ);
-    ::glVertex3dv(pxYz); ::glVertex3dv(pXYz);
-    ::glVertex3dv(pxYZ); ::glVertex3dv(pXYZ);
-    ////
-    ::glVertex3dv(pxyz); ::glVertex3dv(pxYz);
-    ::glVertex3dv(pxyZ); ::glVertex3dv(pxYZ);
-    ::glVertex3dv(pXyz); ::glVertex3dv(pXYz);
-    ::glVertex3dv(pXyZ); ::glVertex3dv(pXYZ);
-    ::glEnd();
-  }
-#else
-  void draw(){
-  }
-#endif
 public:
 	double x_min,x_max,  y_min,y_max,  z_min,z_max;
 	bool is_active;	//!< false if there is nothing inside

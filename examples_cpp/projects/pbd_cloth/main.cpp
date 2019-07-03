@@ -17,6 +17,7 @@
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/mshtopo.h"
+#include "delfem2/cad_dyntri_v23_gl.h"
 
 #include "delfem2/funcs_gl.h"
 #include "delfem2/funcs_glut.h"

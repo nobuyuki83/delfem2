@@ -3,8 +3,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/mshtopoio_gl.h"
-#include "delfem2/funcs_gl.h"
+#include "delfem2/mshtopoio.h"
 #include "delfem2/dyntri.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/dyntri_v3.h"
@@ -409,7 +408,7 @@ void init_mshtopoio_gl(py::module &m){
   .def(py::init<>())
   .def("read_obj", &CMeshMultiElem::ReadObj)
   .def("minmax_xyz", &CMeshMultiElem::AABB3_MinMax)
-  .def("draw",&CMeshMultiElem::Draw)
+//  .def("draw",&CMeshMultiElem::Draw)
   .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   

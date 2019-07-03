@@ -30,7 +30,7 @@
 ////
 #include "delfem2/funcs_gl.h"
 #include "delfem2/v23q_gl.h"  // vec3, mat3
-#include "delfem2/gpusampler.h"
+#include "delfem2/gl_gpusampler.h"
 
 /*
 double Dot(const std::vector<double>& p0, const std::vector<double>& p1){
