@@ -6,17 +6,6 @@
  */
 
 
-#if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
-#elif defined(_WIN32)
-#include <windows.h>
-#include <GL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
-
 #include "delfem2/vec3.h"
 #include "delfem2/voxel.h"
 
@@ -287,11 +276,13 @@ int Adj_Grid
 
 void Pick_CubeGrid
 (int& icube_pic, int& iface_pic,
- const CVector3& src_pic, const CVector3& dir_pic,
+ const double src_pic[3], const double dir_pic_[3],
  double elen,
- const CVector3& org,
+ const double org[3],
  const std::vector<CCubeGrid>& aCube)
 {
+  CVector3 dir_pic(dir_pic_);
+  //////
   icube_pic = -1;
   double depth_min = 0;
   for(unsigned int ivox=0;ivox<aCube.size();++ivox){
@@ -426,78 +417,3 @@ void AABB_CubeGrid
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#ifdef USE_GL
-
-static void myGlNormal(const CVector3& n){ ::glNormal3d(n.x,n.y,n.z); }
-static void myGlVertex(const CVector3& v){ ::glVertex3d(v.x,v.y,v.z); }
-static void myGlColorDiffuse(float r, float g, float b, float a){
-  ::glColor4d(r, g, b, a );
-  float c[4] = {r, g, b, a};
-  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
-}
-
-void Draw_CubeGrid
-(bool is_picked, int iface_picked,
- double elen, const CVector3& org,
- const CCubeGrid& cube)
-{
-  if( !cube.is_active ) return;
-  int ih = cube.ivx;
-  int jh = cube.ivy;
-  int kh = cube.ivz;
-  CVector3 aP[8] = {
-    org + elen*CVector3(ih+0,jh+0,kh+0),
-    org + elen*CVector3(ih+1,jh+0,kh+0),
-    org + elen*CVector3(ih+0,jh+1,kh+0),
-    org + elen*CVector3(ih+1,jh+1,kh+0),
-    org + elen*CVector3(ih+0,jh+0,kh+1),
-    org + elen*CVector3(ih+1,jh+0,kh+1),
-    org + elen*CVector3(ih+0,jh+1,kh+1),
-    org + elen*CVector3(ih+1,jh+1,kh+1) };
-  ::glEnable(GL_LIGHTING);
-  ::glBegin(GL_QUADS);
-  for(int iface=0;iface<6;++iface){
-    if( is_picked && iface_picked == iface ){
-      ::myGlColorDiffuse(1,1,0,1);
-    }
-    else{
-      ::myGlColorDiffuse(0.8,0.8,0.8,1);
-    }
-    myGlNormal(normalHexFace[iface]);
-    myGlVertex(aP[noelElemFace_Vox[iface][0]]);
-    myGlVertex(aP[noelElemFace_Vox[iface][1]]);
-    myGlVertex(aP[noelElemFace_Vox[iface][2]]);
-    myGlVertex(aP[noelElemFace_Vox[iface][3]]);
-  }
-  ::glEnd();
-  //////////////////////////////
-  ::glDisable(GL_LIGHTING);
-  ::glColor3d(0,0,0);
-  ::glBegin(GL_LINE_STRIP);
-  myGlVertex(aP[0]);
-  myGlVertex(aP[1]);
-  myGlVertex(aP[3]);
-  myGlVertex(aP[2]);
-  myGlVertex(aP[0]);
-  myGlVertex(aP[4]);
-  myGlVertex(aP[5]);
-  myGlVertex(aP[7]);
-  myGlVertex(aP[6]);
-  myGlVertex(aP[4]);
-  glEnd();
-  ::glBegin(GL_LINES);
-  myGlVertex(aP[1]); myGlVertex(aP[5]);
-  myGlVertex(aP[2]); myGlVertex(aP[6]);
-  myGlVertex(aP[3]); myGlVertex(aP[7]);
-  ::glEnd();
-}
-#else
-void Draw_CubeGrid
-(bool is_picked, int iface_picked,
- double elen, const CVector3& org,
- const CCubeGrid& cube)
-{
-  std::cout << "Error!->define #USE_GL to use this funciton" << std::endl;
-}
-#endif

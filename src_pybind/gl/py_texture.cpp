@@ -15,7 +15,7 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/tex.h"
+#include "delfem2/gl_tex.h"
 
 namespace py = pybind11;
 

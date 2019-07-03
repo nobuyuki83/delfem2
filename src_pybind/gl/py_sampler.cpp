@@ -4,7 +4,7 @@
 #include <pybind11/numpy.h>
 
 #include "delfem2/funcs_glew.h"
-#include "delfem2/gpusampler.h"
+#include "delfem2/gl_gpusampler.h"
 
 namespace py = pybind11;
 

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
@@ -6,10 +13,7 @@
 #include <map>
 #include <deque>
 
-//#include "delfem2/funcs_glew.h" // have to be included in the beginning
-#include "delfem2/funcs_gl.h"
-#include "delfem2/mshtopoio_gl.h"
-
+#include "delfem2/mshtopoio.h"
 #include "delfem2/voxel.h"
 #include "delfem2/bv.h"    // include gl
 #include "delfem2/cad2d.h"
@@ -183,7 +187,6 @@ PYBIND11_MODULE(c_core, m) {
   .def(py::init<const std::vector<double>&>())
   .def("__str__",            &CBV3D_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
   .def("minmax_xyz",         &CBV3D_AABB::MinMaxXYZ)
-  .def("draw",               &CBV3D_AABB::Draw, "draw edge of the bounding box to opengl")
   .def("set_minmax_xyz",     &CBV3D_AABB::SetMinMaxXYZ)
   .def("add_minmax_xyz",     &CBV3D_AABB::Add_AABBMinMax)
   .def("list_xyz",           &CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
@@ -207,8 +210,7 @@ PYBIND11_MODULE(c_core, m) {
   
   py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "SDF_Sphere")
   .def(py::init<>())
-  .def(py::init<double,const std::vector<double>&,bool>())
-  .def("draw",  &CSignedDistanceField3D_Sphere::Draw);
+  .def(py::init<double,const std::vector<double>&,bool>());
   
   m.def("isosurface", &PyIsoSurface);
   
@@ -262,7 +264,7 @@ PYBIND11_MODULE(c_core, m) {
 //  m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
 //  m.def("setup_glsl",       &setUpGLSL, "compile shader program");
 //  m.def("glew_init",        &glewInit);
-  m.def("draw_sphere",      &DrawSphereAt );
+//  m.def("draw_sphere",      &DrawSphereAt );
   m.def("mvc",              &PyMVC);
 }
 

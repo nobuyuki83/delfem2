@@ -24,7 +24,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h
   ${DELFEM2_SRC}/color_gl.cpp      ${DELFEM2_INC}/color_gl.h
   ${DELFEM2_SRC}/camera_gl.cpp     ${DELFEM2_INC}/camera_gl.h
-  ${DELFEM2_SRC}/tex.cpp           ${DELFEM2_INC}/tex.h
+  ${DELFEM2_SRC}/gl_tex.cpp        ${DELFEM2_INC}/gl_tex.h
   
   main.cpp
 )

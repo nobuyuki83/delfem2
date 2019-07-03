@@ -84,7 +84,7 @@ void StepTime_InternalDynamics
 (
  std::vector<double>& aXYZ, // (in,out) deformed vertex positions
  std::vector<double>& aUVW, // (in,out) deformed vertex velocity
- CMatrixSquareSparse& mat_A,
+ CMatrixSparse& mat_A,
  ////
  const std::vector<double>& aXYZ0,// (in) initial vertex positions
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)
@@ -127,9 +127,9 @@ void StepTime_InternalDynamics
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
   for(int ip=0;ip<np;ip++){
-    mat_A.m_valDia[ip*9+0*3+0] += mass_point / (dt*dt);
-    mat_A.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
-    mat_A.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
+    mat_A.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
+    mat_A.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
+    mat_A.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   for(unsigned int ip=0;ip<np;ip++){
@@ -154,7 +154,7 @@ void StepTime_InternalDynamicsILU
 (
  std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
  std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
- CMatrixSquareSparse& mat_A,
+ CMatrixSparse& mat_A,
  CPreconditionerILU& ilu_A,
  ////
  const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
@@ -198,9 +198,9 @@ void StepTime_InternalDynamicsILU
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
   for(int ip=0;ip<np;ip++){
-    mat_A.m_valDia[ip*9+0*3+0] += mass_point / (dt*dt);
-    mat_A.m_valDia[ip*9+1*3+1] += mass_point / (dt*dt);
-    mat_A.m_valDia[ip*9+2*3+2] += mass_point / (dt*dt);
+    mat_A.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
+    mat_A.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
+    mat_A.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
   }
   mat_A.SetBoundaryCondition(aBCFlag.data(), aBCFlag.size()/3,3);
   for(unsigned int i=0;i<nDof;i++){

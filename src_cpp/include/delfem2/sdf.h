@@ -8,11 +8,12 @@
 #ifndef SDF_H
 #define SDF_H
 
+#include <math.h>
+
 class CSDF3
 {
 public:
   virtual ~CSDF3(){};
-  virtual void Draw() const = 0;
   virtual double Projection
   (double px, double py, double pz,
    double n[3]) const = 0; // normal
@@ -28,7 +29,6 @@ class CSignedDistanceField3D_Plane : public CSDF3
 {
 public:
 	CSignedDistanceField3D_Plane(double norm[3], double orgn[3]);
-	virtual void Draw() const;
 	virtual double Projection(double px, double py, double pz,
                             double n[3]) const; // normal
   virtual bool IntersectionPoint(double p[3], 
@@ -50,7 +50,6 @@ public:
     is_out_ = true;
   }
 	CSignedDistanceField3D_Sphere(double rad, const std::vector<double>& c, bool is_out);
-	virtual void Draw() const;	
 	// return penetration depth (inside is positive)
 	virtual double Projection
 	(double px, double py, double pz,
@@ -77,8 +76,6 @@ public:
     is_out_ = true; // true:normal points outward
   }
 	CSignedDistanceField3D_Cylinder(double rad, double cent[3], double dir[3], bool is_out);
-	virtual void Draw() const;	
-	void DrawFace() const;	  
 	// return penetration depth (inside is positive)
 	virtual double Projection
 	(double px, double py, double pz,
@@ -105,8 +102,6 @@ class CSignedDistanceField3D_Torus : public CSDF3
 {
 public:
 	CSignedDistanceField3D_Torus();
-	virtual void Draw() const;
-	
 	// return penetration depth (inside is positive)
 	virtual double Projection
 	(double px, double py, double pz,
@@ -170,7 +165,6 @@ public:
     }
     return len3;
   }
-  virtual void Draw() const {}
   virtual bool IntersectionPoint
   (double p[3],
    const double org[3], const double dir[3]) const { return true; }
@@ -190,8 +184,6 @@ public:
 	~CSignedDistanceField3D_Combine(){ 
     for(unsigned int ipct=0;ipct<apCT.size();ipct++){ delete apCT[ipct]; }
   }
-  
-	virtual void Draw() const;
 	virtual double Projection
 	(double px, double py, double pz,
 	 double n[3]) const; // normal
@@ -220,8 +212,7 @@ public:
 	void SetTranslate(double x, double y, double z){
 		trans[0] = x; trans[1] = y; trans[2] = z;		
 	}
-		
-	virtual void Draw() const;
+  
 	virtual double Projection
 	(double px, double py, double pz,
 	 double n[3]) const; // normal
@@ -246,7 +237,6 @@ class CSignedDistanceField3D_Mesh : public CSDF3
 public:
   CSignedDistanceField3D_Mesh();
   ~CSignedDistanceField3D_Mesh();
-  virtual void Draw() const;
   // return penetration depth (inside is positive)
   virtual double Projection
   (double px, double py, double pz,
@@ -272,7 +262,8 @@ private:
   virtual unsigned int FindInOut(double px, double py, double pz) const;
   virtual unsigned int FindInOut_Boxel
   (double px, double py, double pz) const;
-private:
+  
+public:
   bool is_hole;
   unsigned int nnode_;
   double* pXYZs_;

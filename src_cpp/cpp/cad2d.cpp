@@ -14,13 +14,10 @@
 #include "delfem2/msh.h"
 #include "delfem2/bv.h"
 
-#include "delfem2/dyntri.h"
 #include "delfem2/vec2.h"
-#include "delfem2/dyntri_v2.h"
 
-#include "delfem2/funcs_gl.h"
-#include "delfem2/color_gl.h"
-#include "delfem2/v23q_gl.h"
+#include "delfem2/dyntri.h"
+#include "delfem2/dyntri_v2.h"
 
 #include "delfem2/cad2d.h"
 

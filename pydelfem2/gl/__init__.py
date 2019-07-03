@@ -2,12 +2,14 @@ import numpy
 
 from ..cadmsh import Mesh
 
-from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D
+from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D, SDF_Sphere
 from ..c_core import TRI, QUAD, LINE
 
-from .c_gl import CppGPUSampler
+from .c_gl import CppGPUSampler, depth_buffer
 from .c_gl import ColorMap
-from .c_gl import get_texture, setSomeLighting, cppDrawEdge_CppMeshDynTri2D, cppDrawEdge_CppMeshDynTri3D, cppDraw_CppCad2D
+from .c_gl import get_texture, setSomeLighting
+from .c_gl import cppDrawEdge_CppMeshDynTri2D, cppDrawEdge_CppMeshDynTri3D, cppDraw_CppCad2D
+from .c_gl import draw_CppSDF_sphere
 from .c_gl import draw_mesh_facenorm, draw_mesh_edge
 
 from ._gl import AxisXYZ, Camera
@@ -125,3 +127,4 @@ setattr(Mesh,"draw",draw_Mesh)
 setattr(CppMeshDynTri2D,"draw",draw_CppMeshDynTri2D)
 setattr(CppMeshDynTri3D,"draw",draw_CppMeshDynTri3D)
 setattr(CppCad2D,"draw",draw_CppCad2D)
+setattr(SDF_Sphere, "draw", draw_CppSDF_sphere)

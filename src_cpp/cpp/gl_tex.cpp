@@ -13,7 +13,7 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "delfem2/tex.h"
+#include "delfem2/gl_tex.h"
 
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac

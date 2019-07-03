@@ -25,8 +25,7 @@ from .c_core import MathExpressionEvaluator, mass_lumped
 from .cadmsh import SDF
 from .cadmsh import Mesh, MeshDynTri2D
 
-from .c_core import drawField_colorMap, drawField_disp, drawField_hedgehog
-
+from .gl.c_gl import drawField_colorMap, drawField_disp, drawField_hedgehog
 from .gl.c_gl import ColorMap
 
 

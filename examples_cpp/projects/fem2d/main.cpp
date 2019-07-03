@@ -150,7 +150,7 @@ std::vector<double> aAcc;
 std::vector<int> aBCFlag; // boundary condition flag
 std::vector<int> aMSFlag; // master slave flag
 
-CMatrixSquareSparse mat_A;
+CMatrixSparse mat_A;
 std::vector<double> vec_b;
 CPreconditionerILU  ilu_A;
 

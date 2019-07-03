@@ -17,8 +17,12 @@ include_directories(
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/vec2.cpp           ${DELFEM2_INC}/vec2.h
+  ${DELFEM2_SRC}/vec3.cpp           ${DELFEM2_INC}/vec3.h  
   ${DELFEM2_SRC}/dyntri.cpp         ${DELFEM2_INC}/dyntri.h
   ${DELFEM2_SRC}/dyntri_v2.cpp      ${DELFEM2_INC}/dyntri_v2.h
+
+  ${DELFEM2_SRC}/funcs_gl.cpp      ${DELFEM2_INC}/funcs_gl.h  
+  ${DELFEM2_SRC}/cad_dyntri_v23_gl.cpp      ${DELFEM2_INC}/cad_dyntri_v23_gl.h  
   main.cpp  
 )
 

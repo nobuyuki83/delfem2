@@ -47,7 +47,7 @@ std::vector<double> aAcc;
 
 std::vector<int> aBCFlag;
 
-CMatrixSquareSparse mat_A;
+CMatrixSparse mat_A;
 std::vector<double> vec_b;
 CPreconditionerILU  ilu_A;
 

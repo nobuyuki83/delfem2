@@ -11,28 +11,28 @@
 #include <fstream>
 #include <iostream>
 
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
-#elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else // linux
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-#include "delfem2/funcs_gl.h"
 #include "delfem2/dyntri_v3.h"
-
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
+#include "delfem2/mshtopoio.h"
 
-#include "delfem2/mshtopoio_gl.h"
+///////////////////////////////////
+
+// probably std::stroi is safer to use but it is only for C++11
+static int myStoi(const std::string& str){
+  char* e;
+  long d = std::strtol(str.c_str(),&e,0);
+  return (int)d;
+}
+
+static double myStof(const std::string& str){
+  char* e;
+  float fval = std::strtof(str.c_str(),&e);
+  return fval;
+}
+
+////////////////////////////////////
 
 
 void MeshTri3D_GeodesicPolyhedron
@@ -98,47 +98,6 @@ void MeshTri3D_GeodesicPolyhedron
   }
 }
 
-void CMeshElem::DrawFace_ElemWiseNorm() const
-{
-  if( elem_type == MESHELEM_TRI ){
-    if( ndim == 3 ){ DrawMeshTri3D_FaceNorm(aPos, aElem); }
-    if( ndim == 2 ){ DrawMeshTri2D_Face(aElem,aPos); }
-  }
-  else if( elem_type == MESHELEM_QUAD ){
-    if( ndim == 3 ){ DrawMeshQuad3D_FaceNorm(aPos, aElem); }
-    if( ndim == 2 ){ DrawMeshQuad2D_Edge(aPos, aElem); }
-  }
-}
-
-void CMeshElem::DrawEdge() const {
-  if( elem_type == MESHELEM_TRI ){
-    if( ndim == 3 ){ DrawMeshTri3D_Edge(aPos, aElem); }
-    if( ndim == 2 ){ DrawMeshTri2D_Edge(aElem, aPos); }
-  }
-  else if( elem_type == MESHELEM_QUAD ){
-    if( ndim == 3 ){ DrawMeshQuad3D_Edge(aPos, aElem); }
-  }
-}
-
-void CMeshElem::Draw() const {
-  if(      color_face.size() == 4 ){
-    glColor4d(color_face[0], color_face[1], color_face[2], color_face[4]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color_face.data());
-  }
-  else if( color_face.size() == 3 ){
-    const float color[4] = {color_face[0], color_face[1], color_face[2], 1.0};
-    glColor4fv(color);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
-  }
-  /////
-  this->DrawFace_ElemWiseNorm();
-  if( this->is_draw_edge ) {
-    glDisable(GL_LIGHTING);
-    glLineWidth(1);
-    this->DrawEdge();
-  }
-}
-
 CMeshElem Read_MeshTri3D_Nas_CMeshElem(const std::string& fpath){
   CMeshElem em;
   em.elem_type = MESHELEM_TRI;
@@ -175,18 +134,6 @@ void CMeshMultiElem::ReadObj(const std::string& path_obj)
   }
 }
 
-void CMeshMultiElem::Draw() const
-{
-  for(int iogt=0;iogt<(int)aObjGroupTri.size();++iogt){
-    int imtl = aObjGroupTri[iogt].imtl;
-    ::glEnable(GL_LIGHTING);
-    if( imtl>=0 && imtl<(int)aMaterial.size() ){ aMaterial[imtl].GL(); }
-    else{ ::myGlColorDiffuse(CColor::White()); }
-    DrawMeshTri3D_FaceNorm(aXYZ, aObjGroupTri[iogt].aTriVtx,
-                          aNorm, aObjGroupTri[iogt].aTriNrm);
-  }
-}
-
 std::vector<double> CMeshMultiElem::AABB3_MinMax() const
 {
   double cw[6]; GetCenterWidth(cw, aXYZ);
@@ -209,4 +156,81 @@ void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
 {
   Translate(x,y,z, aXYZ);
 }
+
+void Load_Mtl
+(const std::string& fname,
+ std::vector<CMaterial>& aMtl)
+{
+  std::ifstream fin;
+  fin.open(fname.c_str());
+  if (fin.fail()){
+    std::cout<<"File Read Fail"<<std::endl;
+    return;
+  }
+  aMtl.clear();
+  const int BUFF_SIZE = 256;
+  char buff[BUFF_SIZE];
+  while (fin.getline(buff, BUFF_SIZE)){
+    if (buff[0]=='#'){ continue; }
+    if (buff[0]=='\n'){ continue; }
+    std::stringstream ss(buff);
+    std::string str0, str1, str2, str3, str4;
+    ss >> str0;
+    if( str0 == "newmtl" ){
+      aMtl.resize(aMtl.size()+1);
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1;
+      aMtl[imtl0].name_mtl = str1;
+    }
+    if( str0 == "Kd" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Kd[0] = myStof(str1);
+      aMtl[imtl0].Kd[1] = myStof(str2);
+      aMtl[imtl0].Kd[2] = myStof(str3);
+      aMtl[imtl0].Kd[3] = 1.0;
+    }
+    if( str0 == "Ka" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Ka[0] = myStof(str1);
+      aMtl[imtl0].Ka[1] = myStof(str2);
+      aMtl[imtl0].Ka[2] = myStof(str3);
+      aMtl[imtl0].Ka[3] = 1.0;
+    }
+    if( str0 == "Ks" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Ks[0] = myStof(str1);
+      aMtl[imtl0].Ks[1] = myStof(str2);
+      aMtl[imtl0].Ks[2] = myStof(str3);
+      aMtl[imtl0].Ks[3] = 1.0;
+    }
+    if( str0 == "Ke" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1 >> str2 >> str3;
+      aMtl[imtl0].Ke[0] = myStof(str1);
+      aMtl[imtl0].Ke[1] = myStof(str2);
+      aMtl[imtl0].Ke[2] = myStof(str3);
+      aMtl[imtl0].Ke[3] = myStof(str3);
+    }
+    if( str0 == "Ns" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1;
+      aMtl[imtl0].Ns = myStof(str1);
+    }
+    if( str0 == "illum" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1;
+      aMtl[imtl0].illum = myStoi(str1);
+    }
+    if( str0 == "map_Kd" ){
+      const int imtl0 = aMtl.size()-1;
+      ss >> str1;
+      aMtl[imtl0].map_Kd = str1;
+    }
+  }
+}
+
+
 

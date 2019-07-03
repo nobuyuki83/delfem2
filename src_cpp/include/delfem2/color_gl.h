@@ -222,24 +222,5 @@ void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,
                                      std::vector< std::pair<double,CColor> >& colorMap);
 
 
-////////////////////////////////////
-
-
-class CMaterial{
-public:
-  std::string name_mtl;
-  float Kd[4];
-  float Ka[4];
-  float Ks[4];
-  float Ke[4];
-  float Ns;
-  int illum;
-  std::string map_Kd;
-public:
-  void GL() const;
-};
-
-void Load_Mtl(const std::string& fname,
-              std::vector<CMaterial>& aMtl);
 
 #endif

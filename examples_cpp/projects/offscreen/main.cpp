@@ -15,7 +15,7 @@
 #include "delfem2/v23q_gl.h"
 #include "delfem2/color_gl.h"
 
-#include "delfem2/gpusampler.h"
+#include "delfem2/gl_gpusampler.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
