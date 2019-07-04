@@ -41,10 +41,9 @@ void DrawAxis(double s);
 
 void DrawSphere(int nla, int nlo);
 void DrawSphereAt(int nla, int nlo, double rad, double x, double y, double z);
-void DrawSphere_Edge(const double cent_[3],
-                     double radius_);
+void DrawSphere_Edge(double radius_);
 
-void DrawTorus_Edge(double radius_, double radius_tube_, const double cent_[3]);
+void DrawTorus_Edge(double radius_, double radius_tube_);
 
 void DrawCylinder_Face(const double* dir_, double radius_, const double* cent_);
 void DrawCylinder_Edge(const double* dir_, double radius_, const double* cent_);
