@@ -194,6 +194,8 @@ PYBIND11_MODULE(c_gl, m) {
   m.def("glew_init",        &glewInit);
   
   m.def("cppDrawSphere",      &DrawSphereAt );
+  m.def("cppDrawSphere_Edge", &DrawSphere_Edge);
+  m.def("cppDrawTorus_Edge",  &DrawTorus_Edge);
 }
 
 

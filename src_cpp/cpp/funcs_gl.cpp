@@ -141,19 +141,12 @@ void DrawSphereAt(int nla, int nlo, double rad, double x, double y, double z)
 }
 
 void DrawSphere_Edge
-(const double cent_[3],
- double radius_)
+(double radius_)
 {
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
   const bool is_texture = ::glIsEnabled(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_TEXTURE_2D);
-  ////
-  ::glLineWidth(1);
-  ::glColor3d(1,0,0);
-  ::glMatrixMode(GL_MODELVIEW);
-  ::glPushMatrix();
-  ::glTranslated(cent_[0],cent_[1],cent_[2]);
   
   const unsigned int nlg = 32;
   const unsigned int nlt = 18;
@@ -184,7 +177,6 @@ void DrawSphere_Edge
     ::glEnd();
   }
   //   ::glutWireSphere(radius_,32,32);
-  ::glPopMatrix();
   ////
   if(is_lighting){ glEnable(GL_LIGHTING); }
   if(is_texture ){ glEnable(GL_TEXTURE_2D); }
@@ -192,16 +184,12 @@ void DrawSphere_Edge
 
 
 void DrawTorus_Edge
-(double radius_, double radius_tube_, const double cent_[3])
+(double radius_, double radius_tube_)
 {
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
   const bool is_texture = ::glIsEnabled(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_TEXTURE_2D);
-  ////
-  ::glColor3d(1,0,0);
-  ::glPushMatrix();
-  ::glTranslated(cent_[0],cent_[1],cent_[2]);
   
   const unsigned int nlg = 32;
   const unsigned int nlt = 18;
@@ -229,7 +217,6 @@ void DrawTorus_Edge
     }
     ::glEnd();
   }
-  ::glPopMatrix();
   ////
   if(is_lighting){ ::glEnable(GL_LIGHTING); }
   if(is_texture) { ::glEnable(GL_TEXTURE_2D); }

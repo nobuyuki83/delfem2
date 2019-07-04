@@ -84,10 +84,11 @@ class WindowGLFW:
     gl.glEnable(gl.GL_DEPTH_TEST)
 
   def __enter__(self):
-    pass
+    return self
 
   def __exit__(self, exc_type, exc_val, exc_tb):
-    self.close()
+#    self.close()
+    pass
 
   def draw_loop(self):
     """
