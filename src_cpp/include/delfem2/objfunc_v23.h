@@ -5,8 +5,8 @@
 //  Created by Nobuyuki Umetani on 2019-06-08.
 //
 
-#ifndef pbd_v23_h
-#define pbd_v23_h
+#ifndef OBJFUNC_v23_h
+#define OBJFUNC_v23_h
 
 void Energy_MIPS(double& E,
                  double dE[3][3],

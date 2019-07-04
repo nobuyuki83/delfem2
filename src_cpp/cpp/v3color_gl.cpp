@@ -9,9 +9,10 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/v3color_gl.h"
-#include "delfem2/color_gl.h"
 #include "delfem2/vec3.h"
+
+#include "delfem2/v3color_gl.h"
+#include "delfem2/gl_color.h"
 #include "delfem2/v23q_gl.h"
 
 void DrawQuad_ScalarQ1

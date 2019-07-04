@@ -3,9 +3,10 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
-#include "delfem2/color_gl.h"
 #include "delfem2/paramgeo_v23.h"
 #include "delfem2/mshsrch_v3.h"
+
+#include "delfem2/gl_color.h"
 
 class CCad3D_Vertex{
 public:

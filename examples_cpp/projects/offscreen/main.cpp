@@ -13,8 +13,8 @@
 #include "delfem2/funcs_gl.h"
 #include "delfem2/funcs_glew.h"
 #include "delfem2/v23q_gl.h"
-#include "delfem2/color_gl.h"
 
+#include "delfem2/gl_color.h"
 #include "delfem2/gl_gpusampler.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,11 @@ from .c_core import copyMeshDynTri2D
 from .c_core import numpyXYTri_MeshDynTri2D
 from .c_core import setTopology_ExtrudeTri2Tet
 from .c_core import cppNormalVtx_Mesh, cppEdge_Mesh
-from .c_core import cppMeshTri3D_Cylinder, cppMeshTri3D_Sphere
+from .c_core import \
+  cppMeshTri3D_Cylinder, \
+  cppMeshTri3D_Sphere, \
+  cppMeshTri3D_GeoPoly, \
+  cppMeshTri3D_Icosahedron
 
 
 
@@ -142,6 +146,14 @@ class Mesh():
 
   def set_sphere(self, r:float, nla:int, nlo:int):
     self.np_pos, self.np_elm = cppMeshTri3D_Sphere(r, nla, nlo)
+    self.elem_type = TRI
+
+  def set_geopoly(self):
+    self.np_pos, self.np_elm = cppMeshTri3D_GeoPoly()
+    self.elem_type = TRI
+
+  def set_icosahedron(self):
+    self.np_pos, self.np_elm = cppMeshTri3D_Icosahedron()
     self.elem_type = TRI
 
 ###########################################################################

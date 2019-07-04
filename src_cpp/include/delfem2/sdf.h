@@ -44,6 +44,7 @@ class CSignedDistanceField3D_Sphere : public CSDF3
 public:
   CSignedDistanceField3D_Sphere(){
     radius_ = 1.0;
+    cent_.resize(3);
     cent_[0] = 0.0;
     cent_[1] = 0.0;
     cent_[2] = 0.0;
@@ -60,7 +61,7 @@ public:
    const double org[3], const double dir[3]) const;
   virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const;
 public:
-	double cent_[3];
+  std::vector<double> cent_;
 	double radius_;
 	bool is_out_;	// true:normal points outward
 };

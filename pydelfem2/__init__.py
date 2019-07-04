@@ -1,5 +1,5 @@
 from .c_core import AABB3
-from .c_core import SDF_Sphere
+from .c_core import CppSDF_Sphere
 from .c_core import MathExpressionEvaluator
 
 from .c_core import meshdyntri3d_initialize, isosurface

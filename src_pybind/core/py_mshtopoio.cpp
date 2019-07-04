@@ -391,6 +391,29 @@ PyMeshTri3D_Sphere(double r, int nla, int nlo)
   return std::forward_as_tuple(npXYZ,npTri);
 }
 
+std::tuple< py::array_t<double>, py::array_t<unsigned int> >
+PyMeshTri3D_GeoPoly()
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  MeshTri3D_GeodesicPolyhedron(aXYZ,aTri);
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  return std::forward_as_tuple(npXYZ,npTri);
+}
+
+
+std::tuple< py::array_t<double>, py::array_t<unsigned int> >
+PyMeshTri3D_Icosahedron()
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  MeshTri3D_Icosahedron(aXYZ,aTri);
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  return std::forward_as_tuple(npXYZ,npTri);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void init_mshtopoio_gl(py::module &m){
@@ -404,7 +427,7 @@ void init_mshtopoio_gl(py::module &m){
   .value("LINE",    MESHELEM_TYPE::MESHELEM_LINE)
   .export_values();
   
-  py::class_<CMeshMultiElem>(m,"MeshMultiElem")
+  py::class_<CMeshMultiElem>(m,"CppMeshMultiElem")
   .def(py::init<>())
   .def("read_obj", &CMeshMultiElem::ReadObj)
   .def("minmax_xyz", &CMeshMultiElem::AABB3_MinMax)
@@ -454,6 +477,12 @@ void init_mshtopoio_gl(py::module &m){
   m.def("meshtri3d_read_nastran", &PyMeshTri3D_ReadNastran, py::return_value_policy::move);
   m.def("meshquad2d_grid",        &PyMeshQuad2D_Grid,       py::return_value_policy::move);
   
+  // primitive
+  m.def("cppMeshTri3D_Cylinder",    &PyMeshTri3D_Cylinder,    py::return_value_policy::move);
+  m.def("cppMeshTri3D_Sphere",      &PyMeshTri3D_Sphere,      py::return_value_policy::move);
+  m.def("cppMeshTri3D_GeoPoly",     &PyMeshTri3D_GeoPoly,     py::return_value_policy::move);
+  m.def("cppMeshTri3D_Icosahedron", &PyMeshTri3D_Icosahedron, py::return_value_policy::move);
+  
   // subdiv
   m.def("meshquad3d_subdiv",      &PyMeshQuad3D_Subviv,     py::return_value_policy::move);
   m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
@@ -469,8 +498,4 @@ void init_mshtopoio_gl(py::module &m){
   
   m.def("elemQuad_dihedralTri",&PyElemQuad_DihedralTri);
   m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
-  
-  m.def("cppMeshTri3D_Cylinder", &PyMeshTri3D_Cylinder);
-  m.def("cppMeshTri3D_Sphere",   &PyMeshTri3D_Sphere);
-
 }

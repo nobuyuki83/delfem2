@@ -17,9 +17,10 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  main.cpp
-  ${DELFEM2_SRC}/color_gl.cpp       ${DELFEM2_INC}/color_gl.h
   ${DELFEM2_SRC}/camera_gl.cpp      ${DELFEM2_INC}/camera_gl.h
+  ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h          
+  
+  main.cpp  
 )
 
 target_link_libraries(${PROJECT_NAME}  

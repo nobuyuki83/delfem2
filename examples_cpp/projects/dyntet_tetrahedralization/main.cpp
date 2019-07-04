@@ -15,13 +15,13 @@
 
 //#include "geosim/matrix3.h"
 #include "delfem2/vec3.h"
-#include "delfem2/funcs_glut.h"
-#include "delfem2/color_gl.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/dyntet_vec3.h"
-//#include "delfem2/jagged_array.h"
+
+#include "delfem2/funcs_glut.h"
+#include "delfem2/gl_color.h"
 
 
 void FindEdge

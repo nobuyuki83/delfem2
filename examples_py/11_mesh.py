@@ -61,6 +61,13 @@ def primitive():
   msh.set_sphere(1.0,16, 32)
   dfm2.gl._glfw.winDraw3d([msh])
 
+  msh.set_icosahedron()
+  dfm2.gl._glfw.winDraw3d([msh])
+
+  msh.set_geopoly()
+  dfm2.gl._glfw.winDraw3d([msh])
+
+
 if __name__ == "__main__":
   height_map()
   edge_tri()

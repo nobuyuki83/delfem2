@@ -18,10 +18,10 @@
 
 #include "delfem2/funcs_gl.h"
 #include "delfem2/v23q_gl.h"
-#include "delfem2/color_gl.h"
+#include "delfem2/gl_color.h"
 #include "delfem2/camera_gl.h"
 #include "delfem2/funcs_glut.h"
-#include "delfem2/gl_voxsdfbv.h"
+#include "delfem2/gl_voxbv.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793

@@ -12,15 +12,15 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
+#include "delfem2/cad3d.h"
 
 #include "delfem2/v23m3q.h"
 #include "delfem2/dyntri_v2.h"
 
 #include "delfem2/funcs_gl.h"
-#include "delfem2/color_gl.h"
+#include "delfem2/gl_color.h"
 #include "delfem2/v23q_gl.h"
 
-#include "delfem2/cad3d.h"
 
 void CCad3D_Vertex::Draw(bool is_selected, int ielem, double view_height) const
 {
