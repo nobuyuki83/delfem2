@@ -8,14 +8,14 @@
 
 #include "delfem2/funcs_glew.h" // have to be included in the beginning
 #include "delfem2/funcs_gl.h"
-#include "delfem2/color_gl.h"
 
 #include "delfem2/cad_dyntri_v23_gl.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/dyntri_v3.h"
 
 #include "delfem2/mshtopo.h"
-#include "delfem2/gl_voxsdfbv.h"
+#include "delfem2/gl_voxbv.h"
+#include "delfem2/gl_color.h"
 
 namespace py = pybind11;
 
@@ -192,9 +192,8 @@ PYBIND11_MODULE(c_gl, m) {
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
   m.def("setup_glsl",       &setUpGLSL, "compile shader program");
   m.def("glew_init",        &glewInit);
-  m.def("draw_sphere",      &DrawSphereAt );
   
-  m.def("draw_CppSDF_sphere",  &DrawSDF_Sphere);
+  m.def("cppDrawSphere",      &DrawSphereAt );
 }
 
 

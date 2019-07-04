@@ -18,7 +18,5 @@ void Draw_CubeGrid(bool is_picked, int iface_picked,
                    double elen, const CVector3& org,
                    const CCubeGrid& cube);
 
-void DrawSDF_Sphere(const CSignedDistanceField3D_Sphere& sdf);
-
 
 #endif /* gl_voxsdf_hpp */

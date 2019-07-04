@@ -48,7 +48,7 @@ set(INPUT_SRC
   ${DELFEM2_INC}/isosurface_stuffing.h
   ${DELFEM2_SRC}/isosurface_stuffing.cpp
 
-  py_mshtopoio_gl.cpp
+  py_mshtopoio.cpp
   py_polyline.cpp 
   py_field.cpp
   py_fem.cpp

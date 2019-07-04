@@ -6,8 +6,8 @@
  */
 
 
-#ifndef MSHTOPOIO_GL_H
-#define MSHTOPOIO_GL_H
+#ifndef MSHTOPOIO_H
+#define MSHTOPOIO_H
 
 #include <string>
 #include <vector>
@@ -16,11 +16,10 @@
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/color_gl.h"
 #include "delfem2/funcs.h"
 
 void MeshTri3D_GeodesicPolyhedron(std::vector<double>& aXYZ1,
-                                  std::vector<int>& aTri1);
+                                  std::vector<unsigned int>& aTri1);
 
 class CMeshElem{
 public:
@@ -106,8 +105,6 @@ public:
   std::vector<float> color_face;
   bool is_draw_edge;
 };
-
-CMeshElem Read_MeshTri3D_Nas_CMeshElem(std::string& fpath);
 
 class CMaterial{
 public:

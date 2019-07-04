@@ -25,24 +25,19 @@ set(INPUT_SRC
   ${DELFEM2_INC}/msh.h           ${DELFEM2_SRC}/msh.cpp
   ${DELFEM2_INC}/voxel.h         ${DELFEM2_SRC}/voxel.cpp
   ${DELFEM2_INC}/bv.h
-  ${DELFEM2_INC}/sdf.h           ${DELFEM2_SRC}/sdf.cpp
-  ${DELFEM2_INC}/hash3d.h        ${DELFEM2_SRC}/hash3d.cpp
 
   ${DELFEM2_INC}/v23q_gl.h       ${DELFEM2_SRC}/v23q_gl.cpp
   ${DELFEM2_INC}/funcs_gl.h      ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_INC}/color_gl.h      ${DELFEM2_SRC}/color_gl.cpp
+  ${DELFEM2_INC}/gl_color.h      ${DELFEM2_SRC}/gl_color.cpp
   ${DELFEM2_INC}/funcs_glew.h
 
   ${DELFEM2_INC}/camera_gl.h     ${DELFEM2_SRC}/camera_gl.cpp
-  ${DELFEM2_INC}/gl_voxsdfbv.h   ${DELFEM2_SRC}/gl_voxsdfbv.cpp
+  ${DELFEM2_INC}/gl_voxbv.h      ${DELFEM2_SRC}/gl_voxbv.cpp
   ${DELFEM2_INC}/gl_gpusampler.h ${DELFEM2_SRC}/gl_gpusampler.cpp
   ${DELFEM2_INC}/gl_tex.h        ${DELFEM2_SRC}/gl_tex.cpp
 
   ${DELFEM2_INC}/cad_dyntri_v23_gl.h
   ${DELFEM2_SRC}/cad_dyntri_v23_gl.cpp
-
-  ${DELFEM2_INC}/gl_voxsdfbv.h
-  ${DELFEM2_SRC}/gl_voxsdfbv.cpp
 
   py_sampler.cpp
   py_texture.cpp 

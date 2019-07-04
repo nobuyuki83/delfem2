@@ -8,7 +8,7 @@
 #endif
 
 #include "delfem2/funcs_gl.h"
-#include "delfem2/color_gl.h"
+#include "delfem2/gl_color.h"
 
 #include "delfem2/funcs_glut.h"
 

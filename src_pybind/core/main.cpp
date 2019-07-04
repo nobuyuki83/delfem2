@@ -208,9 +208,11 @@ PYBIND11_MODULE(c_core, m) {
   // SDF
   py::class_<CSDF3>(m, "SDF");
   
-  py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "SDF_Sphere")
+  py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "CppSDF_Sphere")
   .def(py::init<>())
-  .def(py::init<double,const std::vector<double>&,bool>());
+  .def(py::init<double,const std::vector<double>&,bool>())
+  .def_readwrite("cent", &CSignedDistanceField3D_Sphere::cent_)
+  .def_readwrite("rad",  &CSignedDistanceField3D_Sphere::radius_);
   
   m.def("isosurface", &PyIsoSurface);
   

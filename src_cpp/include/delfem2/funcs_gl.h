@@ -38,8 +38,19 @@ void showdepth();
 // draw functions
 
 void DrawAxis(double s);
+
 void DrawSphere(int nla, int nlo);
 void DrawSphereAt(int nla, int nlo, double rad, double x, double y, double z);
+void DrawSphere_Edge(const double cent_[3],
+                     double radius_);
+
+void DrawTorus_Edge(double radius_, double radius_tube_, const double cent_[3]);
+
+void DrawCylinder_Face(const double* dir_, double radius_, const double* cent_);
+void DrawCylinder_Edge(const double* dir_, double radius_, const double* cent_);
+
+void DrawPlane_Edge(const double* origin_, const double* normal_);
+
 void DrawBox_MinMaxXYZ(double x_min, double x_max,
                        double y_min, double y_max,
                        double z_min, double z_max);

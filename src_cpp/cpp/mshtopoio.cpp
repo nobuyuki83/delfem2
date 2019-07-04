@@ -10,6 +10,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "delfem2/dyntri_v3.h"
 #include "delfem2/mshio.h"
@@ -96,14 +97,6 @@ void MeshTri3D_GeodesicPolyhedron
     aTri1.push_back(ip2); aTri1.push_back(iedge20+np0); aTri1.push_back(iedge12+np0);
     aTri1.push_back(iedge01+np0); aTri1.push_back(iedge12+np0); aTri1.push_back(iedge20+np0);
   }
-}
-
-CMeshElem Read_MeshTri3D_Nas_CMeshElem(const std::string& fpath){
-  CMeshElem em;
-  em.elem_type = MESHELEM_TRI;
-  em.ndim = 3;
-  Read_MeshTri3D_Nas(em.aPos, em.aElem, fpath.c_str());
-  return em;
 }
 
 ////////

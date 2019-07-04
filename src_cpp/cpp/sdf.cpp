@@ -231,6 +231,7 @@ double CSignedDistanceField3D_Plane::Projection(double px, double py, double pz,
 
 
 CSignedDistanceField3D_Sphere::CSignedDistanceField3D_Sphere(double r, const std::vector<double>& c, bool is_out){
+  cent_.resize(3);
 	cent_[0] = c[0];
 	cent_[1] = c[1];
 	cent_[2] = c[2];

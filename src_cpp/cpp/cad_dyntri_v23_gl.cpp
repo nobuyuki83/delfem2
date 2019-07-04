@@ -174,7 +174,7 @@ void DrawMeshDynTri3D_Edge
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void DrawEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_elem)
+void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_elem)
 {
   if( is_selected ){ ::glColor3d(1,1,0); }
   else{ ::glColor3d(0,0,0); }
@@ -237,9 +237,9 @@ void Draw_CCad2D(const CCad2D& cad2d)
   /////
   ::glLineWidth(3);
   for(unsigned int ie=0;ie<aEdge.size();++ie){
-    DrawEdge(aEdge[ie],
-             (int)ie == iedge_picked,
-             ipicked_elem);
+    Draw_CCad2DEdge(aEdge[ie],
+                    (int)ie == iedge_picked,
+                    ipicked_elem);
   }
   //////
   if( is_draw_face ){
