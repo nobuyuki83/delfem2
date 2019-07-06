@@ -10,7 +10,7 @@ import numpy, os
 import OpenGL.GL as gl
 from typing import Tuple, List
 
-from .c_core import CppCad2D, CppMeshDynTri2D, CppVoxelGrid, CppMapper
+from .c_core import CppCad2D, CppMeshDynTri2D, CppVoxelGrid, CppMapper, AABB3
 from .c_core import TRI, QUAD, HEX, TET, LINE
 from .c_core import \
   meshquad2d_grid, \
@@ -34,8 +34,6 @@ from .c_core import \
   cppMeshTri3D_Icosahedron
 
 
-
-
 ####################
 
 class Mesh():
@@ -48,13 +46,9 @@ class Mesh():
     assert type(np_elm) == numpy.ndarray
     assert np_pos.dtype == numpy.float64
     assert np_elm.dtype == numpy.uint32
-    self.color_face = [0.8, 0.8, 0.8, 1.0]
     self.np_pos = np_pos
     self.np_elm = np_elm
     self.elem_type = elem_type
-    ### draw related functions from here
-    self.is_draw_edge = True
-    self.is_draw_face = True
 
   def minmax_xyz(self):
     if self.np_pos.shape[0] == 0:
@@ -73,11 +67,20 @@ class Mesh():
 
   #####
 
+  def aabb3(self):
+    return AABB3( self.minmax_xyz() )
+
   def ndim(self) -> int:
     return self.np_pos.shape[1]
 
   def scale_xyz(self,scale:float):
     self.np_pos *= scale
+
+  def translate(self,d:List[float],mag:float):
+    self.np_pos[:,0] += mag*d[0]
+    self.np_pos[:,1] += mag*d[1]
+    self.np_pos[:,2] += mag*d[2]        
+
 
   def subdiv(self):
     if self.elem_type == QUAD:

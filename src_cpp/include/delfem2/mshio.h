@@ -75,12 +75,15 @@ void Read_Obj(const std::string& fname,
 void Read_Obj_Quad(const std::string& fname,
                    std::vector<double>& aXYZ,
                    std::vector<int>& aQuad);
-void Read_Obj2(const std::string& fname,
-               std::vector<double>& aXYZ,
-               std::vector<int>& aTri);
 void Read_Obj(std::stringstream& ssobj,
               std::vector<double>& aXYZ,
               std::vector<int>& aTri);
+void Read_Obj2(const std::string& fname,
+               std::vector<double>& aXYZ,
+               std::vector<int>& aTri);
+void Read_Obj3(const std::string& fname,
+               std::vector<double>& aXYZ,
+               std::vector<unsigned int>& aTri);
 
 class CTriGroup{
 public:

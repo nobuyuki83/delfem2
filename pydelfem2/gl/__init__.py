@@ -130,6 +130,10 @@ def draw_CppSDF_Sphere(self):
 
 
 setattr(Mesh,"draw",draw_Mesh)
+setattr(Mesh,"is_draw_edge",True)
+setattr(Mesh,"is_draw_face",True)
+setattr(Mesh,"color_face", [0.8, 0.8, 0.8, 1.0])
+
 setattr(CppMeshDynTri2D,"draw",draw_CppMeshDynTri2D)
 setattr(CppMeshDynTri3D,"draw",draw_CppMeshDynTri3D)
 setattr(CppCad2D,       "draw",draw_CppCad2D)

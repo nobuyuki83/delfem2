@@ -34,8 +34,7 @@ def edge_tri():
   msh = dfm2.Mesh()
   msh.read("../test_inputs/bunny_2k.ply")
   msh_edge = msh.mesh_edge()
-  aabb = dfm2.AABB3( msh.minmax_xyz() )
-  dfm2.gl._glfw.winDraw3d([msh_edge,aabb])
+  dfm2.gl._glfw.winDraw3d([msh_edge,msh.aabb3()])
 
 
 def edge_quad_hex():
@@ -67,8 +66,21 @@ def primitive():
   msh.set_geopoly()
   dfm2.gl._glfw.winDraw3d([msh])
 
+def read_file():
+  msh = dfm2.Mesh()
+
+  msh.read("../test_inputs/A.obj")
+  dfm2.gl._glfw.winDraw3d([msh,msh.aabb3()])
+
+  msh.read("../test_inputs/bunny_2k.ply")
+  dfm2.gl._glfw.winDraw3d([msh,msh.aabb3()])
+
+  msh.read("../test_inputs/bunny_1k.obj")
+  dfm2.gl._glfw.winDraw3d([msh,msh.aabb3()])
+
 
 if __name__ == "__main__":
+  read_file()
   height_map()
   edge_tri()
   edge_quad_hex()
