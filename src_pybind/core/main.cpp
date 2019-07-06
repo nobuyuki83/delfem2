@@ -261,12 +261,6 @@ PYBIND11_MODULE(c_core, m) {
   .def("set_key",       &CMathExpressionEvaluator::SetKey)
   .def("eval",          &CMathExpressionEvaluator::Eval);
   
-   ///////////////////////////////////
-  // gl misc
-//  m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
-//  m.def("setup_glsl",       &setUpGLSL, "compile shader program");
-//  m.def("glew_init",        &glewInit);
-//  m.def("draw_sphere",      &DrawSphereAt );
   m.def("mvc",              &PyMVC);
 }
 

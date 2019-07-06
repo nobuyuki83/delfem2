@@ -488,10 +488,10 @@ void Read_Obj
   }
 }
 
-void Load_Obj3
+void Read_Obj3
 (const std::string& fname,
  std::vector<double>& aXYZ,
- std::vector<int>& aTri)
+ std::vector<unsigned int>& aTri)
 {
   std::ifstream fin;
   fin.open(fname.c_str());

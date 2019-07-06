@@ -51,7 +51,7 @@ std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadObj
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  Read_Obj(fname, aXYZ, aTri);
+  Read_Obj3(fname, aXYZ, aTri);
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::forward_as_tuple(npXYZ,npTri);
@@ -429,10 +429,9 @@ void init_mshtopoio_gl(py::module &m){
   
   py::class_<CMeshMultiElem>(m,"CppMeshMultiElem")
   .def(py::init<>())
-  .def("read_obj", &CMeshMultiElem::ReadObj)
-  .def("minmax_xyz", &CMeshMultiElem::AABB3_MinMax)
-//  .def("draw",&CMeshMultiElem::Draw)
-  .def("scaleXYZ",&CMeshMultiElem::ScaleXYZ)
+  .def("read_obj",    &CMeshMultiElem::ReadObj)
+  .def("minmax_xyz",  &CMeshMultiElem::AABB3_MinMax)
+  .def("scaleXYZ",    &CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
   py::class_<CMeshDynTri3D>(m, "CppMeshDynTri3D")
