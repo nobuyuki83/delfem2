@@ -70,7 +70,13 @@ def read_file():
   msh = dfm2.Mesh()
 
   msh.read("../test_inputs/A.obj")
-  dfm2.gl._glfw.winDraw3d([msh,msh.aabb3()])
+  dfm2.gl._glfw.winDraw3d([msh,msh.aabb3(),dfm2.gl.AxisXYZ()])
+
+  msh.rotate([3.1415*0.5, 0.0, 0.0])
+  dfm2.gl._glfw.winDraw3d([msh, msh.aabb3(), dfm2.gl.AxisXYZ()])
+
+  msh.translate([1, 1.0, 0.0], 1.0)
+  dfm2.gl._glfw.winDraw3d([msh, msh.aabb3(), dfm2.gl.AxisXYZ()])
 
   msh.read("../test_inputs/bunny_2k.ply")
   dfm2.gl._glfw.winDraw3d([msh,msh.aabb3()])

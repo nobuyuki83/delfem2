@@ -13,9 +13,10 @@
 #include <map>
 #include <deque>
 
+#include "delfem2/mat3.h"
 #include "delfem2/mshtopoio.h"
 #include "delfem2/voxel.h"
-#include "delfem2/bv.h"    // include gl
+#include "delfem2/bv.h"
 #include "delfem2/cad2d.h"
 #include "delfem2/sdf.h"
 #include "delfem2/isosurface_stuffing.h"
@@ -170,6 +171,19 @@ py::array_t<double> PyMVC
 }
 
 
+py::array_t<double> PyRotMat3_Cartesian(const std::vector<double>& d)
+{
+  CMatrix3 m;
+  m.SetRotMatrix_Cartesian(d[0], d[1], d[2]);
+  py::array_t<double> npR({3,3});
+  for(int i=0;i<3;++i){
+    for(int j=0;j<3;++j){
+      npR.mutable_at(i,j) = m.Get(i, j);
+    }
+  }
+  return npR;
+}
+
 
 PYBIND11_MODULE(c_core, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -262,6 +276,7 @@ PYBIND11_MODULE(c_core, m) {
   .def("eval",          &CMathExpressionEvaluator::Eval);
   
   m.def("mvc",              &PyMVC);
+  m.def("rotmat3_cartesian", &PyRotMat3_Cartesian);
 }
 
 

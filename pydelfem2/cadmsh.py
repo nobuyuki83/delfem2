@@ -32,6 +32,7 @@ from .c_core import \
   cppMeshTri3D_Sphere, \
   cppMeshTri3D_GeoPoly, \
   cppMeshTri3D_Icosahedron
+from .c_core import rotmat3_cartesian
 
 
 ####################
@@ -41,7 +42,7 @@ class Mesh():
                np_pos=numpy.ndarray((0,3),dtype=numpy.float64),
                np_elm=numpy.ndarray((0,3),dtype=numpy.uint32),
                elem_type=TRI):
-    print("PyMesh -- construct")
+#    print("PyMesh -- construct")
     assert type(np_pos) == numpy.ndarray
     assert type(np_elm) == numpy.ndarray
     assert np_pos.dtype == numpy.float64
@@ -76,11 +77,15 @@ class Mesh():
   def scale_xyz(self,scale:float):
     self.np_pos *= scale
 
-  def translate(self,d:List[float],mag:float):
+  def translate(self,d:List[float],mag=1.0):
     self.np_pos[:,0] += mag*d[0]
     self.np_pos[:,1] += mag*d[1]
     self.np_pos[:,2] += mag*d[2]        
 
+  def rotate(self,d:List[float]):
+    R = rotmat3_cartesian(d)
+    tmp0 = numpy.matmul(R, numpy.transpose(self.np_pos))
+    self.np_pos[:,:] = numpy.transpose(tmp0)
 
   def subdiv(self):
     if self.elem_type == QUAD:
