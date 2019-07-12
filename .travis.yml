@@ -29,17 +29,21 @@ addons:
 script: |
   git submodule init
   git submodule update
+  
   cd src_cpp/external/glfw
   cmake .
   make
   cd ../../../
+
   cd test/googletest
   mkdir build
   cd build
   cmake ..
   make
   cd ../../../
+
   pip3 install -e .
+
   cd test
   ls googletest/build/googlemock/gtest
   mkdir buildMake
@@ -48,14 +52,13 @@ script: |
   make
   make test 
   cd ../../
+
   cd examples_cpp
   mkdir buildMake
   cd buildMake
   cmake ..
   make -i
-  cd ..
-  ls bin/  
-  cd .. 
+  cd ../..
 
   cd src_pybind/core
   mkdir buildMake
