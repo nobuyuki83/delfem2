@@ -1,7 +1,7 @@
 project(adf3d)
 
 cmake_minimum_required(VERSION 2.8)
-set( CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -std=c++11" )
+set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -std=c++11" )
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")

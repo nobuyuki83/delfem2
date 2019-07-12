@@ -1,7 +1,7 @@
 project(fbx_read)
 
 cmake_minimum_required(VERSION 2.8)
-set( CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
+set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
