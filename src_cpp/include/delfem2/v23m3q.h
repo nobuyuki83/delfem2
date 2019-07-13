@@ -31,21 +31,21 @@ CMatrix3 Mat3_RotCartesian(const CVector3& vec0);
 
 CMatrix3 Mat3_OuterProduct(const CVector3& vec0,
                       const CVector3& vec1 );
-CMatrix3 Spin(const CVector3& vec0);
-CMatrix3 ParallelTransport(const CVector3& p0,
-                           const CVector3& p1,
-                           const CVector3& q0,
-                           const CVector3& q1);
-CMatrix3 MinimumRotation(const CVector3& V,
-                         const CVector3& v);
-CMatrix3 Irot_Tri(const CVector3& d0,
-                  const CVector3& d1,
-                  const CVector3& d2);
-CMatrix3 Irot_TriSolid(const CVector3& d0,
-                       const CVector3& d1,
-                       const CVector3& d2);
-CMatrix3 Irot_LineSeg(const CVector3& d0,
-                      const CVector3& d1);
-CMatrix3 Irot_Point(const CVector3& d0);
+CMatrix3 Mat3_Spin(const CVector3& vec0);
+CMatrix3 Mat3_ParallelTransport(const CVector3& p0,
+                                const CVector3& p1,
+                                const CVector3& q0,
+                                const CVector3& q1);
+CMatrix3 Mat3_MinimumRotation(const CVector3& V,
+                              const CVector3& v);
+CMatrix3 Mat3_IrotTri(const CVector3& d0,
+                      const CVector3& d1,
+                      const CVector3& d2);
+CMatrix3 Mat3_IrotTriSolid(const CVector3& d0,
+                           const CVector3& d1,
+                           const CVector3& d2);
+CMatrix3 Mat3_IrotLineSeg(const CVector3& d0,
+                          const CVector3& d1);
+CMatrix3 Mat3_IrotPoint(const CVector3& d0);
 
 #endif /* vec23mat3quat_hpp */

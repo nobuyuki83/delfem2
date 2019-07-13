@@ -181,56 +181,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     {
       break;
     }
-      /*
-    case 'w':
-    {
-      std::ofstream fout;
-      fout.open("hoge.txt",std::ios::out);
-      cad.WriteFile(fout);
-      break;
-    }
-    case 'r':
-    {
-      std::ifstream fin;
-      fin.open("hoge.txt",std::ios::in);
-      cad.ReadFile(fin);
-      break;
-    }
-    case '1':
-    {
-      cad.imode_edit = CCad3D::EDIT_MOVE;
-      break;
-    }
-    case '2':
-    {
-      cad.imode_edit = CCad3D::EDIT_ADD_CROSS_SECTION;
-      break;
-    }
-    case '3':
-    {
-      cad.imode_edit = CCad3D::EDIT_ADD_POINT_EDGE;
-      break;
-    }
-    case '4':
-    {
-      cad.imode_edit = CCad3D::EDIT_SKETCH;
-      break;
-    }
-    case '5':
-    {
-      break;
-    }
-    case '+':
-    {
-      cad.ChangeEdgeLength(cad.elen*0.9);
-      break;
-    }
-    case '-':
-    {
-      cad.ChangeEdgeLength(cad.elen/0.9);
-      break;
-    }
-       */
   }
   ::glutPostRedisplay();
 }

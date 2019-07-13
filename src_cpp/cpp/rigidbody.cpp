@@ -76,7 +76,7 @@ void EdEddE_Exforce
   dEdu = +fex;
   dEdw = +Rv^fex;
   ddEddu  = CMatrix3(0.0);
-  ddEddw  = +Spin(fex)*Spin(Rv);
+  ddEddw  = +Mat3_Spin(fex)*Mat3_Spin(Rv);
   ddEdudw = CMatrix3(0.0);
 }
 
@@ -98,7 +98,7 @@ void EdEddE_Contact
   dEdu = ((cq*n)*cont_stiff)*n;
   dEdw = ((cq*n)*cont_stiff)*(Rv^n);
   ddEddu  = cont_stiff*Mat3_OuterProduct(n,n);
-  ddEddw  = cont_stiff*Mat3_OuterProduct(Rv^n,Rv^n) + ((cq*n)*cont_stiff)*Spin(n)*Spin(Rv);
+  ddEddw  = cont_stiff*Mat3_OuterProduct(Rv^n,Rv^n) + ((cq*n)*cont_stiff)*Mat3_Spin(n)*Mat3_Spin(Rv);
   ddEdudw = cont_stiff*Mat3_OuterProduct(Rv^n,n);
 }
 
@@ -120,8 +120,8 @@ void EdEddE_ContactFriction
   dEdw = cont_stiff*(Rv^(cq-cp));
   ddEddu  = cont_stiff*CMatrix3::Identity();
   //    ddEddw  = -cont_stiff*CMatrix3::OuterProduct(Rv,Rv) + cont_stiff*CMatrix3::Spin(Rv)*CMatrix3::Spin(cq-cp);
-  ddEddw  = -cont_stiff*Spin(Rv)*Spin(Rv) + cont_stiff*Spin(cq-cp)*Spin(Rv);
-  ddEdudw = cont_stiff*Spin(Rv);
+  ddEddw  = -cont_stiff*Mat3_Spin(Rv)*Mat3_Spin(Rv) + cont_stiff*Mat3_Spin(cq-cp)*Mat3_Spin(Rv);
+  ddEdudw = cont_stiff*Mat3_Spin(Rv);
 }
 
 
@@ -156,17 +156,17 @@ void EdEddE_Joint
   
   ddEdu0du0 =  trans_stiff*CMatrix3::Identity();
   ddEdu0du1 = -trans_stiff*CMatrix3::Identity();
-  ddEdu0dw0 = +trans_stiff*Spin(Rv0);
-  ddEdu0dw1 = -trans_stiff*Spin(Rv1);
+  ddEdu0dw0 = +trans_stiff*Mat3_Spin(Rv0);
+  ddEdu0dw1 = -trans_stiff*Mat3_Spin(Rv1);
   
-  ddEdw0dw0 = -trans_stiff*Spin(Rv0)*Spin(Rv0) + trans_stiff*Spin(qj0-qj1)*Spin(Rv0);
-  ddEdw0du1 = +trans_stiff*Spin(Rv0);
-  ddEdw0dw1 = +trans_stiff*Spin(Rv1)*Spin(Rv0);
+  ddEdw0dw0 = -trans_stiff*Mat3_Spin(Rv0)*Mat3_Spin(Rv0) + trans_stiff*Mat3_Spin(qj0-qj1)*Mat3_Spin(Rv0);
+  ddEdw0du1 = +trans_stiff*Mat3_Spin(Rv0);
+  ddEdw0dw1 = +trans_stiff*Mat3_Spin(Rv1)*Mat3_Spin(Rv0);
   
   ddEdu1du1 =  trans_stiff*CMatrix3::Identity();
-  ddEdu1dw1 = +trans_stiff*Spin(Rv1);
+  ddEdu1dw1 = +trans_stiff*Mat3_Spin(Rv1);
   
-  ddEdw1dw1 = -trans_stiff*Spin(Rv1)*Spin(Rv1) + trans_stiff*Spin(qj1-qj0)*Spin(Rv1);
+  ddEdw1dw1 = -trans_stiff*Mat3_Spin(Rv1)*Mat3_Spin(Rv1) + trans_stiff*Mat3_Spin(qj1-qj0)*Mat3_Spin(Rv1);
   
   CVector3 av(0,0,0);
   CMatrix3 davdw0, davdw1;
@@ -175,8 +175,8 @@ void EdEddE_Joint
       CVector3 r0( R0.mat[0*3+i], R0.mat[1*3+i], R0.mat[2*3+i] );
       CVector3 r1( R1.mat[0*3+i], R1.mat[1*3+i], R1.mat[2*3+i] );
       av += (r0^r1);
-      davdw0 += Spin(r1)*Spin(r0);
-      davdw1 -= Spin(r0)*Spin(r1);
+      davdw0 += Mat3_Spin(r1)*Mat3_Spin(r0);
+      davdw1 -= Mat3_Spin(r0)*Mat3_Spin(r1);
     }
     av *= 0.5;
     davdw0 *= 0.5;
@@ -190,10 +190,10 @@ void EdEddE_Joint
     CVector3 r1( R1.mat[0*3+i], R1.mat[1*3+i], R1.mat[2*3+i] );
     dEdw0 += 0.5*rot_stiff*r0^(r1^av);
     dEdw1 -= 0.5*rot_stiff*r1^(r0^av);
-    ddEdw0dw0 += 0.5*rot_stiff*( Spin(r1^av)*Spin(r0) + Spin(r0)*Spin(r1)*davdw0 );
-    ddEdw1dw1 -= 0.5*rot_stiff*( Spin(r0^av)*Spin(r1) + Spin(r1)*Spin(r0)*davdw1 );
-    ddEdw0dw1 -= 0.5*rot_stiff*(  Spin(r1)*Spin(av)*Spin(r0)
-                                + Spin(r1)*Spin(r0)*davdw0 );
+    ddEdw0dw0 += 0.5*rot_stiff*( Mat3_Spin(r1^av)*Mat3_Spin(r0) + Mat3_Spin(r0)*Mat3_Spin(r1)*davdw0 );
+    ddEdw1dw1 -= 0.5*rot_stiff*( Mat3_Spin(r0^av)*Mat3_Spin(r1) + Mat3_Spin(r1)*Mat3_Spin(r0)*davdw1 );
+    ddEdw0dw1 -= 0.5*rot_stiff*(  Mat3_Spin(r1)*Mat3_Spin(av)*Mat3_Spin(r0)
+                                + Mat3_Spin(r1)*Mat3_Spin(r0)*davdw0 );
   }
 }
 

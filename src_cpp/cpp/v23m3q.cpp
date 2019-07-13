@@ -133,7 +133,7 @@ CMatrix3 Mat3(const CVector3& vec0, const CVector3& vec1, const CVector3& vec2)
   return m;
 }
 
-CMatrix3 Spin(const CVector3& vec0){
+CMatrix3 Mat3_Spin(const CVector3& vec0){
   CMatrix3 m;
   SetSpinTensor(m,vec0);
   return m;
@@ -165,7 +165,7 @@ CVector3 operator* (const CMatrix3& m, const CVector3& v)
 
 //////////////////////////////////////////////////////////////////////
 
-CMatrix3 MinimumRotation
+CMatrix3 Mat3_MinimumRotation
 (const CVector3& V,
  const CVector3& v)
 {
@@ -360,17 +360,17 @@ void CheckEnergyMIPS(){
   }
 }
 
-CMatrix3 ParallelTransport
+CMatrix3 Mat3_ParallelTransport
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& q0,
  const CVector3& q1)
 {
-  return MinimumRotation(p1-p0, q1-q0);
+  return Mat3_MinimumRotation(p1-p0, q1-q0);
 }
 
 // moment of inertia around origin triangle vtx (origin,d0,d1,d2) the area_density=1
-CMatrix3 Irot_Tri
+CMatrix3 Mat3_IrotTri
 (const CVector3& d0,
  const CVector3& d1,
  const CVector3& d2)
@@ -388,7 +388,7 @@ CMatrix3 Irot_Tri
 }
 
 // moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
-CMatrix3 Irot_TriSolid
+CMatrix3 Mat3_IrotTriSolid
 (const CVector3& d0,
  const CVector3& d1,
  const CVector3& d2)
@@ -405,7 +405,7 @@ CMatrix3 Irot_TriSolid
   return I;
 }
 
-CMatrix3 Irot_LineSeg
+CMatrix3 Mat3_IrotLineSeg
 (const CVector3& d0,
  const CVector3& d1)
 {
@@ -421,7 +421,7 @@ CMatrix3 Irot_LineSeg
   return I;
 }
 
-CMatrix3 Irot_Point
+CMatrix3 Mat3_IrotPoint
 (const CVector3& d0)
 {
   return (d0.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(d0,d0));
