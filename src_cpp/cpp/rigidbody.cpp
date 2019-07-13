@@ -97,9 +97,9 @@ void EdEddE_Contact
   energy = 0.5*(cq*n)*(cq*n)*cont_stiff;
   dEdu = ((cq*n)*cont_stiff)*n;
   dEdw = ((cq*n)*cont_stiff)*(Rv^n);
-  ddEddu  = cont_stiff*OuterProduct(n,n);
-  ddEddw  = cont_stiff*OuterProduct(Rv^n,Rv^n) + ((cq*n)*cont_stiff)*Spin(n)*Spin(Rv);
-  ddEdudw = cont_stiff*OuterProduct(Rv^n,n);
+  ddEddu  = cont_stiff*Mat3_OuterProduct(n,n);
+  ddEddw  = cont_stiff*Mat3_OuterProduct(Rv^n,Rv^n) + ((cq*n)*cont_stiff)*Spin(n)*Spin(Rv);
+  ddEdudw = cont_stiff*Mat3_OuterProduct(Rv^n,n);
 }
 
 void EdEddE_ContactFriction

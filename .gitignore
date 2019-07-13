@@ -43,5 +43,6 @@ private_examples
 desktop.ini
 examples_py/*.vtk
 pyenv
+myenv
 __pycache__
 pydelfem2.egg-info
