@@ -102,7 +102,7 @@ void SetProjection(CMatrix3& m, const CVector3& vec0)
 CMatrix3 Mirror(const CVector3& n){
   CVector3 N = n;
   N.SetNormalizedVector();
-  return CMatrix3::Identity() - 2*OuterProduct(N,N);
+  return CMatrix3::Identity() - 2*Mat3_OuterProduct(N,N);
 }
 
 CMatrix3 RotMatrix_Cartesian(const CVector3& v){
@@ -139,10 +139,17 @@ CMatrix3 Spin(const CVector3& vec0){
   return m;
 }
 
-CMatrix3 OuterProduct(const CVector3& vec0, const CVector3& vec1 )
+CMatrix3 Mat3_OuterProduct(const CVector3& vec0, const CVector3& vec1 )
 {
   CMatrix3 m;
   SetOuterProduct(m,vec0,vec1);
+  return m;
+}
+
+CMatrix3 Mat3_RotCartesian(const CVector3& vec0)
+{
+  CMatrix3 m;
+  m.SetRotMatrix_Cartesian(vec0.x, vec0.y, vec0.z);
   return m;
 }
 
@@ -258,20 +265,21 @@ void Energy_MIPS
   dE[1][0]=dECd1.x; dE[1][1]=dECd1.y; dE[1][2]=dECd1.z;
   dE[2][0]=dECd2.x; dE[2][1]=dECd2.y; dE[2][2]=dECd2.z;
   
+  CMatrix3 (*op)(const CVector3&, const CVector3&) = Mat3_OuterProduct;
   
   double tmp1 = 0.25/area;
   CVector3 dad0 = ((v20*v12)*v01-(v01*v12)*v20)*tmp1;
   CVector3 dad1 = ((v01*v20)*v12-(v12*v20)*v01)*tmp1;
   CVector3 dad2 = ((v12*v01)*v20-(v20*v01)*v12)*tmp1;
-  CMatrix3 ddad0d0 = (CMatrix3::Identity(v12*v12) - OuterProduct(v12,v12)                             - 4*OuterProduct(dad0,dad0))*tmp1;
-  CMatrix3 ddad0d1 = (CMatrix3::Identity(v20*v12) - OuterProduct(v20,v12-v01) - OuterProduct(v01,v20) - 4*OuterProduct(dad0,dad1))*tmp1;
-  CMatrix3 ddad0d2 = (CMatrix3::Identity(v01*v12) - OuterProduct(v01,v12-v20) - OuterProduct(v20,v01) - 4*OuterProduct(dad0,dad2))*tmp1;
-  CMatrix3 ddad1d0 = (CMatrix3::Identity(v12*v20) - OuterProduct(v12,v20-v01) - OuterProduct(v01,v12) - 4*OuterProduct(dad1,dad0))*tmp1;
-  CMatrix3 ddad1d1 = (CMatrix3::Identity(v20*v20) - OuterProduct(v20,v20)                             - 4*OuterProduct(dad1,dad1))*tmp1;
-  CMatrix3 ddad1d2 = (CMatrix3::Identity(v01*v20) - OuterProduct(v01,v20-v12) - OuterProduct(v12,v01) - 4*OuterProduct(dad1,dad2))*tmp1;
-  CMatrix3 ddad2d0 = (CMatrix3::Identity(v12*v01) - OuterProduct(v12,v01-v20) - OuterProduct(v20,v12) - 4*OuterProduct(dad2,dad0))*tmp1;
-  CMatrix3 ddad2d1 = (CMatrix3::Identity(v20*v01) - OuterProduct(v20,v01-v12) - OuterProduct(v12,v20) - 4*OuterProduct(dad2,dad1))*tmp1;
-  CMatrix3 ddad2d2 = (CMatrix3::Identity(v01*v01) - OuterProduct(v01,v01)                             - 4*OuterProduct(dad2,dad2))*tmp1;
+  CMatrix3 ddad0d0 = (CMatrix3::Identity(v12*v12) - op(v12,v12) - 4*op(dad0,dad0))*tmp1;
+  CMatrix3 ddad0d1 = (CMatrix3::Identity(v20*v12) - op(v20,v12-v01) - op(v01,v20) - 4*op(dad0,dad1))*tmp1;
+  CMatrix3 ddad0d2 = (CMatrix3::Identity(v01*v12) - op(v01,v12-v20) - op(v20,v01) - 4*op(dad0,dad2))*tmp1;
+  CMatrix3 ddad1d0 = (CMatrix3::Identity(v12*v20) - op(v12,v20-v01) - op(v01,v12) - 4*op(dad1,dad0))*tmp1;
+  CMatrix3 ddad1d1 = (CMatrix3::Identity(v20*v20) - op(v20,v20)                             - 4*op(dad1,dad1))*tmp1;
+  CMatrix3 ddad1d2 = (CMatrix3::Identity(v01*v20) - op(v01,v20-v12) - op(v12,v01) - 4*op(dad1,dad2))*tmp1;
+  CMatrix3 ddad2d0 = (CMatrix3::Identity(v12*v01) - op(v12,v01-v20) - op(v20,v12) - 4*op(dad2,dad0))*tmp1;
+  CMatrix3 ddad2d1 = (CMatrix3::Identity(v20*v01) - op(v20,v01-v12) - op(v12,v20) - 4*op(dad2,dad1))*tmp1;
+  CMatrix3 ddad2d2 = (CMatrix3::Identity(v01*v01) - op(v01,v01)                             - 4*op(dad2,dad2))*tmp1;
   
   double ADR = Area/area+area/Area;
   double EA = ADR;
@@ -285,15 +293,15 @@ void Energy_MIPS
     dE[1][idim]=EC*dEA*dad1[idim]+EA*dECd1[idim];
     dE[2][idim]=EC*dEA*dad2[idim]+EA*dECd2[idim];
   }
-  CMatrix3 ddEd0d0 = EC*dEA*ddad0d0 + EC*ddEA*OuterProduct(dad0,dad0) + EA*CMatrix3::Identity(t00) + dEA*OuterProduct(dad0,dECd0)*2;
-  CMatrix3 ddEd0d1 = EC*dEA*ddad0d1 + EC*ddEA*OuterProduct(dad0,dad1) + EA*CMatrix3::Identity(t01) + dEA*OuterProduct(dad0,dECd1) + dEA*OuterProduct(dad1,dECd0);
-  CMatrix3 ddEd0d2 = EC*dEA*ddad0d2 + EC*ddEA*OuterProduct(dad0,dad2) + EA*CMatrix3::Identity(t02) + dEA*OuterProduct(dad0,dECd2) + dEA*OuterProduct(dad2,dECd0);
-  CMatrix3 ddEd1d0 = EC*dEA*ddad1d0 + EC*ddEA*OuterProduct(dad1,dad0) + EA*CMatrix3::Identity(t01) + dEA*OuterProduct(dad1,dECd0) + dEA*OuterProduct(dad0,dECd1);
-  CMatrix3 ddEd1d1 = EC*dEA*ddad1d1 + EC*ddEA*OuterProduct(dad1,dad1) + EA*CMatrix3::Identity(t11) + dEA*OuterProduct(dad1,dECd1)*2;
-  CMatrix3 ddEd1d2 = EC*dEA*ddad1d2 + EC*ddEA*OuterProduct(dad1,dad2) + EA*CMatrix3::Identity(t12) + dEA*OuterProduct(dad1,dECd2) + dEA*OuterProduct(dad2,dECd1);
-  CMatrix3 ddEd2d0 = EC*dEA*ddad2d0 + EC*ddEA*OuterProduct(dad2,dad0) + EA*CMatrix3::Identity(t02) + dEA*OuterProduct(dad2,dECd0) + dEA*OuterProduct(dad0,dECd2);
-  CMatrix3 ddEd2d1 = EC*dEA*ddad2d1 + EC*ddEA*OuterProduct(dad2,dad1) + EA*CMatrix3::Identity(t12) + dEA*OuterProduct(dad2,dECd1) + dEA*OuterProduct(dad1,dECd2);
-  CMatrix3 ddEd2d2 = EC*dEA*ddad2d2 + EC*ddEA*OuterProduct(dad2,dad2) + EA*CMatrix3::Identity(t22) + dEA*OuterProduct(dad2,dECd2)*2;
+  CMatrix3 ddEd0d0 = EC*dEA*ddad0d0 + EC*ddEA*op(dad0,dad0) + EA*CMatrix3::Identity(t00) + dEA*op(dad0,dECd0)*2;
+  CMatrix3 ddEd0d1 = EC*dEA*ddad0d1 + EC*ddEA*op(dad0,dad1) + EA*CMatrix3::Identity(t01) + dEA*op(dad0,dECd1) + dEA*op(dad1,dECd0);
+  CMatrix3 ddEd0d2 = EC*dEA*ddad0d2 + EC*ddEA*op(dad0,dad2) + EA*CMatrix3::Identity(t02) + dEA*op(dad0,dECd2) + dEA*op(dad2,dECd0);
+  CMatrix3 ddEd1d0 = EC*dEA*ddad1d0 + EC*ddEA*op(dad1,dad0) + EA*CMatrix3::Identity(t01) + dEA*op(dad1,dECd0) + dEA*op(dad0,dECd1);
+  CMatrix3 ddEd1d1 = EC*dEA*ddad1d1 + EC*ddEA*op(dad1,dad1) + EA*CMatrix3::Identity(t11) + dEA*op(dad1,dECd1)*2;
+  CMatrix3 ddEd1d2 = EC*dEA*ddad1d2 + EC*ddEA*op(dad1,dad2) + EA*CMatrix3::Identity(t12) + dEA*op(dad1,dECd2) + dEA*op(dad2,dECd1);
+  CMatrix3 ddEd2d0 = EC*dEA*ddad2d0 + EC*ddEA*op(dad2,dad0) + EA*CMatrix3::Identity(t02) + dEA*op(dad2,dECd0) + dEA*op(dad0,dECd2);
+  CMatrix3 ddEd2d1 = EC*dEA*ddad2d1 + EC*ddEA*op(dad2,dad1) + EA*CMatrix3::Identity(t12) + dEA*op(dad2,dECd1) + dEA*op(dad1,dECd2);
+  CMatrix3 ddEd2d2 = EC*dEA*ddad2d2 + EC*ddEA*op(dad2,dad2) + EA*CMatrix3::Identity(t22) + dEA*op(dad2,dECd2)*2;
   
   for(int idim=0;idim<3;++idim){
     for(int jdim=0;jdim<3;++jdim){
@@ -370,7 +378,7 @@ CMatrix3 Irot_Tri
   // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
   
   CVector3 dv = d0+d1+d2;
-  CMatrix3 I0 = OuterProduct(d0,d0) + OuterProduct(d1,d1) + OuterProduct(d2,d2) + OuterProduct(dv,dv);
+  CMatrix3 I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
   double tr0 = I0.Trace();
   CMatrix3 I = tr0*CMatrix3::Identity()-I0;
   
@@ -388,7 +396,7 @@ CMatrix3 Irot_TriSolid
   // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
   
   CVector3 dv = d0+d1+d2;
-  CMatrix3 I0 = OuterProduct(d0,d0) + OuterProduct(d1,d1) + OuterProduct(d2,d2) + OuterProduct(dv,dv);
+  CMatrix3 I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
   double tr0 = I0.Trace();
   CMatrix3 I = tr0*CMatrix3::Identity()-I0;
   
@@ -405,17 +413,17 @@ CMatrix3 Irot_LineSeg
   double l = dv.Length();
   CMatrix3 I;
   {
-    I = dv.DLength()*CMatrix3::Identity()-OuterProduct(dv,dv);
+    I = dv.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(dv,dv);
     I *= l/12.0;
   }
   CVector3 p = (d0+d1)*0.5;
-  I += l*(p.DLength()*CMatrix3::Identity()-OuterProduct(p,p));
+  I += l*(p.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(p,p));
   return I;
 }
 
 CMatrix3 Irot_Point
 (const CVector3& d0)
 {
-  return (d0.DLength()*CMatrix3::Identity()-OuterProduct(d0,d0));
+  return (d0.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(d0,d0));
 }
 
