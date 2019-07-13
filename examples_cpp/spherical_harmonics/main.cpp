@@ -122,7 +122,7 @@ double evaluateSH(double x, double y, double z)
 {
   double a[100];
 //  makeEvaluationArraySH(l+1,a, x,y,z);
-    makeArray_SphericalHarmonics(l+1,a, x,y,z);
+  makeArray_SphericalHarmonics(a, l+1, x,y,z);
   int ish = l*(l+1)+m;
   return a[ish];
 }

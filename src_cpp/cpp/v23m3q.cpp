@@ -427,3 +427,12 @@ CMatrix3 Mat3_IrotPoint
   return (d0.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(d0,d0));
 }
 
+
+
+void AffineMatrixTrans(double m[16], const CMatrix3& mat, const CVector3& trans)
+{
+  mat.AffineMatrixTrans(m);
+  m[3*4+0] = trans.x;
+  m[3*4+1] = trans.y;
+  m[3*4+2] = trans.z;
+}
