@@ -68,11 +68,6 @@ public:
   CMatrix3(double v00, double v01, double v02,
            double v10, double v11, double v12,
            double v20, double v21, double v22);
-  /*
-  CMatrix3(const CVector3& vec0);
-  CMatrix3(const CVector3& vec0, const CVector3& vec1);
-  CMatrix3(const CVector3& vec0, const CVector3& vec1, const CVector3& vec2);
-   */
   CMatrix3(double x, double y, double z);
   CMatrix3(const double m[9]);
   ////////
