@@ -13,7 +13,7 @@ typedef std::complex<double> COMPLEX;
 // n <= 9
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
-void makeArray_SphericalHarmonics(int n, double* a, double x, double z, double y);
+void makeArray_SphericalHarmonics(double* a, int norder, double x, double y, double z);
 
 void makeArray_CoeffSphericalHankelFirst(int n, COMPLEX* h, double x);
 

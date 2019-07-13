@@ -48,4 +48,6 @@ CMatrix3 Mat3_IrotLineSeg(const CVector3& d0,
                           const CVector3& d1);
 CMatrix3 Mat3_IrotPoint(const CVector3& d0);
 
+void AffineMatrixTrans(double m[16], const CMatrix3& mat, const CVector3& trans);
+
 #endif /* vec23mat3quat_hpp */

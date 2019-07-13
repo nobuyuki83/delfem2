@@ -31,6 +31,7 @@ static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], cons
   n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
 }
 
+/*
 // probably std::stroi is safer to use but it is only for C++11
 static int myStoi(const std::string& str){
   char* e;
@@ -43,6 +44,7 @@ static double myStof(const std::string& str){
   float fval = std::strtof(str.c_str(),&e);
   return fval;
 }
+ */
 
 inline void myGlVertex3d(int i, const std::vector<double>& aV)
 {

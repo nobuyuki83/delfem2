@@ -18,8 +18,9 @@ inline double normalize(double& x, double& z, double& y){
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
 void makeArray_SphericalHarmonics
-(int n, double* Y, 
-double x, double z, double y)
+(double* Y,
+ int n,
+ double x, double y, double z)
 {
   const double pi = 3.1415926535;
   const double invpi = 1.0/pi;
