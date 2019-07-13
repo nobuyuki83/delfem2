@@ -48,3 +48,5 @@ add_subdirectory(cloth_internal)
 add_subdirectory(cloth_selfcollision)
 
 add_subdirectory(dyntri2d_cloth)
+
+add_subdirectory(rigidbody3d_rotation)

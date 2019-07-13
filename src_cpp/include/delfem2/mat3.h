@@ -76,49 +76,12 @@ public:
   CMatrix3(double x, double y, double z);
   CMatrix3(const double m[9]);
   ////////
-  void GetAffineTransMatElements(double m[16]) const {
-    m[0*4+0] = mat[0];
-    m[1*4+0] = mat[1];
-    m[2*4+0] = mat[2];
-    m[3*4+0] = 0;
-
-    m[0*4+1] = mat[3];
-    m[1*4+1] = mat[4];
-    m[2*4+1] = mat[5];
-    m[3*4+1] = 0;
-
-    m[0*4+2] = mat[6];
-    m[1*4+2] = mat[7];
-    m[2*4+2] = mat[8];
-    m[3*4+2] = 0;
-
-    m[0*4+3] = 0;
-    m[1*4+3] = 0;
-    m[2*4+3] = 0;
-    m[3*4+3] = 1;
-  }
-  ////
   void GetElements(double m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
-  void GetTransAffineMatrix(double m[16]) const {
-    m[0*4+0] = mat[0];
-    m[1*4+0] = mat[1];
-    m[2*4+0] = mat[2];
-    m[3*4+0] = 0;
-    
-    m[0*4+1] = mat[3];
-    m[1*4+1] = mat[4];
-    m[2*4+1] = mat[5];
-    m[3*4+1] = 0;
-    
-    m[0*4+2] = mat[6];
-    m[1*4+2] = mat[7];
-    m[2*4+2] = mat[8];
-    m[3*4+2] = 0;    
-    
-    m[0*4+3] = 0;
-    m[1*4+3] = 0;
-    m[2*4+3] = 0;
-    m[3*4+3] = 1;
+  void AffineMatrixTrans(double m[16]) const {
+    m[0*4+0] = mat[0];  m[1*4+0] = mat[1];  m[2*4+0] = mat[2];  m[3*4+0] = 0;
+    m[0*4+1] = mat[3];  m[1*4+1] = mat[4];  m[2*4+1] = mat[5];  m[3*4+1] = 0;
+    m[0*4+2] = mat[6];  m[1*4+2] = mat[7];  m[2*4+2] = mat[8];  m[3*4+2] = 0;
+    m[0*4+3] = 0;       m[1*4+3] = 0;       m[2*4+3] = 0;       m[3*4+3] = 1;
   }
   double Get(int i, int j) const {
     return mat[i*3+j];
