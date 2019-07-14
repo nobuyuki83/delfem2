@@ -105,6 +105,7 @@ public:
     GLint viewport[4];
     ::glGetIntegerv(GL_VIEWPORT,viewport);
     imodifier = glutGetModifiers();
+    /*
     if( imodifier == 0 ){
       if( button == 1 && state == GLUT_DOWN ){
         imodifier = GLUT_ACTIVE_ALT;
@@ -113,6 +114,7 @@ public:
         imodifier = GLUT_ACTIVE_CTRL;
       }
     }
+     */
     if( state == GLUT_UP ){ this->ibutton = -1; }
     else{                   this->ibutton = button; }
     const int win_w = viewport[2];

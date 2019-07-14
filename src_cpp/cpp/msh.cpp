@@ -941,7 +941,7 @@ void MeshQuad3D_CubeVox
 
 void MeshTri3D_Cube
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int>& aTri,
  int n)
 {
   aXYZ.clear();

@@ -158,8 +158,8 @@ public:
 
 // 0: no, 1:lighting, 2:no-lighting
 void DrawMeshTri3D_VtxColor(const std::vector<double>& aXYZ,
-                        const std::vector<int>& aTri,
-                        std::vector<CColor>& aColor);
+                            const std::vector<int>& aTri,
+                            std::vector<CColor>& aColor);
 
 // 0: no, 1:lighting, 2:no-lighting
 void DrawMeshTri3DFlag_FaceNorm(const std::vector<double>& aXYZ,
@@ -179,11 +179,11 @@ void DrawMeshTri2D_ScalarP1(const double* aXY, int nXY,
                           const std::vector< std::pair<double,CColor> >& colorMap);
 
 void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
-                        std::vector<double>& aXY,
-                        std::vector<double>& aVal,
-                        int nstride,
-                        int noffset,
-                        const std::vector< std::pair<double,CColor> >& colorMap);
+                            std::vector<double>& aXY,
+                            std::vector<double>& aVal,
+                            int nstride,
+                            int noffset,
+                            const std::vector< std::pair<double,CColor> >& colorMap);
 
 // 3D value -- vtx value
 void DrawMeshTri3D_ScalarP1(const double* aXYZ, int nXYZ,

@@ -1,7 +1,9 @@
-import unittest, numpy, random
+import unittest, numpy, random, os
 import sys
 sys.path.append("..")
 import pydelfem2 as dfm2
+
+os.chdir(os.path.dirname(__file__)) # for python3 setup.py test
 
 class Test_CppCad2D(unittest.TestCase):
   def test1(self):
@@ -134,7 +136,7 @@ class Test_CppMeshDynTri3D(unittest.TestCase):
     dmesh = dfm2.CppMeshDynTri3D()
     dfm2.meshdyntri3d_initialize(dmesh, msh.np_pos, msh.np_elm)
     dmesh.check()
-    for itr in range(1000):
+    for itr in range(100):
       itri0 = random.randint(0, dmesh.ntri() - 1)
       iedge0 = random.randint(0, 2)
       dmesh.delete_tri_edge(itri0, iedge0)
