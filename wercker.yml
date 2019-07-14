@@ -76,9 +76,10 @@ build:
         name: python unit test
         code: |
           cd tests
-          python3 -m pip install numpy
-          python3 -m pip install PyOpenGL
-          python3 -m pip install glfw
+          pip3 install numpy
+          pip3 install PyOpenGL
+          pip3 install glfw
+          pip3 install PyQt5
           python3 test_cadmsh.py 
           python3 test_fem.py 
     - script:
