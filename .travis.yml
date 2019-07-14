@@ -58,10 +58,6 @@ script: |
   make -i
   cd ../..
 
-  pip3 install -e .
-  python3 setup.py install
-  python3 setup.py test  
-
   cd src_pybind/core
   mkdir buildMake
   cd buildMake
@@ -89,3 +85,7 @@ script: |
   python3 -m pip install glfw
   python3 test_cadmsh.py
   python3 test_fem.py
+
+  pip3 install -e .
+  python3 setup.py install
+  python3 setup.py test  
