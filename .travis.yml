@@ -79,13 +79,13 @@ script: |
   make    
   cd ../../../
 
-  cd tests
+  pip3 install -e .
+  python3 setup.py install
   python3 -m pip install numpy
   python3 -m pip install PyOpenGL
   python3 -m pip install glfw
+  python3 setup.py test    
+
+  cd tests
   python3 test_cadmsh.py
   python3 test_fem.py
-
-  pip3 install -e .
-  python3 setup.py install
-  python3 setup.py test  
