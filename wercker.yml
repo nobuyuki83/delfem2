@@ -27,13 +27,6 @@ build:
           cmake .
           make
     - script:
-        name: pip setup py moudule
-        code: |
-          sudo apt-get -y install python-pip python-dev build-essential
-          pip install -e .
-          python3 setup.py install
-          python3 setup.py test
-    - script:
         name: compile gtest
         code: |
           cd tests/googletest
@@ -51,6 +44,15 @@ build:
           cmake ..
           make
           make test          
+    - script:
+        name: compile cpp examples
+        code: |
+          cd examples_cpp
+          mkdir buildMake
+          cd buildMake
+          cmake ..
+          make -i
+          cd ..          
     - script: 
         name: compile python binding
         code: |
@@ -81,13 +83,11 @@ build:
           python3 -m pip install PyOpenGL
           python3 -m pip install glfw
           python3 test_cadmsh.py 
-          python3 test_fem.py           
+          python3 test_fem.py 
     - script:
-        name: compile cpp examples
+        name: pip setup py moudule
         code: |
-          cd examples_cpp
-          mkdir buildMake
-          cd buildMake
-          cmake ..
-          make -i
-          cd ..
+          sudo apt-get -y install python-pip python-dev build-essential
+          pip install -e .
+          python3 setup.py install
+          python3 setup.py test                    
