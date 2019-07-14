@@ -27,22 +27,24 @@ build:
           cmake .
           make
     - script:
-        name: compile gtest
-        code: |
-          cd test/googletest
-          mkdir build
-          cd build
-          cmake ..
-          make
-    - script:
         name: pip setup py moudule
         code: |
           sudo apt-get -y install python-pip python-dev build-essential
           pip install -e .
+          python3 setup.py install
+          python3 setup.py test
+    - script:
+        name: compile gtest
+        code: |
+          cd tests/googletest
+          mkdir build
+          cd build
+          cmake ..
+          make          
     - script:
         name: test
         code: |
-          cd test
+          cd tests
           ls googletest/build/googlemock/gtest
           mkdir buildMake
           cd buildMake
@@ -74,7 +76,7 @@ build:
     - script: 
         name: python unit test
         code: |
-          cd test
+          cd tests
           python3 -m pip install numpy
           python3 -m pip install PyOpenGL
           python3 -m pip install glfw

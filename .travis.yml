@@ -35,16 +35,14 @@ script: |
   make
   cd ../../../
 
-  cd test/googletest
+  cd tests/googletest
   mkdir build
   cd build
   cmake ..
   make
   cd ../../../
 
-  pip3 install -e .
-
-  cd test
+  cd tests
   ls googletest/build/googlemock/gtest
   mkdir buildMake
   cd buildMake
@@ -59,6 +57,10 @@ script: |
   cmake ..
   make -i
   cd ../..
+
+  pip3 install -e .
+  python3 setup.py install
+  python3 setup.py test  
 
   cd src_pybind/core
   mkdir buildMake
@@ -81,7 +83,7 @@ script: |
   make    
   cd ../../../
 
-  cd test
+  cd tests
   python3 -m pip install numpy
   python3 -m pip install PyOpenGL
   python3 -m pip install glfw
