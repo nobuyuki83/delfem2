@@ -84,12 +84,12 @@ build:
     - script:
         name: pip install -e .
         code: |
-          pip install -e .
+          pip3 install -e .
     - script:
-        name: pip setup.py install
+        name: python3 setup.py install
         code: |
           python3 setup.py install
     - script:
-        name: pip setup.py test
+        name: python3 setup.py test
         code: |
           python3 setup.py test                    
