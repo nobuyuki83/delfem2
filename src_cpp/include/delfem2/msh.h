@@ -138,7 +138,7 @@ void MeshTri3D_OpenCylinder(std::vector<double>& aXYZ, std::vector<int>& aTri,
 void MeshTri3D_ClosedCylinder(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                               double r, double l,
                               int nr, int nl);
-void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<int>& aTri,
+void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                     int n);
 void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<int>& aTri,
                     double r, int nr, int nth);

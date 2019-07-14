@@ -10,7 +10,7 @@ import OpenGL.GL as gl
 
 from typing import List
 
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent, QTimer
+from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent, QTimer, QObject
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QSizePolicy
 from PyQt5.QtWidgets import \
@@ -28,8 +28,10 @@ def setColor(c:QColor):
   gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
 
 
-class NavigationPyQt:
+class NavigationPyQt(QObject):
+  updated = pyqtSignal()
   def __init__(self,view_height):
+    super(NavigationPyQt,self).__init__()
     self.camera = dfm2.gl.Camera(view_height)
     self.mouse_x = 0.0
     self.mouse_y = 0.0
@@ -43,6 +45,7 @@ class NavigationPyQt:
     self.mouse_y = (size.height() - 2.0 * event.y()) / size.height()
     self.button = event.button()
     self.modifiers = event.modifiers()
+    self.updated.emit()
 
   def motion(self,event,size:QSize):
     w0,h0 = size.width(),size.height()
@@ -56,6 +59,7 @@ class NavigationPyQt:
       elif self.modifiers & Qt.ShiftModifier:
         self.camera.translation(self.mouse_x, self.mouse_y,
                                 self.mouse_pre_x, self.mouse_pre_y)
+    self.updated.emit()
 
   def btn(self):
     if self.button & Qt.LeftButton: return 0
@@ -88,9 +92,12 @@ class NavigationPyQt:
 
 
 class QGLW_Nav3D(QOpenGLWidget):
-  def __init__(self, parent=None):
+  def __init__(self, parent=None, nav=None):
     super(QGLW_Nav3D, self).__init__(parent)
-    self.nav = NavigationPyQt(view_height=1.0)
+    if nav is None:
+      self.nav = NavigationPyQt(view_height=1.0)
+    else:
+      self.nav = nav
 
   def minimumSizeHint(self):
     return QSize(300, 300)
@@ -106,7 +113,7 @@ class QGLW_Nav3D(QOpenGLWidget):
     gl.glDisable(gl.GL_LIGHTING)
     gl.glEnable(gl.GL_POLYGON_OFFSET_FILL)
     gl.glPolygonOffset(1.1, 4.0 )
-    dfm2.setSomeLighting()
+    dfm2.gl.setSomeLighting()
 
   def paintGL(self):
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
@@ -125,6 +132,7 @@ class QGLW_Nav3D(QOpenGLWidget):
   def wheelEvent(self,event):
     v = 0.1*(event.angleDelta().y()/120.0)
     self.nav.camera.scale *= math.exp(v)
+    self.nav.updated.emit()
     self.update()
 
 
