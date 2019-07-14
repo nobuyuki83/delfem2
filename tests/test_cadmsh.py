@@ -3,7 +3,7 @@ import sys
 sys.path.append("..")
 import pydelfem2 as dfm2
 
-os.chdir(os.path.dirname(__file__)) # for python3 setup.py test
+os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 class Test_CppCad2D(unittest.TestCase):
   def test1(self):
@@ -131,6 +131,7 @@ class Test_CppMeshDynTri3D(unittest.TestCase):
       dmesh.check()
 
   def test2(self):
+    print(os.path.abspath(__file__))
     msh = dfm2.Mesh()
     msh.read("../test_inputs/bunny_2k.ply")
     dmesh = dfm2.CppMeshDynTri3D()
