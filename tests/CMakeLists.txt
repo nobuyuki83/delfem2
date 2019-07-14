@@ -25,11 +25,11 @@ add_executable(runUnitTests
 
 find_library(GTEST_LIBRARY
   NAMES libgtest.a
-  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/googletest/build/googlemock/gtest)  
+  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/googletest/lib)  
 
 find_library(GTEST_MAIN_LIBRARY
   NAMES libgtest_main.a
-  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/googletest/build/googlemock/gtest)  
+  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/googletest/lib)  
 
 # Link test executable against gtest & gtest_main
 target_link_libraries(runUnitTests 

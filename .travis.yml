@@ -36,14 +36,11 @@ script: |
   cd ../../../
 
   cd tests/googletest
-  mkdir build
-  cd build
-  cmake ..
+  cmake .
   make
-  cd ../../../
+  cd ../../
 
   cd tests
-  ls googletest/build/googlemock/gtest
   mkdir buildMake
   cd buildMake
   cmake ..
