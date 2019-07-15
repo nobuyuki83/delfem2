@@ -17,6 +17,7 @@ inline double normalize(double& x, double& z, double& y){
 
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
+// https://ciks.cbt.nist.gov/~garbocz/paper134/node10.html
 void makeArray_SphericalHarmonics
 (double* Y,
  int n,

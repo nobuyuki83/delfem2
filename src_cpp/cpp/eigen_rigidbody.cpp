@@ -18,7 +18,7 @@
 #include <GL/glu.h>
 #endif
 
-#include "delfem2/rigidbody.h"
+#include "delfem2/eigen_rigidbody.h"
 #include "delfem2/v23m3q.h"
 
 void myUpdateMinMaxXYZ
