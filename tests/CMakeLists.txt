@@ -7,10 +7,11 @@ set(DELFEM2_INC         "../src_cpp/include/delfem2")
 set(DELFEM2_SRC         "../src_cpp/cpp")
 
 
-set(GTEST_LIBRARY      ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest.a)
+set(GTEST_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest.a)
 set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest_main.a)
-set(GTEST_INCLUDE_DIR　${PROJECT_SOURCE_DIR}/googletest/googletest/include)
+set(GTEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/googletest/googletest/include)
 set(MY_BINARY_NAME runUnitTests)
+message(STATUS "${GTEST_INCLUDE_DIR}")
 
 include_directories(
   ${GTEST_INCLUDE_DIR}
