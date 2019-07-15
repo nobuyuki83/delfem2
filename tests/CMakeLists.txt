@@ -6,9 +6,10 @@ set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
 set(DELFEM2_INC         "../src_cpp/include/delfem2")
 set(DELFEM2_SRC         "../src_cpp/cpp")
 
-find_package(GTest REQUIRED)
-message(STATUS "${GTEST_INCLUDE_DIR}")
 
+set(GTEST_LIBRARY      ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest.a)
+set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest_main.a)
+set(GTEST_INCLUDE_DIR. ${PROJECT_SOURCE_DIR}/googletest/googletest/include)
 set(MY_BINARY_NAME runUnitTests)
 
 include_directories(
@@ -26,8 +27,8 @@ add_executable(${MY_BINARY_NAME}
 )
 
 target_link_libraries(${MY_BINARY_NAME}
-  GTest::GTest
-  GTest::Main
+  ${GTEST_LIBRARY}
+  ${GTEST_MAIN_LIBRARY}
 )
 
 add_test(
