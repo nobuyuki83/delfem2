@@ -46,6 +46,7 @@ script: |
   cmake ..
   make
   make test 
+  runUnitTests
   cd ../../
 
   cd examples_cpp
