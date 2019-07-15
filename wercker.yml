@@ -41,7 +41,7 @@ build:
           cmake ..
           make
           make test          
-          runUnitTests
+          ./runUnitTests
     - script:
         name: compile cpp examples
         code: |
