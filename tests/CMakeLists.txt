@@ -30,7 +30,7 @@ add_executable(${MY_BINARY_NAME}
 target_link_libraries(${MY_BINARY_NAME}
   ${GTEST_LIBRARY}
   ${GTEST_MAIN_LIBRARY}
-  pthread
+  -pthread
 )
 
 add_test(
