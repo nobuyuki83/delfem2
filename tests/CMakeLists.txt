@@ -6,8 +6,8 @@ set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
 set(DELFEM2_INC         "../src_cpp/include/delfem2")
 set(DELFEM2_SRC         "../src_cpp/cpp")
 
-set(GTEST_ROOT ${CMAKE_SOURCE_DIR}/googletest)
 find_package(GTest REQUIRED)
+message(STATUS "${GTEST_INCLUDE_DIR}")
 
 set(MY_BINARY_NAME runUnitTests)
 
