@@ -4,7 +4,7 @@
 #include "delfem2/mathfuncs.h"
 
 const double pi = 3.1415926535;
-const double invpi = 1.0/pi;
+//const double invpi = 1.0/pi;
 
 inline double normalize(double& x, double& z, double& y){
   double r = sqrt(x*x+y*y+z*z);
@@ -142,7 +142,7 @@ void makeArray_SphericalHarmonics
     double v4=+3.0/32.0*sqrt(385*0.5*invpi)*(13*z2*z-3*z);
     double v5=-3.0/64.0*sqrt(385*0.5*invpi)*(13*z2-1);
     double v6=+3.0/64.0*sqrt(5005*invpi)*z;
-    double v7=-3.0/64.0*sqrt(715*invpi);
+    double v7=-3.0/128.0*sqrt(1430*invpi);
     Y[49] = v7*i7;
     Y[50] = v6*i6;
     Y[51] = v5*i5;
@@ -198,11 +198,11 @@ void makeArray_SphericalHarmonics
     double v1=-3.0/256*sqrt(95*0.5*invpi)*(2431*z8-4004*z4*z2+2002*z4-308*z2+7); //1
     double v2=+3.0/128*sqrt(1045*invpi)*z*(221*z4*z2-273*z4+91*z2-7); //2
     double v3=-1.0/256*sqrt(21945*invpi)*(221*z4*z2-195*z4+39*z2-1); //3
-    double v4=+3.0/128*sqrt(95095*invpi)*z*(17*z4-10*z2+1); //4
+    double v4=+3.0/256*sqrt(95095*2*invpi)*z*(17*z4-10*z2+1); //4 *
     double v5=-3.0/256*sqrt(2717*invpi)*(85*z4-30*z2+1); //5
     double v6=+1.0/128*sqrt(40755*invpi)*z*(17*z2-3); //6
     double v7=-3.0/512*sqrt(13585*invpi)*(17*z2-1); //7
-    double v8=-3.0/256*sqrt(230945*invpi)*z; //7
+    double v8=-3.0/512*sqrt(230945*2*invpi)*z; //7
     double v9=-1.0/512*sqrt(230945*invpi); //7
     Y[81] = v9*i9;
     Y[82] = v8*i8;

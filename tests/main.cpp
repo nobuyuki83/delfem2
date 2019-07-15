@@ -4,6 +4,8 @@
 
 #include "delfem2/mat3.h"
 #include "delfem2/quat.h"
+#include "delfem2/msh.h"
+#include "delfem2/mathfuncs.h"
 
 TEST(mat3, eigen3)
 {
