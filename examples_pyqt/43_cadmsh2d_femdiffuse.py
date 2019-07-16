@@ -14,18 +14,18 @@ from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QButtonGroup,
 sys.path.append("..")
 import pydelfem2 as dfm2
 import pydelfem2.gl
-import pydelfem2.pyqt
+import pydelfem2.qt
 import pydelfem2.cadmshsim
 
 
-class Window_Poisson(dfm2.pyqt.QW_CadMshFem):
+class Window_Poisson(dfm2.qt.QW_CadMshFem):
   def __init__(self):
     super(Window_Poisson, self).__init__()
 
     self.cadmsh = dfm2.cadmshsim.CadMesh2D_FEMDiffuse(edge_length=0.05)
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
-    self.ui_fem = dfm2.pyqt.QW_FEMDiffuse(self.cadmsh.fem)
+    self.ui_fem = dfm2.qt.QW_FEMDiffuse(self.cadmsh.fem)
 
     self.setWindowTitle("CAD_Mesh_Diffuse")
 

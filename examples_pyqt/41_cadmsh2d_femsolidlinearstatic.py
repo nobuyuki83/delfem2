@@ -15,12 +15,12 @@ from PySide2.QtWidgets import QVBoxLayout
 sys.path.append("..")
 import pydelfem2 as dfm2
 import pydelfem2.gl
-import pydelfem2.pyqt
+import pydelfem2.qt
 import pydelfem2.cadmshsim
 
 
 
-class Window_SolidLinearStatic(dfm2.pyqt.QW_CadMshFem):
+class Window_SolidLinearStatic(dfm2.qt.QW_CadMshFem):
   def __init__(self):
     super(Window_SolidLinearStatic, self).__init__()
 
@@ -30,7 +30,7 @@ class Window_SolidLinearStatic(dfm2.pyqt.QW_CadMshFem):
     self.cadmsh.fem.param_gravity_y = -0.1
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
-    self.ui_fem = dfm2.pyqt.QW_FEMSolidLinearStatic(self.cadmsh.fem)
+    self.ui_fem = dfm2.qt.QW_FEMSolidLinearStatic(self.cadmsh.fem)
 
     super().init_UI()
 

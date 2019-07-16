@@ -163,7 +163,7 @@ class QGLW_Cad2D(QOpenGLWidget):
   def __init__(self, parent=None):
     super(QGLW_Cad2D, self).__init__(parent)
     self.cadobj = None
-    self.nav = dfm2.pyqt.NavigationPyQt(view_height=2.0)
+    self.nav = dfm2.qt.NavigationPyQt(view_height=2.0)
     self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
   def minimumSizeHint(self):
@@ -629,19 +629,19 @@ class QW_CadMshFem(QWidget):
     return QSize(1200, 600)
 
   def init_UI(self):
-    self.glWidget0 = dfm2.pyqt.QGLW_Cad2D()
+    self.glWidget0 = dfm2.qt.QGLW_Cad2D()
     self.glWidget0.cadobj = self.cadmsh
     self.glWidget0.updated_cadmshfem.connect(self.updated_cadmshfem)
 
-    self.glWidget1 = dfm2.pyqt.QGLW_Cad2D()
+    self.glWidget1 = dfm2.qt.QGLW_Cad2D()
     self.glWidget1.cadobj = self.cadmsh
     self.glWidget1.updated_cadmshfem.connect(self.updated_cadmshfem)
 
-    self.ui_numwin = dfm2.pyqt.QW_NumWin(1)
+    self.ui_numwin = dfm2.qt.QW_NumWin(1)
     self.ui_numwin.changed.connect(self.numwin_changed)
     self.numwin_changed(1)
 
-    self.ui_meshres = dfm2.pyqt.QW_MeshRes(self.cadmsh)
+    self.ui_meshres = dfm2.qt.QW_MeshRes(self.cadmsh)
     self.ui_meshres.updated_cadmshfem.connect(self.updated_cadmshfem)
 
     self.layout_param = QVBoxLayout()

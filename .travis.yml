@@ -84,7 +84,8 @@ script: |
   pip3 install numpy
   pip3 install PyOpenGL
   pip3 install glfw
-  pip3 install -e .
+  pip3 install --upgrade pip setuptools
+  pip3 install -e .  
   python3 setup.py install
   python3 setup.py test    
 

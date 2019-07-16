@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (QApplication, QVBoxLayout,
 sys.path.append("..")
 import pydelfem2 as dfm2
 import pydelfem2.gl
-import pydelfem2.pyqt
+import pydelfem2.qt
 
 class Window(QWidget):
   def __init__(self):
@@ -22,7 +22,7 @@ class Window(QWidget):
     self.cad = dfm2.Cad2D()
     self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
 
-    self.glWidget = dfm2.pyqt.QGLW_Cad2D()
+    self.glWidget = dfm2.qt.QGLW_Cad2D()
     self.glWidget.cadobj = self.cad
 
     mainLayout = QVBoxLayout()
