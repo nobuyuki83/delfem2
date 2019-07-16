@@ -1,8 +1,8 @@
 import sys
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.eigen as rb
-import pydelfem2.gl._glfw
+import PyDelFEM2 as dfm2
+import PyDelFEM2.eigen as rb
+import PyDelFEM2.gl._glfw
 
 rb0 = rb.RigidBody(1.0, [+0.0, 1.0, +0.0])
 rb1 = rb.RigidBody(0.1, [-1.0, 0.5, -1.0])

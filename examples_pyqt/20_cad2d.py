@@ -11,9 +11,9 @@ from PySide2.QtWidgets import (QApplication, QVBoxLayout,
                              QWidget, QPushButton)
 
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl
-import pydelfem2.qt
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl
+import PyDelFEM2.qt
 
 class Window(QWidget):
   def __init__(self):

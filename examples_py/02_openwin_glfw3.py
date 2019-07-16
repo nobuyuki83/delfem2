@@ -8,8 +8,8 @@
 
 import sys
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl._glfw
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl._glfw
 
 msh = dfm2.Mesh()
 msh.read("../test_inputs/bunny_2k.ply")

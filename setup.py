@@ -74,7 +74,7 @@ class CMakeBuild(build_ext):
     print()  # Add an empty line for cleaner output
 
 
-setup(name='pydelfem2',
+setup(name='PyDelFEM2',
       version='0.0.0',
       description='Handy toolset for implementing geometry processing and finite element simulation',
       author='Nobuyuki Umetani',
@@ -84,10 +84,10 @@ setup(name='pydelfem2',
       install_requires=[
        'numpy', 'PyOpenGL', 'glfw', 'PySide2'
       ],
-      package_dir={'pydelfem2': 'pydelfem2',
-                   'gl': 'pydelfem2/gl',
-                   'eigen': 'pydelfem2/eigen/',
-                   'qt': 'pydelfem2/qt'},
+      package_dir={'PyDelFEM2': 'PyDelFEM2',
+                   'gl': 'PyDelFEM2/gl',
+                   'eigen': 'PyDelFEM2/eigen/',
+                   'qt': 'PyDelFEM2/qt'},
       ext_modules=[CMakeExtension('c_core','src_pybind/core'),
                     CMakeExtension('c_gl','src_pybind/gl'),
                     CMakeExtension('c_eigen','src_pybind/eigen'),
