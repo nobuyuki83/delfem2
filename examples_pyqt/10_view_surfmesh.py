@@ -7,8 +7,8 @@
 
 import sys
 
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget,
+from PySide2.QtCore import QSize
+from PySide2.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget,
                              QWidget, QPushButton)
 
 import OpenGL.GL as gl

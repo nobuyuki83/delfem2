@@ -10,10 +10,10 @@ import OpenGL.GL as gl
 
 from typing import List
 
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QEvent, QTimer, QObject
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QOpenGLWidget, QMenu, QWidget, QSizePolicy
-from PyQt5.QtWidgets import \
+from PySide2.QtCore import QPoint, QSize, Qt, QEvent, QTimer, QObject, Signal
+from PySide2.QtGui import QColor
+from PySide2.QtWidgets import QOpenGLWidget, QMenu, QWidget, QSizePolicy
+from PySide2.QtWidgets import \
   QPushButton, QLabel, QSlider, QHBoxLayout, QCheckBox, QVBoxLayout, QGridLayout, \
   QLabel, QRadioButton,\
   QButtonGroup
@@ -29,7 +29,7 @@ def setColor(c:QColor):
 
 
 class NavigationPyQt(QObject):
-  updated = pyqtSignal()
+  updated = Signal()
   def __init__(self,view_height):
     super(NavigationPyQt,self).__init__()
     self.camera = dfm2.gl.Camera(view_height)
@@ -158,7 +158,7 @@ class QGLW_Mesh(QGLW_Nav3D):
 
 
 class QGLW_Cad2D(QOpenGLWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self, parent=None):
     super(QGLW_Cad2D, self).__init__(parent)
@@ -250,7 +250,7 @@ class QGLW_Cad2D(QOpenGLWidget):
 
 
 class QW_NumWin(QWidget):
-  changed = pyqtSignal(int)
+  changed = Signal(int)
 
   def __init__(self, numwin:int):
     super(QW_NumWin,self).__init__()
@@ -304,7 +304,7 @@ class QW_ValudSlider(QWidget):
 
 
 class QW_FemParams(QWidget):
-  valueChanged = pyqtSignal()
+  valueChanged = Signal()
 
   def __init__(self,list_name:List[str],fem):
     super(QW_FemParams, self).__init__()
@@ -340,7 +340,7 @@ class QW_FemParams(QWidget):
 
 
 class QW_MeshRes(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,cadmsh:dfm2.CadMesh2D):
     super(QW_MeshRes, self).__init__()
@@ -382,7 +382,7 @@ class QW_MeshRes(QWidget):
 
 
 class QW_SolveParam(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem):
     super(QW_SolveParam,self).__init__()
@@ -407,7 +407,7 @@ class QW_SolveParam(QWidget):
 
 
 class QW_AnimCntrl(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem):
     super(QW_AnimCntrl,self).__init__()
@@ -449,7 +449,7 @@ class QW_AnimCntrl(QWidget):
 
 
 class QW_FEMPoisson(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem:dfm2.FEM_Poisson):
     super(QW_FEMPoisson, self).__init__()
@@ -485,7 +485,7 @@ class QW_FEMPoisson(QWidget):
 
 
 class QW_FEMSolidLinearStatic(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem:dfm2.FEM_SolidLinearStatic):
     super(QW_FEMSolidLinearStatic, self).__init__()
@@ -512,7 +512,7 @@ class QW_FEMSolidLinearStatic(QWidget):
 
 
 class QW_FEMSolidLinearEigen(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem:dfm2.FEM_SolidLinearEigen):
     super(QW_FEMSolidLinearEigen, self).__init__()
@@ -532,7 +532,7 @@ class QW_FEMSolidLinearEigen(QWidget):
 
 
 class QW_FEMDiffuse(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem:dfm2.FEM_Diffuse):
     super(QW_FEMDiffuse, self).__init__()
@@ -556,7 +556,7 @@ class QW_FEMDiffuse(QWidget):
 
 
 class QW_PBD(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem:dfm2.PBD):
     super(QW_PBD, self).__init__()
@@ -591,7 +591,7 @@ class QW_PBD(QWidget):
 
 
 class QW_PBDCloth(QWidget):
-  updated_cadmshfem = pyqtSignal()
+  updated_cadmshfem = Signal()
 
   def __init__(self,fem:dfm2.PBD_Cloth):
     super(QW_PBDCloth, self).__init__()

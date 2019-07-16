@@ -7,9 +7,9 @@
 
 import sys, math
 
-from PyQt5.QtCore import Qt, QSize, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QWidget, QSizePolicy
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QButtonGroup, QRadioButton
+from PySide2.QtCore import Qt, QSize, Signal
+from PySide2.QtWidgets import QApplication, QWidget, QSizePolicy
+from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout, QCheckBox, QButtonGroup, QRadioButton
 
 sys.path.append("..")
 import pydelfem2 as dfm2
