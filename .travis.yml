@@ -84,7 +84,6 @@ script: |
   pip3 install numpy
   pip3 install PyOpenGL
   pip3 install glfw
-  pip3 install PyQt5
   pip3 install -e .
   python3 setup.py install
   python3 setup.py test    
