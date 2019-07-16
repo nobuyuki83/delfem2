@@ -56,6 +56,10 @@ script: |
   make -i
   cd ../..
 
+  pyenv versions
+  pyenv global 3.7
+  python --version  
+
   cd src_pybind/core
   mkdir buildMake
   cd buildMake

@@ -7,7 +7,7 @@
 
 import sys
 
-from PyQt5.QtWidgets import (QApplication, QVBoxLayout,
+from PySide2.QtWidgets import (QApplication, QVBoxLayout,
                              QWidget, QPushButton)
 
 sys.path.append("..")

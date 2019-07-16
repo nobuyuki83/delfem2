@@ -7,8 +7,10 @@
 
 import sys, math
 
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtWidgets import QVBoxLayout
+from PySide2.QtCore import Qt, QSize
+from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout
+from PySide2.QtWidgets import QApplication, QWidget
+from PySide2.QtWidgets import QVBoxLayout
 
 sys.path.append("..")
 import pydelfem2 as dfm2
@@ -16,8 +18,6 @@ import pydelfem2.gl
 import pydelfem2.pyqt
 import pydelfem2.cadmshsim
 
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout
 
 
 class Window_Pbd2D(dfm2.pyqt.QW_CadMshFem):

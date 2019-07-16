@@ -6,8 +6,8 @@
 ####################################################################
 
 import sys
-import PyQt5
-from PyQt5.QtWidgets import QApplication, QWidget
+import PySide2
+from PySide2.QtWidgets import QApplication, QWidget
 
 
 class MyWindow(QWidget): 
