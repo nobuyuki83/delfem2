@@ -8,9 +8,9 @@
 
 import sys
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl._glfw
-import pydelfem2.cadmshsim
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl._glfw
+import PyDelFEM2.cadmshsim
 
 def mesh():
   cmf = dfm2.CadMesh2D(edge_length=0.1)

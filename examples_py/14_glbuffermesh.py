@@ -11,8 +11,8 @@ import numpy
 
 import sys
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl._glfw
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl._glfw
 
 def main():
   buf_face = None

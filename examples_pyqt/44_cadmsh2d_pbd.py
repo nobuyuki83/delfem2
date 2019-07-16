@@ -13,10 +13,10 @@ from PySide2.QtWidgets import QApplication, QWidget
 from PySide2.QtWidgets import QVBoxLayout
 
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl
-import pydelfem2.qt
-import pydelfem2.cadmshsim
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl
+import PyDelFEM2.qt
+import PyDelFEM2.cadmshsim
 
 
 

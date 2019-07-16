@@ -87,7 +87,7 @@ add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
   ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_eigen.*
-  ${PROJECT_SOURCE_DIR}/../../pydelfem2/eigen/
+  ${PROJECT_SOURCE_DIR}/../../PyDelFEM2/eigen/
   COMMENT "Post Event"
 )
 endif()

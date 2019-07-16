@@ -10,8 +10,8 @@ import OpenGL.GL as gl
 
 import sys
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl._glfw
+import PyDelFEM2 as dfm2
+import pyDelFEM2.gl._glfw
 
 from pydelfem2.gl.c_gl import cppDrawSphere_Edge, cppDrawTorus_Edge
 

@@ -163,7 +163,7 @@ void DrawMeshQuad2D_Edge(const double* aXY, int nXY,
 void DrawMeshQuad2D_Edge(const std::vector<double>& aXY,
                          const std::vector<unsigned int>& aQuad);
 void DrawMeshQuad3D_FaceNorm(const double* aXYZ,
-                             const unsigned int* aQuad, int nQuad);
+                             const unsigned int* aQuad, unsigned int nQuad);
 void DrawMeshQuad3D_FaceNorm(const std::vector<double>& aXYZ,
                              const std::vector<unsigned int>& aQuad);
 

@@ -18,8 +18,8 @@ from PySide2.QtWidgets import \
   QLabel, QRadioButton,\
   QButtonGroup
 
-import pydelfem2 as dfm2
-import pydelfem2.gl
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl
 
 def setClearColor(c:QColor):
   gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())

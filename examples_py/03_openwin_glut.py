@@ -10,8 +10,8 @@ import OpenGL.GLUT as glut
 
 import sys
 sys.path.append("..")
-import pydelfem2 as dfm2
-import pydelfem2.gl._glut
+import PyDelFEM2 as dfm2
+import PyDelFEM2.gl._glut
 
 wmngr_glut = None
 

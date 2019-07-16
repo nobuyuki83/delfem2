@@ -1491,7 +1491,7 @@ void DrawMeshQuad3D_Edge
 
 void DrawMeshQuad3D_FaceNorm
 (const double* aXYZ,
- const unsigned int* aQuad, const int nQuad)
+ const unsigned int* aQuad, const unsigned int nQuad)
 {
   ::glBegin(GL_QUADS);
   for(unsigned int iq=0;iq<nQuad;++iq){
