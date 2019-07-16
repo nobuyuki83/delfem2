@@ -16,7 +16,7 @@ import OpenGL.GL as gl
 sys.path.append("..")
 import pydelfem2 as dfm2
 import pydelfem2.gl
-import pydelfem2.pyqt
+import pydelfem2.qt
 
 class Window(QWidget):
   def __init__(self):
@@ -46,7 +46,7 @@ class GLWidget(QOpenGLWidget):
   def __init__(self, parent=None):
     super(GLWidget, self).__init__(parent)
     self.msh = None
-    self.nav = dfm2.pyqt.NavigationPyQt(view_height=1.0)
+    self.nav = dfm2.qt.NavigationPyQt(view_height=1.0)
 
   def minimumSizeHint(self):
     return QSize(300, 300)

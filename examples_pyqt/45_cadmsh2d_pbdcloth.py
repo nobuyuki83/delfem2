@@ -13,14 +13,14 @@ from PySide2.QtWidgets import QVBoxLayout
 sys.path.append("..")
 import pydelfem2 as dfm2
 import pydelfem2.gl
-import pydelfem2.pyqt
+import pydelfem2.qt
 import pydelfem2.cadmshsim
 
 from PySide2.QtCore import Qt, QSize
 from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout
 
 
-class Window_Pbd2D(dfm2.pyqt.QW_CadMshFem):
+class Window_Pbd2D(dfm2.qt.QW_CadMshFem):
   def __init__(self):
     super(Window_Pbd2D, self).__init__()
 
@@ -31,7 +31,7 @@ class Window_Pbd2D(dfm2.pyqt.QW_CadMshFem):
     self.cadmsh.pbd.param_gravity_y = -0.1
     self.cadmsh.pbd.dt = 0.1
 
-    self.ui_fem = dfm2.pyqt.QW_PBDCloth(self.cadmsh.pbd)
+    self.ui_fem = dfm2.qt.QW_PBDCloth(self.cadmsh.pbd)
 
     super().init_UI()
 

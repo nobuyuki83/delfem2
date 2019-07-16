@@ -13,10 +13,10 @@ from PySide2.QtWidgets import (QApplication, QVBoxLayout,
 sys.path.append("..")
 import pydelfem2 as dfm2
 import pydelfem2.gl
-import pydelfem2.pyqt
+import pydelfem2.qt
 
 
-class Window(dfm2.pyqt.QW_CadMshFem):
+class Window(dfm2.qt.QW_CadMshFem):
   def __init__(self):
     super(Window, self).__init__()
     self.setWindowTitle("CAD_Mesh")
