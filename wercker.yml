@@ -73,15 +73,6 @@ build:
           cmake ..
           make          
           cd ../../  
-    - script: 
-        name: python unit test
-        code: |
-          cd tests
-          pip3 install numpy
-          pip3 install PyOpenGL
-          pip3 install glfw
-          python3 test_cadmsh.py 
-          python3 test_fem.py 
     - script:
         name: pip install -e .
         code: |
@@ -91,6 +82,16 @@ build:
         code: |
           python3 setup.py install
     - script:
+        name: python3 setup.py develop
+        code: |
+          python3 setup.py develop      
+    - script: 
+        name: python unit test
+        code: |
+          cd tests
+          python3 test_cadmsh.py 
+          python3 test_fem.py           
+    - script:
         name: python3 setup.py test
         code: |
-          python3 setup.py test                    
+          python3 setup.py test 

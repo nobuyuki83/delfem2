@@ -81,6 +81,9 @@ setup(name='pydelfem2',
       author_email='n.umetani@gmail.com',
       url='https://github.com/nobuyuki83/delfem2',
       packages=find_packages('pydelfem2'),
+      install_requires=[
+       'numpy', 'PyOpenGL', 'glfw', 'PySide2'
+      ]
       package_dir={'pydelfem2': 'pydelfem2',
                    'gl': 'pydelfem2/gl',
                    'eigen': 'pydelfem2/eigen/',
