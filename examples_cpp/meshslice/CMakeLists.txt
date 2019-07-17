@@ -1,4 +1,4 @@
-project(dyntri3d_edgecollapse)
+project(meshslice)
 
 cmake_minimum_required(VERSION 2.8)
 set( CMAKE_CXX_FLAGS "-Wall  -Wno-deprecated-declarations")
@@ -21,6 +21,7 @@ add_executable(${PROJECT_NAME}
   main.cpp
   ${DELFEM2_SRC}/vec3.cpp             ${DELFEM2_INC}/vec3.h
   ${DELFEM2_SRC}/msh.cpp              ${DELFEM2_INC}/msh.h
+  ${DELFEM2_SRC}/mshtopo.cpp          ${DELFEM2_INC}/mshtopo.h  
   ${DELFEM2_SRC}/mshio.cpp            ${DELFEM2_INC}/mshio.h
 
   ${DELFEM2_SRC}/dyntri_v3.cpp        ${DELFEM2_INC}/dyntri.h

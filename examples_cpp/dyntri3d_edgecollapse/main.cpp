@@ -47,7 +47,7 @@ void SetNewProblem()
     int ntri;
     unsigned int* aTriInd = 0;
     //    Load_Ply("homer.ply" ,nnode,pXYZs, ntri,aTriInd);
-    Read_Ply("../test_inputs/arm_16k.ply" ,nnode,pXYZs, ntri,aTriInd);
+    Read_Ply(std::string(PATH_INPUT_DIR)+"/arm_16k.ply" ,nnode,pXYZs, ntri,aTriInd);
     {
       double cx,cy,cz, wx,wy,wz;
       GetCenterWidth(cx,cy,cz, wx,wy,wz,
