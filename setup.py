@@ -75,19 +75,17 @@ class CMakeBuild(build_ext):
 
 
 setup(name='PyDelFEM2',
-      version='0.0.0',
+      version='0.0.4',
       description='Handy toolset for implementing geometry processing and finite element simulation',
       author='Nobuyuki Umetani',
       author_email='n.umetani@gmail.com',
       url='https://github.com/nobuyuki83/delfem2',
-      packages=find_packages('PyDelFEM2'),
-      install_requires=[
-       'numpy', 'PyOpenGL', 'glfw', 'PySide2'
-      ],
-      package_dir={'PyDelFEM2': 'PyDelFEM2',
-                   'gl'       : 'PyDelFEM2/gl',
-                   'eigen'    : 'PyDelFEM2/eigen/',
-                   'qt'       : 'PyDelFEM2/qt'},
+      packages=['PyDelFEM2'],
+      install_requires=[ 'numpy', 'PyOpenGL', 'glfw', 'PySide2' ],
+      license="MIT",
+      include_package_data=True,
+      py_modules = ['PyDelFEM2','PyDelFEM2.gl','PyDelFEM2.eigen','PyDelFEM2.qt' ],      
+      package_data = { '': ['*.so'], },
       ext_modules=[CMakeExtension('c_core','src_pybind/core'),
                     CMakeExtension('c_gl','src_pybind/gl'),
                     CMakeExtension('c_eigen','src_pybind/eigen'),
