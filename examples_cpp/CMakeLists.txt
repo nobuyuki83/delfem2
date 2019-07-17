@@ -32,6 +32,8 @@ add_subdirectory(pbd_cloth)
 
 add_subdirectory(cadmsh2d)
 
+add_subdirectory(meshslice)
+
 add_subdirectory(convhull)
 add_subdirectory(dyntet_tetrahedralization)
 add_subdirectory(dyntri2d_triangulation)
