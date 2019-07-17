@@ -1,0 +1,6 @@
+include setup.py
+include PyDelFEM2/*.so
+include PyDelFEM2/gl/*.so
+include PyDelFEM2/eigen/*.so
+include src_cpp/cpp/*
+include src_cpp/include/delfem2/*
