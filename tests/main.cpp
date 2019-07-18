@@ -127,7 +127,7 @@ TEST(vec2,second_moment_of_area)
                                aVec2);
     EXPECT_NEAR(area, a*b, 1.0e-20);
     EXPECT_NEAR(pa1*pa2, 0.0, 1.0e-10 );
-    EXPECT_TRUE(I1>I2);
+    EXPECT_TRUE(I1>=I2);q
     if( a >  b ){
       EXPECT_NEAR(pa1.x, 0.0, 1.0e-15);
       EXPECT_NEAR(pa1.y*pa1.y, 1.0, 1.0e-10);
