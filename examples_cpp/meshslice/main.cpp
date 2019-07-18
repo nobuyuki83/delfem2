@@ -15,16 +15,14 @@
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/dyntri.h"
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/vec3.h"
 
-
-#include "delfem2/funcs_gl.h"
+#include "delfem2/gl_funcs.h"
 #include "delfem2/gl_color.h"
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 
 
-void MakeCrossSection_Tri
+void IndexElement_OverlapLevels_MeshTri3D
 (std::vector< std::vector<unsigned int> >& aCST,
  ////
  const std::vector<double>& aH,
@@ -56,8 +54,9 @@ void MakeCrossSection_Tri
   }
 }
 
-void MakeCrossSection_TriAppart
-(std::vector< std::pair<unsigned int,std::vector<unsigned int> > >& aCS_HTri,
+void CrossSections_Levels_MeshTri3D
+(std::vector<unsigned int>& aCS_H,
+ std::vector< std::vector<unsigned int> >& aCS_IndTri,
  std::vector< std::vector<CVector3> >& aCS_LoopXYZ,
  const std::vector<double>& aHeight,
  const CVector3& norm,
@@ -70,11 +69,12 @@ void MakeCrossSection_TriAppart
   const unsigned int nH = (unsigned int)aHeight.size();
   ////
   std::vector< std::vector<unsigned int> > aCST;
-  MakeCrossSection_Tri(aCST,
-                       aHeight,norm,origin,
-                       aXYZ,aTri);
+  IndexElement_OverlapLevels_MeshTri3D(aCST,
+                                  aHeight,norm,origin,
+                                  aXYZ,aTri);
   /////
-  aCS_HTri.clear();
+  aCS_H.clear();
+  aCS_IndTri.clear();
   aCS_LoopXYZ.clear();
   
   std::vector<int> Tri2Seg;
@@ -93,11 +93,13 @@ void MakeCrossSection_TriAppart
         if( aFlgSeg[iseg_ker] == 0 ){ break; }
       }
       if( iseg_ker == aCST[ih].size() ) break;
-      const unsigned int ihcs = (unsigned int)aCS_HTri.size();
-      aCS_HTri.resize( ihcs+1 );
-      aCS_LoopXYZ.resize( aCS_HTri.size() );
-      aCS_HTri[ihcs].first = ih;
+      const unsigned int ihcs = (unsigned int)aCS_H.size();
+      aCS_H.resize( ihcs+1 );
+      aCS_IndTri.resize( ihcs+1 );
+      aCS_LoopXYZ.resize( ihcs+1 );
+      aCS_H[ihcs] = ih;
       aCS_LoopXYZ[ihcs].clear();
+      aCS_IndTri[ihcs].clear();
       /////
       unsigned int iseg_next = iseg_ker;
       bool is_open = false;
@@ -105,7 +107,7 @@ void MakeCrossSection_TriAppart
         assert( aFlgSeg[iseg_next] == 0 );
         int jtri0 = aCST[ih][iseg_next];
         aFlgSeg[iseg_next] = 1;
-        aCS_HTri[ihcs].second.push_back(jtri0);
+        aCS_IndTri[ihcs].push_back(jtri0);
         ////
         unsigned int iflg = 0;
         CVector3 aP[3];
@@ -165,9 +167,10 @@ void MakeCrossSection_TriAppart
       }
       if( is_open ){
         std::cout << "open : " << ih << " " << std::endl;
-        const unsigned int nhcs = aCS_HTri.size();
-        aCS_HTri.resize( nhcs-1 );
-        aCS_LoopXYZ.resize( aCS_HTri.size() );
+        const unsigned int nhcs = aCS_H.size();
+        aCS_H.resize( nhcs-1 );
+        aCS_LoopXYZ.resize( aCS_H.size() );
+        aCS_IndTri.resize( aCS_H.size() );
         /////
         iseg_next = iseg_ker;
         for(;;){ // seg in cs loop
@@ -216,8 +219,6 @@ void MakeCrossSection_TriAppart
 
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
-
-std::vector< std::pair<unsigned int,std::vector<unsigned int> > > aCS_HTri;
 std::vector< std::vector<CVector3> > aCS_LoopXYZ;
 
 CGlutWindowManager win;
@@ -337,13 +338,14 @@ int main(int argc,char* argv[])
   aHeight.push_back(+0.1);
   aHeight.push_back(+0.2);
   aHeight.push_back(+0.3);
-  MakeCrossSection_TriAppart(aCS_HTri, aCS_LoopXYZ,
+  std::vector<unsigned int> aCS_H;
+  std::vector< std::vector<unsigned int> > aCS_IndTri;
+  CrossSections_Levels_MeshTri3D(aCS_H, aCS_IndTri, aCS_LoopXYZ,
                              aHeight,
                              CVector3(0,1,0), CVector3(0,0,0),
                              aXYZ,aTri,aTriSurRel);
-  
-  std::cout << aCS_LoopXYZ.size() << std::endl;
-  std::cout << aCS_HTri.size() << std::endl;
+  assert(aCS_H.size()==aCS_IndTri.size());
+  assert(aCS_H.size()==aCS_LoopXYZ.size());
   
   glutMainLoop();
   return 0;

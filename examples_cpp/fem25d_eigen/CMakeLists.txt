@@ -32,10 +32,10 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/matrix_sparse.cpp
   ${DELFEM2_SRC}/ilu_sparse.cpp
 
-  ${DELFEM2_SRC}/v23q_gl.cpp
-  ${DELFEM2_SRC}/camera_gl.cpp      ${DELFEM2_INC}/camera_gl.h
+  ${DELFEM2_SRC}/gl_v23q.cpp
+  ${DELFEM2_SRC}/gl_camera.cpp      ${DELFEM2_INC}/gl_camera.h
   ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h 
-  ${DELFEM2_SRC}/funcs_gl.cpp        ${DELFEM2_INC}/funcs_gl.h       
+  ${DELFEM2_SRC}/gl_funcs.cpp        ${DELFEM2_INC}/gl_funcs.h       
 
   main.cpp
 )

@@ -27,7 +27,7 @@
 #include "delfem2/paramgeo_v23.h"
 
 #include "delfem2/gl_color.h"
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 
 
 CVector3 GetPointSurf

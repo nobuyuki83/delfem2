@@ -1,4 +1,12 @@
 
+git submodule update --init --recursive
+cd tests/googletest
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../../
+
 #virtualenv --python=python3.7 myenv
 
 PATH_PYTHON="myenv/bin/"
@@ -25,6 +33,12 @@ cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
 cd examples_cpp
+mkdir buildXcode
+cd buildXcode
+cmake -G Xcode ..
+cd ../../
+
+cd tests
 mkdir buildXcode
 cd buildXcode
 cmake -G Xcode ..

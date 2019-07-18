@@ -27,7 +27,7 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/v23m3q.cpp        ${DELFEM2_INC}/v23m3q.h
   ${DELFEM2_SRC}/eigen_rigidbody.cpp     ${DELFEM2_INC}/eigen_rigidbody.h
 
-  ${DELFEM2_SRC}/v23q_gl.cpp       ${DELFEM2_INC}/v23q_gl.h
+  ${DELFEM2_SRC}/gl_v23q.cpp       ${DELFEM2_INC}/gl_v23q.h
 
   main.cpp
 )

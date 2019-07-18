@@ -28,7 +28,7 @@
   #include <GL/glu.h>
 #endif
 
-#include "delfem2/funcs_gl.h"
+#include "delfem2/gl_funcs.h"
 
 static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
 {

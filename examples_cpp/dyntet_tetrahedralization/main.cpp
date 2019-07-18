@@ -20,7 +20,7 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/dyntet_vec3.h"
 
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"
 
 

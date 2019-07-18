@@ -27,7 +27,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/dyntri_v2.cpp      ${DELFEM2_INC}/dyntri_v2.h
   ${DELFEM2_INC}/cloth_internal.h
 
-  ${DELFEM2_SRC}/funcs_gl.cpp       ${DELFEM2_INC}/funcs_gl.h
+  ${DELFEM2_SRC}/gl_funcs.cpp       ${DELFEM2_INC}/gl_funcs.h
 
   main.cpp  
 )

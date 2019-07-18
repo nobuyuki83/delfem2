@@ -13,7 +13,7 @@
 
 #include "delfem2/gl_color.h"
 #include "delfem2/noise.h"
-#include "delfem2/camera_gl.h"
+#include "delfem2/gl_camera.h"
 
 
 std::vector<int> aP;

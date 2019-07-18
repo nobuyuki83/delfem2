@@ -28,8 +28,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/sdf.cpp
   ${DELFEM2_SRC}/hash3d.cpp
 
-  ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_SRC}/camera_gl.cpp    ${DELFEM2_INC}/camera_gl.h
+  ${DELFEM2_SRC}/gl_funcs.cpp
+  ${DELFEM2_SRC}/gl_camera.cpp    ${DELFEM2_INC}/gl_camera.h
   ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h        
 )
 

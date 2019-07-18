@@ -23,8 +23,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mat3.cpp            ${DELFEM2_INC}/mat3.h
   ${DELFEM2_SRC}/quat.cpp            ${DELFEM2_INC}/quat.h
 
-  ${DELFEM2_SRC}/funcs_gl.cpp        ${DELFEM2_INC}/funcs_gl.h
-  ${DELFEM2_SRC}/v23q_gl.cpp          ${DELFEM2_INC}/v23q_gl.h
+  ${DELFEM2_SRC}/gl_funcs.cpp        ${DELFEM2_INC}/gl_funcs.h
+  ${DELFEM2_SRC}/gl_v23q.cpp          ${DELFEM2_INC}/gl_v23q.h
 
   main.cpp
 )

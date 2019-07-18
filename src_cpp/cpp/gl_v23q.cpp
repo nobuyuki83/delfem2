@@ -21,7 +21,7 @@
 #endif
 
 #include "delfem2/quat.h"
-#include "delfem2/v23q_gl.h"
+#include "delfem2/gl_v23q.h"
 
 void myGlVertex(const CVector3& v)
 {
