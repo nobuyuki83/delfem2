@@ -1,6 +1,18 @@
 include setup.py
-include PyDelFEM2/*.so
-include PyDelFEM2/gl/*.so
-include PyDelFEM2/eigen/*.so
-include src_cpp/cpp/*
-include src_cpp/include/delfem2/*
+
+recursive-include src_cpp/cpp *
+recursive-include src_cpp/include *
+
+recursive-include src_cpp/external/eigen-git-mirror/Eigen *
+include src_cpp/external/eigen-git-mirror/COPYING.MPL2
+
+recursive-include src_pybind/pybind11/include *.h
+recursive-include src_pybind/pybind11/tools *
+include src_pybind/pybind11/LICENSE
+include src_pybind/pybind11/CMakeLists.txt
+
+recursive-include src_pybind/core *
+recursive-include src_pybind/eigen *
+recursive-include src_pybind/gl *
+
+recursive-include PyDelFEM2 *.so
