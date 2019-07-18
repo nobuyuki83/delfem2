@@ -40,8 +40,8 @@ build:
           cd buildMake
           cmake ..
           make
-          make test          
           ./runUnitTests
+          make test
     - script:
         name: compile cpp examples
         code: |
