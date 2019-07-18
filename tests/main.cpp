@@ -2,9 +2,11 @@
 
 #include "gtest/gtest.h"
 
+#include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/quat.h"
+
 #include "delfem2/msh.h"
 #include "delfem2/mathfuncs.h"
 
@@ -107,6 +109,46 @@ TEST(mat3, quat)
     EXPECT_NEAR(diff, 0.0, 1.0e-20);
   }
 }
+
+
+TEST(vec2,second_moment_of_area)
+{
+  for(int itr=0;itr<10;itr++){
+    double a = 10*(double)rand()/(RAND_MAX+1.0);
+    double b = 10*(double)rand()/(RAND_MAX+1.0);
+    std::vector<CVector2> aVec2;
+    aVec2.push_back( CVector2(-a*0.5,-b*0.5) );
+    aVec2.push_back( CVector2(+a*0.5,-b*0.5) );
+    aVec2.push_back( CVector2(+a*0.5,+b*0.5) );
+    aVec2.push_back( CVector2(-a*0.5,+b*0.5) );
+    CVector2 cg,pa1,pa2;
+    double area,I1,I2;
+    SecondMomentOfArea_Polygon(cg,area, pa1,I1, pa2,I2,
+                               aVec2);
+    EXPECT_NEAR(area, a*b, 1.0e-20);
+    EXPECT_NEAR(pa1*pa2, 0.0, 1.0e-10 );
+    EXPECT_TRUE(I1>I2);
+    if( a >  b ){
+      EXPECT_NEAR(pa1.x, 0.0, 1.0e-15);
+      EXPECT_NEAR(pa1.y*pa1.y, 1.0, 1.0e-10);
+      EXPECT_NEAR(I1,a*a*a*b/12.0, 1.0e-10 );
+      ////
+      EXPECT_NEAR(pa2.x*pa2.x, 1.0, 1.0e-10);
+      EXPECT_NEAR(pa2.y, 0.0, 1.0e-15);
+      EXPECT_NEAR(I2,a*b*b*b/12.0, 1.0e-10 );
+    }
+    else{ // a < b
+      EXPECT_NEAR(pa1.x*pa1.x, 1.0, 1.0e-10);
+      EXPECT_NEAR(pa1.y, 0.0, 1.0e-15);
+      EXPECT_NEAR(I1,a*b*b*b/12.0, 1.0e-10 );
+      ///
+      EXPECT_NEAR(pa2.x, 0.0, 1.0e-15);
+      EXPECT_NEAR(pa2.y*pa2.y, 1.0, 1.0e-10);
+      EXPECT_NEAR(I2,b*a*a*a/12.0, 1.0e-10 );
+    }
+  }
+}
+
 
 TEST(mathfunc,sherical_harmonics_orthgonality)
 {

@@ -454,9 +454,9 @@ double TriArea
 
 
 
-void getCubicBezierCurve
-(const int n,
- std::vector<CVector2>& aP,
+void Polyline_CubicBezierCurve
+(std::vector<CVector2>& aP,
+ const int n, 
  const std::vector<CVector2>& aCP)
 {
   int ns = (int)(aCP.size()/3);
@@ -472,7 +472,7 @@ void getCubicBezierCurve
 
 
 
-double getLengthPolyoine
+double Length_Polygon
 (const std::vector<CVector2>& aP)
 {
   double len = 0;
@@ -607,7 +607,7 @@ void makeSplineLoop
   }
 }
 
-std::vector<CVector2> resampleStroke
+std::vector<CVector2> Polyline_Resample_Polyline
 (const std::vector<CVector2>& stroke0,
  double l)
 {
@@ -639,7 +639,7 @@ std::vector<CVector2> resampleStroke
   return stroke;
 }
 
-std::vector<CVector2> resampleLoop
+std::vector<CVector2> Polygon_Resample_Polygon
 (const std::vector<CVector2>& stroke0,
  double l)
 {
@@ -668,4 +668,55 @@ std::vector<CVector2> resampleLoop
   }
   //  stroke.push_back( stroke0.back() );
   return stroke;
+}
+
+
+void SecondMomentOfArea_Polygon
+(CVector2& cg,  double& area,
+ CVector2& pa1, double& I1,
+ CVector2& pa2, double& I2,
+ const std::vector<CVector2>& aVec2D)
+{
+  area = 0;
+  const int nseg = aVec2D.size();
+  cg = CVector2(0.0, 0.0);
+  for(unsigned int iseg=0;iseg<nseg;iseg++){
+    int ip0 = (iseg+0)%nseg;
+    int ip1 = (iseg+1)%nseg;
+    double x0 = aVec2D[ip0].x;
+    double y0 = aVec2D[ip0].y;
+    double x1 = aVec2D[ip1].x;
+    double y1 = aVec2D[ip1].y;
+    double ai = x0*y1 - x1*y0;
+    area += ai;
+    cg.x += ai*(x0+x1)/3.0;
+    cg.y += ai*(y0+y1)/3.0;
+  }
+  cg.x /= area;
+  cg.y /= area;
+  area *= 0.5;
+  ////////
+  double Ix=0, Iy=0, Ixy=0;
+  for(unsigned int iseg=0;iseg<nseg;iseg++){
+    int ip0 = (iseg+0)%nseg;
+    int ip1 = (iseg+1)%nseg;
+    double x0 = aVec2D[ip0].x-cg.x;
+    double y0 = aVec2D[ip0].y-cg.y;
+    double x1 = aVec2D[ip1].x-cg.x;
+    double y1 = aVec2D[ip1].y-cg.y;
+    double ai = x0*y1 - x1*y0;
+    Ix  += ai*(y0*y0 + y0*y1 + y1*y1)/12.0;
+    Iy  += ai*(x0*x0 + x0*x1 + x1*x1)/12.0;
+    Ixy += ai*(x0*y0 + 0.5*x0*y1 + 0.5*x1*y0 + x1*y1)/12.0;
+  }
+  if( fabs(Ix-Iy)+fabs(Ixy) < 1.0e-20 ){
+    pa1 = CVector2(1,0);
+    pa2 = CVector2(0,1);
+    return;
+  }
+  double phi = 0.5*atan2(-2*Ixy,Ix-Iy);
+  pa1 = CVector2(+cos(phi), +sin(phi));
+  pa2 = CVector2(-sin(phi), +cos(phi));
+  I1 = 0.5*(Ix+Iy)+0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
+  I2 = 0.5*(Ix+Iy)-0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
 }
