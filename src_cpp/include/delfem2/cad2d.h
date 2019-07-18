@@ -10,9 +10,10 @@
 #define CAD2D_h
 
 #include "delfem2/vec2.h"
-#include "delfem2/funcs_gl.h"
 #include "delfem2/cadtopo.h"
 #include "delfem2/dyntri_v2.h"
+
+#include "delfem2/gl_funcs.h"
 
 
 class CCad2D_VtxGeo{

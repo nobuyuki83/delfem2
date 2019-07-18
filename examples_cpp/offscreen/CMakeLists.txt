@@ -25,15 +25,13 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/quat.cpp           ${DELFEM2_INC}/quat.h
 
   ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
+
   ${DELFEM2_SRC}/gl_gpusampler.cpp  ${DELFEM2_INC}/gl_gpusampler.h
-
-  ${DELFEM2_SRC}/funcs_gl.cpp       ${DELFEM2_INC}/funcs_gl.h
-  ${DELFEM2_SRC}/v3color_gl.cpp     ${DELFEM2_INC}/v3color_gl.h
-  ${DELFEM2_SRC}/v23q_gl.cpp
-
-  ${DELFEM2_SRC}/camera_gl.cpp      ${DELFEM2_INC}/camera_gl.h
-                                    ${DELFEM2_INC}/funcs_glew.h
-
+  ${DELFEM2_SRC}/gl_funcs.cpp       ${DELFEM2_INC}/gl_funcs.h
+  ${DELFEM2_SRC}/gl_v3color.cpp     ${DELFEM2_INC}/gl_v3color.h
+  ${DELFEM2_SRC}/gl_v23q.cpp
+  ${DELFEM2_SRC}/gl_camera.cpp      ${DELFEM2_INC}/gl_camera.h
+                                    ${DELFEM2_INC}/glew_funcs.h
   ${DELFEM2_INC}/gl_color.h         ${DELFEM2_SRC}/gl_color.cpp  
 
   main.cpp

@@ -28,8 +28,8 @@
   #include <GL/gl.h>
 #endif
 ////
-#include "delfem2/funcs_gl.h"
-#include "delfem2/v23q_gl.h"  // vec3, mat3
+#include "delfem2/gl_funcs.h"
+#include "delfem2/gl_v23q.h"  // vec3, mat3
 #include "delfem2/gl_gpusampler.h"
 
 /*

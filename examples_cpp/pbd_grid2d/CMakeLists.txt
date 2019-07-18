@@ -25,8 +25,8 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_SRC}/objfunc_v23.cpp       ${DELFEM2_INC}/objfunc_v23.h  
 
-  ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_SRC}/camera_gl.cpp         ${DELFEM2_INC}/camera_gl.h
+  ${DELFEM2_SRC}/gl_funcs.cpp
+  ${DELFEM2_SRC}/gl_camera.cpp         ${DELFEM2_INC}/gl_camera.h
 
   main.cpp
 )

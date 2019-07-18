@@ -23,9 +23,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/quat.cpp        ${DELFEM2_INC}/quat.h
   ${DELFEM2_SRC}/voxel.cpp       ${DELFEM2_INC}/voxel.h  
 
-  ${DELFEM2_SRC}/v23q_gl.cpp     ${DELFEM2_INC}/v23q_gl.h
-  ${DELFEM2_SRC}/funcs_gl.cpp    ${DELFEM2_INC}/funcs_gl.h
-  ${DELFEM2_SRC}/camera_gl.cpp   ${DELFEM2_INC}/camera_gl.h
+  ${DELFEM2_SRC}/gl_v23q.cpp     ${DELFEM2_INC}/gl_v23q.h
+  ${DELFEM2_SRC}/gl_funcs.cpp    ${DELFEM2_INC}/gl_funcs.h
+  ${DELFEM2_SRC}/gl_camera.cpp   ${DELFEM2_INC}/gl_camera.h
   ${DELFEM2_SRC}/gl_voxbv.cpp    ${DELFEM2_INC}/gl_voxbv.h
   ${DELFEM2_SRC}/gl_color.cpp    ${DELFEM2_INC}/gl_color.h  
 

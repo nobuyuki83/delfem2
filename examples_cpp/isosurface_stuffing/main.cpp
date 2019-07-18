@@ -13,9 +13,9 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"
-#include "delfem2/funcs_gl.h"
+#include "delfem2/gl_funcs.h"
 
 #include "delfem2/isosurface_stuffing.h"
 #include "delfem2/sdf.h"

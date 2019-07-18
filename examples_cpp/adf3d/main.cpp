@@ -19,9 +19,9 @@
 #include "delfem2/mshio.h"
 
 #include "delfem2/gl_color.h"
-#include "delfem2/funcs_gl.h"
+#include "delfem2/gl_funcs.h"
 
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 
 //////////////////////////////////////////////////
 

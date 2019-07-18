@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_STANDARD 11)
-project(testDelFEM2)
+project(testsDelFEM2)
 
 set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
 set(DELFEM2_INC         "../src_cpp/include/delfem2")
@@ -17,7 +17,8 @@ message(STATUS "${GTEST_INCLUDE_DIR}")
 
 include_directories(
   ${GTEST_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR})
+  ${DELFEM2_INCLUDE_DIR}
+)
 
 # Add test cpp file
 add_executable(${MY_BINARY_NAME}

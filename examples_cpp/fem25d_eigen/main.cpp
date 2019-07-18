@@ -29,10 +29,10 @@
 #include "delfem2/dyntri_v2.h"
 
 
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"
-#include "delfem2/v23q_gl.h"
-#include "delfem2/funcs_gl.h"
+#include "delfem2/gl_v23q.h"
+#include "delfem2/gl_funcs.h"
 
 
 

@@ -10,9 +10,9 @@
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 
-#include "delfem2/funcs_gl.h"
+#include "delfem2/gl_funcs.h"
 #include "delfem2/gl_color.h"
-#include "delfem2/funcs_glut.h"
+#include "delfem2/glut_funcs.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 

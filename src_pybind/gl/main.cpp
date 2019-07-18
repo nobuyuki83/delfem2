@@ -6,14 +6,13 @@
 #include <map>
 #include <deque>
 
-#include "delfem2/funcs_glew.h" // have to be included in the beginning
-#include "delfem2/funcs_gl.h"
-
-#include "delfem2/cad_dyntri_v23_gl.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/dyntri_v3.h"
-
 #include "delfem2/mshtopo.h"
+
+#include "delfem2/glew_funcs.h" // have to be included in the beginning
+#include "delfem2/gl_funcs.h"
+#include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_voxbv.h"
 #include "delfem2/gl_color.h"
 

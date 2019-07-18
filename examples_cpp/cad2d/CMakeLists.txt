@@ -26,16 +26,16 @@ add_executable(${PROJECT_NAME}
                                     ${DELFEM2_INC}/bv.h
 
   ${DELFEM2_SRC}/v23m3q.cpp         ${DELFEM2_INC}/v23m3q.h
-
   ${DELFEM2_SRC}/mshsrch_v3.cpp     ${DELFEM2_INC}/mshsrch_v3.h
   ${DELFEM2_SRC}/paramgeo_v23.cpp   ${DELFEM2_INC}/paramgeo_v23.h
   ${DELFEM2_SRC}/dyntri_v2.cpp      ${DELFEM2_INC}/dyntri_v2.h
   ${DELFEM2_SRC}/cad2d.cpp          ${DELFEM2_INC}/cad2d.h
 
-  ${DELFEM2_SRC}/funcs_gl.cpp
-  ${DELFEM2_SRC}/v23q_gl.cpp         ${DELFEM2_INC}/v23q_gl.h
-  ${DELFEM2_SRC}/camera_gl.cpp      ${DELFEM2_INC}/camera_gl.h
-  ${DELFEM2_SRC}/cad_dyntri_v23_gl.cpp         ${DELFEM2_INC}/cad_dyntri_v23_gl.h
+  ${DELFEM2_SRC}/gl_funcs.cpp
+  ${DELFEM2_SRC}/gl_v23q.cpp         ${DELFEM2_INC}/gl_v23q.h
+  ${DELFEM2_SRC}/gl_camera.cpp       ${DELFEM2_INC}/gl_camera.h
+  ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp         
+  ${DELFEM2_INC}/gl_cad_dyntri_v23.h
 
   main.cpp
 )
