@@ -129,22 +129,22 @@ TEST(vec2,second_moment_of_area)
     EXPECT_NEAR(pa1*pa2, 0.0, 1.0e-10 );
     EXPECT_TRUE(I1>=I2);
     if( a >  b ){
-      EXPECT_NEAR(pa1.x, 0.0, 1.0e-15);
-      EXPECT_NEAR(pa1.y*pa1.y, 1.0, 1.0e-10);
-      EXPECT_NEAR(I1,a*a*a*b/12.0, 1.0e-10 );
+      EXPECT_NEAR(pa1.x,        0.0,          1.0e-10);
+      EXPECT_NEAR(pa1.y*pa1.y,  1.0,          1.0e-10);
+      EXPECT_NEAR(I1,           a*a*a*b/12.0, 1.0e-10 );
       ////
-      EXPECT_NEAR(pa2.x*pa2.x, 1.0, 1.0e-10);
-      EXPECT_NEAR(pa2.y, 0.0, 1.0e-15);
-      EXPECT_NEAR(I2,a*b*b*b/12.0, 1.0e-10 );
+      EXPECT_NEAR(pa2.x*pa2.x,  1.0,          1.0e-10);
+      EXPECT_NEAR(pa2.y,        0.0,          1.0e-10);
+      EXPECT_NEAR(I2,           a*b*b*b/12.0, 1.0e-10 );
     }
     else{ // a < b
-      EXPECT_NEAR(pa1.x*pa1.x, 1.0, 1.0e-10);
-      EXPECT_NEAR(pa1.y, 0.0, 1.0e-15);
-      EXPECT_NEAR(I1,a*b*b*b/12.0, 1.0e-10 );
+      EXPECT_NEAR(pa1.x*pa1.x,  1.0,          1.0e-10);
+      EXPECT_NEAR(pa1.y,        0.0,          1.0e-10);
+      EXPECT_NEAR(I1,           a*b*b*b/12.0, 1.0e-10 );
       ///
-      EXPECT_NEAR(pa2.x, 0.0, 1.0e-15);
-      EXPECT_NEAR(pa2.y*pa2.y, 1.0, 1.0e-10);
-      EXPECT_NEAR(I2,b*a*a*a/12.0, 1.0e-10 );
+      EXPECT_NEAR(pa2.x,        0.0,          1.0e-10);
+      EXPECT_NEAR(pa2.y*pa2.y,  1.0,          1.0e-10);
+      EXPECT_NEAR(I2,           b*a*a*a/12.0, 1.0e-10 );
     }
   }
 }
