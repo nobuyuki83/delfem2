@@ -210,16 +210,19 @@ CVector2 pointCurve_BezierCubic(double t,
 double TriArea(const int iv1, const int iv2, const int iv3,
                const std::vector<CVector2>& point );
 
+void Polyline_CubicBezierCurve(std::vector<CVector2>& aP,
+                               const int n,
+                               const std::vector<CVector2>& aCP);
 
-void getCubicBezierCurve(const int n,
-                         std::vector<CVector2>& aP,
-                         const std::vector<CVector2>& aCP);
-
-std::vector<CVector2> resampleLoop(const std::vector<CVector2>& stroke0,
+std::vector<CVector2> Polygon_Resample_Polygon(const std::vector<CVector2>& stroke0,
                                    double l);
-
-std::vector<CVector2> resampleStroke(const std::vector<CVector2>& stroke0,
+std::vector<CVector2> Polyline_Resample_Polyline(const std::vector<CVector2>& stroke0,
                                      double l);
+void SecondMomentOfArea_Polygon(CVector2& cg,  double& area,
+                               CVector2& pa1, double& I1,
+                               CVector2& pa2, double& I2,
+                              const std::vector<CVector2>& aVec2D);
+double Length_Polygon(const std::vector<CVector2>& aP);
 
 void MeanValueCoordinate2D(double* aW,
                            double px, double py,
@@ -227,8 +230,6 @@ void MeanValueCoordinate2D(double* aW,
 void MeanValueCoordinate(std::vector<double>& aW,
                          CVector2& p,
                          std::vector<CVector2>& aVtx);
-
-double getLengthPolyoine(const std::vector<CVector2>& aP);
 
 void makeRandomLoop(unsigned int nCV,
                     std::vector<double>& aCV);

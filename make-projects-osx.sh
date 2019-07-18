@@ -1,11 +1,9 @@
 
 git submodule update --init --recursive
 cd tests/googletest
-mkdir buildMake
-cd buildMake
-cmake ..
+cmake .
 make
-cd ../../../
+cd ../..
 
 #virtualenv --python=python3.7 myenv
 

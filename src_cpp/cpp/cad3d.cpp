@@ -1093,7 +1093,7 @@ bool MovePointsAlongSketch
  float mMV[16], float mPj[16], double view_height)
 {
   // resampling
-  std::vector<CVector2> aStroke1 = resampleStroke(aStroke,0.025);
+  std::vector<CVector2> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
   //
   CVector3 plane_nrm(0,0,0); plane_nrm[inorm] = 1;
   CVector3 plane_ex(0,0,0); plane_ex[(inorm+1)%3] = 1;
