@@ -357,11 +357,11 @@ py::array_t<unsigned int> PyEdge_Mesh
  const MESHELEM_TYPE type)
 {
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup,
-                           elm.data(), elm.shape()[0], elm.shape()[1], pos.shape()[0]);
+  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+                              elm.data(), elm.shape()[0], elm.shape()[1], pos.shape()[0]);
   std::vector<int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,
-                       elm.data(), type, elsup_ind, elsup, false);
+                      elm.data(), type, elsup_ind, elsup, false);
   std::vector<unsigned int> aLine;
   MeshLine_JArrayEdge(aLine,
                       edge_ind, edge);

@@ -5,18 +5,17 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import sys
-
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import (QApplication, QVBoxLayout, QOpenGLWidget,
                              QWidget, QPushButton)
 
 import OpenGL.GL as gl
 
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl
 import PyDelFEM2.qt
+
+import sys
 
 class Window(QWidget):
   def __init__(self):

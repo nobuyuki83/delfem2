@@ -6,8 +6,7 @@
 ####################################################################
 
 import matplotlib.pyplot as plt
-import sys
-sys.path.append("..")
+
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl._glfw
 

@@ -11,7 +11,6 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QWidget
 from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout
 
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl
 import PyDelFEM2.qt

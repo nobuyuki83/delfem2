@@ -5,11 +5,9 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-
-import sys, numpy
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl._glfw
+import numpy
 
 def show_hex(voxelgrid):
   msh = voxelgrid.mesh_hex()
