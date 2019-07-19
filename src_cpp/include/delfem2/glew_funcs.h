@@ -6,10 +6,11 @@
  */
 
 
-#ifndef FUNCS_GLEW_H
-#define FUNCS_GLEW_H
+#ifndef GLEW_FUNCS_H
+#define GLEW_FUNCS_H
 
 #include <vector>
+#include <iostream> // this must be delated in future
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GL/glew.h>
@@ -168,6 +169,40 @@ public:
   int height;
   std::string sFormatPixelColor;
 };
+
+
+class CElemBuffObj{
+public:
+  void SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type);
+  void DrawBuffer() const ;
+public:
+  unsigned int iebo;
+  unsigned int gl_elem_type;
+  unsigned int size_elem;
+  bool is_lighting;
+};
+
+class CGLBuffer
+{
+public:
+  CGLBuffer(){
+    vbo = -1;
+    vbo_nrm = -1;
+  }
+  void SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim);
+  void SetBuffer_Nrm(const std::vector<double>& aNrm);
+  void Draw_Start() const;
+  void Draw_End() const ;
+public:
+  
+public:
+  unsigned int vbo;
+  unsigned int vbo_nrm;
+  unsigned int ndim;
+};
+
+
+
 
 #endif /* utility_glew_h */
 

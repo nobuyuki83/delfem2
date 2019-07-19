@@ -10,10 +10,12 @@ set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
+find_package(GLEW REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  ${GLEW_INCLUDE_DIR}  
 )
 
 add_executable(${PROJECT_NAME}
@@ -22,13 +24,16 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/msh.cpp          ${DELFEM2_INC}/msh.h
   ${DELFEM2_SRC}/mshtopo.cpp      ${DELFEM2_INC}/mshtopo.h
 
-  ${DELFEM2_SRC}/gl_funcs.cpp      ${DELFEM2_INC}/gl_funcs.h
-  ${DELFEM2_SRC}/gl_camera.cpp     ${DELFEM2_INC}/gl_camera.h
-  ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h        
+  ${DELFEM2_SRC}/gl_funcs.cpp     ${DELFEM2_INC}/gl_funcs.h
+  ${DELFEM2_SRC}/gl_camera.cpp    ${DELFEM2_INC}/gl_camera.h
+  ${DELFEM2_SRC}/gl_color.cpp     ${DELFEM2_INC}/gl_color.h        
+  ${DELFEM2_SRC}/glew_funcs.cpp   ${DELFEM2_INC}/glew_funcs.h  
 
   main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} 
   ${GLUT_LIBRARY} 
-  ${OPENGL_LIBRARY})
+  ${OPENGL_LIBRARY}
+  ${GLEW_LIBRARY}  
+)
