@@ -6,8 +6,7 @@
 ####################################################################
 
 
-import sys, numpy
-sys.path.append("..")
+import numpy
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl._glfw
 

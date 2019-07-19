@@ -78,6 +78,7 @@ class GLBufferMesh():
     gl.glDrawElements(self.gl_elem_type, self.size_elem, gl.GL_UNSIGNED_INT, None)
     gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
 
+
 def draw_Mesh(self):
   if self.is_draw_face:
     gl.glColor4d(self.color_face[0], self.color_face[1], self.color_face[2], self.color_face[3])
@@ -101,6 +102,7 @@ def vbo_array(aXY:numpy.ndarray) -> int:
                   gl.GL_STATIC_DRAW)
   gl.glBindBuffer(gl.GL_ARRAY_BUFFER, 0)
   return vbo
+
 
 def ebo_array(aElm:numpy.ndarray) -> int:
   ebo = gl.glGenBuffers(1)

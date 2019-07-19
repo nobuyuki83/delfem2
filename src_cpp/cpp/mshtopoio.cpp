@@ -46,8 +46,8 @@ void MeshTri3D_GeodesicPolyhedron
   ////
   const int np0 = aXYZ0.size()/3;
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup,
-                           aTri0.data(), aTri0.size()/3, 3, np0);
+  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+                              aTri0.data(), aTri0.size()/3, 3, np0);
   ////
   std::vector<int> psup_ind, psup;
   makeOneRingNeighborhood(psup_ind, psup,
@@ -58,8 +58,8 @@ void MeshTri3D_GeodesicPolyhedron
   //  Print_IndexedArray(psup_ind, psup);
   /////
   std::vector<int> edge_ind, edge;
-  JArray_MakeEdgeFromPsup(edge_ind, edge,
-           psup_ind,psup);
+  JArrayEdgeUnidir_PointSurPoint(edge_ind, edge,
+                             psup_ind,psup);
   //  std::cout << "edge" << std::endl;
   //  Print_IndexedArray(edge_ind, edge);
   ////

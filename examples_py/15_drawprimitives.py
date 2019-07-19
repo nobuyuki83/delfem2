@@ -8,12 +8,10 @@
 
 import OpenGL.GL as gl
 
-import sys
-sys.path.append("..")
 import PyDelFEM2 as dfm2
-import pyDelFEM2.gl._glfw
+import PyDelFEM2.gl._glfw
 
-from pydelfem2.gl.c_gl import cppDrawSphere_Edge, cppDrawTorus_Edge
+from PyDelFEM2.gl.c_gl import cppDrawSphere_Edge, cppDrawTorus_Edge
 
 def main():
   with dfm2.gl._glfw.WindowGLFW(1.0,winsize=(400,300)) as win0:

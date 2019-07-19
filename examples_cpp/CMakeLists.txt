@@ -19,6 +19,7 @@ add_subdirectory(selfcollision_bvh)
 
 add_subdirectory(shader_glsl)
 add_subdirectory(offscreen)
+add_subdirectory(glbuffer)
 
 add_subdirectory(subdiv)
 add_subdirectory(exponential_map)

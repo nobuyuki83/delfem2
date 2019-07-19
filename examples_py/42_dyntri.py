@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import sys, random
-sys.path.append("..")
+import random
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl._glfw
 

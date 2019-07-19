@@ -234,19 +234,19 @@ void FlipElement(std::vector<int>& aElem_Flip,
 
 ////////////////////////////////////////
 // make elsup
-void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
+void JArrayElemSurPoint_MeshElem(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
                               ////
                               const unsigned int* aElem,
                               int nEl,
                               int nPoEl,
                               int nPo);
-void makeElemSurroundingPoint_Tri(std::vector<int>& elsup_ind,
-                                  std::vector<int>& elsup,
-                                  ////
-                                  const std::vector<unsigned int>& aTri,
-                                  int nXYZ);
-void makeElemSurroundingPoint(std::vector<int>& elsup_ind,
+void JArrayElemSurPoint_MeshTri(std::vector<int>& elsup_ind,
+                                std::vector<int>& elsup,
+                                ////
+                                const std::vector<unsigned int>& aTri,
+                                int nXYZ);
+void JArrayElemSurPoint_MeshMix(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
                               ////
                               const std::vector<int>& aElemInd,
@@ -324,18 +324,11 @@ void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     const std::vector<int>& elsup_ind,
                                     const std::vector<int>& elsup,
                                     int np);
-void JArray_MakeEdgeFromPsup(std::vector<int>& edge_ind,
-                             std::vector<int>& edge,
-                             /////
-                             const std::vector<int>& psup_ind,
-                             const std::vector<int>& psup);
-void JArray_MakeEdgeVox(std::vector<int>& psup_ind,
-                        std::vector<int>& psup,
-                        ////
-                        const std::vector<int>& aVox0,
-                        const std::vector<int>& elsup_ind,
-                        const std::vector<int>& elsup,
-                        int nPo0);
+void JArrayEdgeUnidir_PointSurPoint(std::vector<int>& edge_ind,
+                                std::vector<int>& edge,
+                                /////
+                                const std::vector<int>& psup_ind,
+                                const std::vector<int>& psup);
 void JArrayEdge_MeshElem(std::vector<int>& edge_ind,
                          std::vector<int>& edge,
                          ////
@@ -348,7 +341,11 @@ void MeshLine_JArrayEdge(std::vector<unsigned int>& aLine,
                          ////
                          const std::vector<int>& psup_ind,
                          const std::vector<int>& psup);
-
+void MeshLine_MeshElem(std::vector<unsigned int>& aLine,
+                       const unsigned int* aElm0,
+                       unsigned int nElem,
+                       MESHELEM_TYPE elem_type,
+                       unsigned int nPo);
 
 //////////////////////////////////////
 void MarkConnectedElements(std::vector<int>& aIndGroup,
@@ -430,7 +427,7 @@ public:
   }
   void MakeElemSurroundingPoint(std::vector<int>& elsup_ind, std::vector<int>& elsup,
                                 const int nPo){
-    ::makeElemSurroundingPoint(elsup_ind,elsup,
+    ::JArrayElemSurPoint_MeshMix(elsup_ind,elsup,
                                aElemInd,aElem,nPo);
   }
   void MakeSurroundingRelationship(std::vector<int>& aElemFaceInd,

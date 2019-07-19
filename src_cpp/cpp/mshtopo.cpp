@@ -128,7 +128,7 @@ void JArray_AddDiagonal
 }
 
 // in the edge ip -> jp, it holds (ip < jp)
-void JArray_MakeEdgeFromPsup
+void JArrayEdgeUnidir_PointSurPoint
 (std::vector<int>& edge_ind,
  std::vector<int>& edge,
  /////
@@ -167,7 +167,7 @@ void JArray_MakeEdgeFromPsup
   edge_ind[0] = 0;
 }
 
-void makeElemSurroundingPoint
+void JArrayElemSurPoint_MeshElem
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
@@ -340,18 +340,18 @@ void AddElement
 
 
 
-void makeElemSurroundingPoint_Tri
+void JArrayElemSurPoint_MeshTri
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
  const std::vector<unsigned int>& aTri,
  int nXYZ)
 {
-  makeElemSurroundingPoint(elsup_ind, elsup,
+  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            aTri.data(), aTri.size()/3, 3, nXYZ);
 }
 
-void makeElemSurroundingPoint
+void JArrayElemSurPoint_MeshMix
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
@@ -474,7 +474,7 @@ void makeSurroundingRelationship
 {
   const int nNoEl = nNodeElem(type);
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup,
+  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            aElem, nElem, nNoEl, nXYZ);
   const int nfael = nFaceElem(type);
   const int nnofa = nNodeElemFace(type, 0);
@@ -494,7 +494,7 @@ void makeSurroundingRelationship
  const int nXYZ)
 {
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup,
+  JArrayElemSurPoint_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,
                            nXYZ);
   makeSurroundingRelationship(aElemFaceInd,aElemFaceRel,
@@ -676,7 +676,7 @@ void JArray_MeshOneRingNeighborhood
  int nPo)
 {
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup,
+  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            pElem, nEl, nPoEl, nPo);
   makeOneRingNeighborhood(psup_ind, psup,
                           pElem, elsup_ind,elsup, nPoEl, nPo);
@@ -783,6 +783,26 @@ void MeshLine_JArrayEdge
       aLine.push_back(jp);
     }
   }
+}
+
+void MeshLine_MeshElem
+(std::vector<unsigned int>& aLine,
+ const unsigned int* aElm0,
+ unsigned int nElem,
+ MESHELEM_TYPE elem_type,
+ unsigned int nPo)
+{
+  std::vector<int> elsup_ind,elsup;
+  const unsigned int nPoEl = mapMeshElemType2NNodeElem[elem_type];
+  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+                           aElm0, nElem, nPoEl, nPo);
+  std::vector<int> edge_ind, edge;
+  JArrayEdge_MeshElem(edge_ind, edge,
+                      aElm0,
+                      elem_type,
+                      elsup_ind,elsup,false);
+  MeshLine_JArrayEdge(aLine,
+                      edge_ind,edge);
 }
 
 
@@ -1029,7 +1049,7 @@ void MakeGroupElem
  int nPo)
 {
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind, elsup,
+  JArrayElemSurPoint_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,nPo);
   std::vector<int> aElemFaceInd, aElemFaceRel;
   makeSurroundingRelationship(aElemFaceInd, aElemFaceRel,
@@ -1128,7 +1148,7 @@ void QuadSubdiv
 {
   const int nq0 = nQuad0;
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind,elsup,
+  JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
                        aQuad0, MESHELEM_QUAD, elsup_ind, elsup,
@@ -1195,7 +1215,7 @@ void TetSubdiv
 {
   const int nt0 = nTet0;
   std::vector<int> elsup_ind, elsup;
-  makeElemSurroundingPoint(elsup_ind,elsup,
+  JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aTet0,nTet0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
                        aTet0, MESHELEM_TET, elsup_ind, elsup,
@@ -1397,7 +1417,7 @@ void HexSubdiv
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
   std::vector<int> elsupIndHex0, elsupHex0;
-  makeElemSurroundingPoint(elsupIndHex0, elsupHex0,
+  JArrayElemSurPoint_MeshElem(elsupIndHex0, elsupHex0,
                            aHex0,nHex0,8,nhp0);
   
   //edge
@@ -1428,7 +1448,7 @@ void HexSubdiv
     }
   }
   std::vector<int> elsupIndQuadHex0, elsupQuadHex0;
-  makeElemSurroundingPoint(elsupIndQuadHex0,elsupQuadHex0,
+  JArrayElemSurPoint_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
                            aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   
   const int neh0 = (int)psupHex0.size();

@@ -10,7 +10,6 @@ import sys
 from PySide2.QtWidgets import (QApplication, QVBoxLayout,
                              QWidget, QPushButton)
 
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl
 import PyDelFEM2.qt

@@ -8,8 +8,6 @@
 import OpenGL.GL as gl
 import OpenGL.GLUT as glut
 
-import sys
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl._glut
 

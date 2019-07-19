@@ -1,6 +1,4 @@
 import unittest, numpy, random, os
-import sys
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test

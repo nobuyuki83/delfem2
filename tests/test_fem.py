@@ -1,6 +1,4 @@
 import unittest, numpy, random
-import sys
-sys.path.append("..")
 import PyDelFEM2 as dfm2
 
 class Test_PBD(unittest.TestCase):

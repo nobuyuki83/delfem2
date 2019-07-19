@@ -61,25 +61,6 @@ void Draw_AABB3D_MinMaxXYZ_Edge(double x_min, double x_max,
                                 double y_min, double y_max,
                                 double z_min, double z_max);
 
-class CAxisXYZ {
-public:
-  CAxisXYZ(): len(1.0){
-    line_width = 1.0;
-  }
-  CAxisXYZ(double len): len(len){
-    line_width=1.0;
-  }
-  void Draw() const;
-  std::vector<double> MinMaxXYZ() const{
-    std::vector<double> mm(6,0);
-    mm[1] = len;  mm[3] = len;  mm[5] = len;
-    return mm;
-  }
-public:
-  double len;
-  double line_width;
-};
-
 ///////////////
 // Draw Point
 
@@ -216,5 +197,59 @@ void DrawMeshElemPart3D_FaceNorm_TexPoEl(const std::vector<double>& aXYZ,
                                          const std::vector<unsigned int>& aElem,
                                          const std::vector<int>& aIndElem,
                                          const std::vector<double>& aUV);
+
+
+////////////////////////////////////////////////////////////////////////////
+
+class CAxisXYZ {
+public:
+  CAxisXYZ(): len(1.0){
+    line_width = 1.0;
+  }
+  CAxisXYZ(double len): len(len){
+    line_width=1.0;
+  }
+  void Draw() const;
+  std::vector<double> MinMaxXYZ() const{
+    std::vector<double> mm(6,0);
+    mm[1] = len;  mm[3] = len;  mm[5] = len;
+    return mm;
+  }
+public:
+  double len;
+  double line_width;
+};
+
+class CElemBuffObj{
+public:
+  void SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type);
+  void DrawBuffer() const ;
+public:
+  unsigned int iebo;
+  unsigned int gl_elem_type;
+  unsigned int size_elem;
+  bool is_lighting;
+};
+
+class CGLBuffer
+{
+public:
+  CGLBuffer(){
+    vbo = -1;
+    vbo_nrm = -1;
+  }
+  void SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim);
+  void SetBuffer_Nrm(const std::vector<double>& aNrm);
+  void Draw_Start() const;
+  void Draw_End() const ;
+public:
+  
+public:
+  unsigned int vbo;
+  unsigned int vbo_nrm;
+  unsigned int ndim;
+};
+
+
 
 #endif /* utility_gl_h */
