@@ -2,8 +2,10 @@
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
+#include <GL/glew.h>
 #include <GLUT/glut.h>
 #else
+#include <GL/glew.h>
 #include <GL/glut.h>
 #endif
 
@@ -11,6 +13,7 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 
+#include "delfem2/glew_funcs.h"
 #include "delfem2/glut_funcs.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_color.h"
@@ -158,6 +161,7 @@ int main(int argc,char* argv[])
   MeshLine_MeshElem(aLine,
                     aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
   
+  glewInit();
   glbuff.SetBuffer_Vtx(aXYZ,3);
   glbuff.SetBuffer_Nrm(aNorm);
   

@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/gl_v3color.cpp     ${DELFEM2_INC}/gl_v3color.h
   ${DELFEM2_SRC}/gl_v23q.cpp
   ${DELFEM2_SRC}/gl_camera.cpp      ${DELFEM2_INC}/gl_camera.h
-                                    ${DELFEM2_INC}/glew_funcs.h
+  ${DELFEM2_SRC}/glew_funcs.cpp     ${DELFEM2_INC}/glew_funcs.h
   ${DELFEM2_INC}/gl_color.h         ${DELFEM2_SRC}/gl_color.cpp  
 
   main.cpp
