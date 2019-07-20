@@ -47,3 +47,4 @@ myenv
 __pycache__
 dist
 PyDelFEM2.egg-info
+pydelfem2.egg-info

@@ -42,7 +42,6 @@ class Mesh():
                np_pos=numpy.ndarray((0,3),dtype=numpy.float64),
                np_elm=numpy.ndarray((0,3),dtype=numpy.uint32),
                elem_type=TRI):
-#    print("PyMesh -- construct")
     assert type(np_pos) == numpy.ndarray
     assert type(np_elm) == numpy.ndarray
     assert np_pos.dtype == numpy.float64
@@ -80,7 +79,16 @@ class Mesh():
   def translate(self,d:List[float],mag=1.0):
     self.np_pos[:,0] += mag*d[0]
     self.np_pos[:,1] += mag*d[1]
-    self.np_pos[:,2] += mag*d[2]        
+    self.np_pos[:,2] += mag*d[2]
+
+  def normalize(self):
+    bb = self.minmax_xyz()
+    lenx = bb[1]-bb[0]
+    leny = bb[3]-bb[2]
+    lenz = bb[5]-bb[4]
+    self.translate([-0.5*(bb[1]+bb[0]), -0.5*(bb[3]+bb[2]), -0.5*(bb[5]+bb[4])])
+    lenmax = max(lenx,leny,lenz)
+    self.scale_xyz(1.0/lenmax)
 
   def rotate(self,d:List[float]):
     R = rotmat3_cartesian(d)

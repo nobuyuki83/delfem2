@@ -10,9 +10,6 @@
 #include "delfem2/glew_funcs.h"
 
 
-
-
-
 void CElemBuffObj::SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type)
 {
   this->gl_elem_type = gl_elem_type;

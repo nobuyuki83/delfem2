@@ -125,14 +125,15 @@ void GetCenterWidth_MinMaxXYZ
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void RemoveUnreferencedPoints3D
+void RemoveUnreferencedPoints_MeshElem
 (std::vector<double>& aXYZ1,
- std::vector<int>& aElem1,
+ std::vector<unsigned int>& aElem1,
  std::vector<int>& aMap01,
+ int ndim,
  const std::vector<double>& aXYZ0,
- const std::vector<int>& aElem0)
+ const std::vector<unsigned int>& aElem0)
 {
-  int np0 = aXYZ0.size()/3;
+  int np0 = aXYZ0.size()/ndim;
   aMap01.assign(np0,-2);
   for(unsigned int it=0;it<aElem0.size();++it){
     int ip = aElem0[it];
@@ -144,13 +145,13 @@ void RemoveUnreferencedPoints3D
     aMap01[ip] = npj;
     npj++;
   }
-  aXYZ1.resize(npj*3);
+  aXYZ1.resize(npj*ndim);
   for(int ip=0;ip<np0;++ip){
     if( aMap01[ip] == -2 ) continue;
     int jp = aMap01[ip];
-    aXYZ1[jp*3+0] = aXYZ0[ip*3+0];
-    aXYZ1[jp*3+1] = aXYZ0[ip*3+1];
-    aXYZ1[jp*3+2] = aXYZ0[ip*3+2];
+    for(int idim=0;idim<ndim;++idim){
+      aXYZ1[jp*ndim+idim] = aXYZ0[ip*ndim+idim];
+    }
   }
   aElem1.resize(aElem0.size());
   for(unsigned int it=0;it<aElem0.size();++it){

@@ -13,7 +13,7 @@
 int Adj_Grid(int ivox_picked, int iface_picked,
              int ndivx, int ndivy, int ndivz);
 
-void MeshQuad3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+void MeshQuad3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                           int ndivx, int ndivy, int ndivz,
                           int iorgx, int iorgy, int iorgz,
                           const std::vector<int>& aIsVox);
@@ -77,10 +77,10 @@ void AABB_CubeGrid(int aabb[6],
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-class CGrid3D
+class CVoxelGrid3D
 {
 public:
-  CGrid3D(){
+  CVoxelGrid3D(){
     ndivx = ndivy = ndivz = 0;
     iorgx = iorgy = iorgz = 0;
     aIsVox.clear();
@@ -124,7 +124,7 @@ public:
     else{
       int aabb[8]; this->AABB(aabb);
       Add_AABB(aabb,ivx,ivy,ivz);
-      CGrid3D vg0 = (*this);
+      CVoxelGrid3D vg0 = (*this);
       this->Init_AABB(aabb);
       Set(ivx,ivy,ivz,1);
       for(int igvx0=0;igvx0<vg0.ndivx;++igvx0){
@@ -150,7 +150,7 @@ public:
     const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
     aIsVox[ivoxel] = isVox;
   }
-  void GetQuad(std::vector<double>& aXYZ, std::vector<int>& aQuad) const {
+  void GetQuad(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad) const {
     MeshQuad3D_VoxelGrid(aXYZ, aQuad,
                       ndivx, ndivy, ndivz,
                       iorgx, iorgy, iorgz,

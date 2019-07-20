@@ -215,9 +215,9 @@ void Polyline_CubicBezierCurve(std::vector<CVector2>& aP,
                                const std::vector<CVector2>& aCP);
 
 std::vector<CVector2> Polygon_Resample_Polygon(const std::vector<CVector2>& stroke0,
-                                   double l);
+                                               double l);
 std::vector<CVector2> Polyline_Resample_Polyline(const std::vector<CVector2>& stroke0,
-                                     double l);
+                                                 double l);
 void SecondMomentOfArea_Polygon(CVector2& cg,  double& area,
                                CVector2& pa1, double& I1,
                                CVector2& pa2, double& I2,
@@ -236,6 +236,11 @@ void makeRandomLoop(unsigned int nCV,
 
 void makeSplineLoop(const std::vector<double>& aCV,
                     std::vector<double>& aVecCurve);
+
+void Translate(std::vector<CVector2>& aP,
+               double dx, double dy);
+void Rotate(std::vector<CVector2>& aP,
+            double dt);
   
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////

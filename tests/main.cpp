@@ -6,6 +6,8 @@
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/quat.h"
+#include "delfem2/voxel.h"
+#include "delfem2/mshtopo.h"
 
 #include "delfem2/msh.h"
 #include "delfem2/mathfuncs.h"
@@ -114,39 +116,70 @@ TEST(mat3, quat)
 TEST(vec2,second_moment_of_area)
 {
   for(int itr=0;itr<10;itr++){
-    double a = 10*(double)rand()/(RAND_MAX+1.0);
-    double b = 10*(double)rand()/(RAND_MAX+1.0);
+    double r0 = (double)rand()/(RAND_MAX+1.0);
+    double r1 = (double)rand()/(RAND_MAX+1.0);
+    double r2 = (double)rand()/(RAND_MAX+1.0);
+    double r3 = (double)rand()/(RAND_MAX+1.0);
+    double r4 = (double)rand()/(RAND_MAX+1.0);
+    double a = 10*r0;
+    double b = a*(3*r1+1);
     std::vector<CVector2> aVec2;
-    aVec2.push_back( CVector2(-a*0.5,-b*0.5) );
-    aVec2.push_back( CVector2(+a*0.5,-b*0.5) );
-    aVec2.push_back( CVector2(+a*0.5,+b*0.5) );
-    aVec2.push_back( CVector2(-a*0.5,+b*0.5) );
+    {
+      aVec2.push_back( CVector2(-a*0.5,-b*0.5) );
+      aVec2.push_back( CVector2(+a*0.5,-b*0.5) );
+      aVec2.push_back( CVector2(+a*0.5,+b*0.5) );
+      aVec2.push_back( CVector2(-a*0.5,+b*0.5) );
+      double theta0 = r4*3.1415*2.0;
+      Rotate(aVec2,theta0);
+      Translate(aVec2, r2*10-5,r3*10-5);
+    }
     CVector2 cg,pa1,pa2;
     double area,I1,I2;
     SecondMomentOfArea_Polygon(cg,area, pa1,I1, pa2,I2,
                                aVec2);
-    EXPECT_NEAR(area, a*b, 1.0e-20);
+    EXPECT_NEAR(area, a*b, 1.0e-10);
     EXPECT_NEAR(pa1*pa2, 0.0, 1.0e-10 );
     EXPECT_TRUE(I1>=I2);
-    if( a >  b ){
-      EXPECT_NEAR(pa1.x,        0.0,          1.0e-10);
-      EXPECT_NEAR(pa1.y*pa1.y,  1.0,          1.0e-10);
-      EXPECT_NEAR(I1,           a*a*a*b/12.0, 1.0e-10 );
-      ////
-      EXPECT_NEAR(pa2.x*pa2.x,  1.0,          1.0e-10);
-      EXPECT_NEAR(pa2.y,        0.0,          1.0e-10);
-      EXPECT_NEAR(I2,           a*b*b*b/12.0, 1.0e-10 );
-    }
-    else{ // a < b
-      EXPECT_NEAR(pa1.x*pa1.x,  1.0,          1.0e-10);
-      EXPECT_NEAR(pa1.y,        0.0,          1.0e-10);
-      EXPECT_NEAR(I1,           a*b*b*b/12.0, 1.0e-10 );
-      ///
-      EXPECT_NEAR(pa2.x,        0.0,          1.0e-10);
-      EXPECT_NEAR(pa2.y*pa2.y,  1.0,          1.0e-10);
-      EXPECT_NEAR(I2,           b*a*a*a/12.0, 1.0e-10 );
-    }
+//    EXPECT_NEAR(pa1.x*pa1.x,  1.0,          1.0e-10);
+//    EXPECT_NEAR(pa1.y,        0.0,          1.0e-10);
+    EXPECT_NEAR(I1,           a*b*b*b/12.0, 1.0e-10 );
+    ///
+//    EXPECT_NEAR(pa2.x,        0.0,          1.0e-10);
+//    EXPECT_NEAR(pa2.y*pa2.y,  1.0,          1.0e-10);
+    EXPECT_NEAR(I2,           b*a*a*a/12.0, 1.0e-10 );
   }
+}
+
+
+TEST(meshtopo,quad_subdiv0)
+{
+  CVoxelGrid3D vg;
+  vg.Add(0,0,0);
+  std::vector<double> aXYZ0;
+  std::vector<unsigned int> aQuad0;
+  vg.GetQuad(aXYZ0, aQuad0);
+  EXPECT_EQ(aXYZ0.size(),8*3);
+  EXPECT_EQ(aQuad0.size(),6*4);
+}
+
+TEST(meshtopo,quad_subdiv1)
+{
+  CVoxelGrid3D vg;
+  vg.Add(0,0,0);
+  vg.Add(1,0,0);
+  vg.Add(1,1,0);
+  std::vector<double> aXYZ0;
+  std::vector<unsigned int> aQuad0;
+  vg.GetQuad(aXYZ0, aQuad0);
+  EXPECT_EQ(aXYZ0.size(),18*3);
+  EXPECT_EQ(aQuad0.size(),14*4);
+  std::vector<double> aXYZ0a;
+  std::vector<unsigned int> aQuad0a;
+  std::vector<int> mapInOut;
+  RemoveUnreferencedPoints_MeshElem(aXYZ0a,aQuad0a, mapInOut,
+                                    3,aXYZ0,aQuad0);
+  EXPECT_EQ(aXYZ0a.size(),16*3);
+  EXPECT_EQ(aQuad0a.size(),14*4);
 }
 
 

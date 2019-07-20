@@ -110,11 +110,12 @@ void MassLumped_Tet3D(double* aMassMatrixLumped,
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void RemoveUnreferencedPoints3D(std::vector<double>& aXYZOut,
-                                std::vector<int>& aTriOut,
-                                std::vector<int>& aMapInOut,
-                                const std::vector<double>& aXYZIn,
-                                const std::vector<int>& aTriIn);
+void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZOut,
+                                       std::vector<unsigned int>& aElemOut,
+                                       std::vector<int>& aMapInOut,
+                                       int ndim,
+                                       const std::vector<double>& aXYZIn,
+                                       const std::vector<unsigned int>& aElemIn);
 void Normal_MeshTri3D(double* aNorm,
                       const double* aXYZ, int nXYZ,
                       const unsigned int* aTri, int nTri);

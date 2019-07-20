@@ -75,7 +75,7 @@ class CMakeBuild(build_ext):
 
 
 setup(name='PyDelFEM2',
-      version='0.0.5',
+      version='0.0.6',
       description='a framework for geometry processing and finite element analysis',
       author='Nobuyuki Umetani',
       author_email='n.umetani@gmail.com',

@@ -56,7 +56,7 @@ void Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 
 
 void MeshQuad3D_VoxelGrid
-(std::vector<double>& aXYZ, std::vector<int>& aQuad,
+(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
  int ndivx, int ndivy, int ndivz,
  int ioffx, int ioffy, int ioffz,
  const std::vector<int>& aIsVox)

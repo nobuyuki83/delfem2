@@ -607,6 +607,28 @@ void makeSplineLoop
   }
 }
 
+void Translate
+(std::vector<CVector2>& aP,
+ double dx, double dy)
+{
+  for(int ip=0;ip<aP.size();++ip){
+    aP[ip].x += dx;
+    aP[ip].y += dy;
+  }
+}
+
+void Rotate
+(std::vector<CVector2>& aP,
+ double dt)
+{
+  for(int ip=0;ip<aP.size();++ip){
+    double x0 = aP[ip].x;
+    double y0 = aP[ip].y;
+    aP[ip].x = cos(dt)*x0 - sin(dt)*y0;
+    aP[ip].y = sin(dt)*x0 + cos(dt)*y0;
+  }
+}
+
 std::vector<CVector2> Polyline_Resample_Polyline
 (const std::vector<CVector2>& stroke0,
  double l)
