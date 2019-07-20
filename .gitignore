@@ -45,5 +45,5 @@ examples_py/*.vtk
 pyenv
 myenv
 __pycache__
-pydelfem2.egg-info
 dist
+PyDelFEM2.egg-info
