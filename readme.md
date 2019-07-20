@@ -3,7 +3,7 @@
 
 # DelFEM2
 
-A handy toolset for coding geometry processing and fem simulation
+A framework for geometry processing and FEM simulation including all the components -- shape editing, meshing, FEM simulation, linear solver, visualization. Aside from the C++ implementation, python wrapper, called PyDelFEM2, is provided. 
 
 The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
@@ -12,14 +12,15 @@ Please find out more detail in this [project document](https://nobuyuki83.github
 
 # Dependency
 
-PyDelFEM is run on Python3. Python2 is not supported.
-
 PyDelFEM2 depends on following python packages:
 - Numpy
 - glfw
 - PyOpenGL  
 - PySide2
+
 These packages are automatically installed when you installed the PyDelFEM2 using the ```setup.py``` or ```pip3```.
+
+PyDelFEM is run on Python3. Python2 is not supported.
 
 # Install
 
