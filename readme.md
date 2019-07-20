@@ -3,8 +3,75 @@
 
 # DelFEM2
 
-A handy toolset for coding geometry processing and fem simulation
+A framework for geometry processing and FEM simulation including all the components -- shape editing, meshing, FEM simulation, linear solver, visualization. 
+
+DelFEM2 is aiming a interactive digital engineering and authoring tool. 
+
+Aside from the C++ implementation, python wrapper, called PyDelFEM2, is provided. 
 
 The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
 Please find out more detail in this [project document](https://nobuyuki83.github.io/delfem2/)
+
+
+# Dependency
+
+PyDelFEM is run on Python3. Python2 is not supported.
+
+PyDelFEM2 depends on following python packages:
+- numpy
+- glfw
+- PyOpenGL  
+- PySide2
+
+These dependency is written in ```REQUIRED_PACKAGES``` in the setup.py, so they are automatically installed when installing the PyDelFEM2 pakage using the ```setup.py``` or ```pip3```.
+
+
+# Install
+
+## from PyPl
+
+PyDelFEM2 can be installed simply with 
+
+```
+pip3 install PyDelFEM2
+```
+
+If you don't have pip install it with
+
+```
+sudo apt-get install python3-pip
+```
+
+
+The installation fails if OpenGL packages are missing. Install them with following commanad for Ubuntu.
+
+```
+sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev
+```
+
+
+
+## from GitHub
+
+Installation from github can be done with the command:
+```
+pip3 install git+https://github.com/nobuyuki83/delfem2
+```
+
+
+## building from the source code
+
+```
+git clone https://github.com/nobuyuki83/delfem2.git
+git submodle update --init --recursive
+python3 setup.py install
+```
+
+if you don't have git, install it with 
+```
+sudo apt-get install git
+```
+
+
+
