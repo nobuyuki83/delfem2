@@ -3,7 +3,11 @@
 
 # DelFEM2
 
-A framework for geometry processing and FEM simulation including all the components -- shape editing, meshing, FEM simulation, linear solver, visualization. Aside from the C++ implementation, python wrapper, called PyDelFEM2, is provided. 
+A framework for geometry processing and FEM simulation including all the components -- shape editing, meshing, FEM simulation, linear solver, visualization. 
+
+DelFEM2 is aiming a interactive digital engineering and authoring tool. 
+
+Aside from the C++ implementation, python wrapper, called PyDelFEM2, is provided. 
 
 The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
