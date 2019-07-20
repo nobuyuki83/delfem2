@@ -16,15 +16,16 @@ Please find out more detail in this [project document](https://nobuyuki83.github
 
 # Dependency
 
+PyDelFEM is run on Python3. Python2 is not supported.
+
 PyDelFEM2 depends on following python packages:
-- Numpy
+- numpy
 - glfw
 - PyOpenGL  
 - PySide2
 
-These packages are automatically installed when you installed the PyDelFEM2 using the ```setup.py``` or ```pip3```.
+These dependency is written in ```REQUIRED_PACKAGES``` in the setup.py, so they are automatically installed when installing the PyDelFEM2 pakage using the ```setup.py``` or ```pip3```.
 
-PyDelFEM is run on Python3. Python2 is not supported.
 
 # Install
 
@@ -43,7 +44,7 @@ sudo apt-get install python3-pip
 ```
 
 
-Installation may fails because the necessary OpenGL packages are missing. Run following commanad for Ubuntu.
+The installation fails if OpenGL packages are missing. Install them with following commanad for Ubuntu.
 
 ```
 sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev
@@ -53,7 +54,7 @@ sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev
 
 ## from GitHub
 
-installation from github can be done with:
+Installation from github can be done with the command:
 ```
 pip3 install git+https://github.com/nobuyuki83/delfem2
 ```
