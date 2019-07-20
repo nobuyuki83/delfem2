@@ -3,11 +3,7 @@
 
 # DelFEM2
 
-A framework for geometry processing and FEM simulation including all the components -- shape editing, meshing, FEM simulation, linear solver, visualization. 
-
-DelFEM2 is aiming a interactive digital engineering and authoring tool. 
-
-Aside from the C++ implementation, python wrapper, called PyDelFEM2, is provided. 
+DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, and visualization. DelFEM2 is aiming an interactive digital engineering and authoring tool. Aside from the C++ implementation, python wrapper called PyDelFEM2 is provided. 
 
 The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
@@ -16,7 +12,7 @@ Please find out more detail in this [project document](https://nobuyuki83.github
 
 # Dependency
 
-PyDelFEM is run on Python3. Python2 is not supported.
+PyDelFEM runs on Python3. Python2 is not supported.
 
 PyDelFEM2 depends on following python packages:
 - numpy
@@ -37,14 +33,14 @@ PyDelFEM2 can be installed simply with
 pip3 install PyDelFEM2
 ```
 
-If you don't have pip install it with
+In Ubuntu, if you don't have pip installed, get it with:
 
 ```
 sudo apt-get install python3-pip
 ```
 
 
-The installation fails if OpenGL packages are missing. Install them with following commanad for Ubuntu.
+The installation fails if OpenGL packages are missing. For Ubuntu, install them with following commanad:
 
 ```
 sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev
@@ -54,7 +50,7 @@ sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev
 
 ## from GitHub
 
-Installation from github can be done with the command:
+Installation from the GitHub repository can be done with the command:
 ```
 pip3 install git+https://github.com/nobuyuki83/delfem2
 ```
@@ -68,7 +64,7 @@ git submodle update --init --recursive
 python3 setup.py install
 ```
 
-if you don't have git, install it with 
+if you don't have git in Ubuntu install it with:
 ```
 sudo apt-get install git
 ```
