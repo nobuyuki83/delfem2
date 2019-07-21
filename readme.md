@@ -33,7 +33,9 @@ Please find out more detail in this [project document](https://nobuyuki83.github
 
 # Manual Tutorial
 
-Please look at the python exaxmples under 'examples_cpp','examples_py','examples_pyqt','examples_jupyter'.
+Please look at the python exaxmples under  ```examples_cpp```, ```examples_py```, ```examples_pyqt```, and ```examples_jupyter```.
+
+Reading the test code under ```tests\``` also help understanding the code behaviour
 
 
 # Dependency
