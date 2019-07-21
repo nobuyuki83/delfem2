@@ -241,8 +241,8 @@ void ElemQuad_DihedralTri
 ///////////////////////////////////////////////////////////////////////////////
 
 void convert2Tri_Quad
-(std::vector<int>& aTri,
- const std::vector<int>& aQuad)
+(std::vector<unsigned int>& aTri,
+ const std::vector<unsigned int>& aQuad)
 {
   const unsigned long nq = aQuad.size()/4;
   aTri.resize(nq*6);
@@ -614,7 +614,7 @@ void makeBoundary
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void makeOneRingNeighborhood
+void JArrayPointSurPoint_MeshOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
@@ -666,7 +666,7 @@ void makeOneRingNeighborhood
   psup_ind[0] = 0;
 }
 
-void JArray_MeshOneRingNeighborhood
+void JArrayPointSurPoint_MeshOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  ////
@@ -678,7 +678,7 @@ void JArray_MeshOneRingNeighborhood
   std::vector<int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            pElem, nEl, nPoEl, nPo);
-  makeOneRingNeighborhood(psup_ind, psup,
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                           pElem, elsup_ind,elsup, nPoEl, nPo);
 }
 

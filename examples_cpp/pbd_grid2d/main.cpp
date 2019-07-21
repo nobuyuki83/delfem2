@@ -177,7 +177,7 @@ int main(int argc,char* argv[])
   aUV1.resize(aXY0.size());
   
   std::vector<int> psup_ind, psup;
-  JArray_MeshOneRingNeighborhood(psup_ind, psup,
+  JArrayPSuP_MeshOneRingNeighborhood(psup_ind, psup,
                                       aQuad.data(), aQuad.size()/4, 4,
                                       aXY0.size()/2);
 //  Print_IndexedArray(psup_ind, psup);

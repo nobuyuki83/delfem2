@@ -8,8 +8,8 @@
 #include "delfem2/quat.h"
 #include "delfem2/voxel.h"
 #include "delfem2/mshtopo.h"
-
 #include "delfem2/msh.h"
+#include "delfem2/mshio.h"
 #include "delfem2/mathfuncs.h"
 
 TEST(mat3, eigen3)
@@ -112,6 +112,13 @@ TEST(mat3, quat)
   }
 }
 
+TEST(mshio,load_obj)
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj", aXYZ, aTri);
+  EXPECT_EQ(aTri.size(),1000*3);
+}
 
 TEST(vec2,second_moment_of_area)
 {
@@ -155,11 +162,18 @@ TEST(meshtopo,quad_subdiv0)
 {
   CVoxelGrid3D vg;
   vg.Add(0,0,0);
-  std::vector<double> aXYZ0;
-  std::vector<unsigned int> aQuad0;
-  vg.GetQuad(aXYZ0, aQuad0);
-  EXPECT_EQ(aXYZ0.size(),8*3);
-  EXPECT_EQ(aQuad0.size(),6*4);
+  {
+    std::vector<double> aXYZ0;
+    std::vector<unsigned int> aQuad0;
+    vg.GetQuad(aXYZ0, aQuad0);
+    EXPECT_EQ(aXYZ0.size(),8*3);
+    EXPECT_EQ(aQuad0.size(),6*4);
+    {
+      std::vector<unsigned int> aTri0;
+      convert2Tri_Quad(aTri0, aQuad0);
+      EXPECT_EQ(aTri0.size(),12*3);
+    }
+  }
 }
 
 TEST(meshtopo,quad_subdiv1)
