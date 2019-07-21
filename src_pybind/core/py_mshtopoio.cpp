@@ -229,8 +229,8 @@ std::tuple<py::array_t<int>, py::array_t<int>>
 PyJArray_MeshPsup(const py::array_t<unsigned int>& elm, int npoint)
 {
   std::vector<int> psup_ind, psup;
-  JArray_MeshOneRingNeighborhood(psup_ind, psup,
-                                      elm.data(), elm.shape()[0], elm.shape()[1], npoint);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                              elm.data(), elm.shape()[0], elm.shape()[1], npoint);
   py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::forward_as_tuple(np_psup_ind, np_psup);
@@ -269,11 +269,14 @@ void PyMassLumped
   assert( np_elm.ndim() == 2 );
   assert( mass_lumped.shape()[0] == np_pos.shape()[0] );
   if( elem_type ==  MESHELEM_TET ){
-    std::cout << "mass_lumped " << np_pos.shape()[0] << " " << np_elm.shape()[0] << std::endl;
     MassLumped_Tet3D((double*)(mass_lumped.request().ptr),
                      rho,
                      np_pos.data(), np_pos.shape()[0],
                      np_elm.data(), np_elm.shape()[0]);
+  }
+  else{
+    // TODO: implemnet mass lumped for other types of meshes
+    assert(0);
   }
 }
 

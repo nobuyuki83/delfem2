@@ -50,10 +50,10 @@ void MeshTri3D_GeodesicPolyhedron
                               aTri0.data(), aTri0.size()/3, 3, np0);
   ////
   std::vector<int> psup_ind, psup;
-  makeOneRingNeighborhood(psup_ind, psup,
-                          aTri0.data(),
-                          elsup_ind, elsup,
-                          3, np0);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                              aTri0.data(),
+                                              elsup_ind, elsup,
+                                              3, np0);
   //  std::cout << "psup" << std::endl;
   //  Print_IndexedArray(psup_ind, psup);
   /////

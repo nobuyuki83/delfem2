@@ -213,8 +213,8 @@ void AddElement(const MESHELEM_TYPE& femelem_type,
                 std::vector<MESHELEM_TYPE>& aElemType);
 
 ////
-void convert2Tri_Quad(std::vector<int>& aTri,
-                      const std::vector<int>& aQuad);
+void convert2Tri_Quad(std::vector<unsigned int>& aTri,
+                      const std::vector<unsigned int>& aQuad);
 void convert2Tri(std::vector<int>& aTri,
                  ////
                  const std::vector<int>& aElemInd,
@@ -266,13 +266,6 @@ void makeSurroundingRelationship(std::vector<int>& aElemSurRel,
                                  const unsigned int* aElem, int nEl,
                                  MESHELEM_TYPE type,
                                  const int nXYZ);
-/*
-void makeSurroundingRelationship(std::vector<int>& aElSurRel,
-                                 const int* aEl, int nEl, int nNoEl,
-                                 MESHELEM_TYPE type,
-                                 const std::vector<int>& elsup_ind,
-                                 const std::vector<int>& elsup);
- */
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,
@@ -301,21 +294,24 @@ void makeBoundary(std::vector<int>& aElemInd_Bound,
 
 ////////////////////////////////////////
 // make psup
-void makeOneRingNeighborhood(std::vector<int>& psup_ind,
-                             std::vector<int>& psup,
-                             ////
-                             const unsigned int* pElem,
-                             const std::vector<int>& elsup_ind,
-                             const std::vector<int>& elsup,
-                             int nnoel,
-                             int nnode);
-void JArray_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
-                             std::vector<int>& psup,
-                             ////
-                             const unsigned int* pElem,
-                             int nEl,
-                             int nPoEl,
-                             int nPo);
+// psup -> edge bidirectional
+// edge unidir (ip0<ip1)
+// line (array of 2)
+void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
+                                                 std::vector<int>& psup,
+                                                 ////
+                                                 const unsigned int* pElem,
+                                                 const std::vector<int>& elsup_ind,
+                                                 const std::vector<int>& elsup,
+                                                 int nnoel,
+                                                 int nnode);
+void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
+                                                 std::vector<int>& psup,
+                                                 ////
+                                                 const unsigned int* pElem,
+                                                 int nEl,
+                                                 int nPoEl,
+                                                 int nPo);
 void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     std::vector<int>& psup,
                                     ////
@@ -369,14 +365,13 @@ void MakeGroupElem(int& ngroup,
                    const std::vector<int>& aElem,
                    const std::vector<int>& aElemFaceInd,
                    const std::vector<int>& aElemFaceRel);
-void MakeGroupElem
-(int& ngroup,
- std::vector<int>& aIndGroup,
- /////
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType,
- int nPo);
+void MakeGroupElem(int& ngroup,
+                   std::vector<int>& aIndGroup,
+                   /////
+                   const std::vector<int>& aElemInd,
+                   const std::vector<int>& aElem,
+                   const std::vector<MESHELEM_TYPE>& aElemType,
+                   int nPo);
 void ClipGroup(std::vector<int>& aElemInd1,
                std::vector<int>& aElem1,
                std::vector<MESHELEM_TYPE>& aElemType1,
