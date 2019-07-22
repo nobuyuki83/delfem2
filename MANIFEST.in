@@ -11,8 +11,13 @@ recursive-include src_pybind/pybind11/tools *
 include src_pybind/pybind11/LICENSE
 include src_pybind/pybind11/CMakeLists.txt
 
-recursive-include src_pybind/core *
-recursive-include src_pybind/eigen *
-recursive-include src_pybind/gl *
+include src_pybind/core/*.cpp
+include src_pybind/core/CMakeLists.txt
+include src_pybind/eigen/*.cpp
+include src_pybind/eigen/CMakeLists.txt
+include src_pybind/gl/*.cpp
+include src_pybind/gl/CMakeLists.txt
 
-recursive-include PyDelFEM2 *.so
+exclude PyDelFEM2/c_core.*
+exclude PyDelFEM2/gl/c_gl.*
+exclude PyDelFEM2/eigen/c_eigen.*
