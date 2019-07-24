@@ -12,7 +12,7 @@ from .c_gl import cppDrawEdge_CppMeshDynTri2D, cppDrawEdge_CppMeshDynTri3D, cppD
 from .c_gl import draw_mesh_facenorm, draw_mesh_edge
 from .c_gl import cppDrawSphere
 
-from ._gl import AxisXYZ, Camera
+from ._gl import AxisXYZ, Camera, CAMERA_ROT_MODE
 from ._gl import getOpenglInfo, screenUnProjection, screenUnProjectionDirection
 
 import OpenGL.GL as gl
