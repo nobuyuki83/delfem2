@@ -226,8 +226,8 @@ void SetNewProblem()
     std::vector<int> elsup_ind, elsup;
     JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                              aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
-    JArrayPSuP_MeshOneRingNeighborhood(psup_ind, psup,
-                            aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
+    JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
   }
   {
     std::vector<double> aNorm(aXYZ.size());

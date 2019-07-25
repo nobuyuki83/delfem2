@@ -7,7 +7,7 @@ set(PYBIND11_CPP_STANDARD -std=c++14)
 if(WIN32)
 set(CMAKE_CXX_FLAGS "-Wall -O2")
 else()
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -O2")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -O2")
 endif()		
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)

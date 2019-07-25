@@ -63,11 +63,11 @@ void PBD_Update_Const3
  const double* dCdp,
  const int* aIP)
 {
-  double mi[np];
+  std::vector<double> mi(np);
   for(int ip=0;ip<np;++ip){ mi[ip] = 1.0/m[ip]; }
   /////
   const int nc = 3;
-  double MinvC[nc*np*ndim];
+  std::vector<double> MinvC(nc*np*ndim);
   for(int ic=0;ic<nc;++ic){
     for(int ine=0;ine<np;++ine){
       MinvC[ic*np*ndim+ine*3+0] = dCdp[ic*np*ndim+ine*ndim+0]*mi[ine];
@@ -112,6 +112,7 @@ void PBD_ConstProj_Rigid3D
     CVector3 pc(0, 0, 0), qc(0, 0, 0);
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const int ip = clstr[iip];
+      assert( ip < nclstr0 );
       qc += CVector3(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2]);
       pc += CVector3(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
     }
@@ -145,7 +146,7 @@ void PBD_ConstProj_Rigid3D
       aXYZt[ip*3+1] = pg2.y;
       aXYZt[ip*3+2] = pg2.z;
     }
-  }
+  }  
 }
 
 void PBD_ConstProj_Rigid2D
@@ -159,7 +160,8 @@ void PBD_ConstProj_Rigid2D
   for(int iclstr=0;iclstr<nclstr;++iclstr){
     CVector2 pc(0, 0), qc(0, 0);
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
-      const int ip = clstr[iip];
+      assert( iip < nclstr0 );
+      const int ip = clstr[iip]; assert( ip>=0 && ip < nXY0 );
       qc += CVector2(aXY0[ip*2+0],aXY0[ip*2+1]);
       pc += CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
     }

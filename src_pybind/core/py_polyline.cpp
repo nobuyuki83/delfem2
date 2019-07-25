@@ -262,10 +262,12 @@ double distance
 (int i0, int i1, int i2,
  const std::vector<int>& aXY)
 {
+#ifndef NDEBUG
   const int np = aXY.size()/2;
   assert(i0>=0&&i0<np);
   assert(i1>=0&&i1<np);
   assert(i2>=0&&i2<np);
+#endif
   CVector2 v0(aXY[i0*2+0], aXY[i0*2+1]);
   CVector2 v1(aXY[i1*2+0], aXY[i1*2+1]);
   CVector2 v2(aXY[i2*2+0], aXY[i2*2+1]);

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cassert>
+#include <iterator>
 #include <stack>
 #include <set>
 #include <iostream>
@@ -826,10 +827,10 @@ void JArray_AddMasterSlavePattern
       int idof0 = aMSFlag[ino1*ndim+idim1];
       if( idof0 == -1 ){ continue; }
       int ino0 = idof0/ndim;
-      int idim0 = idof0 - ino0*ndim;
-      assert( ino0 < nno && idim0 < ndim );
+//      int idim0 = idof0 - ino0*ndim;
+      assert( ino0 < nno && idof0 - ino0*ndim < ndim );
 //      std::cout << idim1 << " " << idim0 << " " << ndim << std::endl;
-      assert( idim1 == idim0 );
+      assert( idim1 == idof0 - ino0*ndim );
       mapM2S[ino0].push_back(ino1);
     }
   }

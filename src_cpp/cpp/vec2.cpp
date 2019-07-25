@@ -611,7 +611,7 @@ void Translate
 (std::vector<CVector2>& aP,
  double dx, double dy)
 {
-  for(int ip=0;ip<aP.size();++ip){
+  for(unsigned int ip=0;ip<aP.size();++ip){
     aP[ip].x += dx;
     aP[ip].y += dy;
   }
@@ -621,7 +621,7 @@ void Rotate
 (std::vector<CVector2>& aP,
  double dt)
 {
-  for(int ip=0;ip<aP.size();++ip){
+  for(unsigned int ip=0;ip<aP.size();++ip){
     double x0 = aP[ip].x;
     double y0 = aP[ip].y;
     aP[ip].x = cos(dt)*x0 - sin(dt)*y0;
@@ -700,7 +700,7 @@ void SecondMomentOfArea_Polygon
  const std::vector<CVector2>& aVec2D)
 {
   area = 0;
-  const int nseg = aVec2D.size();
+  const unsigned int nseg = aVec2D.size();
   cg = CVector2(0.0, 0.0);
   for(unsigned int iseg=0;iseg<nseg;iseg++){
     int ip0 = (iseg+0)%nseg;

@@ -1222,7 +1222,7 @@ void DrawMeshTriMap3D_Edge
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
   const int nTri = (int)aTri.size()/3;
-  const int nXYZ = (int)aXYZ.size()/3;
+//  const int nXYZ = (int)aXYZ.size()/3;
   /////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
@@ -1238,9 +1238,9 @@ void DrawMeshTriMap3D_Edge
     const int i1 = map[j1];
     const int i2 = map[j2];
     const int i3 = map[j3];
-    assert(i1>=0 && i1<nXYZ);
-    assert(i2>=0 && i2<nXYZ);
-    assert(i3>=0 && i3<nXYZ);
+    assert(i1>=0 && i1<(int)aXYZ.size()/3);
+    assert(i2>=0 && i2<(int)aXYZ.size()/3);
+    assert(i3>=0 && i3<(int)aXYZ.size()/3);
     double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
@@ -1606,7 +1606,7 @@ void DrawMeshTet3DSurface_Edge
   
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
-  const int nXYZ = (int)aXYZ.size()/3;
+//  const int nXYZ = (int)aXYZ.size()/3;
   /////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
@@ -1621,9 +1621,9 @@ void DrawMeshTet3DSurface_Edge
       assert(i2==-1); assert(i3==-1);
       continue;
     }
-    assert(i1>=0&&i1 < nXYZ);
-    assert(i2>=0&&i2 < nXYZ);
-    assert(i3>=0&&i3 < nXYZ);
+    assert(i1>=0&&i1 < (int)aXYZ.size()/3);
+    assert(i2>=0&&i2 < (int)aXYZ.size()/3);
+    assert(i3>=0&&i3 < (int)aXYZ.size()/3);
     double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };

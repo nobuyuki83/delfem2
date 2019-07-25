@@ -651,14 +651,16 @@ bool CPreconditionerILU::DoILUDecomp()
   const unsigned int* rowptr = mat.rowPtr.data();
   double* vcrs = mat.valCrs;
   double* vdia = mat.valDia;
+#ifndef NDEBUG
   const unsigned int m_ncrs = colind[nblk];
+#endif
   
   std::vector<int> row2crs(nblk,-1);
   
 	if( len == 1 ){
 		for(int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
-        assert( ijcrs<m_ncrs );
+        assert( ijcrs<colind[nblk] );
 				const int jblk0 = rowptr[ijcrs];
         assert( jblk0<nblk );
 				row2crs[jblk0] = ijcrs;

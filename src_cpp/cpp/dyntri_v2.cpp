@@ -520,9 +520,11 @@ void EnforceEdge
       else{
         const int ied0 = 3 - inotri0 - inotri1;
         assert( aTri[itri0].s2[ied0] >= 0 );
+#ifndef NDEBUG
         const int itri1 = aTri[itri0].s2[ied0];
         const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
         assert( aTri[itri1].s2[ied1] >= itri0 );
+#endif
         FlipEdge(itri0,ied0,aPo2D,aTri);
         continue;
       }
@@ -536,9 +538,11 @@ void FlagConnected
  unsigned int itri0_ker,
  int iflag)
 {
+#ifndef NDEBUG
   const unsigned int ntri = aTri_in.size();
   assert( inout_flg.size() == ntri );
   assert( itri0_ker>= 0 && itri0_ker<inout_flg.size() );
+#endif
   inout_flg[itri0_ker] = iflag;
   std::stack<int> ind_stack;
   ind_stack.push(itri0_ker);

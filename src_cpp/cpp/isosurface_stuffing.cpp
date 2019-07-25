@@ -668,11 +668,13 @@ void Continuation
         const int ljca = ( jca >= 0 ) ? aCell[jca].aIC_Adj[kface] : -1;
         if( lkca != -1 || ljca != -1 ){ continue; }
         const int jch = adjChildInside[ich][jface];
-        const int kch = adjChildInside[ich][kface];
         int lch = ( jch >= 0 ) ? adjChildInside[jch][kface] : -1;
         if( lch != -1 ){
+#ifndef NDEBUG
+          const int kch = adjChildInside[ich][kface];
           assert( kch != -1 );
           assert( lch == adjChildInside[kch][jface] );
+#endif
         }
         if( lch >= 0 ){ // diagonal child
           makeChild(aCell, aPoint, input, ipc, lch);
@@ -1691,8 +1693,7 @@ void MakeCutPoint
     for(int ind0=lat2cut_ind[ino0];ind0<lat2cut_ind[ino0+1];++ind0){
       int ino1 = lat2cut[ind0*2+0];
       if( ino0 < ino1 ){
-        int iout = lat2cut[ind0*2+1];
-        assert( iout != -1 );
+        assert( lat2cut[ind0*2+1] != -1 );
         continue;
       }
       for(int ind1=lat2cut_ind[ino1];ind1<lat2cut_ind[ino1+1];ind1++){
