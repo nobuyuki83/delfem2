@@ -235,8 +235,8 @@ void InitializeProblem_Scalar()
    */
   //////
   std::vector<int> psup_ind, psup;
-  JArrayPSuP_MeshOneRingNeighborhood(psup_ind, psup,
-                                      aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                              aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 1, true);
@@ -338,8 +338,8 @@ void InitializeProblem_Solid()
   }
   //////
   std::vector<int> psup_ind0, psup0;
-  JArrayPSuP_MeshOneRingNeighborhood(psup_ind0, psup0,
-                                 aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind0, psup0,
+                                              aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<int> psup_ind, psup;
   JArray_AddMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),2,
@@ -478,8 +478,8 @@ void InitializeProblem_Fluid()
   }
   //////
   std::vector<int> psup_ind, psup;
-  JArrayPSuP_MeshOneRingNeighborhood(psup_ind, psup,
-                                 aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                              aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   JArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
@@ -541,8 +541,8 @@ void InitializeProblem_Fluid2()
   }
   ///////
   std::vector<int> psup_ind0, psup0;
-  JArrayPSuP_MeshOneRingNeighborhood(psup_ind0, psup0,
-                                 aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind0, psup0,
+                                              aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<int> psup_ind, psup;
   JArray_AddMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),3,

@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 //! 3D bounding box class
 class CBV3D_AABB

@@ -586,11 +586,7 @@ bool CheckTri( const std::vector<ETri>& aTri )
 				assert( itri_s < ntri );
 				assert( irel < 3 );
 				// check sorounding
-				{
-					const int noel_dia = relTriTri[irel][iedtri];
-					assert( aTri[itri_s].s2[noel_dia] == itri );
-          //					std::cout << itri << " " << itri_s << std::endl;
-				}
+        assert( aTri[itri_s].s2[relTriTri[irel][iedtri]] == itri );
 				// check relation 
 				for(int inoed=0;inoed<2;inoed++){
 					const int inoel = (iedtri+1+inoed)%3;

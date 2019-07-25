@@ -2017,7 +2017,7 @@ void ConvexHull
     for(int itri=0;itri<(int)aTri.size()/3;itri++){
       if( IsOut(itri,v,aXYZ,aTri) ){ itri_ker = itri; break; }
     }
-#ifdef DEBUG
+#ifndef NDEBUG
     {
       for(int itri=0;itri<aTri.size()/3;itri++){
         for(int ied=0;ied<3;ied++){
@@ -2113,7 +2113,7 @@ void ConvexHull
         }
       }
     }
-#ifdef DEBUG
+#ifndef NDEBUG
     for(int ib=0;ib<aB.size();ib++){
       for(int inb=0;inb<2;inb++){
         int itri0 = aB[ib].first;
@@ -2163,7 +2163,7 @@ void ConvexHull
       int itn1 = triEd[itn0][0];
       int itn2 = triEd[itn0][1];
       assert( !IsOut(itri0,v,aXYZ,aTri) );
-#ifdef DEBUG
+#ifndef NDEBUG
       {
         int itri_s = aTriSur[itri0*3+itn0].first;
         assert( IsOut(itri_s,v,aXYZ,aTri) );

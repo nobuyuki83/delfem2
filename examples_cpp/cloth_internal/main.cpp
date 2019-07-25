@@ -354,8 +354,8 @@ int main(int argc,char* argv[])
 //    MakeNormal(aNormal, aXYZ, aTri);
     mat_A.Initialize(np,3,true);
     std::vector<int> psup_ind,psup;
-    JArrayPSuP_MeshOneRingNeighborhood(psup_ind, psup,
-                                   aQuad.data(),aQuad.size()/4, 4, np);
+    JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                aQuad.data(),aQuad.size()/4, 4, np);
     JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
     ilu_A.Initialize_ILU0(mat_A);

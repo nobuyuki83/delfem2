@@ -24,8 +24,7 @@ void MatrixSquareSparse_SetPattern
   assert( mss.len_col == mss.len_row );
   assert( psup_ind.ndim()  == 1 );
   assert( psup.ndim()  == 1 );
-  const int np = mss.nblk_col;
-  assert( psup_ind.shape()[0] == np+1 );
+  assert( psup_ind.shape()[0] == mss.nblk_col+1 );
   mss.SetPattern(psup_ind.data(), psup_ind.shape()[0],
                  psup.data(),     psup.shape()[0]);
 }

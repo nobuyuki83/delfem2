@@ -7,7 +7,7 @@ set(PYBIND11_CPP_STANDARD -std=c++14)
 if(WIN32)
 set(CMAKE_CXX_FLAGS "-Wall -O2")
 else()
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -O2")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -O2")
 endif()		
 add_definitions(-DUSE_GL)
 
