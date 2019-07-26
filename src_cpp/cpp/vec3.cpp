@@ -2019,13 +2019,13 @@ void ConvexHull
     }
 #ifndef NDEBUG
     {
-      for(int itri=0;itri<aTri.size()/3;itri++){
+      for(unsigned int itri=0;itri<aTri.size()/3;itri++){
         for(int ied=0;ied<3;ied++){
           int ied1 = triEd[ied][0];
           int ied2 = triEd[ied][1];
           int itri_s = aTriSur[itri*3+ied].first;
           int ied_s0 = aTriSur[itri*3+ied].second;
-          assert( aTriSur[itri_s*3+ied_s0].first  == itri );
+          assert( aTriSur[itri_s*3+ied_s0].first  == (int)itri );
           assert( aTriSur[itri_s*3+ied_s0].second == ied );
           int ied_s1 = triEd[ied_s0][0];
           int ied_s2 = triEd[ied_s0][1];
@@ -2114,7 +2114,7 @@ void ConvexHull
       }
     }
 #ifndef NDEBUG
-    for(int ib=0;ib<aB.size();ib++){
+    for(unsigned int ib=0;ib<aB.size();ib++){
       for(int inb=0;inb<2;inb++){
         int itri0 = aB[ib].first;
         int itn0  = aB[ib].second;

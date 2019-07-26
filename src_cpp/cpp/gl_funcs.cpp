@@ -1291,14 +1291,14 @@ void DrawMeshTri3D_FaceNorm
     const unsigned int in1 = aTriNrm[itri*3+0];
     const unsigned int in2 = aTriNrm[itri*3+1];
     const unsigned int in3 = aTriNrm[itri*3+2];
-    bool bn1=in1>=0&&in1*3<aNorm.size();
-    bool bn2=in2>=0&&in2*3<aNorm.size();
-    bool bn3=in3>=0&&in3*3<aNorm.size();
-    bool bv1=iv1>=0&&iv1*3<aXYZ.size();
-    bool bv2=iv2>=0&&iv2*3<aXYZ.size();
-    bool bv3=iv3>=0&&iv3*3<aXYZ.size();
-    bool bn123 = bn1 && bn2 && bn3;
-    bool bv123 = bv1 && bv2 && bv3;
+    const bool bn1 = in1*3<aNorm.size();
+    const bool bn2 = in2*3<aNorm.size();
+    const bool bn3 = in3*3<aNorm.size();
+    const bool bv1 = iv1*3<aXYZ.size();
+    const bool bv2 = iv2*3<aXYZ.size();
+    const bool bv3 = iv3*3<aXYZ.size();
+    const bool bn123 = bn1 && bn2 && bn3;
+    const bool bv123 = bv1 && bv2 && bv3;
     if( bn123 && bv123 ){
       ::myGlNorm3d(in1, aNorm); ::myGlVertex3d(iv1, aXYZ);
       ::myGlNorm3d(in2, aNorm); ::myGlVertex3d(iv2, aXYZ);

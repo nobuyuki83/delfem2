@@ -32,7 +32,7 @@ public:
               const std::vector<double>& x,
               double beta,
               std::vector<double>& y) const;
-  void SetBoundaryCondition(const int* pBCFlag, int nP, int ndimVal);
+  void SetBoundaryCondition(const int* pBCFlag, unsigned int nP, unsigned int ndimVal);
   void SetMasterSlave(const int* aMSFlag);
   double CheckSymmetry() const;
   void ScaleLeftRight(const double* scale);

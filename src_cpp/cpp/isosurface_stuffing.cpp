@@ -530,7 +530,7 @@ void makeChild
 (std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
  const CInputIsosurfaceStuffing& input, unsigned int icell, int ichild)
 {
-  assert( icell >=0 && icell < aCell.size() );
+  assert( icell < aCell.size() );
   assert( ichild >=0 && ichild < 8 );
   if( aCell[icell].aIC_Cld[ichild] != -1 ) return; // already there
   int icntr0 = aCell[icell].aIP[26];
