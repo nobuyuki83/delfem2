@@ -31,7 +31,8 @@ from .c_core import \
   cppMeshTri3D_Cylinder, \
   cppMeshTri3D_Sphere, \
   cppMeshTri3D_GeoPoly, \
-  cppMeshTri3D_Icosahedron
+  cppMeshTri3D_Icosahedron, \
+  cppMeshTri3D_Cube
 from .c_core import rotmat3_cartesian
 
 
@@ -73,7 +74,7 @@ class Mesh():
   def ndim(self) -> int:
     return self.np_pos.shape[1]
 
-  def scale_xyz(self,scale:float):
+  def scale_xyz(self,scale):
     self.np_pos *= scale
 
   def translate(self,d:List[float],mag=1.0):
@@ -158,6 +159,10 @@ class Mesh():
 
   def set_cylinder(self, r:float, l:float, nr:int, nl:int):
     self.np_pos, self.np_elm = cppMeshTri3D_Cylinder(r,l, nr, nl)
+    self.elem_type = TRI
+
+  def set_cube(self, n:int):
+    self.np_pos, self.np_elm = cppMeshTri3D_Cube(n)
     self.elem_type = TRI
 
   def set_sphere(self, r:float, nla:int, nlo:int):

@@ -384,6 +384,17 @@ PyMeshTri3D_Cylinder(double r, double l, int nr, int nl)
 }
 
 std::tuple< py::array_t<double>, py::array_t<unsigned int> >
+PyMeshTri3D_Cube(int n)
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  MeshTri3D_Cube(aXYZ, aTri, n);
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
+  return std::forward_as_tuple(npXYZ,npTri);
+}
+
+std::tuple< py::array_t<double>, py::array_t<unsigned int> >
 PyMeshTri3D_Sphere(double r, int nla, int nlo)
 {
   std::vector<double> aXYZ;
@@ -482,6 +493,7 @@ void init_mshtopoio_gl(py::module &m){
   // primitive
   m.def("cppMeshTri3D_Cylinder",    &PyMeshTri3D_Cylinder,    py::return_value_policy::move);
   m.def("cppMeshTri3D_Sphere",      &PyMeshTri3D_Sphere,      py::return_value_policy::move);
+  m.def("cppMeshTri3D_Cube",        &PyMeshTri3D_Cube,        py::return_value_policy::move);
   m.def("cppMeshTri3D_GeoPoly",     &PyMeshTri3D_GeoPoly,     py::return_value_policy::move);
   m.def("cppMeshTri3D_Icosahedron", &PyMeshTri3D_Icosahedron, py::return_value_policy::move);
   

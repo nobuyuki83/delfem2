@@ -163,24 +163,8 @@ class Camera:
     gl.glMatrixMode(gl.GL_MODELVIEW)
     gl.glLoadIdentity()
     gl.glTranslated(self.scr_trans[0], self.scr_trans[1], -depth)
-    if self.camera_rot_mode == CAMERA_ROT_MODE.TBALL:
-      Rview = affine_matrix_quaternion(self.quat)
-      gl.glMultMatrixd(Rview)
-    elif self.camera_rot_mode == CAMERA_ROT_MODE.YTOP:
-      x = math.sin(self.theta)*math.cos(self.psi)
-      z = math.cos(self.theta)*math.cos(self.psi)
-      y = math.sin(self.psi)
-      ey = numpy.array([x,y,z])
-      up = numpy.array([0,1,0])
-      up =  up-ey*numpy.dot(ey,up)
-      up /= numpy.linalg.norm(up)
-      vx = v3_normalize(v3_cross(up, ey))
-      mMV = [vx[0], up[0], ey[0], 0,
-             vx[1], up[1], ey[1], 0,
-             vx[2], up[2], ey[2], 0,
-             0,     0,     0,     1]
-      mMV = numpy.array(mMV)
-      gl.glMultMatrixf(mMV)
+    mMV = self.affine_matrix()
+    gl.glMultMatrixf(mMV)
     gl.glTranslated(self.pivot[0], self.pivot[1], self.pivot[2])
 
   def set_rotation(self, camera_eye_up):
@@ -192,14 +176,33 @@ class Camera:
     mat = [vx,vy,vz]
     self.quat = get_quaternion_rot_matrix(mat)
 
+  def affine_matrix(self):
+    if self.camera_rot_mode == CAMERA_ROT_MODE.TBALL:
+      mMV = affine_matrix_quaternion(self.quat)
+    elif self.camera_rot_mode == CAMERA_ROT_MODE.YTOP:
+      x = math.sin(self.theta) * math.cos(self.psi)
+      z = math.cos(self.theta) * math.cos(self.psi)
+      y = math.sin(self.psi)
+      ey = numpy.array([x, y, z])
+      up = numpy.array([0, 1, 0])
+      up = up - ey * numpy.dot(ey, up)
+      up /= numpy.linalg.norm(up)
+      vx = v3_normalize(v3_cross(up, ey))
+      mMV = [vx[0], up[0], ey[0], 0,
+             vx[1], up[1], ey[1], 0,
+             vx[2], up[2], ey[2], 0,
+             0, 0, 0, 1]
+      mMV = numpy.array(mMV)
+    return mMV
+
   def rotation(self,sx1,sy1,sx0,sy0):
     if self.camera_rot_mode == CAMERA_ROT_MODE.TBALL:
       self.quat, self.trans = motion_rot(
         sx1, sy1, sx0, sy0,
         self.quat, self.scr_trans)
     elif self.camera_rot_mode == CAMERA_ROT_MODE.YTOP:
-      self.theta += sx1-sx0
-      self.psi   += sy1-sy0
+      self.theta -= sx1-sx0
+      self.psi   -= sy1-sy0
       self.psi = min(max(-math.pi*0.499,self.psi),math.pi*0.499)
     return
 
