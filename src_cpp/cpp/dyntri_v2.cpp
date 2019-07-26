@@ -541,7 +541,7 @@ void FlagConnected
 #ifndef NDEBUG
   const unsigned int ntri = aTri_in.size();
   assert( inout_flg.size() == ntri );
-  assert( itri0_ker>= 0 && itri0_ker<inout_flg.size() );
+  assert( itri0_ker<inout_flg.size() );
 #endif
   inout_flg[itri0_ker] = iflag;
   std::stack<int> ind_stack;
@@ -1417,9 +1417,9 @@ void MakeMassMatrixTri
  const unsigned int aIP[3],
  const std::vector<CVector2>& aVec2)
 {
-  assert(aIP[0]>=0 && aIP[0]<aVec2.size());
-  assert(aIP[1]>=0 && aIP[1]<aVec2.size());
-  assert(aIP[2]>=0 && aIP[2]<aVec2.size());
+  assert( aIP[0]<aVec2.size() );
+  assert( aIP[1]<aVec2.size() );
+  assert( aIP[2]<aVec2.size() );
   const double P[3][2] = {
     {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
     {aVec2[aIP[1]].x,aVec2[aIP[1]].y},

@@ -343,7 +343,7 @@ void CMatrixSparse::MatVec
 }
 
 void CMatrixSparse::SetBoundaryCondition
-(const int* bc_flag, int np, int ndimval)
+(const int* bc_flag, unsigned int np, unsigned int ndimval)
 {
   assert( this->is_dia );
   assert( this->nblk_row == this->nblk_col );
