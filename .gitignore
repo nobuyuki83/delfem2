@@ -33,6 +33,7 @@ cmake-build-release
 delfem2.egg-info
 buildXcode
 buildMake
+buildVS
 build
 trash
 external/fbx
