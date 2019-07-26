@@ -4,6 +4,7 @@ set(PROJ_NAME c_core)
 
 project(${PROJ_NAME})
 set(PYBIND11_CPP_STANDARD -std=c++14)
+
 if(MSVC)
 set(CMAKE_CXX_FLAGS "/W4 /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 /wd4505 -O2")
 else()

@@ -10,6 +10,7 @@
 #define GLEW_FUNCS_H
 
 #include <vector>
+#include <assert.h>
 #include <iostream> // this must be delated in future
 
 #if defined(__APPLE__) && defined(__MACH__)
