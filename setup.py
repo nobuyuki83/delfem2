@@ -48,9 +48,10 @@ class CMakeBuild(build_ext):
     build_args = ['--config', cfg]
 
     if platform.system() == "Windows":
-      cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(
-        cfg.upper(),
-        extdir)]
+      cmake_args += [
+      '-DCMAKE_PREFIX_PATH=C:/Program Files (x86)/glew'
+#      '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(),extdir)
+      ]
       if sys.maxsize > 2 ** 32:
         cmake_args += ['-A', 'x64']
       build_args += ['--', '/m']
@@ -77,7 +78,14 @@ class CMakeBuild(build_ext):
     print("path_from",path_from)
     print("path_to",path_to)    
     if os.path.dirname(path_from) != os.path.dirname(path_to):
-      subprocess.check_call('cp '+path_from+" "+path_to,shell=True)
+      if platform.system() == "Windows":
+        path_from = path_from.replace("/","\\")
+        path_to = path_to.replace("/","\\")
+        print("path_from",path_from)
+        print("path_to",path_to)    
+        subprocess.check_call('copy '+path_from+".pyd "+path_to,shell=True)
+      else:
+        subprocess.check_call('cp '+path_from+" "+path_to,shell=True)
     print()  # Add an empty line for cleaner output
 
 
