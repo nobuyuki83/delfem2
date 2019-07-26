@@ -436,3 +436,17 @@ void AffineMatrixTrans(double m[16], const CMatrix3& mat, const CVector3& trans)
   m[3*4+1] = trans.y;
   m[3*4+2] = trans.z;
 }
+
+
+void AffineMatrix_ScaleMatTrans(double m[16], double scale, const CMatrix3& mat, const CVector3& trans)
+{
+  mat.AffineMatrixTrans(m);
+  for(int i=0;i<3;++i){
+  for(int j=0;j<3;++j){
+    m[i*4+j] *= scale;
+  }
+  }
+  m[3*4+0] = trans.x;
+  m[3*4+1] = trans.y;
+  m[3*4+2] = trans.z;
+}
