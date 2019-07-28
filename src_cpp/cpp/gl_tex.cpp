@@ -267,11 +267,12 @@ bool LoadTGAFile
   }
   
   // Read the two first bytes we don't need.
-  fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
-  fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
+  size_t n0;
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
   
   // Which type of image gets stored in imageTypeCode.
-  fread(&tgaFile->imageTypeCode, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&tgaFile->imageTypeCode, sizeof(unsigned char), 1, filePtr);
   
   // For our purposes, the type code should be 2 (uncompressed RGB image)
   // or 3 (uncompressed black-and-white images).
@@ -282,21 +283,21 @@ bool LoadTGAFile
   }
   
   // Read 13 bytes of data we don't need.
-  fread(&sintBad, sizeof(short int), 1, filePtr);
-  fread(&sintBad, sizeof(short int), 1, filePtr);
-  fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
-  fread(&sintBad, sizeof(short int), 1, filePtr);
-  fread(&sintBad, sizeof(short int), 1, filePtr);
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
   
   // Read the image's width and height.
-  fread(&tgaFile->imageWidth, sizeof(short int), 1, filePtr);
-  fread(&tgaFile->imageHeight, sizeof(short int), 1, filePtr);
+  n0 = fread(&tgaFile->imageWidth, sizeof(short int), 1, filePtr);
+  n0 = fread(&tgaFile->imageHeight, sizeof(short int), 1, filePtr);
   
   // Read the bit depth.
-  fread(&tgaFile->bitCount, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&tgaFile->bitCount, sizeof(unsigned char), 1, filePtr);
   
   // Read one byte of data we don't need.
-  fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
   
   // Color mode -> 3 = BGR, 4 = BGRA.
   colorMode = tgaFile->bitCount / 8;
@@ -306,7 +307,7 @@ bool LoadTGAFile
   tgaFile->imageData = (unsigned char*)malloc(sizeof(unsigned char)*imageSize);
   
   // Read the image data.
-  fread(tgaFile->imageData, sizeof(unsigned char), imageSize, filePtr);
+  n0 = fread(tgaFile->imageData, sizeof(unsigned char), imageSize, filePtr);
   
   // Change from BGR to RGB so OpenGL can read the image data.
   for (int imageIdx = 0; imageIdx < imageSize; imageIdx += colorMode)

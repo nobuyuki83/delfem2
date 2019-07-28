@@ -425,7 +425,8 @@ bool LoadNumpy
  FILE* fp)
 {
   NPY npy;
-  fread(&npy, sizeof(npy), 1, fp);
+  size_t n0 = fread(&npy, sizeof(npy), 1, fp);
+  n0 = 0;
   
   { // check magic string
     unsigned char sMagic[7] = {0x93,'N','U','M','P','Y'};
@@ -436,7 +437,8 @@ bool LoadNumpy
   ndim1 = 0;
   { // format
     char buff[256];
-    fread(buff, 1, npy.header_len, fp);
+    size_t n1 = fread(buff, 1, npy.header_len, fp);
+    n1 = 0;
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     std::string str_shape = map0["'shape'"];
     str_shape = GetEnclosed(str_shape,"()");
@@ -458,7 +460,8 @@ bool LoadNumpy_2DimF
   LoadNumpy(ndim0, ndim1, fp);
   int size = ndim0*ndim1;
   aData.resize(size);
-  fread(&aData[0], sizeof(float), size, fp);
+  size_t n0 = fread(&aData[0], sizeof(float), size, fp);
+  n0 = 0;
   return true;
 }
 
@@ -471,7 +474,8 @@ bool LoadNumpy_2DimD
   LoadNumpy(ndim0, ndim1, fp);
   int size = ndim0*ndim1;
   aData.resize(size);
-  fread(&aData[0], sizeof(double), size, fp);
+  size_t n0 = fread(&aData[0], sizeof(double), size, fp);
+  n0 = 0;
   return true;
 }
 
@@ -483,7 +487,8 @@ bool LoadNumpy_1DimF
   if( fp == NULL ) { return false; }
   
   NPY npy;
-  fread(&npy, sizeof(npy), 1, fp);
+  size_t n0 = fread(&npy, sizeof(npy), 1, fp);
+  n0 = 0;
   
   { // check magic string
     unsigned char sMagic[7] = {0x93,'N','U','M','P','Y'};
@@ -497,7 +502,8 @@ bool LoadNumpy_1DimF
   ndim0 = 0;
   { // format
     char buff[256];
-    fread(buff, 1, npy.header_len, fp);
+    size_t n1 = fread(buff, 1, npy.header_len, fp);
+    n1 = 0;
     //    std::cout << buff << "###" << strlen(buff) << std::endl;
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     //    for(std::map<std::string, std::string>::iterator itr=map0.begin();itr!=map0.end();++itr){
@@ -515,6 +521,7 @@ bool LoadNumpy_1DimF
   double size = ndim0;
   aData.resize(size);
   //  double* aRes = (double*)malloc( sizeof(double)*size );
-  fread(&aData[0], sizeof(float), size, fp);
+  size_t n2 = fread(&aData[0], sizeof(float), size, fp);
+  n2 = 0;
   return true;
 }

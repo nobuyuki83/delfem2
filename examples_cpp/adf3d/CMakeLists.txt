@@ -21,17 +21,16 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  main.cpp
-  ${DELFEM2_SRC}/vec3.cpp                ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/msh.cpp
-  ${DELFEM2_SRC}/mshio.cpp
+  ${DELFEM2_INC}/vec3.h          ${DELFEM2_SRC}/vec3.cpp                
+  ${DELFEM2_INC}/msh.h           ${DELFEM2_SRC}/msh.cpp                
+  ${DELFEM2_INC}/mshio.h         ${DELFEM2_SRC}/mshio.cpp                  
+  ${DELFEM2_INC}/adf.h           ${DELFEM2_SRC}/adf.cpp                
+  ${DELFEM2_INC}/sdf.h           ${DELFEM2_SRC}/sdf.cpp                
+  ${DELFEM2_INC}/hash3d.h        ${DELFEM2_SRC}/hash3d.cpp                
   
-  ${DELFEM2_SRC}/adf.cpp
-  ${DELFEM2_SRC}/sdf.cpp
-  ${DELFEM2_SRC}/hash3d.cpp
-
-  ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_SRC}/gl_camera.cpp           ${DELFEM2_INC}/gl_camera.h
+  ${DELFEM2_INC}/gl_funcs.h      ${DELFEM2_SRC}/gl_funcs.cpp                
+  ${DELFEM2_INC}/gl_camera.h     ${DELFEM2_SRC}/gl_camera.cpp                
+  main.cpp  
 )
 
 target_link_libraries(${PROJECT_NAME}

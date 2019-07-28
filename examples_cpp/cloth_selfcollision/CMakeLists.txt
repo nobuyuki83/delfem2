@@ -20,22 +20,21 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  main.cpp
-  ${DELFEM2_SRC}/vec3.cpp                  ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/mshtopo.cpp               ${DELFEM2_INC}/mshtopo.h
-  ${DELFEM2_SRC}/bvh.cpp                   ${DELFEM2_INC}/bvh.h
-  ${DELFEM2_SRC}/collisiontri_v3bvh.cpp    ${DELFEM2_INC}/collisiontri_v3bvh.h
+  ${DELFEM2_INC}/vec3.h                  ${DELFEM2_SRC}/vec3.cpp                    
+  ${DELFEM2_INC}/mshtopo.h               ${DELFEM2_SRC}/mshtopo.cpp                    
+  ${DELFEM2_INC}/bvh.h                   ${DELFEM2_SRC}/bvh.cpp                    
+  ${DELFEM2_INC}/fem_ematrix.h           ${DELFEM2_SRC}/fem_ematrix.cpp                    
+  ${DELFEM2_INC}/matrix_sparse.h         ${DELFEM2_SRC}/matrix_sparse.cpp                    
+  
+  ${DELFEM2_INC}/collisiontri_v3bvh.h    ${DELFEM2_SRC}/collisiontri_v3bvh.cpp                    
+  ${DELFEM2_INC}/fem.h                   ${DELFEM2_SRC}/fem.cpp                    
+  ${DELFEM2_INC}/ilu_sparse.h            ${DELFEM2_SRC}/ilu_sparse.cpp                    
+  
+  ${DELFEM2_INC}/gl_funcs.h              ${DELFEM2_SRC}/gl_funcs.cpp                    
+  ${DELFEM2_INC}/gl_camera.h             ${DELFEM2_SRC}/gl_camera.cpp                    
 
-  ${DELFEM2_SRC}/fem_ematrix.cpp
-  ${DELFEM2_SRC}/fem.cpp
-  ${DELFEM2_SRC}/matrix_sparse.cpp
-  ${DELFEM2_SRC}/ilu_sparse.cpp
-
-  ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_SRC}/gl_camera.cpp             ${DELFEM2_INC}/gl_camera.h
-
-  ${DELFEM2_SRC}/cloth_selfcollision.cpp   ${DELFEM2_INC}/cloth_selfcollision.h
-  ${DELFEM2_INC}/cloth_internal.h  
+  ${DELFEM2_INC}/cloth_selfcollision.h   ${DELFEM2_SRC}/cloth_selfcollision.cpp
+  ${DELFEM2_INC}/cloth_internal.h        
   main.cpp
 )
 

@@ -20,10 +20,9 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
-add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/gl_camera.cpp      ${DELFEM2_INC}/gl_camera.h
-  ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h          
-  
+add_executable(${PROJECT_NAME}  
+  ${DELFEM2_INC}/gl_camera.h  ${DELFEM2_SRC}/gl_camera.cpp
+  ${DELFEM2_INC}/gl_color.h   ${DELFEM2_SRC}/gl_color.cpp            
   main.cpp  
 )
 

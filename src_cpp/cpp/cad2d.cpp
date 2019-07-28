@@ -525,3 +525,65 @@ void CMesher_Cad2D::Meshing
 //  std::cout << "num. comp." << nvtx << " " << nedge << " " << nface << std::endl;
   //  MeshTri2D_Export(aXY,aTri, aVec2,aETri);
 }
+
+
+std::vector<int> CMesher_Cad2D::IndPoint_IndEdgeArray
+(const std::vector<int>& aIndEd,
+ const CCad2D& cad2d)
+{
+  //    std::cout << nvtx << " " << nedge << " " << nface << std::endl;
+  std::vector<int> aflg(nvtx+nedge+nface,0);
+  {
+    for(unsigned int iie=0;iie<aIndEd.size();++iie){
+      const unsigned int iedge = aIndEd[iie]; assert(iedge<nedge);
+      aflg[iedge+nvtx] = 1;
+      {
+        const std::vector<int>& aIV = cad2d.Ind_Vtx_Edge(iedge);
+        for(unsigned int iiv=0;iiv<aIV.size();++iiv){
+          const int iv0 = aIV[iiv];
+          aflg[iv0] = 1;
+        }
+      }
+    }
+  }
+  std::vector<int> res;
+  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
+    int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
+    if( aflg[iflg] == 1 ){ res.push_back(ip); }
+  }
+  return res;
+}
+
+
+std::vector<int> CMesher_Cad2D::IndPoint_IndFaceArray
+(const std::vector<int>& aIndFc,
+ const CCad2D& cad2d)
+{
+  std::vector<int> aflg(nvtx+nedge+nface,0);
+  {
+    for(unsigned int iif=0;iif<aIndFc.size();++iif){
+      const unsigned int iface = aIndFc[iif]; assert(iface<nface);
+      aflg[nvtx+nedge+iface] = 1;
+      {
+        const std::vector<std::pair<int,bool> >& aIE = cad2d.Ind_Edge_Face(iface);
+        for(unsigned int iie=0;iie<aIE.size();++iie){
+          const int ie0 = aIE[iie].first;
+          aflg[nvtx+ie0] = 1;
+        }
+      }
+      {
+        const std::vector<int>& aIV = cad2d.Ind_Vtx_Face(iface);
+        for(unsigned int iiv=0;iiv<aIV.size();++iiv){
+          const int iv0 = aIV[iiv];
+          aflg[iv0] = 1;
+        }
+      }
+    }
+  }
+  std::vector<int> res;
+  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
+    int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
+    if( aflg[iflg] == 1 ){ res.push_back(ip); }
+  }
+  return res;
+  }

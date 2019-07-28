@@ -20,17 +20,17 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/vec2.cpp                ${DELFEM2_INC}/vec2.h
-  ${DELFEM2_SRC}/vec3.cpp                ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/quat.cpp                ${DELFEM2_INC}/quat.h
-
-  ${DELFEM2_SRC}/gl_camera.cpp           ${DELFEM2_INC}/gl_camera.h
-  ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_SRC}/gl_v23q.cpp              ${DELFEM2_INC}/gl_v23q.h
-  ${DELFEM2_SRC}/gl_camera.cpp           ${DELFEM2_INC}/gl_camera.h
-
-  ${DELFEM2_SRC}/gl_color.cpp            ${DELFEM2_INC}/gl_color.h            
-
+  ${DELFEM2_INC}/vec2.h           ${DELFEM2_SRC}/vec2.cpp                                     
+  ${DELFEM2_INC}/vec3.h           ${DELFEM2_SRC}/vec3.cpp                                     
+  ${DELFEM2_INC}/quat.h           ${DELFEM2_SRC}/quat.cpp                                     
+  
+  ${DELFEM2_INC}/gl_camera.h      ${DELFEM2_SRC}/gl_camera.cpp                                     
+  ${DELFEM2_INC}/gl_funcs.h       ${DELFEM2_SRC}/gl_funcs.cpp             
+  ${DELFEM2_INC}/gl_v23q.h        ${DELFEM2_SRC}/gl_v23q.cpp                                     
+  ${DELFEM2_INC}/gl_camera.h      ${DELFEM2_SRC}/gl_camera.cpp                                     
+  
+  ${DELFEM2_INC}/gl_color.h       ${DELFEM2_SRC}/gl_color.cpp   
+                        
   main.cpp
 )
 
