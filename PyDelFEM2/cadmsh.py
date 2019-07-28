@@ -10,7 +10,7 @@ import numpy, os
 import OpenGL.GL as gl
 from typing import Tuple, List
 
-from .c_core import CppCad2D, CppMeshDynTri2D, CppVoxelGrid, CppMapper, AABB3
+from .c_core import CppCad2D, CppMeshDynTri2D, CppMesher_Cad2D, CppVoxelGrid, CppMapper, AABB3
 from .c_core import TRI, QUAD, HEX, TET, LINE
 from .c_core import \
   meshquad2d_grid, \
@@ -21,7 +21,7 @@ from .c_core import \
   meshdyntri2d_initialize
 from .c_core import meshtri3d_read_ply, meshtri3d_read_obj, meshtri3d_read_nastran, meshtri3d_write_obj
 from .c_core import mvc
-from .c_core import meshDynTri2D_CppCad2D, setXY_MeshDynTri2D
+from .c_core import setXY_MeshDynTri2D
 from .c_core import cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
 from .c_core import copyMeshDynTri2D
 from .c_core import numpyXYTri_MeshDynTri2D
@@ -244,32 +244,6 @@ class VoxelGrid:
 
 ###########################################################################
 
-class MapCadMesh2D():
-  def __init__(self,ccad:CppCad2D,flg_pnt:numpy.ndarray,flg_tri:numpy.ndarray):
-    self.ccad = ccad
-    self.flg_pnt = flg_pnt
-    self.flg_tri = flg_tri
-
-  def npIndFace(self,iface) -> numpy.ndarray:
-    np_ind_face = numpy.where(self.flg_pnt == self.ccad.nvtx() + self.ccad.nedge() + iface)[0]
-    for ie, dir in self.ccad.ind_edge_face(iface):
-      np_ind_face = numpy.append(np_ind_face, numpy.where(self.flg_pnt == self.ccad.nvtx() + ie)[0])
-    for iv in self.ccad.ind_vtx_face(iface):
-      np_ind_face = numpy.append(np_ind_face, numpy.where(self.flg_pnt == iv)[0])
-    return np_ind_face
-
-  def npIndEdge(self,list_ind_edge) -> numpy.ndarray:
-    if isinstance(list_ind_edge, int):
-      list_ind_edge = [list_ind_edge]
-    np_ind_edge = numpy.zeros((0),dtype=numpy.uint32)
-    for ie in list_ind_edge:
-      np0 = numpy.where(self.flg_pnt == self.ccad.nvtx() + ie)[0]
-      np_ind_edge = numpy.append(np_ind_edge,np0)
-      list_iv = self.ccad.ind_vtx_edge(ie)
-      for iv in list_iv:
-        np_ind_edge = numpy.append(np_ind_edge,iv)
-    return np_ind_edge
-
 
 class Cad2D():
   def __init__(self):
@@ -297,16 +271,6 @@ class Cad2D():
     self.ccad.add_vtx_edge(pos[0],pos[1],iedge)
     self.ccad.check()
 
-  def mesh(self,edge_len=0.05) -> Tuple[Mesh,MapCadMesh2D]:
-    cdmsh, flg_pnt, flg_tri = meshDynTri2D_CppCad2D(self.ccad, edge_len)
-    np_pos, np_elm = numpyXYTri_MeshDynTri2D(cdmsh)
-    dmesh = MeshDynTri2D()
-    dmesh.cdmsh = cdmsh
-    dmesh.np_pos = np_pos
-    dmesh.np_elm = np_elm
-    dmesh.elem_type = TRI
-    return dmesh, MapCadMesh2D(self.ccad,flg_pnt,flg_tri)
-
   def set_edge_type(self, iedge:int, type:int, param:List[float]):
     self.ccad.set_edge_type(iedge,type,param)
 
@@ -332,6 +296,8 @@ class Cad2D():
 
 ######################
 
+######################
+
 class CadMesh2D(Cad2D):
   def __init__(self,edge_length:float):
     super().__init__()
@@ -341,6 +307,7 @@ class CadMesh2D(Cad2D):
     self.map_cad2msh = None # this object reallocate
     self.listW = list()
     self.is_sync_mesh = True
+    self.mesher = Mesher_Cad2D()
 
   def draw(self):
     self.ccad.draw()
@@ -370,13 +337,11 @@ class CadMesh2D(Cad2D):
 #        self.remesh()
 
   def remesh(self):
-    self.dmsh.cdmsh, flg_pnt, flg_tri = meshDynTri2D_CppCad2D(self.ccad, self.edge_length)
-    self.dmsh.np_pos, self.dmsh.np_elm = numpyXYTri_MeshDynTri2D(self.dmsh.cdmsh)
-    self.map_cad2msh = MapCadMesh2D(self.ccad,flg_pnt,flg_tri)
+    self.mesher.meshing(self,self.dmsh)
     ####
     self.listW.clear()
     for iface in range(self.ccad.nface()):
-      npIndPoint_face = self.map_cad2msh.npIndFace(iface)
+      npIndPoint_face = self.mesher.npIndFace(iface,self)
       npPosPoint_face = self.dmsh.np_pos[npIndPoint_face]
       np_xy_bound = numpy.array(self.ccad.xy_vtxctrl_face(iface)).reshape([-1, 2])
       W = mvc(npPosPoint_face, np_xy_bound)
@@ -396,6 +361,38 @@ class CadMesh2D(Cad2D):
   def set_edge_type(self, iedge:int, type:int, param:List[float]):
     super().set_edge_type(iedge,type,param)
     self.remesh()
+
+#####################################################
+
+
+class Mesher_Cad2D():
+  def __init__(self,edge_length=0.01):
+    self.ege_length = edge_length
+    self.cmshr = CppMesher_Cad2D()
+
+  def npIndFace(self,list_iface,cad:Cad2D) -> numpy.ndarray:
+    if isinstance(list_iface, int):
+      list_iface = [list_iface]
+    list_points = self.cmshr.points_on_faces(list_iface,cad.ccad)
+    return numpy.array(list_points,dtype=numpy.int32)
+
+  def npIndEdge(self,list_iedge,cad:Cad2D) -> numpy.ndarray:
+    if isinstance(list_iedge, int):
+      list_iedge = [list_iedge]
+    list_points = self.cmshr.points_on_edges(list_iedge,cad.ccad)
+    return numpy.array(list_points,dtype=numpy.int32)
+
+  def meshing(self,cad:Cad2D,dmesh=None):
+    cdmsh = CppMeshDynTri2D()
+    self.cmshr.meshing(cdmsh,cad.ccad)
+    np_pos, np_elm = numpyXYTri_MeshDynTri2D(cdmsh)
+    if dmesh is None:
+      dmesh = MeshDynTri2D()
+    dmesh.cdmsh = cdmsh
+    dmesh.np_pos = np_pos
+    dmesh.np_elm = np_elm
+    dmesh.elem_type = TRI
+    return dmesh
 
 #####################################################
 

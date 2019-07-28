@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 set(PROJ_NAME c_core)
 
 project(${PROJ_NAME})
-set(PYBIND11_CPP_STANDARD -std=c++14)
+set(PYBIND11_CPP_STANDARD -std=c++11)
 
 if(MSVC)
 set(CMAKE_CXX_FLAGS "/W4 /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 /wd4505 -O2")
@@ -76,15 +76,17 @@ file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}" NATIVE_PROJECT_SOURCE_DIR)
 if(WIN32)
 add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
-  COMMAND copy "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"   ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
+  COMMAND copy 
+    "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"   
+    ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
   COMMENT "Post Event"
 )
 else()
 add_custom_command(TARGET ${PROJ_NAME}
 POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy 
-  ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_core.*
-  ${PROJECT_SOURCE_DIR}/../../PyDelFEM2/
+    ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_core.*
+    ${PROJECT_SOURCE_DIR}/../../PyDelFEM2/
   COMMENT "Post Event"
 )
 endif()

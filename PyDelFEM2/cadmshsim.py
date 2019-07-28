@@ -33,7 +33,7 @@ class CadMesh2D_FEMPoisson(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.fem.updated_topology(self.dmsh)
-    npIdP = self.map_cad2msh.npIndEdge(self.list_cad_edge_fix)
+    npIdP = self.mesher.npIndEdge(self.list_cad_edge_fix,self)
     self.fem.value[npIdP] = 0.0
     self.fem.ls.bc[npIdP] = 1
     self.fem.solve()
@@ -69,7 +69,6 @@ class CadMesh2D_FEMSolidLinearStatic(CadMesh2D):
     self.fem = FEM_SolidLinearStatic()
     self.vis = VisFEM_ColorContour(self.fem, name_disp="vec_val")
     self.list_cad_edge_fix = [3]
-    self.remesh()
 
   def draw(self):
     self.ccad.draw()
@@ -82,7 +81,7 @@ class CadMesh2D_FEMSolidLinearStatic(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.fem.updated_topology(self.dmsh)
-    npIdP = self.map_cad2msh.npIndEdge(3)
+    npIdP = self.mesher.npIndEdge(3,self)
     self.fem.vec_val[npIdP] = 0.0
     self.fem.ls.bc[npIdP] = 1
     self.fem.solve()
@@ -137,7 +136,7 @@ class CadMesh2D_PBD(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.pbd.updated_topology(self.dmsh)
-    npIdP = self.map_cad2msh.npIndEdge(0)
+    npIdP = self.mesher.npIndEdge(0,self)
     self.pbd.vec_bc[npIdP] = 1
 #    self.fvs = FieldValueSetter("0.3*sin(2*t)", self.pbd.vec_val, 0,
 #                                mesh=self.dmsh, npIdP=npIdP, dt=self.pbd.dt)
@@ -162,7 +161,7 @@ class CadMesh2D_PBDCloth(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.pbd.updated_topology(self.dmsh)
-    npIdP = self.map_cad2msh.npIndEdge(3)
+    npIdP = self.mesher.npIndEdge(3,self)
     self.pbd.bc[npIdP] = 1
     self.vis_mesh = Mesh(np_pos=self.pbd.vec_val,np_elm=self.dmsh.np_elm)
 

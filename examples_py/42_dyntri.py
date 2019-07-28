@@ -12,15 +12,18 @@ import PyDelFEM2.gl._glfw
 def main_CppMeshDynTri2D_0():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
-  cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(cad.ccad,0.1)
-  cdmesh.check()
-  dfm2.gl._glfw.winDraw3d([cdmesh,dfm2.gl.AxisXYZ()],winsize=(400,300))
+  mesher = dfm2.Mesher_Cad2D()
+  dmesh = mesher.meshing(cad)
+  dmesh.cdmsh.check()
+  dfm2.gl._glfw.winDraw3d([dmesh.cdmsh,dfm2.gl.AxisXYZ()],winsize=(400,300))
 
 
 def main_CppMeshDynTri2D_1():
-  ccad = dfm2.CppCad2D()
-  ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  cdmesh,_,_ = dfm2.meshDynTri2D_CppCad2D(ccad,0.3)
+  cad = dfm2.Cad2D()
+  cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
+  mesher = dfm2.Mesher_Cad2D()
+  dmesh = mesher.meshing(cad)
+  cdmesh = dmesh.cdmsh
   cdmesh.check()
   for itr in range(10):
     itri0 = random.randint(0,cdmesh.ntri()-1)
@@ -65,7 +68,8 @@ def main_MeshDynTri2D_1():
 def main_MeshDynTri2D_2():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
-  dmsh,_ = cad.mesh(0.1)
+  mesher = dfm2.Mesher_Cad2D()
+  dmsh = mesher.meshing(cad)
   ####
   fem = dfm2.FEM_Poisson(source=1.0)
   fem.updated_topology(dmsh)
@@ -89,8 +93,8 @@ def main_MeshDynTri2D_2():
 def main_MeshDynTri2D_3():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-  dmsh = dfm2.MeshDynTri2D()
-  dmsh.set_mesh(cad.mesh(0.1)[0])
+  mesher = dfm2.Mesher_Cad2D()
+  dmsh = mesher.meshing(cad)
   fem = dfm2.FEM_Cloth()
   fem.updated_topology(dmsh)
   npIdP = cad.points_edge([0], dmsh.np_pos)

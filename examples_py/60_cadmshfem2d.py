@@ -12,7 +12,7 @@ import PyDelFEM2.cadmshsim
 def mesh():
   cmf = dfm2.CadMesh2D(edge_length=0.1)
   cmf.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-  cmf.set_edge_type(0,1,[0.2, 0.3, -0.2, 0.3])
+  cmf.set_edge_type(0,1,[0.2, 0.0, -0.2, 0.0])
   dfm2.gl._glfw.winDraw3d([cmf])
 
 def poisson():

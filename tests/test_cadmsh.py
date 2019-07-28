@@ -49,12 +49,14 @@ class Test_Cad2D(unittest.TestCase):
   def test3(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-    msh,map_cad2msh = cad.mesh(0.02)
-    self.assertEqual(msh.np_pos.shape[1],2)
+    mesher = dfm2.Mesher_Cad2D()
+    dmsh = mesher.meshing(cad)
+#    msh,map_cad2msh = cad.mesh(0.02)
+    self.assertEqual(dmsh.np_pos.shape[1],2)
     np_xy_bound = numpy.array(cad.ccad.xy_vtxctrl_face(0)).reshape([-1, 2])
-    W = dfm2.mvc(msh.np_pos, np_xy_bound)
+    W = dfm2.mvc(dmsh.np_pos, np_xy_bound)
     self.assertEqual(W.ndim,2)
-    self.assertEqual(W.shape[0],msh.np_pos.shape[0])
+    self.assertEqual(W.shape[0],dmsh.np_pos.shape[0])
     self.assertEqual(W.shape[1],len(cad.ccad.xy_vtxctrl_face(0))/2)
     self.assertLess(numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0]))),1.0e-3)
 
@@ -108,7 +110,8 @@ class Test_CppMeshDynTri3D(unittest.TestCase):
   def test0(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
-    mesh,map_cad2mesh = cad.mesh(0.1)
+    mesher = dfm2.Mesher_Cad2D()
+    mesh = mesher.meshing(cad)
     dmesh = dfm2.CppMeshDynTri3D()
     dfm2.meshdyntri3d_initialize(dmesh, mesh.np_pos, mesh.np_elm)
     dmesh.check()
@@ -116,7 +119,8 @@ class Test_CppMeshDynTri3D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
-    mesh,map_cad2mesh = cad.mesh(0.2)
+    mesher = dfm2.Mesher_Cad2D()
+    mesh = mesher.meshing(cad)
     dmesh = dfm2.CppMeshDynTri3D()
     dfm2.meshdyntri3d_initialize(dmesh, mesh.np_pos, mesh.np_elm)
     dmesh.check()
