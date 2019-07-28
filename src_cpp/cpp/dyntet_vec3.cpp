@@ -92,7 +92,7 @@ bool MakeTetSurTet(std::vector<CETet>& tet)
 		nnode = 0;
 		for(unsigned int itet=0;itet<tet.size();itet++){
 		for(unsigned int inotet=0;inotet<4;inotet++){
-			nnode = ( tet[itet].v[inotet] > nnode ) ? tet[itet].v[inotet] : nnode;
+			nnode = ( tet[itet].v[inotet] > (int)nnode ) ? tet[itet].v[inotet] : nnode;
 		}
 		}
 		nnode += 1;
@@ -251,7 +251,7 @@ bool MakeTetSurNo(const std::vector<CETet>& tet,
 	}
 	for(unsigned int itet=0;itet<tet.size();itet++){
 		for(unsigned int inoel=0;inoel<npotet;inoel++){
-			assert( tet[itet].v[inoel] >= 0 && tet[itet].v[inoel] < npoin );
+			assert( tet[itet].v[inoel] < npoin );
 			tetsupo_ind[ tet[itet].v[inoel]+1 ]++;
 		}
 	}
@@ -1018,9 +1018,9 @@ bool CheckTet(const std::vector<CETet>& aSTet,
 {
 	std::cout << " *** CheckTet *** ";
 
-	for(int ip=0;ip<aPo3D.size();ip++){
+	for(unsigned int ip=0;ip<aPo3D.size();ip++){
 		if( aPo3D[ip].e!=-1 ){
-			if( aPo3D[ip].e < 0 || (int)aPo3D[ip].e >= aSTet.size() ){
+			if( aPo3D[ip].e < 0 || aPo3D[ip].e >= (int)aSTet.size() ){
 				std::cout << ip << " " << aPo3D[ip].e << " " << aSTet.size() << std::endl;
 			}
 			if( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] != ip ){
@@ -1028,8 +1028,8 @@ bool CheckTet(const std::vector<CETet>& aSTet,
 			}
 		}
 		if( aPo3D[ip].e!=-1 ){
-			assert( aPo3D[ip].e >= 0 && (int)aPo3D[ip].e < aSTet.size()    );
-			assert( aPo3D[ip].poel >= 0 && (int)aPo3D[ip].poel < 4       );
+			assert( aPo3D[ip].e >= 0 && aPo3D[ip].e < (int)aSTet.size()    );
+			assert( aPo3D[ip].poel >= 0 && aPo3D[ip].poel < 4       );
 			assert( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] == ip );
 		}
 	}
@@ -1041,7 +1041,7 @@ bool CheckTet(const std::vector<CETet>& aSTet,
 		for(int inotet=0;inotet<4;inotet++){
 			int ino = aSTet[itet].v[inotet];
       if( ino == -1 ) continue;
-			assert( ino < aPo3D.size() );
+			assert( ino < (int)aPo3D.size() );
 		}
 		if( TetVolume(itet,aSTet,aPo3D) < 1.0e-15 ){
 			std::cout << " negative " << itet << " " << TetVolume(itet,aSTet,aPo3D) << std::endl;
@@ -1051,7 +1051,7 @@ bool CheckTet(const std::vector<CETet>& aSTet,
 	
 	std::cout << "v ";
 	
-	for(int itet=0;itet<aSTet.size();itet++){
+	for(unsigned int itet=0;itet<aSTet.size();itet++){
 		for(int ifatet=0;ifatet<4;ifatet++){
 			if( aSTet[itet].s[ifatet] == -1 ){ continue; }
 			const int adj = aSTet[itet].s[ifatet];
@@ -1267,7 +1267,7 @@ std::vector<int>& tmp_buffer)
 #endif
   }
   { // put vertex index new
-    for (int inew = 0; inew<aNew.size(); ++inew){
+    for (unsigned int inew = 0; inew<aNew.size(); ++inew){
       const int it0 = aNew[inew].it_old;
       const int ift0 = aNew[inew].ift_old;
       const int ift1 = noelTetFace[ift0][0];
@@ -1280,10 +1280,10 @@ std::vector<int>& tmp_buffer)
   }
 #ifndef NDEBUG
   { // assertion old is in, else is out
-    for(int it=0;it<aSTet.size();++it){
+    for(unsigned int it=0;it<aSTet.size();++it){
       if( !aSTet[it].isActive() ) continue;
       bool is_old = false;
-      for(int iold=0;iold<aOld.size();++iold){
+      for(unsigned int iold=0;iold<aOld.size();++iold){
         if( it == aOld[iold].it_old ){
           is_old = true;
           break;
@@ -1298,7 +1298,7 @@ std::vector<int>& tmp_buffer)
   }
 #endif
   { // find adjancy of new
-    for (int inew = 0; inew<aNew.size(); ++inew){
+    for (unsigned int inew = 0; inew<aNew.size(); ++inew){
       for (int iedtri = 0; iedtri<3; ++iedtri){
         int i0 = aNew[inew].iv[(iedtri+1)%3];
         int i1 = aNew[inew].iv[(iedtri+2)%3];
@@ -1322,7 +1322,7 @@ std::vector<int>& tmp_buffer)
     }
 #ifndef NDEBUG
     {// assertion relations between news
-      for (int inew = 0; inew<aNew.size(); ++inew){
+      for (unsigned int inew = 0; inew<aNew.size(); ++inew){
         for (int iedtri = 0; iedtri<3; ++iedtri){
           int iv0 = aNew[inew].iv[(iedtri+1)%3];
           int iv1 = aNew[inew].iv[(iedtri+2)%3];
@@ -1364,7 +1364,7 @@ std::vector<int>& tmp_buffer)
     }
   }
   ///////////////////////////
-  for (int inew = 0; inew<aNew.size(); ++inew){
+  for (unsigned int inew = 0; inew<aNew.size(); ++inew){
     int it_new = aNew[inew].it_new;
     assert(it_new<aSTet.size());
     int iold = aNew[inew].iold;
@@ -1441,7 +1441,7 @@ std::vector<int>& tmp_buffer)
   }
   
 #ifndef NDEBUG
-  for(int ip=0;ip<aPo3D.size();ip++){
+  for(unsigned int ip=0;ip<aPo3D.size();ip++){
     if( aPo3D[ip].e==-1 ){ continue; }
     if( aPo3D[ip].e < 0 || (int)aPo3D[ip].e >= aSTet.size() ){
       std::cout << aPo3D[ip].e << " " << aSTet.size() << "   " << ip << " " << aPo3D.size() << std::endl;
@@ -1453,7 +1453,7 @@ std::vector<int>& tmp_buffer)
 #endif
   
   /////
-  for (int iold = 0; iold<aOld.size(); ++iold){
+  for (unsigned int iold = 0; iold<aOld.size(); ++iold){
     const int it0 = aOld[iold].it_old;
     tmp_buffer[it0*4+0] = -1;
     tmp_buffer[it0*4+1] = -1;
@@ -1867,14 +1867,14 @@ bool Swap4Elared
   const unsigned int nod = elared.nod;
   const unsigned int nou = elared.nou;
 
-	assert( nod == tet[iold0].v[noel0d] );
-	assert( nou == tet[iold0].v[noel0u] );
-	assert( nod == tet[iold1].v[noel1d] );
-	assert( nou == tet[iold1].v[noel1u] );
-	assert( nod == tet[iold2].v[noel2d] );
-	assert( nou == tet[iold2].v[noel2u] );
-	assert( nod == tet[iold3].v[noel3d] );
-	assert( nou == tet[iold3].v[noel3u] );
+	assert( (int)nod == tet[iold0].v[noel0d] );
+	assert( (int)nou == tet[iold0].v[noel0u] );
+	assert( (int)nod == tet[iold1].v[noel1d] );
+	assert( (int)nou == tet[iold1].v[noel1u] );
+	assert( (int)nod == tet[iold2].v[noel2d] );
+	assert( (int)nou == tet[iold2].v[noel2u] );
+	assert( (int)nod == tet[iold3].v[noel3d] );
+	assert( (int)nou == tet[iold3].v[noel3u] );
 
 	const int inew_u0 = iold0;
 	const int inew_d0 = iold1;
@@ -2827,7 +2827,7 @@ bool AddPointTet_Face
 			const unsigned int* rel = tetRel[ old_i.f[ino2_i] ];
 			ref_tet.f[0] = noel2Rel[ rel[ino2_i]*4 + rel[ino0_i] ];
 			assert( ref_tet.f[0] >= 0 && ref_tet.f[0] < 12 );
-			assert( old_i.s[ino2_i] < aTet.size() );
+			assert( old_i.s[ino2_i] < (int)aTet.size() );
 			aTet[ old_i.s[ino2_i] ].s[ rel[ino2_i] ] = itet0;
 			aTet[ old_i.s[ino2_i] ].f[ rel[ino2_i] ] = invTetRel[ ref_tet.f[0] ];
 		}
@@ -2846,7 +2846,7 @@ bool AddPointTet_Face
 			const unsigned int* rel = tetRel[ old_i.f[ino1_i] ];
 			ref_tet.f[0] = noel2Rel[ rel[ino1_i]*4 + rel[ino0_i] ];
 			assert( ref_tet.f[0] >= 0 && ref_tet.f[0] < 12 );
-			assert( old_i.s[ino1_i] < aTet.size() );
+			assert( old_i.s[ino1_i] < (int)aTet.size() );
 			aTet[ old_i.s[ino1_i] ].s[ rel[ino1_i] ] = itet1;
 			aTet[ old_i.s[ino1_i] ].f[ rel[ino1_i] ] = invTetRel[ ref_tet.f[0] ];
 		}
@@ -2865,7 +2865,7 @@ bool AddPointTet_Face
 			const unsigned int* rel = tetRel[ old_i.f[ino3_i] ];
 			ref_tet.f[0] = noel2Rel[ rel[ino3_i]*4 + rel[ino0_i] ];
 			assert( ref_tet.f[0] >= 0 && ref_tet.f[0] < 12 );
-			assert( old_i.s[ino3_i] < aTet.size() );
+			assert( old_i.s[ino3_i] < (int)aTet.size() );
 			aTet[ old_i.s[ino3_i] ].s[ rel[ino3_i] ] = itet2;
 			aTet[ old_i.s[ino3_i] ].f[ rel[ino3_i] ] = invTetRel[ ref_tet.f[0] ];
 		}
