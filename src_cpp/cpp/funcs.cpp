@@ -461,7 +461,7 @@ bool LoadNumpy_2DimF
   int size = ndim0*ndim1;
   aData.resize(size);
   size_t n0 = fread(&aData[0], sizeof(float), size, fp);
-  if( n0 != size ){ return false; }
+  if( (int)n0 != size ){ return false; }
   return true;
 }
 
@@ -475,7 +475,7 @@ bool LoadNumpy_2DimD
   int size = ndim0*ndim1;
   aData.resize(size);
   size_t n0 = fread(&aData[0], sizeof(double), size, fp);
-  if( n0 != size ){ return false; }
+  if( (int)n0 != size ){ return false; }
   return true;
 }
 
