@@ -170,7 +170,7 @@ void CCad3D_Face::Initialize
   std::vector<double> aXYZ_B0;
   std::vector<double> aXYZ_B1;
   const int ne = (int)aIE.size();
-  for(int iie=0;iie<aIE.size();++iie){
+  for(unsigned int iie=0;iie<aIE.size();++iie){
     int ie0 = aIE[iie].first;
     assert( ie0>=0 && ie0<aEdge.size() );
     const CCad3D_Edge& e0 = aEdge[ie0];
@@ -223,7 +223,7 @@ void CCad3D_Face::Initialize
     aXY_B0.push_back((p-cg)*axis_y);
   }
   std::vector<double> aXY_B1;
-  for(int ixyz=0;ixyz<aXYZ_B1.size()/3;++ixyz){
+  for(unsigned int ixyz=0;ixyz<aXYZ_B1.size()/3;++ixyz){
     CVector3 p(aXYZ_B1[ixyz*3+0],aXYZ_B1[ixyz*3+1],aXYZ_B1[ixyz*3+2]);
     aXY_B1.push_back((p-cg)*axis_x);
     aXY_B1.push_back((p-cg)*axis_y);
@@ -279,7 +279,7 @@ void CCad3D_Face::MovePoints
  const std::vector<CCad3D_Edge>& aEdge)
 {
   aXYZ.resize(aPInfo.size()*3);
-  for(int ip=0;ip<aPInfo.size();++ip){
+  for(unsigned int ip=0;ip<aPInfo.size();++ip){
     if( aPInfo[ip].itype == 0 ){
       int iv0 = aPInfo[ip].iv;
       aPInfo[ip].n = aVertex[iv0].norm;
@@ -315,7 +315,7 @@ void CCad3D_Face::MovePoints
       aEdge[aIE[2].first].getVtxPos(aIE[2].second,1),
       aEdge[aIE[2].first].getVtxPos(aIE[2].second,2),
     };
-    for(int ip=0;ip<aPInfo.size();++ip){
+    for(unsigned int ip=0;ip<aPInfo.size();++ip){
       if( aPInfo[ip].itype != 2 ){ continue; }
       const std::vector<double>& aW1 = aPInfo[ip].aW1;
       assert( aW1.size() == 3 );
@@ -357,7 +357,7 @@ void CCad3D_Face::MovePoints
     }
   }
   else{
-    for(int ip=0;ip<aPInfo.size();++ip){
+    for(unsigned int ip=0;ip<aPInfo.size();++ip){
       if( aPInfo[ip].itype != 2 ){ continue; }
       aXYZ[ip*3+0] = 0;
       aXYZ[ip*3+1] = 0;
@@ -420,7 +420,7 @@ int AddPointEdge
   const int iv_new = (int)aVertex.size();
   {
     CVector3 nv;
-    for (int ifc = 0; ifc<aFace.size(); ++ifc){       
+    for (unsigned int ifc = 0; ifc<aFace.size(); ++ifc){
       const CCad3D_Face& fc = aFace[ifc];       
       for (int ie = 0; ie<fc.aIE.size(); ++ie){
         if (fc.aIE[ie].first!=ie_div) continue;         
@@ -451,9 +451,9 @@ int AddPointEdge
   aEdge.push_back( CCad3D_Edge(iv_new,iv1,aEdge[ie_div].is_sim,aEdge[ie_div].inorm) );
   aEdge[ie_new].Initialize(aVertex,elen);
   
-  for(int ifc=0;ifc<aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
     CCad3D_Face& fc = aFace[ifc];
-    for(int ie=0;ie<fc.aIE.size();++ie){
+    for(unsigned int ie=0;ie<fc.aIE.size();++ie){
       if(fc.aIE[ie].first!=ie_div) continue;
       if(fc.aIE[ie].second){
         fc.aIE.insert(fc.aIE.begin()+ie+1,std::make_pair(ie_new,true));
@@ -491,7 +491,7 @@ void ConectEdge
     aVertex[iv0].isConst[inorm_new] = true;
     aVertex[iv1].isConst[inorm_new] = true;
   }
-  for(int iie=0;iie<aFace[iface_div].aIE.size();++iie){
+  for(unsigned int iie=0;iie<aFace[iface_div].aIE.size();++iie){
     int ie0 = aFace[iface_div].aIE[iie].first;
     int jv0 = aEdge[ie0].iv0;
     int jv1 = aEdge[ie0].iv1;
@@ -536,10 +536,10 @@ void MakeItSmooth
  std::vector<CCad3D_Edge>& aEdge,
  std::vector<CCad3D_Face>& aFace)
 {
-  for(int iv=0;iv<aVertex.size();++iv){
+  for(unsigned int iv=0;iv<aVertex.size();++iv){
     aVertex[iv].norm.SetZero();
   }
-  for(int ifc=0;ifc<aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
     const std::vector< std::pair<int,bool> >& aIE = aFace[ifc].aIE;
     int nIE = (int)aIE.size();
     CVector3 nf,cg; FaceCenterNormal(cg,nf,aIE,aEdge);
@@ -551,7 +551,7 @@ void MakeItSmooth
       aVertex[ipA].norm += nf;
     }
   }
-  for(int iv=0;iv<aVertex.size();++iv){
+  for(unsigned int iv=0;iv<aVertex.size();++iv){
 //    if( aVertex[iv].isConst[0] ){ aVertex[iv].norm.x = 0; }
 //    if( aVertex[iv].isConst[1] ){ aVertex[iv].norm.y = 0; }
 //    if( aVertex[iv].isConst[2] ){ aVertex[iv].norm.z = 0; }
@@ -561,10 +561,10 @@ void MakeItSmooth
     }
     aVertex[iv].norm.SetNormalizedVector();
   }
-  for(int ie=0;ie<aEdge.size();ie++){
+  for(unsigned int ie=0;ie<aEdge.size();ie++){
     aEdge[ie].MovePoints(aVertex); // ie0+0
   }
-  for(int ifc=0;ifc<aFace.size();ifc++){
+  for(unsigned int ifc=0;ifc<aFace.size();ifc++){
     aFace[ifc].MovePoints(aVertex,aEdge); // ie0+0
   }
 }
@@ -1108,7 +1108,7 @@ bool MovePointsAlongSketch
   }
   bool is_moved = false;
   std::vector<int> aIP = getPointsInEdges(aIE_picked,aEdge);
-  for(int iip=0;iip<aIP.size();++iip){
+  for(unsigned int iip=0;iip<aIP.size();++iip){
     int iv0 = aIP[iip];
     CCad3D_Vertex& v = aVertex[iv0];
     CVector2 p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
@@ -1127,10 +1127,10 @@ bool MovePointsAlongSketch
   }
   ////
   if( is_moved ){
-    for(int ie=0;ie<aEdge.size();++ie){
+    for(unsigned int ie=0;ie<aEdge.size();++ie){
       aEdge[ie].MovePoints(aVertex);
     }
-    for(int ifc=0;ifc<aFace.size();++ifc){
+    for(unsigned int ifc=0;ifc<aFace.size();++ifc){
       aFace[ifc].MovePoints(aVertex,aEdge);
     }
   }
@@ -1189,7 +1189,7 @@ void BuildTriMesh
  int isym)
 {
   std::vector<int> aIsSymVtx(aVertex.size(),0);
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     const CCad3D_Edge& e = aEdge[ie];
     if( e.is_sim ){
       assert( e.inorm == isym );
@@ -1200,7 +1200,7 @@ void BuildTriMesh
     }
   }
   aXYZ.resize(0);
-  for(int iv=0;iv<aVertex.size();++iv){
+  for(unsigned int iv=0;iv<aVertex.size();++iv){
     CCad3D_Vertex& v = aVertex[iv];
     int iq0 = (int)aXYZ.size()/3;
     aXYZ.push_back(+v.pos.x);
@@ -1224,7 +1224,7 @@ void BuildTriMesh
       aVertex[iv].iq_left = iq0+1;
     }
   }
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     CCad3D_Edge& e = aEdge[ie];
     const int iv0 = e.iv0;
     const int iv1 = e.iv1;
@@ -1299,9 +1299,9 @@ void BuildTriMesh
     }
   }
   aTri.resize(0);
-  for(int ifc=0;ifc<aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
     CCad3D_Face& fc = aFace[ifc];
-    for(int it=0;it<fc.aTri.size()/3;++it){
+    for(unsigned int it=0;it<fc.aTri.size()/3;++it){
       int ip0 = fc.aTri[it*3+0];
       int ip1 = fc.aTri[it*3+1];
       int ip2 = fc.aTri[it*3+2];

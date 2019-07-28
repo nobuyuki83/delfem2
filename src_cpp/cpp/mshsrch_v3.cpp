@@ -390,7 +390,7 @@ CPointElemSurf nearest_Point_MeshTri3D
 {
   CPointElemSurf pes;
   double min_dist = -1;
-  for(int it=0;it<aTri.size()/3;++it){
+  for(unsigned int it=0;it<aTri.size()/3;++it){
     int ip0 = aTri[it*3+0];
     int ip1 = aTri[it*3+1];
     int ip2 = aTri[it*3+2];
@@ -489,7 +489,7 @@ CPointElemSurf nearest_Point_MeshTetFace3D
   double dist_min=-1.0;
   int itf_min = -1;
   CVector3 p_min;
-  for(int itf=0;itf<aTetFaceSrf.size()/2;++itf){
+  for(unsigned int itf=0;itf<aTetFaceSrf.size()/2;++itf){
     int itet = aTetFaceSrf[itf*2+0];
     int iface = aTetFaceSrf[itf*2+1];
     const int i0 = aTet[itet*4+noelTetFace[iface][0]];

@@ -13,8 +13,6 @@
 #include "delfem2/cadtopo.h"
 #include "delfem2/dyntri_v2.h"
 
-#include "delfem2/gl_funcs.h"
-
 
 class CCad2D_VtxGeo{
 public:
@@ -144,6 +142,9 @@ public:
                                          const CCad2D& cad2d);
   std::vector<int> IndPoint_IndFaceArray(const std::vector<int>& aIndFc,
                                          const CCad2D& cad2d);
+  std::vector<int> IndPoint_IndEdge(const int ie,
+                                    bool is_end_point,
+                                    const CCad2D& cad2d);
 public:
   double edge_length;
   ////
