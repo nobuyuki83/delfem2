@@ -21,14 +21,18 @@ void PBD_Post
  const std::vector<double>& aXYZt,
  const std::vector<int>& aBCFlag)
 {
-  const unsigned int ndof = aXYZt.size();
-  assert( aBCFlag.size() == ndof );
-  assert( aXYZ.size() == ndof );
-  assert( aUVW.size() == ndof );
-  for(unsigned int idof=0;idof<ndof;++idof){
-    if( aBCFlag[idof] != 0 ) continue;
-    aUVW[idof] = (aXYZt[idof]-aXYZ[idof])/dt;
-    aXYZ[idof] = aXYZt[idof];
+  const unsigned int np = aXYZ.size()/3;
+  assert( aBCFlag.size() == np );
+  assert( aXYZ.size() == np*3 );
+  assert( aUVW.size() == np*3 );
+  for(unsigned int ip=0;ip<np;++ip){
+    if( aBCFlag[ip] != 0 ) continue;
+    aUVW[ip*3+0] = (aXYZt[ip*3+0]-aXYZ[ip*3+0])/dt;
+    aUVW[ip*3+1] = (aXYZt[ip*3+1]-aXYZ[ip*3+1])/dt;
+    aUVW[ip*3+2] = (aXYZt[ip*3+2]-aXYZ[ip*3+2])/dt;
+    aXYZ[ip*3+0] = aXYZt[ip*3+0];
+    aXYZ[ip*3+1] = aXYZt[ip*3+1];
+    aXYZ[ip*3+2] = aXYZt[ip*3+2];
   }
 }
 
@@ -41,15 +45,19 @@ void PBD_Pre3D
  const std::vector<int>& aBCFlag)
 {
   const unsigned int np = aXYZ.size()/3;
+  assert( aBCFlag.size() == np );
   assert( aUVW.size() == np*3 );
-  assert( aBCFlag.size() == np*3 );
   aXYZt.resize(np*3);
   for(unsigned int ip=0;ip<np;++ip){
-    for(int idim=0;idim<3;++idim){
-      const int idof = ip*3+idim;
-      if( aBCFlag[idof] != 0 ){ aXYZt[idof] = aXYZ[idof]; continue; }
-      aXYZt[idof] = aXYZ[idof]+dt*aUVW[idof]+dt*dt*gravity[idim];
+    if( aBCFlag[ip] != 0 ){
+      aXYZt[ip*3+0] = aXYZ[ip*3+0];
+      aXYZt[ip*3+1] = aXYZ[ip*3+1];
+      aXYZt[ip*3+2] = aXYZ[ip*3+2];
+      continue;
     }
+    aXYZt[ip*3+0] = aXYZ[ip*3+0]+dt*aUVW[ip*3+0]+dt*dt*gravity[0];
+    aXYZt[ip*3+1] = aXYZ[ip*3+1]+dt*aUVW[ip*3+1]+dt*dt*gravity[1];
+    aXYZt[ip*3+2] = aXYZ[ip*3+2]+dt*aUVW[ip*3+2]+dt*dt*gravity[2];
   }
 }
 
