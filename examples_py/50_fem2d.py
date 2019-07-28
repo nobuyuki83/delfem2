@@ -130,7 +130,8 @@ def navir_storks(cad,mesh):
 def fem_cloth():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
-  mesh,map_cad2mesh = cad.mesh(0.1)
+  mesher = dfm2.Mesher_Cad2D()
+  mesh = mesher.meshing(cad)
   ####
   fem = dfm2.FEM_Cloth()
   fem.dt = 0.08
@@ -161,7 +162,8 @@ def pbd1(cad,mesh):
 def pbd_cloth():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
-  mesh,map_cad2mesh = cad.mesh(0.1)
+  mesher = dfm2.Mesher_Cad2D()
+  mesh = mesher.meshing(cad)
   ####
   pbd = dfm2.PBD_Cloth()
   pbd.param_gravity_y = -0.1
@@ -179,8 +181,9 @@ def pbd_cloth():
 def main():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-  mesh,map_cad2mesh = cad.mesh(0.05)
-  poisson(cad,mesh,map_cad2mesh)
+  mesher = dfm2.Mesher_Cad2D()
+  mesh = mesher.meshing(cad)
+  poisson(cad,mesh,mesher)
   diffuse(cad,mesh)
   linear_solid_static(cad,mesh)
   linear_solid_dynamic(cad,mesh)
@@ -192,17 +195,20 @@ def main():
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
-  mesh,map_cad2mesh = cad.mesh(0.05)
+  mesher = dfm2.Mesher_Cad2D()
+  mesh = mesher.meshing(cad)
   poisson_ms(cad, mesh)
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesh,map_cad2mesh = cad.mesh(0.2)
+  mesher = dfm2.Mesher_Cad2D()
+  mesh = mesher.meshing(cad)
   pbd1(cad,mesh)
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
-  msh2,map_cad2mesh = cad.mesh(0.05)
+  mesher = dfm2.Mesher_Cad2D()
+  msh2 = mesher.meshing(cad)
   msh25 = dfm2.Mesh()
   msh25.set_extrude(msh2,1)
   msh25.np_pos[:,2] *= 0.05

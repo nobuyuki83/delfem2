@@ -6,7 +6,7 @@ from .c_core import MathExpressionEvaluator
 from .c_core import meshdyntri3d_initialize, isosurface
 from .c_core import cad_getPointsEdge, mvc
 
-from .c_core import meshDynTri2D_CppCad2D, CppMeshDynTri3D, CppCad2D
+from .c_core import CppMeshDynTri3D, CppCad2D
 
 
 from .fem import VisFEM_Hedgehog, VisFEM_ColorContour
@@ -23,5 +23,5 @@ from .fem import \
   FEM_StorksDynamic2D, \
   FEM_NavierStorks2D
 
-from .cadmsh import Cad2D, VoxelGrid, SDF, Mesh, CadMesh2D, MeshDynTri2D
+from .cadmsh import Cad2D, VoxelGrid, SDF, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D
 from .cadmsh import TET, TRI, HEX, QUAD

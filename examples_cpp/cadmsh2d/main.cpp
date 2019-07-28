@@ -146,41 +146,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       imode_draw = (imode_draw+1)%3;
       break;
     }
-    case 'b':
-    {
-      break;
-    }
-    case 'p':
-    {
-      break;
-    }
-    case 'e':
-    {
-//      MakeItSmooth(cad.aVertex, cad.aEdge, cad.aFace);
-      break;
-    }
-    case 'f':
-    {
-      break;
-    }
-    case 's':
-    {
-//      cad.Initialize_Sphere();
-      break;
-    }
-    case 'c':
-    {
-//      cad.Initialize_Cube();
-      break;
-    }
-    case 'n':
-    {
-      break;
-    }
-    case 't':
-    {
-      break;
-    }
   }
   ::glutPostRedisplay();
 }
@@ -214,11 +179,14 @@ int main(int argc,char* argv[])
   const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
   cad.AddPolygon(std::vector<double>(poly,poly+8));
   cad.is_draw_face = false;
-  std::vector<int> aFlgPnt, aFlgTri;
-  CMeshDynTri2D dmsh;
-  cad.Meshing(dmsh, aFlgPnt,aFlgTri,
-              0.5);
-  dmsh.Export_StlVectors(aXY, aTri);
+  {
+    std::vector<int> aFlgPnt, aFlgTri;
+    CMeshDynTri2D dmsh;
+    CMesher_Cad2D mesher;
+    mesher.edge_length = 0.5;
+    mesher.Meshing(dmsh, cad);
+    dmsh.Export_StlVectors(aXY, aTri);
+  }
   
   const int nv = 4;
   std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);

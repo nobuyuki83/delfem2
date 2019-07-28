@@ -15,7 +15,7 @@ add_subdirectory(transform_handler)
 
 add_subdirectory(adf3d)
 add_subdirectory(selfcollision_bvh)
-
+add_subdirectory(bvh_read)
 
 add_subdirectory(shader_glsl)
 add_subdirectory(offscreen)

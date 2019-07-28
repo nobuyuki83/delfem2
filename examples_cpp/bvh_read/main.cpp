@@ -15,7 +15,7 @@
 #include "delfem2/funcs.h"
 
 #include "delfem2/gl_funcs.h"
-#include "delfem2/v23_gl.h"
+#include "delfem2/gl_v23q.h"
 #include "delfem2/glut_funcs.h"
 
 #include "delfem2/rigmesh.h"
@@ -162,7 +162,7 @@ int main(int argc,char* argv[])
   
   setSomeLighting();
   
-  std::string path_bvh = "../test_inputs/walk.bvh";
+  std::string path_bvh = std::string(PATH_INPUT_DIR)+"/walk.bvh";
   std::cout << "path:" << path_bvh << std::endl;
   ReadBVH(aBone,aChannelRotTransBone,nframe,aValRotTransBone,
           path_bvh);

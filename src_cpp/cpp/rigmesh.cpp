@@ -32,11 +32,11 @@
 #include "delfem2/funcs.h" // isFileExists
 #include "delfem2/v23m3q.h"
 #include "delfem2/msh.h"
-#include "delfem2/tex.h"
 
-#include "delfem2/funcs_gl.h"
-#include "delfem2/color_gl.h"
-#include "delfem2/v23q_gl.h"
+#include "delfem2/gl_tex.h"
+#include "delfem2/gl_funcs.h"
+#include "delfem2/gl_color.h"
+#include "delfem2/gl_v23q.h"
 
 #include "delfem2/rigmesh.h"
 
@@ -487,7 +487,7 @@ void BoneOptimization
                                    aBone[ibone].pos, aBone[ib0].pos);
         CVector3 a = CVector3(aBone[ib0].pos) - org;
         CVector3 b = pos_goal-org;
-        A += OuterProduct(a,b);
+        A += Mat3_OuterProduct(a,b);
         len += a.Length() + b.Length();
       }
       A += CMatrix3::Identity()*len*len*1.0e-3;

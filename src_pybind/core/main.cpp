@@ -50,6 +50,7 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   return std::forward_as_tuple(aXYZ,aHex);
 }
 
+/*
 std::tuple<CMeshDynTri2D, py::array_t<int>, py::array_t<int>> MeshDynTri2D_Cad2D
 (const CCad2D& cad, double len)
 {
@@ -65,6 +66,7 @@ std::tuple<CMeshDynTri2D, py::array_t<int>, py::array_t<int>> MeshDynTri2D_Cad2D
   py::array_t<int> npFlgTri(aFlgTri.size(), aFlgTri.data());
   return std::forward_as_tuple(dmesh,npFlgPnt,npFlgTri);
 }
+ */
 
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>>
@@ -238,7 +240,6 @@ PYBIND11_MODULE(c_core, m) {
   .def("drag_picked", &CCad2D::DragPicked)
   .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
   .def("add_polygon", &CCad2D::AddPolygon)
-  .def("meshing",     &CCad2D::Meshing)
   .def("xy_vtxctrl_face", &CCad2D::XY_VtxCtrl_Face)
   .def("ind_vtx_face", &CCad2D::Ind_Vtx_Face)
   .def("ind_edge_face",&CCad2D::Ind_Edge_Face)
@@ -255,6 +256,13 @@ PYBIND11_MODULE(c_core, m) {
   .def_readwrite("iedge_picked",  &CCad2D::iedge_picked)
   .def_readwrite("iface_picked",  &CCad2D::iface_picked);
   
+  py::class_<CMesher_Cad2D>(m,"CppMesher_Cad2D")
+  .def(py::init<>())
+  .def("meshing",            &CMesher_Cad2D::Meshing)
+  .def("points_on_edges",    &CMesher_Cad2D::IndPoint_IndEdgeArray)
+  .def("points_on_faces",    &CMesher_Cad2D::IndPoint_IndFaceArray);
+//  .def_readonly("flag_point",&CMesher_Cad2D::aFlgPnt)
+//  .def_readonly("flag_edge", &CMesher_Cad2D::aFlgTri);
 
   m.def("cad_getPointsEdge",
         &PyCad2D_GetPointsEdge,
@@ -264,7 +272,7 @@ PYBIND11_MODULE(c_core, m) {
         py::arg("tolerance") = 0.001,
         py::return_value_policy::move);
   
-  m.def("meshDynTri2D_CppCad2D",&MeshDynTri2D_Cad2D);
+//  m.def("meshDynTri2D_CppCad2D",&MeshDynTri2D_Cad2D);
   m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
   
   ////////////////////////////////////

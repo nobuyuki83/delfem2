@@ -177,111 +177,6 @@ std::vector<double> CCad2D::MinMaxXYZ() const
   return aabb.MinMaxXYZ();
 }
 
-void CCad2D::Meshing
-(CMeshDynTri2D& dmesh,
- std::vector<int>& aFlgPnt,
- std::vector<int>& aFlgTri,
- double elen) const
-{
-  dmesh.Clear();
-  if( aVtx.empty() ){ return; }
-  std::vector<CVector2>& aVec2 = dmesh.aVec2;
-  for(unsigned int iv=0;iv<aVtx.size();++iv){
-    aVec2.push_back( aVtx[iv].pos );
-    aFlgPnt.push_back(iv);
-  }
-  std::vector<int> edgeIP_ind,edgeIP;
-  edgeIP_ind.push_back(0);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    std::vector<CVector2> aP0;
-    aEdge[ie].GetInternalPoints_ElemLen(aP0, elen);
-    for(unsigned int ip=0;ip<aP0.size();++ip){
-      const int ip0 = aVec2.size();
-      edgeIP.push_back(ip0);
-      aVec2.push_back(aP0[ip]);
-      aFlgPnt.push_back(ie+aVtx.size());
-    }
-    edgeIP_ind.push_back(edgeIP_ind[ie]+aP0.size());
-  }
-  assert( aVec2.size() == aFlgPnt.size() );
-  /*
-  for(int ie=0;ie<edgeIP_ind.size()-1;++ie){
-    std::cout << ie << " --> ";
-    for(int iip=edgeIP_ind[ie];iip<edgeIP_ind[ie+1];++iip){
-      std::cout << edgeIP[iip] << " ";
-    }
-    std::cout << std::endl;
-  }
-   */
-  std::vector<CEPo2>& aPo2D = dmesh.aEPo;
-  std::vector<ETri>& aETri = dmesh.aETri;
-  Meshing_Initialize(aPo2D,aETri,aVec2);
-  {
-    aFlgPnt.push_back(-1);
-    aFlgPnt.push_back(-1);
-    aFlgPnt.push_back(-1);
-    assert(aFlgPnt.size() == aVec2.size() );
-    assert(aFlgPnt.size() == aPo2D.size() );
-  }
-  ////
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    const int iv0 = topo.aEdge[ie].iv0;
-    const int iv1 = topo.aEdge[ie].iv1;
-    const int nseg = edgeIP_ind[ie+1]-edgeIP_ind[ie]+1;
-    for(int iseg=0;iseg<nseg;++iseg){
-      int ip0 = iv0; if( iseg != 0      ){ ip0 = edgeIP[edgeIP_ind[ie]+iseg-1]; }
-      int ip1 = iv1; if( iseg != nseg-1 ){ ip1 = edgeIP[edgeIP_ind[ie]+iseg+0]; }
-      EnforceEdge(aPo2D,aETri,
-                  ip0,ip1,aVec2);
-    }
-  }
-  //////////////////////////////////////
-  // Make Flag for Triangles
-  aFlgTri.assign(aETri.size(),-1);
-  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
-    int ip0 = -1, ip1 = -1;
-    {
-      int ie = topo.aFace[ifc].aIE[0].first;
-      bool dir = topo.aFace[ifc].aIE[0].second;
-      ip0 = (dir) ? topo.aEdge[ie].iv0 : topo.aEdge[ie].iv1;
-      ip1 = (dir) ? topo.aEdge[ie].iv1 : topo.aEdge[ie].iv0;
-      if( edgeIP_ind[ie+1]-edgeIP_ind[ie] > 0 ){
-        if(dir){ ip1 = edgeIP[edgeIP_ind[ie]]; }
-        else{    ip1 = edgeIP[edgeIP_ind[ie+1]-1]; }
-      }
-    }
-    assert( ip0 != -1 && ip1 != -1 );
-    int itri0_ker, iedtri;
-    FindEdge_LookAllTriangles(itri0_ker, iedtri,
-                              ip0,ip1, aETri);
-    assert(itri0_ker>=0&&itri0_ker<(int)aETri.size());
-    FlagConnected(aFlgTri,
-                  aETri, itri0_ker,ifc);
-  }
-  //////////////////////////////////////
-  { // Delete Outer Triangles & Points
-    assert(aFlgTri.size()==aETri.size());
-    assert(aFlgPnt.size()==aVec2.size());
-    assert(aFlgPnt.size()==aPo2D.size());
-    DeleteTriFlag(aETri,aFlgTri,
-                  -1);
-    DeletePointsFlag(aVec2,aPo2D,aETri, aFlgPnt,
-                     -1);
-    assert(aFlgTri.size()==aETri.size());
-    assert(aFlgPnt.size()==aVec2.size());
-    assert(aFlgPnt.size()==aPo2D.size());
-  }
-  if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
-    MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
-                  aVec2.size(), aVtx.size()+aEdge.size(),  elen, param);
-  }
-  assert(aFlgTri.size()==aETri.size());
-  assert(aFlgPnt.size()==aVec2.size());
-  assert(aFlgPnt.size()==aPo2D.size());
-//  MeshTri2D_Export(aXY,aTri, aVec2,aETri);
-}
-
 void CCad2D::GetPointsEdge
 (std::vector<int>& aIdP,
  const double* pXY, int np,
@@ -512,3 +407,121 @@ void CCad2D_FaceGeo::GenMesh
   }
 }
 
+/////////////////////////////////////////////////////////////
+
+
+
+void CMesher_Cad2D::Meshing
+(CMeshDynTri2D& dmesh,
+ const CCad2D& cad)
+{
+  aFlgPnt.clear();
+  aFlgTri.clear();
+  dmesh.Clear();
+  if( cad.aVtx.empty() ){
+    std::cout << "empy cad" << std::endl;
+    nvtx = 0;
+    nedge = 0;
+    nface = 0;
+    return;
+  }
+  std::vector<CVector2>& aVec2 = dmesh.aVec2;
+  for(unsigned int iv=0;iv<cad.aVtx.size();++iv){
+    aVec2.push_back( cad.aVtx[iv].pos );
+    aFlgPnt.push_back(iv);
+  }
+  std::vector<int> edgeIP_ind,edgeIP;
+  edgeIP_ind.push_back(0);
+  for(unsigned int ie=0;ie<cad.aEdge.size();++ie){
+    std::vector<CVector2> aP0;
+    cad.aEdge[ie].GetInternalPoints_ElemLen(aP0, edge_length);
+    for(unsigned int ip=0;ip<aP0.size();++ip){
+      const int ip0 = aVec2.size();
+      edgeIP.push_back(ip0);
+      aVec2.push_back(aP0[ip]);
+      aFlgPnt.push_back(ie+cad.aVtx.size());
+    }
+    edgeIP_ind.push_back(edgeIP_ind[ie]+aP0.size());
+  }
+  assert( aVec2.size() == aFlgPnt.size() );
+  /*
+   for(int ie=0;ie<edgeIP_ind.size()-1;++ie){
+   std::cout << ie << " --> ";
+   for(int iip=edgeIP_ind[ie];iip<edgeIP_ind[ie+1];++iip){
+   std::cout << edgeIP[iip] << " ";
+   }
+   std::cout << std::endl;
+   }
+   */
+  std::vector<CEPo2>& aPo2D = dmesh.aEPo;
+  std::vector<ETri>& aETri = dmesh.aETri;
+  Meshing_Initialize(aPo2D,aETri,aVec2);
+  {
+    aFlgPnt.push_back(-1);
+    aFlgPnt.push_back(-1);
+    aFlgPnt.push_back(-1);
+    assert(aFlgPnt.size() == aVec2.size() );
+    assert(aFlgPnt.size() == aPo2D.size() );
+  }
+  ////
+  for(unsigned int ie=0;ie<cad.aEdge.size();++ie){
+    const int iv0 = cad.topo.aEdge[ie].iv0;
+    const int iv1 = cad.topo.aEdge[ie].iv1;
+    const int nseg = edgeIP_ind[ie+1]-edgeIP_ind[ie]+1;
+    for(int iseg=0;iseg<nseg;++iseg){
+      int ip0 = iv0; if( iseg != 0      ){ ip0 = edgeIP[edgeIP_ind[ie]+iseg-1]; }
+      int ip1 = iv1; if( iseg != nseg-1 ){ ip1 = edgeIP[edgeIP_ind[ie]+iseg+0]; }
+      EnforceEdge(aPo2D,aETri,
+                  ip0,ip1,aVec2);
+    }
+  }
+  //////////////////////////////////////
+  // Make Flag for Triangles
+  aFlgTri.assign(aETri.size(),-1);
+  for(unsigned int ifc=0;ifc<cad.aFace.size();++ifc){
+    int ip0 = -1, ip1 = -1;
+    {
+      int ie = cad.topo.aFace[ifc].aIE[0].first;
+      bool dir = cad.topo.aFace[ifc].aIE[0].second;
+      ip0 = (dir) ? cad.topo.aEdge[ie].iv0 : cad.topo.aEdge[ie].iv1;
+      ip1 = (dir) ? cad.topo.aEdge[ie].iv1 : cad.topo.aEdge[ie].iv0;
+      if( edgeIP_ind[ie+1]-edgeIP_ind[ie] > 0 ){
+        if(dir){ ip1 = edgeIP[edgeIP_ind[ie]]; }
+        else{    ip1 = edgeIP[edgeIP_ind[ie+1]-1]; }
+      }
+    }
+    assert( ip0 != -1 && ip1 != -1 );
+    int itri0_ker, iedtri;
+    FindEdge_LookAllTriangles(itri0_ker, iedtri,
+                              ip0,ip1, aETri);
+    assert(itri0_ker>=0&&itri0_ker<(int)aETri.size());
+    FlagConnected(aFlgTri,
+                  aETri, itri0_ker,ifc);
+  }
+  //////////////////////////////////////
+  { // Delete Outer Triangles & Points
+    assert(aFlgTri.size()==aETri.size());
+    assert(aFlgPnt.size()==aVec2.size());
+    assert(aFlgPnt.size()==aPo2D.size());
+    DeleteTriFlag(aETri,aFlgTri,
+                  -1);
+    DeletePointsFlag(aVec2,aPo2D,aETri, aFlgPnt,
+                     -1);
+    assert(aFlgTri.size()==aETri.size());
+    assert(aFlgPnt.size()==aVec2.size());
+    assert(aFlgPnt.size()==aPo2D.size());
+  }
+  if( edge_length > 1.0e-10 ){
+    CInputTriangulation_Uniform param(1.0);
+    MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
+                  aVec2.size(), cad.aVtx.size()+cad.aEdge.size(),  edge_length, param);
+  }
+  assert(aFlgTri.size()==aETri.size());
+  assert(aFlgPnt.size()==aVec2.size());
+  assert(aFlgPnt.size()==aPo2D.size());
+  nvtx = cad.aVtx.size();
+  nedge = cad.aEdge.size();
+  nface = cad.aFace.size();
+//  std::cout << "num. comp." << nvtx << " " << nedge << " " << nface << std::endl;
+  //  MeshTri2D_Export(aXY,aTri, aVec2,aETri);
+}
