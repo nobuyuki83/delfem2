@@ -426,7 +426,7 @@ bool LoadNumpy
 {
   NPY npy;
   size_t n0 = fread(&npy, sizeof(npy), 1, fp);
-  n0 = 0;
+  if( n0 != 1 ){ return false; }
   
   { // check magic string
     unsigned char sMagic[7] = {0x93,'N','U','M','P','Y'};
@@ -438,7 +438,7 @@ bool LoadNumpy
   { // format
     char buff[256];
     size_t n1 = fread(buff, 1, npy.header_len, fp);
-    n1 = 0;
+    if( n1 != npy.header_len ){ return false; }
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     std::string str_shape = map0["'shape'"];
     str_shape = GetEnclosed(str_shape,"()");
@@ -461,7 +461,7 @@ bool LoadNumpy_2DimF
   int size = ndim0*ndim1;
   aData.resize(size);
   size_t n0 = fread(&aData[0], sizeof(float), size, fp);
-  n0 = 0;
+  if( n0 != size ){ return false; }
   return true;
 }
 
@@ -475,7 +475,7 @@ bool LoadNumpy_2DimD
   int size = ndim0*ndim1;
   aData.resize(size);
   size_t n0 = fread(&aData[0], sizeof(double), size, fp);
-  n0 = 0;
+  if( n0 != size ){ return false; }
   return true;
 }
 
@@ -488,7 +488,7 @@ bool LoadNumpy_1DimF
   
   NPY npy;
   size_t n0 = fread(&npy, sizeof(npy), 1, fp);
-  n0 = 0;
+  if( n0 != 1 ){ return false; }
   
   { // check magic string
     unsigned char sMagic[7] = {0x93,'N','U','M','P','Y'};
@@ -503,7 +503,7 @@ bool LoadNumpy_1DimF
   { // format
     char buff[256];
     size_t n1 = fread(buff, 1, npy.header_len, fp);
-    n1 = 0;
+    if( n1 != npy.header_len ){ return false; }
     //    std::cout << buff << "###" << strlen(buff) << std::endl;
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     //    for(std::map<std::string, std::string>::iterator itr=map0.begin();itr!=map0.end();++itr){
@@ -522,6 +522,6 @@ bool LoadNumpy_1DimF
   aData.resize(size);
   //  double* aRes = (double*)malloc( sizeof(double)*size );
   size_t n2 = fread(&aData[0], sizeof(float), size, fp);
-  n2 = 0;
+  if( n2 != size ){ return false; }
   return true;
 }

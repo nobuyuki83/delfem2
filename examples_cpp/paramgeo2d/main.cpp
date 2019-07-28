@@ -52,12 +52,12 @@ void SetExample
   aKnotMulti[   0] = ndeg+1;
   aKnotMulti[ndiv] = ndeg+1;
   FlatKnot(aKnotFlat, aKnotMulti, aKnot);
-  for(int ik=0;ik<aKnotFlat.size();++ik){
+  for(unsigned int ik=0;ik<aKnotFlat.size();++ik){
     std::cout << "knot" << ik << " " << aKnotFlat[ik] << std::endl;
   }
   /////
   aCtrlPoint.assign(ncp, CVector2(0,0));  //7+2+1 = 10
-  for(int i=0;i<aCtrlPoint.size();++i){
+  for(unsigned int i=0;i<aCtrlPoint.size();++i){
     aCtrlPoint[i].x = i*2.0/(aCtrlPoint.size()-1)-1.0;
   }
 }
@@ -122,7 +122,7 @@ void myGlutMouse(int button, int state, int x, int y)
     getPosOnScreen_Camera2D(pos_down[0], pos_down[1],
                             x, y);
     ipoint_picked = -1;
-    for(int ip=0;ip<aCtrlPoint.size();ip++){
+    for(unsigned int ip=0;ip<aCtrlPoint.size();ip++){
       if( Distance(CVector2(pos_down[0],pos_down[1]),aCtrlPoint[ip])<0.03 ){
         ipoint_picked = ip;
       }

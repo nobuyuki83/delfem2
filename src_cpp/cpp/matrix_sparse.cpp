@@ -462,7 +462,7 @@ void CMatrixSparse::SetMasterSlave
     }
     for(unsigned int icrs1=colInd[ino];icrs1<colInd[ino+1];icrs1++){
       const unsigned int jno1 = rowPtr[icrs1];
-      assert( jno1 >= 0 && jno1 < nblk_row );
+      assert( jno1 < nblk_row );
       for(unsigned int jlen1=0;jlen1<len_row;jlen1++){
         int jdof0 = aMSFlag[jno1*len_row+jlen1];
         if( jdof0 == -1 ) continue;
@@ -485,7 +485,7 @@ void CMatrixSparse::SetMasterSlave
     }
     for(unsigned int icrs=colInd[ino];icrs<colInd[ino+1];++icrs){
       unsigned int jno0 = rowPtr[icrs];
-      assert( jno0 >= 0 && jno0 < nblk_row );
+      assert( jno0 < nblk_row );
       row2crs[jno0] = -1;
     }
   }

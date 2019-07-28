@@ -217,4 +217,9 @@ def main():
   pbd_cloth()
 
 if __name__ == "__main__":
+  import numpy
+  arr = numpy.random.rand(4)
+  arr_f32 = arr.astype(numpy.float32)
+  numpy.save("numpy_array4_float",arr_f32)
+
   main()
