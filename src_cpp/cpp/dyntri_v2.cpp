@@ -1437,6 +1437,36 @@ void MakeMassMatrixTri
   }
 }
 
-
-
-
+void GenMesh
+(std::vector<CEPo2>& aPo2D,
+ std::vector<ETri>& aETri,
+ std::vector<CVector2>& aVec2,
+ const std::vector< std::vector<double> >& aaXY,
+ double resolution_edge,
+ double resolution_face)
+{
+  std::vector<int> loopIP_ind, loopIP;
+  {
+    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                         aaXY);
+    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+      return;
+    }
+    FixLoopOrientation(loopIP,
+                       loopIP_ind,aVec2);
+    if( resolution_edge > 10e-10 ){
+      ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                     resolution_edge );
+    }
+  }
+  ////
+  Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
+                                 loopIP_ind,loopIP);
+  if( resolution_face > 1.0e-10 ){
+    CInputTriangulation_Uniform param(1.0);
+    std::vector<int> flg_pnt(aVec2.size());
+    std::vector<int> flg_tri(aETri.size());
+    MeshingInside(aPo2D,aETri,aVec2, flg_pnt,flg_tri,
+                  aVec2.size(), 0, resolution_face, param);
+  }
+}

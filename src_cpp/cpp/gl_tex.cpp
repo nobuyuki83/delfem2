@@ -180,10 +180,12 @@ int ReadPPM_SetTexture(const std::string& fname)
   {
     const unsigned int buffSize = 256;
     char buff[buffSize];
-    fgets(buff,buffSize,fp); std::cout << buff << std::endl;
-    fgets(buff,buffSize,fp); std::cout << buff << std::endl;
+    char* cres = 0;
+    cres = fgets(buff,buffSize,fp); if( cres == NULL ){ return -1; }
+    cres = fgets(buff,buffSize,fp); if( cres == NULL ){ return -1; }
     sscanf(buff,"%d%d",&w,&h);
-    fgets(buff,buffSize,fp);  // read 255
+    cres = fgets(buff,buffSize,fp);  // read 255
+    if( cres == NULL ){ return -1; }
   }
   std::cout << "tex size : " << w << " " << h << std::endl;
   //  assert( w >= 0 && h >=0 );
@@ -192,7 +194,8 @@ int ReadPPM_SetTexture(const std::string& fname)
   char* buff = new char [buffSize];
   int icnt = 0;
   while (icnt<w*h*3) {
-    fgets(buff,buffSize,fp);
+    char* cres = fgets(buff,buffSize,fp);
+    if( cres == NULL ){ return -1; }
     char* pCur = buff;
     char* pNxt;
     for(;;){
@@ -268,36 +271,36 @@ bool LoadTGAFile
   
   // Read the two first bytes we don't need.
   size_t n0;
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr); if( n0 != 1 ){ return false; }
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr); if( n0 != 1 ){ return false; }
   
   // Which type of image gets stored in imageTypeCode.
   n0 = fread(&tgaFile->imageTypeCode, sizeof(unsigned char), 1, filePtr);
+  if( n0 != 1 ){ return false; }
   
   // For our purposes, the type code should be 2 (uncompressed RGB image)
   // or 3 (uncompressed black-and-white images).
-  if (tgaFile->imageTypeCode != 2 && tgaFile->imageTypeCode != 3)
-  {
+  if (tgaFile->imageTypeCode != 2 && tgaFile->imageTypeCode != 3){
     fclose(filePtr);
     return false;
   }
   
   // Read 13 bytes of data we don't need.
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);  if( n0 != 1 ){ return false; }
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
+  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
   
   // Read the image's width and height.
-  n0 = fread(&tgaFile->imageWidth, sizeof(short int), 1, filePtr);
-  n0 = fread(&tgaFile->imageHeight, sizeof(short int), 1, filePtr);
+  n0 = fread(&tgaFile->imageWidth, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
+  n0 = fread(&tgaFile->imageHeight, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
   
   // Read the bit depth.
-  n0 = fread(&tgaFile->bitCount, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&tgaFile->bitCount, sizeof(unsigned char), 1, filePtr);  if( n0 != 1 ){ return false; }
   
   // Read one byte of data we don't need.
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);
+  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);   if( n0 != 1 ){ return false; }
   
   // Color mode -> 3 = BGR, 4 = BGRA.
   colorMode = tgaFile->bitCount / 8;
@@ -308,6 +311,7 @@ bool LoadTGAFile
   
   // Read the image data.
   n0 = fread(tgaFile->imageData, sizeof(unsigned char), imageSize, filePtr);
+  if( (long)n0 != imageSize ){ return false; }
   
   // Change from BGR to RGB so OpenGL can read the image data.
   for (int imageIdx = 0; imageIdx < imageSize; imageIdx += colorMode)

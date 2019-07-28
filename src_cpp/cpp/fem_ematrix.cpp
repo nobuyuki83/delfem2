@@ -1579,6 +1579,7 @@ void WdWddW_Bend
     }
   }
   // compute 1st derivative of energy
+  W = 0.0;
   for(int ino=0;ino<4;ino++){
     for(int idim=0;idim<3;idim++){
       dW[ino][idim] = 0;

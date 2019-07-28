@@ -1583,7 +1583,7 @@ void WarpLattice
   for(int ip=0;ip<(int)aPointLattice.size();++ip){ // lattice points
     double min_len = -1.0;
     double min_dist = -1.0;
-    double min_cut[3];
+    double min_cut[3] = {0.0, 0.0, 0.0};
     for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const int jp = psup[ipsup];
       assert( jp>=0 && jp<(int)aPointLattice.size() );
