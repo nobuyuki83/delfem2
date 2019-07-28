@@ -21,16 +21,16 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/mat3.cpp              ${DELFEM2_INC}/mat3.h
-  ${DELFEM2_SRC}/vec2.cpp              ${DELFEM2_INC}/vec2.h
-  ${DELFEM2_SRC}/vec3.cpp              ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/msh.cpp               ${DELFEM2_INC}/msh.h  
-  ${DELFEM2_SRC}/mshtopo.cpp           ${DELFEM2_INC}/mshtopo.h
-
-  ${DELFEM2_SRC}/objfunc_v23.cpp       ${DELFEM2_INC}/objfunc_v23.h  
-
-  ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_SRC}/gl_camera.cpp         ${DELFEM2_INC}/gl_camera.h
+  ${DELFEM2_INC}/mat3.h             ${DELFEM2_SRC}/mat3.cpp                 
+  ${DELFEM2_INC}/vec2.h             ${DELFEM2_SRC}/vec2.cpp                 
+  ${DELFEM2_INC}/vec3.h             ${DELFEM2_SRC}/vec3.cpp                 
+  ${DELFEM2_INC}/msh.h              ${DELFEM2_SRC}/msh.cpp                   
+  ${DELFEM2_INC}/mshtopo.h          ${DELFEM2_SRC}/mshtopo.cpp                 
+  
+  ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp                   
+  
+  ${DELFEM2_INC}/gl_funcs.h         ${DELFEM2_SRC}/gl_funcs.cpp                 
+  ${DELFEM2_INC}/gl_camera.h        ${DELFEM2_SRC}/gl_camera.cpp                 
 
   main.cpp
 )
