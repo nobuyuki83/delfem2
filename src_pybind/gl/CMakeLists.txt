@@ -7,7 +7,7 @@ set(PYBIND11_CPP_STANDARD -std=c++14)
 if(MSVC)
 set(CMAKE_CXX_FLAGS "/W4 /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 /wd4505 /wd4245 /wd4457 /wd4800 /wd4838 -O2")
 else()
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -O2")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -O2")
 endif()		
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)

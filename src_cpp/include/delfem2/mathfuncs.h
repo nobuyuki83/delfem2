@@ -48,7 +48,7 @@ inline void makeArray_Legendre(int n, double* P, double x)
   P[4] = 0.125*(35*x4-30*x2+3);
   if (n==4) return;
 
-  const double x5 = x3*x2;
+//  const double x5 = x3*x2;
   P[5] = 0.125*x*(63*x4-70*x2+15);
   if (n==5) return;
 
@@ -56,7 +56,7 @@ inline void makeArray_Legendre(int n, double* P, double x)
   P[6] = 0.0625*(231*x6-315*x4+105*x2-5);
   if (n==6) return;
 
-  const double x7 = x3*x4;
+//  const double x7 = x3*x4;
   P[7] = 0.0625*x*(429*x6-693*x4+315*x2-35);
 //  P[7] = 0.0625*x*(((13*x2-21)*11*x2+105)*3*x2-35);
   if (n==7) return;

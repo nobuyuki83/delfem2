@@ -198,7 +198,7 @@ void FlatKnot
 {
   assert(aKnot.size()==aKnotMulti.size());
   aKnotFlat.clear();
-  for(int ik=0;ik<aKnot.size();++ik){
+  for(unsigned int ik=0;ik<aKnot.size();++ik){
     for(int iik=0;iik<aKnotMulti[ik];++iik){
       aKnotFlat.push_back(aKnot[ik]);
     }

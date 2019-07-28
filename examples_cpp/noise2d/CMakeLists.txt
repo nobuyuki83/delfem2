@@ -11,7 +11,6 @@ set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
-
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories(
