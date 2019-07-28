@@ -45,11 +45,14 @@ static void FetchData
 std::vector<CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
 std::vector<ETri> aETri;
+std::vector<int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-double mass_point = 0.01;
+const double mass_point = 0.01;
+const double dt = 0.01;
+const double gravity[3] = {0.0, 0.0, -10.0};
 
 CGlutWindowManager win;
 bool is_animation = false;
@@ -58,11 +61,9 @@ bool is_animation = false;
 
 void StepTime()
 {
-  const double dt = 0.01;
-  const double gravity[3] = {0.0, 0.0, -10.0};
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
-  for(int it=0;it<aETri.size();++it){
+  for(unsigned int it=0;it<aETri.size();++it){
     const int aIP[3] = {aETri[it].v[0],aETri[it].v[1],aETri[it].v[2]};
     const double P[3][2] = {
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
@@ -73,7 +74,7 @@ void StepTime()
     double m[3] = {1,1,1};
     PBD_Update_Const3(aXYZt.data(), 3, 3, m, C, &dCdp[0][0], aIP);
   }
-  for(int it=0;it<aETri.size();++it){
+  for(unsigned int it=0;it<aETri.size();++it){
     for(int ie=0;ie<3;++ie){
       const int jt0 = aETri[it].s2[ie];
       if( jt0 == -1 ){ continue; }
@@ -93,6 +94,37 @@ void StepTime()
                        P, p);
       double m[4] = {1,1,1,1};
       PBD_Update_Const3(aXYZt.data(), 4,3, m, C, &dCdp[0][0], aIP);
+    }
+  }
+  for(unsigned int il=0;il<aLine.size()/2;++il){
+    int ip0 = aLine[il*2+0];
+    int ip1 = aLine[il*2+1];
+    const double p[2][3] = {
+      {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
+      {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
+    double d0 = Distance3D(p[0], p[1]);
+    double dLen = 0.01;
+    if( d0 > dLen ){
+      double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
+      double l01 = Length3D(n01);
+      double invl01 = 1.0/l01;
+      n01[0] *= invl01;
+      n01[1] *= invl01;
+      n01[2] *= invl01;
+      aXYZt[ip0*3+0] += n01[0]*dLen*0.5;
+      aXYZt[ip0*3+1] += n01[1]*dLen*0.5;
+      aXYZt[ip0*3+2] += n01[2]*dLen*0.5;
+      aXYZt[ip1*3+0] -= n01[0]*dLen*0.5;
+      aXYZt[ip1*3+1] -= n01[1]*dLen*0.5;
+      aXYZt[ip1*3+2] -= n01[2]*dLen*0.5;
+    }
+    else{
+      aXYZt[ip0*3+0] = (p[0][0]+p[1][0])*0.5;
+      aXYZt[ip0*3+1] = (p[0][1]+p[1][1])*0.5;
+      aXYZt[ip0*3+2] = (p[0][2]+p[1][2])*0.5;
+      aXYZt[ip1*3+0] = (p[0][0]+p[1][0])*0.5;
+      aXYZt[ip1*3+1] = (p[0][1]+p[1][1])*0.5;
+      aXYZt[ip1*3+2] = (p[0][2]+p[1][2])*0.5;
     }
   }
   PBD_Post(aXYZ, aUVW,
@@ -201,12 +233,18 @@ int main(int argc,char* argv[])
   ::glutSpecialFunc(myGlutSpecial);
   ::glutIdleFunc(myGlutIdle);
   
-  double lenx = 1.0;
   {
     std::vector< std::vector<double> > aaXY;
     aaXY.resize(1);
-    double xys[8] = {-0.5,-0.5, +0.5,-0.5, +0.5,+0.5, -0.5,+0.5};
-    aaXY[0].assign(xys,xys+8);
+    double xys[12] = {
+      -0.5,-0.5,
+      +0.5,-0.5,
+      +0.5,+0.5,
+      +0.1,+0.6,
+      -0.1,+0.6,
+      -0.5,+0.5,
+    };
+    aaXY[0].assign(xys,xys+12);
     GenMesh(aPo2D,aETri,aVec2,
             aaXY, 0.05, 0.05);
   }
@@ -220,28 +258,33 @@ int main(int argc,char* argv[])
   }
   aXYZt = aXYZ;
   aUVW.resize(np*3,0.0);
-  aBCFlag.resize(np*3,0);
+  aBCFlag.resize(np,0);
   for(int ip=0;ip<np;++ip){
-    if( aXYZ[ip*3+0]  < -0.49*lenx ){
-      aBCFlag[ip*3+0] = 1;
-      aBCFlag[ip*3+1] = 1;
-      aBCFlag[ip*3+2] = 1;
+    if( aXYZ[ip*3+1]  > +0.59 ){
+      aBCFlag[ip] = 1;
     }
   }
-  /*
-  {
-    CMatrix3 m;
-    m.SetRotMatrix_Cartesian(0.0, 0.0, 1.0);
-    const int np = aXYZ.size()/3;
+  aLine.clear();
+  { // make aLine
+    std::map<int,int> mapY2Ip;
     for(int ip=0;ip<np;++ip){
-      double p0[3] = {aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]};
-      double p1[3];  m.MatVec(p0,p1);
-      aXYZ[ip*3+0] = p1[0]*1.0;
-      aXYZ[ip*3+1] = p1[1]*1.0;
-      aXYZ[ip*3+2] = p1[2]*1.0;
+      if( aXYZ[ip*3+0]  > +0.49 ){
+        double y0 = aXYZ[ip*3+1];
+        int iy = (int)(y0/0.0132);
+        mapY2Ip[iy] = ip;
+      }
+    }
+    for(int ip=0;ip<np;++ip){
+      if( aXYZ[ip*3+0]  < -0.49 ){
+        double y1 = aXYZ[ip*3+1];
+        int iy = (int)(y1/0.0132);
+        assert( mapY2Ip.find(iy) != mapY2Ip.end() );
+        int ip0 = mapY2Ip[iy];
+        aLine.push_back(ip);
+        aLine.push_back(ip0);
+      }
     }
   }
-   */
   
   win.camera.view_height = 1.0;
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
