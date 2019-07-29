@@ -80,6 +80,9 @@ void myGlutDisplay(void)
   
   ::glLineWidth(1);
   ::DrawAxis(1);
+  
+  ShowFPS();
+  
   ::glutSwapBuffers();
 }
 

@@ -347,7 +347,7 @@ void myGlutDisplay(void)
                       vis_cut_org, vis_cut_nrm);
   }
   
-//	ShowFPS();
+	ShowFPS();
 	::glutSwapBuffers();
 }
 

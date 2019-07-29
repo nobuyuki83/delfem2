@@ -29,7 +29,7 @@ set(INPUT_SRC
   ${DELFEM2_INC}/gl_v23q.h       ${DELFEM2_SRC}/gl_v23q.cpp
   ${DELFEM2_INC}/gl_funcs.h      ${DELFEM2_SRC}/gl_funcs.cpp
   ${DELFEM2_INC}/gl_color.h      ${DELFEM2_SRC}/gl_color.cpp
-  ${DELFEM2_INC}/glew_funcs.h
+  ${DELFEM2_INC}/glew_funcs.h    ${DELFEM2_SRC}/glew_funcs.cpp
   ${DELFEM2_INC}/gl_camera.h     ${DELFEM2_SRC}/gl_camera.cpp
   ${DELFEM2_INC}/gl_voxbv.h      ${DELFEM2_SRC}/gl_voxbv.cpp
   ${DELFEM2_INC}/gl_gpusampler.h ${DELFEM2_SRC}/gl_gpusampler.cpp

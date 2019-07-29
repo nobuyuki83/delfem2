@@ -63,6 +63,8 @@ void myGlutDisplay(void)
   glDisable(GL_TEXTURE_GEN_T);
   glDisable(GL_TEXTURE_GEN_R);
   
+  ShowFPS();
+  
   glutSwapBuffers();
 }
 
