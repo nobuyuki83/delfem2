@@ -1,8 +1,15 @@
-#if defined(__APPLE__) && defined(__MACH__)
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#include "stdio.h"
+
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/gl.h>
-#elif defined(WIN32) // windows
+#elif defined(_MSC_VER) // windows
 #include <windows.h>
 #include <GL/gl.h>
 #else
