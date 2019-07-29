@@ -10,18 +10,14 @@
 #include <map>
 #include <cassert>
 
-#if defined(__APPLE__) && defined(__MACH__) // Mac
+#if defined(__APPLE__) // Mac
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
 #elif defined(_WIN32) // windows
 #include <windows.h>
-#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #else
-#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
