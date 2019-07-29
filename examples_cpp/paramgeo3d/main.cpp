@@ -160,6 +160,9 @@ void myGlutDisplay(void)
       ::glEnd();
     }
   }
+  
+  ShowFPS();
+
   ::glutSwapBuffers();
 }
 

@@ -542,7 +542,7 @@ std::vector<int> CMesher_Cad2D::IndPoint_IndEdge
   if( is_end_point ){ res.push_back(aIP_E[0]); }
   for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
-    if( iflg >= nvtx+nedge ){ break; }
+    if( iflg >= (int)(nvtx+nedge) ){ break; }
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
   }
   if( is_end_point ){ res.push_back(aIP_E[1]); }

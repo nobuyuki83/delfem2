@@ -30,17 +30,27 @@ cd buildXcode
 cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
-cd examples_cpp
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
-cd ../../
-
 cd tests
 mkdir buildXcode
 cd buildXcode
 cmake -G Xcode ..
 cd ../../
+
+cd examples_cpp
+mkdir buildXcode
+cd buildXcode
+cmake -G Xcode ..
+cmake --build .
+cd ../../
+
+cd examples_cpp
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../
+
+
 
 
 #python3 setup.py install

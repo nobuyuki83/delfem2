@@ -6,6 +6,14 @@
 #include <map>
 #include <deque>
 
+#if defined(__APPLE__) && defined(__MACH__)
+#include <GL/glew.h>
+#include <OpenGL/gl.h>
+#else
+#include <GL/glew.h>
+#endif
+
+
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/dyntri_v3.h"
 #include "delfem2/mshtopo.h"

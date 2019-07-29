@@ -87,7 +87,7 @@ public:
   unsigned int pointSize;
   bool isDrawTex;
 private:
-  GLint view[4];
+  int view[4];
 };
 
 #endif /* depth_hpp */

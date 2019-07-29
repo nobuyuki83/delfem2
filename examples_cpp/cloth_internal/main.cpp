@@ -273,6 +273,8 @@ void myGlutDisplay(void)
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }  
   
+  ShowFPS();
+  
   ::glutSwapBuffers();
 }
 

@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/gl_tex.cpp       ${DELFEM2_INC}/gl_tex.h
   ${DELFEM2_SRC}/gl_funcs.cpp     ${DELFEM2_INC}/gl_funcs.h
   ${DELFEM2_SRC}/gl_camera.cpp    ${DELFEM2_INC}/gl_camera.h
+  ${DELFEM2_SRC}/glew_funcs.cpp    ${DELFEM2_INC}/glew_funcs.h
   main.cpp  
 )
 
