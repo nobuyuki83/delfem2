@@ -1,5 +1,12 @@
-#ifndef viewer3d_spherical_harmonics_h
-#define viewer3d_spherical_harmonics_h
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#ifndef MATHFUNCS_H
+#define MATHFUNCS_H
 
 #include <cassert>
 #include <complex>

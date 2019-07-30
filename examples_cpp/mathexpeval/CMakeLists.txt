@@ -18,7 +18,7 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/mathexpeval.cpp          ${DELFEM2_INC}/mathexpeval.h
+  ${DELFEM2_INC}/mathexpeval.h ${DELFEM2_SRC}/mathexpeval.cpp
   main.cpp
 )
 

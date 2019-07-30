@@ -60,7 +60,7 @@ T DeBoorBSpline
   assert( aKnot.size() == aCP.size()+ndegree+1 );
   const double eps = 1.0e-10;
   ////
-  int iks;
+  unsigned int iks;
   {
     for(iks=ndegree;iks<aKnot.size()-ndegree;++iks){
       double u0 = aKnot[iks];
