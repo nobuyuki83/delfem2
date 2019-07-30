@@ -34,6 +34,8 @@ delfem2.egg-info
 buildXcode
 buildMake
 buildVS
+buildVS32
+buildVS64
 build
 trash
 external/fbx

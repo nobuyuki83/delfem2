@@ -1,13 +1,18 @@
 #include <iostream>
 #include <math.h>
 
+#if defined(_MSC_VER)
+#include <windows.h> 
+#endif
+
 #include <GLFW/glfw3.h>
 
+#include "delfem2/glfw_funcs.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_v23q.h"
 #include "delfem2/gl_color.h"
 
-#include "delfem2/glfw_funcs.h"
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 

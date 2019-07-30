@@ -49,7 +49,7 @@ class CMakeBuild(build_ext):
 
     if platform.system() == "Windows":
       cmake_args += [
-      '-DCMAKE_PREFIX_PATH=C:/Program Files (x86)/glew'
+      '-DCMAKE_PREFIX_PATH=C:/Program Files/glew'
 #      '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(),extdir)
       ]
       if sys.maxsize > 2 ** 32:
@@ -66,7 +66,9 @@ class CMakeBuild(build_ext):
     if not os.path.exists(self.build_temp):
       os.makedirs(self.build_temp)
     print("$$$", self.build_temp)
-    print("###cmake ext", ext.name, ext.sourcedir, extdir)
+    print("###ext.name: ", ext.name)    
+    print("###ext.sourcdir: ", ext.sourcedir)
+    print("###extdir: ", extdir)
     print("@@@", cmake_args)
     subprocess.check_call(['cmake', ext.sourcedir] + cmake_args,
                           cwd=self.build_temp, env=env)

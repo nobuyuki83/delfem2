@@ -43,10 +43,25 @@ ELSEIF(UNIX)
   SET( EXTRA_LIBS   -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp )
 ENDIF()
 
-target_link_libraries(${PROJECT_NAME} 
-  ${OPENGL_LIBRARY}
-  ${GLFW_DIR}/src/libglfw3.a
-  ${EXTRA_LIBS}
- 
-)
+if(MSVC)
+  if(CMAKE_CL_64)
+    target_link_libraries(${PROJECT_NAME} 
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
+      ${EXTRA_LIBS}
+    )
+  else()
+      target_link_libraries(${PROJECT_NAME} 
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/buildVS32/src/Release/glfw3.lib
+      ${EXTRA_LIBS}
+    )
+  endif()
+else()
+  target_link_libraries(${PROJECT_NAME} 
+    ${OPENGL_LIBRARY}
+    ${GLFW_DIR}/src/libglfw3.a
+    ${EXTRA_LIBS}
+  )
+endif()
 

@@ -5,11 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__APPLE__)
 #include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/gl.h>
-#elif defined(WIN32) // windows
+#elif defined(_MSC_VER) // windows
 #include <windows.h>
 #include <GL/gl.h>
 #else

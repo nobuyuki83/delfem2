@@ -649,7 +649,7 @@ void DrawMeshTet3D_Cut
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTet,
  const std::vector<CColor>& aColor,
- const double org[3], const double n[3])
+ const double org[3], const double ncut[3])
 {
   glEnable(GL_COLOR_MATERIAL);
   glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -664,10 +664,10 @@ void DrawMeshTet3D_Cut
     const double p1[3] = {aXYZ[ino1*3+0], aXYZ[ino1*3+1], aXYZ[ino1*3+2]};
     const double p2[3] = {aXYZ[ino2*3+0], aXYZ[ino2*3+1], aXYZ[ino2*3+2]};
     const double p3[3] = {aXYZ[ino3*3+0], aXYZ[ino3*3+1], aXYZ[ino3*3+2]};
-    if( IsAbovePlane(p0, org, n) ) continue;
-    if( IsAbovePlane(p1, org, n) ) continue;
-    if( IsAbovePlane(p2, org, n) ) continue;
-    if( IsAbovePlane(p3, org, n) ) continue;
+    if( IsAbovePlane(p0, org, ncut) ) continue;
+    if( IsAbovePlane(p1, org, ncut) ) continue;
+    if( IsAbovePlane(p2, org, ncut) ) continue;
+    if( IsAbovePlane(p3, org, ncut) ) continue;
     //    ::glColor3d(1,1,0);
     aColor[itet].glColorDiffuse();
     ////
@@ -710,10 +710,10 @@ void DrawMeshTet3D_Cut
     const double p1[3] = {aXYZ[ino1*3+0], aXYZ[ino1*3+1], aXYZ[ino1*3+2]};
     const double p2[3] = {aXYZ[ino2*3+0], aXYZ[ino2*3+1], aXYZ[ino2*3+2]};
     const double p3[3] = {aXYZ[ino3*3+0], aXYZ[ino3*3+1], aXYZ[ino3*3+2]};
-    if( IsAbovePlane(p0, org, n) ) continue;
-    if( IsAbovePlane(p1, org, n) ) continue;
-    if( IsAbovePlane(p2, org, n) ) continue;
-    if( IsAbovePlane(p3, org, n) ) continue;
+    if( IsAbovePlane(p0, org, ncut) ) continue;
+    if( IsAbovePlane(p1, org, ncut) ) continue;
+    if( IsAbovePlane(p2, org, ncut) ) continue;
+    if( IsAbovePlane(p3, org, ncut) ) continue;
     ////
     ::glVertex3dv(p0);
     ::glVertex3dv(p1);
