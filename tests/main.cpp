@@ -21,6 +21,10 @@
 #include "delfem2/funcs.h"
 #include "delfem2/mathexpeval.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
+
 TEST(mathexpeval,test1){
   CMathExpressionEvaluator e;
   e.SetKey("x", 3.0);
