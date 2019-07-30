@@ -455,7 +455,7 @@ bool LoadNumpy_2DimF
 (int& ndim0, int& ndim1, std::vector<float>& aData,
  const std::string& path)
 {
-  FILE* fp = fopen(path.c_str(),"r");
+  FILE* fp = fopen(path.c_str(),"rb");
   if( fp == NULL ) { return false; }
   LoadNumpy(ndim0, ndim1, fp);
   int size = ndim0*ndim1;
@@ -469,7 +469,7 @@ bool LoadNumpy_2DimD
 (int& ndim0, int& ndim1, std::vector<double>& aData,
  const std::string& path)
 {
-  FILE* fp = fopen(path.c_str(),"r");
+  FILE* fp = fopen(path.c_str(),"rb");
   if( fp == NULL ) { return false; }
   LoadNumpy(ndim0, ndim1, fp);
   int size = ndim0*ndim1;
