@@ -14,9 +14,11 @@ set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
+find_package(GLEW REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLUT_INCLUDE_DIR}
+  ${GLUT_INCLUDE_DIR}  
+  ${GLEW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
 )
 
@@ -30,4 +32,5 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}  
   ${GLUT_LIBRARY} 
   ${OPENGL_LIBRARY}
+  ${GLEW_LIBRARY}
 )
