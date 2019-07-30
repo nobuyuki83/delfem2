@@ -8,7 +8,7 @@
 #include <iostream>
 #include <math.h>
 
-#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__APPLE__)
 #include <GL/glew.h>
 #include <GLUT/glut.h>
 #else
