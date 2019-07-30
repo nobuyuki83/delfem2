@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 
 #include "gtest/gtest.h"
@@ -12,6 +19,16 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mathfuncs.h"
 #include "delfem2/funcs.h"
+#include "delfem2/mathexpeval.h"
+
+TEST(mathexpeval,test1){
+  CMathExpressionEvaluator e;
+  e.SetKey("x", 3.0);
+  e.SetExp("x+3.0");
+  EXPECT_EQ(e.Eval(),6);
+  e.SetKey("x", 5.0);
+  EXPECT_EQ(e.Eval(),8);
+}
 
 TEST(funcs,numpy_load_2df){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4x4_float.npy";

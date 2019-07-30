@@ -36,7 +36,7 @@ void DevideElemAryConnex
       z_min = cgz-eps;
       z_max = cgz+eps;
     }
-    for(int il=1;il<list.size();il++){
+    for(unsigned int il=1;il<list.size();il++){
       int itri = list[il];
       assert( itri < aElemCenter.size() );
       assert( aElem2Node[itri] == iroot_node );
@@ -62,7 +62,7 @@ void DevideElemAryConnex
   }
   double org[3] = {(x_min+x_max)*0.5,  (y_min+y_max)*0.5,  (z_min+z_max)*0.5};
   int itri_ker = -1;
-  for(int il=0;il<list.size();il++){
+  for(unsigned int il=0;il<list.size();il++){
     int itri0 = list[il];
     const double det0 = DetSide(aElemCenter.data()+itri0*3,org,dir);
     if( fabs(det0) < 1.0e-10 ) continue;
@@ -72,7 +72,7 @@ void DevideElemAryConnex
   }
   if( itri_ker == -1 ){
     org[0]=0; org[1]=0; org[2]=0;
-    for(int il=0;il<list.size();il++){ // center of the gravity of list
+    for(unsigned int il=0;il<list.size();il++){ // center of the gravity of list
       int itri0 = list[il];
       org[0] += aElemCenter[itri0*3+0];
       org[1] += aElemCenter[itri0*3+1];
@@ -82,7 +82,7 @@ void DevideElemAryConnex
     org[1] = org[1]/list.size();
     org[2] = org[2]/list.size();
     double mat[3][3] = { {0,0,0},{0,0,0},{0,0,0} };
-    for(int il=0;il<list.size();il++){
+    for(unsigned int il=0;il<list.size();il++){
       int itri0 = list[il];
       const double vcg[3] = {
         aElemCenter[itri0*3+0]-org[0],
@@ -101,7 +101,7 @@ void DevideElemAryConnex
       dir[1] = tmp[1]/len;
       dir[2] = tmp[2]/len;
     }
-    for(int il=0;il<list.size();il++){
+    for(unsigned int il=0;il<list.size();il++){
       int itri0 = list[il];
       double det = DetSide(aElemCenter.data()+itri0*3,org,dir);
       if( fabs(det) < 1.0e-10 ) continue;
@@ -142,7 +142,7 @@ void DevideElemAryConnex
   }
   // 子ノード１に含まれる三角形を抽出(入力リストから子ノード0に含まれる物を除外)
   std::vector<int> list_ch1;
-  for(int il=0;il<list.size();il++){
+  for(unsigned int il=0;il<list.size();il++){
     int itri = list[il];
     if( aElem2Node[itri] == inode_ch0 ) continue;
     assert( aElem2Node[itri] == iroot_node );
@@ -180,10 +180,10 @@ int MakeTreeTopologyBVH_TopDown
  const std::vector<double>& aElemCenter)
 {
   aNodeBVH.clear();
-  const int nelem = (int)aElemCenter.size()/3;
+  const unsigned int nelem = aElemCenter.size()/3;
   assert( aElemSurInd.size() == nelem+1 );
   std::vector<int> list(nelem);
-  for(int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
+  for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
   std::vector<int> aElem2Node;
   aElem2Node.resize(nelem,0);
   aNodeBVH.resize(1);
