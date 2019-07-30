@@ -17,6 +17,9 @@ cd ../
 cd ../../../
 
 
+
+
+
 cd src_pybind/core
 mkdir buildVS64
 cd buildVS64
@@ -54,3 +57,26 @@ cd buildVS64
 cmake -A x64 -DCMAKE_PREFIX_PATH="C:/Program Files/glew;C:/Program Files/freeglut" ..
 cmake --build .
 cd ../../
+
+
+
+pip uninstall PyDelFEM2 -y
+pip uninstall PyDelFEM2 -y
+python setup.py install
+python setup.py test
+
+
+
+cd tests\googletest
+mkdir buildVS64
+cd buildVS64
+cmake -A x64 .. 
+cmake --build . --config Release
+cd ..\..\..
+cd tests
+mkdir buildVS64
+cd buildVS64
+cmake -A x64 ..
+cmake --build . --config Release
+Release\runUnitTests.exe
+cd ..\..\

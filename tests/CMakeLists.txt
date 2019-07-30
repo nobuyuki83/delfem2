@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_STANDARD 11)
 project(testsDelFEM2)
 
+if(MSVC)
+    # GTest is static compiled by default
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif()
+
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../src_cpp/include")
@@ -10,8 +16,18 @@ set(DELFEM2_SRC         "../src_cpp/cpp")
 
 enable_testing()
 
-set(GTEST_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest.a)
-set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest_main.a)
+if(MSVC)
+  if(CMAKE_CL_64)
+    set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/buildVS64/lib/Release/gtest_main.lib)
+    set(GTEST_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/buildVS64/lib/Release/gtest.lib)
+  else()
+    set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/buildVS32/lib/Release/gtest_main.lib)
+    set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/buildVS32/lib/Release/gtest.lib)
+  endif()
+else()
+  set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest_main.a)
+  set(GTEST_MAIN_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest.a)
+endif()
 set(GTEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/googletest/googletest/include)
 
 set(MY_BINARY_NAME runUnitTests)
