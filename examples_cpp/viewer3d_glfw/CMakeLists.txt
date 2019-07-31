@@ -60,7 +60,7 @@ if(MSVC)
 else()
   target_link_libraries(${PROJECT_NAME} 
     ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
+    ${GLFW_DIR}/buildMake/src/libglfw3.a
     ${EXTRA_LIBS}
   )
 endif()

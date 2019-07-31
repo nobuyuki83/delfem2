@@ -18,38 +18,33 @@ cd ../../../../
 
 #PATH_PYTHON="myenv/bin/"
 #PATH_PYTHON=$( cd ${PATH_PYTHON}; pwd )"/python3"
-PATH_PYTHON=$(which python)
+PATH_PYTHON=$(which python3)
 echo ${PATH_PYTHON}
 
 cd src_pybind/core
-mkdir buildXcode 
-cd buildXcode
-cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
+mkdir buildMake
+cd buildMake
+cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
 cd src_pybind/gl
-mkdir buildXcode 
-cd buildXcode
-cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
+mkdir buildMake
+cd buildMake
+cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
 cd src_pybind/eigen
-mkdir buildXcode 
-cd buildXcode
-cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
+mkdir buildMake
+cd buildMake
+cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
 cd tests
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
-cd ../../
-
-cd examples_cpp
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
-cmake --build .
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+./runUnitTests
 cd ../../
 
 cd examples_cpp
