@@ -71,6 +71,7 @@ TEST(funcs,numpy_load_1df){
 
 TEST(mat3, eigen3)
 {
+
   for(int itr=0;itr<10000;itr++){
     double sm[6];
     for(int i=0;i<6;i++){
@@ -90,6 +91,43 @@ TEST(mat3, eigen3)
       CMatrix3 ULUt; MatMatTrans3(ULUt.mat, UL.mat, U.mat);
       CMatrix3 SM; SM.SetSymetric(sm);
       double diff = (ULUt-SM).SqNorm_Frobenius();
+      if( diff > 1.0e-10 ){
+        std::cout << sm[0] << " " << sm[1] << " " << sm[2] << " " << sm[3] << " " << sm[4] << " " << sm[5] << std::endl;
+        std::cout << itr << "       " << U << std::endl;
+        std::cout << itr << "       " << ULUt << std::endl;
+        std::cout << itr << "       " << SM << std::endl;
+        std::cout << itr << " " << diff << std::endl;
+      }
+      EXPECT_NEAR(diff, 0.0, 1.0e-6);
+    }
+  }
+  for(int itr=0;itr<1000;itr++){
+    double sm[6];
+    for(int i=0;i<6;i++){
+      sm[i] = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+    }
+    sm[5] = -sm[4];
+    double l[3];
+    CMatrix3 U;
+    eigenSym3(U.mat, l,
+              sm,20);
+    {
+      double diffU = (U.Trans()*U-CMatrix3::Identity()).SqNorm_Frobenius();
+      EXPECT_NEAR(diffU, 0.0, 1.0e-10);
+    }
+    {
+      double L[9] = {l[0],0,0, 0,l[1],0, 0,0,l[2]};
+      CMatrix3 UL; MatMat3(UL.mat,U.mat,L);
+      CMatrix3 ULUt; MatMatTrans3(ULUt.mat, UL.mat, U.mat);
+      CMatrix3 SM; SM.SetSymetric(sm);
+      double diff = (ULUt-SM).SqNorm_Frobenius();
+      if( diff > 1.0e-10 ){
+        std::cout << sm[0] << " " << sm[1] << " " << sm[2] << " " << sm[3] << " " << sm[4] << " " << sm[5] << std::endl;
+        std::cout << itr << "       " << U << std::endl;
+        std::cout << itr << "       " << ULUt << std::endl;
+        std::cout << itr << "       " << SM << std::endl;
+        std::cout << itr << " " << diff << std::endl;
+      }
       EXPECT_NEAR(diff, 0.0, 1.0e-6);
     }
   }

@@ -1,5 +1,7 @@
 
 
+
+
 git submodule update --init --recursive
 cd src_cpp/external/glfw
 mkdir buildVS64
@@ -64,7 +66,6 @@ pip uninstall PyDelFEM2 -y
 pip uninstall PyDelFEM2 -y
 python setup.py install
 python setup.py test
-
 
 
 cd tests\googletest
