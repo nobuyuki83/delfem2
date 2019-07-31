@@ -91,17 +91,11 @@ TEST(mat3, eigen3)
       CMatrix3 ULUt; MatMatTrans3(ULUt.mat, UL.mat, U.mat);
       CMatrix3 SM; SM.SetSymetric(sm);
       double diff = (ULUt-SM).SqNorm_Frobenius();
-      if( diff > 1.0e-10 ){
-        std::cout << sm[0] << " " << sm[1] << " " << sm[2] << " " << sm[3] << " " << sm[4] << " " << sm[5] << std::endl;
-        std::cout << itr << "       " << U << std::endl;
-        std::cout << itr << "       " << ULUt << std::endl;
-        std::cout << itr << "       " << SM << std::endl;
-        std::cout << itr << " " << diff << std::endl;
-      }
       EXPECT_NEAR(diff, 0.0, 1.0e-6);
     }
   }
-  for(int itr=0;itr<1000;itr++){
+  ///////////////////////////////////////////
+  for(int itr=0;itr<100;itr++){
     double sm[6];
     for(int i=0;i<6;i++){
       sm[i] = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
@@ -121,13 +115,6 @@ TEST(mat3, eigen3)
       CMatrix3 ULUt; MatMatTrans3(ULUt.mat, UL.mat, U.mat);
       CMatrix3 SM; SM.SetSymetric(sm);
       double diff = (ULUt-SM).SqNorm_Frobenius();
-      if( diff > 1.0e-10 ){
-        std::cout << sm[0] << " " << sm[1] << " " << sm[2] << " " << sm[3] << " " << sm[4] << " " << sm[5] << std::endl;
-        std::cout << itr << "       " << U << std::endl;
-        std::cout << itr << "       " << ULUt << std::endl;
-        std::cout << itr << "       " << SM << std::endl;
-        std::cout << itr << " " << diff << std::endl;
-      }
       EXPECT_NEAR(diff, 0.0, 1.0e-6);
     }
   }
@@ -217,7 +204,7 @@ TEST(mshio,load_obj)
 
 TEST(vec2,second_moment_of_area)
 {
-  for(int itr=0;itr<10;itr++){
+  for(int itr=0;itr<100;itr++){
     double r0 = (double)rand()/(RAND_MAX+1.0);
     double r1 = (double)rand()/(RAND_MAX+1.0);
     double r2 = (double)rand()/(RAND_MAX+1.0);
