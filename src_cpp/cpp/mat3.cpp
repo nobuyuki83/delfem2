@@ -46,17 +46,15 @@ bool eigenSym3
  const double sm[6],
  int nitr)
 {
+//  const double eps = 1.0e-100;
   //  double tol = 1.0e-5;
   u[0]=u[4]=u[8]=1.0;
   u[1]=u[2]=u[3]=u[5]=u[6]=u[7]=0.0;
   l[0]=l[1]=l[2]=0.0;
   double dnrm = sqnormFrobenius(sm);
-  if( dnrm < 1.0e-20 ){
-    // this matrix is too small;
-    return false;
-  }
-  double scale = sqrt(dnrm);
-  double invscl = 1.0/scale;
+  if( dnrm < 1.0e-30 ){ return false; } // this matrix is too small
+  const double scale = sqrt(dnrm);
+  const double invscl = 1.0/scale;
   double sms[6] = {sm[0]*invscl,sm[1]*invscl,sm[2]*invscl,sm[3]*invscl,sm[4]*invscl,sm[5]*invscl};
   for(int itr=0;itr<nitr;itr++){
     const double m[6] = {sms[0],sms[1],sms[2],sms[3],sms[4],sms[5]};
@@ -64,10 +62,14 @@ bool eigenSym3
     const double a12 = fabs(sms[3]);
     const double a20 = fabs(sms[4]);
     const double a01 = fabs(sms[5]);
-    if( a12 > a20 && a12 > a01 ){ // a12 sms[3] is biggest
+//    std::cout << a12 << " " << a20 << " " << a01 << std::endl;
+//    std::cout << m[0] << " " << m[1] << " " << m[2] << " " << m[3] << " " << m[4] << " " << m[5] << std::endl;
+    if( a12 >= a20 && a12 >= a01 ){ // a12 sms[3] is biggest
       const double t = 0.5*atan2(2*m[3],m[2]-m[1]);
       const double ct = cos(t);
       const double st = sin(t);
+//      std::cout << "hoge0 " << m[2]-m[1] << " " << (ct*ct-st*st)*m[3]+st*ct*(m[1]-m[2]) << std::endl;
+//      if( fabs(t)< eps ){ return true; }
       sms[1] = ct*ct*m[1]+st*st*m[2]-2*st*ct*m[3];
       sms[2] = ct*ct*m[2]+st*st*m[1]+2*st*ct*m[3];
       sms[3] = 0; // (ct*ct-st*st)*m[3]+st*ct*(m[1]-m[2]);
@@ -81,10 +83,13 @@ bool eigenSym3
       u[7] = +ct*v[7]-st*v[8];
       u[8] = +st*v[7]+ct*v[8];
     }
-    if( a20 > a01 && a20 > a12 ){ // a20 sms[4] is biggest
+    else if( a20 >= a01 && a20 >= a12 ){ // a20 sms[4] is biggest
+      // the above condition statement shoud pass exactly once for each iteration.
       const double t = 0.5*atan2(2*m[4],m[2]-m[0]);
       const double ct = cos(t);
       const double st = sin(t);
+//      std::cout << "hoge1 " << m[2]-m[0] << "   " << (ct*ct-st*st)*m[4]+st*ct*(m[0]-m[2]) << std::endl;
+//      if( fabs(t)< eps ){ return true; }
       sms[0] = ct*ct*m[0]+st*st*m[2]-2*st*ct*m[4];
       sms[2] = ct*ct*m[2]+st*st*m[0]+2*st*ct*m[4];
       sms[3] = st*m[5]+ct*m[3];
@@ -98,10 +103,13 @@ bool eigenSym3
       u[6] = +ct*v[6]-st*v[8];
       u[8] = +st*v[6]+ct*v[8];
     }
-    if( a01 > a12 && a01 > a20 ){ // a01 sms[5] is biggest
+//    if( a01 >= a12 && a01 >= a20 ){ // a01 sms[5] is biggest
+    else{ // the condition statement shoud pass exactly once for each iteration.
       const double t = 0.5*atan2(2*m[5],m[1]-m[0]);
       const double ct = cos(t);
       const double st = sin(t);
+//      std::cout << "hoge2 " << m[1]-m[0] << " " << (ct*ct-st*st)*m[5]+st*ct*(m[0]-m[1]) << std::endl;
+//      if( fabs(t)< eps ){ return true; }
       sms[0] = ct*ct*m[0]+st*st*m[1]-2*st*ct*m[5];
       sms[1] = ct*ct*m[1]+st*st*m[0]+2*st*ct*m[5];
       sms[3] = st*m[4]+ct*m[3];

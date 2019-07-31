@@ -1,10 +1,9 @@
-//
-//  self_collision_cloth.cpp
-//  cloth_simple_contact
-//
-//  Created by Nobuyuki Umetani on 10/28/12.
-//  Copyright (c) 2012 Nobuyuki Umetani. All rights reserved.
-//
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 
 #include <stack>
