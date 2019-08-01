@@ -20,10 +20,48 @@
 #include "delfem2/mathfuncs.h"
 #include "delfem2/funcs.h"
 #include "delfem2/mathexpeval.h"
+#include "delfem2/lp.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
+
+
+TEST(linpro,test1)
+{
+  // example in http://www.bunkyo.ac.jp/~nemoto/lecture/or/99/simplex.pdf
+  // http://www.me.titech.ac.jp/~mizu_lab/text/PDF-LP/LP1-problem.pdf
+  std::vector<double> A;
+  std::vector<int> flg_row; // 0:base 1:non_base 2:trg
+  std::vector<int> map_col2row; // 0:base 1:non_base 2:trg
+  const int nvar = 2;
+  const int nineq = 3;
+  LinPro_Init(A, flg_row, map_col2row,
+              nvar, nineq);
+  LinPro_SetIneqLe(A,flg_row,map_col2row,
+                   nvar,nineq,0,{1.0,2.0,800});
+  LinPro_SetIneqLe(A,flg_row,map_col2row,
+                   nvar,nineq,1,{3.0,4.0,1800});
+  LinPro_SetIneqLe(A,flg_row,map_col2row,
+                   nvar,nineq,2,{3.0,1.0,1500});
+  LinPro_SetTarget(A,flg_row,map_col2row,
+                   nvar, nineq, {20.0,30.0});
+  //////////////////////////////
+  std::vector<double> solution;
+  const int max_itr = 10;
+  int nitr = max_itr;
+  LinPro_Solve(solution,nitr,
+               nvar,nineq,A,flg_row,map_col2row);
+  EXPECT_LT(nitr,max_itr);
+  EXPECT_EQ(solution.size(),7);
+  EXPECT_NEAR(solution[0],13000,1.0e-10);
+  EXPECT_NEAR(solution[1],200,1.0e-10);
+  EXPECT_NEAR(solution[2],300,1.0e-10);
+  EXPECT_NEAR(solution[3],0,1.0e-10);
+  EXPECT_NEAR(solution[4],0,1.0e-10);
+  EXPECT_NEAR(solution[5],600,1.0e-10);
+  EXPECT_NEAR(solution[6],0,1.0e-10);
+}
 
 TEST(mathexpeval,test1){
   CMathExpressionEvaluator e;
