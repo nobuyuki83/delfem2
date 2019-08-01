@@ -8,7 +8,6 @@ from .c_core import cad_getPointsEdge, mvc
 
 from .c_core import CppMeshDynTri3D, CppCad2D
 
-
 from .fem import VisFEM_Hedgehog, VisFEM_ColorContour
 from .fem import FieldValueSetter
 from .fem import PBD, PBD_Cloth
@@ -25,3 +24,5 @@ from .fem import \
 
 from .cadmsh import Cad2D, VoxelGrid, SDF, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D
 from .cadmsh import TET, TRI, HEX, QUAD
+
+from .util import Trans_Rigid2DTo3D

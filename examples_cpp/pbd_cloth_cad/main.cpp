@@ -128,14 +128,14 @@ void StepTime()
       aXYZt[ip1*3+1] = (p[0][1]+p[1][1])*0.5;
       aXYZt[ip1*3+2] = (p[0][2]+p[1][2])*0.5;
     }
-    for(int ip=0;ip<aXYZt.size()/3;++ip){
-      double p[3] = {aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] };
-      double l0 = Length3D(p);
-      if( l0 < rad0 ){
-        aXYZt[ip*3+0] /= (l0/rad0);
-        aXYZt[ip*3+1] /= (l0/rad0);
-        aXYZt[ip*3+2] /= (l0/rad0);
-      }
+  }
+  for(int ip=0;ip<aXYZt.size()/3;++ip){
+    double p[3] = {aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] };
+    double l0 = Length3D(p);
+    if( l0 < rad0 ){
+      aXYZt[ip*3+0] /= (l0/rad0);
+      aXYZt[ip*3+1] /= (l0/rad0);
+      aXYZt[ip*3+2] /= (l0/rad0);
     }
   }
   PBD_Post(aXYZ, aUVW,

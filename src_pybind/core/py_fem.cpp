@@ -15,6 +15,17 @@
 
 namespace py = pybind11;
 
+
+static double Length3D(const double v[3]){
+  return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+}
+
+static double Distance3D(const double p0[3], const double p1[3]){
+  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+////////////////////////////////////////////////////////////////////////
+
 void MatrixSquareSparse_SetPattern
 (CMatrixSparse& mss,
  const py::array_t<int>& psup_ind,
@@ -508,6 +519,48 @@ void PyPBD_ConstProj_Cloth
   }
 }
 
+void PyPBD_ConstProj_Seam
+(py::array_t<double>& npXYZt,
+ const py::array_t<int>& npLine)
+{
+  double* aXYZt = (double*)(npXYZt.request().ptr);
+  assert( npLine.ndim() == 2 );
+  assert( npLine.shape()[1] == 2 );
+  const unsigned int nline = npLine.shape()[0];
+  for(unsigned int il=0;il<nline;++il){
+    const int i0 = npLine.at(il,0);
+    const int i1 = npLine.at(il,1);
+    double p[2][3] = {
+      {aXYZt[i0*3+0], aXYZt[i0*3+1], aXYZt[i0*3+2] },
+      {aXYZt[i1*3+0], aXYZt[i1*3+1], aXYZt[i1*3+2] },
+    };
+    double d0 = Distance3D(p[0], p[1]);
+    double dLen = 0.02;
+    if( d0 > dLen ){
+      double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
+      double l01 = Length3D(n01);
+      double invl01 = 1.0/l01;
+      n01[0] *= invl01;
+      n01[1] *= invl01;
+      n01[2] *= invl01;
+      aXYZt[i0*3+0] += n01[0]*dLen*0.5;
+      aXYZt[i0*3+1] += n01[1]*dLen*0.5;
+      aXYZt[i0*3+2] += n01[2]*dLen*0.5;
+      aXYZt[i1*3+0] -= n01[0]*dLen*0.5;
+      aXYZt[i1*3+1] -= n01[1]*dLen*0.5;
+      aXYZt[i1*3+2] -= n01[2]*dLen*0.5;
+    }
+    else{
+      aXYZt[i0*3+0] = (p[0][0]+p[1][0])*0.5;
+      aXYZt[i0*3+1] = (p[0][1]+p[1][1])*0.5;
+      aXYZt[i0*3+2] = (p[0][2]+p[1][2])*0.5;
+      aXYZt[i1*3+0] = (p[0][0]+p[1][0])*0.5;
+      aXYZt[i1*3+1] = (p[0][1]+p[1][1])*0.5;
+      aXYZt[i1*3+2] = (p[0][2]+p[1][2])*0.5;
+    }
+  }
+}
+
 void PyPointFixBC
 (py::array_t<double>& aTmp,
  const py::array_t<int>& aBC,
@@ -571,6 +624,7 @@ void init_fem(py::module &m){
   
   m.def("pbd_proj_rigid2d",            &PyPBD_ConstProj_Rigid2D);
   m.def("pbd_proj_rigid3d",            &PyConstProj_Rigid3D);
-  m.def("pbd_pointFixBC",              &PyPointFixBC);
   m.def("pbd_proj_cloth",              &PyPBD_ConstProj_Cloth);
+  m.def("pbd_proj_seam",               &PyPBD_ConstProj_Seam);
+  m.def("pbd_pointFixBC",              &PyPointFixBC);
 }

@@ -45,7 +45,7 @@ void DevideElemAryConnex
     }
     for(unsigned int il=1;il<list.size();il++){
       int itri = list[il];
-      assert( itri < aElemCenter.size() );
+      assert( itri < (int)aElemCenter.size() );
       assert( aElem2Node[itri] == iroot_node );
       double cgx = aElemCenter[itri*3+0];
       double cgy = aElemCenter[itri*3+1];
@@ -137,7 +137,7 @@ void DevideElemAryConnex
         int jtri = aElemSur[jje*2+0];
         if( jtri == -1 ) continue;
         if( aElem2Node[jtri] != iroot_node ) continue;
-        assert( jtri < aElemCenter.size() );
+        assert( jtri < (int)aElemCenter.size() );
         double det = DetSide(aElemCenter.data()+jtri*3,org,dir);
         if( det < 0 ) continue;
         stack.push(jtri);

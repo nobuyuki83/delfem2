@@ -307,7 +307,7 @@ class CadMesh2D(Cad2D):
     self.map_cad2msh = None # this object reallocate
     self.listW = list()
     self.is_sync_mesh = True
-    self.mesher = Mesher_Cad2D()
+    self.mesher = Mesher_Cad2D(edge_length=0.05)
 
   def draw(self):
     self.ccad.draw()
@@ -367,19 +367,19 @@ class CadMesh2D(Cad2D):
 
 class Mesher_Cad2D():
   def __init__(self,edge_length=0.01):
-    self.ege_length = edge_length
     self.cmshr = CppMesher_Cad2D()
+    self.cmshr.edge_length = edge_length
 
-  def npIndFace(self,list_iface,cad:Cad2D) -> numpy.ndarray:
-    if isinstance(list_iface, int):
-      list_iface = [list_iface]
+  def points_on_faces(self,list_iface:List[int],cad:Cad2D) -> numpy.ndarray:
     list_points = self.cmshr.points_on_faces(list_iface,cad.ccad)
     return numpy.array(list_points,dtype=numpy.int32)
 
-  def npIndEdge(self,list_iedge,cad:Cad2D) -> numpy.ndarray:
-    if isinstance(list_iedge, int):
-      list_iedge = [list_iedge]
+  def points_on_edges(self,list_iedge:List[int],cad:Cad2D) -> numpy.ndarray:
     list_points = self.cmshr.points_on_edges(list_iedge,cad.ccad)
+    return numpy.array(list_points,dtype=numpy.int32)
+
+  def points_on_one_edge(self,iedge:int,is_endpoints:bool, cad:Cad2D) -> numpy.ndarray:
+    list_points = self.cmshr.points_on_one_edge(iedge,is_endpoints,cad.ccad)
     return numpy.array(list_points,dtype=numpy.int32)
 
   def meshing(self,cad:Cad2D,dmesh=None):

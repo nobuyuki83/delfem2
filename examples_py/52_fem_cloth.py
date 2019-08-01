@@ -12,9 +12,8 @@ import PyDelFEM2.gl._glfw
 def example1():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
-#  mesh,map_cad2mesh = cad.mesh(0.05)
   fem = dfm2.FEM_Cloth()
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([2], mesh.np_pos)

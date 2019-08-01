@@ -12,7 +12,7 @@ import PyDelFEM2.gl._glfw
 def main_CppMeshDynTri2D_0():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   dmesh = mesher.meshing(cad)
   dmesh.cdmsh.check()
   dfm2.gl._glfw.winDraw3d([dmesh.cdmsh,dfm2.gl.AxisXYZ()],winsize=(400,300))
@@ -21,7 +21,7 @@ def main_CppMeshDynTri2D_0():
 def main_CppMeshDynTri2D_1():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   dmesh = mesher.meshing(cad)
   cdmesh = dmesh.cdmsh
   cdmesh.check()
@@ -68,7 +68,7 @@ def main_MeshDynTri2D_1():
 def main_MeshDynTri2D_2():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   dmsh = mesher.meshing(cad)
   ####
   fem = dfm2.FEM_Poisson(source=1.0)
@@ -93,7 +93,7 @@ def main_MeshDynTri2D_2():
 def main_MeshDynTri2D_3():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   dmsh = mesher.meshing(cad)
   fem = dfm2.FEM_Cloth()
   fem.updated_topology(dmsh)
