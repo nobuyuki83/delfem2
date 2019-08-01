@@ -5,7 +5,7 @@ class Test_PBD(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D()
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     mesh = mesher.meshing(cad)
     pbd = dfm2.PBD()
     pbd.updated_topology(mesh)
@@ -39,7 +39,7 @@ class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D()
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_Poisson(source=1.0)
     fem.updated_topology(msh)
@@ -71,7 +71,7 @@ class Test_FEMDiffuse2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D()
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_Diffuse()
     fem.updated_topology(msh)
@@ -105,7 +105,7 @@ class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D()
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_SolidLinearStatic()
     fem.updated_topology(msh)
@@ -118,7 +118,7 @@ class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D()
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_SolidLinearDynamic()
     fem.param_gravity_x = -0.01
@@ -133,7 +133,7 @@ class Test_FEMSorkes2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D()
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_StorksStatic2D(msh)
     npIdP0 = cad.points_edge([0,1,2,3], msh.np_pos)

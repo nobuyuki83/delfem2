@@ -15,7 +15,12 @@ from .c_core import \
   fem_merge_storksStatic2D, \
   fem_merge_storksDynamic2D, \
   fem_merge_navierStorks2D
-from .c_core import pbd_proj_rigid2d, pbd_proj_rigid3d, pbd_pointFixBC, pbd_proj_cloth
+from .c_core import \
+  pbd_proj_rigid2d, \
+  pbd_proj_rigid3d, \
+  pbd_pointFixBC, \
+  pbd_proj_cloth, \
+  pbd_proj_seam
 from .c_core import matrixSquareSparse_setFixBC
 from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
 from .c_core import map_value
@@ -675,6 +680,12 @@ class PBD_Cloth():
     self.param_gravity_x = 0.0
     self.param_gravity_y = 0.0
     self.param_gravity_z = 0.0
+    self.dmsh = None
+    self.elems_seam = None
+    self.bc = None
+    self.vec_val = None
+    self.vec_velo = None
+    self.vec_tpos = None
 
   def updated_topology(self, dmsh:MeshDynTri2D):
     self.dmsh = dmsh
@@ -684,8 +695,6 @@ class PBD_Cloth():
     self.vec_val[:,:2] = dmsh.np_pos
     self.vec_velo = numpy.zeros_like(self.vec_val, dtype=numpy.float64)
     self.vec_tpos = self.vec_val.copy()
-    self.psup = dmsh.psup()
-    self.psup = jarray_add_diagonal(*self.psup)
 
   def step_time(self):
     self.vec_tpos[:] = self.vec_val + self.dt * self.vec_velo
@@ -695,6 +704,9 @@ class PBD_Cloth():
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     for itr in range(1):
       pbd_proj_cloth(self.vec_tpos,self.dmsh.cdmsh)
+    if isinstance(self.elems_seam,numpy.ndarray):
+      for itr in range(1):
+         pbd_proj_seam(self.vec_tpos,self.elems_seam)
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos

@@ -7,9 +7,9 @@
 
 import math, numpy
 
-def rot_matrix_cartesian(vec):
+def mat3_rot_cartesian(vec:numpy.ndarray) -> numpy.ndarray:
   sqt = vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]
-  mat = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+  mat = numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]],dtype=numpy.float64)
   if sqt < 1.0e-20:  # infinitesmal rotation approximation
     mat[0][0] = 1
     mat[0][1] = -vec[2]
@@ -36,6 +36,35 @@ def rot_matrix_cartesian(vec):
   mat[2][1] = +n[0] * s0 + (1 - c0) * n[2] * n[1]
   mat[2][2] = c0 + (1 - c0) * n[2] * n[2]
   return mat
+
+def mat3_quaternion(q:numpy.ndarray) -> numpy.ndarray:
+  x2 = q[1] * q[1] * 2.0
+  y2 = q[2] * q[2] * 2.0
+  z2 = q[3] * q[3] * 2.0
+  xy = q[1] * q[2] * 2.0
+  yz = q[2] * q[3] * 2.0
+  zx = q[3] * q[1] * 2.0
+  xw = q[1] * q[0] * 2.0
+  yw = q[2] * q[0] * 2.0
+  zw = q[3] * q[0] * 2.0
+  R = numpy.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]],numpy.float64)
+  R[0][0] = 1.0 - y2 - z2
+  R[1][0] = xy + zw
+  R[2][0] = zx - yw
+  R[0][1] = xy - zw
+  R[1][1] = 1.0 - z2 - x2
+  R[2][1] = yz + xw
+  R[0][2] = zx + yw
+  R[1][2] = yz - xw
+  R[2][2] = 1.0 - x2 - y2
+  return R
+
+def mat3_identity() -> numpy.ndarray:
+  I = numpy.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]],numpy.float64)
+  return I
+
+######################################################################
+
 
 def add_scaled_3(vec0,vec1,s):
   vec2 = [0,0,0]
@@ -81,27 +110,7 @@ def get_quaternion_rot_matrix(mat):
   return eparam2
 
 
-def rot_matrix_quaternion(q):
-  x2 = q[1] * q[1] * 2.0
-  y2 = q[2] * q[2] * 2.0
-  z2 = q[3] * q[3] * 2.0
-  xy = q[1] * q[2] * 2.0
-  yz = q[2] * q[3] * 2.0
-  zx = q[3] * q[1] * 2.0
-  xw = q[1] * q[0] * 2.0
-  yw = q[2] * q[0] * 2.0
-  zw = q[3] * q[0] * 2.0
-  R = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-  R[0][0] = 1.0 - y2 - z2
-  R[1][0] = xy + zw
-  R[2][0] = zx - yw
-  R[0][1] = xy - zw
-  R[1][1] = 1.0 - z2 - x2
-  R[2][1] = yz + xw
-  R[0][2] = zx + yw
-  R[1][2] = yz - xw
-  R[2][2] = 1.0 - x2 - y2
-  return R
+
 
 
 def mult_GlAffineMatrix(m, p):
@@ -323,3 +332,16 @@ def screenUnProjectionDirection(v:numpy.ndarray,
   v1 = v1/numpy.linalg.norm(v1)
   return v1
 
+
+class Trans_Rigid2DTo3D:
+  def __init__(self):
+    self.org2 = numpy.array([0.0, 0.0], dtype=numpy.float64)
+    self.org3 = numpy.array([0.0, 0.0, 0.0], dtype=numpy.float64)
+    self.R = mat3_identity()
+
+  def trans(self,pos2):
+    assert pos2.ndim == 2 and pos2.shape[1] == 2
+    pos3 = numpy.zeros((pos2.shape[0],3),numpy.float64)
+    pos3[:,:2] =  pos2 - self.org2
+    pos3[:,:] = numpy.dot(pos3,self.R) + self.org3
+    return pos3

@@ -9,10 +9,10 @@ import numpy
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl._glfw
 
-def poisson(cad,mesh,map_cad2mesh):
+def poisson(cad,mesh,mesher):
   fem = dfm2.FEM_Poisson(source=1.0)
   fem.updated_topology(mesh)
-  npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
+  npIdP = mesher.points_on_edges([0,1,2,3], cad)
   fem.ls.bc[npIdP] = 1
   fem.solve()
   field = dfm2.VisFEM_ColorContour(fem,"value")
@@ -35,10 +35,10 @@ def poisson_ms(cad, mesh):
   dfm2.gl._glfw.winDraw3d([field])
 
 
-def diffuse(cad,mesh):
+def diffuse(cad,mesh,mesher):
   fem = dfm2.FEM_Diffuse()
   fem.updated_topology(mesh)
-  npIdP = cad.points_edge([0,1,2,3], mesh.np_pos)
+  npIdP = mesher.points_on_edges([0,1,2,3], cad)
 
   fem.ls.bc[npIdP] = 1
   ####
@@ -130,7 +130,7 @@ def navir_storks(cad,mesh):
 def fem_cloth():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
   ####
   fem = dfm2.FEM_Cloth()
@@ -162,7 +162,7 @@ def pbd1(cad,mesh):
 def pbd_cloth():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
   ####
   pbd = dfm2.PBD_Cloth()
@@ -170,7 +170,7 @@ def pbd_cloth():
   pbd.param_gravity_z = -0.001
   pbd.dt = 0.08
   pbd.updated_topology(mesh)
-  npIdP = cad.points_edge([2,4], mesh.np_pos)
+  npIdP = mesher.points_on_edges([2,4], cad)
   pbd.bc[npIdP] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
@@ -181,10 +181,10 @@ def pbd_cloth():
 def main():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
   poisson(cad,mesh,mesher)
-  diffuse(cad,mesh)
+  diffuse(cad,mesh,mesher)
   linear_solid_static(cad,mesh)
   linear_solid_dynamic(cad,mesh)
   storks_static(cad,mesh)
@@ -195,19 +195,19 @@ def main():
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
   poisson_ms(cad, mesh)
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
   mesh = mesher.meshing(cad)
   pbd1(cad,mesh)
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
-  mesher = dfm2.Mesher_Cad2D()
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   msh2 = mesher.meshing(cad)
   msh25 = dfm2.Mesh()
   msh25.set_extrude(msh2,1)
