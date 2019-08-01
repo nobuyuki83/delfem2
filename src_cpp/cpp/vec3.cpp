@@ -160,6 +160,8 @@ void GetNearest_LineSegPoint3D
   pn[2] = s[2]+t*d[2];
   return;
 }
+
+
 void GetNearest_TrianglePoint3D
 (double pn[3],
  double& r0, double& r1,
@@ -222,7 +224,6 @@ void GetNearest_TrianglePoint3D
   r1 = 1-r0;
   return;
 }
-
 
 
 void GetVertical2Vector3D
