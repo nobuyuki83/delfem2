@@ -26,42 +26,86 @@
 #define M_PI 3.14159265359
 #endif
 
-
 TEST(linpro,test1)
 {
-  // example in http://www.bunkyo.ac.jp/~nemoto/lecture/or/99/simplex.pdf
+  // example in https://people.richland.edu/james/ictcm/2006/simplex.html
   // http://www.me.titech.ac.jp/~mizu_lab/text/PDF-LP/LP1-problem.pdf
-  std::vector<double> A;
-  std::vector<int> flg_row; // 0:base 1:non_base 2:trg
-  std::vector<int> map_col2row; // 0:base 1:non_base 2:trg
-  const int nvar = 2;
-  const int nineq = 3;
-  LinPro_Init(A, flg_row, map_col2row,
-              nvar, nineq);
-  LinPro_SetIneqLe(A,flg_row,map_col2row,
-                   nvar,nineq,0,{1.0,2.0,800});
-  LinPro_SetIneqLe(A,flg_row,map_col2row,
-                   nvar,nineq,1,{3.0,4.0,1800});
-  LinPro_SetIneqLe(A,flg_row,map_col2row,
-                   nvar,nineq,2,{3.0,1.0,1500});
-  LinPro_SetTarget(A,flg_row,map_col2row,
-                   nvar, nineq, {20.0,30.0});
+  CLinPro lp;
+  lp.AddEqn({ 1.0,  2.0}, 16.0, CLinPro::LE);
+  lp.AddEqn({ 1.0,  1.0},  9.0, CLinPro::LE);
+  lp.AddEqn({ 3.0,  2.0}, 24.0, CLinPro::LE);
+  int nitr = 10;
+  lp.Precomp(nitr);
+  EXPECT_LT(nitr,10);
   //////////////////////////////
   std::vector<double> solution;
-  const int max_itr = 10;
-  int nitr = max_itr;
-  LinPro_Solve(solution,nitr,
-               nvar,nineq,A,flg_row,map_col2row);
-  EXPECT_LT(nitr,max_itr);
-  EXPECT_EQ(solution.size(),7);
-  EXPECT_NEAR(solution[0],13000,1.0e-10);
-  EXPECT_NEAR(solution[1],200,1.0e-10);
-  EXPECT_NEAR(solution[2],300,1.0e-10);
-  EXPECT_NEAR(solution[3],0,1.0e-10);
-  EXPECT_NEAR(solution[4],0,1.0e-10);
-  EXPECT_NEAR(solution[5],600,1.0e-10);
-  EXPECT_NEAR(solution[6],0,1.0e-10);
+  double opt_val;
+  nitr = 10;
+  lp.Solve(solution,opt_val,nitr,
+           {40.0, 30.0});
+  EXPECT_LT(nitr,10);
+  EXPECT_EQ(solution.size(),2);
+  EXPECT_FLOAT_EQ(solution[0],   6);
+  EXPECT_FLOAT_EQ(solution[1],   3);
+  EXPECT_FLOAT_EQ(opt_val,     330);
 }
+
+
+TEST(linpro,test2)
+{
+  // example in http://www.bunkyo.ac.jp/~nemoto/lecture/or/99/simplex.pdf
+  CLinPro lp;
+  lp.AddEqn({ 1.0,  2.0},  800, CLinPro::LE);
+  lp.AddEqn({ 3.0,  4.0}, 1800, CLinPro::LE);
+  lp.AddEqn({ 3.0,  1.0}, 1500, CLinPro::LE);
+  int nitr = 10;
+  lp.Precomp(nitr);
+  //////////////////////////////
+  std::vector<double> solution;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(solution,opt_val,nitr,
+           {20.0, 30.0});
+  EXPECT_LT(nitr,10);
+  EXPECT_EQ(solution.size(),2);
+  EXPECT_FLOAT_EQ(solution[0],   200);
+  EXPECT_FLOAT_EQ(solution[1],   300);
+  EXPECT_FLOAT_EQ(opt_val,     13000);
+}
+
+
+TEST(linpro,test3)
+{
+  // example in https://people.richland.edu/james/ictcm/2006/simplex.html
+  // http://www.me.titech.ac.jp/~mizu_lab/text/PDF-LP/LP1-problem.pdf
+  CLinPro lp;
+  lp.AddEqn({+0.0, +1.0}, +1.0, CLinPro::LE);
+  lp.AddEqn({+1.0, +0.0}, +1.0, CLinPro::LE);
+  lp.AddEqn({-2.0, -1.0}, -1.0, CLinPro::LE);
+  int nitr = 10;
+  lp.Precomp(nitr);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {1.0, 1.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], 1.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], 1.0);
+  EXPECT_FLOAT_EQ(opt_val,    2.0);
+}
+
+
+
+
+
+
+
+
+
+
 
 TEST(mathexpeval,test1){
   CMathExpressionEvaluator e;

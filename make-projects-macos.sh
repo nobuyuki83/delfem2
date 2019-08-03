@@ -25,6 +25,14 @@ cd buildXcode
 cmake -G Xcode ..
 cd ../../
 
+cd tests
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+./runUnitTests
+cd ../../
+
 ################################
 # build examples
 
