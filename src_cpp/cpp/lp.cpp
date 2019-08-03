@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
+#include <cassert>
 
 #include "delfem2/lp.h"
 
