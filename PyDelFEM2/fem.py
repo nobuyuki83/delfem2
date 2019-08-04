@@ -25,7 +25,8 @@ from .c_core import \
   pbd_proj_rigid2d, \
   pbd_proj_rigid3d, \
   pbd_pointFixBC, \
-  pbd_proj_cloth, \
+  pbd_proj_cloth_stretch, \
+  pbd_proj_cloth_bend, \
   pbd_proj_seam, \
   pbd_proj_contact
 from .c_core import \
@@ -628,7 +629,10 @@ class PBD_Cloth():
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     # cloth
     for itr in range(1):
-      pbd_proj_cloth(self.vec_tpos,self.dmsh.cdmsh)
+      pbd_proj_cloth_stretch(self.vec_tpos,self.dmsh.cdmsh)
+    # bend
+    for itr in range(1):
+      pbd_proj_cloth_bend(self.vec_tpos, self.dmsh.cdmsh)
     # seam
     if isinstance(self.elems_seam,numpy.ndarray):
       for itr in range(1):

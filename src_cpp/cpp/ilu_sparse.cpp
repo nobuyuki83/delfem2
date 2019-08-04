@@ -102,13 +102,13 @@ static inline void CalcInvMat3(double a[], double t[] )
 
 CPreconditionerILU::CPreconditionerILU()
 {
-  std::cout << "CPreconditionerILU -- construct" << std::endl;
+//  std::cout << "CPreconditionerILU -- construct" << std::endl;
 }
 
 
 CPreconditionerILU::CPreconditionerILU(const CPreconditionerILU& p)
 {
-  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
+//  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
   this->mat = p.mat; // deep copy
   const int nblk = this->mat.nblk_col;
   this->m_diaInd.resize(nblk);
@@ -121,9 +121,9 @@ CPreconditionerILU::CPreconditionerILU(const CPreconditionerILU& p)
 
 CPreconditionerILU::~CPreconditionerILU()
 {
-  std::cout << "CPreconditionerILU -- destroy" << std::endl;
+//  std::cout << "CPreconditionerILU -- destroy" << std::endl;
   m_diaInd.clear();
-  std::cout << "CPreconditionerILU -- destroy end" << std::endl;
+//  std::cout << "CPreconditionerILU -- destroy end" << std::endl;
 }
 
 
