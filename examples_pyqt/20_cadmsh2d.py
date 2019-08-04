@@ -14,10 +14,29 @@ import PyDelFEM2 as dfm2
 import PyDelFEM2.gl
 import PyDelFEM2.qt
 
-
-class Window(dfm2.qt.QW_CadMshFem):
+class QWindow_Cad2D(QWidget):
   def __init__(self):
-    super(Window, self).__init__()
+    super(QWindow_Cad2D, self).__init__()
+
+    self.cad = dfm2.Cad2D()
+    self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+
+    self.glWidget = dfm2.qt.QGLW_Cad2D()
+    self.glWidget.cadobj = self.cad
+
+    mainLayout = QVBoxLayout()
+    mainLayout.addWidget(self.glWidget)
+    self.setLayout(mainLayout)
+
+    self.setWindowTitle("CAD")
+
+  def keyPressEvent(self, event):
+    if event.text() == 'q':
+      self.close()
+
+class QWindow_CadMshFem(dfm2.qt.QW_CadMshFem):
+  def __init__(self):
+    super(QWindow_CadMshFem, self).__init__()
     self.setWindowTitle("CAD_Mesh")
 
     self.cadmsh = dfm2.CadMesh2D(edge_length=0.05)
@@ -28,6 +47,12 @@ class Window(dfm2.qt.QW_CadMshFem):
 
 if __name__ == '__main__':
   app = QApplication(sys.argv)
-  window = Window()
+
+  ####
+  window = QWindow_Cad2D()
   window.show()
-  sys.exit(app.exec_())
+  app.exec_()
+
+  window = QWindow_CadMshFem()
+  window.show()
+  app.exec_()

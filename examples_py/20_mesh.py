@@ -17,7 +17,7 @@ def height_map():
       A0[iy,ix] = 5*math.sin(ix*0.4)*math.cos(iy*0.6) + 5
 
   msh = dfm2.Mesh()
-  msh.set_grid((A0.shape[1],A0.shape[0]))
+  msh.set_grid([A0.shape[1],A0.shape[0]])
   msh.np_pos = numpy.hstack((msh.np_pos,A0.reshape((-1,1))))
   axis = dfm2.gl.AxisXYZ(32)
   print("hight_map")
