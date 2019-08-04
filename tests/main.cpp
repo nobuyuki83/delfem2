@@ -98,10 +98,142 @@ TEST(linpro,test3)
 }
 
 
+TEST(linpro,test4)
+{
+  // http://zeus.mech.kyushu-u.ac.jp/~tsuji/java_edu/TwoPhase.html
+  CLinPro lp;
+  lp.AddEqn({+2.0, +1.0}, +8.0, CLinPro::GE);
+  lp.AddEqn({+1.0, +1.0}, +6.0, CLinPro::GE);
+  lp.AddEqn({+1.0, +2.0}, +8.0, CLinPro::GE);
+  int nitr = 10;
+  lp.Precomp(nitr);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {-4.0, -3.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], 2.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], 4.0);
+  EXPECT_FLOAT_EQ(opt_val,    -20.0);
+}
 
 
+TEST(linpro,test5)
+{
+  // http://zeus.mech.kyushu-u.ac.jp/~tsuji/java_edu/TwoPhase.html
+  CLinPro lp;
+  lp.AddEqn({+1.0, +2.0, +0.0}, +12.0, CLinPro::EQ);
+  lp.AddEqn({+1.0, +4.0, +3.0}, +20.0, CLinPro::EQ);
+  int nitr = 10;
+  lp.Precomp(nitr);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {2.0, 1.0, 1.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),3);
+  EXPECT_FLOAT_EQ(sol_ini[0], 12.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], 0.0);
+  EXPECT_FLOAT_EQ(sol_ini[2], 8.0/3.0);
+  EXPECT_FLOAT_EQ(opt_val,    +80.0/3.0);
+}
 
+TEST(linpro,test6)
+{
+  // http://www.fujilab.dnj.ynu.ac.jp/lecture/system4.pdf
+  CLinPro lp;
+  lp.AddEqn({+1.0, +3.0}, +4.0, CLinPro::GE);
+  lp.AddEqn({+2.0, +1.0}, +3.0, CLinPro::GE);
+  int nitr = 10;
+  bool res = lp.Precomp(nitr);
+  EXPECT_TRUE(res);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {-4.0, -1.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], +0.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], +3.0);
+  EXPECT_FLOAT_EQ(opt_val,    -3.0);
+}
 
+TEST(linpro,test7)
+{
+  // http://www.bunkyo.ac.jp/~nemoto/lecture/mathpro/2002/2stage-simplex.pdf
+  CLinPro lp;
+  lp.AddEqn({+2.0, +3.0},  +6.0, CLinPro::LE);
+  lp.AddEqn({-5.0, +9.0}, +15.0, CLinPro::EQ);
+  lp.AddEqn({-6.0, +3.0},  +3.0, CLinPro::GE);
+  int nitr = 10;
+  bool res = lp.Precomp(nitr);
+  EXPECT_TRUE(res);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {-6.0, +6.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], +0.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], +5.0/3.0);
+  EXPECT_FLOAT_EQ(opt_val,    +10);
+}
+
+TEST(linpro,test8)
+{
+  // http://www.bunkyo.ac.jp/~nemoto/lecture/mathpro/2002/2stage-simplex.pdf
+  CLinPro lp;
+  lp.AddEqn({-1.0, +1.0, +1.0}, +2.0, CLinPro::LE);
+  lp.AddEqn({+2.0, +1.0, -1.0}, +8.0, CLinPro::EQ);
+  lp.AddEqn({+1.0, +2.0, -1.0}, +1.0, CLinPro::GE);
+  int nitr = 10;
+  bool res = lp.Precomp(nitr);
+  EXPECT_TRUE(res);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {+1.0, +3.0, +5});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),3);
+  EXPECT_FLOAT_EQ(sol_ini[0], +8.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], +1.0);
+  EXPECT_FLOAT_EQ(sol_ini[2], +9.0);
+  EXPECT_FLOAT_EQ(opt_val,    +56.0);
+}
+
+TEST(linpro,test9)
+{
+  // http://www.bunkyo.ac.jp/~nemoto/lecture/mathpro/2002/2stage-simplex.pdf
+  CLinPro lp;
+  lp.AddEqn({+1.0, +1.0, +2.0}, +10.0, CLinPro::GE);
+  lp.AddEqn({+3.0, +1.0, +1.0}, +20.0, CLinPro::GE);
+  int nitr = 10;
+  bool res = lp.Precomp(nitr);
+  EXPECT_TRUE(res);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  lp.Solve(sol_ini,opt_val,nitr,
+           {-12.0, -6.0, -10.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),3);
+  EXPECT_FLOAT_EQ(sol_ini[0], +5.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], +5.0);
+  EXPECT_FLOAT_EQ(sol_ini[2], +0.0);
+  EXPECT_FLOAT_EQ(opt_val,    -90.0);
+}
 
 
 
