@@ -10,7 +10,7 @@ import OpenGL.GL as gl
 import numpy
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 def main():
   buf_face = None
@@ -28,7 +28,7 @@ def main():
   msh.scale_xyz(0.03)
   msh_edge = msh.mesh_edge()
   ####
-  win = dfm2.gl._glfw.WindowGLFW(1.0,winsize=(400,300))
+  win = dfm2.gl.glfw.WindowGLFW(1.0,winsize=(400,300))
   buf_face = dfm2.gl.GLBufferMesh(msh,is_normal=True)
   buf_edge = dfm2.gl.GLBufferMesh(msh_edge)
   win.list_func_draw.append(draw_func)

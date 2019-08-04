@@ -1,5 +1,11 @@
+####################################################################
+# Copyright (c) 2019 Nobuyuki Umetani                              #
+#                                                                  #
+# This source code is licensed under the MIT license found in the  #
+# LICENSE file in the root directory of this source tree.          #
+####################################################################
+
 import numpy, os
-import OpenGL.GL as gl
 
 from .c_core import CppMatrixSparse, PreconditionerILU
 from .c_core import addMasterSlavePattern, matrixSquareSparse_setPattern, matrixSquareSparse_ScaleLeftRight
@@ -21,17 +27,18 @@ from .c_core import \
   pbd_pointFixBC, \
   pbd_proj_cloth, \
   pbd_proj_seam
+from .c_core import \
+  write_vtk_meshpoint, \
+  write_vtk_meshelem, \
+  write_vtk_pointscalar, \
+  write_vtk_pointvector  
 from .c_core import matrixSquareSparse_setFixBC
 from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
 from .c_core import map_value
-from .c_core import write_vtk_meshpoint, write_vtk_meshelem, write_vtk_pointscalar, write_vtk_pointvector
 from .c_core import MathExpressionEvaluator, mass_lumped
 
 from .cadmsh import SDF
 from .cadmsh import Mesh, MeshDynTri2D
-
-from .gl.c_gl import drawField_colorMap, drawField_disp, drawField_hedgehog
-from .gl.c_gl import ColorMap
 
 
 def normalize_rigmsh(rigmsh):
@@ -41,93 +48,6 @@ def normalize_rigmsh(rigmsh):
   rigmsh.scale(1.0/aabb.max_length())
 
 #####################################################
-
-class VisFEM_Hedgehog():
-  def __init__(self, fem,
-               name_vector=""):
-    self.fem = fem
-    self.name_vector = name_vector
-
-  def draw(self):
-    mesh = self.fem.mesh
-    if hasattr(self.fem, self.name_vector):
-      npVector = getattr(self.fem, self.name_vector)
-      assert type(npVector) == numpy.ndarray
-      assert npVector.ndim  == 2
-      ndim = self.fem.mesh.np_pos.shape[1]
-      gl.glDisable(gl.GL_LIGHTING)
-      gl.glColor3d(0, 0, 0)
-      drawField_hedgehog(self.fem.mesh.np_pos, npVector[:,0:ndim], 1.0)
-
-class VisFEM_ColorContour():
-  def __init__(self, fem,
-               name_color="",
-               name_disp="",
-               idim = 0):
-    self.fem = fem
-    ####
-    self.name_color = name_color
-    self.idim = idim
-    self.color_mode = 'bcgyr'
-    self.color_min = 0.0
-    self.color_max = 0.3
-    ####
-    self.name_disp = name_disp
-    self.disp_mode = 'disp'
-    self.is_lighting = True
-
-  def minmax_xyz(self):
-    return self.fem.mesh.minmax_xyz()
-
-  def set_color_minmax(self):
-    if hasattr(self.fem, self.name_color):
-      npColor = getattr(self.fem, self.name_color)
-      assert type(npColor) == numpy.ndarray
-      assert npColor.ndim == 2 and self.idim < npColor.shape[1]
-      self.color_min = npColor[:,self.idim].min()
-      self.color_max = npColor[:,self.idim].max()
-
-  def draw(self):
-    mesh = self.fem.mesh
-    if self.is_lighting:
-      gl.glEnable(gl.GL_LIGHTING)
-
-    if hasattr(self.fem, self.name_color):
-      npColor = getattr(self.fem, self.name_color)
-      assert type(npColor) == numpy.ndarray
-      assert npColor.ndim == 2 and self.idim < npColor.shape[1]
-      self.color_map = ColorMap(self.color_min,self.color_max,self.color_mode)
-      drawField_colorMap(mesh.np_pos, mesh.np_elm,
-                         npColor[:,self.idim],
-                         self.color_map)
-
-    if hasattr(self.fem, self.name_disp):
-      npDisp = getattr(self.fem, self.name_disp)
-      assert type(npDisp) == numpy.ndarray
-      if self.disp_mode == 'disp':
-        drawField_disp(mesh.np_pos, mesh.np_elm, mesh.elem_type,
-                       npDisp)
-      if self.disp_mode == 'hedgehog':
-        gl.glDisable(gl.GL_LIGHTING)
-        gl.glColor3d(0,0,0)
-        drawField_hedgehog(mesh.np_pos, self.val_disp, 1.0)
-
-  def write_vtk(self, path_vtk, message=""):
-    mesh = self.fem.mesh
-    write_vtk_meshpoint(path_vtk,"foobar", mesh.np_pos)
-    write_vtk_meshelem(path_vtk, mesh.np_elm, mesh.elem_type)
-    open(path_vtk, "a+").write("POINT_DATA {0}\n".format(mesh.np_pos.shape[0]))
-    if hasattr(self.fem, self.name_color):
-      npColor = getattr(self.fem, self.name_color)
-      assert type(npColor) == numpy.ndarray
-      if npColor.ndim == 1 or (npColor.ndim == 2 and npColor.shape[1] == 1):
-        write_vtk_pointscalar(path_vtk, npColor)
-    elif hasattr(self.fem, self.name_disp):
-      npDisp = getattr(self.fem, self.name_disp)
-      assert type(npDisp) == numpy.ndarray
-      if npDisp.ndim == 2 and npDisp.shape[1] == mesh.np_pos.shape[1]:
-        write_vtk_pointvector(path_vtk, npDisp)
-
 
 class FieldValueSetter():
   def __init__(self,
@@ -682,6 +602,7 @@ class PBD_Cloth():
     self.param_gravity_z = 0.0
     self.dmsh = None
     self.elems_seam = None
+    self.sdf = None
     self.bc = None
     self.vec_val = None
     self.vec_velo = None
@@ -701,12 +622,20 @@ class PBD_Cloth():
     self.vec_tpos[:,0] += self.dt*self.dt*self.param_gravity_x
     self.vec_tpos[:,1] += self.dt*self.dt*self.param_gravity_y
     self.vec_tpos[:,2] += self.dt*self.dt*self.param_gravity_z
+    # pre
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
+    # cloth
     for itr in range(1):
       pbd_proj_cloth(self.vec_tpos,self.dmsh.cdmsh)
+    # seam
     if isinstance(self.elems_seam,numpy.ndarray):
       for itr in range(1):
          pbd_proj_seam(self.vec_tpos,self.elems_seam)
+    # contact
+    if isinstance(self.sdf,SDF):
+      for itr in range(1):
+        pbd_prj_contact(self.vec_tpos,self.sdf)
+    # post
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
     self.vec_val[:] = self.vec_tpos

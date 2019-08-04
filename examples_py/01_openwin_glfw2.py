@@ -9,7 +9,7 @@
 import OpenGL.GL as gl
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 
 def draw_func():
@@ -20,7 +20,7 @@ msh = dfm2.Mesh()
 msh.read("../test_inputs/bunny_2k.ply")
 msh.scale_xyz(0.03)
 
-win = dfm2.gl._glfw.WindowGLFW(1.0,winsize=(400,300))
+win = dfm2.gl.glfw.WindowGLFW(1.0,winsize=(400,300))
 win.list_func_draw.append(draw_func)
 dfm2.gl.setSomeLighting()
 win.draw_loop()

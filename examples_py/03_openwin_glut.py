@@ -9,7 +9,7 @@ import OpenGL.GL as gl
 import OpenGL.GLUT as glut
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glut
+import PyDelFEM2.gl.glut
 
 wmngr_glut = None
 
@@ -73,7 +73,7 @@ def main():
   glut.glutSpecialFunc(special)
   glut.glutIdleFunc(idle)
 
-  wmngr_glut = dfm2.gl._glut.WindowManagerGLUT(0.3)
+  wmngr_glut = dfm2.gl.glut.WindowManagerGLUT(0.3)
 
   dfm2.gl.setSomeLighting()
 

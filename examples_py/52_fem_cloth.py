@@ -7,7 +7,7 @@
 
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 def example1():
   cad = dfm2.Cad2D()
@@ -22,7 +22,7 @@ def example1():
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([fem,mesh2,axis,fem.sdf])
+  dfm2.gl.glfw.winDraw3d([fem,mesh2,axis,fem.sdf])
 
 
 if __name__ == "__main__":

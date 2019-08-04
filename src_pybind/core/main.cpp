@@ -218,17 +218,16 @@ PYBIND11_MODULE(c_core, m) {
   .def("add",&CVoxelGrid3D::Add,"add voxel at the integer coordinate");
   
   m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
-  m.def("meshhex3d_voxelgrid",&PyMeshHex3D_VoxelGrid);
+  m.def("meshhex3d_voxelgrid", &PyMeshHex3D_VoxelGrid);
   
   ///////////////////////////////////
   // SDF
   py::class_<CSDF3>(m, "SDF");
-  
-  py::class_<CSignedDistanceField3D_Sphere, CSDF3>(m, "CppSDF_Sphere")
+  py::class_<CSDF3_Sphere, CSDF3>(m, "CppSDF_Sphere")
   .def(py::init<>())
   .def(py::init<double,const std::vector<double>&,bool>())
-  .def_readwrite("cent", &CSignedDistanceField3D_Sphere::cent_)
-  .def_readwrite("rad",  &CSignedDistanceField3D_Sphere::radius_);
+  .def_readwrite("cent", &CSDF3_Sphere::cent_)
+  .def_readwrite("rad",  &CSDF3_Sphere::radius_);
   
   m.def("isosurface", &PyIsoSurface);
   

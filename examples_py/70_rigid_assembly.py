@@ -1,7 +1,7 @@
 
 import PyDelFEM2 as dfm2
 import PyDelFEM2.eigen as rb
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 rb0 = rb.RigidBody(1.0, [+0.0, 1.0, +0.0])
 rb1 = rb.RigidBody(0.1, [-1.0, 0.5, -1.0])
@@ -21,4 +21,4 @@ jt3 = rb.Joint(0,4, [+1,+1,+1])
 
 rb_asm = rb.RigidBodyAssembly_Static([rb0,rb1,rb2,rb3,rb4],[jt0,jt1,jt2,jt3])
 axis = dfm2.gl.AxisXYZ(1)
-dfm2.gl._glfw.winDraw3d([axis,rb_asm],winsize=(400,300))
+dfm2.gl.glfw.winDraw3d([axis,rb_asm],winsize=(400,300))

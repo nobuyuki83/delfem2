@@ -210,7 +210,7 @@ const double q2[3])
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-CSignedDistanceField3D_Plane::CSignedDistanceField3D_Plane(double n[3], double o[3])
+CSDF3_Plane::CSDF3_Plane(double n[3], double o[3])
 {
 	////
 	normal_[0] = n[0];
@@ -222,9 +222,7 @@ CSignedDistanceField3D_Plane::CSignedDistanceField3D_Plane(double n[3], double o
 	origin_[2] = o[2];
 }
 
-
-
-double CSignedDistanceField3D_Plane::Projection(double px, double py, double pz,
+double CSDF3_Plane::Projection(double px, double py, double pz,
 							  double n[3]) const // normal
 {
 	n[0] = normal_[0];		
@@ -233,11 +231,10 @@ double CSignedDistanceField3D_Plane::Projection(double px, double py, double pz,
 	return -( normal_[0]*(px-origin_[0]) + normal_[1]*(py-origin_[1]) + normal_[2]*(pz-origin_[2]) );
 }
 
-
 ////////////////////////////////////////////////////////////////
 
 
-CSignedDistanceField3D_Sphere::CSignedDistanceField3D_Sphere(double r, const std::vector<double>& c, bool is_out){
+CSDF3_Sphere::CSDF3_Sphere(double r, const std::vector<double>& c, bool is_out){
   cent_.resize(3);
 	cent_[0] = c[0];
 	cent_[1] = c[1];
@@ -246,68 +243,8 @@ CSignedDistanceField3D_Sphere::CSignedDistanceField3D_Sphere(double r, const std
 	this->is_out_ = is_out;
 }
 
-void CSignedDistanceField3D_Sphere::GetMesh
-(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const
-{
-  double pi = 3.1415;
-  const unsigned int nlg = 32;
-	const unsigned int nlt = 18;	
-	const double rlg = 2*pi/nlg;	// longtitude
-	const double rlt = 1*pi/nlt;	// latitude
-  aXYZ.resize(nlg*(nlt-1)*3+2*3);
-	for(unsigned int ilg=0;ilg<nlg;ilg++){    
-    for(unsigned int ilt=0;ilt<(nlt-1);ilt++){
-      double alt = ilt*rlt+rlt-pi*0.5;
-      aXYZ[(ilg*(nlt-1)+ilt)*3+0] = cent_[0]+radius_*cos(alt)*sin(ilg*rlg);
-      aXYZ[(ilg*(nlt-1)+ilt)*3+1] = cent_[1]+radius_*cos(alt)*cos(ilg*rlg);
-      aXYZ[(ilg*(nlt-1)+ilt)*3+2] = cent_[2]+radius_*sin(alt);
-    }
-  }
-  const unsigned int iu1 = nlg*(nlt-1);
-  {
-    aXYZ[iu1*3+0] = cent_[0];
-    aXYZ[iu1*3+1] = cent_[1];
-    aXYZ[iu1*3+2] = cent_[2]+radius_;
-  }
-  const unsigned int iu2 = nlg*(nlt-1)+1;  
-  {    
-    aXYZ[iu2*3+0] = cent_[0];
-    aXYZ[iu2*3+1] = cent_[1];
-    aXYZ[iu2*3+2] = cent_[2]-radius_;   
-  }
-  ////
-  aTri.resize(nlg*(nlt-2)*2*3+nlg*2*3);
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-    for(unsigned int ilt=0;ilt<nlt-2;ilt++){
-      unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;
-      aTri[(ilg*(nlt-2)+ilt)*6+0] = ilg*(nlt-1)+ilt;
-      aTri[(ilg*(nlt-2)+ilt)*6+1] = iug*(nlt-1)+ilt+1;
-      aTri[(ilg*(nlt-2)+ilt)*6+2] = iug*(nlt-1)+ilt;
-      ////
-      aTri[(ilg*(nlt-2)+ilt)*6+3] = ilg*(nlt-1)+ilt;
-      aTri[(ilg*(nlt-2)+ilt)*6+4] = ilg*(nlt-1)+ilt+1;
-      aTri[(ilg*(nlt-2)+ilt)*6+5] = iug*(nlt-1)+ilt+1;
-    }
-  }
-  const unsigned int itri1 = nlg*(nlt-2)*2;
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-    unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;    
-    aTri[(itri1+ilg)*3+0] = nlt-2+(nlt-1)*ilg;
-    aTri[(itri1+ilg)*3+1] = iu1;
-    aTri[(itri1+ilg)*3+2] = nlt-2+(nlt-1)*iug;
-  }
-  const unsigned int itri2 = nlg*(nlt-2)*2+nlg;
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-    unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;    
-    aTri[(itri2+ilg)*3+0] = (nlt-1)*iug;
-    aTri[(itri2+ilg)*3+1] = iu2;
-    aTri[(itri2+ilg)*3+2] = (nlt-1)*ilg;    
-  }    
-}
-
-	
 // return penetration depth (inside is positive)
-double CSignedDistanceField3D_Sphere::Projection
+double CSDF3_Sphere::Projection
 	(double px, double py, double pz,
 	 double n[3]) const // normal outward
 {
@@ -326,7 +263,7 @@ double CSignedDistanceField3D_Sphere::Projection
 	return radius_-len;
 }
 
-unsigned int CSignedDistanceField3D_Sphere::FindInOut(double px, double py, double pz) const
+unsigned int CSDF3_Sphere::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	double pd = this->Projection(px, py, pz, n);	
@@ -335,7 +272,7 @@ unsigned int CSignedDistanceField3D_Sphere::FindInOut(double px, double py, doub
 	return 1;
 }
 
-bool CSignedDistanceField3D_Sphere::IntersectionPoint
+bool CSDF3_Sphere::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -355,7 +292,7 @@ bool CSignedDistanceField3D_Sphere::IntersectionPoint
 
 ////////////////////////////////////////////////////////////////
 
-CSignedDistanceField3D_Cylinder::CSignedDistanceField3D_Cylinder
+CSDF3_Cylinder::CSDF3_Cylinder
 (double r, double cnt[3], double dir[3], bool is_out){
 	cent_[0] = cnt[0];
 	cent_[1] = cnt[1];
@@ -367,70 +304,9 @@ CSignedDistanceField3D_Cylinder::CSignedDistanceField3D_Cylinder
 	this->is_out_ = is_out;
 }
 
-void CSignedDistanceField3D_Cylinder::GetMesh
-(std::vector<unsigned int>& aTri,
- std::vector<double>& aXYZ,
- double elen) const
-{
-  double pi = 3.1415;
-  const unsigned int nlg = 32;
-	const unsigned int nlt = 18;	
-	const double rlg = 2*pi/nlg;	// longtitude
-	const double rlt = 1*pi/nlt;	// latitude
-  aXYZ.resize(nlg*(nlt-1)*3+2*3);
-	for(unsigned int ilg=0;ilg<nlg;ilg++){    
-    for(unsigned int ilt=0;ilt<(nlt-1);ilt++){
-      double alt = ilt*rlt+rlt-pi*0.5;
-      aXYZ[(ilg*(nlt-1)+ilt)*3+0] = cent_[0]+radius_*cos(alt)*sin(ilg*rlg);
-      aXYZ[(ilg*(nlt-1)+ilt)*3+1] = cent_[1]+radius_*cos(alt)*cos(ilg*rlg);
-      aXYZ[(ilg*(nlt-1)+ilt)*3+2] = cent_[2]+radius_*sin(alt);
-    }
-  }
-  const unsigned int iu1 = nlg*(nlt-1);
-  {
-    aXYZ[iu1*3+0] = cent_[0];
-    aXYZ[iu1*3+1] = cent_[1];
-    aXYZ[iu1*3+2] = cent_[2]+radius_;
-  }
-  const unsigned int iu2 = nlg*(nlt-1)+1;  
-  {    
-    aXYZ[iu2*3+0] = cent_[0];
-    aXYZ[iu2*3+1] = cent_[1];
-    aXYZ[iu2*3+2] = cent_[2]-radius_;   
-  }
-  ////
-  aTri.resize(nlg*(nlt-2)*2*3+nlg*2*3);
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-    for(unsigned int ilt=0;ilt<nlt-2;ilt++){
-      unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;
-      aTri[(ilg*(nlt-2)+ilt)*6+0] = ilg*(nlt-1)+ilt;
-      aTri[(ilg*(nlt-2)+ilt)*6+1] = iug*(nlt-1)+ilt+1;
-      aTri[(ilg*(nlt-2)+ilt)*6+2] = iug*(nlt-1)+ilt;
-      ////
-      aTri[(ilg*(nlt-2)+ilt)*6+3] = ilg*(nlt-1)+ilt;
-      aTri[(ilg*(nlt-2)+ilt)*6+4] = ilg*(nlt-1)+ilt+1;
-      aTri[(ilg*(nlt-2)+ilt)*6+5] = iug*(nlt-1)+ilt+1;
-    }
-  }
-  const unsigned int itri1 = nlg*(nlt-2)*2;
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-    unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;    
-    aTri[(itri1+ilg)*3+0] = nlt-2+(nlt-1)*ilg;
-    aTri[(itri1+ilg)*3+1] = iu1;
-    aTri[(itri1+ilg)*3+2] = nlt-2+(nlt-1)*iug;
-  }
-  const unsigned int itri2 = nlg*(nlt-2)*2+nlg;
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-    unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;    
-    aTri[(itri2+ilg)*3+0] = (nlt-1)*iug;
-    aTri[(itri2+ilg)*3+1] = iu2;
-    aTri[(itri2+ilg)*3+2] = (nlt-1)*ilg;    
-  }    
-}
-
 
 // return penetration depth (inside is positive)
-double CSignedDistanceField3D_Cylinder::Projection
+double CSDF3_Cylinder::Projection
 (double px, double py, double pz,
  double n[3]) const // normal outward
 {
@@ -453,7 +329,7 @@ double CSignedDistanceField3D_Cylinder::Projection
 	return radius_-len;
 }
 
-unsigned int CSignedDistanceField3D_Cylinder::FindInOut(double px, double py, double pz) const
+unsigned int CSDF3_Cylinder::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	double pd = this->Projection(px, py, pz, n);	
@@ -462,7 +338,7 @@ unsigned int CSignedDistanceField3D_Cylinder::FindInOut(double px, double py, do
 	return 1;
 }
 
-bool CSignedDistanceField3D_Cylinder::IntersectionPoint
+bool CSDF3_Cylinder::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -482,48 +358,14 @@ bool CSignedDistanceField3D_Cylinder::IntersectionPoint
 ////////////////////////////////////////////////////////////////
 
 
-CSignedDistanceField3D_Torus::CSignedDistanceField3D_Torus(){
+CSDF3_Torus::CSDF3_Torus(){
 	cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
 	radius_ = 0.5;
 	radius_tube_ = 0.2;
 }
 
-void CSignedDistanceField3D_Torus::GetMesh
-(std::vector<unsigned int>& aTri,
- std::vector<double>& aXYZ,
- double elen) const
-{
-	const unsigned int nlg = 32;
-	const unsigned int nlt = 18;	
-	const double rlg = 6.28/nlg;	// longtitude
-	const double rlt = 6.28/nlt;	// latitude
-  aXYZ.resize(nlg*nlt*3);
-	for(unsigned int ilg=0;ilg<nlg;ilg++){    
-  for(unsigned int ilt=0;ilt<nlt;ilt++){
-    aXYZ[(ilg*nlt+ilt)*3+0] = ( radius_ + radius_tube_*cos(ilt*rlt) )*sin(ilg*rlg);
-    aXYZ[(ilg*nlt+ilt)*3+1] = ( radius_ + radius_tube_*cos(ilt*rlt) )*cos(ilg*rlg);
-    aXYZ[(ilg*nlt+ilt)*3+2] = radius_tube_*sin(ilt*rlt);
-	}
-  }
-  aTri.resize(nlg*nlt*2*3);
-	for(unsigned int ilg=0;ilg<nlg;ilg++){        
-  for(unsigned int ilt=0;ilt<nlt;ilt++){
-    unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;
-    unsigned int iut = ( ilt == nlt-1 ) ? 0 : ilt+1; 
-    aTri[(ilg*nlt+ilt)*6+0] = ilg*nlt+ilt;
-    aTri[(ilg*nlt+ilt)*6+2] = iug*nlt+ilt;
-    aTri[(ilg*nlt+ilt)*6+1] = iug*nlt+iut;
-    ////
-    aTri[(ilg*nlt+ilt)*6+3] = ilg*nlt+ilt;
-    aTri[(ilg*nlt+ilt)*6+5] = iug*nlt+iut;
-    aTri[(ilg*nlt+ilt)*6+4] = ilg*nlt+iut;
-  }
-  }
-}
-
-	
 // return penetration depth (inside is positive)
-double CSignedDistanceField3D_Torus::Projection
+double CSDF3_Torus::Projection
 (double px, double py, double pz,
  double n[3]) const // normal outward
 {
@@ -554,7 +396,7 @@ double CSignedDistanceField3D_Torus::Projection
 	return radius_tube_-len2;
 }
 	
-unsigned int CSignedDistanceField3D_Torus::FindInOut(double px, double py, double pz) const
+unsigned int CSDF3_Torus::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	const double pd = this->Projection(px, py, pz, n);
@@ -565,7 +407,7 @@ unsigned int CSignedDistanceField3D_Torus::FindInOut(double px, double py, doubl
 /////
 
 
-double CSignedDistanceField3D_Combine::Projection
+double CSDF3_Combine::Projection
 (double px, double py, double pz,
  double n[3]) const // normal
 {
@@ -584,7 +426,8 @@ double CSignedDistanceField3D_Combine::Projection
   return max_dist;
 }
 
-void CSignedDistanceField3D_Combine::GetMesh
+/*
+void CSDF3_Combine::GetMesh
 (std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
@@ -606,12 +449,13 @@ void CSignedDistanceField3D_Combine::GetMesh
     }
   }
 }
+ */
 
 /////
 
 
 
-double CSignedDistanceField3D_Transform::Projection
+double CSDF3_Transform::Projection
 (double px, double py, double pz,
  double n[3]) const // normal
 {
@@ -634,7 +478,8 @@ double CSignedDistanceField3D_Transform::Projection
 }
 
 
-void CSignedDistanceField3D_Transform::GetMesh
+/*
+void CSDF3_Transform::GetMesh
 (std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
@@ -660,25 +505,25 @@ void CSignedDistanceField3D_Transform::GetMesh
     aXYZ[ino*3+2] = pz2;    
   }
 }
+*/
 
 
 
 
-
-CSignedDistanceField3D_Mesh::CSignedDistanceField3D_Mesh(){
+CSDF3_Mesh::CSDF3_Mesh(){
   nnode_ = 0;	pXYZs_ = 0;
   ntri_ = 0;	aTri_ = 0;
   pBoxel_ = 0;
   is_hole = false;
 }
 
-CSignedDistanceField3D_Mesh::~CSignedDistanceField3D_Mesh(){
+CSDF3_Mesh::~CSDF3_Mesh(){
   if( pXYZs_  != 0 ){ delete pXYZs_; }
   if( aTri_   != 0 ){ delete aTri_; }
   if( pBoxel_ != 0 ){ delete pBoxel_; }
 }
 
-void CSignedDistanceField3D_Mesh::GetCenterWidth(double& cx, double& cy, double& cz,
+void CSDF3_Mesh::GetCenterWidth(double& cx, double& cy, double& cz,
                                                  double& wx, double& wy, double& wz)
 {
   double x_min = pXYZs_[0], x_max = pXYZs_[0];
@@ -839,7 +684,7 @@ void CSignedDistanceField3D_Mesh::GetCenterWidth(double& cx, double& cy, double&
  }
  */
 
-void CSignedDistanceField3D_Mesh::SetMesh
+void CSDF3_Mesh::SetMesh
 (const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
 {
@@ -853,7 +698,7 @@ void CSignedDistanceField3D_Mesh::SetMesh
 
 
 // return penetration depth (inside is positive)
-double CSignedDistanceField3D_Mesh::Projection
+double CSDF3_Mesh::Projection
 (double px, double py, double pz,
  double n[3]) const // normal outward
 {
@@ -876,7 +721,7 @@ double CSignedDistanceField3D_Mesh::Projection
   return -dist;	// if not sure assume out
 }
 
-void CSignedDistanceField3D_Mesh::GetMesh
+void CSDF3_Mesh::GetMesh
 (std::vector<unsigned int>& aTri,
  std::vector<double>& aXYZ,
  double elen) const
@@ -889,7 +734,7 @@ void CSignedDistanceField3D_Mesh::GetMesh
 
 
 // 0:in 1:out 2:not sure
-double CSignedDistanceField3D_Mesh::FindNearest
+double CSDF3_Mesh::FindNearest
 (int& itri, double& r0, double& r1,
  double px, double py, double pz) const
 {
@@ -971,7 +816,7 @@ double CSignedDistanceField3D_Mesh::Distance_Mesh_Boxel
 
 
 // 0:in 1:out 2:not sure
-unsigned int CSignedDistanceField3D_Mesh::FindInOut_IntersectionRay
+unsigned int CSDF3_Mesh::FindInOut_IntersectionRay
 (double px, double py, double pz,
  const double dir[3]) const
 {
@@ -1008,7 +853,7 @@ unsigned int CSignedDistanceField3D_Mesh::FindInOut_IntersectionRay
 
 
 // 0:in 1:out 2:not sure
-unsigned int CSignedDistanceField3D_Mesh::FindInOut_IntersectionRay_Boxel
+unsigned int CSDF3_Mesh::FindInOut_IntersectionRay_Boxel
 (double px, double py, double pz,
  const double dir[3]) const
 {
@@ -1061,7 +906,7 @@ AMBIGUOUS:
 }
 
 
-void CSignedDistanceField3D_Mesh::BuildBoxel()
+void CSDF3_Mesh::BuildBoxel()
 {
   //	double c[3] = {0.0542,-0.04374532,0.06234};
   double c[3] = {0,0,0};
@@ -1084,7 +929,7 @@ void CSignedDistanceField3D_Mesh::BuildBoxel()
   aIndTriCand.reserve(2048);
 }
 
-unsigned int CSignedDistanceField3D_Mesh::FindInOut(double px, double py, double pz) const
+unsigned int CSDF3_Mesh::FindInOut(double px, double py, double pz) const
 {
   unsigned int icnt_in  = 0;
   unsigned int icnt_out = 0;
@@ -1111,7 +956,7 @@ unsigned int CSignedDistanceField3D_Mesh::FindInOut(double px, double py, double
   return 2;
 }
 
-unsigned int CSignedDistanceField3D_Mesh::FindInOut_Boxel
+unsigned int CSDF3_Mesh::FindInOut_Boxel
 (double px, double py, double pz) const
 {
   assert( pBoxel_ != 0 );
@@ -1137,7 +982,7 @@ unsigned int CSignedDistanceField3D_Mesh::FindInOut_Boxel
   return 2;
 }
 
-void CSignedDistanceField3D_Mesh::Translate(double x, double y, double z)
+void CSDF3_Mesh::Translate(double x, double y, double z)
 {
   for(unsigned int ino=0;ino<nnode_;ino++){
     pXYZs_[ino*3+0] += x;
@@ -1173,7 +1018,7 @@ bool IsIntersecTri3D
   return true;
 }
 
-bool CSignedDistanceField3D_Mesh::FindIntersectionTri
+bool CSDF3_Mesh::FindIntersectionTri
 (double psec[3], int& itri, double& r0, double& r1,
  const double org[3], const double dir[3]) const
 {
@@ -1231,7 +1076,7 @@ bool CSignedDistanceField3D_Mesh::FindIntersectionTri
 }
 
 
-bool CSignedDistanceField3D_Mesh::IntersectionPoint
+bool CSDF3_Mesh::IntersectionPoint
 (double p[3],
  const double org[3], const double dir[3]) const
 {

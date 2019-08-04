@@ -1121,6 +1121,40 @@ void MeshTri3D_Icosahedron
   aTri[19*3+0]=10; aTri[19*3+1]= 5; aTri[19*3+2]= 7;
 }
 
+void MeshTri3D_Torus
+(std::vector<unsigned int>& aTri,
+ std::vector<double>& aXYZ,
+ double radius_,
+ double radius_tube_)
+{
+  const unsigned int nlg = 32;
+  const unsigned int nlt = 18;
+  const double rlg = 6.28/nlg;  // longtitude
+  const double rlt = 6.28/nlt;  // latitude
+  aXYZ.resize(nlg*nlt*3);
+  for(unsigned int ilg=0;ilg<nlg;ilg++){
+    for(unsigned int ilt=0;ilt<nlt;ilt++){
+      aXYZ[(ilg*nlt+ilt)*3+0] = ( radius_ + radius_tube_*cos(ilt*rlt) )*sin(ilg*rlg);
+      aXYZ[(ilg*nlt+ilt)*3+1] = ( radius_ + radius_tube_*cos(ilt*rlt) )*cos(ilg*rlg);
+      aXYZ[(ilg*nlt+ilt)*3+2] = radius_tube_*sin(ilt*rlt);
+    }
+  }
+  aTri.resize(nlg*nlt*2*3);
+  for(unsigned int ilg=0;ilg<nlg;ilg++){
+    for(unsigned int ilt=0;ilt<nlt;ilt++){
+      unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;
+      unsigned int iut = ( ilt == nlt-1 ) ? 0 : ilt+1;
+      aTri[(ilg*nlt+ilt)*6+0] = ilg*nlt+ilt;
+      aTri[(ilg*nlt+ilt)*6+2] = iug*nlt+ilt;
+      aTri[(ilg*nlt+ilt)*6+1] = iug*nlt+iut;
+      ////
+      aTri[(ilg*nlt+ilt)*6+3] = ilg*nlt+ilt;
+      aTri[(ilg*nlt+ilt)*6+5] = iug*nlt+iut;
+      aTri[(ilg*nlt+ilt)*6+4] = ilg*nlt+iut;
+    }
+  }
+}
+
 void SetTopology_ExtrudeTri2Tet
 (unsigned int* aTet,
  int nXY,

@@ -7,7 +7,7 @@
 
 import numpy
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 def poisson(cad,mesh,mesher):
   fem = dfm2.FEM_Poisson(source=1.0)
@@ -15,8 +15,8 @@ def poisson(cad,mesh,mesher):
   npIdP = mesher.points_on_edges([0,1,2,3], cad)
   fem.ls.bc[npIdP] = 1
   fem.solve()
-  field = dfm2.VisFEM_ColorContour(fem,"value")
-  dfm2.gl._glfw.winDraw3d([field])
+  field = dfm2.gl.VisFEM_ColorContour(fem,"value")
+  dfm2.gl.glfw.winDraw3d([field])
   field.write_vtk("poisson2d.vtk")
 
 
@@ -31,8 +31,8 @@ def poisson_ms(cad, mesh):
   npIdP_fix = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP_fix] = 1
   fem.solve()
-  field = dfm2.VisFEM_ColorContour(fem,"value")
-  dfm2.gl._glfw.winDraw3d([field])
+  field = dfm2.gl.VisFEM_ColorContour(fem,"value")
+  dfm2.gl.glfw.winDraw3d([field])
 
 
 def diffuse(cad,mesh,mesher):
@@ -42,11 +42,11 @@ def diffuse(cad,mesh,mesher):
 
   fem.ls.bc[npIdP] = 1
   ####
-  field = dfm2.VisFEM_ColorContour(fem,name_color="value")
+  field = dfm2.gl.VisFEM_ColorContour(fem,name_color="value")
   field.draw_val_min = 0.0
   field.draw_val_max = 0.3
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([fem,field,axis])
+  dfm2.gl.glfw.winDraw3d([fem,field,axis])
 
 
 def linear_solid_static(cad,mesh):
@@ -56,8 +56,8 @@ def linear_solid_static(cad,mesh):
   npIdP = cad.points_edge([3], mesh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   fem.solve()
-  field = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
-  dfm2.gl._glfw.winDraw3d([field])
+  field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="vec_val")
+  dfm2.gl.glfw.winDraw3d([field])
   field.write_vtk("linearsolid2d.vtk")
 
 
@@ -65,8 +65,8 @@ def linear_solid_eigen(mesh):
   fem = dfm2.FEM_SolidLinearEigen()
   fem.updated_topology(mesh)
   fem.ls.f[:] = numpy.random.uniform(-1,1, mesh.np_pos.shape )
-  field = dfm2.VisFEM_ColorContour(fem,name_disp="mode")
-  dfm2.gl._glfw.winDraw3d([fem,field])
+  field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="mode")
+  dfm2.gl.glfw.winDraw3d([fem,field])
 
 
 def linear_solid_dynamic(cad,mesh):
@@ -77,9 +77,9 @@ def linear_solid_dynamic(cad,mesh):
   fem.ls.bc[npIdP,:] = 1
   print(fem.ls.conv_hist)
   ####
-  field = dfm2.VisFEM_ColorContour(fem,name_disp="vec_val")
+  field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="vec_val")
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([fem,field,axis])
+  dfm2.gl.glfw.winDraw3d([fem,field,axis])
 
 
 def storks_static(cad,mesh):
@@ -91,11 +91,11 @@ def storks_static(cad,mesh):
   fem.solve()
   print(fem.ls.conv_hist)
   ####
-  field_p = dfm2.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
+  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
   field_p.set_color_minmax()
-  field_v = dfm2.VisFEM_Hedgehog(fem, name_vector="vec_val")
+  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([field_p,field_v,axis])
+  dfm2.gl.glfw.winDraw3d([field_p,field_v,axis])
 
 def storks_dynamic(cad,mesh):
   fem = dfm2.FEM_StorksDynamic2D(mesh)
@@ -106,11 +106,11 @@ def storks_dynamic(cad,mesh):
   fem.solve()
   print(fem.ls.conv_hist)
   ####
-  field_p = dfm2.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
+  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
   field_p.set_color_minmax()
-  field_v = dfm2.VisFEM_Hedgehog(fem, name_vector="vec_val")
+  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([fem,field_p,field_v,axis])
+  dfm2.gl.glfw.winDraw3d([fem,field_p,field_v,axis])
 
 
 def navir_storks(cad,mesh):
@@ -120,11 +120,11 @@ def navir_storks(cad,mesh):
   npIdP1 = cad.points_edge([2], mesh.np_pos)
   fem.vec_val[npIdP1,0] = 1.0
   ####
-  field_p = dfm2.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
+  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
   field_p.set_color_minmax()
-  field_v = dfm2.VisFEM_Hedgehog(fem, name_vector="vec_val")
+  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([fem,field_p,field_v,axis])
+  dfm2.gl.glfw.winDraw3d([fem,field_p,field_v,axis])
 
 
 def fem_cloth():
@@ -144,7 +144,7 @@ def fem_cloth():
   ####
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([fem,mesh2,axis])
+  dfm2.gl.glfw.winDraw3d([fem,mesh2,axis])
 
 
 def pbd1(cad,mesh):
@@ -156,7 +156,7 @@ def pbd1(cad,mesh):
                               mesh=mesh, npIdP=npIdP, dt=pbd.dt)
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
-  dfm2.gl._glfw.winDraw3d([fvs,pbd,mesh2])
+  dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh2])
 
 
 def pbd_cloth():
@@ -175,7 +175,7 @@ def pbd_cloth():
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl._glfw.winDraw3d([pbd,mesh2,axis])
+  dfm2.gl.glfw.winDraw3d([pbd,mesh2,axis])
 
 
 def main():
