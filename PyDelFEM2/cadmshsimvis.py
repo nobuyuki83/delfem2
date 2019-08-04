@@ -23,6 +23,7 @@ class CadMesh2D_FEMPoisson(CadMesh2D):
 
   def draw(self):
     self.ccad.draw()
+    gl.glDisable(gl.GL_LIGHTING)
     self.vis.draw()
 
   def motion(self,src0,src1,dir):
@@ -45,6 +46,7 @@ class CadMesh2D_FEMDiffuse(CadMesh2D):
     super().__init__(edge_length)
     self.fem = FEM_Diffuse()
     self.vis = VisFEM_ColorContour(self.fem,name_color='value')
+    self.vis.is_lighting = False
     self.list_cad_edge_fix = [0,1,2,3]
 
   def draw(self):
@@ -68,6 +70,7 @@ class CadMesh2D_FEMSolidLinearStatic(CadMesh2D):
     super().__init__(edge_length)
     self.fem = FEM_SolidLinearStatic()
     self.vis = VisFEM_ColorContour(self.fem, name_disp="vec_val")
+    self.vis.is_lighting = False
     self.list_cad_edge_fix = [3]
 
   def draw(self):
@@ -93,6 +96,7 @@ class CadMesh2D_FEMSolidLinearEigen(CadMesh2D):
     super().__init__(edge_length)
     self.fem = FEM_SolidLinearEigen()
     self.vis = VisFEM_ColorContour(self.fem, name_disp="mode")
+    self.vis.is_lighting = True
     self.remesh()
 
   def draw(self):
