@@ -393,12 +393,3 @@ class Mesher_Cad2D():
     dmesh.elem_type = TRI
     return dmesh
 
-#####################################################
-
-class SDF():
-  def __init__(self):
-    self.list_sdf = []
-
-  def draw(self):
-    for sdf in self.list_sdf:
-      sdf.draw()

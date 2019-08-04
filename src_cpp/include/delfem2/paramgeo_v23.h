@@ -71,7 +71,7 @@ T DeBoorBSpline
   std::vector<T> aTmp;
   {
     aTmp.reserve(ndegree+1);
-    for(int ik=iks-ndegree;ik<iks+1;++ik){
+    for(unsigned int ik=iks-ndegree;ik<iks+1;++ik){
       assert(ik>=0);
       aTmp.push_back(aCP[ik]);
     }

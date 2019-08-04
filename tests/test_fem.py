@@ -57,10 +57,9 @@ class Test_FEMPoission2D(unittest.TestCase):
 
 class Test_FEMPoission3D(unittest.TestCase):
   def test1(self):
-    sdf = dfm2.SDF()
-    sdf.list_sdf.append(dfm2.CppSDF_Sphere(0.55, [-0.5, 0, 0], True))
-    sdf.list_sdf.append(dfm2.CppSDF_Sphere(0.55, [+0.5, 0, 0], True))
-    np_xyz, np_tet = dfm2.isosurface(sdf.list_sdf)
+    sdf0 = dfm2.CppSDF3_Sphere(0.55, [-0.5, 0, 0], True)
+    sdf1 = dfm2.CppSDF3_Sphere(0.55, [+0.5, 0, 0], True)
+    np_xyz, np_tet = dfm2.isosurface([sdf0,sdf1])
     msh = dfm2.Mesh(np_xyz, np_tet, dfm2.TET)
     npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
     npIdP1 = numpy.where(msh.np_pos[:,0]<-1)
@@ -90,10 +89,9 @@ class Test_FEMDiffuse2D(unittest.TestCase):
 
 class Test_FemDiffuse3D(unittest.TestCase):
   def test1(self):
-    sdf = dfm2.SDF()
-    sdf.list_sdf.append(dfm2.CppSDF_Sphere(0.55, [-0.5, 0, 0], True))
-    sdf.list_sdf.append(dfm2.CppSDF_Sphere(0.55, [+0.5, 0, 0], True))
-    np_xyz, np_tet = dfm2.isosurface(sdf.list_sdf)
+    sdf0 = dfm2.CppSDF3_Sphere(0.55, [-0.5, 0, 0], True)
+    sdf1 = dfm2.CppSDF3_Sphere(0.55, [+0.5, 0, 0], True)
+    np_xyz, np_tet = dfm2.isosurface([sdf0,sdf1])
     msh = dfm2.Mesh(np_xyz, np_tet, dfm2.TET)
     npIdP0 = numpy.where(msh.np_pos[:,0]>+1)
     npIdP1 = numpy.where(msh.np_pos[:,0]<-1)

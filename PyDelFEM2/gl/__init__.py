@@ -10,7 +10,8 @@ import numpy
 
 from ..cadmsh import Mesh
 
-from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D, CppSDF_Sphere
+from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D
+from ..c_core import CppSDF3_Sphere
 from ..c_core import TRI, QUAD, LINE
 from ..c_core import \
   write_vtk_meshpoint, \
@@ -226,7 +227,7 @@ def draw_CppMeshDynTri3D(self:CppMeshDynTri3D):
 def draw_CppCad2D(self:CppCad2D):
   cppDraw_CppCad2D(self)
 
-def draw_CppSDF_Sphere(self):
+def draw_CppSDF3_Sphere(self):
   c = self.cent
   gl.glDisable(gl.GL_LIGHTING)
   gl.glColor3d(1,0,0,)
@@ -241,4 +242,4 @@ setattr(Mesh,"color_face", [0.8, 0.8, 0.8, 1.0])
 setattr(CppMeshDynTri2D,"draw",draw_CppMeshDynTri2D)
 setattr(CppMeshDynTri3D,"draw",draw_CppMeshDynTri3D)
 setattr(CppCad2D,       "draw",draw_CppCad2D)
-setattr(CppSDF_Sphere,  "draw",draw_CppSDF_Sphere)
+setattr(CppSDF3_Sphere,  "draw",draw_CppSDF3_Sphere)

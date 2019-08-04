@@ -21,9 +21,10 @@ def example1():
 
   ####
   pbd = dfm2.PBD_Cloth()
-  pbd.param_gravity_y = -0.1
+#  pbd.param_gravity_y = -0.1
   pbd.dt = 0.08
   pbd.updated_topology(mesh)
+  pbd.sdf = dfm2.CppSDF3_Sphere(0.3,[0.0, 0.0, 0.0],True)
 
   trans0 = dfm2.Trans_Rigid2DTo3D()
   trans0.org2 = numpy.array([0.5,0.5])
@@ -43,14 +44,19 @@ def example1():
   npIndP_Edge0a = mesher.points_on_one_edge(1,True,cad)
   npIndP_Edge0b = mesher.points_on_one_edge(7,True,cad)
   npIndP_Seam0 = numpy.vstack([npIndP_Edge0a,npIndP_Edge0b[::-1]]).transpose()
-  pbd.elems_seam = npIndP_Seam0
 
-  npIdP = mesher.points_on_edges([2,6],cad)
-  pbd.bc[npIdP] = 1
+  npIndP_Edge1a = mesher.points_on_one_edge(3,True,cad)
+  npIndP_Edge1b = mesher.points_on_one_edge(5,True,cad)
+  npIndP_Seam1 = numpy.vstack([npIndP_Edge1a,npIndP_Edge1b[::-1]]).transpose()
+
+  pbd.elems_seam = numpy.vstack([npIndP_Seam0,npIndP_Seam1])
+
+#  npIdP = mesher.points_on_edges([2,6],cad)
+#  pbd.bc[npIdP] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl.glfw.winDraw3d([pbd,mesh2,axis])
+  dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,axis])
 
 
 if __name__ == "__main__":

@@ -11,10 +11,9 @@ import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
 
 def make_mesh():
-  sdf = dfm2.SDF()
-  sdf.list_sdf.append( dfm2.CppSDF_Sphere(0.55,[-0.5,0,0],True) )
-  sdf.list_sdf.append( dfm2.CppSDF_Sphere(0.55,[+0.5,0,0],True) )
-  np_xyz,np_tet = dfm2.isosurface(sdf.list_sdf)
+  sdf0 = dfm2.CppSDF3_Sphere(0.55,[-0.5,0,0],True)
+  sdf1 = dfm2.CppSDF3_Sphere(0.55,[+0.5,0,0],True)
+  np_xyz,np_tet = dfm2.isosurface([sdf0,sdf1])
   print(np_xyz.shape,np_tet.shape)
   msh = dfm2.Mesh(np_xyz,np_tet,dfm2.TET)
   return msh
