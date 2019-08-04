@@ -8,7 +8,7 @@
 import sys
 sys.path.append("..")
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 def main():
   msh = dfm2.Mesh()
@@ -27,7 +27,7 @@ def main():
   sampler.len_axis = 10
   sampler.bgcolor = [1,1,0,1]
 
-  with dfm2.gl._glfw.GPUSamplerBufferGLFW([512,512],format_color="4byte",is_depth=True):
+  with dfm2.gl.glfw.GPUSamplerBufferGLFW([512,512],format_color="4byte",is_depth=True):
     sampler.start()
     msh.draw()
     sampler.end()
@@ -37,7 +37,7 @@ def main():
 #  print(np_depth.shape)
 #  numpy.savetxt("hoge.txt",np_depth)
 
-  dfm2.gl._glfw.winDraw3d([msh,aabb,sampler,axis])
+  dfm2.gl.glfw.winDraw3d([msh,aabb,sampler,axis])
 
 if __name__ == "__main__":
   main()

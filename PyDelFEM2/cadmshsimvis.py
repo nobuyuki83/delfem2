@@ -1,15 +1,15 @@
 import numpy
-import OpenGL.GL as gl
 
 from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse
 from .fem import PBD, PBD_Cloth
 from .fem import FieldValueSetter
-from .fem import VisFEM_ColorContour
 
 from .cadmsh import CadMesh2D, cad_getPointsEdge, Mesh
 
 from .gl.c_gl import setSomeLighting
 
+import OpenGL.GL as gl
+from .gl import VisFEM_ColorContour
 
 
 class CadMesh2D_FEMPoisson(CadMesh2D):
@@ -33,7 +33,7 @@ class CadMesh2D_FEMPoisson(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.fem.updated_topology(self.dmsh)
-    npIdP = self.mesher.npIndEdge(self.list_cad_edge_fix,self)
+    npIdP = self.mesher.points_on_edges(self.list_cad_edge_fix,self)
     self.fem.value[npIdP] = 0.0
     self.fem.ls.bc[npIdP] = 1
     self.fem.solve()
@@ -81,7 +81,7 @@ class CadMesh2D_FEMSolidLinearStatic(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.fem.updated_topology(self.dmsh)
-    npIdP = self.mesher.npIndEdge(3,self)
+    npIdP = self.mesher.points_on_edges([3],self)
     self.fem.vec_val[npIdP] = 0.0
     self.fem.ls.bc[npIdP] = 1
     self.fem.solve()
@@ -136,7 +136,7 @@ class CadMesh2D_PBD(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.pbd.updated_topology(self.dmsh)
-    npIdP = self.mesher.npIndEdge(0,self)
+    npIdP = self.mesher.points_on_edges([0],self)
     self.pbd.vec_bc[npIdP] = 1
 #    self.fvs = FieldValueSetter("0.3*sin(2*t)", self.pbd.vec_val, 0,
 #                                mesh=self.dmsh, npIdP=npIdP, dt=self.pbd.dt)
@@ -161,7 +161,7 @@ class CadMesh2D_PBDCloth(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.pbd.updated_topology(self.dmsh)
-    npIdP = self.mesher.npIndEdge(3,self)
+    npIdP = self.mesher.points_on_edges([3],self)
     self.pbd.bc[npIdP] = 1
     self.vis_mesh = Mesh(np_pos=self.pbd.vec_val,np_elm=self.dmsh.np_elm)
 

@@ -7,9 +7,9 @@
 
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 msh = dfm2.Mesh()
 msh.read("../test_inputs/bunny_2k.ply")
 msh.scale_xyz(0.03)
-dfm2.gl._glfw.winDraw3d([msh],winsize=(400,300))
+dfm2.gl.glfw.winDraw3d([msh],winsize=(400,300))

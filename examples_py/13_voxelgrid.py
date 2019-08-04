@@ -6,14 +6,14 @@
 ####################################################################
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 import numpy
 
 def show_hex(voxelgrid):
   msh = voxelgrid.mesh_hex()
   msh = msh.subdiv()
   axis = dfm2.gl.AxisXYZ()
-  dfm2.gl._glfw.winDraw3d([msh, axis], (400, 400))
+  dfm2.gl.glfw.winDraw3d([msh, axis], (400, 400))
 
 def pbd_hex(voxelgrid):
   msh = voxelgrid.mesh_hex()
@@ -27,7 +27,7 @@ def pbd_hex(voxelgrid):
   ####
   msh_def = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=msh.np_elm,elem_type=dfm2.HEX)
   axis = dfm2.gl.AxisXYZ()
-  dfm2.gl._glfw.winDraw3d([fvs, pbd, msh_def, axis], (400, 400))
+  dfm2.gl.glfw.winDraw3d([fvs, pbd, msh_def, axis], (400, 400))
 
 def show_quad(voxelgrid):
   msh = voxelgrid.mesh_quad()
@@ -35,7 +35,7 @@ def show_quad(voxelgrid):
   msh = msh.subdiv()
   msh = msh.subdiv()
   axis = dfm2.gl.AxisXYZ()
-  dfm2.gl._glfw.winDraw3d([msh, axis], (400, 400))
+  dfm2.gl.glfw.winDraw3d([msh, axis], (400, 400))
 
 def main():
   grid3d = dfm2.VoxelGrid()

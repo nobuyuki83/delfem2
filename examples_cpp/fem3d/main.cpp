@@ -624,7 +624,7 @@ public:
   }
 
 public:
-  CSignedDistanceField3D_Sphere sdf;
+  CSDF3_Sphere sdf;
 };
 
 class CBox : public CInputIsosurfaceStuffing
@@ -635,7 +635,7 @@ public:
     return sdf.Projection(x, y, z,n);
   }
 public:
-  CSignedDistanceField3D_Box sdf;
+  CSDF3_Box sdf;
 };
 
 void SetMesh(int ishape)

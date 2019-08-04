@@ -7,32 +7,32 @@
 
 import random
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 def main_CppMeshDynTri2D_0():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
-  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
   dmesh = mesher.meshing(cad)
   dmesh.cdmsh.check()
-  dfm2.gl._glfw.winDraw3d([dmesh.cdmsh,dfm2.gl.AxisXYZ()],winsize=(400,300))
+  dfm2.gl.glfw.winDraw3d([dmesh.cdmsh,dfm2.gl.AxisXYZ()],winsize=(400,300))
 
 
 def main_CppMeshDynTri2D_1():
   cad = dfm2.Cad2D()
   cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1.0])
-  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
   dmesh = mesher.meshing(cad)
   cdmesh = dmesh.cdmsh
   cdmesh.check()
-  for itr in range(10):
+  for itr in range(100):
     itri0 = random.randint(0,cdmesh.ntri()-1)
     r0 = random.uniform(0.02, 0.98)
     r1 = random.uniform(0.01, 0.99-r0)
     ipo= cdmesh.insert_point_elem(itri0,r0,r1)
     cdmesh.delaunay_around_point(ipo)
     cdmesh.check()
-  dfm2.gl._glfw.winDraw3d([cdmesh],winsize=(400,300))
+  dfm2.gl.glfw.winDraw3d([cdmesh],winsize=(400,300))
 
 
 def main_CppMeshDynTri3D():
@@ -45,7 +45,7 @@ def main_CppMeshDynTri3D():
     itri0 = random.randint(0,dmesh.ntri()-1)
     iedge0 = random.randint(0,2)
     dmesh.delete_tri_edge(itri0,iedge0)
-  dfm2.gl._glfw.winDraw3d([dmesh],winsize=(400,300))
+  dfm2.gl.glfw.winDraw3d([dmesh],winsize=(400,300))
 
 
 def main_MeshDynTri2D_0():
@@ -53,16 +53,16 @@ def main_MeshDynTri2D_0():
   dmsh.meshing_loops([[-1,-1, +1,-1, +1,+1, -1,+1],
                       [-0.5, -0.5, +0.5, -0.5, 0.0, +0.5]],
                      edge_length=0.2)
-  dfm2.gl._glfw.winDraw3d([dmsh])
+  dfm2.gl.glfw.winDraw3d([dmsh])
 
 
 def main_MeshDynTri2D_1():
   dmsh = dfm2.MeshDynTri2D()
   dmsh.meshing_loops([[-1,-1, +1,-1, +1,+1, -1,+1]],
                      edge_length=0.2)
-  dfm2.gl._glfw.winDraw3d([dmsh])
+  dfm2.gl.glfw.winDraw3d([dmsh])
   res = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0, 0.5)
-  dfm2.gl._glfw.winDraw3d([dmsh])
+  dfm2.gl.glfw.winDraw3d([dmsh])
 
 
 def main_MeshDynTri2D_2():
@@ -77,17 +77,17 @@ def main_MeshDynTri2D_2():
   fem.value[npIdP] = 0.0
   fem.ls.bc[npIdP] = 1
   fem.solve()
-  vis = dfm2.VisFEM_ColorContour(fem,name_color="value")
-  dfm2.gl._glfw.winDraw3d([vis,dmsh])
+  vis = dfm2.gl.VisFEM_ColorContour(fem,name_color="value")
+  dfm2.gl.glfw.winDraw3d([vis,dmsh])
   #####
   mapper = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
   fem.updated_topology(dmsh,mapper=mapper)
-  dfm2.gl._glfw.winDraw3d([vis,dmsh])
+  dfm2.gl.glfw.winDraw3d([vis,dmsh])
   #####
   fem.value[npIdP] = 0.0
   fem.ls.bc[npIdP] = 1
   fem.solve()
-  dfm2.gl._glfw.winDraw3d([vis,dmsh])
+  dfm2.gl.glfw.winDraw3d([vis,dmsh])
 
 
 def main_MeshDynTri2D_3():
@@ -100,14 +100,14 @@ def main_MeshDynTri2D_3():
   npIdP = cad.points_edge([0], dmsh.np_pos)
   fem.ls.bc[npIdP,:] = 1
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=dmsh.np_elm)
-  dfm2.gl._glfw.winDraw3d([fem,mesh2])
+  dfm2.gl.glfw.winDraw3d([fem,mesh2])
   #####
   mesh2 = None
   mapper = dmsh.refine_EdgeLongerThan_InsideCircle(0.05, 0.0,0.0,0.5)
   fem.updated_topology(dmsh,mapper=mapper)
   fem.ls.bc[npIdP,:] = 1
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=dmsh.np_elm)
-  dfm2.gl._glfw.winDraw3d([fem,mesh2])
+  dfm2.gl.glfw.winDraw3d([fem,mesh2])
   '''  
   #####
   fem.vec_val[npIdP] = 0.0

@@ -73,7 +73,7 @@ void SetProblem()
         ilevel_vol = -1;
       }
     public:
-      CSignedDistanceField3D_Sphere sp;
+      CSDF3_Sphere sp;
     };
     double rad = 1.5;
     CSphere sphere(rad);
@@ -103,7 +103,7 @@ void SetProblem()
         nlayer = 1;
       }
     public:
-      CSignedDistanceField3D_Box bx;
+      CSDF3_Box bx;
     };
     const double hwx = 0.91;
     const double hwy = 0.61;
@@ -148,8 +148,8 @@ void SetProblem()
         nlayer = 1;
       }
     public:
-      CSignedDistanceField3D_Box box;
-      CSignedDistanceField3D_Sphere sphere;
+      CSDF3_Box box;
+      CSDF3_Sphere sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
     IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
@@ -172,7 +172,7 @@ void SetProblem()
         nlayer = 2;
       }
     public:
-      CSignedDistanceField3D_Mesh sdf_mesh;
+      CSDF3_Mesh sdf_mesh;
     } mesh;
     {
       std::vector<unsigned int> aTri;
@@ -215,8 +215,8 @@ void SetProblem()
         nlayer = 2;
       }
     public:
-      CSignedDistanceField3D_Box box;
-      CSignedDistanceField3D_Mesh sdf;
+      CSDF3_Box box;
+      CSDF3_Mesh sdf;
     } cav_mesh;
     ////
     double lenx = 3;

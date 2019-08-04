@@ -10,13 +10,13 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glut
+import PyDelFEM2.gl.glut
 
 def draw_func():
   glEnable(GL_LIGHTING)
   glutSolidTeapot(0.5)
 
-win = dfm2.gl._glut.WindowGLUT(1.0,winsize=(400,300))
+win = dfm2.gl.glut.WindowGLUT(1.0,winsize=(400,300))
 dfm2.gl.setSomeLighting()
 win.draw_loop(draw_func)
 

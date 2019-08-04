@@ -7,7 +7,6 @@
 
 
 import numpy, os
-import OpenGL.GL as gl
 from typing import Tuple, List
 
 from .c_core import CppCad2D, CppMeshDynTri2D, CppMesher_Cad2D, CppVoxelGrid, CppMapper, AABB3
@@ -341,7 +340,7 @@ class CadMesh2D(Cad2D):
     ####
     self.listW.clear()
     for iface in range(self.ccad.nface()):
-      npIndPoint_face = self.mesher.npIndFace(iface,self)
+      npIndPoint_face = self.mesher.points_on_faces([iface],self)
       npPosPoint_face = self.dmsh.np_pos[npIndPoint_face]
       np_xy_bound = numpy.array(self.ccad.xy_vtxctrl_face(iface)).reshape([-1, 2])
       W = mvc(npPosPoint_face, np_xy_bound)

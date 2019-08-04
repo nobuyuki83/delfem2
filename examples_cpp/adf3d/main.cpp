@@ -51,11 +51,11 @@ void SetProblem()
         return sdf.Projection(x, y, z,n);
       }
     public:
-      CSignedDistanceField3D_Sphere sdf;
+      CSDF3_Sphere sdf;
     };
     CSphere sphere;
     sphere.sdf.radius_ = 0.5;
-    sphere.sdf.GetMesh(aTri, aXYZ, 0.01);
+//    sphere.sdf.GetMesh(aTri, aXYZ, 0.01);
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(sphere, bb);
     adf.BuildIsoSurface_MarchingCube();
@@ -70,12 +70,12 @@ void SetProblem()
         return sdf.Projection(x, y, z,n);
       }
     public:
-      CSignedDistanceField3D_Torus sdf;
+      CSDF3_Torus sdf;
     };
     CTorus torus;
     torus.sdf.radius_ = 0.5;
     torus.sdf.radius_tube_ = 0.2;
-    torus.sdf.GetMesh(aTri, aXYZ, 0.01);
+//    torus.sdf.GetMesh(aTri, aXYZ, 0.01);
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(torus, bb);
     adf.BuildIsoSurface_MarchingCube();
@@ -90,7 +90,7 @@ void SetProblem()
         return sdf.Projection(x, y, z,n);
       }
     public:
-      CSignedDistanceField3D_Mesh sdf;
+      CSDF3_Mesh sdf;
     };
     CMesh mesh;
     {

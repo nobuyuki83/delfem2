@@ -9,18 +9,18 @@
 import OpenGL.GL as gl
 
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 from PyDelFEM2.gl.c_gl import cppDrawSphere_Edge, cppDrawTorus_Edge
 
 def main():
-  with dfm2.gl._glfw.WindowGLFW(1.0,winsize=(400,300)) as win0:
+  with dfm2.gl.glfw.WindowGLFW(1.0,winsize=(400,300)) as win0:
     gl.glDisable(gl.GL_LIGHTING)
     gl.glColor3d(0,0,0)
     win0.list_func_draw.append(lambda: cppDrawSphere_Edge(0.5))
     win0.draw_loop()
 
-  with dfm2.gl._glfw.WindowGLFW(1.0,winsize=(400,300)) as win0:
+  with dfm2.gl.glfw.WindowGLFW(1.0,winsize=(400,300)) as win0:
     gl.glDisable(gl.GL_LIGHTING)
     gl.glColor3d(0,0,0)
     win0.list_func_draw.append(lambda: cppDrawTorus_Edge(0.5, 0.3))

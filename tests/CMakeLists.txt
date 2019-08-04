@@ -52,6 +52,7 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/voxel.h       ${DELFEM2_SRC}/voxel.cpp
   ${DELFEM2_INC}/mathexpeval.h ${DELFEM2_SRC}/mathexpeval.cpp
   ${DELFEM2_INC}/lp.h          ${DELFEM2_SRC}/lp.cpp
+  test_lp.cpp
   main.cpp  
 )
 
