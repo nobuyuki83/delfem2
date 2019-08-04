@@ -26,7 +26,8 @@ from .c_core import \
   pbd_proj_rigid3d, \
   pbd_pointFixBC, \
   pbd_proj_cloth, \
-  pbd_proj_seam
+  pbd_proj_seam, \
+  pbd_proj_contact
 from .c_core import \
   write_vtk_meshpoint, \
   write_vtk_meshelem, \
@@ -36,8 +37,8 @@ from .c_core import matrixSquareSparse_setFixBC
 from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
 from .c_core import map_value
 from .c_core import MathExpressionEvaluator, mass_lumped
+from .c_core import CppSDF3
 
-from .cadmsh import SDF
 from .cadmsh import Mesh, MeshDynTri2D
 
 
@@ -412,7 +413,7 @@ class FEM_Cloth():
     self.rho = 1.0
     self.myu = 10.0
     self.lmd = 5000.0
-    self.sdf = SDF()
+    self.sdf = None
 
   def updated_topology(self,mesh:Mesh,mapper=None):
     self.mesh = mesh
@@ -445,10 +446,11 @@ class FEM_Cloth():
                         self.rho, self.dt,
                         self.gravity,
                         self.vec_val, self.vec_velo)
-    fem_merge_contact(self.ls.mat, self.ls.f,
-                      10000, 0.1,
-                      self.sdf.list_sdf,
-                      self.vec_val)
+    if self.sdf is not None:
+      fem_merge_contact(self.ls.mat, self.ls.f,
+                        10000, 0.1,
+                        [self.sdf],
+                        self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -632,9 +634,9 @@ class PBD_Cloth():
       for itr in range(1):
          pbd_proj_seam(self.vec_tpos,self.elems_seam)
     # contact
-    if isinstance(self.sdf,SDF):
+    if isinstance(self.sdf,CppSDF3):
       for itr in range(1):
-        pbd_prj_contact(self.vec_tpos,self.sdf)
+        pbd_proj_contact(self.vec_tpos,self.sdf)
     # post
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt

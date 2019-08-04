@@ -222,8 +222,8 @@ PYBIND11_MODULE(c_core, m) {
   
   ///////////////////////////////////
   // SDF
-  py::class_<CSDF3>(m, "SDF");
-  py::class_<CSDF3_Sphere, CSDF3>(m, "CppSDF_Sphere")
+  py::class_<CSDF3>(m, "CppSDF3");
+  py::class_<CSDF3_Sphere, CSDF3>(m, "CppSDF3_Sphere")
   .def(py::init<>())
   .def(py::init<double,const std::vector<double>&,bool>())
   .def_readwrite("cent", &CSDF3_Sphere::cent_)

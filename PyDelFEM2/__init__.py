@@ -7,7 +7,7 @@
 
 
 from .c_core import AABB3
-from .c_core import CppSDF_Sphere
+from .c_core import CppSDF3_Sphere
 from .c_core import MathExpressionEvaluator
 from .c_core import meshdyntri3d_initialize, isosurface
 from .c_core import cad_getPointsEdge, mvc
@@ -26,7 +26,7 @@ from .fem import \
   FEM_StorksDynamic2D, \
   FEM_NavierStorks2D
 
-from .cadmsh import Cad2D, VoxelGrid, SDF, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D
+from .cadmsh import Cad2D, VoxelGrid, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D
 from .cadmsh import TET, TRI, HEX, QUAD
 
 from .util import Trans_Rigid2DTo3D

@@ -14,12 +14,13 @@ def example1():
   cad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
+
   fem = dfm2.FEM_Cloth()
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP,0:3] = 1
-  fem.sdf.list_sdf.append( dfm2.CppSDF_Sphere(0.55,[0,+0.5,-1.0],True) )
-  ####
+  fem.sdf = dfm2.CppSDF3_Sphere(0.55,[0,+0.5,-1.0],True)
+
   mesh2 = dfm2.Mesh(np_pos=fem.vec_val,np_elm=mesh.np_elm)
   axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.gl.glfw.winDraw3d([fem,mesh2,axis,fem.sdf])

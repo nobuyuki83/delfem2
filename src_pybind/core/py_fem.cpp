@@ -523,6 +523,8 @@ void PyPBD_ConstProj_Seam
 (py::array_t<double>& npXYZt,
  const py::array_t<int>& npLine)
 {
+  assert( npXYZt.ndim() == 2 );
+  assert( npXYZt.shape()[1] == 3 );
   double* aXYZt = (double*)(npXYZt.request().ptr);
   assert( npLine.ndim() == 2 );
   assert( npLine.shape()[1] == 2 );
@@ -559,6 +561,28 @@ void PyPBD_ConstProj_Seam
       aXYZt[i1*3+2] = (p[0][2]+p[1][2])*0.5;
     }
   }
+}
+
+void PyPBD_ConstProj_Contact
+(py::array_t<double>& npXYZt,
+ const CSDF3& sdf)
+{
+  assert( npXYZt.ndim() == 2 );
+  assert( npXYZt.shape()[1] == 3 );
+  double* aXYZt = (double*)(npXYZt.request().ptr);
+  unsigned int np = npXYZt.shape()[0];
+  for(unsigned int ip=0;ip<np;++ip){
+    double n[3];
+    double dist = sdf.Projection(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] , n);
+    if( dist > 0 ){
+      aXYZt[ip*3+0] += dist*n[0];
+      aXYZt[ip*3+1] += dist*n[1];
+      aXYZt[ip*3+2] += dist*n[2];
+    }
+  }
+//  assert( npLine.ndim() == 2 );
+//  assert( npLine.shape()[1] == 2 );
+//  const unsigned int nline = npLine.shape()[0];
 }
 
 void PyPointFixBC
@@ -626,5 +650,6 @@ void init_fem(py::module &m){
   m.def("pbd_proj_rigid3d",            &PyConstProj_Rigid3D);
   m.def("pbd_proj_cloth",              &PyPBD_ConstProj_Cloth);
   m.def("pbd_proj_seam",               &PyPBD_ConstProj_Seam);
+  m.def("pbd_proj_contact",            &PyPBD_ConstProj_Contact);
   m.def("pbd_pointFixBC",              &PyPointFixBC);
 }
