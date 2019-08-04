@@ -71,7 +71,7 @@ class CCad2D
 {
 public:
   CCad2D(){
-    std::cout << "CCAD2D -- construct" << std::endl;
+//    std::cout << "CCAD2D -- construct" << std::endl;
     ivtx_picked = -1;
     iedge_picked = -1;
     iface_picked = -1;

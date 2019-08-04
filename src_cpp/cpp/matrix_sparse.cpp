@@ -15,7 +15,7 @@
 
 CMatrixSparse::CMatrixSparse()
 {
-  std::cout << "MatrixSquareSparse -- construct" << std::endl;
+//  std::cout << "MatrixSquareSparse -- construct" << std::endl;
 	nblk_col = 0;
 	len_col = 0;
   
@@ -63,7 +63,7 @@ void CMatrixSparse::Initialize(int nblk, int len, bool is_dia)
 
 void CMatrixSparse::operator = (const CMatrixSparse& m)
 {
-  std::cout << "CMatrixSquareSparse -- copy" << std::endl;
+//  std::cout << "CMatrixSquareSparse -- copy" << std::endl;
   if( is_dia ){
     assert( nblk_col == nblk_row );
     assert( len_col == len_row );

@@ -492,7 +492,7 @@ void PyConstProj_Rigid3D
                         npXYZ.data(),      npXYZ.shape()[0]);
 }
 
-void PyPBD_ConstProj_Cloth
+void PyPBD_ConstProj_ClothStretch
 (py::array_t<double>& npXYZt,
  const CMeshDynTri2D& mesh)
 {
@@ -516,6 +516,48 @@ void PyPBD_ConstProj_Cloth
     double m[3] = {1,1,1};
     const int aIP[3] = {i0,i1,i2};
     PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
+  }
+}
+
+void PyPBD_ConstProj_ClothBend
+(py::array_t<double>& npXYZt,
+ const CMeshDynTri2D& mesh)
+{
+  assert( npXYZt.ndim() == 2 );
+  assert( npXYZt.shape()[1] == 3 );
+  const std::vector<ETri>& aETri = mesh.aETri;
+  const std::vector<CVector2>& aVec2 = mesh.aVec2;
+  double* aXYZt = (double*)(npXYZt.request().ptr);
+  for(unsigned int it=0;it<aETri.size();++it){
+    for(int ie=0;ie<3;++ie){
+      const int jt0 = aETri[it].s2[ie];
+      if( jt0 == -1 ){ continue; }
+      if( jt0 > it ){ continue; }
+      const int rt0 = aETri[it].r2[ie];
+      const int je0 = (6-rt0-ie)%3;
+      assert( aETri[jt0].s2[je0] == it);
+      const int i0 = aETri[it].v[ie];
+      const int i1 = aETri[jt0].v[je0];
+      const int i2 = aETri[it].v[(ie+1)%3];
+      const int i3 = aETri[it].v[(ie+2)%3];
+      const double P[4][3] = {
+        {aVec2[i0].x,aVec2[i0].y, 0.0},
+        {aVec2[i1].x,aVec2[i1].y, 0.0},
+        {aVec2[i2].x,aVec2[i2].y, 0.0},
+        {aVec2[i3].x,aVec2[i3].y, 0.0} };
+      double p[4][3] = {
+        {aXYZt[i0*3+0], aXYZt[i0*3+1], aXYZt[i0*3+2] },
+        {aXYZt[i1*3+0], aXYZt[i1*3+1], aXYZt[i1*3+2] },
+        {aXYZt[i2*3+0], aXYZt[i2*3+1], aXYZt[i2*3+2] },
+        {aXYZt[i3*3+0], aXYZt[i3*3+1], aXYZt[i3*3+2] },
+      };
+      double C[3], dCdp[3][12];
+      PBD_CdC_QuadBend(C, dCdp,
+                       P, p);
+      double m[4] = {1,1,1,1};
+      const int aIP[4] = {i0,i1,i2,i3};
+      PBD_Update_Const3(aXYZt, 4,3, m, C, &dCdp[0][0], aIP);
+    }
   }
 }
 
@@ -648,7 +690,8 @@ void init_fem(py::module &m){
   
   m.def("pbd_proj_rigid2d",            &PyPBD_ConstProj_Rigid2D);
   m.def("pbd_proj_rigid3d",            &PyConstProj_Rigid3D);
-  m.def("pbd_proj_cloth",              &PyPBD_ConstProj_Cloth);
+  m.def("pbd_proj_cloth_stretch",      &PyPBD_ConstProj_ClothStretch);
+  m.def("pbd_proj_cloth_bend",         &PyPBD_ConstProj_ClothBend);
   m.def("pbd_proj_seam",               &PyPBD_ConstProj_Seam);
   m.def("pbd_proj_contact",            &PyPBD_ConstProj_Contact);
   m.def("pbd_pointFixBC",              &PyPointFixBC);
