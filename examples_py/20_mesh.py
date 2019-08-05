@@ -64,6 +64,10 @@ def primitive():
   msh.set_geopoly()
   dfm2.gl.glfw.winDraw3d([msh])
 
+  msh.set_torus()
+  dfm2.gl.glfw.winDraw3d([msh])
+
+
 def read_file():
   msh = dfm2.Mesh()
 

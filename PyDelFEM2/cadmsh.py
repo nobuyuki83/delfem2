@@ -306,7 +306,7 @@ class CadMesh2D(Cad2D):
     self.map_cad2msh = None # this object reallocate
     self.listW = list()
     self.is_sync_mesh = True
-    self.mesher = Mesher_Cad2D(edge_length=0.05)
+    self.mesher = Mesher_Cad2D(edge_length=0.1)
 
   def draw(self):
     self.ccad.draw()
@@ -353,13 +353,11 @@ class CadMesh2D(Cad2D):
     super().add_vtx_edge(iedge,[pos[0],pos[1]])
     self.remesh()
 
-  def add_polygon(self,list_xy):
-    self.ccad.add_polygon(list_xy)
-    self.remesh()
+#  def add_polygon(self,list_xy):
+#    self.ccad.add_polygon(list_xy)
 
-  def set_edge_type(self, iedge:int, type:int, param:List[float]):
-    super().set_edge_type(iedge,type,param)
-    self.remesh()
+#  def set_edge_type(self, iedge:int, type:int, param:List[float]):
+#    super().set_edge_type(iedge,type,param)
 
 #####################################################
 

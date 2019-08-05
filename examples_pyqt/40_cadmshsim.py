@@ -24,6 +24,7 @@ class Window_Poisson(dfm2.qt.QW_CadMshFem):
 
     self.cadmsh = dfm2.cadmshsimvis.CadMesh2D_FEMPoisson(edge_length=0.05)
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    self.cadmsh.remesh()
 
     self.ui_fem = dfm2.qt.QW_FEMPoisson(self.cadmsh.fem)
 
@@ -36,6 +37,7 @@ class Window_Diffuse(dfm2.qt.QW_CadMshFem):
 
     self.cadmsh = dfm2.cadmshsimvis.CadMesh2D_FEMDiffuse(edge_length=0.05)
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    self.cadmsh.remesh()
 
     self.ui_fem = dfm2.qt.QW_FEMDiffuse(self.cadmsh.fem)
 
@@ -53,6 +55,7 @@ class Window_SolidLinearStatic(dfm2.qt.QW_CadMshFem):
     self.cadmsh = dfm2.cadmshsimvis.CadMesh2D_FEMSolidLinearStatic(edge_length=0.05)
     self.cadmsh.fem.param_gravity_y = -0.1
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    self.cadmsh.remesh()
 
     self.ui_fem = dfm2.qt.QW_FEMSolidLinearStatic(self.cadmsh.fem)
 
@@ -66,6 +69,7 @@ class Window_SolidLinearEigen(dfm2.qt.QW_CadMshFem):
 
     self.cadmsh = dfm2.cadmshsimvis.CadMesh2D_FEMSolidLinearEigen(edge_length=0.05)
     self.cadmsh.add_polygon([-1, -0.2, +1, -0.2, +1, +0.2, -1, +0.2])
+    self.cadmsh.remesh()
 
     self.ui_fem = dfm2.qt.QW_FEMSolidLinearEigen(self.cadmsh.fem)
 
@@ -80,6 +84,7 @@ class Window_Pbd2D(dfm2.qt.QW_CadMshFem):
 
     self.cadmsh = dfm2.cadmshsimvis.CadMesh2D_PBD(edge_length=0.1)
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    self.cadmsh.remesh()
 
     self.ui_fem = dfm2.qt.QW_PBD(self.cadmsh.pbd)
 
@@ -94,7 +99,11 @@ class Window_PbdCloth(dfm2.qt.QW_CadMshFem):
 
     self.cadmsh = dfm2.cadmshsimvis.CadMesh2D_PBDCloth(edge_length=0.1)
     self.cadmsh.add_polygon([-1, -1, +1, -1, +1, +1, +0.8,+1, -0.8,+1, -1, +1])
+    self.cadmsh.listIndEdge_Fix = [2,4]
+    self.cadmsh.remesh()
+
     self.cadmsh.pbd.param_gravity_y = -0.1
+    self.cadmsh.pbd.param_gravity_z = -0.001
     self.cadmsh.pbd.dt = 0.1
 
     self.ui_fem = dfm2.qt.QW_PBDCloth(self.cadmsh.pbd)

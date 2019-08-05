@@ -79,6 +79,8 @@ class VisFEM_ColorContour():
       self.color_max = npColor[:,self.idim].max()
 
   def draw(self):
+    if not hasattr(self.fem, 'mesh'):
+      return
     mesh = self.fem.mesh
     if self.is_lighting:
       gl.glEnable(gl.GL_LIGHTING)

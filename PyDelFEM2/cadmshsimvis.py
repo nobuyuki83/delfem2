@@ -1,4 +1,5 @@
 import numpy
+from typing import List
 
 from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse
 from .fem import PBD, PBD_Cloth
@@ -97,7 +98,6 @@ class CadMesh2D_FEMSolidLinearEigen(CadMesh2D):
     self.fem = FEM_SolidLinearEigen()
     self.vis = VisFEM_ColorContour(self.fem, name_disp="mode")
     self.vis.is_lighting = True
-    self.remesh()
 
   def draw(self):
     self.ccad.draw()
@@ -155,6 +155,11 @@ class CadMesh2D_PBDCloth(CadMesh2D):
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
     self.pbd = PBD_Cloth()
+    self.listIndEdge_Fix = []
+    self.list_seam = []
+    self.pbd.param_gravity_x = 0
+    self.pbd.param_gravity_y = 0
+    self.pbd.param_gravity_z = 0
 
   def draw(self):
     self.ccad.draw()
@@ -165,8 +170,24 @@ class CadMesh2D_PBDCloth(CadMesh2D):
   def remesh(self):
     super().remesh()
     self.pbd.updated_topology(self.dmsh)
-    npIdP = self.mesher.points_on_edges([3],self)
+
+    # fixbc
+    npIdP = self.mesher.points_on_edges(self.listIndEdge_Fix,self)
     self.pbd.bc[npIdP] = 1
+
+    # seam
+    list_npIndPSeam = []
+    for seam in self.list_seam:
+      npIndP_Edge0a = self.mesher.points_on_one_edge(seam[0], True, self)
+      npIndP_Edge0b = self.mesher.points_on_one_edge(seam[1], True, self)
+      npIndP_Seam0 = numpy.vstack([npIndP_Edge0a, npIndP_Edge0b[::-1]]).transpose()
+      list_npIndPSeam.append(npIndP_Seam0)
+    if len(list_npIndPSeam) > 0:
+      self.pbd.elems_seam = numpy.vstack(list_npIndPSeam)
+    else:
+      self.pbd.elems_seam = None
+
+    # visualization
     self.vis_mesh = Mesh(np_pos=self.pbd.vec_val,np_elm=self.dmsh.np_elm)
 
   def step_time(self):
