@@ -19,7 +19,7 @@ public:
 public:
   CLinPro(){}
   void AddEqn(const std::vector<double>& aW, double rhs, EQ_TYPE type);
-  bool Precomp(int& nitr);
+  int Precomp(int& nitr);
   bool Solve(std::vector<double>& solution, double& opt_val, int& nitr,
              const std::vector<double>& aCoeffTrg) const;
 //  void SetTarget(const std::vector<double>& aW);

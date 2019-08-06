@@ -19,20 +19,23 @@ TEST(linpro,test1)
   lp.AddEqn({ 1.0,  1.0},  9.0, CLinPro::LE);
   lp.AddEqn({ 3.0,  2.0}, 24.0, CLinPro::LE);
   int nitr = 10;
-  lp.Precomp(nitr);
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res,0);
   EXPECT_LT(nitr,10);
   //////////////////////////////
   std::vector<double> solution;
   double opt_val;
   nitr = 10;
-  lp.Solve(solution,opt_val,nitr,
+  res = lp.Solve(solution,opt_val,nitr,
            {40.0, 30.0});
+  EXPECT_EQ(res,0);
   EXPECT_LT(nitr,10);
   EXPECT_EQ(solution.size(),2);
   EXPECT_FLOAT_EQ(solution[0],   6);
   EXPECT_FLOAT_EQ(solution[1],   3);
   EXPECT_FLOAT_EQ(opt_val,     330);
 }
+
 
 
 TEST(linpro,test2)
@@ -134,8 +137,8 @@ TEST(linpro,test6)
   lp.AddEqn({+1.0, +3.0}, +4.0, CLinPro::GE);
   lp.AddEqn({+2.0, +1.0}, +3.0, CLinPro::GE);
   int nitr = 10;
-  bool res = lp.Precomp(nitr);
-  EXPECT_TRUE(res);
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res,0);
   EXPECT_LT(nitr, 10);
   std::vector<double> sol_ini;
   double opt_val;
@@ -157,8 +160,8 @@ TEST(linpro,test7)
   lp.AddEqn({-5.0, +9.0}, +15.0, CLinPro::EQ);
   lp.AddEqn({-6.0, +3.0},  +3.0, CLinPro::GE);
   int nitr = 10;
-  bool res = lp.Precomp(nitr);
-  EXPECT_TRUE(res);
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res,0);
   EXPECT_LT(nitr, 10);
   std::vector<double> sol_ini;
   double opt_val;
@@ -180,8 +183,8 @@ TEST(linpro,test8)
   lp.AddEqn({+2.0, +1.0, -1.0}, +8.0, CLinPro::EQ);
   lp.AddEqn({+1.0, +2.0, -1.0}, +1.0, CLinPro::GE);
   int nitr = 10;
-  bool res = lp.Precomp(nitr);
-  EXPECT_TRUE(res);
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res, 0);
   EXPECT_LT(nitr, 10);
   std::vector<double> sol_ini;
   double opt_val;
@@ -203,8 +206,8 @@ TEST(linpro,test9)
   lp.AddEqn({+1.0, +1.0, +2.0}, +10.0, CLinPro::GE);
   lp.AddEqn({+3.0, +1.0, +1.0}, +20.0, CLinPro::GE);
   int nitr = 10;
-  bool res = lp.Precomp(nitr);
-  EXPECT_TRUE(res);
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res, 0);
   EXPECT_LT(nitr, 10);
   std::vector<double> sol_ini;
   double opt_val;
@@ -218,3 +221,70 @@ TEST(linpro,test9)
   EXPECT_FLOAT_EQ(sol_ini[2], +0.0);
   EXPECT_FLOAT_EQ(opt_val,    -90.0);
 }
+
+
+TEST(linpro,test10)
+{ // test rsh ==  0
+  CLinPro lp;
+  lp.AddEqn({+0.0, +1.0 }, +1.0, CLinPro::LE);
+  lp.AddEqn({+1.0, -1.0 }, -0.0, CLinPro::EQ);
+  int nitr = 10;
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res, 0);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  res = lp.Solve(sol_ini,opt_val,nitr,
+                 {+1.0, +1.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], +1.0);
+  EXPECT_FLOAT_EQ(sol_ini[1], +1.0);
+  EXPECT_FLOAT_EQ(opt_val,    +2.0);
+}
+
+
+TEST(linpro,test11)
+{ // test equality constraint with neative rsh
+  CLinPro lp;
+  lp.AddEqn({+0.0, +1.0 }, +1.0, CLinPro::LE);
+  lp.AddEqn({+1.0, -1.0 }, -0.1, CLinPro::EQ);
+  int nitr = 10;
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res, 0);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  res = lp.Solve(sol_ini,opt_val,nitr,
+                 {+1.0, +1.0});
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], +0.9);
+  EXPECT_FLOAT_EQ(sol_ini[1], +1.0);
+  EXPECT_FLOAT_EQ(opt_val,    +1.9);
+}
+
+TEST(linpro,test12)
+{ // test equality constraint with positive rsh
+  CLinPro lp;
+  lp.AddEqn({+0.0, +1.0 }, +1.0, CLinPro::LE);
+  lp.AddEqn({+1.0, -1.0 }, +0.1, CLinPro::EQ);
+  int nitr = 10;
+  int res = lp.Precomp(nitr);
+  EXPECT_EQ(res, 0);
+  EXPECT_LT(nitr, 10);
+  std::vector<double> sol_ini;
+  double opt_val;
+  nitr = 10;
+  res = lp.Solve(sol_ini,opt_val,nitr,
+                 {+1.0, +1.0});
+  EXPECT_EQ(res, 0);
+  EXPECT_LT(nitr, 10);
+  EXPECT_EQ(sol_ini.size(),2);
+  EXPECT_FLOAT_EQ(sol_ini[0], +1.1);
+  EXPECT_FLOAT_EQ(sol_ini[1], +1.0);
+  EXPECT_FLOAT_EQ(opt_val,    +2.1);
+}
+
