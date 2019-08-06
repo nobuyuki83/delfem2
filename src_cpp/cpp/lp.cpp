@@ -37,15 +37,30 @@ void Print(const std::vector<double>& A, int ncol, int nrow)
 }
 
 
-
-bool LinPro_SolveTable
+// return value
+// 0: converged
+// 1: input value wrong
+// 2: no bound
+int LinPro_SolveTable
 (int& nitr,
  std::vector<double>& B,
  std::vector<int>& map_col2row,
  int ncol, int nrow)
 {
-  assert(B.size()==ncol*nrow);
-  assert(map_col2row.size()==ncol);
+#ifndef NDEBUG
+  {
+    assert(B.size()==ncol*nrow);
+    assert(map_col2row.size()==ncol);
+    std::vector<int> aFlgRow(nrow,0);
+    for(int jcol=0;jcol<ncol;++jcol){
+      const int jrow = map_col2row[jcol];
+      assert( jrow >= 0 && jrow < nrow );
+      assert(aFlgRow[jrow] == 0 );
+      aFlgRow[jrow] = 1;
+    }
+  }
+#endif
+  
   for(int icol=0;icol<ncol-1;++icol){
     int jrow = map_col2row[icol];
     double b0 = B[icol*nrow+jrow];
@@ -76,7 +91,8 @@ bool LinPro_SolveTable
         double b2 = B[jcol*nrow]; // the origin (0,0,...) should be valid
         if( jcol != ncol-1 ){
           if( b*b2 < 0 ){
-            std::cout << icol << " " << jrow << " " << b2 << " " << b << std::endl;
+            std::cout << "wrong entry" << icol << " " << jrow << " " << b2 << " " << b << std::endl;
+            return 1;
           }
           assert(b*b2>=0); // the initial target value can be negtive
         }
@@ -91,57 +107,67 @@ bool LinPro_SolveTable
   for(int itr=0;itr<nitr;++itr){
 //    std::cout << "iteration: " << itr << std::endl;
 //    ::Print(B,ncol,nrow,map_col2row);
-    int jrow_min = -1;
+    int icol_min = -1, jrow_min = -1;
     { // find minimum row
-      double val_min = 0.0;
-      jrow_min = -1;
-      for(int j=0;j<nrow;++j){
-        if( flg_row[j] != 0 ){ continue; }
-        double d0 = B[(ncol-1)*nrow+j];
-        if( jrow_min == -1 || d0 < val_min ){
-          jrow_min = j;
-          val_min = d0;
-          continue;
-        }
-      }
-    }
-    assert( jrow_min >=0 && jrow_min < nrow );
-//    std::cout << "minimum bottom" << itr << " " << B[(ncol-1)*nrow+jrow_min] << "     " << B[(ncol-1)*nrow]  << " " << jrow_min << " " << std::endl;
-    if( B[(ncol-1)*nrow+jrow_min] >= 0 ){ // no way to furthre increase the value
-      nitr = itr;
-      return true;
-    }
-    int icol_min = -1;
-    { // detecting positive minimum bound
-      double val_min = 0;
-      for(int icol=0;icol<ncol-1;++icol){
-        double v0 = B[icol*nrow+jrow_min];
-        double v1 = B[icol*nrow];
-        double v2 = v1/v0;
-        if( v2 > 0 ){
-          if( icol_min == -1 || v2<val_min ){
-            val_min = v2;
+      bool is_optim = true;
+      for(int jrow=0;jrow<nrow;++jrow){
+        if( flg_row[jrow] != 0 ){ continue; }
+        double d0 = B[(ncol-1)*nrow+jrow];
+        if( d0 >= 0 ){ continue; }
+        is_optim = false;
+        double min_bound = -1;
+        for(int icol=0;icol<ncol-1;++icol){
+          double v0 = B[icol*nrow+jrow];
+          double v1 = B[icol*nrow];
+//          std::cout << "       hogehoge" << v0 << " " << v1 << std::endl;
+          if( v0*v1<=0 ){ continue; }
+          double bound0 = v1/v0;
+//          std::cout << "        val improv" << icol << " " << jrow << " " << bound0 << std::endl;
+          if( min_bound < 0 || bound0 < min_bound ){
+            min_bound = bound0;
+            jrow_min = jrow;
             icol_min = icol;
           }
         }
+        if( min_bound < 0 ){ // no bound for improvemnet
+          continue;
+        }
+        else{
+          assert( jrow_min != -1 && icol_min != -1 );
+          break;
+        }
+      }
+//      std::cout << "mininum index " << icol_min << " " << jrow_min << std::endl;
+      if( is_optim ){ // no way to furthre increase the value
+        nitr = itr;
+        return 0; // converged
       }
     }
+    if( icol_min == -1 || jrow_min == -1 ){
+      nitr = itr;
+      return 0;
+    }
+//    std::cout << "minimum bottom" << itr << " " << B[(ncol-1)*nrow+jrow_min] << "     " << B[(ncol-1)*nrow]  << " " << jrow_min << " " << std::endl;
+
+    assert( icol_min >= 0 );
+//    std::cout << "itr: " << itr << " " << icol_min << " " << jrow_min << " " << B[icol_min*nrow+jrow_min] << std::endl;
     if( fabs(B[icol_min*nrow+jrow_min])<1.0e-30 ){
-      std::cout << "invalid: " << itr << " " << B[icol_min*nrow+jrow_min] << std::endl;
-      return false;
+//      std::cout << "invalid: " << itr << " " << B[icol_min*nrow+jrow_min] << std::endl;
+      return 2;
     }
 //    std::cout << "icolmin" << icol_min << " " << jrow_min << std::endl;
-    {
+    { // Gauss's sweep
       const double vpiv = B[icol_min*nrow+jrow_min];
       for(int jrow=0;jrow<nrow;++jrow){ B[icol_min*nrow+jrow] /= vpiv; }
-    }
-    for(int icol=0;icol<ncol;++icol){
-      if( icol == icol_min ) continue;
-      const double vpiv = B[icol*nrow+jrow_min];
-      for(int jrow=0;jrow<nrow;jrow++){
-        B[icol*nrow+jrow] -= vpiv*B[icol_min*nrow+jrow];
+      for(int icol=0;icol<ncol;++icol){
+        if( icol == icol_min ) continue;
+        const double vpiv = B[icol*nrow+jrow_min];
+        for(int jrow=0;jrow<nrow;jrow++){
+          B[icol*nrow+jrow] -= vpiv*B[icol_min*nrow+jrow];
+        }
       }
     }
+    // swap basic-nonbasic index
     flg_row[jrow_min] = 1;
     int jrow_new = map_col2row[icol_min];
     flg_row[jrow_new] = 0;
@@ -191,7 +217,7 @@ bool CLinPro::Solve
   }
   opt_val = buff[1];
 //  std::cout << " opt" << opt_val << std::endl;
-  return true;
+  return 0;
 }
 
 
@@ -208,25 +234,27 @@ void CLinPro::AddEqn
 }
 
 
-bool CLinPro::Precomp(int& nitr)
+// 0 converged
+// 2 nobound
+int CLinPro::Precomp(int& nitr)
 {
-  this->neq = aEq.size();
-  this->nvar = 0;
-  this->nslk = 0;
-  this->nart = 0;
+  neq = aEq.size();
+  nvar = 0;
+  nslk = 0;
+  nart = 0;
   std::vector<int> mapEq2Slk(neq,-1);
   std::vector<int> mapEq2Art(neq,-1);
   for(int ieq=0;ieq<aEq.size();++ieq){
     const int nv = aEq[ieq].aCoeff.size();
     if( nvar < nv ){ nvar = nv; }
+    if( aEq[ieq].itype == EQ ){ mapEq2Slk[ieq] = nslk; nslk++; }
     if( aEq[ieq].itype == LE || aEq[ieq].itype == GE ){ mapEq2Slk[ieq] = nslk; nslk++; }
     if( aEq[ieq].itype == LE && aEq[ieq].rhs < 0  ){ mapEq2Art[ieq] = nart; nart++; }
     if( aEq[ieq].itype == GE && aEq[ieq].rhs > 0  ){ mapEq2Art[ieq] = nart; nart++; }
-    if( aEq[ieq].itype == EQ && aEq[ieq].rhs != 0 ){ mapEq2Art[ieq] = nart; nart++; }
   }
-//  std::cout << neq << " " << nvar << " " << nslk << " " << nart << std::endl;
   const int ncol = (neq+1); // neq,trg
   const int nrow = (1+1+nvar+nslk+nart); // rhs,trg,var,slk,art
+//  std::cout << neq << " " << nvar << " " << nslk << " " << nart << "  " << ncol << " " << nrow << std::endl;
   A.resize(ncol*nrow,0.0);
   for(int ieq=0;ieq<neq;++ieq){
     A[ieq*nrow] = aEq[ieq].rhs;
@@ -249,13 +277,14 @@ bool CLinPro::Precomp(int& nitr)
       const int iart = mapEq2Art[ieq]; assert(iart!=-1);
       A[ieq*nrow+2+nvar+nslk+iart] = +1;
     }
-    if( aEq[ieq].itype == EQ && aEq[ieq].rhs > 0 ){
-      const int iart = mapEq2Art[ieq]; assert(iart!=-1);
-      A[ieq*nrow+2+nvar+nslk+iart] = +1;
-    }
-    if( aEq[ieq].itype == EQ && aEq[ieq].rhs < 0 ){
-      const int iart = mapEq2Art[ieq]; assert(iart!=-1);
-      A[ieq*nrow+2+nvar+nslk+iart] = -1;
+    if( aEq[ieq].itype == EQ ){
+      const int islk = mapEq2Slk[ieq]; assert(islk!=-1);
+       if( aEq[ieq].rhs >= 0 ){
+         A[ieq*nrow+2+nvar+islk] = +1;
+       }
+       else{
+         A[ieq*nrow+2+nvar+islk] = -1;
+       }
     }
   }
   map_col2row.assign(ncol,0); // 0:base 1:non_base 2:trg
@@ -265,7 +294,7 @@ bool CLinPro::Precomp(int& nitr)
   }
 //  std::cout << "precomp" << std::endl;
 //  ::Print(A, ncol, nrow, map_col2row);
-  if( nart == 0 ){ nitr=0; return true; }
+  if( nart == 0 ){ nitr=0; return 0; }
   ////
   A[(ncol-1)*nrow+1] = 1.0;
   for(int ieq=0;ieq<aEq.size();++ieq){
@@ -288,12 +317,19 @@ bool CLinPro::Precomp(int& nitr)
      */
     map_col2row[ieq] = jrow1;
   }
-//  std::cout << "precomp art" << std::endl;
+//  std::cout << "  precomp art" << std::endl;
 //  ::Print(A, ncol, nrow, map_col2row);
-  LinPro_SolveTable(nitr, A, map_col2row, ncol,nrow);
-//  std::cout << "solved" << std::endl;
+  int res = LinPro_SolveTable(nitr, A, map_col2row, ncol,nrow);
+  if( res == 2 ){
+    std::cout << "no bound in solution" << std::endl;
+    return 2;
+  }
+//  std::cout << "  solved" << std::endl;
 //  ::Print(A, ncol, nrow, map_col2row);
-  if( fabs(A[(ncol-1)*nrow])> 1.0e-8 ){ return false; }
+  if( fabs(A[(ncol-1)*nrow])> 1.0e-8 ){
+    std::cout << "couldn't found solution" << std::endl;
+    return 3;
+  }
 //  std::cout << "succesfully found a valid solution" << std::endl;
   const std::vector<double> B = A;
   const int nrow1 = 1+1+nvar+nslk;
@@ -304,7 +340,7 @@ bool CLinPro::Precomp(int& nitr)
       A[icol*nrow1+irow] = B[icol*nrow+irow];
     }
   }
-  return true;
+  return 0;
 }
 
 
