@@ -45,7 +45,7 @@ int imode_draw = 0;
 
 void SetProblem()
 {
-  const unsigned int nprob = 5;
+  const unsigned int nprob = 4;
   static int iprob = 0;
   
   std::vector<int> aIsOnSurfXYZ;
@@ -177,7 +177,7 @@ void SetProblem()
     {
       std::vector<unsigned int> aTri;
       std::vector<double> aXYZ_Tri;
-      Read_Ply("models/bunny_1k.ply", aXYZ_Tri, aTri);
+      Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ_Tri, aTri);
       Normalize(aXYZ_Tri,2.3);
       mesh.sdf_mesh.SetMesh(aTri, aXYZ_Tri);
       mesh.sdf_mesh.BuildBoxel();
@@ -186,6 +186,7 @@ void SetProblem()
     IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                        mesh, 0.18, 3.0, cent);
   }
+  /*
   if( iprob == 4 ){
     class CCavMesh : public CInputIsosurfaceStuffing
     {
@@ -237,8 +238,8 @@ void SetProblem()
     double centre[3] = {0,0,0};
     IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
                        cav_mesh, resolution, lenz*2.3, centre);
-
   }
+   */
   
   aTetColor.resize(aTet.size()/4);
   for(int it=0;it<aTet.size()/4;++it){

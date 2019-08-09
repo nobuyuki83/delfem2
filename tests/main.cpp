@@ -20,11 +20,96 @@
 #include "delfem2/mathfuncs.h"
 #include "delfem2/funcs.h"
 #include "delfem2/mathexpeval.h"
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
+
+#include "delfem2/mshsrch_v3bvh.h"
+#include "delfem2/objfunc_v23.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
 
+TEST(objfunc_v23, Check_CdC_TriStrain){
+  for(int itr=0;itr<200;++itr){
+    const double P[3][2] = {
+      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
+      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
+      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
+    };
+    double a0 = TriArea2D(P[0], P[1], P[2]);
+    if( fabs(a0) < 0.1 ) continue;
+    const double p[3][3] = {
+      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
+      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
+      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5),
+        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
+    };
+    double diff = Check_CdC_TriStrain(P, p, 1.0e-5);
+    EXPECT_LT(diff, 0.2);
+  }
+}
+
+TEST(bvh,test1)
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  {
+    MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
+    Rotate(aXYZ, 0.2, 0.3, 0.4);
+  }
+  int iroot_bvh;
+  std::vector<CNodeBVH> aNodeBVH; // array of BVH node
+  {
+    const int ntri = aTri.size()/3;
+    std::vector<double> aElemCenter(ntri*3);
+    for(int itri=0;itri<ntri;++itri){
+      CVector3 p0 = cg_Tri(itri, aTri, aXYZ);
+      aElemCenter[itri*3+0] = p0.x;
+      aElemCenter[itri*3+1] = p0.y;
+      aElemCenter[itri*3+2] = p0.z;
+    }
+    std::vector<int> aTriSurRel;
+    makeSurroundingRelationship(aTriSurRel,
+                                aTri.data(), aTri.size()/3,
+                                MESHELEM_TRI, aXYZ.size()/3);
+    iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
+                                     3,aTriSurRel,
+                                     aElemCenter);
+  }
+  std::vector<CBV3D_Sphere> aBB_BVH;
+  double contact_clearance = 0.01;
+  {
+    BVH_BuildBVHGeometry(iroot_bvh,
+                          contact_clearance,
+                          aXYZ,aTri,3,aNodeBVH,aBB_BVH);
+  }
+  for(int itr=0;itr<100;++itr){
+    double p[3] = {
+      2.0*(rand()/(RAND_MAX+1.0)-1.0),
+      2.0*(rand()/(RAND_MAX+1.0)-1.0),
+      2.0*(rand()/(RAND_MAX+1.0)-1.0) };
+    double l = Length3D(p);
+    p[0] = p[0]/l*1.005;
+    p[1] = p[1]/l*1.005;
+    p[2] = p[2]/l*1.005;
+    CVector3 p0(p[0],p[1],p[2]);
+    CPointElemSurf pes1 = Nearest_Point_MeshTri3D(p,aXYZ,aTri,
+                                                  iroot_bvh,aNodeBVH,aBB_BVH);
+    CPointElemSurf pes0 = Nearest_Point_MeshTri3D(p, aXYZ, aTri);
+    CVector3 q0 = pes0.getPos_Tri(aXYZ, aTri);
+    CVector3 q1 = pes1.getPos_Tri(aXYZ, aTri);
+    EXPECT_LT(Distance(q0,q1),1.0e-10);
+  }
+}
 
 TEST(mathexpeval,test1){
   CMathExpressionEvaluator e;
@@ -156,17 +241,17 @@ TEST(mat3, rot_comp)
     CMatrix3 R; GetRotPolarDecomp(R.mat, M.mat, 40);
     {
       double diff = (R.Trans()*R-CMatrix3::Identity()).SqNorm_Frobenius();
-      EXPECT_NEAR(diff, 0.0, 1.0e-14);
+      EXPECT_NEAR(diff, 0.0, 1.0e-11);
     }
     {
       CMatrix3 MR = M.MatMat(R.Trans());
       double diff0 = (MR-MR.Sym()).SqNorm_Frobenius();
-      EXPECT_NEAR(diff0, 0.0, 1.0e-14);
+      EXPECT_NEAR(diff0, 0.0, 1.0e-11);
     }
     {
       CMatrix3 RM = (R.Trans()).MatMat(M);
       double diff1 = (RM-RM.Sym()).SqNorm_Frobenius();
-      EXPECT_NEAR(diff1, 0.0, 1.0e-14);
+      EXPECT_NEAR(diff1, 0.0, 1.0e-11);
     }
   }
 }

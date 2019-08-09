@@ -26,7 +26,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/bv.h                                                                         
   ${DELFEM2_INC}/bvh.h          ${DELFEM2_SRC}/bvh.cpp             
   
-  ${DELFEM2_INC}/collisiontri_v3bvh.h     ${DELFEM2_SRC}/collisiontri_v3bvh.cpp                               
+  ${DELFEM2_INC}/collisiontri_v3bvh.h     
+  ${DELFEM2_SRC}/collisiontri_v3bvh.cpp
   
   ${DELFEM2_INC}/gl_funcs.h     ${DELFEM2_SRC}/gl_funcs.cpp           
   ${DELFEM2_INC}/gl_camera.h    ${DELFEM2_SRC}/gl_camera.cpp

@@ -595,7 +595,7 @@ CVector3 nearest_Plane_Point
   return p + ((o-p)*n0)*n0;
 }
 
-CVector3 nearest_Orgin_PlaneTri
+CVector3 Nearest_Orgin_PlaneTri
 (double& r0,
  double& r1,
  const CVector3& q0,
@@ -615,7 +615,7 @@ CVector3 nearest_Orgin_PlaneTri
   return q0*r0 + q1*r1 + q2*r2;
 }
 
-CVector3 nearest_Origin_Tri
+CVector3 Nearest_Origin_Tri
 (double& r0,
  double& r1,
  const CVector3& q0,
@@ -623,7 +623,7 @@ CVector3 nearest_Origin_Tri
  const CVector3& q2)
 {
   { // check on triangle
-    CVector3 p012 = nearest_Orgin_PlaneTri(r0,r1, q0,q1,q2);
+    CVector3 p012 = Nearest_Orgin_PlaneTri(r0,r1, q0,q1,q2);
     if( r0>0 && r1>0 && (1-r0-r1)>0 ){ return p012; }
   }
   //////

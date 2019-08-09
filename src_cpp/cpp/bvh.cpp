@@ -21,7 +21,7 @@ void DevideElemAryConnex
  std::vector<CNodeBVH>& aNodeBVH,
  ////
  const std::vector<int>& list,
- const std::vector<int>& aElemSurInd,
+ const int nfael,
  const std::vector<int>& aElemSur,
  const std::vector<double>& aElemCenter)
 {
@@ -133,8 +133,8 @@ void DevideElemAryConnex
     while(!stack.empty()){
       int itri0 = stack.top();
       stack.pop();
-      for(int jje=aElemSurInd[itri0];jje<aElemSurInd[itri0+1];jje++){
-        int jtri = aElemSur[jje*2+0];
+      for(int ifael=0;ifael<nfael;ifael++){
+        int jtri = aElemSur[itri0*6+nfael*2+0];
         if( jtri == -1 ) continue;
         if( aElem2Node[jtri] != iroot_node ) continue;
         assert( jtri < (int)aElemCenter.size() );
@@ -165,7 +165,7 @@ void DevideElemAryConnex
   }
   else{ // 子ノード0にある三角形を再度分割
     DevideElemAryConnex(inode_ch0,aElem2Node,aNodeBVH,
-                       list_ch0,aElemSurInd,aElemSur,aElemCenter);
+                       list_ch0,nfael,aElemSur,aElemCenter);
   }
   list_ch0.clear();
   
@@ -176,19 +176,18 @@ void DevideElemAryConnex
   }
   else{ // 子ノード1にある三角形を再度分割
     DevideElemAryConnex(inode_ch1,aElem2Node,aNodeBVH,
-                       list_ch1,aElemSurInd,aElemSur,aElemCenter);
+                       list_ch1,nfael,aElemSur,aElemCenter);
   }
 }
 
-int MakeTreeTopologyBVH_TopDown
+int BVH_MakeTreeTopology
 (std::vector<CNodeBVH>& aNodeBVH,
- const std::vector<int>& aElemSurInd,
+ const int nfael,
  const std::vector<int>& aElemSur,
  const std::vector<double>& aElemCenter)
 {
   aNodeBVH.clear();
   const unsigned int nelem = aElemCenter.size()/3;
-  assert( aElemSurInd.size() == nelem+1 );
   std::vector<int> list(nelem);
   for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
   std::vector<int> aElem2Node;
@@ -196,7 +195,7 @@ int MakeTreeTopologyBVH_TopDown
   aNodeBVH.resize(1);
   aNodeBVH[0].iroot = -1;
   DevideElemAryConnex(0,aElem2Node,aNodeBVH,
-                      list,aElemSurInd,aElemSur,aElemCenter);
+                      list,nfael,aElemSur,aElemCenter);
   return 0;
 }
 

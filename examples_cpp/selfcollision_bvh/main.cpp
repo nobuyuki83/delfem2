@@ -27,7 +27,6 @@ std::vector<unsigned int> aTri;  // index of triangles
 // variables for self-collision
 int iroot_bvh; // index BVH root node
 std::vector<CNodeBVH> aNodeBVH; // array of BVH node
-//std::vector<CAABB3D> aBB_BVH; // array of AABB same size as aNodeBVH
 std::vector<CBV3D_Sphere> aBB_BVH; // array of AABB same size as aNodeBVH
 
 std::vector<CIntersectTriPair> aITP;
@@ -38,8 +37,8 @@ double cur_time = 0;
 CGlutWindowManager win;
 int imode_draw = 0;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 void myGlutDisplay(void)
 {
@@ -89,10 +88,9 @@ void myGlutIdle(){
       aXYZ[ip*3+2] =  aXYZ0[ip*3+2] + aUVW[ip*3+2]*d;
     }
     ////
-    double contact_clearance = 0.01;
-    BuildBoundingBoxesBVH(iroot_bvh,
-                          contact_clearance,
-                          aXYZ,aTri,3,aNodeBVH,aBB_BVH);
+    BVH_BuildBVHGeometry(iroot_bvh,
+                         1.0e-5,
+                         aXYZ,aTri,3,aNodeBVH,aBB_BVH);
     aITP.clear();
     GetIntersectTriPairs(aITP,
                          aXYZ,aTri,
@@ -175,14 +173,9 @@ int main(int argc,char* argv[])
       makeSurroundingRelationship(aTriSurRel,
                                   aTri.data(), aTri.size()/3, 
                                   MESHELEM_TRI, aXYZ.size()/3);
-      std::vector<int> aElemSurInd(ntri+1);
-      aElemSurInd[0] = 0;
-      for(int itri=0;itri<ntri;++itri){
-        aElemSurInd[itri+1] = (itri+1)*3;
-      }
-      iroot_bvh = MakeTreeTopologyBVH_TopDown(aNodeBVH,
-                                              aElemSurInd,aTriSurRel,
-                                              aElemCenter);
+      iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
+                                       3,aTriSurRel,
+                                       aElemCenter);
       std::cout << "aNodeBVH.size(): " << aNodeBVH.size() << std::endl;
     }
     //    aEdge.SetEdgeOfElem(aTri,(int)aTri.size()/3,3, aXYZ.size()/3,false);

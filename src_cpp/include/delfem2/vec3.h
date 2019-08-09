@@ -201,7 +201,7 @@ void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
 CVector3 nearest_Plane_Point(const CVector3& p, // point
                              const CVector3& o, // origin
                              const CVector3& n); // normal
-CVector3 nearest_Origin_Tri(double& r0,
+CVector3 Nearest_Origin_Tri(double& r0,
                             double& r1,
                             const CVector3& q0,
                             const CVector3& q1,

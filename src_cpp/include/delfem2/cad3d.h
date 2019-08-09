@@ -4,7 +4,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/paramgeo_v23.h"
-#include "delfem2/mshsrch_v3.h"
+#include "delfem2/mshsrch_v3bvh.h"
 
 #include "delfem2/gl_color.h"
 
