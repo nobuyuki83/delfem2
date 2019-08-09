@@ -57,8 +57,9 @@ void PBD_CdC_TriStrain2D3D(double C[3],
                        double dCdp[3][9],
                        const double P[3][2], // (in) undeformed triangle vertex positions
                        const double p[3][3]); // (in) deformed triangle vertex positions
-void Check_CdC_TriStrain(const double P[3][2], // (in) undeformed triangle vertex positions
-                         const double p[3][3]); // (in) deformed triangle vertex positions)
+double Check_CdC_TriStrain(const double P[3][2], // (in) undeformed triangle vertex positions
+                           const double p[3][3], // (in) deformed triangle vertex positions)
+                           double epsilon);
 
 void PBD_ConstraintProjection_DistanceTri2D3D(double C[3],
                                               double dCdp[3][9],

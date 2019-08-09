@@ -252,16 +252,16 @@ void PBD_CdC_TriStrain2D3D
   dC2dp2.CopyValueTo(dCdp[2]+2*3);
 }
 
-void Check_CdC_TriStrain
+double Check_CdC_TriStrain
 (const double P[3][2], // (in) undeformed triangle vertex positions
- const double p[3][3] // (in) deformed triangle vertex positions)
-)
+ const double p[3][3], // (in) deformed triangle vertex positions)
+ double eps)
 {
+  double sum_diff = 0.0;
   double C[3], dCdp[3][9];
   PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
   for(int ine=0;ine<3;++ine){
     for(int idim=0;idim<3;++idim){
-      double eps = 1.0e-10;
       double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
       p1[ine][idim] += eps;
       double C1[3], dCdp1[3][9];
@@ -272,9 +272,11 @@ void Check_CdC_TriStrain
       diff0 = abs(diff0);
       diff1 = abs(diff1);
       diff2 = abs(diff2);
-      std::cout << diff0 << " " << diff1 << " " << diff2 << std::endl;
+      sum_diff += diff0 + diff1 + diff2;
+//      std::cout << diff0 << " " << diff1 << " " << diff2 << std::endl;
     }
   }
+  return sum_diff;
 }
 
 

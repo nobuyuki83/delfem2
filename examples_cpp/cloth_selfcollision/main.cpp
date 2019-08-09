@@ -453,17 +453,12 @@ int main(int argc,char* argv[])
         aElemCenter[itri*3+1] = p.y;
         aElemCenter[itri*3+2] = p.z;
       }
-      std::vector<int> aElemSurInd(ntri+1);
-      aElemSurInd[0] = 0;
-      for(int itri=0;itri<ntri;++itri){
-        aElemSurInd[itri+1] = (itri+1)*3;
-      }
       std::vector<int> aTriSurRel;
       makeSurroundingRelationship(aTriSurRel,
                                   aTri.data(), aTri.size()/3,
                                   MESHELEM_TRI, aXYZ.size()/3);
-      iroot_bvh = MakeTreeTopologyBVH_TopDown(aNodeBVH,
-                                              aElemSurInd,aTriSurRel,aElemCenter);
+      iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
+                                       3,aTriSurRel,aElemCenter);
     }
     std::cout << "aNodeBVH.size(): " << aNodeBVH.size() << std::endl;
 //    aEdge.SetEdgeOfElem(aTri,(int)aTri.size()/3,3, np,false);

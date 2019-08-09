@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
 #include "delfem2/vec3.h"
 
 ////////////////////////////////////////////////////////////////////
@@ -36,7 +38,7 @@ class CPointElemSurf{
 public:
   CPointElemSurf() : itri(-1), r0(0), r1(0) {}
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
-  CVector3 getPos_Tri(const std::vector<double>& aXYZ, const std::vector<int>& aTri) const;
+  CVector3 getPos_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTri) const;
   CVector3 getPos_TetFace(const std::vector<double>& aXYZ, const std::vector<int>& aTet, const std::vector<int>& aTetFace) const;
 public:
   int itri;
@@ -74,9 +76,9 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const CVector3& org, const CVector3& 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-CPointElemSurf nearest_Point_MeshTri3D(const CVector3& q,
+CPointElemSurf Nearest_Point_MeshTri3D(const CVector3& q,
                                        const std::vector<double>& aXYZ,
-                                       const std::vector<int>& aTri);
+                                       const std::vector<unsigned int>& aTri);
 CPointElemSurf nearest_Point_MeshTetFace3D(const CVector3& p0,
                                            const std::vector<double>& aXYZ,
                                            const std::vector<int>& aTet,
@@ -89,5 +91,41 @@ CPointElemSolid nearest_Point_MeshTet3D(const CVector3& p,
                                         const std::vector<double>& aXYZ,
                                         const std::vector<int>& aTet,
                                         const std::vector<int>& aTetSurRel);
+
+
+template <typename T>
+CPointElemSurf Nearest_Point_MeshTri3D
+(const CVector3& q,
+ const std::vector<double>& aXYZ,
+ const std::vector<unsigned int>& aTri,
+ int iroot_bvh,
+ const std::vector<CNodeBVH>& aNodeBVH, // array of BVH node
+ const std::vector<T>& aBB_BVH)
+{
+  std::vector<int> aIndTri_Cand;
+  BVH_GetIndElem_IncludePoint(aIndTri_Cand,
+                              q.x, q.y, q.z,
+                              iroot_bvh,
+                              aNodeBVH,aBB_BVH);
+  double min_dist = -1;
+  CPointElemSurf pes;
+  for(int iitri=0;iitri<aIndTri_Cand.size();++iitri){
+    const int itri0 = aIndTri_Cand[iitri];
+    const int i0 = aTri[itri0*3+0];
+    const int i1 = aTri[itri0*3+1];
+    const int i2 = aTri[itri0*3+2];
+    const CVector3 p0(aXYZ[i0*3+0]-q.x, aXYZ[i0*3+1]-q.y, aXYZ[i0*3+2]-q.z);
+    const CVector3 p1(aXYZ[i1*3+0]-q.x, aXYZ[i1*3+1]-q.y, aXYZ[i1*3+2]-q.z);
+    const CVector3 p2(aXYZ[i2*3+0]-q.x, aXYZ[i2*3+1]-q.y, aXYZ[i2*3+2]-q.z);
+    double r0,r1;
+    CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+    double dist = p_min.DLength();
+    if( min_dist<0 || dist < min_dist ){
+      min_dist = dist;
+      pes = CPointElemSurf(itri0,r0,r1);
+    }
+  }
+  return pes;
+}
 
 #endif /* search_mesh_hpp */

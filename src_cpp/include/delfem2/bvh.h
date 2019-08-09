@@ -14,9 +14,9 @@ public:
 };
 
 // make BVH topology
-int MakeTreeTopologyBVH_TopDown
+int BVH_MakeTreeTopology
 (std::vector<CNodeBVH>& aNodeBVH,
- const std::vector<int>& aElemSurInd,
+ const int nfael,
  const std::vector<int>& aElemSur,
  const std::vector<double>& aElemCenter);
 
@@ -25,9 +25,9 @@ int MakeTreeTopologyBVH_TopDown
 
 // build Bounding Box for AABB
 template <typename T>
-void BuildBoundingBoxesBVH
+void BVH_BuildBVHGeometry
 (int ibvh,
- double delta,
+ double margin,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aElem,
  int nnoel,
@@ -36,8 +36,8 @@ void BuildBoundingBoxesBVH
 {
   aBB.resize( aNodeBVH.size() );
   assert( ibvh < (int)aNodeBVH.size() );
-  int ichild0 = aNodeBVH[ibvh].ichild[0];
-  int ichild1 = aNodeBVH[ibvh].ichild[1];
+  const int ichild0 = aNodeBVH[ibvh].ichild[0];
+  const int ichild1 = aNodeBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf node
     const int ielem = ichild0;
     assert( ielem < (int)aElem.size()/nnoel );
@@ -45,15 +45,15 @@ void BuildBoundingBoxesBVH
     bb.is_active = false;
     for(int inoel=0;inoel<nnoel;++inoel){
       const int ino0 = aElem[ielem*nnoel+inoel];
-      bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], delta*0.5);
+      bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], margin);
     }
     return;
   }
   // branch node is the bounding volume of child nodes
   assert( aNodeBVH[ichild0].iroot == ibvh );
   assert( aNodeBVH[ichild1].iroot == ibvh );
-  BuildBoundingBoxesBVH(ichild0,delta, aXYZ,aElem,nnoel,aNodeBVH,aBB);
-  BuildBoundingBoxesBVH(ichild1,delta, aXYZ,aElem,nnoel,aNodeBVH,aBB);
+  BVH_BuildBVHGeometry(ichild0,margin, aXYZ,aElem,nnoel,aNodeBVH,aBB);
+  BVH_BuildBVHGeometry(ichild1,margin, aXYZ,aElem,nnoel,aNodeBVH,aBB);
   T& bb = aBB[ibvh];
   bb.is_active = false;
   bb  = aBB[ichild0];
@@ -145,7 +145,7 @@ void BuildBoundingBoxesBVH_Dynamic
 
 
 template <typename T>
-void getBVH_IncludePoint
+void BVH_GetIndElem_IncludePoint
 (std::vector<int>& aIndElem,
  /////
  double px, double py, double pz,
@@ -161,8 +161,8 @@ void getBVH_IncludePoint
     return;
   }
   /////
-  getBVH_IncludePoint(aIndElem, px,py,pz, ichild0,  aBVH,aBB);
-  getBVH_IncludePoint(aIndElem, px,py,pz, ichild1,  aBVH,aBB);
+  BVH_GetIndElem_IncludePoint(aIndElem, px,py,pz, ichild0,  aBVH,aBB);
+  BVH_GetIndElem_IncludePoint(aIndElem, px,py,pz, ichild1,  aBVH,aBB);
 }
 
 // potential maximum distance of the nearest point
