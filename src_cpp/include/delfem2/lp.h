@@ -8,6 +8,7 @@
 #ifndef LP_H
 #define LP_H
 
+#include <math.h>
 #include <vector>
 
 
@@ -20,16 +21,33 @@ public:
   CLinPro(){}
   void AddEqn(const std::vector<double>& aW, double rhs, EQ_TYPE type);
   int Precomp(int& nitr);
-  bool Solve(std::vector<double>& solution, double& opt_val, int& nitr,
+  int Solve(std::vector<double>& solution, double& opt_val, int& nitr,
              const std::vector<double>& aCoeffTrg) const;
-//  void SetTarget(const std::vector<double>& aW);
-  ////
-//  bool IsViable(const std::vector<double>& aW) const;
-//  std::vector<double> GetViableSolution(std::vector<double>& sol, int& nitr) const;
-  ////
+  std::vector<double> GetValid() const;
+  void Print() const;
 private:
   class CEq
   {
+  public:
+    bool IsValid(const std::vector<double>& sol, double tol=1.0e-20) const {
+      double sum = -rhs;
+      for(int ic=0;ic<aCoeff.size();++ic){ sum += aCoeff[ic]*sol[ic]; }
+      if( itype == EQ ){
+        if( fabs(sum)<tol ){ return true; }
+        else{
+          std::cout << "  diff:" << fabs(sum) << std::endl;
+          return false;
+        }
+      }
+      else if( itype == LE ){
+        if( sum<tol ){ return true; }
+        else{ return false; }
+      }
+      else{
+        if( sum>-tol ){ return true; }
+        else{ return false; }
+      }
+    }
   public:
     std::vector<double> aCoeff;
     double rhs;
