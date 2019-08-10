@@ -7,7 +7,7 @@
 
 #include <map>
 
-#include "delfem2/mshsrch_v3bvh.h"
+#include "delfem2/srchuni_v3bvh.h"
 
 CVector3 CPointElemSolid::getPos_Tet
 (const std::vector<double> &aXYZ,
@@ -61,6 +61,21 @@ CVector3 CPointElemSurf::getPos_Tri(const std::vector<double>& aXYZ, const std::
   const CVector3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
   const CVector3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
+}
+
+CVector3 CPointElemSurf::UNorm_Tri
+(const std::vector<double>& aXYZ,
+ const std::vector<unsigned int>& aTri,
+ const std::vector<double>& aNorm) const
+{
+  assert(itri>=0&&itri<(int)aTri.size()/3);
+  const int i0 = aTri[itri*3+0];
+  const int i1 = aTri[itri*3+1];
+  const int i2 = aTri[itri*3+2];
+  const CVector3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
+  const CVector3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
+  const CVector3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
+  return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
 
 CVector3 CPointElemSurf::getPos_TetFace
@@ -416,7 +431,7 @@ CPointElemSurf Nearest_Point_MeshTri3D
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-CPointElemSolid nearest_Point_MeshTet3D
+CPointElemSolid Nearest_Point_MeshTet3D
 (const CVector3& q,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet)
@@ -431,7 +446,7 @@ CPointElemSolid nearest_Point_MeshTet3D
   return CPointElemSolid();
 }
 
-CPointElemSolid nearest_Point_MeshTet3D
+CPointElemSolid Nearest_Point_MeshTet3D
 (const CVector3& p,
  int itet_start, // starting triangle
  const std::vector<double>& aXYZ,
@@ -477,7 +492,7 @@ CPointElemSolid nearest_Point_MeshTet3D
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CPointElemSurf nearest_Point_MeshTetFace3D
+CPointElemSurf Nearest_Point_MeshTetFace3D
 (const CVector3& p0,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,

@@ -23,7 +23,7 @@
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
 
-#include "delfem2/mshsrch_v3bvh.h"
+#include "delfem2/srchuni_v3bvh.h"
 #include "delfem2/objfunc_v23.h"
 
 #ifndef M_PI
@@ -66,6 +66,9 @@ TEST(bvh,test1)
     MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
     Rotate(aXYZ, 0.2, 0.3, 0.4);
   }
+  std::vector<double> aNorm(aXYZ.size());
+  Normal_MeshTri3D(aNorm.data(),
+                   aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
   int iroot_bvh;
   std::vector<CNodeBVH> aNodeBVH; // array of BVH node
   {
@@ -86,7 +89,7 @@ TEST(bvh,test1)
                                      aElemCenter);
   }
   std::vector<CBV3D_Sphere> aBB_BVH;
-  double contact_clearance = 0.01;
+  double contact_clearance = 0.02;
   {
     BVH_BuildBVHGeometry(iroot_bvh,
                           contact_clearance,
@@ -98,9 +101,16 @@ TEST(bvh,test1)
       2.0*(rand()/(RAND_MAX+1.0)-1.0),
       2.0*(rand()/(RAND_MAX+1.0)-1.0) };
     double l = Length3D(p);
-    p[0] = p[0]/l*1.005;
-    p[1] = p[1]/l*1.005;
-    p[2] = p[2]/l*1.005;
+    if( itr % 2 == 0 ){
+      p[0] = p[0]/l*1.01;
+      p[1] = p[1]/l*1.01;
+      p[2] = p[2]/l*1.01;
+    }
+    else{
+      p[0] = p[0]/l*0.99;
+      p[1] = p[1]/l*0.99;
+      p[2] = p[2]/l*0.99;
+    }
     CVector3 p0(p[0],p[1],p[2]);
     CPointElemSurf pes1 = Nearest_Point_MeshTri3D(p,aXYZ,aTri,
                                                   iroot_bvh,aNodeBVH,aBB_BVH);
@@ -108,6 +118,8 @@ TEST(bvh,test1)
     CVector3 q0 = pes0.getPos_Tri(aXYZ, aTri);
     CVector3 q1 = pes1.getPos_Tri(aXYZ, aTri);
     EXPECT_LT(Distance(q0,q1),1.0e-10);
+    CVector3 n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
+    EXPECT_EQ( n0*(p-q1)>0, itr%2==0);
   }
 }
 

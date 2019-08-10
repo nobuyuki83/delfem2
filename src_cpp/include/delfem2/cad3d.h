@@ -4,7 +4,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/paramgeo_v23.h"
-#include "delfem2/mshsrch_v3bvh.h"
+#include "delfem2/srchuni_v3bvh.h"
 
 #include "delfem2/gl_color.h"
 
@@ -153,7 +153,7 @@ public:
     aIE = aIE0;
   }
   int findIIE_CP(int icp_in, const std::vector<CCad3D_Edge>& aEdge) const {
-    for(int iie=0;iie<aIE.size();++iie){
+    for(unsigned int iie=0;iie<aIE.size();++iie){
       int ie0 = aIE[iie].first;
       assert( ie0>=0 && ie0<aEdge.size() );
       const CCad3D_Edge& e0 = aEdge[ie0];
@@ -179,7 +179,7 @@ public:
   void DrawEdge() const;
   void WriteFile(std::ofstream& fout) const{
     fout << "  " << aIE.size() << std::endl;
-    for(int iie=0;iie<aIE.size();++iie){
+    for(unsigned int iie=0;iie<aIE.size();++iie){
       fout << "   " << aIE[iie].first << " " << aIE[iie].second << std::endl;
     }
   }
@@ -387,10 +387,10 @@ public:
   bool isSym(int iv) const;
   void ChangeEdgeLength(double elen){
     this->elen = elen;
-    for(int ie=0;ie<aEdge.size();ie++){
+    for(unsigned int ie=0;ie<aEdge.size();ie++){
       aEdge[ie].Initialize(aVertex,elen); // ie0+0
     }
-    for(int ifc=0;ifc<aFace.size();ifc++){
+    for(unsigned int ifc=0;ifc<aFace.size();ifc++){
       aFace[ifc].Initialize(aVertex,aEdge, elen); // ie0+0
     }
     BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);

@@ -9,7 +9,7 @@
 
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/collisiontri_v3bvh.h"
+#include "delfem2/srchbi_v3bvh.h"
 
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
