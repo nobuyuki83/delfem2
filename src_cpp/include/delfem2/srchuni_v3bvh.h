@@ -46,9 +46,17 @@ class CPointElemSurf{
 public:
   CPointElemSurf() : itri(-1), r0(0), r1(0) {}
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
-  CVector3 getPos_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTri) const;
-  CVector3 getPos_TetFace(const std::vector<double>& aXYZ, const std::vector<int>& aTet, const std::vector<int>& aTetFace) const;
-  CVector3 UNorm_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTet, const std::vector<double>& aNorm) const;
+  CVector3 Pos_Tri(const std::vector<double>& aXYZ,
+                   const std::vector<unsigned int>& aTri) const;
+  CVector3 Pos_TetFace(const std::vector<double>& aXYZ,
+                       const std::vector<int>& aTet,
+                       const std::vector<int>& aTetFace) const;
+  CVector3 UNorm_Tri(const std::vector<double>& aXYZ,
+                     const std::vector<unsigned int>& aTet,
+                     const std::vector<double>& aNorm) const;
+  bool Check(const std::vector<double>& aXYZ,
+             const std::vector<unsigned int>& aTri,
+             double eps) const;
 public:
   int itri;
   double r0, r1;
@@ -128,6 +136,7 @@ CPointElemSurf Nearest_Point_MeshTri3D
     const CVector3 p2(aXYZ[i2*3+0]-q.x, aXYZ[i2*3+1]-q.y, aXYZ[i2*3+2]-q.z);
     double r0,r1;
     CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+    assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
     double dist = p_min.DLength();
     if( min_dist<0 || dist < min_dist ){
       min_dist = dist;
