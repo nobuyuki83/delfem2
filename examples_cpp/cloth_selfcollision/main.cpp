@@ -9,8 +9,9 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/bvh.h"
-#include "delfem2/collisiontri_v3bvh.h"
 #include "delfem2/mshtopo.h"
+
+#include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
 

@@ -55,7 +55,7 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/objfunc_v23.h   ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/bvh.h           ${DELFEM2_SRC}/bvh.cpp
-  ${DELFEM2_INC}/mshsrch_v3bvh.h ${DELFEM2_SRC}/mshsrch_v3bvh.cpp
+  ${DELFEM2_INC}/srchuni_v3bvh.h ${DELFEM2_SRC}/srchuni_v3bvh.cpp
 
   test_lp.cpp
   main.cpp  

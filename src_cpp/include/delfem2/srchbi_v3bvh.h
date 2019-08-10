@@ -6,35 +6,95 @@
 #include "delfem2/bvh.h"
 #include "delfem2/vec3.h"
 
-double DistanceFaceVertex
-(const CVector3& p0, const CVector3& p1, const CVector3& p2,
- const CVector3& p3,
- double& w0, double& w1);
 
-double DistanceEdgeEdge
-(const CVector3& p0, const CVector3& p1,
- const CVector3& q0, const CVector3& q1,
- double& ratio_p, double& ratio_q);
+template <typename T>
+bool IsContact_FV_Proximity(int ino0, int ino1, int ino2, int ino3,
+                            const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
+                            const T& bb,
+                            const double delta);
 
-double FindCoplanerInterp
-(const CVector3& s0, const CVector3& s1, const CVector3& s2, const CVector3& s3,
- const CVector3& e0, const CVector3& e1, const CVector3& e2, const CVector3& e3);
+template <typename T>
+bool IsContact_EE_CCD(int ino0,         int ino1,         int jno0,         int jno1,
+                      const CVector3& p0s, const CVector3& p1s, const CVector3& q0s, const CVector3& q1s,
+                      const CVector3& p0e, const CVector3& p1e, const CVector3& q0e, const CVector3& q1e);
 
-bool IsContact_EE_Proximity
-(int ino0,        int ino1,        int jno0,        int jno1,
- const CVector3& p0, const CVector3& p1, const CVector3& q0, const CVector3& q1,
- const double delta);
+template <typename T>
+bool IsContact_FV_CCD(int ino0,        int ino1,        int ino2,        int ino3,
+                      const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
+                      const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3,
+                      const T& bb);
 
-bool IsContact_FV_CCD2
-(int ino0,        int ino1,        int ino2,        int ino3,
- const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
- const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3);
+//////////////////////
+class CContactElement;
 
-bool isIntersectTriPair
-(CVector3& P0, CVector3& P1,
- int itri, int jtri,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXYZ);
+template <typename T>
+void GetContactElement_Proximity(std::set<CContactElement>& aContactElem,
+                                 ////
+                                 double delta,
+                                 const std::vector<double>& aXYZ,
+                                 const std::vector<unsigned int>& aTri,
+                                 int ibvh0, int ibvh1,
+                                 const std::vector<CNodeBVH>& aBVH,
+                                 const std::vector<T>& aBB);
+
+template <typename T>
+void GetContactElement_Proximity(std::set<CContactElement>& aContactElem,
+                                 ////
+                                 double delta,
+                                 const std::vector<double>& aXYZ,
+                                 const std::vector<unsigned int>& aTri,
+                                 int ibvh,
+                                 const std::vector<CNodeBVH>& aBVH,
+                                 const std::vector<T>& aBB);
+
+template <typename T>
+void GetContactElement_CCD(std::set<CContactElement>& aContactElem,
+                           /////
+                           double dt,
+                           double delta,
+                           const std::vector<double>& aXYZ,
+                           const std::vector<double>& aUVW,
+                           const std::vector<unsigned int>& aTri,
+                           int ibvh,
+                           const std::vector<CNodeBVH>& aBVH,
+                           const std::vector<T>& aBB);
+
+template <typename T>
+void GetContactElement_CCD(std::set<CContactElement>& aContactElem,
+                           ////
+                           double dt,
+                           double delta,
+                           const std::vector<double>& aXYZ,
+                           const std::vector<double>& aUVW,
+                           const std::vector<unsigned int>& aTri,
+                           int ibvh0, int ibvh1,
+                           const std::vector<CNodeBVH>& aBVH,
+                           const std::vector<T>& aBB);
+
+//////////////////////
+class CIntersectTriPair;
+
+template <typename T>
+void GetIntersectTriPairs(std::vector<CIntersectTriPair>& aIntersectTriPair,
+                          /////
+                          const std::vector<double>& aXYZ,
+                          const std::vector<unsigned int>& aTri,
+                          int ibvh,
+                          const std::vector<CNodeBVH>& aBVH,
+                          const std::vector<T>& aBB);
+
+template <typename T>
+void GetIntersectTriPairs(std::vector<CIntersectTriPair>& aIntersectTriPair,
+                          ////
+                          const std::vector<double>& aXYZ,
+                          const std::vector<unsigned int>& aTri,
+                          int ibvh0, int ibvh1,
+                          const std::vector<CNodeBVH>& aBVH,
+                          const std::vector<T>& aBB);
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 bool IsContact_FV_Proximity

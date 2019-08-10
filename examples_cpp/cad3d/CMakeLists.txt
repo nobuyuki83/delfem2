@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/dyntri_v2.h     ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/v23m3q.h        ${DELFEM2_SRC}/v23m3q.cpp
-  ${DELFEM2_INC}/mshsrch_v3bvh.h ${DELFEM2_SRC}/mshsrch_v3bvh.cpp
+  ${DELFEM2_INC}/srchuni_v3bvh.h ${DELFEM2_SRC}/srchuni_v3bvh.cpp
   ${DELFEM2_INC}/paramgeo_v23.h  ${DELFEM2_SRC}/paramgeo_v23.cpp
   ${DELFEM2_INC}/cad3d.h         ${DELFEM2_SRC}/cad3d.cpp
 

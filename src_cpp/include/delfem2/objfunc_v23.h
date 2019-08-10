@@ -1,19 +1,13 @@
-//
-//  pbd_v23.h
-//  delfem2
-//
-//  Created by Nobuyuki Umetani on 2019-06-08.
-//
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 
 #ifndef OBJFUNC_v23_h
 #define OBJFUNC_v23_h
-
-void Energy_MIPS(double& E,
-                 double dE[3][3],
-                 double ddE[3][3][3][3],
-                 const double c[3][3],
-                 const double C[3][3]);
-
 
 void PBD_Pre3D(std::vector<double>& aXYZt,
                double dt,

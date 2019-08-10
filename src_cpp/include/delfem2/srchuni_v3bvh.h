@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
 #ifndef MSHSRCH_V3_H
 #define MSHSRCH_V3_H
 
@@ -40,6 +48,7 @@ public:
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
   CVector3 getPos_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTri) const;
   CVector3 getPos_TetFace(const std::vector<double>& aXYZ, const std::vector<int>& aTet, const std::vector<int>& aTetFace) const;
+  CVector3 UNorm_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTet, const std::vector<double>& aNorm) const;
 public:
   int itri;
   double r0, r1;
@@ -79,14 +88,14 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const CVector3& org, const CVector3& 
 CPointElemSurf Nearest_Point_MeshTri3D(const CVector3& q,
                                        const std::vector<double>& aXYZ,
                                        const std::vector<unsigned int>& aTri);
-CPointElemSurf nearest_Point_MeshTetFace3D(const CVector3& p0,
+CPointElemSurf Nearest_Point_MeshTetFace3D(const CVector3& p0,
                                            const std::vector<double>& aXYZ,
                                            const std::vector<int>& aTet,
                                            const std::vector<int>& aTetFaceSrf);
-CPointElemSolid nearest_Point_MeshTet3D(const CVector3& q,
+CPointElemSolid Nearest_Point_MeshTet3D(const CVector3& q,
                                         const std::vector<double>& aXYZ,
                                         const std::vector<int>& aTet);
-CPointElemSolid nearest_Point_MeshTet3D(const CVector3& p,
+CPointElemSolid Nearest_Point_MeshTet3D(const CVector3& p,
                                         int itet_start, // starting triangle
                                         const std::vector<double>& aXYZ,
                                         const std::vector<int>& aTet,

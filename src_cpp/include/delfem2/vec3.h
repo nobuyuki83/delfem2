@@ -236,6 +236,32 @@ CVector3 intersection_Plane_Line(const CVector3& o, // one point on plane
 
 ////////////////////////////////////////////////////////////////
 
+double DistanceFaceVertex(const CVector3& p0, const CVector3& p1, const CVector3& p2,
+                          const CVector3& p3,
+                          double& w0, double& w1);
+
+double DistanceEdgeEdge(const CVector3& p0, const CVector3& p1,
+                        const CVector3& q0, const CVector3& q1,
+                        double& ratio_p, double& ratio_q);
+
+double FindCoplanerInterp(const CVector3& s0, const CVector3& s1, const CVector3& s2, const CVector3& s3,
+                          const CVector3& e0, const CVector3& e1, const CVector3& e2, const CVector3& e3);
+
+bool IsContact_EE_Proximity(int ino0,        int ino1,        int jno0,        int jno1,
+                            const CVector3& p0, const CVector3& p1, const CVector3& q0, const CVector3& q1,
+                            const double delta);
+
+bool IsContact_FV_CCD2(int ino0,        int ino1,        int ino2,        int ino3,
+                       const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
+                       const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3);
+
+bool isIntersectTriPair(CVector3& P0, CVector3& P1,
+                        int itri, int jtri,
+                        const std::vector<unsigned int>& aTri,
+                        const std::vector<double>& aXYZ);
+
+////////////////////////////////////////////////////////////////
+
 bool barycentricCoord_Origin_Tet(double& r0,
                                  double& r1,
                                  double& r2,
