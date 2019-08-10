@@ -632,37 +632,23 @@ CVector3 Nearest_Origin_Tri
   double r2=0;
   r0=1; r1=0;
   {
-    CVector3 p23 = nearest_Origin_LineSeg(r2, q1, q2);
-    const double d23 = p23.Length();
-    if(d23<d_min){ d_min=d23; p_min=p23; r1=1-r2; r0=0; }
-  }
-  {
-    CVector3 p31 = nearest_Origin_LineSeg(r0, q2, q0);
-    const double d31 = p31.Length();
-    if(d31<d_min){ d_min=d31; p_min=p31; r2=1-r0; r1=0; }
-  }
-  {
-    CVector3 p12 = nearest_Origin_LineSeg(r1, q0, q1);
+    double s2;
+    CVector3 p12 = nearest_Origin_LineSeg(s2, q1, q2);
     const double d12 = p12.Length();
-    if(d12<d_min){ d_min=d12; p_min=p12; r0=1-r1; r2=0; }
-  }
-  /*
-  {
-    CVector3 p23 = nearest_Origin_LineSeg(r1, q1, q2);
-    const double d23 = p23.Length();
-    if(d23<d_min){ d_min=d23; p_min=p23; r2=1-r1; r0=0; }
+    if(d12<d_min){ d_min=d12; p_min=p12; r1=1-s2; r0=0; r2=s2; }
   }
   {
-    CVector3 p31 = nearest_Origin_LineSeg(r2, q2, q0);
-    const double d31 = p31.Length();
-    if(d31<d_min){ d_min=d31; p_min=p31; r0=1-r2; r1=0; }
+    double s0;
+    CVector3 p20 = nearest_Origin_LineSeg(s0, q2, q0);
+    const double d20 = p20.Length();
+    if(d20<d_min){ d_min=d20; p_min=p20; r2=1-s0; r1=0; r0=s0; }
   }
   {
-    CVector3 p12 = nearest_Origin_LineSeg(r0, q0, q1);
-    const double d12 = p12.Length();
-    if(d12<d_min){ d_min=d12; p_min=p12; r1=1-r0; r2=0; }
+    double s1;
+    CVector3 p01 = nearest_Origin_LineSeg(s1, q0, q1);
+    const double d01 = p01.Length();
+    if(d01<d_min){ d_min=d01; p_min=p01; r0=1-s1; r2=0; r1=s1; }
   }
-   */
   return p_min;
 }
 

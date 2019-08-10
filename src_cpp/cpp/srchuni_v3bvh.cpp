@@ -51,7 +51,7 @@ void CPointElemSolid::setPos_Tet
   this->r2 = v2/vt;
 }
 
-CVector3 CPointElemSurf::getPos_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTri) const
+CVector3 CPointElemSurf::Pos_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTri) const
 {
   assert(itri>=0&&itri<(int)aTri.size()/3);
   const int i0 = aTri[itri*3+0];
@@ -78,7 +78,7 @@ CVector3 CPointElemSurf::UNorm_Tri
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
 
-CVector3 CPointElemSurf::getPos_TetFace
+CVector3 CPointElemSurf::Pos_TetFace
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,
  const std::vector<int>& aTetFace) const
@@ -105,7 +105,18 @@ CVector3 CPointElemSurf::getPos_TetFace
 }
 
 
-
+bool CPointElemSurf::Check
+(const std::vector<double>& aXYZ,
+ const std::vector<unsigned int>& aTri,
+ double eps) const
+{
+  if( itri < 0 || itri >= aTri.size()/3 ){ return false; }
+  if( r0 < -eps || r0 > 1+eps ){ return false; }
+  if( r1 < -eps || r1 > 1+eps ){ return false; }
+  double r2 = 1-r0-r1;
+  if( r2 < -eps || r2 > 1+eps ){ return false; }
+  return true;
+}
 
 
 
