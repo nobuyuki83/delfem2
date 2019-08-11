@@ -4,7 +4,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/paramgeo_v23.h"
-#include "delfem2/srchuni_v3bvh.h"
+#include "delfem2/srchuni_v3.h"
 
 #include "delfem2/gl_color.h"
 
@@ -163,13 +163,14 @@ public:
     }
     return -1;
   }
-  void Initialize
-  (const std::vector<CCad3D_Vertex>& aCtrlPoint,
-   const std::vector<CCad3D_Edge>& aEdge,
-   double elen);
+  void Initialize(const std::vector<CCad3D_Vertex>& aCtrlPoint,
+                  const std::vector<CCad3D_Edge>& aEdge,
+                  double elen);
   bool isPick(const CVector3& org, const CVector3& dir){
-    CPointElemSurf pes = intersect_Ray_MeshTri3D(org,dir, aTri,aXYZ);
-    if( pes.itri != -1 ){ return true; }
+    std::map<double,CPointElemSurf> mapDepthPES;
+    IntersectionRay_MeshTri3D(mapDepthPES,
+                              org,dir, aTri,aXYZ);
+    if( mapDepthPES.empty() ){ return true; }
     return false;
   }
   void MovePoints(const std::vector<CCad3D_Vertex>& aVertex,
@@ -218,52 +219,44 @@ public:
   std::vector<CFacePointInfo> aPInfo;
 };
 
-int AddPointEdge
-(int ie_div, double ratio_edge,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen);
+int AddPointEdge(int ie_div, double ratio_edge,
+                 std::vector<CCad3D_Vertex>& aVertex,
+                 std::vector<CCad3D_Edge>& aEdge,
+                 std::vector<CCad3D_Face>& aFace,
+                 double elen);
 
-void ConectEdge
-(int iv0, int iv1, int iface_div, int inorm_new,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen);
+void ConectEdge(int iv0, int iv1, int iface_div, int inorm_new,
+                std::vector<CCad3D_Vertex>& aVertex,
+                std::vector<CCad3D_Edge>& aEdge,
+                std::vector<CCad3D_Face>& aFace,
+                double elen);
 
-void MakeItSmooth
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace);
+void MakeItSmooth(std::vector<CCad3D_Vertex>& aVertex,
+                  std::vector<CCad3D_Edge>& aEdge,
+                  std::vector<CCad3D_Face>& aFace);
 
-void findEdgeGroup
-(std::vector< std::pair<int,bool> >& aIE,
- int iedge0,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge);
+void findEdgeGroup(std::vector< std::pair<int,bool> >& aIE,
+                   int iedge0,
+                   std::vector<CCad3D_Vertex>& aVertex,
+                   std::vector<CCad3D_Edge>& aEdge);
 
-void AddSphere_XSym
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen);
-void AddSphere_ZSym
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen);
-void AddTorus_XSym
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen);
+void AddSphere_XSym(std::vector<CCad3D_Vertex>& aVertex,
+                    std::vector<CCad3D_Edge>& aEdge,
+                    std::vector<CCad3D_Face>& aFace,
+                    double elen);
+void AddSphere_ZSym(std::vector<CCad3D_Vertex>& aVertex,
+                    std::vector<CCad3D_Edge>& aEdge,
+                    std::vector<CCad3D_Face>& aFace,
+                    double elen);
+void AddTorus_XSym(std::vector<CCad3D_Vertex>& aVertex,
+                   std::vector<CCad3D_Edge>& aEdge,
+                   std::vector<CCad3D_Face>& aFace,
+                   double elen);
 
-void AddCube
-(std::vector<CCad3D_Vertex>& aVertex,
-std::vector<CCad3D_Edge>& aEdge,
-std::vector<CCad3D_Face>& aFace,
-double elen);
+void AddCube(std::vector<CCad3D_Vertex>& aVertex,
+             std::vector<CCad3D_Edge>& aEdge,
+             std::vector<CCad3D_Face>& aFace,
+             double elen);
 
 bool FindFittingPoint
 (CVector2& p2d_near,

@@ -4,12 +4,13 @@
 #include <pybind11/numpy.h>
 
 #include "delfem2/matrix_sparse.h"
-#include "delfem2/ilu_sparse.h"
-#include "delfem2/fem.h"
 #include "delfem2/fem_ematrix.h"
 #include "delfem2/mshtopo.h"
+#include "delfem2/primitive.h"
 #include "delfem2/sdf.h"
 
+#include "delfem2/ilu_sparse.h"
+#include "delfem2/fem.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/dyntri_v2.h"
 
@@ -370,7 +371,8 @@ double PyMergeLinSys_Contact
                                      double px, double py, double pz) const
     {
       double n[3];
-      double max_pd = apSDF[0]->Projection(px,py,pz, n);
+      double max_pd = apSDF[0]->Projection(n,
+                                           px,py,pz);
       /*
       for(unsigned int ipct=1;ipct<apSDF.size();ipct++){
         double dist0,n0[3];
@@ -532,10 +534,10 @@ void PyPBD_ConstProj_ClothBend
     for(int ie=0;ie<3;++ie){
       const int jt0 = aETri[it].s2[ie];
       if( jt0 == -1 ){ continue; }
-      if( jt0 > it ){ continue; }
+      if( jt0 > (int)it ){ continue; }
       const int rt0 = aETri[it].r2[ie];
       const int je0 = (6-rt0-ie)%3;
-      assert( aETri[jt0].s2[je0] == it);
+      assert( aETri[jt0].s2[je0] == (int)it);
       const int i0 = aETri[it].v[ie];
       const int i1 = aETri[jt0].v[je0];
       const int i2 = aETri[it].v[(ie+1)%3];
@@ -615,7 +617,8 @@ void PyPBD_ConstProj_Contact
   unsigned int np = npXYZt.shape()[0];
   for(unsigned int ip=0;ip<np;++ip){
     double n[3];
-    double dist = sdf.Projection(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] , n);
+    double dist = sdf.Projection(n,
+                                 aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2]);
     if( dist > 0 ){
       aXYZt[ip*3+0] += dist*n[0];
       aXYZt[ip*3+1] += dist*n[1];

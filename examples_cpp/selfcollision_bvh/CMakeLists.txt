@@ -24,7 +24,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/msh.h          ${DELFEM2_SRC}/msh.cpp 
   ${DELFEM2_INC}/mshtopo.h      ${DELFEM2_SRC}/mshtopo.cpp               
   ${DELFEM2_INC}/bv.h                                                                         
-  ${DELFEM2_INC}/bvh.h          ${DELFEM2_SRC}/bvh.cpp             
+  ${DELFEM2_INC}/bvh.h          ${DELFEM2_SRC}/bvh.cpp
+  ${DELFEM2_INC}/primitive.h    ${DELFEM2_SRC}/primitive.cpp          
   
   ${DELFEM2_INC}/srchbi_v3bvh.h
   

@@ -212,27 +212,25 @@ void StepTime()
   if(      imode_contact == 1 ){ ic = &c1; }
   /////
   std::vector<double> aXYZ1 = aXYZ;
-  ::StepTime_InternalDynamicsILU
-  (aXYZ, aUVW, mat_A, ilu_A,
-   aXYZ0, aBCFlag,
-   aTri, aQuad,
-   time_step_size,
-   lambda, myu, stiff_bend,
-   gravity, mass_point,
-   stiff_contact,contact_clearance,*ic);
+  ::StepTime_InternalDynamicsILU(aXYZ, aUVW, mat_A, ilu_A,
+                                 aXYZ0, aBCFlag,
+                                 aTri, aQuad,
+                                 time_step_size,
+                                 lambda, myu, stiff_bend,
+                                 gravity, mass_point,
+                                 stiff_contact,contact_clearance,*ic);
   ////
   bool is_impulse_applied;
-  GetIntermidiateVelocityContactResolved
-  (aUVW,
-   is_impulse_applied,
-   time_step_size,
-   contact_clearance,
-   mass_point,
-   stiff_contact,
-   aXYZ1,
-   aTri,
-   psup_ind,psup,
-   iroot_bvh,  aNodeBVH, aBB_BVH);
+  GetIntermidiateVelocityContactResolved(aUVW,
+                                         is_impulse_applied,
+                                         time_step_size,
+                                         contact_clearance,
+                                         mass_point,
+                                         stiff_contact,
+                                         aXYZ1,
+                                         aTri,
+                                         psup_ind,psup,
+                                         iroot_bvh,  aNodeBVH, aBB_BVH);
   if( is_impulse_applied ){
     std::cout << "update middle velocity" << std::endl;
     for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
@@ -241,13 +239,12 @@ void StepTime()
       aXYZ[ip*3+2] =  aXYZ1[ip*3+2] + aUVW[ip*3+2]*time_step_size;
     }
     // now aXYZ is collision free
-    ::UpdateIntermidiateVelocity
-    (aUVW,
-     aXYZ, aXYZ0, aBCFlag,
-     aTri, aQuad,
-     time_step_size,
-     lambda, myu, stiff_bend,
-     gravity, mass_point);
+    ::UpdateIntermidiateVelocity(aUVW,
+                                 aXYZ, aXYZ0, aBCFlag,
+                                 aTri, aQuad,
+                                 time_step_size,
+                                 lambda, myu, stiff_bend,
+                                 gravity, mass_point);
   }
   MakeNormal();
 }

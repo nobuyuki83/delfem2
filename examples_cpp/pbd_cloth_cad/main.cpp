@@ -20,6 +20,8 @@
 #include "delfem2/v23m3q.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/cad2d.h"
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
 
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_funcs.h"
@@ -66,7 +68,10 @@ void StepTime()
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
   for(unsigned int it=0;it<aETri.size();++it){
-    const int aIP[3] = {aETri[it].v[0],aETri[it].v[1],aETri[it].v[2]};
+    const int aIP[3] = {
+      aETri[it].v[0],
+      aETri[it].v[1],
+      aETri[it].v[2]};
     const double P[3][2] = {
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
       {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
@@ -84,7 +89,11 @@ void StepTime()
       const int rt0 = aETri[it].r2[ie];
       const int je0 = (6-rt0-ie)%3;
       assert( aETri[jt0].s2[je0] == it);
-      const int aIP[4] = {aETri[it].v[ie],aETri[jt0].v[je0],aETri[it].v[(ie+1)%3],aETri[it].v[(ie+2)%3]};
+      const int aIP[4] = {
+        aETri[it].v[ie],
+        aETri[jt0].v[je0],
+        aETri[it].v[(ie+1)%3],
+        aETri[it].v[(ie+2)%3] };
       const double P[4][3] = {
         {aVec2[aIP[0]].x,aVec2[aIP[0]].y, 0.0},
         {aVec2[aIP[1]].x,aVec2[aIP[1]].y, 0.0},
@@ -129,7 +138,7 @@ void StepTime()
       aXYZt[ip1*3+2] = (p[0][2]+p[1][2])*0.5;
     }
   }
-  for(int ip=0;ip<aXYZt.size()/3;++ip){
+  for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
     double p[3] = {aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] };
     double l0 = Length3D(p);
     if( l0 < rad0 ){
@@ -311,7 +320,6 @@ int main(int argc,char* argv[])
     {
       std::vector<int> aIP0 = mesher.IndPoint_IndEdge(1, true, cad);
       std::vector<int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
-      std::cout << aIP0.size() << " " << aIP1.size() << std::endl;
       const int npe = aIP0.size();
       assert( aIP1.size() == npe );
       for(int iip=0;iip<npe;++iip){
@@ -324,7 +332,6 @@ int main(int argc,char* argv[])
     {
       std::vector<int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
       std::vector<int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
-      std::cout << aIP0.size() << " " << aIP1.size() << std::endl;
       const int npe = aIP0.size();
       assert( aIP1.size() == npe );
       for(int iip=0;iip<npe;++iip){
@@ -334,7 +341,6 @@ int main(int argc,char* argv[])
         aLine.push_back(ip1);
       }
     }
-    std::cout << aIP.size() << " " << aPo2D.size() << std::endl;
   }
   aXYZt = aXYZ;
   

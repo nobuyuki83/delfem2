@@ -13,15 +13,18 @@
 #include <GL/glut.h>
 #endif
 
+#include "delfem2/primitive.h"
+#include "delfem2/msh.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshtopo.h"
+#include "delfem2/isosurface_stuffing.h"
+
+#include "delfem2/srch_v3bvhmshtopo.h"
+
 #include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"
 #include "delfem2/gl_funcs.h"
 
-#include "delfem2/isosurface_stuffing.h"
-#include "delfem2/sdf.h"
-#include "delfem2/msh.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshtopo.h"
 
 //////////////////////////////////////////////////////////////
 
@@ -50,15 +53,16 @@ void SetProblem()
   
   std::vector<int> aIsOnSurfXYZ;
   if( iprob == 0 ){
-    class CSphere : public CInputIsosurfaceStuffing
+    class CInSphere : public CInput_IsosurfaceStuffing
     {
     public:
-      CSphere(double rad){
+      CInSphere(double rad){
         sp.radius_ = rad;
       }
       virtual double SignedDistance(double px, double py, double pz) const{
         double n[3];
-        return sp.Projection(px,py,pz,n);
+        return sp.Projection(n,
+                             px,py,pz);
       }
       virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                          double px, double py, double pz) const
@@ -73,26 +77,27 @@ void SetProblem()
         ilevel_vol = -1;
       }
     public:
-      CSDF3_Sphere sp;
+      CSphere sp;
     };
     double rad = 1.5;
-    CSphere sphere(rad);
+    CInSphere sphere(rad);
     double cent[3] = {0,0,0};
     IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
                        sphere, 0.2, rad*4.0, cent);
   }
   else if( iprob ==  1 ){
-    class CBox : public CInputIsosurfaceStuffing
+    class CInBox : public CInput_IsosurfaceStuffing
     {
     public:
-      CBox(double hwx, double hwy, double hwz){
+      CInBox(double hwx, double hwy, double hwz){
         bx.hwx = hwx;
         bx.hwy = hwy;
         bx.hwz = hwz;
       }
       virtual double SignedDistance(double px, double py, double pz) const{
         double n[3];
-        return bx.Projection(px,py,pz,n);
+        return bx.Projection(n,
+                             px,py,pz);
       }
       virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                          double px, double py, double pz) const
@@ -103,18 +108,18 @@ void SetProblem()
         nlayer = 1;
       }
     public:
-      CSDF3_Box bx;
+      CBox bx;
     };
     const double hwx = 0.91;
     const double hwy = 0.61;
     const double hwz = 0.41;
     double cent[3] = {0,0,0};
-    CBox box(hwx,hwy,hwz);
+    CInBox box(hwx,hwy,hwz);
     IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
                        box, 0.1, 2.00, cent);
   }
   else if( iprob == 2 ){
-    class CCavSphere : public CInputIsosurfaceStuffing
+    class CCavSphere : public CInput_IsosurfaceStuffing
     {
     public:
       CCavSphere(){
@@ -130,11 +135,13 @@ void SetProblem()
       }
       virtual double SignedDistance(double x, double y, double z ) const {
         double n[3];
-        double dist0 = -sphere.Projection(x, y, z, n);
+        double dist0 = -sphere.Projection(n,
+                                          x, y, z);
         double cx = 0.0;
         double cy = 0.0;
         double cz = 0.0;
-        double dist1 = box.Projection(x-cx, y-cy, z-cz, n);
+        double dist1 = box.Projection(n,
+                                      x-cx, y-cy, z-cz);
         return (dist0<dist1) ? dist0 : dist1;
       }
       virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
@@ -148,20 +155,20 @@ void SetProblem()
         nlayer = 1;
       }
     public:
-      CSDF3_Box box;
-      CSDF3_Sphere sphere;
+      CBox box;
+      CSphere sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
     IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                        cav_sphere, 0.2, 3.00, cent);
   }
   if( iprob == 3 ){
-    class CMesh : public CInputIsosurfaceStuffing
+    class CMesh : public CInput_IsosurfaceStuffing
     {
     public:
       virtual double SignedDistance(double x, double y, double z) const {
-        double n[3];
-        return sdf_mesh.Projection(x, y, z,n);
+        CVector3 n0;
+        return obj.SignedDistanceFunction(n0, CVector3(x,y,z), aXYZ_Tri, aTri, aNorm);
       }
       virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                          double px, double py, double pz) const
@@ -172,15 +179,19 @@ void SetProblem()
         nlayer = 2;
       }
     public:
-      CSDF3_Mesh sdf_mesh;
-    } mesh;
-    {
+      CBVH_MeshTri3D<CBV3D_Sphere> obj;
+      std::vector<double> aNorm;
       std::vector<unsigned int> aTri;
       std::vector<double> aXYZ_Tri;
-      Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ_Tri, aTri);
-      Normalize(aXYZ_Tri,2.3);
-      mesh.sdf_mesh.SetMesh(aTri, aXYZ_Tri);
-      mesh.sdf_mesh.BuildBoxel();
+    } mesh;
+    {
+      Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", mesh.aXYZ_Tri, mesh.aTri);
+      Normalize(mesh.aXYZ_Tri,2.3);
+      mesh.obj.Init(mesh.aXYZ_Tri,mesh.aTri,0.0);
+      mesh.aNorm.resize(mesh.aXYZ_Tri.size());
+      Normal_MeshTri3D(mesh.aNorm.data(),
+                       mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size()/3,
+                       mesh.aTri.data(), mesh.aTri.size()/3);
     }
     double cent[3] = {0,0,0};
     IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,

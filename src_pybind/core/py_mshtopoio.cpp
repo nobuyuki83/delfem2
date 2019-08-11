@@ -4,7 +4,9 @@
 #include <pybind11/numpy.h>
 
 #include "delfem2/mshtopoio.h"
+#include "delfem2/primitive.h"
 #include "delfem2/dyntri.h"
+
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/dyntri_v3.h"
 
@@ -430,7 +432,7 @@ PyMeshTri3D_Icosahedron()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void init_mshtopoio_gl(py::module &m){
+void init_mshtopoio(py::module &m){
   py::enum_<MESHELEM_TYPE>(m, "MESH_ELEM_TYPE")
   .value("TRI",     MESHELEM_TYPE::MESHELEM_TRI)
   .value("QUAD",    MESHELEM_TYPE::MESHELEM_QUAD)

@@ -8,7 +8,7 @@
 
 #include <vector>
 
-class CInputIsosurfaceStuffing
+class CInput_IsosurfaceStuffing
 {
 public:
   virtual double SignedDistance(double px, double py, double pz) const = 0;
@@ -23,16 +23,14 @@ public:
   }
 };
 
-
-bool IsoSurfaceStuffing
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTet,
- std::vector<int>& aIsOnSurfXYZ,
- ////
- const CInputIsosurfaceStuffing& input,
- double elen_in,
- double width,
- const double center[3]);
+bool IsoSurfaceStuffing(std::vector<double>& aXYZ,
+                        std::vector<unsigned int>& aTet,
+                        std::vector<int>& aIsOnSurfXYZ,
+                        ////
+                        const CInput_IsosurfaceStuffing& input,
+                        double elen_in,
+                        double width,
+                        const double center[3]);
 
 class CPointLattice
 {
@@ -56,6 +54,6 @@ public:
 };
 
 void makeBackgroundLattice(std::vector<CPointLattice>& aPoint, std::vector<unsigned int>& aTet,
-                           const CInputIsosurfaceStuffing& input,
+                           const CInput_IsosurfaceStuffing& input,
                            double elen, int  ndiv, const double org[3]);
 

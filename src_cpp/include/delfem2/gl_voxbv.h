@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 #include "delfem2/voxel.h"
-#include "delfem2/sdf.h"
+#include "delfem2/primitive.h"
 #include "delfem2/bv.h"
 
 void Draw_CubeGrid(bool is_picked, int iface_picked,

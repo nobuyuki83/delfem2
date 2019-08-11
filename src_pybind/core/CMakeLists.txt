@@ -43,8 +43,7 @@ set(INPUT_SRC
   ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/mshtopoio.h        ${DELFEM2_SRC}/mshtopoio.cpp
   ${DELFEM2_INC}/cad2d.h            ${DELFEM2_SRC}/cad2d.cpp
-  ${DELFEM2_INC}/sdf.h              ${DELFEM2_SRC}/sdf.cpp
-  ${DELFEM2_INC}/hash3d.h           ${DELFEM2_SRC}/hash3d.cpp
+  ${DELFEM2_INC}/primitive.h        ${DELFEM2_SRC}/primitive.cpp
 
   ${DELFEM2_INC}/isosurface_stuffing.h
   ${DELFEM2_SRC}/isosurface_stuffing.cpp
@@ -53,6 +52,7 @@ set(INPUT_SRC
   py_polyline.cpp 
   py_field.cpp
   py_fem.cpp
+  py_sdf.cpp
   main.cpp
 )
 
