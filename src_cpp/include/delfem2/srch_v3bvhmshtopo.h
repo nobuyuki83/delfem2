@@ -120,6 +120,37 @@ public:
     return Nearest_Point_MeshTri3DPart(p0,aXYZ,aTri,
                                        aIndTri_Cand);
   }
+  bool Projection_IncludedInBVH(double& sdf,
+                                CVector3& n0,
+                                const CVector3& p0,
+                                const std::vector<double>& aXYZ,
+                                const std::vector<unsigned int>& aTri,
+                                const std::vector<double>& aNorm)
+  {
+    assert( aBB_BVH.size() == aNodeBVH.size() );
+    std::vector<int> aIndTri_Cand;
+    BVH_GetIndElem_IncludePoint(aIndTri_Cand,
+                                p0.x, p0.y, p0.z,
+                                iroot_bvh,
+                                aNodeBVH,aBB_BVH);
+    CPointElemSurf pes= Nearest_Point_MeshTri3DPart(p0,aXYZ,aTri,
+                                                    aIndTri_Cand);
+    if( pes.itri == -1 ){ return false; }
+    CVector3 q1 = pes.Pos_Tri(aXYZ,aTri);
+    double dist = (q1-p0).Length();
+    CVector3 n1 = pes.UNorm_Tri(aXYZ,aTri,aNorm);
+    if( (q1-p0)*n1 > 0 ){  //inside
+      if( dist < 1.0e-6 ){ n0 = n1; }
+      else{ n0 = (q1-p0).Normalize(); }
+      sdf = dist;
+    }
+    else{ // outside
+      if( dist < 1.0e-6 ){ n0 = n1; }
+      else{ n0 = (p0-q1).Normalize(); }
+      sdf = -dist;
+    }
+    return true;
+  }
   CPointElemSurf NearestPoint_Global(const CVector3& p0,
                                      const std::vector<double>& aXYZ,
                                      const std::vector<unsigned int>& aTri) const {

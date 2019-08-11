@@ -1177,12 +1177,8 @@ void DrawMeshTri3D_Edge
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
-//  const int nTri = (int)aTri.size()/3;
-//  const int nXYZ = (int)aXYZ.size()/3;
-  /////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
-  ::glColor3d(0, 0, 0);
   for (int itri = 0; itri<nTri; ++itri){
     const int i1 = aTri[itri*3+0];
     const int i2 = aTri[itri*3+1];
@@ -1194,9 +1190,9 @@ void DrawMeshTri3D_Edge
     assert(i1>=0&&i1 < nXYZ);
     assert(i2>=0&&i2 < nXYZ);
     assert(i3>=0&&i3 < nXYZ);
-    double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-    double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
+    const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+    const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+    const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
     ::glVertex3dv(p1); ::glVertex3dv(p2);
     ::glVertex3dv(p2); ::glVertex3dv(p3);
     ::glVertex3dv(p3); ::glVertex3dv(p1);
