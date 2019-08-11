@@ -67,6 +67,40 @@ void AXPY(double a,
           double* y,
           int n);
 
+void XPlusAY(std::vector<double>& X,
+             const int nDoF,
+             const std::vector<int>& aBCFlag,
+             double alpha,
+             const std::vector<double>& Y);
+
+void XPlusAYBZ(std::vector<double>& X,
+               const int nDoF,
+               const std::vector<int>& aBCFlag,
+               double alpha,
+               const std::vector<double>& Y,
+               double beta,
+               const std::vector<double>& Z);
+
+void XPlusAYBZCW(std::vector<double>& X,
+                 const int nDoF,
+                 const std::vector<int>& aBCFlag,
+                 double alpha,
+                 const std::vector<double>& Y,
+                 double beta,
+                 const std::vector<double>& Z,
+                 double gamma,
+                 const std::vector<double>& W);
+
+// set boundary condition
+void setRHS_Zero(std::vector<double>& vec_b,
+                 const std::vector<int>& aBCFlag,
+                 int iflag_nonzero);
+
+void setRHS_MasterSlave(double* vec_b,
+                        int nDoF,
+                        const int* aMSFlag);
+
+
 void Solve_CG(double& conv_ratio,
               int& iteration,
               const CMatrixSparse& mat,

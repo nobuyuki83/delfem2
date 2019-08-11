@@ -23,12 +23,12 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec3.h              ${DELFEM2_SRC}/vec3.cpp
   ${DELFEM2_INC}/mshtopo.h           ${DELFEM2_SRC}/mshtopo.cpp
   ${DELFEM2_INC}/bvh.h               ${DELFEM2_SRC}/bvh.cpp
-  ${DELFEM2_INC}/fem_ematrix.h       ${DELFEM2_SRC}/fem_ematrix.cpp
-  ${DELFEM2_INC}/matrix_sparse.h     ${DELFEM2_SRC}/matrix_sparse.cpp
+  ${DELFEM2_INC}/emat.h              ${DELFEM2_SRC}/emat.cpp
+  ${DELFEM2_INC}/mats.h              ${DELFEM2_SRC}/mats.cpp
   
   ${DELFEM2_INC}/srchbi_v3bvh.h
-  ${DELFEM2_INC}/fem.h                ${DELFEM2_SRC}/fem.cpp
-  ${DELFEM2_INC}/ilu_sparse.h         ${DELFEM2_SRC}/ilu_sparse.cpp
+  ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_SRC}/fem_emats.cpp
+  ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_SRC}/ilu_mats.cpp
   
   ${DELFEM2_INC}/gl_funcs.h           ${DELFEM2_SRC}/gl_funcs.cpp
   ${DELFEM2_INC}/gl_camera.h          ${DELFEM2_SRC}/gl_camera.cpp

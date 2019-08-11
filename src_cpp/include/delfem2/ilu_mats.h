@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-#include "matrix_sparse.h"
+#include "mats.h"
 
 class CPreconditionerILU
 {
@@ -48,5 +48,19 @@ std::vector<double> Solve_PBiCGStab(double* r_vec,
                                     int num_iter,
                                     const CMatrixSparse& mat,
                                     const CPreconditionerILU& ilu);
+
+void SolveLinSys_PCG(const CMatrixSparse& mat_A,
+                     std::vector<double>& vec_b,
+                     std::vector<double>& vec_x,
+                     CPreconditionerILU& ilu_A,
+                     double& conv_ratio,
+                     int& iteration);
+
+bool SolveLinSys_BiCGStab(CMatrixSparse& mat_A,
+                          std::vector<double>& vec_b,
+                          std::vector<double>& vec_x,
+                          CPreconditionerILU& ilu_A,
+                          double& conv_ratio,
+                          int& iteration);
 
 #endif 

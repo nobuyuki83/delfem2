@@ -30,8 +30,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/primitive.h    ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/bvh.h          ${DELFEM2_SRC}/bvh.cpp
-  ${DELFEM2_INC}/isosurface_stuffing.h
-  ${DELFEM2_SRC}/isosurface_stuffing.cpp
+  ${DELFEM2_INC}/iss.h          ${DELFEM2_SRC}/iss.cpp
 
   ${DELFEM2_INC}/srchuni_v3.h   ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h

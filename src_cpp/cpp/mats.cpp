@@ -10,7 +10,7 @@
 #include <math.h>
 #include <vector>
 
-#include "delfem2/matrix_sparse.h"
+#include "delfem2/mats.h"
 
 
 CMatrixSparse::CMatrixSparse()
@@ -889,3 +889,73 @@ bool Solve_BiCGSTAB
   return true;
 }
 
+void XPlusAY
+(std::vector<double>& X,
+ const int nDoF,
+ const std::vector<int>& aBCFlag,
+ double alpha,
+ const std::vector<double>& Y)
+{
+  for(int i=0;i<nDoF;++i ){
+    if( aBCFlag[i] !=0 ) continue;
+    X[i] += alpha*Y[i];
+  }
+}
+
+void XPlusAYBZ
+(std::vector<double>& X,
+ const int nDoF,
+ const std::vector<int>& aBCFlag,
+ double alpha,
+ const std::vector<double>& Y,
+ double beta,
+ const std::vector<double>& Z)
+{
+  for(int i=0;i<nDoF;++i ){
+    if( aBCFlag[i] !=0 ) continue;
+    X[i] += alpha*Y[i] + beta*Z[i];
+  }
+}
+
+void XPlusAYBZCW
+(std::vector<double>& X,
+ const int nDoF,
+ const std::vector<int>& aBCFlag,
+ double alpha,
+ const std::vector<double>& Y,
+ double beta,
+ const std::vector<double>& Z,
+ double gamma,
+ const std::vector<double>& W)
+{
+  for(int i=0;i<nDoF;++i ){
+    if( aBCFlag[i] !=0 ) continue;
+    X[i] += alpha*Y[i] + beta*Z[i] + gamma*W[i];
+  }
+}
+
+// set boundary condition
+void setRHS_Zero
+(std::vector<double>& vec_b,
+ const std::vector<int>& aBCFlag,
+ int iflag_nonzero)
+{
+  const int ndof = (int)vec_b.size();
+  for (int i=0;i<ndof;++i){
+    if (aBCFlag[i]==iflag_nonzero) continue;
+    vec_b[i] = 0;
+  }
+}
+
+void setRHS_MasterSlave
+(double* vec_b,
+ int nDoF,
+ const int* aMSFlag)
+{
+  for(int idof=0;idof<nDoF;++idof){
+    int jdof = aMSFlag[idof];
+    if( jdof == -1 ) continue;
+    vec_b[jdof] += vec_b[idof];
+    vec_b[idof] = 0;
+  }
+}

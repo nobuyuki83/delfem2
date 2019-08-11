@@ -19,13 +19,12 @@
 
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
-
-#include "delfem2/matrix_sparse.h"
-#include "delfem2/ilu_sparse.h"
-#include "delfem2/fem.h"
-
+#include "delfem2/mats.h"
 #include "delfem2/primitive.h"
-#include "delfem2/isosurface_stuffing.h"
+#include "delfem2/iss.h"
+
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
 
 #include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"

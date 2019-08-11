@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <iostream>
 
-#include "delfem2/fem_ematrix.h"
+#include "delfem2/emat.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 

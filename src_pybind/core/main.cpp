@@ -17,10 +17,11 @@
 #include "delfem2/mshtopoio.h"
 #include "delfem2/voxel.h"
 #include "delfem2/bv.h"
-#include "delfem2/cad2d.h"
 #include "delfem2/primitive.h"
-#include "delfem2/isosurface_stuffing.h"
+#include "delfem2/iss.h"
 #include "delfem2/mathexpeval.h"
+
+#include "delfem2/cad2d.h"
 
 namespace py = pybind11;
 

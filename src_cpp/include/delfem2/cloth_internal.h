@@ -1,10 +1,12 @@
 #ifndef solve_internal_eigen_h
 #define solve_internal_eigen_h
 
-#include "delfem2/matrix_sparse.h"
-#include "delfem2/ilu_sparse.h"
-#include "delfem2/fem_ematrix.h"
-#include "delfem2/fem.h"
+#include "delfem2/mats.h"
+
+#include "delfem2/ilu_mats.h"
+#include "delfem2/emat.h"
+
+#include "delfem2/fem_emats.h"
 
 
 

@@ -11,65 +11,10 @@
 #include <cassert>
 #include <vector>
 
-#include "delfem2/matrix_sparse.h"
-#include "delfem2/ilu_sparse.h"
-#include "delfem2/fem_ematrix.h"
+#include "delfem2/mats.h"
+#include "delfem2/emat.h"
 
-/*
-void FetchData(double* val_to,
-               int nno, int ndim,
-               const int* aIP,
-               const double* val_from, int nstride, int noffset);
- */
-
-void XPlusAY(std::vector<double>& X,
-             const int nDoF,
-             const std::vector<int>& aBCFlag,
-             double alpha,
-             const std::vector<double>& Y);
-
-void XPlusAYBZ(std::vector<double>& X,
-               const int nDoF,
-               const std::vector<int>& aBCFlag,
-               double alpha,
-               const std::vector<double>& Y,
-               double beta,
-               const std::vector<double>& Z);
-
-void XPlusAYBZCW(std::vector<double>& X,
-                 const int nDoF,
-                 const std::vector<int>& aBCFlag,
-                 double alpha,
-                 const std::vector<double>& Y,
-                 double beta,
-                 const std::vector<double>& Z,
-                 double gamma,
-                 const std::vector<double>& W);
-
-// set boundary condition
-void setRHS_Zero(std::vector<double>& vec_b,
-                 const std::vector<int>& aBCFlag,
-                 int iflag_nonzero);
-
-void setRHS_MasterSlave(double* vec_b,
-                        int nDoF,
-                        const int* aMSFlag);
-
-void SolveLinSys_PCG(const CMatrixSparse& mat_A,
-                     std::vector<double>& vec_b,
-                     std::vector<double>& vec_x,
-                     CPreconditionerILU& ilu_A,
-                     double& conv_ratio,
-                     int& iteration);
-
-bool SolveLinSys_BiCGStab(CMatrixSparse& mat_A,
-                          std::vector<double>& vec_b,
-                          std::vector<double>& vec_x,
-                          CPreconditionerILU& ilu_A,
-                          double& conv_ratio,
-                          int& iteration);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
 void MergeLinSys_Poission_MeshTri2D(CMatrixSparse& mat_A,
                             double* vec_b,
@@ -191,117 +136,6 @@ double MergeLinSys_Contact(CMatrixSparse& ddW,
                          double contact_clearance,
                          const CInput_Contact& input,
                          const double* aXYZ,  int nXYZ);
-
-/*
-void Solve_LinearSolid_TetP1()
-{
-
-unsigned int ndof = aXYZ.size();
-MatrixXd Mat(ndof,ndof);
-//  Eigen::SparseMatrix<double> Mat(ndof,ndof);
-Mat.setZero();
-
-VectorXd Lhs(ndof);
-Lhs.setZero();
-
-for(unsigned int itet=0;itet<aTet.size()/4;itet++){
-const unsigned int aPo[4] = { aTet[itet*4+0], aTet[itet*4+1], aTet[itet*4+2], aTet[itet*4+3] };
-unsigned int i0=aPo[0], i1=aPo[1], i2=aPo[2], i3=aPo[3];
-double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
-double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
-double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
-////
-const double vol = TetVolume3D(p0,p1,p2,p3);
-double dldx[4][3];
-double zero_order_term[4];
-TetDlDx(dldx, zero_order_term,   p0,p1,p2,p3);
-////
-double disp[4][3] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} };
-double emat[4][4][3][3], eres[4][3];
-matRes_LinearSolid_TetP1(emat,eres,
-vol,lambda,myu,
-0,1,0, 1,
-dldx,disp);
-
-for(unsigned int ino=0;ino<4;ino++){
-for(unsigned int jno=0;jno<4;jno++){
-unsigned int ipo = aPo[ino];
-unsigned int jpo = aPo[jno];
-for(unsigned int idim=0;idim<3;idim++){
-for(unsigned int jdim=0;jdim<3;jdim++){
-Mat(ipo*3+idim,jpo*3+jdim) += emat[ino][jno][idim][jdim];
-//            Mat.coeffRef(ipo*3+idim,jpo*3+jdim) += emat[ino][jno][idim][jdim];
-}
-}
-}
-}
-for(unsigned int ino=0;ino<4;ino++){
-unsigned int ipo = aPo[ino];
-for(unsigned int idim=0;idim<3;idim++){
-Lhs(ipo*3+idim) += eres[ino][idim];
-}
-}
-}
-
-std::vector<unsigned int> aFix;
-{
-for(unsigned int ipo=0;ipo<aXYZ.size()/3;ipo++){
-double p[3] = {aXYZ[ipo*3+0], aXYZ[ipo*3+1], aXYZ[ipo*3+2]};
-if( p[0] < 0 ){
-aFix.push_back(ipo);
-}
-}
-}
-for(unsigned int ifix=0;ifix<aFix.size();ifix++){
-unsigned int ifix0 = aFix[ifix];
-for(int i=0;i<3;i++){
-Lhs(ifix0*3+i) = 0;
-}
-for(unsigned int jpo=0;jpo<aXYZ.size()/3;jpo++){
-for(int i=0;i<3;i++){
-for(int j=0;j<3;j++){
-Mat(ifix0*3+i,jpo*3+j) = 0;
-//          Mat.coeffRef(ifix0*3+i,jpo*3+j) = 0;
-}
-}
-}
-for(unsigned int jpo=0;jpo<aXYZ.size()/3;jpo++){
-for(int i=0;i<3;i++){
-for(int j=0;j<3;j++){
-Mat(jpo*3+i,ifix0*3+j) = 0;
-//          Mat.coeffRef(jpo*3+i,ifix0*3+j) = 0;
-}
-}
-}
-{
-for(int i=0;i<3;i++){
-Mat(ifix0*3+i,ifix0*3+i) = 1;
-//        Mat.coeffRef(ifix0*3+i,ifix0*3+i) = 1;
-}
-}
-}
-
-
-//  sMat = Mat;
-//  Mat.makeCompressed();
-
-VectorXd Rhs;
-Rhs = Mat.partialPivLu().solve(Lhs);
-
-//  std::cout << ndof << std::endl;
-//  ConjugateGradient<SparseMatrix<double>> cg;
-//  cg.setMaxIterations(10000);
-//  cg.compute(Mat);
-//  Rhs = cg.solve(Lhs);
-
-for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
-for(unsigned int i=0;i<3;i++){
-aDisp[ip*3+i] += Rhs(ip*3+i);
-}
-}
-}
-*/
 
 void MergeLinSys_SolidStaticLinear_MeshTet3D(CMatrixSparse& mat_A,
                                          double* vec_b,
@@ -677,6 +511,118 @@ aDispEdge[ipo*3+2] = vecUpd.GetValue(ipo+ncorner,2);
 }
 
 */
+
+/*
+ void Solve_LinearSolid_TetP1()
+ {
+ 
+ unsigned int ndof = aXYZ.size();
+ MatrixXd Mat(ndof,ndof);
+ //  Eigen::SparseMatrix<double> Mat(ndof,ndof);
+ Mat.setZero();
+ 
+ VectorXd Lhs(ndof);
+ Lhs.setZero();
+ 
+ for(unsigned int itet=0;itet<aTet.size()/4;itet++){
+ const unsigned int aPo[4] = { aTet[itet*4+0], aTet[itet*4+1], aTet[itet*4+2], aTet[itet*4+3] };
+ unsigned int i0=aPo[0], i1=aPo[1], i2=aPo[2], i3=aPo[3];
+ double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
+ double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
+ double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
+ double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
+ ////
+ const double vol = TetVolume3D(p0,p1,p2,p3);
+ double dldx[4][3];
+ double zero_order_term[4];
+ TetDlDx(dldx, zero_order_term,   p0,p1,p2,p3);
+ ////
+ double disp[4][3] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} };
+ double emat[4][4][3][3], eres[4][3];
+ matRes_LinearSolid_TetP1(emat,eres,
+ vol,lambda,myu,
+ 0,1,0, 1,
+ dldx,disp);
+ 
+ for(unsigned int ino=0;ino<4;ino++){
+ for(unsigned int jno=0;jno<4;jno++){
+ unsigned int ipo = aPo[ino];
+ unsigned int jpo = aPo[jno];
+ for(unsigned int idim=0;idim<3;idim++){
+ for(unsigned int jdim=0;jdim<3;jdim++){
+ Mat(ipo*3+idim,jpo*3+jdim) += emat[ino][jno][idim][jdim];
+ //            Mat.coeffRef(ipo*3+idim,jpo*3+jdim) += emat[ino][jno][idim][jdim];
+ }
+ }
+ }
+ }
+ for(unsigned int ino=0;ino<4;ino++){
+ unsigned int ipo = aPo[ino];
+ for(unsigned int idim=0;idim<3;idim++){
+ Lhs(ipo*3+idim) += eres[ino][idim];
+ }
+ }
+ }
+ 
+ std::vector<unsigned int> aFix;
+ {
+ for(unsigned int ipo=0;ipo<aXYZ.size()/3;ipo++){
+ double p[3] = {aXYZ[ipo*3+0], aXYZ[ipo*3+1], aXYZ[ipo*3+2]};
+ if( p[0] < 0 ){
+ aFix.push_back(ipo);
+ }
+ }
+ }
+ for(unsigned int ifix=0;ifix<aFix.size();ifix++){
+ unsigned int ifix0 = aFix[ifix];
+ for(int i=0;i<3;i++){
+ Lhs(ifix0*3+i) = 0;
+ }
+ for(unsigned int jpo=0;jpo<aXYZ.size()/3;jpo++){
+ for(int i=0;i<3;i++){
+ for(int j=0;j<3;j++){
+ Mat(ifix0*3+i,jpo*3+j) = 0;
+ //          Mat.coeffRef(ifix0*3+i,jpo*3+j) = 0;
+ }
+ }
+ }
+ for(unsigned int jpo=0;jpo<aXYZ.size()/3;jpo++){
+ for(int i=0;i<3;i++){
+ for(int j=0;j<3;j++){
+ Mat(jpo*3+i,ifix0*3+j) = 0;
+ //          Mat.coeffRef(jpo*3+i,ifix0*3+j) = 0;
+ }
+ }
+ }
+ {
+ for(int i=0;i<3;i++){
+ Mat(ifix0*3+i,ifix0*3+i) = 1;
+ //        Mat.coeffRef(ifix0*3+i,ifix0*3+i) = 1;
+ }
+ }
+ }
+ 
+ 
+ //  sMat = Mat;
+ //  Mat.makeCompressed();
+ 
+ VectorXd Rhs;
+ Rhs = Mat.partialPivLu().solve(Lhs);
+ 
+ //  std::cout << ndof << std::endl;
+ //  ConjugateGradient<SparseMatrix<double>> cg;
+ //  cg.setMaxIterations(10000);
+ //  cg.compute(Mat);
+ //  Rhs = cg.solve(Lhs);
+ 
+ for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
+ for(unsigned int i=0;i<3;i++){
+ aDisp[ip*3+i] += Rhs(ip*3+i);
+ }
+ }
+ }
+ */
+
 
 
 #endif /* fem_utility_h */

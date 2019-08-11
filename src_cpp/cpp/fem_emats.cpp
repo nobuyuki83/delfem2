@@ -7,11 +7,10 @@
 
 #include <stdio.h>
 
-#include "delfem2/fem.h"
-#include "delfem2/fem_ematrix.h"
-#include "delfem2/matrix_sparse.h"
-#include "delfem2/ilu_sparse.h"
+#include "delfem2/emat.h"
+#include "delfem2/mats.h"
 
+#include "delfem2/fem_emats.h"
 
 static void FetchData
 (double* val_to,
@@ -29,125 +28,12 @@ static void FetchData
   }
 }
 
-void XPlusAY
-(std::vector<double>& X,
- const int nDoF,
- const std::vector<int>& aBCFlag,
- double alpha,
- const std::vector<double>& Y)
-{
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i];
-  }
-}
 
-void XPlusAYBZ
-(std::vector<double>& X,
- const int nDoF,
- const std::vector<int>& aBCFlag,
- double alpha,
- const std::vector<double>& Y,
- double beta,
- const std::vector<double>& Z)
-{
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i] + beta*Z[i];
-  }
-}
-
-void XPlusAYBZCW
-(std::vector<double>& X,
- const int nDoF,
- const std::vector<int>& aBCFlag,
- double alpha,
- const std::vector<double>& Y,
- double beta,
- const std::vector<double>& Z,
- double gamma,
- const std::vector<double>& W)
-{
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i] + beta*Z[i] + gamma*W[i];
-  }
-}
-
-// set boundary condition
-void setRHS_Zero
-(std::vector<double>& vec_b,
- const std::vector<int>& aBCFlag,
- int iflag_nonzero)
-{
-  const int ndof = (int)vec_b.size();
-  for (int i=0;i<ndof;++i){
-    if (aBCFlag[i]==iflag_nonzero) continue;
-    vec_b[i] = 0;
-  }
-}
-
-void setRHS_MasterSlave
-(double* vec_b,
- int nDoF,
- const int* aMSFlag)
-{
-  for(int idof=0;idof<nDoF;++idof){
-    int jdof = aMSFlag[idof];
-    if( jdof == -1 ) continue;
-    vec_b[jdof] += vec_b[idof];
-    vec_b[idof] = 0;
-  }
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-
-void SolveLinSys_PCG
-(const CMatrixSparse& mat_A,
- std::vector<double>& vec_b,
- std::vector<double>& vec_x,
- CPreconditionerILU& ilu_A,
- double& conv_ratio,
- int& iteration)
-{
-  // set ILU preconditioner
-  ilu_A.SetValueILU(mat_A);
-  ilu_A.DoILUDecomp();
-  // solve linear system
-  //Solve_CG(conv_ratio, iteration, mat_A, vec_b, vec_x);
-  //  Solve_BiCGSTAB(conv_ratio, iteration, mat_A, vec_b, vec_x);
-  //  Solve_PBiCGSTAB(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
-  vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(), vec_x.data(), conv_ratio, iteration, mat_A, ilu_A);
-  std::cout<<"  conv_ratio:"<<conv_ratio<<"  iteration:"<<iteration<<std::endl;
-}
-
-bool SolveLinSys_BiCGStab
-(CMatrixSparse& mat_A,
- std::vector<double>& vec_b,
- std::vector<double>& vec_x,
- CPreconditionerILU& ilu_A,
- double& conv_ratio,
- int& iteration)
-{
-  // set ILU preconditioner
-  ilu_A.SetValueILU(mat_A);
-  bool res_ilu = ilu_A.DoILUDecomp();
-  if( !res_ilu ){ return false; }
-  // solve linear system
-  //  double conv_ratio = 1.0e-4;
-  //  int iteration = 1000;
-  //  Solve_CG(conv_ratio, iteration, mat_A, vec_b, vec_x);
-  //  Solve_BiCGSTAB(conv_ratio, iteration, mat_A, vec_b, vec_x);
-  vec_x.resize(vec_b.size());
-  Solve_PBiCGStab(vec_b.data(), vec_x.data(), conv_ratio, iteration, mat_A, ilu_A);
-  /// Solve_PCG(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
-  //  std::cout<<"  interative solver --- conv_ratio:"<<conv_ratio<<"  iteration:"<<iteration<<std::endl;
-  return true;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////

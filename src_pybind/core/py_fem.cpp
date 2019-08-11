@@ -3,14 +3,14 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/matrix_sparse.h"
-#include "delfem2/fem_ematrix.h"
+#include "delfem2/mats.h"
+#include "delfem2/emat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/primitive.h"
 #include "delfem2/sdf.h"
 
-#include "delfem2/ilu_sparse.h"
-#include "delfem2/fem.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/dyntri_v2.h"
 

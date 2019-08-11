@@ -31,11 +31,13 @@ set(INPUT_SRC
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/mathexpeval.h      ${DELFEM2_SRC}/mathexpeval.cpp
   ${DELFEM2_INC}/dyntri.h           ${DELFEM2_SRC}/dyntri.cpp
+  ${DELFEM2_INC}/mats.h             ${DELFEM2_SRC}/mats.cpp
+  ${DELFEM2_INC}/emat.h             ${DELFEM2_SRC}/emat.cpp
+  ${DELFEM2_INC}/primitive.h        ${DELFEM2_SRC}/primitive.cpp
+  ${DELFEM2_INC}/iss.h              ${DELFEM2_SRC}/iss.cpp
 
-  ${DELFEM2_INC}/matrix_sparse.h    ${DELFEM2_SRC}/matrix_sparse.cpp
-  ${DELFEM2_INC}/ilu_sparse.h       ${DELFEM2_SRC}/ilu_sparse.cpp
-  ${DELFEM2_INC}/fem.h              ${DELFEM2_SRC}/fem.cpp
-  ${DELFEM2_INC}/fem_ematrix.h      ${DELFEM2_SRC}/fem_ematrix.cpp
+  ${DELFEM2_INC}/ilu_mats.h         ${DELFEM2_SRC}/ilu_mats.cpp
+  ${DELFEM2_INC}/fem_emats.h        ${DELFEM2_SRC}/fem_emats.cpp
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp
 
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
@@ -43,10 +45,6 @@ set(INPUT_SRC
   ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/mshtopoio.h        ${DELFEM2_SRC}/mshtopoio.cpp
   ${DELFEM2_INC}/cad2d.h            ${DELFEM2_SRC}/cad2d.cpp
-  ${DELFEM2_INC}/primitive.h        ${DELFEM2_SRC}/primitive.cpp
-
-  ${DELFEM2_INC}/isosurface_stuffing.h
-  ${DELFEM2_SRC}/isosurface_stuffing.cpp
 
   py_mshtopoio.cpp
   py_polyline.cpp 
