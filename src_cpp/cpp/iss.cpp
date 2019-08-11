@@ -10,7 +10,7 @@
 #include <math.h>
 #include <iostream>
 
-#include "delfem2/isosurface_stuffing.h"
+#include "delfem2/iss.h"
 /*
 static inline void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
 	n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );

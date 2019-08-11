@@ -15,7 +15,7 @@
 
 #include "delfem2/bv.h"
 #include "delfem2/primitive.h"
-#include "delfem2/isosurface_stuffing.h"
+#include "delfem2/iss.h"
 
 namespace py = pybind11;
 
