@@ -471,7 +471,7 @@ bool isEdgeCenterPoint
 
 void makeLatticeCoasestLevel
 (std::vector<CPointLattice>& aPoint,   std::vector<CCell>& aCell,
- const CInputIsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
+ const CInput_IsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
 {
   aPoint.clear();
   aPoint.resize((ndiv+1)*(ndiv+1)*(ndiv+1)+ndiv*ndiv*ndiv);
@@ -528,7 +528,7 @@ void makeLatticeCoasestLevel
 
 void makeChild
 (std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInputIsosurfaceStuffing& input, unsigned int icell, int ichild)
+ const CInput_IsosurfaceStuffing& input, unsigned int icell, int ichild)
 {
   assert( icell < aCell.size() );
   assert( ichild >=0 && ichild < 8 );
@@ -564,7 +564,7 @@ void makeChild
 
 void makeChild_Face
 (std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInputIsosurfaceStuffing& input, int icell, int iface)
+ const CInput_IsosurfaceStuffing& input, int icell, int iface)
 {
   assert( icell >= 0 && icell < (int)aCell.size() );
   const int faceHex[6][4] = {
@@ -583,7 +583,7 @@ void makeChild_Face
 
 void Continuation
 (std::vector<CPointLattice>& aPoint,std::vector<CCell>& aCell,
- const CInputIsosurfaceStuffing& input)
+ const CInput_IsosurfaceStuffing& input)
 {
   const int faceHex[6][4] = {
     {0,4,6,2},
@@ -842,7 +842,7 @@ void addEdgeFacePoints
 (std::vector<CPointLattice>& aPoint,
  std::vector<CCell>& aCell,
  /////
- const CInputIsosurfaceStuffing& input)
+ const CInput_IsosurfaceStuffing& input)
 {
   std::vector<int> orderCell;
   orderCell.reserve(aCell.size());
@@ -1752,7 +1752,7 @@ void cutoutTetFromLattice
 /// internal function for debug
 void makeBackgroundLattice
 (std::vector<CPointLattice>& aPointLattice, std::vector<unsigned int>& aTetLattice,
- const CInputIsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
+ const CInput_IsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
 {
   std::vector<CCell> aCell;
   makeLatticeCoasestLevel(aPointLattice, aCell,
@@ -1814,7 +1814,7 @@ void makeBackgroundLattice
 
 bool IsoSurfaceStuffing
 (std::vector<double>& aXYZ, std::vector<unsigned int>& aTet, std::vector<int>& aIsOnSurfXYZ,
- const CInputIsosurfaceStuffing& input, double elen_in, double width, const double center[3])
+ const CInput_IsosurfaceStuffing& input, double elen_in, double width, const double center[3])
 {
   if( elen_in <= 0 ) return false;
   

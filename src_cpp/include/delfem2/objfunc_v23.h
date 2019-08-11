@@ -9,6 +9,8 @@
 #ifndef OBJFUNC_v23_h
 #define OBJFUNC_v23_h
 
+#include <vector>
+
 void PBD_Pre3D(std::vector<double>& aXYZt,
                double dt,
                const double gravity[3],

@@ -18,7 +18,7 @@
 
 #include "delfem2/adf.h"
 
-CAdaptiveDistanceField3D::CAdaptiveDistanceField3D()
+CADF3::CADF3()
 {
   this->is_show_cage = false;
   //	this->is_show_cage = true;
@@ -30,14 +30,14 @@ CAdaptiveDistanceField3D::CAdaptiveDistanceField3D()
   color_[2] = 1.0;
 }
 
-CAdaptiveDistanceField3D::~CAdaptiveDistanceField3D()
+CADF3::~CADF3()
 {
   if( this->aIsoTri_  != 0 ){ delete[] this->aIsoTri_; }
   if( this->aIsoEdge_ != 0 ){ delete[] this->aIsoEdge_; }
 }
 
-void CAdaptiveDistanceField3D::SetUp
-(const CInputAdaptiveDistanceField3D& ct,
+void CADF3::SetUp
+(const CInput_ADF3& ct,
  double bb[6])
 {
   aNode.reserve(1024*64);
@@ -72,7 +72,7 @@ void CAdaptiveDistanceField3D::SetUp
   nIsoTri_ = 0;
 }
 
-void CAdaptiveDistanceField3D::Draw() const
+void CADF3::Draw() const
 {
   //		std::cout << "ADF" << aNode.size() << std::endl;
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -99,7 +99,7 @@ void CAdaptiveDistanceField3D::Draw() const
 }
 
 // return penetration depth (inside is positive)
-double CAdaptiveDistanceField3D::Projection
+double CADF3::Projection
 (double px, double py, double pz,
  double n[3]) const // normal outward
 {
@@ -115,7 +115,7 @@ double CAdaptiveDistanceField3D::Projection
   return no.FindDistNormal(px,py,pz, n, aNode);
 }
 
-void CAdaptiveDistanceField3D::BuildIsoSurface_MarchingCube()
+void CADF3::BuildIsoSurface_MarchingCube()
 {
   std::vector<double> aTri;
   aTri.reserve(1024*32);
@@ -126,7 +126,7 @@ void CAdaptiveDistanceField3D::BuildIsoSurface_MarchingCube()
   nIsoTri_ = (unsigned int)aTri.size()/9;
 }
 
-void CAdaptiveDistanceField3D::BuildMarchingCubeEdge()
+void CADF3::BuildMarchingCubeEdge()
 {
   if( nIsoTri_ == 0 ){ this->BuildIsoSurface_MarchingCube(); }
   if( this->aIsoEdge_ != 0 ){ delete aIsoEdge_; }
@@ -146,7 +146,7 @@ void CAdaptiveDistanceField3D::BuildMarchingCubeEdge()
 }
 
 
-CAdaptiveDistanceField3D::CNode::CNode()
+CADF3::CNode::CNode()
 {
   cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
   hw_ = 0;
@@ -156,7 +156,7 @@ CAdaptiveDistanceField3D::CNode::CNode()
   dists_[4] = 0;		dists_[5] = 0;		dists_[6] = 0;		dists_[7] = 0;
 }
 
-CAdaptiveDistanceField3D::CNode::CNode
+CADF3::CNode::CNode
 (const CNode& no)
 {
   cent_[0] = no.cent_[0];
@@ -171,20 +171,20 @@ CAdaptiveDistanceField3D::CNode::CNode
   dists_[4] = no.dists_[4];		dists_[5] = no.dists_[5];		dists_[6] = no.dists_[6];		dists_[7] = no.dists_[7];
 }
 
-void CAdaptiveDistanceField3D::CNode::SetCornerDist
-(const CInputAdaptiveDistanceField3D& ct)
+void CADF3::CNode::SetCornerDist
+(const CInput_ADF3& ct)
 {
-  dists_[0] = ct.Projection(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
-  dists_[1] = ct.Projection(cent_[0]+hw_, cent_[1]-hw_, cent_[2]-hw_);
-  dists_[2] = ct.Projection(cent_[0]+hw_, cent_[1]+hw_, cent_[2]-hw_);
-  dists_[3] = ct.Projection(cent_[0]-hw_, cent_[1]+hw_, cent_[2]-hw_);
-  dists_[4] = ct.Projection(cent_[0]-hw_, cent_[1]-hw_, cent_[2]+hw_);
-  dists_[5] = ct.Projection(cent_[0]+hw_, cent_[1]-hw_, cent_[2]+hw_);
-  dists_[6] = ct.Projection(cent_[0]+hw_, cent_[1]+hw_, cent_[2]+hw_);
-  dists_[7] = ct.Projection(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
+  dists_[0] = ct.sdf(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
+  dists_[1] = ct.sdf(cent_[0]+hw_, cent_[1]-hw_, cent_[2]-hw_);
+  dists_[2] = ct.sdf(cent_[0]+hw_, cent_[1]+hw_, cent_[2]-hw_);
+  dists_[3] = ct.sdf(cent_[0]-hw_, cent_[1]+hw_, cent_[2]-hw_);
+  dists_[4] = ct.sdf(cent_[0]-hw_, cent_[1]-hw_, cent_[2]+hw_);
+  dists_[5] = ct.sdf(cent_[0]+hw_, cent_[1]-hw_, cent_[2]+hw_);
+  dists_[6] = ct.sdf(cent_[0]+hw_, cent_[1]+hw_, cent_[2]+hw_);
+  dists_[7] = ct.sdf(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
 }
 
-void CAdaptiveDistanceField3D::CNode::Draw_Wire() const
+void CADF3::CNode::Draw_Wire() const
 {
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
@@ -228,7 +228,7 @@ void CAdaptiveDistanceField3D::CNode::Draw_Wire() const
   ::glEnd();
 }
 
-void CAdaptiveDistanceField3D::CNode::DrawThisAndChild_Wire(const std::vector<CNode>& aNo) const
+void CADF3::CNode::DrawThisAndChild_Wire(const std::vector<CNode>& aNo) const
 {
   //			std::cout << "ichild " << ichilds_[0] << " " << ichilds_[1] << " " << ichilds_[2] << " " << ichilds_[3] << std::endl;
   if( ichilds_[0] == -1 ){
@@ -245,8 +245,8 @@ void CAdaptiveDistanceField3D::CNode::DrawThisAndChild_Wire(const std::vector<CN
   aNo[ichilds_[7]].DrawThisAndChild_Wire(aNo);
 }
 
-void CAdaptiveDistanceField3D::CNode::MakeChildTree
-(const CInputAdaptiveDistanceField3D& ct,
+void CADF3::CNode::MakeChildTree
+(const CInput_ADF3& ct,
  std::vector<CNode>& aNo,
  double min_hw, double max_hw)
 {
@@ -255,31 +255,31 @@ void CAdaptiveDistanceField3D::CNode::MakeChildTree
     return;
   }
   ////Edges
-  const double va100 = ct.Projection(cent_[0],    cent_[1]-hw_,cent_[2]-hw_);
-  const double va210 = ct.Projection(cent_[0]+hw_,cent_[1],    cent_[2]-hw_);
-  const double va120 = ct.Projection(cent_[0],    cent_[1]+hw_,cent_[2]-hw_);
-  const double va010 = ct.Projection(cent_[0]-hw_,cent_[1],    cent_[2]-hw_);
+  const double va100 = ct.sdf(cent_[0],    cent_[1]-hw_,cent_[2]-hw_);
+  const double va210 = ct.sdf(cent_[0]+hw_,cent_[1],    cent_[2]-hw_);
+  const double va120 = ct.sdf(cent_[0],    cent_[1]+hw_,cent_[2]-hw_);
+  const double va010 = ct.sdf(cent_[0]-hw_,cent_[1],    cent_[2]-hw_);
   
-  const double va001 = ct.Projection(cent_[0]-hw_,cent_[1]-hw_,cent_[2]);
-  const double va201 = ct.Projection(cent_[0]+hw_,cent_[1]-hw_,cent_[2]);
-  const double va221 = ct.Projection(cent_[0]+hw_,cent_[1]+hw_,cent_[2]);
-  const double va021 = ct.Projection(cent_[0]-hw_,cent_[1]+hw_,cent_[2]);
+  const double va001 = ct.sdf(cent_[0]-hw_,cent_[1]-hw_,cent_[2]);
+  const double va201 = ct.sdf(cent_[0]+hw_,cent_[1]-hw_,cent_[2]);
+  const double va221 = ct.sdf(cent_[0]+hw_,cent_[1]+hw_,cent_[2]);
+  const double va021 = ct.sdf(cent_[0]-hw_,cent_[1]+hw_,cent_[2]);
   
-  const double va102 = ct.Projection(cent_[0],	  cent_[1]-hw_,cent_[2]+hw_);
-  const double va212 = ct.Projection(cent_[0]+hw_,cent_[1],    cent_[2]+hw_);
-  const double va122 = ct.Projection(cent_[0],    cent_[1]+hw_,cent_[2]+hw_);
-  const double va012 = ct.Projection(cent_[0]-hw_,cent_[1],    cent_[2]+hw_);
+  const double va102 = ct.sdf(cent_[0],	  cent_[1]-hw_,cent_[2]+hw_);
+  const double va212 = ct.sdf(cent_[0]+hw_,cent_[1],    cent_[2]+hw_);
+  const double va122 = ct.sdf(cent_[0],    cent_[1]+hw_,cent_[2]+hw_);
+  const double va012 = ct.sdf(cent_[0]-hw_,cent_[1],    cent_[2]+hw_);
   
   ////Faces
-  const double va101 = ct.Projection(cent_[0],	  cent_[1]-hw_,	cent_[2]    );
-  const double va211 = ct.Projection(cent_[0]+hw_,cent_[1],		  cent_[2]    );
-  const double va121 = ct.Projection(cent_[0],	  cent_[1]+hw_,	cent_[2]  	);
-  const double va011 = ct.Projection(cent_[0]-hw_,cent_[1],	  	cent_[2]    );
-  const double va110 = ct.Projection(cent_[0],   	cent_[1],		  cent_[2]-hw_);
-  const double va112 = ct.Projection(cent_[0],	  cent_[1],		  cent_[2]+hw_);
+  const double va101 = ct.sdf(cent_[0],	  cent_[1]-hw_,	cent_[2]    );
+  const double va211 = ct.sdf(cent_[0]+hw_,cent_[1],		  cent_[2]    );
+  const double va121 = ct.sdf(cent_[0],	  cent_[1]+hw_,	cent_[2]  	);
+  const double va011 = ct.sdf(cent_[0]-hw_,cent_[1],	  	cent_[2]    );
+  const double va110 = ct.sdf(cent_[0],   	cent_[1],		  cent_[2]-hw_);
+  const double va112 = ct.sdf(cent_[0],	  cent_[1],		  cent_[2]+hw_);
   
   ////Center
-  const double va111 = ct.Projection(cent_[0],		cent_[1],		cent_[2]);
+  const double va111 = ct.sdf(cent_[0],		cent_[1],		cent_[2]);
   
   if ( hw_*0.5 > max_hw ) goto MAKE_CHILDS;
   
@@ -435,7 +435,7 @@ MAKE_CHILDS:
   return;
 }
 
-double CAdaptiveDistanceField3D::CNode::FindDistNormal
+double CADF3::CNode::FindDistNormal
 (double px, double py, double pz,
  double n[3],
  const std::vector<CNode>& aNo) const // normal outward
@@ -855,7 +855,7 @@ static void VertexInterp
 
 
 
-void CAdaptiveDistanceField3D::CNode::GenerateIsoSurface
+void CADF3::CNode::GenerateIsoSurface
 (std::vector<double>& aTri,
  const std::vector<CNode>& aNo) const
 {

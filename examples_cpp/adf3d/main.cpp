@@ -14,18 +14,20 @@
 #endif
 
 #include "delfem2/adf.h"
-#include "delfem2/sdf.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
+#include "delfem2/primitive.h"
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 
 #include "delfem2/gl_color.h"
 #include "delfem2/gl_funcs.h"
-
 #include "delfem2/glut_funcs.h"
 
 //////////////////////////////////////////////////
 
-CAdaptiveDistanceField3D adf;
+CADF3 adf;
 CGlutWindowManager win;
 bool is_animation;
 double cur_time = 0;
@@ -38,23 +40,24 @@ std::vector<double> aXYZ;
 
 void SetProblem()
 {
-  const unsigned int nprob = 4;	// ñ‚ëËêî
+  const unsigned int nprob = 3;	// number of problems
   static int iprob = 0;
   
   if( iprob == 0 )
   {
-    class CSphere : public CInputAdaptiveDistanceField3D
+    class CInSphere : public CInput_ADF3
     {
     public:
-      virtual double Projection(double x, double y, double z) const {
+      virtual double sdf(double x, double y, double z) const {
         double n[3];
-        return sdf.Projection(x, y, z,n);
+        return obj.Projection(n,
+                              x, y, z);
       }
     public:
-      CSDF3_Sphere sdf;
+      CSphere obj;
     };
-    CSphere sphere;
-    sphere.sdf.radius_ = 0.5;
+    CInSphere sphere;
+    sphere.obj.radius_ = 0.5;
 //    sphere.sdf.GetMesh(aTri, aXYZ, 0.01);
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(sphere, bb);
@@ -62,19 +65,20 @@ void SetProblem()
     adf.BuildMarchingCubeEdge();
   }
   else if( iprob == 1 ){
-    class CTorus : public CInputAdaptiveDistanceField3D
+    class CInTorus : public CInput_ADF3
     {
     public:
-      virtual double Projection(double x, double y, double z) const {
+      virtual double sdf(double x, double y, double z) const {
         double n[3];
-        return sdf.Projection(x, y, z,n);
+        return obj.Projection(n,
+                              x, y, z);
       }
     public:
-      CSDF3_Torus sdf;
+      CTorus obj;
     };
-    CTorus torus;
-    torus.sdf.radius_ = 0.5;
-    torus.sdf.radius_tube_ = 0.2;
+    CInTorus torus;
+    torus.obj.radius_ = 0.5;
+    torus.obj.radius_tube_ = 0.2;
 //    torus.sdf.GetMesh(aTri, aXYZ, 0.01);
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(torus, bb);
@@ -82,25 +86,29 @@ void SetProblem()
     adf.BuildMarchingCubeEdge();
   }
   else if( iprob == 2 ){
-    class CMesh : public CInputAdaptiveDistanceField3D
+    class CMesh : public CInput_ADF3
     {
     public:
-      virtual double Projection(double x, double y, double z) const {
-        double n[3];
-        return sdf.Projection(x, y, z,n);
+      virtual double sdf(double x, double y, double z) const {
+        CVector3 n0;
+        double sdf0 = obj.SignedDistanceFunction(n0,
+                                                 CVector3(x,y,z),
+                                                 aXYZ, aTri, aNorm);
+        return sdf0;
       }
     public:
-      CSDF3_Mesh sdf;
+      std::vector<double> aNorm;
+      CBVH_MeshTri3D<CBV3D_Sphere> obj;
     };
     CMesh mesh;
     {
       std::cout << PATH_INPUT_DIR << std::endl;
       Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ, aTri);
       Normalize(aXYZ,1.7);
-      mesh.sdf.SetMesh(aTri, aXYZ);
-      std::cout<<"bulding boxel:start"<<std::endl;
-      mesh.sdf.BuildBoxel();
-      std::cout<<"bulding boxel:end"<<std::endl;
+      mesh.obj.Init(aXYZ,aTri, 0.0);
+      mesh.aNorm.resize(aXYZ.size());
+      Normal_MeshTri3D(mesh.aNorm.data(),
+                       aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
     }
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(mesh, bb);

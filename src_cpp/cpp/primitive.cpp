@@ -14,8 +14,7 @@
 #include <fstream>
 #include <time.h>
 
-#include "delfem2/sdf.h"
-#include "delfem2/hash3d.h"
+#include "delfem2/primitive.h"
 
 /*
 static void Cross3D(double r[3], const double v1[3], const double v2[3]){
@@ -25,10 +24,11 @@ static void Cross3D(double r[3], const double v1[3], const double v2[3]){
 }
  */
 
-
+/*
 static inline double Dot3D(const double p0[3], const double p1[3]){
 	return p0[0]*p1[0]+p0[1]*p1[1]+p0[2]*p1[2];
 }
+ */
 
 /*
 static inline double Length3D(const double v[3]){
@@ -42,9 +42,11 @@ static inline double SqLength3D(const double v[3]){
 }
  */
 
+/*
 static double Distance3D(const double p0[3], const double p1[3]){
   return sqrt((p1[0]-p0[0])*(p1[0]-p0[0])+(p1[1]-p0[1])*(p1[1]-p0[1])+(p1[2]-p0[2])*(p1[2]-p0[2]));
 }
+ */
 
 /*
 static inline void NormalTri3D(double n[3], const double v1[3], const double v2[3], const double v3[3]){
@@ -53,7 +55,7 @@ static inline void NormalTri3D(double n[3], const double v1[3], const double v2[
 	n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
 }
  */
-
+/*
 static double TetVolume3D
 (const double v1[3],
  const double v2[3],
@@ -66,6 +68,7 @@ static double TetVolume3D
 	 +	( v2[2] - v1[2] )*( ( v3[0] - v1[0] )*( v4[1] - v1[1] ) - ( v4[0] - v1[0] )*( v3[1] - v1[1] ) )
 	 ) * 0.16666666666666666666666666666667;		
 }
+ */
 
 /*
 static double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
@@ -76,6 +79,7 @@ static double TriArea3D(const double v1[3], const double v2[3], const double v3[
 	return 0.5*sqrt( x*x + y*y + z*z );
 }
  */
+/*
 static void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
 	n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
 	n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
@@ -92,7 +96,7 @@ inline double ScalarTripleProduct3D(const double v1[3], const double v2[3], cons
 	const double z = ( v1[0]*v2[1] - v2[0]*v1[1] )*v3[2];
 	return x+y+z;
 }
-
+*/
 /*
 static bool GetVertical2Vector3D(const double vec0[3], double vec1[3], double vec2[3])
 {
@@ -122,7 +126,7 @@ static bool GetVertical2Vector3D(const double vec0[3], double vec1[3], double ve
   return true;
 }
  */
-
+/*
 static void GetNearest_LineSegPoint3D
 (double pn[3],
 const double p[3], // point
@@ -144,73 +148,11 @@ const double e[3]) // end
   pn[2] = s[2]+t*d[2];
   return;
 }
-
-static void GetNearest_TrianglePoint3D
-(double pn[3],
- double& r0, double& r1,
-const double ps[3], // origin point
-const double q0[3],
-const double q1[3],
-const double q2[3])
-{
-  double area, n012[3]; UnitNormalAreaTri3D(n012, area, q0, q1, q2);
-  const double pe[3] = { ps[0]+n012[0], ps[1]+n012[1], ps[2]+n012[2] };
-  const double v012 = TetVolume3D(ps, q0, q1, q2);
-  if (fabs(v012) > 1.0e-10){
-    const double sign = (v012 > 0) ? +1 : -1;
-    const double v0 = TetVolume3D(ps, q1, q2, pe)*sign;
-    const double v1 = TetVolume3D(ps, q2, q0, pe)*sign;
-    const double v2 = TetVolume3D(ps, q0, q1, pe)*sign;
-    assert(fabs(v0+v1+v2) > 1.0e-10);
-    double inv_v012 = 1.0/(v0+v1+v2);
-    r0 = v0*inv_v012;
-    r1 = v1*inv_v012;
-    const double r2 = (1.0-r0-r1);
-    const double tol = 1.0e-4;
-    if (r0 > -tol && r1 > -tol && r2 > -tol){
-      pn[0] = q0[0]*r0+q1[0]*r1+q2[0]*r2;
-      pn[1] = q0[1]*r0+q1[1]*r1+q2[1]*r2;
-      pn[2] = q0[2]*r0+q1[2]*r1+q2[2]*r2;
-      return;
-    }
-  }
-  double r12[3]; GetNearest_LineSegPoint3D(r12, ps, q1, q2);
-  double r20[3]; GetNearest_LineSegPoint3D(r20, ps, q2, q0);
-  double r01[3]; GetNearest_LineSegPoint3D(r01, ps, q0, q1);
-  const double d12 = Distance3D(r12, ps);
-  const double d20 = Distance3D(r20, ps);
-  const double d01 = Distance3D(r01, ps);
-  if (d12 < d20){
-    if (d12 < d01){ // 12 is the smallest
-      pn[0] = r12[0];
-      pn[1] = r12[1];
-      pn[2] = r12[2];
-      r0 = 0;
-      r1 = Distance3D(pn,q2)/Distance3D(q1,q2);
-      return;
-    }
-  }
-  else{
-    if (d20 < d01){ // d20 is the smallest
-      pn[0] = r20[0];
-      pn[1] = r20[1];
-      pn[2] = r20[2];
-      r0 = Distance3D(pn,q2)/Distance3D(q0,q2);
-      r1 = 0;
-      return;
-    }
-  }
-  pn[0] = r01[0];
-  pn[1] = r01[1];
-  pn[2] = r01[2];
-  r0 = Distance3D(pn,q1)/Distance3D(q0,q1);
-  r1 = 1-r0;
-  return;
-}
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-CSDF3_Plane::CSDF3_Plane(double n[3], double o[3])
+CPlane::CPlane(double n[3], double o[3])
 {
 	////
 	normal_[0] = n[0];
@@ -222,8 +164,9 @@ CSDF3_Plane::CSDF3_Plane(double n[3], double o[3])
 	origin_[2] = o[2];
 }
 
-double CSDF3_Plane::Projection(double px, double py, double pz,
-							  double n[3]) const // normal
+double CPlane::Projection
+(double n[3],
+ double px, double py, double pz) const // normal
 {
 	n[0] = normal_[0];		
 	n[1] = normal_[1];		
@@ -234,7 +177,7 @@ double CSDF3_Plane::Projection(double px, double py, double pz,
 ////////////////////////////////////////////////////////////////
 
 
-CSDF3_Sphere::CSDF3_Sphere(double r, const std::vector<double>& c, bool is_out){
+CSphere::CSphere(double r, const std::vector<double>& c, bool is_out){
   cent_.resize(3);
 	cent_[0] = c[0];
 	cent_[1] = c[1];
@@ -244,9 +187,9 @@ CSDF3_Sphere::CSDF3_Sphere(double r, const std::vector<double>& c, bool is_out){
 }
 
 // return penetration depth (inside is positive)
-double CSDF3_Sphere::Projection
-	(double px, double py, double pz,
-	 double n[3]) const // normal outward
+double CSphere::Projection
+(double n[3],
+ double px, double py, double pz) const // normal outward
 {
 	double dir[3] = { px-cent_[0], py-cent_[1], pz-cent_[2] };
 	const double len = sqrt( dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2] );		
@@ -263,16 +206,16 @@ double CSDF3_Sphere::Projection
 	return radius_-len;
 }
 
-unsigned int CSDF3_Sphere::FindInOut(double px, double py, double pz) const
+unsigned int CSphere::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
-	double pd = this->Projection(px, py, pz, n);	
+	double pd = this->Projection(n, px, py, pz);
 	if( !is_out_ ) pd *= -1.0;
 	if( pd > 0 ){ return 0; }
 	return 1;
 }
 
-bool CSDF3_Sphere::IntersectionPoint
+bool CSphere::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -292,7 +235,7 @@ bool CSDF3_Sphere::IntersectionPoint
 
 ////////////////////////////////////////////////////////////////
 
-CSDF3_Cylinder::CSDF3_Cylinder
+CCylinder::CCylinder
 (double r, double cnt[3], double dir[3], bool is_out){
 	cent_[0] = cnt[0];
 	cent_[1] = cnt[1];
@@ -306,9 +249,9 @@ CSDF3_Cylinder::CSDF3_Cylinder
 
 
 // return penetration depth (inside is positive)
-double CSDF3_Cylinder::Projection
-(double px, double py, double pz,
- double n[3]) const // normal outward
+double CCylinder::Projection
+(double n[3],
+ double px, double py, double pz) const // normal outward
 {
   double dd = dir_[0]*dir_[0] + dir_[1]*dir_[1] + dir_[2]*dir_[2];
   double pod = (px-cent_[0])*dir_[0]+(py-cent_[1])*dir_[1]+(pz-cent_[2])*dir_[2];
@@ -329,16 +272,17 @@ double CSDF3_Cylinder::Projection
 	return radius_-len;
 }
 
-unsigned int CSDF3_Cylinder::FindInOut(double px, double py, double pz) const
+unsigned int CCylinder::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
-	double pd = this->Projection(px, py, pz, n);	
+	double pd = this->Projection(n,
+                               px, py, pz);
 	if( !is_out_ ) pd *= -1.0;
 	if( pd > 0 ){ return 0; }
 	return 1;
 }
 
-bool CSDF3_Cylinder::IntersectionPoint
+bool CCylinder::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -358,16 +302,16 @@ bool CSDF3_Cylinder::IntersectionPoint
 ////////////////////////////////////////////////////////////////
 
 
-CSDF3_Torus::CSDF3_Torus(){
+CTorus::CTorus(){
 	cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
 	radius_ = 0.5;
 	radius_tube_ = 0.2;
 }
 
 // return penetration depth (inside is positive)
-double CSDF3_Torus::Projection
-(double px, double py, double pz,
- double n[3]) const // normal outward
+double CTorus::Projection
+(double n[3],
+ double px, double py, double pz) const // normal outward
 {
 	double dir[3] = { px-cent_[0], py-cent_[1], pz-cent_[2] };
 	const double t = dir[2];
@@ -396,17 +340,529 @@ double CSDF3_Torus::Projection
 	return radius_tube_-len2;
 }
 	
-unsigned int CSDF3_Torus::FindInOut(double px, double py, double pz) const
+unsigned int CTorus::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
-	const double pd = this->Projection(px, py, pz, n);
+	const double pd = this->Projection(n,
+                                     px, py, pz);
 	if( pd > 0 ){ return 0; }
 	return 1;
 }
 
 /////
 
+void MeshQuad2D_Grid
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aQuad,
+ int nx, int ny)
+{
+  int np = (nx+1)*(ny+1);
+  aXYZ.resize(np*2);
+  for(int iy=0;iy<ny+1;++iy){
+    for(int ix=0;ix<nx+1;++ix){
+      int ip = iy*(nx+1)+ix;
+      aXYZ[ip*2+0] = ix;
+      aXYZ[ip*2+1] = iy;
+    }
+  }
+  aQuad.resize(nx*ny*4);
+  for(int iy=0;iy<ny;++iy){
+    for(int ix=0;ix<nx;++ix){
+      int iq = iy*nx+ix;
+      aQuad[iq*4+0] = (iy+0)*(nx+1)+(ix+0);
+      aQuad[iq*4+1] = (iy+0)*(nx+1)+(ix+1);
+      aQuad[iq*4+2] = (iy+1)*(nx+1)+(ix+1);
+      aQuad[iq*4+3] = (iy+1)*(nx+1)+(ix+0);
+    }
+  }
+}
 
+void MeshTri3D_Disk
+(std::vector<double>& aXYZ,
+ std::vector<int>& aTri,
+ double r, int nr, int nth)
+{
+  aXYZ.clear();
+  aTri.clear();
+  const double pi = 3.1415926535;
+  { // make coordinates
+    const int npo = 1+nr*nth;
+    double dr = r/nr;
+    double dth = 2.0*pi/nth;
+    aXYZ.reserve(npo*3);
+    aXYZ.push_back(0.0);
+    aXYZ.push_back(0.0);
+    aXYZ.push_back(0.0);
+    for(int ir=1;ir<=nr;ir++){
+      double ri = dr*ir;
+      for(int ith=0;ith<nth;ith++){
+        aXYZ.push_back(ri*cos(ith*dth));
+        aXYZ.push_back(0);
+        aXYZ.push_back(ri*sin(ith*dth));
+      }
+    }
+  }
+  int ntri = nth*(nr-1)*2+nth;
+  aTri.reserve(ntri*3);
+  for (int ith = 0; ith<nth; ith++){
+    aTri.push_back(0);
+    aTri.push_back((ith+1)%nth+1);
+    aTri.push_back((ith+0)%nth+1);
+  }
+  for (int ir = 0; ir<nr-1; ir++){
+    for (int ith = 0; ith<nth; ith++){
+      int i1 = (ir+0)*nth+1+(ith+0)%nth;
+      int i2 = (ir+0)*nth+1+(ith+1)%nth;
+      int i3 = (ir+1)*nth+1+(ith+1)%nth;
+      int i4 = (ir+1)*nth+1+(ith+0)%nth;
+      aTri.push_back(i3);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      aTri.push_back(i4);
+      aTri.push_back(i1);
+      aTri.push_back(i3);
+    }
+  }
+}
+
+
+
+void MeshTri3D_OpenCylinder
+(std::vector<double>& aXYZ,
+ std::vector<int>& aTri,
+ double r, double l,
+ int nr, int nl)
+{
+  aXYZ.clear();
+  aTri.clear();
+  const double pi = 3.1415926535;
+  double dl = l/nl;
+  double dr = 2.0*pi/nr;
+  const int npo = (nl+1)*nr;
+  aXYZ.reserve(npo*3);
+  for (int il = 0; il<nl+1; il++){
+    double y0 = -0.5*l+il*dl;
+    for (int ir = 0; ir<nr; ir++){
+      double x0 = r*cos(dr*ir);
+      double z0 = r*sin(dr*ir);
+      aXYZ.push_back(x0);
+      aXYZ.push_back(y0);
+      aXYZ.push_back(z0);
+    }
+  }
+  /////
+  const int ntri = nl*nr*2;
+  aTri.reserve(ntri*3);
+  for (int il = 0; il<nl; il++){
+    for (int ir = 0; ir<nr; ir++){
+      const int i1 = (il+0)*nr+(ir+0)%nr;
+      const int i2 = (il+0)*nr+(ir+1)%nr;
+      const int i3 = (il+1)*nr+(ir+1)%nr;
+      const int i4 = (il+1)*nr+(ir+0)%nr;
+      //      std::cout<<i1<<" "<<i2<<" "<<i3<<" "<<i4<<" "<<npo<<std::endl;
+      aTri.push_back(i3);
+      aTri.push_back(i2);
+      aTri.push_back(i1);
+      aTri.push_back(i4);
+      aTri.push_back(i3);
+      aTri.push_back(i1);
+    }
+  }
+}
+
+void MeshTri3D_ClosedCylinder
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aTri,
+ double r, double l,
+ int nlo, int nl)
+{
+  int nla = nl+2;
+  aXYZ.clear();
+  aTri.clear();
+  if (nla<=1||nlo<=2){ return; }
+  const double pi = 3.1415926535;
+  double dl = l/nl;
+  double dr = 2.0*pi/nlo;
+  aXYZ.reserve((nlo*(nla-1)+2)*3);
+  for (int ila = 0; ila<nla+1; ila++){
+    double y0 = -0.5*l+dl*(ila-1);
+    if (ila==0  ){ y0 = -0.5*l; }
+    if (ila==nla){ y0 = +0.5*l; }
+    for (int ilo = 0; ilo<nlo; ilo++){
+      double x0 = r*cos(dr*ilo);
+      double z0 = r*sin(dr*ilo);
+      if (ila==0){
+        aXYZ.push_back(0);
+        aXYZ.push_back(y0);
+        aXYZ.push_back(0);
+        break;
+      }
+      else if(ila==nla){
+        aXYZ.push_back(0);
+        aXYZ.push_back(y0);
+        aXYZ.push_back(0);
+        break;
+      }
+      else{
+        aXYZ.push_back(x0);
+        aXYZ.push_back(y0);
+        aXYZ.push_back(z0);
+      }
+    }
+  }
+  /////
+  int ntri = nlo*(nla-1)*2+nlo*2;
+  aTri.reserve(ntri*3);
+  for (int ilo = 0; ilo<nlo; ilo++){
+    aTri.push_back(0);
+    aTri.push_back((ilo+0)%nlo+1);
+    aTri.push_back((ilo+1)%nlo+1);
+  }
+  for (int ila = 0; ila<nla-2; ila++){
+    for (int ilo = 0; ilo<nlo; ilo++){
+      int i1 = (ila+0)*nlo+1+(ilo+0)%nlo;
+      int i2 = (ila+0)*nlo+1+(ilo+1)%nlo;
+      int i3 = (ila+1)*nlo+1+(ilo+1)%nlo;
+      int i4 = (ila+1)*nlo+1+(ilo+0)%nlo;
+      aTri.push_back(i3);
+      aTri.push_back(i2);
+      aTri.push_back(i1);
+      aTri.push_back(i4);
+      aTri.push_back(i3);
+      aTri.push_back(i1);
+    }
+  }
+  for (int ilo = 0; ilo<nlo; ilo++){
+    aTri.push_back(nlo*(nla-1)+1);
+    aTri.push_back((nla-2)*nlo+1+(ilo+1)%nlo);
+    aTri.push_back((nla-2)*nlo+1+(ilo+0)%nlo);
+  }
+  /*
+   for(int itri=0;itri<aTri.size()/3;itri++){
+   for(int inotri=0;inotri<3;++inotri){
+   const int i0 = aTri[itri*3+inotri];
+   assert( i0 >=0 && i0 < aXYZ.size()/3 );
+   }
+   }
+   */
+}
+
+void MeshTri3D_Sphere
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aTri,
+ double r,
+ int nla, int nlo)
+{
+  aXYZ.clear();
+  aTri.clear();
+  if( nla <= 1 || nlo <= 2 ){ return; }
+  const double pi = 3.1415926535;
+  double dl = pi/nla;
+  double dr = 2.0*pi/nlo;
+  aXYZ.reserve( (nlo*(nla-1)+2)*3 );
+  for(int ila=0;ila<nla+1;ila++){
+    double y0 = cos(dl*ila);
+    double r0 = sin(dl*ila);
+    for(int ilo=0;ilo<nlo;ilo++){
+      double x0 = r0*sin(dr*ilo);
+      double z0 = r0*cos(dr*ilo);
+      aXYZ.push_back(r*x0);
+      aXYZ.push_back(r*y0);
+      aXYZ.push_back(r*z0);
+      if( ila == 0 || ila == nla ){ break; }
+    }
+  }
+  /////
+  int ntri = nlo*(nla-1)*2+nlo*2;
+  aTri.reserve(ntri*3);
+  for(int ilo=0;ilo<nlo;ilo++){
+    aTri.push_back(0);
+    aTri.push_back((ilo+0)%nlo+1);
+    aTri.push_back((ilo+1)%nlo+1);
+  }
+  for(int ila=0;ila<nla-2;ila++){
+    for(int ilo=0;ilo<nlo;ilo++){
+      int i1 = (ila+0)*nlo+1+(ilo+0)%nlo;
+      int i2 = (ila+0)*nlo+1+(ilo+1)%nlo;
+      int i3 = (ila+1)*nlo+1+(ilo+1)%nlo;
+      int i4 = (ila+1)*nlo+1+(ilo+0)%nlo;
+      aTri.push_back(i3);
+      aTri.push_back(i2);
+      aTri.push_back(i1);
+      aTri.push_back(i4);
+      aTri.push_back(i3);
+      aTri.push_back(i1);
+    }
+  }
+  for(int ilo=0;ilo<nlo;ilo++){
+    aTri.push_back(nlo*(nla-1)+1);
+    aTri.push_back((nla-2)*nlo+1+(ilo+1)%nlo);
+    aTri.push_back((nla-2)*nlo+1+(ilo+0)%nlo);
+  }
+}
+
+// p0: -x, -y, -z
+// p1: +x, -y, -z
+// p2: -x, +y, -z
+// p3: +x, +y, -z
+// p4: -x, -y, +z
+// p5: +x, -y, +z
+// p6: -x, +y, +z
+// p7: +x, +y, +z
+// f0: -x
+// f1: +x
+// f2: -y
+// f3: +y
+// f4: -z
+// f5: +z
+void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
+{
+  aQuad.resize(6*4);
+  aQuad[0*4+0] = 0;    aQuad[0*4+1] = 4;   aQuad[0*4+2] = 6;   aQuad[0*4+3] = 2;
+  aQuad[1*4+0] = 1;    aQuad[1*4+1] = 3;   aQuad[1*4+2] = 7;   aQuad[1*4+3] = 5;
+  aQuad[2*4+0] = 0;    aQuad[2*4+1] = 1;   aQuad[2*4+2] = 5;   aQuad[2*4+3] = 4;
+  aQuad[3*4+0] = 2;    aQuad[3*4+1] = 6;   aQuad[3*4+2] = 7;   aQuad[3*4+3] = 3;
+  aQuad[4*4+0] = 0;    aQuad[4*4+1] = 2;   aQuad[4*4+2] = 3;   aQuad[4*4+3] = 1;
+  aQuad[5*4+0] = 4;    aQuad[5*4+1] = 5;   aQuad[5*4+2] = 7;   aQuad[5*4+3] = 6;
+}
+
+void MeshQuad3D_CubeVox
+(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
+ double x_min, double x_max,
+ double y_min, double y_max,
+ double z_min, double z_max)
+{
+  aXYZ.resize(0);
+  aXYZ.reserve(8*3);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_min);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_min);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_max);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_max);    aXYZ.push_back(z_min);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_min);    aXYZ.push_back(z_max);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_min);    aXYZ.push_back(z_max);
+  aXYZ.push_back(x_min);    aXYZ.push_back(y_max);    aXYZ.push_back(z_max);
+  aXYZ.push_back(x_max);    aXYZ.push_back(y_max);    aXYZ.push_back(z_max);
+  SetTopoQuad_CubeVox(aQuad);
+}
+
+void MeshTri3D_Cube
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aTri,
+ int n)
+{
+  aXYZ.clear();
+  aTri.clear();
+  if( n < 1 ){ return; }
+  double r = 1.0/n;
+  const int np = 4*n*(n+1)+(n-1)*(n-1)*2;
+  aXYZ.reserve( np*3 );
+  for(int iz=0;iz<n+1;++iz){ // height
+    for(int ix=0;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int iy=0;iy<n;++iy){
+      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int ix=n;ix>0;--ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int iy=n;iy>0;--iy){
+      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+  }
+  for(int iy=1;iy<n;++iy){
+    for(int ix=1;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5);
+    }
+  }
+  for(int iy=1;iy<n;++iy){
+    for(int ix=1;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(+0.5);
+    }
+  }
+  /////
+  int ntri = n*n*6*2;
+  aTri.reserve(ntri*3);
+  for(int iz=0;iz<n;++iz){
+    for(int ixy=0;ixy<4*n;++ixy){
+      int i0 = ixy          +4*n*iz;
+      int i1 = (ixy+1)%(4*n)+4*n*iz;
+      int i2 = (ixy+1)%(4*n)+4*n*(iz+1);
+      int i3 = ixy          +4*n*(iz+1);
+      aTri.push_back(i0);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      ///
+      aTri.push_back(i2);
+      aTri.push_back(i3);
+      aTri.push_back(i0);
+    }
+  }
+  // bottom
+  for(int ix=0;ix<n;++ix){
+    for(int iy=0;iy<n;++iy){
+      int i0, i1, i2, i3;
+      i0 = 4*n*(n+1) + (iy-1)*(n-1)+(ix-1);
+      i1 = 4*n*(n+1) + (iy-1)*(n-1)+(ix+0);
+      i2 = 4*n*(n+1) + (iy+0)*(n-1)+(ix+0);
+      i3 = 4*n*(n+1) + (iy+0)*(n-1)+(ix-1);
+      if( ix==0 ){
+        i0 = (iy==0) ? 0 : 4*n-iy;
+        i3 = 4*n-iy-1;
+      }
+      if( ix==n-1 ){
+        i1 = n+iy;
+        i2 = n+iy+1;
+      }
+      if( iy==0 ){
+        i0 = ix;
+        i1 = ix+1;
+      }
+      if( iy==n-1 ){
+        i2 = 3*n-ix-1;
+        i3 = 3*n-ix+0;
+      }
+      aTri.push_back(i1);
+      aTri.push_back(i0);
+      aTri.push_back(i2);
+      ///
+      aTri.push_back(i3);
+      aTri.push_back(i2);
+      aTri.push_back(i0);
+    }
+  }
+  // top
+  int nps  = 4*n*(n+1); // side vertex
+  int nps0 = 4*n*n; // side vertex
+  for(int ix=0;ix<n;++ix){
+    for(int iy=0;iy<n;++iy){
+      int i0, i1, i2, i3;
+      i0 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix-1);
+      i1 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix+0);
+      i2 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix+0);
+      i3 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix-1);
+      if( ix==0 ){
+        i0 = (iy==0) ? nps0 : nps0+4*n-iy;
+        i3 = nps0+4*n-iy-1;
+      }
+      if( ix==n-1 ){
+        i1 = nps0+n+iy;
+        i2 = nps0+n+iy+1;
+      }
+      if( iy==0 ){
+        i0 = nps0+ix;
+        i1 = nps0+ix+1;
+      }
+      if( iy==n-1 ){
+        i2 = nps0+3*n-ix-1;
+        i3 = nps0+3*n-ix+0;
+      }
+      aTri.push_back(i0);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      ///
+      aTri.push_back(i2);
+      aTri.push_back(i3);
+      aTri.push_back(i0);
+    }
+  }
+}
+
+
+void MeshTri3D_Icosahedron
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aTri)
+{
+  double p = (1+sqrt(5))*0.5;
+  aXYZ.resize(12*3);
+  aXYZ[ 0*3+0]= 0;    aXYZ[ 0*3+1]=-1;   aXYZ[ 0*3+2]=-p;
+  aXYZ[ 1*3+0]= 0;    aXYZ[ 1*3+1]=-1;   aXYZ[ 1*3+2]=+p;
+  aXYZ[ 2*3+0]= 0;    aXYZ[ 2*3+1]=+1;   aXYZ[ 2*3+2]=-p;
+  aXYZ[ 3*3+0]= 0;    aXYZ[ 3*3+1]=+1;   aXYZ[ 3*3+2]=+p;
+  aXYZ[ 4*3+0]=-p;    aXYZ[ 4*3+1]= 0;   aXYZ[ 4*3+2]=-1;
+  aXYZ[ 5*3+0]=+p;    aXYZ[ 5*3+1]= 0;   aXYZ[ 5*3+2]=-1;
+  aXYZ[ 6*3+0]=-p;    aXYZ[ 6*3+1]= 0;   aXYZ[ 6*3+2]=+1;
+  aXYZ[ 7*3+0]=+p;    aXYZ[ 7*3+1]= 0;   aXYZ[ 7*3+2]=+1;
+  aXYZ[ 8*3+0]=-1;    aXYZ[ 8*3+1]=-p;   aXYZ[ 8*3+2]= 0;
+  aXYZ[ 9*3+0]=-1;    aXYZ[ 9*3+1]=+p;   aXYZ[ 9*3+2]= 0;
+  aXYZ[10*3+0]=+1;    aXYZ[10*3+1]=-p;   aXYZ[10*3+2]= 0;
+  aXYZ[11*3+0]=+1;    aXYZ[11*3+1]=+p;   aXYZ[11*3+2]= 0;
+  /////
+  aTri.resize(20*3);
+  aTri[ 0*3+0]= 7; aTri[ 0*3+1]=11; aTri[ 0*3+2]= 3;
+  aTri[ 1*3+0]=11; aTri[ 1*3+1]= 9; aTri[ 1*3+2]= 3;
+  aTri[ 2*3+0]= 9; aTri[ 2*3+1]= 6; aTri[ 2*3+2]= 3;
+  aTri[ 3*3+0]= 6; aTri[ 3*3+1]= 1; aTri[ 3*3+2]= 3;
+  aTri[ 4*3+0]= 1; aTri[ 4*3+1]= 7; aTri[ 4*3+2]= 3;
+  /////
+  aTri[ 5*3+0]= 2; aTri[ 5*3+1]= 5; aTri[ 5*3+2]= 0;
+  aTri[ 6*3+0]= 4; aTri[ 6*3+1]= 2; aTri[ 6*3+2]= 0;
+  aTri[ 7*3+0]= 8; aTri[ 7*3+1]= 4; aTri[ 7*3+2]= 0;
+  aTri[ 8*3+0]=10; aTri[ 8*3+1]= 8; aTri[ 8*3+2]= 0;
+  aTri[ 9*3+0]= 5; aTri[ 9*3+1]=10; aTri[ 9*3+2]= 0;
+  /////
+  aTri[10*3+0]=11; aTri[10*3+1]= 7; aTri[10*3+2]= 5;
+  aTri[11*3+0]= 9; aTri[11*3+1]=11; aTri[11*3+2]= 2;
+  aTri[12*3+0]= 6; aTri[12*3+1]= 9; aTri[12*3+2]= 4;
+  aTri[13*3+0]= 1; aTri[13*3+1]= 6; aTri[13*3+2]= 8;
+  aTri[14*3+0]= 7; aTri[14*3+1]= 1; aTri[14*3+2]=10;
+  /////
+  aTri[15*3+0]= 5; aTri[15*3+1]= 2; aTri[15*3+2]=11;
+  aTri[16*3+0]= 2; aTri[16*3+1]= 4; aTri[16*3+2]= 9;
+  aTri[17*3+0]= 4; aTri[17*3+1]= 8; aTri[17*3+2]= 6;
+  aTri[18*3+0]= 8; aTri[18*3+1]=10; aTri[18*3+2]= 1;
+  aTri[19*3+0]=10; aTri[19*3+1]= 5; aTri[19*3+2]= 7;
+}
+
+void MeshTri3D_Torus
+(std::vector<unsigned int>& aTri,
+ std::vector<double>& aXYZ,
+ double radius_,
+ double radius_tube_)
+{
+  const unsigned int nlg = 32;
+  const unsigned int nlt = 18;
+  const double rlg = 6.28/nlg;  // longtitude
+  const double rlt = 6.28/nlt;  // latitude
+  aXYZ.resize(nlg*nlt*3);
+  for(unsigned int ilg=0;ilg<nlg;ilg++){
+    for(unsigned int ilt=0;ilt<nlt;ilt++){
+      aXYZ[(ilg*nlt+ilt)*3+0] = ( radius_ + radius_tube_*cos(ilt*rlt) )*sin(ilg*rlg);
+      aXYZ[(ilg*nlt+ilt)*3+1] = ( radius_ + radius_tube_*cos(ilt*rlt) )*cos(ilg*rlg);
+      aXYZ[(ilg*nlt+ilt)*3+2] = radius_tube_*sin(ilt*rlt);
+    }
+  }
+  aTri.resize(nlg*nlt*2*3);
+  for(unsigned int ilg=0;ilg<nlg;ilg++){
+    for(unsigned int ilt=0;ilt<nlt;ilt++){
+      unsigned int iug = ( ilg == nlg-1 ) ? 0 : ilg+1;
+      unsigned int iut = ( ilt == nlt-1 ) ? 0 : ilt+1;
+      aTri[(ilg*nlt+ilt)*6+0] = ilg*nlt+ilt;
+      aTri[(ilg*nlt+ilt)*6+2] = iug*nlt+ilt;
+      aTri[(ilg*nlt+ilt)*6+1] = iug*nlt+iut;
+      ////
+      aTri[(ilg*nlt+ilt)*6+3] = ilg*nlt+ilt;
+      aTri[(ilg*nlt+ilt)*6+5] = iug*nlt+iut;
+      aTri[(ilg*nlt+ilt)*6+4] = ilg*nlt+iut;
+    }
+  }
+}
+
+
+
+/*
 double CSDF3_Combine::Projection
 (double px, double py, double pz,
  double n[3]) const // normal
@@ -425,6 +881,7 @@ double CSDF3_Combine::Projection
   }  
   return max_dist;
 }
+ */
 
 /*
 void CSDF3_Combine::GetMesh
@@ -454,7 +911,7 @@ void CSDF3_Combine::GetMesh
 /////
 
 
-
+/*
 double CSDF3_Transform::Projection
 (double px, double py, double pz,
  double n[3]) const // normal
@@ -476,7 +933,7 @@ double CSDF3_Transform::Projection
 	n[2] = mat[2][0]*n0[0] + mat[2][1]*n0[1] + mat[2][2]*n0[2];
 	return d;
 }
-
+*/
 
 /*
 void CSDF3_Transform::GetMesh
@@ -509,7 +966,7 @@ void CSDF3_Transform::GetMesh
 
 
 
-
+/*
 CSDF3_Mesh::CSDF3_Mesh(){
   nnode_ = 0;	pXYZs_ = 0;
   ntri_ = 0;	aTri_ = 0;
@@ -545,7 +1002,7 @@ void CSDF3_Mesh::GetCenterWidth(double& cx, double& cy, double& cz,
   wz = z_max-z_min;
 }
 
-/*
+
  void CSignedDistanceField3D_Mesh::Load_Off(const std::string& fname)
  {
 	std::ifstream fin;
@@ -682,7 +1139,6 @@ void CSDF3_Mesh::GetCenterWidth(double& cx, double& cy, double& cz,
  //		std::cout << itri << " " << itmp << " " << i1 << " " << i2 << " " << i3 << std::endl;
 	}
  }
- */
 
 void CSDF3_Mesh::SetMesh
 (const std::vector<unsigned int>& aTri,
@@ -776,7 +1232,6 @@ double CSDF3_Mesh::FindNearest
   return dist;
 }
 
-/*
 // 0:in 1:out 2:not sure
 double CSignedDistanceField3D_Mesh::Distance_Mesh_Boxel
 (double px, double py, double pz,
@@ -812,7 +1267,6 @@ double CSignedDistanceField3D_Mesh::Distance_Mesh_Boxel
   }
   return dist;
 }
- */
 
 
 // 0:in 1:out 2:not sure
@@ -944,15 +1398,6 @@ unsigned int CSDF3_Mesh::FindInOut(double px, double py, double pz) const
   }
   if( icnt_in > 5 )  return 0;
   if( icnt_out > 5 ) return 1;
-  /*	for(unsigned int i=1;i<20;i++){
-   const double theta = i*6.28*543260;
-   const double dir[3] = { sin(theta)*cos(theta*3), cos(theta), sin(theta)*sin(theta*3) };
-   unsigned int ires = FindInOut_IntersectionRay(px,py,pz, dir);
-   if( ires == 0 ) icnt_in++;
-   if( ires == 1 ) icnt_out++;
-   if( icnt_in  - icnt_out > 5 ) return 0;
-   if( icnt_out - icnt_in  > 5 ) return 1;
-   }*/
   return 2;
 }
 
@@ -970,9 +1415,6 @@ unsigned int CSDF3_Mesh::FindInOut_Boxel
     //		const double dir[3] = { -0.35, 0.1342, 0.3 };
     unsigned int ires  = FindInOut_IntersectionRay_Boxel(px,py,pz, dir);
     //		unsigned int ires1 = FindInOut_IntersectionRay(px,py,pz, dir);
-    /*		if( ires != ires1 ){
-     std::cout << "hoge " << px << " " << py << " " << pz << std::endl;
-     }*/
     if( ires != 2 && !is_hole ){ return ires; }
     if( ires == 0 ) icnt_in++;
     if( ires == 1 ) icnt_out++;
@@ -1085,7 +1527,7 @@ bool CSDF3_Mesh::IntersectionPoint
   bool res = this->FindIntersectionTri(p,itri,r0,r1,org,dir);
   return res;
 }
-
+*/
 
 ////////////////
 

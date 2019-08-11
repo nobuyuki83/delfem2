@@ -12,11 +12,13 @@
 #include <iostream>
 #include <sstream>
 
-#include "delfem2/dyntri_v3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshtopoio.h"
+#include "delfem2/primitive.h"
+
+#include "delfem2/dyntri_v3.h"
 
 ///////////////////////////////////
 

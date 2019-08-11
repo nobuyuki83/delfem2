@@ -29,8 +29,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/mshtopo.cpp        ${DELFEM2_INC}/mshtopo.h
 
   ${DELFEM2_SRC}/isosurface_stuffing.cpp
-  ${DELFEM2_SRC}/sdf.cpp
-  ${DELFEM2_SRC}/hash3d.cpp
+  ${DELFEM2_SRC}/primitive.cpp      ${DELFEM2_INC}/primitive.h
 
   ${DELFEM2_SRC}/fem_ematrix.cpp
   ${DELFEM2_SRC}/fem.cpp            ${DELFEM2_INC}/fem.h

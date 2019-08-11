@@ -24,7 +24,7 @@
 #include "delfem2/ilu_sparse.h"
 #include "delfem2/fem.h"
 
-#include "delfem2/sdf.h"
+#include "delfem2/primitive.h"
 #include "delfem2/isosurface_stuffing.h"
 
 #include "delfem2/glut_funcs.h"
@@ -607,12 +607,13 @@ void SolveProblem_NavierStokes_Dynamic()
 }
 
 
-class CSphere : public CInputIsosurfaceStuffing
+class CInSphere : public CInput_IsosurfaceStuffing
 {
 public:
   virtual double SignedDistance(double x, double y, double z) const {
     double n[3];
-    return sdf.Projection(x, y, z,n);
+    return sdf.Projection(n,
+                          x, y, z);
   }
   virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                      double px, double py, double pz) const
@@ -624,18 +625,19 @@ public:
   }
 
 public:
-  CSDF3_Sphere sdf;
+  CSphere sdf;
 };
 
-class CBox : public CInputIsosurfaceStuffing
+class CInBox : public CInput_IsosurfaceStuffing
 {
 public:
   virtual double SignedDistance(double x, double y, double z) const {
     double n[3];
-    return sdf.Projection(x, y, z,n);
+    return sdf.Projection(n,
+                          x, y, z);
   }
 public:
-  CSDF3_Box sdf;
+  CBox sdf;
 };
 
 void SetMesh(int ishape)
@@ -645,7 +647,7 @@ void SetMesh(int ishape)
   
   if(ishape==0){
     const double rad = 0.5;
-    CSphere sphere;
+    CInSphere sphere;
     sphere.sdf.is_out_ = true;
     sphere.sdf.radius_ = rad;
     double cent[3] = {0,0,0};
@@ -655,7 +657,7 @@ void SetMesh(int ishape)
     const double hwx = 0.5;
     const double hwy = 0.5;
     const double hwz = 0.5;
-    CBox box;
+    CInBox box;
     box.sdf.hwx = hwx;
     box.sdf.hwy = hwy;
     box.sdf.hwz = hwz;
@@ -663,7 +665,7 @@ void SetMesh(int ishape)
     IsoSurfaceStuffing(aXYZ, aTet, aIsSurf, box, 0.2, 1.1, cent);
   }
   else if( ishape == 2 ){
-    class CCavSphere : public CInputIsosurfaceStuffing
+    class CCavSphere : public CInput_IsosurfaceStuffing
     {
     public:
       CCavSphere(){
@@ -687,8 +689,8 @@ void SetMesh(int ishape)
         return (dist0<dist1) ? dist0 : dist1;
       }
     public:
-      CBox box;
-      CSphere sphere;
+      CInBox box;
+      CInSphere sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
     IsoSurfaceStuffing(aXYZ, aTet, aIsSurf, cav_sphere, 0.05, 1.1, cent);

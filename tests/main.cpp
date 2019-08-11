@@ -20,10 +20,8 @@
 #include "delfem2/mathfuncs.h"
 #include "delfem2/funcs.h"
 #include "delfem2/mathexpeval.h"
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
+#include "delfem2/primitive.h"
 
-#include "delfem2/srchuni_v3bvh.h"
 #include "delfem2/objfunc_v23.h"
 
 #ifndef M_PI
@@ -58,73 +56,6 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
   }
 }
 
-TEST(bvh,test1)
-{
-  std::vector<double> aXYZ;
-  std::vector<unsigned int> aTri;
-  { // make a unit sphere
-    MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    Rotate(aXYZ, 0.2, 0.3, 0.4);
-  }
-  std::vector<double> aNorm(aXYZ.size());
-  Normal_MeshTri3D(aNorm.data(),
-                   aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  int iroot_bvh;
-  std::vector<CNodeBVH> aNodeBVH; // array of BVH node
-  { // make BVH topology
-    const int ntri = aTri.size()/3;
-    std::vector<double> aElemCenter(ntri*3);
-    for(int itri=0;itri<ntri;++itri){
-      CVector3 p0 = cg_Tri(itri, aTri, aXYZ);
-      aElemCenter[itri*3+0] = p0.x;
-      aElemCenter[itri*3+1] = p0.y;
-      aElemCenter[itri*3+2] = p0.z;
-    }
-    std::vector<int> aTriSurRel;
-    makeSurroundingRelationship(aTriSurRel,
-                                aTri.data(), aTri.size()/3,
-                                MESHELEM_TRI, aXYZ.size()/3);
-    iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
-                                     3,aTriSurRel,
-                                     aElemCenter);
-  }
-  std::vector<CBV3D_Sphere> aBB_BVH;
-  double contact_clearance = 0.03;
-  { // make bvh bv geometry
-    BVH_BuildBVHGeometry(iroot_bvh,
-                          contact_clearance,
-                          aXYZ,aTri,3,aNodeBVH,aBB_BVH);
-  }
-  for(int itr=0;itr<1000;++itr){
-    double p[3] = {
-      2.0*(rand()/(RAND_MAX+1.0)-0.5),
-      2.0*(rand()/(RAND_MAX+1.0)-0.5),
-      2.0*(rand()/(RAND_MAX+1.0)-0.5) };
-    double l = Length3D(p);
-    if( itr % 2 == 0 ){ // outside
-      p[0] = p[0]/l*1.02;
-      p[1] = p[1]/l*1.02;
-      p[2] = p[2]/l*1.02;
-    }
-    else{ // inside
-      p[0] = p[0]/l*0.98;
-      p[1] = p[1]/l*0.98;
-      p[2] = p[2]/l*0.98;
-    }
-    CVector3 p0(p[0],p[1],p[2]);
-    CPointElemSurf pes1 = Nearest_Point_MeshTri3D(p,aXYZ,aTri,
-                                                  iroot_bvh,aNodeBVH,aBB_BVH);
-    EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
-    CVector3 q1 = pes1.Pos_Tri(aXYZ, aTri);
-    {
-      CPointElemSurf pes0 = Nearest_Point_MeshTri3D(p, aXYZ, aTri);
-      CVector3 q0 = pes0.Pos_Tri(aXYZ, aTri);
-      EXPECT_LT(Distance(q0,q1),1.0e-10);
-    }
-    CVector3 n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
-    EXPECT_EQ( n0*(p-q1)>0, itr%2==0);
-  }
-}
 
 TEST(mathexpeval,test1){
   CMathExpressionEvaluator e;
@@ -232,7 +163,7 @@ TEST(mat3, svd3)
          M.mat,20);
     {
       double diffU = (U.Trans()*U-CMatrix3::Identity()).SqNorm_Frobenius();
-      EXPECT_NEAR(diffU, 0.0, 1.0e-10);
+      EXPECT_NEAR(diffU, 0.0, 1.0e-6);
     }
     {
       double diffV = (V.Trans()*V-CMatrix3::Identity()).SqNorm_Frobenius();

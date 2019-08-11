@@ -13,6 +13,7 @@
 #include <vector>
 #include <set>
 #include <assert.h>
+#include <iostream>
 
 class CNodeBVH
 {
@@ -69,6 +70,7 @@ void BVH_BuildBVHGeometry
   return;
 }
 
+/*
 // build Bounding Box for AABB
 template <typename T>
 void BuildBoundingBoxesBVH
@@ -106,6 +108,7 @@ void BuildBoundingBoxesBVH
   bb += aBB[ichild1];
   return;
 }
+ */
 
 template <typename T>
 void BuildBoundingBoxesBVH_Dynamic
@@ -173,10 +176,11 @@ void BVH_GetIndElem_IncludePoint
   BVH_GetIndElem_IncludePoint(aIndElem, px,py,pz, ichild1,  aBVH,aBB);
 }
 
+
 // potential maximum distance of the nearest point
 template <typename T>
-void getMinMaxDist_nearPoint
-(double& max,
+void BVH_Range_DistToNearestPoint
+(double& min, double& max,
  /////
  double px, double py, double pz,
  int ibvh,
@@ -184,45 +188,108 @@ void getMinMaxDist_nearPoint
  const std::vector<T>& aBB)
 {
   double min0, max0;
-  aBB[ibvh].getRange_Point(min0,max0, px,py,pz);
+  aBB[ibvh].Range_DistToPoint(min0,max0, px,py,pz);
+  assert( min0 >= 0 && max0 >= min0 );
   ////
   if( max>=0 && min0>max ){ return; }
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
     assert( aBB[ibvh].is_active );
-    if( max<0 || max0<max ){ max=max0; }
+    if( max<0 ){
+      max = max0;
+      min = min0;
+      return;
+    }
+    if( max0 < max ){ max = max0; }
+    if( min0 < min ){ min = min0; }
     return;
   }
   /////
-  getMinMaxDist_nearPoint(max, px,py,pz, ichild0,aBVH,aBB);
-  getMinMaxDist_nearPoint(max, px,py,pz, ichild1,aBVH,aBB);
+  BVH_Range_DistToNearestPoint(min,max, px,py,pz, ichild0,aBVH,aBB);
+  BVH_Range_DistToNearestPoint(min,max, px,py,pz, ichild1,aBVH,aBB);
 }
 
 template <typename T>
-void getBVH_NearPoint_OverlapDist
+void BVH_GetIndElem_InsideRange
 (std::vector<int>& aIndElem,
  /////
- double dist,
+ double min, double max,
  double px, double py, double pz,
  int ibvh,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
 {
+  assert( min < max );
   {
     double min0, max0;
-    aBB[ibvh].getRange_Point(min0,max0, px,py,pz);
-    if( dist<min0 ){ return; }
+    aBB[ibvh].Range_DistToPoint(min0,max0, px,py,pz);
+    if( max0<min ){ return; }
+    if( min0>max ){ return; }
   }
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
+    assert( aBB[ibvh].is_active );
+    assert( ichild0 >= 0 && ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
   }
   /////
-  getBVH_NearPoint_OverlapDist(aIndElem, dist,px,py,pz, ichild0,aBVH,aBB);
-  getBVH_NearPoint_OverlapDist(aIndElem, dist,px,py,pz, ichild1,aBVH,aBB);
+  BVH_GetIndElem_InsideRange(aIndElem, min,max, px,py,pz, ichild0,aBVH,aBB);
+  BVH_GetIndElem_InsideRange(aIndElem, min,max, px,py,pz, ichild1,aBVH,aBB);
+}
+
+template <typename T>
+void BVH_GetIndElem_IntersectRay
+(std::vector<int>& aIndElem,
+ /////
+ const double src[3], const double dir[3],
+ int ibvh,
+ const std::vector<CNodeBVH>& aBVH,
+ const std::vector<T>& aBB)
+{
+  assert( ibvh >= 0 && ibvh < aBVH.size() );
+  bool is_intersect = aBB[ibvh].IsIntersectRay(src,dir);
+  if( !is_intersect ) return;
+  ////
+  const int ichild0 = aBVH[ibvh].ichild[0];
+  const int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == -1 ){ // leaf
+    assert( aBB[ibvh].is_active );
+    assert( ichild0 >= 0 && ichild0 < aBB.size() );
+    aIndElem.push_back(ichild0);
+    return;
+  }
+  /////
+  BVH_GetIndElem_IntersectRay(aIndElem, src,dir, ichild0,aBVH,aBB);
+  BVH_GetIndElem_IntersectRay(aIndElem, src,dir, ichild1,aBVH,aBB);
+}
+
+template <typename T>
+void BVH_GetIndElem_IntersectLine
+(std::vector<int>& aIndElem,
+ /////
+ const double src[3], const double dir[3],
+ int ibvh,
+ const std::vector<CNodeBVH>& aBVH,
+ const std::vector<T>& aBB)
+{
+  assert( ibvh >= 0 && ibvh < aBVH.size() );
+  bool is_intersect = aBB[ibvh].IsIntersectLine(src,dir);
+  if( !is_intersect ) return;
+  ////
+  const int ichild0 = aBVH[ibvh].ichild[0];
+  const int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == -1 ){ // leaf
+    assert( aBB[ibvh].is_active );
+    assert( ichild0 >= 0 && ichild0 < aBB.size() );
+    aIndElem.push_back(ichild0);
+    return;
+  }
+  /////
+  BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild0,aBVH,aBB);
+  BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild1,aBVH,aBB);
 }
 
 

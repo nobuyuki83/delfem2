@@ -245,26 +245,25 @@ public:
     cx=cy=cz=r=0;
   }
   void AddPoint(double x,double y,double z, double R){
-    if( R <= 0 ){ return; }
+    assert( R >= 0 );
     if( !is_active ){ // empty
       is_active = true;
       cx=x; cy=y; cz=z; r=R;
       return;
     }
     const double L = sqrt((x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz));
-    if( L<r+R ){ // overlapping
-      if( r>L+R ){ return; } // included
-      if( R>L+r){
-        cx=x; cy=y; cz=z; r=R;
-        return;
-      }
+    if( r>L+R ){ return; } // including
+    if( R>L+r){ // included
+      cx=x; cy=y; cz=z; r=R;
+      return;
     }
-    if( fabs(L) < 1.0e-5*fabs(r+R) ){
+    if( fabs(L) < 1.0e-5*fabs(r+R) ){ // almost co-centric
       r = L+R;
       return;
     }
-    const double r0 = 0.5*(1+(r-R)/L);
-    const double r1 = 0.5*(1+(R-r)/L);
+    const double r0 = 0.5*(L+r-R)/L;
+    const double r1 = 0.5*(L+R-r)/L;
+    assert( r0 >= 0 && r1 >= 0 );
     cx = r0*cx + r1*x;
     cy = r0*cy + r1*y;
     cz = r0*cz + r1*z;
@@ -279,6 +278,33 @@ public:
     if( L > bb.r + r ) return false;
     return true;
   }
+  bool IsIntersectLine(const double src[3], const double dir[3]) const {
+    assert( is_active );
+    double ratio = dir[0]*(cx-src[0]) + dir[1]*(cy-src[1]) + dir[2]*(cz-src[2]);
+    ratio = ratio/(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
+    const double px = src[0] + ratio*dir[0];
+    const double py = src[1] + ratio*dir[1];
+    const double pz = src[2] + ratio*dir[2];
+    const double L = sqrt((px-cx)*(px-cx) + (py-cy)*(py-cy) + (pz-cz)*(pz-cz));
+    assert( fabs(dir[0]*(px-cx) + dir[1]*(py-cy) + dir[2]*(pz-cz)) < 1.0e-10 );
+    if( L <= r ){ return true; }
+    return false;
+  }
+  bool IsIntersectRay(const double src[3], const double dir[3]) const {
+    assert( is_active );
+    const double L0 = sqrt((src[0]-cx)*(src[0]-cx) + (src[1]-cy)*(src[1]-cy) + (src[2]-cz)*(src[2]-cz));
+    if( L0 <= r ){ return true; } // source included
+    double ratio = dir[0]*(cx-src[0]) + dir[1]*(cy-src[1]) + dir[2]*(cz-src[2]);
+    ratio = ratio/(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
+    if( ratio < 0 ){ return false; }
+    const double px = src[0] + ratio*dir[0];
+    const double py = src[1] + ratio*dir[1];
+    const double pz = src[2] + ratio*dir[2];
+    const double L = sqrt((px-cx)*(px-cx) + (py-cy)*(py-cy) + (pz-cz)*(pz-cz));
+    assert( fabs(dir[0]*(px-cx) + dir[1]*(py-cy) + dir[2]*(pz-cz)) < 1.0e-10 );
+    if( L <= r ){ return true; }
+    return false;
+  }
   CBV3D_Sphere& operator+=(const CBV3D_Sphere& bb)
   {
     if( !bb.is_active ) return *this;
@@ -291,12 +317,13 @@ public:
     if( L < r*r ){ return true; }
     return false;
   }
-  void getRange_Point(double& min0, double& max0,
+  void Range_DistToPoint(double& min0, double& max0,
                       double x, double y, double z) const {
+    assert( is_active );
     const double L = sqrt((x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz));
     if( L < r ){
       min0 = 0;
-      max0 = r-L;
+      max0 = r+L;
       return;
     }
     min0 = L-r;
