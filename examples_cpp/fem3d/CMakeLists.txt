@@ -21,25 +21,24 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/vec2.cpp           ${DELFEM2_INC}/vec2.h
-  ${DELFEM2_SRC}/vec3.cpp           ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/mat3.cpp
-  ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_SRC}/msh.cpp
-  ${DELFEM2_SRC}/mshtopo.cpp        ${DELFEM2_INC}/mshtopo.h
+  ${DELFEM2_INC}/vec2.h                     ${DELFEM2_SRC}/vec2.cpp                 
+  ${DELFEM2_INC}/vec3.h                     ${DELFEM2_SRC}/vec3.cpp                 
+  ${DELFEM2_INC}/mat3.h                     ${DELFEM2_SRC}/mat3.cpp                 
+  ${DELFEM2_INC}/quat.h                     ${DELFEM2_SRC}/quat.cpp                 
+  ${DELFEM2_INC}/msh.h                      ${DELFEM2_SRC}/msh.cpp                   
+  ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_SRC}/mshtopo.cpp               
+  ${DELFEM2_INC}/primitive.h                ${DELFEM2_SRC}/primitive.cpp
+  ${DELFEM2_INC}/isosurface_stuffing.h      ${DELFEM2_SRC}/isosurface_stuffing.cpp
 
-  ${DELFEM2_SRC}/isosurface_stuffing.cpp
-  ${DELFEM2_SRC}/primitive.cpp      ${DELFEM2_INC}/primitive.h
+  ${DELFEM2_INC}/fem_ematrix.h     ${DELFEM2_SRC}/fem_ematrix.cpp        
+  ${DELFEM2_INC}/fem.h             ${DELFEM2_SRC}/fem.cpp               
+  ${DELFEM2_INC}/matrix_sparse.h   ${DELFEM2_SRC}/matrix_sparse.cpp     
+  ${DELFEM2_INC}/ilu_sparse.h      ${DELFEM2_SRC}/ilu_sparse.cpp        
 
-  ${DELFEM2_SRC}/fem_ematrix.cpp
-  ${DELFEM2_SRC}/fem.cpp            ${DELFEM2_INC}/fem.h
-  ${DELFEM2_SRC}/matrix_sparse.cpp
-  ${DELFEM2_SRC}/ilu_sparse.cpp
-
-  ${DELFEM2_SRC}/gl_v23q.cpp
-  ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_SRC}/gl_camera.cpp      ${DELFEM2_INC}/gl_camera.h
-  ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h    
+  ${DELFEM2_INC}/gl_v23q.h      ${DELFEM2_SRC}/gl_v23q.cpp          
+  ${DELFEM2_INC}/gl_funcs.h     ${DELFEM2_SRC}/gl_funcs.cpp         
+  ${DELFEM2_INC}/gl_camera.h    ${DELFEM2_SRC}/gl_camera.cpp        
+  ${DELFEM2_INC}/gl_color.h     ${DELFEM2_SRC}/gl_color.cpp            
 
   main.cpp
 )

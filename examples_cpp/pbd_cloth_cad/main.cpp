@@ -15,13 +15,15 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/dyntri.h"
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
+#include "delfem2/primitive.h"
 
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/v23m3q.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/cad2d.h"
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_funcs.h"
@@ -54,9 +56,15 @@ std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
+
+std::vector<double> aXYZ_Contact;
+std::vector<unsigned int> aTri_Contact;
+std::vector<double> aNorm_Contact(aXYZ.size());
+CBVH_MeshTri3D<CBV3D_Sphere> bvh;
+
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
-double rad0 = 0.3;
+const double contact_clearance = 0.0001;
 
 CGlutWindowManager win;
 bool is_animation = false;
@@ -139,13 +147,16 @@ void StepTime()
     }
   }
   for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
-    double p[3] = {aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] };
-    double l0 = Length3D(p);
-    if( l0 < rad0 ){
-      aXYZt[ip*3+0] /= (l0/rad0);
-      aXYZt[ip*3+1] /= (l0/rad0);
-      aXYZt[ip*3+2] /= (l0/rad0);
-    }
+    CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
+    CVector3 n0; double sdf=0;
+    bool res = bvh.Projection_IncludedInBVH(sdf, n0,
+                                            p0, aXYZ_Contact,aTri_Contact,aNorm_Contact);
+    if( !res ){ continue; }
+    double cc = contact_clearance;
+    if( sdf < -cc ) continue;
+    aXYZt[ip*3+0] += (sdf+cc)*n0.x;
+    aXYZt[ip*3+1] += (sdf+cc)*n0.y;
+    aXYZt[ip*3+2] += (sdf+cc)*n0.z;
   }
   PBD_Post(aXYZ, aUVW,
            dt, aXYZt, aBCFlag);
@@ -192,7 +203,9 @@ void myGlutDisplay(void)
   DrawMeshDynTri3D_Edge(aXYZ, aETri);
 
   ::glColor3d(1,0,0);
-  DrawSphere_Edge(rad0);
+  DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                     aTri_Contact.data(), aTri_Contact.size()/3);
+//  DrawSphere_Edge(rad0);
 
   
   ShowFPS();
@@ -273,7 +286,7 @@ int main(int argc,char* argv[])
     cad.AddPolygon(std::vector<double>(xys1,xys1+8));
   }
   CMesher_Cad2D mesher;
-  mesher.edge_length = 0.05;
+  mesher.edge_length = 0.04;
   CMeshDynTri2D dmesh;
   mesher.Meshing(dmesh,
                  cad);
@@ -344,7 +357,16 @@ int main(int argc,char* argv[])
   }
   aXYZt = aXYZ;
   
-  
+  { // make a unit sphere
+    MeshTri3D_Sphere(aXYZ_Contact, aTri_Contact, 0.3, 32, 32);
+    Rotate(aXYZ_Contact, 0.2, 0.3, 0.4);
+    aNorm_Contact.resize(aXYZ_Contact.size());
+    Normal_MeshTri3D(aNorm_Contact.data(),
+                     aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                     aTri_Contact.data(), aTri_Contact.size()/3);
+    bvh.Init(aXYZ_Contact, aTri_Contact, 0.01);
+  }
+
   
   win.camera.view_height = 1.0;
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
