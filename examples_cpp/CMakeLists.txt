@@ -13,9 +13,10 @@ add_subdirectory(paramgeo3d)
 
 add_subdirectory(transform_handler)
 
-add_subdirectory(adf3d)
-add_subdirectory(selfcollision_bvh)
+add_subdirectory(mathexpeval)
+
 add_subdirectory(bvh_read)
+add_subdirectory(gltf_read)
 
 add_subdirectory(shader_glsl)
 add_subdirectory(offscreen)
@@ -25,13 +26,10 @@ add_subdirectory(subdiv)
 add_subdirectory(exponential_map)
 add_subdirectory(edit_cubes)
 add_subdirectory(spherical_harmonics)
-add_subdirectory(isosurface_stuffing)
-add_subdirectory(mathexpeval)
-
-
-add_subdirectory(cadmsh2d)
-
 add_subdirectory(meshslice)
+
+add_subdirectory(adf3d)
+add_subdirectory(isosurface_stuffing)
 
 add_subdirectory(convhull)
 add_subdirectory(dyntet_tetrahedralization)
@@ -46,9 +44,11 @@ add_subdirectory(fem2d)
 add_subdirectory(fem3d)
 add_subdirectory(fem25d_eigen)
 add_subdirectory(cloth_internal)
-add_subdirectory(cloth_selfcollision)
-
+add_subdirectory(cadmsh2d)
 add_subdirectory(dyntri2d_cloth)
+
+add_subdirectory(selfcollision_bvh)
+add_subdirectory(cloth_selfcollision)
 
 add_subdirectory(pbd_grid2d)
 add_subdirectory(pbd_cloth)
