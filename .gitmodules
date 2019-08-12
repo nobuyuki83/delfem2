@@ -13,3 +13,6 @@
 [submodule "tests/googletest"]
 	path = tests/googletest
 	url = https://github.com/google/googletest.git
+[submodule "src_cpp/external/tinygltf"]
+	path = src_cpp/external/tinygltf
+	url = https://github.com/syoyo/tinygltf.git

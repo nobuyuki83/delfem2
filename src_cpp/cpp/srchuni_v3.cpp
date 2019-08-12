@@ -296,7 +296,7 @@ void IntersectionRay_MeshTri3D
  const std::vector<double>& aXYZ)
 {
   mapDepthPES.clear();
-  for(int itri=0;itri<aTri.size()/3;++itri){
+  for(unsigned int itri=0;itri<aTri.size()/3;++itri){
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
     const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
@@ -323,7 +323,7 @@ void IntersectionRay_MeshTri3DPart
  const std::vector<int>& aIndTri)
 {
   mapDepthPES.clear();
-  for(int iitri=0;iitri<aIndTri.size();++iitri){
+  for(unsigned int iitri=0;iitri<aIndTri.size();++iitri){
     const int itri = aIndTri[iitri];
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
@@ -472,7 +472,7 @@ CPointElemSurf Nearest_Point_MeshTri3DPart
 {
   double min_dist = -1;
   CPointElemSurf pes;
-  for(int iitri=0;iitri<aIndTri_Cand.size();++iitri){
+  for(unsigned int iitri=0;iitri<aIndTri_Cand.size();++iitri){
     const int itri0 = aIndTri_Cand[iitri];
     const unsigned int i0 = aTri[itri0*3+0];
     const unsigned int i1 = aTri[itri0*3+1];
@@ -503,8 +503,8 @@ CPointElemSolid Nearest_Point_MeshTet3D
  const std::vector<int>& aTet)
 {
   const double eps = 1.0e-4;
-  const int ntet = (int)aTet.size()/4;
-  for(int itet=0;itet<ntet;++itet){
+  const unsigned int ntet = aTet.size()/4;
+  for(unsigned int itet=0;itet<ntet;++itet){
     CPointElemSolid pt;
     pt.setPos_Tet(itet,q,aXYZ,aTet);
     if( pt.isInside(-eps) ){ return pt; }
