@@ -15,21 +15,28 @@
 #include <string>
 #include <cassert>
 
+#include "delfem2/vec3.h"
+
 class CVector3;
 
 class CBone_RigMsh
 {
 public:
     CBone_RigMsh(){
-      is_active = true;
-      quat_joint[0] = 1;
-      quat_joint[1] = 0;
-      quat_joint[2] = 0;
-      quat_joint[3] = 0;
-      quat[0] = 1;
-      quat[1] = 0;
-      quat[2] = 0;
-      quat[3] = 0;
+      for(int i=0;i<16;++i){ invBindMat[i]=0.0; }
+      invBindMat[ 0] = 1.0;
+      invBindMat[ 5] = 1.0;
+      invBindMat[10] = 1.0;
+      invBindMat[15] = 1.0;
+      //////////
+      scale = 1;
+      rot[0] = 1;
+      rot[1] = 0;
+      rot[2] = 0;
+      rot[3] = 0;
+      trans[0] = 0;
+      trans[1] = 0;
+      trans[2] = 0;
       ibone_parent = -1;
     }
   void Draw(bool is_selected,
@@ -39,18 +46,22 @@ public:
   int PickHandler(const CVector3& org, const CVector3& dir,
                   double rad_handlr,
                   double tol) const;
-  void Affine(const double a[16]);
+  CVector3 Pos() const {
+    return CVector3(Mat[3],Mat[7],Mat[11]);
+  }
+  void AffineJoint(const double a[16]) const;
 public:
   std::string name;
   int ibone_parent;
-  bool is_active;
   /////
-  double pos_ini[3];
-  double quat_joint[4];
-  /////
-  double pos[3];
-  double quat[4]; // joint rotation at this bone_point. Rotation propageate to the child skeleton
+  double invBindMat[16];
+  double Mat[16];
+  //////
+  double rot[4]; // totatl rotation at this bone (quaternion w,x,y,z)
+  double trans[3]; // translation from
+  double scale; // scale
 };
+
 
 class CChannel_RotTransBone_BVH
 {
@@ -77,8 +88,6 @@ void ReadBVH(std::vector<CBone_RigMsh>& aBone,
              std::vector<double>& aRotTransBone,
              const std::string& path_bvh);
 
-void InitializeBone(std::vector<CBone_RigMsh>& aBone);
-
 void SetRotTransBVH(std::vector<CBone_RigMsh>& aBone,
                     const std::vector<CChannel_RotTransBone_BVH>& aChannelRotTransBone,
                     const double *aVal);
@@ -93,6 +102,7 @@ void PickBone(int& ibone_selected,
               double rad_hndlr,
               double tol);
 
+/*
 class CBoneGoal
 {
 public:
@@ -109,12 +119,13 @@ public:
   double pos[3];
   double dir[3];
 };
+ */
 
-void BoneOptimization(std::vector<CBone_RigMsh>& aBone,
-                      const std::vector<CBoneGoal>& aBoneGoal);
+//void BoneOptimization(std::vector<CBone_RigMsh>& aBone,
+//                      const std::vector<CBoneGoal>& aBoneGoal);
 
-void DrawBoneTarget(const std::vector<CBoneGoal>& aBoneGoal,
-                    const std::vector<CBone_RigMsh>& aBone);
+//void DrawBoneTarget(const std::vector<CBoneGoal>& aBoneGoal,
+//                    const std::vector<CBone_RigMsh>& aBone);
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////

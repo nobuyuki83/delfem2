@@ -88,9 +88,11 @@ void myGlutMotion( int x, int y )
     CVector2 sp1(window.mouse_x, window.mouse_y);
     CVector2 sp0(window.mouse_x-window.dx, window.mouse_y-window.dy);
     CBone_RigMsh& bone = aBone[ibone_selected];
+    /*
     DragHandlerRot(bone.quat_joint,
                    ielem_bone_selected, sp0, sp1, bone.pos,
                    mMV, mPj);
+     */
     UpdateBoneRotTrans(aBone);
   }
   ::glutPostRedisplay();
@@ -166,6 +168,7 @@ int main(int argc,char* argv[])
   std::cout << "path:" << path_bvh << std::endl;
   ReadBVH(aBone,aChannelRotTransBone,nframe,aValRotTransBone,
           path_bvh);
+  UpdateBoneRotTrans(aBone);
   std::cout << "nBone:" << aBone.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;
   for(int ib=0;ib<aBone.size();++ib){
     std::cout << ib << " " << aBone[ib].name << std::endl;

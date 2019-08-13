@@ -76,6 +76,37 @@ void myAdd_AABB(double aabb[6], const double aabb0[6], const double aabb1[6])
   aabb[5] = ( aabb0[5] > aabb1[5] ) ? aabb0[5] : aabb1[5];
 }
 
+static void CalcInvMat(double* a, const int n, int& info )
+{
+  double tmp1;
+  
+  info = 0;
+  int i,j,k;
+  for(i=0;i<n;i++){
+    if( fabs(a[i*n+i]) < 1.0e-30 ){
+      info = 1;
+      return;
+    }
+    if( a[i*n+i] < 0.0 ){
+      info--;
+    }
+    tmp1 = 1.0 / a[i*n+i];
+    a[i*n+i] = 1.0;
+    for(k=0;k<n;k++){
+      a[i*n+k] *= tmp1;
+    }
+    for(j=0;j<n;j++){
+      if( j!=i ){
+        tmp1 = a[j*n+i];
+        a[j*n+i] = 0.0;
+        for(k=0;k<n;k++){
+          a[j*n+k] -= tmp1*a[i*n+k];
+        }
+      }
+    }
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void CBone_RigMsh::Draw
@@ -84,17 +115,17 @@ void CBone_RigMsh::Draw
  const std::vector<CBone_RigMsh>& aBone,
  double bone_rad) const
 {
-  if( !is_active ) return;
   { // draw point
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
-    DrawSphereAt(32, 32, bone_rad, pos[0],pos[1],pos[2]);
+    const CVector3 pos = this->Pos();
+    DrawSphereAt(32, 32, bone_rad, pos.x,pos.y,pos.z);
   }
   if(is_selected){
-    const CVector3 p0(pos);
-    DrawHandlerRotation(p0, quat, 15, ielem_selected);
-    if( ibone_parent>=0&&ibone_parent<(int)aBone.size() && aBone[ibone_parent].is_active ){
-      const CVector3 pp(aBone[ibone_parent].pos);
+//    const CVector3 p0(pos);
+//    DrawHandlerRotation(p0, quat, 15, ielem_selected);
+    if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
+      const CVector3 pp(aBone[ibone_parent].Pos());
 //      double len = (p0-pp).Length();
 //      drawCircle((p0-pp).Normalize(), p0, len*1.5);
     }
@@ -109,20 +140,24 @@ int CBone_RigMsh::PickHandler
  double rad_handlr,
  double tol) const
 {
-  const CVector3 p0(pos);
+//  const CVector3 p0(pos);
+  /*
   return PickHandlerRotation(org,dir,
                              p0, quat, rad_handlr,
                              tol);
+   */
+  return -1;
 }
 
 
 
-
+/*
 void CBone_RigMsh::Affine(const double A[16])
 {
   Affine3D(pos_ini, A, pos_ini);
   Affine3D(pos, A, pos);
 }
+ */
 
 /*
  void Scale(double scale){
@@ -162,17 +197,15 @@ void DrawBone
   // draw edges whilte
   for( int ibone=0;ibone<(int)aBone.size();++ibone){
     const CBone_RigMsh& bone = aBone[ibone];
-    if( !bone.is_active ) continue;
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
     const CBone_RigMsh& bone_p = aBone[ibone_p];
-    if( !bone_p.is_active ) continue;
     bool is_selected_p = (ibone_p == ibone_selected);
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
     else{              ::glColor3d(0.0,0.0,0.0); }
     ::glBegin(GL_LINES);
-    ::glVertex3dv(bone.pos);
-    ::glVertex3dv(bone_p.pos);
+    myGlVertex(bone.Pos());
+    myGlVertex(bone_p.Pos());
     ::glEnd();
   }
 }
@@ -226,15 +259,18 @@ void ReadBVH
     else if( aToken[0] == "OFFSET"){
       assert( aToken.size()==4 );
       int ib = aBone.size()-1;
-      aBone[ib].pos_ini[0] = myStod(aToken[1]);
-      aBone[ib].pos_ini[1] = myStod(aToken[2]);
-      aBone[ib].pos_ini[2] = myStod(aToken[3]);
+      double org_x = myStod(aToken[1]);
+      double org_y = myStod(aToken[2]);
+      double org_z = myStod(aToken[3]);
+      aBone[ib].invBindMat[ 3] = -org_x;
+      aBone[ib].invBindMat[ 7] = -org_y;
+      aBone[ib].invBindMat[11] = -org_z;
       if( stackIndBone.size() > 1 ){
         const int ibp = stackIndBone[stackIndBone.size()-2];
         assert(ibp<(int)aBone.size());
-        aBone[ib].pos_ini[0] += aBone[ibp].pos_ini[0];
-        aBone[ib].pos_ini[1] += aBone[ibp].pos_ini[1];
-        aBone[ib].pos_ini[2] += aBone[ibp].pos_ini[2];
+        aBone[ib].invBindMat[ 3] += aBone[ibp].invBindMat[ 3];
+        aBone[ib].invBindMat[ 7] += aBone[ibp].invBindMat[ 7];
+        aBone[ib].invBindMat[11] += aBone[ibp].invBindMat[11];
       }
     }
     else if( aToken[0] == "CHANNELS" ){
@@ -292,32 +328,34 @@ void ReadBVH
     if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
     if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
     std::vector<std::string> aToken = Split(line,' ');
-    std::cout << aToken.size() << " " << aChannelRotTransBone.size() << std::endl;
+//    std::cout << aToken.size() << " " << aChannelRotTransBone.size() << std::endl;
     assert(aToken.size()==aChannelRotTransBone.size());
     for(int ich=0;ich<nchannel;++ich){
       aValueRotTransBone[iframe*nchannel+ich] = myStod(aToken[ich]);
     }
   }
   ///////
-  InitializeBone(aBone);
-}
-
-void InitializeBone
-(std::vector<CBone_RigMsh>& aBone)
-{
+  for(int ibone=0;ibone<aBone.size();++ibone){
+    CBone_RigMsh& bone = aBone[ibone];
+    bone.scale = 1.0;
+    bone.rot[0] = 1.0;
+    bone.rot[1] = 0.0;
+    bone.rot[2] = 0.0;
+    bone.rot[3] = 0.0;
+    bone.trans[0] = 0.0;
+    bone.trans[1] = 0.0;
+    bone.trans[2] = 0.0;
+    if( bone.ibone_parent != -1 ){
+      const CBone_RigMsh& bone_p = aBone[bone.ibone_parent];
+      bone.trans[0] = (-bone.invBindMat[ 3])-(-bone_p.invBindMat[ 3]);
+      bone.trans[1] = (-bone.invBindMat[ 7])-(-bone_p.invBindMat[ 7]);
+      bone.trans[2] = (-bone.invBindMat[11])-(-bone_p.invBindMat[11]);
+    }
+  }
   for(unsigned int ib=0;ib<aBone.size();++ib){
     CBone_RigMsh& bone = aBone[ib];
-    bone.pos[0] = bone.pos_ini[0];
-    bone.pos[1] = bone.pos_ini[1];
-    bone.pos[2] = bone.pos_ini[2];
-    bone.quat[0] = 1.0;
-    bone.quat[1] = 0.0;
-    bone.quat[2] = 0.0;
-    bone.quat[3] = 0.0;
-    bone.quat_joint[0] = 1.0;
-    bone.quat_joint[1] = 0.0;
-    bone.quat_joint[2] = 0.0;
-    bone.quat_joint[3] = 0.0;
+    for(int i=0;i<16;++i){ bone.Mat[i] = bone.invBindMat[i]; }
+    int info; CalcInvMat(bone.Mat, 4, info);
   }
 }
 
@@ -327,14 +365,19 @@ void UpdateBoneRotTrans
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
-      QuatCopy(aBone[ibone].quat,aBone[ibone].quat_joint);
+      Mat4_ScaleRotTrans(aBone[ibone].Mat,
+                         aBone[ibone].scale,
+                         aBone[ibone].rot,
+                         aBone[ibone].trans);
       continue;
     }
-    const double* quat_parent = aBone[ibone_p].quat;
-    CVector3 v0 = CVector3(aBone[ibone].pos_ini) - CVector3(aBone[ibone_p].pos_ini);
-    CVector3 v1 = QuatVec(quat_parent, v0) + CVector3(aBone[ibone_p].pos);
-    v1.CopyValueTo(aBone[ibone].pos);
-    QuatMult(aBone[ibone].quat, aBone[ibone].quat_joint, quat_parent);
+    double M01[16];
+    Mat4_ScaleRotTrans(M01,
+                       aBone[ibone].scale,
+                       aBone[ibone].rot,
+                       aBone[ibone].trans);
+    MatMat4(aBone[ibone].Mat,
+            aBone[ibone_p].Mat,M01);
   }
 }
 
@@ -343,7 +386,13 @@ void SetRotTransBVH
  const std::vector<CChannel_RotTransBone_BVH>& aChannelRotTransBone,
  const double *aVal)
 {
-  InitializeBone(aBone);
+  for(unsigned int ib=0;ib<aBone.size();++ib){
+    CBone_RigMsh& bone = aBone[ib];
+    bone.rot[0] = 1.0;
+    bone.rot[1] = 0.0;
+    bone.rot[2] = 0.0;
+    bone.rot[3] = 0.0;
+  }
   const int nch = aChannelRotTransBone.size();
   for(int ich=0;ich<nch;++ich){
     const int ibone = aChannelRotTransBone[ich].ibone;
@@ -353,15 +402,15 @@ void SetRotTransBVH
     assert(ibone<(int)aBone.size());
     assert(iaxis>=0&&iaxis<3);
     if( !isrot ){
-      aBone[ibone].pos[iaxis] = val;
+      aBone[ibone].trans[iaxis] = val;
     }
     else{
       const double ar = -val*M_PI/180.0;
       double v0[3] = {0,0,0};
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
-      double qtmp[4]; QuatMult(qtmp, dq, aBone[ibone].quat_joint);
-      QuatCopy(aBone[ibone].quat_joint,qtmp);
+      double qtmp[4]; QuatMult(qtmp, dq, aBone[ibone].rot);
+      QuatCopy(aBone[ibone].rot,qtmp);
     }
   }
   UpdateBoneRotTrans(aBone);
@@ -383,7 +432,7 @@ void PickBone
   if( ielem_selected == -1 ){
     ibone_selected = -1;
     for(int ibone=0;ibone<(int)aBone.size();++ibone){
-      CVector3 pos(aBone[ibone].pos);
+      CVector3 pos(aBone[ibone].Pos());
       double distance = Distance(nearest_Line_Point(pos, src, dir),pos);
       if( distance < tol ){
         ibone_selected = ibone;
@@ -393,7 +442,7 @@ void PickBone
   }
 }
 
-
+/*
 void CBoneGoal::GetGoalPos
 (double* pos_trg,
  const double* org_rot,
@@ -436,8 +485,8 @@ void CBoneGoal::GetGoalPos
     }
   }
 }
-
-
+*/
+/*
 void BoneOptimization
 (std::vector<CBone_RigMsh>& aBone,
  const std::vector<CBoneGoal>& aBoneGoal)
@@ -457,16 +506,6 @@ void BoneOptimization
     }
   }
   
-  /*
-   std::cout << "#########" << std::endl;
-   for(int ibone=0;ibone<aBone.size();++ibone){
-   std::cout << "src2trg: " << ibone << " --> ";
-   for(int itrg=0;itrg<src2trg[ibone].size();++itrg){
-   std::cout << src2trg[ibone][itrg] << " ";
-   }
-   std::cout << std::endl;
-   }
-   */
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     //  for(int ibone=aBone.size()-1;ibone>=0;--ibone){
     if( src2trg[ibone].empty() ){ continue; }
@@ -517,7 +556,8 @@ void BoneOptimization
     }
   }
 }
-
+ */
+/*
 void DrawBoneTarget
 (const std::vector<CBoneGoal>& aBoneGoal,
  const std::vector<CBone_RigMsh>& aBone)
@@ -540,6 +580,7 @@ void DrawBoneTarget
     }
   }
 }
+ */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -627,6 +668,7 @@ void CSkin_RigMsh::SetSkeleton
   assert( (int)aPoint2BoneInd.size() == np+1 );
   aXYZ.assign(np*3,0.0);
   for(int ip=0;ip<np;++ip){
+    /*
     for(int iilb=aPoint2BoneInd[ip];iilb<aPoint2BoneInd[ip+1];++iilb){
       const int ilb = aPoint2Bone[iilb];
       const double weight = aPoint2BoneWeight[iilb];
@@ -642,6 +684,7 @@ void CSkin_RigMsh::SetSkeleton
       aXYZ[ip*3+1] += (pos_b[1]+v1[1])*weight;
       aXYZ[ip*3+2] += (pos_b[2]+v1[2])*weight;
     }
+     */
   }
 }
 
@@ -718,7 +761,7 @@ void CMesh_RigMsh::Affine(const double A[16])
 void CRigMsh::Affine(const double A[16])
 {
   for(unsigned int im=0;im<aMesh.size();++im){ aMesh[im].Affine(A); }
-  for(unsigned int ib=0;ib<aBone.size();++ib){ aBone[ib].Affine(A); }
+//  for(unsigned int ib=0;ib<aBone.size();++ib){ aBone[ib].Affine(A); }
 }
 
 std::vector<double> CRigMsh::MinMaxXYZ() const
@@ -771,8 +814,8 @@ void CRigMsh::Drag(double spx, double spy, double dsx, double dsy)
   CVector2 sp1(spx+dsx, spy+dsy);
   if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
     CBone_RigMsh& bone = aBone[ibone_selected];
-    bool is_updated = DragHandlerRot(bone.quat_joint,
-                                     ielem_selected, sp0, sp1, bone.pos,
+    bool is_updated = DragHandlerRot(bone.rot,
+                                     ielem_selected, sp0, sp1, bone.Pos(),
                                      mMV, mPj);
     if( is_updated ){
       this->UpdateBonePos();

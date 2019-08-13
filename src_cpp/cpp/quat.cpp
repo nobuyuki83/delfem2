@@ -136,6 +136,34 @@ void QuatNormalize(double q[])
   q[3] *= invlen;
 }
 
+void Mat4_ScaleRotTrans
+(double m[16],
+ double scale,
+ const double quat[4],
+ const double trans[3])
+{
+  QuatGetAffineMatrixTrans(m, quat);
+  for(int i=0;i<3;++i){
+    for(int j=0;j<3;++j){
+      m[i*4+j] *= scale;
+    }
+  }
+  m[0*4+3] = trans[0];
+  m[1*4+3] = trans[1];
+  m[2*4+3] = trans[2];
+}
+
+void MatMat4(double m01[16],
+             const double m0[16], const double m1[16])
+{
+  for(int i=0;i<4;++i){
+    for(int j=0;j<4;++j){
+      m01[i*4+j] = m0[i*4+0]*m1[0*4+j] + m0[i*4+1]*m1[1*4+j] + m0[i*4+2]*m1[2*4+j] + m0[i*4+3]*m1[3*4+j];
+    }
+  }
+}
+
+
 //////////////////////////////////////////////////////////////////////
 // �\�z/����
 //////////////////////////////////////////////////////////////////////
