@@ -11,6 +11,7 @@
 
 // stand alone implementation of the quaternion function and class
 
+// order is (w,x,y,z)
 void QuatSetIdentity(double q[]);
 void QuatCopy(double r[], const double p[]);
 void QuatMult(double r[], const double p[], const double q[]);
@@ -19,6 +20,11 @@ void QuatConjVec(double vo[], const double q[], const double vi[]);
 void QuatGetAffineMatrix(double r[], const double q[]);
 void QuatGetAffineMatrixTrans(double r[], const double q[]);
 void QuatNormalize(double q[]);
+
+void Mat4_ScaleRotTrans(double m[16],
+                        double scale, const double quat[4], const double trans[3]);
+void MatMat4(double m01[16],
+             const double m0[16], const double m1[16]);
 
 class CQuaternion;
 
@@ -78,7 +84,7 @@ public:
   double SquareLength() const;
 	*/
 private:
-  double q[4];
+  double q[4]; // w,x,y,z
 //	CVector3D vector;	//!< imaginary part
 //	double real;	//!< real part
 };

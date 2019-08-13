@@ -63,6 +63,7 @@ add_executable(${MY_BINARY_NAME}
 
   test_bvh.cpp
   test_lp.cpp
+  test_gltf.cpp
   main.cpp  
 )
 
