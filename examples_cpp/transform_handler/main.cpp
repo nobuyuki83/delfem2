@@ -31,7 +31,7 @@ public:
     pos = CVector3(0,0,0);
   }
   void Draw() const{
-    DrawHandlerRotation(pos, quat, size, ielem_picked);
+    DrawHandlerRotation_PosQuat(pos, quat, size, ielem_picked);
   }
   void Pick(bool is_down, double spx, double spy, float mMV[16], float mPj[16], double tol){
     if( !is_down ){
@@ -41,12 +41,12 @@ public:
     CVector3 src = screenUnProjection(CVector3(spx,spy,0), mMV, mPj);
     CVector3 dir = screenUnProjectionDirection(CVector3(0,0,1),mMV, mPj);
     double wh = 1.0/mPj[5];
-    ielem_picked = PickHandlerRotation(src,dir, CVector3(0,0,0), quat,size,wh*tol);
+    ielem_picked = PickHandlerRotation_PosQuat(src,dir, CVector3(0,0,0), quat,size,wh*tol);
   }
   void Drag(double sp0x,double sp0y, double sp1x,double sp1y, float mMV[16], float mPj[16]){
     const CVector2 sp0(sp0x,sp0y);
     const CVector2 sp1(sp1x,sp1y);
-    DragHandlerRot(quat,
+    DragHandlerRot_PosQuat(quat,
                    ielem_picked,sp0,sp1,pos,mMV,mPj);
   }
 public:
@@ -81,7 +81,7 @@ void myGlutDisplay(void)
   ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
   {
     ::glPushMatrix();
-    double M[16]; QuatGetAffineMatrix(M, hndlr_rot.quat);
+    double M[16]; Mat4_Quat(M, hndlr_rot.quat);
     glMultMatrixd(M);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);

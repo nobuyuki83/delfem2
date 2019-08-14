@@ -337,9 +337,11 @@ std::vector<unsigned int> aTri;
 
 bool is_animation = false;
 
-std::vector<CBone_RigMsh> aBone;
+std::vector<CRigBone> aBone;
 int ibone_selected;
 int ielem_bone_selected;
+double rad_bone_sphere = 0.01;
+double rad_rot_hndlr = 1.0;
 
 void myGlutDisplay(void)
 {
@@ -363,7 +365,7 @@ void myGlutDisplay(void)
   
   
   ::glDisable(GL_DEPTH_TEST);
-  DrawBone(aBone, ibone_selected, -1, 0.001);
+  DrawBone(aBone, ibone_selected, ielem_bone_selected, rad_bone_sphere, rad_rot_hndlr);
   ::glEnable(GL_DEPTH_TEST);
   
   ::glColor3d(0,0,0);
@@ -397,6 +399,19 @@ void myGlutMotion( int x, int y )
   window.glutMotion(x, y);
   if( window.imodifier != 0 ) return;
   ////
+  if( ibone_selected>=0 && ibone_selected<aBone.size() ){
+    window.SetGL_Camera();
+    float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
+    float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
+    CVector2 sp1(window.mouse_x, window.mouse_y);
+    CVector2 sp0(window.mouse_x-window.dx, window.mouse_y-window.dy);
+    CRigBone& bone = aBone[ibone_selected];
+    DragHandlerRot_Mat4(bone.rot,
+                        ielem_bone_selected, sp0, sp1, bone.Mat,
+                        mMV, mPj);
+    UpdateBoneRotTrans(aBone);
+  }
+  ////
   ::glutPostRedisplay();
 }
 
@@ -415,7 +430,7 @@ void myGlutMouse(int button, int state, int x, int y)
     PickBone(ibone_selected, ielem_bone_selected,
              aBone,
              src,dir,
-             15,
+             rad_rot_hndlr,
              wh*0.1);
     std::cout << ibone_selected << std::endl;
   }
@@ -445,7 +460,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 
 
 void SetBone
-(std::vector<CBone_RigMsh>& aBone,
+(std::vector<CRigBone>& aBone,
  const tinygltf::Model& model,
  int inode_cur, int ibone_p,
  const std::vector<int>& mapNode2Bone)
@@ -459,9 +474,9 @@ void SetBone
   aBone[ibone].trans[1] = node.translation[1];
   aBone[ibone].trans[2] = node.translation[2];
   aBone[ibone].rot[0] = node.rotation[3];
-  aBone[ibone].rot[1] = -node.rotation[0];
-  aBone[ibone].rot[2] = -node.rotation[1];
-  aBone[ibone].rot[3] = -node.rotation[2];
+  aBone[ibone].rot[1] = node.rotation[0];
+  aBone[ibone].rot[2] = node.rotation[1];
+  aBone[ibone].rot[3] = node.rotation[2];
   aBone[ibone].name = node.name;
   if( node.scale.size() > 0 ){ aBone[ibone].scale = node.scale[0]; }
   else{ aBone[ibone].scale = 1;  }

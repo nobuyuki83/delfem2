@@ -21,6 +21,8 @@
 #endif
 
 #include "delfem2/quat.h"
+#include "delfem2/vec2.h"
+#include "delfem2/vec3.h"
 #include "delfem2/gl_v23q.h"
 
 void myGlVertex(const CVector3& v)
@@ -698,29 +700,96 @@ void DrawAxisHandler(double s, const CVector3& p)
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-void DrawHandlerRotation
+void DrawHandlerRotation_PosQuat
 (const CVector3& pos,
  const double quat[4],
  double size,
  int ielem_picked)
 {
   ::glDisable(GL_LIGHTING);
-  if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
-  ::DrawCircleWire(QuatVec(quat,CVector3(1,0,0)), pos, size);
-  if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
-  ::DrawCircleWire(QuatVec(quat,CVector3(0,1,0)), pos, size);
-  if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
-  ::DrawCircleWire(QuatVec(quat,CVector3(0,0,1)), pos, size);
+  {
+    if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
+    const CVector3& ax = QuatVec(quat,CVector3(1,0,0));
+    ::DrawCircleWire(ax, pos, size);
+  }
+  {
+    if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
+    const CVector3& ay = QuatVec(quat,CVector3(0,1,0));
+    ::DrawCircleWire(ay, pos, size);
+  }
+  {
+    if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
+    const CVector3& az = QuatVec(quat,CVector3(0,0,1));
+    ::DrawCircleWire(az, pos, size);
+  }
 }
 
-int PickHandlerRotation
+void DrawHandlerRotation_Mat4
+(const double Mat[16],
+ double size,
+ int ielem_picked)
+{
+  ::glDisable(GL_LIGHTING);
+  {
+    if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
+    const CVector3& ax = Mat4Vec(Mat,CVector3(1,0,0)).Normalize();
+    const CVector3 pos(Mat[3],Mat[7],Mat[11]);
+    ::DrawCircleWire(ax, pos, size);
+  }
+  {
+    if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
+    const CVector3& ay = Mat4Vec(Mat,CVector3(0,1,0)).Normalize();
+    const CVector3 pos(Mat[3],Mat[7],Mat[11]);
+    ::DrawCircleWire(ay, pos, size);
+  }
+  {
+    if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
+    const CVector3& az = Mat4Vec(Mat,CVector3(0,0,1)).Normalize();
+    const CVector3 pos(Mat[3],Mat[7],Mat[11]);
+    ::DrawCircleWire(az, pos, size);
+  }
+}
+
+int PickHandlerRotation_PosQuat
 (const CVector3& src, const CVector3& dir,
  const CVector3& pos, const double quat[4], double rad,
  double tol)
 {
-  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,QuatVec(quat,CVector3(1,0,0)), rad);
-  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,QuatVec(quat,CVector3(0,1,0)), rad);
-  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,QuatVec(quat,CVector3(0,0,1)), rad);
+  CVector3 ax = QuatVec(quat,CVector3(1,0,0));
+  CVector3 ay = QuatVec(quat,CVector3(0,1,0));
+  CVector3 az = QuatVec(quat,CVector3(0,0,1));
+  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
+  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
+  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
+  double dx = (px-src)*dir;
+  double dy = (py-src)*dir;
+  double dz = (pz-src)*dir;
+  double lx = (px-qx).Length();
+  double ly = (py-qy).Length();
+  double lz = (pz-qz).Length();
+  double dm = (fabs(dx)+fabs(dy)+fabs(dz))*1000;
+  std::cout << lx << " " << ly << " " << lz << " " << dm << std::endl;
+  if( lx>tol ){ dx = dm; }
+  if( ly>tol ){ dy = dm; }
+  if( lz>tol ){ dz = dm; }
+  if( dx < dy && dx < dz  && dx < 0.9*dm ){ return 0; }
+  if( dy < dz && dy < dx  && dy < 0.9*dm ){ return 1; }
+  if( dz < dx && dz < dy  && dz < 0.9*dm ){ return 2; }
+  return -1;
+}
+
+int PickHandlerRotation_Mat4
+(const CVector3& src, const CVector3& dir,
+ const double mat[16], double rad,
+ double tol)
+{
+  CVector3 ax = Mat4Vec(mat,CVector3(1,0,0));
+  CVector3 ay = Mat4Vec(mat,CVector3(0,1,0));
+  CVector3 az = Mat4Vec(mat,CVector3(0,0,1));
+  CVector3 pos(mat[3],mat[7],mat[11]);
+  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
+  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
+  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
   double dx = (px-src)*dir;
   double dy = (py-src)*dir;
   double dz = (pz-src)*dir;
@@ -739,7 +808,7 @@ int PickHandlerRotation
 }
 
 
-bool DragHandlerRot
+bool DragHandlerRot_PosQuat
 (double quat[4], int ielem,
  const CVector2& sp0, const CVector2& sp1,
  const CVector3& pos,
@@ -752,7 +821,27 @@ bool DragHandlerRot
     CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
     double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
-    double qtmp[4]; QuatMult(qtmp, dq, quat);
+    double qtmp[4]; QuatQuat(qtmp, dq, quat);
+    QuatCopy(quat,qtmp);
+    return true;
+  }
+  return false;
+}
+
+bool DragHandlerRot_Mat4
+(double quat[4], int ielem,
+ const CVector2& sp0, const CVector2& sp1, double mat[16],
+ const float mMV[16], const float mPj[16])
+{
+  if( ielem>=0 && ielem<3 ){
+    double vi[3] = {0,0,0}; vi[ielem] = 1;
+    double vo[3]; Mat4Vec3(vo, mat, vi);
+    CVector3 v0(0,0,0); v0[ielem] = 1;
+    CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
+    CVector3 pos(mat[3],mat[7],mat[11]);
+    const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
+    const double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
+    double qtmp[4]; QuatQuat(qtmp, quat, dq);
     QuatCopy(quat,qtmp);
     return true;
   }

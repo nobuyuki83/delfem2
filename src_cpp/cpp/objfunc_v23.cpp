@@ -148,7 +148,7 @@ void PBD_ConstProj_Rigid3D
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const int ip = clstr[iip];
       CVector3 dq = CVector3(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2])-qc;
-      CVector3 pg = pc+MatVec(R, dq); // goal position
+      CVector3 pg = pc+Mat3Vec(R, dq); // goal position
       CVector3 pg2 = stiffness*pg+(1-stiffness)*CVector3(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
       aXYZt[ip*3+0] = pg2.x;
       aXYZt[ip*3+1] = pg2.y;
