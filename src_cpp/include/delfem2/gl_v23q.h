@@ -98,14 +98,23 @@ CVector3 QuatConjVec(const double quat[4], const CVector3& v0);
 // Handler
 
 void DrawAxisHandler(double s, const CVector3& p);
-void DrawHandlerRotation(const CVector3& pos, const double quat[4], double size, int ielem_picked);
-int PickHandlerRotation(const CVector3& src, const CVector3& dir,
+void DrawHandlerRotation_PosQuat(const CVector3& pos, const double quat[4],
+                                 double size, int ielem_picked);
+void DrawHandlerRotation_Mat4(const double Mat[16],
+                              double size, int ielem_picked);
+int PickHandlerRotation_PosQuat(const CVector3& src, const CVector3& dir,
                         const CVector3& pos, const double quat[4], double rad,
                         double tol);
-bool DragHandlerRot(double quat[4], int ielem,
+int PickHandlerRotation_Mat4(const CVector3& src, const CVector3& dir,
+                             const double mat[16], double rad,
+                             double tol);
+bool DragHandlerRot_PosQuat(double quat[4], int ielem,
                     const CVector2& sp0, const CVector2& sp1,
                     const CVector3& pos,
                     const float mMV[16], const float mPj[16]);
+bool DragHandlerRot_Mat4(double quat[4], int ielem,
+                         const CVector2& sp0, const CVector2& sp1, double mat[16],
+                         const float mMV[16], const float mPj[16]);
 CVector3 drag_AxisHandler(const CVector2& sp0,
                           const CVector2& sp1,
                           const CVector3& p,

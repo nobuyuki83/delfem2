@@ -90,7 +90,7 @@ static void CopyQuat(double r[], const double p[])
   r[3] = p[3];
 }
 
-static void RotTransAffineMatQuaternion(double r[], const double q[])
+static void Mat4_Quat(double r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -404,7 +404,7 @@ void CCamera::SetGL_Camera(int win_w, int win_h)
     }
     else if( camera_rot_mode == CAMERA_ROT_TBALL ){
       double Rview[16];
-      RotTransAffineMatQuaternion(Rview,Quat_tball);
+      Mat4_Quat(Rview,Quat_tball);
       ::glMultMatrixd(Rview);
     }
 }

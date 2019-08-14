@@ -109,43 +109,38 @@ static void CalcInvMat(double* a, const int n, int& info )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBone_RigMsh::Draw
+void CRigBone::Draw
 (bool is_selected,
  int ielem_selected,
- const std::vector<CBone_RigMsh>& aBone,
- double bone_rad) const
+ const std::vector<CRigBone>& aBone,
+ double rad_bone_sphere,
+ double rad_rot_hndlr) const
 {
   { // draw point
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
     const CVector3 pos = this->Pos();
-    DrawSphereAt(32, 32, bone_rad, pos.x,pos.y,pos.z);
+    DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
   }
   if(is_selected){
-//    const CVector3 p0(pos);
-//    DrawHandlerRotation(p0, quat, 15, ielem_selected);
+    DrawHandlerRotation_Mat4(Mat, rad_rot_hndlr, ielem_selected);
     if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
       const CVector3 pp(aBone[ibone_parent].Pos());
-//      double len = (p0-pp).Length();
-//      drawCircle((p0-pp).Normalize(), p0, len*1.5);
     }
     else{
     }
   }
 }
 
-int CBone_RigMsh::PickHandler
+int CRigBone::PickHandler
 (const CVector3& org,
  const CVector3& dir,
  double rad_handlr,
  double tol) const
 {
-//  const CVector3 p0(pos);
-  /*
-  return PickHandlerRotation(org,dir,
-                             p0, quat, rad_handlr,
-                             tol);
-   */
+  return PickHandlerRotation_Mat4(org,dir,
+                                  Mat, rad_handlr,
+                                  tol);
   return -1;
 }
 
@@ -182,24 +177,26 @@ void CBone_RigMsh::Affine(const double A[16])
 // from here std::vector<CBone_RigMsh>
 
 void DrawBone
-(const std::vector<CBone_RigMsh>& aBone,
+(const std::vector<CRigBone>& aBone,
  int ibone_selected,
  int ielem_selected,
- double bone_rad)
+ double rad_bone_sphere,
+ double rad_rot_hndlr)
 {
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
   ::glPointSize(3);
   for( int iskel=0;iskel<(int)aBone.size();++iskel){
-    const CBone_RigMsh& bone = aBone[iskel];
-    bone.Draw((iskel==ibone_selected),ielem_selected,aBone,bone_rad);
+    const CRigBone& bone = aBone[iskel];
+    bone.Draw((iskel==ibone_selected),ielem_selected,aBone,
+              rad_bone_sphere,rad_rot_hndlr);
   }
   // draw edges whilte
   for( int ibone=0;ibone<(int)aBone.size();++ibone){
-    const CBone_RigMsh& bone = aBone[ibone];
+    const CRigBone& bone = aBone[ibone];
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
-    const CBone_RigMsh& bone_p = aBone[ibone_p];
+    const CRigBone& bone_p = aBone[ibone_p];
     bool is_selected_p = (ibone_p == ibone_selected);
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
     else{              ::glColor3d(0.0,0.0,0.0); }
@@ -211,9 +208,9 @@ void DrawBone
 }
 
 
-void ReadBVH
-(std::vector<CBone_RigMsh>& aBone,
- std::vector<CChannel_RotTransBone_BVH>& aChannelRotTransBone,
+void Read_BioVisionHierarchy
+(std::vector<CRigBone>& aBone,
+ std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  int& nframe,
  std::vector<double>& aValueRotTransBone,
  const std::string& path_bvh)
@@ -240,7 +237,7 @@ void ReadBVH
     }
     else if( aToken[0] == "ROOT" ){
       assert(aBone.size()==0);
-      CBone_RigMsh br;
+      CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
@@ -280,26 +277,26 @@ void ReadBVH
       const int ib = aBone.size()-1;
       for(int ich=0;ich<nch;++ich){
         const std::string& type_ch = aToken[ich+2];
-        if(      type_ch == "Xposition" ){ aChannelRotTransBone.push_back( CChannel_RotTransBone_BVH(ib,0,false) ); }
-        else if( type_ch == "Yposition" ){ aChannelRotTransBone.push_back( CChannel_RotTransBone_BVH(ib,1,false) ); }
-        else if( type_ch == "Zposition" ){ aChannelRotTransBone.push_back( CChannel_RotTransBone_BVH(ib,2,false) ); }
-        else if( type_ch == "Xrotation" ){ aChannelRotTransBone.push_back( CChannel_RotTransBone_BVH(ib,0,true) ); }
-        else if( type_ch == "Yrotation" ){ aChannelRotTransBone.push_back( CChannel_RotTransBone_BVH(ib,1,true) ); }
-        else if( type_ch == "Zrotation" ){ aChannelRotTransBone.push_back( CChannel_RotTransBone_BVH(ib,2,true) ); }
+        if(      type_ch == "Xposition" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,0,false) ); }
+        else if( type_ch == "Yposition" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,1,false) ); }
+        else if( type_ch == "Zposition" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,2,false) ); }
+        else if( type_ch == "Xrotation" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,0,true) ); }
+        else if( type_ch == "Yrotation" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,1,true) ); }
+        else if( type_ch == "Zrotation" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,2,true) ); }
         else{
           std::cout << "ERROR-->undefiend type" << std::endl;
         }
       }
     }
     else if( aToken[0] == "JOINT" ){
-      CBone_RigMsh br;
+      CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
     }
     else if( aToken[0] == "End" ){
       assert(aToken[1] == "Site");
-      CBone_RigMsh br;
+      CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
@@ -336,7 +333,7 @@ void ReadBVH
   }
   ///////
   for(int ibone=0;ibone<aBone.size();++ibone){
-    CBone_RigMsh& bone = aBone[ibone];
+    CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
     bone.rot[0] = 1.0;
     bone.rot[1] = 0.0;
@@ -346,21 +343,21 @@ void ReadBVH
     bone.trans[1] = 0.0;
     bone.trans[2] = 0.0;
     if( bone.ibone_parent != -1 ){
-      const CBone_RigMsh& bone_p = aBone[bone.ibone_parent];
+      const CRigBone& bone_p = aBone[bone.ibone_parent];
       bone.trans[0] = (-bone.invBindMat[ 3])-(-bone_p.invBindMat[ 3]);
       bone.trans[1] = (-bone.invBindMat[ 7])-(-bone_p.invBindMat[ 7]);
       bone.trans[2] = (-bone.invBindMat[11])-(-bone_p.invBindMat[11]);
     }
   }
   for(unsigned int ib=0;ib<aBone.size();++ib){
-    CBone_RigMsh& bone = aBone[ib];
+    CRigBone& bone = aBone[ib];
     for(int i=0;i<16;++i){ bone.Mat[i] = bone.invBindMat[i]; }
     int info; CalcInvMat(bone.Mat, 4, info);
   }
 }
 
 void UpdateBoneRotTrans
-(std::vector<CBone_RigMsh>& aBone)
+(std::vector<CRigBone>& aBone)
 {
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
@@ -381,13 +378,13 @@ void UpdateBoneRotTrans
   }
 }
 
-void SetRotTransBVH
-(std::vector<CBone_RigMsh>& aBone,
- const std::vector<CChannel_RotTransBone_BVH>& aChannelRotTransBone,
+void SetPose_BioVisionHierarchy
+(std::vector<CRigBone>& aBone,
+ const std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  const double *aVal)
 {
   for(unsigned int ib=0;ib<aBone.size();++ib){
-    CBone_RigMsh& bone = aBone[ib];
+    CRigBone& bone = aBone[ib];
     bone.rot[0] = 1.0;
     bone.rot[1] = 0.0;
     bone.rot[2] = 0.0;
@@ -405,11 +402,11 @@ void SetRotTransBVH
       aBone[ibone].trans[iaxis] = val;
     }
     else{
-      const double ar = -val*M_PI/180.0;
+      const double ar = val*M_PI/180.0;
       double v0[3] = {0,0,0};
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
-      double qtmp[4]; QuatMult(qtmp, dq, aBone[ibone].rot);
+      double qtmp[4]; QuatQuat(qtmp, aBone[ibone].rot, dq);
       QuatCopy(aBone[ibone].rot,qtmp);
     }
   }
@@ -419,14 +416,14 @@ void SetRotTransBVH
 void PickBone
 (int& ibone_selected,
  int& ielem_selected,
- const std::vector<CBone_RigMsh>& aBone,
+ const std::vector<CRigBone>& aBone,
  const CVector3& src,
  const CVector3& dir,
  double rad_hndlr,
  double tol)
 {
   if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
-    const CBone_RigMsh& bone = aBone[ibone_selected];
+    const CRigBone& bone = aBone[ibone_selected];
     ielem_selected = bone.PickHandler(src,dir,rad_hndlr,tol);
   }
   if( ielem_selected == -1 ){
@@ -654,7 +651,7 @@ void CSkin_RigMsh::SetBoneHierarchy(const std::vector< std::pair<std::string,std
 
 void CSkin_RigMsh::SetSkeleton
 (std::vector<double>& aXYZ,
- const std::vector<CBone_RigMsh>& aGBone,
+ const std::vector<CRigBone>& aGBone,
  const std::vector<double>& aXYZ_ini)
 {
   assert(aXYZ.size()==aXYZ_ini.size());
@@ -801,7 +798,7 @@ void CRigMsh::Draw(const CTexManager& tex_manager) const{
   
   if( is_draw_bone ){
     glDisable(GL_DEPTH_TEST);
-    DrawBone(aBone,ibone_selected,ielem_selected,draw_rep_length*0.005);
+    DrawBone(aBone,ibone_selected,ielem_selected,draw_rep_length*0.005,1);
   }
   glEnable(GL_DEPTH_TEST);
 }
@@ -813,8 +810,8 @@ void CRigMsh::Drag(double spx, double spy, double dsx, double dsy)
   CVector2 sp0(spx,spy);
   CVector2 sp1(spx+dsx, spy+dsy);
   if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
-    CBone_RigMsh& bone = aBone[ibone_selected];
-    bool is_updated = DragHandlerRot(bone.rot,
+    CRigBone& bone = aBone[ibone_selected];
+    bool is_updated = DragHandlerRot_PosQuat(bone.rot,
                                      ielem_selected, sp0, sp1, bone.Pos(),
                                      mMV, mPj);
     if( is_updated ){
@@ -847,7 +844,7 @@ void CRigMsh::Pick(double spx, double spy)
 //  std::cout << ibone_selected << " " << ielem_selected << std::endl;
 }
 
-void CMesh_RigMsh::SetSleketon(const std::vector<CBone_RigMsh>& aGBone){
+void CMesh_RigMsh::SetSleketon(const std::vector<CRigBone>& aGBone){
   if( iskin_active < 0 || iskin_active >= (int)aSkin.size() ) return;
   CSkin_RigMsh& skin = aSkin[iskin_active];
   skin.SetSkeleton(aXYZ,aGBone,aXYZ_ini);

@@ -276,6 +276,15 @@ void MatVec3(double y[3], const double m[9], const double x[3]){
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
 
+void Mat4Vec3
+(double vo[3],
+ const double M[16], const double vi[3])
+{
+  vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
+  vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
+  vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -370,13 +379,23 @@ std::istream &operator>>(std::istream &input, std::vector<CVector3>& aV){
   return input;
 }
 
-CVector3 MatVec(double mat[9], const CVector3& v){
+CVector3 Mat3Vec(const double mat[9], const CVector3& v){
   CVector3 u;
   u.x = mat[0]*v.x + mat[1]*v.y + mat[2]*v.z;
   u.y = mat[3]*v.x + mat[4]*v.y + mat[5]*v.z;
   u.z = mat[6]*v.x + mat[7]*v.y + mat[8]*v.z;
   return u;
 }
+
+
+CVector3 Mat4Vec(const double mat[16], const CVector3& v){
+  CVector3 u;
+  u.x = mat[0]*v.x + mat[1]*v.y + mat[ 2]*v.z;
+  u.y = mat[4]*v.x + mat[5]*v.y + mat[ 6]*v.z;
+  u.z = mat[8]*v.x + mat[9]*v.y + mat[10]*v.z;
+  return u;
+}
+
 
 ////////////////////////////////////////////
 
@@ -998,7 +1017,7 @@ void iteration_barycentricCoord_Origin_Solid
   const double czz = dpdr0.z*dpdr0.z + dpdr1.z*dpdr1.z + dpdr2.z*dpdr2.z;
   double C[9] = {cxx,cxy,cxz, cxy,cyy,cyz, cxz,cyz,czz};
   double Cinv[9]; InverseMat3(Cinv, C);
-  const CVector3 d = damp*MatVec(Cinv,q);
+  const CVector3 d = damp*Mat3Vec(Cinv,q);
   r0 -= dpdr0*d;
   r1 -= dpdr1*d;
   r2 -= dpdr2*d;
@@ -1466,7 +1485,7 @@ CVector3 solve_GlAffineMatrix(const float* m,
     m[0*4+1],m[1*4+1],m[2*4+1],
     m[0*4+2],m[1*4+2],m[2*4+2] };
   double Minv[9];  InverseMat3(Minv, M);
-  return MatVec(Minv,v);
+  return Mat3Vec(Minv,v);
 //  CMatrix3 Minv = M.Inverse();  
 //  return Minv*v;
 }
@@ -1479,7 +1498,7 @@ CVector3 solve_GlAffineMatrixDirection(const float* m,
     m[0*4+1],m[1*4+1],m[2*4+1],
     m[0*4+2],m[1*4+2],m[2*4+2] };
   double Minv[9];  InverseMat3(Minv, M);
-  return MatVec(Minv,v);
+  return Mat3Vec(Minv,v);
   /*
   CMatrix3 M(m[0*4+0],m[1*4+0],m[2*4+0],
              m[0*4+1],m[1*4+1],m[2*4+1],

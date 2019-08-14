@@ -21,8 +21,8 @@
 #include "delfem2/rigmesh.h"
 
 CGlutWindowManager window;
-std::vector<CBone_RigMsh> aBone;
-std::vector<CChannel_RotTransBone_BVH> aChannelRotTransBone;
+std::vector<CRigBone> aBone;
+std::vector<CChannel_BioVisionHierarchy> aChannelRotTransBone;
 int nframe = 0;
 std::vector<double> aValRotTransBone;
 
@@ -30,6 +30,8 @@ int iframe;
 int ibone_selected = -1;
 int ielem_bone_selected = -1;
 bool is_animation = false;
+double rad_bone_sphere = 0.1;
+double rad_rot_hndlr = 1.0;
 
 void myGlutDisplay(void)
 {
@@ -45,7 +47,9 @@ void myGlutDisplay(void)
   
   DrawAxis(10);
   
-  DrawBone(aBone, ibone_selected, ielem_bone_selected, 0.1);
+  DrawBone(aBone,
+           ibone_selected, ielem_bone_selected,
+           rad_bone_sphere, rad_rot_hndlr);
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -57,7 +61,7 @@ void myGlutIdle()
 {
   if( is_animation ){
     const int nch = aChannelRotTransBone.size();
-    SetRotTransBVH(aBone,aChannelRotTransBone,aValRotTransBone.data()+iframe*nch);
+    SetPose_BioVisionHierarchy(aBone,aChannelRotTransBone,aValRotTransBone.data()+iframe*nch);
     iframe = (iframe+1)%nframe;
   }
   ::glutPostRedisplay();
@@ -87,12 +91,10 @@ void myGlutMotion( int x, int y )
     float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
     CVector2 sp1(window.mouse_x, window.mouse_y);
     CVector2 sp0(window.mouse_x-window.dx, window.mouse_y-window.dy);
-    CBone_RigMsh& bone = aBone[ibone_selected];
-    /*
-    DragHandlerRot(bone.quat_joint,
-                   ielem_bone_selected, sp0, sp1, bone.pos,
-                   mMV, mPj);
-     */
+    CRigBone& bone = aBone[ibone_selected];
+    DragHandlerRot_Mat4(bone.rot,
+                        ielem_bone_selected, sp0, sp1, bone.Mat,
+                        mMV, mPj);
     UpdateBoneRotTrans(aBone);
   }
   ::glutPostRedisplay();
@@ -109,12 +111,11 @@ void myGlutMouse(int button, int state, int x, int y)
   CVector3 dir = screenDepthDirection(src,mMV,mPj);
   if( state == GLUT_DOWN ){
     const double wh = 1.0/mPj[5];
-    std::cout << wh << std::endl;
     PickBone(ibone_selected, ielem_bone_selected,
              aBone,
              src,dir,
-             15,
-             wh*0.04);
+             rad_rot_hndlr,
+             wh*0.02);
   }
   else{
   }
@@ -166,7 +167,7 @@ int main(int argc,char* argv[])
   
   std::string path_bvh = std::string(PATH_INPUT_DIR)+"/walk.bvh";
   std::cout << "path:" << path_bvh << std::endl;
-  ReadBVH(aBone,aChannelRotTransBone,nframe,aValRotTransBone,
+  Read_BioVisionHierarchy(aBone,aChannelRotTransBone,nframe,aValRotTransBone,
           path_bvh);
   UpdateBoneRotTrans(aBone);
   std::cout << "nBone:" << aBone.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;

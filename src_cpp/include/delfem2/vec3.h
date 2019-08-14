@@ -41,6 +41,8 @@ void MatVec3(double y[3],
 void VecMat3D(const double x[3], const double m[9],  double y[3]);
 void GetRotMatrix_Rodrigues3D(double rot[9],
                               const double n[3], double theta);
+void Mat4Vec3(double vo[3],
+              const double M[16], const double vi[3]);
 
 /////////////////////////////////////////////////////////
 class CVector3;
@@ -152,7 +154,8 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // rule about naming, the method starts "Set" change it self (not const)
 
-CVector3 MatVec(double M[9], const CVector3& v);
+CVector3 Mat3Vec(const double M[ 9], const CVector3& v);
+CVector3 Mat4Vec(const double M[16], const CVector3& v);
 CVector3 screenProjection(const CVector3& v,
                           const float* mMV, const float* mPj);
 // opposite to the screen normal

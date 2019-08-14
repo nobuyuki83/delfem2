@@ -19,10 +19,10 @@
 
 class CVector3;
 
-class CBone_RigMsh
+class CRigBone
 {
 public:
-    CBone_RigMsh(){
+    CRigBone(){
       for(int i=0;i<16;++i){ invBindMat[i]=0.0; }
       invBindMat[ 0] = 1.0;
       invBindMat[ 5] = 1.0;
@@ -41,10 +41,11 @@ public:
     }
   void Draw(bool is_selected,
             int ielem_select,
-            const std::vector<CBone_RigMsh>& aBone,
-            double len) const;
+            const std::vector<CRigBone>& aBone,
+            double rad_bone_sphere,
+            double rad_rot_hndlr) const;
   int PickHandler(const CVector3& org, const CVector3& dir,
-                  double rad_handlr,
+                  double rad_rot_handlr,
                   double tol) const;
   CVector3 Pos() const {
     return CVector3(Mat[3],Mat[7],Mat[11]);
@@ -57,16 +58,35 @@ public:
   double invBindMat[16];
   double Mat[16];
   //////
-  double rot[4]; // totatl rotation at this bone (quaternion w,x,y,z)
-  double trans[3]; // translation from
+  double rot[4]; // rotation of the joint from parent joint (quaternion w,x,y,z)
+  double trans[3]; // position of the joint position from parent joint
   double scale; // scale
 };
 
 
-class CChannel_RotTransBone_BVH
+void DrawBone(const std::vector<CRigBone>& aBone,
+              int ibone_selected,
+              int ielem_selected,
+              double rad_bone_sphere,
+              double rad_rot_hndlr);
+
+void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
+
+void PickBone(int& ibone_selected,
+              int& ielem_selected,
+              const std::vector<CRigBone>& aBone,
+              const CVector3& src,
+              const CVector3& dir,
+              double rad_hndlr,
+              double tol);
+
+
+////////////////////////////////////////////////////////////////////////
+
+class CChannel_BioVisionHierarchy
 {
 public:
-  CChannel_RotTransBone_BVH(int ib, int ia, bool br){
+  CChannel_BioVisionHierarchy(int ib, int ia, bool br){
     this->ibone = ib;
     this->iaxis = ia;
     this->isrot = br;
@@ -77,30 +97,17 @@ public:
   bool isrot;
 };
 
-void DrawBone(const std::vector<CBone_RigMsh>& aBone,
-              int ibone_selected,
-              int ielem_selected,
-              double bone_rad);
+void Read_BioVisionHierarchy(std::vector<CRigBone>& aBone,
+                             std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
+                             int& nframe,
+                             std::vector<double>& aChannelValue,
+                             const std::string& path_bvh);
 
-void ReadBVH(std::vector<CBone_RigMsh>& aBone,
-             std::vector<CChannel_RotTransBone_BVH>& aChannelRotTransBone,
-             int& nframe,
-             std::vector<double>& aRotTransBone,
-             const std::string& path_bvh);
+void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
+                                const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
+                                const double *aVal);
 
-void SetRotTransBVH(std::vector<CBone_RigMsh>& aBone,
-                    const std::vector<CChannel_RotTransBone_BVH>& aChannelRotTransBone,
-                    const double *aVal);
 
-void UpdateBoneRotTrans(std::vector<CBone_RigMsh>& aBone);
-
-void PickBone(int& ibone_selected,
-              int& ielem_selected,
-              const std::vector<CBone_RigMsh>& aBone,
-              const CVector3& src,
-              const CVector3& dir,
-              double rad_hndlr,
-              double tol);
 
 /*
 class CBoneGoal
@@ -182,7 +189,7 @@ public:
   }
   void Finalize(const int npoint);
   void SetSkeleton(std::vector<double>& aXYZ,
-                   const std::vector<CBone_RigMsh>& aSkeleton,
+                   const std::vector<CRigBone>& aSkeleton,
                    const std::vector<double>& aXYZ_ini);
 public:
   std::vector<CBoneWeight_RigMsh> aBone;
@@ -258,7 +265,7 @@ public:
     const CSkin_RigMsh& skin = aSkin[iskin_active];
     skin.computeWeight(aWeight,name_bone_active,aXYZ_ini.size()/3);
   }
-  void SetSleketon(const std::vector<CBone_RigMsh>& aSkeleton); // initialize aWeight and aXYZ
+  void SetSleketon(const std::vector<CRigBone>& aSkeleton); // initialize aWeight and aXYZ
   void Affine(const double a[16]);
 public:
   std::vector<double> aXYZ_ini;
@@ -347,7 +354,7 @@ public:
   double draw_rep_length; // diagonal length of the bounding box，set in the Initialize()
   bool is_draw_bone;
   std::vector<CMesh_RigMsh> aMesh;
-  std::vector<CBone_RigMsh> aBone;
+  std::vector<CRigBone> aBone;
   ////
   std::vector<double> color_bone_weight;
   std::vector<double> color_bone_weight_back;

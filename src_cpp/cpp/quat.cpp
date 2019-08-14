@@ -16,7 +16,7 @@
 
 
 // multiply two quaternion
-void QuatMult(double r[], const double p[], const double q[])
+void QuatQuat(double r[], const double p[], const double q[])
 {
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
   r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
@@ -76,7 +76,7 @@ void QuatCopy(double r[], const double p[])
   r[3] = p[3];
 }
 
-void QuatGetAffineMatrix(double r[], const double q[])
+void Mat4_Quat(double r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -101,7 +101,8 @@ void QuatGetAffineMatrix(double r[], const double q[])
   r[15] = 1.0;
 }
 
-void QuatGetAffineMatrixTrans(double r[], const double q[])
+// return transpose matrix of Mat4_Quat
+void Mat4_QuatConj(double r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -142,7 +143,7 @@ void Mat4_ScaleRotTrans
  const double quat[4],
  const double trans[3])
 {
-  QuatGetAffineMatrixTrans(m, quat);
+  Mat4_Quat(m, quat);
   for(int i=0;i<3;++i){
     for(int j=0;j<3;++j){
       m[i*4+j] *= scale;
@@ -161,6 +162,11 @@ void MatMat4(double m01[16],
       m01[i*4+j] = m0[i*4+0]*m1[0*4+j] + m0[i*4+1]*m1[1*4+j] + m0[i*4+2]*m1[2*4+j] + m0[i*4+3]*m1[3*4+j];
     }
   }
+}
+
+void Copy_Mat4(double m1[16], const double m0[16])
+{
+  for(int i=0;i<16;++i){ m1[i] = m0[i]; }
 }
 
 
