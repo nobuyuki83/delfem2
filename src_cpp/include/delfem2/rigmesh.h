@@ -83,6 +83,15 @@ void PickBone(int& ibone_selected,
 
 ////////////////////////////////////////////////////////////////////////
 
+void UpdateRigSkin(std::vector<double>& aXYZ,
+                   const std::vector<double>& aXYZ0,
+                   const std::vector<unsigned int>& aTri,
+                   const std::vector<CRigBone>& aBone,
+                   const std::vector<double>& aRigWeight,
+                   const std::vector<unsigned int>& aRigJoint);
+
+////////////////////////////////////////////////////////////////////////
+
 class CChannel_BioVisionHierarchy
 {
 public:

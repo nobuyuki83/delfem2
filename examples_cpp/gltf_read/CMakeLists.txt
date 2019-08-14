@@ -12,6 +12,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_EXT         "../../src_cpp/external")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -37,7 +38,11 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/gl_funcs.h  ${DELFEM2_SRC}/gl_funcs.cpp         
   ${DELFEM2_INC}/gl_color.h  ${DELFEM2_SRC}/gl_color.cpp        
   ${DELFEM2_INC}/gl_v23q.h   ${DELFEM2_SRC}/gl_v23q.cpp        
-  ${DELFEM2_INC}/gl_tex.h    ${DELFEM2_SRC}/gl_tex.cpp           
+  ${DELFEM2_INC}/gl_tex.h    ${DELFEM2_SRC}/gl_tex.cpp
+
+  ${DELFEM2_EXT}/io_gltf.h
+  ${DELFEM2_EXT}/io_gltf.cpp
+
   main.cpp
 )
 
