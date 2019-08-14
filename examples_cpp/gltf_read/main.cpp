@@ -11,6 +11,7 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
+#include "delfem2/mat3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/funcs.h"
 #include "delfem2/quat.h"
@@ -332,16 +333,51 @@ void GetMeshInfo
 //////////////////////////////////////////////////////////////////////
 
 CGlutWindowManager window;
-std::vector<double> aXYZ;
+std::vector<double> aXYZ0;
 std::vector<unsigned int> aTri;
+std::vector<double> aRigWeight;
+std::vector<unsigned int> aRigJoint;
+////
+std::vector<double> aXYZ;
+std::vector<CRigBone> aBone;
+int ibone_selected = -1;
+int ielem_bone_selected = -1;
+double rad_bone_sphere = 0.01;
+double rad_rot_hndlr = 1.0;
 
 bool is_animation = false;
 
-std::vector<CRigBone> aBone;
-int ibone_selected;
-int ielem_bone_selected;
-double rad_bone_sphere = 0.01;
-double rad_rot_hndlr = 1.0;
+void UpdateRigSkin()
+{
+  const int np = aXYZ0.size()/3;
+  assert(aRigWeight.size()==np*4);
+  assert(aRigJoint.size()==np*4);
+  aXYZ.resize(aXYZ0.size());
+  for(int ip=0;ip<np;++ip){
+    double pos0[4] = {aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2],1.0};
+    double pos1[3] = {0,0,0};
+    double sum_w = 0.0;
+    for(int iij=0;iij<4;++iij){
+      double w = aRigWeight[ip*4+iij];
+      if( w < 1.0e-30 ){ continue; }
+      int ij = aRigJoint[ip*4+iij];
+      sum_w += w;
+      assert (ij>=0 && ij<aBone.size());
+      double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
+      double pos0b[4]; MatVec4(pos0b,aBone[ij].Mat,pos0a);
+      pos1[0] += w*pos0b[0];
+      pos1[1] += w*pos0b[1];
+      pos1[2] += w*pos0b[2];
+    }
+    assert( fabs(sum_w)>1.0e-10 );
+    pos1[0] /= sum_w;
+    pos1[1] /= sum_w;
+    pos1[2] /= sum_w;
+    aXYZ[ip*3+0] = pos1[0];
+    aXYZ[ip*3+1] = pos1[1];
+    aXYZ[ip*3+2] = pos1[2];
+  }
+}
 
 void myGlutDisplay(void)
 {
@@ -365,7 +401,9 @@ void myGlutDisplay(void)
   
   
   ::glDisable(GL_DEPTH_TEST);
-  DrawBone(aBone, ibone_selected, ielem_bone_selected, rad_bone_sphere, rad_rot_hndlr);
+  DrawBone(aBone,
+           ibone_selected, ielem_bone_selected,
+           rad_bone_sphere, rad_rot_hndlr);
   ::glEnable(GL_DEPTH_TEST);
   
   ::glColor3d(0,0,0);
@@ -410,6 +448,7 @@ void myGlutMotion( int x, int y )
                         ielem_bone_selected, sp0, sp1, bone.Mat,
                         mMV, mPj);
     UpdateBoneRotTrans(aBone);
+    UpdateRigSkin();
   }
   ////
   ::glutPostRedisplay();
@@ -431,10 +470,8 @@ void myGlutMouse(int button, int state, int x, int y)
              aBone,
              src,dir,
              rad_rot_hndlr,
-             wh*0.1);
+             wh*0.05);
     std::cout << ibone_selected << std::endl;
-  }
-  else{
   }
   /////
   ::glutPostRedisplay();
@@ -518,9 +555,9 @@ int main(int argc,char* argv[])
     
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
 //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
-    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
+//    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Monster.glb";
-//    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
+    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
   
     bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, path_gltf); // for binary glTF(.glb)
     if (!warn.empty()) { printf("Warn: %s\n", warn.c_str()); }
@@ -529,9 +566,7 @@ int main(int argc,char* argv[])
     
     Print(model);
     ////
-    std::vector<double> aRigWeight;
-    std::vector<unsigned int> aRigJoint;
-    GetMeshInfo(aXYZ, aTri, aRigWeight, aRigJoint,
+    GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint,
                 model, 0, 0);
     if( !model.skins.empty() ){
       aBone.resize( model.skins[0].joints.size() );
@@ -556,8 +591,8 @@ int main(int argc,char* argv[])
       }
     }
     UpdateBoneRotTrans(aBone);
+    UpdateRigSkin();
   }
-    
   
   window.camera.view_height = 2.0;
   window.camera.camera_rot_mode = CAMERA_ROT_TBALL;
