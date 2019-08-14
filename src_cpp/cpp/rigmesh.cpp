@@ -141,7 +141,6 @@ int CRigBone::PickHandler
   return PickHandlerRotation_Mat4(org,dir,
                                   Mat, rad_handlr,
                                   tol);
-  return -1;
 }
 
 
@@ -425,6 +424,9 @@ void PickBone
   if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
     const CRigBone& bone = aBone[ibone_selected];
     ielem_selected = bone.PickHandler(src,dir,rad_hndlr,tol);
+  }
+  else{
+    ielem_selected = -1;
   }
   if( ielem_selected == -1 ){
     ibone_selected = -1;

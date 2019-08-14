@@ -797,7 +797,6 @@ int PickHandlerRotation_Mat4
   double ly = (py-qy).Length();
   double lz = (pz-qz).Length();
   double dm = (fabs(dx)+fabs(dy)+fabs(dz))*1000;
-  std::cout << lx << " " << ly << " " << lz << " " << dm << std::endl;
   if( lx>tol ){ dx = dm; }
   if( ly>tol ){ dy = dm; }
   if( lz>tol ){ dz = dm; }
