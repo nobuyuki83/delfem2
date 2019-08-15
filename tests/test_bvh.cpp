@@ -24,7 +24,7 @@
 #define M_PI 3.14159265359
 #endif
 
-TEST(bvh,inclusion)
+TEST(bvh,inclusion_sphere)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
@@ -56,7 +56,39 @@ TEST(bvh,inclusion)
   }
 }
 
-TEST(bvh,nearest_local)
+TEST(bvh,inclusion_aabb)
+{
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  { // make a unit sphere
+    MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
+    Rotate(aXYZ, 0.2, 0.3, 0.4);
+  }
+  //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
+  CBVH_MeshTri3D<CBV3D_AABB> bvh;
+  bvh.Init(aXYZ, aTri, 0.03);
+  for(int itr=0;itr<10000;++itr){
+    CVector3 p0;
+    {
+      p0.x = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.y = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.z = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
+    }
+    for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
+      const CBV3D_AABB& bv = bvh.aBB_BVH[ibvh];
+      const CNodeBVH& node = bvh.aNodeBVH[ibvh];
+      bool is_intersect = bv.isInclude_Point(p0.x, p0.y, p0.z);
+      if( !is_intersect && node.ichild[1] != -1 ){ // branch
+        const int ichild0 = node.ichild[0];
+        const int ichild1 = node.ichild[1];
+        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x, p0.y, p0.z) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x, p0.y, p0.z) );
+      }
+    }
+  }
+}
+
+TEST(bvh,nearestinc_sphere)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
@@ -80,7 +112,10 @@ TEST(bvh,nearest_local)
       if( itr % 2 == 0 ){ p0 *= 1.02; } // outside included in bvh
       else{               p0 *= 0.98; } // inside in included in bvh
     }
-    CPointElemSurf pes1 = bvh.Nearest_Point_IncludedInBVH(p0,aXYZ,aTri);
+    CPointElemSurf pes1;
+    double dist1 = bvh.Nearest_Point_IncludedInBVH(pes1,p0,0.1,aXYZ,aTri);
+    EXPECT_LE( dist1, 0.1 );
+    EXPECT_GE( dist1, 0.0 );
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
     CVector3 q1 = pes1.Pos_Tri(aXYZ, aTri);
     {
@@ -93,9 +128,9 @@ TEST(bvh,nearest_local)
     //////
     {
       CPointElemSurf pes2;
-      double dist_min = -1;
-      BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_min, pes2,
-                                               p0.x, p0.y, p0.z,
+      double dist_tri = -1, dist_bv = 0.1;
+      BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri, dist_bv, pes2,
+                                               p0.x, p0.y, p0.z, 0.1,
                                                aXYZ, aTri,
                                                bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       CVector3 q2 = pes2.Pos_Tri(aXYZ, aTri);
@@ -130,7 +165,6 @@ TEST(bvh,nearest_range) // find global nearest from range
       bool is_max = false;
       for(int it=0;it<aTri.size()/3;++it){
         CBV3D_Sphere bb;
-        bb.is_active = false;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[it*3+inoel];
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
@@ -155,7 +189,6 @@ TEST(bvh,nearest_range) // find global nearest from range
       }
       for(int itri=0;itri<aTri.size()/3;++itri){
         CBV3D_Sphere bb;
-        bb.is_active = false;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[itri*3+inoel];
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
@@ -280,7 +313,6 @@ TEST(bvh,lineintersection)
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
       CBV3D_Sphere bb;
-      bb.is_active = false;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
         bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 1.0e-5);
@@ -339,7 +371,6 @@ TEST(bvh,rayintersection)
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
       CBV3D_Sphere bb;
-      bb.is_active = false;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
         bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 1.0e-5);

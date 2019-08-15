@@ -183,7 +183,7 @@ public:
     else{                 z0 = z_max; }
     return sqrt( (x0-x)*(x0-x) + (y0-y)*(y0-y) + (z0-z)*(z0-z) );
   }
-  bool IsInside(double x, double y, double z) const
+  bool isInclude_Point(double x, double y, double z) const
   {
    if( !is_active ) return false;
    if(   x >= x_min && x <= x_max
@@ -228,7 +228,9 @@ public:
                        std::to_string(z_min)+" "+std::to_string(z_max));
   }
 public:
-	double x_min,x_max,  y_min,y_max,  z_min,z_max;
+  double x_min,x_max;
+  double y_min,y_max;
+  double z_min,z_max;
 	bool is_active;	//!< false if there is nothing inside
 };
 
@@ -237,17 +239,15 @@ public:
 class CBV3D_Sphere
 {
 public:
-  bool is_active;
   double cx,cy,cz,r;
 public:
   CBV3D_Sphere(){
-    is_active = false;
-    cx=cy=cz=r=0;
+    cx=cy=cz;
+    r = -1; // if r is negative this is not active yet
   }
   void AddPoint(double x,double y,double z, double R){
     assert( R >= 0 );
-    if( !is_active ){ // empty
-      is_active = true;
+    if( r < 0 ){ // empty
       cx=x; cy=y; cz=z; r=R;
       return;
     }
@@ -272,14 +272,11 @@ public:
   }
   bool IsIntersect(const CBV3D_Sphere& bb) const
   {
-    if( !is_active ) return false;
-    if( !bb.is_active ) return false;
     const double L = sqrt((bb.cx-cx)*(bb.cx-cx) + (bb.cy-cy)*(bb.cy-cy) + (bb.cz-cz)*(bb.cz-cz));
     if( L > bb.r + r ) return false;
     return true;
   }
   bool IsIntersectLine(const double src[3], const double dir[3]) const {
-    assert( is_active );
     double ratio = dir[0]*(cx-src[0]) + dir[1]*(cy-src[1]) + dir[2]*(cz-src[2]);
     ratio = ratio/(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
     const double px = src[0] + ratio*dir[0];
@@ -291,7 +288,6 @@ public:
     return false;
   }
   bool IsIntersectRay(const double src[3], const double dir[3]) const {
-    assert( is_active );
     const double L0 = sqrt((src[0]-cx)*(src[0]-cx) + (src[1]-cy)*(src[1]-cy) + (src[2]-cz)*(src[2]-cz));
     if( L0 <= r ){ return true; } // source included
     double ratio = dir[0]*(cx-src[0]) + dir[1]*(cy-src[1]) + dir[2]*(cz-src[2]);
@@ -307,19 +303,16 @@ public:
   }
   CBV3D_Sphere& operator+=(const CBV3D_Sphere& bb)
   {
-    if( !bb.is_active ) return *this;
     this->AddPoint(bb.cx,bb.cy,bb.cz, bb.r);
     return *this;
   }
   bool isInclude_Point(double x, double y, double z) const {
-    if( !is_active ){ return false; }
     const double L = (x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz);
     if( L < r*r ){ return true; }
     return false;
   }
   void Range_DistToPoint(double& min0, double& max0,
                       double x, double y, double z) const {
-    assert( is_active );
     const double L = sqrt((x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz));
     if( L < r ){
       min0 = 0;

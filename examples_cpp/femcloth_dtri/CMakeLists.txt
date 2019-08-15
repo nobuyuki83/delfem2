@@ -1,4 +1,4 @@
-project(dyntri2d_cloth)
+project(femcloth_dtri)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)

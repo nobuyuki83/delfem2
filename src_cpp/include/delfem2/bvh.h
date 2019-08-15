@@ -51,7 +51,6 @@ void BVH_BuildBVHGeometry
     const int ielem = ichild0;
     assert( ielem < (int)aElem.size()/nnoel );
     T& bb = aBB[ibvh];
-    bb.is_active = false;
     for(int inoel=0;inoel<nnoel;++inoel){
       const int ino0 = aElem[ielem*nnoel+inoel];
       bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], margin);
@@ -64,7 +63,6 @@ void BVH_BuildBVHGeometry
   BVH_BuildBVHGeometry(ichild0,margin, aXYZ,aElem,nnoel,aNodeBVH,aBB);
   BVH_BuildBVHGeometry(ichild1,margin, aXYZ,aElem,nnoel,aNodeBVH,aBB);
   T& bb = aBB[ibvh];
-  bb.is_active = false;
   bb  = aBB[ichild0];
   bb += aBB[ichild1];
   return;
@@ -195,7 +193,6 @@ void BVH_Range_DistToNearestPoint
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
-    assert( aBB[ibvh].is_active );
     if( max<0 ){
       max = max0;
       min = min0;
@@ -230,7 +227,6 @@ void BVH_GetIndElem_InsideRange
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
-    assert( aBB[ibvh].is_active );
     assert( ichild0 >= 0 && ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
@@ -256,7 +252,6 @@ void BVH_GetIndElem_IntersectRay
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
-    assert( aBB[ibvh].is_active );
     assert( ichild0 >= 0 && ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
@@ -282,7 +277,6 @@ void BVH_GetIndElem_IntersectLine
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
-    assert( aBB[ibvh].is_active );
     assert( ichild0 >= 0 && ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
