@@ -29,21 +29,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // multiply two quaternion
-static void QuatMult(double r[], const double p[], const double q[])
+static void QuatQuat(double r[], const double p[], const double q[])
 {
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
   r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
   r[2] = p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1];
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
-/*
-static void QuatSetIdentity(double q[]){
-  q[0] = 1;
-  q[1] = 0;
-  q[2] = 0;
-  q[3] = 0;
-}
- */
 
 // transform vector with quaternion
 inline void QuatVec(double vo[], const double q[], const double vi[])
@@ -81,6 +73,8 @@ inline void QuatConjVec(double vo[], const double q[], const double vi[])
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 
+
+
 // copy quaternion
 static void CopyQuat(double r[], const double p[])
 {
@@ -89,6 +83,8 @@ static void CopyQuat(double r[], const double p[])
   r[2] = p[2];
   r[3] = p[3];
 }
+
+
 
 static void Mat4_Quat(double r[], const double q[])
 {
@@ -426,7 +422,7 @@ void CCamera::Rot_Camera(double dx, double dy){
       double ar = a*0.5; // angle
       double dq[4] = { cos(ar), -dy*sin(ar)/a, dx*sin(ar)/a, 0.0 };
       if (a != 0.0) {
-        double qtmp[4]; QuatMult(qtmp, dq, Quat_tball);
+        double qtmp[4]; QuatQuat(qtmp, dq, Quat_tball);
         CopyQuat(Quat_tball,qtmp);
       }
     }

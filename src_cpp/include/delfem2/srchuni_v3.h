@@ -128,5 +128,17 @@ CPointElemSolid Nearest_Point_MeshTet3D(const CVector3& p,
                                         const std::vector<int>& aTet,
                                         const std::vector<int>& aTetSurRel);
 
+double SDFNormal_NearestPoint(CVector3& n0,
+                              const CVector3& p0,
+                              const CPointElemSurf& pes,
+                              const std::vector<double>& aXYZ,
+                              const std::vector<unsigned int>& aTri,
+                              const std::vector<double>& aNorm);
+
+double DistanceToTri(CPointElemSurf& pes,
+                     const CVector3& p,
+                     unsigned int itri0,
+                     const std::vector<double>& aXYZ,
+                     const std::vector<unsigned int>& aTri);
 
 #endif /* search_mesh_hpp */

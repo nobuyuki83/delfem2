@@ -528,3 +528,41 @@ void PBD_CdC_QuadBend
     dCdp[idim][3*3+idim] = K[3];
   }
 }
+
+
+void PBD_Seam
+(std::vector<double>& aXYZt,
+ std::vector<unsigned int>& aLine)
+{
+  for(unsigned int il=0;il<aLine.size()/2;++il){
+    int ip0 = aLine[il*2+0];
+    int ip1 = aLine[il*2+1];
+    const double p[2][3] = {
+      {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
+      {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
+    double d0 = Distance3D(p[0], p[1]);
+    double dLen = 0.01;
+    if( d0 > dLen ){
+      double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
+      double l01 = Length3D(n01);
+      double invl01 = 1.0/l01;
+      n01[0] *= invl01;
+      n01[1] *= invl01;
+      n01[2] *= invl01;
+      aXYZt[ip0*3+0] += n01[0]*dLen*0.5;
+      aXYZt[ip0*3+1] += n01[1]*dLen*0.5;
+      aXYZt[ip0*3+2] += n01[2]*dLen*0.5;
+      aXYZt[ip1*3+0] -= n01[0]*dLen*0.5;
+      aXYZt[ip1*3+1] -= n01[1]*dLen*0.5;
+      aXYZt[ip1*3+2] -= n01[2]*dLen*0.5;
+    }
+    else{
+      aXYZt[ip0*3+0] = (p[0][0]+p[1][0])*0.5;
+      aXYZt[ip0*3+1] = (p[0][1]+p[1][1])*0.5;
+      aXYZt[ip0*3+2] = (p[0][2]+p[1][2])*0.5;
+      aXYZt[ip1*3+0] = (p[0][0]+p[1][0])*0.5;
+      aXYZt[ip1*3+1] = (p[0][1]+p[1][1])*0.5;
+      aXYZt[ip1*3+2] = (p[0][2]+p[1][2])*0.5;
+    }
+  }
+}
