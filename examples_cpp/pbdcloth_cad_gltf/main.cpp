@@ -46,6 +46,7 @@ std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
+std::vector<CInfoNearest> aInfoNearest;
 
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
@@ -72,7 +73,7 @@ void StepTime()
   PBD_TriStrain(aXYZt, aETri, aVec2);
   PBD_Bend(aXYZt, aETri, aVec2);
   PBD_Seam(aXYZt, aLine);
-  Project_PointsIncludedInBVH_Outside(aXYZt,
+  Project_PointsIncludedInBVH_Outside(aXYZt,aInfoNearest,
                                       contact_clearance,bvh,
                                       aXYZ_Contact,aTri_Contact,aNorm_Contact);
   PBD_Post(aXYZ, aUVW,

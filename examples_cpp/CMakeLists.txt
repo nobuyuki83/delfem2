@@ -45,9 +45,10 @@ add_subdirectory(fem3d)
 add_subdirectory(fem25d_eigen)
 add_subdirectory(femcloth_internal)
 add_subdirectory(femcloth_selfcollision)
+add_subdirectory(femcloth_dtri)
 
 add_subdirectory(cadmsh2d)
-add_subdirectory(dyntri2d_cloth)
+
 
 add_subdirectory(selfcollision_bvh)
 
