@@ -1,4 +1,4 @@
-project(cloth_selfcollision)
+project(femcloth_selfcollision)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)

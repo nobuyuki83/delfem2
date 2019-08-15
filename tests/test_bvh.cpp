@@ -77,10 +77,10 @@ TEST(bvh,nearest_local)
       p0.y = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
       p0.z = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
       p0.SetNormalizedVector();
-      if( itr % 2 == 0 ){ p0 *= 1.02; } // outside
-      else{               p0 *= 0.98; } // inside
+      if( itr % 2 == 0 ){ p0 *= 1.02; } // outside included in bvh
+      else{               p0 *= 0.98; } // inside in included in bvh
     }
-    CPointElemSurf pes1 = bvh.NearestPoint_IncludedInBVH(p0,aXYZ,aTri);
+    CPointElemSurf pes1 = bvh.Nearest_Point_IncludedInBVH(p0,aXYZ,aTri);
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
     CVector3 q1 = pes1.Pos_Tri(aXYZ, aTri);
     {
@@ -90,6 +90,17 @@ TEST(bvh,nearest_local)
     }
     CVector3 n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
     EXPECT_EQ( n0*(p0-q1)>0, itr%2==0);
+    //////
+    {
+      CPointElemSurf pes2;
+      double dist_min = -1;
+      BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_min, pes2,
+                                               p0.x, p0.y, p0.z,
+                                               aXYZ, aTri,
+                                               bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+      CVector3 q2 = pes2.Pos_Tri(aXYZ, aTri);
+      EXPECT_LT(Distance(q2,q1),1.0e-10);
+    }
   }
 }
 

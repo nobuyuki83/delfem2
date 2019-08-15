@@ -20,6 +20,7 @@
 #include "delfem2/primitive.h"
 
 #include "delfem2/objfunc_v23.h"
+#include "delfem2/objfunc_v23dtri.h"
 #include "delfem2/v23m3q.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/cad2d.h"
@@ -30,28 +31,14 @@
 #include "delfem2/glut_funcs.h"
 
 
-static void FetchData
-(double* val_to,
- int nno, int ndim,
- const int* aIP,
- const double* val_from,
- int nstride)
-{
-  assert( nstride >= ndim );
-  for(int ino=0;ino<nno;++ino){
-    int ip = aIP[ino];
-    for(int idim=0;idim<ndim;++idim){
-      val_to[ino*ndim+idim] = val_from[ip*nstride+idim];
-    }
-  }
-}
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 
 std::vector<CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
 std::vector<ETri> aETri;
-std::vector<int> aLine;
+std::vector<unsigned int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
@@ -75,89 +62,12 @@ void StepTime()
 {
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
-  for(unsigned int it=0;it<aETri.size();++it){
-    const int aIP[3] = {
-      aETri[it].v[0],
-      aETri[it].v[1],
-      aETri[it].v[2]};
-    const double P[3][2] = {
-      {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
-      {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
-      {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
-    double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt.data(), 3);
-    double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
-    double m[3] = {1,1,1};
-    PBD_Update_Const3(aXYZt.data(), 3, 3, m, C, &dCdp[0][0], aIP);
-  }
-  for(unsigned int it=0;it<aETri.size();++it){
-    for(int ie=0;ie<3;++ie){
-      const int jt0 = aETri[it].s2[ie];
-      if( jt0 == -1 ){ continue; }
-      if( jt0 > it ){ continue; }
-      const int rt0 = aETri[it].r2[ie];
-      const int je0 = (6-rt0-ie)%3;
-      assert( aETri[jt0].s2[je0] == it);
-      const int aIP[4] = {
-        aETri[it].v[ie],
-        aETri[jt0].v[je0],
-        aETri[it].v[(ie+1)%3],
-        aETri[it].v[(ie+2)%3] };
-      const double P[4][3] = {
-        {aVec2[aIP[0]].x,aVec2[aIP[0]].y, 0.0},
-        {aVec2[aIP[1]].x,aVec2[aIP[1]].y, 0.0},
-        {aVec2[aIP[2]].x,aVec2[aIP[2]].y, 0.0},
-        {aVec2[aIP[3]].x,aVec2[aIP[3]].y, 0.0} };
-      double p[4][3]; FetchData(&p[0][0], 4, 3, aIP, aXYZt.data(), 3);
-      double C[3], dCdp[3][12];
-      PBD_CdC_QuadBend(C, dCdp,
-                       P, p);
-      double m[4] = {1,1,1,1};
-      PBD_Update_Const3(aXYZt.data(), 4,3, m, C, &dCdp[0][0], aIP);
-    }
-  }
-  for(unsigned int il=0;il<aLine.size()/2;++il){
-    int ip0 = aLine[il*2+0];
-    int ip1 = aLine[il*2+1];
-    const double p[2][3] = {
-      {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
-      {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
-    double d0 = Distance3D(p[0], p[1]);
-    double dLen = 0.02;
-    if( d0 > dLen ){
-      double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
-      double l01 = Length3D(n01);
-      double invl01 = 1.0/l01;
-      n01[0] *= invl01;
-      n01[1] *= invl01;
-      n01[2] *= invl01;
-      aXYZt[ip0*3+0] += n01[0]*dLen*0.5;
-      aXYZt[ip0*3+1] += n01[1]*dLen*0.5;
-      aXYZt[ip0*3+2] += n01[2]*dLen*0.5;
-      aXYZt[ip1*3+0] -= n01[0]*dLen*0.5;
-      aXYZt[ip1*3+1] -= n01[1]*dLen*0.5;
-      aXYZt[ip1*3+2] -= n01[2]*dLen*0.5;
-    }
-    else{
-      aXYZt[ip0*3+0] = (p[0][0]+p[1][0])*0.5;
-      aXYZt[ip0*3+1] = (p[0][1]+p[1][1])*0.5;
-      aXYZt[ip0*3+2] = (p[0][2]+p[1][2])*0.5;
-      aXYZt[ip1*3+0] = (p[0][0]+p[1][0])*0.5;
-      aXYZt[ip1*3+1] = (p[0][1]+p[1][1])*0.5;
-      aXYZt[ip1*3+2] = (p[0][2]+p[1][2])*0.5;
-    }
-  }
-  for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
-    CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
-    CVector3 n0; double sdf=0;
-    bool res = bvh.Projection_IncludedInBVH(sdf, n0,
-                                            p0, aXYZ_Contact,aTri_Contact,aNorm_Contact);
-    if( !res ){ continue; }
-    double cc = contact_clearance;
-    if( sdf < -cc ) continue;
-    aXYZt[ip*3+0] += (sdf+cc)*n0.x;
-    aXYZt[ip*3+1] += (sdf+cc)*n0.y;
-    aXYZt[ip*3+2] += (sdf+cc)*n0.z;
-  }
+  PBD_TriStrain(aXYZt, aETri, aVec2);
+  PBD_Bend(aXYZt, aETri, aVec2);
+  PBD_Seam(aXYZt, aLine);
+  Project_PointsIncludedInBVH_Outside(aXYZt,
+                                      contact_clearance,bvh,
+                                      aXYZ_Contact,aTri_Contact,aNorm_Contact);
   PBD_Post(aXYZ, aUVW,
            dt, aXYZt, aBCFlag);
 

@@ -18,6 +18,8 @@ void QuatQuat(double r[], const double p[], const double q[]);
 void QuatVec(double vo[], const double q[], const double vi[]);
 void QuatConjVec(double vo[], const double q[], const double vi[]);
 void QuatNormalize(double q[]);
+void Quat_Bryant(double q[4],
+                 double x, double y, double z);
 
 void Mat4_Quat(double r[],
                const double q[]);

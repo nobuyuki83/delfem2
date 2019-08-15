@@ -76,6 +76,16 @@ void QuatCopy(double r[], const double p[])
   r[3] = p[3];
 }
 
+void Quat_Bryant(double q[4],
+                 double x, double y, double z)
+{
+  const double dqx[4] = { cos(x*0.5), sin(x*0.5), 0.0, 0.0 };
+  const double dqy[4] = { cos(y*0.5), 0.0, sin(y*0.5), 0.0 };
+  const double dqz[4] = { cos(z*0.5), 0.0, 0.0, sin(z*0.5) };
+  double qtmp_yx[4]; QuatQuat(qtmp_yx, dqy, dqx);
+  QuatQuat(q, dqz, qtmp_yx);
+}
+
 void Mat4_Quat(double r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;
