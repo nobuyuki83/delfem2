@@ -9,10 +9,11 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
+#include "delfem2/v23m3q.h"
 ////
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_color.h"
-#include "delfem2/gl_v23q.h"
+#include "delfem2/gl_v23.h"
 #include "delfem2/glut_funcs.h"
 
 

@@ -13,11 +13,12 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
+#include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/dyntri.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/primitive.h"
+#include "delfem2/v23m3q.h"
 
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
@@ -25,12 +26,12 @@
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/cad2d.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
+#include "delfem2/rig_v3q.h"
 
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_funcs.h"
+#include "delfem2/gl_rig_v23q.h"
 #include "delfem2/glut_funcs.h"
-
-#include "delfem2/rigmesh.h"
 
 #include "delfem2/../../external/tinygltf/tiny_gltf.h"
 #include "delfem2/../../external/io_gltf.h"

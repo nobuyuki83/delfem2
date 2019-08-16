@@ -11,13 +11,11 @@
 #include <math.h>
 #include <vector>
 
-#include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshtopo.h" // sourrounding relationship
 #include "delfem2/vec3.h"
 
-#include "delfem2/srchuni_v3.h"
+#include "delfem2/srchuni_v3.h" // CPointElemSurf
 
 // potential maximum distance of the nearest point
 template <typename T>
@@ -98,6 +96,8 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D
   BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes, px,py,pz,rad_exp, aXYZ,aTri, ichild0,aBVH,aBB);
   BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes, px,py,pz,rad_exp, aXYZ,aTri, ichild1,aBVH,aBB);
 }
+
+///////////////////////////////////////
 
 template <typename T>
 class CBVH_MeshTri3D

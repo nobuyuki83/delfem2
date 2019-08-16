@@ -34,7 +34,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/dyntri_v3.h         ${DELFEM2_SRC}/dyntri_v3.cpp          
 
   ${DELFEM2_INC}/gl_funcs.h          ${DELFEM2_SRC}/gl_funcs.cpp         
-  ${DELFEM2_INC}/gl_v23q.h           ${DELFEM2_SRC}/gl_v23q.cpp           
+  ${DELFEM2_INC}/gl_v23.h            ${DELFEM2_SRC}/gl_v23.cpp           
   ${DELFEM2_INC}/gl_camera.h         ${DELFEM2_SRC}/gl_camera.cpp        
   ${DELFEM2_INC}/gl_color.h          ${DELFEM2_SRC}/gl_color.cpp                 
 

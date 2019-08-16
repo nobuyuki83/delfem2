@@ -34,18 +34,19 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/bvh.h              ${DELFEM2_SRC}/bvh.cpp
   ${DELFEM2_INC}/funcs.h            ${DELFEM2_SRC}/funcs.cpp
 
-  ${DELFEM2_INC}/rigmesh.h          ${DELFEM2_SRC}/rigmesh.cpp
-  ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp 
+  ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h  ${DELFEM2_SRC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/cad2d.h            ${DELFEM2_SRC}/cad2d.cpp
+  ${DELFEM2_INC}/rig_v3q.h          ${DELFEM2_SRC}/rig_v3q.cpp
+  ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
   ${DELFEM2_INC}/srchuni_v3.h       ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
   
   ${DELFEM2_INC}/gl_funcs.h         ${DELFEM2_SRC}/gl_funcs.cpp                 
   ${DELFEM2_INC}/gl_camera.h        ${DELFEM2_SRC}/gl_camera.cpp
-  ${DELFEM2_INC}/gl_v23q.h          ${DELFEM2_SRC}/gl_v23q.cpp
+  ${DELFEM2_INC}/gl_v23.h          ${DELFEM2_SRC}/gl_v23.cpp
+  ${DELFEM2_INC}/gl_rig_v23q.h       ${DELFEM2_SRC}/gl_rig_v23q.cpp
   ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp       
   ${DELFEM2_INC}/gl_cad_dyntri_v23.h
 

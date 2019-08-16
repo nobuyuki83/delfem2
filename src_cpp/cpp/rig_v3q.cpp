@@ -9,32 +9,14 @@
 #include <set>
 #include <map>
 #include <cassert>
+#include <sstream>
 
-#if defined(__APPLE__) // Mac
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-#include "delfem2/mat3.h"
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/funcs.h" // isFileExists
 #include "delfem2/v23m3q.h"
 #include "delfem2/msh.h"
-
-#include "delfem2/gl_tex.h"
-#include "delfem2/gl_funcs.h"
-#include "delfem2/gl_color.h"
-#include "delfem2/gl_v23q.h"
-
-#include "delfem2/rigmesh.h"
+#include "delfem2/rig_v3q.h"
 
 #ifndef M_PI 
 #define M_PI 3.1415926535
@@ -109,29 +91,6 @@ static void CalcInvMat(double* a, const int n, int& info )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void CRigBone::Draw
-(bool is_selected,
- int ielem_selected,
- const std::vector<CRigBone>& aBone,
- double rad_bone_sphere,
- double rad_rot_hndlr) const
-{
-  { // draw point
-    if(is_selected){ ::glColor3d(0,1,1); }
-    else{            ::glColor3d(1,0,0); }
-    const CVector3 pos = this->Pos();
-    DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
-  }
-  if(is_selected){
-    DrawHandlerRotation_Mat4(Mat, rad_rot_hndlr, ielem_selected);
-    if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
-      const CVector3 pp(aBone[ibone_parent].Pos());
-    }
-    else{
-    }
-  }
-}
-
 int CRigBone::PickHandler
 (const CVector3& org,
  const CVector3& dir,
@@ -143,68 +102,8 @@ int CRigBone::PickHandler
                                   tol);
 }
 
-
-
-/*
-void CBone_RigMsh::Affine(const double A[16])
-{
-  Affine3D(pos_ini, A, pos_ini);
-  Affine3D(pos, A, pos);
-}
- */
-
-/*
- void Scale(double scale){
- pos_ini[0] *= scale;
- pos_ini[1] *= scale;
- pos_ini[2] *= scale;
- pos[0] *= scale;
- pos[1] *= scale;
- pos[2] *= scale;
- }
- void Translate(double dx, double dy, double dz){
- pos_ini[0] += dx;
- pos_ini[1] += dy;
- pos_ini[2] += dz;
- pos[0] += dx;
- pos[1] += dy;
- pos[2] += dz;
- }
- */
-
 ////////////////////////////////////////////////////////////////////////////
 // from here std::vector<CBone_RigMsh>
-
-void DrawBone
-(const std::vector<CRigBone>& aBone,
- int ibone_selected,
- int ielem_selected,
- double rad_bone_sphere,
- double rad_rot_hndlr)
-{
-  glDisable(GL_LIGHTING);
-  glDisable(GL_TEXTURE_2D);
-  ::glPointSize(3);
-  for( int iskel=0;iskel<(int)aBone.size();++iskel){
-    const CRigBone& bone = aBone[iskel];
-    bone.Draw((iskel==ibone_selected),ielem_selected,aBone,
-              rad_bone_sphere,rad_rot_hndlr);
-  }
-  // draw edges whilte
-  for( int ibone=0;ibone<(int)aBone.size();++ibone){
-    const CRigBone& bone = aBone[ibone];
-    const int ibone_p = aBone[ibone].ibone_parent;
-    if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
-    const CRigBone& bone_p = aBone[ibone_p];
-    bool is_selected_p = (ibone_p == ibone_selected);
-    if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
-    else{              ::glColor3d(0.0,0.0,0.0); }
-    ::glBegin(GL_LINES);
-    myGlVertex(bone.Pos());
-    myGlVertex(bone_p.Pos());
-    ::glEnd();
-  }
-}
 
 
 void Read_BioVisionHierarchy

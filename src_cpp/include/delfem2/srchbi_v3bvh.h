@@ -104,7 +104,7 @@ bool IsContact_FV_Proximity
  const double delta)
 {
   if( ino3 == ino0 || ino3 == ino1 || ino3 == ino2 ){ return false; }
-  if( !bb.IsInside(p3.x,p3.y,p3.z) ) return false;
+  if( !bb.isInclude_Point(p3.x,p3.y,p3.z) ) return false;
   double height = fabs( Height(p0,p1,p2,p3) );
   if( height > delta ) return false;
   double w0,w1;

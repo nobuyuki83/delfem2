@@ -19,6 +19,45 @@
 
 static bool isnan_vector3(double x) { return x!=x; }
 
+// there is another impelemntation in quat.h so this is "static function"
+// transform vector with quaternion
+static void QuatVec(double vo[], const double q[], const double vi[])
+{
+  double x2 = q[1] * q[1] * 2.0;
+  double y2 = q[2] * q[2] * 2.0;
+  double z2 = q[3] * q[3] * 2.0;
+  double xy = q[1] * q[2] * 2.0;
+  double yz = q[2] * q[3] * 2.0;
+  double zx = q[3] * q[1] * 2.0;
+  double xw = q[1] * q[0] * 2.0;
+  double yw = q[2] * q[0] * 2.0;
+  double zw = q[3] * q[0] * 2.0;
+  
+  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
+  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
+  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+}
+
+// there is formal implementation in quat.cpp so this is static to avoid dumplicated
+static void QuatConjVec(double vo[], const double q[], const double vi[])
+{
+  double x2 = q[1] * q[1] * 2.0;
+  double y2 = q[2] * q[2] * 2.0;
+  double z2 = q[3] * q[3] * 2.0;
+  double xy = q[1] * q[2] * 2.0;
+  double yz = q[2] * q[3] * 2.0;
+  double zx = q[3] * q[1] * 2.0;
+  double xw = q[1] * q[0] * 2.0;
+  double yw = q[2] * q[0] * 2.0;
+  double zw = q[3] * q[0] * 2.0;
+  
+  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
+  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
+  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+}
+
+//////////////////////////////////////////
+
 double ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
   return a[0]*(b[1]*c[2] - b[2]*c[1])
   +a[1]*(b[2]*c[0] - b[0]*c[2])
@@ -394,6 +433,18 @@ CVector3 Mat4Vec(const double mat[16], const CVector3& v){
   u.y = mat[4]*v.x + mat[5]*v.y + mat[ 6]*v.z;
   u.z = mat[8]*v.x + mat[9]*v.y + mat[10]*v.z;
   return u;
+}
+
+CVector3 QuatVec(const double quat[4], const CVector3& v0){
+  const double v0a[3] = {v0.x,v0.y,v0.z};
+  double v1a[3]; QuatVec(v1a,quat,v0a);
+  return CVector3(v1a[0],v1a[1],v1a[2]);
+}
+
+CVector3 QuatConjVec(const double quat[4], const CVector3& v0){
+  const double v0a[3] = {v0.x,v0.y,v0.z};
+  double v1a[3]; QuatConjVec(v1a,quat,v0a);
+  return CVector3(v1a[0],v1a[1],v1a[2]);
 }
 
 

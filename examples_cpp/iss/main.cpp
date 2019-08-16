@@ -18,6 +18,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/iss.h"
+#include "delfem2/bv.h"
 
 #include "delfem2/srch_v3bvhmshtopo.h"
 

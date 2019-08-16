@@ -4,7 +4,7 @@
 #include <vector>
 #include <stdio.h>
 
-#include "delfem2/rigmesh.h" // CRigBone is defined here
+#include "delfem2/rig_v3q.h" // CRigBone is defined here
 
 
 void Print(const tinygltf::Model& model);
