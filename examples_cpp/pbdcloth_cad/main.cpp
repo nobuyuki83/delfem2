@@ -65,9 +65,12 @@ void StepTime()
 {
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
-  PBD_TriStrain(aXYZt, aETri, aVec2);
-  PBD_Bend(aXYZt, aETri, aVec2);
-  PBD_Seam(aXYZt, aLine);
+  PBD_TriStrain(aXYZt.data(),
+                aXYZt.size()/3,aETri, aVec2);
+  PBD_Bend(aXYZt.data(),
+           aXYZt.size()/3, aETri, aVec2);
+  PBD_Seam(aXYZt.data(),
+           aXYZt.size()/3, aLine.data(), aLine.size()/2);
   Project_PointsIncludedInBVH_Outside(aXYZt,aInfoNearest,
                                       contact_clearance,bvh,
                                       aXYZ_Contact,aTri_Contact,aNorm_Contact);

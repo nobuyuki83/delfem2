@@ -34,7 +34,8 @@ static void FetchData
 }
 
 void PBD_TriStrain
-(std::vector<double>& aXYZt,
+(double* aXYZt,
+ unsigned int nXYZ,
  const std::vector<ETri>& aETri,
  const std::vector<CVector2>& aVec2)
 {
@@ -47,15 +48,16 @@ void PBD_TriStrain
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
       {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
       {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
-    double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt.data(), 3);
+    double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
     double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
     double m[3] = {1,1,1};
-    PBD_Update_Const3(aXYZt.data(), 3, 3, m, C, &dCdp[0][0], aIP);
+    PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
   }
 }
 
 void PBD_Bend
-(std::vector<double>& aXYZt,
+(double* aXYZt,
+ unsigned int nXYZ,
  const std::vector<ETri>& aETri,
  const std::vector<CVector2>& aVec2)
 {
@@ -63,10 +65,10 @@ void PBD_Bend
     for(int ie=0;ie<3;++ie){
       const int jt0 = aETri[it].s2[ie];
       if( jt0 == -1 ){ continue; }
-      if( jt0 > it ){ continue; }
+      if( jt0 > (int)it ){ continue; }
       const int rt0 = aETri[it].r2[ie];
       const int je0 = (6-rt0-ie)%3;
-      assert( aETri[jt0].s2[je0] == it);
+      assert( aETri[jt0].s2[je0] == (int)it);
       const int aIP[4] = {
         aETri[it].v[ie],
         aETri[jt0].v[je0],
@@ -77,12 +79,12 @@ void PBD_Bend
         {aVec2[aIP[1]].x,aVec2[aIP[1]].y, 0.0},
         {aVec2[aIP[2]].x,aVec2[aIP[2]].y, 0.0},
         {aVec2[aIP[3]].x,aVec2[aIP[3]].y, 0.0} };
-      double p[4][3]; FetchData(&p[0][0], 4, 3, aIP, aXYZt.data(), 3);
+      double p[4][3]; FetchData(&p[0][0], 4, 3, aIP, aXYZt, 3);
       double C[3], dCdp[3][12];
       PBD_CdC_QuadBend(C, dCdp,
                        P, p);
       double m[4] = {1,1,1,1};
-      PBD_Update_Const3(aXYZt.data(), 4,3, m, C, &dCdp[0][0], aIP);
+      PBD_Update_Const3(aXYZt, 4,3, m, C, &dCdp[0][0], aIP);
     }
   }
 }

@@ -17,6 +17,7 @@ add_subdirectory(${PYBIND11_DIR} pybind11)
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_EXT         "../../src_cpp/external")
 
 set(INPUT_SRC
   ${DELFEM2_INC}/vec2.h             ${DELFEM2_SRC}/vec2.cpp
@@ -39,12 +40,16 @@ set(INPUT_SRC
   ${DELFEM2_INC}/ilu_mats.h         ${DELFEM2_SRC}/ilu_mats.cpp
   ${DELFEM2_INC}/fem_emats.h        ${DELFEM2_SRC}/fem_emats.cpp
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp
+  ${DELFEM2_INC}/objfunc_v23dtri.h  ${DELFEM2_SRC}/objfunc_v23dtri.cpp
 
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
   ${DELFEM2_INC}/dyntri_v3.h        ${DELFEM2_SRC}/dyntri_v3.cpp
   ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/mshtopoio.h        ${DELFEM2_SRC}/mshtopoio.cpp
   ${DELFEM2_INC}/cad2d.h            ${DELFEM2_SRC}/cad2d.cpp
+
+  ${DELFEM2_EXT}/io_gltf.h
+  ${DELFEM2_EXT}/io_gltf.cpp
 
   py_mshtopoio.cpp
   py_polyline.cpp 
