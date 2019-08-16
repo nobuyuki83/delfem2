@@ -23,6 +23,9 @@
 
 #include "delfem2/cad2d.h"
 
+#include "delfem2/../../external/tinygltf/tiny_gltf.h"
+#include "delfem2/../../external/io_gltf.h"
+
 namespace py = pybind11;
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +36,8 @@ void init_mshtopoio(py::module &m);
 void init_field(py::module &m);
 void init_fem(py::module &m);
 void init_sdf(py::module &m);
+
+
 
 std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
 (const CVoxelGrid3D& vg)
@@ -51,25 +56,6 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   vg.GetHex(aXYZ, aHex);
   return std::forward_as_tuple(aXYZ,aHex);
 }
-
-/*
-std::tuple<CMeshDynTri2D, py::array_t<int>, py::array_t<int>> MeshDynTri2D_Cad2D
-(const CCad2D& cad, double len)
-{
-  CMeshDynTri2D dmesh;
-  std::vector<int> aFlgPnt;
-  std::vector<int> aFlgTri;
-  cad.Meshing(dmesh, aFlgPnt,aFlgTri,
-              len);
-  assert( aFlgPnt.size() == dmesh.aVec2.size() );
-  assert( aFlgTri.size() == dmesh.aETri.size() );
-  ////
-  py::array_t<int> npFlgPnt(aFlgPnt.size(), aFlgPnt.data());
-  py::array_t<int> npFlgTri(aFlgTri.size(), aFlgTri.data());
-  return std::forward_as_tuple(dmesh,npFlgPnt,npFlgTri);
-}
- */
-
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>>
 NumpyXYTri_MeshDynTri2D
@@ -211,6 +197,11 @@ PYBIND11_MODULE(c_core, m) {
   
 //  m.def("meshDynTri2D_CppCad2D",&MeshDynTri2D_Cad2D);
   m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
+  
+  py::class_<CGLTF>(m,"CppGLTF")
+  .def(py::init<>())
+  .def("read", &CGLTF::Read)
+  .def("print", &CGLTF::Print);
   
   ////////////////////////////////////
 

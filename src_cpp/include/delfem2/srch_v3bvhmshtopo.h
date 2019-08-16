@@ -286,7 +286,9 @@ void Project_PointsIncludedInBVH_Outside
     CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
     if( aInfoNearest[ip].is_active ){
       double dp = Distance(p0,aInfoNearest[ip].pos);
-      if( aInfoNearest[ip].sdf + dp + cc < 0 ){ continue; }
+      if( aInfoNearest[ip].sdf + dp + cc < 0 ){
+        continue;
+      }
     }
     aInfoNearest[ip].pos = p0;
     double dist0 = bvh.Nearest_Point_IncludedInBVH(aInfoNearest[ip].pes,

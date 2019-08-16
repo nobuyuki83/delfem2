@@ -13,6 +13,8 @@
 #include "delfem2/fem_emats.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/dyntri_v2.h"
+#include "delfem2/objfunc_v23dtri.h"
+
 
 namespace py = pybind11;
 
@@ -501,24 +503,8 @@ void PyPBD_ConstProj_ClothStretch
   double* aXYZt = (double*)(npXYZt.request().ptr);
   const std::vector<ETri>& aETri = mesh.aETri;
   const std::vector<CVector2>& aVec2 = mesh.aVec2;
-  for(unsigned int it=0;it<aETri.size();++it){
-    const int i0 = aETri[it].v[0];
-    const int i1 = aETri[it].v[1];
-    const int i2 = aETri[it].v[2];
-    const double P[3][2] = {
-      {aVec2[i0].x,aVec2[i0].y},
-      {aVec2[i1].x,aVec2[i1].y},
-      {aVec2[i2].x,aVec2[i2].y} };
-    double p[3][3] = {
-      {aXYZt[i0*3+0], aXYZt[i0*3+1], aXYZt[i0*3+2] },
-      {aXYZt[i1*3+0], aXYZt[i1*3+1], aXYZt[i1*3+2] },
-      {aXYZt[i2*3+0], aXYZt[i2*3+1], aXYZt[i2*3+2] },
-    };
-    double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
-    double m[3] = {1,1,1};
-    const int aIP[3] = {i0,i1,i2};
-    PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
-  }
+  PBD_TriStrain(aXYZt,
+                npXYZt.shape()[0], aETri, aVec2);
 }
 
 void PyPBD_ConstProj_ClothBend
@@ -530,42 +516,14 @@ void PyPBD_ConstProj_ClothBend
   const std::vector<ETri>& aETri = mesh.aETri;
   const std::vector<CVector2>& aVec2 = mesh.aVec2;
   double* aXYZt = (double*)(npXYZt.request().ptr);
-  for(unsigned int it=0;it<aETri.size();++it){
-    for(int ie=0;ie<3;++ie){
-      const int jt0 = aETri[it].s2[ie];
-      if( jt0 == -1 ){ continue; }
-      if( jt0 > (int)it ){ continue; }
-      const int rt0 = aETri[it].r2[ie];
-      const int je0 = (6-rt0-ie)%3;
-      assert( aETri[jt0].s2[je0] == (int)it);
-      const int i0 = aETri[it].v[ie];
-      const int i1 = aETri[jt0].v[je0];
-      const int i2 = aETri[it].v[(ie+1)%3];
-      const int i3 = aETri[it].v[(ie+2)%3];
-      const double P[4][3] = {
-        {aVec2[i0].x,aVec2[i0].y, 0.0},
-        {aVec2[i1].x,aVec2[i1].y, 0.0},
-        {aVec2[i2].x,aVec2[i2].y, 0.0},
-        {aVec2[i3].x,aVec2[i3].y, 0.0} };
-      double p[4][3] = {
-        {aXYZt[i0*3+0], aXYZt[i0*3+1], aXYZt[i0*3+2] },
-        {aXYZt[i1*3+0], aXYZt[i1*3+1], aXYZt[i1*3+2] },
-        {aXYZt[i2*3+0], aXYZt[i2*3+1], aXYZt[i2*3+2] },
-        {aXYZt[i3*3+0], aXYZt[i3*3+1], aXYZt[i3*3+2] },
-      };
-      double C[3], dCdp[3][12];
-      PBD_CdC_QuadBend(C, dCdp,
-                       P, p);
-      double m[4] = {1,1,1,1};
-      const int aIP[4] = {i0,i1,i2,i3};
-      PBD_Update_Const3(aXYZt, 4,3, m, C, &dCdp[0][0], aIP);
-    }
-  }
+  PBD_Bend(aXYZt,
+           npXYZt.shape()[0],
+           aETri, aVec2);
 }
 
 void PyPBD_ConstProj_Seam
 (py::array_t<double>& npXYZt,
- const py::array_t<int>& npLine)
+ const py::array_t<unsigned int>& npLine)
 {
   assert( npXYZt.ndim() == 2 );
   assert( npXYZt.shape()[1] == 3 );
@@ -573,38 +531,9 @@ void PyPBD_ConstProj_Seam
   assert( npLine.ndim() == 2 );
   assert( npLine.shape()[1] == 2 );
   const unsigned int nline = npLine.shape()[0];
-  for(unsigned int il=0;il<nline;++il){
-    const int i0 = npLine.at(il,0);
-    const int i1 = npLine.at(il,1);
-    double p[2][3] = {
-      {aXYZt[i0*3+0], aXYZt[i0*3+1], aXYZt[i0*3+2] },
-      {aXYZt[i1*3+0], aXYZt[i1*3+1], aXYZt[i1*3+2] },
-    };
-    double d0 = Distance3D(p[0], p[1]);
-    double dLen = 0.02;
-    if( d0 > dLen ){
-      double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
-      double l01 = Length3D(n01);
-      double invl01 = 1.0/l01;
-      n01[0] *= invl01;
-      n01[1] *= invl01;
-      n01[2] *= invl01;
-      aXYZt[i0*3+0] += n01[0]*dLen*0.5;
-      aXYZt[i0*3+1] += n01[1]*dLen*0.5;
-      aXYZt[i0*3+2] += n01[2]*dLen*0.5;
-      aXYZt[i1*3+0] -= n01[0]*dLen*0.5;
-      aXYZt[i1*3+1] -= n01[1]*dLen*0.5;
-      aXYZt[i1*3+2] -= n01[2]*dLen*0.5;
-    }
-    else{
-      aXYZt[i0*3+0] = (p[0][0]+p[1][0])*0.5;
-      aXYZt[i0*3+1] = (p[0][1]+p[1][1])*0.5;
-      aXYZt[i0*3+2] = (p[0][2]+p[1][2])*0.5;
-      aXYZt[i1*3+0] = (p[0][0]+p[1][0])*0.5;
-      aXYZt[i1*3+1] = (p[0][1]+p[1][1])*0.5;
-      aXYZt[i1*3+2] = (p[0][2]+p[1][2])*0.5;
-    }
-  }
+  PBD_Seam(aXYZt,
+           npXYZt.shape()[0],
+           npLine.data(), nline);
 }
 
 void PyPBD_ConstProj_Contact

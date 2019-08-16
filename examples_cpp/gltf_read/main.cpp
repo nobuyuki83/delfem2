@@ -23,7 +23,6 @@
 #include "delfem2/gl_rig_v23q.h"
 #include "delfem2/glut_funcs.h"
 
-#include "delfem2/../../external/tinygltf/tiny_gltf.h"
 #include "delfem2/../../external/io_gltf.h"
 
 
@@ -185,45 +184,22 @@ int main(int argc,char* argv[])
   
   
   {
-    tinygltf::Model model;
-    tinygltf::TinyGLTF loader;
-    std::string err;
-    std::string warn;
-    
-    //std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.gltf";
-    //bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, path_gltf);
-    
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
 //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Monster.glb";
-    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
-  
-    bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, path_gltf); // for binary glTF(.glb)
-    if (!warn.empty()) { printf("Warn: %s\n", warn.c_str()); }
-    if (!err.empty()) { printf("Err: %s\n", err.c_str()); }
-    if (!ret) { printf("Failed to parse glTF\n"); return -1; }
-    
-    Print(model);
-    ////
-    GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint,
-                model, 0, 0);
-    if( !model.skins.empty() ){
-      aBone.resize( model.skins[0].joints.size() );
-      std::vector<int> mapNode2Bone( model.nodes.size(), -1);
-      for(int ij=0;ij<model.skins[0].joints.size();++ij){
-        int inode = model.skins[0].joints[ij];
-        mapNode2Bone[inode] = ij;
-      }
-      SetBone(aBone,
-              model, model.skins[0].skeleton, -1, mapNode2Bone);
-      GetBoneBinding(aBone,
-                     model);
-    }
-    UpdateBoneRotTrans(aBone);
-    UpdateRigSkin(aXYZ,
-                  aXYZ0, aTri, aBone, aRigWeight, aRigJoint);
+    std::string path_glb = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
+    CGLTF gltf;
+    gltf.Read(path_glb);
+    gltf.Print();
+    gltf.GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint, 0,0);
+    gltf.GetBone(aBone, 0);
   }
+  
+  UpdateBoneRotTrans(aBone);
+  UpdateRigSkin(aXYZ,
+                aXYZ0, aTri, aBone, aRigWeight, aRigJoint);
+
   
   window.camera.view_height = 2.0;
   window.camera.camera_rot_mode = CAMERA_ROT_TBALL;

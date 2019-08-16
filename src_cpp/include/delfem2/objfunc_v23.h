@@ -84,7 +84,9 @@ void PBD_CdC_QuadBend(double C[3],
                       const double P[4][3],
                       const double p[4][3]);
 
-void PBD_Seam(std::vector<double>& aXYZt,
-              std::vector<unsigned int>& aLine);
+void PBD_Seam(double* aXYZt,
+              unsigned int nXYZ,
+              const unsigned int* aLine,
+              unsigned int nline);
 
 #endif /* pbd_v23_h */

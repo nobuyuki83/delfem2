@@ -5,19 +5,16 @@ project(examplesDelFEM2)
 add_subdirectory(viewer3d_glut)
 add_subdirectory(viewer3d_glfw)
 
-add_subdirectory(noise2d)
-add_subdirectory(noise3d)
-
 add_subdirectory(paramgeo2d)
 add_subdirectory(paramgeo3d)
-
 add_subdirectory(transform_handler)
 
 add_subdirectory(mathexpeval)
 
-add_subdirectory(bvh_read)
-add_subdirectory(gltf_read)
+add_subdirectory(rigidbody3d_rotation)
 
+add_subdirectory(noise2d)
+add_subdirectory(noise3d)
 add_subdirectory(shader_glsl)
 add_subdirectory(offscreen)
 add_subdirectory(glbuffer)
@@ -49,12 +46,13 @@ add_subdirectory(femcloth_dtri)
 
 add_subdirectory(cadmsh2d)
 
-
 add_subdirectory(selfcollision_bvh)
 
 add_subdirectory(pbd_grid2d)
 add_subdirectory(pbdcloth)
 add_subdirectory(pbdcloth_cad)
-add_subdirectory(pbdcloth_cad_gltf)
 
-add_subdirectory(rigidbody3d_rotation)
+add_subdirectory(bvh_read)
+add_subdirectory(gltf_read)
+
+add_subdirectory(pbdcloth_cad_gltf)

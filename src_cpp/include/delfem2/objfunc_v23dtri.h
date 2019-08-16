@@ -14,11 +14,13 @@
 #include "delfem2/dyntri.h"
 #include "delfem2/dyntri_v2.h"
 
-void PBD_TriStrain(std::vector<double>& aXYZt,
+void PBD_TriStrain(double* aXYZt,
+                   unsigned int nXYZ,
                    const std::vector<ETri>& aETri,
                    const std::vector<CVector2>& aVec2);
 
-void PBD_Bend(std::vector<double>& aXYZt,
+void PBD_Bend(double* aXYZt,
+              unsigned int nXYZ,
               const std::vector<ETri>& aETri,
               const std::vector<CVector2>& aVec2);
 

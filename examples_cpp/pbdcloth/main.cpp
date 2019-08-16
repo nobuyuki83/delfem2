@@ -48,10 +48,12 @@ void StepTime()
 {
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
-  PBD_TriStrain(aXYZt, aETri, aVec2);
-  PBD_Bend(aXYZt, aETri, aVec2);
-  PBD_Seam(aXYZt,
-           aLine);
+  PBD_TriStrain(aXYZt.data(),
+                aXYZt.size()/3, aETri, aVec2);
+  PBD_Bend(aXYZt.data(),
+           aXYZt.size()/3, aETri, aVec2);
+  PBD_Seam(aXYZt.data(),
+           aXYZt.size()/3, aLine.data(), aLine.size()/2);
   PBD_Post(aXYZ, aUVW,
            dt, aXYZt, aBCFlag);
 

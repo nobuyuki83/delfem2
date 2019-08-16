@@ -531,10 +531,12 @@ void PBD_CdC_QuadBend
 
 
 void PBD_Seam
-(std::vector<double>& aXYZt,
- std::vector<unsigned int>& aLine)
+(double* aXYZt,
+ unsigned int nXYZ,
+ const unsigned int* aLine,
+ unsigned int nline)
 {
-  for(unsigned int il=0;il<aLine.size()/2;++il){
+  for(unsigned int il=0;il<nline;++il){
     int ip0 = aLine[il*2+0];
     int ip1 = aLine[il*2+1];
     const double p[2][3] = {
