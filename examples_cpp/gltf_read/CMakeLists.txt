@@ -32,12 +32,13 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/funcs.h     ${DELFEM2_SRC}/funcs.cpp          
 
   ${DELFEM2_INC}/v23m3q.h    ${DELFEM2_SRC}/v23m3q.cpp          
-  ${DELFEM2_INC}/rigmesh.h   ${DELFEM2_SRC}/rigmesh.cpp        
+  ${DELFEM2_INC}/rig_v3q.h   ${DELFEM2_SRC}/rig_v3q.cpp
 
-  ${DELFEM2_INC}/gl_camera.h ${DELFEM2_SRC}/gl_camera.cpp       
-  ${DELFEM2_INC}/gl_funcs.h  ${DELFEM2_SRC}/gl_funcs.cpp         
-  ${DELFEM2_INC}/gl_color.h  ${DELFEM2_SRC}/gl_color.cpp        
-  ${DELFEM2_INC}/gl_v23q.h   ${DELFEM2_SRC}/gl_v23q.cpp        
+  ${DELFEM2_INC}/gl_camera.h    ${DELFEM2_SRC}/gl_camera.cpp
+  ${DELFEM2_INC}/gl_funcs.h     ${DELFEM2_SRC}/gl_funcs.cpp
+  ${DELFEM2_INC}/gl_color.h     ${DELFEM2_SRC}/gl_color.cpp
+  ${DELFEM2_INC}/gl_v23.h       ${DELFEM2_SRC}/gl_v23.cpp
+  ${DELFEM2_INC}/gl_rig_v23q.h  ${DELFEM2_SRC}/gl_rig_v23q.cpp
 
   ${DELFEM2_EXT}/io_gltf.h
   ${DELFEM2_EXT}/io_gltf.cpp

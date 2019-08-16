@@ -20,10 +20,12 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/quat.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
-#include "delfem2/gl_v23q.h"
+
+#include "delfem2/gl_v23.h"
+
+///////////////////////////////////////////////////////////////////////
 
 void myGlVertex(const CVector3& v)
 {
@@ -83,14 +85,7 @@ void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& 
 
 ///////////////////////////////////////////////
 
-CVector2 screenXYProjection
-(const CVector3& v,
- const float* mMV,
- const float* mPj)
-{
-  CVector3 sp0 = screenProjection(v,mMV,mPj);
-  return CVector2(sp0.x,sp0.y);
-}
+
 
 /////////////
 
@@ -324,10 +319,6 @@ void DrawArcSolid
     ::glEnd();
   }
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
 
 void DrawSingleQuad_Edge
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3)
@@ -596,91 +587,6 @@ void DrawGridOutside
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool isPickCircle
-(const CVector2& sp,
- const CVector3& p,
- const CVector3& axis,
- double r,
- const float* mMV,
- const float* mPj,
- double pick_tol)
-{
-  const int ndiv = 32;
-  double rdiv = 3.1415*2.0/ndiv;
-  CVector3 x,y; GetVertical2Vector(axis, x, y);
-  for(int idiv=0;idiv<ndiv+1;idiv++){
-    int jdiv = idiv+1;
-    CVector3 p0 = p+(r*sin(rdiv*idiv))*x+(r*cos(rdiv*idiv))*y;
-    CVector3 p1 = p+(r*sin(rdiv*jdiv))*x+(r*cos(rdiv*jdiv))*y;
-    CVector2 sp0 = screenXYProjection(p0, mMV, mPj);
-    CVector2 sp1 = screenXYProjection(p1, mMV, mPj);
-    double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
-    if( sdist < pick_tol ){ return true; }
-  }
-  return false;
-}
-
-bool isPickCircle
-(const CVector3& axis,
- const CVector3& org,
- double rad,
- const CVector3& src,
- const CVector3& dir,
- double pick_tol)
-{
-  double t = ((org-src)*axis)/(dir*axis);
-  CVector3 p0 = src+t*dir;
-  double rad0 = (p0-org).Length();
-  if( fabs(rad-rad0) < pick_tol ) return true;
-  return false;
-}
-
-double DragCircle
-(const CVector2& sp0,
- const CVector2& sp1,
- const CVector3& p,
- const CVector3& axis,
- const float* mMV,
- const float* mPj)
-{
-  CVector2 spo0 = screenXYProjection(p, mMV, mPj);
-  double area = TriArea(sp0, spo0, sp1);
-  double angl = area / ( (sp0-spo0).Length() * (sp1-spo0).Length() );
-  {
-    CVector3 a3 = screenUnProjectionDirection(axis,mMV,mPj);
-    if( a3.z < 0 ){ angl *= -1; }
-  }
-  return angl;
-//  CMatrix3 R; R.SetRotMatrix_Cartesian(angl*axis);
-//  return R;
-}
-
-bool isPickQuad
-(const CVector3& p0,const CVector3& p1,const CVector3& p2,const CVector3& p3,
- const CVector2& sp, const CVector3& pick_dir,
- const float mMV[16], const float mPj[16],
- double eps)
-{
-  const CVector2 sp0 = screenXYProjection(p0, mMV, mPj);
-  const CVector2 sp1 = screenXYProjection(p1, mMV, mPj);
-  const CVector2 sp2 = screenXYProjection(p2, mMV, mPj);
-  const CVector2 sp3 = screenXYProjection(p3, mMV, mPj);
-  double a01 = TriArea(sp,sp0,sp1);
-  double a12 = TriArea(sp,sp1,sp2);
-  double a23 = TriArea(sp,sp2,sp3);
-  double a30 = TriArea(sp,sp3,sp0);
-  double a0123 = a01+a12+a23+a30;
-  if( fabs(a0123) < 1.0e-10 ) return false;
-  a01 /= a0123;
-  a12 /= a0123;
-  a23 /= a0123;
-  a30 /= a0123;
-  if( a01<eps || a12<eps || a23<eps || a30<eps ){ return false; }
-  CVector3 n0123 = Normal(p0,p1,p2) + Normal(p1,p2,p3) + Normal(p2,p3,p0) + Normal(p3,p0,p1);
-  if( n0123*pick_dir>0 ){ return false; }
-  return true;
-}
-
 void DrawAxisHandler(double s, const CVector3& p)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -748,161 +654,6 @@ void DrawHandlerRotation_Mat4
     const CVector3 pos(Mat[3],Mat[7],Mat[11]);
     ::DrawCircleWire(az, pos, size);
   }
-}
-
-int PickHandlerRotation_PosQuat
-(const CVector3& src, const CVector3& dir,
- const CVector3& pos, const double quat[4], double rad,
- double tol)
-{
-  CVector3 ax = QuatVec(quat,CVector3(1,0,0));
-  CVector3 ay = QuatVec(quat,CVector3(0,1,0));
-  CVector3 az = QuatVec(quat,CVector3(0,0,1));
-  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
-  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
-  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
-  double dx = (px-src)*dir;
-  double dy = (py-src)*dir;
-  double dz = (pz-src)*dir;
-  double lx = (px-qx).Length();
-  double ly = (py-qy).Length();
-  double lz = (pz-qz).Length();
-  double dm = (fabs(dx)+fabs(dy)+fabs(dz))*1000;
-  std::cout << lx << " " << ly << " " << lz << " " << dm << std::endl;
-  if( lx>tol ){ dx = dm; }
-  if( ly>tol ){ dy = dm; }
-  if( lz>tol ){ dz = dm; }
-  if( dx < dy && dx < dz  && dx < 0.9*dm ){ return 0; }
-  if( dy < dz && dy < dx  && dy < 0.9*dm ){ return 1; }
-  if( dz < dx && dz < dy  && dz < 0.9*dm ){ return 2; }
-  return -1;
-}
-
-int PickHandlerRotation_Mat4
-(const CVector3& src, const CVector3& dir,
- const double mat[16], double rad,
- double tol)
-{
-  CVector3 ax = Mat4Vec(mat,CVector3(1,0,0));
-  CVector3 ay = Mat4Vec(mat,CVector3(0,1,0));
-  CVector3 az = Mat4Vec(mat,CVector3(0,0,1));
-  CVector3 pos(mat[3],mat[7],mat[11]);
-  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
-  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
-  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
-  double dx = (px-src)*dir;
-  double dy = (py-src)*dir;
-  double dz = (pz-src)*dir;
-  double lx = (px-qx).Length();
-  double ly = (py-qy).Length();
-  double lz = (pz-qz).Length();
-  double dm = (fabs(dx)+fabs(dy)+fabs(dz))*1000;
-  if( lx>tol ){ dx = dm; }
-  if( ly>tol ){ dy = dm; }
-  if( lz>tol ){ dz = dm; }
-  if( dx < dy && dx < dz  && dx < 0.9*dm ){ return 0; }
-  if( dy < dz && dy < dx  && dy < 0.9*dm ){ return 1; }
-  if( dz < dx && dz < dy  && dz < 0.9*dm ){ return 2; }
-  return -1;
-}
-
-
-bool DragHandlerRot_PosQuat
-(double quat[4], int ielem,
- const CVector2& sp0, const CVector2& sp1,
- const CVector3& pos,
- const float mMV[16], const float mPj[16])
-{
-  if( ielem>=0 && ielem<3 ){
-    double vi[3] = {0,0,0}; vi[ielem] = 1;
-    double vo[3]; QuatVec(vo, quat, vi);
-    CVector3 v0(0,0,0); v0[ielem] = 1;
-    CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
-    double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
-    double qtmp[4]; QuatQuat(qtmp, dq, quat);
-    QuatCopy(quat,qtmp);
-    return true;
-  }
-  return false;
-}
-
-bool DragHandlerRot_Mat4
-(double quat[4], int ielem,
- const CVector2& sp0, const CVector2& sp1, double mat[16],
- const float mMV[16], const float mPj[16])
-{
-  if( ielem>=0 && ielem<3 ){
-    double vi[3] = {0,0,0}; vi[ielem] = 1;
-    double vo[3]; Mat4Vec3(vo, mat, vi);
-    CVector3 v0(0,0,0); v0[ielem] = 1;
-    CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
-    CVector3 pos(mat[3],mat[7],mat[11]);
-    const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    const double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
-    double qtmp[4]; QuatQuat(qtmp, quat, dq);
-    QuatCopy(quat,qtmp);
-    return true;
-  }
-  return false;
-}
-
-bool isPick_AxisHandler
-(const CVector2& sp,
- const CVector3& p,
- const CVector3& axis,
- double len,
- const float* mMV,
- const float* mPj,
- double pick_tol)
-{
-  CVector2 sp0 = screenXYProjection(p+len*axis, mMV, mPj);
-  CVector2 sp1 = screenXYProjection(p-len*axis, mMV, mPj);
-  double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
-  if (sdist < pick_tol){ return true; }
-  return false;
-}
-
-CVector3 drag_AxisHandler
-(const CVector2& sp0,
- const CVector2& sp1,
- const CVector3& p,
- const CVector3& axis,
- double len,
- const float* mMV,
- const float* mPj)
-{
-  CVector2 spa0 = screenXYProjection(p+len*axis, mMV, mPj);
-  CVector2 spa1 = screenXYProjection(p-len*axis, mMV, mPj);
-  double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
-  return r*axis*len;
-}
-
-bool isPickPoint
-(const CVector2& sp,
- const CVector3& p,
- const float* mMV,
- const float* mPj,
- double pick_tol)
-{
-  CVector2 sp0 = screenXYProjection(p, mMV, mPj);
-  if ((sp-sp0).Length() < pick_tol){ return true; }
-  return false;
-}
-
-
-/////////////////////////////////
-
-CVector3 QuatVec(const double quat[4], const CVector3& v0){
-  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; QuatVec(v1a,quat,v0a);
-  return CVector3(v1a[0],v1a[1],v1a[2]);
-}
-
-CVector3 QuatConjVec(const double quat[4], const CVector3& v0){
-  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; QuatConjVec(v1a,quat,v0a);
-  return CVector3(v1a[0],v1a[1],v1a[2]);
 }
 
 

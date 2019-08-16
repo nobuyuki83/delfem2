@@ -6,8 +6,8 @@
  */
 
 
-#ifndef RIGMESH_H
-#define RIGMESH_H
+#ifndef RIG_V3Q_H
+#define RIG_V3Q_H
 
 #include <stdio.h>
 #include <iostream>
@@ -39,17 +39,13 @@ public:
       trans[2] = 0;
       ibone_parent = -1;
     }
-  void Draw(bool is_selected,
-            int ielem_select,
-            const std::vector<CRigBone>& aBone,
-            double rad_bone_sphere,
-            double rad_rot_hndlr) const;
-  int PickHandler(const CVector3& org, const CVector3& dir,
-                  double rad_rot_handlr,
-                  double tol) const;
-  CVector3 Pos() const {
+  CVector3 Pos() const{
     return CVector3(Mat[3],Mat[7],Mat[11]);
   }
+  int PickHandler(const CVector3& org,
+                  const CVector3& dir,
+                  double rad_handlr,
+                  double tol) const;
   void AffineJoint(const double a[16]) const;
 public:
   std::string name;
@@ -63,12 +59,6 @@ public:
   double scale; // scale
 };
 
-
-void DrawBone(const std::vector<CRigBone>& aBone,
-              int ibone_selected,
-              int ielem_selected,
-              double rad_bone_sphere,
-              double rad_rot_hndlr);
 
 void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
 

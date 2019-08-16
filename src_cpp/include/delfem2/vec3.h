@@ -156,6 +156,8 @@ public:
 
 CVector3 Mat3Vec(const double M[ 9], const CVector3& v);
 CVector3 Mat4Vec(const double M[16], const CVector3& v);
+CVector3 QuatVec(const double quat[4], const CVector3& v0);
+CVector3 QuatConjVec(const double quat[4], const CVector3& v0);
 CVector3 screenProjection(const CVector3& v,
                           const float* mMV, const float* mPj);
 // opposite to the screen normal

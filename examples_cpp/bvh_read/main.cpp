@@ -12,13 +12,16 @@
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/mshio.h"
+#include "delfem2/v23m3q.h"
 #include "delfem2/funcs.h"
 
+#include "delfem2/rig_v3q.h"
+
 #include "delfem2/gl_funcs.h"
-#include "delfem2/gl_v23q.h"
+#include "delfem2/gl_v23.h"
+#include "delfem2/gl_rig_v23q.h"
 #include "delfem2/glut_funcs.h"
 
-#include "delfem2/rigmesh.h"
 
 CGlutWindowManager window;
 std::vector<CRigBone> aBone;

@@ -12,8 +12,6 @@
 #include <stdio.h>
 #include <map>
 
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
 #include "delfem2/vec3.h"
 
 ////////////////////////////////////////////////////////////////////

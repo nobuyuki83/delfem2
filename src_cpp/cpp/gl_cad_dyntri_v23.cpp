@@ -17,7 +17,7 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/gl_v23q.h"
+#include "delfem2/gl_v23.h"
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_funcs.h"
 

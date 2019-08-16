@@ -26,14 +26,15 @@ set(INPUT_SRC
   ${DELFEM2_INC}/voxel.h         ${DELFEM2_SRC}/voxel.cpp
   ${DELFEM2_INC}/bv.h
 
-  ${DELFEM2_INC}/gl_v23q.h       ${DELFEM2_SRC}/gl_v23q.cpp
   ${DELFEM2_INC}/gl_funcs.h      ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_INC}/gl_color.h      ${DELFEM2_SRC}/gl_color.cpp
   ${DELFEM2_INC}/glew_funcs.h    ${DELFEM2_SRC}/glew_funcs.cpp
   ${DELFEM2_INC}/gl_camera.h     ${DELFEM2_SRC}/gl_camera.cpp
-  ${DELFEM2_INC}/gl_voxbv.h      ${DELFEM2_SRC}/gl_voxbv.cpp
   ${DELFEM2_INC}/gl_gpusampler.h ${DELFEM2_SRC}/gl_gpusampler.cpp
   ${DELFEM2_INC}/gl_tex.h        ${DELFEM2_SRC}/gl_tex.cpp
+
+  ${DELFEM2_INC}/gl_v23.h        ${DELFEM2_SRC}/gl_v23.cpp
+  ${DELFEM2_INC}/gl_color.h      ${DELFEM2_SRC}/gl_color.cpp
+  ${DELFEM2_INC}/gl_voxbv.h      ${DELFEM2_SRC}/gl_voxbv.cpp
 
   ${DELFEM2_INC}/gl_cad_dyntri_v23.h
   ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp
