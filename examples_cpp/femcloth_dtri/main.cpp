@@ -45,8 +45,8 @@ std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
 std::vector<unsigned int> aTri;  // index of triangles
 std::vector<unsigned int> aQuad; // index of 4 vertices required for bending
-CMatrixSparse mat_A; // coefficient matrix
-CPreconditionerILU  ilu_A; // ilu decomposition of the coefficient matrix
+CMatrixSparse<double> mat_A; // coefficient matrix
+CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
 double mass_point = 0.01;
 
 int idp_nearest = -1;

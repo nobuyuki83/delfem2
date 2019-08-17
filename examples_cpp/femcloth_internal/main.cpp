@@ -162,8 +162,8 @@ int imode_contact; // mode of contacting object
 double mass_point; // mass for a point
 
 // variables for sparse solver
-CMatrixSparse mat_A; // coefficient matrix
-CPreconditionerILU  ilu_A; // ilu decomposition of the coefficient matrix
+CMatrixSparse<double> mat_A; // coefficient matrix
+CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
 
 //std::vector<double> aNormal; // deformed vertex noamals
 
