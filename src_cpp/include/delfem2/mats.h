@@ -9,6 +9,7 @@
 #define MATRIX_SPARSE_H
 
 #include <vector>
+#include <cassert>
 
 template <typename T>
 class CMatrixSparse
