@@ -54,10 +54,135 @@ void IndexElement_OverlapLevels_MeshTri3D
   }
 }
 
-void CrossSections_Levels_MeshTri3D
-(std::vector<unsigned int>& aCS_H,
- std::vector< std::vector<unsigned int> >& aCS_IndTri,
- std::vector< std::vector<CVector3> >& aCS_LoopXYZ,
+class CSliceTriMesh
+{
+public:
+  CSliceTriMesh(unsigned int ih): iHeight(ih) {}
+public:
+  unsigned int iHeight;
+  std::vector<unsigned int> aIndTri;
+  std::vector<CVector3> aLoopPos;
+};
+
+
+bool TraverseBoundaryLoop
+(CSliceTriMesh& cs,
+ std::vector<int>& aFlgSeg,
+ int iseg_ker, int ih,
+ const std::vector<int>& Tri2Seg,
+ const std::vector<unsigned int>& aCST,
+ const CVector3& norm,
+ const CVector3& origin,
+ double height,
+ const std::vector<double>& aXYZ,
+ const std::vector<unsigned int>& aTri,
+ const std::vector<int>& aTriSur)
+{
+  cs.aIndTri.clear();
+  cs.aLoopPos.clear();
+  unsigned int iseg_next = iseg_ker;
+  for(;;){ // seg in cs loop
+    assert( aFlgSeg[iseg_next] == 0 );
+    int jtri0 = aCST[iseg_next];
+    aFlgSeg[iseg_next] = 1;
+    cs.aIndTri.push_back(jtri0);
+    ////
+    unsigned int iflg = 0;
+    CVector3 aP[3];
+    double aH[3];
+    for(unsigned int inotri=0;inotri<3;inotri++){
+      unsigned int jno0 = aTri[jtri0*3+inotri];
+      aP[inotri] = CVector3( aXYZ[jno0*3+0], aXYZ[jno0*3+1], aXYZ[jno0*3+2] );
+      aH[inotri] = Dot(aP[inotri]-origin,norm)-height;
+      if( aH[inotri] < 0 ){ continue; }
+      if( inotri == 0 ){ iflg += 1; }
+      if( inotri == 1 ){ iflg += 2; }
+      if( inotri == 2 ){ iflg += 4; }
+    }
+    CVector3 v1, v2;
+    unsigned int iedge_next;
+    if( iflg == 1 ){ // 0
+      v1 = -aH[1]/(aH[0]-aH[1])*aP[0] + aH[0]/(aH[0]-aH[1])*aP[1];
+      v2 = -aH[2]/(aH[0]-aH[2])*aP[0] + aH[0]/(aH[0]-aH[2])*aP[2];
+      iedge_next = 1;
+    }
+    if( iflg == 2 ){ // 1
+      v1 = -aH[2]/(aH[1]-aH[2])*aP[1] + aH[1]/(aH[1]-aH[2])*aP[2];
+      v2 = -aH[0]/(aH[1]-aH[0])*aP[1] + aH[1]/(aH[1]-aH[0])*aP[0];
+      iedge_next = 2;
+    }
+    if( iflg == 4 ){ // 2
+      v1 = -aH[0]/(aH[2]-aH[0])*aP[2] + aH[2]/(aH[2]-aH[0])*aP[0];
+      v2 = -aH[1]/(aH[2]-aH[1])*aP[2] + aH[2]/(aH[2]-aH[1])*aP[1];
+      iedge_next = 0;
+    }
+    if( iflg == 3 ){ // 01
+      v1 = -aH[1]/(aH[2]-aH[1])*aP[2] + aH[2]/(aH[2]-aH[1])*aP[1];
+      v2 = -aH[0]/(aH[2]-aH[0])*aP[2] + aH[2]/(aH[2]-aH[0])*aP[0];
+      iedge_next = 1;
+    }
+    if( iflg == 5 ){ // 02
+      v1 = -aH[0]/(aH[1]-aH[0])*aP[1] + aH[1]/(aH[1]-aH[0])*aP[0];
+      v2 = -aH[2]/(aH[1]-aH[2])*aP[1] + aH[1]/(aH[1]-aH[2])*aP[2];
+      iedge_next = 0;
+    }
+    if( iflg == 6 ){ // 12
+      v1 = -aH[2]/(aH[0]-aH[2])*aP[0] + aH[0]/(aH[0]-aH[2])*aP[2];
+      v2 = -aH[1]/(aH[0]-aH[1])*aP[0] + aH[0]/(aH[0]-aH[1])*aP[1];
+      iedge_next = 2;
+    }
+    cs.aLoopPos.push_back(v1);
+    ////////////////
+    int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
+    if( itri_next1 == -1 ){ break; } // open loop discard
+    int iseg_next1 = Tri2Seg[itri_next1];
+    assert( iseg_next1 != -1 );
+    if( iseg_next1 == iseg_ker ){ return true; } // is_open == false
+    iseg_next = iseg_next1;
+  }
+  // reach here if the loop is open
+  cs.aIndTri.clear();
+  cs.aLoopPos.clear();
+  /////
+  iseg_next = iseg_ker;
+  for(;;){ // seg in cs loop
+    int jtri0 = aCST[iseg_next];
+    unsigned int iflg = 0;
+    CVector3 aP[3];
+    double aH[3];
+    for(unsigned int inotri=0;inotri<3;inotri++){
+      unsigned int jno0 = aTri[jtri0*3+inotri];
+      aP[inotri] = CVector3( aXYZ[jno0*3+0], aXYZ[jno0*3+1], aXYZ[jno0*3+2] );
+      aH[inotri] = Dot(aP[inotri]-origin,norm)-height;
+      if( aH[inotri] < 0 ){ continue; }
+      if( inotri == 0 ){ iflg += 1; }
+      if( inotri == 1 ){ iflg += 2; }
+      if( inotri == 2 ){ iflg += 4; }
+    }
+    unsigned int iedge_next;
+    if( iflg == 1 ){ iedge_next = 2; } // 0
+    if( iflg == 2 ){ iedge_next = 0; } // 1
+    if( iflg == 4 ){ iedge_next = 1; } // 2
+    if( iflg == 3 ){ iedge_next = 0; } // 01
+    if( iflg == 5 ){ iedge_next = 2; } // 02
+    if( iflg == 6 ){ iedge_next = 1; } // 12
+    int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
+    if( itri_next1 == -1 ){ break; } // reached boundary
+    const int iseg_next1 = Tri2Seg[itri_next1];
+    assert( iseg_next1 != -1 );
+    if( iseg_next1 == iseg_ker ) break;
+    iseg_next = iseg_next1;
+    assert( aFlgSeg[iseg_next] == 0 );
+    jtri0 = aCST[iseg_next];
+    aFlgSeg[iseg_next] = 1;
+  }
+  return false;
+}
+
+
+void Slice_MeshTri3D_Heights
+(std::vector<CSliceTriMesh>& aCS,
+ ////
  const std::vector<double>& aHeight,
  const CVector3& norm,
  const CVector3& origin,
@@ -70,13 +195,10 @@ void CrossSections_Levels_MeshTri3D
   ////
   std::vector< std::vector<unsigned int> > aCST;
   IndexElement_OverlapLevels_MeshTri3D(aCST,
-                                  aHeight,norm,origin,
-                                  aXYZ,aTri);
+                                       aHeight,norm,origin,
+                                       aXYZ,aTri);
   /////
-  aCS_H.clear();
-  aCS_IndTri.clear();
-  aCS_LoopXYZ.clear();
-  
+  aCS.clear();
   std::vector<int> Tri2Seg;
   Tri2Seg.resize(ntri,-1);
   for(unsigned int ih=0;ih<nH;ih++){ // h loop
@@ -93,119 +215,14 @@ void CrossSections_Levels_MeshTri3D
         if( aFlgSeg[iseg_ker] == 0 ){ break; }
       }
       if( iseg_ker == aCST[ih].size() ) break;
-      const unsigned int ihcs = (unsigned int)aCS_H.size();
-      aCS_H.resize( ihcs+1 );
-      aCS_IndTri.resize( ihcs+1 );
-      aCS_LoopXYZ.resize( ihcs+1 );
-      aCS_H[ihcs] = ih;
-      aCS_LoopXYZ[ihcs].clear();
-      aCS_IndTri[ihcs].clear();
       /////
-      unsigned int iseg_next = iseg_ker;
-      bool is_open = false;
-      for(;;){ // seg in cs loop
-        assert( aFlgSeg[iseg_next] == 0 );
-        int jtri0 = aCST[ih][iseg_next];
-        aFlgSeg[iseg_next] = 1;
-        aCS_IndTri[ihcs].push_back(jtri0);
-        ////
-        unsigned int iflg = 0;
-        CVector3 aP[3];
-        double aH[3];
-        for(unsigned int inotri=0;inotri<3;inotri++){
-          unsigned int jno0 = aTri[jtri0*3+inotri];
-          aP[inotri] = CVector3( aXYZ[jno0*3+0], aXYZ[jno0*3+1], aXYZ[jno0*3+2] );
-          aH[inotri] = Dot(aP[inotri]-origin,norm)-aHeight[ih];
-          if( aH[inotri] < 0 ){ continue; }
-          if( inotri == 0 ){ iflg += 1; }
-          if( inotri == 1 ){ iflg += 2; }
-          if( inotri == 2 ){ iflg += 4; }
-        }
-        CVector3 v1, v2;
-        unsigned int iedge_next;
-        if( iflg == 1 ){ // 0
-          v1 = -aH[1]/(aH[0]-aH[1])*aP[0] + aH[0]/(aH[0]-aH[1])*aP[1];
-          v2 = -aH[2]/(aH[0]-aH[2])*aP[0] + aH[0]/(aH[0]-aH[2])*aP[2];
-          iedge_next = 1;
-        }
-        if( iflg == 2 ){ // 1
-          v1 = -aH[2]/(aH[1]-aH[2])*aP[1] + aH[1]/(aH[1]-aH[2])*aP[2];
-          v2 = -aH[0]/(aH[1]-aH[0])*aP[1] + aH[1]/(aH[1]-aH[0])*aP[0];
-          iedge_next = 2;
-        }
-        if( iflg == 4 ){ // 2
-          v1 = -aH[0]/(aH[2]-aH[0])*aP[2] + aH[2]/(aH[2]-aH[0])*aP[0];
-          v2 = -aH[1]/(aH[2]-aH[1])*aP[2] + aH[2]/(aH[2]-aH[1])*aP[1];
-          iedge_next = 0;
-        }
-        if( iflg == 3 ){ // 01
-          v1 = -aH[1]/(aH[2]-aH[1])*aP[2] + aH[2]/(aH[2]-aH[1])*aP[1];
-          v2 = -aH[0]/(aH[2]-aH[0])*aP[2] + aH[2]/(aH[2]-aH[0])*aP[0];
-          iedge_next = 1;
-        }
-        if( iflg == 5 ){ // 02
-          v1 = -aH[0]/(aH[1]-aH[0])*aP[1] + aH[1]/(aH[1]-aH[0])*aP[0];
-          v2 = -aH[2]/(aH[1]-aH[2])*aP[1] + aH[1]/(aH[1]-aH[2])*aP[2];
-          iedge_next = 0;
-        }
-        if( iflg == 6 ){ // 12
-          v1 = -aH[2]/(aH[0]-aH[2])*aP[0] + aH[0]/(aH[0]-aH[2])*aP[2];
-          v2 = -aH[1]/(aH[0]-aH[1])*aP[0] + aH[0]/(aH[0]-aH[1])*aP[1];
-          iedge_next = 2;
-        }
-        aCS_LoopXYZ[ihcs].push_back(v1);
-        ////////////////
-        int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
-        if( itri_next1 == -1 ){
-          is_open = true;
-          break;
-        }
-        int iseg_next1 = Tri2Seg[itri_next1];
-        assert( iseg_next1 != -1 );
-        if( iseg_next1 == iseg_ker ) break;
-        iseg_next = iseg_next1;
-      }
-      if( is_open ){
-        std::cout << "open : " << ih << " " << std::endl;
-        const unsigned int nhcs = aCS_H.size();
-        aCS_H.resize( nhcs-1 );
-        aCS_LoopXYZ.resize( aCS_H.size() );
-        aCS_IndTri.resize( aCS_H.size() );
-        /////
-        iseg_next = iseg_ker;
-        for(;;){ // seg in cs loop
-          int jtri0 = aCST[ih][iseg_next];
-          unsigned int iflg = 0;
-          CVector3 aP[3];
-          double aH[3];
-          for(unsigned int inotri=0;inotri<3;inotri++){
-            unsigned int jno0 = aTri[jtri0*3+inotri];
-            aP[inotri] = CVector3( aXYZ[jno0*3+0], aXYZ[jno0*3+1], aXYZ[jno0*3+2] );
-            aH[inotri] = Dot(aP[inotri]-origin,norm)-aHeight[ih];
-            if( aH[inotri] < 0 ){ continue; }
-            if( inotri == 0 ){ iflg += 1; }
-            if( inotri == 1 ){ iflg += 2; }
-            if( inotri == 2 ){ iflg += 4; }
-          }
-          unsigned int iedge_next;
-          if( iflg == 1 ){ iedge_next = 2; } // 0
-          if( iflg == 2 ){ iedge_next = 0; } // 1
-          if( iflg == 4 ){ iedge_next = 1; } // 2
-          if( iflg == 3 ){ iedge_next = 0; } // 01
-          if( iflg == 5 ){ iedge_next = 2; } // 02
-          if( iflg == 6 ){ iedge_next = 1; } // 12
-          int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
-          if( itri_next1 == -1 ){ break; } // reached boundary
-          const int iseg_next1 = Tri2Seg[itri_next1];
-          assert( iseg_next1 != -1 );
-          if( iseg_next1 == iseg_ker ) break;
-          iseg_next = iseg_next1;
-          ////
-          assert( aFlgSeg[iseg_next] == 0 );
-          jtri0 = aCST[ih][iseg_next];
-          aFlgSeg[iseg_next] = 1;
-        }
-      }
+      CSliceTriMesh cs(ih);
+      const bool is_closed = TraverseBoundaryLoop(cs, aFlgSeg,
+                                                  iseg_ker, ih, Tri2Seg,
+                                                  aCST[ih], norm, origin,aHeight[ih],
+                                                  aXYZ, aTri, aTriSur);
+      if( !is_closed ){ continue; }
+      aCS.push_back(cs);
     }
     ////
     for(unsigned int isg=0;isg<aCST[ih].size();isg++){
@@ -213,13 +230,12 @@ void CrossSections_Levels_MeshTri3D
       Tri2Seg[itri] = -1;
     }
   }
-  
 }
 
 
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
-std::vector< std::vector<CVector3> > aCS_LoopXYZ;
+std::vector<CSliceTriMesh> aCS;
 
 CGlutWindowManager win;
 
@@ -269,8 +285,8 @@ void myGlutDisplay(void)
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
   ::glLineWidth(5);
-  for(int iloop=0;iloop<aCS_LoopXYZ.size();++iloop){
-    const std::vector<CVector3>& aVec = aCS_LoopXYZ[iloop];
+  for(int iloop=0;iloop<aCS.size();++iloop){
+    const std::vector<CVector3>& aVec = aCS[iloop].aLoopPos;
     ::glBegin(GL_LINE_LOOP);
     for(int iv=0;iv<aVec.size();++iv){
       ::glVertex3d(aVec[iv].x,aVec[iv].y,aVec[iv].z);
@@ -327,7 +343,8 @@ int main(int argc,char* argv[])
            aXYZ,aTri);
   Normalize(aXYZ);
   std::vector<int> aTriSurRel;
-  makeSurroundingRelationship(aTriSurRel, aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
+  makeSurroundingRelationship(aTriSurRel,
+                              aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
   
  
   std::vector<double> aHeight;
@@ -338,15 +355,10 @@ int main(int argc,char* argv[])
   aHeight.push_back(+0.1);
   aHeight.push_back(+0.2);
   aHeight.push_back(+0.3);
-  std::vector<unsigned int> aCS_H;
-  std::vector< std::vector<unsigned int> > aCS_IndTri;
-  CrossSections_Levels_MeshTri3D(aCS_H, aCS_IndTri, aCS_LoopXYZ,
-                             aHeight,
-                             CVector3(0,1,0), CVector3(0,0,0),
-                             aXYZ,aTri,aTriSurRel);
-  assert(aCS_H.size()==aCS_IndTri.size());
-  assert(aCS_H.size()==aCS_LoopXYZ.size());
-  
+  Slice_MeshTri3D_Heights(aCS,
+                                 aHeight,
+                                 CVector3(0,1,0), CVector3(0,0,0),
+                                 aXYZ,aTri,aTriSurRel);
   glutMainLoop();
   return 0;
 }

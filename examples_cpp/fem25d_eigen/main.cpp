@@ -172,8 +172,8 @@ std::vector<double> aMode;
 std::vector<double> aModesKer;
 double lamda0 = 0.1;
 
-CMatrixSparse mat_A;
-CPreconditionerILU  ilu_A;
+CMatrixSparse<double> mat_A;
+CPreconditionerILU<double>  ilu_A;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -236,7 +236,8 @@ void InitializeProblem_LinearSolidEigen()
                                           aXYZ.data(), aXYZ.size()/3,
                                           aTet.data(), aTet.size()/4,
                                           aTmp0.data());
-  mat_A.ScaleLeftRight(aMassLumpedSqrtInv.data());
+  ScaleLeftRight(mat_A,
+                 aMassLumpedSqrtInv.data());
   mat_A.AddDia(0.8);
   
   ilu_A.SetValueILU(mat_A);

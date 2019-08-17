@@ -150,9 +150,9 @@ std::vector<double> aAcc;
 std::vector<int> aBCFlag; // boundary condition flag
 std::vector<int> aMSFlag; // master slave flag
 
-CMatrixSparse mat_A;
+CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-CPreconditionerILU  ilu_A;
+CPreconditionerILU<double> ilu_A;
 
 int press_button = -1;
 double mov_begin_x, mov_begin_y;
@@ -378,7 +378,8 @@ void SolveProblem_LinearSolid_Static()
                                           aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag.data());
+  SetMasterSlave(mat_A,
+                 aMSFlag.data());
   setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   //////////////////////////
   std::vector<double> vec_x;
@@ -417,7 +418,8 @@ void SolveProblem_LinearSolid_Dynamic()
                                     aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
-  mat_A.SetMasterSlave(aMSFlag.data());
+  SetMasterSlave(mat_A,
+                 aMSFlag.data());
   setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   //////////////////////////////
   std::vector<double> vec_x;
@@ -582,7 +584,8 @@ void SolveProblem_Stokes_Static()
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
-    mat_A.SetMasterSlave(aMSFlag.data());
+    SetMasterSlave(mat_A,
+                   aMSFlag.data());
     setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   //////////////////////////
@@ -624,7 +627,8 @@ void SolveProblem_Stokes_Dynamic()
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
-    mat_A.SetMasterSlave(aMSFlag.data());
+    SetMasterSlave(mat_A,
+                   aMSFlag.data());
     setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   //////////////////////////
@@ -671,7 +675,8 @@ void SolveProblem_NavierStokes_Dynamic()
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
-    mat_A.SetMasterSlave(aMSFlag.data());
+    SetMasterSlave(mat_A,
+                   aMSFlag.data());
     setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   //////////////////////////////
