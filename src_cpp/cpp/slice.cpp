@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <assert>
+#include <assert.h>
 
 #include "delfem2/slice.h"
 
