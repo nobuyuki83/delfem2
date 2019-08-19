@@ -21,6 +21,7 @@
 #include "delfem2/funcs.h"
 #include "delfem2/mathexpeval.h"
 #include "delfem2/primitive.h"
+#include "delfem2/slice.h"
 
 #include "delfem2/objfunc_v23.h"
 
@@ -54,6 +55,39 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
     double diff = Check_CdC_TriStrain(P, p, 1.0e-5);
     EXPECT_LT(diff, 0.2);
   }
+}
+
+
+TEST(slice,test1){
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  std::vector<CSliceTriMesh> aCS;
+  std::vector< std::set<unsigned int> > ReebGraphCS;
+  ////
+  Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+           aXYZ,aTri);
+  Normalize(aXYZ);
+  std::vector<int> aTriSurRel;
+  makeSurroundingRelationship(aTriSurRel,
+                              aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
+  
+  
+  std::vector<double> aHeight;
+  aHeight.push_back(-0.3);
+  aHeight.push_back(-0.2);
+  aHeight.push_back(-0.1);
+  aHeight.push_back(-0.0);
+  aHeight.push_back(+0.1);
+  aHeight.push_back(+0.2);
+  aHeight.push_back(+0.3);
+  const double nrm[3] = {0,1,0};
+  const double org[3] = {0,0,0};
+  Slice_MeshTri3D_Heights(aCS,
+                          aHeight,
+                          nrm, org,
+                          aXYZ,aTri,aTriSurRel);
+  MakeReebGraph(ReebGraphCS,
+                aCS, aTri, aTriSurRel);
 }
 
 
