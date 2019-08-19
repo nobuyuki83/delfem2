@@ -9,6 +9,7 @@
 #include <math.h>
 #include <assert.h>
 #include <iostream>
+#include <complex>
 
 #include "delfem2/emat.h"
 
@@ -285,6 +286,43 @@ void MakeMat_Poisson2D_P1
   }
   for (int ino = 0; ino<nno; ino++){
     for (int jno = 0; jno<nno; jno++){
+      eres[ino] -= emat[ino][jno]*value[jno];
+    }
+  }
+}
+
+
+void MakeMat_Helmhotlz2D_P1
+(const double wave_length,
+ const double coords[3][2],
+ const std::complex<double> value[3],
+ std::complex<double> eres[3],
+ std::complex<double> emat[][3])
+{
+  const int nno = 3;
+  const int ndim = 2;
+  const double area = TriArea2D(coords[0],coords[1],coords[2]);
+  double dldx[nno][ndim], const_term[nno];
+  TriDlDx(dldx,const_term,
+          coords[0],coords[1],coords[2]);
+  for(unsigned int ino=0;ino<nno;ino++){
+    for(unsigned int jno=0;jno<nno;jno++){
+      emat[ino][jno] = area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]);
+    }
+  }
+  {
+    double k = 2*3.1416/wave_length;
+    double tmp_val = k*k*area/12.0;
+    for(unsigned int ino=0;ino<nno;ino++){
+      emat[ino][ino] -= tmp_val;
+      for(unsigned int jno=0;jno<nno;jno++){
+        emat[ino][jno] -= tmp_val;
+      }
+    }
+  }
+  for(unsigned int ino=0;ino<nno;ino++){
+    eres[ino] = 0.0;
+    for(unsigned int jno=0;jno<nno;jno++){
       eres[ino] -= emat[ino][jno]*value[jno];
     }
   }
@@ -3174,7 +3212,6 @@ void MakeMat_NavierStokes3D_Dynamic_P1
 
 
 /////////////////////////////
-
 
 
 

@@ -75,7 +75,6 @@ void Read_Ply
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
 {
-  std::cout<<"File load "<<fname<<std::endl;
   std::ifstream fin;
   fin.open(fname.c_str());
   if (fin.fail()){
