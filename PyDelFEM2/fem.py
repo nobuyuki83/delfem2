@@ -636,7 +636,7 @@ class PBD_Cloth():
     # seam
     if isinstance(self.elems_seam,numpy.ndarray):
       for itr in range(1):
-         pbd_proj_seam(self.vec_tpos,self.elems_seam)
+        pbd_proj_seam(self.vec_tpos,self.elems_seam)
     # contact
     if isinstance(self.sdf,CppSDF3):
       for itr in range(1):

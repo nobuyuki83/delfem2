@@ -537,8 +537,8 @@ void PBD_Seam
  unsigned int nline)
 {
   for(unsigned int il=0;il<nline;++il){
-    int ip0 = aLine[il*2+0];
-    int ip1 = aLine[il*2+1];
+    const int ip0 = aLine[il*2+0];
+    const int ip1 = aLine[il*2+1];
     const double p[2][3] = {
       {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
       {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
@@ -546,8 +546,8 @@ void PBD_Seam
     double dLen = 0.01;
     if( d0 > dLen ){
       double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
-      double l01 = Length3D(n01);
-      double invl01 = 1.0/l01;
+      const double l01 = Length3D(n01);
+      const double invl01 = 1.0/l01;
       n01[0] *= invl01;
       n01[1] *= invl01;
       n01[2] *= invl01;

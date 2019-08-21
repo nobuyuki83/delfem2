@@ -18,11 +18,11 @@ class CSliceTriMesh
 {
 public:
   CSliceTriMesh(unsigned int ih): iHeight(ih) {}
-  int IndHeight() const { return iHeight; }
-  unsigned int NumSeg() const { return aTriInfo.size(); }
-  unsigned int IndTri_Seg(unsigned int iseg) const {
-    return aTriInfo[iseg].itri;
-  }
+  
+  int IndHeight() const { return iHeight; } // requirement for MakeReebGraph
+  unsigned int NumSeg() const { return aTriInfo.size(); } // requirement for MakeReebGraph
+  unsigned int IndTri_Seg(unsigned int iseg) const { return aTriInfo[iseg].itri; } // requirement for MakeReebGraph
+  
 public:
   class CSegInfo{
   public:
@@ -35,6 +35,8 @@ public:
   unsigned int iHeight;
   std::vector<CSegInfo> aTriInfo;
 };
+
+
 
 void Slice_MeshTri3D_Heights(std::vector<CSliceTriMesh>& aCS,
                              ////
@@ -58,40 +60,40 @@ void MakeReebGraph
  const std::vector<int>& aTriSur)
 {
   const unsigned int ntri = (unsigned int)aTri.size()/3;
-  const unsigned int nHCS = aCrossSection.size();
+  const unsigned int nCS = aCrossSection.size();
   aConnectivity.clear();
-  aConnectivity.resize(nHCS);
+  aConnectivity.resize(nCS);
   std::vector<int> Tri2HCS;
   Tri2HCS.resize(ntri,-1);
-  for(unsigned int ihcs=0;ihcs<aCrossSection.size();ihcs++){
-    const T& cs0 = aCrossSection[ihcs];
+  for(unsigned int ics=0;ics<nCS;ics++){
+    const T& cs0 = aCrossSection[ics];
     for(unsigned int iseg=0;iseg<cs0.NumSeg();iseg++){
       unsigned int itri0 = cs0.IndTri_Seg(iseg);
       if( Tri2HCS[itri0] != -1 ){
-        unsigned int jhcs = Tri2HCS[itri0];
-        const T& cs1 = aCrossSection[jhcs];
+        unsigned int jcs0 = Tri2HCS[itri0];
+        const T& cs1 = aCrossSection[jcs0];
         if( abs( cs0.IndHeight() - cs1.IndHeight()) == 1 ){
-          aConnectivity[ihcs].insert(jhcs);
-          aConnectivity[jhcs].insert(ihcs);
+          aConnectivity[ics].insert(jcs0);
+          aConnectivity[jcs0].insert(ics);
         }
       }
       else{
-        Tri2HCS[itri0] = ihcs;
+        Tri2HCS[itri0] = ics;
       }
     }
   }
-  for(unsigned int ihcs=0;ihcs<aCrossSection.size();ihcs++){
-    const T& cs0 = aCrossSection[ihcs];
+  for(unsigned int ics=0;ics<nCS;ics++){
+    const T& cs0 = aCrossSection[ics];
     for(unsigned int iseg=0;iseg<cs0.NumSeg();iseg++){
       unsigned int itri0 = cs0.IndTri_Seg(iseg);
       for(unsigned int iedtri=0;iedtri<3;iedtri++){
-        unsigned int jtri0 = aTriSur[itri0*3+iedtri];
+        unsigned int jtri0 = aTriSur[itri0*6+iedtri*2+0];
         if( Tri2HCS[jtri0] == -1 ){ continue; }
         unsigned int jhcs = Tri2HCS[jtri0];
         const T& cs1 = aCrossSection[jhcs];
         if( abs( cs0.IndHeight() - cs1.IndHeight() ) != 1 ) continue;
-        aConnectivity[ihcs].insert(jhcs);
-        aConnectivity[jhcs].insert(ihcs);
+        aConnectivity[ics].insert(jhcs);
+        aConnectivity[jhcs].insert(ics);
       }
     }
   }
@@ -103,7 +105,7 @@ void MakeReebGraph
     }
     if( stackTri.empty() )break;
     std::set<unsigned int> setAdjCS;
-    std::vector<unsigned int> aFlg; aFlg.resize(nHCS,-1);
+    std::vector<unsigned int> aFlg; aFlg.resize(nCS,-1);
     for(;;){
       if( stackTri.empty() ) break;
       unsigned int jtri0 = stackTri.top();
@@ -111,7 +113,7 @@ void MakeReebGraph
       if( Tri2HCS[jtri0] != -1 ) continue;
       Tri2HCS[jtri0] = -2;
       for(unsigned int jedtri=0;jedtri<3;jedtri++){
-        unsigned int ktri0 = aTriSur[jtri0*3+jedtri];
+        unsigned int ktri0 = aTriSur[jtri0*6+jedtri*2+0];
         if(      Tri2HCS[ktri0] == -2 ) continue; // already studied
         else if( Tri2HCS[ktri0] == -1 ){ stackTri.push(ktri0); }
         else{

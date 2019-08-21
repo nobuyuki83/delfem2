@@ -88,6 +88,15 @@ TEST(slice,test1){
                           aXYZ,aTri,aTriSurRel);
   MakeReebGraph(ReebGraphCS,
                 aCS, aTri, aTriSurRel);
+  EXPECT_EQ( aCS.size(), ReebGraphCS.size() );
+  for(int ics=0;ics<ReebGraphCS.size();++ics){
+    for(auto itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
+      const unsigned int jcs1 = *itr;
+      EXPECT_LT( jcs1, aCS.size());
+      EXPECT_EQ( abs(aCS[ics].IndHeight() - aCS[jcs1].IndHeight()), 1 );
+    }
+  }
+
 }
 
 

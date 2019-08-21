@@ -3,6 +3,8 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
+#include "../py_funcs.h"
+
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
 #include "delfem2/mshtopo.h"
@@ -75,12 +77,8 @@ void LinearSystem_SetMasterSlave
 {
   assert( mss.nblk_col == mss.nblk_row );
   assert( mss.len_col == mss.len_row );
-  assert( np_b.ndim() == 2 );
-  assert( np_b.shape()[0] == mss.nblk_col );
-  assert( np_b.shape()[1] == mss.len_col );
-  assert( np_ms.ndim() == 2 );
-  assert( np_ms.shape()[0] == np_b.shape()[0] );
-  assert( np_ms.shape()[1] == np_b.shape()[1] );
+  assert( AssertNumpyArray2D(np_b, mss.nblk_col, mss.len_col) );
+  assert( AssertNumpyArray2D(np_ms, np_b.shape()[0], np_b.shape()[1]) );
   SetMasterSlave(mss,
                  np_ms.data());
   auto buff_b = np_b.request();
@@ -451,7 +449,7 @@ std::tuple<py::array_t<int>,py::array_t<int>> PyAddMasterSlavePattern
                                np_psup_ind0.data(), np_psup_ind0.shape()[0], np_psup0.data());
   py::array_t<int> np_psup_ind((int)psup_ind.size(),psup_ind.data());
   py::array_t<int> np_psup((int)psup.size(),psup.data());
-  return std::tie(np_psup_ind,np_psup);
+  return std::make_tuple(np_psup_ind,np_psup);
 }
 
 void PyMasterSlave_DistributeValue
@@ -523,15 +521,14 @@ void PyPBD_ConstProj_ClothBend
            aETri, aVec2);
 }
 
+
 void PyPBD_ConstProj_Seam
 (py::array_t<double>& npXYZt,
  const py::array_t<unsigned int>& npLine)
 {
-  assert( npXYZt.ndim() == 2 );
-  assert( npXYZt.shape()[1] == 3 );
+  assert( AssertNumpyArray2D(npXYZt, -1, 3) );
+  assert( AssertNumpyArray2D(npLine, -1, 2) );
   double* aXYZt = (double*)(npXYZt.request().ptr);
-  assert( npLine.ndim() == 2 );
-  assert( npLine.shape()[1] == 2 );
   const unsigned int nline = npLine.shape()[0];
   PBD_Seam(aXYZt,
            npXYZt.shape()[0],
@@ -542,8 +539,7 @@ void PyPBD_ConstProj_Contact
 (py::array_t<double>& npXYZt,
  const CSDF3& sdf)
 {
-  assert( npXYZt.ndim() == 2 );
-  assert( npXYZt.shape()[1] == 3 );
+  assert( AssertNumpyArray2D(npXYZt, -1, 3) );
   double* aXYZt = (double*)(npXYZt.request().ptr);
   unsigned int np = npXYZt.shape()[0];
   for(unsigned int ip=0;ip<np;++ip){

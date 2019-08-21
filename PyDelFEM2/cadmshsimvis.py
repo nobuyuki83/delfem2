@@ -183,7 +183,7 @@ class CadMesh2D_PBDCloth(CadMesh2D):
       npIndP_Seam0 = numpy.vstack([npIndP_Edge0a, npIndP_Edge0b[::-1]]).transpose()
       list_npIndPSeam.append(npIndP_Seam0)
     if len(list_npIndPSeam) > 0:
-      self.pbd.elems_seam = numpy.vstack(list_npIndPSeam)
+      self.pbd.elems_seam = numpy.vstack(list_npIndPSeam).copy().astype(numpy.uint32)
     else:
       self.pbd.elems_seam = None
 

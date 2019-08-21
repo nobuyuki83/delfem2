@@ -51,6 +51,8 @@ set(INPUT_SRC
   ${DELFEM2_EXT}/io_gltf.h
   ${DELFEM2_EXT}/io_gltf.cpp
 
+  ../py_funcs.h
+
   py_mshtopoio.cpp
   py_polyline.cpp 
   py_field.cpp

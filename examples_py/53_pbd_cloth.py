@@ -49,14 +49,16 @@ def example1():
   npIndP_Edge1b = mesher.points_on_one_edge(5,True,cad)
   npIndP_Seam1 = numpy.vstack([npIndP_Edge1a,npIndP_Edge1b[::-1]]).transpose()
 
-  pbd.elems_seam = numpy.vstack([npIndP_Seam0,npIndP_Seam1])
+  pbd.elems_seam = numpy.vstack([npIndP_Seam0,npIndP_Seam1]).copy().astype(numpy.uint32) # to allign data
 
 #  npIdP = mesher.points_on_edges([2,6],cad)
 #  pbd.bc[npIdP] = 1
   ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
+  mesh3 = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=pbd.elems_seam, elem_type=dfm2.LINE)
+
   axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,axis])
+  dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,axis])
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from .c_core import MathExpressionEvaluator
 from .c_core import meshdyntri3d_initialize, isosurface
 from .c_core import cad_getPointsEdge, mvc
 from .c_core import CppMeshDynTri3D, CppCad2D
-from .c_core import CppGLTF
+from .c_core import CppGLTF, CppGLTF_GetMeshInfo
 
 from .fem import FieldValueSetter
 from .fem import PBD, PBD_Cloth
@@ -28,6 +28,6 @@ from .fem import \
   FEM_NavierStorks2D
 
 from .cadmsh import Cad2D, VoxelGrid, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D
-from .cadmsh import TET, TRI, HEX, QUAD
+from .cadmsh import TET, TRI, HEX, QUAD, LINE
 
 from .util import Trans_Rigid2DTo3D

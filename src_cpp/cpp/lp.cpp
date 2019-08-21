@@ -108,7 +108,7 @@ int LinPro_SolveTable
   flg_row[0] = 2;
   ////////
   for(int itr=0;itr<nitr;++itr){
-//    std::cout << "iteration: " << itr << std::endl;
+//    std::cout << "iteration: " << itr << " " << nitr << std::endl;
 //    ::Print(B,ncol,nrow,map_col2row);
     assert(LinPro_CheckTable(B, map_col2row, ncol, nrow));
     { // check convegence
@@ -136,6 +136,7 @@ int LinPro_SolveTable
         for(int icol=0;icol<ncol-1;++icol){
           const double dia0 = B[icol*nrow+jrow];
           const double rhs0 = B[icol*nrow];
+//          std::cout << "hoge" << dia0 << std::endl;
           if( dia0 <= 0 ){ continue; } // negative dia makes the rhs netgative
           double bound0 = rhs0/dia0;
           if( bound0 > 1.0e+10 ) continue;
@@ -231,8 +232,7 @@ int CLinPro::Solve
   assert(LinPro_CheckTable(B, map_col2rowB, ncol, nrow));
   int res = LinPro_SolveTable(nitr, B, map_col2rowB,
                               ncol, nrow);
-//  std::cout << "resres" << res << std::endl;
-  if( res != 0 ){ return res; }
+//  if( res != 0 ){ return res; }
 //  std::cout << "res" << res << std::endl;
 //  std::cout << "after solve" << std::endl;
 //  ::Print(B, ncol, nrow, map_col2rowB);
