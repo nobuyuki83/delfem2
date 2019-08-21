@@ -33,6 +33,7 @@ from .c_core import \
   cppMeshTri3D_Icosahedron, \
   cppMeshTri3D_Cube
 from .c_core import rotmat3_cartesian
+from .c_core import num_node_elem
 
 
 ####################
@@ -46,9 +47,12 @@ class Mesh():
     assert type(np_elm) == numpy.ndarray
     assert np_pos.dtype == numpy.float64
     assert np_elm.dtype == numpy.uint32
+    assert np_elm.shape[1] == num_node_elem(elem_type)
     self.np_pos = np_pos
     self.np_elm = np_elm
     self.elem_type = elem_type
+
+
 
   def minmax_xyz(self):
     if self.np_pos.shape[0] == 0:

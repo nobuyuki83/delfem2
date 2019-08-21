@@ -31,14 +31,15 @@ enum MESHELEM_TYPE
 // 14: VTK_PYRAMD
 
 ////
-const int mapMeshElemType2NNodeElem[7] = {
-  3, // TRI
-  4, // TET
-  4, // QUAD
-  8, // HEX
-  5, // PYRAM
-  6, // WEDGE
-  8  // VOX
+const int mapMeshElemType2NNodeElem[8] = {
+  3, // TRI 0
+  4, // TET 1
+  4, // QUAD 2
+  8, // HEX 3
+  5, // PYRAM 4
+  6, // WEDGE 5
+  8,  // VOX 6
+  2, // LINE 7
 };
 ////
 const int mapMeshElemType2NFaceElem[7] = {

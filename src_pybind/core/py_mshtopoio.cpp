@@ -3,6 +3,8 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
+#include "../py_funcs.h"
+
 #include "delfem2/mshtopoio.h"
 #include "delfem2/primitive.h"
 #include "delfem2/dyntri.h"
@@ -37,7 +39,8 @@ void PySetTopology_ExtrudeTri2Tet
 
 /////////////////////////////////////////////////////////////////////
 
-std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadPly
+std::tuple<py::array_t<double>,py::array_t<unsigned int>>
+PyMeshTri3D_ReadPly
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
@@ -48,7 +51,8 @@ std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadPly
   return std::forward_as_tuple(np_XYZ,np_Tri);
 }
 
-std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadObj
+std::tuple<py::array_t<double>,py::array_t<unsigned int>>
+PyMeshTri3D_ReadObj
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
@@ -69,7 +73,8 @@ void PyMeshTri3D_WriteObj
             aTri.data(), aTri.shape()[0]);
 }
 
-std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshTri3D_ReadNastran
+std::tuple<py::array_t<double>,py::array_t<unsigned int>>
+PyMeshTri3D_ReadNastran
 (const std::string& fname)
 {
   std::vector<double> aXYZ;
@@ -130,6 +135,8 @@ void PyMeshDynTri3D_Initialize
  const py::array_t<double>& po,
  const py::array_t<unsigned int>& tri)
 {
+  assert( AssertNumpyArray2D(po, -1, 3) );
+  assert( AssertNumpyArray2D(tri, -1, 3) );
   mesh.Initialize(po.data(), po.shape()[0], po.shape()[1],
                   tri.data(), tri.shape()[0]);
 }
@@ -139,7 +146,8 @@ void PyMeshDynTri2D_Initialize
  const py::array_t<double>& po,
  const py::array_t<unsigned int>& tri)
 {
-  assert(po.shape()[1]==2);
+  assert( AssertNumpyArray2D(po, -1, 2) );
+  assert( AssertNumpyArray2D(tri, -1, 3) );
   mesh.Initialize(po.data(), po.shape()[0],
                   tri.data(), tri.shape()[0]);
 }
@@ -157,10 +165,8 @@ void PyCopyMeshDynTri2D
  py::array_t<unsigned int>& npElm,
  const CMeshDynTri2D& mesh)
 {
-  assert(npPos.ndim()==2);
-  assert(npElm.ndim()==2);
-  assert(npPos.shape()[1]==2);
-  assert(npElm.shape()[1]==3);
+  assert( AssertNumpyArray2D(npPos, -1, 2) );
+  assert( AssertNumpyArray2D(npElm, -1, 3) );
   const int np = mesh.aEPo.size();
   const int ntri = mesh.aETri.size();
   assert(npPos.shape()[0]==np);
@@ -475,6 +481,8 @@ void init_mshtopoio(py::module &m){
   .def(py::init<>());
   
   m.def("map_value",    &PyMapValue);
+  
+  m.def("num_node_elem", &nNodeElem);
   
   // dyntri
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);

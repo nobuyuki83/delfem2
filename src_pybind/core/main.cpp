@@ -13,6 +13,8 @@
 #include <map>
 #include <deque>
 
+#include "../py_funcs.h"
+
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopoio.h"
 #include "delfem2/voxel.h"
@@ -45,7 +47,7 @@ std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
   std::vector<double> aXYZ;
   std::vector<unsigned int> aQuad;
   vg.GetQuad(aXYZ, aQuad);
-  return std::forward_as_tuple(aXYZ,aQuad);
+  return std::make_tuple(aXYZ,aQuad);
 }
 
 std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
@@ -54,7 +56,7 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   std::vector<double> aXYZ;
   std::vector<int> aHex;
   vg.GetHex(aXYZ, aHex);
-  return std::forward_as_tuple(aXYZ,aHex);
+  return std::make_tuple(aXYZ,aHex);
 }
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>>
@@ -66,7 +68,7 @@ NumpyXYTri_MeshDynTri2D
   dmesh.Export_StlVectors(aXY,aTri);
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
-  return std::tie(npXY,npTri);
+  return std::make_tuple(npXY,npTri);
 }
 
 py::array_t<int> PyCad2D_GetPointsEdge
@@ -88,10 +90,8 @@ py::array_t<double> PyMVC
 (const py::array_t<double>& XY,
  const py::array_t<double>& XY_bound)
 {
-  assert(XY.ndim()==2);
-  assert(XY.shape()[1]==2);
-  assert(XY_bound.ndim()==2);
-  assert(XY_bound.shape()[1]==2);
+  assert( AssertNumpyArray2D(XY, -1, 2) );
+  assert( AssertNumpyArray2D(XY_bound, -1, 2) );
   const int np = XY.shape()[0];
   const int npb = XY_bound.shape()[0];
   py::array_t<double> aW({np,npb});
@@ -117,6 +117,29 @@ py::array_t<double> PyRotMat3_Cartesian(const std::vector<double>& d)
   }
   return npR;
 }
+
+std::tuple<py::array_t<double>, py::array_t<unsigned int>, py::array_t<double>, py::array_t<unsigned int>>
+PyGLTF_GetMeshInfo
+(const CGLTF& gltf,
+ int imesh, int iprimitive)
+{
+  std::vector<double> aXYZ0;
+  std::vector<unsigned int> aTri;
+  std::vector<double> aRigWeight;
+  std::vector<unsigned int> aRigJoint;
+  gltf.GetMeshInfo(aXYZ0,aTri,aRigWeight,aRigJoint,
+                   imesh, iprimitive);
+  const int np = aXYZ0.size()/3;
+  assert( (int)aRigWeight.size() == np*4 );
+  assert( (int)aRigJoint.size() == np*4 );
+  py::array_t<double> npXYZ0({np,3}, aXYZ0.data());
+  py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
+  py::array_t<double> npRW({np,4}, aRigWeight.data());
+  py::array_t<unsigned int> npRJ({np,4}, aRigJoint.data());
+  return std::make_tuple(npXYZ0,npTri,npRW,npRJ);
+}
+
+
 
 
 PYBIND11_MODULE(c_core, m) {
@@ -184,8 +207,6 @@ PYBIND11_MODULE(c_core, m) {
   .def("points_on_edges",    &CMesher_Cad2D::IndPoint_IndEdgeArray)
   .def("points_on_faces",    &CMesher_Cad2D::IndPoint_IndFaceArray)
   .def_readwrite("edge_length", &CMesher_Cad2D::edge_length);
-//  .def_readonly("flag_point",&CMesher_Cad2D::aFlgPnt)
-//  .def_readonly("flag_edge", &CMesher_Cad2D::aFlgTri);
 
   m.def("cad_getPointsEdge",
         &PyCad2D_GetPointsEdge,
@@ -195,13 +216,17 @@ PYBIND11_MODULE(c_core, m) {
         py::arg("tolerance") = 0.001,
         py::return_value_policy::move);
   
-//  m.def("meshDynTri2D_CppCad2D",&MeshDynTri2D_Cad2D);
   m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
+  
+  py::class_<CRigBone>(m,"CppRigBone")
+  .def(py::init<>());
   
   py::class_<CGLTF>(m,"CppGLTF")
   .def(py::init<>())
   .def("read", &CGLTF::Read)
   .def("print", &CGLTF::Print);
+  m.def("CppGLTF_GetMeshInfo", &PyGLTF_GetMeshInfo);
+
   
   ////////////////////////////////////
 

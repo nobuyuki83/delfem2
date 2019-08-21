@@ -8,6 +8,8 @@
 #ifndef EMAT_h
 #define EMAT_h
 
+#include <ccomplex>
+
 // derivative of a shape function of a triangle and constant compornent
 void TriDlDx(double dldx[][2], double const_term[],
              const double p0[], const double p1[], const double p2[]);
@@ -18,6 +20,12 @@ void MakeMat_Poisson2D_P1(const double alpha, const double source,
                           const double value[3],
                           double eres[3],
                           double emat[][3]);
+
+void MakeMat_Helmhotlz2D_P1(const double wave_length,
+                            const double coords[3][2],
+                            const std::complex<double> value[3],
+                            std::complex<double> eres[3],
+                            std::complex<double> emat[][3]);
 
 // [\rho][velo] - [\alpha]\nabla^2[value] = [source]
 void MakeMat_Diffusion2D_P1(const double alpha, const double source,

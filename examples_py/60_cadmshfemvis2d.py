@@ -62,7 +62,6 @@ def pbd_cloth():
   npIndP_Face1 = cms.mesher.points_on_faces([1],cms)
   cms.pbd.vec_val[npIndP_Face1] = trans1.trans(cms.dmsh.np_pos[npIndP_Face1])
 
-
   cms.pbd.sdf = dfm2.CppSDF3_Sphere(0.3,[0,0,0],True)
 
   dfm2.gl.glfw.winDraw3d([cms,cms.pbd.sdf])

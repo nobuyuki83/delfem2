@@ -29,6 +29,7 @@ std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<CSliceTriMesh> aCS;
 std::vector< std::set<unsigned int> > ReebGraphCS;
+std::vector<CVector3> aCG_CS;
 
 CGlutWindowManager win;
 
@@ -87,6 +88,31 @@ void myGlutDisplay(void)
     ::glEnd();
   }
   
+  ::glDisable(GL_DEPTH_TEST);
+  
+  for(int ics=0;ics<ReebGraphCS.size();++ics){
+    ::glColor3d(0,0,0);
+    ::glPointSize(10);
+    ::glBegin(GL_POINTS);
+    ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
+    ::glEnd();
+  }
+  for(int ics=0;ics<ReebGraphCS.size();++ics){
+    for(auto itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
+      const unsigned int jcs = *itr;
+      assert( jcs < aCS.size());
+      assert( abs(aCS[ics].IndHeight() - aCS[jcs].IndHeight()) == 1 );
+      ::glColor3d(0,0,0);
+      ::glLineWidth(3);
+      ::glBegin(GL_LINES);
+      ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
+      ::glVertex3d(aCG_CS[jcs].x, aCG_CS[jcs].y, aCG_CS[jcs].z);
+      ::glEnd();
+    }
+  }
+  ::glEnable(GL_DEPTH_TEST);
+  
+  
   ShowFPS();
   glutSwapBuffers();
 }
@@ -116,7 +142,7 @@ int main(int argc,char* argv[])
   glutInitWindowSize(400, 300);
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("Surface Mesh Edge Collapse");
+  glutCreateWindow("ReebGraph");
   
   // define call back functions
   glutIdleFunc(myGlutIdle);
@@ -156,6 +182,29 @@ int main(int argc,char* argv[])
                           aXYZ,aTri,aTriSurRel);
   MakeReebGraph(ReebGraphCS,
                 aCS, aTri, aTriSurRel);
+  assert( aCS.size() == ReebGraphCS.size() );
+  
+  aCG_CS.resize(aCS.size());
+  for(int ics=0;ics<aCS.size();++ics){
+    const double h0 = aHeight[aCS[ics].IndHeight()];
+    const double po[3] = {org[0]+nrm[0]*h0,  org[1]+nrm[1]*h0,  org[2]+nrm[2]*h0 };
+    double sum_area = 0.0;
+    CVector3 cg(0,0,0);
+    for(int iseg=0;iseg<aCS[ics].aTriInfo.size();++iseg){
+      double n0[3]; NormalTri3D(n0,
+                                aCS[ics].aTriInfo[iseg].pA,
+                                aCS[ics].aTriInfo[iseg].pB,
+                                po);
+      double area0 = n0[0]*nrm[0] + n0[1]*nrm[1] + n0[2]*nrm[2];
+      sum_area += area0;
+      cg.x += area0*(po[0]+aCS[ics].aTriInfo[iseg].pA[0]+aCS[ics].aTriInfo[iseg].pB[0])/3.0;
+      cg.y += area0*(po[1]+aCS[ics].aTriInfo[iseg].pA[1]+aCS[ics].aTriInfo[iseg].pB[1])/3.0;
+      cg.z += area0*(po[2]+aCS[ics].aTriInfo[iseg].pA[2]+aCS[ics].aTriInfo[iseg].pB[2])/3.0;
+    }
+    cg /= sum_area;
+    aCG_CS[ics] = cg;
+  }
+  
   glutMainLoop();
   return 0;
 }
