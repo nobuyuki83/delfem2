@@ -14,8 +14,12 @@
 #include <deque>
 
 #include "delfem2/bv.h"
+#include "delfem2/bvh.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
+
+#include "../py_funcs.h"
 
 namespace py = pybind11;
 
@@ -79,17 +83,93 @@ std::tuple<py::array_t<double>, py::array_t<unsigned int>> PyIsoSurface
 }
 
 
+void PyProjectPointOutsideSDF
+(py::array_t<double>& npXYZt,
+ const std::vector<const CSDF3*>& apSDF)
+{
+  assert( AssertNumpyArray2D(npXYZt, -1, 3) );
+  const int np = npXYZt.shape()[0];
+  double* pXYZt = (double*)(npXYZt.request().ptr);
+  for(int ip=0;ip<np;++ip){
+    const double px = npXYZt.at(ip,0);
+    const double py = npXYZt.at(ip,1);
+    const double pz = npXYZt.at(ip,2);
+    double n[3];
+    double max_dist = apSDF[0]->Projection(n,
+                                           px,py,pz);
+    for(unsigned int ipct=1;ipct<apSDF.size();ipct++){
+      double dist0,n0[3];
+      dist0 = apSDF[ipct]->Projection(n0,
+                                      px,py,pz);
+      if( dist0 < max_dist ){ continue; }
+      max_dist = dist0;
+      n[0] = n0[0];
+      n[1] = n0[1];
+      n[2] = n0[2];
+    }
+    if( max_dist <= 0 ){ continue; }
+    pXYZt[ip*3+0] += n[0]*max_dist;
+    pXYZt[ip*3+1] += n[1]*max_dist;
+    pXYZt[ip*3+2] += n[2]*max_dist;
+  }
+}
+
+class CPyCollision_Points_MeshTri3D
+{
+public:
+  void SetMesh(const py::array_t<double>& xyz,
+               const py::array_t<unsigned int>& tri,
+               double margin)
+  {
+    contact_clearance = margin;
+    bvh.Init(xyz.data(), xyz.shape()[0],
+             tri.data(), tri.shape()[0],
+             margin);
+  }
+  void Project(py::array_t<double>& npXYZt,
+               const py::array_t<double>& npXYZ,
+               const py::array_t<unsigned int>& npTri,
+               const py::array_t<double>& npNorm,
+               double rad_explore)
+  {
+    assert( AssertNumpyArray2D(npXYZ, -1, 3) );
+    assert( AssertNumpyArray2D(npTri, -1, 3) );
+    assert( AssertNumpyArray2D(npNorm, -1, 3) );
+    assert( AssertNumpyArray2D(npXYZt, -1, 3) );
+    assert( npXYZ.shape()[0] == npNorm.shape()[0] );
+    assert( aInfoNearest.empty() || (int)aInfoNearest.size() == npXYZt.shape()[0] );
+    double* pXYZt = (double*)(npXYZt.request().ptr);
+    Project_PointsIncludedInBVH_Outside_Cache(pXYZt, aInfoNearest,
+                                              npXYZt.shape()[0],
+                                              contact_clearance,bvh,
+                                              npXYZ.data(), npXYZ.shape()[0],
+                                              npTri.data(), npTri.shape()[0],
+                                              npNorm.data(), rad_explore);
+  }
+public:
+  double contact_clearance;
+  std::vector<CInfoNearest> aInfoNearest;
+  CBVH_MeshTri3D<CBV3D_Sphere> bvh;
+};
 
 void init_sdf(py::module &m){
   
   ///////////////////////////////////
   // SDF
   py::class_<CSDF3>(m, "CppSDF3");
+  
   py::class_<CSphere, CSDF3>(m, "CppSDF3_Sphere")
   .def(py::init<>())
   .def(py::init<double,const std::vector<double>&,bool>())
   .def_readwrite("cent", &CSphere::cent_)
   .def_readwrite("rad",  &CSphere::radius_);
+  
+  py::class_<CPyCollision_Points_MeshTri3D>(m, "CppClliderPointsMeshTri3D")
+  .def("set_mesh", &CPyCollision_Points_MeshTri3D::SetMesh)
+  .def("project",  &CPyCollision_Points_MeshTri3D::Project)
+  .def(py::init<>());
+  
+  m.def("project_points_outside_sdf", &PyProjectPointOutsideSDF);
   
   m.def("isosurface", &PyIsoSurface);  
 }

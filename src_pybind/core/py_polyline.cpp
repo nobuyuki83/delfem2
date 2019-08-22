@@ -225,39 +225,6 @@ std::vector<std::vector<double> > getLevelSet
 }
 
 
-std::vector<std::vector<int> > pyGetLevelSet(const py::array_t<float>& a, double mag)
-{
-  assert(a.ndim()==2);
-  const int mh0 = a.shape()[0];
-  const int mw0 = a.shape()[1];
-  const int mh1 = mh0+2;
-  const int mw1 = mw0+2;
-  std::vector<float> a1(mh1*mw1,0.0);
-  for(int ih=0;ih<mh0;++ih){
-  for(int iw=0;iw<mw0;++iw){
-    const int ip0 = (ih+0)*mw0+(iw+0);
-    const int ip1 = (ih+1)*mw1+(iw+1);
-    a1[ip1] = a.data()[ip0];
-  }
-  }
-  std::vector<std::vector<double> > aLoop = getLevelSet(mh1, mw1, a1.data(), 0.5);
-  std::vector<std::vector<int> > aLoopInt(aLoop.size());
-  for(unsigned int iloop=0;iloop<aLoop.size();++iloop){
-    std::vector<double> loop = aLoop[iloop];
-    const int np = loop.size()/2;
-    for(int ip=0;ip<np;++ip){
-      double x0 = loop[ip*2+0];
-      double y0 = loop[ip*2+1];
-      double ix0 = int((x0+0.5-1.0)*mag);
-      double iy0 = int((y0+0.5-1.0)*mag);
-      aLoopInt[iloop].push_back(ix0);
-      aLoopInt[iloop].push_back(iy0);
-    }
-  }
-  return aLoopInt;
-}
-
-
 double distance
 (int i0, int i1, int i2,
  const std::vector<int>& aXY)
@@ -320,7 +287,45 @@ std::vector<int> simplifyPolyloop(std::vector<int>& aXY_in, double eps)
 }
 
 
+//////////////////////////////////
+
+std::vector<std::vector<int> >
+pyGetLevelSet
+(const py::array_t<float>& a,
+ double mag)
+{
+  assert(a.ndim()==2);
+  const int mh0 = a.shape()[0];
+  const int mw0 = a.shape()[1];
+  const int mh1 = mh0+2;
+  const int mw1 = mw0+2;
+  std::vector<float> a1(mh1*mw1,0.0);
+  for(int ih=0;ih<mh0;++ih){
+    for(int iw=0;iw<mw0;++iw){
+      const int ip0 = (ih+0)*mw0+(iw+0);
+      const int ip1 = (ih+1)*mw1+(iw+1);
+      a1[ip1] = a.data()[ip0];
+    }
+  }
+  std::vector<std::vector<double> > aLoop = getLevelSet(mh1, mw1, a1.data(), 0.5);
+  std::vector<std::vector<int> > aLoopInt(aLoop.size());
+  for(unsigned int iloop=0;iloop<aLoop.size();++iloop){
+    std::vector<double> loop = aLoop[iloop];
+    const int np = loop.size()/2;
+    for(int ip=0;ip<np;++ip){
+      double x0 = loop[ip*2+0];
+      double y0 = loop[ip*2+1];
+      double ix0 = int((x0+0.5-1.0)*mag);
+      double iy0 = int((y0+0.5-1.0)*mag);
+      aLoopInt[iloop].push_back(ix0);
+      aLoopInt[iloop].push_back(iy0);
+    }
+  }
+  return aLoopInt;
+}
+
+
 void init_polyline(py::module &m){
-  m.def("get_level_set", pyGetLevelSet);
-  m.def("simplify_polyloop",simplifyPolyloop);
+  m.def("get_level_set",    &pyGetLevelSet);
+  m.def("simplify_polyloop",&simplifyPolyloop);
 }

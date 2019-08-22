@@ -63,8 +63,8 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D
  /////
  double px, double py, double pz,
  double rad_exp, // exploring distance
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
+ const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri,
  int ibvh,
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
@@ -84,7 +84,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D
       CPointElemSurf pes_tmp;
       const double dist0 = DistanceToTri(pes_tmp,
                                          CVector3(px,py,pz),
-                                         itri0, aXYZ,aTri);
+                                         itri0, aXYZ,nXYZ, aTri,nTri);
       if( dist_tri<0 || dist0 < dist_tri ){
         dist_tri = dist0;
         pes = pes_tmp;
@@ -93,8 +93,14 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D
     return;
   }
   /////
-  BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes, px,py,pz,rad_exp, aXYZ,aTri, ichild0,aBVH,aBB);
-  BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes, px,py,pz,rad_exp, aXYZ,aTri, ichild1,aBVH,aBB);
+  BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes,
+                                           px,py,pz,rad_exp,
+                                           aXYZ,nXYZ,aTri,nTri,
+                                           ichild0,aBVH,aBB);
+  BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes,
+                                           px,py,pz,rad_exp,
+                                           aXYZ,nXYZ,aTri,nTri,
+                                           ichild1,aBVH,aBB);
 }
 
 ///////////////////////////////////////
@@ -104,58 +110,63 @@ class CBVH_MeshTri3D
 {
 public:
   CBVH_MeshTri3D(){}
-  void Init(const std::vector<double>& aXYZ,
-            const std::vector<unsigned int>& aTri,
+  void Init(const double* pXYZ, unsigned int nXYZ,
+            const unsigned int* pTri, unsigned int nTri,
             double margin)
   {
     assert( margin >= 0 );
     { // make BVH topology
-      const int ntri = aTri.size()/3;
-      std::vector<double> aElemCenter(ntri*3);
-      for(int itri=0;itri<ntri;++itri){
-        int i0 = aTri[itri*3+0];
-        int i1 = aTri[itri*3+1];
-        int i2 = aTri[itri*3+2];
-        double x0 = (aXYZ[i0*3+0]+aXYZ[i1*3+0]+aXYZ[i2*3+0])/3.0;
-        double y0 = (aXYZ[i0*3+1]+aXYZ[i1*3+1]+aXYZ[i2*3+1])/3.0;
-        double z0 = (aXYZ[i0*3+2]+aXYZ[i1*3+2]+aXYZ[i2*3+2])/3.0;
+      std::vector<double> aElemCenter(nTri*3);
+      for(unsigned int itri=0;itri<nTri;++itri){
+        int i0 = pTri[itri*3+0];
+        int i1 = pTri[itri*3+1];
+        int i2 = pTri[itri*3+2];
+        double x0 = (pXYZ[i0*3+0]+pXYZ[i1*3+0]+pXYZ[i2*3+0])/3.0;
+        double y0 = (pXYZ[i0*3+1]+pXYZ[i1*3+1]+pXYZ[i2*3+1])/3.0;
+        double z0 = (pXYZ[i0*3+2]+pXYZ[i1*3+2]+pXYZ[i2*3+2])/3.0;
         aElemCenter[itri*3+0] = x0;
         aElemCenter[itri*3+1] = y0;
         aElemCenter[itri*3+2] = z0;
       }
-      std::vector<int> aTriSurRel;
-      makeSurroundingRelationship(aTriSurRel,
-                                  aTri.data(), aTri.size()/3,
-                                  MESHELEM_TRI, aXYZ.size()/3);
-      iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
-                                       3,aTriSurRel,
-                                       aElemCenter);
+      {
+        std::vector<int> aTriSurRel;
+        makeSurroundingRelationship(aTriSurRel,
+                                    pTri, nTri,
+                                    MESHELEM_TRI, nXYZ);
+        iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
+                                        3,aTriSurRel,
+                                         aElemCenter);
+      }
     }
-    this->UpdateGeometry(aXYZ,aTri,margin);
+    this->UpdateGeometry(pXYZ, nXYZ,
+                         pTri, nTri,
+                         margin);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
-  void UpdateGeometry(const std::vector<double>& aXYZ,
-                      const std::vector<unsigned int>& aTri,
+  void UpdateGeometry(const double* pXYZ, unsigned int nXYZ,
+                      const unsigned int* pTri, unsigned int nTri,
                       double margin)
   {
     assert( margin >= 0 );
     BVH_BuildBVHGeometry(iroot_bvh,
                          margin,
-                         aXYZ,aTri,3,aNodeBVH,aBB_BVH);
+                         pXYZ,nXYZ,
+                         pTri,3,nTri,
+                         aNodeBVH,aBB_BVH);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
   double Nearest_Point_IncludedInBVH(CPointElemSurf& pes,
                                      const CVector3& p0,
                                      double rad_exp, // look leaf inside this radius
-                                     const std::vector<double>& aXYZ,
-                                     const std::vector<unsigned int>& aTri) const{
+                                     const double* aXYZ, unsigned int nXYZ,
+                                     const unsigned int* aTri, unsigned int nTri) const{
     assert( aBB_BVH.size() == aNodeBVH.size() );
     double dist = -1, dist_min = rad_exp;
     pes.itri = -1;
     BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist,dist_min, pes,
                                              p0.x, p0.y, p0.z, rad_exp,
-                                             aXYZ, aTri, iroot_bvh, aNodeBVH, aBB_BVH);
-//    std::cout << pes.itri << " " << dist << " " << dist_min << std::endl;
+                                             aXYZ, nXYZ, aTri, nTri,
+                                             iroot_bvh, aNodeBVH, aBB_BVH);
     if( pes.itri == -1 ){ return dist_min; }
     return dist;
     /*
@@ -237,18 +248,22 @@ void Project_PointsIncludedInBVH_Outside
 (std::vector<double>& aXYZt,
  double cc,
  const CBVH_MeshTri3D<T>& bvh,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aNorm)
+ const std::vector<double>& aXYZ0,
+ const std::vector<unsigned int>& aTri0,
+ const std::vector<double>& aNorm0)
 {
   for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
     CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
     CPointElemSurf pes;
-    bvh.Nearest_Point_IncludedInBVH(pes, p0, 0.0, aXYZ,aTri);
+    bvh.Nearest_Point_IncludedInBVH(pes,
+                                    p0, 0.0,
+                                    aXYZ0.data(),aXYZ0.size()/3,
+                                    aTri0.data(),aTri0.size()/3);
+    /////
     if( pes.itri == -1 ){ continue; }
     CVector3 n0;
     double sdf = SDFNormal_NearestPoint(n0,
-                                        p0,pes,aXYZ,aTri,aNorm);
+                                        p0,pes,aXYZ0,aTri0,aNorm0);
 //    std::cout << sdf+cc << std::endl;
     if( sdf+cc < 0 ) continue;
     aXYZt[ip*3+0] += (sdf+cc)*n0.x;
@@ -271,16 +286,18 @@ public:
 };
 
 template <typename T>
-void Project_PointsIncludedInBVH_Outside
-(std::vector<double>& aXYZt,
+void Project_PointsIncludedInBVH_Outside_Cache
+(double* aXYZt,
  std::vector<CInfoNearest>& aInfoNearest,
+ unsigned int nXYZt,
  double cc,
  const CBVH_MeshTri3D<T>& bvh,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aNorm)
+ const double* pXYZ0, unsigned int nXYZ0,
+ const unsigned int* pTri0, unsigned int nTri0,
+ const double* pNorm0,
+ double rad_explore)
 {
-  const int np = aXYZt.size()/3;
+  const unsigned int np = nXYZt;
   aInfoNearest.resize(np);
   for(unsigned int ip=0;ip<np;++ip){
     CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
@@ -292,7 +309,9 @@ void Project_PointsIncludedInBVH_Outside
     }
     aInfoNearest[ip].pos = p0;
     double dist0 = bvh.Nearest_Point_IncludedInBVH(aInfoNearest[ip].pes,
-                                                   aInfoNearest[ip].pos, 0.1, aXYZ,aTri);
+                                                   aInfoNearest[ip].pos, rad_explore,
+                                                   pXYZ0, nXYZ0,
+                                                   pTri0, nTri0);
     if( aInfoNearest[ip].pes.itri == -1 ){
       if( aInfoNearest[ip].is_active ){
         if( aInfoNearest[ip].sdf < 0 ){ aInfoNearest[ip].sdf = -dist0; }
@@ -307,7 +326,9 @@ void Project_PointsIncludedInBVH_Outside
     CVector3 n0;
     double sdf = SDFNormal_NearestPoint(n0,
                                         aInfoNearest[ip].pos, aInfoNearest[ip].pes,
-                                        aXYZ,aTri,aNorm);
+                                        pXYZ0, nXYZ0,
+                                        pTri0, nTri0,
+                                        pNorm0);
     aInfoNearest[ip].sdf = sdf;
     aInfoNearest[ip].is_active = true;
     if( sdf+cc < 0 ) continue;

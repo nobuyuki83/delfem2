@@ -375,8 +375,10 @@ void GetIntermidiateVelocityContactResolved
     std::vector<CContactElement> aContactElem;
     {
       BVH_BuildBVHGeometry(iroot_bvh,
-                            contact_clearance*0.5, // for tri to tri collision, we put half margin for both tri
-                            aXYZ,aTri,3,aNodeBVH,aBB);
+                           contact_clearance*0.5, // for tri to tri collision, we put half margin for both tri
+                           aXYZ.data(), aXYZ.size()/3,
+                           aTri.data(), 3, aTri.size()/3,
+                           aNodeBVH,aBB);
       std::set<CContactElement> setCE;
       GetContactElement_Proximity(setCE,
                                   contact_clearance,

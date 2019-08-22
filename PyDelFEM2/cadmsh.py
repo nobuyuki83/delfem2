@@ -35,6 +35,9 @@ from .c_core import \
 from .c_core import rotmat3_cartesian
 from .c_core import num_node_elem
 
+from .c_core import CppSDF3, CppSDF3_Sphere
+from .c_core import project_points_outside_sdf
+from .c_core import CppClliderPointsMeshTri3D
 
 ####################
 
@@ -51,8 +54,6 @@ class Mesh():
     self.np_pos = np_pos
     self.np_elm = np_elm
     self.elem_type = elem_type
-
-
 
   def minmax_xyz(self):
     if self.np_pos.shape[0] == 0:
@@ -182,7 +183,38 @@ class Mesh():
 
 ###########################################################################
 
+class SDF():
+  def __init__(self):
+    self.list_sdf = []
 
+  def add(self,sdf):
+    self.list_sdf.append(sdf)
+
+  def project_points_outside(self,np_xyz):
+    project_points_outside_sdf(np_xyz,self.list_sdf)
+
+  def draw(self) -> None:
+    for sdf in self.list_sdf:
+      sdf.draw()
+
+
+class Collider_PointsToMeshTri3D():
+  def __init__(self):
+    self.msh = None
+    self.cpp_collider = CppClliderPointsMeshTri3D()
+
+  def set_mesh(self,msh:Mesh):
+    self.msh = msh
+    self.cpp_collider.set_mesh(msh.np_pos,msh.np_elm,0.001)
+    self.np_nrm = numpy.zeros_like(msh.np_pos,dtype=numpy.float64)
+    cppNormalVtx_Mesh(self.np_nrm,
+                      self.msh.np_pos, self.msh.np_elm, self.msh.elem_type)
+
+  def project_points_outside(self,np_xyz):
+    self.cpp_collider.project(np_xyz,
+                              self.msh.np_pos, self.msh.np_elm,
+                              self.np_nrm,
+                              0.1)
 
 ###########################################################################
 

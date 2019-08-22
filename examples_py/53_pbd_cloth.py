@@ -11,6 +11,7 @@ import PyDelFEM2.gl.glfw
 
 import numpy
 
+########################################
 
 def example1():
   cad = dfm2.Cad2D()
@@ -24,7 +25,8 @@ def example1():
 #  pbd.param_gravity_y = -0.1
   pbd.dt = 0.08
   pbd.updated_topology(mesh)
-  pbd.sdf = dfm2.CppSDF3_Sphere(0.3,[0.0, 0.0, 0.0],True)
+  pbd.sdf = dfm2.SDF()
+  pbd.sdf.add( dfm2.CppSDF3_Sphere(0.3, [0.0, 0.0, 0.0], True) )
 
   trans0 = dfm2.Trans_Rigid2DTo3D()
   trans0.org2 = numpy.array([0.5,0.5])
@@ -51,14 +53,21 @@ def example1():
 
   pbd.elems_seam = numpy.vstack([npIndP_Seam0,npIndP_Seam1]).copy().astype(numpy.uint32) # to allign data
 
-#  npIdP = mesher.points_on_edges([2,6],cad)
-#  pbd.bc[npIdP] = 1
-  ####
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   mesh3 = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=pbd.elems_seam, elem_type=dfm2.LINE)
 
   axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,axis])
+
+
+  msh_trg = dfm2.Mesh()
+  msh_trg.set_sphere(0.3, 16, 16)
+
+  pbd.sdf = dfm2.Collider_PointsToMeshTri3D()
+  pbd.sdf.set_mesh(msh_trg)
+
+  dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,msh_trg,axis])
+
 
 
 if __name__ == "__main__":

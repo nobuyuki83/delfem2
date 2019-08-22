@@ -352,8 +352,10 @@ void PyNormalVtx_Mesh
  const py::array_t<unsigned int>& elm,
  const MESHELEM_TYPE type)
 {
+  assert( AssertNumpyArray2D(pos, -1, 3) );
+  assert( AssertNumpyArray2D(elm, -1, 3) );
+  assert( AssertNumpyArray2D(nrm, -1, 3) );
   assert( nrm.shape()[0] == pos.shape()[0] );
-  assert( nrm.shape()[1] == 3 );
   if( type == MESHELEM_TRI ){
     Normal_MeshTri3D((double*)(nrm.request().ptr),
                      pos.data(),pos.shape()[0],

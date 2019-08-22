@@ -91,7 +91,9 @@ void myGlutIdle(){
     ////
     BVH_BuildBVHGeometry(iroot_bvh,
                          1.0e-5,
-                         aXYZ,aTri,3,aNodeBVH,aBB_BVH);
+                         aXYZ.data(),aXYZ.size()/3,
+                         aTri.data(),3,aTri.size()/3,
+                         aNodeBVH,aBB_BVH);
     aITP.clear();
     GetIntersectTriPairs(aITP,
                          aXYZ,aTri,

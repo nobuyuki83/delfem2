@@ -105,7 +105,9 @@ void SetProblem()
       std::cout << PATH_INPUT_DIR << std::endl;
       Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ, aTri);
       Normalize(aXYZ,1.7);
-      mesh.obj.Init(aXYZ,aTri, 0.0);
+      mesh.obj.Init(aXYZ.data(), aXYZ.size()/3,
+                    aTri.data(), aTri.size()/3,
+                    0.0);
       mesh.aNorm.resize(aXYZ.size());
       Normal_MeshTri3D(mesh.aNorm.data(),
                        aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);

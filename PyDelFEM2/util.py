@@ -334,10 +334,13 @@ def screenUnProjectionDirection(v:numpy.ndarray,
 
 
 class Trans_Rigid2DTo3D:
-  def __init__(self):
-    self.org2 = numpy.array([0.0, 0.0], dtype=numpy.float64)
-    self.org3 = numpy.array([0.0, 0.0, 0.0], dtype=numpy.float64)
-    self.R = mat3_identity()
+  def __init__(self,
+               org2 = numpy.array([0.0, 0.0], dtype=numpy.float64),
+               org3 = numpy.array([0.0, 0.0, 0.0], dtype=numpy.float64),
+               R = numpy.array([[1,0,0], [0,1,0], [0,0,1]], dtype=numpy.float64) ):
+    self.org2 = org2
+    self.org3 = org3
+    self.R = R
 
   def trans(self,pos2):
     assert pos2.ndim == 2 and pos2.shape[1] == 2

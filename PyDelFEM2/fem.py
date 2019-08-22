@@ -638,9 +638,8 @@ class PBD_Cloth():
       for itr in range(1):
         pbd_proj_seam(self.vec_tpos,self.elems_seam)
     # contact
-    if isinstance(self.sdf,CppSDF3):
-      for itr in range(1):
-        pbd_proj_contact(self.vec_tpos,self.sdf)
+    if self.sdf is not None:
+      self.sdf.project_points_outside(self.vec_tpos)
     # post
     pbd_pointFixBC(self.vec_tpos, self.bc, self.vec_val)
     self.vec_velo[:] = (self.vec_tpos-self.vec_val)/self.dt
