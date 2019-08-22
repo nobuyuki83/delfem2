@@ -24,6 +24,7 @@
 #include "delfem2/mathexpeval.h"
 
 #include "delfem2/cad2d.h"
+#include "delfem2/rig_v3q.h"
 
 #include "delfem2/../../external/tinygltf/tiny_gltf.h"
 #include "delfem2/../../external/io_gltf.h"
@@ -139,7 +140,57 @@ PyGLTF_GetMeshInfo
   return std::make_tuple(npXYZ0,npTri,npRW,npRJ);
 }
 
+class CBoneArray{
+public:
+  void SetTranslation(int ib, const std::vector<double>& aT){
+    assert(aT.size()==3);
+    aRigBone[ib].SetTranslation(aT[0], aT[1], aT[2]);
+    UpdateBoneRotTrans(aRigBone);
+  }
+  void SetRotationBryant(int ib, const std::vector<double>& aRB){
+    assert(aRB.size()==3);
+    aRigBone[ib].SetRotationBryant(aRB[0], aRB[1], aRB[2]);
+    UpdateBoneRotTrans(aRigBone);
+  }
+public:
+  std::vector<CRigBone> aRigBone;
+};
 
+CBoneArray
+PyGLTF_GetBones
+(const CGLTF& gltf,
+ int iskin)
+{
+  CBoneArray BA;
+  gltf.GetBone(BA.aRigBone,
+               iskin);
+  return BA;
+}
+
+void PyUpdateRigSkin
+(py::array_t<double>& npXYZ,
+ const py::array_t<double>& npXYZ0,
+ const py::array_t<unsigned int>& npTri,
+ const CBoneArray& BA,
+ const py::array_t<double>& npRigWeight,
+ const py::array_t<unsigned int>& npRigJoint)
+{
+  assert( AssertNumpyArray2D(npXYZ, -1, 3) );
+  assert( AssertNumpyArray2D(npXYZ0, -1, 3) );
+  assert( AssertNumpyArray2D(npTri, -1, 3) );
+  assert( AssertNumpyArray2D(npRigWeight, -1, 4) );
+  assert( AssertNumpyArray2D(npRigJoint, -1, 4) );
+  assert( npXYZ.shape()[0] == npXYZ0.shape()[0] );
+  assert( npXYZ.shape()[0] == npRigWeight.shape()[0] );
+  assert( npXYZ.shape()[0] == npRigJoint.shape()[0] );
+  double* aXYZ = (double*)(npXYZ.request().ptr);
+  UpdateRigSkin(aXYZ,
+                npXYZ0.data(), npXYZ0.shape()[0],
+                npTri.data(), npTri.shape()[0],
+                BA.aRigBone,
+                npRigWeight.data(),
+                npRigJoint.data());
+}
 
 
 PYBIND11_MODULE(c_core, m) {
@@ -218,14 +269,27 @@ PYBIND11_MODULE(c_core, m) {
   
   m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
   
+  /*
   py::class_<CRigBone>(m,"CppRigBone")
-  .def(py::init<>());
+  .def(py::init<>())
+  .def("set_translation", &CRigBone::SetTranslation)
+  .def("set_rotation_bryant", &CRigBone::SetRotationBryant);
+   */
   
   py::class_<CGLTF>(m,"CppGLTF")
   .def(py::init<>())
   .def("read", &CGLTF::Read)
   .def("print", &CGLTF::Print);
+  
+  py::class_<CBoneArray>(m,"CppBoneArray")
+  .def("set_translation", &CBoneArray::SetTranslation)
+  .def("set_rotation_bryant", &CBoneArray::SetRotationBryant)
+  .def(py::init<>());
+  
   m.def("CppGLTF_GetMeshInfo", &PyGLTF_GetMeshInfo);
+  m.def("CppGLTF_GetBones", &PyGLTF_GetBones);
+  m.def("update_rig_skin", &PyUpdateRigSkin);
+  m.def("update_bone_transform", &UpdateBoneRotTrans);
 
   
   ////////////////////////////////////

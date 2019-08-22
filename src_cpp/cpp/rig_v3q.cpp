@@ -102,9 +102,83 @@ int CRigBone::PickHandler
                                   tol);
 }
 
-////////////////////////////////////////////////////////////////////////////
-// from here std::vector<CBone_RigMsh>
+void CRigBone::SetRotationBryant
+(double rx, double ry, double rz)
+{
+  Quat_Bryant(rot, rx, ry, rz);
+}
 
+void CRigBone::SetTranslation
+(double tx, double ty, double tz)
+{
+  this->trans[0] = tx;
+  this->trans[1] = ty;
+  this->trans[2] = tz;
+}
+
+void UpdateBoneRotTrans
+(std::vector<CRigBone>& aBone)
+{
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
+    const int ibone_p = aBone[ibone].ibone_parent;
+    if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
+      Mat4_ScaleRotTrans(aBone[ibone].Mat,
+                         aBone[ibone].scale,
+                         aBone[ibone].rot,
+                         aBone[ibone].trans);
+      continue;
+    }
+    double M01[16];
+    Mat4_ScaleRotTrans(M01,
+                       aBone[ibone].scale,
+                       aBone[ibone].rot,
+                       aBone[ibone].trans);
+    MatMat4(aBone[ibone].Mat,
+            aBone[ibone_p].Mat,M01);
+  }
+}
+
+
+
+void UpdateRigSkin
+(double* aXYZ,
+ const double* aXYZ0,
+ unsigned int nXYZ,
+ const unsigned int* aTri,
+ unsigned int nTri,
+ const std::vector<CRigBone>& aBone,
+ const double* aRigWeight,
+ const unsigned int* aRigJoint)
+{
+  for(unsigned int ip=0;ip<nXYZ;++ip){
+    double pos0[4] = {aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2],1.0};
+    double pos1[3] = {0,0,0};
+    double sum_w = 0.0;
+    for(int iij=0;iij<4;++iij){
+      double w = aRigWeight[ip*4+iij];
+      if( w < 1.0e-30 ){ continue; }
+      int ij = aRigJoint[ip*4+iij];
+      sum_w += w;
+      assert (ij>=0 && ij<(int)aBone.size());
+      double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
+      double pos0b[4]; MatVec4(pos0b,aBone[ij].Mat,pos0a);
+      pos1[0] += w*pos0b[0];
+      pos1[1] += w*pos0b[1];
+      pos1[2] += w*pos0b[2];
+    }
+    assert( fabs(sum_w)>1.0e-10 );
+    pos1[0] /= sum_w;
+    pos1[1] /= sum_w;
+    pos1[2] /= sum_w;
+    aXYZ[ip*3+0] = pos1[0];
+    aXYZ[ip*3+1] = pos1[1];
+    aXYZ[ip*3+2] = pos1[2];
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+// from here BioVisionHierarchy
 
 void Read_BioVisionHierarchy
 (std::vector<CRigBone>& aBone,
@@ -230,7 +304,7 @@ void Read_BioVisionHierarchy
     }
   }
   ///////
-  for(int ibone=0;ibone<aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
     bone.rot[0] = 1.0;
@@ -254,27 +328,6 @@ void Read_BioVisionHierarchy
   }
 }
 
-void UpdateBoneRotTrans
-(std::vector<CRigBone>& aBone)
-{
-  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
-    const int ibone_p = aBone[ibone].ibone_parent;
-    if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
-      Mat4_ScaleRotTrans(aBone[ibone].Mat,
-                         aBone[ibone].scale,
-                         aBone[ibone].rot,
-                         aBone[ibone].trans);
-      continue;
-    }
-    double M01[16];
-    Mat4_ScaleRotTrans(M01,
-                       aBone[ibone].scale,
-                       aBone[ibone].rot,
-                       aBone[ibone].trans);
-    MatMat4(aBone[ibone].Mat,
-            aBone[ibone_p].Mat,M01);
-  }
-}
 
 void SetPose_BioVisionHierarchy
 (std::vector<CRigBone>& aBone,
@@ -340,43 +393,6 @@ void PickBone
   }
 }
 
-void UpdateRigSkin
-(std::vector<double>& aXYZ,
- const std::vector<double>& aXYZ0,
- const std::vector<unsigned int>& aTri,
- const std::vector<CRigBone>& aBone,
- const std::vector<double>& aRigWeight,
- const std::vector<unsigned int>& aRigJoint)
-{
-  const int np = aXYZ0.size()/3;
-  assert(aRigWeight.size()==np*4);
-  assert(aRigJoint.size()==np*4);
-  aXYZ.resize(aXYZ0.size());
-  for(int ip=0;ip<np;++ip){
-    double pos0[4] = {aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2],1.0};
-    double pos1[3] = {0,0,0};
-    double sum_w = 0.0;
-    for(int iij=0;iij<4;++iij){
-      double w = aRigWeight[ip*4+iij];
-      if( w < 1.0e-30 ){ continue; }
-      int ij = aRigJoint[ip*4+iij];
-      sum_w += w;
-      assert (ij>=0 && ij<aBone.size());
-      double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
-      double pos0b[4]; MatVec4(pos0b,aBone[ij].Mat,pos0a);
-      pos1[0] += w*pos0b[0];
-      pos1[1] += w*pos0b[1];
-      pos1[2] += w*pos0b[2];
-    }
-    assert( fabs(sum_w)>1.0e-10 );
-    pos1[0] /= sum_w;
-    pos1[1] /= sum_w;
-    pos1[2] /= sum_w;
-    aXYZ[ip*3+0] = pos1[0];
-    aXYZ[ip*3+1] = pos1[1];
-    aXYZ[ip*3+2] = pos1[2];
-  }
-}
 
 
 /*
