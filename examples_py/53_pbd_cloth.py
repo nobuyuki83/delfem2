@@ -59,6 +59,7 @@ def example1():
   axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,axis])
 
+  #########
 
   msh_trg = dfm2.Mesh()
   msh_trg.set_sphere(0.3, 16, 16)
@@ -67,6 +68,19 @@ def example1():
   pbd.sdf.set_mesh(msh_trg)
 
   dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,msh_trg,axis])
+
+  #########
+
+  gltf = PyDelFEM2.CppGLTF()
+  gltf.read("../test_inputs/CesiumMan.glb")
+  # gltf.print()
+
+  np_pos, np_elm, np_rigw, np_rigj = dfm2.CppGLTF_GetMeshInfo(gltf, 0, 0)
+  msh = dfm2.Mesh(np_pos, np_elm, dfm2.TRI)
+  list_bone = dfm2.CppGLTF_GetBones(gltf,0)
+
+
+  dfm2.gl.glfw.winDraw3d([msh], winsize=(400, 300))
 
 
 

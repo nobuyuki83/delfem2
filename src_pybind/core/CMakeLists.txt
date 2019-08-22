@@ -44,6 +44,7 @@ set(INPUT_SRC
   ${DELFEM2_INC}/objfunc_v23dtri.h  ${DELFEM2_SRC}/objfunc_v23dtri.cpp
   ${DELFEM2_INC}/srchuni_v3.h       ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
+  ${DELFEM2_INC}/rig_v3q.h          ${DELFEM2_SRC}/rig_v3q.cpp
 
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
   ${DELFEM2_INC}/dyntri_v3.h        ${DELFEM2_SRC}/dyntri_v3.cpp

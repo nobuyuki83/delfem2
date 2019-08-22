@@ -329,8 +329,11 @@ int main(int argc,char* argv[])
 //        Quat_Bryant(aBone[0].rot, 0, 0, 0);
       }
       UpdateBoneRotTrans(aBone);
-      UpdateRigSkin(aXYZ_Contact,
-                    aXYZ0_Contact, aTri_Contact, aBone, aRigWeight_Contact, aRigJoint_Contact);
+      aXYZ_Contact = aXYZ0_Contact;
+      UpdateRigSkin(aXYZ_Contact.data(),
+                    aXYZ0_Contact.data(), aXYZ0_Contact.size()/3,
+                    aTri_Contact.data(), aTri_Contact.size()/3,
+                    aBone, aRigWeight_Contact.data(), aRigJoint_Contact.data());
     }
     aNorm_Contact.resize(aXYZ_Contact.size());
     Normal_MeshTri3D(aNorm_Contact.data(),

@@ -112,8 +112,10 @@ void myGlutMotion( int x, int y )
                         ielem_bone_selected, sp0, sp1, bone.Mat,
                         mMV, mPj);
     UpdateBoneRotTrans(aBone);
-    UpdateRigSkin(aXYZ,
-                  aXYZ0, aTri, aBone, aRigWeight, aRigJoint);
+    UpdateRigSkin(aXYZ.data(),
+                  aXYZ0.data(), aXYZ.size()/3, 
+                  aTri.data(), aTri.size()/3,
+                  aBone, aRigWeight.data(), aRigJoint.data());
   }
   ////
   ::glutPostRedisplay();
@@ -197,8 +199,11 @@ int main(int argc,char* argv[])
   }
   
   UpdateBoneRotTrans(aBone);
-  UpdateRigSkin(aXYZ,
-                aXYZ0, aTri, aBone, aRigWeight, aRigJoint);
+  aXYZ = aXYZ0;
+  UpdateRigSkin(aXYZ.data(),
+                aXYZ0.data(), aXYZ0.size()/3,
+                aTri.data(), aTri.size()/3,
+                aBone, aRigWeight.data(), aRigJoint.data());
 
   
   window.camera.view_height = 2.0;

@@ -12,7 +12,7 @@ from .c_core import MathExpressionEvaluator
 from .c_core import meshdyntri3d_initialize, isosurface
 from .c_core import cad_getPointsEdge, mvc
 from .c_core import CppMeshDynTri3D, CppCad2D
-from .c_core import CppGLTF, CppGLTF_GetMeshInfo
+from .c_core import CppGLTF, CppGLTF_GetMeshInfo, CppGLTF_GetBones, update_rig_skin, update_bone_transform
 
 from .fem import FieldValueSetter
 from .fem import PBD, PBD_Cloth

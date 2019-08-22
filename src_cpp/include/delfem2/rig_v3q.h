@@ -42,6 +42,8 @@ public:
   CVector3 Pos() const{
     return CVector3(Mat[3],Mat[7],Mat[11]);
   }
+  void SetRotationBryant(double rx, double ry, double rz);
+  void SetTranslation(double tx, double ty, double tz);
   int PickHandler(const CVector3& org,
                   const CVector3& dir,
                   double rad_handlr,
@@ -73,12 +75,14 @@ void PickBone(int& ibone_selected,
 
 ////////////////////////////////////////////////////////////////////////
 
-void UpdateRigSkin(std::vector<double>& aXYZ,
-                   const std::vector<double>& aXYZ0,
-                   const std::vector<unsigned int>& aTri,
+void UpdateRigSkin(double* aXYZ,
+                   const double* aXYZ0,
+                   unsigned int nXYZ,
+                   const unsigned int* aTri,
+                   unsigned int nTri,
                    const std::vector<CRigBone>& aBone,
-                   const std::vector<double>& aRigWeight,
-                   const std::vector<unsigned int>& aRigJoint);
+                   const double* aRigWeight,
+                   const unsigned int* aRigJoint);
 
 ////////////////////////////////////////////////////////////////////////
 
