@@ -73,14 +73,20 @@ def example1():
 
   gltf = PyDelFEM2.CppGLTF()
   gltf.read("../test_inputs/CesiumMan.glb")
-  # gltf.print()
 
-  np_pos, np_elm, np_rigw, np_rigj = dfm2.CppGLTF_GetMeshInfo(gltf, 0, 0)
-  msh = dfm2.Mesh(np_pos, np_elm, dfm2.TRI)
-  list_bone = dfm2.CppGLTF_GetBones(gltf,0)
+  np_pos0, np_elm, np_rigw, np_rigj = dfm2.CppGLTF_GetMeshInfo(gltf, 0, 0)
+  np_pos = np_pos0.copy()
+  bones = dfm2.CppGLTF_GetBones(gltf,0)
+  bones.set_rotation_bryant(0, [-3.1415 * 0.5, 0.0, 0.0])
+  bones.set_translation(0, [0.0, 0.0, +0.2])
+  dfm2.update_rig_skin(np_pos,
+                       np_pos0, np_elm, bones, np_rigw, np_rigj)
+  msh_trg = dfm2.Mesh(np_pos,np_elm,dfm2.TRI)
 
+  pbd.sdf = dfm2.Collider_PointsToMeshTri3D()
+  pbd.sdf.set_mesh(msh_trg)
 
-  dfm2.gl.glfw.winDraw3d([msh], winsize=(400, 300))
+  dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,msh_trg,axis], winsize=(400, 300))
 
 
 
