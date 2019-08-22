@@ -30,6 +30,7 @@ set(INPUT_SRC
   ${DELFEM2_INC}/funcs.h            ${DELFEM2_SRC}/funcs.cpp
   ${DELFEM2_INC}/voxel.h            ${DELFEM2_SRC}/voxel.cpp
   ${DELFEM2_INC}/bv.h
+  ${DELFEM2_INC}/bvh.h              ${DELFEM2_SRC}/bvh.cpp
   ${DELFEM2_INC}/mathexpeval.h      ${DELFEM2_SRC}/mathexpeval.cpp
   ${DELFEM2_INC}/dyntri.h           ${DELFEM2_SRC}/dyntri.cpp
   ${DELFEM2_INC}/mats.h             ${DELFEM2_SRC}/mats.cpp
@@ -41,6 +42,8 @@ set(INPUT_SRC
   ${DELFEM2_INC}/fem_emats.h        ${DELFEM2_SRC}/fem_emats.cpp
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h  ${DELFEM2_SRC}/objfunc_v23dtri.cpp
+  ${DELFEM2_INC}/srchuni_v3.h       ${DELFEM2_SRC}/srchuni_v3.cpp
+  ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
   ${DELFEM2_INC}/dyntri_v3.h        ${DELFEM2_SRC}/dyntri_v3.cpp

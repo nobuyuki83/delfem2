@@ -47,12 +47,17 @@ public:
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
   CVector3 Pos_Tri(const std::vector<double>& aXYZ,
                    const std::vector<unsigned int>& aTri) const;
+  CVector3 Pos_Tri(const double* aXYZ, unsigned int nXYZ,
+                   const unsigned int* aTri, unsigned int nTri) const;
   CVector3 Pos_TetFace(const std::vector<double>& aXYZ,
                        const std::vector<int>& aTet,
                        const std::vector<int>& aTetFace) const;
   CVector3 UNorm_Tri(const std::vector<double>& aXYZ,
                      const std::vector<unsigned int>& aTet,
                      const std::vector<double>& aNorm) const;
+  CVector3 UNorm_Tri(const double* aXYZ, unsigned int nXYZ,
+                     const unsigned int* aTri, unsigned int nTri,
+                     const double* aNorm) const;
   bool Check(const std::vector<double>& aXYZ,
              const std::vector<unsigned int>& aTri,
              double eps) const;
@@ -133,10 +138,23 @@ double SDFNormal_NearestPoint(CVector3& n0,
                               const std::vector<unsigned int>& aTri,
                               const std::vector<double>& aNorm);
 
+double SDFNormal_NearestPoint(CVector3& n0,
+                              const CVector3& p0,
+                              const CPointElemSurf& pes,
+                              const double* aXYZ, unsigned int nXYZ,
+                              const unsigned int* aTri, unsigned int nTri,
+                              const double* aNorm);
+
 double DistanceToTri(CPointElemSurf& pes,
                      const CVector3& p,
                      unsigned int itri0,
                      const std::vector<double>& aXYZ,
                      const std::vector<unsigned int>& aTri);
+
+double DistanceToTri(CPointElemSurf& pes,
+                     const CVector3& p,
+                     unsigned int itri0,
+                     const double* aXYZ, unsigned int nXYZ,
+                     const unsigned int* aTri, unsigned int nTri);
 
 #endif /* search_mesh_hpp */

@@ -61,6 +61,7 @@ std::vector<CRigBone> aBone;
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
 const double contact_clearance = 0.0001;
+const double rad_explore = 0.1;
 
 CGlutWindowManager win;
 bool is_animation = false;
@@ -77,9 +78,12 @@ void StepTime()
            aXYZt.size()/3, aETri, aVec2);
   PBD_Seam(aXYZt.data(),
            aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  Project_PointsIncludedInBVH_Outside(aXYZt,aInfoNearest,
-                                      contact_clearance,bvh,
-                                      aXYZ_Contact,aTri_Contact,aNorm_Contact);
+  Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
+                                            aXYZt.size()/3,
+                                            contact_clearance,bvh,
+                                            aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                                            aTri_Contact.data(), aTri_Contact.size()/3,
+                                            aNorm_Contact.data(), rad_explore);
   PBD_Post(aXYZ, aUVW,
            dt, aXYZt, aBCFlag);
 
@@ -332,7 +336,9 @@ int main(int argc,char* argv[])
     Normal_MeshTri3D(aNorm_Contact.data(),
                      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
                      aTri_Contact.data(), aTri_Contact.size()/3);
-    bvh.Init(aXYZ_Contact, aTri_Contact, 0.01);
+    bvh.Init(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+             aTri_Contact.data(), aTri_Contact.size()/3,
+             0.01);
   }
 
   

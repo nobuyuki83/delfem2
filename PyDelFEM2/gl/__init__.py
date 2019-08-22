@@ -11,8 +11,8 @@ import numpy
 from ..cadmsh import Mesh
 
 from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D
-from ..c_core import CppSDF3_Sphere
 from ..c_core import TRI, QUAD, LINE
+from ..c_core import CppSDF3, CppSDF3_Sphere
 from ..c_core import \
   write_vtk_meshpoint, \
   write_vtk_meshelem, \

@@ -51,9 +51,25 @@ void CPointElemSolid::setPos_Tet
   this->r2 = v2/vt;
 }
 
-CVector3 CPointElemSurf::Pos_Tri(const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTri) const
+CVector3 CPointElemSurf::Pos_Tri
+(const std::vector<double>& aXYZ,
+ const std::vector<unsigned int>& aTri) const
 {
   assert(itri>=0&&itri<(int)aTri.size()/3);
+  const int i0 = aTri[itri*3+0];
+  const int i1 = aTri[itri*3+1];
+  const int i2 = aTri[itri*3+2];
+  const CVector3 p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
+  const CVector3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
+  const CVector3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
+  return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
+}
+
+CVector3 CPointElemSurf::Pos_Tri
+(const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri) const
+{
+  assert(itri>=0&&itri<(int)nTri);
   const int i0 = aTri[itri*3+0];
   const int i1 = aTri[itri*3+1];
   const int i2 = aTri[itri*3+2];
@@ -69,6 +85,21 @@ CVector3 CPointElemSurf::UNorm_Tri
  const std::vector<double>& aNorm) const
 {
   assert(itri>=0&&itri<(int)aTri.size()/3);
+  const int i0 = aTri[itri*3+0];
+  const int i1 = aTri[itri*3+1];
+  const int i2 = aTri[itri*3+2];
+  const CVector3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
+  const CVector3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
+  const CVector3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
+  return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
+}
+
+CVector3 CPointElemSurf::UNorm_Tri
+(const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri,
+ const double* aNorm) const
+{
+  assert(itri>=0&&itri<(int)nTri);
   const int i0 = aTri[itri*3+0];
   const int i1 = aTri[itri*3+1];
   const int i2 = aTri[itri*3+2];
@@ -110,7 +141,7 @@ bool CPointElemSurf::Check
  const std::vector<unsigned int>& aTri,
  double eps) const
 {
-  if( itri < 0 || itri >= aTri.size()/3 ){ return false; }
+  if( itri < 0 || itri >= (int)aTri.size()/3 ){ return false; }
   if( r0 < -eps || r0 > 1+eps ){ return false; }
   if( r1 < -eps || r1 > 1+eps ){ return false; }
   double r2 = 1-r0-r1;
@@ -621,6 +652,29 @@ double SDFNormal_NearestPoint
 (CVector3& n0,
  const CVector3& p0,
  const CPointElemSurf& pes,
+ const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri,
+ const double* aNorm)
+{
+  CVector3 q1 = pes.Pos_Tri(aXYZ,nXYZ,aTri,nTri);
+  double dist = (q1-p0).Length();
+  CVector3 n1 = pes.UNorm_Tri(aXYZ,nXYZ,aTri,nTri,aNorm);
+  if( (q1-p0)*n1 > 0 ){  //inside
+    if( dist < 1.0e-6 ){ n0 = n1; }
+    else{ n0 = (q1-p0).Normalize(); }
+    return dist;
+  }
+  else{ // outside
+    if( dist < 1.0e-6 ){ n0 = n1; }
+    else{ n0 = (p0-q1).Normalize(); }
+    return -dist;
+  }
+}
+
+double SDFNormal_NearestPoint
+(CVector3& n0,
+ const CVector3& p0,
+ const CPointElemSurf& pes,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm)
@@ -647,6 +701,29 @@ double DistanceToTri
  unsigned int itri0,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
+{
+  const unsigned int i0 = aTri[itri0*3+0];
+  const unsigned int i1 = aTri[itri0*3+1];
+  const unsigned int i2 = aTri[itri0*3+2];
+  const CVector3 p0(aXYZ[i0*3+0]-p.x, aXYZ[i0*3+1]-p.y, aXYZ[i0*3+2]-p.z);
+  const CVector3 p1(aXYZ[i1*3+0]-p.x, aXYZ[i1*3+1]-p.y, aXYZ[i1*3+2]-p.z);
+  const CVector3 p2(aXYZ[i2*3+0]-p.x, aXYZ[i2*3+1]-p.y, aXYZ[i2*3+2]-p.z);
+  double r0,r1;
+  CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+  assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
+  pes.itri = itri0;
+  pes.r0 = r0;
+  pes.r1 = r1;
+  return p_min.Length();
+}
+
+
+double DistanceToTri
+(CPointElemSurf& pes,
+ const CVector3& p,
+ unsigned int itri0,
+ const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri)
 {
   const unsigned int i0 = aTri[itri0*3+0];
   const unsigned int i1 = aTri[itri0*3+1];

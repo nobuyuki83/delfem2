@@ -49,20 +49,17 @@ def pbd_cloth():
   cms.list_seam = [[1,7],[3,5]]
   cms.remesh()
 
-  trans0 = dfm2.Trans_Rigid2DTo3D()
-  trans0.org2 = numpy.array([0.5,0.5])
-  trans0.org3 = numpy.array([0.0,0.0,0.5])
+  trans0 = dfm2.Trans_Rigid2DTo3D(org2=[0.5, 0.5], org3=[0.0,0.0,0.5])
   npIndP_Face0 = cms.mesher.points_on_faces([0],cms)
   cms.pbd.vec_val[npIndP_Face0] = trans0.trans(cms.dmsh.np_pos[npIndP_Face0])
 
-  trans1 = dfm2.Trans_Rigid2DTo3D()
-  trans1.org2 = numpy.array([2.5,0.5])
-  trans1.org3 = numpy.array([0.0,0.0,-0.5])
+  trans1 = dfm2.Trans_Rigid2DTo3D(org2=[2.5,0.5], org3=[0.0,0.0,-0.5])
   trans1.R = dfm2.util.mat3_rot_cartesian(numpy.array([0,3.1415,0]))
   npIndP_Face1 = cms.mesher.points_on_faces([1],cms)
   cms.pbd.vec_val[npIndP_Face1] = trans1.trans(cms.dmsh.np_pos[npIndP_Face1])
 
-  cms.pbd.sdf = dfm2.CppSDF3_Sphere(0.3,[0,0,0],True)
+  cms.pbd.sdf = dfm2.SDF()
+  cms.pbd.sdf.add( dfm2.CppSDF3_Sphere(0.3,[0,0,0],True) )
 
   dfm2.gl.glfw.winDraw3d([cms,cms.pbd.sdf])
 

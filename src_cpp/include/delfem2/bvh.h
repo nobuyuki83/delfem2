@@ -37,9 +37,8 @@ template <typename T>
 void BVH_BuildBVHGeometry
 (int ibvh,
  double margin,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aElem,
- int nnoel,
+ const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aElem, unsigned int nnoel, unsigned int nElem,
  const std::vector<CNodeBVH>& aNodeBVH,
  std::vector<T>& aBB)
 {
@@ -49,10 +48,10 @@ void BVH_BuildBVHGeometry
   const int ichild1 = aNodeBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf node
     const int ielem = ichild0;
-    assert( ielem < (int)aElem.size()/nnoel );
+    assert( ielem < (int)nElem );
     T& bb = aBB[ibvh];
-    for(int inoel=0;inoel<nnoel;++inoel){
-      const int ino0 = aElem[ielem*nnoel+inoel];
+    for(unsigned int inoel=0;inoel<nnoel;++inoel){
+      const unsigned int ino0 = aElem[ielem*nnoel+inoel];
       bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], margin);
     }
     return;
@@ -60,8 +59,8 @@ void BVH_BuildBVHGeometry
   // branch node is the bounding volume of child nodes
   assert( aNodeBVH[ichild0].iroot == ibvh );
   assert( aNodeBVH[ichild1].iroot == ibvh );
-  BVH_BuildBVHGeometry(ichild0,margin, aXYZ,aElem,nnoel,aNodeBVH,aBB);
-  BVH_BuildBVHGeometry(ichild1,margin, aXYZ,aElem,nnoel,aNodeBVH,aBB);
+  BVH_BuildBVHGeometry(ichild0,margin, aXYZ,nXYZ,aElem,nnoel,nElem, aNodeBVH,aBB);
+  BVH_BuildBVHGeometry(ichild1,margin, aXYZ,nXYZ,aElem,nnoel,nElem, aNodeBVH,aBB);
   T& bb = aBB[ibvh];
   bb  = aBB[ichild0];
   bb += aBB[ichild1];
