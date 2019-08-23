@@ -64,7 +64,7 @@ def primitive():
   msh.set_geopoly()
   dfm2.gl.glfw.winDraw3d([msh])
 
-  msh.set_torus()
+  msh.set_torus(2,1)
   dfm2.gl.glfw.winDraw3d([msh])
 
 

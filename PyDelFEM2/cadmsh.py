@@ -31,7 +31,8 @@ from .c_core import \
   cppMeshTri3D_Sphere, \
   cppMeshTri3D_GeoPoly, \
   cppMeshTri3D_Icosahedron, \
-  cppMeshTri3D_Cube
+  cppMeshTri3D_Cube, \
+  cppMeshTri3D_Torus
 from .c_core import rotmat3_cartesian
 from .c_core import num_node_elem
 
@@ -179,6 +180,10 @@ class Mesh():
 
   def set_icosahedron(self):
     self.np_pos, self.np_elm = cppMeshTri3D_Icosahedron()
+    self.elem_type = TRI
+
+  def set_torus(self, r0, r1):
+    self.np_pos, self.np_elm = cppMeshTri3D_Torus(r0,r1)
     self.elem_type = TRI
 
 ###########################################################################

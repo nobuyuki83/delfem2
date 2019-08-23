@@ -827,8 +827,8 @@ void MeshTri3D_Icosahedron
 }
 
 void MeshTri3D_Torus
-(std::vector<unsigned int>& aTri,
- std::vector<double>& aXYZ,
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aTri, 
  double radius_,
  double radius_tube_)
 {
