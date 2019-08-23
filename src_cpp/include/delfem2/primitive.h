@@ -29,7 +29,11 @@ void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<int>& aTri,
                     double r, int nr, int nth);
 void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
                            std::vector<unsigned int>& aTri);
+void MeshTri3D_Torus(std::vector<double>& aXYZ,
+                     std::vector<unsigned int>& aTri,
+                     double r, double l);
 
+                              
 void SetTopoQuad_CubeVox(std::vector<int>& aQuad);
 void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                      int nx, int ny);

@@ -25,8 +25,6 @@ def example1():
 #  pbd.param_gravity_y = -0.1
   pbd.dt = 0.08
   pbd.updated_topology(mesh)
-  pbd.sdf = dfm2.SDF()
-  pbd.sdf.add( dfm2.CppSDF3_Sphere(0.3, [0.0, 0.0, 0.0], True) )
 
   trans0 = dfm2.Trans_Rigid2DTo3D()
   trans0.org2 = numpy.array([0.5,0.5])
@@ -55,6 +53,9 @@ def example1():
 
   mesh2 = dfm2.Mesh(np_pos=pbd.vec_val,np_elm=mesh.np_elm)
   mesh3 = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=pbd.elems_seam, elem_type=dfm2.LINE)
+
+  pbd.sdf = dfm2.SDF()
+  pbd.sdf.add( dfm2.CppSDF3_Sphere(0.3, [0.0, 0.0, 0.0], True) )
 
   axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.gl.glfw.winDraw3d([pbd,pbd.sdf,mesh2,mesh3,axis])
