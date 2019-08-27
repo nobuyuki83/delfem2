@@ -17,7 +17,7 @@ def example1():
   cad = dfm2.Cad2D()
   cad.add_polygon([+0,0, +1,0, +1,+1, 0,+1.0])
   cad.add_polygon([+2,0, +3,0, +3,+1, 2,+1.0])
-  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.03)
   mesh = mesher.meshing(cad)
 
   ####

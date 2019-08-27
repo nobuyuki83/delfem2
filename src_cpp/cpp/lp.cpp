@@ -232,7 +232,7 @@ int CLinPro::Solve
   assert(LinPro_CheckTable(B, map_col2rowB, ncol, nrow));
   int res = LinPro_SolveTable(nitr, B, map_col2rowB,
                               ncol, nrow);
-  if( res != 0 ){ return res; }
+//  if( res != 0 ){ return res; }
 //  std::cout << "res" << res << std::endl;
 //  std::cout << "after solve" << std::endl;
 //  ::Print(B, ncol, nrow, map_col2rowB);
@@ -248,7 +248,7 @@ int CLinPro::Solve
   }
   opt_val = buff[1];
 //  std::cout << " opt" << opt_val << std::endl;
-  return 0;
+  return res;
 }
 
 
