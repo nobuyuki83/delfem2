@@ -175,5 +175,20 @@ void MakeMat_NavierStokes3D_Dynamic_P1(double myu, double rho, double g_x, doubl
                                        double emat[4][4][4][4],
                                        double eres[4][4]);
 
+void WdWddW_PlateBendingMITC3(double& W,
+                              double dW[3][3],
+                              double ddW[3][3][3][3],
+                              const double C[3][2], // initial XY position
+                              const double u[3][3], // z displacement + xy axis rotation
+                              double thk,
+                              double lambda,
+                              double myu);
+
+double Check_WdWddW_PlateBendingMITC3(const double C[3][2],
+                                      const double u0[3][3],
+                                      const double thickness,
+                                      const double lambda,
+                                      const double myu,
+                                      double eps);
 
 #endif /* fem_ematrix_h */
