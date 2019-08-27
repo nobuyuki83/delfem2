@@ -254,17 +254,17 @@ TEST(mat3, rot_comp)
     CMatrix3 R; GetRotPolarDecomp(R.mat, M.mat, 40);
     {
       double diff = (R.Trans()*R-CMatrix3::Identity()).SqNorm_Frobenius();
-      EXPECT_NEAR(diff, 0.0, 1.0e-11);
+      EXPECT_NEAR(diff, 0.0, 1.0e-5);
     }
     {
       CMatrix3 MR = M.MatMat(R.Trans());
       double diff0 = (MR-MR.Sym()).SqNorm_Frobenius();
-      EXPECT_NEAR(diff0, 0.0, 1.0e-11);
+      EXPECT_NEAR(diff0, 0.0, 1.0e-5);
     }
     {
       CMatrix3 RM = (R.Trans()).MatMat(M);
       double diff1 = (RM-RM.Sym()).SqNorm_Frobenius();
-      EXPECT_NEAR(diff1, 0.0, 1.0e-11);
+      EXPECT_NEAR(diff1, 0.0, 1.0e-5);
     }
   }
 }
