@@ -217,6 +217,7 @@ void myGlutDisplay(void)
    */
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
+  ::glColor3d(0,0,0);
   DrawMeshTri3D_Edge(aXYZ, aTri);
   {
     ::glEnable(GL_LIGHTING);
