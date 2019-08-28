@@ -3452,9 +3452,6 @@ void WdWddW_PlateBendingMITC3
     const double EA1t = ( Gd[1][0]*(u[2][2]-u[0][2]) - Gd[1][1]*(u[2][1]-u[0][1]) )*0.5*thk;
     const double EA2t = ( Gd[0][0]*(u[2][2]-u[0][2]) - Gd[0][1]*(u[2][1]-u[0][1])
                          +Gd[1][0]*(u[1][2]-u[0][2]) - Gd[1][1]*(u[1][1]-u[0][1]) )*0.25*thk;
-    W = 0.0;
-    for(int i=0;i<9;++i){ (&dW[0][0])[i] = 0.0; }
-    for(int i=0;i<81;++i){ (&ddW[0][0][0][0])[i] = 0.0; }
     ////
     for(int iGauss=0;iGauss<2;++iGauss){
       const double t0 = (iGauss == 0) ? -1.0/sqrt(3) : +1.0/sqrt(3);
@@ -3575,6 +3572,9 @@ double Check_WdWddW_PlateBendingMITC3
  double eps)
 {
   double W0, dW0[3][3], ddW0[3][3][3][3];
+  W0 = 0.0;
+  for(int i=0;i<9;++i){ (&dW0[0][0])[i] = 0.0; }
+  for(int i=0;i<81;++i){ (&ddW0[0][0][0][0])[i] = 0.0; }
   WdWddW_PlateBendingMITC3(W0,dW0,ddW0,
                            C,u0,
                            thickness,lambda,myu);
@@ -3584,6 +3584,9 @@ double Check_WdWddW_PlateBendingMITC3
       double u1[3][3]; for(int i=0;i<9;++i){ (&u1[0][0])[i] = (&u0[0][0])[i]; }
       u1[ino][idof] += eps;
       double W1, dW1[3][3], ddW1[3][3][3][3];
+      W1 = 0.0;
+      for(int i=0;i<9;++i){ (&dW1[0][0])[i] = 0.0; }
+      for(int i=0;i<81;++i){ (&ddW1[0][0][0][0])[i] = 0.0; }
       WdWddW_PlateBendingMITC3(W1,dW1,ddW1,
                                C,u1,
                                thickness,lambda,myu);

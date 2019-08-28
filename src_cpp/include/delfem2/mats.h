@@ -241,11 +241,11 @@ void SetMasterSlave(CMatrixSparse<double>& mat, const int* aMSFlag);
 void ScaleLeftRight(CMatrixSparse<double>& mat, const double* scale);
 
 
-double InnerProduct(const std::vector<double>& r_vec,
-                    const std::vector<double>& u_vec);
-double InnerProduct(const double* r_vec,
-                    const double* u_vec,
-                    int ndof);
+double Dot(const std::vector<double>& r_vec,
+           const std::vector<double>& u_vec);
+double DotX(const double* r_vec,
+            const double* u_vec,
+            int ndof);
 
 void AXPY(double a,
           const std::vector<double>& x,

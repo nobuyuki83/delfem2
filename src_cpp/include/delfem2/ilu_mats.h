@@ -68,7 +68,8 @@ void SolveLinSys_PCG
   //  Solve_BiCGSTAB(conv_ratio, iteration, mat_A, vec_b, vec_x);
   //  Solve_PBiCGSTAB(conv_ratio, iteration, mat_A, ilu_A, vec_b, vec_x);
   vec_x.resize(vec_b.size());
-  Solve_PCG(vec_b.data(), vec_x.data(), conv_ratio, iteration, mat_A, ilu_A);
+  Solve_PCG(vec_b.data(), vec_x.data(), conv_ratio, iteration,
+            mat_A, ilu_A);
   std::cout<<"  conv_ratio:"<<conv_ratio<<"  iteration:"<<iteration<<std::endl;
 }
 

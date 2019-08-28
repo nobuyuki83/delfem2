@@ -218,6 +218,17 @@ void MergeLinSys_NavierStokes3D_Dynamic(CMatrixSparse<double>& mat_A,
                                         const std::vector<double>& aVal,
                                         const std::vector<double>& aVelo);
 
+void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(CMatrixSparse<double>& mat_A,
+                                                        double* vec_b,
+                                                        const double thick,
+                                                        const double lambda,
+                                                        const double myu,
+                                                        const double rho,
+                                                        const double gravity_z,
+                                                        const double* aXY1, int nXY,
+                                                        const unsigned int* aTri1, int nTri,
+                                                        const double* aVal);
+
 /* ------------------------------------------------------------------------- */
 
 
