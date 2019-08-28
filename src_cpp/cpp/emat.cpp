@@ -3448,6 +3448,11 @@ void WdWddW_PlateBendingMITC3
         lambda*GuGu2[2]*GuGu2[1] + 2*myu*(GuGu2[2]*GuGu2[1]), // 01(2):11(1) 11(1):01(2)
         lambda*GuGu2[2]*GuGu2[2] + 1*myu*(GuGu2[0]*GuGu2[1] + GuGu2[2]*GuGu2[2])} // 01(2):01(2) 00(0):11(1) 01(2):01(2)
     };
+    const double CnstB[3][3] = { // {rr,ss,sr} x {rr,ss,sr}
+      { 1.0*CnstA[0][0], 1.0*CnstA[0][1], 2.0*CnstA[0][2] },
+      { 1.0*CnstA[1][0], 1.0*CnstA[1][1], 2.0*CnstA[1][2] },
+      { 2.0*CnstA[2][0], 2.0*CnstA[2][1], 4.0*CnstA[2][2] },
+    };
     const double EA0t = ( Gd[0][0]*(u[1][2]-u[0][2]) - Gd[0][1]*(u[1][1]-u[0][1]) )*0.5*thk;
     const double EA1t = ( Gd[1][0]*(u[2][2]-u[0][2]) - Gd[1][1]*(u[2][1]-u[0][1]) )*0.5*thk;
     const double EA2t = ( Gd[0][0]*(u[2][2]-u[0][2]) - Gd[0][1]*(u[2][1]-u[0][1])
@@ -3456,8 +3461,8 @@ void WdWddW_PlateBendingMITC3
     for(int iGauss=0;iGauss<2;++iGauss){
       const double t0 = (iGauss == 0) ? -1.0/sqrt(3) : +1.0/sqrt(3);
       const double wGauss = Area*thk/2.0;
-      const double EA[3] = { t0*EA0t, t0*EA1t, t0*EA2t };
-      const double dEA[3][3][3] = {
+      const double E[3] = { t0*EA0t, t0*EA1t, t0*EA2t };
+      const double dE[3][3][3] = {
         { {0, +Gd[0][1]*0.5*thk*t0, -Gd[0][0]*0.5*thk*t0},
           {0, -Gd[0][1]*0.5*thk*t0, +Gd[0][0]*0.5*thk*t0},
           {0,0,0}                                             },
@@ -3468,14 +3473,14 @@ void WdWddW_PlateBendingMITC3
           {0, -Gd[1][1]*0.25*thk*t0, +Gd[1][0]*0.25*thk*t0},
           {0, -Gd[0][1]*0.25*thk*t0, +Gd[0][0]*0.25*thk*t0}   } };
       ////
-      const double S[3] = {
-        CnstA[0][0]*EA[0] + CnstA[0][1]*EA[1] + CnstA[0][2]*EA[2],
-        CnstA[1][0]*EA[0] + CnstA[1][1]*EA[1] + CnstA[1][2]*EA[2],
-        CnstA[2][0]*EA[0] + CnstA[2][1]*EA[1] + CnstA[2][2]*EA[2] };
-      W += wGauss*0.5*(EA[0]*S[0] + EA[1]*S[1] + EA[2]*S[2]);
+      const double SB[3] = {
+        CnstB[0][0]*E[0] + CnstB[0][1]*E[1] + CnstB[0][2]*E[2],
+        CnstB[1][0]*E[0] + CnstB[1][1]*E[1] + CnstB[1][2]*E[2],
+        CnstB[2][0]*E[0] + CnstB[2][1]*E[1] + CnstB[2][2]*E[2]};
+      W += wGauss*0.5*(E[0]*SB[0] + E[1]*SB[1] + E[2]*SB[2]);
       for(int ino=0;ino<3;++ino){
         for(int idof=0;idof<3;++idof){
-          dW[ino][idof] += wGauss*(S[0]*dEA[0][ino][idof] + S[1]*dEA[1][ino][idof] + S[2]*dEA[2][ino][idof]);
+          dW[ino][idof] += wGauss*(SB[0]*dE[0][ino][idof] + SB[1]*dE[1][ino][idof] + SB[2]*dE[2][ino][idof]);
         }
       }
       for(int ino=0;ino<3;++ino){
@@ -3483,15 +3488,15 @@ void WdWddW_PlateBendingMITC3
           for(int idof=0;idof<3;++idof){
             for(int jdof=0;jdof<3;++jdof){
               const double dtmp =
-              dEA[0][ino][idof]*CnstA[0][0]*dEA[0][jno][jdof]
-              + dEA[0][ino][idof]*CnstA[0][1]*dEA[1][jno][jdof]
-              + dEA[0][ino][idof]*CnstA[0][2]*dEA[2][jno][jdof]
-              + dEA[1][ino][idof]*CnstA[1][0]*dEA[0][jno][jdof]
-              + dEA[1][ino][idof]*CnstA[1][1]*dEA[1][jno][jdof]
-              + dEA[1][ino][idof]*CnstA[1][2]*dEA[2][jno][jdof]
-              + dEA[2][ino][idof]*CnstA[2][0]*dEA[0][jno][jdof]
-              + dEA[2][ino][idof]*CnstA[2][1]*dEA[1][jno][jdof]
-              + dEA[2][ino][idof]*CnstA[2][2]*dEA[2][jno][jdof];
+              + dE[0][ino][idof]*CnstB[0][0]*dE[0][jno][jdof]
+              + dE[0][ino][idof]*CnstB[0][1]*dE[1][jno][jdof]
+              + dE[0][ino][idof]*CnstB[0][2]*dE[2][jno][jdof]
+              + dE[1][ino][idof]*CnstB[1][0]*dE[0][jno][jdof]
+              + dE[1][ino][idof]*CnstB[1][1]*dE[1][jno][jdof]
+              + dE[1][ino][idof]*CnstB[1][2]*dE[2][jno][jdof]
+              + dE[2][ino][idof]*CnstB[2][0]*dE[0][jno][jdof]
+              + dE[2][ino][idof]*CnstB[2][1]*dE[1][jno][jdof]
+              + dE[2][ino][idof]*CnstB[2][2]*dE[2][jno][jdof];
               ddW[ino][jno][idof][jdof] += wGauss*dtmp;
             }
           }
@@ -3500,12 +3505,15 @@ void WdWddW_PlateBendingMITC3
     }
   }
   {
-    const double CnstB[2][2] = { // {rt,st} x {rt,st}
+    const double CnstA[2][2] = { // {rt,st} x {rt,st}
       { myu*GuGu2[0]*GuGu2[3],  // rt*rt -> rr(0):tt(3)
         myu*GuGu2[2]*GuGu2[3]}, // st*rt -> sr(2):tt(3)
       { myu*GuGu2[2]*GuGu2[3],  // rt*st -> rs(2):tt(3)
         myu*GuGu2[1]*GuGu2[3]}  // st*st -> ss(1):tt(3)
     };
+    const double CnstB[2][2] = {
+      { 4.0*CnstA[0][0], 2.0*CnstA[0][1] },
+      { 2.0*CnstA[1][0], 4.0*CnstA[1][1] } };
     const double Ert_01 = 0.5*thk*(u[1][0]-u[0][0] + 0.5*Gd[0][0]*(u[0][2]+u[1][2]) - 0.5*Gd[0][1]*(u[0][1]+u[1][1]));
     const double Ert_12 = 0.5*thk*(u[1][0]-u[0][0] + 0.5*Gd[0][0]*(u[1][2]+u[2][2]) - 0.5*Gd[0][1]*(u[1][1]+u[2][1]));
     const double Est_12 = 0.5*thk*(u[2][0]-u[0][0] + 0.5*Gd[1][0]*(u[1][2]+u[2][2]) - 0.5*Gd[1][1]*(u[1][1]+u[2][1]));
@@ -3536,13 +3544,13 @@ void WdWddW_PlateBendingMITC3
           dE[1][ino][idof] = dEst_20[ino][idof]-dEC[ino][idof]*r;
         }
       }
-      const double S[2] = {
+      const double SB[2] = {
         CnstB[0][0]*E[0] + CnstB[0][1]*E[1],
         CnstB[1][0]*E[0] + CnstB[1][1]*E[1] };
-      W += wGauss*0.5*(S[0]*E[0] + S[1]*E[1]);
+      W += wGauss*0.5*(SB[0]*E[0] + SB[1]*E[1]);
       for(int ino=0;ino<3;++ino){
         for(int idof=0;idof<3;++idof){
-          dW[ino][idof] += wGauss*(S[0]*dE[0][ino][idof] + S[1]*dE[1][ino][idof]);
+          dW[ino][idof] += wGauss*(SB[0]*dE[0][ino][idof] + SB[1]*dE[1][ino][idof]);
         }
       }
       for(int ino=0;ino<3;++ino){
@@ -3550,7 +3558,7 @@ void WdWddW_PlateBendingMITC3
           for(int idof=0;idof<3;++idof){
             for(int jdof=0;jdof<3;++jdof){
               const double dtmp =
-              dE[0][ino][idof]*CnstB[0][0]*dE[0][jno][jdof]
+              + dE[0][ino][idof]*CnstB[0][0]*dE[0][jno][jdof]
               + dE[0][ino][idof]*CnstB[0][1]*dE[1][jno][jdof]
               + dE[1][ino][idof]*CnstB[1][0]*dE[0][jno][jdof]
               + dE[1][ino][idof]*CnstB[1][1]*dE[1][jno][jdof];

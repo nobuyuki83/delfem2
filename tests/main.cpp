@@ -22,65 +22,12 @@
 #include "delfem2/mathexpeval.h"
 #include "delfem2/primitive.h"
 #include "delfem2/slice.h"
-#include "delfem2/emat.h"
 
-#include "delfem2/objfunc_v23.h"
 
 
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
-
-TEST(objfunc_v23, Check_CdC_TriStrain){
-  for(int itr=0;itr<200;++itr){
-    const double P[3][2] = {
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-    };
-    double a0 = TriArea2D(P[0], P[1], P[2]);
-    if( fabs(a0) < 0.1 ) continue;
-    const double p[3][3] = {
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-    };
-    double diff = Check_CdC_TriStrain(P, p, 1.0e-5);
-    EXPECT_LT(diff, 0.2);
-  }
-}
-
-
-TEST(fem,plate_bending_mitc3)
-{
-  for(int itr=0;itr<200;++itr){
-    double C[3][2];
-    for(int i=0;i<6;++i){
-      (&C[0][0])[i] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
-    double a0 = TriArea2D(C[0], C[1], C[2]);
-    if( a0 < 0.1 ) continue;
-    double u[3][3];
-    for(int i=0;i<9;++i){
-      (&u[0][0])[i] = 1.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
-    double thickness = (rand()+1.0)/(RAND_MAX+1.0);
-    double lambda = (rand()+1.0)/(RAND_MAX+1.0);
-    double myu = (rand()+1.0)/(RAND_MAX+1.0);
-    double diff = Check_WdWddW_PlateBendingMITC3(C, u,
-                                                 thickness,lambda,myu, 1.0e-6);
-    EXPECT_LT(diff,2.0e-3);
-  }
-}
 
 TEST(slice,test1){
   std::vector<double> aXYZ;
