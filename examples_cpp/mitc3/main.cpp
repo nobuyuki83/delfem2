@@ -11,9 +11,9 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 #include "delfem2/mats.h"
-#include "delfem2/ilu_mats.h"
 #include "delfem2/vec2.h"
 
+#include "delfem2/ilu_mats.h"
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/fem_emats.h"
 
@@ -34,8 +34,6 @@ std::vector<unsigned int> aTri;
 std::vector<double> aXY0;
 
 std::vector<double> aVal;
-std::vector<double> aVelo;
-std::vector<double> aAcc;
 std::vector<int> aBCFlag; // boundary condition flag
 std::vector<int> aMSFlag; // master slave flag
 
@@ -44,7 +42,13 @@ std::vector<double> vec_b;
 CPreconditionerILU<double> ilu_A;
 
 const double lenx = 1.0;
-const double leny = 0.1;
+const double leny = 0.2;
+const double thickness = 0.05;
+const double myu = 10000.0;
+const double lambda = 0.0;
+const double rho = 1.0;
+const double gravity_z = -10.0;
+
 
 ///////////////////////////////////////////////////////////////
 
@@ -58,36 +62,13 @@ void MakeMesh(){
     aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
   }
   //////////////////////////////
+  std::vector<CEPo2> aPo2D;
+  std::vector<ETri> aETri;
   std::vector<CVector2> aVec2;
-  std::vector<int> loopIP_ind, loopIP; // vtx on loop
-  const double elen = 0.05;
-  {
-    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
-                         aaXY);
-    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
-      return;
-    }
-    FixLoopOrientation(loopIP,
-                       loopIP_ind,aVec2);
-    if( elen > 10e-10 ){
-      ResamplingLoop(loopIP_ind,loopIP,aVec2,
-                     elen );
-    }
-  }
-  {
-    std::vector<CEPo2> aPo2D;
-    std::vector<ETri> aETri;
-    Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
-                                   loopIP_ind,loopIP);
-    if( elen > 1.0e-10 ){
-      CInputTriangulation_Uniform param(1.0);
-      std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
-      MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
-                    aVec2.size(),0,elen, param);
-    }
-    MeshTri2D_Export(aXY0,aTri,
-                     aVec2,aETri);
-  }
+  GenMesh(aPo2D, aETri, aVec2,
+          aaXY, 0.03, 0.03);
+  MeshTri2D_Export(aXY0,aTri,
+                   aVec2,aETri);
   std::cout<<"  ntri;"<<aTri.size()/3<<"  nXY:"<<aXY0.size()/2<<std::endl;
 }
 
@@ -122,11 +103,6 @@ void SolveProblem_PlateBendingMITC3()
   const int np = (int)aXY0.size()/2;
   const int nDoF = np*3;
   //////////////////////////
-  double thickness = 0.1;
-  double myu = 10000.0;
-  double lambda = 0.0;
-  double rho = 1.0;
-  double gravity_z = -10.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),
@@ -144,7 +120,7 @@ void SolveProblem_PlateBendingMITC3()
     ilu_A.SetValueILU(mat_A);
     ilu_A.DoILUDecomp();
     vec_x.resize(vec_b.size());
-    std::vector<double> conv = Solve_PCG(vec_b.data(), vec_x.data(), 1.0e-5, 100,
+    std::vector<double> conv = Solve_PCG(vec_b.data(), vec_x.data(), 1.0e-5, 1000,
                                          mat_A, ilu_A);
     std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
   }
@@ -257,7 +233,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         std::cout << itr << " " << diff << std::endl;
       }
     }
-  
   }
   ::glutPostRedisplay();
 }
@@ -290,6 +265,20 @@ int main(int argc,char* argv[])
   aVal.assign(aXY0.size()/2*3, 0.0);
   InitializeProblem_PlateBendingMITC3();
   SolveProblem_PlateBendingMITC3();
+  {
+    assert( fabs(lambda)<1.0e-10 );
+    const double E = myu*2.0;
+    const double I = thickness*thickness*thickness*leny/12.0;
+    const double W = thickness*lenx*leny*rho*gravity_z;
+    const double w = W/lenx;
+    const double disp = w*(lenx*lenx*lenx*lenx)/(8.0*E*I);
+    std::cout << "disp:" << disp << std::endl;
+    for(int ip=0;ip<aXY0.size()/2;++ip){
+      const double px = aXY0[ip*2+0];
+      if( fabs(px-(+lenx*0.5)) > 0.0001 ){ continue; }
+      std::cout << aVal[ip*3+0] << std::endl;
+    }
+  }
   
   glutMainLoop();
   return 0;

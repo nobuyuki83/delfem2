@@ -57,7 +57,12 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/slice.h          ${DELFEM2_SRC}/slice.cpp
   ${DELFEM2_INC}/emat.h           ${DELFEM2_SRC}/emat.cpp
+  ${DELFEM2_INC}/dyntri.h         ${DELFEM2_SRC}/dyntri.cpp
+  ${DELFEM2_INC}/mats.h           ${DELFEM2_SRC}/mats.cpp
 
+  ${DELFEM2_INC}/fem_emats.h      ${DELFEM2_SRC}/fem_emats.cpp
+  ${DELFEM2_INC}/ilu_mats.h       ${DELFEM2_SRC}/ilu_mats.cpp
+  ${DELFEM2_INC}/dyntri_v2.h      ${DELFEM2_SRC}/dyntri_v2.cpp
   ${DELFEM2_INC}/objfunc_v23.h    ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/srchuni_v3.h     ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h
@@ -66,6 +71,7 @@ add_executable(${MY_BINARY_NAME}
   test_bvh.cpp
   test_lp.cpp
   test_gltf.cpp
+  test_fem.cpp
   main.cpp  
 )
 
