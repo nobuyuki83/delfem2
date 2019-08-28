@@ -13,6 +13,7 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 #include "delfem2/dyntri.h"
+#include "delfem2/mats.h"
 
 #include "delfem2/dyntri_v2.h"
 #include "delfem2/ilu_mats.h"

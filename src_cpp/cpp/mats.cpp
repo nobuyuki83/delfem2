@@ -346,7 +346,7 @@ void ScaleLeftRight
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-double InnerProduct
+double Dot
 (const std::vector<double>& r_vec,
  const std::vector<double>& u_vec)
 {
@@ -359,7 +359,7 @@ double InnerProduct
   return r;
 }
 
-double InnerProduct
+double DotX
 (const double* r_vec,
  const double* u_vec,
  int n)
@@ -418,7 +418,7 @@ void Solve_CG
   // {x} = 0
   x_vec.assign(ndof,0.0);
   
-  double sqnorm_res = InnerProduct(r_vec,r_vec);
+  double sqnorm_res = Dot(r_vec,r_vec);
   if( sqnorm_res < 1.0e-30 ){
     conv_ratio = 0.0;
     iteration = 0;
@@ -438,7 +438,7 @@ void Solve_CG
 		double alpha;
 		{	// alpha = (r,r) / (p,Ap)
 			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
-			const double pAp = InnerProduct(p_vec,Ap_vec);
+			const double pAp = Dot(p_vec,Ap_vec);
 			alpha = sqnorm_res / pAp;
 		}
     
@@ -449,7 +449,7 @@ void Solve_CG
 		// {r} = -alpha*{Ap} + {r}
 		AXPY(-alpha,Ap_vec,r_vec);
     
-		double sqnorm_res_new = InnerProduct(r_vec,r_vec);
+		double sqnorm_res_new = Dot(r_vec,r_vec);
     // Converge Judgement    
     
 		if( sqnorm_res_new * inv_sqnorm_res_ini < conv_ratio_tol*conv_ratio_tol ){
@@ -499,7 +499,7 @@ bool Solve_BiCGSTAB
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = InnerProduct(r_vec, r_vec);
+    const double sq_norm_res_ini = Dot(r_vec, r_vec);
     std::cout << "initial norm " << sq_norm_res_ini << std::endl;
     if( sq_norm_res_ini < 1.0e-60 ){
       conv_ratio = sqrt( sq_norm_res_ini );
@@ -516,7 +516,7 @@ bool Solve_BiCGSTAB
   p_vec = r_vec;
   
   // calc ({r},{r2})
-  double r_r2 = InnerProduct(r_vec,r2_vec);
+  double r_r2 = Dot(r_vec,r2_vec);
   
   num_iter = max_iter;
   for(unsigned int iitr=1;iitr<max_iter;iitr++){
@@ -531,7 +531,7 @@ bool Solve_BiCGSTAB
     // alhpa = ({r},{r2}) / ({Ap},{r2})
     double alpha;
     {
-      const double denominator = InnerProduct(Ap_vec,r2_vec);
+      const double denominator = Dot(Ap_vec,r2_vec);
 //      std::cout << " alpha deno : " << denominator << std::endl;
       alpha = r_r2 / denominator;
     }
@@ -548,8 +548,8 @@ bool Solve_BiCGSTAB
     // omega = ({As},{s}) / ({As},{As})
     double omega;
     {
-      const double denominator = InnerProduct(As_vec,As_vec);
-      const double numerator = InnerProduct(As_vec,s_vec);
+      const double denominator = Dot(As_vec,As_vec);
+      const double numerator = Dot(As_vec,s_vec);
       omega = numerator / denominator;
     }
     
@@ -564,7 +564,7 @@ bool Solve_BiCGSTAB
     AXPY(-omega,As_vec,r_vec);
     
     {
-      const double sq_norm_res = InnerProduct(r_vec,r_vec);
+      const double sq_norm_res = Dot(r_vec,r_vec);
       const double sq_conv_ratio = sq_norm_res * sq_inv_norm_res_ini;
 //      std::cout << iitr << " " << sq_norm_res << " " << sqrt(sq_conv_ratio) << " " << sqrt(sq_norm_res) << std::endl;
       if( sq_conv_ratio < tolerance*tolerance ){
@@ -578,7 +578,7 @@ bool Solve_BiCGSTAB
     // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
     double beta;
     {
-      const double tmp1 = InnerProduct(r_vec,r2_vec);
+      const double tmp1 = Dot(r_vec,r2_vec);
       beta = (tmp1*alpha) / (r_r2*omega);
       r_r2 = tmp1;
     }

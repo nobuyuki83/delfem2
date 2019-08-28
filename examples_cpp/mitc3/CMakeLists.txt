@@ -20,8 +20,16 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/quat.h         ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/emat.h         ${DELFEM2_SRC}/emat.cpp             
+  ${DELFEM2_INC}/vec2.h         ${DELFEM2_SRC}/vec2.cpp
+  ${DELFEM2_INC}/msh.h          ${DELFEM2_SRC}/msh.cpp
+  ${DELFEM2_INC}/mshtopo.h      ${DELFEM2_SRC}/mshtopo.cpp
+  ${DELFEM2_INC}/emat.h         ${DELFEM2_SRC}/emat.cpp
+  ${DELFEM2_INC}/dyntri.h       ${DELFEM2_SRC}/dyntri.cpp
+  ${DELFEM2_INC}/mats.h         ${DELFEM2_SRC}/mats.cpp
+
+  ${DELFEM2_INC}/dyntri_v2.h    ${DELFEM2_SRC}/dyntri_v2.cpp
+  ${DELFEM2_INC}/ilu_mats.h     ${DELFEM2_SRC}/ilu_mats.cpp
+  ${DELFEM2_INC}/fem_emats.h    ${DELFEM2_SRC}/fem_emats.cpp
 
   ${DELFEM2_INC}/gl_funcs.h     ${DELFEM2_SRC}/gl_funcs.cpp             
   ${DELFEM2_INC}/gl_camera.h    ${DELFEM2_SRC}/gl_camera.cpp             

@@ -177,7 +177,7 @@ int lev_fill)
 
   m_diaInd.resize(nblk);
 
-  for (int iblk = 0; iblk<nblk; ++iblk){
+  for(unsigned int iblk=0; iblk<nblk; ++iblk){
     std::vector<CRowLevNext> listNonzero;
     {	// copy row pattern of input matrix into listNonzero
       listNonzero.resize(m.colInd[iblk+1]-m.colInd[iblk]);
@@ -263,7 +263,7 @@ int lev_fill)
       }
 
       mat.colInd[iblk+1] = icrs0;
-//      mat.ncrs = icrs0;
+      mat.rowPtr.resize(icrs0);
       m_diaInd[iblk] = icrs0;
       for (unsigned int ijcrs = mat.colInd[iblk]; ijcrs<mat.colInd[iblk+1]; ijcrs++){
         const int jblk0 = aRowLev[ijcrs].row;
@@ -277,6 +277,7 @@ int lev_fill)
 
   {
     const unsigned int ncrs = mat.rowPtr.size();
+    std::cout << aRowLev.size() << " " << ncrs << std::endl;
     assert(aRowLev.size()==ncrs);
     mat.rowPtr.resize(ncrs);
     for (unsigned int icrs = 0; icrs<ncrs; ++icrs){
@@ -904,7 +905,7 @@ std::vector<double> Solve_PCG
   
 	double inv_sqnorm_res0;
 	{
-		const double sqnorm_res0 = InnerProduct(r_vec,r_vec,ndof);
+		const double sqnorm_res0 = DotX(r_vec,r_vec,ndof);
     aResHistry.push_back(sqnorm_res0);
 		if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
 		inv_sqnorm_res0 = 1.0 / sqnorm_res0;
@@ -917,7 +918,7 @@ std::vector<double> Solve_PCG
   std::vector<double> p_vec = Pr_vec;
   
   // rPr = ({r},{Pr})
-	double rPr = InnerProduct(r_vec,Pr_vec.data(),ndof);
+	double rPr = DotX(r_vec,Pr_vec.data(),ndof);
 	for(int iitr=0;iitr<iteration;iitr++){
     
 		{
@@ -925,7 +926,7 @@ std::vector<double> Solve_PCG
       // {Ap} = [A]{p}
 			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
       // alpha = ({r},{Pr})/({p},{Ap})
-			const double pAp = InnerProduct(p_vec,Ap_vec);
+			const double pAp = Dot(p_vec,Ap_vec);
 			double alpha = rPr / pAp;
       // {r} = -alpha*{Ap} + {r}
       AXPY(-alpha,Ap_vec.data(),r_vec, ndof);
@@ -934,7 +935,7 @@ std::vector<double> Solve_PCG
     }
     
 		{	// Converge Judgement
-			double sqnorm_res = InnerProduct(r_vec,r_vec,ndof);
+			double sqnorm_res = DotX(r_vec,r_vec,ndof);
       aResHistry.push_back(sqrt(sqnorm_res));
 			if( sqnorm_res * inv_sqnorm_res0 < conv_ratio*conv_ratio ){
 				return aResHistry;
@@ -946,7 +947,7 @@ std::vector<double> Solve_PCG
       for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
 			ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
-			const double rPr1 = InnerProduct(r_vec,Pr_vec.data(),ndof);
+			const double rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
       // beta = rPr1/rPr
 			double beta = rPr1/rPr;
 			rPr = rPr1;
@@ -956,7 +957,7 @@ std::vector<double> Solve_PCG
 	}
   {
     // Converge Judgement
-    double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
+    double sq_norm_res = DotX(r_vec,r_vec,ndof);
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
@@ -989,7 +990,7 @@ std::vector<double> Solve_PBiCGStab
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = InnerProduct(r_vec,r_vec,ndof);
+    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof);
     if( sq_norm_res_ini < 1.0e-60 ){
       aResHistry.push_back( sqrt( sq_norm_res_ini ) );
       return aResHistry;
@@ -1023,7 +1024,7 @@ std::vector<double> Solve_PBiCGStab
     ilu.Solve(Mp_vec);
     
     // calc (r,r0*)
-    const double r_r2 = InnerProduct(r_vec,r2_vec.data(),ndof);
+    const double r_r2 = DotX(r_vec,r2_vec.data(),ndof);
     
     //        std::cout << "r_r2 : " << r_r2 << std::endl;
     
@@ -1033,7 +1034,7 @@ std::vector<double> Solve_PBiCGStab
     // calc alpha
     double alpha;
     {
-      const double denominator = InnerProduct(AMp_vec,r2_vec);
+      const double denominator = Dot(AMp_vec,r2_vec);
       alpha = r_r2 / denominator;
     }
     
@@ -1061,8 +1062,8 @@ std::vector<double> Solve_PBiCGStab
     
     double omega;
     {	// calc omega
-      const double denominator = InnerProduct(AMs_vec,AMs_vec);
-      const double numerator = InnerProduct(s_vec,AMs_vec);
+      const double denominator = Dot(AMs_vec,AMs_vec);
+      const double numerator = Dot(s_vec,AMs_vec);
       //            std::cout << "Omega0 : " << denominator << " " << numerator << std::endl;
       omega = numerator / denominator;
     }
@@ -1083,7 +1084,7 @@ std::vector<double> Solve_PBiCGStab
     AXPY(-omega,AMs_vec.data(),r_vec,ndof);
     
     {
-      const double sq_norm_res = InnerProduct(r_vec,r_vec,ndof);
+      const double sq_norm_res = DotX(r_vec,r_vec,ndof);
       const double sq_conv_ratio = sq_norm_res * sq_inv_norm_res_ini;
 //      std::cout << iitr << " " << sqrt(sq_conv_ratio) << " " << sqrt(sq_norm_res) << std::endl;
       if( sq_conv_ratio < tolerance * tolerance ){
@@ -1094,7 +1095,7 @@ std::vector<double> Solve_PBiCGStab
     
     double beta;
     {	// calc beta
-      const double tmp1 = InnerProduct(r_vec,r2_vec.data(),ndof);
+      const double tmp1 = DotX(r_vec,r2_vec.data(),ndof);
       beta = tmp1 * alpha / (r_r2*omega);
     }
     
