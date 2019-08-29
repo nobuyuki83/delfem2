@@ -103,10 +103,14 @@ void CenterOfGravity_Tet(double& v_tot,
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void MassLumped_Tet3D(double* aMassMatrixLumped,
+void MassLumped_Tet(double* aMassMatrixLumped,
+                    double rho,
+                    const double* aXYZ, int nXYZ,
+                    const unsigned int* aTet, int nTet);
+void MassLumped_Tri2D(double* aMassMatrixLumped,
                       double rho,
-                      const double* aXYZ, int nXYZ,
-                      const unsigned int* aTet, int nTet);
+                      const double* aXY, int nXY,
+                      const unsigned int* aTri, int nTri);
 
 ////////////////////////////////////////////////////////////////////////////////////
 

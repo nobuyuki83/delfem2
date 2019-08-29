@@ -69,12 +69,6 @@ void GenMesh
   }
 }
 
-double Dot(const double* p0, const double* p1, int ndof){
-  double v=0;
-  for(int i=0;i<ndof;++i){ v += p0[i]*p1[i]; }
-  return v;
-}
-
 void Scale(double* p0, int n, double s)
 {
   for(int i=0;i<n;++i){ p0[i] *= s; }
@@ -82,7 +76,7 @@ void Scale(double* p0, int n, double s)
 
 void Normalize(double* p0, int n)
 {
-  const double ss = Dot(p0,p0,n);
+  const double ss = DotX(p0,p0,n);
   Scale(p0,n,1.0/sqrt(ss));
 }
 
@@ -90,7 +84,7 @@ void Normalize(double* p0, int n)
 void Orthogonalize_ToUnitVector(double* p1,
                                 const double* p0, int n)
 {
-  double d = Dot(p0, p1, n);
+  double d = DotX(p0, p1, n);
   for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
 }
 
@@ -103,8 +97,8 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 {
   const int nDoF = nXYZ*3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
-  MassLumped_Tet3D(aMassLumpedSqrt.data(),
-                   1, aXYZ, nXYZ, aTet,nTet);
+  MassLumped_Tet(aMassLumpedSqrt.data(),
+                 1, aXYZ, nXYZ, aTet,nTet);
   
   for(int ip=0;ip<nXYZ;++ip){
     aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
@@ -199,7 +193,7 @@ void RemoveKernel()
 
 
 
-void InitializeProblem_LinearSolidEigen()
+void InitializeProblem_ShellEigenPB()
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
@@ -252,7 +246,7 @@ void Solve(){
   aTmp1 = aTmp0;
   aConv = Solve_PCG(aTmp1.data(), aMode.data(),
                     conv_ratio, iteration, mat_A, ilu_A);
-  double lam0 = Dot(aTmp0.data(), aMode.data(), aTmp0.size());
+  double lam0 = DotX(aTmp0.data(), aMode.data(), aTmp0.size());
   std::cout << 1.0/lam0 << std::endl;
   aTmp0 = aMode;
   ////
@@ -421,7 +415,7 @@ int main(int argc,char* argv[])
   aTmp0.assign(aXYZ.size(),0.0);
   aMode.assign(aXYZ.size(),0.0);
   
-  InitializeProblem_LinearSolidEigen();
+  InitializeProblem_ShellEigenPB();
   
   for(int i=0;i<aXYZ.size();++i){
     aTmp0[i] = (rand()+1.0)/(RAND_MAX+1.0);

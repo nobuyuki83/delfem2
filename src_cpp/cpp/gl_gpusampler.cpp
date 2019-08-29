@@ -53,7 +53,7 @@ void Normalize(std::vector<double>& p0)
 }
  */
 
-double Dot(const double* p0, const double* p1, int ndof){
+double DotX(const double* p0, const double* p1, int ndof){
   double v=0;
   for(int i=0;i<ndof;++i){ v += p0[i]*p1[i]; }
   return v;
@@ -66,7 +66,7 @@ void Scale(double* p0, int n, double s)
 
 void Normalize(double* p0, int n)
 {
-  const double ss = Dot(p0,p0,n);
+  const double ss = DotX(p0,p0,n);
   Scale(p0,n,1.0/sqrt(ss));
 }
 
