@@ -1,4 +1,4 @@
-project(mitc3)
+project(fempb_mitc3eigen)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)

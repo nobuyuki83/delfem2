@@ -291,11 +291,25 @@ void PyMassLumped
   assert( np_pos.ndim() == 2 );
   assert( np_elm.ndim() == 2 );
   assert( mass_lumped.shape()[0] == np_pos.shape()[0] );
+  assert( AssertNumpyArray2D(np_elm, -1, nNodeElem(elem_type)) );
   if( elem_type ==  MESHELEM_TET ){
-    MassLumped_Tet3D((double*)(mass_lumped.request().ptr),
-                     rho,
-                     np_pos.data(), np_pos.shape()[0],
-                     np_elm.data(), np_elm.shape()[0]);
+    assert( AssertNumpyArray2D(np_pos, -1, 3) );
+    MassLumped_Tet((double*)(mass_lumped.request().ptr),
+                   rho,
+                   np_pos.data(), np_pos.shape()[0],
+                   np_elm.data(), np_elm.shape()[0]);
+  }
+  if( elem_type ==  MESHELEM_TRI ){
+    if( np_pos.shape()[1] == 2 ){
+      assert( AssertNumpyArray2D(np_pos, -1, 2) );
+      MassLumped_Tri2D((double*)(mass_lumped.request().ptr),
+                       rho,
+                       np_pos.data(), np_pos.shape()[0],
+                       np_elm.data(), np_elm.shape()[0]);
+    }
+    else{
+      assert(0);
+    }
   }
   else{
     // TODO: implemnet mass lumped for other types of meshes

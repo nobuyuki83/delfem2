@@ -205,7 +205,7 @@ void SolveProblem_Diffusion()
 }
 
 
-void InitializeProblem_LinearSolidEigen()
+void InitializeProblem_ShellEigenPB()
 {
   // set boundary condition
   const int np = (int)aXYZ.size()/3;
@@ -710,7 +710,7 @@ void Solve(bool is_next)
     SolveProblem_Diffusion();
   }
   else if( iphysics == 2 ){
-    InitializeProblem_LinearSolidEigen();
+    InitializeProblem_ShellEigenPB();
     SolveProblem_LinearSolid_Static();
   }
   else if( iphysics == 3 ){

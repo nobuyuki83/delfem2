@@ -9,7 +9,7 @@ add_subdirectory(paramgeo2d)
 add_subdirectory(paramgeo3d)
 add_subdirectory(transform_handler)
 
-add_subdirectory(mathexpeval)
+add_subdirectory(evalmathexp)
 
 add_subdirectory(rigidbody3d_rotation)
 
@@ -43,6 +43,8 @@ add_subdirectory(fem25d_eigen)
 add_subdirectory(femcloth_internal)
 add_subdirectory(femcloth_selfcollision)
 add_subdirectory(femcloth_dtri)
+add_subdirectory(fempb_mitc3)
+add_subdirectory(fempb_mitc3eigen)
 
 add_subdirectory(cadmsh2d)
 

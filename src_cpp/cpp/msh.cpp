@@ -919,7 +919,7 @@ void makeSolidAngle
 }
 
 
-void MassLumped_Tet3D
+void MassLumped_Tet
 (double* aMassMatrixLumped,
  double rho,
  const double* aXYZ, int nXYZ,
@@ -940,6 +940,27 @@ void MassLumped_Tet3D
     aMassMatrixLumped[i1] += 0.25*rho*v0123;
     aMassMatrixLumped[i2] += 0.25*rho*v0123;
     aMassMatrixLumped[i3] += 0.25*rho*v0123;
+  }
+}
+
+void MassLumped_Tri2D
+(double* aMassMatrixLumped,
+ double rho,
+ const double* aXY, int nXY,
+ const unsigned int* aTri, int nTri)
+{
+  for(int i=0;i<nXY;++i){ aMassMatrixLumped[i] = 0.0; }
+  for(int it=0;it<nTri;++it){
+    const int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
+    const int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
+    const int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+    const double* p0 = aXY+i0*2;
+    const double* p1 = aXY+i1*2;
+    const double* p2 = aXY+i2*2;
+    const double a012 = TriArea2D(p0, p1, p2);
+    aMassMatrixLumped[i0] += rho*a012/3.0;
+    aMassMatrixLumped[i1] += rho*a012/3.0;
+    aMassMatrixLumped[i2] += rho*a012/3.0;
   }
 }
 
