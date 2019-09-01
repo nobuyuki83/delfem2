@@ -200,8 +200,11 @@ int DetDelaunay(const CVector2& p0,
                 const CVector2& p3);
 
 // move to paramgeo2d?
-CVector2 pointCurve_BezierCubic(double t,
-                                const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
+CVector2 pointCurve_BezierCubic
+(double t,
+ const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
+
+
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -213,6 +216,12 @@ double TriArea(const int iv1, const int iv2, const int iv3,
 void Polyline_CubicBezierCurve(std::vector<CVector2>& aP,
                                const int n,
                                const std::vector<CVector2>& aCP);
+
+void Polyline_BezierCubic
+(std::vector<CVector2>& aP,
+ const unsigned int n,
+ const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
+
 
 std::vector<CVector2> Polygon_Resample_Polygon(const std::vector<CVector2>& stroke0,
                                                double l);

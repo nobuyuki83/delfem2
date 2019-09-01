@@ -311,6 +311,10 @@ class Cad2D():
     self.ccad.add_vtx_edge(pos[0],pos[1],iedge)
     self.ccad.check()
 
+  def add_vtx_face(self, iface, pos:List[float]) -> None:
+    self.ccad.add_vtx_face(pos[0],pos[1],iface)
+    self.ccad.check()
+
   def set_edge_type(self, iedge:int, type:int, param:List[float]):
     self.ccad.set_edge_type(iedge,type,param)
 

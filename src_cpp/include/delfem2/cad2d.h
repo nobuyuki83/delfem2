@@ -20,14 +20,17 @@ public:
 public:
   CVector2 pos;
 };
+
 class CCad2D_EdgeGeo{
 public:
   CCad2D_EdgeGeo(){
     type_edge = 0;
+    ip0 = -1;
   }
   void GenMesh(unsigned int iedge, const CCadTopo& topo,
-               std::vector<CCad2D_VtxGeo>& aVtxGeo);
-  void GetInternalPoints_ElemLen(std::vector<CVector2>& aV, double elen) const;
+               const std::vector<CCad2D_VtxGeo>& aVtxGeo,
+               double elen);
+//  void GetInternalPoints_ElemLen(std::vector<CVector2>& aV, double elen) const;
   double Distance(double x, double y) const;
   double Length() const;
 public:
@@ -36,14 +39,14 @@ public:
   std::vector<double> param;
   ///
   std::vector<CVector2> aP;
+  int ip0;
 };
+
 class CCad2D_FaceGeo{
 public:
   std::vector<unsigned int> aTri;
   std::vector<double> aXY;
 public:
-  void GenMesh(unsigned int iface0, const CCadTopo& topo, 
-               std::vector<CCad2D_EdgeGeo>& aEdgeGeo);
   bool IsInside(double x, double y) const {
     for(unsigned int it=0;it<aTri.size()/3;++it){
       const double q0[2] = {x,y};
@@ -88,9 +91,10 @@ public:
             double view_height);
   void DragPicked(double p1x, double p1y, double p0x, double p0y);
   std::vector<double> MinMaxXYZ() const;
-  void Check() const;
+  bool Check() const;
   void AddPolygon(const std::vector<double>& aXY);
-  void AddVtxEdge(double x, double y, int ie_add);
+  void AddVtxFace(double x0, double y0, unsigned int ifc_add);
+  void AddVtxEdge(double x, double y, unsigned int ie_add);
   void GetPointsEdge(std::vector<int>& aIdP,
                      const double* pXY, int np,
                      const std::vector<int>& aIE,

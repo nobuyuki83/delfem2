@@ -77,18 +77,24 @@ void Meshing_SingleConnectedShape2D(std::vector<CEPo2>& aPo2D,
                                     std::vector<ETri>& aETri,
                                     const std::vector<int>& loopIP_ind,
                                     const std::vector<int>& loopIP);
-
 void DeleteUnrefPoints(std::vector<CVector2>& aVec2,
                   std::vector<CEPo2>& aPo2D,
                   std::vector<ETri>& aTri_in,
                   const std::vector<int>& aPoDel);
-
 void DeletePointsFlag(std::vector<CVector2>& aVec1,
                       std::vector<CEPo2>& aPo1,
                       std::vector<ETri>& aTri,
                       std::vector<int>& aFlgPnt1,
                       int iflg);
-
+void MakeSuperTriangle(std::vector<CVector2>& aVec2,
+                       std::vector<CEPo2>& aPo2D,
+                       std::vector<ETri>& aTri,
+                       const double bound_2d[4]);
+void AddPointsMesh(const std::vector<CVector2>& aVec2,
+                   std::vector<CEPo2>& aPo2D,
+                   std::vector<ETri>& aTri,
+                   int ipoin,
+                   double MIN_TRI_AREA);
 void MakeInvMassLumped_Tri(std::vector<double>& aInvMassLumped,
                            double rho,
                            const std::vector<CVector2>& aVec2,

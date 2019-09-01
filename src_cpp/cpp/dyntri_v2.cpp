@@ -360,13 +360,15 @@ void MeshingInside
 void MakeSuperTriangle
 (std::vector<CVector2>& aVec2,
  std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri)
+ std::vector<ETri>& aTri,
+ const double bound_2d[4])
 { // super triangle
   assert( aVec2.size() == aPo2D.size() );
   ////
   double max_len;
   double center[2];
   {
+    /*
     double bound_2d[4];
     bound_2d[0] = aVec2[0].x;
     bound_2d[1] = aVec2[0].x;
@@ -378,6 +380,7 @@ void MakeSuperTriangle
       if( aVec2[ipoin].y < bound_2d[2] ){ bound_2d[2] = aVec2[ipoin].y; }
       if( aVec2[ipoin].y > bound_2d[3] ){ bound_2d[3] = aVec2[ipoin].y; }
     }
+     */
     max_len = (bound_2d[1]-bound_2d[0]>bound_2d[3]-bound_2d[2]) ? bound_2d[1]-bound_2d[0] : bound_2d[3]-bound_2d[2];
     center[0] = (bound_2d[1]+bound_2d[0])*0.5;
     center[1] = (bound_2d[3]+bound_2d[2])*0.5;
@@ -462,7 +465,7 @@ void AddPointsMesh
     }
   }
   if( itri_in == -1 ){
-    std::cout << "super triangle failure" << std::endl;
+    std::cout << "super triangle failure " << iflg1 << " " << iflg2 << std::endl;
     assert(0);
     abort();
   }
@@ -707,7 +710,19 @@ void Meshing_Initialize
     aPo2D[ixys].d = -1;
   }
   {
-    MakeSuperTriangle(aVec2, aPo2D, aTri);
+    double bound_2d[4];
+    bound_2d[0] = aVec2[0].x;
+    bound_2d[1] = aVec2[0].x;
+    bound_2d[2] = aVec2[0].y;
+    bound_2d[3] = aVec2[0].y;
+    for(int ipoin=1;ipoin<(int)aPo2D.size();ipoin++){
+      if( aVec2[ipoin].x < bound_2d[0] ){ bound_2d[0] = aVec2[ipoin].x; }
+      if( aVec2[ipoin].x > bound_2d[1] ){ bound_2d[1] = aVec2[ipoin].x; }
+      if( aVec2[ipoin].y < bound_2d[2] ){ bound_2d[2] = aVec2[ipoin].y; }
+      if( aVec2[ipoin].y > bound_2d[3] ){ bound_2d[3] = aVec2[ipoin].y; }
+    }
+    MakeSuperTriangle(aVec2, aPo2D, aTri,
+                      bound_2d);
   }
   {
     const double MIN_TRI_AREA = 1.0e-10;

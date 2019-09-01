@@ -5,17 +5,14 @@
 
 #include "delfem2/vec3.h"
 
-CVector3 getPointCoonsQuad_CubicBezierEdge
-(double u, double v,
- CVector3 aP[12]);
+CVector3 getPointCoonsQuad_CubicBezierEdge(double u, double v,
+                                           CVector3 aP[12]);
 
-CVector3 getPointCoonsTri_CubicBezierEdge
-(double u, double v, double w,
- CVector3 aP[9]);
+CVector3 getPointCoonsTri_CubicBezierEdge(double u, double v, double w,
+                                          CVector3 aP[9]);
 
-CVector3 getPointHermetianQuad
-(double u, double v,
- CVector3 aP[12]);
+CVector3 getPointHermetianQuad(double u, double v,
+                               CVector3 aP[12]);
 
 CVector3 getPointCubicBezierCurve
 (double t,
@@ -38,23 +35,19 @@ CVector3 getPointSurfaceBezierCubic
  const CVector3& p20, const CVector3& p21, const CVector3& p22, const CVector3& p23,
  const CVector3& p30, const CVector3& p31, const CVector3& p32, const CVector3& p33);
 
-void getCubicBezierCurve
-(const int n,
- std::vector<CVector3>& aP,
- const std::vector<CVector3>& aCP);
+void getCubicBezierCurve(const int n,
+                         std::vector<CVector3>& aP,
+                         const std::vector<CVector3>& aCP);
 
-
-void FlatKnot
-(std::vector<double>& aKnotFlat,
- const std::vector<int>& aKnotMulti,
- const std::vector<double>& aKnot);
+void FlatKnot(std::vector<double>& aKnotFlat,
+              const std::vector<int>& aKnotMulti,
+              const std::vector<double>& aKnot);
 
 template <typename T>
-T DeBoorBSpline
-(double u,
- int ndegree,
- const std::vector<T>& aCP,
- const std::vector<double>& aKnot)
+T DeBoorBSpline(double u,
+                int ndegree,
+                const std::vector<T>& aCP,
+                const std::vector<double>& aKnot)
 {
   assert( ndegree>0 );
   assert( aKnot.size() == aCP.size()+ndegree+1 );
@@ -89,12 +82,11 @@ T DeBoorBSpline
 }
 
 template <typename T>
-void SampleBSpline
-(std::vector<T>& polyline0,
- const int nsmpl,
- const int ndegree,
- const std::vector<double>& aKnotFlat,
- const std::vector<T>& aCtrlPoint)
+void SampleBSpline(std::vector<T>& polyline0,
+                   const int nsmpl,
+                   const int ndegree,
+                   const std::vector<double>& aKnotFlat,
+                   const std::vector<T>& aCtrlPoint)
 {
   polyline0.clear();
   double u0 = aKnotFlat[0];
