@@ -49,7 +49,7 @@ void SetValue_ShellEigenPB_MassLumpedSqrtInv_KernelModes3
  const double* aXY, int nXY,
  const unsigned int* aTri, int nTri)
 {
-  const int nDoF = nXY*3;
+  const unsigned int nDoF = nXY*3;
   std::vector<double> aMassLumpedSqrt(nXY);
   MassLumped_Tri2D(aMassLumpedSqrt.data(),
                    rho*thickness, aXY, nXY, aTri,nTri);

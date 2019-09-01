@@ -14,7 +14,10 @@ def main():
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   dfm2.gl.glfw.winDraw3d([cad])
 
-  cad.add_vtx_edge(2, [0.0, 0.0])
+  cad.add_vtx_face(0, [0.0, 0.0])
+  dfm2.gl.glfw.winDraw3d([cad])
+
+  cad.add_vtx_edge(2, [0.0, 0.8])
   dfm2.gl.glfw.winDraw3d([cad])
 
   cad.set_edge_type(0, 1, [0.2, 0.3, -0.2, 0.3])

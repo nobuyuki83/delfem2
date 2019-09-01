@@ -127,9 +127,33 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case '\033':
       exit(0);  /* '\033' ? ESC ? ASCII ??? */
       break;
-    case 'a':
+    case ' ':
     {
-      is_animation = !is_animation;
+      static int istep = 0;
+      if(      istep == 0 ){
+        cad.AddVtxFace(0.0, 0.1, 0);
+      }
+      else if( istep == 1 ){
+        double param[4] = {0.2, 0.3, -0.2, 0.3};
+        std::vector<double> vparam(param,param+4);
+        cad.SetEdgeType( 0, 1, vparam );
+      }
+      else if( istep == 2 ){
+        cad.AddVtxEdge(-0.0, +0.8, 2);
+      }
+      else if( istep == 3 ){
+        double x0 = 2.1, y0 = 0.0;
+        const double poly[8] = {x0-1,y0-1, x0+1,y0-1, x0+1,y0+1, x0-1,y0+1};
+        cad.AddPolygon(std::vector<double>(poly,poly+8) );
+        cad.AddVtxEdge(x0, -0.2, 5);
+      }
+      else if( istep == 4 ){
+        cad.Clear();
+        const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
+        cad.AddPolygon(std::vector<double>(poly,poly+8));
+      }
+      istep++;
+      if( istep == 5 ){ istep = 0; }
       break;
     }
     case 'd':
@@ -137,24 +161,8 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       imode_draw = (imode_draw+1)%3;
       break;
     }
-    case 'b':
-    {
-      cad.AddVtxEdge(-0.0, -0.2, 0);
-      break;
-    }
-    case 'c':
-    {
-      double x0 = 2.1, y0 = 0.0;
-      const double poly[8] = {x0-1,y0-1, x0+1,y0-1, x0+1,y0+1, x0-1,y0+1};
-      cad.AddPolygon(std::vector<double>(poly,poly+8) );
-      cad.AddVtxEdge(x0, -0.2, 5);
-      break;
-    }
     case 'e':
     {
-      double param[4] = {0.2, 0.3, 0.8, 0.3};
-      std::vector<double> vparam(param,param+4);
-      cad.SetEdgeType( 0, 1, vparam );
     }
   }
   ::glutPostRedisplay();

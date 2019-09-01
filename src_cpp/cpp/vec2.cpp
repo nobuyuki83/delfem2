@@ -470,13 +470,26 @@ void Polyline_CubicBezierCurve
   aP[ns*n] = aCP[ns*3];
 }
 
+void Polyline_BezierCubic
+(std::vector<CVector2>& aP,
+ const unsigned int n,
+ const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4)
+{
+  aP.resize(n);
+  for(int i=0;i<n;++i){
+    const double t = (double)i/(n-1.0);
+    aP[i] = pointCurve_BezierCubic(t,
+                                   p1, p2, p3, p4);
+  }
+}
+
 
 
 double Length_Polygon
 (const std::vector<CVector2>& aP)
 {
   double len = 0;
-  for(int ip0=0;ip0<(int)aP.size()-1;ip0++){
+  for(unsigned int ip0=0;ip0<aP.size()-1;ip0++){
     int ip1 = ip0+1;
     len += (aP[ip0]-aP[ip1]).Length();
   }
