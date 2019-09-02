@@ -31,7 +31,18 @@ void MergeLinSys_Poission_MeshTet3D(CMatrixSparse<double>& mat_A,
                                     const double* aXYZ, int nXYZ,
                                     const unsigned int* aTet, int nTet,
                                     const double* aVal);
-
+void MergeLinSys_Helmholtz_MeshTri2D(CMatrixSparse<std::complex<double> >& mat_A,
+                                     std::complex<double>* vec_b,
+                                     const double wave_length,
+                                     const double* aXY1, int np,
+                                     const unsigned int* aTri1, int nTri,
+                                     const std::complex<double>* aVal);
+void MergeLinSys_SommerfeltRadiationBC_Polyline2D(CMatrixSparse<std::complex<double> >& mat_A,
+                                                  std::complex<double>* vec_b,
+                                                  const double wave_length,
+                                                  const double* aXY1, int np,
+                                                  const unsigned int* aIP, int nIP,
+                                                  const std::complex<double>* aVal);
 void MergeLinSys_Diffusion_MeshTri2D(CMatrixSparse<double>& mat_A,
                                      double* vec_b,
                                      const double alpha,

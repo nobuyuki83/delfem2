@@ -144,7 +144,8 @@ void StepTime_InternalDynamics
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  Solve_CG(conv_ratio,iteration,mat_A,vec_b,vec_x);
+  Solve_CG(vec_b,vec_x,
+           conv_ratio,iteration,  mat_A);
   std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position，頂点位置の更新
   for(int i=0;i<nDof;i++){ aXYZ[i] += vec_x[i]; }

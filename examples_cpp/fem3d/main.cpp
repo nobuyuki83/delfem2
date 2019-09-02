@@ -125,7 +125,11 @@ void SolveProblem_Poisson()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
   XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
@@ -193,7 +197,11 @@ void SolveProblem_Diffusion()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
   XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
@@ -264,7 +272,11 @@ void SolveProblem_LinearSolid_Static()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A, vec_b, vec_x, ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration,mat_A,ilu_A);
   ////////////////////////////////////////////
   XPlusAY(aVal, nDoF, aBCFlag,
     1.0, vec_x);
@@ -338,7 +350,11 @@ void SolveProblem_LinearSolid_Dynamic()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
   XPlusAYBZCW(aVal, nDoF, aBCFlag,
               dt_timestep,aVelo,
@@ -425,7 +441,11 @@ void SolveProblem_Stokes_Static()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
   XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
 }
@@ -505,7 +525,11 @@ void SolveProblem_Stokes_Dynamic()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
   XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
@@ -594,7 +618,12 @@ void SolveProblem_NavierStokes_Dynamic()
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A,aBCFlag);
   double conv_ratio = 1.0e-5;
   int iteration = 1000;
-  SolveLinSys_BiCGStab(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PBiCGStab(vec_b.data(),vec_x.data(),
+                  conv_ratio,iteration,mat_A,ilu_A);
+//  Solve_BiCGStab(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   /////////////////////////////
   XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,

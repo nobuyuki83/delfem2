@@ -148,7 +148,7 @@ std::vector<int> loopIP_ind, loopIP; // vtx on loop
 std::vector<double> aVal;
 std::vector<double> aVelo;
 std::vector<double> aAcc;
-std::vector<int> aBCFlag; // boundary condition flag
+std::vector<int> aBCFlag; // master slave flag
 std::vector<int> aMSFlag; // master slave flag
 
 CMatrixSparse<double> mat_A;
@@ -267,7 +267,11 @@ void SolveProblem_Poisson()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration, mat_A,ilu_A);
   ///////////////////////////
   XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
@@ -297,7 +301,12 @@ void SolveProblem_Diffusion()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration, mat_A,ilu_A);
+//  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   ///////////////////
   XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
@@ -386,7 +395,12 @@ void SolveProblem_LinearSolid_Static()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration, mat_A,ilu_A);
+//  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //////////////////////////
   XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
@@ -426,7 +440,12 @@ void SolveProblem_LinearSolid_Dynamic()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration, mat_A,ilu_A);
+//  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //////////////////////////////
   XPlusAYBZCW(aVal, nDoF, aBCFlag,
               dt_timestep,aVelo,
@@ -593,7 +612,12 @@ void SolveProblem_Stokes_Static()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration, mat_A,ilu_A);
+//  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //////////////////////////
   XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
@@ -636,7 +660,12 @@ void SolveProblem_Stokes_Dynamic()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PCG(vec_b.data(),vec_x.data(),
+            conv_ratio,iteration, mat_A,ilu_A);
+//  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //////////////////////////
   XPlusAYBZ(aVal,nDoF, aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
@@ -684,8 +713,13 @@ void SolveProblem_NavierStokes_Dynamic()
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
-  SolveLinSys_BiCGStab(mat_A,vec_b,vec_x,ilu_A,
-                       conv_ratio, iteration);
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  vec_x.resize(vec_b.size());
+  Solve_PBiCGStab(vec_b.data(),vec_x.data(),
+                  conv_ratio,iteration, mat_A,ilu_A);
+//  SolveLinSys_BiCGStab(mat_A,vec_b,vec_x,ilu_A,
+//                       conv_ratio, iteration);
   //////////////////////////////
   XPlusAYBZ(aVal,nDoF, aBCFlag,
             dt_timestep*gamma_newmark,vec_x,

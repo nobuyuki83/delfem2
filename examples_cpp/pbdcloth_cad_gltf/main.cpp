@@ -257,8 +257,8 @@ int main(int argc,char* argv[])
     }
     aLine.clear();
     {
-      std::vector<int> aIP0 = mesher.IndPoint_IndEdge(1, true, cad);
-      std::vector<int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
+      std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(1, true, cad);
+      std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
       const int npe = aIP0.size();
       assert( aIP1.size() == npe );
       for(int iip=0;iip<npe;++iip){
@@ -269,8 +269,8 @@ int main(int argc,char* argv[])
       }
     }
     {
-      std::vector<int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
-      std::vector<int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
+      std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
+      std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
       const int npe = aIP0.size();
       assert( aIP1.size() == npe );
       for(int iip=0;iip<npe;++iip){

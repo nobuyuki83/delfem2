@@ -615,7 +615,7 @@ void CMesher_Cad2D::Meshing
 }
 
 
-std::vector<int> CMesher_Cad2D::IndPoint_IndEdge
+std::vector<unsigned int> CMesher_Cad2D::IndPoint_IndEdge
 (const int iedge,
  bool is_end_point,
  const CCad2D& cad2d)
@@ -626,7 +626,7 @@ std::vector<int> CMesher_Cad2D::IndPoint_IndEdge
     aflg[nvtx+iedge] = 1;
   }
   std::vector<int> aIP_E = cad2d.Ind_Vtx_Edge(iedge);
-  std::vector<int> res;
+  std::vector<unsigned int> res;
   if( is_end_point ){ res.push_back(aIP_E[0]); }
   for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
@@ -637,7 +637,7 @@ std::vector<int> CMesher_Cad2D::IndPoint_IndEdge
   return res;
 }
 
-std::vector<int> CMesher_Cad2D::IndPoint_IndEdgeArray
+std::vector<unsigned int> CMesher_Cad2D::IndPoint_IndEdgeArray
 (const std::vector<int>& aIndEd,
  const CCad2D& cad2d)
 {
@@ -656,7 +656,7 @@ std::vector<int> CMesher_Cad2D::IndPoint_IndEdgeArray
       }
     }
   }
-  std::vector<int> res;
+  std::vector<unsigned int> res;
   for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( aflg[iflg] == 1 ){ res.push_back(ip); }

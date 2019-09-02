@@ -21,11 +21,17 @@ void MakeMat_Poisson2D_P1(const double alpha, const double source,
                           double eres[3],
                           double emat[][3]);
 
-void MakeMat_Helmhotlz2D_P1(const double wave_length,
+void MakeMat_Helmholtz2D_P1(const double wave_length,
                             const double coords[3][2],
                             const std::complex<double> value[3],
                             std::complex<double> eres[3],
                             std::complex<double> emat[][3]);
+
+void MakeMat_SommerfeltRadiationBC_Line2D(std::complex<double> eres[2],
+                                          std::complex<double> emat[2][2],
+                                          double wave_length,
+                                          const double P[2][2],
+                                          const std::complex<double> val[2]);
 
 // [\rho][velo] - [\alpha]\nabla^2[value] = [source]
 void MakeMat_Diffusion2D_P1(const double alpha, const double source,

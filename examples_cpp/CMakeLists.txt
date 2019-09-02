@@ -38,6 +38,7 @@ add_subdirectory(cad2d)
 add_subdirectory(cad3d)
 
 add_subdirectory(fem2d)
+add_subdirectory(fem2d_helmholtz)
 add_subdirectory(fem3d)
 add_subdirectory(fem25d_eigen)
 add_subdirectory(femcloth_internal)

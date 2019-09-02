@@ -6,6 +6,9 @@
  */
 
 #include <stdio.h>
+#include <complex>
+
+typedef std::complex<double> COMPLEX;
 
 #include "delfem2/emat.h"
 #include "delfem2/mats.h"
@@ -69,6 +72,65 @@ void MergeLinSys_Poission_MeshTri2D
       vec_b[ip] += eres[ino];
     }
     mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+  }
+}
+
+void MergeLinSys_Helmholtz_MeshTri2D
+(CMatrixSparse<COMPLEX>& mat_A,
+ COMPLEX* vec_b,
+ const double wave_length,
+ const double* aXY1, int np,
+ const unsigned int* aTri1, int nTri,
+ const COMPLEX* aVal)
+{
+  const int nDoF = np;
+  std::vector<int> tmp_buffer(nDoF, -1);
+  for (int iel = 0; iel<nTri; ++iel){
+    const unsigned int i0 = aTri1[iel*3+0];
+    const unsigned int i1 = aTri1[iel*3+1];
+    const unsigned int i2 = aTri1[iel*3+2];
+    const unsigned int aIP[3] = {i0,i1,i2};
+    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    const COMPLEX value[3] = { aVal[i0], aVal[i1], aVal[i2] };
+    ////
+    std::complex<double> eres[3];
+    std::complex<double> emat[3][3];
+    MakeMat_Helmholtz2D_P1(wave_length,
+                           coords, value,
+                           eres,emat);
+    for(int ino=0; ino<3; ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip] += eres[ino];
+    }
+    mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
+  }
+}
+
+void MergeLinSys_SommerfeltRadiationBC_Polyline2D
+(CMatrixSparse<COMPLEX>& mat_A,
+ COMPLEX* vec_b,
+ const double wave_length,
+ const double* aXY1, int np,
+ const unsigned int* aIP, int nIP,
+ const COMPLEX* aVal)
+{
+  const int nDoF = np;
+  std::vector<int> tmp_buffer(nDoF, -1);
+  for(int iel=0; iel<nIP-1; ++iel){
+    const unsigned int i0 = aIP[iel+0];
+    const unsigned int i1 = aIP[iel+1];
+    const unsigned int aIP[2] = {i0,i1};
+    double P[2][2]; FetchData(&P[0][0],2,2,aIP, aXY1);
+    const COMPLEX val[2] = { aVal[i0], aVal[i1] };
+    ////
+    COMPLEX eres[2], emat[2][2];
+    MakeMat_SommerfeltRadiationBC_Line2D(eres,emat,
+                                         wave_length,P,val);
+    for(int ino=0;ino<2;ino++){
+      const unsigned int ip = aIP[ino];
+      vec_b[ip] += eres[ino];
+    }
+    mat_A.Mearge(2, aIP, 2, aIP, 1, &emat[0][0], tmp_buffer);
   }
 }
 

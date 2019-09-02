@@ -8,6 +8,9 @@
 #include <assert.h>
 #include <math.h>
 #include <vector>
+#include <ccomplex>
+
+typedef std::complex<double> COMPLEX;
 
 #include "delfem2/ilu_mats.h"
 
@@ -110,518 +113,6 @@ CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& p)
   for(int iblk=0;iblk<nblk;++iblk){
     this->m_diaInd[iblk] = p.m_diaInd[iblk];
   }
-}
-
-template <>
-void CPreconditionerILU<double>::Initialize_ILU0(const CMatrixSparse<double>& m){
-  this->mat = m;
-  const int nblk = m.nblk_col;
-  m_diaInd.resize(nblk);
-  for(int iblk=0;iblk<nblk;iblk++){
-    m_diaInd[iblk] = mat.colInd[iblk+1];
-    for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
-      assert( icrs < mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[icrs];
-      assert( jblk0 < nblk );
-      if( jblk0 > iblk ){
-        m_diaInd[iblk] = icrs;
-        break;
-      }
-    }
-  }
-}
-
-
-class CRowLev{
-public:
-  CRowLev() :row(0), lev(0){}
-  CRowLev(int row, int lev) : row(row), lev(lev){}
-  bool operator < (const CRowLev& rhs) const{
-    if (row!=rhs.row) return row < rhs.row;
-    return lev < rhs.lev;
-  }
-public:
-  int row;
-  int lev;
-};
-
-class CRowLevNext{
-public:
-  int row;
-  int lev;
-  int next;
-};
-
-// if(lev_fill == -1){ take all the fills }
-template <>
-void CPreconditionerILU<double>::Initialize_ILUk
-(const CMatrixSparse<double>& m,
-int lev_fill)
-{
-
-  if (lev_fill==0){
-   this->Initialize_ILU0(m);
-   return;
-  }
-
-  std::vector<CRowLev> aRowLev;
-  aRowLev.reserve(m.rowPtr.size()*4);
-
-  assert(m.nblk_col==m.nblk_row);
-  const int nblk = m.nblk_col;
-  assert(m.len_col==m.len_row);
-  const int len = m.len_col;
-
-  assert(!m.valDia.empty());
-  mat.Initialize(nblk, len, true);
-
-  m_diaInd.resize(nblk);
-
-  for(unsigned int iblk=0; iblk<nblk; ++iblk){
-    std::vector<CRowLevNext> listNonzero;
-    {	// copy row pattern of input matrix into listNonzero
-      listNonzero.resize(m.colInd[iblk+1]-m.colInd[iblk]);
-      int inz = 0;
-      for (unsigned int ijcrs = m.colInd[iblk]; ijcrs<m.colInd[iblk+1]; ijcrs++){
-        assert(ijcrs<m.rowPtr.size());
-        const int jblk0 = m.rowPtr[ijcrs];
-        assert(jblk0<nblk);
-        listNonzero[inz].row = jblk0;
-        listNonzero[inz].lev = 0;
-        listNonzero[inz].next = inz+1;
-        inz++;
-      }
-      listNonzero[inz-1].next = -1;
-    }
-
-    int knz_cur = 0;
-    for (;;){
-      const int kblk0 = listNonzero[knz_cur].row;
-      assert(kblk0<nblk);
-      const int ik_lev0 = listNonzero[knz_cur].lev;
-      if (ik_lev0+1>lev_fill && lev_fill!=-1){
-        knz_cur = listNonzero[knz_cur].next;
-        if (knz_cur==-1) break;
-        continue;
-      }
-      if (kblk0>=iblk) break;
-
-      int jnz_cur = knz_cur;
-      for (unsigned int kjcrs = m_diaInd[kblk0]; kjcrs<mat.colInd[kblk0+1]; kjcrs++){
-        const int kj_lev0 = aRowLev[kjcrs].lev;
-        if (kj_lev0+1>lev_fill && lev_fill!=-1) continue;
-        const int jblk0 = aRowLev[kjcrs].row;
-        assert(jblk0>kblk0 && jblk0<nblk);
-        assert(listNonzero[jnz_cur].row < jblk0);
-        if (jblk0==iblk) continue; // already filled-in on the diagonal
-
-        // check if this is fill in
-        bool is_fill_in = false;
-        for (;;){
-          const int jnz_nex = listNonzero[jnz_cur].next;
-          assert((jnz_nex>=0&&jnz_nex<nblk)||jnz_nex==-1);
-          if (jnz_nex==-1){ is_fill_in = true; break; }
-          if (listNonzero[jnz_nex].row>jblk0){ is_fill_in = true; break; }
-          if (listNonzero[jnz_nex].row==jblk0){ break; }
-          assert(listNonzero[jnz_nex].row < jblk0);
-          jnz_cur = jnz_nex;
-        }
-        if (!is_fill_in){ continue; }
-
-        // pick up fill in
-        const unsigned int max_lev0 = (ik_lev0 > kj_lev0) ? ik_lev0 : kj_lev0;
-        const unsigned  int inz_last = listNonzero.size();
-        listNonzero.resize(listNonzero.size()+1);
-        listNonzero[inz_last].row = jblk0;
-        listNonzero[inz_last].lev = max_lev0+1;
-        listNonzero[inz_last].next = listNonzero[jnz_cur].next;
-        listNonzero[jnz_cur].next = inz_last;
-        jnz_cur = inz_last;
-      }
-      knz_cur = listNonzero[knz_cur].next;
-      assert((knz_cur>=0&&knz_cur<nblk)||knz_cur==-1);
-      if (knz_cur==-1) break;
-    }
-
-    ////////////////////
-
-    {     
-//      if (ColInd_pre[iblk]+nonzero.size() > m_pRowLev->max_size()){
-//        std::cout<<"		overflow and memory reallocate in ilu frac"<<std::endl;
-//      }
-      // copy "listNonzero" to "aRowLev"
-      aRowLev.resize(mat.colInd[iblk]+listNonzero.size());
-      int icrs0 = mat.colInd[iblk];
-      for (int inz = 0; inz!=-1; inz = listNonzero[inz].next){
-        const int jblk = listNonzero[inz].row;
-        const int jlev = listNonzero[inz].lev;
-        assert(jblk<nblk);
-        assert(jblk!=iblk);
-        aRowLev[icrs0].row = jblk;
-        aRowLev[icrs0].lev = jlev;
-        icrs0++;
-      }
-
-      mat.colInd[iblk+1] = icrs0;
-      mat.rowPtr.resize(icrs0);
-      m_diaInd[iblk] = icrs0;
-      for (unsigned int ijcrs = mat.colInd[iblk]; ijcrs<mat.colInd[iblk+1]; ijcrs++){
-        const int jblk0 = aRowLev[ijcrs].row;
-        if (jblk0 > iblk){
-          m_diaInd[iblk] = ijcrs;
-          break;
-        }
-      }
-    }
-  }
-
-  {
-    const unsigned int ncrs = mat.rowPtr.size();
-    std::cout << aRowLev.size() << " " << ncrs << std::endl;
-    assert(aRowLev.size()==ncrs);
-    mat.rowPtr.resize(ncrs);
-    for (unsigned int icrs = 0; icrs<ncrs; ++icrs){
-      mat.rowPtr[icrs] = aRowLev[icrs].row;
-    }
-    /*
-    for (int iblk = 0; iblk<nblk; ++iblk){
-      for (int icrs = mat.m_colInd[iblk]; icrs<mat.m_colInd[iblk+1]; ++icrs){
-        const int jblk = mat.m_rowPtr[icrs];
-//        std::cout<<iblk<<" "<<jblk<<" "<<aRowLev[icrs].lev<<std::endl;
-      }
-    }
-     */
-    const int blksize = len*len;
-    mat.valCrs.resize(ncrs*blksize);
-    assert(!mat.valDia.empty());
-    mat.valDia = m.valDia;
-    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
-  }
-
-}
-
-
-template <typename T>
-void CPreconditionerILU<T>::ForwardSubstitution( std::vector<double>& vec ) const
-{
-  const int len = mat.len_col;
-  const int nblk = mat.nblk_col;
-  
-	if( len == 1 ){
-		const unsigned int* colind = mat.colInd.data();
-		const unsigned int* rowptr = mat.rowPtr.data();
-		const double* vcrs = mat.valCrs.data();
-		const double* vdia = mat.valDia.data();
-		////////////////    
-		for(int iblk=0;iblk<nblk;iblk++){	// ëOêiè¡ãé
-			double lvec_i = vec[iblk];
-			for(unsigned int ijcrs=colind[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = rowptr[ijcrs];
-				assert( jblk0<iblk );
-				lvec_i -= vcrs[ijcrs]*vec[jblk0];
-			}
-			vec[iblk] = vdia[iblk]*lvec_i;
-		}
-	}
-	else if( len == 2 ){
-		const unsigned int* colind = mat.colInd.data();
-		const unsigned int* rowptr = mat.rowPtr.data();
-		const double* vcrs = mat.valCrs.data();
-		const double* vdia = mat.valDia.data();
-		////////////////
-		double pTmpVec[2];
-		for(int iblk=0;iblk<nblk;iblk++){
-			pTmpVec[0] = vec[iblk*2+0];
-			pTmpVec[1] = vec[iblk*2+1];
-			const unsigned int icrs0 = colind[iblk];
-			const unsigned int icrs1 = m_diaInd[iblk];
-			for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = rowptr[ijcrs];
-				assert( jblk0<iblk );
-				const double* vij = &vcrs[ijcrs*4];
-        const double valj0 = vec[jblk0*2+0];
-				const double valj1 = vec[jblk0*2+1];
-				pTmpVec[0] -= vij[0]*valj0+vij[1]*valj1;
-				pTmpVec[1] -= vij[2]*valj0+vij[3]*valj1;
-			}
-			const double* vii = &vdia[iblk*4];
-			vec[iblk*2+0] = vii[0]*pTmpVec[0]+vii[1]*pTmpVec[1];
-			vec[iblk*2+1] = vii[2]*pTmpVec[0]+vii[3]*pTmpVec[1];
-		}
-	}
-	else if( len == 3 ){
-		const unsigned int* colind = mat.colInd.data();
-		const unsigned int* rowptr = mat.rowPtr.data();
-		const double* vcrs = mat.valCrs.data();
-		const double* vdia = mat.valDia.data();
-		////////////////
-		double pTmpVec[3];
-		for(int iblk=0;iblk<nblk;iblk++){
-			pTmpVec[0] = vec[iblk*3+0];
-			pTmpVec[1] = vec[iblk*3+1];
-			pTmpVec[2] = vec[iblk*3+2];
-			const unsigned int icrs0 = colind[iblk];
-			const unsigned int icrs1 = m_diaInd[iblk];
-			for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = rowptr[ijcrs];
-				assert( jblk0<iblk );
-				const double* vij = &vcrs[ijcrs*9];
-				const double valj0 = vec[jblk0*3+0];
-				const double valj1 = vec[jblk0*3+1];
-				const double valj2 = vec[jblk0*3+2];
-				pTmpVec[0] -= vij[0]*valj0+vij[1]*valj1+vij[2]*valj2;
-				pTmpVec[1] -= vij[3]*valj0+vij[4]*valj1+vij[5]*valj2;
-				pTmpVec[2] -= vij[6]*valj0+vij[7]*valj1+vij[8]*valj2;
-			}
-			const double* vii = &vdia[iblk*9];
-			vec[iblk*3+0] = vii[0]*pTmpVec[0]+vii[1]*pTmpVec[1]+vii[2]*pTmpVec[2];
-			vec[iblk*3+1] = vii[3]*pTmpVec[0]+vii[4]*pTmpVec[1]+vii[5]*pTmpVec[2];
-			vec[iblk*3+2] = vii[6]*pTmpVec[0]+vii[7]*pTmpVec[1]+vii[8]*pTmpVec[2];
-		}
-	}
-  else if (len==4){
-    const unsigned int* colind = mat.colInd.data();
-    const unsigned int* rowptr = mat.rowPtr.data();
-    const double* vcrs = mat.valCrs.data();
-    const double* vdia = mat.valDia.data();
-    ////////////////
-    double pTmpVec[4];
-    for (int iblk = 0; iblk<nblk; iblk++){
-      pTmpVec[0] = vec[iblk*4+0];
-      pTmpVec[1] = vec[iblk*4+1];
-      pTmpVec[2] = vec[iblk*4+2];
-      pTmpVec[3] = vec[iblk*4+3];
-      const unsigned int icrs0 = colind[iblk];
-      const unsigned int icrs1 = m_diaInd[iblk];
-      for (unsigned int ijcrs = icrs0; ijcrs<icrs1; ijcrs++){
-        assert(ijcrs<mat.rowPtr.size());
-        const int jblk0 = rowptr[ijcrs];
-        assert(jblk0<iblk);
-        const double* vij = &vcrs[ijcrs*16];
-        const double valj0 = vec[jblk0*4+0];
-        const double valj1 = vec[jblk0*4+1];
-        const double valj2 = vec[jblk0*4+2];
-        const double valj3 = vec[jblk0*4+3];
-        pTmpVec[0] -= vij[ 0]*valj0+vij[ 1]*valj1+vij[ 2]*valj2+vij[ 3]*valj3;
-        pTmpVec[1] -= vij[ 4]*valj0+vij[ 5]*valj1+vij[ 6]*valj2+vij[ 7]*valj3;
-        pTmpVec[2] -= vij[ 8]*valj0+vij[ 9]*valj1+vij[10]*valj2+vij[11]*valj3;
-        pTmpVec[3] -= vij[12]*valj0+vij[13]*valj1+vij[14]*valj2+vij[15]*valj3;
-      }
-      const double* vii = &vdia[iblk*16];
-      vec[iblk*4+0] = vii[ 0]*pTmpVec[0]+vii[ 1]*pTmpVec[1]+vii[ 2]*pTmpVec[2]+vii[ 3]*pTmpVec[3];
-      vec[iblk*4+1] = vii[ 4]*pTmpVec[0]+vii[ 5]*pTmpVec[1]+vii[ 6]*pTmpVec[2]+vii[ 7]*pTmpVec[3];
-      vec[iblk*4+2] = vii[ 8]*pTmpVec[0]+vii[ 9]*pTmpVec[1]+vii[10]*pTmpVec[2]+vii[11]*pTmpVec[3];
-      vec[iblk*4+3] = vii[12]*pTmpVec[0]+vii[13]*pTmpVec[1]+vii[14]*pTmpVec[2]+vii[15]*pTmpVec[3];
-    }
-  }
-	else{
-		const int blksize = len*len;
-		double* pTmpVec = new double [len];
-		for(int iblk=0;iblk<nblk;iblk++){
-			for(int idof=0;idof<len;idof++){
-				pTmpVec[idof] = vec[iblk*len+idof];
-			}
-			for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = mat.rowPtr[ijcrs];
-				assert( jblk0<iblk );
-				const double* vij = &mat.valCrs[ijcrs*blksize];
-				for(int idof=0;idof<len;idof++){
-					for(int jdof=0;jdof<len;jdof++){
-						pTmpVec[idof] -= vij[idof*len+jdof]*vec[jblk0*len+jdof];
-					}
-				}
-			}
-			const double* vii = &mat.valDia[iblk*blksize];
-			for(int idof=0;idof<len;idof++){
-				double dtmp1 = 0.0;
-				for(int jdof=0;jdof<len;jdof++){
-					dtmp1 += vii[idof*len+jdof]*pTmpVec[jdof];
-				}
-				vec[iblk*len+idof] = dtmp1;
-			}
-		}
-		delete[] pTmpVec;
-	}
-}
-
-template <typename T>
-void CPreconditionerILU<T>::BackwardSubstitution( std::vector<double>& vec ) const
-{
-  const int len = mat.len_col;
-  const int nblk = mat.nblk_col;
-
-	if( len == 1 ){
-		const unsigned int* colind = mat.colInd.data();
-		const unsigned int* rowptr = mat.rowPtr.data();
-		const double* vcrs = mat.valCrs.data();
-		////////////////
-		for(int iblk=nblk-1;iblk>=0;iblk--){	
-			assert( (int)iblk < nblk );
-			double lvec_i = vec[iblk];
-			for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<colind[iblk+1];ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = rowptr[ijcrs];
-//        std::cout << jblk0 << " " << iblk << " " << nblk << std::endl;
-				assert( jblk0>(int)iblk && jblk0<nblk );
-				lvec_i -=  vcrs[ijcrs]*vec[jblk0];
-			}
-			vec[iblk] = lvec_i;
-		}
-	}
-	else if( len == 2 ){
-		const unsigned int* colind = mat.colInd.data();
-		const unsigned int* rowptr = mat.rowPtr.data();
-		const double* vcrs = mat.valCrs.data();
-    ////////////////
-		double pTmpVec[2];
-		for(int iblk=nblk-1;iblk>=0;iblk--){
-			assert( (int)iblk < nblk );
-			pTmpVec[0] = vec[iblk*2+0];
-			pTmpVec[1] = vec[iblk*2+1];
-			const unsigned int icrs0 = m_diaInd[iblk];
-			const unsigned int icrs1 = colind[iblk+1];
-			for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = rowptr[ijcrs];
-				assert( jblk0>(int)iblk && jblk0<nblk );
-				const double* vij = &vcrs[ijcrs*4];
-				const double valj0 = vec[jblk0*2+0];
-				const double valj1 = vec[jblk0*2+1];
-				pTmpVec[0] -= vij[0]*valj0+vij[1]*valj1;
-				pTmpVec[1] -= vij[2]*valj0+vij[3]*valj1;
-			}
-			vec[iblk*2+0] = pTmpVec[0];
-			vec[iblk*2+1] = pTmpVec[1];
-		}
-	}
-	else if( len == 3 ){
-    const unsigned int* colind = mat.colInd.data();
-		const unsigned int* rowptr = mat.rowPtr.data();
-		const double* vcrs = mat.valCrs.data();
-    ////////////////
-		double pTmpVec[3];
-		for(int iblk=nblk-1;iblk>=0;iblk--){
-			assert( (int)iblk < nblk );
-			pTmpVec[0] = vec[iblk*3+0];
-			pTmpVec[1] = vec[iblk*3+1];
-			pTmpVec[2] = vec[iblk*3+2];
-			const int icrs0 = m_diaInd[iblk];
-			const unsigned int icrs1 = colind[iblk+1];
-			for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = rowptr[ijcrs];
-				assert( jblk0>(int)iblk && jblk0<nblk );
-				const double* vij = &vcrs[ijcrs*9];
-				const double valj0 = vec[jblk0*3+0];
-				const double valj1 = vec[jblk0*3+1];
-				const double valj2 = vec[jblk0*3+2];
-				pTmpVec[0] -= vij[0]*valj0+vij[1]*valj1+vij[2]*valj2;
-				pTmpVec[1] -= vij[3]*valj0+vij[4]*valj1+vij[5]*valj2;
-				pTmpVec[2] -= vij[6]*valj0+vij[7]*valj1+vij[8]*valj2;
-			}
-			vec[iblk*3+0] = pTmpVec[0];
-			vec[iblk*3+1] = pTmpVec[1];
-			vec[iblk*3+2] = pTmpVec[2];
-		}
-	}
-  else if (len==4){
-    const unsigned int* colind = mat.colInd.data();
-    const unsigned int* rowptr = mat.rowPtr.data();
-    const double* vcrs = mat.valCrs.data();
-    ////////////////
-    double pTmpVec[4];
-    for (int iblk = nblk-1; iblk>=0; iblk--){
-      assert((int)iblk < nblk);
-      pTmpVec[0] = vec[iblk*4+0];
-      pTmpVec[1] = vec[iblk*4+1];
-      pTmpVec[2] = vec[iblk*4+2];
-      pTmpVec[3] = vec[iblk*4+3];
-      const int icrs0 = m_diaInd[iblk];
-      const unsigned int icrs1 = colind[iblk+1];
-      for (unsigned int ijcrs = icrs0; ijcrs<icrs1; ijcrs++){
-        assert(ijcrs<mat.rowPtr.size());
-        const int jblk0 = rowptr[ijcrs];
-        assert(jblk0>(int)iblk && jblk0<nblk);
-        const double* vij = &vcrs[ijcrs*16];
-        const double valj0 = vec[jblk0*4+0];
-        const double valj1 = vec[jblk0*4+1];
-        const double valj2 = vec[jblk0*4+2];
-        const double valj3 = vec[jblk0*4+3];
-        pTmpVec[0] -= vij[ 0]*valj0+vij[ 1]*valj1+vij[ 2]*valj2+vij[ 3]*valj3;
-        pTmpVec[1] -= vij[ 4]*valj0+vij[ 5]*valj1+vij[ 6]*valj2+vij[ 7]*valj3;
-        pTmpVec[2] -= vij[ 8]*valj0+vij[ 9]*valj1+vij[10]*valj2+vij[11]*valj3;
-        pTmpVec[3] -= vij[12]*valj0+vij[13]*valj1+vij[14]*valj2+vij[15]*valj3;
-      }
-      vec[iblk*4+0] = pTmpVec[0];
-      vec[iblk*4+1] = pTmpVec[1];
-      vec[iblk*4+2] = pTmpVec[2];
-      vec[iblk*4+3] = pTmpVec[3];
-    }
-  }
-	else{
-		const int blksize = len*len;
-		double* pTmpVec = new double [len];	// çÏã∆ópÇÃè¨Ç≥Ç»îzóÒ
-		for(int iblk=nblk-1;iblk>=0;iblk--){
-			assert( (int)iblk < nblk );
-			for(int idof=0;idof<len;idof++){
-				pTmpVec[idof] = vec[iblk*len+idof];
-			}
-			for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
-				assert( ijcrs<mat.rowPtr.size() );
-				const int jblk0 = mat.rowPtr[ijcrs];
-				assert( jblk0>(int)iblk && jblk0<nblk );
-				const double* vij = &mat.valCrs[ijcrs*blksize];
-				for(int idof=0;idof<len;idof++){
-					for(int jdof=0;jdof<len;jdof++){
-						pTmpVec[idof] -= vij[idof*len+jdof]*vec[jblk0*len+jdof];
-					}
-				}
-			}
-			for(int idof=0;idof<len;idof++){
-				vec[iblk*len+idof] = pTmpVec[idof];
-			}
-		}
-		delete[] pTmpVec;
-	}
-}
-
-template <>
-void CPreconditionerILU<double>::SetValueILU(const CMatrixSparse<double>& m)
-{
-  const int nblk = mat.nblk_col;
-	const int len = mat.len_col;
-	const int blksize = len*len;
-//  for(int i=0;i<mat.m_ncrs*blksize;i++){ mat.m_valCrs[i] = m.m_valCrs[i]; }
-  std::vector<int> row2crs(nblk,-1);
-  for(int iblk=0;iblk<nblk;iblk++){
-    for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[ijcrs];
-      assert( jblk0 < nblk );
-      row2crs[jblk0] = ijcrs;
-    }
-    for(unsigned int ijcrs=m.colInd[iblk];ijcrs<m.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<m.rowPtr.size() );
-      const int jblk0 = m.rowPtr[ijcrs];
-      assert( jblk0<nblk );
-      const int ijcrs0 = row2crs[jblk0];
-      if( ijcrs0 == -1 ) continue;
-      const double* pval_in = &m.valCrs[ijcrs*blksize];
-      double* pval_out = &mat.valCrs[ijcrs0*blksize];
-      for(int i=0;i<blksize;i++){ *(pval_out+i) = *(pval_in+i); }
-    }
-    for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[ijcrs];
-      assert( jblk0 < nblk );
-      row2crs[jblk0] = -1;
-    }
-  }
-  for(int i=0;i<nblk*blksize;i++){ mat.valDia[i] = m.valDia[i]; }
 }
 
 // numerical factorization
@@ -884,24 +375,96 @@ bool CPreconditionerILU<double>::DoILUDecomp()
 
 
 
+// numerical factorization
+template <>
+bool CPreconditionerILU<COMPLEX>::DoILUDecomp()
+{
+  const int nmax_sing = 10;
+  int icnt_sing = 0;
+  
+  const int len = mat.len_col;
+  const int nblk = mat.nblk_col;
+  //  const int m_ncrs = mat.m_ncrs;
+  const unsigned int* colind = mat.colInd.data();
+  const unsigned int* rowptr = mat.rowPtr.data();
+  COMPLEX* vcrs = mat.valCrs.data();
+  COMPLEX* vdia = mat.valDia.data();
+#ifndef NDEBUG
+  const unsigned int m_ncrs = colind[nblk];
+#endif
+  
+  std::vector<int> row2crs(nblk,-1);
+  if( len == 1 ){
+    for(int iblk=0;iblk<nblk;iblk++){
+      for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
+        assert( ijcrs<colind[nblk] );
+        const int jblk0 = rowptr[ijcrs];
+        assert( jblk0<nblk );
+        row2crs[jblk0] = ijcrs;
+      }
+      // [L] * [D^-1*U]
+      for(unsigned int ikcrs=colind[iblk];ikcrs<m_diaInd[iblk];ikcrs++){
+        const int kblk = rowptr[ikcrs]; assert( kblk<nblk );
+        const COMPLEX ikvalue = vcrs[ikcrs];
+        for(unsigned int kjcrs=m_diaInd[kblk];kjcrs<colind[kblk+1];kjcrs++){
+          const int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
+          if( jblk0 != iblk ){
+            const int ijcrs0 = row2crs[jblk0];
+            if( ijcrs0 == -1 ) continue;
+            vcrs[ijcrs0] -= ikvalue*vcrs[kjcrs];
+          }
+          else{ vdia[iblk] -= ikvalue*vcrs[kjcrs]; }
+        }
+      }
+      COMPLEX iivalue = vdia[iblk];
+      vdia[iblk] = 1.0/iivalue;
+      /*
+      if( fabs((std::conj(iivalue)*iivalue).real()) > 1.0e-30 ){
+
+      }
+      else{
+        std::cout << "frac false" << iblk << std::endl;
+        icnt_sing++;
+        if( icnt_sing > nmax_sing ){
+          return false;
+        }
+      }
+       */
+      for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<colind[iblk+1];ijcrs++){
+        assert( ijcrs<m_ncrs );
+        vcrs[ijcrs] = vcrs[ijcrs] * vdia[iblk];
+      }
+      for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
+        assert( ijcrs<m_ncrs );
+        const int jblk0 = rowptr[ijcrs];
+        assert( jblk0<nblk );
+        row2crs[jblk0] = -1;
+      }
+    }  // end iblk
+  }
+  else{
+    std::cout << "error!-->TOBE IMPLEMENTED" << std::endl;
+    abort();
+  }
+  return true;
+}
+
+
+///////////////////////////////////////////////////////////////////
+
 template <>
 std::vector<double> Solve_PCG
 (double* r_vec,
  double* x_vec,
- double conv_ratio,
- int iteration,
+ double conv_ratio_tol,
+ int max_nitr,
  const CMatrixSparse<double>& mat,
  const CPreconditionerILU<double>& ilu)
 {
-	const int nblk = mat.nblk_col;
-  const int len = mat.len_col;
-//  assert(r_vec.size() == nblk*len);
-  const int ndof = nblk*len;
+  const int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
-  // {x} = 0
-//  x_vec.resize(ndof);
-  for(int i=0;i<ndof;i++){ x_vec[i] = 0; }
+  for(int i=0;i<ndof;i++){ x_vec[i] = 0; }    // {x} = 0
   
 	double inv_sqnorm_res0;
 	{
@@ -916,11 +479,9 @@ std::vector<double> Solve_PCG
   ilu.Solve(Pr_vec);
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
-  
   // rPr = ({r},{Pr})
 	double rPr = DotX(r_vec,Pr_vec.data(),ndof);
-	for(int iitr=0;iitr<iteration;iitr++){
-    
+	for(int iitr=0;iitr<max_nitr;iitr++){
 		{
       std::vector<double>& Ap_vec = Pr_vec;      
       // {Ap} = [A]{p}
@@ -928,23 +489,18 @@ std::vector<double> Solve_PCG
       // alpha = ({r},{Pr})/({p},{Ap})
 			const double pAp = Dot(p_vec,Ap_vec);
 			double alpha = rPr / pAp;
-      // {r} = -alpha*{Ap} + {r}
-      AXPY(-alpha,Ap_vec.data(),r_vec, ndof);
-      // {x} = +alpha*{p } + {x}
-      AXPY(+alpha,p_vec.data(), x_vec, ndof);
+      AXPY(-alpha,Ap_vec.data(),r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
+      AXPY(+alpha,p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
     }
-    
 		{	// Converge Judgement
 			double sqnorm_res = DotX(r_vec,r_vec,ndof);
-      aResHistry.push_back(sqrt(sqnorm_res));
-			if( sqnorm_res * inv_sqnorm_res0 < conv_ratio*conv_ratio ){
-				return aResHistry;
-			}
+      double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
+      aResHistry.push_back(conv_ratio);
+      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
 		}
-    
 		{	// calc beta
       // {Pr} = [P]{r}
-      for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
+      for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; } 
 			ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
 			const double rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
@@ -963,28 +519,89 @@ std::vector<double> Solve_PCG
   return aResHistry;
 }
 
+
+template <>
+std::vector<double> Solve_PCG
+(COMPLEX* r_vec,
+ COMPLEX* x_vec,
+ double conv_ratio_tol,
+ int max_nitr,
+ const CMatrixSparse<COMPLEX>& mat,
+ const CPreconditionerILU<COMPLEX>& ilu)
+{
+  const int ndof = mat.nblk_col*mat.len_col;
+  std::vector<double> aResHistry;
+  
+  for(int i=0;i<ndof;i++){ x_vec[i] = COMPLEX(0.0,0.0); }    // {x} = 0
+  
+  double inv_sqnorm_res0;
+  {
+    const double sqnorm_res0 = DotX(r_vec,r_vec,ndof).real();
+    aResHistry.push_back(sqnorm_res0);
+    if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
+    inv_sqnorm_res0 = 1.0 / sqnorm_res0;
+  }
+  
+  // {Pr} = [P]{r}
+  std::vector<COMPLEX> Pr_vec(r_vec,r_vec+ndof);
+  ilu.Solve(Pr_vec);
+  // {p} = {Pr}
+  std::vector<COMPLEX> p_vec = Pr_vec;
+  // rPr = ({r},{Pr})
+  COMPLEX rPr = DotX(r_vec,Pr_vec.data(),ndof);
+  for(int iitr=0;iitr<max_nitr;iitr++){
+    {
+      std::vector<COMPLEX>& Ap_vec = Pr_vec;
+      // {Ap} = [A]{p}
+      mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+      // alpha = ({r},{Pr})/({p},{Ap})
+      const double pAp = Dot(p_vec,Ap_vec).real();
+      COMPLEX alpha = rPr / pAp;
+      AXPY(-alpha,Ap_vec.data(),r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
+      AXPY(+alpha,p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
+    }
+    {  // Converge Judgement
+      double sqnorm_res = DotX(r_vec,r_vec,ndof).real();
+      double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
+      aResHistry.push_back(conv_ratio);
+      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
+    }
+    {  // calc beta
+      // {Pr} = [P]{r}
+      for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
+      ilu.Solve(Pr_vec);
+      // rPr1 = ({r},{Pr})
+      const COMPLEX rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
+      // beta = rPr1/rPr
+      COMPLEX beta = rPr1/rPr;
+      rPr = rPr1;
+      // {p} = {Pr} + beta*{p}
+      for(int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
+    }
+  }
+  {
+    // Converge Judgement
+    double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
+    aResHistry.push_back(sqrt(sq_norm_res));
+  }
+  return aResHistry;
+}
+
 template <>
 std::vector<double> Solve_PBiCGStab
 (double* r_vec,
  double* x_vec,
- double conv_ratio,
- int num_iter,
+ double conv_ratio_tol,
+ int max_niter,
  const CMatrixSparse<double>& mat,
  const CPreconditionerILU<double>& ilu)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
   assert( mat.len_col == mat.len_row );
-  
-  const int nblk = mat.nblk_col;
-  const int len = mat.len_col;
-//  assert(r_vec.size() == nblk*len);
-  const int ndof = nblk*len;
+  const int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
-  const unsigned int max_iter = num_iter;
-  const double tolerance = conv_ratio;
- 
   // {u} = 0
   for(int i=0;i<ndof;++i){ x_vec[i] = 0.0; }
   
@@ -1003,109 +620,193 @@ std::vector<double> Solve_PBiCGStab
   std::vector<double> s_vec(ndof);
   std::vector<double> Ms_vec(ndof);
   std::vector<double> AMs_vec(ndof);
-  std::vector<double> p_vec(ndof);
   std::vector<double> Mp_vec(ndof);
   std::vector<double> AMp_vec(ndof);
-  std::vector<double> r2_vec(ndof);
   
-  // {r2} = {r}
-  r2_vec.assign(r_vec,r_vec+ndof);
+  const std::vector<double> r0_vec(r_vec,r_vec+ndof);   // {r2} = {r}
+  std::vector<double> p_vec(r_vec,r_vec+ndof);  // {p} = {r}
   
-  // {p} = {r}
-  p_vec.assign(r_vec,r_vec+ndof);
-  
-  num_iter = max_iter;
-  for(unsigned int iitr=1;iitr<max_iter;iitr++)
-  {
+  for(unsigned int iitr=1;iitr<max_niter;iitr++){
     // {Mp_vec} = [M^-1]*{p}
-//    ls.COPY(ip,iMp);
     Mp_vec = p_vec;
-//    ls.SolvePrecond(iMp);
     ilu.Solve(Mp_vec);
-    
     // calc (r,r0*)
-    const double r_r2 = DotX(r_vec,r2_vec.data(),ndof);
-    
-    //        std::cout << "r_r2 : " << r_r2 << std::endl;
-    
+    const double r_r2 = DotX(r_vec,r0_vec.data(),ndof);
     // calc {AMp_vec} = [A]*{Mp_vec}
     mat.MatVec(1.0, Mp_vec, 0.0, AMp_vec);
-    
     // calc alpha
-    double alpha;
-    {
-      const double denominator = Dot(AMp_vec,r2_vec);
-      alpha = r_r2 / denominator;
-    }
-    
-    //        std::cout << "Alpha : " << alpha << std::endl;
-    
+    const double alpha = r_r2 / Dot(AMp_vec,r0_vec);
     // calc s_vector
     s_vec.assign(r_vec,r_vec+ndof);
     AXPY(-alpha,AMp_vec,s_vec);
-//    ls.COPY(ir,is);
-//    ls.AXPY(-alpha,iAMp,is);
-    
-    //        std::cout << "ir iAMp is " << ls.DOT(ir,ir) << " " << ls.DOT(iAMp,iAMp) << " " << ls.DOT(is,is) << std::endl;
-    
     // {Ms_vec} = [M^-1]*{s}
-//    ls.COPY(is,iMs);
     Ms_vec = s_vec;
-//    ls.SolvePrecond(iMs);
     ilu.Solve(Ms_vec);
-    
-    //        std::cout << "Is iMs " << ls.DOT(is,is) << " " << ls.DOT(iMs,iMs) << std::endl;
-    
     // calc {AMs_vec} = [A]*{Ms_vec}
-//    ls.MATVEC(1.0,iMs,0.0,iAMs);
     mat.MatVec(1.0,Ms_vec,0.0,AMs_vec);
-    
     double omega;
     {	// calc omega
       const double denominator = Dot(AMs_vec,AMs_vec);
       const double numerator = Dot(s_vec,AMs_vec);
-      //            std::cout << "Omega0 : " << denominator << " " << numerator << std::endl;
       omega = numerator / denominator;
     }
-    
-    //        std::cout << "Omega : " << omega << std::endl;
-    
-    // update solution
-//    ls.AXPY(alpha,iMp,ix);
     AXPY(alpha,Mp_vec.data(),x_vec,ndof);
-//    ls.AXPY(omega,iMs,ix);
     AXPY(omega,Ms_vec.data(),x_vec,ndof);
-    
-    // update residual
-//    ls.COPY(is,ir);
-    for(int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; }
-    
-//    ls.AXPY(-omega,iAMs,ir);
+    for(int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; } // update residual
     AXPY(-omega,AMs_vec.data(),r_vec,ndof);
-    
     {
       const double sq_norm_res = DotX(r_vec,r_vec,ndof);
-      const double sq_conv_ratio = sq_norm_res * sq_inv_norm_res_ini;
-//      std::cout << iitr << " " << sqrt(sq_conv_ratio) << " " << sqrt(sq_norm_res) << std::endl;
-      if( sq_conv_ratio < tolerance * tolerance ){
-        aResHistry.push_back( sqrt( sq_norm_res ) );
-        return aResHistry;
-      }
+      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
+      aResHistry.push_back( conv_ratio );
+      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
     }
-    
     double beta;
     {	// calc beta
-      const double tmp1 = DotX(r_vec,r2_vec.data(),ndof);
+      const double tmp1 = DotX(r_vec,r0_vec.data(),ndof);
       beta = tmp1 * alpha / (r_r2*omega);
     }
-    
     // update p_vector
-//    ls.SCAL(beta,ip);
     for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
-//    ls.AXPY(1.0,ir,ip);
     AXPY(1.0,r_vec,p_vec.data(),ndof);
-//    ls.AXPY(-beta*omega,iAMp,ip);
     AXPY(-beta*omega,AMp_vec,p_vec);
+  }
+  
+  return aResHistry;
+}
+
+
+
+template <>
+std::vector<double> Solve_PBiCGStab
+(COMPLEX* r_vec,
+ COMPLEX* x_vec,
+ double conv_ratio_tol,
+ int max_niter,
+ const CMatrixSparse<COMPLEX>& mat,
+ const CPreconditionerILU<COMPLEX>& ilu)
+{
+  assert( !mat.valDia.empty() );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  std::vector<double> aResHistry;
+  
+  for(int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
+  
+  double sq_inv_norm_res_ini;
+  {
+    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof).real();
+    if( sq_norm_res_ini < 1.0e-60 ){
+      aResHistry.push_back( sqrt( sq_norm_res_ini ) );
+      return aResHistry;
+    }
+    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
+  }
+  
+  std::vector<COMPLEX> s_vec(ndof);
+  std::vector<COMPLEX> Ms_vec(ndof);
+  std::vector<COMPLEX> AMs_vec(ndof);
+  std::vector<COMPLEX> Mp_vec(ndof);
+  std::vector<COMPLEX> AMp_vec(ndof);
+  
+  const std::vector<COMPLEX> r0_vec(r_vec,r_vec+ndof);   // {r2} = {r}
+  std::vector<COMPLEX> p_vec(r_vec,r_vec+ndof);  // {p} = {r}
+  
+  // calc (r,r0*)
+  COMPLEX r_r0 = DotX(r_vec,r0_vec.data(),ndof);
+  
+  for(unsigned int itr=0;itr<max_niter;itr++){
+    // {Mp_vec} = [M^-1]*{p}
+    Mp_vec.assign(p_vec.begin(),p_vec.end());
+    ilu.Solve(Mp_vec);
+    // calc {AMp_vec} = [A]*{Mp_vec}
+    mat.MatVec(COMPLEX(1,0), Mp_vec, COMPLEX(0,0), AMp_vec);
+    // calc alpha
+    const COMPLEX alpha = r_r0 / Dot(AMp_vec,r0_vec);
+    // calc s_vector
+    s_vec.assign(r_vec,r_vec+ndof);
+    AXPY(-alpha,AMp_vec,s_vec);
+    // {Ms_vec} = [M^-1]*{s}
+    Ms_vec.assign(s_vec.begin(),s_vec.end());
+    ilu.Solve(Ms_vec);
+    // calc {AMs_vec} = [A]*{Ms_vec}
+    mat.MatVec(COMPLEX(1,0),Ms_vec, COMPLEX(0,0), AMs_vec);
+    const COMPLEX omega = Dot(s_vec,AMs_vec) / Dot(AMs_vec,AMs_vec).real();
+    for(int i=0;i<ndof;++i){ x_vec[i] = x_vec[i]+alpha*Mp_vec[i]+omega*Ms_vec[i]; }
+    for(int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]-omega*AMs_vec[i]; }
+    {
+      const double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
+      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
+      aResHistry.push_back( conv_ratio );
+      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
+    }
+    COMPLEX beta;
+    {  // calc beta
+      const COMPLEX tmp1 = DotX(r_vec,r0_vec.data(),ndof);
+      beta = (tmp1*alpha)/(r_r0*omega);
+      r_r0 = tmp1;
+    }
+    // update p_vector
+    for(int i=0;i<ndof;++i){ p_vec[i] = r_vec[i]+beta*(p_vec[i]-omega*AMp_vec[i]); }
+  }
+  
+  return aResHistry;
+}
+
+
+std::vector<double> Solve_PCOCG
+(COMPLEX* r_vec,
+ COMPLEX* x_vec,
+ double conv_ratio_tol,
+ int max_niter,
+ const CMatrixSparse<COMPLEX>& mat,
+ const CPreconditionerILU<COMPLEX>& ilu)
+{
+  assert( !mat.valDia.empty() );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  std::vector<double> aResHistry;
+  
+  for(int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
+  
+  double sq_inv_norm_res_ini;
+  {
+    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof).real();
+    if( sq_norm_res_ini < 1.0e-60 ){
+      aResHistry.push_back( sqrt( sq_norm_res_ini ) );
+      return aResHistry;
+    }
+    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
+  }
+  
+  std::vector<COMPLEX> Ap_vec(ndof);
+  std::vector<COMPLEX> w_vec(r_vec,r_vec+ndof);
+  ilu.Solve(w_vec);
+  
+  std::vector<COMPLEX> p_vec = w_vec;  // {p} = {w}
+  COMPLEX r_w = MultSumX(r_vec,w_vec.data(),ndof);
+  
+  for(unsigned int itr=0;itr<max_niter;itr++){
+    mat.MatVec(COMPLEX(1,0), p_vec, COMPLEX(0,0), Ap_vec);
+    const COMPLEX alpha = r_w / MultSumX(p_vec.data(),Ap_vec.data(),ndof);
+    AXPY(+alpha,p_vec.data(), x_vec,ndof);
+    AXPY(-alpha,Ap_vec.data(), r_vec,ndof);
+    {
+      const double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
+      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
+      aResHistry.push_back( conv_ratio );
+      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
+    }
+    w_vec.assign(r_vec,r_vec+ndof);
+    ilu.Solve(w_vec);
+    COMPLEX beta;
+    {  // calc beta
+      const COMPLEX tmp1 = MultSumX(r_vec,w_vec.data(),ndof);
+      beta = tmp1/r_w;
+      r_w = tmp1;
+    }
+    for(int i=0;i<ndof;++i){ p_vec[i] = w_vec[i] + beta*p_vec[i]; }
   }
   
   return aResHistry;
