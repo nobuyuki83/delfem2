@@ -142,13 +142,13 @@ public:
   }
   void Meshing(CMeshDynTri2D& dmesh,
                const CCad2D& cad2d);
-  std::vector<int> IndPoint_IndEdgeArray(const std::vector<int>& aIndEd,
-                                         const CCad2D& cad2d);
+  std::vector<unsigned int> IndPoint_IndEdgeArray(const std::vector<int>& aIndEd,
+                                                  const CCad2D& cad2d);
   std::vector<int> IndPoint_IndFaceArray(const std::vector<int>& aIndFc,
                                          const CCad2D& cad2d);
-  std::vector<int> IndPoint_IndEdge(const int ie,
-                                    bool is_end_point,
-                                    const CCad2D& cad2d);
+  std::vector<unsigned int> IndPoint_IndEdge(const int ie,
+                                             bool is_end_point,
+                                             const CCad2D& cad2d);
 public:
   double edge_length;
   ////

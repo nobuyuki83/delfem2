@@ -11,7 +11,10 @@
 #include <iostream>
 #include <complex>
 
+typedef std::complex<double> COMPLEX;
+
 #include "delfem2/emat.h"
+
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -344,12 +347,12 @@ void MakeMat_Poisson2D_P1
 }
 
 
-void MakeMat_Helmhotlz2D_P1
+void MakeMat_Helmholtz2D_P1
 (const double wave_length,
  const double coords[3][2],
  const std::complex<double> value[3],
  std::complex<double> eres[3],
- std::complex<double> emat[][3])
+ std::complex<double> emat[3][3])
 {
   const int nno = 3;
   const int ndim = 2;
@@ -376,6 +379,32 @@ void MakeMat_Helmhotlz2D_P1
     eres[ino] = 0.0;
     for(unsigned int jno=0;jno<nno;jno++){
       eres[ino] -= emat[ino][jno]*value[jno];
+    }
+  }
+}
+
+void MakeMat_SommerfeltRadiationBC_Line2D
+(COMPLEX eres[2],
+ COMPLEX emat[2][2],
+ double wave_length,
+ const double P[2][2],
+ const COMPLEX val[2])
+{
+  const double elen = sqrt( (P[0][0]-P[1][0])*(P[0][0]-P[1][0]) + (P[0][1]-P[1][1])*(P[0][1]-P[1][1]) );
+  {
+    const double k = 2*3.1416/wave_length;
+    COMPLEX tmp_val1 = (k/6.0*elen)*COMPLEX(0,1);
+    COMPLEX tmp_val2 = -1/(2.0*elen*k)*COMPLEX(0,1);
+    //      Com::Complex tmp_val2 = 0.0;
+    emat[0][0] = tmp_val1*2.0+tmp_val2;
+    emat[0][1] = tmp_val1    -tmp_val2;
+    emat[1][0] = tmp_val1    -tmp_val2;
+    emat[1][1] = tmp_val1*2.0+tmp_val2;
+  }
+  for(unsigned int ino=0;ino<2;ino++){
+    eres[ino] = 0.0;
+    for(unsigned int jno=0;jno<2;jno++){
+      eres[ino] -= emat[ino][jno]*val[jno];
     }
   }
 }

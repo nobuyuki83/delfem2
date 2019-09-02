@@ -9,6 +9,9 @@
 #include <cassert>
 #include <math.h>
 #include <vector>
+#include <complex>
+
+typedef std::complex<double> COMPLEX;
 
 #include "delfem2/mats.h"
 
@@ -346,6 +349,7 @@ void ScaleLeftRight
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+template <>
 double Dot
 (const std::vector<double>& r_vec,
  const std::vector<double>& u_vec)
@@ -359,19 +363,26 @@ double Dot
   return r;
 }
 
-double DotX
-(const double* r_vec,
- const double* u_vec,
- int n)
+template <>
+COMPLEX Dot
+(const std::vector<COMPLEX>& va,
+ const std::vector<COMPLEX>& vb)
 {
-  double r = 0.0;
-  for(int i=0;i<n;i++){
-    r += r_vec[i]*u_vec[i];
+  const unsigned int n = va.size();
+  assert( vb.size() == n );
+  double sr = 0.0, si = 0.0;
+  for(int i=0;i<n;++i){
+    const COMPLEX& a = va[i];
+    const COMPLEX& b = vb[i];
+    sr += a.real()*b.real() + a.imag()*b.imag();
+    si += a.imag()*b.real() - a.real()*b.imag();
   }
-  return r;
+  return COMPLEX(sr,si);
 }
 
+
 // {y} = {y} + a * {x}
+template<>
 void AXPY
 (double a,
  const std::vector<double>& x,
@@ -379,223 +390,87 @@ void AXPY
 {
   const unsigned int n = x.size();
   assert( y.size() == n );
-  for(unsigned int i=0;i<n;i++){
-    y[i] += a*x[i];
-  }
+  for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
 
 // {y} = {y} + a * {x}
+template<>
+void AXPY
+(COMPLEX a,
+ const std::vector<COMPLEX>& x,
+ std::vector<COMPLEX>& y)
+{
+  const unsigned int n = x.size();
+  assert( y.size() == n );
+  for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
+}
+
+template<>
+double DotX
+(const double* r_vec,
+ const double* u_vec,
+ int n)
+{
+  double r = 0.0;
+  for(int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
+  return r;
+}
+
+template<>
+COMPLEX DotX
+(const COMPLEX* va,
+ const COMPLEX* vb,
+ int n)
+{
+  double sr = 0.0;
+  double si = 0.0;
+  for(int i=0;i<n;i++){
+    const COMPLEX& a = va[i];
+    const COMPLEX& b = vb[i];
+    sr += a.real()*b.real() + a.imag()*b.imag();
+    si += a.imag()*b.real() - a.real()*b.imag();
+  }
+  return COMPLEX(sr,si);
+}
+
+COMPLEX MultSumX
+(const COMPLEX* va,
+ const COMPLEX* vb,
+ int n)
+{
+  COMPLEX s(0,0);
+  for(int i=0;i<n;++i){
+    const COMPLEX& a = va[i];
+    const COMPLEX& b = vb[i];
+    s += a*b;
+  }
+  return s;
+}
+
+
+// {y} = {y} + a * {x}
+template <>
 void AXPY
 (double a,
  const double* x,
  double* y,
  int n)
 {
-  for(int i=0;i<n;i++){
-    y[i] += a*x[i];
-  }
+  for(int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
 
-void Solve_CG
-(double& conv_ratio,
- int& iteration,
- const CMatrixSparse<double>& mat,
- std::vector<double>& r_vec,
- std::vector<double>& x_vec)
+template <>
+void AXPY
+(COMPLEX a,
+ const COMPLEX* x,
+ COMPLEX* y,
+ int n)
 {
-  assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  
-	const double conv_ratio_tol = conv_ratio;
-	const int mx_iter = iteration;
-  
-	const unsigned int nblk = mat.nblk_col;
-  const unsigned int len = mat.len_col;
-  assert(r_vec.size() == nblk*len);
-  const int ndof = nblk*len;
-  
-  // {x} = 0
-  x_vec.assign(ndof,0.0);
-  
-  double sqnorm_res = Dot(r_vec,r_vec);
-  if( sqnorm_res < 1.0e-30 ){
-    conv_ratio = 0.0;
-    iteration = 0;
-    return;
-  }
-	double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
-  
-  std::vector<double> Ap_vec(ndof);
-  
-	// Set Initial Serch Direction
-	// {p} = {r}
-  std::vector<double>  p_vec = r_vec;
-  
-	iteration = mx_iter;
-	for(int iitr=1;iitr<mx_iter;iitr++){
-    
-		double alpha;
-		{	// alpha = (r,r) / (p,Ap)
-			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
-			const double pAp = Dot(p_vec,Ap_vec);
-			alpha = sqnorm_res / pAp;
-		}
-    
-		// update x
-		// {x} = +alpha*{ p} + {x}
-		AXPY(alpha,p_vec,x_vec);
-    
-		// {r} = -alpha*{Ap} + {r}
-		AXPY(-alpha,Ap_vec,r_vec);
-    
-		double sqnorm_res_new = Dot(r_vec,r_vec);
-    // Converge Judgement    
-    
-		if( sqnorm_res_new * inv_sqnorm_res_ini < conv_ratio_tol*conv_ratio_tol ){
-      conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res_ini );
-      iteration = iitr;
-      return;
-		}
-    
-		// beta = (r1,r1) / (r0,r0)
-		const double beta = sqnorm_res_new / sqnorm_res;
-		sqnorm_res = sqnorm_res_new;
-    
-    // {p} = {r} + beta*{p}
-    for(int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; }
-	}
-  
-	return;
+  for(int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
 
 
-bool Solve_BiCGSTAB
-(double& conv_ratio,
- int& num_iter,
- const CMatrixSparse<double>& mat,
- std::vector<double>& r_vec,
- std::vector<double>& x_vec)
-{
-  assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  
-  const unsigned int nblk = mat.nblk_col;
-  const unsigned int len = mat.len_col;
-  assert(r_vec.size() == nblk*len);
-  const int ndof = nblk*len;
-  
-  const unsigned int max_iter = num_iter;
-  const double tolerance = conv_ratio;
-
-  std::vector<double> s_vec(ndof);
-  std::vector<double> As_vec(ndof);
-  std::vector<double> p_vec(ndof);
-  std::vector<double> Ap_vec(ndof);
-  std::vector<double> r2_vec(ndof);
-  
-  x_vec.assign(ndof,0.0);
-  
-  double sq_inv_norm_res_ini;
-  {
-    const double sq_norm_res_ini = Dot(r_vec, r_vec);
-    std::cout << "initial norm " << sq_norm_res_ini << std::endl;
-    if( sq_norm_res_ini < 1.0e-60 ){
-      conv_ratio = sqrt( sq_norm_res_ini );
-      num_iter = 0;
-      return true;
-    }
-    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
-  }
-  
-  // {r2} = {r}
-  r2_vec = r_vec;
-  
-  // {p} = {r}
-  p_vec = r_vec;
-  
-  // calc ({r},{r2})
-  double r_r2 = Dot(r_vec,r2_vec);
-  
-  num_iter = max_iter;
-  for(unsigned int iitr=1;iitr<max_iter;iitr++){
-    
-    // calc {Ap} = [A]*{p}
-    mat.MatVec(1.0,p_vec,0.0,Ap_vec);
-//    ls.MATVEC(1.0,ip,0.0,iAp);
-//    std::cout << " sq_norm iAp : " << ls.DOT(iAp,iAp) << std::endl;
-//    std::cout << " sq_norm iAp : " << InnerProduct(Ap_vec,Ap_vec) << std::endl;
-    
-    // calc alpha
-    // alhpa = ({r},{r2}) / ({Ap},{r2})
-    double alpha;
-    {
-      const double denominator = Dot(Ap_vec,r2_vec);
-//      std::cout << " alpha deno : " << denominator << std::endl;
-      alpha = r_r2 / denominator;
-    }
-    
-    // {s} = {r} - alpha*{Ap}
-    s_vec = r_vec;
-    AXPY(-alpha, Ap_vec, s_vec);
-    
-    // calc {As} = [A]*{s}
-    mat.MatVec(1.0,s_vec,0.0,As_vec);
-//    ls.MATVEC(1.0,is,0.0,iAs);
-    
-    // calc omega
-    // omega = ({As},{s}) / ({As},{As})
-    double omega;
-    {
-      const double denominator = Dot(As_vec,As_vec);
-      const double numerator = Dot(As_vec,s_vec);
-      omega = numerator / denominator;
-    }
-    
-    // update solution
-    // ix += alpha*{p} + omega*{s}
-    AXPY(alpha,p_vec,x_vec);
-    AXPY(omega,s_vec,x_vec);
-    
-    // update residual
-    // {r} = {s} - omega*{As}
-    r_vec = s_vec;
-    AXPY(-omega,As_vec,r_vec);
-    
-    {
-      const double sq_norm_res = Dot(r_vec,r_vec);
-      const double sq_conv_ratio = sq_norm_res * sq_inv_norm_res_ini;
-//      std::cout << iitr << " " << sq_norm_res << " " << sqrt(sq_conv_ratio) << " " << sqrt(sq_norm_res) << std::endl;
-      if( sq_conv_ratio < tolerance*tolerance ){
-        conv_ratio = sqrt( sq_conv_ratio );
-        num_iter = iitr;
-        break;
-      }
-    }
-    
-    // calc beta
-    // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
-    double beta;
-    {
-      const double tmp1 = Dot(r_vec,r2_vec);
-      beta = (tmp1*alpha) / (r_r2*omega);
-      r_r2 = tmp1;
-    }
-    
-    // update p_vector
-    // {p} = {r} + beta*({p}-omega*[A]*{p})
-    for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
-    AXPY(1.0,r_vec,p_vec);
-    AXPY(-beta*omega,Ap_vec,p_vec);
-//    ls.SCAL(beta,ip);
-//    ls.AXPY(1.0,ir,ip);
-//    ls.AXPY(-beta*omega,iAp,ip);
-  }
-  
-  return true;
-}
-
+template <>
 void XPlusAY
 (std::vector<double>& X,
  const int nDoF,
@@ -608,6 +483,287 @@ void XPlusAY
     X[i] += alpha*Y[i];
   }
 }
+
+template <>
+void XPlusAY
+(std::vector<std::complex<double> >& X,
+ const int nDoF,
+ const std::vector<int>& aBCFlag,
+ std::complex<double> alpha,
+ const std::vector<std::complex<double> >& Y)
+{
+  for(int i=0;i<nDoF;++i ){
+    if( aBCFlag[i] !=0 ) continue;
+    X[i] += alpha*Y[i];
+  }
+}
+
+
+template<>
+void setRHS_Zero
+(std::vector<double>& vec_b,
+ const std::vector<int>& aBCFlag,
+ int iflag_nonzero)
+{
+  const int ndof = (int)vec_b.size();
+  for (int i=0;i<ndof;++i){
+    if (aBCFlag[i]==iflag_nonzero) continue;
+    vec_b[i] = 0;
+  }
+}
+
+template<>
+void setRHS_Zero
+(std::vector<COMPLEX>& vec_b,
+ const std::vector<int>& aBCFlag,
+ int iflag_nonzero)
+{
+  const int ndof = (int)vec_b.size();
+  for (int i=0;i<ndof;++i){
+    if (aBCFlag[i]==iflag_nonzero) continue;
+    vec_b[i] = 0;
+  }
+}
+
+template <>
+std::vector<double>
+Solve_CG
+(std::vector<double>& r_vec,
+ std::vector<double>& x_vec,
+ double conv_ratio_tol,
+ int max_iteration,
+ const CMatrixSparse<double>& mat)
+{
+  assert( !mat.valDia.empty() );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
+  const int ndof = mat.nblk_col*mat.len_col;
+  assert(r_vec.size() == ndof);
+  std::vector<double> aConv;
+  x_vec.assign(ndof,0.0);   // {x} = 0
+  double sqnorm_res = Dot(r_vec,r_vec);
+  if( sqnorm_res < 1.0e-30 ){ return aConv; }
+	double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
+  std::vector<double> Ap_vec(ndof);
+  std::vector<double>  p_vec = r_vec;  // {p} = {r}  (Set Initial Serch Direction)
+	for(int iitr=0;iitr<max_iteration;iitr++){
+		double alpha;
+		{	// alpha = (r,r) / (p,Ap)
+			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+			const double pAp = Dot(p_vec,Ap_vec);
+			alpha = sqnorm_res / pAp;
+		}
+		AXPY(alpha,p_vec,x_vec);    // {x} = +alpha*{ p} + {x} (update x)
+		AXPY(-alpha,Ap_vec,r_vec);  // {r} = -alpha*{Ap} + {r}
+		const double sqnorm_res_new = Dot(r_vec,r_vec);
+    double conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res_ini );
+    aConv.push_back(conv_ratio);
+		if( conv_ratio < conv_ratio_tol ){ return aConv; }
+    {
+      const double beta = sqnorm_res_new / sqnorm_res;      // beta = (r1,r1) / (r0,r0)
+      sqnorm_res = sqnorm_res_new;
+      for(int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; } // {p} = {r} + beta*{p}
+    }
+	}
+	return aConv;
+}
+
+
+template <>
+std::vector<double> Solve_CG
+(std::vector<COMPLEX>& r_vec,
+ std::vector<COMPLEX>& x_vec,
+ double conv_ratio_tol,
+ int max_iteration,
+ const CMatrixSparse<COMPLEX>& mat)
+{
+  assert( !mat.valDia.empty() );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  assert(r_vec.size() == ndof);
+  std::vector<double> aConv;
+  x_vec.assign(ndof,0.0);   // {x} = 0
+  double sqnorm_res = Dot(r_vec,r_vec).real();
+  if( sqnorm_res < 1.0e-30 ){ return aConv; }
+  const double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
+  std::vector<COMPLEX> Ap_vec(ndof);
+  std::vector<COMPLEX>  p_vec = r_vec;// {p} = {r} (Set Initial Serch Direction)
+  for(int iitr=0;iitr<max_iteration;iitr++){
+    double alpha;
+    {  // alpha = (r,r) / (p,Ap)
+      mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+      COMPLEX C_pAp = Dot(p_vec,Ap_vec);
+      assert( fabs(C_pAp.imag())<1.0e-3 );
+      const double pAp = C_pAp.real();
+      alpha = sqnorm_res / pAp;
+    }
+    AXPY(COMPLEX(+alpha),p_vec,x_vec);    // {x} = +alpha*{ p} + {x} (updatex)
+    AXPY(COMPLEX(-alpha),Ap_vec,r_vec);  // {r} = -alpha*{Ap} + {r}
+    double sqnorm_res_new = Dot(r_vec,r_vec).real();
+    const double conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res_ini );
+    aConv.push_back(conv_ratio);
+    if( conv_ratio < conv_ratio_tol ){ return aConv; }
+    { // update p
+      const double beta = sqnorm_res_new / sqnorm_res;  // beta = (r1,r1) / (r0,r0)
+      sqnorm_res = sqnorm_res_new;
+      for(int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; } // {p} = {r} + beta*{p}
+    }
+  }
+  return aConv;
+}
+
+
+template <>
+std::vector<double>
+Solve_BiCGSTAB
+(std::vector<COMPLEX>& r_vec,
+ std::vector<COMPLEX>& x_vec,
+ double conv_ratio_tol,
+ int max_niter,
+ const CMatrixSparse<COMPLEX>& mat)
+{
+  assert( !mat.valDia.empty() );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
+  assert(r_vec.size() == ndof);
+  
+  std::vector<double> aConv;
+  double sq_inv_norm_res_ini;
+  {
+    const double sq_norm_res_ini = Dot(r_vec, r_vec).real();
+    if( sq_norm_res_ini < 1.0e-30 ){ return aConv; }
+    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
+  }
+  
+  std::vector<COMPLEX> s_vec(ndof);
+  std::vector<COMPLEX> As_vec(ndof);
+  std::vector<COMPLEX> p_vec(ndof);
+  std::vector<COMPLEX> Ap_vec(ndof);
+
+  x_vec.assign(ndof,0.0);
+  
+  const std::vector<COMPLEX> r0_vec = r_vec;   // {r2} = {r}
+  p_vec = r_vec;    // {p} = {r}
+  COMPLEX r_r0 = Dot(r_vec,r0_vec);   // calc ({r},{r2})
+  
+  for(unsigned int iitr=0;iitr<max_niter;iitr++){
+    mat.MatVec(1.0,p_vec,0.0,Ap_vec); // calc {Ap} = [A]*{p}
+    const COMPLEX alpha = r_r0 / Dot(Ap_vec,r0_vec); // alhpa = ({r},{r2}) / ({Ap},{r2})
+    // {s} = {r} - alpha*{Ap}
+    s_vec = r_vec;
+    AXPY(-alpha, Ap_vec, s_vec);
+    // calc {As} = [A]*{s}
+    mat.MatVec(1.0,s_vec,0.0,As_vec);
+    // calc omega
+    const COMPLEX omega = Dot(s_vec,As_vec) / Dot(As_vec,As_vec).real();  // omega=({As},{s})/({As},{As})
+    // ix += alpha*{p} + omega*{s} (update solution)
+    AXPY(alpha,p_vec,x_vec);
+    AXPY(omega,s_vec,x_vec);
+    // {r} = {s} - omega*{As} (update residual)
+    r_vec = s_vec;
+    AXPY(-omega,As_vec,r_vec);
+    {
+      const double sq_norm_res = Dot(r_vec,r_vec).real();
+      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
+      aConv.push_back(conv_ratio);
+      if( conv_ratio < conv_ratio_tol ){ return aConv; }
+    }
+    { // compute beta
+      const COMPLEX tmp1 = Dot(r_vec,r0_vec);
+      const COMPLEX beta = (tmp1*alpha)/(r_r0*omega); // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
+      r_r0 = tmp1;
+       // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
+      for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
+      AXPY(COMPLEX(1.0),r_vec,p_vec);
+      AXPY(-beta*omega,Ap_vec,p_vec);
+    }
+  }
+  return aConv;
+}
+
+
+template <>
+std::vector<double>
+Solve_BiCGSTAB
+(std::vector<double>& r_vec,
+ std::vector<double>& x_vec,
+ double conv_ratio_tol,
+ int max_niter,
+ const CMatrixSparse<double>& mat)
+{
+  assert( !mat.valDia.empty() );
+  assert( mat.nblk_col == mat.nblk_row );
+  assert( mat.len_col == mat.len_row );
+  const int ndof = mat.nblk_col*mat.len_col;
+  assert(r_vec.size() == ndof);
+  
+  std::vector<double> aConv;
+  double sq_inv_norm_res_ini;
+  {
+    const double sq_norm_res_ini = Dot(r_vec, r_vec);
+    if( sq_norm_res_ini < 1.0e-30 ){ return aConv; }
+    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
+  }
+  
+  std::vector<double> s_vec(ndof);
+  std::vector<double> As_vec(ndof);
+  std::vector<double> p_vec(ndof);
+  std::vector<double> Ap_vec(ndof);
+  std::vector<double> r2_vec(ndof);
+  
+  x_vec.assign(ndof,0.0);
+  
+  r2_vec = r_vec;   // {r2} = {r}
+  p_vec = r_vec;    // {p} = {r}
+  double r_r2 = Dot(r_vec,r2_vec);   // calc ({r},{r2})
+  
+  for(unsigned int iitr=0;iitr<max_niter;iitr++){
+    mat.MatVec(1.0,p_vec,0.0,Ap_vec); // calc {Ap} = [A]*{p}
+    double alpha;
+    { // alhpa = ({r},{r2}) / ({Ap},{r2})
+      const double denominator = Dot(Ap_vec,r2_vec);
+      alpha = r_r2 / denominator;
+    }
+    // {s} = {r} - alpha*{Ap}
+    s_vec = r_vec;
+    AXPY(-alpha, Ap_vec, s_vec);
+    // calc {As} = [A]*{s}
+    mat.MatVec(1.0,s_vec,0.0,As_vec);
+    // calc omega
+    double omega;
+    { // omega = ({As},{s}) / ({As},{As})
+      const double denominator = Dot(As_vec,As_vec);
+      const double numerator = Dot(As_vec,s_vec);
+      omega = numerator / denominator;
+    }
+    // ix += alpha*{p} + omega*{s} (update solution)
+    AXPY(alpha,p_vec,x_vec);
+    AXPY(omega,s_vec,x_vec);
+    // {r} = {s} - omega*{As} (update residual)
+    r_vec = s_vec;
+    AXPY(-omega,As_vec,r_vec);
+    {
+      const double sq_norm_res = Dot(r_vec,r_vec);
+      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
+      aConv.push_back(conv_ratio);
+      if( conv_ratio < conv_ratio_tol ){ return aConv; }
+    }
+    { // compute beta
+      const double tmp1 = Dot(r_vec,r2_vec);
+      const double beta = (tmp1*alpha) / (r_r2*omega);     // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
+      r_r2 = tmp1;
+      // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
+      for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
+      AXPY(1.0,r_vec,p_vec);
+      AXPY(-beta*omega,Ap_vec,p_vec);
+    }
+  }
+  return aConv;
+}
+
+
 
 void XPlusAYBZ
 (std::vector<double>& X,
@@ -641,18 +797,7 @@ void XPlusAYBZCW
   }
 }
 
-// set boundary condition
-void setRHS_Zero
-(std::vector<double>& vec_b,
- const std::vector<int>& aBCFlag,
- int iflag_nonzero)
-{
-  const int ndof = (int)vec_b.size();
-  for (int i=0;i<ndof;++i){
-    if (aBCFlag[i]==iflag_nonzero) continue;
-    vec_b[i] = 0;
-  }
-}
+
 
 void setRHS_MasterSlave
 (double* vec_b,

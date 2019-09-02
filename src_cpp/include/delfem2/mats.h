@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cassert>
+#include <ccomplex>
 
 template <typename T>
 class CMatrixSparse
@@ -110,7 +111,9 @@ void CMatrixSparse<T>::MatVec
  T beta,
  std::vector<T>& y) const
 {
-  const int blksize = len_col*len_col;
+  assert(y.size()==len_col*nblk_col);
+  assert(x.size()==len_row*nblk_row);
+  const int blksize = len_col*len_row;
   const T* vcrs  = valCrs.data();
   const T* vdia = valDia.data();
   const unsigned int* colind = colInd.data();
@@ -241,25 +244,41 @@ void SetMasterSlave(CMatrixSparse<double>& mat, const int* aMSFlag);
 void ScaleLeftRight(CMatrixSparse<double>& mat, const double* scale);
 
 
-double Dot(const std::vector<double>& r_vec,
-           const std::vector<double>& u_vec);
-double DotX(const double* r_vec,
-            const double* u_vec,
-            int ndof);
-
-void AXPY(double a,
-          const std::vector<double>& x,
-          std::vector<double>& y);
-void AXPY(double a,
-          const double* x,
-          double* y,
-          int n);
-
-void XPlusAY(std::vector<double>& X,
+template <typename T>
+void XPlusAY(std::vector<T>& X,
              const int nDoF,
              const std::vector<int>& aBCFlag,
-             double alpha,
-             const std::vector<double>& Y);
+             T alpha,
+             const std::vector<T>& Y);
+
+template <typename T>
+T Dot(const std::vector<T>& r_vec,
+      const std::vector<T>& u_vec);
+
+template <typename T>
+void AXPY(T a,
+          const std::vector<T>& x,
+          std::vector<T>& y);
+
+template <typename T>
+void AXPY(T a,
+          const T* x,
+          T* y,
+          int n);
+
+template <typename T>
+void setRHS_Zero(std::vector<T>& vec_b,
+                 const std::vector<int>& aBCFlag,
+                 int iflag_nonzero);
+
+template <typename T>
+T DotX(const T* r_vec,
+       const T* u_vec,
+       int ndof);
+
+std::complex<double> MultSumX(const std::complex<double>* va,
+                              const std::complex<double>* vb,
+                              int n);
 
 void XPlusAYBZ(std::vector<double>& X,
                const int nDoF,
@@ -280,26 +299,25 @@ void XPlusAYBZCW(std::vector<double>& X,
                  const std::vector<double>& W);
 
 // set boundary condition
-void setRHS_Zero(std::vector<double>& vec_b,
-                 const std::vector<int>& aBCFlag,
-                 int iflag_nonzero);
 
 void setRHS_MasterSlave(double* vec_b,
                         int nDoF,
                         const int* aMSFlag);
 
+template <typename T>
+std::vector<double>
+Solve_CG(std::vector<T>& r_vec,
+         std::vector<T>& u_vec,
+         double conv_ratio,
+         int iteration,
+         const CMatrixSparse<T>& mat);
 
-void Solve_CG(double& conv_ratio,
-              int& iteration,
-              const CMatrixSparse<double>& mat,
-              std::vector<double>& r_vec,
-              std::vector<double>& u_vec);
-
-bool Solve_BiCGSTAB(double& conv_ratio,
-                    int& num_iter,
-                    const CMatrixSparse<double>& mat,
-                    std::vector<double>& r_vec,
-                    std::vector<double>& x_vec);
-
+template <typename T>
+std::vector<double>
+Solve_BiCGSTAB(std::vector<T>& r_vec,
+               std::vector<T>& x_vec,
+               double conv_ratio,
+               int num_iter,
+               const CMatrixSparse<T>& mat);
 
 #endif // MATDIA_CRS_H
