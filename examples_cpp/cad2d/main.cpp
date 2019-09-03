@@ -161,8 +161,10 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       imode_draw = (imode_draw+1)%3;
       break;
     }
-    case 'e':
+    case 'w':
     {
+      WriteCAD_DXF("hoge.dxf",
+                   cad,1.0);
     }
   }
   ::glutPostRedisplay();

@@ -379,8 +379,8 @@ bool CPreconditionerILU<double>::DoILUDecomp()
 template <>
 bool CPreconditionerILU<COMPLEX>::DoILUDecomp()
 {
-  const int nmax_sing = 10;
-  int icnt_sing = 0;
+//  const int nmax_sing = 10;
+//  int icnt_sing = 0;
   
   const int len = mat.len_col;
   const int nblk = mat.nblk_col;
