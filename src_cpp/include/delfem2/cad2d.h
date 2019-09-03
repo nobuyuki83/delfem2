@@ -33,6 +33,13 @@ public:
 //  void GetInternalPoints_ElemLen(std::vector<CVector2>& aV, double elen) const;
   double Distance(double x, double y) const;
   double Length() const;
+  CBoundingBox2D BB() const{
+    CBoundingBox2D bb;
+    bb.Add(p0.x,p0.y);
+    bb.Add(p1.x,p1.y);
+    for(int ip=0;ip<aP.size();++ip){ bb.Add(aP[ip].x,aP[ip].y); }
+    return bb;
+  }
 public:
   CVector2 p0,p1;
   int type_edge; // 0: line, 1:Cubic Bezier
@@ -130,6 +137,11 @@ public:
   
   bool is_draw_face;
 };
+
+// write to DXF file
+bool WriteCAD_DXF(const std::string& file_name,
+                  const CCad2D& cad,
+                  double scale);
 
 
 class CMesher_Cad2D{

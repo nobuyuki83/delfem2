@@ -273,7 +273,13 @@ public:
   CBoundingBox2D( const CBoundingBox2D& bb )
   : x_min(bb.x_min),x_max(bb.x_max), y_min(bb.y_min),y_max(bb.y_max),
   isnt_empty(bb.isnt_empty){}
-  
+  //////
+  void Add(double x0, double y0){
+    x_max = ( x_max > x0 ) ? x_max : x0;
+    x_min = ( x_min < x0 ) ? x_min : x0;
+    y_max = ( y_max > y0 ) ? y_max : y0;
+    y_min = ( y_min < y0 ) ? y_min : y0;
+  }
   CBoundingBox2D& operator+=(const CBoundingBox2D& bb)
   {
     if( !bb.isnt_empty ) return *this;
