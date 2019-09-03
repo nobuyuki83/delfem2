@@ -74,6 +74,7 @@ void init_sampler(py::module &m){
   .def("end",        &CGPUSampler::End)
   .def("init_gl",    &CGPUSampler::LoadTex)
   .def("get_pos_ray_collide",  &CGPUSampler::getGPos)
+  .def("set_zero_to_depth", &CGPUSampler::SetZeroToDepth)
   .def_readwrite("bgcolor", &CGPUSampler::bgcolor)
   .def_readwrite("color",  &CGPUSampler::color)
   .def_readwrite("len_axis",  &CGPUSampler::draw_len_axis)

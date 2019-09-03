@@ -66,6 +66,7 @@ public:
                 const std::vector<double>& dirWidth);
   void Start();
   void End();
+  void SetZeroToDepth(){ for(unsigned int i=0;i<aZ.size();++i){ aZ[i] = 0.0; } }
 public:
   std::string sFormatPixelColor;
   bool isDepth;
