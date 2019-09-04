@@ -213,8 +213,12 @@ void Solve_StiffnessWarping()
 
 void myGlutDisplay(void)
 {
-//	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  if( is_stiffness_warping ){
+    ::glClearColor(0.4f, 0.9f, 0.9f ,1.0f);
+  }
+  else{
+    ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+  }
 	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 	::glEnable(GL_DEPTH_TEST);
 

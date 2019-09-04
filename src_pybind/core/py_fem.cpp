@@ -231,12 +231,11 @@ void PyMergeLinSys_LinearSolidStatic
   }
   if( aXY.shape()[1] == 3 ){
     if( elem_type == MESHELEM_TET ){
-      MergeLinSys_SolidStaticLinear_MeshTet3D(mss, (double*)buff_vecb.ptr,
-                                              myu,lambda,rho,
-                                              gravity[0],gravity[1],gravity[2],
-                                              aXY.data(), aXY.shape()[0],
-                                              aElm.data(), aElm.shape()[0],
-                                              aVal.data());
+      MergeLinSys_SolidLinear_Static_MeshTet3D(mss, (double*)buff_vecb.ptr,
+                                               myu,lambda,rho,gravity.data(),
+                                               aXY.data(), aXY.shape()[0],
+                                               aElm.data(), aElm.shape()[0],
+                                               aVal.data());
     }
   }
 }
@@ -270,12 +269,12 @@ void PyMergeLinSys_LinearSolidDynamic
   }
   if( aXY.shape()[1] == 3 ){
     if( elem_type == MESHELEM_TET ){
-      MergeLinSys_SolidDynamicLinear_MeshTet3D(mss,(double*)buff_vecb.ptr,
-                                               myu,lambda,rho,gravity[0],gravity[1],gravity[2],
-                                               dt_timestep,gamma_newmark,beta_newmark,
-                                               aXY.data(), aXY.shape()[0],
-                                               aElm.data(), aElm.shape()[0],
-                                               aVal.data(),aVelo.data(),aAcc.data());
+      MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(mss,(double*)buff_vecb.ptr,
+                                                    myu,lambda,rho,gravity.data(),
+                                                    dt_timestep,gamma_newmark,beta_newmark,
+                                                    aXY.data(), aXY.shape()[0],
+                                                    aElm.data(), aElm.shape()[0],
+                                                    aVal.data(),aVelo.data(),aAcc.data());
     }
   }
 }
