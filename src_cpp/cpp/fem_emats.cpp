@@ -857,7 +857,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1
   }
 }
 
-void MergeLinSys_SoliLinear_NewmarkBeta_MeshTet3D
+void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,

@@ -179,7 +179,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1(CMatrixSparse<double>& mat_A,
                                          const std::vector<int>& aHex,
                                          const std::vector<double>& aVal);
 
-void MergeLinSys_SoliLinear_NewmarkBeta_MeshTet3D(CMatrixSparse<double>& mat_A,
+void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(CMatrixSparse<double>& mat_A,
                                               double* vec_b,
                                               const double myu,
                                               const double lambda,

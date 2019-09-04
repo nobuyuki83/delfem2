@@ -334,12 +334,12 @@ void SolveProblem_LinearSolid_Dynamic()
   const double g[3] = {0.0, -0.3, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SoliLinear_NewmarkBeta_MeshTet3D(mat_A,vec_b.data(),
-                                           myu,lambda,rho,g,
-                                           dt_timestep,gamma_newmark,beta_newmark,
-                                           aXYZ.data(), aXYZ.size()/3,
-                                           aTet.data(), aTet.size()/4,
-                                           aVal.data(),aVelo.data(),aAcc.data());
+  MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(mat_A,vec_b.data(),
+                                                myu,lambda,rho,g,
+                                                dt_timestep,gamma_newmark,beta_newmark,
+                                                aXYZ.data(), aXYZ.size()/3,
+                                                aTet.data(), aTet.size()/4,
+                                                aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
