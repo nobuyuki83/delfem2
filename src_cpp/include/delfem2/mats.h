@@ -75,10 +75,14 @@ public:
               unsigned int nblkel_row, const unsigned int* blkel_row,
               unsigned int blksize, const T* emat,
               std::vector<int>& m_marge_tmp_buffer);
-  // Calc Matrix Vector Product
-  // {y} = alpha * [A]{x} + beta * {y}  
+  /**
+   * @brief Matrix vector product as: {y} = alpha * [A]{x} + beta * {y}
+   */
 	void MatVec(T alpha, const std::vector<T>& x, T beta,
               std::vector<T>& y) const;
+  /**
+   * @brief if BCFlag is 0 for a dof, set all the off-diagonal componenet to zero and set diagonal to one.
+   */
   void SetBoundaryCondition(const int* pBCFlag, unsigned int nP, unsigned int ndimVal);
   void AddDia(T eps){
     assert( this->nblk_row == this->nblk_col );
@@ -89,6 +93,24 @@ public:
     for(unsigned int ino=0;ino<nblk_col;++ino){
       for(int ilen=0;ilen<nlen;++ilen){
         valDia[ino*blksize+ilen*nlen+ilen] += eps;
+      }
+    }
+  }
+  /**
+   * @brief add vector to diagonal component
+   * @param[in] lm a lumped mass vector with size of nblk
+   * @param[in] scale scaling factor for the lumped mass (typically 1/dt^2).
+   * @details the matrix need to be square matrix
+   */
+  void AddDia_LumpedMass(const T* lm, double scale){
+    assert( this->nblk_row == this->nblk_col );
+    assert( this->len_row == this->len_col );
+    const int blksize = len_col*len_row;
+    const int nlen = this->len_col;
+    if( valDia.empty() ){ return; }
+    for(unsigned int iblk=0;iblk<nblk_col;++iblk){
+      for(int ilen=0;ilen<nlen;++ilen){
+        valDia[iblk*blksize+ilen*nlen+ilen] += lm[iblk];
       }
     }
   }

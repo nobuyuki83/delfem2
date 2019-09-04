@@ -23,6 +23,8 @@ void MatMat3(double* UL,
              const double* U, const double* L);
 void MatMatTrans3(double* ULUt,
                   const double* UL, const double* U);
+void MatTransMat3(double* C,
+                  const double* A, const double* B);
 
 // compute eigen value & vector for symmmetric matrix
 // sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
@@ -188,6 +190,10 @@ public:
     std::cout << mat[0] << " " << mat[1] << " " << mat[2] << std::endl;
     std::cout << mat[3] << " " << mat[4] << " " << mat[5] << std::endl;
     std::cout << mat[6] << " " << mat[7] << " " << mat[8] << std::endl;
+  }
+  void PolerDecomp(CMatrix3& R, int nitr) const{
+    GetRotPolarDecomp(R.mat,
+                      mat, nitr);
   }
   //////////////////////////////////////
   // static functions

@@ -111,8 +111,8 @@ void MakeLocalCoord
     anrp[2] *= 1.0/snrp;
     double rot[9];
     GetRotMatrix_Rodrigues3D(rot, anrp, t);
-    VecMat3D(lcp+3, rot, lrx);
-    VecMat3D(lcp+6, rot, lry);
+    VecMat3(lrx, lcp+3, rot);
+    VecMat3(lry, lcp+6, rot);
   }
   else{
     lrx[0]=lcp[3];  lrx[1]=lcp[4];  lrx[2]=lcp[5];

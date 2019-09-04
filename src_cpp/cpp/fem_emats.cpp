@@ -5,6 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file fem_emats.cpp
+ * @brief implementation of the merge functions for various PDE
+ * @author Nobuyuki Umetani
+ * @date 2018
+ * @details this file only depends on and "emat.h" and "mats.h"
+ */
+
 #include <stdio.h>
 #include <complex>
 
@@ -38,6 +46,90 @@ static double TriArea2D(const double p0[], const double p1[], const double p2[])
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
+static double TetVolume3D
+(const double v1[3],
+ const double v2[3],
+ const double v3[3],
+ const double v4[3])
+{
+  return
+  ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
+   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
+   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
+   ) * 0.16666666666666666666666666666667;
+}
+
+
+// caluculate Derivative of Area Coord
+static inline void TetDlDx(double dldx[][3], double a[],
+                           const double p0[], const double p1[], const double p2[], const double p3[])
+{
+  const double vol = TetVolume3D(p0, p1, p2, p3);
+  const double dtmp1 = 1.0/(vol * 6.0);
+  
+  a[0] = +dtmp1*(p1[0]*(p2[1]*p3[2]-p3[1]*p2[2])-p1[1]*(p2[0]*p3[2]-p3[0]*p2[2])+p1[2]*(p2[0]*p3[1]-p3[0]*p2[1]));
+  a[1] = -dtmp1*(p2[0]*(p3[1]*p0[2]-p0[1]*p3[2])-p2[1]*(p3[0]*p0[2]-p0[0]*p3[2])+p2[2]*(p3[0]*p0[1]-p0[0]*p3[1]));
+  a[2] = +dtmp1*(p3[0]*(p0[1]*p1[2]-p1[1]*p0[2])-p3[1]*(p0[0]*p1[2]-p1[0]*p0[2])+p3[2]*(p0[0]*p1[1]-p1[0]*p0[1]));
+  a[3] = -dtmp1*(p0[0]*(p1[1]*p2[2]-p2[1]*p1[2])-p0[1]*(p1[0]*p2[2]-p2[0]*p1[2])+p0[2]*(p1[0]*p2[1]-p2[0]*p1[1]));
+  
+  dldx[0][0] = -dtmp1*((p2[1]-p1[1])*(p3[2]-p1[2])-(p3[1]-p1[1])*(p2[2]-p1[2]));
+  dldx[0][1] = +dtmp1*((p2[0]-p1[0])*(p3[2]-p1[2])-(p3[0]-p1[0])*(p2[2]-p1[2]));
+  dldx[0][2] = -dtmp1*((p2[0]-p1[0])*(p3[1]-p1[1])-(p3[0]-p1[0])*(p2[1]-p1[1]));
+  
+  dldx[1][0] = +dtmp1*((p3[1]-p2[1])*(p0[2]-p2[2])-(p0[1]-p2[1])*(p3[2]-p2[2]));
+  dldx[1][1] = -dtmp1*((p3[0]-p2[0])*(p0[2]-p2[2])-(p0[0]-p2[0])*(p3[2]-p2[2]));
+  dldx[1][2] = +dtmp1*((p3[0]-p2[0])*(p0[1]-p2[1])-(p0[0]-p2[0])*(p3[1]-p2[1]));
+  
+  dldx[2][0] = -dtmp1*((p0[1]-p3[1])*(p1[2]-p3[2])-(p1[1]-p3[1])*(p0[2]-p3[2]));
+  dldx[2][1] = +dtmp1*((p0[0]-p3[0])*(p1[2]-p3[2])-(p1[0]-p3[0])*(p0[2]-p3[2]));
+  dldx[2][2] = -dtmp1*((p0[0]-p3[0])*(p1[1]-p3[1])-(p1[0]-p3[0])*(p0[1]-p3[1]));
+  
+  dldx[3][0] = +dtmp1*((p1[1]-p0[1])*(p2[2]-p0[2])-(p2[1]-p0[1])*(p1[2]-p0[2]));
+  dldx[3][1] = -dtmp1*((p1[0]-p0[0])*(p2[2]-p0[2])-(p2[0]-p0[0])*(p1[2]-p0[2]));
+  dldx[3][2] = +dtmp1*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
+  
+  //  std::cout << dldx[0][0]+dldx[1][0]+dldx[2][0]+dldx[3][0] << std::endl;
+  //  std::cout << dldx[0][1]+dldx[1][1]+dldx[2][1]+dldx[3][1] << std::endl;
+  //  std::cout << dldx[0][2]+dldx[1][2]+dldx[2][2]+dldx[3][2] << std::endl;
+  
+  //  std::cout << a[0]+dldx[0][0]*p0[0]+dldx[0][1]*p0[1]+dldx[0][2]*p0[2] << std::endl;
+  //  std::cout << a[1]+dldx[1][0]*p1[0]+dldx[1][1]*p1[1]+dldx[1][2]*p1[2] << std::endl;
+  //  std::cout << a[2]+dldx[2][0]*p2[0]+dldx[2][1]*p2[1]+dldx[2][2]*p2[2] << std::endl;
+  //  std::cout << a[3]+dldx[3][0]*p3[0]+dldx[3][1]*p3[1]+dldx[3][2]*p3[2] << std::endl;
+}
+
+
+static void MatVec3
+(double y[3],
+ const double m[9], const double x[3]){
+  y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
+  y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
+  y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
+}
+
+static void MatMat3
+(double* C,
+ const double* A, const double* B)
+{
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      C[i*3+j] = A[i*3+0]*B[0*3+j] + A[i*3+1]*B[1*3+j] + A[i*3+2]*B[2*3+j];
+    }
+  }
+}
+
+static void MatMatTrans3
+(double* C,
+ const double* A, const double* B)
+{
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      C[i*3+j] = A[i*3+0]*B[j*3+0] + A[i*3+1]*B[j*3+1] + A[i*3+2]*B[j*3+2];
+    }
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -63,10 +155,10 @@ void MergeLinSys_Poission_MeshTri2D
     ////
     double eres[3];
     double emat[3][3];
-    MakeMat_Poisson2D_P1
-    (alpha, source,
-     coords, value,
-     eres,emat);
+    EMat_Poisson_Tri2D
+    (eres,emat,
+     alpha, source,
+     coords, value);
     for (int ino = 0; ino<3; ino++){
       const int ip = aIP[ino];
       vec_b[ip] += eres[ino];
@@ -95,9 +187,9 @@ void MergeLinSys_Helmholtz_MeshTri2D
     ////
     std::complex<double> eres[3];
     std::complex<double> emat[3][3];
-    MakeMat_Helmholtz2D_P1(wave_length,
-                           coords, value,
-                           eres,emat);
+    EMat_Helmholtz_Tri2D(eres,emat,
+                         wave_length,
+                         coords, value);
     for(int ino=0; ino<3; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
@@ -124,7 +216,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D
     const COMPLEX val[2] = { aVal[i0], aVal[i1] };
     ////
     COMPLEX eres[2], emat[2][2];
-    MakeMat_SommerfeltRadiationBC_Line2D(eres,emat,
+    EMat_SommerfeltRadiationBC_Line2D(eres,emat,
                                          wave_length,P,val);
     for(int ino=0;ino<2;ino++){
       const unsigned int ip = aIP[ino];
@@ -144,7 +236,6 @@ void MergeLinSys_Poission_MeshTet3D
  const double* aVal)
 {
   const int np = nXYZ;
-  /////
   std::vector<int> tmp_buffer(np, -1);
   for (int itet = 0; itet<nTet; ++itet){
     const unsigned int i0 = aTet[itet*4+0];
@@ -156,15 +247,13 @@ void MergeLinSys_Poission_MeshTet3D
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
     ////
     double eres[4], emat[4][4];
-    MakeMat_Poisson3D_P1
-    (alpha, source,
-     coords, value,
-     eres,emat);
+    EMat_Poisson_Tet3D(eres,emat,
+                       alpha, source,
+                       coords, value);
     for (int ino = 0; ino<4; ino++){
       const int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
-    // marge dde
     mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
   }
 }
@@ -198,11 +287,11 @@ void MergeLinSys_Diffusion_MeshTri2D
     ////
     double eres[3];
     double emat[3][3];
-    MakeMat_Diffusion2D_P1
-    (alpha, source,
+    EMat_Diffusion_Tri2D
+    (eres,emat,
+     alpha, source,
      dt_timestep, gamma_newmark, rho,
-     coords, value, velo,
-     eres,emat);
+     coords, value, velo);
     for (int ino = 0; ino<3; ino++){
       const int ip = aIP[ino];
       vec_b[ip] += eres[ino];
@@ -225,10 +314,6 @@ void MergeLinSys_Diffusion_MeshTet3D
  const double* aVelo)
 {
   const int np = nXYZ;
-//  const int nDoF = np;
-  ////
-//  mat_A.SetZero();
-//  vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
@@ -242,11 +327,10 @@ void MergeLinSys_Diffusion_MeshTet3D
     ////
     double eres[4];
     double emat[4][4];
-    MakeMat_Diffusion3D_P1
-    (alpha, source,
-     dt_timestep, gamma_newmark, rho,
-     coords, value, velo,
-     eres,emat);
+    EMat_Diffusion_Newmark_Tet3D(eres,emat,
+                                 alpha, source,
+                                 dt_timestep, gamma_newmark, rho,
+                                 coords, value, velo);
     for (int ino = 0; ino<4; ino++){
       const int ip = aIP[ino];
       vec_b[ip] += eres[ino];
@@ -268,12 +352,8 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D
  const double* aVal)
 {
   const int np = nXY;
-//  const int nDoF = np*2;
-  ////
-//  mat_A.SetZero();
-//  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for(int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -283,17 +363,14 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D
     ////
     double eres[3][2];
     double emat[3][3][2][2];
-    MakeMat_LinearSolid2D_Static_P1
-    (myu, lambda,
-     rho, g_x, g_y,
-     disps, coords,
-     eres,emat);
+    EMat_SolidStaticLinear_Tri2D(eres,emat,
+                                 myu, lambda, rho, g_x, g_y,
+                                 disps, coords);
     for (int ino = 0; ino<3; ino++){
       const int ip = aIP[ino];
       vec_b[ip*2+0] += eres[ino][0];
       vec_b[ip*2+1] += eres[ino][1];
     }
-    // marge dde
     mat_A.Mearge(3, aIP, 3, aIP, 4, &emat[0][0][0][0], tmp_buffer);
   }
 }
@@ -333,12 +410,12 @@ void MergeLinSys_SolidDynamicLinear_MeshTri2D
     ////
     double eres[3][2];
     double emat[3][3][2][2];
-    MakeMat_LinearSolid2D_Dynamic_P1
-    (myu, lambda,
+    EMat_SolidDynamicLinear_Tri2D
+    (eres,emat,
+     myu, lambda,
      rho, g_x, g_y,
      dt_timestep, gamma_newmark, beta_newmark,
-     disps, velos, accs, coords,
-     eres,emat,
+     disps, velos, accs, coords, 
      true);
     for (int ino = 0; ino<3; ino++){
       const int ip = aIP[ino];
@@ -684,22 +761,18 @@ double MergeLinSys_Contact
  */
 
 
-void MergeLinSys_SolidStaticLinear_MeshTet3D
+void MergeLinSys_SolidLinear_Static_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
  const double lambda,
  const double rho,
- const double g_x,
- const double g_y,
- const double g_z,
+ const double g[3],
  const double* aXYZ, int nXYZ,
  const unsigned int* aTet, int nTet,
- const double* aVal)
+ const double* aDisp)
 {
   const int np = nXYZ;
-//  const int nDoF = np*3;
-  //////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
@@ -707,22 +780,30 @@ void MergeLinSys_SolidStaticLinear_MeshTet3D
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double coords[4][3]; FetchData(&coords[0][0], 4, 3, aIP, aXYZ);
-    double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aVal);
+    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aDisp);
     ////
-    double eres[4][3];
     double emat[4][4][3][3];
-    MakeMat_LinearSolid3D_Static_P1(myu, lambda,
-                                    rho, g_x, g_y, g_z,
-                                    coords, disps,
-                                    emat,eres);
+    for(int i=0;i<144;++i){ (&emat[0][0][0][0])[i] = 0.0; } // zero-clear
+    double eres[4][3];
+    {
+      const double vol = TetVolume3D(P[0],P[1],P[2],P[3]);
+      for(int ino=0;ino<4;++ino){
+        eres[ino][0] = vol*rho*g[0]*0.25;
+        eres[ino][1] = vol*rho*g[1]*0.25;
+        eres[ino][2] = vol*rho*g[2]*0.25;
+      }
+    }
+    EMat_SolidLinear_Static_Tet(emat,eres,
+                                myu, lambda,
+                                P, disps,
+                                true); // additive
     for (int ino = 0; ino<4; ino++){
       const int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    // marge dde
     mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
   }
 }
@@ -776,15 +857,13 @@ void MergeLinSys_LinearSolid3D_Static_Q1
   }
 }
 
-void MergeLinSys_SolidDynamicLinear_MeshTet3D
+void MergeLinSys_SoliLinear_NewmarkBeta_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
  const double lambda,
  const double rho,
- const double g_x,
- const double g_y,
- const double g_z,
+ const double g[3],
  const double dt_timestep,
  const double gamma_newmark,
  const double beta_newmark,
@@ -795,8 +874,6 @@ void MergeLinSys_SolidDynamicLinear_MeshTet3D
  const double* aAcc)
 {
   const int np = nXYZ;
-//  const int nDoF = np*3;
-  ////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
@@ -804,31 +881,175 @@ void MergeLinSys_SolidDynamicLinear_MeshTet3D
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    double P[4][3]; FetchData(&P[0][0],4,3,aIP, aXYZ);
     double disps[4][3];  FetchData(&disps[0][0], 4,3,aIP, aVal);
     double velos[4][3];  FetchData(&velos[0][0], 4,3,aIP, aVelo);
     double accs[4][3];   FetchData(&accs[0][0],  4,3,aIP, aAcc);
     ////
     double eres[4][3], emat[4][4][3][3];
-    MakeMat_LinearSolid3D_Dynamic_P1
-    (myu, lambda,
-     rho, g_x, g_y, g_z,
-     dt_timestep, gamma_newmark, beta_newmark,
-     disps, velos, accs, coords,
-     eres,emat,
-     true);
+    EMat_SolidLinear_NewmarkBeta_MeshTet3D(eres,emat,
+                                                  myu, lambda,
+                                                  rho, g[0], g[1], g[2],
+                                                  dt_timestep, gamma_newmark, beta_newmark,
+                                                  disps, velos, accs, P,
+                                                  true);
     for (int ino = 0; ino<4; ino++){
       const int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
     }
-    // marge dde
+    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+  }
+}
+
+void MergeLinSys_SolidLinear_BEuler_MeshTet3D
+(CMatrixSparse<double>& mat_A,
+ double* vec_b,
+ const double myu,
+ const double lambda,
+ const double rho,
+ const double g[3],
+ const double dt,
+ const double* aXYZ, int nXYZ,
+ const unsigned int* aTet, int nTet,
+ const double* aDisp,
+ const double* aVelo)
+{
+  const int np = nXYZ;
+  std::vector<int> tmp_buffer(np, -1);
+  for(int iel=0; iel<nTet; ++iel){
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = { i0, i1, i2, i3 };
+    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    double emat[4][4][3][3];
+    double eres[4][3];
+    const double vol = TetVolume3D(P[0], P[1], P[2], P[3]);
+    {
+      double dldx[4][3], const_term[4];
+      TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
+      ddW_SolidLinear_Tet3D(&emat[0][0][0][0],
+                            lambda, myu, vol, dldx, false, 3);
+    }
+    {
+      double u[4][3]; FetchData(&u[0][0], 4, 3, aIP, aDisp);
+      double v[4][3]; FetchData(&v[0][0], 4, 3, aIP, aVelo);
+      for(int ino=0;ino<4;++ino){
+        for(int idim=0;idim<3;++idim){
+          eres[ino][idim] = vol*rho*g[idim]*0.25;
+          for(int jno=0;jno<4;++jno){
+            eres[ino][idim] -= emat[ino][jno][idim][0]*(u[jno][0]+dt*v[jno][0]);
+            eres[ino][idim] -= emat[ino][jno][idim][1]*(u[jno][1]+dt*v[jno][1]);
+            eres[ino][idim] -= emat[ino][jno][idim][2]*(u[jno][2]+dt*v[jno][2]);
+          }
+        }
+      }
+    }
+    {
+      for(int ino=0;ino<4;++ino){
+        emat[ino][ino][0][0] += rho*vol*0.25/(dt*dt);
+        emat[ino][ino][1][1] += rho*vol*0.25/(dt*dt);
+        emat[ino][ino][2][2] += rho*vol*0.25/(dt*dt);
+      }
+    }
+    ///////////
+    for (int ino = 0; ino<4; ino++){
+      const int ip = aIP[ino];
+      vec_b[ip*3+0] += eres[ino][0]/dt;
+      vec_b[ip*3+1] += eres[ino][1]/dt;
+      vec_b[ip*3+2] += eres[ino][2]/dt;
+    }
     mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
   }
 }
 
 
+void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
+(CMatrixSparse<double>& mat_A,
+ double* vec_b,
+ const double myu,
+ const double lambda,
+ const double rho,
+ const double g[3],
+ const double dt,
+ const double* aXYZ, int nXYZ,
+ const unsigned int* aTet, int nTet,
+ const double* aDisp,
+ const double* aVelo,
+ const std::vector<double>& aR)
+{
+  const int np = nXYZ;
+  assert(aR.size()==np*9);
+  //////
+  std::vector<int> tmp_buffer(np, -1);
+  for (int iel = 0; iel<nTet; ++iel){
+    const unsigned int i0 = aTet[iel*4+0];
+    const unsigned int i1 = aTet[iel*4+1];
+    const unsigned int i2 = aTet[iel*4+2];
+    const unsigned int i3 = aTet[iel*4+3];
+    const unsigned int aIP[4] = { i0, i1, i2, i3 };
+    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    const double vol = TetVolume3D(P[0], P[1], P[2], P[3]);
+    ////
+    double emat[4][4][3][3];
+    { // make stifness matrix with stiffness warping
+      double dldx[4][3], const_term[4];
+      TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
+      double emat0[4][4][3][3];
+      ddW_SolidLinear_Tet3D(&emat0[0][0][0][0],
+                            lambda, myu, vol, dldx, false, 3);
+      double mtmp[9];
+      for(int ino=0;ino<4;++ino){
+        const double* Mi = aR.data()+aIP[ino]*9;
+        for(int jno=0;jno<4;++jno){
+          MatMatTrans3(mtmp, &emat0[ino][jno][0][0], Mi);
+          MatMat3(&emat[ino][jno][0][0], Mi,mtmp);
+        }
+      }
+    }
+    double eres[4][3];
+    {
+      for(int ino=0;ino<4;++ino){
+        eres[ino][0] = vol*rho*g[0]*0.25;
+        eres[ino][1] = vol*rho*g[1]*0.25;
+        eres[ino][2] = vol*rho*g[2]*0.25;
+      }
+      double u0[4][3]; FetchData(&u0[0][0], 4, 3, aIP, aDisp);
+      double v0[4][3]; FetchData(&v0[0][0], 4, 3, aIP, aVelo);
+      for(int ino=0;ino<4;++ino){
+        const double* Mi = aR.data()+aIP[ino]*9;
+        for(int idim=0;idim<3;++idim){
+          for(int jno=0;jno<4;++jno){
+            double Pj1[3]; MatVec3(Pj1, Mi,P[jno]);
+            double uj1[3] = {
+              P[jno][0]+u0[jno][0]+dt*v0[jno][0]-Pj1[0],
+              P[jno][1]+u0[jno][1]+dt*v0[jno][1]-Pj1[1],
+              P[jno][2]+u0[jno][2]+dt*v0[jno][2]-Pj1[2] };
+            eres[ino][idim] -= emat[ino][jno][idim][0]*uj1[0];
+            eres[ino][idim] -= emat[ino][jno][idim][1]*uj1[1];
+            eres[ino][idim] -= emat[ino][jno][idim][2]*uj1[2];
+          }
+        }
+      }
+    }
+    for(int ino=0;ino<4;++ino){
+      emat[ino][ino][0][0] += rho*vol*0.25/(dt*dt);
+      emat[ino][ino][1][1] += rho*vol*0.25/(dt*dt);
+      emat[ino][ino][2][2] += rho*vol*0.25/(dt*dt);
+    }
+    ////////////////
+    for (int ino = 0; ino<4; ino++){
+      const int ip = aIP[ino];
+      vec_b[ip*3+0] += eres[ino][0]/dt;
+      vec_b[ip*3+1] += eres[ino][1]/dt;
+      vec_b[ip*3+2] += eres[ino][2]/dt;
+    }
+    mat_A.Mearge(4, aIP, 4, aIP, 9, &emat[0][0][0][0], tmp_buffer);
+  }
+}
 
 void MergeLinSys_Stokes3D_Static
 (CMatrixSparse<double>& mat_A,

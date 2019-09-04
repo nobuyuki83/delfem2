@@ -256,16 +256,14 @@ void SolveProblem_LinearSolid_Static()
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
-  double g_x = 0.0;
-  double g_y =-0.5;
-  double g_z = 0.0;
+  double g[3] = {0.0, -0.5, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidStaticLinear_MeshTet3D(mat_A, vec_b.data(),
-                                          myu, lambda, rho, g_x, g_y, g_z,
-                                          aXYZ.data(), aXYZ.size()/3,
-                                          aTet.data(), aTet.size()/4,
-                                          aVal.data());
+  MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, vec_b.data(),
+                                           myu, lambda, rho, g,
+                                           aXYZ.data(), aXYZ.size()/3,
+                                           aTet.data(), aTet.size()/4,
+                                           aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   ////////////////////////////////////////////
@@ -333,17 +331,15 @@ void SolveProblem_LinearSolid_Dynamic()
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
-  double g_x = 0.0;
-  double g_y = -0.3;
-  double g_z = 0.0;
+  const double g[3] = {0.0, -0.3, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidDynamicLinear_MeshTet3D(mat_A,vec_b.data(),
-                                    myu,lambda,rho,g_x,g_y,g_z,
-                                    dt_timestep,gamma_newmark,beta_newmark,
-                                    aXYZ.data(), aXYZ.size()/3,
-                                    aTet.data(), aTet.size()/4,
-                                    aVal.data(),aVelo.data(),aAcc.data());
+  MergeLinSys_SoliLinear_NewmarkBeta_MeshTet3D(mat_A,vec_b.data(),
+                                           myu,lambda,rho,g,
+                                           dt_timestep,gamma_newmark,beta_newmark,
+                                           aXYZ.data(), aXYZ.size()/3,
+                                           aTet.data(), aTet.size()/4,
+                                           aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////

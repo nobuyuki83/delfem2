@@ -20,11 +20,12 @@
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
+#include "delfem2/mat3.h"
 #include "delfem2/mats.h"
 
+#include "delfem2/v23m3q.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
-
 #include "delfem2/dyntri.h"
 #include "delfem2/dyntri_v2.h"
 
@@ -69,86 +70,32 @@ void GenMesh
   }
 }
 
-void Scale(double* p0, int n, double s)
+void RotationAtMeshPoints
+(std::vector<double>& aR,
+ const std::vector<double>& aXYZ,
+ const std::vector<double>& aDisp,
+ const std::vector<int>& psup_ind,
+ const std::vector<int>& psup)
 {
-  for(int i=0;i<n;++i){ p0[i] *= s; }
-}
-
-void Normalize(double* p0, int n)
-{
-  const double ss = DotX(p0,p0,n);
-  Scale(p0,n,1.0/sqrt(ss));
-}
-
-
-void Orthogonalize_ToUnitVector(double* p1,
-                                const double* p0, int n)
-{
-  double d = DotX(p0, p1, n);
-  for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
-}
-
-
-void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
-(double* aMassLumpedSqrtInv,
- double* aModesKer,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet)
-{
-  const int nDoF = nXYZ*3;
-  std::vector<double> aMassLumpedSqrt(nXYZ);
-  MassLumped_Tet(aMassLumpedSqrt.data(),
-                 1, aXYZ, nXYZ, aTet,nTet);
-  
-  for(int ip=0;ip<nXYZ;++ip){
-    aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
-  }
-  
-  {
-    for(int i=0;i<nDoF*6;++i){ aModesKer[i] = 0.0; }
-    double* p0 = aModesKer+nDoF*0;
-    double* p1 = aModesKer+nDoF*1;
-    double* p2 = aModesKer+nDoF*2;
-    double* p3 = aModesKer+nDoF*3;
-    double* p4 = aModesKer+nDoF*4;
-    double* p5 = aModesKer+nDoF*5;
-    for(int ip=0;ip<nXYZ;++ip){
-      const double x0 = aXYZ[ip*3+0];
-      const double y0 = aXYZ[ip*3+1];
-      const double z0 = aXYZ[ip*3+2];
-      const double m0 = aMassLumpedSqrt[ip];
-      p0[ip*3+0] = m0;
-      p1[ip*3+1] = m0;
-      p2[ip*3+2] = m0;
-      p3[ip*3+2] = -y0*m0;  p3[ip*3+1] = +z0*m0;
-      p4[ip*3+0] = -z0*m0;  p4[ip*3+2] = +x0*m0;
-      p5[ip*3+1] = -x0*m0;  p5[ip*3+0] = +y0*m0;
+  const unsigned int np = aXYZ.size()/3;
+  aR.resize(np*9);
+  for(int ip=0;ip<aXYZ.size()/3;++ip){
+    CVector3 Pi(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
+    CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
+                aXYZ[ip*3+1]+aDisp[ip*3+1],
+                aXYZ[ip*3+2]+aDisp[ip*3+2]);
+    CMatrix3 A;
+    A.SetZero();
+    for(int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
+      int jp = psup[jjp];
+      CVector3 Pj(aXYZ[jp*3+0],aXYZ[jp*3+1],aXYZ[jp*3+2]);
+      CVector3 pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
+                  aXYZ[jp*3+1]+aDisp[jp*3+1],
+                  aXYZ[jp*3+2]+aDisp[jp*3+2]);
+      A += Mat3_OuterProduct(pj-pi,Pj-Pi);
     }
-    Normalize(p0,nDoF);
-    Orthogonalize_ToUnitVector(p1, p0, nDoF);
-    Orthogonalize_ToUnitVector(p2, p0, nDoF);
-    Orthogonalize_ToUnitVector(p3, p0, nDoF);
-    Orthogonalize_ToUnitVector(p4, p0, nDoF);
-    Orthogonalize_ToUnitVector(p5, p0, nDoF);
-    Normalize(p1,nDoF);
-    Orthogonalize_ToUnitVector(p2, p1, nDoF);
-    Orthogonalize_ToUnitVector(p3, p1, nDoF);
-    Orthogonalize_ToUnitVector(p4, p1, nDoF);
-    Orthogonalize_ToUnitVector(p5, p1, nDoF);
-    Normalize(p2,nDoF);
-    Orthogonalize_ToUnitVector(p3, p2, nDoF);
-    Orthogonalize_ToUnitVector(p4, p2, nDoF);
-    Orthogonalize_ToUnitVector(p5, p2, nDoF);
-    Normalize(p3,nDoF);
-    Orthogonalize_ToUnitVector(p4, p3, nDoF);
-    Orthogonalize_ToUnitVector(p5, p3, nDoF);
-    Normalize(p4,nDoF);
-    Orthogonalize_ToUnitVector(p5, p4, nDoF);
-    Normalize(p5,nDoF);
-  }
-  
-  for(int ip=0;ip<nXYZ;++ip){
-    aMassLumpedSqrtInv[ip] = 1.0/aMassLumpedSqrt[ip];
+    GetRotPolarDecomp(aR.data()+ip*9,
+                      A.mat, 100);
   }
 }
 
@@ -156,50 +103,32 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 /////////////////////////////////////////
 
 CGlutWindowManager win;
+bool is_animatio = false;
+bool is_stiffness_warping = true;
 
 std::vector<unsigned int> aTet;
 std::vector<double> aXYZ;
-std::vector<double> aMassLumpedSqrtInv;
-std::vector<double> aTmp0;
-std::vector<double> aTmp1;
-std::vector<double> aMode;
-std::vector<double> aModesKer;
-double lamda0 = 0.1;
+std::vector<double> aDisp;
+std::vector<double> aVelo;
+std::vector<int> aBCFlag;
+double dt = 0.03;
+double myu = 200.0;
+double lambda = 1.0;
+double rho = 1.0;
+const double gravity[3] = {0.0, -4.0, 0.0};
 
 CMatrixSparse<double> mat_A;
+std::vector<double> vec_b;
 CPreconditionerILU<double>  ilu_A;
+std::vector<int> psup_ind, psup;
+std::vector<double> aR;
 
 /////////////////////////////////////////////////////////////////////////////
-
-void RemoveKernel()
-{
-  const int nDoF = aXYZ.size();
-  const double* p0 = aModesKer.data()+nDoF*0;
-  const double* p1 = aModesKer.data()+nDoF*1;
-  const double* p2 = aModesKer.data()+nDoF*2;
-  const double* p3 = aModesKer.data()+nDoF*3;
-  const double* p4 = aModesKer.data()+nDoF*4;
-  const double* p5 = aModesKer.data()+nDoF*5;
-  double* p = aTmp0.data();
-  Orthogonalize_ToUnitVector(p, p0, nDoF);
-  Orthogonalize_ToUnitVector(p, p1, nDoF);
-  Orthogonalize_ToUnitVector(p, p2, nDoF);
-  Orthogonalize_ToUnitVector(p, p3, nDoF);
-  Orthogonalize_ToUnitVector(p, p4, nDoF);
-  Orthogonalize_ToUnitVector(p, p5, nDoF);
-  Normalize(p, nDoF);
-}
-
-
 
 
 void InitializeProblem_ShellEigenPB()
 {
   const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*3;
-  aTmp0.assign(nDoF, 0.0);
-  //////
-  std::vector<int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -208,58 +137,76 @@ void InitializeProblem_ShellEigenPB()
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
-  
-  ///////////////////////////////////////////
-  aMassLumpedSqrtInv.resize(np);
-  aModesKer.resize(nDoF*6);
-  SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(aMassLumpedSqrtInv.data(),
-                                          aModesKer.data(),
-                                          aXYZ.data(), aXYZ.size()/3,
-                                          aTet.data(), aTet.size()/4);
+}
   
   ////////////////////////////////////////////
-  
-  double myu = 1.0;
-  double lambda = 1.0;
-  double rho = 1.0;
+
+
+void Solve_Linear()
+{
   mat_A.SetZero();
-  aMode.assign(nDoF, 0.0);
-  aTmp0.assign(nDoF, 0.0);
-  double gravity[3] = {0,0,0};
-  MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, aMode.data(),
-                                           myu, lambda, rho, gravity,
+  vec_b.assign(aXYZ.size(),0.0);
+  MergeLinSys_SolidLinear_BEuler_MeshTet3D(mat_A, vec_b.data(),
+                                           myu, lambda,
+                                           rho, gravity,
+                                           dt,
                                            aXYZ.data(), aXYZ.size()/3,
                                            aTet.data(), aTet.size()/4,
-                                           aTmp0.data());
-  ScaleLeftRight(mat_A,
-                 aMassLumpedSqrtInv.data());
-  mat_A.AddDia(0.8);
-  
+                                           aDisp.data(),
+                                           aVelo.data());
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aXYZ.size()/3,3);
+  setRHS_Zero(vec_b,aBCFlag,0);
+  ////
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
+  const int nDoF = aXYZ.size();
+  std::vector<double> dv(nDoF,0.0);
+  std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
+                                              1.0e-4, 1000, mat_A, ilu_A);
+  ////
+  XPlusAYBZ(aDisp,nDoF,aBCFlag,
+            dt, dv,
+            dt, aVelo);
+  XPlusAY(aVelo,nDoF,aBCFlag,
+          1.0, dv);
+
+  std::cout << "conv; " << aConv.size() <<  std::endl;
 }
 
-void Solve(){
-  aMode.assign(aTmp0.size(),0.0);
-  const double conv_ratio = 1.0e-5;
-  const int iteration = 1000;
-  std::vector<double> aConv;
-  aTmp1 = aTmp0;
-  aConv = Solve_PCG(aTmp1.data(), aMode.data(),
-                    conv_ratio, iteration, mat_A, ilu_A);
-  double lam0 = DotX(aTmp0.data(), aMode.data(), aTmp0.size());
-  std::cout << 1.0/lam0 << std::endl;
-  aTmp0 = aMode;
-  ////
-  RemoveKernel();
 
+void Solve_StiffnessWarping()
+{
+  RotationAtMeshPoints(aR,
+                       aXYZ,aDisp,psup_ind,psup);
+  /////
+  mat_A.SetZero();
+  vec_b.assign(aXYZ.size(),0.0);
+  MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(mat_A, vec_b.data(),
+                                              myu, lambda,
+                                              rho, gravity,
+                                              dt,
+                                              aXYZ.data(), aXYZ.size()/3,
+                                              aTet.data(), aTet.size()/4,
+                                              aDisp.data(),
+                                              aVelo.data(),
+                                              aR);
   ////
-  for(int ip=0;ip<aTmp0.size()/3;++ip){
-    const double s0 = aMassLumpedSqrtInv[ip];
-    for(int idim=0;idim<3;++idim){
-      aMode[ip*3+idim] = aTmp0[ip*3+idim]*s0;
-    }
-  }
+  mat_A.SetBoundaryCondition(aBCFlag.data(),aXYZ.size()/3,3);
+  setRHS_Zero(vec_b,aBCFlag,0);
+  /////////////
+  ilu_A.SetValueILU(mat_A);
+  ilu_A.DoILUDecomp();
+  const int nDoF = aXYZ.size();
+  std::vector<double> dv(nDoF,0.0);
+  std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
+                                              1.0e-4, 1000, mat_A, ilu_A);
+  ////
+  XPlusAYBZ(aDisp,nDoF,aBCFlag,
+            dt, dv,
+            dt, aVelo);
+  XPlusAY(aVelo,nDoF,aBCFlag,
+          1.0,dv);
+  std::cout << "conv; " << aConv.size() <<  std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -272,7 +219,7 @@ void myGlutDisplay(void)
 	::glEnable(GL_DEPTH_TEST);
 
 	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 3.1f, 2.0f );
+	::glPolygonOffset( 1.0f, 1.0f );
 
   win.SetGL_Camera();
 
@@ -289,12 +236,36 @@ void myGlutDisplay(void)
  }
   ::glDisable(GL_LIGHTING);
   
-  {
+  { // defomred edge
     ::glColor3d(0,0,0);
     DrawMeshTet3D_EdgeDisp(aXYZ.data(),
                            aTet.data(),aTet.size()/4,
-                           aMode.data(),
-                          0.1);
+                           aDisp.data(),
+                           1.0);
+  }
+  
+  ::glDisable(GL_LIGHTING);
+  for(int ip=0;ip<aXYZ.size()/3;++ip){
+    CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
+                aXYZ[ip*3+1]+aDisp[ip*3+1],
+                aXYZ[ip*3+2]+aDisp[ip*3+2]);
+    CVector3 ex(aR[ip*9+0],aR[ip*9+3],aR[ip*9+6]);
+    CVector3 ey(aR[ip*9+1],aR[ip*9+4],aR[ip*9+7]);
+    CVector3 ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
+    ::glBegin(GL_LINES);
+    ::glColor3d(1,0,0);
+    ::myGlVertex(pi);
+    ::myGlVertex(pi+0.04*ex);
+    ::glColor3d(0,1,0);
+    ::myGlVertex(pi);
+    ::myGlVertex(pi+0.04*ey);
+    ::glColor3d(0,0,1);
+    ::myGlVertex(pi);
+    ::myGlVertex(pi+0.04*ez);
+    ::glEnd();
+  }
+    
+  {
     ::glEnable(GL_LIGHTING);
     {
       float color[4] = {180.0/256.0, 180.0/256.0, 130.0/256.0,1.0f};
@@ -302,7 +273,6 @@ void myGlutDisplay(void)
       ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
       glShadeModel(GL_FLAT);
     }
-    
     DrawMeshTet3D_FaceNorm(aXYZ.data(), 
                            aTet.data(), aTet.size()/4);
 
@@ -343,18 +313,30 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case 'Q':
     case '\033':
       exit(0);  /* '\033' ? ESC ? ASCII ??? */
+    case 'a':
+    {
+      is_animatio = !is_animatio;
+      break;
+    }
+    case 'l':
+    {
+      is_stiffness_warping = !is_stiffness_warping;
+      break;
+    }
     case 's':
     {
-      Solve();
+      Solve_StiffnessWarping();
       break;
     }
 	::glutPostRedisplay();
   }
 }
 
-
-
 void myGlutIdle(){
+  if( is_animatio ){
+    if( is_stiffness_warping ){ Solve_StiffnessWarping(); }
+    else{                       Solve_Linear();           }
+  }
   ::glutPostRedisplay();
 }
 
@@ -389,40 +371,40 @@ int main(int argc,char* argv[])
     std::vector< std::vector<double> > aaXY;
     {
       const double aXY[8] = {
-        -1,-0.3,
-        +1,-0.3,
-        +1,+0.3,
-        -1,+0.3 };
+        -1,-0.1,
+        +1,-0.1,
+        +1,+0.1,
+        -1,+0.1 };
       aaXY.push_back( std::vector<double>(aXY,aXY+8) );
     }
-
     std::vector<CVector2> aVec2;
     std::vector<CEPo2> aPo2D;
     std::vector<ETri> aETri;
     GenMesh(aVec2,aPo2D,aETri,
-            0.05, aaXY);
-    std::cout << aVec2.size() << " " << aPo2D.size() << " " << aETri.size() << std::endl;
+            0.1, aaXY);
     std::vector<double> aXY;
     std::vector<unsigned int> aTri;
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
-    
-    ExtrudeTri2Tet(1, 0.1,
+    ExtrudeTri2Tet(2, 0.1,
                    aXYZ,aTet,
                    aXY,aTri);
   }
-  
-  
-  aTmp0.assign(aXYZ.size(),0.0);
-  aMode.assign(aXYZ.size(),0.0);
-  
-  InitializeProblem_ShellEigenPB();
-  
-  for(int i=0;i<aXYZ.size();++i){
-    aTmp0[i] = (rand()+1.0)/(RAND_MAX+1.0);
+  aDisp.assign(aXYZ.size(), 0.0);
+  aVelo.assign(aXYZ.size(), 0.0);
+  aBCFlag.assign(aXYZ.size(),0);
+  for(int ip=0;ip<aXYZ.size()/3;++ip){
+    double x0 = aXYZ[ip*3+0];
+    if( fabs(x0+1)<1.0e-10 ){
+      aBCFlag[ip*3+0] = 1;
+      aBCFlag[ip*3+1] = 1;
+      aBCFlag[ip*3+2] = 1;
+    }
   }
-  RemoveKernel();
-  
+  InitializeProblem_ShellEigenPB();
+  RotationAtMeshPoints(aR,
+                       aXYZ,aDisp,psup_ind,psup);
+
   
   win.camera.view_height = 2.0;
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
