@@ -303,16 +303,30 @@ void GetRotMatrix_Rodrigues3D
   rot[8] = ct+(1-ct)*n[2]*n[2];
 }
 
-void VecMat3D(const double x[3], const double m[9],  double y[3]){
+void VecMat3
+(double y[3],
+ const double x[3], const double m[9])
+{
   y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
   y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-void MatVec3(double y[3], const double m[9], const double x[3]){
+void MatVec3
+(double y[3],
+ const double m[9], const double x[3]){
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
+}
+
+void MatTransVec3
+(double y[3],
+ const double m[9], const double x[3])
+{
+  y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
+  y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
+  y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
 void Mat4Vec3

@@ -1,9 +1,18 @@
-/*
+/**
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
+/**
+ * @file fem_emats.h
+ * @brief declaration of the merge functions for various PDE
+ * @author Nobuyuki Umetani
+ * @date 2018
+ * @details this file only depends on and "emat.h" and "mats.h"
+ */
+
 
 #ifndef FEM_H
 #define FEM_H
@@ -148,17 +157,15 @@ double MergeLinSys_Contact(CMatrixSparse<double>& ddW,
                          const CInput_Contact& input,
                          const double* aXYZ,  int nXYZ);
 
-void MergeLinSys_SolidStaticLinear_MeshTet3D(CMatrixSparse<double>& mat_A,
-                                         double* vec_b,
-                                         const double myu,
-                                         const double lambda,
-                                         const double rho,
-                                         const double g_x,
-                                         const double g_y,
-                                         const double g_z,
-                                         const double* aXYZ, int nXYZ,
-                                         const unsigned int* aTet, int nTet,
-                                         const double* aVal);
+void MergeLinSys_SolidLinear_Static_MeshTet3D(CMatrixSparse<double>& mat_A,
+                                              double* vec_b,
+                                              const double myu,
+                                              const double lambda,
+                                              const double rho,
+                                              const double g[3],
+                                              const double* aXYZ, int nXYZ,
+                                              const unsigned int* aTet, int nTet,
+                                              const double* aVal);
 
 void MergeLinSys_LinearSolid3D_Static_Q1(CMatrixSparse<double>& mat_A,
                                          std::vector<double>& vec_b,
@@ -172,22 +179,45 @@ void MergeLinSys_LinearSolid3D_Static_Q1(CMatrixSparse<double>& mat_A,
                                          const std::vector<int>& aHex,
                                          const std::vector<double>& aVal);
 
-void MergeLinSys_SolidDynamicLinear_MeshTet3D(CMatrixSparse<double>& mat_A,
-                                       double* vec_b,
-                                       const double myu,
-                                       const double lambda,
-                                       const double rho,
-                                       const double g_x,
-                                       const double g_y,
-                                       const double g_z,
-                                       const double dt_timestep,
-                                       const double gamma_newmark,
-                                       const double beta_newmark,
-                                       const double* aXYZ, int nXYZ,
-                                       const unsigned int* aTet, int nTet,
-                                       const double* aVal,
-                                       const double* aVelo,
-                                       const double* aAcc);
+void MergeLinSys_SoliLinear_NewmarkBeta_MeshTet3D(CMatrixSparse<double>& mat_A,
+                                              double* vec_b,
+                                              const double myu,
+                                              const double lambda,
+                                              const double rho,
+                                              const double g[3],
+                                              const double dt_timestep,
+                                              const double gamma_newmark,
+                                              const double beta_newmark,
+                                              const double* aXYZ, int nXYZ,
+                                              const unsigned int* aTet, int nTet,
+                                              const double* aVal,
+                                              const double* aVelo,
+                                              const double* aAcc);
+
+void MergeLinSys_SolidLinear_BEuler_MeshTet3D(CMatrixSparse<double>& mat_A,
+                                              double* vec_b,
+                                              const double myu,
+                                              const double lambda,
+                                              const double rho,
+                                              const double g[3],
+                                              const double dt,
+                                              const double* aXYZ, int nXYZ,
+                                              const unsigned int* aTet, int nTet,
+                                              const double* aDisp,
+                                              const double* aVelo);
+
+void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(CMatrixSparse<double>& mat_A,
+                                                 double* vec_b,
+                                                 const double myu,
+                                                 const double lambda,
+                                                 const double rho,
+                                                 const double g[3],
+                                                 const double dt,
+                                                 const double* aXYZ, int nXYZ,
+                                                 const unsigned int* aTet, int nTet,
+                                                 const double* aDisp,
+                                                 const double* aVelo,
+                                                 const std::vector<double>& aR);
 
 void MergeLinSys_Stokes3D_Static(CMatrixSparse<double>& mat_A,
                                  std::vector<double>& vec_b,

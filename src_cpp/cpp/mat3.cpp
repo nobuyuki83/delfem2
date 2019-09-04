@@ -31,6 +31,17 @@ void MatMatTrans3
   }
 }
 
+void MatTransMat3
+(double* C,
+ const double* A, const double* B)
+{
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      C[i*3+j] = A[0*3+i]*B[0*3+j] + A[1*3+i]*B[1*3+j] + A[2*3+i]*B[2*3+j];
+    }
+  }
+}
+
 double sqnormFrobenius
 (const double sm[6])
 {

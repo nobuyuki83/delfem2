@@ -315,12 +315,11 @@ void MakeConstMatrix3D
   C[5][5] = lambda*GuGu2[5]*GuGu2[5] + 1*myu*(GuGu2[5]*GuGu2[5] + GuGu2[0]*GuGu2[2]); // 02(5):20(5) 02(5):20(5) 00(0):22(2)
 }
 
-void MakeMat_Poisson2D_P1
-(const double alpha, const double source,
+void EMat_Poisson_Tri2D
+(double eres[3], double emat[3][3],
+ const double alpha, const double source,
  const double coords[3][2],
- const double value[3],
- double eres[3],
- double emat[][3])
+ const double value[3])
 {
   const int nno = 3;
   const int ndim = 2;
@@ -347,12 +346,12 @@ void MakeMat_Poisson2D_P1
 }
 
 
-void MakeMat_Helmholtz2D_P1
-(const double wave_length,
+void EMat_Helmholtz_Tri2D
+(std::complex<double> eres[3],
+ std::complex<double> emat[3][3],
+ const double wave_length,
  const double coords[3][2],
- const std::complex<double> value[3],
- std::complex<double> eres[3],
- std::complex<double> emat[3][3])
+ const std::complex<double> value[3])
 {
   const int nno = 3;
   const int ndim = 2;
@@ -383,7 +382,7 @@ void MakeMat_Helmholtz2D_P1
   }
 }
 
-void MakeMat_SommerfeltRadiationBC_Line2D
+void EMat_SommerfeltRadiationBC_Line2D
 (COMPLEX eres[2],
  COMPLEX emat[2][2],
  double wave_length,
@@ -410,13 +409,13 @@ void MakeMat_SommerfeltRadiationBC_Line2D
 }
 
 
-void MakeMat_Diffusion2D_P1
-(const double alpha, const double source,
+void EMat_Diffusion_Tri2D
+(double eres[3],
+ double emat[3][3],
+ const double alpha, const double source,
  const double dt_timestep, const double gamma_newmark, const double rho,
  const double coords[3][2],
- const double value[3], const double velo[3],
- double eres[3],
- double emat[3][3])
+ const double value[3], const double velo[3])
 {
   const int nno = 3;
   const int ndim = 2;
@@ -466,13 +465,13 @@ void MakeMat_Diffusion2D_P1
   }
 }
 
-void MakeMat_LinearSolid2D_Static_P1
-(const double myu, const double lambda,
+void EMat_SolidStaticLinear_Tri2D
+(double eres[3][2],
+ double emat[3][3][2][2],
+ const double myu, const double lambda,
  const double rho, const double g_x, const double g_y,
  const double disp[3][2],
- const double coords[3][2],
- double eres[3][2],
- double emat[3][3][2][2])
+ const double coords[3][2])
 {
   const int nno = 3;
   const int ndim = 2;
@@ -508,14 +507,14 @@ void MakeMat_LinearSolid2D_Static_P1
 }
 
 
-void MakeMat_LinearSolid2D_Dynamic_P1
-(const double myu, const double lambda,
+void EMat_SolidDynamicLinear_Tri2D
+(double eres[3][2],
+ double emat[3][3][2][2],
+ const double myu, const double lambda,
  const double rho, const double g_x, const double g_y,
  const double dt_timestep, const double gamma_newmark,  const double beta_newmark,
  const double disp[3][2], const double velo[3][2], const double acc[3][2],
  const double coords[3][2],
- double eres[3][2],
- double emat[3][3][2][2],
  bool is_initial)
 {
   const int nno = 3;
@@ -2020,12 +2019,71 @@ static inline void TetDlDx(double dldx[][3], double a[],
   //	std::cout << a[3]+dldx[3][0]*p3[0]+dldx[3][1]*p3[1]+dldx[3][2]*p3[2] << std::endl;
 }
 
-void MakeMat_Poisson3D_P1
-(const double alpha, const double source,
+
+void ddW_SolidLinear_Tet3D
+(double* eKmat,
+ double lambda, double myu,
+ double vol, double dldx[4][3],
+ bool is_add,
+ unsigned int nstride)
+{
+  if( !is_add ){
+    for(int i=0;i<4*4*nstride*nstride;++i){ eKmat[i] = 0.0; }
+  }
+  for (int ino = 0; ino<4; ino++){
+    for (int jno = 0; jno<4; jno++){
+      double* pK = eKmat+(nstride*nstride)*(ino*4+jno);
+      pK[0*nstride+0] += vol*(lambda*dldx[ino][0]*dldx[jno][0]+myu*dldx[jno][0]*dldx[ino][0]);
+      pK[0*nstride+1] += vol*(lambda*dldx[ino][0]*dldx[jno][1]+myu*dldx[jno][0]*dldx[ino][1]);
+      pK[0*nstride+2] += vol*(lambda*dldx[ino][0]*dldx[jno][2]+myu*dldx[jno][0]*dldx[ino][2]);
+      pK[1*nstride+0] += vol*(lambda*dldx[ino][1]*dldx[jno][0]+myu*dldx[jno][1]*dldx[ino][0]);
+      pK[1*nstride+1] += vol*(lambda*dldx[ino][1]*dldx[jno][1]+myu*dldx[jno][1]*dldx[ino][1]);
+      pK[1*nstride+2] += vol*(lambda*dldx[ino][1]*dldx[jno][2]+myu*dldx[jno][1]*dldx[ino][2]);
+      pK[2*nstride+0] += vol*(lambda*dldx[ino][2]*dldx[jno][0]+myu*dldx[jno][2]*dldx[ino][0]);
+      pK[2*nstride+1] += vol*(lambda*dldx[ino][2]*dldx[jno][1]+myu*dldx[jno][2]*dldx[ino][1]);
+      pK[2*nstride+2] += vol*(lambda*dldx[ino][2]*dldx[jno][2]+myu*dldx[jno][2]*dldx[ino][2]);
+      const double dtmp1 = dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2];
+      pK[0*nstride+0] += vol*myu*dtmp1;
+      pK[1*nstride+1] += vol*myu*dtmp1;
+      pK[2*nstride+2] += vol*myu*dtmp1;
+    }
+  }
+}
+
+void ddW_MassConsistentVal3D_Tet3D
+(double* eMmat,
+ double rho, double vol,
+ bool is_add,
+ unsigned int nstride)
+{
+  if( !is_add ){
+    for(int i=0;i<4*4*nstride*nstride;++i){ eMmat[i] = 0.0; }
+  }
+  const double dtmp1 = vol*rho*0.05;
+  for(int ino=0;ino<4;ino++){
+    for(int jno=0;jno<4;jno++){
+      double* pM = eMmat+(nstride*nstride)*(ino*4+jno);
+      pM[0*nstride+0] += dtmp1;
+      pM[1*nstride+1] += dtmp1;
+      pM[2*nstride+2] += dtmp1;
+    }
+    {
+      double* pM = eMmat+(nstride*nstride)*(ino*4+ino);
+      pM[0*nstride+0] += dtmp1;
+      pM[1*nstride+1] += dtmp1;
+      pM[2*nstride+2] += dtmp1;
+    }
+  }
+}
+
+////////////
+
+void EMat_Poisson_Tet3D
+(double eres[4],
+ double emat[4][4],
+ const double alpha, const double source,
  const double coords[4][3],
- const double value[4],
- double eres[4],
- double emat[][4])
+ const double value[4])
 {
   const int nno = 4;
   const int ndim = 3;
@@ -2036,6 +2094,7 @@ void MakeMat_Poisson3D_P1
   ////
   double dldx[nno][ndim], const_term[nno];
   TetDlDx(dldx, const_term, coords[0], coords[1], coords[2], coords[3]);
+  
   for (int ino = 0; ino<nno; ino++){
     for (int jno = 0; jno<nno; jno++){
       emat[ino][jno] = alpha*area*(dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2]);
@@ -2051,13 +2110,13 @@ void MakeMat_Poisson3D_P1
   }
 }
 
-void MakeMat_Diffusion3D_P1
-(const double alpha, const double source,
+void EMat_Diffusion_Newmark_Tet3D
+(double eres[4],
+ double emat[4][4],
+ const double alpha, const double source,
  const double dt_timestep, const double gamma_newmark, const double rho,
  const double coords[4][3],
- const double value[4], const double velo[4],
- double eres[4],
- double emat[4][4])
+ const double value[4], const double velo[4])
 {
   const int nno = 4;
   const int ndim = 3;
@@ -2254,43 +2313,27 @@ const double disp[10][3])
 }
 
 
-void MakeMat_LinearSolid3D_Static_P1
-(const double myu, const double lambda,
-const double rho, const double g_x, const double g_y, const double g_z, 
-const double coords[4][3],
-const double disp[4][3],
-////
-double emat[4][4][3][3],
-double eres[4][3])
+void EMat_SolidLinear_Static_Tet
+(double emat[4][4][3][3],
+ double eres[4][3],
+ const double myu, const double lambda,
+ const double P[4][3],
+ const double disp[4][3],
+ bool is_add)
 {
-  const double vol = TetVolume3D(coords[0], coords[1], coords[2], coords[3]);
+  const double vol = TetVolume3D(P[0], P[1], P[2], P[3]);
   double dldx[4][3];
   {
     double const_term[4];    
-    TetDlDx(dldx, const_term, coords[0], coords[1], coords[2], coords[3]);
+    TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
   }
   /////////////////////////////////////////
-  for (int ino = 0; ino<4; ino++){
-    for (int jno = 0; jno<4; jno++){
-      emat[ino][jno][0][0] = vol*(lambda*dldx[ino][0]*dldx[jno][0]+myu*dldx[jno][0]*dldx[ino][0]);
-      emat[ino][jno][0][1] = vol*(lambda*dldx[ino][0]*dldx[jno][1]+myu*dldx[jno][0]*dldx[ino][1]);
-      emat[ino][jno][0][2] = vol*(lambda*dldx[ino][0]*dldx[jno][2]+myu*dldx[jno][0]*dldx[ino][2]);
-      emat[ino][jno][1][0] = vol*(lambda*dldx[ino][1]*dldx[jno][0]+myu*dldx[jno][1]*dldx[ino][0]);
-      emat[ino][jno][1][1] = vol*(lambda*dldx[ino][1]*dldx[jno][1]+myu*dldx[jno][1]*dldx[ino][1]);
-      emat[ino][jno][1][2] = vol*(lambda*dldx[ino][1]*dldx[jno][2]+myu*dldx[jno][1]*dldx[ino][2]);
-      emat[ino][jno][2][0] = vol*(lambda*dldx[ino][2]*dldx[jno][0]+myu*dldx[jno][2]*dldx[ino][0]);
-      emat[ino][jno][2][1] = vol*(lambda*dldx[ino][2]*dldx[jno][1]+myu*dldx[jno][2]*dldx[ino][1]);
-      emat[ino][jno][2][2] = vol*(lambda*dldx[ino][2]*dldx[jno][2]+myu*dldx[jno][2]*dldx[ino][2]);
-      const double dtmp1 = dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2];
-      emat[ino][jno][0][0] += vol*myu*dtmp1;
-      emat[ino][jno][1][1] += vol*myu*dtmp1;
-      emat[ino][jno][2][2] += vol*myu*dtmp1;
-    }
+  ddW_SolidLinear_Tet3D(&emat[0][0][0][0],
+                        lambda, myu, vol, dldx, is_add, 3);
+  if( !is_add ){
+    for(int i=0;i<12;++i){ (&eres[0][0])[i] = 0.0; }
   }
   for (int ino = 0; ino<4; ino++){
-    eres[ino][0] = vol*rho*g_x*0.25;
-    eres[ino][1] = vol*rho*g_y*0.25;
-    eres[ino][2] = vol*rho*g_z*0.25;
     for (int jno = 0; jno<4; jno++){
       eres[ino][0] -= emat[ino][jno][0][0]*disp[jno][0]+emat[ino][jno][0][1]*disp[jno][1]+emat[ino][jno][0][2]*disp[jno][2];
       eres[ino][1] -= emat[ino][jno][1][0]*disp[jno][0]+emat[ino][jno][1][1]*disp[jno][1]+emat[ino][jno][1][2]*disp[jno][2];
@@ -2331,8 +2374,8 @@ void MakeMat_LinearSolid3D_Static_Q1
       double dtmp1 = 0.0;
       for(int idim=0;idim<3;idim++){
         for(int jdim=0;jdim<3;jdim++){
-//          emat[ino][jno][idim][jdim] += detwei*( lambda*dndx[ino][idim]*dndx[jno][jdim]
-//                                                +myu*dndx[jno][idim]*dndx[ino][jdim] );
+          emat[ino][jno][idim][jdim] += detwei*( lambda*dndx[ino][idim]*dndx[jno][jdim]
+                                                +myu*dndx[jno][idim]*dndx[ino][jdim] );
         }
         dtmp1 += dndx[ino][idim]*dndx[jno][idim];
       }
@@ -2358,65 +2401,36 @@ void MakeMat_LinearSolid3D_Static_Q1
   }
 }
 
-void MakeMat_LinearSolid3D_Dynamic_P1
-(const double myu, const double lambda,
+
+
+void EMat_SolidLinear_NewmarkBeta_MeshTet3D
+(double eres[4][3],
+ double emat[4][4][3][3],
+ const double myu, const double lambda,
  const double rho, const double g_x, const double g_y, const double g_z,
  const double dt, const double gamma_newmark,  const double beta_newmark,
  const double disp[4][3], const double velo[4][3], const double acc[4][3],
- const double coords[4][3],
- double eres[4][3],
- double emat[4][4][3][3],
- bool is_initial)
+ const double P[4][3],
+ bool is_initial_iter)
 {
   const int nno = 4;
   const int ndim = 3;
   
-  const double vol = TetVolume3D(coords[0],coords[1],coords[2],coords[3]);
+  const double vol = TetVolume3D(P[0],P[1],P[2],P[3]);
   double dldx[nno][ndim];		// spatial derivative of linear shape function
   {
     double zero_order_term[nno];	// const term of shape function
-    TetDlDx(dldx, zero_order_term,   coords[0],coords[1],coords[2],coords[3]);
+    TetDlDx(dldx, zero_order_term,   P[0],P[1],P[2],P[3]);
   }
   
   double eKmat[nno][nno][ndim][ndim];
-  for (int ino = 0; ino<4; ino++){
-    for (int jno = 0; jno<4; jno++){
-      eKmat[ino][jno][0][0] = vol*(lambda*dldx[ino][0]*dldx[jno][0]+myu*dldx[jno][0]*dldx[ino][0]);
-      eKmat[ino][jno][0][1] = vol*(lambda*dldx[ino][0]*dldx[jno][1]+myu*dldx[jno][0]*dldx[ino][1]);
-      eKmat[ino][jno][0][2] = vol*(lambda*dldx[ino][0]*dldx[jno][2]+myu*dldx[jno][0]*dldx[ino][2]);
-      eKmat[ino][jno][1][0] = vol*(lambda*dldx[ino][1]*dldx[jno][0]+myu*dldx[jno][1]*dldx[ino][0]);
-      eKmat[ino][jno][1][1] = vol*(lambda*dldx[ino][1]*dldx[jno][1]+myu*dldx[jno][1]*dldx[ino][1]);
-      eKmat[ino][jno][1][2] = vol*(lambda*dldx[ino][1]*dldx[jno][2]+myu*dldx[jno][1]*dldx[ino][2]);
-      eKmat[ino][jno][2][0] = vol*(lambda*dldx[ino][2]*dldx[jno][0]+myu*dldx[jno][2]*dldx[ino][0]);
-      eKmat[ino][jno][2][1] = vol*(lambda*dldx[ino][2]*dldx[jno][1]+myu*dldx[jno][2]*dldx[ino][1]);
-      eKmat[ino][jno][2][2] = vol*(lambda*dldx[ino][2]*dldx[jno][2]+myu*dldx[jno][2]*dldx[ino][2]);
-      const double dtmp1 = dldx[ino][0]*dldx[jno][0]+dldx[ino][1]*dldx[jno][1]+dldx[ino][2]*dldx[jno][2];
-      eKmat[ino][jno][0][0] += vol*myu*dtmp1;
-      eKmat[ino][jno][1][1] += vol*myu*dtmp1;
-      eKmat[ino][jno][2][2] += vol*myu*dtmp1;
-    }
-  }
+  ddW_SolidLinear_Tet3D(&eKmat[0][0][0][0],
+                        lambda,myu,
+                        vol, dldx, false, 3);
   
   double eMmat[nno][nno][ndim][ndim];
-  {
-    const double dtmp1 = vol*rho*0.05;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat[ino][jno][0][0] = dtmp1;
-        eMmat[ino][jno][0][1] = 0.0;
-        eMmat[ino][jno][0][2] = 0.0;
-        eMmat[ino][jno][1][0] = 0.0;
-        eMmat[ino][jno][1][1] = dtmp1;
-        eMmat[ino][jno][1][2] = 0.0;
-        eMmat[ino][jno][2][0] = 0.0;
-        eMmat[ino][jno][2][1] = 0.0;
-        eMmat[ino][jno][2][2] = dtmp1;
-      }
-      eMmat[ino][ino][0][0] += dtmp1;
-      eMmat[ino][ino][1][1] += dtmp1;
-      eMmat[ino][ino][2][2] += dtmp1;
-    }
-  }
+  ddW_MassConsistentVal3D_Tet3D(&eMmat[0][0][0][0],
+                                rho,vol,false,3);
   
   // calc external force
   for(int ino=0;ino<nno;ino++){
@@ -2447,7 +2461,7 @@ void MakeMat_LinearSolid3D_Dynamic_P1
       eres[ino][2] -= eMmat[ino][jno][2][0]*acc[jno][0]+eMmat[ino][jno][2][1]*acc[jno][1]+eMmat[ino][jno][2][2]*acc[jno][2];
     }
   }
-  if( is_initial ){
+  if( is_initial_iter ){
     for(int ino=0;ino<nno;ino++){
       for(int jno=0;jno<nno;jno++){
         eres[ino][0] -= dt*(eKmat[ino][jno][0][0]*velo[jno][0]+eKmat[ino][jno][0][1]*velo[jno][1]+eKmat[ino][jno][0][2]*velo[jno][2]);
@@ -2815,35 +2829,7 @@ void MakeMat_Stokes3D_Dynamic_P1
   
   ////////////////
   double eMmat[4][4][4][4];
-  {
-    const double dtmp1 = vol*rho*0.05;
-    for(int ino=0;ino<nno;ino++){
-      for(int jno=0;jno<nno;jno++){
-        eMmat[ino][jno][0][0] = dtmp1;
-        eMmat[ino][jno][0][1] = 0.0;
-        eMmat[ino][jno][0][2] = 0.0;
-        eMmat[ino][jno][0][3] = 0.0;
-        ////
-        eMmat[ino][jno][1][0] = 0.0;
-        eMmat[ino][jno][1][1] = dtmp1;
-        eMmat[ino][jno][1][2] = 0.0;
-        eMmat[ino][jno][1][3] = 0.0;
-        ////
-        eMmat[ino][jno][2][0] = 0.0;
-        eMmat[ino][jno][2][1] = 0.0;
-        eMmat[ino][jno][2][2] = dtmp1;
-        eMmat[ino][jno][2][3] = 0.0;
-        /////
-        eMmat[ino][jno][3][0] = 0.0;
-        eMmat[ino][jno][3][1] = 0.0;
-        eMmat[ino][jno][3][2] = 0.0;
-        eMmat[ino][jno][3][3] = 0.0;
-      }
-      eMmat[ino][ino][0][0] += dtmp1;
-      eMmat[ino][ino][1][1] += dtmp1;
-      eMmat[ino][ino][2][2] += dtmp1;
-    }
-  }
+  ddW_MassConsistentVal3D_Tet3D(&eMmat[0][0][0][0], rho, vol, false, 4);
   
   for(int ino=0;ino<nno;ino++){
     eres[ino][0] = vol*g_x*0.25;

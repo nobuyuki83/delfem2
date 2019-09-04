@@ -38,7 +38,10 @@ void transposeMat3(double At[],
 void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
 void MatVec3(double y[3],
              const double m[9], const double x[3]);
-void VecMat3D(const double x[3], const double m[9],  double y[3]);
+void MatTransVec3(double y[3],
+                  const double m[9], const double x[3]);
+void VecMat3(double y[3],
+             const double x[3], const double m[9]);
 void GetRotMatrix_Rodrigues3D(double rot[9],
                               const double n[3], double theta);
 void Mat4Vec3(double vo[3],
