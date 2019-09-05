@@ -385,12 +385,12 @@ int main(int argc,char* argv[])
     std::vector<CEPo2> aPo2D;
     std::vector<ETri> aETri;
     GenMesh(aVec2,aPo2D,aETri,
-            0.1, aaXY);
+            0.075, aaXY);
     std::vector<double> aXY;
     std::vector<unsigned int> aTri;
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
-    ExtrudeTri2Tet(2, 0.1,
+    ExtrudeTri2Tet(3, 0.075,
                    aXYZ,aTet,
                    aXY,aTri);
   }

@@ -7,6 +7,7 @@
 
 import unittest, numpy, random, os
 import PyDelFEM2 as dfm2
+import PyDelFEM2.gl.glfw
 
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
@@ -14,8 +15,19 @@ class Test_CppCad2D(unittest.TestCase):
   def test1(self):
     ccad = dfm2.CppCad2D()
     ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
+    dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
     ccad.check()
-    ccad.add_vtx_edge(0.0,0.0, 0)
+    ccad.add_vtx_face(0.0, 0.0, 0)
+    dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
+
+    ccad.add_vtx_edge(0.0,0.8, 2)
+    dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
+
+    ccad.set_edge_type(0, 1, [0.2, 0.3, -0.2, 0.3])
+    dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
+
+    ccad.set_edge_type(0, 0, [])
+    dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
 
 
 class Test_Cad2D(unittest.TestCase):
@@ -82,16 +94,19 @@ class Test_Mesh(unittest.TestCase):
     msh = dfm2.Mesh()
     msh.read("../test_inputs/bunny_2k.ply")
     self.assertIsNot(msh,None)
+    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test2(self):
     msh = dfm2.Mesh()
     msh.read("../test_inputs/bunny_1k.obj")
     self.assertIsNot(msh,None)
+    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test3(self):
     msh = dfm2.Mesh()
     msh.set_grid((32,16))
     self.assertIsNot(msh,None)
+    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test4(self):
     voxelgrid = dfm2.VoxelGrid()
@@ -103,6 +118,7 @@ class Test_Mesh(unittest.TestCase):
     msh = msh.subdiv()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
+    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test5(self):
     voxelgrid = dfm2.VoxelGrid()
@@ -112,11 +128,12 @@ class Test_Mesh(unittest.TestCase):
     msh = voxelgrid.mesh_hex()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
+    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
 class Test_CppMeshDynTri3D(unittest.TestCase):
   def test0(self):
     cad = dfm2.Cad2D()
-    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D()
     mesh = mesher.meshing(cad)
     dmesh = dfm2.CppMeshDynTri3D()
@@ -125,7 +142,7 @@ class Test_CppMeshDynTri3D(unittest.TestCase):
 
   def test1(self):
     cad = dfm2.Cad2D()
-    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1.0])
+    cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D()
     mesh = mesher.meshing(cad)
     dmesh = dfm2.CppMeshDynTri3D()

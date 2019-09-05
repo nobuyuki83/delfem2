@@ -147,7 +147,7 @@ void PyMeshDynTri3D_Initialize
  const py::array_t<double>& po,
  const py::array_t<unsigned int>& tri)
 {
-  assert( AssertNumpyArray2D(po, -1, 3) );
+  assert( AssertNumpyArray2D(po, -1, 2) );
   assert( AssertNumpyArray2D(tri, -1, 3) );
   mesh.Initialize(po.data(), po.shape()[0], po.shape()[1],
                   tri.data(), tri.shape()[0]);

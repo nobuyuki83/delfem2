@@ -240,8 +240,9 @@ def affine_matrix_quaternion(q):
   r[15] = 1.0
   return r
 
+#############################################################
 
-def QuatMult(p, q):
+def qmultiply(p, q):
   r = [None] * 4
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3]
   r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2]
@@ -249,6 +250,23 @@ def QuatMult(p, q):
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0]
   return r
 
+def quat_from_axis(a):
+  len = v3_length(a)
+  r = [1,0,0,0]
+  if len < 1.0e-10:  
+    r[0] = 1.0-0.5*len*len 
+    r[1] = 0.5*a[0]
+    r[2] = 0.5*a[1]
+    r[3] = 0.5*a[2]
+    return r
+  r[0] = math.cos(len*0.5)
+  r[1] = math.sin(len*0.5)*a[0]/len
+  r[2] = math.sin(len*0.5)*a[1]/len
+  r[3] = math.sin(len*0.5)*a[2]/len
+  return r
+
+
+#############################################################
 
 def minMaxLoc(aP:list,e:list):
   ndim = len(e)

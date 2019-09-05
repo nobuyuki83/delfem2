@@ -80,7 +80,8 @@ cd ../../../
 
 pip3 uninstall PyDelFEM2 -y
 pip3 uninstall PyDelFEM2 -y
-python3 setup.py install
+pip3 install -e .
+#python3 setup.py install
 python3 setup.py test
 #python3 setup.py sdist bdist_wheel
 #twine upload dist/*

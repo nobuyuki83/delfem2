@@ -339,7 +339,7 @@ void MergeLinSys_Diffusion_MeshTet3D
   }
 }
 
-void MergeLinSys_SolidStaticLinear_MeshTri2D
+void MergeLinSys_SolidLinear_Static_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -375,7 +375,7 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D
   }
 }
 
-void MergeLinSys_SolidDynamicLinear_MeshTri2D
+void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,

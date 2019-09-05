@@ -221,7 +221,7 @@ void PyMergeLinSys_LinearSolidStatic
   auto buff_vecb = vec_b.request();
   if( aXY.shape()[1] == 2 ){
     if( elem_type == MESHELEM_TRI ){
-      MergeLinSys_SolidStaticLinear_MeshTri2D(mss, (double*)buff_vecb.ptr,
+      MergeLinSys_SolidLinear_Static_MeshTri2D(mss, (double*)buff_vecb.ptr,
                                               myu,lambda,rho,
                                               gravity[0], gravity[1],
                                               aXY.data(), aXY.shape()[0],
@@ -259,7 +259,7 @@ void PyMergeLinSys_LinearSolidDynamic
   assert( nNodeElem(elem_type) == aElm.shape()[1] );
   if( aXY.shape()[1] == 2 ){
     if( elem_type == MESHELEM_TRI ){
-      MergeLinSys_SolidDynamicLinear_MeshTri2D(mss,(double*)buff_vecb.ptr,
+      MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(mss,(double*)buff_vecb.ptr,
                                                myu,lambda,rho,gravity[0],gravity[1],
                                                dt_timestep,gamma_newmark,beta_newmark,
                                                aXY.data(), aXY.shape()[0],

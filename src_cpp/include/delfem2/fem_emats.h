@@ -76,7 +76,7 @@ void MergeLinSys_Diffusion_MeshTet3D(CMatrixSparse<double>& mat_A,
                              const double* aVal,
                              const double* aVelo);
 
-void MergeLinSys_SolidStaticLinear_MeshTri2D(CMatrixSparse<double>& mat_A,
+void MergeLinSys_SolidLinear_Static_MeshTri2D(CMatrixSparse<double>& mat_A,
                                       double* vec_b,
                                       const double myu,
                                       const double lambda,
@@ -87,7 +87,7 @@ void MergeLinSys_SolidStaticLinear_MeshTri2D(CMatrixSparse<double>& mat_A,
                                       const unsigned int* aTri1, int nTri,
                                       const double* aVal);
 
-void MergeLinSys_SolidDynamicLinear_MeshTri2D(CMatrixSparse<double>& mat_A,
+void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(CMatrixSparse<double>& mat_A,
                                       double* vec_b,
                                       const double myu,
                                       const double lambda,

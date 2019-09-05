@@ -11,7 +11,7 @@ import OpenGL.GL as gl
 
 from ..util import minMaxLoc, v3_scale, v3_normalize, v3_cross
 from ..util import motion_rot, motion_trans
-from ..util import get_quaternion_rot_matrix, affine_matrix_quaternion
+from ..util import get_quaternion_rot_matrix, affine_matrix_quaternion, quat_from_axis
 from ..util import screenUnProjection, screenUnProjectionDirection
 
 from enum import Enum
@@ -167,14 +167,8 @@ class Camera:
     gl.glMultMatrixf(mMV)
     gl.glTranslated(self.pivot[0], self.pivot[1], self.pivot[2])
 
-  def set_rotation(self, camera_eye_up):
-    vz = camera_eye_up[0:3]
-    vy = camera_eye_up[3:6]
-    vz = v3_scale(v3_normalize(vz),-1.0)
-    vy = v3_normalize(vy)
-    vx = v3_cross(vy,vz)
-    mat = [vx,vy,vz]
-    self.quat = get_quaternion_rot_matrix(mat)
+  def set_rotation(self, camera_rotation:numpy.ndarray):
+    self.quat = quat_from_axis(camera_rotation)
 
   def affine_matrix(self):
     if self.camera_rot_mode == CAMERA_ROT_MODE.TBALL:

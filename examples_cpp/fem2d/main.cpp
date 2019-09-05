@@ -381,11 +381,11 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidStaticLinear_MeshTri2D(mat_A,vec_b.data(),
-                                          myu,lambda,rho,g_x,g_y,
-                                          aXY1.data(), aXY1.size()/2,
-                                          aTri1.data(), aTri1.size()/3,
-                                          aVal.data());
+  MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
+                                           myu,lambda,rho,g_x,g_y,
+                                           aXY1.data(), aXY1.size()/2,
+                                           aTri1.data(), aTri1.size()/3,
+                                           aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
@@ -425,12 +425,12 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidDynamicLinear_MeshTri2D(mat_A,vec_b.data(),
-                                    myu,lambda,rho,g_x,g_y,
-                                    dt_timestep,gamma_newmark,beta_newmark,
-                                    aXY1.data(), aXY1.size()/2,
-                                    aTri1.data(), aTri1.size()/3,
-                                    aVal.data(),aVelo.data(),aAcc.data());
+  MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(mat_A,vec_b.data(),
+                                                myu,lambda,rho,g_x,g_y,
+                                                dt_timestep,gamma_newmark,beta_newmark,
+                                                aXY1.data(), aXY1.size()/2,
+                                                aTri1.data(), aTri1.size()/3,
+                                                aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,

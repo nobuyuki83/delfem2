@@ -90,7 +90,7 @@ class WindowGLFW:
 #    self.close()
     pass
 
-  def draw_loop(self):
+  def draw_loop(self,nframe=-1):
     """
     Enter the draw loop
 
@@ -100,6 +100,7 @@ class WindowGLFW:
     glfw.set_cursor_pos_callback(self.win, self.motion)
     glfw.set_key_callback(self.win, self.keyinput)
 #    glfw.set_window_size_callback(self.win, self.window_size)
+    iframe:int = 0
     while not glfw.window_should_close(self.win):
       gl.glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
       gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
@@ -112,6 +113,9 @@ class WindowGLFW:
         draw_func()
       glfw.swap_buffers(self.win)
       glfw.poll_events()
+      iframe += 1
+      if nframe > 0 and iframe > nframe:
+        break
       if self.wm.isClose:
         break
     self.close()
@@ -157,8 +161,9 @@ def winDraw3d(list_obj:list,
               bgcolor=(1,1,1),
               glsl_vrt="",
               glsl_frg="",
-              camera_orientation=(+0.0,+0.0,-1.0, +0.0,+1.0,+0.0),
-              camera_scale=1.0):
+              camera_rotation=(0.0, 0.0, 0.0),
+              camera_scale=1.0,
+              nframe = -1):
   """
   draw the input object into openGL window
 
@@ -196,15 +201,15 @@ def winDraw3d(list_obj:list,
   window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
   window.wm.camera.scale = camera_scale
   #### set camera rotation
-  if len(camera_orientation) == 6:
-    window.wm.camera.set_rotation(camera_orientation)
+  if len(camera_rotation) == 3:
+    window.wm.camera.set_rotation(camera_rotation)
   #### initalizing opengl
   setSomeLighting()
   gl.glEnable(gl.GL_POLYGON_OFFSET_FILL )
   gl.glPolygonOffset( 1.1, 4.0 )
   gl.glUseProgram(id_shader_program)
   #### enter loop
-  window.draw_loop()
+  window.draw_loop(nframe=nframe)
 
 
 def imgDraw3d(list_obj,winsize=(400,300)):

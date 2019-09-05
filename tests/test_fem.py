@@ -7,22 +7,22 @@
 
 import unittest, numpy, random
 import PyDelFEM2 as dfm2
+import PyDelFEM2.gl.glfw
 
 class Test_PBD(unittest.TestCase):
-  def test1(self):
+  def test_pbd_tri(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
     mesh = mesher.meshing(cad)
     pbd = dfm2.PBD()
     pbd.updated_topology(mesh)
     npIdP = cad.points_edge([0], mesh.np_pos)
     pbd.vec_bc[npIdP] = 1
-    fvs = dfm2.FieldValueSetter("0.3*sin(20*t)", pbd.vec_val, 0,
+    fvs = dfm2.FieldValueSetter("0.3*sin(2*t)", pbd.vec_val, 0,
                                 mesh=mesh, npIdP=npIdP, dt=pbd.dt)
-    for itr in range(100):
-      fvs.step_time()
-      pbd.step_time()
+    mesh_def = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=mesh.np_elm)
+    dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh_def],nframe=100)
 
   def test_pbd_hex(self):
     voxelgrid = dfm2.VoxelGrid()
@@ -37,10 +37,10 @@ class Test_PBD(unittest.TestCase):
     pbd.vec_bc[npIdP] = 1
     fvs = dfm2.FieldValueSetter("0.4*sin(0.8*t)", pbd.vec_val, 1,
                                 mesh=msh, npIdP=npIdP, dt=pbd.dt)
-    for itr in range(100):
-      fvs.step_time()
-      pbd.step_time()
-
+    ##
+    mesh_def = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=msh.np_elm, elem_type=dfm2.HEX)
+    dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh_def],
+                           nframe=100, camera_rotation=[0.1, 0.2, 0.0])
 
 class Test_FEMPoission2D(unittest.TestCase):
   def test1(self):
@@ -53,6 +53,9 @@ class Test_FEMPoission2D(unittest.TestCase):
     npIdP = cad.points_edge([0,1,2,3], msh.np_pos)
     fem.ls.bc[npIdP] = 1
     fem.solve()
+    ##
+    field = dfm2.gl.VisFEM_ColorContour(fem, "value")
+    dfm2.gl.glfw.winDraw3d([field],nframe=10)
 
 
 class Test_FEMPoission3D(unittest.TestCase):
@@ -71,6 +74,10 @@ class Test_FEMPoission3D(unittest.TestCase):
     fem.value[npIdP0] = 0.0
     fem.value[npIdP1] = 1.0
     fem.solve()
+    ##
+    field = dfm2.gl.VisFEM_ColorContour(fem, "value")
+    field.set_color_minmax()
+    dfm2.gl.glfw.winDraw3d([field],nframe=10)
 
 
 class Test_FEMDiffuse2D(unittest.TestCase):
@@ -83,8 +90,11 @@ class Test_FEMDiffuse2D(unittest.TestCase):
     fem.updated_topology(msh)
     npIdP = cad.points_edge([0, 1, 2, 3], msh.np_pos)
     fem.ls.bc[npIdP] = 1
-    for itr in range(100):
-      fem.step_time()
+    ##
+    field = dfm2.gl.VisFEM_ColorContour(fem, "value")
+    field.color_min = 0.0
+    field.color_max = 1.0
+    dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
 
 
 class Test_FemDiffuse3D(unittest.TestCase):
@@ -102,21 +112,28 @@ class Test_FemDiffuse3D(unittest.TestCase):
     fem.value[:] = 0.5
     fem.value[npIdP0] = 0.0
     fem.value[npIdP1] = 1.0
-    for itr in range(100):
-      fem.step_time()
+    ##
+    field = dfm2.gl.VisFEM_ColorContour(fem, "value")
+    field.color_min = 0.0
+    field.color_max = 1.0
+    dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
 
 
 class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
   def test1(self):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+    mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_SolidLinearStatic()
+    fem.param_gravity_y = -0.1
     fem.updated_topology(msh)
     npIdP = cad.points_edge([3], msh.np_pos)
     fem.ls.bc[npIdP,:] = 1
     fem.solve()
+    ##
+    field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="vec_val")
+    dfm2.gl.glfw.winDraw3d([field],nframe=10)
 
 
 class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
@@ -126,12 +143,13 @@ class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
     mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_SolidLinearDynamic()
-    fem.param_gravity_x = -0.01
+    fem.param_gravity_y = -0.1
     fem.updated_topology(msh)
     npIdP = cad.points_edge([3], msh.np_pos)
     fem.ls.bc[npIdP, :] = 1
-    for itr in range(100):
-      fem.step_time()
+    ##
+    field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="vec_val")
+    dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
 
 
 class Test_FEMSorkes2D(unittest.TestCase):
@@ -146,6 +164,12 @@ class Test_FEMSorkes2D(unittest.TestCase):
     npIdP1 = cad.points_edge([2], msh.np_pos)
     fem.vec_val[npIdP1,0] = 1.0
     fem.solve()
+    ####
+    field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val", idim=2)
+    field_p.set_color_minmax()
+    field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
+    axis = dfm2.gl.AxisXYZ(1.0)
+    dfm2.gl.glfw.winDraw3d([field_p, field_v, axis],nframe=10)
 
 
 class Test_FEMCloth(unittest.TestCase):
@@ -159,10 +183,10 @@ class Test_FEMCloth(unittest.TestCase):
     fem.updated_topology(msh)
     npIdP = cad.points_edge([2], msh.np_pos)
     fem.ls.bc[npIdP,0:3] = 1
-    for itr in range(100):
-      fem.step_time()
-
-
+    ####
+    mesh2 = dfm2.Mesh(np_pos=fem.vec_val, np_elm=msh.np_elm)
+    axis = dfm2.gl.AxisXYZ(1.0)
+    dfm2.gl.glfw.winDraw3d([fem, mesh2, axis],nframe=100)
 
 
 if __name__ == "__main__":
