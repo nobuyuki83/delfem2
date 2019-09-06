@@ -476,7 +476,7 @@ void Polyline_BezierCubic
  const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4)
 {
   aP.resize(n);
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     const double t = (double)i/(n-1.0);
     aP[i] = pointCurve_BezierCubic(t,
                                    p1, p2, p3, p4);

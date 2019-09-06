@@ -188,7 +188,7 @@ void Read_BioVisionHierarchy
  const std::string& path_bvh)
 {
   std::ifstream fin;
-  fin.open(path_bvh);
+  fin.open(path_bvh.c_str());
   if( !fin.is_open() ){
     std::cout << "cannot open file" << std::endl;
     return;

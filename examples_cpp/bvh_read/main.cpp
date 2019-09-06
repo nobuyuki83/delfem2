@@ -174,7 +174,7 @@ int main(int argc,char* argv[])
           path_bvh);
   UpdateBoneRotTrans(aBone);
   std::cout << "nBone:" << aBone.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;
-  for(int ib=0;ib<aBone.size();++ib){
+  for(unsigned int ib=0;ib<aBone.size();++ib){
     std::cout << ib << " " << aBone[ib].name << std::endl;
   }
   iframe = 0;
