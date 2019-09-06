@@ -15,18 +15,23 @@ class Test_CppCad2D(unittest.TestCase):
   def test1(self):
     ccad = dfm2.CppCad2D()
     ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
-    dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
     ccad.check()
+    dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
+
     ccad.add_vtx_face(0.0, 0.0, 0)
+    ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
 
     ccad.add_vtx_edge(0.0,0.8, 2)
+    ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
 
     ccad.set_edge_type(0, 1, [0.2, 0.3, -0.2, 0.3])
+    ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
 
     ccad.set_edge_type(0, 0, [])
+    ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
 
 

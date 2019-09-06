@@ -98,7 +98,7 @@ void myGlutDisplay(void)
     ::glEnd();
   }
   for(int ics=0;ics<ReebGraphCS.size();++ics){
-    for(auto itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
+    for(std::set<unsigned int>::iterator itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
       const unsigned int jcs = *itr;
       assert( jcs < aCS.size());
       assert( abs(aCS[ics].IndHeight() - aCS[jcs].IndHeight()) == 1 );
