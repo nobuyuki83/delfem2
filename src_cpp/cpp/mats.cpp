@@ -537,7 +537,7 @@ Solve_CG
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
   assert( mat.len_col == mat.len_row );
-  const int ndof = mat.nblk_col*mat.len_col;
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
   assert(r_vec.size() == ndof);
   std::vector<double> aConv;
   x_vec.assign(ndof,0.0);   // {x} = 0
@@ -546,7 +546,7 @@ Solve_CG
 	double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
   std::vector<double> Ap_vec(ndof);
   std::vector<double>  p_vec = r_vec;  // {p} = {r}  (Set Initial Serch Direction)
-	for(int iitr=0;iitr<max_iteration;iitr++){
+	for(unsigned int iitr=0;iitr<max_iteration;iitr++){
 		double alpha;
 		{	// alpha = (r,r) / (p,Ap)
 			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
@@ -562,7 +562,7 @@ Solve_CG
     {
       const double beta = sqnorm_res_new / sqnorm_res;      // beta = (r1,r1) / (r0,r0)
       sqnorm_res = sqnorm_res_new;
-      for(int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; } // {p} = {r} + beta*{p}
+      for(unsigned int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; } // {p} = {r} + beta*{p}
     }
 	}
 	return aConv;
@@ -589,7 +589,7 @@ std::vector<double> Solve_CG
   const double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
   std::vector<COMPLEX> Ap_vec(ndof);
   std::vector<COMPLEX>  p_vec = r_vec;// {p} = {r} (Set Initial Serch Direction)
-  for(int iitr=0;iitr<max_iteration;iitr++){
+  for(unsigned int iitr=0;iitr<max_iteration;iitr++){
     double alpha;
     {  // alpha = (r,r) / (p,Ap)
       mat.MatVec(1.0,p_vec,0.0,Ap_vec);

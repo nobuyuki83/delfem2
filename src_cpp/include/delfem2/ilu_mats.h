@@ -190,7 +190,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
       for(unsigned int ijcrs=colind[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
         assert( ijcrs<mat.rowPtr.size() );
         const int jblk0 = rowptr[ijcrs];
-        assert( jblk0<iblk );
+        assert( jblk0<(int)iblk );
         lvec_i -= vcrs[ijcrs]*vec[jblk0];
       }
       vec[iblk] = vdia[iblk]*lvec_i;
@@ -211,7 +211,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
       for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
         assert( ijcrs<mat.rowPtr.size() );
         const int jblk0 = rowptr[ijcrs];
-        assert( jblk0<iblk );
+        assert( jblk0<(int)iblk );
         const T* vij = &vcrs[ijcrs*4];
         const T valj0 = vec[jblk0*2+0];
         const T valj1 = vec[jblk0*2+1];
@@ -239,7 +239,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
       for(unsigned int ijcrs=icrs0;ijcrs<icrs1;ijcrs++){
         assert( ijcrs<mat.rowPtr.size() );
         const int jblk0 = rowptr[ijcrs];
-        assert( jblk0<iblk );
+        assert( jblk0<(int)iblk );
         const T* vij = &vcrs[ijcrs*9];
         const T valj0 = vec[jblk0*3+0];
         const T valj1 = vec[jblk0*3+1];
@@ -271,7 +271,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
       for (unsigned int ijcrs = icrs0; ijcrs<icrs1; ijcrs++){
         assert(ijcrs<mat.rowPtr.size());
         const int jblk0 = rowptr[ijcrs];
-        assert(jblk0<iblk);
+        assert(jblk0<(int)iblk);
         const T* vij = &vcrs[ijcrs*16];
         const T valj0 = vec[jblk0*4+0];
         const T valj1 = vec[jblk0*4+1];
@@ -299,7 +299,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
       for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
         assert( ijcrs<mat.rowPtr.size() );
         const int jblk0 = mat.rowPtr[ijcrs];
-        assert( jblk0<iblk );
+        assert( jblk0<(int)iblk );
         const T* vij = &mat.valCrs[ijcrs*blksize];
         for(unsigned int idof=0;idof<len;idof++){
           for(unsigned int jdof=0;jdof<len;jdof++){

@@ -462,7 +462,7 @@ std::vector<double> Solve_PCG
  const CMatrixSparse<double>& mat,
  const CPreconditionerILU<double>& ilu)
 {
-  const int ndof = mat.nblk_col*mat.len_col;
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
   for(unsigned int i=0;i<ndof;i++){ x_vec[i] = 0; }    // {x} = 0
