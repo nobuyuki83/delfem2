@@ -12,7 +12,7 @@ import glfw
 import numpy
 from typing import List
 
-from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ
+from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ, getOpenglInfo
 
 from .c_gl import CppFrameBufferManager
 from .c_gl import glew_init, setSomeLighting
@@ -70,6 +70,15 @@ class WindowGLFW:
   """
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
     self.is_valid = True
+    print("hoge1")
+    print(getOpenglInfo())
+    print("hoge2")
+    try:
+      glew_init()
+    except:
+      print("glew init failure")
+      
+
     try:
       glfw.init()
     except:
