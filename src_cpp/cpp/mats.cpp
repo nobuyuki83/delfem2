@@ -696,7 +696,7 @@ Solve_BiCGSTAB
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
   assert( mat.len_col == mat.len_row );
-  const int ndof = mat.nblk_col*mat.len_col;
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
   assert(r_vec.size() == ndof);
   
   std::vector<double> aConv;
@@ -755,7 +755,7 @@ Solve_BiCGSTAB
       const double beta = (tmp1*alpha) / (r_r2*omega);     // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
       r_r2 = tmp1;
       // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
-      for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
+      for(unsigned int i=0;i<ndof;++i){ p_vec[i] *= beta; }
       AXPY(1.0,r_vec,p_vec);
       AXPY(-beta*omega,Ap_vec,p_vec);
     }
