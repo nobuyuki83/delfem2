@@ -8,6 +8,7 @@
 import unittest, numpy, random
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
+import PyDelFEM2.gl._gl
 
 class Test_PBD(unittest.TestCase):
   def test_pbd_tri(self):
