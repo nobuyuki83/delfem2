@@ -75,6 +75,8 @@ class WindowGLFW:
       print(res)
     except:
       print("GLFW couldn't not initialize!")
+      glfw.terminate()
+      print("terminated")
       self.is_valid = False
       return
     if not isVisible:
