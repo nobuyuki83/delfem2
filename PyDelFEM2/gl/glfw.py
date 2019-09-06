@@ -70,7 +70,9 @@ class WindowGLFW:
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
     self.is_valid = True
     try:
-      glfw.init()
+      print("trying to init glfw")
+      res = glfw.init()
+      print(res)
     except:
       print("GLFW couldn't not initialize!")
       self.is_valid = False
