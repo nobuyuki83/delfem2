@@ -135,16 +135,15 @@ template <typename T>
 void CPreconditionerILU<T>::SetValueILU
 (const CMatrixSparse<T>& rhs)
 {
-  const int nblk = mat.nblk_col;
-  const int len = mat.len_col;
+  const unsigned int nblk = mat.nblk_col;
+  const unsigned int len = mat.len_col;
   assert( rhs.nblk_col == nblk );
   assert( rhs.nblk_row == nblk );
   assert( rhs.len_col == len );
   assert( rhs.len_row == len );
-  const int blksize = len*len;
-  //  for(int i=0;i<mat.m_ncrs*blksize;i++){ mat.m_valCrs[i] = m.m_valCrs[i]; }
+  const unsigned int blksize = len*len;
   std::vector<int> row2crs(nblk,-1);
-  for(int iblk=0;iblk<nblk;iblk++){
+  for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
       assert( ijcrs<mat.rowPtr.size() );
       const int jblk0 = mat.rowPtr[ijcrs];
@@ -159,7 +158,7 @@ void CPreconditionerILU<T>::SetValueILU
       if( ijcrs0 == -1 ) continue;
       const T* pval_in = &rhs.valCrs[ijcrs*blksize];
       T* pval_out = &mat.valCrs[ijcrs0*blksize];
-      for(int i=0;i<blksize;i++){ *(pval_out+i) = *(pval_in+i); }
+      for(unsigned int i=0;i<blksize;i++){ *(pval_out+i) = *(pval_in+i); }
     }
     for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
       assert( ijcrs<mat.rowPtr.size() );
@@ -168,7 +167,7 @@ void CPreconditionerILU<T>::SetValueILU
       row2crs[jblk0] = -1;
     }
   }
-  for(int i=0;i<nblk*blksize;i++){ mat.valDia[i] = rhs.valDia[i]; }
+  for(unsigned int i=0;i<nblk*blksize;i++){ mat.valDia[i] = rhs.valDia[i]; }
 }
 
 
