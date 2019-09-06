@@ -189,6 +189,3 @@ class Test_FEMCloth(unittest.TestCase):
     axis = dfm2.gl.AxisXYZ(1.0)
     dfm2.gl.glfw.winDraw3d([fem, mesh2, axis],nframe=100)
 
-
-if __name__ == "__main__":
-    unittest.main()

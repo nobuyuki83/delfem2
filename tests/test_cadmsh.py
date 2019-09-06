@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import unittest, numpy, random, os
+import unittest, numpy, random, os, sys
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
 
@@ -13,11 +13,13 @@ os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 class Test_CppCad2D(unittest.TestCase):
   def test1(self):
+    print("argument", sys.argv)
     ccad = dfm2.CppCad2D()
     ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
     ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
     print("hoge1")
+    return
 
     ccad.add_vtx_face(0.0, 0.0, 0)
     ccad.check()
