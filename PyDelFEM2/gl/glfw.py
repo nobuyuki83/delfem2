@@ -180,6 +180,7 @@ def winDraw3d(list_obj:list,
   #### initialize window
   window = WindowGLFW(winsize=winsize)
   if not window.is_valid:
+    print("aborting opening window..")
     return
   window.color_bg = bgcolor
   for obj in list_obj:
