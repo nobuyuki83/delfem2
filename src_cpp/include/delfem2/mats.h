@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <cassert>
-#include <ccomplex>
+#include <complex>
 
 template <typename T>
 class CMatrixSparse
