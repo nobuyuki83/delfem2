@@ -77,7 +77,7 @@ class WindowGLFW:
       glew_init()
     except:
       print("glew init failure")
-      
+    print("hoge3")
 
     try:
       glfw.init()
