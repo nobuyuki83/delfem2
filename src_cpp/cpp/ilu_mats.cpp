@@ -458,7 +458,7 @@ std::vector<double> Solve_PCG
 (double* r_vec,
  double* x_vec,
  double conv_ratio_tol,
- int max_nitr,
+ unsigned int max_nitr,
  const CMatrixSparse<double>& mat,
  const CPreconditionerILU<double>& ilu)
 {
@@ -526,7 +526,7 @@ std::vector<double> Solve_PCG
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
- int max_nitr,
+ unsigned int max_nitr,
  const CMatrixSparse<COMPLEX>& mat,
  const CPreconditionerILU<COMPLEX>& ilu)
 {
@@ -593,7 +593,7 @@ std::vector<double> Solve_PBiCGStab
 (double* r_vec,
  double* x_vec,
  double conv_ratio_tol,
- int max_niter,
+ unsigned int max_niter,
  const CMatrixSparse<double>& mat,
  const CPreconditionerILU<double>& ilu)
 {
@@ -682,7 +682,7 @@ std::vector<double> Solve_PBiCGStab
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
- int max_niter,
+ unsigned int max_niter,
  const CMatrixSparse<COMPLEX>& mat,
  const CPreconditionerILU<COMPLEX>& ilu)
 {
@@ -759,7 +759,7 @@ std::vector<double> Solve_PCOCG
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
- int max_niter,
+ unsigned int max_niter,
  const CMatrixSparse<COMPLEX>& mat,
  const CPreconditionerILU<COMPLEX>& ilu)
 {
