@@ -128,7 +128,7 @@ void MakeExpMap_Point
  std::vector<int>& psup_ind,
  std::vector<int>& psup)
 {
-  const int nXYZ = aXYZ.size()/3;
+  const unsigned int nXYZ = aXYZ.size()/3;
   std::vector<CNode> aNode;
   aNode.resize(nXYZ);
   for(unsigned int i=0;i<nXYZ*2;i++){ aTex[i]=0; }
@@ -368,7 +368,7 @@ void myGlutDisplay(void)
     //    ::glColor3d(1,1,1);
   }
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<aTri.size()/3;itri++){
+  for(unsigned int itri=0;itri<aTri.size()/3;itri++){
     int i0 = aTri[itri*3+0];
     int i1 = aTri[itri*3+1];
     int i2 = aTri[itri*3+2];

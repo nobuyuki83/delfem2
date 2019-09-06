@@ -37,7 +37,7 @@ public:
     CBoundingBox2D bb;
     bb.Add(p0.x,p0.y);
     bb.Add(p1.x,p1.y);
-    for(int ip=0;ip<aP.size();++ip){ bb.Add(aP[ip].x,aP[ip].y); }
+    for(unsigned int ip=0;ip<aP.size();++ip){ bb.Add(aP[ip].x,aP[ip].y); }
     return bb;
   }
 public:

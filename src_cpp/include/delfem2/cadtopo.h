@@ -64,7 +64,7 @@ public:
       const int ne = aLoop[il].aIE.size();
       int iie = 0;
       for(;iie<ne;++iie){
-        if( aLoop[il].aIE[iie].first == ieo ){ break; }
+        if( aLoop[il].aIE[iie].first == (int)ieo ){ break; }
       }
       if( iie == ne ){ continue; }
       if( aLoop[il].aIE[iie].second ){
@@ -112,8 +112,8 @@ public:
         const int ie1 = aIE[(iie+1)%ne].first;
         const bool flg0 = aIE[(iie+0)%ne].second;
         const bool flg1 = aIE[(iie+1)%ne].second;
-        if( ie0 < 0 ||  ie0 >= aEdge.size() ){ return false; }
-        if( ie1 < 0 ||  ie1 >= aEdge.size() ){ return false; }
+        if( ie0 < 0 ||  ie0 >= (int)aEdge.size() ){ return false; }
+        if( ie1 < 0 ||  ie1 >= (int)aEdge.size() ){ return false; }
         int iv0a = (flg0) ? aEdge[ie0].iv1 : aEdge[ie0].iv0;
         int iv0b = (flg1) ? aEdge[ie1].iv0 : aEdge[ie1].iv1;
         assert( iv0a == iv0b );
