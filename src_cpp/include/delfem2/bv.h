@@ -223,9 +223,9 @@ public:
     return aP;
   }
   std::string str(){
-    return std::string(std::to_string(x_min)+" "+std::to_string(x_max)+" "+
-                       std::to_string(y_min)+" "+std::to_string(y_max)+" "+
-                       std::to_string(z_min)+" "+std::to_string(z_max));
+    std::stringstream ss;
+    ss << x_min << " " << x_max << " " << y_min << " " << y_max << " " << z_min << " " << z_max;
+    return ss.str();
   }
 public:
   double x_min,x_max;

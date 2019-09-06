@@ -68,8 +68,13 @@ class WindowGLFW:
   class to manage the glfw window
   """
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
-    if glfw.init() == gl.GL_FALSE:
+    self.is_valid = True
+    try:
+      glfw.init()
+    except:
       print("GLFW couldn't not initialize!")
+      self.is_valid = False
+      return
     if not isVisible:
       glfw.window_hint(glfw.VISIBLE, False)
     self.win = glfw.create_window(winsize[0], winsize[1], '3D Window', None, None)
@@ -174,6 +179,8 @@ def winDraw3d(list_obj:list,
   """
   #### initialize window
   window = WindowGLFW(winsize=winsize)
+  if not window.is_valid:
+    return
   window.color_bg = bgcolor
   for obj in list_obj:
     if hasattr(obj, 'init_gl'):
@@ -220,6 +227,8 @@ def imgDraw3d(list_obj,winsize=(400,300)):
 
   winsize -- the size of the window
   """
+  ####
+
   #### initialize window
   window = WindowGLFW(1.0,winsize=winsize,isVisible=False)
   #### set camera
