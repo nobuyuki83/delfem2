@@ -7,6 +7,7 @@
 
 import OpenGL.GL as gl
 import glfw
+import importlib # for case glfw init fails, need to import the module again
 
 import numpy
 from typing import List
@@ -70,14 +71,10 @@ class WindowGLFW:
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
     self.is_valid = True
     try:
-      print("trying to init glfw")
-      res = glfw.init()
-      print(res)
+      glfw.init()
     except:
-      print("GLFW couldn't not initialize!")
-      glfw.terminate()
-      print("terminated")
       self.is_valid = False
+      importlib.reload(glfw)
       return
     if not isVisible:
       glfw.window_hint(glfw.VISIBLE, False)

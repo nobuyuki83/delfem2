@@ -13,19 +13,14 @@ os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 class Test_CppCad2D(unittest.TestCase):
   def test1(self):
-    print("argument", sys.argv)
     ccad = dfm2.CppCad2D()
     ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
     ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
-    print("hoge1")
-    return
 
     ccad.add_vtx_face(0.0, 0.0, 0)
     ccad.check()
-    print("hoge2")
     dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
-    print("hoge3")
 
     ccad.add_vtx_edge(0.0,0.8, 2)
     ccad.check()
