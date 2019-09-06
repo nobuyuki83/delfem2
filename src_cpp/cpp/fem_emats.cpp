@@ -982,7 +982,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
  const std::vector<double>& aR)
 {
   const int np = nXYZ;
-  assert(aR.size()==np*9);
+  assert((int)aR.size()==np*9);
   //////
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
@@ -1496,7 +1496,7 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
  const double rho,
  const double gravity_z,
  const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
+ const unsigned int* aTri1, unsigned int nTri,
  const double* aVal)
 {
   const int np = nXY;

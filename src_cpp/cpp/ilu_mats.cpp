@@ -530,7 +530,7 @@ std::vector<double> Solve_PCG
  const CMatrixSparse<COMPLEX>& mat,
  const CPreconditionerILU<COMPLEX>& ilu)
 {
-  const int ndof = mat.nblk_col*mat.len_col;
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
   for(unsigned int i=0;i<ndof;i++){ x_vec[i] = COMPLEX(0.0,0.0); }    // {x} = 0
@@ -569,7 +569,7 @@ std::vector<double> Solve_PCG
     }
     {  // calc beta
       // {Pr} = [P]{r}
-      for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
+      for(unsigned int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
       ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
       const COMPLEX rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
@@ -600,7 +600,7 @@ std::vector<double> Solve_PBiCGStab
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
   assert( mat.len_col == mat.len_row );
-  const int ndof = mat.nblk_col*mat.len_col;
+  const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
   // {u} = 0
@@ -653,7 +653,7 @@ std::vector<double> Solve_PBiCGStab
     }
     AXPY(alpha,Mp_vec.data(),x_vec,ndof);
     AXPY(omega,Ms_vec.data(),x_vec,ndof);
-    for(int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; } // update residual
+    for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; } // update residual
     AXPY(-omega,AMs_vec.data(),r_vec,ndof);
     {
       const double sq_norm_res = DotX(r_vec,r_vec,ndof);
