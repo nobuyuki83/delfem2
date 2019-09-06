@@ -125,7 +125,7 @@ void CCad2D::DragPicked(double p1x, double p1y, double p0x, double p0y)
 bool CCad2D::Check() const
 {
   if( !this->topo.Check() ){ assert(0); return false; }
-  if( aVtx.size() != topo.nVertex ){ assert(0); return false; }
+  if( (int)aVtx.size() != topo.nVertex ){ assert(0); return false; }
   if( aEdge.size() != topo.aEdge.size() ){ assert(0); return false; }
   if( aFace.size() != topo.aFace.size() ){ assert(0); return false; }
   return true;
@@ -443,7 +443,7 @@ void GenMeshCadFace
   }
   std::vector<int> aIP;
   { // make list of index of point involved this face
-    for(int iil=0;iil<topo.aFace[iface0].aIL.size();++iil){
+    for(unsigned int iil=0;iil<topo.aFace[iface0].aIL.size();++iil){
       const int il0 = topo.aFace[iface0].aIL[iil];
       if( topo.aLoop[il0].iv != -1 ){
         aIP.push_back(topo.aLoop [il0].iv );
@@ -595,8 +595,8 @@ void CMesher_Cad2D::Meshing
   }
   { // make EPo
     dmsh.aEPo.resize(dmsh.aVec2.size());
-    for(int it=0;it<dmsh.aETri.size();++it){
-      for(int inotri=0;inotri<3;++inotri){
+    for(unsigned int it=0;it<dmsh.aETri.size();++it){
+      for(unsigned int inotri=0;inotri<3;++inotri){
         dmsh.aEPo[ dmsh.aETri[it].v[inotri] ].e = it;
         dmsh.aEPo[ dmsh.aETri[it].v[inotri] ].d = inotri;
       }
@@ -743,9 +743,9 @@ bool WriteCAD_DXF
     for(unsigned int iil=0;iil<aIL.size();iil++){
       const int il0 = aIL[iil];
       const std::vector< std::pair<int,bool> >& aIE = cad.topo.aLoop[il0].aIE;
-      for(int iie=0;iie<aIE.size();++iie){
+      for(unsigned int iie=0;iie<aIE.size();++iie){
         unsigned int ie0 = aIE[iie].first;
-        bool dir0 = aIE[iie].second;
+//        bool dir0 = aIE[iie].second;
         unsigned int id_vs = cad.topo.aEdge[ie0].iv0;
         unsigned int id_ve = cad.topo.aEdge[ie0].iv1;
         const CVector2& ps = cad.aVtx[id_vs].pos;

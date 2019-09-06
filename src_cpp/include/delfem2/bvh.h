@@ -244,7 +244,7 @@ void BVH_GetIndElem_IntersectRay
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
 {
-  assert( ibvh >= 0 && ibvh < aBVH.size() );
+  assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectRay(src,dir);
   if( !is_intersect ) return;
   ////
@@ -269,7 +269,7 @@ void BVH_GetIndElem_IntersectLine
  const std::vector<CNodeBVH>& aBVH,
  const std::vector<T>& aBB)
 {
-  assert( ibvh >= 0 && ibvh < aBVH.size() );
+  assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectLine(src,dir);
   if( !is_intersect ) return;
   ////

@@ -17,10 +17,13 @@ class Test_CppCad2D(unittest.TestCase):
     ccad.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
     ccad.check()
     dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
+    print("hoge1")
 
     ccad.add_vtx_face(0.0, 0.0, 0)
     ccad.check()
+    print("hoge2")
     dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
+    print("hoge3")
 
     ccad.add_vtx_edge(0.0,0.8, 2)
     ccad.check()
