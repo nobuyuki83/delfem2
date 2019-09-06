@@ -371,7 +371,7 @@ COMPLEX Dot
   const unsigned int n = va.size();
   assert( vb.size() == n );
   double sr = 0.0, si = 0.0;
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     const COMPLEX& a = va[i];
     const COMPLEX& b = vb[i];
     sr += a.real()*b.real() + a.imag()*b.imag();
@@ -531,7 +531,7 @@ Solve_CG
 (std::vector<double>& r_vec,
  std::vector<double>& x_vec,
  double conv_ratio_tol,
- int max_iteration,
+ unsigned int max_iteration,
  const CMatrixSparse<double>& mat)
 {
   assert( !mat.valDia.empty() );
@@ -574,7 +574,7 @@ std::vector<double> Solve_CG
 (std::vector<COMPLEX>& r_vec,
  std::vector<COMPLEX>& x_vec,
  double conv_ratio_tol,
- int max_iteration,
+ unsigned int max_iteration,
  const CMatrixSparse<COMPLEX>& mat)
 {
   assert( !mat.valDia.empty() );
@@ -607,7 +607,7 @@ std::vector<double> Solve_CG
     { // update p
       const double beta = sqnorm_res_new / sqnorm_res;  // beta = (r1,r1) / (r0,r0)
       sqnorm_res = sqnorm_res_new;
-      for(int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; } // {p} = {r} + beta*{p}
+      for(unsigned int i=0;i<ndof;i++){ p_vec[i] = r_vec[i] + beta*p_vec[i]; } // {p} = {r} + beta*{p}
     }
   }
   return aConv;
@@ -620,7 +620,7 @@ Solve_BiCGSTAB
 (std::vector<COMPLEX>& r_vec,
  std::vector<COMPLEX>& x_vec,
  double conv_ratio_tol,
- int max_niter,
+ unsigned int max_niter,
  const CMatrixSparse<COMPLEX>& mat)
 {
   assert( !mat.valDia.empty() );
@@ -675,7 +675,7 @@ Solve_BiCGSTAB
       const COMPLEX beta = (tmp1*alpha)/(r_r0*omega); // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
       r_r0 = tmp1;
        // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
-      for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
+      for(unsigned int i=0;i<ndof;++i){ p_vec[i] *= beta; }
       AXPY(COMPLEX(1.0),r_vec,p_vec);
       AXPY(-beta*omega,Ap_vec,p_vec);
     }
@@ -690,7 +690,7 @@ Solve_BiCGSTAB
 (std::vector<double>& r_vec,
  std::vector<double>& x_vec,
  double conv_ratio_tol,
- int max_niter,
+ unsigned int max_niter,
  const CMatrixSparse<double>& mat)
 {
   assert( !mat.valDia.empty() );

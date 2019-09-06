@@ -2028,7 +2028,7 @@ void ddW_SolidLinear_Tet3D
  unsigned int nstride)
 {
   if( !is_add ){
-    for(int i=0;i<4*4*nstride*nstride;++i){ eKmat[i] = 0.0; }
+    for(unsigned int i=0;i<4*4*nstride*nstride;++i){ eKmat[i] = 0.0; }
   }
   for (int ino = 0; ino<4; ino++){
     for (int jno = 0; jno<4; jno++){
@@ -2057,7 +2057,7 @@ void ddW_MassConsistentVal3D_Tet3D
  unsigned int nstride)
 {
   if( !is_add ){
-    for(int i=0;i<4*4*nstride*nstride;++i){ eMmat[i] = 0.0; }
+    for(unsigned int i=0;i<4*4*nstride*nstride;++i){ eMmat[i] = 0.0; }
   }
   const double dtmp1 = vol*rho*0.05;
   for(int ino=0;ino<4;ino++){

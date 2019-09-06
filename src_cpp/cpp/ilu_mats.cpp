@@ -465,7 +465,7 @@ std::vector<double> Solve_PCG
   const int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
-  for(int i=0;i<ndof;i++){ x_vec[i] = 0; }    // {x} = 0
+  for(unsigned int i=0;i<ndof;i++){ x_vec[i] = 0; }    // {x} = 0
   
 	double inv_sqnorm_res0;
 	{
@@ -482,7 +482,7 @@ std::vector<double> Solve_PCG
   std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
 	double rPr = DotX(r_vec,Pr_vec.data(),ndof);
-	for(int iitr=0;iitr<max_nitr;iitr++){
+	for(unsigned int iitr=0;iitr<max_nitr;iitr++){
 		{
       std::vector<double>& Ap_vec = Pr_vec;      
       // {Ap} = [A]{p}
@@ -501,7 +501,7 @@ std::vector<double> Solve_PCG
 		}
 		{	// calc beta
       // {Pr} = [P]{r}
-      for(int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; } 
+      for(unsigned int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
 			ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
 			const double rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
@@ -509,7 +509,7 @@ std::vector<double> Solve_PCG
 			double beta = rPr1/rPr;
 			rPr = rPr1;
       // {p} = {Pr} + beta*{p}
-      for(int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
+      for(unsigned int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
     }
 	}
   {
@@ -533,7 +533,7 @@ std::vector<double> Solve_PCG
   const int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
-  for(int i=0;i<ndof;i++){ x_vec[i] = COMPLEX(0.0,0.0); }    // {x} = 0
+  for(unsigned int i=0;i<ndof;i++){ x_vec[i] = COMPLEX(0.0,0.0); }    // {x} = 0
   
   double inv_sqnorm_res0;
   {
@@ -550,7 +550,7 @@ std::vector<double> Solve_PCG
   std::vector<COMPLEX> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
   COMPLEX rPr = DotX(r_vec,Pr_vec.data(),ndof);
-  for(int iitr=0;iitr<max_nitr;iitr++){
+  for(unsigned int iitr=0;iitr<max_nitr;iitr++){
     {
       std::vector<COMPLEX>& Ap_vec = Pr_vec;
       // {Ap} = [A]{p}
@@ -577,7 +577,7 @@ std::vector<double> Solve_PCG
       COMPLEX beta = rPr1/rPr;
       rPr = rPr1;
       // {p} = {Pr} + beta*{p}
-      for(int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
+      for(unsigned int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
     }
   }
   {
@@ -604,7 +604,7 @@ std::vector<double> Solve_PBiCGStab
   std::vector<double> aResHistry;
   
   // {u} = 0
-  for(int i=0;i<ndof;++i){ x_vec[i] = 0.0; }
+  for(unsigned int i=0;i<ndof;++i){ x_vec[i] = 0.0; }
   
   double sq_inv_norm_res_ini;
   {
@@ -667,7 +667,7 @@ std::vector<double> Solve_PBiCGStab
       beta = tmp1 * alpha / (r_r2*omega);
     }
     // update p_vector
-    for(int i=0;i<ndof;++i){ p_vec[i] *= beta; }
+    for(unsigned int i=0;i<ndof;++i){ p_vec[i] *= beta; }
     AXPY(1.0,r_vec,p_vec.data(),ndof);
     AXPY(-beta*omega,AMp_vec,p_vec);
   }
@@ -692,7 +692,7 @@ std::vector<double> Solve_PBiCGStab
   const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
-  for(int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
+  for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
   
   double sq_inv_norm_res_ini;
   {
@@ -733,8 +733,8 @@ std::vector<double> Solve_PBiCGStab
     // calc {AMs_vec} = [A]*{Ms_vec}
     mat.MatVec(COMPLEX(1,0),Ms_vec, COMPLEX(0,0), AMs_vec);
     const COMPLEX omega = Dot(s_vec,AMs_vec) / Dot(AMs_vec,AMs_vec).real();
-    for(int i=0;i<ndof;++i){ x_vec[i] = x_vec[i]+alpha*Mp_vec[i]+omega*Ms_vec[i]; }
-    for(int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]-omega*AMs_vec[i]; }
+    for(unsigned int i=0;i<ndof;++i){ x_vec[i] = x_vec[i]+alpha*Mp_vec[i]+omega*Ms_vec[i]; }
+    for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]-omega*AMs_vec[i]; }
     {
       const double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
@@ -748,7 +748,7 @@ std::vector<double> Solve_PBiCGStab
       r_r0 = tmp1;
     }
     // update p_vector
-    for(int i=0;i<ndof;++i){ p_vec[i] = r_vec[i]+beta*(p_vec[i]-omega*AMp_vec[i]); }
+    for(unsigned int i=0;i<ndof;++i){ p_vec[i] = r_vec[i]+beta*(p_vec[i]-omega*AMp_vec[i]); }
   }
   
   return aResHistry;
@@ -769,7 +769,7 @@ std::vector<double> Solve_PCOCG
   const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
   
-  for(int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
+  for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
   
   double sq_inv_norm_res_ini;
   {
@@ -807,7 +807,7 @@ std::vector<double> Solve_PCOCG
       beta = tmp1/r_w;
       r_w = tmp1;
     }
-    for(int i=0;i<ndof;++i){ p_vec[i] = w_vec[i] + beta*p_vec[i]; }
+    for(unsigned int i=0;i<ndof;++i){ p_vec[i] = w_vec[i] + beta*p_vec[i]; }
   }
   
   return aResHistry;

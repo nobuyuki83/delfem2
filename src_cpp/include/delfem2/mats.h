@@ -331,7 +331,7 @@ std::vector<double>
 Solve_CG(std::vector<T>& r_vec,
          std::vector<T>& u_vec,
          double conv_ratio,
-         int iteration,
+         unsigned int iteration,
          const CMatrixSparse<T>& mat);
 
 template <typename T>
@@ -339,7 +339,7 @@ std::vector<double>
 Solve_BiCGSTAB(std::vector<T>& r_vec,
                std::vector<T>& x_vec,
                double conv_ratio,
-               int num_iter,
+               unsigned int num_iter,
                const CMatrixSparse<T>& mat);
 
 #endif // MATDIA_CRS_H
