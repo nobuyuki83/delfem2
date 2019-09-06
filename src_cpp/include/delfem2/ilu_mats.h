@@ -176,7 +176,7 @@ template <typename T>
 void CPreconditionerILU<T>::ForwardSubstitution
 ( std::vector<T>& vec ) const
 {
-  const int len = mat.len_col;
+  const unsigned int len = mat.len_col;
   const unsigned int nblk = mat.nblk_col;
   
   if( len == 1 ){
@@ -203,7 +203,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const T* vdia = mat.valDia.data();
     ////////////////
     T pTmpVec[2];
-    for(int iblk=0;iblk<nblk;iblk++){
+    for(unsigned int iblk=0;iblk<nblk;iblk++){
       pTmpVec[0] = vec[iblk*2+0];
       pTmpVec[1] = vec[iblk*2+1];
       const unsigned int icrs0 = colind[iblk];
@@ -230,7 +230,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const T* vdia = mat.valDia.data();
     ////////////////
     T pTmpVec[3];
-    for(int iblk=0;iblk<nblk;iblk++){
+    for(unsigned int iblk=0;iblk<nblk;iblk++){
       pTmpVec[0] = vec[iblk*3+0];
       pTmpVec[1] = vec[iblk*3+1];
       pTmpVec[2] = vec[iblk*3+2];
@@ -261,7 +261,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const T* vdia = mat.valDia.data();
     ////////////////
     T pTmpVec[4];
-    for (int iblk = 0; iblk<nblk; iblk++){
+    for (unsigned int iblk = 0; iblk<nblk; iblk++){
       pTmpVec[0] = vec[iblk*4+0];
       pTmpVec[1] = vec[iblk*4+1];
       pTmpVec[2] = vec[iblk*4+2];
@@ -292,8 +292,8 @@ void CPreconditionerILU<T>::ForwardSubstitution
   else{
     const int blksize = len*len;
     std::vector<T> pTmpVec(len);
-    for(int iblk=0;iblk<nblk;iblk++){
-      for(int idof=0;idof<len;idof++){
+    for(unsigned int iblk=0;iblk<nblk;iblk++){
+      for(unsigned int idof=0;idof<len;idof++){
         pTmpVec[idof] = vec[iblk*len+idof];
       }
       for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
@@ -301,16 +301,16 @@ void CPreconditionerILU<T>::ForwardSubstitution
         const int jblk0 = mat.rowPtr[ijcrs];
         assert( jblk0<iblk );
         const T* vij = &mat.valCrs[ijcrs*blksize];
-        for(int idof=0;idof<len;idof++){
-          for(int jdof=0;jdof<len;jdof++){
+        for(unsigned int idof=0;idof<len;idof++){
+          for(unsigned int jdof=0;jdof<len;jdof++){
             pTmpVec[idof] -= vij[idof*len+jdof]*vec[jblk0*len+jdof];
           }
         }
       }
       const T* vii = &mat.valDia[iblk*blksize];
-      for(int idof=0;idof<len;idof++){
+      for(unsigned int idof=0;idof<len;idof++){
         T dtmp1 = 0.0;
-        for(int jdof=0;jdof<len;jdof++){
+        for(unsigned int jdof=0;jdof<len;jdof++){
           dtmp1 += vii[idof*len+jdof]*pTmpVec[jdof];
         }
         vec[iblk*len+idof] = dtmp1;
@@ -439,7 +439,7 @@ void CPreconditionerILU<T>::BackwardSubstitution
     std::vector<T> pTmpVec(len);
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
-      for(int idof=0;idof<len;idof++){
+      for(unsigned int idof=0;idof<len;idof++){
         pTmpVec[idof] = vec[iblk*len+idof];
       }
       for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
@@ -447,13 +447,13 @@ void CPreconditionerILU<T>::BackwardSubstitution
         const int jblk0 = mat.rowPtr[ijcrs];
         assert( jblk0>(int)iblk && jblk0<nblk );
         const T* vij = &mat.valCrs[ijcrs*blksize];
-        for(int idof=0;idof<len;idof++){
-          for(int jdof=0;jdof<len;jdof++){
+        for(unsigned int idof=0;idof<len;idof++){
+          for(unsigned int jdof=0;jdof<len;jdof++){
             pTmpVec[idof] -= vij[idof*len+jdof]*vec[jblk0*len+jdof];
           }
         }
       }
-      for(int idof=0;idof<len;idof++){
+      for(unsigned int idof=0;idof<len;idof++){
         vec[iblk*len+idof] = pTmpVec[idof];
       }
     }
