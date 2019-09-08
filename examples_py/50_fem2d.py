@@ -9,7 +9,7 @@ import numpy
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
 
-def poisson(cad,mesh,mesher):
+def femScalarPoisson(cad, mesh, mesher):
   fem = dfm2.FEM_Poisson(source=1.0)
   fem.updated_topology(mesh)
   npIdP = mesher.points_on_edges([0,1,2,3], cad)
@@ -20,7 +20,7 @@ def poisson(cad,mesh,mesher):
   field.write_vtk("poisson2d.vtk")
 
 
-def poisson_ms(cad, mesh):
+def femScalarPoissonMasterSlave(cad, mesh):
   npIdP_ms = cad.points_edge([0], mesh.np_pos)
   vec_ms = numpy.zeros((mesh.np_pos.shape[0],1),dtype=numpy.int32)
   vec_ms[:] = -1
@@ -35,7 +35,7 @@ def poisson_ms(cad, mesh):
   dfm2.gl.glfw.winDraw3d([field])
 
 
-def diffuse(cad,mesh,mesher):
+def femSclarDiffuse(cad, mesh, mesher):
   fem = dfm2.FEM_Diffuse()
   fem.updated_topology(mesh)
   npIdP = mesher.points_on_edges([0,1,2,3], cad)
@@ -48,8 +48,9 @@ def diffuse(cad,mesh,mesher):
   axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.gl.glfw.winDraw3d([fem,field,axis])
 
+####################################################
 
-def linear_solid_static(cad,mesh):
+def femSolidLinear_Static(cad, mesh):
   fem = dfm2.FEM_SolidLinearStatic()
   fem.param_gravity_y = -0.1
   fem.updated_topology(mesh)
@@ -61,7 +62,7 @@ def linear_solid_static(cad,mesh):
   field.write_vtk("linearsolid2d.vtk")
 
 
-def linear_solid_eigen(mesh):
+def femSolidLinear_Eigen(mesh):
   fem = dfm2.FEM_SolidLinearEigen()
   fem.updated_topology(mesh)
   fem.ls.f[:] = numpy.random.uniform(-1,1, mesh.np_pos.shape )
@@ -69,7 +70,7 @@ def linear_solid_eigen(mesh):
   dfm2.gl.glfw.winDraw3d([fem,field])
 
 
-def linear_solid_dynamic(cad,mesh):
+def femSolidLinear_Dynamic(cad, mesh):
   fem = dfm2.FEM_SolidLinearDynamic()
   fem.param_gravity_y = -0.1
   fem.updated_topology(mesh)
@@ -82,49 +83,27 @@ def linear_solid_dynamic(cad,mesh):
   dfm2.gl.glfw.winDraw3d([fem,field,axis])
 
 
-def storks_static(cad,mesh):
-  fem = dfm2.FEM_StorksStatic2D(mesh)
-  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
-  fem.ls.bc[npIdP0,0:2] = 1
-  npIdP1 = cad.points_edge([2], mesh.np_pos)
-  fem.vec_val[npIdP1,0] = 1.0
+############################
+
+def femShellPlateBendingMitc3_Static(cad:dfm2.Cad2D, mesher, mesh:dfm2.Mesh):
+  fem = dfm2.FEM_ShellPlateBendingMITC3()
+  fem.param_gravity_z = -0.01
+  fem.updated_topology(mesh)
+  fem.ls.bc[mesher.points_on_one_edge(3,True,cad),:] = 1
   fem.solve()
-  print(fem.ls.conv_hist)
-  ####
-  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
-  field_p.set_color_minmax()
-  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
-  axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl.glfw.winDraw3d([field_p,field_v,axis])
-
-def storks_dynamic(cad,mesh):
-  fem = dfm2.FEM_StorksDynamic2D(mesh)
-  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
-  fem.ls.bc[npIdP0,0:2] = 1
-  npIdP1 = cad.points_edge([2], mesh.np_pos)
-  fem.vec_val[npIdP1,0] = 1.0
-  fem.solve()
-  print(fem.ls.conv_hist)
-  ####
-  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
-  field_p.set_color_minmax()
-  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
-  axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl.glfw.winDraw3d([fem,field_p,field_v,axis])
+  print(fem.ls.conv_hist,len(fem.ls.conv_hist))
+  pos1 = numpy.zeros((mesh.np_pos.shape[0],3))
+  pos1[:,:2] = mesh.np_pos
+  pos1[:,2] = fem.disp[:,0]
+  mesh1 = dfm2.Mesh(pos1,mesh.np_elm, dfm2.TRI)
+  dfm2.gl.glfw.winDraw3d([mesh1])
 
 
-def navir_storks(cad,mesh):
-  fem = dfm2.FEM_NavierStorks2D(mesh)
-  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
-  fem.ls.bc[npIdP0,0:2] = 1
-  npIdP1 = cad.points_edge([2], mesh.np_pos)
-  fem.vec_val[npIdP1,0] = 1.0
-  ####
-  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
-  field_p.set_color_minmax()
-  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
-  axis = dfm2.gl.AxisXYZ(1.0)
-  dfm2.gl.glfw.winDraw3d([fem,field_p,field_v,axis])
+def shell_mitc_eigen(mesh):
+  fem = dfm2.FEM_ShellPlateBendingMITC3_Eigen()
+  fem.updated_topology(mesh)
+  fem.ls.f[:] = numpy.random.uniform(-1,1, (mesh.np_pos.shape[0],3) )
+  dfm2.gl.glfw.winDraw3d([fem,mesh])
 
 
 def fem_cloth():
@@ -146,6 +125,54 @@ def fem_cloth():
   axis = dfm2.gl.AxisXYZ(1.0)
   dfm2.gl.glfw.winDraw3d([fem,mesh2,axis])
 
+##########################################
+
+def femFluidStokes_Static(cad, mesh):
+  fem = dfm2.FEM_StorksStatic2D(mesh)
+  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
+  fem.ls.bc[npIdP0,0:2] = 1
+  npIdP1 = cad.points_edge([2], mesh.np_pos)
+  fem.vec_val[npIdP1,0] = 1.0
+  fem.solve()
+  print(fem.ls.conv_hist)
+  ####
+  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
+  field_p.set_color_minmax()
+  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
+  axis = dfm2.gl.AxisXYZ(1.0)
+  dfm2.gl.glfw.winDraw3d([field_p,field_v,axis])
+
+
+def femFluidStokes_Dynamic(cad, mesh):
+  fem = dfm2.FEM_StorksDynamic2D(mesh)
+  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
+  fem.ls.bc[npIdP0,0:2] = 1
+  npIdP1 = cad.points_edge([2], mesh.np_pos)
+  fem.vec_val[npIdP1,0] = 1.0
+  fem.solve()
+  print(fem.ls.conv_hist)
+  ####
+  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
+  field_p.set_color_minmax()
+  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
+  axis = dfm2.gl.AxisXYZ(1.0)
+  dfm2.gl.glfw.winDraw3d([fem,field_p,field_v,axis])
+
+
+def femFluidNavirStokes(cad, mesh):
+  fem = dfm2.FEM_NavierStorks2D(mesh)
+  npIdP0 = cad.points_edge([0,1,2,3], mesh.np_pos)
+  fem.ls.bc[npIdP0,0:2] = 1
+  npIdP1 = cad.points_edge([2], mesh.np_pos)
+  fem.vec_val[npIdP1,0] = 1.0
+  ####
+  field_p = dfm2.gl.VisFEM_ColorContour(fem, name_color="vec_val",idim=2)
+  field_p.set_color_minmax()
+  field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
+  axis = dfm2.gl.AxisXYZ(1.0)
+  dfm2.gl.glfw.winDraw3d([fem,field_p,field_v,axis])
+
+#######################################################
 
 def pbd1(cad,mesh):
   pbd = dfm2.PBD()
@@ -180,16 +207,31 @@ def pbd_cloth():
 
 def main():
   cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+  msh2 = mesher.meshing(cad)
+  femShellPlateBendingMitc3_Static(cad, mesher, msh2)
+#  shell_mitc_eigen(msh2)
+#  return
+
+  msh25 = dfm2.Mesh()
+  msh25.set_extrude(msh2,1)
+  msh25.np_pos[:,2] *= 0.05
+
+
+  femSolidLinear_Eigen(msh25)
+
+  cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
-  poisson(cad,mesh,mesher)
-  diffuse(cad,mesh,mesher)
-  linear_solid_static(cad,mesh)
-  linear_solid_dynamic(cad,mesh)
-  storks_static(cad,mesh)
-  storks_dynamic(cad,mesh)
-  navir_storks(cad,mesh)
+  femScalarPoisson(cad, mesh, mesher)
+  femSclarDiffuse(cad, mesh, mesher)
+  femSolidLinear_Static(cad, mesh)
+  femSolidLinear_Dynamic(cad, mesh)
+  femFluidStokes_Static(cad, mesh)
+  femFluidStokes_Dynamic(cad, mesh)
+  femFluidNavirStokes(cad, mesh)
 
   fem_cloth()
 
@@ -197,22 +239,13 @@ def main():
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
-  poisson_ms(cad, mesh)
+  femScalarPoissonMasterSlave(cad, mesh)
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1.0])
   mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
   mesh = mesher.meshing(cad)
   pbd1(cad,mesh)
-
-  cad = dfm2.Cad2D()
-  cad.add_polygon(list_xy=[-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
-  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
-  msh2 = mesher.meshing(cad)
-  msh25 = dfm2.Mesh()
-  msh25.set_extrude(msh2,1)
-  msh25.np_pos[:,2] *= 0.05
-  linear_solid_eigen(msh25)
 
   pbd_cloth()
 

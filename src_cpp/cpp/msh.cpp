@@ -919,7 +919,7 @@ void makeSolidAngle
 }
 
 
-void MassLumped_Tet
+void MassLumped_Tet3D
 (double* aMassMatrixLumped,
  double rho,
  const double* aXYZ, int nXYZ,

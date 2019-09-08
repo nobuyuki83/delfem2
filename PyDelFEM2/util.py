@@ -298,7 +298,7 @@ def motion_rot(scrnx1, scrny1, scrnx0, scrny0, quat, trans):
   else:
     dq = [1,-dy,dx,0.0]
   if a != 0.0:
-    quat = QuatMult(dq, quat)
+    quat = qmultiply(dq, quat)
   return quat, trans
 
 
