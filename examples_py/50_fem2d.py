@@ -96,14 +96,21 @@ def femShellPlateBendingMitc3_Static(cad:dfm2.Cad2D, mesher, mesh:dfm2.Mesh):
   pos1[:,:2] = mesh.np_pos
   pos1[:,2] = fem.disp[:,0]
   mesh1 = dfm2.Mesh(pos1,mesh.np_elm, dfm2.TRI)
-  dfm2.gl.glfw.winDraw3d([mesh1])
+  dfm2.gl.glfw.winDraw3d([mesh1],camera_rotation=[-1.2,0,0])
 
 
 def shell_mitc_eigen(mesh):
   fem = dfm2.FEM_ShellPlateBendingMITC3_Eigen()
   fem.updated_topology(mesh)
   fem.ls.f[:] = numpy.random.uniform(-1,1, (mesh.np_pos.shape[0],3) )
-  dfm2.gl.glfw.winDraw3d([fem,mesh])
+  for itr in range(60):
+    fem.solve()
+  pos1 = numpy.zeros((mesh.np_pos.shape[0],3))
+  pos1[:,:2] = mesh.np_pos
+  pos1[:,2] = fem.mode[:,0]*3.0
+  mesh1 = dfm2.Mesh(pos1,mesh.np_elm, dfm2.TRI)
+  dfm2.gl.glfw.winDraw3d([mesh1],camera_rotation=[-1.2,0,0])
+#  dfm2.gl.glfw.winDraw3d([fem,mesh])
 
 
 def fem_cloth():
@@ -211,8 +218,8 @@ def main():
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   msh2 = mesher.meshing(cad)
   femShellPlateBendingMitc3_Static(cad, mesher, msh2)
-#  shell_mitc_eigen(msh2)
-#  return
+  shell_mitc_eigen(msh2)
+  return
 
   msh25 = dfm2.Mesh()
   msh25.set_extrude(msh2,1)

@@ -5,7 +5,9 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import unittest, numpy, random, os, sys
+#import unittest,
+import pytest
+import numpy, random, os, sys
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
 
@@ -86,6 +88,7 @@ class Test_Cad2D(unittest.TestCase):
 
 
 class Test_MathExpression(unittest.TestCase):
+
   def test1(self):
     mee = dfm2.MathExpressionEvaluator()
     mee.set_key("x",3)
@@ -95,23 +98,30 @@ class Test_MathExpression(unittest.TestCase):
 
 
 class Test_Mesh(unittest.TestCase):
+  def __init__(self,str_method,is_gl=True):
+    super().__init__(str_method)
+    self.is_gl = is_gl
+
   def test1(self):
     msh = dfm2.Mesh()
     msh.read("../test_inputs/bunny_2k.ply")
     self.assertIsNot(msh,None)
-    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
+    if self.is_gl:
+      dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test2(self):
     msh = dfm2.Mesh()
     msh.read("../test_inputs/bunny_1k.obj")
     self.assertIsNot(msh,None)
-    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
+    if self.is_gl:
+      dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test3(self):
     msh = dfm2.Mesh()
     msh.set_grid((32,16))
     self.assertIsNot(msh,None)
-    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
+    if self.is_gl:
+      dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test4(self):
     voxelgrid = dfm2.VoxelGrid()
@@ -123,7 +133,8 @@ class Test_Mesh(unittest.TestCase):
     msh = msh.subdiv()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
-    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
+    if self.is_gl:
+      dfm2.gl.glfw.winDraw3d([msh],nframe=20)
 
   def test5(self):
     voxelgrid = dfm2.VoxelGrid()
@@ -133,7 +144,9 @@ class Test_Mesh(unittest.TestCase):
     msh = voxelgrid.mesh_hex()
     msh = msh.subdiv()
     self.assertIsNot(msh,None)
-    dfm2.gl.glfw.winDraw3d([msh],nframe=20)
+    if self.is_gl:
+      dfm2.gl.glfw.winDraw3d([msh],nframe=20)
+
 
 class Test_CppMeshDynTri3D(unittest.TestCase):
   def test0(self):

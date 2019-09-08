@@ -154,7 +154,9 @@ class QGLW_Mesh(QGLW_Nav3D):
       print("foo3")
 
   def paintGL(self):
+    print("bar0")
     super().paintGL()
+    print("bar1")
     if self.msh is None:
       return
     if self.buff_face is None:

@@ -110,4 +110,6 @@ setup(name='PyDelFEM2',
                     CMakeExtension('c_eigen','src_pybind/eigen','PyDelFEM2/eigen'),
                     ],  # location of *.so file, cmake file
       cmdclass=dict(build_ext=CMakeBuild),
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest'],
       )
