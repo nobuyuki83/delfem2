@@ -97,8 +97,8 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 {
   const int nDoF = nXYZ*3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
-  MassLumped_Tet(aMassLumpedSqrt.data(),
-                 1, aXYZ, nXYZ, aTet,nTet);
+  MassLumped_Tet3D(aMassLumpedSqrt.data(),
+                   1, aXYZ, nXYZ, aTet,nTet);
   
   for(int ip=0;ip<nXYZ;++ip){
     aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);

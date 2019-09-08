@@ -3,12 +3,10 @@
 # download & build submodules
 git submodule update --init --recursive
 
-cd tests/googletest
-mkdir buildMake
-cd buildMake
-cmake ..
+cd test_cpp/googletest
+cmake .
 make
-cd ../../..
+cd ../../
 
 cd src_cpp/external/glfw
 cmake .
@@ -19,13 +17,13 @@ cd ../../../
 ################################
 # test cpp
 
-cd tests
+cd test_cpp
 mkdir buildXcode
 cd buildXcode
 cmake -G Xcode ..
 cd ../../
 
-cd tests
+cd test_cpp
 mkdir buildMake
 cd buildMake
 cmake ..
