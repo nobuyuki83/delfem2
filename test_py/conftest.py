@@ -13,8 +13,6 @@ def pytest_addoption(parser):
         "--is_gl", action="store", default="true", help="my option: type1 or type2"
     )
 
-
-
 '''
 @pytest.fixture
 def cmdopt(request):

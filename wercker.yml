@@ -81,4 +81,4 @@ build:
         name: python unit test
         code: |
           pip3 install pytest
-          pytest -v -s --is-gl=false
+          pytest -v -s --is_gl=false -m "not qttest"
