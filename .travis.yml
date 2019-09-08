@@ -85,4 +85,4 @@ script: |
   pip3 install -e .  
 
   pip3 install pytest
-  pytest -v -s --is_gl=false -m "not qttest"
+  pytest -v -s --is_gl=false --ignore=test_py/test_pyqt.py
