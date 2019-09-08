@@ -449,7 +449,10 @@ class FEM_ShellPlateBendingMITC3():
 
 class FEM_ShellPlateBendingMITC3_Eigen():
   def __init__(self):
-    self.rho = 1.0
+    self.param_thickness = 0.05
+    self.param_rho = 1.0
+    self.param_myu = 100.0
+    self.param_lambda = 100.0
     self.mesh = None
 
   def updated_topology(self, mesh: Mesh):
@@ -466,13 +469,16 @@ class FEM_ShellPlateBendingMITC3_Eigen():
 
   def updated_geometry(self):
     cpp_mass_lumped(self.mass_lumped_sqrt_inv,
-                    self.rho, self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
+                    self.param_rho*self.param_thickness,
+                    self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
     self.mass_lumped_sqrt_inv = numpy.sqrt(self.mass_lumped_sqrt_inv)
     assert self.mesh.np_pos.shape[1] == 2
     self.ker = self.ker.reshape((3, -1, 3))
     self.ker[:, :, :] = 0.0
     self.ker[0, :, 0] = + self.mass_lumped_sqrt_inv[:]
+    self.ker[1, :, 0] = + self.mass_lumped_sqrt_inv * self.mesh.np_pos[:, 1]
     self.ker[1, :, 1] = + self.mass_lumped_sqrt_inv[:]
+    self.ker[2, :, 0] = - self.mass_lumped_sqrt_inv * self.mesh.np_pos[:, 0]
     self.ker[2, :, 2] = + self.mass_lumped_sqrt_inv[:]
     self.ker = self.ker.reshape((3, -1))
     for i in range(3):
@@ -484,7 +490,9 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ls.set_zero()
     self.mode[:] = 0.0
     fem_merge_ShellMitc3Static(self.ls.mat, self.ls.f,
-                               0.01, 1.0, 0.1, 0.0, 0.0,
+                               self.param_thickness,
+                               self.param_lambda, self.param_myu,
+                               self.param_rho, 0.0,
                                self.mesh.np_pos, self.mesh.np_elm,
                                self.mode)
     matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)

@@ -30,6 +30,7 @@ cmake-build-release
 .vscode
 .python-version
 .pytest_cache/
+.eggs
 delfem2.egg-info
 buildXcode
 buildMake
