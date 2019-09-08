@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import os, sys, unittest
+import pytest
+import os, sys
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout
 
@@ -15,7 +16,9 @@ os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 app = QApplication(sys.argv)
 
-class Test_OpenWindow(unittest.TestCase):
+
+@pytest.mark.qttest
+class Test_OpenWindow():
   class MyWindow(QWidget):
     def __init__(self):
       super().__init__()
@@ -32,7 +35,7 @@ class Test_OpenWindow(unittest.TestCase):
     gui.show()
     app.exec_()
 
-
+'''
 class Test_QGLW_Mesh(unittest.TestCase):
   class Window(QWidget):
     def __init__(self):
@@ -117,3 +120,5 @@ class Test_QGLW_CAD2D(unittest.TestCase):
     gui = self.QW_Cad2D()
     gui.show()
     app.exec_()
+
+'''    
