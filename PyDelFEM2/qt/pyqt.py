@@ -142,19 +142,26 @@ class QGLW_Mesh(QGLW_Nav3D):
   def __init__(self):
     super(QGLW_Mesh, self).__init__()
     self.msh = None
+    self.buff_face = None
 
   def initializeGL(self):
+    print("foo0")
     super().initializeGL()
-    self.buff_face = dfm2.GLBufferMesh(self.msh, is_normal=True)
+    print("foo1")
+    if not self.msh is None:
+      print("foo2")
+      self.buff_face = dfm2.gl.GLBufferMesh(self.msh, is_normal=True)
+      print("foo3")
 
   def paintGL(self):
     super().paintGL()
+    if self.msh is None:
+      return
     if self.buff_face is None:
       self.msh.draw()
     else:
       gl.glEnable(gl.GL_LIGHTING)
       self.buff_face.draw()
-
 
 
 class QGLW_Cad2D(QOpenGLWidget):

@@ -147,7 +147,7 @@ void PyMeshDynTri3D_Initialize
  const py::array_t<double>& po,
  const py::array_t<unsigned int>& tri)
 {
-  assert( AssertNumpyArray2D(po, -1, 2) );
+  assert( AssertNumpyArray2D(po, -1, -1) ); // 2d or 3d
   assert( AssertNumpyArray2D(tri, -1, 3) );
   mesh.Initialize(po.data(), po.shape()[0], po.shape()[1],
                   tri.data(), tri.shape()[0]);
@@ -294,12 +294,12 @@ void PyMassLumped
   assert( AssertNumpyArray2D(np_elm, -1, nNodeElem(elem_type)) );
   if( elem_type ==  MESHELEM_TET ){
     assert( AssertNumpyArray2D(np_pos, -1, 3) );
-    MassLumped_Tet((double*)(mass_lumped.request().ptr),
+    MassLumped_Tet3D((double*)(mass_lumped.request().ptr),
                    rho,
                    np_pos.data(), np_pos.shape()[0],
                    np_elm.data(), np_elm.shape()[0]);
   }
-  if( elem_type ==  MESHELEM_TRI ){
+  else if( elem_type ==  MESHELEM_TRI ){
     if( np_pos.shape()[1] == 2 ){
       assert( AssertNumpyArray2D(np_pos, -1, 2) );
       MassLumped_Tri2D((double*)(mass_lumped.request().ptr),
@@ -562,7 +562,7 @@ void init_mshtopoio(py::module &m){
   
   m.def("setTopology_ExtrudeTri2Tet", &PySetTopology_ExtrudeTri2Tet);
   
-  m.def("mass_lumped", &PyMassLumped);
+  m.def("cpp_mass_lumped", &PyMassLumped);
   
   // jarray
   m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);

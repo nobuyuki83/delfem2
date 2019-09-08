@@ -470,7 +470,7 @@ std::vector<double> Solve_PCG
 	double inv_sqnorm_res0;
 	{
 		const double sqnorm_res0 = DotX(r_vec,r_vec,ndof);
-    aResHistry.push_back(sqnorm_res0);
+    aResHistry.push_back(sqrt(sqnorm_res0));
 		if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
 		inv_sqnorm_res0 = 1.0 / sqnorm_res0;
 	}
@@ -495,8 +495,8 @@ std::vector<double> Solve_PCG
     }
 		{	// Converge Judgement
 			double sqnorm_res = DotX(r_vec,r_vec,ndof);
+      aResHistry.push_back(sqrt(sqnorm_res));
       double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
-      aResHistry.push_back(conv_ratio);
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
 		}
 		{	// calc beta

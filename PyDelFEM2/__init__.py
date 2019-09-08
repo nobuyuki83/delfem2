@@ -23,6 +23,8 @@ from .fem import \
   FEM_SolidLinearStatic, \
   FEM_SolidLinearDynamic, \
   FEM_SolidLinearEigen, \
+  FEM_ShellPlateBendingMITC3, \
+  FEM_ShellPlateBendingMITC3_Eigen,\
   FEM_StorksStatic2D, \
   FEM_StorksDynamic2D, \
   FEM_NavierStorks2D

@@ -70,15 +70,6 @@ class WindowGLFW:
   """
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
     self.is_valid = True
-    print("hoge1")
-    print(getOpenglInfo())
-    print("hoge2")
-    try:
-      glew_init()
-    except:
-      print("glew init failure")
-    print("hoge3")
-
     try:
       glfw.init()
     except:

@@ -20,7 +20,8 @@ from .c_core import \
   fem_merge_linearSolidDynamic, \
   fem_merge_storksStatic2D, \
   fem_merge_storksDynamic2D, \
-  fem_merge_navierStorks2D
+  fem_merge_navierStorks2D, \
+  fem_merge_ShellMitc3Static
 from .c_core import \
   pbd_proj_rigid2d, \
   pbd_proj_rigid3d, \
@@ -37,7 +38,7 @@ from .c_core import \
 from .c_core import matrixSquareSparse_setFixBC
 from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
 from .c_core import map_value
-from .c_core import MathExpressionEvaluator, mass_lumped
+from .c_core import MathExpressionEvaluator, cpp_mass_lumped
 from .c_core import CppSDF3
 
 from .cadmsh import Mesh, MeshDynTri2D
@@ -222,7 +223,8 @@ class FEM_Diffuse():
     self.value[:] = 0.0
     self.velocity[:] = 0.0
 
-
+############################################################
+## FEM solid from here
 class FEM_SolidLinearStatic():
   def __init__(self):
     self.param_gravity_x = +0.0
@@ -274,8 +276,8 @@ class FEM_SolidLinearEigen():
     self.updated_geometry()
 
   def updated_geometry(self):
-    mass_lumped(self.mass_lumped_sqrt_inv,
-                self.rho, self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
+    cpp_mass_lumped(self.mass_lumped_sqrt_inv,
+                    self.rho, self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
     self.mass_lumped_sqrt_inv = numpy.sqrt(self.mass_lumped_sqrt_inv)
     if self.mesh.np_pos.shape[1] == 3:
       self.ker = self.ker.reshape((6,-1,3))
@@ -365,6 +367,7 @@ class FEM_SolidLinearEigen():
   def initialize(self):
     self.ls.f[:] = numpy.random.uniform(-1, 1, self.mesh.np_pos.shape)
 
+
 class FEM_SolidLinearDynamic():
   def __init__(self):
     self.mesh = None
@@ -405,6 +408,113 @@ class FEM_SolidLinearDynamic():
 
   def step_time(self):
     self.solve()
+
+
+#############################################
+## shell from here
+
+class FEM_ShellPlateBendingMITC3():
+  def __init__(self):
+    self.mesh = None
+    self.param_gravity_z = 0.001
+    self.param_thickness = 0.05
+    self.param_rho = 1.0
+    self.param_myu = 100.0
+    self.param_lambda = 100.0
+
+  def updated_topology(self, mesh: Mesh):
+    assert mesh.np_pos.shape[1] == 2
+    self.mesh = mesh
+    np = self.mesh.np_pos.shape[0]
+    ndimval = 3
+    self.disp = numpy.zeros((np,ndimval),dtype=numpy.float64)
+    self.ls = FEM_LinSys(np, ndimval)
+    self.ls.set_pattern(self.mesh.psup())
+
+  def solve(self):
+    self.ls.set_zero()
+    fem_merge_ShellMitc3Static(self.ls.mat, self.ls.f,
+                               self.param_thickness, self.param_lambda, self.param_myu,
+                               self.param_rho, self.param_gravity_z,
+                               self.mesh.np_pos, self.mesh.np_elm,
+                               self.disp)
+    self.ls.set_bc_ms()
+    self.ls.set_precond()
+    self.ls.solve_iteration()
+    self.disp += self.ls.x
+
+  def initialize(self):
+    self.disp[:] = 0.0
+
+
+class FEM_ShellPlateBendingMITC3_Eigen():
+  def __init__(self):
+    self.rho = 1.0
+    self.mesh = None
+
+  def updated_topology(self, mesh: Mesh):
+    self.mesh = mesh
+    np = self.mesh.np_pos.shape[0]
+    ndimval = 3
+    self.mode = numpy.zeros((np, ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ker = numpy.zeros((3, np, ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.mass_lumped_sqrt_inv = numpy.zeros((np,), dtype=numpy.float64)
+    self.ls = FEM_LinSys(np, ndimval)
+    if self.ls.mat is None:
+      self.ls.set_pattern(self.mesh.psup())
+    self.updated_geometry()
+
+  def updated_geometry(self):
+    cpp_mass_lumped(self.mass_lumped_sqrt_inv,
+                    self.rho, self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
+    self.mass_lumped_sqrt_inv = numpy.sqrt(self.mass_lumped_sqrt_inv)
+    assert self.mesh.np_pos.shape[1] == 2
+    self.ker = self.ker.reshape((3, -1, 3))
+    self.ker[:, :, :] = 0.0
+    self.ker[0, :, 0] = + self.mass_lumped_sqrt_inv[:]
+    self.ker[1, :, 1] = + self.mass_lumped_sqrt_inv[:]
+    self.ker[2, :, 2] = + self.mass_lumped_sqrt_inv[:]
+    self.ker = self.ker.reshape((3, -1))
+    for i in range(3):
+      self.ker[i] /= numpy.linalg.norm(self.ker[i])
+      for j in range(i + 1, 3):
+        self.ker[j] -= numpy.dot(self.ker[i], self.ker[j]) * self.ker[i]
+    self.ker = self.ker.reshape((3, -1, 3))
+    self.mass_lumped_sqrt_inv = numpy.reciprocal(self.mass_lumped_sqrt_inv)
+    self.ls.set_zero()
+    self.mode[:] = 0.0
+    fem_merge_ShellMitc3Static(self.ls.mat, self.ls.f,
+                               0.01, 1.0, 0.1, 0.0, 0.0,
+                               self.mesh.np_pos, self.mesh.np_elm,
+                               self.mode)
+    matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
+    self.ls.mat.add_dia(1.0)
+    ####
+    self.ls.set_precond()
+
+  def solve(self):
+    self.mode[:] = self.ls.f
+    self.ls.x[:] = 0.0
+    self.ls.solve_iteration()
+    ####
+    x = self.ls.x.reshape((-1))
+    self.ker = self.ker.reshape((3, -1))
+    x -= numpy.dot(x, self.ker[0]) * self.ker[0]
+    x -= numpy.dot(x, self.ker[1]) * self.ker[1]
+    x -= numpy.dot(x, self.ker[2]) * self.ker[2]
+    x /= numpy.linalg.norm(x)
+    self.ker = self.ker.reshape((3, -1, 3))
+    self.ls.f[:] = self.ls.x
+    ####
+    self.mode[:, 0] = self.mass_lumped_sqrt_inv * self.ls.x[:, 0] * 0.03
+    self.mode[:, 1] = self.mass_lumped_sqrt_inv * self.ls.x[:, 1] * 0.03
+    self.mode[:, 2] = self.mass_lumped_sqrt_inv * self.ls.x[:, 2] * 0.03
+
+  def step_time(self):
+    self.solve()
+
+  def initialize(self):
+    self.ls.f[:] = numpy.random.uniform(-1, 1, self.mesh.np_pos.shape)
 
 
 class FEM_Cloth():
@@ -561,6 +671,7 @@ class FEM_NavierStorks2D():
   def step_time(self):
     self.solve()
 
+###########################################################################
 
 class PBD():
   def __init__(self):

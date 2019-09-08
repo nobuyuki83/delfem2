@@ -334,6 +334,22 @@ void PyMergeLinSys_NavierStorks2D
                              aVal.data(), aVelo.data());
 }
 
+void PyMergeLinSys_ShellMitc3Static
+(CMatrixSparse<double>& mss,
+ py::array_t<double>& vec_b,
+ double thickness, double lambda, double myu, double rho, double g_z,
+ const py::array_t<double>& aXY,
+ const py::array_t<unsigned int>& aTri,
+ const py::array_t<double>& aDisp)
+{
+  auto buff_vecb = vec_b.request();
+  MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mss,(double*)buff_vecb.ptr,
+                                                     thickness, lambda, myu, rho, g_z,
+                                                     aXY.data(), aXY.shape()[0],
+                                                     aTri.data(), aTri.shape()[0],
+                                                     aDisp.data());
+}
+
 double PyMergeLinSys_Cloth
 (CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
@@ -616,6 +632,7 @@ void init_fem(py::module &m){
   m.def("fem_merge_cloth",             &PyMergeLinSys_Cloth);
   m.def("fem_merge_massPoint",         &PyMergeLinSys_MassPoint);
   m.def("fem_merge_contact",           &PyMergeLinSys_Contact);
+  m.def("fem_merge_ShellMitc3Static",  &PyMergeLinSys_ShellMitc3Static);
   
   m.def("pbd_proj_rigid2d",            &PyPBD_ConstProj_Rigid2D);
   m.def("pbd_proj_rigid3d",            &PyConstProj_Rigid3D);
