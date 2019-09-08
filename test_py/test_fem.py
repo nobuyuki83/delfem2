@@ -5,13 +5,13 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import unittest, numpy, random
+import numpy, random, pytest
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
 import PyDelFEM2.gl._gl
 
-class Test_PBD(unittest.TestCase):
-  def test_pbd_tri(self):
+class Test_PBD():
+  def test_pbd_tri(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
@@ -23,9 +23,10 @@ class Test_PBD(unittest.TestCase):
     fvs = dfm2.FieldValueSetter("0.3*sin(2*t)", pbd.vec_val, 0,
                                 mesh=mesh, npIdP=npIdP, dt=pbd.dt)
     mesh_def = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=mesh.np_elm)
-    dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh_def],nframe=100)
+    if request.config.getoption('--is_gl') == "true":                  
+      dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh_def],nframe=100)
 
-  def test_pbd_hex(self):
+  def test_pbd_hex(self,request):
     voxelgrid = dfm2.VoxelGrid()
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
@@ -40,11 +41,12 @@ class Test_PBD(unittest.TestCase):
                                 mesh=msh, npIdP=npIdP, dt=pbd.dt)
     ##
     mesh_def = dfm2.Mesh(np_pos=pbd.vec_val, np_elm=msh.np_elm, elem_type=dfm2.HEX)
-    dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh_def],
-                           nframe=100, camera_rotation=[0.1, 0.2, 0.0])
+    if request.config.getoption('--is_gl') == "true":                      
+      dfm2.gl.glfw.winDraw3d([fvs,pbd,mesh_def],
+                             nframe=100, camera_rotation=[0.1, 0.2, 0.0])
 
-class Test_FEMPoission2D(unittest.TestCase):
-  def test1(self):
+class Test_FEMPoission2D():
+  def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
@@ -56,11 +58,12 @@ class Test_FEMPoission2D(unittest.TestCase):
     fem.solve()
     ##
     field = dfm2.gl.VisFEM_ColorContour(fem, "value")
-    dfm2.gl.glfw.winDraw3d([field],nframe=10)
+    if request.config.getoption('--is_gl') == "true":                  
+      dfm2.gl.glfw.winDraw3d([field],nframe=10)
 
 
-class Test_FEMPoission3D(unittest.TestCase):
-  def test1(self):
+class Test_FEMPoission3D():
+  def test1(self,request):
     sdf0 = dfm2.CppSDF3_Sphere(0.55, [-0.5, 0, 0], True)
     sdf1 = dfm2.CppSDF3_Sphere(0.55, [+0.5, 0, 0], True)
     np_xyz, np_tet = dfm2.isosurface([sdf0,sdf1])
@@ -78,11 +81,12 @@ class Test_FEMPoission3D(unittest.TestCase):
     ##
     field = dfm2.gl.VisFEM_ColorContour(fem, "value")
     field.set_color_minmax()
-    dfm2.gl.glfw.winDraw3d([field],nframe=10)
+    if request.config.getoption('--is_gl') == "true":                  
+      dfm2.gl.glfw.winDraw3d([field],nframe=10)
 
 
-class Test_FEMDiffuse2D(unittest.TestCase):
-  def test1(self):
+class Test_FEMDiffuse2D():
+  def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
@@ -95,11 +99,12 @@ class Test_FEMDiffuse2D(unittest.TestCase):
     field = dfm2.gl.VisFEM_ColorContour(fem, "value")
     field.color_min = 0.0
     field.color_max = 1.0
-    dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
+    if request.config.getoption('--is_gl') == "true":                  
+      dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
 
 
-class Test_FemDiffuse3D(unittest.TestCase):
-  def test1(self):
+class Test_FemDiffuse3D():
+  def test1(self,request):
     sdf0 = dfm2.CppSDF3_Sphere(0.55, [-0.5, 0, 0], True)
     sdf1 = dfm2.CppSDF3_Sphere(0.55, [+0.5, 0, 0], True)
     np_xyz, np_tet = dfm2.isosurface([sdf0,sdf1])
@@ -117,11 +122,12 @@ class Test_FemDiffuse3D(unittest.TestCase):
     field = dfm2.gl.VisFEM_ColorContour(fem, "value")
     field.color_min = 0.0
     field.color_max = 1.0
-    dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
+    if request.config.getoption('--is_gl') == "true":                      
+      dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
 
 
-class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
-  def test1(self):
+class Test_FEMSolidLLinearStatic2D():
+  def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D(edge_length=0.1)
@@ -134,11 +140,12 @@ class Test_FEMSolidLLinearStatic2D(unittest.TestCase):
     fem.solve()
     ##
     field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="vec_val")
-    dfm2.gl.glfw.winDraw3d([field],nframe=10)
+    if request.config.getoption('--is_gl') == "true":                      
+      dfm2.gl.glfw.winDraw3d([field],nframe=10)
 
 
-class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
-  def test1(self):
+class Test_FEMSolidLLinearDynamic2D():
+  def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
@@ -150,11 +157,12 @@ class Test_FEMSolidLLinearDynamic2D(unittest.TestCase):
     fem.ls.bc[npIdP, :] = 1
     ##
     field = dfm2.gl.VisFEM_ColorContour(fem,name_disp="vec_val")
-    dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
+    if request.config.getoption('--is_gl') == "true":                  
+      dfm2.gl.glfw.winDraw3d([fem,field],nframe=100)
 
 
-class Test_FEMSorkes2D(unittest.TestCase):
-  def test1(self):
+class Test_FEMSorkes2D():
+  def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
@@ -170,11 +178,12 @@ class Test_FEMSorkes2D(unittest.TestCase):
     field_p.set_color_minmax()
     field_v = dfm2.gl.VisFEM_Hedgehog(fem, name_vector="vec_val")
     axis = dfm2.gl.AxisXYZ(1.0)
-    dfm2.gl.glfw.winDraw3d([field_p, field_v, axis],nframe=10)
+    if request.config.getoption('--is_gl') == "true":                      
+      dfm2.gl.glfw.winDraw3d([field_p, field_v, axis],nframe=10)
 
 
-class Test_FEMCloth(unittest.TestCase):
-  def test1(self):
+class Test_FEMCloth():
+  def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
     
@@ -187,5 +196,6 @@ class Test_FEMCloth(unittest.TestCase):
     ####
     mesh2 = dfm2.Mesh(np_pos=fem.vec_val, np_elm=msh.np_elm)
     axis = dfm2.gl.AxisXYZ(1.0)
-    dfm2.gl.glfw.winDraw3d([fem, mesh2, axis],nframe=100)
+    if request.config.getoption('--is_gl') == "true":                  
+      dfm2.gl.glfw.winDraw3d([fem, mesh2, axis],nframe=100)
 

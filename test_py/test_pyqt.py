@@ -16,6 +16,8 @@ import PyDelFEM2.qt
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 app = QApplication(sys.argv)
+timer = QTimer()
+timer.timeout.connect(lambda: app.closeAllWindows())
 
 class Test_OpenWindow():
   class MyWindow(QWidget):
@@ -24,18 +26,15 @@ class Test_OpenWindow():
       self.setWindowTitle("simple window test")
       self.setGeometry(0, 0, 500, 400)
 
-  timer = QTimer()
-  timer.timeout.connect(lambda: app.closeAllWindows())
-
   def test0(self):
-    global app
-    self.timer.start(1000) # 1 sec
+    global app, timer
+    timer.start(1000) # 1 sec
     gui = self.MyWindow()
     gui.show()
     app.exec_()
 
-'''
-class Test_QGLW_Mesh(unittest.TestCase):
+
+class Test_QGLW_Mesh():
   class Window(QWidget):
     def __init__(self):
       super().__init__()
@@ -49,42 +48,32 @@ class Test_QGLW_Mesh(unittest.TestCase):
       self.setLayout(mainLayout)
       self.setWindowTitle("CAD")
 
-  timer = QTimer()
-  timer.timeout.connect(lambda: app.closeAllWindows())
-
   def test0(self):
-    global app
+    global app, timer
+    timer.start(1000) # 1 sec    
     gui = dfm2.qt.QGLW_Mesh()
     gui.show()
-    self.timer.start(1000) # 1 sec
     app.exec_()
 
   def test1(self):
-    global appn
-    print("hoge0")
-    gui = dfm2.qt.QGLW_Mesh()
-    print("hoge1")
+    global app, timer
+    gui = dfm2.qt.QGLW_Mesh()    
     gui.msh = dfm2.Mesh()
-    print("hoge2")
     gui.msh.read("../test_inputs/bunny_2k.ply")
-    print("hoge3")
-    gui.msh.scale_xyz(0.03)
-    print("hoge4")
-    gui.show()
-    print("hoge5")
-    self.timer.start(1000) # 1 sec
-    print("hoge6")
+    gui.msh.scale_xyz(0.03)    
+    timer.start(1000) # 1 sec    
+    gui.show() # segment fault here
     app.exec_()
 
   def test2(self):
-    global app
+    global app, timer
     gui = self.Window()
+    timer.start(1000) # 1 sec        
     gui.show()
-    self.timer.start(1000) # 1 sec
     app.exec_()
 
 
-class Test_QGLW_CAD2D(unittest.TestCase):
+class Test_QGLW_CAD2D():
   class QW_Cad2D(QWidget):
     def __init__(self):
       super().__init__()
@@ -101,23 +90,18 @@ class Test_QGLW_CAD2D(unittest.TestCase):
 
       self.setWindowTitle("CAD")
 
-  timer = QTimer()
-  timer.timeout.connect(lambda: app.closeAllWindows())
-
   def test0(self):
-    global app
-    self.timer.start(1000) # 1 sec
+    global app, timer
     gui = dfm2.qt.QGLW_Cad2D()
     gui.cadobj = dfm2.Cad2D()
     gui.cadobj.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    timer.start(1000) # 1 sec             
     gui.show()
     app.exec_()
 
   def test1(self):
     global app
-    self.timer.start(1000) # 1 sec
     gui = self.QW_Cad2D()
+    timer.start(1000) # 1 sec                
     gui.show()
     app.exec_()
-
-'''    

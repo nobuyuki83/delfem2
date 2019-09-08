@@ -10,9 +10,9 @@
 [submodule "src_pybind/pybind11"]
 	path = src_pybind/pybind11
 	url = https://github.com/pybind/pybind11.git
-[submodule "tests/googletest"]
-	path = tests/googletest
-	url = https://github.com/google/googletest.git
 [submodule "src_cpp/external/tinygltf"]
 	path = src_cpp/external/tinygltf
 	url = https://github.com/syoyo/tinygltf.git
+[submodule "test_cpp/googletest"]
+	path = test_cpp/googletest
+	url = https://github.com/google/googletest.git

@@ -35,12 +35,12 @@ script: |
   make
   cd ../../../
 
-  cd tests/googletest
+  cd test_cpp/googletest
   cmake .
   make
   cd ../../
 
-  cd tests
+  cd test_cpp
   mkdir buildMake
   cd buildMake
   cmake ..

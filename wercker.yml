@@ -29,13 +29,13 @@ build:
     - script:
         name: compile gtest
         code: |
-          cd tests/googletest
+          cd test_cpp/googletest
           cmake .
           make 
     - script:
-        name: test
+        name: test_cpp
         code: |
-          cd tests
+          cd test_cpp
           mkdir buildMake
           cd buildMake
           cmake ..
