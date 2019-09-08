@@ -12,12 +12,11 @@ from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout
 
 import PyDelFEM2 as dfm2
 import PyDelFEM2.qt
+
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 app = QApplication(sys.argv)
 
-
-@pytest.mark.qttest
 class Test_OpenWindow():
   class MyWindow(QWidget):
     def __init__(self):
