@@ -5,10 +5,14 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import pytest
 import os, sys
+import pytest
+from time import sleep
+
+from PySide2.QtCore import Qt, QPointF, QEvent
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PySide2.QtGui import QMouseEvent
 
 import PyDelFEM2 as dfm2
 import PyDelFEM2.qt
@@ -16,92 +20,84 @@ import PyDelFEM2.qt
 os.chdir(os.path.dirname(os.path.abspath(__file__))) # for python3 setup.py test
 
 app = QApplication(sys.argv)
-timer = QTimer()
-timer.timeout.connect(lambda: app.closeAllWindows())
 
-class Test_OpenWindow():
+def test_OpenWindow():
   class MyWindow(QWidget):
     def __init__(self):
       super().__init__()
       self.setWindowTitle("simple window test")
       self.setGeometry(0, 0, 500, 400)
 
-  def test0(self):
-    global app, timer
-    timer.start(1000) # 1 sec
-    gui = self.MyWindow()
-    gui.show()
-    app.exec_()
+  gui = MyWindow()
+  icnt = 0
+  def events():
+    nonlocal icnt, gui
+    icnt = icnt+1
+    if icnt >= 30:
+      gui.close()
+
+  timer = QTimer()
+  timer.setInterval(30)
+  timer.timeout.connect(events)
+  timer.start()
+  gui.show()
+  app.exec_() #event loop
 
 
-class Test_QGLW_Mesh():
-  class Window(QWidget):
-    def __init__(self):
-      super().__init__()
-      self.msh = dfm2.Mesh()
-      self.msh.read("../test_inputs/bunny_2k.ply");
-      self.msh.scale_xyz(0.03)
-      self.glWidget = dfm2.qt.QGLW_Mesh()
-      self.glWidget.msh = self.msh
-      mainLayout = QVBoxLayout()
-      mainLayout.addWidget(self.glWidget)
-      self.setLayout(mainLayout)
-      self.setWindowTitle("CAD")
+def test_QGLWMesh():
+  gui = dfm2.qt.QGLW_Mesh()
+  icnt = 0
 
-  def test0(self):
-    global app, timer
-    timer.start(1000) # 1 sec    
-    gui = dfm2.qt.QGLW_Mesh()
-    gui.show()
-    app.exec_()
+  def events():
+    nonlocal icnt, gui
+    icnt = icnt+1
+    if icnt == 10:
+      gui.msh = dfm2.Mesh()
+      gui.msh.read("../test_inputs/bunny_2k.ply")
+      gui.msh.scale_xyz(0.03)
+    if icnt == 20:
+      gui.make_buffer()
+      event = QMouseEvent(QEvent.MouseButtonPress, QPointF(200.0,200.0), Qt.LeftButton, Qt.NoButton, Qt.ShiftModifier)
+      gui.mousePressEvent(event)
+    if icnt > 20 and icnt < 30:
+      event = QMouseEvent(QEvent.MouseMove, QPointF(200.0+(icnt-20)*5,200.0), Qt.LeftButton, Qt.NoButton, Qt.NoModifier)
+      gui.mouseMoveEvent(event)
+    if icnt >= 30:
+      gui.close()
+    gui.update()
 
-  def test1(self):
-    global app, timer
-    gui = dfm2.qt.QGLW_Mesh()    
-    gui.msh = dfm2.Mesh()
-    gui.msh.read("../test_inputs/bunny_2k.ply")
-    gui.msh.scale_xyz(0.03)    
-    timer.start(1000) # 1 sec    
-    gui.show() # segment fault here
-    app.exec_()
-
-  def test2(self):
-    global app, timer
-    gui = self.Window()
-    timer.start(1000) # 1 sec        
-    gui.show()
-    app.exec_()
+  gui.show()
+  timer = QTimer()
+  timer.setInterval(30)
+  timer.timeout.connect(events)
+  timer.start() # 1 sec
+  app.exec_() # event loop
 
 
-class Test_QGLW_CAD2D():
-  class QW_Cad2D(QWidget):
-    def __init__(self):
-      super().__init__()
 
-      self.cad = dfm2.Cad2D()
-      self.cad.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+def test_QGLW_Cad2D():
+  gui = dfm2.qt.QGLW_Cad2D()
+  icnt = 0
 
-      self.glWidget = dfm2.qt.QGLW_Cad2D()
-      self.glWidget.cadobj = self.cad
+  def events():
+    nonlocal icnt, gui
+    if icnt == 10:
+      gui.cadobj = dfm2.Cad2D()
+      gui.cadobj.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
+    if icnt == 20:
+      gui.cadobj.pick(-1,+1, view_height=2)
+      assert gui.cadobj.ivtx_picked() == 3
+    if icnt > 20 and icnt < 30:
+      gui.cadobj.motion([-1,+1,0],
+                        [-1 - (icnt - 20) * 0.02, +1, 0], [0, 0, 1])
+    if icnt == 30:
+      gui.close()
+    icnt += 1
+    gui.update()
 
-      mainLayout = QVBoxLayout()
-      mainLayout.addWidget(self.glWidget)
-      self.setLayout(mainLayout)
-
-      self.setWindowTitle("CAD")
-
-  def test0(self):
-    global app, timer
-    gui = dfm2.qt.QGLW_Cad2D()
-    gui.cadobj = dfm2.Cad2D()
-    gui.cadobj.add_polygon([-1, -1, +1, -1, +1, +1, -1, +1])
-    timer.start(1000) # 1 sec             
-    gui.show()
-    app.exec_()
-
-  def test1(self):
-    global app
-    gui = self.QW_Cad2D()
-    timer.start(1000) # 1 sec                
-    gui.show()
-    app.exec_()
+  gui.show()
+  timer = QTimer()
+  timer.setInterval(50)
+  timer.timeout.connect(events)
+  timer.start() # 1 sec
+  app.exec_() # loop

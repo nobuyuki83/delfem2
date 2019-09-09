@@ -145,18 +145,11 @@ class QGLW_Mesh(QGLW_Nav3D):
     self.buff_face = None
 
   def initializeGL(self):
-    print("foo0")
     super().initializeGL()
-    print("foo1")
-    if not self.msh is None:
-      print("foo2")
-      self.buff_face = dfm2.gl.GLBufferMesh(self.msh, is_normal=True)
-      print("foo3")
+    self.make_buffer()
 
   def paintGL(self):
-    print("bar0")
     super().paintGL()
-    print("bar1")
     if self.msh is None:
       return
     if self.buff_face is None:
@@ -164,6 +157,10 @@ class QGLW_Mesh(QGLW_Nav3D):
     else:
       gl.glEnable(gl.GL_LIGHTING)
       self.buff_face.draw()
+
+  def make_buffer(self):
+    if not self.msh is None:
+      self.buff_face = dfm2.gl.GLBufferMesh(self.msh, is_normal=True)
 
 
 class QGLW_Cad2D(QOpenGLWidget):
@@ -179,10 +176,9 @@ class QGLW_Cad2D(QOpenGLWidget):
     return QSize(300, 300)
 
   def sizeHint(self):
-    return QSize(2000, 2000)
+    return QSize(600, 600)
 
   def initializeGL(self):
-    print(dfm2.gl.getOpenglInfo())
     gl.glClearColor(0.8, 0.8, 1.0, 1.0)
     gl.glEnable(gl.GL_DEPTH_TEST)
     gl.glEnable(gl.GL_CULL_FACE)
@@ -193,7 +189,8 @@ class QGLW_Cad2D(QOpenGLWidget):
   def paintGL(self):
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
     self.nav.camera.set_gl_camera()
-    self.cadobj.draw()
+    if self.cadobj is not None:
+      self.cadobj.draw()
 
   def resizeGL(self, width, height):
     gl.glViewport(0,0,width,height)
@@ -374,7 +371,6 @@ class QW_MeshRes(QWidget):
     self.vl.addLayout(self.hl)
     self.vl.addWidget(self.vs, alignment=Qt.AlignLeft)
     self.setLayout(self.vl)
-
 
   def slider_moved(self):
     self.vs.lbl1b.setText(str(self.vs.sp1.value()))
