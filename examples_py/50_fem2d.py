@@ -219,13 +219,11 @@ def main():
   msh2 = mesher.meshing(cad)
   femShellPlateBendingMitc3_Static(cad, mesher, msh2)
   shell_mitc_eigen(msh2)
-  return
+#  return
 
   msh25 = dfm2.Mesh()
   msh25.set_extrude(msh2,1)
   msh25.np_pos[:,2] *= 0.05
-
-
   femSolidLinear_Eigen(msh25)
 
   cad = dfm2.Cad2D()
