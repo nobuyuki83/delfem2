@@ -135,7 +135,7 @@ CVector2 rotate90(const CVector2& p0);
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 
-CVector2 matVec(const double A[4], const CVector2& v);
+CVector2 Mat2Vec(const double A[4], const CVector2& v);
 
 //! Area of the Triangle
 double TriArea(const CVector2& v1,
@@ -209,7 +209,16 @@ CVector2 pointCurve_BezierCubic
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-//! Area of the Triangle (3 indexes and vertex array)
+/**
+ * @brief translate all the points
+ */
+void Translate(std::vector<CVector2>& aP,
+               double dx, double dy);
+
+void Rotate(std::vector<CVector2>& aP,
+            double dt);
+
+//! @brief Area of the Triangle (3 indexes and vertex array)
 double TriArea(const int iv1, const int iv2, const int iv3,
                const std::vector<CVector2>& point );
 
@@ -217,10 +226,10 @@ void Polyline_CubicBezierCurve(std::vector<CVector2>& aP,
                                const int n,
                                const std::vector<CVector2>& aCP);
 
-void Polyline_BezierCubic
-(std::vector<CVector2>& aP,
- const unsigned int n,
- const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
+void Polyline_BezierCubic(std::vector<CVector2>& aP,
+                          const unsigned int n,
+                          const CVector2& p1, const CVector2& p2,
+                          const CVector2& p3, const CVector2& p4);
 
 
 std::vector<CVector2> Polygon_Resample_Polygon(const std::vector<CVector2>& stroke0,
@@ -232,6 +241,7 @@ void SecondMomentOfArea_Polygon(CVector2& cg,  double& area,
                                CVector2& pa2, double& I2,
                               const std::vector<CVector2>& aVec2D);
 double Length_Polygon(const std::vector<CVector2>& aP);
+double Area_Polygon(const std::vector<CVector2>& aP);
 
 void MeanValueCoordinate2D(double* aW,
                            double px, double py,
@@ -246,10 +256,30 @@ void makeRandomLoop(unsigned int nCV,
 void makeSplineLoop(const std::vector<double>& aCV,
                     std::vector<double>& aVecCurve);
 
-void Translate(std::vector<CVector2>& aP,
-               double dx, double dy);
-void Rotate(std::vector<CVector2>& aP,
-            double dt);
+void FixLoopOrientation(std::vector<int>& loopIP,
+                        const std::vector<int>& loopIP_ind,
+                        const std::vector<CVector2>& aXY);
+
+std::vector<CVector2> Polygon_Invert(const std::vector<CVector2>& aP);
+
+std::vector<double> XY_Polygon(const std::vector<CVector2>& aP);
+
+void ResamplingLoop(std::vector<int>& loopIP1_ind,
+                    std::vector<int>& loopIP1,
+                    std::vector<CVector2>& aXY,
+                    double max_edge_length);
+
+void JArray_FromVecVec_XY(std::vector<int>& aIndXYs,
+                          std::vector<int>& loopIP0,
+                          std::vector<CVector2>& aXY,
+                          const std::vector< std::vector<double> >& aaXY);
+
+void MakeMassMatrixTri(double M[9],
+                       double rho,
+                       const unsigned int aIP[3],
+                       const std::vector<CVector2>& aVec2);
+
+
   
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -259,22 +289,22 @@ class CBoundingBox2D
 {
 public:
   CBoundingBox2D(){
-    x_min=0;	x_max=0;
+    x_min=1;	x_max=-1;
     y_min=0;	y_max=0;
-    isnt_empty = false;
   }
   CBoundingBox2D(double x_min0,double x_max0,  double y_min0,double y_max0)
   : x_min(x_min0),x_max(x_max0),  y_min(y_min0),y_max(y_max0)
-  {
-    assert( x_min <= x_max );
-    assert( y_min <= y_max );
-    isnt_empty = true;
-  }
+  {}
   CBoundingBox2D( const CBoundingBox2D& bb )
-  : x_min(bb.x_min),x_max(bb.x_max), y_min(bb.y_min),y_max(bb.y_max),
-  isnt_empty(bb.isnt_empty){}
+  : x_min(bb.x_min),x_max(bb.x_max), y_min(bb.y_min),y_max(bb.y_max) {}
   //////
+  bool isActive() const { return x_min <= x_max; }
   void Add(double x0, double y0){
+    if( !isActive() ){
+      x_min = x_max = x0;
+      y_min = y_max = y0;
+      return;
+    }
     x_max = ( x_max > x0 ) ? x_max : x0;
     x_min = ( x_min < x0 ) ? x_min : x0;
     y_max = ( y_max > y0 ) ? y_max : y0;
@@ -282,11 +312,10 @@ public:
   }
   CBoundingBox2D& operator+=(const CBoundingBox2D& bb)
   {
-    if( !bb.isnt_empty ) return *this;
-    if( !isnt_empty ){
+    if( !bb.isActive() ){ return *this; }
+    if( !isActive() ){
       x_max = bb.x_max;	x_min = bb.x_min;
       y_max = bb.y_max;	y_min = bb.y_min;
-      this->isnt_empty = bb.isnt_empty;
       return *this;
     }
     x_max = ( x_max > bb.x_max ) ? x_max : bb.x_max;
@@ -297,14 +326,14 @@ public:
   }
   bool IsInside(const CVector2& vec)
   {
-    if( !isnt_empty ) return false;
+    if( !isActive() ) return false;
     if(   vec.x >= x_min && vec.x <= x_max
        && vec.y >= y_min && vec.y <= y_max ) return true;
     return false;
   }
   bool IsIntersectSphere(const CVector2& vec, const double radius ) const
   {
-    if( !isnt_empty ) return false;
+    if( !isActive() ) return false;
     if( vec.x < x_min-radius || vec.x > x_max+radius ||
        vec.y < y_min-radius || vec.y > y_max+radius ) return false;
     return true;
@@ -317,7 +346,6 @@ public:
   }
 public:
   double x_min,x_max,  y_min,y_max;
-  bool isnt_empty;	//!< false if there is nothing inside
 };
 
 #endif // VECTOR_2D_H

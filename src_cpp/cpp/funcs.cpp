@@ -32,7 +32,20 @@ static double myStod(const std::string& str){
   return d;
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool isAlphabet(char c){
+  if ( c >= 65 && c <= 90  ){ return true; }
+  if(  c >= 97 && c <= 122 ){ return true; }
+  return false;
+}
+
+bool isNumber(char c){
+  if( c >= 46 && c <= 57 ){ return true; }
+  return false;
+}
 
 void Split
 (std::vector<std::string>& aToken,
@@ -57,8 +70,31 @@ std::vector<std::string> Split
   return aToken;
 }
 
-// "(a,b),c,(d,e)" - > "(a,b)", "c", "(d,e)"
 std::vector<std::string> Split
+(const std::string& str,
+ const std::string& del)
+{
+  std::vector<std::string> aToken;
+  int imark = 0;
+  bool is_del0 = false;
+  for(int i=0;i<str.size();++i){
+    bool is_del1 = false;
+    for(int j=0;j<del.size();++j){
+      if( str[i] == del[j] ){ is_del1 = true; break; }
+    }
+    if( !is_del0 and is_del1 ){ // just got delimitner
+      aToken.push_back( std::string(str.data()+imark,str.data()+i) );
+    }
+    if( is_del0 and !is_del1 ){ // just got delimitner
+      imark = i;
+    }
+    is_del0 = is_del1;
+  }
+  return aToken;
+}
+
+// "(a,b),c,(d,e)" - > "(a,b)", "c", "(d,e)"
+std::vector<std::string> Split_Parentheses
 (const std::string& str,
  char delimiter,
  const std::string& par)
@@ -67,24 +103,47 @@ std::vector<std::string> Split
   if( par.size() != 2 ){ aToken.push_back(str); return aToken; }
   char cs = par[0];
   char ce = par[1];
-  const int n = str.size();
   ////
-  int is=0, ie;
+  int is=0;
   int ilevel = 0;
-  for(ie=is+1;ie<n;++ie){
-    if( ie == n-1 ){
-      assert( ilevel == 0 );
-      aToken.push_back( std::string(str.data()+is,str.data()+ie) );
+  for(int ie=0;ie<str.size();++ie){
+    if( ie == str.size()-1 ){
+      aToken.push_back( std::string(str.data()+is,str.data()+ie+1) );
     }
-    else if( str[ie] == delimiter && ilevel == 0 ){
+    if( str[ie] == cs ){ ilevel++; }
+    if( str[ie] == ce ){ ilevel--; }
+    if( str[ie] == delimiter && ilevel == 0 ){
       aToken.push_back( std::string(str.data()+is,str.data()+ie) );
       is = ie+1;
     }
-    else if( str[ie] == cs ){ ilevel++; }
-    else if( str[ie] == ce ){ ilevel--; }
   }
   return aToken;
 }
+
+// "'a,b',c,'d,e'" - > 'a,b' + 'c' + 'd,e'
+std::vector<std::string> Split_Quote
+(const std::string& str,
+ char delimiter,
+ char quote)
+{
+  std::vector<std::string> aToken;
+  int is=0;
+  bool is_in = false;
+  for(int ie=0;ie<str.size();++ie){
+    if( ie == str.size()-1 ){
+      aToken.push_back( std::string(str.data()+is,str.data()+ie+1) );
+    }
+    if( str[ie] == quote ){ is_in = !is_in; }
+    if( str[ie] == delimiter && !is_in ){
+      aToken.push_back( std::string(str.data()+is,str.data()+ie) );
+      is = ie+1;
+    }
+  }
+  return aToken;
+}
+
+
+
 
 std::map<std::string, std::string> ReadDictionary(const std::string& fin_path)
 {
@@ -101,31 +160,6 @@ std::map<std::string, std::string> ReadDictionary(const std::string& fin_path)
     map0.insert( std::make_pair(str0,str1) );
   }
   return map0;
-}
-
-// GetEnclosed with "()" --> "(a,(b,c),d)" -> a,(b,c),d
-std::string GetEnclosed
-(const std::string& str,
- const std::string& par)
-{
-  if( par.size() != 2 ){ return std::string(); }
-  char cs = par[0];
-  char ce = par[1];
-  const int n = str.size();
-  ////
-  int iss = -1;
-  for(int i=0;i<n;++i){
-    if( str[i] == cs ){ iss = i; break; }
-  }
-  ////
-  if( iss == -1 ){ return std::string(); }
-  for(int i=n-1;i>=iss;--i){
-    if( str[i] == ce ){
-      std::string ss(str.begin()+iss+1,str.begin()+i);
-      return ss;
-    }
-  }
-  return std::string();
 }
 
 std::string Replace
@@ -193,9 +227,58 @@ std::string RemoveBeginning
     istat = i;
     break;
   }
-  std::string ss(str.begin()+istat,str.end());
-  return ss;
+  return std::string(str.begin()+istat,str.end());
 }
+
+std::string Remove_Quote
+(const std::string& str,
+ char quat)
+{
+  const int n = str.size();
+  {
+    int nq = 0;
+    for(int i=0;i<n;++i){
+      if( str[i] == quat ){ ++nq; }
+    }
+    if( nq < 2 ){ return str;}
+  }
+  int istat = 0;
+  for(;istat<n;++istat){
+    if( str[istat] == quat ){ break; }
+  }
+  int iend = n-1;
+  for(;iend>=0;--iend){
+    if( str[iend] == quat ){ break; }
+  }
+  return std::string(str.begin()+istat+1,str.begin()+iend);
+}
+
+// GetEnclosed with "()" --> "(a,(b,c),d)" -> a,(b,c),d
+std::string Get_Parentheses
+(const std::string& str,
+ const std::string& par)
+{
+  if( par.size() != 2 ){ return std::string(); }
+  char cs = par[0];
+  char ce = par[1];
+  const int n = str.size();
+  ////
+  int iss = -1;
+  for(int i=0;i<n;++i){
+    if( str[i] == cs ){ iss = i; break; }
+  }
+  ////
+  if( iss == -1 ){ return std::string(); }
+  for(int i=n-1;i>=iss;--i){
+    if( str[i] == ce ){
+      std::string ss(str.begin()+iss+1,str.begin()+i);
+      return ss;
+    }
+  }
+  return std::string();
+}
+
+////////////////////////////////////////////////////////
 
 // Read somehting like this {"command":"meshing_polygon","aXY_vertex":"0,0,0,30,30,30,30,0"}
 std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn)
@@ -441,7 +524,7 @@ bool LoadNumpy
     if( n1 != npy.header_len ){ return false; }
     std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
     std::string str_shape = map0["'shape'"];
-    str_shape = GetEnclosed(str_shape,"()");
+    str_shape = Get_Parentheses(str_shape,"()");
     std::vector<std::string> aToken = Split(str_shape,',');
     if( aToken.size() != 2 ){ return false; }
     ndim0 = myStoi(aToken[0]);
@@ -510,7 +593,7 @@ bool LoadNumpy_1DimF
     //      std::cout << itr->first << " --> " << itr->second << std::endl;
     //    }
     std::string str_shape = map0["'shape'"];
-    str_shape = GetEnclosed(str_shape,"()");
+    str_shape = Get_Parentheses(str_shape,"()");
     std::vector<std::string> aToken = Split(str_shape,',');
     if( aToken.size() != 1 ){ return false; }
     ndim0 = myStoi(aToken[0]);
@@ -524,4 +607,76 @@ bool LoadNumpy_1DimF
   size_t n2 = fread(&aData[0], sizeof(float), size, fp);
   if( n2 != size ){ return false; }
   return true;
+}
+
+///////////////////////////////////////////////////////
+
+bool GetFileContents
+(std::vector<char>& aC,
+ const std::string& fpath)
+{
+  FILE* fp = NULL;
+  size_t size;
+  
+  fp = fopen(fpath.c_str(), "rb");
+  if (!fp) goto error;
+  fseek(fp, 0, SEEK_END);
+  size = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+  aC.resize(size+1);
+  if (fread(aC.data(), 1, size, fp) != size) goto error;
+  aC[size] = '\0';  // Must be null terminated.
+  fclose(fp);
+  return true;
+  
+error:
+  if (fp) fclose(fp);
+  return false;
+}
+
+
+void XML_SeparateTagContent
+(std::vector<std::string>& aStr,
+ const std::vector<char>& input)
+{
+  std::vector<char> buffer = input;
+  char* s = buffer.data();
+  char* mark = s;
+  int state = 1;
+  while (*s) {
+    if (*s == '<' && state == 1) {
+      // Start of a tag
+      *s++ = '\0';
+      aStr.push_back(std::string(mark));
+      mark = s;
+      state = 0;
+    }
+    else if (*s == '>' && state == 0 ) {       // Start of a content or new tag.
+      *s++ = '\0';
+      aStr.push_back(std::string(mark));
+      mark = s;
+      state = 1;
+    }
+    else {
+      s++;
+    }
+  }
+  //////////
+  for(int is=0;is<aStr.size();++is){
+    aStr[is] = RemoveBeginning(aStr[is], " ");
+  }
+}
+
+
+void ParseAttributes
+(std::map<std::string, std::string>& mapAttr,
+ const std::string& input)
+{
+  std::vector<std::string> aS = Split_Quote(input, ' ', '\"' );
+  for(int is=0;is<aS.size();++is){
+    std::vector<std::string> aS1 = Split(aS[is], '=');
+    assert( aS1.size() == 2 );
+    std::string s1 = Remove_Quote(aS1[1], '\"');
+    mapAttr.insert( std::make_pair(aS1[0],s1) );
+  }
 }

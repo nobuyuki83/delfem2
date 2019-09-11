@@ -15,28 +15,6 @@
 #include "delfem2/vec2.h"
 #include "delfem2/dyntri.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-// OpenGL dependency! these functions should be removed and put in another file
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-void FixLoopOrientation(std::vector<int>& loopIP,
-                        const std::vector<int>& loopIP_ind,
-                        const std::vector<CVector2>& aXY);
-
-void ResamplingLoop(std::vector<int>& loopIP1_ind,
-                    std::vector<int>& loopIP1,
-                    std::vector<CVector2>& aXY,
-                    double max_edge_length);
-
-void JArray_FromVecVec_XY(std::vector<int>& aIndXYs,
-                          std::vector<int>& loopIP0,
-                          std::vector<CVector2>& aXY,
-                          const std::vector< std::vector<double> >& aaXY);
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
 bool CheckTri(const std::vector<CEPo2>& aPo3D,
               const std::vector<ETri>& aSTri,
               const std::vector<CVector2>& aXYZ);
@@ -103,10 +81,7 @@ void MinMaxTriArea(double& min_area,
                    double& max_area,
                    const std::vector<CVector2>& aVec2,
                    const std::vector<ETri>& aETri);
-void MakeMassMatrixTri(double M[9],
-                       double rho,
-                       const unsigned int aIP[3],
-                       const std::vector<CVector2>& aVec2);
+
 
 void CMeshTri2D(std::vector<double>& aXY,
                 std::vector<unsigned int>& aTri,

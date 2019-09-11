@@ -78,7 +78,7 @@ public:
   }
   bool Check() const{
     for(unsigned int il=0;il<aLoop.size();++il){
-      if( !aLoop[il].Check(aEdge) ){ return false; }
+      if( !aLoop[il].Check(aEdge) ){ assert(0); return false; }
     }
     return true;
   }
@@ -104,8 +104,9 @@ public:
       return res;
     }
     bool Check(const std::vector<CEdge>& aEdge) const {
-      if( iv != -1 && !aIE.empty() ) return false;
-      if( iv == -1 && aIE.empty() ) return false;
+      if( iv == -1 && aIE.empty() ){ assert(0); return false; }
+      if( iv != -1 && !aIE.empty() ){ assert(0);  return false; }
+      if( iv == -1 && aIE.empty() ){ assert(0);  return false; }
       const unsigned int ne = aIE.size();
       for(unsigned int iie=0;iie<ne;++iie){
         const int ie0 = aIE[(iie+0)%ne].first;
