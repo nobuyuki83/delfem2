@@ -59,9 +59,14 @@ void Split(std::vector<std::string>& aToken,
            const std::string& str,
            char delimiter);
 std::vector<std::string> Split(const std::string& str,
-                               char delimiter,
-                               const std::string& par);
-std::string GetEnclosed(const std::string& str,
+                               const std::string& del);
+std::vector<std::string> Split_Parentheses(const std::string& str,
+                                           char delimiter,
+                                           const std::string& par);
+std::vector<std::string> Split_Quote(const std::string& str,
+                                     char delimiter,
+                                     char quote);
+std::string Get_Parentheses(const std::string& str,
                         const std::string& par);
 std::string Replace(const std::string& str,
                     const char cf, const char ct);
@@ -88,6 +93,32 @@ bool LoadNumpy_2DimD(int& ndim0, int& ndim1, std::vector<double>& aData,
 
 bool LoadNumpy_1DimF(int& ndim0, std::vector<float>& aData,
                      const std::string& path);
+
+//////////////////////////////////////////////////////////////////////////////
+
+bool GetFileContents(std::vector<char>& aC,
+                     const std::string& fpath);
+
+/**
+ * @brief make associative array
+ * @param[in] input input text like "href=hoge color=red pos="0.0 1.0""
+ * @param[out] std::map A["href"]="hoge", A["pos"]="0.1 1.0"
+ */
+void ParseAttributes(std::map<std::string, std::string>& mapAttr,
+                     const std::string& input);
+
+/**
+ * @brief separate tag and content in xml file
+ * @details for xml text like "<h>hoge</h>", the tag is "h" and "/h" and content is "hoge".
+ * tag is put at the odd index, and content is put at the even index.
+ * The space at the beginning of the tag and content is removed
+ */
+void XML_SeparateTagContent(std::vector<std::string>& aStr,
+                            const std::vector<char>& input);
+
+bool isAlphabet(char c);
+bool isNumber(char c);
+
 
 
 #endif /* fem_utility_h */

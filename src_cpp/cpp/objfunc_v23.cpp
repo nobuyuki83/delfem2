@@ -192,7 +192,7 @@ void PBD_ConstProj_Rigid2D
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const int ip = clstr[iip];
       CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
-      CVector2 pg = pc+matVec(R, dq); // goal position
+      CVector2 pg = pc+Mat2Vec(R, dq); // goal position
       CVector2 pg2 = stiffness*pg+(1-stiffness)*CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
       aXYt[ip*2+0] = pg2.x;
       aXYt[ip*2+1] = pg2.y;

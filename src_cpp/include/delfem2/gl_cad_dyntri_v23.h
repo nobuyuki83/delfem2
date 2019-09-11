@@ -37,6 +37,10 @@ void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
 
 /////////////////////////////////////////
 
+void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge,
+                     bool is_selected,
+                     int ipicked_elem);
+
 void Draw_CCad2D(const CCad2D& cad2d);
 
 

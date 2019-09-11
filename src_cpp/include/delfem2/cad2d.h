@@ -21,16 +21,17 @@ public:
   CVector2 pos;
 };
 
+/**
+ * @details this class should be independent from any other classes except for "CVector2" and "CBoundingBox2D"
+ * std::vector<CCad2D_EdgeGeo> will stands for a loop of curves
+ */
 class CCad2D_EdgeGeo{
 public:
   CCad2D_EdgeGeo(){
     type_edge = 0;
     ip0 = -1;
   }
-  void GenMesh(unsigned int iedge, const CCadTopo& topo,
-               const std::vector<CCad2D_VtxGeo>& aVtxGeo,
-               double elen);
-//  void GetInternalPoints_ElemLen(std::vector<CVector2>& aV, double elen) const;
+  void GenMesh(double elen);
   double Distance(double x, double y) const;
   double Length() const;
   CBoundingBox2D BB() const{
@@ -45,10 +46,30 @@ public:
   int type_edge; // 0: line, 1:Cubic Bezier
   std::vector<double> param;
   ///
-  std::vector<CVector2> aP;
-  int ip0;
+  std::vector<CVector2> aP; //
+  int ip0; //! ip0 is the p0's point index when mesh is generated
 };
 
+double AreaLoop(const std::vector<CCad2D_EdgeGeo>& aEdge);
+
+void Transform_LoopEdgeCad2D(std::vector<CCad2D_EdgeGeo>& aEdge,
+                             bool is_flip_holizontal,
+                             bool is_flip_vertical,
+                             double scale);
+
+CBoundingBox2D BB_LoopEdgeCad2D(const std::vector<CCad2D_EdgeGeo>& aEdge);
+
+/**
+ * @details read an SVG image file and output first path elemnet as a loop of curves.
+ * If there is no path element, output first polygon elmenet if they are.
+ */
+void LoopEdgeCCad2D_ReadSVG(std::vector<CCad2D_EdgeGeo>& aEdge,
+                            const std::string& fname);
+
+
+/**
+ * @details this class should be independent from everything
+ */
 class CCad2D_FaceGeo{
 public:
   std::vector<unsigned int> aTri;
@@ -97,21 +118,10 @@ public:
   void Pick(double x0, double y0,
             double view_height);
   void DragPicked(double p1x, double p1y, double p0x, double p0y);
+  /////
   std::vector<double> MinMaxXYZ() const;
+  CBoundingBox2D BB() const;
   bool Check() const;
-  void AddPolygon(const std::vector<double>& aXY);
-  void AddVtxFace(double x0, double y0, unsigned int ifc_add);
-  void AddVtxEdge(double x, double y, unsigned int ie_add);
-  void GetPointsEdge(std::vector<int>& aIdP,
-                     const double* pXY, int np,
-                     const std::vector<int>& aIE,
-                     double tolerance ) const;
-  void SetEdgeType(int iedge, int itype, std::vector<double>& param){
-    assert( iedge >= 0 && iedge< (int)aEdge.size() );
-    aEdge[iedge].type_edge = itype;
-    aEdge[iedge].param = param;
-    this->Tessellation();
-  }
   int GetEdgeType(int iedge) const {
     assert( iedge >= 0 && iedge< (int)aEdge.size() );
     return aEdge[iedge].type_edge;
@@ -123,6 +133,21 @@ public:
   std::vector<std::pair<int,bool> >  Ind_Edge_Face(int iface) const;
   std::vector<int> Ind_Vtx_Face(int iface) const;
   std::vector<int> Ind_Vtx_Edge(int iedge) const;
+  void GetPointsEdge(std::vector<int>& aIdP,
+                     const double* pXY, int np,
+                     const std::vector<int>& aIE,
+                     double tolerance ) const;
+  ////
+  void AddPolygon(const std::vector<double>& aXY);
+  void AddFace(const std::vector<CCad2D_EdgeGeo>& aEdge);
+  void AddVtxFace(double x0, double y0, unsigned int ifc_add);
+  void AddVtxEdge(double x, double y, unsigned int ie_add);
+  void SetEdgeType(int iedge, int itype, std::vector<double>& param){
+    assert( iedge >= 0 && iedge< (int)aEdge.size() );
+    aEdge[iedge].type_edge = itype;
+    aEdge[iedge].param = param;
+    this->Tessellation();
+  }
 public:
   CCadTopo topo;
   /////
