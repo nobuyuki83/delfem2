@@ -7,6 +7,8 @@ else()
 set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -std=c++11" )
 endif()
 
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
@@ -26,7 +28,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mat3.h          ${DELFEM2_SRC}/mat3.cpp
   ${DELFEM2_INC}/mshtopo.h       ${DELFEM2_SRC}/mshtopo.cpp
   ${DELFEM2_INC}/msh.h           ${DELFEM2_SRC}/msh.cpp
-  ${DELFEM2_INC}/dyntri.h        ${DELFEM2_SRC}/dyntri.cpp            
+  ${DELFEM2_INC}/dyntri.h        ${DELFEM2_SRC}/dyntri.cpp
+  ${DELFEM2_INC}/funcs.h         ${DELFEM2_SRC}/funcs.cpp
   ${DELFEM2_INC}/bv.h       
                                   
   ${DELFEM2_INC}/v23m3q.h        ${DELFEM2_SRC}/v23m3q.cpp

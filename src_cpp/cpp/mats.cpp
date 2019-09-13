@@ -324,23 +324,48 @@ void SetMasterSlave
 
 void ScaleLeftRight
 (CMatrixSparse<double>& mat,
- const double* scale){
+ const double* scale,
+ bool is_sumdimval)
+{
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );
   const unsigned int nblk = mat.nblk_col;
   const unsigned int len = mat.len_col;
   const unsigned int blksize = len*len;
-  for(unsigned int ino=0;ino<nblk;++ino){
-    for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
-      const int jno = mat.rowPtr[icrs0];
-      const double s0 = scale[ino]*scale[jno];
-      for(unsigned int i=0;i<blksize;++i){ mat.valCrs[icrs0*blksize+i] *= s0; }
+  if( is_sumdimval ){
+    for(unsigned int ino=0;ino<nblk;++ino){
+      for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
+        const int jno = mat.rowPtr[icrs0];
+        const double s0 = scale[ino]*scale[jno];
+        for(unsigned int i=0;i<blksize;++i){ mat.valCrs[icrs0*blksize+i] *= s0; }
+      }
+    }
+    if( !mat.valDia.empty() ){
+      for(unsigned int ino=0;ino<nblk;++ino){
+        double s0 = scale[ino]*scale[ino];
+        for(unsigned int i=0;i<blksize;++i){ mat.valDia[ino*blksize+i] *= s0; }
+      }
     }
   }
-  if( !mat.valDia.empty() ){
+  else{
     for(unsigned int ino=0;ino<nblk;++ino){
-      double s0 = scale[ino]*scale[ino];
-      for(unsigned int i=0;i<blksize;++i){ mat.valDia[ino*blksize+i] *= s0; }
+      for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
+        const int jno = mat.rowPtr[icrs0];
+        for(int ilen=0;ilen<len;++ilen){
+          for(int jlen=0;jlen<len;++jlen){
+            mat.valCrs[icrs0*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[jno*len+jlen];
+          }
+        }
+      }
+    }
+    if( !mat.valDia.empty() ){
+      for(unsigned int ino=0;ino<nblk;++ino){
+        for(int ilen=0;ilen<len;++ilen){
+          for(int jlen=0;jlen<len;++jlen){
+            mat.valDia[ino*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[ino*len+jlen];
+          }
+        }
+      }
     }
   }
 }

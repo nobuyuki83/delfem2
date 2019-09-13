@@ -60,14 +60,17 @@ void MatrixSquareSparse_SetFixBC
 
 void MatrixSquareSparse_ScaleLeftRight
 (CMatrixSparse<double>& mss,
- const py::array_t<double>& scale)
+ const py::array_t<double>& scale,
+ bool is_sumndimval)
 {
   assert( mss.nblk_col == mss.nblk_row );
   assert( mss.len_col == mss.len_row );
   assert( scale.ndim() == 1 );
-  assert( scale.shape()[0] == mss.nblk_col );
+  if( is_sumndimval ){ assert( scale.shape()[0] == mss.nblk_col ); }
+  else{                assert( scale.shape()[0] == mss.nblk_col*mss.len_col ); }
   ScaleLeftRight(mss,
-                 scale.data());
+                 scale.data(),
+                 is_sumndimval);
 }
 
 void LinearSystem_SetMasterSlave

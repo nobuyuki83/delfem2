@@ -335,7 +335,7 @@ class FEM_SolidLinearEigen():
                                 1.0, 0.1, 0.0, (0,0,0),
                                 self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
                                 self.mode)
-    matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
+    matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv,True)
     self.ls.mat.add_dia(1.0)
     ####
     self.ls.set_precond()
