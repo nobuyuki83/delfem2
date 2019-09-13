@@ -130,30 +130,55 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case ' ':
     {
       static int istep = 0;
-      if(      istep == 0 ){
-        cad.AddVtxFace(0.0, 0.1, 0);
+      std::cout << istep << std::endl;
+      if( istep == 0 ){
+        cad.Clear();
+        const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
+        cad.AddPolygon(std::vector<double>(poly,poly+8));
       }
       else if( istep == 1 ){
+        cad.AddVtxFace(0.0, 0.1, 0);
+      }
+      else if( istep == 2 ){
         double param[4] = {0.2, 0.3, -0.2, 0.3};
         std::vector<double> vparam(param,param+4);
         cad.SetEdgeType( 0, 1, vparam );
       }
-      else if( istep == 2 ){
+      else if( istep == 3 ){
         cad.AddVtxEdge(-0.0, +0.8, 2);
       }
-      else if( istep == 3 ){
+      else if( istep == 4 ){
         double x0 = 2.1, y0 = 0.0;
         const double poly[8] = {x0-1,y0-1, x0+1,y0-1, x0+1,y0+1, x0-1,y0+1};
         cad.AddPolygon(std::vector<double>(poly,poly+8) );
         cad.AddVtxEdge(x0, -0.2, 5);
       }
-      else if( istep == 4 ){
+      else if( istep == 5 || istep == 6 || istep == 7 )  {
+        std::string path_svg;
+        if( istep == 5 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape0.svg"; }
+        if( istep == 6 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
+        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
+        //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg";
+        //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg";
+        //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape3.svg";
+        std::vector<CCad2D_EdgeGeo> aEdge;
+        LoopEdgeCCad2D_ReadSVG(aEdge,
+                               path_svg);
+        Transform_LoopEdgeCad2D(aEdge,false,true,0.1);
+        for(int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
         cad.Clear();
-        const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
-        cad.AddPolygon(std::vector<double>(poly,poly+8));
+        cad.AddFace(aEdge);
       }
-      istep++;
-      if( istep == 5 ){ istep = 0; }
+      { // set camera
+        CBoundingBox2D bb = cad.BB();
+        std::cout << "bb: " << bb.x_min << " " << bb.x_max << " " << bb.y_min << " " << bb.y_max << std::endl;
+        win.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+        win.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+        win.camera.trans[2] = 0.0;
+        win.camera.view_height = 0.5*sqrt( (bb.x_max-bb.x_min)*(bb.x_max-bb.x_min) + (bb.y_max-bb.y_min)*(bb.y_max-bb.y_min) );
+        win.camera.scale = 1.0;
+      }
+      istep = (istep+1)%8;
       break;
     }
     case 'd':

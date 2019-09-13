@@ -218,7 +218,7 @@ def main():
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   msh2 = mesher.meshing(cad)
   femShellPlateBendingMitc3_Static(cad, mesher, msh2)
-  shell_mitc_eigen(msh2)
+#  shell_mitc_eigen(msh2)
 #  return
 
   msh25 = dfm2.Mesh()

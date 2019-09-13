@@ -263,7 +263,7 @@ bool CMatrixSparse<T>::Mearge
 
 double CheckSymmetry(const CMatrixSparse<double>& mat);
 void SetMasterSlave(CMatrixSparse<double>& mat, const int* aMSFlag);
-void ScaleLeftRight(CMatrixSparse<double>& mat, const double* scale);
+void ScaleLeftRight(CMatrixSparse<double>& mat, const double* scale, bool is_sumdimval);
 
 
 template <typename T>

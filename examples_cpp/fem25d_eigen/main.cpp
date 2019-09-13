@@ -232,7 +232,8 @@ void InitializeProblem_ShellEigenPB()
                                            aTet.data(), aTet.size()/4,
                                            aTmp0.data());
   ScaleLeftRight(mat_A,
-                 aMassLumpedSqrtInv.data());
+                 aMassLumpedSqrtInv.data(),
+                 true);
   mat_A.AddDia(0.8);
   
   ilu_A.SetValueILU(mat_A);

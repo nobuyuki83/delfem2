@@ -42,7 +42,32 @@ void Orthogonalize_ToUnitVector(double* p1,
 }
 
 
-void SetValue_ShellEigenPB_MassLumpedSqrtInv_KernelModes3
+void LumpedMassMatrix_ShellPlateBendingMITC3
+(double* aM,
+ double rho, double thick,
+ const double* aXY, unsigned int nXY,
+ const unsigned int* aTri, unsigned int nTri)
+{
+  const unsigned int nDoF = nXY*3;
+  for(int i=0;i<nDoF;++i){ aM[i] = 0.0; }
+  for(int it=0;it<nTri;++it){
+    const int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
+    const int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
+    const int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+    const double* p0 = aXY+i0*2;
+    const double* p1 = aXY+i1*2;
+    const double* p2 = aXY+i2*2;
+    const double a012 = TriArea2D(p0, p1, p2);
+    double m0 = a012/3.0*rho*thick;
+    double m1 = a012/3.0*rho*thick*thick*thick/12.0;
+    double m2 = m1;
+    aM[i0*3+0] += m0;  aM[i1*3+0] += m0;  aM[i2*3+0] += m0;
+    aM[i0*3+1] += m1;  aM[i1*3+1] += m1;  aM[i2*3+1] += m1;
+    aM[i0*3+2] += m2;  aM[i1*3+2] += m2;  aM[i2*3+2] += m2;
+  }
+}
+
+void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
 (double* aMassLumpedSqrtInv,
  double* aModesKer,
  double rho, double thickness,
@@ -50,14 +75,12 @@ void SetValue_ShellEigenPB_MassLumpedSqrtInv_KernelModes3
  const unsigned int* aTri, int nTri)
 {
   const unsigned int nDoF = nXY*3;
-  std::vector<double> aMassLumpedSqrt(nXY);
-  MassLumped_Tri2D(aMassLumpedSqrt.data(),
-                   rho*thickness, aXY, nXY, aTri,nTri);
-  
-  for(int ip=0;ip<nXY;++ip){
-    aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
-  }
-  
+  std::vector<double> aMassLumpedSqrt(nDoF);
+  LumpedMassMatrix_ShellPlateBendingMITC3(aMassLumpedSqrt.data(),
+                                          rho, thickness,
+                                          aXY, nXY,
+                                          aTri, nTri);
+  for(int i=0;i<nDoF;++i){ aMassLumpedSqrt[i] = sqrt(aMassLumpedSqrt[i]); }
   {
     for(int i=0;i<nDoF*3;++i){ aModesKer[i] = 0.0; }
     double* p0 = aModesKer+nDoF*0;
@@ -66,10 +89,12 @@ void SetValue_ShellEigenPB_MassLumpedSqrtInv_KernelModes3
     for(int ip=0;ip<nXY;++ip){
       const double x0 = aXY[ip*2+0];
       const double y0 = aXY[ip*2+1];
-      const double m0 = aMassLumpedSqrt[ip];
+      const double m0 = aMassLumpedSqrt[ip*3+0];
+      const double m1 = aMassLumpedSqrt[ip*3+1];
+      const double m2 = aMassLumpedSqrt[ip*3+2];
       p0[ip*3+0] = m0;
-      p1[ip*3+0] = +y0*m0;  p1[ip*3+1] = m0;
-      p2[ip*3+0] = -x0*m0;  p2[ip*3+2] = m0;
+      p1[ip*3+0] = +y0*m0;  p1[ip*3+1] = m1;
+      p2[ip*3+0] = -x0*m0;  p2[ip*3+2] = m2;
     }
     Normalize(p0,nDoF);
     Orthogonalize_ToUnitVector(p1, p0, nDoF);
@@ -78,11 +103,23 @@ void SetValue_ShellEigenPB_MassLumpedSqrtInv_KernelModes3
     Orthogonalize_ToUnitVector(p2, p1, nDoF);
     Normalize(p2,nDoF);
   }
-  
-  for(int ip=0;ip<nXY;++ip){
-    aMassLumpedSqrtInv[ip] = 1.0/aMassLumpedSqrt[ip];
-  }
+  for(int i=0;i<nDoF;++i){ aMassLumpedSqrtInv[i] = 1.0/aMassLumpedSqrt[i]; }
 }
+
+void RemoveKernel(std::vector<double>& aTmp0,
+                  const std::vector<double>& aModesKer)
+{
+  const unsigned int nDoF = aTmp0.size();
+  const double* p0 = aModesKer.data()+nDoF*0;
+  const double* p1 = aModesKer.data()+nDoF*1;
+  const double* p2 = aModesKer.data()+nDoF*2;
+  double* p = aTmp0.data();
+  Orthogonalize_ToUnitVector(p, p0, nDoF);
+  Orthogonalize_ToUnitVector(p, p1, nDoF);
+  Orthogonalize_ToUnitVector(p, p2, nDoF);
+  Normalize(p, nDoF);
+}
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,12 +140,17 @@ std::vector<double> aModesKer;
 CMatrixSparse<double> mat_A;
 CPreconditionerILU<double> ilu_A;
 
-const double lenx = 2.0;
-const double leny = 0.2;
-const double thickness = 0.05;
-const double myu = 10000.0;
-const double lambda = 0.0;
-const double rho = 1.0;
+const double lenx = 0.5;
+const double leny = 0.03;
+const double thickness = 0.004;
+double EYoung = 68.3*1.0e+9;
+double Poisson = 0.34;
+//double Poisson = 0.0;
+double myu = EYoung/(2*(1.0+Poisson));
+double lambda = Poisson*EYoung/(1+Poisson)/(1-2*Poisson);
+const double rho = 2700;
+const double offset_dia = 0.2;
+double freq_theo = 0.0;
 
 ///////////////////////////////////////////////////////////////
 
@@ -126,7 +168,7 @@ void MakeMesh(){
   std::vector<ETri> aETri;
   std::vector<CVector2> aVec2;
   GenMesh(aPo2D, aETri, aVec2,
-          aaXY, 0.03, 0.03);
+          aaXY, 0.01, 0.01);
   MeshTri2D_Export(aXY0,aTri,
                    aVec2,aETri);
   std::cout<<"  ntri;"<<aTri.size()/3<<"  nXY:"<<aXY0.size()/2<<std::endl;
@@ -149,13 +191,13 @@ void InitializeProblem_ShellEigenPB()
   ilu_A.Initialize_ILU0(mat_A);
   
   ///////////////////////////////////////////
-  aMassLumpedSqrtInv.resize(np);
+  aMassLumpedSqrtInv.resize(nDoF);
   aModesKer.resize(nDoF*3);
-  SetValue_ShellEigenPB_MassLumpedSqrtInv_KernelModes3(aMassLumpedSqrtInv.data(),
-                                                       aModesKer.data(),
-                                                       thickness,rho,
-                                                       aXY0.data(), aXY0.size()/2,
-                                                       aTri.data(), aTri.size()/3);
+  SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3(aMassLumpedSqrtInv.data(),
+                                                            aModesKer.data(),
+                                                            rho, thickness,
+                                                            aXY0.data(), aXY0.size()/2,
+                                                            aTri.data(), aTri.size()/3);
   
   ////////////////////////////////////////////
   
@@ -169,45 +211,34 @@ void InitializeProblem_ShellEigenPB()
                                                      aTri.data(), aTri.size()/3,
                                                      aTmp0.data());
   ScaleLeftRight(mat_A,
-                 aMassLumpedSqrtInv.data());
-  mat_A.AddDia(0.0);
+                 aMassLumpedSqrtInv.data(),
+                 false);
+  mat_A.AddDia(offset_dia);
   
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
 }
 
-void RemoveKernel()
-{
-  const int nDoF = aXY0.size()/2*3;
-  const double* p0 = aModesKer.data()+nDoF*0;
-  const double* p1 = aModesKer.data()+nDoF*1;
-  const double* p2 = aModesKer.data()+nDoF*2;
-  double* p = aTmp0.data();
-  Orthogonalize_ToUnitVector(p, p0, nDoF);
-  Orthogonalize_ToUnitVector(p, p1, nDoF);
-  Orthogonalize_ToUnitVector(p, p2, nDoF);
-  Normalize(p, nDoF);
-}
-
 void Solve(){
   aMode.assign(aTmp0.size(),0.0);
   const double conv_ratio = 1.0e-5;
-  const int iteration = 1000;
+  const int iteration = 10000;
   std::vector<double> aConv;
   aTmp1 = aTmp0;
   aConv = Solve_PCG(aTmp1.data(), aMode.data(),
                     conv_ratio, iteration, mat_A, ilu_A);
-  double lam0 = DotX(aTmp0.data(), aMode.data(), aTmp0.size());
-  std::cout << 1.0/sqrt(lam0) << std::endl;
+  {
+    double lam0 = DotX(aTmp0.data(), aMode.data(), aTmp0.size());
+    double freq_sim = sqrt(1.0/lam0-offset_dia)/(2*M_PI);
+    std::cout << "freq theo" << freq_theo << "   freq_sim:" << freq_sim << "   " << freq_theo/freq_sim  << "     " << aConv.size() << std::endl;
+  }
   aTmp0 = aMode;
   ////
-  RemoveKernel();
+  RemoveKernel(aTmp0,
+               aModesKer);
   ////
-  for(int ip=0;ip<aTmp0.size()/3;++ip){
-    const double s0 = aMassLumpedSqrtInv[ip];
-    for(int idim=0;idim<3;++idim){
-      aMode[ip*3+idim] = aTmp0[ip*3+idim]*s0;
-    }
+  for(unsigned int i=0;i<aTmp0.size();++i){
+    aMode[i] = aTmp0[i]*aMassLumpedSqrtInv[i];
   }
 }
 
@@ -375,6 +406,27 @@ int main(int argc,char* argv[])
     aTmp0[ip*3+0] = (rand()+1.0)/(RAND_MAX+1.0);
     aTmp0[ip*3+1] = (rand()+1.0)/(RAND_MAX+1.0);
     aTmp0[ip*3+2] = (rand()+1.0)/(RAND_MAX+1.0);
+  }
+  
+  {
+    const double I = thickness*thickness*thickness*leny/12.0;
+    const double EI = EYoung*I;
+    const double rhoA = rho*thickness*leny;
+    // https://www.mapleprimes.com/DocumentFiles/206657_question/Transverse_vibration_of_beams.pdf
+    const double freq = (22.4)/(lenx*lenx)*sqrt(EI/rhoA)/(2*M_PI);
+    freq_theo = freq;
+//    std::cout << "freq" << freq << "   " << sim_freq << "   " << freq/sim_freq  << std::endl;
+    /*
+    const double W = thickness*lenx*leny*rho*gravity_z;
+    const double w = W/lenx;
+    const double disp = w*(lenx*lenx*lenx*lenx)/(8.0*E*I);
+    std::cout << "disp:" << disp << std::endl;
+    for(int ip=0;ip<aXY0.size()/2;++ip){
+      const double px = aXY0[ip*2+0];
+      if( fabs(px-(+lenx*0.5)) > 0.0001 ){ continue; }
+      std::cout << aVal[ip*3+0] << std::endl;
+    }
+     */
   }
   
   glutMainLoop();

@@ -1,8 +1,13 @@
-/*
+/**
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ */
+
+
+/**
+ * @details this file should not depends on anything other than std::vector
  */
 
 #ifndef MSH_H
@@ -59,7 +64,10 @@ void MinMaxXYZ(double mm[6],
 
 //////////////////////
 
-// Bryant angle
+/**
+ * @brief rotate with the Bryant angle (XYZ order) around origin.
+ * @details the angles are in the radian.
+ */
 void Rotate(std::vector<double>& aXYZ,
             double radx, double rady, double radz);
 void Translate(double tx, double ty, double tz,
@@ -103,15 +111,6 @@ void CenterOfGravity_Tet(double& v_tot,
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void MassLumped_Tet3D(double* aMassMatrixLumped,
-                      double rho,
-                      const double* aXYZ, int nXYZ,
-                      const unsigned int* aTet, int nTet);
-void MassLumped_Tri2D(double* aMassMatrixLumped,
-                      double rho,
-                      const double* aXY, int nXY,
-                      const unsigned int* aTri, int nTri);
-
 ////////////////////////////////////////////////////////////////////////////////////
 
 void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZOut,
@@ -141,6 +140,7 @@ void ExtrudeTri2Tet(int nlayer, double h,
                     const std::vector<unsigned int>& aTri);
 
 //////////////////////////////////////////////////////////////////////
+// considering moving these file to other locations
 
 void makeSolidAngle(std::vector<double>& aSolidAngle,
                     const std::vector<double>& aXYZ,
@@ -151,10 +151,28 @@ void makeSolidAngle(std::vector<double>& aSolidAngle,
                     const std::vector<double>& aNorm,
                     std::vector<int>& elsup_ind,
                     std::vector<int>& elsup);
+
+void MassLumped_Tet3D(double* aMassMatrixLumped,
+                      double rho,
+                      const double* aXYZ, int nXYZ,
+                      const unsigned int* aTet, int nTet);
+
+/**
+ * @brief compute lumped mass matrix for 2D triangle mesh
+ * @details aMassMatrixLumped need to be allocated in the size of nXY
+ */
+void MassLumped_Tri2D(double* aMassMatrixLumped,
+                      double rho,
+                      const double* aXY, int nXY,
+                      const unsigned int* aTri, int nTri);
+
+
 void LaplacianSmoothing(std::vector<double>& aXYZ,
                         const std::vector<int>& aTri,
                         const std::vector<int>& elsup_ind,
                         const std::vector<int> elsup);
+
+//////////////////////////////////////////////////////////////
 void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         ///
                                         const std::vector<unsigned int>& aQuad1,
