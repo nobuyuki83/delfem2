@@ -322,48 +322,54 @@ void SetMasterSlave
   }
 }
 
-void ScaleLeftRight
+void MatSparse_ScaleBlk_LeftRight
 (CMatrixSparse<double>& mat,
- const double* scale,
- bool is_sumdimval)
+ const double* scale)
 {
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );
   const unsigned int nblk = mat.nblk_col;
   const unsigned int len = mat.len_col;
   const unsigned int blksize = len*len;
-  if( is_sumdimval ){
-    for(unsigned int ino=0;ino<nblk;++ino){
-      for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
-        const int jno = mat.rowPtr[icrs0];
-        const double s0 = scale[ino]*scale[jno];
-        for(unsigned int i=0;i<blksize;++i){ mat.valCrs[icrs0*blksize+i] *= s0; }
-      }
-    }
-    if( !mat.valDia.empty() ){
-      for(unsigned int ino=0;ino<nblk;++ino){
-        double s0 = scale[ino]*scale[ino];
-        for(unsigned int i=0;i<blksize;++i){ mat.valDia[ino*blksize+i] *= s0; }
-      }
+  for(unsigned int ino=0;ino<nblk;++ino){
+    for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
+      const int jno = mat.rowPtr[icrs0];
+      const double s0 = scale[ino]*scale[jno];
+      for(unsigned int i=0;i<blksize;++i){ mat.valCrs[icrs0*blksize+i] *= s0; }
     }
   }
-  else{
+  if( !mat.valDia.empty() ){
     for(unsigned int ino=0;ino<nblk;++ino){
-      for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
-        const int jno = mat.rowPtr[icrs0];
-        for(int ilen=0;ilen<len;++ilen){
-          for(int jlen=0;jlen<len;++jlen){
-            mat.valCrs[icrs0*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[jno*len+jlen];
-          }
+      double s0 = scale[ino]*scale[ino];
+      for(unsigned int i=0;i<blksize;++i){ mat.valDia[ino*blksize+i] *= s0; }
+    }
+  }
+}
+
+void MatSparse_ScaleBlkLen_LeftRight
+(CMatrixSparse<double>& mat,
+ const double* scale)
+{
+  assert( mat.nblk_row == mat.nblk_col );
+  assert( mat.len_row == mat.len_col );
+  const unsigned int nblk = mat.nblk_col;
+  const unsigned int len = mat.len_col;
+  const unsigned int blksize = len*len;
+  for(unsigned int ino=0;ino<nblk;++ino){
+    for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
+      const int jno = mat.rowPtr[icrs0];
+      for(int ilen=0;ilen<len;++ilen){
+        for(int jlen=0;jlen<len;++jlen){
+          mat.valCrs[icrs0*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[jno*len+jlen];
         }
       }
     }
-    if( !mat.valDia.empty() ){
-      for(unsigned int ino=0;ino<nblk;++ino){
-        for(int ilen=0;ilen<len;++ilen){
-          for(int jlen=0;jlen<len;++jlen){
-            mat.valDia[ino*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[ino*len+jlen];
-          }
+  }
+  if( !mat.valDia.empty() ){
+    for(unsigned int ino=0;ino<nblk;++ino){
+      for(int ilen=0;ilen<len;++ilen){
+        for(int jlen=0;jlen<len;++jlen){
+          mat.valDia[ino*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[ino*len+jlen];
         }
       }
     }
@@ -822,6 +828,23 @@ void XPlusAYBZCW
   }
 }
 
+void ScaleX(double* p0, int n, double s)
+{
+  for(int i=0;i<n;++i){ p0[i] *= s; }
+}
+
+void NormalizeX(double* p0, int n)
+{
+  const double ss = DotX(p0,p0,n);
+  ScaleX(p0,n,1.0/sqrt(ss));
+}
+
+void OrthogonalizeToUnitVectorX(double* p1,
+                                const double* p0, int n)
+{
+  double d = DotX(p0, p1, n);
+  for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
+}
 
 
 void setRHS_MasterSlave

@@ -22,51 +22,6 @@
 #include "delfem2/glut_funcs.h"
 
 
-void Scale(double* p0, int n, double s)
-{
-  for(int i=0;i<n;++i){ p0[i] *= s; }
-}
-
-void Normalize(double* p0, int n)
-{
-  const double ss = DotX(p0,p0,n);
-  Scale(p0,n,1.0/sqrt(ss));
-}
-
-
-void Orthogonalize_ToUnitVector(double* p1,
-                                const double* p0, int n)
-{
-  double d = DotX(p0, p1, n);
-  for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
-}
-
-
-void LumpedMassMatrix_ShellPlateBendingMITC3
-(double* aM,
- double rho, double thick,
- const double* aXY, unsigned int nXY,
- const unsigned int* aTri, unsigned int nTri)
-{
-  const unsigned int nDoF = nXY*3;
-  for(int i=0;i<nDoF;++i){ aM[i] = 0.0; }
-  for(int it=0;it<nTri;++it){
-    const int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
-    const int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
-    const int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
-    const double* p0 = aXY+i0*2;
-    const double* p1 = aXY+i1*2;
-    const double* p2 = aXY+i2*2;
-    const double a012 = TriArea2D(p0, p1, p2);
-    double m0 = a012/3.0*rho*thick;
-    double m1 = a012/3.0*rho*thick*thick*thick/12.0;
-    double m2 = m1;
-    aM[i0*3+0] += m0;  aM[i1*3+0] += m0;  aM[i2*3+0] += m0;
-    aM[i0*3+1] += m1;  aM[i1*3+1] += m1;  aM[i2*3+1] += m1;
-    aM[i0*3+2] += m2;  aM[i1*3+2] += m2;  aM[i2*3+2] += m2;
-  }
-}
-
 void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
 (double* aMassLumpedSqrtInv,
  double* aModesKer,
@@ -76,7 +31,7 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
 {
   const unsigned int nDoF = nXY*3;
   std::vector<double> aMassLumpedSqrt(nDoF);
-  LumpedMassMatrix_ShellPlateBendingMITC3(aMassLumpedSqrt.data(),
+  MassLumped_ShellPlateBendingMITC3(aMassLumpedSqrt.data(),
                                           rho, thickness,
                                           aXY, nXY,
                                           aTri, nTri);
@@ -96,12 +51,12 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
       p1[ip*3+0] = +y0*m0;  p1[ip*3+1] = m1;
       p2[ip*3+0] = -x0*m0;  p2[ip*3+2] = m2;
     }
-    Normalize(p0,nDoF);
-    Orthogonalize_ToUnitVector(p1, p0, nDoF);
-    Orthogonalize_ToUnitVector(p2, p0, nDoF);
-    Normalize(p1,nDoF);
-    Orthogonalize_ToUnitVector(p2, p1, nDoF);
-    Normalize(p2,nDoF);
+    NormalizeX(p0,nDoF);
+    OrthogonalizeToUnitVectorX(p1, p0, nDoF);
+    OrthogonalizeToUnitVectorX(p2, p0, nDoF);
+    NormalizeX(p1,nDoF);
+    OrthogonalizeToUnitVectorX(p2, p1, nDoF);
+    NormalizeX(p2,nDoF);
   }
   for(int i=0;i<nDoF;++i){ aMassLumpedSqrtInv[i] = 1.0/aMassLumpedSqrt[i]; }
 }
@@ -114,10 +69,10 @@ void RemoveKernel(std::vector<double>& aTmp0,
   const double* p1 = aModesKer.data()+nDoF*1;
   const double* p2 = aModesKer.data()+nDoF*2;
   double* p = aTmp0.data();
-  Orthogonalize_ToUnitVector(p, p0, nDoF);
-  Orthogonalize_ToUnitVector(p, p1, nDoF);
-  Orthogonalize_ToUnitVector(p, p2, nDoF);
-  Normalize(p, nDoF);
+  OrthogonalizeToUnitVectorX(p, p0, nDoF);
+  OrthogonalizeToUnitVectorX(p, p1, nDoF);
+  OrthogonalizeToUnitVectorX(p, p2, nDoF);
+  NormalizeX(p, nDoF);
 }
 
 
@@ -210,9 +165,8 @@ void InitializeProblem_ShellEigenPB()
                                                      aXY0.data(), aXY0.size()/2,
                                                      aTri.data(), aTri.size()/3,
                                                      aTmp0.data());
-  ScaleLeftRight(mat_A,
-                 aMassLumpedSqrtInv.data(),
-                 false);
+  MatSparse_ScaleBlkLen_LeftRight(mat_A,
+                                  aMassLumpedSqrtInv.data());
   mat_A.AddDia(offset_dia);
   
   ilu_A.SetValueILU(mat_A);
@@ -413,20 +367,8 @@ int main(int argc,char* argv[])
     const double EI = EYoung*I;
     const double rhoA = rho*thickness*leny;
     // https://www.mapleprimes.com/DocumentFiles/206657_question/Transverse_vibration_of_beams.pdf
-    const double freq = (22.4)/(lenx*lenx)*sqrt(EI/rhoA)/(2*M_PI);
-    freq_theo = freq;
-//    std::cout << "freq" << freq << "   " << sim_freq << "   " << freq/sim_freq  << std::endl;
-    /*
-    const double W = thickness*lenx*leny*rho*gravity_z;
-    const double w = W/lenx;
-    const double disp = w*(lenx*lenx*lenx*lenx)/(8.0*E*I);
-    std::cout << "disp:" << disp << std::endl;
-    for(int ip=0;ip<aXY0.size()/2;++ip){
-      const double px = aXY0[ip*2+0];
-      if( fabs(px-(+lenx*0.5)) > 0.0001 ){ continue; }
-      std::cout << aVal[ip*3+0] << std::endl;
-    }
-     */
+    // https://en.wikipedia.org/wiki/Euler%E2%80%93Bernoulli_beam_theory
+    freq_theo = (22.3733)/(lenx*lenx)*sqrt(EI/rhoA)/(2*M_PI);
   }
   
   glutMainLoop();

@@ -91,3 +91,10 @@ class Test_Cad2D():
     assert W.shape[1] == len(cad.ccad.xy_vtxctrl_face(0))/2
     assert numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0])))<1.0e-3
 
+
+  def test_svg(self):
+    cad = dfm2.Cad2D()
+    for itr in range(3):
+      cad.clear()
+      cad.import_svg("../test_inputs/shape" + str(itr) + ".svg")
+      dfm2.gl.glfw.winDraw3d([cad],nframe=20)

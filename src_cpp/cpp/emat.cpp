@@ -3626,3 +3626,6 @@ double Check_WdWddW_PlateBendingMITC3
   }
   return sum1+sum0;
 }
+
+
+

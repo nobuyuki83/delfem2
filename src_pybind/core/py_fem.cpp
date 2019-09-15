@@ -8,6 +8,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
 #include "delfem2/mshtopo.h"
+#include "delfem2/msh.h"
 #include "delfem2/primitive.h"
 #include "delfem2/sdf.h"
 
@@ -58,19 +59,43 @@ void MatrixSquareSparse_SetFixBC
 }
 
 
-void MatrixSquareSparse_ScaleLeftRight
+void PyMatSparse_ScaleBlk_LeftRight
+(CMatrixSparse<double>& mss,
+ const py::array_t<double>& scale)
+{
+  assert( mss.nblk_col == mss.nblk_row );
+  assert( mss.len_col == mss.len_row );
+  assert( scale.ndim() == 1 );
+  assert( scale.shape()[0] == mss.nblk_col );
+  MatSparse_ScaleBlk_LeftRight(mss,
+                               scale.data());
+}
+
+void PyMatSparse_ScaleBlkLen_LeftRight
+(CMatrixSparse<double>& mss,
+ const py::array_t<double>& scale)
+{
+  assert( mss.nblk_col == mss.nblk_row );
+  assert( mss.len_col == mss.len_row );
+  assert( scale.ndim() == 2 );
+  assert( scale.shape()[0] == mss.nblk_col );
+  assert( scale.shape()[1] == mss.len_col );
+  MatSparse_ScaleBlkLen_LeftRight(mss,
+                                  scale.data());
+}
+
+void PyMatrixSparse_ScaleBlkLen_LeftRight
 (CMatrixSparse<double>& mss,
  const py::array_t<double>& scale,
  bool is_sumndimval)
 {
   assert( mss.nblk_col == mss.nblk_row );
   assert( mss.len_col == mss.len_row );
-  assert( scale.ndim() == 1 );
-  if( is_sumndimval ){ assert( scale.shape()[0] == mss.nblk_col ); }
-  else{                assert( scale.shape()[0] == mss.nblk_col*mss.len_col ); }
-  ScaleLeftRight(mss,
-                 scale.data(),
-                 is_sumndimval);
+  assert( scale.ndim() == 2 );
+  assert( scale.shape()[0] == mss.nblk_col );
+  assert( scale.shape()[1] == mss.len_col );
+  MatSparse_ScaleBlkLen_LeftRight(mss,
+                                  scale.data());
 }
 
 void LinearSystem_SetMasterSlave
@@ -602,6 +627,64 @@ void PyPointFixBC
   }
 }
 
+
+void PyMassPointMesh
+(py::array_t<double>& mass_point,
+ double rho,
+ const py::array_t<double>& np_pos,
+ const py::array_t<unsigned int>& np_elm,
+ MESHELEM_TYPE elem_type)
+{
+  assert( mass_point.ndim() == 1 );
+  assert( np_pos.ndim() == 2 );
+  assert( np_elm.ndim() == 2 );
+  assert( mass_point.shape()[0] == np_pos.shape()[0] );
+  assert( AssertNumpyArray2D(np_elm, -1, nNodeElem(elem_type)) );
+  if( elem_type ==  MESHELEM_TET ){
+    assert( AssertNumpyArray2D(np_pos, -1, 3) );
+    MassPoint_Tet3D((double*)(mass_point.request().ptr),
+                     rho,
+                     np_pos.data(), np_pos.shape()[0],
+                     np_elm.data(), np_elm.shape()[0]);
+  }
+  else if( elem_type ==  MESHELEM_TRI ){
+    if( np_pos.shape()[1] == 2 ){ // two dimensional
+      assert( AssertNumpyArray2D(np_pos, -1, 2) );
+      MassPoint_Tri2D((double*)(mass_point.request().ptr),
+                       rho,
+                       np_pos.data(), np_pos.shape()[0],
+                       np_elm.data(), np_elm.shape()[0]);
+    }
+    else{
+      assert(0);
+    }
+  }
+  else{
+    // TODO: implemnet mass lumped for other types of meshes
+    assert(0);
+  }
+}
+
+void PyMassLumped_ShellPlateBendingMitc3
+(py::array_t<double>& mass_lumped,
+ double rho, double thick,
+ const py::array_t<double>& np_pos,
+ const py::array_t<unsigned int>& np_elm)
+{
+  assert( mass_lumped.ndim() == 2 );
+  assert( AssertNumpyArray2D(mass_lumped, -1, 3) );
+  assert( np_pos.ndim() == 2 );
+  assert( AssertNumpyArray2D(np_pos, -1, 2) );
+  assert( np_elm.ndim() == 2 );
+  assert( AssertNumpyArray2D(np_elm, -1, 3) );
+  assert( mass_lumped.shape()[0] == np_pos.shape()[0] );
+  double* aM = (double*)(mass_lumped.request().ptr);
+  MassLumped_ShellPlateBendingMITC3(aM,
+                                    rho, thick,
+                                    np_pos.data(), np_pos.shape()[0],
+                                    np_elm.data(), np_elm.shape()[0]);
+}
+
 void init_fem(py::module &m){
   py::class_<CMatrixSparse<double>>(m,"CppMatrixSparse")
   .def(py::init<>())
@@ -609,33 +692,38 @@ void init_fem(py::module &m){
   .def("set_zero",   &CMatrixSparse<double>::SetZero)
   .def("add_dia",    &CMatrixSparse<double>::AddDia);
   
+  m.def("matrixSquareSparse_setPattern",     &MatrixSquareSparse_SetPattern);
+  m.def("matrixSquareSparse_setFixBC",       &MatrixSquareSparse_SetFixBC);
+  m.def("cppMatSparse_ScaleBlk_LeftRight",    &PyMatSparse_ScaleBlk_LeftRight);
+  m.def("cppMatSparse_ScaleBlkLen_LeftRight", &PyMatSparse_ScaleBlkLen_LeftRight);
+  m.def("masterSlave_distributeValue",   &PyMasterSlave_DistributeValue);
+  m.def("addMasterSlavePattern",         &PyAddMasterSlavePattern);
+  
   py::class_<CPreconditionerILU<double>>(m,"PreconditionerILU")
   .def(py::init<>())
   .def("ilu_decomp", &CPreconditionerILU<double>::DoILUDecomp)
   .def("set_value",  &CPreconditionerILU<double>::SetValueILU);
-  
-  m.def("matrixSquareSparse_setPattern",     &MatrixSquareSparse_SetPattern);
-  m.def("matrixSquareSparse_setFixBC",       &MatrixSquareSparse_SetFixBC);
-  m.def("matrixSquareSparse_ScaleLeftRight", &MatrixSquareSparse_ScaleLeftRight);
-  
-  m.def("addMasterSlavePattern",         &PyAddMasterSlavePattern);
+
   m.def("precond_ilu0",                  &PrecondILU0);
+  
+  m.def("linearSystem_setMasterSlave",   &LinearSystem_SetMasterSlave);
   m.def("linsys_solve_pcg",              &PySolve_PCG);
   m.def("linsys_solve_bicgstab",         &PySolve_PBiCGStab);
-  m.def("linearSystem_setMasterSlave",   &LinearSystem_SetMasterSlave);
-  m.def("masterSlave_distributeValue",   &PyMasterSlave_DistributeValue);
   
-  m.def("fem_merge_poission",          &PyMergeLinSys_Poission);
-  m.def("fem_merge_diffuse",           &PyMergeLinSys_Diffuse);
-  m.def("fem_merge_linearSolidStatic", &PyMergeLinSys_LinearSolidStatic);
-  m.def("fem_merge_linearSolidDynamic",&PyMergeLinSys_LinearSolidDynamic);
-  m.def("fem_merge_storksStatic2D",    &PyMergeLinSys_StorksStatic2D);
-  m.def("fem_merge_storksDynamic2D",   &PyMergeLinSys_StorksDynamic2D);
-  m.def("fem_merge_navierStorks2D",    &PyMergeLinSys_NavierStorks2D);
-  m.def("fem_merge_cloth",             &PyMergeLinSys_Cloth);
-  m.def("fem_merge_massPoint",         &PyMergeLinSys_MassPoint);
-  m.def("fem_merge_contact",           &PyMergeLinSys_Contact);
-  m.def("fem_merge_ShellMitc3Static",  &PyMergeLinSys_ShellMitc3Static);
+  m.def("cppMassPoint_Mesh",                    &PyMassPointMesh);
+  m.def("cppMassLumped_ShellPlateBendingMitc3", &PyMassLumped_ShellPlateBendingMitc3);
+  
+  m.def("cppFEM_Merge_PointMass",         &PyMergeLinSys_MassPoint);
+  m.def("cppFEM_Merge_PointContact",      &PyMergeLinSys_Contact);
+  m.def("cppFEM_Merge_ScalarPoission",    &PyMergeLinSys_Poission);
+  m.def("cppFEM_Merge_ScalarDiffuse",     &PyMergeLinSys_Diffuse);
+  m.def("cppFEM_Merge_SolidLinearStatic", &PyMergeLinSys_LinearSolidStatic);
+  m.def("cppFEM_Merge_SolidLinearDynamic",&PyMergeLinSys_LinearSolidDynamic);
+  m.def("cppFEM_Merge_FluidStorksStatic", &PyMergeLinSys_StorksStatic2D);
+  m.def("cppFEM_Merge_FluidStorksDynamic",&PyMergeLinSys_StorksDynamic2D);
+  m.def("cppFEM_Merge_FluidNavierStorks", &PyMergeLinSys_NavierStorks2D);
+  m.def("cppFEM_Merge_ShellCloth",        &PyMergeLinSys_Cloth);
+  m.def("cppFEM_Merge_ShellMitc3Static",  &PyMergeLinSys_ShellMitc3Static);
   
   m.def("pbd_proj_rigid2d",            &PyPBD_ConstProj_Rigid2D);
   m.def("pbd_proj_rigid3d",            &PyConstProj_Rigid3D);

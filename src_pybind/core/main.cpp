@@ -87,6 +87,19 @@ py::array_t<int> PyCad2D_GetPointsEdge
   return py::array_t<int>((int)aIdP.size(), aIdP.data());
 }
 
+
+void PyCad2D_ImportSVG
+(CCad2D& cad,
+ const std::string& path_svg)
+{
+  std::vector<CCad2D_EdgeGeo> aEdge;
+  LoopEdgeCCad2D_ReadSVG(aEdge,
+                         path_svg);
+  Transform_LoopEdgeCad2D(aEdge,false,true,0.1);
+  for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+  cad.AddFace(aEdge);
+}
+
 py::array_t<double> PyMVC
 (const py::array_t<double>& XY,
  const py::array_t<double>& XY_bound)
@@ -231,26 +244,30 @@ PYBIND11_MODULE(c_core, m) {
   // cad
   py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
-  .def("pick",        &CCad2D::Pick)
-  .def("drag_picked", &CCad2D::DragPicked)
-  .def("minmax_xyz",  &CCad2D::MinMaxXYZ)
-  .def("add_polygon",  &CCad2D::AddPolygon)
-  .def("add_vtx_edge", &CCad2D::AddVtxEdge)
-  .def("add_vtx_face",  &CCad2D::AddVtxFace)
-  .def("xy_vtxctrl_face", &CCad2D::XY_VtxCtrl_Face)
-  .def("ind_vtx_face", &CCad2D::Ind_Vtx_Face)
-  .def("ind_edge_face",&CCad2D::Ind_Edge_Face)
-  .def("ind_vtx_edge", &CCad2D::Ind_Vtx_Edge)
-  .def("set_edge_type",&CCad2D::SetEdgeType)
-  .def("edge_type",   &CCad2D::GetEdgeType)
-  .def("check",       &CCad2D::Check)
-  .def("nface",       &CCad2D::nFace)
-  .def("nvtx",        &CCad2D::nVtx)
-  .def("nedge",       &CCad2D::nEdge)
+  .def("clear",          &CCad2D::Clear)
+  .def("pick",           &CCad2D::Pick)
+  .def("drag_picked",    &CCad2D::DragPicked)
+  .def("minmax_xyz",     &CCad2D::MinMaxXYZ)
+  .def("add_polygon",    &CCad2D::AddPolygon)
+  .def("add_vtx_edge",   &CCad2D::AddVtxEdge)
+  .def("add_vtx_face",   &CCad2D::AddVtxFace)
+  .def("xy_vtxctrl_face",&CCad2D::XY_VtxCtrl_Face)
+  .def("ind_vtx_face",   &CCad2D::Ind_Vtx_Face)
+  .def("ind_edge_face",  &CCad2D::Ind_Edge_Face)
+  .def("ind_vtx_edge",   &CCad2D::Ind_Vtx_Edge)
+  .def("set_edge_type",  &CCad2D::SetEdgeType)
+  .def("edge_type",      &CCad2D::GetEdgeType)
+  .def("check",          &CCad2D::Check)
+  .def("nface",          &CCad2D::nFace)
+  .def("nvtx",           &CCad2D::nVtx)
+  .def("nedge",          &CCad2D::nEdge)
   .def_readwrite("is_draw_face", &CCad2D::is_draw_face)
   .def_readwrite("ivtx_picked",  &CCad2D::ivtx_picked)
   .def_readwrite("iedge_picked",  &CCad2D::iedge_picked)
   .def_readwrite("iface_picked",  &CCad2D::iface_picked);
+  
+  m.def("cppCad2D_ImportSVG",
+        &PyCad2D_ImportSVG);
   
   py::class_<CMesher_Cad2D>(m,"CppMesher_Cad2D")
   .def(py::init<>())

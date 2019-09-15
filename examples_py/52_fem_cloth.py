@@ -15,7 +15,7 @@ def example1():
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   mesh = mesher.meshing(cad)
 
-  fem = dfm2.FEM_Cloth()
+  fem = dfm2.FEM_ShellCloth()
   fem.updated_topology(mesh)
   npIdP = cad.points_edge([2], mesh.np_pos)
   fem.ls.bc[npIdP,0:3] = 1

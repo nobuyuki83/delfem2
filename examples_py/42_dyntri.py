@@ -95,7 +95,7 @@ def main_MeshDynTri2D_3():
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   dmsh = mesher.meshing(cad)
-  fem = dfm2.FEM_Cloth()
+  fem = dfm2.FEM_ShellCloth()
   fem.updated_topology(dmsh)
   npIdP = cad.points_edge([0], dmsh.np_pos)
   fem.ls.bc[npIdP,:] = 1

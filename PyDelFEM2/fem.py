@@ -5,23 +5,25 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import numpy, os
+import numpy, os, math
 
 from .c_core import CppMatrixSparse, PreconditionerILU
-from .c_core import addMasterSlavePattern, matrixSquareSparse_setPattern, matrixSquareSparse_ScaleLeftRight
+from .c_core import addMasterSlavePattern, matrixSquareSparse_setPattern, \
+  cppMatSparse_ScaleBlk_LeftRight, \
+  cppMatSparse_ScaleBlkLen_LeftRight
 from .c_core import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
 from .c_core import \
-  fem_merge_poission, \
-  fem_merge_cloth, \
-  fem_merge_massPoint, \
-  fem_merge_contact, \
-  fem_merge_linearSolidStatic, \
-  fem_merge_diffuse, \
-  fem_merge_linearSolidDynamic, \
-  fem_merge_storksStatic2D, \
-  fem_merge_storksDynamic2D, \
-  fem_merge_navierStorks2D, \
-  fem_merge_ShellMitc3Static
+  cppFEM_Merge_PointMass, \
+  cppFEM_Merge_PointContact, \
+  cppFEM_Merge_ScalarPoission, \
+  cppFEM_Merge_ScalarDiffuse, \
+  cppFEM_Merge_SolidLinearStatic, \
+  cppFEM_Merge_SolidLinearDynamic, \
+  cppFEM_Merge_FluidStorksStatic, \
+  cppFEM_Merge_FluidStorksDynamic, \
+  cppFEM_Merge_FluidNavierStorks, \
+  cppFEM_Merge_ShellCloth, \
+  cppFEM_Merge_ShellMitc3Static
 from .c_core import \
   pbd_proj_rigid2d, \
   pbd_proj_rigid3d, \
@@ -38,7 +40,8 @@ from .c_core import \
 from .c_core import matrixSquareSparse_setFixBC
 from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
 from .c_core import map_value
-from .c_core import MathExpressionEvaluator, cpp_mass_lumped
+from .c_core import MathExpressionEvaluator
+from .c_core import cppMassPoint_Mesh, cppMassLumped_ShellPlateBendingMitc3
 from .c_core import CppSDF3
 
 from .cadmsh import Mesh, MeshDynTri2D
@@ -154,7 +157,7 @@ class FEM_LinSys():
 
 
 
-class FEM_Poisson():
+class FEM_ScalarPoisson():
   def __init__(self,
                source=0.0,
                alpha=1.0):
@@ -176,10 +179,10 @@ class FEM_Poisson():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    fem_merge_poission(self.ls.mat, self.ls.f,
-                       self.param_alpha, self.param_source,
-                       self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                       self.value)
+    cppFEM_Merge_ScalarPoission(self.ls.mat, self.ls.f,
+                                 self.param_alpha, self.param_source,
+                                 self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                 self.value)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -188,7 +191,7 @@ class FEM_Poisson():
       masterSlave_distributeValue(self.value, self.ls.vec_ms)
 
 
-class FEM_Diffuse():
+class FEM_ScalarDiffuse():
   def __init__(self):
     self.dt = 0.01
     self.gamma_newmark = 0.6
@@ -208,11 +211,11 @@ class FEM_Diffuse():
   def step_time(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    fem_merge_diffuse(self.ls.mat, self.ls.f,
-                      self.param_alpha, self.param_rho, self.param_source,
-                      self.dt, self.gamma_newmark,
-                      self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                      self.value, self.velocity)
+    cppFEM_Merge_ScalarDiffuse(self.ls.mat, self.ls.f,
+                                self.param_alpha, self.param_rho, self.param_source,
+                                self.dt, self.gamma_newmark,
+                                self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                self.value, self.velocity)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -248,10 +251,10 @@ class FEM_SolidLinearStatic():
     gravity = [self.param_gravity_x, self.param_gravity_y]
     if self.mesh.np_pos.shape[1] == 3:
       gravity = [self.param_gravity_x, self.param_gravity_y, self.param_gravity_z]
-    fem_merge_linearSolidStatic(self.ls.mat, self.ls.f,
-                                self.param_myu, self.param_lambda, self.param_rho, gravity,
-                                self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                                self.vec_val)
+    cppFEM_Merge_SolidLinearStatic(self.ls.mat, self.ls.f,
+                                    self.param_myu, self.param_lambda, self.param_rho, gravity,
+                                    self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                    self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -276,8 +279,9 @@ class FEM_SolidLinearEigen():
     self.updated_geometry()
 
   def updated_geometry(self):
-    cpp_mass_lumped(self.mass_lumped_sqrt_inv,
-                    self.rho, self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
+    cppMassPoint_Mesh(self.mass_lumped_sqrt_inv,
+                       self.rho,
+                       self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
     self.mass_lumped_sqrt_inv = numpy.sqrt(self.mass_lumped_sqrt_inv)
     if self.mesh.np_pos.shape[1] == 3:
       self.ker = self.ker.reshape((6,-1,3))
@@ -331,12 +335,12 @@ class FEM_SolidLinearEigen():
       pass
     self.ls.set_zero()
     self.mode[:] = 0.0
-    fem_merge_linearSolidStatic(self.ls.mat, self.ls.f,
-                                1.0, 0.1, 0.0, (0,0,0),
-                                self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                                self.mode)
-    matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv,True)
-    self.ls.mat.add_dia(1.0)
+    cppFEM_Merge_SolidLinearStatic(self.ls.mat, self.ls.f,
+                                    1.0, 0.1, 0.0, (0,0,0),
+                                    self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                    self.mode)
+    cppMatSparse_ScaleBlk_LeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
+    self.ls.mat.add_dia(0.0)
     ####
     self.ls.set_precond()
 
@@ -394,11 +398,11 @@ class FEM_SolidLinearDynamic():
     gravity = [self.param_gravity_x, self.param_gravity_y]
     if self.mesh.np_pos.shape[1] == 3:
       gravity = [self.param_gravity_x, self.param_gravity_y, self.param_gravity_z]
-    fem_merge_linearSolidDynamic(self.ls.mat, self.ls.f,
-                                 1.0, 0.0, 1.0, gravity,
-                                 self.dt, self.gamma_newmark, self.beta_newmark,
-                                 self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
-                                 self.vec_val, self.vec_velo, self.vec_acc)
+    cppFEM_Merge_SolidLinearDynamic(self.ls.mat, self.ls.f,
+                                     1.0, 0.0, 1.0, gravity,
+                                     self.dt, self.gamma_newmark, self.beta_newmark,
+                                     self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type,
+                                     self.vec_val, self.vec_velo, self.vec_acc)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -433,11 +437,11 @@ class FEM_ShellPlateBendingMITC3():
 
   def solve(self):
     self.ls.set_zero()
-    fem_merge_ShellMitc3Static(self.ls.mat, self.ls.f,
-                               self.param_thickness, self.param_lambda, self.param_myu,
-                               self.param_rho, self.param_gravity_z,
-                               self.mesh.np_pos, self.mesh.np_elm,
-                               self.disp)
+    cppFEM_Merge_ShellMitc3Static(self.ls.mat, self.ls.f,
+                                   self.param_thickness, self.param_lambda, self.param_myu,
+                                   self.param_rho, self.param_gravity_z,
+                                   self.mesh.np_pos, self.mesh.np_elm,
+                                   self.disp)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -454,6 +458,8 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.param_myu = 100.0
     self.param_lambda = 100.0
     self.mesh = None
+    self.offset_dia = 0.0
+    self.freq_eigen = 0.0
 
   def updated_topology(self, mesh: Mesh):
     self.mesh = mesh
@@ -461,25 +467,26 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     ndimval = 3
     self.mode = numpy.zeros((np, ndimval), dtype=numpy.float64)  # initial guess is zero
     self.ker = numpy.zeros((3, np, ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.mass_lumped_sqrt_inv = numpy.zeros((np,), dtype=numpy.float64)
+    self.mass_lumped_sqrt_inv = numpy.zeros((np,3), dtype=numpy.float64)
     self.ls = FEM_LinSys(np, ndimval)
     if self.ls.mat is None:
       self.ls.set_pattern(self.mesh.psup())
     self.updated_geometry()
 
   def updated_geometry(self):
-    cpp_mass_lumped(self.mass_lumped_sqrt_inv,
-                    self.param_rho*self.param_thickness,
-                    self.mesh.np_pos, self.mesh.np_elm, self.mesh.elem_type)
+    cppMassLumped_ShellPlateBendingMitc3(self.mass_lumped_sqrt_inv,
+                                         self.param_rho, self.param_thickness,
+                                         self.mesh.np_pos,
+                                         self.mesh.np_elm)
     self.mass_lumped_sqrt_inv = numpy.sqrt(self.mass_lumped_sqrt_inv)
     assert self.mesh.np_pos.shape[1] == 2
     self.ker = self.ker.reshape((3, -1, 3))
     self.ker[:, :, :] = 0.0
-    self.ker[0, :, 0] = + self.mass_lumped_sqrt_inv[:]
-    self.ker[1, :, 0] = + self.mass_lumped_sqrt_inv * self.mesh.np_pos[:, 1]
-    self.ker[1, :, 1] = + self.mass_lumped_sqrt_inv[:]
-    self.ker[2, :, 0] = - self.mass_lumped_sqrt_inv * self.mesh.np_pos[:, 0]
-    self.ker[2, :, 2] = + self.mass_lumped_sqrt_inv[:]
+    self.ker[0, :, 0] = + self.mass_lumped_sqrt_inv[:,0]
+    self.ker[1, :, 0] = + self.mass_lumped_sqrt_inv[:,0] * self.mesh.np_pos[:, 1]
+    self.ker[1, :, 1] = + self.mass_lumped_sqrt_inv[:,1]
+    self.ker[2, :, 0] = - self.mass_lumped_sqrt_inv[:,0] * self.mesh.np_pos[:, 0]
+    self.ker[2, :, 2] = + self.mass_lumped_sqrt_inv[:,2]
     self.ker = self.ker.reshape((3, -1))
     for i in range(3):
       self.ker[i] /= numpy.linalg.norm(self.ker[i])
@@ -489,14 +496,14 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.mass_lumped_sqrt_inv = numpy.reciprocal(self.mass_lumped_sqrt_inv)
     self.ls.set_zero()
     self.mode[:] = 0.0
-    fem_merge_ShellMitc3Static(self.ls.mat, self.ls.f,
+    cppFEM_Merge_ShellMitc3Static(self.ls.mat, self.ls.f,
                                self.param_thickness,
                                self.param_lambda, self.param_myu,
-                               self.param_rho, 0.0,
+                               0.0, 0.0,
                                self.mesh.np_pos, self.mesh.np_elm,
                                self.mode)
-    matrixSquareSparse_ScaleLeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
-    self.ls.mat.add_dia(1.0)
+    cppMatSparse_ScaleBlkLen_LeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
+    self.ls.mat.add_dia(self.offset_dia)
     ####
     self.ls.set_precond()
 
@@ -504,6 +511,12 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.mode[:] = self.ls.f
     self.ls.x[:] = 0.0
     self.ls.solve_iteration()
+    ####
+    lam0 = numpy.dot(self.ls.x.flatten(),self.mode.flatten())
+    if( 1.0 / lam0 - self.offset_dia > 0 ):
+      self.freq_eigen = math.sqrt(1.0/lam0-self.offset_dia)/(2.0*math.pi)
+    else:
+      self.freq_eigen = 0.0
     ####
     x = self.ls.x.reshape((-1))
     self.ker = self.ker.reshape((3, -1))
@@ -514,9 +527,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ker = self.ker.reshape((3, -1, 3))
     self.ls.f[:] = self.ls.x
     ####
-    self.mode[:, 0] = self.mass_lumped_sqrt_inv * self.ls.x[:, 0] * 0.03
-    self.mode[:, 1] = self.mass_lumped_sqrt_inv * self.ls.x[:, 1] * 0.03
-    self.mode[:, 2] = self.mass_lumped_sqrt_inv * self.ls.x[:, 2] * 0.03
+    self.mode[:] = self.mass_lumped_sqrt_inv[:] * self.ls.x[:] * 0.03
 
   def step_time(self):
     self.solve()
@@ -525,7 +536,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ls.f[:] = numpy.random.uniform(-1, 1, self.mesh.np_pos.shape)
 
 
-class FEM_Cloth():
+class FEM_ShellCloth():
   def __init__(self):
     self.dt = 0.1
     self.gravity = (0,0,-1)
@@ -556,20 +567,20 @@ class FEM_Cloth():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    fem_merge_cloth(self.ls.mat, self.ls.f,
-                    self.myu, self.lmd, self.dt,
-                    self.mesh.np_pos, self.mesh.np_elm,
-                    self.np_quad,
-                    self.vec_val)
-    fem_merge_massPoint(self.ls.mat, self.ls.f,
-                        self.rho, self.dt,
-                        self.gravity,
-                        self.vec_val, self.vec_velo)
+    cppFEM_Merge_ShellCloth(self.ls.mat, self.ls.f,
+                             self.myu, self.lmd, self.dt,
+                             self.mesh.np_pos, self.mesh.np_elm,
+                             self.np_quad,
+                             self.vec_val)
+    cppFEM_Merge_PointMass(self.ls.mat, self.ls.f,
+                            self.rho, self.dt,
+                            self.gravity,
+                            self.vec_val, self.vec_velo)
     if self.sdf is not None:
-      fem_merge_contact(self.ls.mat, self.ls.f,
-                        10000, 0.1,
-                        [self.sdf],
-                        self.vec_val)
+      cppFEM_merge_PointContact(self.ls.mat, self.ls.f,
+                                 10000, 0.1,
+                                 [self.sdf],
+                                 self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -583,7 +594,7 @@ class FEM_Cloth():
 ##########################
 ## fluid from here
 
-class FEM_StorksStatic2D():
+class FEM_FluidStorksStatic():
   def __init__(self,
                mesh: Mesh):
     self.mesh = mesh
@@ -599,10 +610,10 @@ class FEM_StorksStatic2D():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    fem_merge_storksStatic2D(self.ls.mat, self.ls.f,
-                             1.0, 0.0, 0.0,
-                             self.mesh.np_pos, self.mesh.np_elm,
-                             self.vec_val)
+    cppFEM_Merge_FluidStorksStatic(self.ls.mat, self.ls.f,
+                                    1.0, 0.0, 0.0,
+                                    self.mesh.np_pos, self.mesh.np_elm,
+                                    self.vec_val)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -612,7 +623,7 @@ class FEM_StorksStatic2D():
     self.solve()
 
 
-class FEM_StorksDynamic2D():
+class FEM_FluidStorksDynamic():
   def __init__(self,
                mesh: Mesh):
     self.dt = 0.005
@@ -631,11 +642,11 @@ class FEM_StorksDynamic2D():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    fem_merge_storksDynamic2D(self.ls.mat, self.ls.f,
-                              1.0, 1.0, 0.0, 0.0,
-                              self.dt, self.gamma_newmark,
-                              self.mesh.np_pos, self.mesh.np_elm,
-                              self.vec_val, self.vec_velo)
+    cppFEM_Merge_FluidStorksDynamic(self.ls.mat, self.ls.f,
+                                     1.0, 1.0, 0.0, 0.0,
+                                     self.dt, self.gamma_newmark,
+                                     self.mesh.np_pos, self.mesh.np_elm,
+                                     self.vec_val, self.vec_velo)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration()
@@ -646,7 +657,7 @@ class FEM_StorksDynamic2D():
     self.solve()
 
 
-class FEM_NavierStorks2D():
+class FEM_FluidNavierStorks():
   def __init__(self,
                mesh: Mesh):
     self.dt = 0.1
@@ -665,11 +676,11 @@ class FEM_NavierStorks2D():
   def solve(self):
     assert self.ls.mat is not None
     self.ls.set_zero()
-    fem_merge_navierStorks2D(self.ls.mat, self.ls.f,
-                             1.0, 1000.0, 0.0, 0.0,
-                             self.dt, self.gamma_newmark,
-                             self.mesh.np_pos, self.mesh.np_elm,
-                             self.vec_val, self.vec_velo)
+    cppFEM_Merge_FluidNavierStorks(self.ls.mat, self.ls.f,
+                                    1.0, 1000.0, 0.0, 0.0,
+                                    self.dt, self.gamma_newmark,
+                                    self.mesh.np_pos, self.mesh.np_elm,
+                                    self.vec_val, self.vec_velo)
     self.ls.set_bc_ms()
     self.ls.set_precond()
     self.ls.solve_iteration(is_asymmetric=True)
