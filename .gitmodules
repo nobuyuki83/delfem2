@@ -16,3 +16,6 @@
 [submodule "test_cpp/googletest"]
 	path = test_cpp/googletest
 	url = https://github.com/google/googletest.git
+[submodule "src_cpp/external/imgui"]
+	path = src_cpp/external/imgui
+	url = https://github.com/ocornut/imgui.git

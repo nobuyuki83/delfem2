@@ -49,7 +49,7 @@ script: |
   ./runUnitTests
   cd ../../
 
-  cd examples_cpp
+  cd examples_glut
   mkdir buildMake
   cd buildMake
   cmake ..
