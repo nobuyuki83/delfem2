@@ -17,17 +17,17 @@ from .c_core import CppGLTF, CppGLTF_GetMeshInfo, CppGLTF_GetBones, update_rig_s
 from .fem import FieldValueSetter
 from .fem import PBD, PBD_Cloth
 from .fem import \
-  FEM_Poisson, \
-  FEM_Cloth, \
-  FEM_Diffuse, \
+  FEM_ScalarPoisson, \
+  FEM_ScalarDiffuse, \
   FEM_SolidLinearStatic, \
   FEM_SolidLinearDynamic, \
   FEM_SolidLinearEigen, \
   FEM_ShellPlateBendingMITC3, \
-  FEM_ShellPlateBendingMITC3_Eigen,\
-  FEM_StorksStatic2D, \
-  FEM_StorksDynamic2D, \
-  FEM_NavierStorks2D
+  FEM_ShellPlateBendingMITC3_Eigen, \
+  FEM_ShellCloth, \
+  FEM_FluidStorksStatic, \
+  FEM_FluidStorksDynamic, \
+  FEM_FluidNavierStorks
 
 from .cadmsh import SDF
 from .cadmsh import Cad2D, VoxelGrid, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D

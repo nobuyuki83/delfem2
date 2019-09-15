@@ -457,7 +457,7 @@ class QW_AnimCntrl(QWidget):
 class QW_FEMPoisson(QWidget):
   updated_cadmshfem = Signal()
 
-  def __init__(self,fem:dfm2.FEM_Poisson):
+  def __init__(self,fem:dfm2.FEM_ScalarPoisson):
     super(QW_FEMPoisson, self).__init__()
     self.fem = fem
     
@@ -540,7 +540,7 @@ class QW_FEMSolidLinearEigen(QWidget):
 class QW_FEMDiffuse(QWidget):
   updated_cadmshfem = Signal()
 
-  def __init__(self,fem:dfm2.FEM_Diffuse):
+  def __init__(self,fem:dfm2.FEM_ScalarDiffuse):
     super(QW_FEMDiffuse, self).__init__()
     ####
     self.fem = fem

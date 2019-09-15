@@ -344,6 +344,11 @@ public:
     if( bb_j.y_min > y_max+clearance || bb_j.y_max < y_min-clearance ) return false;
     return true;
   }
+  std::vector<double> MinMaxXYZ() const {
+    const double tmp[6] = {x_min,x_max, y_min,y_max, 0.0, 0.0};
+    std::vector<double> bb(tmp,tmp+6);
+    return bb;
+  }
 public:
   double x_min,x_max,  y_min,y_max;
 };

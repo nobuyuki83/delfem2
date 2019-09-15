@@ -1531,3 +1531,28 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
     mat_A.Mearge(3, aIP, 3, aIP, 9, &ddW[0][0][0][0], tmp_buffer);
   }
 }
+
+void MassLumped_ShellPlateBendingMITC3
+(double* aM,
+ double rho, double thick,
+ const double* aXY, unsigned int nXY,
+ const unsigned int* aTri, unsigned int nTri)
+{
+  const unsigned int nDoF = nXY*3;
+  for(int i=0;i<nDoF;++i){ aM[i] = 0.0; }
+  for(int it=0;it<nTri;++it){
+    const int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
+    const int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
+    const int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+    const double* p0 = aXY+i0*2;
+    const double* p1 = aXY+i1*2;
+    const double* p2 = aXY+i2*2;
+    const double a012 = TriArea2D(p0, p1, p2);
+    double m0 = a012/3.0*rho*thick;
+    double m1 = a012/3.0*rho*thick*thick*thick/12.0;
+    double m2 = m1;
+    aM[i0*3+0] += m0;  aM[i1*3+0] += m0;  aM[i2*3+0] += m0;
+    aM[i0*3+1] += m1;  aM[i1*3+1] += m1;  aM[i2*3+1] += m1;
+    aM[i0*3+2] += m2;  aM[i1*3+2] += m2;  aM[i2*3+2] += m2;
+  }
+}

@@ -158,7 +158,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         if( istep == 5 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape0.svg"; }
         if( istep == 6 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
         if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
-        //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg";
         //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg";
         //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape3.svg";
         std::vector<CCad2D_EdgeGeo> aEdge;

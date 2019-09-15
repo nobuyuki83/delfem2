@@ -280,42 +280,6 @@ PyJArray_AddDiagonal
 }
 
 
-void PyMassLumped
-(py::array_t<double>& mass_lumped,
- double rho,
- const py::array_t<double>& np_pos,
- const py::array_t<unsigned int>& np_elm,
- MESHELEM_TYPE elem_type)
-{
-  assert( mass_lumped.ndim() == 1 );
-  assert( np_pos.ndim() == 2 );
-  assert( np_elm.ndim() == 2 );
-  assert( mass_lumped.shape()[0] == np_pos.shape()[0] );
-  assert( AssertNumpyArray2D(np_elm, -1, nNodeElem(elem_type)) );
-  if( elem_type ==  MESHELEM_TET ){
-    assert( AssertNumpyArray2D(np_pos, -1, 3) );
-    MassLumped_Tet3D((double*)(mass_lumped.request().ptr),
-                   rho,
-                   np_pos.data(), np_pos.shape()[0],
-                   np_elm.data(), np_elm.shape()[0]);
-  }
-  else if( elem_type ==  MESHELEM_TRI ){
-    if( np_pos.shape()[1] == 2 ){
-      assert( AssertNumpyArray2D(np_pos, -1, 2) );
-      MassLumped_Tri2D((double*)(mass_lumped.request().ptr),
-                       rho,
-                       np_pos.data(), np_pos.shape()[0],
-                       np_elm.data(), np_elm.shape()[0]);
-    }
-    else{
-      assert(0);
-    }
-  }
-  else{
-    // TODO: implemnet mass lumped for other types of meshes
-    assert(0);
-  }
-}
 
 
 
@@ -561,8 +525,6 @@ void init_mshtopoio(py::module &m){
   m.def("meshhex3d_subdiv",       &PyMeshHex3D_Subviv,      py::return_value_policy::move);
   
   m.def("setTopology_ExtrudeTri2Tet", &PySetTopology_ExtrudeTri2Tet);
-  
-  m.def("cpp_mass_lumped", &PyMassLumped);
   
   // jarray
   m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);

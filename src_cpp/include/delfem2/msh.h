@@ -152,16 +152,20 @@ void makeSolidAngle(std::vector<double>& aSolidAngle,
                     std::vector<int>& elsup_ind,
                     std::vector<int>& elsup);
 
-void MassLumped_Tet3D(double* aMassMatrixLumped,
+/**
+ * @brief Compute mass of the points (lumped mass) for 3D tet mesh
+ * @details aMassMatrixLumped need to be allocated before in the size of nXY
+ */
+void MassPoint_Tet3D(double* aMassMatrixLumped,
                       double rho,
                       const double* aXYZ, int nXYZ,
                       const unsigned int* aTet, int nTet);
 
 /**
- * @brief compute lumped mass matrix for 2D triangle mesh
- * @details aMassMatrixLumped need to be allocated in the size of nXY
+ * @brief Compute mass of the points (lumped mass) for 2D triangle mesh
+ * @details aMassMatrixLumped need to be allocated before in the size of nXY
  */
-void MassLumped_Tri2D(double* aMassMatrixLumped,
+void MassPoint_Tri2D(double* aMassMatrixLumped,
                       double rho,
                       const double* aXY, int nXY,
                       const unsigned int* aTri, int nTri);

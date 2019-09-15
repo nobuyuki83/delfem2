@@ -1,7 +1,11 @@
 import numpy
 from typing import List
 
-from .fem import FEM_Poisson, FEM_SolidLinearStatic, FEM_SolidLinearEigen, FEM_Diffuse
+from .fem import \
+  FEM_ScalarPoisson, \
+  FEM_ScalarDiffuse, \
+  FEM_SolidLinearStatic, \
+  FEM_SolidLinearEigen
 from .fem import PBD, PBD_Cloth
 from .fem import FieldValueSetter
 
@@ -17,7 +21,7 @@ class CadMesh2D_FEMPoisson(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
-    self.fem = FEM_Poisson(source=1.0)
+    self.fem = FEM_ScalarPoisson(source=1.0)
     self.vis = VisFEM_ColorContour(self.fem,name_color='value')
     self.vis.is_lighting = False
     self.list_cad_edge_fix = [0,1,2,3]
@@ -45,7 +49,7 @@ class CadMesh2D_FEMDiffuse(CadMesh2D):
 
   def __init__(self,edge_length:float):
     super().__init__(edge_length)
-    self.fem = FEM_Diffuse()
+    self.fem = FEM_ScalarDiffuse()
     self.vis = VisFEM_ColorContour(self.fem,name_color='value')
     self.vis.is_lighting = False
     self.list_cad_edge_fix = [0,1,2,3]

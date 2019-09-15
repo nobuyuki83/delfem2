@@ -919,7 +919,7 @@ void makeSolidAngle
 }
 
 
-void MassLumped_Tet3D
+void MassPoint_Tet3D
 (double* aMassMatrixLumped,
  double rho,
  const double* aXYZ, int nXYZ,
@@ -943,7 +943,7 @@ void MassLumped_Tet3D
   }
 }
 
-void MassLumped_Tri2D
+void MassPoint_Tri2D
 (double* aMassMatrixLumped,
  double rho,
  const double* aXY, int nXY,

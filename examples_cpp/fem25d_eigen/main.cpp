@@ -34,8 +34,6 @@
 #include "delfem2/gl_funcs.h"
 
 
-
-
 void GenMesh
 (std::vector<CVector2>& aVec2,
  std::vector<CEPo2>& aPo2D,
@@ -69,26 +67,6 @@ void GenMesh
   }
 }
 
-void Scale(double* p0, int n, double s)
-{
-  for(int i=0;i<n;++i){ p0[i] *= s; }
-}
-
-void Normalize(double* p0, int n)
-{
-  const double ss = DotX(p0,p0,n);
-  Scale(p0,n,1.0/sqrt(ss));
-}
-
-
-void Orthogonalize_ToUnitVector(double* p1,
-                                const double* p0, int n)
-{
-  double d = DotX(p0, p1, n);
-  for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
-}
-
-
 void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 (double* aMassLumpedSqrtInv,
  double* aModesKer,
@@ -97,7 +75,7 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 {
   const int nDoF = nXYZ*3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
-  MassLumped_Tet3D(aMassLumpedSqrt.data(),
+  MassPoint_Tet3D(aMassLumpedSqrt.data(),
                    1, aXYZ, nXYZ, aTet,nTet);
   
   for(int ip=0;ip<nXYZ;++ip){
@@ -124,27 +102,27 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
       p4[ip*3+0] = -z0*m0;  p4[ip*3+2] = +x0*m0;
       p5[ip*3+1] = -x0*m0;  p5[ip*3+0] = +y0*m0;
     }
-    Normalize(p0,nDoF);
-    Orthogonalize_ToUnitVector(p1, p0, nDoF);
-    Orthogonalize_ToUnitVector(p2, p0, nDoF);
-    Orthogonalize_ToUnitVector(p3, p0, nDoF);
-    Orthogonalize_ToUnitVector(p4, p0, nDoF);
-    Orthogonalize_ToUnitVector(p5, p0, nDoF);
-    Normalize(p1,nDoF);
-    Orthogonalize_ToUnitVector(p2, p1, nDoF);
-    Orthogonalize_ToUnitVector(p3, p1, nDoF);
-    Orthogonalize_ToUnitVector(p4, p1, nDoF);
-    Orthogonalize_ToUnitVector(p5, p1, nDoF);
-    Normalize(p2,nDoF);
-    Orthogonalize_ToUnitVector(p3, p2, nDoF);
-    Orthogonalize_ToUnitVector(p4, p2, nDoF);
-    Orthogonalize_ToUnitVector(p5, p2, nDoF);
-    Normalize(p3,nDoF);
-    Orthogonalize_ToUnitVector(p4, p3, nDoF);
-    Orthogonalize_ToUnitVector(p5, p3, nDoF);
-    Normalize(p4,nDoF);
-    Orthogonalize_ToUnitVector(p5, p4, nDoF);
-    Normalize(p5,nDoF);
+    NormalizeX(p0,nDoF);
+    OrthogonalizeToUnitVectorX(p1, p0, nDoF);
+    OrthogonalizeToUnitVectorX(p2, p0, nDoF);
+    OrthogonalizeToUnitVectorX(p3, p0, nDoF);
+    OrthogonalizeToUnitVectorX(p4, p0, nDoF);
+    OrthogonalizeToUnitVectorX(p5, p0, nDoF);
+    NormalizeX(p1,nDoF);
+    OrthogonalizeToUnitVectorX(p2, p1, nDoF);
+    OrthogonalizeToUnitVectorX(p3, p1, nDoF);
+    OrthogonalizeToUnitVectorX(p4, p1, nDoF);
+    OrthogonalizeToUnitVectorX(p5, p1, nDoF);
+    NormalizeX(p2,nDoF);
+    OrthogonalizeToUnitVectorX(p3, p2, nDoF);
+    OrthogonalizeToUnitVectorX(p4, p2, nDoF);
+    OrthogonalizeToUnitVectorX(p5, p2, nDoF);
+    NormalizeX(p3,nDoF);
+    OrthogonalizeToUnitVectorX(p4, p3, nDoF);
+    OrthogonalizeToUnitVectorX(p5, p3, nDoF);
+    NormalizeX(p4,nDoF);
+    OrthogonalizeToUnitVectorX(p5, p4, nDoF);
+    NormalizeX(p5,nDoF);
   }
   
   for(int ip=0;ip<nXYZ;++ip){
@@ -181,13 +159,13 @@ void RemoveKernel()
   const double* p4 = aModesKer.data()+nDoF*4;
   const double* p5 = aModesKer.data()+nDoF*5;
   double* p = aTmp0.data();
-  Orthogonalize_ToUnitVector(p, p0, nDoF);
-  Orthogonalize_ToUnitVector(p, p1, nDoF);
-  Orthogonalize_ToUnitVector(p, p2, nDoF);
-  Orthogonalize_ToUnitVector(p, p3, nDoF);
-  Orthogonalize_ToUnitVector(p, p4, nDoF);
-  Orthogonalize_ToUnitVector(p, p5, nDoF);
-  Normalize(p, nDoF);
+  OrthogonalizeToUnitVectorX(p, p0, nDoF);
+  OrthogonalizeToUnitVectorX(p, p1, nDoF);
+  OrthogonalizeToUnitVectorX(p, p2, nDoF);
+  OrthogonalizeToUnitVectorX(p, p3, nDoF);
+  OrthogonalizeToUnitVectorX(p, p4, nDoF);
+  OrthogonalizeToUnitVectorX(p, p5, nDoF);
+  NormalizeX(p, nDoF);
 }
 
 
@@ -231,9 +209,8 @@ void InitializeProblem_ShellEigenPB()
                                            aXYZ.data(), aXYZ.size()/3,
                                            aTet.data(), aTet.size()/4,
                                            aTmp0.data());
-  ScaleLeftRight(mat_A,
-                 aMassLumpedSqrtInv.data(),
-                 true);
+  MatSparse_ScaleBlk_LeftRight(mat_A,
+                               aMassLumpedSqrtInv.data());
   mat_A.AddDia(0.8);
   
   ilu_A.SetValueILU(mat_A);
@@ -407,7 +384,6 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aTri;
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
-    
     ExtrudeTri2Tet(1, 0.1,
                    aXYZ,aTet,
                    aXY,aTri);

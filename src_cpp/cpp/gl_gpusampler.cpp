@@ -59,7 +59,7 @@ double DotX(const double* p0, const double* p1, int ndof){
   return v;
 }
 
-void Scale(double* p0, int n, double s)
+void ScaleX(double* p0, int n, double s)
 {
   for(int i=0;i<n;++i){ p0[i] *= s; }
 }
@@ -67,7 +67,7 @@ void Scale(double* p0, int n, double s)
 void Normalize(double* p0, int n)
 {
   const double ss = DotX(p0,p0,n);
-  Scale(p0,n,1.0/sqrt(ss));
+  ScaleX(p0,n,1.0/sqrt(ss));
 }
 
 

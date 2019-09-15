@@ -10,6 +10,7 @@ import numpy, os
 from typing import Tuple, List
 
 from .c_core import CppCad2D, CppMeshDynTri2D, CppMesher_Cad2D, CppVoxelGrid, CppMapper, AABB3
+from .c_core import cppCad2D_ImportSVG
 from .c_core import TRI, QUAD, HEX, TET, LINE
 from .c_core import \
   meshquad2d_grid, \
@@ -300,6 +301,15 @@ class Cad2D():
   def motion(self,src0,src1,dir) -> None:
     self.ccad.drag_picked(src1[0],src1[1], src0[0],src0[1])
 
+  def minmax_xyz(self):
+    return self.ccad.minmax_xyz();
+
+  ######
+
+  def clear(self) -> None:
+    """clear all the cad elements"""
+    self.ccad.clear()
+
   def pick(self, x, y, view_height) -> None:
     self.ccad.pick(x,y,view_height)
 
@@ -337,6 +347,11 @@ class Cad2D():
 
   def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
     return cad_getPointsEdge(self.ccad,list_edge_index, np_xy, tolerance=tolerance)
+
+  def import_svg(self,path0:str):
+    if not os.path.isfile(path0):
+      return false
+    cppCad2D_ImportSVG(self.ccad,path0)
 
 ######################
 

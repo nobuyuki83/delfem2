@@ -190,18 +190,14 @@ void CCad2D::AddVtxEdge(double x, double y, unsigned int ie_add)
 
 std::vector<double> CCad2D::MinMaxXYZ() const
 {
-  CBV3D_AABB aabb;
-  for(unsigned int iv=0;iv<aVtx.size();++iv){
-    const CVector2& v = aVtx[iv].pos;
-    aabb.AddPoint(v.x, v.y, 0.0, 0.0);
-  }
-  return aabb.MinMaxXYZ();
+  CBoundingBox2D bb = this->BB();
+  return bb.MinMaxXYZ();
 }
 
 CBoundingBox2D CCad2D::BB() const
 {
   CBoundingBox2D bb;
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     bb += aEdge[ie].BB();
   }
   return bb;

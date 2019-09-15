@@ -270,6 +270,11 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(CMatrixSparse<double>& m
                                                         const unsigned int* aTri1, unsigned int nTri,
                                                         const double* aVal);
 
+void MassLumped_ShellPlateBendingMITC3(double* aM,
+                                       double rho, double thick,
+                                       const double* aXY, unsigned int nXY,
+                                       const unsigned int* aTri, unsigned int nTri);
+
 /* ------------------------------------------------------------------------- */
 
 

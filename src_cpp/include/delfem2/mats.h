@@ -263,7 +263,12 @@ bool CMatrixSparse<T>::Mearge
 
 double CheckSymmetry(const CMatrixSparse<double>& mat);
 void SetMasterSlave(CMatrixSparse<double>& mat, const int* aMSFlag);
-void ScaleLeftRight(CMatrixSparse<double>& mat, const double* scale, bool is_sumdimval);
+void MatSparse_ScaleBlk_LeftRight(CMatrixSparse<double>& mat,
+                                     const double* scale);
+void MatSparse_ScaleBlkLen_LeftRight(CMatrixSparse<double>& mat,
+                                     const double* scale);
+
+
 
 
 template <typename T>
@@ -319,6 +324,11 @@ void XPlusAYBZCW(std::vector<double>& X,
                  const std::vector<double>& Z,
                  double gamma,
                  const std::vector<double>& W);
+
+void ScaleX(double* p0, int n, double s);
+void NormalizeX(double* p0, int n);
+void OrthogonalizeToUnitVectorX(double* p1,
+                                const double* p0, int n);
 
 // set boundary condition
 
