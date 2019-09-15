@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <deque>
 #include <set>
+#include <cstdlib>
 
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
@@ -22,7 +23,13 @@
 
 #include "delfem2/cad2d.h"
 
+////////////////////////////////////////////////////////////////////////////////////
 
+static double myStod(const std::string& str){
+  char* e;
+  double d = std::strtod(str.c_str(),&e);
+  return d;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -889,15 +896,15 @@ void LoopEdgeCad2D_SVGPathD
   CVector2 pos_cur;
   for(int is=0;;){
     if( aStr1[is] == "M" ){
-      pos_cur.x = std::stod(aStr1[is+1]);
-      pos_cur.y = std::stod(aStr1[is+2]);
+      pos_cur.x = myStod(aStr1[is+1]);
+      pos_cur.y = myStod(aStr1[is+2]);
       is += 3;
       for(;;){
         if( isAlphabet(aStr1[is][0]) ){ break; }
         CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1.x = std::stod(aStr1[is+0]);
-        e.p1.y = std::stod(aStr1[is+1]);
+        e.p1.x = myStod(aStr1[is+0]);
+        e.p1.y = myStod(aStr1[is+1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;
@@ -906,14 +913,14 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "C" ){
       CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1 = CVector2( std::stod(aStr1[is+5]), std::stod(aStr1[is+6]) );
+      e.p1 = CVector2( myStod(aStr1[is+5]), myStod(aStr1[is+6]) );
       double len01 = (e.p1 - e.p0).Length();
       const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
       const CVector2 ly = CVector2(lx.y,-lx.x);
       e.type_edge = 1;
       e.param.resize(4,0.0);
-      CVector2 p2( std::stod(aStr1[is+1]), std::stod(aStr1[is+2]) );
-      CVector2 p3( std::stod(aStr1[is+3]), std::stod(aStr1[is+4]) );
+      CVector2 p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );
+      CVector2 p3( myStod(aStr1[is+3]), myStod(aStr1[is+4]) );
       e.param[0] = (p2-e.p0)*lx;
       e.param[1] = (p2-e.p0)*ly;
       e.param[2] = (p3-e.p1)*lx;
@@ -925,14 +932,14 @@ void LoopEdgeCad2D_SVGPathD
         if( isAlphabet(aStr1[is][0]) ){ break; }
         CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1 = CVector2( std::stod(aStr1[is+4]), std::stod(aStr1[is+5]) );
+        e.p1 = CVector2( myStod(aStr1[is+4]), myStod(aStr1[is+5]) );
         double len01 = (e.p1 - e.p0).Length();
         const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
         const CVector2 ly = CVector2(lx.y,-lx.x);
         e.type_edge = 1;
         e.param.resize(4,0.0);
-        CVector2 p2( std::stod(aStr1[is+0]), std::stod(aStr1[is+1]) );
-        CVector2 p3( std::stod(aStr1[is+2]), std::stod(aStr1[is+3]) );
+        CVector2 p2( myStod(aStr1[is+0]), myStod(aStr1[is+1]) );
+        CVector2 p3( myStod(aStr1[is+2]), myStod(aStr1[is+3]) );
         e.param[0] = (p2-e.p0)*lx;
         e.param[1] = (p2-e.p0)*ly;
         e.param[2] = (p3-e.p1)*lx;
@@ -945,12 +952,12 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "c" ){
       CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1 = CVector2(pos_cur.x + std::stod(aStr1[is+5]),
-                      pos_cur.y + std::stod(aStr1[is+6]) );
-      CVector2 p2(pos_cur.x + std::stod(aStr1[is+1]),
-                  pos_cur.y + std::stod(aStr1[is+2]) );
-      CVector2 p3(pos_cur.x + std::stod(aStr1[is+3]),
-                  pos_cur.y + std::stod(aStr1[is+4]) );
+      e.p1 = CVector2(pos_cur.x + myStod(aStr1[is+5]),
+                      pos_cur.y + myStod(aStr1[is+6]) );
+      CVector2 p2(pos_cur.x + myStod(aStr1[is+1]),
+                  pos_cur.y + myStod(aStr1[is+2]) );
+      CVector2 p3(pos_cur.x + myStod(aStr1[is+3]),
+                  pos_cur.y + myStod(aStr1[is+4]) );
       double len01 = (e.p1 - e.p0).Length();
       const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
       const CVector2 ly = CVector2(lx.y,-lx.x);
@@ -967,8 +974,8 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "l" ){
       CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1.x = pos_cur.x + std::stod(aStr1[is+1]);
-      e.p1.y = pos_cur.y + std::stod(aStr1[is+2]);
+      e.p1.x = pos_cur.x + myStod(aStr1[is+1]);
+      e.p1.y = pos_cur.y + myStod(aStr1[is+2]);
       pos_cur = e.p1;
       aEdge.push_back(e);
       is += 3;
@@ -976,8 +983,8 @@ void LoopEdgeCad2D_SVGPathD
         if( isAlphabet(aStr1[is][0]) ){ break; }
         CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1.x = pos_cur.x + std::stod(aStr1[is+0]);
-        e.p1.y = pos_cur.y + std::stod(aStr1[is+1]);
+        e.p1.x = pos_cur.x + myStod(aStr1[is+0]);
+        e.p1.y = pos_cur.y + myStod(aStr1[is+1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;
@@ -986,8 +993,8 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "L" ){
       CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1.x = std::stod(aStr1[is+1]);
-      e.p1.y = std::stod(aStr1[is+2]);
+      e.p1.x = myStod(aStr1[is+1]);
+      e.p1.y = myStod(aStr1[is+2]);
       pos_cur = e.p1;
       aEdge.push_back(e);
       is += 3;
@@ -995,8 +1002,8 @@ void LoopEdgeCad2D_SVGPathD
         if( isAlphabet(aStr1[is][0]) ){ break; }
         CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1.x = std::stod(aStr1[is+0]);
-        e.p1.y = std::stod(aStr1[is+1]);
+        e.p1.x = myStod(aStr1[is+0]);
+        e.p1.y = myStod(aStr1[is+1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;
@@ -1005,13 +1012,13 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "S" ){
       CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1 = CVector2( std::stod(aStr1[is+3]), std::stod(aStr1[is+4]) );
+      e.p1 = CVector2( myStod(aStr1[is+3]), myStod(aStr1[is+4]) );
       double len01 = (e.p1 - e.p0).Length();
       const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
       const CVector2 ly = CVector2(lx.y,-lx.x);
       e.type_edge = 1;
       e.param.resize(4,0.0);
-      CVector2 p2( std::stod(aStr1[is+1]), std::stod(aStr1[is+2]) );
+      CVector2 p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );
       CVector2 p3 = e.p1;
       e.param[0] = (p2-e.p0)*lx;
       e.param[1] = (p2-e.p0)*ly;
@@ -1039,7 +1046,7 @@ void LoopEdgeCad2D_SVGPolygonPoints
   const int np = aS.size()/2;
   std::vector<CVector2> aP;
   for(int ip=0;ip<np;++ip){
-    aP.push_back( CVector2(std::stod(aS[ip*2+0]), std::stod(aS[ip*2+1]) ) );
+    aP.push_back( CVector2(myStod(aS[ip*2+0]), myStod(aS[ip*2+1]) ) );
   }
   std::cout << "np  " << np << std::endl;
   for(int ie=0;ie<np;++ie){

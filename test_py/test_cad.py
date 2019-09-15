@@ -92,9 +92,11 @@ class Test_Cad2D():
     assert numpy.linalg.norm(W.sum(axis=1)-numpy.ones((W.shape[0])))<1.0e-3
 
 
-  def test_svg(self):
+  def test_svg(self,request):
+    is_gl = request.config.getoption('--is_gl') == "true"
     cad = dfm2.Cad2D()
     for itr in range(3):
       cad.clear()
       cad.import_svg("../test_inputs/shape" + str(itr) + ".svg")
-      dfm2.gl.glfw.winDraw3d([cad],nframe=20)
+      if is_gl:
+        dfm2.gl.glfw.winDraw3d([cad],nframe=20)
