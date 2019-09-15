@@ -1067,7 +1067,7 @@ XY_Polygon(const std::vector<CVector2>& aP)
 {
   std::vector<double> res;
   res.reserve(aP.size()*2);
-  for(int ip=0;ip<aP.size();++ip){
+  for(unsigned int ip=0;ip<aP.size();++ip){
     res.push_back(aP[ip].x);
     res.push_back(aP[ip].y);
   }

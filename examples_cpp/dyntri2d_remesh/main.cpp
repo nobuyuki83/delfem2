@@ -11,7 +11,7 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 #include "delfem2/gl_cad_dyntri_v23.h"
 
 

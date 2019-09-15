@@ -13,7 +13,7 @@
 #include <stack>
 
 #include "delfem2/vec2.h"
-#include "delfem2/dyntri.h"
+#include "delfem2/dtri.h"
 
 bool CheckTri(const std::vector<CEPo2>& aPo3D,
               const std::vector<ETri>& aSTri,

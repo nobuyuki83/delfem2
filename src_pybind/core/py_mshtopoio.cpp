@@ -7,10 +7,10 @@
 
 #include "delfem2/mshtopoio.h"
 #include "delfem2/primitive.h"
-#include "delfem2/dyntri.h"
+#include "delfem2/dtri.h"
 
-#include "delfem2/dyntri_v2.h"
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/dtri_v2.h"
+#include "delfem2/dtri_v3.h"
 
 namespace py = pybind11;
 

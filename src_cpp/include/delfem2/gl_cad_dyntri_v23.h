@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "delfem2/dyntri.h"
+#include "delfem2/dtri.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/cad2d.h"

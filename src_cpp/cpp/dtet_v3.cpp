@@ -20,7 +20,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#include "delfem2/dyntet_vec3.h"
+#include "delfem2/dtet_v3.h"
 
 
 //using namespace Msh;

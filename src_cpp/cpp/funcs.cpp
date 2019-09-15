@@ -77,9 +77,9 @@ std::vector<std::string> Split
   std::vector<std::string> aToken;
   int imark = 0;
   bool is_del0 = false;
-  for(int i=0;i<str.size();++i){
+  for(unsigned int i=0;i<str.size();++i){
     bool is_del1 = false;
-    for(int j=0;j<del.size();++j){
+    for(unsigned int j=0;j<del.size();++j){
       if( str[i] == del[j] ){ is_del1 = true; break; }
     }
     if( !is_del0 and is_del1 ){ // just got delimitner
@@ -106,7 +106,7 @@ std::vector<std::string> Split_Parentheses
   ////
   int is=0;
   int ilevel = 0;
-  for(int ie=0;ie<str.size();++ie){
+  for(unsigned int ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
       aToken.push_back( std::string(str.data()+is,str.data()+ie+1) );
     }
@@ -129,7 +129,7 @@ std::vector<std::string> Split_Quote
   std::vector<std::string> aToken;
   int is=0;
   bool is_in = false;
-  for(int ie=0;ie<str.size();++ie){
+  for(unsigned int ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
       aToken.push_back( std::string(str.data()+is,str.data()+ie+1) );
     }
@@ -662,7 +662,7 @@ void XML_SeparateTagContent
     }
   }
   //////////
-  for(int is=0;is<aStr.size();++is){
+  for(unsigned int is=0;is<aStr.size();++is){
     aStr[is] = RemoveBeginning(aStr[is], " ");
   }
 }
@@ -673,7 +673,7 @@ void ParseAttributes
  const std::string& input)
 {
   std::vector<std::string> aS = Split_Quote(input, ' ', '\"' );
-  for(int is=0;is<aS.size();++is){
+  for(unsigned int is=0;is<aS.size();++is){
     std::vector<std::string> aS1 = Split(aS[is], '=');
     assert( aS1.size() == 2 );
     std::string s1 = Remove_Quote(aS1[1], '\"');

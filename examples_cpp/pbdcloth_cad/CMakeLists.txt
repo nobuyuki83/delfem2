@@ -25,7 +25,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec3.h             ${DELFEM2_SRC}/vec3.cpp                 
   ${DELFEM2_INC}/mat3.h             ${DELFEM2_SRC}/mat3.cpp                 
   ${DELFEM2_INC}/quat.h             ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/dyntri.h           ${DELFEM2_SRC}/dyntri.cpp                 
+  ${DELFEM2_INC}/dtri.h           ${DELFEM2_SRC}/dtri.cpp                 
   ${DELFEM2_INC}/mshtopo.h          ${DELFEM2_SRC}/mshtopo.cpp
   ${DELFEM2_INC}/msh.h              ${DELFEM2_SRC}/msh.cpp
   ${DELFEM2_INC}/bv.h
@@ -35,7 +35,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp 
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h  ${DELFEM2_SRC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
+  ${DELFEM2_INC}/dtri_v2.h        ${DELFEM2_SRC}/dtri_v2.cpp
   ${DELFEM2_INC}/cad2d.h            ${DELFEM2_SRC}/cad2d.cpp
   ${DELFEM2_INC}/srchuni_v3.h       ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h

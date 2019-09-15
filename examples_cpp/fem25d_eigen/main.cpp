@@ -21,12 +21,11 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
 #include "delfem2/mats.h"
+#include "delfem2/dtri.h"
 
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
-
-#include "delfem2/dyntri.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 
 #include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"

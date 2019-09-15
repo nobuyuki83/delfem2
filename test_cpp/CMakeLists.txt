@@ -50,19 +50,19 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
   ${DELFEM2_INC}/mshio.h          ${DELFEM2_SRC}/mshio.cpp
   ${DELFEM2_INC}/voxel.h          ${DELFEM2_SRC}/voxel.cpp
-  ${DELFEM2_INC}/mathexpeval.h    ${DELFEM2_SRC}/mathexpeval.cpp
+  ${DELFEM2_INC}/evalmathexp.h    ${DELFEM2_SRC}/evalmathexp.cpp
   ${DELFEM2_INC}/lp.h             ${DELFEM2_SRC}/lp.cpp
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/bvh.h            ${DELFEM2_SRC}/bvh.cpp
   ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/slice.h          ${DELFEM2_SRC}/slice.cpp
   ${DELFEM2_INC}/emat.h           ${DELFEM2_SRC}/emat.cpp
-  ${DELFEM2_INC}/dyntri.h         ${DELFEM2_SRC}/dyntri.cpp
+  ${DELFEM2_INC}/dtri.h           ${DELFEM2_SRC}/dtri.cpp
   ${DELFEM2_INC}/mats.h           ${DELFEM2_SRC}/mats.cpp
 
   ${DELFEM2_INC}/fem_emats.h      ${DELFEM2_SRC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h       ${DELFEM2_SRC}/ilu_mats.cpp
-  ${DELFEM2_INC}/dyntri_v2.h      ${DELFEM2_SRC}/dyntri_v2.cpp
+  ${DELFEM2_INC}/dtri_v2.h        ${DELFEM2_SRC}/dtri_v2.cpp
   ${DELFEM2_INC}/objfunc_v23.h    ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/srchuni_v3.h     ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h

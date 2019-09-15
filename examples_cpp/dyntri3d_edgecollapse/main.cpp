@@ -14,8 +14,8 @@
 
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
-#include "delfem2/dyntri_v3.h"
-#include "delfem2/dyntri.h"
+#include "delfem2/dtri_v3.h"
+#include "delfem2/dtri.h"
 
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_color.h"

@@ -14,7 +14,7 @@
 #include "delfem2/vec2.h"
 
 #include "delfem2/ilu_mats.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 #include "delfem2/fem_emats.h"
 
 #include "delfem2/gl_funcs.h"

@@ -13,12 +13,11 @@
 #include <GL/glut.h>
 #endif
 
-//#include "geosim/matrix3.h"
 #include "delfem2/vec3.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/dyntet_vec3.h"
+#include "delfem2/dtet_v3.h"
 
 #include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"

@@ -1539,11 +1539,11 @@ void MassLumped_ShellPlateBendingMITC3
  const unsigned int* aTri, unsigned int nTri)
 {
   const unsigned int nDoF = nXY*3;
-  for(int i=0;i<nDoF;++i){ aM[i] = 0.0; }
-  for(int it=0;it<nTri;++it){
-    const int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
-    const int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
-    const int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+  for(unsigned int i=0;i<nDoF;++i){ aM[i] = 0.0; }
+  for(unsigned int it=0;it<nTri;++it){
+    const unsigned int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
+    const unsigned int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
+    const unsigned int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;

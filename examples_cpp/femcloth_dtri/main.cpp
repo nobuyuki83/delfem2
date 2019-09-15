@@ -17,7 +17,7 @@
 
 #include "delfem2/ilu_mats.h"
 #include "delfem2/cloth_internal.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 
 #include "delfem2/gl_funcs.h"
 #include "delfem2/glut_funcs.h"

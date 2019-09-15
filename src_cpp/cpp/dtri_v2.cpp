@@ -9,13 +9,7 @@
 #include <set>
 #include <algorithm>
 
-#include "delfem2/dyntri_v2.h"
-
-
-
-
-
-
+#include "delfem2/dtri_v2.h"
 
 
 

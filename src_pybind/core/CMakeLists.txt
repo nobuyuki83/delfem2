@@ -31,8 +31,8 @@ set(INPUT_SRC
   ${DELFEM2_INC}/voxel.h            ${DELFEM2_SRC}/voxel.cpp
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/bvh.h              ${DELFEM2_SRC}/bvh.cpp
-  ${DELFEM2_INC}/mathexpeval.h      ${DELFEM2_SRC}/mathexpeval.cpp
-  ${DELFEM2_INC}/dyntri.h           ${DELFEM2_SRC}/dyntri.cpp
+  ${DELFEM2_INC}/evalmathexp.h      ${DELFEM2_SRC}/evalmathexp.cpp
+  ${DELFEM2_INC}/dtri.h             ${DELFEM2_SRC}/dtri.cpp
   ${DELFEM2_INC}/mats.h             ${DELFEM2_SRC}/mats.cpp
   ${DELFEM2_INC}/emat.h             ${DELFEM2_SRC}/emat.cpp
   ${DELFEM2_INC}/primitive.h        ${DELFEM2_SRC}/primitive.cpp
@@ -47,8 +47,8 @@ set(INPUT_SRC
   ${DELFEM2_INC}/rig_v3q.h          ${DELFEM2_SRC}/rig_v3q.cpp
 
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
-  ${DELFEM2_INC}/dyntri_v3.h        ${DELFEM2_SRC}/dyntri_v3.cpp
-  ${DELFEM2_INC}/dyntri_v2.h        ${DELFEM2_SRC}/dyntri_v2.cpp
+  ${DELFEM2_INC}/dtri_v3.h          ${DELFEM2_SRC}/dtri_v3.cpp
+  ${DELFEM2_INC}/dtri_v2.h          ${DELFEM2_SRC}/dtri_v2.cpp
   ${DELFEM2_INC}/mshtopoio.h        ${DELFEM2_SRC}/mshtopoio.cpp
   ${DELFEM2_INC}/cad2d.h            ${DELFEM2_SRC}/cad2d.cpp
 

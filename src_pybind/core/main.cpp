@@ -21,7 +21,7 @@
 #include "delfem2/bv.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
-#include "delfem2/mathexpeval.h"
+#include "delfem2/evalmathexp.h"
 
 #include "delfem2/cad2d.h"
 #include "delfem2/rig_v3q.h"

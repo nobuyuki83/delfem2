@@ -358,8 +358,8 @@ void MatSparse_ScaleBlkLen_LeftRight
   for(unsigned int ino=0;ino<nblk;++ino){
     for(unsigned int icrs0=mat.colInd[ino];icrs0<mat.colInd[ino+1];++icrs0){
       const int jno = mat.rowPtr[icrs0];
-      for(int ilen=0;ilen<len;++ilen){
-        for(int jlen=0;jlen<len;++jlen){
+      for(unsigned int ilen=0;ilen<len;++ilen){
+        for(unsigned int jlen=0;jlen<len;++jlen){
           mat.valCrs[icrs0*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[jno*len+jlen];
         }
       }
@@ -367,8 +367,8 @@ void MatSparse_ScaleBlkLen_LeftRight
   }
   if( !mat.valDia.empty() ){
     for(unsigned int ino=0;ino<nblk;++ino){
-      for(int ilen=0;ilen<len;++ilen){
-        for(int jlen=0;jlen<len;++jlen){
+      for(unsigned int ilen=0;ilen<len;++ilen){
+        for(unsigned int jlen=0;jlen<len;++jlen){
           mat.valDia[ino*blksize+ilen*len+jlen] *= scale[ino*len+ilen]*scale[ino*len+jlen];
         }
       }

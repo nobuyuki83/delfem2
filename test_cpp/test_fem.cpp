@@ -15,7 +15,7 @@
 #include "delfem2/mshtopo.h"
 
 #include "delfem2/objfunc_v23.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
