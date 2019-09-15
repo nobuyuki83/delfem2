@@ -34,14 +34,14 @@ cd ../../
 ################################
 # build examples
 
-cd examples_cpp
+cd examples_glut
 mkdir buildMake
 cd buildMake
 cmake ..
 make
 cd ../../
 
-cd examples_cpp
+cd examples_glut
 mkdir buildXcode
 cd buildXcode
 cmake -G Xcode ..

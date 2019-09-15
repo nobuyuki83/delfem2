@@ -9,8 +9,6 @@ add_subdirectory(paramgeo2d)
 add_subdirectory(paramgeo3d)
 add_subdirectory(transform_handler)
 
-add_subdirectory(evalmathexp)
-
 add_subdirectory(rigidbody3d_rotation)
 
 add_subdirectory(noise2d)

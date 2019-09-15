@@ -43,9 +43,9 @@ build:
           ./runUnitTests
           make test
     - script:
-        name: compile cpp examples
+        name: compile glut examples
         code: |
-          cd examples_cpp
+          cd examples_glut
           mkdir buildMake
           cd buildMake
           cmake ..
