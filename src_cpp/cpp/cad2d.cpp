@@ -15,11 +15,10 @@
 #include "delfem2/msh.h"
 #include "delfem2/bv.h"
 #include "delfem2/funcs.h"
-
 #include "delfem2/vec2.h"
+#include "delfem2/dtri.h"
 
-#include "delfem2/dyntri.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 
 #include "delfem2/cad2d.h"
 
@@ -404,7 +403,7 @@ double AreaLoop
 {
   double a0 = 0;
   CVector2 qo(0,0);
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     const std::vector<CVector2>& aP = aEdge[ie].aP;
     for(unsigned int il=0;il<aP.size()+1;++il){
       const CVector2 q0 = (il==0) ? aEdge[ie].p0 : aP[il-1];
@@ -858,9 +857,9 @@ bool WriteCAD_DXF
 
 std::vector<std::string> SVG_Split_Path_d(std::string& s0)
 {
-  int imark = 0;
+  unsigned int imark = 0;
   std::vector<std::string> aS;
-  for(int i=0;i<s0.size();++i){
+  for(unsigned int i=0;i<s0.size();++i){
     if( isNumber(s0[i]) ) continue;
     if( s0[i] == ',' ){
       std::string s1(s0.begin()+imark, s0.begin()+i);
@@ -1063,7 +1062,7 @@ void LoopEdgeCCad2D_ReadSVG
 {
   std::vector<char> aC;
   GetFileContents(aC, fname);
-  for(int ic=0;ic<aC.size();++ic){
+  for(unsigned int ic=0;ic<aC.size();++ic){
     std::cout << aC[ic];
   }
   std::cout << std::endl;
@@ -1073,7 +1072,7 @@ void LoopEdgeCCad2D_ReadSVG
   
   { // check path
     std::string str_path;
-    for(int is=0;is<aStr.size();++is){
+    for(unsigned int is=0;is<aStr.size();++is){
       if( aStr[is].compare(0,5,"path ") == 0 ){
         str_path = std::string(aStr[is].begin()+5,aStr[is].end());
         break;
@@ -1088,7 +1087,7 @@ void LoopEdgeCCad2D_ReadSVG
       std::cout << "str_path_d: " << str_path_d << std::endl;
       str_path_d = Remove(str_path_d, " \n");
       std::vector<std::string> aStr1 = SVG_Split_Path_d(str_path_d);
-      for(int is=0;is<aStr1.size();++is){
+      for(unsigned int is=0;is<aStr1.size();++is){
         std::cout << is << " " << aStr1[is] << std::endl;
       }
       LoopEdgeCad2D_SVGPathD(aEdge,
@@ -1098,7 +1097,7 @@ void LoopEdgeCCad2D_ReadSVG
   
   { // check polygon
     std::string str_polygon;
-    for(int is=0;is<aStr.size();++is){
+    for(unsigned int is=0;is<aStr.size();++is){
       if( aStr[is].compare(0,8,"polygon ") == 0 ){
         str_polygon = std::string(aStr[is].begin()+8,aStr[is].end());
         break;
@@ -1111,7 +1110,7 @@ void LoopEdgeCCad2D_ReadSVG
                       str_polygon);
       std::string str_polygon_points = mapAttr["points"];
       std::vector<std::string> aS = Split(str_polygon_points, "  ,");
-      for(int is=0;is<aS.size();++is){
+      for(unsigned int is=0;is<aS.size();++is){
         std::cout << is << " " << aS[is] << std::endl;
       }
       LoopEdgeCad2D_SVGPolygonPoints(aEdge,
@@ -1131,7 +1130,7 @@ void Transform_LoopEdgeCad2D
   if( is_flip_holizontal ){ A[0] *= -1; }
   if( is_flip_vertical ){ A[3] *= -1; }
   bool is_det_inv = (is_flip_holizontal != is_flip_vertical );
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     aEdge[ie].p0 = Mat2Vec(A, aEdge[ie].p0);
     aEdge[ie].p1 = Mat2Vec(A, aEdge[ie].p1);
     if( aEdge[ie].type_edge == 1 && is_det_inv ){
@@ -1146,7 +1145,7 @@ CBoundingBox2D BB_LoopEdgeCad2D
 (const std::vector<CCad2D_EdgeGeo>& aEdge)
 {
   CBoundingBox2D bb;
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     CBoundingBox2D bb0 = aEdge[ie].BB();
     bb += bb0;
   }

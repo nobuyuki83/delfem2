@@ -14,8 +14,8 @@
 #endif
 
 
-#include "delfem2/dyntri_v2.h"
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/dtri_v2.h"
+#include "delfem2/dtri_v3.h"
 #include "delfem2/mshtopo.h"
 
 #include "delfem2/glew_funcs.h" // have to be included in the beginning

@@ -11,8 +11,8 @@
 
 #include <vector>
 
-#include "delfem2/dyntri.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri.h"
+#include "delfem2/dtri_v2.h"
 
 void PBD_TriStrain(double* aXYZt,
                    unsigned int nXYZ,

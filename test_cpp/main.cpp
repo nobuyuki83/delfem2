@@ -19,7 +19,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mathfuncs.h"
 #include "delfem2/funcs.h"
-#include "delfem2/mathexpeval.h"
+#include "delfem2/evalmathexp.h"
 #include "delfem2/primitive.h"
 #include "delfem2/slice.h"
 

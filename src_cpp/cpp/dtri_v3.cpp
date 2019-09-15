@@ -9,7 +9,7 @@
 #include <set>
 #include <algorithm>
 
-#include "delfem2/dyntri_v3.h"
+#include "delfem2/dtri_v3.h"
 
 
 CVector3 normalTri

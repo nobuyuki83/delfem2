@@ -146,13 +146,13 @@ void CPreconditionerILU<T>::SetValueILU
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
       assert( ijcrs<mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[ijcrs];
+      const unsigned int jblk0 = mat.rowPtr[ijcrs];
       assert( jblk0 < nblk );
       row2crs[jblk0] = ijcrs;
     }
     for(unsigned int ijcrs=rhs.colInd[iblk];ijcrs<rhs.colInd[iblk+1];ijcrs++){
       assert( ijcrs<rhs.rowPtr.size() );
-      const int jblk0 = rhs.rowPtr[ijcrs];
+      const unsigned int jblk0 = rhs.rowPtr[ijcrs];
       assert( jblk0<nblk );
       const int ijcrs0 = row2crs[jblk0];
       if( ijcrs0 == -1 ) continue;
@@ -162,7 +162,7 @@ void CPreconditionerILU<T>::SetValueILU
     }
     for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
       assert( ijcrs<mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[ijcrs];
+      const unsigned int jblk0 = mat.rowPtr[ijcrs];
       assert( jblk0 < nblk );
       row2crs[jblk0] = -1;
     }

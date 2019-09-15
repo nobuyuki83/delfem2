@@ -11,7 +11,8 @@
 
 #include "delfem2/vec2.h"
 #include "delfem2/cadtopo.h"
-#include "delfem2/dyntri_v2.h"
+
+#include "delfem2/dtri_v2.h"
 
 
 class CCad2D_VtxGeo{

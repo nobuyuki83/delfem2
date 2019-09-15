@@ -11,7 +11,7 @@
 #include <iostream>
 #include <cstdlib> //(strtod)
 
-#include "delfem2/mathexpeval.h"
+#include "delfem2/evalmathexp.h"
 
 class CCmd
 {

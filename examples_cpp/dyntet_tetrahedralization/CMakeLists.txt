@@ -25,7 +25,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshtopo.h          ${DELFEM2_SRC}/mshtopo.cpp                
   ${DELFEM2_INC}/vec3.h             ${DELFEM2_SRC}/vec3.cpp                
   
-  ${DELFEM2_INC}/dyntet_vec3.h      ${DELFEM2_SRC}/dyntet_vec3.cpp                
+  ${DELFEM2_INC}/dtet_v3.h          ${DELFEM2_SRC}/dtet_v3.cpp                
   
   ${DELFEM2_INC}/gl_camera.h        ${DELFEM2_SRC}/gl_camera.cpp                
   ${DELFEM2_INC}/gl_color.h         ${DELFEM2_SRC}/gl_color.cpp   

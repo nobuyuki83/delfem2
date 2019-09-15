@@ -14,11 +14,11 @@
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/dyntri.h"
+#include "delfem2/dtri.h"
 
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
-#include "delfem2/dyntri_v2.h"
+#include "delfem2/dtri_v2.h"
 
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_funcs.h"

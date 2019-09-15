@@ -13,7 +13,7 @@
 #include <stack>
 
 #include "delfem2/vec3.h"
-#include "delfem2/dyntri.h"
+#include "delfem2/dtri.h"
 
 CVector3 normalTri(int itri0,
                    const std::vector<ETri>& aSTri,

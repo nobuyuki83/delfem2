@@ -155,6 +155,7 @@ void makeSolidAngle(std::vector<double>& aSolidAngle,
 /**
  * @brief Compute mass of the points (lumped mass) for 3D tet mesh
  * @details aMassMatrixLumped need to be allocated before in the size of nXY
+ * this is here because both "fem" and "pbd" use this function
  */
 void MassPoint_Tet3D(double* aMassMatrixLumped,
                       double rho,
@@ -164,6 +165,7 @@ void MassPoint_Tet3D(double* aMassMatrixLumped,
 /**
  * @brief Compute mass of the points (lumped mass) for 2D triangle mesh
  * @details aMassMatrixLumped need to be allocated before in the size of nXY
+ * this is here because both "fem" and "pbd" use this function
  */
 void MassPoint_Tri2D(double* aMassMatrixLumped,
                       double rho,
