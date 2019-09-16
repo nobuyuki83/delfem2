@@ -12,8 +12,6 @@
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_color.h"
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // display data
@@ -46,8 +44,7 @@ void draw(GLFWwindow* window)
   glEnd();
   
   DrawCylinder(CVector3(-1,0,0), CVector3(+1,0,0), 0.1);
-  
-  
+    
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
