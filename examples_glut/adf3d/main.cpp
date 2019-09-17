@@ -23,7 +23,8 @@
 
 #include "delfem2/gl_color.h"
 #include "delfem2/gl_funcs.h"
-#include "delfem2/glut_funcs.h"
+
+#include "../glut_funcs.h"
 
 //////////////////////////////////////////////////
 

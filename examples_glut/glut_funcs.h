@@ -1,5 +1,5 @@
-#ifndef FUNCS_GLUT_H
-#define FUNCS_GLUT_H
+#ifndef GLUT_FUNCS_H
+#define GLUT_FUNCS_H
 
 #include <fstream>
 #include <string>
@@ -12,7 +12,7 @@
   #include <GL/glut.h>
 #endif
 
-#include "gl_camera.h"
+#include "delfem2/gl_camera.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 

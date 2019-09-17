@@ -19,8 +19,9 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/dtet_v3.h"
 
-#include "delfem2/glut_funcs.h"
 #include "delfem2/gl_color.h"
+
+#include "../glut_funcs.h"
 
 
 void FindEdge

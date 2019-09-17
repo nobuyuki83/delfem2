@@ -20,7 +20,8 @@
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_rig_v23q.h"
-#include "delfem2/glut_funcs.h"
+
+#include "../glut_funcs.h"
 
 
 CGlutWindowManager window;

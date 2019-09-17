@@ -1,7 +1,7 @@
 #ifndef FUNCS_GLFW_H
 #define FUNCS_GLFW_H
 
-#include "gl_camera.h"
+#include "delfem2/gl_camera.h"
 
 // class for each GLUT window
 class CWindowManager_GLFW

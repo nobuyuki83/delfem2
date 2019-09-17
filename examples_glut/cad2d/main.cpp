@@ -22,10 +22,11 @@
 #include "delfem2/dtri_v2.h"
 #include "delfem2/cad2d.h"
 
-#include "delfem2/glut_funcs.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_cad_dyntri_v23.h"
+
+#include "../glut_funcs.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793

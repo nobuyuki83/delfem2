@@ -7,11 +7,12 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/glut_funcs.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_color.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/mathfuncs.h"
+
+#include "../glut_funcs.h"
 
 static void drawShphere_Heatmap
 (double (*value)(double,double,double),
