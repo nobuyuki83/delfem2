@@ -55,3 +55,4 @@ __pycache__
 dist
 PyDelFEM2.egg-info
 pydelfem2.egg-info
+imgui.ini
