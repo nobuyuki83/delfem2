@@ -37,6 +37,7 @@ buildMake
 buildVS
 buildVS32
 buildVS64
+buildEm
 build
 trash
 external/fbx
