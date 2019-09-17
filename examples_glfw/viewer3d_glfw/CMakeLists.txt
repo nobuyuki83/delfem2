@@ -11,7 +11,7 @@ set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
-set(GLFW_DIR "../../src_cpp/external/glfw")
+set(GLFW_DIR "../glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)
