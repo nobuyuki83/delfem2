@@ -11,10 +11,11 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/glew_funcs.h" 
-#include "delfem2/glut_funcs.h"
+#include "delfem2/glew_funcs.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_tex.h"
+
+#include "../glut_funcs.h"
 
 
 /////////////////////////////////////////////////////////

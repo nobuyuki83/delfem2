@@ -7,10 +7,11 @@
 
 #include <GLFW/glfw3.h>
 
-#include "delfem2/glfw_funcs.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_color.h"
+
+#include "../glfw_funcs.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 

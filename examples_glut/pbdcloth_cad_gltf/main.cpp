@@ -31,7 +31,8 @@
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_funcs.h"
 #include "delfem2/gl_rig_v23q.h"
-#include "delfem2/glut_funcs.h"
+
+#include "../glut_funcs.h"
 
 #include "delfem2/../../external/tinygltf/tiny_gltf.h"
 #include "delfem2/../../external/io_gltf.h"
