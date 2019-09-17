@@ -48,7 +48,7 @@ build:
     - script:
         name: compile glfw
         code: |
-          cd exaple_glfw/glfw
+          cd examples_glfw/glfw
           cmake .
           make          
     - script:
@@ -59,7 +59,7 @@ build:
           cd buildMake
           cmake ..
           make -i
-          cd ..          
+          cd ..  
     - script: 
         name: compile python binding
         code: |

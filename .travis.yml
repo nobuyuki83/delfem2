@@ -51,12 +51,12 @@ script: |
   make -i
   cd ../..
 
-  cd example_glfw/glfw
+  cd examples_glfw/glfw
   cmake .
   make
   cd ../..
 
-  cd example_glfw
+  cd examples_glfw
   mkdir buildMake
   cd buildMake
   cmake ..
