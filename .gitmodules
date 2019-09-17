@@ -1,6 +1,3 @@
-[submodule "src_cpp/external/glfw"]
-	path = src_cpp/external/glfw
-	url = https://github.com/glfw/glfw.git
 [submodule "src_cpp/external/stb"]
 	path = src_cpp/external/stb
 	url = https://github.com/nothings/stb
@@ -16,7 +13,9 @@
 [submodule "test_cpp/googletest"]
 	path = test_cpp/googletest
 	url = https://github.com/google/googletest.git
-
 [submodule "examples_imgui/imgui"]
 	path = examples_imgui/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "examples_glfw/glfw"]
+	path = examples_glfw/glfw
+	url = https://github.com/glfw/glfw.git

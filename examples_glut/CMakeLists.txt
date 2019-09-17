@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(examplesDelFEM2)
+project(examples_glut)
 
 add_subdirectory(viewer3d_glut)
-add_subdirectory(viewer3d_glfw)
 
 add_subdirectory(paramgeo2d)
 add_subdirectory(paramgeo3d)

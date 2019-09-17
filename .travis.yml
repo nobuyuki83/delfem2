@@ -29,11 +29,6 @@ addons:
 script: |
   git submodule init
   git submodule update
-  
-  cd src_cpp/external/glfw
-  cmake .
-  make
-  cd ../../../
 
   cd test_cpp/googletest
   cmake .
@@ -50,6 +45,18 @@ script: |
   cd ../../
 
   cd examples_glut
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make -i
+  cd ../..
+
+  cd example_glfw/glfw
+  cmake .
+  make
+  cd ../..
+
+  cd example_glfw
   mkdir buildMake
   cd buildMake
   cmake ..
