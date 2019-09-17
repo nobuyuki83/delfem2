@@ -13,9 +13,9 @@
 [submodule "test_cpp/googletest"]
 	path = test_cpp/googletest
 	url = https://github.com/google/googletest.git
-[submodule "examples_imgui/imgui"]
-	path = examples_imgui/imgui
-	url = https://github.com/ocornut/imgui.git
 [submodule "examples_glfw/glfw"]
 	path = examples_glfw/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "examples_glfw/imgui"]
+	path = examples_glfw/imgui
+	url = https://github.com/ocornut/imgui.git
