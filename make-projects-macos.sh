@@ -1,6 +1,6 @@
-
 #################################
 # download & build submodules
+
 git submodule update --init --recursive
 
 
@@ -26,6 +26,7 @@ make
 ./runUnitTests
 cd ../../
 
+
 ################################
 # build examples_glfw
 
@@ -40,6 +41,14 @@ cd buildXcode
 cmake -G Xcode ..
 cmake --build .
 cd ../../
+
+cd examples_glfw
+mkdir buildEm
+cd buildEm
+cmake -DEMSCRIPTEN ..
+make
+cd ../../
+
 
 ################################
 # build examples_glut
