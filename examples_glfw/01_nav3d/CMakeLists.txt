@@ -55,7 +55,7 @@ if (NOT EMSCRIPTEN)
       ${GLFW_DIR}/src/libglfw3.a
       -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
     )
-  ELESEIF(MSVC)
+  ELSEIF(MSVC)
     set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
     if(CMAKE_CL_64)
       target_link_libraries(${PROJECT_NAME}
