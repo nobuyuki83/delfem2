@@ -76,7 +76,8 @@ public:
     Quat_tball[2]=0;
     Quat_tball[3]=0;
   }
-  void Affine4f_Projection(float mP[16], double asp, double depth);
+  void Affine4f_Projection(float mP[16], double asp, double depth) const;
+  void Affine4f_ModelView(float mMV[16]) const;
   void SetGL_Camera(int win_w, int win_h);
   void Scale(double s);
   void Rot_Camera(double dx, double dy);
