@@ -18,8 +18,9 @@
 #include "delfem2/dtri_v3.h"
 #include "delfem2/mshtopo.h"
 
-#include "delfem2/glew_funcs.h" // have to be included in the beginning
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl2ew_funcs.h" // have to be included in the beginning
+#include "delfem2/gl2_funcs.h"
+#include "delfem2/gl24_funcs.h"
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl_voxbv.h"
 #include "delfem2/gl_color.h"

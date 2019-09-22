@@ -59,7 +59,7 @@ public:
     is_pars = false;
     fovy = 60;
     
-    view_height = 0.1;
+    view_height = 1.0;
     scale = 1.0;
     
     trans[0] = 0;
@@ -76,6 +76,7 @@ public:
     Quat_tball[2]=0;
     Quat_tball[3]=0;
   }
+  void Affine4f_Projection(float mP[16], double asp, double depth);
   void SetGL_Camera(int win_w, int win_h);
   void Scale(double s);
   void Rot_Camera(double dx, double dy);

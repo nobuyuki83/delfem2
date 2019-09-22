@@ -15,70 +15,7 @@
 #include <GL/glew.h>
 #endif
 
-#include "delfem2/glew_funcs.h"
-
-
-int compileShader
-(const std::string& str_glsl_vert,
- int shaderType)
-{
-  int id_shader = glCreateShader(shaderType);
-  const char *vfile = str_glsl_vert.c_str();
-  glShaderSource(id_shader, 1, &vfile, NULL);
-  glCompileShader(id_shader); // compile the code
-  
-  {
-    GLint res;
-    glGetShaderiv(id_shader, GL_COMPILE_STATUS, &res);
-    if (res==GL_FALSE){
-      if (shaderType==GL_VERTEX_SHADER){
-        std::cout<<"compile vertex shader failed"<<std::endl;
-      }
-      else if(shaderType==GL_FRAGMENT_SHADER){
-        std::cout<<"compile fragment shader failed"<<std::endl;
-      }
-    }
-  }
-  return id_shader;
-}
-
-// compile vertex and fragment shader
-// return shader program
-int setUpGLSL
-(const std::string& str_glsl_vert,
- const std::string& str_glsl_frag)
-{
-  int vShaderId = compileShader(str_glsl_vert, GL_VERTEX_SHADER);
-  int fShaderId = compileShader(str_glsl_frag, GL_FRAGMENT_SHADER);
-  
-  
-  int id_program = glCreateProgram();
-  glAttachShader(id_program,vShaderId);
-  glAttachShader(id_program,fShaderId);
-  
-  GLint linked;
-  glLinkProgram(id_program);
-  glGetProgramiv(id_program, GL_LINK_STATUS, &linked);
-  if(linked == GL_FALSE)
-  {
-    std::cerr << "Link Err.\n";
-    GLint maxLength = 0;
-    glGetProgramiv(id_program, GL_INFO_LOG_LENGTH, &maxLength);
-    // The maxLength includes the NULL character
-    std::vector<GLchar> infoLog(maxLength);
-    glGetProgramInfoLog(id_program, maxLength, &maxLength, &infoLog[0]);
-    for(unsigned int i=0;i<infoLog.size();++i){
-      std::cout << infoLog[i];
-    }
-    std::cout << std::endl;
-    glDeleteProgram(id_program); // The program is useless now. So delete it.
-    return 0;
-  }
-  return id_program;
-}
-
-/////////////////////////////////////////////
-
+#include "delfem2/gl2ew_funcs.h"
 
 
 void CFrameBufferManager::DeleteFrameBuffer(){

@@ -1,10 +1,50 @@
-#ifndef FUNCS_GLFW_H
-#define FUNCS_GLFW_H
+#ifndef GLFW_FUNCS_H
+#define GLFW_FUNCS_H
+
+#include <GLFW/glfw3.h>
+
 
 #include "delfem2/gl_camera.h"
 
-// class for each GLUT window
-class CWindowManager_GLFW
+
+void callback_error(int error, const char* description)
+{
+  fputs(description, stderr);
+}
+
+GLFWwindow* myGLFW_OpenWindow
+(const unsigned int SCR_WIDTH,
+ const unsigned int SCR_HEIGHT)
+{
+  glfwSetErrorCallback(callback_error);
+  if (!glfwInit()){
+    exit(EXIT_FAILURE);
+  }
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  
+#ifdef __APPLE__
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+#endif
+  
+  // glfw window creation
+  // --------------------
+  GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+  if (window == NULL)
+  {
+    std::cout << "Failed to create GLFW window" << std::endl;
+    glfwTerminate();
+    return 0;
+  }
+  return window;
+}
+
+/**
+ * @brief class for 3D navigation (rotation translation) for each GLFW window
+ * @details this class should be compiled with OpenGL4.x
+ */
+class CNav3D_GLFW
 {
 public:
   void Mouse(GLFWwindow *window, int button, int action, int mods){

@@ -1,25 +1,20 @@
-/*
+/**
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @details this file must be compile with OpenGL2 and GLEW library.
+ */
 
-#ifndef GLEW_FUNCS_H
-#define GLEW_FUNCS_H
+#ifndef GL2EW_FUNCS_H
+#define GL2EW_FUNCS_H
 
 #include <vector>
 #include <assert.h>
 #include <iostream> // this must be delated in future
-
-int compileShader(const std::string& str_glsl_vert,
-                  int shaderType);
-
-// compile vertex and fragment shader
-// return shader program
-int setUpGLSL(const std::string& str_glsl_vert,
-              const std::string& str_glsl_frag);
 
 //////////////////////////////////////////////
 

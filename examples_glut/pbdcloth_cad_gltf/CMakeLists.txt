@@ -43,7 +43,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/srchuni_v3.h       ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
   
-  ${DELFEM2_INC}/gl_funcs.h         ${DELFEM2_SRC}/gl_funcs.cpp
+  ${DELFEM2_INC}/gl2_funcs.h         ${DELFEM2_SRC}/gl2_funcs.cpp
   ${DELFEM2_INC}/gl_camera.h        ${DELFEM2_SRC}/gl_camera.cpp
   ${DELFEM2_INC}/gl_v23.h           ${DELFEM2_SRC}/gl_v23.cpp
   ${DELFEM2_INC}/gl_rig_v23q.h      ${DELFEM2_SRC}/gl_rig_v23q.cpp

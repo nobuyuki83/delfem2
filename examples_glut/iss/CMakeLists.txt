@@ -36,7 +36,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/srchbi_v3bvh.h
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
-  ${DELFEM2_SRC}/gl_funcs.cpp
+  ${DELFEM2_SRC}/gl2_funcs.cpp
   ${DELFEM2_SRC}/gl_camera.cpp    ${DELFEM2_INC}/gl_camera.h
   ${DELFEM2_SRC}/gl_color.cpp     ${DELFEM2_INC}/gl_color.h        
 )

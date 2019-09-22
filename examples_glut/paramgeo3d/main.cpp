@@ -97,6 +97,42 @@ CGlutWindowManager win;
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+void Random()
+{
+  int nCP = 16;
+  aCP.resize(nCP);
+  for(int iCP=0;iCP<16;iCP++){
+    aCP[iCP].x = 1.0*(double)rand()/(RAND_MAX+1.0);
+    aCP[iCP].y = 1.0*(double)rand()/(RAND_MAX+1.0);
+    aCP[iCP].z = 1.0*(double)rand()/(RAND_MAX+1.0);
+  }
+  aIndCP.resize(16);
+  for(int i=0;i<16;++i){ aIndCP[i] = i; }
+  aCP[ 0] += CVector3(-2,-2,0);
+  aCP[ 1] += CVector3(-2,-1,0);
+  aCP[ 2] += CVector3(-2,+1,0);
+  aCP[ 3] += CVector3(-2,+2,0);
+  ////
+  aCP[ 4] += CVector3(-1,-2,0);
+  aCP[ 5] += CVector3(-1,-1,0);
+  aCP[ 6] += CVector3(-1,+1,0);
+  aCP[ 7] += CVector3(-1,+2,0);
+  ////
+  aCP[ 8] += CVector3(+1,-2,0);
+  aCP[ 9] += CVector3(+1,-1,0);
+  aCP[10] += CVector3(+1,+1,0);
+  aCP[11] += CVector3(+1,+2,0);
+  ////
+  aCP[12] += CVector3(+2,-2,0);
+  aCP[13] += CVector3(+2,-1,0);
+  aCP[14] += CVector3(+2,+1,0);
+  aCP[15] += CVector3(+2,+2,0);
+  
+  /////
+  aPQuad.clear();
+  AddQuads(aPQuad,n,0,aIndCP,aCP);
+}
+
 
 static void myGlVertex3d(const CVector3& v)
 {
@@ -174,6 +210,7 @@ void myGlutIdle()
     ::glutPostRedisplay();
     return;
   }
+  Random();
   ::glutPostRedisplay();
 }
 
@@ -209,38 +246,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       break;
     case ' ':
     {
-      int nCP = 16;
-      aCP.resize(nCP);
-      for(int iCP=0;iCP<16;iCP++){
-        aCP[iCP].x = 1.0*(double)rand()/(RAND_MAX+1.0);
-        aCP[iCP].y = 1.0*(double)rand()/(RAND_MAX+1.0);
-        aCP[iCP].z = 1.0*(double)rand()/(RAND_MAX+1.0);
-      }
-      aIndCP.resize(16);
-      for(int i=0;i<16;++i){ aIndCP[i] = i; }
-      aCP[ 0] += CVector3(-2,-2,0);
-      aCP[ 1] += CVector3(-2,-1,0);
-      aCP[ 2] += CVector3(-2,+1,0);
-      aCP[ 3] += CVector3(-2,+2,0);
-      ////
-      aCP[ 4] += CVector3(-1,-2,0);
-      aCP[ 5] += CVector3(-1,-1,0);
-      aCP[ 6] += CVector3(-1,+1,0);
-      aCP[ 7] += CVector3(-1,+2,0);
-      ////
-      aCP[ 8] += CVector3(+1,-2,0);
-      aCP[ 9] += CVector3(+1,-1,0);
-      aCP[10] += CVector3(+1,+1,0);
-      aCP[11] += CVector3(+1,+2,0);
-      ////
-      aCP[12] += CVector3(+2,-2,0);
-      aCP[13] += CVector3(+2,-1,0);
-      aCP[14] += CVector3(+2,+1,0);
-      aCP[15] += CVector3(+2,+2,0);
-      
-      /////
-      aPQuad.clear();
-      AddQuads(aPQuad,n,0,aIndCP,aCP);
       break;
     }
   }
@@ -275,7 +280,6 @@ int main(int argc,char* argv[])
   
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   win.camera.view_height = 4;
-  
   
   glutMainLoop();
   return 0;

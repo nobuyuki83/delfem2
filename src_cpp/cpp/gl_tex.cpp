@@ -252,7 +252,7 @@ int ReadPPM_SetTexture(const std::string& fname)
 }
 
 bool LoadTGAFile
-(const char *filename,
+(const std::string& filename,
  SFile_TGA *tgaFile)
 {
   FILE *filePtr;
@@ -263,7 +263,7 @@ bool LoadTGAFile
   unsigned char colorSwap;
   
   // Open the TGA file.
-  filePtr = fopen(filename, "rb");
+  filePtr = fopen(filename.c_str(), "rb");
   if (filePtr == NULL)
   {
     return false;

@@ -2,19 +2,19 @@
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GL/glew.h>
-#include <GLUT/glut.h>
+  #include <GL/glew.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glew.h>
-#include <GL/glut.h>
+  #include <GL/glew.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 
-#include "delfem2/glew_funcs.h"
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl2ew_funcs.h"
+#include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_color.h"
 
 #include "../glut_funcs.h"

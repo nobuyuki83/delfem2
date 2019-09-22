@@ -76,7 +76,7 @@ public:
   unsigned char *imageData;
 };
 
-bool LoadTGAFile(const char *filename, SFile_TGA *tgaFile);
+bool LoadTGAFile(const std::string& filename, SFile_TGA *tgaFile);
 int ReadPPM_SetTexture(const std::string& fname);
 
 unsigned int LoadTexture(const unsigned char* image,

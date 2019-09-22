@@ -20,7 +20,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/slice.h"
 
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_color.h"
 
 #include "../glut_funcs.h"

@@ -17,7 +17,7 @@
 
 #include "delfem2/rig_v3q.h"
 
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_rig_v23q.h"
 
