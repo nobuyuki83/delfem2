@@ -22,7 +22,7 @@
   #include <GL/glu.h>
 #endif
 
-#include "delfem2/gl_camera.h"
+#include "delfem2/gl24_camera.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ static void CopyQuat(double r[], const double p[])
 
 
 
-static void Mat4_Quat(double r[], const double q[])
+static void Mat4f_Quat(float r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -110,6 +110,16 @@ static void Mat4_Quat(double r[], const double q[])
   r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
   r[15] = 1.0;
 }
+
+
+void Mat4f_Identity(float r[])
+{
+  r[ 0] = 1.0;  r[ 1] = 0.0;  r[ 2] = 0.0;  r[ 3] = 0.0;
+  r[ 4] = 0.0;  r[ 5] = 1.0;  r[ 6] = 0.0;  r[ 7] = 0.0;
+  r[ 8] = 0.0;  r[ 9] = 0.0;  r[10] = 1.0;  r[11] = 0.0;
+  r[12] = 0.0;  r[13] = 0.0;  r[14] = 0.0;  r[15] = 1.0;
+}
+
 
 
 /////////////////////////////////////////////////////////////
@@ -351,17 +361,17 @@ void glhOrthof2
   mP[0*4+0] = 2.0/(r-l);
   mP[0*4+1] = 0.0;
   mP[0*4+2] = 0.0;
-  mP[0*4+3] = -(l+r)*0.5;
+  mP[0*4+3] = -(l+r)/(r-l);
   
   mP[1*4+0] = 0.0;
   mP[1*4+1] = 2.0/(t-b);
   mP[1*4+2] = 0.0;
-  mP[1*4+3] = -(t+b)*0.5;
+  mP[1*4+3] = -(t+b)/(t-b);
   
   mP[2*4+0] = 0.0;
   mP[2*4+1] = 0.0;
   mP[2*4+2] = 2.0/(n-f);
-  mP[2*4+3] = -(n+f)*0.5;
+  mP[2*4+3] = -(n+f)/(n-f);
   
   mP[3*4+0] = 0.0;
   mP[3*4+1] = 0.0;
@@ -375,7 +385,7 @@ void glhOrthof2
 
 
 void CCamera::Affine4f_Projection
-(float mP[16], double asp, double depth)
+(float mP[16], double asp, double depth) const 
 {
   if( is_pars ){
     glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
@@ -392,49 +402,56 @@ void CCamera::Affine4f_Projection
   }
 }
 
+void CCamera::Affine4f_ModelView
+(float mMV[16]) const
+{
+  /*
+  {
+    ::glMatrixMode(GL_MODELVIEW);
+    ::glLoadIdentity();
+    ::glTranslated(trans[0],trans[1],trans[2]);
+  }
+   */
+  Mat4f_Identity(mMV);
+  if(      camera_rot_mode == CAMERA_ROT_YTOP  ){
+    double x = sin(theta);
+    double z = cos(theta);
+    double y = sin(psi);
+    x *= cos(psi);
+    z *= cos(psi);
+    glhLookAtf2(mMV, x,y,z, 0,0,0, 0,1,0);
+  }
+  else if( camera_rot_mode == CAMERA_ROT_ZTOP  ){
+    double x = sin(theta);
+    double y = cos(theta);
+    double z = sin(psi);
+    x *= cos(psi);
+    y *= cos(psi);
+    float mMV[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+    glhLookAtf2(mMV, x,y,z, 0,0,0, 0,0,1);
+  }
+  else if( camera_rot_mode == CAMERA_ROT_TBALL ){
+    Mat4f_Quat(mMV,Quat_tball);
+  }
+}
+
 void CCamera::SetGL_Camera(int win_w, int win_h)
 {
-  double depth = view_height/(scale*tan(0.5*fovy*3.1415/180.0));
   {
     ::glMatrixMode(GL_PROJECTION);
     ::glLoadIdentity();
     float mP[16];
+    double depth = view_height/(scale*tan(0.5*fovy*3.1415/180.0));
     this->Affine4f_Projection(mP, (double)win_w/win_h, depth);
     ::glMultMatrixf(mP);
   }
-    //// solve translation rotation from here
-    {
-      ::glMatrixMode(GL_MODELVIEW);
-      ::glLoadIdentity();
-      ::glTranslated(trans[0],trans[1],trans[2]);
-    }
-    if(      camera_rot_mode == CAMERA_ROT_YTOP  ){
-      double x = sin(theta);
-      double z = cos(theta);
-      double y = sin(psi);
-      x *= cos(psi);
-      z *= cos(psi);
-      float mMV[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-      glhLookAtf2(mMV, x,y,z, 0,0,0, 0,1,0);
-      ::glMultMatrixf(mMV);
-//      ::gluLookAt(x,y,z, 0,0,0, 0,1,0);
-    }
-    else if( camera_rot_mode == CAMERA_ROT_ZTOP  ){
-      double x = sin(theta);
-      double y = cos(theta);
-      double z = sin(psi);
-      x *= cos(psi);
-      y *= cos(psi);
-      float mMV[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-      glhLookAtf2(mMV, x,y,z, 0,0,0, 0,0,1);
-      ::glMultMatrixf(mMV);
-//      ::gluLookAt(x,y,z, 0,0,0, 0,0,1);
-    }
-    else if( camera_rot_mode == CAMERA_ROT_TBALL ){
-      double Rview[16];
-      Mat4_Quat(Rview,Quat_tball);
-      ::glMultMatrixd(Rview);
-    }
+  {
+    ::glMatrixMode(GL_MODELVIEW);
+    ::glLoadIdentity();
+    float mMV[16];
+    this->Affine4f_ModelView(mMV);
+    ::glMultMatrixf(mMV);
+  }
 }
 
 void CCamera::Scale(double s){

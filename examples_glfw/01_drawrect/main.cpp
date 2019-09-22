@@ -91,13 +91,31 @@ int main(void)
                          indices,2);
   }
 
+  {
+    const std::string glslvrt_simplest =
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+    
+    const std::string glslfrg_simplest =
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "  FragColor = vec4(1.0f, 0.5f, 0.5f, 1.0f);\n"
+    "}\n\0";
 #ifdef EMSCRIPTEN
-  shaderProgram = GL24_CompileShader(glsles3vert_simplest.c_str(),
-                                     glsles3frag.c_str());
+    shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
+                                        glslvrt_simplest).c_str(),
+                                       (std::string("#version 300 es\n")+
+                                        std::string("precision highp float;\n")+
+                                        glslfrg_simplest).c_str());
 #else
-  shaderProgram = GL24_CompileShader(glsl33vert_simplest.c_str(),
-                                     glsl33frag.c_str());
+    shaderProgram = GL24_CompileShader(("#version 330 core\n"+glslvrt_simplest).c_str(),
+                                       ("#version 330 core\n"+glslfrg_simplest).c_str());
 #endif
+  }
   
   
   

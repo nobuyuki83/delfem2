@@ -18,9 +18,13 @@
 /**
  * @details the OpenGL ES 2.0 only accept float array. So there is no "double" version of this file
  */
-int GL4_VAO_MeshTri3D
-(const float* aP, int nP, int nDim,
- const unsigned int* aTri, int nTri);
+int GL4_VAO_MeshTri3D(const float* aP, int nP, int nDim,
+                      const unsigned int* aTri, int nTri);
+
+int GL4_VAO_MeshTri3D_FaceNormal(const float* aP, int nP, int nDim,
+                                 const unsigned int* aTri, int nTri,
+                                 const float* aN);
+
 
 class CGL4_VAO_Mesh
 {
@@ -28,67 +32,42 @@ public:
   void Draw() const {
     glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     //glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_TRIANGLES, 3*nTri, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_ELEM_TYPE, nElem*nNoel, GL_UNSIGNED_INT, 0);
     // glBindVertexArray(0); // no need to unbind it every time
   }
 public:
   int VAO;
-  int nTri;
+  int nElem;
+  int nNoel;
+  int GL_ELEM_TYPE;
 };
 
 
-const std::string glsl33vert_simplest =
-"#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
 const std::string glsl33vert_projection =
-"#version 330 core\n"
-"uniform mat4 projectionMatrix;\n"
-"layout (location = 0) in vec3 aPos;\n"
+"uniform mat4 matrixProjection;\n"
+"uniform mat4 matrixModelView;\n"
+"layout (location = 0) in vec3 posIn;\n"
+"layout (location = 1) in vec3 nrmIn;\n"
+"out vec3 nrmPrj;\n"
 "void main()\n"
 "{\n"
-"   gl_Position = projectionMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"  gl_Position = matrixProjection * matrixModelView * vec4(posIn.x, posIn.y, posIn.z, 1.0);\n"
+"  vec4 v0 = matrixModelView * vec4(nrmIn.x, nrmIn.y, nrmIn.z, 0.0);\n"
+"  nrmPrj = v0.xyz;\n"
+"  if( length(nrmIn) < 1.e-30 ){ nrmPrj = vec3(0.f, 0.f, 1.f); }\n"
 "}\0";
 
 const std::string glsl33frag =
-"#version 330 core\n"
+"uniform vec3 color;\n"
+"in vec3 nrmPrj;\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
 "}\n\0";
 
 ////////////////////////////////////////////////////
 
-const std::string glsles3vert_simplest =
-"#version 300 es\n"
-"in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const std::string glsles3vert_projection =
-"#version 300 es\n"
-"uniform mat4 projectionMatrix;\n"
-"in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = projectionMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const std::string glsles3frag =
-"#version 300 es\n"
-"precision highp float;\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0, 0.5, 0.2, 1.0);\n"
-"}\n\0";
 
 
 #endif /* utility_glew_h */
