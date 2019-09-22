@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @details the file depends on OpenGL 2.x.
+ * There Are a lot of glBegin(),glEnd()
+ */
+
 #ifndef FUNCS_GL_H
 #define FUNCS_GL_H
 

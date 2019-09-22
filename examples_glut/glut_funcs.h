@@ -6,13 +6,15 @@
 #include <sstream>
 #include <iomanip>  // for the format
 
+//#include <glad/glad.h>
+
+#include "delfem2/gl_camera.h"
+
 #if defined(__APPLE__) && defined(__MACH__)
   #include <GLUT/glut.h>
 #else
   #include <GL/glut.h>
 #endif
-
-#include "delfem2/gl_camera.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 

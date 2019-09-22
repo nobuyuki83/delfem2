@@ -1,6 +1,5 @@
-
-
 #include <iostream>
+#include <fstream>
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -11,11 +10,13 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/glew_funcs.h"
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl24_funcs.h"
+
+#include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_tex.h"
 
 #include "../glut_funcs.h"
+
 
 
 /////////////////////////////////////////////////////////
@@ -182,10 +183,9 @@ int main(int argc,char* argv[])
   glutSpecialFunc(myGlutSpecial);
   glutKeyboardFunc(myGlutKeyboard);
   
+  
   ////////////////////////
-//#ifndef __MACH__
   glewInit();
-//#endif
   
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';
   std::cout<<"GPU: "<<glGetString(GL_RENDERER)<<'\n';
@@ -198,8 +198,8 @@ int main(int argc,char* argv[])
   win.camera.view_height = 2.0;
   win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  SFile_TGA tga_color;  LoadTGAFile("../test_inputs/rock_color.tga",  &tga_color);
-  SFile_TGA tga_normal; LoadTGAFile("../test_inputs/rock_normal.tga", &tga_normal);
+  SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_color.tga",  &tga_color);
+  SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_normal.tga", &tga_normal);
   
   GLuint aIndTex[2];
   ::glGenTextures(2, aIndTex);

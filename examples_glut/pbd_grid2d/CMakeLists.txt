@@ -30,7 +30,7 @@ add_executable(${PROJECT_NAME}
   
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp                   
   
-  ${DELFEM2_INC}/gl_funcs.h         ${DELFEM2_SRC}/gl_funcs.cpp                 
+  ${DELFEM2_INC}/gl2_funcs.h         ${DELFEM2_SRC}/gl2_funcs.cpp                 
   ${DELFEM2_INC}/gl_camera.h        ${DELFEM2_SRC}/gl_camera.cpp                 
 
   main.cpp

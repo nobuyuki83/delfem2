@@ -342,39 +342,71 @@ void glhLookAtf2
 }
 
 
+void glhOrthof2
+(float mP[16],
+ double l, double r,
+ double b, double t,
+ double n, double f)
+{
+  mP[0*4+0] = 2.0/(r-l);
+  mP[0*4+1] = 0.0;
+  mP[0*4+2] = 0.0;
+  mP[0*4+3] = -(l+r)*0.5;
+  
+  mP[1*4+0] = 0.0;
+  mP[1*4+1] = 2.0/(t-b);
+  mP[1*4+2] = 0.0;
+  mP[1*4+3] = -(t+b)*0.5;
+  
+  mP[2*4+0] = 0.0;
+  mP[2*4+1] = 0.0;
+  mP[2*4+2] = 2.0/(n-f);
+  mP[2*4+3] = -(n+f)*0.5;
+  
+  mP[3*4+0] = 0.0;
+  mP[3*4+1] = 0.0;
+  mP[3*4+2] = 0.0;
+  mP[3*4+3] = 1.0;
+}
+
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
+
+void CCamera::Affine4f_Projection
+(float mP[16], double asp, double depth)
+{
+  if( is_pars ){
+    glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
+  }
+  else{
+    ////
+    glhOrthof2(mP,
+               -view_height/scale*asp,
+               +view_height/scale*asp,
+               -view_height/scale,
+               +view_height/scale,
+               -depth*10,
+               +depth*10);
+  }
+}
+
 void CCamera::SetGL_Camera(int win_w, int win_h)
 {
-    double depth = view_height/(scale*tan(0.5*fovy*3.1415/180.0));
-    {
-      double asp = (double)win_w/win_h;
-      ::glMatrixMode(GL_PROJECTION);
-      ::glLoadIdentity();
-      if( is_pars ){
-//        ::gluPerspective(fovy, asp, depth*0.01, depth*10);
-        float mP[16];
-        glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
-        ::glMultMatrixf(mP);
-      }
-      else{
-        ////
-        ::glOrtho(-view_height/scale*asp,
-                  +view_height/scale*asp,
-                  -view_height/scale,
-                  +view_height/scale,
-                  -depth*10,
-                  +depth*10);
-//                  -view_height/scale*10.0,
-//                  +view_height/scale*10.0);
-      }
-    }
+  double depth = view_height/(scale*tan(0.5*fovy*3.1415/180.0));
+  {
+    ::glMatrixMode(GL_PROJECTION);
+    ::glLoadIdentity();
+    float mP[16];
+    this->Affine4f_Projection(mP, (double)win_w/win_h, depth);
+    ::glMultMatrixf(mP);
+  }
     //// solve translation rotation from here
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
-      ::glTranslated(trans[0],trans[1],-depth);
+      ::glTranslated(trans[0],trans[1],trans[2]);
     }
     if(      camera_rot_mode == CAMERA_ROT_YTOP  ){
       double x = sin(theta);

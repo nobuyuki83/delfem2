@@ -23,7 +23,7 @@
 
 #include "delfem2/vec3.h"
 #include "delfem2/gl_voxbv.h"
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl2_funcs.h"
 
 
 static void myGlNormal(const CVector3& n){ ::glNormal3d(n.x,n.y,n.z); }

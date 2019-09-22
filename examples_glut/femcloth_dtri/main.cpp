@@ -19,7 +19,7 @@
 #include "delfem2/cloth_internal.h"
 #include "delfem2/dtri_v2.h"
 
-#include "delfem2/gl_funcs.h"
+#include "delfem2/gl2_funcs.h"
 
 #include "../glut_funcs.h"
 

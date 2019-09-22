@@ -8,7 +8,9 @@ if(MSVC)
 set(CMAKE_CXX_FLAGS "/W4 /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 /wd4505 /wd4245 /wd4457 /wd4800 /wd4838 -O2")
 else()
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -O2")
-endif()		
+endif()
+
+add_definitions(-DUSE_GLEW=1)
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
@@ -26,11 +28,12 @@ set(INPUT_SRC
   ${DELFEM2_INC}/voxel.h         ${DELFEM2_SRC}/voxel.cpp
   ${DELFEM2_INC}/bv.h
 
-  ${DELFEM2_INC}/gl_funcs.h      ${DELFEM2_SRC}/gl_funcs.cpp
-  ${DELFEM2_INC}/glew_funcs.h    ${DELFEM2_SRC}/glew_funcs.cpp
+  ${DELFEM2_INC}/gl2_funcs.h      ${DELFEM2_SRC}/gl2_funcs.cpp
+  ${DELFEM2_INC}/gl2ew_funcs.h    ${DELFEM2_SRC}/gl2ew_funcs.cpp
   ${DELFEM2_INC}/gl_camera.h     ${DELFEM2_SRC}/gl_camera.cpp
   ${DELFEM2_INC}/gl_gpusampler.h ${DELFEM2_SRC}/gl_gpusampler.cpp
   ${DELFEM2_INC}/gl_tex.h        ${DELFEM2_SRC}/gl_tex.cpp
+  ${DELFEM2_INC}/gl24_funcs.h      ${DELFEM2_SRC}/gl24_funcs.cpp
 
   ${DELFEM2_INC}/gl_v23.h        ${DELFEM2_SRC}/gl_v23.cpp
   ${DELFEM2_INC}/gl_color.h      ${DELFEM2_SRC}/gl_color.cpp
