@@ -89,8 +89,10 @@ inline void myGlVertex(const CVector2& v)
 
 void drawPolyLine2D(const std::vector<CVector2>& aP);
 
+void Draw_MeshTri(const std::vector<CVector2>& aP,
+                  const std::vector<unsigned int>& aTri);
 
-
-
+void Draw_MeshTri_Edge(const std::vector<CVector2>& aP,
+                       const std::vector<unsigned int>& aTri);
 
 #endif

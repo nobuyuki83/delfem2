@@ -250,9 +250,9 @@ void Draw_CCad2D(const CCad2D& cad2d)
       const CCad2D_FaceGeo& face = aFace[iface];
       if( (int)iface == iface_picked ){ ::glColor3d(1,1,0); }
       else{ ::glColor3d(0.8,0.8,0.8); }
-      DrawMeshTri2D_Face(face.aTri, face.aXY);
+      Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
       ::glColor3d(0.0,0.0,0.0);
-      DrawMeshTri2D_Edge(face.aTri, face.aXY);
+      Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
     }
     glTranslated(0,0,+0.2);
   }

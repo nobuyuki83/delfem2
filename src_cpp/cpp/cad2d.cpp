@@ -71,7 +71,7 @@ void CCad2D::Pick(double x0, double y0,
   }
   ////
   for(unsigned int iface=0;iface<aFace.size();++iface){
-    bool is_inside = aFace[iface].IsInside(x0, y0);
+    bool is_inside = aFace[iface].IsInside(x0, y0, aVec2_Tessellation);
     if( is_inside ){
       this->iface_picked = iface;
       return;
@@ -316,7 +316,6 @@ void CCad2D_EdgeGeo::GenMesh
     const CVector2 ly = CVector2(lx.y,-lx.x);
     const CVector2 q0 = p0 + param[0]*lx + param[1]*ly;
     const CVector2 q1 = p1 + param[2]*lx + param[3]*ly;
-    std::cout << "hoge: " << param[0] << " " << param[1] << " " << param[2] << " " << param[3] << std::endl;
     int ndiv = 10;
     if( elen > 0 ){
       std::vector<CVector2> aP0;
@@ -560,7 +559,8 @@ void CCad2D::Tessellation()
     aEdge[ie].p1 = aVtx[iv1].pos;
     aEdge[ie].GenMesh(-1);
   }
-  std::vector<CVector2> aVec2;
+  std::vector<CVector2>& aVec2 = this->aVec2_Tessellation;
+  aVec2.clear();
   for(unsigned int iv=0;iv<aVtx.size();++iv){
     aVec2.push_back( aVtx[iv].pos );
   }
@@ -576,9 +576,15 @@ void CCad2D::Tessellation()
                    aFace[ifc],ifc,
                    topo,
                    aVtx,aEdge);
-    MeshTri2D_Export(aFace[ifc].aXY, aFace[ifc].aTri,
-                     aVec2, aETri);
-    
+    std::vector<unsigned int>& aTri = aFace[ifc].aTri;
+    aTri.clear();
+    const int ntri = (int)aETri.size();
+    aTri.resize(ntri*3);
+    for(int itri=0;itri<ntri;itri++){
+      aTri[itri*3+0] = aETri[itri].v[0];
+      aTri[itri*3+1] = aETri[itri].v[1];
+      aTri[itri*3+2] = aETri[itri].v[2];
+    }
   }
 }
 
@@ -742,9 +748,6 @@ std::vector<int> CMesher_Cad2D::IndPoint_IndFaceArray
 }
 
 
-
-
-// write to DXF file
 bool WriteCAD_DXF
 (const std::string& file_name,
  const CCad2D& cad,

@@ -8,3 +8,5 @@ add_subdirectory(02_nav3d)
 
 add_subdirectory(10_imgui_sampledemo)
 add_subdirectory(11_imgui_basic)
+
+add_subdirectory(20_cad2d)
