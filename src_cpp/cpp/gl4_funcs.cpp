@@ -33,7 +33,7 @@
 
 /////////////////////////////////////////////
 
-void GL4_VAO_MeshTri3D
+void GL4_VAO_Pos
 (unsigned int& VAO,
  unsigned int& VBO,
  const float* aP, int nP, int nDim)
@@ -54,7 +54,7 @@ void GL4_VAO_MeshTri3D
 }
 
 
-void GL4_VAO_MeshTri3D_FaceNormal
+void GL4_VAO_PosNrm
 (unsigned int& VAO,
  unsigned int& VBO_pos,
  unsigned int& VBO_nrm,

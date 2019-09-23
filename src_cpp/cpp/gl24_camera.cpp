@@ -226,7 +226,10 @@ void glhTranslatef2
 }
 
 //PURPOSE:      For square matrices. This is column major for OpenGL
-inline void MultiplyMatrices4by4OpenGL_FLOAT(float *result, float *matrix1, float *matrix2)
+inline void MultiplyMatrices4by4OpenGL_FLOAT
+ (float *result,
+  const float *matrix1,
+  const float *matrix2)
 {
   result[0]=matrix1[0]*matrix2[0]+
   matrix1[4]*matrix2[1]+
@@ -412,14 +415,20 @@ void CCamera::Affine4f_ModelView
     ::glTranslated(trans[0],trans[1],trans[2]);
   }
    */
-  Mat4f_Identity(mMV);
+  const float B[16] =
+  { 1.f, 0.f, 0.f, 0.f,
+    0.f, 1.f, 0.f, 0.f,
+    0.f, 0.f, 1.f, 0.f,
+    (float)trans[0], (float)trans[1], (float)trans[2], 1.f};
+  float A[16];
+  Mat4f_Identity(A);
   if(      camera_rot_mode == CAMERA_ROT_YTOP  ){
     double x = sin(theta);
     double z = cos(theta);
     double y = sin(psi);
     x *= cos(psi);
     z *= cos(psi);
-    glhLookAtf2(mMV, x,y,z, 0,0,0, 0,1,0);
+    glhLookAtf2(A, x,y,z, 0,0,0, 0,1,0);
   }
   else if( camera_rot_mode == CAMERA_ROT_ZTOP  ){
     double x = sin(theta);
@@ -427,12 +436,12 @@ void CCamera::Affine4f_ModelView
     double z = sin(psi);
     x *= cos(psi);
     y *= cos(psi);
-    float mMV[16] = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
-    glhLookAtf2(mMV, x,y,z, 0,0,0, 0,0,1);
+    glhLookAtf2(A, x,y,z, 0,0,0, 0,0,1);
   }
   else if( camera_rot_mode == CAMERA_ROT_TBALL ){
-    Mat4f_Quat(mMV,Quat_tball);
+    Mat4f_Quat(A,Quat_tball);
   }
+  MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
 }
 
 void CCamera::SetGL_Camera(int win_w, int win_h)

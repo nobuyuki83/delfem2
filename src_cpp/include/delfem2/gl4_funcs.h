@@ -18,11 +18,11 @@
 /**
  * @details the OpenGL ES 2.0 only accept float array. So there is no "double" version of this file
  */
-void GL4_VAO_MeshTri3D(unsigned int& VAO,
+void GL4_VAO_Pos(unsigned int& VAO,
                        unsigned int& VBO,
                        const float* aP, int nP, int nDim);
 
-void GL4_VAO_MeshTri3D_FaceNormal(unsigned int& VAO,
+void GL4_VAO_PosNrm(unsigned int& VAO,
                                   unsigned int& VBO_pos,
                                   unsigned int& VBO_nrm,
                                   const float* aP, int nP, int nDim,

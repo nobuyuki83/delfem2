@@ -146,8 +146,8 @@ int main(void)
     {
       unsigned int VAO;
       unsigned int VBO_pos;
-      GL4_VAO_MeshTri3D(VAO,VBO_pos,
-                        aXYf.data(),aXYf.size()/2,2);
+      GL4_VAO_Pos(VAO,VBO_pos,
+                  aXYf.data(),aXYf.size()/2,2);
       unsigned int EBO_Tri;
       {
         glBindVertexArray(VAO); // opengl4
@@ -179,17 +179,6 @@ int main(void)
         vao_face.aElem.push_back(e0);
       }
     }
-    /*
-    {
-      int VAO = GL4_VAO_MeshTri3D(aXYf.data(),aXYf.size()/2,2,
-                                  aLine.data(),aLine.size()/2);
-      std::cout << "VAO: " << VAO << std::endl;
-      vao_edge.VAO = VAO;
-      vao_edge.nElem = aLine.size()/2;
-      vao_edge.nNoel = 2;
-      vao_edge.GL_ELEM_TYPE = GL_LINES;
-    }
-     */
   }
 
 #ifdef EMSCRIPTEN

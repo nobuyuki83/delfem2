@@ -131,9 +131,9 @@ int main(void)
     ///
     {
       unsigned int VAO, VBO_pos, VBO_nrm;
-      GL4_VAO_MeshTri3D_FaceNormal(VAO, VBO_pos, VBO_nrm,
-                                   aXYZf.data(), aXYZf.size()/3, 3,
-                                   aNrmf.data());
+      GL4_VAO_PosNrm(VAO, VBO_pos, VBO_nrm,
+                     aXYZf.data(), aXYZf.size()/3, 3,
+                     aNrmf.data());
       unsigned int EBO_Tri;
       {
         glBindVertexArray(VAO); // opengl4
