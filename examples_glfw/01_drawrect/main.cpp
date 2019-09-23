@@ -87,7 +87,7 @@ int main(void)
       0, 1, 3,  // first Triangle
       1, 2, 3   // second Triangle
     };
-    GL4_VAO_MeshTri3D(VAO, VBO_Tri,
+    GL4_VAO_Pos(VAO, VBO_Tri,
                       vertices,4,3);
     {
       glBindVertexArray(VAO); // opengl4
