@@ -22,7 +22,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int shaderProgram;
-int VAO;
+unsigned int VAO;
+unsigned int VBO_Tri;
+unsigned int EBO_Tri;
 
 void draw(GLFWwindow* window)
 {
@@ -35,12 +37,10 @@ void draw(GLFWwindow* window)
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
   
-  // draw our first triangle
   glUseProgram(shaderProgram);
-  glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-  //glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindVertexArray(VAO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-  // glBindVertexArray(0); // no need to unbind it every time
   
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -87,8 +87,14 @@ int main(void)
       0, 1, 3,  // first Triangle
       1, 2, 3   // second Triangle
     };
-    VAO = GL4_VAO_MeshTri3D(vertices,4,3,
-                         indices,2);
+    GL4_VAO_MeshTri3D(VAO, VBO_Tri,
+                      vertices,4,3);
+    {
+      glBindVertexArray(VAO); // opengl4
+      glGenBuffers(1, &EBO_Tri);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*6, indices, GL_STATIC_DRAW);
+    }
   }
 
   {

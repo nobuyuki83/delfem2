@@ -18,28 +18,39 @@
 /**
  * @details the OpenGL ES 2.0 only accept float array. So there is no "double" version of this file
  */
-int GL4_VAO_MeshTri3D(const float* aP, int nP, int nDim,
-                      const unsigned int* aTri, int nTri);
+void GL4_VAO_MeshTri3D(unsigned int& VAO,
+                       unsigned int& VBO,
+                       const float* aP, int nP, int nDim);
 
-int GL4_VAO_MeshTri3D_FaceNormal(const float* aP, int nP, int nDim,
-                                 const unsigned int* aTri, int nTri,
-                                 const float* aN);
+void GL4_VAO_MeshTri3D_FaceNormal(unsigned int& VAO,
+                                  unsigned int& VBO_pos,
+                                  unsigned int& VBO_nrm,
+                                  const float* aP, int nP, int nDim,
+                                  const float* aN);
 
 
 class CGL4_VAO_Mesh
 {
 public:
-  void Draw() const {
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_ELEM_TYPE, nElem*nNoel, GL_UNSIGNED_INT, 0);
-    // glBindVertexArray(0); // no need to unbind it every time
+  class CElem{
+  public:
+    int GL_MODE;
+    unsigned int size;
+    int EBO;
+  };
+public:
+  void Draw(unsigned int iel) const {
+    if( iel >= aElem.size() ){ assert(0); return; }
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aElem[iel].EBO);
+    glDrawElements(aElem[iel].GL_MODE,
+                   aElem[iel].size,
+                   GL_UNSIGNED_INT,
+                   0);
   }
 public:
   int VAO;
-  int nElem;
-  int nNoel;
-  int GL_ELEM_TYPE;
+  std::vector<CElem> aElem;
 };
 
 

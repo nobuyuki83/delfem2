@@ -13,9 +13,7 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/msh.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/primitive.h"
+#include "delfem2/cad2d.h"
 
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
@@ -24,11 +22,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CNav3D_GLFW nav;
+CCad2D cad;
 int shaderProgram;
 int Loc_MatrixProjection;
 int Loc_MatrixModelView;
 int Loc_Color;
 CGL4_VAO_Mesh vao_face;
+
 
 void draw(GLFWwindow* window)
 {
@@ -48,16 +48,16 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
 
+  
   glUseProgram(shaderProgram);
   float mP[16]; nav.camera.Affine4f_Projection(mP, asp, 10);
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
   float mMV[16]; nav.camera.Affine4f_ModelView(mMV);
   glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
-  glUniform3f(Loc_Color, 1,0,0);
+  glUniform3f(Loc_Color, 1,1,1);
   vao_face.Draw(0);
   glUniform3f(Loc_Color, 0,0,0);
   vao_face.Draw(1);
-  
   
   
   glfwSwapBuffers(window);
@@ -112,59 +112,84 @@ int main(void)
   }
 
   {
-    std::vector<double> aXYZd;
-    std::vector<unsigned int> aTri;
-    MeshTri3D_Torus(aXYZd, aTri,
-                    1.0, 0.2);
+    std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
+    cad.AddPolygon(aXY);
+    std::vector<float> aXYf;
     std::vector<unsigned int> aLine;
-    MeshLine_MeshElem(aLine,
-                      aTri.data(), aTri.size()/3, MESHELEM_TRI,
-                      aXYZd.size()/3);
-    std::cout << "nXYZ: " << aXYZd.size()/3 << "  nTri: "  << aTri.size()/3 << std::endl;
-    Normalize(aXYZd);
-    std::vector<double> aNrmd(aXYZd.size());
-    Normal_MeshTri3D(aNrmd.data(),
-                     aXYZd.data(), aXYZd.size()/3,
-                     aTri.data(), aTri.size()/3);
-    std::vector<float> aXYZf(aXYZd.begin(),aXYZd.end());
-    std::vector<float> aNrmf(aNrmd.begin(),aNrmd.end());
-    ///
+    std::vector<unsigned int> aTri;
     {
-      unsigned int VAO, VBO_pos, VBO_nrm;
-      GL4_VAO_MeshTri3D_FaceNormal(VAO, VBO_pos, VBO_nrm,
-                                   aXYZf.data(), aXYZf.size()/3, 3,
-                                   aNrmf.data());
+      const std::vector<CVector2>& aVec2 = cad.aVec2_Tessellation;
+      aXYf.reserve(aVec2.size()*2);
+      for(int iv=0;iv<aVec2.size();++iv){
+        aXYf.push_back(aVec2[iv].x);
+        aXYf.push_back(aVec2[iv].y);
+      }
+      for(int ie=0;ie<cad.aEdge.size();++ie){
+        const CCadTopo& topo = cad.topo;
+        int iv0 = topo.aEdge[ie].iv0;
+        int iv1 = topo.aEdge[ie].iv1;
+        int ip0 = cad.aEdge[ie].ip0;
+        int nseg = cad.aEdge[ie].aP.size()+1;
+        for(int iseg=0;iseg<nseg;++iseg){
+          int i0 = (iseg==0)?iv0:ip0+iseg-1;
+          int i1 = (iseg==nseg-1)?iv1:iseg;
+          aLine.push_back(i0);
+          aLine.push_back(i1);
+          std::cout << i0 << " " << i1 << std::endl;
+        }
+      }
+      for(int ifc=0;ifc<cad.aFace.size();++ifc){
+        const CCad2D_FaceGeo& fc = cad.aFace[ifc];
+        aTri.insert(aTri.end(),fc.aTri.begin(),fc.aTri.end());
+      }
+    }
+    {
+      unsigned int VAO;
+      unsigned int VBO_pos;
+      GL4_VAO_MeshTri3D(VAO,VBO_pos,
+                        aXYf.data(),aXYf.size()/2,2);
       unsigned int EBO_Tri;
       {
         glBindVertexArray(VAO); // opengl4
         glGenBuffers(1, &EBO_Tri);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri); // gl24
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW); // gl24
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
       }
       unsigned int EBO_Line;
       {
         glBindVertexArray(VAO); // opengl4
         glGenBuffers(1, &EBO_Line);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line); // gl24
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW); // gl24
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW);
       }
       std::cout << "VAO: " << VAO << std::endl;
       vao_face.VAO = VAO;
       {
         CGL4_VAO_Mesh::CElem e0;
-        e0.EBO = EBO_Tri;
-        e0.GL_MODE = GL_TRIANGLES;
         e0.size = aTri.size();
+        e0.GL_MODE = GL_TRIANGLES;
+        e0.EBO = EBO_Tri;
         vao_face.aElem.push_back(e0);
       }
       {
         CGL4_VAO_Mesh::CElem e0;
-        e0.EBO = EBO_Line;
-        e0.GL_MODE = GL_LINES;
         e0.size = aLine.size();
+        e0.GL_MODE = GL_LINES;
+        e0.EBO = EBO_Line;
         vao_face.aElem.push_back(e0);
       }
     }
+    /*
+    {
+      int VAO = GL4_VAO_MeshTri3D(aXYf.data(),aXYf.size()/2,2,
+                                  aLine.data(),aLine.size()/2);
+      std::cout << "VAO: " << VAO << std::endl;
+      vao_edge.VAO = VAO;
+      vao_edge.nElem = aLine.size()/2;
+      vao_edge.nNoel = 2;
+      vao_edge.GL_ELEM_TYPE = GL_LINES;
+    }
+     */
   }
 
 #ifdef EMSCRIPTEN

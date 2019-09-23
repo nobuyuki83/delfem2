@@ -14,9 +14,9 @@
 #include <stack>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/dtri_v2.h"
@@ -29,7 +29,7 @@
 #include "../glut_funcs.h"
 
 #ifndef M_PI
-#define M_PI 3.141592653589793
+  #define M_PI 3.141592653589793
 #endif
 
 

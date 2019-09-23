@@ -417,6 +417,49 @@ void drawPolyLine2D(const std::vector<CVector2>& aP)
   ::glEnd();
 }
 
+void Draw_MeshTri
+(const std::vector<CVector2>& aP,
+ const std::vector<unsigned int>& aTri)
+{
+  const int nTri = (int)aTri.size()/3;
+  ::glBegin(GL_TRIANGLES);
+  for(int itri=0;itri<nTri;itri++){
+    const int i0 = aTri[itri*3+0];
+    const int i1 = aTri[itri*3+1];
+    const int i2 = aTri[itri*3+2];
+    const CVector2& v0 = aP[i0];
+    const CVector2& v1 = aP[i1];
+    const CVector2& v2 = aP[i2];
+    myGlVertex(v0);
+    myGlVertex(v1);
+    myGlVertex(v2);
+  }
+  ::glEnd();
+}
+
+void Draw_MeshTri_Edge
+(const std::vector<CVector2>& aP,
+ const std::vector<unsigned int>& aTri)
+{
+  //  const unsigned int nxys = (int)aXY.size()/2;
+  ////////////////
+  ::glColor3d(0,0,0);
+  ::glBegin(GL_LINES);
+  const int nTri = (int)aTri.size()/3;
+  for(int itri=0;itri<nTri;itri++){
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
+    const CVector2& v0 = aP[i0];
+    const CVector2& v1 = aP[i1];
+    const CVector2& v2 = aP[i2];
+    myGlVertex(v0);  myGlVertex(v1);
+    myGlVertex(v1);  myGlVertex(v2);
+    myGlVertex(v2);  myGlVertex(v0);
+  }
+  ::glEnd();
+}
+
 void DrawTriMeshNorm
 (const std::vector<CVector3>& aP,
  const std::vector<int>& aTri)

@@ -74,20 +74,23 @@ void LoopEdgeCCad2D_ReadSVG(std::vector<CCad2D_EdgeGeo>& aEdge,
 class CCad2D_FaceGeo{
 public:
   std::vector<unsigned int> aTri;
-  std::vector<double> aXY;
+//  std::vector<double> aXY;
 public:
-  bool IsInside(double x, double y) const {
+  bool IsInside
+  (double x, double y,
+   const std::vector<CVector2>& aVec2) const
+  {
     for(unsigned int it=0;it<aTri.size()/3;++it){
-      const double q0[2] = {x,y};
+      const CVector2 q0(x,y);
       const int i0 = aTri[it*3+0];
       const int i1 = aTri[it*3+1];
       const int i2 = aTri[it*3+2];
-      const double* p0 = aXY.data()+i0*2;
-      const double* p1 = aXY.data()+i1*2;
-      const double* p2 = aXY.data()+i2*2;
-      double a0 = TriArea2D(q0, p1, p2);
-      double a1 = TriArea2D(p0, q0, p2);
-      double a2 = TriArea2D(p0, p1, q0);
+      const CVector2& p0 = aVec2[i0];
+      const CVector2& p1 = aVec2[i1];
+      const CVector2& p2 = aVec2[i2];
+      double a0 = TriArea(q0, p1, p2);
+      double a1 = TriArea(p0, q0, p2);
+      double a2 = TriArea(p0, p1, q0);
       if( a0 > 0 && a1 > 0 && a2 > 0 ){ return true; }
     }
     return false;
@@ -119,7 +122,8 @@ public:
   void Pick(double x0, double y0,
             double view_height);
   void DragPicked(double p1x, double p1y, double p0x, double p0y);
-  /////
+  //////////////////////////
+  // const method here
   std::vector<double> MinMaxXYZ() const;
   CBoundingBox2D BB() const;
   bool Check() const;
@@ -130,15 +134,22 @@ public:
   int nFace() const { return aFace.size(); }
   int nVtx() const { return aVtx.size(); }
   int nEdge() const { return aEdge.size(); }
+  /**
+   * @brief return std::vector of XY that bounds the face with index iface
+   */
   std::vector<double> XY_VtxCtrl_Face(int iface) const;
   std::vector<std::pair<int,bool> >  Ind_Edge_Face(int iface) const;
   std::vector<int> Ind_Vtx_Face(int iface) const;
   std::vector<int> Ind_Vtx_Edge(int iedge) const;
+  /**
+   * @brief add index to aIdP if a point in aXY is on the edge
+   */
   void GetPointsEdge(std::vector<int>& aIdP,
                      const double* pXY, int np,
                      const std::vector<int>& aIE,
                      double tolerance ) const;
-  ////
+  /////////////////////////////////////
+  // geometric operations from here
   void AddPolygon(const std::vector<double>& aXY);
   void AddFace(const std::vector<CCad2D_EdgeGeo>& aEdge);
   void AddVtxFace(double x0, double y0, unsigned int ifc_add);
@@ -155,6 +166,7 @@ public:
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
+  std::vector<CVector2> aVec2_Tessellation;
   
   int ivtx_picked;
   int iedge_picked;
@@ -164,7 +176,9 @@ public:
   bool is_draw_face;
 };
 
-// write to DXF file
+/**
+ * @brief  write the shape of cad into DXF file
+ */
 bool WriteCAD_DXF(const std::string& file_name,
                   const CCad2D& cad,
                   double scale);
