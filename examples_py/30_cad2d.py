@@ -26,6 +26,10 @@ def main():
   cad.set_edge_type(0, 0, [])
   dfm2.gl.glfw.winDraw3d([cad])
 
+  cad.clear()
+  cad.add_polygon(list_xy=[-1000,-1000, +1000,-1000, +1000,+1000, -1000,+1000])
+  dfm2.gl.glfw.winDraw3d([cad])
+
   for itr in range(3):
     cad.clear()
     cad.import_svg("../test_inputs/shape"+str(itr)+".svg")

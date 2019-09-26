@@ -194,7 +194,7 @@ def pbd1(cad,mesh):
 def pbd_cloth():
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, +0.8,+1, -0.8,+1, -1,+1])
-  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.01)
   mesh = mesher.meshing(cad)
   ####
   pbd = dfm2.PBD_Cloth()

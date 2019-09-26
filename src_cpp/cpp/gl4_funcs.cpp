@@ -93,3 +93,14 @@ void GL4_VAO_PosNrm
   glBindVertexArray(0); // gl4
   return;
 }
+
+
+void CGL4_VAO_Mesh::Draw(unsigned int iel) const {
+  if( iel >= aElem.size() ){ assert(0); return; }
+  glBindVertexArray(VAO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aElem[iel].EBO);
+  glDrawElements(aElem[iel].GL_MODE,
+                 aElem[iel].size,
+                 GL_UNSIGNED_INT,
+                 0);
+}

@@ -96,7 +96,7 @@ std::vector<double> aModesKer;
 CMatrixSparse<double> mat_A;
 CPreconditionerILU<double> ilu_A;
 
-const double lenx = 0.5;
+const double lenx = 0.3;
 const double leny = 0.03;
 const double thickness = 0.004;
 double EYoung = 68.3*1.0e+9;

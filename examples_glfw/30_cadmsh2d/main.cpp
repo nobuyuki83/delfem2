@@ -20,12 +20,12 @@
 #include "delfem2/gl4_v23dtricad.h"
 #include "../glfw_funcs.h"
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CNav3D_GLFW nav;
 CCad2D cad;
 CShader_CCad2D shdr_cad;
-
 
 void draw(GLFWwindow* window)
 {
@@ -47,7 +47,7 @@ void draw(GLFWwindow* window)
 
   float mP[16]; nav.camera.Affine4f_Projection(mP, asp, 10);
   float mMV[16]; nav.camera.Affine4f_ModelView(mMV);
-  shdr_cad.Draw(mP, mMV);
+  shdr_cad.Draw(mP,mMV);
   
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -99,21 +99,27 @@ int main(void)
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
-  shdr_cad.Compile();
 
   {
-    std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
-    cad.AddPolygon(aXY);
     {
-      double param[4] = {0.2, 0.3, -0.2, 0.3};
-      std::vector<double> vparam(param,param+4);
-      cad.SetEdgeType( 0, 1, vparam );
+      std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
+      cad.AddPolygon(aXY);
+    }
+    shdr_cad.MakeBuffer(cad);
+    shdr_cad.Compile();
+    {
+      std::vector<int> aFlgPnt, aFlgTri;
+      CMeshDynTri2D dmsh;
+      CMesher_Cad2D mesher;
+      mesher.edge_length = 0.05;
+      mesher.Meshing(dmsh, cad);
     }
   }
-  shdr_cad.MakeBuffer(cad);
   
   nav.camera.view_height = 1.5;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  
+  
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);

@@ -36,6 +36,13 @@ def solid_linear_eigen():
   cmf.remesh()
   dfm2.gl.glfw.winDraw3d([cmf])
 
+def shell_platebending_mitc3_eigen():
+  cmf = dfm2.cadmshsimvis.CadMesh2D_FEMShellPlateBendingMITC3Eigen(edge_length=0.1)
+  cmf.add_polygon([-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
+  cmf.remesh()
+  dfm2.gl.glfw.winDraw3d([cmf])
+
+
 def pbd2d():
   cmf = dfm2.cadmshsimvis.CadMesh2D_PBD(edge_length=0.2)
   cmf.add_polygon([-1,-1, +1,-1, +1,+1, -1,+1])
@@ -43,7 +50,7 @@ def pbd2d():
   dfm2.gl.glfw.winDraw3d([cmf])
 
 def pbd_cloth():
-  cms = dfm2.cadmshsimvis.CadMesh2D_PBDCloth(edge_length=0.2)
+  cms = dfm2.cadmshsimvis.CadMesh2D_PBDCloth(edge_length=0.05)
   cms.add_polygon([0, 0, +1, 0, +1, +1, 0, +1])
   cms.add_polygon([2, 0, +3, 0, +3, +1, 2, +1])
   cms.list_seam = [[1,7],[3,5]]
@@ -63,7 +70,9 @@ def pbd_cloth():
 
   dfm2.gl.glfw.winDraw3d([cms,cms.pbd.sdf])
 
+
 if __name__ == "__main__":
+  shell_platebending_mitc3_eigen()
   mesh()
   poisson()
   solid_linear_static()

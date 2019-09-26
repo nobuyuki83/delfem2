@@ -472,6 +472,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     if self.ls.mat is None:
       self.ls.set_pattern(self.mesh.psup())
     self.updated_geometry()
+    self.ls.f[:] = numpy.random.uniform(-1, 1, self.ls.f.shape)
 
   def updated_geometry(self):
     cppMassLumped_ShellPlateBendingMitc3(self.mass_lumped_sqrt_inv,
@@ -494,9 +495,9 @@ class FEM_ShellPlateBendingMITC3_Eigen():
         self.ker[j] -= numpy.dot(self.ker[i], self.ker[j]) * self.ker[i]
     self.ker = self.ker.reshape((3, -1, 3))
     self.mass_lumped_sqrt_inv = numpy.reciprocal(self.mass_lumped_sqrt_inv)
-    self.ls.set_zero()
-    self.mode[:] = 0.0
-    cppFEM_Merge_ShellMitc3Static(self.ls.mat, self.ls.f,
+    self.ls.mat.set_zero()
+    tmp = numpy.zeros_like(self.ls.f)
+    cppFEM_Merge_ShellMitc3Static(self.ls.mat, tmp,
                                self.param_thickness,
                                self.param_lambda, self.param_myu,
                                0.0, 0.0,
@@ -523,7 +524,9 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     x -= numpy.dot(x, self.ker[0]) * self.ker[0]
     x -= numpy.dot(x, self.ker[1]) * self.ker[1]
     x -= numpy.dot(x, self.ker[2]) * self.ker[2]
-    x /= numpy.linalg.norm(x)
+    nrm = numpy.linalg.norm(x)
+    if abs(nrm) > 1.0e-10:
+      x /= nrm
     self.ker = self.ker.reshape((3, -1, 3))
     self.ls.f[:] = self.ls.x
     ####

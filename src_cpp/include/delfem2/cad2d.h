@@ -52,6 +52,8 @@ public:
 };
 
 double AreaLoop(const std::vector<CCad2D_EdgeGeo>& aEdge);
+std::vector<CCad2D_EdgeGeo> InvertLoop(const std::vector<CCad2D_EdgeGeo>& aEdge);
+std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength(const std::vector<CCad2D_EdgeGeo>& aEdge);
 
 void Transform_LoopEdgeCad2D(std::vector<CCad2D_EdgeGeo>& aEdge,
                              bool is_flip_holizontal,
@@ -148,6 +150,10 @@ public:
                      const double* pXY, int np,
                      const std::vector<int>& aIE,
                      double tolerance ) const;
+  void MeshForVisualization(std::vector<float>& aXYf,
+                            std::vector< std::vector<unsigned int> >& aaLine,
+                            std::vector<unsigned int>& aTri) const;
+
   /////////////////////////////////////
   // geometric operations from here
   void AddPolygon(const std::vector<double>& aXY);

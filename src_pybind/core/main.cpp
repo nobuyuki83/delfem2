@@ -90,13 +90,16 @@ py::array_t<int> PyCad2D_GetPointsEdge
 
 void PyCad2D_ImportSVG
 (CCad2D& cad,
- const std::string& path_svg)
+ const std::string& path_svg,
+ double scale)
 {
   std::vector<CCad2D_EdgeGeo> aEdge;
   LoopEdgeCCad2D_ReadSVG(aEdge,
                          path_svg);
-  Transform_LoopEdgeCad2D(aEdge,false,true,0.1);
+  Transform_LoopEdgeCad2D(aEdge,false,true,scale);
   for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+  if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
+  aEdge = RemoveEdgeWithZeroLength(aEdge);
   cad.AddFace(aEdge);
 }
 
