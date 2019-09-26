@@ -1,11 +1,14 @@
 import numpy
 from typing import List
 
+from .c_core import TRI
+
 from .fem import \
   FEM_ScalarPoisson, \
   FEM_ScalarDiffuse, \
   FEM_SolidLinearStatic, \
-  FEM_SolidLinearEigen
+  FEM_SolidLinearEigen,\
+  FEM_ShellPlateBendingMITC3_Eigen
 from .fem import PBD, PBD_Cloth
 from .fem import FieldValueSetter
 
@@ -126,6 +129,52 @@ class CadMesh2D_FEMSolidLinearEigen(CadMesh2D):
     self.fem.updated_topology(self.msh25)
     self.fem.ls.f[:] = numpy.random.uniform(-1, 1, self.msh25.np_pos.shape)
     self.fem.solve()
+
+
+
+
+class CadMesh2D_FEMShellPlateBendingMITC3Eigen(CadMesh2D):
+
+  def __init__(self,edge_length:float):
+    super().__init__(edge_length)
+    self.fem = FEM_ShellPlateBendingMITC3_Eigen()
+    #self.vis = VisFEM_ColorContour(self.fem, name_disp="mode")
+    #self.vis.is_lighting = True
+
+  def draw(self):
+    self.ccad.draw()
+    gl.glEnable(gl.GL_LIGHTING)
+    setSomeLighting()
+    gl.glColor3d(0.8,0.8,0.8)
+    gl.glDisable(gl.GL_CULL_FACE)
+    self.vis_mesh.draw()
+#    self.msh25.draw()
+
+  def motion(self,src0,src1,dir):
+    super().motion(src0,src1,dir)
+    self.fem.updated_geometry()
+    self.fem.solve()
+    print(len(self.fem.ls.conv_hist),self.fem.freq_eigen)
+    self.vis_mesh.np_pos[:, :2] = self.dmsh.np_pos
+    self.vis_mesh.np_pos[:, 2] = self.fem.mode[:, 0]
+
+  def remesh(self):
+    """
+    regenerate 2D mesh and data structure for linear system
+    """
+    super().remesh()
+    self.fem.updated_topology(self.dmsh)
+    self.fem.solve()
+    self.vis_mesh = Mesh(numpy.zeros((self.dmsh.np_pos.shape[0], 3)),
+                         self.dmsh.np_elm, TRI)
+    self.vis_mesh.np_pos[:, :2] = self.dmsh.np_pos
+    self.vis_mesh.np_pos[:, 2] = self.fem.mode[:, 0]
+
+  def step_time(self):
+    self.fem.solve()
+    print(len(self.fem.ls.conv_hist), self.fem.freq_eigen)
+    self.vis_mesh.np_pos[:, :2] = self.dmsh.np_pos
+    self.vis_mesh.np_pos[:, 2] = self.fem.mode[:, 0]
 
 
 

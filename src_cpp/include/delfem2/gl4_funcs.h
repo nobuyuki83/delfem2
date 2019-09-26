@@ -23,10 +23,10 @@ void GL4_VAO_Pos(unsigned int& VAO,
                        const float* aP, int nP, int nDim);
 
 void GL4_VAO_PosNrm(unsigned int& VAO,
-                                  unsigned int& VBO_pos,
-                                  unsigned int& VBO_nrm,
-                                  const float* aP, int nP, int nDim,
-                                  const float* aN);
+                    unsigned int& VBO_pos,
+                    unsigned int& VBO_nrm,
+                    const float* aP, int nP, int nDim,
+                    const float* aN);
 
 
 class CGL4_VAO_Mesh
@@ -39,17 +39,14 @@ public:
     int EBO;
   };
 public:
-  void Draw(unsigned int iel) const {
-    if( iel >= aElem.size() ){ assert(0); return; }
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aElem[iel].EBO);
-    glDrawElements(aElem[iel].GL_MODE,
-                   aElem[iel].size,
-                   GL_UNSIGNED_INT,
-                   0);
+  CGL4_VAO_Mesh(){
+    VAO = 0;
+    VBO_pos = -1;
   }
+  void Draw(unsigned int iel) const;
 public:
-  int VAO;
+  unsigned int VAO;
+  unsigned int VBO_pos;
   std::vector<CElem> aElem;
 };
 

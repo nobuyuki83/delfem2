@@ -50,9 +50,9 @@ public:
   void Mouse(GLFWwindow *window, int button, int action, int mods){
     GLint viewport[4];
     ::glGetIntegerv(GL_VIEWPORT,viewport);
-//    int win_w, win_h;  glfwGetFramebufferSize(window, &win_w, &win_h);
-    int win_w = 800;//viewport[2];
-    int win_h = 500;//viewport[3];
+    int win_w, win_h;  glfwGetFramebufferSize(window, &win_w, &win_h);
+//    int win_w = viewport[2];
+//    int win_h = viewport[3];
     imodifier = mods;
     double x, y;  glfwGetCursorPos (window, &x,&y);
 //    std::cout << " pos: " << x << " " << y << " " << win_w << " " << win_h << std::endl;

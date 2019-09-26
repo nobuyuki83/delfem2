@@ -1,4 +1,4 @@
-project(20_cad2d)
+project(30_cadmsh2d)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -22,7 +22,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/gl24_camera.h    ${DELFEM2_SRC}/gl24_camera.cpp
   ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
   ${DELFEM2_INC}/gl4_v23dtricad.h ${DELFEM2_SRC}/gl4_v23dtricad.cpp
-  ../glad4/include/glad/glad.h    ../glad4/src/glad.c
+  ../glad4/include/glad/glad.h  ../glad4/src/glad.c
   ../glfw_funcs.h
   main.cpp
 )

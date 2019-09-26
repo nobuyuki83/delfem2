@@ -34,6 +34,9 @@
 
 
 
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -43,6 +46,7 @@ bool is_animation = false;
 int imode_draw = 0;
 
 CCad2D cad;
+std::vector<CCad2D_EdgeGeo> aEdge;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +63,10 @@ void myGlutDisplay(void)
   win.SetGL_Camera();
   
   Draw_CCad2D(cad);
+  for(int ie=0;ie<aEdge.size();++ie){
+    Draw_CCad2DEdge(aEdge[ie], false, -1);
+  }
+  
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -166,6 +174,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
                                path_svg);
         Transform_LoopEdgeCad2D(aEdge,false,true,0.1);
         for(int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+        std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
         cad.Clear();
         cad.AddFace(aEdge);
       }

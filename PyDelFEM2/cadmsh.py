@@ -348,10 +348,11 @@ class Cad2D():
   def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
     return cad_getPointsEdge(self.ccad,list_edge_index, np_xy, tolerance=tolerance)
 
-  def import_svg(self,path0:str):
+  def import_svg(self,path0:str,scale=1.0):
     if not os.path.isfile(path0):
       return false
-    cppCad2D_ImportSVG(self.ccad,path0)
+    cppCad2D_ImportSVG(self.ccad,path0,scale)
+    self.ccad.check()
 
 ######################
 
@@ -366,7 +367,7 @@ class CadMesh2D(Cad2D):
     self.map_cad2msh = None # this object reallocate
     self.listW = list()
     self.is_sync_mesh = True
-    self.mesher = Mesher_Cad2D(edge_length=0.1)
+    self.mesher = Mesher_Cad2D(edge_length=edge_length)
 
   def draw(self):
     self.ccad.draw()
@@ -390,10 +391,11 @@ class CadMesh2D(Cad2D):
         np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
         self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
         self.dmsh.syncXY_from_npPos()
-
-#      max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
-#      if max_asp > 5.0 or min_area < 0.0:
-#        self.remesh()
+      '''
+      max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
+      if max_asp > 5.0 or min_area < 0.0:
+        self.remesh()
+      '''
 
   def remesh(self):
     self.mesher.meshing(self,self.dmsh)

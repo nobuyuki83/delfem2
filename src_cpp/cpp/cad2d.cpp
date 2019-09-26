@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -384,6 +384,33 @@ double CCad2D_EdgeGeo::Distance(double x, double y) const
   return 0;
 }
 
+void CCad2D::MeshForVisualization
+(std::vector<float>& aXYf,
+ std::vector<std::vector<unsigned int> >& aaLine,
+ std::vector<unsigned int>& aTri) const
+{
+  const std::vector<CVector2>& aVec2 = aVec2_Tessellation;
+  aXYf.reserve(aVec2.size()*2);
+  for(int iv=0;iv<aVec2.size();++iv){
+    aXYf.push_back(aVec2[iv].x);
+    aXYf.push_back(aVec2[iv].y);
+  }
+  aaLine.resize(aEdge.size());
+  for(int ie=0;ie<aEdge.size();++ie){
+    std::vector<unsigned int>& aLine = aaLine[ie];
+    aLine.clear();
+    aLine.push_back(topo.aEdge[ie].iv0);
+    for(int ip=0;ip<aEdge[ie].aP.size();++ip){
+      aLine.push_back(ip+aEdge[ie].ip0);
+    }
+    aLine.push_back(topo.aEdge[ie].iv1);
+  }
+  for(int ifc=0;ifc<aFace.size();++ifc){
+    const CCad2D_FaceGeo& fc = aFace[ifc];
+    aTri.insert(aTri.end(),fc.aTri.begin(),fc.aTri.end());
+  }
+}
+
 double CCad2D_EdgeGeo::Length() const
 {
   double len0 = 0.0;
@@ -404,13 +431,43 @@ double AreaLoop
   CVector2 qo(0,0);
   for(unsigned int ie=0;ie<aEdge.size();++ie){
     const std::vector<CVector2>& aP = aEdge[ie].aP;
-    for(unsigned int il=0;il<aP.size()+1;++il){
-      const CVector2 q0 = (il==0) ? aEdge[ie].p0 : aP[il-1];
-      const CVector2 q1 = (il==aP.size()) ?aEdge[ie].p1 : aP[il];
+    const int nseg = aP.size()+1;
+    for(unsigned int iseg=0;iseg<nseg;++iseg){
+      const CVector2 q0 = (iseg==0) ? aEdge[ie].p0 : aP[iseg-1];
+      const CVector2 q1 = (iseg==nseg-1) ?aEdge[ie].p1 : aP[iseg];
       a0 += TriArea(qo, q0, q1);
     }
   }
   return a0;
+}
+
+
+std::vector<CCad2D_EdgeGeo> InvertLoop
+(const std::vector<CCad2D_EdgeGeo>& aEdge)
+{
+  const unsigned int ne = aEdge.size();
+  std::vector<CCad2D_EdgeGeo> aEdgeOut(ne);
+  for(int ie=0;ie<ne;++ie){
+    const CCad2D_EdgeGeo& ei = aEdge[ie];
+    CCad2D_EdgeGeo& eo = aEdgeOut[ne-ie-1];
+    eo.p1 = ei.p0;
+    eo.p0 = ei.p1;
+  }
+  return aEdgeOut;
+}
+
+
+std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength
+(const std::vector<CCad2D_EdgeGeo>& aEdge)
+{
+  const unsigned int ne = aEdge.size();
+  std::vector<CCad2D_EdgeGeo> aEdgeOut;
+  aEdgeOut.reserve(ne);
+  for(int ie=0;ie<ne;++ie){
+    if( aEdge[ie].Length() < 1.0e-10 ) continue;
+    aEdgeOut.push_back(aEdge[ie]);
+  }
+  return aEdgeOut;
 }
 
 
@@ -1063,12 +1120,15 @@ void LoopEdgeCCad2D_ReadSVG
 (std::vector<CCad2D_EdgeGeo>& aEdge,
  const std::string& fname)
 {
+  aEdge.clear();
   std::vector<char> aC;
-  GetFileContents(aC, fname);
+  if( !GetFileContents(aC, fname) ){ return; }
+  std::cout << "svg file content: ";
   for(unsigned int ic=0;ic<aC.size();++ic){
     std::cout << aC[ic];
   }
   std::cout << std::endl;
+  
   std::vector< std::string > aStr;
   XML_SeparateTagContent(aStr,
                          aC);
