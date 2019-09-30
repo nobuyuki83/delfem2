@@ -99,11 +99,12 @@ public:
   }
 };
 
-//////////////////
 
+//---------------------------------------------------------------------------------
 
-
-
+/**
+ * @brief class to define 2D shapes bounded by parametric curves
+ */
 class CCad2D
 {
 public:

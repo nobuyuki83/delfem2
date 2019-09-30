@@ -1737,8 +1737,6 @@ double SquareTriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
   return (dtmp_x*dtmp_x + dtmp_y*dtmp_y + dtmp_z*dtmp_z)*0.25;
 }
 
-////////////////////////////////////////////////
-
 double SquareDistance(const CVector3& ipo0, const CVector3& ipo1)
 {
   return	( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y ) + ( ipo1.z - ipo0.z )*( ipo1.z - ipo0.z );
@@ -1749,7 +1747,6 @@ double SquareLength(const CVector3& point)
   return	point.x*point.x + point.y*point.y + point.z*point.z;
 }
 
-////////////////////////////////////////////////
 
 //! length of vector
 double Length(const CVector3& point)
@@ -1763,7 +1760,6 @@ double Distance(const CVector3& p0, const CVector3& p1)
   return	sqrt( SquareDistance(p0,p1) );
 }
 
-////////////////////////////////////////////////
 
 double SqareLongestEdgeLength
 (const CVector3& ipo0,
@@ -2121,10 +2117,13 @@ bool isPointSameSide
 
 ////////////////////////////////
 
-//! check if Delaunay condition satisfied
-// 0 : p3 is inside circum circle on the p0,p1,p2
-// 1 :       on         
-// 2 :       outsdie 
+/**
+ * @brief check if Delaunay condition satisfied
+ * @details
+ * 0 : p3 is inside circum circle on the p0,p1,p2
+ * 1 :       on
+ * 2 :       outsdie
+ */
 int DetDelaunay
 (const CVector3& p0,
 const CVector3& p1,
@@ -2159,8 +2158,8 @@ const CVector3& p3)
   return 0;
 }
 
-/*!
- curcumradius of a tetrahedra
+/**
+ * @brief curcumradius of a tetrahedra
  */
 double Circumradius
 (const CVector3& ipo0,
@@ -2234,15 +2233,8 @@ CVector3 RandGaussVector()
 
 
 
-////////////////////////////////////////////////
+// ----------------------------------------------------------------------------------------
 // using <vector> from here
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void GetConstConstDiff_Bend

@@ -14,6 +14,7 @@
 #endif
 
 #include "delfem2/cad2d.h"
+#include "delfem2/vec3.h"
 
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
@@ -47,7 +48,7 @@ void draw(GLFWwindow* window)
 
   float mP[16]; nav.camera.Affine4f_Projection(mP, asp, 10);
   float mMV[16]; nav.camera.Affine4f_ModelView(mMV);
-  shdr_cad.Draw(mP,mMV);
+  shdr_cad.Draw(mP,mMV,cad);
   
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -68,6 +69,7 @@ void callback_resize(GLFWwindow* window, int width, int height)
 void callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
   nav.Mouse(window,button,action,mods);
+
 
 }
 

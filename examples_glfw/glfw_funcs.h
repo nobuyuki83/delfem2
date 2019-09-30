@@ -47,12 +47,23 @@ GLFWwindow* myGLFW_OpenWindow
 class CNav3D_GLFW
 {
 public:
+  CNav3D_GLFW(){
+    ibutton = -1;
+  }
   void Mouse(GLFWwindow *window, int button, int action, int mods){
-    GLint viewport[4];
-    ::glGetIntegerv(GL_VIEWPORT,viewport);
-    int win_w, win_h;  glfwGetFramebufferSize(window, &win_w, &win_h);
-//    int win_w = viewport[2];
-//    int win_h = viewport[3];
+    int win_w, win_h;
+    {
+      // frame buffer size might be x2 larger than the window size.
+      glfwGetWindowSize(window, &win_w, &win_h);
+      /*
+      glfwGetFramebufferSize(window, &win_w, &win_h);
+      std::cout << win_w << " " << win_h << std::endl;
+      GLint viewport[4];
+      ::glGetIntegerv(GL_VIEWPORT,viewport);
+      win_w = viewport[2];
+      win_h = viewport[3];
+       */
+    }
     imodifier = mods;
     double x, y;  glfwGetCursorPos (window, &x,&y);
 //    std::cout << " pos: " << x << " " << y << " " << win_w << " " << win_h << std::endl;
@@ -69,7 +80,11 @@ public:
   }
   void Motion(GLFWwindow *window, double x, double y){
 
-    int win_w, win_h;  glfwGetFramebufferSize(window, &win_w, &win_h);
+    int win_w, win_h;
+    {
+//      glfwGetFramebufferSize(window, &win_w, &win_h);
+      glfwGetWindowSize(window, &win_w, &win_h);
+    }
     const double mov_end_x = (2.0*x-win_w)/win_w;
     const double mov_end_y = (win_h-2.0*y)/win_h;
     dx = mov_end_x - mouse_x;
@@ -96,6 +111,17 @@ public:
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     camera.SetGL_Camera(width,height);
+  }
+  void Matrix_MVP(float mMV[16],
+                  float mP[16],
+                  GLFWwindow* window) const
+  {
+    float asp;
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+    asp = width / (float) height;
+    camera.Affine4f_Projection(mP, asp, 10);
+    camera.Affine4f_ModelView(mMV);
   }
 public:
 //  int iwin;

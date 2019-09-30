@@ -21,118 +21,155 @@
 #include "delfem2/gl4_v23dtricad.h"
 
 
+void AddLine
+(std::vector<float>& aPxyNxyf,
+ std::vector< std::vector<unsigned int>>& aaTri,
+ const std::vector<float>& aXY0f,
+ const std::vector<unsigned int>& aLine)
+{
+  const int npl = aLine.size();
+  const int icnt_p0 = aPxyNxyf.size()/8;
+  aPxyNxyf.resize(aPxyNxyf.size()+npl*8,0.0);
+  for(int ipl=0;ipl<npl;++ipl){
+    aPxyNxyf[(icnt_p0+ipl)*8+0] = aXY0f[aLine[ipl]*2+0];
+    aPxyNxyf[(icnt_p0+ipl)*8+1] = aXY0f[aLine[ipl]*2+1];
+    aPxyNxyf[(icnt_p0+ipl)*8+2] = 0.0;
+    aPxyNxyf[(icnt_p0+ipl)*8+3] = 0.0;
+    aPxyNxyf[(icnt_p0+ipl)*8+4] = aXY0f[aLine[ipl]*2+0];
+    aPxyNxyf[(icnt_p0+ipl)*8+5] = aXY0f[aLine[ipl]*2+1];
+    aPxyNxyf[(icnt_p0+ipl)*8+6] = 0.0;
+    aPxyNxyf[(icnt_p0+ipl)*8+7] = 0.0;
+  }
+  const int nseg = aLine.size()-1;
+  for(int iseg=0;iseg<nseg;++iseg){
+    const int i0 = aLine[iseg+0];
+    const int i1 = aLine[iseg+1];
+    double v01x = aXY0f[i1*2+0] - aXY0f[i0*2+0];
+    double v01y = aXY0f[i1*2+1] - aXY0f[i0*2+1];
+    double len = sqrt(v01x*v01x+v01y*v01y);
+    double n01x = +v01y/len;
+    double n01y = -v01x/len;
+    aPxyNxyf[(icnt_p0+iseg+0)*8+2] += +n01x;
+    aPxyNxyf[(icnt_p0+iseg+0)*8+3] += +n01y;
+    aPxyNxyf[(icnt_p0+iseg+0)*8+6] += -n01x;
+    aPxyNxyf[(icnt_p0+iseg+0)*8+7] += -n01y;
+    aPxyNxyf[(icnt_p0+iseg+1)*8+2] += +n01x;
+    aPxyNxyf[(icnt_p0+iseg+1)*8+3] += +n01y;
+    aPxyNxyf[(icnt_p0+iseg+1)*8+6] += -n01x;
+    aPxyNxyf[(icnt_p0+iseg+1)*8+7] += -n01y;
+  }
+  for(int ipl=0;ipl<npl*2;++ipl){
+    double nx0 = aPxyNxyf[icnt_p0*8+ipl*4+2];
+    double ny0 = aPxyNxyf[icnt_p0*8+ipl*4+3];
+    double len = sqrt(nx0*nx0+ny0*ny0);
+    aPxyNxyf[icnt_p0*8+ipl*4+2] /= len;
+    aPxyNxyf[icnt_p0*8+ipl*4+3] /= len;
+  }
+  const unsigned int iatri = aaTri.size();
+  aaTri.resize(aaTri.size()+1);
+  aaTri[iatri].resize(nseg*2*3);
+  for(int iseg=0;iseg<nseg;++iseg){
+    int i0 = icnt_p0+iseg+0;
+    int i1 = icnt_p0+iseg+1;
+    aaTri[iatri][iseg*6+0] = i0*2+0;
+    aaTri[iatri][iseg*6+1] = i0*2+1;
+    aaTri[iatri][iseg*6+2] = i1*2+0;
+    aaTri[iatri][iseg*6+3] = i0*2+1;
+    aaTri[iatri][iseg*6+4] = i1*2+0;
+    aaTri[iatri][iseg*6+5] = i1*2+1;
+  }
+}
+
+void AddPoint
+(std::vector<float>& aPxyNxyf,
+ std::vector< std::vector<unsigned int> >& aaTri,
+ double x0,
+ double y0,
+ unsigned int ndiv)
+{
+  const unsigned int np0 = aPxyNxyf.size()/4;
+  const unsigned int npa = ndiv+1;
+  aPxyNxyf.resize(np0*4+npa*4);
+  const double rdiv = 2.0*3.14156/ndiv;
+  for(int ipa=0;ipa<npa;++ipa){
+    if( ipa == 0 ){
+      aPxyNxyf[np0*4+ipa*4+0] = x0;
+      aPxyNxyf[np0*4+ipa*4+1] = y0;
+      aPxyNxyf[np0*4+ipa*4+2] = 0.0;
+      aPxyNxyf[np0*4+ipa*4+3] = 0.0;
+    }
+    else{
+      aPxyNxyf[np0*4+ipa*4+0] = x0;
+      aPxyNxyf[np0*4+ipa*4+1] = y0;
+      aPxyNxyf[np0*4+ipa*4+2] = cos((ipa-1)*rdiv);
+      aPxyNxyf[np0*4+ipa*4+3] = sin((ipa-1)*rdiv);
+    }
+  }
+  unsigned int itria0 = aaTri.size();
+  aaTri.resize(aaTri.size()+1);
+  for(int idiv=0;idiv<ndiv;++idiv){
+    aaTri[itria0].push_back(np0);
+    aaTri[itria0].push_back(np0+1+(idiv+0)%ndiv);
+    aaTri[itria0].push_back(np0+1+(idiv+1)%ndiv);
+  }
+}
+
 void CShader_CCad2D::MakeBuffer(const CCad2D& cad)
 {
+  {
+    vao_face.aElem.clear();
+    vao_edge.aElem.clear();
+  }
+  
   std::vector<float> aXY0f;
   std::vector<std::vector<unsigned int> > aaLine;
   std::vector<unsigned int> aTri;
   cad.MeshForVisualization(aXY0f,aaLine,aTri);
-  {
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO); // opengl4
-    glBindVertexArray(VAO); // opengl4
+  { // triangles for faces
+    if( !glIsVertexArray(vao_face.VAO) ){
+      glGenVertexArrays(1, &vao_face.VAO);
+    }
+    glBindVertexArray(vao_face.VAO);
 
-    unsigned int VBO_pos;
-    glGenBuffers(1, &VBO_pos);
+    if( !glIsBuffer(vao_face.VBO_pos) ){
+      glGenBuffers(1, &vao_face.VBO_pos);
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, vao_face.VBO_pos); // gl24
     
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_pos); // gl24
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+
+    vao_face.Delete_EBOs();
     ///
     unsigned int EBO_Tri;
     glGenBuffers(1, &EBO_Tri);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
-    
-    vao_face.VAO = VAO;
-    vao_face.VBO_pos = VBO_pos;
-    
+  
     CGL4_VAO_Mesh::CElem e0;
     e0.size = aTri.size();
     e0.GL_MODE = GL_TRIANGLES;
     e0.EBO = EBO_Tri;
     vao_face.aElem.push_back(e0);
   }
-  {
+  { // point and edges
     std::vector<float> aPxyNxyf;
-    {
-      int icnt = 0;
-      for(int il=0;il<aaLine.size();++il){ icnt += aaLine[il].size(); }
-      aPxyNxyf.assign(icnt*8,0.0);
+    std::vector< std::vector<unsigned int>> aaTri;
+    for(int iv=0;iv<cad.aVtx.size();++iv){
+      AddPoint(aPxyNxyf, aaTri,
+               cad.aVtx[iv].pos.x,
+               cad.aVtx[iv].pos.y,
+               16);
     }
-    {
-      int icnt = 0;
-      for(int il=0;il<aaLine.size();++il){
-        const int npl = aaLine[il].size();
-        for(int ipl=0;ipl<npl;++ipl){
-          aPxyNxyf[(icnt+ipl)*8+0] = aXY0f[aaLine[il][ipl]*2+0];
-          aPxyNxyf[(icnt+ipl)*8+1] = aXY0f[aaLine[il][ipl]*2+1];
-          aPxyNxyf[(icnt+ipl)*8+2] = 0.0;
-          aPxyNxyf[(icnt+ipl)*8+3] = 0.0;
-          aPxyNxyf[(icnt+ipl)*8+4] = aXY0f[aaLine[il][ipl]*2+0];
-          aPxyNxyf[(icnt+ipl)*8+5] = aXY0f[aaLine[il][ipl]*2+1];
-          aPxyNxyf[(icnt+ipl)*8+6] = 0.0;
-          aPxyNxyf[(icnt+ipl)*8+7] = 0.0;
-        }
-        const int nseg = aaLine[il].size()-1;
-        for(int iseg=0;iseg<nseg;++iseg){
-          const int i0 = aaLine[il][iseg+0];
-          const int i1 = aaLine[il][iseg+1];
-          double v01x = aXY0f[i1*2+0] - aXY0f[i0*2+0];
-          double v01y = aXY0f[i1*2+1] - aXY0f[i0*2+1];
-          double len = sqrt(v01x*v01x+v01y*v01y);
-          double n01x = +v01y/len;
-          double n01y = -v01x/len;
-          aPxyNxyf[(icnt+iseg+0)*8+2] += +n01x;
-          aPxyNxyf[(icnt+iseg+0)*8+3] += +n01y;
-          aPxyNxyf[(icnt+iseg+0)*8+6] += -n01x;
-          aPxyNxyf[(icnt+iseg+0)*8+7] += -n01y;
-          aPxyNxyf[(icnt+iseg+1)*8+2] += +n01x;
-          aPxyNxyf[(icnt+iseg+1)*8+3] += +n01y;
-          aPxyNxyf[(icnt+iseg+1)*8+6] += -n01x;
-          aPxyNxyf[(icnt+iseg+1)*8+7] += -n01y;
-        }
-        icnt += aaLine[il].size();
-      }
+    for(int il=0;il<aaLine.size();++il){
+      AddLine(aPxyNxyf,aaTri,
+              aXY0f,aaLine[il]);
     }
-    for(int i=0;i<aPxyNxyf.size()/4;++i){
-      double nx0 = aPxyNxyf[i*4+2];
-      double ny0 = aPxyNxyf[i*4+3];
-      double len = sqrt(nx0*nx0+ny0*ny0);
-      aPxyNxyf[i*4+2] /= len;
-      aPxyNxyf[i*4+3] /= len;
-    }
-    std::vector< std::vector<unsigned int>> aaTri(aaLine.size());
-    {
-      int icnt = 0;
-      for(int il=0;il<aaLine.size();++il){
-        const int nseg = aaLine[il].size()-1;
-        aaTri[il].resize(nseg*2*3);
-        for(int iseg=0;iseg<nseg;++iseg){
-          int i0 = icnt+iseg+0;
-          int i1 = icnt+iseg+1;
-          aaTri[il][iseg*6+0] = i0*2+0;
-          aaTri[il][iseg*6+1] = i0*2+1;
-          aaTri[il][iseg*6+2] = i1*2+0;
-          aaTri[il][iseg*6+3] = i0*2+1;
-          aaTri[il][iseg*6+4] = i1*2+0;
-          aaTri[il][iseg*6+5] = i1*2+1;
-        }
-        icnt += aaLine[il].size();
-      }
-    }
-    /*
-    for(int il=0;il<aaTri.size();++il){
-      for(int it=0;it<aaTri[il].size()/3;++it){
-        std::cout << il << " " << it << " " << aaTri[il][it*3+0] << " " << aaTri[il][it*3+1] << " " << aaTri[il][it*3+2] << std::endl;
-      }
-    }
-     */
-    glGenVertexArrays(1, &vao_edge.VAO); // opengl4
-    glBindVertexArray(vao_edge.VAO); // opengl4
-
-    glGenBuffers(1, &vao_edge.VBO_pos);
+    if( !glIsVertexArray(vao_edge.VAO) ){ glGenVertexArrays(1, &vao_edge.VAO); }
+    glBindVertexArray(vao_edge.VAO);
+    if( !glIsBuffer(vao_edge.VBO_pos) ){ glGenBuffers(1, &vao_edge.VBO_pos); }
+    glBindBuffer(GL_ARRAY_BUFFER, vao_edge.VBO_pos); // gl24
     
     glBindBuffer(GL_ARRAY_BUFFER, vao_edge.VBO_pos); // gl24
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aPxyNxyf.size(), aPxyNxyf.data(), GL_STATIC_DRAW); // gl24
@@ -141,6 +178,7 @@ void CShader_CCad2D::MakeBuffer(const CCad2D& cad)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float))); // gl24
     glEnableVertexAttribArray(1);
     ///
+    vao_edge.Delete_EBOs();
     for(int il=0;il<aaTri.size();++il){
       unsigned int EBO_Tri;
       glGenBuffers(1, &EBO_Tri);
@@ -152,7 +190,6 @@ void CShader_CCad2D::MakeBuffer(const CCad2D& cad)
       e0.EBO = EBO_Tri;
       vao_edge.aElem.push_back(e0);
     }
-    
   }
 }
 
@@ -218,7 +255,7 @@ void CShader_CCad2D::Compile_Edge()
   "void main()\n"
   "{\n"
   "  vec2 v0 = posIn + nrmIn*0.5*line_width;\n"
-  "  gl_Position = matrixProjection * matrixModelView * vec4(v0.x, v0.y, 0.0, 1.0);\n"
+  "  gl_Position = matrixProjection * matrixModelView * vec4(v0.x, v0.y, line_width*0.01, 1.0);\n"
   "}\0";
 
   const std::string glsl33frag =
@@ -252,8 +289,10 @@ void CShader_CCad2D::Compile_Edge()
   std::cout << "projectionMatrixLoc: " << shdr1_Loc_MatrixProjection << "   shaderProgram: " << shdr1_program << "  LocColor: " << shdr1_Loc_Color << std::endl;
 }
 
-
-void CShader_CCad2D::Draw(float mP[16], float mMV[16]) const
+void CShader_CCad2D::Draw
+ (const float mP[16],
+  const float mMV[16],
+  const CCad2D& cad) const
 {
 //  assert( vao_face.aElem.size() >= 2 );
   glUseProgram(shdr0_program);
@@ -265,10 +304,28 @@ void CShader_CCad2D::Draw(float mP[16], float mMV[16]) const
   glUseProgram(shdr1_program);
   glUniformMatrix4fv(shdr1_Loc_MatrixProjection, 1, GL_FALSE, mP);
   glUniformMatrix4fv(shdr1_Loc_MatrixModelView, 1, GL_FALSE, mMV);
-  glUniform3f(shdr1_Loc_Color, 0,0,0);
-  double view_height = 1.0/mP[5];
+  
+  assert( vao_edge.aElem.size() == cad.aVtx.size()+cad.aEdge.size() );
+  
+  const int ipicked_iv = cad.ivtx_picked;
+  const int ipicked_ie = cad.iedge_picked;
+  const int ipicked_elem = cad.ipicked_elem;
+  
+  
+  const double view_height = 1.0/mP[5];
+  const int nv = cad.aVtx.size();
+  /////
+  glUniform1f(shdr1_Loc_LineWidth, view_height*0.04);
+  for(unsigned int iv=0;iv<cad.aVtx.size();++iv){
+    if( iv == ipicked_iv ){ glUniform3f(shdr1_Loc_Color, 1.0f,0.9f,0.f); }
+    else{                   glUniform3f(shdr1_Loc_Color, 1.f,0.f,0.f); }
+    vao_edge.Draw(iv);
+  }
+  ///
   glUniform1f(shdr1_Loc_LineWidth, view_height*0.02);
-  for(int ie=0;ie<vao_edge.aElem.size();++ie){
-    vao_edge.Draw(ie);
+  for(unsigned int ie=0;ie<cad.aEdge.size();++ie){
+    if( ie == ipicked_ie ){ glUniform3f(shdr1_Loc_Color, 1.0f,0.9f,0.f); }
+    else{                   glUniform3f(shdr1_Loc_Color, 0.f,0.f,0.f); }
+    vao_edge.Draw(nv+ie);
   }
 }
