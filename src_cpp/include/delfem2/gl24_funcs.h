@@ -21,11 +21,12 @@ int GL24_CompileShader(const char *vert, const char* frag);
 int compileShader(const std::string& str_glsl_vert,
                   int shaderType);
 
-// compile vertex and fragment shader
-// return shader program
+/**
+ * @function compile vertex and fragment shader
+ * @return id of the shader program
+ */
 int setUpGLSL(const std::string& str_glsl_vert,
               const std::string& str_glsl_frag);
 
 
-
-#endif /* utility_gl_h */
+#endif /* GL24_FUNCS_H */

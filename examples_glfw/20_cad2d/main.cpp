@@ -21,7 +21,8 @@
 #include "delfem2/gl4_v23dtricad.h"
 #include "../glfw_funcs.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// end of header
+// -----------------------------------------------------
 
 CNav3D_GLFW nav;
 CCad2D cad;
@@ -59,26 +60,16 @@ void callback_resize(GLFWwindow* window, int width, int height)
 void callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
   nav.Mouse(window,button,action,mods);
-  {
-    float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
-    CVector2 sp0(nav.mouse_x, nav.mouse_y);
-    const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mP);
-    const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mP);
-    cad.Pick(src_pick.x, src_pick.y, nav.camera.view_height);
-  }
+  float px, py; nav.PosMouse2D(px, py, window);
+  cad.Pick(px, py, nav.camera.view_height);
 }
 
 void callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
 {
   nav.Motion(window,xpos,ypos);
   if( nav.ibutton == 0 ){
-    float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
-    CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
-    CVector2 sp1(nav.mouse_x, nav.mouse_y);
-    const CVector3 src_pick0 = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mP);
-    const CVector3 src_pick1 = screenUnProjection(CVector3(sp1.x,sp1.y, 0.0), mMV,mP);
-    const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mP);
-    cad.DragPicked(src_pick1.x,src_pick1.y, src_pick0.x,src_pick0.y);
+    float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1, window);
+    cad.DragPicked(px1,py1, px0,py0);
     shdr_cad.MakeBuffer(cad);
   }
 }

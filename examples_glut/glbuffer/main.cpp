@@ -24,7 +24,7 @@
 // display data
 bool is_animation;
 
-CGlutWindowManager window;
+CNav3D_GLUT window;
 CGLBuffer glbuff;
 CElemBuffObj ebo_face;
 CElemBuffObj ebo_edge;

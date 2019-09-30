@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DYNTRI_H
-#define DYNTRI_H
+#ifndef DTRI_H
+#define DTRI_H
 
 #include <vector>
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------------
 
 // (6-i-j)%3;
 static const unsigned int relTriTri[3][3] = {
@@ -35,7 +35,7 @@ public:
   CEPo2(int ielem, unsigned int idir)
     : e(ielem), d(idir) {}
 public:
-  int e;  //<! index of 
+  int e;  //<! index of elements
   int d;
 };
 
@@ -61,13 +61,13 @@ void InitializeMesh(std::vector<CEPo2>& aEPo2,
                     int nXYZ);
 
 bool FindEdge_LookAroundPoint(int& itri0, int& inotri0, int& inotri1,
-              ///
-              const int ipo0, const int ipo1,
-              const std::vector<CEPo2>& aEPo2,
-              const std::vector<ETri>& aETri);
+                              //
+                              const int ipo0, const int ipo1,
+                              const std::vector<CEPo2>& aEPo2,
+                              const std::vector<ETri>& aETri);
 
 bool FindEdge_LookAllTriangles(int& itri0, int& iedtri0,
-                               ///
+                               //
                                const int ipo0, const int ipo1,
                                const std::vector<ETri>& aETri);
 
@@ -79,22 +79,22 @@ void GetTriArrayAroundPoint(std::vector< std::pair<int,int> >& aTriSurPo,
 void MoveCCW(int& itri_cur,
              int& inotri_cur,
              bool& flag_is_wall,
-             ////
+             //
              std::vector<ETri>& aETri);
 
-///////////////////////////////////////////////////////////////
+// ---------------
 // topology edit
 
 bool FlipEdge(int itri0, int ied0,
               std::vector<CEPo2>& aEPo2,
               std::vector<ETri>& aETri);
 
-////////////////
+// ----------------------
 // insert point
 
-bool InsertPoint_ElemEdge(const int ipo_ins,    //the index of the new point
-                          const int itri_ins,  //triangle index
-                          const int ied_ins,  //edge index
+bool InsertPoint_ElemEdge(const int ipo_ins,  //!< the index of the new point
+                          const int itri_ins, //!< triangle index
+                          const int ied_ins,  //!< edge index
                           std::vector<CEPo2>& aEPo2,
                           std::vector<ETri>& aETri );
 
@@ -103,7 +103,7 @@ bool InsertPoint_Elem(const int ipo_ins,
                       std::vector<CEPo2>& aEPo2,
                       std::vector<ETri>& aETri);
 
-////////////////
+// -----------------
 // delete point
 
 bool DeleteTri(int itri_to,
@@ -116,15 +116,15 @@ bool Collapse_ElemEdge(const int itri_del,
                        std::vector<ETri>& aETri);
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------
 
 void extractHoles(std::vector< std::vector<int> >& aIndP_Hole,
                   const int npo,
                   const std::vector<ETri>& aETri);
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 
 
-#endif // #endif SURFACE_MESH_H
+#endif // #endif DTRI_H

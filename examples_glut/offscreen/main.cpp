@@ -40,7 +40,7 @@ CFrameBufferManager fbm;
 bool is_animation = true;
 
 bool is_depth = false;
-CGlutWindowManager window;
+CNav3D_GLUT window;
 
 void myGlutDisplay(void)
 {

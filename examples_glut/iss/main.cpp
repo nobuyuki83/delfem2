@@ -39,7 +39,7 @@ std::vector<CColor> aTetColor;
 std::vector<unsigned int> aTet1;
 std::vector<CColor> aTetColor1;
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 double vis_cut_org[3] = {-0.0, 0.0, 0.0};
 double vis_cut_nrm[3] = {0.0,-0.9, +0.2};
 //double vis_cut_time = 0;
@@ -292,11 +292,11 @@ void myGlutResize(int w, int h)
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y){
-  win.glutMouse(button,state,x,y);
+  nav.glutMouse(button,state,x,y);
 }
 
 void SetProblem();
@@ -326,7 +326,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key,x,y);
+  nav.glutSpecial(Key,x,y);
 }
 
 void myGlutIdle(){
@@ -348,7 +348,7 @@ void myGlutDisplay(void)
 	::glEnable(GL_POLYGON_OFFSET_FILL );
 	::glPolygonOffset( 1.1f, 4.0f );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
 
   ::glEnable(GL_LIGHTING);
   if( imode_draw == 0 ){
@@ -390,8 +390,8 @@ int main(int argc,char* argv[])
 	
 //  Hoge();
   SetProblem();
-  win.camera.view_height = 2;
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   ////
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_LIGHT0);            

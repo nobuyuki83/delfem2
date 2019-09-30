@@ -103,7 +103,7 @@ void RotationAtMeshPoints
 
 /////////////////////////////////////////
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 bool is_animatio = false;
 bool is_stiffness_warping = true;
 
@@ -226,7 +226,7 @@ void myGlutDisplay(void)
 	::glEnable(GL_POLYGON_OFFSET_FILL );
 	::glPolygonOffset( 1.0f, 1.0f );
 
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
 
 //  glEnable(GL_BLEND);
 //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -300,13 +300,13 @@ void myGlutResize(int w, int h)
 
 void myGlutMotion( int x, int y )
 {
-  win.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   ::glutPostRedisplay();
 }
 
@@ -348,7 +348,7 @@ void myGlutIdle(){
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
@@ -411,8 +411,8 @@ int main(int argc,char* argv[])
                        aXYZ,aDisp,psup_ind,psup);
 
   
-  win.camera.view_height = 2.0;
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   setSomeLighting();
   glutMainLoop();

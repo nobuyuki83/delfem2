@@ -17,7 +17,7 @@
 // display data
 bool is_animation;
 
-CGlutWindowManager window;
+CNav3D_GLUT window;
 
 void drawObject(){ // for shadow
   ::glutSolidTeapot(1.0);

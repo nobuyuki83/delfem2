@@ -17,7 +17,7 @@
 #include "delfem2/vec3.h"
 #include "delfem2/cad2d.h"
 
-/////////////////////////////////////////
+// ---------------------------
 
 void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
                              const std::vector<CVector3>& aVec3);
@@ -35,7 +35,7 @@ void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
 void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
                            const std::vector<ETri>& aSTri);
 
-/////////////////////////////////////////
+// --------------------------------------------
 
 void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge,
                      bool is_selected,

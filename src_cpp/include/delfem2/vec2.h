@@ -29,8 +29,7 @@ void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);
 void RotationalComponentOfMatrix2(double R[4], const double M[4]);
 
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
+// -----------------------------------------------------
 
 class CVector2;
 
@@ -39,7 +38,9 @@ CVector2 operator*(const CVector2&, double);
 std::ostream &operator<<(std::ostream &output, const CVector2& v);
 std::istream &operator>>(std::istream &input, CVector2& v);
 
-//! 2 dimensional vector class
+/**
+ * @brief 2 dimensional vector class
+ */
 class CVector2{
 public:
 	CVector2(){
@@ -97,7 +98,7 @@ public:
     assert(0);
     return x;
   }
-	//! normalize length
+	//! @brief normalize length
 	inline void SetNormalizedVector(){
 		const double mag = Length();
 		x /= mag;
@@ -132,12 +133,11 @@ CVector2 operator/ (const CVector2& vec, double d); //! divide by real number
 CVector2 rotate(const CVector2& p0, double theta);
 CVector2 rotate90(const CVector2& p0);
 
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 CVector2 Mat2Vec(const double A[4], const CVector2& v);
 
-//! Area of the Triangle
+//! @brief Area of the Triangle
 double TriArea(const CVector2& v1,
                const CVector2& v2,
                const CVector2& v3);
@@ -146,16 +146,16 @@ double SquareLength(const CVector2& ipo0, const CVector2& ipo1);
 double SquareLength(const CVector2& point);
 double Length(const CVector2& point);
 
-//! Length between two points
+//! @brief Length between two points
 double Distance(const CVector2& ipo0, const CVector2& ipo1);
 
-//! Length between two points
+//! @brief Length between two points
 double SquareDistance(const CVector2& ipo0, const CVector2& ipo1);
 
-//! Hight of a triangle : between v1 and line of v2-v3
+//! @brief Hight of a triangle : between v1 and line of v2-v3
 double TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3);
 
-//! compute dot product
+//! @brief compute dot product
 inline double Dot(const CVector2& ipo0, const CVector2& ipo1);
 
 // get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
@@ -179,21 +179,28 @@ bool IsCross_LineSeg_LineSeg(const CVector2& po_s0, const CVector2& po_e0,
 double GetDist_LineSeg_LineSeg(const CVector2& po_s0, const CVector2& po_e0,
                                const CVector2& po_s1, const CVector2& po_e1);
   
-//! square root of circumradius
+/**
+ * @brief square root of circumradius
+ */
 double SquareCircumradius(const CVector2& p0,
                           const CVector2& p1,
                           const CVector2& p2 );
 
-//! center of the circumcircle
+/**
+ * @brief center of the circumcircle
+ */
 bool CenterCircumcircle(const CVector2& p0,
                         const CVector2& p1,
                         const CVector2& p2,
                         CVector2& center);
 
-//! check if Delaunay condition satisfied
-// 0 : p3 is inside circum circle on the p0,p1,p2
-// 1 :       on         
-// 2 :       outsdie 
+/**
+ * @brief check if Delaunay condition satisfied
+ * @return
+ * 0 : p3 is inside circum circle on the p0,p1,p2
+ * 1 :       on
+ * 2 :       outsdie
+ */
 int DetDelaunay(const CVector2& p0,
                 const CVector2& p1,
                 const CVector2& p2,
@@ -205,9 +212,7 @@ CVector2 pointCurve_BezierCubic
  const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4);
 
 
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------
 
 /**
  * @brief translate all the points
@@ -279,12 +284,12 @@ void MakeMassMatrixTri(double M[9],
                        const unsigned int aIP[3],
                        const std::vector<CVector2>& aVec2);
 
+// -------------------------------------------------------------
 
-  
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-
-//! 2D bounding box class
+/**
+ * @brief 2D bounding box
+ * @details inactive if x_min > x_max
+ */
 class CBoundingBox2D
 {
 public:
@@ -297,8 +302,31 @@ public:
   {}
   CBoundingBox2D( const CBoundingBox2D& bb )
   : x_min(bb.x_min),x_max(bb.x_max), y_min(bb.y_min),y_max(bb.y_max) {}
-  //////
+  
+  // -------------------------
+  // const functions from here
   bool isActive() const { return x_min <= x_max; }
+  bool IsIntersectSphere(const CVector2& vec, const double radius ) const
+  {
+    if( !isActive() ) return false;
+    if( vec.x < x_min-radius || vec.x > x_max+radius ||
+       vec.y < y_min-radius || vec.y > y_max+radius ) return false;
+    return true;
+  }
+  bool IsIntersect(const CBoundingBox2D& bb_j, double clearance) const
+  {
+    if( bb_j.x_min > x_max+clearance || bb_j.x_max < x_min-clearance ) return false;
+    if( bb_j.y_min > y_max+clearance || bb_j.y_max < y_min-clearance ) return false;
+    return true;
+  }
+  std::vector<double> MinMaxXYZ() const {
+    const double tmp[6] = {x_min,x_max, y_min,y_max, 0.0, 0.0};
+    std::vector<double> bb(tmp,tmp+6);
+    return bb;
+  }
+  
+  // -------------------------------
+  // non const functions from here
   void Add(double x0, double y0){
     if( !isActive() ){
       x_min = x_max = x0;
@@ -331,28 +359,10 @@ public:
        && vec.y >= y_min && vec.y <= y_max ) return true;
     return false;
   }
-  bool IsIntersectSphere(const CVector2& vec, const double radius ) const
-  {
-    if( !isActive() ) return false;
-    if( vec.x < x_min-radius || vec.x > x_max+radius ||
-       vec.y < y_min-radius || vec.y > y_max+radius ) return false;
-    return true;
-  }
-  bool IsIntersect(const CBoundingBox2D& bb_j, double clearance) const
-  {
-    if( bb_j.x_min > x_max+clearance || bb_j.x_max < x_min-clearance ) return false;
-    if( bb_j.y_min > y_max+clearance || bb_j.y_max < y_min-clearance ) return false;
-    return true;
-  }
-  std::vector<double> MinMaxXYZ() const {
-    const double tmp[6] = {x_min,x_max, y_min,y_max, 0.0, 0.0};
-    std::vector<double> bb(tmp,tmp+6);
-    return bb;
-  }
 public:
   double x_min,x_max,  y_min,y_max;
 };
 
-#endif // VECTOR_2D_H
+#endif // VEC_2
 
 

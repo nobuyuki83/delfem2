@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DYNTRI_V2_H
-#define DYNTRI_V2_H
+#ifndef DTRI_V2_H
+#define DTRI_V2_H
 
 #include <map>
 #include <algorithm>
@@ -288,4 +288,4 @@ public:
   std::vector<CVector2> aVec2;
 };
 
-#endif // #endif SURFACE_MESH_H
+#endif // #endif DTRI_V2_H

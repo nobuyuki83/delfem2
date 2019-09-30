@@ -62,7 +62,7 @@ std::vector<CETet> aSTet;
 
 int imode_display = 0;
 bool is_animation = true;
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 
 int it_wrong = -1;
 
@@ -91,7 +91,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.1f, 4.0f);
 
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
 
   DrawBackground();
 
@@ -157,13 +157,13 @@ void myGlutResize(int w, int h)
 
 void myGlutMotion(int x, int y)
 {
-  win.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int ibutton, int state, int x, int y)
 {
-  win.glutMouse(ibutton, state, x, y);
+  nav.glutMouse(ibutton, state, x, y);
 }
 
 void Initialize()
@@ -369,7 +369,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
@@ -392,7 +392,7 @@ int main(int argc, char* argv[])
   glutSpecialFunc(myGlutSpecial);
   glutIdleFunc(myGlutIdle);
 
-  win.camera.view_height = 2.5;
+  nav.camera.view_height = 2.5;
   
   Initialize();
   AddRandomPoint();

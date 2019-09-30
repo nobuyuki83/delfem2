@@ -47,8 +47,8 @@ public:
   int type_edge; // 0: line, 1:Cubic Bezier
   std::vector<double> param;
   ///
-  std::vector<CVector2> aP; //
-  int ip0; //! ip0 is the p0's point index when mesh is generated
+  std::vector<CVector2> aP;
+  int ip0; //!< ip0 is the p0's point index when mesh is generated
 };
 
 double AreaLoop(const std::vector<CCad2D_EdgeGeo>& aEdge);
@@ -76,7 +76,6 @@ void LoopEdgeCCad2D_ReadSVG(std::vector<CCad2D_EdgeGeo>& aEdge,
 class CCad2D_FaceGeo{
 public:
   std::vector<unsigned int> aTri;
-//  std::vector<double> aXY;
 public:
   bool IsInside
   (double x, double y,
@@ -125,7 +124,7 @@ public:
   void Pick(double x0, double y0,
             double view_height);
   void DragPicked(double p1x, double p1y, double p0x, double p0y);
-  //////////////////////////
+  // --------------------
   // const method here
   std::vector<double> MinMaxXYZ() const;
   CBoundingBox2D BB() const;
@@ -155,7 +154,7 @@ public:
                             std::vector< std::vector<unsigned int> >& aaLine,
                             std::vector<unsigned int>& aTri) const;
 
-  /////////////////////////////////////
+  // ----------------------------------
   // geometric operations from here
   void AddPolygon(const std::vector<double>& aXY);
   void AddFace(const std::vector<CCad2D_EdgeGeo>& aEdge);

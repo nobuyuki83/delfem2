@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef V23_GL_H
-#define V23_GL_H
+#ifndef GL_V23_H
+#define GL_V23_H
 
 #include <vector>
 
@@ -23,7 +23,7 @@ void myGlVertex(int i, const std::vector<double>& vec);
 void ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin);
 void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin);
 
-///////////////////////////////////////////////////
+// -------------------------------------
 
 void DrawArcSolid(const CVector3& axis,
                   const CVector3& org,
@@ -65,7 +65,7 @@ void DrawCircleSolid(const CVector3& axis,
                      const CVector3& org,
                      double r);
 
-/////////////////
+// -----------
 // Handler
 
 void DrawAxisHandler(double s, const CVector3& p);
@@ -74,8 +74,8 @@ void DrawHandlerRotation_PosQuat(const CVector3& pos, const double quat[4],
 void DrawHandlerRotation_Mat4(const double Mat[16],
                               double size, int ielem_picked);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// vec2 starts here
+// ----------------
+// vec2 starts here
 
 inline void myGlVertex(int i, const std::vector<CVector2>& aP)
 {

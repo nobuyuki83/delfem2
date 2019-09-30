@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 
 std::vector<int> aP;
 std::vector<double> aGrad;
@@ -51,7 +51,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1, 4.0 );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_TEXTURE_3D);
@@ -76,13 +76,13 @@ void myGlutIdle(){
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
 }
 
 void ComputePerlin(){
@@ -189,7 +189,7 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 }
 
 void myGlutSpecial(int key, int x, int y){
-  win.glutSpecial(key, x, y);
+  nav.glutSpecial(key, x, y);
   switch(key){
     case GLUT_KEY_PAGE_UP:
       break;
@@ -243,7 +243,7 @@ int main(int argc,char* argv[])
   glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, nW, nH, nD, 0,
                GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
   
-  win.camera.view_height = 2.0;
+  nav.camera.view_height = 2.0;
   
   setSomeLighting();
   

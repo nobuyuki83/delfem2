@@ -111,7 +111,7 @@ static void drawShphere_Radius
 
 // display data
 bool is_animation;
-CGlutWindowManager window;
+CNav3D_GLUT window;
 const int nl = 10;
 int l=0;
 int m=0;

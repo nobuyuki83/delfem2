@@ -1,9 +1,9 @@
-/**
-* Copyright (c) 2019 Nobuyuki Umetani
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 /**
  * @brief classes and functions that depend on cad,dtri,vec2,vec3 and OpenGL ver. 4

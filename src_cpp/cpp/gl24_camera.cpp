@@ -24,11 +24,11 @@
 
 #include "delfem2/gl24_camera.h"
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------------------
 
-// multiply two quaternion
+
+
+//! @brief multiply two quaternion
 static void QuatQuat(double r[], const double p[], const double q[])
 {
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
@@ -37,7 +37,7 @@ static void QuatQuat(double r[], const double p[], const double q[])
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
 
-// transform vector with quaternion
+//! @brief transform vector with quaternion
 inline void QuatVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
@@ -55,7 +55,7 @@ inline void QuatVec(double vo[], const double q[], const double vi[])
   vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 
-// transform vector with conjugate of quaternion
+//! @brief transform vector with conjugate of quaternion
 inline void QuatConjVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
@@ -75,16 +75,16 @@ inline void QuatConjVec(double vo[], const double q[], const double vi[])
 
 
 
-// copy quaternion
-static void CopyQuat(double r[], const double p[])
+//! @brief copy quaternion
+static void CopyQuat
+ (double r[],
+  const double p[])
 {
   r[0] = p[0];
   r[1] = p[1];
   r[2] = p[2];
   r[3] = p[3];
 }
-
-
 
 static void Mat4f_Quat(float r[], const double q[])
 {
@@ -120,9 +120,9 @@ void Mat4f_Identity(float r[])
   r[12] = 0.0;  r[13] = 0.0;  r[14] = 0.0;  r[15] = 1.0;
 }
 
+// static functions ends here
+//----------------------------------------------------------------------------------------
 
-
-/////////////////////////////////////////////////////////////
 
 void getPosOnScreen_Camera2D
 (double& x, double& y,
@@ -228,76 +228,28 @@ void glhTranslatef2
 //PURPOSE:      For square matrices. This is column major for OpenGL
 inline void MultiplyMatrices4by4OpenGL_FLOAT
  (float *result,
-  const float *matrix1,
-  const float *matrix2)
+  const float *m1,
+  const float *m2)
 {
-  result[0]=matrix1[0]*matrix2[0]+
-  matrix1[4]*matrix2[1]+
-  matrix1[8]*matrix2[2]+
-  matrix1[12]*matrix2[3];
-  result[4]=matrix1[0]*matrix2[4]+
-  matrix1[4]*matrix2[5]+
-  matrix1[8]*matrix2[6]+
-  matrix1[12]*matrix2[7];
-  result[8]=matrix1[0]*matrix2[8]+
-  matrix1[4]*matrix2[9]+
-  matrix1[8]*matrix2[10]+
-  matrix1[12]*matrix2[11];
-  result[12]=matrix1[0]*matrix2[12]+
-  matrix1[4]*matrix2[13]+
-  matrix1[8]*matrix2[14]+
-  matrix1[12]*matrix2[15];
+  result[0]=m1[0]*m2[0]+  m1[4]*m2[1]+  m1[8]*m2[2]+  m1[12]*m2[3];
+  result[4]=m1[0]*m2[4]+  m1[4]*m2[5]+  m1[8]*m2[6]+  m1[12]*m2[7];
+  result[8]=m1[0]*m2[8]+  m1[4]*m2[9]+  m1[8]*m2[10]+  m1[12]*m2[11];
+  result[12]=m1[0]*m2[12]+   m1[4]*m2[13]+  m1[8]*m2[14]+  m1[12]*m2[15];
   
-  result[1]=matrix1[1]*matrix2[0]+
-  matrix1[5]*matrix2[1]+
-  matrix1[9]*matrix2[2]+
-  matrix1[13]*matrix2[3];
-  result[5]=matrix1[1]*matrix2[4]+
-  matrix1[5]*matrix2[5]+
-  matrix1[9]*matrix2[6]+
-  matrix1[13]*matrix2[7];
-  result[9]=matrix1[1]*matrix2[8]+
-  matrix1[5]*matrix2[9]+
-  matrix1[9]*matrix2[10]+
-  matrix1[13]*matrix2[11];
-  result[13]=matrix1[1]*matrix2[12]+
-  matrix1[5]*matrix2[13]+
-  matrix1[9]*matrix2[14]+
-  matrix1[13]*matrix2[15];
+  result[1]=m1[1]*m2[0]+  m1[5]*m2[1]+  m1[9]*m2[2]+  m1[13]*m2[3];
+  result[5]=m1[1]*m2[4]+  m1[5]*m2[5]+  m1[9]*m2[6]+  m1[13]*m2[7];
+  result[9]=m1[1]*m2[8]+  m1[5]*m2[9]+  m1[9]*m2[10]+  m1[13]*m2[11];
+  result[13]=m1[1]*m2[12]+  m1[5]*m2[13]+  m1[9]*m2[14]+  m1[13]*m2[15];
   
-  result[2]=matrix1[2]*matrix2[0]+
-  matrix1[6]*matrix2[1]+
-  matrix1[10]*matrix2[2]+
-  matrix1[14]*matrix2[3];
-  result[6]=matrix1[2]*matrix2[4]+
-  matrix1[6]*matrix2[5]+
-  matrix1[10]*matrix2[6]+
-  matrix1[14]*matrix2[7];
-  result[10]=matrix1[2]*matrix2[8]+
-  matrix1[6]*matrix2[9]+
-  matrix1[10]*matrix2[10]+
-  matrix1[14]*matrix2[11];
-  result[14]=matrix1[2]*matrix2[12]+
-  matrix1[6]*matrix2[13]+
-  matrix1[10]*matrix2[14]+
-  matrix1[14]*matrix2[15];
+  result[2]=m1[2]*m2[0]+  m1[6]*m2[1]+  m1[10]*m2[2]+  m1[14]*m2[3];
+  result[6]=m1[2]*m2[4]+  m1[6]*m2[5]+  m1[10]*m2[6]+  m1[14]*m2[7];
+  result[10]=m1[2]*m2[8]+  m1[6]*m2[9]+  m1[10]*m2[10]+  m1[14]*m2[11];
+  result[14]=m1[2]*m2[12]+   m1[6]*m2[13]+  m1[10]*m2[14]+  m1[14]*m2[15];
   
-  result[3]=matrix1[3]*matrix2[0]+
-  matrix1[7]*matrix2[1]+
-  matrix1[11]*matrix2[2]+
-  matrix1[15]*matrix2[3];
-  result[7]=matrix1[3]*matrix2[4]+
-  matrix1[7]*matrix2[5]+
-  matrix1[11]*matrix2[6]+
-  matrix1[15]*matrix2[7];
-  result[11]=matrix1[3]*matrix2[8]+
-  matrix1[7]*matrix2[9]+
-  matrix1[11]*matrix2[10]+
-  matrix1[15]*matrix2[11];
-  result[15]=matrix1[3]*matrix2[12]+
-  matrix1[7]*matrix2[13]+
-  matrix1[11]*matrix2[14]+
-  matrix1[15]*matrix2[15];
+  result[3]=m1[3]*m2[0]+  m1[7]*m2[1]+  m1[11]*m2[2]+  m1[15]*m2[3];
+  result[7]=m1[3]*m2[4]+  m1[7]*m2[5]+  m1[11]*m2[6]+  m1[15]*m2[7];
+  result[11]=m1[3]*m2[8]+   m1[7]*m2[9]+  m1[11]*m2[10]+  m1[15]*m2[11];
+  result[15]=m1[3]*m2[12]+   m1[7]*m2[13]+  m1[11]*m2[14]+  m1[15]*m2[15];
 }
 
 void glhLookAtf2
@@ -383,8 +335,69 @@ void glhOrthof2
 }
 
 
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
+void InverseMat3
+ (float Ainv[],
+  const float A[])
+{
+  const float det =
+  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
+  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
+  const float inv_det = 1.0/det;
+  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
+  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
+  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
+  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
+  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
+  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
+  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
+  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
+  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
+}
+
+void Mat3Vec
+ (float vo[3],
+  const float mat[9],
+  const float vi[3])
+{
+  vo[0] = mat[0]*vi[0] + mat[1]*vi[1] + mat[2]*vi[2];
+  vo[1] = mat[3]*vi[0] + mat[4]*vi[1] + mat[5]*vi[2];
+  vo[2] = mat[6]*vi[0] + mat[7]*vi[1] + mat[8]*vi[2];
+}
+
+void solve_GlAffineMatrix
+ (float vo[3],
+  const float m[16],
+  const float p[3])
+{
+  const float v[3] = {p[0]-m[3*4+0], p[1]-m[3*4+1], p[2]-m[3*4+2]};
+  const float M[9] = {
+    m[0*4+0],m[1*4+0],m[2*4+0],
+    m[0*4+1],m[1*4+1],m[2*4+1],
+    m[0*4+2],m[1*4+2],m[2*4+2] };
+  float Minv[9];  InverseMat3(Minv, M);
+  Mat3Vec(vo,
+          Minv,v);
+}
+
+void screenUnProjection
+ (float vout[3],
+  const float v[3],
+  const float mMV[16],
+  const float mPj[16])
+{
+  const float D = mPj[11] + mPj[15]; // z is 1 after model view
+  const float v0[3] = { D*v[0], D*v[1], 0.0 };
+  float v1[3];
+  solve_GlAffineMatrix(v1,
+                       mPj, v0);
+  v1[2] = 1;
+  solve_GlAffineMatrix(vout,
+                       mMV, v1);
+}
+
+
+//------------------------------------------------------------------------
+// implementation of CCamera class starts here
 
 
 void CCamera::Affine4f_Projection

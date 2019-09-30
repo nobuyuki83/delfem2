@@ -29,7 +29,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 std::vector<unsigned int> aTri1;
 std::vector<double> aXY1;
 std::vector<int> aBCFlag; // boundary condition flag
@@ -166,7 +166,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1, 4.0 );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   DrawMeshTri2D_Edge(aTri1,aXY1);
   ::glPointSize(2);
@@ -198,11 +198,11 @@ void myGlutIdle(){
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y){
-    win.glutMouse(button,state,x,y);
+    nav.glutMouse(button,state,x,y);
 }
 
 void myGlutKeyboard(unsigned char key, int x, int y)
@@ -222,7 +222,7 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 }
 
 void myGlutSpecial(int key, int x, int y){
-  win.glutSpecial(key,x,y);
+  nav.glutSpecial(key,x,y);
   switch(key){
   }
   ::myGlutResize(-1,-1);
@@ -256,7 +256,7 @@ int main(int argc,char* argv[])
   for(int ip=0;ip<aVal.size();++ip){ aVal[ip] = aCVal[ip].real(); }
   
   // Enter main loop
-  win.camera.view_height = 2.0;
+  nav.camera.view_height = 2.0;
   ::glutMainLoop();
   return 0;
 }

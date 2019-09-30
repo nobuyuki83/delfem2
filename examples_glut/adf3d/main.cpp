@@ -29,7 +29,7 @@
 //////////////////////////////////////////////////
 
 CADF3 adf;
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 bool is_animation;
 double cur_time = 0;
 
@@ -131,12 +131,12 @@ void myGlutResize(int w, int h)
 
 void myGlutMotion( int x, int y )
 {
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button,state,x,y);
+  nav.glutMouse(button,state,x,y);
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
@@ -161,7 +161,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key,x,y);
+  nav.glutSpecial(Key,x,y);
 }
 
 void myGlutIdle(){
@@ -177,7 +177,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   if( imode_display == 0 ){
     adf.SetShowCage(false);
@@ -218,8 +218,8 @@ int main(int argc,char* argv[])
   glutSpecialFunc(myGlutSpecial);
   glutIdleFunc(myGlutIdle);
   
-  win.camera.view_height = 2.0;
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   SetProblem();
   setSomeLighting();

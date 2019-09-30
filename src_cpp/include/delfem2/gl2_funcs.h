@@ -7,7 +7,7 @@
 
 /**
  * @details the file depends on OpenGL 2.x.
- * There Are a lot of glBegin(),glEnd()
+ * There are a lot of legacy commands such as glBegin(),glEnd()
  */
 
 #ifndef FUNCS_GL_H
@@ -39,7 +39,7 @@ void DrawRectangle_FullCanvas();
 void showdepth();
 
 
-////////////////////////////////////////////////////////////////////////
+// -------------------
 // draw functions
 
 void DrawAxis(double s);
@@ -66,7 +66,7 @@ void Draw_AABB3D_MinMaxXYZ_Edge(double x_min, double x_max,
                                 double y_min, double y_max,
                                 double z_min, double z_max);
 
-///////////////
+// -------------
 // Draw Point
 
 void DrawPoints2D_Vectors(const double* aXY, int nXY,
@@ -77,13 +77,13 @@ void DrawPoints2D_Vectors(const double* aXY, int nXY,
 void DrawPoints2D_Points(std::vector<double>& aXY);
 void DrawPoints3D_Points(std::vector<double>& aXYZ);
 
-//////////////
+// --------------
 // Draw Line
 void DrawMeshLine3D_Edge(const double* aXYZ,
                          int nXYZ,
                          const unsigned int* aLine,
                          int nLine);
-///////////////
+// ------------
 // Draw Tri
 
 void DrawMeshTri2D_Face(const std::vector<unsigned int>& aTri,
@@ -137,7 +137,7 @@ void DrawMeshTriMap3D_Edge(const std::vector<double>& aXYZ,
                            const std::vector<unsigned int>& aTri,
                            const std::vector<int>& map);
 
-///////////////
+// -----------------
 // Draw Quad
 
 void DrawMeshQuad3D_Edge(const double* aXYZ, int nXYZ,
@@ -153,7 +153,7 @@ void DrawMeshQuad3D_FaceNorm(const double* aXYZ,
 void DrawMeshQuad3D_FaceNorm(const std::vector<double>& aXYZ,
                              const std::vector<unsigned int>& aQuad);
 
-///////////////
+// -------------------
 // Draw Tet
 
 void DrawMeshTet3D_Edge(const double* aXYZ, int nXYZ,
@@ -174,7 +174,7 @@ void DrawMeshTet3D_FaceNormDisp(const double* aXYZ, int nXYZ,
                                 const unsigned int* aTet, int nTet,
                                 const double* aDisp);
 
-///////////////
+// -------------
 // Draw Hex
 
 void DrawMeshHex3D_Edge(const double* aXYZ, int nXYZ,
@@ -186,7 +186,7 @@ void Draw_HexMeshFaceDisp(const std::vector<double>& aXYZ,
                           const std::vector<double>& aDisp);
 
 
-////////////////
+// -----------
 // Draw Mix
 
 void DrawMeshElem3D_FaceNorm(const std::vector<double>& aXYZ,
@@ -204,7 +204,7 @@ void DrawMeshElemPart3D_FaceNorm_TexPoEl(const std::vector<double>& aXYZ,
                                          const std::vector<double>& aUV);
 
 
-////////////////////////////////////////////////////////////////////////////
+// ------------------------
 
 class CAxisXYZ {
 public:

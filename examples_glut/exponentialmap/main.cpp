@@ -198,7 +198,7 @@ std::vector<double> aLocCoord;
 std::vector<int> psup_ind;
 std::vector<int> psup;
 int iker = 0;
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 bool is_animation = true;
 bool is_lighting = false;
 int m_texName;
@@ -268,16 +268,16 @@ void myGlutResize(int w, int h)
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y){
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
 }
 
 void myGlutDisplay(void)
@@ -290,7 +290,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   
   DrawBackground();
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
@@ -586,8 +586,8 @@ int main(int argc,char* argv[])
   
   m_texName = ReadPPM_SetTexture(std::string(PATH_INPUT_DIR)+"/dep.ppm");
   
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  win.camera.view_height = 1.5;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 1.5;
   
   glutMainLoop();
   return 0;
