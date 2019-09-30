@@ -14,6 +14,7 @@
 #endif
 
 #include "delfem2/cad2d.h"
+#include "delfem2/vec3.h"
 
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
@@ -29,25 +30,15 @@ CShader_CCad2D shdr_cad;
 
 void draw(GLFWwindow* window)
 {
-  float asp;
-  {
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-    asp = width / (float) height;
-//    std::cout << width << " " << height << " " << asp << std::endl;
-  }
-  
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-
-  float mP[16]; nav.camera.Affine4f_Projection(mP, asp, 10);
-  float mMV[16]; nav.camera.Affine4f_ModelView(mMV);
-  shdr_cad.Draw(mP, mMV);
+  
+  float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
+  shdr_cad.Draw(mP, mMV, cad);
   
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -68,12 +59,28 @@ void callback_resize(GLFWwindow* window, int width, int height)
 void callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
   nav.Mouse(window,button,action,mods);
-
+  {
+    float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
+    CVector2 sp0(nav.mouse_x, nav.mouse_y);
+    const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mP);
+    const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mP);
+    cad.Pick(src_pick.x, src_pick.y, nav.camera.view_height);
+  }
 }
 
 void callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
 {
   nav.Motion(window,xpos,ypos);
+  if( nav.ibutton == 0 ){
+    float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
+    CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
+    CVector2 sp1(nav.mouse_x, nav.mouse_y);
+    const CVector3 src_pick0 = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mP);
+    const CVector3 src_pick1 = screenUnProjection(CVector3(sp1.x,sp1.y, 0.0), mMV,mP);
+    const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mP);
+    cad.DragPicked(src_pick1.x,src_pick1.y, src_pick0.x,src_pick0.y);
+    shdr_cad.MakeBuffer(cad);
+  }
 }
 
 void callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
@@ -112,7 +119,7 @@ int main(void)
   }
   shdr_cad.MakeBuffer(cad);
   
-  nav.camera.view_height = 1.5;
+  nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
 #ifdef EMSCRIPTEN

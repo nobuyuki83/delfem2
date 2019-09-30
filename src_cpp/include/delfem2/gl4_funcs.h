@@ -41,9 +41,16 @@ public:
 public:
   CGL4_VAO_Mesh(){
     VAO = 0;
-    VBO_pos = -1;
+    VBO_pos = 0;
   }
   void Draw(unsigned int iel) const;
+  void Delete_EBOs(){
+    for(int ie=0;ie<aElem.size();++ie){
+       unsigned int ebo = aElem[ie].EBO;
+       if( glIsBuffer(ebo) ){ glad_glDeleteBuffers(1,&ebo); }
+     }
+     aElem.clear();
+  }
 public:
   unsigned int VAO;
   unsigned int VBO_pos;
