@@ -24,7 +24,7 @@
 #include "../glut_funcs.h"
 
 
-CGlutWindowManager window;
+CNav3D_GLUT window;
 std::vector<CRigBone> aBone;
 std::vector<CChannel_BioVisionHierarchy> aChannelRotTransBone;
 int nframe = 0;

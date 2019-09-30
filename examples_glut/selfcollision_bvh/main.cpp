@@ -36,7 +36,7 @@ std::vector<CIntersectTriPair> aITP;
 // data for camera
 bool is_animation;
 double cur_time = 0;
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 int imode_draw = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
@@ -115,18 +115,18 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
 }
 
 void myGlutMotion( int x, int y )
 {
-  win.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
@@ -208,7 +208,7 @@ int main(int argc,char* argv[])
   //////////////////////////
   
   setSomeLighting();
-  win.camera.view_height = 1.5;
+  nav.camera.view_height = 1.5;
   
   glutMainLoop();
   return 0;

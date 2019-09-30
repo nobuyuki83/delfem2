@@ -18,7 +18,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CGlutWindowManager window;
+CNav3D_GLUT window;
 std::vector< std::vector<unsigned int> > aaQuad;
 std::vector< std::vector<double> > aaXYZ;
 const unsigned int nlevel_subdiv = 3;

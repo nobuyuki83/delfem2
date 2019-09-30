@@ -10,22 +10,23 @@
 #include <cassert>
 
 #if defined(__APPLE__) && defined(__MACH__) // mac
-#include <OpenGL/gl.h>
+  #include <OpenGL/gl.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
+  #include <GL/glu.h>
 #elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
+  #include <windows.h>
+  #include <GL/gl.h>
 #else // linux
-#include <GL/gl.h>
+  #include <GL/gl.h>
 #endif
+
 
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 
 #include "delfem2/gl_v23.h"
 
-///////////////////////////////////////////////////////////////////////
+//----------------------------------------------------
 
 void myGlVertex(const CVector3& v)
 {
@@ -83,11 +84,7 @@ void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& 
   ::glMultMatrixd(A);
 }
 
-///////////////////////////////////////////////
-
-
-
-/////////////
+//--------------------------------------------------------
 
 void DrawCylinderWire
 (const CVector3& p0,
@@ -245,9 +242,7 @@ void DrawCircleArrow
   }
 }
 
-
-
-//////////////////////////////////////////////////////
+//--------------------------------------------------------
 
 void DrawCircleWire
 (const CVector3& axis,

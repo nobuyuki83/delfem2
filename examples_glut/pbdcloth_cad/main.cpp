@@ -57,7 +57,7 @@ const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
 const double contact_clearance = 0.0001;
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 bool is_animation = false;
 
 //////////////////////////////////
@@ -102,7 +102,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1, 4.0 );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   ::glPointSize(5);
   ::glLineWidth(1);
@@ -143,12 +143,12 @@ void myGlutIdle(){
 
 void myGlutMotion( int x, int y )
 {
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button, state, x,y);
+  nav.glutMouse(button, state, x,y);
 }
 
 void myGlutKeyboard(unsigned char key, int x, int y)
@@ -168,7 +168,7 @@ void myGlutKeyboard(unsigned char key, int x, int y)
 }
 
 void myGlutSpecial(int key, int x, int y){
-  win.glutSpecial(key,x,y);
+  nav.glutSpecial(key,x,y);
 }
 
 
@@ -290,8 +290,8 @@ int main(int argc,char* argv[])
   }
 
   
-  win.camera.view_height = 1.0;
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 1.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   setSomeLighting();
   // Enter main loop

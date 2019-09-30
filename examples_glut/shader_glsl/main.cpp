@@ -21,7 +21,7 @@
 
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 int id_shader_program = 0;
 
 /////////
@@ -85,7 +85,7 @@ void myGlutDisplay(void)
   
   ::glEnable(GL_LIGHTING);
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   {
     float lightPosition[4] = { 0.0, 0.0, 5.0, 1.0 };
@@ -127,19 +127,19 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  win.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   ::glutPostRedisplay();
 }
 
@@ -195,8 +195,8 @@ int main(int argc,char* argv[])
   setShaderProgram(3);
   
   /////////////////////////  
-  win.camera.view_height = 2.0;
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_color.tga",  &tga_color);
   SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_normal.tga", &tga_normal);

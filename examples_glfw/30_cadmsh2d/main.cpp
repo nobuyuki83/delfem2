@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
 #include <iostream>
 #include <math.h>
 
@@ -22,33 +30,21 @@
 #include "../glfw_funcs.h"
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 CNav3D_GLFW nav;
 CCad2D cad;
 CShader_CCad2D shdr_cad;
 
 void draw(GLFWwindow* window)
 {
-  float asp;
-  {
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-    asp = width / (float) height;
-//    std::cout << width << " " << height << " " << asp << std::endl;
-  }
-  
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-
-  float mP[16]; nav.camera.Affine4f_Projection(mP, asp, 10);
-  float mMV[16]; nav.camera.Affine4f_ModelView(mMV);
-  shdr_cad.Draw(mP,mMV,cad);
+  
+  float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
+  shdr_cad.Draw(mP, mMV, cad);
   
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -93,22 +89,21 @@ int main(void)
   glfwSetMouseButtonCallback(    window, callback_mouse_button);
   glfwSetCursorPosCallback(      window, callback_cursor_position);
   glfwSetScrollCallback(         window, callback_scroll);
-  
+    
   // glad: load all OpenGL function pointers
-  // ---------------------------------------
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
 
+  shdr_cad.Compile();
   {
     {
       std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
       cad.AddPolygon(aXY);
     }
     shdr_cad.MakeBuffer(cad);
-    shdr_cad.Compile();
     {
       std::vector<int> aFlgPnt, aFlgTri;
       CMeshDynTri2D dmsh;
@@ -120,9 +115,7 @@ int main(void)
   
   nav.camera.view_height = 1.5;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  
-  
-  
+    
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);
 #else

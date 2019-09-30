@@ -150,7 +150,7 @@ const int noelElemEdge_Vox[12][2] = {
   {0,4},{1,5},{3,7},{2,6} 
 };
 
-/////////////////////////////////////////////
+// -----------------------------
 inline int nNodeElem(MESHELEM_TYPE type){
   return mapMeshElemType2NNodeElem[type];
 }
@@ -205,19 +205,18 @@ void JArray_AddMasterSlavePattern(std::vector<int>& index,
                            const int npsup_ind0,
                            const int* psup);
 
-//////////////////////////////////////
+// -----------------------------
 void AddElement(const MESHELEM_TYPE& femelem_type,
                 const std::vector<int>& aElemIn,
-                ////
+                //
                 std::vector<int>& aElemInd,
                 std::vector<int>& aElem,
                 std::vector<MESHELEM_TYPE>& aElemType);
 
-////
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
                       const std::vector<unsigned int>& aQuad);
 void convert2Tri(std::vector<int>& aTri,
-                 ////
+                 //
                  const std::vector<int>& aElemInd,
                  const std::vector<int>& aElem,
                  const std::vector<MESHELEM_TYPE>& aElemType);
@@ -225,16 +224,19 @@ void convert2Tri(std::vector<int>& aTri,
 void ElemQuad_DihedralTri(std::vector<unsigned int>& aQuad,
                           const unsigned int* aTri, int nTri,
                           int np);
-////
+
 void FlipElement_Tri(std::vector<int>& aTri);
 void FlipElement(std::vector<int>& aElem_Flip,
-          ////
+          //
           const std::vector<int>& aElemInd,
           const std::vector<int>& aElem,
           const std::vector<MESHELEM_TYPE>& aElemType);
 
-////////////////////////////////////////
-// make elsup
+// -------------------
+
+/**
+ * @function make elsup
+ */
 void JArrayElemSurPoint_MeshElem(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
                               ////
@@ -254,7 +256,7 @@ void JArrayElemSurPoint_MeshMix(std::vector<int>& elsup_ind,
                               const std::vector<int>& aElem,
                               const int nPo);
 
-////////////////////////////////////////
+// -----------------
 // elem sur elem
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
                                  const unsigned int* aEl, int nEl, int nNoEl,
@@ -281,7 +283,7 @@ void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup);
 
-//////////////////////////////////////////
+// -------------------
 // make boundary
 void makeBoundary(std::vector<int>& aElemInd_Bound,
                   std::vector<int>& aElem_Bound,
@@ -293,14 +295,14 @@ void makeBoundary(std::vector<int>& aElemInd_Bound,
                   const std::vector<int>& aElemFaceInd,
                   const std::vector<int>& aElemFaceRel);
 
-////////////////////////////////////////
+// -------------------------------
 // make psup
 // psup -> edge bidirectional
 // edge unidir (ip0<ip1)
 // line (array of 2)
 void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                                                  std::vector<int>& psup,
-                                                 ////
+                                                 //
                                                  const unsigned int* pElem,
                                                  const std::vector<int>& elsup_ind,
                                                  const std::vector<int>& elsup,
@@ -308,14 +310,14 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                                                  int nnode);
 void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                                                  std::vector<int>& psup,
-                                                 ////
+                                                 //
                                                  const unsigned int* pElem,
                                                  int nEl,
                                                  int nPoEl,
                                                  int nPo);
 void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     std::vector<int>& psup,
-                                    ////
+                                    //
                                     const std::vector<int>& aTri,
                                     const std::vector<int>& aTriSurRel,
                                     const std::vector<int>& elsup_ind,
@@ -323,19 +325,19 @@ void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     int np);
 void JArrayEdgeUnidir_PointSurPoint(std::vector<int>& edge_ind,
                                 std::vector<int>& edge,
-                                /////
+                                //
                                 const std::vector<int>& psup_ind,
                                 const std::vector<int>& psup);
 void JArrayEdge_MeshElem(std::vector<int>& edge_ind,
                          std::vector<int>& edge,
-                         ////
+                         //
                          const unsigned int* aElm0,
                          MESHELEM_TYPE elem_type,
                          const std::vector<int>& elsup_ind,
                          const std::vector<int>& elsup,
                          bool is_bidirectional);
 void MeshLine_JArrayEdge(std::vector<unsigned int>& aLine,
-                         ////
+                         //
                          const std::vector<int>& psup_ind,
                          const std::vector<int>& psup);
 void MeshLine_MeshElem(std::vector<unsigned int>& aLine,
@@ -344,7 +346,8 @@ void MeshLine_MeshElem(std::vector<unsigned int>& aLine,
                        MESHELEM_TYPE elem_type,
                        unsigned int nPo);
 
-//////////////////////////////////////
+// ------------------------------------
+
 void MarkConnectedElements(std::vector<int>& aIndGroup,
                             int itri_ker,
                             int igroup,
@@ -368,7 +371,7 @@ void MakeGroupElem(int& ngroup,
                    const std::vector<int>& aElemFaceRel);
 void MakeGroupElem(int& ngroup,
                    std::vector<int>& aIndGroup,
-                   /////
+                   //
                    const std::vector<int>& aElemInd,
                    const std::vector<int>& aElem,
                    const std::vector<MESHELEM_TYPE>& aElemType,
@@ -376,14 +379,15 @@ void MakeGroupElem(int& ngroup,
 void ClipGroup(std::vector<int>& aElemInd1,
                std::vector<int>& aElem1,
                std::vector<MESHELEM_TYPE>& aElemType1,
-               ///
+               //
                const std::vector<int>& aElemInd,
                const std::vector<int>& aElem,
                const std::vector<MESHELEM_TYPE>& aElemType,
                int igroup,
                const std::vector<int>& aIndGroup);
 
-/////////////////////////////////////////////
+// -----------------------------------------------
+
 void QuadSubdiv(std::vector<unsigned int>& aQuad1,
                 std::vector<int>& psup_ind,
                 std::vector<int>& psup,
@@ -409,7 +413,7 @@ int findFace(int ipc0, int ipc1, int ip2, int ip3,
              const std::vector<int>& elsupInd,
              const std::vector<int>& elsup);
 
-//////////////////////////////////////////
+// ---------------------------------------------------
 
 
 class CElemMixed{

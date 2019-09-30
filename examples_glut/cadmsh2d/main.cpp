@@ -27,7 +27,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 const double view_height = 2.0;
 bool is_animation = false;
 int imode_draw = 0;
@@ -48,7 +48,7 @@ void myGlutDisplay(void)
 	::glEnable(GL_POLYGON_OFFSET_FILL );
 	::glPolygonOffset( 1.1f, 4.0f );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   Draw_CCad2D(cad);
   
@@ -79,16 +79,16 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key,x,y);
+  nav.glutSpecial(Key,x,y);
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
-  if( win.imodifier != 0){ return; }
+  nav.glutMotion(x,y);
+  if( nav.imodifier != 0){ return; }
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(win.mouse_x-win.dx, win.mouse_y-win.dy);
-  CVector2 sp1(win.mouse_x, win.mouse_y);
+  CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
+  CVector2 sp1(nav.mouse_x, nav.mouse_y);
   const CVector3 src_pick0 = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
   const CVector3 src_pick1 = screenUnProjection(CVector3(sp1.x,sp1.y, 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
@@ -110,11 +110,11 @@ void myGlutMotion( int x, int y ){
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button,state,x,y);
-  if( win.imodifier == GLUT_ACTIVE_SHIFT || win.imodifier == GLUT_ACTIVE_ALT ) return;
+  nav.glutMouse(button,state,x,y);
+  if( nav.imodifier == GLUT_ACTIVE_SHIFT || nav.imodifier == GLUT_ACTIVE_ALT ) return;
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(win.mouse_x, win.mouse_y);
+  CVector2 sp0(nav.mouse_x, nav.mouse_y);
   const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
@@ -167,9 +167,9 @@ int main(int argc,char* argv[])
 	glutSpecialFunc(myGlutSpecial);
   
   ////////////////////////
-  win.camera.view_height = view_height;
+  nav.camera.view_height = view_height;
 //  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  win.camera.camera_rot_mode = CAMERA_ROT_YTOP;
+  nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
 //    win.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   
   setSomeLighting();

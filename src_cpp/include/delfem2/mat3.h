@@ -15,8 +15,6 @@
 #include <iostream>
 #include <limits> // using NaN Check
 
-//#include "vec3.h"
-
 #define NEARLY_ZERO 1.e-16
 
 void MatMat3(double* UL,
@@ -26,10 +24,13 @@ void MatMatTrans3(double* ULUt,
 void MatTransMat3(double* C,
                   const double* A, const double* B);
 
-// compute eigen value & vector for symmmetric matrix
-// sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
-// M = ULU^T
-// u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
+/**
+ * @brief compute eigen value & vector for symmmetric matrix
+ * @details
+ * sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
+ * M = ULU^T
+ * u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
+ */
 bool eigenSym3(double u[9], double l[3],
                const double sm[6],
                int nitr);
@@ -46,7 +47,7 @@ void GetRotPolarDecomp(double R[9],
 
 
 
-////////////////////////////////////////////////////////////////////////////
+// --------------------------------
 
 class CMatrix3; // this pre-definition is needed for following functions
 CMatrix3 operator+ (const CMatrix3& lhs, const CMatrix3& rhs);
@@ -61,7 +62,10 @@ std::istream &operator>>(std::istream &output, CMatrix3& m);
 static bool myIsNAN_Matrix3(double d){
   return !(d > d-1);
 }
-//!< 3x3 matrix
+
+/**
+ * @brief class of 3x3 matrix
+ */
 class CMatrix3
 {
 public:
@@ -195,7 +199,7 @@ public:
     GetRotPolarDecomp(R.mat,
                       mat, nitr);
   }
-  //////////////////////////////////////
+  // --------------------
   // static functions
   static CMatrix3 Identity(double scale = 1){
     CMatrix3 m;
@@ -213,7 +217,7 @@ public:
 };
 
 
-/////////////////////////////////////////////////////////////////////
+// ------------------------------------------------
 
 void MatVec4(double v[4],
              const double A[16],

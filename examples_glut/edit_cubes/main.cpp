@@ -32,7 +32,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 int imode_draw = 0;
 
 enum EDIT_MODE {
@@ -63,7 +63,7 @@ void myGlutDisplay(void)
   
   ::DrawBackground(CColor(0.2, 0.7, 0.7));
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   CVector3 offsym(0,0,0);
   if( imode_sym == 2 ){ offsym.z = -elen*0.5; }
@@ -100,25 +100,25 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key,x,y);
+  nav.glutSpecial(Key,x,y);
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
-  if( win.imodifier != 0){ return; }
+  nav.glutMotion(x,y);
+  if( nav.imodifier != 0){ return; }
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(win.mouse_x-win.dx, win.mouse_y-win.dy);
-  CVector2 sp1(win.mouse_x, win.mouse_y);
+  CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
+  CVector2 sp1(nav.mouse_x, nav.mouse_y);
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button,state,x,y);
-  if( win.imodifier != 0 ) return;
+  nav.glutMouse(button,state,x,y);
+  if( nav.imodifier != 0 ) return;
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(win.mouse_x, win.mouse_y);
+  CVector2 sp0(nav.mouse_x, nav.mouse_y);
   const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
@@ -197,8 +197,8 @@ int main(int argc,char* argv[])
   glutSpecialFunc(myGlutSpecial);
   
   ////////////////////////
-  win.camera.view_height = 2.0;
-  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
    
   setSomeLighting();
   

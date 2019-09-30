@@ -15,7 +15,9 @@
 #include <iostream>
 #include <sstream>
 
-//! 3D bounding box class
+/**
+ * @class 3D bounding box
+ */
 class CBV3D_AABB
 {
 public:
@@ -234,7 +236,7 @@ public:
 	bool is_active;	//!< false if there is nothing inside
 };
 
-//////////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 class CBV3D_Sphere
 {

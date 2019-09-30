@@ -32,7 +32,7 @@ std::vector<CSliceTriMesh> aCS;
 std::vector< std::set<unsigned int> > ReebGraphCS;
 std::vector<CVector3> aCG_CS;
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 
 
 
@@ -50,16 +50,16 @@ void myGlutResize(int w, int h)
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y){
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
 }
 
 void myGlutDisplay(void)
@@ -72,7 +72,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   
   DrawBackground();
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   ::glEnable(GL_LIGHTING);
   ::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
@@ -156,8 +156,8 @@ int main(int argc,char* argv[])
   
   setSomeLighting();
   
-  win.camera.view_height = 0.5;
-  win.camera.camera_rot_mode  = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 0.5;
+  nav.camera.camera_rot_mode  = CAMERA_ROT_TBALL;
   
   Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);

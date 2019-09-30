@@ -329,28 +329,30 @@ double Length(const CVector2& point){
   return  point.Length();
 }
 
-//! Length between two points
+// Distance between two points
 double Distance
-(const CVector2& ipo0, const CVector2& ipo1)
+(const CVector2& ipo0,
+ const CVector2& ipo1)
 {
   return  sqrt( ( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y ) );
 }
 
-//! Length between two points
+// Distance between two points
 double SquareDistance
-(const CVector2& ipo0, const CVector2& ipo1)
+(const CVector2& ipo0,
+ const CVector2& ipo1)
 {
   return  ( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y );
 }
 
-//! Hight of a triangle : between v1 and line of v2-v3
+// Hight of a triangle : between v1 and line of v2-v3
 double TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3){
   const double area = TriArea(v1,v2,v3);
   const double len = sqrt( SquareLength(v2,v3) );
   return area*2.0/len;
 }
 
-//! compute dot product
+// compute dot product
 double Dot(const CVector2& ipo0, const CVector2& ipo1)
 {
   return  ipo0.x*ipo1.x + ipo0.y*ipo1.y;
@@ -433,7 +435,7 @@ double GetDist_LineSeg_LineSeg
   return min_dist;  
 }
 
-//! square root of circumradius
+// square root of circumradius
 double SquareCircumradius
 (const CVector2& p0,
  const CVector2& p1,
@@ -473,13 +475,10 @@ bool CenterCircumcircle
 }
 
 
-////////////////////////////////
-
-/*! check if Delaunay condition satisfied
- * 0 : p3 is inside circum circle on the p0,p1,p2
- * 1 :       on
- * 2 :       outsdie
- */
+// check if Delaunay condition satisfied
+// 0 : p3 is inside circum circle on the p0,p1,p2
+// 1 :       on
+// 2 :       outsdie
 int DetDelaunay
 (const CVector2& p0,
  const CVector2& p1,
@@ -526,7 +525,8 @@ CVector2 pointCurve_BezierCubic
   return t*t*t*p4 + 3*t*t*tp*p3 + 3*t*tp*tp*p2 + tp*tp*tp*p1;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ----------------------------------------------------------------------------------
 // std::vector starts from here
 
 //! Area of the Triangle (3 indexes and vertex array)
@@ -536,8 +536,6 @@ double TriArea
 {
   return TriArea(point[iv1],point[iv2],point[iv3]);
 }
-
-
 
 void Polyline_CubicBezierCurve
 (std::vector<CVector2>& aP,

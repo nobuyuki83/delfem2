@@ -29,7 +29,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-CGlutWindowManager window;
+CNav3D_GLUT window;
 std::vector<double> aXYZ0;
 std::vector<unsigned int> aTri;
 std::vector<double> aRigWeight;

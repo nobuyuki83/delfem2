@@ -19,14 +19,14 @@
 CVector3 operator* (const CVector3& v, const CMatrix3& m);
 CVector3 operator* (const CMatrix3& m, const CVector3& v);
 
-///////////////////////////////////////////////
+// ---------------------------------------------
 
 CVector2 screenXYProjection(const CVector3& v,
                             const float* mMV,
                             const float* mPj);
 
 
-///////////////////////////////////////////////
+// --------------------------------------------
 
 CMatrix3 Mat3(const CVector3& vec0,
               const CVector3& vec1,

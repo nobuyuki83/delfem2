@@ -47,7 +47,7 @@ void GetRotMatrix_Rodrigues3D(double rot[9],
 void Mat4Vec3(double vo[3],
               const double M[16], const double vi[3]);
 
-/////////////////////////////////////////////////////////
+// -------------------------------------------------------------
 class CVector3;
 double Dot(const CVector3 &arg1, const CVector3 &arg2);
 CVector3 Cross(const CVector3& arg1, const CVector3& arg2);
@@ -61,7 +61,9 @@ CVector3 operator ^ (const CVector3& lhs, const CVector3& rhs);
 std::ostream &operator<<(std::ostream &output, const CVector3& v);
 std::istream &operator>>(std::istream &input, CVector3& v);
 
-//! 3 dimentional vector class
+/**
+ * @brief 3 dimentional vector class
+ */
 class CVector3  
 {
 public:
@@ -151,10 +153,9 @@ public:
 	double y;	//!< y axis coordinate
 	double z;	//!< z axis coordinate
 };
-//////////////////////////////////////////////////////////////////////////////
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------
 // rule about naming, the method starts "Set" change it self (not const)
 
 CVector3 Mat3Vec(const double M[ 9], const CVector3& v);
@@ -183,7 +184,7 @@ bool operator != (const CVector3& lhs, const CVector3& rhs);
 double Height(const CVector3& v1, const CVector3& v2, const CVector3& v3, const CVector3& v4);
 void GetVertical2Vector (const CVector3& vec_n, CVector3& vec_x, CVector3& vec_y);
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------
 
 CVector3 nearest_Line_Point(const CVector3& p, // point
                               const CVector3& s, // source
@@ -228,7 +229,7 @@ void Nearest_Line_Circle(CVector3& p0,
                          const CVector3& normal,
                          double rad);
 
-////////////////////////////////////////////////////////////////
+// -----------------------------------------
 
 bool intersection_Plane_Line(CVector3& p0, double& r0, double& r1, double& r2,
                              double eps,
@@ -242,7 +243,7 @@ CVector3 intersection_Plane_Line(const CVector3& o, // one point on plane
                                  const CVector3& s, // one point on line
                                  const CVector3& d); // direction of line
 
-////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------------
 
 double DistanceFaceVertex(const CVector3& p0, const CVector3& p1, const CVector3& p2,
                           const CVector3& p3,
@@ -268,7 +269,7 @@ bool isIntersectTriPair(CVector3& P0, CVector3& P1,
                         const std::vector<unsigned int>& aTri,
                         const std::vector<double>& aXYZ);
 
-////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------
 
 bool barycentricCoord_Origin_Tet(double& r0,
                                  double& r1,
@@ -295,7 +296,7 @@ bool barycentricCoord_Origin_Wedge(double& r0,
                                    const CVector3& p4,
                                    const CVector3& p5);
 
-////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------
 
 bool IsInside_Orgin_BoundingBoxPoint4(const CVector3& p0,
                                     const CVector3& p1,
@@ -315,7 +316,7 @@ bool IsInside_Orgin_BoundingBoxPoint6(const CVector3& p0,
                                     const CVector3& p4,
                                     const CVector3& p5);
 
-////////////////////////////////////////////////////////////////
+// -----------------------------------------------
 
 double volume_OrgTet(const CVector3& v1,
                      const CVector3& v2,
@@ -336,7 +337,7 @@ double volume_Wedge(const CVector3& p0,
                     const CVector3& p4,
                     const CVector3& p5);
 
-//////////////////////////////////////////////////////////
+// ---------------------------------------------
 
 double SolidAngleTri(const CVector3& v1,
                      const CVector3& v2,
@@ -384,10 +385,13 @@ void UnitNormal(CVector3& vnorm,
                 const CVector3& v2,
                 const CVector3& v3);
 
-//! check if Delaunay condition satisfied
-// 0 : p3 is inside circum circle on the p0,p1,p2
-// 1 :       on
-// 2 :       outsdie
+/**
+ * @function check if Delaunay condition satisfied
+ * @return
+ * 0 : p3 is inside circum circle on the p0,p1,p2
+ * 1 :       on
+ * 2 :       outsdie
+ */
 int DetDelaunay(const CVector3& p0,
                 const CVector3& p1,
                 const CVector3& p2,
@@ -428,7 +432,7 @@ bool isRayIntersectingTriangle(const CVector3 &line0, const CVector3 &line1,
                                CVector3 &intersectionPoint);
 
 
-///////////////////
+// ----------------------------------------------------------
 // here starts std::vector<CVector3>
 
 
@@ -478,4 +482,4 @@ std::istream &operator>>(std::istream &input, std::vector<CVector3>& aV);
 
 
 
-#endif // PHYSICS_VECTOR_3D_H
+#endif // VEC3_H

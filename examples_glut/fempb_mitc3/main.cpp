@@ -28,7 +28,7 @@
 // display data
 bool is_animation;
 
-CGlutWindowManager window;
+CNav3D_GLUT window;
 
 
 std::vector<unsigned int> aTri;

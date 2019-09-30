@@ -12,7 +12,7 @@
 #include <fstream>
 #include <map>
 
-///////////////////////////////////////////////////
+// --------------------
 // command related
 
 std::string getCmdOptionStr(char ** begin, char ** end, const std::string & option);
@@ -20,7 +20,7 @@ int getCmdOptionInt(char ** begin, char ** end, const std::string & option, int 
 double getCmdOptionDouble(char ** begin, char ** end, const std::string & option, int ddef);
 bool cmdOptionExists(char** begin, char** end, const std::string& option);
 
-///////////////////////////////////////////////////
+// -----------------
 // Path related
 
 bool isFileExists(const std::string& fpath);
@@ -28,7 +28,7 @@ std::string pathRemoveExtension(const std::string& fpath);
 std::string pathGetExtension(const std::string& fpath);
 std::string getPathDir(const std::string& fpath);
 
-///////////////////////////////////////////////////
+// ---------------
 // File related
 
 bool ReadParam(std::vector<float>& aPara,
@@ -50,7 +50,7 @@ bool WriteParam
 
 std::string LoadFile(const std::string& fname);
 
-//////////////////////////////////////////////////////////////////////////////
+// ---------------------
 // string handling
 
 std::vector<std::string> Split(const std::string& str,
@@ -81,7 +81,7 @@ std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn)
 
 void ReadVector_CSV(std::vector<double>& str, const std::string& strIn);
 
-//////////////////////////////////////////////////////////////////////////////
+// ------------------------------
 // Python realted funcs
 
 std::map<std::string, std::string> ReadDictionary_Python(const std::string& buff);
@@ -94,7 +94,7 @@ bool LoadNumpy_2DimD(int& ndim0, int& ndim1, std::vector<double>& aData,
 bool LoadNumpy_1DimF(int& ndim0, std::vector<float>& aData,
                      const std::string& path);
 
-//////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------
 
 bool GetFileContents(std::vector<char>& aC,
                      const std::string& fpath);
@@ -121,4 +121,4 @@ bool isNumber(char c);
 
 
 
-#endif /* fem_utility_h */
+#endif /* FUNCS_H */

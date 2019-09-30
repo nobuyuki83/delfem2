@@ -170,7 +170,7 @@ CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matri
 
 // data for camera
 bool is_animation;
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 int imode_draw = 0;
 /* ------------------------------------------------------------------------ */
 
@@ -205,7 +205,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   /*
    ::glMatrixMode(GL_MODELVIEW);
    ::glLoadIdentity();
@@ -298,18 +298,18 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y){
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
@@ -385,11 +385,11 @@ int main(int argc,char* argv[])
   
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   setSomeLighting();
-  win.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
-  win.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
-  win.camera.psi = 3.1415*0.2;
-  win.camera.theta = 3.1415*0.1;
-  win.camera.view_height = 2;
+  nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
+  nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
+  nav.camera.psi = 3.1415*0.2;
+  nav.camera.theta = 3.1415*0.1;
+  nav.camera.view_height = 2;
   
   
   glutMainLoop();

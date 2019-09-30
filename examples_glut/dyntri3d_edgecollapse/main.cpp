@@ -36,7 +36,7 @@ std::vector<CEPo2> aPo;
 std::vector<ETri> aTri;
 std::vector<CVector3> aVec3;
 
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 bool is_animation = true;
 bool is_lighting = false;
 
@@ -99,16 +99,16 @@ void myGlutResize(int w, int h)
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
+  nav.glutMotion(x,y);
 }
 
 void myGlutMouse(int button, int state, int x, int y){
-  win.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
 }
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
 }
 
 void myGlutDisplay(void)
@@ -121,7 +121,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   
   DrawBackground();
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
@@ -227,7 +227,7 @@ int main(int argc,char* argv[])
   setSomeLighting();
   SetNewProblem();
   
-  win.camera.view_height = 1.5;
+  nav.camera.view_height = 1.5;
   
   {
     float white[3] = {1.0,1.0,1.0};

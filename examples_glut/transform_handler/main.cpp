@@ -62,7 +62,7 @@ public:
 
 // display data
 CHandlerRotation hndlr_rot;
-CGlutWindowManager window;
+CNav3D_GLUT window;
 
 
 void myGlutDisplay(void)

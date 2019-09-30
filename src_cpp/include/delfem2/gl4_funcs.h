@@ -13,8 +13,6 @@
 #include <assert.h>
 #include <iostream> // this must be delated in future
 
-//////////////////////////////////////////////
-
 /**
  * @details the OpenGL ES 2.0 only accept float array. So there is no "double" version of this file
  */
@@ -80,10 +78,6 @@ const std::string glsl33frag =
 "{\n"
 "  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
 "}\n\0";
-
-////////////////////////////////////////////////////
-
-
 
 #endif /* utility_glew_h */
 

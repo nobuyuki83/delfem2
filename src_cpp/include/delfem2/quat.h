@@ -5,11 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file stand alone implementation of the quaternion function and class
+ */
 
 #ifndef QUAT_H
 #define QUAT_H
-
-// stand alone implementation of the quaternion function and class
 
 // order is (w,x,y,z)
 void QuatSetIdentity(double q[]);

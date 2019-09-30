@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2019 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
@@ -32,15 +32,7 @@
   #define M_PI 3.141592653589793
 #endif
 
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-
-CGlutWindowManager win;
+CNav3D_GLUT nav;
 const double view_height = 2.0;
 bool is_animation = false;
 int imode_draw = 0;
@@ -48,7 +40,7 @@ int imode_draw = 0;
 CCad2D cad;
 std::vector<CCad2D_EdgeGeo> aEdge;
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------
 
 void myGlutDisplay(void)
 {
@@ -60,14 +52,13 @@ void myGlutDisplay(void)
 	::glEnable(GL_POLYGON_OFFSET_FILL );
 	::glPolygonOffset( 1.1f, 4.0f );
   
-  win.SetGL_Camera();
+  nav.SetGL_Camera();
   
   Draw_CCad2D(cad);
   for(int ie=0;ie<aEdge.size();++ie){
     Draw_CCad2DEdge(aEdge[ie], false, -1);
   }
-  
-  
+    
   ::glColor3d(0,0,0);
   ShowFPS();
   
@@ -89,42 +80,24 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  win.glutSpecial(Key,x,y);
+  nav.glutSpecial(Key,x,y);
 }
 
 void myGlutMotion( int x, int y ){
-  win.glutMotion(x,y);
-  if( win.imodifier != 0){ return; }
-  float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
-  float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(win.mouse_x-win.dx, win.mouse_y-win.dy);
-  CVector2 sp1(win.mouse_x, win.mouse_y);
-  const CVector3 src_pick0 = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
-  const CVector3 src_pick1 = screenUnProjection(CVector3(sp1.x,sp1.y, 0.0), mMV,mPj);
-  const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
-  /////
-  cad.DragPicked(src_pick1.x,src_pick1.y, src_pick0.x,src_pick0.y);
+  nav.glutMotion(x,y);
+  if( nav.imodifier != 0){ return; }
+  float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1);
+  cad.DragPicked(px1,py1, px0,py0);
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  win.glutMouse(button,state,x,y);
-  if( win.imodifier == GLUT_ACTIVE_SHIFT || win.imodifier == GLUT_ACTIVE_ALT ) return;
-  float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
-  float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(win.mouse_x, win.mouse_y);
-  const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
-  const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
+  nav.glutMouse(button,state,x,y);
+  if( nav.imodifier == GLUT_ACTIVE_SHIFT || nav.imodifier == GLUT_ACTIVE_ALT ) return;
   if( state == GLUT_DOWN ){
-    cad.Pick(src_pick[0],src_pick[1],view_height);
+    float px, py; nav.PosMouse2D(px, py);
+    cad.Pick(px, py, nav.camera.view_height);
   }
-  /*
-  if( state == GLUT_UP ){
-    cad.ivtx_picked = -1;
-    cad.iedge_picked = -1;
-    cad.iface_picked = -1;
-  }
-   */
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
@@ -181,11 +154,11 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       { // set camera
         CBoundingBox2D bb = cad.BB();
         std::cout << "bb: " << bb.x_min << " " << bb.x_max << " " << bb.y_min << " " << bb.y_max << std::endl;
-        win.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
-        win.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
-        win.camera.trans[2] = 0.0;
-        win.camera.view_height = 0.5*sqrt( (bb.x_max-bb.x_min)*(bb.x_max-bb.x_min) + (bb.y_max-bb.y_min)*(bb.y_max-bb.y_min) );
-        win.camera.scale = 1.0;
+        nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
+        nav.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
+        nav.camera.trans[2] = 0.0;
+        nav.camera.view_height = 0.5*sqrt( (bb.x_max-bb.x_min)*(bb.x_max-bb.x_min) + (bb.y_max-bb.y_min)*(bb.y_max-bb.y_min) );
+        nav.camera.scale = 1.0;
       }
       istep = (istep+1)%8;
       break;
@@ -222,10 +195,11 @@ int main(int argc,char* argv[])
 	glutKeyboardFunc(myGlutKeyboard);
 	glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
-  win.camera.view_height = view_height;
+  // -----------------------------------
+  // setting camera
+  nav.camera.view_height = view_height;
 //  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  win.camera.camera_rot_mode = CAMERA_ROT_YTOP;
+  nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
 //    win.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   
   setSomeLighting();

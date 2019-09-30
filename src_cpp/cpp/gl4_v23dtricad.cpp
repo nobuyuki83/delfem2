@@ -1,9 +1,9 @@
-/**
-* Copyright (c) 2019 Nobuyuki Umetani
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 #include <stdio.h>
 
@@ -126,14 +126,9 @@ void CShader_CCad2D::MakeBuffer(const CCad2D& cad)
   std::vector<unsigned int> aTri;
   cad.MeshForVisualization(aXY0f,aaLine,aTri);
   { // triangles for faces
-    if( !glIsVertexArray(vao_face.VAO) ){
-      glGenVertexArrays(1, &vao_face.VAO);
-    }
+    if( !glIsVertexArray(vao_face.VAO) ){ glGenVertexArrays(1, &vao_face.VAO); }
     glBindVertexArray(vao_face.VAO);
-
-    if( !glIsBuffer(vao_face.VBO_pos) ){
-      glGenBuffers(1, &vao_face.VBO_pos);
-    }
+    if( !glIsBuffer(vao_face.VBO_pos) ){ glGenBuffers(1, &vao_face.VBO_pos); }
     glBindBuffer(GL_ARRAY_BUFFER, vao_face.VBO_pos); // gl24
     
     glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
