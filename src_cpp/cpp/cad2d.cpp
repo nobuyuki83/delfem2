@@ -1121,11 +1121,14 @@ void LoopEdgeCCad2D_ReadSVG
   aEdge.clear();
   std::vector<char> aC;
   if( !GetFileContents(aC, fname) ){ return; }
+  
+  /*
   std::cout << "svg file content: ";
   for(unsigned int ic=0;ic<aC.size();++ic){
     std::cout << aC[ic];
   }
   std::cout << std::endl;
+   */
   
   std::vector< std::string > aStr;
   XML_SeparateTagContent(aStr,
@@ -1139,18 +1142,20 @@ void LoopEdgeCCad2D_ReadSVG
         break;
       }
     }
-    std::cout << "str_path: " << str_path << std::endl;
+//    std::cout << "str_path: " << str_path << std::endl;
     if( str_path != "" ){
       std::map< std::string, std::string > mapAttr;
       ParseAttributes(mapAttr,
                       str_path);
       std::string str_path_d = mapAttr["d"];
-      std::cout << "str_path_d: " << str_path_d << std::endl;
+//      std::cout << "str_path_d: " << str_path_d << std::endl;
       str_path_d = Remove(str_path_d, " \n");
       std::vector<std::string> aStr1 = SVG_Split_Path_d(str_path_d);
+      /*
       for(unsigned int is=0;is<aStr1.size();++is){
         std::cout << is << " " << aStr1[is] << std::endl;
       }
+       */
       LoopEdgeCad2D_SVGPathD(aEdge,
                              aStr1);
     }
@@ -1164,16 +1169,18 @@ void LoopEdgeCCad2D_ReadSVG
         break;
       }
     }
-    std::cout << "str_polygon: " << str_polygon << std::endl;
+//    std::cout << "str_polygon: " << str_polygon << std::endl;
     if( str_polygon != "" ){
       std::map< std::string, std::string > mapAttr;
       ParseAttributes(mapAttr,
                       str_polygon);
       std::string str_polygon_points = mapAttr["points"];
       std::vector<std::string> aS = Split(str_polygon_points, "  ,");
+      /*
       for(unsigned int is=0;is<aS.size();++is){
         std::cout << is << " " << aS[is] << std::endl;
       }
+       */
       LoopEdgeCad2D_SVGPolygonPoints(aEdge,
                                      aS);
     }
