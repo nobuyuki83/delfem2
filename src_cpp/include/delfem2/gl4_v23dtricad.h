@@ -17,10 +17,11 @@
 
 class CCad2D;
 
-class CShader_CCad2D
+class CShader_Cad2D
 {
 public:
-  CShader_CCad2D(){
+  CShader_Cad2D(){
+    is_show_face = true;
   }
   void MakeBuffer(const CCad2D& cad);
   void Compile(){
@@ -45,12 +46,30 @@ public:
   int shdr1_Loc_Color;
   int shdr1_Loc_LineWidth;
   
-//  int ipicked_iv;
-//  int ipicked_ie;
-//  int ipicked_elem;
-  ///
+  bool is_show_face;
+  
   CGL4_VAO_Mesh vao_face;
   CGL4_VAO_Mesh vao_edge;
+};
+
+
+class CShader_MeshDTri2D
+{
+public:
+  CShader_MeshDTri2D(){
+  }
+  void MakeBuffer(const std::vector<CVector2>& aVec2,
+                  const std::vector<ETri>& aETri);
+  void Draw(const float mP[16],
+            const float mMV[16]) const;
+  void Compile();
+public:
+  int shdr0_program; // for face
+  int shdr0_Loc_MatrixProjection;
+  int shdr0_Loc_MatrixModelView;
+  int shdr0_Loc_Color;
+  
+  CGL4_VAO_Mesh vao;
 };
 
 #endif /* gl4_v23dtricad_h */

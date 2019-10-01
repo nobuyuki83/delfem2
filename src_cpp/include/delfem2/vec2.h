@@ -214,9 +214,8 @@ CVector2 pointCurve_BezierCubic
 
 // ---------------------------------------------------------------
 
-/**
- * @brief translate all the points
- */
+
+//! @brief translate all the points
 void Translate(std::vector<CVector2>& aP,
                double dx, double dy);
 

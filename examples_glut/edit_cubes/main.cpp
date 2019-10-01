@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <sstream>
 #include <math.h>
@@ -6,9 +13,9 @@
 #include <complex>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/vec3.h"
@@ -28,9 +35,7 @@
 #define M_PI 3.141592653589793
 #endif
 
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------
 
 CNav3D_GLUT nav;
 int imode_draw = 0;
@@ -50,7 +55,7 @@ std::vector<CCubeGrid> aCubeGrid;
 int icube_picked;
 int iface_picked;
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------
 
 void myGlutDisplay(void)
 {
@@ -196,7 +201,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // -------------------------
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
    

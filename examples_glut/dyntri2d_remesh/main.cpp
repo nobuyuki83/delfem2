@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -6,17 +13,15 @@
 #include <set>
 
 #ifdef __APPLE__
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/dtri_v2.h"
 #include "delfem2/gl_cad_dyntri_v23.h"
 
-
-
-////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 std::vector<CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
@@ -30,7 +35,7 @@ double mov_begin_x, mov_begin_y;
 bool is_animation = true;
 double mag = 1.0;
 
-//////////////////////////////////
+// --------------------------------------------
 
 void Refine(double px, double py)
 {

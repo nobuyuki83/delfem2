@@ -1,3 +1,10 @@
+/*
+* Copyright (c) 2019 Nobuyuki Umetani
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
 #include <iostream>
 #include <math.h>
 
@@ -99,17 +106,18 @@ CRigidBodyState StepTime_RungeKutta4
   return rb0.Step(dt/6.0, vrb1234);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------
 
-// display data
 bool is_animation;
 
-CNav3D_GLUT window;
+CNav3D_GLUT nav;
 
 double dt;
 CRigidBodyState rbs;
 CRigidBodyInertia rbi;
 CRigidBodyForceModel rbfm;
+
+// ------------------------------------------------
 
 
 void myGlutDisplay(void)
@@ -122,7 +130,7 @@ void myGlutDisplay(void)
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   
   DrawBackground();
   
@@ -164,19 +172,19 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  window.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  window.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  window.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   ::glutPostRedisplay();
 }
 
@@ -236,7 +244,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // -------------
   
   rbi.mass = 1.0;
   {
@@ -255,9 +263,9 @@ int main(int argc,char* argv[])
   
   dt = 0.05;
   
-  ////////////////////////
+  // ---------------
   
-  window.camera.view_height = 2.0;
+  nav.camera.view_height = 2.0;
   setSomeLighting();
   
   glutMainLoop();

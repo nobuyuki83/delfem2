@@ -187,13 +187,6 @@ public:
     }
     ::glutPostRedisplay();
   }
-  void SetGL_Camera(){
-    GLint viewport[4];
-    ::glGetIntegerv(GL_VIEWPORT,viewport);
-    const int win_w = viewport[2];
-    const int win_h = viewport[3];
-    camera.SetGL_Camera(win_w,win_h);
-  }
   void PosMouse2D(float& x, float& y){
 //    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
     float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
@@ -223,6 +216,28 @@ public:
       screenUnProjection(src1,
                          sp1, mMV,mP);
       x1 = src1[0]; y1 = src1[1];
+    }
+  }
+  void SetGL_Camera()
+  {
+    GLint viewport[4];
+    ::glGetIntegerv(GL_VIEWPORT,viewport);
+    const int win_w = viewport[2];
+    const int win_h = viewport[3];
+    {
+      ::glMatrixMode(GL_PROJECTION);
+      ::glLoadIdentity();
+      float mP[16];
+      double depth = camera.view_height/(camera.scale*tan(0.5*camera.fovy*3.1415/180.0));
+      camera.Affine4f_Projection(mP, (double)win_w/win_h, depth);
+      ::glMultMatrixf(mP);
+    }
+    {
+      ::glMatrixMode(GL_MODELVIEW);
+      ::glLoadIdentity();
+      float mMV[16];
+      camera.Affine4f_ModelView(mMV);
+      ::glMultMatrixf(mMV);
     }
   }
 public:

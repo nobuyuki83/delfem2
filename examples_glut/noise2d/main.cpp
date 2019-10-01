@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -6,23 +13,24 @@
 #include <vector>
 
 #ifdef __APPLE__
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
-#include "delfem2/gl_color.h"
 #include "delfem2/noise.h"
+
+#include "delfem2/gl_color.h"
+#include "delfem2/gl2_funcs.h"
 #include "delfem2/gl24_camera.h"
 
 
 std::vector<int> aP;
 std::vector<double> aGrad;
-
 int nH, nW;
 std::vector<double> aV;
 
-////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------
 
 void myGlutResize(int w, int h)
 {

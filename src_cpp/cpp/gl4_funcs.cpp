@@ -7,16 +7,6 @@
 
 #include <stdio.h>
 
-/*
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GL/glew.h>
-//#include <OpenGL/glext.h>
-#include <OpenGL/gl.h>
-#else
-#include <GL/glew.h>
-#endif
- */
-
 #ifdef USE_GLEW
   #include <GL/glew.h>
 #else
@@ -29,9 +19,7 @@
 
 #include "delfem2/gl4_funcs.h"
 
-
-
-/////////////////////////////////////////////
+// ---------------------------------------------------------
 
 void GL4_VAO_Pos
 (unsigned int& VAO,

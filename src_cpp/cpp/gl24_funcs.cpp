@@ -27,7 +27,7 @@
 #include "delfem2/gl24_funcs.h"
 
 
-//////////////////////////
+// ---------------------------------------------------------------------------
 
 
 int GL24_CompileShader(const char *vert, const char* frag)

@@ -13,24 +13,7 @@
 #include <stdio.h> // memcpy
 #include <string.h>
 
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/glu.h>
-#elif defined(WIN32)
-  #include <windows.h>
-  #include <GL/glu.h>
-#else
-  #include <GL/glu.h>
-#endif
-
-//--------------------------------------------------
-
-void getPosOnScreen_Camera2D(double& x, double& y,
-                             int i, int j);
-void setGL_Camera2D();
-
-//---------------------------------------------------
+// ---------------------------------------------------
 
 void glhFrustumf2(float *matrix, float left, float right, float bottom, float top,
                   float znear, float zfar);
@@ -42,7 +25,7 @@ void glhLookAtf2(float *matrix,
                  float cntx, float cnty, float cntz,
                  float upx, float upy, float upz );
 
-//----------------------------------------------------
+// ----------------------------------------------------
 
 
 void screenUnProjection(float vout[3],
@@ -50,7 +33,7 @@ void screenUnProjection(float vout[3],
                         const float mMV[16],
                         const float mPj[16]);
 
-//----------------------------------------------------
+// ----------------------------------------------------
 
 
 enum CAMERA_ROT_MODE
@@ -84,13 +67,12 @@ public:
     Quat_tball[2]=0;
     Quat_tball[3]=0;
   }
-  //-----------------------
-  // cost method from here
+  // -----------------------
+  // cost methods from here
   void Affine4f_Projection(float mP[16], double asp, double depth) const;
-  
-  //------------------------
   void Affine4f_ModelView(float mMV[16]) const;
-  void SetGL_Camera(int win_w, int win_h);
+  
+  // ------------------------
   void Scale(double s);
   void Rot_Camera(double dx, double dy);
   void Pan_Camera(double dx, double dy);
@@ -103,9 +85,11 @@ public:
   double trans[3];
   
   CAMERA_ROT_MODE camera_rot_mode;
+  
   // ytop
   double theta;
   double psi;
+  
   // tball
   double Quat_tball[4];
 };

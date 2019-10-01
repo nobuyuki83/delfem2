@@ -24,8 +24,8 @@
 void GetRGB_HSV(float&r, float& g, float& b,
                 float h, float s, float v);
 
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
+// -------------------------------------------------------------
+
 class CColor
 {
 public:
@@ -129,8 +129,8 @@ void heatmap(double input,double* color);
 void heatmap_glColor(double input);
 void heatmap_glDiffuse(double input);
 
-////////////////////////////////////////////////////////////////////////////////////
-// vector from here
+// ------------------------------------------------------------
+// std::vector from here
 
 void heatmap(double input, const std::vector<std::pair<double, CColor> >& colorMap);
 CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap);
@@ -213,7 +213,7 @@ void DrawMeshTet3D_Cut(const std::vector<double>& aXYZ,
                        const std::vector<CColor>& aColor,
                        const double org[3], const double n[3]);
 
-////////////////////////////////////
+// ---------------------------------------------------------------
 
 void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,
                                      const std::vector<int>& aTri1,

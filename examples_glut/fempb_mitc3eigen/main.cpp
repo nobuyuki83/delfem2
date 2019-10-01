@@ -83,7 +83,7 @@ void RemoveKernel(std::vector<double>& aTmp0,
 // display data
 bool is_animation;
 
-CNav3D_GLUT window;
+CNav3D_GLUT nav;
 
 std::vector<unsigned int> aTri;
 std::vector<double> aXY0;
@@ -211,7 +211,7 @@ void myGlutDisplay(void)
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   
   DrawBackground();
   
@@ -268,19 +268,19 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  window.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  window.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  window.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   ::glutPostRedisplay();
 }
 
@@ -351,8 +351,8 @@ int main(int argc,char* argv[])
   
   ////////////////////////
   
-  window.camera.view_height = 1.0;
-  window.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
+  nav.camera.view_height = 1.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   setSomeLighting();
   
   MakeMesh();

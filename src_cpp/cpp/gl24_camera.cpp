@@ -11,21 +11,9 @@
 #include <cstring>
 #include <iostream>
 
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/glu.h>
-#elif defined(_WIN32)
-  #include <windows.h>
-  #include <GL/glu.h>
-#else
-  #include <GL/glu.h>
-#endif
-
 #include "delfem2/gl24_camera.h"
 
 //----------------------------------------------------------------------------------------
-
 
 
 //! @brief multiply two quaternion
@@ -122,36 +110,6 @@ void Mat4f_Identity(float r[])
 
 // static functions ends here
 //----------------------------------------------------------------------------------------
-
-
-void getPosOnScreen_Camera2D
-(double& x, double& y,
- int i, int j)
-{
-  int viewport[8];
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  double hw = (double)viewport[2]*0.5; // half width
-  double hh = (double)viewport[3]*0.5; // half height
-  double asp = hw/hh;
-  x = (i-hw)/hw*asp;
-  y = (hh-j)/hh;
-}
-
-void setGL_Camera2D()
-{
-  int viewport[8];
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  double w = (double)viewport[2];
-  double h = (double)viewport[3];
-  double asp = w/h;
-  ::glMatrixMode(GL_PROJECTION);
-  ::glLoadIdentity();
-  ::glOrtho(-asp*2, +asp*2, -2, +2, -10, +10);
-  ::glMatrixMode(GL_MODELVIEW);
-  ::glLoadIdentity();
-}
-
-/////////////////////////////////////////////////////////////
 
 void glhFrustumf2
 (float *matrix,
@@ -455,25 +413,6 @@ void CCamera::Affine4f_ModelView
     Mat4f_Quat(A,Quat_tball);
   }
   MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
-}
-
-void CCamera::SetGL_Camera(int win_w, int win_h)
-{
-  {
-    ::glMatrixMode(GL_PROJECTION);
-    ::glLoadIdentity();
-    float mP[16];
-    double depth = view_height/(scale*tan(0.5*fovy*3.1415/180.0));
-    this->Affine4f_Projection(mP, (double)win_w/win_h, depth);
-    ::glMultMatrixf(mP);
-  }
-  {
-    ::glMatrixMode(GL_MODELVIEW);
-    ::glLoadIdentity();
-    float mMV[16];
-    this->Affine4f_ModelView(mMV);
-    ::glMultMatrixf(mMV);
-  }
 }
 
 void CCamera::Scale(double s){
