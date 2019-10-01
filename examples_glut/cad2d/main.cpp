@@ -139,9 +139,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         std::string path_svg;
         if( istep == 5 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape0.svg"; }
         if( istep == 6 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
-//        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
-        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/../private_examples/metallophone/10_E6.svg"; }
-//        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/../private_examples/metallophone/1_C5.svg"; }
+        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
         //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg";
         //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape3.svg";
         std::vector<CCad2D_EdgeGeo> aEdge;
@@ -154,7 +152,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
         cad.Clear();
         cad.AddFace(aEdge);
-        std::cout << "hoge" << std::endl;
       }
       { // set camera
         CBoundingBox2D bb = cad.BB();
