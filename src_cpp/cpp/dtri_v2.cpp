@@ -525,8 +525,12 @@ void EnforceEdge
         const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
         assert( aTri[itri1].s2[ied1] >= itri0 );
 #endif
-        FlipEdge(itri0,ied0,aPo2D,aTri);
-        continue;
+        bool res = FlipEdge(itri0,ied0,aPo2D,aTri);
+        std::cout << itri0 << " " << ied0 << " " << ratio << " " << res << std::endl;
+//        continue;
+        if( !res ){
+          break;
+        }
       }
     }
   }

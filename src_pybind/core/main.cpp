@@ -97,9 +97,9 @@ void PyCad2D_ImportSVG
   LoopEdgeCCad2D_ReadSVG(aEdge,
                          path_svg);
   Transform_LoopEdgeCad2D(aEdge,false,true,scale);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
   if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
   aEdge = RemoveEdgeWithZeroLength(aEdge);
+  for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
   cad.AddFace(aEdge);
 }
 

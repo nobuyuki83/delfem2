@@ -458,7 +458,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.param_myu = 100.0
     self.param_lambda = 100.0
     self.mesh = None
-    self.offset_dia = 0.0
+    self.param_offsetdia = 0.0
     self.freq_eigen = 0.0
 
   def updated_topology(self, mesh: Mesh):
@@ -504,7 +504,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
                                self.mesh.np_pos, self.mesh.np_elm,
                                self.mode)
     cppMatSparse_ScaleBlkLen_LeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
-    self.ls.mat.add_dia(self.offset_dia)
+    self.ls.mat.add_dia(self.param_offsetdia)
     ####
     self.ls.set_precond()
 
@@ -514,8 +514,8 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ls.solve_iteration()
     ####
     lam0 = numpy.dot(self.ls.x.flatten(),self.mode.flatten())
-    if( 1.0 / lam0 - self.offset_dia > 0 ):
-      self.freq_eigen = math.sqrt(1.0/lam0-self.offset_dia)/(2.0*math.pi)
+    if( 1.0 / lam0 - self.param_offsetdia > 0 ):
+      self.freq_eigen = math.sqrt(1.0/lam0-self.param_offsetdia)/(2.0*math.pi)
     else:
       self.freq_eigen = 0.0
     ####
