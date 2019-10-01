@@ -5,12 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @details OpenGL dependency (not GLUT)
+ * this file should not depend anything other than OpenGL
+ */
+
 
 #ifndef COLOR_GL_H
 #define COLOR_GL_H
 
-// OpenGL dependency (not GLUT)
-// this file should not depend anything other than OpenGL
 
 #include <iostream>
 #include <stdlib.h>

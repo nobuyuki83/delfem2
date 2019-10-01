@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/bvh.h              ${DELFEM2_SRC}/bvh.cpp
   ${DELFEM2_INC}/funcs.h            ${DELFEM2_SRC}/funcs.cpp
+  ${DELFEM2_INC}/camera.h           ${DELFEM2_SRC}/camera.cpp
 
   ${DELFEM2_INC}/dtri_v2.h          ${DELFEM2_SRC}/dtri_v2.cpp
   ${DELFEM2_INC}/objfunc_v23.h      ${DELFEM2_SRC}/objfunc_v23.cpp
@@ -43,8 +44,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/srchuni_v3.h       ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
   
-  ${DELFEM2_INC}/gl2_funcs.h         ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/gl24_camera.h        ${DELFEM2_SRC}/gl24_camera.cpp
+  ${DELFEM2_INC}/gl2_funcs.h        ${DELFEM2_SRC}/gl2_funcs.cpp
   ${DELFEM2_INC}/gl_v23.h           ${DELFEM2_SRC}/gl_v23.cpp
   ${DELFEM2_INC}/gl_rig_v23q.h      ${DELFEM2_SRC}/gl_rig_v23q.cpp
   ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp       

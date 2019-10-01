@@ -14,6 +14,8 @@
 #include <cmath>
 #include <vector>
 
+// -----------------------------------------------------
+
 double TriArea2D(const double v1[2], const double v2[2], const double v3[2]);
 double SqDistance2D(const double v1[2], const double v2[2]);
 double Distance2D(const double v1[2], const double v2[2]);
@@ -158,18 +160,15 @@ double TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3);
 //! @brief compute dot product
 inline double Dot(const CVector2& ipo0, const CVector2& ipo1);
 
-// get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
-// this one has implementation in header because GetDist_LineSeg_Point below refers this
+//! @details get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 double FindNearestPointParameter_Line_Point(const CVector2& po_c,
                                             const CVector2& po_s, const CVector2& po_e);
 
-// get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
-// this one has implementation in header because utility_glvector.h refers this
+//! @details  get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 CVector2 GetNearest_LineSeg_Point(const CVector2& po_c,
                                   const CVector2& po_s, const CVector2& po_e);
 
-// get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
-// this one has implementation in header because utility_glvector.h refers this
+//! @details  get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 double GetDist_LineSeg_Point(const CVector2& po_c,
                              const CVector2& po_s, const CVector2& po_e);
   

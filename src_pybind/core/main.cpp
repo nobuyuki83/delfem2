@@ -31,7 +31,7 @@
 
 namespace py = pybind11;
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------
 
 
 void init_polyline(py::module &m);
@@ -211,7 +211,7 @@ void PyUpdateRigSkin
 
 PYBIND11_MODULE(c_core, m) {
   m.doc() = "pybind11 delfem2 binding";
-  ///////////////////////////////////
+  // ------------------------
   
   init_mshtopoio(m);
   init_polyline(m);
@@ -219,7 +219,7 @@ PYBIND11_MODULE(c_core, m) {
   init_fem(m);
   init_sdf(m);
   
-  ///////////////////////////////////
+  // -------------------------
   // axis arrigned boudning box
   py::class_<CBV3D_AABB>(m,"AABB3", "3D axis aligned bounding box class")
   .def(py::init<>())
@@ -234,7 +234,7 @@ PYBIND11_MODULE(c_core, m) {
   .def("center",             &CBV3D_AABB::Center, "center position")
   .def_readwrite("isActive", &CBV3D_AABB::is_active);
   
-  ///////////////////////////////////
+  // --------
   // voxel
   py::class_<CVoxelGrid3D>(m, "CppVoxelGrid", "voxel grid class")
   .def(py::init<>())
@@ -243,7 +243,7 @@ PYBIND11_MODULE(c_core, m) {
   m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
   m.def("meshhex3d_voxelgrid", &PyMeshHex3D_VoxelGrid);
   
-  ///////////////////////////////////
+  // ----
   // cad
   py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
@@ -313,7 +313,7 @@ PYBIND11_MODULE(c_core, m) {
   m.def("update_bone_transform", &UpdateBoneRotTrans);
 
   
-  ////////////////////////////////////
+  // ------------------------------------------
 
   py::class_<CMathExpressionEvaluator>(m,"MathExpressionEvaluator")
   .def(py::init<>())

@@ -87,7 +87,7 @@ class WindowGLFW:
     self.list_func_draw = []
     self.color_bg = (1,1,1)
     gl.glEnable(gl.GL_DEPTH_TEST)
-    
+
   def __enter__(self):
     return self
 

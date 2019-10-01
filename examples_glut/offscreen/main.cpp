@@ -16,31 +16,30 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/gl2ew_funcs.h" // compile using GLEW
+#include "delfem2/gl2ew_funcs.h" // compile using GLEW (-DUSE_GLEW)
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_v23.h"
-
 #include "delfem2/gl_color.h"
 #include "delfem2/gl_gpusampler.h"
 
 #include "../glut_funcs.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------
 
 double cur_time = 0.0;
+CGPUSampler sampler;
+CFrameBufferManager fbm;
+bool is_animation = true;
+bool is_depth = false;
+CNav3D_GLUT nav;
+
+// ------------------------------------------------------
 
 void Draw(){
   ::glRotated(+cur_time, 1,0,0);
   glutSolidTeapot(1.0);
   ::glRotated(-cur_time, 1,0,0);
 }
-
-CGPUSampler sampler;
-CFrameBufferManager fbm;
-bool is_animation = true;
-
-bool is_depth = false;
-CNav3D_GLUT nav;
 
 void myGlutDisplay(void)
 {
@@ -57,8 +56,6 @@ void myGlutDisplay(void)
   
   ::glColor3d(1,1,1);
   Draw();
-  
-  ///////
 
   glPointSize(3);
   sampler.Draw();

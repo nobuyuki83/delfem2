@@ -14,10 +14,11 @@
   #include <GL/glut.h>
 #endif
 
+#include "delfem2/specialfuncs.h"
+
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_color.h"
 #include "delfem2/gl2_funcs.h"
-#include "delfem2/mathfuncs.h"
 
 #include "../glut_funcs.h"
 
@@ -244,7 +245,7 @@ int main(int argc,char* argv[])
 	glutKeyboardFunc(myGlutKeyboard);
 	glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // -----------------------------
   
   nav.camera.view_height = 2.0;
   

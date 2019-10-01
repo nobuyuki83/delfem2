@@ -7,12 +7,13 @@
 
 /**
  * @file stand alone implementation of the quaternion function and class
+ * @details the  order of the parameters on memory is (w,x,y,z)
  */
 
 #ifndef QUAT_H
 #define QUAT_H
 
-// order is (w,x,y,z)
+
 void QuatSetIdentity(double q[]);
 void QuatCopy(double r[], const double p[]);
 void QuatQuat(double r[], const double p[], const double q[]);
@@ -44,7 +45,7 @@ CQuaternion operator*(const CQuaternion&, const CQuaternion&);
   
 CQuaternion SphericalLinearInterp(const CQuaternion&, const CQuaternion&, double);
 
-//! class of Quaternion
+//! @brief class of Quaternion
 class CQuaternion  
 {
 public:

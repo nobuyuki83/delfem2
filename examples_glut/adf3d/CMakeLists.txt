@@ -29,13 +29,13 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/primitive.h     ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/bvh.h           ${DELFEM2_SRC}/bvh.cpp
+  ${DELFEM2_INC}/camera.h        ${DELFEM2_SRC}/camera.cpp
 
   ${DELFEM2_INC}/srchuni_v3.h    ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h  
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
-  ${DELFEM2_INC}/gl2_funcs.h      ${DELFEM2_SRC}/gl2_funcs.cpp                
-  ${DELFEM2_INC}/gl24_camera.h    ${DELFEM2_SRC}/gl24_camera.cpp
+  ${DELFEM2_INC}/gl2_funcs.h     ${DELFEM2_SRC}/gl2_funcs.cpp
 
   main.cpp  
 )

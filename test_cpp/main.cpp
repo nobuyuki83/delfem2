@@ -17,7 +17,7 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
-#include "delfem2/mathfuncs.h"
+#include "delfem2/specialfuncs.h"
 #include "delfem2/funcs.h"
 #include "delfem2/evalmathexp.h"
 #include "delfem2/primitive.h"
