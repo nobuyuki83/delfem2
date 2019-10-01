@@ -28,6 +28,7 @@ CNav3D_GLFW nav;
 CCad2D cad;
 CShader_Cad2D shdr_cad;
 
+// -----------------------------------------------------
 
 void draw(GLFWwindow* window)
 {

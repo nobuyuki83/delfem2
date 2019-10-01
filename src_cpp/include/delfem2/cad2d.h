@@ -189,7 +189,9 @@ bool WriteCAD_DXF(const std::string& file_name,
                   const CCad2D& cad,
                   double scale);
 
-
+/**
+ * @brief mesher for 2 dimensional CAD
+ */
 class CMesher_Cad2D{
 public:
   CMesher_Cad2D(){

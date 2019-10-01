@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <cmath>
 
-#include "delfem2/mathfuncs.h"
+#include "delfem2/specialfuncs.h"
 
 //const double pi = 3.1415926535;
 //const double invpi = 1.0/pi;

@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec3.h             ${DELFEM2_SRC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h             ${DELFEM2_SRC}/mat3.cpp
   ${DELFEM2_INC}/quat.h             ${DELFEM2_SRC}/quat.cpp
+  ${DELFEM2_INC}/camera.h           ${DELFEM2_SRC}/camera.cpp
 
   ${DELFEM2_INC}/v23m3q.h           ${DELFEM2_SRC}/v23m3q.cpp
 
@@ -35,7 +36,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/gl_v23.h           ${DELFEM2_SRC}/gl_v23.cpp
   ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h
   ${DELFEM2_INC}/gl2_funcs.h        ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/gl24_camera.h      ${DELFEM2_SRC}/gl24_camera.cpp
   ${DELFEM2_INC}/gl2ew_funcs.h      ${DELFEM2_SRC}/gl2ew_funcs.cpp
   main.cpp
 )

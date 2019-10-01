@@ -16,14 +16,17 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/funcs.h          ${DELFEM2_SRC}/funcs.cpp
   ${DELFEM2_INC}/dtri.h           ${DELFEM2_SRC}/dtri.cpp
   ${DELFEM2_INC}/vec2.h           ${DELFEM2_SRC}/vec2.cpp
+  ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
+  
   ${DELFEM2_INC}/dtri_v2.h        ${DELFEM2_SRC}/dtri_v2.cpp
 
   ${DELFEM2_INC}/gl24_funcs.h     ${DELFEM2_SRC}/gl24_funcs.cpp
-  ${DELFEM2_INC}/gl24_camera.h    ${DELFEM2_SRC}/gl24_camera.cpp
   ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
   ${DELFEM2_INC}/gl4_v23dtricad.h ${DELFEM2_SRC}/gl4_v23dtricad.cpp
+  
   ../glad4/include/glad/glad.h  ../glad4/src/glad.c
   ../glfw_funcs.h
+  
   main.cpp
 )
 

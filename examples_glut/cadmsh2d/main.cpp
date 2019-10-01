@@ -7,9 +7,9 @@
 #include <stack>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/dtri_v2.h"
@@ -22,10 +22,10 @@
 #include "../glut_funcs.h"
 
 #ifndef M_PI
-#define M_PI 3.141592653589793
+  #define M_PI 3.141592653589793
 #endif
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------
 
 CNav3D_GLUT nav;
 const double view_height = 2.0;
@@ -36,7 +36,7 @@ std::vector<unsigned int> aTri;
 std::vector<double> aW;
 CCad2D cad;
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------
 
 void myGlutDisplay(void)
 {
@@ -85,16 +85,9 @@ void myGlutSpecial(int Key, int x, int y)
 void myGlutMotion( int x, int y ){
   nav.glutMotion(x,y);
   if( nav.imodifier != 0){ return; }
-  float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
-  float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
-  CVector2 sp1(nav.mouse_x, nav.mouse_y);
-  const CVector3 src_pick0 = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
-  const CVector3 src_pick1 = screenUnProjection(CVector3(sp1.x,sp1.y, 0.0), mMV,mPj);
-  const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
-  /////
-  cad.DragPicked(src_pick1[0],src_pick1[1], src_pick0[0],src_pick0[1]);
-  ////
+  float x0,y0, x1,y1; nav.PosMove2D(x0,y0, x1,y1);
+  cad.DragPicked(x1,y1, x0,y0);
+  // ----
   std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
   int npb = aXY_bound.size()/2;
   int np = aXY.size()/2;
@@ -112,13 +105,9 @@ void myGlutMouse(int button, int state, int x, int y)
 {
   nav.glutMouse(button,state,x,y);
   if( nav.imodifier == GLUT_ACTIVE_SHIFT || nav.imodifier == GLUT_ACTIVE_ALT ) return;
-  float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
-  float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(nav.mouse_x, nav.mouse_y);
-  const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
-  const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
-    cad.Pick(src_pick[0],src_pick[1],view_height);
+    float x0,y0; nav.PosMouse2D(x0, y0);
+    cad.Pick(x0,y0,view_height);
   }
   if( state == GLUT_UP ){
     cad.ivtx_picked = -1;
@@ -166,7 +155,7 @@ int main(int argc,char* argv[])
 	glutKeyboardFunc(myGlutKeyboard);
 	glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // -----------------
   nav.camera.view_height = view_height;
 //  win.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;

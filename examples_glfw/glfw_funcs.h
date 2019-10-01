@@ -12,7 +12,7 @@
 #include <GLFW/glfw3.h>
 
 
-#include "delfem2/gl24_camera.h"
+#include "delfem2/camera.h"
 
 
 void callback_error(int error, const char* description)

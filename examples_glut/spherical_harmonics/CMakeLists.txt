@@ -23,12 +23,13 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/quat.cpp           ${DELFEM2_INC}/quat.h
   ${DELFEM2_SRC}/vec2.cpp           ${DELFEM2_INC}/vec2.h
   ${DELFEM2_SRC}/vec3.cpp           ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/mathfuncs.cpp
+  ${DELFEM2_SRC}/camera.cpp         ${DELFEM2_INC}/camera.h  
+  ${DELFEM2_SRC}/specialfuncs.cpp   ${DELFEM2_INC}/specialfuncs.h  
+
   ${DELFEM2_SRC}/gl_v23.cpp
 
   ${DELFEM2_SRC}/gl_color.cpp       ${DELFEM2_INC}/gl_color.h
   ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_SRC}/gl24_camera.cpp    ${DELFEM2_INC}/gl24_camera.h
 
   main.cpp
 )

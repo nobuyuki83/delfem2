@@ -30,7 +30,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/primitive.h     ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/mats.h          ${DELFEM2_SRC}/mats.cpp     
   ${DELFEM2_INC}/iss.h           ${DELFEM2_SRC}/iss.cpp
-  ${DELFEM2_INC}/emat.h          ${DELFEM2_SRC}/emat.cpp        
+  ${DELFEM2_INC}/emat.h          ${DELFEM2_SRC}/emat.cpp     
+  ${DELFEM2_INC}/camera.h        ${DELFEM2_SRC}/camera.cpp   
 
   ${DELFEM2_INC}/fem_emats.h     ${DELFEM2_SRC}/fem_emats.cpp               
   ${DELFEM2_INC}/ilu_mats.h      ${DELFEM2_SRC}/ilu_mats.cpp        
@@ -38,7 +39,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/gl_v23.h        ${DELFEM2_SRC}/gl_v23.cpp
   ${DELFEM2_INC}/gl_color.h      ${DELFEM2_SRC}/gl_color.cpp
   ${DELFEM2_INC}/gl2_funcs.h     ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/gl24_camera.h   ${DELFEM2_SRC}/gl24_camera.cpp
 
   main.cpp
 )

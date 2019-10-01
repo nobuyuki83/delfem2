@@ -45,7 +45,7 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/vec2.h           ${DELFEM2_SRC}/vec2.cpp
   ${DELFEM2_INC}/mat3.h           ${DELFEM2_SRC}/mat3.cpp
   ${DELFEM2_INC}/quat.h           ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/mathfuncs.h      ${DELFEM2_SRC}/mathfuncs.cpp
+  ${DELFEM2_INC}/specialfuncs.h   ${DELFEM2_SRC}/specialfuncs.cpp
   ${DELFEM2_INC}/msh.h            ${DELFEM2_SRC}/msh.cpp
   ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
   ${DELFEM2_INC}/mshio.h          ${DELFEM2_SRC}/mshio.cpp

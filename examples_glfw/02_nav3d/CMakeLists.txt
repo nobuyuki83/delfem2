@@ -11,12 +11,12 @@ set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshtopo.h          ${DELFEM2_SRC}/mshtopo.cpp
+  ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
   ${DELFEM2_INC}/msh.h            ${DELFEM2_SRC}/msh.cpp
   ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp
+  ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
 
   ${DELFEM2_INC}/gl24_funcs.h     ${DELFEM2_SRC}/gl24_funcs.cpp
-  ${DELFEM2_INC}/gl24_camera.h    ${DELFEM2_SRC}/gl24_camera.cpp
   ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
   ../glad4/include/glad/glad.h   ../glad4/src/glad.c
   ../glfw_funcs.h

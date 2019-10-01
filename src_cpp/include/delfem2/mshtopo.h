@@ -239,25 +239,26 @@ void FlipElement(std::vector<int>& aElem_Flip,
  */
 void JArrayElemSurPoint_MeshElem(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
-                              ////
+                              //
                               const unsigned int* aElem,
                               int nEl,
                               int nPoEl,
                               int nPo);
 void JArrayElemSurPoint_MeshTri(std::vector<int>& elsup_ind,
                                 std::vector<int>& elsup,
-                                ////
+                                //
                                 const std::vector<unsigned int>& aTri,
                                 int nXYZ);
 void JArrayElemSurPoint_MeshMix(std::vector<int>& elsup_ind,
                               std::vector<int>& elsup,
-                              ////
+                              //
                               const std::vector<int>& aElemInd,
                               const std::vector<int>& aElem,
                               const int nPo);
 
 // -----------------
 // elem sur elem
+
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
                                  const unsigned int* aEl, int nEl, int nNoEl,
                                  const std::vector<int>& elsup_ind,
@@ -285,10 +286,11 @@ void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
 
 // -------------------
 // make boundary
+
 void makeBoundary(std::vector<int>& aElemInd_Bound,
                   std::vector<int>& aElem_Bound,
                   std::vector<MESHELEM_TYPE>& aElemType_Bound,
-                  ////
+                  //
                   const std::vector<int>& aElemInd,
                   const std::vector<int>& aElem,
                   const std::vector<MESHELEM_TYPE>& aElemType,
@@ -300,6 +302,7 @@ void makeBoundary(std::vector<int>& aElemInd_Bound,
 // psup -> edge bidirectional
 // edge unidir (ip0<ip1)
 // line (array of 2)
+
 void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<int>& psup_ind,
                                                  std::vector<int>& psup,
                                                  //

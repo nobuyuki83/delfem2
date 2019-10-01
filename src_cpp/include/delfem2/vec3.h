@@ -200,13 +200,6 @@ CVector3 nearest_LineSeg_Point(double& t,
                                  const CVector3& p, // point
                                  const CVector3& s,
                                  const CVector3& e); // direction
-void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
-                         const CVector3& pa_, const CVector3& va,
-                         const CVector3& pb_, const CVector3& vb);
-void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
-                         double& ta, double& tb,
-                         const CVector3& pa_, const CVector3& va,
-                         const CVector3& pb_, const CVector3& vb);
 CVector3 nearest_Plane_Point(const CVector3& p, // point
                              const CVector3& o, // origin
                              const CVector3& n); // normal
@@ -221,6 +214,14 @@ CVector3 nearst_Origin_Quad(double& s0, double& s1,
                             const CVector3& q1,
                             const CVector3& q2,
                             const CVector3& q3);
+
+void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
+                         const CVector3& pa_, const CVector3& va,
+                         const CVector3& pb_, const CVector3& vb);
+void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
+                         double& ta, double& tb,
+                         const CVector3& pa_, const CVector3& va,
+                         const CVector3& pb_, const CVector3& vb);
 void Nearest_Line_Circle(CVector3& p0,
                          CVector3& q0,
                          const CVector3& src,

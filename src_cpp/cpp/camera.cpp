@@ -11,9 +11,9 @@
 #include <cstring>
 #include <iostream>
 
-#include "delfem2/gl24_camera.h"
+#include "delfem2/camera.h"
 
-//----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------
 
 
 //! @brief multiply two quaternion
@@ -354,7 +354,7 @@ void screenUnProjection
 }
 
 
-//------------------------------------------------------------------------
+// ----------------------------------------------------
 // implementation of CCamera class starts here
 
 

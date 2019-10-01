@@ -19,10 +19,10 @@
 #endif
 
 #include "delfem2/noise.h"
+#include "delfem2/camera.h"
 
 #include "delfem2/gl_color.h"
 #include "delfem2/gl2_funcs.h"
-#include "delfem2/gl24_camera.h"
 
 
 std::vector<int> aP;
