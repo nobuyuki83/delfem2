@@ -99,7 +99,7 @@ public:
 };
 
 
-//---------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------
 
 /**
  * @brief class to define 2D shapes bounded by parametric curves
@@ -168,7 +168,7 @@ public:
   }
 public:
   CCadTopo topo;
-  /////
+  //
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
@@ -209,7 +209,7 @@ public:
                                              const CCad2D& cad2d);
 public:
   double edge_length;
-  ////
+  //
   unsigned int nvtx;
   unsigned int nedge;
   unsigned int nface;

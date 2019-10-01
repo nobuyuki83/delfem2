@@ -115,11 +115,6 @@ public:
     if( key ==  GLFW_KEY_PAGE_UP && action == GLFW_PRESS ){ camera.Scale(1.03); }
     if( key ==  GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS ){ camera.Scale(1.0/1.03); }
   }
-  void SetGL_Camera(GLFWwindow *window){
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    camera.SetGL_Camera(width,height);
-  }
   void Matrix_MVP(float mMV[16],
                   float mP[16],
                   GLFWwindow* window) const

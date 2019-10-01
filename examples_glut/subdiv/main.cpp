@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/msh.h"
@@ -16,14 +23,14 @@
 
 #include "../glut_funcs.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------
 
-CNav3D_GLUT window;
+CNav3D_GLUT nav;
 std::vector< std::vector<unsigned int> > aaQuad;
 std::vector< std::vector<double> > aaXYZ;
 const unsigned int nlevel_subdiv = 3;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------
 
 void myGlutDisplay(void)
 {
@@ -35,7 +42,7 @@ void myGlutDisplay(void)
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   
   DrawBackground(CColor(0.2,0.7,0.7));
   
@@ -62,19 +69,19 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  window.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  window.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  window.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   ::glutPostRedisplay();
 }
 
@@ -110,7 +117,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // ---------------------------
   
   aaXYZ.resize(nlevel_subdiv+1);
   aaQuad.resize(nlevel_subdiv+1);
@@ -135,7 +142,7 @@ int main(int argc,char* argv[])
                                        aXYZ0.data(),  aXYZ0.size()/3);
   }
   
-  window.camera.view_height = 2.0;
+  nav.camera.view_height = 2.0;
   
   setSomeLighting();
   

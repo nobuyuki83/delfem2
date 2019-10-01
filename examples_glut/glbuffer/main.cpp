@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <math.h>
 
@@ -19,15 +26,16 @@
 
 #include "../glut_funcs.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------
 
-// display data
 bool is_animation;
 
-CNav3D_GLUT window;
+CNav3D_GLUT nav;
 CGLBuffer glbuff;
 CElemBuffObj ebo_face;
 CElemBuffObj ebo_edge;
+
+// -------------------------------
 
 void myGlutDisplay(void)
 {
@@ -39,7 +47,7 @@ void myGlutDisplay(void)
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   
   DrawBackground(CColor(0.8, 0.8, 1.0));
   
@@ -71,19 +79,19 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  window.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  window.glutMotion(x, y);
+  nav.glutMotion(x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  window.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   ::glutPostRedisplay();
 }
 
@@ -145,8 +153,8 @@ int main(int argc,char* argv[])
   
   ////////////////////////
   
-  window.camera.view_height = 1.0;
-  window.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 1.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;

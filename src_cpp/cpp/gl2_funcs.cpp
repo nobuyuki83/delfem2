@@ -2020,6 +2020,31 @@ void showdepth()
   free(buffer);
 }
 
-//////////////////////////
+// --------------------------
 
+void getPosOnScreen_Camera2D
+(double& x, double& y,
+ int i, int j)
+{
+  int viewport[8];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  double hw = (double)viewport[2]*0.5; // half width
+  double hh = (double)viewport[3]*0.5; // half height
+  double asp = hw/hh;
+  x = (i-hw)/hw*asp;
+  y = (hh-j)/hh;
+}
 
+void setGL_Camera2D()
+{
+  int viewport[8];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  double w = (double)viewport[2];
+  double h = (double)viewport[3];
+  double asp = w/h;
+  ::glMatrixMode(GL_PROJECTION);
+  ::glLoadIdentity();
+  ::glOrtho(-asp*2, +asp*2, -2, +2, -10, +10);
+  ::glMatrixMode(GL_MODELVIEW);
+  ::glLoadIdentity();
+}

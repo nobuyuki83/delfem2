@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @brief dynamic triangle mesh class
+ */
+
 #ifndef DTRI_V2_H
 #define DTRI_V2_H
 

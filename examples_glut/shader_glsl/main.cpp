@@ -1,13 +1,20 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GL/glew.h>
-#include <GLUT/glut.h>
+  #include <GL/glew.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glew.h>
-#include <GL/glut.h>
+  #include <GL/glew.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/gl24_funcs.h"
@@ -17,14 +24,12 @@
 
 #include "../glut_funcs.h"
 
+// -----------------------------
 
-
-/////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
 CNav3D_GLUT nav;
 int id_shader_program = 0;
 
-/////////
+// -----------------------------
 
 std::string LoadFile
 (const std::string& fname)
@@ -184,7 +189,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   
   
-  ////////////////////////
+  // --------------
   glewInit();
   
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';
@@ -194,7 +199,7 @@ int main(int argc,char* argv[])
   
   setShaderProgram(3);
   
-  /////////////////////////  
+  // -------------------------
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   

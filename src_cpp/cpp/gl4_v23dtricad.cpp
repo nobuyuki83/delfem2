@@ -114,7 +114,7 @@ void AddPoint
   }
 }
 
-void CShader_CCad2D::MakeBuffer(const CCad2D& cad)
+void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
 {
   {
     vao_face.aElem.clear();
@@ -189,7 +189,7 @@ void CShader_CCad2D::MakeBuffer(const CCad2D& cad)
 }
 
 
-void CShader_CCad2D::Compile_Face()
+void CShader_Cad2D::Compile_Face()
 {
 
   const std::string glsl33vert_projection =
@@ -234,11 +234,13 @@ void CShader_CCad2D::Compile_Face()
   shdr0_Loc_MatrixProjection = glGetUniformLocation(shdr0_program,  "matrixProjection");
   shdr0_Loc_MatrixModelView  = glGetUniformLocation(shdr0_program,  "matrixModelView");
   shdr0_Loc_Color            = glGetUniformLocation(shdr0_program,  "color");
-  std::cout << "projectionMatrixLoc: " << shdr0_Loc_MatrixProjection << "   shaderProgram: " << shdr0_program << "  LocColor: " << shdr0_Loc_Color << std::endl;
+  std::cout << "  shaderProgram: " << shdr0_program;
+  std::cout << "  projectionMatrixLoc: " << shdr0_Loc_MatrixProjection;
+  std::cout << "  LocColor: " << shdr0_Loc_Color << std::endl;
 }
 
 
-void CShader_CCad2D::Compile_Edge()
+void CShader_Cad2D::Compile_Edge()
 {
 
   const std::string glsl33vert_projection =
@@ -281,20 +283,24 @@ void CShader_CCad2D::Compile_Edge()
   shdr1_Loc_MatrixModelView  = glGetUniformLocation(shdr1_program,  "matrixModelView");
   shdr1_Loc_Color            = glGetUniformLocation(shdr1_program,  "color");
   shdr1_Loc_LineWidth        = glGetUniformLocation(shdr1_program,  "line_width");
-  std::cout << "projectionMatrixLoc: " << shdr1_Loc_MatrixProjection << "   shaderProgram: " << shdr1_program << "  LocColor: " << shdr1_Loc_Color << std::endl;
+  std::cout << "  shaderProgram: " << shdr1_program;
+  std::cout << "  projectionMatrixLoc: " << shdr1_Loc_MatrixProjection;
+  std::cout << "  LocColor: " << shdr1_Loc_Color << std::endl;
 }
 
-void CShader_CCad2D::Draw
+void CShader_Cad2D::Draw
  (const float mP[16],
   const float mMV[16],
   const CCad2D& cad) const
 {
 //  assert( vao_face.aElem.size() >= 2 );
-  glUseProgram(shdr0_program);
-  glUniformMatrix4fv(shdr0_Loc_MatrixProjection, 1, GL_FALSE, mP);
-  glUniformMatrix4fv(shdr0_Loc_MatrixModelView, 1, GL_FALSE, mMV);
-  glUniform3f(shdr0_Loc_Color, 1,1,1);
-  vao_face.Draw(0);
+  if( is_show_face ){
+    glUseProgram(shdr0_program);
+    glUniformMatrix4fv(shdr0_Loc_MatrixProjection, 1, GL_FALSE, mP);
+    glUniformMatrix4fv(shdr0_Loc_MatrixModelView, 1, GL_FALSE, mMV);
+    glUniform3f(shdr0_Loc_Color, 1,1,1);
+    vao_face.Draw(0);
+  }
   
   glUseProgram(shdr1_program);
   glUniformMatrix4fv(shdr1_Loc_MatrixProjection, 1, GL_FALSE, mP);
@@ -323,4 +329,130 @@ void CShader_CCad2D::Draw
     else{                   glUniform3f(shdr1_Loc_Color, 0.f,0.f,0.f); }
     vao_edge.Draw(nv+ie);
   }
+}
+
+
+
+// ------------------------------------------------------------------------------
+
+
+void CShader_MeshDTri2D::MakeBuffer
+ (const std::vector<CVector2>& aVec2,
+  const std::vector<ETri>& aETri)
+{
+  std::vector<float> aXYf;
+  std::vector<unsigned int> aTri;
+  std::vector<unsigned int> aLine;
+  {
+    aXYf.resize(aVec2.size()*2);
+    for(int iv=0;iv<aVec2.size();++iv){
+      aXYf[iv*2+0] = aVec2[iv].x;
+      aXYf[iv*2+1] = aVec2[iv].y;
+    }
+    aTri.resize(aETri.size()*3);
+    for(int it=0;it<aETri.size();++it){
+      aTri[it*3+0] = aETri[it].v[0];
+      aTri[it*3+1] = aETri[it].v[1];
+      aTri[it*3+2] = aETri[it].v[2];
+    }
+    aLine.reserve(aTri.size()*1.5*1.1);
+    for(int it=0;it<aETri.size();++it){
+      int i0 = aETri[it].v[0];
+      int i1 = aETri[it].v[1];
+      int i2 = aETri[it].v[2];
+      if( aETri[it].s2[0] == -1 || i2 > i1 ){ aLine.push_back(i1); aLine.push_back(i2); }
+      if( aETri[it].s2[1] == -1 || i0 > i2 ){ aLine.push_back(i2); aLine.push_back(i0); }
+      if( aETri[it].s2[2] == -1 || i1 > i0 ){ aLine.push_back(i0); aLine.push_back(i1); }
+    }
+  }
+  // ----------
+  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  glBindVertexArray(vao.VAO);
+  if( !glIsBuffer(vao.VBO_pos) ){ glGenBuffers(1, &vao.VBO_pos); }
+  glBindBuffer(GL_ARRAY_BUFFER, vao.VBO_pos); // gl24
+    
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXYf.size(), aXYf.data(), GL_STATIC_DRAW); // gl24
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+
+  vao.Delete_EBOs();
+  {
+    unsigned int EBO_Tri;
+    glGenBuffers(1, &EBO_Tri);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
+    CGL4_VAO_Mesh::CElem e0;
+    e0.size = aTri.size();
+    e0.GL_MODE = GL_TRIANGLES;
+    e0.EBO = EBO_Tri;
+    vao.aElem.push_back(e0);
+  }
+  {
+    unsigned int EBO_Line;
+    glGenBuffers(1, &EBO_Line);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW);
+    CGL4_VAO_Mesh::CElem e0;
+    e0.size = aLine.size();
+    e0.GL_MODE = GL_LINES;
+    e0.EBO = EBO_Line;
+    vao.aElem.push_back(e0);
+  }
+}
+
+void CShader_MeshDTri2D::Compile()
+{
+  const std::string glsl33vert_projection =
+  "uniform mat4 matrixProjection;\n"
+  "uniform mat4 matrixModelView;\n"
+  "layout (location = 0) in vec2 posIn;\n"
+  "void main()\n"
+  "{\n"
+  "  gl_Position = matrixProjection * matrixModelView * vec4(posIn.x, posIn.y, 0.0, 1.0);\n"
+  "}\0";
+
+  const std::string glsl33frag =
+  "uniform vec3 color;\n"
+  "out vec4 FragColor;\n"
+  "void main()\n"
+  "{\n"
+  "  FragColor = vec4(color.x, color.y, color.z, 1.0f);\n"
+  "}\n\0";
+  
+  #ifdef EMSCRIPTEN
+    shdr0_program = GL24_CompileShader((std::string("#version 300 es\n")+
+                                        glsl33vert_projection).c_str(),
+                                       (std::string("#version 300 es\n")+
+                                        std::string("precision highp float;\n")+
+                                        glsl33frag).c_str());
+  #else
+    shdr0_program = GL24_CompileShader((std::string("#version 330 core\n")+
+                                        glsl33vert_projection).c_str(),
+                                       (std::string("#version 330 core\n")+
+                                        glsl33frag).c_str());
+  #endif
+    
+    
+  assert( glIsProgram(shdr0_program) );
+  glUseProgram(shdr0_program);
+  shdr0_Loc_MatrixProjection = glGetUniformLocation(shdr0_program,  "matrixProjection");
+  shdr0_Loc_MatrixModelView  = glGetUniformLocation(shdr0_program,  "matrixModelView");
+  shdr0_Loc_Color            = glGetUniformLocation(shdr0_program,  "color");
+  std::cout << "  shaderProgram: " << shdr0_program;
+  std::cout << "  projectionMatrixLoc: " << shdr0_Loc_MatrixProjection;
+  std::cout << "  LocColor: " << shdr0_Loc_Color << std::endl;
+}
+
+
+void CShader_MeshDTri2D::Draw
+ (const float mP[16],
+  const float mMV[16]) const
+{
+  glUseProgram(shdr0_program);
+  glUniformMatrix4fv(shdr0_Loc_MatrixProjection, 1, GL_FALSE, mP);
+  glUniformMatrix4fv(shdr0_Loc_MatrixModelView, 1, GL_FALSE, mMV);
+  glUniform3f(shdr0_Loc_Color, 1,1,1);
+  vao.Draw(0);
+  glUniform3f(shdr0_Loc_Color, 0,0,0);
+  vao.Draw(1);
 }

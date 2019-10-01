@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -6,11 +13,11 @@
 #include <vector>
 
 #ifdef __APPLE__
-#include <GL/glew.h>
-#include <GLUT/glut.h>
+  #include <GL/glew.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glew.h>
-#include <GL/glut.h>
+  #include <GL/glew.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/noise.h"
@@ -20,8 +27,7 @@
 
 #include "../glut_funcs.h"
 
-////////////////////////////////////////////////////////////////////////////////////
-
+// -----------------------------
 
 CNav3D_GLUT nav;
 
@@ -31,7 +37,7 @@ std::vector<double> aGrad;
 int nH, nW, nD;
 std::vector<unsigned char> aV;
 
-////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------
 
 void myGlutResize(int w, int h)
 {

@@ -1,3 +1,10 @@
+/*
+* Copyright (c) 2019 Nobuyuki Umetani
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
 #include <iostream>
 #include <math.h>
 
@@ -16,8 +23,6 @@
 #include "delfem2/gl_v23.h"
 
 #include "../glut_funcs.h"
-
-
 
 
 
@@ -58,11 +63,11 @@ public:
   int ielem_picked;
 };
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------
 
 // display data
 CHandlerRotation hndlr_rot;
-CNav3D_GLUT window;
+CNav3D_GLUT nav;
 
 
 void myGlutDisplay(void)
@@ -78,7 +83,7 @@ void myGlutDisplay(void)
   
   DrawBackground(CColor::Blue());
   
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   
   ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
   {
@@ -116,18 +121,18 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  window.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  window.glutMotion(x, y);
-  double sp1x = window.mouse_x;
-  double sp1y = window.mouse_y;
-  double sp0x = window.mouse_x-window.dx;
-  double sp0y = window.mouse_y-window.dy;
-  window.SetGL_Camera();
+  nav.glutMotion(x, y);
+  double sp1x = nav.mouse_x;
+  double sp1y = nav.mouse_y;
+  double sp0x = nav.mouse_x-nav.dx;
+  double sp0y = nav.mouse_y-nav.dy;
+  nav.SetGL_Camera();
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   hndlr_rot.Drag(sp0x,sp0y,sp1x,sp1y,mMV,mPj);
@@ -136,10 +141,10 @@ void myGlutMotion( int x, int y )
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  window.glutMouse(button, state, x, y);
-  double spx = window.mouse_x;
-  double spy = window.mouse_y;
-  window.SetGL_Camera();
+  nav.glutMouse(button, state, x, y);
+  double spx = nav.mouse_x;
+  double spy = nav.mouse_y;
+  nav.SetGL_Camera();
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   hndlr_rot.Pick(state==GLUT_DOWN,spx,spy,mMV,mPj,0.05);
@@ -202,8 +207,8 @@ int main(int argc,char* argv[])
   
   ////////////////////////
   
-  window.camera.view_height = 2.0;
-  window.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   setSomeLighting();
   

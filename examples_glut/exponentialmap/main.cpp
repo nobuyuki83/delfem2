@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -8,9 +15,9 @@
 #include <queue>
 
 #if defined(__APPLE__) && (__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/msh.h"
@@ -189,7 +196,7 @@ void MakeExpMap_Point
   }  
 }
 
-//////////////////////////////////////////////////////////////
+// ---------------------------------------------------
 
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
@@ -202,6 +209,8 @@ CNav3D_GLUT nav;
 bool is_animation = true;
 bool is_lighting = false;
 int m_texName;
+    
+// ---------------------------------------------------
 
 void SetNewProblem()
 {
@@ -254,7 +263,7 @@ void SetNewProblem()
   if( iprob == nprob ){ iprob = 0; }
 }
 
-//////////////////////////////////////////////////////////////
+// -----------------------------------------------------
 
 void myGlutIdle(){
   glutPostRedisplay();

@@ -38,6 +38,11 @@ void drawFloorShadow(void (*DrawObject)(), float yfloor, float wfloor);
 void DrawRectangle_FullCanvas();
 void showdepth();
 
+// --------------------------------------------------
+void getPosOnScreen_Camera2D(double& x, double& y,
+                             int i, int j);
+void setGL_Camera2D();
+
 
 // -------------------
 // draw functions

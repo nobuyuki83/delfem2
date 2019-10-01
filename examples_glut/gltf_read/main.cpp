@@ -29,7 +29,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-CNav3D_GLUT window;
+CNav3D_GLUT nav;
 std::vector<double> aXYZ0;
 std::vector<unsigned int> aTri;
 std::vector<double> aRigWeight;
@@ -54,7 +54,7 @@ void myGlutDisplay(void)
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   
 //  ::glDisable(GL_LIGHTING);
 //  DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
@@ -93,21 +93,21 @@ void myGlutResize(int w, int h)
 
 void myGlutSpecial(int Key, int x, int y)
 {
-  window.glutSpecial(Key, x, y);
+  nav.glutSpecial(Key, x, y);
   ::glutPostRedisplay();
 }
 
 void myGlutMotion( int x, int y )
 {
-  window.glutMotion(x, y);
-  if( window.imodifier != 0 ) return;
+  nav.glutMotion(x, y);
+  if( nav.imodifier != 0 ) return;
   ////
   if( ibone_selected>=0 && ibone_selected<aBone.size() ){
-    window.SetGL_Camera();
+    nav.SetGL_Camera();
     float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
     float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-    CVector2 sp1(window.mouse_x, window.mouse_y);
-    CVector2 sp0(window.mouse_x-window.dx, window.mouse_y-window.dy);
+    CVector2 sp1(nav.mouse_x, nav.mouse_y);
+    CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
     CRigBone& bone = aBone[ibone_selected];
     DragHandlerRot_Mat4(bone.rot,
                         ielem_bone_selected, sp0, sp1, bone.Mat,
@@ -124,12 +124,12 @@ void myGlutMotion( int x, int y )
 
 void myGlutMouse(int button, int state, int x, int y)
 {
-  window.glutMouse(button, state, x, y);
+  nav.glutMouse(button, state, x, y);
   /////
-  window.SetGL_Camera();
+  nav.SetGL_Camera();
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector3 src = screenUnProjection(CVector3(window.mouse_x,window.mouse_y,0.0), mMV, mPj);
+  CVector3 src = screenUnProjection(CVector3(nav.mouse_x,nav.mouse_y,0.0), mMV, mPj);
   CVector3 dir = screenDepthDirection(src,mMV,mPj);
   if( state == GLUT_DOWN ){
     const double wh = 1.0/mPj[5];
@@ -207,8 +207,8 @@ int main(int argc,char* argv[])
                 aBone, aRigWeight.data(), aRigJoint.data());
 
   
-  window.camera.view_height = 2.0;
-  window.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.view_height = 2.0;
+  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   setSomeLighting();
   
   glutMainLoop();

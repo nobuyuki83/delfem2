@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include <iostream>
 #include <math.h>
 
@@ -29,10 +28,14 @@
 #include "delfem2/gl4_v23dtricad.h"
 #include "../glfw_funcs.h"
 
+// -----------------------------------
 
 CNav3D_GLFW nav;
 CCad2D cad;
-CShader_CCad2D shdr_cad;
+CShader_Cad2D shdr_cad;
+CShader_MeshDTri2D shdr_dmsh;
+
+// -----------------------------------
 
 void draw(GLFWwindow* window)
 {
@@ -45,6 +48,8 @@ void draw(GLFWwindow* window)
   
   float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
   shdr_cad.Draw(mP, mMV, cad);
+  shdr_dmsh.Draw(mP, mMV);
+  
   
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -65,8 +70,6 @@ void callback_resize(GLFWwindow* window, int width, int height)
 void callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
   nav.Mouse(window,button,action,mods);
-
-
 }
 
 void callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
@@ -98,6 +101,7 @@ int main(void)
   }
 
   shdr_cad.Compile();
+  shdr_dmsh.Compile();
   {
     {
       std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
@@ -110,8 +114,11 @@ int main(void)
       CMesher_Cad2D mesher;
       mesher.edge_length = 0.05;
       mesher.Meshing(dmsh, cad);
+      shdr_dmsh.MakeBuffer(dmsh.aVec2, dmsh.aETri);
     }
   }
+  
+  shdr_cad.is_show_face = false;
   
   nav.camera.view_height = 1.5;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;

@@ -18,9 +18,10 @@
 #include "delfem2/paramgeo_v23.h"
 
 #include "delfem2/gl_v23.h"
+#include "delfem2/gl2_funcs.h"
 #include "delfem2/gl24_camera.h"
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------
 
 // should be inside cam2
 int ipoint_picked;
@@ -36,7 +37,7 @@ std::vector<CVector2> aCtrlPoint;
 const int nsmpl = 100;
 std::vector<CVector2> polyline0; // current test
 
-///////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------
 
 void SetExample
 (int ndeg, int ncp)
@@ -190,13 +191,12 @@ int main(int argc,char* argv[])
   glutMouseFunc(myGlutMouse);
   glutKeyboardFunc(myGlutKeyboard);
   
-  ////////////////////////
-  
+  // -----------
   
   SetExample(3,6);
   SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
   
-  ////////////////////////
+  // -----------
   
   glutMainLoop();
   return 0;
