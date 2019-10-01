@@ -407,10 +407,7 @@ bool FlipEdge
   const int no0_1 = ied1;
   const int no1_1 = (ied1+1)%3; //noelTriEdge[ied1][0];
   const int no2_1 = (ied1+2)%3; //noelTriEdge[ied1][1];
-  
-  if(old0.s2[no1_0]==old1.s2[no2_1]) return false; // inverted mesh
-  if(old0.s2[no2_0]==old1.s2[no1_1]) return false; // inverted mesh
-  
+
   assert(old0.v[no1_0]==old1.v[no2_1]);
   assert(old0.v[no2_0]==old1.v[no1_1]);
   
@@ -421,10 +418,10 @@ bool FlipEdge
   
   {
     ETri& ref_tri = aTri[itri0];
-    ////////////////
+    // -------------------
     ref_tri.v[0] = old0.v[no1_0];  ref_tri.v[1] = old1.v[no0_1];  ref_tri.v[2] = old0.v[no0_0];
     ref_tri.s2[0] = itri1;      ref_tri.s2[1] = old0.s2[no2_0];  ref_tri.s2[2] = old1.s2[no1_1];
-    ////////////////
+    // -------------------
     ref_tri.r2[0] = 0;
     if (old0.s2[no2_0]>=0){
       assert(old0.r2[no2_0] < 3);
@@ -450,10 +447,10 @@ bool FlipEdge
   
   {
     ETri& ref_tri = aTri[itri1];
-    ////////////////
+    // -------------------------
     ref_tri.v[0] = old1.v[no1_1];  ref_tri.v[1] = old0.v[no0_0];  ref_tri.v[2] = old1.v[no0_1];
     ref_tri.s2[0] = itri0;      ref_tri.s2[1] = old1.s2[no2_1];  ref_tri.s2[2] = old0.s2[no1_0];
-    ////////////////
+    // -----------------
     ref_tri.r2[0] = 0;
     if (old1.s2[no2_1]>=0){
       assert(old1.r2[no2_1] < 3);
@@ -474,9 +471,9 @@ bool FlipEdge
       aTri[old0.s2[no1_0]].r2[rel[no1_0]] = invRelTriTri[ref_tri.r2[2]];
     }
   }
-  
   return true;
 }
+
 
 bool FindEdge_LookAroundPoint
 (int& itri0, int& inotri0, int& inotri1,

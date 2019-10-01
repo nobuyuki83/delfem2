@@ -145,7 +145,6 @@ void CCad2D::AddPolygon(const std::vector<double>& aXY)
   for(int ip=0;ip<np;++ip){
     aVtx.push_back(CVector2(aXY[ip*2+0], aXY[ip*2+1]));
   }
-  ////
 //  const unsigned int iedge0 = aEdge.size();
 //  const unsigned int iface0 = aFace.size();
   for(int ie=0;ie<np;++ie){
@@ -169,7 +168,6 @@ void CCad2D::AddFace(const std::vector<CCad2D_EdgeGeo>& aEdgeIn)
     aEdge.push_back(aEdgeIn[ie]);
   }
   aFace.push_back(CCad2D_FaceGeo());
-  ////
   assert( this->Check() );
   Tessellation();
 }
@@ -645,7 +643,7 @@ void CCad2D::Tessellation()
   }
 }
 
-/////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------------------
 
 
 

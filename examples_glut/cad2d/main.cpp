@@ -139,17 +139,22 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         std::string path_svg;
         if( istep == 5 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape0.svg"; }
         if( istep == 6 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
-        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
+//        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
+        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/../private_examples/metallophone/10_E6.svg"; }
+//        if( istep == 7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/../private_examples/metallophone/1_C5.svg"; }
         //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg";
         //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape3.svg";
         std::vector<CCad2D_EdgeGeo> aEdge;
         LoopEdgeCCad2D_ReadSVG(aEdge,
                                path_svg);
-        Transform_LoopEdgeCad2D(aEdge,false,true,0.1);
+        Transform_LoopEdgeCad2D(aEdge,false,true,1.0);
+        if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
+        aEdge = RemoveEdgeWithZeroLength(aEdge);
         for(int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
         std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
         cad.Clear();
         cad.AddFace(aEdge);
+        std::cout << "hoge" << std::endl;
       }
       { // set camera
         CBoundingBox2D bb = cad.BB();
