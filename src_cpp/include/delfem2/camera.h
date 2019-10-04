@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file camera class that define projection and model-view transformation.
+ * @details this file should be stand alone
+ */
 
 #ifndef CAMERA_GL_H
 #define CAMERA_GL_H
@@ -67,12 +71,15 @@ public:
     Quat_tball[2]=0;
     Quat_tball[3]=0;
   }
+  
   // -----------------------
   // cost methods from here
+  
   void Affine4f_Projection(float mP[16], double asp, double depth) const;
   void Affine4f_ModelView(float mMV[16]) const;
   
   // ------------------------
+  
   void Scale(double s);
   void Rot_Camera(double dx, double dy);
   void Pan_Camera(double dx, double dy);

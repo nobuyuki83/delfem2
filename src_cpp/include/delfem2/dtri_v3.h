@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DYNTRI_V3_H
-#define DYNTRI_V3_H
+#ifndef DTRI_V3_H
+#define DTRI_V3_H
 
 #include <map>
 #include <algorithm>
@@ -34,11 +34,10 @@ bool DelaunayAroundPoint(int ipo0,
                          std::vector<ETri>& aTri,
                          const std::vector<CVector3>& aVec3);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------
 
-
-
-class CMeshDynTri3D{
+class CMeshDynTri3D
+{
 public:
   void Initialize(const double* aPo, int nPo, int ndim,
                   const unsigned int* aTri, int nTri)

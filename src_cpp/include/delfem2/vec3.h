@@ -48,6 +48,7 @@ void Mat4Vec3(double vo[3],
               const double M[16], const double vi[3]);
 
 // -------------------------------------------------------------
+
 class CVector3;
 double Dot(const CVector3 &arg1, const CVector3 &arg2);
 CVector3 Cross(const CVector3& arg1, const CVector3& arg2);

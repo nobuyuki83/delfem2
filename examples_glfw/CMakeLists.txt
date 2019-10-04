@@ -12,3 +12,5 @@ add_subdirectory(11_imgui_basic)
 add_subdirectory(20_cad2d)
 
 add_subdirectory(30_cadmsh2d)
+
+add_subdirectory(40_femcloth)

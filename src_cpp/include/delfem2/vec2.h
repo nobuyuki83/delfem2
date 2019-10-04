@@ -303,6 +303,7 @@ public:
   
   // -------------------------
   // const functions from here
+  
   bool isActive() const { return x_min <= x_max; }
   bool IsIntersectSphere(const CVector2& vec, const double radius ) const
   {
@@ -325,6 +326,7 @@ public:
   
   // -------------------------------
   // non const functions from here
+  
   void Add(double x0, double y0){
     if( !isActive() ){
       x_min = x_max = x0;

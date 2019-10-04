@@ -347,7 +347,7 @@ void CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-    ////////////////
+    // ----------------------------
     T pTmpVec[2];
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
@@ -373,7 +373,7 @@ void CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-    ////////////////
+    // --------------------
     T pTmpVec[3];
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
@@ -572,7 +572,7 @@ void CPreconditionerILU<T>::Initialize_ILUk
       if (knz_cur==-1) break;
     }
     
-    ////////////////////
+    // -------------------------------------
     
     {
       aRowLev.resize(mat.colInd[iblk]+listNonzero.size());

@@ -195,7 +195,7 @@ void CMatrixSparse<T>::SetBoundaryCondition
       }
     }
   }
-  /////
+  // -------------
   for(unsigned int icrs=0;icrs<rowPtr.size();icrs++){ // set column
     const int jblk1 = rowPtr[icrs];
     for(unsigned int jlen=0;jlen<len_row;jlen++){
@@ -258,7 +258,7 @@ bool CMatrixSparse<T>::Mearge
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------
 
 
 double CheckSymmetry(const CMatrixSparse<double>& mat);

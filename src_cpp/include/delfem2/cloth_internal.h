@@ -1,16 +1,15 @@
-#ifndef solve_internal_eigen_h
-#define solve_internal_eigen_h
+#ifndef CLOTH_INTERNAL_H
+#define CLOTH_INTERNAL_H
 
 #include "delfem2/mats.h"
-
-#include "delfem2/ilu_mats.h"
 #include "delfem2/emat.h"
 
+#include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
-
-
-// compute total energy and its first and second derivatives
+/**
+ * @brief compute total energy and its first and second derivatives
+ */
 void AddWdW_Cloth
 (double& W, // (out) energy
  std::vector<double>& dW, // (out) first derivative of energy
@@ -62,14 +61,19 @@ void AddWdW_Cloth
   }
 }
 
-// compute total energy and its first and second derivatives
+
+/**
+ * @brief compute total energy and its first and second derivatives
+ * @param dW first derivative of energy
+ * @param aXYZ deformed vertex positions
+ * @param gravity gravitational accerelation in xyz directions stored in a native array
+ * @param mass_point mass of a point
+ */
 double AddWdW_Gravity
-(std::vector<double>& dW, // (out) first derivative of energy
- ////
- const std::vector<double>& aXYZ, // (in) deformed vertex positions，現在の頂点の座標配列
- const double gravity[3], // (in) gravitational accerelation，重力加速度
- double mass_point // (in) mass of a point，頂点の質量
- )
+(std::vector<double>& dW,
+ const std::vector<double>& aXYZ,
+ const double gravity[3],
+ double mass_point)
 {
   double W = 0;
   for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
@@ -83,8 +87,7 @@ double AddWdW_Gravity
 }
 
 void StepTime_InternalDynamics
-(
- std::vector<double>& aXYZ, // (in,out) deformed vertex positions
+(std::vector<double>& aXYZ, // (in,out) deformed vertex positions
  std::vector<double>& aUVW, // (in,out) deformed vertex velocity
  CMatrixSparse<double>& mat_A,
  ////
@@ -154,8 +157,7 @@ void StepTime_InternalDynamics
 }
 
 void StepTime_InternalDynamicsILU
-(
- std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
+(std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
  std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
  CMatrixSparse<double>& mat_A,
  CPreconditionerILU<double>& ilu_A,
@@ -270,6 +272,80 @@ void UpdateIntermidiateVelocity
     aUVW[ip*3+0] += -(0.5*dt/mass_point)*dW[ip*3+0];
     aUVW[ip*3+1] += -(0.5*dt/mass_point)*dW[ip*3+1];
     aUVW[ip*3+2] += -(0.5*dt/mass_point)*dW[ip*3+2];
+  }
+}
+
+
+// Setting problem here
+void SetClothShape_Square
+(std::vector<double>& aXYZ0, // (out) undeformed vertex positions
+ std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)
+ std::vector<unsigned int>& aTri, // (out) index of triangles
+ std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending
+ ///
+ int ndiv, // (in) number of division of the square cloth edge
+ double cloth_size) // (in) size of square cloth
+{
+  // make vertex potision array
+  const double elem_length = cloth_size/ndiv; // size of an element
+  const int nxyz =(ndiv+1)*(ndiv+1); // number of points
+  aXYZ0.reserve( nxyz*3 );
+  for(int ix=0;ix<ndiv+1;ix++){
+    for(int iy=0;iy<ndiv+1;iy++){
+      aXYZ0.push_back( ix*elem_length );
+      aXYZ0.push_back( iy*elem_length );
+      aXYZ0.push_back( 0.0 );
+    }
+  }
+  
+  // make triangle index array
+  const int ntri = ndiv*ndiv*2;
+  aTri.reserve( ntri*3 );
+  for(int ix=0;ix<ndiv;ix++){
+    for(int iy=0;iy<ndiv;iy++){
+      aTri.push_back(  ix   *(ndiv+1)+ iy    );
+      aTri.push_back( (ix+1)*(ndiv+1)+ iy    );
+      aTri.push_back(  ix   *(ndiv+1)+(iy+1) );
+      ////
+      aTri.push_back( (ix+1)*(ndiv+1)+(iy+1) );
+      aTri.push_back(  ix   *(ndiv+1)+(iy+1) );
+      aTri.push_back( (ix+1)*(ndiv+1)+ iy    );
+    }
+  }
+  
+  // make quad index array
+  const int nquad = ndiv*ndiv + ndiv*(ndiv-1)*2;
+  aQuad.reserve( nquad*4 );
+  for(int ix=0;ix<ndiv;ix++){
+    for(int iy=0;iy<ndiv;iy++){
+      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+0) );
+      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+1) );
+      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+0) );
+      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+1) );
+    }
+  }
+  for(int ix=0;ix<ndiv;ix++){
+    for(int iy=0;iy<ndiv-1;iy++){
+      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+0) );
+      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+2) );
+      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+1) );
+      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+1) );
+    }
+  }
+  for(int ix=0;ix<ndiv-1;ix++){
+    for(int iy=0;iy<ndiv;iy++){
+      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+1) );
+      aQuad.push_back( (ix+2)*(ndiv+1)+(iy+0) );
+      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+0) );
+      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+1) );
+    }
+  }
+  
+  aBCFlag = std::vector<int>(nxyz*3,0);
+  for(int iy=0;iy<ndiv+1;iy++){
+    aBCFlag[iy*3+0] = 1;
+    aBCFlag[iy*3+1] = 1;
+    aBCFlag[iy*3+2] = 1;
   }
 }
 

@@ -2,11 +2,10 @@
 #include <vector>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
-
 
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
@@ -22,83 +21,6 @@
 #include "../glut_funcs.h"
 
 /* ------------------------------------------------------------------------ */
-
-// Setting problem here
-void SetClothShape_Square
-(std::vector<double>& aXYZ0, // (out) undeformed vertex positions
- std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)
- std::vector<unsigned int>& aTri, // (out) index of triangles
- std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending
- double& total_area, // (out) total area of cloth
- ///
- int ndiv, // (in) number of division of the square cloth edge
- double cloth_size) // (in) size of square cloth
-{
-  // make vertex potision array
-  const double elem_length = cloth_size/ndiv; // size of an element
-  const int nxyz =(ndiv+1)*(ndiv+1); // number of points
-  aXYZ0.reserve( nxyz*3 );
-  for(int ix=0;ix<ndiv+1;ix++){
-    for(int iy=0;iy<ndiv+1;iy++){
-      aXYZ0.push_back( ix*elem_length );
-      aXYZ0.push_back( iy*elem_length );
-      aXYZ0.push_back( 0.0 );
-    }
-  }
-  
-  // make triangle index array
-  const int ntri = ndiv*ndiv*2;
-  aTri.reserve( ntri*3 );
-  for(int ix=0;ix<ndiv;ix++){
-    for(int iy=0;iy<ndiv;iy++){
-      aTri.push_back(  ix   *(ndiv+1)+ iy    );
-      aTri.push_back( (ix+1)*(ndiv+1)+ iy    );      
-      aTri.push_back(  ix   *(ndiv+1)+(iy+1) );
-      ////
-      aTri.push_back( (ix+1)*(ndiv+1)+(iy+1) );
-      aTri.push_back(  ix   *(ndiv+1)+(iy+1) );
-      aTri.push_back( (ix+1)*(ndiv+1)+ iy    );
-    }
-  }
-  
-  // make quad index array
-  const int nquad = ndiv*ndiv + ndiv*(ndiv-1)*2;
-  aQuad.reserve( nquad*4 );
-  for(int ix=0;ix<ndiv;ix++){
-    for(int iy=0;iy<ndiv;iy++){
-      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+0) );
-      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+1) );
-      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+0) );
-      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+1) );
-    }
-  }
-  for(int ix=0;ix<ndiv;ix++){
-    for(int iy=0;iy<ndiv-1;iy++){
-      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+0) );
-      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+2) );
-      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+1) );
-      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+1) );
-    }
-  }
-  for(int ix=0;ix<ndiv-1;ix++){
-    for(int iy=0;iy<ndiv;iy++){
-      aQuad.push_back( (ix+0)*(ndiv+1)+(iy+1) );
-      aQuad.push_back( (ix+2)*(ndiv+1)+(iy+0) );
-      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+0) );
-      aQuad.push_back( (ix+1)*(ndiv+1)+(iy+1) );
-    }
-  }
-  
-  total_area = cloth_size*cloth_size;
-  
-  aBCFlag = std::vector<int>(nxyz*3,0);
-  for(int iy=0;iy<ndiv+1;iy++){
-    aBCFlag[iy*3+0] = 1;
-    aBCFlag[iy*3+1] = 1;
-    aBCFlag[iy*3+2] = 1;
-  }
-}
-
 
 
 class CInput_ContactNothing: public CInput_Contact
@@ -143,6 +65,7 @@ class CInput_ContactSphere: public CInput_Contact
 
 /* ------------------------------------------------------------------------ */
 // input parameter for simulation
+
 const int ndiv = 25;  // (in) number of division of the square cloth edge
 const double cloth_size = 1; // square cloth 1m x 1m
 std::vector<double> aXYZ0; // undeformed vertex positions
@@ -166,12 +89,10 @@ double mass_point; // mass for a point
 CMatrixSparse<double> mat_A; // coefficient matrix
 CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
 
-//std::vector<double> aNormal; // deformed vertex noamals
-
-// data for camera
 bool is_animation;
 CNav3D_GLUT nav;
 int imode_draw = 0;
+
 /* ------------------------------------------------------------------------ */
 
 
@@ -347,10 +268,10 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 int main(int argc,char* argv[])
 {
   { // initialze data
-    double total_area;
-    SetClothShape_Square(aXYZ0,aBCFlag,aTri,aQuad,total_area,
+    SetClothShape_Square(aXYZ0,aBCFlag,aTri,aQuad,
                          ndiv,cloth_size);
     const int np = aXYZ0.size()/3.0;
+    double total_area = cloth_size*cloth_size;
     mass_point = total_area*areal_density / (double)np;
     // initialize deformation
     aXYZ = aXYZ0;
@@ -361,7 +282,8 @@ int main(int argc,char* argv[])
     JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                 aQuad.data(),aQuad.size()/4, 4, np);
     JArray_Sort(psup_ind, psup);
-    mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
+    mat_A.SetPattern(psup_ind.data(),psup_ind.size(),
+                     psup.data(),psup.size());
     ilu_A.Initialize_ILU0(mat_A);
   }
   
@@ -381,7 +303,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // -----------------------------
   
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   setSomeLighting();
