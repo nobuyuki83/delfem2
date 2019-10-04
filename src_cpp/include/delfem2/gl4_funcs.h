@@ -40,18 +40,20 @@ public:
   CGL4_VAO_Mesh(){
     VAO = 0;
     VBO_pos = 0;
+    VBO_nrm = 0;
   }
   void Draw(unsigned int iel) const;
   void Delete_EBOs(){
     for(int ie=0;ie<aElem.size();++ie){
        unsigned int ebo = aElem[ie].EBO;
-       if( glIsBuffer(ebo) ){ glad_glDeleteBuffers(1,&ebo); }
+       if( glIsBuffer(ebo) ){ glDeleteBuffers(1,&ebo); }
      }
      aElem.clear();
   }
 public:
   unsigned int VAO;
   unsigned int VBO_pos;
+  unsigned int VBO_nrm;
   std::vector<CElem> aElem;
 };
 
@@ -78,6 +80,8 @@ const std::string glsl33frag =
 "{\n"
 "  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
 "}\n\0";
+
+
 
 #endif /* utility_glew_h */
 

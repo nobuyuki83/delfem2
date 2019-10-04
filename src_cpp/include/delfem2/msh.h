@@ -15,7 +15,7 @@
 
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////
+// -----------------
 // work on points
 
 void updateMinMaxXYZ(double& x_min, double& x_max,
@@ -62,7 +62,7 @@ void MinMaxXYZ(double mm[6],
                const std::vector<double>& aXYZ);
 
 
-//////////////////////
+// ------------------------------------------
 
 /**
  * @brief rotate with the Bryant angle (XYZ order) around origin.
@@ -84,7 +84,7 @@ double Size(const std::vector<double>& aXYZ);
 void Normalize(std::vector<double>& aXYZ,
                double s = 1.0);
 
-////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------
 
 void CenterOfGravity(double& cgx, double& cgy, double& cgz,
                      const std::vector<double>& aXYZ);
@@ -109,9 +109,7 @@ void CenterOfGravity_Tet(double& v_tot,
                          const std::vector<int>& aTetC);
 
 
-////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------------
 
 void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZOut,
                                        std::vector<unsigned int>& aElemOut,
@@ -126,7 +124,7 @@ void Quality_MeshTri2D(double& max_aspect, double& min_area,
                        const double* aXY,
                        const unsigned int* aTri, int nTri);
 
-///////////////////////////////////////////////////////////////////////////////
+// ----------------------
 // set primitive mesh
 
 void SetTopology_ExtrudeTri2Tet(unsigned int* aTet,
@@ -139,7 +137,7 @@ void ExtrudeTri2Tet(int nlayer, double h,
                     const std::vector<double>& aXY,
                     const std::vector<unsigned int>& aTri);
 
-//////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------
 // considering moving these file to other locations
 
 void makeSolidAngle(std::vector<double>& aSolidAngle,
@@ -164,13 +162,14 @@ void MassPoint_Tet3D(double* aMassMatrixLumped,
 
 /**
  * @brief Compute mass of the points (lumped mass) for 2D triangle mesh
- * @details aMassMatrixLumped need to be allocated before in the size of nXY
- * this is here because both "fem" and "pbd" use this function
+ * @param[out] aMassMatrixLumped this need to be allocated before in the size of nXY
+ * @details this is here because both "fem" and "pbd" use this function
  */
 void MassPoint_Tri2D(double* aMassMatrixLumped,
-                      double rho,
-                      const double* aXY, int nXY,
-                      const unsigned int* aTri, int nTri);
+                     //
+                     double rho,
+                     const double* aXY, int nXY,
+                     const unsigned int* aTri, int nTri);
 
 
 void LaplacianSmoothing(std::vector<double>& aXYZ,
@@ -178,9 +177,10 @@ void LaplacianSmoothing(std::vector<double>& aXYZ,
                         const std::vector<int>& elsup_ind,
                         const std::vector<int> elsup);
 
-//////////////////////////////////////////////////////////////
+// ---------------------------------------------------------
+
 void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
-                                        ///
+                                        //
                                         const std::vector<unsigned int>& aQuad1,
                                         const std::vector<int>& aEdgeFace0,
                                         const std::vector<int>& psupIndQuad0,
@@ -188,7 +188,7 @@ void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         const unsigned int* aQuad0, int nQuad0,
                                         const double* aXYZ0, int nXYZ0);
 void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
-                            ///
+                            //
                             const std::vector<int>& aQuad1,
                             const std::vector<int>& aEdgeFace0,
                             const std::vector<int>& psupIndQuad0,
@@ -197,17 +197,12 @@ void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
                             const std::vector<double>& aXYZ0);
 
 void SubdivisionPoints_Hex(std::vector<double>& aXYZ1,
-                           ///
+                           //
                            const std::vector<int>& psupHex0,
                            const std::vector<int>& psupIndHex0,
                            const std::vector<unsigned int>& aQuadHex0,
                            const unsigned int* aHex0, int nHex0,
                            const double* aXYZ0, int nXYZ0);
-
-//////////////////////////////////////////////////////////////
-// raw mesh functions
-
-
 
 
 #endif

@@ -23,16 +23,17 @@ public:
 };
 
 // make BVH topology
-int BVH_MakeTreeTopology
-(std::vector<CNodeBVH>& aNodeBVH,
- const int nfael,
- const std::vector<int>& aElemSur,
- const std::vector<double>& aElemCenter);
+int BVH_MakeTreeTopology(std::vector<CNodeBVH>& aNodeBVH,
+                         const int nfael,
+                         const std::vector<int>& aElemSur,
+                         const std::vector<double>& aElemCenter);
 
-///////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------------------
 // following is the template function to define bounding volume
 
-// build Bounding Box for AABB
+/**
+ * @brief build Bounding Box for AABB
+ */
 template <typename T>
 void BVH_BuildBVHGeometry
 (int ibvh,
@@ -149,13 +150,13 @@ void BuildBoundingBoxesBVH_Dynamic
   return;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------
 
 
 template <typename T>
 void BVH_GetIndElem_IncludePoint
 (std::vector<int>& aIndElem,
- /////
+ //
  double px, double py, double pz,
  int ibvh,
  const std::vector<CNodeBVH>& aBVH,
@@ -168,7 +169,6 @@ void BVH_GetIndElem_IncludePoint
     aIndElem.push_back(ichild0);
     return;
   }
-  /////
   BVH_GetIndElem_IncludePoint(aIndElem, px,py,pz, ichild0,  aBVH,aBB);
   BVH_GetIndElem_IncludePoint(aIndElem, px,py,pz, ichild1,  aBVH,aBB);
 }
@@ -255,7 +255,6 @@ void BVH_GetIndElem_IntersectRay
     aIndElem.push_back(ichild0);
     return;
   }
-  /////
   BVH_GetIndElem_IntersectRay(aIndElem, src,dir, ichild0,aBVH,aBB);
   BVH_GetIndElem_IntersectRay(aIndElem, src,dir, ichild1,aBVH,aBB);
 }
@@ -280,7 +279,6 @@ void BVH_GetIndElem_IntersectLine
     aIndElem.push_back(ichild0);
     return;
   }
-  /////
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild0,aBVH,aBB);
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild1,aBVH,aBB);
 }

@@ -59,9 +59,7 @@ CMatrix3 operator/ (const CMatrix3& m, double d);
 std::ostream &operator<<(std::ostream &output, const CMatrix3& m);
 std::istream &operator>>(std::istream &output, CMatrix3& m);
 
-static bool myIsNAN_Matrix3(double d){
-  return !(d > d-1);
-}
+static bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
 
 /**
  * @brief class of 3x3 matrix
@@ -76,7 +74,7 @@ public:
            double v20, double v21, double v22);
   CMatrix3(double x, double y, double z);
   CMatrix3(const double m[9]);
-  ////////
+  // ---------------
   void GetElements(double m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
   void AffineMatrixTrans(double m[16]) const {
     m[0*4+0] = mat[0];  m[1*4+0] = mat[1];  m[2*4+0] = mat[2];  m[3*4+0] = 0;
@@ -87,14 +85,14 @@ public:
   double Get(int i, int j) const {
     return mat[i*3+j];
   }
-  ///////////////////////////////////////////////
+  // ---------------
 //  CVector3 MatVec(const CVector3& vec0) const;
   void MatVec(const double vec0[], double vec1[]) const;
   void MatVecTrans(const double vec0[], double vec1[]) const;
 //  CVector3 MatVecTrans(const CVector3& vec0) const;
   CMatrix3 MatMat(const CMatrix3& mat0) const;
   CMatrix3 MatMatTrans(const CMatrix3& mat0) const;
-  /////
+  // ----------------
   CMatrix3 Sym() const{
     CMatrix3 m;
     for(unsigned int i=0;i<3;i++){
@@ -129,36 +127,24 @@ public:
   inline double& operator()(int i, int j){
     return this->mat[i*3+j];
   }
-  /////
-  /*
-  CVector3 getColumnVector(int j) const {
-    return CVector3(mat[0*3+j], mat[1*3+j], mat[2*3+j]);
-  }
-   */
+  // -------------------------
   CMatrix3 Inverse() const;
-  /////
+  // -------------------------
   void SetInverse();
-//  void SetDiag(const CVector3& d);
   void SetSymetric(const double sm[6]);
   void SetZero();
   void SetRandom();
-//  void SetRotMatrix_Cartesian(const CVector3& v);
   void SetRotMatrix_Cartesian(const double vec[]);
   void SetRotMatrix_Cartesian(double x, double y, double z);
   void SetRotMatrix_Rodrigues(const double vec[]);
   void SetRotMatrix_CRV(const double crv[]);
   void SetRotMatrix_Quaternion(const double quat[]);
   void SetRotMatrix_BryantAngle(double rx, double ry, double rz);
-//  void SetSpinTensor(const CVector3& vec0);
-//  void SetOuterProduct(const CVector3& vec0, const CVector3& vec1 );
-//  void SetProjection(const CVector3& vec0);
   void SetIdentity(double scale = 1);
-  /////
-//  CVector3 GetCartesianRotationVector() const;
-//  CVector3 GetSpinVector()const;
+  // ------------------------
   void GetCRV_RotMatrix(double crv[]) const;
   void GetQuat_RotMatrix(double quat[]) const;
-  ///////
+  // ------------------------
   CMatrix3 Trans() const {
     CMatrix3 m;
     m.mat[0] = mat[0]; m.mat[1] = mat[3]; m.mat[2] = mat[6];

@@ -6,8 +6,8 @@
  */
 
 
-#ifndef MATH_EXPRESSION_EVALUATOR_H
-#define MATH_EXPRESSION_EVALUATOR_H
+#ifndef EVALMATHEXP_H
+#define EVALMATHEXP_H
 
 #include <iostream>
 #include <string>
@@ -31,7 +31,7 @@ public:
 	CMathExpressionEvaluator(const std::string& exp){ this->SetExp(exp); }
 	~CMathExpressionEvaluator();
 
-	////////////////
+	// --------------------
 	bool SetExp(const std::string& key_name);
 	void SetKey(const std::string& key_name, double val);
 	bool IsKeyUsed(const std::string& key_name){
@@ -51,4 +51,4 @@ private:
 	std::vector<CKey> m_aKey;	// 文字列の名前と値が，どのIndexのコマンドに格納されているか
 };
 
-#endif	// !defind MATH_EXPRESSION_EVALUATOR_H
+#endif	// !defind EVALMATHEXP

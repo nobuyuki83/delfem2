@@ -10,9 +10,14 @@
 
 #include <complex>
 
-// derivative of a shape function of a triangle and constant compornent
-void TriDlDx(double dldx[][2], double const_term[],
-             const double p0[], const double p1[], const double p2[]);
+/**
+ * @brief derivative of a shape function of a triangle and constant compornent
+ */
+void TriDlDx(double dldx[3][2],
+             double const_term[3],
+             const double p0[2],
+             const double p1[2],
+             const double p2[2]);
 
 void ddW_MassConsistentVal3D_Tet3D(double* eMmat,
                                    double rho, double vol,
@@ -25,7 +30,7 @@ void ddW_SolidLinear_Tet3D(double* eKmat,
                            bool is_add,
                            unsigned int nstride = 3);
 
-/////////////////////////////
+// -------------------------------------------------------------------
 
 // -[\alpha]\nabla^2[value] = [source]
 void EMat_Poisson_Tri2D(double eres[3],
@@ -101,13 +106,20 @@ void MakeMat_NavierStokes2D_Dynamic_P1(double myu, double rho, double g_x, doubl
                                        double emat[3][3][3][3],
                                        double eres[3][3]);
 
-// compute energy and its 1st and 2nd derivative for cloth bending
-void WdWddW_Bend(double& W,  // (out) strain energy
-                 double dW[4][3], // (out) 1st derivative of energy
-                 double ddW[4][4][3][3], // (out) 2nd derivative of energy
+/**
+ * @brief compute energy and its 1st and 2nd derivative for cloth bending
+ * @param[out] W strain energy
+ * @param[out] dW 1st derivative of energy
+ * @param[out] ddW 2nd derivative of energy
+ * @param[in] C undeformed quad vertex positions
+ * @param[in] c deformed quad vertex positions
+ */
+void WdWddW_Bend(double& W,
+                 double dW[4][3],
+                 double ddW[4][4][3][3],
                  ////
-                 const double C[4][3], // (in) undeformed triangle vertex positions
-                 const double c[4][3], // (in) deformed triangle vertex positions
+                 const double C[4][3],
+                 const double c[4][3],
                  double stiff);
 
 void WdWddW_CST(double& W, // (out) energy
@@ -119,7 +131,10 @@ void WdWddW_CST(double& W, // (out) energy
                 const double lambda, // (in) Lame's 1st parameter
                 const double myu);   // (in) Lame's 2nd parameter
 
-// compute energy and its 1st and 2nd derivative for contact against object
+
+/**
+ * @brief compute energy and its 1st and 2nd derivative for contact against object
+ */
 class CInput_Contact
 {
 public:
@@ -137,7 +152,7 @@ void WdWddW_Contact(double& W,  // (out) energy
                     const CInput_Contact& input);
 
 
-//////////////////////////////
+// --------------------------------------------------------------------------
 
 void EMat_Poisson_Tet3D(double eres[4],
                         double emat[][4],
