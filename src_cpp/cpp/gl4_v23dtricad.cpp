@@ -117,8 +117,8 @@ void AddPoint
 void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
 {
   {
-    vao_face.aElem.clear();
-    vao_edge.aElem.clear();
+    vao_face.aEBO.clear();
+    vao_edge.aEBO.clear();
   }
   
   std::vector<float> aXY0f;
@@ -128,25 +128,32 @@ void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
   { // triangles for faces
     if( !glIsVertexArray(vao_face.VAO) ){ glGenVertexArrays(1, &vao_face.VAO); }
     glBindVertexArray(vao_face.VAO);
-    if( !glIsBuffer(vao_face.VBO_pos) ){ glGenBuffers(1, &vao_face.VBO_pos); }
-    glBindBuffer(GL_ARRAY_BUFFER, vao_face.VBO_pos); // gl24
     
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
+    vao_face.ADD_VBO(0,aXY0f);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+    /*
+    {
+      if( !glIsBuffer(vao_face.VBO_pos) ){ glGenBuffers(1, &vao_face.VBO_pos); }
+      glBindBuffer(GL_ARRAY_BUFFER, vao_face.VBO_pos); // gl24
+      glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
+      glEnableVertexAttribArray(0);
+      glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+    }
+     */
 
     vao_face.Delete_EBOs();
-    ///
-    unsigned int EBO_Tri;
-    glGenBuffers(1, &EBO_Tri);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
-  
-    CGL4_VAO_Mesh::CElem e0;
-    e0.size = aTri.size();
-    e0.GL_MODE = GL_TRIANGLES;
-    e0.EBO = EBO_Tri;
-    vao_face.aElem.push_back(e0);
+    {
+      unsigned int EBO_Tri;
+      glGenBuffers(1, &EBO_Tri);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
+      CGL4_VAO_Mesh::CEBO e0;
+      e0.size = aTri.size();
+      e0.GL_MODE = GL_TRIANGLES;
+      e0.EBO = EBO_Tri;
+      vao_face.aEBO.push_back(e0);
+    }
   }
   { // point and edges
     std::vector<float> aPxyNxyf;
@@ -163,15 +170,19 @@ void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
     }
     if( !glIsVertexArray(vao_edge.VAO) ){ glGenVertexArrays(1, &vao_edge.VAO); }
     glBindVertexArray(vao_edge.VAO);
-    if( !glIsBuffer(vao_edge.VBO_pos) ){ glGenBuffers(1, &vao_edge.VBO_pos); }
-    glBindBuffer(GL_ARRAY_BUFFER, vao_edge.VBO_pos); // gl24
     
-    glBindBuffer(GL_ARRAY_BUFFER, vao_edge.VBO_pos); // gl24
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aPxyNxyf.size(), aPxyNxyf.data(), GL_STATIC_DRAW); // gl24
+    vao_edge.ADD_VBO(0,aPxyNxyf);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)0); // gl24
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float))); // gl24
     glEnableVertexAttribArray(1);
+    /*
+    {
+      if( !glIsBuffer(vao_edge.VBO_pos) ){ glGenBuffers(1, &vao_edge.VBO_pos); }
+      glBindBuffer(GL_ARRAY_BUFFER, vao_edge.VBO_pos); // gl24
+      glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aPxyNxyf.size(), aPxyNxyf.data(), GL_STATIC_DRAW); // gl24
+    }
+     */
     ///
     vao_edge.Delete_EBOs();
     for(int il=0;il<aaTri.size();++il){
@@ -179,11 +190,11 @@ void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
       glGenBuffers(1, &EBO_Tri);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aaTri[il].size(), aaTri[il].data(), GL_STATIC_DRAW);
-      CGL4_VAO_Mesh::CElem e0;
+      CGL4_VAO_Mesh::CEBO e0;
       e0.size = aaTri[il].size();
       e0.GL_MODE = GL_TRIANGLES;
       e0.EBO = EBO_Tri;
-      vao_edge.aElem.push_back(e0);
+      vao_edge.aEBO.push_back(e0);
     }
   }
 }
@@ -306,13 +317,12 @@ void CShader_Cad2D::Draw
   glUniformMatrix4fv(shdr1_Loc_MatrixProjection, 1, GL_FALSE, mP);
   glUniformMatrix4fv(shdr1_Loc_MatrixModelView, 1, GL_FALSE, mMV);
   
-  assert( vao_edge.aElem.size() == cad.aVtx.size()+cad.aEdge.size() );
+  assert( vao_edge.aEBO.size() == cad.aVtx.size()+cad.aEdge.size() );
   
   const int ipicked_iv = cad.ivtx_picked;
   const int ipicked_ie = cad.iedge_picked;
-  const int ipicked_elem = cad.ipicked_elem;
-  
-  
+//  const int ipicked_elem = cad.ipicked_elem;
+    
   const double view_height = 1.0/mP[5];
   const int nv = cad.aVtx.size();
   /////
@@ -330,6 +340,9 @@ void CShader_Cad2D::Draw
     vao_edge.Draw(nv+ie);
   }
 }
+
+
+
 
 
 
@@ -368,10 +381,8 @@ void CShader_MeshDTri2D::MakeBuffer
   // ----------
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
   glBindVertexArray(vao.VAO);
-  if( !glIsBuffer(vao.VBO_pos) ){ glGenBuffers(1, &vao.VBO_pos); }
-  glBindBuffer(GL_ARRAY_BUFFER, vao.VBO_pos); // gl24
-    
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXYf.size(), aXYf.data(), GL_STATIC_DRAW); // gl24
+  
+  vao.ADD_VBO(0,aXYf);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
 
@@ -381,22 +392,22 @@ void CShader_MeshDTri2D::MakeBuffer
     glGenBuffers(1, &EBO_Tri);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW);
-    CGL4_VAO_Mesh::CElem e0;
+    CGL4_VAO_Mesh::CEBO e0;
     e0.size = aTri.size();
     e0.GL_MODE = GL_TRIANGLES;
     e0.EBO = EBO_Tri;
-    vao.aElem.push_back(e0);
+    vao.aEBO.push_back(e0);
   }
   {
     unsigned int EBO_Line;
     glGenBuffers(1, &EBO_Line);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW);
-    CGL4_VAO_Mesh::CElem e0;
+    CGL4_VAO_Mesh::CEBO e0;
     e0.size = aLine.size();
     e0.GL_MODE = GL_LINES;
     e0.EBO = EBO_Line;
-    vao.aElem.push_back(e0);
+    vao.aEBO.push_back(e0);
   }
 }
 

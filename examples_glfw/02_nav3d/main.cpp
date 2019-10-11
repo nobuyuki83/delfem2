@@ -151,18 +151,18 @@ int main(void)
       std::cout << "VAO: " << VAO << std::endl;
       vao_face.VAO = VAO;
       {
-        CGL4_VAO_Mesh::CElem e0;
+        CGL4_VAO_Mesh::CEBO e0;
         e0.EBO = EBO_Tri;
         e0.GL_MODE = GL_TRIANGLES;
         e0.size = aTri.size();
-        vao_face.aElem.push_back(e0);
+        vao_face.aEBO.push_back(e0);
       }
       {
-        CGL4_VAO_Mesh::CElem e0;
+        CGL4_VAO_Mesh::CEBO e0;
         e0.EBO = EBO_Line;
         e0.GL_MODE = GL_LINES;
         e0.size = aLine.size();
-        vao_face.aElem.push_back(e0);
+        vao_face.aEBO.push_back(e0);
       }
     }
   }

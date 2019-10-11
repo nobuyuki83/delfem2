@@ -29,7 +29,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/msh.h           ${DELFEM2_SRC}/msh.cpp
   ${DELFEM2_INC}/dtri.h          ${DELFEM2_SRC}/dtri.cpp
   ${DELFEM2_INC}/camera.h        ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/bv.h                                                
+  ${DELFEM2_INC}/bv.h
 
   ${DELFEM2_INC}/v23m3q.h        ${DELFEM2_SRC}/v23m3q.cpp
   ${DELFEM2_INC}/paramgeo_v23.h  ${DELFEM2_SRC}/paramgeo_v23.cpp

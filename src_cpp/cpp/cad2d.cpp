@@ -22,7 +22,7 @@
 
 #include "delfem2/cad2d.h"
 
-////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------
 
 static double myStod(const std::string& str){
   char* e;
@@ -30,7 +30,7 @@ static double myStod(const std::string& str){
   return d;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------
 
 void CCad2D::Pick(double x0, double y0,
                   double view_height)
@@ -293,7 +293,7 @@ std::vector<std::pair<int,bool> > CCad2D::Ind_Edge_Face(int iface) const
   return aIdE;
 }
 
-///////////////////////////////////////////////////////////
+// ----------------------------------------------
 
 // for visualization
 void CCad2D_EdgeGeo::GenMesh

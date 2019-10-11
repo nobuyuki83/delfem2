@@ -20,7 +20,7 @@
 
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
-#include "delfem2/gl4_msh.h"
+#include "delfem2/gl4_mshcolor.h"
 #include "../glfw_funcs.h"
 
 
@@ -209,8 +209,7 @@ int main(void)
   }
   
   shdr_trimsh.Compile();
-  shdr_trimsh.Initialize(aXYZ, aTri);
-  
+  shdr_trimsh.Initialize(aXYZ, aTri);  
   
   nav.camera.view_height = 1.5;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;

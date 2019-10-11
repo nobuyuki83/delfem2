@@ -234,10 +234,27 @@ void StepTime_InternalDynamicsILU
 }
 
 
+
+
+/**
+ * @brief Update intermediate velocity for cloth
+ * @param aUVW  (in,out) deformed vertex velocity
+ * @param aXYZ (in,out) deformed vertex position
+ * @param aXYZ0 (in) initial vertex positions
+ * @param aBCFlag (in) boundary condition flag (0:free else:fixed)
+ * @param aTri (in) triangle index
+ * @param aQuad (in) index of 4 vertices required for bending
+ * @param dt (in) size of time step
+ * @param lambda (in) Lame's 1st parameter
+ * @param myu (in) Lame's 2nd parameter
+ * @param stiff_bend (in) bending stiffness
+ * @param gravity (in) gravitatinal accereration
+ * @param mass_point  (in) mass for a point
+ */
 void UpdateIntermidiateVelocity
-(std::vector<double>& aUVW, // (in,out) deformed vertex velocity
+(std::vector<double>& aUVW,
  ////
- const std::vector<double>& aXYZ, // (in,out) deformed vertex positions
+ const std::vector<double>& aXYZ, // (in,out)
  const std::vector<double>& aXYZ0,// (in) initial vertex positions
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free else:fixed)
  const std::vector<unsigned int>& aTri, // (in) triangle index
@@ -250,8 +267,9 @@ void UpdateIntermidiateVelocity
  double mass_point // (in) mass for a point
  )
 {
-  const int np = (int)aXYZ.size()/3; // number of point
-  const int nDof = np*3; // degree of freedom
+  const unsigned int np = aXYZ.size()/3; // number of point
+  const unsigned int nDof = np*3; // degree of freedom
+  
   // compute total energy and its first and second derivatives
   double W = 0;
   std::vector<double> dW(nDof,0);
@@ -262,7 +280,7 @@ void UpdateIntermidiateVelocity
   W += AddWdW_Gravity(dW,
                       aXYZ,
                       gravity,mass_point);
-  for(int ip=0;ip<np;ip++){
+  for(unsigned int ip=0;ip<np;ip++){
     if( aBCFlag[ip] == 0 ) continue;
     aUVW[ip*3+0] = 0;
     aUVW[ip*3+1] = 0;
@@ -282,7 +300,7 @@ void SetClothShape_Square
  std::vector<int>& aBCFlag, // (out) boundary condition flag (0:free 1:fixed)
  std::vector<unsigned int>& aTri, // (out) index of triangles
  std::vector<unsigned int>& aQuad, // (out) index of 4 vertices required for bending
- ///
+ // ---------------------
  int ndiv, // (in) number of division of the square cloth edge
  double cloth_size) // (in) size of square cloth
 {

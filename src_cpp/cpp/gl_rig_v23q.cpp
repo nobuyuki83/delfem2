@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include <set>
 #include <map>
 #include <cassert>
@@ -32,8 +31,8 @@
 #include "delfem2/rig_v3q.h"
 
 #include "delfem2/gl2_funcs.h"
+#include "delfem2/gl2_color.h"
 #include "delfem2/gl_tex.h"
-#include "delfem2/gl_color.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_rig_v23q.h"
 
@@ -42,7 +41,7 @@
 #define M_PI 3.1415926535
 #endif
 
-///////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------
 
 void Draw_RigBone
 (int ibone,

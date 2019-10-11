@@ -84,12 +84,22 @@ void GL4_VAO_PosNrm
 
 
 void CGL4_VAO_Mesh::Draw(unsigned int iel) const {
-  if( iel >= aElem.size() ){ assert(0); return; }
+  if( iel >= aEBO.size() ){ assert(0); return; }
   glBindVertexArray(VAO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aElem[iel].EBO);
-  glDrawElements(aElem[iel].GL_MODE,
-                 aElem[iel].size,
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aEBO[iel].EBO);
+  glDrawElements(aEBO[iel].GL_MODE,
+                 aEBO[iel].size,
                  GL_UNSIGNED_INT,
                  0);
 }
 
+
+void CGL4_VAO_Mesh::ADD_VBO
+(unsigned int ivbo,
+ const std::vector<float>& aXY0f)
+{
+  if( ivbo >= aVBO.size() ){ aVBO.resize(ivbo+1); }
+  if( !glIsBuffer(aVBO[ivbo].VBO) ){ glGenBuffers(1, &aVBO[ivbo].VBO); }
+  glBindBuffer(GL_ARRAY_BUFFER, aVBO[ivbo].VBO); // gl24
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
+}

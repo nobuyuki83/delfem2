@@ -23,7 +23,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
 
-///////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------
 
 void MergeLinSys_Poission_MeshTri2D(CMatrixSparse<double>& mat_A,
                                     double* vec_b,
