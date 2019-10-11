@@ -240,7 +240,7 @@ void CShader_TriMesh_Scalar::Compile()
   "void main()\n"
   "{\n"
   "  float r01 = (val-val_min)/(val_max-val_min);\n"
-  "  vec3 clr01 = (1-r01)*color0 + r01*color1;\n"
+  "  vec3 clr01 = (1.f-r01)*color0 + r01*color1;\n"
   "  FragColor = vec4(clr01.x, clr01.y, clr01.z, 1.0f);\n"
   "}\n\0";
   
