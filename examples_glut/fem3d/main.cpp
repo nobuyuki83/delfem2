@@ -26,7 +26,7 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
-#include "delfem2/gl_color.h"
+#include "delfem2/gl2_color.h"
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl2_funcs.h"
 

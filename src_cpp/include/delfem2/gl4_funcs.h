@@ -30,31 +30,42 @@ void GL4_VAO_PosNrm(unsigned int& VAO,
 class CGL4_VAO_Mesh
 {
 public:
-  class CElem{
+  class CEBO{
   public:
     int GL_MODE;
     unsigned int size;
     int EBO;
   };
+  class CVBO{
+  public:
+    CVBO(){ VBO = 0; }
+  public:
+    unsigned int VBO;
+  };
 public:
   CGL4_VAO_Mesh(){
     VAO = 0;
-    VBO_pos = 0;
-    VBO_nrm = 0;
   }
   void Draw(unsigned int iel) const;
+  // ----
+  void ADD_VBO(unsigned int ivbo,
+               const std::vector<float>& aF);
+  void ADD_VBO(unsigned int ivbo,
+               const std::vector<double>& aD){
+    std::vector<float> aF(aD.begin(),aD.end());
+    this->ADD_VBO(ivbo, aF);
+  }
   void Delete_EBOs(){
-    for(int ie=0;ie<aElem.size();++ie){
-       unsigned int ebo = aElem[ie].EBO;
+    for(int ie=0;ie<aEBO.size();++ie){
+       unsigned int ebo = aEBO[ie].EBO;
        if( glIsBuffer(ebo) ){ glDeleteBuffers(1,&ebo); }
      }
-     aElem.clear();
+     aEBO.clear();
   }
 public:
   unsigned int VAO;
-  unsigned int VBO_pos;
-  unsigned int VBO_nrm;
-  std::vector<CElem> aElem;
+  std::vector<CEBO> aEBO;
+  std::vector<CVBO> aVBO;
 };
 
 

@@ -14,12 +14,13 @@
 #include "delfem2/msh.h"
 #include "delfem2/dtri.h"
 #include "delfem2/mats.h"
+#include "delfem2/color.h"
 
 #include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
-#include "delfem2/gl_color.h"
+#include "delfem2/gl2_color.h"
 #include "delfem2/gl2_funcs.h"
 
 #include "../glut_funcs.h"

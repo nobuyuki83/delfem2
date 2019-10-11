@@ -1,30 +1,41 @@
-project(40_femcloth)
+project(41_fem2d_poisson)
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+if(MSVC)
+set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
+else()
+set( CMAKE_CXX_FLAGS "-Wall  -Wno-deprecated-declarations -std=c++11" )
+endif()
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+include_directories(
+  ${OPENGL_INCLUDE_DIR}
+  ${GLUT_INCLUDE_DIR}
+  ${DELFEM2_INCLUDE_DIR}
+)
+
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/msh.h            ${DELFEM2_SRC}/msh.cpp
-  ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp
-  ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/emat.h           ${DELFEM2_SRC}/emat.cpp              
-  ${DELFEM2_INC}/mats.h           ${DELFEM2_SRC}/mats.cpp    
+  ${DELFEM2_INC}/vec2.h          ${DELFEM2_SRC}/vec2.cpp              
+  ${DELFEM2_INC}/msh.h           ${DELFEM2_SRC}/msh.cpp              
+  ${DELFEM2_INC}/mshtopo.h       ${DELFEM2_SRC}/mshtopo.cpp        
+  ${DELFEM2_INC}/dtri.h          ${DELFEM2_SRC}/dtri.cpp         
+  ${DELFEM2_INC}/mats.h          ${DELFEM2_SRC}/mats.cpp    
+  ${DELFEM2_INC}/emat.h          ${DELFEM2_SRC}/emat.cpp     
+  ${DELFEM2_INC}/camera.h        ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/color.h         ${DELFEM2_SRC}/color.cpp
 
-  ${DELFEM2_INC}/ilu_mats.h       ${DELFEM2_SRC}/ilu_mats.cpp              
-  ${DELFEM2_INC}/fem_emats.h      ${DELFEM2_SRC}/fem_emats.cpp
-  ${DELFEM2_INC}/cloth_internal.h
+  ${DELFEM2_INC}/dtri_v2.h       ${DELFEM2_SRC}/dtri_v2.cpp
+  ${DELFEM2_INC}/ilu_mats.h      ${DELFEM2_SRC}/ilu_mats.cpp       
+  ${DELFEM2_INC}/fem_emats.h     ${DELFEM2_SRC}/fem_emats.cpp                      
 
-  ${DELFEM2_INC}/gl24_funcs.h     ${DELFEM2_SRC}/gl24_funcs.cpp
-  ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
-  ${DELFEM2_INC}/gl4_mshcolor.h      ${DELFEM2_SRC}/gl4_mshcolor.cpp
+  ${DELFEM2_INC}/gl24_funcs.h    ${DELFEM2_SRC}/gl24_funcs.cpp
+  ${DELFEM2_INC}/gl4_funcs.h     ${DELFEM2_SRC}/gl4_funcs.cpp
+  ${DELFEM2_INC}/gl4_mshcolor.h       ${DELFEM2_SRC}/gl4_mshcolor.cpp
 
   ../glad4/include/glad/glad.h   ../glad4/src/glad.c
   ../glfw_funcs.h

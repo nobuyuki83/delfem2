@@ -9,17 +9,18 @@
 #include <cstdlib>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
+  #include <OpenGL/gl.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/gl.h>
+  #include <GL/gl.h>
 #elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
+  #include <windows.h>
+  #include <GL/gl.h>
 #else
-#include <GL/gl.h>
+  #include <GL/gl.h>
 #endif
 
-#include "delfem2/gl_color.h"
+#include "delfem2/color.h"
+#include "delfem2/gl2_color.h"
 
 static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
 {
@@ -31,29 +32,12 @@ static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], cons
   n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
 }
 
-/*
-// probably std::stroi is safer to use but it is only for C++11
-static int myStoi(const std::string& str){
-  char* e;
-  long d = std::strtol(str.c_str(),&e,0);
-  return (int)d;
-}
-
-static double myStof(const std::string& str){
-  char* e;
-  float fval = std::strtof(str.c_str(),&e);
-  return fval;
-}
- */
-
 inline void myGlVertex3d(int i, const std::vector<double>& aV)
 {
   glVertex3d(aV[i*3+0],aV[i*3+1],aV[i*3+2]);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+// -----------------------------------------------------------------
 
 void myGlMaterialDiffuse(const CColor& color){
   float c[4];
@@ -79,57 +63,6 @@ void myGlDiffuse(const CColor& color){
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-void CColor::glColor() const {
-  ::glColor4d(r, g, b, a);
-}
-
-void CColor::glMaterialDiffuse() const {
-  float cf[4] = {r,g,b,a};
-  ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cf);
-}
-
-void GetRGB_HSV
-(float&r, float& g, float& b,
- float h, float s, float v)
-{
-  r = v;
-  g = v;
-  b = v;
-  if (s > 0.0f) {
-    h *= 6.0f;
-    const int i = (int) h;
-    const float f = h - (float) i;
-    switch (i) {
-      default:
-      case 0:
-        g *= 1 - s * (1 - f);
-        b *= 1 - s;
-        break;
-      case 1:
-        r *= 1 - s * f;
-        b *= 1 - s;
-        break;
-      case 2:
-        r *= 1 - s;
-        b *= 1 - s * (1 - f);
-        break;
-      case 3:
-        r *= 1 - s;
-        g *= 1 - s * f;
-        break;
-      case 4:
-        r *= 1 - s * (1 - f);
-        g *= 1 - s;
-        break;
-      case 5:
-        g *= 1 - s;
-        b *= 1 - s * f;
-        break;
-    }
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
 void DrawBackground(const CColor& c)
 {
   glPushAttrib(GL_TRANSFORM_BIT|GL_CURRENT_BIT|GL_ENABLE_BIT);
@@ -174,50 +107,7 @@ void DrawBackground()
   DrawBackground( CColor(0.5, 0.5, 0.5) );
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-void interpolateColor
-(CColor& Cout, float r, const CColor& C0, const CColor& C1)
-{
-  Cout.r = (1-r)*C0.r+r*C1.r;
-  Cout.g = (1-r)*C0.g+r*C1.g;
-  Cout.b = (1-r)*C0.b+r*C1.b;
-  Cout.a = (1-r)*C0.a+r*C1.a;
-}
-
-void heatmap(double input,double* color)
-{
-  if(0 <=input&&input <=0.25){
-    color[0] = 0.0;
-    color[1] = input*4.0;
-    color[2] = 1.0;
-  }
-  else if(0.25<input && input <=0.5){
-    color[0] = 0.0;
-    color[1] = 1.0;
-    color[2] = 2.0-input*4.0;
-  }
-  else if(0.5<input && input <=0.75){
-    color[0] = input*4 -2.0;
-    color[1] = 1.0;
-    color[2] = 0.0;
-  }
-  else if(0.75<input&& input <=1.0){
-    color[0] = 1.0;
-    color[1] = 4.0 -input*4.0;
-    color[2] = 0.0;
-  }
-  else if(1.0<input){
-    color[0] = 1.0;
-    color[1] = 0.0;
-    color[2] = 0.0;
-  }
-  else{
-    color[0] = 0.0;
-    color[1] = 0.0;
-    color[2] = 1.0;
-  }
-}
+// ------------------------------------------------------------
 
 void heatmap_glColor(double input)
 {
@@ -232,64 +122,13 @@ void heatmap_glDiffuse(double input)
   glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,cf);
 }
 
-CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap)
-{
-  if (colorMap.size()==0) return CColor::Black();
-  if (input < colorMap[0].first){
-    return colorMap[0].second;
-  }
-  for (int ic = 0; ic<(int)colorMap.size()-1; ++ic){
-    double val0 = colorMap[ic].first;
-    double val1 = colorMap[ic+1].first;
-    if (val0<=input&&input<=val1){
-      float rp = (float)((input-val0)/(val1-val0));
-      CColor color;
-      interpolateColor(color, rp, colorMap[ic].second, colorMap[ic+1].second);
-      return color;
-    }
-  }
-  return colorMap[colorMap.size()-1].second;
-}
-
 void heatmap(double input, const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const CColor& c = getColor(input, colorMap);
   myGlColorDiffuse(c);
 }
 
-
-
-void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
-{
-  double diff = (max-min)*0.25;
-  colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, 1.0f))); // blue
-  colorMap.push_back(std::make_pair(min+diff*1, CColor(0.0f, 0.2f, 1.0f, 1.0f)));
-  colorMap.push_back(std::make_pair(min+diff*2, CColor(0.5f, 0.5f, 0.5f, 1.0f))); // gray
-  colorMap.push_back(std::make_pair(min+diff*3, CColor(1.0f, 0.2f, 0.0f, 1.0f)));
-  colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
-}
-
-void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
-{
-  double diff = (max-min)*0.25;
-  colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, alpha))); // blue
-  colorMap.push_back(std::make_pair(min+diff*1, CColor(0.0f, 1.0f, 1.0f, alpha))); // cyan
-  colorMap.push_back(std::make_pair(min+diff*2, CColor(0.0f, 1.0f, 0.0f, alpha))); // green
-  colorMap.push_back(std::make_pair(min+diff*3, CColor(1.0f, 1.0f, 0.0f, alpha))); // yellow
-  colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, alpha))); // red
-}
-
-void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
-{
-  double diff = (max-min)*0.25;
-  colorMap.push_back(std::make_pair(min+diff*0, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
-  colorMap.push_back(std::make_pair(min+diff*1, CColor(1.0f, 1.0f, 0.0f, 1.0f))); // yellow
-  colorMap.push_back(std::make_pair(min+diff*2, CColor(0.0f, 1.0f, 0.0f, 1.0f))); // green
-  colorMap.push_back(std::make_pair(min+diff*3, CColor(0.0f, 1.0f, 1.0f, 1.0f))); // cyan
-  colorMap.push_back(std::make_pair(min+diff*4, CColor(0.0f, 0.0f, 1.0f, 1.0f))); // blue
-}
-
-//////////////////////////
+// -------------------------------------------------------------
 
 void DrawMeshTri2D_ScalarP1
 (const double* aXY, int nXY,
@@ -669,7 +508,7 @@ void DrawMeshTet3D_Cut
     if( IsAbovePlane(p2, org, ncut) ) continue;
     if( IsAbovePlane(p3, org, ncut) ) continue;
     //    ::glColor3d(1,1,0);
-    aColor[itet].glColorDiffuse();
+    myGlColorDiffuse(aColor[itet]);
     ////
     double n[3], area;
     UnitNormalAreaTri3D(n, area, p0, p2, p1);
@@ -741,46 +580,4 @@ void DrawMeshTet3D_Cut
    */
   if( is_lighting ){ glEnable(GL_LIGHTING); }
 }
-
-
-
-/////////////
-
-void Write_Ply_Tri2DMesh_HeightColor
-(const std::string& fname,
- const std::vector<int>& aTri1,
- const std::vector<double>& aXY1,
- const std::vector<double>& aVal,
- std::vector< std::pair<double,CColor> >& colorMap)
-{
-  const int np = aXY1.size()/2;
-  const int ntri = aTri1.size()/3;
-  std::ofstream fout;
-  fout.open(fname.c_str(),std::ios::out);
-  fout << "ply" << std::endl;
-  fout << "format ascii 1.0" << std::endl;
-  fout << "element vertex " << np << std::endl;
-  fout << "property float x" << std::endl;
-  fout << "property float y" << std::endl;
-  fout << "property float z" << std::endl;
-  fout << "property uchar red" << std::endl;
-  fout << "property uchar green" << std::endl;
-  fout << "property uchar blue" << std::endl;
-  fout << "element face " << ntri << std::endl;
-  fout << "property list uchar int vertex_indices" << std::endl;
-  fout << "end_header" << std::endl;
-  for(int ip=0;ip<np;++ip){
-    double v = aVal[ip];
-    CColor c = getColor(v,colorMap);
-    int cr, cg, cb;
-    c.getRGBChar(cr,cg,cb);
-    fout << aXY1[ip*2+0] << " " << aXY1[ip*2+1] << " " << v << " ";
-    fout << cr << " " << cg << " " << cb << std::endl;
-  }
-  for(int itri=0;itri<ntri;++itri){
-    fout << "3 " << aTri1[itri*3+0] << " " << aTri1[itri*3+1] << " " << aTri1[itri*3+2] << std::endl;
-  }
-}
-
-/////////////
 

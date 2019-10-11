@@ -65,7 +65,7 @@ void MinMaxXYZ(double mm[6],
 // ------------------------------------------
 
 /**
- * @brief rotate with the Bryant angle (XYZ order) around origin.
+ * @brief rotate with the Bryant angle (in the  order of XYZ) around the origin.
  * @details the angles are in the radian.
  */
 void Rotate(std::vector<double>& aXYZ,
@@ -162,7 +162,7 @@ void MassPoint_Tet3D(double* aMassMatrixLumped,
 
 /**
  * @brief Compute mass of the points (lumped mass) for 2D triangle mesh
- * @param[out] aMassMatrixLumped this need to be allocated before in the size of nXY
+ * @param aMassMatrixLumped (out) this need to be allocated before in the size of nXY
  * @details this is here because both "fem" and "pbd" use this function
  */
 void MassPoint_Tri2D(double* aMassMatrixLumped,

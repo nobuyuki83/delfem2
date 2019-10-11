@@ -24,11 +24,12 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshio.h            ${DELFEM2_SRC}/mshio.cpp                
   ${DELFEM2_INC}/mshtopo.h          ${DELFEM2_SRC}/mshtopo.cpp                
   ${DELFEM2_INC}/vec3.h             ${DELFEM2_SRC}/vec3.cpp                
-  ${DELFEM2_INC}/camera.h           ${DELFEM2_SRC}/camera.cpp  
+  ${DELFEM2_INC}/camera.h           ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/color.h          ${DELFEM2_SRC}/color.cpp
   
   ${DELFEM2_INC}/dtet_v3.h          ${DELFEM2_SRC}/dtet_v3.cpp                
   
-  ${DELFEM2_INC}/gl_color.h         ${DELFEM2_SRC}/gl_color.cpp   
+  ${DELFEM2_INC}/gl2_color.h         ${DELFEM2_SRC}/gl2_color.cpp   
 
   main.cpp
 )

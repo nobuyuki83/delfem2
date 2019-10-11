@@ -21,7 +21,7 @@
 #include "delfem2/bvh.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 
-#include "delfem2/gl_color.h"
+#include "delfem2/gl2_color.h"
 #include "delfem2/gl2_funcs.h"
 
 #include "../glut_funcs.h"

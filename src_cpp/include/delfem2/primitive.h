@@ -42,8 +42,7 @@ void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<unsigned int>& aQ
                         double y_min, double y_max,
                         double z_min, double z_max);
 
-
-////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------------
 
 class CPlane: public CSDF3
 {

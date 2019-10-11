@@ -183,7 +183,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-    ////////////////
+    // -------------------------
     for(unsigned int iblk=0;iblk<nblk;iblk++){
       T lvec_i = vec[iblk];
       for(unsigned int ijcrs=colind[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
@@ -200,7 +200,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-    ////////////////
+    // ------------------------
     T pTmpVec[2];
     for(unsigned int iblk=0;iblk<nblk;iblk++){
       pTmpVec[0] = vec[iblk*2+0];
@@ -227,7 +227,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-    ////////////////
+    // -------------------------
     T pTmpVec[3];
     for(unsigned int iblk=0;iblk<nblk;iblk++){
       pTmpVec[0] = vec[iblk*3+0];
@@ -258,7 +258,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-    ////////////////
+    // ------------
     T pTmpVec[4];
     for (unsigned int iblk = 0; iblk<nblk; iblk++){
       pTmpVec[0] = vec[iblk*4+0];
@@ -330,7 +330,7 @@ void CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-    ////////////////
+    // -------------------------------
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
       T lvec_i = vec[iblk];
@@ -403,7 +403,7 @@ void CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-    ////////////////
+    // -----------------------------
     T pTmpVec[4];
     for (int iblk = nblk-1; iblk>=0; iblk--){
       assert((int)iblk < nblk);
@@ -602,7 +602,7 @@ void CPreconditionerILU<T>::Initialize_ILUk
   
   {
     const unsigned int ncrs = mat.rowPtr.size();
-    std::cout << aRowLev.size() << " " << ncrs << std::endl;
+//    std::cout << aRowLev.size() << " " << ncrs << std::endl;
     assert(aRowLev.size()==ncrs);
     mat.rowPtr.resize(ncrs);
     for (unsigned int icrs = 0; icrs<ncrs; ++icrs){
@@ -612,7 +612,7 @@ void CPreconditionerILU<T>::Initialize_ILUk
     mat.valCrs.resize(ncrs*blksize);
     assert(!mat.valDia.empty());
     mat.valDia = m.valDia;
-    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
+//    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
   }
   
 }

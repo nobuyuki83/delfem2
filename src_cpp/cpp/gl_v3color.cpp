@@ -17,7 +17,7 @@
 #include "delfem2/vec3.h"
 
 #include "delfem2/gl_v3color.h"
-#include "delfem2/gl_color.h"
+#include "delfem2/gl2_color.h"
 #include "delfem2/gl_v23.h"
 
 void DrawQuad_ScalarQ1
