@@ -10,10 +10,8 @@
 #include <math.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
-  #include <GL/glew.h>
   #include <GLUT/glut.h>
 #else
-  #include <GL/glew.h>
   #include <GL/glut.h>
 #endif
 
@@ -22,7 +20,7 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_tex.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 // -----------------------------
 
@@ -190,7 +188,12 @@ int main(int argc,char* argv[])
   
   
   // --------------
-  glewInit();
+  /*
+  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
+    printf("Something went wrong in loading OpenGL functions!\n");
+    exit(-1);
+  }
+   */
   
   std::cout<<"Vendor:"<<glGetString(GL_VENDOR)<<'\n';
   std::cout<<"GPU: "<<glGetString(GL_RENDERER)<<'\n';

@@ -8,12 +8,11 @@
 #include <iostream>
 #include <math.h>
 
+#include "glad/glad.h"
 #if defined(__APPLE__)
-#include <GL/glew.h>
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glew.h>
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/gl2ew_funcs.h" // compile using GLEW (-DUSE_GLEW)
@@ -22,7 +21,7 @@
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_gpusampler.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 // ------------------------------------------------------
 
@@ -162,14 +161,18 @@ int main(int argc,char* argv[])
 	glutKeyboardFunc(myGlutKeyboard);
 	glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // ---------------------------------
   
   nav.camera.view_height = 2.0;
+  
+  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
+    printf("Something went wrong in loading OpenGL functions!\n");
+    exit(-1);
+  }
   
   setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
-  glewInit();
   fbm.Init(512, 512, "4byte",true);
   
   int nres = 128;

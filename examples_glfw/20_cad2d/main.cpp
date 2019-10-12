@@ -19,7 +19,7 @@
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
 #include "delfem2/gl4_v23dtricad.h"
-#include "../glfw_funcs.h"
+#include "../glfw_cam.h"
 
 // end of header
 // -----------------------------------------------------

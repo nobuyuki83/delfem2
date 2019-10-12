@@ -8,11 +8,10 @@
 #include <iostream>
 #include <math.h>
 
+#include "glad/glad.h"
 #if defined(__APPLE__) && defined(__MACH__)
-  #include <GL/glew.h>
   #include <GLUT/glut.h>
 #else
-  #include <GL/glew.h>
   #include <GL/glut.h>
 #endif
 
@@ -24,7 +23,7 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl2_color.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 // -------------------------------
 
@@ -151,7 +150,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // ---------------------
   
   nav.camera.view_height = 1.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
@@ -167,7 +166,11 @@ int main(int argc,char* argv[])
   MeshLine_MeshElem(aLine,
                     aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
   
-  glewInit();
+  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
+    printf("Something went wrong in loading OpenGL functions!\n");
+    exit(-1);
+  }
+
   glbuff.SetBuffer_Vtx(aXYZ,3);
   glbuff.SetBuffer_Nrm(aNorm);
   

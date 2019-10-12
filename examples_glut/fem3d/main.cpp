@@ -30,10 +30,10 @@
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl2_funcs.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 
-/////////////////////////////////////////
+// ------------------------
 
 CNav3D_GLUT nav;
 
@@ -66,7 +66,7 @@ double dt_timestep = 0.01;
 double gamma_newmark = 1;
 double beta_newmark = 0.5;
 
-/////////////////////////////////////////////////////////////////////////////
+// ----------------------------
 
 void InitializeProblem_Poisson()
 {

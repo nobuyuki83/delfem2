@@ -32,13 +32,12 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_rig_v23q.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 #include "delfem2/../../external/tinygltf/tiny_gltf.h"
 #include "delfem2/../../external/io_gltf.h"
 
-
-////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 std::vector<CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
@@ -67,7 +66,7 @@ const double rad_explore = 0.1;
 CNav3D_GLUT nav;
 bool is_animation = false;
 
-//////////////////////////////////
+// ------------------------------------
 
 void StepTime()
 {

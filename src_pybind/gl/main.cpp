@@ -6,11 +6,11 @@
 #include <map>
 #include <deque>
 
+#include "glad/glad.h"
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GL/glew.h>
 #include <OpenGL/gl.h>
 #else
-#include <GL/glew.h>
+#include <GL/gl.h>
 #endif
 
 
@@ -27,7 +27,7 @@
 
 namespace py = pybind11;
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------
 
 void init_sampler(py::module &m);
 void init_texture(py::module &m);
@@ -170,6 +170,13 @@ void DrawField_Hedgehog
   }
 }
 
+void PyGLExtensionInit(){
+  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
+    printf("Something went wrong in loading OpenGL functions!\n");
+    exit(-1);
+  }
+}
+
 
 PYBIND11_MODULE(c_gl, m) {
   m.doc() = "pybind11 delfem2 binding";
@@ -199,7 +206,7 @@ PYBIND11_MODULE(c_gl, m) {
   // gl misc
   m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
   m.def("setup_glsl",       &setUpGLSL, "compile shader program");
-  m.def("glew_init",        &glewInit);
+  m.def("glew_init",        &PyGLExtensionInit);
   
   m.def("cppDrawSphere",      &DrawSphereAt );
   m.def("cppDrawSphere_Edge", &DrawSphere_Edge);

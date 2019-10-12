@@ -13,10 +13,8 @@
 #include <vector>
 
 #ifdef __APPLE__
-  #include <GL/glew.h>
   #include <GLUT/glut.h>
 #else
-  #include <GL/glew.h>
   #include <GL/glut.h>
 #endif
 
@@ -25,7 +23,7 @@
 #include "delfem2/gl2_color.h"
 #include "delfem2/gl2_funcs.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 // -----------------------------
 
@@ -226,7 +224,15 @@ int main(int argc,char* argv[])
   
   ComputePerlin();
   
-  glewInit();
+  /*
+  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
+    printf("Something went wrong in loading OpenGL functions!\n");
+    exit(-1);
+  }
+   */
+  
+  printf("OpenGL version supported by this platform (%s): \n",
+         glGetString(GL_VERSION));
   
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

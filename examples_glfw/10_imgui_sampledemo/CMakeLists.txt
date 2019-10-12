@@ -3,25 +3,27 @@ cmake_minimum_required(VERSION 2.8.12)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED CONFIG)
-find_package(GLEW REQUIRED)
 
 set(GLFW_DIR "../glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
-add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLEW)
-
+add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 set(IMGUI_DIR "../imgui")
+
+set(GLAD_INCLUDE_DIR "../glad4/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLEW_INCLUDE_DIR}    
   ${GLFW_DIR}/include
   ${IMGUI_DIR}
   ${IMGUI_DIR}/examples
+  ${GLAD_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
   main.cpp
+  
   ${IMGUI_DIR}/imgui.cpp  
   ${IMGUI_DIR}/imgui.h    
   ${IMGUI_DIR}/imgui_draw.cpp
@@ -31,19 +33,30 @@ add_executable(${PROJECT_NAME}
   ${IMGUI_DIR}/examples/imgui_impl_opengl3.h
   ${IMGUI_DIR}/examples/imgui_impl_glfw.cpp
   ${IMGUI_DIR}/examples/imgui_impl_glfw.h
+  
+  ../glad4/include/glad/glad.h    ../glad4/src/glad.c
 )
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
-  find_library( OpenGL_LIBRARY OpenGL )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
-  SET( EXTRA_LIBS ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY} )
+  target_link_libraries(${PROJECT_NAME}
+    ${OPENGL_LIBRARY}
+    ${GLEW_LIBRARY}
+    ${GLFW_DIR}/src/libglfw3.a
+    ${COCOA_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${COREVIDEO_LIBRARY}
+  )
 ELSEIF(UNIX)
-  SET( EXTRA_LIBS   -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp )
-ENDIF()
-
-if(MSVC)
+  target_link_libraries(${PROJECT_NAME}
+    ${OPENGL_LIBRARY}
+    ${GLEW_LIBRARY}
+    ${GLFW_DIR}/src/libglfw3.a
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+  )
+ELSEIF(MSVC)
   if(CMAKE_CL_64)
     target_link_libraries(${PROJECT_NAME} 
       ${OPENGL_LIBRARY}
@@ -57,11 +70,4 @@ if(MSVC)
       ${EXTRA_LIBS}
     )
   endif()
-else()
-  target_link_libraries(${PROJECT_NAME} 
-    ${OPENGL_LIBRARY}
-    ${GLEW_LIBRARY}  
-    ${GLFW_DIR}/src/libglfw3.a
-    ${EXTRA_LIBS}
-  )
-endif()
+ENDIF()

@@ -55,6 +55,8 @@ public:
     std::vector<float> aF(aD.begin(),aD.end());
     this->ADD_VBO(ivbo, aF);
   }
+  void Add_EBO(const std::vector<unsigned int>& aTri,
+               int GL_MODE);
   void Delete_EBOs(){
     for(int ie=0;ie<aEBO.size();++ie){
        unsigned int ebo = aEBO[ie].EBO;

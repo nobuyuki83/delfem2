@@ -20,7 +20,7 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl2_color.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 void MyGlVertex3dv(CVector3& p){
   ::glVertex3d(p.x, p.y, p.z);

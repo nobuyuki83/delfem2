@@ -10,7 +10,8 @@ else()
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -O2")
 endif()
 
-add_definitions(-DUSE_GLEW=1)
+set(GLAD_INCLUDE_DIR "../glad3/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
@@ -41,6 +42,8 @@ set(INPUT_SRC
 
   ${DELFEM2_INC}/gl_cad_dyntri_v23.h
   ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp
+  
+  ../glad3/include/glad/glad.h  ../glad3/src/glad.c
 
   py_sampler.cpp
   py_texture.cpp 
@@ -48,16 +51,14 @@ set(INPUT_SRC
 )
 
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
 
 set(INPUT_INCLUDE_DIR
   ${OPENGL_INCLUDE_DIR}
-  ${GLEW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  ${GLAD_INCLUDE_DIR}
 )
 set(INPUT_LIBRARY
   ${OPENGL_LIBRARY}
-  ${GLEW_LIBRARY}
 )
 
 include_directories( ${INPUT_INCLUDE_DIR} )

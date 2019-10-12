@@ -22,12 +22,12 @@
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_rig_v23q.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 #include "delfem2/../../external/io_gltf.h"
 
 
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------
 
 CNav3D_GLUT nav;
 std::vector<double> aXYZ0;

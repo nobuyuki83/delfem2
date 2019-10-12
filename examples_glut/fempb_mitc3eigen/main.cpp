@@ -20,7 +20,7 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl2_color.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 
 void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
@@ -78,7 +78,7 @@ void RemoveKernel(std::vector<double>& aTmp0,
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------
 
 // display data
 bool is_animation;

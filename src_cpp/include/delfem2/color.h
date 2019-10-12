@@ -6,7 +6,8 @@
  */
 
 /**
- * @details CColor class  without OpenGL dependency
+ * @brief CColor class
+ * @details this class does not have the OpenGL dependency
  */
 
 
@@ -121,16 +122,6 @@ public:
 
 void interpolateColor(CColor& Cout, float r, const CColor& C0, const CColor& C1);
 
-/*
-void myGlMaterialDiffuse(const CColor& color);
-void myGlColor(const CColor& c);
-void myGlColorDiffuse(const CColor& color);
-inline void myGlDiffuse(const CColor& color);
-
-void DrawBackground(const CColor& c);
-void DrawBackground();
- */
-
 void heatmap(double input,double* color);
 void heatmap_glColor(double input);
 void heatmap_glDiffuse(double input);
@@ -141,9 +132,12 @@ void heatmap_glDiffuse(double input);
 CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap);
 
 
-void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max);
-void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha=1);
-void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max);
+void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap,
+                             float min, float max);
+void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap,
+                                        float min, float max, float alpha=1);
+void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap,
+                                        float min, float max);
 
 class CColorMap
 {
@@ -160,63 +154,6 @@ public:
 public:
   std::vector< std::pair<double,CColor> > aColor;
 };
-
-// 0: no, 1:lighting, 2:no-lighting
-void DrawMeshTri3D_VtxColor(const std::vector<double>& aXYZ,
-                            const std::vector<int>& aTri,
-                            std::vector<CColor>& aColor);
-
-// 0: no, 1:lighting, 2:no-lighting
-void DrawMeshTri3DFlag_FaceNorm(const std::vector<double>& aXYZ,
-                            const std::vector<int>& aTri,
-                            const std::vector<int>& aIndGroup,
-                            std::vector< std::pair<int,CColor> >& aColor);
-
-void DrawMeshTri_ScalarP0(const std::vector<double>& aXYZ,
-                          const std::vector<unsigned int>& aTri,
-                          const std::vector<double>& aValSrf,
-                          const std::vector<std::pair<double, CColor> >& colorMap);
-
-void DrawMeshTri2D_ScalarP1(const double* aXY, int nXY,
-                            const unsigned int* aTri, int nTri,
-                            const double* aVal,
-                            int nstride,
-                          const std::vector< std::pair<double,CColor> >& colorMap);
-
-void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
-                            std::vector<double>& aXY,
-                            std::vector<double>& aVal,
-                            int nstride,
-                            int noffset,
-                            const std::vector< std::pair<double,CColor> >& colorMap);
-
-// 3D value -- vtx value
-void DrawMeshTri3D_ScalarP1(const double* aXYZ, int nXYZ,
-                            const unsigned int* aTri, int nTri,
-                            const double* aValSrf,
-                            const std::vector<std::pair<double, CColor> >& colorMap);
-void DrawMeshTri3D_ScalarP1(const std::vector<double>& aXYZ,
-                        const std::vector<unsigned int>& aTri,
-                        const double* aValSrf,
-                        const std::vector<std::pair<double, CColor> >& colorMap);
-
-// scalar value on 3D mesh (mixed elem).
-void DrawMeshElem3D_Scalar_Vtx(const std::vector<double>& aXYZ,
-                               const std::vector<unsigned int>& aElemInd,
-                               const std::vector<unsigned int>& aElem,
-                               const double* aValVtx,
-                               const std::vector<std::pair<double, CColor> >& colorMap);
-
-// 3D value
-void DrawMeshTet3D_ScalarP1(const double* aXYZ, int nXYZ,
-                            const unsigned int* aTet, int nTet,
-                            const double* aValSrf,
-                            const std::vector<std::pair<double, CColor> >& colorMap);
-
-void DrawMeshTet3D_Cut(const std::vector<double>& aXYZ,
-                       const std::vector<unsigned int>& aTet,
-                       const std::vector<CColor>& aColor,
-                       const double org[3], const double n[3]);
 
 // ---------------------------------------------------------------
 

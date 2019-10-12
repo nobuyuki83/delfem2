@@ -15,11 +15,9 @@
 
 #include "delfem2/gl4_funcs.h"
 #include "delfem2/gl24_funcs.h"
-#include "../glfw_funcs.h"
+#include "../glfw_cam.h"
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------
 
 int shaderProgram;
 unsigned int VAO;

@@ -27,7 +27,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/gl4_mshcolor.h      ${DELFEM2_SRC}/gl4_mshcolor.cpp
 
   ../glad4/include/glad/glad.h   ../glad4/src/glad.c
-  ../glfw_funcs.h
+  ../glfw_cam.h
 
   main.cpp
 )

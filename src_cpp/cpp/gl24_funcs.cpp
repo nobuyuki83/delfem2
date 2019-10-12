@@ -17,12 +17,24 @@
 #ifdef USE_GLEW
   #include <GL/glew.h>
 #else
-  #include <glad/glad.h>
+//  #include <glad/glad.h>
   #ifdef EMSCRIPTEN
     #include <emscripten/emscripten.h>
     #define GLFW_INCLUDE_ES3
   #endif
 #endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+#include <GL/gl.h>
+#elif defined(_WIN32) // windows
+#include <windows.h>
+#include <GL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
 
 #include "delfem2/gl24_funcs.h"
 

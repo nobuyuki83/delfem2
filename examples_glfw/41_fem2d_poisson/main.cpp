@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -27,7 +34,7 @@
 
 #include "delfem2/gl2_color.h"
 #include "delfem2/gl4_mshcolor.h"
-#include "../glfw_funcs.h"
+#include "../glfw_cam.h"
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {
@@ -344,8 +351,7 @@ int main(void)
   glfwSetScrollCallback(         window, callback_scroll);
   
   // glad: load all OpenGL function pointers
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
