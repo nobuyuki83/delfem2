@@ -7,35 +7,34 @@
 
 #include <stdio.h>
 
+#include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__)
-#include <GL/glew.h>
-//#include <OpenGL/glext.h>
-#include <OpenGL/gl.h>
+  #include <OpenGL/gl.h>
 #else
-#include <GL/glew.h>
+  #include <GL/gl.h>
 #endif
 
 #include "delfem2/gl2ew_funcs.h"
 
-
 void CFrameBufferManager::DeleteFrameBuffer(){
   if( id_framebuffer > 0 ){
-    glDeleteFramebuffers(1, &id_framebuffer);
+    glDeleteFramebuffers(1, &id_framebuffer); // gl3.0+
     id_framebuffer = 0;
   }
   if( id_depth_render_buffer > 0  ){
-    glDeleteRenderbuffersEXT(1, &id_depth_render_buffer);
+    glDeleteRenderbuffers(1, &id_depth_render_buffer);
     id_depth_render_buffer = 0;
   }
   if( id_color_render_buffer > 0  ){
-    glDeleteRenderbuffersEXT(1, &id_color_render_buffer);
+    glDeleteRenderbuffers(1, &id_color_render_buffer);
     id_color_render_buffer = 0;
   }
 }
 
-void CFrameBufferManager::Init(int width, int height,
-          std::string sFormatPixelColor,
-          bool isDepth)
+void CFrameBufferManager::Init
+ (int width, int height,
+  std::string sFormatPixelColor,
+  bool isDepth)
 {
   // glewInit() should be called beforehand
   this->sFormatPixelColor = sFormatPixelColor;
@@ -94,14 +93,7 @@ void CFrameBufferManager::End() const {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
-
-
-
-
-
-
-//////////////////////////////////////////////
+// -------------------------------------------------------------------
 
 void CElemBuffObj::SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type)
 {

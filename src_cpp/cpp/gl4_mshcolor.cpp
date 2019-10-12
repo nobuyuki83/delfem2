@@ -32,37 +32,12 @@ void CShader_TriMesh::Initialize
   MeshLine_MeshElem(aLine,
                     aTri.data(), aTri.size()/3, MESHELEM_TRI,
                     aXYZd.size()/3);
-  std::cout << "nXYZ: " << aXYZd.size()/3 << "  nTri: "  << aTri.size()/3 << std::endl;
-  ////
-  if( !glIsVertexArray(vao.VAO) ){
-    glGenVertexArrays(1, &vao.VAO); // opengl4
-  }
-  
+  // --------
+  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  vao.Delete_EBOs();
+  vao.Add_EBO(aTri,GL_TRIANGLES);
+  vao.Add_EBO(aLine,GL_LINES);
   this->UpdateVertex(aXYZd, aTri);
-  
-  {
-    unsigned int EBO_Tri;
-    glGenBuffers(1, &EBO_Tri);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri); // gl24
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW); // gl24
-    CGL4_VAO_Mesh::CEBO e0;
-    e0.EBO = EBO_Tri;
-    e0.GL_MODE = GL_TRIANGLES;
-    e0.size = aTri.size();
-    vao.aEBO.push_back(e0);
-  }
-  {
-    unsigned int EBO_Line;
-    glBindVertexArray(vao.VAO); // opengl4
-    glGenBuffers(1, &EBO_Line);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line); // gl24
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW); // gl24
-    CGL4_VAO_Mesh::CEBO e0;
-    e0.EBO = EBO_Line;
-    e0.GL_MODE = GL_LINES;
-    e0.size = aLine.size();
-    vao.aEBO.push_back(e0);
-  }
 }
 
 void CShader_TriMesh::UpdateVertex
@@ -131,9 +106,6 @@ void CShader_TriMesh::Compile()
   Loc_MatrixProjection = glGetUniformLocation(shaderProgram,  "matrixProjection");
   Loc_MatrixModelView  = glGetUniformLocation(shaderProgram,  "matrixModelView");
   Loc_Color            = glGetUniformLocation(shaderProgram,  "color");
-  std::cout << "   shaderProgram: " << shaderProgram;
-  std::cout << "   projectionMatrixLoc: " << Loc_MatrixProjection;
-  std::cout << "  LocColor: " << Loc_Color << std::endl;
 }
 
 
@@ -164,39 +136,12 @@ void CShader_TriMesh_Scalar::Initialize
   MeshLine_MeshElem(aLine,
                     aTri.data(), aTri.size()/3, MESHELEM_TRI,
                     aPosD.size()/ndim);
-  std::cout << "nXYZ: " << aPosD.size()/ndim << "  nTri: "  << aTri.size()/3 << std::endl;
-    ///
-  {
-    if( !glIsVertexArray(vao.VAO) ){
-      glGenVertexArrays(1, &vao.VAO); // opengl4
-    }
-    
-    this->UpdateVertex(aPosD, ndim, aValD);
-    
-    glBindVertexArray(vao.VAO); // opengl4
-    {
-      unsigned int EBO_Tri;
-      glGenBuffers(1, &EBO_Tri);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri); // gl24
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aTri.size(), aTri.data(), GL_STATIC_DRAW); // gl24
-      CGL4_VAO_Mesh::CEBO e0;
-      e0.EBO = EBO_Tri;
-      e0.GL_MODE = GL_TRIANGLES;
-      e0.size = aTri.size();
-      vao.aEBO.push_back(e0);
-    }
-    {
-      unsigned int EBO_Line;
-      glGenBuffers(1, &EBO_Line);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Line); // gl24
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aLine.size(), aLine.data(), GL_STATIC_DRAW); // gl24
-      CGL4_VAO_Mesh::CEBO e0;
-      e0.EBO = EBO_Line;
-      e0.GL_MODE = GL_LINES;
-      e0.size = aLine.size();
-      vao.aEBO.push_back(e0);
-    }
-  }
+  // ------
+  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  vao.Delete_EBOs();
+  vao.Add_EBO(aTri,GL_TRIANGLES);
+  vao.Add_EBO(aLine,GL_LINES);
+  this->UpdateVertex(aPosD, ndim, aValD);
 }
 
 void CShader_TriMesh_Scalar::UpdateVertex
@@ -204,8 +149,6 @@ void CShader_TriMesh_Scalar::UpdateVertex
  unsigned int ndim,
  std::vector<double>& aValD)
 {
-  glBindVertexArray(vao.VAO); // opengl4
-  
   vao.ADD_VBO(0,aPosD);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24

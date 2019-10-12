@@ -1,6 +1,7 @@
 
 git submodule update --init --recursive
-cd tests/googletest
+
+cd test_cpp/googletest
 mkdir buildMake
 cd buildMake
 cmake ..

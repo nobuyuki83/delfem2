@@ -5,19 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include <set>
 #include <algorithm>
 
 #include "delfem2/dtri_v2.h"
 
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-
+// --------------------------------------------------------
 
 bool CheckTri
 (const std::vector<CEPo2>& aPo3D,
@@ -43,7 +36,7 @@ bool CheckTri
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------
 
 bool FindEdgePoint_AcrossEdge
 (int& itri0, int& inotri0, int& inotri1, double& ratio,
@@ -200,7 +193,7 @@ bool DelaunayAroundPoint
   }
   if (!flag_is_wall) return true;
   
-  ////////////////////////////////
+  // ----------------------------
   // rotate counter clock-wise
   
   itri_cur = itri0;
@@ -1005,7 +998,7 @@ void Meshing_SingleConnectedShape2D
 }
 
 
-//////////////////////////////////////////
+// -----------------------------------------
 
 void CMeshTri2D
 (std::vector<double>& aXY,
@@ -1172,7 +1165,7 @@ void GenMesh
                      resolution_edge );
     }
   }
-  ////
+  // -----------------------
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( resolution_face > 1.0e-10 ){

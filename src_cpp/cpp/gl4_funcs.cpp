@@ -98,8 +98,30 @@ void CGL4_VAO_Mesh::ADD_VBO
 (unsigned int ivbo,
  const std::vector<float>& aXY0f)
 {
+  glBindVertexArray(this->VAO); // opengl4
+  assert( glIsVertexArray(this->VAO) );
+  // ----
   if( ivbo >= aVBO.size() ){ aVBO.resize(ivbo+1); }
   if( !glIsBuffer(aVBO[ivbo].VBO) ){ glGenBuffers(1, &aVBO[ivbo].VBO); }
   glBindBuffer(GL_ARRAY_BUFFER, aVBO[ivbo].VBO); // gl24
   glBufferData(GL_ARRAY_BUFFER, sizeof(float)*aXY0f.size(), aXY0f.data(), GL_STATIC_DRAW); // gl24
+}
+
+
+void CGL4_VAO_Mesh::Add_EBO
+ (const std::vector<unsigned int>& aElem,
+  int GL_MODE)
+{
+  glBindVertexArray(this->VAO); // opengl4
+  assert( glIsVertexArray(this->VAO) );
+  // -----
+  unsigned int EBO_Tri;
+  glGenBuffers(1, &EBO_Tri);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri); // gl24
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aElem.size(), aElem.data(), GL_STATIC_DRAW); // gl24
+  CGL4_VAO_Mesh::CEBO e0;
+  e0.EBO = EBO_Tri;
+  e0.GL_MODE = GL_MODE;
+  e0.size = aElem.size();
+  this->aEBO.push_back(e0);
 }

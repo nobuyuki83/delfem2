@@ -19,7 +19,7 @@
 #include "delfem2/gl_v23.h"
 #include "delfem2/gl_cad_dyntri_v23.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 #ifndef M_PI
   #define M_PI 3.141592653589793

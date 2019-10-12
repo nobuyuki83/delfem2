@@ -20,10 +20,10 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl2_color.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------
 
 // display data
 bool is_animation;
@@ -51,7 +51,7 @@ const double rho = 1.0;
 const double gravity_z = -10.0;
 
 
-///////////////////////////////////////////////////////////////
+// -------------------------
 
 void MakeMesh(){
   std::vector< std::vector<double> > aaXY;

@@ -21,7 +21,7 @@
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
 #include "delfem2/gl4_mshcolor.h"
-#include "../glfw_funcs.h"
+#include "../glfw_cam.h"
 
 
 class CInput_ContactNothing: public CInput_Contact
@@ -214,7 +214,6 @@ int main(void)
   nav.camera.view_height = 1.5;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
    
-  
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);
 #else

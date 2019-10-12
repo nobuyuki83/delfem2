@@ -24,9 +24,9 @@
 #include "delfem2/gl2_color.h"
 #include "delfem2/gl2_funcs.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
-//////////////////////////////////////////////////
+// -----------------------
 
 CADF3 adf;
 CNav3D_GLUT nav;
@@ -37,7 +37,7 @@ int imode_display = 0;
 std::vector<unsigned int> aTri;
 std::vector<double> aXYZ;
 
-/////////////////
+// ---------------
 
 void SetProblem()
 {

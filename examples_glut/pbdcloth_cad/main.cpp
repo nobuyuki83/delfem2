@@ -30,12 +30,10 @@
 #include "delfem2/gl_cad_dyntri_v23.h"
 #include "delfem2/gl2_funcs.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 
-
-
-////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------
 
 std::vector<CEPo2> aPo2D;
 std::vector<CVector2> aVec2;

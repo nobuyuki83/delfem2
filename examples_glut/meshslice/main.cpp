@@ -23,7 +23,7 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl2_color.h"
 
-#include "../glut_funcs.h"
+#include "../glut_cam.h"
 
 
 std::vector<double> aXYZ;
