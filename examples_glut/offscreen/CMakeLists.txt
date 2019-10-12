@@ -45,7 +45,15 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} 
-  ${GLUT_LIBRARY}
-  ${OPENGL_LIBRARY}
-)
+IF(UNIX)
+  target_link_libraries(${PROJECT_NAME}
+    ${GLUT_LIBRARY}
+    ${OPENGL_LIBRARY}
+    -ldl
+  )
+ELSE()
+  target_link_libraries(${PROJECT_NAME}
+    ${GLUT_LIBRARY}
+    ${OPENGL_LIBRARY}
+  )
+ENDIF()

@@ -2,12 +2,15 @@ project(glbuffer)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)
-  set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
+  set(CMAKE_CXX_FLAGS "/W4 -O2 -std=c++11 \
+      /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 \
+      /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 \
+      /wd4505 /wd4456")
 else()
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
 endif()
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
@@ -41,7 +44,15 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} 
-  ${GLUT_LIBRARY} 
-  ${OPENGL_LIBRARY}
-)
+IF(UNIX)
+  target_link_libraries(${PROJECT_NAME}
+    ${GLUT_LIBRARY}
+    ${OPENGL_LIBRARY}
+    -ldl
+  )
+ELSE()
+  target_link_libraries(${PROJECT_NAME}
+    ${GLUT_LIBRARY}
+    ${OPENGL_LIBRARY}
+  )
+ENDIF()
