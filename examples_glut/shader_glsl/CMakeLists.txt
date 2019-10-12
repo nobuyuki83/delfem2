@@ -13,11 +13,15 @@ set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
+set(GLAD_INCLUDE_DIR "../glad3/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
+
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
+  ${GLAD_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
 )
 
@@ -27,11 +31,14 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_SRC}/gl_tex.cpp      ${DELFEM2_INC}/gl_tex.h
   ${DELFEM2_SRC}/gl2_funcs.cpp   ${DELFEM2_INC}/gl2_funcs.h
   ${DELFEM2_SRC}/gl24_funcs.cpp  ${DELFEM2_INC}/gl24_funcs.h
+  
+  ../glad3/include/glad/glad.h      ../glad3/src/glad.c
 
   main.cpp  
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${GLUT_LIBRARY}
-  ${OPENGL_LIBRARY})
+  ${OPENGL_LIBRARY}
+)
 

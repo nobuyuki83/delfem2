@@ -7,7 +7,8 @@
 
 /**
  * @details the file depends on OpenGL 2.x and 4.x
- * compile with -USE_GLEW if you want to use "glew", otherwise it use glad
+ * this file need a function loader such as GLEW or GLAD.
+ * compile with -USE_GLEW if you want to use GLEW, otherwise it use GLAD
  */
 
 #ifndef GL24_FUNCS_H
