@@ -30,8 +30,8 @@ script: |
   git submodule init
   git submodule update
 
-###########
-# test cpp
+  # ----------------
+  # test cpp
   cd test_cpp/googletest
   cmake .
   make
@@ -46,8 +46,8 @@ script: |
   ./runUnitTests
   cd ../../
 
-###########################
-# build c++ glut examples
+  # --------------------------
+  # build c++ glut examples
   cd examples_glut
   mkdir buildMake
   cd buildMake
@@ -55,8 +55,8 @@ script: |
   make -i
   cd ../..
 
-###########################
-# build C++ glfw examples
+  # -------------------------
+  # build C++ glfw examples
   cd examples_glfw/glfw
   cmake .
   make
@@ -69,8 +69,8 @@ script: |
   make -i
   cd ../..
 
-############################
-# build python module
+  # ---------------------
+  # build python module
   pyenv versions
   pyenv global 3.7
   python --version  
@@ -99,7 +99,7 @@ script: |
   pip3 install --upgrade pip setuptools
   pip3 install -e .  
 
-###########################
-# test python module
+  # ----------------------
+  # test python module
   pip3 install pytest
   pytest -v -s --is_gl=false --ignore=test_py/test_pyqt.py
