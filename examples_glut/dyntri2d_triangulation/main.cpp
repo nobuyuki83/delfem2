@@ -11,7 +11,7 @@
 #endif
 
 #include "delfem2/dtri_v2.h"
-#include "delfem2/gl_cad_dyntri_v23.h"
+#include "delfem2/gl2_v23dtricad.h"
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {

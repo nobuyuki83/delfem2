@@ -19,7 +19,7 @@
 
 #include "delfem2/paramgeo_v23.h"
 
-#include "delfem2/gl_v23.h"
+#include "delfem2/gl2_v23.h"
 #include "delfem2/gl2_funcs.h"
 
 // ---------------------------------------------

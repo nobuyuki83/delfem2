@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -6,9 +13,9 @@
 #include <set>
 
 #ifdef __APPLE__
-#include <GLUT/glut.h>
+  #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+  #include <GL/glut.h>
 #endif
 
 #include "delfem2/vec3.h"
@@ -18,8 +25,8 @@
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/v23m3q.h"
 
+#include "delfem2/v23m3q.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
 #include "delfem2/v23m3q.h"
@@ -28,7 +35,7 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_v3q.h"
 
-#include "delfem2/gl_cad_dyntri_v23.h"
+#include "delfem2/gl2_v23dtricad.h"
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl_rig_v23q.h"
 
@@ -89,15 +96,13 @@ void StepTime()
 
 }
 
-//////////////////////////////////
+// ---------------------------------------
 
 void myGlutResize(int w, int h)
 {
   glViewport(0, 0, w, h);
   ::glutPostRedisplay();
 }
-
-
 
 void myGlutDisplay(void)
 {
@@ -221,7 +226,7 @@ int main(int argc,char* argv[])
   aETri = dmesh.aETri;
   aVec2 = dmesh.aVec2;
 
-  /////////
+  // -----------------------------
   const int np = aPo2D.size();
   aUVW.resize(np*3,0.0);
   aBCFlag.resize(np,0);

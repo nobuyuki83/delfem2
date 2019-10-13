@@ -22,7 +22,7 @@
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl2_color.h"
-#include "delfem2/gl_cad_dyntri_v23.h"
+#include "delfem2/gl2_v23dtricad.h"
 #include "delfem2/gl_voxbv.h"
 
 namespace py = pybind11;

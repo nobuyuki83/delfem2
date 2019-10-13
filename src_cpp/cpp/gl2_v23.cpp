@@ -24,7 +24,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 
-#include "delfem2/gl_v23.h"
+#include "delfem2/gl2_v23.h"
 
 //----------------------------------------------------
 
