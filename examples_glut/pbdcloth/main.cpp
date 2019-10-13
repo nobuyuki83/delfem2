@@ -20,7 +20,7 @@
 #include "delfem2/objfunc_v23dtri.h"
 #include "delfem2/dtri_v2.h"
 
-#include "delfem2/gl_cad_dyntri_v23.h"
+#include "delfem2/gl2_v23dtricad.h"
 #include "delfem2/gl2_funcs.h"
 
 #include "../glut_cam.h"

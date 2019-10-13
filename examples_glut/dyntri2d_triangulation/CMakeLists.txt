@@ -1,4 +1,4 @@
-project(dyntri2d_triangulation)
+project(dtri2d_triangulation)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)
@@ -20,15 +20,15 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                  ${DELFEM2_SRC}/vec2.cpp               
-  ${DELFEM2_INC}/vec3.h                  ${DELFEM2_SRC}/vec3.cpp               
-  ${DELFEM2_INC}/dtri.h                ${DELFEM2_SRC}/dtri.cpp
+  ${DELFEM2_INC}/vec2.h             ${DELFEM2_SRC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h             ${DELFEM2_SRC}/vec3.cpp
+  ${DELFEM2_INC}/dtri.h             ${DELFEM2_SRC}/dtri.cpp
 
-  ${DELFEM2_INC}/dtri_v2.h             ${DELFEM2_SRC}/dtri_v2.cpp
+  ${DELFEM2_INC}/dtri_v2.h          ${DELFEM2_SRC}/dtri_v2.cpp
                 
-  ${DELFEM2_INC}/gl2_funcs.h              ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/gl_v23.h              ${DELFEM2_SRC}/gl_v23.cpp           
-  ${DELFEM2_INC}/gl_cad_dyntri_v23.h     ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp
+  ${DELFEM2_INC}/gl2_funcs.h        ${DELFEM2_SRC}/gl2_funcs.cpp
+  ${DELFEM2_INC}/gl2_v23.h          ${DELFEM2_SRC}/gl2_v23.cpp
+  ${DELFEM2_INC}/gl2_v23dtricad.h   ${DELFEM2_SRC}/gl2_v23dtricad.cpp
 
   main.cpp  
 )

@@ -45,10 +45,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
   
   ${DELFEM2_INC}/gl2_funcs.h        ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/gl_v23.h           ${DELFEM2_SRC}/gl_v23.cpp
+  ${DELFEM2_INC}/gl2_v23.h          ${DELFEM2_SRC}/gl2_v23.cpp
+  ${DELFEM2_INC}/gl2_v23dtricad.h   ${DELFEM2_SRC}/gl2_v23dtricad.cpp
   ${DELFEM2_INC}/gl_rig_v23q.h      ${DELFEM2_SRC}/gl_rig_v23q.cpp
-  ${DELFEM2_SRC}/gl_cad_dyntri_v23.cpp       
-  ${DELFEM2_INC}/gl_cad_dyntri_v23.h
 
   ${DELFEM2_EXT}/io_gltf.h
   ${DELFEM2_EXT}/io_gltf.cpp

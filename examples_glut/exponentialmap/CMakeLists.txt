@@ -29,7 +29,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/color.h          ${DELFEM2_SRC}/color.cpp
 
   ${DELFEM2_INC}/gl_tex.h      ${DELFEM2_SRC}/gl_tex.cpp        
-  ${DELFEM2_INC}/gl2_color.h    ${DELFEM2_SRC}/gl2_color.cpp      
+  ${DELFEM2_INC}/gl2_color.h   ${DELFEM2_SRC}/gl2_color.cpp
   ${DELFEM2_INC}/gl2_funcs.h   ${DELFEM2_SRC}/gl2_funcs.cpp
 
   main.cpp

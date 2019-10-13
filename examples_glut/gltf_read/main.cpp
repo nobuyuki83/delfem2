@@ -19,7 +19,7 @@
 #include "delfem2/rig_v3q.h"
 
 #include "delfem2/gl2_funcs.h"
-#include "delfem2/gl_v23.h"
+#include "delfem2/gl2_v23.h"
 #include "delfem2/gl_rig_v23q.h"
 
 #include "../glut_cam.h"
@@ -183,8 +183,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
-  
+  // --------------------------------------
   
   {
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
