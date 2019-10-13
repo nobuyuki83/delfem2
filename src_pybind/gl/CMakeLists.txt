@@ -5,9 +5,14 @@ set(PROJ_NAME c_gl)
 project(${PROJ_NAME})
 set(PYBIND11_CPP_STANDARD -std=c++14)
 if(MSVC)
-set(CMAKE_CXX_FLAGS "/W4 /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 /wd4505 /wd4245 /wd4457 /wd4800 /wd4838 -O2")
+set(CMAKE_CXX_FLAGS "/W4  -O2 \
+    /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 \
+    /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 \
+    /wd4505 /wd4245 /wd4457 /wd4800 /wd4838")
 else()
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -O2")
+set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra \
+    -Wno-deprecated-declarations \
+    -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable")
 endif()
 
 set(GLAD_INCLUDE_DIR "../glad3/include")
@@ -54,8 +59,8 @@ find_package(OpenGL REQUIRED)
 
 set(INPUT_INCLUDE_DIR
   ${OPENGL_INCLUDE_DIR}
+  ${GLAD_INCLUDE_DIR}  
   ${DELFEM2_INCLUDE_DIR}
-  ${GLAD_INCLUDE_DIR}
 )
 set(INPUT_LIBRARY
   ${OPENGL_LIBRARY}
