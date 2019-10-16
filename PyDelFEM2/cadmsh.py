@@ -10,7 +10,7 @@ import numpy, os
 from typing import Tuple, List
 
 from .c_core import CppCad2D, CppMeshDynTri2D, CppMesher_Cad2D, CppVoxelGrid, CppMapper, AABB3
-from .c_core import cppCad2D_ImportSVG
+from .c_core import cppCad2D_ImportSVG, cppSVG_Polyline
 from .c_core import TRI, QUAD, HEX, TET, LINE
 from .c_core import \
   meshquad2d_grid, \
@@ -348,15 +348,20 @@ class Cad2D():
   def points_edge(self, list_edge_index, np_xy, tolerance=0.01):
     return cad_getPointsEdge(self.ccad,list_edge_index, np_xy, tolerance=tolerance)
 
-  def import_svg(self,path0:str,scale=1.0):
+  def import_svg(self,path0:str,scale=(1.0,1.0)):
     if not os.path.isfile(path0):
       return false
-    cppCad2D_ImportSVG(self.ccad,path0,scale)
+    cppCad2D_ImportSVG(self.ccad,path0,scale[0],scale[1])
     self.ccad.check()
 
-######################
+  def export_svg(self,path0:str,scale=1.0):
+    list_xy = self.ccad.xy_vtxctrl_face(0)
+    str0 = cppSVG_Polyline(list_xy,scale)
+    with open(path0, mode='w') as f:
+      f.write(str0)
 
-######################
+
+########################################################################################
 
 class CadMesh2D(Cad2D):
   def __init__(self,edge_length:float):

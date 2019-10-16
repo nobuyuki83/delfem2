@@ -272,6 +272,14 @@ std::vector<int> CCad2D::Ind_Vtx_Face(int iface) const
   return topo.aLoop[iface].GetArray_IdVertex(topo.aEdge);
 }
 
+std::vector<double> CCad2D::XY_Vtx(int ivtx) const
+{
+  std::vector<double> xy;
+  xy.push_back(aVtx[ivtx].pos.x);
+  xy.push_back(aVtx[ivtx].pos.y);
+  return xy;
+}
+
 std::vector<int> CCad2D::Ind_Vtx_Edge(int iedge) const
 {
   std::vector<int> aRes;
@@ -1192,9 +1200,10 @@ void Transform_LoopEdgeCad2D
 (std::vector<CCad2D_EdgeGeo>& aEdge,
  bool is_flip_holizontal,
  bool is_flip_vertical,
- double scale)
+ double scale_x,
+ double scale_y)
 {
-  double A[4] = {scale,0,0,scale};
+  double A[4] = {scale_x,0,0,scale_y};
   if( is_flip_holizontal ){ A[0] *= -1; }
   if( is_flip_vertical ){ A[3] *= -1; }
   bool is_det_inv = (is_flip_holizontal != is_flip_vertical );

@@ -91,12 +91,13 @@ py::array_t<int> PyCad2D_GetPointsEdge
 void PyCad2D_ImportSVG
 (CCad2D& cad,
  const std::string& path_svg,
- double scale)
+ double scale_x,
+ double scale_y)
 {
   std::vector<CCad2D_EdgeGeo> aEdge;
   LoopEdgeCCad2D_ReadSVG(aEdge,
                          path_svg);
-  Transform_LoopEdgeCad2D(aEdge,false,true,scale);
+  Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
   if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
   aEdge = RemoveEdgeWithZeroLength(aEdge);
   for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
@@ -255,6 +256,7 @@ PYBIND11_MODULE(c_core, m) {
   .def("add_vtx_edge",   &CCad2D::AddVtxEdge)
   .def("add_vtx_face",   &CCad2D::AddVtxFace)
   .def("xy_vtxctrl_face",&CCad2D::XY_VtxCtrl_Face)
+  .def("xy_vtx",         &CCad2D::XY_Vtx)
   .def("ind_vtx_face",   &CCad2D::Ind_Vtx_Face)
   .def("ind_edge_face",  &CCad2D::Ind_Edge_Face)
   .def("ind_vtx_edge",   &CCad2D::Ind_Vtx_Edge)
@@ -271,6 +273,8 @@ PYBIND11_MODULE(c_core, m) {
   
   m.def("cppCad2D_ImportSVG",
         &PyCad2D_ImportSVG);
+  m.def("cppSVG_Polyline",
+        &Str_SVGPolygon);
   
   py::class_<CMesher_Cad2D>(m,"CppMesher_Cad2D")
   .def(py::init<>())

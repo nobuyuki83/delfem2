@@ -58,7 +58,8 @@ std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength(const std::vector<CCad2D_Ed
 void Transform_LoopEdgeCad2D(std::vector<CCad2D_EdgeGeo>& aEdge,
                              bool is_flip_holizontal,
                              bool is_flip_vertical,
-                             double scale);
+                             double scale_x,
+                             double scale_y);
 
 CBoundingBox2D BB_LoopEdgeCad2D(const std::vector<CCad2D_EdgeGeo>& aEdge);
 
@@ -68,6 +69,8 @@ CBoundingBox2D BB_LoopEdgeCad2D(const std::vector<CCad2D_EdgeGeo>& aEdge);
  */
 void LoopEdgeCCad2D_ReadSVG(std::vector<CCad2D_EdgeGeo>& aEdge,
                             const std::string& fname);
+
+
 
 
 /**
@@ -140,6 +143,7 @@ public:
    * @brief return std::vector of XY that bounds the face with index iface
    */
   std::vector<double> XY_VtxCtrl_Face(int iface) const;
+  std::vector<double> XY_Vtx(int ivtx) const;
   std::vector<std::pair<int,bool> >  Ind_Edge_Face(int iface) const;
   std::vector<int> Ind_Vtx_Face(int iface) const;
   std::vector<int> Ind_Vtx_Edge(int iedge) const;

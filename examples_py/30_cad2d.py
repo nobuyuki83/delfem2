@@ -36,12 +36,5 @@ def main():
     dfm2.gl.glfw.winDraw3d([cad])
 
 
-
-
-
-
-
-
-
 if __name__ == "__main__":
   main()

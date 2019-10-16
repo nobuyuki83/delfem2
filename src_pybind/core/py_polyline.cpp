@@ -287,7 +287,7 @@ std::vector<int> simplifyPolyloop(std::vector<int>& aXY_in, double eps)
 }
 
 
-//////////////////////////////////
+// ----------------------------
 
 std::vector<std::vector<int> >
 pyGetLevelSet
