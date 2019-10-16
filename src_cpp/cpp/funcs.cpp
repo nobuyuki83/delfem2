@@ -34,7 +34,7 @@ static double myStod(const std::string& str){
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------------
 
 bool isAlphabet(char c){
   if ( c >= 65 && c <= 90  ){ return true; }
@@ -609,7 +609,7 @@ bool LoadNumpy_1DimF
   return true;
 }
 
-///////////////////////////////////////////////////////
+// ----------------------
 
 bool GetFileContents
 (std::vector<char>& aC,
@@ -661,7 +661,6 @@ void XML_SeparateTagContent
       s++;
     }
   }
-  //////////
   for(unsigned int is=0;is<aStr.size();++is){
     aStr[is] = RemoveBeginning(aStr[is], " ");
   }
@@ -679,4 +678,36 @@ void ParseAttributes
     std::string s1 = Remove_Quote(aS1[1], '\"');
     mapAttr.insert( std::make_pair(aS1[0],s1) );
   }
+}
+
+
+std::string Str_SVGPolygon
+(const std::vector<double>& aXY,
+ double scale)
+{
+  double min_x,max_x, min_y,max_y;
+  min_x = max_x = aXY[0];
+  min_y = max_y = aXY[1];
+  for(unsigned int ixy=0;ixy<aXY.size()/2;++ixy){
+    if( aXY[ixy*2+0] < min_x ){ min_x = aXY[ixy*2+0]; }
+    if( aXY[ixy*2+0] > max_x ){ max_x = aXY[ixy*2+0]; }
+    if( aXY[ixy*2+1] < min_y ){ min_y = aXY[ixy*2+1]; }
+    if( aXY[ixy*2+1] > max_y ){ max_y = aXY[ixy*2+1]; }
+  }
+  int w0 = (max_x-min_x)*scale;
+  int h0 = (max_y-min_y)*scale;
+  std::ostringstream oss;
+  oss << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"";
+  oss << w0;
+  oss << "\" height=\"";
+  oss << h0;
+  oss << "\" viewBox=\"0 0 " << w0 << " " << h0;
+  oss <<  "\">\n  <polygon points=\"";
+    for(int ixy=0;ixy<aXY.size()/2;++ixy){
+      double x0 = (aXY[ixy*2+0]-min_x)*scale;
+      double y0 = (aXY[ixy*2+1]-min_y)*scale;
+      oss << x0 << "," << y0 << " ";
+    }
+  oss << "\" fill=\"blue\"></polygon>\n</svg>";
+  return oss.str();
 }

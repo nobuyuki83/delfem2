@@ -19,6 +19,8 @@
   #include <GL/glut.h>
 #endif
 
+#include "delfem2/funcs.h"
+
 #include "delfem2/dtri_v2.h"
 #include "delfem2/cad2d.h"
 
@@ -145,13 +147,14 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         std::vector<CCad2D_EdgeGeo> aEdge;
         LoopEdgeCCad2D_ReadSVG(aEdge,
                                path_svg);
-        Transform_LoopEdgeCad2D(aEdge,false,true,1.0);
+        Transform_LoopEdgeCad2D(aEdge,false,true,1.0,1.0);
         if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
         aEdge = RemoveEdgeWithZeroLength(aEdge);
         for(int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
         std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
         cad.Clear();
         cad.AddFace(aEdge);
+        std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       }
       { // set camera
         CBoundingBox2D bb = cad.BB();

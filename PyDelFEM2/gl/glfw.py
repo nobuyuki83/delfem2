@@ -21,6 +21,9 @@ from ..c_core import AABB3
 
 
 class NavigationGLFW:
+  """
+  class for GUI for camera control
+  """
   def __init__(self,view_height):
     self.camera = Camera(view_height)
     self.modifier = 0
@@ -31,7 +34,7 @@ class NavigationGLFW:
     self.button = -1
     self.isClose = False
 
-  def keyinput(self,win_glfw,key,scancode,action,mods):
+  def keyinput(self,win_glfw,key,scancode,action,mods) -> None:
     if key == glfw.KEY_Q and action == glfw.PRESS:
       self.isClose = True
     if key == glfw.KEY_PAGE_UP:
@@ -39,7 +42,7 @@ class NavigationGLFW:
     if key == glfw.KEY_PAGE_DOWN:
       self.camera.scale /= 1.03
 
-  def mouse(self,win_glfw,btn,action,mods):
+  def mouse(self,win_glfw,btn,action,mods) -> None:
     (win_w, win_h) = glfw.get_window_size(win_glfw)
     (x, y) = glfw.get_cursor_pos(win_glfw)
     self.mouse_x = (2.0 * x - win_w) / win_w
@@ -50,7 +53,7 @@ class NavigationGLFW:
     elif action == glfw.RELEASE:
       self.button = -1
 
-  def motion(self,win_glfw, x, y):
+  def motion(self,win_glfw, x, y) -> None:
     (win_w, win_h) = glfw.get_window_size(win_glfw)
     self.mouse_pre_x,self.mouse_pre_y = self.mouse_x, self.mouse_y
     (x, y) = glfw.get_cursor_pos(win_glfw)
@@ -63,10 +66,9 @@ class NavigationGLFW:
         self.camera.translation(self.mouse_x, self.mouse_y, self.mouse_pre_x, self.mouse_pre_y)
 
 
-
 class WindowGLFW:
   """
-  class to manage the glfw window
+  class to manage a glfw window
   """
   def __init__(self,view_height=1.0,winsize=(400,300),isVisible=True):
     self.is_valid = True
@@ -85,6 +87,7 @@ class WindowGLFW:
     self.list_func_motion = []
     self.list_func_step_time = []
     self.list_func_draw = []
+    self.list_func_key = []
     self.color_bg = (1,1,1)
     gl.glEnable(gl.GL_DEPTH_TEST)
 
@@ -155,6 +158,11 @@ class WindowGLFW:
 
   def keyinput(self,win0,key,scancode,action,mods):
     self.wm.keyinput(win0,key,scancode,action,mods)
+    if action != glfw.PRESS:
+      return
+    key_name = glfw.get_key_name(key,scancode)
+    for func_key in self.list_func_key:
+      func_key(key_name)
 
 #  def window_size(self,win0,w,h):
 #    gl.glViewport(0,0,w,h) # because of multisampling this doesn't work
@@ -177,6 +185,7 @@ def winDraw3d(list_obj:list,
 
   winsize -- the size of the window (width,height)
   """
+
   #### initialize window
   window = WindowGLFW(winsize=winsize)
   if not window.is_valid:
@@ -194,6 +203,8 @@ def winDraw3d(list_obj:list,
       window.list_func_draw.append(obj.draw)
     if hasattr(obj, "step_time"):
       window.list_func_step_time.append(obj.step_time)
+    if hasattr(obj, "key"):
+      window.list_func_key.append(obj.key)
   #### glsl compile
   id_shader_program = 0
   if glsl_vrt != "" and glsl_frg != "":

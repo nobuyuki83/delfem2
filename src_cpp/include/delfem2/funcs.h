@@ -94,6 +94,14 @@ bool LoadNumpy_2DimD(int& ndim0, int& ndim1, std::vector<double>& aData,
 bool LoadNumpy_1DimF(int& ndim0, std::vector<float>& aData,
                      const std::string& path);
 
+
+// ---------------------
+// SVG related function
+
+std::string Str_SVGPolygon(const std::vector<double>& aXY,
+                           double scale);
+
+
 // ---------------------------------------------------
 
 bool GetFileContents(std::vector<char>& aC,
@@ -116,6 +124,10 @@ void ParseAttributes(std::map<std::string, std::string>& mapAttr,
 void XML_SeparateTagContent(std::vector<std::string>& aStr,
                             const std::vector<char>& input);
 
+
+/**
+ * @brief check  if c is alphabet (e.g., A-Za-z) or not
+ */
 bool isAlphabet(char c);
 bool isNumber(char c);
 
