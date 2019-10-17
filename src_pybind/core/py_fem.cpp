@@ -30,7 +30,7 @@ static double Distance3D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
-////////////////////////////////////////////////////////////////////////
+// ----------------------------
 
 void MatrixSquareSparse_SetPattern
 (CMatrixSparse<double>& mss,
@@ -115,11 +115,14 @@ void LinearSystem_SetMasterSlave
 }
 
 
-void PrecondILU0
+void PyPrecILU_SetPattern_ILUk
 (CPreconditionerILU<double>&  mat_ilu,
- const CMatrixSparse<double>& mss)
+ const CMatrixSparse<double>& mss,
+ unsigned int nlev_fill)
 {
-  mat_ilu.Initialize_ILU0(mss);
+//  mat_ilu.Initialize_ILU0(mss);
+  mat_ilu.Initialize_ILUk(mss,
+                          nlev_fill);
 }
 
 
@@ -692,19 +695,19 @@ void init_fem(py::module &m){
   .def("set_zero",   &CMatrixSparse<double>::SetZero)
   .def("add_dia",    &CMatrixSparse<double>::AddDia);
   
-  m.def("matrixSquareSparse_setPattern",     &MatrixSquareSparse_SetPattern);
-  m.def("matrixSquareSparse_setFixBC",       &MatrixSquareSparse_SetFixBC);
+  m.def("matrixSquareSparse_setPattern",      &MatrixSquareSparse_SetPattern);
+  m.def("matrixSquareSparse_setFixBC",        &MatrixSquareSparse_SetFixBC);
   m.def("cppMatSparse_ScaleBlk_LeftRight",    &PyMatSparse_ScaleBlk_LeftRight);
   m.def("cppMatSparse_ScaleBlkLen_LeftRight", &PyMatSparse_ScaleBlkLen_LeftRight);
-  m.def("masterSlave_distributeValue",   &PyMasterSlave_DistributeValue);
-  m.def("addMasterSlavePattern",         &PyAddMasterSlavePattern);
+  m.def("masterSlave_distributeValue",        &PyMasterSlave_DistributeValue);
+  m.def("addMasterSlavePattern",              &PyAddMasterSlavePattern);
   
   py::class_<CPreconditionerILU<double>>(m,"PreconditionerILU")
   .def(py::init<>())
   .def("ilu_decomp", &CPreconditionerILU<double>::DoILUDecomp)
   .def("set_value",  &CPreconditionerILU<double>::SetValueILU);
 
-  m.def("precond_ilu0",                  &PrecondILU0);
+  m.def("cppPrecILU_SetPattern_ILUk",    &PyPrecILU_SetPattern_ILUk);
   
   m.def("linearSystem_setMasterSlave",   &LinearSystem_SetMasterSlave);
   m.def("linsys_solve_pcg",              &PySolve_PCG);

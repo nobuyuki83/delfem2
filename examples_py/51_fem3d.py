@@ -19,7 +19,7 @@ def make_mesh():
   return msh
 
 def poission(msh,npIdP0,npIdP1):
-  fem = dfm2.FEM_Poisson()
+  fem = dfm2.FEM_ScalarPoisson()
   fem.updated_topology(msh)
   fem.ls.bc[npIdP0] = 1
   fem.ls.bc[npIdP1] = 2
@@ -35,7 +35,7 @@ def poission(msh,npIdP0,npIdP1):
   dfm2.gl.glfw.winDraw3d([vis_color,axis])
 
 def diffuse(msh,npIdP0,npIdP1):
-  fem = dfm2.FEM_Diffuse()
+  fem = dfm2.FEM_ScalarDiffuse()
   fem.updated_topology(msh)
   fem.ls.bc[npIdP1] = 1
   fem.value[:] = 0.0

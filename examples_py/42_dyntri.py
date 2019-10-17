@@ -71,7 +71,7 @@ def main_MeshDynTri2D_2():
   mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
   dmsh = mesher.meshing(cad)
   ####
-  fem = dfm2.FEM_Poisson(source=1.0)
+  fem = dfm2.FEM_ScalarPoisson(source=1.0)
   fem.updated_topology(dmsh)
   npIdP = cad.points_edge([0,1,2,3], dmsh.np_pos)
   fem.value[npIdP] = 0.0

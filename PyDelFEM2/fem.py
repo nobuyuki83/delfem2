@@ -11,7 +11,9 @@ from .c_core import CppMatrixSparse, PreconditionerILU
 from .c_core import addMasterSlavePattern, matrixSquareSparse_setPattern, \
   cppMatSparse_ScaleBlk_LeftRight, \
   cppMatSparse_ScaleBlkLen_LeftRight
-from .c_core import precond_ilu0, linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
+from .c_core import cppPrecILU_SetPattern_ILUk
+from .c_core import \
+  linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
 from .c_core import \
   cppFEM_Merge_PointMass, \
   cppFEM_Merge_PointContact, \
@@ -93,9 +95,14 @@ class FieldValueSetter():
 ######################################################
 
 class FEM_LinSys():
-  def __init__(self,
-               np:int, ndimval:int):
-    # vectors
+  def __init__(self):
+    self.nlev_fill = 0
+    self.nitr = 1000
+    self.conv_ratio = 1.0e-4
+    self.conv_hist = []
+
+  def set_dimension(self,
+                    np:int, ndimval:int):
     self.np = np
     self.ndimval = ndimval
     self.f = numpy.zeros((np,ndimval), dtype=numpy.float64)
@@ -105,10 +112,6 @@ class FEM_LinSys():
 
     self.mat = None
     self.mat_prec = None
-
-    self.nitr = 1000
-    self.conv_ratio = 1.0e-4
-    self.conv_hist = []
 
   def set_pattern(self, pattern:tuple, master_slave_ptn=None):
     self.vec_ms = master_slave_ptn
@@ -124,7 +127,7 @@ class FEM_LinSys():
     matrixSquareSparse_setPattern(self.mat, psup_ind1, psup1)
     # preconditioner
     self.mat_prec = PreconditionerILU()
-    precond_ilu0(self.mat_prec, self.mat)
+    cppPrecILU_SetPattern_ILUk(self.mat_prec, self.mat, self.nlev_fill)
 
   def set_zero(self):
     self.mat.set_zero()
@@ -161,6 +164,7 @@ class FEM_ScalarPoisson():
   def __init__(self,
                source=0.0,
                alpha=1.0):
+    self.ls = FEM_LinSys()
     self.param_source = source
     self.param_alpha = alpha
 
@@ -173,7 +177,7 @@ class FEM_ScalarPoisson():
       val_new[:self.value.shape[0],:] = self.value
       map_value(val_new,mapper)
     self.value = val_new
-    self.ls = FEM_LinSys(np,ndimval)
+    self.ls.set_dimension(np,ndimval)
     self.ls.set_pattern(self.mesh.psup(),master_slave_ptn=master_slave_pattern)
 
   def solve(self):
@@ -193,6 +197,7 @@ class FEM_ScalarPoisson():
 
 class FEM_ScalarDiffuse():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.dt = 0.01
     self.gamma_newmark = 0.6
     self.param_alpha = 1.0
@@ -205,7 +210,7 @@ class FEM_ScalarDiffuse():
     ndimval = 1
     self.value = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.velocity = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.ls = FEM_LinSys(np,ndimval)
+    self.ls.set_dimension(np,ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def step_time(self):
@@ -230,6 +235,7 @@ class FEM_ScalarDiffuse():
 ## FEM solid from here
 class FEM_SolidLinearStatic():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.param_gravity_x = +0.0
     self.param_gravity_y = -0.0
     self.param_gravity_z = +0.0
@@ -242,7 +248,7 @@ class FEM_SolidLinearStatic():
     np = self.mesh.np_pos.shape[0]
     ndimval = self.mesh.np_pos.shape[1]
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.ls = FEM_LinSys(np, ndimval)
+    self.ls.set_dimension(np, ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def solve(self):
@@ -263,6 +269,7 @@ class FEM_SolidLinearStatic():
 
 class FEM_SolidLinearEigen():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.rho = 1.0
     self.mesh = None
 
@@ -273,7 +280,7 @@ class FEM_SolidLinearEigen():
     self.mode = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.ker = numpy.zeros((6,np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.mass_lumped_sqrt_inv = numpy.zeros((np,), dtype=numpy.float64)
-    self.ls = FEM_LinSys(np, ndimval)
+    self.ls.set_dimension(np, ndimval)
     if self.ls.mat is None:
       self.ls.set_pattern(self.mesh.psup())
     self.updated_geometry()
@@ -374,6 +381,7 @@ class FEM_SolidLinearEigen():
 
 class FEM_SolidLinearDynamic():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.mesh = None
     self.param_gravity_x = +0.0
     self.param_gravity_y = -0.0
@@ -389,7 +397,7 @@ class FEM_SolidLinearDynamic():
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.vec_acc = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.ls = FEM_LinSys(np, ndimval)
+    self.ls.set_dimension(np, ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def solve(self):
@@ -419,6 +427,7 @@ class FEM_SolidLinearDynamic():
 
 class FEM_ShellPlateBendingMITC3():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.mesh = None
     self.param_gravity_z = 0.001
     self.param_thickness = 0.05
@@ -432,7 +441,7 @@ class FEM_ShellPlateBendingMITC3():
     np = self.mesh.np_pos.shape[0]
     ndimval = 3
     self.disp = numpy.zeros((np,ndimval),dtype=numpy.float64)
-    self.ls = FEM_LinSys(np, ndimval)
+    self.ls.set_dimension(np, ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def solve(self):
@@ -453,6 +462,7 @@ class FEM_ShellPlateBendingMITC3():
 
 class FEM_ShellPlateBendingMITC3_Eigen():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.param_thickness = 0.05
     self.param_rho = 1.0
     self.param_myu = 100.0
@@ -468,7 +478,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.mode = numpy.zeros((np, ndimval), dtype=numpy.float64)  # initial guess is zero
     self.ker = numpy.zeros((3, np, ndimval), dtype=numpy.float64)  # initial guess is zero
     self.mass_lumped_sqrt_inv = numpy.zeros((np,3), dtype=numpy.float64)
-    self.ls = FEM_LinSys(np, ndimval)
+    self.ls.set_dimension(np, ndimval)
     if self.ls.mat is None:
       self.ls.set_pattern(self.mesh.psup())
     self.updated_geometry()
@@ -541,6 +551,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
 
 class FEM_ShellCloth():
   def __init__(self):
+    self.ls = FEM_LinSys()
     self.dt = 0.1
     self.gravity = (0,0,-1)
     self.rho = 1.0
@@ -563,8 +574,8 @@ class FEM_ShellCloth():
       vec_val_new[:,:2] = self.mesh.np_pos
     self.vec_val = vec_val_new
     self.vec_velo = vec_velo_new
-    self.ls = FEM_LinSys(np,ndimval)
     self.np_quad = elemQuad_dihedralTri(self.mesh.np_elm, np)
+    self.ls.set_dimension(np,ndimval)
     self.ls.set_pattern(jarray_mesh_psup(self.np_quad, np))
 
   def solve(self):
@@ -580,7 +591,7 @@ class FEM_ShellCloth():
                             self.gravity,
                             self.vec_val, self.vec_velo)
     if self.sdf is not None:
-      cppFEM_merge_PointContact(self.ls.mat, self.ls.f,
+      cppFEM_Merge_PointContact(self.ls.mat, self.ls.f,
                                  10000, 0.1,
                                  [self.sdf],
                                  self.vec_val)
@@ -600,14 +611,15 @@ class FEM_ShellCloth():
 class FEM_FluidStorksStatic():
   def __init__(self,
                mesh: Mesh):
+    self.ls = FEM_LinSys()
     self.mesh = mesh
     self.updated_topology()
 
   def updated_topology(self):
     np = self.mesh.np_pos.shape[0]
     ndimval = 3
-    self.ls = FEM_LinSys(np,ndimval)
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls.set_dimension(np,ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def solve(self):
@@ -629,6 +641,7 @@ class FEM_FluidStorksStatic():
 class FEM_FluidStorksDynamic():
   def __init__(self,
                mesh: Mesh):
+    self.ls = FEM_LinSys()
     self.dt = 0.005
     self.gamma_newmark = 0.6
     self.mesh = mesh
@@ -637,9 +650,9 @@ class FEM_FluidStorksDynamic():
   def updated_topology(self):
     np = self.mesh.np_pos.shape[0]
     ndimval = 3
-    self.ls = FEM_LinSys(np,ndimval)
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
+    self.ls.set_dimension(np,ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def solve(self):
@@ -663,6 +676,7 @@ class FEM_FluidStorksDynamic():
 class FEM_FluidNavierStorks():
   def __init__(self,
                mesh: Mesh):
+    self.ls = FEM_LinSys()
     self.dt = 0.1
     self.gamma_newmark = 0.6
     self.mesh = mesh
@@ -673,7 +687,7 @@ class FEM_FluidNavierStorks():
     ndimval = 3
     self.vec_val = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
     self.vec_velo = numpy.zeros((np,ndimval), dtype=numpy.float64)  # initial guess is zero
-    self.ls = FEM_LinSys(np,ndimval)
+    self.ls.set_dimension(np,ndimval)
     self.ls.set_pattern(self.mesh.psup())
 
   def solve(self):
