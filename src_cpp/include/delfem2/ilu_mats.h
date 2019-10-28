@@ -143,6 +143,10 @@ void CPreconditionerILU<T>::SetValueILU
   assert( rhs.len_row == len );
   const unsigned int blksize = len*len;
   std::vector<int> row2crs(nblk,-1);
+  {
+    const int n = mat.rowPtr.size()*len*len;
+    for(unsigned int i=0;i<n;++i){ mat.valCrs[i] = 0.0; }
+  }
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
       assert( ijcrs<mat.rowPtr.size() );
@@ -492,6 +496,9 @@ void CPreconditionerILU<T>::Initialize_ILUk
     this->Initialize_ILU0(m);
     return;
   }
+  
+//  std::cout << "hoe" << m.nblk_col << " " << m.len_col << " " << m.rowPtr.size() << std::endl;
+//  std::cout << "fua" << mat.nblk_col << " " << mat.len_col << " " << mat.rowPtr.size() << std::endl;
   
   std::vector<CRowLev> aRowLev;
   aRowLev.reserve(m.rowPtr.size()*4);

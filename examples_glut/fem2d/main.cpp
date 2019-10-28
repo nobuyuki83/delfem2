@@ -317,13 +317,13 @@ void SolveProblem_Diffusion()
           1.0,vec_x);
 }
 
-/////////////////////////////////////////////////////////////////////
+// -------------------------------
 // iproblem: 2, 3
 void InitializeProblem_Solid()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*2;
-  /////
+  // ----------------
   aBCFlag.assign(nDoF, 0);
   for(int ip=0;ip<np;++ip){
     const double px = aXY1[ip*2+0];
@@ -348,7 +348,7 @@ void InitializeProblem_Solid()
       }
     }
   }
-  //////
+  // -----------
   std::vector<int> psup_ind0, psup0;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind0, psup0,
                                               aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
@@ -363,19 +363,19 @@ void InitializeProblem_Solid()
    crs.addMasterSlavePattern(aMSFlag,2);
    crs.Sort();
    */
-  ////
+  // -------------
   mat_A.Initialize(np, 2, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(), psup.size());
   ilu_A.Initialize_ILU0(mat_A);
 }
 
-/////////////////////////////////////////////////////////////////////
+// -------------------------
 // iproblem: 2
 void SolveProblem_LinearSolid_Static()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*2;
-  //////////////////////////
+  // ----------------------
   double myu = 10.0;
   double lambda = 10.0;
   double rho = 1.0;
@@ -393,7 +393,7 @@ void SolveProblem_LinearSolid_Static()
   SetMasterSlave(mat_A,
                  aMSFlag.data());
   setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
-  //////////////////////////
+  // ---------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -403,7 +403,7 @@ void SolveProblem_LinearSolid_Static()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
-  //////////////////////////
+  // --------------
   XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
   for(int idof=0;idof<nDoF;++idof){
@@ -413,13 +413,13 @@ void SolveProblem_LinearSolid_Static()
   }
 }
 
-/////////////////////////////////////////////////////////////////////
+// -----------------------------------
 // iproblem: 3
 void SolveProblem_LinearSolid_Dynamic()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*2;
-  //////////////////////////////
+  // ------------------
   double myu = 10.0;
   double lambda = 10.0;
   double rho = 1.0;

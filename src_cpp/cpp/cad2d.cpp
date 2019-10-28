@@ -86,7 +86,7 @@ void CCad2D::DragPicked(double p1x, double p1y, double p0x, double p0y)
   if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
     aVtx[ivtx_picked].pos.x = p1x;
     aVtx[ivtx_picked].pos.y = p1y;
-    Tessellation();
+    Tessellation(); // tesselation for visualization
     return;
   }
   if( iedge_picked >= 0 && iedge_picked < (int)aEdge.size() ){
@@ -114,7 +114,7 @@ void CCad2D::DragPicked(double p1x, double p1y, double p0x, double p0y)
         }
       }
     }
-    Tessellation();
+    Tessellation(); // tesselation for visualization
     return;
   }
   if( iface_picked >= 0 && iface_picked < (int)aFace.size() ){
@@ -124,7 +124,7 @@ void CCad2D::DragPicked(double p1x, double p1y, double p0x, double p0y)
       aVtx[iv1].pos.x += p1x-p0x;
       aVtx[iv1].pos.y += p1y-p0y;
     }
-    Tessellation();
+    Tessellation(); // tesselation for visualization
     return;
   }
 }
@@ -1113,7 +1113,7 @@ void LoopEdgeCad2D_SVGPolygonPoints
   for(int ip=0;ip<np;++ip){
     aP.push_back( CVector2(myStod(aS[ip*2+0]), myStod(aS[ip*2+1]) ) );
   }
-  std::cout << "np  " << np << std::endl;
+//  std::cout << "np  " << np << std::endl;
   for(int ie=0;ie<np;++ie){
     CCad2D_EdgeGeo e;
     e.p0 = aP[(ie+0)%np];

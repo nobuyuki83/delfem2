@@ -703,9 +703,9 @@ std::string Str_SVGPolygon
   oss << h0;
   oss << "\" viewBox=\"0 0 " << w0 << " " << h0;
   oss <<  "\">\n  <polygon points=\"";
-    for(int ixy=0;ixy<aXY.size()/2;++ixy){
+  for(unsigned int ixy=0;ixy<aXY.size()/2;++ixy){
       double x0 = (aXY[ixy*2+0]-min_x)*scale;
-      double y0 = (aXY[ixy*2+1]-min_y)*scale;
+      double y0 = (max_y-aXY[ixy*2+1])*scale;
       oss << x0 << "," << y0 << " ";
     }
   oss << "\" fill=\"blue\"></polygon>\n</svg>";

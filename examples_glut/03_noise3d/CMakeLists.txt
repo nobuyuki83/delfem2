@@ -1,4 +1,4 @@
-project(viewer3d_glut)
+project(03_noise3d)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)
@@ -13,6 +13,7 @@ set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
+
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
@@ -20,16 +21,16 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/quat.h         ${DELFEM2_SRC}/quat.cpp
   ${DELFEM2_INC}/camera.h       ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/color.h       ${DELFEM2_SRC}/color.cpp
-
+  ${DELFEM2_INC}/color.h        ${DELFEM2_SRC}/color.cpp
+  
   ${DELFEM2_INC}/gl2_funcs.h    ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/gl2_color.h     ${DELFEM2_SRC}/gl2_color.cpp                     
+  ${DELFEM2_INC}/gl2_color.h    ${DELFEM2_SRC}/gl2_color.cpp
   
   main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}  
   ${GLUT_LIBRARY} 
-  ${OPENGL_LIBRARY})
+  ${OPENGL_LIBRARY}
+)

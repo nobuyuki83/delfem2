@@ -1,4 +1,4 @@
-project(shader_glsl)
+project(01_shader)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)

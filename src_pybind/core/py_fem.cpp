@@ -115,15 +115,6 @@ void LinearSystem_SetMasterSlave
 }
 
 
-void PyPrecILU_SetPattern_ILUk
-(CPreconditionerILU<double>&  mat_ilu,
- const CMatrixSparse<double>& mss,
- unsigned int nlev_fill)
-{
-//  mat_ilu.Initialize_ILU0(mss);
-  mat_ilu.Initialize_ILUk(mss,
-                          nlev_fill);
-}
 
 
 std::vector<double> PySolve_PCG
@@ -159,11 +150,17 @@ std::vector<double> PySolve_PBiCGStab
 }
 
 
+void PyPrecILU_SetPattern_ILUk
+ (CPreconditionerILU<double>&  mat_ilu,
+  const CMatrixSparse<double>& mss,
+  unsigned int nlev_fill)
+{
+    //  mat_ilu.Initialize_ILU0(mss);
+  mat_ilu.Initialize_ILUk(mss,
+                          nlev_fill);
+}
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------
 
 void PyMergeLinSys_Poission
 (CMatrixSparse<double>& mss,

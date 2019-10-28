@@ -220,8 +220,7 @@ public:
   }
   void SetGL_Camera()
   {
-    GLint viewport[4];
-    ::glGetIntegerv(GL_VIEWPORT,viewport);
+    GLint viewport[4]; ::glGetIntegerv(GL_VIEWPORT,viewport);
     const int win_w = viewport[2];
     const int win_h = viewport[3];
     {

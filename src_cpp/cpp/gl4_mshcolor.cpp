@@ -228,3 +228,97 @@ void CShader_TriMesh_Scalar::Draw(float mP[16], float mMV[16])
   vao.Draw(1);
 }
 
+// ---------------------------------------
+
+void CShader_TriMesh_Disp::Initialize
+ (std::vector<double>& aPosD,
+  unsigned int ndim,
+  std::vector<unsigned int>& aTri,
+  std::vector<double>& aDispD)
+{
+  assert( ndim == 2 || ndim == 3 );
+  assert( aPosD.size()%ndim == 0 );
+  
+  std::vector<unsigned int> aLine;
+  MeshLine_MeshElem(aLine,
+                    aTri.data(), aTri.size()/3, MESHELEM_TRI,
+                    aPosD.size()/ndim);
+  // ------
+  if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
+  vao.Delete_EBOs();
+  vao.Add_EBO(aTri,GL_TRIANGLES);
+  vao.Add_EBO(aLine,GL_LINES);
+  this->UpdateVertex(aPosD, ndim, aDispD);
+}
+
+void CShader_TriMesh_Disp::UpdateVertex
+ (std::vector<double>& aPosD,
+  unsigned int ndim,
+  std::vector<double>& aDispD)
+{
+  assert( aPosD.size() == aDispD.size() );
+  vao.ADD_VBO(0,aPosD);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+  
+  vao.ADD_VBO(1,aDispD);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
+}
+
+void CShader_TriMesh_Disp::Compile()
+{
+  const std::string glsl33vert_projection =
+  "uniform mat4 matrixProjection;\n"
+  "uniform mat4 matrixModelView;\n"
+  "layout (location = 0) in vec3 posIn;\n"
+  "layout (location = 1) in vec3 dispIn;\n"
+  "void main()\n"
+  "{\n"
+  "  vec4 pos = vec4(posIn.x, posIn.y, posIn.z, 1.0) + vec4(dispIn.x, dispIn.y, dispIn.z, 1.0);"
+  "  gl_Position = matrixProjection * matrixModelView * pos;\n"
+  "}\0";
+  
+  const std::string glsl33frag =
+  "uniform vec3 color0;\n"
+  "out vec4 FragColor;\n"
+  "void main()\n"
+  "{\n"
+  "  FragColor = vec4(color0.x, color0.y, color0.z, 1.0f);\n"
+  "}\n\0";
+  
+#ifdef EMSCRIPTEN
+  shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
+                                      glsl33vert_projection).c_str(),
+                                     (std::string("#version 300 es\n")+
+                                      std::string("precision highp float;\n")+
+                                      glsl33frag).c_str());
+#else
+  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
+                                      glsl33vert_projection).c_str(),
+                                     (std::string("#version 330 core\n")+
+                                      glsl33frag).c_str());
+#endif
+  
+  if( !glIsProgram(shaderProgram) ){
+    std::cout << "shader doesnot exist" << std::endl;
+  }
+  glUseProgram(shaderProgram);
+  Loc_MatrixProjection = glGetUniformLocation(shaderProgram, "matrixProjection");
+  Loc_MatrixModelView  = glGetUniformLocation(shaderProgram, "matrixModelView");
+  Loc_Color0           = glGetUniformLocation(shaderProgram, "color0");
+  Loc_Color1           = glGetUniformLocation(shaderProgram, "color1");
+  Loc_ValMin           = glGetUniformLocation(shaderProgram, "val_min");
+  Loc_ValMax           = glGetUniformLocation(shaderProgram, "val_max");
+}
+
+void CShader_TriMesh_Disp::Draw(float mP[16], float mMV[16])
+{
+  glUseProgram(shaderProgram);
+  glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
+  glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
+  glUniform3f(Loc_Color0, 0.8, 0.8, 0.8);
+  vao.Draw(0);
+  glUniform3f(Loc_Color0, 0,0,0);
+  vao.Draw(1);
+}

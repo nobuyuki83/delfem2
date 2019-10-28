@@ -1,4 +1,4 @@
-project(41_fem2d_poisson)
+project(42_fem2d_linearsolid)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)
@@ -35,7 +35,7 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/gl24_funcs.h    ${DELFEM2_SRC}/gl24_funcs.cpp
   ${DELFEM2_INC}/gl4_funcs.h     ${DELFEM2_SRC}/gl4_funcs.cpp
-  ${DELFEM2_INC}/gl4_mshcolor.h       ${DELFEM2_SRC}/gl4_mshcolor.cpp
+  ${DELFEM2_INC}/gl4_mshcolor.h  ${DELFEM2_SRC}/gl4_mshcolor.cpp
 
   ../glad4/include/glad/glad.h   ../glad4/src/glad.c
   ../glfw_cam.h
@@ -75,7 +75,7 @@ if (NOT EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcpq
+      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
     )
   ELSEIF(MSVC)
     set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
