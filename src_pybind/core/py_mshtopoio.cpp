@@ -448,7 +448,7 @@ PyMeshTri3D_Torus(double r0, double r1)
   return std::make_tuple(npXYZ,npTri);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------
 
 void init_mshtopoio(py::module &m){
   py::enum_<MESHELEM_TYPE>(m, "MESH_ELEM_TYPE")
@@ -470,23 +470,23 @@ void init_mshtopoio(py::module &m){
   
   py::class_<CMeshDynTri3D>(m, "CppMeshDynTri3D")
   .def(py::init<>())
-  .def("check",             &CMeshDynTri3D::Check)
-  .def("ntri",              &CMeshDynTri3D::nTri)
-  .def("delete_tri_edge",   &CMeshDynTri3D::DeleteTriEdge)
-  .def("minmax_xyz",        &CMeshDynTri3D::MinMax_XYZ)
-  .def("insert_point_elem", &CMeshDynTri3D::insertPointElem)
+  .def("check",                 &CMeshDynTri3D::Check)
+  .def("ntri",                  &CMeshDynTri3D::nTri)
+  .def("delete_tri_edge",       &CMeshDynTri3D::DeleteTriEdge)
+  .def("minmax_xyz",            &CMeshDynTri3D::MinMax_XYZ)
+  .def("insert_point_elem",     &CMeshDynTri3D::insertPointElem)
   .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
   
   py::class_<CMeshDynTri2D>(m, "CppMeshDynTri2D")
   .def(py::init<>())
-  .def("check",             &CMeshDynTri2D::Check)
-  .def("ntri",              &CMeshDynTri2D::nTri)
-  .def("npoint",            &CMeshDynTri2D::nPoint)
-  .def("delete_tri_edge",   &CMeshDynTri2D::DeleteTriEdge)
-  .def("minmax_xyz",        &CMeshDynTri2D::MinMax_XYZ)
-  .def("insert_point_elem", &CMeshDynTri2D::insertPointElem)
+  .def("check",                 &CMeshDynTri2D::Check)
+  .def("ntri",                  &CMeshDynTri2D::nTri)
+  .def("npoint",                &CMeshDynTri2D::nPoint)
+  .def("delete_tri_edge",       &CMeshDynTri2D::DeleteTriEdge)
+  .def("minmax_xyz",            &CMeshDynTri2D::MinMax_XYZ)
+  .def("insert_point_elem",     &CMeshDynTri2D::insertPointElem)
   .def("delaunay_around_point", &CMeshDynTri2D::DelaunayAroundPoint)
-  .def("meshing_loops",     &CMeshDynTri2D::meshing_loops)
+  .def("meshing_loops",         &CMeshDynTri2D::meshing_loops)
   .def("refinementPlan_EdgeLongerThan_InsideCircle",   &CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
   
   py::class_<CCmdRefineMesh>(m, "CppMapper")

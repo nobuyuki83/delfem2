@@ -473,6 +473,7 @@ void EnforceEdge
  int i0, int i1,
  const std::vector<CVector2>& aVec2)
 { // enforce edge
+//  std::cout << "enforce edge" << std::endl;
   assert( i0 < (int)aPo2D.size() );
   assert( i1 < (int)aPo2D.size() );
   for(;;){
@@ -519,7 +520,7 @@ void EnforceEdge
         assert( aTri[itri1].s2[ied1] >= itri0 );
 #endif
         bool res = FlipEdge(itri0,ied0,aPo2D,aTri);
-        std::cout << itri0 << " " << ied0 << " " << ratio << " " << res << std::endl;
+//        std::cout << itri0 << " " << ied0 << " " << ratio << " " << res << std::endl;
 //        continue;
         if( !res ){
           break;

@@ -1,4 +1,4 @@
-project(noise2d)
+project(02_noise2d)
 cmake_minimum_required(VERSION 2.8)
 
 if(MSVC)

@@ -154,7 +154,7 @@ class CadMesh2D_FEMShellPlateBendingMITC3Eigen(CadMesh2D):
     super().motion(src0,src1,dir)
     self.fem.updated_geometry()
     self.fem.solve()
-    print(len(self.fem.ls.conv_hist),self.fem.freq_eigen)
+    # set visualization
     self.vis_mesh.np_pos[:, :2] = self.dmsh.np_pos
     self.vis_mesh.np_pos[:, 2] = self.fem.mode[:, 0]
 
@@ -173,6 +173,7 @@ class CadMesh2D_FEMShellPlateBendingMITC3Eigen(CadMesh2D):
   def step_time(self):
     self.fem.solve()
     print(len(self.fem.ls.conv_hist), self.fem.freq_eigen)
+    # set visualization
     self.vis_mesh.np_pos[:, :2] = self.dmsh.np_pos
     self.vis_mesh.np_pos[:, 2] = self.fem.mode[:, 0]
 

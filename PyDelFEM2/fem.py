@@ -109,7 +109,6 @@ class FEM_LinSys():
     self.x = numpy.zeros((np,ndimval), dtype=numpy.float64)
     self.bc = numpy.zeros((np,ndimval), dtype=numpy.int32)
     self.ms = None
-
     self.mat = None
     self.mat_prec = None
 
@@ -128,6 +127,7 @@ class FEM_LinSys():
     # preconditioner
     self.mat_prec = PreconditionerILU()
     cppPrecILU_SetPattern_ILUk(self.mat_prec, self.mat, self.nlev_fill)
+#    cppPrecILU_SetPattern_ILUk(self.mat_prec, self.mat, 0)
 
   def set_zero(self):
     self.mat.set_zero()
@@ -467,9 +467,9 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.param_rho = 1.0
     self.param_myu = 100.0
     self.param_lambda = 100.0
-    self.mesh = None
     self.param_offsetdia = 0.0
     self.freq_eigen = 0.0
+    self.mesh = None
 
   def updated_topology(self, mesh: Mesh):
     self.mesh = mesh
@@ -485,6 +485,8 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ls.f[:] = numpy.random.uniform(-1, 1, self.ls.f.shape)
 
   def updated_geometry(self):
+    ####
+    assert self.mass_lumped_sqrt_inv.shape[0] == self.mesh.np_pos.shape[0]
     cppMassLumped_ShellPlateBendingMitc3(self.mass_lumped_sqrt_inv,
                                          self.param_rho, self.param_thickness,
                                          self.mesh.np_pos,
@@ -508,14 +510,15 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ls.mat.set_zero()
     tmp = numpy.zeros_like(self.ls.f)
     cppFEM_Merge_ShellMitc3Static(self.ls.mat, tmp,
-                               self.param_thickness,
-                               self.param_lambda, self.param_myu,
-                               0.0, 0.0,
-                               self.mesh.np_pos, self.mesh.np_elm,
-                               self.mode)
-    cppMatSparse_ScaleBlkLen_LeftRight(self.ls.mat, self.mass_lumped_sqrt_inv)
+                                  self.param_thickness,
+                                  self.param_lambda, self.param_myu,
+                                  0.0, 0.0,
+                                  self.mesh.np_pos, self.mesh.np_elm,
+                                  self.mode)
+    cppMatSparse_ScaleBlkLen_LeftRight(self.ls.mat,
+                                       self.mass_lumped_sqrt_inv)
     self.ls.mat.add_dia(self.param_offsetdia)
-    ####
+    ###
     self.ls.set_precond()
 
   def solve(self):
@@ -524,7 +527,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.ls.solve_iteration()
     ####
     lam0 = numpy.dot(self.ls.x.flatten(),self.mode.flatten())
-    if( 1.0 / lam0 - self.param_offsetdia > 0 ):
+    if lam0 > 0.0 and 1.0 / lam0 - self.param_offsetdia > 0 :
       self.freq_eigen = math.sqrt(1.0/lam0-self.param_offsetdia)/(2.0*math.pi)
     else:
       self.freq_eigen = 0.0
@@ -546,7 +549,7 @@ class FEM_ShellPlateBendingMITC3_Eigen():
     self.solve()
 
   def initialize(self):
-    self.ls.f[:] = numpy.random.uniform(-1, 1, self.mesh.np_pos.shape)
+    self.ls.f[:] = numpy.random.uniform(-1, 1, self.ls.f.shape)
 
 
 class FEM_ShellCloth():

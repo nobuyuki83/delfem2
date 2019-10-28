@@ -388,14 +388,15 @@ class CadMesh2D(Cad2D):
 
   def drag_picked(self, s1x,s1y, s0x,s0y):
     self.ccad.drag_picked(s1x,s1y, s0x,s0y)
-    if self.is_sync_mesh:
-      assert len(self.listW) == self.ccad.nface()
-      for iface in range(self.ccad.nface()):
-        list_xy_bound = self.ccad.xy_vtxctrl_face(iface)
-        np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
-        np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
-        self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
-        self.dmsh.syncXY_from_npPos()
+    if not self.is_sync_mesh:
+      return
+    assert len(self.listW) == self.ccad.nface()
+    for iface in range(self.ccad.nface()):
+      list_xy_bound = self.ccad.xy_vtxctrl_face(iface)
+      np_xy_bound = numpy.array(list_xy_bound).reshape([-1, 2])
+      np_pos_face = numpy.dot(self.listW[iface][1],np_xy_bound)
+      self.dmsh.np_pos[self.listW[iface][0]] = np_pos_face
+      self.dmsh.syncXY_from_npPos()
       '''
       max_asp,min_area = quality_meshTri2D(self.dmsh.np_pos,self.dmsh.np_elm)
       if max_asp > 5.0 or min_area < 0.0:

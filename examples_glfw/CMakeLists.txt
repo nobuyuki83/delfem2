@@ -15,3 +15,4 @@ add_subdirectory(30_cadmsh2d)
 
 add_subdirectory(40_femcloth)
 add_subdirectory(41_fem2d_poisson)
+add_subdirectory(42_fem2d_linearsolid)

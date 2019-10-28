@@ -62,5 +62,28 @@ public:
   CColor color_min, color_max;
 };
 
+class CShader_TriMesh_Disp{
+public:
+  CShader_TriMesh_Disp(){
+  }
+  void Initialize(std::vector<double>& aPosD,
+                  unsigned int ndim,
+                  std::vector<unsigned int>& aTri,
+                  std::vector<double>& aDispD);
+  void UpdateVertex(std::vector<double>& aPosD,
+                    unsigned int ndim,
+                    std::vector<double>& aDispD);
+  void Compile();
+  void Draw(float mP[16], float mMV[16]);
+  
+public:
+  CGL4_VAO_Mesh vao; // gl4
+  int shaderProgram;
+  int Loc_MatrixProjection;
+  int Loc_MatrixModelView;
+  int Loc_Color0, Loc_Color1;
+  int Loc_ValMin, Loc_ValMax;
+};
+
 
 #endif /* gl4_msh_hpp */

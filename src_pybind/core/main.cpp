@@ -278,10 +278,10 @@ PYBIND11_MODULE(c_core, m) {
   
   py::class_<CMesher_Cad2D>(m,"CppMesher_Cad2D")
   .def(py::init<>())
-  .def("meshing",            &CMesher_Cad2D::Meshing)
+  .def("meshing",               &CMesher_Cad2D::Meshing)
   .def("points_on_one_edge",    &CMesher_Cad2D::IndPoint_IndEdge)
-  .def("points_on_edges",    &CMesher_Cad2D::IndPoint_IndEdgeArray)
-  .def("points_on_faces",    &CMesher_Cad2D::IndPoint_IndFaceArray)
+  .def("points_on_edges",       &CMesher_Cad2D::IndPoint_IndEdgeArray)
+  .def("points_on_faces",       &CMesher_Cad2D::IndPoint_IndFaceArray)
   .def_readwrite("edge_length", &CMesher_Cad2D::edge_length);
 
   m.def("cad_getPointsEdge",
@@ -316,7 +316,6 @@ PYBIND11_MODULE(c_core, m) {
   m.def("update_rig_skin",       &PyUpdateRigSkin);
   m.def("update_bone_transform", &UpdateBoneRotTrans);
 
-  
   // ------------------------------------------
 
   py::class_<CMathExpressionEvaluator>(m,"MathExpressionEvaluator")

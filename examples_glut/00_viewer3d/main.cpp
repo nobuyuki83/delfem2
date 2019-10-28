@@ -93,6 +93,7 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   ::glViewport(0,0,w,h);
+//  std::cout << glutGet(GLUT_WINDOW_BUFFER_SIZE) << std::endl;
   ::glutPostRedisplay();
 }
 
@@ -125,7 +126,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case 'a':
       is_animation = !is_animation;
       break;
-      
     case '1':
       break;
     case '2':
@@ -152,7 +152,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
   ::glutPostRedisplay();
 }
 
-
 int main(int argc,char* argv[])
 {
   glutInit(&argc, argv);
@@ -169,7 +168,6 @@ int main(int argc,char* argv[])
   glutMouseFunc(myGlutMouse);
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
-  
   // ----------------------------------
   
   nav.camera.view_height = 2.0;
