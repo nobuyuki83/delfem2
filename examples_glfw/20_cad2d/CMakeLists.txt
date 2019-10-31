@@ -9,6 +9,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_EXT         "../../src_cpp/external")
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
@@ -24,8 +25,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/gl24_funcs.h     ${DELFEM2_SRC}/gl24_funcs.cpp
   ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
   ${DELFEM2_INC}/gl4_v23dtricad.h ${DELFEM2_SRC}/gl4_v23dtricad.cpp
+  ${DELFEM2_INC}/glfw_cam.h
+
   ../glad4/include/glad/glad.h    ../glad4/src/glad.c
-  ../glfw_cam.h
   main.cpp
 )
 
@@ -36,7 +38,7 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../glfw")
+  set(GLFW_DIR "../../src_cpp/external/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
   find_package(OpenGL REQUIRED)
   include_directories(

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.12)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED CONFIG)
 
-set(GLFW_DIR "../glfw")
+set(GLFW_DIR "../../src_cpp/external/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)

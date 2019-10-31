@@ -5,27 +5,18 @@ project(examples_glut)
 # opengl
 add_subdirectory(00_viewer3d)
 add_subdirectory(01_shader)
-add_subdirectory(02_noise2d)
-add_subdirectory(03_noise3d)
 
 add_subdirectory(offscreen)
 add_subdirectory(glbuffer)
 
 # geometry
-add_subdirectory(10_convhull)
-
-add_subdirectory(subdiv)
 add_subdirectory(exponentialmap)
 add_subdirectory(edit_cubes)
-add_subdirectory(spherical_harmonics)
-add_subdirectory(meshslice)
-
 add_subdirectory(paramgeo2d)
 add_subdirectory(paramgeo3d)
 add_subdirectory(transform_handler)
 
 add_subdirectory(selfcollision_bvh)
-
 
 # meshgen
 add_subdirectory(adf3d)

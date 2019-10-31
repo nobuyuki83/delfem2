@@ -30,10 +30,10 @@ cd ../../
 ################################
 # build examples_glfw
 
-cd examples_glfw/glfw
+cd src_cpp/external/glfw
 cmake .
 make
-cd ../..
+cd ../../..
 
 cd examples_glfw
 mkdir buildXcode
@@ -49,6 +49,23 @@ cmake -DEMSCRIPTEN ..
 make
 cd ../../
 
+
+################################
+# build examples_glut
+
+cd examples_glfw_oldgl
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../
+
+cd examples_glfw_oldgl
+mkdir buildXcode
+cd buildXcode
+cmake -G Xcode ..
+cmake --build .
+cd ../../
 
 ################################
 # build examples_glut

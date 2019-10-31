@@ -13,6 +13,7 @@
 #ifndef CAMERA_GL_H
 #define CAMERA_GL_H
 
+#include <ostream>
 #include <math.h>
 #include <stdio.h> // memcpy
 #include <string.h>

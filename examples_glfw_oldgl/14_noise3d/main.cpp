@@ -11,82 +11,39 @@
 #include <limits>
 #include <assert.h>
 #include <vector>
-
-#ifdef __APPLE__
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
-
 #include "delfem2/noise.h"
+#include "delfem2/mshio.h"
+#include "delfem2/msh.h"
 
-#include "delfem2/gl2_color.h"
+#include <GLFW/glfw3.h>
+#include "delfem2/glfw_viewer.hpp"
 #include "delfem2/gl2_funcs.h"
-
-#include "../glut_cam.h"
+#include "delfem2/gl2_color.h"
 
 // -----------------------------
-
-CNav3D_GLUT nav;
-
+std::vector<double> aXYZ;
+std::vector<unsigned int> aTri;
 std::vector<int> aP;
 std::vector<double> aGrad;
-
 int nH, nW, nD;
 std::vector<unsigned char> aV;
-
 // -------------------------------
-
-void myGlutResize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  glutPostRedisplay();
-}
 
 void myGlutDisplay(void)
 {
-  int viewport[4]; glGetIntegerv(GL_VIEWPORT,viewport);
-  
-  ::glClearColor(0.2, .7, 0.7, 1.0);
-  //	::glClearColor(0.0, .0, 0.0, 1.0);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1, 4.0 );
-  
-  nav.SetGL_Camera();
-  
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_TEXTURE_3D);
   glEnable(GL_TEXTURE_GEN_S);
   glEnable(GL_TEXTURE_GEN_T);
   glEnable(GL_TEXTURE_GEN_R);
-  ::glutSolidTeapot(1.0);
+  ::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+//  ::glutSolidTeapot(1.0);
   //    glutSolidSphere(1.0, 32, 16);
   //  glutSolidDodecahedron();
   ::glDisable(GL_TEXTURE_3D);
   glDisable(GL_TEXTURE_GEN_S);
   glDisable(GL_TEXTURE_GEN_T);
   glDisable(GL_TEXTURE_GEN_R);
-  
-  ShowFPS();
-  
-  glutSwapBuffers();
-}
-
-void myGlutIdle(){
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y ){
-  nav.glutMotion(x,y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
 }
 
 void ComputePerlin(){
@@ -172,55 +129,10 @@ void ComputePerlin(){
 }
 
 
-void myGlutKeyboard(unsigned char key, int x, int y)
-{
-  switch (key) {
-    case 'q':
-    case 'Q':
-    case '\033':  /* '\033' ÇÕ ESC ÇÃ ASCII ÉRÅ[Éh */
-      exit(0);
-      break;
-    case 'a':
-      break;
-    case ' ':
-      ComputePerlin();
-      glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, nW, nH, nD, 0,
-                   GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
-      break;
-    default:
-      break;
-  }
-}
-
-void myGlutSpecial(int key, int x, int y){
-  nav.glutSpecial(key, x, y);
-  switch(key){
-    case GLUT_KEY_PAGE_UP:
-      break;
-    case GLUT_KEY_PAGE_DOWN:
-      break;
-  }
-  ::myGlutResize(-1,-1);
-  ::glutPostRedisplay();
-}
-
 int main(int argc,char* argv[])
 {
-  // Initailze GLUT
-  ::glutInitWindowPosition(200,200);
-  ::glutInitWindowSize(400, 300);
-  ::glutInit(&argc, argv);
-  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  ::glutCreateWindow("Cad View");
-  
-  // Set callback function
-  ::glutMotionFunc(myGlutMotion);
-  ::glutMouseFunc(myGlutMouse);
-  ::glutDisplayFunc(myGlutDisplay);
-  ::glutReshapeFunc(myGlutResize);
-  ::glutKeyboardFunc(myGlutKeyboard);
-  ::glutSpecialFunc(myGlutSpecial);
-  ::glutIdleFunc(myGlutIdle);
+  CViewer_GLFW viewer;
+  viewer.Init_GLold();
   
   ComputePerlin();
   
@@ -255,11 +167,25 @@ int main(int argc,char* argv[])
   glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, nW, nH, nD, 0,
                GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
   
-  nav.camera.view_height = 2.0;
+  viewer.nav.camera.view_height = 1.0;
+  viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   setSomeLighting();
   
-  // Enter main loop
-  ::glutMainLoop();
-  return 0;
+  Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+           aXYZ,aTri);
+  Normalize(aXYZ);
+  
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    viewer.DrawBegin_Glold();
+    
+    myGlutDisplay();
+    
+    glfwSwapBuffers(viewer.window);
+    glfwPollEvents();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

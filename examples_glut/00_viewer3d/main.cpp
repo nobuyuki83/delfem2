@@ -32,8 +32,8 @@ void drawObject(){ // for shadow
 
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
+	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
+//  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
   ::glClearStencil(0);
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
@@ -93,7 +93,6 @@ void myGlutIdle(){
 void myGlutResize(int w, int h)
 {
   ::glViewport(0,0,w,h);
-//  std::cout << glutGet(GLUT_WINDOW_BUFFER_SIZE) << std::endl;
   ::glutPostRedisplay();
 }
 
@@ -159,7 +158,7 @@ int main(int argc,char* argv[])
   // Initialize GLUT window 3D
   glutInitWindowPosition(200,200);
   glutInitWindowSize(400, 300);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
+  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
   glutCreateWindow("3D View");
   glutDisplayFunc(myGlutDisplay);
   glutIdleFunc(myGlutIdle);
@@ -171,6 +170,8 @@ int main(int argc,char* argv[])
   // ----------------------------------
   
   nav.camera.view_height = 2.0;
+  
+  printf("renderer: %s\n", glGetString(GL_RENDERER));
   
   setSomeLighting();
   

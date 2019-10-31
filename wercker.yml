@@ -48,18 +48,27 @@ build:
     - script:
         name: compile glfw
         code: |
-          cd examples_glfw/glfw
+          cd src_cpp/external/glfw
           cmake .
           make          
     - script:
-        name: compile glew examples
+        name: compile glfw examples
+        code: |
+          cd examples_glfw_oldgl
+          mkdir buildMake
+          cd buildMake
+          cmake ..
+          make -i
+          cd ..  
+    - script:
+        name: compile glfw examples
         code: |
           cd examples_glfw
           mkdir buildMake
           cd buildMake
           cmake ..
           make -i
-          cd ..  
+          cd ..            
     - script: 
         name: compile python binding
         code: |

@@ -11,15 +11,14 @@
 
 #include <GLFW/glfw3.h>
 
-
 #include "delfem2/camera.h"
 
-void callback_error(int error, const char* description)
+static void callback_error(int error, const char* description)
 {
   fputs(description, stderr);
 }
 
-GLFWwindow* myGLFW_OpenWindow
+static GLFWwindow* myGLFW_OpenWindow
 (const unsigned int SCR_WIDTH,
  const unsigned int SCR_HEIGHT)
 {
@@ -56,10 +55,14 @@ GLFWwindow* myGLFW_OpenWindow
   
   // glfw window creation
   // --------------------
-  GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(SCR_WIDTH,
+                                        SCR_HEIGHT,
+                                        "LearnOpenGL",
+                                        NULL,
+                                        NULL);
   if (window == NULL)
   {
-    std::cout << "Failed to create GLFW window" << std::endl;
+//    std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
     return 0;
   }
