@@ -13,23 +13,14 @@
 #include <set>
 #include <math.h>
 #include <time.h>
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/msh.h"
-
 #include "delfem2/paramgeo_v23.h"
 
+#include <GLFW/glfw3.h>
+#include "delfem2/glfw_viewer.hpp"
 #include "delfem2/gl2_color.h"
-
-#include "../glut_cam.h"
-
 
 CVector3 GetPointSurf
 (double u, double v,
@@ -92,9 +83,6 @@ std::vector<CVector3> aCP;
 std::vector<CVector3> aPQuad;
 int n = 20;
 
-bool is_animation = true;
-CNav3D_GLUT nav;
-
 // ------------------------------
 
 void Random()
@@ -148,18 +136,6 @@ static void myGlVertex3d(int i, const std::vector<CVector3>& aV)
 
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
-  
-  nav.SetGL_Camera();
-  
-  DrawBackground();
-  
   ::glEnable(GL_BLEND);
   ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
   ::glEnable(GL_CULL_FACE);
@@ -197,90 +173,35 @@ void myGlutDisplay(void)
       ::glEnd();
     }
   }
-  
-  ShowFPS();
-
-  ::glutSwapBuffers();
 }
 
-
-void myGlutIdle()
-{
-  if( !is_animation ){
-    ::glutPostRedisplay();
-    return;
-  }
-  Random();
-  ::glutPostRedisplay();
-}
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0, 0, w, h);
-  ::glutPostRedisplay();  
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x,y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int ibutton, int state, int x, int y)
-{
-  nav.glutMouse(ibutton, state, x, y);
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key)
-  {
-    case 'q':
-    case 'Q':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-      break;
-    case '\033':
-      break;
-    case 'a':
-      is_animation = !is_animation;
-      break;
-    case ' ':
-    {
-      break;
-    }
-  }
-  ::glutPostRedisplay();
-}
-
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
 
 int main(int argc,char* argv[])
 {
-  ::glutInit(&argc, argv);
+  CViewer_GLFW viewer;
+  viewer.Init_GLold();
   
-  // Initialize GLUT
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("Initial");
+  viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  viewer.nav.camera.view_height = 4;
   
-  // Define callback functions
-  glutDisplayFunc(myGlutDisplay);
-  glutReshapeFunc(myGlutResize);
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutSpecialFunc(myGlutSpecial);
-  glutIdleFunc(myGlutIdle);
-  
-  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  nav.camera.view_height = 4;
-  
-  glutMainLoop();
-  return 0;
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    {
+      static int iframe = 0;
+      if( iframe == 0 ){
+        Random();
+      }
+      iframe = (iframe + 1)%300;
+    }
+    
+    viewer.DrawBegin_Glold();
+    
+    myGlutDisplay();
+    
+    glfwSwapBuffers(viewer.window);
+    glfwPollEvents();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
