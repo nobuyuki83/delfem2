@@ -7,20 +7,13 @@
 
 #include <iostream>
 #include <math.h>
-
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
-
 #include "delfem2/specialfuncs.h"
 
-#include "delfem2/gl2_color.h"
+#include <GLFW/glfw3.h>
+#include "delfem2/glfw_viewer.hpp"
 #include "delfem2/gl2_funcs.h"
+#include "delfem2/gl2_color.h"
 #include "delfem2/gl2_v23.h"
-
-#include "../glut_cam.h"
 
 static void drawShphere_Heatmap
 (double (*value)(double,double,double),
@@ -117,12 +110,9 @@ static void drawShphere_Radius
 
 // -------------------------------
 
-bool is_animation;
-CNav3D_GLUT nav;
 const int nl = 10;
 int l=0;
 int m=0;
-
 std::vector<COMPLEX> aDecmpSH;
 std::vector<double> aDecmpSHReal;
 
@@ -137,122 +127,38 @@ double evaluateSH(double x, double y, double z)
   return a[ish];
 }
 
-void myGlutDisplay(void)
-{
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  ::glClearStencil(0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-  
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
-  nav.SetGL_Camera();
-  
-  DrawBackground();
-  
-  ::glEnable(GL_LIGHTING);
-  drawShphere_Radius(evaluateSH        ,heatmap_glDiffuse);
-  
-  ShowFPS();
-  ::glutSwapBuffers();
-}
-
-void myGlutIdle(){
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0,0,w,h);
-	::glutPostRedisplay();
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-	::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-	::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-	::glutPostRedisplay();
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-	switch(Key)
-	{
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-      is_animation = !is_animation;
-      break;      
-    case '1':
-       break;
-    case '2':
-       break;
-    case '3':
-       break;
-    case '4':
-      break;
-    case 'i': // one iteration
-      break;
-    case 'c':
-      break;
-    case 'd': // change draw mode
-      break;
-    case 'f': //
-      break;
-    case 's': //
-      break;
-    case ' ':
-    {
-      ++m;
-      if( m > l ){ l++; m=-l; }
-      if( l >= nl ){ l=0; m=0; }
-      std::cout << l << " " << m << " " << (l+1)*l+m << std::endl;
-    }
-  }
-	::glutPostRedisplay();
-}
-
-
 int main(int argc,char* argv[])
 {
-  glutInit(&argc, argv);
-  
-	// Initialize GLUT window 3D
-  glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
-  glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
+  CViewer_GLFW viewer;
+  viewer.Init_GLold();
   
   // -----------------------------
   
-  nav.camera.view_height = 2.0;
+  viewer.nav.camera.view_height = 2.0;
   
   setSomeLighting();
   
-  glutMainLoop();
-	return 0;
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    {
+      static int iframe = 0;
+      if( iframe == 0 ){
+        ++m;
+        if( m > l ){ l++; m=-l; }
+        if( l >= nl ){ l=0; m=0; }
+      }
+      iframe = (iframe+1)%50;
+    }
+    viewer.DrawBegin_Glold();
+    ::glEnable(GL_LIGHTING);
+    drawShphere_Radius(evaluateSH        ,heatmap_glDiffuse);
+    glfwSwapBuffers(viewer.window);
+    glfwPollEvents();
+  }
+  
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
 
 

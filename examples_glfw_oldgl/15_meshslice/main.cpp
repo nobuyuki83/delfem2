@@ -7,24 +7,18 @@
 #include <stdlib.h>
 #include <set>
 #include <stack>
-
-#if defined(__APPLE__) && (__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/msh.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
 #include "delfem2/slice.h"
 
+#include <GLFW/glfw3.h>
+#include "delfem2/glfw_viewer.hpp"
 #include "delfem2/gl2_funcs.h"
 #include "delfem2/gl2_color.h"
 
-#include "../glut_cam.h"
-
+// -------------------------
 
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
@@ -32,48 +26,10 @@ std::vector<CSliceTriMesh> aCS;
 std::vector< std::set<unsigned int> > ReebGraphCS;
 std::vector<CVector3> aCG_CS;
 
-CNav3D_GLUT nav;
-
-
-
-//////////////////////////////////////////////////////////////
-
-void myGlutIdle(){
-  glutPostRedisplay();
-}
-
-void myGlutResize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  ::glMatrixMode(GL_PROJECTION);
-  glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y ){
-  nav.glutMotion(x,y);
-}
-
-void myGlutMouse(int button, int state, int x, int y){
-  nav.glutMouse(button, state, x, y);
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-}
+// ---------------------------
 
 void myGlutDisplay(void)
 {
-  ::glClearColor(0.2f, .7f, .7f,1.0f);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
-  
-  DrawBackground();
-  nav.SetGL_Camera();
-  
   ::glEnable(GL_LIGHTING);
   ::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   
@@ -112,53 +68,9 @@ void myGlutDisplay(void)
     }
   }
   ::glEnable(GL_DEPTH_TEST);
-  
-  
-  ShowFPS();
-  glutSwapBuffers();
 }
 
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key){
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-      break;
-    case ' ':
-      break;
-    case 'l':
-      break;
-  }
-  
-  ::glutPostRedisplay();
-}
-
-int main(int argc,char* argv[])
-{
-  // initialize glut
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("ReebGraph");
-  
-  // define call back functions
-  glutIdleFunc(myGlutIdle);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutDisplayFunc(myGlutDisplay);
-  glutReshapeFunc(myGlutResize);
-  glutSpecialFunc(myGlutSpecial);;
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  
-  setSomeLighting();
-  
-  nav.camera.view_height = 0.5;
-  nav.camera.camera_rot_mode  = CAMERA_ROT_TBALL;
-  
+void Hoge(){
   Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   Normalize(aXYZ);
@@ -166,7 +78,7 @@ int main(int argc,char* argv[])
   makeSurroundingRelationship(aTriSurRel,
                               aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
   
- 
+  
   std::vector<double> aHeight;
   aHeight.push_back(-0.3);
   aHeight.push_back(-0.2);
@@ -205,7 +117,29 @@ int main(int argc,char* argv[])
     cg /= sum_area;
     aCG_CS[ics] = cg;
   }
+}
+
+int main(int argc,char* argv[])
+{
+  CViewer_GLFW viewer;
+  viewer.Init_GLold();
   
-  glutMainLoop();
-  return 0;
+  setSomeLighting();
+  
+  viewer.nav.camera.view_height = 0.5;
+  viewer.nav.camera.camera_rot_mode  = CAMERA_ROT_TBALL;
+  
+  Hoge();
+  
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    viewer.DrawBegin_Glold();
+    myGlutDisplay();
+    glfwSwapBuffers(viewer.window);
+    glfwPollEvents();
+  }
+  
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

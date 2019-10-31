@@ -9,6 +9,7 @@
 #define PRIMITIVE_H
 
 #include <math.h>
+#include <vector>
 
 #include "delfem2/sdf.h"
 

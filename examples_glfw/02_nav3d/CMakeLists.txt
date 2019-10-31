@@ -18,8 +18,12 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/gl24_funcs.h     ${DELFEM2_SRC}/gl24_funcs.cpp
   ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
+  ${DELFEM2_INC}/glfw_cam.h
+  ${DELFEM2_INC}/gl4_mshcolor.h   ${DELFEM2_SRC}/gl4_mshcolor.cpp
+  ${DELFEM2_INC}/glfw_viewer.hpp  ${DELFEM2_SRC}/glfw_viewer.cpp
+  
   ../glad4/include/glad/glad.h   ../glad4/src/glad.c
-  ../glfw_cam.h
+  
   main.cpp
 )
 
@@ -30,7 +34,7 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../glfw")
+  set(GLFW_DIR "../../src_cpp/external/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
   find_package(OpenGL REQUIRED)
   include_directories(

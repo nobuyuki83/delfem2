@@ -34,7 +34,7 @@
 
 #include "delfem2/gl2_color.h"
 #include "delfem2/gl4_mshcolor.h"
-#include "../glfw_cam.h"
+#include "delfem2/glfw_cam.h"
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {

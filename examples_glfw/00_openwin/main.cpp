@@ -6,8 +6,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#define GLFW_INCLUDE_ES3
+  #include <emscripten/emscripten.h>
+  #define GLFW_INCLUDE_ES3
 #endif
 #include <GLFW/glfw3.h>
 #include <iostream>

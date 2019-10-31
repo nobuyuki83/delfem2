@@ -26,7 +26,7 @@
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
 #include "delfem2/gl4_v23dtricad.h"
-#include "../glfw_cam.h"
+#include "delfem2/glfw_cam.h"
 
 // -----------------------------------
 

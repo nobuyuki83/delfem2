@@ -21,7 +21,7 @@
 #include "delfem2/gl24_funcs.h"
 #include "delfem2/gl4_funcs.h"
 #include "delfem2/gl4_mshcolor.h"
-#include "../glfw_cam.h"
+#include "delfem2/glfw_cam.h"
 
 
 class CInput_ContactNothing: public CInput_Contact
