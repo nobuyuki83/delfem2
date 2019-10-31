@@ -1,9 +1,10 @@
-project(10_nav3d)
+project(18_paramgeo3d)
 cmake_minimum_required(VERSION 2.8)
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
 set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 set(GLFW_DIR "../../src_cpp/external/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
@@ -16,9 +17,25 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/glfw_viewer.hpp  ${DELFEM2_SRC}/glfw_viewer.cpp
+  ${DELFEM2_INC}/vec2.h              ${DELFEM2_SRC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h              ${DELFEM2_SRC}/vec3.cpp
+  ${DELFEM2_INC}/mat3.h              ${DELFEM2_SRC}/mat3.cpp
+  ${DELFEM2_INC}/quat.h              ${DELFEM2_SRC}/quat.cpp
+  ${DELFEM2_INC}/mshtopo.h           ${DELFEM2_SRC}/mshtopo.cpp
+  ${DELFEM2_INC}/msh.h               ${DELFEM2_SRC}/msh.cpp
+  ${DELFEM2_INC}/dtri.h              ${DELFEM2_SRC}/dtri.cpp
+  ${DELFEM2_INC}/camera.h            ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/color.h             ${DELFEM2_SRC}/color.cpp
   
+  ${DELFEM2_INC}/v23m3q.h            ${DELFEM2_SRC}/v23m3q.cpp
+  ${DELFEM2_INC}/paramgeo_v23.h      ${DELFEM2_SRC}/paramgeo_v23.cpp
+  ${DELFEM2_INC}/dtri_v3.h           ${DELFEM2_SRC}/dtri_v3.cpp
+  
+  ${DELFEM2_INC}/glfw_viewer.hpp  ${DELFEM2_SRC}/glfw_viewer.cpp
+  ${DELFEM2_INC}/gl2_v23.h           ${DELFEM2_SRC}/gl2_v23.cpp
+  ${DELFEM2_INC}/gl2_color.h         ${DELFEM2_SRC}/gl2_color.cpp
+  ${DELFEM2_INC}/gl2_funcs.h         ${DELFEM2_SRC}/gl2_funcs.cpp
+
   main.cpp
 )
 

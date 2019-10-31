@@ -9,6 +9,9 @@
 #ifndef GLFW_FUNCS_H
 #define GLFW_FUNCS_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <GLFW/glfw3.h>
 
 #include "delfem2/camera.h"
