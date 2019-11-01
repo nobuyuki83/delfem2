@@ -12,9 +12,9 @@
 #include "delfem2/paramgeo_v23.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/glfw_viewer.hpp"
-#include "delfem2/gl2_v23.h"
-#include "delfem2/gl2_funcs.h"
+#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/gl2_funcs.h"
 
 // ---------------------------------------------
 

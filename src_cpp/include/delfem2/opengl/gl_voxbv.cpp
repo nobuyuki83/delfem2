@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/vec3.h"
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
 #include <OpenGL/gl.h>
@@ -20,11 +21,12 @@
 #include <GL/glu.h>
 #endif
 
+#include "delfem2/opengl/gl_voxbv.h"
+#include "delfem2/opengl/gl2_funcs.h"
 
-#include "delfem2/vec3.h"
-#include "delfem2/gl_voxbv.h"
-#include "delfem2/gl2_funcs.h"
 
+
+// ------------------------------------
 
 static void myGlNormal(const CVector3& n){ ::glNormal3d(n.x,n.y,n.z); }
 static void myGlVertex(const CVector3& v){ ::glVertex3d(v.x,v.y,v.z); }
@@ -34,9 +36,7 @@ static void myGlColorDiffuse(float r, float g, float b, float a){
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-////////////////////////////////////////////////////////
-
-
+// -------------------------------
 
 const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 4, 6, 2 }, // -x

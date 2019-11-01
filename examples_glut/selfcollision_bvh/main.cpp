@@ -1,5 +1,13 @@
 #include <iostream>
 #include <vector>
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
+#include "delfem2/primitive.h"
+#include "delfem2/msh.h"
+#include "delfem2/mshtopo.h"
+#include "delfem2/srchbi_v3bvh.h"
+
+// -----
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GLUT/glut.h>
@@ -7,16 +15,7 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/bv.h"
-#include "delfem2/bvh.h"
-#include "delfem2/primitive.h"
-#include "delfem2/msh.h"
-#include "delfem2/mshtopo.h"
-
-#include "delfem2/srchbi_v3bvh.h"
-
-#include "delfem2/gl2_funcs.h"
-
+#include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
 /* ------------------------------------------------------------------------ */

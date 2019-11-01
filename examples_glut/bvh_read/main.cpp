@@ -2,13 +2,6 @@
 #include <sstream>
 #include <vector>
 #include <set>
-
-#if defined(__APPLE__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
 #include "delfem2/mshio.h"
@@ -17,10 +10,17 @@
 
 #include "delfem2/rig_v3q.h"
 
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl2_v23.h"
-#include "delfem2/gl_rig_v23q.h"
+// ---------------
 
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/gl_rig_v23q.h"
 #include "../glut_cam.h"
 
 

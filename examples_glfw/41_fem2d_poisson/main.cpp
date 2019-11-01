@@ -10,6 +10,16 @@
 #include <iostream>
 #include <limits>
 #include <vector>
+#include "delfem2/mshtopo.h"
+#include "delfem2/msh.h"
+#include "delfem2/dtri.h"
+#include "delfem2/mats.h"
+
+#include "delfem2/dtri_v2.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
+
+// -----
 
 #if defined(_MSC_VER)
   #include <windows.h>
@@ -23,18 +33,11 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
-#include "delfem2/dtri.h"
-#include "delfem2/mats.h"
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl4_mshcolor.h"
+#include "delfem2/opengl/glfw_cam.h"
 
-#include "delfem2/dtri_v2.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/fem_emats.h"
-
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl4_mshcolor.h"
-#include "delfem2/glfw_cam.h"
+// ------------------------------------
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {

@@ -20,7 +20,8 @@
 #endif
 
 #include "delfem2/color.h"
-#include "delfem2/gl2_color.h"
+
+#include "delfem2/opengl/gl2_color.h"
 
 static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
 {

@@ -29,9 +29,10 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/fem_emats.h         ${DELFEM2_SRC}/fem_emats.cpp
   ${DELFEM2_INC}/dtri_v2.h           ${DELFEM2_SRC}/dtri_v2.cpp
-                                     
-  ${DELFEM2_INC}/cloth_internal.h     
-  ${DELFEM2_INC}/gl2_funcs.h          ${DELFEM2_SRC}/gl2_funcs.cpp
+  ${DELFEM2_INC}/cloth_internal.h
+  
+  ${DELFEM2_INC}/opengl/gl2_funcs.h
+  ${DELFEM2_INC}/opengl/gl2_funcs.cpp
 
   main.cpp  
 )

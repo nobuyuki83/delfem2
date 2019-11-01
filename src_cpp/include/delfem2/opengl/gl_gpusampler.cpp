@@ -28,9 +28,9 @@
   #include <GL/gl.h>
 #endif
 ////
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl2_v23.h"  // vec3, mat3
-#include "delfem2/gl_gpusampler.h"
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl2_v23.h"  // vec3, mat3
+#include "delfem2/opengl/gl_gpusampler.h"
 
 /*
 double Dot(const std::vector<double>& p0, const std::vector<double>& p1){

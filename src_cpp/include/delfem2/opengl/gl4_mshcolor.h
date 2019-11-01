@@ -10,9 +10,9 @@
 
 #include <stdio.h>
 #include <vector>
-
 #include "delfem2/color.h"
-#include "delfem2/gl4_funcs.h" // CGL4_VAO_Mesh
+
+#include "delfem2/opengl/gl4_funcs.h" // CGL4_VAO_Mesh
 
 class CShader_TriMesh{
 public:

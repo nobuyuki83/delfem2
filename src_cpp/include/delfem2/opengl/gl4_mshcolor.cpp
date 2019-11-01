@@ -5,6 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/mshtopo.h"
+#include "delfem2/msh.h"
+#include "delfem2/color.h"
+
+// --
+
 #ifdef USE_GLEW
   #include <GL/glew.h>
 #else
@@ -15,13 +21,11 @@
   #endif
 #endif
 
-#include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
-#include "delfem2/color.h"
+#include "delfem2/opengl/gl24_funcs.h" // compile shader
+#include "delfem2/opengl/gl4_funcs.h" // CGL4_VAO_Mesh
+#include "delfem2/opengl/gl4_mshcolor.h"
 
-#include "delfem2/gl24_funcs.h" // compile shader
-#include "delfem2/gl4_funcs.h" // CGL4_VAO_Mesh
-#include "delfem2/gl4_mshcolor.h"
+// ------------------------------------------
 
 
 void CShader_TriMesh::Initialize

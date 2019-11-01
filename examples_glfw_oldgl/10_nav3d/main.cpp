@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 #include <GLFW/glfw3.h>
-#include "delfem2/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.hpp"
 
 int main(void)
 {

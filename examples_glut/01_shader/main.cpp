@@ -16,11 +16,9 @@
   #include <GL/glut.h>
 #endif
 
-#include "delfem2/gl24_funcs.h"
-
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl_tex.h"
-
+#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl_tex.h"
 #include "../glut_cam.h"
 
 // -----------------------------

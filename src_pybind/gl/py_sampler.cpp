@@ -3,12 +3,12 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/gl2ew_funcs.h"
-#include "delfem2/gl_gpusampler.h"
+#include "delfem2/opengl/gl2ew_funcs.h"
+#include "delfem2/opengl/gl_gpusampler.h"
 
 namespace py = pybind11;
 
-///////////////////////////////////
+// -----------------
 
 py::array_t<float> depth_buffer(CGPUSampler& sampler)
 {

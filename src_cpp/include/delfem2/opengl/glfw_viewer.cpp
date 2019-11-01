@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "delfem2/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.hpp"
 
 // ---------------
 

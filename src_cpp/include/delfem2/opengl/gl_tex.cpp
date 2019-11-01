@@ -13,22 +13,24 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "delfem2/gl_tex.h"
-
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+  #include <OpenGL/gl.h>
+  #include <OpenGL/glu.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
+  #include <GL/glu.h>
 #elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+  #include <windows.h>
+  #include <GL/gl.h>
+  #include <GL/glu.h>
 #else // linux
-#include <GL/gl.h>
-#include <GL/glu.h>
+  #include <GL/gl.h>
+  #include <GL/glu.h>
 #endif
+
+#include "delfem2/opengl/gl_tex.h"
+
+// ------------------------
 
 void CTexture::LoadTex()
 {

@@ -8,10 +8,14 @@
 #include <iostream>
 #include <sstream>
 #include <math.h>
-
 #include <complex>
 #include <set>
 #include <stack>
+#include "delfem2/funcs.h"
+#include "delfem2/dtri_v2.h"
+#include "delfem2/cad2d.h"
+
+// ------------------------
 
 #if defined(__APPLE__) && defined(__MACH__)
   #include <GLUT/glut.h>
@@ -19,15 +23,9 @@
   #include <GL/glut.h>
 #endif
 
-#include "delfem2/funcs.h"
-
-#include "delfem2/dtri_v2.h"
-#include "delfem2/cad2d.h"
-
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl2_v23.h"
-#include "delfem2/gl2_v23dtricad.h"
-
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/gl2_v23dtricad.h"
 #include "../glut_cam.h"
 
 #ifndef M_PI

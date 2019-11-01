@@ -13,6 +13,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <queue>
+#include "delfem2/msh.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshtopo.h"
+#include "delfem2/vec3.h"
+
+// --------
 
 #if defined(__APPLE__) && (__MACH__)
   #include <GLUT/glut.h>
@@ -20,15 +26,9 @@
   #include <GL/glut.h>
 #endif
 
-#include "delfem2/msh.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/vec3.h"
-
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl_tex.h"
-
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl_tex.h"
 #include "../glut_cam.h"
 
 // ------------------------------------------------------

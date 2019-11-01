@@ -14,7 +14,7 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/gl2ew_funcs.h"
+#include "delfem2/opengl/gl2ew_funcs.h"
 
 void CFrameBufferManager::DeleteFrameBuffer(){
   if( id_framebuffer > 0 ){

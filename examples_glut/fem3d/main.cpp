@@ -10,13 +10,6 @@
 #include <cstdlib>
 #include <math.h>
 #include <time.h>
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
@@ -26,10 +19,17 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl2_v23.h"
-#include "delfem2/gl2_funcs.h"
+// ---------------
 
+#if defined(__APPLE__) && defined(__MACH__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
 

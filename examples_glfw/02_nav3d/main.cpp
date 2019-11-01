@@ -1,5 +1,8 @@
 #include <iostream>
 #include <math.h>
+#include "delfem2/primitive.h"
+
+// ---
 
 #if defined(_MSC_VER)
   #include <windows.h>
@@ -13,13 +16,11 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/primitive.h"
-
-#include "delfem2/gl24_funcs.h"
-#include "delfem2/gl4_funcs.h"
-#include "delfem2/gl4_mshcolor.h"
-#include "delfem2/glfw_cam.h"
-#include "delfem2/glfw_viewer.hpp"
+#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl4_funcs.h"
+#include "delfem2/opengl/gl4_mshcolor.h"
+#include "delfem2/opengl/glfw_cam.h"
+#include "delfem2/opengl/glfw_viewer.hpp"
 
 // ---------------------------
 CShader_TriMesh shdr;

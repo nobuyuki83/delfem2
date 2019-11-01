@@ -1,12 +1,5 @@
 #include <iostream>
 #include <math.h>
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/msh.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
@@ -14,11 +7,19 @@
 
 #include "delfem2/objfunc_v23.h"
 
-#include "delfem2/gl2_funcs.h"
+
+// --------
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_funcs.h"
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------
 
 
 
