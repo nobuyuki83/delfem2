@@ -65,7 +65,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  ::DrawBackground(CColor(0.2, 0.7, 0.7));
+  opengl::DrawBackground(CColor(0.2, 0.7, 0.7));
   
   nav.SetGL_Camera();
   
@@ -84,7 +84,7 @@ void myGlutDisplay(void)
   
   
   ::glLineWidth(1);
-  ::DrawAxis(1);
+  opengl::DrawAxis(1);
   
   ShowFPS();
   
@@ -204,7 +204,7 @@ int main(int argc,char* argv[])
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
    
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   aCubeGrid.push_back( CCubeGrid(0,0,0) );
   

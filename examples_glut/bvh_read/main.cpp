@@ -49,7 +49,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   nav.SetGL_Camera();
   
-  DrawAxis(10);
+  opengl::DrawAxis(10);
   
   DrawBone(aBone,
            ibone_selected, ielem_bone_selected,
@@ -162,12 +162,12 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // -------------------------
   
   nav.camera.view_height = 15.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   std::string path_bvh = std::string(PATH_INPUT_DIR)+"/walk.bvh";
   std::cout << "path:" << path_bvh << std::endl;

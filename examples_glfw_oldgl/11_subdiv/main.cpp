@@ -58,7 +58,7 @@ int main(int argc,char* argv[])
   // ----------------------------
   
   viewer.nav.camera.view_height = 2.0;
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   while (!glfwWindowShouldClose(viewer.window))
   {
@@ -66,10 +66,10 @@ int main(int argc,char* argv[])
     
     ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
     ::glEnable(GL_LIGHTING);
-    DrawMeshQuad3D_FaceNorm(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
+    opengl::DrawMeshQuad3D_FaceNorm(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
-    DrawMeshQuad3D_Edge(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
+    opengl::DrawMeshQuad3D_Edge(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
     
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();

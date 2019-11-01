@@ -28,39 +28,39 @@
 
 //----------------------------------------------------
 
-void myGlVertex(const CVector3& v)
+void opengl::myGlVertex(const CVector3& v)
 {
   ::glVertex3d(v.x,v.y,v.z);
 }
 
-void myGlTranslate(const CVector3& v)
+void opengl::myGlTranslate(const CVector3& v)
 {
   ::glTranslated(v.x,v.y,v.z);
 }
 
-void myGlNormal(const CVector3& n)
+void opengl::myGlNormal(const CVector3& n)
 {
   ::glNormal3d(n.x,n.y,n.z);
 }
 
-void myGlNormal(const CVector3& a, const CVector3& b, const CVector3& c)
+void opengl::myGlNormal(const CVector3& a, const CVector3& b, const CVector3& c)
 {
   CVector3 n; UnitNormal(n, a, b, c);
   ::glNormal3d(n.x,n.y,n.z);
 }
 
-void myGlVertex(int i, const std::vector<CVector3>& aV)
+void opengl::myGlVertex(int i, const std::vector<CVector3>& aV)
 {
   const CVector3& v = aV[i];
-  ::myGlVertex(v);
+  opengl::myGlVertex(v);
 }
 
-void myGlVertex(int i, const std::vector<double>& vec)
+void opengl::myGlVertex(int i, const std::vector<double>& vec)
 {
   ::glVertex3d(vec[i*2], vec[i*2+1], +0.0);
 }
 
-void ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin)
+void opengl::ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin)
 {
   const CVector3& dy = Cross(dz,dx);
   const CVector3& o = origin;
@@ -72,7 +72,7 @@ void ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3&
   ::glMultMatrixd(A);
 }
 
-void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin)
+void opengl::ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin)
 {
   const CVector3& dy = Cross(dz,dx);
   CVector3 o(dx*origin,dy*origin,dz*origin);
@@ -86,7 +86,7 @@ void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& 
 
 //--------------------------------------------------------
 
-void DrawCylinderWire
+void opengl::DrawCylinderWire
 (const CVector3& p0,
  const CVector3& p1,
  double r)
@@ -112,7 +112,7 @@ void DrawCylinderWire
   ::glEnd();
 }
 
-void DrawCylinder
+void opengl::DrawCylinder
 (const CVector3& p0,
  const CVector3& p1,
  double r)
@@ -125,11 +125,11 @@ void DrawCylinder
     ::glBegin(GL_QUADS);
     for (int idiv=0; idiv<ndivt; ++idiv){
       CVector3 n = cos((idiv+0.5)*dt)*y+sin((idiv+0.5)*dt)*x;
-      ::myGlNormal(n);
-      ::myGlVertex(p0+r*sin((idiv+0)*dt)*x+r*cos((idiv+0)*dt)*y);
-      ::myGlVertex(p1+r*sin((idiv+0)*dt)*x+r*cos((idiv+0)*dt)*y);
-      ::myGlVertex(p1+r*sin((idiv+1)*dt)*x+r*cos((idiv+1)*dt)*y);
-      ::myGlVertex(p0+r*sin((idiv+1)*dt)*x+r*cos((idiv+1)*dt)*y);
+      myGlNormal(n);
+      myGlVertex(p0+r*sin((idiv+0)*dt)*x+r*cos((idiv+0)*dt)*y);
+      myGlVertex(p1+r*sin((idiv+0)*dt)*x+r*cos((idiv+0)*dt)*y);
+      myGlVertex(p1+r*sin((idiv+1)*dt)*x+r*cos((idiv+1)*dt)*y);
+      myGlVertex(p0+r*sin((idiv+1)*dt)*x+r*cos((idiv+1)*dt)*y);
     }
     ::glEnd();
   }
@@ -140,17 +140,17 @@ void DrawCylinder
       CVector3 v1 = p1+(r*sin((idiv+1)*dt))*x+(r*cos((idiv+1)*dt))*y;
       CVector3 v2 = p1;
       CVector3 n; UnitNormal(n, v1, v0, v2);
-      ::myGlNormal(n);
-      ::myGlVertex(v0);
-      ::myGlVertex(v2);
-      ::myGlVertex(v1);
+      myGlNormal(n);
+      myGlVertex(v0);
+      myGlVertex(v2);
+      myGlVertex(v1);
     }
     ::glEnd();
   }
 }
 
 
-void DrawArrow
+void opengl::DrawArrow
 (const CVector3& p0,
  const CVector3& d,
  int ndivt)
@@ -165,11 +165,11 @@ void DrawArrow
     ::glBegin(GL_QUADS);
     for(int idiv=0;idiv<ndivt;idiv++){
       CVector3 n = cos((idiv+0.5)*dt)*y + sin((idiv+0.5)*dt)*x;
-      ::myGlNormal(n);
-      ::myGlVertex(p0      +r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
-      ::myGlVertex(p0+d*0.8+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
-      ::myGlVertex(p0+d*0.8+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
-      ::myGlVertex(p0      +r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
+      myGlNormal(n);
+      myGlVertex(p0      +r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
+      myGlVertex(p0+d*0.8+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
+      myGlVertex(p0+d*0.8+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
+      myGlVertex(p0      +r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
     }
     ::glEnd();
   }
@@ -180,16 +180,16 @@ void DrawArrow
       CVector3 v1 = p0+d*0.8 + (r1*sin((idiv+1)*dt))*x + (r1*cos((idiv+1)*dt))*y;
       CVector3 v2 = p0+d;
       CVector3 n; UnitNormal(n, v1, v0, v2);
-      ::myGlNormal(n);
-      ::myGlVertex(v0);
-      ::myGlVertex(v2);
-      ::myGlVertex(v1);
+      myGlNormal(n);
+      myGlVertex(v0);
+      myGlVertex(v2);
+      myGlVertex(v1);
     }
     ::glEnd();
   }
 }
 
-void DrawCircleArrow
+void opengl::DrawCircleArrow
 (CVector3 org, CVector3 axis, double offset)
 {
   double arrow_width_ratio = 0.1;
@@ -211,10 +211,10 @@ void DrawCircleArrow
       for(int jdiv=0;jdiv<ndivt;jdiv++){
         CVector3 n = sin((jdiv+0)*dt)*s0 + cos((jdiv+0)*dt)*z;
         ::glNormal3d(n.x,n.y,n.z);
-        ::myGlVertex(q0 + r0*sin((jdiv+0)*dt)*s0 + r0*cos((jdiv+0)*dt)*z);
-        ::myGlVertex(q0 + r0*sin((jdiv+1)*dt)*s0 + r0*cos((jdiv+1)*dt)*z);
-        ::myGlVertex(q1 + r0*sin((jdiv+1)*dt)*s1 + r0*cos((jdiv+1)*dt)*z);
-        ::myGlVertex(q1 + r0*sin((jdiv+0)*dt)*s1 + r0*cos((jdiv+0)*dt)*z);
+        myGlVertex(q0 + r0*sin((jdiv+0)*dt)*s0 + r0*cos((jdiv+0)*dt)*z);
+        myGlVertex(q0 + r0*sin((jdiv+1)*dt)*s0 + r0*cos((jdiv+1)*dt)*z);
+        myGlVertex(q1 + r0*sin((jdiv+1)*dt)*s1 + r0*cos((jdiv+1)*dt)*z);
+        myGlVertex(q1 + r0*sin((jdiv+0)*dt)*s1 + r0*cos((jdiv+0)*dt)*z);
       }
     }
     ::glEnd();
@@ -234,9 +234,9 @@ void DrawCircleArrow
       CVector3 v2 = q1;
       CVector3 n; UnitNormal(n, v0, v2, v1);
       ::glNormal3d(n.x,n.y,n.z);
-      ::myGlVertex(v0);
-      ::myGlVertex(v2);
-      ::myGlVertex(v1);
+      myGlVertex(v0);
+      myGlVertex(v2);
+      myGlVertex(v1);
     }
     ::glEnd();
   }
@@ -244,7 +244,7 @@ void DrawCircleArrow
 
 //--------------------------------------------------------
 
-void DrawCircleWire
+void opengl::DrawCircleWire
 (const CVector3& axis,
  const CVector3& org,
  double r)
@@ -260,7 +260,7 @@ void DrawCircleWire
   ::glEnd();
 }
 
-void DrawCircleSolid
+void opengl::DrawCircleSolid
 (const CVector3& axis,
  const CVector3& org,
  double r)
@@ -276,16 +276,16 @@ void DrawCircleSolid
       CVector3 v1 = org+(r*sin((idiv+1)*dt))*x+(r*cos((idiv+1)*dt))*y;
       CVector3 v2 = org;
       CVector3 n; UnitNormal(n, v1, v0, v2);
-      ::myGlNormal(n);
-      ::myGlVertex(v0);
-      ::myGlVertex(v2);
-      ::myGlVertex(v1);
+      myGlNormal(n);
+      myGlVertex(v0);
+      myGlVertex(v2);
+      myGlVertex(v1);
     }
     ::glEnd();
   }
 }
 
-void DrawArcSolid
+void opengl::DrawArcSolid
 (const CVector3& axis,
  const CVector3& org,
  double ru, // rin
@@ -305,17 +305,17 @@ void DrawArcSolid
       CVector3 v0 = org+(rv*sin(rads+(idiv+0)*dt))*y+(rv*cos(rads+(idiv+0)*dt))*x;
       CVector3 v1 = org+(rv*sin(rads+(idiv+1)*dt))*y+(rv*cos(rads+(idiv+1)*dt))*x;
       CVector3 n; UnitNormal(n, v1, v0, org);
-      ::myGlNormal(n);
-      ::myGlVertex(v0);
-      ::myGlVertex(v1);
-      ::myGlVertex(u1);
-      ::myGlVertex(u0);
+      myGlNormal(n);
+      myGlVertex(v0);
+      myGlVertex(v1);
+      myGlVertex(u1);
+      myGlVertex(u0);
     }
     ::glEnd();
   }
 }
 
-void DrawSingleQuad_Edge
+void opengl::DrawSingleQuad_Edge
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3)
 {
   ::glDisable(GL_LIGHTING);
@@ -328,7 +328,7 @@ void DrawSingleQuad_Edge
   
 }
 
-void DrawSingleQuad_FaceNorm
+void opengl::DrawSingleQuad_FaceNorm
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3)
 {
   ::glBegin(GL_QUADS);
@@ -356,26 +356,26 @@ void DrawSingleQuad_FaceNorm
 }
 
 
-void drawPolyLine
+void opengl::drawPolyLine
 (const std::vector<CVector2>& aP)
 {
   ::glBegin(GL_LINES);
   for (unsigned int ip = 0; ip<aP.size()-1; ip++){
     unsigned int jp = ip+1;
-    myGlVertex(ip,aP);
-    myGlVertex(jp,aP);
+    opengl::myGlVertex(ip,aP);
+    opengl::myGlVertex(jp,aP);
   }
   ::glEnd();
   
   ////
   ::glBegin(GL_POINTS);
   for (unsigned int ip = 0; ip<aP.size(); ip++){
-    myGlVertex(ip,aP);
+    opengl::myGlVertex(ip,aP);
   }
   ::glEnd();
 }
 
-void drawPolyLine3D(const std::vector<CVector3>& aP)
+void opengl::drawPolyLine3D(const std::vector<CVector3>& aP)
 {
   if( aP.empty() ) return;
   ::glBegin(GL_LINES);
@@ -394,7 +394,7 @@ void drawPolyLine3D(const std::vector<CVector3>& aP)
   ::glEnd();
 }
 
-void drawPolyLine2D(const std::vector<CVector2>& aP)
+void opengl::drawPolyLine2D(const std::vector<CVector2>& aP)
 {
   ::glBegin(GL_LINES);
   for (unsigned int ip = 0; ip<aP.size()-1; ip++){
@@ -412,7 +412,7 @@ void drawPolyLine2D(const std::vector<CVector2>& aP)
   ::glEnd();
 }
 
-void Draw_MeshTri
+void opengl::Draw_MeshTri
 (const std::vector<CVector2>& aP,
  const std::vector<unsigned int>& aTri)
 {
@@ -432,7 +432,7 @@ void Draw_MeshTri
   ::glEnd();
 }
 
-void Draw_MeshTri_Edge
+void opengl::Draw_MeshTri_Edge
 (const std::vector<CVector2>& aP,
  const std::vector<unsigned int>& aTri)
 {
@@ -455,7 +455,7 @@ void Draw_MeshTri_Edge
   ::glEnd();
 }
 
-void DrawTriMeshNorm
+void opengl::DrawTriMeshNorm
 (const std::vector<CVector3>& aP,
  const std::vector<int>& aTri)
 {
@@ -477,7 +477,7 @@ void DrawTriMeshNorm
   ::glEnd();
 }
 
-void DrawMeshTri_Edge
+void opengl::DrawMeshTri_Edge
 (const std::vector<CVector3>& aP,
  const std::vector<unsigned int>& aTri)
 {
@@ -499,9 +499,9 @@ void DrawMeshTri_Edge
     assert(i0>=0&&i0<(int)aP.size());
     assert(i1>=0&&i1<(int)aP.size());
     assert(i2>=0&&i2<(int)aP.size());
-    ::myGlVertex(aP[i0]); ::myGlVertex(aP[i1]);
-    ::myGlVertex(aP[i1]); ::myGlVertex(aP[i2]);
-    ::myGlVertex(aP[i2]); ::myGlVertex(aP[i0]);
+    myGlVertex(aP[i0]); myGlVertex(aP[i1]);
+    myGlVertex(aP[i1]); myGlVertex(aP[i2]);
+    myGlVertex(aP[i2]); myGlVertex(aP[i0]);
   }
   ::glEnd();
   
@@ -509,7 +509,7 @@ void DrawMeshTri_Edge
 }
 
 
-void DrawMeshQuad_Face
+void opengl::DrawMeshQuad_Face
 (const std::vector<CVector3>& aPoint,
  const std::vector<unsigned int>& aQuad)
 {
@@ -533,18 +533,18 @@ void DrawMeshQuad_Face
   ::glEnd();
 }
 
-void DrawPoint3D
+void opengl::DrawPoint3D
 (const std::vector<CVector3>& aPoint)
 {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_POINTS);
   for(int ip=0;ip<(int)aPoint.size();++ip){
-    ::myGlVertex(aPoint[ip]);
+    myGlVertex(aPoint[ip]);
   }
   ::glEnd();
 }
 
-void DrawQuad3D_Edge
+void opengl::DrawQuad3D_Edge
 (const std::vector<CVector3>& aPoint,
  const std::vector<unsigned int>& aQuad)
 {
@@ -562,7 +562,7 @@ void DrawQuad3D_Edge
   ::glEnd();
 }
 
-void DrawSingleHex_Edge
+void opengl::DrawSingleHex_Edge
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
  const CVector3& p4, const CVector3& p5, const CVector3& p6, const CVector3& p7)
 {
@@ -588,7 +588,7 @@ void DrawSingleHex_Edge
 }
 
 
-void DrawGrid2D
+void opengl::DrawGrid2D
 (int ndivx, int ndivy,
  const CVector3& ex, const CVector3& ey, const CVector3& org)
 {
@@ -609,7 +609,7 @@ void DrawGrid2D
   ::glEnd();
 }
 
-void DrawGridOutside
+void opengl::DrawGridOutside
 (int ndivx, int ndivy, int ndivz,
  double elen,
  const CVector3& org)
@@ -625,26 +625,26 @@ void DrawGridOutside
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void DrawAxisHandler(double s, const CVector3& p)
+void opengl::DrawAxisHandler(double s, const CVector3& p)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1, 0, 0);
-  ::DrawArrow(p,CVector3(+s, 0, 0));
-  ::DrawArrow(p,CVector3(-s, 0, 0));
+  opengl::DrawArrow(p,CVector3(+s, 0, 0));
+  opengl::DrawArrow(p,CVector3(-s, 0, 0));
   
   ::glColor3d(0, 1, 0);
-  ::DrawArrow(p, CVector3(0, +s, 0));
-  ::DrawArrow(p, CVector3(0, -s, 0));
+  opengl::DrawArrow(p, CVector3(0, +s, 0));
+  opengl::DrawArrow(p, CVector3(0, -s, 0));
   
   ::glColor3d(0, 0, 1);
-  ::DrawArrow(p, CVector3(0, 0, +s));
-  ::DrawArrow(p, CVector3(0, 0, -s));
+  opengl::DrawArrow(p, CVector3(0, 0, +s));
+  opengl::DrawArrow(p, CVector3(0, 0, -s));
   
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-void DrawHandlerRotation_PosQuat
+void opengl::DrawHandlerRotation_PosQuat
 (const CVector3& pos,
  const double quat[4],
  double size,
@@ -654,21 +654,21 @@ void DrawHandlerRotation_PosQuat
   {
     if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
     const CVector3& ax = QuatVec(quat,CVector3(1,0,0));
-    ::DrawCircleWire(ax, pos, size);
+    opengl::DrawCircleWire(ax, pos, size);
   }
   {
     if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
     const CVector3& ay = QuatVec(quat,CVector3(0,1,0));
-    ::DrawCircleWire(ay, pos, size);
+    opengl::DrawCircleWire(ay, pos, size);
   }
   {
     if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
     const CVector3& az = QuatVec(quat,CVector3(0,0,1));
-    ::DrawCircleWire(az, pos, size);
+    opengl::DrawCircleWire(az, pos, size);
   }
 }
 
-void DrawHandlerRotation_Mat4
+void opengl::DrawHandlerRotation_Mat4
 (const double Mat[16],
  double size,
  int ielem_picked)
@@ -678,19 +678,19 @@ void DrawHandlerRotation_Mat4
     if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
     const CVector3& ax = Mat4Vec(Mat,CVector3(1,0,0)).Normalize();
     const CVector3 pos(Mat[3],Mat[7],Mat[11]);
-    ::DrawCircleWire(ax, pos, size);
+    opengl::DrawCircleWire(ax, pos, size);
   }
   {
     if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
     const CVector3& ay = Mat4Vec(Mat,CVector3(0,1,0)).Normalize();
     const CVector3 pos(Mat[3],Mat[7],Mat[11]);
-    ::DrawCircleWire(ay, pos, size);
+    opengl::DrawCircleWire(ay, pos, size);
   }
   {
     if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
     const CVector3& az = Mat4Vec(Mat,CVector3(0,0,1)).Normalize();
     const CVector3 pos(Mat[3],Mat[7],Mat[11]);
-    ::DrawCircleWire(az, pos, size);
+    opengl::DrawCircleWire(az, pos, size);
   }
 }
 

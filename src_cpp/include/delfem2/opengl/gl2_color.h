@@ -24,6 +24,9 @@
 
 #include "delfem2/color.h"
 
+namespace opengl
+{
+
 // -------------------------------------------------------------
 
 void myGlMaterialDiffuse(const CColor& color);
@@ -71,7 +74,7 @@ void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
                             int nstride,
                             int noffset,
                             const std::vector< std::pair<double,CColor> >& colorMap);
-
+  
 // 3D value -- vtx value
 void DrawMeshTri3D_ScalarP1(const double* aXYZ, int nXYZ,
                             const unsigned int* aTri, int nTri,
@@ -81,6 +84,13 @@ void DrawMeshTri3D_ScalarP1(const std::vector<double>& aXYZ,
                         const std::vector<unsigned int>& aTri,
                         const double* aValSrf,
                         const std::vector<std::pair<double, CColor> >& colorMap);
+void DrawMeshTri3D_VtxColor(const std::vector<double>& aXYZ,
+                            const std::vector<unsigned int>& aTri,
+                            std::vector<CColor>& aColor);
+void drawMeshTri3D_ScalarP0(const std::vector<double>& aXYZ,
+                            const std::vector<unsigned int>& aTri,
+                            const std::vector<double>& aValSrf,
+                            const std::vector<std::pair<double, CColor> >& colorMap);
 
 // scalar value on 3D mesh (mixed elem).
 void DrawMeshElem3D_Scalar_Vtx(const std::vector<double>& aXYZ,
@@ -99,5 +109,8 @@ void DrawMeshTet3D_Cut(const std::vector<double>& aXYZ,
                        const std::vector<unsigned int>& aTet,
                        const std::vector<CColor>& aColor,
                        const double org[3], const double n[3]);
+  
+  
+} // namespace opengl
 
 #endif

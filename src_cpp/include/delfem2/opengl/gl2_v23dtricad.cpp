@@ -180,11 +180,11 @@ void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_e
   if( is_selected ){ ::glColor3d(1,1,0); }
   else{ ::glColor3d(0,0,0); }
   ::glBegin(GL_LINE_STRIP);
-  ::myGlVertex( edge.p0 );
+  opengl::myGlVertex( edge.p0 );
   for(unsigned int ip=0;ip<edge.aP.size();++ip){
-    ::myGlVertex( edge.aP[ip] );
+    opengl::myGlVertex( edge.aP[ip] );
   }
-  ::myGlVertex( edge.p1 );
+  opengl::myGlVertex( edge.p1 );
   ::glEnd();
   ////
   if( is_selected ){
@@ -196,20 +196,20 @@ void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_e
       const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
-      ::myGlVertex(edge.p0);
-      ::myGlVertex(q0);
-      ::myGlVertex(edge.p1);
-      ::myGlVertex(q1);
+      opengl::myGlVertex(edge.p0);
+      opengl::myGlVertex(q0);
+      opengl::myGlVertex(edge.p1);
+      opengl::myGlVertex(q1);
       ::glEnd();
       if( ipicked_elem == 1 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
       else{ ::glColor3d(0.0, 0.8, 0.0 ); }
       ::glBegin(GL_POINTS);
-      ::myGlVertex(q0);
+      opengl::myGlVertex(q0);
       ::glEnd();
       if( ipicked_elem == 2 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
       else{ ::glColor3d(0.0, 0.8, 0.0 ); }
       ::glBegin(GL_POINTS);
-      ::myGlVertex(q1);
+      opengl::myGlVertex(q1);
       ::glEnd();
     }
   }
@@ -250,9 +250,9 @@ void Draw_CCad2D(const CCad2D& cad2d)
       const CCad2D_FaceGeo& face = aFace[iface];
       if( (int)iface == iface_picked ){ ::glColor3d(1,1,0); }
       else{ ::glColor3d(0.8,0.8,0.8); }
-      Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
+      opengl::Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
       ::glColor3d(0.0,0.0,0.0);
-      Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
+      opengl::Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
     }
     glTranslated(0,0,+0.2);
   }

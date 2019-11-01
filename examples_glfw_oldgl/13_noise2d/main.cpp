@@ -100,10 +100,10 @@ int main(int argc,char* argv[])
         double x1 = -0.5+1.0/(nW-1)*(jw+1);
         double y0 = -0.5+1.0/(nH-1)*(jh+0);
         double y1 = -0.5+1.0/(nH-1)*(jh+1);
-        heatmap(v00, colorMap); ::glVertex2d(x0,y0);
-        heatmap(v10, colorMap); ::glVertex2d(x1,y0);
-        heatmap(v11, colorMap); ::glVertex2d(x1,y1);
-        heatmap(v01, colorMap); ::glVertex2d(x0,y1);
+        opengl::heatmap(v00, colorMap); ::glVertex2d(x0,y0);
+        opengl::heatmap(v10, colorMap); ::glVertex2d(x1,y0);
+        opengl::heatmap(v11, colorMap); ::glVertex2d(x1,y1);
+        opengl::heatmap(v01, colorMap); ::glVertex2d(x0,y1);
       }
     }
     ::glEnd();

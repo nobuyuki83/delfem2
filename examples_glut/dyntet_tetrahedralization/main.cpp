@@ -95,7 +95,7 @@ void myGlutDisplay(void)
 
   nav.SetGL_Camera();
 
-  DrawBackground();
+  opengl::DrawBackground();
 
   ::glEnable(GL_BLEND);
   ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
