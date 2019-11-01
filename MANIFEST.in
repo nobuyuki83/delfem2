@@ -20,4 +20,3 @@ include src_pybind/gl/CMakeLists.txt
 
 exclude PyDelFEM2/c_core.*
 exclude PyDelFEM2/gl/c_gl.*
-exclude PyDelFEM2/eigen/c_eigen.*

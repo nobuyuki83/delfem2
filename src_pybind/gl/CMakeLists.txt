@@ -42,7 +42,9 @@ set(INPUT_SRC
   ${DELFEM2_SRC}/camera.cpp  
   ${DELFEM2_INC}/bv.h
   ${DELFEM2_INC}/color.h        
-  ${DELFEM2_SRC}/color.cpp    
+  ${DELFEM2_SRC}/color.cpp
+  ${DELFEM2_INC}/v23m3q.h
+  ${DELFEM2_SRC}/v23m3q.cpp
 
   ${DELFEM2_INC}/opengl/gl2_funcs.h       
   ${DELFEM2_INC}/opengl/gl2_funcs.cpp
@@ -66,7 +68,8 @@ set(INPUT_SRC
   ../glad3/include/glad/glad.h  ../glad3/src/glad.c
 
   py_sampler.cpp
-  py_texture.cpp 
+  py_texture.cpp
+  py_rigidasm.cpp
   main.cpp
 )
 
