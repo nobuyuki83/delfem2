@@ -18,12 +18,12 @@
 #include "delfem2/dtri_v3.h"
 #include "delfem2/mshtopo.h"
 
-#include "delfem2/gl2ew_funcs.h" // have to be included in the beginning
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl24_funcs.h"
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl2_v23dtricad.h"
-#include "delfem2/gl_voxbv.h"
+#include "delfem2/opengl/gl2ew_funcs.h" // have to be included in the beginning
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl2_v23dtricad.h"
+#include "delfem2/opengl/gl_voxbv.h"
 
 namespace py = pybind11;
 

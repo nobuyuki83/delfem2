@@ -11,8 +11,8 @@
 #include <vector>
 
 // eventually, I would like to split vec2 and vec3 dependent part.
-#include "vec2.h"
-#include "vec3.h"
+#include "delfem2/vec2.h"
+#include "delfem2/vec3.h"
 
 void myGlVertex(const CVector3& v);
 void myGlTranslate(const CVector3& v);

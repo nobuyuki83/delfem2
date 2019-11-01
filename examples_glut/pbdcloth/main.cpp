@@ -4,13 +4,6 @@
 #include <limits>
 #include <vector>
 #include <set>
-
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopo.h"
@@ -20,9 +13,16 @@
 #include "delfem2/objfunc_v23dtri.h"
 #include "delfem2/dtri_v2.h"
 
-#include "delfem2/gl2_v23dtricad.h"
-#include "delfem2/gl2_funcs.h"
+// --------------
 
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_v23dtricad.h"
+#include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
 

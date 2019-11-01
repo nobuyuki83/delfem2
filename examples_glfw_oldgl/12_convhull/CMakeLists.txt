@@ -22,8 +22,10 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp  
   ${DELFEM2_INC}/vec3.h           ${DELFEM2_SRC}/vec3.cpp                
 
-  ${DELFEM2_INC}/gl2_funcs.h      ${DELFEM2_SRC}/gl2_funcs.cpp
-  ${DELFEM2_INC}/glfw_viewer.hpp  ${DELFEM2_SRC}/glfw_viewer.cpp  
+  ${DELFEM2_INC}/opengl/gl2_funcs.h
+  ${DELFEM2_INC}/opengl/gl2_funcs.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   
   main.cpp
 )

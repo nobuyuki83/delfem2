@@ -17,7 +17,7 @@
   #endif
 #endif
 
-#include "delfem2/gl4_funcs.h"
+#include "delfem2/opengl/gl4_funcs.h"
 
 // ---------------------------------------------------------
 

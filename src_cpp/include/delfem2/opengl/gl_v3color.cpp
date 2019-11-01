@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/vec3.h"
+
+// -------
+
 #if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #elif defined(_MSC_VER) // windows
@@ -14,11 +18,11 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/vec3.h"
+#include "delfem2/opengl/gl_v3color.h"
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl2_v23.h"
 
-#include "delfem2/gl_v3color.h"
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl2_v23.h"
+// -----------------------------
 
 void DrawQuad_ScalarQ1
 (const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,

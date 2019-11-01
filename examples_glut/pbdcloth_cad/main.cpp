@@ -4,13 +4,6 @@
 #include <limits>
 #include <vector>
 #include <set>
-
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/msh.h" // Rotate, NormalMeshTri3D
@@ -27,11 +20,17 @@
 #include "delfem2/cad2d.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 
-#include "delfem2/gl2_v23dtricad.h"
-#include "delfem2/gl2_funcs.h"
+// ---------------
 
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_v23dtricad.h"
+#include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
-
 
 // --------------------------------------
 

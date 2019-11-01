@@ -4,13 +4,6 @@
 #include <limits>
 #include <vector>
 #include <complex>
-
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
 #include "delfem2/dtri.h"
@@ -21,11 +14,17 @@
 #include "delfem2/fem_emats.h"
 #include "delfem2/cad2d.h"
 
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl2_funcs.h"
+// ---------------
 
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
-
 
 // --------------------------------------------
 

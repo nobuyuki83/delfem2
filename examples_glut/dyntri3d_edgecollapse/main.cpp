@@ -5,6 +5,10 @@
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+#include "delfem2/msh.h"
+#include "delfem2/mshio.h"
+#include "delfem2/dtri_v3.h"
+#include "delfem2/dtri.h"
 
 #if defined(__APPLE__) && (__MACH__)
 #include <GLUT/glut.h>
@@ -12,14 +16,8 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/msh.h"
-#include "delfem2/mshio.h"
-#include "delfem2/dtri_v3.h"
-#include "delfem2/dtri.h"
-
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl2_color.h"
-
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl2_color.h"
 #include "../glut_cam.h"
 
 void MyGlVertex3dv(CVector3& p){

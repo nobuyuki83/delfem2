@@ -6,6 +6,13 @@
 #include <set>
 #include <math.h>
 #include <time.h>
+#include "delfem2/vec3.h"
+#include "delfem2/msh.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshtopo.h"
+#include "delfem2/dtet_v3.h"
+
+// ----------------
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <GLUT/glut.h>
@@ -13,15 +20,10 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/vec3.h"
-#include "delfem2/msh.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/dtet_v3.h"
-
-#include "delfem2/gl2_color.h"
-
+#include "delfem2/opengl/gl2_color.h"
 #include "../glut_cam.h"
+
+// --------------------------------------------
 
 
 void FindEdge

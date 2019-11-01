@@ -29,7 +29,8 @@ add_executable(${PROJECT_NAME}
   
   ${DELFEM2_INC}/dtet_v3.h          ${DELFEM2_SRC}/dtet_v3.cpp                
   
-  ${DELFEM2_INC}/gl2_color.h         ${DELFEM2_SRC}/gl2_color.cpp   
+  ${DELFEM2_INC}/opengl/gl2_color.h
+  ${DELFEM2_INC}/opengl/gl2_color.cpp   
 
   main.cpp
 )

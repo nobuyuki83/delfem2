@@ -18,8 +18,8 @@
 #include "delfem2/primitive.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/glfw_viewer.hpp"
-#include "delfem2/gl2_funcs.h"
+#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/gl2_funcs.h"
 
 int main(int argc,char* argv[])
 {

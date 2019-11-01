@@ -11,6 +11,7 @@
 #include <limits>
 #include <vector>
 #include <set>
+#include "delfem2/dtri_v2.h"
 
 #ifdef __APPLE__
   #include <GLUT/glut.h>
@@ -18,8 +19,7 @@
   #include <GL/glut.h>
 #endif
 
-#include "delfem2/dtri_v2.h"
-#include "delfem2/gl2_v23dtricad.h"
+#include "delfem2/opengl/gl2_v23dtricad.h"
 
 // --------------------------------------------
 

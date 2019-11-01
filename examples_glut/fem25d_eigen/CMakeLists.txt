@@ -37,9 +37,12 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_SRC}/fem_emats.cpp              
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_SRC}/ilu_mats.cpp              
   
-  ${DELFEM2_INC}/gl2_v23.h              ${DELFEM2_SRC}/gl2_v23.cpp
-  ${DELFEM2_INC}/gl2_color.h            ${DELFEM2_SRC}/gl2_color.cpp
-  ${DELFEM2_INC}/gl2_funcs.h            ${DELFEM2_SRC}/gl2_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl2_v23.h
+  ${DELFEM2_INC}/opengl/gl2_v23.cpp
+  ${DELFEM2_INC}/opengl/gl2_color.h
+  ${DELFEM2_INC}/opengl/gl2_color.cpp
+  ${DELFEM2_INC}/opengl/gl2_funcs.h
+  ${DELFEM2_INC}/opengl/gl2_funcs.cpp
 
   main.cpp
 )

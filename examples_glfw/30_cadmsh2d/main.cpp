@@ -7,6 +7,10 @@
 
 #include <iostream>
 #include <math.h>
+#include "delfem2/cad2d.h"
+#include "delfem2/vec3.h"
+
+// ----
 
 #if defined(_MSC_VER)
   #include <windows.h>
@@ -20,13 +24,10 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/cad2d.h"
-#include "delfem2/vec3.h"
-
-#include "delfem2/gl24_funcs.h"
-#include "delfem2/gl4_funcs.h"
-#include "delfem2/gl4_v23dtricad.h"
-#include "delfem2/glfw_cam.h"
+#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl4_funcs.h"
+#include "delfem2/opengl/gl4_v23dtricad.h"
+#include "delfem2/opengl/glfw_cam.h"
 
 // -----------------------------------
 

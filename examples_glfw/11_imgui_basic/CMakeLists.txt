@@ -30,8 +30,10 @@ include_directories(
 add_executable(${PROJECT_NAME}
   main.cpp
   
-  ${DELFEM2_INC}/gl24_funcs.h   ${DELFEM2_SRC}/gl24_funcs.cpp
-  ${DELFEM2_INC}/gl4_funcs.h   ${DELFEM2_SRC}/gl4_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl24_funcs.h   
+  ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl4_funcs.h   
+  ${DELFEM2_INC}/opengl/gl4_funcs.cpp
   
   ${IMGUI_DIR}/imgui.h
   ${IMGUI_DIR}/imgui.cpp

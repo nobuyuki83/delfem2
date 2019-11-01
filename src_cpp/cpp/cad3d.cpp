@@ -8,14 +8,6 @@
 #include <stdio.h>
 #include <deque>
 #include <set>
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
-
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/msh.h"
@@ -24,9 +16,19 @@
 #include "delfem2/v23m3q.h"
 #include "delfem2/dtri_v2.h"
 
-#include "delfem2/gl2_funcs.h"
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl2_v23.h"
+// -------
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl2_v23.h"
+
+// ------------------------------------
 
 
 void CCad3D_Vertex::Draw(bool is_selected, int ielem, double view_height) const

@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-#include "delfem2/glfw_cam.h"
+#include "delfem2/opengl/glfw_cam.h"
 
 // -----------
 

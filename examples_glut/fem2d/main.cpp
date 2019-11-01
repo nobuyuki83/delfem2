@@ -20,9 +20,8 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
-#include "delfem2/gl2_color.h"
-#include "delfem2/gl2_funcs.h"
-
+#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])

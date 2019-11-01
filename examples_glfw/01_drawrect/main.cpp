@@ -13,9 +13,9 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/gl4_funcs.h"
-#include "delfem2/gl24_funcs.h"
-#include "delfem2/glfw_cam.h"
+#include "delfem2/opengl/gl4_funcs.h"
+#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/glfw_cam.h"
 
 // -------------------------------------------
 

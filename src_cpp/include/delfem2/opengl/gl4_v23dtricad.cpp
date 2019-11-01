@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include "delfem2/cad2d.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,10 +16,9 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/cad2d.h"
-#include "delfem2/gl24_funcs.h"
-#include "delfem2/gl4_funcs.h"
-#include "delfem2/gl4_v23dtricad.h"
+#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl4_funcs.h"
+#include "delfem2/opengl/gl4_v23dtricad.h"
 
 
 void AddLine

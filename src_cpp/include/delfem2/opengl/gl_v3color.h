@@ -8,8 +8,9 @@
 #ifndef funcs_glcolorvec3_hpp
 #define funcs_glcolorvec3_hpp
 
-#include "delfem2/gl2_color.h"
 #include "delfem2/vec3.h"
+
+#include "delfem2/opengl/gl2_color.h"
 
 #include <stdio.h>
 

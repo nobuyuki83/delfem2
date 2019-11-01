@@ -17,9 +17,9 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/gl2_v23.h"
-#include "delfem2/gl2_v23dtricad.h"
-#include "delfem2/gl2_funcs.h"
+#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/gl2_v23dtricad.h"
+#include "delfem2/opengl/gl2_funcs.h"
 
 void DrawMeshDynTri_FaceNorm
 (const std::vector<ETri>& aSTri,

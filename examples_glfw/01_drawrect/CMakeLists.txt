@@ -10,10 +10,16 @@ set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 set(DELFEM2_EXT         "../../src_cpp/external")
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/gl24_funcs.h     ${DELFEM2_SRC}/gl24_funcs.cpp
-  ${DELFEM2_INC}/gl4_funcs.h      ${DELFEM2_SRC}/gl4_funcs.cpp
-  ${DELFEM2_INC}/glfw_cam.h
-  ../glad4/include/glad/glad.h   ../glad4/src/glad.c
+
+  ../glad4/include/glad/glad.h   
+  ../glad4/src/glad.c
+
+  ${DELFEM2_INC}/opengl/gl24_funcs.h 
+  ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl4_funcs.h      
+  ${DELFEM2_INC}/opengl/gl4_funcs.cpp
+  ${DELFEM2_INC}/opengl/glfw_cam.h
+
   main.cpp
 )
 
