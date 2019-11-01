@@ -141,7 +141,6 @@ void myGlutDisplay(void)
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,1,0);
-    //////////////
   {
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0.8, 0.8, 0.8);

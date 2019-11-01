@@ -96,13 +96,6 @@ script: |
   make    
   cd ../../../
 
-  cd src_pybind/eigen
-  mkdir buildMake
-  cd buildMake
-  cmake ..
-  make    
-  cd ../../../
-
   pip3 install --upgrade pip setuptools
   pip3 install -e .  
 

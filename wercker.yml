@@ -85,12 +85,6 @@ build:
           cmake ..
           make          
           cd ../../
-          cd eigen
-          mkdir buildMake
-          cd buildMake
-          cmake ..
-          make          
-          cd ../../  
     - script:
         name: pip install -e .
         code: |

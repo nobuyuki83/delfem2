@@ -33,7 +33,7 @@ namespace py = pybind11;
 
 // ----------------------------------------------------------
 
-
+void init_rigidbody(py::module &m);
 void init_polyline(py::module &m);
 void init_mshtopoio(py::module &m);
 void init_field(py::module &m);
@@ -219,6 +219,7 @@ PYBIND11_MODULE(c_core, m) {
   init_field(m);
   init_fem(m);
   init_sdf(m);
+  init_rigidbody(m);
   
   // -------------------------
   // axis arrigned boudning box

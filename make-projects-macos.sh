@@ -106,12 +106,6 @@ cd buildXcode
 cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
-cd src_pybind/eigen
-mkdir buildXcode 
-cd buildXcode
-cmake -G Xcode -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
-cd ../../../
-
 pip3 uninstall PyDelFEM2 -y
 pip3 uninstall PyDelFEM2 -y
 pip3 install -e .

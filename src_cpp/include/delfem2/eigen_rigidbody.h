@@ -1,15 +1,9 @@
-#ifndef RIGIDBODY
-#define RIGIDBODY
+#ifndef DFM2_RIGIDBODY
+#define DFM2_RIGIDBODY
 
 #include <iostream>
 #include <set>
 #include <cstdio>
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include "Eigen/Dense"
-#else
-#include <Eigen/Dense>
-#endif
 
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
@@ -104,8 +98,8 @@ public:
 //  void PrintJointForce();
   
   //display
-  void Draw();
-  void DrawFloorGL();
+//  void Draw();
+//  void DrawFloorGL();
   
 private: // non-static private functions
   void Solve_InterPlane();

@@ -13,7 +13,7 @@ void init_rigidbody(py::module &m){
   .def(py::init<>())
   .def(py::init<std::vector<CRigidBody>,std::vector<CJoint>>())
   .def("solve", &CRigidBodyAssembly_Static::Solve)
-  .def("draw",&CRigidBodyAssembly_Static::Draw)
+//  .def("draw",&CRigidBodyAssembly_Static::Draw)
   .def("minmax_xyz",&CRigidBodyAssembly_Static::MinMaxXYZ);
 //  .def("init_gl",&CTexture::LoadTex)
 //  .def("minmax_xyz",&CTexture::MinMaxXYZ);
@@ -24,11 +24,4 @@ void init_rigidbody(py::module &m){
   
   py::class_<CJoint>(m,"Joint")
   .def(py::init<int,int, std::vector<double>>());
-}
-
-
-PYBIND11_MODULE(c_eigen, m) {
-  m.doc() = "pybind11 delfem2 binding";
-  ///////////////////////////////////
-  init_rigidbody(m);
 }
