@@ -18,6 +18,13 @@
 #include <GL/glu.h>
 #endif
 
+#if defined(__APPLE__) && defined(__MACH__)
+#include "Eigen/Dense"
+#else
+#include <Eigen/Dense>
+#endif
+
+
 #include "delfem2/eigen_rigidbody.h"
 #include "delfem2/v23m3q.h"
 
@@ -42,7 +49,7 @@ void myUpdateMinMaxXYZ
   bb[5] = (bb[5] > z) ? bb[5] : z;
 }
 
-///////////////////////////////////////////////////////////////////////
+// -----------------------------------------------
 
 void EdEd_Potential
 (double& energy,
@@ -1057,168 +1064,6 @@ std::vector<double> CRigidBodyAssembly_Static::MinMaxXYZ() const
   }
   std::vector<double> res(bb,bb+6);
   return res;
-}
-
-void CRigidBodyAssembly_Static::Draw()
-{
-  const double small_rad = 0.1;
-  const double big_rad = 0.1;
-  GLUquadricObj *quadricSphere=gluNewQuadric();  
-  
-  ::glDisable(GL_LIGHTING);
-  for(unsigned int irb=0;irb<aRigidBody.size();irb++){
-    const CRigidBody rb = aRigidBody[irb];
-    CVector3 cg = rb.cg;
-    if( is_draw_deformed ){
-      cg += rb.u;
-    }
-    
-    if( is_draw_skeleton ){
-      ::glColor3d(0,1,0);
-      ::glPushMatrix();
-      ::glTranslated(cg.x,cg.y,cg.z);
-      //::glutWireSphere(0.1, 16, 16);
-      gluSphere(quadricSphere, big_rad, 16, 16);
-      ::glPopMatrix();
-    }
-    for(unsigned int icp=0;icp<rb.aCP.size();icp++){
-      CVector3 p = rb.aCP[icp];
-      if( is_draw_deformed ){
-        p = rb.R*(p-rb.cg)+rb.cg + rb.u;
-      }
-      ::glColor3d(1,0,0);
-      ::glPushMatrix();
-      ::glTranslated(p.x,p.y,p.z);
-      //::glutWireSphere(0.02, 16, 16);
-      gluSphere(quadricSphere, small_rad, 16, 16);
-      ::glPopMatrix();
-      
-      if( is_draw_skeleton ){
-        ::glLineWidth(5);
-        ::glColor3d(0,0,0);
-        ::glBegin(GL_LINES);
-        myGlVertex3d(cg);
-        myGlVertex3d( p);
-        ::glEnd();
-      }
-      
-      if( is_draw_force ){
-        if (!rb.aCForce.empty()) {
-          CVector3 q = p + scale_force*rb.aCForce[icp];
-          ::glLineWidth(5);
-          ::glColor3d(1,0,0);
-          ::glBegin(GL_LINES);
-          myGlVertex3d( p);
-          myGlVertex3d( q);
-          ::glEnd();
-        }
-      }
-    }
-  }
-  /////////////////////////////////////////////
-  for(unsigned int ij=0;ij<aJoint.size();ij++){
-    const CJoint& joint = aJoint[ij];
-    int irb0 = joint.irb0;
-    int irb1 = joint.irb1;
-    const CRigidBody& rb0 = aRigidBody[irb0];
-    const CRigidBody& rb1 = aRigidBody[irb1];
-    
-    CVector3 p0 = joint.p;
-    CVector3 p1 = joint.p;
-    if( is_draw_deformed ){
-      p0 = rb0.R*(p0-rb0.cg)+rb0.cg + rb0.u;
-      p1 = rb1.R*(p1-rb1.cg)+rb1.cg + rb1.u;
-    }
-    
-   
-    // joint point seen from rb0
-    ::glColor3d(0,0,1);
-    ::glPushMatrix();
-    ::glTranslated(p0.x,p0.y,p0.z);
-    //::glutWireSphere(0.02, 16, 16);
-    gluSphere(quadricSphere, small_rad, 16, 16);
-    ::glPopMatrix();
-    
-    // joint point seen from rb1
-    ::glPushMatrix();
-    ::glTranslated(p1.x,p1.y,p1.z);
-    //::glutWireSphere(0.02, 16, 16);
-    gluSphere(quadricSphere, small_rad, 16, 16);
-    ::glPopMatrix();
-    
-    CVector3 cg0 = rb0.cg;
-    CVector3 cg1 = rb1.cg;
-    if( is_draw_deformed ){
-      cg0 += rb0.u;
-      cg1 += rb1.u;
-    }
-    if( is_draw_skeleton ){
-      ::glLineWidth(5);
-      ::glColor3d(0,0,0);
-      ::glBegin(GL_LINES);
-      myGlVertex3d(cg0);
-      myGlVertex3d( p0);
-      myGlVertex3d(cg1);
-      myGlVertex3d( p1);
-      ::glEnd();
-    }
-    
-    if( is_draw_force ){
-      ::glLineWidth(5);
-      CVector3 q0 = p0 + scale_force*joint.linear;
-      CVector3 q1 = p1 - scale_force*joint.linear;
-      ::glColor3d(1,0,1);
-      ::glBegin(GL_LINES);
-      myGlVertex3d( p0);
-      myGlVertex3d( q0);
-      myGlVertex3d( p1);
-      myGlVertex3d( q1);
-      ::glEnd();
-      
-      CVector3 r0 = p0 + scale_torque*joint.torque;
-      CVector3 r1 = p1 - scale_torque*joint.torque;
-      ::glColor3d(0,1,1);
-      ::glBegin(GL_LINES);
-      myGlVertex3d( p0);
-      myGlVertex3d( r0);
-      myGlVertex3d( p1);
-      myGlVertex3d( r1);
-      ::glEnd();
-    }
-    
-  }
-  
-  glLineWidth(1.0f);
-  gluDeleteQuadric(quadricSphere);
-  
-}
-
-
-
-void CRigidBodyAssembly_Static::DrawFloorGL() {
-  
-  if( is_draw_grid ) {
-    // draw floor
-    ::glLineWidth(1);
-    ::glBegin(GL_LINES);
-    ::glColor3d(0,0,0);
-    double grid_x_min = -10;
-    double grid_x_max = +10;
-    double grid_z_min = -10;
-    double grid_z_max = +10;
-    unsigned int ndiv_grid = 30;
-    for(unsigned int ix=0;ix<ndiv_grid+1;ix++){
-      double x0 = (grid_x_max-grid_x_min) / ndiv_grid * ix + grid_x_min;
-      ::glVertex3d(x0,0,grid_z_min);
-      ::glVertex3d(x0,0,grid_z_max);
-    }
-    for(unsigned int iz=0;iz<ndiv_grid+1;iz++){
-      double z0 = (grid_z_max-grid_z_min) / ndiv_grid * iz + grid_z_min;
-      ::glVertex3d(grid_x_min,0,z0);
-      ::glVertex3d(grid_x_max,0,z0);
-    }
-    ::glEnd();
-  }
 }
 
 
