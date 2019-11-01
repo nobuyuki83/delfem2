@@ -801,19 +801,19 @@ void myGlutDisplay(void)
     glShadeModel(GL_SMOOTH);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
-    DrawMeshTet3D_Edge(aXYZ.data(),aXYZ.size()/3, aTet.data(),aTet.size()/4);
+    opengl::DrawMeshTet3D_Edge(aXYZ.data(),aXYZ.size()/3, aTet.data(),aTet.size()/4);
     {
       std::vector< std::pair<double,CColor> > colorMap;
       makeHeatMap_BlueGrayRed(colorMap, 0, 1.0);
-      DrawMeshTet3D_ScalarP1(aXYZ.data(), aXYZ.size()/3,
-                             aTet.data(), aTet.size()/4,
-                             aVal.data(),
-                             colorMap);
+      opengl::DrawMeshTet3D_ScalarP1(aXYZ.data(), aXYZ.size()/3,
+                                     aTet.data(), aTet.size()/4,
+                                     aVal.data(),
+                                     colorMap);
     }
   }
   if (iphysics==2||iphysics==3){
     ::glColor3d(0,0,0);
-    DrawMeshTet3D_EdgeDisp(aXYZ.data(), aTet.data(), aTet.size()/4, aVal.data(), 1.0);
+    opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(), aTet.data(), aTet.size()/4, aVal.data(), 1.0);
     ::glEnable(GL_LIGHTING);
     {
       float color[4] = {180.0/256.0, 180.0/256.0, 130.0/256.0,1.0f};
@@ -821,9 +821,9 @@ void myGlutDisplay(void)
       ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
       glShadeModel(GL_FLAT);
     }
-    DrawMeshTet3D_FaceNormDisp(aXYZ.data(), aXYZ.size()/3,
-                               aTet.data(), aTet.size()/4,
-                               aVal.data());
+    opengl::DrawMeshTet3D_FaceNormDisp(aXYZ.data(), aXYZ.size()/3,
+                                       aTet.data(), aTet.size()/4,
+                                       aVal.data());
   }
   if( iphysics == 4 || iphysics == 5 || iphysics == 6 ){
     ::glEnable(GL_LIGHTING);
@@ -838,7 +838,7 @@ void myGlutDisplay(void)
       const CVector3 p(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
       const CVector3 v(aVal[ip*4+0],aVal[ip*4+1],aVal[ip*4+2]);
       double a = 0.1;
-      DrawArrow(p, a*v);
+      opengl::DrawArrow(p, a*v);
     }
   }
 
@@ -963,7 +963,7 @@ int main(int argc,char* argv[])
 //  SolveProblem_LinearSolid3D_Static();
 
   
-  setSomeLighting();
+  opengl::setSomeLighting();
 
   glutMainLoop();
 	return 0;

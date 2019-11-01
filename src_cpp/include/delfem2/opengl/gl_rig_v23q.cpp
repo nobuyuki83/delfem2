@@ -56,10 +56,10 @@ void Draw_RigBone
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
     const CVector3 pos = aBone[ibone].Pos();
-    DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
+    opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
   }
   if(is_selected){
-    DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
+    opengl::DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
     int ibone_parent = aBone[ibone].ibone_parent;
     if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
       const CVector3 pp(aBone[ibone_parent].Pos());
@@ -94,8 +94,8 @@ void DrawBone
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
     else{              ::glColor3d(0.0,0.0,0.0); }
     ::glBegin(GL_LINES);
-    myGlVertex(bone.Pos());
-    myGlVertex(bone_p.Pos());
+    opengl::myGlVertex(bone.Pos());
+    opengl::myGlVertex(bone_p.Pos());
     ::glEnd();
   }
 }

@@ -352,15 +352,15 @@ void myGlutDisplay(void)
 
   ::glEnable(GL_LIGHTING);
   if( imode_draw == 0 ){
-    DrawMeshTet3D_Cut(aXYZ,aTet,aTetColor,
-                      vis_cut_org, vis_cut_nrm);
+    opengl::DrawMeshTet3D_Cut(aXYZ,aTet,aTetColor,
+                              vis_cut_org, vis_cut_nrm);
   }
   else if( imode_draw == 1 ){
-    DrawMeshTet3DSurface_Edge(aXYZ, aTet, aTetSurface);
+    opengl::DrawMeshTet3DSurface_Edge(aXYZ, aTet, aTetSurface);
   }
   else if( imode_draw == 2 ){
-    DrawMeshTet3D_Cut(aXYZ,aTet1,aTetColor1,
-                      vis_cut_org, vis_cut_nrm);
+    opengl::DrawMeshTet3D_Cut(aXYZ,aTet1,aTetColor1,
+                              vis_cut_org, vis_cut_nrm);
   }
   
 	ShowFPS();

@@ -59,9 +59,8 @@ void myGlutDisplay(void)
 //  DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
   
   ::glEnable(GL_LIGHTING);
-  DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
-  
-  DrawAxis(1);
+  opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
+  opengl::DrawAxis(1);
   
   
   ::glDisable(GL_DEPTH_TEST);
@@ -207,7 +206,7 @@ int main(int argc,char* argv[])
   
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   glutMainLoop();
   return 0;

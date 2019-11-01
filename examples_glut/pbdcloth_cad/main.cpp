@@ -120,8 +120,8 @@ void myGlutDisplay(void)
   DrawMeshDynTri3D_Edge(aXYZ, aETri);
 
   ::glColor3d(1,0,0);
-  DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                     aTri_Contact.data(), aTri_Contact.size()/3);
+  opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                             aTri_Contact.data(), aTri_Contact.size()/3);
 //  DrawSphere_Edge(rad0);
 
   
@@ -290,7 +290,7 @@ int main(int argc,char* argv[])
   nav.camera.view_height = 1.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   // Enter main loop
   ::glutMainLoop();
   return 0;

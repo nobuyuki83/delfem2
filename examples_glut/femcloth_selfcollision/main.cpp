@@ -489,9 +489,9 @@ int main(int argc,char* argv[])
 	glutKeyboardFunc(myGlutKeyboard);
 	glutSpecialFunc(myGlutSpecial);
   
-  ////////////////////////
+  // ---------------------------
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   nav.camera.psi = 3.1415*0.2;

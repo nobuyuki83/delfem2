@@ -56,7 +56,7 @@ void myGlutDisplay(void)
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
   //  Draw_SurfaceMeshNorm(aXYZ, aTri, aNormal);
-  DrawMeshTri3D_Edge(aXYZ,aTri);
+  opengl::DrawMeshTri3D_Edge(aXYZ,aTri);
   
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(2);
@@ -204,9 +204,9 @@ int main(int argc,char* argv[])
   glutMouseFunc(myGlutMouse);
   glutKeyboardFunc(myGlutKeyboard);
   glutSpecialFunc(myGlutSpecial);
-  //////////////////////////
+  // ----------------
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   nav.camera.view_height = 1.5;
   
   glutMainLoop();

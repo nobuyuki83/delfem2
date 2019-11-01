@@ -151,12 +151,12 @@ void myGlutDisplay(void)
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
     ::glEnable(GL_DEPTH_TEST);
      */
-    DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  DrawMeshTri3D_Edge(aXYZ, aTri);
+  opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
 
   
   ShowFPS();
@@ -301,7 +301,7 @@ int main(int argc,char* argv[])
     }
   }
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   // Enter main loop
   ::glutMainLoop();
   return 0;

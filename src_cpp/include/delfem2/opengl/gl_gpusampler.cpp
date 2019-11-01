@@ -119,7 +119,7 @@ void CGPUSampler::SetCoord
 void CGPUSampler::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
-  ViewTransformation(x_axis,z_axis,origin);
+  opengl::ViewTransformation(x_axis,z_axis,origin);
   ::glMatrixMode(GL_PROJECTION);
   ::glLoadIdentity();
   ::glOrtho(0.0, +lengrid*nResX,
@@ -232,10 +232,10 @@ void CGPUSampler::Draw() const {
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
     ::glColor3d(1,1,1);
     ::glBegin(GL_QUADS);
-    ::glTexCoord2d(0.0, 0.0); myGlVertex(p0);
-    ::glTexCoord2d(1.0, 0.0); myGlVertex(p1);
-    ::glTexCoord2d(1.0, 1.0); myGlVertex(p2);
-    ::glTexCoord2d(0.0, 1.0); myGlVertex(p3);
+    ::glTexCoord2d(0.0, 0.0); opengl::myGlVertex(p0);
+    ::glTexCoord2d(1.0, 0.0); opengl::myGlVertex(p1);
+    ::glTexCoord2d(1.0, 1.0); opengl::myGlVertex(p2);
+    ::glTexCoord2d(0.0, 1.0); opengl::myGlVertex(p3);
     ::glEnd();
     ::glBindTexture(GL_TEXTURE_2D, 0);
     ::glDisable(GL_TEXTURE_2D);
@@ -246,8 +246,8 @@ void CGPUSampler::Draw_Axis() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
-  ModelTransformation(x_axis, z_axis, origin);
-  DrawAxis(draw_len_axis);
+  opengl::ModelTransformation(x_axis, z_axis, origin);
+  opengl::DrawAxis(draw_len_axis);
     ::glPopMatrix();
 }
 
@@ -255,9 +255,9 @@ void CGPUSampler::Draw_BoundingBox() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
-  ModelTransformation(x_axis, z_axis, origin);
+  opengl::ModelTransformation(x_axis, z_axis, origin);
   ::glLineWidth(3);
-  Draw_AABB3D_MinMaxXYZ_Edge(0.0, lengrid*nResX, 0.0, lengrid*nResY, 0.0, -z_range);
+  opengl::Draw_AABB3D_MinMaxXYZ_Edge(0.0, lengrid*nResX, 0.0, lengrid*nResY, 0.0, -z_range);
   ::glPopMatrix();
 }
 
@@ -278,7 +278,7 @@ void CGPUSampler::Draw_Point() const
       double lx = (ix+0.5)*lengrid;
       double ly = (iy+0.5)*lengrid;
       CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
-      myGlVertex(vp);
+      opengl::myGlVertex(vp);
     }
   }
   ::glEnd();

@@ -31,28 +31,28 @@ void DrawQuad_ScalarQ1
 {
   ::glBegin(GL_QUADS);
   {
-    heatmap(v0, colorMap);
+    opengl::heatmap(v0, colorMap);
     CVector3 n0; UnitNormal(n0,  p0, p1, p3);
-    myGlNormal(n0);
-    myGlVertex(p0);
+    opengl::myGlNormal(n0);
+    opengl::myGlVertex(p0);
   }
   {
-    heatmap(v1, colorMap);
+    opengl::heatmap(v1, colorMap);
     CVector3 n1; UnitNormal(n1,  p0, p1, p2);
-    myGlNormal(n1);
-    myGlVertex(p1);
+    opengl::myGlNormal(n1);
+    opengl::myGlVertex(p1);
   }
   {
-    heatmap(v2, colorMap);
+    opengl::heatmap(v2, colorMap);
     CVector3 n2; UnitNormal(n2,  p1, p2, p3);
-    myGlNormal(n2);
-    myGlVertex(p2);
+    opengl::myGlNormal(n2);
+    opengl::myGlVertex(p2);
   }
   {
-    heatmap(v3, colorMap);
+    opengl::heatmap(v3, colorMap);
     CVector3 n3; UnitNormal(n3,  p2, p3, p0);
-    myGlNormal(n3);
-    myGlVertex(p3);
+    opengl::myGlNormal(n3);
+    opengl::myGlVertex(p3);
   }
   ::glEnd();
 }

@@ -189,7 +189,7 @@ void myGlutDisplay(void)
   }
   else if( imode_display == 2 ){
     //    DrawTri3D_SurfaceNorm(aXYZ, aTri);
-    DrawMeshTri3D_FaceNorm(aXYZ,aTri);
+    opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     //    Draw_Edge(aXYZ, aTri);
   }
   
@@ -222,7 +222,7 @@ int main(int argc,char* argv[])
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
   SetProblem();
-  setSomeLighting();
+  opengl::setSomeLighting();
   glutMainLoop();
   return 0;
 }

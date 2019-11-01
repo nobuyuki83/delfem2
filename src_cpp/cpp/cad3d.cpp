@@ -39,18 +39,18 @@ void CCad3D_Vertex::Draw(bool is_selected, int ielem, double view_height) const
     ::glDisable(GL_LIGHTING);
     if( !isConst[0] ){
       ::glColor3d(1, 0, 0);
-      DrawArrow(pos, CVector3(+s, 0, 0));
-      DrawArrow(pos, CVector3(-s, 0, 0));
+      opengl::DrawArrow(pos, CVector3(+s, 0, 0));
+      opengl::DrawArrow(pos, CVector3(-s, 0, 0));
     }
     if( !isConst[1] ){
       ::glColor3d(0, 1, 0);
-      DrawArrow(pos, CVector3(0, +s, 0));
-      DrawArrow(pos, CVector3(0, -s, 0));
+      opengl::DrawArrow(pos, CVector3(0, +s, 0));
+      opengl::DrawArrow(pos, CVector3(0, -s, 0));
     }
     if( !isConst[2] ){
       ::glColor3d(0, 0, 1);
-      DrawArrow(pos, CVector3(0, 0, +s));
-      DrawArrow(pos, CVector3(0, 0, -s));
+      opengl::DrawArrow(pos, CVector3(0, 0, +s));
+      opengl::DrawArrow(pos, CVector3(0, 0, -s));
     }
   }
   else{
@@ -58,14 +58,14 @@ void CCad3D_Vertex::Draw(bool is_selected, int ielem, double view_height) const
     ::glColor3d(0,0,1);
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
-    ::myGlTranslate(pos);
+    opengl::myGlTranslate(pos);
     ::glDisable(GL_CULL_FACE);
     ::glScaled(view_height*0.03, view_height*0.03, view_height*0.03);
-    DrawSphere(32, 32);
+    opengl::DrawSphere(32, 32);
     ::glPopMatrix();
   }
   ////
-  ::myGlColorDiffuse(CColor::Red());
+  opengl::myGlColorDiffuse(CColor::Red());
 //  DrawArrow(pos, +norm*view_height*0.1);
 //  ::DrawArrow(pos, -norm*0.15);
 }
@@ -84,23 +84,23 @@ void CCad3D_Edge::DrawLine(bool is_picked, double view_height) const
   }
   ::glLineWidth(2);
   ::glBegin(GL_LINE_STRIP);
-  for(unsigned int ip=0;ip<aP.size();++ip){ ::myGlVertex(aP[ip]); }
+  for(unsigned int ip=0;ip<aP.size();++ip){ opengl::myGlVertex(aP[ip]); }
   ::glEnd();
 }
 
 void CCad3D_Edge::DrawHandler(int ielem_picked, double view_height) const
 {
   ::glColor3d(0,1,0);
-  DrawCylinder(p0, q0, view_height*0.01);
-  DrawCylinder(p1, q1, view_height*0.01);
+  opengl::DrawCylinder(p0, q0, view_height*0.01);
+  opengl::DrawCylinder(p1, q1, view_height*0.01);
   {
     if( ielem_picked == 2 ){ ::glColor3d(1,0.0,0); }
     else{                    ::glColor3d(0,0.9,0); }
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
-    ::myGlTranslate(q0);
+    opengl::myGlTranslate(q0);
     ::glScaled(view_height*0.02, view_height*0.02, view_height*0.02);
-    DrawSphere(32, 32);
+    opengl::DrawSphere(32, 32);
     ::glPopMatrix();
   }
   {
@@ -108,9 +108,9 @@ void CCad3D_Edge::DrawHandler(int ielem_picked, double view_height) const
     else{                    ::glColor3d(0,0.9,0); }
     ::glMatrixMode(GL_MODELVIEW);
     ::glPushMatrix();
-    ::myGlTranslate(q1);
+    opengl::myGlTranslate(q1);
     ::glScaled(view_height*0.02, view_height*0.02, view_height*0.02);
-    DrawSphere(32, 32);
+    opengl::DrawSphere(32, 32);
     ::glPopMatrix();
   }
   ::glEnd();
@@ -398,20 +398,20 @@ void CCad3D_Face::MovePoints
 
 void CCad3D_Face::DrawFace() const
 {
-  DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
+  opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
 }
 
 void CCad3D_Face::DrawBackFace() const
 {
   ::glEnable(GL_LIGHTING);
-  ::myGlColorDiffuse(CColor::Gray(0.9));
-  DrawMeshTri3D_FaceNorm_XYsym(aXYZ, aTri);
+  opengl::myGlColorDiffuse(CColor::Gray(0.9));
+  opengl::DrawMeshTri3D_FaceNorm_XYsym(aXYZ, aTri);
 }
 
 void CCad3D_Face::DrawEdge() const
 {
   ::glLineWidth(1);
-  DrawMeshTri3D_Edge(aXYZ, aTri);
+  opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
 }
 
 
@@ -1541,8 +1541,8 @@ void CCad3D::Pick
 void CCad3D::DrawFace_LeftRight() const
 {
   ::glEnable(GL_LIGHTING);
-  ::myGlColorDiffuse(color_face);
-  DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
+  opengl::myGlColorDiffuse(color_face);
+  opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri, aNorm);
 }
 
 void CCad3D::DrawFace_RightSelected(bool is_edge) const
@@ -1557,10 +1557,10 @@ void CCad3D::DrawFace_RightSelected(bool is_edge) const
   ::glEnable(GL_LIGHTING);
   for(unsigned int iface=0;iface<aFace.size();++iface){
     if( iface == iface_picked ){
-      ::myGlColorDiffuse(color_face_selected);
+      opengl::myGlColorDiffuse(color_face_selected);
     }
     else{
-      ::myGlColorDiffuse(color_face);
+      opengl::myGlColorDiffuse(color_face);
     }
     aFace[iface].DrawFace();
     if( is_edge ){ aFace[iface].DrawEdge(); }
@@ -1581,7 +1581,7 @@ void CCad3D::DrawVtxEdgeHandler(double view_height) const
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 //  glEnable(GL_MULTISAMPLE);
   
-  myGlColorDiffuse(CColor::Blue());
+  opengl::myGlColorDiffuse(CColor::Blue());
   for(int ie=0;ie<(int)aEdge.size();++ie){
     bool is_loop0 = std::find(aIE_picked.begin(), aIE_picked.end(), std::make_pair(ie,true ) ) != aIE_picked.end();
     bool is_loop1 = std::find(aIE_picked.begin(), aIE_picked.end(), std::make_pair(ie,false) ) != aIE_picked.end();
@@ -1595,7 +1595,7 @@ void CCad3D::DrawVtxEdgeHandler(double view_height) const
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_CULL_FACE);
   if( plane_inorm >= 0 && plane_inorm < 3 ){
-    myGlColorDiffuse(CColor(0.0, 0.0, 1.0, 0.5));
+    opengl::myGlColorDiffuse(CColor(0.0, 0.0, 1.0, 0.5));
     CVector3 plane_ex = CVector3::Axis((plane_inorm+1)%3);
     CVector3 plane_ey = CVector3::Axis((plane_inorm+2)%3);
     CVector3 p0 = plane_org-plane_sizeX*plane_ex-plane_sizeY*plane_ey;
@@ -1603,19 +1603,19 @@ void CCad3D::DrawVtxEdgeHandler(double view_height) const
     CVector3 p2 = plane_org+plane_sizeX*plane_ex+plane_sizeY*plane_ey;
     CVector3 p3 = plane_org-plane_sizeX*plane_ex+plane_sizeY*plane_ey;
     ::glBegin(GL_QUADS);
-    ::myGlVertex(p0);
-    ::myGlVertex(p1);
-    ::myGlVertex(p2);
-    ::myGlVertex(p3);
+    opengl::myGlVertex(p0);
+    opengl::myGlVertex(p1);
+    opengl::myGlVertex(p2);
+    opengl::myGlVertex(p3);
     ::glEnd();
     ////
     ::glLineWidth(5);
-    if( ielem_edge_picked == 1 ){ myGlColorDiffuse(CColor(1.0, 0.0, 0.0, 0.9)); }
-    else{                         myGlColorDiffuse(CColor(0.0, 0.0, 1.0, 0.9)); }
-    DrawCylinder(p0, p1, view_height*0.01);
-    DrawCylinder(p1, p2, view_height*0.01);
-    DrawCylinder(p2, p3, view_height*0.01);
-    DrawCylinder(p3, p0, view_height*0.01);
+    if( ielem_edge_picked == 1 ){ opengl::myGlColorDiffuse(CColor(1.0, 0.0, 0.0, 0.9)); }
+    else{                         opengl::myGlColorDiffuse(CColor(0.0, 0.0, 1.0, 0.9)); }
+    opengl::DrawCylinder(p0, p1, view_height*0.01);
+    opengl::DrawCylinder(p1, p2, view_height*0.01);
+    opengl::DrawCylinder(p2, p3, view_height*0.01);
+    opengl::DrawCylinder(p3, p0, view_height*0.01);
   }
   
   {
@@ -1632,7 +1632,7 @@ void CCad3D::DrawVtxEdgeHandler(double view_height) const
     ::glLineWidth(3);
     ::glBegin(GL_LINE_STRIP);
     for(unsigned int ist=0;ist<aStroke.size();++ist){
-      ::myGlVertex(aStroke[ist]);
+      opengl::myGlVertex(aStroke[ist]);
     }
     ::glEnd();
     //////

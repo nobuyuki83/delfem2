@@ -167,17 +167,17 @@ void myGlutDisplay(void)
   
   nav.SetGL_Camera();
   
-  DrawMeshTri2D_Edge(aTri1,aXY1);
+  opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
   ::glPointSize(2);
   ::glColor3d(0,0,0);
-  DrawPoints2D_Points(aXY1);
+  opengl::DrawPoints2D_Points(aXY1);
   
   std::vector< std::pair<double,CColor> > colorMap;
 //  makeHeatMap_BlueGrayRed(colorMap, -0.2, +0.2);
   makeHeatMap_BlueCyanGreenYellowRed(colorMap, -0.2, +0.2);
-  DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
-                         aTri1.data(),aTri1.size()/3,
-                         aVal.data(),1,colorMap);
+  opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+                                 aTri1.data(),aTri1.size()/3,
+                                 aVal.data(),1,colorMap);
   
   ::glColor3d(0,0,0);
   ShowFPS();
