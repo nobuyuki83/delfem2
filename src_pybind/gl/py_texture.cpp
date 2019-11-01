@@ -5,14 +5,14 @@
 #include <pybind11/numpy.h>
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
+  #include <OpenGL/gl.h>
 #elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/gl.h>
+  #include <GL/gl.h>
 #elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
+  #include <windows.h>
+  #include <GL/gl.h>
 #else
-#include <GL/gl.h>
+  #include <GL/gl.h>
 #endif
 
 #include "delfem2/opengl/gl_tex.h"

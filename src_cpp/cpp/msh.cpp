@@ -16,12 +16,13 @@
 #include <vector>
 #include <stack>
 #include <set>
-
 #include "delfem2/msh.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+// ------------------------------------------------
 
 static double Length3D(const double p[3]){
   return sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);

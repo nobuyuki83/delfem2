@@ -8,7 +8,8 @@
 
 namespace py = pybind11;
 
-void init_rigidbody(py::module &m){
+void init_rigidbody(py::module &m)
+{
   py::class_<CRigidBodyAssembly_Static>(m,"RigidBodyAssembly_Static")
   .def(py::init<>())
   .def(py::init<std::vector<CRigidBody>,std::vector<CJoint>>())

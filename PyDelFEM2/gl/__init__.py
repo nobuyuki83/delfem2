@@ -13,12 +13,12 @@ from ..cadmsh import Mesh
 from ..c_core import CppMeshDynTri2D, CppMeshDynTri3D, CppCad2D
 from ..c_core import TRI, QUAD, LINE
 from ..c_core import CppSDF3, CppSDF3_Sphere
+from ..c_core import RigidBodyAssembly_Static
 from ..c_core import \
   write_vtk_meshpoint, \
   write_vtk_meshelem, \
   write_vtk_pointscalar, \
   write_vtk_pointvector
-
 
 from .c_gl import CppGPUSampler, depth_buffer, color_buffer_4float
 from .c_gl import ColorMap
@@ -27,6 +27,7 @@ from .c_gl import cppDrawEdge_CppMeshDynTri2D, cppDrawEdge_CppMeshDynTri3D, cppD
 from .c_gl import draw_mesh_facenorm, draw_mesh_edge
 from .c_gl import cppDrawSphere
 from .c_gl import drawField_colorMap, drawField_disp, drawField_hedgehog
+from .c_gl import drawRigidBodyAssemblyStatic
 
 from ._gl import AxisXYZ, Camera, CAMERA_ROT_MODE
 from ._gl import getOpenglInfo, screenUnProjection, screenUnProjectionDirection
@@ -234,6 +235,10 @@ def draw_CppSDF3_Sphere(self):
   gl.glColor3d(1,0,0,)
   cppDrawSphere(32,32,self.rad,c[0],c[1],c[2])
 
+def draw_CppRigidBodyAssembly_Static(self:RigidBodyAssembly_Static):
+  drawRigidBodyAssemblyStatic(self)
+
+
 
 setattr(Mesh,"draw",draw_Mesh)
 setattr(Mesh,"is_draw_edge",True)
@@ -243,4 +248,5 @@ setattr(Mesh,"color_face", [0.8, 0.8, 0.8, 1.0])
 setattr(CppMeshDynTri2D,"draw",draw_CppMeshDynTri2D)
 setattr(CppMeshDynTri3D,"draw",draw_CppMeshDynTri3D)
 setattr(CppCad2D,       "draw",draw_CppCad2D)
-setattr(CppSDF3_Sphere,  "draw",draw_CppSDF3_Sphere)
+setattr(CppSDF3_Sphere, "draw",draw_CppSDF3_Sphere)
+setattr(RigidBodyAssembly_Static, "draw", draw_CppRigidBodyAssembly_Static)

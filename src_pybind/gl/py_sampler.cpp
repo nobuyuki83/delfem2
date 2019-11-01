@@ -44,7 +44,8 @@ py::array_t<float> color_buffer_4float(CGPUSampler& sampler)
 }
 
 
-void init_sampler(py::module &m){
+void init_sampler(py::module &m)
+{
   ///////////////////////////////////
   // FrameBuffer
   py::class_<CFrameBufferManager>(m,"CppFrameBufferManager", "Buffer Class for Depth")
