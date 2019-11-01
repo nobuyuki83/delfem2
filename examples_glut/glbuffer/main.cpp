@@ -47,7 +47,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   nav.SetGL_Camera();
   
-  DrawBackground(CColor(0.8, 0.8, 1.0));
+  opengl::DrawBackground(CColor(0.8, 0.8, 1.0));
   
   ::glEnable(GL_LIGHTING);
   glbuff.Draw_Start();
@@ -176,7 +176,7 @@ int main(int argc,char* argv[])
   ebo_face.SetBuffer_Elem(aTri, GL_TRIANGLES);
   ebo_edge.SetBuffer_Elem(aLine, GL_LINES);
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   glutMainLoop();
   return 0;

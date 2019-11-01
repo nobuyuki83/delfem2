@@ -250,7 +250,7 @@ int main(int argc,char* argv[])
   nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
 //    win.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   cad.Initialize_Sphere();
   

@@ -36,7 +36,7 @@ void myGlutDisplay(void)
   glEnable(GL_TEXTURE_GEN_S);
   glEnable(GL_TEXTURE_GEN_T);
   glEnable(GL_TEXTURE_GEN_R);
-  ::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+  opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
 //  ::glutSolidTeapot(1.0);
   //    glutSolidSphere(1.0, 32, 16);
   //  glutSolidDodecahedron();
@@ -170,7 +170,7 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 1.0;
   viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);

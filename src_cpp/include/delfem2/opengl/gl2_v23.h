@@ -14,6 +14,9 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 
+namespace opengl
+{
+
 void myGlVertex(const CVector3& v);
 void myGlTranslate(const CVector3& v);
 void myGlNormal(const CVector3& n);
@@ -34,6 +37,7 @@ void DrawArcSolid(const CVector3& axis,
 void DrawArrow(const CVector3& p0,
                const CVector3& d,
                int ndivt=16);
+void DrawCircleArrow(CVector3 org, CVector3 axis, double offset);
 void DrawCylinder(const CVector3& p0,
                   const CVector3& p1,
                   double r);
@@ -64,6 +68,27 @@ void DrawCircleWire(const CVector3& axis,
 void DrawCircleSolid(const CVector3& axis,
                      const CVector3& org,
                      double r);
+void DrawGrid2D(int ndivx, int ndivy,
+                const CVector3& ex, const CVector3& ey, const CVector3& org);
+void DrawGridOutside(int ndivx, int ndivy, int ndivz,
+                     double elen,
+                     const CVector3& org);
+  
+
+// ------------
+// mesh from here
+void DrawPoint3D(const std::vector<CVector3>& aPoint);
+void drawPolyLine(const std::vector<CVector2>& aP);
+void DrawMeshQuad_Face(const std::vector<CVector3>& aPoint,
+                       const std::vector<unsigned int>& aQuad);
+void DrawMeshTri_Edge(const std::vector<CVector3>& aP,
+                      const std::vector<unsigned int>& aTri);
+void DrawTriMeshNorm(const std::vector<CVector3>& aP,
+                     const std::vector<int>& aTri);
+void DrawMeshTri_Edge(const std::vector<CVector3>& aP,
+                      const std::vector<unsigned int>& aTri);
+void DrawQuad3D_Edge(const std::vector<CVector3>& aPoint,
+                     const std::vector<unsigned int>& aQuad);
 
 // -----------
 // Handler
@@ -94,5 +119,7 @@ void Draw_MeshTri(const std::vector<CVector2>& aP,
 
 void Draw_MeshTri_Edge(const std::vector<CVector2>& aP,
                        const std::vector<unsigned int>& aTri);
+  
+}
 
 #endif

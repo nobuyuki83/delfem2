@@ -53,9 +53,9 @@ void myGlutDisplay(void)
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0.8, 0.8, 0.8);
-  DrawMeshTri2D_Face(aTri,aXY);
+  opengl::DrawMeshTri2D_Face(aTri,aXY);
   ::glLineWidth(1);
-  DrawMeshTri2D_Edge(aTri,aXY);
+  opengl::DrawMeshTri2D_Edge(aTri,aXY);
   
   ::glColor3d(0,0,0);
   ShowFPS();
@@ -160,7 +160,7 @@ int main(int argc,char* argv[])
   nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
 //    win.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   
-  setSomeLighting();
+  opengl::setSomeLighting();
   
   const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
   cad.AddPolygon(std::vector<double>(poly,poly+8));

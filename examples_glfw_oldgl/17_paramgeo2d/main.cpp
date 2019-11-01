@@ -65,11 +65,11 @@ void myGlutDisplay(void)
   ::glColor3d(1,0,0);
   
   ::glColor3d(0,0.5,0);
-  drawPolyLine2D(aCtrlPoint);
+  opengl::drawPolyLine2D(aCtrlPoint);
       
   ::glPointSize(2);
   ::glColor3d(0,0,0);
-  drawPolyLine2D(polyline0);
+  opengl::drawPolyLine2D(polyline0);
 }
 
 int main(int argc,char* argv[])
