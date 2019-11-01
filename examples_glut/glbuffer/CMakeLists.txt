@@ -28,12 +28,18 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/quat.h           ${DELFEM2_SRC}/quat.cpp               
-  ${DELFEM2_INC}/mshio.h          ${DELFEM2_SRC}/mshio.cpp               
-  ${DELFEM2_INC}/msh.h            ${DELFEM2_SRC}/msh.cpp               
-  ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/color.h          ${DELFEM2_SRC}/color.cpp
+  ${DELFEM2_INC}/quat.h           
+  ${DELFEM2_SRC}/quat.cpp               
+  ${DELFEM2_INC}/mshio.h          
+  ${DELFEM2_SRC}/mshio.cpp               
+  ${DELFEM2_INC}/msh.h            
+  ${DELFEM2_SRC}/msh.cpp               
+  ${DELFEM2_INC}/mshtopo.h        
+  ${DELFEM2_SRC}/mshtopo.cpp
+  ${DELFEM2_INC}/camera.h         
+  ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/color.h          
+  ${DELFEM2_SRC}/color.cpp
 
   ${DELFEM2_INC}/opengl/gl2_color.h      
   ${DELFEM2_INC}/opengl/gl2_color.cpp
