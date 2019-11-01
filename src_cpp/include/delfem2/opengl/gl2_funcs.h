@@ -10,11 +10,14 @@
  * There are a lot of legacy commands such as glBegin(),glEnd()
  */
 
-#ifndef FUNCS_GL_H
-#define FUNCS_GL_H
+#ifndef DFM2_FUNCS_GL2_H
+#define DFM2_FUNCS_GL2_H
 
 #include <string>
 #include <vector>
+
+namespace opengl
+{
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
@@ -186,6 +189,9 @@ void DrawMeshHex3D_Edge(const double* aXYZ, int nXYZ,
                         const unsigned int* aHex, int nHex);
 void DrawMeshHex3D_FaceNorm(const double* aXYZ,
                             const unsigned int* aHex, int nHex);
+void DrawHex3D_FaceNormDisp(const std::vector<double>& aXYZ,
+                           const std::vector<int>& aHex,
+                           const std::vector<double>& aDisp);
 void Draw_HexMeshFaceDisp(const std::vector<double>& aXYZ,
                           const std::vector<unsigned int>& aHex,
                           const std::vector<double>& aDisp);
@@ -230,7 +236,7 @@ public:
   double line_width;
 };
 
-
+} // namespace opengl
 
 
 #endif /* utility_gl_h */

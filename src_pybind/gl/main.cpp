@@ -55,10 +55,10 @@ void PyDrawMesh_FaceNorm
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){  DrawMeshTri3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){  DrawMeshHex3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){  DrawMeshTet3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TRI  ){  opengl::DrawMeshTri3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){  opengl::DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_HEX  ){  opengl::DrawMeshHex3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TET  ){  opengl::DrawMeshTet3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
   }
 }
 
@@ -72,15 +72,15 @@ void PyDrawMesh_Edge
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){ DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){ DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){ DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){ DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_LINE ){ DrawMeshLine3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TRI  ){  opengl::DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){  opengl::DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_HEX  ){  opengl::DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TET  ){  opengl::DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_LINE ){  opengl::DrawMeshLine3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
   if( shape_pos[1] == 2 ){ // 2D Mesh
-    if( type == MESHELEM_TRI  ){  DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_TRI  ){  opengl::DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == MESHELEM_QUAD ){  opengl::DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
 }
 
@@ -100,24 +100,24 @@ void DrawField_ColorMap
   const int nstride = val.strides()[0] / sizeof(double);
   if( elm.shape()[1] == 3 ){
     if( ndim == 3 ){
-      DrawMeshTri3D_ScalarP1(pos.data(), np,
-                             elm.data(), nelm,
-                             val.data(),
-                             color_map.aColor);
+      opengl::DrawMeshTri3D_ScalarP1(pos.data(), np,
+                                     elm.data(), nelm,
+                                     val.data(),
+                                     color_map.aColor);
     }
     else if( ndim == 2 ){
-      DrawMeshTri2D_ScalarP1(pos.data(), np,
-                             elm.data(), nelm,
-                             val.data(), nstride,
-                             color_map.aColor);
+      opengl::DrawMeshTri2D_ScalarP1(pos.data(), np,
+                                     elm.data(), nelm,
+                                     val.data(), nstride,
+                                     color_map.aColor);
     }
   }
   if( elm.shape()[1] == 4 ){
     if( ndim == 3 ){
-      DrawMeshTet3D_ScalarP1(pos.data(), np,
-                             elm.data(), nelm,
-                             val.data(),
-                             color_map.aColor);
+      opengl::DrawMeshTet3D_ScalarP1(pos.data(), np,
+                                     elm.data(), nelm,
+                                     val.data(),
+                                     color_map.aColor);
     }
   }
 }
@@ -137,16 +137,16 @@ void DrawField_Disp
   const int nstride = disp.strides()[0] / sizeof(double);
   if( ndim == 3 ){
     if( meshelem_type == MESHELEM_TET ){
-      DrawMeshTet3D_FaceNormDisp(pos.data(), np,
-                                 elm.data(), nelm,
-                                 disp.data());
+      opengl::DrawMeshTet3D_FaceNormDisp(pos.data(), np,
+                                         elm.data(), nelm,
+                                         disp.data());
     }
   }
   else if( ndim == 2 ){
     if( meshelem_type == MESHELEM_TRI ){
-      DrawMeshTri2D_FaceDisp2D(pos.data(), np,
-                               elm.data(), nelm,
-                               disp.data(), nstride);
+      opengl::DrawMeshTri2D_FaceDisp2D(pos.data(), np,
+                                       elm.data(), nelm,
+                                       disp.data(), nstride);
     }
   }
 }
@@ -165,8 +165,8 @@ void DrawField_Hedgehog
   if( ndim == 3 ){
   }
   else if( ndim == 2 ){
-    DrawPoints2D_Vectors(pos.data(), np,
-                         disp.data(), nstride, 0, mag);
+    opengl::DrawPoints2D_Vectors(pos.data(), np,
+                                 disp.data(), nstride, 0, mag);
   }
 }
 
@@ -202,15 +202,15 @@ PYBIND11_MODULE(c_gl, m) {
   m.def("drawField_disp",       &DrawField_Disp);
   m.def("drawField_hedgehog",   &DrawField_Hedgehog);
   
-  ///////////////////////////////////
+  // ----------------
   // gl misc
-  m.def("setSomeLighting",  &setSomeLighting, "set some lighting that looks good for me");
+  m.def("setSomeLighting",  &opengl::setSomeLighting, "set some lighting that looks good for me");
   m.def("setup_glsl",       &setUpGLSL, "compile shader program");
   m.def("glew_init",        &PyGLExtensionInit);
   
-  m.def("cppDrawSphere",      &DrawSphereAt );
-  m.def("cppDrawSphere_Edge", &DrawSphere_Edge);
-  m.def("cppDrawTorus_Edge",  &DrawTorus_Edge);
+  m.def("cppDrawSphere",      &opengl::DrawSphereAt );
+  m.def("cppDrawSphere_Edge", &opengl::DrawSphere_Edge);
+  m.def("cppDrawTorus_Edge",  &opengl::DrawTorus_Edge);
 }
 
 

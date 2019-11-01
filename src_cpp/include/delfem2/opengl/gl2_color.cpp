@@ -23,6 +23,8 @@
 
 #include "delfem2/opengl/gl2_color.h"
 
+
+
 static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
 {
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
@@ -38,9 +40,77 @@ inline void myGlVertex3d(int i, const std::vector<double>& aV)
   glVertex3d(aV[i*3+0],aV[i*3+1],aV[i*3+2]);
 }
 
+
+void DrawSingleTri3D_Scalar_Vtx
+ (const double* aXYZ,
+  const unsigned int* tri,
+  const double* aValVtx,
+  const std::vector<std::pair<double, CColor> >& colorMap)
+{
+  const int i0 = tri[0];
+  const int i1 = tri[1];
+  const int i2 = tri[2];
+  if (i0==-1){
+    assert(i1==-1); assert(i2==-1);
+    return;
+  }
+    //  assert(i0>=0&&i0<(int)aXYZ.size()/3);
+    //  assert(i1>=0&&i1<(int)aXYZ.size()/3);
+    //  assert(i2>=0&&i2<(int)aXYZ.size()/3);
+  const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
+  const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+  const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+  {
+    double n[3], a; UnitNormalAreaTri3D(n, a, p0, p1, p2);
+    ::glNormal3dv(n);
+  }
+  const double vt0 = aValVtx[i0];
+  const double vt1 = aValVtx[i1];
+  const double vt2 = aValVtx[i2];
+  opengl::heatmap(vt0, colorMap); glVertex3dv(p0);
+  opengl::heatmap(vt1, colorMap); glVertex3dv(p1);
+  opengl::heatmap(vt2, colorMap); glVertex3dv(p2);
+}
+
+void DrawSingleQuad3D_Scalar_Vtx
+ (const std::vector<double>& aXYZ,
+  const unsigned int* quad,
+  const double* aValVtx,
+  const std::vector<std::pair<double, CColor> >& colorMap)
+{
+  const int i0 = quad[0];
+  const int i1 = quad[1];
+  const int i2 = quad[2];
+  const int i3 = quad[3];
+  if (i0==-1){
+    assert(i1==-1); assert(i2==-1); assert(i3==-1);
+    return;
+  }
+  assert(i0>=0&&i0<(int)aXYZ.size()/3);
+  assert(i1>=0&&i1<(int)aXYZ.size()/3);
+  assert(i2>=0&&i2<(int)aXYZ.size()/3);
+  assert(i3>=0&&i3<(int)aXYZ.size()/3);
+  const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
+  const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+  const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+  const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
+  {
+    double n[3], a; UnitNormalAreaTri3D(n, a, p0, p1, p2);
+    ::glNormal3dv(n);
+  }
+  const double vt0 = aValVtx[i0];
+  const double vt1 = aValVtx[i1];
+  const double vt2 = aValVtx[i2];
+  const double vt3 = aValVtx[i3];
+  opengl::heatmap(vt0, colorMap); glVertex3dv(p0);
+  opengl::heatmap(vt1, colorMap); glVertex3dv(p1);
+  opengl::heatmap(vt2, colorMap); glVertex3dv(p2);
+  opengl::heatmap(vt3, colorMap); glVertex3dv(p3);
+}
+
 // -----------------------------------------------------------------
 
-void myGlMaterialDiffuse(const CColor& color){
+void opengl::myGlMaterialDiffuse(const CColor& color){
   float c[4];
   c[0] = color.r;
   c[1] = color.g;
@@ -49,22 +119,22 @@ void myGlMaterialDiffuse(const CColor& color){
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-void myGlColor(const CColor& c){
+void opengl::myGlColor(const CColor& c){
   ::glColor4d(c.r, c.g, c.b, c.a );
 }
 
-void myGlColorDiffuse(const CColor& color){
+void opengl::myGlColorDiffuse(const CColor& color){
   ::glColor4d(color.r, color.g, color.b, color.a );
   float c[4] = {color.r, color.g, color.b, color.a};
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-void myGlDiffuse(const CColor& color){
+void opengl::myGlDiffuse(const CColor& color){
   float c[4] = {color.r, color.g, color.b, color.a};
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, c);
 }
 
-void DrawBackground(const CColor& c)
+void opengl::DrawBackground(const CColor& c)
 {
   glPushAttrib(GL_TRANSFORM_BIT|GL_CURRENT_BIT|GL_ENABLE_BIT);
   ::glShadeModel(GL_SMOOTH);
@@ -102,10 +172,10 @@ void DrawBackground(const CColor& c)
   if( is_texture  ){ ::glEnable(GL_TEXTURE_2D); }
 }
 
-void DrawBackground()
+void opengl::DrawBackground()
 {
   //  ::glColor3d(0.2,0.7,0.7);
-  DrawBackground( CColor(0.5, 0.5, 0.5) );
+  opengl::DrawBackground( CColor(0.5, 0.5, 0.5) );
 }
 
 // ------------------------------------------------------------
@@ -123,15 +193,15 @@ void heatmap_glDiffuse(double input)
   glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,cf);
 }
 
-void heatmap(double input, const std::vector<std::pair<double, CColor> >& colorMap)
+void opengl::heatmap(double input, const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const CColor& c = getColor(input, colorMap);
-  myGlColorDiffuse(c);
+  opengl::myGlColorDiffuse(c);
 }
 
 // -------------------------------------------------------------
 
-void DrawMeshTri2D_ScalarP1
+void opengl::DrawMeshTri2D_ScalarP1
 (const double* aXY, int nXY,
  const unsigned int* aTri, int nTri,
  const double* paVal,
@@ -150,14 +220,14 @@ void DrawMeshTri2D_ScalarP1
     const double v0 = paVal[ino0*nstride];
     const double v1 = paVal[ino1*nstride];
     const double v2 = paVal[ino2*nstride];
-    heatmap(v0,colorMap); ::glVertex2d( aXY[ino0*2+0], aXY[ino0*2+1] );
-    heatmap(v1,colorMap); ::glVertex2d( aXY[ino1*2+0], aXY[ino1*2+1] );
-    heatmap(v2,colorMap); ::glVertex2d( aXY[ino2*2+0], aXY[ino2*2+1] );
+    opengl::heatmap(v0,colorMap); ::glVertex2d( aXY[ino0*2+0], aXY[ino0*2+1] );
+    opengl::heatmap(v1,colorMap); ::glVertex2d( aXY[ino1*2+0], aXY[ino1*2+1] );
+    opengl::heatmap(v2,colorMap); ::glVertex2d( aXY[ino2*2+0], aXY[ino2*2+1] );
   }
   ::glEnd();
 }
 
-void DrawMeshTri2D_ScalarP0
+void opengl::DrawMeshTri2D_ScalarP0
 (std::vector<int>& aTri,
  std::vector<double>& aXY,
  std::vector<double>& aVal,
@@ -173,7 +243,7 @@ void DrawMeshTri2D_ScalarP0
     const int ino1 = aTri[itri*3+1];
     const int ino2 = aTri[itri*3+2];
     const double v0 = aVal[itri*nstride+noffset];
-    heatmap(v0,colorMap);
+    opengl::heatmap(v0,colorMap);
     ::glVertex2d( aXY[ino0*2+0], aXY[ino0*2+1] );
     ::glVertex2d( aXY[ino1*2+0], aXY[ino1*2+1] );
     ::glVertex2d( aXY[ino2*2+0], aXY[ino2*2+1] );
@@ -181,76 +251,8 @@ void DrawMeshTri2D_ScalarP0
   ::glEnd();
 }
 
-
-void DrawSingleTri3D_Scalar_Vtx
-(const double* aXYZ,
- const unsigned int* tri,
- const double* aValVtx,
- const std::vector<std::pair<double, CColor> >& colorMap)
-{
-  const int i0 = tri[0];
-  const int i1 = tri[1];
-  const int i2 = tri[2];
-  if (i0==-1){
-    assert(i1==-1); assert(i2==-1);
-    return;
-  }
-//  assert(i0>=0&&i0<(int)aXYZ.size()/3);
-//  assert(i1>=0&&i1<(int)aXYZ.size()/3);
-//  assert(i2>=0&&i2<(int)aXYZ.size()/3);
-  const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
-  const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-  const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-  {
-    double n[3], a; UnitNormalAreaTri3D(n, a, p0, p1, p2);
-    ::glNormal3dv(n);
-  }
-  const double vt0 = aValVtx[i0];
-  const double vt1 = aValVtx[i1];
-  const double vt2 = aValVtx[i2];
-  heatmap(vt0, colorMap); glVertex3dv(p0);
-  heatmap(vt1, colorMap); glVertex3dv(p1);
-  heatmap(vt2, colorMap); glVertex3dv(p2);
-}
-
-void DrawSingleQuad3D_Scalar_Vtx
-(const std::vector<double>& aXYZ,
- const unsigned int* quad,
- const double* aValVtx,
- const std::vector<std::pair<double, CColor> >& colorMap)
-{
-  const int i0 = quad[0];
-  const int i1 = quad[1];
-  const int i2 = quad[2];
-  const int i3 = quad[3];
-  if (i0==-1){
-    assert(i1==-1); assert(i2==-1); assert(i3==-1);
-    return;
-  }
-  assert(i0>=0&&i0<(int)aXYZ.size()/3);
-  assert(i1>=0&&i1<(int)aXYZ.size()/3);
-  assert(i2>=0&&i2<(int)aXYZ.size()/3);
-  assert(i3>=0&&i3<(int)aXYZ.size()/3);
-  const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
-  const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-  const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-  const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-  {
-    double n[3], a; UnitNormalAreaTri3D(n, a, p0, p1, p2);
-    ::glNormal3dv(n);
-  }
-  const double vt0 = aValVtx[i0];
-  const double vt1 = aValVtx[i1];
-  const double vt2 = aValVtx[i2];
-  const double vt3 = aValVtx[i3];
-  heatmap(vt0, colorMap); glVertex3dv(p0);
-  heatmap(vt1, colorMap); glVertex3dv(p1);
-  heatmap(vt2, colorMap); glVertex3dv(p2);
-  heatmap(vt3, colorMap); glVertex3dv(p3);
-}
-
 // vetex value
-void DrawMeshTri3D_ScalarP1
+void opengl::DrawMeshTri3D_ScalarP1
 (const double* aXYZ, int nXYZ,
  const unsigned int* aTri, int nTri,
  const double* aValSrf,
@@ -264,7 +266,7 @@ void DrawMeshTri3D_ScalarP1
 }
 
 // vetex value
-void DrawMeshTri3D_ScalarP1
+void opengl::DrawMeshTri3D_ScalarP1
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const double* aValSrf,
@@ -279,7 +281,7 @@ void DrawMeshTri3D_ScalarP1
 }
 
 // vetex value
-void DrawMeshElem3D_Scalar_Vtx
+void opengl::DrawMeshElem3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
@@ -311,7 +313,7 @@ void DrawMeshElem3D_Scalar_Vtx
 }
 
 // element-wise
-void drawMeshTri3D_ScalarP0
+void opengl::drawMeshTri3D_ScalarP0
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aValSrf,
@@ -348,7 +350,7 @@ void drawMeshTri3D_ScalarP0
 
 
 
-void DrawMeshTri3D_VtxColor
+void opengl::DrawMeshTri3D_VtxColor
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  std::vector<CColor>& aColor)
@@ -373,9 +375,9 @@ void DrawMeshTri3D_VtxColor
     double un[3], area;
     UnitNormalAreaTri3D(un,area, p1,p2,p3);
     ::glNormal3dv(un);
-    ::myGlColorDiffuse(aColor[i1]); ::myGlVertex3d(i1,aXYZ);
-    ::myGlColorDiffuse(aColor[i2]); ::myGlVertex3d(i2,aXYZ);
-    ::myGlColorDiffuse(aColor[i3]); ::myGlVertex3d(i3,aXYZ);
+    myGlColorDiffuse(aColor[i1]); ::myGlVertex3d(i1,aXYZ);
+    myGlColorDiffuse(aColor[i2]); ::myGlVertex3d(i2,aXYZ);
+    myGlColorDiffuse(aColor[i3]); ::myGlVertex3d(i3,aXYZ);
     ::glEnd();
   }
 }
@@ -395,7 +397,7 @@ void DrawMeshTri3DFlag_FaceNorm
     if(      imode == 0 ) continue;
     else if( imode == 1 ){ ::glEnable(GL_LIGHTING); }
     else if( imode == 2 ){ ::glDisable(GL_LIGHTING); }
-    ::myGlColorDiffuse(aColor[ig0].second);
+    opengl::myGlColorDiffuse(aColor[ig0].second);
     const int i1 = aTri[itri*3+0];
     const int i2 = aTri[itri*3+1];
     const int i3 = aTri[itri*3+2];
@@ -425,7 +427,7 @@ void DrawMeshTri3DFlag_FaceNorm
 // tet from here
 
 // 3D value
-void DrawMeshTet3D_ScalarP1
+void opengl::DrawMeshTet3D_ScalarP1
 (const double* aXYZ, int nXYZ,
  const unsigned int* aTet, int nTet,
  const double* aValSrf,
@@ -485,7 +487,7 @@ static bool IsAbovePlane(const double p[3], const double org[3], const double n[
 }
 
 
-void DrawMeshTet3D_Cut
+void opengl::DrawMeshTet3D_Cut
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTet,
  const std::vector<CColor>& aColor,
@@ -509,7 +511,7 @@ void DrawMeshTet3D_Cut
     if( IsAbovePlane(p2, org, ncut) ) continue;
     if( IsAbovePlane(p3, org, ncut) ) continue;
     //    ::glColor3d(1,1,0);
-    myGlColorDiffuse(aColor[itet]);
+    opengl::myGlColorDiffuse(aColor[itet]);
     ////
     double n[3], area;
     UnitNormalAreaTri3D(n, area, p0, p2, p1);
