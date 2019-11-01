@@ -18,13 +18,19 @@ set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 set(INPUT_SRC
-  ${DELFEM2_SRC}/vec2.cpp          ${DELFEM2_INC}/vec2.h
-  ${DELFEM2_SRC}/vec3.cpp          ${DELFEM2_INC}/vec3.h
-  ${DELFEM2_SRC}/mat3.cpp          ${DELFEM2_INC}/mat3.h
-  ${DELFEM2_SRC}/quat.cpp          ${DELFEM2_INC}/quat.h
+  ${DELFEM2_SRC}/vec2.cpp          
+  ${DELFEM2_INC}/vec2.h
+  ${DELFEM2_SRC}/vec3.cpp          
+  ${DELFEM2_INC}/vec3.h
+  ${DELFEM2_SRC}/mat3.cpp          
+  ${DELFEM2_INC}/mat3.h
+  ${DELFEM2_SRC}/quat.cpp          
+  ${DELFEM2_INC}/quat.h
 
-  ${DELFEM2_SRC}/v23m3q.cpp           ${DELFEM2_INC}/v23m3q.h
-  ${DELFEM2_SRC}/eigen_rigidbody.cpp  ${DELFEM2_INC}/eigen_rigidbody.h
+  ${DELFEM2_SRC}/v23m3q.cpp           
+  ${DELFEM2_INC}/v23m3q.h
+  ${DELFEM2_SRC}/eigen_rigidbody.cpp  
+  ${DELFEM2_INC}/eigen_rigidbody.h
 
   ${DELFEM2_INC}/opengl/gl2_v23.cpp       
   ${DELFEM2_INC}/opengl/gl2_v23.h

@@ -20,9 +20,12 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/quat.h         ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/camera.h       ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/color.h        ${DELFEM2_SRC}/color.cpp
+  ${DELFEM2_INC}/quat.h         
+  ${DELFEM2_SRC}/quat.cpp
+  ${DELFEM2_INC}/camera.h       
+  ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/color.h        
+  ${DELFEM2_SRC}/color.cpp
 
   ${DELFEM2_INC}/opengl/gl2_funcs.h
   ${DELFEM2_INC}/opengl/gl2_funcs.cpp

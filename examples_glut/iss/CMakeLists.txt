@@ -22,18 +22,28 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec3.h           ${DELFEM2_SRC}/vec3.cpp
-  ${DELFEM2_INC}/mshio.h          ${DELFEM2_SRC}/mshio.cpp
-  ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/msh.h            ${DELFEM2_SRC}/msh.cpp
-  ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp
+  ${DELFEM2_INC}/vec3.h
+  ${DELFEM2_SRC}/vec3.cpp
+  ${DELFEM2_INC}/mshio.h
+  ${DELFEM2_SRC}/mshio.cpp
+  ${DELFEM2_INC}/mshtopo.h
+  ${DELFEM2_SRC}/mshtopo.cpp
+  ${DELFEM2_INC}/msh.h
+  ${DELFEM2_SRC}/msh.cpp
+  ${DELFEM2_INC}/primitive.h
+  ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/bv.h
-  ${DELFEM2_INC}/bvh.h            ${DELFEM2_SRC}/bvh.cpp
-  ${DELFEM2_INC}/iss.h            ${DELFEM2_SRC}/iss.cpp
-  ${DELFEM2_INC}/camera.h    ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/color.h          ${DELFEM2_SRC}/color.cpp
+  ${DELFEM2_INC}/bvh.h
+  ${DELFEM2_SRC}/bvh.cpp
+  ${DELFEM2_INC}/iss.h
+  ${DELFEM2_SRC}/iss.cpp
+  ${DELFEM2_INC}/camera.h
+  ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/color.h
+  ${DELFEM2_SRC}/color.cpp
 
-  ${DELFEM2_INC}/srchuni_v3.h     ${DELFEM2_SRC}/srchuni_v3.cpp
+  ${DELFEM2_INC}/srchuni_v3.h     
+  ${DELFEM2_SRC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
