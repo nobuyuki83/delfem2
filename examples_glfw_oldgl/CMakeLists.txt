@@ -21,3 +21,8 @@ add_subdirectory(201_dyntri2d_triangulation)
 add_subdirectory(202_dyntri2d_remesh)
 add_subdirectory(203_dyntri3d_edgecollapse)
 add_subdirectory(204_dyntet_tetrahedralization)
+
+
+# immplicit shape
+add_subdirectory(300_AdaptiveDistanceField)
+add_subdirectory(301_IsoSurfaceStuffing)

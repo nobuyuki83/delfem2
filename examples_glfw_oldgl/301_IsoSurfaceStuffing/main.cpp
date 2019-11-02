@@ -12,21 +12,14 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/iss.h"
 #include "delfem2/bv.h"
-
 #include "delfem2/srch_v3bvhmshtopo.h"
 
 // ---------
 
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "../glut_cam.h"
-
 
 // ------------------------------------------
 
@@ -39,7 +32,6 @@ std::vector<CColor> aTetColor;
 std::vector<unsigned int> aTet1;
 std::vector<CColor> aTetColor1;
 
-CNav3D_GLUT nav;
 double vis_cut_org[3] = {-0.0, 0.0, 0.0};
 double vis_cut_nrm[3] = {0.0,-0.9, +0.2};
 //double vis_cut_time = 0;
@@ -48,11 +40,8 @@ double cur_time = 0.5;
 int imode_draw = 0;
 
 
-void SetProblem()
+void SetProblem(int iprob)
 {
-  const unsigned int nprob = 4;
-  static int iprob = 0;
-  
   std::vector<int> aIsOnSurfXYZ;
   if( iprob == 0 ){
     class CInSphere : public CInput_IsosurfaceStuffing
@@ -201,60 +190,6 @@ void SetProblem()
     IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                        mesh, 0.18, 3.0, cent);
   }
-  /*
-  if( iprob == 4 ){
-    class CCavMesh : public CInputIsosurfaceStuffing
-    {
-    public:
-      CCavMesh(){
-      }
-      virtual double SignedDistance(double x, double y, double z ) const {
-        double ntmp[3];
-        double dist0 = -sdf.Projection(x, y, z, ntmp);
-        double cx = 0.0;
-        double cy = 1.0;
-        double cz = 0.0;
-        double dist1 = box.Projection(x-cx, y-cy, z-cz, ntmp);
-        return (dist0<dist1) ? dist0 : dist1;
-      }
-      virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
-                         double px, double py, double pz) const {
-        sdf = this->SignedDistance(px,py,pz);
-        const double lx = box.hwx;
-        const double ly = box.hwy;
-        const double lz = box.hwz;
-        if( fabs(px)<lx*0.6 && fabs(py)<ly*0.5 && fabs(pz)<lz*0.5 ){ ilevel_srf = 4; }
-        else{ ilevel_srf = 0; }
-        if( (px>0&&px<lx*0.7) && fabs(py)<ly*0.5 && fabs(pz)<lz*0.5 ){ ilevel_vol = 1; }
-        else{ ilevel_vol = 0; }
-        ilevel_vol = -1;
-        nlayer = 2;
-      }
-    public:
-      CSDF3_Box box;
-      CSDF3_Mesh sdf;
-    } cav_mesh;
-    ////
-    double lenx = 3;
-    double leny = 3;
-    double lenz = 6;
-    std::vector<unsigned int> aTriIn;
-    std::vector<double> aXYZIn;
-    Read_Ply("models/car.ply", aXYZIn, aTriIn);
-    {
-      cav_mesh.sdf.SetMesh(aTriIn, aXYZIn);
-      cav_mesh.sdf.BuildBoxel();
-      cav_mesh.box.hwx = lenx;
-      cav_mesh.box.hwy = leny;
-      cav_mesh.box.hwz = lenz;
-    }
-    /////
-    double resolution = 1.1;
-    double centre[3] = {0,0,0};
-    IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
-                       cav_mesh, resolution, lenz*2.3, centre);
-  }
-   */
   
   aTetColor.resize(aTet.size()/4);
   for(int it=0;it<aTet.size()/4;++it){
@@ -277,79 +212,17 @@ void SetProblem()
   
   aTet1.clear();
   aTetColor1.clear();
-  
-  iprob++;
-  if( iprob == nprob ){ iprob = 0; }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0, 0, w, h);
-	::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y ){
-  nav.glutMotion(x,y);
-}
-
-void myGlutMouse(int button, int state, int x, int y){
-  nav.glutMouse(button,state,x,y);
-}
-
-void SetProblem();
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-	switch(Key)
-	{
-		case 'q':
-		case 'Q':
-		case '\033':
-			exit(0);  /* '\033' ? ESC ? ASCII ??? */
-		case 'a':
-			is_animation = !is_animation;
-			break;
-		case 'b':
-			cur_time = 0;
-			break;
-    case 'd':
-      imode_draw = (imode_draw+1)%3;
-      break;
-		case ' ':	
-			SetProblem();
-			break;
-	}
-}
-
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key,x,y);
-}
-
+// ----------------------------------------------
 void myGlutIdle(){
   if( is_animation ){
-    cur_time += 0.005;
-    if( cur_time > 1 ){ cur_time = 0.0; }
-    vis_cut_org[1] = -1*(1-cur_time) + 1*cur_time;
+
   }
-	::glutPostRedisplay();
 }
 
 void myGlutDisplay(void)
 {
-//	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);  
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-	
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
-  
-  nav.SetGL_Camera();
-
   ::glEnable(GL_LIGHTING);
   if( imode_draw == 0 ){
     opengl::DrawMeshTet3D_Cut(aXYZ,aTet,aTetColor,
@@ -362,36 +235,17 @@ void myGlutDisplay(void)
     opengl::DrawMeshTet3D_Cut(aXYZ,aTet1,aTetColor1,
                               vis_cut_org, vis_cut_nrm);
   }
-  
-	ShowFPS();
-	::glutSwapBuffers();
 }
 
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
+// ------------------------------------
 
 int main(int argc,char* argv[])
 {	
-	// Initialize GLUT
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("FEM View");
+  CViewer_GLFW viewer;
+  viewer.Init_GLold();
 	
-	// Setting call back function
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-	glutIdleFunc(myGlutIdle);
-	
-//  Hoge();
-  SetProblem();
-  nav.camera.view_height = 2;
-  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  viewer.nav.camera.view_height = 2;
+  viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   ////
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_LIGHT0);            
@@ -405,10 +259,28 @@ int main(int argc,char* argv[])
   ::glLightfv(GL_LIGHT1, GL_POSITION, light1pos);          
   float white2[3] = {1.0,1.0,0.0};
   ::glLightfv(GL_LIGHT1, GL_DIFFUSE, white2);        
-  ////
+  ///
   
-  
-	glutMainLoop();
-	return 0;
+  while(!glfwWindowShouldClose(viewer.window)){
+    {
+      static int iframe = 0;
+      int iprob = iframe/100;
+      if( iframe % 100 == 0 ){
+        SetProblem(iprob);
+      }
+      iframe = (iframe+1)%300;
+      //
+      cur_time += 0.02;
+      if( cur_time > 1 ){ cur_time = 0.0; }
+      vis_cut_org[1] = -1*(1-cur_time) + 1*cur_time;
+    }
+    // ------------
+    viewer.DrawBegin_Glold();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
 
