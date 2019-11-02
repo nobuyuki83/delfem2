@@ -20,6 +20,7 @@ public:
   void Init_GLnew();
   
   void DrawBegin_Glold();
+  void DrawEnd_oldGL();
   
 public:
   GLFWwindow* window;

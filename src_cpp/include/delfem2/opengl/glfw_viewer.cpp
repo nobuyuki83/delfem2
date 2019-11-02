@@ -147,3 +147,9 @@ void CViewer_GLFW::DrawBegin_Glold()
   glLoadIdentity();
   glMultMatrixf(mMV);
 }
+
+void CViewer_GLFW::DrawEnd_oldGL()
+{
+  glfwSwapBuffers(this->window);
+  glfwPollEvents();
+}
