@@ -20,11 +20,6 @@ add_subdirectory(selfcollision_bvh)
 add_subdirectory(adf3d)
 add_subdirectory(iss)
 
-add_subdirectory(dyntet_tetrahedralization)
-add_subdirectory(dyntri2d_triangulation)
-add_subdirectory(dyntri2d_remesh)
-add_subdirectory(dyntri3d_edgecollapse)
-
 # cad
 add_subdirectory(cad2d)
 add_subdirectory(cad3d)

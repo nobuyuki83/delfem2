@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <cstdlib>
+#include "delfem2/color.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
@@ -19,11 +20,10 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/color.h"
-
 #include "delfem2/opengl/gl2_color.h"
 
-
+// header ends here
+// -------------------------------------------------
 
 static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
 {
