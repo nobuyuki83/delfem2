@@ -214,13 +214,6 @@ void SetProblem(int iprob)
   aTetColor1.clear();
 }
 
-// ----------------------------------------------
-void myGlutIdle(){
-  if( is_animation ){
-
-  }
-}
-
 void myGlutDisplay(void)
 {
   ::glEnable(GL_LIGHTING);

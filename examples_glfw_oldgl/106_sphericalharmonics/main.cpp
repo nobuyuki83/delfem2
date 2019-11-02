@@ -134,7 +134,7 @@ int main(int argc,char* argv[])
   
   // -----------------------------
   
-  viewer.nav.camera.view_height = 2.0;
+  viewer.nav.camera.view_height = 1.0;
   
   opengl::setSomeLighting();
   
