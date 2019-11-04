@@ -365,7 +365,7 @@ TEST(mathfunc,sherical_harmonics_orthgonality)
 {
   std::vector<double> aXYZ,aVal;
   std::vector<unsigned int> aTri;
-  MeshTri3D_Cube(aXYZ,aTri, 50);
+  delfem2::MeshTri3D_Cube(aXYZ,aTri, 50);
   for(int ip=0;ip<aXYZ.size()/3;ip++){
     double x = aXYZ[ip*3+0];
     double y = aXYZ[ip*3+1];

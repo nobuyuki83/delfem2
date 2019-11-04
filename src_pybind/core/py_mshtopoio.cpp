@@ -13,14 +13,15 @@
 #include "delfem2/dtri_v3.h"
 
 namespace py = pybind11;
+namespace dfm2 = delfem2;
 
 std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshQuad2D_Grid
 (int mx, int my)
 {
   std::vector<double> aXY;
   std::vector<unsigned int> aQuad;
-  MeshQuad2D_Grid(aXY, aQuad,
-                  mx-1, my-1);
+  dfm2::MeshQuad2D_Grid(aXY, aQuad,
+                        mx-1, my-1);
   py::array_t<double> npXY({(int)aXY.size()/2,2}, aXY.data());
   py::array_t<unsigned int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
   return std::make_tuple(npXY,npQuad);
@@ -384,7 +385,7 @@ PyMeshTri3D_Cylinder(double r, double l, int nr, int nl)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  MeshTri3D_ClosedCylinder(aXYZ, aTri, r, l, nr, nl);
+  dfm2::MeshTri3D_ClosedCylinder(aXYZ, aTri, r, l, nr, nl);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);
@@ -395,7 +396,7 @@ PyMeshTri3D_Cube(int n)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  MeshTri3D_Cube(aXYZ, aTri, n);
+  dfm2::MeshTri3D_Cube(aXYZ, aTri, n);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);
@@ -406,7 +407,7 @@ PyMeshTri3D_Sphere(double r, int nla, int nlo)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  MeshTri3D_Sphere(aXYZ,aTri, r,nla,nlo);
+  dfm2::MeshTri3D_Sphere(aXYZ,aTri, r,nla,nlo);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);
@@ -429,7 +430,7 @@ PyMeshTri3D_Icosahedron()
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  MeshTri3D_Icosahedron(aXYZ,aTri);
+  dfm2::MeshTri3D_Icosahedron(aXYZ,aTri);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);
@@ -441,8 +442,8 @@ PyMeshTri3D_Torus(double r0, double r1)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  MeshTri3D_Torus(aXYZ,aTri,
-                  r0,r1);
+  dfm2::MeshTri3D_Torus(aXYZ,aTri,
+                        r0,r1);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);

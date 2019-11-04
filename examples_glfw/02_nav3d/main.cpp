@@ -62,8 +62,8 @@ int main(void)
   {
     std::vector<double> aXYZd;
     std::vector<unsigned int> aTri;
-    MeshTri3D_Torus(aXYZd, aTri,
-                    1.0, 0.2);
+    delfem2::MeshTri3D_Torus(aXYZd, aTri,
+                             1.0, 0.2);
     shdr.Initialize(aXYZd, aTri);
   }
  

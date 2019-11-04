@@ -16,6 +16,8 @@
 
 #include "delfem2/primitive.h"
 
+namespace dfm2 = delfem2;
+
 /*
 static void Cross3D(double r[3], const double v1[3], const double v2[3]){
 	r[0] = v1[1]*v2[2] - v2[1]*v1[2];
@@ -150,9 +152,9 @@ const double e[3]) // end
 }
 */
 
-////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------
 
-CPlane::CPlane(double n[3], double o[3])
+dfm2::CPlane::CPlane(double n[3], double o[3])
 {
 	////
 	normal_[0] = n[0];
@@ -164,7 +166,7 @@ CPlane::CPlane(double n[3], double o[3])
 	origin_[2] = o[2];
 }
 
-double CPlane::Projection
+double dfm2::CPlane::Projection
 (double n[3],
  double px, double py, double pz) const // normal
 {
@@ -177,7 +179,7 @@ double CPlane::Projection
 ////////////////////////////////////////////////////////////////
 
 
-CSphere::CSphere(double r, const std::vector<double>& c, bool is_out){
+dfm2::CSphere::CSphere(double r, const std::vector<double>& c, bool is_out){
   cent_.resize(3);
 	cent_[0] = c[0];
 	cent_[1] = c[1];
@@ -187,7 +189,7 @@ CSphere::CSphere(double r, const std::vector<double>& c, bool is_out){
 }
 
 // return penetration depth (inside is positive)
-double CSphere::Projection
+double dfm2::CSphere::Projection
 (double n[3],
  double px, double py, double pz) const // normal outward
 {
@@ -206,7 +208,7 @@ double CSphere::Projection
 	return radius_-len;
 }
 
-unsigned int CSphere::FindInOut(double px, double py, double pz) const
+unsigned int dfm2::CSphere::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	double pd = this->Projection(n, px, py, pz);
@@ -215,7 +217,7 @@ unsigned int CSphere::FindInOut(double px, double py, double pz) const
 	return 1;
 }
 
-bool CSphere::IntersectionPoint
+bool dfm2::CSphere::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -235,7 +237,7 @@ bool CSphere::IntersectionPoint
 
 ////////////////////////////////////////////////////////////////
 
-CCylinder::CCylinder
+dfm2::CCylinder::CCylinder
 (double r, double cnt[3], double dir[3], bool is_out){
 	cent_[0] = cnt[0];
 	cent_[1] = cnt[1];
@@ -249,7 +251,7 @@ CCylinder::CCylinder
 
 
 // return penetration depth (inside is positive)
-double CCylinder::Projection
+double dfm2::CCylinder::Projection
 (double n[3],
  double px, double py, double pz) const // normal outward
 {
@@ -272,7 +274,7 @@ double CCylinder::Projection
 	return radius_-len;
 }
 
-unsigned int CCylinder::FindInOut(double px, double py, double pz) const
+unsigned int dfm2::CCylinder::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	double pd = this->Projection(n,
@@ -282,7 +284,7 @@ unsigned int CCylinder::FindInOut(double px, double py, double pz) const
 	return 1;
 }
 
-bool CCylinder::IntersectionPoint
+bool dfm2::CCylinder::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -302,14 +304,14 @@ bool CCylinder::IntersectionPoint
 ////////////////////////////////////////////////////////////////
 
 
-CTorus::CTorus(){
+dfm2::CTorus::CTorus(){
 	cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
 	radius_ = 0.5;
 	radius_tube_ = 0.2;
 }
 
 // return penetration depth (inside is positive)
-double CTorus::Projection
+double dfm2::CTorus::Projection
 (double n[3],
  double px, double py, double pz) const // normal outward
 {
@@ -340,7 +342,7 @@ double CTorus::Projection
 	return radius_tube_-len2;
 }
 	
-unsigned int CTorus::FindInOut(double px, double py, double pz) const
+unsigned int dfm2::CTorus::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	const double pd = this->Projection(n,
@@ -351,7 +353,7 @@ unsigned int CTorus::FindInOut(double px, double py, double pz) const
 
 /////
 
-void MeshQuad2D_Grid
+void dfm2::MeshQuad2D_Grid
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aQuad,
  int nx, int ny)
@@ -377,7 +379,7 @@ void MeshQuad2D_Grid
   }
 }
 
-void MeshTri3D_Disk
+void dfm2::MeshTri3D_Disk
 (std::vector<double>& aXYZ,
  std::vector<int>& aTri,
  double r, int nr, int nth)
@@ -427,7 +429,7 @@ void MeshTri3D_Disk
 
 
 
-void MeshTri3D_OpenCylinder
+void dfm2::MeshTri3D_OpenCylinder
 (std::vector<double>& aXYZ,
  std::vector<int>& aTri,
  double r, double l,
@@ -470,7 +472,7 @@ void MeshTri3D_OpenCylinder
   }
 }
 
-void MeshTri3D_ClosedCylinder
+void dfm2::MeshTri3D_ClosedCylinder
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  double r, double l,
@@ -547,7 +549,7 @@ void MeshTri3D_ClosedCylinder
    */
 }
 
-void MeshTri3D_Sphere
+void dfm2::MeshTri3D_Sphere
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  double r,
@@ -615,7 +617,7 @@ void MeshTri3D_Sphere
 // f3: +y
 // f4: -z
 // f5: +z
-void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
+void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 {
   aQuad.resize(6*4);
   aQuad[0*4+0] = 0;    aQuad[0*4+1] = 4;   aQuad[0*4+2] = 6;   aQuad[0*4+3] = 2;
@@ -626,7 +628,7 @@ void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
   aQuad[5*4+0] = 4;    aQuad[5*4+1] = 5;   aQuad[5*4+2] = 7;   aQuad[5*4+3] = 6;
 }
 
-void MeshQuad3D_CubeVox
+void dfm2::MeshQuad3D_CubeVox
 (std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
  double x_min, double x_max,
  double y_min, double y_max,
@@ -645,7 +647,7 @@ void MeshQuad3D_CubeVox
   SetTopoQuad_CubeVox(aQuad);
 }
 
-void MeshTri3D_Cube
+void dfm2::MeshTri3D_Cube
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  int n)
@@ -781,7 +783,7 @@ void MeshTri3D_Cube
 }
 
 
-void MeshTri3D_Icosahedron
+void dfm2::MeshTri3D_Icosahedron
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
 {
@@ -826,7 +828,7 @@ void MeshTri3D_Icosahedron
   aTri[19*3+0]=10; aTri[19*3+1]= 5; aTri[19*3+2]= 7;
 }
 
-void MeshTri3D_Torus
+void dfm2::MeshTri3D_Torus
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri, 
  double radius_,

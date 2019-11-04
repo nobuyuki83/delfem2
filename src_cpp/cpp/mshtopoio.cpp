@@ -20,7 +20,9 @@
 
 #include "delfem2/dtri_v3.h"
 
-///////////////////////////////////
+namespace dfm2 = delfem2;
+
+// ----------------------------------------------
 
 // probably std::stroi is safer to use but it is only for C++11
 static int myStoi(const std::string& str){
@@ -35,8 +37,7 @@ static double myStof(const std::string& str){
   return fval;
 }
 
-////////////////////////////////////
-
+// --------------------------------------------------
 
 void MeshTri3D_GeodesicPolyhedron
 (std::vector<double>& aXYZ1,
@@ -44,7 +45,7 @@ void MeshTri3D_GeodesicPolyhedron
 {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri0;
-  MeshTri3D_Icosahedron(aXYZ0, aTri0);
+  dfm2::MeshTri3D_Icosahedron(aXYZ0, aTri0);
   ////
   const int np0 = aXYZ0.size()/3;
   std::vector<int> elsup_ind, elsup;

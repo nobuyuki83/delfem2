@@ -397,21 +397,21 @@ void CCad2D::MeshForVisualization
 {
   const std::vector<CVector2>& aVec2 = aVec2_Tessellation;
   aXYf.reserve(aVec2.size()*2);
-  for(int iv=0;iv<aVec2.size();++iv){
+  for(unsigned int iv=0;iv<aVec2.size();++iv){
     aXYf.push_back(aVec2[iv].x);
     aXYf.push_back(aVec2[iv].y);
   }
   aaLine.resize(aEdge.size());
-  for(int ie=0;ie<aEdge.size();++ie){
+  for(unsigned int ie=0;ie<aEdge.size();++ie){
     std::vector<unsigned int>& aLine = aaLine[ie];
     aLine.clear();
     aLine.push_back(topo.aEdge[ie].iv0);
-    for(int ip=0;ip<aEdge[ie].aP.size();++ip){
+    for(unsigned int ip=0;ip<aEdge[ie].aP.size();++ip){
       aLine.push_back(ip+aEdge[ie].ip0);
     }
     aLine.push_back(topo.aEdge[ie].iv1);
   }
-  for(int ifc=0;ifc<aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
     const CCad2D_FaceGeo& fc = aFace[ifc];
     aTri.insert(aTri.end(),fc.aTri.begin(),fc.aTri.end());
   }
@@ -453,7 +453,7 @@ std::vector<CCad2D_EdgeGeo> InvertLoop
 {
   const unsigned int ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut(ne);
-  for(int ie=0;ie<ne;++ie){
+  for(unsigned int ie=0;ie<ne;++ie){
     const CCad2D_EdgeGeo& ei = aEdge[ie];
     CCad2D_EdgeGeo& eo = aEdgeOut[ne-ie-1];
     eo.p1 = ei.p0;
@@ -469,7 +469,7 @@ std::vector<CCad2D_EdgeGeo> RemoveEdgeWithZeroLength
   const unsigned int ne = aEdge.size();
   std::vector<CCad2D_EdgeGeo> aEdgeOut;
   aEdgeOut.reserve(ne);
-  for(int ie=0;ie<ne;++ie){
+  for(unsigned int ie=0;ie<ne;++ie){
     if( aEdge[ie].Length() < 1.0e-10 ) continue;
     aEdgeOut.push_back(aEdge[ie]);
   }
