@@ -30,6 +30,7 @@
 #include "delfem2/../../external/io_gltf.h"
 
 namespace py = pybind11;
+namespace dfm2 = delfem2;
 
 // ----------------------------------------------------------
 
@@ -319,11 +320,11 @@ PYBIND11_MODULE(c_core, m) {
 
   // ------------------------------------------
 
-  py::class_<CMathExpressionEvaluator>(m,"MathExpressionEvaluator")
+  py::class_<dfm2::CMathExpressionEvaluator>(m,"MathExpressionEvaluator")
   .def(py::init<>())
-  .def("set_expression",&CMathExpressionEvaluator::SetExp)
-  .def("set_key",       &CMathExpressionEvaluator::SetKey)
-  .def("eval",          &CMathExpressionEvaluator::Eval);
+  .def("set_expression",&dfm2::CMathExpressionEvaluator::SetExp)
+  .def("set_key",       &dfm2::CMathExpressionEvaluator::SetKey)
+  .def("eval",          &dfm2::CMathExpressionEvaluator::Eval);
   
   m.def("mvc",              &PyMVC);
   m.def("rotmat3_cartesian", &PyRotMat3_Cartesian);

@@ -650,7 +650,7 @@ public:
   }
 
 public:
-  CSphere sdf;
+  delfem2::CSphere sdf;
 };
 
 class CInBox : public CInput_IsosurfaceStuffing
@@ -662,7 +662,7 @@ public:
                           x, y, z);
   }
 public:
-  CBox sdf;
+  delfem2::CBox sdf;
 };
 
 void SetMesh(int ishape)

@@ -13,6 +13,9 @@
 
 #include "delfem2/evalmathexp.h"
 
+namespace dfm2 = delfem2;
+
+namespace delfem2{
 class CCmd
 {
 public:
@@ -20,8 +23,9 @@ public:
   virtual bool DoOperation(std::vector<double>& stack) = 0;
   virtual void SetValue(const double& val) = 0;
 };
+}
 
-class COperand : public CCmd
+class COperand : public dfm2::CCmd
 {
 public:
   ~COperand(){}
@@ -52,7 +56,7 @@ private:
   double m_Value;
 };
 
-class CBinaryOperator : public CCmd
+class CBinaryOperator : public dfm2::CCmd
 {
 public:
   ~CBinaryOperator(){}
@@ -90,7 +94,7 @@ public:
   int m_iOpr;
 };
 
-class CUnaryOperator : public CCmd
+class CUnaryOperator : public dfm2::CCmd
 {
 public:
   ~CUnaryOperator(){}
@@ -393,8 +397,8 @@ bool MakeRPN(unsigned int icur_old, std::vector<SExpCompo>& exp_node_vec)
 
 
 bool MakeCmdAry
-(std::vector<CCmd*>& cmd_vec,
- std::vector<CMathExpressionEvaluator::CKey>& m_aKey,
+(std::vector<dfm2::CCmd*>& cmd_vec,
+ std::vector<dfm2::CMathExpressionEvaluator::CKey>& m_aKey,
  const std::vector<SExpCompo>& exp_node_vec)
 {
   cmd_vec.resize( exp_node_vec.size(), 0 );
@@ -454,20 +458,17 @@ bool MakeCmdAry
 
 
 //////////////////////////////////////////////////////////////////////
-
-
-
 //////////////////////////////////////////////////////////////////////
-// 構築/消滅
 //////////////////////////////////////////////////////////////////////
 
-CMathExpressionEvaluator::~CMathExpressionEvaluator(){
+dfm2::CMathExpressionEvaluator::~CMathExpressionEvaluator(){
 	for(unsigned int icmd=0;icmd<m_apCmd.size();icmd++){
 		delete m_apCmd[icmd];
 	}
 }
 
-void CMathExpressionEvaluator::SetKey(const std::string& key_name, double key_val)
+void dfm2::CMathExpressionEvaluator::SetKey
+ (const std::string& key_name, double key_val)
 {
 	for(unsigned int ikey=0;ikey<m_aKey.size();ikey++){
 		if( m_aKey[ikey].m_Name == key_name){
@@ -484,7 +485,7 @@ void CMathExpressionEvaluator::SetKey(const std::string& key_name, double key_va
 	m_aKey.push_back( CKey(key_name,key_val) );
 }
 
-bool CMathExpressionEvaluator::SetExp(const std::string& exp){
+bool dfm2::CMathExpressionEvaluator::SetExp(const std::string& exp){
 	m_is_valid = false;
 	m_sExp = exp;
 	// 消去
@@ -517,7 +518,7 @@ bool CMathExpressionEvaluator::SetExp(const std::string& exp){
 			std::cout << std::endl;
 		}*/
 
-		if( !MakeCmdAry(m_apCmd, m_aKey,
+    if( !MakeCmdAry(m_apCmd, m_aKey,
                     exp_vec) ){
 			m_is_valid = false;
 			return false;
@@ -559,7 +560,7 @@ bool CMathExpressionEvaluator::SetExp(const std::string& exp){
 	return true;
 }
 
-double CMathExpressionEvaluator::Eval() const{ // evaluating the math expression
+double dfm2::CMathExpressionEvaluator::Eval() const{ // evaluating the math expression
 	std::vector<double> stack;
 	stack.reserve(128);
 	for(unsigned int icmd=0;icmd<m_apCmd.size();icmd++){
