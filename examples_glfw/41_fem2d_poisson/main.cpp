@@ -365,7 +365,7 @@ int main(void)
   shdr0.val_max = 0.3;
     
   nav.camera.view_height = 1.5;
-  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
   
 #ifdef EMSCRIPTEN

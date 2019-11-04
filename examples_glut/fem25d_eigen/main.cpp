@@ -402,7 +402,7 @@ int main(int argc,char* argv[])
   
   
   nav.camera.view_height = 2.0;
-  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
   delfem2::opengl::setSomeLighting();
   glutMainLoop();

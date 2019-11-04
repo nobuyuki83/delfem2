@@ -26,7 +26,7 @@ int main(int argc,char* argv[])
     CCAD3DViewer(){
       cad.Initialize_Sphere();
       nav.camera.view_height = 1.5;
-      nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
+      nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_YTOP;
       cad.imode_edit = CCad3D::EDIT_MOVE;
     }
     void Draw(){

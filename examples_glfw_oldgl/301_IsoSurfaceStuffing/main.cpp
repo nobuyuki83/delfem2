@@ -240,7 +240,7 @@ int main(int argc,char* argv[])
   viewer.Init_GLold();
 	
   viewer.nav.camera.view_height = 2;
-  viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   ////
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_LIGHT0);            
