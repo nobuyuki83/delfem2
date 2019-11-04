@@ -35,7 +35,7 @@ int main(int argc,char* argv[])
   
   aaXYZ.resize(nlevel_subdiv+1);
   aaQuad.resize(nlevel_subdiv+1);
-  MeshQuad3D_CubeVox(aaXYZ[0],aaQuad[0],
+  delfem2::MeshQuad3D_CubeVox(aaXYZ[0],aaQuad[0],
                      -1,+1,  -1,+1,  -1,+1);
   for(unsigned int il=0;il<nlevel_subdiv;++il){
     const std::vector<double>& aXYZ0 = aaXYZ[il];
