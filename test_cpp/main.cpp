@@ -24,7 +24,6 @@
 #include "delfem2/slice.h"
 
 
-
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
@@ -72,7 +71,7 @@ TEST(slice,test1){
 
 
 TEST(mathexpeval,test1){
-  CMathExpressionEvaluator e;
+  delfem2::CMathExpressionEvaluator e;
   e.SetKey("x", 3.0);
   e.SetExp("x+3.0");
   EXPECT_EQ(e.Eval(),6);

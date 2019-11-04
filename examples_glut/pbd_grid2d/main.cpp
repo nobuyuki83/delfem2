@@ -170,10 +170,9 @@ int main(int argc,char* argv[])
 	glutMotionFunc(myGlutMotion);
 	glutMouseFunc(myGlutMouse);
   glutKeyboardFunc(myGlutKeyboard);
+  // --------------------------
   
-  ////////////////////////
-  
-  MeshQuad2D_Grid(aXY0, aQuad, nX, nY);
+  delfem2::MeshQuad2D_Grid(aXY0, aQuad, nX, nY);
   aXY1 = aXY0;
   aXYt = aXY0;
   aUV1.resize(aXY0.size());

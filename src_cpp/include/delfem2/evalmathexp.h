@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+namespace delfem2 {
+
 class CCmd;
 class CMathExpressionEvaluator
 {
@@ -50,5 +52,7 @@ private:
 	std::vector<CCmd*> m_apCmd;	// 逆ポーランド記法された演算子や値の列
 	std::vector<CKey> m_aKey;	// 文字列の名前と値が，どのIndexのコマンドに格納されているか
 };
+  
+}
 
 #endif	// !defind EVALMATHEXP

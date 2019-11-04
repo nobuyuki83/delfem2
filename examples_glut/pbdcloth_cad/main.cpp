@@ -275,7 +275,7 @@ int main(int argc,char* argv[])
   aXYZt = aXYZ;
   
   { // make a unit sphere
-    MeshTri3D_Sphere(aXYZ_Contact, aTri_Contact, 0.3, 32, 32);
+    delfem2::MeshTri3D_Sphere(aXYZ_Contact, aTri_Contact, 0.3, 32, 32);
     Rotate(aXYZ_Contact, 0.2, 0.3, 0.4);
     aNorm_Contact.resize(aXYZ_Contact.size());
     Normal_MeshTri3D(aNorm_Contact.data(),
