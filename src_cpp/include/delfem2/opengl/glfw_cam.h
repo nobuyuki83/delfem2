@@ -161,6 +161,41 @@ public:
     x = src_pick[0];
     y = src_pick[1];
   }
+  void MouseRay(float src[3], float dir[3],
+                GLFWwindow* window) const
+  {
+    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
+    {
+      const float sp0[3] = {(float)mouse_x, (float)mouse_y,0.0};
+      screenUnProjection(src,
+                         sp0, mMV,mP);
+    }
+    {
+      const float dir0[3] = {0.0, 0.0, -1.0};
+      screenUnProjectionDirection(dir,
+                                  dir0, mMV,mP);
+    }
+  }
+  void RayMouseMove(float src0[3], float src1[3], float dir[3],
+                    GLFWwindow* window) const
+  {
+    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
+    {
+      const float sp0[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy),0.0};
+      screenUnProjection(src0,
+                         sp0, mMV,mP);
+    }
+    {
+      const float sp1[3] = {(float)mouse_x, (float)mouse_y,0.0};
+      screenUnProjection(src1,
+                         sp1, mMV,mP);
+    }
+    {
+      const float dir0[3] = {0.0, 0.0, -1.0};
+      screenUnProjectionDirection(dir,
+                                  dir0, mMV,mP);
+    }
+  }
   void PosMove2D(float& x0, float& y0,
                  float& x1, float& y1,
                  GLFWwindow* window) const

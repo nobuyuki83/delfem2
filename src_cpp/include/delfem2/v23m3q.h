@@ -6,11 +6,10 @@
  */
 
 
-#ifndef V23M3Q_H
-#define V23M3Q_H
+#ifndef DFM2_V23M3Q_H
+#define DFM2_V23M3Q_H
 
 #include <stdio.h>
-
 #include "vec2.h"
 #include "vec3.h"
 #include "mat3.h"

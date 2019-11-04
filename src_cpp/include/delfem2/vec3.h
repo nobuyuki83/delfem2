@@ -6,8 +6,8 @@
  */
 
 
-#ifndef VEC3_H
-#define VEC3_H
+#ifndef DFM2_VEC3_H
+#define DFM2_VEC3_H
 
 #include <cassert>
 #include <math.h>
@@ -72,6 +72,7 @@ public:
 	CVector3(): x(0.0), y(0.0), z(0.0){}
 	CVector3(const CVector3& rhs){ x = rhs.x; y = rhs.y; z = rhs.z; }
   CVector3(const double* prhs){ x = prhs[0]; y = prhs[1]; z = prhs[2]; }
+  CVector3(const float* prhs){ x = prhs[0]; y = prhs[1]; z = prhs[2]; }
   CVector3(const std::vector<double>& v){ x = v[0]; y = v[1]; z = v[2]; }
 	virtual ~CVector3(){}
 

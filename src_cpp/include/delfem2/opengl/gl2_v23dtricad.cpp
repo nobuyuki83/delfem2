@@ -132,10 +132,8 @@ void DrawMeshDynTri_Edge
     const CVector3& p2 = aVec3[i2];
     glVertex3d(p0.x,p0.y,p0.z);
     glVertex3d(p1.x,p1.y,p1.z);
-    
     glVertex3d(p1.x,p1.y,p1.z);
     glVertex3d(p2.x,p2.y,p2.z);
-    
     glVertex3d(p2.x,p2.y,p2.z);
     glVertex3d(p0.x,p0.y,p0.z);
   }
@@ -169,13 +167,12 @@ void DrawMeshDynTri3D_Edge
   ::glEnd();
 }
 
+// -------------------------------------------------------------------------
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge, bool is_selected, int ipicked_elem)
+void Draw_CCad2DEdge
+ (const CCad2D_EdgeGeo& edge,
+  bool is_selected,
+  int ipicked_elem)
 {
   if( is_selected ){ ::glColor3d(1,1,0); }
   else{ ::glColor3d(0,0,0); }
@@ -242,7 +239,7 @@ void Draw_CCad2D(const CCad2D& cad2d)
                     (int)ie == iedge_picked,
                     ipicked_elem);
   }
-  //////
+  //
   if( is_draw_face ){
     ::glLineWidth(1);
     glTranslated(0,0,-0.2);

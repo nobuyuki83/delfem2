@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef VEC2_H
-#define VEC2_H
+#ifndef DFM2_VEC2_H
+#define DFM2_VEC2_H
 
 #include <cstdlib>
 #include <cassert>

@@ -6,15 +6,14 @@
  */
 
 
-#ifndef MSHSRCH_V3_H
-#define MSHSRCH_V3_H
+#ifndef DFM2_MSHSRCH_V3_H
+#define DFM2_MSHSRCH_V3_H
 
 #include <stdio.h>
 #include <map>
-
 #include "delfem2/vec3.h"
 
-////////////////////////////////////////////////////////////////////
+// -----------------------------------
 
 class CPointElemSolid{
 public:
