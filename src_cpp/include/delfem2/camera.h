@@ -20,6 +20,8 @@
 
 // ---------------------------------------------------
 
+//namespace delfem2{
+
 void glhFrustumf2(float *matrix, float left, float right, float bottom, float top,
                   float znear, float zfar);
 void glhPerspectivef2(float *matrix, float fovyInDegrees, float aspectRatio,
@@ -111,6 +113,6 @@ public:
 std::ostream &operator<<(std::ostream &output, CCamera& c);
 std::istream &operator>>(std::istream &input, CCamera& c);
 
-
+//} // namespace delfem2
 
 #endif

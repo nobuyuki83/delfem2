@@ -22,7 +22,7 @@
 
 int main(int argc,char* argv[])
 {
-  class CCadMesh2DVeiwer : public CViewer_GLFW
+  class CCadMesh2DVeiwer : public delfem2::opengl::CViewer_GLFW
   {
   public:
     CCadMesh2DVeiwer(){

@@ -21,7 +21,7 @@
 
 int main(int argc,char* argv[])
 {
-  class CCAD3DViewer : public CViewer_GLFW {
+  class CCAD3DViewer : public delfem2::opengl::CViewer_GLFW {
   public:
     CCAD3DViewer(){
       cad.Initialize_Sphere();

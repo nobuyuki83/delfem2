@@ -29,7 +29,7 @@
 
 int main(int argc,char* argv[])
 {
-  class CCAD2DViewer : public CViewer_GLFW {
+  class CCAD2DViewer : public delfem2::opengl::CViewer_GLFW {
   public:
     CCAD2DViewer(){
       const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};

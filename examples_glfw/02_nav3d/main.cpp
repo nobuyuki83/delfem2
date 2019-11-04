@@ -24,7 +24,7 @@
 
 // ---------------------------
 CShader_TriMesh shdr;
-CViewer_GLFW viewer;
+delfem2::opengl::CViewer_GLFW viewer;
 // ---------------------------
 
 

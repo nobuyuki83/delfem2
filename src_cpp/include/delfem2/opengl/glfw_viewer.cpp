@@ -13,7 +13,7 @@
 
 // ---------------
 
-static CViewer_GLFW* pViewer = 0;
+static delfem2::opengl::CViewer_GLFW* pViewer = 0;
 
 // ---------------
 
@@ -64,7 +64,7 @@ static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoff
 }
 
 
-void CViewer_GLFW::Init_GLold()
+void delfem2::opengl::CViewer_GLFW::Init_GLold()
 {
   pViewer = this;
   // -----
@@ -87,7 +87,7 @@ void CViewer_GLFW::Init_GLold()
 }
 
 
-void CViewer_GLFW::Init_GLnew()
+void delfem2::opengl::CViewer_GLFW::Init_GLnew()
 {
   pViewer = this;
   // -----
@@ -144,7 +144,7 @@ void CViewer_GLFW::Init_GLnew()
 }
 
 
-void CViewer_GLFW::DrawBegin_Glold()
+void delfem2::opengl::CViewer_GLFW::DrawBegin_Glold()
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -163,7 +163,7 @@ void CViewer_GLFW::DrawBegin_Glold()
   glMultMatrixf(mMV);
 }
 
-void CViewer_GLFW::DrawEnd_oldGL()
+void delfem2::opengl::CViewer_GLFW::DrawEnd_oldGL()
 {
   glfwSwapBuffers(this->window);
   glfwPollEvents();
