@@ -114,7 +114,7 @@ int main(void)
   shdr_cad.MakeBuffer(cad);
   
   nav.camera.view_height = 2.0;
-  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);

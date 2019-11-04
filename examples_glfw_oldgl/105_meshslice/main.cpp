@@ -127,7 +127,7 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   
   viewer.nav.camera.view_height = 0.5;
-  viewer.nav.camera.camera_rot_mode  = CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode  = delfem2::CAMERA_ROT_TBALL;
   
   Hoge();
   

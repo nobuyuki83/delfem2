@@ -193,7 +193,7 @@ public:
     float mP[16]; glGetFloatv(GL_PROJECTION_MATRIX, mP);
     const float sp0[3] = {(float)mouse_x, (float)mouse_y,0.0};
     float src_pick[3];
-    screenUnProjection(src_pick,
+    delfem2::screenUnProjection(src_pick,
                        sp0, mMV,mP);
     x = src_pick[0];
     y = src_pick[1];
@@ -206,14 +206,14 @@ public:
     {
       const float sp0[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy),0.0};
       float src0[3];
-      screenUnProjection(src0,
+      delfem2::screenUnProjection(src0,
                          sp0, mMV,mP);
       x0 = src0[0]; y0 = src0[1];
     }
     {
       const float sp1[3] = {(float)mouse_x, (float)mouse_y,0.0};
       float src1[3];
-      screenUnProjection(src1,
+      delfem2::screenUnProjection(src1,
                          sp1, mMV,mP);
       x1 = src1[0]; y1 = src1[1];
     }
@@ -243,7 +243,7 @@ public:
   int iwin;
   int imodifier;
   int ibutton;
-  CCamera camera;
+  delfem2::CCamera camera;
   double mouse_x, mouse_y;
   double dx;
   double dy;

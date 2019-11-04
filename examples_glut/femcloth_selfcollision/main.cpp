@@ -493,7 +493,7 @@ int main(int argc,char* argv[])
   
   delfem2::opengl::setSomeLighting();
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-  nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
+  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
   nav.camera.psi = 3.1415*0.2;
   nav.camera.theta = 3.1415*0.1;
   nav.camera.view_height = 2.0;

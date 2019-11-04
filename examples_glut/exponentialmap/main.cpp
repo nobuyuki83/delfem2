@@ -597,7 +597,7 @@ int main(int argc,char* argv[])
   
   m_texName = ReadPPM_SetTexture(std::string(PATH_INPUT_DIR)+"/dep.ppm");
   
-  nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   nav.camera.view_height = 1.5;
   
   glutMainLoop();

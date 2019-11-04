@@ -91,7 +91,7 @@ int main(int argc,char* argv[])
   CCadMesh2DVeiwer viewer;
   viewer.Init_GLold();
   viewer.nav.camera.view_height = 1.5;
-  viewer.nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_YTOP;
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();

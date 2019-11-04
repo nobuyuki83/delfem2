@@ -172,7 +172,7 @@ int main(int argc,char* argv[])
                GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
   
   viewer.nav.camera.view_height = 1.0;
-  viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
   delfem2::opengl::setSomeLighting();
   
