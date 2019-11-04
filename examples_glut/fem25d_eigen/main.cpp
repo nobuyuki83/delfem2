@@ -269,10 +269,10 @@ void myGlutDisplay(void)
   
   {
     ::glColor3d(0,0,0);
-    opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
-                                   aTet.data(),aTet.size()/4,
-                                   aMode.data(),
-                                   0.1);
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
+                                            aTet.data(),aTet.size()/4,
+                                            aMode.data(),
+                                            0.1);
     ::glEnable(GL_LIGHTING);
     {
       float color[4] = {180.0/256.0, 180.0/256.0, 130.0/256.0,1.0f};
@@ -281,8 +281,8 @@ void myGlutDisplay(void)
       glShadeModel(GL_FLAT);
     }
     
-    opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
-                                   aTet.data(), aTet.size()/4);
+    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
+                                            aTet.data(), aTet.size()/4);
 
   }
 
@@ -404,7 +404,7 @@ int main(int argc,char* argv[])
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   glutMainLoop();
 	return 0;
 }

@@ -54,7 +54,7 @@ int main(int argc,char* argv[])
   CCAD2DViewer viewer;
   viewer.Init_GLold();
   viewer.nav.camera.view_height = 1.5;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   // --------------------
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();

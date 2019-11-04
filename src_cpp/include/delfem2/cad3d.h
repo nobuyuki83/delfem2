@@ -1,5 +1,5 @@
-#ifndef CAD3D_H
-#define CAD3D_H
+#ifndef DFM2_CAD3D_H
+#define DFM2_CAD3D_H
 
 #include "delfem2/vec3.h"
 #include "delfem2/vec2.h"
@@ -312,8 +312,8 @@ class CCad3D
 {
 public:
   CCad3D(){
-    color_face = CColor(0.75164f, 0.60648f, 0.22648f, 1.0f);
-    color_face_selected = CColor(1.0, 1.0, 0.0, 1);
+    color_face = delfem2::CColor(0.75164f, 0.60648f, 0.22648f, 1.0f);
+    color_face_selected = delfem2::CColor(1.0, 1.0, 0.0, 1);
     isym = 0;
     elen = 0.1;
     plane_inorm = -1; // if it is 0,1,2 it shouws plane
@@ -434,8 +434,8 @@ public:
   
   ////////////////////////////////
   // viz related
-  CColor color_face;
-  CColor color_face_selected;
+  delfem2::CColor color_face;
+  delfem2::CColor color_face_selected;
 };
 
 

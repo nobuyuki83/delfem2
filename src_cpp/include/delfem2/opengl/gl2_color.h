@@ -10,8 +10,8 @@
  * this file should not depend anything other than OpenGL
  */
 
-#ifndef GL2_COLOR_H
-#define GL2_COLOR_H
+#ifndef DFM2_GL2_COLOR_H
+#define DFM2_GL2_COLOR_H
 
 #include <iostream>
 #include <stdlib.h>
@@ -24,8 +24,8 @@
 
 #include "delfem2/color.h"
 
-namespace opengl
-{
+namespace delfem2{
+namespace opengl{
 
 // -------------------------------------------------------------
 
@@ -112,5 +112,6 @@ void DrawMeshTet3D_Cut(const std::vector<double>& aXYZ,
   
   
 } // namespace opengl
+}
 
 #endif

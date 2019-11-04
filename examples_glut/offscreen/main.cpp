@@ -49,7 +49,7 @@ void myGlutDisplay(void)
 	::glPolygonOffset( 1.1f, 4.0f );
   nav.SetGL_Camera();
   
-  opengl::DrawBackground( CColor(0.2,0.7,0.7) );
+  delfem2::opengl::DrawBackground( delfem2::CColor(0.2,0.7,0.7) );
 //  ::glDisable(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
   
@@ -170,7 +170,7 @@ int main(int argc,char* argv[])
     exit(-1);
   }
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
   fbm.Init(512, 512, "4byte",true);

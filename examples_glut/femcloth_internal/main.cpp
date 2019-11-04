@@ -140,14 +140,14 @@ void myGlutDisplay(void)
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
   ::glColor3d(0,0,0);
-  opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
   {
     ::glEnable(GL_LIGHTING);
     float color[4] = {200.0/256.0, 200.0/256.0, 200.0/256.0,1.0f};
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,color);
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
   }
-  opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   
   { // fixed boundary condition
     ::glDisable(GL_LIGHTING);        
@@ -306,7 +306,7 @@ int main(int argc,char* argv[])
   // -----------------------------
   
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
   nav.camera.psi = 3.1415*0.2;

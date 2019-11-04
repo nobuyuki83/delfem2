@@ -757,39 +757,39 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1, 4.0 );
   
-  opengl::setGL_Camera2D();
+  delfem2::opengl::setGL_Camera2D();
   
   if( iproblem == 0 || iproblem == 1 ){
     {
-      std::vector< std::pair<double,CColor> > colorMap;
+      std::vector< std::pair<double,delfem2::CColor> > colorMap;
       makeHeatMap_BlueGrayRed(colorMap, 0, +0.1);
-      opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+      delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
                                      aTri1.data(),aTri1.size()/3,
                                      aVal.data(),1,colorMap);
     }
-    opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
+    delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
     ::glPointSize(2);
     ::glColor3d(0,0,0);
-    opengl::DrawPoints2D_Points(aXY1);
+    delfem2::opengl::DrawPoints2D_Points(aXY1);
   }
   else if( iproblem == 2 || iproblem == 3 ){
-    opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
+    delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
                                      aTri1.data(), aTri1.size()/3,
                                      aVal.data(), 2);
   }
   else if( iproblem == 4 || iproblem == 5 || iproblem == 6
           || iproblem == 7 || iproblem == 8 || iproblem == 9 )
   {
-    std::vector< std::pair<double,CColor> > colorMap;
+    std::vector< std::pair<double,delfem2::CColor> > colorMap;
     makeHeatMap_BlueGrayRed(colorMap, -30, +30);
-    opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+    delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
                                    aTri1.data(),aTri1.size()/3,
                                    aVal.data()+2,3,colorMap);
     ::glColor3d(0,0,0);    
-    opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
+    delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
     ::glPointSize(2);
     ::glColor3d(0,0,0);
-    opengl::DrawPoints2D_Points(aXY1);
+    delfem2::opengl::DrawPoints2D_Points(aXY1);
   }
   
   ShowFPS();

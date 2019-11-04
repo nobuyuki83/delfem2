@@ -19,6 +19,8 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl2_color.h"
 
+namespace dfm2 = delfem2;
+
 // ---------------------
 
 std::vector<int> aP;
@@ -82,7 +84,7 @@ int main(int argc,char* argv[])
     ::glVertex2d(-0.5, +0.5);
     ::glEnd();
     
-    std::vector<std::pair<double, CColor> > colorMap;
+    std::vector<std::pair<double, dfm2::CColor> > colorMap;
     makeHeatMap_BlueCyanGreenYellowRed(colorMap, -0.5, +0.5);
       //  makeHeatMap_BlueGrayRed(colorMap, -0.8, +0.8);
     ::glBegin(GL_QUADS);
@@ -100,10 +102,10 @@ int main(int argc,char* argv[])
         double x1 = -0.5+1.0/(nW-1)*(jw+1);
         double y0 = -0.5+1.0/(nH-1)*(jh+0);
         double y1 = -0.5+1.0/(nH-1)*(jh+1);
-        opengl::heatmap(v00, colorMap); ::glVertex2d(x0,y0);
-        opengl::heatmap(v10, colorMap); ::glVertex2d(x1,y0);
-        opengl::heatmap(v11, colorMap); ::glVertex2d(x1,y1);
-        opengl::heatmap(v01, colorMap); ::glVertex2d(x0,y1);
+        dfm2::opengl::heatmap(v00, colorMap); ::glVertex2d(x0,y0);
+        dfm2::opengl::heatmap(v10, colorMap); ::glVertex2d(x1,y0);
+        dfm2::opengl::heatmap(v11, colorMap); ::glVertex2d(x1,y1);
+        dfm2::opengl::heatmap(v01, colorMap); ::glVertex2d(x0,y1);
       }
     }
     ::glEnd();

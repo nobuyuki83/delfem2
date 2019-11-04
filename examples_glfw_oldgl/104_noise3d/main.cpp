@@ -36,7 +36,7 @@ void myGlutDisplay(void)
   glEnable(GL_TEXTURE_GEN_S);
   glEnable(GL_TEXTURE_GEN_T);
   glEnable(GL_TEXTURE_GEN_R);
-  opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
 //  ::glutSolidTeapot(1.0);
   //    glutSolidSphere(1.0, 32, 16);
   //  glutSolidDodecahedron();
@@ -131,6 +131,10 @@ void ComputePerlin(){
 
 int main(int argc,char* argv[])
 {
+  Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+           aXYZ,aTri);
+  Normalize(aXYZ);
+  
   CViewer_GLFW viewer;
   viewer.Init_GLold();
   
@@ -170,11 +174,9 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 1.0;
   viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
-  Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-           aXYZ,aTri);
-  Normalize(aXYZ);
+
   
   while (!glfwWindowShouldClose(viewer.window))
   {

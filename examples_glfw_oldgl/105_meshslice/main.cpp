@@ -31,7 +31,7 @@ std::vector<CVector3> aCG_CS;
 void myGlutDisplay(void)
 {
   ::glEnable(GL_LIGHTING);
-  opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
@@ -124,7 +124,7 @@ int main(int argc,char* argv[])
   CViewer_GLFW viewer;
   viewer.Init_GLold();
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   viewer.nav.camera.view_height = 0.5;
   viewer.nav.camera.camera_rot_mode  = CAMERA_ROT_TBALL;

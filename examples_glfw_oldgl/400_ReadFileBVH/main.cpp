@@ -43,7 +43,7 @@ int main(int argc,char* argv[])
   viewer.Init_GLold();
   viewer.nav.camera.view_height = 15.0;
   viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   // -------------------------
   
@@ -56,7 +56,7 @@ int main(int argc,char* argv[])
     }
       // --------------------
     viewer.DrawBegin_Glold();
-    opengl::DrawAxis(10);
+    delfem2::opengl::DrawAxis(10);
     DrawBone(aBone,
              -1, -1,
              0.1, 1.0);

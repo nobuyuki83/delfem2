@@ -37,8 +37,8 @@ public:
   CShader_TriMesh_Scalar(){
     val_min = 0.0;
     val_max = 1.0;
-    color_min = CColor::Gray(0.0);
-    color_max = CColor::Gray(1.0);
+    color_min = delfem2::CColor::Gray(0.0);
+    color_max = delfem2::CColor::Gray(1.0);
   }
   void Initialize(std::vector<double>& aPosD,
                   unsigned int ndim,
@@ -59,7 +59,7 @@ public:
   int Loc_ValMin, Loc_ValMax;
   
   double val_min, val_max;
-  CColor color_min, color_max;
+  delfem2::CColor color_min, color_max;
 };
 
 class CShader_TriMesh_Disp{

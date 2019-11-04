@@ -58,15 +58,14 @@ int main(int argc,char* argv[])
   viewer.Init_GLold();
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   while(!glfwWindowShouldClose(viewer.window)){
     // --------------------
     viewer.DrawBegin_Glold();
     ::glEnable(GL_LIGHTING);
-    opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
-    opengl::DrawAxis(1);
-    
+    delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
+    delfem2::opengl::DrawAxis(1);    
     
     ::glDisable(GL_DEPTH_TEST);
     DrawBone(aBone,

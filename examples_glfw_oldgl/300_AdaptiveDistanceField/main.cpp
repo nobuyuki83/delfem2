@@ -117,7 +117,7 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   while(!glfwWindowShouldClose(viewer.window)){
     int iproblem  = 0;

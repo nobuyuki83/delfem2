@@ -27,6 +27,7 @@
 
 
 namespace py = pybind11;
+namespace dfm2 = delfem2;
 
 
 void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
@@ -67,8 +68,8 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
         ::glLineWidth(5);
         ::glColor3d(0,0,0);
         ::glBegin(GL_LINES);
-        opengl::myGlVertex(cg);
-        opengl::myGlVertex( p);
+        dfm2::opengl::myGlVertex(cg);
+        dfm2::opengl::myGlVertex( p);
         ::glEnd();
       }
       
@@ -78,8 +79,8 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
           ::glLineWidth(5);
           ::glColor3d(1,0,0);
           ::glBegin(GL_LINES);
-          opengl::myGlVertex( p);
-          opengl::myGlVertex( q);
+          dfm2::opengl::myGlVertex( p);
+          dfm2::opengl::myGlVertex( q);
           ::glEnd();
         }
       }
@@ -127,10 +128,10 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
       ::glLineWidth(5);
       ::glColor3d(0,0,0);
       ::glBegin(GL_LINES);
-      opengl::myGlVertex(cg0);
-      opengl::myGlVertex( p0);
-      opengl::myGlVertex(cg1);
-      opengl::myGlVertex( p1);
+      dfm2::opengl::myGlVertex(cg0);
+      dfm2::opengl::myGlVertex( p0);
+      dfm2::opengl::myGlVertex(cg1);
+      dfm2::opengl::myGlVertex( p1);
       ::glEnd();
     }
     
@@ -140,19 +141,19 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
       CVector3 q1 = p1 - rba.scale_force*joint.linear;
       ::glColor3d(1,0,1);
       ::glBegin(GL_LINES);
-      opengl::myGlVertex( p0);
-      opengl::myGlVertex( q0);
-      opengl::myGlVertex( p1);
-      opengl::myGlVertex( q1);
+      dfm2::opengl::myGlVertex( p0);
+      dfm2::opengl::myGlVertex( q0);
+      dfm2::opengl::myGlVertex( p1);
+      dfm2::opengl::myGlVertex( q1);
       ::glEnd();
       CVector3 r0 = p0 + rba.scale_torque*joint.torque;
       CVector3 r1 = p1 - rba.scale_torque*joint.torque;
       ::glColor3d(0,1,1);
       ::glBegin(GL_LINES);
-      opengl::myGlVertex( p0);
-      opengl::myGlVertex( r0);
-      opengl::myGlVertex( p1);
-      opengl::myGlVertex( r1);
+      dfm2::opengl::myGlVertex( p0);
+      dfm2::opengl::myGlVertex( r0);
+      dfm2::opengl::myGlVertex( p1);
+      dfm2::opengl::myGlVertex( r1);
       ::glEnd();
     }
     

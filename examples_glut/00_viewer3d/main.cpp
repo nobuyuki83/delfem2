@@ -41,7 +41,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   nav.SetGL_Camera();
   
-  opengl::DrawBackground();
+  delfem2::opengl::DrawBackground();
   
   ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
   ::glDisable(GL_LIGHTING);
@@ -75,7 +75,7 @@ void myGlutDisplay(void)
    }
    */
   
-  opengl::drawFloorShadow(drawObject, -5, 20);
+  delfem2::opengl::drawFloorShadow(drawObject, -5, 20);
   
   ShowFPS();
   ::glutSwapBuffers();
@@ -172,7 +172,7 @@ int main(int argc,char* argv[])
   
   printf("renderer: %s\n", glGetString(GL_RENDERER));
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   glutMainLoop();
   return 0;

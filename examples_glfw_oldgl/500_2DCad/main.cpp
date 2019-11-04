@@ -34,7 +34,7 @@ int main(int argc,char* argv[])
   // --------------------
   CViewer_GLFW viewer;
   viewer.Init_GLold();
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     {
       static int iframe = 0;

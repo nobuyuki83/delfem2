@@ -56,7 +56,7 @@ int main(int argc,char* argv[])
   // -------------
   CCAD3DViewer viewer;
   viewer.Init_GLold();
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
   }

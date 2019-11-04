@@ -9,8 +9,8 @@
  * @brief dynamic triangle mesh class
  */
 
-#ifndef DTRI_V2_H
-#define DTRI_V2_H
+#ifndef DFM2_DTRI_V2_H
+#define DFM2_DTRI_V2_H
 
 #include <map>
 #include <algorithm>

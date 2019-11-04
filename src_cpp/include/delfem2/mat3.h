@@ -6,8 +6,8 @@
  */
 
 
-#ifndef MAT3_H
-#define MAT3_H
+#ifndef DFM2_MAT3_H
+#define DFM2_MAT3_H
 
 #include <vector>
 #include <cassert>

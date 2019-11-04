@@ -56,7 +56,7 @@ void myGlutDisplay(void)
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
   //  Draw_SurfaceMeshNorm(aXYZ, aTri, aNormal);
-  opengl::DrawMeshTri3D_Edge(aXYZ,aTri);
+  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ,aTri);
   
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(2);
@@ -206,7 +206,7 @@ int main(int argc,char* argv[])
   glutSpecialFunc(myGlutSpecial);
   // ----------------
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   nav.camera.view_height = 1.5;
   
   glutMainLoop();
