@@ -10,7 +10,9 @@
 
 #include "delfem2/color.h"
 
-void GetRGB_HSV
+using namespace delfem2;
+
+void delfem2::GetRGB_HSV
 (float&r, float& g, float& b,
  float h, float s, float v)
 {
@@ -53,7 +55,7 @@ void GetRGB_HSV
 
 // ------------------------------------------------------------
 
-void interpolateColor
+void delfem2::interpolateColor
 (CColor& Cout, float r, const CColor& C0, const CColor& C1)
 {
   Cout.r = (1-r)*C0.r+r*C1.r;
@@ -62,7 +64,7 @@ void interpolateColor
   Cout.a = (1-r)*C0.a+r*C1.a;
 }
 
-void heatmap(double input,double* color)
+void delfem2::heatmap(double input,double* color)
 {
   if(0 <=input&&input <=0.25){
     color[0] = 0.0;
@@ -96,7 +98,7 @@ void heatmap(double input,double* color)
   }
 }
 
-CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap)
+CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap)
 {
   if (colorMap.size()==0) return CColor::Black();
   if (input < colorMap[0].first){
@@ -108,14 +110,14 @@ CColor getColor(double input, const std::vector<std::pair<double, CColor> >& col
     if (val0<=input&&input<=val1){
       float rp = (float)((input-val0)/(val1-val0));
       CColor color;
-      interpolateColor(color, rp, colorMap[ic].second, colorMap[ic+1].second);
+      delfem2::interpolateColor(color, rp, colorMap[ic].second, colorMap[ic+1].second);
       return color;
     }
   }
   return colorMap[colorMap.size()-1].second;
 }
 
-void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
+void delfem2::makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
   colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, 1.0f))); // blue
@@ -125,7 +127,7 @@ void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, 
   colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
 }
 
-void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
+void delfem2::makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
 {
   double diff = (max-min)*0.25;
   colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, alpha))); // blue
@@ -135,7 +137,7 @@ void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >&
   colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, alpha))); // red
 }
 
-void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
+void delfem2::makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
   colorMap.push_back(std::make_pair(min+diff*0, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
@@ -147,7 +149,7 @@ void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >&
 
 // ----------------------------------------------------
 
-void Write_Ply_Tri2DMesh_HeightColor
+void delfem2::Write_Ply_Tri2DMesh_HeightColor
 (const std::string& fname,
  const std::vector<int>& aTri1,
  const std::vector<double>& aXY1,
@@ -172,7 +174,7 @@ void Write_Ply_Tri2DMesh_HeightColor
   fout << "end_header" << std::endl;
   for(int ip=0;ip<np;++ip){
     double v = aVal[ip];
-    CColor c = getColor(v,colorMap);
+    CColor c = delfem2::getColor(v,colorMap);
     int cr, cg, cb;
     c.getRGBChar(cr,cg,cb);
     fout << aXY1[ip*2+0] << " " << aXY1[ip*2+1] << " " << v << " ";

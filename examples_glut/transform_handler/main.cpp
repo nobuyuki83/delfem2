@@ -38,7 +38,7 @@ public:
     pos = CVector3(0,0,0);
   }
   void Draw() const{
-    opengl::DrawHandlerRotation_PosQuat(pos, quat, size, ielem_picked);
+    delfem2::opengl::DrawHandlerRotation_PosQuat(pos, quat, size, ielem_picked);
   }
   void Pick(bool is_down, double spx, double spy, float mMV[16], float mPj[16], double tol){
     if( !is_down ){
@@ -81,7 +81,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  opengl::DrawBackground(CColor::Blue());
+  delfem2::opengl::DrawBackground(delfem2::CColor::Blue());
   
   nav.SetGL_Camera();
   
@@ -210,7 +210,7 @@ int main(int argc,char* argv[])
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   glutMainLoop();
   return 0;

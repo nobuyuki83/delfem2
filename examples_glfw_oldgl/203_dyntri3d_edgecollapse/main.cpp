@@ -119,7 +119,7 @@ int main(int argc,char* argv[])
   CViewer_GLFW viewer;
   viewer.Init_GLold();
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   {
     float white[3] = {1.0,1.0,1.0};
     

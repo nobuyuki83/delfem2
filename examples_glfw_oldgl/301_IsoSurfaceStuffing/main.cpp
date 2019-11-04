@@ -21,16 +21,18 @@
 #include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_funcs.h"
 
+namespace dfm2 = delfem2;
+
 // ------------------------------------------
 
 
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTet;
 std::vector<unsigned int> aTetSurface;
-std::vector<CColor> aTetColor;
+std::vector<dfm2::CColor> aTetColor;
 
 std::vector<unsigned int> aTet1;
-std::vector<CColor> aTetColor1;
+std::vector<dfm2::CColor> aTetColor1;
 
 double vis_cut_org[3] = {-0.0, 0.0, 0.0};
 double vis_cut_nrm[3] = {0.0,-0.9, +0.2};
@@ -218,15 +220,15 @@ void myGlutDisplay(void)
 {
   ::glEnable(GL_LIGHTING);
   if( imode_draw == 0 ){
-    opengl::DrawMeshTet3D_Cut(aXYZ,aTet,aTetColor,
+    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ,aTet,aTetColor,
                               vis_cut_org, vis_cut_nrm);
   }
   else if( imode_draw == 1 ){
-    opengl::DrawMeshTet3DSurface_Edge(aXYZ, aTet, aTetSurface);
+    dfm2::opengl::DrawMeshTet3DSurface_Edge(aXYZ, aTet, aTetSurface);
   }
   else if( imode_draw == 2 ){
-    opengl::DrawMeshTet3D_Cut(aXYZ,aTet1,aTetColor1,
-                              vis_cut_org, vis_cut_nrm);
+    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ,aTet1,aTetColor1,
+                                    vis_cut_org, vis_cut_nrm);
   }
 }
 

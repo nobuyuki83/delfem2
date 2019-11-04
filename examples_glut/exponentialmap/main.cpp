@@ -300,7 +300,7 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  opengl::DrawBackground();
+  delfem2::opengl::DrawBackground();
   nav.SetGL_Camera();
   
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -590,7 +590,7 @@ int main(int argc,char* argv[])
   glutMotionFunc(myGlutMotion);
   glutMouseFunc(myGlutMouse);
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   SetNewProblem();
   
   //  m_texName = ReadPPM_SetTexture("checkerboard.pnm");

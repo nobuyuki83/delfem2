@@ -55,10 +55,10 @@ static void drawShphere_Heatmap
       double vb = value(b.x,b.y,b.z);
       double vc = value(c.x,c.y,c.z);
       double vd = value(d.x,d.y,d.z);
-      color(va+0.5); opengl::myGlVertex(a);
-      color(vb+0.5); opengl::myGlVertex(b);
-      color(vc+0.5); opengl::myGlVertex(c);
-      color(vd+0.5); opengl::myGlVertex(d);
+      color(va+0.5); delfem2::opengl::myGlVertex(a);
+      color(vb+0.5); delfem2::opengl::myGlVertex(b);
+      color(vc+0.5); delfem2::opengl::myGlVertex(c);
+      color(vd+0.5); delfem2::opengl::myGlVertex(d);
     }
   }
   ::glEnd();
@@ -94,14 +94,14 @@ static void drawShphere_Radius
       double vb = value(b.x,b.y,b.z);
       double vc = value(c.x,c.y,c.z);
       double vd = value(d.x,d.y,d.z);
-      opengl::myGlNormal(va*a,vc*c,vb*b);
-      color(va+0.5); opengl::myGlVertex(fabs(va)*a);
-      color(vb+0.5); opengl::myGlVertex(fabs(vb)*b);
-      color(vc+0.5); opengl::myGlVertex(fabs(vc)*c);
-      opengl::myGlNormal(vd*d,vc*c,va*a);
-      color(vd+0.5); opengl::myGlVertex(fabs(vd)*d);
-      color(vc+0.5); opengl::myGlVertex(fabs(vc)*c);
-      color(va+0.5); opengl::myGlVertex(fabs(va)*a);
+      delfem2::opengl::myGlNormal(va*a,vc*c,vb*b);
+      color(va+0.5); delfem2::opengl::myGlVertex(fabs(va)*a);
+      color(vb+0.5); delfem2::opengl::myGlVertex(fabs(vb)*b);
+      color(vc+0.5); delfem2::opengl::myGlVertex(fabs(vc)*c);
+      delfem2::opengl::myGlNormal(vd*d,vc*c,va*a);
+      color(vd+0.5); delfem2::opengl::myGlVertex(fabs(vd)*d);
+      color(vc+0.5); delfem2::opengl::myGlVertex(fabs(vc)*c);
+      color(va+0.5); delfem2::opengl::myGlVertex(fabs(va)*a);
     }
   }
   ::glEnd();
@@ -135,9 +135,7 @@ int main(int argc,char* argv[])
   // -----------------------------
   
   viewer.nav.camera.view_height = 1.0;
-  
-  opengl::setSomeLighting();
-  
+  delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window))
   {
     {
@@ -151,7 +149,7 @@ int main(int argc,char* argv[])
     }
     viewer.DrawBegin_Glold();
     ::glEnable(GL_LIGHTING);
-    drawShphere_Radius(evaluateSH        ,heatmap_glDiffuse);
+    drawShphere_Radius(evaluateSH,delfem2::opengl::heatmap_glDiffuse);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

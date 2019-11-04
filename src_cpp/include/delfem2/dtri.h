@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DTRI_H
-#define DTRI_H
+#ifndef DFM2_DTRI_H
+#define DFM2_DTRI_H
 
 #include <vector>
 

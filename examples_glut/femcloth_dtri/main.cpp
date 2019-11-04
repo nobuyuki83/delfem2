@@ -150,12 +150,12 @@ void myGlutDisplay(void)
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
     ::glEnable(GL_DEPTH_TEST);
      */
-    opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
 
   
   ShowFPS();
@@ -300,7 +300,7 @@ int main(int argc,char* argv[])
     }
   }
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   // Enter main loop
   ::glutMainLoop();
   return 0;

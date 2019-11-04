@@ -102,7 +102,7 @@ void myGlutDisplay(void)
     ::glLoadIdentity();
   }
   
-  opengl::DrawMeshQuad2D_Edge(aXY1.data(), aXY1.size()/2,
+  delfem2::opengl::DrawMeshQuad2D_Edge(aXY1.data(), aXY1.size()/2,
                               aQuad.data(), aQuad.size()/4);
     
   ::glutSwapBuffers();

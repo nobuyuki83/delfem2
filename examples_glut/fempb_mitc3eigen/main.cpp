@@ -215,10 +215,10 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   nav.SetGL_Camera();
   
-  opengl::DrawBackground();
+  delfem2::opengl::DrawBackground();
   
   ::glColor3d(0,0,0);
-  opengl::DrawMeshTri2D_Edge(aTri,aXY0);
+  delfem2::opengl::DrawMeshTri2D_Edge(aTri,aXY0);
   {
     double scale = (aXY0.size()/2)*1.0e-4;
     assert( aMode.size()/3 == aXY0.size()/2 );
@@ -355,7 +355,7 @@ int main(int argc,char* argv[])
   
   nav.camera.view_height = 1.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_ZTOP;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   MakeMesh();
   InitializeProblem_ShellEigenPB();

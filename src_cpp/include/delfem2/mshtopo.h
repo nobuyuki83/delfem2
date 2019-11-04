@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef MSHTOPO_H
-#define MSHTOPO_H
+#ifndef DFM2_MSHTOPO_H
+#define DFM2_MSHTOPO_H
 
 #include <stdio.h>
 #include <vector>

@@ -243,10 +243,10 @@ void myGlutDisplay(void)
   
   { // defomred edge
     ::glColor3d(0,0,0);
-    opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
-                                   aTet.data(),aTet.size()/4,
-                                   aDisp.data(),
-                                   1.0);
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
+                                            aTet.data(),aTet.size()/4,
+                                            aDisp.data(),
+                                            1.0);
   }
   
   ::glDisable(GL_LIGHTING);
@@ -259,14 +259,14 @@ void myGlutDisplay(void)
     CVector3 ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
     ::glBegin(GL_LINES);
     ::glColor3d(1,0,0);
-    opengl::myGlVertex(pi);
-    opengl::myGlVertex(pi+0.04*ex);
+    delfem2::opengl::myGlVertex(pi);
+    delfem2::opengl::myGlVertex(pi+0.04*ex);
     ::glColor3d(0,1,0);
-    opengl::myGlVertex(pi);
-    opengl::myGlVertex(pi+0.04*ey);
+    delfem2::opengl::myGlVertex(pi);
+    delfem2::opengl::myGlVertex(pi+0.04*ey);
     ::glColor3d(0,0,1);
-    opengl::myGlVertex(pi);
-    opengl::myGlVertex(pi+0.04*ez);
+    delfem2::opengl::myGlVertex(pi);
+    delfem2::opengl::myGlVertex(pi+0.04*ez);
     ::glEnd();
   }
     
@@ -278,7 +278,7 @@ void myGlutDisplay(void)
       ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
       glShadeModel(GL_FLAT);
     }
-    opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
+    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
                                    aTet.data(), aTet.size()/4);
 
   }
@@ -414,7 +414,7 @@ int main(int argc,char* argv[])
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = CAMERA_ROT_TBALL;
   
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   glutMainLoop();
 	return 0;
 }

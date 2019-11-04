@@ -75,9 +75,9 @@ int main(int argc,char* argv[])
       Draw_CCad2D(cad);
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0.8, 0.8, 0.8);
-      opengl::DrawMeshTri2D_Face(aTri,aXY);
+      delfem2::opengl::DrawMeshTri2D_Face(aTri,aXY);
       ::glLineWidth(1);
-      opengl::DrawMeshTri2D_Edge(aTri,aXY);
+      delfem2::opengl::DrawMeshTri2D_Edge(aTri,aXY);
       this->DrawEnd_oldGL();
     }
   public:
@@ -92,7 +92,7 @@ int main(int argc,char* argv[])
   viewer.Init_GLold();
   viewer.nav.camera.view_height = 1.5;
   viewer.nav.camera.camera_rot_mode = CAMERA_ROT_YTOP;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
   }

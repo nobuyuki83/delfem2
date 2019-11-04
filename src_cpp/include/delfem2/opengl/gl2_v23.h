@@ -12,6 +12,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 
+namespace delfem2{
 namespace opengl
 {
 
@@ -118,6 +119,7 @@ void Draw_MeshTri(const std::vector<CVector2>& aP,
 void Draw_MeshTri_Edge(const std::vector<CVector2>& aP,
                        const std::vector<unsigned int>& aTri);
   
-}
+} // end namespace opengl
+} // end namespace delfem2
 
 #endif

@@ -58,21 +58,18 @@ int main(int argc,char* argv[])
   // ----------------------------
   
   viewer.nav.camera.view_height = 2.0;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   while (!glfwWindowShouldClose(viewer.window))
   {
     viewer.DrawBegin_Glold();
-    
     ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
     ::glEnable(GL_LIGHTING);
-    opengl::DrawMeshQuad3D_FaceNorm(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
+    delfem2::opengl::DrawMeshQuad3D_FaceNorm(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
-    opengl::DrawMeshQuad3D_Edge(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
-    
-    glfwSwapBuffers(viewer.window);
-    glfwPollEvents();
+    delfem2::opengl::DrawMeshQuad3D_Edge(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
+    viewer.DrawEnd_oldGL();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

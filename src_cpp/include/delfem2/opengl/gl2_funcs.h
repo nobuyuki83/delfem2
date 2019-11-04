@@ -16,8 +16,8 @@
 #include <string>
 #include <vector>
 
-namespace opengl
-{
+namespace delfem2{
+namespace opengl{
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
@@ -237,6 +237,6 @@ public:
 };
 
 } // namespace opengl
-
+} // namespace delfem2
 
 #endif /* utility_gl_h */

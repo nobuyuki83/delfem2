@@ -10,10 +10,8 @@
  * @details this class does not have the OpenGL dependency
  */
 
-
-#ifndef COLOR_H
-#define COLOR_H
-
+#ifndef DFM2_COLOR_H
+#define DFM2_COLOR_H
 
 #include <iostream>
 #include <stdlib.h>
@@ -23,6 +21,8 @@
 #include <math.h>
 #include <vector>
 #include <assert.h>
+
+namespace delfem2{
 
 void GetRGB_HSV(float&r, float& g, float& b,
                 float h, float s, float v);
@@ -162,7 +162,7 @@ void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,
                                      const std::vector<double>& aXY1,
                                      const std::vector<double>& aVal,
                                      std::vector< std::pair<double,CColor> >& colorMap);
-
-
+  
+} // namespace delfem2
 
 #endif

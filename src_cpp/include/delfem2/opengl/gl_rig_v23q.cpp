@@ -42,6 +42,9 @@
 #define M_PI 3.1415926535
 #endif
 
+namespace dfm2 = delfem2;
+//using namespace delfem2::opengl;
+
 // -------------------------------------------------------
 
 void Draw_RigBone
@@ -56,10 +59,10 @@ void Draw_RigBone
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
     const CVector3 pos = aBone[ibone].Pos();
-    opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
+    delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
   }
   if(is_selected){
-    opengl::DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
+    dfm2::opengl::DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
     int ibone_parent = aBone[ibone].ibone_parent;
     if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
       const CVector3 pp(aBone[ibone_parent].Pos());
@@ -94,8 +97,8 @@ void DrawBone
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
     else{              ::glColor3d(0.0,0.0,0.0); }
     ::glBegin(GL_LINES);
-    opengl::myGlVertex(bone.Pos());
-    opengl::myGlVertex(bone_p.Pos());
+    dfm2::opengl::myGlVertex(bone.Pos());
+    dfm2::opengl::myGlVertex(bone_p.Pos());
     ::glEnd();
   }
 }

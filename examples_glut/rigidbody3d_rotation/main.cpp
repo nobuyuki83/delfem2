@@ -131,7 +131,7 @@ void myGlutDisplay(void)
   ::glPolygonOffset( 1.1f, 4.0f );
   nav.SetGL_Camera();
   
-  opengl::DrawBackground();
+  delfem2::opengl::DrawBackground();
   
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -265,7 +265,7 @@ int main(int argc,char* argv[])
   // ---------------
   
   nav.camera.view_height = 2.0;
-  opengl::setSomeLighting();
+  delfem2::opengl::setSomeLighting();
   
   glutMainLoop();
   return 0;
