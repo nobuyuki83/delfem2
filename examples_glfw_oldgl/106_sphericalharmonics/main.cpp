@@ -129,7 +129,7 @@ double evaluateSH(double x, double y, double z)
 
 int main(int argc,char* argv[])
 {
-  CViewer_GLFW viewer;
+  delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_GLold();
   
   // -----------------------------

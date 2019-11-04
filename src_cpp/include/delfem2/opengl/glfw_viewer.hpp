@@ -15,6 +15,9 @@
 
 // ------------------------------------------------------
 
+namespace delfem2{
+namespace opengl{
+
 class CViewer_GLFW{
 public:
   void Init_GLold();
@@ -30,5 +33,8 @@ public:
   GLFWwindow* window;
   CNav3D_GLFW nav;
 };
+  
+}
+}
 
 #endif /* glfw_viewer_hpp */

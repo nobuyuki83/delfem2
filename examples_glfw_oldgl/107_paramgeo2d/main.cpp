@@ -74,7 +74,7 @@ void myGlutDisplay(void)
 
 int main(int argc,char* argv[])
 {
-  CViewer_GLFW viewer;
+  delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_GLold();
   
   // -----------
