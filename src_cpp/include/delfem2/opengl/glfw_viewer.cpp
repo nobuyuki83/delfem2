@@ -13,7 +13,7 @@
 
 // ---------------
 
-static CViewer_GLFW* pViewer;
+static CViewer_GLFW* pViewer = 0;
 
 // ---------------
 
@@ -35,16 +35,31 @@ static void glfw_callback_resize(GLFWwindow* window, int width, int height)
 
 static void glfw_callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
+  assert( pViewer != 0 );
   pViewer->nav.Mouse(window,button,action,mods);
+  if( action == GLFW_PRESS ){
+    float src[3], dir[3];
+    pViewer->nav.MouseRay(src, dir,
+                          pViewer->window);
+    pViewer->mouse_press(src,dir);
+  }
 }
 
 static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
 {
+  assert( pViewer != 0 );
   pViewer->nav.Motion(window,xpos,ypos);
+  if( pViewer->nav.ibutton == 0 ){
+    float src0[3], src1[3], dir[3];
+    pViewer->nav.RayMouseMove(src0, src1, dir,
+                              pViewer->window);
+    pViewer->mouse_drag(src0,src1,dir);
+  }
 }
 
 static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
 {
+  assert( pViewer != 0 );
   pViewer->nav.camera.scale *= pow(1.01,yoffset);
 }
 

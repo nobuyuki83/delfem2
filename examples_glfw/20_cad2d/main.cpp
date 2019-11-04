@@ -3,7 +3,8 @@
 #include "delfem2/cad2d.h"
 #include "delfem2/vec3.h"
 
-// ----
+// ------------------------
+// opengl dependent header
 
 #if defined(_MSC_VER)
   #include <windows.h>

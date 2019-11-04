@@ -13,16 +13,8 @@ add_subdirectory(glbuffer)
 add_subdirectory(exponentialmap)
 add_subdirectory(edit_cubes)
 add_subdirectory(transform_handler)
-
 add_subdirectory(selfcollision_bvh)
 
-# meshgen
-add_subdirectory(adf3d)
-add_subdirectory(iss)
-
-# cad
-add_subdirectory(cad2d)
-add_subdirectory(cad3d)
 
 # fem
 add_subdirectory(rigidbody3d_rotation)
@@ -38,15 +30,8 @@ add_subdirectory(femcloth_dtri)
 add_subdirectory(fempb_mitc3)
 add_subdirectory(fempb_mitc3eigen)
 
-# io
-add_subdirectory(bvh_read)
-add_subdirectory(gltf_read)
-
 # pbd
 add_subdirectory(pbd_grid2d)
 add_subdirectory(pbdcloth)
 add_subdirectory(pbdcloth_cad)
-
-
-add_subdirectory(cadmsh2d)
 add_subdirectory(pbdcloth_cad_gltf)

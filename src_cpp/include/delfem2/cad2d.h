@@ -6,8 +6,8 @@
  */
 
 
-#ifndef CAD2D_h
-#define CAD2D_h
+#ifndef DFM2_CAD2D_H
+#define DFM2_CAD2D_H
 
 #include "delfem2/vec2.h"
 #include "delfem2/cadtopo.h"

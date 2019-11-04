@@ -5,12 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef GL_V23_H
-#define GL_V23_H
+#ifndef DFM2_GL2_V23_H
+#define DFM2_GL2_V23_H
 
 #include <vector>
-
-// eventually, I would like to split vec2 and vec3 dependent part.
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 

@@ -1,8 +1,14 @@
-#ifndef PARAMGEO_V23_H
-#define PARAMGEO_V23_H
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#ifndef DFM2_PARAMGEO_V23_H
+#define DFM2_PARAMGEO_V23_H
 
 #include <stdio.h>
-
 #include "delfem2/vec3.h"
 
 CVector3 getPointCoonsQuad_CubicBezierEdge(double u, double v,

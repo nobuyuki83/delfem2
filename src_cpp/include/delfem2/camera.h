@@ -10,8 +10,8 @@
  * @details this file should be stand alone
  */
 
-#ifndef CAMERA_GL_H
-#define CAMERA_GL_H
+#ifndef DFM2_CAMERA_H
+#define DFM2_CAMERA_H
 
 #include <ostream>
 #include <math.h>
@@ -37,6 +37,11 @@ void screenUnProjection(float vout[3],
                         const float v[3],
                         const float mMV[16],
                         const float mPj[16]);
+
+void screenUnProjectionDirection (float vo[3],
+                                  const float vi[3],
+                                  const float mMV[16],
+                                  const float mPj[16]);
 
 // ----------------------------------------------------
 

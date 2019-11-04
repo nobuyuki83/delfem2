@@ -10,9 +10,8 @@
  * @details the  order of the parameters on memory is (w,x,y,z)
  */
 
-#ifndef QUAT_H
-#define QUAT_H
-
+#ifndef DFM2_QUAT_H
+#define DFM2_QUAT_H
 
 void QuatSetIdentity(double q[]);
 void QuatCopy(double r[], const double p[]);

@@ -1578,7 +1578,7 @@ CVector3 solve_GlAffineMatrixDirection(const float* m,
 //  return Minv*v;
 }
 
-//////////////////////
+// ----------------------
 
 CVector3 screenProjection(const CVector3& v,
                           const float* mMV, const float* mPj)
