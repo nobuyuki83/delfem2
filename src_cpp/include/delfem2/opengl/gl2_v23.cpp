@@ -88,6 +88,16 @@ void delfem2::opengl::ViewTransformation
   ::glMultMatrixd(A);
 }
 
+void delfem2::opengl::myGlVertex(int i, const std::vector<CVector2>& aP)
+{
+  ::glVertex3d(aP[i].x, aP[i].y, +0.0);
+}
+
+void delfem2::opengl::myGlVertex(const CVector2& v)
+{
+  ::glVertex2d(v.x,v.y);
+}
+
 //--------------------------------------------------------
 
 void delfem2::opengl::DrawCylinderWire
