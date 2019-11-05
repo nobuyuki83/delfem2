@@ -32,6 +32,7 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
 
 // ------------------------
 
@@ -115,11 +116,11 @@ void SolveProblem_Poisson()
   const double source = 0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Poission_MeshTet3D(mat_A,vec_b.data(),
-                         alpha,source,
-                         aXYZ.data(), aXYZ.size()/3,
-                         aTet.data(), aTet.size()/4,
-                         aVal.data());
+  dfm2::MergeLinSys_Poission_MeshTet3D(mat_A,vec_b.data(),
+                                       alpha,source,
+                                       aXYZ.data(), aXYZ.size()/3,
+                                       aTet.data(), aTet.size()/4,
+                                       aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,1);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -186,12 +187,12 @@ void SolveProblem_Diffusion()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Diffusion_MeshTet3D(mat_A,vec_b.data(),
-                                  alpha, rho, source,
-                                  dt_timestep, gamma_newmark,
-                                  aXYZ.data(), aXYZ.size()/3,
-                                  aTet.data(), aTet.size()/4,
-                                  aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_Diffusion_MeshTet3D(mat_A,vec_b.data(),
+                                        alpha, rho, source,
+                                        dt_timestep, gamma_newmark,
+                                        aXYZ.data(), aXYZ.size()/3,
+                                        aTet.data(), aTet.size()/4,
+                                        aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,1);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -260,11 +261,11 @@ void SolveProblem_LinearSolid_Static()
   double g[3] = {0.0, -0.5, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, vec_b.data(),
-                                           myu, lambda, rho, g,
-                                           aXYZ.data(), aXYZ.size()/3,
-                                           aTet.data(), aTet.size()/4,
-                                           aVal.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, vec_b.data(),
+                                                 myu, lambda, rho, g,
+                                                 aXYZ.data(), aXYZ.size()/3,
+                                                 aTet.data(), aTet.size()/4,
+                                                 aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   ////////////////////////////////////////////
@@ -335,12 +336,12 @@ void SolveProblem_LinearSolid_Dynamic()
   const double g[3] = {0.0, -0.3, 0.0};
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(mat_A,vec_b.data(),
-                                                myu,lambda,rho,g,
-                                                dt_timestep,gamma_newmark,beta_newmark,
-                                                aXYZ.data(), aXYZ.size()/3,
-                                                aTet.data(), aTet.size()/4,
-                                                aVal.data(),aVelo.data(),aAcc.data());
+  dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(mat_A,vec_b.data(),
+                                                      myu,lambda,rho,g,
+                                                      dt_timestep,gamma_newmark,beta_newmark,
+                                                      aXYZ.data(), aXYZ.size()/3,
+                                                      aTet.data(), aTet.size()/4,
+                                                      aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -428,10 +429,10 @@ void SolveProblem_Stokes_Static()
   double g_z = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Stokes3D_Static(mat_A,vec_b,
-                              myu,rho,g_x,g_y,g_z,
-                              aXYZ,aTet,
-                              aVal,aVelo);
+  dfm2::MergeLinSys_Stokes3D_Static(mat_A,vec_b,
+                                    myu,rho,g_x,g_y,g_z,
+                                    aXYZ,aTet,
+                                    aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,4);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -511,11 +512,11 @@ void SolveProblem_Stokes_Dynamic()
   double g_z = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Stokes3D_Dynamic(mat_A,vec_b,
-                              myu,rho,g_x,g_y,g_z,
-                               dt_timestep,gamma_newmark,
-                               aXYZ,aTet,
-                               aVal,aVelo);
+  dfm2::MergeLinSys_Stokes3D_Dynamic(mat_A,vec_b,
+                                     myu,rho,g_x,g_y,g_z,
+                                     dt_timestep,gamma_newmark,
+                                     aXYZ,aTet,
+                                     aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,4);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
@@ -603,11 +604,11 @@ void SolveProblem_NavierStokes_Dynamic()
   double g_z = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_NavierStokes3D_Dynamic(mat_A,vec_b,
-                                     myu,rho,g_x,g_y,g_z,
-                                     dt_timestep,gamma_newmark,
-                                     aXYZ,aTet,
-                                     aVal,aVelo);
+  dfm2::MergeLinSys_NavierStokes3D_Dynamic(mat_A,vec_b,
+                                           myu,rho,g_x,g_y,g_z,
+                                           dt_timestep,gamma_newmark,
+                                           aXYZ,aTet,
+                                           aVal,aVelo);
   mat_A.SetBoundaryCondition(aBCFlag.data(),np,4);
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////

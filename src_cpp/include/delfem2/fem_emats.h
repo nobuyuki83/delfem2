@@ -25,6 +25,8 @@
 
 // ----------------------------------------------------------------
 
+namespace delfem2 {
+
 void MergeLinSys_Poission_MeshTri2D(CMatrixSparse<double>& mat_A,
                                     double* vec_b,
                                     const double alpha,
@@ -274,6 +276,8 @@ void MassLumped_ShellPlateBendingMITC3(double* aM,
                                        double rho, double thick,
                                        const double* aXY, unsigned int nXY,
                                        const unsigned int* aTri, unsigned int nTri);
+  
+}
 
 /* ------------------------------------------------------------------------- */
 

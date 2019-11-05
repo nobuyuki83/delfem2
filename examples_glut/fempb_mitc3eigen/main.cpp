@@ -22,6 +22,8 @@
 #include "delfem2/opengl/gl2_color.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
 // ----------------------------------
 
 
@@ -34,7 +36,7 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
 {
   const unsigned int nDoF = nXY*3;
   std::vector<double> aMassLumpedSqrt(nDoF);
-  MassLumped_ShellPlateBendingMITC3(aMassLumpedSqrt.data(),
+  dfm2::MassLumped_ShellPlateBendingMITC3(aMassLumpedSqrt.data(),
                                           rho, thickness,
                                           aXY, nXY,
                                           aTri, nTri);
@@ -163,11 +165,11 @@ void InitializeProblem_ShellEigenPB()
   mat_A.SetZero();
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);
-  MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A, aMode.data(),
-                                                     thickness,lambda, myu, 0.0, 0.0,
-                                                     aXY0.data(), aXY0.size()/2,
-                                                     aTri.data(), aTri.size()/3,
-                                                     aTmp0.data());
+  dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A, aMode.data(),
+                                                           thickness,lambda, myu, 0.0, 0.0,
+                                                           aXY0.data(), aXY0.size()/2,
+                                                           aTri.data(), aTri.size()/3,
+                                                           aTmp0.data());
   MatSparse_ScaleBlkLen_LeftRight(mat_A,
                                   aMassLumpedSqrtInv.data());
   mat_A.AddDia(offset_dia);

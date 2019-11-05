@@ -23,6 +23,8 @@ typedef std::complex<double> COMPLEX;
 
 #include "delfem2/fem_emats.h"
 
+namespace dfm2 = delfem2;
+
 static void FetchData
 (double* val_to,
  int nno, int ndim,
@@ -133,7 +135,7 @@ static void MatMatTrans3
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void MergeLinSys_Poission_MeshTri2D
+void dfm2::MergeLinSys_Poission_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double alpha,
@@ -167,7 +169,7 @@ void MergeLinSys_Poission_MeshTri2D
   }
 }
 
-void MergeLinSys_Helmholtz_MeshTri2D
+void dfm2::MergeLinSys_Helmholtz_MeshTri2D
 (CMatrixSparse<COMPLEX>& mat_A,
  COMPLEX* vec_b,
  const double wave_length,
@@ -198,7 +200,7 @@ void MergeLinSys_Helmholtz_MeshTri2D
   }
 }
 
-void MergeLinSys_SommerfeltRadiationBC_Polyline2D
+void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D
 (CMatrixSparse<COMPLEX>& mat_A,
  COMPLEX* vec_b,
  const double wave_length,
@@ -226,7 +228,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D
   }
 }
 
-void MergeLinSys_Poission_MeshTet3D
+void dfm2::MergeLinSys_Poission_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double alpha,
@@ -258,7 +260,7 @@ void MergeLinSys_Poission_MeshTet3D
   }
 }
 
-void MergeLinSys_Diffusion_MeshTri2D
+void dfm2::MergeLinSys_Diffusion_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double alpha,
@@ -300,7 +302,7 @@ void MergeLinSys_Diffusion_MeshTri2D
   }
 }
 
-void MergeLinSys_Diffusion_MeshTet3D
+void dfm2::MergeLinSys_Diffusion_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double alpha,
@@ -339,7 +341,7 @@ void MergeLinSys_Diffusion_MeshTet3D
   }
 }
 
-void MergeLinSys_SolidLinear_Static_MeshTri2D
+void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -375,7 +377,7 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D
   }
 }
 
-void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
+void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -427,7 +429,7 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
   }
 }
 
-void MergeLinSys_StokesStatic2D
+void dfm2::MergeLinSys_StokesStatic2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -466,7 +468,7 @@ void MergeLinSys_StokesStatic2D
   }
 }
 
-void MergeLinSys_StokesDynamic2D
+void dfm2::MergeLinSys_StokesDynamic2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -512,7 +514,7 @@ void MergeLinSys_StokesDynamic2D
   }
 }
 
-void MergeLinSys_NavierStokes2D
+void dfm2::MergeLinSys_NavierStokes2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -558,7 +560,7 @@ void MergeLinSys_NavierStokes2D
 
 
 // compute total energy and its first and second derivatives
-double MergeLinSys_Cloth
+double dfm2::MergeLinSys_Cloth
 (CMatrixSparse<double>& ddW, // (out) second derivative of energy
  double* dW, // (out) first derivative of energy
  ////
@@ -623,7 +625,7 @@ double MergeLinSys_Cloth
 
 
 
-double MergeLinSys_Contact
+double dfm2::MergeLinSys_Contact
 (CMatrixSparse<double>& ddW,
  double* dW,
  ////
@@ -761,7 +763,7 @@ double MergeLinSys_Contact
  */
 
 
-void MergeLinSys_SolidLinear_Static_MeshTet3D
+void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -808,7 +810,7 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D
   }
 }
 
-void MergeLinSys_LinearSolid3D_Static_Q1
+void dfm2::MergeLinSys_LinearSolid3D_Static_Q1
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -857,7 +859,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1
   }
 }
 
-void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
+void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -903,7 +905,7 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
   }
 }
 
-void MergeLinSys_SolidLinear_BEuler_MeshTet3D
+void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -967,7 +969,7 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D
 }
 
 
-void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
+void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -1051,7 +1053,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
   }
 }
 
-void MergeLinSys_Stokes3D_Static
+void dfm2::MergeLinSys_Stokes3D_Static
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -1097,7 +1099,7 @@ void MergeLinSys_Stokes3D_Static
   }
 }
 
-void MergeLinSys_Stokes3D_Dynamic
+void dfm2::MergeLinSys_Stokes3D_Dynamic
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -1145,7 +1147,7 @@ void MergeLinSys_Stokes3D_Dynamic
   }
 }
 
-void MergeLinSys_NavierStokes3D_Dynamic
+void dfm2::MergeLinSys_NavierStokes3D_Dynamic
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -1487,7 +1489,7 @@ void MergeLinSys_NavierStokes3D_Dynamic
  */
 
 
-void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
+void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double thick,
@@ -1532,7 +1534,7 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
   }
 }
 
-void MassLumped_ShellPlateBendingMITC3
+void dfm2::MassLumped_ShellPlateBendingMITC3
 (double* aM,
  double rho, double thick,
  const double* aXY, unsigned int nXY,

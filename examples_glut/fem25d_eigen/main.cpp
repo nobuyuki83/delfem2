@@ -33,6 +33,9 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
+// --------------------
 
 void GenMesh
 (std::vector<CVector2>& aVec2,
@@ -204,11 +207,11 @@ void InitializeProblem_ShellEigenPB()
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);
   double gravity[3] = {0,0,0};
-  MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, aMode.data(),
-                                           myu, lambda, rho, gravity,
-                                           aXYZ.data(), aXYZ.size()/3,
-                                           aTet.data(), aTet.size()/4,
-                                           aTmp0.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, aMode.data(),
+                                                 myu, lambda, rho, gravity,
+                                                 aXYZ.data(), aXYZ.size()/3,
+                                                 aTet.data(), aTet.size()/4,
+                                                 aTmp0.data());
   MatSparse_ScaleBlk_LeftRight(mat_A,
                                aMassLumpedSqrtInv.data());
   mat_A.AddDia(0.8);

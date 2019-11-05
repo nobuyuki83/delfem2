@@ -37,6 +37,8 @@
 #include "delfem2/opengl/gl4_mshcolor.h"
 #include "delfem2/opengl/glfw_cam.h"
 
+namespace dfm2 = delfem2;
+
 // ------------------------------------
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
@@ -258,11 +260,11 @@ void SolveProblem_Poisson()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
-                         alpha,source,
-                         aXY1.data(),aXY1.size()/2,
-                         aTri1.data(),aTri1.size()/3,
-                         aVal.data());
+  dfm2::MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
+                                       alpha,source,
+                                       aXY1.data(),aXY1.size()/2,
+                                       aTri1.data(),aTri1.size()/3,
+                                       aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   // -----------------------

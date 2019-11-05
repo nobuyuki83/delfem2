@@ -437,7 +437,7 @@ double AreaLoop
   CVector2 qo(0,0);
   for(unsigned int ie=0;ie<aEdge.size();++ie){
     const std::vector<CVector2>& aP = aEdge[ie].aP;
-    const int nseg = aP.size()+1;
+    const unsigned int nseg = aP.size()+1;
     for(unsigned int iseg=0;iseg<nseg;++iseg){
       const CVector2 q0 = (iseg==0) ? aEdge[ie].p0 : aP[iseg-1];
       const CVector2 q1 = (iseg==nseg-1) ?aEdge[ie].p1 : aP[iseg];

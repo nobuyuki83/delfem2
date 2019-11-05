@@ -24,6 +24,10 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
+// --------------------------------------------------------------
+
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 {
   const unsigned int nCV = (int)aCV.size()/2;
@@ -257,11 +261,11 @@ void SolveProblem_Poisson()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
-                         alpha,source,
-                         aXY1.data(),aXY1.size()/2,
-                         aTri1.data(),aTri1.size()/3,
-                         aVal.data());
+  dfm2::MergeLinSys_Poission_MeshTri2D(mat_A,vec_b.data(),
+                                       alpha,source,
+                                       aXY1.data(),aXY1.size()/2,
+                                       aTri1.data(),aTri1.size()/3,
+                                       aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////////////
@@ -290,12 +294,12 @@ void SolveProblem_Diffusion()
   const double source = 1.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Diffusion_MeshTri2D(mat_A, vec_b.data(),
-                                  alpha, rho, source,
-                                  dt_timestep, gamma_newmark,
-                                  aXY1.data(), aXY1.size()/2,
-                                  aTri1.data(), aTri1.size()/3,
-                                  aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_Diffusion_MeshTri2D(mat_A, vec_b.data(),
+                                        alpha, rho, source,
+                                        dt_timestep, gamma_newmark,
+                                        aXY1.data(), aXY1.size()/2,
+                                        aTri1.data(), aTri1.size()/3,
+                                        aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
@@ -382,11 +386,11 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
-                                           myu,lambda,rho,g_x,g_y,
-                                           aXY1.data(), aXY1.size()/2,
-                                           aTri1.data(), aTri1.size()/3,
-                                           aVal.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
+                                                 myu,lambda,rho,g_x,g_y,
+                                                 aXY1.data(), aXY1.size()/2,
+                                                 aTri1.data(), aTri1.size()/3,
+                                                 aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
@@ -426,12 +430,12 @@ void SolveProblem_LinearSolid_Dynamic()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(mat_A,vec_b.data(),
-                                                myu,lambda,rho,g_x,g_y,
-                                                dt_timestep,gamma_newmark,beta_newmark,
-                                                aXY1.data(), aXY1.size()/2,
-                                                aTri1.data(), aTri1.size()/3,
-                                                aVal.data(),aVelo.data(),aAcc.data());
+  dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(mat_A,vec_b.data(),
+                                                      myu,lambda,rho,g_x,g_y,
+                                                      dt_timestep,gamma_newmark,beta_newmark,
+                                                      aXY1.data(), aXY1.size()/2,
+                                                      aTri1.data(), aTri1.size()/3,
+                                                      aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
@@ -597,11 +601,11 @@ void SolveProblem_Stokes_Static()
   double g_y = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_StokesStatic2D( mat_A,vec_b.data(),
-                              myu,g_x,g_y,
-                              aXY1.data(), aXY1.size()/2,
-                              aTri1.data(), aTri1.size()/3,
-                              aVal.data());
+  dfm2::MergeLinSys_StokesStatic2D( mat_A,vec_b.data(),
+                                   myu,g_x,g_y,
+                                   aXY1.data(), aXY1.size()/2,
+                                   aTri1.data(), aTri1.size()/3,
+                                   aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
@@ -644,12 +648,12 @@ void SolveProblem_Stokes_Dynamic()
   double g_y = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_StokesDynamic2D(mat_A,vec_b.data(),
-                              myu,rho,g_x,g_y,
-                              dt_timestep,gamma_newmark,
-                              aXY1.data(), aXY1.size()/2,
-                              aTri1.data(), aTri1.size()/3,
-                              aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_StokesDynamic2D(mat_A,vec_b.data(),
+                                    myu,rho,g_x,g_y,
+                                    dt_timestep,gamma_newmark,
+                                    aXY1.data(), aXY1.size()/2,
+                                    aTri1.data(), aTri1.size()/3,
+                                    aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
@@ -697,12 +701,12 @@ void SolveProblem_NavierStokes_Dynamic()
   double g_y = -0.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_NavierStokes2D(mat_A,vec_b.data(),
-                             myu,rho,g_x,g_y,
-                             dt_timestep,gamma_newmark,
-                             aXY1.data(), aXY1.size()/2,
-                             aTri1.data(), aTri1.size()/3,
-                             aVal.data(),aVelo.data());
+  dfm2::MergeLinSys_NavierStokes2D(mat_A,vec_b.data(),
+                                   myu,rho,g_x,g_y,
+                                   dt_timestep,gamma_newmark,
+                                   aXY1.data(), aXY1.size()/2,
+                                   aTri1.data(), aTri1.size()/3,
+                                   aVal.data(),aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){

@@ -19,6 +19,7 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
+namespace dfm2 = delfem2;
 
 TEST(objfunc_v23, Check_CdC_TriStrain){
   for(int itr=0;itr<200;++itr){
@@ -146,12 +147,12 @@ TEST(fem,plate_bending_mitc3_cantilever)
       //////////////////////////
       mat_A.SetZero();
       vec_b.assign(nDoF, 0.0);
-      MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),
-                                                         thickness,lambda,myu,
-                                                         rho,gravity_z,
-                                                         aXY0.data(), aXY0.size()/2,
-                                                         aTri.data(), aTri.size()/3,
-                                                         aVal.data());
+      dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),
+                                                               thickness,lambda,myu,
+                                                               rho,gravity_z,
+                                                               aXY0.data(), aXY0.size()/2,
+                                                               aTri.data(), aTri.size()/3,
+                                                               aVal.data());
       mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
       setRHS_Zero(vec_b, aBCFlag,0);
       //////////////////////////
