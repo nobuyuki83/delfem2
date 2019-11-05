@@ -249,7 +249,7 @@ void myGlutDisplay(void)
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   while (!glfwWindowShouldClose(viewer.window))
   {
@@ -261,7 +261,7 @@ int main(int argc,char* argv[])
       iframe = (iframe + 1)%300;
     }
     
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     
     myGlutDisplay();
     

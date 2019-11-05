@@ -1,13 +1,14 @@
-//
-//  glfw_viewer.cpp
-//  00_openwin
-//
-//  Created by Nobuyuki Umetani on 2019-10-31.
-//
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <cassert>
 
 #include "delfem2/opengl/glfw_viewer.hpp"
 
@@ -64,7 +65,7 @@ static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoff
 }
 
 
-void delfem2::opengl::CViewer_GLFW::Init_GLold()
+void delfem2::opengl::CViewer_GLFW::Init_oldGL()
 {
   pViewer = this;
   // -----
@@ -144,7 +145,7 @@ void delfem2::opengl::CViewer_GLFW::Init_GLnew()
 }
 
 
-void delfem2::opengl::CViewer_GLFW::DrawBegin_Glold()
+void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL()
 {
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

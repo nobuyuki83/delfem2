@@ -117,7 +117,7 @@ void myGlutDisplay(void)
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   delfem2::opengl::setSomeLighting();
   {
@@ -152,7 +152,7 @@ int main(int argc,char* argv[])
       }
       iframe = (iframe+1)%10;
     }
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     myGlutDisplay();
     viewer.DrawEnd_oldGL();
   }

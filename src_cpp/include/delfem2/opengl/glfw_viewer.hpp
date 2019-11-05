@@ -20,8 +20,8 @@ namespace opengl{
 
 class CViewer_GLFW{
 public:
-  void Init_GLold();
-  void DrawBegin_Glold();
+  void Init_oldGL();
+  void DrawBegin_oldGL();
   void DrawEnd_oldGL();
   
   void Init_GLnew();

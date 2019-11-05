@@ -55,14 +55,14 @@ int main(int argc,char* argv[])
   // --------------
   // opengl starts here
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
   
   while(!glfwWindowShouldClose(viewer.window)){
     // --------------------
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     ::glEnable(GL_LIGHTING);
     delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
     delfem2::opengl::DrawAxis(1);    

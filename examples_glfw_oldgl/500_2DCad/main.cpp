@@ -33,7 +33,7 @@ int main(int argc,char* argv[])
   
   // --------------------
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     {
@@ -91,7 +91,7 @@ int main(int argc,char* argv[])
       iframe = (iframe+1)%(nframe*8);
     }
     // --------------------
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     Draw_CCad2D(cad);
     viewer.DrawEnd_oldGL();
   }

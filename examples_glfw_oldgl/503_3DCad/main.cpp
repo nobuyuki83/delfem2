@@ -30,7 +30,7 @@ int main(int argc,char* argv[])
       cad.imode_edit = CCad3D::EDIT_MOVE;
     }
     void Draw(){
-      this->DrawBegin_Glold();
+      this->DrawBegin_oldGL();
       cad.DrawFace_RightSelected(false);
       cad.DrawVtxEdgeHandler(nav.camera.view_height);
       this->DrawEnd_oldGL();
@@ -55,7 +55,7 @@ int main(int argc,char* argv[])
   };
   // -------------
   CCAD3DViewer viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
