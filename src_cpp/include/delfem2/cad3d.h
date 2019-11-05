@@ -22,7 +22,7 @@ public:
     isConst[1] = false;
     isConst[2] = false;
   }
-  void Draw(bool is_selected, int ielem, double view_height) const;
+//  void Draw(bool is_selected, int ielem, double view_height) const;
   void WriteFile(std::ofstream& fout) const{
     fout << "  " << pos << std::endl;
     fout << "  " << norm << std::endl;
@@ -117,8 +117,8 @@ public:
     }
     return CVector3(0,0,0);
   }
-  void DrawLine(bool is_picked, double view_height) const;
-  void DrawHandler(int ielem_picked, double view_height) const;
+//  void DrawLine(bool is_picked, double view_height) const;
+//  void DrawHandler(int ielem_picked, double view_height) const;
   
   void WriteFile(std::ofstream& fout) const{
     fout << "  " << iv0 << " " << iv1 << std::endl;
@@ -175,9 +175,9 @@ public:
   }
   void MovePoints(const std::vector<CCad3D_Vertex>& aVertex,
                   const std::vector<CCad3D_Edge>& aEdge);
-  void DrawFace() const;
-  void DrawBackFace() const;
-  void DrawEdge() const;
+//  void DrawFace() const;
+//  void DrawBackFace() const;
+//  void DrawEdge() const;
   void WriteFile(std::ofstream& fout) const{
     fout << "  " << aIE.size() << std::endl;
     for(unsigned int iie=0;iie<aIE.size();++iie){
@@ -356,9 +356,9 @@ public:
    CVector2 sp0, float mMV[16], float mPj[16],
    double view_height);
   
-  void DrawFace_LeftRight() const;
-  void DrawVtxEdgeHandler(double view_height) const;
-  void DrawFace_RightSelected(bool is_edge) const;
+//  void DrawFace_LeftRight() const;  
+//  void DrawVtxEdgeHandler(double view_height) const;
+//  void DrawFace_RightSelected(bool is_edge) const;
   
   bool ReflectChangeForCurveAndSurface(std::vector<int>& aIsMoved_Edge,
                                        const std::vector<int>& aIsMoved_Vtx);

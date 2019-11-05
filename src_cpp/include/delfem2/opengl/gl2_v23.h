@@ -101,15 +101,9 @@ void DrawHandlerRotation_Mat4(const double Mat[16],
 // ----------------
 // vec2 starts here
 
-inline void myGlVertex(int i, const std::vector<CVector2>& aP)
-{
-  ::glVertex3d(aP[i].x, aP[i].y, +0.0);
-}
+void myGlVertex(int i, const std::vector<CVector2>& aP);
 
-inline void myGlVertex(const CVector2& v)
-{
-  ::glVertex2d(v.x,v.y);
-}
+void myGlVertex(const CVector2& v);
 
 void drawPolyLine2D(const std::vector<CVector2>& aP);
 

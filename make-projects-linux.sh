@@ -1,19 +1,55 @@
+#################################
+# download & build submodules
 
 git submodule update --init --recursive
 
+######################
+## test
+
 cd test_cpp/googletest
+cmake .
+make
+cd ../..
+
+cd test_cpp
 mkdir buildMake
 cd buildMake
 cmake ..
+make
+./runUnitTests
+cd ../../
+
+#######################
+
+cd src_cpp/external/glfw
+cmake .
 make
 cd ../../..
 
-cd src_cpp/external/glfw
+cd examples_glfw
 mkdir buildMake
 cd buildMake
 cmake ..
 make
-cd ../../../../
+cd ../../
+
+
+cd examples_glfw_oldgl
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../
+
+#######################
+
+cd examples_glut
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../
+
 
 #virtualenv --python=python3.7 myenv
 
@@ -27,35 +63,12 @@ mkdir buildMake
 cd buildMake
 cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
-
 cd src_pybind/gl
+
 mkdir buildMake
 cd buildMake
 cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
-
-cd src_pybind/eigen
-mkdir buildMake
-cd buildMake
-cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
-cd ../../../
-
-cd tests
-mkdir buildMake
-cd buildMake
-cmake ..
-make
-./runUnitTests
-cd ../../
-
-cd examples_cpp
-mkdir buildMake
-cd buildMake
-cmake ..
-make
-cd ../../
-
-
 
 
 #python3 setup.py install
