@@ -37,6 +37,8 @@
 #include "delfem2/opengl/gl4_mshcolor.h"
 #include "delfem2/opengl/glfw_cam.h"
 
+namespace dfm2 = delfem2;
+
 // ----------------------------------------------------
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
@@ -295,11 +297,11 @@ void SolveProblem_LinearSolid_Static()
   double g_y = -3.0;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
-                                           myu,lambda,rho,g_x,g_y,
-                                           aXY1.data(), aXY1.size()/2,
-                                           aTri1.data(), aTri1.size()/3,
-                                           aVal.data());
+  dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(mat_A,vec_b.data(),
+                                                 myu,lambda,rho,g_x,g_y,
+                                                 aXY1.data(), aXY1.size()/2,
+                                                 aTri1.data(), aTri1.size()/3,
+                                                 aVal.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
   setRHS_Zero(vec_b, aBCFlag,0);
 //  SetMasterSlave(mat_A,

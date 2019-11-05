@@ -108,7 +108,6 @@ void CenterOfGravity_Tet(double& v_tot,
                          const std::vector<double>& aXYZC,
                          const std::vector<int>& aTetC);
 
-
 // -------------------------------------------------------------
 
 void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZOut,

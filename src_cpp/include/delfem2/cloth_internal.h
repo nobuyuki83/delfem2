@@ -112,16 +112,16 @@ void StepTime_InternalDynamics
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
   std::vector<int> tmp_buffer(np,-1);
-  W += MergeLinSys_Cloth(mat_A,vec_b.data(),
-                         lambda,myu,stiff_bend,
-                         aXYZ0.data(), aXYZ0.size()/3, 3,
-                         aTri.data(), aTri.size()/3,
-                         aQuad.data(), aQuad.size()/4,
-                         aXYZ.data());
-  W += MergeLinSys_Contact(mat_A, vec_b.data(),
-                           stiff_contact,contact_clearance,
-                           input_contact,
-                           aXYZ.data(), aXYZ.size()/3);
+  W += delfem2::MergeLinSys_Cloth(mat_A,vec_b.data(),
+                                  lambda,myu,stiff_bend,
+                                  aXYZ0.data(), aXYZ0.size()/3, 3,
+                                  aTri.data(), aTri.size()/3,
+                                  aQuad.data(), aQuad.size()/4,
+                                  aXYZ.data());
+  W += delfem2::MergeLinSys_Contact(mat_A, vec_b.data(),
+                                    stiff_contact,contact_clearance,
+                                    input_contact,
+                                    aXYZ.data(), aXYZ.size()/3);
   W += AddWdW_Gravity(vec_b,
                       aXYZ,
                       gravity,mass_point);
@@ -183,16 +183,16 @@ void StepTime_InternalDynamicsILU
   std::vector<double> vec_b(nDof,0);
 	mat_A.SetZero();
   std::vector<int> tmp_buffer(np,-1);
-  W += MergeLinSys_Cloth(mat_A,vec_b.data(),
-                         lambda,myu,stiff_bend,
-                         aXYZ0.data(), aXYZ0.size()/3, 3,
-                         aTri.data(), aTri.size()/3,
-                         aQuad.data(), aQuad.size()/4,
-                         aXYZ.data());
-  W += MergeLinSys_Contact(mat_A,vec_b.data(),
-                           stiff_contact,contact_clearance,
-                           input_contact,
-                           aXYZ.data(), aXYZ.size()/3);
+  W += delfem2::MergeLinSys_Cloth(mat_A,vec_b.data(),
+                                  lambda,myu,stiff_bend,
+                                  aXYZ0.data(), aXYZ0.size()/3, 3,
+                                  aTri.data(), aTri.size()/3,
+                                  aQuad.data(), aQuad.size()/4,
+                                  aXYZ.data());
+  W += delfem2::MergeLinSys_Contact(mat_A,vec_b.data(),
+                                    stiff_contact,contact_clearance,
+                                    input_contact,
+                                    aXYZ.data(), aXYZ.size()/3);
   W += AddWdW_Gravity(vec_b,
                       aXYZ,
                       gravity,mass_point);

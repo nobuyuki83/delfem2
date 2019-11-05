@@ -26,6 +26,8 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
 // --------------------------------------------
 
 CNav3D_GLUT nav;
@@ -92,28 +94,28 @@ void InitializeProblem_Scalar()
 //  ilu_A.Initialize_ILUk(mat_A, 2);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------
 // iproblem: 0
 void SolveProblem_Poisson()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np;
-  ///////////////////////////
+  // ------------
   const double wave_length = 0.4;
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
-  MergeLinSys_Helmholtz_MeshTri2D(mat_A,vec_b.data(),
-                                  wave_length,
-                                  aXY1.data(),aXY1.size()/2,
-                                  aTri1.data(),aTri1.size()/3,
-                                  aCVal.data());
+  dfm2::MergeLinSys_Helmholtz_MeshTri2D(mat_A,vec_b.data(),
+                                        wave_length,
+                                        aXY1.data(),aXY1.size()/2,
+                                        aTri1.data(),aTri1.size()/3,
+                                        aCVal.data());
 
   for(int ipl=0;ipl<aaIP.size();++ipl){
-    MergeLinSys_SommerfeltRadiationBC_Polyline2D(mat_A,vec_b.data(),
-                                                 wave_length,
-                                                 aXY1.data(),aXY1.size()/2,
-                                                 aaIP[ipl].data(),aaIP[ipl].size(),
-                                                 aCVal.data());
+    dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(mat_A,vec_b.data(),
+                                                       wave_length,
+                                                       aXY1.data(),aXY1.size()/2,
+                                                       aaIP[ipl].data(),aaIP[ipl].size(),
+                                                       aCVal.data());
   }
 
 
