@@ -1,23 +1,28 @@
-#ifndef ADF_H
-#define ADF_H
+#ifndef DFM2_ADF_H
+#define DFM2_ADF_H
 
 #include <vector>
 
-// virtual input class
+namespace delfem2 {
+
+/**
+ * @brief virtual input class
+ */
 class CInput_ADF3
 {
 public:
   virtual double sdf(double px, double py, double pz) const = 0;
 };
 
-// Adaptive distance field
+/**
+ * @brief Adaptive distance field
+ */
 class CADF3
 {
 public:
   CADF3();
   ~CADF3();
   void SetUp(const CInput_ADF3& ct, double bb[6]);
-  void Draw() const;
   void SetFaceColor(double r, double g, double b){ color_[0] = r; color_[1] = g; color_[2] = b; }
   virtual double Projection
   (double px, double py, double pz,
@@ -26,19 +31,17 @@ public:
   (double p[3],
    const double org[3], const double dir[3]) const { return false; }
   virtual void GetMesh(std::vector<unsigned int>& aTri, std::vector<double>& aXYZ, double elen) const{}
-  /////
+  //
   void BuildIsoSurface_MarchingCube();
   void BuildMarchingCubeEdge();
   void SetShowCage(bool is_show){ this->is_show_cage = is_show; }
-private:
+public:
   class CNode
   {
   public:
     CNode();
     CNode(const CNode& no);
     void SetCornerDist(const CInput_ADF3& ct);
-    void Draw_Wire() const;
-    void DrawThisAndChild_Wire(const std::vector<CNode>& aNo) const ;
     void MakeChildTree(const CInput_ADF3& ct, std::vector<CNode>& aNo, double min_hw, double max_hw);
     double FindDistNormal
     (double px, double py, double pz,
@@ -53,7 +56,7 @@ private:
     int ichilds_[8];
     double dists_[8];
   };
-private:
+public:
   std::vector<CNode> aNode;
   double dist_min, dist_max;
   unsigned int nIsoTri_;
@@ -62,5 +65,7 @@ private:
   bool is_show_cage;
   double color_[3];
 };
+  
+} // namespace delfem2
 
 #endif /* adaptive_distance_field_h */
