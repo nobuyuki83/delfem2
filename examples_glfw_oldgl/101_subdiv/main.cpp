@@ -24,7 +24,7 @@
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   // --------------------------
   // begin computing subdivision
@@ -62,7 +62,7 @@ int main(int argc,char* argv[])
   
   while (!glfwWindowShouldClose(viewer.window))
   {
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
     ::glEnable(GL_LIGHTING);
     delfem2::opengl::DrawMeshQuad3D_FaceNorm(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);

@@ -71,7 +71,7 @@ int main(int argc,char* argv[])
       }
     }
     void Draw(){
-      this->DrawBegin_Glold();
+      this->DrawBegin_oldGL();
       Draw_CCad2D(cad);
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0.8, 0.8, 0.8);
@@ -89,7 +89,7 @@ int main(int argc,char* argv[])
   
   // ----------------------------------
   CCadMesh2DVeiwer viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.5;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_YTOP;
   delfem2::opengl::setSomeLighting();

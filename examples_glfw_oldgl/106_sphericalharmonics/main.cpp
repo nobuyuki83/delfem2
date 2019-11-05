@@ -130,7 +130,7 @@ double evaluateSH(double x, double y, double z)
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   // -----------------------------
   
@@ -147,7 +147,7 @@ int main(int argc,char* argv[])
       }
       iframe = (iframe+1)%50;
     }
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     ::glEnable(GL_LIGHTING);
     drawShphere_Radius(evaluateSH,delfem2::opengl::heatmap_glDiffuse);
     glfwSwapBuffers(viewer.window);

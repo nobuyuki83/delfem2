@@ -237,7 +237,7 @@ void myGlutDisplay(void)
 int main(int argc,char* argv[])
 {	
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
 	
   viewer.nav.camera.view_height = 2;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
@@ -270,7 +270,7 @@ int main(int argc,char* argv[])
       vis_cut_org[1] = -1*(1-cur_time) + 1*cur_time;
     }
     // ------------
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     myGlutDisplay();
     viewer.DrawEnd_oldGL();
   }

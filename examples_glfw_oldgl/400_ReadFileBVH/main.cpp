@@ -40,7 +40,7 @@ int main(int argc,char* argv[])
   // -------------------------
   
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   viewer.nav.camera.view_height = 15.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
@@ -55,7 +55,7 @@ int main(int argc,char* argv[])
       iframe = (iframe+1)%nframe;
     }
       // --------------------
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawAxis(10);
     DrawBone(aBone,
              -1, -1,

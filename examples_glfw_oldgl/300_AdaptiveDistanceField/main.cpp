@@ -112,7 +112,7 @@ void SetProblem(int iprob)
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
@@ -128,7 +128,7 @@ int main(int argc,char* argv[])
       iframe = (iframe+1)%3000;
     }
     // --------------------
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     if( iproblem == 0 ){
       adf.SetShowCage(false);
       adf.Draw();

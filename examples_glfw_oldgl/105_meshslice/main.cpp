@@ -122,7 +122,7 @@ void Hoge(){
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   delfem2::opengl::setSomeLighting();
   
@@ -133,7 +133,7 @@ int main(int argc,char* argv[])
   
   while (!glfwWindowShouldClose(viewer.window))
   {
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     myGlutDisplay();
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();

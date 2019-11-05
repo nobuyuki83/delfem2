@@ -19,11 +19,11 @@
 int main(void)
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
 
   while (!glfwWindowShouldClose(viewer.window))
   {
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     
     glBegin(GL_TRIANGLES);
     glColor3f(1.f, 0.f, 0.f);

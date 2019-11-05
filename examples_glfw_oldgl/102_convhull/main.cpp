@@ -29,7 +29,7 @@ static void myGlVertex3d(int i, const std::vector<CVector3>& aV)
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   
   viewer.nav.camera.view_height = 1.5;
   
@@ -53,7 +53,7 @@ int main(int argc,char* argv[])
       iframe = (iframe + 1)%300;
     }
     
-    viewer.DrawBegin_Glold();
+    viewer.DrawBegin_oldGL();
     
     ::glEnable(GL_BLEND);
     ::glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);

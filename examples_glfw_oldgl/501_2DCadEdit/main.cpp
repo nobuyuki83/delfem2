@@ -44,7 +44,7 @@ int main(int argc,char* argv[])
     }
     //
     void Draw(){
-      DrawBegin_Glold();
+      DrawBegin_oldGL();
       Draw_CCad2D(cad);
       DrawEnd_oldGL();
     }
@@ -52,7 +52,7 @@ int main(int argc,char* argv[])
   };
   // --------------------
   CCAD2DViewer viewer;
-  viewer.Init_GLold();
+  viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.5;
   delfem2::opengl::setSomeLighting();
   // --------------------
