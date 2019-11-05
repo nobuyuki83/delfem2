@@ -9,16 +9,11 @@
 #include <assert.h>
 #include <math.h>
 #include <vector>
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #include "delfem2/adf.h"
 
-CADF3::CADF3()
+namespace dfm2 = delfem2;
+
+dfm2::CADF3::CADF3()
 {
   this->is_show_cage = false;
   //	this->is_show_cage = true;
@@ -30,13 +25,13 @@ CADF3::CADF3()
   color_[2] = 1.0;
 }
 
-CADF3::~CADF3()
+dfm2::CADF3::~CADF3()
 {
   if( this->aIsoTri_  != 0 ){ delete[] this->aIsoTri_; }
   if( this->aIsoEdge_ != 0 ){ delete[] this->aIsoEdge_; }
 }
 
-void CADF3::SetUp
+void dfm2::CADF3::SetUp
 (const CInput_ADF3& ct,
  double bb[6])
 {
@@ -72,34 +67,8 @@ void CADF3::SetUp
   nIsoTri_ = 0;
 }
 
-void CADF3::Draw() const
-{
-  //		std::cout << "ADF" << aNode.size() << std::endl;
-  const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
-  ::glDisable(GL_LIGHTING);
-  if( aNode.size() > 0 && is_show_cage ){
-    aNode[0].DrawThisAndChild_Wire(aNode);
-  }
-  
-  if( this->nIsoTri_ != 0 ){
-    ::glColor3dv(color_);
-    ::glEnableClientState(GL_VERTEX_ARRAY);
-    ::glVertexPointer(3 , GL_DOUBLE, 0 , aIsoTri_);
-    ::glDrawArrays(GL_TRIANGLES, 0 , nIsoTri_*3);
-    ::glDisableClientState(GL_VERTEX_ARRAY);
-  }
-  if( this->aIsoEdge_ != 0 ){
-    ::glColor3d(0,0,0);
-    ::glEnableClientState(GL_VERTEX_ARRAY);
-    ::glVertexPointer(3 , GL_DOUBLE, 0 , aIsoEdge_);
-    ::glDrawArrays(GL_LINES, 0 , nIsoTri_*6);
-    ::glDisableClientState(GL_VERTEX_ARRAY);
-  }
-  if( is_lighting ){ ::glEnable(GL_LIGHTING); }
-}
-
 // return penetration depth (inside is positive)
-double CADF3::Projection
+double dfm2::CADF3::Projection
 (double px, double py, double pz,
  double n[3]) const // normal outward
 {
@@ -115,7 +84,7 @@ double CADF3::Projection
   return no.FindDistNormal(px,py,pz, n, aNode);
 }
 
-void CADF3::BuildIsoSurface_MarchingCube()
+void dfm2::CADF3::BuildIsoSurface_MarchingCube()
 {
   std::vector<double> aTri;
   aTri.reserve(1024*32);
@@ -126,7 +95,7 @@ void CADF3::BuildIsoSurface_MarchingCube()
   nIsoTri_ = (unsigned int)aTri.size()/9;
 }
 
-void CADF3::BuildMarchingCubeEdge()
+void dfm2::CADF3::BuildMarchingCubeEdge()
 {
   if( nIsoTri_ == 0 ){ this->BuildIsoSurface_MarchingCube(); }
   if( this->aIsoEdge_ != 0 ){ delete aIsoEdge_; }
@@ -146,7 +115,7 @@ void CADF3::BuildMarchingCubeEdge()
 }
 
 
-CADF3::CNode::CNode()
+dfm2::CADF3::CNode::CNode()
 {
   cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
   hw_ = 0;
@@ -156,7 +125,7 @@ CADF3::CNode::CNode()
   dists_[4] = 0;		dists_[5] = 0;		dists_[6] = 0;		dists_[7] = 0;
 }
 
-CADF3::CNode::CNode
+dfm2::CADF3::CNode::CNode
 (const CNode& no)
 {
   cent_[0] = no.cent_[0];
@@ -171,7 +140,7 @@ CADF3::CNode::CNode
   dists_[4] = no.dists_[4];		dists_[5] = no.dists_[5];		dists_[6] = no.dists_[6];		dists_[7] = no.dists_[7];
 }
 
-void CADF3::CNode::SetCornerDist
+void dfm2::CADF3::CNode::SetCornerDist
 (const CInput_ADF3& ct)
 {
   dists_[0] = ct.sdf(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
@@ -184,68 +153,7 @@ void CADF3::CNode::SetCornerDist
   dists_[7] = ct.sdf(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
 }
 
-void CADF3::CNode::Draw_Wire() const
-{
-  ::glLineWidth(1);
-  ::glColor3d(0,0,0);
-  ::glBegin(GL_LINES);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]+hw_, cent_[1]-hw_, cent_[2]-hw_);
-  
-  ::glVertex3d(cent_[0]+hw_, cent_[1]-hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]+hw_, cent_[1]+hw_, cent_[2]-hw_);
-  
-  ::glVertex3d(cent_[0]+hw_, cent_[1]+hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]+hw_, cent_[2]-hw_);
-  
-  ::glVertex3d(cent_[0]-hw_, cent_[1]+hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
-  ////
-  ::glVertex3d(cent_[0]-hw_, cent_[1]-hw_, cent_[2]+hw_);
-  ::glVertex3d(cent_[0]+hw_, cent_[1]-hw_, cent_[2]+hw_);
-  
-  ::glVertex3d(cent_[0]+hw_, cent_[1]-hw_, cent_[2]+hw_);
-  ::glVertex3d(cent_[0]+hw_, cent_[1]+hw_, cent_[2]+hw_);
-  
-  ::glVertex3d(cent_[0]+hw_, cent_[1]+hw_, cent_[2]+hw_);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
-  
-  ::glVertex3d(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]-hw_, cent_[2]+hw_);
-  ////
-  ::glVertex3d(cent_[0]-hw_, cent_[1]-hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]-hw_, cent_[2]+hw_);
-  
-  ::glVertex3d(cent_[0]+hw_, cent_[1]-hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]+hw_, cent_[1]-hw_, cent_[2]+hw_);
-  
-  ::glVertex3d(cent_[0]+hw_, cent_[1]+hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]+hw_, cent_[1]+hw_, cent_[2]+hw_);
-  
-  ::glVertex3d(cent_[0]-hw_, cent_[1]+hw_, cent_[2]-hw_);
-  ::glVertex3d(cent_[0]-hw_, cent_[1]+hw_, cent_[2]+hw_);
-  
-  ::glEnd();
-}
-
-void CADF3::CNode::DrawThisAndChild_Wire(const std::vector<CNode>& aNo) const
-{
-  //			std::cout << "ichild " << ichilds_[0] << " " << ichilds_[1] << " " << ichilds_[2] << " " << ichilds_[3] << std::endl;
-  if( ichilds_[0] == -1 ){
-    Draw_Wire();
-    return;
-  }
-  aNo[ichilds_[0]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[1]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[2]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[3]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[4]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[5]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[6]].DrawThisAndChild_Wire(aNo);
-  aNo[ichilds_[7]].DrawThisAndChild_Wire(aNo);
-}
-
-void CADF3::CNode::MakeChildTree
+void dfm2::CADF3::CNode::MakeChildTree
 (const CInput_ADF3& ct,
  std::vector<CNode>& aNo,
  double min_hw, double max_hw)
@@ -435,7 +343,7 @@ MAKE_CHILDS:
   return;
 }
 
-double CADF3::CNode::FindDistNormal
+double dfm2::CADF3::CNode::FindDistNormal
 (double px, double py, double pz,
  double n[3],
  const std::vector<CNode>& aNo) const // normal outward
@@ -855,7 +763,7 @@ static void VertexInterp
 
 
 
-void CADF3::CNode::GenerateIsoSurface
+void dfm2::CADF3::CNode::GenerateIsoSurface
 (std::vector<double>& aTri,
  const std::vector<CNode>& aNo) const
 {
