@@ -101,7 +101,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
         aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(+leny*0.5);
         aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
       }
-      //////////////////////////////
+      // ---------------------
       std::vector<CEPo2> aPo2D;
       std::vector<ETri> aETri;
       std::vector<CVector2> aVec2;
@@ -144,7 +144,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
     {
       const int np = (int)aXY0.size()/2;
       const int nDoF = np*3;
-      //////////////////////////
+      // -------------------
       mat_A.SetZero();
       vec_b.assign(nDoF, 0.0);
       dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),

@@ -11,26 +11,14 @@
 #include "delfem2/fem_emats.h"
 
 // ----------------
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl2_color.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
 // ------------------------
-
-// display data
-bool is_animation;
-
-CNav3D_GLUT nav;
-
 
 std::vector<unsigned int> aTri;
 std::vector<double> aXY0;
@@ -63,7 +51,6 @@ void MakeMesh(){
     aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(+leny*0.5);
     aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
   }
-  //////////////////////////////
   std::vector<CEPo2> aPo2D;
   std::vector<ETri> aETri;
   std::vector<CVector2> aVec2;
@@ -87,13 +74,13 @@ void InitializeProblem_PlateBendingMITC3()
       aBCFlag[ip*3+2] = 1;
     }
   }
-  //////
+  //
   std::vector<int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTri.data(), aTri.size()/3, 3,
                                               (int)aXY0.size()/2);
   JArray_Sort(psup_ind, psup);
-  ////
+  //
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
 //  ilu_A.Initialize_ILU0(mat_A);
@@ -104,7 +91,7 @@ void SolveProblem_PlateBendingMITC3()
 {
   const int np = (int)aXY0.size()/2;
   const int nDoF = np*3;
-  //////////////////////////
+  //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),
@@ -116,7 +103,7 @@ void SolveProblem_PlateBendingMITC3()
   std::cout << Dot(vec_b, vec_b) << std::endl;
   mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
   setRHS_Zero(vec_b, aBCFlag,0);
-  //////////////////////////
+  //
   std::vector<double> vec_x;
   {
     ilu_A.SetValueILU(mat_A);
@@ -126,29 +113,14 @@ void SolveProblem_PlateBendingMITC3()
                                          mat_A, ilu_A);
     std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
   }
-  //////////////////////////
+  //
   XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
 }
 
-//////////////////////////////////////////////////////////////
-
-
-
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  ::glClearStencil(0);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
-  nav.SetGL_Camera();
-  
-  delfem2::opengl::DrawBackground();
-  
+  ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   delfem2::opengl::DrawMeshTri2D_Edge(aTri,aXY0);
   {
@@ -171,39 +143,6 @@ void myGlutDisplay(void)
     }
     ::glEnd();
   }
-
-  ShowFPS();
-  ::glutSwapBuffers();
-}
-
-void myGlutIdle(){
-  
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0,0,w,h);
-  ::glutPostRedisplay();
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-  ::glutPostRedisplay();
 }
 
 void myGlutKeyboard(unsigned char Key, int x, int y)
@@ -236,37 +175,24 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       }
     }
   }
-  ::glutPostRedisplay();
 }
 
 
 int main(int argc,char* argv[])
 {
-  glutInit(&argc, argv);
-  
-  // Initialize GLUT window 3D
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
-  glutCreateWindow("3D View");
-  glutDisplayFunc(myGlutDisplay);
-  glutIdleFunc(myGlutIdle);
-  glutReshapeFunc(myGlutResize);
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutSpecialFunc(myGlutSpecial);
-  
-  ////////////////////////
-  
-  nav.camera.view_height = 1.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
-  delfem2::opengl::setSomeLighting();
-  
   MakeMesh();
   aVal.assign(aXY0.size()/2*3, 0.0);
   InitializeProblem_PlateBendingMITC3();
   SolveProblem_PlateBendingMITC3();
+ 
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 0.8;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
+  viewer.nav.camera.psi = 0.2;
+  viewer.nav.camera.theta = 0.2;
+  delfem2::opengl::setSomeLighting();
+
   {
     assert( fabs(lambda)<1.0e-10 );
     const double E = myu*2.0;
@@ -282,7 +208,14 @@ int main(int argc,char* argv[])
     }
   }
   
-  glutMainLoop();
+  while(!glfwWindowShouldClose(viewer.window)){
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
   return 0;
 }
 

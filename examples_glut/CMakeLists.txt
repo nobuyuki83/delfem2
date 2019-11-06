@@ -20,14 +20,12 @@ add_subdirectory(selfcollision_bvh)
 add_subdirectory(rigidbody3d_rotation)
 
 add_subdirectory(fem2d)
-add_subdirectory(fem2d_helmholtz)
 add_subdirectory(fem3d)
 add_subdirectory(fem25d_eigen)
 add_subdirectory(fem25d_stiffwarp)
 add_subdirectory(femcloth_internal)
 add_subdirectory(femcloth_selfcollision)
 add_subdirectory(femcloth_dtri)
-add_subdirectory(fempb_mitc3)
 add_subdirectory(fempb_mitc3eigen)
 
 # pbd
