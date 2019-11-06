@@ -42,3 +42,7 @@ add_subdirectory(500_2DCad)
 add_subdirectory(501_2DCadEdit)
 add_subdirectory(502_2DCadMeshEdit)
 add_subdirectory(503_3DCad)
+
+# fem
+add_subdirectory(600_Fem2DHelmholtz)
+add_subdirectory(601_FemPlateBendingMitc3)
