@@ -16,7 +16,7 @@
 #include <vector>
 #include <stack>
 #include <set>
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -964,7 +964,7 @@ void MassPoint_Tri2D
 }
 
 // TODO: make this handle open surface (average face & edge independently)
-void SubdivisionPoints_QuadCatmullClark
+void dfm2::SubdivisionPoints_QuadCatmullClark
 (std::vector<double>& aXYZ1,
  ///
  const std::vector<unsigned int>& aQuad1,
@@ -1042,7 +1042,7 @@ void SubdivisionPoints_QuadCatmullClark
   }
 }
 
-void SubdivisionPoints_Quad
+void dfm2::SubdivisionPoints_Quad
 (std::vector<double>& aXYZ1,
  ///
  const std::vector<int>& aQuad1,
@@ -1089,7 +1089,7 @@ void SubdivisionPoints_Quad
 }
 
 
-void SubdivisionPoints_Hex
+void dfm2::SubdivisionPoints_Hex
 (std::vector<double>& aXYZ1,
  ///
  const std::vector<int>& psupIndHex0,

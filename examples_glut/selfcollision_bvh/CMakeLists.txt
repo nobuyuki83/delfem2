@@ -22,8 +22,8 @@ include_directories(
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec3.h          
   ${DELFEM2_SRC}/vec3.cpp      
-  ${DELFEM2_INC}/msh.h           
-  ${DELFEM2_SRC}/msh.cpp 
+  ${DELFEM2_INC}/mshmisc.h
+  ${DELFEM2_SRC}/mshmisc.cpp
   ${DELFEM2_INC}/mshtopo.h       
   ${DELFEM2_SRC}/mshtopo.cpp               
   ${DELFEM2_INC}/bv.h                                                                         

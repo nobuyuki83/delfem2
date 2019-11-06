@@ -14,7 +14,7 @@ set(DELFEM2_EXT         "../../src_cpp/external")
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/msh.h            ${DELFEM2_SRC}/msh.cpp
+  ${DELFEM2_INC}/mshmisc.h        ${DELFEM2_SRC}/mshmisc.cpp
   ${DELFEM2_INC}/primitive.h      ${DELFEM2_SRC}/primitive.cpp
   ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
   ${DELFEM2_INC}/emat.h           ${DELFEM2_SRC}/emat.cpp              

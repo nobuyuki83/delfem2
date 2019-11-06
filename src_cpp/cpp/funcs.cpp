@@ -19,6 +19,10 @@
 
 #include "delfem2/funcs.h"
 
+namespace dfm2 = delfem2;
+
+// ----------------------------------------
+
 // probably std::stroi is safer to use but it is only for C++11
 static int myStoi(const std::string& str){
   char* e;
@@ -448,7 +452,8 @@ bool ReadParam
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Read somehting like this {'descr': '<f8', 'fortran_order': False, 'shape': (3682, 151), }
-std::map<std::string, std::string> ReadDictionary_Python(const std::string& strIn)
+std::map<std::string, std::string>
+dfm2::ReadDictionary_Python(const std::string& strIn)
 {
   std::string buff = RemoveSpace(strIn);
   std::map<std::string, std::string> map0;
@@ -522,7 +527,7 @@ bool LoadNumpy
     char buff[256];
     size_t n1 = fread(buff, 1, npy.header_len, fp);
     if( n1 != npy.header_len ){ return false; }
-    std::map<std::string, std::string> map0 = ReadDictionary_Python(std::string(buff));
+    std::map<std::string, std::string> map0 = dfm2::ReadDictionary_Python(std::string(buff));
     std::string str_shape = map0["'shape'"];
     str_shape = Get_Parentheses(str_shape,"()");
     std::vector<std::string> aToken = Split(str_shape,',');
@@ -534,7 +539,7 @@ bool LoadNumpy
 }
 
 
-bool LoadNumpy_2DimF
+bool dfm2::LoadNumpy_2DimF
 (int& ndim0, int& ndim1, std::vector<float>& aData,
  const std::string& path)
 {
@@ -548,7 +553,7 @@ bool LoadNumpy_2DimF
   return true;
 }
 
-bool LoadNumpy_2DimD
+bool dfm2::LoadNumpy_2DimD
 (int& ndim0, int& ndim1, std::vector<double>& aData,
  const std::string& path)
 {
@@ -562,7 +567,7 @@ bool LoadNumpy_2DimD
   return true;
 }
 
-bool LoadNumpy_1DimF
+bool dfm2::LoadNumpy_1DimF
 (int& ndim0, std::vector<float>& aData,
  const std::string& path)
 {

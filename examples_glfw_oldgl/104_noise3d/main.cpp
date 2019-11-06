@@ -13,7 +13,7 @@
 #include <vector>
 #include "delfem2/noise.h"
 #include "delfem2/mshio.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"

@@ -15,7 +15,7 @@
 #include "delfem2/quat.h"
 #include "delfem2/voxel.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/specialfuncs.h"
 #include "delfem2/funcs.h"
@@ -28,6 +28,8 @@
 #endif
 
 namespace dfm2 = delfem2;
+
+// ------------------------------------------
 
 TEST(slice,test1){
   std::vector<double> aXYZ;
@@ -91,8 +93,8 @@ TEST(funcs,numpy_load_2df){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4x4_float.npy";
   int ndim0,ndim1;
   std::vector<float> aData;
-  bool res = LoadNumpy_2DimF(ndim0,ndim1,aData,
-                             path);
+  bool res = dfm2::LoadNumpy_2DimF(ndim0,ndim1,aData,
+                                   path);
   EXPECT_TRUE(res);
   EXPECT_EQ(ndim0,4);
   EXPECT_EQ(ndim1,4);
@@ -103,8 +105,8 @@ TEST(funcs,numpy_load_2dd){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4x4_double.npy";
   int ndim0,ndim1;
   std::vector<double> aData;
-  bool res = LoadNumpy_2DimD(ndim0,ndim1,aData,
-                             path);
+  bool res = dfm2::LoadNumpy_2DimD(ndim0,ndim1,aData,
+                                   path);
   EXPECT_TRUE(res);
   EXPECT_EQ(ndim0,4);
   EXPECT_EQ(ndim1,4);
@@ -115,8 +117,8 @@ TEST(funcs,numpy_load_1df){
   std::string path = std::string(PATH_INPUT_DIR)+"/numpy_array4_float.npy";
   int ndim0;
   std::vector<float> aData;
-  bool res = LoadNumpy_1DimF(ndim0,aData,
-                             path);
+  bool res = dfm2::LoadNumpy_1DimF(ndim0,aData,
+                                   path);
   EXPECT_TRUE(res);
   EXPECT_EQ(ndim0,4);
   EXPECT_EQ(aData.size(),ndim0);
@@ -183,7 +185,7 @@ TEST(mat3, eigen3)
       EXPECT_NEAR(diff, 0.0, 1.0e-6);
     }
   }
-  ///////////////////////////////////////////
+  // -----------------------------
   for(int itr=0;itr<100;itr++){
     double sm[6];
     for(int i=0;i<6;i++){

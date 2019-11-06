@@ -6,7 +6,7 @@
 #include <set>
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/msh.h" // Rotate, NormalMeshTri3D
+#include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
 #include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"

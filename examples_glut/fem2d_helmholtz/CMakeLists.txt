@@ -22,7 +22,7 @@ include_directories(
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/funcs.h         ${DELFEM2_SRC}/funcs.cpp
   ${DELFEM2_INC}/vec2.h          ${DELFEM2_SRC}/vec2.cpp              
-  ${DELFEM2_INC}/msh.h           ${DELFEM2_SRC}/msh.cpp              
+  ${DELFEM2_INC}/mshmisc.h       ${DELFEM2_SRC}/mshmisc.cpp              
   ${DELFEM2_INC}/mshtopo.h       ${DELFEM2_SRC}/mshtopo.cpp        
   ${DELFEM2_INC}/dtri.h          ${DELFEM2_SRC}/dtri.cpp
   ${DELFEM2_INC}/mats.h          ${DELFEM2_SRC}/mats.cpp    

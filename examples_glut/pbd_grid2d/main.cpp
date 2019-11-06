@@ -1,6 +1,6 @@
 #include <iostream>
 #include <math.h>
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
 #include "delfem2/primitive.h"

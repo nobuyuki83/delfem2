@@ -15,7 +15,7 @@
 #include "delfem2/quat.h"
 #include "delfem2/funcs.h" // isFileExists
 #include "delfem2/v23m3q.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/rig_v3q.h"
 
 #ifndef M_PI 
