@@ -766,7 +766,7 @@ void myGlutDisplay(void)
   if( iproblem == 0 || iproblem == 1 ){
     {
       std::vector< std::pair<double,delfem2::CColor> > colorMap;
-      makeHeatMap_BlueGrayRed(colorMap, 0, +0.1);
+      ColorMap_BlueGrayRed(colorMap, 0, +0.1);
       delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
                                      aTri1.data(),aTri1.size()/3,
                                      aVal.data(),1,colorMap);
@@ -785,7 +785,7 @@ void myGlutDisplay(void)
           || iproblem == 7 || iproblem == 8 || iproblem == 9 )
   {
     std::vector< std::pair<double,delfem2::CColor> > colorMap;
-    makeHeatMap_BlueGrayRed(colorMap, -30, +30);
+    delfem2::ColorMap_BlueGrayRed(colorMap, -30, +30);
     delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
                                    aTri1.data(),aTri1.size()/3,
                                    aVal.data()+2,3,colorMap);

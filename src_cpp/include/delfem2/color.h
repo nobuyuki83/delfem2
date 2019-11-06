@@ -132,11 +132,11 @@ void heatmap_glDiffuse(double input);
 CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap);
 
 
-void makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap,
+void ColorMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap,
                              float min, float max);
-void makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap,
+void ColorMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap,
                                         float min, float max, float alpha=1);
-void makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap,
+void ColorMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap,
                                         float min, float max);
 
 class CColorMap
@@ -145,10 +145,10 @@ public:
   CColorMap(){}
   CColorMap(double min, double max, const std::string& str){
     if( str == "bgr" ){
-      makeHeatMap_BlueGrayRed(aColor, min, max);
+      ColorMap_BlueGrayRed(aColor, min, max);
     }
     else{
-      makeHeatMap_BlueCyanGreenYellowRed(aColor, min, max);
+      ColorMap_BlueCyanGreenYellowRed(aColor, min, max);
     }
   }
 public:

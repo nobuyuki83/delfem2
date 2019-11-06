@@ -133,7 +133,7 @@ int main(int argc,char* argv[])
 {
   Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
-  Normalize(aXYZ);
+  delfem2::Normalize(aXYZ);
   
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();

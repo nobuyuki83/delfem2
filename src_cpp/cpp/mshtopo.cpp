@@ -14,6 +14,10 @@
 
 #include "delfem2/mshtopo.h"
 
+namespace dfm2 = delfem2;
+
+// ---------------------------------------------
+
 void JArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
@@ -239,9 +243,9 @@ void ElemQuad_DihedralTri
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+// ---------------------------------
 
-void convert2Tri_Quad
+void dfm2::convert2Tri_Quad
 (std::vector<unsigned int>& aTri,
  const std::vector<unsigned int>& aQuad)
 {

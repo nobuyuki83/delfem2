@@ -226,12 +226,14 @@ void SetNewProblem()
       GetCenterWidth(cx,cy,cz,
                      wx,wy,wz,
                      aXYZ);
-      Translate(-cx,-cy,-cz, aXYZ);
+      delfem2::Translate(aXYZ,
+                         -cx,-cy,-cz);
       double wm = wx;
       wm = ( wx > wm ) ? wx : wm;
       wm = ( wy > wm ) ? wy : wm;
       wm = ( wz > wm ) ? wz : wm;
-      Scale(2.0/wm,aXYZ);
+      delfem2::Scale(aXYZ,
+                     2.0/wm);
     }
   }
   {

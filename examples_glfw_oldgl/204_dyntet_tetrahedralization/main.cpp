@@ -185,8 +185,9 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       std::vector<double> aXYZ;
       std::vector<unsigned int> aTri;
       Read_Obj("models/bunny2k.obj",aXYZ, aTri);
-      Normalize(aXYZ);
-      Scale(2.0,aXYZ);
+      delfem2::Normalize(aXYZ);
+      delfem2::Scale(aXYZ,
+                     2.0);
       ////
       Initialize();
       std::vector<int> tmp_buffer;

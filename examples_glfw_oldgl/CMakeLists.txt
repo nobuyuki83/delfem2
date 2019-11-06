@@ -17,6 +17,7 @@ add_subdirectory(105_meshslice)
 add_subdirectory(106_sphericalharmonics)
 add_subdirectory(107_paramgeo2d)
 add_subdirectory(108_paramgeo3d)
+add_subdirectory(109_ContourLine2D)
 
 
 # meshing

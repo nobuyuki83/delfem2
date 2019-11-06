@@ -64,25 +64,29 @@ void MinMaxXYZ(double mm[6],
 
 // ------------------------------------------
 
+namespace delfem2{
+
 /**
  * @brief rotate with the Bryant angle (in the  order of XYZ) around the origin.
  * @details the angles are in the radian.
  */
 void Rotate(std::vector<double>& aXYZ,
             double radx, double rady, double radz);
-void Translate(double tx, double ty, double tz,
-               std::vector<double>& aXYZ);
 void Translate(std::vector<double>& aXYZ,
                double tx, double ty, double tz);
 void Translate(double tx, double ty, double tz,
                const unsigned int nnode_, double* pXYZs_);
-void Scale(double s,
-           std::vector<double>& aXYZ);
+void Translate(std::vector<double>& aXY,
+               double tx, double ty);
+void Scale(std::vector<double>& aXYZ,
+           double s);
 void Scale(double s,
            const unsigned int nnode_, double* pXYZs_);
 double Size(const std::vector<double>& aXYZ);
 void Normalize(std::vector<double>& aXYZ,
                double s = 1.0);
+  
+}
 
 // ------------------------------------------------------------
 

@@ -161,7 +161,7 @@ int main(int argc,char* argv[])
 {
   {
     delfem2::MeshTri3D_Sphere(aXYZ0, aTri, 1.0, 16, 16);
-    Rotate(aXYZ0, 0.2, 0.3, 0.4);
+    delfem2::Rotate(aXYZ0, 0.2, 0.3, 0.4);
     aXYZ = aXYZ0;
     {
       const int ntri = aTri.size()/3;

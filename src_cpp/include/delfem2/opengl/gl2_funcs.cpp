@@ -1475,7 +1475,6 @@ void dfm2::opengl::DrawMeshTri2D_Edge
  const unsigned int* aTri, int nTri)
 {
   //  const unsigned int nxys = (int)aXY.size()/2;
-  ////////////////
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
   for(int itri=0;itri<nTri;itri++){

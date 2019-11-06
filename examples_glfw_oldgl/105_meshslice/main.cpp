@@ -22,7 +22,7 @@
 
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
-std::vector<CSliceTriMesh> aCS;
+std::vector<delfem2::CSliceTriMesh> aCS;
 std::vector< std::set<unsigned int> > ReebGraphCS;
 std::vector<CVector3> aCG_CS;
 
@@ -39,8 +39,10 @@ void myGlutDisplay(void)
   for(int iloop=0;iloop<aCS.size();++iloop){
     ::glBegin(GL_LINE_LOOP);
     for(int iseg=0;iseg<aCS[iloop].aTriInfo.size();++iseg){
-      const CVector3& pA = aCS[iloop].aTriInfo[iseg].pA;
-      ::glVertex3d(pA.x,pA.y,pA.z);
+      const delfem2::CSliceTriMesh::CSegInfo& seg = aCS[iloop].aTriInfo[iseg];
+      double pA[3],pB[3]; seg.Pos3D(pA,pB,
+                                    aXYZ,aTri);
+      ::glVertex3d(pA[0],pA[1],pA[2]);
     }
     ::glEnd();
   }
@@ -73,7 +75,7 @@ void myGlutDisplay(void)
 void Hoge(){
   Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
-  Normalize(aXYZ);
+  delfem2::Normalize(aXYZ);
   std::vector<int> aTriSurRel;
   makeSurroundingRelationship(aTriSurRel,
                               aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
@@ -89,10 +91,19 @@ void Hoge(){
   aHeight.push_back(+0.3);
   const double nrm[3] = {0,1,0};
   const double org[3] = {0,0,0};
-  Slice_MeshTri3D_Heights(aCS,
-                          aHeight,
-                          nrm, org,
-                          aXYZ,aTri,aTriSurRel);
+  {
+    std::vector<double> aHeightVtx(aXYZ.size()/3);
+    for(unsigned int ip=0;ip<aXYZ.size()/3;++ip){
+      double x0 = aXYZ[ip*3+0] - org[0];
+      double y0 = aXYZ[ip*3+1] - org[1];
+      double z0 = aXYZ[ip*3+2] - org[2];
+      aHeightVtx[ip] = nrm[0]*x0 + nrm[1]*y0 + nrm[2]*z0;
+    }
+    Slice_MeshTri3D_Heights(aCS,
+                            aHeight,
+                            aHeightVtx,
+                            aTri,aTriSurRel);
+  }
   MakeReebGraph(ReebGraphCS,
                 aCS, aTri, aTriSurRel);
   assert( aCS.size() == ReebGraphCS.size() );
@@ -104,15 +115,16 @@ void Hoge(){
     double sum_area = 0.0;
     CVector3 cg(0,0,0);
     for(int iseg=0;iseg<aCS[ics].aTriInfo.size();++iseg){
+      double pA[3],pB[3];
+      aCS[ics].aTriInfo[iseg].Pos3D(pA,pB,
+                                    aXYZ,aTri);
       double n0[3]; NormalTri3D(n0,
-                                aCS[ics].aTriInfo[iseg].pA,
-                                aCS[ics].aTriInfo[iseg].pB,
-                                po);
-      double area0 = n0[0]*nrm[0] + n0[1]*nrm[1] + n0[2]*nrm[2];
+                                pA,pB,po);
+      const double area0 = n0[0]*nrm[0] + n0[1]*nrm[1] + n0[2]*nrm[2];
       sum_area += area0;
-      cg.x += area0*(po[0]+aCS[ics].aTriInfo[iseg].pA[0]+aCS[ics].aTriInfo[iseg].pB[0])/3.0;
-      cg.y += area0*(po[1]+aCS[ics].aTriInfo[iseg].pA[1]+aCS[ics].aTriInfo[iseg].pB[1])/3.0;
-      cg.z += area0*(po[2]+aCS[ics].aTriInfo[iseg].pA[2]+aCS[ics].aTriInfo[iseg].pB[2])/3.0;
+      cg.x += area0*(po[0]+pA[0]+pB[0])/3.0;
+      cg.y += area0*(po[1]+pA[1]+pB[1])/3.0;
+      cg.z += area0*(po[2]+pA[2]+pB[2])/3.0;
     }
     cg /= sum_area;
     aCG_CS[ics] = cg;

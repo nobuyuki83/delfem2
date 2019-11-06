@@ -85,7 +85,7 @@ int main(int argc,char* argv[])
     ::glEnd();
     
     std::vector<std::pair<double, dfm2::CColor> > colorMap;
-    makeHeatMap_BlueCyanGreenYellowRed(colorMap, -0.5, +0.5);
+    ColorMap_BlueCyanGreenYellowRed(colorMap, -0.5, +0.5);
       //  makeHeatMap_BlueGrayRed(colorMap, -0.8, +0.8);
     ::glBegin(GL_QUADS);
     for(int jh=0;jh<nH-1;++jh){
