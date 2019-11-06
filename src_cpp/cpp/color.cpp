@@ -117,7 +117,7 @@ CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColo
   return colorMap[colorMap.size()-1].second;
 }
 
-void delfem2::makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
+void delfem2::ColorMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
   colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, 1.0f))); // blue
@@ -127,7 +127,7 @@ void delfem2::makeHeatMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& c
   colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
 }
 
-void delfem2::makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
+void delfem2::ColorMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
 {
   double diff = (max-min)*0.25;
   colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, alpha))); // blue
@@ -137,7 +137,7 @@ void delfem2::makeHeatMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, C
   colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, alpha))); // red
 }
 
-void delfem2::makeHeatMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
+void delfem2::ColorMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
   colorMap.push_back(std::make_pair(min+diff*0, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red

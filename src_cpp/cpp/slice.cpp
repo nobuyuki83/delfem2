@@ -9,37 +9,31 @@
 
 #include "delfem2/slice.h"
 
+namespace dfm2 = delfem2;
 
-
+// ---------------------------------------------
 
 void IndexElement_OverlapLevels_MeshTri3D
 (std::vector< std::vector<unsigned int> >& aCST,
  ////
  const std::vector<double>& aH,
- const double norm[3],
- const double centerOfGravity[3],
- const std::vector<double>& aXYZ,
+ const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri)
 {
   const unsigned int ntri = aTri.size()/3;
   const unsigned int nH = aH.size();
   aCST.resize(nH);
   for(unsigned int itri=0;itri<ntri;itri++){
-    double ah[3];
-    for(unsigned int inotri=0;inotri<3;inotri++){
-      unsigned int ino0 = aTri[itri*3+inotri];
-      const double p0[3] = {
-        aXYZ[ino0*3+0]-centerOfGravity[0],
-        aXYZ[ino0*3+1]-centerOfGravity[1],
-        aXYZ[ino0*3+2]-centerOfGravity[2] };
-      ah[inotri] = p0[0]*norm[0] +  p0[1]*norm[1] + p0[2]*norm[2];
-    }
+    const double ah[3] = {
+      aLevelVtx[ aTri[itri*3+0] ],
+      aLevelVtx[ aTri[itri*3+1] ],
+      aLevelVtx[ aTri[itri*3+2] ],
+    };
     for(unsigned int ih=0;ih<nH;ih++){
       unsigned int icnt = 0;
       for(unsigned int inotri=0;inotri<3;inotri++){
         if( ah[inotri]-aH[ih] > 0 ){ icnt++; }
       }
-      ////
       if( icnt == 1 || icnt == 2 ){
         aCST[ih].push_back(itri);
       }
@@ -47,17 +41,98 @@ void IndexElement_OverlapLevels_MeshTri3D
   }
 }
 
+// ----------------------------------------------
+
+void dfm2::CSliceTriMesh::CSegInfo::Initialize
+(int jtri0,
+ const std::vector<unsigned int>& aTri,
+ const std::vector<double>& aLevelVtx,
+ double height)
+{
+  this->itri = jtri0;
+  unsigned int iflg = 0;
+  double aH[3];
+  for(unsigned int inotri=0;inotri<3;inotri++){
+    aH[inotri] = aLevelVtx[ aTri[jtri0*3+inotri] ] - height;
+    if( aH[inotri] < 0 ){ continue; }
+    if( inotri == 0 ){ iflg += 1; }
+    if( inotri == 1 ){ iflg += 2; }
+    if( inotri == 2 ){ iflg += 4; }
+  }
+  if( iflg == 1 ){
+    this->iedA = 2; this->r0A = +aH[0]/(aH[0]-aH[1]);
+    this->iedB = 1; this->r0B = -aH[2]/(aH[0]-aH[2]);
+  }
+  if( iflg == 2 ){
+    this->iedA = 0; this->r0A = +aH[1]/(aH[1]-aH[2]);
+    this->iedB = 2; this->r0B = -aH[0]/(aH[1]-aH[0]);
+  }
+  if( iflg == 4 ){
+    this->iedA = 1; this->r0A = +aH[2]/(aH[2]-aH[0]);
+    this->iedB = 0; this->r0B = -aH[1]/(aH[2]-aH[1]);
+  }
+  if( iflg == 3 ){
+    this->iedA = 0; this->r0A = -aH[1]/(aH[2]-aH[1]);
+    this->iedB = 1; this->r0B = +aH[2]/(aH[2]-aH[0]);
+  }
+  if( iflg == 5 ){
+    this->iedA = 2; this->r0A = -aH[0]/(aH[1]-aH[0]);
+    this->iedB = 0; this->r0B = +aH[1]/(aH[1]-aH[2]);
+  }
+  if( iflg == 6 ){
+    this->iedA = 1; this->r0A = -aH[2]/(aH[0]-aH[2]);
+    this->iedB = 2; this->r0B = +aH[0]/(aH[0]-aH[1]);
+  }
+}
+
+void dfm2::CSliceTriMesh::CSegInfo::Pos3D
+ (double pA[3], double pB[3],
+  const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri) const 
+{
+  const unsigned int i0 = aTri[this->itri*3+0];
+  const unsigned int i1 = aTri[this->itri*3+1];
+  const unsigned int i2 = aTri[this->itri*3+2];
+  const double aP[3][3] = {
+    { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] },
+    { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] },
+    { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] } };
+  pA[0] = (1.0-this->r0A)*aP[(this->iedA+1)%3][0] + (this->r0A)*aP[(this->iedA+2)%3][0];
+  pA[1] = (1.0-this->r0A)*aP[(this->iedA+1)%3][1] + (this->r0A)*aP[(this->iedA+2)%3][1];
+  pA[2] = (1.0-this->r0A)*aP[(this->iedA+1)%3][2] + (this->r0A)*aP[(this->iedA+2)%3][2];
+  pB[0] = (1.0-this->r0B)*aP[(this->iedB+1)%3][0] + (this->r0B)*aP[(this->iedB+2)%3][0];
+  pB[1] = (1.0-this->r0B)*aP[(this->iedB+1)%3][1] + (this->r0B)*aP[(this->iedB+2)%3][1];
+  pB[2] = (1.0-this->r0B)*aP[(this->iedB+1)%3][2] + (this->r0B)*aP[(this->iedB+2)%3][2];
+}
+
+void dfm2::CSliceTriMesh::CSegInfo::Pos2D
+(double pA[2], double pB[2],
+ const std::vector<double>& aXY,
+ const std::vector<unsigned int>& aTri) const
+{
+  const unsigned int i0 = aTri[this->itri*3+0];
+  const unsigned int i1 = aTri[this->itri*3+1];
+  const unsigned int i2 = aTri[this->itri*3+2];
+  const double aP[3][2] = {
+    { aXY[i0*2+0], aXY[i0*2+1] },
+    { aXY[i1*2+0], aXY[i1*2+1] },
+    { aXY[i2*2+0], aXY[i2*2+1] } };
+  pA[0] = (1.0-this->r0A)*aP[(this->iedA+1)%3][0] + (this->r0A)*aP[(this->iedA+2)%3][0];
+  pA[1] = (1.0-this->r0A)*aP[(this->iedA+1)%3][1] + (this->r0A)*aP[(this->iedA+2)%3][1];
+  pB[0] = (1.0-this->r0B)*aP[(this->iedB+1)%3][0] + (this->r0B)*aP[(this->iedB+2)%3][0];
+  pB[1] = (1.0-this->r0B)*aP[(this->iedB+1)%3][1] + (this->r0B)*aP[(this->iedB+2)%3][1];
+}
+
+// ----------------------------------------------
 
 bool TraverseBoundaryLoop
-(CSliceTriMesh& cs,
+ (dfm2::CSliceTriMesh& cs,
  std::vector<int>& aFlgSeg,
  int iseg_ker, int ih,
  const std::vector<int>& Tri2Seg,
  const std::vector<unsigned int>& aCST,
- const double norm[3],
- const double origin[3],
  double height,
- const std::vector<double>& aXYZ,
+ const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri,
  const std::vector<int>& aTriSur)
 {
@@ -67,59 +142,10 @@ bool TraverseBoundaryLoop
     assert( aFlgSeg[iseg_next] == 0 );
     int jtri0 = aCST[iseg_next];
     aFlgSeg[iseg_next] = 1;
-    CSliceTriMesh::CSegInfo info;
-    {
-      info.itri = jtri0;
-      unsigned int iflg = 0;
-      double aP[3][3], aH[3];
-      for(unsigned int inotri=0;inotri<3;inotri++){
-        unsigned int jno0 = aTri[jtri0*3+inotri];
-        aP[inotri][0] = aXYZ[jno0*3+0];
-        aP[inotri][1] = aXYZ[jno0*3+1];
-        aP[inotri][2] = aXYZ[jno0*3+2];
-        aH[inotri]
-        = (aP[inotri][0]-origin[0])*norm[0]
-        + (aP[inotri][1]-origin[1])*norm[1]
-        + (aP[inotri][2]-origin[2])*norm[2] -height;
-        if( aH[inotri] < 0 ){ continue; }
-        if( inotri == 0 ){ iflg += 1; }
-        if( inotri == 1 ){ iflg += 2; }
-        if( inotri == 2 ){ iflg += 4; }
-      }
-      if( iflg == 1 ){
-        info.iedA = 2; info.r0A = +aH[0]/(aH[0]-aH[1]);
-        info.iedB = 1; info.r0B = -aH[2]/(aH[0]-aH[2]);
-      }
-      if( iflg == 2 ){
-        info.iedA = 0; info.r0A = +aH[1]/(aH[1]-aH[2]);
-        info.iedB = 2; info.r0B = -aH[0]/(aH[1]-aH[0]);
-      }
-      if( iflg == 4 ){
-        info.iedA = 1; info.r0A = +aH[2]/(aH[2]-aH[0]);
-        info.iedB = 0; info.r0B = -aH[1]/(aH[2]-aH[1]);
-      }
-      if( iflg == 3 ){
-        info.iedA = 0; info.r0A = -aH[1]/(aH[2]-aH[1]);
-        info.iedB = 1; info.r0B = +aH[2]/(aH[2]-aH[0]);
-      }
-      if( iflg == 5 ){
-        info.iedA = 2; info.r0A = -aH[0]/(aH[1]-aH[0]);
-        info.iedB = 0; info.r0B = +aH[1]/(aH[1]-aH[2]);
-      }
-      if( iflg == 6 ){
-        info.iedA = 1; info.r0A = -aH[2]/(aH[0]-aH[2]);
-        info.iedB = 2; info.r0B = +aH[0]/(aH[0]-aH[1]);
-      }
-      info.pA[0] = (1.0-info.r0A)*aP[(info.iedA+1)%3][0] + (info.r0A)*aP[(info.iedA+2)%3][0];
-      info.pA[1] = (1.0-info.r0A)*aP[(info.iedA+1)%3][1] + (info.r0A)*aP[(info.iedA+2)%3][1];
-      info.pA[2] = (1.0-info.r0A)*aP[(info.iedA+1)%3][2] + (info.r0A)*aP[(info.iedA+2)%3][2];
-      info.pB[0] = (1.0-info.r0B)*aP[(info.iedB+1)%3][0] + (info.r0B)*aP[(info.iedB+2)%3][0];
-      info.pB[1] = (1.0-info.r0B)*aP[(info.iedB+1)%3][1] + (info.r0B)*aP[(info.iedB+2)%3][1];
-      info.pB[2] = (1.0-info.r0B)*aP[(info.iedB+1)%3][2] + (info.r0B)*aP[(info.iedB+2)%3][2];
-    }
+    dfm2::CSliceTriMesh::CSegInfo info;
+    info.Initialize(jtri0,aTri,aLevelVtx,height);
     cs.aTriInfo.push_back(info);
     unsigned int iedge_next = info.iedB;
-    ////////////////
     int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
     if( itri_next1 == -1 ){ break; } // open loop discard
     int iseg_next1 = Tri2Seg[itri_next1];
@@ -129,21 +155,14 @@ bool TraverseBoundaryLoop
   }
   // reach here if the loop is open
   cs.aTriInfo.clear();
-  /////
+  //
   iseg_next = iseg_ker;
   for(;;){ // seg in cs loop
     int jtri0 = aCST[iseg_next];
     unsigned int iflg = 0;
-    double aP[3][3], aH[3];
+    double aH[3];
     for(unsigned int inotri=0;inotri<3;inotri++){
-      unsigned int jno0 = aTri[jtri0*3+inotri];
-      aP[inotri][0] = aXYZ[jno0*3+0];
-      aP[inotri][1] = aXYZ[jno0*3+1];
-      aP[inotri][2] = aXYZ[jno0*3+2];
-      aH[inotri]
-      = (aP[inotri][0]-origin[0])*norm[0]
-      + (aP[inotri][1]-origin[1])*norm[1]
-      + (aP[inotri][2]-origin[2])*norm[2] -height;
+      aH[inotri] = aLevelVtx[ aTri[jtri0*3+inotri] ] -height;
       if( aH[inotri] < 0 ){ continue; }
       if( inotri == 0 ){ iflg += 1; }
       if( inotri == 1 ){ iflg += 2; }
@@ -170,24 +189,22 @@ bool TraverseBoundaryLoop
 }
 
 
-void Slice_MeshTri3D_Heights
-(std::vector<CSliceTriMesh>& aCS,
+void dfm2::Slice_MeshTri3D_Heights
+(std::vector<dfm2::CSliceTriMesh>& aCS,
  ////
- const std::vector<double>& aHeight,
- const double norm[3],
- const double origin[3],
- const std::vector<double>& aXYZ,
+ const std::vector<double>& aLevel,
+ const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri,
  const std::vector<int>& aTriSur)
 {
   const unsigned int ntri = (unsigned int)aTri.size()/3;
-  const unsigned int nH = (unsigned int)aHeight.size();
-  ////
+  const unsigned int nH = (unsigned int)aLevel.size();
+  //
   std::vector< std::vector<unsigned int> > aCST;
   IndexElement_OverlapLevels_MeshTri3D(aCST,
-                                       aHeight,norm,origin,
-                                       aXYZ,aTri);
-  /////
+                                       aLevel,
+                                       aLevelVtx,
+                                       aTri);
   aCS.clear();
   std::vector<int> Tri2Seg;
   Tri2Seg.resize(ntri,-1);
@@ -196,7 +213,6 @@ void Slice_MeshTri3D_Heights
       unsigned int itri = aCST[ih][isg];
       Tri2Seg[itri] = isg;
     }
-    ////
     std::vector<int> aFlgSeg;
     aFlgSeg.resize(aCST[ih].size(),0);
     unsigned int iseg_ker = 0;
@@ -205,19 +221,73 @@ void Slice_MeshTri3D_Heights
         if( aFlgSeg[iseg_ker] == 0 ){ break; }
       }
       if( iseg_ker == aCST[ih].size() ) break;
-      /////
-      CSliceTriMesh cs(ih);
+      dfm2::CSliceTriMesh cs(ih);
       const bool is_closed = TraverseBoundaryLoop(cs, aFlgSeg,
                                                   iseg_ker, ih, Tri2Seg,
-                                                  aCST[ih], norm, origin, aHeight[ih],
-                                                  aXYZ, aTri, aTriSur);
+                                                  aCST[ih], aLevel[ih],
+                                                  aLevelVtx,
+                                                  aTri, aTriSur);
       if( !is_closed ){ continue; }
       aCS.push_back(cs);
     }
-    ////
+    //
     for(unsigned int isg=0;isg<aCST[ih].size();isg++){
       unsigned int itri = aCST[ih][isg];
       Tri2Seg[itri] = -1;
     }
   }
 }
+
+
+/*
+void Slice_MeshTri2D_Contour
+ (std::vector<CSliceTriMesh>& aCS,
+  //
+  const std::vector<double>& aLevel,
+  const std::vector<double>& aXY,
+  const std::vector<double>& aVal,
+  const std::vector<unsigned int>& aTri,
+  const std::vector<int>& aTriSur)
+{
+  const unsigned int ntri = (unsigned int)aTri.size()/3;
+  const unsigned int nH = (unsigned int)aLevel.size();
+    //
+  std::vector< std::vector<unsigned int> > aCST;
+  IndexElement_OverlapLevels_MeshTri3D(aCST,
+                                       aLevel,norm,origin,
+                                       aXYZ,aTri);
+    //
+  aCS.clear();
+  std::vector<int> Tri2Seg;
+  Tri2Seg.resize(ntri,-1);
+  for(unsigned int ih=0;ih<nH;ih++){ // h loop
+    for(unsigned int isg=0;isg<aCST[ih].size();isg++){
+      unsigned int itri = aCST[ih][isg];
+      Tri2Seg[itri] = isg;
+    }
+      //
+    std::vector<int> aFlgSeg;
+    aFlgSeg.resize(aCST[ih].size(),0);
+    unsigned int iseg_ker = 0;
+    for(;;){ // cs loop
+      for(;iseg_ker<aCST[ih].size();iseg_ker++){
+        if( aFlgSeg[iseg_ker] == 0 ){ break; }
+      }
+      if( iseg_ker == aCST[ih].size() ) break;
+        //
+      CSliceTriMesh cs(ih);
+      const bool is_closed = TraverseBoundaryLoop(cs, aFlgSeg,
+                                                  iseg_ker, ih, Tri2Seg,
+                                                  aCST[ih], norm, origin, aLevel[ih],
+                                                  aXYZ, aTri, aTriSur);
+      if( !is_closed ){ continue; }
+      aCS.push_back(cs);
+    }
+      //
+    for(unsigned int isg=0;isg<aCST[ih].size();isg++){
+      unsigned int itri = aCST[ih][isg];
+      Tri2Seg[itri] = -1;
+    }
+  }
+}
+ */

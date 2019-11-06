@@ -22,6 +22,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+namespace dfm2 = delfem2;
+
 // ------------------------------------------------
 
 static double Length3D(const double p[3]){
@@ -394,36 +396,18 @@ void GetCenterWidthLocal
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+// -------------------------------------
 
-void Translate
-(double tx, double ty, double tz,
-std::vector<double>& aXYZ)
+void dfm2::Scale
+(std::vector<double>& aXYZ,
+ double s)
 {
-  const int nno = (int)aXYZ.size()/3;
-  for (int ino = 0; ino<nno; ++ino){
-    aXYZ[ino*3+0] += tx;
-    aXYZ[ino*3+1] += ty;
-    aXYZ[ino*3+2] += tz;
-  }
-}
-
-void Scale
-(double s,
-std::vector<double>& aXYZ)
-{
-  const int nno = (int)aXYZ.size()/3;
-  for (int ino = 0; ino<nno; ++ino){
-    aXYZ[ino*3+0] *= s;
-    aXYZ[ino*3+1] *= s;
-    aXYZ[ino*3+2] *= s;
-  }
+  const unsigned int n = aXYZ.size();
+  for (unsigned int i = 0; i<n; ++i){ aXYZ[i] *= s; }
 }
 
 
-void Translate
+void dfm2::Translate
 (std::vector<double>& aXYZ,
 double tx, double ty, double tz)
 {
@@ -435,7 +419,18 @@ double tx, double ty, double tz)
   }
 }
 
-void Rotate
+void dfm2::Translate
+ (std::vector<double>& aXY,
+  double tx, double ty)
+{
+  const unsigned int np = aXY.size()/2;
+  for (int ip = 0; ip<np; ip++){
+    aXY[ip*2+0] += tx;
+    aXY[ip*2+1] += ty;
+  }
+}
+
+void dfm2::Rotate
 (std::vector<double>& aXYZ,
 double radx, double rady, double radz)
 {
@@ -458,25 +453,49 @@ double radx, double rady, double radz)
   }
 }
 
-
-
-double Size(const std::vector<double>& aXYZ){
+double dfm2::Size(const std::vector<double>& aXYZ){
   double cx, cy, cz, wx, wy, wz;
   GetCenterWidth(cx, cy, cz, wx, wy, wz, aXYZ);
   double wmax = largest(wx, wy, wz);
   return wmax;
 }
 
-void Normalize
+void dfm2::Normalize
 (std::vector<double>& aXYZ,
  double s)
 {
   double cx, cy, cz, wx, wy, wz;
   GetCenterWidth(cx, cy, cz, wx, wy, wz, aXYZ);
-  Translate(-cx, -cy, -cz, aXYZ);
+  Translate(aXYZ,
+            -cx, -cy, -cz);
   double wmax = largest(wx, wy, wz);
-  Scale(s/wmax, aXYZ);
+  Scale(aXYZ,
+        s/wmax);
 }
+
+void dfm2::Translate
+ (double tx, double ty, double tz,
+  const unsigned int nnode_, double* pXYZs_)
+{
+  for(unsigned int ino=0;ino<nnode_;ino++){
+    pXYZs_[ino*3+0] += tx;
+    pXYZs_[ino*3+1] += ty;
+    pXYZs_[ino*3+2] += tz;
+  }
+}
+
+void dfm2::Scale
+ (double s,
+  const unsigned int nnode_, double* pXYZs_)
+{
+  for(unsigned int ino=0;ino<nnode_;ino++){
+    pXYZs_[ino*3+0] *= s;
+    pXYZs_[ino*3+1] *= s;
+    pXYZs_[ino*3+2] *= s;
+  }
+}
+
+// ---------------------------------------
 
 void CenterOfGravity
 (double& cgx, double& cgy, double& cgz,
@@ -620,27 +639,6 @@ void CenterOfGravity_Tri
 
 
 
-void Translate
-(double tx, double ty, double tz,
- const unsigned int nnode_, double* pXYZs_)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] += tx;
-    pXYZs_[ino*3+1] += ty;
-    pXYZs_[ino*3+2] += tz;
-  }
-}
-
-void Scale
-(double s,
- const unsigned int nnode_, double* pXYZs_)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] *= s;
-    pXYZs_[ino*3+1] *= s;
-    pXYZs_[ino*3+2] *= s;
-  }  
-}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -14,6 +14,8 @@
 #include <stack>
 #include <vector>
 
+namespace delfem2 {
+
 class CSliceTriMesh
 {
 public:
@@ -26,10 +28,21 @@ public:
 public:
   class CSegInfo{
   public:
+    void Initialize(int jtri0,
+                    const std::vector<unsigned int>& aTri,
+                    const std::vector<double>& aLevelVtx,
+                    double height);
+    void Pos3D(double pA[3], double pB[3],
+               const std::vector<double>& aXYZ,
+               const std::vector<unsigned int>& aTri) const ;
+    void Pos2D(double pA[2], double pB[2],
+               const std::vector<double>& aXY,
+               const std::vector<unsigned int>& aTri) const ;
+  public:
     int itri;
     int iedA, iedB;
     double r0A, r0B;
-    double pA[3],pB[3];
+//    double pA[3],pB[3];
   };
 public:
   unsigned int iHeight;
@@ -41,12 +54,9 @@ public:
 void Slice_MeshTri3D_Heights(std::vector<CSliceTriMesh>& aCS,
                              ////
                              const std::vector<double>& aHeight,
-                             const double norm[3],
-                             const double origin[3],
-                             const std::vector<double>& aXYZ,
+                             const std::vector<double>& aHeightVtx,
                              const std::vector<unsigned int>& aTri,
                              const std::vector<int>& aTriSur);
-
 
 // T must have following functions
 //     int IndHeight() const;
@@ -158,5 +168,6 @@ void MakeReebGraph
   }
 }
 
+} // namespace delfem2
 
 #endif /* SLICE_H */

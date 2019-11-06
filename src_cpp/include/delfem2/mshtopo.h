@@ -184,6 +184,9 @@ inline const int (*noelElemEdge(MESHELEM_TYPE type))[2]
   return noelElemEdge0[type];
 }
 
+// ---------------------------------------------
+// function related to jagged array
+
 void JArray_Sort(const std::vector<int>& index,
                  std::vector<int>& array);
 void JArray_Sort(const int* index, const int size,
@@ -213,8 +216,11 @@ void AddElement(const MESHELEM_TYPE& femelem_type,
                 std::vector<int>& aElem,
                 std::vector<MESHELEM_TYPE>& aElemType);
 
+namespace delfem2 {
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
                       const std::vector<unsigned int>& aQuad);
+}
+
 void convert2Tri(std::vector<int>& aTri,
                  //
                  const std::vector<int>& aElemInd,

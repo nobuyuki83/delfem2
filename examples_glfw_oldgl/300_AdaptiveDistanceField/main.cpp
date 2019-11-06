@@ -186,7 +186,7 @@ void SetProblem(int iprob)
     {
       std::cout << PATH_INPUT_DIR << std::endl;
       Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ, aTri);
-      Normalize(aXYZ,1.7);
+      delfem2::Normalize(aXYZ,1.7);
       mesh.obj.Init(aXYZ.data(), aXYZ.size()/3,
                     aTri.data(), aTri.size()/3,
                     0.0);

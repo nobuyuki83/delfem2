@@ -805,7 +805,7 @@ void myGlutDisplay(void)
     delfem2::opengl::DrawMeshTet3D_Edge(aXYZ.data(),aXYZ.size()/3, aTet.data(),aTet.size()/4);
     {
       std::vector< std::pair<double,delfem2::CColor> > colorMap;
-      makeHeatMap_BlueGrayRed(colorMap, 0, 1.0);
+      delfem2::ColorMap_BlueGrayRed(colorMap, 0, 1.0);
       delfem2::opengl::DrawMeshTet3D_ScalarP1(aXYZ.data(), aXYZ.size()/3,
                                               aTet.data(), aTet.size()/4,
                                               aVal.data(),

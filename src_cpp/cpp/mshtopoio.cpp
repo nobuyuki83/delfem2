@@ -145,12 +145,14 @@ std::vector<double> CMeshMultiElem::AABB3_MinMax() const
 
 void CMeshMultiElem::ScaleXYZ(double s)
 {
-  Scale(s,aXYZ);
+  delfem2::Scale(aXYZ,
+                 s);
 }
 
 void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
 {
-  Translate(x,y,z, aXYZ);
+  delfem2::Translate(aXYZ,
+                     x,y,z);
 }
 
 void Load_Mtl

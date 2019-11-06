@@ -23,20 +23,21 @@
 #include "delfem2/primitive.h"
 #include "delfem2/slice.h"
 
-
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
 
+namespace dfm2 = delfem2;
+
 TEST(slice,test1){
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  std::vector<CSliceTriMesh> aCS;
+  std::vector<dfm2::CSliceTriMesh> aCS;
   std::vector< std::set<unsigned int> > ReebGraphCS;
   ////
   Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
-  Normalize(aXYZ);
+  delfem2::Normalize(aXYZ);
   std::vector<int> aTriSurRel;
   makeSurroundingRelationship(aTriSurRel,
                               aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
@@ -52,10 +53,17 @@ TEST(slice,test1){
   aHeight.push_back(+0.3);
   const double nrm[3] = {0,1,0};
   const double org[3] = {0,0,0};
-  Slice_MeshTri3D_Heights(aCS,
-                          aHeight,
-                          nrm, org,
-                          aXYZ,aTri,aTriSurRel);
+  std::vector<double> aHeightVtx(aXYZ.size()/3);
+  for(unsigned int ip=0;ip<aXYZ.size()/3;++ip){
+    double x0 = aXYZ[ip*3+0] - org[0];
+    double y0 = aXYZ[ip*3+1] - org[1];
+    double z0 = aXYZ[ip*3+2] - org[2];
+    aHeightVtx[ip] = nrm[0]*x0 + nrm[1]*y0 + nrm[2]*z0;
+  }
+  delfem2::Slice_MeshTri3D_Heights(aCS,
+                                   aHeight,
+                                   aHeightVtx,
+                                   aTri,aTriSurRel);
   MakeReebGraph(ReebGraphCS,
                 aCS, aTri, aTriSurRel);
   EXPECT_EQ( aCS.size(), ReebGraphCS.size() );
@@ -333,7 +341,7 @@ TEST(meshtopo,quad_subdiv0)
     EXPECT_EQ(aQuad0.size(),6*4);
     {
       std::vector<unsigned int> aTri0;
-      convert2Tri_Quad(aTri0, aQuad0);
+      delfem2::convert2Tri_Quad(aTri0, aQuad0);
       EXPECT_EQ(aTri0.size(),12*3);
     }
   }

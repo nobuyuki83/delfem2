@@ -208,7 +208,6 @@ void GenMesh(){
                      elen );
     }
   }
-  ////
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
@@ -219,7 +218,7 @@ void GenMesh(){
   }
 }
 
-//////////////////////////////////
+// --------------------------------------
 
 void myGlutDisplay(void)
 {

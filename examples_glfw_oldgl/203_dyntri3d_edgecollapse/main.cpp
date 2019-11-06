@@ -41,12 +41,12 @@ void SetNewProblem()
     double cx,cy,cz, wx,wy,wz;
     GetCenterWidth(cx,cy,cz, wx,wy,wz,
                    nnode,pXYZs);
-    Translate(-cx,-cy,-cz, nnode,pXYZs);
+    delfem2::Translate(-cx,-cy,-cz, nnode,pXYZs);
     double wm = wx;
     wm = ( wx > wm ) ? wx : wm;
     wm = ( wy > wm ) ? wy : wm;
     wm = ( wz > wm ) ? wz : wm;
-    Scale(2.0/wm,nnode,pXYZs);
+    delfem2::Scale(2.0/wm,nnode,pXYZs);
   }
   aPo.resize(nnode);
   aVec3.resize(nnode);

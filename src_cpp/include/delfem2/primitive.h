@@ -15,6 +15,9 @@
 
 namespace delfem2 {
 
+// -----------------------
+// 3D primitives
+  
 // y axis is the pole
 void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                       double r,
@@ -38,14 +41,19 @@ void MeshTri3D_Torus(std::vector<double>& aXYZ,
 
                               
 void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad);
-void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
-                     int nx, int ny);
 void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                         double x_min, double x_max,
                         double y_min, double y_max,
                         double z_min, double z_max);
+  
+// -----------------------
+// 2D primitives
+  
+void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
+                     int nx, int ny);
 
 // -------------------------------------------------------------
+// primivive classes from here
 
 class CPlane: public CSDF3
 {
