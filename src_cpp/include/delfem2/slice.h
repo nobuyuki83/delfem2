@@ -15,41 +15,48 @@
 #include <vector>
 
 namespace delfem2 {
-
-class CSliceTriMesh
-{
-public:
-  CSliceTriMesh(unsigned int ih): iHeight(ih) {}
   
-  int IndHeight() const { return iHeight; } // requirement for MakeReebGraph
-  unsigned int NumSeg() const { return aTriInfo.size(); } // requirement for MakeReebGraph
-  unsigned int IndTri_Seg(unsigned int iseg) const { return aTriInfo[iseg].itri; } // requirement for MakeReebGraph
-  
+class CSegInfo{
 public:
-  class CSegInfo{
-  public:
-    void Initialize(int jtri0,
-                    const std::vector<unsigned int>& aTri,
-                    const std::vector<double>& aLevelVtx,
-                    double height);
-    void Pos3D(double pA[3], double pB[3],
-               const std::vector<double>& aXYZ,
-               const std::vector<unsigned int>& aTri) const ;
-    void Pos2D(double pA[2], double pB[2],
-               const std::vector<double>& aXY,
-               const std::vector<unsigned int>& aTri) const ;
-  public:
-    int itri;
-    int iedA, iedB;
-    double r0A, r0B;
-//    double pA[3],pB[3];
-  };
+  void Initialize(int jtri0,
+                  const unsigned int* aTri,
+                  unsigned int nTri,
+                  const double* aLevelVtx,
+                  double height);
+  void Pos3D(double pA[3], double pB[3],
+             const std::vector<double>& aXYZ,
+             const std::vector<unsigned int>& aTri) const ;
+  void Pos2D(double pA[2], double pB[2],
+             const double* aXY,
+             const unsigned int* aTri) const ;
 public:
-  unsigned int iHeight;
-  std::vector<CSegInfo> aTriInfo;
+  int itri;
+  int iedA, iedB;
+  double r0A, r0B;
 };
 
+void AddContour(std::vector<CSegInfo>& aSeg,
+                double thres,
+                const unsigned int* aTri,
+                unsigned int nTri,
+                const double* aVal);
 
+// ---------------------------------------
+  
+class CSliceTriMesh
+{
+  public:
+    CSliceTriMesh(unsigned int ih): iHeight(ih) {}
+    
+    int IndHeight() const { return iHeight; } // requirement for MakeReebGraph
+    unsigned int NumSeg() const { return aTriInfo.size(); } // requirement for MakeReebGraph
+    unsigned int IndTri_Seg(unsigned int iseg) const { return aTriInfo[iseg].itri; } // requirement for MakeReebGraph
+    
+  public:
+  public:
+    unsigned int iHeight;
+    std::vector<CSegInfo> aTriInfo;
+};
 
 void Slice_MeshTri3D_Heights(std::vector<CSliceTriMesh>& aCS,
                              ////

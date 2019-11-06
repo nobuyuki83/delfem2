@@ -43,10 +43,11 @@ void IndexElement_OverlapLevels_MeshTri3D
 
 // ----------------------------------------------
 
-void dfm2::CSliceTriMesh::CSegInfo::Initialize
+void dfm2::CSegInfo::Initialize
 (int jtri0,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aLevelVtx,
+ const unsigned int* aTri,
+ unsigned int nTri,
+ const double* aLevelVtx,
  double height)
 {
   this->itri = jtri0;
@@ -85,7 +86,7 @@ void dfm2::CSliceTriMesh::CSegInfo::Initialize
   }
 }
 
-void dfm2::CSliceTriMesh::CSegInfo::Pos3D
+void dfm2::CSegInfo::Pos3D
  (double pA[3], double pB[3],
   const std::vector<double>& aXYZ,
   const std::vector<unsigned int>& aTri) const 
@@ -105,10 +106,10 @@ void dfm2::CSliceTriMesh::CSegInfo::Pos3D
   pB[2] = (1.0-this->r0B)*aP[(this->iedB+1)%3][2] + (this->r0B)*aP[(this->iedB+2)%3][2];
 }
 
-void dfm2::CSliceTriMesh::CSegInfo::Pos2D
+void dfm2::CSegInfo::Pos2D
 (double pA[2], double pB[2],
- const std::vector<double>& aXY,
- const std::vector<unsigned int>& aTri) const
+ const double* aXY,
+ const unsigned int* aTri) const
 {
   const unsigned int i0 = aTri[this->itri*3+0];
   const unsigned int i1 = aTri[this->itri*3+1];
@@ -121,6 +122,30 @@ void dfm2::CSliceTriMesh::CSegInfo::Pos2D
   pA[1] = (1.0-this->r0A)*aP[(this->iedA+1)%3][1] + (this->r0A)*aP[(this->iedA+2)%3][1];
   pB[0] = (1.0-this->r0B)*aP[(this->iedB+1)%3][0] + (this->r0B)*aP[(this->iedB+2)%3][0];
   pB[1] = (1.0-this->r0B)*aP[(this->iedB+1)%3][1] + (this->r0B)*aP[(this->iedB+2)%3][1];
+}
+
+void dfm2::AddContour
+ (std::vector<dfm2::CSegInfo>& aSeg,
+  double thres,
+  const unsigned int* aTri,
+  unsigned int nTri,
+  const double* aVal)
+{
+  for(unsigned int itri=0;itri<nTri;++itri){
+    double v0 = aVal[ aTri[itri*3+0] ];
+    double v1 = aVal[ aTri[itri*3+1] ];
+    double v2 = aVal[ aTri[itri*3+2] ];
+    if(   (v0-thres)*(v1-thres) >= 0
+       && (v1-thres)*(v2-thres) >= 0
+       && (v2-thres)*(v0-thres) >= 0 ){
+      continue;
+    }
+    delfem2::CSegInfo seg;
+    seg.Initialize(itri,
+                   aTri,nTri,aVal,
+                   thres);
+    aSeg.push_back(seg);
+  }
 }
 
 // ----------------------------------------------
@@ -142,8 +167,10 @@ bool TraverseBoundaryLoop
     assert( aFlgSeg[iseg_next] == 0 );
     int jtri0 = aCST[iseg_next];
     aFlgSeg[iseg_next] = 1;
-    dfm2::CSliceTriMesh::CSegInfo info;
-    info.Initialize(jtri0,aTri,aLevelVtx,height);
+    dfm2::CSegInfo info;
+    info.Initialize(jtri0,
+                    aTri.data(),aTri.size()/3,
+                    aLevelVtx.data(),height);
     cs.aTriInfo.push_back(info);
     unsigned int iedge_next = info.iedB;
     int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
