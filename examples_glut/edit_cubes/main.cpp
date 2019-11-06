@@ -12,7 +12,7 @@
 #include <complex>
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/voxel.h"
 #include "delfem2/camera.h"
 

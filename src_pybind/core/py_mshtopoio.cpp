@@ -105,10 +105,10 @@ PyMeshQuad3D_Subviv
              aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
   ///////
   std::vector<double> aXYZ1;
-  SubdivisionPoints_QuadCatmullClark(aXYZ1,
-                                     aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
-                                     aQuad0.data(),aQuad0.shape()[0],
-                                     aXYZ0.data(), aXYZ0.shape()[0]);
+  delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
+                                              aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
+                                              aQuad0.data(),aQuad0.shape()[0],
+                                              aXYZ0.data(), aXYZ0.shape()[0]);
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
   py::array_t<unsigned int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
   return std::make_tuple(npXYZ1,npQuad1);
@@ -131,10 +131,10 @@ PyMeshHex3D_Subviv
             aHex0.data(), aHex0.shape()[0], aXYZ0.shape()[0]);
   ///////
   std::vector<double> aXYZ1;
-  SubdivisionPoints_Hex(aXYZ1,
-                        psupIndHex0,psupHex0,aQuadHex0,
-                        aHex0.data(), aHex0.shape()[0],
-                        aXYZ0.data(), aXYZ0.shape()[0]);
+  delfem2::SubdivisionPoints_Hex(aXYZ1,
+                                 psupIndHex0,psupHex0,aQuadHex0,
+                                 aHex0.data(), aHex0.shape()[0],
+                                 aXYZ0.data(), aXYZ0.shape()[0]);
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
   py::array_t<unsigned int> npHex1({(int)aHex1.size()/8,8}, aHex1.data());
   return std::make_tuple(npXYZ1,npHex1);

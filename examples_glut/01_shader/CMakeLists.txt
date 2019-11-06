@@ -26,8 +26,7 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_SRC}/camera.cpp      
-  ${DELFEM2_INC}/camera.h
+  ${DELFEM2_SRC}/camera.cpp      ${DELFEM2_INC}/camera.h
   
   ${DELFEM2_INC}/opengl/gl_tex.cpp
   ${DELFEM2_INC}/opengl/gl_tex.h

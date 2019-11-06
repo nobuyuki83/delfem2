@@ -15,7 +15,7 @@
 #include <time.h>
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/paramgeo_v23.h"
 
 #include <GLFW/glfw3.h>

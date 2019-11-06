@@ -12,7 +12,7 @@
 #include <cstdlib>
 
 #include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/bv.h"
 #include "delfem2/funcs.h"
 #include "delfem2/vec2.h"

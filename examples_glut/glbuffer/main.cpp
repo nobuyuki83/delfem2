@@ -9,7 +9,7 @@
 #include <math.h>
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 // ------
 
 #include "glad/glad.h"

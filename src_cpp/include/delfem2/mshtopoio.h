@@ -14,7 +14,7 @@
 #include <fstream>
 
 #include "delfem2/mshio.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/funcs.h"
 
@@ -85,10 +85,10 @@ public:
                  aQuad0.data(), aQuad0.size()/4, aXYZ0.size()/3);
       ///////
       std::vector<double>& aXYZ1 = em.aPos;
-      SubdivisionPoints_QuadCatmullClark(aXYZ1,
-                                         aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
-                                         aQuad0.data(),aQuad0.size()/4,
-                                         aXYZ0.data(),aXYZ0.size()/3);
+      delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
+                                                  aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
+                                                  aQuad0.data(),aQuad0.size()/4,
+                                                  aXYZ0.data(),aXYZ0.size()/3);
     }
     return em;
   }

@@ -14,7 +14,7 @@
 #include "delfem2/bvh.h"
 #include "delfem2/sdf.h"
 #include "delfem2/primitive.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/objfunc_v23.h"

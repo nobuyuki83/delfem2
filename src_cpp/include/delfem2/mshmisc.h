@@ -182,6 +182,8 @@ void LaplacianSmoothing(std::vector<double>& aXYZ,
 
 // ---------------------------------------------------------
 
+namespace delfem2 {
+
 void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         //
                                         const std::vector<unsigned int>& aQuad1,
@@ -206,6 +208,7 @@ void SubdivisionPoints_Hex(std::vector<double>& aXYZ1,
                            const std::vector<unsigned int>& aQuadHex0,
                            const unsigned int* aHex0, int nHex0,
                            const double* aXYZ0, int nXYZ0);
-
+  
+}
 
 #endif

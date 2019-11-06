@@ -10,7 +10,7 @@
 #include <set>
 #include "delfem2/mat3.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/cad3d.h"
 
 #include "delfem2/v23m3q.h"

@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
-#include "delfem2/msh.h"
+#include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/primitive.h"
 
@@ -48,10 +48,10 @@ int main(int argc,char* argv[])
                aQuad0.data(), aQuad0.size()/4,
                aXYZ0.size()/3);
     std::vector<double>& aXYZ1 = aaXYZ[il+1];
-    SubdivisionPoints_QuadCatmullClark(aXYZ1,
-                                       aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
-                                       aQuad0.data(), aQuad0.size()/4,
-                                       aXYZ0.data(),  aXYZ0.size()/3);
+    delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
+                                                aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
+                                                aQuad0.data(), aQuad0.size()/4,
+                                                aXYZ0.data(),  aXYZ0.size()/3);
   }
   
   // end computing subdivision
