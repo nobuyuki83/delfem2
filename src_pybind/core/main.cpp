@@ -21,6 +21,7 @@
 #include "delfem2/bv.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
+#include "delfem2/slice.h"
 #include "delfem2/evalmathexp.h"
 
 #include "delfem2/cad2d.h"
@@ -41,7 +42,8 @@ void init_field(py::module &m);
 void init_fem(py::module &m);
 void init_sdf(py::module &m);
 
-
+// ---------------------------------
+// voxel related
 
 std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
 (const CVoxelGrid3D& vg)
@@ -60,6 +62,8 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   vg.GetHex(aXYZ, aHex);
   return std::make_tuple(aXYZ,aHex);
 }
+
+// -------------------------------------------
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>>
 NumpyXYTri_MeshDynTri2D
@@ -88,23 +92,6 @@ py::array_t<int> PyCad2D_GetPointsEdge
   return py::array_t<int>((int)aIdP.size(), aIdP.data());
 }
 
-
-void PyCad2D_ImportSVG
-(CCad2D& cad,
- const std::string& path_svg,
- double scale_x,
- double scale_y)
-{
-  std::vector<CCad2D_EdgeGeo> aEdge;
-  LoopEdgeCCad2D_ReadSVG(aEdge,
-                         path_svg);
-  Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
-  if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
-  aEdge = RemoveEdgeWithZeroLength(aEdge);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
-  cad.AddFace(aEdge);
-}
-
 py::array_t<double> PyMVC
 (const py::array_t<double>& XY,
  const py::array_t<double>& XY_bound)
@@ -123,7 +110,6 @@ py::array_t<double> PyMVC
   return aW;
 }
 
-
 py::array_t<double> PyRotMat3_Cartesian(const std::vector<double>& d)
 {
   CMatrix3 m;
@@ -136,6 +122,9 @@ py::array_t<double> PyRotMat3_Cartesian(const std::vector<double>& d)
   }
   return npR;
 }
+
+// -----------------------------------------------
+// Rigging related from here
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>, py::array_t<double>, py::array_t<unsigned int>>
 PyGLTF_GetMeshInfo
@@ -208,6 +197,64 @@ void PyUpdateRigSkin
                 BA.aRigBone,
                 npRigWeight.data(),
                 npRigJoint.data());
+}
+
+// Rigging related ends here
+// -----------------------------------------
+
+void PyCad2D_ImportSVG
+ (CCad2D& cad,
+  const std::string& path_svg,
+  double scale_x,
+  double scale_y)
+{
+  std::vector<CCad2D_EdgeGeo> aEdge;
+  LoopEdgeCCad2D_ReadSVG(aEdge,
+                         path_svg);
+  Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
+  if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
+  aEdge = RemoveEdgeWithZeroLength(aEdge);
+  for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+  cad.AddFace(aEdge);
+}
+
+
+void PyIsoSurfaceToSVG
+ (const py::array_t<double>& npXY,
+  const py::array_t<unsigned int>& npTri,
+  const py::array_t<double>& npVal,
+  double scale)
+{
+  assert( AssertNumpyArray2D(npXY, -1, 2) );
+  assert( AssertNumpyArray2D(npTri, -1, 3) );
+  assert( npVal.ndim() == 1 );
+  assert( npVal.size() == npXY.shape()[0] );
+  assert( npVal.strides()[0] == sizeof(double) );
+  std::vector<dfm2::CSegInfo> aSeg;
+  dfm2::AddContour(aSeg,
+                   0.0,
+                   npTri.data(), npTri.shape()[0],
+                   npVal.data());
+  std::vector<double> aXY_Line(aSeg.size()*4);
+  for(unsigned int iseg=0;iseg<aSeg.size();++iseg){
+    double pA[2], pB[2];
+    aSeg[iseg].Pos2D(pA, pB,
+                     npXY.data(), npTri.data());
+    aXY_Line[iseg*4+0] = pA[0]*scale;
+    aXY_Line[iseg*4+1] = pA[1]*scale;
+    aXY_Line[iseg*4+2] = pB[0]*scale;
+    aXY_Line[iseg*4+3] = pB[1]*scale;
+  }
+  std::ofstream fout("hoge.svg");
+  fout << "<?xml version=\"1.0\"?>" << std::endl;;
+  fout << "<svg xmlns=\"http://www.w3.org/2000/svg\">" << std::endl;;
+  for(unsigned int il=0;il<aXY_Line.size()/4;++il){
+    fout << "<line";
+    fout << " x1=\"" << aXY_Line[il*4+0] << "\" y1=\"" << -aXY_Line[il*4+1] << "\"";
+    fout << " x2=\"" << aXY_Line[il*4+2] << "\" y2=\"" << -aXY_Line[il*4+3] << "\"";
+    fout << " stroke=\"black\" stroke-width=\"2\" />" << std::endl;
+  }
+  fout << "</svg>" << std::endl;
 }
 
 
@@ -328,6 +375,8 @@ PYBIND11_MODULE(c_core, m) {
   
   m.def("mvc",              &PyMVC);
   m.def("rotmat3_cartesian", &PyRotMat3_Cartesian);
+  
+  m.def("isoline_svg", &PyIsoSurfaceToSVG);
 }
 
 

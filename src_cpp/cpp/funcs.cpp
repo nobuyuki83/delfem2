@@ -282,7 +282,7 @@ std::string Get_Parentheses
   return std::string();
 }
 
-////////////////////////////////////////////////////////
+// ----------------------------------------------------------
 
 // Read somehting like this {"command":"meshing_polygon","aXY_vertex":"0,0,0,30,30,30,30,0"}
 std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn)
@@ -690,6 +690,7 @@ std::string Str_SVGPolygon
 (const std::vector<double>& aXY,
  double scale)
 {
+  /*
   double min_x,max_x, min_y,max_y;
   min_x = max_x = aXY[0];
   min_y = max_y = aXY[1];
@@ -702,6 +703,7 @@ std::string Str_SVGPolygon
   int w0 = (max_x-min_x)*scale;
   int h0 = (max_y-min_y)*scale;
   std::ostringstream oss;
+  oss << "<?xml version=\"1.0\"?>\n";
   oss << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"";
   oss << w0;
   oss << "\" height=\"";
@@ -713,6 +715,18 @@ std::string Str_SVGPolygon
       double y0 = (max_y-aXY[ixy*2+1])*scale;
       oss << x0 << "," << y0 << " ";
     }
+  oss << "\" fill=\"blue\"></polygon>\n</svg>";
+  return oss.str();
+   */
+  std::ostringstream oss;
+  oss << "<?xml version=\"1.0\"?>\n";
+  oss << "<svg xmlns=\"http://www.w3.org/2000/svg\">\n";
+  oss << "<polygon points=\"";
+  for(unsigned int ixy=0;ixy<aXY.size()/2;++ixy){
+    double x0 = +aXY[ixy*2+0]*scale;
+    double y0 = -aXY[ixy*2+1]*scale;
+    oss << x0 << "," << y0 << " ";
+  }
   oss << "\" fill=\"blue\"></polygon>\n</svg>";
   return oss.str();
 }

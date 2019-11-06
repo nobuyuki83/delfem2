@@ -39,7 +39,7 @@ void myGlutDisplay(void)
   for(int iloop=0;iloop<aCS.size();++iloop){
     ::glBegin(GL_LINE_LOOP);
     for(int iseg=0;iseg<aCS[iloop].aTriInfo.size();++iseg){
-      const delfem2::CSliceTriMesh::CSegInfo& seg = aCS[iloop].aTriInfo[iseg];
+      const delfem2::CSegInfo& seg = aCS[iloop].aTriInfo[iseg];
       double pA[3],pB[3]; seg.Pos3D(pA,pB,
                                     aXYZ,aTri);
       ::glVertex3d(pA[0],pA[1],pA[2]);

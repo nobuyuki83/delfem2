@@ -15,6 +15,8 @@ from .c_core import CppMeshDynTri3D, CppCad2D
 from .c_core import CppGLTF, CppGLTF_GetMeshInfo, CppGLTF_GetBones, update_rig_skin, update_bone_transform
 from .c_core import RigidBodyAssembly_Static, RigidBody, Joint
 
+from .c_core import isoline_svg
+
 from .fem import FieldValueSetter
 from .fem import PBD, PBD_Cloth
 from .fem import \

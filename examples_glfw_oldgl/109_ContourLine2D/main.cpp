@@ -20,12 +20,14 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl2_color.h"
 
+namespace dfm2 = delfem2;
+
 // -------------------------
 
 std::vector<double> aXY;
 std::vector<unsigned int> aTri;
 std::vector<double> aVal;
-std::vector<delfem2::CSliceTriMesh::CSegInfo> aSeg;
+std::vector<delfem2::CSegInfo> aSeg;
 
 // ---------------------------
 
@@ -48,7 +50,7 @@ void myGlutDisplay(void)
   for(int iseg=0;iseg<aSeg.size();++iseg){
     double pA[2], pB[2];
     aSeg[iseg].Pos2D(pA,pB,
-                     aXY, aTri);
+                     aXY.data(), aTri.data());
     ::glVertex2dv(pA);
     ::glVertex2dv(pB);
   }
@@ -101,19 +103,10 @@ int main(int argc,char* argv[])
       static int iframe = 0;
       double thres = 0.9*sin(iframe*0.001);
       aSeg.clear();
-      for(unsigned int itri=0;itri<aTri.size()/3;++itri){
-        double v0 = aVal[ aTri[itri*3+0] ];
-        double v1 = aVal[ aTri[itri*3+1] ];
-        double v2 = aVal[ aTri[itri*3+2] ];
-        if(   (v0-thres)*(v1-thres) >= 0
-           && (v1-thres)*(v2-thres) >= 0
-           && (v2-thres)*(v0-thres) >= 0 ){
-          continue;
-        }
-        delfem2::CSliceTriMesh::CSegInfo seg;
-        seg.Initialize(itri, aTri, aVal, thres);
-        aSeg.push_back(seg);
-      }
+      dfm2::AddContour(aSeg,
+                       thres,
+                       aTri.data(), aTri.size()/3,
+                       aVal.data());
       iframe += 1;
     }
     // ------------------

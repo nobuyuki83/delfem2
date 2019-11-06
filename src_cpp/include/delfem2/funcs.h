@@ -6,8 +6,8 @@
  */
 
 
-#ifndef FUNCS_H
-#define FUNCS_H
+#ifndef DFM2_FUNCS_H
+#define DFM2_FUNCS_H
 
 #include <fstream>
 #include <map>
