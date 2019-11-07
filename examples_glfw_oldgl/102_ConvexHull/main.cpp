@@ -25,7 +25,6 @@ static void myGlVertex3d(int i, const std::vector<CVector3>& aV)
   ::glVertex3d(v.x,v.y,v.z);
 }
 
-
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
@@ -48,7 +47,7 @@ int main(int argc,char* argv[])
           aXYZ[ixyz].y = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
           aXYZ[ixyz].z = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
         }
-        ConvexHull(aTri,aXYZ);
+        delfem2::ConvexHull(aTri,aXYZ);
       }
       iframe = (iframe + 1)%300;
     }

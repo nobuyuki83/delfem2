@@ -1,5 +1,7 @@
-#ifndef NOISE_H
-#define NOISE_H
+#ifndef DFM2_NOISE_H
+#define DFM2_NOISE_H
+
+namespace delfem2 {
 
 void Shuffle(std::vector<int>& X)
 {
@@ -143,6 +145,7 @@ double noise_perlin_3d_oct
   }
   return val;
 }
-
+  
+}
 
 #endif /* noise_h */

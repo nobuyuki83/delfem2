@@ -17,6 +17,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+namespace dfm2 = delfem2;
+
+// ---------------------------------------------------------------
+
 static bool isnan_vector3(double x) { return x!=x; }
 
 // there is another impelemntation in quat.h so this is "static function"
@@ -2321,7 +2325,7 @@ double volume_Tet
   return volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
 }
 
-///////
+// -------------------------------------
 
 bool IsOut
 (int itri, const CVector3& v,
@@ -2339,7 +2343,7 @@ bool IsOut
   return dot > 0;
 }
 
-void ConvexHull
+void dfm2::ConvexHull
 (std::vector<int>& aTri,
  const std::vector<CVector3>& aXYZ)
 {

@@ -237,7 +237,7 @@ void CCad3D_Face::MovePoints
       if( aPInfo[ip].itype != 2 ){ continue; }
       const std::vector<double>& aW1 = aPInfo[ip].aW1;
       assert( aW1.size() == 3 );
-      CVector3 p =  getPointCoonsTri_CubicBezierEdge(aW1[0],aW1[1],aW1[2],aP);
+      CVector3 p =  delfem2::getPointCoonsTri_CubicBezierEdge(aW1[0],aW1[1],aW1[2],aP);
       aXYZ[ip*3+0] = p.x;
       aXYZ[ip*3+1] = p.y;
       aXYZ[ip*3+2] = p.z;
@@ -268,7 +268,7 @@ void CCad3D_Face::MovePoints
       const double u = aW1[1] + aW1[2];
       const double v = aW1[2] + aW1[3];
 //      CVector3 p =  getPointCoons_CubicBezier(u,v,aP);
-      CVector3 p =  getPointHermetianQuad(u,v,aP);
+      CVector3 p =  dfm2::getPointHermetianQuad(u,v,aP);
       aXYZ[ip*3+0] = p.x;
       aXYZ[ip*3+1] = p.y;
       aXYZ[ip*3+2] = p.z;

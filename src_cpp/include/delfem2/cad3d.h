@@ -81,7 +81,7 @@ public:
     const int ndiv = (int)aP.size()-1;
     for(int ip=0;ip<ndiv+1;++ip){
       double t = (double)ip/ndiv;
-      aP[ip] = getPointCubicBezierCurve(t, p0, q0, q1, p1);
+      aP[ip] = delfem2::getPointCubicBezierCurve(t, p0, q0, q1, p1);
     }
   }
   void Initialize(const std::vector<CCad3D_Vertex>& aVertex, double elen){
@@ -94,13 +94,13 @@ public:
   }
   bool isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const;
   bool GetParameterIntersection(double& t, const CVector3& org, const CVector3& nrm) const {
-    return getParameterCubicBezier_IntersectionWithPlane(t, org,nrm, p0,q0,q1,p1);
+    return delfem2::getParameterCubicBezier_IntersectionWithPlane(t, org,nrm, p0,q0,q1,p1);
   }
   CVector3 GetPosInEdge(double t) const {
-    return getPointCubicBezierCurve(t, p0, q0, q1, p1);
+    return delfem2::getPointCubicBezierCurve(t, p0, q0, q1, p1);
   }
   CVector3 GetTangentInEdge(double t) const {
-    return getTangentCubicBezierCurve(t, p0, q0, q1, p1);
+    return delfem2::getTangentCubicBezierCurve(t, p0, q0, q1, p1);
   }
   CVector3 getVtxPos(bool is_root, int ioff) const {
     if( is_root ){

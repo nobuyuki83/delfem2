@@ -31,6 +31,8 @@ std::vector<CVector2> aCtrlPoint;
 const int nsmpl = 100;
 std::vector<CVector2> polyline0; // current test
 
+namespace dfm2 = delfem2;
+
 // -----------------------------------------------
 
 void SetExample(int ndeg, int ncp)
@@ -45,7 +47,7 @@ void SetExample(int ndeg, int ncp)
   aKnotMulti.assign(ndiv+1,1);
   aKnotMulti[   0] = ndeg+1;
   aKnotMulti[ndiv] = ndeg+1;
-  FlatKnot(aKnotFlat, aKnotMulti, aKnot);
+  dfm2::FlatKnot(aKnotFlat, aKnotMulti, aKnot);
   for(unsigned int ik=0;ik<aKnotFlat.size();++ik){
     std::cout << "knot" << ik << " " << aKnotFlat[ik] << std::endl;
   }
@@ -80,7 +82,7 @@ int main(int argc,char* argv[])
   // -----------
   
   SetExample(3,6);
-  SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
+  dfm2::SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
   
   // -----------
   
@@ -93,7 +95,7 @@ int main(int argc,char* argv[])
           aCtrlPoint[icp].x += ((double)rand()/RAND_MAX-0.5)*0.1;
           aCtrlPoint[icp].y += ((double)rand()/RAND_MAX-0.5)*0.1;
         }
-        SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
+        dfm2::SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
       }
       iframe = (iframe+1)%50;
     }
