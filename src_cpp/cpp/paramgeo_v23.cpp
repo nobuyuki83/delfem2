@@ -8,16 +8,32 @@
 #include "delfem2/vec3.h"
 #include "delfem2/paramgeo_v23.h"
 
-CVector3 getPointCoonsQuad_CubicBezier
-(double u, double v,
- CVector3 aP[12])
+namespace dfm2 = delfem2;
+
+// -----------------------------------
+
+CVector3 QuadBilinear
+ (int iq, double r0, double r1,
+  std::vector<int>& aQuad,
+  std::vector<CVector3>& aPoint)
 {
-  CVector3 p01u = getPointCubicBezierCurve(u, aP[0], aP[1], aP[2], aP[3]);
-  CVector3 p32u = getPointCubicBezierCurve(u, aP[9], aP[8], aP[7], aP[6]);
+  int i0 = aQuad[iq*4+0];
+  int i1 = aQuad[iq*4+1];
+  int i2 = aQuad[iq*4+2];
+  int i3 = aQuad[iq*4+3];
+  return (1-r0)*(1-r1)*aPoint[i0] + r0*(1-r1)*aPoint[i1] + r0*r1*aPoint[i2] + (1-r0)*r1*aPoint[i3];
+}
+
+CVector3 getPointCoonsQuad_CubicBezier
+ (double u, double v,
+  CVector3 aP[12])
+{
+  CVector3 p01u = dfm2::getPointCubicBezierCurve(u, aP[0], aP[1], aP[2], aP[3]);
+  CVector3 p32u = dfm2::getPointCubicBezierCurve(u, aP[9], aP[8], aP[7], aP[6]);
   CVector3 p = (1-v)*p01u + v*p32u;
-  ///
-  CVector3 q03v = getPointCubicBezierCurve(v, aP[0], aP[11], aP[10], aP[9]);
-  CVector3 q12v = getPointCubicBezierCurve(v, aP[3], aP[ 4], aP[ 5], aP[6]);
+    ///
+  CVector3 q03v = dfm2::getPointCubicBezierCurve(v, aP[0], aP[11], aP[10], aP[9]);
+  CVector3 q12v = dfm2::getPointCubicBezierCurve(v, aP[3], aP[ 4], aP[ 5], aP[6]);
   CVector3 q = (1-u)*q03v + u*q12v;
   
   CVector3 r = (1-u)*(1-v)*aP[0] + u*(1-v)*aP[3] + u*v*aP[6] + (1-u)*v*aP[9];
@@ -25,13 +41,35 @@ CVector3 getPointCoonsQuad_CubicBezier
   return p+q-r;
 }
 
-CVector3 getPointCoonsTri_CubicBezierEdge
+void getCubicBezierSurface
+ (const int n, // number of segment
+  std::vector<CVector3>& aP,
+  const std::vector<CVector3>& aCP)
+{
+  aP.resize((n+1)*(n+1));
+  for (int i = 0; i<(n+1); ++i){
+    for (int j = 0; j<(n+1); ++j){
+      double u = (double)i/n;
+      double v = (double)j/n;
+      aP[i*(n+1)+j] = dfm2::getPointSurfaceBezierCubic(u,v,
+                                                       aCP[ 0], aCP[ 1], aCP[ 2], aCP[ 3],
+                                                       aCP[ 4], aCP[ 5], aCP[ 6], aCP[ 7],
+                                                       aCP[ 8], aCP[ 9], aCP[10], aCP[11],
+                                                       aCP[12], aCP[13], aCP[14], aCP[15]);
+    }
+  }
+}
+
+// ---------------------------------------------
+
+
+CVector3 dfm2::getPointCoonsTri_CubicBezierEdge
 (double u, double v, double w,
  CVector3 aP[9])
 {
-  CVector3 peu = getPointCubicBezierCurve(w/(1-u), aP[3], aP[4], aP[5], aP[6]);
-  CVector3 pev = getPointCubicBezierCurve(u/(1-v), aP[6], aP[7], aP[8], aP[0]);
-  CVector3 pew = getPointCubicBezierCurve(v/(1-w), aP[0], aP[1], aP[2], aP[3]);
+  CVector3 peu = dfm2::getPointCubicBezierCurve(w/(1-u), aP[3], aP[4], aP[5], aP[6]);
+  CVector3 pev = dfm2::getPointCubicBezierCurve(u/(1-v), aP[6], aP[7], aP[8], aP[0]);
+  CVector3 pew = dfm2::getPointCubicBezierCurve(v/(1-w), aP[0], aP[1], aP[2], aP[3]);
   CVector3 pu = (1-u)*peu + u*aP[0];
   CVector3 pv = (1-v)*pev + v*aP[3];
   CVector3 pw = (1-w)*pew + w*aP[6];
@@ -44,7 +82,7 @@ CVector3 getPointCoonsTri_CubicBezierEdge
   
 }
 
-CVector3 getPointHermetianQuad
+CVector3 dfm2::getPointHermetianQuad
 (double u, double v,
  CVector3 aP[12])
 {
@@ -64,7 +102,7 @@ CVector3 getPointHermetianQuad
   return p+q+r;
 }
 
-bool getParameterCubicBezier_IntersectionWithPlane
+bool dfm2::getParameterCubicBezier_IntersectionWithPlane
 (double& t,
  const CVector3& org, const CVector3& nrm,
  const CVector3& p1, const CVector3& p2, const CVector3& p3, const CVector3& p4)
@@ -90,7 +128,7 @@ bool getParameterCubicBezier_IntersectionWithPlane
   return false;
 }
 
-CVector3 getPointCubicBezierCurve
+CVector3 dfm2::getPointCubicBezierCurve
 (double t,
  const CVector3& p1, const CVector3& p2, const CVector3& p3, const CVector3& p4)
 {
@@ -101,7 +139,7 @@ CVector3 getPointCubicBezierCurve
   + tp*tp*tp*p1;
 }
 
-CVector3 getTangentCubicBezierCurve
+CVector3 dfm2::getTangentCubicBezierCurve
 (double t,
  const CVector3& p1, const CVector3& p2, const CVector3& p3, const CVector3& p4)
 {
@@ -112,20 +150,7 @@ CVector3 getTangentCubicBezierCurve
   - 3*tp*tp*p1;
 }
 
-CVector3 QuadBilinear
-(int iq, double r0, double r1,
- std::vector<int>& aQuad,
- std::vector<CVector3>& aPoint)
-{
-  int i0 = aQuad[iq*4+0];
-  int i1 = aQuad[iq*4+1];
-  int i2 = aQuad[iq*4+2];
-  int i3 = aQuad[iq*4+3];
-  return (1-r0)*(1-r1)*aPoint[i0] + r0*(1-r1)*aPoint[i1] + r0*r1*aPoint[i2] + (1-r0)*r1*aPoint[i3];
-}
-
-
-void getCubicBezierCurve
+void dfm2::getCubicBezierCurve
 (const int n,
  std::vector<CVector3>& aP,
  const std::vector<CVector3>& aCP)
@@ -145,7 +170,7 @@ void getCubicBezierCurve
 // p03: u=0 v=1
 // p30: u=1 v=0
 // p33: u=1 v=1
-CVector3 getPointSurfaceBezierCubic
+CVector3 dfm2::getPointSurfaceBezierCubic
 (double u, double v,
  const CVector3& p00, const CVector3& p01, const CVector3& p02, const CVector3& p03,
  const CVector3& p10, const CVector3& p11, const CVector3& p12, const CVector3& p13,
@@ -171,27 +196,7 @@ CVector3 getPointSurfaceBezierCubic
   + (u3*v0)*p30 + (u3*v1)*p31 + (u3*v2)*p32 + (u3*v3)*p33;
 }
 
-void getCubicBezierSurface
-(const int n, // number of segment
- std::vector<CVector3>& aP,
- const std::vector<CVector3>& aCP)
-{
-  aP.resize((n+1)*(n+1));
-  for (int i = 0; i<(n+1); ++i){
-    for (int j = 0; j<(n+1); ++j){
-      double u = (double)i/n;
-      double v = (double)j/n;
-      aP[i*(n+1)+j] = getPointSurfaceBezierCubic(u,v,
-                                                 aCP[ 0], aCP[ 1], aCP[ 2], aCP[ 3],
-                                                 aCP[ 4], aCP[ 5], aCP[ 6], aCP[ 7],
-                                                 aCP[ 8], aCP[ 9], aCP[10], aCP[11],
-                                                 aCP[12], aCP[13], aCP[14], aCP[15]);
-    }
-  }
-}
-
-
-void FlatKnot
+void dfm2::FlatKnot
 (std::vector<double>& aKnotFlat,
  const std::vector<int>& aKnotMulti,
  const std::vector<double>& aKnot)

@@ -50,7 +50,7 @@ void ComputePerlin(){
   
   aP.resize(256);
   for(int i=0;i<256;++i){ aP[i]=i; }
-  Shuffle(aP);
+  delfem2::Shuffle(aP);
   aP.resize(512);
   for(int i=0;i<256;++i){ aP[256+i]=i; }
   
@@ -93,7 +93,7 @@ void ComputePerlin(){
         double x = (double)iw/nH*nrep;
         double y = (double)ih/nW*nrep;
         double z = (double)id/nD*nrep;
-        double v = noise_perlin_3d_oct(x,y,z,nrep, 4,0.5, aGrad,aP);
+        double v = delfem2::noise_perlin_3d_oct(x,y,z,nrep, 4,0.5, aGrad,aP);
         //        double v = noise_perlin_3d(x,y,z, aGrad,aP);
         double v0 = v*128+128;
         if( v0 < 0   ){ v0 =   0; }

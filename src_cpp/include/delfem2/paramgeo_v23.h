@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "delfem2/vec3.h"
 
+namespace delfem2 {
+
 CVector3 getPointCoonsQuad_CubicBezierEdge(double u, double v,
                                            CVector3 aP[12]);
 
@@ -102,6 +104,8 @@ void SampleBSpline(std::vector<T>& polyline0,
     T p = DeBoorBSpline(u, ndegree,aCtrlPoint,aKnotFlat);
     polyline0.push_back(p);
   }
+}
+  
 }
 
 #endif /* paramgeo_vec23_hpp */

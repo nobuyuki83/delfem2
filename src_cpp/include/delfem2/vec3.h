@@ -449,8 +449,10 @@ CVector3 QuadBilinear(int iq, double r0, double r1,
                       std::vector<int>& aQuad,
                       std::vector<CVector3>& aPoint);
 
+namespace delfem2 {
 void ConvexHull(std::vector<int>& aTri,
                 const std::vector<CVector3>& aXYZ);
+}
 
 inline CVector3 cg_Tri(int itri,
                        const std::vector<unsigned int>& aTri,

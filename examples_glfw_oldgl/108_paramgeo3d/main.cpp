@@ -22,6 +22,10 @@
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_color.h"
 
+namespace dfm2 = delfem2;
+
+// -----------------------------------
+
 CVector3 GetPointSurf
 (double u, double v,
  int isurf,
@@ -44,11 +48,11 @@ CVector3 GetPointSurf
   int i13 = aIndCP[isurf*16+13];
   int i14 = aIndCP[isurf*16+14];
   int i15 = aIndCP[isurf*16+15];
-  return getPointSurfaceBezierCubic(u,v,
-                                    aCP[i00], aCP[i01], aCP[i02], aCP[i03],
-                                    aCP[i04], aCP[i05], aCP[i06], aCP[i07],
-                                    aCP[i08], aCP[i09], aCP[i10], aCP[i11],
-                                    aCP[i12], aCP[i13], aCP[i14], aCP[i15]);
+  return dfm2::getPointSurfaceBezierCubic(u,v,
+                                          aCP[i00], aCP[i01], aCP[i02], aCP[i03],
+                                          aCP[i04], aCP[i05], aCP[i06], aCP[i07],
+                                          aCP[i08], aCP[i09], aCP[i10], aCP[i11],
+                                          aCP[i12], aCP[i13], aCP[i14], aCP[i15]);
 }
 
 void AddQuads

@@ -34,7 +34,7 @@ void ComputePerlin(){
   
   aP.resize(256);
   for(int i=0;i<256;++i){ aP[i]=i; }
-  Shuffle(aP);
+  dfm2::Shuffle(aP);
   aP.resize(512);
   for(int i=0;i<256;++i){ aP[256+i]=i; }
   
@@ -54,14 +54,14 @@ void ComputePerlin(){
     for(int iw=0;iw<nW;++iw){
       double x = (double)iw/(nW)*nrep;
       double y = (double)ih/(nH)*nrep;
-      aV[ih*nW+iw] = noise_perlin_2d_oct(x,y,nrep, 4, 0.9, aGrad,aP);
+      aV[ih*nW+iw] = dfm2::noise_perlin_2d_oct(x,y,nrep, 4, 0.9, aGrad,aP);
     }
   }
 }
 
 int main(int argc,char* argv[])
 {
-  delfem2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   
   while (!glfwWindowShouldClose(viewer.window))

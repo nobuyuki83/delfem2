@@ -9,8 +9,8 @@ add_subdirectory(000_OpenWindowWithGLFW)
 
 # basic funcs
 add_subdirectory(100_ViewNavigationIn3D)
-add_subdirectory(101_subdiv)
-add_subdirectory(102_convhull)
+add_subdirectory(101_SubdivisionSurfaceCatmull)
+add_subdirectory(102_ConvexHull)
 add_subdirectory(103_noise2d)
 add_subdirectory(104_noise3d)
 add_subdirectory(105_meshslice)
