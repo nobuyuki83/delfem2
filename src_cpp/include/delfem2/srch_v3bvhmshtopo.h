@@ -103,7 +103,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D
                                            ichild1,aBVH,aBB);
 }
 
-///////////////////////////////////////
+// ----------------------
 
 template <typename T>
 class CBVH_MeshTri3D
@@ -132,7 +132,7 @@ public:
         std::vector<int> aTriSurRel;
         makeSurroundingRelationship(aTriSurRel,
                                     pTri, nTri,
-                                    MESHELEM_TRI, nXYZ);
+                                    delfem2::MESHELEM_TRI, nXYZ);
         iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
                                         3,aTriSurRel,
                                          aElemCenter);

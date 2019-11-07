@@ -8,7 +8,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/dtri.h"
 #include "delfem2/mats.h"
-
+//
 #include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
@@ -37,20 +37,19 @@ CMatrixSparse<std::complex<double> > mat_A;
 std::vector<std::complex<double> > vec_b;
 CPreconditionerILU<std::complex<double> > ilu_A;
 
-
 // ---------------------------------------------------
 
 void MakeMesh(){
-  CCad2D cad2d;
+  delfem2::CCad2D cad2d;
   {
     double xy[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
     std::vector<double> aXY(xy,xy+8);
     cad2d.AddPolygon(aXY);
   }
   cad2d.AddVtxFace(0.0, 0.0, 0);
-  CMesher_Cad2D mshr;
+  delfem2::CMesher_Cad2D mshr;
   mshr.edge_length = 0.05;
-  CMeshDynTri2D dmsh;
+  delfem2::CMeshDynTri2D dmsh;
   mshr.Meshing(dmsh, cad2d);
   MeshTri2D_Export(aXY1, aTri1,
                    dmsh.aVec2, dmsh.aETri);

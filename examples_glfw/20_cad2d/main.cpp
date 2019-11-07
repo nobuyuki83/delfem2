@@ -27,8 +27,8 @@
 // -----------------------------------------------------
 
 CNav3D_GLFW nav;
-CCad2D cad;
-CShader_Cad2D shdr_cad;
+delfem2::CCad2D cad;
+delfem2::opengl::CShader_Cad2D shdr_cad;
 
 // -----------------------------------------------------
 

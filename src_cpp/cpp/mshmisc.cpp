@@ -424,7 +424,7 @@ void dfm2::Translate
   double tx, double ty)
 {
   const unsigned int np = aXY.size()/2;
-  for (int ip = 0; ip<np; ip++){
+  for (unsigned int ip = 0; ip<np; ip++){
     aXY[ip*2+0] += tx;
     aXY[ip*2+1] += ty;
   }

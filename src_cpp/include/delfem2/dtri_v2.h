@@ -174,6 +174,8 @@ void RefineMesh(std::vector<CEPo2>& aPo3D,
                 std::vector<CVector2>& aVec2,
                 CCmdRefineMesh& aCmd);
 
+namespace delfem2 {
+
 class CMeshDynTri2D{
 public:
   void Initialize(const double* aXY, int nPo,
@@ -291,5 +293,7 @@ public:
   std::vector<ETri> aETri;
   std::vector<CVector2> aVec2;
 };
+  
+}
 
 #endif // #endif DTRI_V2_H

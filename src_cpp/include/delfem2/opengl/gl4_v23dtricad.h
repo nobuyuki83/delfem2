@@ -15,7 +15,10 @@
 
 #include "gl4_funcs.h" // for CGL4_VAO_Mesh
 
+namespace delfem2 {
 class CCad2D;
+
+namespace opengl{
 
 class CShader_Cad2D
 {
@@ -71,5 +74,9 @@ public:
   
   CGL4_VAO_Mesh vao;
 };
+  
+}
+  
+}
 
 #endif /* gl4_v23dtricad_h */

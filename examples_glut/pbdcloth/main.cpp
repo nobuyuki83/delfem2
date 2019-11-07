@@ -97,7 +97,7 @@ void myGlutDisplay(void)
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  DrawMeshDynTri3D_Edge(aXYZ, aETri);
+  delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 
   
   ShowFPS();

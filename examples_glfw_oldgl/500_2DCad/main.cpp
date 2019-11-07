@@ -29,7 +29,7 @@
 
 int main(int argc,char* argv[])
 {
-  CCad2D cad;
+  delfem2::CCad2D cad;
   
   // --------------------
   delfem2::opengl::CViewer_GLFW viewer;
@@ -68,7 +68,7 @@ int main(int argc,char* argv[])
         if( iframe == nframe*7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
           //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg";
           //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape3.svg";
-        std::vector<CCad2D_EdgeGeo> aEdge;
+        std::vector<delfem2::CCad2D_EdgeGeo> aEdge;
         LoopEdgeCCad2D_ReadSVG(aEdge,
                                path_svg);
         Transform_LoopEdgeCad2D(aEdge,false,true,1.0,1.0);
@@ -92,7 +92,7 @@ int main(int argc,char* argv[])
     }
     // --------------------
     viewer.DrawBegin_oldGL();
-    Draw_CCad2D(cad);
+    delfem2::opengl::Draw_CCad2D(cad);
     viewer.DrawEnd_oldGL();
   }
   glfwDestroyWindow(viewer.window);

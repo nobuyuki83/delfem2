@@ -19,6 +19,10 @@
 
 // ---------------------------
 
+namespace delfem2{
+namespace opengl{
+
+
 void DrawMeshDynTri_FaceNorm(const std::vector<ETri>& aSTri,
                              const std::vector<CVector3>& aVec3);
 
@@ -37,11 +41,13 @@ void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
 
 // --------------------------------------------
 
-void Draw_CCad2DEdge(const CCad2D_EdgeGeo& edge,
+void Draw_CCad2DEdge(const delfem2::CCad2D_EdgeGeo& edge,
                      bool is_selected,
                      int ipicked_elem);
 
-void Draw_CCad2D(const CCad2D& cad2d);
-
+void Draw_CCad2D(const delfem2::CCad2D& cad2d);
+  
+}
+}
 
 #endif /* cad_dyntri_v23_gl_hpp */

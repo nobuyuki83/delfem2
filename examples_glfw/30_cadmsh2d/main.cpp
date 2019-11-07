@@ -32,12 +32,12 @@
 // -----------------------------------
 
 CNav3D_GLFW nav;
-CCad2D cad;
-CMeshDynTri2D dmsh;
+delfem2::CCad2D cad;
+delfem2::CMeshDynTri2D dmsh;
 std::vector<double> aW;
 
-CShader_Cad2D shdr_cad;
-CShader_MeshDTri2D shdr_dmsh;
+delfem2::opengl::CShader_Cad2D shdr_cad;
+delfem2::opengl::CShader_MeshDTri2D shdr_dmsh;
 
 // -----------------------------------
 
@@ -134,7 +134,7 @@ int main(void)
     shdr_cad.MakeBuffer(cad);
     {
       std::vector<int> aFlgPnt, aFlgTri;
-      CMesher_Cad2D mesher;
+      delfem2::CMesher_Cad2D mesher;
       mesher.edge_length = 0.08;
       mesher.Meshing(dmsh, cad);
       shdr_dmsh.MakeBuffer(dmsh.aVec2, dmsh.aETri);

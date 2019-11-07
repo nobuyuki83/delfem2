@@ -45,10 +45,10 @@ int main(int argc,char* argv[])
     //
     void Draw(){
       DrawBegin_oldGL();
-      Draw_CCad2D(cad);
+      delfem2::opengl::Draw_CCad2D(cad);
       DrawEnd_oldGL();
     }
-    CCad2D cad;
+    delfem2::CCad2D cad;
   };
   // --------------------
   CCAD2DViewer viewer;

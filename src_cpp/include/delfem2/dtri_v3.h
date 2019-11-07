@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DTRI_V3_H
-#define DTRI_V3_H
+#ifndef DFM2_DTRI_V3_H
+#define DFM2_DTRI_V3_H
 
 #include <map>
 #include <algorithm>
@@ -35,6 +35,8 @@ bool DelaunayAroundPoint(int ipo0,
                          const std::vector<CVector3>& aVec3);
 
 // -------------------------------------------------------
+
+namespace delfem2 {
 
 class CMeshDynTri3D
 {
@@ -114,6 +116,7 @@ public:
   std::vector<ETri> aETri;
   std::vector<CVector3> aVec3;
 };
-
+  
+}
 
 #endif // #endif SURFACE_MESH_H

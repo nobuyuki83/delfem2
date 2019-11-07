@@ -144,7 +144,7 @@ PyMeshHex3D_Subviv
 ///////////////////////////////////////////////////////////////////////////////////
 
 void PyMeshDynTri3D_Initialize
-(CMeshDynTri3D& mesh,
+(dfm2::CMeshDynTri3D& mesh,
  const py::array_t<double>& po,
  const py::array_t<unsigned int>& tri)
 {
@@ -155,7 +155,7 @@ void PyMeshDynTri3D_Initialize
 }
 
 void PyMeshDynTri2D_Initialize
-(CMeshDynTri2D& mesh,
+(dfm2::CMeshDynTri2D& mesh,
  const py::array_t<double>& po,
  const py::array_t<unsigned int>& tri)
 {
@@ -166,7 +166,7 @@ void PyMeshDynTri2D_Initialize
 }
 
 void PySetXY_MeshDynTri2D
-(CMeshDynTri2D& mesh,
+(dfm2::CMeshDynTri2D& mesh,
  const py::array_t<double>& npXY)
 {
   assert( AssertNumpyArray2D(npXY, -1, 2) );
@@ -177,7 +177,7 @@ void PySetXY_MeshDynTri2D
 void PyCopyMeshDynTri2D
 (py::array_t<double>& npPos,
  py::array_t<unsigned int>& npElm,
- const CMeshDynTri2D& mesh)
+ const dfm2::CMeshDynTri2D& mesh)
 {
   assert( AssertNumpyArray2D(npPos, -1, 2) );
   assert( AssertNumpyArray2D(npElm, -1, 3) );
@@ -346,13 +346,13 @@ void PyNormalVtx_Mesh
 (py::array_t<double>& nrm,
  const py::array_t<double>& pos,
  const py::array_t<unsigned int>& elm,
- const MESHELEM_TYPE type)
+ const dfm2::MESHELEM_TYPE type)
 {
   assert( AssertNumpyArray2D(pos, -1, 3) );
   assert( AssertNumpyArray2D(elm, -1, 3) );
   assert( AssertNumpyArray2D(nrm, -1, 3) );
   assert( nrm.shape()[0] == pos.shape()[0] );
-  if( type == MESHELEM_TRI ){
+  if( type == dfm2::MESHELEM_TRI ){
     Normal_MeshTri3D((double*)(nrm.request().ptr),
                      pos.data(),pos.shape()[0],
                      elm.data(),elm.shape()[0]);
@@ -363,7 +363,7 @@ void PyNormalVtx_Mesh
 py::array_t<unsigned int> PyEdge_Mesh
 (const py::array_t<double>& pos,
  const py::array_t<unsigned int>& elm,
- const MESHELEM_TYPE type)
+ const dfm2::MESHELEM_TYPE type)
 {
   assert( AssertNumpyArray2D(pos, -1, pos.shape()[1]) );
   assert( AssertNumpyArray2D(elm, -1, nNodeElem(type)) );
@@ -452,14 +452,14 @@ PyMeshTri3D_Torus(double r0, double r1)
 // --------------------------------------
 
 void init_mshtopoio(py::module &m){
-  py::enum_<MESHELEM_TYPE>(m, "MESH_ELEM_TYPE")
-  .value("TRI",     MESHELEM_TYPE::MESHELEM_TRI)
-  .value("QUAD",    MESHELEM_TYPE::MESHELEM_QUAD)
-  .value("TET",     MESHELEM_TYPE::MESHELEM_TET)
-  .value("PYRAMID", MESHELEM_TYPE::MESHELEM_PYRAMID)
-  .value("WEDGE",   MESHELEM_TYPE::MESHELEM_WEDGE)
-  .value("HEX",     MESHELEM_TYPE::MESHELEM_HEX)
-  .value("LINE",    MESHELEM_TYPE::MESHELEM_LINE)
+  py::enum_<dfm2::MESHELEM_TYPE>(m, "MESH_ELEM_TYPE")
+  .value("TRI",     dfm2::MESHELEM_TYPE::MESHELEM_TRI)
+  .value("QUAD",    dfm2::MESHELEM_TYPE::MESHELEM_QUAD)
+  .value("TET",     dfm2::MESHELEM_TYPE::MESHELEM_TET)
+  .value("PYRAMID", dfm2::MESHELEM_TYPE::MESHELEM_PYRAMID)
+  .value("WEDGE",   dfm2::MESHELEM_TYPE::MESHELEM_WEDGE)
+  .value("HEX",     dfm2::MESHELEM_TYPE::MESHELEM_HEX)
+  .value("LINE",    dfm2::MESHELEM_TYPE::MESHELEM_LINE)
   .export_values();
   
   py::class_<CMeshMultiElem>(m,"CppMeshMultiElem")
@@ -469,33 +469,33 @@ void init_mshtopoio(py::module &m){
   .def("scaleXYZ",    &CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
-  py::class_<CMeshDynTri3D>(m, "CppMeshDynTri3D")
+  py::class_<dfm2::CMeshDynTri3D>(m, "CppMeshDynTri3D")
   .def(py::init<>())
-  .def("check",                 &CMeshDynTri3D::Check)
-  .def("ntri",                  &CMeshDynTri3D::nTri)
-  .def("delete_tri_edge",       &CMeshDynTri3D::DeleteTriEdge)
-  .def("minmax_xyz",            &CMeshDynTri3D::MinMax_XYZ)
-  .def("insert_point_elem",     &CMeshDynTri3D::insertPointElem)
-  .def("delaunay_around_point", &CMeshDynTri3D::DelaunayAroundPoint);
+  .def("check",                 &dfm2::CMeshDynTri3D::Check)
+  .def("ntri",                  &dfm2::CMeshDynTri3D::nTri)
+  .def("delete_tri_edge",       &dfm2::CMeshDynTri3D::DeleteTriEdge)
+  .def("minmax_xyz",            &dfm2::CMeshDynTri3D::MinMax_XYZ)
+  .def("insert_point_elem",     &dfm2::CMeshDynTri3D::insertPointElem)
+  .def("delaunay_around_point", &dfm2::CMeshDynTri3D::DelaunayAroundPoint);
   
-  py::class_<CMeshDynTri2D>(m, "CppMeshDynTri2D")
+  py::class_<dfm2::CMeshDynTri2D>(m, "CppMeshDynTri2D")
   .def(py::init<>())
-  .def("check",                 &CMeshDynTri2D::Check)
-  .def("ntri",                  &CMeshDynTri2D::nTri)
-  .def("npoint",                &CMeshDynTri2D::nPoint)
-  .def("delete_tri_edge",       &CMeshDynTri2D::DeleteTriEdge)
-  .def("minmax_xyz",            &CMeshDynTri2D::MinMax_XYZ)
-  .def("insert_point_elem",     &CMeshDynTri2D::insertPointElem)
-  .def("delaunay_around_point", &CMeshDynTri2D::DelaunayAroundPoint)
-  .def("meshing_loops",         &CMeshDynTri2D::meshing_loops)
-  .def("refinementPlan_EdgeLongerThan_InsideCircle",   &CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
+  .def("check",                 &dfm2::CMeshDynTri2D::Check)
+  .def("ntri",                  &dfm2::CMeshDynTri2D::nTri)
+  .def("npoint",                &dfm2::CMeshDynTri2D::nPoint)
+  .def("delete_tri_edge",       &dfm2::CMeshDynTri2D::DeleteTriEdge)
+  .def("minmax_xyz",            &dfm2::CMeshDynTri2D::MinMax_XYZ)
+  .def("insert_point_elem",     &dfm2::CMeshDynTri2D::insertPointElem)
+  .def("delaunay_around_point", &dfm2::CMeshDynTri2D::DelaunayAroundPoint)
+  .def("meshing_loops",         &dfm2::CMeshDynTri2D::meshing_loops)
+  .def("refinementPlan_EdgeLongerThan_InsideCircle",   &dfm2::CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
   
   py::class_<CCmdRefineMesh>(m, "CppMapper")
   .def(py::init<>());
   
   m.def("map_value",    &PyMapValue);
   
-  m.def("num_node_elem", &nNodeElem);
+  m.def("num_node_elem", &dfm2::nNodeElem);
   
   // dyntri
   m.def("meshdyntri3d_initialize",&PyMeshDynTri3D_Initialize);

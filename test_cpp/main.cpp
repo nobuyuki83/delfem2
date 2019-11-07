@@ -42,7 +42,7 @@ TEST(slice,test1){
   delfem2::Normalize(aXYZ);
   std::vector<int> aTriSurRel;
   makeSurroundingRelationship(aTriSurRel,
-                              aTri.data(), aTri.size()/3, MESHELEM_TRI, aXYZ.size()/3);
+                              aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI, aXYZ.size()/3);
   
   
   std::vector<double> aHeight;

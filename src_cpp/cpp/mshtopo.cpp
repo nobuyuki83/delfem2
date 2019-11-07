@@ -220,7 +220,7 @@ void ElemQuad_DihedralTri
   std::vector<int> aElemSurRel;
   makeSurroundingRelationship(aElemSurRel,
                               aTri, nTri,
-                              MESHELEM_TRI, np);
+                              dfm2::MESHELEM_TRI, np);
   ////
   for(int itri=0; itri<nTri; ++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
@@ -266,7 +266,7 @@ void convert2Tri
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType)
+ const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   const long nElem0 = aElemInd.size()-1;
   aTri.clear();
@@ -302,7 +302,7 @@ void FlipElement
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType)
+ const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   aElem_Flip.resize(aElem.size());
   assert(!aElemInd.empty());
@@ -319,15 +319,15 @@ void FlipElement
 }
 
 
-/////////////////////////////////////////////////////////////////////////
+// -------------------------------------
 
 void AddElement
-(const MESHELEM_TYPE& femelem_type,
+(const dfm2::MESHELEM_TYPE& femelem_type,
  const std::vector<int>& aElemIn,
  ////
  std::vector<int>& aElemInd,
  std::vector<int>& aElem,
- std::vector<MESHELEM_TYPE>& aElemType)
+ std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   const int nnoel = nNodeElem(femelem_type);
   const int nElemIn = aElemIn.size()/nnoel;
@@ -341,8 +341,7 @@ void AddElement
   for(int ie=0;ie<nElemIn;++ie){ aElemInd.push_back((ie+1)*nnoel+nei0); }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
+// --------------------------------------
 
 
 void JArrayElemSurPoint_MeshTri
@@ -474,7 +473,7 @@ void makeSurroundingRelationship
 void makeSurroundingRelationship
 (std::vector<int>& aElemSurRel,
  const unsigned int* aElem, int nElem,
- MESHELEM_TYPE type,
+ dfm2::MESHELEM_TYPE type,
  const int nXYZ)
 {
   const int nNoEl = nNodeElem(type);
@@ -495,7 +494,7 @@ void makeSurroundingRelationship
  std::vector<int>& aElemFaceRel,
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType,
+ const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  const int nXYZ)
 {
   std::vector<int> elsup_ind, elsup;
@@ -513,7 +512,7 @@ void makeSurroundingRelationship
  ///
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType,
+ const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
@@ -532,7 +531,7 @@ void makeSurroundingRelationship
   aElemFaceRel.assign(nface*2,-1);
   std::vector<int> aFlg(np,-1);
   for(unsigned int ielem=0;ielem<nelem;++ielem){
-    const MESHELEM_TYPE type_i = aElemType[ielem];
+    const dfm2::MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem] == nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
       const int iface = iiface-aElemFaceInd[ielem];
@@ -548,7 +547,7 @@ void makeSurroundingRelationship
       for(int jelsup=elsup_ind[ip0];jelsup<elsup_ind[ip0+1];++jelsup){
         const int je0 = elsup[jelsup];
         if( (int)ielem == je0 ) continue;
-        const MESHELEM_TYPE type_j = aElemType[je0];
+        const dfm2::MESHELEM_TYPE type_j = aElemType[je0];
         for(int ijface=aElemFaceInd[je0];ijface<aElemFaceInd[je0+1];++ijface){
           const int jface = ijface-aElemFaceInd[je0];
           const int nnofa_j = nNodeElemFace(type_j,jface);
@@ -578,11 +577,11 @@ void makeSurroundingRelationship
 void makeBoundary
 (std::vector<int>& aElemInd_Bound,
  std::vector<int>& aElem_Bound,
- std::vector<MESHELEM_TYPE>& aElemType_Bound,
+ std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType,
+ const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  const std::vector<int>& aElemFaceInd,
  const std::vector<int>& aElemFaceRel)
 {
@@ -592,14 +591,14 @@ void makeBoundary
   aElemInd_Bound.push_back(0);
   const int nelem = aElemInd.size()-1;
   for(int ielem=0;ielem<nelem;++ielem){
-    const MESHELEM_TYPE type_i = aElemType[ielem];
+    const dfm2::MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem]==nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
       if( aElemFaceRel[iiface*2+0] != -1 ) continue;
       const int iface = iiface-aElemFaceInd[ielem];
       const int nnofa_i = nNodeElemFace(type_i,iface);
-      if(      nnofa_i == 3 ){ aElemType_Bound.push_back(MESHELEM_TRI ); }
-      else if( nnofa_i == 4 ){ aElemType_Bound.push_back(MESHELEM_QUAD); }
+      if(      nnofa_i == 3 ){ aElemType_Bound.push_back(dfm2::MESHELEM_TRI ); }
+      else if( nnofa_i == 4 ){ aElemType_Bound.push_back(dfm2::MESHELEM_QUAD); }
       aElemInd_Bound.push_back(nnofa_i);
       for(int inofa=0;inofa<nnofa_i;++inofa){
         const int ino0 = noelElemFace(type_i)[iface][inofa];
@@ -736,13 +735,13 @@ void JArrayEdge_MeshElem
  std::vector<int>& edge,
  ////
  const unsigned int* aElm0,
- MESHELEM_TYPE elem_type,
+ dfm2::MESHELEM_TYPE elem_type,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
  bool is_bidirectional)
 {
-  const int neElm = mapMeshElemType2NEdgeElem[elem_type];
-  const int nnoelElm = mapMeshElemType2NNodeElem[elem_type];
+  const int neElm = dfm2::mapMeshElemType2NEdgeElem[elem_type];
+  const int nnoelElm = dfm2::mapMeshElemType2NNodeElem[elem_type];
   const int (*aNoelEdge)[2] = noelElemEdge(elem_type);
   const int nPoint0 = elsup_ind.size()-1;
   edge_ind.resize(nPoint0+1);
@@ -794,11 +793,11 @@ void MeshLine_MeshElem
 (std::vector<unsigned int>& aLine,
  const unsigned int* aElm0,
  unsigned int nElem,
- MESHELEM_TYPE elem_type,
+ dfm2::MESHELEM_TYPE elem_type,
  unsigned int nPo)
 {
   std::vector<int> elsup_ind,elsup;
-  const unsigned int nPoEl = mapMeshElemType2NNodeElem[elem_type];
+  const unsigned int nPoEl = dfm2::mapMeshElemType2NNodeElem[elem_type];
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            aElm0, nElem, nPoEl, nPo);
   std::vector<int> edge_ind, edge;
@@ -1050,7 +1049,7 @@ void MakeGroupElem
  /////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<MESHELEM_TYPE>& aElemType,
+ const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  int nPo)
 {
   std::vector<int> elsup_ind, elsup;
@@ -1064,15 +1063,16 @@ void MakeGroupElem
                 aElemInd,aElem,aElemFaceInd,aElemFaceRel);
 }
 
-void ClipGroup(std::vector<int>& aElemInd1,
-               std::vector<int>& aElem1,
-               std::vector<MESHELEM_TYPE>& aElemType1,
-               ///
-               const std::vector<int>& aElemInd,
-               const std::vector<int>& aElem,
-               const std::vector<MESHELEM_TYPE>& aElemType,
-               int igroup,
-               const std::vector<int>& aIndGroup)
+void ClipGroup
+ (std::vector<int>& aElemInd1,
+  std::vector<int>& aElem1,
+  std::vector<dfm2::MESHELEM_TYPE>& aElemType1,
+  //
+  const std::vector<int>& aElemInd,
+  const std::vector<int>& aElem,
+  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
+  int igroup,
+  const std::vector<int>& aIndGroup)
 {
   aElem1.clear();
   aElemType1.clear();
@@ -1081,7 +1081,7 @@ void ClipGroup(std::vector<int>& aElemInd1,
   int nelem = aElemInd.size()-1;
   for(int ie=0;ie<nelem;++ie){
     if( aIndGroup[ie] != igroup ) continue;
-    MESHELEM_TYPE type = aElemType[ie];
+    dfm2::MESHELEM_TYPE type = aElemType[ie];
     aElemType1.push_back(type);
     aElemInd1.push_back( nNodeElem(type) );
     for(int iip=aElemInd[ie];iip<aElemInd[ie+1];++iip){
@@ -1156,7 +1156,7 @@ void QuadSubdiv
   JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
-                       aQuad0, MESHELEM_QUAD, elsup_ind, elsup,
+                       aQuad0, dfm2::MESHELEM_QUAD, elsup_ind, elsup,
                        false); // is_bidirectional = false
   const unsigned int ne0 = (int)psup.size();
   aEdgeFace0.resize(0);
@@ -1223,7 +1223,7 @@ void TetSubdiv
   JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aTet0,nTet0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
-                       aTet0, MESHELEM_TET, elsup_ind, elsup,
+                       aTet0, dfm2::MESHELEM_TET, elsup_ind, elsup,
                        false);
   aTet1.resize(0);
   aTet1.reserve(nTet0*4);
@@ -1427,7 +1427,7 @@ void HexSubdiv
   
   //edge
   JArrayEdge_MeshElem(psupIndHex0, psupHex0,
-                       aHex0, MESHELEM_HEX, elsupIndHex0,elsupHex0,
+                       aHex0, dfm2::MESHELEM_HEX, elsupIndHex0,elsupHex0,
                        false); // is_directional = false
   
   //face
@@ -1437,15 +1437,15 @@ void HexSubdiv
     makeSurroundingRelationship(aHexSurRel0,
                                 aHex0,nHex0,8,
                                 elsupIndHex0,elsupHex0,
-                                nFaceElem(MESHELEM_HEX),
-                                nNodeElemFace(MESHELEM_HEX, 0),
-                                noelElemFace(MESHELEM_HEX));
+                                nFaceElem(dfm2::MESHELEM_HEX),
+                                nNodeElemFace(dfm2::MESHELEM_HEX, 0),
+                                noelElemFace(dfm2::MESHELEM_HEX));
     for(unsigned int ih=0;ih<(unsigned int)nHex0;++ih){
       for(int ifh=0;ifh<6;++ifh){
         int jh0 = aHexSurRel0[ih*6*2+ifh*2+0];
         if( jh0!=-1 && (int)ih>jh0 ) continue;
         for(int inofa=0;inofa<4;++inofa){
-          int inoel0 = noelElemFace_Hex[ifh][inofa];
+          int inoel0 = dfm2::noelElemFace_Hex[ifh][inofa];
           int igp0 = aHex0[ih*8+inoel0];
           aQuadHex0.push_back(igp0);
         }

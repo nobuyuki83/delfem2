@@ -20,6 +20,9 @@
 #include "delfem2/opengl/gl4_funcs.h"
 #include "delfem2/opengl/gl4_v23dtricad.h"
 
+namespace dfm2 = delfem2;
+
+// -----------------------------------
 
 void AddLine
 (std::vector<float>& aPxyNxyf,
@@ -114,7 +117,7 @@ void AddPoint
   }
 }
 
-void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
+void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
 {
   {
     vao_face.aEBO.clear();
@@ -200,7 +203,7 @@ void CShader_Cad2D::MakeBuffer(const CCad2D& cad)
 }
 
 
-void CShader_Cad2D::Compile_Face()
+void dfm2::opengl::CShader_Cad2D::Compile_Face()
 {
 
   const std::string glsl33vert_projection =
@@ -251,7 +254,7 @@ void CShader_Cad2D::Compile_Face()
 }
 
 
-void CShader_Cad2D::Compile_Edge()
+void dfm2::opengl::CShader_Cad2D::Compile_Edge()
 {
 
   const std::string glsl33vert_projection =
@@ -299,7 +302,7 @@ void CShader_Cad2D::Compile_Edge()
   std::cout << "  LocColor: " << shdr1_Loc_Color << std::endl;
 }
 
-void CShader_Cad2D::Draw
+void dfm2::opengl::CShader_Cad2D::Draw
  (const float mP[16],
   const float mMV[16],
   const CCad2D& cad) const
@@ -349,7 +352,7 @@ void CShader_Cad2D::Draw
 // ------------------------------------------------------------------------------
 
 
-void CShader_MeshDTri2D::MakeBuffer
+void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
  (const std::vector<CVector2>& aVec2,
   const std::vector<ETri>& aETri)
 {
@@ -411,7 +414,7 @@ void CShader_MeshDTri2D::MakeBuffer
   }
 }
 
-void CShader_MeshDTri2D::Compile()
+void dfm2::opengl::CShader_MeshDTri2D::Compile()
 {
   const std::string glsl33vert_projection =
   "uniform mat4 matrixProjection;\n"
@@ -455,7 +458,7 @@ void CShader_MeshDTri2D::Compile()
 }
 
 
-void CShader_MeshDTri2D::Draw
+void dfm2::opengl::CShader_MeshDTri2D::Draw
  (const float mP[16],
   const float mMV[16]) const
 {

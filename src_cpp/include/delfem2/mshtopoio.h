@@ -60,7 +60,7 @@ public:
     else if( sExt == "obj") {
       Read_Obj(fname, aPos, aElem);
     }
-    elem_type = MESHELEM_TRI;
+    elem_type = delfem2::MESHELEM_TRI;
     ndim = 3;
   }
   void Write_Obj(const std::string& fname){
@@ -72,10 +72,10 @@ public:
 //  void DrawEdge() const;
   CMeshElem Subdiv(){
     CMeshElem em;
-    if( elem_type == MESHELEM_QUAD ){
+    if( elem_type == delfem2::MESHELEM_QUAD ){
       const std::vector<double>& aXYZ0 = this->aPos;
       const std::vector<unsigned int>& aQuad0 = this->aElem;
-      em.elem_type = MESHELEM_QUAD;
+      em.elem_type = delfem2::MESHELEM_QUAD;
       em.ndim = 3;
       std::vector<unsigned int>& aQuad1 = em.aElem;
       std::vector<int> aEdgeFace0;
@@ -96,12 +96,12 @@ public:
     delfem2::Scale(aPos,s);
   }
 public:
-  MESHELEM_TYPE elem_type;
+  delfem2::MESHELEM_TYPE elem_type;
   std::vector<unsigned int> aElem;
-  /////
+  //
   int ndim;
   std::vector<double> aPos;
-  /////
+  //
   std::vector<float> color_face;
   bool is_draw_edge;
 };
