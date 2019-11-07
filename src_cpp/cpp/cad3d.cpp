@@ -164,12 +164,12 @@ void CCad3D_Face::Initialize
                          loopIP_ind,aVec2);
     }
     {
-      std::vector<CEPo2> aPo2D;
-      std::vector<ETri> aETri;
+      std::vector<dfm2::CEPo2> aPo2D;
+      std::vector<dfm2::ETri> aETri;
       Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                      loopIP_ind,loopIP);
       if( elen > 1.0e-10 ){
-        CInputTriangulation_Uniform param(1.0);
+        dfm2::CInputTriangulation_Uniform param(1.0);
         std::vector<int> aFlgPnt(aVec2.size()), aFlgTri(aETri.size());
         MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                       aVec2.size(), 0, elen, param);

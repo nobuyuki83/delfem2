@@ -481,7 +481,7 @@ std::vector<dfm2::CCad2D_EdgeGeo> dfm2::RemoveEdgeWithZeroLength
 }
 
 
-///////////////////////////////////////////////////////////
+// ---------------------------------------------------------------
 
 void GetBound
 (double bound_2d[4],
@@ -521,14 +521,14 @@ void GetBound
 
 void GenMeshCadFace
 (std::vector<CVector2>& aVec2,
- std::vector<ETri>& aETri,
+ std::vector<dfm2::ETri>& aETri,
  const dfm2::CCad2D_FaceGeo& facegeo, unsigned int iface0,
  const CCadTopo& topo,
  const std::vector<dfm2::CCad2D_VtxGeo>& aVtxGeo,
  const std::vector<dfm2::CCad2D_EdgeGeo>& aEdgeGeo)
 {
   assert( iface0<topo.aFace.size() );
-  std::vector<CEPo2> aPo2D;
+  std::vector<dfm2::CEPo2> aPo2D;
   {
     aPo2D.resize(aVec2.size());
     for(unsigned int ixys=0;ixys<aVec2.size();ixys++){

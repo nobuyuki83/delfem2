@@ -15,6 +15,10 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl2_color.h"
 
+namespace dfm2 = delfem2;
+
+// ---------------------------
+
 void MyGlVertex3dv(CVector3& p){
   ::glVertex3d(p.x, p.y, p.z);
 }
@@ -25,8 +29,8 @@ void MyGlNormal3dv(CVector3& n){
 
 double cur_time = 0.0;
 double dt = 0.1;
-std::vector<CEPo2> aPo;
-std::vector<ETri> aTri;
+std::vector<dfm2::CEPo2> aPo;
+std::vector<dfm2::ETri> aTri;
 std::vector<CVector3> aVec3;
 
 void SetNewProblem()

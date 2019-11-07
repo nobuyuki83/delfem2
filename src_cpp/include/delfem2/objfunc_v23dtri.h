@@ -16,12 +16,12 @@
 
 void PBD_TriStrain(double* aXYZt,
                    unsigned int nXYZ,
-                   const std::vector<ETri>& aETri,
+                   const std::vector<delfem2::ETri>& aETri,
                    const std::vector<CVector2>& aVec2);
 
 void PBD_Bend(double* aXYZt,
               unsigned int nXYZ,
-              const std::vector<ETri>& aETri,
+              const std::vector<delfem2::ETri>& aETri,
               const std::vector<CVector2>& aVec2);
 
 #endif /* pbd_v23_h */

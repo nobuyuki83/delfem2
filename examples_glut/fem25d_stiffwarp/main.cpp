@@ -42,8 +42,8 @@ namespace dfm2 = delfem2;
 
 void GenMesh
 (std::vector<CVector2>& aVec2,
- std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aETri,
+ std::vector<dfm2::CEPo2>& aPo2D,
+ std::vector<dfm2::ETri>& aETri,
  double elen,
  const std::vector< std::vector<double> >& aaXY)
 {
@@ -65,7 +65,7 @@ void GenMesh
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
+    dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aVec2.size());
     std::vector<int> aFlgTri(aETri.size());
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
@@ -385,8 +385,8 @@ int main(int argc,char* argv[])
       aaXY.push_back( std::vector<double>(aXY,aXY+8) );
     }
     std::vector<CVector2> aVec2;
-    std::vector<CEPo2> aPo2D;
-    std::vector<ETri> aETri;
+    std::vector<dfm2::CEPo2> aPo2D;
+    std::vector<dfm2::ETri> aETri;
     GenMesh(aVec2,aPo2D,aETri,
             0.075, aaXY);
     std::vector<double> aXY;

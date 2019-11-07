@@ -405,14 +405,14 @@ double PyMergeLinSys_Contact
  ////
  double stiff_contact,
  double contact_clearance,
- const std::vector<const CSDF3*>& apSDF,
+ const std::vector<const dfm2::CSDF3*>& apSDF,
  const py::array_t<double>& aXYZ)
 {
   if( apSDF.size() == 0 ) return 0;
   class CMyInput : public CInput_Contact
   {
   public:
-    CMyInput(const std::vector<const CSDF3*>& apSDF){ this->apSDF = apSDF; }
+    CMyInput(const std::vector<const dfm2::CSDF3*>& apSDF){ this->apSDF = apSDF; }
     virtual double penetrationNormal(double& nx, double& ny, double& nz,
                                      double px, double py, double pz) const
     {
@@ -436,7 +436,7 @@ double PyMergeLinSys_Contact
       return max_pd;
     }
   public:
-    std::vector<const CSDF3*> apSDF;
+    std::vector<const dfm2::CSDF3*> apSDF;
   } input(apSDF);
   auto buff_vecb = vec_b.request();
   double W = dfm2::MergeLinSys_Contact(mss, (double*)buff_vecb.ptr,
@@ -545,7 +545,7 @@ void PyPBD_ConstProj_ClothStretch
  const dfm2::CMeshDynTri2D& mesh)
 {
   double* aXYZt = (double*)(npXYZt.request().ptr);
-  const std::vector<ETri>& aETri = mesh.aETri;
+  const std::vector<dfm2::ETri>& aETri = mesh.aETri;
   const std::vector<CVector2>& aVec2 = mesh.aVec2;
   PBD_TriStrain(aXYZt,
                 npXYZt.shape()[0], aETri, aVec2);
@@ -557,7 +557,7 @@ void PyPBD_ConstProj_ClothBend
 {
   assert( npXYZt.ndim() == 2 );
   assert( npXYZt.shape()[1] == 3 );
-  const std::vector<ETri>& aETri = mesh.aETri;
+  const std::vector<dfm2::ETri>& aETri = mesh.aETri;
   const std::vector<CVector2>& aVec2 = mesh.aVec2;
   double* aXYZt = (double*)(npXYZt.request().ptr);
   PBD_Bend(aXYZt,
@@ -581,7 +581,7 @@ void PyPBD_ConstProj_Seam
 
 void PyPBD_ConstProj_Contact
 (py::array_t<double>& npXYZt,
- const CSDF3& sdf)
+ const dfm2::CSDF3& sdf)
 {
   assert( AssertNumpyArray2D(npXYZt, -1, 3) );
   double* aXYZt = (double*)(npXYZt.request().ptr);

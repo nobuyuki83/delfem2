@@ -9,6 +9,8 @@
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_v23dtricad.h"
 
+namespace dfm2 = delfem2;
+
 // --------------------------------------
 
 double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
@@ -158,7 +160,7 @@ void drawMesh
     ::glVertex2d( aXY[ino0*2+0], aXY[ino0*2+1] );
   }
   ::glEnd();
-  ////////////////
+  //
   ::glPointSize(2);
   ::glColor3d(0,0,0);
   ::glBegin(GL_POINTS);
@@ -171,11 +173,11 @@ void drawMesh
 
 
 
-////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------
 
-std::vector<CEPo2> aPo2D;
+std::vector<dfm2::CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
-std::vector<ETri> aETri;
+std::vector<dfm2::ETri> aETri;
 std::vector<int> loopIP_ind, loopIP;
 
 int idp_nearest = -1;
@@ -185,7 +187,7 @@ double mov_begin_x, mov_begin_y;
 bool is_animation = true;
 double mag = 1.0;
 
-//////////////////////////////////
+// --------------------------
 
 void GenMesh(){
   std::vector<double> aCV0; MakeRandomCV(8,aCV0); // current cv
@@ -211,7 +213,7 @@ void GenMesh(){
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
+    dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                   aVec2.size(), 0, elen, param);

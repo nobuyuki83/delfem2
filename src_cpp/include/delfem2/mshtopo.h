@@ -202,23 +202,18 @@ void JArray_AddDiagonal(std::vector<int >& psup_ind1,
                       const int* psup0, int npsup0);
 
 void JArray_Print(const std::vector<int>& index,
-                        const std::vector<int>& array);
+                  const std::vector<int>& array);
 
 void JArray_AddMasterSlavePattern(std::vector<int>& index,
-                           std::vector<int>& array,
-                           const int*aMSFlag,
-                           int ndim,
-                           const int* psup_ind0,
-                           const int npsup_ind0,
-                           const int* psup);
+                                  std::vector<int>& array,
+                                  const int*aMSFlag,
+                                  int ndim,
+                                  const int* psup_ind0,
+                                  const int npsup_ind0,
+                                  const int* psup);
 
-// -----------------------------
-void AddElement(const delfem2::MESHELEM_TYPE& femelem_type,
-                const std::vector<int>& aElemIn,
-                //
-                std::vector<int>& aElemInd,
-                std::vector<int>& aElem,
-                std::vector<delfem2::MESHELEM_TYPE>& aElemType);
+// ---------------------------------------------------
+
 
 namespace delfem2 {
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
@@ -427,6 +422,13 @@ int findFace(int ipc0, int ipc1, int ip2, int ip3,
              const std::vector<int>& elsup);
 
 // ---------------------------------------------------
+
+void AddElement(const delfem2::MESHELEM_TYPE& femelem_type,
+                const std::vector<int>& aElemIn,
+                //
+                std::vector<int>& aElemInd,
+                std::vector<int>& aElem,
+                std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
 
 namespace delfem2 {

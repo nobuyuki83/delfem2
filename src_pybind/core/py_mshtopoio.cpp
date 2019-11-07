@@ -15,6 +15,8 @@
 namespace py = pybind11;
 namespace dfm2 = delfem2;
 
+// ----------------------------------------------------------
+
 std::tuple<py::array_t<double>,py::array_t<unsigned int>> PyMeshQuad2D_Grid
 (int mx, int my)
 {
@@ -40,7 +42,7 @@ void PySetTopology_ExtrudeTri2Tet
                              nlayer);
 }
 
-/////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------
 
 std::tuple<py::array_t<double>,py::array_t<unsigned int>>
 PyMeshTri3D_ReadPly
@@ -103,7 +105,7 @@ PyMeshQuad3D_Subviv
   QuadSubdiv(aQuad1,
              psupIndQuad0,psupQuad0, aEdgeFace0,
              aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
-  ///////
+  //
   std::vector<double> aXYZ1;
   delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
                                               aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
@@ -129,7 +131,6 @@ PyMeshHex3D_Subviv
             aQuadHex0,
             ///
             aHex0.data(), aHex0.shape()[0], aXYZ0.shape()[0]);
-  ///////
   std::vector<double> aXYZ1;
   delfem2::SubdivisionPoints_Hex(aXYZ1,
                                  psupIndHex0,psupHex0,aQuadHex0,
@@ -140,8 +141,7 @@ PyMeshHex3D_Subviv
   return std::make_tuple(npXYZ1,npHex1);
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------------
 
 void PyMeshDynTri3D_Initialize
 (dfm2::CMeshDynTri3D& mesh,
@@ -202,9 +202,7 @@ void PyCopyMeshDynTri2D
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
-
+// ----------------------------------------------------------------------
 
 /*
 std::tuple<std::vector<double>,std::vector<int>>
@@ -314,7 +312,7 @@ PyQuality_MeshTri2D
 
 void PyMapValue
 (py::array_t<double>& npV,
- CCmdRefineMesh& mpr)
+ dfm2::CCmdRefineMesh& mpr)
 {
   /*
   assert(npOut.shape()[0]==(int)mpr.iv_ind.size()-1);
@@ -490,7 +488,7 @@ void init_mshtopoio(py::module &m){
   .def("meshing_loops",         &dfm2::CMeshDynTri2D::meshing_loops)
   .def("refinementPlan_EdgeLongerThan_InsideCircle",   &dfm2::CMeshDynTri2D::RefinementPlan_EdgeLongerThan_InsideCircle);
   
-  py::class_<CCmdRefineMesh>(m, "CppMapper")
+  py::class_<dfm2::CCmdRefineMesh>(m, "CppMapper")
   .def(py::init<>());
   
   m.def("map_value",    &PyMapValue);

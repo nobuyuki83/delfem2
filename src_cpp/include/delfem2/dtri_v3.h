@@ -15,6 +15,8 @@
 #include "delfem2/vec3.h"
 #include "delfem2/dtri.h"
 
+namespace delfem2 {
+
 CVector3 normalTri(int itri0,
                    const std::vector<ETri>& aSTri,
                    const std::vector<CVector3>& aVec3);
@@ -35,8 +37,6 @@ bool DelaunayAroundPoint(int ipo0,
                          const std::vector<CVector3>& aVec3);
 
 // -------------------------------------------------------
-
-namespace delfem2 {
 
 class CMeshDynTri3D
 {
@@ -106,7 +106,7 @@ public:
     return ipo0;
   }
   void DelaunayAroundPoint(int ipo){
-    ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
+    delfem2::DelaunayAroundPoint(ipo, aEPo, aETri, aVec3);
   }
   int nTri() const { return aETri.size(); }
   int nPoint() const { return aEPo.size(); }

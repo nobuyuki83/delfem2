@@ -198,8 +198,3 @@ int BVH_MakeTreeTopology
                       list,nfael,aElemSur,aElemCenter);
   return 0;
 }
-
-
-// end independent from type of bounding volume
-///////////////////////////////////////////////////////////////////////////////////////////
-

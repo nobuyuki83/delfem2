@@ -22,17 +22,17 @@
 #include "../py_funcs.h"
 
 namespace py = pybind11;
+namespace dfm2 = delfem2;
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
+// ------------------------------------------------------------------------
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>> PyIsoSurface
-(const std::vector<const CSDF3*>& apSDF)
+(const std::vector<const dfm2::CSDF3*>& apSDF)
 {
-  class CMyInput : public CInput_IsosurfaceStuffing
+  class CMyInput : public delfem2::CInput_IsosurfaceStuffing
   {
   public:
-    CMyInput(const std::vector<const CSDF3*>& apSDF){
+    CMyInput(const std::vector<const dfm2::CSDF3*>& apSDF){
       this->apSDF = apSDF;
     }
     virtual double SignedDistance(double px, double py, double pz) const{
@@ -66,7 +66,7 @@ std::tuple<py::array_t<double>, py::array_t<unsigned int>> PyIsoSurface
       ilevel_vol = -1;
     }
   public:
-    std::vector<const CSDF3*> apSDF;
+    std::vector<const dfm2::CSDF3*> apSDF;
   } input(apSDF);
   
   std::vector<double> aXYZ;
@@ -85,7 +85,7 @@ std::tuple<py::array_t<double>, py::array_t<unsigned int>> PyIsoSurface
 
 void PyProjectPointOutsideSDF
 (py::array_t<double>& npXYZt,
- const std::vector<const CSDF3*>& apSDF)
+ const std::vector<const dfm2::CSDF3*>& apSDF)
 {
   assert( AssertNumpyArray2D(npXYZt, -1, 3) );
   const int np = npXYZt.shape()[0];
@@ -154,11 +154,11 @@ public:
 
 void init_sdf(py::module &m){
   
-  ///////////////////////////////////
+  // --------------------
   // SDF
-  py::class_<CSDF3>(m, "CppSDF3");
+  py::class_<dfm2::CSDF3>(m, "CppSDF3");
   
-  py::class_<delfem2::CSphere, CSDF3>(m, "CppSDF3_Sphere")
+  py::class_<delfem2::CSphere, dfm2::CSDF3>(m, "CppSDF3_Sphere")
   .def(py::init<>())
   .def(py::init<double,const std::vector<double>&,bool>())
   .def_readwrite("cent", &delfem2::CSphere::cent_)

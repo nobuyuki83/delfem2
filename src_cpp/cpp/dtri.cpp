@@ -15,10 +15,12 @@
 
 #include "delfem2/dtri.h"
 
+namespace dfm2 = delfem2;
+
 // ---------------------------------------------
 
 
-void MakeInnerRelationTri
+void dfm2::MakeInnerRelationTri
 (std::vector<ETri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
@@ -68,7 +70,7 @@ void MakeInnerRelationTri
   }
 }
 
-bool JArray_MakeElSuP
+bool dfm2::JArray_MakeElSuP
 (std::vector<int>& elsup_ind, std::vector<int>& elsup,
  const std::vector<ETri>& aTri, const unsigned int npoin)
 {
@@ -100,7 +102,7 @@ bool JArray_MakeElSuP
   return true;
 }
 
-void JArray_PSuP
+void dfm2::JArray_PSuP
 (std::vector<int>& psup_ind, std::vector<int>& psup,
  const std::vector<ETri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind, const std::vector<int>& elsup)
@@ -145,7 +147,7 @@ void JArray_PSuP
 // -----------------------------------------------------------------
 
 
-bool InsertPoint_ElemEdge
+bool dfm2::InsertPoint_ElemEdge
 (const int ipo_ins,    //the index of the new point
  const int itri_ins,  //triangle index
  const int ied_ins,  //edge index
@@ -281,7 +283,7 @@ bool InsertPoint_ElemEdge
 
 
 
-bool InsertPoint_Elem
+bool dfm2::InsertPoint_Elem
 (const int ipo_ins,
  const int itri_ins,
  std::vector<CEPo2>& aPo,
@@ -367,7 +369,7 @@ bool InsertPoint_Elem
 }
 
 
-bool FlipEdge
+bool dfm2::FlipEdge
 (int itri0, int ied0,
  std::vector<CEPo2>& aPo,
  std::vector<ETri>& aTri)
@@ -475,7 +477,7 @@ bool FlipEdge
 }
 
 
-bool FindEdge_LookAroundPoint
+bool dfm2::FindEdge_LookAroundPoint
 (int& itri0, int& inotri0, int& inotri1,
  ///
  const int ipo0, const int ipo1,
@@ -548,7 +550,7 @@ bool FindEdge_LookAroundPoint
 
 
 
-bool FindEdge_LookAllTriangles
+bool dfm2::FindEdge_LookAllTriangles
 (int& itri0, int& iedtri0,
  ///
  const int ipo0, const int ipo1,
@@ -568,7 +570,7 @@ bool FindEdge_LookAllTriangles
   return false;
 }
 
-bool CheckTri( const std::vector<ETri>& aTri )
+bool dfm2::CheckTri( const std::vector<ETri>& aTri )
 {
 	const int ntri = (int)aTri.size();
 	for(int itri=0;itri<ntri;itri++){
@@ -599,7 +601,7 @@ bool CheckTri( const std::vector<ETri>& aTri )
 	return true;
 }
 
-bool CheckTri
+bool dfm2::CheckTri
 (const std::vector<CEPo2>& aPo3D,
  const std::vector<ETri>& aSTri,
  bool is_assert)
@@ -682,7 +684,7 @@ bool CheckTri
 
 
 
-void InitializeMesh
+void dfm2::InitializeMesh
 (std::vector<CEPo2>& aPo3D,
  std::vector<ETri>& aSTri,
  ////
@@ -721,7 +723,7 @@ void InitializeMesh
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
-void MoveCCW
+void dfm2::MoveCCW
 (int& itri_cur,
  int& inotri_cur,
  bool& flag_is_wall,
@@ -739,7 +741,7 @@ void MoveCCW
 }
 
 
-bool DeleteTri
+bool dfm2::DeleteTri
 (int itri_to,
  std::vector<CEPo2>& aPo,
  std::vector<ETri>& aTri)
@@ -775,7 +777,7 @@ bool DeleteTri
 }
 
 
-bool Collapse_ElemEdge
+bool dfm2::Collapse_ElemEdge
 (const int itri_del,
  const int ied_del,
  std::vector<CEPo2>& aPo,
@@ -1033,7 +1035,7 @@ bool Collapse_ElemEdge
   return true;
 }
 
-void GetTriArrayAroundPoint
+void dfm2::GetTriArrayAroundPoint
 (std::vector< std::pair<int,int> >& aTriSurPo,
  int ipoin,
  const std::vector<CEPo2>& aPo,
@@ -1074,7 +1076,7 @@ void GetTriArrayAroundPoint
 
 
 
-void extractHoles
+void dfm2::extractHoles
 (std::vector< std::vector<int> >& aIndP_Hole,
  const int npo,
  const std::vector<ETri>& aETri)

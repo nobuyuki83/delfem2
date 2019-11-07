@@ -23,6 +23,10 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
+// -------------------------------------------
+
 
 class CInput_ContactNothing: public CInput_Contact
 {
@@ -37,9 +41,9 @@ public:
 
 // ---------------------------
 
-std::vector<CEPo2> aPo2D;
+std::vector<dfm2::CEPo2> aPo2D;
+std::vector<dfm2::ETri> aETri;
 std::vector<CVector2> aVec2;
-std::vector<ETri> aETri;
 std::vector<double> aXYZ0; // undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // deformed vertex velocity
@@ -56,7 +60,7 @@ double mov_begin_x, mov_begin_y;
 bool is_animation = true;
 double mag = 1.0;
 
-//////////////////////////////////
+// ----------------------------------
 
 void GenMesh(const std::vector< std::vector<double> >& aaXY)
 {
@@ -79,7 +83,7 @@ void GenMesh(const std::vector< std::vector<double> >& aaXY)
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
+    dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                   aVec2.size(),0, elen, param);
@@ -107,7 +111,7 @@ void StepTime()
                                stiff_contact,contact_clearance,c1);
 }
 
-//////////////////////////////////
+// -----------------------------------------------
 
 void myGlutResize(int w, int h)
 {
