@@ -51,8 +51,8 @@ void MakeMesh(){
     aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(+leny*0.5);
     aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
   }
-  std::vector<CEPo2> aPo2D;
-  std::vector<ETri> aETri;
+  std::vector<dfm2::CEPo2> aPo2D;
+  std::vector<dfm2::ETri> aETri;
   std::vector<CVector2> aVec2;
   GenMesh(aPo2D, aETri, aVec2,
           aaXY, 0.03, 0.03);

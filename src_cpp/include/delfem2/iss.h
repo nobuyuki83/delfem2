@@ -8,6 +8,8 @@
 
 #include <vector>
 
+namespace delfem2 {
+
 class CInput_IsosurfaceStuffing
 {
 public:
@@ -57,3 +59,4 @@ void makeBackgroundLattice(std::vector<CPointLattice>& aPoint, std::vector<unsig
                            const CInput_IsosurfaceStuffing& input,
                            double elen, int  ndiv, const double org[3]);
 
+}

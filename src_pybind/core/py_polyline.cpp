@@ -10,6 +10,8 @@
 
 namespace py = pybind11;
 
+// ---------------------------------------------
+
 int getLevelSet_AddEdge
 (int ip0, int ip1,
  double v0, double v1,

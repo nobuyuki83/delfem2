@@ -633,7 +633,7 @@ void SolveProblem_NavierStokes_Dynamic()
 }
 
 
-class CInSphere : public CInput_IsosurfaceStuffing
+class CInSphere : public dfm2::CInput_IsosurfaceStuffing
 {
 public:
   virtual double SignedDistance(double x, double y, double z) const {
@@ -654,7 +654,7 @@ public:
   delfem2::CSphere sdf;
 };
 
-class CInBox : public CInput_IsosurfaceStuffing
+class CInBox : public dfm2::CInput_IsosurfaceStuffing
 {
 public:
   virtual double SignedDistance(double x, double y, double z) const {
@@ -688,10 +688,10 @@ void SetMesh(int ishape)
     box.sdf.hwy = hwy;
     box.sdf.hwz = hwz;
     double cent[3] = {0,0,0};
-    IsoSurfaceStuffing(aXYZ, aTet, aIsSurf, box, 0.2, 1.1, cent);
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsSurf, box, 0.2, 1.1, cent);
   }
   else if( ishape == 2 ){
-    class CCavSphere : public CInput_IsosurfaceStuffing
+    class CCavSphere : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
       CCavSphere(){
@@ -719,7 +719,7 @@ void SetMesh(int ishape)
       CInSphere sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
-    IsoSurfaceStuffing(aXYZ, aTet, aIsSurf, cav_sphere, 0.05, 1.1, cent);
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsSurf, cav_sphere, 0.05, 1.1, cent);
   }
 }
 

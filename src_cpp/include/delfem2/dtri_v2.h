@@ -19,6 +19,10 @@
 #include "delfem2/vec2.h"
 #include "delfem2/dtri.h"
 
+// -------------------------------
+
+namespace delfem2 {
+
 bool CheckTri(const std::vector<CEPo2>& aPo3D,
               const std::vector<ETri>& aSTri,
               const std::vector<CVector2>& aXYZ);
@@ -32,9 +36,6 @@ void MeshTri2D_Export(std::vector<double>& aXY_out,
                       std::vector<unsigned int>& aTri_out,
                       const std::vector<CVector2>& aVec2,
                       const std::vector<ETri>& aTri_in);
-
-bool CheckInputBoundaryForTriangulation(const std::vector<int>& loop_ind,
-                                        const std::vector<CVector2>& aXY);
 
 void Meshing_Initialize(std::vector<CEPo2>& aPo2D,
                         std::vector<ETri>& aTri,
@@ -174,8 +175,6 @@ void RefineMesh(std::vector<CEPo2>& aPo3D,
                 std::vector<CVector2>& aVec2,
                 CCmdRefineMesh& aCmd);
 
-namespace delfem2 {
-
 class CMeshDynTri2D{
 public:
   void Initialize(const double* aXY, int nPo,
@@ -238,7 +237,7 @@ public:
     return ipo0;
   }
   void DelaunayAroundPoint(int ipo){
-    ::DelaunayAroundPoint(ipo, aEPo, aETri, aVec2);
+    delfem2::DelaunayAroundPoint(ipo, aEPo, aETri, aVec2);
   }
   void meshing_loops(const std::vector< std::vector<double> >& aaXY,
                      double edge_length)
@@ -271,9 +270,9 @@ public:
   void RefinementPlan_EdgeLongerThan_InsideCircle(CCmdRefineMesh& aCmd,
                                                   double elen,
                                                   double px, double py, double rad){
-    ::RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
-                                                 elen,px,py, rad,
-                                                 aEPo,aVec2,aETri);
+    delfem2::RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
+                                                        elen,px,py, rad,
+                                                        aEPo,aVec2,aETri);
     RefineMesh(aEPo, aETri, aVec2, aCmd);
     assert( aEPo.size() == aVec2.size() );
   }

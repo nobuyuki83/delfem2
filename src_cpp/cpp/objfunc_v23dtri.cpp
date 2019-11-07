@@ -17,6 +17,10 @@
 
 #include "delfem2/objfunc_v23dtri.h"
 
+namespace dfm2 = delfem2;
+
+// -------------------------------------
+
 static void FetchData
 (double* val_to,
  int nno, int ndim,
@@ -36,7 +40,7 @@ static void FetchData
 void PBD_TriStrain
 (double* aXYZt,
  unsigned int nXYZ,
- const std::vector<ETri>& aETri,
+ const std::vector<delfem2::ETri>& aETri,
  const std::vector<CVector2>& aVec2)
 {
   for(unsigned int it=0;it<aETri.size();++it){
@@ -58,7 +62,7 @@ void PBD_TriStrain
 void PBD_Bend
 (double* aXYZt,
  unsigned int nXYZ,
- const std::vector<ETri>& aETri,
+ const std::vector<delfem2::ETri>& aETri,
  const std::vector<CVector2>& aVec2)
 {
   for(unsigned int it=0;it<aETri.size();++it){

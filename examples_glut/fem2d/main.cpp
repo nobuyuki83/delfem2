@@ -141,9 +141,7 @@ void drawCurve
   ::glEnd();
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------
 
 double len = 1.1;
 std::vector<unsigned int> aTri1;
@@ -172,7 +170,7 @@ double dt_timestep = 0.01;
 double gamma_newmark = 0.6;
 double beta_newmark = 0.36;
 
-//////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------
 
 void MakeMesh(){
   std::vector<double> aCV0; MakeRandomCV(8, aCV0); // current cv
@@ -204,12 +202,12 @@ void MakeMesh(){
     }
   }
   {
-    std::vector<CEPo2> aPo2D;
-    std::vector<ETri> aETri;
+    std::vector<dfm2::CEPo2> aPo2D;
+    std::vector<dfm2::ETri> aETri;
     Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                    loopIP_ind,loopIP);
     if( elen > 1.0e-10 ){
-      CInputTriangulation_Uniform param(1.0);
+      dfm2::CInputTriangulation_Uniform param(1.0);
       std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
       MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                     aVec2.size(),0,elen, param);

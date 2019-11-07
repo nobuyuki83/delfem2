@@ -282,6 +282,9 @@ void MakeMassMatrixTri(double M[9],
                        const unsigned int aIP[3],
                        const std::vector<CVector2>& aVec2);
 
+bool CheckInputBoundaryForTriangulation (const std::vector<int>& loopIP_ind,
+                                         const std::vector<CVector2>& aXY);
+
 // -------------------------------------------------------------
 
 /**

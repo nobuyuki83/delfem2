@@ -12,6 +12,8 @@
 
 // ------------------------------------------------------------------
 
+namespace delfem2 {
+
 // (6-i-j)%3;
 static const unsigned int relTriTri[3][3] = {
 	{ 0, 2, 1 }, //  0
@@ -41,7 +43,9 @@ public:
 
 bool JArray_MakeElSuP(std::vector<int>& elsup_ind, std::vector<int>& elsup,
                      const std::vector<ETri>& aTri, const unsigned int npoin);
-
+void JArray_PSuP (std::vector<int>& psup_ind, std::vector<int>& psup,
+                  const std::vector<ETri>& aTri, const unsigned int npoin,
+                  const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
 void MakeInnerRelationTri(std::vector<ETri>& aTri, const unsigned int npoin,
                           const std::vector<int>& elsup_ind,
                           const std::vector<int>& elsup);
@@ -122,9 +126,6 @@ void extractHoles(std::vector< std::vector<int> >& aIndP_Hole,
                   const int npo,
                   const std::vector<ETri>& aETri);
 
-
-// --------------------------------------------
-
-
+}
 
 #endif // #endif DTRI_H

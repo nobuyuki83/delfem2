@@ -17,18 +17,20 @@
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_v23dtricad.h"
 
+namespace dfm2 = delfem2;
+
 // --------------------------------------------
 
-std::vector<CEPo2> aPo2D;
+std::vector<dfm2::CEPo2> aPo2D;
 std::vector<CVector2> aVec2;
-std::vector<ETri> aETri;
+std::vector<dfm2::ETri> aETri;
 std::vector<int> loopIP_ind, loopIP;
 
 // --------------------------------------------
 
 void Refine(double px, double py)
 {
-  CCmdRefineMesh aCmd;
+  dfm2::CCmdRefineMesh aCmd;
   RefinementPlan_EdgeLongerThan_InsideCircle(aCmd,
                                              0.05, px, py, 0.1,
                                              aPo2D, aVec2, aETri);
@@ -109,7 +111,7 @@ void GenMesh()
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
-    CInputTriangulation_Uniform param(1.0);
+    dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                   aVec2.size(), 0, elen, param);

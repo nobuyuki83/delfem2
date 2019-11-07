@@ -32,11 +32,13 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
 // --------------------------------------
 
-std::vector<CEPo2> aPo2D;
+std::vector<dfm2::CEPo2> aPo2D;
+std::vector<dfm2::ETri> aETri;
 std::vector<CVector2> aVec2;
-std::vector<ETri> aETri;
 std::vector<unsigned int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;

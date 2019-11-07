@@ -5,12 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include <assert.h>
 #include <math.h>
 #include <iostream>
 
 #include "delfem2/iss.h"
+
+namespace dfm2 = delfem2;
+
+// ---------------------------------------------------------
+
 /*
 static inline void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
 	n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
@@ -467,11 +471,12 @@ bool isEdgeCenterPoint
 }
  */
 
-
-
 void makeLatticeCoasestLevel
-(std::vector<CPointLattice>& aPoint,   std::vector<CCell>& aCell,
- const CInput_IsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
+(std::vector<dfm2::CPointLattice>& aPoint,
+ std::vector<CCell>& aCell,
+ //
+ const dfm2::CInput_IsosurfaceStuffing& input,
+ double elen, int  ndiv, const double org[3])
 {
   aPoint.clear();
   aPoint.resize((ndiv+1)*(ndiv+1)*(ndiv+1)+ndiv*ndiv*ndiv);
@@ -483,7 +488,7 @@ void makeLatticeCoasestLevel
         double cy = iy*elen+org[1];
         double cz = iz*elen+org[2];
         double sdf = input.SignedDistance(cx,cy,cz);
-        aPoint[icrnr0] = CPointLattice(cx,cy,cz,sdf);
+        aPoint[icrnr0] = dfm2::CPointLattice(cx,cy,cz,sdf);
       }
     }
   }
@@ -495,7 +500,7 @@ void makeLatticeCoasestLevel
         double cy = (iy+0.5)*elen+org[1];
         double cz = (iz+0.5)*elen+org[2];
         double sdf = input.SignedDistance(cx,cy,cz);
-        aPoint[ip0] = CPointLattice(cx,cy,cz,sdf);
+        aPoint[ip0] = dfm2::CPointLattice(cx,cy,cz,sdf);
       }
     }
   }
@@ -527,8 +532,8 @@ void makeLatticeCoasestLevel
 }
 
 void makeChild
-(std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInput_IsosurfaceStuffing& input, unsigned int icell, int ichild)
+(std::vector<CCell>& aCell, std::vector<dfm2::CPointLattice>& aPoint,
+ const dfm2::CInput_IsosurfaceStuffing& input, unsigned int icell, int ichild)
 {
   assert( icell < aCell.size() );
   assert( ichild >=0 && ichild < 8 );
@@ -555,7 +560,7 @@ void makeChild
   CCell cc(size0*0.5,ilevel0+1,icell,ichild);
   {
     cc.aIP[26] = (int)aPoint.size();
-    CPointLattice p(ccx,ccy,ccz,input.SignedDistance(ccx, ccy, ccz));
+    dfm2::CPointLattice p(ccx,ccy,ccz,input.SignedDistance(ccx, ccy, ccz));
     aPoint.push_back(p);
   }
   aCell.push_back(cc);
@@ -563,8 +568,8 @@ void makeChild
 }
 
 void makeChild_Face
-(std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInput_IsosurfaceStuffing& input, int icell, int iface)
+(std::vector<CCell>& aCell, std::vector<dfm2::CPointLattice>& aPoint,
+ const dfm2::CInput_IsosurfaceStuffing& input, int icell, int iface)
 {
   assert( icell >= 0 && icell < (int)aCell.size() );
   const int faceHex[6][4] = {
@@ -582,8 +587,8 @@ void makeChild_Face
 }
 
 void Continuation
-(std::vector<CPointLattice>& aPoint,std::vector<CCell>& aCell,
- const CInput_IsosurfaceStuffing& input)
+(std::vector<dfm2::CPointLattice>& aPoint,std::vector<CCell>& aCell,
+ const dfm2::CInput_IsosurfaceStuffing& input)
 {
   const int faceHex[6][4] = {
     {0,4,6,2},
@@ -839,10 +844,10 @@ void CheckContinuation(const std::vector<CCell>& aCell)
  */
 
 void addEdgeFacePoints
-(std::vector<CPointLattice>& aPoint,
+(std::vector<dfm2::CPointLattice>& aPoint,
  std::vector<CCell>& aCell,
- /////
- const CInput_IsosurfaceStuffing& input)
+ //
+ const dfm2::CInput_IsosurfaceStuffing& input)
 {
   std::vector<int> orderCell;
   orderCell.reserve(aCell.size());
@@ -910,7 +915,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0];
         const double y0 = aPoint[c.aIP[26]].pos[1]-c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2]-c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[8] = ip0;
         if( icay   >=0 ){ aCell[icay   ].aIP[ 9] = ip0; }
         if( icaz   >=0 ){ aCell[icaz   ].aIP[10] = ip0; }
@@ -944,7 +949,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0];
         const double y0 = aPoint[c.aIP[26]].pos[1]+c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2]-c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[9] = ip0;
         if( icaY   >=0 ){ aCell[icaY   ].aIP[ 8] = ip0; }
         if( icaz   >=0 ){ aCell[icaz   ].aIP[11] = ip0; }
@@ -978,7 +983,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0];
         const double y0 = aPoint[c.aIP[26]].pos[1]-c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2]+c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[10] = ip0;
         if( icay   >=0 ){ aCell[icay   ].aIP[11] = ip0; }
         if( icaZ   >=0 ){ aCell[icaZ   ].aIP[ 8] = ip0; }
@@ -1012,7 +1017,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0];
         const double y0 = aPoint[c.aIP[26]].pos[1]+c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2]+c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[11] = ip0;
         if( icaY   >=0 ){ aCell[icaY   ].aIP[10] = ip0; }
         if( icaZ   >=0 ){ aCell[icaZ   ].aIP[ 9] = ip0; }
@@ -1049,7 +1054,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]-c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1];
         const double z0 = aPoint[c.aIP[26]].pos[2]-c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[12] = ip0;
         if( icax   >=0 ){ aCell[icax   ].aIP[13] = ip0; }
         if( icaz   >=0 ){ aCell[icaz   ].aIP[14] = ip0; }
@@ -1083,7 +1088,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]+c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1];
         const double z0 = aPoint[c.aIP[26]].pos[2]-c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[13] = ip0;
         if( icaX   >=0 ){ aCell[icaX   ].aIP[12] = ip0; }
         if( icaz   >=0 ){ aCell[icaz   ].aIP[15] = ip0; }
@@ -1117,7 +1122,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]-c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1];
         const double z0 = aPoint[c.aIP[26]].pos[2]+c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[14] = ip0;
         if( icax   >=0 ){ aCell[icax   ].aIP[15] = ip0; }
         if( icaZ   >=0 ){ aCell[icaZ   ].aIP[12] = ip0; }
@@ -1151,7 +1156,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]+c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1];
         const double z0 = aPoint[c.aIP[26]].pos[2]+c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[15] = ip0;
         if( icaX   >=0 ){ aCell[icaX   ].aIP[14] = ip0; }
         if( icaZ   >=0 ){ aCell[icaZ   ].aIP[13] = ip0; }
@@ -1186,7 +1191,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]-c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1]-c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[16] = ip0;
         if( icax   >=0 ){ aCell[icax   ].aIP[17] = ip0; }
         if( icay   >=0 ){ aCell[icay   ].aIP[18] = ip0; }
@@ -1220,7 +1225,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]+c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1]-c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[17] = ip0;
         if( icaX   >=0 ){ aCell[icaX   ].aIP[16] = ip0; }
         if( icay   >=0 ){ aCell[icay   ].aIP[19] = ip0; }
@@ -1254,7 +1259,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]-c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1]+c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[18] = ip0;
         if( icax   >=0 ){ aCell[icax   ].aIP[19] = ip0; }
         if( icaY   >=0 ){ aCell[icaY   ].aIP[16] = ip0; }
@@ -1289,7 +1294,7 @@ void addEdgeFacePoints
         const double x0 = aPoint[c.aIP[26]].pos[0]+c.size*0.5;
         const double y0 = aPoint[c.aIP[26]].pos[1]+c.size*0.5;
         const double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)));
         c.aIP[19] = ip0;
         if( icaX   >=0 ){ aCell[icaX   ].aIP[18] = ip0; }
         if( icaY   >=0 ){ aCell[icaY   ].aIP[17] = ip0; }
@@ -1320,7 +1325,7 @@ void addEdgeFacePoints
         double x0 = aPoint[c.aIP[26]].pos[0]-c.size*0.5;
         double y0 = aPoint[c.aIP[26]].pos[1];
         double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
         c.aIP[20] = ip0;
         if( icax  >=0 ){ aCell[icax  ].aIP[21] = ip0; }
         if( icc0  >=0 ){ aCell[icc0  ].aIP[ 6] = ip0; }
@@ -1347,7 +1352,7 @@ void addEdgeFacePoints
         double x0 = aPoint[c.aIP[26]].pos[0]+c.size*0.5;
         double y0 = aPoint[c.aIP[26]].pos[1];
         double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back( CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
+        aPoint.push_back( dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
         c.aIP[21] = ip0;
         if( icaX  >=0 ){ aCell[icaX  ].aIP[20] = ip0; }
         if( icc1  >=0 ){ aCell[icc1  ].aIP[ 7] = ip0; }
@@ -1374,7 +1379,7 @@ void addEdgeFacePoints
         double x0 = aPoint[c.aIP[26]].pos[0];
         double y0 = aPoint[c.aIP[26]].pos[1]-c.size*0.5;
         double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back( CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
+        aPoint.push_back( dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
         c.aIP[22] = ip0;
         if( icay  >=0 ){ aCell[icay  ].aIP[23] = ip0; }
         if( icc0  >=0 ){ aCell[icc0  ].aIP[ 5] = ip0; }
@@ -1401,7 +1406,7 @@ void addEdgeFacePoints
         double x0 = aPoint[c.aIP[26]].pos[0];
         double y0 = aPoint[c.aIP[26]].pos[1]+c.size*0.5;
         double z0 = aPoint[c.aIP[26]].pos[2];
-        aPoint.push_back( CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
+        aPoint.push_back( dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
         c.aIP[23] = ip0;
         if( icaY  >=0 ){ aCell[icaY  ].aIP[22] = ip0; }
         if( icc2  >=0 ){ aCell[icc2  ].aIP[ 7] = ip0; }
@@ -1428,7 +1433,7 @@ void addEdgeFacePoints
         double x0 = aPoint[c.aIP[26]].pos[0];
         double y0 = aPoint[c.aIP[26]].pos[1];
         double z0 = aPoint[c.aIP[26]].pos[2]-c.size*0.5;
-        aPoint.push_back( CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
+        aPoint.push_back( dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
         c.aIP[24] = ip0;
         if( icaz >=0 ){ aCell[icaz ].aIP[25] = ip0; }
         if( icc0 >=0 ){ aCell[icc0 ].aIP[ 3] = ip0; }
@@ -1455,7 +1460,7 @@ void addEdgeFacePoints
         double x0 = aPoint[c.aIP[26]].pos[0];
         double y0 = aPoint[c.aIP[26]].pos[1];
         double z0 = aPoint[c.aIP[26]].pos[2]+c.size*0.5;
-        aPoint.push_back(CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
+        aPoint.push_back(dfm2::CPointLattice(x0,y0,z0,input.SignedDistance(x0,y0,z0)) );
         c.aIP[25] = ip0;
         if( icaZ >=0 ){ aCell[icaZ ].aIP[24] = ip0; }
         if( icc4 >=0 ){ aCell[icc4 ].aIP[ 7] = ip0; }
@@ -1571,7 +1576,7 @@ void makeTetLattice
 }
 
 void WarpLattice
-(std::vector<CPointLattice>& aPointLattice,
+(std::vector<dfm2::CPointLattice>& aPointLattice,
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup)
 {
@@ -1627,7 +1632,7 @@ void MakeCutPoint
  std::vector<int>& mapLat2Out,
  std::vector<int>& lat2cut_ind,
  std::vector<int>& lat2cut,
- const std::vector<CPointLattice>& aPointLattice,
+ const std::vector<dfm2::CPointLattice>& aPointLattice,
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup)
 {
@@ -1710,7 +1715,7 @@ void MakeCutPoint
 
 void cutoutTetFromLattice
 (std::vector<unsigned int>& aTet,
- const std::vector<CPointLattice>& aPointLattice,
+ const std::vector<dfm2::CPointLattice>& aPointLattice,
  const std::vector<unsigned int>& aTetLattice,
  const std::vector<int>& mapLat2Out,
  const std::vector<int>& lat2cut_ind,
@@ -1749,10 +1754,14 @@ void cutoutTetFromLattice
 
 
 
-/// internal function for debug
-void makeBackgroundLattice
-(std::vector<CPointLattice>& aPointLattice, std::vector<unsigned int>& aTetLattice,
- const CInput_IsosurfaceStuffing& input, double elen, int  ndiv, const double org[3])
+/**
+ * @brief internal function for debug
+ */
+void dfm2::makeBackgroundLattice
+(std::vector<dfm2::CPointLattice>& aPointLattice,
+ std::vector<unsigned int>& aTetLattice,
+ const dfm2::CInput_IsosurfaceStuffing& input,
+ double elen, int  ndiv, const double org[3])
 {
   std::vector<CCell> aCell;
   makeLatticeCoasestLevel(aPointLattice, aCell,
@@ -1792,7 +1801,7 @@ void makeBackgroundLattice
         CCell cc(size_parent*0.5,ilevel_parent+1,icell,ichild);
         {
           cc.aIP[26] = (int)aPointLattice.size();
-          CPointLattice p(ccx,ccy,ccz,sdf0);
+          dfm2::CPointLattice p(ccx,ccy,ccz,sdf0);
           aPointLattice.push_back(p);
         }
         aCell.push_back(cc);
@@ -1812,9 +1821,12 @@ void makeBackgroundLattice
                  aCell);
 }
 
-bool IsoSurfaceStuffing
-(std::vector<double>& aXYZ, std::vector<unsigned int>& aTet, std::vector<int>& aIsOnSurfXYZ,
- const CInput_IsosurfaceStuffing& input, double elen_in, double width, const double center[3])
+bool dfm2::IsoSurfaceStuffing
+(std::vector<double>& aXYZ,
+ std::vector<unsigned int>& aTet,
+ std::vector<int>& aIsOnSurfXYZ,
+ const dfm2::CInput_IsosurfaceStuffing& input,
+ double elen_in, double width, const double center[3])
 {
   if( elen_in <= 0 ) return false;
   
@@ -1823,9 +1835,9 @@ bool IsoSurfaceStuffing
   double elen = width/(double)ndiv;
   const double org[3] = { center[0]-0.5*elen*ndiv, center[1]-0.5*elen*ndiv, center[2]-0.5*elen*ndiv };
 
-  std::vector<CPointLattice> aPointLattice;
+  std::vector<dfm2::CPointLattice> aPointLattice;
   std::vector<unsigned int> aTetLattice;
-  makeBackgroundLattice(aPointLattice, aTetLattice, input, elen, ndiv, org);
+  dfm2::makeBackgroundLattice(aPointLattice, aTetLattice, input, elen, ndiv, org);
   
   std::vector<int> mapLat2Out;
   std::vector<int> lat2cut_ind, lat2cut;

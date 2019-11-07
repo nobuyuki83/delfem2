@@ -5,8 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef SDF_H
-#define SDF_H
+#ifndef DFM2_SDF_H
+#define DFM2_SDF_H
+
+namespace delfem2 {
 
 class CSDF3
 {
@@ -18,5 +20,7 @@ public:
   virtual double Projection(double n[3],
                             double px, double py, double pz) const = 0; 
 };
+  
+}
 
 #endif

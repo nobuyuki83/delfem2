@@ -46,7 +46,7 @@ void SetProblem(int iprob)
 {
   std::vector<int> aIsOnSurfXYZ;
   if( iprob == 0 ){
-    class CInSphere : public CInput_IsosurfaceStuffing
+    class CInSphere : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
       CInSphere(double rad){
@@ -79,7 +79,7 @@ void SetProblem(int iprob)
                        sphere, 0.2, rad*4.0, cent);
   }
   else if( iprob ==  1 ){
-    class CInBox : public CInput_IsosurfaceStuffing
+    class CInBox : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
       CInBox(double hwx, double hwy, double hwz){
@@ -108,11 +108,11 @@ void SetProblem(int iprob)
     const double hwz = 0.41;
     double cent[3] = {0,0,0};
     CInBox box(hwx,hwy,hwz);
-    IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
                        box, 0.1, 2.00, cent);
   }
   else if( iprob == 2 ){
-    class CCavSphere : public CInput_IsosurfaceStuffing
+    class CCavSphere : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
       CCavSphere(){
@@ -152,11 +152,11 @@ void SetProblem(int iprob)
       dfm2::CSphere sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
-    IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                        cav_sphere, 0.2, 3.00, cent);
   }
   if( iprob == 3 ){
-    class CMesh : public CInput_IsosurfaceStuffing
+    class CMesh : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
       virtual double SignedDistance(double x, double y, double z) const {
@@ -189,7 +189,7 @@ void SetProblem(int iprob)
                        mesh.aTri.data(), mesh.aTri.size()/3);
     }
     double cent[3] = {0,0,0};
-    IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                        mesh, 0.18, 3.0, cent);
   }
   
