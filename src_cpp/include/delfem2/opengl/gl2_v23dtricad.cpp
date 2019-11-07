@@ -25,7 +25,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------------
 
-void DrawMeshDynTri_FaceNorm
+void dfm2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<ETri>& aSTri,
  const std::vector<CVector2>& aVec2)
 {
@@ -50,7 +50,7 @@ void DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
-void DrawMeshDynTri_Edge
+void dfm2::opengl::DrawMeshDynTri_Edge
 (const std::vector<ETri>& aSTri,
  const std::vector<CVector2>& aVec2)
 {
@@ -77,7 +77,7 @@ void DrawMeshDynTri_Edge
 }
 
 
-void DrawMeshDynTri_FaceNorm
+void dfm2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<ETri>& aSTri,
  const std::vector<CVector3>& aVec3)
 {
@@ -115,7 +115,7 @@ void DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
-void DrawMeshDynTri_Edge
+void dfm2::opengl::DrawMeshDynTri_Edge
 (const std::vector<ETri>& aSTri,
  const std::vector<CVector3>& aVec3)
 {
@@ -145,7 +145,7 @@ void DrawMeshDynTri_Edge
 }
 
 
-void DrawMeshDynTri3D_Edge
+void dfm2::opengl::DrawMeshDynTri3D_Edge
 (const std::vector<double>& aXYZ,
  const std::vector<ETri>& aSTri)
 {
@@ -173,8 +173,8 @@ void DrawMeshDynTri3D_Edge
 
 // -------------------------------------------------------------------------
 
-void Draw_CCad2DEdge
- (const CCad2D_EdgeGeo& edge,
+void dfm2::opengl::Draw_CCad2DEdge
+ (const dfm2::CCad2D_EdgeGeo& edge,
   bool is_selected,
   int ipicked_elem)
 {
@@ -216,11 +216,11 @@ void Draw_CCad2DEdge
   }
 }
 
-void Draw_CCad2D(const CCad2D& cad2d)
+void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
 {
-  const std::vector<CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
-  const std::vector<CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;
-  const std::vector<CCad2D_FaceGeo>& aFace = cad2d.aFace;
+  const std::vector<dfm2::CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
+  const std::vector<dfm2::CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;
+  const std::vector<dfm2::CCad2D_FaceGeo>& aFace = cad2d.aFace;
   int ivtx_picked = cad2d.ivtx_picked;
   int iedge_picked = cad2d.iedge_picked;
   int iface_picked = cad2d.iface_picked;
@@ -248,7 +248,7 @@ void Draw_CCad2D(const CCad2D& cad2d)
     ::glLineWidth(1);
     glTranslated(0,0,-0.2);
     for(unsigned int iface=0;iface<aFace.size();++iface){
-      const CCad2D_FaceGeo& face = aFace[iface];
+      const dfm2::CCad2D_FaceGeo& face = aFace[iface];
       if( (int)iface == iface_picked ){ ::glColor3d(1,1,0); }
       else{ ::glColor3d(0.8,0.8,0.8); }
       dfm2::opengl::Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);

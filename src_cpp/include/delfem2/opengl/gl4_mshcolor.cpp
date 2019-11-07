@@ -25,6 +25,8 @@
 #include "delfem2/opengl/gl4_funcs.h" // CGL4_VAO_Mesh
 #include "delfem2/opengl/gl4_mshcolor.h"
 
+namespace dfm2 = delfem2;
+
 // ------------------------------------------
 
 
@@ -34,7 +36,7 @@ void CShader_TriMesh::Initialize
 {
   std::vector<unsigned int> aLine;
   MeshLine_MeshElem(aLine,
-                    aTri.data(), aTri.size()/3, MESHELEM_TRI,
+                    aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
                     aXYZd.size()/3);
   // --------
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
@@ -138,7 +140,7 @@ void CShader_TriMesh_Scalar::Initialize
   
   std::vector<unsigned int> aLine;
   MeshLine_MeshElem(aLine,
-                    aTri.data(), aTri.size()/3, MESHELEM_TRI,
+                    aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
                     aPosD.size()/ndim);
   // ------
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }
@@ -245,7 +247,7 @@ void CShader_TriMesh_Disp::Initialize
   
   std::vector<unsigned int> aLine;
   MeshLine_MeshElem(aLine,
-                    aTri.data(), aTri.size()/3, MESHELEM_TRI,
+                    aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
                     aPosD.size()/ndim);
   // ------
   if( !glIsVertexArray(vao.VAO) ){ glGenVertexArrays(1, &vao.VAO); }

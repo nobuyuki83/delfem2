@@ -8,7 +8,7 @@
 #include "delfem2/mshio.h"
 
 namespace py = pybind11;
-
+namespace dfm2 = delfem2;
 
 /*
 {
@@ -40,12 +40,12 @@ void PyWrite_VTK_MeshPoint
 void PyWrite_VTK_MeshElem
 (const std::string& file_path,
  const py::array_t<int>& aElem,
- MESHELEM_TYPE meshelem_type)
+ dfm2::MESHELEM_TYPE meshelem_type)
 {
   std::ofstream fout(file_path, std::ios_base::app);
   int vtk_elem_type = 0;
-  if( meshelem_type == MESHELEM_TRI ){  vtk_elem_type = 5;  }
-  if( meshelem_type == MESHELEM_TET ){  vtk_elem_type = 10;  }
+  if( meshelem_type == dfm2::MESHELEM_TRI ){  vtk_elem_type = 5;  }
+  if( meshelem_type == dfm2::MESHELEM_TET ){  vtk_elem_type = 10;  }
   WriteVTK_Cells(fout, vtk_elem_type, aElem.data(), aElem.shape()[0]);
 }
 

@@ -169,14 +169,14 @@ void PyMergeLinSys_Poission
  double alpha, double source,
  const py::array_t<double>& aXY,
  const py::array_t<unsigned int>& aElm,
- MESHELEM_TYPE elem_type,
+ dfm2::MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal)
 {
   assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
   assert( nNodeElem(elem_type) == aElm.shape()[1] );
   auto buff_vecb = vec_b.request();
   if( aXY.shape()[1] == 2 ){
-    if( elem_type == MESHELEM_TRI ){
+    if( elem_type == dfm2::MESHELEM_TRI ){
       dfm2::MergeLinSys_Poission_MeshTri2D(mss, (double*)buff_vecb.ptr,
                                            alpha, source,
                                            aXY.data(), aXY.shape()[0],
@@ -185,7 +185,7 @@ void PyMergeLinSys_Poission
     }
   }
   if( aXY.shape()[1] == 3 ){
-    if( elem_type == MESHELEM_TET ){
+    if( elem_type == dfm2::MESHELEM_TET ){
       dfm2::MergeLinSys_Poission_MeshTet3D(mss, (double*)buff_vecb.ptr,
                                            alpha, source,
                                            aXY.data(), aXY.shape()[0],
@@ -203,7 +203,7 @@ void PyMergeLinSys_Diffuse
  double dt_timestep, double gamma_newmark,
  const py::array_t<double>& aXY,
  const py::array_t<unsigned int>& aElm,
- MESHELEM_TYPE elem_type,
+ dfm2::MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo)
 {
@@ -211,7 +211,7 @@ void PyMergeLinSys_Diffuse
   assert( nNodeElem(elem_type) == aElm.shape()[1] );
   auto buff_vecb = vec_b.request();
   if( aXY.shape()[1] == 2 ){
-    if( elem_type == MESHELEM_TRI ){
+    if( elem_type == dfm2::MESHELEM_TRI ){
       dfm2::MergeLinSys_Diffusion_MeshTri2D(mss, (double*)buff_vecb.ptr,
                                       alpha, rho, source,
                                       dt_timestep, gamma_newmark,
@@ -221,7 +221,7 @@ void PyMergeLinSys_Diffuse
     }
   }
   else if( aXY.shape()[1] == 3 ){
-    if( elem_type == MESHELEM_TET ){
+    if( elem_type == dfm2::MESHELEM_TET ){
       dfm2::MergeLinSys_Diffusion_MeshTet3D(mss, (double*)buff_vecb.ptr,
                                       alpha, rho, source,
                                       dt_timestep, gamma_newmark,
@@ -242,14 +242,14 @@ void PyMergeLinSys_LinearSolidStatic
  std::vector<double>& gravity,
  const py::array_t<double>& aXY,
  const py::array_t<unsigned int>& aElm,
- MESHELEM_TYPE elem_type,
+ dfm2::MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal)
 {
   assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
   assert( nNodeElem(elem_type) == aElm.shape()[1] );
   auto buff_vecb = vec_b.request();
   if( aXY.shape()[1] == 2 ){
-    if( elem_type == MESHELEM_TRI ){
+    if( elem_type == dfm2::MESHELEM_TRI ){
       dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D(mss, (double*)buff_vecb.ptr,
                                               myu,lambda,rho,
                                               gravity[0], gravity[1],
@@ -259,7 +259,7 @@ void PyMergeLinSys_LinearSolidStatic
     }
   }
   if( aXY.shape()[1] == 3 ){
-    if( elem_type == MESHELEM_TET ){
+    if( elem_type == dfm2::MESHELEM_TET ){
       dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(mss, (double*)buff_vecb.ptr,
                                                      myu,lambda,rho,gravity.data(),
                                                      aXY.data(), aXY.shape()[0],
@@ -278,7 +278,7 @@ void PyMergeLinSys_LinearSolidDynamic
  double dt_timestep, double gamma_newmark, double beta_newmark,
  const py::array_t<double>& aXY,
  const py::array_t<unsigned int>& aElm,
- MESHELEM_TYPE elem_type,
+ dfm2::MESHELEM_TYPE elem_type,
  const py::array_t<double>& aVal,
  const py::array_t<double>& aVelo,
  const py::array_t<double>& aAcc)
@@ -287,7 +287,7 @@ void PyMergeLinSys_LinearSolidDynamic
   assert( aXY.shape()[1] == 2 || aXY.shape()[1] == 3 );
   assert( nNodeElem(elem_type) == aElm.shape()[1] );
   if( aXY.shape()[1] == 2 ){
-    if( elem_type == MESHELEM_TRI ){
+    if( elem_type == dfm2::MESHELEM_TRI ){
       dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(mss,(double*)buff_vecb.ptr,
                                                myu,lambda,rho,gravity[0],gravity[1],
                                                dt_timestep,gamma_newmark,beta_newmark,
@@ -297,7 +297,7 @@ void PyMergeLinSys_LinearSolidDynamic
     }
   }
   if( aXY.shape()[1] == 3 ){
-    if( elem_type == MESHELEM_TET ){
+    if( elem_type == dfm2::MESHELEM_TET ){
       dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(mss,(double*)buff_vecb.ptr,
                                                           myu,lambda,rho,gravity.data(),
                                                           dt_timestep,gamma_newmark,beta_newmark,
@@ -542,7 +542,7 @@ void PyConstProj_Rigid3D
 
 void PyPBD_ConstProj_ClothStretch
 (py::array_t<double>& npXYZt,
- const CMeshDynTri2D& mesh)
+ const dfm2::CMeshDynTri2D& mesh)
 {
   double* aXYZt = (double*)(npXYZt.request().ptr);
   const std::vector<ETri>& aETri = mesh.aETri;
@@ -553,7 +553,7 @@ void PyPBD_ConstProj_ClothStretch
 
 void PyPBD_ConstProj_ClothBend
 (py::array_t<double>& npXYZt,
- const CMeshDynTri2D& mesh)
+ const dfm2::CMeshDynTri2D& mesh)
 {
   assert( npXYZt.ndim() == 2 );
   assert( npXYZt.shape()[1] == 3 );
@@ -634,21 +634,21 @@ void PyMassPointMesh
  double rho,
  const py::array_t<double>& np_pos,
  const py::array_t<unsigned int>& np_elm,
- MESHELEM_TYPE elem_type)
+ dfm2::MESHELEM_TYPE elem_type)
 {
   assert( mass_point.ndim() == 1 );
   assert( np_pos.ndim() == 2 );
   assert( np_elm.ndim() == 2 );
   assert( mass_point.shape()[0] == np_pos.shape()[0] );
   assert( AssertNumpyArray2D(np_elm, -1, nNodeElem(elem_type)) );
-  if( elem_type ==  MESHELEM_TET ){
+  if( elem_type ==  dfm2::MESHELEM_TET ){
     assert( AssertNumpyArray2D(np_pos, -1, 3) );
     MassPoint_Tet3D((double*)(mass_point.request().ptr),
                      rho,
                      np_pos.data(), np_pos.shape()[0],
                      np_elm.data(), np_elm.shape()[0]);
   }
-  else if( elem_type ==  MESHELEM_TRI ){
+  else if( elem_type ==  dfm2::MESHELEM_TRI ){
     if( np_pos.shape()[1] == 2 ){ // two dimensional
       assert( AssertNumpyArray2D(np_pos, -1, 2) );
       MassPoint_Tri2D((double*)(mass_point.request().ptr),

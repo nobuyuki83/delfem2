@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <vector>
 
+namespace delfem2 {
+
 enum MESHELEM_TYPE
 {
   MESHELEM_TRI = 0,
@@ -183,6 +185,8 @@ inline const int (*noelElemEdge(MESHELEM_TYPE type))[2]
   };
   return noelElemEdge0[type];
 }
+  
+}
 
 // ---------------------------------------------
 // function related to jagged array
@@ -209,12 +213,12 @@ void JArray_AddMasterSlavePattern(std::vector<int>& index,
                            const int* psup);
 
 // -----------------------------
-void AddElement(const MESHELEM_TYPE& femelem_type,
+void AddElement(const delfem2::MESHELEM_TYPE& femelem_type,
                 const std::vector<int>& aElemIn,
                 //
                 std::vector<int>& aElemInd,
                 std::vector<int>& aElem,
-                std::vector<MESHELEM_TYPE>& aElemType);
+                std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
 namespace delfem2 {
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
@@ -225,7 +229,7 @@ void convert2Tri(std::vector<int>& aTri,
                  //
                  const std::vector<int>& aElemInd,
                  const std::vector<int>& aElem,
-                 const std::vector<MESHELEM_TYPE>& aElemType);
+                 const std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
 void ElemQuad_DihedralTri(std::vector<unsigned int>& aQuad,
                           const unsigned int* aTri, int nTri,
@@ -233,10 +237,10 @@ void ElemQuad_DihedralTri(std::vector<unsigned int>& aQuad,
 
 void FlipElement_Tri(std::vector<int>& aTri);
 void FlipElement(std::vector<int>& aElem_Flip,
-          //
-          const std::vector<int>& aElemInd,
-          const std::vector<int>& aElem,
-          const std::vector<MESHELEM_TYPE>& aElemType);
+                 //
+                 const std::vector<int>& aElemInd,
+                 const std::vector<int>& aElem,
+                 const std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
 // -------------------
 
@@ -274,19 +278,19 @@ void makeSurroundingRelationship(std::vector<int>& aElSurRel,
                                  const int noelElemFace[][4]);
 void makeSurroundingRelationship(std::vector<int>& aElemSurRel,
                                  const unsigned int* aElem, int nEl,
-                                 MESHELEM_TYPE type,
+                                 delfem2::MESHELEM_TYPE type,
                                  const int nXYZ);
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,
                                  const std::vector<int>& aElem,
-                                 const std::vector<MESHELEM_TYPE>& aElemType,
+                                 const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
                                  const int nPo);
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,
                                  const std::vector<int>& aElem,
-                                 const std::vector<MESHELEM_TYPE>& aElemType,
+                                 const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
                                  const std::vector<int>& elsup_ind,
                                  const std::vector<int>& elsup);
 
@@ -295,11 +299,11 @@ void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
 
 void makeBoundary(std::vector<int>& aElemInd_Bound,
                   std::vector<int>& aElem_Bound,
-                  std::vector<MESHELEM_TYPE>& aElemType_Bound,
+                  std::vector<delfem2::MESHELEM_TYPE>& aElemType_Bound,
                   //
                   const std::vector<int>& aElemInd,
                   const std::vector<int>& aElem,
-                  const std::vector<MESHELEM_TYPE>& aElemType,
+                  const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
                   const std::vector<int>& aElemFaceInd,
                   const std::vector<int>& aElemFaceRel);
 
@@ -341,7 +345,7 @@ void JArrayEdge_MeshElem(std::vector<int>& edge_ind,
                          std::vector<int>& edge,
                          //
                          const unsigned int* aElm0,
-                         MESHELEM_TYPE elem_type,
+                         delfem2::MESHELEM_TYPE elem_type,
                          const std::vector<int>& elsup_ind,
                          const std::vector<int>& elsup,
                          bool is_bidirectional);
@@ -352,7 +356,7 @@ void MeshLine_JArrayEdge(std::vector<unsigned int>& aLine,
 void MeshLine_MeshElem(std::vector<unsigned int>& aLine,
                        const unsigned int* aElm0,
                        unsigned int nElem,
-                       MESHELEM_TYPE elem_type,
+                       delfem2::MESHELEM_TYPE elem_type,
                        unsigned int nPo);
 
 // ------------------------------------
@@ -383,15 +387,15 @@ void MakeGroupElem(int& ngroup,
                    //
                    const std::vector<int>& aElemInd,
                    const std::vector<int>& aElem,
-                   const std::vector<MESHELEM_TYPE>& aElemType,
+                   const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
                    int nPo);
 void ClipGroup(std::vector<int>& aElemInd1,
                std::vector<int>& aElem1,
-               std::vector<MESHELEM_TYPE>& aElemType1,
+               std::vector<delfem2::MESHELEM_TYPE>& aElemType1,
                //
                const std::vector<int>& aElemInd,
                const std::vector<int>& aElem,
-               const std::vector<MESHELEM_TYPE>& aElemType,
+               const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
                int igroup,
                const std::vector<int>& aIndGroup);
 
@@ -425,6 +429,8 @@ int findFace(int ipc0, int ipc1, int ip2, int ip3,
 // ---------------------------------------------------
 
 
+namespace delfem2 {
+  
 class CElemMixed{
 public:
   CElemMixed(){
@@ -504,7 +510,9 @@ private:
 public:
   std::vector<int> aElemInd;
   std::vector<int> aElem;
-  std::vector<MESHELEM_TYPE> aElemType;
+  std::vector<delfem2::MESHELEM_TYPE> aElemType;
 };
+  
+}
 
 #endif /* meshtopo_hpp */

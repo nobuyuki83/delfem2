@@ -175,7 +175,7 @@ int main(int argc,char* argv[])
       std::vector<int> aTriSurRel;
       makeSurroundingRelationship(aTriSurRel,
                                   aTri.data(), aTri.size()/3, 
-                                  MESHELEM_TRI, aXYZ.size()/3);
+                                  delfem2::MESHELEM_TRI, aXYZ.size()/3);
       iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
                                        3,aTriSurRel,
                                        aElemCenter);

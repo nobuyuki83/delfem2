@@ -305,7 +305,7 @@ void CCad3D_Face::MovePoints
                    aTri.data(), aTri.size()/3);
 }
 
-////////////////////////////////////////////////////
+// ---------------------------------------------
 
 int AddPointEdge
 (int ie_div, double ratio_edge,
@@ -1223,7 +1223,7 @@ void BuildTriMesh
   }
   makeSurroundingRelationship(aTriSurRel,
                               aTri.data(),aTri.size()/3,
-                              MESHELEM_TRI,
+                              delfem2::MESHELEM_TRI,
                               (int)aXYZ.size()/3);
   aNorm.resize(aXYZ.size());
   Normal_MeshTri3D(aNorm.data(),

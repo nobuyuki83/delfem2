@@ -29,7 +29,7 @@
 namespace py = pybind11;
 namespace dfm2 = delfem2;
 
-// --------------------------------------
+// TODO put assert for the input python arrays
 
 // --------------------------------------
 
@@ -38,54 +38,54 @@ void init_texture(py::module &m);
 void init_rigidasm(py::module &m);
 
 
-void PyDrawEdge_CMeshDynTri3D(const CMeshDynTri3D& dmsh){
-  DrawMeshDynTri_Edge(dmsh.aETri,dmsh.aVec3);
+void PyDrawEdge_CMeshDynTri3D(const dfm2::CMeshDynTri3D& dmsh){
+  dfm2::opengl::DrawMeshDynTri_Edge(dmsh.aETri,dmsh.aVec3);
 }
 
-void PyDrawEdge_CMeshDynTri2D(const CMeshDynTri2D& dmsh){
-  DrawMeshDynTri_Edge(dmsh.aETri,dmsh.aVec2);
+void PyDrawEdge_CMeshDynTri2D(const dfm2::CMeshDynTri2D& dmsh){
+  dfm2::opengl::DrawMeshDynTri_Edge(dmsh.aETri,dmsh.aVec2);
 }
 
-void PyDraw_CCad2D(const CCad2D& cad){
-  Draw_CCad2D(cad);
+void PyDraw_CCad2D(const dfm2::CCad2D& cad){
+  dfm2::opengl::Draw_CCad2D(cad);
 }
 
 void PyDrawMesh_FaceNorm
 (const py::array_t<double>& pos,
  const py::array_t<unsigned int>& elm,
- const MESHELEM_TYPE type)
+ const dfm2::MESHELEM_TYPE type)
 {
   assert(pos.ndim()==2);
   assert(elm.ndim()==2);
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){  dfm2::opengl::DrawMeshTri3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  dfm2::opengl::DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){  dfm2::opengl::DrawMeshHex3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){  dfm2::opengl::DrawMeshTet3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_TRI  ){  dfm2::opengl::DrawMeshTri3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_QUAD ){  dfm2::opengl::DrawMeshQuad3D_FaceNorm(pos.data(), elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_HEX  ){  dfm2::opengl::DrawMeshHex3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_TET  ){  dfm2::opengl::DrawMeshTet3D_FaceNorm( pos.data(), elm.data(), shape_elm[0]); }
   }
 }
 
 void PyDrawMesh_Edge
 (const py::array_t<double>& pos,
  const py::array_t<unsigned int>& elm,
- const MESHELEM_TYPE type)
+ const dfm2::MESHELEM_TYPE type)
 {
   assert(pos.ndim()==2);
   assert(elm.ndim()==2);
   const auto shape_pos = pos.shape();
   const auto shape_elm = elm.shape();
   if( shape_pos[1] == 3 ){ // 3D Mesh
-    if( type == MESHELEM_TRI  ){  dfm2::opengl::DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  dfm2::opengl::DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_HEX  ){  dfm2::opengl::DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_TET  ){  dfm2::opengl::DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_LINE ){  dfm2::opengl::DrawMeshLine3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_TRI  ){  dfm2::opengl::DrawMeshTri3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_QUAD ){  dfm2::opengl::DrawMeshQuad3D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_HEX  ){  dfm2::opengl::DrawMeshHex3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_TET  ){  dfm2::opengl::DrawMeshTet3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_LINE ){  dfm2::opengl::DrawMeshLine3D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
   if( shape_pos[1] == 2 ){ // 2D Mesh
-    if( type == MESHELEM_TRI  ){  dfm2::opengl::DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
-    if( type == MESHELEM_QUAD ){  dfm2::opengl::DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_TRI  ){  dfm2::opengl::DrawMeshTri2D_Edge( pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
+    if( type == dfm2::MESHELEM_QUAD ){  dfm2::opengl::DrawMeshQuad2D_Edge(pos.data(), shape_pos[0], elm.data(), shape_elm[0]); }
   }
 }
 
@@ -130,7 +130,7 @@ void DrawField_ColorMap
 void DrawField_Disp
 (const py::array_t<double>& pos,
  const py::array_t<unsigned int>& elm,
- MESHELEM_TYPE meshelem_type,
+ dfm2::MESHELEM_TYPE meshelem_type,
  const py::array_t<double>& disp)
 {
   //  DrawMeshTri2D_ScalarP1(me.aPos,me.aElem,a.data(),1,0,colorMap);
@@ -141,14 +141,14 @@ void DrawField_Disp
   assert( disp.shape()[1] == ndim );
   const int nstride = disp.strides()[0] / sizeof(double);
   if( ndim == 3 ){
-    if( meshelem_type == MESHELEM_TET ){
+    if( meshelem_type == dfm2::MESHELEM_TET ){
       dfm2::opengl::DrawMeshTet3D_FaceNormDisp(pos.data(), np,
                                          elm.data(), nelm,
                                          disp.data());
     }
   }
   else if( ndim == 2 ){
-    if( meshelem_type == MESHELEM_TRI ){
+    if( meshelem_type == dfm2::MESHELEM_TRI ){
       dfm2::opengl::DrawMeshTri2D_FaceDisp2D(pos.data(), np,
                                        elm.data(), nelm,
                                        disp.data(), nstride);

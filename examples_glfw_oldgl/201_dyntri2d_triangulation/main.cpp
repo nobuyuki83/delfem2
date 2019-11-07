@@ -227,9 +227,9 @@ void myGlutDisplay(void)
   ::glPointSize(5);
   ::glColor3d(1,1,0);
   
-  DrawMeshDynTri_Edge(aETri, aVec2);
+  delfem2::opengl::DrawMeshDynTri_Edge(aETri, aVec2);
   ::glColor3d(0.8, 0.8, 0.8);
-  DrawMeshDynTri_FaceNorm(aETri, aVec2);
+  delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aVec2);
   
   
   ::glLineWidth(3);

@@ -31,8 +31,8 @@ int main(int argc,char* argv[])
       cad.is_draw_face = false;
       {
         std::vector<int> aFlgPnt, aFlgTri;
-        CMeshDynTri2D dmsh;
-        CMesher_Cad2D mesher;
+        delfem2::CMeshDynTri2D dmsh;
+        delfem2::CMesher_Cad2D mesher;
         mesher.edge_length = 0.5;
         mesher.Meshing(dmsh, cad);
         dmsh.Export_StlVectors(aXY, aTri);
@@ -72,7 +72,7 @@ int main(int argc,char* argv[])
     }
     void Draw(){
       this->DrawBegin_oldGL();
-      Draw_CCad2D(cad);
+      delfem2::opengl::Draw_CCad2D(cad);
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0.8, 0.8, 0.8);
       delfem2::opengl::DrawMeshTri2D_Face(aTri,aXY);
@@ -84,7 +84,7 @@ int main(int argc,char* argv[])
     std::vector<double> aXY;
     std::vector<unsigned int> aTri;
     std::vector<double> aW;
-    CCad2D cad;
+    delfem2::CCad2D cad;
   };
   
   // ----------------------------------

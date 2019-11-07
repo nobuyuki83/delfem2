@@ -67,7 +67,7 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>>
 NumpyXYTri_MeshDynTri2D
-(CMeshDynTri2D& dmesh)
+(dfm2::CMeshDynTri2D& dmesh)
 {
   std::vector<double> aXY;
   std::vector<unsigned int> aTri;
@@ -78,7 +78,7 @@ NumpyXYTri_MeshDynTri2D
 }
 
 py::array_t<int> PyCad2D_GetPointsEdge
-(const CCad2D& cad,
+(const dfm2::CCad2D& cad,
  const std::vector<int>& aIE,
  const py::array_t<double>& aXY,
  double torelance)
@@ -203,12 +203,12 @@ void PyUpdateRigSkin
 // -----------------------------------------
 
 void PyCad2D_ImportSVG
- (CCad2D& cad,
+ (dfm2::CCad2D& cad,
   const std::string& path_svg,
   double scale_x,
   double scale_y)
 {
-  std::vector<CCad2D_EdgeGeo> aEdge;
+  std::vector<dfm2::CCad2D_EdgeGeo> aEdge;
   LoopEdgeCCad2D_ReadSVG(aEdge,
                          path_svg);
   Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
@@ -295,43 +295,43 @@ PYBIND11_MODULE(c_core, m) {
   
   // ----
   // cad
-  py::class_<CCad2D>(m, "CppCad2D", "2D CAD class")
+  py::class_<dfm2::CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
-  .def("clear",          &CCad2D::Clear)
-  .def("pick",           &CCad2D::Pick)
-  .def("drag_picked",    &CCad2D::DragPicked)
-  .def("minmax_xyz",     &CCad2D::MinMaxXYZ)
-  .def("add_polygon",    &CCad2D::AddPolygon)
-  .def("add_vtx_edge",   &CCad2D::AddVtxEdge)
-  .def("add_vtx_face",   &CCad2D::AddVtxFace)
-  .def("xy_vtxctrl_face",&CCad2D::XY_VtxCtrl_Face)
-  .def("xy_vtx",         &CCad2D::XY_Vtx)
-  .def("ind_vtx_face",   &CCad2D::Ind_Vtx_Face)
-  .def("ind_edge_face",  &CCad2D::Ind_Edge_Face)
-  .def("ind_vtx_edge",   &CCad2D::Ind_Vtx_Edge)
-  .def("set_edge_type",  &CCad2D::SetEdgeType)
-  .def("edge_type",      &CCad2D::GetEdgeType)
-  .def("check",          &CCad2D::Check)
-  .def("nface",          &CCad2D::nFace)
-  .def("nvtx",           &CCad2D::nVtx)
-  .def("nedge",          &CCad2D::nEdge)
-  .def_readwrite("is_draw_face", &CCad2D::is_draw_face)
-  .def_readwrite("ivtx_picked",  &CCad2D::ivtx_picked)
-  .def_readwrite("iedge_picked",  &CCad2D::iedge_picked)
-  .def_readwrite("iface_picked",  &CCad2D::iface_picked);
+  .def("clear",          &dfm2::CCad2D::Clear)
+  .def("pick",           &dfm2::CCad2D::Pick)
+  .def("drag_picked",    &dfm2::CCad2D::DragPicked)
+  .def("minmax_xyz",     &dfm2::CCad2D::MinMaxXYZ)
+  .def("add_polygon",    &dfm2::CCad2D::AddPolygon)
+  .def("add_vtx_edge",   &dfm2::CCad2D::AddVtxEdge)
+  .def("add_vtx_face",   &dfm2::CCad2D::AddVtxFace)
+  .def("xy_vtxctrl_face",&dfm2::CCad2D::XY_VtxCtrl_Face)
+  .def("xy_vtx",         &dfm2::CCad2D::XY_Vtx)
+  .def("ind_vtx_face",   &dfm2::CCad2D::Ind_Vtx_Face)
+  .def("ind_edge_face",  &dfm2::CCad2D::Ind_Edge_Face)
+  .def("ind_vtx_edge",   &dfm2::CCad2D::Ind_Vtx_Edge)
+  .def("set_edge_type",  &dfm2::CCad2D::SetEdgeType)
+  .def("edge_type",      &dfm2::CCad2D::GetEdgeType)
+  .def("check",          &dfm2::CCad2D::Check)
+  .def("nface",          &dfm2::CCad2D::nFace)
+  .def("nvtx",           &dfm2::CCad2D::nVtx)
+  .def("nedge",          &dfm2::CCad2D::nEdge)
+  .def_readwrite("is_draw_face",  &dfm2::CCad2D::is_draw_face)
+  .def_readwrite("ivtx_picked",   &dfm2::CCad2D::ivtx_picked)
+  .def_readwrite("iedge_picked",  &dfm2::CCad2D::iedge_picked)
+  .def_readwrite("iface_picked",  &dfm2::CCad2D::iface_picked);
   
   m.def("cppCad2D_ImportSVG",
         &PyCad2D_ImportSVG);
   m.def("cppSVG_Polyline",
         &Str_SVGPolygon);
   
-  py::class_<CMesher_Cad2D>(m,"CppMesher_Cad2D")
+  py::class_<dfm2::CMesher_Cad2D>(m,"CppMesher_Cad2D")
   .def(py::init<>())
-  .def("meshing",               &CMesher_Cad2D::Meshing)
-  .def("points_on_one_edge",    &CMesher_Cad2D::IndPoint_IndEdge)
-  .def("points_on_edges",       &CMesher_Cad2D::IndPoint_IndEdgeArray)
-  .def("points_on_faces",       &CMesher_Cad2D::IndPoint_IndFaceArray)
-  .def_readwrite("edge_length", &CMesher_Cad2D::edge_length);
+  .def("meshing",               &dfm2::CMesher_Cad2D::Meshing)
+  .def("points_on_one_edge",    &dfm2::CMesher_Cad2D::IndPoint_IndEdge)
+  .def("points_on_edges",       &dfm2::CMesher_Cad2D::IndPoint_IndEdgeArray)
+  .def("points_on_faces",       &dfm2::CMesher_Cad2D::IndPoint_IndFaceArray)
+  .def_readwrite("edge_length", &dfm2::CMesher_Cad2D::edge_length);
 
   m.def("cad_getPointsEdge",
         &PyCad2D_GetPointsEdge,

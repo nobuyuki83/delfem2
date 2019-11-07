@@ -117,7 +117,7 @@ void myGlutDisplay(void)
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  DrawMeshDynTri3D_Edge(aXYZ, aETri);
+  delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 
   ::glColor3d(1,0,0);
   delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
@@ -195,16 +195,16 @@ int main(int argc,char* argv[])
   ::glutSpecialFunc(myGlutSpecial);
   ::glutIdleFunc(myGlutIdle);
   
-  CCad2D cad;
+  delfem2::CCad2D cad;
   {
     const double xys0[8] = { -0.0,-0.0,  +1.0,-0.0, +1.0,+1.0, -0.0,+1.0, };
     const double xys1[8] = { +2.0,-0.0,  +3.0,-0.0, +3.0,+1.0, +2.0,+1.0, };
     cad.AddPolygon(std::vector<double>(xys0,xys0+8));
     cad.AddPolygon(std::vector<double>(xys1,xys1+8));
   }
-  CMesher_Cad2D mesher;
+  delfem2::CMesher_Cad2D mesher;
   mesher.edge_length = 0.04;
-  CMeshDynTri2D dmesh;
+  delfem2::CMeshDynTri2D dmesh;
   mesher.Meshing(dmesh,
                  cad);
   dmesh.Check();
