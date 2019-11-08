@@ -11,6 +11,10 @@
 
 #include "delfem2/bvh.h"
 
+namespace dfm2 = delfem2;
+
+// ------------------------------------
+
 double DetSide(const double p[3], const double org[3], const double n[3]){
   return (p[0]-org[0])*n[0] + (p[1]-org[1])*n[1] + (p[2]-org[2])*n[2];
 }
@@ -18,7 +22,7 @@ double DetSide(const double p[3], const double org[3], const double n[3]){
 void DevideElemAryConnex
 (int iroot_node,
  std::vector<int>& aElem2Node,
- std::vector<CNodeBVH>& aNodeBVH,
+ std::vector<dfm2::CNodeBVH2>& aNodeBVH,
  ////
  const std::vector<int>& list,
  const int nfael,
@@ -180,8 +184,8 @@ void DevideElemAryConnex
   }
 }
 
-int BVH_MakeTreeTopology
-(std::vector<CNodeBVH>& aNodeBVH,
+int dfm2::BVH_MakeTreeTopology
+(std::vector<dfm2::CNodeBVH2>& aNodeBVH,
  const int nfael,
  const std::vector<int>& aElemSur,
  const std::vector<double>& aElemCenter)

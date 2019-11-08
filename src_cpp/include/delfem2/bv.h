@@ -6,14 +6,16 @@
  */
 
 
-#ifndef BV_H
-#define BV_H
+#ifndef DFM2_BV_H
+#define DFM2_BV_H
 
 #include <math.h>
 #include <assert.h>
 #include <vector>
 #include <iostream>
 #include <sstream>
+
+namespace delfem2 {
 
 /**
  * @class 3D bounding box
@@ -325,5 +327,7 @@ public:
     max0 = L+r;
   }
 };
+  
+}
 
 #endif

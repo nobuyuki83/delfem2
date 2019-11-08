@@ -21,6 +21,8 @@
 #include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_funcs.h"
 
+namespace dfm2 = delfem2;
+
 // -----------------------
 
 void Draw_Wire(const delfem2::CADF3::CNode& n)
@@ -180,7 +182,7 @@ void SetProblem(int iprob)
       }
     public:
       std::vector<double> aNorm;
-      CBVH_MeshTri3D<CBV3D_Sphere> obj;
+      CBVH_MeshTri3D<dfm2::CBV3D_Sphere> obj;
     };
     CMesh mesh;
     {

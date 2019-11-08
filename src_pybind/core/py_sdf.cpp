@@ -149,7 +149,7 @@ public:
 public:
   double contact_clearance;
   std::vector<CInfoNearest> aInfoNearest;
-  CBVH_MeshTri3D<CBV3D_Sphere> bvh;
+  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
 };
 
 void init_sdf(py::module &m){

@@ -246,7 +246,7 @@ void InitializeProblem()
   std::vector<int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
-  JArray_Sort(psup_ind, psup);
+  dfm2::JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 2, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());

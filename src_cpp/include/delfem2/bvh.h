@@ -6,8 +6,8 @@
  */
 
 
-#ifndef BVH_H
-#define BVH_H
+#ifndef DFM2_BVH_H
+#define DFM2_BVH_H
 
 #include <stack>
 #include <vector>
@@ -15,7 +15,9 @@
 #include <assert.h>
 #include <iostream>
 
-class CNodeBVH
+namespace delfem2 {
+
+class CNodeBVH2
 {
 public:
   int iroot; // -1: root, else: parent
@@ -23,13 +25,13 @@ public:
 };
 
 // make BVH topology
-int BVH_MakeTreeTopology(std::vector<CNodeBVH>& aNodeBVH,
+int BVH_MakeTreeTopology(std::vector<CNodeBVH2>& aNodeBVH,
                          const int nfael,
                          const std::vector<int>& aElemSur,
                          const std::vector<double>& aElemCenter);
 
 // -------------------------------------------------------------------
-// following is the template function to define bounding volume
+// template functions from here
 
 /**
  * @brief build Bounding Box for AABB
@@ -40,7 +42,7 @@ void BVH_BuildBVHGeometry
  double margin,
  const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aElem, unsigned int nnoel, unsigned int nElem,
- const std::vector<CNodeBVH>& aNodeBVH,
+ const std::vector<CNodeBVH2>& aNodeBVH,
  std::vector<T>& aBB)
 {
   aBB.resize( aNodeBVH.size() );
@@ -115,7 +117,7 @@ void BuildBoundingBoxesBVH_Dynamic
  const std::vector<double>& aXYZ,
  const std::vector<double>& aUVW,
  const std::vector<unsigned int>& aTri,
- const std::vector<CNodeBVH>& aNodeBVH,
+ const std::vector<CNodeBVH2>& aNodeBVH,
  std::vector<T>& aBB)
 {
   double eps = 1.0e-10;
@@ -159,7 +161,7 @@ void BVH_GetIndElem_IncludePoint
  //
  double px, double py, double pz,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   if( !aBB[ibvh].isInclude_Point(px,py,pz) ){ return; }
@@ -178,16 +180,16 @@ void BVH_GetIndElem_IncludePoint
 template <typename T>
 void BVH_Range_DistToNearestPoint
 (double& min, double& max,
- /////
+ //
  double px, double py, double pz,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   double min0, max0;
   aBB[ibvh].Range_DistToPoint(min0,max0, px,py,pz);
   assert( min0 >= 0 && max0 >= min0 );
-  ////
+  //
   if( max>=0 && min0>max ){ return; }
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
@@ -201,7 +203,7 @@ void BVH_Range_DistToNearestPoint
     if( min0 < min ){ min = min0; }
     return;
   }
-  /////
+  //
   BVH_Range_DistToNearestPoint(min,max, px,py,pz, ichild0,aBVH,aBB);
   BVH_Range_DistToNearestPoint(min,max, px,py,pz, ichild1,aBVH,aBB);
 }
@@ -209,11 +211,11 @@ void BVH_Range_DistToNearestPoint
 template <typename T>
 void BVH_GetIndElem_InsideRange
 (std::vector<int>& aIndElem,
- /////
+ //
  double min, double max,
  double px, double py, double pz,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( min < max );
@@ -238,16 +240,16 @@ void BVH_GetIndElem_InsideRange
 template <typename T>
 void BVH_GetIndElem_IntersectRay
 (std::vector<int>& aIndElem,
- /////
+ //
  const double src[3], const double dir[3],
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectRay(src,dir);
   if( !is_intersect ) return;
-  ////
+  //
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
@@ -262,16 +264,16 @@ void BVH_GetIndElem_IntersectRay
 template <typename T>
 void BVH_GetIndElem_IntersectLine
 (std::vector<int>& aIndElem,
- /////
+ //
  const double src[3], const double dir[3],
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectLine(src,dir);
   if( !is_intersect ) return;
-  ////
+  //
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
@@ -282,6 +284,8 @@ void BVH_GetIndElem_IntersectLine
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild0,aBVH,aBB);
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild1,aBVH,aBB);
 }
+  
+} // end namespace delfem2
 
 
 #endif

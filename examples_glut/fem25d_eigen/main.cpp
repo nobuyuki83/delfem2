@@ -184,13 +184,12 @@ void InitializeProblem_ShellEigenPB()
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
-  JArray_Sort(psup_ind, psup);
+  dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
-  
-  ///////////////////////////////////////////
+  // --------------------------------
   aMassLumpedSqrtInv.resize(np);
   aModesKer.resize(nDoF*6);
   SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(aMassLumpedSqrtInv.data(),

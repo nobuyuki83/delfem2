@@ -6,6 +6,7 @@
 #include "delfem2/bvh.h"
 #include "delfem2/vec3.h"
 
+namespace delfem2 {
 
 template <typename T>
 bool IsContact_FV_Proximity(int ino0, int ino1, int ino2, int ino3,
@@ -24,7 +25,7 @@ bool IsContact_FV_CCD(int ino0,        int ino1,        int ino2,        int ino
                       const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3,
                       const T& bb);
 
-//////////////////////
+// -------------
 class CContactElement;
 
 template <typename T>
@@ -34,7 +35,7 @@ void GetContactElement_Proximity(std::set<CContactElement>& aContactElem,
                                  const std::vector<double>& aXYZ,
                                  const std::vector<unsigned int>& aTri,
                                  int ibvh0, int ibvh1,
-                                 const std::vector<CNodeBVH>& aBVH,
+                                 const std::vector<CNodeBVH2>& aBVH,
                                  const std::vector<T>& aBB);
 
 template <typename T>
@@ -44,7 +45,7 @@ void GetContactElement_Proximity(std::set<CContactElement>& aContactElem,
                                  const std::vector<double>& aXYZ,
                                  const std::vector<unsigned int>& aTri,
                                  int ibvh,
-                                 const std::vector<CNodeBVH>& aBVH,
+                                 const std::vector<CNodeBVH2>& aBVH,
                                  const std::vector<T>& aBB);
 
 template <typename T>
@@ -56,7 +57,7 @@ void GetContactElement_CCD(std::set<CContactElement>& aContactElem,
                            const std::vector<double>& aUVW,
                            const std::vector<unsigned int>& aTri,
                            int ibvh,
-                           const std::vector<CNodeBVH>& aBVH,
+                           const std::vector<CNodeBVH2>& aBVH,
                            const std::vector<T>& aBB);
 
 template <typename T>
@@ -68,10 +69,10 @@ void GetContactElement_CCD(std::set<CContactElement>& aContactElem,
                            const std::vector<double>& aUVW,
                            const std::vector<unsigned int>& aTri,
                            int ibvh0, int ibvh1,
-                           const std::vector<CNodeBVH>& aBVH,
+                           const std::vector<CNodeBVH2>& aBVH,
                            const std::vector<T>& aBB);
 
-//////////////////////
+// ------------------------
 class CIntersectTriPair;
 
 template <typename T>
@@ -80,7 +81,7 @@ void GetIntersectTriPairs(std::vector<CIntersectTriPair>& aIntersectTriPair,
                           const std::vector<double>& aXYZ,
                           const std::vector<unsigned int>& aTri,
                           int ibvh,
-                          const std::vector<CNodeBVH>& aBVH,
+                          const std::vector<CNodeBVH2>& aBVH,
                           const std::vector<T>& aBB);
 
 template <typename T>
@@ -89,15 +90,16 @@ void GetIntersectTriPairs(std::vector<CIntersectTriPair>& aIntersectTriPair,
                           const std::vector<double>& aXYZ,
                           const std::vector<unsigned int>& aTri,
                           int ibvh0, int ibvh1,
-                          const std::vector<CNodeBVH>& aBVH,
+                          const std::vector<CNodeBVH2>& aBVH,
                           const std::vector<T>& aBB);
 
+} // end namespace delfem2
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 template <typename T>
-bool IsContact_FV_Proximity
+bool delfem2::IsContact_FV_Proximity
 (int ino0, int ino1, int ino2, int ino3,
  const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
  const T& bb,
@@ -121,7 +123,7 @@ bool IsContact_FV_Proximity
 
 // CCDのEEで接触する要素を検出
 template <typename T>
-bool IsContact_EE_CCD
+bool delfem2::IsContact_EE_CCD
 (int ino0,         int ino1,         int jno0,         int jno1,
  const CVector3& p0s, const CVector3& p1s, const CVector3& q0s, const CVector3& q1s,
  const CVector3& p0e, const CVector3& p1e, const CVector3& q0e, const CVector3& q1e)
@@ -156,7 +158,9 @@ bool IsContact_EE_CCD
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////
+// ---------------------
+
+namespace delfem2 {
 
 // smallest element of contact (vertex-face or edge-edge)
 class CContactElement
@@ -199,16 +203,18 @@ public:
   bool is_fv; // true: ee contact, false: vf contact
   int ino0, ino1, ino2, ino3; // four points in the contact
 };
+  
+}
 
 template <typename T>
-void GetContactElement_Proximity
+void delfem2::GetContactElement_Proximity
 (std::set<CContactElement>& aContactElem,
  ////
  double delta,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  int ibvh0, int ibvh1,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh0 < (int)aBB.size() );
@@ -299,14 +305,14 @@ void GetContactElement_Proximity
 }
 
 template <typename T>
-void GetContactElement_Proximity
-(std::set<CContactElement>& aContactElem,
+void delfem2::GetContactElement_Proximity
+(std::set<delfem2::CContactElement>& aContactElem,
  ////
  double delta,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   const int ichild0 = aBVH[ibvh].ichild[0];
@@ -321,7 +327,7 @@ void GetContactElement_Proximity
 
 // CCDのFVで接触する要素を検出
 template <typename T>
-bool IsContact_FV_CCD
+bool delfem2::IsContact_FV_CCD
 (int ino0,        int ino1,        int ino2,        int ino3,
  const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
  const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3,
@@ -340,7 +346,7 @@ bool IsContact_FV_CCD
 
 // detect contact element with Continous Collision Detection (CCD)
 template <typename T>
-void GetContactElement_CCD
+void delfem2::GetContactElement_CCD
 (std::set<CContactElement>& aContactElem,
  ////
  double dt,
@@ -349,7 +355,7 @@ void GetContactElement_CCD
  const std::vector<double>& aUVW,
  const std::vector<unsigned int>& aTri,
  int ibvh0, int ibvh1,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh0 < (int)aBB.size() );
@@ -447,7 +453,7 @@ void GetContactElement_CCD
 }
 
 template <typename T>
-void GetContactElement_CCD
+void delfem2::GetContactElement_CCD
 (std::set<CContactElement>& aContactElem,
  /////
  double dt,
@@ -456,7 +462,7 @@ void GetContactElement_CCD
  const std::vector<double>& aUVW,
  const std::vector<unsigned int>& aTri,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   const int ichild0 = aBVH[ibvh].ichild[0];
@@ -468,6 +474,9 @@ void GetContactElement_CCD
   GetContactElement_CCD(aContactElem, dt,delta, aXYZ,aUVW,aTri, ichild1,        aBVH,aBB);
 }
 
+// ---------------------------------------------------------------------------
+
+namespace delfem2 {
 
 class CIntersectTriPair
 {
@@ -475,16 +484,18 @@ public:
   int itri, jtri;
   CVector3 P[2];
 };
+  
+}
 
 // detect contact element with Continous Collision Detection (CCD)
 template <typename T>
-void GetIntersectTriPairs
-(std::vector<CIntersectTriPair>& aIntersectTriPair,
+void delfem2::GetIntersectTriPairs
+(std::vector<delfem2::CIntersectTriPair>& aIntersectTriPair,
  ////
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  int ibvh0, int ibvh1,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh0 < (int)aBB.size() );
@@ -517,7 +528,7 @@ void GetIntersectTriPairs
     bool res = isIntersectTriPair(P0,P1,
                                   itri, jtri, aTri, aXYZ);
     if( !res ){ return; }
-    CIntersectTriPair itp;
+    delfem2::CIntersectTriPair itp;
     itp.itri = itri;
     itp.jtri = jtri;
     itp.P[0] = P0;
@@ -527,13 +538,13 @@ void GetIntersectTriPairs
 }
 
 template <typename T>
-void GetIntersectTriPairs
-(std::vector<CIntersectTriPair>& aIntersectTriPair,
+void delfem2::GetIntersectTriPairs
+(std::vector<delfem2::CIntersectTriPair>& aIntersectTriPair,
  /////
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   const int ichild0 = aBVH[ibvh].ichild[0];

@@ -16,7 +16,7 @@
 #include <assert.h>
 #include <iostream> // this must be delated in future
 
-//////////////////////////////////////////////
+// -------------------------------------
 
 class CFrameBufferManager
 {

@@ -50,7 +50,7 @@ std::vector<CInfoNearest> aInfoNearest;
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
 std::vector<double> aNorm_Contact(aXYZ.size());
-CBVH_MeshTri3D<CBV3D_Sphere> bvh;
+CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
 
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};
@@ -59,7 +59,7 @@ const double contact_clearance = 0.0001;
 CNav3D_GLUT nav;
 bool is_animation = false;
 
-//////////////////////////////////
+// -------------------------
 
 void StepTime()
 {

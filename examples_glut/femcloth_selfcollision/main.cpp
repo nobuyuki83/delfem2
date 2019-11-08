@@ -19,6 +19,8 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
 /* ------------------------------------------------------------------------ */
 
 
@@ -133,8 +135,8 @@ std::vector<double> aNormal; // deformed vertex noamals，変形中の頂点の�
 
 // variables for self-collision
 int iroot_bvh; // index of the root BVH node
-std::vector<CNodeBVH> aNodeBVH; // array of BVH node
-std::vector<CBV3D_AABB> aBB_BVH; // array of AABB
+std::vector<delfem2::CNodeBVH2> aNodeBVH; // array of BVH node
+std::vector<delfem2::CBV3D_AABB> aBB_BVH; // array of AABB
 //CJaggedArray aEdge;
 std::vector<int> psup_ind,psup;
 
@@ -463,7 +465,7 @@ int main(int argc,char* argv[])
 //    aEdge.SetEdgeOfElem(aTri,(int)aTri.size()/3,3, np,false);
     JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                 aQuad.data(), aQuad.size()/4, 4, np);
-    JArray_Sort(psup_ind, psup);
+    dfm2::JArray_Sort(psup_ind, psup);
     mat_A.Initialize(np,3,true);
     /*
     CJaggedArray crs;

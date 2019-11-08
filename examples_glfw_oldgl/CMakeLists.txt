@@ -46,3 +46,5 @@ add_subdirectory(503_3DCad)
 # fem
 add_subdirectory(600_Fem2DHelmholtz)
 add_subdirectory(601_FemPlateBendingMitc3)
+
+add_subdirectory(700_HashBvhSelfCollision)

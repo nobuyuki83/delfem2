@@ -172,7 +172,7 @@ void SetProblem(int iprob)
         nlayer = 2;
       }
     public:
-      CBVH_MeshTri3D<CBV3D_Sphere> obj;
+      CBVH_MeshTri3D<dfm2::CBV3D_Sphere> obj;
       std::vector<double> aNorm;
       std::vector<unsigned int> aTri;
       std::vector<double> aXYZ_Tri;
