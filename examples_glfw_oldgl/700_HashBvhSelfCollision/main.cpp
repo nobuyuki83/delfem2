@@ -7,16 +7,13 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/srchbi_v3bvh.h"
 
-// -----
+// ---------------------------------
 
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "../glut_cam.h"
+
+namespace dfm2 = delfem2;
 
 /* ------------------------------------------------------------------------ */
 // input parameter for simulation
@@ -27,34 +24,21 @@ std::vector<unsigned int> aTri;  // index of triangles
 
 // variables for self-collision
 int iroot_bvh; // index BVH root node
-std::vector<CNodeBVH> aNodeBVH; // array of BVH node
-std::vector<CBV3D_Sphere> aBB_BVH; // array of AABB same size as aNodeBVH
-
-std::vector<CIntersectTriPair> aITP;
+std::vector<dfm2::CNodeBVH2> aNodeBVH; // array of BVH node
+std::vector<dfm2::CBV3D_Sphere> aBB_BVH; // array of AABB same size as aNodeBVH
+std::vector<dfm2::CIntersectTriPair> aITP;
 
 // data for camera
-bool is_animation;
 double cur_time = 0;
-CNav3D_GLUT nav;
-int imode_draw = 0;
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------
 
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
-  
-  nav.SetGL_Camera();
-  
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(0,0,0);
   //  Draw_SurfaceMeshNorm(aXYZ, aTri, aNormal);
   delfem2::opengl::DrawMeshTri3D_Edge(aXYZ,aTri);
   
@@ -63,7 +47,7 @@ void myGlutDisplay(void)
   ::glColor3d(1,0,0);
   ::glBegin(GL_LINES);
   for(int iitp=0;iitp<aITP.size();++iitp){
-    const CIntersectTriPair& itp = aITP[iitp];
+    const dfm2::CIntersectTriPair& itp = aITP[iitp];
     glVertex3d(itp.P[0].x, itp.P[0].y, itp.P[0].z);
     glVertex3d(itp.P[1].x, itp.P[1].y, itp.P[1].z);
   }
@@ -71,16 +55,11 @@ void myGlutDisplay(void)
   
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }
-  
-  glColor3d(0,0,0);
-  ShowFPS();
-  
-  ::glutSwapBuffers();
 }
 
 void myGlutIdle(){
   
-  if( is_animation ){
+  {
     cur_time += 0.02;
     double d = sin(cur_time);
     for(int ip=0;ip<(int)aXYZ.size()/3;ip++){
@@ -95,66 +74,12 @@ void myGlutIdle(){
                          aTri.data(),3,aTri.size()/3,
                          aNodeBVH,aBB_BVH);
     aITP.clear();
-    GetIntersectTriPairs(aITP,
-                         aXYZ,aTri,
-                         iroot_bvh,
-                         aNodeBVH,aBB_BVH); // output
+    dfm2::GetIntersectTriPairs(aITP,
+                               aXYZ,aTri,
+                               iroot_bvh,
+                               aNodeBVH,aBB_BVH); // output
     std::cout << aITP.size() << std::endl;
   }
-  
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  ::glutPostRedisplay();
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key)
-  {
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-      is_animation = !is_animation;
-      break;
-    case 'd': // change draw mode
-      imode_draw++;
-      if( imode_draw >= 2 ){
-        imode_draw = 0;
-      }
-      break;
-    case 't':
-      //      StepTime();
-      break;
-    case ' ':
-      //      imode_contact++;
-      aXYZ = aXYZ0;
-      aUVW.assign(aUVW.size(),0.0);
-      break;
-  }
-  ::glutPostRedisplay();
 }
 
 int main(int argc,char* argv[])
@@ -191,26 +116,25 @@ int main(int argc,char* argv[])
     }
   }
   
-  ///////////////////////////
-  glutInit(&argc, argv);
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("3D View");
-  glutDisplayFunc(myGlutDisplay);
-  glutIdleFunc(myGlutIdle);
-  glutReshapeFunc(myGlutResize);
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutSpecialFunc(myGlutSpecial);
-  // ----------------
-  
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
-  nav.camera.view_height = 1.5;
   
-  glutMainLoop();
-  return 0;
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    {
+      static int iframe = 0;
+      myGlutIdle();
+      iframe = (iframe+1)%50;
+    }
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
 
 

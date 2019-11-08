@@ -16,6 +16,8 @@
 #include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/cloth_selfcollision.h"
 
+namespace dfm2 = delfem2;
+
 // 撃力を計算
 void SelfCollisionImpulse_Proximity
 (std::vector<double>& aUVWm, // (in,out)velocity
@@ -26,10 +28,10 @@ void SelfCollisionImpulse_Proximity
  double mass,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
- const std::vector<CContactElement>& aContactElem)
+ const std::vector<dfm2::CContactElement>& aContactElem)
 {
   for(int ice=0;ice<aContactElem.size();ice++){
-    const CContactElement& ce = aContactElem[ice];
+    const dfm2::CContactElement& ce = aContactElem[ice];
     const int ino0 = ce.ino0;
     const int ino1 = ce.ino1;
     const int ino2 = ce.ino2;
@@ -122,10 +124,10 @@ void SelfCollisionImpulse_CCD
  double mass,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
- const std::vector<CContactElement>& aContactElem)
+ const std::vector<dfm2::CContactElement>& aContactElem)
 {
   for(int ice=0;ice<aContactElem.size();ice++){
-    const CContactElement& ce = aContactElem[ice];
+    const dfm2::CContactElement& ce = aContactElem[ice];
     const int ino0 = ce.ino0;
     const int ino1 = ce.ino1;
     const int ino2 = ce.ino2;
@@ -219,13 +221,13 @@ void SelfCollisionImpulse_CCD
 // RIZを更新する
 void MakeRigidImpactZone
 (std::vector< std::set<int> >& aRIZ, // (in,ou)RIZに属する節点のインデックスの集合の配列
- const std::vector<CContactElement>& aContactElem, // 自己交差する接触要素の配列
+ const std::vector<dfm2::CContactElement>& aContactElem, // 自己交差する接触要素の配列
 // const CJaggedArray& aEdge
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup) // 三角形メッシュの辺の配列    
 {
   for(int ice=0;ice<aContactElem.size();ice++){
-    const CContactElement& ce = aContactElem[ice];
+    const dfm2::CContactElement& ce = aContactElem[ice];
     const int n[4] = {ce.ino0, ce.ino1, ce.ino2, ce.ino3};
     std::set<int> ind_inc; // 接触要素が接するRIZの集合
     for(int i=0;i<4;i++){
@@ -368,23 +370,23 @@ void GetIntermidiateVelocityContactResolved
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup,
  int iroot_bvh,
- const std::vector<CNodeBVH>& aNodeBVH,
- std::vector<CBV3D_AABB>& aBB)
+ const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
+ std::vector<dfm2::CBV3D_AABB>& aBB)
 {
   {
-    std::vector<CContactElement> aContactElem;
+    std::vector<dfm2::CContactElement> aContactElem;
     {
       BVH_BuildBVHGeometry(iroot_bvh,
                            contact_clearance*0.5, // for tri to tri collision, we put half margin for both tri
                            aXYZ.data(), aXYZ.size()/3,
                            aTri.data(), 3, aTri.size()/3,
                            aNodeBVH,aBB);
-      std::set<CContactElement> setCE;
-      GetContactElement_Proximity(setCE,
-                                  contact_clearance,
-                                  aXYZ,aTri,
-                                  iroot_bvh,
-                                  aNodeBVH,aBB); // output
+      std::set<dfm2::CContactElement> setCE;
+      dfm2::GetContactElement_Proximity(setCE,
+                                        contact_clearance,
+                                        aXYZ,aTri,
+                                        iroot_bvh,
+                                        aNodeBVH,aBB); // output
       aContactElem.assign(setCE.begin(),setCE.end());
 //      aContactElem.clear();
 //      for(std::set<CContactElement>::iterator itr=setCE.begin();itr!=setCE.end();itr++){
@@ -403,12 +405,12 @@ void GetIntermidiateVelocityContactResolved
   }
   ////////
   for(int itr=0;itr<5;itr++){
-    std::vector<CContactElement> aContactElem;
+    std::vector<dfm2::CContactElement> aContactElem;
     {
       BuildBoundingBoxesBVH_Dynamic(iroot_bvh,
                                     dt,
                                     aXYZ,aUVWm,aTri,aNodeBVH,aBB);
-      std::set<CContactElement> setCE;
+      std::set<dfm2::CContactElement> setCE;
       GetContactElement_CCD(setCE,
                             dt,contact_clearance,
                             aXYZ,aUVWm,aTri,
@@ -434,12 +436,12 @@ void GetIntermidiateVelocityContactResolved
   std::vector<double> aUVWm0 = aUVWm;
   std::vector< std::set<int> > aRIZ;
   for(int itr=0;itr<100;itr++){
-    std::vector<CContactElement> aContactElem;    
+    std::vector<dfm2::CContactElement> aContactElem;
     {
       BuildBoundingBoxesBVH_Dynamic(iroot_bvh,
                                     dt,
                                     aXYZ,aUVWm,aTri,aNodeBVH,aBB);
-      std::set<CContactElement> setCE;
+      std::set<dfm2::CContactElement> setCE;
       GetContactElement_CCD(setCE,
                             dt,contact_clearance,
                             aXYZ,aUVWm,aTri,

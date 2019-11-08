@@ -488,9 +488,9 @@ std::tuple<py::array_t<int>,py::array_t<int>> PyAddMasterSlavePattern
   assert(ms_flag.ndim() == 2 );
   std::cout <<  ms_flag.shape()[0] << " " <<  ms_flag.shape()[1] << std::endl;
   std::vector<int> psup_ind, psup;
-  JArray_AddMasterSlavePattern(psup_ind, psup,
-                               ms_flag.data(), ms_flag.shape()[1],
-                               np_psup_ind0.data(), np_psup_ind0.shape()[0], np_psup0.data());
+  dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
+                                     ms_flag.data(), ms_flag.shape()[1],
+                                     np_psup_ind0.data(), np_psup_ind0.shape()[0], np_psup0.data());
   py::array_t<int> np_psup_ind((int)psup_ind.size(),psup_ind.data());
   py::array_t<int> np_psup((int)psup.size(),psup.data());
   return std::make_tuple(np_psup_ind,np_psup);

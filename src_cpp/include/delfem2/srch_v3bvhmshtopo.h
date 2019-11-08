@@ -27,7 +27,7 @@ void BVH_NearestPoint_MeshTri3D
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   double min0, max0;
@@ -66,7 +66,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D
  const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri,
  int ibvh,
- const std::vector<CNodeBVH>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   double min0,max0;
@@ -202,9 +202,9 @@ public:
     {
       double dist_min = -1;
       BVH_NearestPoint_MeshTri3D(dist_min, pes,
-                                 p0.x, p0.y, p0.z,
-                                 aXYZ, aTri,
-                                 iroot_bvh, aNodeBVH, aBB_BVH);
+                                          p0.x, p0.y, p0.z,
+                                          aXYZ, aTri,
+                                          iroot_bvh, aNodeBVH, aBB_BVH);
     }
     const CVector3 q0 = pes.Pos_Tri(aXYZ, aTri);
     double dist = (q0-p0).Length();
@@ -238,7 +238,7 @@ public:
   }
 public:
   int iroot_bvh;
-  std::vector<CNodeBVH> aNodeBVH; // array of BVH node
+  std::vector<delfem2::CNodeBVH2> aNodeBVH; // array of BVH node
   std::vector<T> aBB_BVH;
 };
 

@@ -13,7 +13,6 @@ add_subdirectory(glbuffer)
 add_subdirectory(exponentialmap)
 add_subdirectory(edit_cubes)
 add_subdirectory(transform_handler)
-add_subdirectory(selfcollision_bvh)
 
 
 # fem

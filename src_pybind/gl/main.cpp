@@ -13,7 +13,6 @@
   #include <GL/gl.h>
 #endif
 
-
 #include "delfem2/dtri_v2.h"
 #include "delfem2/dtri_v3.h"
 #include "delfem2/mshtopo.h"
@@ -185,12 +184,13 @@ void PyGLExtensionInit(){
 
 PYBIND11_MODULE(c_gl, m) {
   m.doc() = "pybind11 delfem2 binding";
-  ///////////////////////////////////
+  
+  // ---------------------
   init_sampler(m);
   init_texture(m);
   init_rigidasm(m);
    
- ////////////////////////////////////
+ // ----------------------
 
   py::class_<dfm2::CColorMap>(m,"ColorMap")
   .def(py::init<>())

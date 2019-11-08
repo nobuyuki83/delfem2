@@ -18,6 +18,7 @@
 
 #include "delfem2/opengl/gl2_funcs.h"
 
+namespace dfm2 = delfem2;
 
 // -------------------------------------------------
 
@@ -182,8 +183,8 @@ int main(int argc,char* argv[])
                                               aQuad.data(), aQuad.size()/4, 4,
                                               aXY0.size()/2);
 //  Print_IndexedArray(psup_ind, psup);
-  JArray_AddDiagonal(clstr_ind, clstr,
-                          psup_ind.data(), psup_ind.size(),  psup.data(), psup.size());
+  dfm2::JArray_AddDiagonal(clstr_ind, clstr,
+                           psup_ind.data(), psup_ind.size(),  psup.data(), psup.size());
 //  JArray_Print(clstr_ind, clstr);
   
   aBC.assign(aXY0.size()/2,0);

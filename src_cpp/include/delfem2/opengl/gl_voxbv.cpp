@@ -24,7 +24,7 @@
 #include "delfem2/opengl/gl_voxbv.h"
 #include "delfem2/opengl/gl2_funcs.h"
 
-
+namespace dfm2 = delfem2;
 
 // ------------------------------------
 
@@ -113,7 +113,7 @@ void Draw_CubeGrid
 
 
 
-void Draw(const CBV3D_AABB& aabb)
+void Draw(const dfm2::CBV3D_AABB& aabb)
 {
   double x_min = aabb.x_min;
   double x_max = aabb.x_max;

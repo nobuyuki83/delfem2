@@ -186,8 +186,6 @@ inline const int (*noelElemEdge(MESHELEM_TYPE type))[2]
   return noelElemEdge0[type];
 }
   
-}
-
 // ---------------------------------------------
 // function related to jagged array
 
@@ -214,8 +212,6 @@ void JArray_AddMasterSlavePattern(std::vector<int>& index,
 
 // ---------------------------------------------------
 
-
-namespace delfem2 {
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
                       const std::vector<unsigned int>& aQuad);
 }

@@ -131,7 +131,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
       JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                   aTri.data(), aTri.size()/3, 3,
                                                   (int)aXY0.size()/2);
-      JArray_Sort(psup_ind, psup);
+      dfm2::JArray_Sort(psup_ind, psup);
       ////
       const int np = (int)aXY0.size()/2;
       mat_A.Initialize(np, 3, true);

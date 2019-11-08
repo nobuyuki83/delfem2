@@ -61,7 +61,7 @@ std::vector<CInfoNearest> aInfoNearest;
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
 std::vector<double> aNorm_Contact(aXYZ.size());
-CBVH_MeshTri3D<CBV3D_Sphere> bvh;
+CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
 std::vector<double> aXYZ0_Contact;
 std::vector<double> aRigWeight_Contact;
 std::vector<unsigned int> aRigJoint_Contact;

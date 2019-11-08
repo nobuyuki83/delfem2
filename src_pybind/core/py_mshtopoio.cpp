@@ -262,7 +262,7 @@ void PyJArray_Sort
 {
   //  std::cout << "hoge " << psup_ind.size() << " " << psup.size() << std::endl;
   auto buff_psup = psup.request();
-  JArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
+  dfm2::JArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
 }
 
 std::tuple<py::array_t<int>, py::array_t<int>>
@@ -271,8 +271,8 @@ PyJArray_AddDiagonal
  py::array_t<int>& psup0)
 {
   std::vector<int> psup_ind, psup;
-  JArray_AddDiagonal(psup_ind,psup,
-                          psup_ind0.data(),psup_ind0.shape()[0], psup0.data(),psup0.shape()[0]);
+  dfm2::JArray_AddDiagonal(psup_ind,psup,
+                           psup_ind0.data(),psup_ind0.shape()[0], psup0.data(),psup0.shape()[0]);
   py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::make_tuple(np_psup_ind, np_psup);

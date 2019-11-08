@@ -18,7 +18,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------
 
-void JArray_Print
+void dfm2::JArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
 {
@@ -32,7 +32,7 @@ void JArray_Print
   }
 }
 
-void JArray_Sort
+void dfm2::JArray_Sort
 (const std::vector<int>& index,
  std::vector<int>& array)
 {
@@ -56,7 +56,7 @@ void JArray_Sort
   }
 }
 
-void JArray_Sort
+void dfm2::JArray_Sort
 (const int* index, const int size,
  int* array)
 {
@@ -81,7 +81,7 @@ void JArray_Sort
   }
 }
 
-void JArray_AddDiagonal
+void dfm2::JArray_AddDiagonal
 (std::vector<int >& psup_ind1,
  std::vector<int >& psup1,
  const int* psup_ind0, int npsup_ind0,
@@ -102,14 +102,12 @@ void JArray_AddDiagonal
       psup_ind1[ip+1] += 1;
     }
   }
-  /////
   for(int ip=0;ip<np;++ip){
     psup_ind1[ip+1] += psup_ind1[ip];
   }
   const int npsup = psup_ind1[np];
   psup1.resize(npsup);
   tmp.assign(np,-1);
-  /////
   for(int ip=0;ip<np;++ip){
     for(int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
       const int jp = psup0[ipsup];
@@ -125,7 +123,6 @@ void JArray_AddDiagonal
       psup_ind1[ip] += 1;
     }
   }
-  //////
   for(int ip=np-1;ip>=0;--ip){
     psup_ind1[ip+1] = psup_ind1[ip];
   }
@@ -210,7 +207,7 @@ void JArrayElemSurPoint_MeshElem
   elsup_ind[0] = 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+// ------------------------------
 
 void ElemQuad_DihedralTri
 (std::vector<unsigned int>& aQuad,
@@ -810,9 +807,9 @@ void MeshLine_MeshElem
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------
 
-void JArray_AddMasterSlavePattern
+void dfm2::JArray_AddMasterSlavePattern
 (std::vector<int>& index,
  std::vector<int>& array,
  const int* aMSFlag,
@@ -928,8 +925,7 @@ void JArray_AddMasterSlavePattern
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------
 
 void MarkConnectedElements
 (std::vector<int>& aIndGroup,
