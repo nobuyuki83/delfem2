@@ -1140,11 +1140,6 @@ void dfm2::SubdivisionPoints_Hex
   }
 }
 
-
-
-
-
-
 void CenterOfGravity_Tet
 (double& v_tot,
  double& cgx, double& cgy, double& cgz,

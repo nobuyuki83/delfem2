@@ -89,7 +89,7 @@ double AddWdW_Gravity
 void StepTime_InternalDynamics
 (std::vector<double>& aXYZ, // (in,out) deformed vertex positions
  std::vector<double>& aUVW, // (in,out) deformed vertex velocity
- CMatrixSparse<double>& mat_A,
+ delfem2::CMatrixSparse<double>& mat_A,
  ////
  const std::vector<double>& aXYZ0,// (in) initial vertex positions
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)
@@ -159,8 +159,8 @@ void StepTime_InternalDynamics
 void StepTime_InternalDynamicsILU
 (std::vector<double>& aXYZ, // (in,out) deformed vertex positions，現在の頂点位置配列
  std::vector<double>& aUVW, // (in,out) deformed vertex velocity，現在の頂点速度配列
- CMatrixSparse<double>& mat_A,
- CPreconditionerILU<double>& ilu_A,
+ delfem2::CMatrixSparse<double>& mat_A,
+ delfem2::CPreconditionerILU<double>& ilu_A,
  ////
  const std::vector<double>& aXYZ0,// (in) initial vertex positions，変形前の頂点の座標配列
  const std::vector<int>& aBCFlag, // (in) boundary condition flag (0:free 1:fixed)，境界条件フラグの配列

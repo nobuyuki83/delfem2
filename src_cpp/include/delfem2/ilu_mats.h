@@ -5,12 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef ILU_SPARSE
-#define ILU_SPARSE
+#ifndef DFM2_ILU_SPARSE
+#define DFM2_ILU_SPARSE
 
 #include <iostream>
 
 #include "mats.h"
+
+namespace delfem2 {
 
 template <typename T>
 class CPreconditionerILU
@@ -35,9 +37,6 @@ public:
   std::vector<unsigned int> m_diaInd;
 };
 
-
-
-
 template <typename T>
 std::vector<double> Solve_PCG(T* r_vec,
                               T* u_vec,
@@ -60,6 +59,8 @@ std::vector<double> Solve_PCOCG(std::complex<double>* r_vec,
                                 unsigned int max_niter,
                                 const CMatrixSparse<std::complex<double> >& mat,
                                 const CPreconditionerILU<std::complex<double> >& ilu);
+  
+}
 
 /*
 template <typename T>
@@ -111,7 +112,7 @@ bool SolveLinSys_BiCGStab
  */
 
 template <typename T>
-void CPreconditionerILU<T>::Initialize_ILU0
+void delfem2::CPreconditionerILU<T>::Initialize_ILU0
 (const CMatrixSparse<T>& m)
 {
   this->mat = m;
@@ -132,7 +133,7 @@ void CPreconditionerILU<T>::Initialize_ILU0
 }
 
 template <typename T>
-void CPreconditionerILU<T>::SetValueILU
+void delfem2::CPreconditionerILU<T>::SetValueILU
 (const CMatrixSparse<T>& rhs)
 {
   const unsigned int nblk = mat.nblk_col;
@@ -176,7 +177,7 @@ void CPreconditionerILU<T>::SetValueILU
 
 
 template <typename T>
-void CPreconditionerILU<T>::ForwardSubstitution
+void delfem2::CPreconditionerILU<T>::ForwardSubstitution
 ( std::vector<T>& vec ) const
 {
   const unsigned int len = mat.len_col;
@@ -324,7 +325,7 @@ void CPreconditionerILU<T>::ForwardSubstitution
 
 
 template <typename T>
-void CPreconditionerILU<T>::BackwardSubstitution
+void delfem2::CPreconditionerILU<T>::BackwardSubstitution
 ( std::vector<T>& vec ) const
 {
   const unsigned int len = mat.len_col;
@@ -487,7 +488,7 @@ public:
 
 // if(lev_fill == -1){ take all the fills }
 template <typename T>
-void CPreconditionerILU<T>::Initialize_ILUk
+void delfem2::CPreconditionerILU<T>::Initialize_ILUk
 (const CMatrixSparse<T>& m,
  int lev_fill)
 {
@@ -504,9 +505,9 @@ void CPreconditionerILU<T>::Initialize_ILUk
   aRowLev.reserve(m.rowPtr.size()*4);
   
   assert(m.nblk_col==m.nblk_row);
-  const int nblk = m.nblk_col;
+  const unsigned int nblk = m.nblk_col;
   assert(m.len_col==m.len_row);
-  const int len = m.len_col;
+  const unsigned int len = m.len_col;
   
   assert(!m.valDia.empty());
   mat.Initialize(nblk, len, true);
@@ -520,7 +521,7 @@ void CPreconditionerILU<T>::Initialize_ILUk
       int inz = 0;
       for (unsigned int ijcrs = m.colInd[iblk]; ijcrs<m.colInd[iblk+1]; ijcrs++){
         assert(ijcrs<m.rowPtr.size());
-        const int jblk0 = m.rowPtr[ijcrs];
+        const unsigned int jblk0 = m.rowPtr[ijcrs];
         assert(jblk0<nblk);
         listNonzero[inz].row = jblk0;
         listNonzero[inz].lev = 0;

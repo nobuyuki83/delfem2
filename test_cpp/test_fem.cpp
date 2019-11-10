@@ -21,6 +21,8 @@
 
 namespace dfm2 = delfem2;
 
+// --------------------------------------
+
 TEST(objfunc_v23, Check_CdC_TriStrain){
   for(int itr=0;itr<200;++itr){
     const double P[3][2] = {
@@ -124,8 +126,8 @@ TEST(fem,plate_bending_mitc3_cantilever)
         }
       }
     }
-    CMatrixSparse<double> mat_A;
-    CPreconditionerILU<double> ilu_A;
+    dfm2::CMatrixSparse<double> mat_A;
+    dfm2::CPreconditionerILU<double> ilu_A;
     {
       std::vector<int> psup_ind, psup;
       JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
@@ -155,7 +157,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
                                                                aVal.data());
       mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
       setRHS_Zero(vec_b, aBCFlag,0);
-      //////////////////////////
+      // ///////////////////////
       std::vector<double> vec_x;
       {
         ilu_A.SetValueILU(mat_A);
@@ -167,7 +169,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
         EXPECT_LT( conv.size(), 1000 );
         EXPECT_LT( conv[conv.size()-1], 1.0e-5);
       }
-      //////////////////////////
+      // -------------------------
       XPlusAY(aVal,nDoF,aBCFlag,
               1.0,vec_x);
     }

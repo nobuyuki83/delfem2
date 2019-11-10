@@ -48,9 +48,9 @@ std::vector<double> aAcc;
 
 std::vector<int> aBCFlag;
 
-CMatrixSparse<double> mat_A;
+dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-CPreconditionerILU<double>  ilu_A;
+delfem2::CPreconditionerILU<double>  ilu_A;
 
 // 0: poission
 // 1: heat diffusion

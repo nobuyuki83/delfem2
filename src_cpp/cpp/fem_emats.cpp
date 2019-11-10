@@ -456,7 +456,7 @@ void dfm2::MergeLinSys_StokesStatic2D
     double eres[3][3];
     double emat[3][3][3][3];
     ////
-    MakeMat_Stokes2D_Static_P1(myu, g_x, g_y, coords, velo_press, emat, eres);
+    EMat_Stokes2D_Static_P1(myu, g_x, g_y, coords, velo_press, emat, eres);
     for (int ino = 0; ino<3; ino++){
       const int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
@@ -500,7 +500,7 @@ void dfm2::MergeLinSys_StokesDynamic2D
     double eres[3][3];
     double emat[3][3][3][3];
     ////
-    MakeMat_Stokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
+    EMat_Stokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
                                 dt_timestep, gamma_newmark,
                                 coords, velo_press, acc_apress,
                                 emat, eres);
@@ -544,7 +544,7 @@ void dfm2::MergeLinSys_NavierStokes2D
     double acc[3][3]; FetchData(&acc[0][0],3,3,aIP, aDtVal);
     ////
     double eres[3][3], emat[3][3][3][3];
-    MakeMat_NavierStokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
+    EMat_NavierStokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
                                       dt_timestep, gamma_newmark,
                                       coords, velo, acc,
                                       emat, eres);

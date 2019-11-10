@@ -29,8 +29,6 @@ set(INPUT_SRC
   ${DELFEM2_INC}/mshio.h              ${DELFEM2_SRC}/mshio.cpp
   ${DELFEM2_INC}/funcs.h              ${DELFEM2_SRC}/funcs.cpp
   ${DELFEM2_INC}/voxel.h              ${DELFEM2_SRC}/voxel.cpp
-  ${DELFEM2_INC}/bv.h
-  ${DELFEM2_INC}/bvh.h                ${DELFEM2_SRC}/bvh.cpp
   ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_SRC}/evalmathexp.cpp
   ${DELFEM2_INC}/dtri.h               ${DELFEM2_SRC}/dtri.cpp
   ${DELFEM2_INC}/mats.h               ${DELFEM2_SRC}/mats.cpp
@@ -39,23 +37,24 @@ set(INPUT_SRC
   ${DELFEM2_INC}/iss.h                ${DELFEM2_SRC}/iss.cpp
   ${DELFEM2_INC}/color.h              ${DELFEM2_SRC}/color.cpp
   ${DELFEM2_INC}/slice.h              ${DELFEM2_SRC}/slice.cpp
+  ${DELFEM2_INC}/bvh.h                ${DELFEM2_SRC}/bvh.cpp
+  ${DELFEM2_INC}/bv.h
   
   ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_SRC}/ilu_mats.cpp
   ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_SRC}/fem_emats.cpp
   ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_SRC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_SRC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_SRC}/srchuni_v3.cpp
-  ${DELFEM2_INC}/srch_v3bvhmshtopo.h
   ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_SRC}/rig_v3q.cpp
   ${DELFEM2_INC}/v23m3q.h             ${DELFEM2_SRC}/v23m3q.cpp
   ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_SRC}/dtri_v3.cpp
   ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_SRC}/dtri_v2.cpp
   ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_SRC}/mshtopoio.cpp
   ${DELFEM2_INC}/cad2d.h              ${DELFEM2_SRC}/cad2d.cpp
-  ${DELFEM2_INC}/eigen_rigidbody.h    ${DELFEM2_SRC}/eigen_rigidbody.cpp  
+  ${DELFEM2_INC}/eigen_rigidbody.h    ${DELFEM2_SRC}/eigen_rigidbody.cpp
+  ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_SRC}/srchuni_v3.cpp
+  ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
-  ${DELFEM2_EXT}/io_gltf.h
-  ${DELFEM2_EXT}/io_gltf.cpp
+  ${DELFEM2_EXT}/io_gltf.h            ${DELFEM2_EXT}/io_gltf.cpp
 
   ../py_funcs.h
 
@@ -64,7 +63,8 @@ set(INPUT_SRC
   py_field.cpp
   py_fem.cpp
   py_sdf.cpp
-  py_rigidbody.cpp  
+  py_rigidbody.cpp
+  
   main.cpp
 )
 

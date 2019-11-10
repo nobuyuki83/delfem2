@@ -27,9 +27,9 @@ std::vector<double> aVal;
 std::vector<int> aBCFlag; // boundary condition flag
 std::vector<int> aMSFlag; // master slave flag
 
-CMatrixSparse<double> mat_A;
+dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-CPreconditionerILU<double> ilu_A;
+dfm2::CPreconditionerILU<double> ilu_A;
 
 const double lenx = 1.0;
 const double leny = 0.2;

@@ -15,6 +15,9 @@ typedef std::complex<double> COMPLEX;
 
 #include "delfem2/ilu_mats.h"
 
+namespace dfm2 = delfem2;
+
+// ----------------------------------------------------
 
 static void CalcMatPr(double* out, const double* d, double* tmp,
                       const int ni, const int nj )
@@ -105,7 +108,7 @@ static inline void CalcInvMat3(double a[], double t[] )
 
 
 template <typename T>
-CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& p)
+delfem2::CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& p)
 {
 //  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
   this->mat = p.mat; // deep copy
@@ -118,7 +121,7 @@ CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& p)
 
 // numerical factorization
 template <>
-bool CPreconditionerILU<double>::DoILUDecomp()
+bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 {
   const int nmax_sing = 10;
 	int icnt_sing = 0;
@@ -181,7 +184,7 @@ bool CPreconditionerILU<double>::DoILUDecomp()
 			}
 		}	// end iblk
 	}
-	////////////////////////////////////////////////////////////////
+	// -----------------------------
 	else if( len == 2 ){
 		double TmpBlk[4];
 		for(int iblk=0;iblk<nblk;iblk++){
@@ -378,7 +381,7 @@ bool CPreconditionerILU<double>::DoILUDecomp()
 
 // numerical factorization
 template <>
-bool CPreconditionerILU<COMPLEX>::DoILUDecomp()
+bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
 {
 //  const int nmax_sing = 10;
 //  int icnt_sing = 0;
@@ -451,16 +454,16 @@ bool CPreconditionerILU<COMPLEX>::DoILUDecomp()
 }
 
 
-///////////////////////////////////////////////////////////////////
+// -----------------------------------------------
 
 template <>
-std::vector<double> Solve_PCG
+std::vector<double> delfem2::Solve_PCG
 (double* r_vec,
  double* x_vec,
  double conv_ratio_tol,
  unsigned int max_nitr,
  const CMatrixSparse<double>& mat,
- const CPreconditionerILU<double>& ilu)
+ const delfem2::CPreconditionerILU<double>& ilu)
 {
   const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
@@ -522,13 +525,13 @@ std::vector<double> Solve_PCG
 
 
 template <>
-std::vector<double> Solve_PCG
+std::vector<double> delfem2::Solve_PCG
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
  unsigned int max_nitr,
  const CMatrixSparse<COMPLEX>& mat,
- const CPreconditionerILU<COMPLEX>& ilu)
+ const delfem2::CPreconditionerILU<COMPLEX>& ilu)
 {
   const unsigned int ndof = mat.nblk_col*mat.len_col;
   std::vector<double> aResHistry;
@@ -589,13 +592,13 @@ std::vector<double> Solve_PCG
 }
 
 template <>
-std::vector<double> Solve_PBiCGStab
+std::vector<double> delfem2::Solve_PBiCGStab
 (double* r_vec,
  double* x_vec,
  double conv_ratio_tol,
  unsigned int max_niter,
  const CMatrixSparse<double>& mat,
- const CPreconditionerILU<double>& ilu)
+ const delfem2::CPreconditionerILU<double>& ilu)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
@@ -678,13 +681,13 @@ std::vector<double> Solve_PBiCGStab
 
 
 template <>
-std::vector<double> Solve_PBiCGStab
+std::vector<double> delfem2::Solve_PBiCGStab
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
  unsigned int max_niter,
  const CMatrixSparse<COMPLEX>& mat,
- const CPreconditionerILU<COMPLEX>& ilu)
+ const delfem2::CPreconditionerILU<COMPLEX>& ilu)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
@@ -755,13 +758,13 @@ std::vector<double> Solve_PBiCGStab
 }
 
 
-std::vector<double> Solve_PCOCG
+std::vector<double> dfm2::Solve_PCOCG
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
  unsigned int max_niter,
  const CMatrixSparse<COMPLEX>& mat,
- const CPreconditionerILU<COMPLEX>& ilu)
+ const delfem2::CPreconditionerILU<COMPLEX>& ilu)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );

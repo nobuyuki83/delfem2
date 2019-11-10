@@ -32,17 +32,85 @@ int BVH_MakeTreeTopology(std::vector<CNodeBVH2>& aNodeBVH,
 
 // -------------------------------------------------------------------
 // template functions from here
+  
+/**
+ * @brief build Bounding Box for AABB
+ */
+template <typename T>
+void BVH_BuildBVHGeometry(int ibvh,
+                          double margin,
+                          const double* aXYZ, unsigned int nXYZ,
+                          const unsigned int* aElem, unsigned int nnoel, unsigned int nElem,
+                          const std::vector<CNodeBVH2>& aNodeBVH,
+                          std::vector<T>& aBB);
+  
+template <typename T>
+void BuildBoundingBoxesBVH_Dynamic(int ibvh,
+                                   double dt,
+                                   const std::vector<double>& aXYZ,
+                                   const std::vector<double>& aUVW,
+                                   const std::vector<unsigned int>& aTri,
+                                   const std::vector<CNodeBVH2>& aNodeBVH,
+                                   std::vector<T>& aBB);
+  
+template <typename T>
+void BVH_GetIndElem_IncludePoint(std::vector<int>& aIndElem,
+                                 //
+                                 double px, double py, double pz,
+                                 int ibvh,
+                                 const std::vector<CNodeBVH2>& aBVH,
+                                 const std::vector<T>& aBB);
+  
+// potential maximum distance of the nearest point
+template <typename T>
+void BVH_Range_DistToNearestPoint(double& min, double& max,
+                                  //
+                                  double px, double py, double pz,
+                                  int ibvh,
+                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
+                                  const std::vector<T>& aBB);
+  
+template <typename T>
+void  BVH_GetIndElem_IntersectRay(std::vector<int>& aIndElem,
+                                  //
+                                  const double src[3], const double dir[3],
+                                  int ibvh,
+                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
+                                  const std::vector<T>& aBB);
+  
+  
+template <typename T>
+void BVH_GetIndElem_IntersectLine(std::vector<int>& aIndElem,
+                                  //
+                                  const double src[3], const double dir[3],
+                                  int ibvh,
+                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
+                                  const std::vector<T>& aBB);
+  
+template <typename T>
+void BVH_GetIndElem_InsideRange(std::vector<int>& aIndElem,
+                                //
+                                double min, double max,
+                                double px, double py, double pz,
+                                int ibvh,
+                                const std::vector<delfem2::CNodeBVH2>& aBVH,
+                                const std::vector<T>& aBB);
+  
+} // end namespace delfem2
+
+
+// --------------------------------------------------------------
 
 /**
  * @brief build Bounding Box for AABB
  */
 template <typename T>
-void BVH_BuildBVHGeometry
+void delfem2::BVH_BuildBVHGeometry
 (int ibvh,
  double margin,
  const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aElem, unsigned int nnoel, unsigned int nElem,
- const std::vector<CNodeBVH2>& aNodeBVH,
+ const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
  std::vector<T>& aBB)
 {
   aBB.resize( aNodeBVH.size() );
@@ -111,13 +179,13 @@ void BuildBoundingBoxesBVH
  */
 
 template <typename T>
-void BuildBoundingBoxesBVH_Dynamic
+void delfem2::BuildBoundingBoxesBVH_Dynamic
 (int ibvh,
  double dt,
  const std::vector<double>& aXYZ,
  const std::vector<double>& aUVW,
  const std::vector<unsigned int>& aTri,
- const std::vector<CNodeBVH2>& aNodeBVH,
+ const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
  std::vector<T>& aBB)
 {
   double eps = 1.0e-10;
@@ -156,12 +224,12 @@ void BuildBoundingBoxesBVH_Dynamic
 
 
 template <typename T>
-void BVH_GetIndElem_IncludePoint
+void delfem2::BVH_GetIndElem_IncludePoint
 (std::vector<int>& aIndElem,
  //
  double px, double py, double pz,
  int ibvh,
- const std::vector<CNodeBVH2>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   if( !aBB[ibvh].isInclude_Point(px,py,pz) ){ return; }
@@ -178,12 +246,12 @@ void BVH_GetIndElem_IncludePoint
 
 // potential maximum distance of the nearest point
 template <typename T>
-void BVH_Range_DistToNearestPoint
+void delfem2::BVH_Range_DistToNearestPoint
 (double& min, double& max,
  //
  double px, double py, double pz,
  int ibvh,
- const std::vector<CNodeBVH2>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   double min0, max0;
@@ -209,13 +277,13 @@ void BVH_Range_DistToNearestPoint
 }
 
 template <typename T>
-void BVH_GetIndElem_InsideRange
+void delfem2::BVH_GetIndElem_InsideRange
 (std::vector<int>& aIndElem,
  //
  double min, double max,
  double px, double py, double pz,
  int ibvh,
- const std::vector<CNodeBVH2>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( min < max );
@@ -238,12 +306,12 @@ void BVH_GetIndElem_InsideRange
 }
 
 template <typename T>
-void BVH_GetIndElem_IntersectRay
+void delfem2::BVH_GetIndElem_IntersectRay
 (std::vector<int>& aIndElem,
  //
  const double src[3], const double dir[3],
  int ibvh,
- const std::vector<CNodeBVH2>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
@@ -262,12 +330,12 @@ void BVH_GetIndElem_IntersectRay
 }
 
 template <typename T>
-void BVH_GetIndElem_IntersectLine
+void delfem2::BVH_GetIndElem_IntersectLine
 (std::vector<int>& aIndElem,
  //
  const double src[3], const double dir[3],
  int ibvh,
- const std::vector<CNodeBVH2>& aBVH,
+ const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<T>& aBB)
 {
   assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
@@ -285,7 +353,7 @@ void BVH_GetIndElem_IntersectLine
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild1,aBVH,aBB);
 }
   
-} // end namespace delfem2
+
 
 
 #endif

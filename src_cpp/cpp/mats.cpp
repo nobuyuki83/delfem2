@@ -15,10 +15,14 @@ typedef std::complex<double> COMPLEX;
 
 #include "delfem2/mats.h"
 
+namespace dfm2 = delfem2;
+
+// -------------------------------------------------------
+
 // Calc Matrix Vector Product
 // {y} = alpha*[A]{x} + beta*{y}
 template <>
-void CMatrixSparse<double>::MatVec
+void dfm2::CMatrixSparse<double>::MatVec
 (double alpha,
  const std::vector<double>& x,
  double beta,
@@ -31,7 +35,7 @@ void CMatrixSparse<double>::MatVec
 		const double* vdia = valDia.data();
 		const unsigned int* colind = colInd.data();
 		const unsigned int* rowptr = rowPtr.data();
-		////////////////
+		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			double& vy = y[iblk];
 			vy *= beta;
@@ -51,7 +55,7 @@ void CMatrixSparse<double>::MatVec
 		const double* vdia = valDia.data();
 		const unsigned int* colind = colInd.data();
 		const unsigned int* rowptr = rowPtr.data();
-		////////////////
+		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			y[iblk*2+0] *= beta;
 			y[iblk*2+1] *= beta;
@@ -73,7 +77,7 @@ void CMatrixSparse<double>::MatVec
 		const double* vdia = valDia.data();
 		const unsigned int* colind = colInd.data();
 		const unsigned int* rowptr = rowPtr.data();
-		////////////////
+		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			y[iblk*3+0] *= beta;
 			y[iblk*3+1] *= beta;
@@ -105,7 +109,7 @@ void CMatrixSparse<double>::MatVec
     const double* vdia = valDia.data();
     const unsigned int* colind = colInd.data();
     const unsigned int* rowptr = rowPtr.data();
-    ////////////////
+    //
     for(unsigned int iblk=0;iblk<nblk_col;iblk++){
       y[iblk*4+0] *= beta;
       y[iblk*4+1] *= beta;
@@ -140,7 +144,7 @@ void CMatrixSparse<double>::MatVec
 		const double* vdia = valDia.data();
 		const unsigned int* colind = colInd.data();
 		const unsigned int* rowptr = rowPtr.data();
-		////////////////
+		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			for(unsigned int idof=0;idof<len_col;idof++){ y[iblk*len_col+idof] *= beta; }
 			const unsigned int colind0 = colind[iblk];
@@ -165,12 +169,10 @@ void CMatrixSparse<double>::MatVec
 }
 
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+// ----------------------------------
 
 void SetMasterSlave
-(CMatrixSparse<double>& mat,
+(dfm2::CMatrixSparse<double>& mat,
  const int* aMSFlag)
 {
   assert( !mat.valDia.empty() );
@@ -323,7 +325,7 @@ void SetMasterSlave
 }
 
 void MatSparse_ScaleBlk_LeftRight
-(CMatrixSparse<double>& mat,
+(dfm2::CMatrixSparse<double>& mat,
  const double* scale)
 {
   assert( mat.nblk_row == mat.nblk_col );
@@ -347,7 +349,7 @@ void MatSparse_ScaleBlk_LeftRight
 }
 
 void MatSparse_ScaleBlkLen_LeftRight
-(CMatrixSparse<double>& mat,
+(dfm2::CMatrixSparse<double>& mat,
  const double* scale)
 {
   assert( mat.nblk_row == mat.nblk_col );
@@ -376,9 +378,7 @@ void MatSparse_ScaleBlkLen_LeftRight
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////
 
 template <>
 double Dot
@@ -563,7 +563,7 @@ Solve_CG
  std::vector<double>& x_vec,
  double conv_ratio_tol,
  unsigned int max_iteration,
- const CMatrixSparse<double>& mat)
+ const dfm2::CMatrixSparse<double>& mat)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
@@ -606,7 +606,7 @@ std::vector<double> Solve_CG
  std::vector<COMPLEX>& x_vec,
  double conv_ratio_tol,
  unsigned int max_iteration,
- const CMatrixSparse<COMPLEX>& mat)
+ const dfm2::CMatrixSparse<COMPLEX>& mat)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
@@ -652,7 +652,7 @@ Solve_BiCGSTAB
  std::vector<COMPLEX>& x_vec,
  double conv_ratio_tol,
  unsigned int max_niter,
- const CMatrixSparse<COMPLEX>& mat)
+ const dfm2::CMatrixSparse<COMPLEX>& mat)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
@@ -722,7 +722,7 @@ Solve_BiCGSTAB
  std::vector<double>& x_vec,
  double conv_ratio_tol,
  unsigned int max_niter,
- const CMatrixSparse<double>& mat)
+ const dfm2::CMatrixSparse<double>& mat)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_col == mat.nblk_row );
@@ -903,7 +903,7 @@ double MatNorm_Assym
   return s;
 }
 
-double CheckSymmetry(const CMatrixSparse<double>& mat)
+double CheckSymmetry(const dfm2::CMatrixSparse<double>& mat)
 {
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );

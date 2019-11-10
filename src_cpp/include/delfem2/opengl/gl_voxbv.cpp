@@ -89,7 +89,7 @@ void Draw_CubeGrid
     myGlVertex(aP[noelElemFace_Vox[iface][3]]);
   }
   ::glEnd();
-  //////////////////////////////
+  // --------------------------
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINE_STRIP);

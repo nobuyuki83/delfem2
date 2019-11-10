@@ -37,7 +37,7 @@ TEST(bvh,inclusion_sphere)
     delfem2::Rotate(aXYZ, 0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -72,7 +72,7 @@ TEST(bvh,inclusion_aabb)
                     0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
-  CBVH_MeshTri3D<dfm2::CBV3D_AABB> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_AABB> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -109,7 +109,7 @@ TEST(bvh,nearestinc_sphere)
   std::vector<double> aNorm(aXYZ.size());
   Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -142,11 +142,11 @@ TEST(bvh,nearestinc_sphere)
     {
       CPointElemSurf pes2;
       double dist_tri = -1, dist_bv = 0.1;
-      BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri, dist_bv, pes2,
-                                               p0.x, p0.y, p0.z, 0.1,
-                                               aXYZ.data(), aXYZ.size()/3,
-                                               aTri.data(), aXYZ.size()/3,
-                                               bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+      dfm2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri, dist_bv, pes2,
+                                                     p0.x, p0.y, p0.z, 0.1,
+                                                     aXYZ.data(), aXYZ.size()/3,
+                                                     aTri.data(), aXYZ.size()/3,
+                                                     bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       CVector3 q2 = pes2.Pos_Tri(aXYZ, aTri);
       EXPECT_LT(Distance(q2,q1),1.0e-10);
     }
@@ -163,7 +163,7 @@ TEST(bvh,nearest_range) // find global nearest from range
     delfem2::Rotate(aXYZ,
                     0.2, 0.3, 0.4);
   }
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -232,7 +232,7 @@ TEST(bvh,nearest_point) // find global nearest directry
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
     delfem2::Rotate(aXYZ, 0.2, 0.3, 0.4);
   }
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -267,7 +267,7 @@ TEST(bvh,sdf) // find global nearest directry
   std::vector<double> aNorm(aXYZ.size());
   Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -300,7 +300,7 @@ TEST(bvh,lineintersection)
   std::vector<double> aNorm(aXYZ.size());
   Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  delfem2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            1.0e-5);
@@ -362,7 +362,7 @@ TEST(bvh,rayintersection)
   std::vector<double> aNorm(aXYZ.size());
   Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+  delfem2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            1.0e-5);

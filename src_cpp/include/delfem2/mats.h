@@ -5,12 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef MATRIX_SPARSE_H
-#define MATRIX_SPARSE_H
+#ifndef DFM2_MATRIX_SPARSE_H
+#define DFM2_MATRIX_SPARSE_H
 
 #include <vector>
 #include <cassert>
 #include <complex>
+
+namespace delfem2 {
 
 template <typename T>
 class CMatrixSparse
@@ -124,10 +126,15 @@ public:
   std::vector<T> valCrs;
   std::vector<T> valDia;
 };
+  
+}
 
+
+// ---------------------------------------------------------------
+// implementation of the template functions from here
 
 template<typename T>
-void CMatrixSparse<T>::MatVec
+void delfem2::CMatrixSparse<T>::MatVec
 (T alpha,
  const std::vector<T>& x,
  T beta,
@@ -164,7 +171,7 @@ void CMatrixSparse<T>::MatVec
 }
 
 template<typename T>
-void CMatrixSparse<T>::SetBoundaryCondition
+void delfem2::CMatrixSparse<T>::SetBoundaryCondition
 (const int* bc_flag, unsigned int np, unsigned int ndimval)
 {
   assert( !this->valDia.empty() );
@@ -208,7 +215,7 @@ void CMatrixSparse<T>::SetBoundaryCondition
 }
 
 template <typename T>
-bool CMatrixSparse<T>::Mearge
+bool delfem2::CMatrixSparse<T>::Mearge
 (unsigned int nblkel_col, const unsigned int* blkel_col,
  unsigned int nblkel_row, const unsigned int* blkel_row,
  unsigned int blksize, const T* emat,
@@ -261,11 +268,11 @@ bool CMatrixSparse<T>::Mearge
 // --------------------------------------------------------------
 
 
-double CheckSymmetry(const CMatrixSparse<double>& mat);
-void SetMasterSlave(CMatrixSparse<double>& mat, const int* aMSFlag);
-void MatSparse_ScaleBlk_LeftRight(CMatrixSparse<double>& mat,
+double CheckSymmetry(const delfem2::CMatrixSparse<double>& mat);
+void SetMasterSlave(delfem2::CMatrixSparse<double>& mat, const int* aMSFlag);
+void MatSparse_ScaleBlk_LeftRight(delfem2::CMatrixSparse<double>& mat,
                                      const double* scale);
-void MatSparse_ScaleBlkLen_LeftRight(CMatrixSparse<double>& mat,
+void MatSparse_ScaleBlkLen_LeftRight(delfem2::CMatrixSparse<double>& mat,
                                      const double* scale);
 
 
@@ -342,7 +349,7 @@ Solve_CG(std::vector<T>& r_vec,
          std::vector<T>& u_vec,
          double conv_ratio,
          unsigned int iteration,
-         const CMatrixSparse<T>& mat);
+         const delfem2::CMatrixSparse<T>& mat);
 
 template <typename T>
 std::vector<double>
@@ -350,6 +357,6 @@ Solve_BiCGSTAB(std::vector<T>& r_vec,
                std::vector<T>& x_vec,
                double conv_ratio,
                unsigned int num_iter,
-               const CMatrixSparse<T>& mat);
+               const delfem2::CMatrixSparse<T>& mat);
 
 #endif // MATDIA_CRS_H

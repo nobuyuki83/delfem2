@@ -33,9 +33,9 @@ int ipCenter = -1;
 std::vector<std::complex<double> > aCVal;
 std::vector<double> aVal;
 
-CMatrixSparse<std::complex<double> > mat_A;
+dfm2::CMatrixSparse<std::complex<double> > mat_A;
 std::vector<std::complex<double> > vec_b;
-CPreconditionerILU<std::complex<double> > ilu_A;
+dfm2::CPreconditionerILU<std::complex<double> > ilu_A;
 
 // ---------------------------------------------------
 

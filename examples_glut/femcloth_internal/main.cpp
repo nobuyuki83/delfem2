@@ -88,8 +88,8 @@ int imode_contact; // mode of contacting object
 double mass_point; // mass for a point
 
 // variables for sparse solver
-CMatrixSparse<double> mat_A; // coefficient matrix
-CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
+dfm2::CMatrixSparse<double> mat_A; // coefficient matrix
+dfm2::CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
 
 bool is_animation;
 CNav3D_GLUT nav;

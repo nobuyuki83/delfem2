@@ -128,8 +128,8 @@ const double contact_clearance = 0.01;
 int imode_contact; // mode of contacting object
 double mass_point; // mass for a point
 
-CMatrixSparse<double> mat_A;
-CPreconditionerILU<double>  ilu_A;
+dfm2::CMatrixSparse<double> mat_A;
+dfm2::CPreconditionerILU<double>  ilu_A;
 
 std::vector<double> aNormal; // deformed vertex noamals，変形中の頂点の法線(可視化用)
 

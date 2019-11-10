@@ -328,6 +328,6 @@ public:
   }
 };
   
-}
+} // namespace delfem2
 
 #endif

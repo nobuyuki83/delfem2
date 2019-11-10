@@ -16,7 +16,7 @@ typedef std::complex<double> COMPLEX;
 #include "delfem2/emat.h"
 
 
-/////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------
 
 const static unsigned int NIntLineGauss[4] = {
   1, 2, 3, 4
@@ -679,7 +679,7 @@ void MakeMat_Stokes2D_Static_P1P1
   }
 }
 
-void MakeMat_Stokes2D_Static_P1
+void EMat_Stokes2D_Static_P1
 (double alpha, double g_x, double g_y,
  const double coords[][2],
  const double velo_press[3][3],
@@ -861,7 +861,7 @@ void MakeMat_Stokes2D_Dynamic_Newmark_P1P1
   }
 }
 
-void MakeMat_Stokes2D_Dynamic_P1
+void EMat_Stokes2D_Dynamic_P1
 (double alpha, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[][2],
@@ -1176,7 +1176,7 @@ void MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
   }
 }
 
-void MakeMat_NavierStokes2D_Dynamic_P1
+void EMat_NavierStokes2D_Dynamic_P1
 (double myu, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[][2],

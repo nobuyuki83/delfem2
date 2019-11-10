@@ -18,10 +18,10 @@
 #include "delfem2/dtri_v2.h"
 #include "delfem2/objfunc_v23dtri.h"
 
-
 namespace py = pybind11;
 namespace dfm2 = delfem2;
 
+// ---------------------------------------
 
 static double Length3D(const double v[3]){
   return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
@@ -34,7 +34,7 @@ static double Distance3D(const double p0[3], const double p1[3]){
 // ----------------------------
 
 void MatrixSquareSparse_SetPattern
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  const py::array_t<int>& psup_ind,
  const py::array_t<int>& psup)
 {
@@ -48,7 +48,7 @@ void MatrixSquareSparse_SetPattern
 }
 
 void MatrixSquareSparse_SetFixBC
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  const py::array_t<int>& flagbc)
 {
   assert( mss.nblk_col == mss.nblk_row );
@@ -61,7 +61,7 @@ void MatrixSquareSparse_SetFixBC
 
 
 void PyMatSparse_ScaleBlk_LeftRight
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  const py::array_t<double>& scale)
 {
   assert( mss.nblk_col == mss.nblk_row );
@@ -73,7 +73,7 @@ void PyMatSparse_ScaleBlk_LeftRight
 }
 
 void PyMatSparse_ScaleBlkLen_LeftRight
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  const py::array_t<double>& scale)
 {
   assert( mss.nblk_col == mss.nblk_row );
@@ -86,7 +86,7 @@ void PyMatSparse_ScaleBlkLen_LeftRight
 }
 
 void PyMatrixSparse_ScaleBlkLen_LeftRight
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  const py::array_t<double>& scale,
  bool is_sumndimval)
 {
@@ -100,7 +100,7 @@ void PyMatrixSparse_ScaleBlkLen_LeftRight
 }
 
 void LinearSystem_SetMasterSlave
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& np_b,
  const py::array_t<int>& np_ms)
 {
@@ -122,8 +122,8 @@ std::vector<double> PySolve_PCG
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
  double conv_ratio, double iteration,
- const CMatrixSparse<double>& mat_A,
- const CPreconditionerILU<double>& ilu_A)
+ const dfm2::CMatrixSparse<double>& mat_A,
+ const dfm2::CPreconditionerILU<double>& ilu_A)
 {
   //  std::cout << "solve pcg" << std::endl;
   auto buff_vecb = vec_b.request();
@@ -138,8 +138,8 @@ std::vector<double> PySolve_PBiCGStab
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
  double conv_ratio, double iteration,
- const CMatrixSparse<double>& mat_A,
- const CPreconditionerILU<double>& ilu_A)
+ const dfm2::CMatrixSparse<double>& mat_A,
+ const dfm2::CPreconditionerILU<double>& ilu_A)
 {
   //  std::cout << "solve pcg" << std::endl;
   auto buff_vecb = vec_b.request();
@@ -152,8 +152,8 @@ std::vector<double> PySolve_PBiCGStab
 
 
 void PyPrecILU_SetPattern_ILUk
- (CPreconditionerILU<double>&  mat_ilu,
-  const CMatrixSparse<double>& mss,
+ (dfm2::CPreconditionerILU<double>&  mat_ilu,
+  const dfm2::CMatrixSparse<double>& mss,
   unsigned int nlev_fill)
 {
     //  mat_ilu.Initialize_ILU0(mss);
@@ -164,7 +164,7 @@ void PyPrecILU_SetPattern_ILUk
 // ------------------------------------------------------------
 
 void PyMergeLinSys_Poission
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double alpha, double source,
  const py::array_t<double>& aXY,
@@ -197,7 +197,7 @@ void PyMergeLinSys_Poission
 
 
 void PyMergeLinSys_Diffuse
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double alpha, double rho, double source,
  double dt_timestep, double gamma_newmark,
@@ -236,7 +236,7 @@ void PyMergeLinSys_Diffuse
 
 
 void PyMergeLinSys_LinearSolidStatic
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double myu, double lambda, double rho,
  std::vector<double>& gravity,
@@ -271,7 +271,7 @@ void PyMergeLinSys_LinearSolidStatic
 
 
 void PyMergeLinSys_LinearSolidDynamic
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double myu, double lambda, double rho,
  std::vector<double>& gravity,
@@ -310,7 +310,7 @@ void PyMergeLinSys_LinearSolidDynamic
 
 
 void PyMergeLinSys_StorksStatic2D
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double myu, double g_x, double g_y,
  const py::array_t<double>& aXY,
@@ -326,7 +326,7 @@ void PyMergeLinSys_StorksStatic2D
 }
 
 void PyMergeLinSys_StorksDynamic2D
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double myu, double rho, double g_x, double g_y,
  double dt_timestep, double gamma_newmark,
@@ -345,7 +345,7 @@ void PyMergeLinSys_StorksDynamic2D
 }
 
 void PyMergeLinSys_NavierStorks2D
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double myu, double rho, double g_x, double g_y,
  double dt_timestep, double gamma_newmark,
@@ -364,7 +364,7 @@ void PyMergeLinSys_NavierStorks2D
 }
 
 void PyMergeLinSys_ShellMitc3Static
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double thickness, double lambda, double myu, double rho, double g_z,
  const py::array_t<double>& aXY,
@@ -380,7 +380,7 @@ void PyMergeLinSys_ShellMitc3Static
 }
 
 double PyMergeLinSys_Cloth
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double lambda, double myu, double stiff_bend,
  const py::array_t<double>& aPosIni,
@@ -400,7 +400,7 @@ double PyMergeLinSys_Cloth
 
 
 double PyMergeLinSys_Contact
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  ////
  double stiff_contact,
@@ -447,7 +447,7 @@ double PyMergeLinSys_Contact
 }
 
 double PyMergeLinSys_MassPoint
-(CMatrixSparse<double>& mss,
+(dfm2::CMatrixSparse<double>& mss,
  py::array_t<double>& vec_b,
  double mass_point,
  double dt,
@@ -687,11 +687,11 @@ void PyMassLumped_ShellPlateBendingMitc3
 }
 
 void init_fem(py::module &m){
-  py::class_<CMatrixSparse<double>>(m,"CppMatrixSparse")
+  py::class_<dfm2::CMatrixSparse<double>>(m,"CppMatrixSparse")
   .def(py::init<>())
-  .def("initialize", &CMatrixSparse<double>::Initialize)
-  .def("set_zero",   &CMatrixSparse<double>::SetZero)
-  .def("add_dia",    &CMatrixSparse<double>::AddDia);
+  .def("initialize", &dfm2::CMatrixSparse<double>::Initialize)
+  .def("set_zero",   &dfm2::CMatrixSparse<double>::SetZero)
+  .def("add_dia",    &dfm2::CMatrixSparse<double>::AddDia);
   
   m.def("matrixSquareSparse_setPattern",      &MatrixSquareSparse_SetPattern);
   m.def("matrixSquareSparse_setFixBC",        &MatrixSquareSparse_SetFixBC);
@@ -700,10 +700,10 @@ void init_fem(py::module &m){
   m.def("masterSlave_distributeValue",        &PyMasterSlave_DistributeValue);
   m.def("addMasterSlavePattern",              &PyAddMasterSlavePattern);
   
-  py::class_<CPreconditionerILU<double>>(m,"PreconditionerILU")
+  py::class_<dfm2::CPreconditionerILU<double>>(m,"PreconditionerILU")
   .def(py::init<>())
-  .def("ilu_decomp", &CPreconditionerILU<double>::DoILUDecomp)
-  .def("set_value",  &CPreconditionerILU<double>::SetValueILU);
+  .def("ilu_decomp", &dfm2::CPreconditionerILU<double>::DoILUDecomp)
+  .def("set_value",  &dfm2::CPreconditionerILU<double>::SetValueILU);
 
   m.def("cppPrecILU_SetPattern_ILUk",    &PyPrecILU_SetPattern_ILUk);
   
