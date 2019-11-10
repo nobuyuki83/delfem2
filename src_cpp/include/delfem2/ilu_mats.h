@@ -38,14 +38,6 @@ public:
 };
 
 template <typename T>
-std::vector<double> Solve_PCG(T* r_vec,
-                              T* u_vec,
-                              double conv_ratio,
-                              unsigned int iteration,
-                              const CMatrixSparse<T>& mat,
-                              const CPreconditionerILU<T>& ilu);
-
-template <typename T>
 std::vector<double> Solve_PBiCGStab(T* r_vec,
                                     T* x_vec,
                                     double conv_ratio,
@@ -54,12 +46,43 @@ std::vector<double> Solve_PBiCGStab(T* r_vec,
                                     const CPreconditionerILU<T>& ilu);
   
 template <>
+std::vector<double> Solve_PBiCGStab(double* r_vec,
+                                    double* x_vec,
+                                    double conv_ratio_tol,
+                                    unsigned int max_niter,
+                                    const CMatrixSparse<double>& mat,
+                                    const delfem2::CPreconditionerILU<double>& ilu);
+
+template <>
+std::vector<double> Solve_PBiCGStab(std::complex<double>* r_vec,
+                                    std::complex<double>* x_vec,
+                                    double conv_ratio_tol,
+                                    unsigned int max_niter,
+                                    const CMatrixSparse<std::complex<double> >& mat,
+                                    const delfem2::CPreconditionerILU<std::complex<double> >& ilu);
+  
+template <typename T>
+std::vector<double> Solve_PCG(T* r_vec,
+                              T* u_vec,
+                              double conv_ratio,
+                              unsigned int iteration,
+                              const CMatrixSparse<T>& mat,
+                              const CPreconditionerILU<T>& ilu);
+template <>
 std::vector<double> Solve_PCG(double* r_vec,
                               double* x_vec,
                               double conv_ratio_tol,
                               unsigned int max_nitr,
                               const CMatrixSparse<double>& mat,
                               const delfem2::CPreconditionerILU<double>& ilu);
+  
+template <>
+std::vector<double> Solve_PCG(std::complex<double>* r_vec,
+                              std::complex<double>* x_vec,
+                              double conv_ratio_tol,
+                              unsigned int max_nitr,
+                              const CMatrixSparse<std::complex<double> >& mat,
+                              const delfem2::CPreconditionerILU<std::complex<double> >& ilu);
 
 std::vector<double> Solve_PCOCG(std::complex<double>* r_vec,
                                 std::complex<double>* x_vec,
