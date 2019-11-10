@@ -28,6 +28,5 @@ add_subdirectory(femcloth_dtri)
 add_subdirectory(fempb_mitc3eigen)
 
 # pbd
-add_subdirectory(pbdcloth)
 add_subdirectory(pbdcloth_cad)
 add_subdirectory(pbdcloth_cad_gltf)
