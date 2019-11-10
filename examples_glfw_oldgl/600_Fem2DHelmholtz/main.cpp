@@ -34,8 +34,8 @@ std::vector<std::complex<double> > aCVal;
 std::vector<double> aVal;
 
 dfm2::CMatrixSparse<std::complex<double> > mat_A;
-std::vector<std::complex<double> > vec_b;
 dfm2::CPreconditionerILU<std::complex<double> > ilu_A;
+std::vector<std::complex<double> > vec_b;
 
 // ---------------------------------------------------
 

@@ -14,16 +14,10 @@
 #include "delfem2/dtri_v2.h"
 
 // --------------
-
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_v23dtricad.h"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
@@ -40,8 +34,6 @@ std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
 const double mass_point = 0.01;
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, -10.0};
-
-CNav3D_GLUT nav;
 bool is_animation = false;
 
 // -------------------------------------
@@ -63,23 +55,8 @@ void StepTime()
 
 // -------------------------------------
 
-void myGlutResize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  ::glutPostRedisplay();
-}
-
 void myGlutDisplay(void)
 {
-  ::glClearColor(1.0, 1.0, 1.0, 1.0);
-  //  ::glClearColor(0.0, .0, 0.0, 1.0);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1, 4.0 );
-  
-  nav.SetGL_Camera();
-  
   ::glPointSize(5);
   ::glLineWidth(1);
   {
@@ -97,69 +74,10 @@ void myGlutDisplay(void)
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
-
-  
-  ShowFPS();
-  
-  glutSwapBuffers();
-}
-
-
-void myGlutIdle(){
-  if( is_animation ){
-    StepTime();
-  }
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x,y);
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x,y);
-}
-
-void myGlutKeyboard(unsigned char key, int x, int y)
-{
-  switch (key) {
-    case 'q':
-    case 'Q':
-    case '\033':  /* '\033' ÇÕ ESC ÇÃ ASCII ÉRÅ[Éh */
-      exit(0);
-      break;
-    case 'a':
-    {
-      is_animation = !is_animation;
-      break;
-    }
-  }
-}
-
-void myGlutSpecial(int key, int x, int y){
-  nav.glutSpecial(key,x,y);
 }
 
 int main(int argc,char* argv[])
 {
-  // Initailze GLUT
-  ::glutInitWindowPosition(200,200);
-  ::glutInitWindowSize(400, 300);
-  ::glutInit(&argc, argv);
-  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  ::glutCreateWindow("Cad View");
-  
-  // Set callback function
-  ::glutMotionFunc(myGlutMotion);
-  ::glutMouseFunc(myGlutMouse);
-  ::glutDisplayFunc(myGlutDisplay);
-  ::glutReshapeFunc(myGlutResize);
-  ::glutKeyboardFunc(myGlutKeyboard);
-  ::glutSpecialFunc(myGlutSpecial);
-  ::glutIdleFunc(myGlutIdle);
-  
   {
     std::vector< std::vector<double> > aaXY;
     aaXY.resize(1);
@@ -175,7 +93,7 @@ int main(int argc,char* argv[])
     GenMesh(aPo2D,aETri,aVec2,
             aaXY, 0.05, 0.05);
   }
-  /////////
+  // -------------
   const int np = aPo2D.size();
   aXYZ.resize(np*3);
   for(int ip=0;ip<np;++ip){
@@ -213,11 +131,26 @@ int main(int argc,char* argv[])
     }
   }
   
-  nav.camera.view_height = 1.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
-  
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 1.0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
-  // Enter main loop
-  ::glutMainLoop();
-  return 0;
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    {
+      static int iframe = 0;
+      if( iframe % 5 == 0 ){
+        StepTime();
+      }
+      iframe++;
+    }
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
