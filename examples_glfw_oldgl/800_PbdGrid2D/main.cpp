@@ -4,26 +4,17 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
 #include "delfem2/primitive.h"
-
+//
 #include "delfem2/objfunc_v23.h"
 
-
 // --------
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
 
 namespace dfm2 = delfem2;
 
 // -------------------------------------------------
-
-
-
 
 void stepTime
 (std::vector<double>& aXY1,
@@ -80,15 +71,6 @@ std::vector<int> aBC;
 
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  ::glClearStencil(0);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-  
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset(1.1f, 4.0f);
-
   {
     int viewport[8];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -105,8 +87,6 @@ void myGlutDisplay(void)
   
   delfem2::opengl::DrawMeshQuad2D_Edge(aXY1.data(), aXY1.size()/2,
                               aQuad.data(), aQuad.size()/4);
-    
-  ::glutSwapBuffers();
 }
 
 void myGlutIdle(){
@@ -114,7 +94,7 @@ void myGlutIdle(){
   static double t = 0;
   t += dt;
   for(int ix=0;ix<nX+1;++ix){
-    aXY1[ix*2+0] = ix + 2*sin(t*4);
+    aXY1[ix*2+0] = ix + 2*sin(t*2);
     aXY1[ix*2+1] = 0;
   }
   stepTime(aXY1, aUV1, aXYt,
@@ -122,55 +102,10 @@ void myGlutIdle(){
            clstr_ind, clstr,
            aBC,
            aQuad, aXY0);
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0,0,w,h);
-	::glutPostRedisplay();
-}
-
-void myGlutMotion(int x, int y)
-{
-	::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-	::glutPostRedisplay();
-}
-
-
-void myGlutKeyboard(unsigned char key, int x, int y)
-{
-  switch (key) {
-    case 'q':
-    case 'Q':
-    case '\033':  /* '\033' ÇÕ ESC ÇÃ ASCII ÉRÅ[Éh */
-      exit(0);
-      break;
-    case 'a':
-      break;
-  }
 }
 
 int main(int argc,char* argv[])
 {
-  glutInit(&argc, argv);
-  
-	// Initialize GLUT window 3D
-  glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
-  glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-  glutKeyboardFunc(myGlutKeyboard);
   // --------------------------
   
   delfem2::MeshQuad2D_Grid(aXY0, aQuad, nX, nY);
@@ -182,17 +117,35 @@ int main(int argc,char* argv[])
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aQuad.data(), aQuad.size()/4, 4,
                                               aXY0.size()/2);
-//  Print_IndexedArray(psup_ind, psup);
+    //  Print_IndexedArray(psup_ind, psup);
   dfm2::JArray_AddDiagonal(clstr_ind, clstr,
                            psup_ind.data(), psup_ind.size(),  psup.data(), psup.size());
-//  JArray_Print(clstr_ind, clstr);
+    //  JArray_Print(clstr_ind, clstr);
   
   aBC.assign(aXY0.size()/2,0);
   for(int ix=0;ix<nX+1;++ix){
     aBC[ix] = 1;
   }
+    
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
   
-  glutMainLoop();
-	return 0;
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    {
+      static int iframe = 0;
+      if( iframe % 5 == 0 ){
+        myGlutIdle();
+      }
+      iframe++;
+    }
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
 

@@ -47,4 +47,10 @@ add_subdirectory(503_3DCad)
 add_subdirectory(600_Fem2DHelmholtz)
 add_subdirectory(601_FemPlateBendingMitc3)
 
+# spatial hash 
 add_subdirectory(700_HashBvhSelfCollision)
+
+# pbd
+add_subdirectory(800_PbdGrid2d)
+add_subdirectory(801_PbdCloth)
+
