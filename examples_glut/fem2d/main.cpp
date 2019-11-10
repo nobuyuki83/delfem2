@@ -154,9 +154,9 @@ std::vector<double> aAcc;
 std::vector<int> aBCFlag; // master slave flag
 std::vector<int> aMSFlag; // master slave flag
 
-CMatrixSparse<double> mat_A;
+dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-CPreconditionerILU<double> ilu_A;
+dfm2::CPreconditionerILU<double> ilu_A;
 
 int press_button = -1;
 double mov_begin_x, mov_begin_y;

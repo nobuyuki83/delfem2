@@ -78,33 +78,33 @@ void EMat_SolidDynamicLinear_Tri2D(double eres[3][2],
                                    const double coords[3][2],
                                    bool is_initial);
 
-void MakeMat_Stokes2D_Static_P1(double alpha, double g_x, double g_y,
-                                const double coords[][2],
-                                const double velo_press[3][3],
-                                double emat[3][3][3][3],
-                                double eres[3][3]);
+void EMat_Stokes2D_Static_P1(double alpha, double g_x, double g_y,
+                             const double coords[][2],
+                             const double velo_press[3][3],
+                             double emat[3][3][3][3],
+                             double eres[3][3]);
 
-void MakeMat_Stokes2D_Dynamic_P1(double alpha, double rho, double g_x, double g_y,
-                                 const double dt_timestep, const double gamma_newmark,
-                                 const double coords[][2],
-                                 const double velo_press[3][3], const double acc_apress[3][3],
-                                 double emat[3][3][3][3],
-                                 double eres[3][3]);
+void EMat_Stokes2D_Dynamic_P1(double alpha, double rho, double g_x, double g_y,
+                              const double dt_timestep, const double gamma_newmark,
+                              const double coords[][2],
+                              const double velo_press[3][3], const double acc_apress[3][3],
+                              double emat[3][3][3][3],
+                              double eres[3][3]);
 
-void MakeMat_NavierStokes2D_NonStatic_Newmark_P1P1(double dt, double gamma,
-                                                   double rho, double myu, double g_x, double g_y,
-                                                   const double coords[][2],
-                                                   const double velo[][2], const double acc[][2], const double press[], const double apress[],
-                                                   double eres_u[3][2], double eres_p[3],
-                                                   double eCmat_uu[][3][2][2], double eCmat_up[][3][2], double eCmat_pu[][3][2], double eCmat_pp[][3],
-                                                   double eMmat_uu[][3][2][2], double eMmat_pu[][3][2]);
+void EMat_NavierStokes2D_NonStatic_Newmark_P1P1(double dt, double gamma,
+                                                double rho, double myu, double g_x, double g_y,
+                                                const double coords[][2],
+                                                const double velo[][2], const double acc[][2], const double press[], const double apress[],
+                                                double eres_u[3][2], double eres_p[3],
+                                                double eCmat_uu[][3][2][2], double eCmat_up[][3][2], double eCmat_pu[][3][2], double eCmat_pp[][3],
+                                                double eMmat_uu[][3][2][2], double eMmat_pu[][3][2]);
 
-void MakeMat_NavierStokes2D_Dynamic_P1(double myu, double rho, double g_x, double g_y,
-                                       const double dt_timestep, const double gamma_newmark,
-                                       const double coords[][2],
-                                       const double velo_press[3][3], const double acc_apress[3][3],
-                                       double emat[3][3][3][3],
-                                       double eres[3][3]);
+void EMat_NavierStokes2D_Dynamic_P1(double myu, double rho, double g_x, double g_y,
+                                    const double dt_timestep, const double gamma_newmark,
+                                    const double coords[][2],
+                                    const double velo_press[3][3], const double acc_apress[3][3],
+                                    double emat[3][3][3][3],
+                                    double eres[3][3]);
 
 /**
  * @brief compute energy and its 1st and 2nd derivative for cloth bending

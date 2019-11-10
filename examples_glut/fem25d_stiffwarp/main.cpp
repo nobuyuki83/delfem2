@@ -103,7 +103,7 @@ void RotationAtMeshPoints
 }
 
 
-/////////////////////////////////////////
+// ---------------------------
 
 CNav3D_GLUT nav;
 bool is_animatio = false;
@@ -120,13 +120,13 @@ double lambda = 1.0;
 double rho = 1.0;
 const double gravity[3] = {0.0, -4.0, 0.0};
 
-CMatrixSparse<double> mat_A;
+dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-CPreconditionerILU<double>  ilu_A;
+dfm2::CPreconditionerILU<double>  ilu_A;
 std::vector<int> psup_ind, psup;
 std::vector<double> aR;
 
-/////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------
 
 
 void InitializeProblem_ShellEigenPB()

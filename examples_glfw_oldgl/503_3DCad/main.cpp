@@ -6,6 +6,7 @@
 #include <deque>
 #include <set>
 #include <stack>
+#include <algorithm>
 #include "delfem2/mat3.h"
 #include "delfem2/cad3d.h"
 

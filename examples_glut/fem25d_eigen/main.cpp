@@ -134,7 +134,7 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 }
 
 
-/////////////////////////////////////////
+// ---------------------------------------
 
 CNav3D_GLUT nav;
 
@@ -147,10 +147,10 @@ std::vector<double> aMode;
 std::vector<double> aModesKer;
 double lamda0 = 0.1;
 
-CMatrixSparse<double> mat_A;
-CPreconditionerILU<double>  ilu_A;
+dfm2::CMatrixSparse<double> mat_A;
+dfm2::CPreconditionerILU<double>  ilu_A;
 
-/////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------
 
 void RemoveKernel()
 {

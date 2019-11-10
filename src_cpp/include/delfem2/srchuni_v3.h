@@ -67,8 +67,7 @@ public:
 std::ostream &operator<<(std::ostream &output, const CPointElemSurf& v);
 std::istream &operator>>(std::istream &input, CPointElemSurf& v);
 
-////////////////////////////////////////////////////////////////////
-
+// ----------------------------------------------------------
 
 void IntersectionRay_MeshTri3D(std::map<double,CPointElemSurf>& mapDepthPES,
                                const CVector3& org, const CVector3& dir,

@@ -36,7 +36,6 @@ std::vector<dfm2::CColor> aTetColor1;
 
 double vis_cut_org[3] = {-0.0, 0.0, 0.0};
 double vis_cut_nrm[3] = {0.0,-0.9, +0.2};
-//double vis_cut_time = 0;
 bool is_animation = false;
 double cur_time = 0.5;
 int imode_draw = 0;
@@ -172,7 +171,7 @@ void SetProblem(int iprob)
         nlayer = 2;
       }
     public:
-      CBVH_MeshTri3D<dfm2::CBV3D_Sphere> obj;
+      dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> obj;
       std::vector<double> aNorm;
       std::vector<unsigned int> aTri;
       std::vector<double> aXYZ_Tri;

@@ -168,9 +168,9 @@ std::vector<int> loopIP_ind, loopIP; // vtx on loop
 std::vector<double> aVal;
 std::vector<int> aBCFlag; // master slave flag
 
-CMatrixSparse<double> mat_A;
+dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
-CPreconditionerILU<double> ilu_A;
+dfm2::CPreconditionerILU<double> ilu_A;
 
 CNav3D_GLFW nav;
 CShader_TriMesh_Disp shdr0;

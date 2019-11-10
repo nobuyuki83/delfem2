@@ -61,15 +61,13 @@ void StepTime()
 
 }
 
-//////////////////////////////////
+// -------------------------------------
 
 void myGlutResize(int w, int h)
 {
   glViewport(0, 0, w, h);
   ::glutPostRedisplay();
 }
-
-
 
 void myGlutDisplay(void)
 {

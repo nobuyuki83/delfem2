@@ -97,8 +97,8 @@ std::vector<double> aTmp1;
 std::vector<double> aMode;
 std::vector<double> aModesKer;
 
-CMatrixSparse<double> mat_A;
-CPreconditionerILU<double> ilu_A;
+dfm2::CMatrixSparse<double> mat_A;
+dfm2::CPreconditionerILU<double> ilu_A;
 
 const double lenx = 0.3;
 const double leny = 0.03;

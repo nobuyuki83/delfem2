@@ -56,12 +56,12 @@ std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-std::vector<CInfoNearest> aInfoNearest;
+std::vector<dfm2::CInfoNearest> aInfoNearest;
 
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
 std::vector<double> aNorm_Contact(aXYZ.size());
-CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
 std::vector<double> aXYZ0_Contact;
 std::vector<double> aRigWeight_Contact;
 std::vector<unsigned int> aRigJoint_Contact;
@@ -87,12 +87,12 @@ void StepTime()
            aXYZt.size()/3, aETri, aVec2);
   PBD_Seam(aXYZt.data(),
            aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
-                                            aXYZt.size()/3,
-                                            contact_clearance,bvh,
-                                            aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                                            aTri_Contact.data(), aTri_Contact.size()/3,
-                                            aNorm_Contact.data(), rad_explore);
+  dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
+                                                  aXYZt.size()/3,
+                                                  contact_clearance,bvh,
+                                                  aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                                                  aTri_Contact.data(), aTri_Contact.size()/3,
+                                                  aNorm_Contact.data(), rad_explore);
   PBD_Post(aXYZ, aUVW,
            dt, aXYZt, aBCFlag);
 

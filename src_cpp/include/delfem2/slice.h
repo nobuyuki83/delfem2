@@ -122,7 +122,7 @@ void MakeReebGraph
     }
     if( stackTri.empty() )break;
     std::set<unsigned int> setAdjCS;
-    std::vector<unsigned int> aFlg; aFlg.resize(nCS,-1);
+    std::vector<int> aFlg; aFlg.resize(nCS,-1);
     for(;;){
       if( stackTri.empty() ) break;
       unsigned int jtri0 = stackTri.top();

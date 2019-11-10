@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+// ---------------
 // IO functions
 
 void Write_MeshTri3D(std::ofstream& fout,
@@ -23,7 +23,7 @@ void Read_MeshTri3D(std::ifstream& fin,
                     std::vector<double>& aXYZ,
                     std::vector<int>& aTri);
 
-/////////////
+// -------
 // TetGen
 
 void Read_MeshTet3D_TetGen(const std::string& fname,
@@ -31,7 +31,7 @@ void Read_MeshTet3D_TetGen(const std::string& fname,
                            std::vector<int>& aTet,
                            std::vector<int>& aTri);
 
-/////////////
+// -------
 // STL
 
 void Write_STL(const std::string& str,
@@ -39,7 +39,7 @@ void Write_STL(const std::string& str,
                const std::vector<int>& aTri);
 
 
-/////////////
+// -----
 // PLY
 
 void Write_Ply(const std::string& fname,
