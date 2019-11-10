@@ -51,6 +51,6 @@ add_subdirectory(601_FemPlateBendingMitc3)
 add_subdirectory(700_HashBvhSelfCollision)
 
 # pbd
-add_subdirectory(800_PbdGrid2d)
+add_subdirectory(800_PbdGrid2D)
 add_subdirectory(801_PbdCloth)
 
