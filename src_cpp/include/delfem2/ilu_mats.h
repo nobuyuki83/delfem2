@@ -52,6 +52,14 @@ std::vector<double> Solve_PBiCGStab(T* r_vec,
                                     unsigned int num_iter,
                                     const CMatrixSparse<T>& mat,
                                     const CPreconditionerILU<T>& ilu);
+  
+template <>
+std::vector<double> Solve_PCG(double* r_vec,
+                              double* x_vec,
+                              double conv_ratio_tol,
+                              unsigned int max_nitr,
+                              const CMatrixSparse<double>& mat,
+                              const delfem2::CPreconditionerILU<double>& ilu);
 
 std::vector<double> Solve_PCOCG(std::complex<double>* r_vec,
                                 std::complex<double>* x_vec,
@@ -59,6 +67,13 @@ std::vector<double> Solve_PCOCG(std::complex<double>* r_vec,
                                 unsigned int max_niter,
                                 const CMatrixSparse<std::complex<double> >& mat,
                                 const CPreconditionerILU<std::complex<double> >& ilu);
+ 
+template <>
+bool delfem2::CPreconditionerILU<std::complex<double> >::DoILUDecomp();
+  
+template <>
+bool delfem2::CPreconditionerILU<double>::DoILUDecomp();
+  
   
 }
 
