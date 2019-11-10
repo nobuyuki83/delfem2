@@ -127,7 +127,16 @@ public:
   std::vector<T> valDia;
 };
   
-}
+  
+// Calc Matrix Vector Product
+// {y} = alpha*[A]{x} + beta*{y}
+template <>
+void CMatrixSparse<double>::MatVec(double alpha,
+                                   const std::vector<double>& x,
+                                   double beta,
+                                   std::vector<double>& y) const;
+  
+} // end namespace delfem2
 
 
 // ---------------------------------------------------------------
