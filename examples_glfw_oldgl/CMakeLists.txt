@@ -49,6 +49,7 @@ add_subdirectory(601_FemPlateBendingMitc3)
 
 # spatial hash 
 add_subdirectory(700_HashBvhSelfCollision)
+add_subdirectory(701_HashLbvh3D)
 
 # pbd
 add_subdirectory(800_PbdGrid2D)

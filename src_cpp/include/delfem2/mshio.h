@@ -16,9 +16,9 @@
 // IO functions
 
 void Write_MeshTri3D(std::ofstream& fout,
-                    const std::vector<double>& aXYZ,
-                    const std::vector<int>& aTri,
-              int ndim=3);
+                     const std::vector<double>& aXYZ,
+                     const std::vector<int>& aTri,
+                     int ndim=3);
 void Read_MeshTri3D(std::ifstream& fin,
                     std::vector<double>& aXYZ,
                     std::vector<int>& aTri);
@@ -55,7 +55,7 @@ void Read_Ply(const std::string& fname,
               std::vector<double>& aXYZ,
               std::vector<unsigned int>& aTri);
 
-/////////////
+// ----------
 // Obj
 
 void Write_Obj(const std::string& str,
@@ -101,7 +101,7 @@ void Load_Obj(const std::string& fname,
               std::vector<double>& aNorm,
               std::vector<CTriGroup>& aTriGroup);
 
-/////////////
+// -----------
 // VTK
 
 void WriteVTK_Points(std::ofstream& fout,

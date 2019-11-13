@@ -86,10 +86,10 @@ std::vector<std::string> Split
     for(unsigned int j=0;j<del.size();++j){
       if( str[i] == del[j] ){ is_del1 = true; break; }
     }
-    if( !is_del0 and is_del1 ){ // just got delimitner
+    if( !is_del0 && is_del1 ){ // just got delimitner
       aToken.push_back( std::string(str.data()+imark,str.data()+i) );
     }
-    if( is_del0 and !is_del1 ){ // just got delimitner
+    if( is_del0 && !is_del1 ){ // just got delimitner
       imark = i;
     }
     is_del0 = is_del1;
