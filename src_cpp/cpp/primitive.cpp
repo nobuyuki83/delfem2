@@ -235,7 +235,7 @@ bool dfm2::CSphere::IntersectionPoint
 }
 
 
-////////////////////////////////////////////////////////////////
+// --------------------------------------------------
 
 dfm2::CCylinder::CCylinder
 (double r, double cnt[3], double dir[3], bool is_out){

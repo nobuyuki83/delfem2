@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file functions to analyze mesh toporogy for static meshes
+ * @details the functions only care about the topology. Geometry (coordinate) information is not handled in this file
+ */
+
 #ifndef DFM2_MSHTOPO_H
 #define DFM2_MSHTOPO_H
 

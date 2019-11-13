@@ -60,7 +60,7 @@ static void QuatConjVec(double vo[], const double q[], const double vi[])
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 
-//////////////////////////////////////////
+// ----------------------------------------
 
 double ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
   return a[0]*(b[1]*c[2] - b[2]*c[1])
@@ -180,7 +180,7 @@ void transposeMat3(double t[], const double a[])
   t[8] = a[8];
 }
 
-/////////////////////////////////////////
+// -----------------------------------
 
 void GetNearest_LineSegPoint3D
 (double pn[3],
