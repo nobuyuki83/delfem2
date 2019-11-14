@@ -12,18 +12,19 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-
 #include "delfem2/eigen_rigidbody.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+  #include <OpenGL/gl.h>
+#elif defined(_WIN32) // windows
+  #include <windows.h>
+  #include <GL/gl.h>
 #else
-#include <GL/gl.h>
-#include <GL/glu.h>
+  #include <GL/gl.h>
 #endif
 
 #include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/gl2_funcs.h"
 
 
 namespace py = pybind11;
@@ -35,7 +36,6 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
   const double small_rad = 0.1;
   const double big_rad = 0.1;
   ::glDisable(GL_LIGHTING);
-  GLUquadricObj *quadricSphere=gluNewQuadric();
   const std::vector<CRigidBody>& aRigidBody = rba.aRigidBody;
   for(unsigned int irb=0;irb<aRigidBody.size();irb++){
     const CRigidBody rb = aRigidBody[irb];
@@ -49,7 +49,8 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
       ::glPushMatrix();
       ::glTranslated(cg.x,cg.y,cg.z);
         //::glutWireSphere(0.1, 16, 16);
-      gluSphere(quadricSphere, big_rad, 16, 16);
+      //gluSphere(quadricSphere, big_rad, 16, 16);
+      dfm2::opengl::DrawSphereAt(16, 16, big_rad, 0.0, 0.0, 0.0);
       ::glPopMatrix();
     }
     for(unsigned int icp=0;icp<rb.aCP.size();icp++){
@@ -61,7 +62,8 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
       ::glPushMatrix();
       ::glTranslated(p.x,p.y,p.z);
         //::glutWireSphere(0.02, 16, 16);
-      gluSphere(quadricSphere, small_rad, 16, 16);
+      //gluSphere(quadricSphere, small_rad, 16, 16);
+      dfm2::opengl::DrawSphereAt(16, 16, small_rad, 0.0, 0.0, 0.0);
       ::glPopMatrix();
       
       if( rba.is_draw_skeleton ){
@@ -86,7 +88,7 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
       }
     }
   }
-    /////////////////////////////////////////////
+  // -------------------------------------------
   const std::vector<CJoint>& aJoint = rba.aJoint;
   for(unsigned int ij=0;ij<aJoint.size();ij++){
     const CJoint& joint = aJoint[ij];
@@ -108,14 +110,16 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
     ::glPushMatrix();
     ::glTranslated(p0.x,p0.y,p0.z);
       //::glutWireSphere(0.02, 16, 16);
-    gluSphere(quadricSphere, small_rad, 16, 16);
+    // gluSphere(quadricSphere, small_rad, 16, 16);
+    dfm2::opengl::DrawSphereAt(16, 16, small_rad, 0.0, 0.0, 0.0);
     ::glPopMatrix();
     
       // joint point seen from rb1
     ::glPushMatrix();
     ::glTranslated(p1.x,p1.y,p1.z);
       //::glutWireSphere(0.02, 16, 16);
-    gluSphere(quadricSphere, small_rad, 16, 16);
+      //    gluSphere(quadricSphere, small_rad, 16, 16);
+    dfm2::opengl::DrawSphereAt(16, 16, small_rad, 0.0, 0.0, 0.0);
     ::glPopMatrix();
     
     CVector3 cg0 = rb0.cg;
@@ -156,11 +160,8 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
       dfm2::opengl::myGlVertex( r1);
       ::glEnd();
     }
-    
   }
-  
   glLineWidth(1.0f);
-  gluDeleteQuadric(quadricSphere);  
 }
 
 

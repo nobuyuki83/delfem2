@@ -209,7 +209,7 @@ void JArray_Print(const std::vector<int>& index,
 
 void JArray_AddMasterSlavePattern(std::vector<int>& index,
                                   std::vector<int>& array,
-                                  const int*aMSFlag,
+                                  const int* aMSFlag,
                                   int ndim,
                                   const int* psup_ind0,
                                   const int npsup_ind0,
@@ -219,7 +219,7 @@ void JArray_AddMasterSlavePattern(std::vector<int>& index,
 
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
                       const std::vector<unsigned int>& aQuad);
-}
+} // namespace delfem2
 
 void convert2Tri(std::vector<int>& aTri,
                  //
@@ -244,23 +244,23 @@ void FlipElement(std::vector<int>& aElem_Flip,
  * @function make elsup
  */
 void JArrayElemSurPoint_MeshElem(std::vector<int>& elsup_ind,
-                              std::vector<int>& elsup,
-                              //
-                              const unsigned int* aElem,
-                              int nEl,
-                              int nPoEl,
-                              int nPo);
+                                 std::vector<int>& elsup,
+                                 //
+                                 const unsigned int* aElem,
+                                 int nEl,
+                                 int nPoEl,
+                                 int nPo);
 void JArrayElemSurPoint_MeshTri(std::vector<int>& elsup_ind,
                                 std::vector<int>& elsup,
                                 //
                                 const std::vector<unsigned int>& aTri,
                                 int nXYZ);
 void JArrayElemSurPoint_MeshMix(std::vector<int>& elsup_ind,
-                              std::vector<int>& elsup,
-                              //
-                              const std::vector<int>& aElemInd,
-                              const std::vector<int>& aElem,
-                              const int nPo);
+                                std::vector<int>& elsup,
+                                //
+                                const std::vector<int>& aElemInd,
+                                const std::vector<int>& aElem,
+                                const int nPo);
 
 // -----------------
 // elem sur elem

@@ -169,7 +169,7 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
   }
   
     // Find the point that is the closest to the target point
-  float minSquareDistance = 1.0e16;
+  double minSquareDistance = 1.0e16;
   for (unsigned int i = 0; i < intersectionPoints.size(); i++)
   {
     float currSquareDistance =
