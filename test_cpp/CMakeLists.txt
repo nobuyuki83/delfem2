@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_STANDARD 11)
 project(testsDelFEM2)
+set(MY_BINARY_NAME runUnitTests)
 
 if(MSVC)
-    # GTest is static compiled by default
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+  # GTest is static compiled by default
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")    
+  set(CMAKE_CXX_FLAGS "/wd4267")
 endif()
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../test_inputs")
@@ -29,9 +31,6 @@ else()
   set(GTEST_LIBRARY ${PROJECT_SOURCE_DIR}/googletest/lib/libgtest.a)
 endif()
 set(GTEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/googletest/googletest/include)
-
-set(MY_BINARY_NAME runUnitTests)
-message(STATUS "${GTEST_INCLUDE_DIR}")
 
 include_directories(
   ${GTEST_INCLUDE_DIR}
@@ -75,11 +74,18 @@ add_executable(${MY_BINARY_NAME}
   main.cpp  
 )
 
-target_link_libraries(${MY_BINARY_NAME}
-  ${GTEST_LIBRARY}
-  ${GTEST_MAIN_LIBRARY}
-  -pthread
-)
+
+if(MSVC)
+  target_link_libraries(${MY_BINARY_NAME}
+    ${GTEST_LIBRARY}
+    ${GTEST_MAIN_LIBRARY})  
+else()    
+  target_link_libraries(${MY_BINARY_NAME}
+    ${GTEST_LIBRARY}
+    ${GTEST_MAIN_LIBRARY}
+    -pthread)    
+endif()    
+
 
 add_test(
   NAME ${MY_BINARY_NAME}

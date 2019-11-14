@@ -50,9 +50,9 @@ ELSEIF(UNIX)
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
-  set(CMAKE_CXX_FLAGS "/W4 -O2")  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4838 /wd4305 ")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
+  set(CMAKE_CXX_FLAGS "/W4 -O2 \ 
+    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
+    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")    
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     target_link_libraries(${PROJECT_NAME} 
       ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
