@@ -2,7 +2,6 @@ project(801_pbdcloth)
 cmake_minimum_required(VERSION 2.8)
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 set(DELFEM2_EXT         "../../src_cpp/external")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
@@ -18,17 +17,17 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                   ${DELFEM2_SRC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h                   ${DELFEM2_SRC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h                   ${DELFEM2_SRC}/mat3.cpp
-  ${DELFEM2_INC}/quat.h                   ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/dtri.h                   ${DELFEM2_SRC}/dtri.cpp
-  ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/camera.h                 ${DELFEM2_SRC}/camera.cpp
+  ${DELFEM2_INC}/vec2.h                   ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
+  ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp
+  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp  
+  ${DELFEM2_INC}/dtri.h                   ${DELFEM2_INC}/dtri.cpp  
+  ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
         
-  ${DELFEM2_INC}/objfunc_v23.h            ${DELFEM2_SRC}/objfunc_v23.cpp
-  ${DELFEM2_INC}/objfunc_v23dtri.h        ${DELFEM2_SRC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/dtri_v2.h                ${DELFEM2_SRC}/dtri_v2.cpp
+  ${DELFEM2_INC}/objfunc_v23.h            ${DELFEM2_INC}/objfunc_v23.cpp
+  ${DELFEM2_INC}/objfunc_v23dtri.h        ${DELFEM2_INC}/objfunc_v23dtri.cpp
+  ${DELFEM2_INC}/dtri_v2.h                ${DELFEM2_INC}/dtri_v2.cpp
   
   ${DELFEM2_INC}/opengl/gl2_funcs.h       ${DELFEM2_INC}/opengl/gl2_funcs.cpp
   ${DELFEM2_INC}/opengl/gl2_v23.h         ${DELFEM2_INC}/opengl/gl2_v23.cpp

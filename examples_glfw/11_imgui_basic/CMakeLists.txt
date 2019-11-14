@@ -14,7 +14,6 @@ set(GLAD_INCLUDE_DIR "../glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

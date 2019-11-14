@@ -26,15 +26,15 @@ set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 set(INPUT_SRC
-  ${DELFEM2_INC}/vec2.h     ${DELFEM2_SRC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h     ${DELFEM2_SRC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h     ${DELFEM2_SRC}/mat3.cpp
-  ${DELFEM2_INC}/quat.h     ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/mshmisc.h  ${DELFEM2_SRC}/mshmisc.cpp
-  ${DELFEM2_INC}/voxel.h    ${DELFEM2_SRC}/voxel.cpp
-  ${DELFEM2_INC}/camera.h   ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/color.h    ${DELFEM2_SRC}/color.cpp
-  ${DELFEM2_INC}/v23m3q.h   ${DELFEM2_SRC}/v23m3q.cpp
+  ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
+  ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+  ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp  
+  ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
+  ${DELFEM2_INC}/voxel.h                     ${DELFEM2_INC}/voxel.cpp
+  ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/bv.h
   
   ${DELFEM2_INC}/opengl/gl2_funcs.h          ${DELFEM2_INC}/opengl/gl2_funcs.cpp

@@ -7,26 +7,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 set(DELFEM2_EXT         "../../src_cpp/external")
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshtopo.h        ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/cad2d.h          ${DELFEM2_SRC}/cad2d.cpp
-  ${DELFEM2_INC}/funcs.h          ${DELFEM2_SRC}/funcs.cpp
-  ${DELFEM2_INC}/dtri.h           ${DELFEM2_SRC}/dtri.cpp
-  ${DELFEM2_INC}/vec2.h           ${DELFEM2_SRC}/vec2.cpp
-  ${DELFEM2_INC}/camera.h         ${DELFEM2_SRC}/camera.cpp
-  
-  ${DELFEM2_INC}/dtri_v2.h        ${DELFEM2_SRC}/dtri_v2.cpp
+  ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp  
+  ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/cad2d.h                   ${DELFEM2_INC}/cad2d.cpp
+  ${DELFEM2_INC}/funcs.h                   ${DELFEM2_INC}/funcs.cpp
+  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp
+           
+  ${DELFEM2_INC}/dtri_v2.h                 ${DELFEM2_INC}/dtri_v2.cpp
 
-  ${DELFEM2_INC}/opengl/gl24_funcs.h     
-  ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_funcs.h      
-  ${DELFEM2_INC}/opengl/gl4_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_v23dtricad.h 
-  ${DELFEM2_INC}/opengl/gl4_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/gl24_funcs.h       ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl4_funcs.h        ${DELFEM2_INC}/opengl/gl4_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl4_v23dtricad.h   ${DELFEM2_INC}/opengl/gl4_v23dtricad.cpp
   ${DELFEM2_INC}/opengl/glfw_cam.h
   
   ../glad4/include/glad/glad.h  ../glad4/src/glad.c

@@ -8,7 +8,6 @@ else()
 endif()
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
@@ -20,17 +19,16 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshtopo.h       ${DELFEM2_SRC}/mshtopo.cpp              
-  ${DELFEM2_INC}/mshmisc.h       ${DELFEM2_SRC}/mshmisc.cpp              
-  ${DELFEM2_INC}/emat.h          ${DELFEM2_SRC}/emat.cpp              
-  ${DELFEM2_INC}/mats.h          ${DELFEM2_SRC}/mats.cpp    
-  ${DELFEM2_INC}/camera.h        ${DELFEM2_SRC}/camera.cpp          
+  ${DELFEM2_INC}/camera.h             ${DELFEM2_INC}/camera.cpp          
+  ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp              
+  ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp              
+  ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp              
+  ${DELFEM2_INC}/mats.h               ${DELFEM2_INC}/mats.cpp    
+     
+  ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp              
+  ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_INC}/fem_emats.cpp         
 
-  ${DELFEM2_INC}/ilu_mats.h      ${DELFEM2_SRC}/ilu_mats.cpp              
-  ${DELFEM2_INC}/fem_emats.h     ${DELFEM2_SRC}/fem_emats.cpp         
-
-  ${DELFEM2_INC}/opengl/gl2_funcs.h
-  ${DELFEM2_INC}/opengl/gl2_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl2_funcs.h   ${DELFEM2_INC}/opengl/gl2_funcs.cpp
 
   main.cpp
 )

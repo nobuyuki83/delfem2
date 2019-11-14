@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <cassert>
 
+#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 
 // ---------------
