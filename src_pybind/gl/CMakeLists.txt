@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.0)
 
 set(PROJ_NAME c_gl)
-
 project(${PROJ_NAME})
-set(PYBIND11_CPP_STANDARD -std=c++14)
+
 if(MSVC)
-set(CMAKE_CXX_FLAGS "/W4  -O2 \
+  set(CMAKE_CXX_FLAGS "/W4  -O2 \
     /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 \
     /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 \
     /wd4505 /wd4245 /wd4457 /wd4800 /wd4838")
 else()
-set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra \
+  set(PYBIND11_CPP_STANDARD -std=c++11)
+  set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra \
     -Wno-deprecated-declarations \
     -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable")
 endif()

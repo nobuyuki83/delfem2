@@ -16,15 +16,10 @@
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
-  #include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/glu.h>
 #elif defined(_WIN32) // windows
   #include <windows.h>
-  #include <GL/glew.h>
   #include <GL/gl.h>
 #else
-  #include <GL/glew.h>
   #include <GL/gl.h>
 #endif
 ////
@@ -33,6 +28,8 @@
 #include "delfem2/opengl/gl_gpusampler.h"
 
 namespace dfm2 = delfem2;
+
+// --------------------------------------------------------
 
 /*
 double Dot(const std::vector<double>& p0, const std::vector<double>& p1){
@@ -72,9 +69,7 @@ void Normalize(double* p0, int n)
   ScaleX(p0,n,1.0/sqrt(ss));
 }
 
-
-
-/////////////////////////////////
+// --------------------------------------------
 
 void CGPUSampler::SetColor(double r, double g, double b){
   color[0] = r;
@@ -98,7 +93,7 @@ void CGPUSampler::Init(int nw, int nh,
   aUC_RGBA.clear();
   if( sFormatPixelColor == "4byte"  ){ aUC_RGBA.resize(npix*4,128); }
   else if( sFormatPixelColor == "4float" ){ aF_RGBA.resize(npix*4,128); }
-  ////////
+  // -------------
   if( id_tex_color > 0 ){ glDeleteTextures(1, &id_tex_color); }
   id_tex_color = 0;
 }

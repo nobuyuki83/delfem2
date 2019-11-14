@@ -11,10 +11,9 @@
 #include <vector>
 #include <complex>
 
-typedef std::complex<double> COMPLEX;
-
 #include "delfem2/ilu_mats.h"
 
+typedef std::complex<double> COMPLEX;
 namespace dfm2 = delfem2;
 
 // ----------------------------------------------------
