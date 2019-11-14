@@ -11,8 +11,8 @@ else()
 endif()
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
-set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
 
 set(GLAD_INCLUDE_DIR "../glad3/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)

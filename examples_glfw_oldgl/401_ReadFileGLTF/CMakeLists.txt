@@ -2,8 +2,8 @@ project(401_read_gltf)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_STANDARD 11)
 
-set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
 set(DELFEM2_EXT         "../../src_cpp/external")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

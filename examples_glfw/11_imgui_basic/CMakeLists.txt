@@ -13,8 +13,8 @@ set(IMGUI_DIR "../imgui")
 set(GLAD_INCLUDE_DIR "../glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
-set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 include_directories(
@@ -29,10 +29,8 @@ include_directories(
 add_executable(${PROJECT_NAME}
   main.cpp
   
-  ${DELFEM2_INC}/opengl/gl24_funcs.h   
-  ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_funcs.h   
-  ${DELFEM2_INC}/opengl/gl4_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl24_funcs.h    ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl4_funcs.h     ${DELFEM2_INC}/opengl/gl4_funcs.cpp
   
   ${IMGUI_DIR}/imgui.h
   ${IMGUI_DIR}/imgui.cpp
