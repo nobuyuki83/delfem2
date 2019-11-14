@@ -29,7 +29,7 @@ void MeshTet3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aTet,
 bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz);
 void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
 
-////////////////////////////////////////////////////////////////////
+// ------------------------------
 
 class CCubeGrid
 {
@@ -74,8 +74,7 @@ void Del_CubeGrid(std::vector<CCubeGrid>& aCube,
 void AABB_CubeGrid(int aabb[6],
                    const std::vector<CCubeGrid>& aCube);
 
-////////////////////////////////////////////////////////////////////////////////////
-
+// -----------------------------------------------
 
 class CVoxelGrid3D
 {

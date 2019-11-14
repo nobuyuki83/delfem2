@@ -9,8 +9,8 @@ else()
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations")
 endif()
 
-set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_INC         "../../src_cpp/include/delfem2")
+set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)

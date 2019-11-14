@@ -12,7 +12,7 @@
 #include "delfem2/v23m3q.h"
 #include "delfem2/rig_v3q.h"
 //
-#include "delfem2/../../external/io_gltf.h"
+#include "delfem2/../../src_cpp/external/io_gltf.h"
 
 // ------------------
 
