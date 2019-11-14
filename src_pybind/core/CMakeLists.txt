@@ -21,38 +21,38 @@ set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 set(DELFEM2_EXT         "../../src_cpp/external")
 
 set(INPUT_SRC
-  ${DELFEM2_INC}/vec2.h               ${DELFEM2_SRC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h               ${DELFEM2_SRC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h               ${DELFEM2_SRC}/mat3.cpp
-  ${DELFEM2_INC}/quat.h               ${DELFEM2_SRC}/quat.cpp
-  ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_SRC}/mshmisc.cpp
-  ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_SRC}/mshtopo.cpp
-  ${DELFEM2_INC}/mshio.h              ${DELFEM2_SRC}/mshio.cpp
-  ${DELFEM2_INC}/funcs.h              ${DELFEM2_SRC}/funcs.cpp
-  ${DELFEM2_INC}/voxel.h              ${DELFEM2_SRC}/voxel.cpp
-  ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_SRC}/evalmathexp.cpp
-  ${DELFEM2_INC}/dtri.h               ${DELFEM2_SRC}/dtri.cpp
-  ${DELFEM2_INC}/mats.h               ${DELFEM2_SRC}/mats.cpp
-  ${DELFEM2_INC}/emat.h               ${DELFEM2_SRC}/emat.cpp
-  ${DELFEM2_INC}/primitive.h          ${DELFEM2_SRC}/primitive.cpp
-  ${DELFEM2_INC}/iss.h                ${DELFEM2_SRC}/iss.cpp
-  ${DELFEM2_INC}/color.h              ${DELFEM2_SRC}/color.cpp
-  ${DELFEM2_INC}/slice.h              ${DELFEM2_SRC}/slice.cpp
-  ${DELFEM2_INC}/bvh.h                ${DELFEM2_SRC}/bvh.cpp
+  ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
+  ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
+  ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
+  ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
+  ${DELFEM2_INC}/funcs.h              ${DELFEM2_INC}/funcs.cpp
+  ${DELFEM2_INC}/voxel.h              ${DELFEM2_INC}/voxel.cpp
+  ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_INC}/evalmathexp.cpp
+  ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
+  ${DELFEM2_INC}/mats.h               ${DELFEM2_INC}/mats.cpp
+  ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp
+  ${DELFEM2_INC}/primitive.h          ${DELFEM2_INC}/primitive.cpp
+  ${DELFEM2_INC}/iss.h                ${DELFEM2_INC}/iss.cpp
+  ${DELFEM2_INC}/color.h              ${DELFEM2_INC}/color.cpp
+  ${DELFEM2_INC}/slice.h              ${DELFEM2_INC}/slice.cpp
+  ${DELFEM2_INC}/bvh.h                ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/bv.h
   
-  ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_SRC}/ilu_mats.cpp
-  ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_SRC}/fem_emats.cpp
-  ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_SRC}/objfunc_v23.cpp
-  ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_SRC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_SRC}/rig_v3q.cpp
-  ${DELFEM2_INC}/v23m3q.h             ${DELFEM2_SRC}/v23m3q.cpp
-  ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_SRC}/dtri_v3.cpp
-  ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_SRC}/dtri_v2.cpp
-  ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_SRC}/mshtopoio.cpp
-  ${DELFEM2_INC}/cad2d.h              ${DELFEM2_SRC}/cad2d.cpp
-  ${DELFEM2_INC}/eigen_rigidbody.h    ${DELFEM2_SRC}/eigen_rigidbody.cpp
-  ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_SRC}/srchuni_v3.cpp
+  ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp
+  ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_INC}/fem_emats.cpp
+  ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_INC}/objfunc_v23.cpp
+  ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_INC}/objfunc_v23dtri.cpp
+  ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_INC}/rig_v3q.cpp
+  ${DELFEM2_INC}/v23m3q.h             ${DELFEM2_INC}/v23m3q.cpp
+  ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_INC}/dtri_v3.cpp
+  ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
+  ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
+  ${DELFEM2_INC}/cad2d.h              ${DELFEM2_INC}/cad2d.cpp
+  ${DELFEM2_INC}/eigen_rigidbody.h    ${DELFEM2_INC}/eigen_rigidbody.cpp
+  ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_INC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
   ${DELFEM2_EXT}/io_gltf.h            ${DELFEM2_EXT}/io_gltf.cpp

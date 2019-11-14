@@ -10,7 +10,6 @@ endif()
 add_definitions(-DUSE_GL)
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 
 find_package(OpenGL REQUIRED)
@@ -22,29 +21,18 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h         
-  ${DELFEM2_SRC}/vec2.cpp       
-  ${DELFEM2_INC}/vec3.h         
-  ${DELFEM2_SRC}/vec3.cpp      
-  ${DELFEM2_INC}/mat3.h         
-  ${DELFEM2_SRC}/mat3.cpp      
-  ${DELFEM2_INC}/quat.h         
-  ${DELFEM2_SRC}/quat.cpp      
-  ${DELFEM2_INC}/voxel.h        
-  ${DELFEM2_SRC}/voxel.cpp      
-  ${DELFEM2_INC}/camera.h       
-  ${DELFEM2_SRC}/camera.cpp
-  ${DELFEM2_INC}/color.h        
-  ${DELFEM2_SRC}/color.cpp
+  ${DELFEM2_INC}/vec2.h                  ${DELFEM2_INC}/vec2.cpp       
+  ${DELFEM2_INC}/vec3.h                  ${DELFEM2_INC}/vec3.cpp      
+  ${DELFEM2_INC}/mat3.h                  ${DELFEM2_INC}/mat3.cpp      
+  ${DELFEM2_INC}/quat.h                  ${DELFEM2_INC}/quat.cpp      
+  ${DELFEM2_INC}/camera.h                ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/color.h                 ${DELFEM2_INC}/color.cpp  
+  ${DELFEM2_INC}/voxel.h                 ${DELFEM2_INC}/voxel.cpp      
 
-  ${DELFEM2_INC}/opengl/gl_voxbv.h     
-  ${DELFEM2_INC}/opengl/gl_voxbv.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23.h      
-  ${DELFEM2_INC}/opengl/gl2_v23.cpp
-  ${DELFEM2_INC}/opengl/gl2_funcs.h    
-  ${DELFEM2_INC}/opengl/gl2_funcs.cpp    
-  ${DELFEM2_INC}/opengl/gl2_color.h    
-  ${DELFEM2_INC}/opengl/gl2_color.cpp
+  ${DELFEM2_INC}/opengl/gl_voxbv.h       ${DELFEM2_INC}/opengl/gl_voxbv.cpp
+  ${DELFEM2_INC}/opengl/gl2_v23.h        ${DELFEM2_INC}/opengl/gl2_v23.cpp
+  ${DELFEM2_INC}/opengl/gl2_funcs.h      ${DELFEM2_INC}/opengl/gl2_funcs.cpp    
+  ${DELFEM2_INC}/opengl/gl2_color.h      ${DELFEM2_INC}/opengl/gl2_color.cpp
 
   main.cpp
 )

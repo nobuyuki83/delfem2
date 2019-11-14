@@ -5,19 +5,15 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 set(DELFEM2_INCLUDE_DIR "../../src_cpp/include")
-set(DELFEM2_SRC         "../../src_cpp/cpp")
 set(DELFEM2_INC         "../../src_cpp/include/delfem2")
 set(DELFEM2_EXT         "../../src_cpp/external")
 
 add_executable(${PROJECT_NAME}
 
-  ../glad4/include/glad/glad.h   
-  ../glad4/src/glad.c
+  ../glad4/include/glad/glad.h           ../glad4/src/glad.c
 
-  ${DELFEM2_INC}/opengl/gl24_funcs.h 
-  ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_funcs.h      
-  ${DELFEM2_INC}/opengl/gl4_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl24_funcs.h     ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl4_funcs.h      ${DELFEM2_INC}/opengl/gl4_funcs.cpp
   ${DELFEM2_INC}/opengl/glfw_cam.h
 
   main.cpp

@@ -14,6 +14,7 @@
 #include <cstring>
 #include <cstdlib>
 
+#include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
