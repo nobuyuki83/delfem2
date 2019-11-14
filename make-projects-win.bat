@@ -80,6 +80,24 @@ cmake -A x64 ..
 cmake --build . --config Release
 cd ../../
 
+
+: ##############################
+: glfw_newgl
+
+cd examples_glfw
+mkdir buildVS32
+cd buildVS32
+cmake -A Win32 ..
+cmake --build . --config Release
+cd ../../
+
+cd examples_glfw
+mkdir buildVS64
+cd buildVS64
+cmake -A x64 ..
+cmake --build . --config Release
+cd ../../
+
 : cd examples_cpp
 : mkdir buildVS64
 : cd buildVS64

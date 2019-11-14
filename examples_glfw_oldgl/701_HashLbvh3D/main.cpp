@@ -2,6 +2,7 @@
 #include <vector>
 #include <bitset>
 #include <stdint.h> // std::uint32_t
+#include <algorithm>
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
 #include "delfem2/primitive.h"

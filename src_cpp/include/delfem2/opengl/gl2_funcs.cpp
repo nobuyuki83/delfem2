@@ -438,10 +438,10 @@ void dfm2::opengl::DrawCylinder_Face
 {
   const bool is_texture = ::glIsEnabled(GL_TEXTURE_2D);
   ::glDisable(GL_TEXTURE_2D);
-  ////
+  //
   ::glLineWidth(1);
   ::glColor3d(1,0,0);
-  float brown[3] = {0.7,0.20,0.15};
+  const float brown[3] = {0.7f, 0.20f, 0.15f};
   ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, brown);
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();

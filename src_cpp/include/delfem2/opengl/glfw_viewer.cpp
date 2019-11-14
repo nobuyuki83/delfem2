@@ -147,7 +147,7 @@ void delfem2::opengl::CViewer_GLFW::Init_GLnew()
 
 void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL()
 {
-  ::glClearColor(0.8, 1.0, 1.0, 1.0);
+  ::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glDepthFunc(GL_LESS);
