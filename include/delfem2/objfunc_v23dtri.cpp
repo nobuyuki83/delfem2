@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
@@ -65,7 +65,7 @@ void PBD_Bend
  const std::vector<delfem2::ETri>& aETri,
  const std::vector<CVector2>& aVec2)
 {
-  for(unsigned int it=0;it<aETri.size();++it){
+  for(size_t it=0;it<aETri.size();++it){
     for(int ie=0;ie<3;++ie){
       const int jt0 = aETri[it].s2[ie];
       if( jt0 == -1 ){ continue; }
