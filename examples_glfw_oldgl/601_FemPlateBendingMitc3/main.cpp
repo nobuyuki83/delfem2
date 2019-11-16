@@ -127,7 +127,7 @@ void myGlutDisplay(void)
     assert( aVal.size()/3 == aXY0.size()/2 );
     ::glColor3d(1,0,0);
     ::glBegin(GL_LINES);
-    for(int itri=0;itri<aTri.size()/3;itri++){
+    for(size_t itri=0;itri<aTri.size()/3;itri++){
       const unsigned int i0 = aTri[itri*3+0];
       const unsigned int i1 = aTri[itri*3+1];
       const unsigned int i2 = aTri[itri*3+2];
@@ -201,7 +201,7 @@ int main(int argc,char* argv[])
     const double w = W/lenx;
     const double disp = w*(lenx*lenx*lenx*lenx)/(8.0*E*I);
     std::cout << "disp:" << disp << std::endl;
-    for(int ip=0;ip<aXY0.size()/2;++ip){
+    for(size_t ip=0;ip<aXY0.size()/2;++ip){
       const double px = aXY0[ip*2+0];
       if( fabs(px-(+lenx*0.5)) > 0.0001 ){ continue; }
       std::cout << aVal[ip*3+0] << std::endl;

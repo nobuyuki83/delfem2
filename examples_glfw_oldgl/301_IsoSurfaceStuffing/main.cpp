@@ -193,7 +193,7 @@ void SetProblem(int iprob)
   }
   
   aTetColor.resize(aTet.size()/4);
-  for(int it=0;it<aTet.size()/4;++it){
+  for(size_t it=0;it<aTet.size()/4;++it){
     aTetColor[it].setRandomVividColor();
   }
   
@@ -203,7 +203,7 @@ void SetProblem(int iprob)
                               delfem2::MESHELEM_TET,
                               aXYZ.size()/3);
   aTetSurface.clear();
-  for(int it=0;it<aTet.size()/4;++it){
+  for(size_t it=0;it<aTet.size()/4;++it){
     for(int ift=0;ift<4;++ift){
       if( aTetSurRel[it*8+ift*2+0] != -1 ){ continue; }
       aTetSurface.push_back(it);

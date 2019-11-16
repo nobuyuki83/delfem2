@@ -622,7 +622,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
     
     {
       aRowLev.resize(mat.colInd[iblk]+listNonzero.size());
-      int icrs0 = mat.colInd[iblk];
+      unsigned int icrs0 = mat.colInd[iblk];
       for (int inz = 0; inz!=-1; inz = listNonzero[inz].next){
         const int jblk = listNonzero[inz].row;
         const int jlev = listNonzero[inz].lev;

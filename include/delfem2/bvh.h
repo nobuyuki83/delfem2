@@ -321,7 +321,7 @@ void delfem2::BVH_GetIndElem_IntersectRay
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
-    assert( ichild0 >= 0 && ichild0 < aBB.size() );
+    assert( ichild0 >= 0 && ichild0 < (int)aBB.size() );
     aIndElem.push_back(ichild0);
     return;
   }

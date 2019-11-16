@@ -32,7 +32,7 @@ void stepTime
   for (int idof=0; idof<ndof; idof++){
     aTmp[idof] = aXY1[idof]+aUV1[idof]*dt;
   }
-  for(int ip=0;ip<aXY0.size()/2;++ip){
+  for(size_t ip=0;ip<aXY0.size()/2;++ip){
     if( aBC[ip] == 0 ){ continue; }
     aTmp[ip*2+0] = aXY1[ip*2+0];
     aTmp[ip*2+1] = aXY1[ip*2+1];
@@ -46,7 +46,7 @@ void stepTime
                             aXY0.data(), aXY0.size());
     }
   }
-  for(int ip=0;ip<aXY0.size()/2;++ip){
+  for(size_t ip=0;ip<aXY0.size()/2;++ip){
     if( aBC[ip] == 0 ){ continue; }
     aTmp[ip*2+0] = aXY1[ip*2+0];
     aTmp[ip*2+1] = aXY1[ip*2+1];
