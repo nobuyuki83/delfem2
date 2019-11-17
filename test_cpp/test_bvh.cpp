@@ -431,3 +431,37 @@ TEST(bvh,rayintersection)
   }
 }
 
+TEST(bvh,morton_code)
+{
+  std::vector<double> aXYZ; // 3d points
+  const unsigned int N = 10000;
+  aXYZ.resize(N*3);
+  const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
+  dfm2::CBV3D_AABB bb(minmax_xyz);
+  for(int i=0;i<N;++i){
+    aXYZ[i*3+0] = (bb.x_max -  bb.x_min) * rand()/(RAND_MAX+1.0) + bb.x_min;
+    aXYZ[i*3+1] = (bb.y_max -  bb.y_min) * rand()/(RAND_MAX+1.0) + bb.y_min;
+    aXYZ[i*3+2] = (bb.z_max -  bb.z_min) * rand()/(RAND_MAX+1.0) + bb.z_min;
+  }
+  std::vector<unsigned int> aSortedId;
+  std::vector<unsigned int> aSortedMc;
+  dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
+                            aXYZ,minmax_xyz);
+  for(int ini=0;ini<aSortedMc.size()-1;++ini){
+    const std::pair<int,int> range = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, ini);
+    int isplit = dfm2::findSplit(aSortedMc.data(), range.first, range.second);
+    const std::pair<int,int> rangeA = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, isplit);
+    const std::pair<int,int> rangeB = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, isplit+1);
+    assert( range.first == rangeA.first );
+    assert( range.second == rangeB.second );
+    {
+      int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
+      int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
+      assert( last1+1 == first1 );
+    }
+  }
+  // ---------------
+  std::vector<dfm2::CNodeBVH2> aNodeBVH;
+  dfm2::BVH_TreeTopology_Morton(aNodeBVH,
+                                aSortedId,aSortedMc);
+}

@@ -36,19 +36,17 @@ void draw(GLFWwindow* window)
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  
 
   float mP[16], mMV[16];
   viewer.nav.Matrix_MVP(mMV, mP, window);
   shdr.Draw(mP, mMV);
-
-  glfwSwapBuffers(window);
-  glfwPollEvents();
+  
+  viewer.DrawEnd_oldGL();
 }
 
 int main(void)
 {
-  viewer.Init_GLnew();
+  viewer.Init_newGL();
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------

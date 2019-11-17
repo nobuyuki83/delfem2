@@ -30,8 +30,8 @@ public:
 		is_active = false;
 	}
 	CBV3D_AABB(double x_min0,double x_max0,
-          double y_min0,double y_max0,
-          double z_min0,double z_max0)
+             double y_min0,double y_max0,
+             double z_min0,double z_max0)
   : x_min(x_min0),x_max(x_max0),
   y_min(y_min0),y_max(y_max0),
   z_min(z_min0),z_max(z_max0)
@@ -48,6 +48,23 @@ public:
   is_active(bb.is_active){
   }
   CBV3D_AABB(const std::vector<double>& minmaxXYZ)
+  {
+    if( minmaxXYZ[0] > minmaxXYZ[1] ){
+      x_min=0;  x_max=0;
+      y_min=0;  y_max=0;
+      z_min=0;  z_max=0;
+      is_active = false;
+      return;
+    }
+    x_min = minmaxXYZ[0];
+    x_max = minmaxXYZ[1];
+    y_min = minmaxXYZ[2];
+    y_max = minmaxXYZ[3];
+    z_min = minmaxXYZ[4];
+    z_max = minmaxXYZ[5];
+    is_active = true;
+  }
+  CBV3D_AABB(const double minmaxXYZ[6])
   {
     if( minmaxXYZ[0] > minmaxXYZ[1] ){
       x_min=0;  x_max=0;

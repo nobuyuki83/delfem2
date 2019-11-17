@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/fem_emats.h              ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/cloth_internal.h
 
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   ${DELFEM2_INC}/opengl/gl24_funcs.h      ${DELFEM2_INC}/opengl/gl24_funcs.cpp
   ${DELFEM2_INC}/opengl/gl4_funcs.h       ${DELFEM2_INC}/opengl/gl4_funcs.cpp
   ${DELFEM2_INC}/opengl/gl4_mshcolor.h    ${DELFEM2_INC}/opengl/gl4_mshcolor.cpp

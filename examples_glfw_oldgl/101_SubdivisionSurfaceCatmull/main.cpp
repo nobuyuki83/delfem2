@@ -21,6 +21,8 @@
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
 
+// --------------------------------------------------
+
 int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
