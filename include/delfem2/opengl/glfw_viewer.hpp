@@ -24,7 +24,7 @@ public:
   void DrawBegin_oldGL();
   void DrawEnd_oldGL();
   
-  void Init_GLnew();
+  void Init_newGL();
   
   virtual void mouse_press(const float src[3], const float dir[3]) {} // for function override. Do nothing here
   virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {} // for function override. Do nothing here

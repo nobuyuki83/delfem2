@@ -14,6 +14,8 @@
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
 
+// ---------------------------------------
+
 static void myGlVertex3d(const CVector3& v)
 {
   ::glVertex3d(v.x,v.y,v.z);

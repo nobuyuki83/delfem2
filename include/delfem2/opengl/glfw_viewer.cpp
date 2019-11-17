@@ -88,7 +88,7 @@ void delfem2::opengl::CViewer_GLFW::Init_oldGL()
 }
 
 
-void delfem2::opengl::CViewer_GLFW::Init_GLnew()
+void delfem2::opengl::CViewer_GLFW::Init_newGL()
 {
   pViewer = this;
   // -----

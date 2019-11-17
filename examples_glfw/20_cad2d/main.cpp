@@ -22,13 +22,38 @@
 #include "delfem2/opengl/gl4_funcs.h"
 #include "delfem2/opengl/gl4_v23dtricad.h"
 #include "delfem2/opengl/glfw_cam.h"
+#include "delfem2/opengl/glfw_viewer.hpp"
 
 // end of header
 // -----------------------------------------------------
 
-CNav3D_GLFW nav;
-delfem2::CCad2D cad;
-delfem2::opengl::CShader_Cad2D shdr_cad;
+class CCAD2D_Viewer : public delfem2::opengl::CViewer_GLFW
+{
+public:
+  CCAD2D_Viewer(){
+    std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
+    cad.AddPolygon(aXY);
+    {
+      double param[4] = {0.2, 0.3, -0.2, 0.3};
+      std::vector<double> vparam(param,param+4);
+      cad.SetEdgeType( 0, 1, vparam );
+    }
+  }
+  virtual void mouse_press(const float src[3], const float dir[3]) {
+    float px, py; nav.PosMouse2D(px, py, window);
+    cad.Pick(px, py, nav.camera.view_height);
+  }
+  virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {
+    float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1, window);
+    cad.DragPicked(px1,py1, px0,py0);
+    shdr_cad.MakeBuffer(cad);
+  }
+public:
+  delfem2::CCad2D cad;
+  delfem2::opengl::CShader_Cad2D shdr_cad;
+};
+
+CCAD2D_Viewer viewer;
 
 // -----------------------------------------------------
 
@@ -41,57 +66,18 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  float mMV[16], mP[16]; nav.Matrix_MVP(mMV, mP, window);
-  shdr_cad.Draw(mP, mMV, cad);
+  float mMV[16], mP[16]; viewer.nav.Matrix_MVP(mMV, mP, window);
+  viewer.shdr_cad.Draw(mP, mMV, viewer.cad);
   
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
 
-void callback_key(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-    glfwSetWindowShouldClose(window, GL_TRUE);
-  }
-}
-
-void callback_resize(GLFWwindow* window, int width, int height)
-{
-  glViewport(0, 0, width, height);
-}
-
-void callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
-{
-  nav.Mouse(window,button,action,mods);
-  float px, py; nav.PosMouse2D(px, py, window);
-  cad.Pick(px, py, nav.camera.view_height);
-}
-
-void callback_cursor_position(GLFWwindow* window, double xpos, double ypos)
-{
-  nav.Motion(window,xpos,ypos);
-  if( nav.ibutton == 0 ){
-    float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1, window);
-    cad.DragPicked(px1,py1, px0,py0);
-    shdr_cad.MakeBuffer(cad);
-  }
-}
-
-void callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
-{
-  nav.camera.scale *= pow(1.01,yoffset);
-}
-
-
 int main(void)
 {
-  GLFWwindow* window = myGLFW_OpenWindow(800,600);
-  glfwMakeContextCurrent(window);
-  glfwSetFramebufferSizeCallback(window, callback_resize);
-  glfwSetKeyCallback(            window, callback_key);
-  glfwSetMouseButtonCallback(    window, callback_mouse_button);
-  glfwSetCursorPosCallback(      window, callback_cursor_position);
-  glfwSetScrollCallback(         window, callback_scroll);
+  viewer.Init_newGL();
+  viewer.nav.camera.view_height = 2.0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------
@@ -100,29 +86,17 @@ int main(void)
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
-  shdr_cad.Compile();
+  viewer.shdr_cad.Compile();
 
-  {
-    std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
-    cad.AddPolygon(aXY);
-    {
-      double param[4] = {0.2, 0.3, -0.2, 0.3};
-      std::vector<double> vparam(param,param+4);
-      cad.SetEdgeType( 0, 1, vparam );
-    }
-  }
-  shdr_cad.MakeBuffer(cad);
-  
-  nav.camera.view_height = 2.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.shdr_cad.MakeBuffer(viewer.cad);
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);
 #else
-  while (!glfwWindowShouldClose(window)) { draw(window); }
+  while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
 #endif
   
-  glfwDestroyWindow(window);
+  glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }

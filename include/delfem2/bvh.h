@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #ifndef DFM2_BVH_H
 #define DFM2_BVH_H
 
@@ -29,6 +28,20 @@ int BVH_MakeTreeTopology(std::vector<CNodeBVH2>& aNodeBVH,
                          const int nfael,
                          const std::vector<int>& aElemSur,
                          const std::vector<double>& aElemCenter);
+  
+int findSplit(const unsigned int* sorted_morton_code, int start, int last);
+std::pair<int,int> determineRange(const unsigned int* sorted_morton_code, int numInternalNode, int i);
+std::uint32_t MortonCode(double x, double y, double z);
+  
+void GetSortedMortenCode(std::vector<unsigned int>& aSortedId,
+                         std::vector<unsigned int>& aSortedMc,
+                         const std::vector<double>& aXYZ,
+                         const double minmax_xyz[6]);
+  
+void BVH_TreeTopology_Morton(std::vector<CNodeBVH2>& aNodeBVH,
+                             const std::vector<unsigned int>& aSortedId,
+                             const std::vector<unsigned int>& aSortedMc);
+
 
 // -------------------------------------------------------------------
 // template functions from here
