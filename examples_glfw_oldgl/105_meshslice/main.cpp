@@ -109,12 +109,12 @@ void Hoge(){
   assert( aCS.size() == ReebGraphCS.size() );
   
   aCG_CS.resize(aCS.size());
-  for(int ics=0;ics<aCS.size();++ics){
+  for(size_t ics=0;ics<aCS.size();++ics){
     const double h0 = aHeight[aCS[ics].IndHeight()];
     const double po[3] = {org[0]+nrm[0]*h0,  org[1]+nrm[1]*h0,  org[2]+nrm[2]*h0 };
     double sum_area = 0.0;
     CVector3 cg(0,0,0);
-    for(int iseg=0;iseg<aCS[ics].aTriInfo.size();++iseg){
+    for(size_t iseg=0;iseg<aCS[ics].aTriInfo.size();++iseg){
       double pA[3],pB[3];
       aCS[ics].aTriInfo[iseg].Pos3D(pA,pB,
                                     aXYZ,aTri);

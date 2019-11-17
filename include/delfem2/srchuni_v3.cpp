@@ -100,9 +100,9 @@ CVector3 CPointElemSurf::UNorm_Tri
  const double* aNorm) const
 {
   assert(itri>=0&&itri<(int)nTri);
-  const int i0 = aTri[itri*3+0];
-  const int i1 = aTri[itri*3+1];
-  const int i2 = aTri[itri*3+2];
+  const unsigned int i0 = aTri[itri*3+0];
+  const unsigned int i1 = aTri[itri*3+1];
+  const unsigned int i2 = aTri[itri*3+2];
   const CVector3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
   const CVector3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
   const CVector3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
@@ -315,10 +315,8 @@ bool intersectRay_Tri3D
   return false;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------
 
 void IntersectionRay_MeshTri3D
 (std::map<double,CPointElemSurf>& mapDepthPES,
@@ -327,7 +325,7 @@ void IntersectionRay_MeshTri3D
  const std::vector<double>& aXYZ)
 {
   mapDepthPES.clear();
-  for(unsigned int itri=0;itri<aTri.size()/3;++itri){
+  for(size_t itri=0;itri<aTri.size()/3;++itri){
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
     const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
@@ -503,7 +501,7 @@ CPointElemSurf Nearest_Point_MeshTri3DPart
 {
   double min_dist = -1;
   CPointElemSurf pes;
-  for(unsigned int iitri=0;iitri<aIndTri_Cand.size();++iitri){
+  for(size_t iitri=0;iitri<aIndTri_Cand.size();++iitri){
     const int itri0 = aIndTri_Cand[iitri];
     const unsigned int i0 = aTri[itri0*3+0];
     const unsigned int i1 = aTri[itri0*3+1];

@@ -83,9 +83,9 @@ void MakeCurveSpline(const std::vector<double>& aCV, std::vector<double>& aVecCu
   const unsigned int nCV = aCV.size()/2;
   unsigned int ndiv = 5;
   for(unsigned int icv=0;icv<nCV;icv++){
-    int icv0=icv;   if( icv0 >= nCV ){ icv0-=nCV; }
-    int icv1=icv+1; if( icv1 >= nCV ){ icv1-=nCV; }
-    int icv2=icv+2; if( icv2 >= nCV ){ icv2-=nCV; }
+    unsigned int icv0=(icv+0)%nCV;
+    unsigned int icv1=(icv+1)%nCV;
+    unsigned int icv2=(icv+2)%nCV;
     const double p0[2] = { aCV[icv0*2+0], aCV[icv0*2+1] };
     const double p1[2] = { aCV[icv1*2+0], aCV[icv1*2+1] };
     const double p2[2] = { aCV[icv2*2+0], aCV[icv2*2+1] };

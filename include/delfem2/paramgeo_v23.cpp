@@ -203,7 +203,7 @@ void dfm2::FlatKnot
 {
   assert(aKnot.size()==aKnotMulti.size());
   aKnotFlat.clear();
-  for(unsigned int ik=0;ik<aKnot.size();++ik){
+  for(size_t ik=0;ik<aKnot.size();++ik){
     for(int iik=0;iik<aKnotMulti[ik];++iik){
       aKnotFlat.push_back(aKnot[ik]);
     }
