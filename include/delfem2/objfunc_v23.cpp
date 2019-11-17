@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
+//#include <cstdio>
 
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
@@ -537,8 +537,8 @@ void PBD_Seam
  unsigned int nline)
 {
   for(unsigned int il=0;il<nline;++il){
-    const int ip0 = aLine[il*2+0];
-    const int ip1 = aLine[il*2+1];
+    const unsigned int ip0 = aLine[il*2+0];
+    const unsigned int ip1 = aLine[il*2+1];
     const double p[2][3] = {
       {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
       {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
