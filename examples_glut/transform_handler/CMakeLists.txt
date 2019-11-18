@@ -1,5 +1,7 @@
 project(trans_hndlr)
 cmake_minimum_required(VERSION 2.8)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 if(MSVC)
 set(CMAKE_CXX_FLAGS "/W4  -O2 \

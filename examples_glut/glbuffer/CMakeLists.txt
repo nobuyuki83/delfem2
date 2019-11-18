@@ -1,6 +1,8 @@
-project(glbuffer)
 cmake_minimum_required(VERSION 2.8)
+project(glbuffer)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
   set(CMAKE_CXX_FLAGS "/W4 -O2 -std=c++11 \
       /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 \

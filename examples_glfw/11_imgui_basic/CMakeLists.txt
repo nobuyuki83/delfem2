@@ -1,5 +1,8 @@
-project(11_imgui_basic)
 cmake_minimum_required(VERSION 2.8.12)
+project(11_imgui_basic)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED CONFIG)

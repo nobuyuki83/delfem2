@@ -1,5 +1,6 @@
-project(30_cadmsh2d)
 cmake_minimum_required(VERSION 2.8)
+
+project(30_cadmsh2d)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)

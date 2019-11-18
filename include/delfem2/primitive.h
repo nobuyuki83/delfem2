@@ -62,8 +62,8 @@ public:
 	double Projection(double n[3],
                     double px, double py, double pz) const; // normal
 public:
-	double normal_[3]{};
-	double origin_[3]{};
+	double normal_[3];
+  double origin_[3];
 };
 
 class CSphere: public CSDF3

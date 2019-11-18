@@ -1,6 +1,9 @@
-project(pbdcloth_cad_gltf)
 cmake_minimum_required(VERSION 2.8)
+project(pbdcloth_cad_gltf)
 
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
 set(CMAKE_CXX_FLAGS "-O2 /W4\
   /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 \
