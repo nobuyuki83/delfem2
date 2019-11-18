@@ -18,6 +18,11 @@ static delfem2::opengl::CViewer_GLFW* pViewer = 0;
 
 // ---------------
 
+static void callback_error(int error, const char* description)
+{
+    fputs(description, stderr);
+}
+
 static void glfw_callback_error(int error, const char* description)
 {
   fputs(description, stderr);

@@ -1,5 +1,7 @@
 project(000_openwin)
 cmake_minimum_required(VERSION 2.8)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 set(GLFW_DIR "../../src_cpp/external/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)

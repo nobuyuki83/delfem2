@@ -556,7 +556,7 @@ bool dfm2::FindEdge_LookAllTriangles
  const int ipo0, const int ipo1,
  const std::vector<ETri>& aTri)
 {
-  for(unsigned int itri=0;itri<aTri.size();++itri){
+  for(size_t itri=0;itri<aTri.size();++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
       int jpo0 = aTri[itri].v[(iedtri+0)%3];
       int jpo1 = aTri[itri].v[(iedtri+1)%3];
@@ -643,8 +643,8 @@ bool dfm2::CheckTri
       return false;
     }
     /////
-    for (unsigned int inotri = 0; inotri<3; inotri++){
-      assert(tri0.v[inotri] < npo);
+    for (int inotri : tri0.v){
+      assert(inotri < npo);
     }
     for (int iedtri = 0; iedtri<3; iedtri++){
       if (tri0.s2[iedtri]>=0&&tri0.s2[iedtri]<ntri){
@@ -720,8 +720,7 @@ void dfm2::InitializeMesh
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------------------
 
 void dfm2::MoveCCW
 (int& itri_cur,
@@ -898,9 +897,9 @@ bool dfm2::Collapse_ElemEdge
     sort(ring1.begin(), ring1.end());
     sort(ring2.begin(), ring2.end());
     std::vector<int> insc(ring1.size());
-    std::vector<int>::iterator it = set_intersection(ring1.begin(), ring1.end(),
-                                                     ring2.begin(), ring2.end(),
-                                                     insc.begin());
+    auto it = set_intersection(ring1.begin(), ring1.end(),
+                               ring2.begin(), ring2.end(),
+                               insc.begin());
     if (it!=insc.begin()){ return  false; }
   }
   
@@ -1042,13 +1041,13 @@ void dfm2::GetTriArrayAroundPoint
  const std::vector<ETri>& aTri)
 {
   const int itri_ini = aPo[ipoin].e;
-  const int inoel_c_ini = aPo[ipoin].d;
+  const unsigned int inoel_c_ini = aPo[ipoin].d;
   assert(itri_ini < (int)aTri.size());
   assert(inoel_c_ini < 3);
   assert(aTri[itri_ini].v[inoel_c_ini]==ipoin);
   int itri0 = itri_ini;
-  int inoel_c0 = inoel_c_ini;
-  int inoel_b0 = (inoel_c0+1)%3;
+  unsigned int inoel_c0 = inoel_c_ini;
+  unsigned int inoel_b0 = (inoel_c0+1)%3;
   for (;;){
     assert(itri0 < (int)aTri.size());
     assert(inoel_c0 < 3);
@@ -1084,12 +1083,12 @@ void dfm2::extractHoles
   aIndP_Hole.clear();
   std::multimap<int,int> mapConnection;
   std::vector<int> aFlg(npo,0);
-  for(int itri=0;itri<(int)aETri.size();itri++){
+  for(const auto & itri : aETri){
     for(int inotri=0;inotri<3;++inotri){
-      int itris0 = aETri[itri].s2[inotri];
+      int itris0 = itri.s2[inotri];
       if( itris0 != -1 ) continue;
-      const int ip0 = aETri[itri].v[(inotri+1)%3];
-      const int ip1 = aETri[itri].v[(inotri+2)%3];
+      const int ip0 = itri.v[(inotri+1)%3];
+      const int ip1 = itri.v[(inotri+2)%3];
       mapConnection.insert( std::make_pair(ip0,ip1) );
 //      mapConnection.insert( std::make_pair(ip1,ip0) ); // to make the hole ccw
       aFlg[ip0] = 1;
@@ -1119,7 +1118,7 @@ void dfm2::extractHoles
       hole.push_back(ip0);
       std::pair<std::multimap<int,int>::iterator, std::multimap<int,int>::iterator > its;
       its = mapConnection.equal_range(ip0);
-      for(std::multimap<int,int>::iterator it=its.first;it!=its.second;it++){
+      for(auto it=its.first;it!=its.second;it++){
         assert( it->first == ip0 );
         int ip1 = it->second;
         stackNext.push(ip1);

@@ -36,7 +36,7 @@ void DrawArcSolid(const CVector3& axis,
 void DrawArrow(const CVector3& p0,
                const CVector3& d,
                int ndivt=16);
-void DrawCircleArrow(CVector3 org, CVector3 axis, double offset);
+void DrawCircleArrow(const CVector3& org, CVector3 axis, double offset);
 void DrawCylinder(const CVector3& p0,
                   const CVector3& p1,
                   double r);

@@ -1044,7 +1044,7 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
     }
     ////////////////
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0]/dt;
       vec_b[ip*3+1] += eres[ino][1]/dt;
       vec_b[ip*3+2] += eres[ino][2]/dt;
@@ -1088,7 +1088,7 @@ void dfm2::MergeLinSys_Stokes3D_Static
                                coords, velo_press,
                                emat, eres);
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*4+0] += eres[ino][0];
       vec_b[ip*4+1] += eres[ino][1];
       vec_b[ip*4+2] += eres[ino][2];
@@ -1137,7 +1137,7 @@ void dfm2::MergeLinSys_Stokes3D_Dynamic
                                 coords, velo_press, acc_apress,
                                 emat, eres);
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*4+0] += eres[ino][0];
       vec_b[ip*4+1] += eres[ino][1];
       vec_b[ip*4+2] += eres[ino][2];
@@ -1184,7 +1184,7 @@ void dfm2::MergeLinSys_NavierStokes3D_Dynamic
                                       coords, velo_press, acc_apress,
                                       emat, eres);
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*4+0] += eres[ino][0];
       vec_b[ip*4+1] += eres[ino][1];
       vec_b[ip*4+2] += eres[ino][2];
@@ -1524,7 +1524,7 @@ void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
       dW[2][0] = rho*A*thick/3.0*gravity_z;
     }
     for (unsigned int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += dW[ino][0];
       vec_b[ip*3+1] += dW[ino][1];
       vec_b[ip*3+2] += dW[ino][2];

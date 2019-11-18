@@ -422,13 +422,13 @@ void CMatrix3::SetSymetric(const double sm[6])
 
 void CMatrix3::SetZero()
 {
-  for(int i=0;i<9;++i){ mat[i] = 0.0; }
+  for(double & i : mat){ i = 0.0; }
 }
 
 
 void CMatrix3::SetRandom(){
-  for(int i=0;i<9;i++){
-    mat[i] = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+  for(double & i : mat){
+    i = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
   }
 }
 
@@ -561,7 +561,7 @@ void CMatrix3::SetIdentity(double scale)
 
 
 
-/////////////////////////////////////////////////////
+// ----------------------------------------------------------
 // 4x4 matrix
 
 void MatVec4

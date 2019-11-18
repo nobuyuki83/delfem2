@@ -68,7 +68,7 @@ void Coarse(double px, double py)
         mapDistTri.insert( std::make_pair(d01,iit) );
       }
     }
-    if( mapDistTri.size() > 0 ){
+    if( !mapDistTri.empty() ){
       const int iit0 = mapDistTri.begin()->second;
       assert( iit0>=0 && iit0 < aPSuP.size() );
       double dist0 = mapDistTri.begin()->first;
@@ -118,7 +118,7 @@ void GenMesh()
   }
 }
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glPointSize(5);
   ::glLineWidth(1);

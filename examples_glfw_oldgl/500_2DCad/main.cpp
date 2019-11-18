@@ -74,7 +74,7 @@ int main(int argc,char* argv[])
         Transform_LoopEdgeCad2D(aEdge,false,true,1.0,1.0);
         if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
         aEdge = RemoveEdgeWithZeroLength(aEdge);
-        for(int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+        for(size_t ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
         std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
         cad.Clear();
         cad.AddFace(aEdge);

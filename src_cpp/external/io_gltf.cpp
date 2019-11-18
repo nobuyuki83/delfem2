@@ -110,12 +110,12 @@ bool GetArray_Double
 }
 
 void Print(const tinygltf::Model& model){
-  for(unsigned int ib=0;ib<model.buffers.size();++ib){
+  for(size_t ib=0;ib<model.buffers.size();++ib){
     std::cout << "buffer: " << ib << " name: " << model.buffers[ib].name << std::endl;
     std::cout << "buffer: " << ib << " size: " << model.buffers[ib].data.size() << std::endl;
     //    const tinygltf::Buffer& buff = model.buffers[ib];
   }
-  for(unsigned int ibv=0;ibv<model.bufferViews.size();++ibv){
+  for(size_t ibv=0;ibv<model.bufferViews.size();++ibv){
     const tinygltf::BufferView& bv = model.bufferViews[ibv];
     std::cout << std::endl;
     std::cout << "buffer view " << ibv << " name: " << bv.name << std::endl;
@@ -123,7 +123,7 @@ void Print(const tinygltf::Model& model){
     std::cout << "buffer view " << ibv << " length: " << bv.byteLength << std::endl;
     std::cout << "buffer view " << ibv << " buffer: " << bv.buffer << std::endl;
   }
-  for(unsigned int iac=0;iac<model.accessors.size();++iac){
+  for(size_t iac=0;iac<model.accessors.size();++iac){
     const tinygltf::Accessor& ac = model.accessors[iac];
     std::cout << std::endl;
     std::cout << "accessor" << iac << " bufview: " << ac.bufferView << std::endl;
@@ -132,13 +132,13 @@ void Print(const tinygltf::Model& model){
     std::cout << "accessor" << iac << " byteStride: " << ac.ByteStride(model.bufferViews[ac.bufferView]) << std::endl;
     std::cout << "accessor" << iac << " byteOffset: " << ac.byteOffset << std::endl;
   }
-  for(unsigned int im=0;im<model.meshes.size();++im){
+  for(size_t im=0;im<model.meshes.size();++im){
     const tinygltf::Mesh& mesh = model.meshes[im];
-    for(unsigned int ipri=0;ipri<mesh.primitives.size();++ipri){
+    for(size_t ipri=0;ipri<mesh.primitives.size();++ipri){
       std::cout << std::endl;
       const tinygltf::Primitive& primitive = mesh.primitives[ipri];
-      for(auto itr = primitive.attributes.begin();itr!=primitive.attributes.end();++itr){
-        std::cout << "mesh" << im << " primitive:" << ipri << " att: " << itr->first << " acc:" << itr->second << std::endl;
+      for(const auto & attribute : primitive.attributes){
+        std::cout << "mesh" << im << " primitive:" << ipri << " att: " << attribute.first << " acc:" << attribute.second << std::endl;
       }
       std::cout << "mesh" << im << " wieghtsize" << mesh.weights.size() << std::endl;
       {
@@ -156,7 +156,7 @@ void Print(const tinygltf::Model& model){
       std::cout << "mesh" << im << " primitive" << ipri << " index: " << primitive.indices << std::endl;
     }
   }
-  for(unsigned int in=0;in<model.nodes.size();++in){
+  for(size_t in=0;in<model.nodes.size();++in){
     const tinygltf::Node& node = model.nodes[in];
     std::cout << std::endl;
     std::cout << "node: " << in << " name: " << node.name << std::endl;
@@ -169,19 +169,19 @@ void Print(const tinygltf::Model& model){
     if( node.translation.size() == 3 ){
       std::cout << "node: " << in << " trans:" << node.translation[0] << " " << node.translation[1] << " " << node.translation[2] << std::endl;
     }
-    assert( node.scale.size() == 0 || node.scale.size() == 3 );
+    assert( node.scale.empty() || node.scale.size() == 3 );
     if( node.scale.size() == 3 ){
       std::cout << "node: " << in << " scale:" << node.scale[0] << " " << node.scale[1] << " " << node.scale[2] << std::endl;
     }
-    assert( node.matrix.size() == 0 || node.matrix.size() == 16 );
+    assert( node.matrix.empty() || node.matrix.size() == 16 );
     if( node.matrix.size() == 16 ){
       for(int i=0;i<16;++i){
         std::cout << "    " << i << " " << node.matrix[i] << std::endl;
       }
     }
     std::cout << "node: " << in << " child: ";
-    for(unsigned int ic=0;ic<node.children.size();++ic){
-      std::cout << node.children[ic] << " ";
+    for(int ic : node.children){
+      std::cout << ic << " ";
     }
     std::cout << std::endl;
   }
@@ -211,13 +211,13 @@ void Print(const tinygltf::Model& model){
    }
    }
    */
-  for(unsigned int is=0;is<model.skins.size();++is){
+  for(size_t is=0;is<model.skins.size();++is){
     const tinygltf::Skin& skin = model.skins[is];
     std::cout << std::endl;
     std::cout << "skin" << is << " inode_skeleton: " << skin.skeleton << std::endl;
     std::cout << "skin: " << is << " joints: ";
-    for(unsigned int ij=0;ij<skin.joints.size();++ij){
-      std::cout << skin.joints[ij] << " ";
+    for(int joint : skin.joints){
+      std::cout << joint << " ";
     }
     std::cout << std::endl;
     std::cout << "skin" << is << " inverseBindMatrices: " << skin.inverseBindMatrices << std::endl;
@@ -315,7 +315,7 @@ void GetBoneBinding
   const tinygltf::Skin& skin = model.skins[0];
   std::vector<double> M; GetArray_Double(M, model, skin.inverseBindMatrices);
   assert( M.size() == aBone.size()*16 );
-  for(unsigned int ij=0;ij<M.size()/16;++ij){
+  for(size_t ij=0;ij<M.size()/16;++ij){
     for(int i=0;i<4;++i){
       for(int j=0;j<4;++j){
         aBone[ij].invBindMat[i*4+j] = M[ij*16+j*4+i];
@@ -345,11 +345,10 @@ void SetBone
   aBone[ibone].rot[2] = node.rotation[1];
   aBone[ibone].rot[3] = node.rotation[2];
   aBone[ibone].name = node.name;
-  if( node.scale.size() > 0 ){ aBone[ibone].scale = node.scale[0]; }
+  if( !node.scale.empty() ){ aBone[ibone].scale = node.scale[0]; }
   else{ aBone[ibone].scale = 1;  }
-  ////
-  for(unsigned int ich=0;ich<node.children.size();++ich){
-    int inode_ch = node.children[ich];
+  // ----------------------------
+  for(int inode_ch : node.children){
     SetBone(aBone, model, inode_ch, ibone, mapNode2Bone);
   }
 }
@@ -394,7 +393,7 @@ void CGLTF::GetBone
 {
   aBone.resize( model->skins[0].joints.size() );
   std::vector<int> mapNode2Bone( model->nodes.size(), -1);
-  for(unsigned int ij=0;ij<model->skins[0].joints.size();++ij){
+  for(size_t ij=0;ij<model->skins[0].joints.size();++ij){
     int inode = model->skins[0].joints[ij];
     mapNode2Bone[inode] = ij;
   }

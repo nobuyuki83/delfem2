@@ -37,8 +37,8 @@ public:
   CEPo2(int ielem, unsigned int idir)
     : e(ielem), d(idir) {}
 public:
-  int e;  //<! index of elements
-  int d;
+  int e;  //<! index of elements this can be zero
+  unsigned int d;
 };
 
 bool JArray_MakeElSuP(std::vector<int>& elsup_ind, std::vector<int>& elsup,

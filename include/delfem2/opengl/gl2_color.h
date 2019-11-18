@@ -62,11 +62,11 @@ void DrawMeshTri_ScalarP0(const std::vector<double>& aXYZ,
                           const std::vector<double>& aValSrf,
                           const std::vector<std::pair<double, CColor> >& colorMap);
 
-void DrawMeshTri2D_ScalarP1(const double* aXY, int nXY,
-                            const unsigned int* aTri, int nTri,
-                            const double* aVal,
+void DrawMeshTri2D_ScalarP1(const double* aXY, unsigned int nXY,
+                            const unsigned int* aTri, unsigned int nTri,
+                            const double* paVal,
                             int nstride,
-                          const std::vector< std::pair<double,CColor> >& colorMap);
+                            const std::vector< std::pair<double,CColor> >& colorMap);
 
 void DrawMeshTri2D_ScalarP0(std::vector<int>& aTri,
                             std::vector<double>& aXY,
@@ -100,8 +100,8 @@ void DrawMeshElem3D_Scalar_Vtx(const std::vector<double>& aXYZ,
                                const std::vector<std::pair<double, CColor> >& colorMap);
 
 // 3D value
-void DrawMeshTet3D_ScalarP1(const double* aXYZ, int nXYZ,
-                            const unsigned int* aTet, int nTet,
+void DrawMeshTet3D_ScalarP1(const double* aXYZ, unsigned int nXYZ,
+                            const unsigned int* aTet, unsigned int nTet,
                             const double* aValSrf,
                             const std::vector<std::pair<double, CColor> >& colorMap);
 

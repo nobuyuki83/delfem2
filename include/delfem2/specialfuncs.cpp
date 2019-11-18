@@ -5,9 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
 #include <cmath>
-
 #include "delfem2/specialfuncs.h"
 
 //const double pi = 3.1415926535;

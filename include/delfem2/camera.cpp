@@ -304,7 +304,7 @@ void InverseMat3
   const float det =
   + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
   - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
-  const float inv_det = 1.0/det;
+  const float inv_det = 1.f/det;
   Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
   Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
   Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);

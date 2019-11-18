@@ -1,12 +1,8 @@
-#include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdlib>
 #include <set>
-#include <stack>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
@@ -16,7 +12,6 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
 
 // -------------------------
 
@@ -36,9 +31,9 @@ void myGlutDisplay(void)
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
   ::glLineWidth(5);
-  for(int iloop=0;iloop<aCS.size();++iloop){
+  for(size_t iloop=0;iloop<aCS.size();++iloop){
     ::glBegin(GL_LINE_LOOP);
-    for(int iseg=0;iseg<aCS[iloop].aTriInfo.size();++iseg){
+    for(size_t iseg=0;iseg<aCS[iloop].aTriInfo.size();++iseg){
       const delfem2::CSegInfo& seg = aCS[iloop].aTriInfo[iseg];
       double pA[3],pB[3]; seg.Pos3D(pA,pB,
                                     aXYZ,aTri);
@@ -49,14 +44,14 @@ void myGlutDisplay(void)
   
   ::glDisable(GL_DEPTH_TEST);
   
-  for(int ics=0;ics<ReebGraphCS.size();++ics){
+  for(size_t ics=0;ics<ReebGraphCS.size();++ics){
     ::glColor3d(0,0,0);
     ::glPointSize(10);
     ::glBegin(GL_POINTS);
     ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
     ::glEnd();
   }
-  for(int ics=0;ics<ReebGraphCS.size();++ics){
+  for(size_t ics=0;ics<ReebGraphCS.size();++ics){
     for(std::set<unsigned int>::iterator itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
       const unsigned int jcs = *itr;
       assert( jcs < aCS.size());
@@ -93,7 +88,7 @@ void Hoge(){
   const double org[3] = {0,0,0};
   {
     std::vector<double> aHeightVtx(aXYZ.size()/3);
-    for(unsigned int ip=0;ip<aXYZ.size()/3;++ip){
+    for(size_t ip=0;ip<aXYZ.size()/3;++ip){
       double x0 = aXYZ[ip*3+0] - org[0];
       double y0 = aXYZ[ip*3+1] - org[1];
       double z0 = aXYZ[ip*3+2] - org[2];

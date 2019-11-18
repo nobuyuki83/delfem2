@@ -14,7 +14,6 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
-
 #include "delfem2/mshio.h"
 
 static void myUnitNormalAreaTri3D
@@ -682,10 +681,7 @@ void Load_Obj
   }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------------------
 
 void Read_MeshTet3D_TetGen
 (const std::string& fname,
@@ -879,19 +875,19 @@ void WriteVTK_Cells
  const std::vector<int>& aPyrm,
  const std::vector<int>& aPrsm)
 {
-  const int ntet = aTet.size()/4;
-  const int npyrm = aPyrm.size()/5;
-  const int nprsm = aPrsm.size()/6;
-  int nelem = ntet + npyrm + nprsm;
+  const size_t ntet = aTet.size()/4;
+  const size_t npyrm = aPyrm.size()/5;
+  const size_t nprsm = aPrsm.size()/6;
+  size_t nelem = ntet + npyrm + nprsm;
   fout << "CELLS " << nelem << " " << ntet*5+npyrm*6+nprsm*7 << std::endl;
-  for(int it=0;it<ntet;++it){
+  for(size_t it=0;it<ntet;++it){
     fout << 4 << " ";
     fout << aTet[it*4+0] << " ";
     fout << aTet[it*4+1] << " ";
     fout << aTet[it*4+2] << " ";
     fout << aTet[it*4+3] << std::endl;
   }
-  for(int ipyrm=0;ipyrm<npyrm;++ipyrm){
+  for(size_t ipyrm=0;ipyrm<npyrm;++ipyrm){
     fout << 5 << " ";
     fout << aPyrm[ipyrm*5+0] << " ";
     fout << aPyrm[ipyrm*5+1] << " ";
@@ -899,7 +895,7 @@ void WriteVTK_Cells
     fout << aPyrm[ipyrm*5+3] << " ";
     fout << aPyrm[ipyrm*5+4] << std::endl;
   }
-  for(int iprsm=0;iprsm<nprsm;++iprsm){
+  for(size_t iprsm=0;iprsm<nprsm;++iprsm){
     fout << 6 << " ";
     fout << aPrsm[iprsm*6+0] << " ";
     fout << aPrsm[iprsm*6+1] << " ";
@@ -909,9 +905,9 @@ void WriteVTK_Cells
     fout << aPrsm[iprsm*6+5] << std::endl;
   }
   fout << "CELL_TYPES " << nelem << std::endl;
-  for(int ie=0;ie<ntet; ++ie){ fout << "10" << std::endl; }
-  for(int ie=0;ie<npyrm;++ie){ fout << "14" << std::endl; }
-  for(int ie=0;ie<nprsm;++ie){ fout << "13" << std::endl; }
+  for(size_t ie=0;ie<ntet; ++ie){ fout << "10" << std::endl; }
+  for(size_t ie=0;ie<npyrm;++ie){ fout << "14" << std::endl; }
+  for(size_t ie=0;ie<nprsm;++ie){ fout << "13" << std::endl; }
 }
 
 
@@ -1280,19 +1276,18 @@ void Read_MeshTri3D_Nas
     }
   }
   int np1 = map01[0];
-  for(unsigned int ip0=0;ip0<map01.size();++ip0){
-    int ip1 = map01[ip0];
+  for(int ip1 : map01){
     np1 = (ip1>np1)?ip1:np1;
   }
   np1 += 1;
   std::vector<int> map10(np1,-1);
-  for(unsigned int ip0=0;ip0<map01.size();++ip0){
+  for(size_t ip0=0;ip0<map01.size();++ip0){
     int ip1 = map01[ip0];
     map10[ip1] = ip0;
   }
-  for(unsigned int i=0;i<aTri.size();++i){
-    int j1 = aTri[i];
-    aTri[i] = map10[j1];
+  for(unsigned int & i : aTri){
+    int j1 = i;
+    i = map10[j1];
   }
 }
 

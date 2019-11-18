@@ -58,12 +58,12 @@ void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad
 class CPlane: public CSDF3
 {
 public:
-	CPlane(double norm[3], double orgn[3]);
+	CPlane(const double norm[3], const double orgn[3]);
 	double Projection(double n[3],
                     double px, double py, double pz) const; // normal
 public:
-	double normal_[3];
-	double origin_[3];
+	double normal_[3]{};
+	double origin_[3]{};
 };
 
 class CSphere: public CSDF3

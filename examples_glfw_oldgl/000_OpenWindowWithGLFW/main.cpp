@@ -10,8 +10,8 @@
  */
 
 #include <GLFW/glfw3.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 static void error_callback(int error, const char* description)
 {

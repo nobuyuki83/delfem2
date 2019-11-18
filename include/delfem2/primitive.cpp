@@ -7,12 +7,11 @@
 
 
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <iostream>
-#include <assert.h>
-
+#include <cassert>
 #include <fstream>
-#include <time.h>
+#include <ctime>
 
 #include "delfem2/primitive.h"
 
@@ -154,15 +153,14 @@ const double e[3]) // end
 
 // ----------------------------------------------------
 
-dfm2::CPlane::CPlane(double n[3], double o[3])
+dfm2::CPlane::CPlane(const double n[3], const double o[3])
 {
-	////
-	normal_[0] = n[0];
+    normal_[0] = n[0];
 	normal_[1] = n[1];
 	normal_[2] = n[2];
-	////
+	//
 	origin_[0] = o[0];
-  origin_[1] = o[1];
+    origin_[1] = o[1];
 	origin_[2] = o[2];
 }
 

@@ -206,7 +206,7 @@ void MeanValueCoordinate2D
     CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
     const double l0 = v0.Length();
     const double l1 = v1.Length();
-    if( abs((v0*v1)/(l0*l1)+1) > 1.0e-10 ){ continue; }
+    if( fabs((v0*v1)/(l0*l1)+1) > 1.0e-10 ){ continue; }
     aW[iv0] = l1/(l0+l1);
     aW[iv1] = l0/(l0+l1);
     return;
@@ -234,7 +234,7 @@ void MeanValueCoordinate2D
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------------------
 
 std::ostream &operator<<(std::ostream &output, const CVector2& v)
 {
@@ -570,8 +570,8 @@ double Length_Polygon
 (const std::vector<CVector2>& aP)
 {
   double len = 0;
-  for(unsigned int ip0=0;ip0<aP.size()-1;ip0++){
-    int ip1 = ip0+1;
+  for(size_t ip0=0;ip0<aP.size()-1;ip0++){
+    size_t ip1 = ip0+1;
     len += (aP[ip0]-aP[ip1]).Length();
   }
   return len;
@@ -647,9 +647,9 @@ void Translate
 (std::vector<CVector2>& aP,
  double dx, double dy)
 {
-  for(unsigned int ip=0;ip<aP.size();++ip){
-    aP[ip].x += dx;
-    aP[ip].y += dy;
+  for(auto & ip : aP){
+    ip.x += dx;
+    ip.y += dy;
   }
 }
 
@@ -657,11 +657,11 @@ void Rotate
 (std::vector<CVector2>& aP,
  double dt)
 {
-  for(unsigned int ip=0;ip<aP.size();++ip){
-    double x0 = aP[ip].x;
-    double y0 = aP[ip].y;
-    aP[ip].x = cos(dt)*x0 - sin(dt)*y0;
-    aP[ip].y = sin(dt)*x0 + cos(dt)*y0;
+  for(auto & ip : aP){
+    double x0 = ip.x;
+    double y0 = ip.y;
+    ip.x = cos(dt)*x0 - sin(dt)*y0;
+    ip.y = sin(dt)*x0 + cos(dt)*y0;
   }
 }
 
@@ -702,7 +702,7 @@ std::vector<CVector2> Polygon_Resample_Polygon
  double l)
 {
   std::vector<CVector2> stroke;
-  if( stroke0.size() == 0 ) return stroke;
+  if( stroke0.empty() ) return stroke;
   stroke.push_back( stroke0[0] );
   int jcur = 0;
   double rcur = 0;
@@ -739,8 +739,8 @@ void SecondMomentOfArea_Polygon
   const unsigned int nseg = aVec2D.size();
   cg = CVector2(0.0, 0.0);
   for(unsigned int iseg=0;iseg<nseg;iseg++){
-    int ip0 = (iseg+0)%nseg;
-    int ip1 = (iseg+1)%nseg;
+    unsigned int ip0 = (iseg+0)%nseg;
+    unsigned int ip1 = (iseg+1)%nseg;
     double x0 = aVec2D[ip0].x;
     double y0 = aVec2D[ip0].y;
     double x1 = aVec2D[ip1].x;
@@ -955,18 +955,19 @@ bool CheckInputBoundaryForTriangulation
 {
   ////////////////////////////////
   // enter Input check section
-  
-  const int nloop = loopIP_ind.size()-1;
+
+  assert( loopIP_ind.size() >= 2 );
+  const unsigned int nloop = loopIP_ind.size()-1;
   
   { // make sure every loop has at least 3 points
-    for(int iloop=0;iloop<nloop;iloop++){
+    for(unsigned int iloop=0;iloop<nloop;iloop++){
       if( loopIP_ind[iloop+1]-loopIP_ind[iloop] < 3 ) return false;
     }
   }
   {
-    ////////////////////////////////
+    // ------------------------------
     // check inclusion of loops
-    for(int iloop=1;iloop<nloop;iloop++){
+    for(unsigned int iloop=1;iloop<nloop;iloop++){
       for(int ipo=loopIP_ind[iloop];ipo<loopIP_ind[iloop+1];ipo++){
         const double pi[2] = {aXY[ipo].x,aXY[ipo].y};
         if( !IsInclude_Loop(pi,
@@ -975,8 +976,8 @@ bool CheckInputBoundaryForTriangulation
       }
     }
     // check inclusion
-    for(int iloop=1;iloop<nloop;iloop++){
-      for(int jloop=0;jloop<nloop;jloop++){
+    for(unsigned int iloop=1;iloop<nloop;iloop++){
+      for(unsigned int jloop=0;jloop<nloop;jloop++){
         if( iloop == jloop ) continue;
         for(int jpo=loopIP_ind[jloop];jpo<loopIP_ind[jloop+1];jpo++){
           const double pj[2] = {aXY[jpo].x,aXY[jpo].y};
@@ -989,7 +990,7 @@ bool CheckInputBoundaryForTriangulation
   }
   { // check intersection
     bool is_intersect = false;
-    for(int iloop=0;iloop<nloop;iloop++){
+    for(unsigned int iloop=0;iloop<nloop;iloop++){
       const int nei = loopIP_ind[iloop+1]-loopIP_ind[iloop];
       for(int ie=0;ie<nei;ie++){
         const int i0 = loopIP_ind[iloop] + (ie+0)%nei;
@@ -1018,7 +1019,7 @@ bool CheckInputBoundaryForTriangulation
           }
         }
         if( is_intersect ) break;
-        for(int jloop=iloop+1;jloop<nloop;jloop++){
+        for(unsigned int jloop=iloop+1;jloop<nloop;jloop++){
           const int nbar_j = loopIP_ind[jloop+1]-loopIP_ind[jloop];
           for(int jbar=0;jbar<nbar_j;jbar++){
             const int jpo0 = loopIP_ind[jloop] + jbar;
@@ -1065,9 +1066,9 @@ XY_Polygon(const std::vector<CVector2>& aP)
 {
   std::vector<double> res;
   res.reserve(aP.size()*2);
-  for(unsigned int ip=0;ip<aP.size();++ip){
-    res.push_back(aP[ip].x);
-    res.push_back(aP[ip].y);
+  for(const auto & ip : aP){
+    res.push_back(ip.x);
+    res.push_back(ip.y);
   }
   return res;
 }

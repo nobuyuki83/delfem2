@@ -173,8 +173,7 @@ bool dfm2::CheckTri
  const std::vector<ETri>& aSTri,
  const std::vector<CVector2>& aXYZ)
 {
-  for (unsigned int itri = 0; itri<aSTri.size(); itri++){
-    const ETri& ref_tri = aSTri[itri];
+  for (const auto & ref_tri : aSTri){
     const int i0 = ref_tri.v[0];
     if( i0 == -1 ) continue;
     const int i1 = ref_tri.v[1];
@@ -217,7 +216,7 @@ bool dfm2::DelaunayAroundPoint
       // check opposing element
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
       const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const int inotri_dia = rel_dia[inotri_cur];
+      const unsigned int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec2[aTri[itri_cur].v[0]],
@@ -256,7 +255,7 @@ bool dfm2::DelaunayAroundPoint
       // check elements in opposing side
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
       const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const int inotri_dia = rel_dia[inotri_cur];
+      const unsigned int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec2[aTri[itri_cur].v[0]],
@@ -279,7 +278,7 @@ bool dfm2::DelaunayAroundPoint
       }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
       const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const int inotri_nex = rel_nex[inotri_cur];
+      const unsigned int inotri_nex = rel_nex[inotri_cur];
       assert(aTri[itri_nex].v[inotri_nex]==ipo0);
       assert(itri_nex!=itri0);	// finsih if reach starting elemnet
       itri_cur = itri_nex;

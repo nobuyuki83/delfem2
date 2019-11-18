@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <complex>
 
@@ -187,22 +187,22 @@ void SetMasterSlave
   for(unsigned int idof1=0;idof1<ndof;++idof1){ // add row
     int idof0 = aMSFlag[idof1];
     if( idof0 == -1 ) continue;
-    int ino0 = idof0 / len;
-    int ilen0 = idof0 - ino0*len;
-    assert( ilen0 >=0 && ilen0 < (int)len );
-    assert( ino0 < (int)nblk && ilen0 < (int)len );
-    int ino1 = idof1 / len;
-    int ilen1 = idof1 - ino1*len;
-    assert( ino1 < (int)nblk && ilen1 < (int)len );
+    unsigned int ino0 = idof0 / len;
+    unsigned int ilen0 = idof0 - ino0*len;
+    assert( ilen0 >=0 && ilen0 < len );
+    assert( ino0 < nblk && ilen0 < len );
+    unsigned int ino1 = idof1 / len;
+    unsigned int ilen1 = idof1 - ino1*len;
+    assert( ino1 < nblk && ilen1 < len );
     assert( ilen0 == ilen1 );
     for(unsigned int icrs0=mat.colInd[ino0];icrs0<mat.colInd[ino0+1];++icrs0){
-      int jno0 = mat.rowPtr[icrs0];
-      assert( jno0 >= 0 && jno0 < (int)nblk );
+      unsigned int jno0 = mat.rowPtr[icrs0];
+      assert( jno0 >= 0 && jno0 < nblk );
       row2crs[jno0] = icrs0;
     }
     for(unsigned int icrs1=mat.colInd[ino1];icrs1<mat.colInd[ino1+1];++icrs1){
-      int jno1 = mat.rowPtr[icrs1];
-      assert( jno1 >= 0 && jno1 < (int)nblk );
+      unsigned int jno1 = mat.rowPtr[icrs1];
+      assert( jno1 >= 0 && jno1 < nblk );
       assert( jno1 != ino1 );
       if( jno1 != ino0 ){ // add non-diagonal 1 to non-diagonal 0
         const int icrs0 = row2crs[jno1];
@@ -253,12 +253,12 @@ void SetMasterSlave
       const unsigned int jno1 = mat.rowPtr[icrs1];
       assert( jno1 < nblk );
       for(unsigned int jlen1=0;jlen1<len;jlen1++){
-        int jdof0 = aMSFlag[jno1*len+jlen1];
-        if( jdof0 == -1 ) continue;
-        int jno0 = jdof0/len;
-        assert( jno0 >= 0 && jno0 < (int)nblk );
+        if( aMSFlag[jno1*len+jlen1] == -1 ) continue;
+        auto jdof0 = (unsigned int)aMSFlag[jno1*len+jlen1];
+        unsigned int jno0 = jdof0/len;
+        assert( jno0 >= 0 && jno0 < nblk );
         assert( jdof0 - jno0*len == jlen1 );
-        if( (int)ino == jno0 ){
+        if( ino == jno0 ){
           for(unsigned int ilen=0;ilen<len;ilen++){
             mat.valDia[jno0*blksize+ilen*len+jlen1] += mat.valCrs[icrs1*blksize+ilen*len+jlen1];
           }
@@ -294,11 +294,11 @@ void SetMasterSlave
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
       for(unsigned int idim=0;idim<len;idim++){
-        int idof0 = aMSFlag[iblk*len+idim];
-        if( idof0 == -1 ) continue;
-        int jblk = mat.rowPtr[icrs];
+        if( aMSFlag[iblk*len+idim] == -1 ) continue;
+        auto idof0 = (unsigned int)aMSFlag[iblk*len+idim];
+        unsigned int jblk = mat.rowPtr[icrs];
         for(unsigned int jdim=0;jdim<len;jdim++){
-          int idof1 = jblk*len+jdim;
+          unsigned int idof1 = jblk*len+jdim;
           if( idof0 != idof1 ){ mat.valCrs[icrs*blksize+idim*len+jdim] = +0.0; }
           else{                 mat.valCrs[icrs*blksize+idim*len+jdim] = -1.0; }
           mat.valCrs[icrs*blksize+idim*len+jdim] = +0.0;
@@ -440,10 +440,10 @@ template<>
 double DotX
 (const double* r_vec,
  const double* u_vec,
- int n)
+ unsigned int n)
 {
   double r = 0.0;
-  for(int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
+  for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
   return r;
 }
 
@@ -451,11 +451,11 @@ template<>
 COMPLEX DotX
 (const COMPLEX* va,
  const COMPLEX* vb,
- int n)
+ unsigned int n)
 {
   double sr = 0.0;
   double si = 0.0;
-  for(int i=0;i<n;i++){
+  for(unsigned int i=0;i<n;i++){
     const COMPLEX& a = va[i];
     const COMPLEX& b = vb[i];
     sr += a.real()*b.real() + a.imag()*b.imag();

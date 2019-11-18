@@ -1,16 +1,8 @@
-#include <iostream>
-#include <fstream>
 #include <vector>
-#include <string>
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>
-#include <set>
-#include <stack>
+#include <cmath>
+#include <cstdlib>
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/vec3.h"
 #include "delfem2/slice.h"
 #include "delfem2/primitive.h"
 #include "delfem2/color.h"
@@ -31,7 +23,7 @@ std::vector<delfem2::CSegInfo> aSeg;
 
 // ---------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
@@ -47,9 +39,9 @@ void myGlutDisplay(void)
   ::glLineWidth(5);
   ::glBegin(GL_LINES);
   ::glColor3d(0,0,0);
-  for(int iseg=0;iseg<aSeg.size();++iseg){
+  for(auto & iseg : aSeg){
     double pA[2], pB[2];
-    aSeg[iseg].Pos2D(pA,pB,
+    iseg.Pos2D(pA,pB,
                      aXY.data(), aTri.data());
     ::glVertex2dv(pA);
     ::glVertex2dv(pB);
@@ -74,9 +66,9 @@ void Hoge()
   }
   
   { // make value
-    const unsigned int np = aXY.size()/2;
+    const size_t np = aXY.size()/2;
     aVal.resize(np);
-    for(int ip=0;ip<np;++ip){
+    for(size_t ip=0;ip<np;++ip){
       double x0 = aXY[ip*2+0];
       double y0 = aXY[ip*2+1];
       aVal[ip] = sqrt(x0*x0+y0*y0)*4.0-1.5;

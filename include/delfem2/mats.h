@@ -317,7 +317,7 @@ void setRHS_Zero(std::vector<T>& vec_b,
 template <typename T>
 T DotX(const T* r_vec,
        const T* u_vec,
-       int ndof);
+       unsigned int ndof);
 
 std::complex<double> MultSumX(const std::complex<double>* va,
                               const std::complex<double>* vb,

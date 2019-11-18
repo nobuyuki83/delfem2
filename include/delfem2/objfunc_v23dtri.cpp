@@ -10,8 +10,9 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/objfunc_v23.h"
 #include "delfem2/dtri.h"
+
+#include "delfem2/objfunc_v23.h"
 #include "delfem2/dtri_v2.h"
 #include "delfem2/dtri_v3.h"
 
@@ -43,11 +44,11 @@ void PBD_TriStrain
  const std::vector<delfem2::ETri>& aETri,
  const std::vector<CVector2>& aVec2)
 {
-  for(unsigned int it=0;it<aETri.size();++it){
+  for(const auto & it : aETri){
     const int aIP[3] = {
-      aETri[it].v[0],
-      aETri[it].v[1],
-      aETri[it].v[2]};
+      it.v[0],
+      it.v[1],
+      it.v[2]};
     const double P[3][2] = {
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
       {aVec2[aIP[1]].x,aVec2[aIP[1]].y},

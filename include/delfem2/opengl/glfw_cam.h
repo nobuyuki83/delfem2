@@ -17,62 +17,11 @@
 #include "delfem2/camera.h"
 
 
-
-static void callback_error(int error, const char* description)
-{
-  fputs(description, stderr);
-}
-
-static GLFWwindow* myGLFW_OpenWindow
-(const unsigned int SCR_WIDTH,
- const unsigned int SCR_HEIGHT)
-{
-  glfwSetErrorCallback(callback_error);
-  if (!glfwInit()){
-    exit(EXIT_FAILURE);
-  }
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  
-#ifdef __APPLE__
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
-#endif
-  
 /*
-    // Decide GL+GLSL versions
-#if __APPLE__
-    // GL 3.2 + GLSL 150
-  const char *glsl_version = "#version 150";
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);       // Required on Mac
-#else
-    // GL 3.0 + GLSL 130
-  const char *glsl_version = "#version 130";
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-#endif
-*/
-  
-  // glfw window creation
-  // --------------------
-  GLFWwindow* window = glfwCreateWindow(SCR_WIDTH,
-                                        SCR_HEIGHT,
-                                        "LearnOpenGL",
-                                        NULL,
-                                        NULL);
-  if (window == NULL)
-  {
-//    std::cout << "Failed to create GLFW window" << std::endl;
-    glfwTerminate();
-    return 0;
-  }
-  return window;
-}
+
+ */
+
+
 
 /**
  * @brief class for 3D navigation (rotation translation) for each GLFW window

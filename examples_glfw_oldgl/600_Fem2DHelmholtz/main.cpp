@@ -1,5 +1,5 @@
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <limits>
 #include <vector>
@@ -97,11 +97,11 @@ void SolveProblem_Poisson()
                                         aTri1.data(),aTri1.size()/3,
                                         aCVal.data());
 
-  for(int ipl=0;ipl<aaIP.size();++ipl){
+  for(auto & ipl : aaIP){
     dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(mat_A,vec_b.data(),
                                                        wave_length,
                                                        aXY1.data(),aXY1.size()/2,
-                                                       aaIP[ipl].data(),aaIP[ipl].size(),
+                                                       ipl.data(),ipl.size(),
                                                        aCVal.data());
   }
   
@@ -124,7 +124,7 @@ void SolveProblem_Poisson()
                                           1.0e-4, 400, mat_A, ilu_A);
   std::cout << aConv.size() << " " << aConv[ aConv.size()-1 ] << std::endl;
 
-  for(int ic=0;ic<aConv.size();++ic){
+  for(size_t ic=0;ic<aConv.size();++ic){
     std::cout << ic << " " << aConv[ic] << std::endl;
   }
 
@@ -137,7 +137,7 @@ void SolveProblem_Poisson()
 
 // -----------------------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
   ::glPointSize(2);
@@ -158,7 +158,7 @@ int main(int argc,char* argv[])
   InitializeProblem_Scalar();
   SolveProblem_Poisson();
   aVal.resize(aCVal.size(),0.1);
-  for(int ip=0;ip<aVal.size();++ip){ aVal[ip] = aCVal[ip].real(); }
+  for(size_t ip=0;ip<aVal.size();++ip){ aVal[ip] = aCVal[ip].real(); }
   
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.nav.camera.view_height = 1.5;
@@ -168,7 +168,7 @@ int main(int argc,char* argv[])
       static int iframe = 0;
       double time_cur = iframe*0.01;
       std::complex<double> rot(cos(time_cur),sin(time_cur));
-      for(int ip=0;ip<aVal.size();++ip){
+      for(size_t ip=0;ip<aVal.size();++ip){
         aVal[ip] = (rot*aCVal[ip]).real();
       }
       iframe++;
