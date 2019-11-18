@@ -5,17 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 #include <cassert>
 #include <cmath>
 #include <vector>
-#include <stack>
-#include <set>
 #include "delfem2/mshmisc.h"
 
 #ifndef M_PI

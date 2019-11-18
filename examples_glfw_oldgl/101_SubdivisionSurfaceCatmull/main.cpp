@@ -9,10 +9,7 @@
  * @brief simple demo of subdivision surface
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <math.h>
+#include <cstdlib>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/primitive.h"

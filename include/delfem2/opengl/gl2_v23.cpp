@@ -204,7 +204,7 @@ void delfem2::opengl::DrawArrow
 }
 
 void delfem2::opengl::DrawCircleArrow
-(CVector3 org, CVector3 axis, double offset)
+(const CVector3& org, CVector3 axis, double offset)
 {
   double arrow_width_ratio = 0.1;
   double head_width_ratio = 2.0;
@@ -245,7 +245,7 @@ void delfem2::opengl::DrawCircleArrow
     for(int jdiv=0;jdiv<ndivt;jdiv++){
       CVector3 v0 = q0 + r1*sin((jdiv+0)*dt)*s0 + r1*cos((jdiv+0)*dt)*z;
       CVector3 v1 = q0 + r1*sin((jdiv+1)*dt)*s0 + r1*cos((jdiv+1)*dt)*z;
-      CVector3 v2 = q1;
+      const CVector3& v2 = q1;
       CVector3 n; UnitNormal(n, v0, v2, v1);
       ::glNormal3d(n.x,n.y,n.z);
       myGlVertex(v0);
@@ -288,7 +288,7 @@ void delfem2::opengl::DrawCircleSolid
     for (int idiv = 0; idiv<ndivt; idiv++){
       CVector3 v0 = org+(r*sin((idiv+0)*dt))*x+(r*cos((idiv+0)*dt))*y;
       CVector3 v1 = org+(r*sin((idiv+1)*dt))*x+(r*cos((idiv+1)*dt))*y;
-      CVector3 v2 = org;
+      const CVector3& v2 = org;
       CVector3 n; UnitNormal(n, v1, v0, v2);
       myGlNormal(n);
       myGlVertex(v0);
@@ -374,16 +374,15 @@ void delfem2::opengl::drawPolyLine
 (const std::vector<CVector2>& aP)
 {
   ::glBegin(GL_LINES);
-  for (unsigned int ip = 0; ip<aP.size()-1; ip++){
+  for (size_t ip = 0; ip<aP.size()-1; ip++){
     unsigned int jp = ip+1;
     opengl::myGlVertex(ip,aP);
     opengl::myGlVertex(jp,aP);
   }
   ::glEnd();
-  
-  ////
+  //
   ::glBegin(GL_POINTS);
-  for (unsigned int ip = 0; ip<aP.size(); ip++){
+  for (size_t ip = 0; ip<aP.size(); ip++){
     opengl::myGlVertex(ip,aP);
   }
   ::glEnd();
@@ -394,16 +393,15 @@ void delfem2::opengl::drawPolyLine3D
 {
   if( aP.empty() ) return;
   ::glBegin(GL_LINES);
-  for (unsigned int ip = 0; ip<aP.size()-1; ip++){
+  for (size_t ip = 0; ip<aP.size()-1; ip++){
     unsigned int jp = ip+1;
     myGlVertex(ip,aP);
     myGlVertex(jp,aP);
   }
   ::glEnd();
-  
-  ////
+  //
   ::glBegin(GL_POINTS);
-  for (unsigned int ip = 0; ip<aP.size(); ip++){
+  for (size_t ip = 0; ip<aP.size(); ip++){
     myGlVertex(ip,aP);
   }
   ::glEnd();

@@ -105,7 +105,7 @@ void StepTime_InternalDynamics
  double contact_clearance,
  const CInput_Contact& input_contact)
 {
-  const int np = (int)aXYZ.size()/3; // number of point，頂点数
+  const size_t np = aXYZ.size()/3; // number of point，頂点数
   const int nDof = np*3; // degree of freedom，全自由度数
   // compute total energy and its first and second derivatives
   double W = 0;

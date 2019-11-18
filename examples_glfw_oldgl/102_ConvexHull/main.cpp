@@ -1,10 +1,5 @@
-#include <cassert>
-#include <iostream>
-#include <string>
 #include <vector>
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
@@ -21,7 +16,9 @@ static void myGlVertex3d(const CVector3& v)
   ::glVertex3d(v.x,v.y,v.z);
 }
 
-static void myGlVertex3d(int i, const std::vector<CVector3>& aV)
+static void myGlVertex3d
+(unsigned int i,
+ const std::vector<CVector3>& aV)
 {
   const CVector3& v = aV[i];
   ::glVertex3d(v.x,v.y,v.z);
@@ -64,8 +61,8 @@ int main(int argc,char* argv[])
       ::glColor3d(0,0,0);
       ::glPointSize(3);
       ::glBegin(GL_POINTS);
-      for(unsigned int ixyz=0;ixyz<aXYZ.size();ixyz++){
-        myGlVertex3d(aXYZ[ixyz]);
+      for(const auto & ixyz : aXYZ){
+        myGlVertex3d(ixyz);
       }
       ::glEnd();
       

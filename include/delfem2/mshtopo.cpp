@@ -1091,9 +1091,7 @@ void ClipGroup
   }
 }
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------
 
 int findEdge
 (int ip0, int ip1,
@@ -1144,10 +1142,10 @@ void QuadSubdiv
  std::vector<int>& psup_ind,
  std::vector<int>& psup,
  std::vector<int>& aEdgeFace0, // two points on the edge and two quads touching the edge
- const unsigned int* aQuad0, int nQuad0,
+ const unsigned int* aQuad0, unsigned int nQuad0,
  unsigned int nPoint0)
 {
-  const int nq0 = nQuad0;
+  const unsigned int nq0 = nQuad0;
   std::vector<int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aQuad0,nQuad0,4,nPoint0);
@@ -1184,7 +1182,7 @@ void QuadSubdiv
   }
   aQuad1.resize(0);
   aQuad1.reserve(nQuad0*4);
-  for(int iq=0;iq<nq0;++iq){
+  for(unsigned int iq=0;iq<nq0;++iq){
     int ip0 = aQuad0[iq*4+0];
     int ip1 = aQuad0[iq*4+1];
     int ip2 = aQuad0[iq*4+2];

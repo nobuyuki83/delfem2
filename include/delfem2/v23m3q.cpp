@@ -69,7 +69,7 @@ CVector3 MatVecTrans(const CMatrix3& m, const CVector3& vec0)
   return vec1;
 }
 
-////////////
+// ---------------------------------------------------------------------
 
 void SetDiag(CMatrix3& m, const CVector3& d)
 {
@@ -481,8 +481,7 @@ bool isPickCircle
   double t = ((org-src)*axis)/(dir*axis);
   CVector3 p0 = src+t*dir;
   double rad0 = (p0-org).Length();
-  if( fabs(rad-rad0) < pick_tol ) return true;
-  return false;
+  return fabs(rad - rad0) < pick_tol;
 }
 
 bool isPickQuad
@@ -507,8 +506,7 @@ bool isPickQuad
   a30 /= a0123;
   if( a01<eps || a12<eps || a23<eps || a30<eps ){ return false; }
   CVector3 n0123 = Normal(p0,p1,p2) + Normal(p1,p2,p3) + Normal(p2,p3,p0) + Normal(p3,p0,p1);
-  if( n0123*pick_dir>0 ){ return false; }
-  return true;
+  return n0123 * pick_dir <= 0;
 }
 
 int PickHandlerRotation_PosQuat
@@ -620,8 +618,7 @@ bool isPick_AxisHandler
   CVector2 sp0 = screenXYProjection(p+len*axis, mMV, mPj);
   CVector2 sp1 = screenXYProjection(p-len*axis, mMV, mPj);
   double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
-  if (sdist < pick_tol){ return true; }
-  return false;
+  return sdist < pick_tol;
 }
 
 CVector3 drag_AxisHandler
@@ -667,8 +664,7 @@ bool isPickPoint
  double pick_tol)
 {
   CVector2 sp0 = screenXYProjection(p, mMV, mPj);
-  if ((sp-sp0).Length() < pick_tol){ return true; }
-  return false;
+  return (sp - sp0).Length() < pick_tol;
 }
 
 bool isPickCircle
@@ -694,6 +690,4 @@ bool isPickCircle
   }
   return false;
 }
-
-/////////////////////////////////
 

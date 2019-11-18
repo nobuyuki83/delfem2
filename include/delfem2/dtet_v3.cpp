@@ -1142,7 +1142,7 @@ bool CheckTet(const std::vector<CETet>& tet)
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------
 
 class CNew
 {
@@ -1263,9 +1263,9 @@ std::vector<int>& tmp_buffer)
     }
 #ifndef NDEBUG
     { // assertion new is on the boundary
-      for (int inew = 0; inew<aNew.size(); ++inew){
-        int it0 = aNew[inew].it_old;
-        int ift0 = aNew[inew].ift_old;
+      for (auto & inew : aNew){
+        int it0 = inew.it_old;
+        int ift0 = inew.ift_old;
         assert(aSTet[it0].isInside(p_ins, aPo3D));
         const int jt0 = aSTet[it0].s[ift0];
         if (jt0==-1) continue;
@@ -1275,15 +1275,15 @@ std::vector<int>& tmp_buffer)
 #endif
   }
   { // put vertex index new
-    for (unsigned int inew = 0; inew<aNew.size(); ++inew){
-      const int it0 = aNew[inew].it_old;
-      const int ift0 = aNew[inew].ift_old;
+    for (auto & inew : aNew){
+      const int it0 = inew.it_old;
+      const int ift0 = inew.ift_old;
       const int ift1 = noelTetFace[ift0][0];
       const int ift2 = noelTetFace[ift0][1];
       const int ift3 = noelTetFace[ift0][2];
-      aNew[inew].iv[0] = aSTet[it0].v[ift1];
-      aNew[inew].iv[1] = aSTet[it0].v[ift2];
-      aNew[inew].iv[2] = aSTet[it0].v[ift3];
+      inew.iv[0] = aSTet[it0].v[ift1];
+      inew.iv[1] = aSTet[it0].v[ift2];
+      inew.iv[2] = aSTet[it0].v[ift3];
     }
   }
 #ifndef NDEBUG
@@ -1291,8 +1291,8 @@ std::vector<int>& tmp_buffer)
     for(unsigned int it=0;it<aSTet.size();++it){
       if( !aSTet[it].isActive() ) continue;
       bool is_old = false;
-      for(unsigned int iold=0;iold<aOld.size();++iold){
-        if( it == aOld[iold].it_old ){
+      for(auto & iold : aOld){
+        if( it == iold.it_old ){
           is_old = true;
           break;
         }
@@ -1306,12 +1306,12 @@ std::vector<int>& tmp_buffer)
   }
 #endif
   { // find adjancy of new
-    for (unsigned int inew = 0; inew<aNew.size(); ++inew){
+    for (size_t inew = 0; inew<aNew.size(); ++inew){
       for (int iedtri = 0; iedtri<3; ++iedtri){
         int i0 = aNew[inew].iv[(iedtri+1)%3];
         int i1 = aNew[inew].iv[(iedtri+2)%3];
         aNew[inew].inewsur[iedtri] = -1;
-        for (int jnew = 0; jnew<aNew.size(); ++jnew){
+        for (size_t jnew = 0; jnew<aNew.size(); ++jnew){
           for (int jedtri = 0; jedtri<3; ++jedtri){
             if (inew==jnew && iedtri==jedtri) continue;
             int j0 = aNew[jnew].iv[(jedtri+1)%3];
@@ -1330,7 +1330,7 @@ std::vector<int>& tmp_buffer)
     }
 #ifndef NDEBUG
     {// assertion relations between news
-      for (unsigned int inew = 0; inew<aNew.size(); ++inew){
+      for (size_t inew = 0; inew<aNew.size(); ++inew){
         for (int iedtri = 0; iedtri<3; ++iedtri){
           int iv0 = aNew[inew].iv[(iedtri+1)%3];
           int iv1 = aNew[inew].iv[(iedtri+2)%3];
@@ -1439,8 +1439,8 @@ std::vector<int>& tmp_buffer)
     aSTet[it_new].setCircumCenter(aPo3D);
   }
 
-  for (int inew = 0; inew<aNew.size(); ++inew){
-    int it_new = aNew[inew].it_new;
+  for (auto & inew : aNew){
+    int it_new = inew.it_new;
     for (int ivtet = 0; ivtet<4; ++ivtet){
       int ip = aSTet[it_new].v[ivtet];
       aPo3D[ip].e = it_new;
@@ -1461,8 +1461,8 @@ std::vector<int>& tmp_buffer)
 #endif
   
   /////
-  for (unsigned int iold = 0; iold<aOld.size(); ++iold){
-    const int it0 = aOld[iold].it_old;
+  for (auto & iold : aOld){
+    const int it0 = iold.it_old;
     tmp_buffer[it0*4+0] = -1;
     tmp_buffer[it0*4+1] = -1;
     tmp_buffer[it0*4+2] = -1;

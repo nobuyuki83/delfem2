@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include <math.h>
+#include <cstdlib>
+#include <cassert>
+#include <cmath>
 #include <vector>
 #include <complex>
 
@@ -320,7 +320,7 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
   ////////////////////////////////////////////////////////////////
 	else{	// lenBlk >= 4
     const int blksize = len*len;
-		double* pTmpBlk = new double [blksize];
+		auto* pTmpBlk = new double [blksize];
 		for(int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );

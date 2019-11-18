@@ -70,9 +70,9 @@ CVector3 CPointElemSurf::Pos_Tri
  const unsigned int* aTri, unsigned int nTri) const
 {
   assert(itri>=0&&itri<(int)nTri);
-  const int i0 = aTri[itri*3+0];
-  const int i1 = aTri[itri*3+1];
-  const int i2 = aTri[itri*3+2];
+  const unsigned int i0 = aTri[itri*3+0];
+  const unsigned int i1 = aTri[itri*3+1];
+  const unsigned int i2 = aTri[itri*3+2];
   const CVector3 p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
   const CVector3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
   const CVector3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
@@ -309,10 +309,7 @@ bool intersectRay_Tri3D
   r0 = v0/vt;
   r1 = v1/vt;
   const double r2 = v2/vt;
-  if( r0>0&&r1>0&&r2>0 ){
-    return true;
-  }
-  return false;
+  return r0 > 0 && r1 > 0 && r2 > 0;
 }
 
 // ---------------------------------------------------------------------------------
@@ -352,8 +349,7 @@ void IntersectionRay_MeshTri3DPart
  const std::vector<int>& aIndTri)
 {
   mapDepthPES.clear();
-  for(unsigned int iitri=0;iitri<aIndTri.size();++iitri){
-    const int itri = aIndTri[iitri];
+  for(int itri : aIndTri){
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
     const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
@@ -463,7 +459,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
  */
 
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------
 
 CPointElemSurf Nearest_Point_MeshTri3D
 (const CVector3& q,
@@ -501,8 +497,7 @@ CPointElemSurf Nearest_Point_MeshTri3DPart
 {
   double min_dist = -1;
   CPointElemSurf pes;
-  for(size_t iitri=0;iitri<aIndTri_Cand.size();++iitri){
-    const int itri0 = aIndTri_Cand[iitri];
+  for(int itri0 : aIndTri_Cand){
     const unsigned int i0 = aTri[itri0*3+0];
     const unsigned int i1 = aTri[itri0*3+1];
     const unsigned int i2 = aTri[itri0*3+2];
@@ -521,10 +516,7 @@ CPointElemSurf Nearest_Point_MeshTri3DPart
   return pes;
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------
 
 CPointElemSolid Nearest_Point_MeshTet3D
 (const CVector3& q,
@@ -602,7 +594,7 @@ CPointElemSurf Nearest_Point_MeshTetFace3D
   double dist_min=-1.0;
   int itf_min = -1;
   CVector3 p_min;
-  for(unsigned int itf=0;itf<aTetFaceSrf.size()/2;++itf){
+  for(size_t itf=0;itf<aTetFaceSrf.size()/2;++itf){
     int itet = aTetFaceSrf[itf*2+0];
     int iface = aTetFaceSrf[itf*2+1];
     const int i0 = aTet[itet*4+noelTetFace[iface][0]];
@@ -633,7 +625,7 @@ CPointElemSurf Nearest_Point_MeshTetFace3D
     double a0 = TriArea(p_min, q1,q2);
     double a1 = TriArea(p_min, q2,q0);
     double a2 = TriArea(p_min, q0,q1);
-    int inva = 1.0/(a0+a1+a2);
+    double inva = 1.0/(a0+a1+a2);
     a0 *= inva;
     a1 *= inva;
     a2 *= inva;

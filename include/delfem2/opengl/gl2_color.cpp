@@ -80,18 +80,14 @@ void DrawSingleQuad3D_Scalar_Vtx
   const double* aValVtx,
   const std::vector<std::pair<double, dfm2::CColor> >& colorMap)
 {
-  const int i0 = quad[0];
-  const int i1 = quad[1];
-  const int i2 = quad[2];
-  const int i3 = quad[3];
-  if (i0==-1){
-    assert(i1==-1); assert(i2==-1); assert(i3==-1);
-    return;
-  }
-  assert(i0>=0&&i0<(int)aXYZ.size()/3);
-  assert(i1>=0&&i1<(int)aXYZ.size()/3);
-  assert(i2>=0&&i2<(int)aXYZ.size()/3);
-  assert(i3>=0&&i3<(int)aXYZ.size()/3);
+  const unsigned int i0 = quad[0];
+  const unsigned int i1 = quad[1];
+  const unsigned int i2 = quad[2];
+  const unsigned int i3 = quad[3];
+  assert(i0<aXYZ.size()/3);
+  assert(i1<aXYZ.size()/3);
+  assert(i2<aXYZ.size()/3);
+  assert(i3<aXYZ.size()/3);
   const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
   const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
   const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -205,8 +201,8 @@ void delfem2::opengl::heatmap
 // -------------------------------------------------------------
 
 void delfem2::opengl::DrawMeshTri2D_ScalarP1
-(const double* aXY, int nXY,
- const unsigned int* aTri, int nTri,
+(const double* aXY, unsigned int nXY,
+ const unsigned int* aTri, unsigned int nTri,
  const double* paVal,
  int nstride,
  const std::vector< std::pair<double,CColor> >& colorMap)
@@ -216,10 +212,10 @@ void delfem2::opengl::DrawMeshTri2D_ScalarP1
   glShadeModel(GL_SMOOTH);
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;++itri){
-    const int ino0 = aTri[itri*3+0]; assert(ino0>=0&&ino0<nXY);
-    const int ino1 = aTri[itri*3+1]; assert(ino1>=0&&ino1<nXY);
-    const int ino2 = aTri[itri*3+2]; assert(ino2>=0&&ino2<nXY);
+  for(unsigned int itri=0;itri<nTri;++itri){
+    const unsigned int ino0 = aTri[itri*3+0]; assert(ino0<nXY);
+    const unsigned int ino1 = aTri[itri*3+1]; assert(ino1<nXY);
+    const unsigned int ino2 = aTri[itri*3+2]; assert(ino2<nXY);
     const double v0 = paVal[ino0*nstride];
     const double v1 = paVal[ino1*nstride];
     const double v2 = paVal[ino2*nstride];
@@ -291,9 +287,9 @@ void dfm2::opengl::DrawMeshElem3D_Scalar_Vtx
  const double* aValVtx,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
-  if( aElemInd.size() == 0 ) return;
-  /////
-  for(unsigned int ielem=0;ielem<aElemInd.size()-1;++ielem){
+  if( aElemInd.empty() ) return;
+  //
+  for(size_t ielem=0;ielem<aElemInd.size()-1;++ielem){
     const int ielemind0 = aElemInd[ielem];
     const int ielemind1 = aElemInd[ielem+1];
     if( ielemind1 - ielemind0 == 3 ){
@@ -426,31 +422,22 @@ void DrawMeshTri3DFlag_FaceNorm
 }
 
 
-//////////////////////////////////////////////////////////
+// -------------------------------------------------
 // tet from here
 
 // 3D value
 void dfm2::opengl::DrawMeshTet3D_ScalarP1
-(const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
+(const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTet, unsigned int nTet,
  const double* aValSrf,
  const std::vector<std::pair<double, CColor> >& colorMap)
 {
-  /////
   ::glBegin(GL_TRIANGLES);
-  for (int itri = 0; itri<nTet; ++itri){
-    const int i0 = aTet[itri*4+0];
-    const int i1 = aTet[itri*4+1];
-    const int i2 = aTet[itri*4+2];
-    const int i3 = aTet[itri*4+3];
-    if (i0==-1){
-      assert(i1==-1); assert(i2==-1);
-      continue;
-    }
-    assert(i0>=0&&i0<nXYZ);
-    assert(i1>=0&&i1<nXYZ);
-    assert(i2>=0&&i2<nXYZ);
-    assert(i3>=0&&i3<nXYZ);
+  for (unsigned itri = 0; itri<nTet; ++itri){
+    const unsigned int i0 = aTet[itri*4+0];    assert(i0<nXYZ);
+    const unsigned int i1 = aTet[itri*4+1];    assert(i1<nXYZ);
+    const unsigned int i2 = aTet[itri*4+2];    assert(i2<nXYZ);
+    const unsigned int i3 = aTet[itri*4+3];    assert(i3<nXYZ);
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -500,7 +487,7 @@ void dfm2::opengl::DrawMeshTet3D_Cut
   glColorMaterial(GL_FRONT, GL_DIFFUSE);
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(unsigned int itet=0;itet<aTet.size()/4;itet++){
+  for(size_t itet=0;itet<aTet.size()/4;itet++){
     const int ino0 = aTet[itet*4+0];
     const int ino1 = aTet[itet*4+1];
     const int ino2 = aTet[itet*4+2];
@@ -546,7 +533,7 @@ void dfm2::opengl::DrawMeshTet3D_Cut
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(unsigned int itet=0;itet<aTet.size()/4;itet++){
+  for(size_t itet=0;itet<aTet.size()/4;itet++){
     const int ino0 = aTet[itet*4+0];
     const int ino1 = aTet[itet*4+1];
     const int ino2 = aTet[itet*4+2];

@@ -10,13 +10,13 @@
  * @details this demo is for showing CViewer_GLFW funtinoalities
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 
-int main(void)
+int main()
 {
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();

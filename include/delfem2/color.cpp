@@ -100,7 +100,7 @@ void delfem2::heatmap(double input,double* color)
 
 CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap)
 {
-  if (colorMap.size()==0) return CColor::Black();
+  if (colorMap.empty()) return CColor::Black();
   if (input < colorMap[0].first){
     return colorMap[0].second;
   }
@@ -108,7 +108,7 @@ CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColo
     double val0 = colorMap[ic].first;
     double val1 = colorMap[ic+1].first;
     if (val0<=input&&input<=val1){
-      float rp = (float)((input-val0)/(val1-val0));
+      auto rp = (float)((input-val0)/(val1-val0));
       CColor color;
       delfem2::interpolateColor(color, rp, colorMap[ic].second, colorMap[ic+1].second);
       return color;
@@ -156,8 +156,8 @@ void delfem2::Write_Ply_Tri2DMesh_HeightColor
  const std::vector<double>& aVal,
  std::vector< std::pair<double,CColor> >& colorMap)
 {
-  const int np = aXY1.size()/2;
-  const int ntri = aTri1.size()/3;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int ntri = aTri1.size()/3;
   std::ofstream fout;
   fout.open(fname.c_str(),std::ios::out);
   fout << "ply" << std::endl;
@@ -172,7 +172,7 @@ void delfem2::Write_Ply_Tri2DMesh_HeightColor
   fout << "element face " << ntri << std::endl;
   fout << "property list uchar int vertex_indices" << std::endl;
   fout << "end_header" << std::endl;
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     double v = aVal[ip];
     CColor c = delfem2::getColor(v,colorMap);
     int cr, cg, cb;
@@ -180,7 +180,7 @@ void delfem2::Write_Ply_Tri2DMesh_HeightColor
     fout << aXY1[ip*2+0] << " " << aXY1[ip*2+1] << " " << v << " ";
     fout << cr << " " << cg << " " << cb << std::endl;
   }
-  for(int itri=0;itri<ntri;++itri){
+  for(unsigned int itri=0;itri<ntri;++itri){
     fout << "3 " << aTri1[itri*3+0] << " " << aTri1[itri*3+1] << " " << aTri1[itri*3+2] << std::endl;
   }
 }

@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <set>
-#include <math.h>
+#include <cmath>
+#include <algorithm>
 
 #include "delfem2/bvh.h"
 
@@ -34,7 +35,7 @@ void DevideElemAryConnex
   double x_min,x_max, y_min,y_max, z_min,z_max;
   {
     {
-      assert( list.size() > 0 );
+      assert( !list.empty() );
       int itri = list[0];
       assert( aElem2Node[itri] == iroot_node );
       double cgx = aElemCenter[itri*3+0];
@@ -160,7 +161,7 @@ void DevideElemAryConnex
     aElem2Node[itri] = inode_ch1;
     list_ch1.push_back(itri);
   }
-  assert( list_ch1.size() > 0 );
+  assert( !list_ch1.empty() );
   
   /////
   if( list_ch0.size() == 1 ){
@@ -221,9 +222,9 @@ std::uint32_t expandBits(std::uint32_t v)
 
 std::uint32_t delfem2::MortonCode(double x, double y, double z)
 {
-  std::uint32_t ix = (unsigned int)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
-  std::uint32_t iy = (unsigned int)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
-  std::uint32_t iz = (unsigned int)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
+  std::uint32_t ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
+  std::uint32_t iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
+  std::uint32_t iz = (std::uint32_t)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
     //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
   ix = expandBits(ix);
   iy = expandBits(iy);
@@ -393,7 +394,7 @@ void dfm2::BVH_TreeTopology_Morton
   aNodeBVH.resize(aSortedMc.size()*2-1);
   aNodeBVH[0].iroot = -1;
   const unsigned int nni = aSortedMc.size()-1; // number of internal node
-  for(int ini=0;ini<nni;++ini){
+  for(unsigned int ini=0;ini<nni;++ini){
     const std::pair<int,int> range = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, ini);
     int isplit = dfm2::findSplit(aSortedMc.data(), range.first, range.second);
     assert( isplit != -1 );

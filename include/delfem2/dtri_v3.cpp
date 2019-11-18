@@ -170,15 +170,15 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
   
     // Find the point that is the closest to the target point
   double minSquareDistance = 1.0e16;
-  for (unsigned int i = 0; i < intersectionPoints.size(); i++)
+  for (auto & i : intersectionPoints)
   {
     float currSquareDistance =
-    (intersectionPoints[i].x - targetPoint.x) * (intersectionPoints[i].x - targetPoint.x) +
-    (intersectionPoints[i].y - targetPoint.y) * (intersectionPoints[i].y - targetPoint.y) +
-    (intersectionPoints[i].z - targetPoint.z) * (intersectionPoints[i].z - targetPoint.z);
+    (i.x - targetPoint.x) * (i.x - targetPoint.x) +
+    (i.y - targetPoint.y) * (i.y - targetPoint.y) +
+    (i.z - targetPoint.z) * (i.z - targetPoint.z);
     if (currSquareDistance < minSquareDistance)
     {
-      intersectionPoint = intersectionPoints[i];
+      intersectionPoint = i;
       minSquareDistance = currSquareDistance;
     }
   }
@@ -208,8 +208,7 @@ bool dfm2::CheckTri
  const std::vector<ETri>& aSTri,
  const std::vector<CVector3>& aXYZ)
 {
-  for (unsigned int itri = 0; itri<aSTri.size(); itri++){
-    const ETri& ref_tri = aSTri[itri];
+  for (const auto & ref_tri : aSTri){
     const int i0 = ref_tri.v[0];
     if( i0 == -1 ) continue;
     const int i1 = ref_tri.v[1];
@@ -238,24 +237,19 @@ bool dfm2::FindRayTriangleMeshIntersections
 	intersectionPoints.clear();
   
 	// Find all the intersection points between this ray and all triangles in the mesh
-	for (unsigned int i = 0; i < aTri.size(); i++)
+	for (const auto & i : aTri)
 	{
 		CVector3 intersectionPoint;
 		if (isRayIntersectingTriangle(line0, line1,
-                                  aVec3[aTri[i].v[0]],
-                                  aVec3[aTri[i].v[1]],
-                                  aVec3[aTri[i].v[2]],
+                                  aVec3[i.v[0]],
+                                  aVec3[i.v[1]],
+                                  aVec3[i.v[2]],
                                   intersectionPoint))
 		{
 			intersectionPoints.push_back(intersectionPoint);
 		}
-	}  
-	if (intersectionPoints.empty())
-	{
-		return false;
-	} else {
-		return true;
-	}  
+	}
+  return !intersectionPoints.empty();
 }
 
 // -----------------------------------------------------------------
@@ -285,7 +279,7 @@ bool dfm2::DelaunayAroundPoint
       // check opposing element
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
       const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const int inotri_dia = rel_dia[inotri_cur];
+      const unsigned int inotri_dia = rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],

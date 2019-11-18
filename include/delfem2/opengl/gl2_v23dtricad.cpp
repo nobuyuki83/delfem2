@@ -29,10 +29,10 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
 {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_TRIANGLES);
-  for (unsigned int itri=0; itri<aSTri.size(); ++itri){
-    const int i0 = aSTri[itri].v[0];
-    const int i1 = aSTri[itri].v[1];
-    const int i2 = aSTri[itri].v[2];
+  for (const auto & itri : aSTri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
     if( i0 == -1 ){
       assert( i1 == -1 );
       assert( i2 == -1 );
@@ -56,10 +56,10 @@ void dfm2::opengl::DrawMeshDynTri_Edge
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for (unsigned int itri = 0; itri<aSTri.size(); ++itri){
-    const int i0 = aSTri[itri].v[0];
-    const int i1 = aSTri[itri].v[1];
-    const int i2 = aSTri[itri].v[2];
+  for (const auto & itri : aSTri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
     if( i0 == -1 ){
       assert( i1 == -1 );
       assert( i2 == -1 );
@@ -84,10 +84,10 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
   ::glEnable(GL_LIGHTING);
   //  ::myGlColorDiffuse(CColor::Orange());
   ::glBegin(GL_TRIANGLES);
-  for (unsigned int itri=0; itri<aSTri.size(); ++itri){
-    const int i0 = aSTri[itri].v[0];
-    const int i1 = aSTri[itri].v[1];
-    const int i2 = aSTri[itri].v[2];
+  for (const auto & itri : aSTri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
     if( i0 == -1 ){
       assert( i1 == -1 );
       assert( i2 == -1 );
@@ -121,10 +121,10 @@ void dfm2::opengl::DrawMeshDynTri_Edge
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for (unsigned int itri = 0; itri<aSTri.size(); ++itri){
-    const int i0 = aSTri[itri].v[0];
-    const int i1 = aSTri[itri].v[1];
-    const int i2 = aSTri[itri].v[2];
+  for (const auto & itri : aSTri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
     if( i0 == -1 ){
       assert( i1 == -1 );
       assert( i2 == -1 );
@@ -151,10 +151,10 @@ void dfm2::opengl::DrawMeshDynTri3D_Edge
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for (unsigned int itri = 0; itri<aSTri.size(); ++itri){
-    const int i0 = aSTri[itri].v[0];
-    const int i1 = aSTri[itri].v[1];
-    const int i2 = aSTri[itri].v[2];
+  for (const auto & itri : aSTri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
     if( i0 == -1 ){
       assert( i1 == -1 );
       assert( i2 == -1 );
@@ -180,12 +180,12 @@ void dfm2::opengl::Draw_CCad2DEdge
   else{ ::glColor3d(0,0,0); }
   ::glBegin(GL_LINE_STRIP);
   dfm2::opengl::myGlVertex( edge.p0 );
-  for(unsigned int ip=0;ip<edge.aP.size();++ip){
-    dfm2::opengl::myGlVertex( edge.aP[ip] );
+  for(const auto & ip : edge.aP){
+    dfm2::opengl::myGlVertex( ip );
   }
   dfm2::opengl::myGlVertex( edge.p1 );
   ::glEnd();
-  ////
+  //
   if( is_selected ){
     if( edge.type_edge == 1 ){
       assert( edge.param.size() == 4 );
@@ -228,15 +228,15 @@ void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
   ::glDisable(GL_LIGHTING);
   ::glPointSize(6);
   ::glBegin(GL_POINTS);
-  for(unsigned int iv=0;iv<aVtx.size();++iv){
+  for(size_t iv=0;iv<aVtx.size();++iv){
     if( (int)iv == ivtx_picked ){ ::glColor3d(1,1,0); }
     else{ ::glColor3d(1,0,0); }
     ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
   }
   ::glEnd();
-  /////
+  //
   ::glLineWidth(3);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
+  for(size_t ie=0;ie<aEdge.size();++ie){
     Draw_CCad2DEdge(aEdge[ie],
                     (int)ie == iedge_picked,
                     ipicked_elem);
@@ -245,7 +245,7 @@ void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
   if( is_draw_face ){
     ::glLineWidth(1);
     glTranslated(0,0,-0.2);
-    for(unsigned int iface=0;iface<aFace.size();++iface){
+    for(size_t iface=0;iface<aFace.size();++iface){
       const dfm2::CCad2D_FaceGeo& face = aFace[iface];
       if( (int)iface == iface_picked ){ ::glColor3d(1,1,0); }
       else{ ::glColor3d(0.8,0.8,0.8); }
