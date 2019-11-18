@@ -1,5 +1,8 @@
-project(42_fem2d_linearsolid)
 cmake_minimum_required(VERSION 2.8)
+project(42_fem2d_linearsolid)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

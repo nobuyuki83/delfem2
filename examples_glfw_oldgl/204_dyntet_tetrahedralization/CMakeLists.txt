@@ -1,5 +1,5 @@
-project(204_dyntet_tetrahedralization)
 cmake_minimum_required(VERSION 2.8)
+project(204_dyntet_tetrahedralization)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(APPLE)
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
   find_library( COCOA_LIBRARY Cocoa )

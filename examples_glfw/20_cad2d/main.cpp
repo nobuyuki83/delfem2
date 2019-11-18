@@ -91,7 +91,7 @@ int main(void)
   viewer.shdr_cad.MakeBuffer(viewer.cad);
   
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg((em_arg_callback_func) draw, window, 60, 1);
+  emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
   while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }
 #endif
