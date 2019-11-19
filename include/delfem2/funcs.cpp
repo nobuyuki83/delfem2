@@ -572,7 +572,7 @@ bool dfm2::LoadNumpy_1DimF
  const std::string& path)
 {
   FILE* fp = fopen(path.c_str(),"r");
-  if( fp == NULL ) { return false; }
+  if( fp == nullptr ) { return false; }
   
   NPY npy;
   size_t n0 = fread(&npy, sizeof(npy), 1, fp);
@@ -620,7 +620,7 @@ bool GetFileContents
 (std::vector<char>& aC,
  const std::string& fpath)
 {
-  FILE* fp = NULL;
+  FILE* fp = nullptr;
   size_t size;
   
   fp = fopen(fpath.c_str(), "rb");
@@ -666,8 +666,8 @@ void XML_SeparateTagContent
       s++;
     }
   }
-  for(unsigned int is=0;is<aStr.size();++is){
-    aStr[is] = RemoveBeginning(aStr[is], " ");
+  for(auto & is : aStr){
+    is = RemoveBeginning(is, " ");
   }
 }
 
@@ -677,8 +677,8 @@ void ParseAttributes
  const std::string& input)
 {
   std::vector<std::string> aS = Split_Quote(input, ' ', '\"' );
-  for(unsigned int is=0;is<aS.size();++is){
-    std::vector<std::string> aS1 = Split(aS[is], '=');
+  for(const auto & is : aS){
+    std::vector<std::string> aS1 = Split(is, '=');
     assert( aS1.size() == 2 );
     std::string s1 = Remove_Quote(aS1[1], '\"');
     mapAttr.insert( std::make_pair(aS1[0],s1) );
@@ -722,7 +722,7 @@ std::string Str_SVGPolygon
   oss << "<?xml version=\"1.0\"?>\n";
   oss << "<svg xmlns=\"http://www.w3.org/2000/svg\">\n";
   oss << "<polygon points=\"";
-  for(unsigned int ixy=0;ixy<aXY.size()/2;++ixy){
+  for(size_t ixy=0;ixy<aXY.size()/2;++ixy){
     double x0 = +aXY[ixy*2+0]*scale;
     double y0 = -aXY[ixy*2+1]*scale;
     oss << x0 << "," << y0 << " ";

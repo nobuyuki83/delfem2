@@ -82,10 +82,8 @@ unsigned int EBO_Tri;
 
 void draw(GLFWwindow* window)
 {
-  float ratio;
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
-  ratio = width / (float) height;
   glViewport(0, 0, width, height);
   
   ::glClearColor(0.8, 1.0, 1.0, 1.0);
@@ -114,7 +112,7 @@ void callback_resize(GLFWwindow* window, int width, int height)
 
 
 
-int main(void)
+int main()
 {
   GLFWwindow* window = myGLFW_OpenWindow(800,600);
   glfwMakeContextCurrent(window);

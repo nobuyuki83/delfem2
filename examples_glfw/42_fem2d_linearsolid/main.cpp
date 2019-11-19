@@ -107,14 +107,17 @@ void MakeRandomCV(unsigned int nCV, std::vector<double>& aCV)
 }
 
 
-void MakeCurveSpline(const std::vector<double>& aCV, std::vector<double>& aVecCurve, int ndiv=5)
+void MakeCurveSpline(
+    const std::vector<double>& aCV,
+    std::vector<double>& aVecCurve,
+    unsigned int ndiv=5)
 {
   aVecCurve.resize(0);
   const unsigned int nCV = aCV.size()/2;
   for(unsigned int icv=0;icv<nCV;icv++){
-    int icv0=(icv+0)%nCV;
-    int icv1=(icv+1)%nCV;
-    int icv2=(icv+2)%nCV;
+    unsigned int icv0=(icv+0)%nCV;
+    unsigned int icv1=(icv+1)%nCV;
+    unsigned int icv2=(icv+2)%nCV;
     const double p0[2] = { aCV[icv0*2+0], aCV[icv0*2+1] };
     const double p1[2] = { aCV[icv1*2+0], aCV[icv1*2+1] };
     const double p2[2] = { aCV[icv2*2+0], aCV[icv2*2+1] };

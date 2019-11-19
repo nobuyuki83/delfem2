@@ -24,7 +24,7 @@ void AddWdW_Cloth
  )
 {
   // marge element in-plane strain energy
-  for(int itri=0;itri<aTri.size()/3;itri++){
+  for(size_t itri=0;itri<aTri.size()/3;itri++){
     const unsigned int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
     double C[3][3]; double c[3][3];
     for(int ino=0;ino<3;ino++){
@@ -42,7 +42,7 @@ void AddWdW_Cloth
     }
   }
   // marge element bending energy
-  for(int iq=0;iq<aQuad.size()/4;iq++){
+  for(size_t iq=0;iq<aQuad.size()/4;iq++){
     const unsigned int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
     double C[4][3]; double c[4][3];
     for(int ino=0;ino<4;ino++){
@@ -131,7 +131,7 @@ void StepTime_InternalDynamics
   for(int i=0;i<nDof;i++){
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
-  for(int ip=0;ip<np;ip++){
+  for(unsigned int ip=0;ip<np;ip++){
     mat_A.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
     mat_A.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
     mat_A.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
@@ -199,10 +199,10 @@ void StepTime_InternalDynamicsILU
 //  std::cout << "energy : " << W << std::endl;
   // compute coefficient matrix and left-hand-side vector
   // Back-ward Eular time integration
-  for(int i=0;i<nDof;i++){
+  for(unsigned int i=0;i<nDof;i++){
     vec_b[i] = -vec_b[i] + mass_point*aUVW[i]/dt;
   }
-  for(int ip=0;ip<np;ip++){
+  for(unsigned int ip=0;ip<np;ip++){
     mat_A.valDia[ip*9+0*3+0] += mass_point / (dt*dt);
     mat_A.valDia[ip*9+1*3+1] += mass_point / (dt*dt);
     mat_A.valDia[ip*9+2*3+2] += mass_point / (dt*dt);
@@ -222,12 +222,12 @@ void StepTime_InternalDynamicsILU
             conv_ratio, iteration, mat_A,ilu_A);
 //  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position
-  for(int i=0;i<nDof;i++){
+  for(unsigned int i=0;i<nDof;i++){
     if( aBCFlag[i] != 0 ) continue;
     aXYZ[i] += vec_x[i];
   }
   // update velocity
-  for(int i=0;i<nDof;i++){
+  for(unsigned int i=0;i<nDof;i++){
     if( aBCFlag[i] != 0 ) continue;
     aUVW[i] = vec_x[i]/dt;
   }

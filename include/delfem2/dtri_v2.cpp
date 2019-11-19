@@ -26,14 +26,14 @@ bool LaplacianArroundPoint
   assert( itri_ini < aTri.size() );
   assert( inoel_c_ini < 3 );
   assert( aTri[itri_ini].v[inoel_c_ini] == ipoin );
-  int itri0 = itri_ini;
-  int inoel_c0 = inoel_c_ini;
-  int inoel_b0 = (inoel_c0+1)%3;
+  unsigned int itri0 = itri_ini;
+  unsigned int inoel_c0 = inoel_c_ini;
+  unsigned int inoel_b0 = (inoel_c0+1)%3;
   bool is_bound_flg = false;
   CVector2 vec_delta = aVec2[ipoin];
   unsigned int ntri_around = 1;
   for(;;){
-    assert( itri0 < (int)aTri.size() );
+    assert( itri0 <  aTri.size() );
     assert( inoel_c0 < 3 );
     assert( aTri[itri0].v[inoel_c0] == ipoin );
     {
@@ -44,10 +44,10 @@ bool LaplacianArroundPoint
     if( aTri[itri0].s2[inoel_b0] >= 0 ){
       const int itri1 = aTri[itri0].s2[inoel_b0];
       const int rel01 = (int)aTri[itri0].r2[inoel_b0];
-      const int inoel_c1 = dfm2::relTriTri[rel01][inoel_c0];
+      const unsigned int inoel_c1 = dfm2::relTriTri[rel01][inoel_c0];
       unsigned int inoel_b1 = dfm2::relTriTri[rel01][ (inoel_c0+2)%3 ];
       assert( itri1 < (int)aTri.size() );
-      assert( aTri[itri1].s2[ dfm2::relTriTri[rel01][inoel_b0] ] == itri0 );
+      assert( aTri[itri1].s2[ dfm2::relTriTri[rel01][inoel_b0] ] == (int)itri0 );
       assert( aTri[itri1].v[inoel_c1] == ipoin );
       if( itri1 == (int)itri_ini ) break;
       itri0 = itri1;

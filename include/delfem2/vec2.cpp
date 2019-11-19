@@ -1081,9 +1081,10 @@ void FixLoopOrientation
  const std::vector<CVector2>& aXY)
 {
   const std::vector<int> loop_old = loopIP;
-  const int nloop = loopIP_ind.size()-1;
+  assert( loopIP_ind.size()>1 );
+  const unsigned int nloop = loopIP_ind.size()-1;
   int ivtx0 = 0;
-  for(int iloop=0;iloop<nloop;iloop++){
+  for(unsigned int iloop=0;iloop<nloop;iloop++){
     double area_loop = 0;
     { // area of this loop
       CVector2 vtmp(0,0);
