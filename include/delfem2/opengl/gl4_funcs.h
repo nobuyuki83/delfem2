@@ -58,7 +58,7 @@ public:
   void Add_EBO(const std::vector<unsigned int>& aTri,
                int GL_MODE);
   void Delete_EBOs(){
-    for(int ie=0;ie<aEBO.size();++ie){
+    for(size_t ie=0;ie<aEBO.size();++ie){
        unsigned int ebo = aEBO[ie].EBO;
        if( glIsBuffer(ebo) ){ glDeleteBuffers(1,&ebo); }
      }

@@ -130,8 +130,8 @@ void dfm2::CMatrixSparse<double>::MatVec
         y[i0+3] += alpha*(vcrs[k0+12]*x[j0+0]+vcrs[k0+13]*x[j0+1]+vcrs[k0+14]*x[j0+2]+vcrs[k0+15]*x[j0+3]);
       }
       {
-        const int i0 = iblk*4;
-        const int k0 = iblk*16;
+        const unsigned int i0 = iblk*4;
+        const unsigned int k0 = iblk*16;
         y[i0+0] += alpha*(vdia[k0+ 0]*x[i0+0]+vdia[k0+ 1]*x[i0+1]+vdia[k0+ 2]*x[i0+2]+vdia[k0+ 3]*x[i0+3]);
         y[i0+1] += alpha*(vdia[k0+ 4]*x[i0+0]+vdia[k0+ 5]*x[i0+1]+vdia[k0+ 6]*x[i0+2]+vdia[k0+ 7]*x[i0+3]);
         y[i0+2] += alpha*(vdia[k0+ 8]*x[i0+0]+vdia[k0+ 9]*x[i0+1]+vdia[k0+10]*x[i0+2]+vdia[k0+11]*x[i0+3]);
@@ -306,15 +306,15 @@ void SetMasterSlave
       }
     }
   }
-  /////
+  // ---------------------------------------------
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
       const int jblk1 = mat.rowPtr[icrs];
       for(unsigned int jdim=0;jdim<len;jdim++){
-        int idof0 = aMSFlag[jblk1*len+jdim];
-        if( idof0 == -1 ) continue;
+        if( aMSFlag[jblk1*len+jdim] == -1 ) continue;
+        unsigned int idof0 = aMSFlag[jblk1*len+jdim];
         for(unsigned int idim=0;idim<len;idim++){
-          int idof1 = iblk*len+idim;
+          unsigned int idof1 = iblk*len+idim;
           if( idof0 != idof1 ){ mat.valCrs[icrs*blksize+idim*len+jdim] = +0.0; }
           else{                 mat.valCrs[icrs*blksize+idim*len+jdim] = -1.0; }
           mat.valCrs[icrs*blksize+idim*len+jdim] = +0.0;
@@ -907,8 +907,8 @@ double CheckSymmetry(const dfm2::CMatrixSparse<double>& mat)
 {
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );
-  const int blksize = mat.len_col*mat.len_row;
-  const int nlen = mat.len_col;
+  const unsigned int blksize = mat.len_col*mat.len_row;
+  const unsigned int nlen = mat.len_col;
   ////
   double sum = 0;
   for(unsigned int ino=0;ino<mat.nblk_col;++ino){

@@ -966,7 +966,7 @@ std::vector<int> getPointsInEdges
  const std::vector<CCad3D_Edge>& aEdge)
 {
   std::vector<int> aIP;
-  for(unsigned int iie=0;iie<aIE_picked.size()+1;++iie){
+  for(size_t iie=0;iie<aIE_picked.size()+1;++iie){
     int iv0;
     if( iie != aIE_picked.size() ){
       int ie0 = aIE_picked[iie].first;
@@ -1525,8 +1525,7 @@ bool CCad3D::MouseMotion
         CVector3 d = r*axis;
         plane_org += d;
         std::vector<int> aIP = getPointsInEdges(aIE_picked, aEdge);
-        for(unsigned int iip=0;iip<aIP.size();++iip){
-          int ip0 = aIP[iip];
+        for(int ip0 : aIP){
           aVertex[ip0].pos += d;
           aIsMoved_Vtx[ip0] = 1;
         }

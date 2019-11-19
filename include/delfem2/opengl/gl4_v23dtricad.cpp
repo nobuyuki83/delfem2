@@ -30,10 +30,10 @@ void AddLine
  const std::vector<float>& aXY0f,
  const std::vector<unsigned int>& aLine)
 {
-  const int npl = aLine.size();
-  const int icnt_p0 = aPxyNxyf.size()/8;
+  const size_t npl = aLine.size();
+  const size_t icnt_p0 = aPxyNxyf.size()/8;
   aPxyNxyf.resize(aPxyNxyf.size()+npl*8,0.0);
-  for(int ipl=0;ipl<npl;++ipl){
+  for(unsigned int ipl=0;ipl<npl;++ipl){
     aPxyNxyf[(icnt_p0+ipl)*8+0] = aXY0f[aLine[ipl]*2+0];
     aPxyNxyf[(icnt_p0+ipl)*8+1] = aXY0f[aLine[ipl]*2+1];
     aPxyNxyf[(icnt_p0+ipl)*8+2] = 0.0;
@@ -43,8 +43,8 @@ void AddLine
     aPxyNxyf[(icnt_p0+ipl)*8+6] = 0.0;
     aPxyNxyf[(icnt_p0+ipl)*8+7] = 0.0;
   }
-  const int nseg = aLine.size()-1;
-  for(int iseg=0;iseg<nseg;++iseg){
+  const size_t nseg = aLine.size()-1;
+  for(size_t iseg=0;iseg<nseg;++iseg){
     const int i0 = aLine[iseg+0];
     const int i1 = aLine[iseg+1];
     double v01x = aXY0f[i1*2+0] - aXY0f[i0*2+0];
@@ -61,7 +61,7 @@ void AddLine
     aPxyNxyf[(icnt_p0+iseg+1)*8+6] += -n01x;
     aPxyNxyf[(icnt_p0+iseg+1)*8+7] += -n01y;
   }
-  for(int ipl=0;ipl<npl*2;++ipl){
+  for(unsigned ipl=0;ipl<npl*2;++ipl){
     double nx0 = aPxyNxyf[icnt_p0*8+ipl*4+2];
     double ny0 = aPxyNxyf[icnt_p0*8+ipl*4+3];
     double len = sqrt(nx0*nx0+ny0*ny0);
@@ -71,9 +71,9 @@ void AddLine
   const unsigned int iatri = aaTri.size();
   aaTri.resize(aaTri.size()+1);
   aaTri[iatri].resize(nseg*2*3);
-  for(int iseg=0;iseg<nseg;++iseg){
-    int i0 = icnt_p0+iseg+0;
-    int i1 = icnt_p0+iseg+1;
+  for(unsigned int iseg=0;iseg<nseg;++iseg){
+    const size_t i0 = icnt_p0+iseg+0;
+    const size_t i1 = icnt_p0+iseg+1;
     aaTri[iatri][iseg*6+0] = i0*2+0;
     aaTri[iatri][iseg*6+1] = i0*2+1;
     aaTri[iatri][iseg*6+2] = i1*2+0;
@@ -94,7 +94,7 @@ void AddPoint
   const unsigned int npa = ndiv+1;
   aPxyNxyf.resize(np0*4+npa*4);
   const double rdiv = 2.0*3.14156/ndiv;
-  for(int ipa=0;ipa<npa;++ipa){
+  for(unsigned int ipa=0;ipa<npa;++ipa){
     if( ipa == 0 ){
       aPxyNxyf[np0*4+ipa*4+0] = x0;
       aPxyNxyf[np0*4+ipa*4+1] = y0;
@@ -110,7 +110,7 @@ void AddPoint
   }
   unsigned int itria0 = aaTri.size();
   aaTri.resize(aaTri.size()+1);
-  for(int idiv=0;idiv<ndiv;++idiv){
+  for(size_t idiv=0;idiv<ndiv;++idiv){
     aaTri[itria0].push_back(np0);
     aaTri[itria0].push_back(np0+1+(idiv+0)%ndiv);
     aaTri[itria0].push_back(np0+1+(idiv+1)%ndiv);
@@ -161,15 +161,15 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
   { // point and edges
     std::vector<float> aPxyNxyf;
     std::vector< std::vector<unsigned int>> aaTri;
-    for(int iv=0;iv<cad.aVtx.size();++iv){
+    for(const auto & iv : cad.aVtx){
       AddPoint(aPxyNxyf, aaTri,
-               cad.aVtx[iv].pos.x,
-               cad.aVtx[iv].pos.y,
+               iv.pos.x,
+               iv.pos.y,
                16);
     }
-    for(int il=0;il<aaLine.size();++il){
+    for(const auto & il : aaLine){
       AddLine(aPxyNxyf,aaTri,
-              aXY0f,aaLine[il]);
+              aXY0f,il);
     }
     if( !glIsVertexArray(vao_edge.VAO) ){ glGenVertexArrays(1, &vao_edge.VAO); }
     glBindVertexArray(vao_edge.VAO);
@@ -188,13 +188,13 @@ void dfm2::opengl::CShader_Cad2D::MakeBuffer(const CCad2D& cad)
      */
     ///
     vao_edge.Delete_EBOs();
-    for(int il=0;il<aaTri.size();++il){
+    for(auto & il : aaTri){
       unsigned int EBO_Tri;
       glGenBuffers(1, &EBO_Tri);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_Tri);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*aaTri[il].size(), aaTri[il].data(), GL_STATIC_DRAW);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*il.size(), il.data(), GL_STATIC_DRAW);
       CGL4_VAO_Mesh::CEBO e0;
-      e0.size = aaTri[il].size();
+      e0.size = il.size();
       e0.GL_MODE = GL_TRIANGLES;
       e0.EBO = EBO_Tri;
       vao_edge.aEBO.push_back(e0);
@@ -330,15 +330,15 @@ void dfm2::opengl::CShader_Cad2D::Draw
   const int nv = cad.aVtx.size();
   /////
   glUniform1f(shdr1_Loc_LineWidth, view_height*0.04);
-  for(unsigned int iv=0;iv<cad.aVtx.size();++iv){
-    if( iv == ipicked_iv ){ glUniform3f(shdr1_Loc_Color, 1.0f,0.9f,0.f); }
+  for(size_t iv=0;iv<cad.aVtx.size();++iv){
+    if( (int)iv == ipicked_iv ){ glUniform3f(shdr1_Loc_Color, 1.0f,0.9f,0.f); }
     else{                   glUniform3f(shdr1_Loc_Color, 1.f,0.f,0.f); }
     vao_edge.Draw(iv);
   }
   ///
   glUniform1f(shdr1_Loc_LineWidth, view_height*0.02);
-  for(unsigned int ie=0;ie<cad.aEdge.size();++ie){
-    if( ie == ipicked_ie ){ glUniform3f(shdr1_Loc_Color, 1.0f,0.9f,0.f); }
+  for(size_t ie=0;ie<cad.aEdge.size();++ie){
+    if( (int)ie == ipicked_ie ){ glUniform3f(shdr1_Loc_Color, 1.0f,0.9f,0.f); }
     else{                   glUniform3f(shdr1_Loc_Color, 0.f,0.f,0.f); }
     vao_edge.Draw(nv+ie);
   }
@@ -361,24 +361,24 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
   std::vector<unsigned int> aLine;
   {
     aXYf.resize(aVec2.size()*2);
-    for(int iv=0;iv<aVec2.size();++iv){
+    for(size_t iv=0;iv<aVec2.size();++iv){
       aXYf[iv*2+0] = aVec2[iv].x;
       aXYf[iv*2+1] = aVec2[iv].y;
     }
     aTri.resize(aETri.size()*3);
-    for(int it=0;it<aETri.size();++it){
+    for(size_t it=0;it<aETri.size();++it){
       aTri[it*3+0] = aETri[it].v[0];
       aTri[it*3+1] = aETri[it].v[1];
       aTri[it*3+2] = aETri[it].v[2];
     }
     aLine.reserve(aTri.size()*1.5*1.1);
-    for(int it=0;it<aETri.size();++it){
-      int i0 = aETri[it].v[0];
-      int i1 = aETri[it].v[1];
-      int i2 = aETri[it].v[2];
-      if( aETri[it].s2[0] == -1 || i2 > i1 ){ aLine.push_back(i1); aLine.push_back(i2); }
-      if( aETri[it].s2[1] == -1 || i0 > i2 ){ aLine.push_back(i2); aLine.push_back(i0); }
-      if( aETri[it].s2[2] == -1 || i1 > i0 ){ aLine.push_back(i0); aLine.push_back(i1); }
+    for(const auto & it : aETri){
+      int i0 = it.v[0];
+      int i1 = it.v[1];
+      int i2 = it.v[2];
+      if( it.s2[0] == -1 || i2 > i1 ){ aLine.push_back(i1); aLine.push_back(i2); }
+      if( it.s2[1] == -1 || i0 > i2 ){ aLine.push_back(i2); aLine.push_back(i0); }
+      if( it.s2[2] == -1 || i1 > i0 ){ aLine.push_back(i0); aLine.push_back(i1); }
     }
   }
   // ----------
