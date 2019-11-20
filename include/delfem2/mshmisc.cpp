@@ -148,7 +148,7 @@ void RemoveUnreferencedPoints_MeshElem
     }
   }
   aElem1.resize(aElem0.size());
-  for(size_t it=0;it<aElem0.size();++it){
+  for(std::size_t it=0;it<aElem0.size();++it){
     int ip = aElem0[it];
     int jp = aMap01[ip];
     aElem1[it] = jp;
@@ -266,7 +266,7 @@ void MinMaxXYZ(double mm[6],
 {
   mm[0] = +1;
   mm[1] = -1;
-  for(size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+  for(std::size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
     updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
                     aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
   }
@@ -520,7 +520,7 @@ const std::vector<int>& aTri)
   cgy = 0.0;
   cgz = 0.0;
   double tw = 0;
-  for (size_t itri = 0; itri<aTri.size()/3; itri++){
+  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
@@ -548,7 +548,7 @@ void CenterOfGravity_Shell
   cgy = 0.0;
   cgz = 0.0;
   double tw = 0;
-  for (size_t itri = 0; itri<aTri.size()/3; itri++){
+  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
@@ -578,7 +578,7 @@ double CenterOfGravity_TriMsh3DFlg_Shell
   cgy = 0.0;
   cgz = 0.0;
   double tw = 0;
-  for (size_t itri = 0; itri<aTri.size()/3; itri++){
+  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     if( aFlg[itri] != iflg ) continue;
     const unsigned int i1 = aTri[itri*3+0];
     const unsigned int i2 = aTri[itri*3+1];
@@ -700,7 +700,7 @@ void LaplacianSmoothing
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
-  for(size_t ip=0;ip<aXYZ.size()/3;++ip){
+  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
     double sum_area = 0.0;
     double pcnt[3] = {0,0,0};
     for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
@@ -1123,7 +1123,7 @@ void CenterOfGravity_Tet
   cgz = 0.0;
   v_tot = 0;
   const double* pXYZ = aXYZC.data();
-  for(size_t it=0;it<aTetC.size()/4;++it){
+  for(std::size_t it=0;it<aTetC.size()/4;++it){
     const double* p0 = pXYZ+aTetC[it*4+0]*3;
     const double* p1 = pXYZ+aTetC[it*4+1]*3;
     const double* p2 = pXYZ+aTetC[it*4+2]*3;
