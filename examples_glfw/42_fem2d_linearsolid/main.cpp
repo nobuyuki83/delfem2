@@ -234,7 +234,7 @@ void InitializeProblem()
   const int nDoF = np*2;
   aBCFlag.assign(nDoF, 0);
   for(int ip=0;ip<np;++ip){
-    const double px = aXY1[ip*2+0];
+//    const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(py-len) < 0.0001 ){
       aBCFlag[ip*2+0] = 1;

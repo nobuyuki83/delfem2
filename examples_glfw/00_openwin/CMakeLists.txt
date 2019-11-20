@@ -1,15 +1,27 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(00_openwin)
+# compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
+option(EMSCRIPTEN "Use Emscripten:" OFF)
+
+##########################################
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-add_executable(${PROJECT_NAME} main.cpp)
+IF(NOT EMSCRIPTEN)
+  IF(MSVC)
+  ELSE()
+    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  ENDIF()
+ENDIF()
 
+##########################################
 
-# compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
+project(00_openwin)
 
-option(EMSCRIPTEN "Use Emscripten:" OFF)
+add_executable(${PROJECT_NAME}
+  main.cpp
+)
+
 if (NOT EMSCRIPTEN)
   set(GLFW_DIR "../../src_cpp/external/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE) # get absolute path
@@ -20,14 +32,12 @@ if (NOT EMSCRIPTEN)
     ${DELFEM2_INCLUDE_DIR}
   )
   IF(APPLE)
-    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
     find_library( COCOA_LIBRARY Cocoa )
     find_library( OpenGL_LIBRARY OpenGL )
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
     SET( EXTRA_LIBS ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY} )
   ELSEIF(UNIX)
-    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
     SET( EXTRA_LIBS   -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp )
   ENDIF()
   target_link_libraries(${PROJECT_NAME} 

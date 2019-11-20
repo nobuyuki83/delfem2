@@ -1,8 +1,20 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(10_imgui_sampledemo)
+
+#####################################
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+IF(NOT EMSCRIPTEN)
+  IF(MSVC)
+    set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
+  ELSE()
+    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  ENDIF()
+ENDIF()
+
+######################################
+
+project(10_imgui_sampledemo)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED CONFIG)
