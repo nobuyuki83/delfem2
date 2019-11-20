@@ -41,7 +41,7 @@ int main(int argc,char* argv[])
     const std::vector<unsigned int>& aQuad0 = aaQuad[il];
     std::vector<unsigned int>& aQuad1 = aaQuad[il+1];
     std::vector<int> aEdgeFace0;
-    std::vector<int> psupIndQuad0, psupQuad0;
+    std::vector<unsigned int> psupIndQuad0, psupQuad0;
     QuadSubdiv(aQuad1,
                psupIndQuad0,psupQuad0, aEdgeFace0,
                aQuad0.data(), aQuad0.size()/4,

@@ -22,8 +22,8 @@ void stepTime
  std::vector<double>& aTmp,
  double dt,
  int nitr,
- const std::vector<int>& clstr_ind,
- const std::vector<int>& clstr,
+ const std::vector<unsigned int>& clstr_ind,
+ const std::vector<unsigned int>& clstr,
  const std::vector<int>& aBC,
  const std::vector<unsigned int>& aQuad,
  const std::vector<double>& aXY0)
@@ -66,10 +66,10 @@ std::vector<double> aXY1;
 std::vector<double> aUV1;
 std::vector<double> aXYt;
 std::vector<unsigned int> aQuad;
-std::vector<int> clstr_ind, clstr;
+std::vector<unsigned int> clstr_ind, clstr;
 std::vector<int> aBC;
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   {
     int viewport[8];
@@ -113,7 +113,7 @@ int main(int argc,char* argv[])
   aXYt = aXY0;
   aUV1.resize(aXY0.size());
   
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aQuad.data(), aQuad.size()/4, 4,
                                               aXY0.size()/2);

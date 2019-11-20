@@ -19,9 +19,9 @@ namespace dfm2 = delfem2;
 // ----------------------------------------------------
 
 static void CalcMatPr(double* out, const double* d, double* tmp,
-                      const int ni, const int nj )
+                      const unsigned int ni, const unsigned int nj )
 {
-	int i,j,k;
+	unsigned int i,j,k;
 	for(i=0;i<ni;i++){
 		for(j=0;j<nj;j++){
 			tmp[i*nj+j] = 0.0;
@@ -125,8 +125,8 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
   const int nmax_sing = 10;
 	int icnt_sing = 0;
   
-	const int len = mat.len_col;
-  const int nblk = mat.nblk_col;
+	const unsigned int len = mat.len_col;
+  const unsigned int nblk = mat.nblk_col;
 //  const int m_ncrs = mat.m_ncrs;
   const unsigned int* colind = mat.colInd.data();
   const unsigned int* rowptr = mat.rowPtr.data();
@@ -139,19 +139,19 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
   std::vector<int> row2crs(nblk,-1);
   
 	if( len == 1 ){
-		for(int iblk=0;iblk<nblk;iblk++){
+		for(unsigned int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<colind[nblk] );
-				const int jblk0 = rowptr[ijcrs];
+				const unsigned int jblk0 = rowptr[ijcrs];
         assert( jblk0<nblk );
 				row2crs[jblk0] = ijcrs;
 			}
 			// [L] * [D^-1*U] 
 			for(unsigned int ikcrs=colind[iblk];ikcrs<m_diaInd[iblk];ikcrs++){
-				const int kblk = rowptr[ikcrs]; assert( kblk<nblk );
+				const unsigned int kblk = rowptr[ikcrs]; assert( kblk<nblk );
 				const double ikvalue = vcrs[ikcrs];
 				for(unsigned int kjcrs=m_diaInd[kblk];kjcrs<colind[kblk+1];kjcrs++){
-					const int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
+					const unsigned int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
 					if( jblk0 != iblk ){
 						const int ijcrs0 = row2crs[jblk0];
 						if( ijcrs0 == -1 ) continue;
@@ -177,7 +177,7 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 			}
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs];
+				const unsigned int jblk0 = rowptr[ijcrs];
         assert( jblk0<nblk );
 				row2crs[jblk0] = -1;
 			}
@@ -186,18 +186,18 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 	// -----------------------------
 	else if( len == 2 ){
 		double TmpBlk[4];
-		for(int iblk=0;iblk<nblk;iblk++){
+		for(unsigned int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
+				const unsigned int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
 				row2crs[jblk0] = ijcrs;
 			}
 			// [L] * [D^-1*U]
 			for(unsigned int ikcrs=colind[iblk];ikcrs<m_diaInd[iblk];ikcrs++){
-				const int kblk = rowptr[ikcrs]; assert( kblk<nblk );
+				const unsigned int kblk = rowptr[ikcrs]; assert( kblk<nblk );
 				const double* vik = &vcrs[ikcrs*4];
 				for(unsigned int kjcrs=m_diaInd[kblk];kjcrs<colind[kblk+1];kjcrs++){
-					const int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
+					const unsigned int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
 					double* vkj = &vcrs[kjcrs*4]; assert( vkj != 0 );
 					double* vij = 0;
 					if( jblk0 != iblk ){
@@ -205,7 +205,9 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 						if( ijcrs0 == -1 ) continue;	
 						vij = &vcrs[ijcrs0*4];
 					}
-          else{ vij = &vdia[iblk*4]; }
+					else{
+            vij = &vdia[iblk*4];
+          }
           assert( vij != 0 );
 					vij[0] -= vik[0]*vkj[0]+vik[1]*vkj[2];
 					vij[1] -= vik[0]*vkj[1]+vik[1]*vkj[3];
@@ -245,34 +247,36 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 			}
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
+				const unsigned int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
 				row2crs[jblk0] = -1;
 			}
 		}	// end iblk
 	}
-	////////////////////////////////////////////////////////////////
+	// -----------------------------------------------------------
 	else if( len == 3 ){	// lenBlk >= 3
 		double tmpBlk[9];
-		for(int iblk=0;iblk<nblk;iblk++){
+		for(unsigned int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
+				const unsigned int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
 				row2crs[jblk0] = ijcrs;
 			}
 			// [L] * [D^-1*U]
 			for(unsigned int ikcrs=colind[iblk];ikcrs<m_diaInd[iblk];ikcrs++){
-				const int kblk = rowptr[ikcrs]; assert( kblk<nblk );
+				const unsigned int kblk = rowptr[ikcrs]; assert( kblk<nblk );
 				const double* vik = &vcrs[ikcrs*9];
 				for(unsigned int kjcrs=m_diaInd[kblk];kjcrs<colind[kblk+1];kjcrs++){
-					const int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
+					const unsigned int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
 					double* vkj = &vcrs[kjcrs*9]; assert( vkj != 0 );
-					double* vij = 0;
+					double* vij = nullptr;
 					if( jblk0 != iblk ){
 						const int ijcrs0 = row2crs[jblk0];
             if( ijcrs0 == -1 ){ continue; }
 						vij = &vcrs[ijcrs0*9];
 					}
-          else{ vij = &vdia[iblk*9]; }
+					else{
+            vij = &vdia[iblk*9];
+          }
 					assert( vij != 0 );
           for(int i=0;i<3;i++){
             vij[i*3+0] -= vik[i*3+0]*vkj[0] + vik[i*3+1]*vkj[3] + vik[i*3+2]*vkj[6];
@@ -312,36 +316,38 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 			}		
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
+				const unsigned int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
 				row2crs[jblk0] = -1;
 			}
 		}	// end iblk
 	}
-  ////////////////////////////////////////////////////////////////
+  // ------------------------------------------------------------------------
 	else{	// lenBlk >= 4
-    const int blksize = len*len;
+    const unsigned int blksize = len*len;
 		auto* pTmpBlk = new double [blksize];
-		for(int iblk=0;iblk<nblk;iblk++){
+		for(unsigned int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
+				const unsigned int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
 				row2crs[jblk0] = ijcrs;
 			}
 			// [L] * [D^-1*U] 
 			for(unsigned int ikcrs=colind[iblk];ikcrs<m_diaInd[iblk];ikcrs++){
-				const int kblk = rowptr[ikcrs]; assert( kblk<nblk );
+				const unsigned int kblk = rowptr[ikcrs]; assert( kblk<nblk );
 				const double* vik = &vcrs[ikcrs*blksize];
 				for(unsigned int kjcrs=m_diaInd[kblk];kjcrs<colind[kblk+1];kjcrs++){
-					const int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
+					const unsigned int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
 					double* vkj = &vcrs[kjcrs *blksize]; assert( vkj != 0 );
-					double* vij = 0;
+					double* vij = nullptr;
 					if( jblk0 != iblk ){
 						const int ijcrs0 = row2crs[jblk0];
             if( ijcrs0 == -1 ){ continue; }
 						vij = &vcrs[ijcrs0*blksize];
 					}
-          else{ vij = &vdia[iblk *blksize]; }
-					assert( vij != 0 );
+					else{
+            vij = &vdia[iblk *blksize];
+          }
+					assert( vij != nullptr );
           CalcSubMatPr(vij,vik,vkj, len,len,len);
 				}
 			}
@@ -367,7 +373,7 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 			}
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-				const int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
+				const unsigned int jblk0 = rowptr[ijcrs]; assert( jblk0<nblk );
 				row2crs[jblk0] = -1;
 			}
 		}	// end iblk
@@ -385,8 +391,8 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
 //  const int nmax_sing = 10;
 //  int icnt_sing = 0;
   
-  const int len = mat.len_col;
-  const int nblk = mat.nblk_col;
+  const unsigned int len = mat.len_col;
+  const unsigned int nblk = mat.nblk_col;
   //  const int m_ncrs = mat.m_ncrs;
   const unsigned int* colind = mat.colInd.data();
   const unsigned int* rowptr = mat.rowPtr.data();
@@ -398,19 +404,19 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
   
   std::vector<int> row2crs(nblk,-1);
   if( len == 1 ){
-    for(int iblk=0;iblk<nblk;iblk++){
+    for(unsigned int iblk=0;iblk<nblk;iblk++){
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<colind[nblk] );
-        const int jblk0 = rowptr[ijcrs];
+        const unsigned int jblk0 = rowptr[ijcrs];
         assert( jblk0<nblk );
         row2crs[jblk0] = ijcrs;
       }
       // [L] * [D^-1*U]
       for(unsigned int ikcrs=colind[iblk];ikcrs<m_diaInd[iblk];ikcrs++){
-        const int kblk = rowptr[ikcrs]; assert( kblk<nblk );
+        const unsigned int kblk = rowptr[ikcrs]; assert( kblk<nblk );
         const COMPLEX ikvalue = vcrs[ikcrs];
         for(unsigned int kjcrs=m_diaInd[kblk];kjcrs<colind[kblk+1];kjcrs++){
-          const int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
+          const unsigned int jblk0 = rowptr[kjcrs]; assert( jblk0<nblk );
           if( jblk0 != iblk ){
             const int ijcrs0 = row2crs[jblk0];
             if( ijcrs0 == -1 ) continue;
@@ -439,7 +445,7 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
       }
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
-        const int jblk0 = rowptr[ijcrs];
+        const unsigned int jblk0 = rowptr[ijcrs];
         assert( jblk0<nblk );
         row2crs[jblk0] = -1;
       }

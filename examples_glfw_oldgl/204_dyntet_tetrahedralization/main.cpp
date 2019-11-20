@@ -84,18 +84,18 @@ void myGlutDisplay(void)
     ::glColor3d(0, 0, 0);
     ::glPointSize(1);
     ::glBegin(GL_POINTS);
-    for (int ip = 0; ip<(int)aPo3D.size(); ip++){
-      glVertex3d(aPo3D[ip].p.x, aPo3D[ip].p.y, aPo3D[ip].p.z);
+    for (auto & ip : aPo3D){
+      glVertex3d(ip.p.x, ip.p.y, ip.p.z);
     }
     ::glEnd();
     ///
     ::glBegin(GL_LINES);
-    for (int it = 0; it<aSTet.size(); ++it){
-      int ip0 = aSTet[it].v[0];
+    for (auto & it : aSTet){
+      int ip0 = it.v[0];
       if( ip0 == -1 ) continue;
-      int ip1 = aSTet[it].v[1];
-      int ip2 = aSTet[it].v[2];
-      int ip3 = aSTet[it].v[3];
+      int ip1 = it.v[1];
+      int ip2 = it.v[2];
+      int ip3 = it.v[3];
       myGlVertex3d(aPo3D[ip0].p);
       myGlVertex3d(aPo3D[ip1].p);
       myGlVertex3d(aPo3D[ip0].p);
@@ -155,7 +155,7 @@ void AddRandomPoint()
     aPo3D[ip_ins].poel = -1;
     int itet_ins = -1;
     {
-      for (int it = 0; it<aSTet.size(); ++it){
+      for (std::size_t it = 0; it<aSTet.size(); ++it){
         int j0 = aSTet[it].v[0];
         int j1 = aSTet[it].v[1];
         int j2 = aSTet[it].v[2];
@@ -191,7 +191,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       ////
       Initialize();
       std::vector<int> tmp_buffer;
-      for(int ixyz=0;ixyz<aXYZ.size()/3;ixyz++){
+      for(std::size_t ixyz=0;ixyz<aXYZ.size()/3;ixyz++){
         double x0 = aXYZ[ixyz*3+0];
         double y0 = aXYZ[ixyz*3+1];
         double z0 = aXYZ[ixyz*3+2];
@@ -202,7 +202,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         aPo3D[ip_ins].poel = -1;
         int itet_ins = -1;
         { // find tet
-          for (int it = 0; it<aSTet.size(); ++it){
+          for (std::size_t it = 0; it<aSTet.size(); ++it){
             int j0 = aSTet[it].v[0];
             int j1 = aSTet[it].v[1];
             int j2 = aSTet[it].v[2];
@@ -223,7 +223,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 #endif
       }
       { // remove SuperTet verteces
-        for(int it=0;it<aSTet.size();++it){
+        for(std::size_t it=0;it<aSTet.size();++it){
           int i0 = aSTet[it].v[0];
           int i1 = aSTet[it].v[1];
           int i2 = aSTet[it].v[2];
@@ -236,7 +236,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         aPo3D[1].e = -1;
         aPo3D[2].e = -1;
         aPo3D[3].e = -1;
-        for(int it=0;it<aSTet.size();++it){
+        for(std::size_t it=0;it<aSTet.size();++it){
           for(int ift=0;ift<4;++ift){
             int iv = aSTet[it].v[ift];
             if( iv == -1 ) continue;
@@ -246,8 +246,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         }
       }
       { // edge recovery
-        std::vector<int> psup_ind;
-        std::vector<int> psup;
+        std::vector<unsigned int> psup_ind, psup;
         JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                     aTri.data(),aTri.size()/3,3,(int)aXYZ.size()/3);
         std::vector<int> edge_ind;

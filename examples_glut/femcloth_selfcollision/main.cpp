@@ -138,7 +138,7 @@ int iroot_bvh; // index of the root BVH node
 std::vector<delfem2::CNodeBVH2> aNodeBVH; // array of BVH node
 std::vector<delfem2::CBV3D_AABB> aBB_BVH; // array of AABB
 //CJaggedArray aEdge;
-std::vector<int> psup_ind,psup;
+std::vector<unsigned int> psup_ind,psup;
 
 // data for camera
 bool is_animation;

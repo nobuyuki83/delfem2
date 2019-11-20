@@ -353,7 +353,7 @@ public:
   }
   void Pick
   (const CVector3& src_pick, const CVector3& dir_pick,
-   CVector2 sp0, float mMV[16], float mPj[16],
+   const CVector2& sp0, float mMV[16], float mPj[16],
    double view_height);
   
 //  void DrawFace_LeftRight() const;  

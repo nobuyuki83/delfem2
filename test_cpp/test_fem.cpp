@@ -129,7 +129,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
     dfm2::CMatrixSparse<double> mat_A;
     dfm2::CPreconditionerILU<double> ilu_A;
     {
-      std::vector<int> psup_ind, psup;
+      std::vector<unsigned int> psup_ind, psup;
       JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                   aTri.data(), aTri.size()/3, 3,
                                                   (int)aXY0.size()/2);

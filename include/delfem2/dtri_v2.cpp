@@ -204,10 +204,10 @@ bool dfm2::DelaunayAroundPoint
   assert(aTri[aPo[ipo0].e].v[aPo[ipo0].d]==ipo0);
   
   const int itri0 = aPo[ipo0].e;
-  int inotri0 = aPo[ipo0].d;
+  unsigned int inotri0 = aPo[ipo0].d;
   
   int itri_cur = itri0;
-  int inotri_cur = aPo[ipo0].d;
+  unsigned int inotri_cur = aPo[ipo0].d;
   bool flag_is_wall = false;
   for (;;){
     assert(aTri[itri_cur].v[inotri_cur]==ipo0);
@@ -333,7 +333,7 @@ void dfm2::MeshingInside
       DelaunayAroundPoint(ipo0,aPo2D,aTri,aVec2);
       nadd++;
     }
-    for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
+    for(std::size_t ip=nPointFix;ip<aVec2.size();++ip){
       LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     }
     if( nadd != 0 ){ ratio *= 0.8; }
@@ -341,7 +341,7 @@ void dfm2::MeshingInside
     if( ratio < 0.65 ) break;
   }
 
-  for(unsigned int ip=nPointFix;ip<aVec2.size();++ip){
+  for(std::size_t ip=nPointFix;ip<aVec2.size();++ip){
     LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     DelaunayAroundPoint(ip, aPo2D, aTri, aVec2);
   }
@@ -1074,7 +1074,7 @@ void dfm2::RefineMesh
     if( aIV_free.empty() ){
       int ipo = aVec2.size();
       aVec2.push_back(v01);
-      aEPo2.push_back(CEPo2());
+      aEPo2.emplace_back();
       cmd.ipo_new = ipo;
     }
     else{

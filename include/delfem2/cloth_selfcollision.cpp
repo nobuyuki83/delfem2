@@ -223,15 +223,13 @@ void MakeRigidImpactZone
 (std::vector< std::set<int> >& aRIZ, // (in,ou)RIZに属する節点のインデックスの集合の配列
  const std::vector<dfm2::CContactElement>& aContactElem, // 自己交差する接触要素の配列
 // const CJaggedArray& aEdge
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup) // 三角形メッシュの辺の配列    
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup) // 三角形メッシュの辺の配列
 {
-  for(int ice=0;ice<aContactElem.size();ice++){
-    const dfm2::CContactElement& ce = aContactElem[ice];
+  for(const auto & ce : aContactElem){
     const int n[4] = {ce.ino0, ce.ino1, ce.ino2, ce.ino3};
     std::set<int> ind_inc; // 接触要素が接するRIZの集合
-    for(int i=0;i<4;i++){
-      const int ino = n[i];
+    for(int ino : n){
       for(int iriz=0;iriz<aRIZ.size();iriz++){
         if( aRIZ[iriz].find(ino) != aRIZ[iriz].end() ){
           ind_inc.insert(iriz);
@@ -246,7 +244,7 @@ void MakeRigidImpactZone
         }
       }
     }
-    if( ind_inc.size() == 0 ){ // 接触要素はどのRIZにも属していない
+    if( ind_inc.empty() ){ // 接触要素はどのRIZにも属していない
       int ind0 = (int)aRIZ.size();
       aRIZ.resize(ind0+1);
       aRIZ[ind0].insert(n[0]); aRIZ[ind0].insert(n[1]); aRIZ[ind0].insert(n[2]); aRIZ[ind0].insert(n[3]);
@@ -306,15 +304,14 @@ void ApplyRigidImpactZone
  const std::vector<double>& aXYZ, // (in) 前ステップの節点の位置の配列
  const std::vector<double>& aUVWm0) // (in) RIZを使う前の中間速度
 {
-  for(int iriz=0;iriz<aRIZ.size();iriz++){
+  for(const auto & iriz : aRIZ){
     std::vector<int> aInd; // index of points belong to this RIZ
-    for(std::set<int>::iterator jtr=aRIZ[iriz].begin();jtr!=aRIZ[iriz].end();jtr++){
+    for(auto jtr=iriz.begin();jtr!=iriz.end();jtr++){
       aInd.push_back(*jtr);
     }
     CVector3 gc(0,0,0); // 重心位置
     CVector3 av(0,0,0); // 平均速度
-    for(int iv=0;iv<aInd.size();iv++){
-      int ino = aInd[iv];
+    for(int ino : aInd){
       gc += CVector3(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
       av += CVector3(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
     }
@@ -322,8 +319,7 @@ void ApplyRigidImpactZone
     av /= (double)aInd.size();
     CVector3 L(0,0,0); // 角運動量
     double I[9] = {0,0,0, 0,0,0, 0,0,0}; // 慣性テンソル
-    for(int iv=0;iv<aInd.size();iv++){
-      int ino = aInd[iv];
+    for(int ino : aInd){
       CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
       CVector3 v(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
       L += Cross(p-gc,v-av);
@@ -340,8 +336,7 @@ void ApplyRigidImpactZone
     omg.y = Iinv[3]*L.x + Iinv[4]*L.y + Iinv[5]*L.z;
     omg.z = Iinv[6]*L.x + Iinv[7]*L.y + Iinv[8]*L.z;
     // 中間速度の更新
-    for(int iv=0;iv<aInd.size();iv++){
-      int ino = aInd[iv];
+    for(int ino : aInd){
       CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
       CVector3 rot = -Cross(p-gc,omg);
       aUVWm[ino*3+0] = av.x + rot.x;
@@ -367,11 +362,11 @@ void GetIntermidiateVelocityContactResolved
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
 // const CJaggedArray& aEdge,
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup,
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup,
  int iroot_bvh,
  const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
- std::vector<dfm2::CBV3D_AABB>& aBB)
+ std::vector<dfm2::CBV3D_AABB> &aBB)
 {
   {
     std::vector<dfm2::CContactElement> aContactElem;

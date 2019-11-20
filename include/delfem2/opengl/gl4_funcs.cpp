@@ -38,7 +38,6 @@ void GL4_VAO_Pos
   glBindBuffer(GL_ARRAY_BUFFER, 0); // gl24
   
   glBindVertexArray(0); // gl4
-  return;
 }
 
 

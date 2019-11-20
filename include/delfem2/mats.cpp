@@ -88,23 +88,23 @@ void dfm2::CMatrixSparse<double>::MatVec
 				assert( icrs < rowPtr.size() );
 				const unsigned int jblk0 = rowptr[icrs];
 				assert( jblk0 < nblk_row );
-        const int i0 = iblk*3;
-        const int j0 = jblk0*3;
-        const int k0 = icrs*9;
+        const unsigned int i0 = iblk*3;
+        const unsigned int j0 = jblk0*3;
+        const unsigned int k0 = icrs*9;
 				y[i0+0] += alpha*(vcrs[k0+0]*x[j0+0]+vcrs[k0+1]*x[j0+1]+vcrs[k0+2]*x[j0+2]);
 				y[i0+1] += alpha*(vcrs[k0+3]*x[j0+0]+vcrs[k0+4]*x[j0+1]+vcrs[k0+5]*x[j0+2]);
 				y[i0+2] += alpha*(vcrs[k0+6]*x[j0+0]+vcrs[k0+7]*x[j0+1]+vcrs[k0+8]*x[j0+2]);
 			}
       {
-        const int i0 = iblk*3;
-        const int k0 = iblk*9;
+        const unsigned int i0 = iblk*3;
+        const unsigned int k0 = iblk*9;
         y[i0+0] += alpha*(vdia[k0+0]*x[i0+0]+vdia[k0+1]*x[i0+1]+vdia[k0+2]*x[i0+2]);
         y[i0+1] += alpha*(vdia[k0+3]*x[i0+0]+vdia[k0+4]*x[i0+1]+vdia[k0+5]*x[i0+2]);
         y[i0+2] += alpha*(vdia[k0+6]*x[i0+0]+vdia[k0+7]*x[i0+1]+vdia[k0+8]*x[i0+2]);
       }
 		}
   }
-  else if( len_col == 4 && len_row == 4 ){
+	else if( len_col == 4 && len_row == 4 ){
     const double* vcrs  = valCrs.data();
     const double* vdia = valDia.data();
     const unsigned int* colind = colInd.data();
@@ -121,9 +121,9 @@ void dfm2::CMatrixSparse<double>::MatVec
         assert( icrs < rowPtr.size() );
         const unsigned int jblk0 = rowptr[icrs];
         assert( jblk0 < nblk_row );
-        const int i0 = iblk*4;
-        const int j0 = jblk0*4;
-        const int k0 = icrs*16;
+        const unsigned int i0 = iblk*4;
+        const unsigned int j0 = jblk0*4;
+        const unsigned int k0 = icrs*16;
         y[i0+0] += alpha*(vcrs[k0+ 0]*x[j0+0]+vcrs[k0+ 1]*x[j0+1]+vcrs[k0+ 2]*x[j0+2]+vcrs[k0+ 3]*x[j0+3]);
         y[i0+1] += alpha*(vcrs[k0+ 4]*x[j0+0]+vcrs[k0+ 5]*x[j0+1]+vcrs[k0+ 6]*x[j0+2]+vcrs[k0+ 7]*x[j0+3]);
         y[i0+2] += alpha*(vcrs[k0+ 8]*x[j0+0]+vcrs[k0+ 9]*x[j0+1]+vcrs[k0+10]*x[j0+2]+vcrs[k0+11]*x[j0+3]);
@@ -241,7 +241,7 @@ void SetMasterSlave
     for(unsigned int jlen1=0;jlen1<len;jlen1++){
       int jdof0 = aMSFlag[ino*len+jlen1];
       if( jdof0 == -1 ) continue;
-      int jno0 = jdof0/len;
+      int jno0 = (int)(jdof0/len);
       assert( jdof0 - jno0*len == jlen1 );
       const int icrs0 = row2crs[jno0];
       assert( icrs0 >= 0 && icrs0 < (int)mat.rowPtr.size() );
@@ -862,12 +862,12 @@ void setRHS_MasterSlave
 
 
 double MatNorm_Assym
-(const double* V0, int n0, int m0,
+(const double* V0, unsigned int n0, unsigned int m0,
  const double* V1)
 {
   double s = 0.0;
-  for(int i=0;i<n0;++i){
-    for(int j=0;j<m0;++j){
+  for(unsigned int i=0;i<n0;++i){
+    for(unsigned int j=0;j<m0;++j){
       double v0 = V0[i*m0+j];
       double v1 = V1[j*n0+i];
       s += (v0-v1)*(v0-v1);
@@ -877,11 +877,11 @@ double MatNorm_Assym
 }
 
 double MatNorm
-(const double* V, int n, int m)
+(const double* V, unsigned int n, unsigned int m)
 {
   double s = 0.0;
-  for(int i=0;i<n;++i){
-    for(int j=0;j<m;++j){
+  for(unsigned int i=0;i<n;++i){
+    for(unsigned int j=0;j<m;++j){
       double v = V[i*m+j];
       s += v*v;
     }

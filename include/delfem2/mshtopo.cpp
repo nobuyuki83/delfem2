@@ -33,10 +33,10 @@ void dfm2::JArray_Print
 }
 
 void dfm2::JArray_Sort
-(const std::vector<int>& index,
- std::vector<int>& array)
+(const std::vector<unsigned int>& index,
+ std::vector<unsigned int>& array)
 {
-  if( index.size() == 0 ) return;
+  if( index.empty() ) return;
   const int size = (int)index.size()-1;
   for(int ipoin=0;ipoin<size;ipoin++){
     const int is = index[ipoin  ];
@@ -82,17 +82,17 @@ void dfm2::JArray_Sort
 }
 
 void dfm2::JArray_AddDiagonal
-(std::vector<int >& psup_ind1,
- std::vector<int >& psup1,
- const int* psup_ind0, int npsup_ind0,
- const int* psup0, int npsup0)
+(std::vector<unsigned int> &psup_ind1,
+ std::vector<unsigned int> &psup1,
+ const unsigned int *psup_ind0, int npsup_ind0,
+ const unsigned int *psup0, int npsup0)
 {
   const int np = npsup_ind0-1;
   std::vector<int> tmp(np,-1);
   psup_ind1.assign(np+1,0);
   for(int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
-      const int jp = psup0[ipsup];
+    for(std::size_t ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
+      const unsigned int jp = psup0[ipsup];
       assert( tmp[jp] != ip );
       tmp[jp] = ip;
       psup_ind1[ip+1] += 1;
@@ -109,8 +109,8 @@ void dfm2::JArray_AddDiagonal
   psup1.resize(npsup);
   tmp.assign(np,-1);
   for(int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
-      const int jp = psup0[ipsup];
+    for(std::size_t ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
+      const unsigned int jp = psup0[ipsup];
       assert( tmp[jp] != ip );
       tmp[jp] = ip;
       int iclstr  = psup_ind1[ip];
@@ -134,29 +134,30 @@ void JArrayEdgeUnidir_PointSurPoint
 (std::vector<int>& edge_ind,
  std::vector<int>& edge,
  /////
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup)
 {
-  const int np = psup_ind.size()-1;
+  assert( psup_ind.size() >= 2 );
+  const std::size_t np = psup_ind.size()-1;
   edge_ind.resize(np+1);
   edge_ind[0] = 0;
   edge.clear();
   ////
-  for(int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
-      int ip0 = psup[ipsup];
+  for(unsigned int ip=0;ip<np;++ip){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      unsigned int ip0 = psup[ipsup];
       if( ip0 <= ip ) continue;
       edge_ind[ip+1]++;
     }
   }
-  for(int ip=0;ip<np;ip++){
+  for(unsigned int ip=0;ip<np;ip++){
     edge_ind[ip+1] += edge_ind[ip];
   }
   const int nedge = edge_ind[np];
   edge.resize(nedge);
-  for(int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
-      const int ip0 = psup[ipsup];
+  for(unsigned int ip=0;ip<np;++ip){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const unsigned int ip0 = psup[ipsup];
       if( ip0 <= ip ) continue;
       const int iedge = edge_ind[ip];
       edge[iedge] = ip0;
@@ -170,8 +171,8 @@ void JArrayEdgeUnidir_PointSurPoint
 }
 
 void JArrayElemSurPoint_MeshElem
-(std::vector<int>& elsup_ind,
- std::vector<int>& elsup,
+(std::vector<unsigned int> &elsup_ind,
+ std::vector<unsigned int> &elsup,
  ////
  const unsigned int* pElem,
  int nElem,
@@ -182,8 +183,7 @@ void JArrayElemSurPoint_MeshElem
   elsup_ind.assign(nPo+1,0);
   for(int ielem=0;ielem<nElem;ielem++){
     for(int inoel=0;inoel<nPoEl;inoel++){
-      const int ino1 = pElem[ielem*nPoEl+inoel];
-      if( ino1 == -1 ){ break; }
+      const unsigned int ino1 = pElem[ielem*nPoEl+inoel];
       elsup_ind[ino1+1] += 1;
     }
   }
@@ -194,8 +194,7 @@ void JArrayElemSurPoint_MeshElem
   elsup.resize(nelsup);
   for(int ielem=0;ielem<nElem;ielem++){
     for(int inoel=0;inoel<nPoEl;inoel++){
-      int ino1 = pElem[ielem*nPoEl+inoel];
-      if( ino1 == -1 ){ break; }
+      int unsigned ino1 = pElem[ielem*nPoEl+inoel];
       int ind1 = elsup_ind[ino1];
       elsup[ind1] = ielem;
       elsup_ind[ino1] += 1;
@@ -265,10 +264,10 @@ void convert2Tri
  const std::vector<int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
-  const long nElem0 = aElemInd.size()-1;
+  const std::size_t nElem0 = aElemInd.size()-1;
   aTri.clear();
   aTri.reserve(nElem0*6);
-  for(int ie=0;ie<nElem0;++ie){
+  for(unsigned int ie=0;ie<nElem0;++ie){
     const int nnoel = aElemInd[ie+1]-aElemInd[ie];
     const int iip0 = aElemInd[ie];
     assert( nnoel == 3 || nnoel == 4 );
@@ -285,7 +284,7 @@ void convert2Tri
 
 void FlipElement_Tri(std::vector<int>& aTri)
 {
-  for (unsigned int itri = 0; itri<aTri.size()/3; itri++){
+  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     //    int i0 = aTri[itri*3+0];
     int i1 = aTri[itri*3+1];
     int i2 = aTri[itri*3+2];
@@ -342,8 +341,8 @@ void AddElement
 
 
 void JArrayElemSurPoint_MeshTri
-(std::vector<int>& elsup_ind,
- std::vector<int>& elsup,
+(std::vector<unsigned int> &elsup_ind,
+ std::vector<unsigned int> &elsup,
  ////
  const std::vector<unsigned int>& aTri,
  int nXYZ)
@@ -353,16 +352,16 @@ void JArrayElemSurPoint_MeshTri
 }
 
 void JArrayElemSurPoint_MeshMix
-(std::vector<int>& elsup_ind,
- std::vector<int>& elsup,
+(std::vector<unsigned int> &elsup_ind,
+ std::vector<unsigned int> &elsup,
  ////
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const int nPo)
 {
-  const int nElem = aElemInd.size()-1;
+  const std::size_t nElem = aElemInd.size()-1;
   elsup_ind.assign(nPo+1,0);
-  for(int ielem=0;ielem<nElem;ielem++){
+  for(unsigned int ielem=0;ielem<nElem;ielem++){
     for(int iino=aElemInd[ielem];iino<aElemInd[ielem+1];iino++){
       int ino1 = aElem[iino];
       if( ino1 == -1 ){ break; }
@@ -374,7 +373,7 @@ void JArrayElemSurPoint_MeshMix
   }
   int nelsup = elsup_ind[nPo];
   elsup.resize(nelsup);
-  for(int ielem=0;ielem<nElem;ielem++){
+  for(unsigned int ielem=0;ielem<nElem;ielem++){
     for(int iino=aElemInd[ielem];iino<aElemInd[ielem+1];iino++){
       int ino1 = aElem[iino];
       if( ino1 == -1 ){ break; }
@@ -396,14 +395,15 @@ void JArrayElemSurPoint_MeshMix
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
  const unsigned int* aEl, int nEl, int nNoEl,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
+ const std::vector<unsigned int> &elsup_ind,
+ const std::vector<unsigned int> &elsup,
  const int nfael,
  const int nnofa,
- const int noelElemFace[][4])
+ const int (*noelElemFace)[4])
 {
 //  std::cout << nfael << " " << nnofa << " " << nnoel << std::endl;
-  const int np = (int)elsup_ind.size()-1;
+  assert( elsup_ind.size()>=2 );
+  const std::size_t np = elsup_ind.size()-1;
   
   aElSurRel.assign(nEl*nfael*2,-1);
   
@@ -413,8 +413,8 @@ void makeSurroundingRelationship
     for (int ifael=0; ifael<nfael; ifael++){
       for (int ipofa=0; ipofa<nnofa; ipofa++){
         int int0 = noelElemFace[ifael][ipofa];
-        const int ip = aEl[iel*nNoEl+int0];
-        assert( ip>=0 && ip<np );
+        const unsigned int ip = aEl[iel*nNoEl+int0];
+        assert( ip<np );
         inpofa[ipofa] = ip;
         tmp_poin[ip] = 1;
       }
@@ -427,7 +427,7 @@ void makeSurroundingRelationship
           iflg = true;
           for (int jpofa = 0; jpofa<nnofa; jpofa++){
             int jnt0 = noelElemFace[jfael][jpofa];
-            const int jpoin0 = aEl[jelem0*nNoEl+jnt0];
+            const unsigned int jpoin0 = aEl[jelem0*nNoEl+jnt0];
             if (tmp_poin[jpoin0]==0){ iflg = false; break; }
           }
           if (iflg){
@@ -474,7 +474,7 @@ void makeSurroundingRelationship
  const unsigned int nXYZ)
 {
   const int nNoEl = nNodeElem(type);
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            aElem, nElem, nNoEl, nXYZ);
   const int nfael = nFaceElem(type);
@@ -494,7 +494,7 @@ void makeSurroundingRelationship
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  const int nXYZ)
 {
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,
                            nXYZ);
@@ -509,13 +509,13 @@ void makeSurroundingRelationship
  ///
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup)
+ const std::vector<dfm2::MESHELEM_TYPE> &aElemType,
+ const std::vector<unsigned int> &elsup_ind,
+ const std::vector<unsigned int> &elsup)
 {
-  assert(aElemInd.size()>0);
+  assert(!aElemInd.empty());
   const unsigned int nelem = aElemInd.size()-1;
-  const int np = elsup_ind.size()-1;
+  const std::size_t np = elsup_ind.size()-1;
   assert( aElemType.size() == nelem );
   aElemFaceInd.assign(nelem+1,0);
   for(unsigned int ielem=0;ielem<nelem;++ielem){
@@ -538,7 +538,7 @@ void makeSurroundingRelationship
         const int ino0 = noelElemFace(type_i)[iface][inofa];
         assert(ino0!=-1);
         ip0 = aElem[ aElemInd[ielem]+ino0 ];
-        assert(ip0>=0&&ip0<np);
+        assert(ip0>=0&&ip0<(int)np);
         aFlg[ip0] =  1;
       }
       for(int jelsup=elsup_ind[ip0];jelsup<elsup_ind[ip0+1];++jelsup){
@@ -586,8 +586,8 @@ void makeBoundary
   aElem_Bound.clear();
   aElemInd_Bound.clear();
   aElemInd_Bound.push_back(0);
-  const int nelem = aElemInd.size()-1;
-  for(int ielem=0;ielem<nelem;++ielem){
+  const std::size_t nelem = aElemInd.size()-1;
+  for(unsigned int ielem=0;ielem<nelem;++ielem){
     const dfm2::MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem]==nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
@@ -605,23 +605,21 @@ void makeBoundary
       }
     }
   }
-  const int neb = aElemInd_Bound.size()-1;
-  for(int ieb=0;ieb<neb;++ieb){
+  const std::size_t neb = aElemInd_Bound.size()-1;
+  for(unsigned int ieb=0;ieb<neb;++ieb){
     aElemInd_Bound[ieb+1] += aElemInd_Bound[ieb];
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------------------------
 
 void JArrayPointSurPoint_MeshOneRingNeighborhood
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
+(std::vector<unsigned int>& psup_ind,
+ std::vector<unsigned int>& psup,
  ////
  const unsigned int* pElem,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
+ const std::vector<unsigned int> &elsup_ind,
+ const std::vector<unsigned int> &elsup,
  int nnoel,
  int nPoint)
 {
@@ -632,7 +630,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
     for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       int jelem = elsup[ielsup];
       for(int jnoel=0;jnoel<nnoel;jnoel++){
-        int jnode = pElem[jelem*nnoel+jnoel];
+        unsigned int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
           aflg[jnode] = ipoint;
           psup_ind[ipoint+1]++;
@@ -651,7 +649,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
     for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       int jelem = elsup[ielsup];
       for(int jnoel=0;jnoel<nnoel;jnoel++){
-        int jnode = pElem[jelem*nnoel+jnoel];
+        unsigned int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
           aflg[jnode] = ipoint;
           const int ind = psup_ind[ipoint];
@@ -668,15 +666,15 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
 }
 
 void JArrayPointSurPoint_MeshOneRingNeighborhood
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
+(std::vector<unsigned int>& psup_ind,
+ std::vector<unsigned int>& psup,
  ////
  const unsigned int* pElem,
  int nEl,
  int nPoEl,
  int nPo)
 {
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            pElem, nEl, nPoEl, nPo);
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
@@ -728,30 +726,30 @@ void makeOneRingNeighborhood_TriFan
 }
 
 void JArrayEdge_MeshElem
-(std::vector<int>& edge_ind,
- std::vector<int>& edge,
+(std::vector<unsigned int> &edge_ind,
+ std::vector<unsigned int> &edge,
  ////
  const unsigned int* aElm0,
  dfm2::MESHELEM_TYPE elem_type,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
+ const std::vector<unsigned int> &elsup_ind,
+ const std::vector<unsigned int> &elsup,
  bool is_bidirectional)
 {
   const int neElm = dfm2::mapMeshElemType2NEdgeElem[elem_type];
   const int nnoelElm = dfm2::mapMeshElemType2NNodeElem[elem_type];
   const int (*aNoelEdge)[2] = noelElemEdge(elem_type);
-  const int nPoint0 = elsup_ind.size()-1;
+  const std::size_t nPoint0 = elsup_ind.size()-1;
   edge_ind.resize(nPoint0+1);
   edge_ind[0] = 0;
-  for(int ip=0;ip<nPoint0;++ip){
+  for(unsigned int ip=0;ip<nPoint0;++ip){
     std::set<int> setIP;
     for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
       int iq0 = elsup[ielsup];
       for(int ie=0;ie<neElm;++ie){
         int inoel0 = aNoelEdge[ie][0];
         int inoel1 = aNoelEdge[ie][1];
-        int ip0 = aElm0[iq0*nnoelElm+inoel0];
-        int ip1 = aElm0[iq0*nnoelElm+inoel1];
+        unsigned int ip0 = aElm0[iq0*nnoelElm+inoel0];
+        unsigned int ip1 = aElm0[iq0*nnoelElm+inoel1];
         if( ip0 != ip && ip1 != ip ) continue;
         if( ip0 == ip ){
           if( is_bidirectional || ip1 > ip ){ setIP.insert(ip1); }
@@ -761,8 +759,8 @@ void JArrayEdge_MeshElem
         }
       }
     }
-    for(std::set<int>::iterator itr = setIP.begin();itr!=setIP.end();++itr){
-      edge.push_back(*itr);
+    for(int itr : setIP){
+      edge.push_back(itr);
     }
     edge_ind[ip+1] = edge_ind[ip] + (int)setIP.size();
   }
@@ -772,12 +770,12 @@ void JArrayEdge_MeshElem
 void MeshLine_JArrayEdge
 (std::vector<unsigned int>& aLine,
  ////
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup)
 {
   aLine.reserve(psup.size()*2);
-  const int np = psup_ind.size()-1;
-  for(int ip=0;ip<np;++ip){
+  const std::size_t np = psup_ind.size()-1;
+  for(unsigned int ip=0;ip<np;++ip){
     for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       int jp = psup[ipsup];
       aLine.push_back(ip);
@@ -793,11 +791,11 @@ void MeshLine_MeshElem
  dfm2::MESHELEM_TYPE elem_type,
  unsigned int nPo)
 {
-  std::vector<int> elsup_ind,elsup;
+  std::vector<unsigned int> elsup_ind,elsup;
   const unsigned int nPoEl = dfm2::mapMeshElemType2NNodeElem[elem_type];
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                            aElm0, nElem, nPoEl, nPo);
-  std::vector<int> edge_ind, edge;
+  std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,
                       aElm0,
                       elem_type,
@@ -810,13 +808,13 @@ void MeshLine_MeshElem
 // -----------------------------------------
 
 void dfm2::JArray_AddMasterSlavePattern
-(std::vector<int>& index,
- std::vector<int>& array,
+(std::vector<unsigned int> &index,
+ std::vector<unsigned int> &array,
  const int* aMSFlag,
  int ndim,
- const int* psup_ind0,
+ const unsigned int *psup_ind0,
  int npsup_ind0,
- const int* psup0)
+ const unsigned int *psup0)
 {
   assert(npsup_ind0>0);
   const int nno = npsup_ind0-1;
@@ -841,8 +839,8 @@ void dfm2::JArray_AddMasterSlavePattern
   /////
   for(int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
-    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
-      const int jno = psup0[icrs];
+    for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const unsigned int jno = psup0[icrs];
       if( aflg[jno] == ino0 ){ continue; }
       aflg[jno] = ino0;
       index[ino0+1]++;
@@ -853,15 +851,15 @@ void dfm2::JArray_AddMasterSlavePattern
         aflg[ino1] = ino0;
         index[ino0+1]++;
       }
-      for(int jcrs=psup_ind0[ino1];jcrs<psup_ind0[ino1+1];++jcrs){
-        const int jno1 = psup0[jcrs];
+      for(unsigned int jcrs=psup_ind0[ino1];jcrs<psup_ind0[ino1+1];++jcrs){
+        const unsigned int jno1 = psup0[jcrs];
         if( aflg[jno1] == ino0 ){ continue; }
         aflg[jno1] = ino0;
         index[ino0+1]++;
       }
     }
-    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
-      const int jno = psup0[icrs];
+    for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const unsigned int jno = psup0[icrs];
       for(int jdim=0;jdim<ndim;++jdim){
         int kdof = aMSFlag[jno*ndim+jdim];
         if( kdof == -1 ) continue;
@@ -880,15 +878,15 @@ void dfm2::JArray_AddMasterSlavePattern
   ////
   for(int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
-    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
-      const int jno = psup0[icrs];
+    for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const unsigned int jno = psup0[icrs];
       if( aflg[jno] == ino0 ){ continue; }
       aflg[jno] = ino0;
       const int ind = index[ino0];
       array[ind] = jno;
       index[ino0]++;
     }
-    for(unsigned int jjno=0;jjno<mapM2S[ino0].size();++jjno){
+    for(std::size_t jjno=0;jjno<mapM2S[ino0].size();++jjno){
       const int jno = mapM2S[ino0][jjno];
       if( aflg[jno] != ino0 ){
         aflg[jno] = ino0;
@@ -896,8 +894,8 @@ void dfm2::JArray_AddMasterSlavePattern
         array[ind] = jno;
         index[ino0]++;
       }
-      for(int jcrs=psup_ind0[jno];jcrs<psup_ind0[jno+1];++jcrs){
-        const int kno = psup0[jcrs];
+      for(unsigned int jcrs=psup_ind0[jno];jcrs<psup_ind0[jno+1];++jcrs){
+        const unsigned int kno = psup0[jcrs];
         if( aflg[kno] == ino0 ){ continue; }
         aflg[kno] = ino0;
         const int ind = index[ino0];
@@ -905,8 +903,8 @@ void dfm2::JArray_AddMasterSlavePattern
         index[ino0]++;
       }
     }
-    for(int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
-      const int jno = psup0[icrs];
+    for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
+      const unsigned int jno = psup0[icrs];
       for(int jdim=0;jdim<ndim;++jdim){
         int kdof = aMSFlag[jno*ndim+jdim];
         if( kdof == -1 ) continue;
@@ -1048,7 +1046,7 @@ void MakeGroupElem
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  int nPo)
 {
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,nPo);
   std::vector<int> aElemFaceInd, aElemFaceRel;
@@ -1095,8 +1093,8 @@ void ClipGroup
 
 int findEdge
 (int ip0, int ip1,
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup)
 {
   if( ip1 > ip0 ){
     for(int ipsup=psup_ind[ip0];ipsup<psup_ind[ip0+1];++ipsup){
@@ -1116,8 +1114,8 @@ int findEdge
 int findFace
 (int ip0, int ip1, int ip2, int ip3,
  const std::vector<unsigned int>& aQuad,
- const std::vector<int>& elsupInd,
- const std::vector<int>& elsup)
+ const std::vector<unsigned int> &elsupInd,
+ const std::vector<unsigned int> &elsup)
 {
   if( ip0 < 0 || ip0 >= (int)elsupInd.size()-1 ) return -1;
   assert( ip0 >=0 && ip0 < (int)elsupInd.size()-1 );
@@ -1139,14 +1137,14 @@ int findFace
 // new points is in the order of [old points], [edge points], [face points]
 void QuadSubdiv
 (std::vector<unsigned int>& aQuad1,
- std::vector<int>& psup_ind,
- std::vector<int>& psup,
+ std::vector<unsigned int> &psup_ind,
+ std::vector<unsigned int> &psup,
  std::vector<int>& aEdgeFace0, // two points on the edge and two quads touching the edge
  const unsigned int* aQuad0, unsigned int nQuad0,
  unsigned int nPoint0)
 {
   const unsigned int nq0 = nQuad0;
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
@@ -1207,13 +1205,13 @@ void QuadSubdiv
 // new points is in the order of [old points], [edge points]
 void TetSubdiv
 (std::vector<unsigned int>& aTet1,
- std::vector<int>& psup_ind,
- std::vector<int>& psup,
+ std::vector<unsigned int> &psup_ind,
+ std::vector<unsigned int> &psup,
  const unsigned int* aTet0, int nTet0,
  unsigned int nPoint0)
 {
   const int nt0 = nTet0;
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
                            aTet0,nTet0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
@@ -1407,15 +1405,15 @@ void VoxSubdiv
 
 void HexSubdiv
 (std::vector<unsigned int>& aHex1,
- std::vector<int>& psupIndHex0,
- std::vector<int>& psupHex0,
+ std::vector<unsigned int> &psupIndHex0,
+ std::vector<unsigned int> &psupHex0,
  std::vector<unsigned int>& aQuadHex0,
  ///
  const unsigned int* aHex0, int nHex0,
  const int nhp0)
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
-  std::vector<int> elsupIndHex0, elsupHex0;
+  std::vector<unsigned int> elsupIndHex0, elsupHex0;
   JArrayElemSurPoint_MeshElem(elsupIndHex0, elsupHex0,
                            aHex0,nHex0,8,nhp0);
   
@@ -1446,7 +1444,7 @@ void HexSubdiv
       }
     }
   }
-  std::vector<int> elsupIndQuadHex0, elsupQuadHex0;
+  std::vector<unsigned int> elsupIndQuadHex0, elsupQuadHex0;
   JArrayElemSurPoint_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
                            aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   

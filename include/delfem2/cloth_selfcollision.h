@@ -25,8 +25,8 @@ void GetIntermidiateVelocityContactResolved
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
 // const CJaggedArray& aEdge,
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup,
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup,
  int iroot_bvh,
  const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
  std::vector<delfem2::CBV3D_AABB>& aBB);

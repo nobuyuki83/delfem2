@@ -188,8 +188,8 @@ void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         //
                                         const std::vector<unsigned int>& aQuad1,
                                         const std::vector<int>& aEdgeFace0,
-                                        const std::vector<int>& psupIndQuad0,
-                                        const std::vector<int>& psupQuad0,
+                                        const std::vector<unsigned int> &psupIndQuad0,
+                                        const std::vector<unsigned int> &psupQuad0,
                                         const unsigned int* aQuad0, unsigned int nQuad0,
                                         const double* aXYZ0, unsigned int nXYZ0);
 void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
