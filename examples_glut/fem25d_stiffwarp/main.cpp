@@ -77,19 +77,19 @@ void RotationAtMeshPoints
 (std::vector<double>& aR,
  const std::vector<double>& aXYZ,
  const std::vector<double>& aDisp,
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
+ const std::vector<unsigned int> &psup_ind,
+ const std::vector<unsigned int> &psup)
 {
   const unsigned int np = aXYZ.size()/3;
   aR.resize(np*9);
-  for(int ip=0;ip<aXYZ.size()/3;++ip){
+  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
     CVector3 Pi(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
     CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                 aXYZ[ip*3+1]+aDisp[ip*3+1],
                 aXYZ[ip*3+2]+aDisp[ip*3+2]);
     CMatrix3 A;
     A.SetZero();
-    for(int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
+    for(unsigned int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
       int jp = psup[jjp];
       CVector3 Pj(aXYZ[jp*3+0],aXYZ[jp*3+1],aXYZ[jp*3+2]);
       CVector3 pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
@@ -123,7 +123,7 @@ const double gravity[3] = {0.0, -4.0, 0.0};
 dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double>  ilu_A;
-std::vector<int> psup_ind, psup;
+std::vector<unsigned int> psup_ind, psup;
 std::vector<double> aR;
 
 // --------------------------------------------
@@ -214,7 +214,7 @@ void Solve_StiffnessWarping()
 
 //////////////////////////////////////////////////////////////////////////////
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   if( is_stiffness_warping ){
     ::glClearColor(0.4f, 0.9f, 0.9f ,1.0f);
@@ -252,7 +252,7 @@ void myGlutDisplay(void)
   }
   
   ::glDisable(GL_LIGHTING);
-  for(int ip=0;ip<aXYZ.size()/3;++ip){
+  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
     CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                 aXYZ[ip*3+1]+aDisp[ip*3+1],
                 aXYZ[ip*3+2]+aDisp[ip*3+2]);
@@ -400,7 +400,7 @@ int main(int argc,char* argv[])
   aDisp.assign(aXYZ.size(), 0.0);
   aVelo.assign(aXYZ.size(), 0.0);
   aBCFlag.assign(aXYZ.size(),0);
-  for(int ip=0;ip<aXYZ.size()/3;++ip){
+  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
     double x0 = aXYZ[ip*3+0];
     if( fabs(x0+1)<1.0e-10 ){
       aBCFlag[ip*3+0] = 1;

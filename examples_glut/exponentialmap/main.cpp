@@ -135,8 +135,8 @@ void MakeExpMap_Point
  std::vector<double>& aLocCoord,
  int iker,
  const std::vector<double>& aXYZ,
- std::vector<int>& psup_ind,
- std::vector<int>& psup)
+ std::vector<unsigned int> &psup_ind,
+ std::vector<unsigned int> &psup)
 {
   const unsigned int nXYZ = aXYZ.size()/3;
   std::vector<CNode> aNode;
@@ -204,8 +204,7 @@ std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<double> aTex;
 std::vector<double> aLocCoord;
-std::vector<int> psup_ind;
-std::vector<int> psup;
+std::vector<unsigned int> psup_ind, psup;
 int iker = 0;
 CNav3D_GLUT nav;
 bool is_animation = true;
@@ -237,7 +236,7 @@ void SetNewProblem()
     }
   }
   {
-    std::vector<int> elsup_ind, elsup;
+    std::vector<unsigned int> elsup_ind, elsup;
     JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                              aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
     JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,

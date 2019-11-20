@@ -63,8 +63,8 @@ void dfm2::MakeInnerRelationTri
       if( !iflg ){
         aTri[itri].s2[iedtri] = -1;
       }
-      for(unsigned int ipofa=0;ipofa<2;ipofa++){
-        tmp_poin[ inpofa[ipofa] ] = 0;
+      for(unsigned int ipofa : inpofa){
+        tmp_poin[ ipofa ] = 0;
       }
     }
   }
@@ -74,12 +74,10 @@ bool dfm2::JArray_MakeElSuP
 (std::vector<int>& elsup_ind, std::vector<int>& elsup,
  const std::vector<ETri>& aTri, const unsigned int npoin)
 {
-  const unsigned int nnotri = 3;
-  
   elsup_ind.assign(npoin+1, 0);
-  for(unsigned int itri=0;itri<aTri.size();itri++){
-    for(unsigned int inotri=0;inotri<nnotri;inotri++){
-      elsup_ind[ aTri[itri].v[inotri]+1 ]++;
+  for(const auto & itri : aTri){
+    for(int inotri : itri.v){
+      elsup_ind[ inotri+1 ]++;
     }
   }
   for(unsigned int ipoin=0;ipoin<npoin;ipoin++){
@@ -87,15 +85,14 @@ bool dfm2::JArray_MakeElSuP
   }
   const int nelsup = elsup_ind[npoin];
   elsup.resize(nelsup);
-  for(unsigned int itri=0;itri<aTri.size();itri++){
-    for(unsigned int inotri=0;inotri<nnotri;inotri++){
-      const unsigned int ipoin0 = aTri[itri].v[inotri];
+  for(std::size_t itri=0;itri<aTri.size();itri++){
+    for(unsigned int ipoin0 : aTri[itri].v){
       const unsigned int ielsup = elsup_ind[ipoin0];
       elsup[ielsup] = itri;
       elsup_ind[ipoin0]++;
     }
   }
-  for(int ipoin=npoin;ipoin>0;ipoin--){
+  for(unsigned int ipoin=npoin;ipoin>0;ipoin--){
     elsup_ind[ipoin] = elsup_ind[ipoin-1];
   }
   elsup_ind[0] = 0;
@@ -114,8 +111,7 @@ void dfm2::JArray_PSuP
     aflg[ino] = ino;
     for (int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
       unsigned int itri1 = elsup[ielsup];
-      for (unsigned int inotri = 0; inotri<3; inotri++){
-        unsigned int ino1 = aTri[itri1].v[inotri];
+      for (unsigned int ino1 : aTri[itri1].v){
         if (aflg[ino1]==ino) continue;
         psup_ind[ino+1]++;
         aflg[ino1] = ino;
@@ -131,8 +127,7 @@ void dfm2::JArray_PSuP
     aflg[ino] = ino;
     for (int ielsup = elsup_ind[ino]; ielsup<elsup_ind[ino+1]; ielsup++){
       unsigned int itri1 = elsup[ielsup];
-      for (unsigned int inotri = 0; inotri<3; inotri++){
-        unsigned int ino1 = aTri[itri1].v[inotri];
+      for (unsigned int ino1 : aTri[itri1].v){
         if (aflg[ino1]==ino) continue;
         psup[iedge] = ino1;
         iedge++;
@@ -724,12 +719,12 @@ void dfm2::InitializeMesh
 
 void dfm2::MoveCCW
 (int& itri_cur,
- int& inotri_cur,
+ unsigned int &inotri_cur,
  bool& flag_is_wall,
  ////
  std::vector<ETri>& aTri)
 {
-  const int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
+  const unsigned int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
   if (aTri[itri_cur].s2[inotri1]==-1){ flag_is_wall = true; return; }
   flag_is_wall = false;
   const int itri_nex = aTri[itri_cur].s2[inotri1];
@@ -860,8 +855,8 @@ bool dfm2::Collapse_ElemEdge
         if( ktri == -1 ) return false;
         assert(ktri>=0&&ktri<(int)aTri.size());
         const int rel01 = aTri[jtri].r2[jnoel_b];
-        const int knoel_c = relTriTri[rel01][jnoel_c];
-        const int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
+        const unsigned int knoel_c = relTriTri[rel01][jnoel_c];
+        const unsigned int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
         assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
         assert(aTri[ktri].v[knoel_c]==ipo3);
         if (ktri==itri2) break;
@@ -884,8 +879,8 @@ bool dfm2::Collapse_ElemEdge
         if( ktri == -1 ) return false;
         assert( ktri>=0 && ktri<(int)aTri.size());
         const int rel01 = aTri[jtri].r2[jnoel_b];
-        const int knoel_c = relTriTri[rel01][jnoel_c];
-        const int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
+        const unsigned int knoel_c = relTriTri[rel01][jnoel_c];
+        const unsigned int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
         assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
         assert(aTri[ktri].v[knoel_c]==ipo1);
         if (ktri==itri4) break;
@@ -1012,8 +1007,8 @@ bool dfm2::Collapse_ElemEdge
       assert(aTri[jtri].s2[jnoel_b]>=0&&aTri[jtri].s2[jnoel_b]<(int)aTri.size());
       int ktri = aTri[jtri].s2[jnoel_b];
       const int rel01 = aTri[jtri].r2[jnoel_b];
-      const int knoel_c = relTriTri[rel01][jnoel_c];
-      const int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
+      const unsigned int knoel_c = relTriTri[rel01][jnoel_c];
+      const unsigned int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
       assert(itri1 < (int)aTri.size());
       assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
       if (ktri==itri3||ktri==itri4) break;
@@ -1052,14 +1047,14 @@ void dfm2::GetTriArrayAroundPoint
     assert(itri0 < (int)aTri.size());
     assert(inoel_c0 < 3);
     assert(aTri[itri0].v[inoel_c0]==ipoin);
-    aTriSurPo.push_back(std::make_pair(itri0, inoel_c0));
+    aTriSurPo.emplace_back(itri0, inoel_c0);
     /////
     if (aTri[itri0].s2[inoel_b0]==-1){ break; }
     assert(aTri[itri0].s2[inoel_b0]>=0&&aTri[itri0].s2[inoel_b0] < (int)aTri.size());
     int itri1 = aTri[itri0].s2[inoel_b0];
     const int rel01 = aTri[itri0].r2[inoel_b0];
-    const int inoel_c1 = relTriTri[rel01][inoel_c0];
-    const int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
+    const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
+    const unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
     assert(itri1 < (int)aTri.size());
     assert(aTri[itri1].s2[relTriTri[rel01][inoel_b0]]==(int)itri0);
     assert(aTri[itri1].v[inoel_c1]==ipoin);

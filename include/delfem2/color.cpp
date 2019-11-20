@@ -120,31 +120,31 @@ CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColo
 void delfem2::ColorMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
-  colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, 1.0f))); // blue
-  colorMap.push_back(std::make_pair(min+diff*1, CColor(0.0f, 0.2f, 1.0f, 1.0f)));
-  colorMap.push_back(std::make_pair(min+diff*2, CColor(0.5f, 0.5f, 0.5f, 1.0f))); // gray
-  colorMap.push_back(std::make_pair(min+diff*3, CColor(1.0f, 0.2f, 0.0f, 1.0f)));
-  colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
+  colorMap.emplace_back(min+diff*0, CColor(0.0f, 0.0f, 1.0f, 1.0f)); // blue
+  colorMap.emplace_back(min+diff*1, CColor(0.0f, 0.2f, 1.0f, 1.0f));
+  colorMap.emplace_back(min+diff*2, CColor(0.5f, 0.5f, 0.5f, 1.0f)); // gray
+  colorMap.emplace_back(min+diff*3, CColor(1.0f, 0.2f, 0.0f, 1.0f));
+  colorMap.emplace_back(min+diff*4, CColor(1.0f, 0.0f, 0.0f, 1.0f)); // red
 }
 
 void delfem2::ColorMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
 {
   double diff = (max-min)*0.25;
-  colorMap.push_back(std::make_pair(min+diff*0, CColor(0.0f, 0.0f, 1.0f, alpha))); // blue
-  colorMap.push_back(std::make_pair(min+diff*1, CColor(0.0f, 1.0f, 1.0f, alpha))); // cyan
-  colorMap.push_back(std::make_pair(min+diff*2, CColor(0.0f, 1.0f, 0.0f, alpha))); // green
-  colorMap.push_back(std::make_pair(min+diff*3, CColor(1.0f, 1.0f, 0.0f, alpha))); // yellow
-  colorMap.push_back(std::make_pair(min+diff*4, CColor(1.0f, 0.0f, 0.0f, alpha))); // red
+  colorMap.emplace_back(min+diff*0, CColor(0.0f, 0.0f, 1.0f, alpha)); // blue
+  colorMap.emplace_back(min+diff*1, CColor(0.0f, 1.0f, 1.0f, alpha)); // cyan
+  colorMap.emplace_back(min+diff*2, CColor(0.0f, 1.0f, 0.0f, alpha)); // green
+  colorMap.emplace_back(min+diff*3, CColor(1.0f, 1.0f, 0.0f, alpha)); // yellow
+  colorMap.emplace_back(min+diff*4, CColor(1.0f, 0.0f, 0.0f, alpha)); // red
 }
 
 void delfem2::ColorMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
-  colorMap.push_back(std::make_pair(min+diff*0, CColor(1.0f, 0.0f, 0.0f, 1.0f))); // red
-  colorMap.push_back(std::make_pair(min+diff*1, CColor(1.0f, 1.0f, 0.0f, 1.0f))); // yellow
-  colorMap.push_back(std::make_pair(min+diff*2, CColor(0.0f, 1.0f, 0.0f, 1.0f))); // green
-  colorMap.push_back(std::make_pair(min+diff*3, CColor(0.0f, 1.0f, 1.0f, 1.0f))); // cyan
-  colorMap.push_back(std::make_pair(min+diff*4, CColor(0.0f, 0.0f, 1.0f, 1.0f))); // blue
+  colorMap.emplace_back(min+diff*0, CColor(1.0f, 0.0f, 0.0f, 1.0f)); // red
+  colorMap.emplace_back(min+diff*1, CColor(1.0f, 1.0f, 0.0f, 1.0f)); // yellow
+  colorMap.emplace_back(min+diff*2, CColor(0.0f, 1.0f, 0.0f, 1.0f)); // green
+  colorMap.emplace_back(min+diff*3, CColor(0.0f, 1.0f, 1.0f, 1.0f)); // cyan
+  colorMap.emplace_back(min+diff*4, CColor(0.0f, 0.0f, 1.0f, 1.0f)); // blue
 }
 
 // ----------------------------------------------------

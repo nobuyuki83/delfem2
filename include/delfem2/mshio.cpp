@@ -645,7 +645,7 @@ void Load_Obj
       std::stringstream ss(buff);
       std::string str0, str1;
       ss >> str0 >> str1;
-      const int iogt0 = aTriGroup.size()-1;
+      const std::size_t iogt0 = aTriGroup.size()-1;
       aTriGroup[iogt0].name_group = str1;
       continue;
     }
@@ -653,15 +653,15 @@ void Load_Obj
       std::stringstream ss(buff);
       std::string str0, str1;
       ss >> str0 >> str1;
-      const int iogt0 = aTriGroup.size()-1;
+      const std::size_t iogt0 = aTriGroup.size()-1;
       aTriGroup[iogt0].name_mtl = str1;
       continue;
     }
     if (buff[0]=='f'){
-      const int iogt0 = aTriGroup.size()-1;
-      if( iogt0 == -1 ){
+      if( aTriGroup.empty() ){
         std::cout << fname << std::endl;
       }
+      const std::size_t iogt0 = aTriGroup.size()-1;
       char str[256], str0[256], str1[256], str2[256];
       sscanf(buff, "%s %s %s %s", str, str0, str1, str2);
 //      std::cout << str0 << " " << str1 << " " << str2 << std::endl;
@@ -1117,14 +1117,14 @@ void WriteVTK_MapTriScalar
     fout << aXYZ[ip*3+0] << " " << aXYZ[ip*3+1] << " " << aXYZ[ip*3+2] << std::endl;
   }
   const int nnoel = 3;
-  const int nelem = aTri.size()/nnoel;
+  const std::size_t nelem = aTri.size()/nnoel;
   fout << "CELLS " << nelem << " " << nelem*(nnoel+1) << std::endl;
-  for(int ielem=0;ielem<nelem;++ielem){
+  for(unsigned int ielem=0;ielem<nelem;++ielem){
     fout << nnoel << " ";
     fout << aTri[ielem*nnoel+0] << " " << aTri[ielem*nnoel+1] << " " << aTri[ielem*nnoel+2] << std::endl;
   }
   fout << "CELL_TYPES " << nelem << std::endl;
-  for(int ih=0;ih<nelem;++ih){
+  for(unsigned int ih=0;ih<nelem;++ih){
     fout << "5" << std::endl;
   }
   fout << "POINT_DATA " << np << std::endl;
@@ -1286,7 +1286,7 @@ void Read_MeshTri3D_Nas
     map10[ip1] = ip0;
   }
   for(unsigned int & i : aTri){
-    int j1 = i;
+    unsigned int j1 = i;
     i = map10[j1];
   }
 }

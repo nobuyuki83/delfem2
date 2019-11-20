@@ -247,7 +247,7 @@ void InitializeProblem()
     aBCFlag[ip0] = 1;
   }
    */
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);

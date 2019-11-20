@@ -129,7 +129,7 @@ void myGlutResize(int w, int h)
 
 
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   //  ::glClearColor(0.0, .0, 0.0, 1.0);
@@ -268,9 +268,9 @@ int main(int argc,char* argv[])
     aaXY[0].assign(xys,xys+8);
     GenMesh(aaXY);
   }
-  /////////
+  // -------------------------------
   aXYZ0.resize(aPo2D.size()*3);
-  for(int ip=0;ip<aPo2D.size();++ip){
+  for(std::size_t ip=0;ip<aPo2D.size();++ip){
     aXYZ0[ip*3+0] = aVec2[ip].x;
     aXYZ0[ip*3+1] = aVec2[ip].y;
     aXYZ0[ip*3+2] = 0.0;
@@ -278,16 +278,16 @@ int main(int argc,char* argv[])
   aXYZ = aXYZ0;
   /////
   aTri.resize(aETri.size()*3);
-  for(int it=0;it<aETri.size();++it){
+  for(std::size_t it=0;it<aETri.size();++it){
     aTri[it*3+0] = aETri[it].v[0];
     aTri[it*3+1] = aETri[it].v[1];
     aTri[it*3+2] = aETri[it].v[2];
   }
   ElemQuad_DihedralTri(aQuad,aTri.data(),aTri.size()/3,aXYZ0.size()/3);
   {
-    const int np = aXYZ0.size()/3;
+    const std::size_t np = aXYZ0.size()/3;
     mat_A.Initialize(np,3,true);
-    std::vector<int> psup_ind,psup;
+    std::vector<unsigned int> psup_ind,psup;
     JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                 aQuad.data(),aQuad.size()/4, 4, np);
     dfm2::JArray_Sort(psup_ind, psup);
@@ -296,7 +296,7 @@ int main(int argc,char* argv[])
   }
   aUVW.resize(aXYZ.size(),0.0);
   aBCFlag.resize(aXYZ.size(),0);
-  for(int ip=0;ip<aXYZ.size()/3;++ip){
+  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
     if( aXYZ[ip*3+0]  < -0.49*lenx ){
       aBCFlag[ip*3+0] = 1;
       aBCFlag[ip*3+1] = 1;

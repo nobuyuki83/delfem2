@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <cassert>
 
 #include <GLFW/glfw3.h>
@@ -133,9 +133,9 @@ void delfem2::opengl::CViewer_GLFW::Init_newGL()
   this->window = glfwCreateWindow(640,
                                   480,
                                   "LearnOpenGL",
-                                  NULL,
-                                  NULL);
-  if (this->window == NULL)
+                                  nullptr,
+                                  nullptr);
+  if (this->window == nullptr)
   {
     glfwTerminate();
   }

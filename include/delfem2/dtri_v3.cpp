@@ -35,7 +35,7 @@ static int InsertPoint_Mesh
     pos = r0*p0 + r1*p1 + (1-r0-r1)*p2;
   }
   int ipo_ins = (int)aPo3D.size();
-  aPo3D.push_back( dfm2::CEPo2() );
+  aPo3D.emplace_back( );
   aXYZ.push_back(pos);
   InsertPoint_Elem(ipo_ins, itri0, aPo3D, aSTri);
   return ipo_ins;
@@ -267,10 +267,10 @@ bool dfm2::DelaunayAroundPoint
   assert(aTri[aPo[ipo0].e].v[aPo[ipo0].d]==ipo0);
   
   const int itri0 = aPo[ipo0].e;
-  int inotri0 = aPo[ipo0].d;
+  unsigned int inotri0 = aPo[ipo0].d;
   
   int itri_cur = itri0;
-  int inotri_cur = aPo[ipo0].d;
+  unsigned int inotri_cur = aPo[ipo0].d;
   bool flag_is_wall = false;
   for (;;){
     assert(aTri[itri_cur].v[inotri_cur]==ipo0);

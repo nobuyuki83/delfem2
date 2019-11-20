@@ -333,10 +333,10 @@ void Energy_MIPS
 
 void CheckEnergyMIPS(){
   double C[3][3];
-  for(int ino=0;ino<3;++ino){
-    C[ino][0] = (double)rand()/(RAND_MAX+1.0);
-    C[ino][1] = (double)rand()/(RAND_MAX+1.0);
-    C[ino][2] = (double)rand()/(RAND_MAX+1.0);
+  for(auto & ino : C){
+    ino[0] = (double)rand()/(RAND_MAX+1.0);
+    ino[1] = (double)rand()/(RAND_MAX+1.0);
+    ino[2] = (double)rand()/(RAND_MAX+1.0);
   }
   double c[3][3];
   CMatrix3 m;

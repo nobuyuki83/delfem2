@@ -81,10 +81,10 @@ void GetTriArrayAroundPoint(std::vector< std::pair<int,int> >& aTriSurPo,
                           const std::vector<ETri>& aETri);
 
 void MoveCCW(int& itri_cur,
-             int& inotri_cur,
+             unsigned int &inotri_cur,
              bool& flag_is_wall,
              //
-             std::vector<ETri>& aETri);
+             std::vector<ETri>& aTri);
 
 // ---------------
 // topology edit

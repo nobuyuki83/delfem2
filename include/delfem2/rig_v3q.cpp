@@ -119,7 +119,7 @@ void CRigBone::SetTranslation
 void UpdateBoneRotTrans
 (std::vector<CRigBone>& aBone)
 {
-  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
+  for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
       Mat4_ScaleRotTrans(aBone[ibone].Mat,
@@ -157,9 +157,9 @@ void UpdateRigSkin
     for(int iij=0;iij<4;++iij){
       double w = aRigWeight[ip*4+iij];
       if( w < 1.0e-30 ){ continue; }
-      int ij = aRigJoint[ip*4+iij];
+      unsigned int ij = aRigJoint[ip*4+iij];
       sum_w += w;
-      assert (ij>=0 && ij<(int)aBone.size());
+      assert (ij>=0 && ij<aBone.size());
       double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
       double pos0b[4]; MatVec4(pos0b,aBone[ij].Mat,pos0a);
       pos1[0] += w*pos0b[0];
@@ -249,12 +249,12 @@ void Read_BioVisionHierarchy
       const int ib = aBone.size()-1;
       for(int ich=0;ich<nch;++ich){
         const std::string& type_ch = aToken[ich+2];
-        if(      type_ch == "Xposition" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,0,false) ); }
-        else if( type_ch == "Yposition" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,1,false) ); }
-        else if( type_ch == "Zposition" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,2,false) ); }
-        else if( type_ch == "Xrotation" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,0,true) ); }
-        else if( type_ch == "Yrotation" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,1,true) ); }
-        else if( type_ch == "Zrotation" ){ aChannelRotTransBone.push_back( CChannel_BioVisionHierarchy(ib,2,true) ); }
+        if(      type_ch == "Xposition" ){ aChannelRotTransBone.emplace_back(ib,0,false ); }
+        else if( type_ch == "Yposition" ){ aChannelRotTransBone.emplace_back(ib,1,false ); }
+        else if( type_ch == "Zposition" ){ aChannelRotTransBone.emplace_back(ib,2,false ); }
+        else if( type_ch == "Xrotation" ){ aChannelRotTransBone.emplace_back(ib,0,true ); }
+        else if( type_ch == "Yrotation" ){ aChannelRotTransBone.emplace_back(ib,1,true ); }
+        else if( type_ch == "Zrotation" ){ aChannelRotTransBone.emplace_back(ib,2,true ); }
         else{
           std::cout << "ERROR-->undefiend type" << std::endl;
         }
@@ -304,7 +304,7 @@ void Read_BioVisionHierarchy
     }
   }
   ///////
-  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
+  for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
     bone.rot[0] = 1.0;
@@ -321,8 +321,7 @@ void Read_BioVisionHierarchy
       bone.trans[2] = (-bone.invBindMat[11])-(-bone_p.invBindMat[11]);
     }
   }
-  for(unsigned int ib=0;ib<aBone.size();++ib){
-    CRigBone& bone = aBone[ib];
+  for(auto & bone : aBone){
     for(int i=0;i<16;++i){ bone.Mat[i] = bone.invBindMat[i]; }
     int info; CalcInvMat(bone.Mat, 4, info);
   }
@@ -334,8 +333,7 @@ void SetPose_BioVisionHierarchy
  const std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  const double *aVal)
 {
-  for(unsigned int ib=0;ib<aBone.size();++ib){
-    CRigBone& bone = aBone[ib];
+  for(auto & bone : aBone){
     bone.rot[0] = 1.0;
     bone.rot[1] = 0.0;
     bone.rot[2] = 0.0;

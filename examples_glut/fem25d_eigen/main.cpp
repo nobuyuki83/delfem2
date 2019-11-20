@@ -180,7 +180,7 @@ void InitializeProblem_ShellEigenPB()
   const int nDoF = np*3;
   aTmp0.assign(nDoF, 0.0);
   //////
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);

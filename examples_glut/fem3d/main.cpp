@@ -89,7 +89,7 @@ void InitializeProblem_Poisson()
     }
   }
   //////
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -160,7 +160,7 @@ void InitializeProblem_Diffusion()
     }
   }
   //////
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -233,7 +233,7 @@ void InitializeProblem_ShellEigenPB()
     }
   }
   //////
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -306,7 +306,7 @@ void InitializeProblem_LinearSolid_Dynamic()
     }
   }
   //////
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -403,7 +403,7 @@ void InitializeProblem_Stokes_Static()
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
   crs.Sort();
    */
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -486,7 +486,7 @@ void InitializeProblem_Stokes_Dynamic()
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
   crs.Sort();
    */
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
@@ -577,7 +577,7 @@ void InitializeProblem_NavierStokes_Dynamic()
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
   crs.Sort();
    */
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTet.data(), aTet.size()/4, 4,
                                               (int)aXYZ.size()/3);
