@@ -249,8 +249,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         std::vector<unsigned int> psup_ind, psup;
         JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                     aTri.data(),aTri.size()/3,3,(int)aXYZ.size()/3);
-        std::vector<int> edge_ind;
-        std::vector<int> edge;
+        std::vector<unsigned int> edge_ind, edge;
         JArrayEdgeUnidir_PointSurPoint(edge_ind, edge,
                                 psup_ind, psup);
 //        CJaggedArray edge;

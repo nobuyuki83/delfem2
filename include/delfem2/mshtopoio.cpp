@@ -48,11 +48,11 @@ void MeshTri3D_GeodesicPolyhedron
   dfm2::MeshTri3D_Icosahedron(aXYZ0, aTri0);
   ////
   const int np0 = aXYZ0.size()/3;
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                               aTri0.data(), aTri0.size()/3, 3, np0);
   ////
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               aTri0.data(),
                                               elsup_ind, elsup,
@@ -60,7 +60,7 @@ void MeshTri3D_GeodesicPolyhedron
   //  std::cout << "psup" << std::endl;
   //  Print_IndexedArray(psup_ind, psup);
   /////
-  std::vector<int> edge_ind, edge;
+  std::vector<unsigned int> edge_ind, edge;
   JArrayEdgeUnidir_PointSurPoint(edge_ind, edge,
                              psup_ind,psup);
   //  std::cout << "edge" << std::endl;

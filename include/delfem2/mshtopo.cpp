@@ -131,8 +131,8 @@ void dfm2::JArray_AddDiagonal
 
 // in the edge ip -> jp, it holds (ip < jp)
 void JArrayEdgeUnidir_PointSurPoint
-(std::vector<int>& edge_ind,
- std::vector<int>& edge,
+(std::vector<unsigned int> &edge_ind,
+ std::vector<unsigned int> &edge,
  /////
  const std::vector<unsigned int> &psup_ind,
  const std::vector<unsigned int> &psup)

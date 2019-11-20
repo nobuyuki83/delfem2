@@ -1064,8 +1064,8 @@ void dfm2::SubdivisionPoints_Quad
 void dfm2::SubdivisionPoints_Hex
 (std::vector<double>& aXYZ1,
  ///
- const std::vector<int>& psupIndHex0,
- const std::vector<int>& psupHex0,
+ const std::vector<unsigned int> &psupIndHex0,
+ const std::vector<unsigned int> &psupHex0,
  const std::vector<unsigned int>& aQuadHex0,
  const unsigned int* aHex0, unsigned int nHex0,
  const double* aXYZ0, unsigned int nXYZ0)
