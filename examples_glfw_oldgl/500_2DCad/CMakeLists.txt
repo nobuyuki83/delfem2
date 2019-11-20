@@ -1,4 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
+
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+IF(MSVC)
+  set(CMAKE_CXX_FLAGS "/W4 -O2 \
+    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
+    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
+ELSE()
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+ENDIF()
+
+####################################
+
 project(500_cad2d)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
@@ -40,10 +54,7 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(APPLE)
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
   find_library( COCOA_LIBRARY Cocoa )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
@@ -55,16 +66,12 @@ IF(APPLE)
     ${COREVIDEO_LIBRARY}
   )
 ELSEIF(UNIX)
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g -std=c++11")
   target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
-  set(CMAKE_CXX_FLAGS "/W4 -O2 \ 
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")    
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     target_link_libraries(${PROJECT_NAME} 
       ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
