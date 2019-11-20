@@ -1,4 +1,3 @@
-project(501_cad2d_edit)
 cmake_minimum_required(VERSION 2.8)
 
 enable_language(CXX)
@@ -13,6 +12,8 @@ ELSE()
 ENDIF()
 
 ####################################
+
+project(501_cad2d_edit)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

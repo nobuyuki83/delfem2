@@ -1,8 +1,23 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(11_imgui_basic)
+
+# compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
+option(EMSCRIPTEN "Use Emscripten:" OFF)
+
+#####################################
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+IF(NOT EMSCRIPTEN)
+  IF(MSVC)
+    set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
+  ELSE()
+    set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  ENDIF()
+ENDIF()
+
+#####################################
+
+project(11_imgui_basic)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED CONFIG)
@@ -47,9 +62,6 @@ add_executable(${PROJECT_NAME}
   ../glad4/include/glad/glad.h    ../glad4/src/glad.c
 )
 
-# compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
-
-option(EMSCRIPTEN "Use Emscripten:" OFF)
 if (NOT EMSCRIPTEN)
   IF(APPLE)
     find_library( COCOA_LIBRARY Cocoa )
