@@ -124,32 +124,31 @@ void RemoveUnreferencedPoints_MeshElem
 (std::vector<double>& aXYZ1,
  std::vector<unsigned int>& aElem1,
  std::vector<int>& aMap01,
- int ndim,
+ unsigned int ndim,
  const std::vector<double>& aXYZ0,
  const std::vector<unsigned int>& aElem0)
 {
-  int np0 = aXYZ0.size()/ndim;
+  unsigned int np0 = aXYZ0.size()/ndim;
   aMap01.assign(np0,-2);
-  for(unsigned int it=0;it<aElem0.size();++it){
-    int ip = aElem0[it];
+  for(int ip : aElem0){
     aMap01[ip] = -1;
   }
   int npj = 0;
-  for(int ip=0;ip<np0;++ip){
+  for(unsigned int ip=0;ip<np0;++ip){
     if( aMap01[ip] == -2 ) continue;
     aMap01[ip] = npj;
     npj++;
   }
   aXYZ1.resize(npj*ndim);
-  for(int ip=0;ip<np0;++ip){
+  for(unsigned int ip=0;ip<np0;++ip){
     if( aMap01[ip] == -2 ) continue;
     int jp = aMap01[ip];
-    for(int idim=0;idim<ndim;++idim){
+    for(unsigned int idim=0;idim<ndim;++idim){
       aXYZ1[jp*ndim+idim] = aXYZ0[ip*ndim+idim];
     }
   }
   aElem1.resize(aElem0.size());
-  for(unsigned int it=0;it<aElem0.size();++it){
+  for(size_t it=0;it<aElem0.size();++it){
     int ip = aElem0[it];
     int jp = aMap01[ip];
     aElem1[it] = jp;
@@ -158,19 +157,14 @@ void RemoveUnreferencedPoints_MeshElem
 
 void Normal_MeshTri3D
 (double* aNorm,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTri, int nTri)
+ const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri)
 {
-  for(int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
-  for(int itri=0;itri<nTri;itri++){
-    const int i0 = aTri[itri*3+0];
-    const int i1 = aTri[itri*3+1];
-    const int i2 = aTri[itri*3+2];
-    if( i0 == -1 ){
-      assert( i1 == -1 );
-      assert( i2 == -1 );
-      continue;
-    }
+  for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
+  for(unsigned int itri=0;itri<nTri;itri++){
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
     double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
     double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
     double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
@@ -180,7 +174,7 @@ void Normal_MeshTri3D
     aNorm[i1*3+0] += un[0];  aNorm[i1*3+1] += un[1];  aNorm[i1*3+2] += un[2];    
     aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];    
   }
-  for(int ino=0;ino<nXYZ;ino++){
+  for(unsigned int ino=0;ino<nXYZ;ino++){
     const double n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
     const double invlen = 1.0/Length3D(n);
     aNorm[ino*3+0] *= invlen;
@@ -194,14 +188,14 @@ void Normal_MeshTri3D
 void Quality_MeshTri2D
 (double& max_aspect, double& min_area,
  const double* aXY,
- const unsigned int* aTri, int nTri)
+ const unsigned int* aTri, unsigned int nTri)
 {
   max_aspect = 0;
   min_area = 0;
-  for(int itri=0;itri<nTri;itri++){
-    const int i0 = aTri[itri*3+0];
-    const int i1 = aTri[itri*3+1];
-    const int i2 = aTri[itri*3+2];
+  for(unsigned int itri=0;itri<nTri;itri++){
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
@@ -222,10 +216,7 @@ void Quality_MeshTri2D
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------------------------
 
 void GetCenterWidth
 (double& cx, double& cy, double& cz,
@@ -275,7 +266,7 @@ void MinMaxXYZ(double mm[6],
 {
   mm[0] = +1;
   mm[1] = -1;
-  for(unsigned int ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+  for(size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
     updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
                     aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
   }
@@ -529,7 +520,7 @@ const std::vector<int>& aTri)
   cgy = 0.0;
   cgz = 0.0;
   double tw = 0;
-  for (unsigned int itri = 0; itri<aTri.size()/3; itri++){
+  for (size_t itri = 0; itri<aTri.size()/3; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
@@ -557,7 +548,7 @@ void CenterOfGravity_Shell
   cgy = 0.0;
   cgz = 0.0;
   double tw = 0;
-  for (unsigned int itri = 0; itri<aTri.size()/3; itri++){
+  for (size_t itri = 0; itri<aTri.size()/3; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
@@ -587,7 +578,7 @@ double CenterOfGravity_TriMsh3DFlg_Shell
   cgy = 0.0;
   cgz = 0.0;
   double tw = 0;
-  for (unsigned int itri = 0; itri<aTri.size()/3; itri++){
+  for (size_t itri = 0; itri<aTri.size()/3; itri++){
     if( aFlg[itri] != iflg ) continue;
     const unsigned int i1 = aTri[itri*3+0];
     const unsigned int i2 = aTri[itri*3+1];
@@ -627,15 +618,7 @@ void CenterOfGravity_Tri
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------------------------------------------
 
 void SetTopology_ExtrudeTri2Tet
 (unsigned int* aTet,
@@ -645,17 +628,17 @@ void SetTopology_ExtrudeTri2Tet
 {
   for(int il=0;il<nlayer;++il){
     for(int itri=0;itri<nTri;++itri){
-      int ip0=-1, ip1=-1, ip2=-1;
+      unsigned int ip0=0, ip1=0, ip2=0;
       {
-        const int i0 = aTri[itri*3+0];
-        const int i1 = aTri[itri*3+1];
-        const int i2 = aTri[itri*3+2];
+        const unsigned int i0 = aTri[itri*3+0];
+        const unsigned int i1 = aTri[itri*3+1];
+        const unsigned int i2 = aTri[itri*3+2];
+        assert( i0 != i1 && i1 != i2 );
         if( i0 > i1 && i0 > i2 ){ ip0=i0; ip1=i1; ip2=i2; }
         if( i1 > i0 && i1 > i2 ){ ip0=i1; ip1=i2; ip2=i0; }
         if( i2 > i0 && i2 > i1 ){ ip0=i2; ip1=i0; ip2=i1; }
-        assert(ip0!=-1);
       }
-      const int aIQ[6] = {
+      const unsigned int aIQ[6] = {
         (il+0)*nXY+ip0, (il+1)*nXY+ip0,
         (il+0)*nXY+ip1, (il+1)*nXY+ip1,
         (il+0)*nXY+ip2, (il+1)*nXY+ip2 };
@@ -709,9 +692,7 @@ void ExtrudeTri2Tet
                              nXY,aTri.data(),nTri,nlayer);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------------------------
 
 void LaplacianSmoothing
 (std::vector<double>& aXYZ,
@@ -719,7 +700,7 @@ void LaplacianSmoothing
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
-  for(unsigned int ip=0;ip<aXYZ.size()/3;++ip){
+  for(size_t ip=0;ip<aXYZ.size()/3;++ip){
     double sum_area = 0.0;
     double pcnt[3] = {0,0,0};
     for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
@@ -913,15 +894,15 @@ void makeSolidAngle
 void MassPoint_Tet3D
 (double* aMassMatrixLumped,
  double rho,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet)
+ const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTet, unsigned int nTet)
 {
-  for(int i=0;i<nXYZ;++i){ aMassMatrixLumped[i] = 0.0; }
-  for(int it=0;it<nTet;++it){
-    const int i0 = aTet[it*4+0]; assert(i0>=0&&i0<nXYZ);
-    const int i1 = aTet[it*4+1]; assert(i1>=0&&i1<nXYZ);
-    const int i2 = aTet[it*4+2]; assert(i2>=0&&i2<nXYZ);
-    const int i3 = aTet[it*4+3]; assert(i3>=0&&i3<nXYZ);
+  for(unsigned int i=0;i<nXYZ;++i){ aMassMatrixLumped[i] = 0.0; }
+  for(unsigned int it=0;it<nTet;++it){
+    const unsigned int i0 = aTet[it*4+0]; assert(i0>=0&&i0<nXYZ);
+    const unsigned int i1 = aTet[it*4+1]; assert(i1>=0&&i1<nXYZ);
+    const unsigned int i2 = aTet[it*4+2]; assert(i2>=0&&i2<nXYZ);
+    const unsigned int i3 = aTet[it*4+3]; assert(i3>=0&&i3<nXYZ);
     const double* p0 = aXYZ+i0*3;
     const double* p1 = aXYZ+i1*3;
     const double* p2 = aXYZ+i2*3;
@@ -937,14 +918,14 @@ void MassPoint_Tet3D
 void MassPoint_Tri2D
 (double* aMassMatrixLumped,
  double rho,
- const double* aXY, int nXY,
- const unsigned int* aTri, int nTri)
+ const double* aXY, unsigned int nXY,
+ const unsigned int* aTri, unsigned int nTri)
 {
-  for(int i=0;i<nXY;++i){ aMassMatrixLumped[i] = 0.0; }
-  for(int it=0;it<nTri;++it){
-    const int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
-    const int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
-    const int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+  for(unsigned int i=0;i<nXY;++i){ aMassMatrixLumped[i] = 0.0; }
+  for(unsigned int it=0;it<nTri;++it){
+    const unsigned int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
+    const unsigned int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
+    const unsigned int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
@@ -963,8 +944,8 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
  const std::vector<int>& aEdgeFace0,
  const std::vector<int>& psupIndQuad0,
  const std::vector<int>& psupQuad0,
- const unsigned int* aQuad0, int nQuad0,
- const double* aXYZ0, int nXYZ0)
+ const unsigned int* aQuad0, unsigned int nQuad0,
+ const double* aXYZ0, unsigned int nXYZ0)
 {
   /*
   std::vector<int> aEdgeFace0;
@@ -974,38 +955,37 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
              psupIndQuad0,psupQuad0, aEdgeFace0,
              aQuad0, nv0);
    */
-  const int nv0 = nXYZ0;
-  const int ne0 = (int)psupQuad0.size();
-  const int nq0 = nQuad0;
-  assert( (int)aEdgeFace0.size() == ne0*4 );
+  const unsigned int nv0 = nXYZ0;
+  const unsigned int ne0 = psupQuad0.size();
+  const unsigned int nq0 = nQuad0;
+  assert( aEdgeFace0.size() == ne0*4 );
   aXYZ1.resize((nv0+ne0+nq0)*3);
   std::vector<int> aW(nv0,0);
-  for(int iv=0;iv<nv0;++iv){
+  for(unsigned int iv=0;iv<nv0;++iv){
     aXYZ1[iv*3+0] = 0;
     aXYZ1[iv*3+1] = 0;
     aXYZ1[iv*3+2] = 0;
   }
-  for(int iq=0;iq<nq0;++iq){
-    const int iv0 = aQuad0[iq*4+0];
-    const int iv1 = aQuad0[iq*4+1];
-    const int iv2 = aQuad0[iq*4+2];
-    const int iv3 = aQuad0[iq*4+3];
+  for(unsigned int iq=0;iq<nq0;++iq){
+    const unsigned int iv0 = aQuad0[iq*4+0];
+    const unsigned int iv1 = aQuad0[iq*4+1];
+    const unsigned int iv2 = aQuad0[iq*4+2];
+    const unsigned int iv3 = aQuad0[iq*4+3];
     double p0x = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0] + aXYZ0[iv2*3+0] + aXYZ0[iv3*3+0])*0.25;
     double p0y = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1] + aXYZ0[iv2*3+1] + aXYZ0[iv3*3+1])*0.25;
     double p0z = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
     aXYZ1[(nv0+ne0+iq)*3+0] = p0x;
     aXYZ1[(nv0+ne0+iq)*3+1] = p0y;
     aXYZ1[(nv0+ne0+iq)*3+2] = p0z;
-    const int aIV[4] = { iv0, iv1, iv2, iv3 };
-    for(int iiv=0;iiv<4;++iiv){
-      int jv0 = aIV[iiv];
+    const unsigned int aIV[4] = { iv0, iv1, iv2, iv3 };
+    for(unsigned int jv0 : aIV){
       aXYZ1[jv0*3+0] += p0x;
       aXYZ1[jv0*3+1] += p0y;
       aXYZ1[jv0*3+2] += p0z;
       aW[jv0] += 1;
     }
   }
-  for(int ie=0;ie<ne0;++ie){
+  for(unsigned int ie=0;ie<ne0;++ie){
     int iv0 = aEdgeFace0[ie*4+0];
     int iv1 = aEdgeFace0[ie*4+1];
     int iq0 = aEdgeFace0[ie*4+2];
@@ -1020,7 +1000,7 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
     aXYZ1[iv1*3+1] += aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1];
     aXYZ1[iv1*3+2] += aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2];
   }
-  for(int iv=0;iv<nv0;++iv){
+  for(unsigned int iv=0;iv<nv0;++iv){
     const int iw = aW[iv];
     if( iw == 0 ){ continue; }
     const double tmp0 = 1.0/(iw*iw);
@@ -1087,20 +1067,20 @@ void dfm2::SubdivisionPoints_Hex
  const std::vector<int>& psupIndHex0,
  const std::vector<int>& psupHex0,
  const std::vector<unsigned int>& aQuadHex0,
- const unsigned int* aHex0, int nHex0,
- const double* aXYZ0, int nXYZ0)
+ const unsigned int* aHex0, unsigned int nHex0,
+ const double* aXYZ0, unsigned int nXYZ0)
 {
-  const int nv0 = nXYZ0;
-  const int ne0 = (int)psupHex0.size();
-  const int nq0 = (int)aQuadHex0.size()/4;
-  const int nh0 = nHex0;
+  const unsigned int nv0 = nXYZ0;
+  const unsigned int ne0 = psupHex0.size();
+  const unsigned int nq0 = aQuadHex0.size()/4;
+  const unsigned int nh0 = nHex0;
   aXYZ1.resize((nv0+ne0+nq0+nh0)*3);
-  for(int iv=0;iv<nv0;++iv){
+  for(unsigned int iv=0;iv<nv0;++iv){
     aXYZ1[iv*3+0] = aXYZ0[iv*3+0];
     aXYZ1[iv*3+1] = aXYZ0[iv*3+1];
     aXYZ1[iv*3+2] = aXYZ0[iv*3+2];
   }
-  for(int iv=0;iv<nv0;++iv){
+  for(unsigned int iv=0;iv<nv0;++iv){
     for(int ipsup=psupIndHex0[iv];ipsup<psupIndHex0[iv+1];++ipsup){
       int jv = psupHex0[ipsup];
       aXYZ1[(nv0+ipsup)*3+0] = (aXYZ0[iv*3+0] + aXYZ0[jv*3+0])*0.5;
@@ -1108,7 +1088,7 @@ void dfm2::SubdivisionPoints_Hex
       aXYZ1[(nv0+ipsup)*3+2] = (aXYZ0[iv*3+2] + aXYZ0[jv*3+2])*0.5;
     }
   }
-  for(int iq=0;iq<nq0;++iq){
+  for(unsigned int iq=0;iq<nq0;++iq){
     const int iv0 = aQuadHex0[iq*4+0];
     const int iv1 = aQuadHex0[iq*4+1];
     const int iv2 = aQuadHex0[iq*4+2];
@@ -1117,15 +1097,15 @@ void dfm2::SubdivisionPoints_Hex
     aXYZ1[(nv0+ne0+iq)*3+1] = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1] + aXYZ0[iv2*3+1] + aXYZ0[iv3*3+1])*0.25;
     aXYZ1[(nv0+ne0+iq)*3+2] = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2] + aXYZ0[iv2*3+2] + aXYZ0[iv3*3+2])*0.25;
   }
-  for(int ih=0;ih<nh0;++ih){
-    const int iv0 = aHex0[ih*8+0];
-    const int iv1 = aHex0[ih*8+1];
-    const int iv2 = aHex0[ih*8+2];
-    const int iv3 = aHex0[ih*8+3];
-    const int iv4 = aHex0[ih*8+4];
-    const int iv5 = aHex0[ih*8+5];
-    const int iv6 = aHex0[ih*8+6];
-    const int iv7 = aHex0[ih*8+7];
+  for(unsigned int ih=0;ih<nh0;++ih){
+    const unsigned int iv0 = aHex0[ih*8+0];
+    const unsigned int iv1 = aHex0[ih*8+1];
+    const unsigned int iv2 = aHex0[ih*8+2];
+    const unsigned int iv3 = aHex0[ih*8+3];
+    const unsigned int iv4 = aHex0[ih*8+4];
+    const unsigned int iv5 = aHex0[ih*8+5];
+    const unsigned int iv6 = aHex0[ih*8+6];
+    const unsigned int iv7 = aHex0[ih*8+7];
     aXYZ1[(nv0+ne0+nq0+ih)*3+0] = (aXYZ0[iv0*3+0]+aXYZ0[iv1*3+0]+aXYZ0[iv2*3+0]+aXYZ0[iv3*3+0]+aXYZ0[iv4*3+0]+aXYZ0[iv5*3+0]+aXYZ0[iv6*3+0]+aXYZ0[iv7*3+0])*0.125;
     aXYZ1[(nv0+ne0+nq0+ih)*3+1] = (aXYZ0[iv0*3+1]+aXYZ0[iv1*3+1]+aXYZ0[iv2*3+1]+aXYZ0[iv3*3+1]+aXYZ0[iv4*3+1]+aXYZ0[iv5*3+1]+aXYZ0[iv6*3+1]+aXYZ0[iv7*3+1])*0.125;
     aXYZ1[(nv0+ne0+nq0+ih)*3+2] = (aXYZ0[iv0*3+2]+aXYZ0[iv1*3+2]+aXYZ0[iv2*3+2]+aXYZ0[iv3*3+2]+aXYZ0[iv4*3+2]+aXYZ0[iv5*3+2]+aXYZ0[iv6*3+2]+aXYZ0[iv7*3+2])*0.125;
@@ -1143,7 +1123,7 @@ void CenterOfGravity_Tet
   cgz = 0.0;
   v_tot = 0;
   const double* pXYZ = aXYZC.data();
-  for(unsigned int it=0;it<aTetC.size()/4;++it){
+  for(size_t it=0;it<aTetC.size()/4;++it){
     const double* p0 = pXYZ+aTetC[it*4+0]*3;
     const double* p1 = pXYZ+aTetC[it*4+1]*3;
     const double* p2 = pXYZ+aTetC[it*4+2]*3;

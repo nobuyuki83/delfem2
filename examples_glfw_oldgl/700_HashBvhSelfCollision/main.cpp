@@ -33,7 +33,7 @@ double cur_time = 0;
 
 // ----------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
@@ -46,8 +46,7 @@ void myGlutDisplay(void)
   ::glLineWidth(2);
   ::glColor3d(1,0,0);
   ::glBegin(GL_LINES);
-  for(int iitp=0;iitp<aITP.size();++iitp){
-    const dfm2::CIntersectTriPair& itp = aITP[iitp];
+  for(const auto & itp : aITP){
     glVertex3d(itp.P[0].x, itp.P[0].y, itp.P[0].z);
     glVertex3d(itp.P[1].x, itp.P[1].y, itp.P[1].z);
   }
@@ -89,9 +88,9 @@ int main(int argc,char* argv[])
     delfem2::Rotate(aXYZ0, 0.2, 0.3, 0.4);
     aXYZ = aXYZ0;
     {
-      const int ntri = aTri.size()/3;
+      const size_t ntri = aTri.size()/3;
       std::vector<double> aElemCenter(ntri*3);
-      for(int itri=0;itri<ntri;++itri){
+      for(unsigned int itri=0;itri<ntri;++itri){
         CVector3 p0 = cg_Tri(itri, aTri, aXYZ);
         aElemCenter[itri*3+0] = p0.x;
         aElemCenter[itri*3+1] = p0.y;
@@ -110,7 +109,7 @@ int main(int argc,char* argv[])
   }
   {
     aUVW.assign(aXYZ.size(),0.0);
-    for(int ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+    for(size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
       double x0 = aXYZ[ixyz*3+0];
       aUVW[ixyz*3+0] = -3*x0*x0*x0*x0*x0;
     }

@@ -393,8 +393,7 @@ bool isFileExists(const std::string& fpath)
 {
   std::ifstream fin;
   fin.open(fpath.c_str());
-  if( fin.is_open() ) return true;
-  return false;
+  return fin.is_open();
 }
 
 std::string pathRemoveExtension(const std::string& fpath)
@@ -544,13 +543,12 @@ bool dfm2::LoadNumpy_2DimF
  const std::string& path)
 {
   FILE* fp = fopen(path.c_str(),"rb");
-  if( fp == NULL ) { return false; }
+  if( fp == nullptr ) { return false; }
   LoadNumpy(ndim0, ndim1, fp);
   int size = ndim0*ndim1;
   aData.resize(size);
   size_t n0 = fread(&aData[0], sizeof(float), size, fp);
-  if( (int)n0 != size ){ return false; }
-  return true;
+  return (int) n0 == size;
 }
 
 bool dfm2::LoadNumpy_2DimD
@@ -558,13 +556,12 @@ bool dfm2::LoadNumpy_2DimD
  const std::string& path)
 {
   FILE* fp = fopen(path.c_str(),"rb");
-  if( fp == NULL ) { return false; }
+  if( fp == nullptr ) { return false; }
   LoadNumpy(ndim0, ndim1, fp);
   int size = ndim0*ndim1;
   aData.resize(size);
   size_t n0 = fread(&aData[0], sizeof(double), size, fp);
-  if( (int)n0 != size ){ return false; }
-  return true;
+  return (int) n0 == size;
 }
 
 bool dfm2::LoadNumpy_1DimF
@@ -610,8 +607,7 @@ bool dfm2::LoadNumpy_1DimF
   aData.resize(size);
   //  double* aRes = (double*)malloc( sizeof(double)*size );
   size_t n2 = fread(&aData[0], sizeof(float), size, fp);
-  if( n2 != size ){ return false; }
-  return true;
+  return n2 == size;
 }
 
 // ----------------------
@@ -652,13 +648,13 @@ void XML_SeparateTagContent
     if (*s == '<' && state == 1) {
       // Start of a tag
       *s++ = '\0';
-      aStr.push_back(std::string(mark));
+      aStr.emplace_back(mark);
       mark = s;
       state = 0;
     }
     else if (*s == '>' && state == 0 ) {       // Start of a content or new tag.
       *s++ = '\0';
-      aStr.push_back(std::string(mark));
+      aStr.emplace_back(mark);
       mark = s;
       state = 1;
     }

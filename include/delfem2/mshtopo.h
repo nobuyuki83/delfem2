@@ -273,9 +273,9 @@ void makeSurroundingRelationship(std::vector<int>& aElSurRel,
                                  const int nnofa,
                                  const int noelElemFace[][4]);
 void makeSurroundingRelationship(std::vector<int>& aElemSurRel,
-                                 const unsigned int* aElem, int nEl,
+                                 const unsigned int* aElem, unsigned int nElem,
                                  delfem2::MESHELEM_TYPE type,
-                                 const int nXYZ);
+                                 const unsigned int nXYZ);
 void makeSurroundingRelationship(std::vector<int>& aElemFaceInd,
                                  std::vector<int>& aElemFaceRel,
                                  const std::vector<int>& aElemInd,

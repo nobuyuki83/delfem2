@@ -26,13 +26,13 @@ std::vector<dfm2::CNodeBVH2> aNodeBVH;
 
 // ----------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glPointSize(3);
   ::glBegin(GL_POINTS);
-  for(int ip=0;ip<aXYZ.size()/3;++ip){
+  for(size_t ip=0;ip<aXYZ.size()/3;++ip){
     ::glVertex3d(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
   }
   ::glEnd();
@@ -45,7 +45,7 @@ int main(int argc,char* argv[])
     aXYZ.resize(N*3);
     const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
     dfm2::CBV3D_AABB bb(minmax_xyz);
-    for(int i=0;i<N;++i){
+    for(unsigned int i=0;i<N;++i){
       aXYZ[i*3+0] = (bb.x_max -  bb.x_min) * rand()/(RAND_MAX+1.0) + bb.x_min;
       aXYZ[i*3+1] = (bb.y_max -  bb.y_min) * rand()/(RAND_MAX+1.0) + bb.y_min;
       aXYZ[i*3+2] = (bb.z_max -  bb.z_min) * rand()/(RAND_MAX+1.0) + bb.z_min;

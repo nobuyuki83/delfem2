@@ -48,7 +48,7 @@ int GL24_CompileShader(const char *vert, const char* frag)
   // ------------------------------------
   // vertex shader
   int vertexShader = glCreateShader(GL_VERTEX_SHADER); // gl24
-  glShaderSource(vertexShader, 1, &vert, NULL); // gl24
+  glShaderSource(vertexShader, 1, &vert, nullptr); // gl24
   glCompileShader(vertexShader); // gl24
   // check for shader compile errors
   int success;
@@ -56,18 +56,18 @@ int GL24_CompileShader(const char *vert, const char* frag)
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success); // gl24
   if (!success)
   {
-    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog); // gl24
+    glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog); // gl24
     std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
   }
   // fragment shader
   int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); //gl24
-  glShaderSource(fragmentShader, 1, &frag, NULL); // gl24
+  glShaderSource(fragmentShader, 1, &frag, nullptr); // gl24
   glCompileShader(fragmentShader); // gl24
   // check for shader compile errors
   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success); // gl24
   if (!success)
   {
-    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog); // gl24
+    glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog); // gl24
     std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
   }
   // link shaders
@@ -78,7 +78,7 @@ int GL24_CompileShader(const char *vert, const char* frag)
   // check for linking errors
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
   if (!success) {
-    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
     std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
   }
   glDeleteShader(vertexShader);
@@ -94,7 +94,7 @@ int compileShader
 {
   int id_shader = glCreateShader(shaderType);
   const char *vfile = str_glsl_vert.c_str();
-  glShaderSource(id_shader, 1, &vfile, NULL);
+  glShaderSource(id_shader, 1, &vfile, nullptr);
   glCompileShader(id_shader); // compile the code
   
   {
@@ -137,8 +137,8 @@ int setUpGLSL
     // The maxLength includes the NULL character
     std::vector<GLchar> infoLog(maxLength);
     glGetProgramInfoLog(id_program, maxLength, &maxLength, &infoLog[0]);
-    for(unsigned int i=0;i<infoLog.size();++i){
-      std::cout << infoLog[i];
+    for(char i : infoLog){
+      std::cout << i;
     }
     std::cout << std::endl;
     glDeleteProgram(id_program); // The program is useless now. So delete it.

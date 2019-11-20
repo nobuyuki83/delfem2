@@ -342,8 +342,7 @@ void Mat4Vec3
   vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------------------
 
 double Dot(const CVector3 &arg1, const CVector3 &arg2)
 {
@@ -481,8 +480,7 @@ bool operator== (const CVector3& lhs, const CVector3& rhs){
 }
 
 bool operator!= (const CVector3& lhs, const CVector3& rhs){
-  if( lhs == rhs )	return false;
-  else return true;
+  return !(lhs == rhs);
 }
 
 void CVector3::SetNormalizedVector()

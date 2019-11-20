@@ -114,18 +114,18 @@ void CenterOfGravity_Tet(double& v_tot,
 
 // -------------------------------------------------------------
 
-void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZOut,
-                                       std::vector<unsigned int>& aElemOut,
-                                       std::vector<int>& aMapInOut,
-                                       int ndim,
-                                       const std::vector<double>& aXYZIn,
-                                       const std::vector<unsigned int>& aElemIn);
+void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZ1,
+                                       std::vector<unsigned int>& aElem1,
+                                       std::vector<int>& aMap01,
+                                       unsigned int ndim,
+                                       const std::vector<double>& aXYZ0,
+                                       const std::vector<unsigned int>& aElem0);
 void Normal_MeshTri3D(double* aNorm,
-                      const double* aXYZ, int nXYZ,
-                      const unsigned int* aTri, int nTri);
+                      const double* aXYZ, unsigned int nXYZ,
+                      const unsigned int* aTri, unsigned int nTri);
 void Quality_MeshTri2D(double& max_aspect, double& min_area,
                        const double* aXY,
-                       const unsigned int* aTri, int nTri);
+                       const unsigned int* aTri, unsigned int nTri);
 
 // ----------------------
 // set primitive mesh
@@ -159,9 +159,9 @@ void makeSolidAngle(std::vector<double>& aSolidAngle,
  * this is here because both "fem" and "pbd" use this function
  */
 void MassPoint_Tet3D(double* aMassMatrixLumped,
-                      double rho,
-                      const double* aXYZ, int nXYZ,
-                      const unsigned int* aTet, int nTet);
+                     double rho,
+                     const double* aXYZ, unsigned int nXYZ,
+                     const unsigned int* aTet, unsigned int nTet);
 
 /**
  * @brief Compute mass of the points (lumped mass) for 2D triangle mesh
@@ -171,8 +171,8 @@ void MassPoint_Tet3D(double* aMassMatrixLumped,
 void MassPoint_Tri2D(double* aMassMatrixLumped,
                      //
                      double rho,
-                     const double* aXY, int nXY,
-                     const unsigned int* aTri, int nTri);
+                     const double* aXY, unsigned int nXY,
+                     const unsigned int* aTri, unsigned int nTri);
 
 
 void LaplacianSmoothing(std::vector<double>& aXYZ,
@@ -190,8 +190,8 @@ void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         const std::vector<int>& aEdgeFace0,
                                         const std::vector<int>& psupIndQuad0,
                                         const std::vector<int>& psupQuad0,
-                                        const unsigned int* aQuad0, int nQuad0,
-                                        const double* aXYZ0, int nXYZ0);
+                                        const unsigned int* aQuad0, unsigned int nQuad0,
+                                        const double* aXYZ0, unsigned int nXYZ0);
 void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
                             //
                             const std::vector<int>& aQuad1,
@@ -203,11 +203,11 @@ void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
 
 void SubdivisionPoints_Hex(std::vector<double>& aXYZ1,
                            //
-                           const std::vector<int>& psupHex0,
                            const std::vector<int>& psupIndHex0,
+                           const std::vector<int>& psupHex0,
                            const std::vector<unsigned int>& aQuadHex0,
-                           const unsigned int* aHex0, int nHex0,
-                           const double* aXYZ0, int nXYZ0);
+                           const unsigned int* aHex0, unsigned int nHex0,
+                           const double* aXYZ0, unsigned int nXYZ0);
   
 }
 

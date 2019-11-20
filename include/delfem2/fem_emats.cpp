@@ -896,7 +896,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
                                                   disps, velos, accs, P,
                                                   true);
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
@@ -957,9 +957,8 @@ void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D
         emat[ino][ino][2][2] += rho*vol*0.25/(dt*dt);
       }
     }
-    ///////////
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0]/dt;
       vec_b[ip*3+1] += eres[ino][1]/dt;
       vec_b[ip*3+2] += eres[ino][2]/dt;

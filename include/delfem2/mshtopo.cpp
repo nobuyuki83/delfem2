@@ -469,9 +469,9 @@ void makeSurroundingRelationship
 
 void makeSurroundingRelationship
 (std::vector<int>& aElemSurRel,
- const unsigned int* aElem, int nElem,
+ const unsigned int* aElem, unsigned int nElem,
  dfm2::MESHELEM_TYPE type,
- const int nXYZ)
+ const unsigned int nXYZ)
 {
   const int nNoEl = nNodeElem(type);
   std::vector<int> elsup_ind, elsup;

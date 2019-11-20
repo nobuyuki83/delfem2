@@ -78,8 +78,7 @@ void GL4_VAO_PosNrm
   
   // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
   // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-  glBindVertexArray(0); // gl4
-  return;
+  glBindVertexArray(0);
 }
 
 

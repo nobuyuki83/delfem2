@@ -454,7 +454,7 @@ void ConvexHull(std::vector<int>& aTri,
                 const std::vector<CVector3>& aXYZ);
 }
 
-inline CVector3 cg_Tri(int itri,
+inline CVector3 cg_Tri(unsigned int itri,
                        const std::vector<unsigned int>& aTri,
                        const std::vector<double>& aXYZ)
 {

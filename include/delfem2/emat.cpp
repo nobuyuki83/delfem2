@@ -8,7 +8,6 @@
 
 #include <math.h>
 #include <assert.h>
-#include <iostream>
 #include <complex>
 
 typedef std::complex<double> COMPLEX;

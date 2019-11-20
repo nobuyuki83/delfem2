@@ -441,7 +441,7 @@ void dfm2::AddPointsMesh
       if( itri_s < 0 ){ return; }
       assert( aTri[itri_s].v[ rel[ (ied0+1)%3 ] ] == ipo_e0 );
       assert( aTri[itri_s].v[ rel[ (ied0+2)%3 ] ] == ipo_e1 );
-      const int inoel_d = rel[ied0];
+      const unsigned int inoel_d = rel[ied0];
       assert( aTri[itri_s].s2[inoel_d] == itri );
       const int ipo_d = aTri[itri_s].v[inoel_d];
       assert( TriArea( po_add, aVec2[ipo_e1], aVec2[ aTri[itri].v[ied0] ] ) > MIN_TRI_AREA );
@@ -488,7 +488,7 @@ void dfm2::EnforceEdge
       const int ied0 = 3 - inotri0 - inotri1;
       {
         const int itri1 = aTri[itri0].s2[ied0];
-        const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+        const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
         assert( aTri[itri1].s2[ied1] == itri0 );
         aTri[itri1].s2[ied1] = -1;
         aTri[itri0].s2[ied0] = -1;
@@ -517,7 +517,7 @@ void dfm2::EnforceEdge
         assert( aTri[itri0].s2[ied0] >= 0 );
 #ifndef NDEBUG
         const int itri1 = aTri[itri0].s2[ied0];
-        const int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+        const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
         assert( aTri[itri1].s2[ied1] >= itri0 );
 #endif
         bool res = FlipEdge(itri0,ied0,aPo2D,aTri);
@@ -549,9 +549,9 @@ void dfm2::FlagConnected
     if( ind_stack.empty() ) break;
     const int itri_cur = ind_stack.top();
     ind_stack.pop();
-    for(int inotri=0;inotri<3;inotri++){
-      if( aTri_in[itri_cur].s2[inotri] == -1 ) continue;
-      const int itri_s = aTri_in[itri_cur].s2[inotri];
+    for(int inotri : aTri_in[itri_cur].s2){
+      if( inotri == -1 ) continue;
+      const int itri_s = inotri;
       if( inout_flg[itri_s] != iflag ){
         inout_flg[itri_s] = iflag;
         ind_stack.push(itri_s);
@@ -590,13 +590,13 @@ void dfm2::DeleteTriFlag
     }
   }
   for(int itri1=0;itri1<ntri1;itri1++){
-    for(int ifatri=0;ifatri<3;ifatri++){
-      if( aTri1[itri1].s2[ifatri] == -1 ) continue;
-      int itri_s0 = aTri1[itri1].s2[ifatri];
+    for(int & ifatri : aTri1[itri1].s2){
+      if( ifatri == -1 ) continue;
+      int itri_s0 = ifatri;
       assert( itri_s0 >= 0 && (int)itri_s0 < (int)aTri0.size() );
       int itri1_s0 = map01[itri_s0];
       assert( itri1_s0 >= 0 && (int)itri1_s0 < (int)aTri1.size() );
-      aTri1[itri1].s2[ifatri] = itri1_s0;
+      ifatri = itri1_s0;
     }
   }
 }
@@ -613,8 +613,8 @@ void dfm2::DeleteUnrefPoints
   int npo_pos;
   {
     map_po_del.resize( aPo2D.size(), -1 );
-    for(int ipo=0;ipo<(int)aPoDel.size();ipo++){
-      map_po_del[ aPoDel[ipo] ] = -2;
+    for(int ipo : aPoDel){
+      map_po_del[ ipo ] = -2;
     }
     npo_pos = 0;
     for(int ipo=0;ipo<(int)aPo2D.size();ipo++){
@@ -701,7 +701,7 @@ void dfm2::Meshing_Initialize
  std::vector<CVector2>& aVec2)
 {
   aPo2D.resize(aVec2.size());
-  for(unsigned int ixys=0;ixys<aVec2.size();ixys++){
+  for(size_t ixys=0;ixys<aVec2.size();ixys++){
     aPo2D[ixys].e = -1;
     aPo2D[ixys].d = -1;
   }
@@ -722,7 +722,7 @@ void dfm2::Meshing_Initialize
   }
   {
     const double MIN_TRI_AREA = 1.0e-10;
-    for(unsigned int ip=0;ip<aPo2D.size()-3;++ip){
+    for(size_t ip=0;ip<aPo2D.size()-3;++ip){
       AddPointsMesh(aVec2,aPo2D,aTri,
                     ip,MIN_TRI_AREA);
       DelaunayAroundPoint(ip,aPo2D,aTri,aVec2);
@@ -972,7 +972,7 @@ void dfm2::Meshing_SingleConnectedShape2D
     aPoDel.push_back( npo+2 );
   }
   Meshing_Initialize(aPo2D,aETri,aVec2);
-  for(unsigned int iloop=0;iloop<loopIP_ind.size()-1;++iloop){
+  for(size_t iloop=0;iloop<loopIP_ind.size()-1;++iloop){
     const int np0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];
     for(int iip=loopIP_ind[iloop];iip<loopIP_ind[iloop+1];++iip){
       const int ip0 = loopIP[loopIP_ind[iloop]+(iip+0)%np0];
@@ -1009,12 +1009,12 @@ void dfm2::CMeshTri2D
  std::vector<ETri>& aETri)
 {
   aXY.resize(aVec2.size()*2);
-  for(unsigned int ip=0;ip<aVec2.size();++ip){
+  for(size_t ip=0;ip<aVec2.size();++ip){
     aXY[ip*2+0] = aVec2[ip].x;
     aXY[ip*2+1] = aVec2[ip].y;
   }
   aTri.resize(aETri.size()*3);
-  for(unsigned int it=0;it<aETri.size();++it){
+  for(size_t it=0;it<aETri.size();++it){
     aTri[it*3+0] = aETri[it].v[0];
     aTri[it*3+1] = aETri[it].v[1];
     aTri[it*3+2] = aETri[it].v[2];
@@ -1031,10 +1031,10 @@ void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
  const std::vector<ETri>& aETri)
 {
   std::set<CCmdRefineMesh::CCmdEdge> setCmd;
-  for(unsigned int itri=0;itri<aETri.size();++itri){
-    const int i0 = aETri[itri].v[0];
-    const int i1 = aETri[itri].v[1];
-    const int i2 = aETri[itri].v[2];
+  for(const auto & itri : aETri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
     const CVector2& p0 = aVec2[i0];
     const CVector2& p1 = aVec2[i1];
     const CVector2& p2 = aVec2[i2];
@@ -1062,12 +1062,11 @@ void dfm2::RefineMesh
 {
   assert( aVec2.size() == aEPo2.size() );
   std::stack<int> aIV_free;
-  for(unsigned int ip=0;ip<aEPo2.size();++ip){
+  for(size_t ip=0;ip<aEPo2.size();++ip){
     if( aEPo2[ip].e != -1 ){ continue; }
     aIV_free.push(ip);
   }
-  for(unsigned int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
-    CCmdRefineMesh::CCmdEdge& cmd = aCmd.aCmdEdge[icmd];
+  for(auto & cmd : aCmd.aCmdEdge){
     int i0= cmd.ipo0;
     int i1= cmd.ipo1;
     double r0 = cmd.r0;
@@ -1086,8 +1085,8 @@ void dfm2::RefineMesh
       cmd.ipo_new = ipo;
     }
   }
-  for(unsigned int icmd=0;icmd<aCmd.aCmdEdge.size();++icmd){
-    const int ip0 = aCmd.aCmdEdge[icmd].ipo_new;
+  for(auto & icmd : aCmd.aCmdEdge){
+    const int ip0 = icmd.ipo_new;
     AddPointsMesh(aVec2, aEPo2, aSTri, ip0, 1.0e-10);
     DelaunayAroundPoint(ip0, aEPo2, aSTri, aVec2);
   }
@@ -1101,19 +1100,18 @@ void dfm2::MakeInvMassLumped_Tri
  const std::vector<ETri>& aETri)
 {
   aInvMassLumped.assign(aVec2.size(),0.0);
-  for(unsigned int it=0;it<aETri.size();++it){
-    const int aIP[3] = {aETri[it].v[0],aETri[it].v[1],aETri[it].v[2]};
+  for(const auto & it : aETri){
+    const int aIP[3] = {it.v[0],it.v[1],it.v[2]};
     double P[3][2] = {
       {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
       {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
       {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
     const double Area = TriArea2D(P[0], P[1], P[2]);
-    for(int inoel=0;inoel<3;++inoel){
-      const int ip = aIP[inoel];
+    for(int ip : aIP){
       aInvMassLumped[ip] += Area*rho/3.0;
     }
   }
-  for(unsigned int ip=0;ip<aVec2.size();++ip){
+  for(size_t ip=0;ip<aVec2.size();++ip){
     double m0 = aInvMassLumped[ip];
     if( m0 < 1.0e-10 ){ continue; }
     aInvMassLumped[ip] = 1.0/m0;
@@ -1126,7 +1124,7 @@ void dfm2::MinMaxTriArea
  const std::vector<CVector2>& aVec2,
  const std::vector<ETri>& aETri)
 {
-  for(unsigned int it=0;it<aETri.size();++it){
+  for(size_t it=0;it<aETri.size();++it){
     const int i0 = aETri[it].v[0];
     const int i1 = aETri[it].v[1];
     const int i2 = aETri[it].v[2];
