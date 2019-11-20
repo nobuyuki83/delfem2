@@ -332,8 +332,8 @@ void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     const std::vector<int>& elsup_ind,
                                     const std::vector<int>& elsup,
                                     int np);
-void JArrayEdgeUnidir_PointSurPoint(std::vector<int>& edge_ind,
-                                    std::vector<int>& edge,
+void JArrayEdgeUnidir_PointSurPoint(std::vector<unsigned int> &edge_ind,
+                                    std::vector<unsigned int> &edge,
                                 //
                                 const std::vector<unsigned int> &psup_ind,
                                     const std::vector<unsigned int> &psup);

@@ -35,8 +35,8 @@ static double Distance3D(const double p0[3], const double p1[3]){
 
 void MatrixSquareSparse_SetPattern
 (dfm2::CMatrixSparse<double>& mss,
- const py::array_t<int>& psup_ind,
- const py::array_t<int>& psup)
+ const py::array_t<unsigned int>& psup_ind,
+ const py::array_t<unsigned int>& psup)
 {
   assert( mss.nblk_col == mss.nblk_row );
   assert( mss.len_col == mss.len_row );
@@ -481,18 +481,18 @@ double PyMergeLinSys_MassPoint
 
 std::tuple<py::array_t<int>,py::array_t<int>> PyAddMasterSlavePattern
 (const py::array_t<int>& ms_flag,
- const py::array_t<int>& np_psup_ind0,
- const py::array_t<int>& np_psup0)
+ const py::array_t<unsigned int>& np_psup_ind0,
+ const py::array_t<unsigned int>& np_psup0)
 {
   assert(ms_flag.shape()[0] == np_psup_ind0.shape()[0]-1);
   assert(ms_flag.ndim() == 2 );
   std::cout <<  ms_flag.shape()[0] << " " <<  ms_flag.shape()[1] << std::endl;
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
                                      ms_flag.data(), ms_flag.shape()[1],
                                      np_psup_ind0.data(), np_psup_ind0.shape()[0], np_psup0.data());
-  py::array_t<int> np_psup_ind((int)psup_ind.size(),psup_ind.data());
-  py::array_t<int> np_psup((int)psup.size(),psup.data());
+  py::array_t<unsigned int> np_psup_ind((int)psup_ind.size(),psup_ind.data());
+  py::array_t<unsigned int> np_psup((int)psup.size(),psup.data());
   return std::make_tuple(np_psup_ind,np_psup);
 }
 
@@ -514,8 +514,8 @@ void PyMasterSlave_DistributeValue
 void PyPBD_ConstProj_Rigid2D
 (py::array_t<double>& npXYt,
  double stiffness,
- const py::array_t<int>& npClstrInd,
- const py::array_t<int>& npClstr,
+ const py::array_t<unsigned int>& npClstrInd,
+ const py::array_t<unsigned int>& npClstr,
  const py::array_t<double>& npXY)
 {
   PBD_ConstProj_Rigid2D((double*)(npXYt.request().ptr),

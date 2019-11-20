@@ -22,6 +22,7 @@
 *.pyc
 *.dll
 *.pyd
+*.cbp
 CMakeFiles
 cmake-build-debug
 cmake-build-release

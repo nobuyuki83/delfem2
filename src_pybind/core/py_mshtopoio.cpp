@@ -100,7 +100,7 @@ PyMeshQuad3D_Subviv
   assert( AssertNumpyArray2D(aXYZ0, -1, 3) );
   assert( AssertNumpyArray2D(aQuad0, -1, 4) );
   std::vector<unsigned int> aQuad1;
-  std::vector<int> psupIndQuad0, psupQuad0;
+  std::vector<unsigned int> psupIndQuad0, psupQuad0;
   std::vector<int> aEdgeFace0;
   QuadSubdiv(aQuad1,
              psupIndQuad0,psupQuad0, aEdgeFace0,
@@ -124,7 +124,7 @@ PyMeshHex3D_Subviv
   assert( AssertNumpyArray2D(aXYZ0, -1, 3) );
   assert( AssertNumpyArray2D(aHex0, -1, 8) );
   std::vector<unsigned int> aHex1;
-  std::vector<int> psupIndHex0, psupHex0;
+  std::vector<unsigned int> psupIndHex0, psupHex0;
   std::vector<unsigned int> aQuadHex0;
   HexSubdiv(aHex1,
             psupIndHex0, psupHex0,
@@ -245,14 +245,14 @@ PyTriangulation
 }
  */
 
-std::tuple<py::array_t<int>, py::array_t<int>>
+std::tuple<py::array_t<unsigned int>, py::array_t<unsigned int>>
 PyJArray_MeshPsup(const py::array_t<unsigned int>& elm, int npoint)
 {
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                               elm.data(), elm.shape()[0], elm.shape()[1], npoint);
-  py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
-  py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
+  py::array_t<unsigned int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
+  py::array_t<unsigned int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::forward_as_tuple(np_psup_ind, np_psup);
 }
 
@@ -265,16 +265,16 @@ void PyJArray_Sort
   dfm2::JArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
 }
 
-std::tuple<py::array_t<int>, py::array_t<int>>
+std::tuple<py::array_t<unsigned int>, py::array_t<unsigned int>>
 PyJArray_AddDiagonal
-(py::array_t<int>& psup_ind0,
- py::array_t<int>& psup0)
+(py::array_t<unsigned int>& psup_ind0,
+ py::array_t<unsigned int>& psup0)
 {
-  std::vector<int> psup_ind, psup;
+  std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_AddDiagonal(psup_ind,psup,
                            psup_ind0.data(),psup_ind0.shape()[0], psup0.data(),psup0.shape()[0]);
-  py::array_t<int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
-  py::array_t<int> np_psup((pybind11::size_t)psup.size(), psup.data());
+  py::array_t<unsigned int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
+  py::array_t<unsigned int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::make_tuple(np_psup_ind, np_psup);
 }
 
@@ -365,10 +365,10 @@ py::array_t<unsigned int> PyEdge_Mesh
 {
   assert( AssertNumpyArray2D(pos, -1, pos.shape()[1]) );
   assert( AssertNumpyArray2D(elm, -1, nNodeElem(type)) );
-  std::vector<int> elsup_ind, elsup;
+  std::vector<unsigned int> elsup_ind, elsup;
   JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                               elm.data(), elm.shape()[0], elm.shape()[1], pos.shape()[0]);
-  std::vector<int> edge_ind, edge;
+  std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,
                       elm.data(), type, elsup_ind, elsup, false);
   std::vector<unsigned int> aLine;
