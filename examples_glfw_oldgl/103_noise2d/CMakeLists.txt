@@ -40,7 +40,7 @@ IF(APPLE)
     ${COREVIDEO_LIBRARY}
   )
 ELSEIF(UNIX)
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g -std=c++11")
   target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a

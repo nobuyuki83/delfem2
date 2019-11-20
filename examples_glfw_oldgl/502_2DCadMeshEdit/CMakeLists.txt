@@ -45,7 +45,7 @@ add_executable(${PROJECT_NAME}
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(APPLE)
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g -std=c++11")
   find_library( COCOA_LIBRARY Cocoa )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )

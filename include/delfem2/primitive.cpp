@@ -174,10 +174,11 @@ double dfm2::CPlane::Projection
 	return -( normal_[0]*(px-origin_[0]) + normal_[1]*(py-origin_[1]) + normal_[2]*(pz-origin_[2]) );
 }
 
-////////////////////////////////////////////////////////////////
+// -------------------------------------------------------
 
 
-dfm2::CSphere::CSphere(double r, const std::vector<double>& c, bool is_out){
+dfm2::CSphere::CSphere
+ (double r, const std::vector<double>& c, bool is_out){
   cent_.resize(3);
 	cent_[0] = c[0];
 	cent_[1] = c[1];
@@ -299,8 +300,7 @@ bool dfm2::CCylinder::IntersectionPoint
   return true;
 }
 
-////////////////////////////////////////////////////////////////
-
+// --------------------------------------------------------
 
 dfm2::CTorus::CTorus(){
 	cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
@@ -349,7 +349,7 @@ unsigned int dfm2::CTorus::FindInOut(double px, double py, double pz) const
 	return 1;
 }
 
-/////
+// ---------------------------------------------
 
 void dfm2::MeshQuad2D_Grid
 (std::vector<double>& aXYZ,
@@ -510,7 +510,7 @@ void dfm2::MeshTri3D_ClosedCylinder
       }
     }
   }
-  /////
+  // ------------------------------------
   int ntri = nlo*(nla-1)*2+nlo*2;
   aTri.reserve(ntri*3);
   for (int ilo = 0; ilo<nlo; ilo++){
