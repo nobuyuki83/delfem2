@@ -137,7 +137,7 @@ void dfm2::glhFrustumf2
  float znear, float zfar)
 {
   float temp, temp2, temp3, temp4;
-  temp = 2.0 * znear;
+  temp = 2.f * znear;
   temp2 = right - left;
   temp3 = top - bottom;
   temp4 = zfar - znear;

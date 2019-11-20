@@ -519,8 +519,8 @@ public:
 
 class CRowLevNext{
 public:
-  int row;
-  int lev;
+  unsigned int row;
+  unsigned int lev;
   int next;
 };
 
@@ -571,10 +571,10 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
     
     int knz_cur = 0;
     for (;;){
-      const int kblk0 = listNonzero[knz_cur].row;
+      const unsigned int kblk0 = listNonzero[knz_cur].row;
       assert(kblk0<nblk);
-      const int ik_lev0 = listNonzero[knz_cur].lev;
-      if (ik_lev0+1>lev_fill && lev_fill!=-1){
+      const unsigned int ik_lev0 = listNonzero[knz_cur].lev;
+      if ((int)ik_lev0+1>lev_fill && lev_fill!=-1){
         knz_cur = listNonzero[knz_cur].next;
         if (knz_cur==-1) break;
         continue;
@@ -583,9 +583,9 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
       
       int jnz_cur = knz_cur;
       for (unsigned int kjcrs = m_diaInd[kblk0]; kjcrs<mat.colInd[kblk0+1]; kjcrs++){
-        const int kj_lev0 = aRowLev[kjcrs].lev;
-        if (kj_lev0+1>lev_fill && lev_fill!=-1) continue;
-        const int jblk0 = aRowLev[kjcrs].row;
+        const unsigned int kj_lev0 = aRowLev[kjcrs].lev;
+        if ((int)kj_lev0+1>lev_fill && lev_fill!=-1) continue;
+        const unsigned int jblk0 = aRowLev[kjcrs].row;
         assert(jblk0>kblk0 && jblk0<nblk);
         assert(listNonzero[jnz_cur].row < jblk0);
         if (jblk0==iblk) continue; // already filled-in on the diagonal
@@ -594,7 +594,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
         bool is_fill_in = false;
         for (;;){
           const int jnz_nex = listNonzero[jnz_cur].next;
-          assert((jnz_nex>=0&&jnz_nex<nblk)||jnz_nex==-1);
+          assert((jnz_nex>=0&&jnz_nex<(int)nblk)||jnz_nex==-1);
           if (jnz_nex==-1){ is_fill_in = true; break; }
           if (listNonzero[jnz_nex].row>jblk0){ is_fill_in = true; break; }
           if (listNonzero[jnz_nex].row==jblk0){ break; }
@@ -614,7 +614,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
         jnz_cur = inz_last;
       }
       knz_cur = listNonzero[knz_cur].next;
-      assert((knz_cur>=0&&knz_cur<nblk)||knz_cur==-1);
+      assert((knz_cur>=0&&knz_cur<(int)nblk)||knz_cur==-1);
       if (knz_cur==-1) break;
     }
     
@@ -624,8 +624,8 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
       aRowLev.resize(mat.colInd[iblk]+listNonzero.size());
       unsigned int icrs0 = mat.colInd[iblk];
       for (int inz = 0; inz!=-1; inz = listNonzero[inz].next){
-        const int jblk = listNonzero[inz].row;
-        const int jlev = listNonzero[inz].lev;
+        const unsigned int jblk = listNonzero[inz].row;
+        const unsigned int jlev = listNonzero[inz].lev;
         assert(jblk<nblk);
         assert(jblk!=iblk);
         aRowLev[icrs0].row = jblk;
@@ -637,7 +637,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
       mat.rowPtr.resize(icrs0);
       m_diaInd[iblk] = icrs0;
       for (unsigned int ijcrs = mat.colInd[iblk]; ijcrs<mat.colInd[iblk+1]; ijcrs++){
-        const int jblk0 = aRowLev[ijcrs].row;
+        const unsigned int jblk0 = aRowLev[ijcrs].row;
         if (jblk0 > iblk){
           m_diaInd[iblk] = ijcrs;
           break;

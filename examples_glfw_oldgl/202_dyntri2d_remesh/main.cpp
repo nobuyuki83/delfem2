@@ -5,12 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <math.h>
-#include <iostream>
-#include <limits>
+#include <cstdlib>
 #include <vector>
-#include <set>
 #include "delfem2/dtri_v2.h"
 
 #include <GLFW/glfw3.h>
@@ -39,7 +35,7 @@ void Refine(double px, double py)
 
 void Coarse(double px, double py)
 {
-  for(int ip=aPo2D.size()-1;ip>=0;--ip){
+  for(int ip=(int)aPo2D.size()-1;ip>=0;--ip){
     if( aPo2D[ip].e == -1 ){ continue; }
     if( Distance(aVec2[ip],CVector2(px,py)) > 0.1 ){ continue; }
     std::vector< std::pair<int,int> > aTriSuP;
@@ -70,7 +66,7 @@ void Coarse(double px, double py)
     }
     if( !mapDistTri.empty() ){
       const int iit0 = mapDistTri.begin()->second;
-      assert( iit0>=0 && iit0 < aPSuP.size() );
+      assert( iit0>=0 && iit0 < (int)aPSuP.size() );
       double dist0 = mapDistTri.begin()->first;
       if( dist0 < 0.05 ){
         const int itri0 = aTriSuP[iit0].first;

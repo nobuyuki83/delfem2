@@ -6,9 +6,8 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 #include <deque>
-#include <set>
 #include <cstdlib>
 #include "delfem2/mshmisc.h"
 #include "delfem2/funcs.h"
@@ -119,8 +118,7 @@ void dfm2::CCad2D::DragPicked
   }
   if( iface_picked >= 0 && iface_picked < (int)aFace.size() ){
     std::vector<int> aIdV = topo.aLoop[iface_picked].GetArray_IdVertex(topo.aEdge);
-    for(unsigned int iiv=0;iiv<aIdV.size();++iiv){
-      const int iv1 = aIdV[iiv];
+    for(int iv1 : aIdV){
       aVtx[iv1].pos.x += p1x-p0x;
       aVtx[iv1].pos.y += p1y-p0y;
     }
@@ -140,14 +138,14 @@ bool dfm2::CCad2D::Check() const
 
 void dfm2::CCad2D::AddPolygon(const std::vector<double>& aXY)
 {
-  const int np = aXY.size()/2;
+  const size_t np = aXY.size()/2;
   topo.AddPolygon(np);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     aVtx.push_back(CVector2(aXY[ip*2+0], aXY[ip*2+1]));
   }
 //  const unsigned int iedge0 = aEdge.size();
 //  const unsigned int iface0 = aFace.size();
-  for(int ie=0;ie<np;++ie){
+  for(unsigned int ie=0;ie<np;++ie){
     aEdge.push_back(CCad2D_EdgeGeo());
   }
   aFace.push_back(CCad2D_FaceGeo());
@@ -201,8 +199,8 @@ std::vector<double> dfm2::CCad2D::MinMaxXYZ() const
 CBoundingBox2D dfm2::CCad2D::BB() const
 {
   CBoundingBox2D bb;
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    bb += aEdge[ie].BB();
+  for(const auto & ie : aEdge){
+    bb += ie.BB();
   }
   return bb;
 }
@@ -217,8 +215,7 @@ void dfm2::CCad2D::GetPointsEdge
   for(int ip=0;ip<np;++ip){
     const double x = pXY[ip*2+0];
     const double y = pXY[ip*2+1];
-    for(unsigned int iie=0;iie<aIE.size();++iie){
-      const int ie0 = aIE[iie];
+    for(int ie0 : aIE){
       const CCad2D_EdgeGeo& eg = this->aEdge[ie0];
       const double dist = eg.Distance(x,y);
       if( dist > tolerance ){ continue; }
@@ -231,9 +228,9 @@ std::vector<double> dfm2::CCad2D::XY_VtxCtrl_Face
 (int iface) const
 {
   std::vector<double> aXY;
-  for(unsigned int iie=0;iie<topo.aLoop[iface].aIE.size();++iie){
-    int ie0 = topo.aLoop[iface].aIE[iie].first;
-    bool dir = topo.aLoop[iface].aIE[iie].second;
+  for(const auto & iie : topo.aLoop[iface].aIE){
+    int ie0 = iie.first;
+    bool dir = iie.second;
     if( dir ){
       const int iv = topo.aEdge[ie0].iv0;
       aXY.push_back( aVtx[iv].pos.x );
@@ -294,10 +291,10 @@ std::vector<std::pair<int,bool> > dfm2::CCad2D::Ind_Edge_Face(int iface) const
 {
 //  std::vector<int> aIdE;
   std::vector<std::pair<int,bool> > aIdE;
-  for(unsigned int iie=0;iie<topo.aLoop[iface].aIE.size();++iie){
-    const int ie0 = topo.aLoop[iface].aIE[iie].first;
-    const bool dir0 = topo.aLoop[iface].aIE[iie].second;
-    aIdE.push_back( std::make_pair(ie0,dir0) );
+  for(const auto & iie : topo.aLoop[iface].aIE){
+    const int ie0 = iie.first;
+    const bool dir0 = iie.second;
+    aIdE.emplace_back(ie0,dir0 );
   }
   return aIdE;
 }
@@ -329,7 +326,7 @@ void dfm2::CCad2D_EdgeGeo::GenMesh
       Polyline_BezierCubic(aP0,
                            20, p0,q0,q1,p1);
       const double len0 = Length_Polygon(aP0);
-      ndiv = len0 / elen;
+      ndiv = (int)(len0 / elen);
     }
     for(int ip=1;ip<ndiv;++ip){
       double t = (double)ip/ndiv;
@@ -379,7 +376,7 @@ double dfm2::CCad2D_EdgeGeo::Distance(double x, double y) const
   else if( type_edge == 1 ){
     assert( param.size() == 4 );
     double min_dist = -1;
-    for(unsigned int ie=0;ie<aP.size()+1;++ie){
+    for(size_t ie=0;ie<aP.size()+1;++ie){
       CVector2 q0 = (ie==0) ? p0 : aP[ie];
       CVector2 q1 = (ie==aP.size()-1) ? p1 : aP[ie+1];
       double dist = ::Distance(q, GetNearest_LineSeg_Point(q,q0,q1));
@@ -398,22 +395,21 @@ void dfm2::CCad2D::MeshForVisualization
 {
   const std::vector<CVector2>& aVec2 = aVec2_Tessellation;
   aXYf.reserve(aVec2.size()*2);
-  for(unsigned int iv=0;iv<aVec2.size();++iv){
-    aXYf.push_back(aVec2[iv].x);
-    aXYf.push_back(aVec2[iv].y);
+  for(const auto & iv : aVec2){
+    aXYf.push_back(iv.x);
+    aXYf.push_back(iv.y);
   }
   aaLine.resize(aEdge.size());
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
+  for(size_t ie=0;ie<aEdge.size();++ie){
     std::vector<unsigned int>& aLine = aaLine[ie];
     aLine.clear();
     aLine.push_back(topo.aEdge[ie].iv0);
-    for(unsigned int ip=0;ip<aEdge[ie].aP.size();++ip){
+    for(size_t ip=0;ip<aEdge[ie].aP.size();++ip){
       aLine.push_back(ip+aEdge[ie].ip0);
     }
     aLine.push_back(topo.aEdge[ie].iv1);
   }
-  for(unsigned int ifc=0;ifc<aFace.size();++ifc){
-    const CCad2D_FaceGeo& fc = aFace[ifc];
+  for(const auto & fc : aFace){
     aTri.insert(aTri.end(),fc.aTri.begin(),fc.aTri.end());
   }
 }
@@ -421,7 +417,7 @@ void dfm2::CCad2D::MeshForVisualization
 double dfm2::CCad2D_EdgeGeo::Length() const
 {
   double len0 = 0.0;
-  for(unsigned int ie=0;ie<aP.size()+1;++ie){
+  for(size_t ie=0;ie<aP.size()+1;++ie){
     const CVector2 q0 = (ie==0) ? p0 : aP[ie-1];
     const CVector2 q1 = (ie==aP.size()) ? p1 : aP[ie];
     double dist0 = ::Distance(q0, q1);
@@ -436,12 +432,12 @@ double dfm2::AreaLoop
 {
   double a0 = 0;
   CVector2 qo(0,0);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    const std::vector<CVector2>& aP = aEdge[ie].aP;
+  for(const auto & ie : aEdge){
+    const std::vector<CVector2>& aP = ie.aP;
     const unsigned int nseg = aP.size()+1;
     for(unsigned int iseg=0;iseg<nseg;++iseg){
-      const CVector2 q0 = (iseg==0) ? aEdge[ie].p0 : aP[iseg-1];
-      const CVector2 q1 = (iseg==nseg-1) ?aEdge[ie].p1 : aP[iseg];
+      const CVector2 q0 = (iseg==0) ? ie.p0 : aP[iseg-1];
+      const CVector2 q1 = (iseg==nseg-1) ?ie.p1 : aP[iseg];
       a0 += TriArea(qo, q0, q1);
     }
   }
@@ -497,8 +493,8 @@ void GetBound
     bound_2d[2] = p0.y;
     bound_2d[3] = p0.y;
   }
-  for(unsigned int iie=0;iie<aIE.size();++iie){
-    const unsigned int ie0 = aIE[iie].first;
+  for(const auto & iie : aIE){
+    const unsigned int ie0 = iie.first;
     {
       const CVector2& p0 = aEdgeGeo[ie0].p0;
       if( p0.x < bound_2d[0] ){ bound_2d[0] = p0.x; }
@@ -506,8 +502,7 @@ void GetBound
       if( p0.y < bound_2d[2] ){ bound_2d[2] = p0.y; }
       if( p0.y > bound_2d[3] ){ bound_2d[3] = p0.y; }
     }
-    for(unsigned int ip=0;ip<aEdgeGeo[ie0].aP.size();ip++){
-      const CVector2& p0 = aEdgeGeo[ie0].aP[ip];
+    for(const auto & p0 : aEdgeGeo[ie0].aP){
       if( p0.x < bound_2d[0] ){ bound_2d[0] = p0.x; }
       if( p0.x > bound_2d[1] ){ bound_2d[1] = p0.x; }
       if( p0.y < bound_2d[2] ){ bound_2d[2] = p0.y; }
@@ -528,7 +523,7 @@ void GenMeshCadFace
   std::vector<dfm2::CEPo2> aPo2D;
   {
     aPo2D.resize(aVec2.size());
-    for(unsigned int ixys=0;ixys<aVec2.size();ixys++){
+    for(size_t ixys=0;ixys<aVec2.size();ixys++){
       aPo2D[ixys].e = -1;
       aPo2D[ixys].d = -1;
     }
@@ -542,17 +537,17 @@ void GenMeshCadFace
   }
   std::vector<int> aIP;
   { // make list of index of point involved this face
-    for(unsigned int iil=0;iil<topo.aFace[iface0].aIL.size();++iil){
+    for(size_t iil=0;iil<topo.aFace[iface0].aIL.size();++iil){
       const int il0 = topo.aFace[iface0].aIL[iil];
       if( topo.aLoop[il0].iv != -1 ){
         aIP.push_back(topo.aLoop [il0].iv );
         continue;
       }
       const std::vector< std::pair<int,bool> >& aIE = topo.aLoop[il0].aIE;
-      for(unsigned int iie=0;iie<aIE.size();++iie){
-        const int ie = aIE[iie].first;
+      for(const auto & iie : aIE){
+        const int ie = iie.first;
         aIP.push_back(topo.aEdge[ie].iv0);
-        for(unsigned int iip=0;iip<aEdgeGeo[ie].aP.size();++iip){
+        for(size_t iip=0;iip<aEdgeGeo[ie].aP.size();++iip){
           aIP.push_back(aEdgeGeo[ie].ip0+iip);
         }
       }
@@ -560,20 +555,19 @@ void GenMeshCadFace
   }
   {
     const double MIN_TRI_AREA = 1.0e-10;
-    for(unsigned int iip=0;iip<aIP.size();++iip){
-      const int ip = aIP[iip];
+    for(int ip : aIP){
       AddPointsMesh(aVec2,aPo2D,aETri,
                     ip,MIN_TRI_AREA);
       DelaunayAroundPoint(ip,aPo2D,aETri,aVec2);
     }
   }
   {
-    for(unsigned int iil=0;iil<topo.aFace[iface0].aIL.size();++iil){
+    for(size_t iil=0;iil<topo.aFace[iface0].aIL.size();++iil){
       const int il0 = topo.aFace[iface0].aIL[iil];
       if( topo.aLoop[il0].iv != -1 ){ continue; }
       const std::vector< std::pair<int,bool> >& aIE = topo.aLoop[il0].aIE;
-      for(unsigned int iie=0;iie<aIE.size();++iie){
-        const int ie0 = aIE[iie].first;
+      for(const auto & iie : aIE){
+        const int ie0 = iie.first;
         const unsigned int np = aEdgeGeo[ie0].aP.size();
         const unsigned int nseg = np+1;
         for(unsigned int iseg=0;iseg<nseg;++iseg){
@@ -616,7 +610,7 @@ void GenMeshCadFace
 
 void dfm2::CCad2D::Tessellation()
 {
-  for(unsigned int ie=0;ie<topo.aEdge.size();++ie){
+  for(size_t ie=0;ie<topo.aEdge.size();++ie){
     const int iv0 = topo.aEdge[ie].iv0;
     const int iv1 = topo.aEdge[ie].iv1;
     aEdge[ie].p0 = aVtx[iv0].pos;
@@ -625,16 +619,16 @@ void dfm2::CCad2D::Tessellation()
   }
   std::vector<CVector2>& aVec2 = this->aVec2_Tessellation;
   aVec2.clear();
-  for(unsigned int iv=0;iv<aVtx.size();++iv){
-    aVec2.push_back( aVtx[iv].pos );
+  for(auto & iv : aVtx){
+    aVec2.push_back( iv.pos );
   }
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    aEdge[ie].ip0 = aVec2.size();
-    for(unsigned int ip=0;ip<aEdge[ie].aP.size();++ip){
-      aVec2.push_back(aEdge[ie].aP[ip]);
+  for(auto & ie : aEdge){
+    ie.ip0 = aVec2.size();
+    for(const auto & ip : ie.aP){
+      aVec2.push_back(ip);
     }
   }
-  for(unsigned int ifc=0;ifc<topo.aFace.size();++ifc){
+  for(size_t ifc=0;ifc<topo.aFace.size();++ifc){
     std::vector<ETri> aETri;
     GenMeshCadFace(aVec2, aETri,
                    aFace[ifc],ifc,
@@ -661,7 +655,7 @@ void dfm2::CMesher_Cad2D::Meshing
  const CCad2D& cad)
 {
   std::vector<CCad2D_EdgeGeo> aEdgeGeo = cad.aEdge;
-  for(unsigned int ie=0;ie<aEdgeGeo.size();++ie){
+  for(size_t ie=0;ie<aEdgeGeo.size();++ie){
     const int iv0 = cad.topo.aEdge[ie].iv0;
     const int iv1 = cad.topo.aEdge[ie].iv1;
     aEdgeGeo[ie].p0 = cad.aVtx[iv0].pos;
@@ -671,13 +665,13 @@ void dfm2::CMesher_Cad2D::Meshing
   ////
   aFlgPnt.clear();
   dmsh.Clear();
-  for(unsigned int iv=0;iv<cad.aVtx.size();++iv){
+  for(size_t iv=0;iv<cad.aVtx.size();++iv){
     dmsh.aVec2.push_back( cad.aVtx[iv].pos );
     aFlgPnt.push_back(iv);
   }
-  for(unsigned int ie=0;ie<aEdgeGeo.size();++ie){
+  for(size_t ie=0;ie<aEdgeGeo.size();++ie){
     aEdgeGeo[ie].ip0 = dmsh.aVec2.size();
-    for(unsigned int ip=0;ip<aEdgeGeo[ie].aP.size();++ip){
+    for(size_t ip=0;ip<aEdgeGeo[ie].aP.size();++ip){
       dmsh.aVec2.push_back(aEdgeGeo[ie].aP[ip]);
       aFlgPnt.push_back(cad.aVtx.size()+ie);
     }
@@ -691,24 +685,24 @@ void dfm2::CMesher_Cad2D::Meshing
                      cad.topo,cad.aVtx,aEdgeGeo);
       aFlgTri.resize(dmsh.aETri.size(),0);
     }
-    for(unsigned int ifc=1;ifc<cad.aFace.size();++ifc){ // face index bigger than 0
+    for(size_t ifc=1;ifc<cad.aFace.size();++ifc){ // face index bigger than 0
       std::vector<ETri> aETri;
       GenMeshCadFace(dmsh.aVec2, aETri,
                      cad.aFace[ifc], ifc,
                      cad.topo,cad.aVtx,aEdgeGeo);
       const unsigned int ntri0 = dmsh.aETri.size();
-      for(unsigned int it=0;it<aETri.size();++it){
-        if( aETri[it].s2[0]>=0){ aETri[it].s2[0] += ntri0; }
-        if( aETri[it].s2[1]>=0){ aETri[it].s2[1] += ntri0; }
-        if( aETri[it].s2[2]>=0){ aETri[it].s2[2] += ntri0; }
-        dmsh.aETri.push_back(aETri[it]);
+      for(auto & it : aETri){
+        if( it.s2[0]>=0){ it.s2[0] += ntri0; }
+        if( it.s2[1]>=0){ it.s2[1] += ntri0; }
+        if( it.s2[2]>=0){ it.s2[2] += ntri0; }
+        dmsh.aETri.push_back(it);
       }
       aFlgTri.resize(dmsh.aETri.size(),ifc);
     }
   }
   { // make EPo
     dmsh.aEPo.resize(dmsh.aVec2.size());
-    for(unsigned int it=0;it<dmsh.aETri.size();++it){
+    for(size_t it=0;it<dmsh.aETri.size();++it){
       for(unsigned int inotri=0;inotri<3;++inotri){
         dmsh.aEPo[ dmsh.aETri[it].v[inotri] ].e = it;
         dmsh.aEPo[ dmsh.aETri[it].v[inotri] ].d = inotri;
@@ -741,7 +735,7 @@ std::vector<unsigned int> dfm2::CMesher_Cad2D::IndPoint_IndEdge
   std::vector<int> aIP_E = cad2d.Ind_Vtx_Edge(iedge);
   std::vector<unsigned int> res;
   if( is_end_point ){ res.push_back(aIP_E[0]); }
-  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
+  for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( iflg >= (int)(nvtx+nedge) ){ break; }
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
@@ -757,20 +751,19 @@ std::vector<unsigned int> dfm2::CMesher_Cad2D::IndPoint_IndEdgeArray
   //    std::cout << nvtx << " " << nedge << " " << nface << std::endl;
   std::vector<int> aflg(nvtx+nedge+nface,0);
   {
-    for(unsigned int iie=0;iie<aIndEd.size();++iie){
-      const unsigned int iedge = aIndEd[iie]; assert(iedge<nedge);
+    for(unsigned int iedge : aIndEd){
+      assert(iedge<nedge);
       aflg[iedge+nvtx] = 1;
       {
         const std::vector<int>& aIV = cad2d.Ind_Vtx_Edge(iedge);
-        for(unsigned int iiv=0;iiv<aIV.size();++iiv){
-          const int iv0 = aIV[iiv];
+        for(int iv0 : aIV){
           aflg[iv0] = 1;
         }
       }
     }
   }
   std::vector<unsigned int> res;
-  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
+  for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
   }
@@ -784,27 +777,26 @@ std::vector<int> dfm2::CMesher_Cad2D::IndPoint_IndFaceArray
 {
   std::vector<int> aflg(nvtx+nedge+nface,0);
   {
-    for(unsigned int iif=0;iif<aIndFc.size();++iif){
-      const unsigned int iface = aIndFc[iif]; assert(iface<nface);
+    for(unsigned int iface : aIndFc){
+      assert(iface<nface);
       aflg[nvtx+nedge+iface] = 1;
       {
         const std::vector<std::pair<int,bool> >& aIE = cad2d.Ind_Edge_Face(iface);
-        for(unsigned int iie=0;iie<aIE.size();++iie){
-          const int ie0 = aIE[iie].first;
+        for(const auto & iie : aIE){
+          const int ie0 = iie.first;
           aflg[nvtx+ie0] = 1;
         }
       }
       {
         const std::vector<int>& aIV = cad2d.Ind_Vtx_Face(iface);
-        for(unsigned int iiv=0;iiv<aIV.size();++iiv){
-          const int iv0 = aIV[iiv];
+        for(int iv0 : aIV){
           aflg[iv0] = 1;
         }
       }
     }
   }
   std::vector<int> res;
-  for(unsigned int ip=0;ip<this->aFlgPnt.size();++ip){
+  for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
     if( aflg[iflg] == 1 ){ res.push_back(ip); }
   }
@@ -818,15 +810,14 @@ bool dfm2::WriteCAD_DXF
  double scale)
 {
   FILE *fp;
-  if( (fp = ::fopen(file_name.c_str(),"w"))== NULL ){
+  if( (fp = ::fopen(file_name.c_str(),"w"))== nullptr ){
     fclose(fp);
     assert(0);
     return false;
   }
   CBoundingBox2D bb;
   {  // Get Bounding Box of this Object
-    for(unsigned int ie=0;ie<cad.aEdge.size();ie++){
-      const dfm2::CCad2D_EdgeGeo& edge = cad.aEdge[ie];
+    for(const auto & edge : cad.aEdge){
       bb += edge.BB();
     }
   }
@@ -848,13 +839,12 @@ bool dfm2::WriteCAD_DXF
   // entity section
   fprintf(fp,"  0\nSECTION\n");
   fprintf(fp,"  2\nENTITIES\n");
-  for(unsigned int ifc=0;ifc<cad.aFace.size();++ifc){
+  for(size_t ifc=0;ifc<cad.aFace.size();++ifc){
     const std::vector<int>& aIL = cad.topo.aFace[ifc].aIL;
-    for(unsigned int iil=0;iil<aIL.size();iil++){
-      const int il0 = aIL[iil];
+    for(int il0 : aIL){
       const std::vector< std::pair<int,bool> >& aIE = cad.topo.aLoop[il0].aIE;
-      for(unsigned int iie=0;iie<aIE.size();++iie){
-        unsigned int ie0 = aIE[iie].first;
+      for(const auto & iie : aIE){
+        unsigned int ie0 = iie.first;
 //        bool dir0 = aIE[iie].second;
         unsigned int id_vs = cad.topo.aEdge[ie0].iv0;
         unsigned int id_ve = cad.topo.aEdge[ie0].iv1;
@@ -926,7 +916,7 @@ std::vector<std::string> SVG_Split_Path_d(std::string& s0)
 {
   unsigned int imark = 0;
   std::vector<std::string> aS;
-  for(unsigned int i=0;i<s0.size();++i){
+  for(size_t i=0;i<s0.size();++i){
     if( isNumber(s0[i]) ) continue;
     if( s0[i] == ',' ){
       std::string s1(s0.begin()+imark, s0.begin()+i);
@@ -946,7 +936,7 @@ std::vector<std::string> SVG_Split_Path_d(std::string& s0)
         aS.push_back( s1 );
       }
       char s2[2] = { s0[i], '\0'};
-      aS.push_back( std::string(s2) );
+      aS.emplace_back(s2 );
       imark = i+1;
     }
   }
@@ -1102,20 +1092,19 @@ void LoopEdgeCad2D_SVGPathD
       break;
     }
   }
-  return;
 }
 
 void LoopEdgeCad2D_SVGPolygonPoints
 (std::vector<dfm2::CCad2D_EdgeGeo>& aEdge,
  std::vector<std::string>& aS)
 {
-  const int np = aS.size()/2;
+  const size_t np = aS.size()/2;
   std::vector<CVector2> aP;
-  for(int ip=0;ip<np;++ip){
-    aP.push_back( CVector2(myStod(aS[ip*2+0]), myStod(aS[ip*2+1]) ) );
+  for(size_t ip=0;ip<np;++ip){
+    aP.emplace_back(myStod(aS[ip*2+0]), myStod(aS[ip*2+1]) );
   }
 //  std::cout << "np  " << np << std::endl;
-  for(int ie=0;ie<np;++ie){
+  for(size_t ie=0;ie<np;++ie){
     dfm2::CCad2D_EdgeGeo e;
     e.p0 = aP[(ie+0)%np];
     e.p1 = aP[(ie+1)%np];
@@ -1145,9 +1134,9 @@ void dfm2::LoopEdgeCCad2D_ReadSVG
   
   { // check path
     std::string str_path;
-    for(unsigned int is=0;is<aStr.size();++is){
-      if( aStr[is].compare(0,5,"path ") == 0 ){
-        str_path = std::string(aStr[is].begin()+5,aStr[is].end());
+    for(auto & is : aStr){
+      if( is.compare(0,5,"path ") == 0 ){
+        str_path = std::string(is.begin()+5,is.end());
         break;
       }
     }
@@ -1172,9 +1161,9 @@ void dfm2::LoopEdgeCCad2D_ReadSVG
   
   { // check polygon
     std::string str_polygon;
-    for(unsigned int is=0;is<aStr.size();++is){
-      if( aStr[is].compare(0,8,"polygon ") == 0 ){
-        str_polygon = std::string(aStr[is].begin()+8,aStr[is].end());
+    for(auto & is : aStr){
+      if( is.compare(0,8,"polygon ") == 0 ){
+        str_polygon = std::string(is.begin()+8,is.end());
         break;
       }
     }
@@ -1208,13 +1197,13 @@ void dfm2::Transform_LoopEdgeCad2D
   if( is_flip_holizontal ){ A[0] *= -1; }
   if( is_flip_vertical ){ A[3] *= -1; }
   bool is_det_inv = (is_flip_holizontal != is_flip_vertical );
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    aEdge[ie].p0 = Mat2Vec(A, aEdge[ie].p0);
-    aEdge[ie].p1 = Mat2Vec(A, aEdge[ie].p1);
-    if( aEdge[ie].type_edge == 1 && is_det_inv ){
-      assert( aEdge[ie].param.size() == 4);
-      aEdge[ie].param[1] *= -1;
-      aEdge[ie].param[3] *= -1;
+  for(auto & ie : aEdge){
+    ie.p0 = Mat2Vec(A, ie.p0);
+    ie.p1 = Mat2Vec(A, ie.p1);
+    if( ie.type_edge == 1 && is_det_inv ){
+      assert( ie.param.size() == 4);
+      ie.param[1] *= -1;
+      ie.param[3] *= -1;
     }
   }
 }
@@ -1223,8 +1212,8 @@ CBoundingBox2D BB_LoopEdgeCad2D
 (const std::vector<dfm2::CCad2D_EdgeGeo>& aEdge)
 {
   CBoundingBox2D bb;
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
-    CBoundingBox2D bb0 = aEdge[ie].BB();
+  for(const auto & ie : aEdge){
+    CBoundingBox2D bb0 = ie.BB();
     bb += bb0;
   }
   return bb;

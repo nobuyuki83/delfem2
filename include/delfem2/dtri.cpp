@@ -506,7 +506,7 @@ bool dfm2::FindEdge_LookAroundPoint
       if (aTri[itri_cur].s2[inotri2]==-1){ break; }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
       const unsigned int* rel = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const int inotri3 = rel[inotri_cur];
+      const unsigned int inotri3 = rel[inotri_cur];
       assert(aTri[itri_nex].v[inotri3]==ipo0);
       if (itri_nex==itri_ini) return false;
       itri_cur = itri_nex;
@@ -523,7 +523,7 @@ bool dfm2::FindEdge_LookAroundPoint
       if (aTri[itri_cur].s2[inotri2]==-1){ break; }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
       const unsigned int* rel = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const int inotri3 = rel[inotri_cur];
+      const unsigned int inotri3 = rel[inotri_cur];
       assert(aTri[itri_nex].v[inotri3]==ipo0);
       if (itri_nex==itri_ini){  // end if it goes around
         itri0 = 0;
@@ -653,7 +653,7 @@ bool dfm2::CheckTri
         assert(itri_s < ntri);
         assert(irel < 3);
         {
-          const int noel_dia = relTriTri[irel][iedtri];
+          const unsigned int noel_dia = relTriTri[irel][iedtri];
           assert(noel_dia < 3);
           if (aSTri[itri_s].s2[noel_dia]!=itri){ // neibough relation broken
             //            std::cout << itri << " " << itri_s << " " << noel_dia << std::endl;
@@ -672,7 +672,7 @@ bool dfm2::CheckTri
   }
   for (int ipoin = 0; ipoin<npo; ++ipoin){
     const int itri0 = aPo3D[ipoin].e;
-    const int inoel0 = aPo3D[ipoin].d;
+    const unsigned int inoel0 = aPo3D[ipoin].d;
     if (aPo3D[ipoin].e>=0){
       assert(aPo3D[ipoin].d>=0&&aPo3D[ipoin].d < 3);
       if (aSTri[itri0].v[inoel0]!=ipoin){}
@@ -734,7 +734,7 @@ void dfm2::MoveCCW
   flag_is_wall = false;
   const int itri_nex = aTri[itri_cur].s2[inotri1];
   const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri1]];
-  const int inotri_nex = rel_nex[inotri_cur];
+  const unsigned int inotri_nex = rel_nex[inotri_cur];
   itri_cur = itri_nex;
   inotri_cur = inotri_nex;
 }
