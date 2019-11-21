@@ -57,14 +57,15 @@ void dfm2::JArray_Sort
   }
 }
 
-void dfm2::JArray_Sort
-(const int* index, const int size,
- int* array)
+void dfm2::JArray_Sort(
+    const unsigned int* index,
+    const unsigned int size,
+    unsigned int* array)
 {
   if( size == 0 ) return;
 //  if( index.size() == 0 ) return;
 //  const int size = (int)index.size()-1;
-  for(int ipoin=0;ipoin<size;ipoin++){
+  for(unsigned int ipoin=0;ipoin<size;ipoin++){
     const int is = index[ipoin  ];
     const int ie = index[ipoin+1];
     if( is == ie ) continue;

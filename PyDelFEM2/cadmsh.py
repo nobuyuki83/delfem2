@@ -22,7 +22,7 @@ from .c_core import \
 from .c_core import meshtri3d_read_ply, meshtri3d_read_obj, meshtri3d_read_nastran, meshtri3d_write_obj
 from .c_core import mvc
 from .c_core import setXY_MeshDynTri2D
-from .c_core import cad_getPointsEdge, jarray_mesh_psup, quality_meshTri2D
+from .c_core import cad_getPointsEdge, cppJArray_MeshPsup, quality_meshTri2D
 from .c_core import copyMeshDynTri2D
 from .c_core import numpyXYTri_MeshDynTri2D
 from .c_core import setTopology_ExtrudeTri2Tet
@@ -111,7 +111,7 @@ class Mesh():
       return Mesh(np_pos1,np_quad1,HEX)
 
   def psup(self) -> tuple:
-    res = jarray_mesh_psup(self.np_elm, self.np_pos.shape[0])
+    res = cppJArray_MeshPsup(self.np_elm, self.np_pos.shape[0])
     return res
 
   def write_obj(self,path_file) -> None:

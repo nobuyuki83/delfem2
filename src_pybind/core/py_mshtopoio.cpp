@@ -257,12 +257,12 @@ PyJArray_MeshPsup(const py::array_t<unsigned int>& elm, int npoint)
 }
 
 void PyJArray_Sort
-(py::array_t<int>& psup_ind,
- py::array_t<int>& psup)
+(py::array_t<unsigned int>& psup_ind,
+ py::array_t<unsigned int>& psup)
 {
   //  std::cout << "hoge " << psup_ind.size() << " " << psup.size() << std::endl;
   auto buff_psup = psup.request();
-  dfm2::JArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (int*)buff_psup.ptr);
+  dfm2::JArray_Sort(psup_ind.data(), psup_ind.shape()[0]-1, (unsigned int*)buff_psup.ptr);
 }
 
 std::tuple<py::array_t<unsigned int>, py::array_t<unsigned int>>
@@ -526,9 +526,9 @@ void init_mshtopoio(py::module &m){
   m.def("setTopology_ExtrudeTri2Tet", &PySetTopology_ExtrudeTri2Tet);
   
   // jarray
-  m.def("jarray_mesh_psup",    &PyJArray_MeshPsup,    py::return_value_policy::move);
+  m.def("cppJArray_MeshPsup",  &PyJArray_MeshPsup,    py::return_value_policy::move);
   m.def("jarray_add_diagonal", &PyJArray_AddDiagonal, py::return_value_policy::move);
-  m.def("jarray_sort",         &PyJArray_Sort);
+  m.def("cppJArray_Sort",      &PyJArray_Sort);
   
   m.def("elemQuad_dihedralTri",&PyElemQuad_DihedralTri);
   m.def("quality_meshTri2D",   &PyQuality_MeshTri2D);
