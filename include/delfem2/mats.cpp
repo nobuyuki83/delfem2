@@ -28,7 +28,7 @@ void dfm2::CMatrixSparse<double>::MatVec
  double beta,
  std::vector<double>& y) const
 {
-	const int blksize = len_col*len_col;
+	const unsigned int blksize = len_col*len_col;
 
 	if( len_col == 1 && len_row == 1 ){
 		const double* vcrs  = valCrs.data();
@@ -189,7 +189,7 @@ void SetMasterSlave
     if( idof0 == -1 ) continue;
     unsigned int ino0 = idof0 / len;
     unsigned int ilen0 = idof0 - ino0*len;
-    assert( ilen0 >=0 && ilen0 < len );
+    assert( ilen0 < len );
     assert( ino0 < nblk && ilen0 < len );
     unsigned int ino1 = idof1 / len;
     unsigned int ilen1 = idof1 - ino1*len;
@@ -197,12 +197,12 @@ void SetMasterSlave
     assert( ilen0 == ilen1 );
     for(unsigned int icrs0=mat.colInd[ino0];icrs0<mat.colInd[ino0+1];++icrs0){
       unsigned int jno0 = mat.rowPtr[icrs0];
-      assert( jno0 >= 0 && jno0 < nblk );
+      assert( jno0 < nblk );
       row2crs[jno0] = icrs0;
     }
     for(unsigned int icrs1=mat.colInd[ino1];icrs1<mat.colInd[ino1+1];++icrs1){
       unsigned int jno1 = mat.rowPtr[icrs1];
-      assert( jno1 >= 0 && jno1 < nblk );
+      assert( jno1 < nblk );
       assert( jno1 != ino1 );
       if( jno1 != ino0 ){ // add non-diagonal 1 to non-diagonal 0
         const int icrs0 = row2crs[jno1];
@@ -256,7 +256,7 @@ void SetMasterSlave
         if( aMSFlag[jno1*len+jlen1] == -1 ) continue;
         auto jdof0 = (unsigned int)aMSFlag[jno1*len+jlen1];
         unsigned int jno0 = jdof0/len;
-        assert( jno0 >= 0 && jno0 < nblk );
+        assert( jno0 < nblk );
         assert( jdof0 - jno0*len == jlen1 );
         if( ino == jno0 ){
           for(unsigned int ilen=0;ilen<len;ilen++){
@@ -408,7 +408,7 @@ COMPLEX Dot
     sr += a.real()*b.real() + a.imag()*b.imag();
     si += a.imag()*b.real() - a.real()*b.imag();
   }
-  return COMPLEX(sr,si);
+  return {sr,si};
 }
 
 
@@ -461,16 +461,16 @@ COMPLEX DotX
     sr += a.real()*b.real() + a.imag()*b.imag();
     si += a.imag()*b.real() - a.real()*b.imag();
   }
-  return COMPLEX(sr,si);
+  return {sr,si};
 }
 
 COMPLEX MultSumX
 (const COMPLEX* va,
  const COMPLEX* vb,
- int n)
+ unsigned int n)
 {
   COMPLEX s(0,0);
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     const COMPLEX& a = va[i];
     const COMPLEX& b = vb[i];
     s += a*b;
@@ -861,9 +861,11 @@ void setRHS_MasterSlave
 }
 
 
-double MatNorm_Assym
-(const double* V0, unsigned int n0, unsigned int m0,
- const double* V1)
+double MatNorm_Assym(
+    const double* V0,
+    unsigned int n0,
+    unsigned int m0,
+    const double* V1)
 {
   double s = 0.0;
   for(unsigned int i=0;i<n0;++i){
@@ -889,12 +891,13 @@ double MatNorm
   return s;
 }
 
-double MatNorm_Assym
-(const double* V, int n)
+double MatNorm_Assym(
+    const double* V,
+    unsigned int n)
 {
   double s = 0.0;
-  for(int i=0;i<n;++i){
-    for(int j=0;j<n;++j){
+  for(unsigned int i=0;i<n;++i){
+    for(unsigned int j=0;j<n;++j){
       double v0 = V[i*n+j];
       double v1 = V[j*n+i];
       s += (v0-v1)*(v0-v1);
@@ -903,7 +906,8 @@ double MatNorm_Assym
   return s;
 }
 
-double CheckSymmetry(const dfm2::CMatrixSparse<double>& mat)
+double CheckSymmetry(
+    const dfm2::CMatrixSparse<double>& mat)
 {
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );

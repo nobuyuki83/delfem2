@@ -31,8 +31,8 @@ void IndexElement_OverlapLevels_MeshTri3D
     };
     for(unsigned int ih=0;ih<nH;ih++){
       unsigned int icnt = 0;
-      for(unsigned int inotri=0;inotri<3;inotri++){
-        if( ah[inotri]-aH[ih] > 0 ){ icnt++; }
+      for(double inotri : ah){
+        if( inotri-aH[ih] > 0 ){ icnt++; }
       }
       if( icnt == 1 || icnt == 2 ){
         aCST[ih].push_back(itri);
@@ -195,13 +195,14 @@ bool TraverseBoundaryLoop
       if( inotri == 1 ){ iflg += 2; }
       if( inotri == 2 ){ iflg += 4; }
     }
-    unsigned int iedge_next;
+    int iedge_next = -1;
     if( iflg == 1 ){ iedge_next = 2; } // 0
     if( iflg == 2 ){ iedge_next = 0; } // 1
     if( iflg == 4 ){ iedge_next = 1; } // 2
     if( iflg == 3 ){ iedge_next = 0; } // 01
     if( iflg == 5 ){ iedge_next = 2; } // 02
     if( iflg == 6 ){ iedge_next = 1; } // 12
+    assert( iedge_next != -1 );
     int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
     if( itri_next1 == -1 ){ break; } // reached boundary
     const int iseg_next1 = Tri2Seg[itri_next1];
@@ -224,8 +225,8 @@ void dfm2::Slice_MeshTri3D_Heights
  const std::vector<unsigned int>& aTri,
  const std::vector<int>& aTriSur)
 {
-  const unsigned int ntri = (unsigned int)aTri.size()/3;
-  const unsigned int nH = (unsigned int)aLevel.size();
+  const std::size_t ntri = aTri.size()/3;
+  const std::size_t nH = aLevel.size();
   //
   std::vector< std::vector<unsigned int> > aCST;
   IndexElement_OverlapLevels_MeshTri3D(aCST,
@@ -236,13 +237,13 @@ void dfm2::Slice_MeshTri3D_Heights
   std::vector<int> Tri2Seg;
   Tri2Seg.resize(ntri,-1);
   for(unsigned int ih=0;ih<nH;ih++){ // h loop
-    for(unsigned int isg=0;isg<aCST[ih].size();isg++){
+    for(std::size_t isg=0;isg<aCST[ih].size();isg++){
       unsigned int itri = aCST[ih][isg];
       Tri2Seg[itri] = isg;
     }
     std::vector<int> aFlgSeg;
     aFlgSeg.resize(aCST[ih].size(),0);
-    unsigned int iseg_ker = 0;
+    std::size_t iseg_ker = 0;
     for(;;){ // cs loop
       for(;iseg_ker<aCST[ih].size();iseg_ker++){
         if( aFlgSeg[iseg_ker] == 0 ){ break; }
@@ -258,8 +259,7 @@ void dfm2::Slice_MeshTri3D_Heights
       aCS.push_back(cs);
     }
     //
-    for(unsigned int isg=0;isg<aCST[ih].size();isg++){
-      unsigned int itri = aCST[ih][isg];
+    for(unsigned int itri : aCST[ih]){
       Tri2Seg[itri] = -1;
     }
   }

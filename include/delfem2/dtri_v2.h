@@ -123,7 +123,7 @@ void MeshingInside(std::vector<CEPo2>& aPo2D,
                    std::vector<int>& aFlagTri,
                    ////
                    const int nPointFix,
-                   const int nflgpnt_offset,
+                   const unsigned int nflgpnt_offset,
                    const double len,
                    const CInputTriangulation& mesh_density);
 

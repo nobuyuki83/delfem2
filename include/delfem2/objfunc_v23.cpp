@@ -160,16 +160,16 @@ void PBD_ConstProj_Rigid3D
 void PBD_ConstProj_Rigid2D
 (double* aXYt,
  double stiffness,
- const unsigned int *clstr_ind, int nclstr_ind,
- const unsigned int *clstr, int nclstr0,
- const double* aXY0, int nXY0)
+ const unsigned int *clstr_ind, unsigned int nclstr_ind,
+ const unsigned int *clstr, unsigned int nclstr0,
+ const double* aXY0, unsigned int nXY0)
 {
-  const int nclstr = nclstr_ind-1;
-  for(int iclstr=0;iclstr<nclstr;++iclstr){
+  const unsigned int nclstr = nclstr_ind-1;
+  for(unsigned int iclstr=0;iclstr<nclstr;++iclstr){
     CVector2 pc(0, 0), qc(0, 0);
-    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
+    for (unsigned int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       assert( iip < nclstr0 );
-      const int ip = clstr[iip]; assert( ip>=0 && ip < nXY0 );
+      const unsigned int ip = clstr[iip]; assert( ip < nXY0 );
       qc += CVector2(aXY0[ip*2+0],aXY0[ip*2+1]);
       pc += CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
     }
@@ -177,8 +177,8 @@ void PBD_ConstProj_Rigid2D
     pc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
     
     double A[4] = { 0, 0, 0, 0 };
-    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
-      const int ip = clstr[iip];
+    for (unsigned int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
+      const unsigned int ip = clstr[iip];
       const CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc; // undeform
       const CVector2 dp = CVector2(aXYt[ip*2+0],aXYt[ip*2+1])-pc; // deform
       A[0*2+0] += dp[0]*dq[0];
@@ -189,8 +189,8 @@ void PBD_ConstProj_Rigid2D
     double R[4]; RotationalComponentOfMatrix2(R,A);
     //    std::cout << R[0] << " " << R[1] << " " << R[2] << " " << R[3] << std::endl;
     
-    for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
-      const int ip = clstr[iip];
+    for (unsigned int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
+      const unsigned int ip = clstr[iip];
       CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
       CVector2 pg = pc+Mat2Vec(R, dq); // goal position
       CVector2 pg2 = stiffness*pg+(1-stiffness)*CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);

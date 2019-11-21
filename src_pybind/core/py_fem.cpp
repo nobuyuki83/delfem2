@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
@@ -121,7 +121,7 @@ void LinearSystem_SetMasterSlave
 std::vector<double> PySolve_PCG
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
- double conv_ratio, double iteration,
+ double conv_ratio, unsigned int iteration,
  const dfm2::CMatrixSparse<double>& mat_A,
  const dfm2::CPreconditionerILU<double>& ilu_A)
 {
@@ -137,7 +137,7 @@ std::vector<double> PySolve_PCG
 std::vector<double> PySolve_PBiCGStab
 (py::array_t<double>& vec_b,
  py::array_t<double>& vec_x,
- double conv_ratio, double iteration,
+ double conv_ratio, unsigned int iteration,
  const dfm2::CMatrixSparse<double>& mat_A,
  const dfm2::CPreconditionerILU<double>& ilu_A)
 {
@@ -154,7 +154,7 @@ std::vector<double> PySolve_PBiCGStab
 void PyPrecILU_SetPattern_ILUk
  (dfm2::CPreconditionerILU<double>&  mat_ilu,
   const dfm2::CMatrixSparse<double>& mss,
-  unsigned int nlev_fill)
+  int nlev_fill)
 {
     //  mat_ilu.Initialize_ILU0(mss);
   mat_ilu.Initialize_ILUk(mss,
@@ -408,7 +408,7 @@ double PyMergeLinSys_Contact
  const std::vector<const dfm2::CSDF3*>& apSDF,
  const py::array_t<double>& aXYZ)
 {
-  if( apSDF.size() == 0 ) return 0;
+  if( apSDF.empty() ) return 0;
   class CMyInput : public CInput_Contact
   {
   public:

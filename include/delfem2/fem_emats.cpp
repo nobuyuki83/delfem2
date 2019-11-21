@@ -13,7 +13,7 @@
  * @details this file only depends on and "emat.h" and "mats.h"
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <complex>
 
 typedef std::complex<double> COMPLEX;
@@ -35,7 +35,7 @@ static void FetchData
   if( nstride == -1 ){ nstride = ndim; }
   assert( nstride >= ndim );
   for(int ino=0;ino<nno;++ino){
-    int ip = aIP[ino];
+    unsigned int ip = aIP[ino];
     for(int idim=0;idim<ndim;++idim){
       val_to[ino*ndim+idim] = val_from[ip*nstride+idim];
     }
@@ -162,7 +162,7 @@ void dfm2::MergeLinSys_Poission_MeshTri2D
      alpha, source,
      coords, value);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
     mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
@@ -253,7 +253,7 @@ void dfm2::MergeLinSys_Poission_MeshTet3D
                        alpha, source,
                        coords, value);
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
     mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
@@ -295,7 +295,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTri2D
      dt_timestep, gamma_newmark, rho,
      coords, value, velo);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
     mat_A.Mearge(3, aIP, 3, aIP, 1, &emat[0][0], tmp_buffer);
@@ -334,7 +334,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTet3D
                                  dt_timestep, gamma_newmark, rho,
                                  coords, value, velo);
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip] += eres[ino];
     }
     mat_A.Mearge(4, aIP, 4, aIP, 1, &emat[0][0], tmp_buffer);
@@ -369,7 +369,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
                                  myu, lambda, rho, g_x, g_y,
                                  disps, coords);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*2+0] += eres[ino][0];
       vec_b[ip*2+1] += eres[ino][1];
     }
@@ -420,7 +420,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
      disps, velos, accs, coords, 
      true);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*2+0] += eres[ino][0];
       vec_b[ip*2+1] += eres[ino][1];
     }
@@ -458,7 +458,7 @@ void dfm2::MergeLinSys_StokesStatic2D
     ////
     EMat_Stokes2D_Static_P1(myu, g_x, g_y, coords, velo_press, emat, eres);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
@@ -549,7 +549,7 @@ void dfm2::MergeLinSys_NavierStokes2D
                                       coords, velo, acc,
                                       emat, eres);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
@@ -591,7 +591,7 @@ double dfm2::MergeLinSys_Cloth
     W += e;  // marge energy
     // marge de
     for(int ino=0;ino<3;ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
     }
     // marge dde
@@ -604,7 +604,7 @@ double dfm2::MergeLinSys_Cloth
     double C[4][3] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
     double c[4][3];
     for(int ino=0;ino<4;ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
     }
@@ -1542,9 +1542,9 @@ void dfm2::MassLumped_ShellPlateBendingMITC3
   const unsigned int nDoF = nXY*3;
   for(unsigned int i=0;i<nDoF;++i){ aM[i] = 0.0; }
   for(unsigned int it=0;it<nTri;++it){
-    const unsigned int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
-    const unsigned int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
-    const unsigned int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+    const unsigned int i0 = aTri[it*3+0]; assert(i0<nXY);
+    const unsigned int i1 = aTri[it*3+1]; assert(i1<nXY);
+    const unsigned int i2 = aTri[it*3+2]; assert(i2<nXY);
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;

@@ -285,7 +285,7 @@ void Pick_CubeGrid
   //////
   icube_pic = -1;
   double depth_min = 0;
-  for(unsigned int ivox=0;ivox<aCube.size();++ivox){
+  for(std::size_t ivox=0;ivox<aCube.size();++ivox){
     if( !aCube[ivox].is_active ) continue;
     int ih = aCube[ivox].ivx;
     int jh = aCube[ivox].ivy;
@@ -345,13 +345,13 @@ void Add_CubeGrid
 (std::vector<CCubeGrid>& aCube,
  int ivx1, int ivy1, int ivz1)
 {
-  for(unsigned int ic=0;ic<aCube.size();++ic){
-    if( aCube[ic].ivx == ivx1 && aCube[ic].ivy == ivy1 && aCube[ic].ivz == ivz1 ){
-      if( aCube[ic].is_active ){
+  for(auto & ic : aCube){
+    if( ic.ivx == ivx1 && ic.ivy == ivy1 && ic.ivz == ivz1 ){
+      if( ic.is_active ){
         return;
       }
       else{
-        aCube[ic].is_active = true;
+        ic.is_active = true;
         return;
       }
     }
@@ -366,10 +366,10 @@ void Del_CubeGrid
 (std::vector<CCubeGrid>& aCube,
  int i1, int j1, int k1)
 {
-  for(unsigned int ic=0;ic<aCube.size();++ic){
-    if( aCube[ic].ivx == i1 && aCube[ic].ivy == j1 && aCube[ic].ivz == k1 ){
-      if( aCube[ic].is_active ){
-        aCube[ic].is_active = false;
+  for(auto & ic : aCube){
+    if( ic.ivx == i1 && ic.ivy == j1 && ic.ivz == k1 ){
+      if( ic.is_active ){
+        ic.is_active = false;
         return;
       }
       else{
@@ -384,7 +384,7 @@ void AABB_CubeGrid
 (int aabb[6],
  const std::vector<CCubeGrid>& aCube)
 {
-  if( aCube.size() == 0 ){
+  if( aCube.empty() ){
     aabb[0] = +1; aabb[1] = -1;
     aabb[2] = +1; aabb[3] = -1;
     aabb[4] = +1; aabb[5] = -1;
@@ -394,7 +394,7 @@ void AABB_CubeGrid
   aabb[2] = aCube[0].ivy;  aabb[3] = aabb[0]+1;
   aabb[4] = aCube[0].ivz;  aabb[5] = aabb[0]+1;
 
-  for(unsigned int ic=1;ic<aCube.size();++ic){
+  for(std::size_t ic=1;ic<aCube.size();++ic){
     if( aCube[ic].ivx+0 < aabb[0] ){ aabb[0] = aCube[ic].ivx+0; }
     if( aCube[ic].ivx+1 > aabb[1] ){ aabb[1] = aCube[ic].ivx+1; }
     if( aCube[ic].ivy+0 < aabb[2] ){ aabb[2] = aCube[ic].ivy+0; }
@@ -404,7 +404,7 @@ void AABB_CubeGrid
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------
 
 
 

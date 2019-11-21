@@ -22,8 +22,9 @@ void dfm2::JArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
 {
-  const int np = index.size()-1;
-  for(int ip=0;ip<np;++ip){
+  assert( index.size() >= 2 );
+  const std::size_t np = index.size()-1;
+  for(unsigned int ip=0;ip<np;++ip){
     std::cout << ip << " --> ";
     for(int ipsup=index[ip];ipsup<index[ip+1];++ipsup){
       std::cout << array[ipsup] << " ";
@@ -326,15 +327,18 @@ void AddElement
  std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   const int nnoel = nNodeElem(femelem_type);
-  const int nElemIn = aElemIn.size()/nnoel;
+  const std::size_t nElemIn = aElemIn.size()/nnoel;
   aElemType.resize(aElemType.size()+nElemIn,femelem_type);
   ////
   std::copy(aElemIn.begin(), aElemIn.end(), std::back_inserter(aElem));
   ////
-  const int nelem0 = aElemInd.size()-1;
+  assert( aElemInd.size() >= 2 );
+  const std::size_t nelem0 = aElemInd.size()-1;
   const int nei0 = aElemInd[nelem0];
   aElemInd.reserve(aElemInd.size()+nElemIn);
-  for(int ie=0;ie<nElemIn;++ie){ aElemInd.push_back((ie+1)*nnoel+nei0); }
+  for(unsigned int ie=0;ie<nElemIn;++ie){
+    aElemInd.push_back((ie+1)*nnoel+nei0);
+  }
 }
 
 // --------------------------------------
@@ -394,7 +398,7 @@ void JArrayElemSurPoint_MeshMix
 
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
- const unsigned int* aEl, int nEl, int nNoEl,
+ const unsigned int* aEl, unsigned int nEl, int nNoEl,
  const std::vector<unsigned int> &elsup_ind,
  const std::vector<unsigned int> &elsup,
  const int nfael,
@@ -409,7 +413,7 @@ void makeSurroundingRelationship
   
   std::vector<int> tmp_poin(np,0);
   std::vector<int> inpofa(nnofa);
-  for (int iel = 0; iel<nEl; iel++){
+  for (unsigned int iel = 0; iel<nEl; iel++){
     for (int ifael=0; ifael<nfael; ifael++){
       for (int ipofa=0; ipofa<nnofa; ipofa++){
         int int0 = noelElemFace[ifael][ipofa];
@@ -420,8 +424,8 @@ void makeSurroundingRelationship
       }
       const int ipoin0 = inpofa[0];
       bool iflg = false;
-      for (int ielsup = elsup_ind[ipoin0]; ielsup<elsup_ind[ipoin0+1]; ielsup++){
-        const int jelem0 = elsup[ielsup];
+      for (unsigned int ielsup = elsup_ind[ipoin0]; ielsup<elsup_ind[ipoin0+1]; ielsup++){
+        const unsigned int jelem0 = elsup[ielsup];
         if (jelem0==iel) continue;
         for (int jfael = 0; jfael<nfael; jfael++){
           iflg = true;
@@ -541,7 +545,7 @@ void makeSurroundingRelationship
         assert(ip0>=0&&ip0<(int)np);
         aFlg[ip0] =  1;
       }
-      for(int jelsup=elsup_ind[ip0];jelsup<elsup_ind[ip0+1];++jelsup){
+      for(unsigned int jelsup=elsup_ind[ip0];jelsup<elsup_ind[ip0+1];++jelsup){
         const int je0 = elsup[jelsup];
         if( (int)ielem == je0 ) continue;
         const dfm2::MESHELEM_TYPE type_j = aElemType[je0];
@@ -627,8 +631,8 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
   psup_ind.assign(nPoint+1,0);
   for(int ipoint=0;ipoint<nPoint;ipoint++){
     aflg[ipoint] = ipoint;
-    for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
-      int jelem = elsup[ielsup];
+    for(unsigned int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
+      unsigned int jelem = elsup[ielsup];
       for(int jnoel=0;jnoel<nnoel;jnoel++){
         unsigned int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
@@ -646,8 +650,8 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
   for(int ipoint=0;ipoint<nPoint;ipoint++){ aflg[ipoint] = -1; }
   for(int ipoint=0;ipoint<nPoint;ipoint++){
     aflg[ipoint] = ipoint;
-    for(int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
-      int jelem = elsup[ielsup];
+    for(unsigned int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
+      unsigned int jelem = elsup[ielsup];
       for(int jnoel=0;jnoel<nnoel;jnoel++){
         unsigned int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
@@ -743,7 +747,7 @@ void JArrayEdge_MeshElem
   edge_ind[0] = 0;
   for(unsigned int ip=0;ip<nPoint0;++ip){
     std::set<int> setIP;
-    for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
+    for(unsigned int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
       int iq0 = elsup[ielsup];
       for(int ie=0;ie<neElm;++ie){
         int inoel0 = aNoelEdge[ie][0];
@@ -776,8 +780,8 @@ void MeshLine_JArrayEdge
   aLine.reserve(psup.size()*2);
   const std::size_t np = psup_ind.size()-1;
   for(unsigned int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
-      int jp = psup[ipsup];
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      unsigned int jp = psup[ipsup];
       aLine.push_back(ip);
       aLine.push_back(jp);
     }
@@ -982,12 +986,11 @@ void MakeGroupElem
  const int nfael,
  const int nnoel)
 {
-  ////
-  const int nelem = aTri.size()/nnoel;
+  const std::size_t nelem = aTri.size()/nnoel;
   aIndGroup.assign(nelem,-1);
   int igroup = -1;
   for(;;){
-    int itri_ker = 0;
+    unsigned int itri_ker = 0;
     for(;itri_ker<nelem;++itri_ker){
       if( aIndGroup[itri_ker]==-1) break;
     }
@@ -1072,8 +1075,9 @@ void ClipGroup
   aElemType1.clear();
   aElemInd1.clear();
   aElemInd1.push_back(0);
-  int nelem = aElemInd.size()-1;
-  for(int ie=0;ie<nelem;++ie){
+  assert( aElemInd.size() >= 2 );
+  std::size_t nelem = aElemInd.size()-1;
+  for(std::size_t ie=0;ie<nelem;++ie){
     if( aIndGroup[ie] != igroup ) continue;
     dfm2::MESHELEM_TYPE type = aElemType[ie];
     aElemType1.push_back(type);
@@ -1083,8 +1087,9 @@ void ClipGroup
       aElem1.push_back(ip0);
     }
   }
-  const int ne = aElemInd1.size()-1;
-  for(int ie=0;ie<ne;++ie){
+  assert( aElemInd1.size() >= 2 );
+  const std::size_t ne = aElemInd1.size()-1;
+  for(unsigned int ie=0;ie<ne;++ie){
     aElemInd1[ie+1] += aElemInd1[ie];
   }
 }
@@ -1092,20 +1097,20 @@ void ClipGroup
 // ----------------------------------------------------
 
 int findEdge
-(int ip0, int ip1,
+(unsigned int ip0, unsigned int ip1,
  const std::vector<unsigned int> &psup_ind,
  const std::vector<unsigned int> &psup)
 {
   if( ip1 > ip0 ){
-    for(int ipsup=psup_ind[ip0];ipsup<psup_ind[ip0+1];++ipsup){
-      int ip2 = psup[ipsup];
-      if( ip2 == ip1 ){ return ipsup; }
+    for(unsigned int ipsup=psup_ind[ip0];ipsup<psup_ind[ip0+1];++ipsup){
+      unsigned int ip2 = psup[ipsup];
+      if( ip2 == ip1 ){ return (int)ipsup; }
     }
   }
   else{
-    for(int ipsup=psup_ind[ip1];ipsup<psup_ind[ip1+1];++ipsup){
-      int ip2 = psup[ipsup];
-      if( ip2 == ip0 ){ return ipsup; }
+    for(unsigned int ipsup=psup_ind[ip1];ipsup<psup_ind[ip1+1];++ipsup){
+      unsigned int ip2 = psup[ipsup];
+      if( ip2 == ip0 ){ return (int)ipsup; }
     }
   }
   return -1;
@@ -1119,7 +1124,7 @@ int findFace
 {
   if( ip0 < 0 || ip0 >= (int)elsupInd.size()-1 ) return -1;
   assert( ip0 >=0 && ip0 < (int)elsupInd.size()-1 );
-  for(int ielsup=elsupInd[ip0];ielsup<elsupInd[ip0+1];++ielsup){
+  for(unsigned int ielsup=elsupInd[ip0];ielsup<elsupInd[ip0+1];++ielsup){
     int ie0 = elsup[ielsup];
     int iq0 = aQuad[ie0*4+0];
     int iq1 = aQuad[ie0*4+1];
@@ -1154,19 +1159,19 @@ void QuadSubdiv
   aEdgeFace0.resize(0);
   aEdgeFace0.reserve(ne0*4);
   for(int ip=0;ip<(int)nPoint0;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       int ip1 = psup[ipsup];
       aEdgeFace0.push_back(ip);
       aEdgeFace0.push_back(ip1);
       int iq0=-1, iq1=-1;
-      for(int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
+      for(unsigned int ielsup=elsup_ind[ip];ielsup<elsup_ind[ip+1];++ielsup){
         int jq0 = elsup[ielsup];
-        int jp0 = aQuad0[jq0*4+0];
-        int jp1 = aQuad0[jq0*4+1];
-        int jp2 = aQuad0[jq0*4+2];
-        int jp3 = aQuad0[jq0*4+3];
-        if( (jp0!=ip) && (jp1!=ip) && (jp2!=ip) && (jp3!=ip) ){ continue; }
-        if( (jp0!=ip1) && (jp1!=ip1) && (jp2!=ip1) && (jp3!=ip1) ){ continue; }
+        unsigned int jp0 = aQuad0[jq0*4+0];
+        unsigned int jp1 = aQuad0[jq0*4+1];
+        unsigned int jp2 = aQuad0[jq0*4+2];
+        unsigned int jp3 = aQuad0[jq0*4+3];
+        if( ((int)jp0!=ip) && ((int)jp1!=ip) && ((int)jp2!=ip) && ((int)jp3!=ip) ){ continue; }
+        if( ((int)jp0!=ip1) && ((int)jp1!=ip1) && ((int)jp2!=ip1) && ((int)jp3!=ip1) ){ continue; }
         //////
         if( iq0 == -1 ){ iq0 = jq0; }
         else{
@@ -1220,22 +1225,22 @@ void TetSubdiv
   aTet1.resize(0);
   aTet1.reserve(nTet0*4);
   for(int it=0;it<nt0;++it){
-    int ip0 = aTet0[it*4+0];
-    int ip1 = aTet0[it*4+1];
-    int ip2 = aTet0[it*4+2];
-    int ip3 = aTet0[it*4+3];
+    unsigned int ip0 = aTet0[it*4+0];
+    unsigned int ip1 = aTet0[it*4+1];
+    unsigned int ip2 = aTet0[it*4+2];
+    unsigned int ip3 = aTet0[it*4+3];
     int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != -1 );
     int ie02 = findEdge(ip0,ip2, psup_ind,psup); assert( ie02 != -1 );
     int ie03 = findEdge(ip0,ip3, psup_ind,psup); assert( ie03 != -1 );
     int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != -1 );
     int ie13 = findEdge(ip1,ip3, psup_ind,psup); assert( ie13 != -1 );
     int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != -1 );
-    int ip01 = ie01 + nPoint0;
-    int ip02 = ie02 + nPoint0;
-    int ip03 = ie03 + nPoint0;
-    int ip12 = ie12 + nPoint0;
-    int ip13 = ie13 + nPoint0;
-    int ip23 = ie23 + nPoint0;
+    unsigned int ip01 = ie01 + nPoint0;
+    unsigned int ip02 = ie02 + nPoint0;
+    unsigned int ip03 = ie03 + nPoint0;
+    unsigned int ip12 = ie12 + nPoint0;
+    unsigned int ip13 = ie13 + nPoint0;
+    unsigned int ip23 = ie23 + nPoint0;
     aTet1.push_back(ip0);  aTet1.push_back(ip01); aTet1.push_back(ip02); aTet1.push_back(ip03);
     aTet1.push_back(ip1);  aTet1.push_back(ip01); aTet1.push_back(ip13); aTet1.push_back(ip12);
     aTet1.push_back(ip2);  aTet1.push_back(ip02); aTet1.push_back(ip12); aTet1.push_back(ip23);
@@ -1438,7 +1443,7 @@ void HexSubdiv
         if( jh0!=-1 && (int)ih>jh0 ) continue;
         for(int inofa=0;inofa<4;++inofa){
           int inoel0 = dfm2::noelElemFace_Hex[ifh][inofa];
-          int igp0 = aHex0[ih*8+inoel0];
+          unsigned int igp0 = aHex0[ih*8+inoel0];
           aQuadHex0.push_back(igp0);
         }
       }
@@ -1472,14 +1477,14 @@ void HexSubdiv
   // making hex
   aHex1.clear();
   for(int ih=0;ih<nHex0;++ih){
-    int ihc0 = aHex0[ih*8+0];
-    int ihc1 = aHex0[ih*8+1];
-    int ihc2 = aHex0[ih*8+2];
-    int ihc3 = aHex0[ih*8+3];
-    int ihc4 = aHex0[ih*8+4];
-    int ihc5 = aHex0[ih*8+5];
-    int ihc6 = aHex0[ih*8+6];
-    int ihc7 = aHex0[ih*8+7];
+    unsigned int ihc0 = aHex0[ih*8+0];
+    unsigned int ihc1 = aHex0[ih*8+1];
+    unsigned int ihc2 = aHex0[ih*8+2];
+    unsigned int ihc3 = aHex0[ih*8+3];
+    unsigned int ihc4 = aHex0[ih*8+4];
+    unsigned int ihc5 = aHex0[ih*8+5];
+    unsigned int ihc6 = aHex0[ih*8+6];
+    unsigned int ihc7 = aHex0[ih*8+7];
     int ihc01 = findEdge(ihc0,ihc1, psupIndHex0,psupHex0)+nhp0; assert(ihc01>=nhp0&&ihc01<nhp0+neh0);
     int ihc12 = findEdge(ihc1,ihc2, psupIndHex0,psupHex0)+nhp0; assert(ihc12>=nhp0&&ihc12<nhp0+neh0);
     int ihc23 = findEdge(ihc2,ihc3, psupIndHex0,psupHex0)+nhp0; assert(ihc23>=nhp0&&ihc23<nhp0+neh0);

@@ -183,21 +183,21 @@ int ReadPPM_SetTexture(const std::string& fname)
     const unsigned int buffSize = 256;
     char buff[buffSize];
     char* cres = 0;
-    cres = fgets(buff,buffSize,fp); if( cres == NULL ){ return -1; }
-    cres = fgets(buff,buffSize,fp); if( cres == NULL ){ return -1; }
+    cres = fgets(buff,buffSize,fp); if( cres == nullptr ){ return -1; }
+    cres = fgets(buff,buffSize,fp); if( cres == nullptr ){ return -1; }
     sscanf(buff,"%d%d",&w,&h);
     cres = fgets(buff,buffSize,fp);  // read 255
-    if( cres == NULL ){ return -1; }
+    if( cres == nullptr ){ return -1; }
   }
   std::cout << "tex size : " << w << " " << h << std::endl;
   //  assert( w >= 0 && h >=0 );
   aRGB.resize(w*h*3);
-  const unsigned int buffSize = (unsigned int)(4*3*w*1.2);  // ÇøÇÂÇ¡Ç∆ó]ï™ñ⁄Ç…Ç∆Ç¡ÇƒÇ®Ç≠
+  const auto buffSize = (unsigned int)(4*3*w*1.2);  // ÇøÇÂÇ¡Ç∆ó]ï™ñ⁄Ç…Ç∆Ç¡ÇƒÇ®Ç≠
   char* buff = new char [buffSize];
   int icnt = 0;
   while (icnt<w*h*3) {
     char* cres = fgets(buff,buffSize,fp);
-    if( cres == NULL ){ return -1; }
+    if( cres == nullptr ){ return -1; }
     char* pCur = buff;
     char* pNxt;
     for(;;){
@@ -440,9 +440,9 @@ void CTexManager::Clear(){
 }
 
 void CTexManager::BindTexturePath(const std::string& path) const {
-  for(int itex=0;itex<(int)aTexInfo.size();++itex){
-    if( aTexInfo[itex].full_path != path ) continue;
-    glBindTexture(GL_TEXTURE_2D, aTexInfo[itex].id_tex_gl );
+  for(const auto & itex : aTexInfo){
+    if( itex.full_path != path ) continue;
+    glBindTexture(GL_TEXTURE_2D, itex.id_tex_gl );
     glEnable(GL_TEXTURE_2D);
   }
 }

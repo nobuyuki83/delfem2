@@ -48,7 +48,7 @@ void DevideElemAryConnex
       z_min = cgz-eps;
       z_max = cgz+eps;
     }
-    for(unsigned int il=1;il<list.size();il++){
+    for(std::size_t il=1;il<list.size();il++){
       int itri = list[il];
       assert( itri < (int)aElemCenter.size() );
       assert( aElem2Node[itri] == iroot_node );
@@ -74,8 +74,7 @@ void DevideElemAryConnex
   }
   double org[3] = {(x_min+x_max)*0.5,  (y_min+y_max)*0.5,  (z_min+z_max)*0.5};
   int itri_ker = -1;
-  for(unsigned int il=0;il<list.size();il++){
-    int itri0 = list[il];
+  for(int itri0 : list){
     const double det0 = DetSide(aElemCenter.data()+itri0*3,org,dir);
     if( fabs(det0) < 1.0e-10 ) continue;
     if( det0 < 0 ){ dir[0]*=-1; dir[1]*=-1; dir[2]*=-1; }
@@ -84,8 +83,7 @@ void DevideElemAryConnex
   }
   if( itri_ker == -1 ){
     org[0]=0; org[1]=0; org[2]=0;
-    for(unsigned int il=0;il<list.size();il++){ // center of the gravity of list
-      int itri0 = list[il];
+    for(int itri0 : list){ // center of the gravity of list
       org[0] += aElemCenter[itri0*3+0];
       org[1] += aElemCenter[itri0*3+1];
       org[2] += aElemCenter[itri0*3+2];
@@ -94,8 +92,7 @@ void DevideElemAryConnex
     org[1] = org[1]/list.size();
     org[2] = org[2]/list.size();
     double mat[3][3] = { {0,0,0},{0,0,0},{0,0,0} };
-    for(unsigned int il=0;il<list.size();il++){
-      int itri0 = list[il];
+    for(int itri0 : list){
       const double vcg[3] = {
         aElemCenter[itri0*3+0]-org[0],
         aElemCenter[itri0*3+1]-org[1],
@@ -113,8 +110,7 @@ void DevideElemAryConnex
       dir[1] = tmp[1]/len;
       dir[2] = tmp[2]/len;
     }
-    for(unsigned int il=0;il<list.size();il++){
-      int itri0 = list[il];
+    for(int itri0 : list){
       double det = DetSide(aElemCenter.data()+itri0*3,org,dir);
       if( fabs(det) < 1.0e-10 ) continue;
       if( det < 0 ){ dir[0]*=-1; dir[1]*=-1; dir[2]*=-1; }
@@ -150,12 +146,11 @@ void DevideElemAryConnex
         list_ch0.push_back(jtri);
       }
     }
-    assert( list_ch0.size() > 0 );
+    assert( !list_ch0.empty() );
   }
   // 子ノード１に含まれる三角形を抽出(入力リストから子ノード0に含まれる物を除外)
   std::vector<int> list_ch1;
-  for(unsigned int il=0;il<list.size();il++){
-    int itri = list[il];
+  for(int itri : list){
     if( aElem2Node[itri] == inode_ch0 ) continue;
     assert( aElem2Node[itri] == iroot_node );
     aElem2Node[itri] = inode_ch1;
@@ -222,9 +217,9 @@ std::uint32_t expandBits(std::uint32_t v)
 
 std::uint32_t delfem2::MortonCode(double x, double y, double z)
 {
-  std::uint32_t ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
-  std::uint32_t iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
-  std::uint32_t iz = (std::uint32_t)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
+  auto ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
+  auto iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
+  auto iz = (std::uint32_t)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
     //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
   ix = expandBits(ix);
   iy = expandBits(iy);
@@ -361,7 +356,7 @@ void dfm2::GetSortedMortenCode
   const double minmax_xyz[6])
 {
   std::vector<CPairMtcInd> aNodeBVH; // array of BVH node
-  const int np = aXYZ.size()/3;
+  const std::size_t np = aXYZ.size()/3;
   aNodeBVH.resize(np);
   const double x_min = minmax_xyz[0];
   const double x_max = minmax_xyz[1];
@@ -369,7 +364,7 @@ void dfm2::GetSortedMortenCode
   const double y_max = minmax_xyz[3];
   const double z_min = minmax_xyz[4];
   const double z_max = minmax_xyz[5];
-  for(int ip=0;ip<np;++ip){
+  for(unsigned ip=0;ip<np;++ip){
     double x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
     double y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
     double z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);

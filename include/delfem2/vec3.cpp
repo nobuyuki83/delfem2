@@ -1610,7 +1610,7 @@ CVector3 screenDepthDirection
   CVector3 v1 = solve_GlAffineMatrix(mPj, v0);
   v1.z = 1;
   ////
-  float Du = mPj[11]*2.0 + mPj[15]; // z is 1 after model view
+  float Du = mPj[11]*2.f + mPj[15]; // z is 1 after model view
   CVector3 u0( Du*v.x, Du*v.y, 0.0 );
   CVector3 u1 = solve_GlAffineMatrix(mPj, u0);
   u1.z = 2;
@@ -2436,15 +2436,15 @@ void dfm2::ConvexHull
           sBound.push( s2 );
         }
         else{ // this is a actuall boundary
-          aB.push_back( std::make_pair(itri0,ied0) );
+          aB.emplace_back(itri0,ied0 );
         }
       }
     }
     std::vector<int> aBSur( aB.size()*2, -1);
     {
-      for(int ib=0;ib<(int)aB.size();ib++){
-        int itri0 = aB[ib].first;
-        int itn0  = aB[ib].second;
+      for(auto & ib : aB){
+        int itri0 = ib.first;
+        int itn0  = ib.second;
         int itn1 = triEd[itn0][0];
         int itn2 = triEd[itn0][1];
         int iv1 = aTri[itri0*3+itn1];
@@ -2480,7 +2480,7 @@ void dfm2::ConvexHull
       }
     }
 #ifndef NDEBUG
-    for(unsigned int ib=0;ib<aB.size();ib++){
+    for(std::size_t ib=0;ib<aB.size();ib++){
       for(int inb=0;inb<2;inb++){
         int itri0 = aB[ib].first;
         int itn0  = aB[ib].second;
@@ -2507,9 +2507,9 @@ void dfm2::ConvexHull
       aTri1.push_back( aTri[itri*3+0] );
       aTri1.push_back( aTri[itri*3+1] );
       aTri1.push_back( aTri[itri*3+2] );
-      aTriSur1.push_back( std::make_pair(-1,0) );
-      aTriSur1.push_back( std::make_pair(-1,0) );
-      aTriSur1.push_back( std::make_pair(-1,0) );
+      aTriSur1.emplace_back(-1,0 );
+      aTriSur1.emplace_back(-1,0 );
+      aTriSur1.emplace_back(-1,0 );
     }
     for(int itri=0;itri<(int)aTri.size()/3;itri++){ // set old relation
       if( isDelTri[itri] ==  1) continue;
@@ -2553,9 +2553,9 @@ void dfm2::ConvexHull
       ////
       int jtri2 = aBSur[ib*2+0] + ntri_old;
       int jtri3 = aBSur[ib*2+1] + ntri_old;
-      aTriSur1.push_back( std::make_pair(jtri0,itn0) );
-      aTriSur1.push_back( std::make_pair(jtri3,2) );
-      aTriSur1.push_back( std::make_pair(jtri2,1) );
+      aTriSur1.emplace_back(jtri0,itn0 );
+      aTriSur1.emplace_back(jtri3,2 );
+      aTriSur1.emplace_back(jtri2,1 );
     }
     aTri    = aTri1;
     aTriSur = aTriSur1;

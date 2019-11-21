@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <deque>
 #include <map>
@@ -85,40 +85,40 @@ std::vector< std::pair<int,int> >& aEdge,
       if( (v0>0 && v1<0 && v2<0 && v3<0) ||  (v0<0 && v1>0 && v2>0 && v3>0) ){
         int in0 = getLevelSet_AddEdge(ip0,ip1,v0,v1,mapNode);
         int in1 = getLevelSet_AddEdge(ip0,ip2,v0,v2,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
       }
       if( (v0<0 && v1>0 && v2<0 && v3<0) ||  (v0>0 && v1<0 && v2>0 && v3>0) ){
         int in0 = getLevelSet_AddEdge(ip0,ip1,v0,v1,mapNode);
         int in1 = getLevelSet_AddEdge(ip1,ip3,v1,v3,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
       }
       if( (v0<0 && v1<0 && v2>0 && v3<0) ||  (v0>0 && v1>0 && v2<0 && v3>0) ){
         int in0 = getLevelSet_AddEdge(ip0,ip2,v0,v2,mapNode);
         int in1 = getLevelSet_AddEdge(ip2,ip3,v2,v3,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
       }
       if( (v0<0 && v1<0 && v2<0 && v3>0) ||  (v0>0 && v1>0 && v2>0 && v3<0) ){
         int in0 = getLevelSet_AddEdge(ip1,ip3,v1,v3,mapNode);
         int in1 = getLevelSet_AddEdge(ip2,ip3,v2,v3,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
       }
       if( (v0>0 && v1>0 && v2<0 && v3<0) ||  (v0<0 && v1<0 && v2>0 && v3>0) ){
         int in0 = getLevelSet_AddEdge(ip0,ip2,v0,v2,mapNode);
         int in1 = getLevelSet_AddEdge(ip1,ip3,v1,v3,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
       }
       if( (v0>0 && v1<0 && v2>0 && v3<0) ||  (v0<0 && v1>0 && v2<0 && v3>0) ){
         int in0 = getLevelSet_AddEdge(ip0,ip1,v0,v1,mapNode);
         int in1 = getLevelSet_AddEdge(ip2,ip3,v2,v3,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
       }
       if( (v0>0 && v1<0 && v2<0 && v3>0) ||  (v0<0 && v1>0 && v2>0 && v3<0) ){
         int in0 = getLevelSet_AddEdge(ip0,ip1,v0,v1,mapNode);
         int in1 = getLevelSet_AddEdge(ip0,ip2,v0,v2,mapNode);
-        aEdge.push_back(std::make_pair(in0,in1));
+        aEdge.emplace_back(in0,in1);
         int in2 = getLevelSet_AddEdge(ip1,ip3,v1,v3,mapNode);
         int in3 = getLevelSet_AddEdge(ip2,ip3,v2,v3,mapNode);
-        aEdge.push_back(std::make_pair(in2,in3));
+        aEdge.emplace_back(in2,in3);
       }
     }
   }
@@ -128,13 +128,12 @@ void getLevelSet_MakeLoop
 (std::vector< std::deque<int> >& aLoop,
  const std::vector<CLevSetNode>& aNode)
 {
-  unsigned int ino_ker = 0;
+  std::size_t ino_ker = 0;
   for(;;){
     for(;ino_ker<aNode.size();++ino_ker){
       bool is_included = false;
-      for(unsigned int iloop=0;iloop<aLoop.size();++iloop){
-        for(unsigned int jino=0;jino<aLoop[iloop].size();++jino){
-          const int jno0 = aLoop[iloop][jino];
+      for(auto & iloop : aLoop){
+        for(int jno0 : iloop){
           if( jno0 == (int)ino_ker ){ is_included = true; break; }
         }
         if( is_included ){ break; }
@@ -193,17 +192,17 @@ std::vector<std::vector<double> > getLevelSet
                          nh,nw,thres,pVal);
     const int nNode = mapNode.size();
     aNode.resize(nNode);
-    for(auto itr=mapNode.begin();itr!=mapNode.end();++itr){
+    for(auto & itr : mapNode){
       CLevSetNode node;
-      node.ip0 = itr->first.first;
-      node.ip1 = itr->first.second;
-      node.ratio = itr->second.second;
-      int in0 = itr->second.first;
+      node.ip0 = itr.first.first;
+      node.ip1 = itr.first.second;
+      node.ratio = itr.second.second;
+      int in0 = itr.second.first;
       aNode[in0] = node;
     }
-    for(unsigned int ie=0;ie<aEdge.size();++ie){
-      const int in0 = aEdge[ie].first;
-      const int in1 = aEdge[ie].second;
+    for(auto & ie : aEdge){
+      const int in0 = ie.first;
+      const int in1 = ie.second;
       aNode[in0].setNeighbour(in1);
       aNode[in1].setNeighbour(in0);
     }
@@ -227,15 +226,17 @@ std::vector<std::vector<double> > getLevelSet
 }
 
 
-double distance
-(int i0, int i1, int i2,
- const std::vector<int>& aXY)
+double distance(
+    unsigned int i0,
+    unsigned int i1,
+    unsigned int i2,
+    const std::vector<int>& aXY)
 {
 #ifndef NDEBUG
-  const int np = aXY.size()/2;
-  assert(i0>=0&&i0<np);
-  assert(i1>=0&&i1<np);
-  assert(i2>=0&&i2<np);
+  const std::size_t np = aXY.size()/2;
+  assert(i0<np);
+  assert(i1<np);
+  assert(i2<np);
 #endif
   CVector2 v0(aXY[i0*2+0], aXY[i0*2+1]);
   CVector2 v1(aXY[i1*2+0], aXY[i1*2+1]);
@@ -275,12 +276,12 @@ void set_flag_douglas_peucker
 std::vector<int> simplifyPolyloop(std::vector<int>& aXY_in, double eps)
 {
   std::vector<int> aXY_out;
-  int np = aXY_in.size()/2;
+  std::size_t np = aXY_in.size()/2;
   if( np <=3 ){ return aXY_out; }
   std::vector<bool> aFlg(np,true);
   set_flag_douglas_peucker(aFlg, aXY_in, 0, np/2, eps);
   set_flag_douglas_peucker(aFlg, aXY_in, np/2,np-1, eps);
-  for(int ip=0;ip<np;++ip){
+  for(std::size_t ip=0;ip<np;++ip){
     if( !aFlg[ip] ) continue;
     aXY_out.push_back(aXY_in[ip*2+0]);
     aXY_out.push_back(aXY_in[ip*2+1]);
@@ -311,10 +312,10 @@ pyGetLevelSet
   }
   std::vector<std::vector<double> > aLoop = getLevelSet(mh1, mw1, a1.data(), 0.5);
   std::vector<std::vector<int> > aLoopInt(aLoop.size());
-  for(unsigned int iloop=0;iloop<aLoop.size();++iloop){
+  for(std::size_t iloop=0;iloop<aLoop.size();++iloop){
     std::vector<double> loop = aLoop[iloop];
-    const int np = loop.size()/2;
-    for(int ip=0;ip<np;++ip){
+    const std::size_t np = loop.size()/2;
+    for(unsigned int ip=0;ip<np;++ip){
       double x0 = loop[ip*2+0];
       double y0 = loop[ip*2+1];
       double ix0 = int((x0+0.5-1.0)*mag);

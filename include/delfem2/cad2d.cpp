@@ -141,14 +141,14 @@ void dfm2::CCad2D::AddPolygon(const std::vector<double>& aXY)
   const size_t np = aXY.size()/2;
   topo.AddPolygon(np);
   for(unsigned int ip=0;ip<np;++ip){
-    aVtx.push_back(CVector2(aXY[ip*2+0], aXY[ip*2+1]));
+    aVtx.emplace_back(CVector2(aXY[ip*2+0], aXY[ip*2+1]));
   }
 //  const unsigned int iedge0 = aEdge.size();
 //  const unsigned int iface0 = aFace.size();
   for(unsigned int ie=0;ie<np;++ie){
-    aEdge.push_back(CCad2D_EdgeGeo());
+    aEdge.emplace_back();
   }
-  aFace.push_back(CCad2D_FaceGeo());
+  aFace.emplace_back();
   ////
   assert( this->Check() );
   Tessellation();
@@ -160,12 +160,12 @@ void dfm2::CCad2D::AddFace(const std::vector<CCad2D_EdgeGeo>& aEdgeIn)
   const int np = aEdgeIn.size();
   topo.AddPolygon(np);
   for(int ip=0;ip<np;++ip){
-    aVtx.push_back(aEdgeIn[ip].p0);
+    aVtx.emplace_back(aEdgeIn[ip].p0);
   }
   for(int ie=0;ie<np;++ie){
     aEdge.push_back(aEdgeIn[ie]);
   }
-  aFace.push_back(CCad2D_FaceGeo());
+  aFace.emplace_back();
   assert( this->Check() );
   Tessellation();
 }
@@ -175,7 +175,7 @@ void dfm2::CCad2D::AddVtxFace(double x0, double y0, unsigned int ifc_add)
   if( ifc_add >= topo.aFace.size() ){ return; }
   topo.AddVtx_Face(ifc_add);
   assert( topo.Check() );
-  aVtx.push_back( CCad2D_VtxGeo(CVector2(x0,y0)) );
+  aVtx.emplace_back(CVector2(x0,y0) );
   assert( this->Check() );
   Tessellation();
 }
@@ -185,8 +185,8 @@ void dfm2::CCad2D::AddVtxEdge(double x, double y, unsigned int ie_add)
   if( ie_add >= topo.aEdge.size() ){ return; }
   topo.AddVtx_Edge(ie_add);
   assert( topo.Check() );
-  aVtx.push_back( CCad2D_VtxGeo(CVector2(x,y)) );
-  aEdge.push_back( CCad2D_EdgeGeo() );
+  aVtx.emplace_back(CVector2(x,y) );
+  aEdge.emplace_back( );
   Tessellation();
 }
 
@@ -596,7 +596,7 @@ void GenMeshCadFace
                               ip0,ip1, aETri);
     assert(itri0_ker>=0&&itri0_ker<(int)aETri.size());
     FlagConnected(aFlgTri,
-                  aETri, itri0_ker,iface0);
+                  aETri, itri0_ker,(int)iface0);
   }
   { // Delete Outer Triangles & Points
     assert(aFlgTri.size()==aETri.size());

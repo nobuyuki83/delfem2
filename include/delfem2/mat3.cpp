@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+#include <random>
 
 #include "delfem2/mat3.h"
 
@@ -383,9 +384,7 @@ CMatrix3 CMatrix3::Inverse() const
   return mi;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
+// ------------------------------------------------------------------
 
 void CMatrix3::SetInverse()
 {
@@ -427,8 +426,11 @@ void CMatrix3::SetZero()
 
 
 void CMatrix3::SetRandom(){
-  for(double & i : mat){
-    i = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_real_distribution<double> score(-50.0, 50.0);
+  for(double & v : mat){
+    v = score(mt);
   }
 }
 

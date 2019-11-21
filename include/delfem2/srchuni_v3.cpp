@@ -481,7 +481,7 @@ CPointElemSurf Nearest_Point_MeshTri3D
     double dist = p_min.DLength();
     if( min_dist<0 || dist < min_dist ){
       min_dist = dist;
-      pes = CPointElemSurf(it,r0,r1);
+      pes = CPointElemSurf((int)it,r0,r1);
     }
   }
   assert( pes.itri != -1 );

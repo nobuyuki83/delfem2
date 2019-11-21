@@ -61,7 +61,7 @@ public:
              const std::vector<unsigned int>& aTri,
              double eps) const;
 public:
-  int itri;
+  int itri; // can be -1
   double r0, r1;
 };
 std::ostream &operator<<(std::ostream &output, const CPointElemSurf& v);

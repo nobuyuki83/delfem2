@@ -49,12 +49,15 @@ static void CalcSubMatPr(double* out, const double* a, const double* b,
 }
 
 
-static void CalcInvMat(double* a, const int n, int& info )
+static void CalcInvMat(
+    double* a,
+    const unsigned int n,
+    int& info )
 {
 	double tmp1;
   
 	info = 0;
-	int i,j,k;
+	unsigned int i,j,k;
 	for(i=0;i<n;i++){
 		if( fabs(a[i*n+i]) < 1.0e-30 ){
 			info = 1;
