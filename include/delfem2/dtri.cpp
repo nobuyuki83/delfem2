@@ -364,17 +364,18 @@ bool dfm2::InsertPoint_Elem
 }
 
 
-bool dfm2::FlipEdge
-(int itri0, int ied0,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri)
+bool dfm2::FlipEdge(
+    unsigned int itri0,
+    unsigned int ied0,
+    std::vector<CEPo2>& aPo,
+    std::vector<ETri>& aTri)
 {
-  assert(itri0 < (int)aTri.size());
+  assert(itri0 < aTri.size());
   assert(ied0 < 3);
   assert(aTri[itri0].s2[ied0]>=0&&aTri[itri0].s2[ied0]<(int)aTri.size());
   
   const int itri1 = aTri[itri0].s2[ied0];
-  const int ied1 = relTriTri[aTri[itri0].r2[ied0]][ied0];
+  const unsigned int ied1 = relTriTri[aTri[itri0].r2[ied0]][ied0];
   assert(itri1 < (int)aTri.size());
   assert(ied1 < 3);
   assert(aTri[itri1].s2[ied1]>=0&&aTri[itri0].s2[ied0]<(int)aTri.size());
@@ -397,13 +398,13 @@ bool dfm2::FlipEdge
   ETri old0 = aTri[itri0];
   ETri old1 = aTri[itri1];
   
-  const int no0_0 = ied0;
-  const int no1_0 = (ied0+1)%3; //noelTriEdge[ied0][0];
-  const int no2_0 = (ied0+2)%3; //noelTriEdge[ied0][1];
+  const unsigned int no0_0 = ied0;
+  const unsigned int no1_0 = (ied0+1)%3; //noelTriEdge[ied0][0];
+  const unsigned int no2_0 = (ied0+2)%3; //noelTriEdge[ied0][1];
   
-  const int no0_1 = ied1;
-  const int no1_1 = (ied1+1)%3; //noelTriEdge[ied1][0];
-  const int no2_1 = (ied1+2)%3; //noelTriEdge[ied1][1];
+  const unsigned int no0_1 = ied1;
+  const unsigned int no1_1 = (ied1+1)%3; //noelTriEdge[ied1][0];
+  const unsigned int no2_1 = (ied1+2)%3; //noelTriEdge[ied1][1];
 
   assert(old0.v[no1_0]==old1.v[no2_1]);
   assert(old0.v[no2_0]==old1.v[no1_1]);
@@ -424,11 +425,11 @@ bool dfm2::FlipEdge
       assert(old0.r2[no2_0] < 3);
       const unsigned int* rel = relTriTri[old0.r2[no2_0]];
       assert(old0.s2[no2_0] < (int)aTri.size());
-      assert(old0.s2[no2_0]!=itri0);
+      assert(old0.s2[no2_0]!=(int)itri0);
       assert(old0.s2[no2_0]!=itri1);
       ref_tri.r2[1] = noel2RelTriTri[rel[no1_0]*3+rel[no2_0]];
       assert(ref_tri.r2[1]>=0&&ref_tri.r2[1] < 3);
-      aTri[old0.s2[no2_0]].s2[rel[no2_0]] = itri0;
+      aTri[old0.s2[no2_0]].s2[rel[no2_0]] = (int)itri0;
       aTri[old0.s2[no2_0]].r2[rel[no2_0]] = invRelTriTri[ref_tri.r2[1]];
     }
     if (old1.s2[no1_1]>=0){
@@ -437,7 +438,7 @@ bool dfm2::FlipEdge
       assert(old1.s2[no1_1] < (int)aTri.size());
       ref_tri.r2[2] = noel2RelTriTri[rel[no2_1]*3+rel[no0_1]];
       assert(ref_tri.r2[2]>=0&&ref_tri.r2[2] < 3);
-      aTri[old1.s2[no1_1]].s2[rel[no1_1]] = itri0;
+      aTri[old1.s2[no1_1]].s2[rel[no1_1]] = (int)itri0;
       aTri[old1.s2[no1_1]].r2[rel[no1_1]] = invRelTriTri[ref_tri.r2[2]];
     }
   }
@@ -445,8 +446,8 @@ bool dfm2::FlipEdge
   {
     ETri& ref_tri = aTri[itri1];
     // -------------------------
-    ref_tri.v[0] = old1.v[no1_1];  ref_tri.v[1] = old0.v[no0_0];  ref_tri.v[2] = old1.v[no0_1];
-    ref_tri.s2[0] = itri0;      ref_tri.s2[1] = old1.s2[no2_1];  ref_tri.s2[2] = old0.s2[no1_0];
+    ref_tri.v[0] = old1.v[no1_1];  ref_tri.v[1] = old0.v[no0_0];    ref_tri.v[2] = old1.v[no0_1];
+    ref_tri.s2[0] = (int)itri0;    ref_tri.s2[1] = old1.s2[no2_1];  ref_tri.s2[2] = old0.s2[no1_0];
     // -----------------
     ref_tri.r2[0] = 0;
     if (old1.s2[no2_1]>=0){
@@ -669,7 +670,7 @@ bool dfm2::CheckTri
     const int itri0 = aPo3D[ipoin].e;
     const unsigned int inoel0 = aPo3D[ipoin].d;
     if (aPo3D[ipoin].e>=0){
-      assert(aPo3D[ipoin].d>=0&&aPo3D[ipoin].d < 3);
+      assert(aPo3D[ipoin].d < 3);
       if (aSTri[itri0].v[inoel0]!=ipoin){}
       assert(aSTri[itri0].v[inoel0]==ipoin);
     }

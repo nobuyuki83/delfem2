@@ -89,9 +89,9 @@ void MoveCCW(int& itri_cur,
 // ---------------
 // topology edit
 
-bool FlipEdge(int itri0, int ied0,
-              std::vector<CEPo2>& aEPo2,
-              std::vector<ETri>& aETri);
+bool FlipEdge(unsigned int itri0, unsigned int ied0,
+              std::vector<CEPo2>& aPo,
+              std::vector<ETri>& aTri);
 
 // ----------------------
 // insert point

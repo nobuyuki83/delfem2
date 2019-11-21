@@ -821,10 +821,11 @@ void ResamplingLoop
   assert( aVec2.size() == loopIP1.size() );
   const std::vector<int> loopIP0_ind = loopIP1_ind;
   const std::vector<int> loopIP0 = loopIP1;
-  const int nloop = loopIP0_ind.size()-1;
+  assert( loopIP0.size() >= 2 );
+  const std::size_t nloop = loopIP0_ind.size()-1;
   std::vector< std::vector<int> > aPoInEd(loopIP0.size());
   {
-    for(int iloop=0;iloop<nloop;++iloop){
+    for(unsigned int iloop=0;iloop<nloop;++iloop){
       const int np = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
       for(int ip=0;ip<np;ip++){
         const int iipo0 = loopIP0_ind[iloop]+(ip+0)%np; assert( iipo0>=0 && iipo0<(int)loopIP0.size() );
@@ -849,7 +850,7 @@ void ResamplingLoop
   ////
   loopIP1_ind.resize(nloop+1);
   loopIP1_ind[0] = 0;
-  for(int iloop=0;iloop<nloop;++iloop){
+  for(unsigned int iloop=0;iloop<nloop;++iloop){
     const int nbar0 = loopIP0_ind[iloop+1]-loopIP0_ind[iloop];
     int nbar1 = nbar0;
     for(int ibar=0;ibar<nbar0;ibar++){
@@ -861,12 +862,12 @@ void ResamplingLoop
   // adding new vertices on the outline
   loopIP1.resize(loopIP1_ind[nloop]);
   unsigned int ivtx0 = 0;
-  for(int iloop=0;iloop<nloop;iloop++){
+  for(unsigned int iloop=0;iloop<nloop;iloop++){
     for(int iip_loop=loopIP0_ind[iloop];iip_loop<loopIP0_ind[iloop+1];iip_loop++){
       const int ip_loop = loopIP0[iip_loop];
       loopIP1[ivtx0] = ip_loop;
       ivtx0++;
-      for(unsigned int iadd=0;iadd<aPoInEd[ip_loop].size();iadd++){
+      for(std::size_t iadd=0;iadd<aPoInEd[ip_loop].size();iadd++){
         loopIP1[ivtx0] = aPoInEd[iip_loop][iadd];
         ivtx0++;
       }
@@ -1055,7 +1056,7 @@ std::vector<CVector2>
 Polygon_Invert(const std::vector<CVector2>& aP)
 {
   std::vector<CVector2> res;
-  for(int ip=aP.size()-1;ip>=0;--ip){
+  for(int ip=(int)aP.size()-1;ip>=0;--ip){
     res.push_back(aP[ip]);
   }
   return res;

@@ -39,9 +39,9 @@ void PBD_Update_Const3(double* aXYZt,
 
 void PBD_ConstProj_Rigid2D(double* aXYt,
                            double stiffness,
-                           const unsigned int *clstr_ind, int nclstr_ind,
-                           const unsigned int *clstr, int nclstr0,
-                           const double* aXY0, int nXY0);
+                           const unsigned int *clstr_ind, unsigned int nclstr_ind,
+                           const unsigned int *clstr, unsigned int nclstr0,
+                           const double* aXY0, unsigned int nXY0);
 
 void PBD_ConstProj_Rigid3D(double* aXYZt,
                                   double stiffness,

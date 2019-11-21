@@ -691,7 +691,7 @@ void EdEddE_Total
         dE[irb*6+3+idim] += dw[idim];
       }
     }
-    for(unsigned int icp=0;icp<rb.aCP.size();icp++){
+    for(std::size_t icp=0;icp<rb.aCP.size();icp++){
       CVector3 cp = rb.aCP[icp];
       double e = 0;
       CVector3 du, dw;
@@ -724,7 +724,7 @@ void EdEddE_Total
       AddMatrix(ddE, irb*6+3, irb*6+0, dudw, true );
       AddMatrix(ddE, irb*6+3, irb*6+3, ddw,  true );
     }
-    for(unsigned int iexf=0;iexf<rb.aExForce.size();iexf++){
+    for(std::size_t iexf=0;iexf<rb.aExForce.size();iexf++){
       CVector3 pex = rb.aExForce[iexf].first;
       CVector3 fex = rb.aExForce[iexf].second;
       double e = 0;
@@ -734,7 +734,7 @@ void EdEddE_Total
                        du,dw,  ddu,ddw,dudw,
                        cg,pex,fex, rb.u,rb.R);
       E += e;
-      for(unsigned int idim=0;idim<3;idim++){
+      for(int idim=0;idim<3;idim++){
         dE[irb*6+0+idim] += du[idim];
         dE[irb*6+3+idim] += dw[idim];
       }
@@ -750,8 +750,7 @@ void EdEddE_Total
       AddMatrix(ddE, irb*6+3, irb*6+3, ddw,  true );
     }
   }
-  for(unsigned int ij=0;ij<aJoint.size();ij++){
-    const CJoint& joint = aJoint[ij];
+  for(const auto & joint : aJoint){
     CVector3 pj = joint.p;
     int irb0 = joint.irb0;
     int irb1 = joint.irb1;
@@ -768,11 +767,11 @@ void EdEddE_Total
                      rb0.cg, rb0.u, rb0.R,
                      rb1.cg, rb1.u, rb1.R);
       E += e;
-      for(unsigned int idim=0;idim<3;idim++){
+      for(int idim=0;idim<3;idim++){
         dE[irb0*6+0+idim] += du0[idim];
         dE[irb0*6+3+idim] += dw0[idim];
       }
-      for(unsigned int idim=0;idim<3;idim++){
+      for(int idim=0;idim<3;idim++){
         dE[irb1*6+0+idim] += du1[idim];
         dE[irb1*6+3+idim] += dw1[idim];
       }
@@ -836,9 +835,9 @@ void CRigidBodyAssembly_Static::SolveOneIteration()
     A(i,i) += damping_ratio;
   }
 	Eigen::VectorXd x = A.partialPivLu().solve(b);
-  for(unsigned int irb=0;irb<aRigidBody.size();irb++){
+  for(std::size_t irb=0;irb<aRigidBody.size();irb++){
     CRigidBody& rb = aRigidBody[irb];
-    for(unsigned int idim=0;idim<3;idim++){
+    for(int idim=0;idim<3;idim++){
       rb.u[idim] += x(irb*6+0+idim);
     }
     {
@@ -886,19 +885,18 @@ void CRigidBodyAssembly_Static::ComputeForces()
  */
 {
   
-  for(unsigned int irb=0;irb<aRigidBody.size();irb++){
-    CRigidBody& rb = aRigidBody[irb];
-    const int ncp = (int)aRigidBody[irb].aCP.size();
+  for(auto & irb : aRigidBody){
+    CRigidBody& rb = irb;
+    const int ncp = (int)irb.aCP.size();
     rb.aCForce.resize(ncp);
     for(int icp=0;icp<ncp;icp++){
-      const CVector3& cp = aRigidBody[irb].aCP[icp];
+      const CVector3& cp = irb.aCP[icp];
       CVector3 Rv = rb.R * (cp-rb.cg);
       CVector3 cq = Rv + rb.cg + rb.u;
       rb.aCForce[icp] = ((cq*n)*cont_stiff)*n;
     }
   }  
-  for(unsigned int ij=0;ij<aJoint.size();ij++){
-    CJoint& joint = aJoint[ij];
+  for(auto & joint : aJoint){
     CVector3 pj = joint.p;
     int irb0 = joint.irb0;
     int irb1 = joint.irb1;
@@ -1054,12 +1052,10 @@ static void myGlVertex3d(const CVector3& v){
 std::vector<double> CRigidBodyAssembly_Static::MinMaxXYZ() const
 {
   double bb[6] = {1,-1, 0,0, 0,0};
-  for(unsigned int irb=0;irb<aRigidBody.size();++irb){
-    const CRigidBody& rb = aRigidBody[irb];
+  for(const auto & rb : aRigidBody){
     myUpdateMinMaxXYZ(bb, rb.cg);
   }
-  for(unsigned int ij=0;ij<aJoint.size();++ij){
-    const CJoint& j = aJoint[ij];
+  for(const auto & j : aJoint){
     myUpdateMinMaxXYZ(bb, j.p);
   }
   std::vector<double> res(bb,bb+6);

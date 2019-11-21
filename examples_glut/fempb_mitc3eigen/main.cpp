@@ -16,6 +16,8 @@
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
+#include <random>
+
 #endif
 
 #include "delfem2/opengl/gl2_funcs.h"
@@ -361,10 +363,15 @@ int main(int argc,char* argv[])
   
   MakeMesh();
   InitializeProblem_ShellEigenPB();
-  for(int ip=0;ip<aXY0.size()/2;++ip){
-    aTmp0[ip*3+0] = (rand()+1.0)/(RAND_MAX+1.0);
-    aTmp0[ip*3+1] = (rand()+1.0)/(RAND_MAX+1.0);
-    aTmp0[ip*3+2] = (rand()+1.0)/(RAND_MAX+1.0);
+  {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> score(0.0, 1.0);
+    for (std::size_t ip = 0; ip < aXY0.size() / 2; ++ip) {
+      aTmp0[ip * 3 + 0] = score(mt);
+      aTmp0[ip * 3 + 1] = score(mt);
+      aTmp0[ip * 3 + 2] = score(mt);
+    }
   }
   
   {

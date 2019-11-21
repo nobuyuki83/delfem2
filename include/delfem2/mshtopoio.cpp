@@ -69,7 +69,7 @@ void MeshTri3D_GeodesicPolyhedron
   double r0 = sqrt((5+sqrt(5))*0.5);
   aXYZ1 = aXYZ0;
   for(int ip=0;ip<np0;++ip){
-    for(int iedge=edge_ind[ip];iedge<edge_ind[ip+1];++iedge){
+    for(unsigned int iedge=edge_ind[ip];iedge<edge_ind[ip+1];++iedge){
       const int ip0 = edge[iedge];
       const double x1 = (aXYZ1[ip*3+0] + aXYZ1[ip0*3+0])*0.5;
       const double y1 = (aXYZ1[ip*3+1] + aXYZ1[ip0*3+1])*0.5;

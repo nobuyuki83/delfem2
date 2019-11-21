@@ -321,7 +321,7 @@ T DotX(const T* r_vec,
 
 std::complex<double> MultSumX(const std::complex<double>* va,
                               const std::complex<double>* vb,
-                              int n);
+                              unsigned int n);
 
 void XPlusAYBZ(std::vector<double>& X,
                const int nDoF,

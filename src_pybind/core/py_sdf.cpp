@@ -39,7 +39,7 @@ std::tuple<py::array_t<double>, py::array_t<unsigned int>> PyIsoSurface
       double n[3];
       double max_dist = apSDF[0]->Projection(n,
                                              px,py,pz);
-      for(unsigned int ipct=1;ipct<apSDF.size();ipct++){
+      for(std::size_t ipct=1;ipct<apSDF.size();ipct++){
         double dist0,n0[3];
         dist0 = apSDF[ipct]->Projection(n0,
                                         px,py,pz);

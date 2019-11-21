@@ -6,8 +6,8 @@
  */
 
 #include <cassert>
-#include <errno.h>	/* Need for Using "ERANGE" */
-#include <math.h>	/* Need for Using "HUGE_VAL" */
+#include <cerrno>	/* Need for Using "ERANGE" */
+#include <cmath>	/* Need for Using "HUGE_VAL" */
 #include <iostream>
 #include <cstdlib> //(strtod)
 
@@ -153,9 +153,9 @@ static void RemoveExpressionSpaceNewline( std::string& exp )
 {
   const std::string stemp(exp);
   unsigned int iexp=0;
-  for( unsigned int itemp=0; itemp<stemp.size(); itemp++ ){
-    if( stemp[itemp] == ' ' || stemp[itemp] == 0x0d || stemp[itemp] == 0x0a )  continue;
-    exp[iexp] = stemp[itemp];
+  for(char itemp : stemp){
+    if( itemp == ' ' || itemp == 0x0d || itemp == 0x0a )  continue;
+    exp[iexp] = itemp;
     iexp++;
   }
   exp.resize(iexp);
@@ -207,7 +207,7 @@ int GetLowestPriorityOperator(int& ibegin, int& iend, int& itype, int& iopr,
   bool is_numeric = true;
   int iBracketDepth = 0;
   int iFirstBracket = -1;
-  for(unsigned int ipos_curr=0 ;ipos_curr<exp.size(); ipos_curr++ ){
+  for(std::size_t ipos_curr=0 ;ipos_curr<exp.size(); ipos_curr++ ){
     // 括弧内を読み飛ばす
     switch ( exp[ipos_curr] )
     {
@@ -369,7 +369,7 @@ bool MakeRPN(unsigned int icur_old, std::vector<SExpCompo>& exp_node_vec)
     SExpCompo& left_compo = exp_node_vec[ileft];
     left_compo.sOpe.assign( cur_old_exp, iend0, cur_old_exp.size()-iend0 );
     RemoveExpressionBracket(left_compo.sOpe);
-    if( left_compo.sOpe.size() == 0 ){ return false; }
+    if( left_compo.sOpe.empty() ){ return false; }
     if( !MakeRPN(ileft,exp_node_vec) ){ return false; }
   }
   
@@ -379,7 +379,7 @@ bool MakeRPN(unsigned int icur_old, std::vector<SExpCompo>& exp_node_vec)
     SExpCompo& right_compo = exp_node_vec[iright];
     right_compo.sOpe.assign( cur_old_exp, 0, ibegin0 );
     RemoveExpressionBracket(right_compo.sOpe);
-    if( right_compo.sOpe.size() == 0 ){ return false; }
+    if( right_compo.sOpe.empty() ){ return false; }
     if( !MakeRPN(iright,exp_node_vec) ){ return false; }
   }
   
@@ -418,9 +418,9 @@ bool MakeCmdAry
     else if( compo.iOpeType == 1 ){ // symbol
       if( compo.iOpe == -1 ){
         bool bflg = false;
-        for(unsigned int ikey=0;ikey<m_aKey.size();ikey++){
-          if( m_aKey[ikey].m_Name == compo.sOpe ){
-            m_aKey[ikey].m_aiCmd.push_back(iexp);
+        for(auto & ikey : m_aKey){
+          if( ikey.m_Name == compo.sOpe ){
+            ikey.m_aiCmd.push_back(iexp);
             bflg = true;
             break;
           }
@@ -462,19 +462,19 @@ bool MakeCmdAry
 //////////////////////////////////////////////////////////////////////
 
 dfm2::CMathExpressionEvaluator::~CMathExpressionEvaluator(){
-	for(unsigned int icmd=0;icmd<m_apCmd.size();icmd++){
-		delete m_apCmd[icmd];
+	for(auto & icmd : m_apCmd){
+		delete icmd;
 	}
 }
 
 void dfm2::CMathExpressionEvaluator::SetKey
  (const std::string& key_name, double key_val)
 {
-	for(unsigned int ikey=0;ikey<m_aKey.size();ikey++){
-		if( m_aKey[ikey].m_Name == key_name){
-			m_aKey[ikey].m_Val = key_val;
-			for(unsigned int icmd=0;icmd<m_aKey[ikey].m_aiCmd.size();icmd++){	// このKeyをもっている全てのCmdに値をセット
-				const unsigned int icmd0 = m_aKey[ikey].m_aiCmd[icmd];
+	for(auto & ikey : m_aKey){
+		if( ikey.m_Name == key_name){
+			ikey.m_Val = key_val;
+			for(unsigned int icmd=0;icmd<ikey.m_aiCmd.size();icmd++){	// このKeyをもっている全てのCmdに値をセット
+				const unsigned int icmd0 = ikey.m_aiCmd[icmd];
 				assert( icmd0 < m_apCmd.size() );
 				m_apCmd[icmd0]->SetValue( key_val );
 			}
@@ -482,22 +482,22 @@ void dfm2::CMathExpressionEvaluator::SetKey
 		}
 	}
 	// 未登録のKeyの場合は以下のルーティン
-	m_aKey.push_back( CKey(key_name,key_val) );
+	m_aKey.emplace_back(key_name,key_val );
 }
 
 bool dfm2::CMathExpressionEvaluator::SetExp(const std::string& exp){
-	m_is_valid = false;
+  m_is_valid = false;
 	m_sExp = exp;
 	// 消去
-	for(unsigned int icmd=0;icmd<m_apCmd.size();icmd++){ delete m_apCmd[icmd]; }
-	for(unsigned int ikey=0;ikey<m_aKey.size();ikey++){ m_aKey[ikey].m_aiCmd.clear(); }
+	for(auto & icmd : m_apCmd){ delete icmd; }
+	for(auto & ikey : m_aKey){ ikey.m_aiCmd.clear(); }
 	m_apCmd.clear();
 
 	////////////////
 	std::string tmp_exp = exp;
 	RemoveExpressionSpaceNewline(tmp_exp);
 	RemoveExpressionBracket(tmp_exp);
-	if( tmp_exp.size() == 0 ){
+	if( tmp_exp.empty() ){
 		m_is_valid = false;
 		return false;
 	}
@@ -546,12 +546,10 @@ bool dfm2::CMathExpressionEvaluator::SetExp(const std::string& exp){
 */	
 	}
 	{	// 登録されているキー全ての値を設定
-		for(unsigned int ikey=0;ikey<m_aKey.size();ikey++){
-			const CKey& key = m_aKey[ikey];
-			double val = key.m_Val;
-			for(unsigned int icmd=0;icmd<key.m_aiCmd.size();icmd++){	// このKeyをもっている全てのCmdに値をセット
-				const unsigned int icmd0 = key.m_aiCmd[icmd];
-				assert( icmd0 < m_apCmd.size() );
+		for(const auto & key : m_aKey){
+		  double val = key.m_Val;
+			for(unsigned int icmd0 : key.m_aiCmd){	// このKeyをもっている全てのCmdに値をセット
+					assert( icmd0 < m_apCmd.size() );
 				m_apCmd[icmd0]->SetValue( val );
 			}
 		}	
@@ -563,8 +561,8 @@ bool dfm2::CMathExpressionEvaluator::SetExp(const std::string& exp){
 double dfm2::CMathExpressionEvaluator::Eval() const{ // evaluating the math expression
 	std::vector<double> stack;
 	stack.reserve(128);
-	for(unsigned int icmd=0;icmd<m_apCmd.size();icmd++){
-		m_apCmd[icmd]->DoOperation(stack);
+	for(auto icmd : m_apCmd){
+		icmd->DoOperation(stack);
 	}
 	assert( stack.size() == 1 );
 	return stack[0];

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <limits>
 #include <vector>
@@ -106,7 +106,7 @@ void myGlutResize(int w, int h)
   ::glutPostRedisplay();
 }
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   //  ::glClearColor(0.0, .0, 0.0, 1.0);
@@ -177,6 +177,8 @@ void myGlutKeyboard(unsigned char key, int x, int y)
       is_animation = !is_animation;
       break;
     }
+    default:
+      break;
   }
 }
 
@@ -239,8 +241,7 @@ int main(int argc,char* argv[])
     rt23.org3 = CVector3(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
-    for(int iip=0;iip<aIP.size();++iip){
-      const int ip = aIP[iip];
+    for(int ip : aIP){
       CVector3 p0(aVec2[ip].x-rt23.org2.x, aVec2[ip].y-rt23.org2.y,0.0);
       CVector3 p1 = rt23.org3+rt23.R*p0;
       aXYZ[ip*3+0] = p1.x;
@@ -253,8 +254,7 @@ int main(int argc,char* argv[])
       rt23.org3 = CVector3(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
-      for(int iip=0;iip<aIP.size();++iip){
-        const int ip = aIP[iip];
+      for(int ip : aIP){
         CVector3 p0(aVec2[ip].x-rt23.org2.x, aVec2[ip].y-rt23.org2.y,0.0);
         CVector3 p1 = rt23.org3+rt23.R*p0;
         aXYZ[ip*3+0] = p1.x;
@@ -278,11 +278,11 @@ int main(int argc,char* argv[])
     {
       std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
       std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
-      const int npe = aIP0.size();
+      const std::size_t npe = aIP0.size();
       assert( aIP1.size() == npe );
-      for(int iip=0;iip<npe;++iip){
-        int ip0 = aIP0[iip];
-        int ip1 = aIP1[npe-iip-1];
+      for(unsigned int iip=0;iip<npe;++iip){
+        unsigned int ip0 = aIP0[iip];
+        unsigned int ip1 = aIP1[npe-iip-1];
         aLine.push_back(ip0);
         aLine.push_back(ip1);
       }
@@ -321,7 +321,7 @@ int main(int argc,char* argv[])
       if( !model.skins.empty() ){
         aBone.resize( model.skins[0].joints.size() );
         std::vector<int> mapNode2Bone( model.nodes.size(), -1);
-        for(int ij=0;ij<model.skins[0].joints.size();++ij){
+        for(std::size_t ij=0;ij<model.skins[0].joints.size();++ij){
           int inode = model.skins[0].joints[ij];
           mapNode2Bone[inode] = ij;
         }

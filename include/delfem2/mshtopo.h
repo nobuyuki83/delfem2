@@ -266,7 +266,7 @@ void JArrayElemSurPoint_MeshMix(std::vector<unsigned int> &elsup_ind,
 // elem sur elem
 
 void makeSurroundingRelationship(std::vector<int>& aElSurRel,
-                                 const unsigned int* aEl, int nEl, int nNoEl,
+                                 const unsigned int* aEl, unsigned int nEl, int nNoEl,
                                  const std::vector<unsigned int> &elsup_ind,
                                  const std::vector<unsigned int> &elsup,
                                  const int nfael,
@@ -414,7 +414,7 @@ void TetSubdiv(std::vector<unsigned int>& aTet1,
                std::vector<unsigned int> &psup,
                const unsigned int* aTet0, int nTet0,
                unsigned int nPoint0);
-int findEdge(int ip0, int ip1,
+int findEdge(unsigned int ip0, unsigned int ip1,
              const std::vector<unsigned int> &psup_ind,
              const std::vector<unsigned int> &psup);
 int findFace(int ip0, int ip1, int ip2, int ip3,

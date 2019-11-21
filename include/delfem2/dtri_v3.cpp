@@ -322,7 +322,7 @@ bool dfm2::DelaunayAroundPoint
   }
   if (!flag_is_wall) return true;
   
-  ////////////////////////////////
+  // ----------------------------------
   // rotate counter clock-wise
   
   itri_cur = itri0;
@@ -351,7 +351,7 @@ bool dfm2::DelaunayAroundPoint
     }
     
     {
-      const int inotri2 = (inotri_cur+2)%3; //  indexRot3[2][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+2)%3; //  indexRot3[2][inotri_cur];
       if (aTri[itri_cur].s2[inotri2]==-1){
         return true;
       }

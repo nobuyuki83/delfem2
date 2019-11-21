@@ -159,7 +159,7 @@ void UpdateRigSkin
       if( w < 1.0e-30 ){ continue; }
       unsigned int ij = aRigJoint[ip*4+iij];
       sum_w += w;
-      assert (ij>=0 && ij<aBone.size());
+      assert (ij<aBone.size());
       double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
       double pos0b[4]; MatVec4(pos0b,aBone[ij].Mat,pos0a);
       pos1[0] += w*pos0b[0];

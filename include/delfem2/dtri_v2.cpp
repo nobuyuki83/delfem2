@@ -272,7 +272,7 @@ bool dfm2::DelaunayAroundPoint
     }
     
     {
-      const int inotri2 = (inotri_cur+2)%3;// indexRot3[2][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+2)%3;// indexRot3[2][inotri_cur];
       if (aTri[itri_cur].s2[inotri2]==-1){
         return true;
       }
@@ -299,7 +299,7 @@ void dfm2::MeshingInside
  std::vector<int>& aFlagPnt,
  std::vector<int>& aFlagTri,
  const int nPointFix,
- const int nflgpnt_offset,
+ const unsigned int nflgpnt_offset,
  const double len,
  const CInputTriangulation& mesh_density)
 {
@@ -793,9 +793,7 @@ void dfm2::MeshTri2D_Export
   }
 }
 
-
-
-/////////////////////////////////////////////////////////////////////
+// -------------------------------------------------------
 
 /*
  ////////////////////////////////

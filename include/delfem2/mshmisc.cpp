@@ -116,9 +116,7 @@ void GetCenterWidth_MinMaxXYZ
   wz = z_max-z_min;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 
 void RemoveUnreferencedPoints_MeshElem
 (std::vector<double>& aXYZ1,
@@ -899,10 +897,10 @@ void MassPoint_Tet3D
 {
   for(unsigned int i=0;i<nXYZ;++i){ aMassMatrixLumped[i] = 0.0; }
   for(unsigned int it=0;it<nTet;++it){
-    const unsigned int i0 = aTet[it*4+0]; assert(i0>=0&&i0<nXYZ);
-    const unsigned int i1 = aTet[it*4+1]; assert(i1>=0&&i1<nXYZ);
-    const unsigned int i2 = aTet[it*4+2]; assert(i2>=0&&i2<nXYZ);
-    const unsigned int i3 = aTet[it*4+3]; assert(i3>=0&&i3<nXYZ);
+    const unsigned int i0 = aTet[it*4+0]; assert(i0<nXYZ);
+    const unsigned int i1 = aTet[it*4+1]; assert(i1<nXYZ);
+    const unsigned int i2 = aTet[it*4+2]; assert(i2<nXYZ);
+    const unsigned int i3 = aTet[it*4+3]; assert(i3<nXYZ);
     const double* p0 = aXYZ+i0*3;
     const double* p1 = aXYZ+i1*3;
     const double* p2 = aXYZ+i2*3;
@@ -923,9 +921,9 @@ void MassPoint_Tri2D
 {
   for(unsigned int i=0;i<nXY;++i){ aMassMatrixLumped[i] = 0.0; }
   for(unsigned int it=0;it<nTri;++it){
-    const unsigned int i0 = aTri[it*3+0]; assert(i0>=0&&i0<nXY);
-    const unsigned int i1 = aTri[it*3+1]; assert(i1>=0&&i1<nXY);
-    const unsigned int i2 = aTri[it*3+2]; assert(i2>=0&&i2<nXY);
+    const unsigned int i0 = aTri[it*3+0]; assert(i0<nXY);
+    const unsigned int i1 = aTri[it*3+1]; assert(i1<nXY);
+    const unsigned int i2 = aTri[it*3+2]; assert(i2<nXY);
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
@@ -1081,7 +1079,7 @@ void dfm2::SubdivisionPoints_Hex
     aXYZ1[iv*3+2] = aXYZ0[iv*3+2];
   }
   for(unsigned int iv=0;iv<nv0;++iv){
-    for(int ipsup=psupIndHex0[iv];ipsup<psupIndHex0[iv+1];++ipsup){
+    for(unsigned int ipsup=psupIndHex0[iv];ipsup<psupIndHex0[iv+1];++ipsup){
       int jv = psupHex0[ipsup];
       aXYZ1[(nv0+ipsup)*3+0] = (aXYZ0[iv*3+0] + aXYZ0[jv*3+0])*0.5;
       aXYZ1[(nv0+ipsup)*3+1] = (aXYZ0[iv*3+1] + aXYZ0[jv*3+1])*0.5;

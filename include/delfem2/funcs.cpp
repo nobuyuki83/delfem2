@@ -81,13 +81,13 @@ std::vector<std::string> Split
   std::vector<std::string> aToken;
   int imark = 0;
   bool is_del0 = false;
-  for(unsigned int i=0;i<str.size();++i){
+  for(std::size_t i=0;i<str.size();++i){
     bool is_del1 = false;
-    for(unsigned int j=0;j<del.size();++j){
-      if( str[i] == del[j] ){ is_del1 = true; break; }
+    for(char j : del){
+      if( str[i] == j ){ is_del1 = true; break; }
     }
     if( !is_del0 && is_del1 ){ // just got delimitner
-      aToken.push_back( std::string(str.data()+imark,str.data()+i) );
+      aToken.emplace_back(str.data()+imark,str.data()+i );
     }
     if( is_del0 && !is_del1 ){ // just got delimitner
       imark = i;
@@ -110,14 +110,14 @@ std::vector<std::string> Split_Parentheses
   ////
   int is=0;
   int ilevel = 0;
-  for(unsigned int ie=0;ie<str.size();++ie){
+  for(std::size_t ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
-      aToken.push_back( std::string(str.data()+is,str.data()+ie+1) );
+      aToken.emplace_back(str.data()+is,str.data()+ie+1 );
     }
     if( str[ie] == cs ){ ilevel++; }
     if( str[ie] == ce ){ ilevel--; }
     if( str[ie] == delimiter && ilevel == 0 ){
-      aToken.push_back( std::string(str.data()+is,str.data()+ie) );
+      aToken.emplace_back(str.data()+is,str.data()+ie );
       is = ie+1;
     }
   }
@@ -133,13 +133,13 @@ std::vector<std::string> Split_Quote
   std::vector<std::string> aToken;
   int is=0;
   bool is_in = false;
-  for(unsigned int ie=0;ie<str.size();++ie){
+  for(std::size_t ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
-      aToken.push_back( std::string(str.data()+is,str.data()+ie+1) );
+      aToken.emplace_back(str.data()+is,str.data()+ie+1 );
     }
     if( str[ie] == quote ){ is_in = !is_in; }
     if( str[ie] == delimiter && !is_in ){
-      aToken.push_back( std::string(str.data()+is,str.data()+ie) );
+      aToken.emplace_back(str.data()+is,str.data()+ie );
       is = ie+1;
     }
   }
