@@ -8,7 +8,7 @@
 import numpy, os, math
 
 from .c_core import CppMatrixSparse, PreconditionerILU
-from .c_core import addMasterSlavePattern, matrixSquareSparse_setPattern, \
+from .c_core import cppAddMasterSlavePattern, matrixSquareSparse_setPattern, \
   cppMatSparse_ScaleBlk_LeftRight, \
   cppMatSparse_ScaleBlkLen_LeftRight
 from .c_core import cppPrecILU_SetPattern_ILUk
@@ -40,7 +40,7 @@ from .c_core import \
   write_vtk_pointscalar, \
   write_vtk_pointvector  
 from .c_core import matrixSquareSparse_setFixBC
-from .c_core import elemQuad_dihedralTri, jarray_mesh_psup, jarray_add_diagonal, jarray_sort
+from .c_core import elemQuad_dihedralTri, cppJArray_MeshPsup, jarray_add_diagonal, cppJArray_Sort
 from .c_core import map_value
 from .c_core import MathExpressionEvaluator
 from .c_core import cppMassPoint_Mesh, cppMassLumped_ShellPlateBendingMitc3
@@ -119,10 +119,11 @@ class FEM_LinSys():
     self.mat.initialize(self.np, self.ndimval, True)
     psup_ind,psup = pattern[0],pattern[1]
     if self.vec_ms is not None:
-      psup_ind1,psup1 = addMasterSlavePattern(self.vec_ms,psup_ind,psup)
+      psup_ind1,psup1 = cppAddMasterSlavePattern(self.vec_ms,psup_ind,psup)
     else:
       psup_ind1,psup1 = psup_ind,psup
-    jarray_sort(psup_ind1, psup1)
+    assert psup_ind1.dtype == numpy.uint32 and psup1.dtype == numpy.uint32
+    cppJArray_Sort(psup_ind1, psup1)
     matrixSquareSparse_setPattern(self.mat, psup_ind1, psup1)
     # preconditioner
     self.mat_prec = PreconditionerILU()
@@ -579,7 +580,7 @@ class FEM_ShellCloth():
     self.vec_velo = vec_velo_new
     self.np_quad = elemQuad_dihedralTri(self.mesh.np_elm, np)
     self.ls.set_dimension(np,ndimval)
-    self.ls.set_pattern(jarray_mesh_psup(self.np_quad, np))
+    self.ls.set_pattern(cppJArray_MeshPsup(self.np_quad, np))
 
   def solve(self):
     assert self.ls.mat is not None

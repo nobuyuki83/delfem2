@@ -196,8 +196,9 @@ inline const int (*noelElemEdge(MESHELEM_TYPE type))[2]
 
 void JArray_Sort(const std::vector<unsigned int>& index,
                  std::vector<unsigned int>& array);
-void JArray_Sort(const int* index, const int size,
-                 int* array);
+void JArray_Sort(const unsigned int* index,
+                 const unsigned int size,
+                 unsigned int* array);
 
 void JArray_AddDiagonal(std::vector<unsigned int> &psup_ind1,
                         std::vector<unsigned int> &psup1,

@@ -479,14 +479,13 @@ double PyMergeLinSys_MassPoint
   return W;
 }
 
-std::tuple<py::array_t<int>,py::array_t<int>> PyAddMasterSlavePattern
+std::tuple<py::array_t<unsigned int>,py::array_t<unsigned int>> PyAddMasterSlavePattern
 (const py::array_t<int>& ms_flag,
  const py::array_t<unsigned int>& np_psup_ind0,
  const py::array_t<unsigned int>& np_psup0)
 {
   assert(ms_flag.shape()[0] == np_psup_ind0.shape()[0]-1);
   assert(ms_flag.ndim() == 2 );
-  std::cout <<  ms_flag.shape()[0] << " " <<  ms_flag.shape()[1] << std::endl;
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
                                      ms_flag.data(), ms_flag.shape()[1],
@@ -698,7 +697,7 @@ void init_fem(py::module &m){
   m.def("cppMatSparse_ScaleBlk_LeftRight",    &PyMatSparse_ScaleBlk_LeftRight);
   m.def("cppMatSparse_ScaleBlkLen_LeftRight", &PyMatSparse_ScaleBlkLen_LeftRight);
   m.def("masterSlave_distributeValue",        &PyMasterSlave_DistributeValue);
-  m.def("addMasterSlavePattern",              &PyAddMasterSlavePattern);
+  m.def("cppAddMasterSlavePattern",           &PyAddMasterSlavePattern);
   
   py::class_<dfm2::CPreconditionerILU<double>>(m,"PreconditionerILU")
   .def(py::init<>())

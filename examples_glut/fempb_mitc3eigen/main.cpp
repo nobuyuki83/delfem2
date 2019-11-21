@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <random>
 #include "delfem2/emat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
