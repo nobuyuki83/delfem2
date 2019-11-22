@@ -297,7 +297,7 @@ std::istream &operator>>(std::istream &input, CMatrix3& m)
   return input;
 }
 
-//////////
+// -------------------------------------------------------------------
 
 CMatrix3::CMatrix3(){
   mat[0*3+0]=0; mat[0*3+1]=0; mat[0*3+2]=0;
@@ -616,24 +616,24 @@ void SetAffine_Rotate_Rodriguez
  double dx, double dy, double dz)
 {
   for(int i=0;i<16;++i){ A[i] = 0.0; }
-  ////
+  //
   const double sqlen = dx*dx+dy*dy+dz*dz;
   const double tmp1 = 1.0/(1+0.25*sqlen);
   A[0*4+0] = 1+tmp1*(+0.5*dx*dx-0.5*sqlen);
   A[0*4+1] =  +tmp1*(-dz+0.5*dx*dy);
   A[0*4+2] =  +tmp1*(+dy+0.5*dx*dz);
   A[0*4+3] = 0.0;
-  ////
+  //
   A[1*4+0] =  +tmp1*(+dz+0.5*dy*dx);
   A[1*4+1] = 1+tmp1*(+0.5*dy*dy-0.5*sqlen);
   A[1*4+2] =  +tmp1*(-dx+0.5*dy*dz);
   A[1*4+3] = 0.0;
-  ////
+  //
   A[2*4+0] =  +tmp1*(-dy+0.5*dz*dx);
   A[2*4+1] =  +tmp1*(+dx+0.5*dz*dy);
   A[2*4+2] = 1+tmp1*(+0.5*dz*dz-0.5*sqlen);
   A[2*4+3] = 0.0;
-  ////
+  //
   A[3*4+0] = 0.0;
   A[3*4+1] = 0.0;
   A[3*4+2] = 0.0;

@@ -65,7 +65,7 @@ static void glfw_callback_cursor_position(GLFWwindow* window, double xpos, doubl
 
 static void glfw_callback_scroll(GLFWwindow* window, double xoffset, double yoffset)
 {
-  assert( pViewer != 0 );
+  assert( pViewer != nullptr );
   pViewer->nav.camera.scale *= pow(1.01,yoffset);
 }
 

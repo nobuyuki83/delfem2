@@ -64,11 +64,13 @@ void InitializeMesh(std::vector<CEPo2>& aEPo2,
                     const unsigned int* aTri,  int nTri,
                     int nXYZ);
 
-bool FindEdge_LookAroundPoint(int& itri0, int& inotri0, int& inotri1,
+bool FindEdge_LookAroundPoint(unsigned int &itri0,
+                              unsigned int &inotri0,
+                              unsigned &inotri1,
                               //
                               const int ipo0, const int ipo1,
-                              const std::vector<CEPo2>& aEPo2,
-                              const std::vector<ETri>& aETri);
+                              const std::vector<CEPo2>& aPo,
+                              const std::vector<ETri>& aTri);
 
 bool FindEdge_LookAllTriangles(int& itri0, int& iedtri0,
                                //

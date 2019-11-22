@@ -87,7 +87,6 @@ void MinMaxTriArea(double& min_area,
                    const std::vector<CVector2>& aVec2,
                    const std::vector<ETri>& aETri);
 
-
 void CMeshTri2D(std::vector<double>& aXY,
                 std::vector<unsigned int>& aTri,
                 std::vector<CVector2>& aVec2,
@@ -121,7 +120,7 @@ void MeshingInside(std::vector<CEPo2>& aPo2D,
                    std::vector<CVector2>& aVec2,
                    std::vector<int>& aFlagPnt,
                    std::vector<int>& aFlagTri,
-                   ////
+                   //
                    const int nPointFix,
                    const unsigned int nflgpnt_offset,
                    const double len,

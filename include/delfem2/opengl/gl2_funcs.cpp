@@ -917,12 +917,7 @@ void dfm2::opengl::DrawCharacter
   }
 }
 
-
-
-
-// /////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+// -----------------------------------------------------------------------------------
 
 void dfm2::opengl::DrawPoints2D_Vectors
 (const double* aXY, int nXY,
@@ -1119,8 +1114,9 @@ void dfm2::opengl::DrawMeshElem3D_FaceNorm
  const std::vector<unsigned int>& aElem,
  const std::vector<double>& aUV)
 {
-  const int nelem = aElemInd.size()-1;
-  for(int ielem=0;ielem<nelem;++ielem){
+  assert( !aElemInd.empty() );
+  const std::size_t nelem = aElemInd.size()-1;
+  for(unsigned int ielem=0;ielem<nelem;++ielem){
     const int ielemind0 = aElemInd[ielem];
     const int ielemind1 = aElemInd[ielem+1];
     if( ielemind1 - ielemind0 == 3 ){
@@ -1148,8 +1144,7 @@ void dfm2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl
  const std::vector<double>& aUV)
 {
   const bool isUV = (aUV.size()==aElem.size()*2);
-  for(int iie=0;iie<(int)aIndElemPart.size();++iie){
-    const int ielem = aIndElemPart[iie];
+  for(int ielem : aIndElemPart){
     const int ielemind0 = aElemInd[ielem];
     const int ielemind1 = aElemInd[ielem+1];
     const double* pUV = isUV ? aUV.data()+ielemind0*2:0;
@@ -1174,20 +1169,16 @@ void dfm2::opengl::DrawMeshTri3D_FaceNorm_XYsym
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
 {
-  const int nTri = (int)aTri.size()/3;
+  const unsigned int nTri = aTri.size()/3;
   /////
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;++itri){
-    const int i1 = aTri[itri*3+0];
-    const int i2 = aTri[itri*3+1];
-    const int i3 = aTri[itri*3+2];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
-      continue;
-    }
-    assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
-    assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
-    assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
+  for(unsigned int itri=0;itri<nTri;++itri){
+    const unsigned int i1 = aTri[itri*3+0];
+    const unsigned int i2 = aTri[itri*3+1];
+    const unsigned int i3 = aTri[itri*3+2];
+    assert( i1 < aXYZ.size()/3 );
+    assert( i2 < aXYZ.size()/3 );
+    assert( i3 < aXYZ.size()/3 );
     double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], -aXYZ[i1*3+2]};
     double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], -aXYZ[i2*3+2]};
     double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], -aXYZ[i3*3+2]};
@@ -1208,8 +1199,7 @@ void DrawMeshTri3DPart_FaceNorm
  const std::vector<int>& aIndTri)
 {
   ::glBegin(GL_TRIANGLES);
-  for(int iitri=0;iitri<(int)aIndTri.size();++iitri){
-    const int itri = aIndTri[iitri];
+  for(int itri : aIndTri){
     assert( itri>=0&&itri<(int)aTri.size()/3 );
     DrawSingleTri3D_FaceNorm(aXYZ.data(), aTri.data()+itri*3,0);
   }
@@ -1275,24 +1265,20 @@ void dfm2::opengl::DrawMeshTri3D_FaceNormEdge
 }
 
 void dfm2::opengl::DrawMeshTri3D_Edge
-(const double* aXYZ, int nXYZ,
- const unsigned int* aTri, int nTri)
+(const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aTri, unsigned int nTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
-  ////
+  //
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
-  for (int itri = 0; itri<nTri; ++itri){
-    const int i1 = aTri[itri*3+0];
-    const int i2 = aTri[itri*3+1];
-    const int i3 = aTri[itri*3+2];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
-      continue;
-    }
-    assert(i1>=0&&i1 < nXYZ);
-    assert(i2>=0&&i2 < nXYZ);
-    assert(i3>=0&&i3 < nXYZ);
+  for (unsigned int itri = 0; itri<nTri; ++itri){
+    const unsigned int i1 = aTri[itri*3+0];
+    const unsigned int i2 = aTri[itri*3+1];
+    const unsigned int i3 = aTri[itri*3+2];
+    assert(i1 < nXYZ);
+    assert(i2 < nXYZ);
+    assert(i3 < nXYZ);
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     const double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
@@ -1318,9 +1304,8 @@ void dfm2::opengl::DrawMeshTri3D_FaceNorm
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm)
 {
-  unsigned int nTri = (int)aTri.size()/3;
-  //  unsigned int nXYZ = (int)aXYZ.size()/3;
-  /////
+  unsigned int nTri = aTri.size()/3;
+  //
   ::glBegin(GL_TRIANGLES);
   for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int i1 = aTri[itri*3+0];
@@ -1440,9 +1425,9 @@ void dfm2::opengl::DrawMeshTri2D_FaceDisp2D
   ::glBegin(GL_TRIANGLES);
   for(int itri=0;itri<nTri;itri++){
     //      double color[3];
-    const int i0 = aTri[itri*3+0];
-    const int i1 = aTri[itri*3+1];
-    const int i2 = aTri[itri*3+2];
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
     const double p0[2] = { aXY[i0*2+0]+aDisp[i0*nstride+0], aXY[i0*2+1]+aDisp[i0*nstride+1] };
     const double p1[2] = { aXY[i1*2+0]+aDisp[i1*nstride+0], aXY[i1*2+1]+aDisp[i1*nstride+1] };
     const double p2[2] = { aXY[i2*2+0]+aDisp[i2*nstride+0], aXY[i2*2+1]+aDisp[i2*nstride+1] };
@@ -1456,9 +1441,9 @@ void dfm2::opengl::DrawMeshTri2D_FaceDisp2D
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
   for(int itri=0;itri<nTri;itri++){
-    const int i0 = aTri[itri*3+0];
-    const int i1 = aTri[itri*3+1];
-    const int i2 = aTri[itri*3+2];
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
     const double p0[2] = { aXY[i0*2+0]+aDisp[i0*nstride+0], aXY[i0*2+1]+aDisp[i0*nstride+1] };
     const double p1[2] = { aXY[i1*2+0]+aDisp[i1*nstride+0], aXY[i1*2+1]+aDisp[i1*nstride+1] };
     const double p2[2] = { aXY[i2*2+0]+aDisp[i2*nstride+0], aXY[i2*2+1]+aDisp[i2*nstride+1] };
@@ -1501,31 +1486,27 @@ void dfm2::opengl::DrawMeshTri2D_Edge
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-/// Quad
+// ----------------------------------
+// Quad
 
 void dfm2::opengl::DrawMeshQuad3D_Edge
-(const double* aXYZ, int nXYZ,
- const unsigned int* aQuad, int nQuad)
+(const double* aXYZ, unsigned int nXYZ,
+ const unsigned int* aQuad, unsigned int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   ////
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
-  for (int iq = 0; iq<nQuad; ++iq){
-    const int i1 = aQuad[iq*4+0];
-    const int i2 = aQuad[iq*4+1];
-    const int i3 = aQuad[iq*4+2];
-    const int i4 = aQuad[iq*4+3];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
-      continue;
-    }
-    assert(i1>=0&&i1<nXYZ);
-    assert(i2>=0&&i2<nXYZ);
-    assert(i3>=0&&i3<nXYZ);
-    assert(i4>=0&&i4<nXYZ);
+  for (unsigned int iq = 0; iq<nQuad; ++iq){
+    const unsigned int i1 = aQuad[iq*4+0];
+    const unsigned int i2 = aQuad[iq*4+1];
+    const unsigned int i3 = aQuad[iq*4+2];
+    const unsigned int i4 = aQuad[iq*4+3];
+    assert(i1<nXYZ);
+    assert(i2<nXYZ);
+    assert(i3<nXYZ);
+    assert(i4<nXYZ);
     double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     double p3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
@@ -1568,27 +1549,23 @@ void dfm2::opengl::DrawMeshQuad3D_FaceNorm
 
 
 void dfm2::opengl::DrawMeshQuad2D_Edge
-(const double* aXY, int nXY,
- const unsigned int* aQuad, int nQuad)
+(const double* aXY, unsigned int nXY,
+ const unsigned int* aQuad, unsigned int nQuad)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
-  /////
+  // ---------------------
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
   ::glColor3d(0, 0, 0);
-  for (int iq = 0; iq<nQuad; ++iq){
-    const int i1 = aQuad[iq*4+0];
-    const int i2 = aQuad[iq*4+1];
-    const int i3 = aQuad[iq*4+2];
-    const int i4 = aQuad[iq*4+3];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
-      continue;
-    }
-    assert(i1>=0&&i1<nXY);
-    assert(i2>=0&&i2<nXY);
-    assert(i3>=0&&i3<nXY);
-    assert(i4>=0&&i4<nXY);
+  for (unsigned int iq = 0; iq<nQuad; ++iq){
+    const unsigned int i1 = aQuad[iq*4+0];
+    const unsigned int i2 = aQuad[iq*4+1];
+    const unsigned int i3 = aQuad[iq*4+2];
+    const unsigned int i4 = aQuad[iq*4+3];
+    assert(i1<nXY);
+    assert(i2<nXY);
+    assert(i3<nXY);
+    assert(i4<nXY);
     double p1[2] = { aXY[i1*2+0], aXY[i1*2+1] };
     double p2[2] = { aXY[i2*2+0], aXY[i2*2+1] };
     double p3[2] = { aXY[i3*2+0], aXY[i3*2+1] };
@@ -1702,10 +1679,10 @@ void dfm2::opengl::DrawMeshTet3D_Edge
  int nTet)
 {
   for (int itet = 0; itet<nTet; itet++){
-    const int i0 = aTet[itet*4+0];
-    const int i1 = aTet[itet*4+1];
-    const int i2 = aTet[itet*4+2];
-    const int i3 = aTet[itet*4+3];
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -1729,8 +1706,8 @@ void dfm2::opengl::DrawMeshLine3D_Edge
  int nLine)
 {
   for (int il = 0; il<nLine; il++){
-    const int i0 = aLine[il*2+0];
-    const int i1 = aLine[il*2+1];
+    const unsigned int i0 = aLine[il*2+0];
+    const unsigned int i1 = aLine[il*2+1];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     //::glColor3d(0, 0, 0);
@@ -1747,10 +1724,10 @@ void dfm2::opengl::DrawMeshTet3D_EdgeDisp
  double s0)
 {
   for (int itet = 0; itet<nTet; itet++){
-    const int i0 = aTet[itet*4+0];
-    const int i1 = aTet[itet*4+1];
-    const int i2 = aTet[itet*4+2];
-    const int i3 = aTet[itet*4+3];
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -1772,13 +1749,13 @@ void dfm2::opengl::DrawMeshTet3D_EdgeDisp
 
 void dfm2::opengl::DrawMeshTet3D_FaceNorm
 (const double* aXYZ,
- const unsigned int* aTet, int nTet)
+ const unsigned int* aTet, unsigned int nTet)
 {
-  for (int itet = 0; itet<nTet; itet++){
-    const int i0 = aTet[itet*4+0];
-    const int i1 = aTet[itet*4+1];
-    const int i2 = aTet[itet*4+2];
-    const int i3 = aTet[itet*4+3];
+  for (unsigned  itet = 0; itet<nTet; itet++){
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -1831,7 +1808,7 @@ void opengl::DrawMeshTet3D_FaceNormDisp
 
 void dfm2::opengl::DrawMeshHex3D_FaceNorm
 (const double* aXYZ,
- const unsigned int* aHex, int nHex)
+ const unsigned int* aHex, unsigned int nHex)
 {
   const int noelElemFace_Hex[8][4] = { // this is corresponds to VTK_VOXEL
     { 0, 4, 7, 3 }, // -x
@@ -1843,14 +1820,14 @@ void dfm2::opengl::DrawMeshHex3D_FaceNorm
   };
   ::glBegin(GL_TRIANGLES);
   for (int ihex = 0; ihex<nHex; ihex++){
-    const int i0 = aHex[ihex*8+0];
-    const int i1 = aHex[ihex*8+1];
-    const int i2 = aHex[ihex*8+2];
-    const int i3 = aHex[ihex*8+3];
-    const int i4 = aHex[ihex*8+4];
-    const int i5 = aHex[ihex*8+5];
-    const int i6 = aHex[ihex*8+6];
-    const int i7 = aHex[ihex*8+7];
+    const unsigned int i0 = aHex[ihex*8+0];
+    const unsigned int i1 = aHex[ihex*8+1];
+    const unsigned int i2 = aHex[ihex*8+2];
+    const unsigned int i3 = aHex[ihex*8+3];
+    const unsigned int i4 = aHex[ihex*8+4];
+    const unsigned int i5 = aHex[ihex*8+5];
+    const unsigned int i6 = aHex[ihex*8+6];
+    const unsigned int i7 = aHex[ihex*8+7];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -1939,14 +1916,14 @@ void dfm2::opengl::DrawMeshHex3D_Edge
     {0,4},{1,5},{3,7},{2,6} };
   ::glBegin(GL_LINES);
   for (int ihex = 0; ihex<nHex; ihex++){
-    const int i0 = aHex[ihex*8+0];
-    const int i1 = aHex[ihex*8+1];
-    const int i2 = aHex[ihex*8+2];
-    const int i3 = aHex[ihex*8+3];
-    const int i4 = aHex[ihex*8+4];
-    const int i5 = aHex[ihex*8+5];
-    const int i6 = aHex[ihex*8+6];
-    const int i7 = aHex[ihex*8+7];
+    const unsigned int i0 = aHex[ihex*8+0];
+    const unsigned int i1 = aHex[ihex*8+1];
+    const unsigned int i2 = aHex[ihex*8+2];
+    const unsigned int i3 = aHex[ihex*8+3];
+    const unsigned int i4 = aHex[ihex*8+4];
+    const unsigned int i5 = aHex[ihex*8+5];
+    const unsigned int i6 = aHex[ihex*8+6];
+    const unsigned int i7 = aHex[ihex*8+7];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
@@ -1956,9 +1933,9 @@ void dfm2::opengl::DrawMeshHex3D_Edge
     const double p6[3] = { aXYZ[i6*3+0], aXYZ[i6*3+1], aXYZ[i6*3+2] };
     const double p7[3] = { aXYZ[i7*3+0], aXYZ[i7*3+1], aXYZ[i7*3+2] };
     const double* aP[8] = {p0,p1,p2,p3,p4,p5,p6,p7};
-    for(int iedge=0;iedge<12;++iedge){
-      const double* q0 = aP[ noelEdge_Hex[iedge][0] ];
-      const double* q1 = aP[ noelEdge_Hex[iedge][1] ];
+    for(auto iedge : noelEdge_Hex){
+      const double* q0 = aP[ iedge[0] ];
+      const double* q1 = aP[ iedge[1] ];
       ::glVertex3dv(q0);
       ::glVertex3dv(q1);
     }
@@ -1972,10 +1949,10 @@ void delfem2::opengl::DrawMeshTet3D_FaceNormDisp
  const double* aDisp)
 {
   for (int itet = 0; itet<nTet; itet++){
-    const int i0 = aTet[itet*4+0];
-    const int i1 = aTet[itet*4+1];
-    const int i2 = aTet[itet*4+2];
-    const int i3 = aTet[itet*4+3];
+    const unsigned int i0 = aTet[itet*4+0];
+    const unsigned int i1 = aTet[itet*4+1];
+    const unsigned int i2 = aTet[itet*4+2];
+    const unsigned int i3 = aTet[itet*4+3];
     const double p0[3] = { aXYZ[i0*3+0]+aDisp[i0*3+0], aXYZ[i0*3+1]+aDisp[i0*3+1], aXYZ[i0*3+2]+aDisp[i0*3+2] };
     const double p1[3] = { aXYZ[i1*3+0]+aDisp[i1*3+0], aXYZ[i1*3+1]+aDisp[i1*3+1], aXYZ[i1*3+2]+aDisp[i1*3+2] };
     const double p2[3] = { aXYZ[i2*3+0]+aDisp[i2*3+0], aXYZ[i2*3+1]+aDisp[i2*3+1], aXYZ[i2*3+2]+aDisp[i2*3+2] };
@@ -2064,8 +2041,8 @@ void dfm2::opengl::setGL_Camera2D()
 {
   int viewport[8];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  double w = (double)viewport[2];
-  double h = (double)viewport[3];
+  auto w = (double)viewport[2];
+  auto h = (double)viewport[3];
   double asp = w/h;
   ::glMatrixMode(GL_PROJECTION);
   ::glLoadIdentity();
