@@ -177,32 +177,32 @@ void JArrayElemSurPoint_MeshElem
  std::vector<unsigned int> &elsup,
  ////
  const unsigned int* pElem,
- int nElem,
- int nPoEl,
- int nPo)
+ unsigned int nElem,
+ unsigned int nPoEl,
+ unsigned int nPo)
 {
   //  const int nElem = (int)aElem.size()/nPoEl;
   elsup_ind.assign(nPo+1,0);
-  for(int ielem=0;ielem<nElem;ielem++){
-    for(int inoel=0;inoel<nPoEl;inoel++){
+  for(unsigned int ielem=0;ielem<nElem;ielem++){
+    for(unsigned int inoel=0;inoel<nPoEl;inoel++){
       const unsigned int ino1 = pElem[ielem*nPoEl+inoel];
       elsup_ind[ino1+1] += 1;
     }
   }
-  for(int ino=0;ino<nPo;++ino){
+  for(unsigned int ino=0;ino<nPo;++ino){
     elsup_ind[ino+1] += elsup_ind[ino];
   }
   int nelsup = elsup_ind[nPo];
   elsup.resize(nelsup);
-  for(int ielem=0;ielem<nElem;ielem++){
-    for(int inoel=0;inoel<nPoEl;inoel++){
+  for(unsigned int ielem=0;ielem<nElem;ielem++){
+    for(unsigned int inoel=0;inoel<nPoEl;inoel++){
       int unsigned ino1 = pElem[ielem*nPoEl+inoel];
       int ind1 = elsup_ind[ino1];
       elsup[ind1] = ielem;
       elsup_ind[ino1] += 1;
     }
   }
-  for(int ino=nPo;ino>=1;ino--){
+  for(int ino=(int)nPo;ino>=1;ino--){
     elsup_ind[ino] = elsup_ind[ino-1];
   }
   elsup_ind[0] = 0;
@@ -219,7 +219,6 @@ void ElemQuad_DihedralTri
   makeSurroundingRelationship(aElemSurRel,
                               aTri, nTri,
                               dfm2::MESHELEM_TRI, np);
-  ////
   for(int itri=0; itri<nTri; ++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
       int jtri = aElemSurRel[itri*6+iedtri*2+0];
@@ -387,15 +386,13 @@ void JArrayElemSurPoint_MeshMix
       elsup_ind[ino1] += 1;
     }
   }
-  for(int ipoint=nPo;ipoint>=1;ipoint--){
+  for(int ipoint=(int)nPo;ipoint>=1;ipoint--){
     elsup_ind[ipoint] = elsup_ind[ipoint-1];
   }
   elsup_ind[0] = 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------------------------------------------
 
 void makeSurroundingRelationship
 (std::vector<int>& aElSurRel,
@@ -580,7 +577,7 @@ void makeBoundary
 (std::vector<int>& aElemInd_Bound,
  std::vector<int>& aElem_Bound,
  std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
- ////
+ //
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
@@ -621,7 +618,7 @@ void makeBoundary
 void JArrayPointSurPoint_MeshOneRingNeighborhood
 (std::vector<unsigned int>& psup_ind,
  std::vector<unsigned int>& psup,
- ////
+ //
  const unsigned int* pElem,
  const std::vector<unsigned int> &elsup_ind,
  const std::vector<unsigned int> &elsup,
@@ -673,7 +670,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
 void JArrayPointSurPoint_MeshOneRingNeighborhood
 (std::vector<unsigned int>& psup_ind,
  std::vector<unsigned int>& psup,
- ////
+ //
  const unsigned int* pElem,
  int nEl,
  int nPoEl,
@@ -733,7 +730,7 @@ void makeOneRingNeighborhood_TriFan
 void JArrayEdge_MeshElem
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
- ////
+ //
  const unsigned int* aElm0,
  dfm2::MESHELEM_TYPE elem_type,
  const std::vector<unsigned int> &elsup_ind,
@@ -774,7 +771,7 @@ void JArrayEdge_MeshElem
 
 void MeshLine_JArrayEdge
 (std::vector<unsigned int>& aLine,
- ////
+ //
  const std::vector<unsigned int> &psup_ind,
  const std::vector<unsigned int> &psup)
 {
@@ -837,11 +834,11 @@ void dfm2::JArray_AddMasterSlavePattern
       mapM2S[ino0].push_back(ino1);
     }
   }
-  ////
+  //
   index.assign(nno+1,0);
   array.clear();
   std::vector<int> aflg(nno,-1);
-  /////
+  ///
   for(int ino0=0;ino0<nno;++ino0){
     aflg[ino0] = ino0;
     for(unsigned int icrs=psup_ind0[ino0];icrs<psup_ind0[ino0+1];++icrs){
@@ -956,11 +953,12 @@ void MarkConnectedElements
 
 void MarkConnectedElements
 (std::vector<int>& aIndGroup,
- int itri_ker,
+ unsigned int itri_ker,
  int igroup,
  const std::vector<int>& aElemFaceInd,
  const std::vector<int>& aElemFaceRel)
 {
+  assert( itri_ker < aIndGroup.size() );
   aIndGroup[itri_ker] = igroup;
   std::stack<int> next;
   next.push(itri_ker);
@@ -1044,7 +1042,7 @@ void MakeGroupElem
 void MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
- /////
+ //
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
@@ -1187,19 +1185,19 @@ void QuadSubdiv
   aQuad1.resize(0);
   aQuad1.reserve(nQuad0*4);
   for(unsigned int iq=0;iq<nq0;++iq){
-    int ip0 = aQuad0[iq*4+0];
-    int ip1 = aQuad0[iq*4+1];
-    int ip2 = aQuad0[iq*4+2];
-    int ip3 = aQuad0[iq*4+3];
+    unsigned int ip0 = aQuad0[iq*4+0];
+    unsigned int ip1 = aQuad0[iq*4+1];
+    unsigned int ip2 = aQuad0[iq*4+2];
+    unsigned int ip3 = aQuad0[iq*4+3];
     int ie01 = findEdge(ip0,ip1, psup_ind,psup); assert( ie01 != -1 );
     int ie12 = findEdge(ip1,ip2, psup_ind,psup); assert( ie12 != -1 );
     int ie23 = findEdge(ip2,ip3, psup_ind,psup); assert( ie23 != -1 );
     int ie30 = findEdge(ip3,ip0, psup_ind,psup); assert( ie30 != -1 );
-    int ip01 = ie01 + nPoint0;
-    int ip12 = ie12 + nPoint0;
-    int ip23 = ie23 + nPoint0;
-    int ip30 = ie30 + nPoint0;
-    int ip0123 = iq + nPoint0 + ne0;
+    unsigned int ip01 = ie01 + nPoint0;
+    unsigned int ip12 = ie12 + nPoint0;
+    unsigned int ip23 = ie23 + nPoint0;
+    unsigned int ip30 = ie30 + nPoint0;
+    unsigned int ip0123 = iq + nPoint0 + ne0;
     aQuad1.push_back(ip0);   aQuad1.push_back(ip01); aQuad1.push_back(ip0123); aQuad1.push_back(ip30);
     aQuad1.push_back(ip1);   aQuad1.push_back(ip12); aQuad1.push_back(ip0123); aQuad1.push_back(ip01);
     aQuad1.push_back(ip2);   aQuad1.push_back(ip23); aQuad1.push_back(ip0123); aQuad1.push_back(ip12);

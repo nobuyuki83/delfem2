@@ -137,8 +137,8 @@ void DrawMeshTri3D_FaceNorm_TexVtx(const std::vector<double>& aXYZ,
                                    const std::vector<unsigned int>& aTri,
                                    const std::vector<double>& aTex);
 // Edge 3D
-void DrawMeshTri3D_Edge(const double* aXYZ, int nXYZ,
-                        const unsigned int* aTri, int nTri);
+void DrawMeshTri3D_Edge(const double* aXYZ, unsigned int nXYZ,
+                        const unsigned int* aTri, unsigned int nTri);
 void DrawMeshTri3D_Edge(const std::vector<double>& aXYZ,
                         const std::vector<unsigned int>& aTri);
 void DrawMeshTriMap3D_Edge(const std::vector<double>& aXYZ,
@@ -148,12 +148,12 @@ void DrawMeshTriMap3D_Edge(const std::vector<double>& aXYZ,
 // -----------------
 // Draw Quad
 
-void DrawMeshQuad3D_Edge(const double* aXYZ, int nXYZ,
-                         const unsigned int* aQuad, int nQuad);
+void DrawMeshQuad3D_Edge(const double* aXYZ, unsigned int nXYZ,
+                         const unsigned int* aQuad, unsigned int nQuad);
 void DrawMeshQuad3D_Edge(const std::vector<double>& aXYZ,
                          const std::vector<unsigned int>& aQuad);
-void DrawMeshQuad2D_Edge(const double* aXY, int nXY,
-                         const unsigned int* aQuad, int nQuad);
+void DrawMeshQuad2D_Edge(const double* aXY, unsigned int nXY,
+                         const unsigned int* aQuad, unsigned int nQuad);
 void DrawMeshQuad2D_Edge(const std::vector<double>& aXY,
                          const std::vector<unsigned int>& aQuad);
 void DrawMeshQuad3D_FaceNorm(const double* aXYZ,
@@ -171,7 +171,7 @@ void DrawMeshTet3D_EdgeDisp(const double* aXYZ,
                             const double* aDisp,
                             double scale);
 void DrawMeshTet3D_FaceNorm(const double* aXYZ,
-                          const unsigned int* aTet, int nTet);
+                            const unsigned int* aTet, unsigned int nTet);
 void DrawMeshTet3DSurface_FaceNorm(const std::vector<double>& aXYZ,
                                const std::vector<unsigned int>& aTet,
                                const std::vector<unsigned int>& aTetFace);
@@ -188,7 +188,7 @@ void DrawMeshTet3D_FaceNormDisp(const double* aXYZ, int nXYZ,
 void DrawMeshHex3D_Edge(const double* aXYZ, int nXYZ,
                         const unsigned int* aHex, int nHex);
 void DrawMeshHex3D_FaceNorm(const double* aXYZ,
-                            const unsigned int* aHex, int nHex);
+                            const unsigned int* aHex, unsigned int nHex);
 void DrawHex3D_FaceNormDisp(const std::vector<double>& aXYZ,
                            const std::vector<int>& aHex,
                            const std::vector<double>& aDisp);

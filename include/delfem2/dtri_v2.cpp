@@ -66,7 +66,7 @@ bool LaplacianArroundPoint
 }
 
 bool FindEdgePoint_AcrossEdge
- (int& itri0, int& inotri0, int& inotri1, double& ratio,
+ (unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double& ratio,
   int ipo0, int ipo1,
   const std::vector<dfm2::CEPo2>& po,
   const std::vector<dfm2::ETri>& tri,
@@ -478,7 +478,7 @@ void dfm2::EnforceEdge
   assert( i0 < (int)aPo2D.size() );
   assert( i1 < (int)aPo2D.size() );
   for(;;){
-    int itri0,inotri0,inotri1;
+    unsigned int itri0,inotri0,inotri1;
     if( FindEdge_LookAroundPoint(itri0,inotri0,inotri1,i0,i1,aPo2D,aTri) ){ // this edge divide outside and inside
       assert( inotri0 != inotri1 );
       assert( inotri0 < 3 );
@@ -489,7 +489,7 @@ void dfm2::EnforceEdge
       {
         const int itri1 = aTri[itri0].s2[ied0];
         const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
-        assert( aTri[itri1].s2[ied1] == itri0 );
+        assert( aTri[itri1].s2[ied1] == (int)itri0 );
         aTri[itri1].s2[ied1] = -1;
         aTri[itri0].s2[ied0] = -1;
       }
@@ -518,7 +518,7 @@ void dfm2::EnforceEdge
 #ifndef NDEBUG
         const int itri1 = aTri[itri0].s2[ied0];
         const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
-        assert( aTri[itri1].s2[ied1] >= itri0 );
+        assert( aTri[itri1].s2[ied1] >= (int)itri0 );
 #endif
         bool res = FlipEdge(itri0,ied0,aPo2D,aTri);
 //        std::cout << itri0 << " " << ied0 << " " << ratio << " " << res << std::endl;

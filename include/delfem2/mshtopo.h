@@ -248,9 +248,9 @@ void JArrayElemSurPoint_MeshElem(std::vector<unsigned int> &elsup_ind,
                                  std::vector<unsigned int> &elsup,
                                  //
                                  const unsigned int* pElem,
-                                 int nElem,
-                                 int nPoEl,
-                                 int nPo);
+                                 unsigned int nElem,
+                                 unsigned int nPoEl,
+                                 unsigned int nPo);
 void JArrayElemSurPoint_MeshTri(std::vector<unsigned int> &elsup_ind,
                                 std::vector<unsigned int> &elsup,
                                 //

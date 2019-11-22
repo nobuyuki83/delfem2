@@ -26,6 +26,7 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
+
 bool CCad3D_Edge::isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const
 {
   const int np = (int)aP.size();
@@ -77,7 +78,7 @@ void FaceCenterNormal(
   nf.SetNormalizedVector();
 }
 
-///////////////////////////////////////
+// -----------------------------------------------
 
 void CCad3D_Face::Initialize
 (const std::vector<CCad3D_Vertex>& aVertex,
@@ -275,13 +276,13 @@ void CCad3D_Face::MovePoints
     }
   }
   else{
-    for(unsigned int ip=0;ip<aPInfo.size();++ip){
+    for(std::size_t ip=0;ip<aPInfo.size();++ip){
       if( aPInfo[ip].itype != 2 ){ continue; }
       aXYZ[ip*3+0] = 0;
       aXYZ[ip*3+1] = 0;
       aXYZ[ip*3+2] = 0;
       const std::vector<double>& aW = aPInfo[ip].aW0;
-      for(unsigned int jp=0;jp<aW.size();++jp){
+      for(std::size_t jp=0;jp<aW.size();++jp){
         aXYZ[ip*3+0] += aW[jp]*aXYZ[jp*3+0];
         aXYZ[ip*3+1] += aW[jp]*aXYZ[jp*3+1];
         aXYZ[ip*3+2] += aW[jp]*aXYZ[jp*3+2];
@@ -388,8 +389,8 @@ void ConectEdge
     aVertex[iv0].isConst[inorm_new] = true;
     aVertex[iv1].isConst[inorm_new] = true;
   }
-  for(unsigned int iie=0;iie<aFace[iface_div].aIE.size();++iie){
-    int ie0 = aFace[iface_div].aIE[iie].first;
+  for(auto & iie : aFace[iface_div].aIE){
+    int ie0 = iie.first;
     int jv0 = aEdge[ie0].iv0;
     int jv1 = aEdge[ie0].iv1;
     if( (jv0==iv0&&jv1==iv1) || (jv0==iv1&&jv1==iv0) ) return;
@@ -576,10 +577,10 @@ void AddSphere_ZSym
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+3,false) );
-    aIE.push_back( std::make_pair(ie0+7,true ) );
-    aIE.push_back( std::make_pair(ie0+4,true) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+3,false );
+    aIE.emplace_back(ie0+7,true );
+    aIE.emplace_back(ie0+4,true );
+    aFace.emplace_back(aIE);
   }
   {
     for(auto & iv : aVertex){
@@ -631,18 +632,18 @@ void AddTorus_XSym
   aVertex[icp0+7].norm = CVector3(0,0,+1);
   /////
   int ie0 = (int)aEdge.size();
-  aEdge.push_back( CCad3D_Edge(icp0+0,icp0+2,true,0) ); // 0
-  aEdge.push_back( CCad3D_Edge(icp0+2,icp0+4,true,0) ); // 1
-  aEdge.push_back( CCad3D_Edge(icp0+4,icp0+6,true,0) ); // 2
-  aEdge.push_back( CCad3D_Edge(icp0+6,icp0+0,true,0) ); // 3
-  aEdge.push_back( CCad3D_Edge(icp0+3,icp0+1,true,0) ); // 4
-  aEdge.push_back( CCad3D_Edge(icp0+5,icp0+3,true,0) ); // 5
-  aEdge.push_back( CCad3D_Edge(icp0+7,icp0+5,true,0) ); // 6
-  aEdge.push_back( CCad3D_Edge(icp0+1,icp0+7,true,0) ); // 7
-  aEdge.push_back( CCad3D_Edge(icp0+1,icp0+0,false,2) ); // 8
-  aEdge.push_back( CCad3D_Edge(icp0+3,icp0+2,false,1) ); // 9
-  aEdge.push_back( CCad3D_Edge(icp0+4,icp0+5,false,2) ); // 10
-  aEdge.push_back( CCad3D_Edge(icp0+6,icp0+7,false,1) ); // 11
+  aEdge.emplace_back(icp0+0,icp0+2,true,0 ); // 0
+  aEdge.emplace_back(icp0+2,icp0+4,true,0 ); // 1
+  aEdge.emplace_back(icp0+4,icp0+6,true,0 ); // 2
+  aEdge.emplace_back(icp0+6,icp0+0,true,0 ); // 3
+  aEdge.emplace_back(icp0+3,icp0+1,true,0 ); // 4
+  aEdge.emplace_back(icp0+5,icp0+3,true,0 ); // 5
+  aEdge.emplace_back(icp0+7,icp0+5,true,0 ); // 6
+  aEdge.emplace_back(icp0+1,icp0+7,true,0 ); // 7
+  aEdge.emplace_back(icp0+1,icp0+0,false,2 ); // 8
+  aEdge.emplace_back(icp0+3,icp0+2,false,1 ); // 9
+  aEdge.emplace_back(icp0+4,icp0+5,false,2 ); // 10
+  aEdge.emplace_back(icp0+6,icp0+7,false,1 ); // 11
   for(int ie=ie0+8;ie<ie0+12;++ie){
     aEdge[ie].r0 = 1;
     aEdge[ie].r1 = 1;
@@ -650,50 +651,50 @@ void AddTorus_XSym
   for(int ie=ie0;ie<ie0+12;ie++){
     aEdge[ie].Initialize(aVertex,elen); // ie0+0
   }
-  /////
+  //
   int ifc0 = (int)aFace.size();
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+0,false) );
-    aIE.push_back( std::make_pair(ie0+8,false) );
-    aIE.push_back( std::make_pair(ie0+4,false) );
-    aIE.push_back( std::make_pair(ie0+9,true ) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+0,false );
+    aIE.emplace_back(ie0+8,false );
+    aIE.emplace_back(ie0+4,false );
+    aIE.emplace_back(ie0+9,true );
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+1,false) );
-    aIE.push_back( std::make_pair(ie0+9,false) );
-    aIE.push_back( std::make_pair(ie0+5,false) );
-    aIE.push_back( std::make_pair(ie0+10,false ) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+1,false );
+    aIE.emplace_back(ie0+9,false );
+    aIE.emplace_back(ie0+5,false );
+    aIE.emplace_back(ie0+10,false );
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+2,false) );
-    aIE.push_back( std::make_pair(ie0+10,true) );
-    aIE.push_back( std::make_pair(ie0+6,false) );
-    aIE.push_back( std::make_pair(ie0+11,false ) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+2,false );
+    aIE.emplace_back(ie0+10,true );
+    aIE.emplace_back(ie0+6,false );
+    aIE.emplace_back(ie0+11,false );
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+3,false) );
-    aIE.push_back( std::make_pair(ie0+11,true) );
-    aIE.push_back( std::make_pair(ie0+7,false) );
-    aIE.push_back( std::make_pair(ie0+8,true ) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+3,false );
+    aIE.emplace_back(ie0+11,true );
+    aIE.emplace_back(ie0+7,false );
+    aIE.emplace_back(ie0+8,true );
+    aFace.emplace_back(aIE);
   }
   {
-    for(unsigned int iv=0;iv<aVertex.size();++iv){
-      aVertex[iv].isConst[0] = false;
-      aVertex[iv].isConst[1] = false;
-      aVertex[iv].isConst[2] = false;
+    for(auto & iv : aVertex){
+      iv.isConst[0] = false;
+      iv.isConst[1] = false;
+      iv.isConst[2] = false;
     }
-    for(unsigned int ie=0;ie<aEdge.size();++ie){
-      int iv0 = aEdge[ie].iv0;
-      int iv1 = aEdge[ie].iv1;
-      int inorm = aEdge[ie].inorm;
+    for(auto & ie : aEdge){
+      int iv0 = ie.iv0;
+      int iv1 = ie.iv1;
+      int inorm = ie.inorm;
       if( inorm < 0 || inorm >= 3 ){ continue; }
       aVertex[iv0].isConst[inorm] = true;
       aVertex[iv1].isConst[inorm] = true;
@@ -736,35 +737,35 @@ void AddSphere_XSym
   aEdge.push_back(e5);
   aEdge.push_back(e6);
   aEdge.push_back(e7);
-  /////
+  //
   int ifc0 = (int)aFace.size();
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+0,false) );
-    aIE.push_back( std::make_pair(ie0+4,false ) );
-    aIE.push_back( std::make_pair(ie0+5,true) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+0,false );
+    aIE.emplace_back(ie0+4,false );
+    aIE.emplace_back(ie0+5,true );
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+1,false) );
-    aIE.push_back( std::make_pair(ie0+5,false) );
-    aIE.push_back( std::make_pair(ie0+6,false) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+1,false );
+    aIE.emplace_back(ie0+5,false );
+    aIE.emplace_back(ie0+6,false );
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+2,false) );
-    aIE.push_back( std::make_pair(ie0+6,true ) );
-    aIE.push_back( std::make_pair(ie0+7,false) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+2,false );
+    aIE.emplace_back(ie0+6,true );
+    aIE.emplace_back(ie0+7,false );
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int,bool> > aIE;
-    aIE.push_back( std::make_pair(ie0+3,false) );
-    aIE.push_back( std::make_pair(ie0+7,true ) );
-    aIE.push_back( std::make_pair(ie0+4,true) );
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+3,false );
+    aIE.emplace_back(ie0+7,true );
+    aIE.emplace_back(ie0+4,true );
+    aFace.emplace_back(aIE);
   }
   {
     for(auto & iv : aVertex){
@@ -800,79 +801,79 @@ std::vector<CCad3D_Face>& aFace,
 double elen)
 {
   int iv0 = (int)aVertex.size();
-  aVertex.push_back(CCad3D_Vertex(CVector3(-1, -1, -1))); // icp0+0
-  aVertex.push_back(CCad3D_Vertex(CVector3(-1, -1, +1))); // icp0+1
-  aVertex.push_back(CCad3D_Vertex(CVector3(-1, +1, -1))); // icp0+2
-  aVertex.push_back(CCad3D_Vertex(CVector3(-1, +1, +1))); // icp0+3
-  aVertex.push_back(CCad3D_Vertex(CVector3(+1, -1, -1))); // icp0+4
-  aVertex.push_back(CCad3D_Vertex(CVector3(+1, -1, +1))); // icp0+5
-  aVertex.push_back(CCad3D_Vertex(CVector3(+1, +1, -1))); // icp0+6
-  aVertex.push_back(CCad3D_Vertex(CVector3(+1, +1, +1))); // icp0+7
+  aVertex.emplace_back(CVector3(-1, -1, -1)); // icp0+0
+  aVertex.emplace_back(CVector3(-1, -1, +1)); // icp0+1
+  aVertex.emplace_back(CVector3(-1, +1, -1)); // icp0+2
+  aVertex.emplace_back(CVector3(-1, +1, +1)); // icp0+3
+  aVertex.emplace_back(CVector3(+1, -1, -1)); // icp0+4
+  aVertex.emplace_back(CVector3(+1, -1, +1)); // icp0+5
+  aVertex.emplace_back(CVector3(+1, +1, -1)); // icp0+6
+  aVertex.emplace_back(CVector3(+1, +1, +1)); // icp0+7
   ////
   int ie0 = (int)aEdge.size();
-  aEdge.push_back(CCad3D_Edge(iv0+0, iv0+1, false, 0)); // 0
-  aEdge.push_back(CCad3D_Edge(iv0+1, iv0+3, false, 0)); // 1
-  aEdge.push_back(CCad3D_Edge(iv0+3, iv0+2, false, 0)); // 2
-  aEdge.push_back(CCad3D_Edge(iv0+2, iv0+0, false, 0)); // 3
+  aEdge.emplace_back(iv0+0, iv0+1, false, 0); // 0
+  aEdge.emplace_back(iv0+1, iv0+3, false, 0); // 1
+  aEdge.emplace_back(iv0+3, iv0+2, false, 0); // 2
+  aEdge.emplace_back(iv0+2, iv0+0, false, 0); // 3
   /////
-  aEdge.push_back(CCad3D_Edge(iv0+6, iv0+4, false, 0)); // 4
-  aEdge.push_back(CCad3D_Edge(iv0+7, iv0+6, false, 0)); // 5
-  aEdge.push_back(CCad3D_Edge(iv0+5, iv0+7, false, 0)); // 6
-  aEdge.push_back(CCad3D_Edge(iv0+4, iv0+5, false, 0)); // 7
+  aEdge.emplace_back(iv0+6, iv0+4, false, 0); // 4
+  aEdge.emplace_back(iv0+7, iv0+6, false, 0); // 5
+  aEdge.emplace_back(iv0+5, iv0+7, false, 0); // 6
+  aEdge.emplace_back(iv0+4, iv0+5, false, 0); // 7
   /////
-  aEdge.push_back(CCad3D_Edge(iv0+0, iv0+4, false, 1)); // 8
-  aEdge.push_back(CCad3D_Edge(iv0+5, iv0+1, false, 1)); // 9
-  aEdge.push_back(CCad3D_Edge(iv0+2, iv0+6, false, 1)); // 10
-  aEdge.push_back(CCad3D_Edge(iv0+7, iv0+3, false, 1)); // 11
+  aEdge.emplace_back(iv0+0, iv0+4, false, 1); // 8
+  aEdge.emplace_back(iv0+5, iv0+1, false, 1); // 9
+  aEdge.emplace_back(iv0+2, iv0+6, false, 1); // 10
+  aEdge.emplace_back(iv0+7, iv0+3, false, 1); // 11
   /////  
   int ifc0 = (int)aFace.size();
   { // face0132
     std::vector< std::pair<int, bool> > aIE;
-    aIE.push_back(std::make_pair(ie0+0, true));
-    aIE.push_back(std::make_pair(ie0+1, true));
-    aIE.push_back(std::make_pair(ie0+2, true));
-    aIE.push_back(std::make_pair(ie0+3, true));
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+0, true);
+    aIE.emplace_back(ie0+1, true);
+    aIE.emplace_back(ie0+2, true);
+    aIE.emplace_back(ie0+3, true);
+    aFace.emplace_back(aIE);
   }
   { // face4567
     std::vector< std::pair<int, bool> > aIE;
-    aIE.push_back(std::make_pair(ie0+4, false));
-    aIE.push_back(std::make_pair(ie0+5, false));
-    aIE.push_back(std::make_pair(ie0+6, false));
-    aIE.push_back(std::make_pair(ie0+7, false));
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+4, false);
+    aIE.emplace_back(ie0+5, false);
+    aIE.emplace_back(ie0+6, false);
+    aIE.emplace_back(ie0+7, false);
+    aFace.emplace_back(aIE);
   }
   { // face0451
     std::vector< std::pair<int, bool> > aIE;
-    aIE.push_back(std::make_pair(ie0+0, false));
-    aIE.push_back(std::make_pair(ie0+8, true));
-    aIE.push_back(std::make_pair(ie0+7, true));
-    aIE.push_back(std::make_pair(ie0+9, true));
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+0, false);
+    aIE.emplace_back(ie0+8, true);
+    aIE.emplace_back(ie0+7, true);
+    aIE.emplace_back(ie0+9, true);
+    aFace.emplace_back(aIE);
   }
   { // face041
     std::vector< std::pair<int, bool> > aIE;
-    aIE.push_back(std::make_pair(ie0+2,  false));
-    aIE.push_back(std::make_pair(ie0+11, false));
-    aIE.push_back(std::make_pair(ie0+5,  true));
-    aIE.push_back(std::make_pair(ie0+10, false));
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+2,  false);
+    aIE.emplace_back(ie0+11, false);
+    aIE.emplace_back(ie0+5,  true);
+    aIE.emplace_back(ie0+10, false);
+    aFace.emplace_back(aIE);
   }
   { // face041     
     std::vector< std::pair<int, bool> > aIE;
-    aIE.push_back(std::make_pair(ie0+3,  false));
-    aIE.push_back(std::make_pair(ie0+10, true));
-    aIE.push_back(std::make_pair(ie0+4,  true));
-    aIE.push_back(std::make_pair(ie0+8,  false));
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+3,  false);
+    aIE.emplace_back(ie0+10, true);
+    aIE.emplace_back(ie0+4,  true);
+    aIE.emplace_back(ie0+8,  false);
+    aFace.emplace_back(aIE);
   }
   { // face041     
     std::vector< std::pair<int, bool> > aIE;
-    aIE.push_back(std::make_pair(ie0+1,  false));
-    aIE.push_back(std::make_pair(ie0+9,  false));
-    aIE.push_back(std::make_pair(ie0+6,  true));
-    aIE.push_back(std::make_pair(ie0+11, true));
-    aFace.push_back(CCad3D_Face(aIE));
+    aIE.emplace_back(ie0+1,  false);
+    aIE.emplace_back(ie0+9,  false);
+    aIE.emplace_back(ie0+6,  true);
+    aIE.emplace_back(ie0+11, true);
+    aFace.emplace_back(aIE);
   }
   {
     for (int iv = iv0; iv<iv0+8; ++iv){
@@ -926,7 +927,8 @@ bool FindFittingPoint
     }
   }
   else if( !isConstX && isConstY ){
-    for(unsigned int iq=0;iq<aP2D.size()-1;++iq){
+    assert( !aP2D.empty() );
+    for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
       CVector2 q0 = aP2D[iq+0];
       CVector2 q1 = aP2D[iq+1];
       if( (q0.y-p2d_org.y)*(q1.y-p2d_org.y) < 0 ){
@@ -1591,13 +1593,13 @@ bool CCad3D::isSym(int iv) const{
 void CCad3D::WriteFile(std::ofstream& fout) const
 {
   fout << aVertex.size() << std::endl;
-  for(unsigned int iv=0;iv<aVertex.size();++iv){
+  for(std::size_t iv=0;iv<aVertex.size();++iv){
     fout << " " << iv << std::endl;
     aVertex[iv].WriteFile(fout);
   }
   ////
   fout << aEdge.size() << std::endl;
-  for(unsigned int ie=0;ie<aEdge.size();++ie){
+  for(std::size_t ie=0;ie<aEdge.size();++ie){
     fout << " " << ie << std::endl;
     aEdge[ie].WriteFile(fout);
   }

@@ -307,7 +307,7 @@ template <typename T>
 void AXPY(T a,
           const T* x,
           T* y,
-          int n);
+          unsigned int n);
 
 template <typename T>
 void setRHS_Zero(std::vector<T>& vec_b,

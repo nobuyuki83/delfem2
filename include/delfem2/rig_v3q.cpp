@@ -36,8 +36,7 @@ static int myStoi(const std::string& str){
 }
 
 bool isActive_AABB(const double aabb[6]){
-  if( aabb[0]>aabb[1] ) return false;
-  return true;
+    return aabb[0] <= aabb[1];
 }
 
 void copy_AABB(double aabb[6], const double aabb0[6]){
@@ -246,7 +245,8 @@ void Read_BioVisionHierarchy
       assert(aToken.size()>=2);
       int nch = myStoi(aToken[1]);
       assert((int)aToken.size()==nch+2);
-      const int ib = aBone.size()-1;
+      assert( !aBone.empty() );
+      const std::size_t ib = aBone.size()-1;
       for(int ich=0;ich<nch;++ich){
         const std::string& type_ch = aToken[ich+2];
         if(      type_ch == "Xposition" ){ aChannelRotTransBone.emplace_back(ib,0,false ); }

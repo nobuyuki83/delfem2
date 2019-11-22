@@ -474,20 +474,20 @@ bool dfm2::FlipEdge(
 
 
 bool dfm2::FindEdge_LookAroundPoint
-(int& itri0, int& inotri0, int& inotri1,
+(unsigned int &itri0,unsigned int &inotri0, unsigned &inotri1,
  ///
  const int ipo0, const int ipo1,
  const std::vector<CEPo2>& aPo,
  const std::vector<ETri>& aTri)
 {
   const int itri_ini = aPo[ipo0].e;
-  const int inotri_ini = aPo[ipo0].d;
-  int inotri_cur = inotri_ini;
+  const unsigned int inotri_ini = aPo[ipo0].d;
+  unsigned int inotri_cur = inotri_ini;
   int itri_cur = itri_ini;
   for (;;){  // serch clock-wise
     assert(aTri[itri_cur].v[inotri_cur]==ipo0);
     {
-      const int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
       if (aTri[itri_cur].v[inotri2]==ipo1){
         itri0 = itri_cur;
         inotri0 = inotri_cur;
@@ -498,7 +498,7 @@ bool dfm2::FindEdge_LookAroundPoint
       }
     }
     {
-      const int inotri2 = (inotri_cur+2)%3; // indexRot3[2][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+2)%3; // indexRot3[2][inotri_cur];
       if (aTri[itri_cur].s2[inotri2]==-1){ break; }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
       const unsigned int* rel = relTriTri[aTri[itri_cur].r2[inotri2]];
@@ -515,7 +515,7 @@ bool dfm2::FindEdge_LookAroundPoint
   for (;;){
     assert(aTri[itri_cur].v[inotri_cur]==ipo0);
     {
-      const int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
       if (aTri[itri_cur].s2[inotri2]==-1){ break; }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
       const unsigned int* rel = relTriTri[aTri[itri_cur].r2[inotri2]];
@@ -530,7 +530,7 @@ bool dfm2::FindEdge_LookAroundPoint
       inotri_cur = inotri3;
     }
     {
-      const int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
       if (aTri[itri_cur].v[inotri2]==ipo1){
         itri0 = itri_cur;
         inotri0 = inotri_cur;
