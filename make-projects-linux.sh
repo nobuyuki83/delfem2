@@ -70,8 +70,23 @@ cd buildMake
 cmake -DPYTHON_EXECUTABLE:PATH=${PATH_PYTHON}  ..
 cd ../../../
 
+pip3 uninstall PyDelFEM2 -y
+pip3 uninstall PyDelFEM2 -y
+pip3 install -e .
+python3 setup.py test
 
 #python3 setup.py install
 #python3 setup.py test
 #python3 setup.py sdist bdist_wheel
 #twine upload dist/*
+
+########################
+## build dll 
+
+cd src_dll
+mkdir build
+cd build
+cmake ..
+make
+
+########################

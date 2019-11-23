@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
+#include <cstdio>
 #include <deque>
 #include <set>
 #include "delfem2/mat3.h"
@@ -49,7 +49,7 @@ bool CCad3D_Edge::isPick(double& ratio, const CVector2& sp0, const float mMV[16]
 void FaceCenterNormal(
   CVector3& cg, 
   CVector3& nf,
-  const std::vector< std::pair<int,bool> >& aIE,
+  const std::vector< std::pair<unsigned int,bool> >& aIE,
   const std::vector<CCad3D_Edge>& aEdge)
 {
   const  int nIE = aIE.size();
@@ -89,7 +89,7 @@ void CCad3D_Face::Initialize
   std::vector<double> aXYZ_B0;
   std::vector<double> aXYZ_B1;
   const int ne = (int)aIE.size();
-  for(unsigned int iie=0;iie<aIE.size();++iie){
+  for(std::size_t iie=0;iie<aIE.size();++iie){
     int ie0 = aIE[iie].first;
     assert( ie0>=0 && ie0<aEdge.size() );
     const CCad3D_Edge& e0 = aEdge[ie0];
@@ -400,10 +400,10 @@ void ConectEdge
   aEdge.emplace_back(iv0,iv1,false,inorm_new );
   aEdge[ie_new].Initialize(aVertex,elen);
   
-  const std::vector< std::pair<int,bool> > aIE = aFace[iface_div].aIE;
+  const std::vector< std::pair<unsigned int,bool> > aIE = aFace[iface_div].aIE;
   const int nie = (int)aIE.size();
   { // modify exisiting
-    std::vector< std::pair<int,bool> > aIE0;
+    std::vector< std::pair<unsigned int,bool> > aIE0;
     aIE0.emplace_back(ie_new,true );
     for(int iie=iie1;iie%nie!=iie0;++iie){
       aIE0.push_back( aIE[iie%nie] );
@@ -412,7 +412,7 @@ void ConectEdge
     aFace[iface_div].Initialize(aVertex, aEdge, elen);
   }
   { // make new
-    std::vector< std::pair<int,bool> > aIE0;
+    std::vector< std::pair<unsigned int,bool> > aIE0;
     aIE0.emplace_back(ie_new,false );
     for(int iie=iie0;iie%nie!=iie1;++iie){
       aIE0.push_back( aIE[iie%nie] );
@@ -438,7 +438,7 @@ void MakeItSmooth
     iv.norm.SetZero();
   }
   for(auto & ifc : aFace){
-    const std::vector< std::pair<int,bool> >& aIE = ifc.aIE;
+    const std::vector< std::pair<unsigned int,bool> >& aIE = ifc.aIE;
     int nIE = (int)aIE.size();
     CVector3 nf,cg; FaceCenterNormal(cg,nf,aIE,aEdge);
     nf.SetNormalizedVector();
@@ -555,28 +555,28 @@ void AddSphere_ZSym
   /////
   int ifc0 = (int)aFace.size();
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+0,false );
     aIE.emplace_back(ie0+4,false );
     aIE.emplace_back(ie0+5,true );
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+1,false );
     aIE.emplace_back(ie0+5,false );
     aIE.emplace_back(ie0+6,false );
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+2,false );
     aIE.emplace_back(ie0+6,true );
     aIE.emplace_back(ie0+7,false );
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+3,false );
     aIE.emplace_back(ie0+7,true );
     aIE.emplace_back(ie0+4,true );
@@ -654,7 +654,7 @@ void AddTorus_XSym
   //
   int ifc0 = (int)aFace.size();
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+0,false );
     aIE.emplace_back(ie0+8,false );
     aIE.emplace_back(ie0+4,false );
@@ -662,7 +662,7 @@ void AddTorus_XSym
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+1,false );
     aIE.emplace_back(ie0+9,false );
     aIE.emplace_back(ie0+5,false );
@@ -670,7 +670,7 @@ void AddTorus_XSym
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+2,false );
     aIE.emplace_back(ie0+10,true );
     aIE.emplace_back(ie0+6,false );
@@ -678,7 +678,7 @@ void AddTorus_XSym
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+3,false );
     aIE.emplace_back(ie0+11,true );
     aIE.emplace_back(ie0+7,false );
@@ -740,28 +740,28 @@ void AddSphere_XSym
   //
   int ifc0 = (int)aFace.size();
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+0,false );
     aIE.emplace_back(ie0+4,false );
     aIE.emplace_back(ie0+5,true );
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+1,false );
     aIE.emplace_back(ie0+5,false );
     aIE.emplace_back(ie0+6,false );
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+2,false );
     aIE.emplace_back(ie0+6,true );
     aIE.emplace_back(ie0+7,false );
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int,bool> > aIE;
+    std::vector< std::pair<unsigned int,bool> > aIE;
     aIE.emplace_back(ie0+3,false );
     aIE.emplace_back(ie0+7,true );
     aIE.emplace_back(ie0+4,true );
@@ -828,7 +828,7 @@ double elen)
   /////  
   int ifc0 = (int)aFace.size();
   { // face0132
-    std::vector< std::pair<int, bool> > aIE;
+    std::vector< std::pair<unsigned int, bool> > aIE;
     aIE.emplace_back(ie0+0, true);
     aIE.emplace_back(ie0+1, true);
     aIE.emplace_back(ie0+2, true);
@@ -836,7 +836,7 @@ double elen)
     aFace.emplace_back(aIE);
   }
   { // face4567
-    std::vector< std::pair<int, bool> > aIE;
+    std::vector< std::pair<unsigned int, bool> > aIE;
     aIE.emplace_back(ie0+4, false);
     aIE.emplace_back(ie0+5, false);
     aIE.emplace_back(ie0+6, false);
@@ -844,7 +844,7 @@ double elen)
     aFace.emplace_back(aIE);
   }
   { // face0451
-    std::vector< std::pair<int, bool> > aIE;
+    std::vector< std::pair<unsigned int, bool> > aIE;
     aIE.emplace_back(ie0+0, false);
     aIE.emplace_back(ie0+8, true);
     aIE.emplace_back(ie0+7, true);
@@ -852,7 +852,7 @@ double elen)
     aFace.emplace_back(aIE);
   }
   { // face041
-    std::vector< std::pair<int, bool> > aIE;
+    std::vector< std::pair<unsigned int, bool> > aIE;
     aIE.emplace_back(ie0+2,  false);
     aIE.emplace_back(ie0+11, false);
     aIE.emplace_back(ie0+5,  true);
@@ -860,7 +860,7 @@ double elen)
     aFace.emplace_back(aIE);
   }
   { // face041     
-    std::vector< std::pair<int, bool> > aIE;
+    std::vector< std::pair<unsigned int, bool> > aIE;
     aIE.emplace_back(ie0+3,  false);
     aIE.emplace_back(ie0+10, true);
     aIE.emplace_back(ie0+4,  true);
@@ -868,7 +868,7 @@ double elen)
     aFace.emplace_back(aIE);
   }
   { // face041     
-    std::vector< std::pair<int, bool> > aIE;
+    std::vector< std::pair<unsigned int, bool> > aIE;
     aIE.emplace_back(ie0+1,  false);
     aIE.emplace_back(ie0+9,  false);
     aIE.emplace_back(ie0+6,  true);
@@ -1046,7 +1046,7 @@ void DivideFace
 //  const CVector3& plane_ex = CVector3::Axis((inorm+1)%3);
 //  const CVector3& plane_ey = CVector3::Axis((inorm+2)%3);
   const CVector3 n01 = CVector3::Axis(inorm);
-  const std::vector< std::pair<int,bool> > aIE = aFace[ifc].aIE;
+  const std::vector< std::pair<unsigned int,bool> > aIE = aFace[ifc].aIE;
   const int nie = (int)aIE.size();
   std::set<int> setIV_new;
   for(int iie=0;iie<nie;++iie){

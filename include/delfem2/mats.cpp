@@ -487,7 +487,7 @@ void AXPY
  double* y,
  unsigned int n)
 {
-  for(int i=0;i<n;i++){ y[i] += a*x[i]; }
+  for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
 
 template <>

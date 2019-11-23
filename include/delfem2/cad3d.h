@@ -149,7 +149,7 @@ class CCad3D_Face{
 public:
   CCad3D_Face(){
   }
-  CCad3D_Face(const std::vector< std::pair<int,bool> >& aIE0){
+  CCad3D_Face(const std::vector< std::pair<unsigned int,bool> >& aIE0){
     aIE = aIE0;
   }
   int findIIE_CP(int icp_in, const std::vector<CCad3D_Edge>& aEdge) const {
@@ -210,9 +210,8 @@ public:
     int iq_left;
   };
 public:
-  std::vector< std::pair<int,bool> > aIE; // index of edge, is this edge ccw?
-  ///
-  //CVector3 norm;
+  std::vector< std::pair<unsigned int,bool> > aIE; // index of edge, is this edge ccw?
+  // --------------------------
   std::vector<double> aXYZ;
   std::vector<double> aNorm;
   std::vector<unsigned int> aTri;
