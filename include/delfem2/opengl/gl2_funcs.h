@@ -99,8 +99,8 @@ void DrawMeshTri2D_Face(const std::vector<unsigned int>& aTri,
 void DrawMeshTri2D_FaceDisp2D(const double* aXY, int nXY,
                               const unsigned int* aTri, int nTri,
                               const double* aDisp, int nstride);
-void DrawMeshTri2D_Edge(const double* aXY, int nXY,
-                        const unsigned int* aTri, int nTri);
+void DrawMeshTri2D_Edge(const double* aXY, unsigned int nXY,
+                        const unsigned int* aTri, unsigned int nTri);
 void DrawMeshTri2D_Edge(const std::vector<unsigned int>& aTri,
                         const std::vector<double>& aXY);
 

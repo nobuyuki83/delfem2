@@ -1362,10 +1362,9 @@ void DrawMeshTri3D_FaceEdge
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
 {
-  const int nTri = (int)aTri.size()/3;
-  /////
+  const std::size_t nTri = aTri.size()/3;
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;itri++){
+  for(unsigned int itri=0;itri<nTri;itri++){
     const int i1 = aTri[itri*3+0];
     const int i2 = aTri[itri*3+1];
     const int i3 = aTri[itri*3+2];
@@ -1374,10 +1373,10 @@ void DrawMeshTri3D_FaceEdge
     myGlVertex3d(i3,aXYZ);
   }
   ::glEnd();
-  ////////
+  // ------------------------------------
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(int itri=0;itri<nTri;itri++){
+  for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int i1 = aTri[itri*3+0];
     const unsigned int i2 = aTri[itri*3+1];
     const unsigned int i3 = aTri[itri*3+2];
@@ -1391,17 +1390,16 @@ void DrawMeshTri3D_FaceEdge
   ::glEnd();
 }
 
-/////////////////////////////////////
+// ------------------------------------------------
 
 void dfm2::opengl::DrawMeshTri2D_Face
 (const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXY)
 {
-  const int ntri = (int)aTri.size()/3;
+  const std::size_t ntri = aTri.size()/3;
   //  const int nxys = (int)aXY.size()/2;
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<ntri;itri++){
-    //      double color[3];
+  for(unsigned int itri=0;itri<ntri;itri++){
     const int i0 = aTri[itri*3+0];
     const int i1 = aTri[itri*3+1];
     const int i2 = aTri[itri*3+2];
@@ -1436,7 +1434,7 @@ void dfm2::opengl::DrawMeshTri2D_FaceDisp2D
     ::glVertex2dv( p2 );
   }
   ::glEnd();
-  ////////////////
+  // --------------------------------------
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
@@ -1456,13 +1454,13 @@ void dfm2::opengl::DrawMeshTri2D_FaceDisp2D
 
 
 void dfm2::opengl::DrawMeshTri2D_Edge
-(const double* aXY, int nXY,
- const unsigned int* aTri, int nTri)
+(const double* aXY, unsigned int nXY,
+ const unsigned int* aTri, unsigned int nTri)
 {
   //  const unsigned int nxys = (int)aXY.size()/2;
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(int itri=0;itri<nTri;itri++){
+  for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int ino0 = aTri[itri*3+0];
     const unsigned int ino1 = aTri[itri*3+1];
     const unsigned int ino2 = aTri[itri*3+2];
@@ -1587,7 +1585,7 @@ void dfm2::opengl::DrawMeshQuad2D_Edge
                       aQuad.data(), aQuad.size()/4);
 }
 
-///////////////////////////////////////////
+// ----------------------------------------------------------------------------
 
 void dfm2::opengl::DrawMeshTet3DSurface_FaceNorm
 (const std::vector<double>& aXYZ,
@@ -1819,7 +1817,7 @@ void dfm2::opengl::DrawMeshHex3D_FaceNorm
     { 4, 5, 6, 7 }  // +z
   };
   ::glBegin(GL_TRIANGLES);
-  for (int ihex = 0; ihex<nHex; ihex++){
+  for (unsigned int ihex = 0; ihex<nHex; ihex++){
     const unsigned int i0 = aHex[ihex*8+0];
     const unsigned int i1 = aHex[ihex*8+1];
     const unsigned int i2 = aHex[ihex*8+2];

@@ -20,7 +20,7 @@
 #include <sstream>
 #include <math.h>
 #include <vector>
-#include <assert.h>
+#include <cassert>
 
 namespace delfem2{
 
