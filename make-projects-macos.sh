@@ -112,3 +112,12 @@ pip3 install -e .
 python3 setup.py test
 #python3 setup.py sdist bdist_wheel
 #twine upload dist/*
+
+##################################
+## build dynamic link library
+
+cd src_dll && mkdir build && cd build
+cmake ..
+make
+cd ../../
+
