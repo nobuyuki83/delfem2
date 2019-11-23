@@ -230,7 +230,7 @@ void SetMasterSlave
       row2crs[jno0] = -1;
     }
   }
-  //////
+  // ---------------------------------------------
   row2crs.assign(nblk,-1);
   for(unsigned int ino=0;ino<nblk;ino++){
     for(unsigned int icrs=mat.colInd[ino];icrs<mat.colInd[ino+1];++icrs){
@@ -278,7 +278,7 @@ void SetMasterSlave
       row2crs[jno0] = -1;
     }
   }
-  //////
+  // --------------------------------------
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int ilen=0;ilen<len;ilen++){
       if( aMSFlag[iblk*len+ilen] == -1 ) continue;
@@ -289,8 +289,7 @@ void SetMasterSlave
       mat.valDia[iblk*blksize+ilen*len+ilen] = 1.0;
     }
   }
-  
-  ////
+  // ---------------------------------------------
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
       for(unsigned int idim=0;idim<len;idim++){
@@ -378,7 +377,7 @@ void MatSparse_ScaleBlkLen_LeftRight
   }
 }
 
-// ///////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------------------------------
 
 template <>
 double Dot
