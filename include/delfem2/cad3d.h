@@ -154,8 +154,8 @@ public:
   }
   int findIIE_CP(int icp_in, const std::vector<CCad3D_Edge>& aEdge) const {
     for(unsigned int iie=0;iie<aIE.size();++iie){
-      int ie0 = aIE[iie].first;
-      assert( ie0>=0 && ie0<aEdge.size() );
+      unsigned int ie0 = aIE[iie].first;
+      assert( ie0<aEdge.size() );
       const CCad3D_Edge& e0 = aEdge[ie0];
       const bool dir0 = aIE[iie].second;
       int icp0 = (dir0) ? e0.iv0 : e0.iv1;

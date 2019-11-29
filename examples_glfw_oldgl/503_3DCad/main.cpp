@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <complex>
 #include <set>
 #include <deque>
@@ -69,7 +69,7 @@ void DrawFace_RightSelected
   }
   
   ::glEnable(GL_LIGHTING);
-  for(unsigned int iface=0;iface<cad.aFace.size();++iface){
+  for(std::size_t iface=0;iface<cad.aFace.size();++iface){
     if( iface == cad.iface_picked ){
       dfm2::opengl::myGlColorDiffuse(cad.color_face_selected);
     }
@@ -128,7 +128,7 @@ void DrawLine
   }
   ::glLineWidth(2);
   ::glBegin(GL_LINE_STRIP);
-  for(unsigned int ip=0;ip<ed.aP.size();++ip){ dfm2::opengl::myGlVertex(ed.aP[ip]); }
+  for(const auto & ip : ed.aP){ dfm2::opengl::myGlVertex(ip); }
   ::glEnd();
 }
 
@@ -179,7 +179,7 @@ void DrawVtxEdgeHandler
 {
   {
     const std::vector<CCad3D_Vertex>& aVertex = cad.aVertex;
-    for(unsigned int icp=0;icp<aVertex.size();++icp){
+    for(std::size_t icp=0;icp<aVertex.size();++icp){
       Draw(aVertex[icp], icp==cad.ivtx_picked, cad.ielem_vtx_picked, view_height);
     }
   }
@@ -247,8 +247,8 @@ void DrawVtxEdgeHandler
     ::glColor3d(1,0,0);
     ::glLineWidth(3);
     ::glBegin(GL_LINE_STRIP);
-    for(unsigned int ist=0;ist<cad.aStroke.size();++ist){
-      dfm2::opengl::myGlVertex(cad.aStroke[ist]);
+    for(const auto & ist : cad.aStroke){
+      dfm2::opengl::myGlVertex(ist);
     }
     ::glEnd();
     //
@@ -281,7 +281,7 @@ int main(int argc,char* argv[])
       DrawVtxEdgeHandler(cad,nav.camera.view_height);
       this->DrawEnd_oldGL();
     }
-    virtual void mouse_press(const float src[3], const float dir[3]){
+    void mouse_press(const float src[3], const float dir[3]) override{
       const CVector3 src_pick(src), dir_pick(dir);
       float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
       cad.MouseDown(src_pick, dir_pick,
@@ -289,7 +289,7 @@ int main(int argc,char* argv[])
                     mMV,mPrj,
                     nav.camera.view_height);
     }
-    virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
       CVector2 sp1(nav.mouse_x, nav.mouse_y);
       const CVector3 src_pick(src1), dir_pick(dir);

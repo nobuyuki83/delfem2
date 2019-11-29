@@ -90,8 +90,8 @@ void CCad3D_Face::Initialize
   std::vector<double> aXYZ_B1;
   const int ne = (int)aIE.size();
   for(std::size_t iie=0;iie<aIE.size();++iie){
-    int ie0 = aIE[iie].first;
-    assert( ie0>=0 && ie0<aEdge.size() );
+    unsigned int ie0 = aIE[iie].first;
+    assert( ie0<aEdge.size() );
     const CCad3D_Edge& e0 = aEdge[ie0];
     const bool dir0 = aIE[iie].second;
     int iv0 = (dir0) ? e0.iv0 : e0.iv1;
@@ -123,9 +123,9 @@ void CCad3D_Face::Initialize
       aPInfo.push_back(pinfo);
     }
     { // for debug
-      int iie1 = (iie+ne-1)%ne; // back
-      int ie1 = aIE[iie1].first;
-      assert( ie1>=0 && ie1<aEdge.size() );
+      unsigned int iie1 = (iie+ne-1)%ne; // back
+      unsigned int ie1 = aIE[iie1].first;
+      assert( ie1<aEdge.size() );
       const CCad3D_Edge& e1 = aEdge[ie1];
       bool dir1 = aIE[iie1].second;
       int iv1 = (dir1) ? e1.iv1 : e1.iv0;
