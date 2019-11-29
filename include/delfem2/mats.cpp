@@ -437,12 +437,12 @@ void AXPY
 
 template<>
 double DotX
-(const double* r_vec,
- const double* u_vec,
+(const double* va,
+ const double* vb,
  unsigned int n)
 {
   double r = 0.0;
-  for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
+  for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
   return r;
 }
 
