@@ -153,10 +153,12 @@ void RemoveUnreferencedPoints_MeshElem
   }
 }
 
-void Normal_MeshTri3D
-(double* aNorm,
- const double* aXYZ, unsigned int nXYZ,
- const unsigned int* aTri, unsigned int nTri)
+void Normal_MeshTri3D(
+    double* aNorm,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri)
 {
   for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
   for(unsigned int itri=0;itri<nTri;itri++){
@@ -942,8 +944,10 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
  const std::vector<int>& aEdgeFace0,
  const std::vector<unsigned int> &psupIndQuad0,
  const std::vector<unsigned int> &psupQuad0,
- const unsigned int* aQuad0, unsigned int nQuad0,
- const double* aXYZ0, unsigned int nXYZ0)
+ const unsigned int* aQuad0,
+ unsigned int nQuad0,
+ const double* aXYZ0,
+ unsigned int nXYZ0)
 {
   /*
   std::vector<int> aEdgeFace0;

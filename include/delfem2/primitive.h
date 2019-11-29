@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef PRIMITIVE_H
-#define PRIMITIVE_H
+#ifndef DFM2_PRIMITIVE_H
+#define DFM2_PRIMITIVE_H
 
 #include <math.h>
 #include <vector>
@@ -62,21 +62,14 @@ public:
 	double Projection(double n[3],
                     double px, double py, double pz) const; // normal
 public:
-	double normal_[3];
-  double origin_[3];
+	double normal_[3] = {0,0,1};
+  double origin_[3] = {0,0,0};
 };
 
 class CSphere: public CSDF3
 {
 public:
-  CSphere(){
-    radius_ = 1.0;
-    cent_.resize(3);
-    cent_[0] = 0.0;
-    cent_[1] = 0.0;
-    cent_[2] = 0.0;
-    is_out_ = true;
-  }
+  CSphere(){}
 	CSphere(double rad, const std::vector<double>& c, bool is_out);
 	// return penetration depth (inside is positive)
 	virtual double Projection(double n[3],
@@ -85,22 +78,16 @@ public:
   bool IntersectionPoint(double p[3],
                          const double org[3], const double dir[3]) const;
 public:
-  std::vector<double> cent_;
-	double radius_;
-	bool is_out_;	// true:normal points outward
+  std::vector<double> cent_ = {0,0, 0.0, 0.0};
+	double radius_ = 1.0;
+	bool is_out_ = true;	// true:normal points outward
 };
 
 
 class CCylinder: public CSDF3
 {
 public:
-  CCylinder()
-  {
-    cent_[0]=0; cent_[1]=0; cent_[2]=0;
-    dir_[0]=1;  dir_[1]=0;  dir_[2]=0;
-    radius_ = 1;
-    is_out_ = true; // true:normal points outward
-  }
+  CCylinder(){};
 	CCylinder(double rad, double cent[3], double dir[3], bool is_out);
 	// return penetration depth (inside is positive)
   double Projection(double n[3],
@@ -113,25 +100,25 @@ public:
   void SetDirection(const double dir[3]){ dir_[0] = dir[0]; dir_[1] = dir[1]; dir_[2] = dir[2]; }
   void SetRadius(double r){ radius_ = r; }
 public:
-	double cent_[3];
-  double dir_[3];
-	double radius_;
-	bool is_out_;	// true:normal points outward
+	double cent_[3] {0.0, 0.0, 0.0};
+  double dir_[3] = {1.0, 0.0, 0.0};
+	double radius_ = 1.0;
+	bool is_out_ = true;	// true:normal points outward
 };
 
 
 class CTorus: public CSDF3
 {
 public:
-	CTorus();
+	CTorus(){}
 	// return penetration depth (inside is positive)
 	virtual double Projection(double n[3],
                             double px, double py, double pz) const; // normal outward
 	unsigned int FindInOut(double px, double py, double pz) const;
 public:
-	double cent_[3];
-	double radius_;
-	double radius_tube_;
+	double cent_[3] = {0.0, 0.0, 0.0};
+	double radius_ = 0.5;
+	double radius_tube_ = 0.2;
 };
 
 class CBox: public CSDF3
@@ -186,9 +173,9 @@ public:
                          const double org[3], const double dir[3]) const { return true; }
 
 public:
-  double hwx; // half x width
-  double hwy; // half y width
-  double hwz; // half z width
+  double hwx = 1; // half x width
+  double hwy = 1; // half y width
+  double hwz = 1; // half z width
 };
   
 } // namespace delfem2

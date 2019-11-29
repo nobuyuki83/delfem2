@@ -52,10 +52,10 @@ void FaceCenterNormal(
   const std::vector< std::pair<unsigned int,bool> >& aIE,
   const std::vector<CCad3D_Edge>& aEdge)
 {
-  const  int nIE = aIE.size();
+  const std::size_t nIE = aIE.size();
   cg.SetZero();
   double len_tot = 0.0;
-  for (int iie = 0; iie<nIE; ++iie){
+  for (unsigned int iie = 0; iie<nIE; ++iie){
     int ie0 = aIE[(iie+0)%nIE].first;
     bool dir0 = aIE[(iie+0)%nIE].second;    
     CVector3 pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
@@ -67,7 +67,7 @@ void FaceCenterNormal(
   cg /= len_tot;
   ///////
   nf.SetZero();
-  for (int iie = 0; iie<nIE; ++iie){
+  for (unsigned int iie = 0; iie<nIE; ++iie){
     int ie0 = aIE[(iie+0)%nIE].first;
 //    int ie1 = aIE[(iie+1)%nIE].first;
     bool dir0 = aIE[(iie+0)%nIE].second;
@@ -88,7 +88,7 @@ void CCad3D_Face::Initialize
   aPInfo.resize(0);
   std::vector<double> aXYZ_B0;
   std::vector<double> aXYZ_B1;
-  const int ne = (int)aIE.size();
+  const unsigned int ne = aIE.size();
   for(std::size_t iie=0;iie<aIE.size();++iie){
     unsigned int ie0 = aIE[iie].first;
     assert( ie0<aEdge.size() );
@@ -101,9 +101,9 @@ void CCad3D_Face::Initialize
       aXYZ_B1.push_back(p0.y);
       aXYZ_B1.push_back(p0.z);
     }
-    const int nep = (int)e0.aP.size();
+    const unsigned nep = e0.aP.size();
     for(int iep=0;iep<nep-1;++iep){
-      int iep0 = (dir0) ? iep : nep-1-iep;
+      unsigned int iep0 = (dir0) ? iep : nep-1-iep;
       double ratio = (double)iep0/(nep-1.0);
       CVector3 pep = (1-ratio)*e0.p0 + ratio*e0.p1;
       aXYZ_B0.push_back(pep.x);
@@ -178,16 +178,18 @@ void CCad3D_Face::Initialize
       MeshTri2D_Export(aXY_out,aTri, aVec2,aETri);
     }
   }
-  const int nxy_bound = (int)aXY_B0.size()/2;
-  for(unsigned int ip=nxy_bound;ip<aXY_out.size()/2;++ip){
+  const std::size_t nxy_bound = aXY_B0.size()/2;
+  for(std::size_t ip=nxy_bound;ip<aXY_out.size()/2;++ip){
     double x0 = aXY_out[ip*2+0];
     double y0 = aXY_out[ip*2+1];
     CFacePointInfo pinfo;
     pinfo.itype = 2;
     pinfo.aW0.resize(aXY_B0.size()/2);
     pinfo.aW1.resize(aXY_B1.size()/2);
-    MeanValueCoordinate2D(pinfo.aW0.data(),x0,y0,aXY_B0.data(),aXY_B0.size()/2);
-    MeanValueCoordinate2D(pinfo.aW1.data(),x0,y0,aXY_B1.data(),aXY_B1.size()/2);
+    MeanValueCoordinate2D(pinfo.aW0.data(),
+                          x0,y0,aXY_B0.data(),(unsigned int)(aXY_B0.size()/2));
+    MeanValueCoordinate2D(pinfo.aW1.data(),
+                          x0,y0,aXY_B1.data(),(unsigned int)(aXY_B1.size()/2));
     aPInfo.push_back(pinfo);
   }
   MovePoints(aVertex,aEdge);
@@ -1124,7 +1126,7 @@ void BuildTriMesh
     const int iv1 = e.iv1;
     assert( iv0>=0 && iv0<(int)aVertex.size() );
     assert( iv1>=0 && iv1<(int)aVertex.size() );
-    const int np = (int)e.aP.size();
+    const std::size_t np = e.aP.size();
     assert(np>=2);
     e.aIQ_RightLeft.resize(np*2);
     e.aIQ_RightLeft[0*2+0] = aVertex[iv0].iq_right;
@@ -1156,8 +1158,8 @@ void BuildTriMesh
     }
   }
   for(auto & fc : aFace){
-    int np = (int)fc.aPInfo.size();
-    for(int ip=0;ip<np;++ip){
+    std::size_t np = fc.aPInfo.size();
+    for(std::size_t ip=0;ip<np;++ip){
       CCad3D_Face::CFacePointInfo& pinfo = fc.aPInfo[ip];
       if( pinfo.itype == 0 ){
         int iv0 = pinfo.iv;

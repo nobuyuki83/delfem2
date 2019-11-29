@@ -1029,10 +1029,10 @@ void dfm2::opengl::Draw_AABB3D_MinMaxXYZ_Edge
 void dfm2::opengl::DrawMeshTri3D_FaceNorm
 (const double* paXYZ,
  const unsigned int* paTri,
- int nTri)
+ unsigned int nTri)
 {
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;++itri){
+  for(unsigned int itri=0;itri<nTri;++itri){
     DrawSingleTri3D_FaceNorm(paXYZ, paTri+itri*3,0);
   }
   ::glEnd();
@@ -1717,7 +1717,7 @@ void dfm2::opengl::DrawMeshLine3D_Edge
 
 void dfm2::opengl::DrawMeshTet3D_EdgeDisp
 (const double* aXYZ,
- const unsigned int* aTet, int nTet,
+ const unsigned int* aTet, unsigned int nTet,
  const double* aDisp,
  double s0)
 {

@@ -7,7 +7,6 @@
 
 
 #include <cmath>
-
 #include "delfem2/quat.h"
 
 #ifndef M_PI

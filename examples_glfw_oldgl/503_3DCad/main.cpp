@@ -1,14 +1,15 @@
-#include <iostream>
-#include <sstream>
 #include <cmath>
-#include <complex>
-#include <set>
-#include <deque>
-#include <set>
-#include <stack>
 #include <algorithm>
-#include "delfem2/mat3.h"
 #include "delfem2/cad3d.h"
+
+//#include <iostream>
+//#include <sstream>
+//#include <complex>
+//#include <set>
+//#include <deque>
+//#include <set>
+//#include <stack>
+//#include "delfem2/mat3.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793

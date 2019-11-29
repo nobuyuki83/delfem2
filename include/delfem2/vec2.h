@@ -246,9 +246,9 @@ void SecondMomentOfArea_Polygon(CVector2& cg,  double& area,
 double Length_Polygon(const std::vector<CVector2>& aP);
 double Area_Polygon(const std::vector<CVector2>& aP);
 
-void MeanValueCoordinate2D(double* aW,
+void MeanValueCoordinate2D(double *aW,
                            double px, double py,
-                           const double* aXY, int nXY);
+                           const double *aXY, unsigned int nXY);
 void MeanValueCoordinate(std::vector<double>& aW,
                          CVector2& p,
                          std::vector<CVector2>& aVtx);

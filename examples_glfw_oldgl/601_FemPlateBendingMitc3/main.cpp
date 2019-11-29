@@ -2,13 +2,14 @@
 #include <math.h>
 #include "delfem2/emat.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/mats.h"
 #include "delfem2/vec2.h"
-
+//
 #include "delfem2/ilu_mats.h"
 #include "delfem2/dtri_v2.h"
 #include "delfem2/fem_emats.h"
+
+//#include "delfem2/mshmisc.h"
 
 // ----------------
 #include <GLFW/glfw3.h>
@@ -63,7 +64,7 @@ void MakeMesh(){
 
 void InitializeProblem_PlateBendingMITC3()
 {
-  const int np = (int)aXY0.size()/2;
+  const std::size_t np = aXY0.size()/2;
   aBCFlag.assign(np*3, 0);
   for(int ip=0;ip<np;++ip){
     const double px = aXY0[ip*2+0];
@@ -89,8 +90,8 @@ void InitializeProblem_PlateBendingMITC3()
 
 void SolveProblem_PlateBendingMITC3()
 {
-  const int np = (int)aXY0.size()/2;
-  const int nDoF = np*3;
+  const std::size_t np = aXY0.size()/2;
+  const std::size_t nDoF = np*3;
   //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
@@ -118,7 +119,7 @@ void SolveProblem_PlateBendingMITC3()
           1.0,vec_x);
 }
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
@@ -149,6 +150,8 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 {
   switch(Key)
   {
+    default:
+      break;
     case 'q':
     case 'Q':
     case '\033':

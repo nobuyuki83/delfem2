@@ -101,7 +101,8 @@ void DrawHandlerRotation_Mat4(const double Mat[16],
 // ----------------
 // vec2 starts here
 
-void myGlVertex(int i, const std::vector<CVector2>& aP);
+void myGlVertex(unsigned int i,
+                const std::vector<CVector2>& aP);
 
 void myGlVertex(const CVector2& v);
 

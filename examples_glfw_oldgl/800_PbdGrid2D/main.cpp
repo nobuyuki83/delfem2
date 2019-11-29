@@ -1,11 +1,12 @@
-#include <iostream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/vec2.h"
 #include "delfem2/primitive.h"
 //
 #include "delfem2/objfunc_v23.h"
+
+//#include <iostream>
+//#include "delfem2/vec2.h"
 
 // --------
 #include <GLFW/glfw3.h>

@@ -78,25 +78,25 @@ static void CopyQuat
 
 static void Mat4f_Quat(float r[], const double q[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
+  auto x2 = (float)(q[1] * q[1] * 2.0);
+  auto y2 = (float)(q[2] * q[2] * 2.0);
+  auto z2 = (float)(q[3] * q[3] * 2.0);
+  auto xy = (float)(q[1] * q[2] * 2.0);
+  auto yz = (float)(q[2] * q[3] * 2.0);
+  auto zx = (float)(q[3] * q[1] * 2.0);
+  auto xw = (float)(q[1] * q[0] * 2.0);
+  auto yw = (float)(q[2] * q[0] * 2.0);
+  auto zw = (float)(q[3] * q[0] * 2.0);
   
-  r[ 0] = 1.0 - y2 - z2;
+  r[ 0] = 1.f - y2 - z2;
   r[ 1] = xy + zw;
   r[ 2] = zx - yw;
   r[ 4] = xy - zw;
-  r[ 5] = 1.0 - z2 - x2;
+  r[ 5] = 1.f - z2 - x2;
   r[ 6] = yz + xw;
   r[ 8] = zx + yw;
   r[ 9] = yz - xw;
-  r[10] = 1.0 - x2 - y2;
+  r[10] = 1.f - x2 - y2;
   r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
   r[15] = 1.0;
 }

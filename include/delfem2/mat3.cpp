@@ -299,33 +299,27 @@ std::istream &operator>>(std::istream &input, CMatrix3& m)
 
 // -------------------------------------------------------------------
 
-CMatrix3::CMatrix3(){
-  mat[0*3+0]=0; mat[0*3+1]=0; mat[0*3+2]=0;
-  mat[1*3+0]=0; mat[1*3+1]=0; mat[1*3+2]=0;
-  mat[2*3+0]=0; mat[2*3+1]=0; mat[2*3+2]=0;
-}
-CMatrix3::CMatrix3(const double s){
-  mat[0*3+0]=s; mat[0*3+1]=0; mat[0*3+2]=0;
-  mat[1*3+0]=0; mat[1*3+1]=s; mat[1*3+2]=0;
-  mat[2*3+0]=0; mat[2*3+1]=0; mat[2*3+2]=s;
-}
+CMatrix3::CMatrix3():
+ mat{0.,0.,0., 0.,0.,0., 0.,0.,0.}
+{}
+
+CMatrix3::CMatrix3(const double s):
+ mat{s,0,0, 0,s,0, 0,0,s}
+{}
+
 CMatrix3::CMatrix3(double v00, double v01, double v02,
                    double v10, double v11, double v12,
-                   double v20, double v21, double v22)
-{
-  mat[0*3+0]=v00; mat[0*3+1]=v01; mat[0*3+2]=v02;
-  mat[1*3+0]=v10; mat[1*3+1]=v11; mat[1*3+2]=v12;
-  mat[2*3+0]=v20; mat[2*3+1]=v21; mat[2*3+2]=v22;
-}
+                   double v20, double v21, double v22):
+ mat{v00,v01,v02, v10,v11,v12, v20,v21,v22}
+{}
 
-CMatrix3::CMatrix3(double x, double y, double z){
-  mat[0*3+0]=x; mat[0*3+1]=0; mat[0*3+2]=0;
-  mat[1*3+0]=0; mat[1*3+1]=y; mat[1*3+2]=0;
-  mat[2*3+0]=0; mat[2*3+1]=0; mat[2*3+2]=z;
-}
-CMatrix3::CMatrix3(const double m[9]){
-  for(unsigned int i=0;i<9;i++){ mat[i]=m[i]; }
-}
+CMatrix3::CMatrix3(double x, double y, double z):
+ mat{x,0,0, 0,y,0, 0,0,z}
+{}
+
+CMatrix3::CMatrix3(const double m[9]):
+ mat{m[0],m[1],m[2], m[3],m[4],m[5], m[6],m[7],m[8]}
+{}
 
 
 

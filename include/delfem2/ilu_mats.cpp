@@ -114,7 +114,7 @@ delfem2::CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& 
 {
 //  std::cout << "CPreconditionerILU -- construct copy" << std::endl;
   this->mat = p.mat; // deep copy
-  const int nblk = this->mat.nblk_col;
+  const unsigned int nblk = this->mat.nblk_col;
   this->m_diaInd.resize(nblk);
   for(int iblk=0;iblk<nblk;++iblk){
     this->m_diaInd[iblk] = p.m_diaInd[iblk];
@@ -211,7 +211,7 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 					else{
             vij = &vdia[iblk*4];
           }
-          assert( vij != 0 );
+          assert( vij != nullptr );
 					vij[0] -= vik[0]*vkj[0]+vik[1]*vkj[2];
 					vij[1] -= vik[0]*vkj[1]+vik[1]*vkj[3];
 					vij[2] -= vik[2]*vkj[0]+vik[3]*vkj[2];
@@ -280,7 +280,7 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 					else{
             vij = &vdia[iblk*9];
           }
-					assert( vij != 0 );
+					assert( vij != nullptr );
           for(int i=0;i<3;i++){
             vij[i*3+0] -= vik[i*3+0]*vkj[0] + vik[i*3+1]*vkj[3] + vik[i*3+2]*vkj[6];
             vij[i*3+1] -= vik[i*3+0]*vkj[1] + vik[i*3+1]*vkj[4] + vik[i*3+2]*vkj[7];

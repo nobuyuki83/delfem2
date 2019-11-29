@@ -5,23 +5,23 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <set>
-#include <map>
-#include <cassert>
+
 #include "delfem2/mat3.h"
 #include "delfem2/vec3.h"
-#include "delfem2/quat.h"
-#include "delfem2/funcs.h" // isFileExists
-#include "delfem2/v23m3q.h"
 #include "delfem2/mshmisc.h"
-
 #include "delfem2/rig_v3q.h"
+//#include <set>
+//#include <map>
+//#include <cassert>
+//#include "delfem2/quat.h"
+//#include "delfem2/funcs.h" // isFileExists
+//#include "delfem2/v23m3q.h"
+
 
 // -------------------------
 
 #if defined(__APPLE__) // Mac
 #include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 #elif defined(_WIN32) // windows
 #include <windows.h>
 #include <GL/gl.h>
@@ -32,10 +32,10 @@
 #endif
 
 #include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_v23.h"
-#include "delfem2/opengl/gl_tex.h"
-#include "delfem2/opengl/gl_rig_v23q.h"
+//#include "delfem2/opengl/gl2_color.h"
+//#include "delfem2/opengl/gl_tex.h"
+//#include "delfem2/opengl/gl_rig_v23q.h"
 
 
 #ifndef M_PI 
@@ -43,7 +43,6 @@
 #endif
 
 namespace dfm2 = delfem2;
-//using namespace delfem2::opengl;
 
 // -------------------------------------------------------
 

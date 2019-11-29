@@ -559,8 +559,8 @@ class FEM_ShellCloth():
     self.dt = 0.1
     self.gravity = (0,0,-1)
     self.rho = 1.0
-    self.myu = 10.0
-    self.lmd = 5000.0
+    self.myu = 100.0
+    self.lmd = 500.0
     self.sdf = None
 
   def updated_topology(self,mesh:Mesh,mapper=None):

@@ -5,16 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
 #include <cassert>
 #include <cmath>
 #include <vector>
 #include <complex>
-
-typedef std::complex<double> COMPLEX;
-
 #include "delfem2/mats.h"
 
+//#include <iostream>
+
+typedef std::complex<double> COMPLEX;
 namespace dfm2 = delfem2;
 
 // -------------------------------------------------------
@@ -311,7 +310,7 @@ void SetMasterSlave
       const int jblk1 = mat.rowPtr[icrs];
       for(unsigned int jdim=0;jdim<len;jdim++){
         if( aMSFlag[jblk1*len+jdim] == -1 ) continue;
-        unsigned int idof0 = aMSFlag[jblk1*len+jdim];
+        unsigned int idof0 = (unsigned int)aMSFlag[jblk1*len+jdim];
         for(unsigned int idim=0;idim<len;idim++){
           unsigned int idof1 = iblk*len+idim;
           if( idof0 != idof1 ){ mat.valCrs[icrs*blksize+idim*len+jdim] = +0.0; }
@@ -384,7 +383,7 @@ double Dot
 (const std::vector<double>& r_vec,
  const std::vector<double>& u_vec)
 {
-  const unsigned int n = r_vec.size();
+  const std::size_t n = r_vec.size();
   assert( u_vec.size() == n );
   double r = 0.0;
   for(unsigned int i=0;i<n;i++){
@@ -398,7 +397,7 @@ COMPLEX Dot
 (const std::vector<COMPLEX>& va,
  const std::vector<COMPLEX>& vb)
 {
-  const unsigned int n = va.size();
+  const std::size_t n = va.size();
   assert( vb.size() == n );
   double sr = 0.0, si = 0.0;
   for(unsigned int i=0;i<n;++i){
@@ -418,7 +417,7 @@ void AXPY
  const std::vector<double>& x,
  std::vector<double>& y)
 {
-  const unsigned int n = x.size();
+  const std::size_t n = x.size();
   assert( y.size() == n );
   for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
@@ -430,7 +429,7 @@ void AXPY
  const std::vector<COMPLEX>& x,
  std::vector<COMPLEX>& y)
 {
-  const unsigned int n = x.size();
+  const std::size_t n = x.size();
   assert( y.size() == n );
   for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
@@ -535,7 +534,7 @@ void setRHS_Zero
  const std::vector<int>& aBCFlag,
  int iflag_nonzero)
 {
-  const int ndof = (int)vec_b.size();
+  const std::size_t ndof = vec_b.size();
   for (int i=0;i<ndof;++i){
     if (aBCFlag[i]==iflag_nonzero) continue;
     vec_b[i] = 0;
@@ -832,24 +831,28 @@ void ScaleX(double* p0, int n, double s)
   for(int i=0;i<n;++i){ p0[i] *= s; }
 }
 
-void NormalizeX(double* p0, int n)
+void NormalizeX(
+    double* p0,
+    unsigned int n)
 {
   const double ss = DotX(p0,p0,n);
   ScaleX(p0,n,1.0/sqrt(ss));
 }
 
-void OrthogonalizeToUnitVectorX(double* p1,
-                                const double* p0, int n)
+void OrthogonalizeToUnitVectorX(
+    double* p1,
+    const double* p0,
+    unsigned int n)
 {
   double d = DotX(p0, p1, n);
   for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
 }
 
 
-void setRHS_MasterSlave
-(double* vec_b,
- int nDoF,
- const int* aMSFlag)
+void setRHS_MasterSlave(
+    double* vec_b,
+    int nDoF,
+    const int* aMSFlag)
 {
   for(int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
@@ -877,8 +880,10 @@ double MatNorm_Assym(
   return s;
 }
 
-double MatNorm
-(const double* V, unsigned int n, unsigned int m)
+double MatNorm(
+    const double* V,
+    unsigned int n,
+    unsigned int m)
 {
   double s = 0.0;
   for(unsigned int i=0;i<n;++i){
