@@ -15,7 +15,7 @@ namespace dfm2 = delfem2;
 
 void IndexElement_OverlapLevels_MeshTri3D
 (std::vector< std::vector<unsigned int> >& aCST,
- ////
+ //
  const std::vector<double>& aH,
  const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri)

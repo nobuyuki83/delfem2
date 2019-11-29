@@ -15,23 +15,17 @@
 #include "delfem2/vec2.h"
 #include "delfem2/mats.h"
 #include "delfem2/dtri.h"
-
+//
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri_v2.h"
 
 // -------------------
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_v23.h"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
@@ -136,8 +130,6 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
 
 // ---------------------------------------
 
-CNav3D_GLUT nav;
-
 std::vector<unsigned int> aTet;
 std::vector<double> aXYZ;
 std::vector<double> aMassLumpedSqrtInv;
@@ -234,7 +226,7 @@ void Solve(){
   RemoveKernel();
 
   ////
-  for(int ip=0;ip<aTmp0.size()/3;++ip){
+  for(std::size_t ip=0;ip<aTmp0.size()/3;++ip){
     const double s0 = aMassLumpedSqrtInv[ip];
     for(int idim=0;idim<3;++idim){
       aMode[ip*3+idim] = aTmp0[ip*3+idim]*s0;
@@ -242,20 +234,10 @@ void Solve(){
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
-//	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 3.1f, 2.0f );
-
-  nav.SetGL_Camera();
-
 //  glEnable(GL_BLEND);
 //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -291,80 +273,16 @@ void myGlutDisplay(void)
   
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }
-
-  ::glColor3d(0,0,0);
-  ShowFPS();
-  ::glutSwapBuffers();
-}
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0, 0, w, h);
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch (Key)
-  {
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 's':
-    {
-      Solve();
-      break;
-    }
-	::glutPostRedisplay();
-  }
 }
 
 
 
-void myGlutIdle(){
-  ::glutPostRedisplay();
-}
 
 
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
 
 
 int main(int argc,char* argv[])
 {
-	// Initialize GLUT
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
-	glutInit(&argc, argv);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("FEM View");
-
-	// Define callback functions
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-	glutIdleFunc(myGlutIdle);
-  
-  
   {
     std::vector< std::vector<double> > aaXY;
     {
@@ -397,16 +315,23 @@ int main(int argc,char* argv[])
   
   InitializeProblem_ShellEigenPB();
   
-  for(int i=0;i<aXYZ.size();++i){
+  for(std::size_t i=0;i<aXYZ.size();++i){
     aTmp0[i] = (rand()+1.0)/(RAND_MAX+1.0);
   }
   RemoveKernel();
-  
-  
-  nav.camera.view_height = 2.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
-  
+
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.nav.camera.view_height = 1.5;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.Init_oldGL();
+
   delfem2::opengl::setSomeLighting();
-  glutMainLoop();
-	return 0;
+  while(!glfwWindowShouldClose(viewer.window)){
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

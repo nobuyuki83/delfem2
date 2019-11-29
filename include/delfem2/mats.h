@@ -156,9 +156,11 @@ void delfem2::CMatrixSparse<T>::MatVec
   const T* vdia = valDia.data();
   const unsigned int* colind = colInd.data();
   const unsigned int* rowptr = rowPtr.data();
-  ////////////////
+  // ---------------------------------------------
   for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-    for(unsigned int idof=0;idof<len_col;idof++){ y[iblk*len_col+idof] *= beta; }
+    for(unsigned int idof=0;idof<len_col;idof++){
+        y[iblk*len_col+idof] *= beta;
+    }
     const unsigned int colind0 = colind[iblk];
     const unsigned int colind1 = colind[iblk+1];
     for(unsigned int icrs=colind0;icrs<colind1;icrs++){
@@ -188,7 +190,7 @@ void delfem2::CMatrixSparse<T>::SetBoundaryCondition
   assert( this->len_row == this->len_col );
   assert( np == nblk_col );
   assert( ndimval == len_col );
-  ////
+  // ---------------------------------------
   const int blksize = len_col*len_row;
   for(unsigned int iblk=0;iblk<nblk_col;iblk++){ // set diagonal
     for(unsigned int ilen=0;ilen<len_col;ilen++){
@@ -200,7 +202,7 @@ void delfem2::CMatrixSparse<T>::SetBoundaryCondition
       valDia[iblk*blksize+ilen*len_col+ilen] = 1.0;
     }
   }
-  /////
+  // ----------------------------
   for(unsigned int iblk=0;iblk<nblk_col;iblk++){ // set row
     for(unsigned int icrs=colInd[iblk];icrs<colInd[iblk+1];icrs++){
       for(unsigned int ilen=0;ilen<len_col;ilen++){
@@ -315,9 +317,9 @@ void setRHS_Zero(std::vector<T>& vec_b,
                  int iflag_nonzero);
 
 template <typename T>
-T DotX(const T* r_vec,
-       const T* u_vec,
-       unsigned int ndof);
+T DotX(const T* va,
+       const T* vb,
+       unsigned int n);
 
 std::complex<double> MultSumX(const std::complex<double>* va,
                               const std::complex<double>* vb,
