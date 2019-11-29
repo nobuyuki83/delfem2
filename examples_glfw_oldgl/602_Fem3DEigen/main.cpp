@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <random>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
@@ -179,9 +180,7 @@ void InitializeProblem_ShellEigenPB()
                                           aModesKer.data(),
                                           aXYZ.data(), aXYZ.size()/3,
                                           aTet.data(), aTet.size()/4);
-  
-  ////////////////////////////////////////////
-  
+  // -----------------------
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
@@ -305,9 +304,14 @@ int main(int argc,char* argv[])
   aMode.assign(aXYZ.size(),0.0);
   
   InitializeProblem_ShellEigenPB();
-  
-  for(std::size_t i=0;i<aXYZ.size();++i){
-    aTmp0[i] = (rand()+1.0)/(RAND_MAX+1.0);
+
+  {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<> dist(-1.0, +1.0);
+    for(std::size_t i=0;i<aXYZ.size();++i) {
+      aTmp0[i] = dist(mt);
+    }
   }
   RemoveKernel();
 

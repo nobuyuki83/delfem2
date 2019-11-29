@@ -1,10 +1,14 @@
-#include <iostream>
-#include <fstream>
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <vector>
 #include <string>
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdlib>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/dtri_v3.h"
@@ -13,7 +17,6 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
 
 namespace dfm2 = delfem2;
 
@@ -69,9 +72,9 @@ void SetNewProblem()
   CheckTri(aPo, aTri, aVec3);
 }
 
-// ///////////////////////////////////////////////////////////
+// -----------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
@@ -90,10 +93,10 @@ void myGlutDisplay(void)
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(unsigned int itri=0;itri<aTri.size();itri++){  
-    const unsigned int i1 = aTri[itri].v[0];
-    const unsigned int i2 = aTri[itri].v[1];
-    const unsigned int i3 = aTri[itri].v[2];
+  for(auto & tri : aTri){
+    const unsigned int i1 = tri.v[0];
+    const unsigned int i2 = tri.v[1];
+    const unsigned int i3 = tri.v[2];
     MyGlVertex3dv(aVec3[i1]);
     MyGlVertex3dv(aVec3[i2]);
     MyGlVertex3dv(aVec3[i3]);
@@ -102,10 +105,10 @@ void myGlutDisplay(void)
   
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(unsigned int itri=0;itri<aTri.size();itri++){  
-    const unsigned int i1 = aTri[itri].v[0];
-    const unsigned int i2 = aTri[itri].v[1];
-    const unsigned int i3 = aTri[itri].v[2];
+  for(auto & tri : aTri){
+    const unsigned int i1 = tri.v[0];
+    const unsigned int i2 = tri.v[1];
+    const unsigned int i3 = tri.v[2];
     MyGlVertex3dv(aVec3[i1]);     MyGlVertex3dv(aVec3[i2]);
     MyGlVertex3dv(aVec3[i2]);     MyGlVertex3dv(aVec3[i3]);
     MyGlVertex3dv(aVec3[i3]);     MyGlVertex3dv(aVec3[i1]);

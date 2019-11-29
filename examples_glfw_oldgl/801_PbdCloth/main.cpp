@@ -3,13 +3,6 @@
 #include <set>
 #include "delfem2/dtri.h"
 
-//#include <cmath>
-//#include <iostream>
-//#include <limits>
-//#include "delfem2/vec3.h"
-//#include "delfem2/mat3.h"
-//#include "delfem2/mshtopo.h"
-
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
 #include "delfem2/dtri_v2.h"

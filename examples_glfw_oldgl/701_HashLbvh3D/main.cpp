@@ -1,17 +1,10 @@
 #include <vector>
 #include <algorithm>
+#include <random>
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-//#include "delfem2/srchbi_v3bvh.h"
-//#include <iostream>
-//#include <bitset>
-//#include <cstdint> // std::uint32_t
-//#include "delfem2/primitive.h"
-//#include "delfem2/mshmisc.h"
-//#include "delfem2/mshtopo.h"
 
 // ---------------------------------
-
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
@@ -44,10 +37,15 @@ int main(int argc,char* argv[])
     aXYZ.resize(N*3);
     const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
     dfm2::CBV3D_AABB bb(minmax_xyz);
-    for(unsigned int i=0;i<N;++i){
-      aXYZ[i*3+0] = (bb.x_max -  bb.x_min) * rand()/(RAND_MAX+1.0) + bb.x_min;
-      aXYZ[i*3+1] = (bb.y_max -  bb.y_min) * rand()/(RAND_MAX+1.0) + bb.y_min;
-      aXYZ[i*3+2] = (bb.z_max -  bb.z_min) * rand()/(RAND_MAX+1.0) + bb.z_min;
+    {
+      std::random_device dev;
+      std::mt19937 rng(dev());
+      std::uniform_real_distribution<> udist(0.0, 1.0);
+      for(unsigned int i=0;i<N;++i) {
+        aXYZ[i * 3 + 0] = (bb.x_max - bb.x_min) * udist(rng) + bb.x_min;
+        aXYZ[i * 3 + 1] = (bb.y_max - bb.y_min) * udist(rng) + bb.y_min;
+        aXYZ[i * 3 + 2] = (bb.z_max - bb.z_min) * udist(rng) + bb.z_min;
+      }
     }
     std::vector<unsigned int> aSortedId;
     std::vector<unsigned int> aSortedMc;

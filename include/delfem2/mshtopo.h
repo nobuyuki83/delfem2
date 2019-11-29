@@ -415,6 +415,7 @@ void TetSubdiv(std::vector<unsigned int>& aTet1,
                std::vector<unsigned int> &psup,
                const unsigned int* aTet0, int nTet0,
                unsigned int nPoint0);
+
 int findEdge(unsigned int ip0, unsigned int ip1,
              const std::vector<unsigned int> &psup_ind,
              const std::vector<unsigned int> &psup);

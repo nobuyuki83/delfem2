@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
@@ -10,10 +17,6 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/cad2d.h"
-
-//#include <limits>
-//#include "delfem2/mshmisc.h"
-//#include "delfem2/dtri.h"
 
 // ---------------
 #include <GLFW/glfw3.h>

@@ -1,24 +1,26 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <set>
-#include <math.h>
-#include <fstream>
-#include <time.h>
 #include "delfem2/adf.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/primitive.h"
 #include "delfem2/bv.h"
-#include "delfem2/bvh.h"
 //
 #include "delfem2/srch_v3bvhmshtopo.h"
 
 // ----------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_funcs.h"
 
 namespace dfm2 = delfem2;
@@ -95,7 +97,7 @@ void Draw(const delfem2::CADF3& adf)
     //    std::cout << "ADF" << aNode.size() << std::endl;
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
-  if( adf.aNode.size() > 0 && adf.is_show_cage ){
+  if( !adf.aNode.empty() && adf.is_show_cage ){
     DrawThisAndChild_Wire(adf.aNode[0], adf.aNode);
   }
   
@@ -152,7 +154,7 @@ void SetProblem(int iprob)
     class CInTorus : public delfem2::CInput_ADF3
     {
     public:
-      virtual double sdf(double x, double y, double z) const {
+      double sdf(double x, double y, double z) const override {
         double n[3];
         return obj.Projection(n,
                               x, y, z);
@@ -173,7 +175,7 @@ void SetProblem(int iprob)
     class CMesh : public delfem2::CInput_ADF3
     {
     public:
-      virtual double sdf(double x, double y, double z) const {
+      double sdf(double x, double y, double z) const override {
         CVector3 n0;
         double sdf0 = obj.SignedDistanceFunction(n0,
                                                  CVector3(x,y,z),

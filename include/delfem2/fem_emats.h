@@ -274,7 +274,7 @@ void MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(CMatrixSparse<double>& m
                                                         const double myu,
                                                         const double rho,
                                                         const double gravity_z,
-                                                        const double* aXY1, int nXY,
+                                                        const double* aXY1, unsigned int nXY,
                                                         const unsigned int* aTri1, unsigned int nTri,
                                                         const double* aVal);
 

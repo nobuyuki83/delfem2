@@ -1406,14 +1406,14 @@ void VoxSubdiv
 */
 
 
-/////////////////////////////////////////////////
+// -------------------------------------
 
 void HexSubdiv
 (std::vector<unsigned int>& aHex1,
  std::vector<unsigned int> &psupIndHex0,
  std::vector<unsigned int> &psupHex0,
  std::vector<unsigned int>& aQuadHex0,
- ///
+ //
  const unsigned int* aHex0, int nHex0,
  const int nhp0)
 {

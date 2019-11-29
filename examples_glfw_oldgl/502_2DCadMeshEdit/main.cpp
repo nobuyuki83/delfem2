@@ -1,8 +1,11 @@
-#include <iostream>
-#include <sstream>
-#include <math.h>
-#include <complex>
-#include <set>
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#include <cmath>
 #include <stack>
 #include "delfem2/dtri_v2.h"
 #include "delfem2/cad2d.h"

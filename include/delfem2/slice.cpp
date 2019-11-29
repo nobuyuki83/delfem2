@@ -86,10 +86,12 @@ void dfm2::CSegInfo::Initialize
   }
 }
 
-void dfm2::CSegInfo::Pos3D
- (double pA[3], double pB[3],
-  const std::vector<double>& aXYZ,
-  const std::vector<unsigned int>& aTri) const 
+void dfm2::CSegInfo::Pos3D(
+    double pA[3],
+    double pB[3],
+    //
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri) const
 {
   const unsigned int i0 = aTri[this->itri*3+0];
   const unsigned int i1 = aTri[this->itri*3+1];
@@ -106,10 +108,12 @@ void dfm2::CSegInfo::Pos3D
   pB[2] = (1.0-this->r0B)*aP[(this->iedB+1)%3][2] + (this->r0B)*aP[(this->iedB+2)%3][2];
 }
 
-void dfm2::CSegInfo::Pos2D
-(double pA[2], double pB[2],
- const double* aXY,
- const unsigned int* aTri) const
+void dfm2::CSegInfo::Pos2D(
+    double pA[2],
+    double pB[2],
+    //
+    const double* aXY,
+    const unsigned int* aTri) const
 {
   const unsigned int i0 = aTri[this->itri*3+0];
   const unsigned int i1 = aTri[this->itri*3+1];
@@ -124,12 +128,12 @@ void dfm2::CSegInfo::Pos2D
   pB[1] = (1.0-this->r0B)*aP[(this->iedB+1)%3][1] + (this->r0B)*aP[(this->iedB+2)%3][1];
 }
 
-void dfm2::AddContour
- (std::vector<dfm2::CSegInfo>& aSeg,
-  double thres,
-  const unsigned int* aTri,
-  unsigned int nTri,
-  const double* aVal)
+void dfm2::AddContour(
+    std::vector<dfm2::CSegInfo>& aSeg,
+    double thres,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aVal)
 {
   for(unsigned int itri=0;itri<nTri;++itri){
     double v0 = aVal[ aTri[itri*3+0] ];
