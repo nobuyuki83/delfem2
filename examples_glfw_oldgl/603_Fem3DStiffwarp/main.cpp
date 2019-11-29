@@ -23,17 +23,9 @@
 #include "delfem2/dtri_v2.h"
 
 // ------------
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
-#include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl2_v23.h"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "../glut_cam.h"
+#include "delfem2/opengl/glfw_viewer.hpp"
 
 namespace dfm2 = delfem2;
 
@@ -105,7 +97,6 @@ void RotationAtMeshPoints
 
 // ---------------------------
 
-CNav3D_GLUT nav;
 bool is_animatio = false;
 bool is_stiffness_warping = true;
 
@@ -142,8 +133,7 @@ void InitializeProblem_ShellEigenPB()
   ilu_A.Initialize_ILU0(mat_A);
 }
   
-  ////////////////////////////////////////////
-
+// ------------------------------------------------------
 
 void Solve_Linear()
 {
@@ -159,20 +149,19 @@ void Solve_Linear()
                                                  aVelo.data());
   mat_A.SetBoundaryCondition(aBCFlag.data(),aXYZ.size()/3,3);
   setRHS_Zero(vec_b,aBCFlag,0);
-  ////
+  //
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   const int nDoF = aXYZ.size();
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
                                               1.0e-4, 1000, mat_A, ilu_A);
-  ////
+  //
   XPlusAYBZ(aDisp,nDoF,aBCFlag,
             dt, dv,
             dt, aVelo);
   XPlusAY(aVelo,nDoF,aBCFlag,
           1.0, dv);
-
   std::cout << "conv; " << aConv.size() <<  std::endl;
 }
 
@@ -181,7 +170,7 @@ void Solve_StiffnessWarping()
 {
   RotationAtMeshPoints(aR,
                        aXYZ,aDisp,psup_ind,psup);
-  /////
+  // ----------------------
   mat_A.SetZero();
   vec_b.assign(aXYZ.size(),0.0);
   dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(mat_A, vec_b.data(),
@@ -193,17 +182,15 @@ void Solve_StiffnessWarping()
                                                     aDisp.data(),
                                                     aVelo.data(),
                                                     aR);
-  ////
   mat_A.SetBoundaryCondition(aBCFlag.data(),aXYZ.size()/3,3);
   setRHS_Zero(vec_b,aBCFlag,0);
-  /////////////
+  // -------------------
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   const int nDoF = aXYZ.size();
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
                                               1.0e-4, 1000, mat_A, ilu_A);
-  ////
   XPlusAYBZ(aDisp,nDoF,aBCFlag,
             dt, dv,
             dt, aVelo);
@@ -212,28 +199,10 @@ void Solve_StiffnessWarping()
   std::cout << "conv; " << aConv.size() <<  std::endl;
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------
 
 void myGlutDisplay()
 {
-  if( is_stiffness_warping ){
-    ::glClearColor(0.4f, 0.9f, 0.9f ,1.0f);
-  }
-  else{
-    ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  }
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.0f, 1.0f );
-
-  nav.SetGL_Camera();
-
-//  glEnable(GL_BLEND);
-//  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   {
     float color[4] = {200.0/256.0, 200.0/256.0, 200.0/256.0,1.0f};
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,color);
@@ -285,95 +254,10 @@ void myGlutDisplay()
 
   }
 
-  
-  if( is_lighting ){ ::glEnable(GL_LIGHTING); }
-  else{              ::glDisable(GL_LIGHTING); }
-
-  ::glColor3d(0,0,0);
-  ShowFPS();
-  ::glutSwapBuffers();
 }
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0, 0, w, h);
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch (Key)
-  {
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-    {
-      is_animatio = !is_animatio;
-      break;
-    }
-    case 'l':
-    {
-      is_stiffness_warping = !is_stiffness_warping;
-      break;
-    }
-    case 's':
-    {
-      Solve_StiffnessWarping();
-      break;
-    }
-	::glutPostRedisplay();
-  }
-}
-
-void myGlutIdle(){
-  if( is_animatio ){
-    if( is_stiffness_warping ){ Solve_StiffnessWarping(); }
-    else{                       Solve_Linear();           }
-  }
-  ::glutPostRedisplay();
-}
-
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
-
 
 int main(int argc,char* argv[])
 {
-	// Initialize GLUT
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
-	glutInit(&argc, argv);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("FEM View");
-
-	// Define callback functions
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-	glutIdleFunc(myGlutIdle);
-  
-  
   {
     std::vector< std::vector<double> > aaXY;
     {
@@ -382,7 +266,7 @@ int main(int argc,char* argv[])
         +1,-0.1,
         +1,+0.1,
         -1,+0.1 };
-      aaXY.push_back( std::vector<double>(aXY,aXY+8) );
+      aaXY.emplace_back(aXY,aXY+8 );
     }
     std::vector<CVector2> aVec2;
     std::vector<dfm2::CEPo2> aPo2D;
@@ -412,11 +296,22 @@ int main(int argc,char* argv[])
   RotationAtMeshPoints(aR,
                        aXYZ,aDisp,psup_ind,psup);
 
-  
-  nav.camera.view_height = 2.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
-  
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.nav.camera.view_height = 2.0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
-  glutMainLoop();
-	return 0;
+
+  while(!glfwWindowShouldClose(viewer.window)){
+    if( is_stiffness_warping ){ Solve_StiffnessWarping(); }
+    else{                       Solve_Linear();           }
+    // -----
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+
 }

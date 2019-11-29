@@ -70,8 +70,8 @@ void dfm2::JArray_Sort(
     const unsigned int ie = index[ipoin+1];
     if( is == ie ) continue;
     assert( is < ie );
-    for(int i=(int)is;i<ie-1;i++){
-      for(int j=(int)ie-1;j>i;j--){
+    for(unsigned int i=is;i<ie-1;i++){
+      for(int j=(int)ie-1;j>(int)i;j--){
         if( array[j] < array[j-1] ){
           unsigned int itmp = array[j];
           array[j] = array[j-1];
@@ -134,7 +134,7 @@ void dfm2::JArray_AddDiagonal
 void JArrayEdgeUnidir_PointSurPoint
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
- /////
+ //
  const std::vector<unsigned int> &psup_ind,
  const std::vector<unsigned int> &psup)
 {
@@ -143,7 +143,7 @@ void JArrayEdgeUnidir_PointSurPoint
   edge_ind.resize(np+1);
   edge_ind[0] = 0;
   edge.clear();
-  ////
+  //
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int ip0 = psup[ipsup];
@@ -259,7 +259,7 @@ void dfm2::convert2Tri_Quad
 
 void convert2Tri
 (std::vector<int>& aTri,
- ////
+ //
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
@@ -328,9 +328,9 @@ void AddElement
   const int nnoel = nNodeElem(femelem_type);
   const std::size_t nElemIn = aElemIn.size()/nnoel;
   aElemType.resize(aElemType.size()+nElemIn,femelem_type);
-  ////
+  //
   std::copy(aElemIn.begin(), aElemIn.end(), std::back_inserter(aElem));
-  ////
+  //
   assert( aElemInd.size() >= 2 );
   const std::size_t nelem0 = aElemInd.size()-1;
   const int nei0 = aElemInd[nelem0];
@@ -357,7 +357,7 @@ void JArrayElemSurPoint_MeshTri
 void JArrayElemSurPoint_MeshMix
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
- ////
+ // ---
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const int nPo)
@@ -507,7 +507,7 @@ void makeSurroundingRelationship
 void makeSurroundingRelationship
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
- ///
+ //
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE> &aElemType,
@@ -1123,18 +1123,18 @@ int findFace(
     const std::vector<unsigned int> &elsupInd,
     const std::vector<unsigned int> &elsup)
 {
-  if( ip0 >= (int)elsupInd.size()-1 ) return -1;
+  if( ip0 >= elsupInd.size()-1 ) return -1;
   for(unsigned int ielsup=elsupInd[ip0];ielsup<elsupInd[ip0+1];++ielsup){
-    int ie0 = elsup[ielsup];
-    int iq0 = aQuad[ie0*4+0];
-    int iq1 = aQuad[ie0*4+1];
-    int iq2 = aQuad[ie0*4+2];
-    int iq3 = aQuad[ie0*4+3];
+    unsigned int ie0 = elsup[ielsup];
+    unsigned int iq0 = aQuad[ie0*4+0];
+    unsigned int iq1 = aQuad[ie0*4+1];
+    unsigned int iq2 = aQuad[ie0*4+2];
+    unsigned int iq3 = aQuad[ie0*4+3];
     if( ip0!=iq0 && ip0!=iq1 && ip0!=iq2 && ip0!=iq3 ) continue;
     if( ip1!=iq0 && ip1!=iq1 && ip1!=iq2 && ip1!=iq3 ) continue;
     if( ip2!=iq0 && ip2!=iq1 && ip2!=iq2 && ip2!=iq3 ) continue;
     if( ip3!=iq0 && ip3!=iq1 && ip3!=iq2 && ip3!=iq3 ) continue;
-    return ie0;
+    return (int)ie0;
   }
   return -1;
 }
@@ -1172,7 +1172,7 @@ void QuadSubdiv
         unsigned int jp3 = aQuad0[jq0*4+3];
         if( ((int)jp0!=ip) && ((int)jp1!=ip) && ((int)jp2!=ip) && ((int)jp3!=ip) ){ continue; }
         if( ((int)jp0!=ip1) && ((int)jp1!=ip1) && ((int)jp2!=ip1) && ((int)jp3!=ip1) ){ continue; }
-        //////
+        // ----------------------------
         if( iq0 == -1 ){ iq0 = jq0; }
         else{
           assert( iq1 == -1 );

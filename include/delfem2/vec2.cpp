@@ -192,16 +192,16 @@ void MeanValueCoordinate2D
  const double *aXY,
  unsigned int nv)
 {
-  for(int iv=0;iv<nv;++iv){ aW[iv] = 0.0; }
-  for(int iv=0;iv<nv;++iv){
+  for(unsigned int iv=0;iv<nv;++iv){ aW[iv] = 0.0; }
+  for(unsigned int iv=0;iv<nv;++iv){
     CVector2 v0(aXY[iv*2+0]-px,aXY[iv*2+1]-py);
     if( v0.Length() > 1.0e-10 ){ continue; }
     aW[iv] = 1.0;
     return;
   }
-  for(int ie=0;ie<nv;++ie){
-    int iv0 = (ie+0)%nv;
-    int iv1 = (ie+1)%nv;
+  for(unsigned int ie=0;ie<nv;++ie){
+    unsigned int iv0 = (ie+0)%nv;
+    unsigned int iv1 = (ie+1)%nv;
     CVector2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
     CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
     const double l0 = v0.Length();
@@ -212,10 +212,10 @@ void MeanValueCoordinate2D
     return;
   }
   double sum = 0;
-  for(int ie=0;ie<nv;++ie){
-    int iv0 = (ie+0)%nv;
-    int iv1 = (ie+1)%nv;
-    int iv2 = (ie+2)%nv;
+  for(unsigned int ie=0;ie<nv;++ie){
+    unsigned int iv0 = (ie+0)%nv;
+    unsigned int iv1 = (ie+1)%nv;
+    unsigned int iv2 = (ie+2)%nv;
     CVector2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
     CVector2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
     CVector2 v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
@@ -229,7 +229,7 @@ void MeanValueCoordinate2D
     aW[iv1] = w1;
     sum += w1;
   }
-  for(int iv=0;iv<nv;++iv){
+  for(unsigned int iv=0;iv<nv;++iv){
     aW[iv] /= sum;
   }
 }
@@ -756,8 +756,8 @@ void SecondMomentOfArea_Polygon
   ////////
   double Ix=0, Iy=0, Ixy=0;
   for(unsigned int iseg=0;iseg<nseg;iseg++){
-    int ip0 = (iseg+0)%nseg;
-    int ip1 = (iseg+1)%nseg;
+    unsigned int ip0 = (iseg+0)%nseg;
+    unsigned int ip1 = (iseg+1)%nseg;
     double x0 = aVec2D[ip0].x-cg.x;
     double y0 = aVec2D[ip0].y-cg.y;
     double x1 = aVec2D[ip1].x-cg.x;
@@ -808,7 +808,9 @@ void JArray_FromVecVec_XY
     }
   }
   loopIP0.resize(aXY.size());
-  for(unsigned int ip=0;ip<aXY.size();++ip){ loopIP0[ip] = ip; }
+  for(std::size_t ip=0;ip<aXY.size();++ip){
+    loopIP0[ip] = ip;
+  }
 }
 
 
