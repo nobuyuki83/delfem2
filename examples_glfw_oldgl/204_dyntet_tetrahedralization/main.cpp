@@ -1,11 +1,15 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <cassert>
 #include <iostream>
-#include <string>
 #include <vector>
-#include <stack>
-#include <set>
-#include <math.h>
-#include <time.h>
+#include <ctime>
+#include <random>
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
@@ -16,7 +20,6 @@
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl2_color.h"
 
 // --------------------------------------------
 
@@ -60,7 +63,7 @@ static void myGlVertex3d(const CVector3& v)
 }
 
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
 
   ::glEnable(GL_BLEND);
@@ -144,10 +147,13 @@ void Initialize()
 void AddRandomPoint()
 {
   std::vector<int> tmp_buffer;
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_real_distribution<> dist(-1.0, +1.0);
   for(int itr=0;itr<100;itr++){
-    double x0 = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-    double y0 = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-    double z0 = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
+    double x0 = dist(mt);
+    double y0 = dist(mt);
+    double z0 = dist(mt);
     int ip_ins = (int)aPo3D.size();
     aPo3D.resize(ip_ins+1);
     aPo3D[ip_ins].p = CVector3(x0,y0,z0);

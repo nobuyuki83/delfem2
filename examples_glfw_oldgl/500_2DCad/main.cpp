@@ -6,13 +6,9 @@
  */
 
 #include <iostream>
-#include <sstream>
-#include <math.h>
-#include <complex>
-#include <set>
+#include <cmath>
 #include <stack>
 #include "delfem2/funcs.h"
-#include "delfem2/dtri_v2.h"
 #include "delfem2/cad2d.h"
 
 // --------------
@@ -74,7 +70,7 @@ int main(int argc,char* argv[])
         Transform_LoopEdgeCad2D(aEdge,false,true,1.0,1.0);
         if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
         aEdge = RemoveEdgeWithZeroLength(aEdge);
-        for(size_t ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+        for(auto & ie : aEdge){ ie.GenMesh(-1); }
         std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
         cad.Clear();
         cad.AddFace(aEdge);

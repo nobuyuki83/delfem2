@@ -5,20 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#if defined(__VISUALC__)
-#pragma warning( disable : 4786 )   // C4786なんて表示すんな( ﾟДﾟ)ｺﾞﾙｧ
-#endif
-//#define for if(0);else for
-
 #include <vector>
 #include <map>
 #include <set>
 #include <stack>
 #include <iostream>
-
-#include <time.h>
-#include <stdio.h>
+#include <ctime>
+#include <cstdio>
 
 #include "delfem2/dtet_v3.h"
 
@@ -224,14 +217,14 @@ bool MakeTetSurTet(std::vector<CETet>& tet)
 bool MakeOneTetSurNo(const std::vector<CETet>& tet,
 					 std::vector<CEPo3D>& point)
 {
-	assert( point.size() > 0 );
-	assert( tet.size() > 0 );
+	assert( !point.empty() );
+	assert( !tet.empty() );
 
     const unsigned int npotet = 4;
 
-	for(unsigned int ipoin=0;ipoin<point.size();ipoin++){
-		point[ipoin].e = -1;
-		point[ipoin].poel = -1;
+	for(auto & ipoin : point){
+		ipoin.e = -1;
+		ipoin.poel = -1;
 	}
 
 	for(unsigned int itet=0;itet<tet.size();itet++){
@@ -276,7 +269,7 @@ bool MakeTetSurNo(const std::vector<CETet>& tet,
 			tetsupo_ind[ ipoin1 ]++;
 		}
 	}
-	for(int ipoin=npoin-1;ipoin>=0;ipoin--){
+	for(int ipoin=(int)npoin-1;ipoin>=0;ipoin--){
 		tetsupo_ind[ipoin+1] = tetsupo_ind[ipoin];
 	}
 	tetsupo_ind[0] = 0;
@@ -1516,7 +1509,7 @@ bool MakeElemAroundEdge
     assert( tet[itet_cur].v[ tetRel[iedrel_cur][3] ] == tet[itet_pre].v[ tetRel[iedrel_pre][2] ] );
 		pair_ii.first = itet_cur;
 		pair_ii.second = iedrel_cur;
-		elared.e.push_back( pair_ii );
+		elared.e.emplace_back(pair_ii );
 		elared.n.push_back(tet[itet_cur].v[ tetRel[iedrel_cur][3] ]);
 	}
 	elared.n.push_back(tet[itet0].v[ tetRel[irel0][3] ]);
@@ -1829,7 +1822,7 @@ bool Swap5Elared
 		tet[inew_tetu].f[linner[2]] = linner[5];
 	}
 
-    for(unsigned int itri=0;itri<nTriInSwap5;itri++){
+	for(unsigned int itri=0;itri<nTriInSwap5;itri++){
 		const int inew_tetd = inew_tet[itri][0];
 		const int inew_tetu = inew_tet[itri][1];
 

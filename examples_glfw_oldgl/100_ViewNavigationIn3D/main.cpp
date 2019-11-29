@@ -11,7 +11,6 @@
  */
 
 #include <cstdlib>
-#include <cstdio>
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"

@@ -5,9 +5,6 @@
 //
 #include "delfem2/objfunc_v23.h"
 
-//#include <iostream>
-//#include "delfem2/vec2.h"
-
 // --------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"

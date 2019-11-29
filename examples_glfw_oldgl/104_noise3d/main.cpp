@@ -5,11 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <math.h>
-#include <iostream>
-#include <limits>
-#include <assert.h>
+#include <cstdlib>
 #include <vector>
 #include "delfem2/noise.h"
 #include "delfem2/mshio.h"
@@ -18,7 +14,6 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
 
 // -----------------------------
 std::vector<double> aXYZ;
@@ -29,7 +24,7 @@ int nH, nW, nD;
 std::vector<unsigned char> aV;
 // -------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glEnable(GL_LIGHTING);
   ::glEnable(GL_TEXTURE_3D);
@@ -98,7 +93,7 @@ void ComputePerlin(){
         double v0 = v*128+128;
         if( v0 < 0   ){ v0 =   0; }
         if( v0 > 255 ){ v0 = 255; }
-        unsigned char ucv = (unsigned char)v0;
+        auto ucv = (unsigned char)v0;
         aV[(id*nW*nH+ih*nW+iw)*4+0] = ucv;
         aV[(id*nW*nH+ih*nW+iw)*4+1] = ucv;
         aV[(id*nW*nH+ih*nW+iw)*4+2] = ucv;

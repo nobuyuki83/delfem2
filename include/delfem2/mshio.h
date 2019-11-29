@@ -9,8 +9,9 @@
 #ifndef MSHIO_H
 #define MSHIO_H
 
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
+#include <string>
 
 // ---------------
 // IO functions

@@ -5,8 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/specialfuncs.h"
 
 #include <GLFW/glfw3.h>

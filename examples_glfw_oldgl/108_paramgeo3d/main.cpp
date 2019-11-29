@@ -6,21 +6,13 @@
  */
 
 #include <cassert>
-#include <iostream>
-#include <string>
 #include <vector>
-#include <stack>
-#include <set>
-#include <math.h>
-#include <time.h>
+#include <random>
 #include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/paramgeo_v23.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl2_color.h"
 
 namespace dfm2 = delfem2;
 
@@ -93,10 +85,15 @@ void Random()
 {
   int nCP = 16;
   aCP.resize(nCP);
-  for(int iCP=0;iCP<16;iCP++){
-    aCP[iCP].x = 1.0*(double)rand()/(RAND_MAX+1.0);
-    aCP[iCP].y = 1.0*(double)rand()/(RAND_MAX+1.0);
-    aCP[iCP].z = 1.0*(double)rand()/(RAND_MAX+1.0);
+  {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<> dist(-1.0, 1.0);
+    for(int iCP=0;iCP<16;iCP++) {
+      aCP[iCP].x = dist(mt);
+      aCP[iCP].y = dist(mt);
+      aCP[iCP].z = dist(mt);
+    }
   }
   aIndCP.resize(16);
   for(int i=0;i<16;++i){ aIndCP[i] = i; }
@@ -148,8 +145,8 @@ void myGlutDisplay(void)
     ::glColor3d(0,0,0);
     ::glPointSize(3);
     ::glBegin(GL_POINTS);
-    for(int icp=0;icp<(int)aCP.size();icp++){
-      myGlVertex3d(aCP[icp]);
+    for(const auto & icp : aCP){
+      myGlVertex3d(icp);
     }
     ::glEnd();
   }

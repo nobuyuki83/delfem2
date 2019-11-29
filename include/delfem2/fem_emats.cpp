@@ -1496,17 +1496,19 @@ void dfm2::MergeLinSys_NavierStokes3D_Dynamic
  */
 
 
-void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double thick,
- const double lambda,
- const double myu,
- const double rho,
- const double gravity_z,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, unsigned int nTri,
- const double* aVal)
+void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double thick,
+    const double lambda,
+    const double myu,
+    const double rho,
+    const double gravity_z,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
+    const double* aVal)
 {
   const int np = nXY;
   std::vector<int> tmp_buffer(np, -1);

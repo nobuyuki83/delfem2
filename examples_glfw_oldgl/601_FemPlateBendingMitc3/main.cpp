@@ -1,5 +1,6 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
+#include <random>
 #include "delfem2/emat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
@@ -158,22 +159,26 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       exit(0);  /* '\033' ? ESC ? ASCII ??? */
     case 'c':
     {
+      std::random_device rd;
+      std::mt19937 mt(rd());
+      std::uniform_real_distribution<> dist0(-0.5, +0.5);
+      std::uniform_real_distribution<> dist1(+1.0e-10, +1.0);
       for(int itr=0;itr<200;++itr){
         double C[3][2];
         for(int i=0;i<6;++i){
-          (&C[0][0])[i] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
+          (&C[0][0])[i] = 10.0*dist0(mt);
         }
         double a0 = TriArea2D(C[0], C[1], C[2]);
         if( a0 < 0.1 ) continue;
         double u[3][3];
         for(int i=0;i<9;++i){
-          (&u[0][0])[i] = 1.0*(rand()/(RAND_MAX+1.0)-0.5);
+          (&u[0][0])[i] = 1.0*dist0(mt);
         }
-        double thickness = (rand()+1.0)/(RAND_MAX+1.0);
-        double lambda = (rand()+1.0)/(RAND_MAX+1.0);
-        double myu = (rand()+1.0)/(RAND_MAX+1.0);
+        double thickness1 = dist1(mt);
+        double lambda1 = dist1(mt);
+        double myu1 = dist1(mt);
         double diff = Check_WdWddW_PlateBendingMITC3(C, u,
-                                                     thickness,lambda,myu, 1.0e-5);
+                                                     thickness1,lambda1,myu1, 1.0e-5);
         std::cout << itr << " " << diff << std::endl;
       }
     }

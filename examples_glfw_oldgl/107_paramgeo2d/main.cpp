@@ -6,9 +6,8 @@
  */
 
 #include <iostream>
-#include <math.h>
+#include <random>
 #include "delfem2/vec2.h"
-#include "delfem2/camera.h"
 #include "delfem2/paramgeo_v23.h"
 
 #include <GLFW/glfw3.h>
@@ -58,7 +57,7 @@ void SetExample(int ndeg, int ncp)
   }
 }
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glDisable(GL_LIGHTING);
   
@@ -91,9 +90,12 @@ int main(int argc,char* argv[])
     {
       static int iframe = 0;
       if( iframe == 0 ){
-        for(int icp=0;icp<aCtrlPoint.size();++icp){
-          aCtrlPoint[icp].x += ((double)rand()/RAND_MAX-0.5)*0.1;
-          aCtrlPoint[icp].y += ((double)rand()/RAND_MAX-0.5)*0.1;
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_real_distribution<> dist(-0.01, 0.01);
+        for(auto & icp : aCtrlPoint){
+          icp.x += dist(mt);
+          icp.y += dist(mt);
         }
         dfm2::SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
       }

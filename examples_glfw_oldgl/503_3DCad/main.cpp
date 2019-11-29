@@ -1,25 +1,24 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <cmath>
 #include <algorithm>
 #include "delfem2/cad3d.h"
-
-//#include <iostream>
-//#include <sstream>
-//#include <complex>
-//#include <set>
-//#include <deque>
-//#include <set>
-//#include <stack>
-//#include "delfem2/mat3.h"
-
-#ifndef M_PI
-#define M_PI 3.141592653589793
-#endif
 
 // ----------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl2_v23.h"
+
+
+#ifndef M_PI
+#  define M_PI 3.141592653589793
+#endif
 
 namespace dfm2 = delfem2;
 
