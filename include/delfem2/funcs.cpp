@@ -47,8 +47,7 @@ bool isAlphabet(char c){
 }
 
 bool isNumber(char c){
-  if( c >= 46 && c <= 57 ){ return true; }
-  return false;
+  return c >= 46 && c <= 57;
 }
 
 void Split
@@ -108,7 +107,7 @@ std::vector<std::string> Split_Parentheses
   char cs = par[0];
   char ce = par[1];
   ////
-  int is=0;
+  unsigned int is=0;
   int ilevel = 0;
   for(std::size_t ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
@@ -131,7 +130,7 @@ std::vector<std::string> Split_Quote
  char quote)
 {
   std::vector<std::string> aToken;
-  int is=0;
+  unsigned int is=0;
   bool is_in = false;
   for(std::size_t ie=0;ie<str.size();++ie){
     if( ie == str.size()-1 ){
@@ -347,7 +346,7 @@ std::string getCmdOptionStr(char ** begin, char ** end, const std::string & opti
   {
     return std::string(*itr);
   }
-  return 0;
+  return "";
 }
 
 int getCmdOptionInt(char ** begin, char ** end, const std::string & option, int ndef)
@@ -402,7 +401,7 @@ std::string pathRemoveExtension(const std::string& fpath)
   Split(aToken, fpath, '.');
   std::string sRes;
   for(int it=0;it<(int)aToken.size()-1;++it){
-    sRes = sRes + aToken[it];
+    sRes += aToken[it];
   }
   return sRes;
 }
@@ -500,10 +499,10 @@ bool isNaN(double x) { return x!=x; }
 // 10bytes header
 struct NPY
 {
-  char magic_string[6]; // 6 bytes (0x93NUMPY)
-  unsigned char major_version; // 1 byte
-  unsigned char minor_version; // 1 byte
-  unsigned short header_len; // 2 bytes
+  char magic_string[6] = {'X','X','X','X','X','X'}; // 6 bytes (0x93NUMPY)
+  unsigned char major_version = 0; // 1 byte
+  unsigned char minor_version = 0; // 1 byte
+  unsigned short header_len = 0; // 2 bytes
 };
 
 

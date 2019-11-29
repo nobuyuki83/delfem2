@@ -169,17 +169,19 @@ void dfm2::MergeLinSys_Poission_MeshTri2D
   }
 }
 
-void dfm2::MergeLinSys_Helmholtz_MeshTri2D
-(CMatrixSparse<COMPLEX>& mat_A,
- COMPLEX* vec_b,
- const double wave_length,
- const double* aXY1, int np,
- const unsigned int* aTri1, int nTri,
- const COMPLEX* aVal)
+void dfm2::MergeLinSys_Helmholtz_MeshTri2D(
+    CMatrixSparse<COMPLEX>& mat_A,
+    COMPLEX* vec_b,
+    const double wave_length,
+    const double* aXY1,
+    unsigned int np,
+    const unsigned int* aTri1,
+    unsigned int nTri,
+    const COMPLEX* aVal)
 {
-  const int nDoF = np;
+  const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -200,31 +202,34 @@ void dfm2::MergeLinSys_Helmholtz_MeshTri2D
   }
 }
 
-void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D
-(CMatrixSparse<COMPLEX>& mat_A,
- COMPLEX* vec_b,
- const double wave_length,
- const double* aXY1, int np,
- const unsigned int* aIP, int nIP,
- const COMPLEX* aVal)
+void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
+    CMatrixSparse <COMPLEX> &mat_A,
+    COMPLEX* vec_b,
+    const double wave_length,
+    const double* aXY1,
+    unsigned int np,
+    const unsigned int* aIPPolyline,
+    unsigned int nIPPolyline,
+    const COMPLEX* aVal)
 {
-  const int nDoF = np;
+  const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
-  for(int iel=0; iel<nIP-1; ++iel){
-    const unsigned int i0 = aIP[iel+0];
-    const unsigned int i1 = aIP[iel+1];
-    const unsigned int aIP[2] = {i0,i1};
-    double P[2][2]; FetchData(&P[0][0],2,2,aIP, aXY1);
+  assert( nIPPolyline >= 2 );
+  for(unsigned int iel=0; iel < nIPPolyline - 1; ++iel){
+    const unsigned int i0 = aIPPolyline[iel + 0];
+    const unsigned int i1 = aIPPolyline[iel + 1];
+    const unsigned int aip[2] = {i0,i1};
+    double P[2][2]; FetchData(&P[0][0],2,2,aip, aXY1);
     const COMPLEX val[2] = { aVal[i0], aVal[i1] };
-    ////
+    //
     COMPLEX eres[2], emat[2][2];
     EMat_SommerfeltRadiationBC_Line2D(eres,emat,
-                                         wave_length,P,val);
+        wave_length,P,val);
     for(int ino=0;ino<2;ino++){
-      const unsigned int ip = aIP[ino];
+      const unsigned int ip = aip[ino];
       vec_b[ip] += eres[ino];
     }
-    mat_A.Mearge(2, aIP, 2, aIP, 1, &emat[0][0], tmp_buffer);
+    mat_A.Mearge(2, aip, 2, aip, 1, &emat[0][0], tmp_buffer);
   }
 }
 
@@ -763,16 +768,16 @@ double dfm2::MergeLinSys_Contact
  */
 
 
-void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double lambda,
- const double rho,
- const double g[3],
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
- const double* aDisp)
+void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double *g,
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTet, unsigned int nTet,
+    const double* aDisp)
 {
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);

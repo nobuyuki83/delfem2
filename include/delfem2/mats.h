@@ -344,9 +344,9 @@ void XPlusAYBZCW(std::vector<double>& X,
                  const std::vector<double>& W);
 
 void ScaleX(double* p0, int n, double s);
-void NormalizeX(double* p0, int n);
+void NormalizeX(double* p0, unsigned int n);
 void OrthogonalizeToUnitVectorX(double* p1,
-                                const double* p0, int n);
+                                const double* p0, unsigned int n);
 
 // set boundary condition
 

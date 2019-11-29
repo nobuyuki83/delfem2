@@ -351,7 +351,8 @@ void CheckEnergyMIPS(){
     //        c[ino][2] *= 1.5;
   }
   double E, dE[3][3], ddE[3][3][3][3];
-  Energy_MIPS(E, dE, ddE, c, C);
+  Energy_MIPS(E, dE, ddE,
+              c, C);
   std::cout << E << std::endl;
   for(int ino=0;ino<3;++ino){
     for(int idim=0;idim<3;++idim){
@@ -362,7 +363,8 @@ void CheckEnergyMIPS(){
       double eps = 1.0e-4;
       c1[ino][idim] += eps;
       double E1, dE1[3][3], ddE1[3][3][3][3];
-      Energy_MIPS(E1, dE1, ddE1, c1, C);
+      Energy_MIPS(E1, dE1, ddE1,
+                  c1, C);
       std::cout << " " << (E1-E)/eps << " " << dE[ino][idim] << std::endl;
       for(int jno=0;jno<3;++jno){
         for(int jdim=0;jdim<3;++jdim){

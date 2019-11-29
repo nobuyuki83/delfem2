@@ -8,10 +8,10 @@
 
 #include <vector>
 #include <cmath>
-#include <iostream>
-#include <cassert>
-#include <fstream>
-#include <ctime>
+//#include <iostream>
+//#include <cassert>
+//#include <fstream>
+//#include <ctime>
 
 #include "delfem2/primitive.h"
 
@@ -301,12 +301,6 @@ bool dfm2::CCylinder::IntersectionPoint
 }
 
 // --------------------------------------------------------
-
-dfm2::CTorus::CTorus(){
-	cent_[0] = 0;	cent_[1] = 0;	cent_[2] = 0;
-	radius_ = 0.5;
-	radius_tube_ = 0.2;
-}
 
 // return penetration depth (inside is positive)
 double dfm2::CTorus::Projection

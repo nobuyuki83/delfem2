@@ -6,7 +6,6 @@
  */
 
 #include <cstdlib>
-
 #include "delfem2/vec2.h"
 
 double TriArea2D(const double v1[2], const double v2[2], const double v3[2]){
@@ -188,9 +187,10 @@ void makeSplineLoop
 
 
 void MeanValueCoordinate2D
-(double* aW,
+(double *aW,
  double px, double py,
- const double* aXY, int nv)
+ const double *aXY,
+ unsigned int nv)
 {
   for(int iv=0;iv<nv;++iv){ aW[iv] = 0.0; }
   for(int iv=0;iv<nv;++iv){

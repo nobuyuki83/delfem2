@@ -4,29 +4,6 @@
 git submodule update --init --recursive
 
 ################################
-# test cpp
-
-cd test_cpp/googletest
-cmake .
-make
-cd ../../
-
-cd test_cpp
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
-cd ../../
-
-cd test_cpp
-mkdir buildMake
-cd buildMake
-cmake ..
-make
-./runUnitTests
-cd ../../
-
-
-################################
 # build examples_glfw
 
 cd src_cpp/external/glfw
@@ -84,6 +61,22 @@ cmake --build .
 cd ../../
 
 
+##################################
+## build CSharp
+
+cd src_dll 
+mkdir build 
+cd build
+cmake ..
+make
+cd ../../
+
+cd examples_cs
+mcs helloworld.cs -define:__APPLE__ -out:helloworld.exe
+mono helloworld.exe
+./helloworld.exe
+cd ../
+
 ################################
 # build python
 
@@ -113,11 +106,27 @@ python3 setup.py test
 #python3 setup.py sdist bdist_wheel
 #twine upload dist/*
 
-##################################
-## build dynamic link library
 
-cd src_dll && mkdir build && cd build
+################################
+# test cpp
+# (this takes time so put it in the end)
+
+cd test_cpp/googletest
+cmake .
+make
+cd ../../
+
+cd test_cpp
+mkdir buildXcode
+cd buildXcode
+cmake -G Xcode ..
+cd ../../
+
+cd test_cpp
+mkdir buildMake
+cd buildMake
 cmake ..
 make
+./runUnitTests
 cd ../../
 

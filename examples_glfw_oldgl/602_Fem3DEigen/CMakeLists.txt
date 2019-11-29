@@ -9,7 +9,7 @@ if(MSVC)
   /wd4800 /wd4996 /wd4530 /wd4245 /wd4505\
   /wd4838 /wd4305 /wd4505 /wd4456")
 else()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -std=c++11" )
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations" )
 endif()
 
 ############################################

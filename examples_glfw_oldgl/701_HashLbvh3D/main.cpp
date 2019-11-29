@@ -1,12 +1,11 @@
-#include <iostream>
 #include <vector>
-#include <bitset>
-#include <stdint.h> // std::uint32_t
 #include <algorithm>
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/srchbi_v3bvh.h"
-
+//#include "delfem2/srchbi_v3bvh.h"
+//#include <iostream>
+//#include <bitset>
+//#include <cstdint> // std::uint32_t
 //#include "delfem2/primitive.h"
 //#include "delfem2/mshmisc.h"
 //#include "delfem2/mshtopo.h"

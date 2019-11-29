@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-//#include <cstdio>
-
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"

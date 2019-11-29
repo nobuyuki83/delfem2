@@ -44,13 +44,15 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> psupIndQuad0, psupQuad0;
     QuadSubdiv(aQuad1,
                psupIndQuad0,psupQuad0, aEdgeFace0,
-               aQuad0.data(), aQuad0.size()/4,
-               aXYZ0.size()/3);
+               aQuad0.data(), (unsigned int)(aQuad0.size()/4),
+               (unsigned int)(aXYZ0.size()/3));
     std::vector<double>& aXYZ1 = aaXYZ[il+1];
     delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
                                                 aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
-                                                aQuad0.data(), aQuad0.size()/4,
-                                                aXYZ0.data(),  aXYZ0.size()/3);
+                                                aQuad0.data(),
+                                                (unsigned int)aQuad0.size()/4,
+                                                aXYZ0.data(),
+                                                (unsigned int)aXYZ0.size()/3);
   }
   
   // end computing subdivision

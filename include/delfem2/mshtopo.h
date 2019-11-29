@@ -324,7 +324,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<unsigned int>& psup
                                                  const unsigned int* pElem,
                                                  unsigned int nEl,
                                                  int nPoEl,
-                                                 int nPo);
+                                                 unsigned int nPo);
 void makeOneRingNeighborhood_TriFan(std::vector<int>& psup_ind,
                                     std::vector<int>& psup,
                                     //

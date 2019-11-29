@@ -186,7 +186,7 @@ class Test_FEMShellCloth():
   def test1(self,request):
     cad = dfm2.Cad2D()
     cad.add_polygon(list_xy=[-1, -1, +1, -1, +1, +1, -1, +1])
-    
+    ####
     mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
     msh = mesher.meshing(cad)
     fem = dfm2.FEM_ShellCloth()

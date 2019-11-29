@@ -1,15 +1,8 @@
-
-#include <cassert>
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <set>
-#include <stack>
-#include <algorithm>
 #include <cstdlib>
-#include <math.h>
-#include <time.h>
+#include <cmath>
+#include <ctime>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec2.h"
@@ -20,12 +13,19 @@
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri_v2.h"
 
+//#include <cassert>
+//#include <fstream>
+//#include <string>
+//#include <set>
+//#include <stack>
+//#include <algorithm>
+
 // -------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl2_color.h"
-#include "delfem2/opengl/gl2_v23.h"
 #include "delfem2/opengl/gl2_funcs.h"
+//#include "delfem2/opengl/gl2_color.h"
+//#include "delfem2/opengl/gl2_v23.h"
 
 namespace dfm2 = delfem2;
 
@@ -64,13 +64,13 @@ void GenMesh
   }
 }
 
-void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6
-(double* aMassLumpedSqrtInv,
- double* aModesKer,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet)
+void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
+    double* aMassLumpedSqrtInv,
+    double* aModesKer,
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTet, unsigned int nTet)
 {
-  const int nDoF = nXYZ*3;
+  const unsigned int nDoF = nXYZ*3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
   MassPoint_Tet3D(aMassLumpedSqrt.data(),
                    1, aXYZ, nXYZ, aTet,nTet);
@@ -291,7 +291,7 @@ int main(int argc,char* argv[])
         +1,-0.3,
         +1,+0.3,
         -1,+0.3 };
-      aaXY.push_back( std::vector<double>(aXY,aXY+8) );
+      aaXY.emplace_back(aXY,aXY+8 );
     }
 
     std::vector<CVector2> aVec2;
@@ -327,6 +327,8 @@ int main(int argc,char* argv[])
 
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
+    Solve();
+    // -----
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
     viewer.DrawEnd_oldGL();

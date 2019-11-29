@@ -88,7 +88,9 @@ void delfem2::opengl::ViewTransformation
   ::glMultMatrixd(A);
 }
 
-void delfem2::opengl::myGlVertex(int i, const std::vector<CVector2>& aP)
+void delfem2::opengl::myGlVertex(
+    unsigned int i,
+    const std::vector<CVector2>& aP)
 {
   ::glVertex3d(aP[i].x, aP[i].y, +0.0);
 }
@@ -152,7 +154,7 @@ void delfem2::opengl::DrawCylinder
     for (int idiv = 0; idiv<ndivt; idiv++){
       CVector3 v0 = p1+(r*sin((idiv+0)*dt))*x+(r*cos((idiv+0)*dt))*y;
       CVector3 v1 = p1+(r*sin((idiv+1)*dt))*x+(r*cos((idiv+1)*dt))*y;
-      CVector3 v2 = p1;
+      const CVector3& v2 = p1;
       CVector3 n; UnitNormal(n, v1, v0, v2);
       myGlNormal(n);
       myGlVertex(v0);
@@ -279,7 +281,7 @@ void delfem2::opengl::DrawCircleSolid
  const CVector3& org,
  double r)
 {
-  CVector3 z = axis;
+  const CVector3& z = axis;
   CVector3 x, y; GetVertical2Vector(z, x, y);
   const int ndivt = 32;
   const double dt = 3.1415*2.0/ndivt;
@@ -307,7 +309,7 @@ void delfem2::opengl::DrawArcSolid
  double rads,
  double rade)
 {
-  CVector3 z = axis;
+  const CVector3& z = axis;
   CVector3 x, y; GetVertical2Vector(z, x, y);
   const int ndivt = 32;
   const double dt = (rade-rads)/ndivt;
@@ -551,8 +553,8 @@ void delfem2::opengl::DrawPoint3D
 {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_POINTS);
-  for(int ip=0;ip<(int)aPoint.size();++ip){
-    myGlVertex(aPoint[ip]);
+  for(const auto & p : aPoint){
+    myGlVertex(p);
   }
   ::glEnd();
 }
@@ -635,8 +637,7 @@ void delfem2::opengl::DrawGridOutside
   DrawGrid2D(ndivz,ndivx, CVector3(0,0,elen), CVector3(elen,0,0), org+CVector3(0,elen*ndivy,0));
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------------------
 
 void delfem2::opengl::DrawAxisHandler(double s, const CVector3& p)
 {
