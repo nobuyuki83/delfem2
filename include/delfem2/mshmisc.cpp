@@ -307,15 +307,15 @@ void GetCenterWidthGroup
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-void GetCenterWidthGroup
-(double& cx, double& cy, double& cz,
- double& wx, double& wy, double& wz,
- ////
- const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
- int igroup,
- const std::vector<int>& aIndGroup)
+void GetCenterWidthGroup(
+    double& cx, double& cy, double& cz,
+    double& wx, double& wy, double& wz,
+    //
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aElemInd,
+    const std::vector<int>& aElem,
+    int igroup,
+    const std::vector<int>& aIndGroup)
 {
   assert(!aElemInd.empty());
   const unsigned int nelem = aElemInd.size()-1;
@@ -342,27 +342,27 @@ void GetCenterWidthGroup
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-void GetCenterWidth3DGroup
-(double cw[6],
- ////
- const std::vector<double>& aXYZ,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
- int igroup,
- const std::vector<int>& aIndGroup)
+void GetCenterWidth3DGroup(
+    double cw[6],
+    //
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aElemInd,
+    const std::vector<int>& aElem,
+    int igroup,
+    const std::vector<int>& aIndGroup)
 {
   GetCenterWidthGroup(cw[0],cw[1],cw[2], cw[3],cw[4],cw[5],
                       aXYZ,aElemInd,aElem, igroup, aIndGroup);
 }
 
 
-void GetCenterWidthLocal
-(double& lcx, double& lcy, double& lcz,
- double& lwx, double& lwy, double& lwz,
- const std::vector<double>& aXYZ,
- const double lex[3],
- const double ley[3],
- const double lez[3])
+void GetCenterWidthLocal(
+    double& lcx, double& lcy, double& lcz,
+    double& lwx, double& lwy, double& lwz,
+    const std::vector<double>& aXYZ,
+    const double lex[3],
+    const double ley[3],
+    const double lez[3])
 {
   const int nno = (int)aXYZ.size()/3;
   if (nno==0){ lcx=lcy=lcz=0; lwx=lwy=lwz=1; return; }
@@ -456,9 +456,10 @@ void dfm2::Normalize
         s/wmax);
 }
 
-void dfm2::Translate
- (double tx, double ty, double tz,
-  const unsigned int nnode_, double* pXYZs_)
+void dfm2::Translate(
+    double tx, double ty, double tz,
+    const unsigned int nnode_,
+    double* pXYZs_)
 {
   for(unsigned int ino=0;ino<nnode_;ino++){
     pXYZs_[ino*3+0] += tx;
@@ -467,9 +468,10 @@ void dfm2::Translate
   }
 }
 
-void dfm2::Scale
- (double s,
-  const unsigned int nnode_, double* pXYZs_)
+void dfm2::Scale (
+    double s,
+    const unsigned int nnode_,
+    double* pXYZs_)
 {
   for(unsigned int ino=0;ino<nnode_;ino++){
     pXYZs_[ino*3+0] *= s;

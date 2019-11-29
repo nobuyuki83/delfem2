@@ -13,24 +13,22 @@
  * @details this file only depends on and "emat.h" and "mats.h"
  */
 
-#include <cstdio>
 #include <complex>
+#include "delfem2/emat.h"
+#include "delfem2/mats.h"
+//
+#include "delfem2/fem_emats.h"
 
 typedef std::complex<double> COMPLEX;
 
-#include "delfem2/emat.h"
-#include "delfem2/mats.h"
-
-#include "delfem2/fem_emats.h"
-
 namespace dfm2 = delfem2;
 
-static void FetchData
-(double* val_to,
- int nno, int ndim,
- const unsigned int* aIP,
- const double* val_from,
- int nstride=-1)
+static void FetchData(
+    double* val_to,
+    int nno, int ndim,
+    const unsigned int* aIP,
+    const double* val_from,
+    int nstride=-1)
 {
   if( nstride == -1 ){ nstride = ndim; }
   assert( nstride >= ndim );
@@ -135,14 +133,16 @@ static void MatMatTrans3
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void dfm2::MergeLinSys_Poission_MeshTri2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double alpha,
- const double source,
- const double* aXY1, int np,
- const unsigned int* aTri1, int nTri,
- const double* aVal)
+void dfm2::MergeLinSys_Poission_MeshTri2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double source,
+    const double* aXY1,
+    int np,
+    const unsigned int* aTri1,
+    int nTri,
+    const double* aVal)
 {
   const int nDoF = np;
   /////
@@ -233,14 +233,14 @@ void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
   }
 }
 
-void dfm2::MergeLinSys_Poission_MeshTet3D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double alpha,
- const double source,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
- const double* aVal)
+void dfm2::MergeLinSys_Poission_MeshTet3D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double source,
+    const double* aXYZ, int nXYZ,
+    const unsigned int* aTet, int nTet,
+    const double* aVal)
 {
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
@@ -265,18 +265,18 @@ void dfm2::MergeLinSys_Poission_MeshTet3D
   }
 }
 
-void dfm2::MergeLinSys_Diffusion_MeshTri2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double alpha,
- const double rho,
- const double source,
- const double dt_timestep,
- const double gamma_newmark,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
- const double* aVal,
- const double* aVelo)
+void dfm2::MergeLinSys_Diffusion_MeshTri2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double rho,
+    const double source,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double* aXY1, int nXY,
+    const unsigned int* aTri1, int nTri,
+    const double* aVal,
+    const double* aVelo)
 {
 //  const int nDoF = nXY;
   ////
@@ -307,18 +307,20 @@ void dfm2::MergeLinSys_Diffusion_MeshTri2D
   }
 }
 
-void dfm2::MergeLinSys_Diffusion_MeshTet3D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double alpha,
- const double rho,
- const double source,
- const double dt_timestep,
- const double gamma_newmark,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
- const double* aVal,
- const double* aVelo)
+void dfm2::MergeLinSys_Diffusion_MeshTet3D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double alpha,
+    const double rho,
+    const double source,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double* aXYZ,
+    int nXYZ,
+    const unsigned int* aTet,
+    int nTet,
+    const double* aVal,
+    const double* aVelo)
 {
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
@@ -382,22 +384,22 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double lambda,
- const double rho,
- const double g_x,
- const double g_y,
- const double dt_timestep,
- const double gamma_newmark,
- const double beta_newmark,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
- const double* aVal,
- const double* aVelo,
- const double* aAcc)
+void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double beta_newmark,
+    const double* aXY1, int nXY,
+    const unsigned int* aTri1, int nTri,
+    const double* aVal,
+    const double* aVelo,
+    const double* aAcc)
 {
   const int np = nXY;
 //  const int nDoF = np*2;
@@ -434,15 +436,15 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D
   }
 }
 
-void dfm2::MergeLinSys_StokesStatic2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double g_x,
- const double g_y,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
- const double* aVal)
+void dfm2::MergeLinSys_StokesStatic2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double g_x,
+    const double g_y,
+    const double* aXY1, int nXY,
+    const unsigned int* aTri1, int nTri,
+    const double* aVal)
 {
   const int np = nXY;
 //  const int nDoF = np*3;
@@ -473,19 +475,19 @@ void dfm2::MergeLinSys_StokesStatic2D
   }
 }
 
-void dfm2::MergeLinSys_StokesDynamic2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double rho,
- const double g_x,
- const double g_y,
- const double dt_timestep,
- const double gamma_newmark,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
- const double* aVal,
- const double* aVelo)
+void dfm2::MergeLinSys_StokesDynamic2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double* aXY1, int nXY,
+    const unsigned int* aTri1, int nTri,
+    const double* aVal,
+    const double* aVelo)
 {
   const int np = nXY;
 //  const int nDoF = np*3;
@@ -510,7 +512,7 @@ void dfm2::MergeLinSys_StokesDynamic2D
                                 coords, velo_press, acc_apress,
                                 emat, eres);
     for (int ino = 0; ino<3; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
@@ -519,19 +521,19 @@ void dfm2::MergeLinSys_StokesDynamic2D
   }
 }
 
-void dfm2::MergeLinSys_NavierStokes2D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double rho,
- const double g_x,
- const double g_y,
- const double dt_timestep,
- const double gamma_newmark,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
- const double* aVal, // vx,vy,press
- const double* aDtVal) // ax,ay,apress
+void dfm2::MergeLinSys_NavierStokes2D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double* aXY1, int nXY,
+    const unsigned int* aTri1, int nTri,
+    const double* aVal, // vx,vy,press
+    const double* aDtVal) // ax,ay,apress
 {
   const int np = nXY;
 //  const int nDoF = np*3;
@@ -587,7 +589,7 @@ double dfm2::MergeLinSys_Cloth
     double C[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
     double c[3][3];
     for(int ino=0;ino<3;ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ[ip*3+i]; }
     }
@@ -618,7 +620,7 @@ double dfm2::MergeLinSys_Cloth
     W += e;  // marge energy
     // marge de
     for(int ino=0;ino<4;ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       for(int i =0;i<3;i++){ dW[ip*3+i] += de[ino][i]; }
     }
     // marge dde
@@ -630,15 +632,15 @@ double dfm2::MergeLinSys_Cloth
 
 
 
-double dfm2::MergeLinSys_Contact
-(CMatrixSparse<double>& ddW,
- double* dW,
- ////
- double stiff_contact,
- double contact_clearance,
- const CInput_Contact& input,
- const double* aXYZ,
- int nXYZ)
+double dfm2::MergeLinSys_Contact(
+    CMatrixSparse<double>& ddW,
+    double* dW,
+    //
+    double stiff_contact,
+    double contact_clearance,
+    const CInput_Contact& input,
+    const double* aXYZ,
+    int nXYZ)
 {
   const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np,-1);
@@ -779,9 +781,9 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
     const unsigned int* aTet, unsigned int nTet,
     const double* aDisp)
 {
-  const int np = nXYZ;
+  const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTet; ++iel){
+  for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
@@ -789,16 +791,16 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
     double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
     double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aDisp);
-    ////
+    //
     double emat[4][4][3][3];
     for(int i=0;i<144;++i){ (&emat[0][0][0][0])[i] = 0.0; } // zero-clear
     double eres[4][3];
     {
       const double vol = TetVolume3D(P[0],P[1],P[2],P[3]);
-      for(int ino=0;ino<4;++ino){
-        eres[ino][0] = vol*rho*g[0]*0.25;
-        eres[ino][1] = vol*rho*g[1]*0.25;
-        eres[ino][2] = vol*rho*g[2]*0.25;
+      for(auto & ere : eres){
+        ere[0] = vol*rho*g[0]*0.25;
+        ere[1] = vol*rho*g[1]*0.25;
+        ere[2] = vol*rho*g[2]*0.25;
       }
     }
     EMat_SolidLinear_Static_Tet(emat,eres,
@@ -806,7 +808,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
                                 P, disps,
                                 true); // additive
     for (int ino = 0; ino<4; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
@@ -815,18 +817,18 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
   }
 }
 
-void dfm2::MergeLinSys_LinearSolid3D_Static_Q1
-(CMatrixSparse<double>& mat_A,
- std::vector<double>& vec_b,
- const double myu,
- const double lambda,
- const double rho,
- const double g_x,
- const double g_y,
- const double g_z,
- const std::vector<double>& aXYZ,
- const std::vector<int>& aHex,
- const std::vector<double>& aVal)
+void dfm2::MergeLinSys_LinearSolid3D_Static_Q1(
+    CMatrixSparse<double>& mat_A,
+    std::vector<double>& vec_b,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double g_x,
+    const double g_y,
+    const double g_z,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aHex,
+    const std::vector<double>& aVal)
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
@@ -854,7 +856,7 @@ void dfm2::MergeLinSys_LinearSolid3D_Static_Q1
                                     coords, disps,
                                     emat,eres);
     for (int ino = 0; ino<8; ino++){
-      const int ip = aIP[ino];
+      const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0];
       vec_b[ip*3+1] += eres[ino][1];
       vec_b[ip*3+2] += eres[ino][2];
@@ -864,21 +866,21 @@ void dfm2::MergeLinSys_LinearSolid3D_Static_Q1
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double lambda,
- const double rho,
- const double g[3],
- const double dt_timestep,
- const double gamma_newmark,
- const double beta_newmark,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
- const double* aVal,
- const double* aVelo,
- const double* aAcc)
+void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double g[3],
+    const double dt_timestep,
+    const double gamma_newmark,
+    const double beta_newmark,
+    const double* aXYZ, int nXYZ,
+    const unsigned int* aTet, int nTet,
+    const double* aVal,
+    const double* aVelo,
+    const double* aAcc)
 {
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
@@ -910,22 +912,24 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D
-(CMatrixSparse<double>& mat_A,
- double* vec_b,
- const double myu,
- const double lambda,
- const double rho,
- const double g[3],
- const double dt,
- const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
- const double* aDisp,
- const double* aVelo)
+void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
+    CMatrixSparse<double>& mat_A,
+    double* vec_b,
+    const double myu,
+    const double lambda,
+    const double rho,
+    const double *g,
+    const double dt,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
+    const double* aDisp,
+    const double* aVelo)
 {
-  const int np = nXYZ;
+  const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
-  for(int iel=0; iel<nTet; ++iel){
+  for(unsigned int iel=0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
@@ -989,7 +993,7 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
 {
   const int np = nXYZ;
   assert((int)aR.size()==np*9);
-  //////
+  // ----------------------------
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
@@ -1046,7 +1050,6 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
       emat[ino][ino][1][1] += rho*vol*0.25/(dt*dt);
       emat[ino][ino][2][2] += rho*vol*0.25/(dt*dt);
     }
-    ////////////////
     for (int ino = 0; ino<4; ino++){
       const unsigned int ip = aIP[ino];
       vec_b[ip*3+0] += eres[ino][0]/dt;

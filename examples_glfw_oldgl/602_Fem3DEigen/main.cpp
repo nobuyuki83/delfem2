@@ -13,19 +13,10 @@
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri_v2.h"
 
-//#include <cassert>
-//#include <fstream>
-//#include <string>
-//#include <set>
-//#include <stack>
-//#include <algorithm>
-
 // -------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/gl2_funcs.h"
-//#include "delfem2/opengl/gl2_color.h"
-//#include "delfem2/opengl/gl2_v23.h"
 
 namespace dfm2 = delfem2;
 
@@ -75,19 +66,19 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
   MassPoint_Tet3D(aMassLumpedSqrt.data(),
                    1, aXYZ, nXYZ, aTet,nTet);
   
-  for(int ip=0;ip<nXYZ;++ip){
+  for(unsigned int ip=0;ip<nXYZ;++ip){
     aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
   }
   
   {
-    for(int i=0;i<nDoF*6;++i){ aModesKer[i] = 0.0; }
+    for(unsigned int i=0;i<nDoF*6;++i){ aModesKer[i] = 0.0; }
     double* p0 = aModesKer+nDoF*0;
     double* p1 = aModesKer+nDoF*1;
     double* p2 = aModesKer+nDoF*2;
     double* p3 = aModesKer+nDoF*3;
     double* p4 = aModesKer+nDoF*4;
     double* p5 = aModesKer+nDoF*5;
-    for(int ip=0;ip<nXYZ;++ip){
+    for(unsigned int ip=0;ip<nXYZ;++ip){
       const double x0 = aXYZ[ip*3+0];
       const double y0 = aXYZ[ip*3+1];
       const double z0 = aXYZ[ip*3+2];
@@ -122,7 +113,7 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
     NormalizeX(p5,nDoF);
   }
   
-  for(int ip=0;ip<nXYZ;++ip){
+  for(unsigned int ip=0;ip<nXYZ;++ip){
     aMassLumpedSqrtInv[ip] = 1.0/aMassLumpedSqrt[ip];
   }
 }

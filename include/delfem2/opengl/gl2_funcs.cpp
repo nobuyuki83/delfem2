@@ -1715,13 +1715,14 @@ void dfm2::opengl::DrawMeshLine3D_Edge
   }
 }
 
-void dfm2::opengl::DrawMeshTet3D_EdgeDisp
-(const double* aXYZ,
- const unsigned int* aTet, unsigned int nTet,
- const double* aDisp,
- double s0)
+void dfm2::opengl::DrawMeshTet3D_EdgeDisp(
+    const double* aXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
+    const double* aDisp,
+    double s0)
 {
-  for (int itet = 0; itet<nTet; itet++){
+  for (unsigned int itet = 0; itet<nTet; itet++){
     const unsigned int i0 = aTet[itet*4+0];
     const unsigned int i1 = aTet[itet*4+1];
     const unsigned int i2 = aTet[itet*4+2];
