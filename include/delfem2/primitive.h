@@ -88,7 +88,7 @@ class CCylinder: public CSDF3
 {
 public:
   CCylinder(){};
-	CCylinder(double rad, double cent[3], double dir[3], bool is_out);
+	CCylinder(double r, const double cnt[3], const double dir[3], bool is_out);
 	// return penetration depth (inside is positive)
   double Projection(double n[3],
                     double px, double py, double pz) const; // normal outward

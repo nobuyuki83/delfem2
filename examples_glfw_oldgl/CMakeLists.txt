@@ -57,3 +57,6 @@ add_subdirectory(701_HashLbvh3D)
 add_subdirectory(800_PbdGrid2D)
 add_subdirectory(801_PbdCloth)
 
+#bem
+add_subdirectory(900_BemPotentialFlow3D)
+

@@ -91,19 +91,19 @@ file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)
 file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}" NATIVE_PROJECT_SOURCE_DIR)
 
 if(WIN32)
-add_custom_command(TARGET ${PROJ_NAME}
-POST_BUILD
-  COMMAND copy 
-    "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"   
-    ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
-  COMMENT "Post Event"
-)
+  add_custom_command(TARGET ${PROJ_NAME}
+  POST_BUILD
+    COMMAND copy 
+      "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"   
+      ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
+    COMMENT "Post Event"
+  )
 else()
-add_custom_command(TARGET ${PROJ_NAME}
-POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy 
-    ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_core.*
-    ${PROJECT_SOURCE_DIR}/../../PyDelFEM2/
-  COMMENT "Post Event"
-)
+  add_custom_command(TARGET ${PROJ_NAME}
+  POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy 
+      ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/c_core.*
+      ${PROJECT_SOURCE_DIR}/../../PyDelFEM2/
+    COMMENT "Post Event"
+  )
 endif()
