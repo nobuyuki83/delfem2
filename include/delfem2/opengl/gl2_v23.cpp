@@ -57,9 +57,14 @@ void delfem2::opengl::myGlVertex(int i, const std::vector<CVector3>& aV)
   opengl::myGlVertex(v);
 }
 
-void delfem2::opengl::myGlVertex(int i, const std::vector<double>& vec)
+void delfem2::opengl::myGlVertex2(int i, const std::vector<double>& vec)
 {
   ::glVertex3d(vec[i*2], vec[i*2+1], +0.0);
+}
+
+void delfem2::opengl::myGlVertex3(int i, const std::vector<double>& vec)
+{
+  ::glVertex3d(vec[i*3+0], vec[i*3+1], vec[i*3+2]);
 }
 
 void delfem2::opengl::ModelTransformation

@@ -237,7 +237,7 @@ bool dfm2::CSphere::IntersectionPoint
 // --------------------------------------------------
 
 dfm2::CCylinder::CCylinder
-(double r, double cnt[3], double dir[3], bool is_out){
+(double r, const double cnt[3], const double dir[3], bool is_out){
 	cent_[0] = cnt[0];
 	cent_[1] = cnt[1];
 	cent_[2] = cnt[2];
