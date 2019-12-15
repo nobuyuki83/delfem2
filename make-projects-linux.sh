@@ -81,12 +81,12 @@ python3 setup.py test
 #twine upload dist/*
 
 ########################
-## build dll 
+## build dll for CSharp
 
-cd src_dll
-mkdir build
-cd build
-cmake ..
-make
+#cd src_dll
+#mkdir build
+#cd build
+#cmake ..
+#make
 
 ########################
