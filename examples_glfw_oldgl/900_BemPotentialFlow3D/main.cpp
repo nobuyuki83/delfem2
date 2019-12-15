@@ -51,7 +51,7 @@ void SetProblem()
     makeLinearSystem_PotentialFlow_Order0th(A,f,
                                             //
                                             Velo,
-                                            0,
+                                            1,
                                             aXYZ,
                                             aTri);
     aSol.assign(aTri.size()/3,0.0);
@@ -77,7 +77,7 @@ void SetProblem()
       double phi_pos;
       evaluateField_PotentialFlow_Order0th(phi_pos,gradphi_pos,
                                            p, Velo,
-                                           0,
+                                           1,
                                            aSol,aXYZ,aTri);
       aValGrid[ ig*(ngrid+1)+jg ] = gradphi_pos;
     }

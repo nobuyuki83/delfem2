@@ -64,18 +64,18 @@ cd ../../
 ##################################
 ## build CSharp
 
-cd src_dll 
-mkdir build 
-cd build
-cmake ..
-make
-cd ../../
+#cd src_dll 
+#mkdir build 
+#cd build
+#cmake ..
+#make
+#cd ../../
 
-cd examples_cs
-mcs helloworld.cs -define:__APPLE__ -out:helloworld.exe
-mono helloworld.exe
-./helloworld.exe
-cd ../
+#cd examples_cs
+#mcs helloworld.cs -define:__APPLE__ -out:helloworld.exe
+#mono helloworld.exe
+#./helloworld.exe
+#cd ../
 
 ################################
 # build python
