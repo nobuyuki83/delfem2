@@ -19,7 +19,7 @@ project(10_imgui_sampledemo)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED CONFIG)
 
-set(GLFW_DIR "../../src_cpp/external/glfw")
+set(GLFW_DIR "../../external/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)

@@ -57,10 +57,10 @@ script: |
 
   # -------------------------
   # build C++ glfw examples
-  cd src_cpp/external/glfw
+  cd external/glfw
   cmake .
   make
-  cd ../../..
+  cd ../..
 
   cd examples_glfw_oldgl
   mkdir buildMake

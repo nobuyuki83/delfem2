@@ -18,7 +18,7 @@ project(100_nav3d)
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 
-set(GLFW_DIR "../../src_cpp/external/glfw")
+set(GLFW_DIR "../../external/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)

@@ -23,7 +23,7 @@ add_executable(${PROJECT_NAME}
 )
 
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../../src_cpp/external/glfw")
+  set(GLFW_DIR "../../external/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE) # get absolute path
   find_package(OpenGL REQUIRED)
   include_directories(

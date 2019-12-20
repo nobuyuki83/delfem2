@@ -21,7 +21,7 @@ add_subdirectory(${PYBIND11_DIR} pybind11)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
-set(DELFEM2_EXT         "../../src_cpp/external")
+set(DELFEM2_EXT         "../../external")
 
 set(INPUT_SRC
   ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
@@ -73,7 +73,7 @@ set(INPUT_SRC
 )
 
 set(INPUT_INCLUDE_DIR
-  "../../src_cpp/external/eigen-git-mirror"
+  "../../external/eigen"
   ${DELFEM2_INCLUDE_DIR}
 )
 set(INPUT_LIBRARY
