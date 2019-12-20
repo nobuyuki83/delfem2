@@ -1,21 +1,18 @@
-[submodule "src_cpp/external/stb"]
-	path = src_cpp/external/stb
-	url = https://github.com/nothings/stb
-[submodule "src_cpp/external/eigen-git-mirror"]
-	path = src_cpp/external/eigen-git-mirror
-	url = https://github.com/eigenteam/eigen-git-mirror.git
 [submodule "src_pybind/pybind11"]
 	path = src_pybind/pybind11
 	url = https://github.com/pybind/pybind11.git
-[submodule "src_cpp/external/tinygltf"]
-	path = src_cpp/external/tinygltf
-	url = https://github.com/syoyo/tinygltf.git
 [submodule "test_cpp/googletest"]
 	path = test_cpp/googletest
 	url = https://github.com/google/googletest.git
 [submodule "examples_glfw/imgui"]
 	path = examples_glfw/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "src_cpp/external/glfw"]
-	path = src_cpp/external/glfw
+[submodule "external/eigen"]
+	path = external/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "external/glfw"]
+	path = external/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "external/tinygltf"]
+	path = external/tinygltf
+	url = https://github.com/syoyo/tinygltf.git

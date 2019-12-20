@@ -56,7 +56,7 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../../src_cpp/external/glfw")
+  set(GLFW_DIR "../../external/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
   find_package(OpenGL REQUIRED)
   include_directories(

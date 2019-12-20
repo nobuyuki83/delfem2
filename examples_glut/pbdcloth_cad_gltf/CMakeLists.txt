@@ -16,7 +16,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
-set(DELFEM2_EXT         "../../src_cpp/external")
+set(DELFEM2_EXT         "../../external")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
