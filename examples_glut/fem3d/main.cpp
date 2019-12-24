@@ -121,7 +121,7 @@ void SolveProblem_Poisson()
                                        aXYZ.data(), aXYZ.size()/3,
                                        aTet.data(), aTet.size()/4,
                                        aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,1);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
@@ -193,7 +193,7 @@ void SolveProblem_Diffusion()
                                         aXYZ.data(), aXYZ.size()/3,
                                         aTet.data(), aTet.size()/4,
                                         aVal.data(),aVelo.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,1);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
@@ -266,9 +266,9 @@ void SolveProblem_LinearSolid_Static()
                                                  aXYZ.data(), aXYZ.size()/3,
                                                  aTet.data(), aTet.size()/4,
                                                  aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
-  ////////////////////////////////////////////
+  // --------------------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -277,7 +277,7 @@ void SolveProblem_LinearSolid_Static()
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
-  ////////////////////////////////////////////
+  // ------------------------------
   XPlusAY(aVal, nDoF, aBCFlag,
     1.0, vec_x);
 }
@@ -342,7 +342,7 @@ void SolveProblem_LinearSolid_Dynamic()
                                                       aXYZ.data(), aXYZ.size()/3,
                                                       aTet.data(), aTet.size()/4,
                                                       aVal.data(),aVelo.data(),aAcc.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
@@ -433,7 +433,7 @@ void SolveProblem_Stokes_Static()
                                     myu,rho,g_x,g_y,g_z,
                                     aXYZ,aTet,
                                     aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,4);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
@@ -517,7 +517,7 @@ void SolveProblem_Stokes_Dynamic()
                                      dt_timestep,gamma_newmark,
                                      aXYZ,aTet,
                                      aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,4);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
@@ -609,9 +609,9 @@ void SolveProblem_NavierStokes_Dynamic()
                                            dt_timestep,gamma_newmark,
                                            aXYZ,aTet,
                                            aVal,aVelo);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),np,4);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
-  /////////////////////////////
+  // --------------------------------------
   std::vector<double> vec_x;
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A,aBCFlag);
   double conv_ratio = 1.0e-5;
@@ -622,7 +622,7 @@ void SolveProblem_NavierStokes_Dynamic()
   Solve_PBiCGStab(vec_b.data(),vec_x.data(),
                   conv_ratio,iteration,mat_A,ilu_A);
 //  Solve_BiCGStab(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
-  /////////////////////////////
+  // ----------------------------------------
   XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
             dt_timestep,aVelo);

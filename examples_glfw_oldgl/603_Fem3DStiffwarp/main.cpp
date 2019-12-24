@@ -147,7 +147,7 @@ void Solve_Linear()
                                                  aTet.data(), aTet.size()/4,
                                                  aDisp.data(),
                                                  aVelo.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aXYZ.size()/3,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b,aBCFlag,0);
   //
   ilu_A.SetValueILU(mat_A);
@@ -182,7 +182,7 @@ void Solve_StiffnessWarping()
                                                     aDisp.data(),
                                                     aVelo.data(),
                                                     aR);
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aXYZ.size()/3,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b,aBCFlag,0);
   // -------------------
   ilu_A.SetValueILU(mat_A);

@@ -22,7 +22,7 @@ void myGlNormal(const CVector3& n);
 void myGlNormal(const CVector3& a, const CVector3& b, const CVector3& c);
 void myGlVertex(int i, const std::vector<CVector3>& aV);
 void myGlVertex2(int i, const std::vector<double>& vec);
-void myGlVertex3(int i, const std::vector<double>& vec);
+void myGlVertex3(unsigned int i, const std::vector<double>& vec);
 void ModelTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin);
 void ViewTransformation(const CVector3& dx, const CVector3& dz, const CVector3& origin);
 

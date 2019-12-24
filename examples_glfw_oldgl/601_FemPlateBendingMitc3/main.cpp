@@ -103,7 +103,7 @@ void SolveProblem_PlateBendingMITC3()
                                                            aTri.data(), aTri.size()/3,
                                                            aVal.data());
   std::cout << Dot(vec_b, vec_b) << std::endl;
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   //
   std::vector<double> vec_x;

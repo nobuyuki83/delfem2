@@ -497,7 +497,7 @@ std::vector<double> delfem2::Solve_PCG
 		{
       std::vector<double>& Ap_vec = Pr_vec;      
       // {Ap} = [A]{p}
-			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+			mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
       // alpha = ({r},{Pr})/({p},{Ap})
 			const double pAp = Dot(p_vec,Ap_vec);
 			double alpha = rPr / pAp;
@@ -565,7 +565,7 @@ std::vector<double> delfem2::Solve_PCG
     {
       std::vector<COMPLEX>& Ap_vec = Pr_vec;
       // {Ap} = [A]{p}
-      mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+      mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
       // alpha = ({r},{Pr})/({p},{Ap})
       const double pAp = Dot(p_vec,Ap_vec).real();
       COMPLEX alpha = rPr / pAp;
@@ -645,7 +645,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
     // calc (r,r0*)
     const double r_r2 = DotX(r_vec,r0_vec.data(),ndof);
     // calc {AMp_vec} = [A]*{Mp_vec}
-    mat.MatVec(1.0, Mp_vec, 0.0, AMp_vec);
+    mat.MatVec(1.0, Mp_vec.data(), 0.0, AMp_vec.data());
     // calc alpha
     const double alpha = r_r2 / Dot(AMp_vec,r0_vec);
     // calc s_vector
@@ -655,7 +655,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
     Ms_vec = s_vec;
     ilu.Solve(Ms_vec);
     // calc {AMs_vec} = [A]*{Ms_vec}
-    mat.MatVec(1.0,Ms_vec,0.0,AMs_vec);
+    mat.MatVec(1.0,Ms_vec.data(),0.0,AMs_vec.data());
     double omega;
     {	// calc omega
       const double denominator = Dot(AMs_vec,AMs_vec);
@@ -732,7 +732,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
     Mp_vec.assign(p_vec.begin(),p_vec.end());
     ilu.Solve(Mp_vec);
     // calc {AMp_vec} = [A]*{Mp_vec}
-    mat.MatVec(COMPLEX(1,0), Mp_vec, COMPLEX(0,0), AMp_vec);
+    mat.MatVec(COMPLEX(1,0), Mp_vec.data(), COMPLEX(0,0), AMp_vec.data());
     // calc alpha
     const COMPLEX alpha = r_r0 / Dot(AMp_vec,r0_vec);
     // calc s_vector
@@ -742,7 +742,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
     Ms_vec.assign(s_vec.begin(),s_vec.end());
     ilu.Solve(Ms_vec);
     // calc {AMs_vec} = [A]*{Ms_vec}
-    mat.MatVec(COMPLEX(1,0),Ms_vec, COMPLEX(0,0), AMs_vec);
+    mat.MatVec(COMPLEX(1,0),Ms_vec.data(), COMPLEX(0,0), AMs_vec.data());
     const COMPLEX omega = Dot(s_vec,AMs_vec) / Dot(AMs_vec,AMs_vec).real();
     for(unsigned int i=0;i<ndof;++i){ x_vec[i] = x_vec[i]+alpha*Mp_vec[i]+omega*Ms_vec[i]; }
     for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]-omega*AMs_vec[i]; }
@@ -800,7 +800,7 @@ std::vector<double> dfm2::Solve_PCOCG
   COMPLEX r_w = MultSumX(r_vec,w_vec.data(),ndof);
   
   for(unsigned int itr=0;itr<max_niter;itr++){
-    mat.MatVec(COMPLEX(1,0), p_vec, COMPLEX(0,0), Ap_vec);
+    mat.MatVec(COMPLEX(1,0), p_vec.data(), COMPLEX(0,0), Ap_vec.data());
     const COMPLEX alpha = r_w / MultSumX(p_vec.data(),Ap_vec.data(),ndof);
     AXPY(+alpha,p_vec.data(), x_vec,ndof);
     AXPY(-alpha,Ap_vec.data(), r_vec,ndof);

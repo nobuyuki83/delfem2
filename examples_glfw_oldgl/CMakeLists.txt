@@ -18,6 +18,8 @@ add_subdirectory(106_sphericalharmonics)
 add_subdirectory(107_paramgeo2d)
 add_subdirectory(108_paramgeo3d)
 add_subdirectory(109_ContourLine2D)
+add_subdirectory(110_ReadFileBVH)
+add_subdirectory(111_ReadFileGLTF)
 
 
 # meshing
@@ -32,10 +34,7 @@ add_subdirectory(300_AdaptiveDistanceField)
 add_subdirectory(301_IsoSurfaceStuffing)
 
 
-# skeleton & rigging
-add_subdirectory(400_ReadFileBVH)
-add_subdirectory(401_ReadFileGLTF)
-
+add_subdirectory(400_LaplaceMeshDeform)
 
 # cad
 add_subdirectory(500_2DCad)

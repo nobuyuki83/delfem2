@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <random>
 
 #include "gtest/gtest.h"
 
@@ -41,13 +42,11 @@ TEST(bvh,inclusion_sphere)
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_real_distribution<> udist(-1.0, 1.0);
   for(int itr=0;itr<10000;++itr){
-    CVector3 p0;
-    {
-      p0.x = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.y = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.z = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
+    CVector3 p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3D_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -76,13 +75,11 @@ TEST(bvh,inclusion_aabb)
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_real_distribution<> udist(-1.0, 1.0);
   for(int itr=0;itr<10000;++itr){
-    CVector3 p0;
-    {
-      p0.x = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.y = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.z = 2.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
+    CVector3 p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3D_AABB& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -113,12 +110,12 @@ TEST(bvh,nearestinc_sphere)
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_real_distribution<> udist(-5.0, 5.0);
   for(int itr=0;itr<1000;++itr){
-    CVector3 p0;
+    CVector3 p0(udist(rng), udist(rng), udist(rng));
     {
-      p0.x = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.y = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.z = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
       p0.SetNormalizedVector();
       if( itr % 2 == 0 ){ p0 *= 1.02; } // outside included in bvh
       else{               p0 *= 0.98; } // inside in included in bvh
@@ -167,13 +164,11 @@ TEST(bvh,nearest_range) // find global nearest from range
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_real_distribution<> udist(-5.0, 5.0);
   for(int itr=0;itr<1000;++itr){
-    CVector3 p0;
-    {
-      p0.x = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.y = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.z = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
+    CVector3 p0(udist(rng), udist(rng), udist(rng));
     {
       double dist_min=-1, dist_max = -1;
       dfm2::BVH_Range_DistToNearestPoint(dist_min, dist_max,
@@ -394,8 +389,7 @@ TEST(bvh,rayintersection)
     BVH_GetIndElem_IntersectRay(aIndElem, ps0, pd0,
                                 bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
-    for(unsigned int iit=0;iit<aIndElem.size();++iit){
-      int itri0 = aIndElem[iit];
+    for(int itri0 : aIndElem){
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
@@ -417,8 +411,8 @@ TEST(bvh,rayintersection)
                                     aTri, aXYZ, aIndElem);
       EXPECT_EQ(mapDepthPES0.size(),mapDepthPES1.size());
       int N = mapDepthPES0.size();
-      std::map<double,CPointElemSurf>::iterator itr0 = mapDepthPES0.begin();
-      std::map<double,CPointElemSurf>::iterator itr1 = mapDepthPES0.begin();
+      auto itr0 = mapDepthPES0.begin();
+      auto itr1 = mapDepthPES0.begin();
       for(int i=0;i<N;++i){
         EXPECT_FLOAT_EQ(itr0->first,itr1->first);
         CPointElemSurf pes0 = itr0->second;
@@ -438,10 +432,13 @@ TEST(bvh,morton_code)
   aXYZ.resize(N*3);
   const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
   dfm2::CBV3D_AABB bb(minmax_xyz);
+  std::random_device dev;
+  std::mt19937 rng(dev());
+  std::uniform_real_distribution<> udist(0.0, 1.0);
   for(int i=0;i<N;++i){
-    aXYZ[i*3+0] = (bb.x_max -  bb.x_min) * rand()/(RAND_MAX+1.0) + bb.x_min;
-    aXYZ[i*3+1] = (bb.y_max -  bb.y_min) * rand()/(RAND_MAX+1.0) + bb.y_min;
-    aXYZ[i*3+2] = (bb.z_max -  bb.z_min) * rand()/(RAND_MAX+1.0) + bb.z_min;
+    aXYZ[i*3+0] = (bb.x_max -  bb.x_min) * udist(rng) + bb.x_min;
+    aXYZ[i*3+1] = (bb.y_max -  bb.y_min) * udist(rng) + bb.y_min;
+    aXYZ[i*3+2] = (bb.z_max -  bb.z_min) * udist(rng) + bb.z_min;
   }
   std::vector<unsigned int> aSortedId;
   std::vector<unsigned int> aSortedMc;

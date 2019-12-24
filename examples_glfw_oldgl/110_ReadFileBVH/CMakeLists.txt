@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(400_read_bvh)
+project(110_read_bvh)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

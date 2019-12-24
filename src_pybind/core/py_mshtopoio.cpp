@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <vector>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -383,7 +390,7 @@ PyMeshTri3D_Cylinder(double r, double l, int nr, int nl)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  dfm2::MeshTri3D_ClosedCylinder(aXYZ, aTri, r, l, nr, nl);
+  dfm2::MeshTri3D_CylinderClosed(aXYZ, aTri, r, l, nr, nl);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);

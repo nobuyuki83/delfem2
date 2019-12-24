@@ -373,7 +373,7 @@ void dfm2::MeshQuad2D_Grid
 
 void dfm2::MeshTri3D_Disk
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int> &aTri,
  double r, int nr, int nth)
 {
   aXYZ.clear();
@@ -421,9 +421,9 @@ void dfm2::MeshTri3D_Disk
 
 
 
-void dfm2::MeshTri3D_OpenCylinder
+void dfm2::MeshTri3D_CylinderOpen
 (std::vector<double>& aXYZ,
- std::vector<int>& aTri,
+ std::vector<unsigned int> &aTri,
  double r, double l,
  int nr, int nl)
 {
@@ -464,7 +464,7 @@ void dfm2::MeshTri3D_OpenCylinder
   }
 }
 
-void dfm2::MeshTri3D_ClosedCylinder
+void dfm2::MeshTri3D_CylinderClosed
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  double r, double l,
