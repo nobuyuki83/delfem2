@@ -155,7 +155,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
                                                                aXY0.data(), aXY0.size()/2,
                                                                aTri.data(), aTri.size()/3,
                                                                aVal.data());
-      mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
+      mat_A.SetFixedBC(aBCFlag.data());
       setRHS_Zero(vec_b, aBCFlag,0);
       // ///////////////////////
       std::vector<double> vec_x;

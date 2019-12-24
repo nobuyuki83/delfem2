@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <cstdio>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -56,7 +63,7 @@ void MatrixSquareSparse_SetFixBC
   assert( flagbc.ndim() == 2 );
   assert( flagbc.shape()[0] == mss.nblk_col );
   assert( flagbc.shape()[1] == mss.len_col );
-  mss.SetBoundaryCondition(flagbc.data(),flagbc.shape()[0],flagbc.shape()[1]);
+  mss.SetFixedBC(flagbc.data());
 }
 
 

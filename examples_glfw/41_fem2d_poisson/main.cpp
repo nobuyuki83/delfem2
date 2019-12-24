@@ -269,7 +269,7 @@ void SolveProblem_Poisson()
                                        aXY1.data(),aXY1.size()/2,
                                        aTri1.data(),aTri1.size()/3,
                                        aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   // -----------------------
   std::vector<double> vec_x;

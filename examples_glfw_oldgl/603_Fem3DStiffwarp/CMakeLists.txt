@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(fem25d_stiffwarp)
+project(603_fem25d_stiffwarp)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)

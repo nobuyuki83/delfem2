@@ -11,8 +11,6 @@
 #include <complex>
 #include "delfem2/mats.h"
 
-//#include <iostream>
-
 typedef std::complex<double> COMPLEX;
 namespace dfm2 = delfem2;
 
@@ -23,9 +21,9 @@ namespace dfm2 = delfem2;
 template <>
 void dfm2::CMatrixSparse<double>::MatVec
 (double alpha,
- const std::vector<double>& x,
+ const double* x,
  double beta,
- std::vector<double>& y) const
+ double* y) const
 {
 	const unsigned int blksize = len_col*len_col;
 
@@ -310,7 +308,7 @@ void SetMasterSlave
       const int jblk1 = mat.rowPtr[icrs];
       for(unsigned int jdim=0;jdim<len;jdim++){
         if( aMSFlag[jblk1*len+jdim] == -1 ) continue;
-        unsigned int idof0 = (unsigned int)aMSFlag[jblk1*len+jdim];
+        auto idof0 = (unsigned int)aMSFlag[jblk1*len+jdim];
         for(unsigned int idim=0;idim<len;idim++){
           unsigned int idof1 = iblk*len+idim;
           if( idof0 != idof1 ){ mat.valCrs[icrs*blksize+idim*len+jdim] = +0.0; }
@@ -535,7 +533,7 @@ void setRHS_Zero
  int iflag_nonzero)
 {
   const std::size_t ndof = vec_b.size();
-  for (int i=0;i<ndof;++i){
+  for (unsigned int i=0;i<ndof;++i){
     if (aBCFlag[i]==iflag_nonzero) continue;
     vec_b[i] = 0;
   }
@@ -578,7 +576,7 @@ Solve_CG
 	for(unsigned int iitr=0;iitr<max_iteration;iitr++){
 		double alpha;
 		{	// alpha = (r,r) / (p,Ap)
-			mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+			mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
 			const double pAp = Dot(p_vec,Ap_vec);
 			alpha = sqnorm_res / pAp;
 		}
@@ -621,7 +619,7 @@ std::vector<double> Solve_CG
   for(unsigned int iitr=0;iitr<max_iteration;iitr++){
     double alpha;
     {  // alpha = (r,r) / (p,Ap)
-      mat.MatVec(1.0,p_vec,0.0,Ap_vec);
+      mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
       COMPLEX C_pAp = Dot(p_vec,Ap_vec);
       assert( fabs(C_pAp.imag())<1.0e-3 );
       const double pAp = C_pAp.real();
@@ -678,13 +676,13 @@ Solve_BiCGSTAB
   COMPLEX r_r0 = Dot(r_vec,r0_vec);   // calc ({r},{r2})
   
   for(unsigned int iitr=0;iitr<max_niter;iitr++){
-    mat.MatVec(1.0,p_vec,0.0,Ap_vec); // calc {Ap} = [A]*{p}
+    mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data()); // calc {Ap} = [A]*{p}
     const COMPLEX alpha = r_r0 / Dot(Ap_vec,r0_vec); // alhpa = ({r},{r2}) / ({Ap},{r2})
     // {s} = {r} - alpha*{Ap}
     s_vec = r_vec;
     AXPY(-alpha, Ap_vec, s_vec);
     // calc {As} = [A]*{s}
-    mat.MatVec(1.0,s_vec,0.0,As_vec);
+    mat.MatVec(1.0,s_vec.data(),0.0,As_vec.data());
     // calc omega
     const COMPLEX omega = Dot(s_vec,As_vec) / Dot(As_vec,As_vec).real();  // omega=({As},{s})/({As},{As})
     // ix += alpha*{p} + omega*{s} (update solution)
@@ -749,7 +747,7 @@ Solve_BiCGSTAB
   double r_r2 = Dot(r_vec,r2_vec);   // calc ({r},{r2})
   
   for(unsigned int iitr=0;iitr<max_niter;iitr++){
-    mat.MatVec(1.0,p_vec,0.0,Ap_vec); // calc {Ap} = [A]*{p}
+    mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data()); // calc {Ap} = [A]*{p}
     double alpha;
     { // alhpa = ({r},{r2}) / ({Ap},{r2})
       const double denominator = Dot(Ap_vec,r2_vec);
@@ -759,7 +757,7 @@ Solve_BiCGSTAB
     s_vec = r_vec;
     AXPY(-alpha, Ap_vec, s_vec);
     // calc {As} = [A]*{s}
-    mat.MatVec(1.0,s_vec,0.0,As_vec);
+    mat.MatVec(1.0,s_vec.data(),0.0,As_vec.data());
     // calc omega
     double omega;
     { // omega = ({As},{s}) / ({As},{As})
@@ -845,7 +843,7 @@ void OrthogonalizeToUnitVectorX(
     unsigned int n)
 {
   double d = DotX(p0, p1, n);
-  for(int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
+  for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
 }
 
 
@@ -910,7 +908,7 @@ double MatNorm_Assym(
   return s;
 }
 
-double CheckSymmetry(
+double dfm2::CheckSymmetry(
     const dfm2::CMatrixSparse<double>& mat)
 {
   assert( mat.nblk_row == mat.nblk_col );

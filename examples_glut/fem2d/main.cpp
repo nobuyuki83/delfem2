@@ -264,7 +264,7 @@ void SolveProblem_Poisson()
                                        aXY1.data(),aXY1.size()/2,
                                        aTri1.data(),aTri1.size()/3,
                                        aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////////////
   std::vector<double> vec_x;
@@ -298,7 +298,7 @@ void SolveProblem_Diffusion()
                                         aXY1.data(), aXY1.size()/2,
                                         aTri1.data(), aTri1.size()/3,
                                         aVal.data(),aVelo.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
   std::vector<double> vec_x;
@@ -389,7 +389,7 @@ void SolveProblem_LinearSolid_Static()
                                                  aXY1.data(), aXY1.size()/2,
                                                  aTri1.data(), aTri1.size()/3,
                                                  aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
                  aMSFlag.data());
@@ -434,7 +434,7 @@ void SolveProblem_LinearSolid_Dynamic()
                                                       aXY1.data(), aXY1.size()/2,
                                                       aTri1.data(), aTri1.size()/3,
                                                       aVal.data(),aVelo.data(),aAcc.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
                  aMSFlag.data());
@@ -604,7 +604,7 @@ void SolveProblem_Stokes_Static()
                                    aXY1.data(), aXY1.size()/2,
                                    aTri1.data(), aTri1.size()/3,
                                    aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
     SetMasterSlave(mat_A,
@@ -652,7 +652,7 @@ void SolveProblem_Stokes_Dynamic()
                                     aXY1.data(), aXY1.size()/2,
                                     aTri1.data(), aTri1.size()/3,
                                     aVal.data(),aVelo.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
     SetMasterSlave(mat_A,
@@ -705,14 +705,14 @@ void SolveProblem_NavierStokes_Dynamic()
                                    aXY1.data(), aXY1.size()/2,
                                    aTri1.data(), aTri1.size()/3,
                                    aVal.data(),aVelo.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/3,3);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
     SetMasterSlave(mat_A,
                    aMSFlag.data());
     setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
-  //////////////////////////////
+  // ----------------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;

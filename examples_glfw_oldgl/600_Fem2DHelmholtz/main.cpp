@@ -109,7 +109,7 @@ void SolveProblem_Poisson()
                                                        aCVal.data());
   }
   
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size(),1);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   // ----------------
   std::vector<std::complex<double> > vec_x;

@@ -306,7 +306,7 @@ void SolveProblem_LinearSolid_Static()
                                                  aXY1.data(), aXY1.size()/2,
                                                  aTri1.data(), aTri1.size()/3,
                                                  aVal.data());
-  mat_A.SetBoundaryCondition(aBCFlag.data(),aBCFlag.size()/2,2);
+  mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
 //  SetMasterSlave(mat_A,
 //                 aMSFlag.data());
