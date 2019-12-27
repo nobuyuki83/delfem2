@@ -29,12 +29,16 @@ CTexture GetTextureFromNumpy(const py::array_t<unsigned char>& a){
   return tex;
 }
 
-void init_texture(py::module &m){
-  py::class_<CTexture>(m,"Texture")
-  .def(py::init<>())
-  .def("draw",&CTexture::Draw)
-  .def("init_gl",&CTexture::LoadTex)
-  .def("minmax_xyz",&CTexture::MinMaxXYZ);
-  
+void init_texture(py::module &m) {
+  py::class_<CTexture>(m, "Texture")
+      .def(py::init<>())
+      .def_readonly("width", &CTexture::w)
+      .def_readonly("height", &CTexture::h)
+      .def("draw", &CTexture::Draw)
+      .def("init_gl", &CTexture::LoadTex)
+      .def("minmax_xyz", &CTexture::MinMaxXYZ)
+      .def("set_minmax_xy", &CTexture::SetMinMaxXY);
+
+
   m.def("get_texture", &GetTextureFromNumpy);
 }

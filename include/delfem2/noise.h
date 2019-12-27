@@ -1,6 +1,8 @@
 #ifndef DFM2_NOISE_H
 #define DFM2_NOISE_H
 
+#include <cassert>
+
 namespace delfem2 {
 
 void Shuffle(std::vector<int>& X)

@@ -21,10 +21,10 @@ cd ../../
 
 #######################
 
-cd src_cpp/external/glfw
+cd external/glfw
 cmake .
 make
-cd ../../..
+cd ../..
 
 cd examples_glfw
 mkdir buildMake
