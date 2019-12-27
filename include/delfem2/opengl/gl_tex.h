@@ -16,7 +16,8 @@ class CTexture
 public:
   std::vector<unsigned char> aRGB;
   unsigned int id_tex;
-  int h,w;
+  unsigned int h,w;
+  double min_x, max_x, min_y, max_y;
   
 public:
   CTexture(){
@@ -38,26 +39,37 @@ public:
       }
     }
     id_tex = 0;
+    this->min_x = 0.0;
+    this->max_x = (double)w;
+    this->min_y = 0.0;
+    this->max_y = (double)h;
   }
   
   void LoadTex();
   
   void Draw();
   
-  std::vector<double>  MinMaxXYZ(){
+  std::vector<double>  MinMaxXYZ() const {
     std::vector<double> m(6,0.0);
-    m[0] = 0;
-    m[1] = w;
-    m[2] = 0;
-    m[3] = h;
+    m[0] = this->min_x;
+    m[1] = this->max_x;
+    m[2] = this->min_y;
+    m[3] = this->max_y;
     m[4] = 0;
     m[5] = 0;
     return m;
   }
+  void SetMinMaxXY(const std::vector<double>& mmxy){
+    if( mmxy.size() < 4 ){ return; }
+    this->min_x = mmxy[0];
+    this->max_x = mmxy[1];
+    this->min_y = mmxy[2];
+    this->max_y = mmxy[3];
+  }
 };
 
 
-//////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------
 // texture related funcitons
 
 void LoadImage_PPM(const std::string& filename,
@@ -65,6 +77,7 @@ void LoadImage_PPM(const std::string& filename,
                    int& width, int& height);
 
 void SaveImage(const std::string& path);
+
 
 class SFile_TGA
 {
@@ -79,13 +92,15 @@ public:
 bool LoadTGAFile(const std::string& filename, SFile_TGA *tgaFile);
 int ReadPPM_SetTexture(const std::string& fname);
 
-unsigned int LoadTexture(const unsigned char* image,
-                         const int width, const int height, const int bpp);
-void DrawTextureBackground(const unsigned int tex,
-                           const int imgWidth,
-                           const int imgHeight,
-                           const int winWidth,
-                           const int winHeight);
+unsigned int LoadTexture(
+    const unsigned char* image,
+    const int width, const int height, const int bpp);
+void DrawTextureBackground(
+    const unsigned int tex,
+     const int imgWidth,
+     const int imgHeight,
+     const int winWidth,
+     const int winHeight);
 
 class CTextureInfo
 {

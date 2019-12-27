@@ -45,7 +45,7 @@ void CTexture::LoadTex()
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-  assert( (int)aRGB.size() == w*h*3 );
+  assert(  aRGB.size() == w*h*3 );
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
                aRGB.data() );
@@ -55,32 +55,22 @@ void CTexture::LoadTex()
 
 void CTexture::Draw(){
   if( id_tex == 0 ){ return; }
-  /*
-   const CVector3& dx = x_axis;
-   const CVector3& dy = Cross(z_axis,dx);
-   const double lx = lengrid*nResX;
-   const double ly = lengrid*nResY;
-   CVector3 p0 = origin;
-   CVector3 p1 = origin + lx*dx;
-   CVector3 p2 = origin + lx*dx + ly*dy;
-   CVector3 p3 = origin + ly*dy;
-   */
   ::glEnable(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
   ::glBindTexture(GL_TEXTURE_2D, id_tex);
   ::glColor3d(1,1,1);
   ::glBegin(GL_QUADS);
-  ::glTexCoord2d(0.0, 0.0); ::glVertex3d(0,0,0);
-  ::glTexCoord2d(1.0, 0.0); ::glVertex3d(w,0,0);
-  ::glTexCoord2d(1.0, 1.0); ::glVertex3d(w,h,0);
-  ::glTexCoord2d(0.0, 1.0); ::glVertex3d(0,h,0);
+  ::glTexCoord2d(0.0, 0.0); ::glVertex3d(min_x,min_y,0);
+  ::glTexCoord2d(1.0, 0.0); ::glVertex3d(max_x,min_y,0);
+  ::glTexCoord2d(1.0, 1.0); ::glVertex3d(max_x,max_y,0);
+  ::glTexCoord2d(0.0, 1.0); ::glVertex3d(min_x,max_y,0);
   ::glEnd();
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glDisable(GL_TEXTURE_2D);
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------
 
 void SaveImage(const std::string& path)
 {
@@ -172,7 +162,7 @@ int ReadPPM_SetTexture(const std::string& fname)
 {
   std::cout << "ReadPPM " << std::endl;
   FILE* fp = fopen(fname.c_str(),"r");
-  if( fp == NULL ){
+  if( fp == nullptr ){
     std::cout << "Read PPM Fail" << std::endl;
     return -1;
   }
@@ -220,7 +210,7 @@ int ReadPPM_SetTexture(const std::string& fname)
   
   std::cout << "width height : " << w << " " << h << std::endl;
   
-  ////////////////
+  // //////////////
   
   GLubyte* inputRGB = new GLubyte [w*h*3];
   for(int i=0;i<w*h*3;i++){ inputRGB[i] = aRGB[i]; }
