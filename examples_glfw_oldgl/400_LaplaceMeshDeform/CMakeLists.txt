@@ -70,38 +70,31 @@ add_executable(${PROJECT_NAME}
 )
 
 IF(APPLE)
-  find_library( COCOA_LIBRARY Cocoa )
-  find_library( IOKIT_LIBRARY IOKit )
-  find_library( COREVIDEO_LIBRARY CoreVideo )
-  target_link_libraries(${PROJECT_NAME}
-    ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-	-Wl--start-group
-	${MKL_LIBRARY}/libmkl_core.a
-	${MKL_LIBRARY}/libmkl_intel_lp64.a
-	${MKL_LIBRARY}/libmkl_sequential.a
-	-Wl--end-group
-	-lpthread
-	-lm
-	-ldl    
-  )
+	find_library( COCOA_LIBRARY Cocoa )
+	find_library( IOKIT_LIBRARY IOKit )
+	find_library( COREVIDEO_LIBRARY CoreVideo )
+	target_link_libraries(${PROJECT_NAME}
+			${OPENGL_LIBRARY}
+			${GLFW_DIR}/src/libglfw3.a
+			${COCOA_LIBRARY}
+			${IOKIT_LIBRARY}
+			${COREVIDEO_LIBRARY}
+			)
 ELSEIF(UNIX)
-  target_link_libraries(${PROJECT_NAME}
-    ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-  )
+	target_link_libraries(${PROJECT_NAME}
+			${OPENGL_LIBRARY}
+			${GLFW_DIR}/src/libglfw3.a
+			-lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+			)
 ELSEIF(MSVC)
-  if(CMAKE_CL_64)
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  else()
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/buildVS32/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  endif()
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		target_link_libraries(${PROJECT_NAME}
+				${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
+				${OPENGL_LIBRARY})
+	else()
+		target_link_libraries(${PROJECT_NAME}
+				${GLFW_DIR}/buildVS32/src/Release/glfw3.lib
+				${OPENGL_LIBRARY})
+	endif()
 ENDIF()
+

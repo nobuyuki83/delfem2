@@ -20,6 +20,7 @@ add_subdirectory(108_paramgeo3d)
 add_subdirectory(109_ContourLine2D)
 add_subdirectory(110_ReadFileBVH)
 add_subdirectory(111_ReadFileGLTF)
+add_subdirectory(112_OffscreenRendering)
 
 
 # meshing
@@ -35,6 +36,8 @@ add_subdirectory(301_IsoSurfaceStuffing)
 
 
 add_subdirectory(400_LaplaceMeshDeform)
+add_subdirectory(401_ExponentialMap)
+
 
 # cad
 add_subdirectory(500_2DCad)
