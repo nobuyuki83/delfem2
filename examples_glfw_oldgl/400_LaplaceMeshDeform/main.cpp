@@ -7,6 +7,8 @@
 #include "delfem2/emat.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/ilu_mats.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshmisc.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
@@ -107,10 +109,19 @@ void SetProblem()
       8,8);
       */
 
+  /*
   const unsigned int nl = 8;
   dfm2::MeshTri3D_CylinderClosed(aXYZ, aTri,
                                  0.2, 1.5,
                                  8, nl);
+                                 */
+  {
+    dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+        aXYZ,aTri);
+    dfm2::Normalize(aXYZ,1.0);
+    dfm2::Rotate(aXYZ, -M_PI*0.5, 0.0, 0.0);
+  }
+
   {
     std::vector<unsigned int> psup_ind, psup;
     JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,

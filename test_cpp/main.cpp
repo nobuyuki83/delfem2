@@ -37,7 +37,7 @@ TEST(slice,test1){
   std::vector<dfm2::CSliceTriMesh> aCS;
   std::vector< std::set<unsigned int> > ReebGraphCS;
   ////
-  Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+  delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   delfem2::Normalize(aXYZ);
   std::vector<int> aTriSurRel;
@@ -289,7 +289,8 @@ TEST(mshio,load_obj)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj", aXYZ, aTri);
+  delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+                    aXYZ, aTri);
   EXPECT_EQ(aTri.size(),1000*3);
 }
 

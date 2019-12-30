@@ -211,7 +211,8 @@ void SetNewProblem()
   static unsigned int iprob = 0;
   
   {
-    Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_2k.ply", aXYZ, aTri);
+    delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_2k.ply",
+                      aXYZ, aTri);
     {
       double cx,cy,cz, wx,wy,wz;
       GetCenterWidth(cx,cy,cz,

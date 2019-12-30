@@ -39,8 +39,8 @@ void PyWrite_VTK_MeshPoint
  const py::array_t<double>& aXYZ)
 {
   std::ofstream fout(file_path);
-  WriteVTK_Points(fout, message,
-                  aXYZ.data(), aXYZ.shape()[0], aXYZ.shape()[1]);
+  delfem2::WriteVTK_Points(fout, message,
+                           aXYZ.data(), aXYZ.shape()[0], aXYZ.shape()[1]);
 }
 
 
@@ -53,7 +53,7 @@ void PyWrite_VTK_MeshElem
   int vtk_elem_type = 0;
   if( meshelem_type == dfm2::MESHELEM_TRI ){  vtk_elem_type = 5;  }
   if( meshelem_type == dfm2::MESHELEM_TET ){  vtk_elem_type = 10;  }
-  WriteVTK_Cells(fout, vtk_elem_type, aElem.data(), aElem.shape()[0]);
+  delfem2::WriteVTK_Cells(fout, vtk_elem_type, aElem.data(), aElem.shape()[0]);
 }
 
 void PyWrite_VTK_PointScalar
@@ -61,7 +61,7 @@ void PyWrite_VTK_PointScalar
  const py::array_t<double>& aVal)
 {
   std::ofstream fout(file_path, std::ios_base::app);
-  WriteVTK_Data_PointScalar(fout,
+  delfem2::WriteVTK_Data_PointScalar(fout,
                             aVal.data(), aVal.shape()[0]);
 }
 
@@ -70,7 +70,7 @@ void PyWrite_VTK_PointVector
  const py::array_t<double>& aVal)
 {
   std::ofstream fout(file_path, std::ios_base::app);
-  WriteVTK_Data_PointVec(fout,
+  delfem2::WriteVTK_Data_PointVec(fout,
                          aVal.data(),
                          aVal.shape()[0], aVal.shape()[1], aVal.shape()[1]);
 }

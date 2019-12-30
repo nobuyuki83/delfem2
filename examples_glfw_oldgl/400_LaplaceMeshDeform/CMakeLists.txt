@@ -58,6 +58,8 @@ add_executable(${PROJECT_NAME}
 		${DELFEM2_INC}/mats.h                   ${DELFEM2_INC}/mats.cpp
 		${DELFEM2_INC}/emat.h                   ${DELFEM2_INC}/emat.cpp
 		${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
+		${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
+		${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
 
 		${DELFEM2_INC}/v23m3q.cpp               ${DELFEM2_INC}/v23m3q.h
 		${DELFEM2_INC}/ilu_mats.h               ${DELFEM2_INC}/ilu_mats.cpp
