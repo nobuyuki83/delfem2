@@ -425,6 +425,23 @@ TEST(bvh,rayintersection)
   }
 }
 
+void mark_child(std::vector<int>& aFlg,
+                unsigned int inode0,
+                const std::vector<dfm2::CNodeBVH2>& aNode)
+{
+  assert( inode0 < aNode.size() );
+  if( aNode[inode0].ichild[1] == -1 ){ // leaf
+    const unsigned int in0 = aNode[inode0].ichild[0];
+    assert( in0 < aFlg.size() );
+    aFlg[in0] += 1;
+    return;
+  }
+  const unsigned int in0 = aNode[inode0].ichild[0];
+  const unsigned int in1 = aNode[inode0].ichild[1];
+  mark_child(aFlg, in0, aNode);
+  mark_child(aFlg, in1, aNode);
+}
+
 TEST(bvh,morton_code)
 {
   std::vector<double> aXYZ; // 3d points
@@ -452,8 +469,8 @@ TEST(bvh,morton_code)
     assert( range.first == rangeA.first );
     assert( range.second == rangeB.second );
     {
-      int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
-      int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
+      const int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
+      const int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
       assert( last1+1 == first1 );
     }
   }
@@ -461,4 +478,9 @@ TEST(bvh,morton_code)
   std::vector<dfm2::CNodeBVH2> aNodeBVH;
   dfm2::BVH_TreeTopology_Morton(aNodeBVH,
                                 aSortedId,aSortedMc);
+  std::vector<int> aFlg(N,0);
+  mark_child(aFlg, 0, aNodeBVH);
+  for(int i=0;i<N;++i){
+    EXPECT_EQ(aFlg[i],1);
+  }
 }

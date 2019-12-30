@@ -397,7 +397,7 @@ void dfm2::BVH_TreeTopology_Morton
       const int inlA = nni+isplit;
       aNodeBVH[ini].ichild[0] = inlA;
       aNodeBVH[inlA].iroot = ini;
-      aNodeBVH[inlA].ichild[0] = aSortedId[ini];
+      aNodeBVH[inlA].ichild[0] = aSortedId[isplit];
       aNodeBVH[inlA].ichild[1] = -1;
     }
     else{
@@ -405,12 +405,12 @@ void dfm2::BVH_TreeTopology_Morton
       aNodeBVH[ini].ichild[0] = iniA;
       aNodeBVH[iniA].iroot = ini;
     }
-      // ----
+    // ----
     if( range.second == isplit+1 ){
       const int inlB = nni+isplit+1;
       aNodeBVH[ini].ichild[1] = inlB;
       aNodeBVH[inlB].iroot = ini;
-      aNodeBVH[inlB].ichild[0] = aSortedId[ini];
+      aNodeBVH[inlB].ichild[0] = aSortedId[isplit+1];
       aNodeBVH[inlB].ichild[1] = -1;
     }
     else{
