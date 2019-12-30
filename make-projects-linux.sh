@@ -42,6 +42,7 @@ make
 cd ../../
 
 #######################
+# glut
 
 cd examples_glut
 mkdir buildMake
@@ -49,6 +50,18 @@ cd buildMake
 cmake ..
 make
 cd ../../
+
+#######################
+# cuda
+
+cd examples_cuda
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../
+
+#######################
 
 
 #virtualenv --python=python3.7 myenv
