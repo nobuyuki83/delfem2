@@ -16,6 +16,8 @@
 #include <cstdlib>
 #include "delfem2/mshio.h"
 
+namespace dfm2 = delfem2;
+
 static void myUnitNormalAreaTri3D
 (double n[3], double& a,
  const double v1[3], const double v2[3], const double v3[3])
@@ -69,7 +71,7 @@ void Write_STL
   fout<<"endsolid"<<std::endl;
 }
 
-void Read_Ply
+void dfm2::Read_Ply
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
@@ -124,7 +126,7 @@ void Read_Ply
   //  if( is_norm_ ){ this->MakeNormal(); }
 }
 
-void Write_Ply
+void dfm2::Write_Ply
 (const std::string& fname,
  unsigned int nXYZ, double* paXYZ,
  unsigned int nTri, unsigned int* paTri)
@@ -155,7 +157,7 @@ void Write_Ply
 }
 
 
-void Write_Ply
+void dfm2::Write_Ply
 (const std::string& fname,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
@@ -188,7 +190,7 @@ void Write_Ply
 }
 
 
-void Read_Ply
+void dfm2::Read_Ply
 (const std::string& fname,
  int& nnode_, double*& pXYZs_,
  int& ntri_, unsigned int*& aTri_)
@@ -255,9 +257,9 @@ void Read_Ply
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------------------
 
-void Write_Obj
+void dfm2::Write_Obj
 (const std::string& str,
  const double* aXYZ, int nXYZ,
  const unsigned int* aTri, int nTri)
@@ -273,7 +275,7 @@ void Write_Obj
   }
 }
 
-void Write_Obj_Quad
+void dfm2::Write_Obj_Quad
 (const std::string& str,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aQuad)
@@ -289,7 +291,7 @@ void Write_Obj_Quad
   }
 }
 
-void Write_Obj
+void dfm2::Write_Obj
 (const std::string& str,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aElemInd,
@@ -315,7 +317,7 @@ void Write_Obj
 }
 
 
-void Write_Obj
+void dfm2::Write_Obj
 (const std::string& str,
  const std::vector< std::pair< std::vector<double>, std::vector<int> > >& aMesh)
 {
@@ -339,7 +341,7 @@ void Write_Obj
   }
 }
 
-void Read_Obj
+void dfm2::Read_Obj
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
@@ -375,7 +377,7 @@ void Read_Obj
   }
 }
 
-void Read_Obj_Quad
+void dfm2::Read_Obj_Quad
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aQuad)
@@ -412,7 +414,7 @@ void Read_Obj_Quad
   }
 }
 
-void Read_Obj2
+void dfm2::Read_Obj2
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -455,7 +457,7 @@ void Read_Obj2
   }
 }
 
-void Read_Obj
+void dfm2::Read_Obj
 (std::stringstream& ssobj,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -486,7 +488,7 @@ void Read_Obj
   }
 }
 
-void Read_Obj3
+void dfm2::Read_Obj3
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
@@ -592,12 +594,12 @@ void ParseVtx
   }
 }
 
-void Load_Obj
+void dfm2::Load_Obj
 (const std::string& fname,
  std::string& fname_mtl,
  std::vector<double>& aXYZ,
  std::vector<double>& aNorm,
- std::vector<CTriGroup>& aTriGroup)
+ std::vector<dfm2::CTriGroup>& aTriGroup)
 {
   std::ifstream fin;
   fin.open(fname.c_str());
@@ -683,7 +685,7 @@ void Load_Obj
 
 // ------------------------------------------------------------------------
 
-void Read_MeshTet3D_TetGen
+void dfm2::Read_MeshTet3D_TetGen
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTet,
@@ -750,7 +752,7 @@ void Read_MeshTet3D_TetGen
 
 // --------------------------------------------
 
-void Write_MeshTri3D
+void dfm2::Write_MeshTri3D
 (std::ofstream& fout,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
@@ -769,7 +771,7 @@ void Write_MeshTri3D
   }
 }
 
-void Read_MeshTri3D
+void dfm2::Read_MeshTri3D
 (std::ifstream& fin,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -786,7 +788,7 @@ void Read_MeshTri3D
   }
 }
 
-void WriteVTK_Points
+void dfm2::WriteVTK_Points
 (std::ofstream& fout,
  const std::string& name,
  const double* aXYZ,
@@ -820,7 +822,7 @@ void WriteVTK_Points
 // 12: VTK_HEXAHEDRON
 // 13: VTK_WEDGE
 // 14: VTK_PYRAMD
-void WriteVTK_Cells
+void dfm2::WriteVTK_Cells
 (std::ofstream& fout,
  int vtk_elem_type,
  const int* aElem,
@@ -869,7 +871,7 @@ void WriteVTK_Cells
   }
 }
 
-void WriteVTK_Cells
+void dfm2::WriteVTK_Cells
 (std::ofstream& fout,
  const std::vector<int>& aTet,
  const std::vector<int>& aPyrm,
@@ -911,7 +913,7 @@ void WriteVTK_Cells
 }
 
 
-void WriteVTK_Data_PointVec
+void dfm2::WriteVTK_Data_PointVec
 (std::ofstream& fout,
  const double* aVal,
  int np,
@@ -935,7 +937,7 @@ void WriteVTK_Data_PointVec
   }
 }
 
-void WriteVTK_Data_PointScalar
+void dfm2::WriteVTK_Data_PointScalar
 (std::ofstream& fout,
  const double* aVal,
  int np,
@@ -1096,7 +1098,7 @@ void WriteVTK_Data_PointScalar
  }
  */
 
-void WriteVTK_MapTriScalar
+void dfm2::WriteVTK_MapTriScalar
 (const std::string& fpath,
  const std::string& name,
  const std::vector<double>& aXYZ,
@@ -1137,7 +1139,7 @@ void WriteVTK_MapTriScalar
 }
 
 
-void ReadVTK
+void dfm2::ReadVTK
 (std::vector<double>& aXYZ,
  int& ielemtype,
  std::vector<int>& aElem,
@@ -1201,7 +1203,7 @@ void ReadVTK
     aPointVal.resize(0);
   }
   fin.close();
-  /////////////////////
+  // ---------
   assert(nelem1 == nelem);
   ielemtype = aElemType[0];
   for(int ie=0;ie<nelem;++ie){
@@ -1223,7 +1225,7 @@ void ReadVTK
 
 
 
-void Read_MeshTri3D_Nas
+void dfm2::Read_MeshTri3D_Nas
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  const char* path)

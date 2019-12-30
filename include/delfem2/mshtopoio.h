@@ -55,16 +55,16 @@ public:
   void Read(const std::string& fname){
     std::string sExt = pathGetExtension(fname);
     if( sExt == "ply") {
-      Read_Ply(fname, aPos, aElem);
+      delfem2::Read_Ply(fname, aPos, aElem);
     }
     else if( sExt == "obj") {
-      Read_Obj(fname, aPos, aElem);
+      delfem2::Read_Obj(fname, aPos, aElem);
     }
     elem_type = delfem2::MESHELEM_TRI;
     ndim = 3;
   }
   void Write_Obj(const std::string& fname){
-    ::Write_Obj(fname,
+    delfem2::Write_Obj(fname,
                 aPos.data(), aPos.size()/3,
                 aElem.data(), aElem.size()/3);
   }
@@ -130,7 +130,7 @@ public:
 public:
   std::vector<double> aXYZ;
   std::vector<double> aNorm;
-  std::vector<CTriGroup> aObjGroupTri;
+  std::vector<delfem2::CTriGroup> aObjGroupTri;
   std::vector<CMaterial> aMaterial;
 };
 

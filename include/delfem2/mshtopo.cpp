@@ -626,7 +626,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
 {
   std::vector<int> aflg(nPoint,-1);
   psup_ind.assign(nPoint+1,0);
-  for(int ipoint=0;ipoint<nPoint;ipoint++){
+  for(unsigned int ipoint=0;ipoint<nPoint;ipoint++){
     aflg[ipoint] = ipoint;
     for(unsigned int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       unsigned int jelem = elsup[ielsup];
@@ -639,13 +639,13 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
       }
     }
   }
-  for(int ipoint=0;ipoint<nPoint;ipoint++){
+  for(unsigned int ipoint=0;ipoint<nPoint;ipoint++){
     psup_ind[ipoint+1] += psup_ind[ipoint];
   }
   const int npsup = psup_ind[nPoint];
   psup.resize(npsup);
-  for(int ipoint=0;ipoint<nPoint;ipoint++){ aflg[ipoint] = -1; }
-  for(int ipoint=0;ipoint<nPoint;ipoint++){
+  for(unsigned int ipoint=0;ipoint<nPoint;ipoint++){ aflg[ipoint] = -1; }
+  for(unsigned int ipoint=0;ipoint<nPoint;ipoint++){
     aflg[ipoint] = ipoint;
     for(unsigned int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       unsigned int jelem = elsup[ielsup];

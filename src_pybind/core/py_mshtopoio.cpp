@@ -57,7 +57,7 @@ PyMeshTri3D_ReadPly
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  Read_Ply(fname, aXYZ, aTri);
+  delfem2::Read_Ply(fname, aXYZ, aTri);
   py::array_t<double> np_XYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   py::array_t<unsigned int> np_Tri({(int)aTri.size()/3,3}, aTri.data());
   return std::make_tuple(np_XYZ,np_Tri);
@@ -69,7 +69,7 @@ PyMeshTri3D_ReadObj
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  Read_Obj3(fname, aXYZ, aTri);
+  delfem2::Read_Obj3(fname, aXYZ, aTri);
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::make_tuple(npXYZ,npTri);
@@ -82,7 +82,7 @@ void PyMeshTri3D_WriteObj
 {
   assert( AssertNumpyArray2D(aXYZ, -1, 3) );
   assert( AssertNumpyArray2D(aTri, -1, 3) );
-  Write_Obj(fname,
+  delfem2::Write_Obj(fname,
             aXYZ.data(), aXYZ.shape()[0],
             aTri.data(), aTri.shape()[0]);
 }
@@ -93,7 +93,7 @@ PyMeshTri3D_ReadNastran
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  Read_MeshTri3D_Nas(aXYZ, aTri, fname.c_str());
+  delfem2::Read_MeshTri3D_Nas(aXYZ, aTri, fname.c_str());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   return std::make_tuple(npXYZ,npTri);

@@ -67,7 +67,7 @@ void myGlutIdle(){
 
 int main(int argc,char* argv[])
 {
-  Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+  delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
   delfem2::Normalize(aXYZ,1.0);
 

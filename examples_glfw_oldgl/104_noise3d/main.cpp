@@ -126,7 +126,7 @@ void ComputePerlin(){
 
 int main(int argc,char* argv[])
 {
-  Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+  delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   delfem2::Normalize(aXYZ);
   
