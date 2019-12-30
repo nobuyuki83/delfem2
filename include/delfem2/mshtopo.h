@@ -316,8 +316,8 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<unsigned int>& psup
                                                  const unsigned int* pElem,
                                                  const std::vector<unsigned int> &elsup_ind,
                                                  const std::vector<unsigned int> &elsup,
-                                                 int nnoel,
-                                                 int nPoint);
+                                                 unsigned int nnoel,
+                                                 unsigned int nPoint);
 void JArrayPointSurPoint_MeshOneRingNeighborhood(std::vector<unsigned int>& psup_ind,
                                                  std::vector<unsigned int>& psup,
                                                  //

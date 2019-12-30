@@ -5,15 +5,11 @@ project(examples_glut)
 # opengl
 add_subdirectory(00_viewer3d)
 add_subdirectory(01_shader)
-
-add_subdirectory(offscreen)
 add_subdirectory(glbuffer)
 
 # geometry
-add_subdirectory(exponentialmap)
 add_subdirectory(edit_cubes)
 add_subdirectory(transform_handler)
-
 
 # fem
 add_subdirectory(rigidbody3d_rotation)

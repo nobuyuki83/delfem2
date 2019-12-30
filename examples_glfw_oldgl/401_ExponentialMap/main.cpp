@@ -5,31 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cmath>
+#include <cstdlib>
 #include <queue>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
 
-// --------
-
-#if defined(__APPLE__) && (__MACH__)
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
-
+// gl related includes
 #include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
 #include "delfem2/opengl/gl_tex.h"
-#include "../glut_cam.h"
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
+
+namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
@@ -206,7 +199,6 @@ std::vector<double> aTex;
 std::vector<double> aLocCoord;
 std::vector<unsigned int> psup_ind, psup;
 int iker = 0;
-CNav3D_GLUT nav;
 bool is_animation = true;
 bool is_lighting = false;
 int m_texName;
@@ -246,7 +238,7 @@ void SetNewProblem()
     std::vector<double> aNorm(aXYZ.size());
     Normal_MeshTri3D(aNorm.data(),
                      aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
-    const int np = aXYZ.size()/3;
+    const unsigned int np = aXYZ.size()/3;
     aLocCoord.resize(np*6);
     for(int ip=0;ip<np;++ip){
       double tmp[3];
@@ -268,42 +260,8 @@ void SetNewProblem()
 
 // -----------------------------------------------------
 
-void myGlutIdle(){
-  glutPostRedisplay();
-}
-
-void myGlutResize(int w, int h)
+void myGlutDisplay()
 {
-  glViewport(0, 0, w, h);
-  ::glMatrixMode(GL_PROJECTION);
-  glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y ){
-  nav.glutMotion(x,y);
-}
-
-void myGlutMouse(int button, int state, int x, int y){
-  nav.glutMouse(button, state, x, y);
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-}
-
-void myGlutDisplay(void)
-{
-  ::glClearColor(0.2f, .7f, .7f,1.0f);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
-  
-  delfem2::opengl::DrawBackground();
-  nav.SetGL_Camera();
-  
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
   GLboolean is_texture  = ::glIsEnabled(GL_TEXTURE_2D);
@@ -323,9 +281,13 @@ void myGlutDisplay(void)
     double px = aXYZ[iker*3+0];
     double py = aXYZ[iker*3+1];
     double pz = aXYZ[iker*3+2];
+    ::glDisable(GL_LIGHTING);
+    ::glPushMatrix();
     ::glTranslated(+px, +py, +pz);
-    ::glutSolidSphere(0.05, 16, 16);
-    ::glTranslated(-px, -py, -pz);
+    ::glScaled(0.05,0.05,0.05);
+    ::glColor3d(1,0,0);
+    dfm2::opengl::DrawSphere(16,16);
+    ::glPopMatrix();
     ////
     CVector3 ex(aLocCoord[iker*6+3],aLocCoord[iker*6+4],aLocCoord[iker*6+5]);
     ex *= 0.2;
@@ -409,198 +371,43 @@ void myGlutDisplay(void)
   if( !is_lighting ){ ::glDisable(GL_LIGHTING); }
   ::glDisable(GL_TEXTURE_2D);
   
-  /*
-   ::glBegin(GL_TRIANGLES);
-   for(int itri=0;itri<aETri.size();itri++){
-   const int i0 = aETri[itri].v[0];
-   const int i1 = aETri[itri].v[1];
-   const int i2 = aETri[itri].v[2];
-   MyGlNormal3dv(aEPo[i0].n); MyGlVertex3dv(aEPo[i0].p);
-   MyGlNormal3dv(aEPo[i1].n); MyGlVertex3dv(aEPo[i1].p);
-   MyGlNormal3dv(aEPo[i2].n); MyGlVertex3dv(aEPo[i2].p);
-   }
-   ::glEnd();        
-   */
-  /*
-   ::glDisable(GL_LIGHTING);
-   ::glColor3d(0,0,0);
-   ::glBegin(GL_LINES);
-   for(unsigned int itri=0;itri<aTri.size();itri++){  
-   const unsigned int i1 = aTri[itri].v[0];
-   const unsigned int i2 = aTri[itri].v[1];
-   const unsigned int i3 = aTri[itri].v[2];
-   MyGlVertex3dv(aPo[i1].p);     MyGlVertex3dv(aPo[i2].p); 
-   MyGlVertex3dv(aPo[i2].p);     MyGlVertex3dv(aPo[i3].p); 
-   MyGlVertex3dv(aPo[i3].p);     MyGlVertex3dv(aPo[i1].p); 
-   }
-   ::glEnd();        
-   
-   */
-  
-  
   if( is_lighting ){ ::glEnable( GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }
   if(  is_texture  ){ ::glEnable(GL_TEXTURE_2D); } 
-  
-  //	ShowFPS();
-  /*
-   {
-   int viewport[4];
-   ::glGetIntegerv(GL_VIEWPORT, viewport);
-   int width = viewport[2];
-   int height = viewport[3];
-   ::glViewport(0,0, 300,300);
-   ::glMatrixMode(GL_PROJECTION);
-   ::glLoadIdentity();
-   ::glMatrixMode(GL_MODELVIEW);
-   ::glLoadIdentity();
-   
-   //    ::glDisable(GL_TEXTURE_2D);
-   
-   //    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-   //    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-   ::glDisable(GL_LIGHTING);
-   ::glDisable(GL_TEXTURE_2D);
-   
-   //  ::glDisable(GL_LIGHTING);
-   
-   //    ::glColor3d(1,1,1);
-   //    ::glBegin(GL_TRIANGLES);
-   //    ::glVertex2d(-1,-1);
-   //    ::glVertex2d(+1,-1);
-   //    ::glVertex2d( 0,+1);
-   //    ::glEnd();
-   
-   ::glBegin(GL_TRIANGLES);
-   double R[9] = { 0,0,0, 0,0,0, 0,0,0 };
-   for(int i=0;i<6;i++){ R[i] = aLocCoord[iker*6+i]; }
-   Cross3D(R+6, R+0, R+3);
-   {
-   double q0[3];
-   //      VecMat3(aLocCoord.data()+iker*6, R, q0);
-   MatVec3D(R, aLocCoord.data()+iker*6, q0);
-   }
-   for(int itri=0;itri<aTri.size()/3;itri++){
-   int i0 = aTri[itri*3+0];
-   int i1 = aTri[itri*3+1];
-   int i2 = aTri[itri*3+2];
-   const double* pn0 = aLocCoord.data()+i0*6;
-   const double* pn1 = aLocCoord.data()+i1*6;
-   const double* pn2 = aLocCoord.data()+i2*6;
-   //      const double* pn0 = aNormal.data()+i0*3;
-   //      const double* pn1 = aNormal.data()+i1*3;
-   //      const double* pn2 = aNormal.data()+i2*3;
-   //      double pN0[3] = {pn0[0],pn0[1],pn0[2]};
-   //      double pN1[3] = {pn1[0],pn1[1],pn1[2]};
-   //      double pN2[3] = {pn2[0],pn2[1],pn2[2]};
-   //      double pN0[3]; VecMat3(pn0, R, pN0);
-   //      double pN1[3]; VecMat3(pn1, R, pN1);
-   //      double pN2[3]; VecMat3(pn2, R, pN2);
-   double pN0[3]; MatVec3D(R, pn0, pN0);
-   double pN1[3]; MatVec3D(R, pn1, pN1);
-   double pN2[3]; MatVec3D(R, pn2, pN2);
-   const double* pp0 = aXYZ.data()+i0*3;
-   const double* pp1 = aXYZ.data()+i1*3;
-   const double* pp2 = aXYZ.data()+i2*3;
-   double r = 1.0;
-   double s = 2.0;
-   if( aTex[i0*2+0] < -0.5 || aTex[i0*2+0] > 0.5 ) continue;
-   if( aTex[i0*2+1] < -0.5 || aTex[i0*2+1] > 0.5 ) continue;
-   if( aTex[i1*2+0] < -0.5 || aTex[i1*2+0] > 0.5 ) continue;
-   if( aTex[i1*2+1] < -0.5 || aTex[i1*2+1] > 0.5 ) continue;
-   if( aTex[i2*2+0] < -0.5 || aTex[i2*2+0] > 0.5 ) continue;
-   if( aTex[i2*2+1] < -0.5 || aTex[i2*2+1] > 0.5 ) continue;
-   //      ::glColor3d(pn0[0]*0.5+0.5, pn0[1]*0.5+0.5, pn0[2]*0.5+0.5);
-   //      ::glTexCoord2d(aTex[i0*2+0]*r+0.5,aTex[i0*2+1]*r+0.5);
-   //      ::glColor3dv(pn1);
-   //      ::glColor3d(pn1[0]*0.5+0.5, pn1[1]*0.5+0.5, pn1[2]*0.5+0.5);
-   //      ::glTexCoord2d(aTex[i1*2+0]*r+0.5,aTex[i1*2+1]*r+0.5);
-   //      ::glColor3dv(pn2);
-   //      ::glColor3d(pn2[0]*0.5+0.5, pn2[1]*0.5+0.5, pn2[2]*0.5+0.5);
-   //      ::glTexCoord2d(aTex[i2*2+0]*r+0.5,aTex[i2*2+1]*r+0.5);
-   ////
-   ::glColor3d(pN0[1]*0.5+0.5, pN0[2]*0.5+0.5, pN0[0]*0.5+0.5);
-   ::glVertex2d(aTex[i0*2+0]*s,aTex[i0*2+1]*s);
-   ////
-   ::glColor3d(pN1[1]*0.5+0.5, pN1[2]*0.5+0.5, pN1[0]*0.5+0.5);
-   ::glVertex2d(aTex[i1*2+0]*s,aTex[i1*2+1]*s);
-   ////
-   ::glColor3d(pN2[1]*0.5+0.5, pN2[2]*0.5+0.5, pN2[0]*0.5+0.5);
-   ::glVertex2d(aTex[i2*2+0]*s,aTex[i2*2+1]*s);
-   }
-   ::glEnd();
-   
-   
-   ::glViewport(0,0,width,height);
-   }
-   */
-  
-  glutSwapBuffers();
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key){
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-      if( is_animation ){ is_animation = false; }
-      else{ is_animation = true; }
-      break;
-    case ' ':
-    {
-      iker = (int)((aXYZ.size()/3.0)*(double)rand()/(1.0+RAND_MAX));
-      MakeExpMap_Point
-      (aTex,aLocCoord,
-       iker,
-       aXYZ,psup_ind,psup);
-    }
-      break;
-    case 'l':
-      is_lighting = !is_lighting;
-      if( is_lighting ){ 
-        ::glEnable(GL_LIGHTING);
-        std::cout << "put on light " << std::endl;
-      }
-      else{              
-        ::glDisable(GL_LIGHTING);
-      }
-      break;
-  }
-  
-  ::glutPostRedisplay();
 }
 
 int main(int argc,char* argv[])
 {
-  // initialize glut
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("Discrete Exponential Map");
-  
-  // define call back functions
-  glutIdleFunc(myGlutIdle);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutDisplayFunc(myGlutDisplay);
-  glutReshapeFunc(myGlutResize);
-  glutSpecialFunc(myGlutSpecial);;
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  
-  delfem2::opengl::setSomeLighting();
   SetNewProblem();
-  
-  //  m_texName = ReadPPM_SetTexture("checkerboard.pnm");
-  
+
+  /////////
+
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 1.0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  delfem2::opengl::setSomeLighting();
+
   m_texName = ReadPPM_SetTexture(std::string(PATH_INPUT_DIR)+"/dep.ppm");
-  
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
-  nav.camera.view_height = 1.5;
-  
-  glutMainLoop();
-  return 0;
+
+  int iframe = 0;
+  while (!glfwWindowShouldClose(viewer.window))
+  {
+    if( iframe % 100 == 0 ){
+      iker = (int)((aXYZ.size()/3.0)*(double)rand()/(1.0+RAND_MAX));
+      MakeExpMap_Point
+          (aTex,aLocCoord,
+           iker,
+           aXYZ,psup_ind,psup);
+      iframe = 0;
+    }
+    iframe++;
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
