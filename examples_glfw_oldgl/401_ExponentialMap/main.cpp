@@ -352,17 +352,17 @@ void myGlutDisplay()
     const double* pn1 = aLocCoord.data()+i1*6;
     const double* pn2 = aLocCoord.data()+i2*6;
     double r = 1.0;
-    ////
+    //
     ::glNormal3dv(aLocCoord.data()+i0*6);
     ::glTexCoord2d(aTex[i0*2+0]*r+0.5,aTex[i0*2+1]*r+0.5);
     //    ::glColor3d(pn0[0]*0.5+0.5, pn0[1]*0.5+0.5, pn0[2]*0.5+0.5);
     ::glVertex3dv(aXYZ.data()+i0*3);
-    ////
+    //
     ::glNormal3dv(aLocCoord.data()+i1*6);
     ::glTexCoord2d(aTex[i1*2+0]*r+0.5,aTex[i1*2+1]*r+0.5);
     //    ::glColor3d(pn1[0]*0.5+0.5, pn1[1]*0.5+0.5, pn1[2]*0.5+0.5);
     ::glVertex3dv(aXYZ.data()+i1*3);
-    ////
+    //
     ::glNormal3dv(aLocCoord.data()+i2*6);
     ::glTexCoord2d(aTex[i2*2+0]*r+0.5,aTex[i2*2+1]*r+0.5);
     //    ::glColor3d(pn2[0]*0.5+0.5, pn2[1]*0.5+0.5, pn2[2]*0.5+0.5);

@@ -33,13 +33,14 @@ void myGlutDisplay()
 int main(int argc,char* argv[])
 {
   {
-    const unsigned int N = 10000;
+    const unsigned int N = 1000;
     aXYZ.resize(N*3);
     const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
     dfm2::CBV3D_AABB bb(minmax_xyz);
     {
       std::random_device dev;
-      std::mt19937 rng(dev());
+//      std::mt19937 rng(dev());
+      std::mt19937 rng(0);
       std::uniform_real_distribution<> udist(0.0, 1.0);
       for(unsigned int i=0;i<N;++i) {
         aXYZ[i * 3 + 0] = (bb.x_max - bb.x_min) * udist(rng) + bb.x_min;
@@ -51,6 +52,15 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aSortedMc;
     dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
                               aXYZ,minmax_xyz);
+    /*
+    {
+      for(int ini=0;ini<aSortedMc.size()-1;++ini){
+        const std::pair<int,int> range = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, ini);
+        int isplit = dfm2::findSplit(aSortedMc.data(), range.first, range.second);
+        std::cout << ini << " " << std::bitset<32>(aSortedMc[ini]) << " --> " << range.first << " " << range.second << " " << isplit << std::endl;
+      }
+    }
+     */
     dfm2::BVH_TreeTopology_Morton(aNodeBVH,
                                   aSortedId,aSortedMc);
   }
