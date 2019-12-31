@@ -85,7 +85,7 @@ static inline double largest(double x0, double x1, double x2) {
   return wmax;
 }
 
-void updateMinMaxXYZ
+void dfm2::updateMinMaxXYZ
 (double& x_min, double& x_max,
  double& y_min, double& y_max,
  double& z_min, double& z_max,
@@ -100,10 +100,21 @@ void updateMinMaxXYZ
   z_max = (z_max > z) ? z_max : z;
 }
 
-void GetCenterWidth_MinMaxXYZ
+void dfm2::MinMaxXYZ(double mm[6],
+                     const std::vector<double>& aXYZ)
+{
+  mm[0] = +1;
+  mm[1] = -1;
+  for(std::size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+    updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
+                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
+  }
+}
+
+void CenterWidth_MinMaxXYZ
 (double& cx, double& cy, double& cz,
  double& wx, double& wy, double& wz,
- ////
+ //
  double x_min, double x_max,
  double y_min, double y_max,
  double z_min, double z_max)
@@ -231,7 +242,7 @@ void dfm2::GetCenterWidth
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                     paXYZ[ino*3+0], paXYZ[ino*3+1], paXYZ[ino*3+2]);
   }
-  GetCenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
+  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
@@ -249,7 +260,7 @@ const std::vector<double>& aXYZ)
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                     aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
   }
-  GetCenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
+  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
@@ -259,17 +270,6 @@ void dfm2::CenterWidth_Points3D
 {
   CenterWidth_Points3D(cw[0],cw[1],cw[2],cw[3],cw[4],cw[5],
                  aXYZ);
-}
-
-void MinMaxXYZ(double mm[6],
-               const std::vector<double>& aXYZ)
-{
-  mm[0] = +1;
-  mm[1] = -1;
-  for(std::size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
-    updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
-                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
-  }
 }
 
 void dfm2::GetCenterWidthGroup
@@ -303,7 +303,7 @@ void dfm2::GetCenterWidthGroup
     }
   }
   if (is_ini){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  GetCenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
+  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
@@ -338,7 +338,7 @@ void dfm2::GetCenterWidthGroup
     }
   }
   if (is_ini){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  GetCenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
+  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
@@ -375,7 +375,7 @@ void dfm2::GetCenterWidthLocal(
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                     Dot(pi,lex), Dot(pi,ley), Dot(pi,lez));
   }
-  GetCenterWidth_MinMaxXYZ(lcx,lcy,lcz, lwx,lwy,lwz,
+  CenterWidth_MinMaxXYZ(lcx,lcy,lcz, lwx,lwy,lwz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 

@@ -130,3 +130,15 @@ make
 ./runUnitTests
 cd ../../
 
+#################################
+# torch extension
+
+pip3 uninstall torch_delfem2 -y
+pip3 install torch
+cd src_pybind/torch
+python3 setup.py develop
+cd ../../
+
+
+
+
