@@ -184,14 +184,14 @@ void SetProblem(int iprob)
     {
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
                mesh.aXYZ_Tri, mesh.aTri);
-      delfem2::Normalize(mesh.aXYZ_Tri,2.3);
+      delfem2::Normalize_Points3D(mesh.aXYZ_Tri,2.3);
       mesh.obj.Init(mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size()/3,
                     mesh.aTri.data(), mesh.aTri.size()/3,
                     0.0);
       mesh.aNorm.resize(mesh.aXYZ_Tri.size());
-      Normal_MeshTri3D(mesh.aNorm.data(),
-                       mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size()/3,
-                       mesh.aTri.data(), mesh.aTri.size()/3);
+      delfem2::Normal_MeshTri3D(mesh.aNorm.data(),
+                                mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size()/3,
+                                mesh.aTri.data(), mesh.aTri.size()/3);
     }
     double cent[3] = {0,0,0};
     dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,

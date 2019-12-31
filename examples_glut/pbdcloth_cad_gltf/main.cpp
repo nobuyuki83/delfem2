@@ -343,9 +343,9 @@ int main(int argc,char* argv[])
                     aBone, aRigWeight_Contact.data(), aRigJoint_Contact.data());
     }
     aNorm_Contact.resize(aXYZ_Contact.size());
-    Normal_MeshTri3D(aNorm_Contact.data(),
-                     aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                     aTri_Contact.data(), aTri_Contact.size()/3);
+    delfem2::Normal_MeshTri3D(aNorm_Contact.data(),
+                              aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                              aTri_Contact.data(), aTri_Contact.size()/3);
     bvh.Init(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
              aTri_Contact.data(), aTri_Contact.size()/3,
              0.01);

@@ -22,14 +22,18 @@ void updateMinMaxXYZ(double& x_min, double& x_max,
                      double& y_min, double& y_max,
                      double& z_min, double& z_max,
                      double x, double y, double z);
+void MinMaxXYZ(double mm[6],
+               const std::vector<double>& aXYZ);
+
+namespace delfem2{
 void GetCenterWidth(double& cx, double& cy, double& cz,
                     double& wx, double& wy, double& wz,
                     const int nXYZ, const double* paXYZ);
-void GetCenterWidth(double& cx, double& cy, double& cz,
-                    double& wx, double& wy, double& wz,
-                    const std::vector<double>& aXYZ);
-void GetCenterWidth(double cw[6],
-                    const std::vector<double>& aXYZ);
+void CenterWidth_Points3D(double& cx, double& cy, double& cz,
+                          double& wx, double& wy, double& wz,
+                          const std::vector<double>& aXYZ);
+void CenterWidth_Points3D(double cw[6],
+                          const std::vector<double>& aXYZ);
 void GetCenterWidthGroup(double& cx, double& cy, double& cz,
                          double& wx, double& wy, double& wz,
                          const std::vector<double>& aXYZ,
@@ -45,7 +49,7 @@ void GetCenterWidthGroup(double& cx, double& cy, double& cz,
                          int igroup,
                          const std::vector<int>& aIndGroup);
 void GetCenterWidth3DGroup(double cw[6],
-                           ////
+                           //
                            const std::vector<double>& aXYZ,
                            const std::vector<int>& aElemInd,
                            const std::vector<int>& aElem,
@@ -58,8 +62,7 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
                          const double lex[3],
                          const double ley[3],
                          const double lez[3]);
-void MinMaxXYZ(double mm[6],
-               const std::vector<double>& aXYZ);
+}
 
 
 // ------------------------------------------
@@ -70,21 +73,21 @@ namespace delfem2{
  * @brief rotate with the Bryant angle (in the  order of XYZ) around the origin.
  * @details the angles are in the radian.
  */
-void Rotate(std::vector<double>& aXYZ,
-            double radx, double rady, double radz);
-void Translate(std::vector<double>& aXYZ,
-               double tx, double ty, double tz);
-void Translate(double tx, double ty, double tz,
-               const unsigned int nnode_, double* pXYZs_);
-void Translate(std::vector<double>& aXY,
-               double tx, double ty);
-void Scale(std::vector<double>& aXYZ,
-           double s);
-void Scale(double s,
-           const unsigned int nnode_, double* pXYZs_);
-double Size(const std::vector<double>& aXYZ);
-void Normalize(std::vector<double>& aXYZ,
-               double s = 1.0);
+void Rotate_Points3D(std::vector<double>& aXYZ,
+                     double radx, double rady, double radz);
+void Translate_Points3D(std::vector<double>& aXYZ,
+                        double tx, double ty, double tz);
+void Translate_Points3D(double tx, double ty, double tz,
+                        const unsigned int nnode_, double* pXYZs_);
+void Translate_Points2D(std::vector<double>& aXY,
+                        double tx, double ty);
+void Scale_PointsXD(std::vector<double>& aXYZ,
+                    double s);
+void Scale_Points3D(double s,
+                    const unsigned int nnode_, double* pXYZs_);
+double Size_Points3D_LongestAABBEdge(const std::vector<double>& aXYZ);
+void Normalize_Points3D(std::vector<double>& aXYZ,
+                        double s = 1.0);
   
 }
 
@@ -120,9 +123,11 @@ void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZ1,
                                        unsigned int ndim,
                                        const std::vector<double>& aXYZ0,
                                        const std::vector<unsigned int>& aElem0);
+namespace delfem2{
 void Normal_MeshTri3D(double* aNorm,
                       const double* aXYZ, unsigned int nXYZ,
                       const unsigned int* aTri, unsigned int nTri);
+}
 void Quality_MeshTri2D(double& max_aspect, double& min_area,
                        const double* aXY,
                        const unsigned int* aTri, unsigned int nTri);

@@ -132,7 +132,8 @@ void CMeshMultiElem::ReadObj(const std::string& path_obj)
 
 std::vector<double> CMeshMultiElem::AABB3_MinMax() const
 {
-  double cw[6]; GetCenterWidth(cw, aXYZ);
+  double cw[6]; delfem2::CenterWidth_Points3D(cw,
+                                              aXYZ);
   std::vector<double> aabb(6);
   aabb[0] = cw[0]-0.5*cw[3];
   aabb[1] = cw[0]+0.5*cw[3];
@@ -145,14 +146,14 @@ std::vector<double> CMeshMultiElem::AABB3_MinMax() const
 
 void CMeshMultiElem::ScaleXYZ(double s)
 {
-  delfem2::Scale(aXYZ,
-                 s);
+  delfem2::Scale_PointsXD(aXYZ,
+                          s);
 }
 
 void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
 {
-  delfem2::Translate(aXYZ,
-                     x,y,z);
+  delfem2::Translate_Points3D(aXYZ,
+                              x,y,z);
 }
 
 void Load_Mtl

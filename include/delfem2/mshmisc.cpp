@@ -89,7 +89,7 @@ void updateMinMaxXYZ
 (double& x_min, double& x_max,
  double& y_min, double& y_max,
  double& z_min, double& z_max,
- /////
+ //
  double x, double y, double z)
 {
   x_min = (x_min < x) ? x_min : x;
@@ -153,12 +153,12 @@ void RemoveUnreferencedPoints_MeshElem
   }
 }
 
-void Normal_MeshTri3D(
-    double* aNorm,
-    const double* aXYZ,
-    unsigned int nXYZ,
-    const unsigned int* aTri,
-    unsigned int nTri)
+void dfm2::Normal_MeshTri3D
+ (double* aNorm,
+  const double* aXYZ,
+  unsigned int nXYZ,
+  const unsigned int* aTri,
+  unsigned int nTri)
 {
   for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
   for(unsigned int itri=0;itri<nTri;itri++){
@@ -218,7 +218,7 @@ void Quality_MeshTri2D
 
 // ------------------------------------------------------------------------------
 
-void GetCenterWidth
+void dfm2::GetCenterWidth
 (double& cx, double& cy, double& cz,
  double& wx, double& wy, double& wz,
  const int nXYZ, const double* paXYZ)
@@ -235,7 +235,7 @@ void GetCenterWidth
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-void GetCenterWidth
+void dfm2::CenterWidth_Points3D
 (double& cx, double& cy, double& cz,
 double& wx, double& wy, double& wz,
 const std::vector<double>& aXYZ)
@@ -253,11 +253,11 @@ const std::vector<double>& aXYZ)
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-void GetCenterWidth
+void dfm2::CenterWidth_Points3D
 (double cw[6],
  const std::vector<double>& aXYZ)
 {
-  GetCenterWidth(cw[0],cw[1],cw[2],cw[3],cw[4],cw[5],
+  CenterWidth_Points3D(cw[0],cw[1],cw[2],cw[3],cw[4],cw[5],
                  aXYZ);
 }
 
@@ -272,10 +272,10 @@ void MinMaxXYZ(double mm[6],
   }
 }
 
-void GetCenterWidthGroup
+void dfm2::GetCenterWidthGroup
 (double& cx, double& cy, double& cz,
  double& wx, double& wy, double& wz,
- ////
+ // ----------
  const std::vector<double>& aXYZ,
  const std::vector<int>& aElem,
  const int nnoel,
@@ -307,15 +307,15 @@ void GetCenterWidthGroup
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-void GetCenterWidthGroup(
-    double& cx, double& cy, double& cz,
-    double& wx, double& wy, double& wz,
-    //
-    const std::vector<double>& aXYZ,
-    const std::vector<int>& aElemInd,
-    const std::vector<int>& aElem,
-    int igroup,
-    const std::vector<int>& aIndGroup)
+void dfm2::GetCenterWidthGroup
+ (double& cx, double& cy, double& cz,
+  double& wx, double& wy, double& wz,
+  //
+  const std::vector<double>& aXYZ,
+  const std::vector<int>& aElemInd,
+  const std::vector<int>& aElem,
+  int igroup,
+  const std::vector<int>& aIndGroup)
 {
   assert(!aElemInd.empty());
   const unsigned int nelem = aElemInd.size()-1;
@@ -342,21 +342,21 @@ void GetCenterWidthGroup(
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
-void GetCenterWidth3DGroup(
-    double cw[6],
-    //
-    const std::vector<double>& aXYZ,
-    const std::vector<int>& aElemInd,
-    const std::vector<int>& aElem,
-    int igroup,
-    const std::vector<int>& aIndGroup)
+void dfm2::GetCenterWidth3DGroup
+ (double cw[6],
+  //
+  const std::vector<double>& aXYZ,
+  const std::vector<int>& aElemInd,
+  const std::vector<int>& aElem,
+  int igroup,
+  const std::vector<int>& aIndGroup)
 {
   GetCenterWidthGroup(cw[0],cw[1],cw[2], cw[3],cw[4],cw[5],
                       aXYZ,aElemInd,aElem, igroup, aIndGroup);
 }
 
 
-void GetCenterWidthLocal(
+void dfm2::GetCenterWidthLocal(
     double& lcx, double& lcy, double& lcz,
     double& lwx, double& lwy, double& lwz,
     const std::vector<double>& aXYZ,
@@ -381,7 +381,7 @@ void GetCenterWidthLocal(
 
 // -------------------------------------
 
-void dfm2::Scale
+void dfm2::Scale_PointsXD
 (std::vector<double>& aXYZ,
  double s)
 {
@@ -390,7 +390,7 @@ void dfm2::Scale
 }
 
 
-void dfm2::Translate
+void dfm2::Translate_Points3D
 (std::vector<double>& aXYZ,
 double tx, double ty, double tz)
 {
@@ -402,7 +402,7 @@ double tx, double ty, double tz)
   }
 }
 
-void dfm2::Translate
+void dfm2::Translate_Points2D
  (std::vector<double>& aXY,
   double tx, double ty)
 {
@@ -413,19 +413,19 @@ void dfm2::Translate
   }
 }
 
-void dfm2::Rotate
+void dfm2::Rotate_Points3D
 (std::vector<double>& aXYZ,
 double radx, double rady, double radz)
 {
   const double phi = radx;
   const double theta = rady;
   const double psi = radz;
-  ////
+  // ----------
   const double mat[9] = {
     cos(psi)*cos(theta), cos(psi)*sin(theta)*sin(phi)-sin(psi)*cos(phi), cos(psi)*sin(theta)*cos(phi)+sin(psi)*sin(phi),
     sin(psi)*cos(theta), sin(psi)*sin(theta)*sin(phi)+cos(psi)*cos(phi), sin(psi)*sin(theta)*cos(phi)-cos(psi)*sin(phi),
     -sin(theta),         cos(theta)*sin(phi),                            cos(theta)*cos(phi) };
-  ////  
+  // ----------
   const int nXYZ = (int)aXYZ.size()/3;
   for (int ixyz = 0; ixyz<nXYZ; ++ixyz){
     double p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
@@ -436,30 +436,32 @@ double radx, double rady, double radz)
   }
 }
 
-double dfm2::Size(const std::vector<double>& aXYZ){
+double dfm2::Size_Points3D_LongestAABBEdge
+ (const std::vector<double>& aXYZ)
+{
   double cx, cy, cz, wx, wy, wz;
-  GetCenterWidth(cx, cy, cz, wx, wy, wz, aXYZ);
+  CenterWidth_Points3D(cx, cy, cz, wx, wy, wz, aXYZ);
   double wmax = largest(wx, wy, wz);
   return wmax;
 }
 
-void dfm2::Normalize
+void dfm2::Normalize_Points3D
 (std::vector<double>& aXYZ,
  double s)
 {
   double cx, cy, cz, wx, wy, wz;
-  GetCenterWidth(cx, cy, cz, wx, wy, wz, aXYZ);
-  Translate(aXYZ,
+  CenterWidth_Points3D(cx, cy, cz, wx, wy, wz, aXYZ);
+  Translate_Points3D(aXYZ,
             -cx, -cy, -cz);
   double wmax = largest(wx, wy, wz);
-  Scale(aXYZ,
-        s/wmax);
+  Scale_PointsXD(aXYZ,
+                 s/wmax);
 }
 
-void dfm2::Translate(
-    double tx, double ty, double tz,
-    const unsigned int nnode_,
-    double* pXYZs_)
+void dfm2::Translate_Points3D
+ (double tx, double ty, double tz,
+  const unsigned int nnode_,
+  double* pXYZs_)
 {
   for(unsigned int ino=0;ino<nnode_;ino++){
     pXYZs_[ino*3+0] += tx;
@@ -468,7 +470,7 @@ void dfm2::Translate(
   }
 }
 
-void dfm2::Scale (
+void dfm2::Scale_Points3D (
     double s,
     const unsigned int nnode_,
     double* pXYZs_)

@@ -51,9 +51,9 @@ void CShader_TriMesh::UpdateVertex
   std::vector<unsigned int>& aTri)
 {
   std::vector<double> aNrmd(aXYZd.size());
-  Normal_MeshTri3D(aNrmd.data(),
-                   aXYZd.data(), aXYZd.size()/3,
-                   aTri.data(), aTri.size()/3);
+  delfem2::Normal_MeshTri3D(aNrmd.data(),
+                            aXYZd.data(), aXYZd.size()/3,
+                            aTri.data(), aTri.size()/3);
 
   glBindVertexArray(vao.VAO); // opengl4
   

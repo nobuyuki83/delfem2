@@ -215,17 +215,17 @@ void SetNewProblem()
                       aXYZ, aTri);
     {
       double cx,cy,cz, wx,wy,wz;
-      GetCenterWidth(cx,cy,cz,
-                     wx,wy,wz,
-                     aXYZ);
-      delfem2::Translate(aXYZ,
+      delfem2::CenterWidth_Points3D(cx,cy,cz,
+                                    wx,wy,wz,
+                                    aXYZ);
+      delfem2::Translate_Points3D(aXYZ,
                          -cx,-cy,-cz);
       double wm = wx;
       wm = ( wx > wm ) ? wx : wm;
       wm = ( wy > wm ) ? wy : wm;
       wm = ( wz > wm ) ? wz : wm;
-      delfem2::Scale(aXYZ,
-                     2.0/wm);
+      delfem2::Scale_PointsXD(aXYZ,
+                              2.0/wm);
     }
   }
   {
@@ -237,8 +237,8 @@ void SetNewProblem()
   }
   {
     std::vector<double> aNorm(aXYZ.size());
-    Normal_MeshTri3D(aNorm.data(),
-                     aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
+    delfem2::Normal_MeshTri3D(aNorm.data(),
+                              aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
     const unsigned int np = aXYZ.size()/3;
     aLocCoord.resize(np*6);
     for(int ip=0;ip<np;++ip){

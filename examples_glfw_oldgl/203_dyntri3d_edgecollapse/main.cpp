@@ -47,14 +47,14 @@ void SetNewProblem()
                     nnode,pXYZs, ntri,aTriInd);
   {
     double cx,cy,cz, wx,wy,wz;
-    GetCenterWidth(cx,cy,cz, wx,wy,wz,
-                   nnode,pXYZs);
-    delfem2::Translate(-cx,-cy,-cz, nnode,pXYZs);
+    delfem2::GetCenterWidth(cx,cy,cz, wx,wy,wz,
+                            nnode,pXYZs);
+    delfem2::Translate_Points3D(-cx,-cy,-cz, nnode,pXYZs);
     double wm = wx;
     wm = ( wx > wm ) ? wx : wm;
     wm = ( wy > wm ) ? wy : wm;
     wm = ( wz > wm ) ? wz : wm;
-    delfem2::Scale(2.0/wm,nnode,pXYZs);
+    delfem2::Scale_Points3D(2.0/wm,nnode,pXYZs);
   }
   aPo.resize(nnode);
   aVec3.resize(nnode);

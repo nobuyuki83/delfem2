@@ -630,7 +630,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
     aflg[ipoint] = ipoint;
     for(unsigned int ielsup=elsup_ind[ipoint];ielsup<elsup_ind[ipoint+1];ielsup++){
       unsigned int jelem = elsup[ielsup];
-      for(int jnoel=0;jnoel<nnoel;jnoel++){
+      for(unsigned int jnoel=0;jnoel<nnoel;jnoel++){
         unsigned int jnode = pElem[jelem*nnoel+jnoel];
         if( aflg[jnode] != ipoint ){
           aflg[jnode] = ipoint;

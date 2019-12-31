@@ -118,8 +118,8 @@ void SetProblem()
   {
     dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
         aXYZ,aTri);
-    dfm2::Normalize(aXYZ,1.0);
-    dfm2::Rotate(aXYZ, -M_PI*0.5, 0.0, 0.0);
+    dfm2::Normalize_Points3D(aXYZ,1.0);
+    dfm2::Rotate_Points3D(aXYZ, -M_PI*0.5, 0.0, 0.0);
   }
 
   {

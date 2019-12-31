@@ -39,8 +39,7 @@ int main(int argc,char* argv[])
     dfm2::CBV3D_AABB bb(minmax_xyz);
     {
       std::random_device dev;
-//      std::mt19937 rng(dev());
-      std::mt19937 rng(0);
+      std::mt19937 rng(dev());
       std::uniform_real_distribution<> udist(0.0, 1.0);
       for(unsigned int i=0;i<N;++i) {
         aXYZ[i * 3 + 0] = (bb.x_max - bb.x_min) * udist(rng) + bb.x_min;

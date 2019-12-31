@@ -303,9 +303,9 @@ void CCad3D_Face::MovePoints
     }
   }
   aNorm.resize(aXYZ.size());
-  Normal_MeshTri3D(aNorm.data(),
-                   aXYZ.data(), aXYZ.size()/3,
-                   aTri.data(), aTri.size()/3);
+  delfem2::Normal_MeshTri3D(aNorm.data(),
+                            aXYZ.data(), aXYZ.size()/3,
+                            aTri.data(), aTri.size()/3);
 }
 
 // ---------------------------------------------
@@ -1220,9 +1220,9 @@ void BuildTriMesh
                               delfem2::MESHELEM_TRI,
                               (int)aXYZ.size()/3);
   aNorm.resize(aXYZ.size());
-  Normal_MeshTri3D(aNorm.data(),
-                   aXYZ.data(), aXYZ.size()/3,
-                   aTri.data(), aTri.size()/3);
+  delfem2::Normal_MeshTri3D(aNorm.data(),
+                            aXYZ.data(), aXYZ.size()/3,
+                            aTri.data(), aTri.size()/3);
 
 }
 
@@ -1264,9 +1264,9 @@ void UpdateTriMesh
     }
   }
   aNorm.resize(aXYZ.size());
-  Normal_MeshTri3D(aNorm.data(),
-                   aXYZ.data(), aXYZ.size()/3,
-                   aTri.data(), aTri.size()/3);
+  delfem2::Normal_MeshTri3D(aNorm.data(),
+                            aXYZ.data(), aXYZ.size()/3,
+                            aTri.data(), aTri.size()/3);
 
 }
 
