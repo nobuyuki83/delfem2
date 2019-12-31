@@ -190,13 +190,13 @@ void SetProblem(int iprob)
     {
       std::cout << PATH_INPUT_DIR << std::endl;
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ, aTri);
-      delfem2::Normalize(aXYZ,1.7);
+      delfem2::Normalize_Points3D(aXYZ,1.7);
       mesh.obj.Init(aXYZ.data(), aXYZ.size()/3,
                     aTri.data(), aTri.size()/3,
                     0.0);
       mesh.aNorm.resize(aXYZ.size());
-      Normal_MeshTri3D(mesh.aNorm.data(),
-                       aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+      delfem2::Normal_MeshTri3D(mesh.aNorm.data(),
+                                aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
     }
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(mesh, bb);

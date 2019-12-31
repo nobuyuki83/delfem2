@@ -42,7 +42,7 @@ public:
   }
 //  void Draw() const;
   std::vector<double> AABB3_MinMax() const{
-    double cw[6]; GetCenterWidth(cw, aPos);
+    double cw[6]; delfem2::CenterWidth_Points3D(cw, aPos);
     std::vector<double> aabb(6);
     aabb[0] = cw[0]-0.5*cw[3];
     aabb[1] = cw[0]+0.5*cw[3];
@@ -93,7 +93,8 @@ public:
     return em;
   }
   void ScaleXYZ(double s){
-    delfem2::Scale(aPos,s);
+    delfem2::Scale_PointsXD(aPos,
+                            s);
   }
 public:
   delfem2::MESHELEM_TYPE elem_type;

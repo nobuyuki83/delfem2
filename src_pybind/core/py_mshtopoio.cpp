@@ -358,9 +358,9 @@ void PyNormalVtx_Mesh
   assert( AssertNumpyArray2D(nrm, -1, 3) );
   assert( nrm.shape()[0] == pos.shape()[0] );
   if( type == dfm2::MESHELEM_TRI ){
-    Normal_MeshTri3D((double*)(nrm.request().ptr),
-                     pos.data(),pos.shape()[0],
-                     elm.data(),elm.shape()[0]);
+    delfem2::Normal_MeshTri3D((double*)(nrm.request().ptr),
+                              pos.data(),pos.shape()[0],
+                              elm.data(),elm.shape()[0]);
   }
 }
 

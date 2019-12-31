@@ -278,11 +278,11 @@ int main(int argc,char* argv[])
   
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ_Contact, aTri_Contact, 0.3, 32, 32);
-    delfem2::Rotate(aXYZ_Contact, 0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3D(aXYZ_Contact, 0.2, 0.3, 0.4);
     aNorm_Contact.resize(aXYZ_Contact.size());
-    Normal_MeshTri3D(aNorm_Contact.data(),
-                     aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                     aTri_Contact.data(), aTri_Contact.size()/3);
+    delfem2::Normal_MeshTri3D(aNorm_Contact.data(),
+                              aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                              aTri_Contact.data(), aTri_Contact.size()/3);
     bvh.Init(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
              aTri_Contact.data(), aTri_Contact.size()/3,
              0.01);

@@ -70,7 +70,7 @@ void myGlutDisplay(void)
 void Hoge(){
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
-  delfem2::Normalize(aXYZ);
+  delfem2::Normalize_Points3D(aXYZ);
   std::vector<int> aTriSurRel;
   makeSurroundingRelationship(aTriSurRel,
                               aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);

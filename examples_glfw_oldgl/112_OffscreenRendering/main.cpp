@@ -69,7 +69,7 @@ int main(int argc,char* argv[])
 {
   delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
-  delfem2::Normalize(aXYZ,1.0);
+  delfem2::Normalize_Points3D(aXYZ,1.0);
 
   // --------------
   delfem2::opengl::CViewer_GLFW viewer;
