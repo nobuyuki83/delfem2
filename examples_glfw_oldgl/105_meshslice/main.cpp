@@ -23,7 +23,7 @@ std::vector<CVector3> aCG_CS;
 
 // ---------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glEnable(GL_LIGHTING);
   delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
@@ -31,10 +31,9 @@ void myGlutDisplay(void)
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
   ::glLineWidth(5);
-  for(size_t iloop=0;iloop<aCS.size();++iloop){
+  for(auto & cs : aCS){
     ::glBegin(GL_LINE_LOOP);
-    for(size_t iseg=0;iseg<aCS[iloop].aTriInfo.size();++iseg){
-      const delfem2::CSegInfo& seg = aCS[iloop].aTriInfo[iseg];
+    for(const auto & seg : cs.aTriInfo){
       double pA[3],pB[3]; seg.Pos3D(pA,pB,
                                     aXYZ,aTri);
       ::glVertex3d(pA[0],pA[1],pA[2]);
@@ -52,7 +51,7 @@ void myGlutDisplay(void)
     ::glEnd();
   }
   for(size_t ics=0;ics<ReebGraphCS.size();++ics){
-    for(std::set<unsigned int>::iterator itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
+    for(auto itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
       const unsigned int jcs = *itr;
       assert( jcs < aCS.size());
       assert( abs(aCS[ics].IndHeight() - aCS[jcs].IndHeight()) == 1 );
@@ -109,9 +108,9 @@ void Hoge(){
     const double po[3] = {org[0]+nrm[0]*h0,  org[1]+nrm[1]*h0,  org[2]+nrm[2]*h0 };
     double sum_area = 0.0;
     CVector3 cg(0,0,0);
-    for(size_t iseg=0;iseg<aCS[ics].aTriInfo.size();++iseg){
+    for(auto & iseg : aCS[ics].aTriInfo){
       double pA[3],pB[3];
-      aCS[ics].aTriInfo[iseg].Pos3D(pA,pB,
+      iseg.Pos3D(pA,pB,
                                     aXYZ,aTri);
       double n0[3]; NormalTri3D(n0,
                                 pA,pB,po);
