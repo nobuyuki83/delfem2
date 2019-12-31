@@ -18,14 +18,16 @@
 // -----------------
 // work on points
 
+namespace delfem2{
+
 void updateMinMaxXYZ(double& x_min, double& x_max,
                      double& y_min, double& y_max,
                      double& z_min, double& z_max,
                      double x, double y, double z);
 void MinMaxXYZ(double mm[6],
                const std::vector<double>& aXYZ);
-
-namespace delfem2{
+  
+// center & width
 void GetCenterWidth(double& cx, double& cy, double& cz,
                     double& wx, double& wy, double& wz,
                     const int nXYZ, const double* paXYZ);
@@ -62,12 +64,9 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
                          const double lex[3],
                          const double ley[3],
                          const double lez[3]);
-}
-
 
 // ------------------------------------------
 
-namespace delfem2{
 
 /**
  * @brief rotate with the Bryant angle (in the  order of XYZ) around the origin.

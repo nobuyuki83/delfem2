@@ -24,6 +24,7 @@
 *.pyd
 *.cbp
 *.exe
+*.egg-info
 CMakeFiles
 cmake-build-debug
 cmake-build-release
