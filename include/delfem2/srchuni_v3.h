@@ -52,7 +52,7 @@ public:
                        const std::vector<int>& aTet,
                        const std::vector<int>& aTetFace) const;
   CVector3 UNorm_Tri(const std::vector<double>& aXYZ,
-                     const std::vector<unsigned int>& aTet,
+                     const std::vector<unsigned int>& aTri,
                      const std::vector<double>& aNorm) const;
   CVector3 UNorm_Tri(const double* aXYZ, unsigned int nXYZ,
                      const unsigned int* aTri, unsigned int nTri,
@@ -69,10 +69,18 @@ std::istream &operator>>(std::istream &input, CPointElemSurf& v);
 
 // ----------------------------------------------------------
 
-void IntersectionRay_MeshTri3D(std::map<double,CPointElemSurf>& mapDepthPES,
-                               const CVector3& org, const CVector3& dir,
-                               const std::vector<unsigned int>& aTri,
-                               const std::vector<double>& aXYZ);
+std::vector<CPointElemSurf>
+IntersectionLine_MeshTri3D(
+    const CVector3& org, const CVector3& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ);
+
+void IntersectionRay_MeshTri3D (
+    std::map<double,CPointElemSurf>& mapDepthPES,
+    const CVector3& org, const CVector3& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ);
+
 void IntersectionRay_MeshTri3DPart(std::map<double,CPointElemSurf>& mapDepthPES,
                                    const CVector3& org, const CVector3& dir,
                                    const std::vector<unsigned int>& aTri,
@@ -106,7 +114,9 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const CVector3& org, const CVector3& 
                                            const std::vector<int>& aFlag);
  */
 
-/////////////////////////////////////////////////////////////////////////////////////////
+// above functions for ray interesection
+// -----------------------------------------------------------
+// below functions for nearest
 
 
 CPointElemSurf Nearest_Point_MeshTri3D(const CVector3& q,

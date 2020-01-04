@@ -70,8 +70,8 @@ public:
       {
         std::vector<int> aTriSurRel;
         makeSurroundingRelationship(aTriSurRel,
-                                    pTri, nTri,
-                                    delfem2::MESHELEM_TRI, nXYZ);
+            pTri, nTri,
+            delfem2::MESHELEM_TRI, nXYZ);
         iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
                                          3,aTriSurRel,
                                          aElemCenter);

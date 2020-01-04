@@ -46,29 +46,29 @@ void MeshTri3D_GeodesicPolyhedron
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri0;
   dfm2::MeshTri3D_Icosahedron(aXYZ0, aTri0);
-  ////
-  const int np0 = aXYZ0.size()/3;
+  // -------
+  const unsigned int np0 = aXYZ0.size()/3;
   std::vector<unsigned int> elsup_ind, elsup;
-  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
-                              aTri0.data(), aTri0.size()/3, 3, np0);
-  ////
+  delfem2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+      aTri0.data(), aTri0.size()/3, 3, np0);
+  // -------
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTri0.data(),
-                                              elsup_ind, elsup,
-                                              3, np0);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+      aTri0.data(),
+      elsup_ind, elsup,
+      3, np0);
   //  std::cout << "psup" << std::endl;
   //  Print_IndexedArray(psup_ind, psup);
-  /////
+  // ---------
   std::vector<unsigned int> edge_ind, edge;
   JArrayEdgeUnidir_PointSurPoint(edge_ind, edge,
-                             psup_ind,psup);
+      psup_ind,psup);
   //  std::cout << "edge" << std::endl;
   //  Print_IndexedArray(edge_ind, edge);
-  ////
+  // ------------
   double r0 = sqrt((5+sqrt(5))*0.5);
   aXYZ1 = aXYZ0;
-  for(int ip=0;ip<np0;++ip){
+  for(unsigned int ip=0;ip<np0;++ip){
     for(unsigned int iedge=edge_ind[ip];iedge<edge_ind[ip+1];++iedge){
       const int ip0 = edge[iedge];
       const double x1 = (aXYZ1[ip*3+0] + aXYZ1[ip0*3+0])*0.5;
@@ -88,12 +88,12 @@ void MeshTri3D_GeodesicPolyhedron
     const int ip2 = aTri0[itri*3+2];
     int iedge01,iedge12,iedge20;
     {
-      if( ip0 < ip1 ){ iedge01 = findEdge(ip0,ip1, edge_ind,edge); }
-      else {           iedge01 = findEdge(ip1,ip0, edge_ind,edge); }
-      if( ip1 < ip2 ){ iedge12 = findEdge(ip1,ip2, edge_ind,edge); }
-      else {           iedge12 = findEdge(ip2,ip1, edge_ind,edge); }
-      if( ip2 < ip0 ){ iedge20 = findEdge(ip2,ip0, edge_ind,edge); }
-      else {           iedge20 = findEdge(ip0,ip2, edge_ind,edge); }
+      if( ip0 < ip1 ){ iedge01 = dfm2::findEdge(ip0,ip1, edge_ind,edge); }
+      else {           iedge01 = dfm2::findEdge(ip1,ip0, edge_ind,edge); }
+      if( ip1 < ip2 ){ iedge12 = dfm2::findEdge(ip1,ip2, edge_ind,edge); }
+      else {           iedge12 = dfm2::findEdge(ip2,ip1, edge_ind,edge); }
+      if( ip2 < ip0 ){ iedge20 = dfm2::findEdge(ip2,ip0, edge_ind,edge); }
+      else {           iedge20 = dfm2::findEdge(ip0,ip2, edge_ind,edge); }
     }
     aTri1.push_back(ip0); aTri1.push_back(iedge01+np0); aTri1.push_back(iedge20+np0);
     aTri1.push_back(ip1); aTri1.push_back(iedge12+np0); aTri1.push_back(iedge01+np0);
