@@ -17,9 +17,9 @@
 #include "delfem2/vec3.h"
 
 // gl related includes
+#include <GLFW/glfw3.h>
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl_tex.h"
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 
 namespace dfm2 = delfem2;
@@ -47,7 +47,7 @@ public:
 class CIndNode
 {
 public:
-  CIndNode(int ino, double mesh_dist) :ino(ino), mesh_dist(mesh_dist){}
+  CIndNode(unsigned int ino, double mesh_dist) :ino(ino), mesh_dist(mesh_dist){}
   bool operator < (const CIndNode& lhs) const {
     return this->mesh_dist < lhs.mesh_dist;
   }
@@ -56,11 +56,11 @@ public:
   double mesh_dist;
 };
 
-void GetLocalExpMap
-(double& u, double& v,
- const double p[3],
- const double lc[9],
- const double q[3])
+void GetLocalExpMap(
+    double& u, double& v,
+    const double p[3],
+    const double lc[9],
+    const double q[3])
 {
   const double dist = Distance3D(p, q);
   if( dist < 1.0e-20 ){ u=0; v=0; return; }
@@ -83,12 +83,12 @@ void GetLocalExpMap
   v = Dot3D(pq,lc+6);
 }
 
-void GetGeodesic
-(double& u_pq, double& v_pq,
- // const double rot[4],
- const double r[3], const double lcr[9],
- const double u_pr, const double v_pr,
- const double q[3])
+void GetGeodesic(
+    double& u_pq, double& v_pq,
+    // -----------
+    const double r[3], const double lcr[9],
+    const double u_pr, const double v_pr,
+    const double q[3])
 {
   double u_rq0, v_rq0;
   GetLocalExpMap(u_rq0,v_rq0,   r,lcr,   q);
@@ -98,10 +98,10 @@ void GetGeodesic
   v_pq = v_pr + v_rq0;
 }
 
-void MakeLocalCoord
-(double lrx[3], double lry[3],
- const double lrn[3],
- const double lcp[9] )
+void MakeLocalCoord(
+    double lrx[3], double lry[3],
+    const double lrn[3],
+    const double lcp[9] )
 {
   double anrp[3];
   Cross3D(anrp, lrn, lcp);
@@ -123,23 +123,23 @@ void MakeLocalCoord
   }
 }
 
-void MakeExpMap_Point
-(std::vector<double>& aTex,
- std::vector<double>& aLocCoord,
- int iker,
- const std::vector<double>& aXYZ,
- std::vector<unsigned int> &psup_ind,
- std::vector<unsigned int> &psup)
+void MakeExpMap_Point(
+    std::vector<double>& aTex,
+    std::vector<double>& aLocCoord,
+    int iker,
+    const std::vector<double>& aXYZ,
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup)
 {
   const unsigned int nXYZ = aXYZ.size()/3;
   std::vector<CNode> aNode;
   aNode.resize(nXYZ);
-  for(unsigned int i=0;i<nXYZ*2;i++){ aTex[i]=0; }
-  ////
+  aTex.assign(nXYZ*2,0.0);
+  // -------
   double LocCoord_ker[9];
   for(unsigned int i=0;i<6;i++){ LocCoord_ker[i] = aLocCoord[iker*6+i]; }
   Cross3D(LocCoord_ker+6, LocCoord_ker+0, LocCoord_ker+3);
-  ////
+  // --------
   aNode[iker].itype = 1;
   aNode[iker].mesh_dist  = 0;
   aNode[iker].weight = 1;
@@ -155,7 +155,7 @@ void MakeExpMap_Point
     const double invw = 1.0/aNode[ifix].weight;
     aTex[ifix*2+0] *= invw;
     aTex[ifix*2+1] *= invw;
-    ////
+    // --------
     double LocCoord_fix[9];
     LocCoord_fix[0]=aLocCoord[ifix*6+0];
     LocCoord_fix[1]=aLocCoord[ifix*6+1];
@@ -167,16 +167,15 @@ void MakeExpMap_Point
     aLocCoord[ifix*6+3]=LocCoord_fix[3];
     aLocCoord[ifix*6+4]=LocCoord_fix[4];
     aLocCoord[ifix*6+5]=LocCoord_fix[5];
-    ////
-    for(int ipsup=psup_ind[ifix];ipsup<psup_ind[ifix+1];++ipsup){
+    // --------
+    for(unsigned int ipsup=psup_ind[ifix];ipsup<psup_ind[ifix+1];++ipsup){
       unsigned int ino1 = psup[ipsup];
       if( aNode[ino1].itype == 2 ) continue;
       const double len = Distance3D(aXYZ.data()+ifix*3,aXYZ.data()+ino1*3);
       const double weight = 1.0/len;
       const double dist0 = aNode[ifix].mesh_dist+len;
       double u, v;
-      GetGeodesic
-      (u,v,
+      GetGeodesic(u,v,
        aXYZ.data()+ifix*3,  LocCoord_fix,
        aTex[ifix*2+0],
        aTex[ifix*2+1],
@@ -188,7 +187,7 @@ void MakeExpMap_Point
       aTex[ino1*2+0] += u*weight;
       aTex[ino1*2+1] += v*weight;
     }
-  }  
+  }
 }
 
 // ---------------------------------------------------
@@ -200,7 +199,6 @@ std::vector<double> aLocCoord;
 std::vector<unsigned int> psup_ind, psup;
 int iker = 0;
 bool is_animation = true;
-bool is_lighting = false;
 int m_texName;
     
 // ---------------------------------------------------
@@ -230,15 +228,15 @@ void SetNewProblem()
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
-    JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
-                             aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
-    JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
+    dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+        aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
+    dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+        aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
   }
   {
     std::vector<double> aNorm(aXYZ.size());
     delfem2::Normal_MeshTri3D(aNorm.data(),
-                              aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
+        aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
     const unsigned int np = aXYZ.size()/3;
     aLocCoord.resize(np*6);
     for(int ip=0;ip<np;++ip){
@@ -348,9 +346,9 @@ void myGlutDisplay()
     int i0 = aTri[itri*3+0];
     int i1 = aTri[itri*3+1];
     int i2 = aTri[itri*3+2];
-    const double* pn0 = aLocCoord.data()+i0*6;
-    const double* pn1 = aLocCoord.data()+i1*6;
-    const double* pn2 = aLocCoord.data()+i2*6;
+//    const double* pn0 = aLocCoord.data()+i0*6;
+//    const double* pn1 = aLocCoord.data()+i1*6;
+//    const double* pn2 = aLocCoord.data()+i2*6;
     double r = 1.0;
     //
     ::glNormal3dv(aLocCoord.data()+i0*6);
@@ -380,9 +378,7 @@ void myGlutDisplay()
 int main(int argc,char* argv[])
 {
   SetNewProblem();
-
-  /////////
-
+  // ------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.0;

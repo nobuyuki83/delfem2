@@ -109,15 +109,15 @@ PyMeshQuad3D_Subviv
   std::vector<unsigned int> aQuad1;
   std::vector<unsigned int> psupIndQuad0, psupQuad0;
   std::vector<int> aEdgeFace0;
-  QuadSubdiv(aQuad1,
-             psupIndQuad0,psupQuad0, aEdgeFace0,
-             aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
+  dfm2::QuadSubdiv(aQuad1,
+      psupIndQuad0,psupQuad0, aEdgeFace0,
+      aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
   //
   std::vector<double> aXYZ1;
-  delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
-                                              aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
-                                              aQuad0.data(),aQuad0.shape()[0],
-                                              aXYZ0.data(), aXYZ0.shape()[0]);
+  dfm2::SubdivisionPoints_QuadCatmullClark(aXYZ1,
+      aQuad1,aEdgeFace0,psupIndQuad0,psupQuad0,
+      aQuad0.data(),aQuad0.shape()[0],
+      aXYZ0.data(), aXYZ0.shape()[0]);
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
   py::array_t<unsigned int> npQuad1({(int)aQuad1.size()/4,4}, aQuad1.data());
   return std::make_tuple(npXYZ1,npQuad1);
@@ -133,16 +133,16 @@ PyMeshHex3D_Subviv
   std::vector<unsigned int> aHex1;
   std::vector<unsigned int> psupIndHex0, psupHex0;
   std::vector<unsigned int> aQuadHex0;
-  HexSubdiv(aHex1,
-            psupIndHex0, psupHex0,
-            aQuadHex0,
-            ///
-            aHex0.data(), aHex0.shape()[0], aXYZ0.shape()[0]);
+  dfm2::HexSubdiv(aHex1,
+      psupIndHex0, psupHex0,
+      aQuadHex0,
+      //
+      aHex0.data(), aHex0.shape()[0], aXYZ0.shape()[0]);
   std::vector<double> aXYZ1;
-  delfem2::SubdivisionPoints_Hex(aXYZ1,
-                                 psupIndHex0,psupHex0,aQuadHex0,
-                                 aHex0.data(), aHex0.shape()[0],
-                                 aXYZ0.data(), aXYZ0.shape()[0]);
+  dfm2::SubdivisionPoints_Hex(aXYZ1,
+      psupIndHex0,psupHex0,aQuadHex0,
+      aHex0.data(), aHex0.shape()[0],
+      aXYZ0.data(), aXYZ0.shape()[0]);
   py::array_t<double> npXYZ1({(int)aXYZ1.size()/3,3}, aXYZ1.data());
   py::array_t<unsigned int> npHex1({(int)aHex1.size()/8,8}, aHex1.data());
   return std::make_tuple(npXYZ1,npHex1);
@@ -373,7 +373,7 @@ py::array_t<unsigned int> PyEdge_Mesh
   assert( AssertNumpyArray2D(pos, -1, pos.shape()[1]) );
   assert( AssertNumpyArray2D(elm, -1, nNodeElem(type)) );
   std::vector<unsigned int> elsup_ind, elsup;
-  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
                               elm.data(), elm.shape()[0], elm.shape()[1], pos.shape()[0]);
   std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,

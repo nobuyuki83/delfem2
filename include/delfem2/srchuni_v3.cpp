@@ -315,13 +315,13 @@ bool intersectRay_Tri3D
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 
-void IntersectionRay_MeshTri3D
-(std::map<double,CPointElemSurf>& mapDepthPES,
- const CVector3& org, const CVector3& dir,
+std::vector<CPointElemSurf>
+IntersectionLine_MeshTri3D
+(const CVector3& org, const CVector3& dir,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
 {
-  mapDepthPES.clear();
+  std::vector<CPointElemSurf> aPES;
   for(size_t itri=0;itri<aTri.size()/3;++itri){
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
@@ -333,11 +333,26 @@ void IntersectionRay_MeshTri3D
     bool res = intersectRay_Tri3D(r0,r1,
                                 org, dir, p0,p1,p2);
     if( !res ){ continue; }
-    double r2 = 1-r0-r1;
-    CVector3 q0 = p0*r0+p1*r1+p2*r2;
-    double depth = (q0-org)*dir/dir.DLength();
+    aPES.emplace_back(itri,r0,r1 );
+  }
+  return aPES;
+}
+
+void IntersectionRay_MeshTri3D (
+    std::map<double,CPointElemSurf>& mapDepthPES,
+    const CVector3& org, const CVector3& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ)
+{
+  const std::vector<CPointElemSurf> aPES = IntersectionLine_MeshTri3D(
+      org, dir,
+      aTri, aXYZ);
+  mapDepthPES.clear();
+  for(auto pes : aPES){
+    CVector3 p0 = pes.Pos_Tri(aXYZ,aTri);
+    double depth = (p0-org)*dir;
     if( depth < 0 ) continue;
-    mapDepthPES.insert( std::make_pair(depth,CPointElemSurf(itri,r0,r1)) );
+    mapDepthPES.insert( std::make_pair(depth, pes) );
   }
 }
 
