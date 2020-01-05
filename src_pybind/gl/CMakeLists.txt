@@ -25,26 +25,26 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 
 set(INPUT_SRC
-  ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-  ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp  
-  ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/voxel.h                     ${DELFEM2_INC}/voxel.cpp
-  ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
-  ${DELFEM2_INC}/bv.h
+    ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
+    ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
+    ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
+    ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
+    ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/voxel.h                     ${DELFEM2_INC}/voxel.cpp
+    ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
+    ${DELFEM2_INC}/bv.h
   
-  ${DELFEM2_INC}/opengl/gl2_funcs.h          ${DELFEM2_INC}/opengl/gl2_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl2_color.h          ${DELFEM2_INC}/opengl/gl2_color.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23.h            ${DELFEM2_INC}/opengl/gl2_v23.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23dtricad.h     ${DELFEM2_INC}/opengl/gl2_v23dtricad.cpp
-  ${DELFEM2_INC}/opengl/gl_gpusampler.h      ${DELFEM2_INC}/opengl/gl_gpusampler.cpp
-  ${DELFEM2_INC}/opengl/gl_tex.h             ${DELFEM2_INC}/opengl/gl_tex.cpp
-  ${DELFEM2_INC}/opengl/gl_voxbv.h           ${DELFEM2_INC}/opengl/gl_voxbv.cpp
-  ${DELFEM2_INC}/opengl/gl2ew_funcs.h        ${DELFEM2_INC}/opengl/gl2ew_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl24_funcs.h         ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl2_funcs.h          ${DELFEM2_INC}/opengl/gl2_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl2_color.h          ${DELFEM2_INC}/opengl/gl2_color.cpp
+    ${DELFEM2_INC}/opengl/gl2_v23.h            ${DELFEM2_INC}/opengl/gl2_v23.cpp
+    ${DELFEM2_INC}/opengl/gl2_v23dtricad.h     ${DELFEM2_INC}/opengl/gl2_v23dtricad.cpp
+    ${DELFEM2_INC}/opengl/gl_gpusampler.h      ${DELFEM2_INC}/opengl/gl_gpusampler.cpp
+    ${DELFEM2_INC}/opengl/gl_voxbv.h           ${DELFEM2_INC}/opengl/gl_voxbv.cpp
+    ${DELFEM2_INC}/opengl/gl2ew_funcs.h        ${DELFEM2_INC}/opengl/gl2ew_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl24_funcs.h         ${DELFEM2_INC}/opengl/gl24_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl24_tex.h           ${DELFEM2_INC}/opengl/gl24_tex.cpp
   
   ../glad3/include/glad/glad.h  ../glad3/src/glad.c
 

@@ -37,6 +37,7 @@ add_subdirectory(301_IsoSurfaceStuffing)
 
 add_subdirectory(400_LaplaceMeshDeform)
 add_subdirectory(401_ExponentialMap)
+add_subdirectory(402_MapOnMesh)
 
 
 # cad
@@ -50,6 +51,7 @@ add_subdirectory(600_Fem2DHelmholtz)
 add_subdirectory(601_FemPlateBendingMitc3)
 add_subdirectory(602_Fem3DEigen)
 add_subdirectory(603_Fem3DStiffwarp)
+add_subdirectory(604_FemCloth_DynamicTriangle)
 
 # spatial hash 
 add_subdirectory(700_HashBvhSelfCollision)
