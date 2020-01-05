@@ -18,7 +18,7 @@
 
 #include "delfem2/opengl/gl24_funcs.h"
 #include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/gl24_tex.h"
 #include "../glut_cam.h"
 
 // -----------------------------

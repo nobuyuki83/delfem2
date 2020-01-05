@@ -28,7 +28,7 @@
   #include <GL/glu.h>
 #endif
 
-#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/gl24_tex.h"
 
 // ------------------------
 
@@ -210,9 +210,9 @@ int ReadPPM_SetTexture(const std::string& fname)
   
   std::cout << "width height : " << w << " " << h << std::endl;
   
-  // //////////////
+  // ----------------------------
   
-  GLubyte* inputRGB = new GLubyte [w*h*3];
+  auto* inputRGB = new GLubyte [w*h*3];
   for(int i=0;i<w*h*3;i++){ inputRGB[i] = aRGB[i]; }
   
   int m_texWidth = 256;
@@ -234,11 +234,13 @@ int ReadPPM_SetTexture(const std::string& fname)
   GLuint m_texName = 0;
   glGenTextures(1 , &m_texName);
   glBindTexture(GL_TEXTURE_2D , m_texName);
-  glTexImage2D(GL_TEXTURE_2D , 0 , 3 , m_texWidth, m_texHeight,
+//  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  glTexImage2D(GL_TEXTURE_2D , 0 , GL_RGB , m_texWidth, m_texHeight,
                0 , GL_RGB , GL_UNSIGNED_BYTE , scaledRGB );
+
   delete[] scaledRGB;
   
-  //  std::cout << m_texName << std::endl;
+  //std::cout << m_texName << std::endl;
   
   return (int)m_texName;
 }

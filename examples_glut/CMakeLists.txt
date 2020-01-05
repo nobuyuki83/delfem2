@@ -18,7 +18,6 @@ add_subdirectory(fem2d)
 add_subdirectory(fem3d)
 add_subdirectory(femcloth_internal)
 add_subdirectory(femcloth_selfcollision)
-add_subdirectory(femcloth_dtri)
 add_subdirectory(fempb_mitc3eigen)
 
 # pbd
