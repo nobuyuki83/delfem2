@@ -147,6 +147,33 @@ double noise_perlin_3d_oct
   }
   return val;
 }
+
+void ComputePerlin(
+    std::vector<double> &aV,
+    int nW, int nH,
+    int nrep,
+    int noct,
+    double persistance) {
+  std::vector<int> aP;
+  aP.resize(256);
+  for (int i = 0; i < 256; ++i) { aP[i] = i; }
+  Shuffle(aP);
+  aP.resize(512);
+  for (int i = 0; i < 256; ++i) { aP[256 + i] = i; }
+
+  std::vector<double> aGrad = {-1, -1, -1, +1, +1, -1, +1, +1};
+
+  aV.resize(nH * nW);
+  for (int ih = 0; ih < nH; ++ih) {
+    for (int iw = 0; iw < nW; ++iw) {
+      double x = (double) iw / (nW) * nrep;
+      double y = (double) ih / (nH) * nrep;
+      aV[ih * nW + iw] = noise_perlin_2d_oct(x, y,
+          nrep, noct, persistance,
+          aGrad, aP);
+    }
+  }
+}
   
 }
 
