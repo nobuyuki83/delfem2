@@ -15,6 +15,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
+#include "delfem2/imgio.h"
 
 // gl related includes
 #include <GLFW/glfw3.h>
@@ -385,7 +386,14 @@ int main(int argc,char* argv[])
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
 
-  m_texName = ReadPPM_SetTexture(std::string(PATH_INPUT_DIR)+"/dep.ppm");
+  {
+    unsigned int w, h;
+    std::vector<unsigned char> image;
+    dfm2::LoadImage_PPMAscii(w, h, image,
+                             std::string(PATH_INPUT_DIR) + "/dep.ppm");
+    assert(image.size() == w * h * 3);
+    m_texName = dfm2::opengl::SetTexture_RGB(w,h,image);
+  }
 
   int iframe = 0;
   while (!glfwWindowShouldClose(viewer.window))

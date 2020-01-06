@@ -6,33 +6,29 @@
  */
 
 
-#include <stdio.h>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <cassert>
 #include <cstdlib>
 
-
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
-  #include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/glu.h>
 #elif defined(_WIN32) // windows
   #include <windows.h>
   #include <GL/gl.h>
-  #include <GL/glu.h>
 #else // linux
   #include <GL/gl.h>
-  #include <GL/glu.h>
 #endif
 
 #include "delfem2/opengl/gl24_tex.h"
 
+namespace dfm2 = delfem2;
+
 // ------------------------
 
-void CTexture::LoadTex()
+void dfm2::opengl::CTexture::LoadTex()
 {
   if( id_tex == 0 ){
     ::glGenTextures(1, &id_tex);
@@ -53,7 +49,7 @@ void CTexture::LoadTex()
 }
 
 
-void CTexture::Draw(){
+void dfm2::opengl::CTexture::Draw(){
   if( id_tex == 0 ){ return; }
   ::glEnable(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
@@ -72,7 +68,8 @@ void CTexture::Draw(){
 
 // --------------------------------------------------
 
-void SaveImage(const std::string& path)
+void dfm2::opengl::SaveImage(
+    const std::string& path)
 {
   static unsigned int inum = 0;
   int viewport[4];
@@ -108,218 +105,21 @@ void SaveImage(const std::string& path)
   inum++;
 }
 
-
-void LoadImage_PPM
-(const std::string& filename,
- std::vector<unsigned char>& image,
- int& width, int& height)
+int dfm2::opengl::SetTexture_RGB(
+    unsigned int w, unsigned int h,
+    const std::vector<unsigned char>& image)
 {
-  std::ifstream file(filename.c_str(), std::ios::binary);
-  if (!file) {
-    std::cerr<<"Could not open file \""<<filename<<"\"."<<std::endl;
-    return;
-  }
-  
-  std::string header;
-  {
-    char buff[256];
-    file.getline(buff, 256);
-    header = std::string(buff);
-  }
-  if (header=="P6") {
-    {
-      int max;
-      char buff[256];
-      file.getline(buff,256);
-      if (buff[0]=='#'){
-        file>>width>>height>>max;
-      }
-      else{
-        std::stringstream ss(buff);
-        ss>>width>>height>>max;
-      }
-      //      std::cout<<header<<" "<<width<<" "<<height<<" "<<max<<std::endl;
-    }
-    // max is supporse to be 255
-    const int size = width*height*3+1;
-    std::vector<unsigned char> data(size);
-    file.read(reinterpret_cast<char*>(&(data[0])), size);
-    image.resize(3*height*width+256);
-    for (int row = 0; row < height; ++row) {
-      for (int col = 0; col < width; ++col) {
-        int dest_index = 3*((height-row-1) * width+col);
-        int src_index = (row * width+col)*3;
-        image[dest_index+0] = data[src_index+1];
-        image[dest_index+1] = data[src_index+2];
-        image[dest_index+2] = data[src_index+3];
-      }
-    }
-  }
-  file.close();
-}
-
-int ReadPPM_SetTexture(const std::string& fname)
-{
-  std::cout << "ReadPPM " << std::endl;
-  FILE* fp = fopen(fname.c_str(),"r");
-  if( fp == nullptr ){
-    std::cout << "Read PPM Fail" << std::endl;
-    return -1;
-  }
-  
-  int w, h;
-  std::vector<char> aRGB;
-  {
-    const unsigned int buffSize = 256;
-    char buff[buffSize];
-    char* cres = 0;
-    cres = fgets(buff,buffSize,fp); if( cres == nullptr ){ return -1; }
-    cres = fgets(buff,buffSize,fp); if( cres == nullptr ){ return -1; }
-    sscanf(buff,"%d%d",&w,&h);
-    cres = fgets(buff,buffSize,fp);  // read 255
-    if( cres == nullptr ){ return -1; }
-  }
-  std::cout << "tex size : " << w << " " << h << std::endl;
-  //  assert( w >= 0 && h >=0 );
-  aRGB.resize(w*h*3);
-  const auto buffSize = (unsigned int)(4*3*w*1.2);  // ÇøÇÂÇ¡Ç∆ó]ï™ñ⁄Ç…Ç∆Ç¡ÇƒÇ®Ç≠
-  char* buff = new char [buffSize];
-  int icnt = 0;
-  while (icnt<w*h*3) {
-    char* cres = fgets(buff,buffSize,fp);
-    if( cres == nullptr ){ return -1; }
-    char* pCur = buff;
-    char* pNxt;
-    for(;;){
-      //      if(      pCur[0] == ' ' ){ assert(0); }
-      if(      pCur[1] == ' ' || pCur[1] == '\n' ){ pCur[1]='\0'; pNxt=pCur+2; }
-      else if( pCur[2] == ' ' || pCur[2] == '\n' ){ pCur[2]='\0'; pNxt=pCur+3; }
-      else if( pCur[3] == ' ' || pCur[3] == '\n' ){ pCur[3]='\0'; pNxt=pCur+4; }
-      //      else{ assert(0); }
-      unsigned int val = atoi(pCur);
-      unsigned int ih = icnt/(w*3);
-      unsigned int iw = icnt-ih*w*3;
-      aRGB[(h-ih-1)*w*3+iw] = val;
-      icnt++;
-      if( pNxt[0] == '\n' || pNxt[0] == '\0') break;
-      pCur = pNxt;
-    }
-  }
-  delete[] buff;
-  //  this->SetImage(w,h,aRGB);
-  
-  std::cout << "width height : " << w << " " << h << std::endl;
-  
-  // ----------------------------
-  
-  auto* inputRGB = new GLubyte [w*h*3];
-  for(int i=0;i<w*h*3;i++){ inputRGB[i] = aRGB[i]; }
-  
-  int m_texWidth = 256;
-  int m_texHeight = 256;
-  //  std::cout << m_texWidth << " " << m_texHight << std::endl;
-  
-  GLubyte* scaledRGB;
-  if( w == m_texWidth && h == m_texHeight ){
-    scaledRGB = inputRGB;
-  }
-  else{
-    scaledRGB = new GLubyte [m_texWidth*m_texHeight*3];
-    gluScaleImage( GL_RGB, w, h, GL_UNSIGNED_BYTE, inputRGB,
-                  m_texWidth, m_texHeight, GL_UNSIGNED_BYTE, scaledRGB );
-    delete [] inputRGB;
-  }
-  
   glEnable(GL_TEXTURE_2D);
   GLuint m_texName = 0;
   glGenTextures(1 , &m_texName);
   glBindTexture(GL_TEXTURE_2D , m_texName);
-//  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  glTexImage2D(GL_TEXTURE_2D , 0 , GL_RGB , m_texWidth, m_texHeight,
-               0 , GL_RGB , GL_UNSIGNED_BYTE , scaledRGB );
-
-  delete[] scaledRGB;
-  
-  //std::cout << m_texName << std::endl;
+  glTexImage2D(GL_TEXTURE_2D , 0 , GL_RGB , w, h,
+               0 , GL_RGB , GL_UNSIGNED_BYTE , image.data() );
   
   return (int)m_texName;
 }
 
-bool LoadTGAFile
-(const std::string& filename,
- SFile_TGA *tgaFile)
-{
-  FILE *filePtr;
-  unsigned char ucharBad;
-  short int sintBad;
-  long imageSize;
-  int colorMode;
-  unsigned char colorSwap;
-  
-  // Open the TGA file.
-  filePtr = fopen(filename.c_str(), "rb");
-  if (filePtr == NULL)
-  {
-    return false;
-  }
-  
-  // Read the two first bytes we don't need.
-  size_t n0;
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr); if( n0 != 1 ){ return false; }
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr); if( n0 != 1 ){ return false; }
-  
-  // Which type of image gets stored in imageTypeCode.
-  n0 = fread(&tgaFile->imageTypeCode, sizeof(unsigned char), 1, filePtr);
-  if( n0 != 1 ){ return false; }
-  
-  // For our purposes, the type code should be 2 (uncompressed RGB image)
-  // or 3 (uncompressed black-and-white images).
-  if (tgaFile->imageTypeCode != 2 && tgaFile->imageTypeCode != 3){
-    fclose(filePtr);
-    return false;
-  }
-  
-  // Read 13 bytes of data we don't need.
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&sintBad, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  
-  // Read the image's width and height.
-  n0 = fread(&tgaFile->imageWidth, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  n0 = fread(&tgaFile->imageHeight, sizeof(short int), 1, filePtr);  if( n0 != 1 ){ return false; }
-  
-  // Read the bit depth.
-  n0 = fread(&tgaFile->bitCount, sizeof(unsigned char), 1, filePtr);  if( n0 != 1 ){ return false; }
-  
-  // Read one byte of data we don't need.
-  n0 = fread(&ucharBad, sizeof(unsigned char), 1, filePtr);   if( n0 != 1 ){ return false; }
-  
-  // Color mode -> 3 = BGR, 4 = BGRA.
-  colorMode = tgaFile->bitCount / 8;
-  imageSize = tgaFile->imageWidth * tgaFile->imageHeight * colorMode;
-  
-  // Allocate memory for the image data.
-  tgaFile->imageData = (unsigned char*)malloc(sizeof(unsigned char)*imageSize);
-  
-  // Read the image data.
-  n0 = fread(tgaFile->imageData, sizeof(unsigned char), imageSize, filePtr);
-  if( (long)n0 != imageSize ){ return false; }
-  
-  // Change from BGR to RGB so OpenGL can read the image data.
-  for (int imageIdx = 0; imageIdx < imageSize; imageIdx += colorMode)
-  {
-    colorSwap = tgaFile->imageData[imageIdx];
-    tgaFile->imageData[imageIdx] = tgaFile->imageData[imageIdx + 2];
-    tgaFile->imageData[imageIdx + 2] = colorSwap;
-  }
-  
-  fclose(filePtr);
-  return true;
-}
-
-GLuint LoadTexture
+GLuint dfm2::opengl::LoadTexture
 (const unsigned char* image,
  const int width, const int height, const int bpp)
 {
@@ -338,6 +138,7 @@ GLuint LoadTexture
   return id_tex;
 };
 
+/*
 void DrawTextureBackground
 (const GLuint tex,
  const int imgWidth,
@@ -390,6 +191,7 @@ void DrawTextureBackground
   
   glPopAttrib();
 }
+ */
 
 // use it for GLSL shader drawing
 void DrawRectangle_FullCanvas()
@@ -421,9 +223,9 @@ void DrawRectangle_FullCanvas()
 }
 
 
-void CTexManager::Clear(){
-  for(int itex=0;itex<(int)aTexInfo.size();++itex){
-    unsigned int id_tex_gl = aTexInfo[itex].id_tex_gl;
+void dfm2::opengl::CTexManager::Clear(){
+  for(auto & itex : aTexInfo){
+    unsigned int id_tex_gl = itex.id_tex_gl;
     if( glIsTexture(id_tex_gl) ){
       ::glDeleteTextures(1, &id_tex_gl);
     }
@@ -431,7 +233,7 @@ void CTexManager::Clear(){
   aTexInfo.clear();
 }
 
-void CTexManager::BindTexturePath(const std::string& path) const {
+void dfm2::opengl::CTexManager::BindTexturePath(const std::string& path) const {
   for(const auto & itex : aTexInfo){
     if( itex.full_path != path ) continue;
     glBindTexture(GL_TEXTURE_2D, itex.id_tex_gl );
