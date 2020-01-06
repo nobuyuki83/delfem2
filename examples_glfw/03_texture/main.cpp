@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include "delfem2/primitive.h"
+#include "delfem2/imgio.h"
 
 #if defined(_MSC_VER)
   #include <windows.h>
@@ -19,6 +19,8 @@
 #include "delfem2/opengl/gl4_mshcolor.h"
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glfw_cam.h"
+
+namespace dfm2 = delfem2;
 
 // ---------------------------
 CShader_TriMesh_Tex shdr;
@@ -89,13 +91,23 @@ int main()
 
   glEnable(GL_TEXTURE_2D);
   glActiveTexture(GL_TEXTURE0);
-  m_texName = ReadPPM_SetTexture(std::string(PATH_INPUT_DIR)+"/dep.ppm");
+  const std::string path = std::string(PATH_INPUT_DIR)+"/dep.ppm";
+  {
+    std::cout << path << std::endl;
+    unsigned int w, h;
+    std::vector<unsigned char> image;
+    dfm2::LoadImage_PPMAscii(w, h, image,
+        path);
+    assert(image.size() == w * h * 3);
+    m_texName = dfm2::opengl::SetTexture_RGB(w,h,image);
+  }
   glGenerateMipmap(GL_TEXTURE_2D);
 
   viewer.nav.camera.view_height = 1.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
 #ifdef EMSCRIPTEN
+  std::cout << "I know I cannot open file in Emsripten." << std::endl;
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
 #else
   while (!glfwWindowShouldClose(viewer.window)) { draw(viewer.window); }

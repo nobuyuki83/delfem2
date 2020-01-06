@@ -7,7 +7,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <math.h>
+#include <cmath>
+#include "delfem2/imgio.h"
 
 #include "glad/glad.h"
 #if defined(__APPLE__) && defined(__MACH__)
@@ -20,6 +21,8 @@
 #include "delfem2/opengl/gl2_funcs.h"
 #include "delfem2/opengl/gl24_tex.h"
 #include "../glut_cam.h"
+
+namespace dfm2 = delfem2;
 
 // -----------------------------
 
@@ -203,8 +206,8 @@ int main(int argc,char* argv[])
   nav.camera.view_height = 2.0;
   nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   
-  SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_color.tga",  &tga_color);
-  SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_normal.tga", &tga_normal);
+  dfm2::SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_color.tga",  &tga_color);
+  dfm2::SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_normal.tga", &tga_normal);
   
   GLuint aIndTex[2];
   ::glGenTextures(2, aIndTex);
