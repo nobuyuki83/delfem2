@@ -44,10 +44,10 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/rig_v3q.h                   ${DELFEM2_INC}/rig_v3q.cpp
 
-  ${DELFEM2_INC}/opengl/gl2_funcs.h          ${DELFEM2_INC}/opengl/gl2_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl2_color.h          ${DELFEM2_INC}/opengl/gl2_color.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23.h            ${DELFEM2_INC}/opengl/gl2_v23.cpp
   ${DELFEM2_INC}/opengl/gl_rig_v23q.h        ${DELFEM2_INC}/opengl/gl_rig_v23q.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_color.h        ${DELFEM2_INC}/opengl/glold_color.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h          ${DELFEM2_INC}/opengl/glold_v23.cpp
   ${DELFEM2_INC}/opengl/glfw_viewer.hpp      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
   ${DELFEM2_EXT}/io_gltf.h      ${DELFEM2_EXT}/io_gltf.cpp

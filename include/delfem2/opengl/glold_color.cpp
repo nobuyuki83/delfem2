@@ -20,7 +20,7 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/glold_color.h"
 
 namespace dfm2 = delfem2;
 

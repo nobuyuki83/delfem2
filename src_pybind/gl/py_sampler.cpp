@@ -3,8 +3,8 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/opengl/gl2ew_funcs.h"
-#include "delfem2/opengl/gl_gpusampler.h"
+#include "delfem2/opengl/gl_framebuffer.h"
+#include "delfem2/opengl/glold_gpusampler.h"
 
 namespace py = pybind11;
 

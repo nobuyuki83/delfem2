@@ -26,21 +26,21 @@ set(DELFEM2_INC         "../../include/delfem2")
 set(DELFEM2_EXT         "../../external")
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h                    ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp
-  ${DELFEM2_INC}/funcs.h                   ${DELFEM2_INC}/funcs.cpp
-  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp
+  ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
+  ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
            
-  ${DELFEM2_INC}/cad2d.h                   ${DELFEM2_INC}/cad2d.cpp
-  ${DELFEM2_INC}/dtri_v2.h                 ${DELFEM2_INC}/dtri_v2.cpp
+  ${DELFEM2_INC}/cad2d.h                     ${DELFEM2_INC}/cad2d.cpp
+  ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
 
-  ${DELFEM2_INC}/opengl/gl24_funcs.h       ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_funcs.h        ${DELFEM2_INC}/opengl/gl4_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_v23dtricad.h   ${DELFEM2_INC}/opengl/gl4_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/gl_funcs.h         ${DELFEM2_INC}/opengl/gl_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_funcs.h        ${DELFEM2_INC}/opengl/glnew_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_v23dtricad.h   ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp
   ${DELFEM2_INC}/opengl/glfw_cam.h
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
   ../glad4/include/glad/glad.h    ../glad4/src/glad.c
   main.cpp

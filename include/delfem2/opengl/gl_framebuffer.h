@@ -42,35 +42,6 @@ public:
 };
 
 
-class CElemBuffObj{
-public:
-  void SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type);
-  void DrawBuffer() const ;
-public:
-  unsigned int iebo;
-  unsigned int gl_elem_type;
-  unsigned int size_elem;
-  bool is_lighting;
-};
-
-class CGLBuffer
-{
-public:
-  CGLBuffer(){
-    vbo = -1;
-    vbo_nrm = -1;
-  }
-  void SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim);
-  void SetBuffer_Nrm(const std::vector<double>& aNrm);
-  void Draw_Start() const;
-  void Draw_End() const ;
-public:
-  
-public:
-  unsigned int vbo;
-  unsigned int vbo_nrm;
-  unsigned int ndim;
-};
 
 
 

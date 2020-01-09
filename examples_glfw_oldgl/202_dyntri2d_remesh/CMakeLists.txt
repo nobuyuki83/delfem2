@@ -37,10 +37,10 @@ add_executable(${PROJECT_NAME}
        
   ${DELFEM2_INC}/dtri_v2.h                ${DELFEM2_INC}/dtri_v2.cpp
   
-  ${DELFEM2_INC}/opengl/gl2_funcs.h       ${DELFEM2_INC}/opengl/gl2_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23.h         ${DELFEM2_INC}/opengl/gl2_v23.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23dtricad.h  ${DELFEM2_INC}/opengl/gl2_v23dtricad.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h        ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_v23dtricad.h ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp    ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   main.cpp
 )
 

@@ -37,7 +37,7 @@
 #endif
 
 
-#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl_funcs.h"
 
 
 // ---------------------------------------------------------------------------

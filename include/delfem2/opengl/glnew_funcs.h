@@ -16,15 +16,17 @@
 /**
  * @details the OpenGL ES 2.0 only accept float array. So there is no "double" version of this file
  */
-void GL4_VAO_Pos(unsigned int& VAO,
-                       unsigned int& VBO,
-                       const float* aP, int nP, int nDim);
+void GL4_VAO_Pos(
+    unsigned int& VAO,
+    unsigned int& VBO,
+    const float* aP, int nP, int nDim);
 
-void GL4_VAO_PosNrm(unsigned int& VAO,
-                    unsigned int& VBO_pos,
-                    unsigned int& VBO_nrm,
-                    const float* aP, int nP, int nDim,
-                    const float* aN);
+void GL4_VAO_PosNrm(
+    unsigned int& VAO,
+    unsigned int& VBO_pos,
+    unsigned int& VBO_nrm,
+    const float* aP, int nP, int nDim,
+    const float* aN);
 
 
 class CGL4_VAO_Mesh

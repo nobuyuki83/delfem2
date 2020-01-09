@@ -38,8 +38,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
   ${DELFEM2_INC}/slice.h                  ${DELFEM2_INC}/slice.cpp
 
-  ${DELFEM2_INC}/opengl/gl2_funcs.h       ${DELFEM2_INC}/opengl/gl2_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl2_color.h       ${DELFEM2_INC}/opengl/gl2_color.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_color.h       ${DELFEM2_INC}/opengl/glold_color.cpp
   ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
   main.cpp

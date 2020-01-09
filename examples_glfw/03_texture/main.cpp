@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <cmath>
 #include "delfem2/imgio.h"
@@ -15,9 +22,9 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/opengl/gl24_funcs.h"
-#include "delfem2/opengl/gl24_tex.h"
-#include "delfem2/opengl/gl4_mshcolor.h"
+#include "delfem2/opengl/gl_funcs.h"
+#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/glnew_mshcolor.h"
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glfw_cam.h"
 

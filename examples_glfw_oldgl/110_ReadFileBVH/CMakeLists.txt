@@ -30,26 +30,26 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                   ${DELFEM2_INC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp
-  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp  
-  ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
-  ${DELFEM2_INC}/funcs.h                  ${DELFEM2_INC}/funcs.cpp
-           
-  ${DELFEM2_INC}/v23m3q.h                 ${DELFEM2_INC}/v23m3q.cpp
-  ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
+    ${DELFEM2_INC}/vec2.h                   ${DELFEM2_INC}/vec2.cpp
+    ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
+    ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
+    ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp
+    ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
+    ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
+    ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
+    ${DELFEM2_INC}/funcs.h                  ${DELFEM2_INC}/funcs.cpp
 
-  ${DELFEM2_INC}/opengl/gl2_color.h       ${DELFEM2_INC}/opengl/gl2_color.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23.h         ${DELFEM2_INC}/opengl/gl2_v23.cpp
-  ${DELFEM2_INC}/opengl/gl2_funcs.h       ${DELFEM2_INC}/opengl/gl2_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl_rig_v23q.h     ${DELFEM2_INC}/opengl/gl_rig_v23q.cpp
-  ${DELFEM2_INC}/opengl/gl24_tex.h        ${DELFEM2_INC}/opengl/gl24_tex.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
-  main.cpp
+    ${DELFEM2_INC}/v23m3q.h                 ${DELFEM2_INC}/v23m3q.cpp
+    ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
+
+    ${DELFEM2_INC}/opengl/gl_tex.h          ${DELFEM2_INC}/opengl/gl_tex.cpp
+    ${DELFEM2_INC}/opengl/gl_rig_v23q.h     ${DELFEM2_INC}/opengl/gl_rig_v23q.cpp
+    ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp
+    ${DELFEM2_INC}/opengl/glold_v23.h       ${DELFEM2_INC}/opengl/glold_v23.cpp
+    ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
+    ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+    main.cpp
 )
 
 IF(APPLE)

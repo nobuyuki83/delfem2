@@ -13,8 +13,8 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/opengl/gl4_funcs.h"
-#include "delfem2/opengl/gl24_funcs.h"
+#include "delfem2/opengl/gl_funcs.h"
+#include "delfem2/opengl/glnew_funcs.h"
 #include "delfem2/opengl/glfw_cam.h"
 
 static void callback_error(int error, const char* description)

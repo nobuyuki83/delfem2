@@ -3,13 +3,6 @@
 #include <iostream>
 #include <limits>
 #include <vector>
-
-#ifdef __APPLE__
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
-
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/dtri.h"
@@ -20,8 +13,14 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
-#include "delfem2/opengl/gl2_color.h"
-#include "delfem2/opengl/gl2_funcs.h"
+// ---------
+#ifdef __APPLE__
+  #include <GLUT/glut.h>
+#else
+  #include <GL/glut.h>
+#endif
+#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/glold_funcs.h"
 #include "../glut_cam.h"
 
 namespace dfm2 = delfem2;

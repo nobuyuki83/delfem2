@@ -24,9 +24,9 @@
   #include <GL/gl.h>
 #endif
 ////
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_v23.h"  // vec3, mat3
-#include "delfem2/opengl/gl_gpusampler.h"
+#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/glold_v23.h"  // vec3, mat3
+#include "delfem2/opengl/glold_gpusampler.h"
 
 namespace dfm2 = delfem2;
 
@@ -208,14 +208,14 @@ void CGPUSampler::Draw() const {
   
   ::glPointSize(this->pointSize);
   this->Draw_Point();
-  /////
+  // -----------
   ::glLineWidth(3);
   this->Draw_Axis();
-  ////
+  // ----------
   ::glLineWidth(1);
   ::glColor3d(0,0,0);
   this->Draw_BoundingBox();
-  
+  // -----------
   if( id_tex_color > 0 && this->isDrawTex ){
     const CVector3& dx = x_axis;
     const CVector3& dy = Cross(z_axis,dx);

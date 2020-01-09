@@ -3,21 +3,19 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
-
+// -------
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/cloth_internal.h"
 
 // ------------------------------
-
 #if defined(__APPLE__) && defined(__MACH__)
   #include <GLUT/glut.h>
 #else
   #include <GL/glut.h>
 #endif
-
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/glold_color.h"
 #include "../glut_cam.h"
 
 namespace dfm2 = delfem2;

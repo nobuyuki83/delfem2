@@ -10,7 +10,7 @@
 
 #include "delfem2/vec3.h"
 
-#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/glold_color.h"
 
 #include <stdio.h>
 

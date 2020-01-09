@@ -19,9 +19,9 @@
 #include <GL/glut.h>
 #endif
 
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
-#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/glold_v23.h"
 #include "../glut_cam.h"
 
 // ----------------------------

@@ -45,9 +45,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/dtri_v3.h                 ${DELFEM2_INC}/dtri_v3.cpp
   
   ${DELFEM2_INC}/opengl/glfw_viewer.hpp    ${DELFEM2_INC}/opengl/glfw_viewer.cpp
-  ${DELFEM2_INC}/opengl/gl2_v23.h          ${DELFEM2_INC}/opengl/gl2_v23.cpp
-  ${DELFEM2_INC}/opengl/gl2_color.h        ${DELFEM2_INC}/opengl/gl2_color.cpp
-  ${DELFEM2_INC}/opengl/gl2_funcs.h        ${DELFEM2_INC}/opengl/gl2_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h        ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_color.h      ${DELFEM2_INC}/opengl/glold_color.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp
 
   main.cpp
 )

@@ -19,10 +19,109 @@
   #include <GL/glut.h>
 #endif
 
-#include "delfem2/opengl/gl2ew_funcs.h"
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/gl_framebuffer.h"
+#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/glold_color.h"
 #include "../glut_cam.h"
+
+// -------------------------------
+
+class CElemBuffObj{
+public:
+  void SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type);
+  void DrawBuffer() const ;
+public:
+  unsigned int iebo;
+  unsigned int gl_elem_type;
+  unsigned int size_elem;
+  bool is_lighting;
+};
+
+
+void CElemBuffObj::SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type)
+{
+  this->gl_elem_type = gl_elem_type;
+  size_elem = aTri.size();
+  glGenBuffers(1,&iebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+               aTri.size()*(sizeof(int)),
+               aTri.data(),
+               GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void CElemBuffObj::DrawBuffer() const
+{
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->iebo);
+  glDrawElements(gl_elem_type, size_elem, GL_UNSIGNED_INT, 0);
+}
+
+// ----------
+
+class CGLBuffer
+{
+public:
+  CGLBuffer(){
+    vbo = -1;
+    vbo_nrm = -1;
+  }
+  void SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim);
+  void SetBuffer_Nrm(const std::vector<double>& aNrm);
+  void Draw_Start() const;
+  void Draw_End() const ;
+public:
+  
+public:
+  unsigned int vbo;
+  unsigned int vbo_nrm;
+  unsigned int ndim;
+};
+
+
+void CGLBuffer::SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim)
+{
+  this->ndim = ndim;
+  glGenBuffers(1,&vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER,
+               aXYZ.size() * (sizeof(double)),
+               aXYZ.data(),
+               GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void CGLBuffer::SetBuffer_Nrm(const std::vector<double>& aNrm)
+{
+  glGenBuffers(1,&vbo_nrm);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_nrm);
+  glBufferData(GL_ARRAY_BUFFER,
+               aNrm.size() * (sizeof(double)),
+               aNrm.data(),
+               GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+
+void CGLBuffer::Draw_Start() const
+{
+  assert( glIsBuffer(this->vbo) );
+  glEnableClientState(GL_VERTEX_ARRAY); // this makes glold
+  glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+  glVertexPointer(ndim, GL_DOUBLE, 0, 0);
+  if( glIsBuffer(this->vbo_nrm) ){
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, this->vbo_nrm);
+    glNormalPointer(GL_DOUBLE, 0, 0);
+  }
+}
+void CGLBuffer::Draw_End() const
+{
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+
 
 // -------------------------------
 

@@ -29,16 +29,16 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp   
-  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp              
-  ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp               
-  ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp               
-  ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
-       
-  ${DELFEM2_INC}/opengl/gl2_color.h       ${DELFEM2_INC}/opengl/gl2_color.cpp
-  ${DELFEM2_INC}/opengl/gl2_funcs.h       ${DELFEM2_INC}/opengl/gl2_funcs.cpp  
-  ${DELFEM2_INC}/opengl/gl2ew_funcs.h     ${DELFEM2_INC}/opengl/gl2ew_funcs.cpp
+    ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp
+    ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
+    ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
+    ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
+    ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
+
+    ${DELFEM2_INC}/opengl/gl_framebuffer.h    ${DELFEM2_INC}/opengl/gl_framebuffer.cpp
+    ${DELFEM2_INC}/opengl/glold_color.h       ${DELFEM2_INC}/opengl/glold_color.cpp
+    ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
   
   ../glad3/include/glad/glad.h  ../glad3/src/glad.c
 

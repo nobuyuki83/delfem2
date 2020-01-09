@@ -48,9 +48,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/paramgeo_v23.h             ${DELFEM2_INC}/paramgeo_v23.cpp
   ${DELFEM2_INC}/cad3d.h                    ${DELFEM2_INC}/cad3d.cpp
 
-  ${DELFEM2_INC}/opengl/gl2_v23.h           ${DELFEM2_INC}/opengl/gl2_v23.cpp
-  ${DELFEM2_INC}/opengl/gl2_color.h         ${DELFEM2_INC}/opengl/gl2_color.cpp
-  ${DELFEM2_INC}/opengl/gl2_funcs.h         ${DELFEM2_INC}/opengl/gl2_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_color.h       ${DELFEM2_INC}/opengl/glold_color.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glfw_viewer.hpp     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
   main.cpp

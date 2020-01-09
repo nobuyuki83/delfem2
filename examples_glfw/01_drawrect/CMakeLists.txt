@@ -27,8 +27,8 @@ add_executable(${PROJECT_NAME}
 
   ../glad4/include/glad/glad.h           ../glad4/src/glad.c
 
-  ${DELFEM2_INC}/opengl/gl24_funcs.h     ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_funcs.h      ${DELFEM2_INC}/opengl/gl4_funcs.cpp
+  ${DELFEM2_INC}/opengl/gl_funcs.h     ${DELFEM2_INC}/opengl/gl_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_funcs.h    ${DELFEM2_INC}/opengl/glnew_funcs.cpp
   ${DELFEM2_INC}/opengl/glfw_cam.h
 
   main.cpp
