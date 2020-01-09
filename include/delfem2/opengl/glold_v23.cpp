@@ -24,7 +24,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 
-#include "delfem2/opengl/gl2_v23.h"
+#include "delfem2/opengl/glold_v23.h"
 
 namespace dfm2 = delfem2;
 

@@ -32,13 +32,12 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
     ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/imgio.h                  ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp
 
-    ${DELFEM2_INC}/opengl/gl24_tex.h        ${DELFEM2_INC}/opengl/gl24_tex.cpp
-    ${DELFEM2_INC}/opengl/gl24_funcs.h      ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-    ${DELFEM2_INC}/opengl/gl4_funcs.h       ${DELFEM2_INC}/opengl/gl4_funcs.cpp
-    ${DELFEM2_INC}/opengl/gl4_mshcolor.h    ${DELFEM2_INC}/opengl/gl4_mshcolor.cpp
+    ${DELFEM2_INC}/opengl/gl_tex.h        ${DELFEM2_INC}/opengl/gl_tex.cpp
+    ${DELFEM2_INC}/opengl/gl_funcs.h      ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/glnew_funcs.h     ${DELFEM2_INC}/opengl/glnew_funcs.cpp
+    ${DELFEM2_INC}/opengl/glnew_mshcolor.h  ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
     ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
     ${DELFEM2_INC}/opengl/glfw_cam.h
 

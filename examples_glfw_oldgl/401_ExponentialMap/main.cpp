@@ -19,8 +19,8 @@
 
 // gl related includes
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl24_tex.h"
+#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glfw_viewer.hpp"
 
 namespace dfm2 = delfem2;

@@ -8,12 +8,12 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include "delfem2/eigen_rigidbody.h"
 
+// -------------
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
@@ -22,9 +22,8 @@
 #else
   #include <GL/gl.h>
 #endif
-
-#include "delfem2/opengl/gl2_v23.h"
-#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/glold_funcs.h"
 
 
 namespace py = pybind11;

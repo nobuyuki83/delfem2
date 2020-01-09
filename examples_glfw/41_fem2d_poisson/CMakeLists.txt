@@ -25,23 +25,23 @@ set(DELFEM2_INC         "../../include/delfem2")
 set(DELFEM2_EXT         "../../external")
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                  ${DELFEM2_INC}/vec2.cpp     
-  ${DELFEM2_INC}/camera.h                ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                 ${DELFEM2_INC}/color.cpp           
-  ${DELFEM2_INC}/mshmisc.h               ${DELFEM2_INC}/mshmisc.cpp              
-  ${DELFEM2_INC}/mshtopo.h               ${DELFEM2_INC}/mshtopo.cpp        
-  ${DELFEM2_INC}/dtri.h                  ${DELFEM2_INC}/dtri.cpp         
-  ${DELFEM2_INC}/mats.h                  ${DELFEM2_INC}/mats.cpp    
-  ${DELFEM2_INC}/emat.h                  ${DELFEM2_INC}/emat.cpp     
+  ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp     
+  ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/color.h                   ${DELFEM2_INC}/color.cpp           
+  ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp              
+  ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp        
+  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp         
+  ${DELFEM2_INC}/mats.h                    ${DELFEM2_INC}/mats.cpp    
+  ${DELFEM2_INC}/emat.h                    ${DELFEM2_INC}/emat.cpp     
         
-  ${DELFEM2_INC}/dtri_v2.h               ${DELFEM2_INC}/dtri_v2.cpp
-  ${DELFEM2_INC}/ilu_mats.h              ${DELFEM2_INC}/ilu_mats.cpp       
-  ${DELFEM2_INC}/fem_emats.h             ${DELFEM2_INC}/fem_emats.cpp                      
+  ${DELFEM2_INC}/dtri_v2.h                 ${DELFEM2_INC}/dtri_v2.cpp
+  ${DELFEM2_INC}/ilu_mats.h                ${DELFEM2_INC}/ilu_mats.cpp       
+  ${DELFEM2_INC}/fem_emats.h               ${DELFEM2_INC}/fem_emats.cpp                      
 
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp  ${DELFEM2_INC}/opengl/glfw_viewer.cpp
-  ${DELFEM2_INC}/opengl/gl24_funcs.h     ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_funcs.h      ${DELFEM2_INC}/opengl/gl4_funcs.cpp
-  ${DELFEM2_INC}/opengl/gl4_mshcolor.h   ${DELFEM2_INC}/opengl/gl4_mshcolor.cpp
+  ${DELFEM2_INC}/opengl/gl_funcs.h         ${DELFEM2_INC}/opengl/gl_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_funcs.h      ${DELFEM2_INC}/opengl/glnew_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_mshcolor.h   ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp    ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   ${DELFEM2_INC}/opengl/glfw_cam.h
 
   ../glad4/include/glad/glad.h   ../glad4/src/glad.c

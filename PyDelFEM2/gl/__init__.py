@@ -149,7 +149,7 @@ class GLBufferMesh():
     self.ebo_elm = 0
 
   def set_mesh(self,msh:Mesh, is_normal:bool):
-    assert msh.elem_type == TRI or msh.elem_type == QUAD or LINE
+    assert msh.elem_type == TRI or msh.elem_type == QUAD or  msh.elem_type ==LINE
     ####
     self.release_buffer()
     ####

@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2020 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef DFM2_NOISE_H
 #define DFM2_NOISE_H
 
 #include <cassert>
+#include <vector>
 
 namespace delfem2 {
 

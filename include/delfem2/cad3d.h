@@ -6,7 +6,7 @@
 #include "delfem2/paramgeo_v23.h"
 #include "delfem2/srchuni_v3.h"
 
-#include "delfem2/opengl/gl2_color.h"
+#include "delfem2/opengl/glold_color.h"
 
 class CCad3D_Vertex{
 public:

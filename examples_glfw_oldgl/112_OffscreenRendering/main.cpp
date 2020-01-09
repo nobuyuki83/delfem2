@@ -13,11 +13,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl2ew_funcs.h" // compile using GLEW (-DUSE_GLEW)
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_color.h"
-#include "delfem2/opengl/gl2_v23.h"
-#include "delfem2/opengl/gl_gpusampler.h"
+#include "delfem2/opengl/gl_framebuffer.h" // compile using GLEW (-DUSE_GLEW)
+#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/glold_gpusampler.h"
 
 // ------------------------------------------------------
 
@@ -47,6 +47,8 @@ void myGlutDisplay()
   Draw();
 
   glPointSize(3);
+  float mMV[16]; glGetFloatv(GL_MODELVIEW, mMV);
+  float mP[16]; glGetFloatv(GL_PROJECTION, mP);
   sampler.Draw();
 }
 

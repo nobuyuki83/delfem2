@@ -5,23 +5,63 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef GL4_MSH_H
-#define GL4_MSH_H
+#ifndef GL4_MSHCOLOR_H
+#define GL4_MSHCOLOR_H
 
 #include <stdio.h>
 #include <vector>
 #include "delfem2/color.h"
 
-#include "delfem2/opengl/gl4_funcs.h" // CGL4_VAO_Mesh
+#include "delfem2/opengl/glnew_funcs.h" // CGL4_VAO_Mesh
+
+// -------------------------------------
+
+class CShader_Points{
+public:
+  void Compile();
+  void Initialize(std::vector<double>& aXYZd);
+  void UpdateVertex(std::vector<double>& aXYZd);
+  void Draw(float mP[16], float mMV[16]) const;
+public:
+  CGL4_VAO_Mesh vao; // gl4
+  int shaderProgram;
+  int Loc_MatrixProjection;
+  int Loc_MatrixModelView;
+  int Loc_Color;
+  unsigned int nPoint = 0;
+  delfem2::CColor color_face = delfem2::CColor(0.0,0.0,0.0,0.0);
+};
+
+class CShader_LineMesh{
+public:
+  void Compile();
+
+  void Initialize(std::vector<double>& aXYZd,
+                  std::vector<unsigned int>& aLine);
+
+  void UpdateVertex(std::vector<double>& aXYZd,
+                    std::vector<unsigned int>& aLine);
+
+  void Draw(float mP[16], float mMV[16]) const;
+
+public:
+  CGL4_VAO_Mesh vao; // gl4
+  int shaderProgram;
+  int Loc_MatrixProjection;
+  int Loc_MatrixModelView;
+  int Loc_Color;
+};
 
 class CShader_TriMesh{
 public:
+  void Compile();
+
   void Initialize(std::vector<double>& aXYZd,
                   std::vector<unsigned int>& aTri);
   void UpdateVertex(std::vector<double>& aXYZd,
                     std::vector<unsigned int>& aTri);
-  void Compile();
-  void Draw(float mP[16], float mMV[16]);
+
+  void Draw(float mP[16], float mMV[16]) const;
   
 public:
   CGL4_VAO_Mesh vao; // gl4
@@ -29,6 +69,7 @@ public:
   int Loc_MatrixProjection;
   int Loc_MatrixModelView;
   int Loc_Color;
+  delfem2::CColor color_face = delfem2::CColor(1.0,0.0,0.0,0.0);
 };
 
 
@@ -96,7 +137,7 @@ public:
       std::vector<unsigned int>& aTri,
       std::vector<double>& aTex);
   void Compile();
-  void Draw(float mP[16], float mMV[16]);
+  void Draw(float mP[16], float mMV[16]) const;
 
 public:
   CGL4_VAO_Mesh vao; // gl4

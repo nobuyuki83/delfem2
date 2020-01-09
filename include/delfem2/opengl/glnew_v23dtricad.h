@@ -13,7 +13,7 @@
 #ifndef gl4_v23dtricad_h
 #define gl4_v23dtricad_h
 
-#include "gl4_funcs.h" // for CGL4_VAO_Mesh
+#include "glnew_funcs.h" // for CGL4_VAO_Mesh
 
 namespace delfem2 {
 class CCad2D;

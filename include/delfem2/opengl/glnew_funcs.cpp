@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
+#include <cstdio>
 
 #ifdef USE_GLEW
   #include <GL/glew.h>
@@ -17,7 +17,7 @@
   #endif
 #endif
 
-#include "delfem2/opengl/gl4_funcs.h"
+#include "delfem2/opengl/glnew_funcs.h"
 
 // ---------------------------------------------------------
 

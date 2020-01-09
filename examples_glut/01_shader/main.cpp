@@ -17,9 +17,9 @@
   #include <GL/glut.h>
 #endif
 
-#include "delfem2/opengl/gl24_funcs.h"
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl24_tex.h"
+#include "delfem2/opengl/gl_funcs.h"
+#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/glold_funcs.h"
 #include "../glut_cam.h"
 
 namespace dfm2 = delfem2;

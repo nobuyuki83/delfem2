@@ -29,13 +29,13 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/camera.h             ${DELFEM2_INC}/camera.cpp
-    ${DELFEM2_INC}/imgio.h              ${DELFEM2_INC}/imgio.cpp
+    ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+    ${DELFEM2_INC}/imgio.h                ${DELFEM2_INC}/imgio.cpp
 
-    ${DELFEM2_INC}/opengl/gl2_funcs.h   ${DELFEM2_INC}/opengl/gl2_funcs.cpp
-    ${DELFEM2_INC}/opengl/gl24_tex.h    ${DELFEM2_INC}/opengl/gl24_tex.cpp
-    ${DELFEM2_INC}/opengl/gl24_funcs.h  ${DELFEM2_INC}/opengl/gl24_funcs.cpp
-  
+    ${DELFEM2_INC}/opengl/gl_tex.h        ${DELFEM2_INC}/opengl/gl_tex.cpp
+    ${DELFEM2_INC}/opengl/gl_funcs.h      ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/glold_funcs.h   ${DELFEM2_INC}/opengl/glold_funcs.cpp
+
     ../glad3/include/glad/glad.h
     ../glad3/src/glad.c
 

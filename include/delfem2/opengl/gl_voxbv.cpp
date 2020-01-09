@@ -22,7 +22,7 @@
 #endif
 
 #include "delfem2/opengl/gl_voxbv.h"
-#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/glold_funcs.h"
 
 namespace dfm2 = delfem2;
 

@@ -23,8 +23,8 @@
 #include "delfem2/dtri_v2.h"
 
 // ------------
-#include "delfem2/opengl/gl2_v23.h"
-#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glfw_viewer.hpp"
 
 namespace dfm2 = delfem2;

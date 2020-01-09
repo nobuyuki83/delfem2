@@ -27,7 +27,7 @@
 #include "delfem2/cad2d.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_v3q.h"
-
+// -------
 #include "delfem2/../../external/tinygltf/tiny_gltf.h"
 #include "delfem2/../../external/io_gltf.h"
 
@@ -38,9 +38,8 @@
 #else
   #include <GL/glut.h>
 #endif
-
-#include "delfem2/opengl/gl2_v23dtricad.h"
-#include "delfem2/opengl/gl2_funcs.h"
+#include "delfem2/opengl/glold_v23dtricad.h"
+#include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/gl_rig_v23q.h"
 #include "../glut_cam.h"
 

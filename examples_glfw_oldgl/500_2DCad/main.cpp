@@ -14,9 +14,9 @@
 // --------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl2_funcs.h"
-#include "delfem2/opengl/gl2_v23.h"
-#include "delfem2/opengl/gl2_v23dtricad.h"
+#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/glold_v23dtricad.h"
 
 #ifndef M_PI
   #define M_PI 3.141592653589793
