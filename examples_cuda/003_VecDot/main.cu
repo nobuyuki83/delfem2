@@ -39,27 +39,29 @@ int main()
 
   clock_t time0 = clock();
 
-  float *d_A, *d_B, *d_res;
-  cudaMalloc((void**)&d_A, sizeof(float)*n);
-  cudaMalloc((void**)&d_B, sizeof(float)*n);
-  cudaMalloc((void**)&d_res, sizeof(float));
-
-  cudaMemset((void**)&d_res, 0.f, sizeof(float));
-  cudaMemcpy(d_A, h_A, sizeof(float)*n, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_B, h_B, sizeof(float)*n, cudaMemcpyHostToDevice);
-
-  const unsigned int BLOCK = 16;
-  dim3 grid(n/BLOCK);
-  dim3 block(BLOCK);
-
-  cuda_Dot_TPB64 <<< grid, block >>> (d_res, d_A,d_B, n);
-
   float h_res = 0.0;
-  cudaMemcpy(&h_res, d_res, sizeof(float), cudaMemcpyDeviceToHost);
+  {
+    float *d_A, *d_B, *d_res;
+    cudaMalloc((void **) &d_A, sizeof(float) * n);
+    cudaMalloc((void **) &d_B, sizeof(float) * n);
+    cudaMalloc((void **) &d_res, sizeof(float));
 
-  cudaFree(d_A);
-  cudaFree(d_B);
-  cudaFree(d_res);
+    cudaMemset((void **) &d_res, 0.f, sizeof(float));
+    cudaMemcpy(d_A, h_A, sizeof(float) * n, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, sizeof(float) * n, cudaMemcpyHostToDevice);
+
+    const unsigned int BLOCK = 64;
+    dim3 grid(n / BLOCK);
+    dim3 block(BLOCK);
+
+    cuda_Dot_TPB64 << < grid, block >> > (d_res, d_A, d_B, n);
+
+    cudaMemcpy(&h_res, d_res, sizeof(float), cudaMemcpyDeviceToHost);
+
+    cudaFree(d_A);
+    cudaFree(d_B);
+    cudaFree(d_res);
+  }
 
   printf("gpu sum %.2f \n",h_res);
 
