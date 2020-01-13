@@ -5,13 +5,13 @@
 //  Created by Nobuyuki Umetani on 2019-11-01.
 //
 
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 #include <vector>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-#include "delfem2/eigen_rigidbody.h"
+#include "delfem2/eigen/eigen_rigidbody.h"
 
 // -------------
 #if defined(__APPLE__) && defined(__MACH__)
@@ -36,8 +36,7 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
   const double big_rad = 0.1;
   ::glDisable(GL_LIGHTING);
   const std::vector<CRigidBody>& aRigidBody = rba.aRigidBody;
-  for(unsigned int irb=0;irb<aRigidBody.size();irb++){
-    const CRigidBody rb = aRigidBody[irb];
+  for(auto rb : aRigidBody){
     CVector3 cg = rb.cg;
     if( rba.is_draw_deformed ){
       cg += rb.u;
@@ -89,8 +88,7 @@ void DrawRigidBodyAssemblyStatic(const CRigidBodyAssembly_Static& rba)
   }
   // -------------------------------------------
   const std::vector<CJoint>& aJoint = rba.aJoint;
-  for(unsigned int ij=0;ij<aJoint.size();ij++){
-    const CJoint& joint = aJoint[ij];
+  for(const auto & joint : aJoint){
     int irb0 = joint.irb0;
     int irb1 = joint.irb1;
     const CRigidBody& rb0 = aRigidBody[irb0];

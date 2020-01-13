@@ -35,7 +35,7 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------------------------
 
-void init_rigidbody(py::module &m);
+//void init_rigidbody(py::module &m);
 void init_polyline(py::module &m);
 void init_mshtopoio(py::module &m);
 void init_field(py::module &m);
@@ -267,7 +267,7 @@ PYBIND11_MODULE(c_core, m) {
   init_field(m);
   init_fem(m);
   init_sdf(m);
-  init_rigidbody(m);
+//  init_rigidbody(m);
   
   // -------------------------
   // axis arrigned boudning box
@@ -323,7 +323,7 @@ PYBIND11_MODULE(c_core, m) {
   m.def("cppCad2D_ImportSVG",
         &PyCad2D_ImportSVG);
   m.def("cppSVG_Polyline",
-        &Str_SVGPolygon);
+        &Str_SVGPolygon);  
   
   py::class_<dfm2::CMesher_Cad2D>(m,"CppMesher_Cad2D")
   .def(py::init<>())
@@ -342,13 +342,6 @@ PYBIND11_MODULE(c_core, m) {
         py::return_value_policy::move);
   
   m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
-  
-  /*
-  py::class_<CRigBone>(m,"CppRigBone")
-  .def(py::init<>())
-  .def("set_translation", &CRigBone::SetTranslation)
-  .def("set_rotation_bryant", &CRigBone::SetRotationBryant);
-   */
   
   py::class_<CGLTF>(m,"CppGLTF")
   .def(py::init<>())

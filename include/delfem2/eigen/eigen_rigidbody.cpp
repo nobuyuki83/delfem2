@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/v23m3q.h"
+
 
 #if defined(__APPLE__) && defined(__MACH__)
 #include <OpenGL/gl.h>
@@ -24,9 +26,7 @@
 #include <Eigen/Dense>
 #endif
 
-
-#include "delfem2/eigen_rigidbody.h"
-#include "delfem2/v23m3q.h"
+#include "delfem2/eigen/eigen_rigidbody.h"
 
 void myUpdateMinMaxXYZ
 (double bb[6],

@@ -51,7 +51,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
   ${DELFEM2_INC}/opengl/glold_v23dtricad.h  ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
-  ${DELFEM2_INC}/opengl/gl_rig_v23q.h     ${DELFEM2_INC}/opengl/gl_rig_v23q.cpp
+  ${DELFEM2_INC}/opengl/glold_rig_v23q.h    ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
   
   ${DELFEM2_EXT}/io_gltf.h
   ${DELFEM2_EXT}/io_gltf.cpp

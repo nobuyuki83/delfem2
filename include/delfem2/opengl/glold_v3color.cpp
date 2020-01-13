@@ -18,7 +18,7 @@
 #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/gl_v3color.h"
+#include "delfem2/opengl/glold_v3color.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_v23.h"
 

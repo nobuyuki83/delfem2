@@ -11,7 +11,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/eigen_rigidbody.h"
+#include "delfem2/eigen/eigen_rigidbody.h"
 
 namespace py = pybind11;
 

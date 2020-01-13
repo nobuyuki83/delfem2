@@ -19,11 +19,12 @@
 
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/gl_framebuffer.h" // have to be included in the beginning
+
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_v23dtricad.h"
 #include "delfem2/opengl/glold_v23.h"
-#include "delfem2/opengl/gl_voxbv.h"
+#include "delfem2/opengl/glold_voxbv.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;
@@ -34,7 +35,7 @@ namespace dfm2 = delfem2;
 
 void init_sampler(py::module &m);
 void init_texture(py::module &m);
-void init_rigidasm(py::module &m);
+//void init_rigidasm(py::module &m);
 
 
 void PyDrawEdge_CMeshDynTri3D(const dfm2::CMeshDynTri3D& dmsh){
@@ -188,7 +189,7 @@ PYBIND11_MODULE(c_gl, m) {
   // ---------------------
   init_sampler(m);
   init_texture(m);
-  init_rigidasm(m);
+//  init_rigidasm(m);
    
  // ----------------------
 

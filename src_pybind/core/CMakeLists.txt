@@ -8,7 +8,10 @@ if(MSVC)
     /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4702 /wd4996 \
     /wd4701 /wd4267 /wd4305 /wd4389 /wd4456 /wd4505 ")
 else()
-  set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-deprecated-declarations -Wno-unused-parameter -Wno-unused-function -O2")
+  set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra \
+    -Wno-deprecated-declarations \
+    -Wno-unused-parameter \
+    -Wno-unused-function")
 endif()
 
 ##########################################################
@@ -24,56 +27,57 @@ set(DELFEM2_INC         "../../include/delfem2")
 set(DELFEM2_EXT         "../../external")
 
 set(INPUT_SRC
-  ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
-  ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
-  ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
-  ${DELFEM2_INC}/funcs.h              ${DELFEM2_INC}/funcs.cpp
-  ${DELFEM2_INC}/voxel.h              ${DELFEM2_INC}/voxel.cpp
-  ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_INC}/evalmathexp.cpp
-  ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
-  ${DELFEM2_INC}/mats.h               ${DELFEM2_INC}/mats.cpp
-  ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp
-  ${DELFEM2_INC}/primitive.h          ${DELFEM2_INC}/primitive.cpp
-  ${DELFEM2_INC}/iss.h                ${DELFEM2_INC}/iss.cpp
-  ${DELFEM2_INC}/color.h              ${DELFEM2_INC}/color.cpp
-  ${DELFEM2_INC}/slice.h              ${DELFEM2_INC}/slice.cpp
-  ${DELFEM2_INC}/bvh.h                ${DELFEM2_INC}/bvh.cpp
-  ${DELFEM2_INC}/bv.h
-  
-  ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp
-  ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_INC}/fem_emats.cpp
-  ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_INC}/objfunc_v23.cpp
-  ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_INC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_INC}/rig_v3q.cpp
-  ${DELFEM2_INC}/v23m3q.h             ${DELFEM2_INC}/v23m3q.cpp
-  ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_INC}/dtri_v3.cpp
-  ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
-  ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
-  ${DELFEM2_INC}/cad2d.h              ${DELFEM2_INC}/cad2d.cpp
-  ${DELFEM2_INC}/eigen_rigidbody.h    ${DELFEM2_INC}/eigen_rigidbody.cpp
-  ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_INC}/srchuni_v3.cpp
-  ${DELFEM2_INC}/srch_v3bvhmshtopo.h
+    ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
+    ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
+    ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
+    ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
+    ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
+    ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
+    ${DELFEM2_INC}/funcs.h              ${DELFEM2_INC}/funcs.cpp
+    ${DELFEM2_INC}/voxel.h              ${DELFEM2_INC}/voxel.cpp
+    ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_INC}/evalmathexp.cpp
+    ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
+    ${DELFEM2_INC}/mats.h               ${DELFEM2_INC}/mats.cpp
+    ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp
+    ${DELFEM2_INC}/primitive.h          ${DELFEM2_INC}/primitive.cpp
+    ${DELFEM2_INC}/iss.h                ${DELFEM2_INC}/iss.cpp
+    ${DELFEM2_INC}/color.h              ${DELFEM2_INC}/color.cpp
+    ${DELFEM2_INC}/slice.h              ${DELFEM2_INC}/slice.cpp
+    ${DELFEM2_INC}/bvh.h                ${DELFEM2_INC}/bvh.cpp
+    ${DELFEM2_INC}/bv.h
 
-  ${DELFEM2_EXT}/io_gltf.h            ${DELFEM2_EXT}/io_gltf.cpp
+    ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp
+    ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_INC}/fem_emats.cpp
+    ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_INC}/objfunc_v23.cpp
+    ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_INC}/objfunc_v23dtri.cpp
+    ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_INC}/rig_v3q.cpp
+    ${DELFEM2_INC}/v23m3q.h             ${DELFEM2_INC}/v23m3q.cpp
+    ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_INC}/dtri_v3.cpp
+    ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
+    ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
+    ${DELFEM2_INC}/cad2d.h              ${DELFEM2_INC}/cad2d.cpp
+    ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_INC}/srchuni_v3.cpp
+    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
-  ../py_funcs.h
+    ${DELFEM2_EXT}/io_gltf.h            ${DELFEM2_EXT}/io_gltf.cpp
 
-  py_mshtopoio.cpp
-  py_polyline.cpp 
-  py_field.cpp
-  py_fem.cpp
-  py_sdf.cpp
-  py_rigidbody.cpp
-  
-  main.cpp
+    ../py_funcs.h
+
+    py_mshtopoio.cpp
+    py_polyline.cpp
+    py_field.cpp
+    py_fem.cpp
+    py_sdf.cpp
+
+#    ${DELFEM2_INC}/eigen/eigen_rigidbody.h    ${DELFEM2_INC}/eigen/eigen_rigidbody.cpp
+#    py_rigidbody.cpp
+
+    main.cpp
 )
 
 set(INPUT_INCLUDE_DIR
-  "../../external/eigen"
+# "../../external/eigen"
   ${DELFEM2_INCLUDE_DIR}
 )
 set(INPUT_LIBRARY
