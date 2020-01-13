@@ -18,12 +18,14 @@ ENDIF()
 
 project(00_openwin)
 
+set(3RD_PARTY           "../../3rd_party")
+
 add_executable(${PROJECT_NAME}
   main.cpp
 )
 
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../../external/glfw")
+  set(GLFW_DIR "${3RD_PARTY}/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE) # get absolute path
   find_package(OpenGL REQUIRED)
   include_directories(

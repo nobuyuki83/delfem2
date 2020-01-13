@@ -22,10 +22,10 @@ ENDIF()
 
 project(05_offscreenprojection)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
-
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
+set(3RD_PARTY           "../../3rd_party")
+
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 add_executable(${PROJECT_NAME}
@@ -43,17 +43,17 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/opengl/glfw_viewer.hpp     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
     ${DELFEM2_INC}/opengl/glfw_cam.h
 
-    ../glad4/include/glad/glad.h
-    ../glad4/src/glad.c
+    ${3RD_PARTY}/glad4/include/glad/glad.h
+    ${3RD_PARTY}/glad4/src/glad.c
   
     main.cpp
 )
 
-set(GLAD_INCLUDE_DIR "../glad4/include")
+set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../../external/glfw")
+  set(GLFW_DIR "${3RD_PARTY}/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
   find_package(OpenGL REQUIRED)
   include_directories(

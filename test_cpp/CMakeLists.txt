@@ -14,6 +14,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../include")
 set(DELFEM2_INC         "../include/delfem2")
+set(3RD_PARTY           "../3rd_party")
 
 enable_testing()
 
@@ -34,6 +35,7 @@ set(GTEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/googletest/googletest/include)
 include_directories(
   ${GTEST_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}
 )
 
 # Add test cpp file

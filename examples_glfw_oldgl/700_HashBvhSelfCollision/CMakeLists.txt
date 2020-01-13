@@ -17,10 +17,10 @@ project(700_hashbvh_selfcollision)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
-set(DELFEM2_EXT         "../../external")
+set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
-set(GLFW_DIR "../../external/glfw")
+set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)

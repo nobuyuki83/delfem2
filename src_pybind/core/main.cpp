@@ -27,8 +27,8 @@
 #include "delfem2/cad2d.h"
 #include "delfem2/rig_v3q.h"
 
-#include "delfem2/../../external/tinygltf/tiny_gltf.h"
-#include "delfem2/../../external/io_gltf.h"
+#include "tinygltf/tiny_gltf.h"
+#include "io_gltf.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;

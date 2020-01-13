@@ -9,7 +9,7 @@
 #include <set>
 #include "delfem2/rig_v3q.h"
 //
-#include "delfem2/../../external/io_gltf.h"
+#include "io_gltf.h"
 
 // ------------------
 

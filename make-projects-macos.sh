@@ -6,7 +6,7 @@ git submodule update --init --recursive
 ################################
 # build examples_glfw
 
-cd external/glfw
+cd 3rd_party/glfw
 cmake .
 make
 cd ../..
