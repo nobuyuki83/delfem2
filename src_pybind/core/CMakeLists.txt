@@ -19,12 +19,12 @@ endif()
 set(PROJ_NAME c_core)
 project(${PROJ_NAME})
 
-set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)
-add_subdirectory(${PYBIND11_DIR} pybind11)
-
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
+
+set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
+add_subdirectory(${PYBIND11_DIR} pybind11)
 
 set(INPUT_SRC
     ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
@@ -77,6 +77,7 @@ set(INPUT_SRC
 set(INPUT_INCLUDE_DIR
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}/glad3/include
+  ${3RD_PARTY}/pybind11/include
   ${3RD_PARTY}
 )
 set(INPUT_LIBRARY

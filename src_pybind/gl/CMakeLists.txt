@@ -22,7 +22,7 @@ set(3RD_PARTY           "../../3rd_party")
 set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad3/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
-set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)
+set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
 
@@ -70,7 +70,8 @@ set(INPUT_LIBRARY
 
 include_directories(
   ${INPUT_INCLUDE_DIR}
-  ${3RD_PARTY}/glad3/include)
+  ${3RD_PARTY}/glad3/include
+  ${3RD_PARTY}/pybind11/include)
 pybind11_add_module(${PROJ_NAME}
   ${INPUT_SRC} )
 
