@@ -15,14 +15,16 @@ else()
     -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable")
 endif()
 
-set(GLAD_INCLUDE_DIR "../glad3/include")
+set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
+set(3RD_PARTY           "../../3rd_party")
+
+set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad3/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 set(PYBIND11_DIR ${PROJECT_SOURCE_DIR}/../pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
 
 set(INPUT_SRC
     ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
@@ -47,13 +49,12 @@ set(INPUT_SRC
     ${DELFEM2_INC}/opengl/glold_v23dtricad.h   ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
     ${DELFEM2_INC}/opengl/glold_gpusampler.h   ${DELFEM2_INC}/opengl/glold_gpusampler.cpp
   
-  ../glad3/include/glad/glad.h
-  ../glad3/src/glad.c
+    ${3RD_PARTY}/glad3/include/glad/glad.h
+    ${3RD_PARTY}/glad3/src/glad.c
 
-  py_sampler.cpp
-  py_texture.cpp
-#  py_rigidasm.cpp
-  main.cpp
+    py_sampler.cpp
+    py_texture.cpp
+    main.cpp
 )
 
 find_package(OpenGL REQUIRED)
@@ -67,7 +68,9 @@ set(INPUT_LIBRARY
   ${OPENGL_LIBRARY}
 )
 
-include_directories( ${INPUT_INCLUDE_DIR} )
+include_directories(
+  ${INPUT_INCLUDE_DIR}
+  ${3RD_PARTY}/glad3/include)
 pybind11_add_module(${PROJ_NAME}
   ${INPUT_SRC} )
 

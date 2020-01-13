@@ -9,7 +9,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(NOT EMSCRIPTEN)
   IF(MSVC)
-    set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
+    set(CMAKE_CXX_FLAGS "-O2 -std=c++11 /W4 \
+    /wd4100 /wd4458 /wd4577 /wd4267 \
+    /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 \
+    /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
   ELSE()
     set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
   ENDIF()
@@ -21,24 +24,25 @@ project(01_drawrect)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
-set(DELFEM2_EXT         "../../external")
+set(3RD_PARTY           "../../3rd_party")
 
 add_executable(${PROJECT_NAME}
 
-  ../glad4/include/glad/glad.h           ../glad4/src/glad.c
+    ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/glnew_funcs.h    ${DELFEM2_INC}/opengl/glnew_funcs.cpp
+    ${DELFEM2_INC}/opengl/glfw_cam.h
 
-  ${DELFEM2_INC}/opengl/gl_funcs.h     ${DELFEM2_INC}/opengl/gl_funcs.cpp
-  ${DELFEM2_INC}/opengl/glnew_funcs.h    ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-  ${DELFEM2_INC}/opengl/glfw_cam.h
+    ${3RD_PARTY}/glad4/include/glad/glad.h
+    ${3RD_PARTY}/glad4/src/glad.c
 
-  main.cpp
+    main.cpp
 )
 
-set(GLAD_INCLUDE_DIR "../glad4/include")
+set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "../../external/glfw")
+  set(GLFW_DIR "${3RD_PARTY}/glfw")
   get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
   find_package(OpenGL REQUIRED)
   include_directories(

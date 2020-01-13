@@ -15,7 +15,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
-#include "delfem2/../../external/tinygltf/tiny_gltf.h"
+#include "tinygltf/tiny_gltf.h"
 
 TEST(gltf,formatcheck)
 {

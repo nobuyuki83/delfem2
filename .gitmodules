@@ -4,12 +4,12 @@
 [submodule "test_cpp/googletest"]
 	path = test_cpp/googletest
 	url = https://github.com/google/googletest.git
-[submodule "examples_glfw/imgui"]
-	path = examples_glfw/imgui
+[submodule "3rd_party/imgui"]
+	path = 3rd_party/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "external/glfw"]
-	path = external/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "external/tinygltf"]
-	path = external/tinygltf
+[submodule "3rd_party/tinygltf"]
+	path = 3rd_party/tinygltf
 	url = https://github.com/syoyo/tinygltf.git
+[submodule "3rd_party/glfw"]
+	path = 3rd_party/glfw
+	url = https://github.com/glfw/glfw.git

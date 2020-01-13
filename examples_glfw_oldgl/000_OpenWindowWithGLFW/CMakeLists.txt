@@ -15,7 +15,8 @@ ENDIF()
 
 project(000_openwin)
 
-set(GLFW_DIR "../../external/glfw")
+set(3RD_PARTY           "../../3rd_party")
+set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)

@@ -24,7 +24,7 @@ add_subdirectory(${PYBIND11_DIR} pybind11)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
-set(DELFEM2_EXT         "../../external")
+set(3RD_PARTY           "../../3rd_party")
 
 set(INPUT_SRC
     ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
@@ -60,7 +60,8 @@ set(INPUT_SRC
     ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_INC}/srchuni_v3.cpp
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 
-    ${DELFEM2_EXT}/io_gltf.h            ${DELFEM2_EXT}/io_gltf.cpp
+    ${3RD_PARTY}/io_gltf.h
+    ${3RD_PARTY}/io_gltf.cpp
 
     ../py_funcs.h
 
@@ -70,15 +71,13 @@ set(INPUT_SRC
     py_fem.cpp
     py_sdf.cpp
 
-#    ${DELFEM2_INC}/eigen/eigen_rigidbody.h    ${DELFEM2_INC}/eigen/eigen_rigidbody.cpp
-#    py_rigidbody.cpp
-
     main.cpp
 )
 
 set(INPUT_INCLUDE_DIR
-# "../../external/eigen"
   ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}/glad3/include
+  ${3RD_PARTY}
 )
 set(INPUT_LIBRARY
 )

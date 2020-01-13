@@ -16,7 +16,7 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
-set(DELFEM2_EXT         "../../external")
+set(3RD_PARTY           "../../3rd_party")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
@@ -24,6 +24,7 @@ include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}
 )
 
 add_executable(${PROJECT_NAME}
@@ -53,8 +54,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_v23dtricad.h  ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
   ${DELFEM2_INC}/opengl/glold_rig_v23q.h    ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
   
-  ${DELFEM2_EXT}/io_gltf.h
-  ${DELFEM2_EXT}/io_gltf.cpp
+  ${3RD_PARTY}/io_gltf.h
+  ${3RD_PARTY}/io_gltf.cpp
 
   main.cpp  
 )

@@ -21,7 +21,7 @@ cd ../../
 
 #######################
 
-cd external/glfw
+cd 3rd_party/glfw
 cmake .
 make
 cd ../..
