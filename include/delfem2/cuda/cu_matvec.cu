@@ -5,15 +5,27 @@
 
 #include "cu_matvec.h"
 
+namespace dfm2 = delfem2;
+
+// -------------------------------------------------------------------
+
 __global__
-void kernel_VecScale(float *out, float *in, float scale, const int n)
+void dfm2::cuda::kernel_VecScale(
+    float *out,
+    const float *in,
+    float scale,
+    const int n)
 {
   const unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
   if (i >= n) { return; }
   out[i] = in[i] * scale;
 }
 
-void cuda_VecScale(float *hOut, float *hIn, float scale, const int n)
+void dfm2::cuda::cuda_VecScale(
+    float *hOut,
+    const float *hIn,
+    float scale,
+    const int n)
 {
   float *dOut; cudaMalloc((void**)&dOut, sizeof(float)*n);
   float *dIn;  cudaMalloc((void**)&dIn,  sizeof(float)*n);
@@ -36,7 +48,7 @@ void cuda_VecScale(float *hOut, float *hIn, float scale, const int n)
  * @brief dot product of two vectors
  */
 __global__
-void kernel_Dot_TPB64(
+void dfm2::cuda::kernel_Dot_TPB64(
     float* d_res,
     const float* d_A,
     const float* d_B,
@@ -62,7 +74,7 @@ void kernel_Dot_TPB64(
 }
 
 
-float cuda_Dot(
+float dfm2::cuda::cuda_Dot(
     const float* h_A,
     const float* h_B,
     unsigned int n)
@@ -94,7 +106,7 @@ float cuda_Dot(
 // ------------------------------------------------------------------
 
 __global__
-void kernel_MatMat_TPB16(
+void dfm2::cuda::kernel_MatMat_TPB16(
     float *C,
     const float *A,
     const float *B,
@@ -120,7 +132,7 @@ void kernel_MatMat_TPB16(
   C[N*r+c] = tmp;
 }
 
-void cuda_MatMat(
+void dfm2::cuda::cuda_MatMat(
     float* h_C_gpu,
     const float* h_A,
     const float* h_B,

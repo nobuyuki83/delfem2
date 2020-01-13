@@ -1,9 +1,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
-#include "cuda_runtime.h"
 
 #include "delfem2/cuda/cu_matvec.h"
+
+namespace dfm2 = delfem2;
 
 int main() {
   const unsigned int n = 64 * 16;
@@ -18,7 +19,7 @@ int main() {
 
   clock_t time0 = clock();
 
-  float h_res = cuda_Dot(h_A,h_B,n);
+  float h_res = dfm2::cuda::cuda_Dot(h_A,h_B,n);
 
 
   printf("gpu sum %.2f \n", h_res);

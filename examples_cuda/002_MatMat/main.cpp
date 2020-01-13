@@ -6,6 +6,8 @@
 
 #include "delfem2/cuda/cu_matvec.h"
 
+namespace dfm2 = delfem2;
+
 void h_multiply(
     float *C,
     const float* A,
@@ -49,7 +51,7 @@ int main()
   // ------------------------------------------------
 
   float h_C_gpu[WIDTH*WIDTH];
-  cuda_MatMat(h_C_gpu,
+  dfm2::cuda::cuda_MatMat(h_C_gpu,
       h_A, h_B, WIDTH);
 
   clock_t time2 = clock();

@@ -3,6 +3,10 @@
 #include <vector>
 #include "delfem2/cuda/cu_matvec.h"
 
+namespace dfm2 = delfem2;
+
+// ----------------------------------------------
+
 int main()
 {
   printf("Hello\n");
@@ -16,7 +20,7 @@ int main()
   for (int i = 0; i < n; i++) in[i] = rand() % 100;
   for (int i = 0; i < n; i++) answer[i] = in[i] * scale;
 
-  cuda_VecScale(out.data(), in.data(), scale, n);
+  dfm2::cuda::cuda_VecScale(out.data(), in.data(), scale, n);
 
   for (int i = 0; i < n; i++) {
       if (answer[i] != out[i]) {
