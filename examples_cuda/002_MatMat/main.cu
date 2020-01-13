@@ -59,6 +59,8 @@ int main()
     h_B[i] = (float)i;
   }
 
+  // ------------------------------------------------
+
   clock_t time0 = clock();
 
   float *d_A, *d_B, *d_C;
