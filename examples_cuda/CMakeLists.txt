@@ -7,6 +7,7 @@ project(examples_cuda)
 add_subdirectory(000_Simple)
 add_subdirectory(001_ThrustTest)
 add_subdirectory(002_MatMat)
+add_subdirectory(003_VecDot)
 
 
 
