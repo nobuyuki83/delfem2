@@ -111,7 +111,7 @@ python3 setup.py test
 # test cpp
 # (this takes time so put it in the end)
 
-cd test_cpp/googletest
+cd "3rd_party/googletest"
 cmake .
 make
 cd ../../
