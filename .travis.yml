@@ -32,7 +32,7 @@ script: |
 
   # ----------------
   # test cpp
-  cd test_cpp/googletest
+  cd 3rd_party/googletest
   cmake .
   make
   cd ../../

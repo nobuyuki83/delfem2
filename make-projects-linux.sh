@@ -6,7 +6,7 @@ git submodule update --init --recursive
 ######################
 ## test
 
-cd test_cpp/googletest
+cd 3rd_party/googletest
 cmake .
 make
 cd ../..
@@ -32,7 +32,6 @@ cd buildMake
 cmake ..
 make
 cd ../../
-
 
 cd examples_glfw_oldgl
 mkdir buildMake

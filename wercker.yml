@@ -23,7 +23,7 @@ build:
     - script:
         name: compile gtest
         code: |
-          cd test_cpp/googletest
+          cd 3rd_party/googletest
           cmake .
           make 
     - script:
