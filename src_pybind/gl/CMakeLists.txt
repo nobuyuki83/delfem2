@@ -36,24 +36,23 @@ set(INPUT_SRC
     ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
     ${DELFEM2_INC}/bv.h
 
-
-    ${DELFEM2_INC}/opengl/gl_voxbv.h           ${DELFEM2_INC}/opengl/gl_voxbv.cpp
-
-    ${DELFEM2_INC}/opengl/gl_funcs.h         ${DELFEM2_INC}/opengl/gl_funcs.cpp
-    ${DELFEM2_INC}/opengl/gl_tex.h           ${DELFEM2_INC}/opengl/gl_tex.cpp
+    ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl_tex.h             ${DELFEM2_INC}/opengl/gl_tex.cpp
     ${DELFEM2_INC}/opengl/gl_framebuffer.h     ${DELFEM2_INC}/opengl/gl_framebuffer.cpp
 
+    ${DELFEM2_INC}/opengl/glold_voxbv.h        ${DELFEM2_INC}/opengl/glold_voxbv.cpp
     ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
     ${DELFEM2_INC}/opengl/glold_color.h        ${DELFEM2_INC}/opengl/glold_color.cpp
     ${DELFEM2_INC}/opengl/glold_v23.h          ${DELFEM2_INC}/opengl/glold_v23.cpp
     ${DELFEM2_INC}/opengl/glold_v23dtricad.h   ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
     ${DELFEM2_INC}/opengl/glold_gpusampler.h   ${DELFEM2_INC}/opengl/glold_gpusampler.cpp
   
-  ../glad3/include/glad/glad.h  ../glad3/src/glad.c
+  ../glad3/include/glad/glad.h
+  ../glad3/src/glad.c
 
   py_sampler.cpp
   py_texture.cpp
-  py_rigidasm.cpp
+#  py_rigidasm.cpp
   main.cpp
 )
 

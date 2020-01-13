@@ -33,9 +33,9 @@
 
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/glold_rig_v23q.h"
 //#include "delfem2/opengl/gl2_color.h"
 //#include "delfem2/opengl/gl_tex.h"
-//#include "delfem2/opengl/gl_rig_v23q.h"
 
 
 #ifndef M_PI 

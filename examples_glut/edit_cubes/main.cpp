@@ -27,7 +27,7 @@
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_v23.h"
-#include "delfem2/opengl/gl_voxbv.h"
+#include "delfem2/opengl/glold_voxbv.h"
 #include "../glut_cam.h"
 
 #ifndef M_PI
