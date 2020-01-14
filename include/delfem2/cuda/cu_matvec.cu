@@ -9,6 +9,35 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------------------------------
 
+__device__
+void atomicMaxFloat(float * const address, const float value)
+{
+  if ( *address >= value ) { return; }
+  int * const address_as_i = (int *)address;
+  int old = * address_as_i, assumed;
+  do {
+    assumed = old;
+    if (__int_as_float(assumed) >= value) { break; }
+    old = atomicCAS(address_as_i, assumed, __float_as_int(value));
+  } while (assumed != old);
+}
+
+__device__
+void atomicMinFloat(float * const address, const float value)
+{
+  if ( *address <= value ) { return; }
+  int * const address_as_i = (int *)address;
+  int old = * address_as_i, assumed;
+  do {
+    assumed = old;
+    if (__int_as_float(assumed) <= value) { break; }
+    old = atomicCAS(address_as_i, assumed, __float_as_int(value));
+  } while (assumed != old);
+}
+
+
+// -------------------------------------------------------------------
+
 __global__
 void dfm2::cuda::kernel_VecScale(
     float *out,
@@ -133,30 +162,96 @@ void dfm2::cuda::kernel_MatMat_TPB16(
 }
 
 void dfm2::cuda::cuda_MatMat(
-    float* h_C_gpu,
-    const float* h_A,
-    const float* h_B,
+    float *h_C_gpu,
+    const float *h_A,
+    const float *h_B,
     unsigned int WIDTH)
 {
-const unsigned int BLOCK = 16;
-float *d_A, *d_B, *d_C;
-cudaMalloc((void **) &d_A, sizeof(float) * WIDTH * WIDTH);
-cudaMalloc((void **) &d_B, sizeof(float) * WIDTH * WIDTH);
-cudaMalloc((void **) &d_C, sizeof(float) * WIDTH * WIDTH);
+  float *d_A, *d_B, *d_C;
+  cudaMalloc((void **) &d_A, sizeof(float) * WIDTH * WIDTH);
+  cudaMalloc((void **) &d_B, sizeof(float) * WIDTH * WIDTH);
+  cudaMalloc((void **) &d_C, sizeof(float) * WIDTH * WIDTH);
 
-cudaMemcpy(d_A, h_A, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
-cudaMemcpy(d_B, h_B, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_A, h_A, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_B, h_B, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
 
-dim3 grid(WIDTH / BLOCK, WIDTH / BLOCK);
-dim3 block(BLOCK, BLOCK);
+  const unsigned int BLOCK = 16;
+  dim3 grid(WIDTH / BLOCK, WIDTH / BLOCK);
+  dim3 block(BLOCK, BLOCK);
 
 //    d_multiply0 << < grid, block >> > (d_C, d_A, d_B, WIDTH);
-kernel_MatMat_TPB16 <<< grid, block >>> (d_C, d_A,d_B, WIDTH);
+  kernel_MatMat_TPB16 << < grid, block >> > (d_C, d_A, d_B, WIDTH);
 
-cudaMemcpy(h_C_gpu,
-    d_C, sizeof(float) * WIDTH * WIDTH, cudaMemcpyDeviceToHost);
+  cudaMemcpy(h_C_gpu,
+             d_C, sizeof(float) * WIDTH * WIDTH, cudaMemcpyDeviceToHost);
 
-cudaFree(d_A);
-cudaFree(d_B);
-cudaFree(d_C);
+  cudaFree(d_A);
+  cudaFree(d_B);
+  cudaFree(d_C);
 }
+
+// ------------------------------------------------------------------------
+
+__global__
+void dfm2::cuda::kernel_MinMax_TPB256(
+    float *d_minmax,
+    const float *d_XYZ,
+    unsigned int np)
+{
+  const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
+  const unsigned int s_idx = threadIdx.x;
+  assert( blockDim.y == 3 && blockIdx.y == 0 );
+  unsigned int idy = threadIdx.y;
+  if( idx >= np ){ return; }
+  // ---------------
+  const unsigned int BLOCK = 256;
+  assert(blockDim.x == BLOCK);
+  __shared__ float s_XYZ[BLOCK][3];
+  s_XYZ[s_idx][idy] = d_XYZ[idx*3+idy];
+  __syncthreads();
+  if( s_idx == 0 ) {
+    float vmin = s_XYZ[0][idy];
+    float vmax = s_XYZ[0][idy];
+    int ns = BLOCK;
+    if( blockDim.x * (blockIdx.x+1) > np ) {
+      ns = np - blockDim.x * blockIdx.x;
+    }
+    for(int is=0;is<ns;++is){
+      if( s_XYZ[is][idy] < vmin ){ vmin = s_XYZ[is][idy]; }
+      if( s_XYZ[is][idy] > vmax ){ vmax = s_XYZ[is][idy]; }
+    }
+    atomicMinFloat(d_minmax+idy+0,vmin);
+    atomicMaxFloat(d_minmax+idy+3,vmax);
+  }
+}
+
+void dfm2::cuda::cuda_MinMax_Point3D(
+    float *h_minmax,
+    const float *h_XYZ,
+    unsigned int np)
+{
+  h_minmax[0] = h_minmax[3] = h_XYZ[0];
+  h_minmax[1] = h_minmax[4] = h_XYZ[1];
+  h_minmax[2] = h_minmax[5] = h_XYZ[2];
+  // --------------------------------------
+  float *d_minmax, *d_XYZ;
+  cudaMalloc((void **) &d_minmax, sizeof(float) * 6);
+  cudaMalloc((void **) &d_XYZ, sizeof(float) * np * 3);
+  cudaMemcpy(d_XYZ,
+             h_XYZ, sizeof(float) * np * 3, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_minmax,
+             h_minmax, sizeof(float) * 6, cudaMemcpyHostToDevice);
+
+  const unsigned int BLOCK = 256;
+  dim3 grid(np/BLOCK+1);
+  dim3 block(BLOCK, 3);
+
+  kernel_MinMax_TPB256 <<< grid, block >>> (d_minmax, d_XYZ, np);
+
+  cudaMemcpy(h_minmax,
+             d_minmax, sizeof(float) * 6, cudaMemcpyDeviceToHost);
+
+  cudaFree(d_minmax);
+  cudaFree(d_XYZ);
+}
+

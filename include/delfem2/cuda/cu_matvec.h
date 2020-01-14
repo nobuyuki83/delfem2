@@ -40,5 +40,18 @@ void cuda_MatMat(
     const float *h_B,
     unsigned int WIDTH);
 
+// -------------------------------------------------------------\
+
+__global__
+void kernel_MinMax_TPB256(
+    float *d_minmax,
+    const float *d_XYZ,
+    unsigned int np);
+
+void cuda_MinMax_Point3D(
+    float *p_minmax,
+    const float *p_XYZ,
+    unsigned int np);
+
 } // cuda
 } // delfem2
