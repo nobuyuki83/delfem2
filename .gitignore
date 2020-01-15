@@ -18,6 +18,7 @@
 *.dat
 *.LinkFileList
 *.so
+*.a
 *.vcxproj
 *.pyc
 *.dll
