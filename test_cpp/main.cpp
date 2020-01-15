@@ -36,15 +36,14 @@ TEST(slice,test1){
   std::vector<unsigned int> aTri;
   std::vector<dfm2::CSliceTriMesh> aCS;
   std::vector< std::set<unsigned int> > ReebGraphCS;
-  ////
+  // ----------------------
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   delfem2::Normalize_Points3D(aXYZ);
   std::vector<int> aTriSurRel;
   makeSurroundingRelationship(aTriSurRel,
                               aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI, aXYZ.size()/3);
-  
-  
+  // ----------------------
   std::vector<double> aHeight;
   aHeight.push_back(-0.3);
   aHeight.push_back(-0.2);

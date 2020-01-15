@@ -19,6 +19,14 @@ make
 ./runUnitTests
 cd ../../
 
+cd test_cuda
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+./test_cuda
+cd ../../
+
 #######################
 
 cd 3rd_party/glfw
