@@ -94,8 +94,12 @@ void kernel_Dot_TPB64(
   __syncthreads();
 
   if( s_idx == 0 ) {
+    int ns = TPB;
+    if( blockDim.x * (blockIdx.x+1) > n ) {
+      ns = n - blockDim.x * blockIdx.x;
+    }
     float blockSum = 0;
-    for(int j=0;j<blockDim.x;++j){
+    for(int j=0;j<ns;++j){
       blockSum += s_prod[j];
     }
     atomicAdd(d_res, blockSum);
@@ -118,7 +122,7 @@ float dfm2::cuda::cuda_Dot(
   cudaMemcpy(d_B, h_B, sizeof(float) * n, cudaMemcpyHostToDevice);
 
   const unsigned int BLOCK = 64;
-  dim3 grid(n / BLOCK);
+  dim3 grid( (n-1)/BLOCK + 1);
   dim3 block(BLOCK);
 
   kernel_Dot_TPB64 << < grid, block >> > (d_res, d_A, d_B, n);
@@ -141,23 +145,29 @@ void kernel_MatMat_TPB16(
     const float *B,
     unsigned int N)
 {
-  unsigned int r = blockDim.y * blockIdx.y + threadIdx.y;
-  unsigned int c = blockDim.x * blockIdx.x + threadIdx.x;
+  const unsigned int r = blockDim.y * blockIdx.y + threadIdx.y;
+  const unsigned int c = blockDim.x * blockIdx.x + threadIdx.x;
   const unsigned int BLOCK = 16;
-  assert(blockDim.x == BLOCK);
-  assert(blockDim.y == BLOCK);
+  assert(blockDim.x == BLOCK && blockDim.y == BLOCK);
   __shared__ float s_A[BLOCK][BLOCK];
   __shared__ float s_B[BLOCK][BLOCK];
   float tmp = 0.0;
   for(int i=0;i<N;i+=BLOCK){
-    s_A[threadIdx.y][threadIdx.x] = A[N*r+i+threadIdx.x];
-    s_B[threadIdx.y][threadIdx.x] = B[N*(i+threadIdx.y) + c];
+    if( i+threadIdx.x < N && r < N ) {
+      s_A[threadIdx.y][threadIdx.x] = A[N * r + i + threadIdx.x];
+    }
+    if( i+threadIdx.y < N && c < N ) {
+      s_B[threadIdx.y][threadIdx.x] = B[N * (i + threadIdx.y) + c];
+    }
     __syncthreads(); // wait for copy is finished for all the thread in the block
-    for(int j=0;j<BLOCK;++j) {
+    int ns = BLOCK;
+    if( i+BLOCK >= N ) { ns = N-i; }
+    for(int j=0;j<ns;++j) {
       tmp += s_A[threadIdx.y][j] * s_B[j][threadIdx.x];
     }
     __syncthreads();
   }
+  if( r >= N || c >= N ){ return; }
   C[N*r+c] = tmp;
 }
 
@@ -176,10 +186,9 @@ void dfm2::cuda::cuda_MatMat(
   cudaMemcpy(d_B, h_B, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
 
   const unsigned int BLOCK = 16;
-  dim3 grid(WIDTH / BLOCK, WIDTH / BLOCK);
+  dim3 grid( (WIDTH-1)/BLOCK+1, (WIDTH-1)/BLOCK+1);
   dim3 block(BLOCK, BLOCK);
 
-//    d_multiply0 << < grid, block >> > (d_C, d_A, d_B, WIDTH);
   kernel_MatMat_TPB16 << < grid, block >> > (d_C, d_A, d_B, WIDTH);
 
   cudaMemcpy(h_C_gpu,

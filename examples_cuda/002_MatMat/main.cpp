@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <ctime>
+#include <iostream>
 #include "cuda_runtime.h"
 
 #include "delfem2/cuda/cu_matvec.h"
@@ -27,7 +28,7 @@ void h_multiply(
 
 int main()
 {
-  const unsigned int WIDTH = 512;
+  const unsigned int WIDTH = 16*1+1;
 
   float h_A[WIDTH*WIDTH];
   float h_B[WIDTH*WIDTH];
@@ -62,6 +63,7 @@ int main()
     float sumDiff = 0.0;
     for (int i = 0; i < WIDTH; ++i) {
       for (int j = 0; j < WIDTH; ++j) {
+//        std::cout << i << " " << j << " --> " << h_C_cpu[i * WIDTH + j] << " " <<  h_C_gpu[i * WIDTH + j] << std::endl;
         float d0 = h_C_cpu[i * WIDTH + j] - h_C_gpu[i * WIDTH + j];
         sumDiff += d0*d0;
       }
