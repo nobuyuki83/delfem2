@@ -39,7 +39,7 @@ void atomicMinFloat(float * const address, const float value)
 // -------------------------------------------------------------------
 
 __global__
-void dfm2::cuda::kernel_VecScale(
+void kernel_VecScale(
     float *out,
     const float *in,
     float scale,
@@ -77,7 +77,7 @@ void dfm2::cuda::cuda_VecScale(
  * @brief dot product of two vectors
  */
 __global__
-void dfm2::cuda::kernel_Dot_TPB64(
+void kernel_Dot_TPB64(
     float* d_res,
     const float* d_A,
     const float* d_B,
@@ -135,7 +135,7 @@ float dfm2::cuda::cuda_Dot(
 // ------------------------------------------------------------------
 
 __global__
-void dfm2::cuda::kernel_MatMat_TPB16(
+void kernel_MatMat_TPB16(
     float *C,
     const float *A,
     const float *B,
@@ -193,7 +193,7 @@ void dfm2::cuda::cuda_MatMat(
 // ------------------------------------------------------------------------
 
 __global__
-void dfm2::cuda::kernel_MinMax_TPB256(
+void kernel_MinMax_TPB256(
     float *d_minmax,
     const float *d_XYZ,
     unsigned int np)
