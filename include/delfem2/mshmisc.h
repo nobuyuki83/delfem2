@@ -20,13 +20,49 @@
 
 namespace delfem2{
 
-void updateMinMaxXYZ(double& x_min, double& x_max,
-                     double& y_min, double& y_max,
-                     double& z_min, double& z_max,
-                     double x, double y, double z);
+template<typename T>
+void updateMinMaxXYZ(T& x_min, T& x_max,
+                     T& y_min, T& y_max,
+                     T& z_min, T& z_max,
+                     T x, T y, T z)
+{
+ if( x_min > x_max ){
+   x_min = x_max = x;
+   y_min = y_max = y;
+   z_min = z_max = z;
+   return;
+ }
+  x_min = (x_min < x) ? x_min : x;
+  x_max = (x_max > x) ? x_max : x;
+  y_min = (y_min < y) ? y_min : y;
+  y_max = (y_max > y) ? y_max : y;
+  z_min = (z_min < z) ? z_min : z;
+  z_max = (z_max > z) ? z_max : z;
+}
+
+/**
+ * @param bb3 (out) bounding box in the order of <minx, miny, minz, maxx, maxy, maxz>
+ */
+template<typename T>
+void BB3_Points3(
+    T bb3[6],
+    const T* aXYZ,
+    const unsigned int nXYZ)
+{
+  bb3[0] = +1;
+  bb3[3] = -1;
+  for(unsigned int ixyz=0;ixyz<nXYZ;++ixyz){
+    updateMinMaxXYZ(bb3[0], bb3[3], bb3[1], bb3[4], bb3[2], bb3[5],
+                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
+  }
+}
+
+
 void MinMaxXYZ(double mm[6],
                const std::vector<double>& aXYZ);
-  
+
+
+
 // center & width
 void GetCenterWidth(double& cx, double& cy, double& cz,
                     double& wx, double& wy, double& wz,

@@ -12,6 +12,7 @@ get_filename_component(GTEST_DIR ${3RD_PARTY}/googletest ABSOLUTE)
 enable_testing()
 
 add_executable(${PROJ_NAME}
+    ${DELFEM2_INC}/mshmisc.h    ${DELFEM2_INC}/mshmisc.cpp
     main.cpp
 )
 

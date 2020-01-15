@@ -85,6 +85,7 @@ static inline double largest(double x0, double x1, double x2) {
   return wmax;
 }
 
+/*
 void dfm2::updateMinMaxXYZ
 (double& x_min, double& x_max,
  double& y_min, double& y_max,
@@ -92,16 +93,12 @@ void dfm2::updateMinMaxXYZ
  //
  double x, double y, double z)
 {
-  x_min = (x_min < x) ? x_min : x;
-  x_max = (x_max > x) ? x_max : x;
-  y_min = (y_min < y) ? y_min : y;
-  y_max = (y_max > y) ? y_max : y;
-  z_min = (z_min < z) ? z_min : z;
-  z_max = (z_max > z) ? z_max : z;
 }
+ */
 
-void dfm2::MinMaxXYZ(double mm[6],
-                     const std::vector<double>& aXYZ)
+void dfm2::MinMaxXYZ(
+    double mm[6],
+    const std::vector<double>& aXYZ)
 {
   mm[0] = +1;
   mm[1] = -1;

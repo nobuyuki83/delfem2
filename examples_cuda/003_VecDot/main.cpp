@@ -7,12 +7,12 @@
 namespace dfm2 = delfem2;
 
 int main() {
-  const unsigned int n = 64 * 16;
+  const unsigned int n = 64 * 16 + 1;
   float h_A[n];
   float h_B[n];
   for (int i = 0; i < n; ++i) {
-    h_A[i] = (float) i;
-    h_B[i] = (float) i;
+    h_A[i] = (float) i/100.0;
+    h_B[i] = (float) i/100.0;
   }
 
   // ------------------------------------------------
