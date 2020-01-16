@@ -447,12 +447,12 @@ void PBD_ConstraintProjection_DistanceTet
  const double p[4][3] // (in) deformed triangle vertex positions
 )
 {
-  const double L01 = Distance3D(P[0],P[1]);
-  const double L02 = Distance3D(P[0],P[2]);
-  const double L03 = Distance3D(P[0],P[3]);
-  const double L12 = Distance3D(P[1],P[2]);
-  const double L13 = Distance3D(P[1],P[3]);
-  const double L23 = Distance3D(P[2],P[3]);
+  const double L01 = Distance3(P[0],P[1]);
+  const double L02 = Distance3(P[0],P[2]);
+  const double L03 = Distance3(P[0],P[3]);
+  const double L12 = Distance3(P[1],P[2]);
+  const double L13 = Distance3(P[1],P[3]);
+  const double L23 = Distance3(P[2],P[3]);
   CVector3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
   CVector3 v02(p[0][0]-p[2][0], p[0][1]-p[2][1], p[0][2]-p[2][2]);
   CVector3 v03(p[0][0]-p[3][0], p[0][1]-p[3][1], p[0][2]-p[3][2]);
@@ -497,7 +497,7 @@ void PBD_CdC_QuadBend
 {
   const double A0 = TriArea3D(P[0],P[2],P[3]);
   const double A1 = TriArea3D(P[1],P[3],P[2]);
-  const double L = Distance3D(P[2],P[3]);
+  const double L = Distance3(P[2],P[3]);
   const double H0 = 2.0*A0/L;
   const double H1 = 2.0*A1/L;
   const CVector3 e23(P[3][0]-P[2][0], P[3][1]-P[2][1], P[3][2]-P[2][2]);
@@ -540,7 +540,7 @@ void PBD_Seam
     const double p[2][3] = {
       {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
       {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
-    double d0 = Distance3D(p[0], p[1]);
+    double d0 = Distance3(p[0], p[1]);
     double dLen = 0.01;
     if( d0 > dLen ){
       double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};

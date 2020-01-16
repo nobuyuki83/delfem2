@@ -63,7 +63,7 @@ void GetLocalExpMap(
     const double lc[9],
     const double q[3])
 {
-  const double dist = Distance3D(p, q);
+  const double dist = Distance3(p, q);
   if( dist < 1.0e-20 ){ u=0; v=0; return; }
   double pq[3] = { q[0]-p[0], q[1]-p[1], q[2]-p[2] };
   {
@@ -172,7 +172,7 @@ void MakeExpMap_Point(
     for(unsigned int ipsup=psup_ind[ifix];ipsup<psup_ind[ifix+1];++ipsup){
       unsigned int ino1 = psup[ipsup];
       if( aNode[ino1].itype == 2 ) continue;
-      const double len = Distance3D(aXYZ.data()+ifix*3,aXYZ.data()+ino1*3);
+      const double len = Distance3(aXYZ.data()+ifix*3,aXYZ.data()+ino1*3);
       const double weight = 1.0/len;
       const double dist0 = aNode[ifix].mesh_dist+len;
       double u, v;
@@ -240,7 +240,7 @@ void SetNewProblem()
         aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
     const unsigned int np = aXYZ.size()/3;
     aLocCoord.resize(np*6);
-    for(int ip=0;ip<np;++ip){
+    for(unsigned int ip=0;ip<np;++ip){
       double tmp[3];
       GetVertical2Vector3D(aNorm.data()+ip*3, aLocCoord.data()+ip*6+3, tmp);
       aLocCoord[ip*6+0] = aNorm[ip*3+0];
@@ -248,7 +248,7 @@ void SetNewProblem()
       aLocCoord[ip*6+2] = aNorm[ip*3+2];
     }
     aTex.resize(np*2);
-    for(int ip=0;ip<np;++ip){
+    for(unsigned int ip=0;ip<np;++ip){
       aTex[ip*2+0] = aXYZ[ip*3+0];
       aTex[ip*2+1] = aXYZ[ip*3+1];
     }

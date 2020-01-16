@@ -16,13 +16,23 @@
 
 #define NEARLY_ZERO 1.e-16
 
+template <typename T>
+double Distance3(const T p0[3], const T p1[3])
+{
+  return sqrt(
+      (p1[0]-p0[0])*(p1[0]-p0[0]) +
+      (p1[1]-p0[1])*(p1[1]-p0[1]) +
+      (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+template double Distance3(const double p0[3], const double p1[3]);
+template double Distance3(const float p0[3], const float p1[3]);
+
 double ScalarTripleProduct3D(const double a[], const double b[], const double c[]);
 double Dot3D(const double a[], const double b[]);
 double Length3D(const double v[3]);
 void Normalize3D(double v[3]);
 double SquareLength3D(const double v[3]);
 double SquareDistance3D(const double p0[3], const double p1[3]);
-double Distance3D(const double p0[3], const double p1[3]);
 double TriArea3D(const double v1[3], const double v2[3], const double v3[3]);
 double TetVolume3D(const double v1[3], const double v2[3], const double v3[3], const double v4[3] );
 void UnitNormalAreaTri3D(double n[3], double& a,

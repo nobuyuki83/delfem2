@@ -5,6 +5,8 @@
 #include "gtest/gtest.h"
 
 #include "delfem2/mshmisc.h"
+#include "delfem2/primitive.h"
+#include "delfem2/vec3.h"
 
 #include "delfem2/cuda/cu_matvec.h"
 
@@ -122,10 +124,54 @@ TEST(matvec,matmat) {
         EXPECT_NEAR(C0[i * n + j], C1[i * n + j], 1.0e-4);
       }
     }
+  }
+}
 
+
+TEST(matvec,meshtri3d_centrad)
+{
+  std::vector<float> aXYZ;
+  std::vector<unsigned int> aTri;
+  dfm2::MeshTri3D_Cube(aXYZ,aTri,100);
+  const unsigned int nTri = aTri.size()/3;
+  // ----------------------
+  std::vector<float> aXYZ_c0(nTri*3);
+  std::vector<float> aRad0(nTri);
+  for(size_t itri=0;itri<nTri;++itri) {
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
+    const float pc[3] = {
+        (aXYZ[i0*3+0] + aXYZ[i1*3+0] + aXYZ[i2*3+0])/3.f,
+        (aXYZ[i0*3+1] + aXYZ[i1*3+1] + aXYZ[i2*3+1])/3.f,
+        (aXYZ[i0*3+2] + aXYZ[i1*3+2] + aXYZ[i2*3+2])/3.f };
+    aXYZ_c0[itri*3+0] = pc[0];
+    aXYZ_c0[itri*3+1] = pc[1];
+    aXYZ_c0[itri*3+2] = pc[2];
+    double l0 = Distance3(pc,aXYZ.data()+i0*3);
+    double l1 = Distance3(pc,aXYZ.data()+i1*3);
+    double l2 = Distance3(pc,aXYZ.data()+i2*3);
+    if( l0 > l1 && l0 > l2 ){ aRad0[itri] = l0; }
+    else if( l1 > l0 && l1 > l2 ){ aRad0[itri] = l1; }
+    else{ aRad0[itri] = l2; }
+  }
+  // ------------------------
+  std::vector<float> aXYZ_c1(nTri*3);
+  std::vector<float> aRad1(nTri);
+  dfm2::cuda::cuda_CentRad_MeshTri3D(
+      aXYZ_c1.data(), aRad1.data(),
+      aXYZ.data(), aXYZ.size()/3,
+      aTri.data(), nTri);
+  // ------------------------
+  for(unsigned int itri=0;itri<nTri;++itri){
+    EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+0],aXYZ_c1[itri*3+0]);
+    EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+1],aXYZ_c1[itri*3+1]);
+    EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+2],aXYZ_c1[itri*3+2]);
+    EXPECT_FLOAT_EQ(aRad0[itri],aRad1[itri]);
   }
 
 }
+
 
 
 
