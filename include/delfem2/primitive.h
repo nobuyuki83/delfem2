@@ -31,8 +31,14 @@ void MeshTri3D_CylinderOpen(std::vector<double>& aXYZ, std::vector<unsigned int>
 void MeshTri3D_CylinderClosed(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                               double r, double l,
                               int nlo, int nl);
-void MeshTri3D_Cube(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
-                    int n);
+
+template <typename T>
+void MeshTri3D_Cube
+    (std::vector<T>& aXYZ,
+     std::vector<unsigned int>& aTri,
+     unsigned int n);
+
+
 void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
                     double r, int nr, int nth);
 void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
@@ -179,8 +185,6 @@ public:
   double hwy = 1; // half y width
   double hwz = 1; // half z width
 };
-  
-} // namespace delfem2
 
 /*
 class CSDF3_Combine : public CSDF3
@@ -279,5 +283,147 @@ public:
   mutable std::vector<unsigned int> aIndTriCand;
 };
  */
+
+// --------------------------------------------------------------------------------------------------------------------
+
+template <typename T>
+void MeshTri3D_Cube
+    (std::vector<T>& aXYZ,
+     std::vector<unsigned int>& aTri,
+     unsigned int n)
+{
+  aXYZ.clear();
+  aTri.clear();
+  if( n < 1 ){ return; }
+  double r = 1.0/n;
+  const int np = 4*n*(n+1)+(n-1)*(n-1)*2;
+  aXYZ.reserve( np*3 );
+  for(int iz=0;iz<n+1;++iz){ // height
+    for(int ix=0;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int iy=0;iy<n;++iy){
+      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int ix=n;ix>0;--ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int iy=n;iy>0;--iy){
+      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+  }
+  for(int iy=1;iy<n;++iy){
+    for(int ix=1;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5);
+    }
+  }
+  for(int iy=1;iy<n;++iy){
+    for(int ix=1;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(+0.5);
+    }
+  }
+  // -------------------------------------------------
+  int ntri = n*n*6*2;
+  aTri.reserve(ntri*3);
+  for(int iz=0;iz<n;++iz){
+    for(int ixy=0;ixy<4*n;++ixy){
+      int i0 = ixy          +4*n*iz;
+      int i1 = (ixy+1)%(4*n)+4*n*iz;
+      int i2 = (ixy+1)%(4*n)+4*n*(iz+1);
+      int i3 = ixy          +4*n*(iz+1);
+      aTri.push_back(i0);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      // ----------------------------
+      aTri.push_back(i2);
+      aTri.push_back(i3);
+      aTri.push_back(i0);
+    }
+  }
+  // bottom
+  for(int ix=0;ix<n;++ix){
+    for(int iy=0;iy<n;++iy){
+      int i0, i1, i2, i3;
+      i0 = 4*n*(n+1) + (iy-1)*(n-1)+(ix-1);
+      i1 = 4*n*(n+1) + (iy-1)*(n-1)+(ix+0);
+      i2 = 4*n*(n+1) + (iy+0)*(n-1)+(ix+0);
+      i3 = 4*n*(n+1) + (iy+0)*(n-1)+(ix-1);
+      if( ix==0 ){
+        i0 = (iy==0) ? 0 : 4*n-iy;
+        i3 = 4*n-iy-1;
+      }
+      if( ix==n-1 ){
+        i1 = n+iy;
+        i2 = n+iy+1;
+      }
+      if( iy==0 ){
+        i0 = ix;
+        i1 = ix+1;
+      }
+      if( iy==n-1 ){
+        i2 = 3*n-ix-1;
+        i3 = 3*n-ix+0;
+      }
+      aTri.push_back(i1);
+      aTri.push_back(i0);
+      aTri.push_back(i2);
+      ///
+      aTri.push_back(i3);
+      aTri.push_back(i2);
+      aTri.push_back(i0);
+    }
+  }
+  // top
+  int nps  = 4*n*(n+1); // side vertex
+  int nps0 = 4*n*n; // side vertex
+  for(int ix=0;ix<n;++ix){
+    for(int iy=0;iy<n;++iy){
+      int i0, i1, i2, i3;
+      i0 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix-1);
+      i1 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix+0);
+      i2 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix+0);
+      i3 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix-1);
+      if( ix==0 ){
+        i0 = (iy==0) ? nps0 : nps0+4*n-iy;
+        i3 = nps0+4*n-iy-1;
+      }
+      if( ix==n-1 ){
+        i1 = nps0+n+iy;
+        i2 = nps0+n+iy+1;
+      }
+      if( iy==0 ){
+        i0 = nps0+ix;
+        i1 = nps0+ix+1;
+      }
+      if( iy==n-1 ){
+        i2 = nps0+3*n-ix-1;
+        i3 = nps0+3*n-ix+0;
+      }
+      aTri.push_back(i0);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      ///
+      aTri.push_back(i2);
+      aTri.push_back(i3);
+      aTri.push_back(i0);
+    }
+  }
+}
+
+
+} // end of delfem2
+
 
 #endif

@@ -639,6 +639,7 @@ void dfm2::MeshQuad3D_CubeVox
   SetTopoQuad_CubeVox(aQuad);
 }
 
+/*
 void dfm2::MeshTri3D_Cube
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
@@ -773,7 +774,7 @@ void dfm2::MeshTri3D_Cube
     }
   }
 }
-
+*/
 
 void dfm2::MeshTri3D_Icosahedron
 (std::vector<double>& aXYZ,

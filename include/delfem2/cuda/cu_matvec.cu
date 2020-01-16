@@ -251,11 +251,12 @@ void dfm2::cuda::cuda_MinMax_Point3D(
   cudaMemcpy(d_minmax,
              h_minmax, sizeof(float) * 6, cudaMemcpyHostToDevice);
 
-  const unsigned int BLOCK = 256;
-  dim3 grid(np/BLOCK+1);
-  dim3 block(BLOCK, 3);
-
-  kernel_MinMax_TPB256 <<< grid, block >>> (d_minmax, d_XYZ, np);
+  {
+    const unsigned int BLOCK = 256;
+    dim3 grid((np - 1) / BLOCK + 1);
+    dim3 block(BLOCK, 3);
+    kernel_MinMax_TPB256 <<< grid, block >>> (d_minmax, d_XYZ, np);
+  }
 
   cudaMemcpy(h_minmax,
              d_minmax, sizeof(float) * 6, cudaMemcpyDeviceToHost);
@@ -264,3 +265,89 @@ void dfm2::cuda::cuda_MinMax_Point3D(
   cudaFree(d_XYZ);
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
+__device__
+void kernel_dist3(
+    float *d,
+    const float p0[3],
+    const float p1[3])
+{
+  float v = (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
+  *d = sqrtf(v);
+}
+
+__global__
+void kernel_CentRad_MeshTri3D_TPB256(
+    float *dXYZ_c,
+    float *dRad,
+    const float *dXYZ,
+    const unsigned int nXYZ,
+    const unsigned int *dTri,
+    const unsigned int nTri)
+{
+  const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
+  if( idx >= nTri ) return;
+  // ----------------------------
+  const unsigned int itri = idx;
+  const unsigned int i0 = dTri[itri*3+0];
+  const unsigned int i1 = dTri[itri*3+1];
+  const unsigned int i2 = dTri[itri*3+2];
+  const float p0[3] = {dXYZ[i0*3+0],dXYZ[i0*3+1],dXYZ[i0*3+2]};
+  const float p1[3] = {dXYZ[i1*3+0],dXYZ[i1*3+1],dXYZ[i1*3+2]};
+  const float p2[3] = {dXYZ[i2*3+0],dXYZ[i2*3+1],dXYZ[i2*3+2]};
+  const float pc[3] = {
+      (p0[0]+p1[0]+p2[0])/3.f,
+      (p0[1]+p1[1]+p2[1])/3.f,
+      (p0[2]+p1[2]+p2[2])/3.f };
+  dXYZ_c[itri*3+0] = pc[0];
+  dXYZ_c[itri*3+1] = pc[1];
+  dXYZ_c[itri*3+2] = pc[2];
+  // ---------------------
+  float l0,l1,l2;
+  kernel_dist3(&l0, pc, p0);
+  kernel_dist3(&l1, pc, p1);
+  kernel_dist3(&l2, pc, p2);
+  if( l0 > l1 && l0 > l2 ){ dRad[itri] = l0; return; }
+  if( l1 > l0 && l1 > l2 ){ dRad[itri] = l1; return; }
+  dRad[itri] = l2;
+}
+
+void dfm2::cuda::cuda_CentRad_MeshTri3D(
+    float* hXYZ_c,
+    float* hRad,
+    const float *hXYZ,
+    const unsigned int nXYZ,
+    const unsigned int *hTri,
+    const unsigned int nTri)
+{
+  float *dXYZ, *dXYZ_c, *dRad;
+  unsigned int *dTri;
+  cudaMalloc((void **) &dXYZ, sizeof(float) * nXYZ * 3);
+  cudaMalloc((void **) &dTri, sizeof(unsigned int) * nTri * 3);
+  cudaMalloc((void **) &dXYZ_c, sizeof(float) * nTri * 3);
+  cudaMalloc((void **) &dRad, sizeof(float) * nTri);
+  cudaMemcpy(dXYZ,
+             hXYZ, sizeof(float) * nXYZ * 3, cudaMemcpyHostToDevice);
+  cudaMemcpy(dTri,
+             hTri, sizeof(unsigned int) * nTri * 3, cudaMemcpyHostToDevice);
+
+  {
+    const unsigned int BLOCK = 64;
+    dim3 grid( (nTri-1)/BLOCK + 1 );
+    dim3 block( BLOCK );
+    kernel_CentRad_MeshTri3D_TPB256 <<< grid, block >>> (dXYZ_c, dRad,
+        dXYZ, nXYZ,
+        dTri, nTri);
+  }
+
+  cudaMemcpy(hXYZ_c,
+             dXYZ_c, sizeof(float) * nTri * 3, cudaMemcpyDeviceToHost);
+  cudaMemcpy(hRad,
+             dRad, sizeof(float) * nTri, cudaMemcpyDeviceToHost);
+
+  cudaFree(dTri);
+  cudaFree(dXYZ);
+  cudaFree(dXYZ_c);
+  cudaFree(dRad);
+}
