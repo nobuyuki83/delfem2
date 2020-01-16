@@ -363,8 +363,9 @@ TEST(meshtopo,quad_subdiv1)
   std::vector<double> aXYZ0a;
   std::vector<unsigned int> aQuad0a;
   std::vector<int> mapInOut;
-  RemoveUnreferencedPoints_MeshElem(aXYZ0a,aQuad0a, mapInOut,
-                                    3,aXYZ0,aQuad0);
+  dfm2::RemoveUnreferencedPoints_MeshElem(aXYZ0a,aQuad0a, mapInOut,
+                                          3,aXYZ0,aQuad0);
+
   EXPECT_EQ(aXYZ0a.size(),16*3);
   EXPECT_EQ(aQuad0a.size(),14*4);
 }

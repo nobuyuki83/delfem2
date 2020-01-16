@@ -134,7 +134,7 @@ TEST(matvec,meshtri3d_centrad)
   std::vector<unsigned int> aTri;
   dfm2::MeshTri3D_Cube(aXYZ,aTri,100);
   const unsigned int nTri = aTri.size()/3;
-  // ----------------------
+  // -----------------------------------------------------
   std::vector<float> aXYZ_c0(nTri*3);
   std::vector<float> aRad0(nTri);
   for(size_t itri=0;itri<nTri;++itri) {
@@ -155,20 +155,22 @@ TEST(matvec,meshtri3d_centrad)
     else if( l1 > l0 && l1 > l2 ){ aRad0[itri] = l1; }
     else{ aRad0[itri] = l2; }
   }
-  // ------------------------
+  // ------------------
   std::vector<float> aXYZ_c1(nTri*3);
   std::vector<float> aRad1(nTri);
   dfm2::cuda::cuda_CentRad_MeshTri3D(
       aXYZ_c1.data(), aRad1.data(),
       aXYZ.data(), aXYZ.size()/3,
       aTri.data(), nTri);
-  // ------------------------
+  // ------------------
   for(unsigned int itri=0;itri<nTri;++itri){
     EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+0],aXYZ_c1[itri*3+0]);
     EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+1],aXYZ_c1[itri*3+1]);
     EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+2],aXYZ_c1[itri*3+2]);
     EXPECT_FLOAT_EQ(aRad0[itri],aRad1[itri]);
   }
+  // ---------------------------------------------------------------
+
 
 }
 

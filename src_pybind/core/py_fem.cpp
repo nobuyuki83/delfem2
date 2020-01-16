@@ -649,18 +649,18 @@ void PyMassPointMesh
   assert( AssertNumpyArray2D(np_elm, -1, nNodeElem(elem_type)) );
   if( elem_type ==  dfm2::MESHELEM_TET ){
     assert( AssertNumpyArray2D(np_pos, -1, 3) );
-    MassPoint_Tet3D((double*)(mass_point.request().ptr),
-                     rho,
-                     np_pos.data(), np_pos.shape()[0],
-                     np_elm.data(), np_elm.shape()[0]);
+    dfm2::MassPoint_Tet3D((double*)(mass_point.request().ptr),
+                          rho,
+                          np_pos.data(), np_pos.shape()[0],
+                          np_elm.data(), np_elm.shape()[0]);
   }
   else if( elem_type ==  dfm2::MESHELEM_TRI ){
     if( np_pos.shape()[1] == 2 ){ // two dimensional
       assert( AssertNumpyArray2D(np_pos, -1, 2) );
-      MassPoint_Tri2D((double*)(mass_point.request().ptr),
-                       rho,
-                       np_pos.data(), np_pos.shape()[0],
-                       np_elm.data(), np_elm.shape()[0]);
+      dfm2::MassPoint_Tri2D((double*)(mass_point.request().ptr),
+                            rho,
+                            np_pos.data(), np_pos.shape()[0],
+                            np_elm.data(), np_elm.shape()[0]);
     }
     else{
       assert(0);

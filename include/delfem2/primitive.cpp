@@ -595,6 +595,155 @@ void dfm2::MeshTri3D_Sphere
   }
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
+template <typename T>
+void dfm2::MeshTri3D_Cube
+    (std::vector<T>& aXYZ,
+     std::vector<unsigned int>& aTri,
+     unsigned int n)
+{
+  aXYZ.clear();
+  aTri.clear();
+  if( n < 1 ){ return; }
+  double r = 1.0/n;
+  const unsigned int np = 4*n*(n+1)+(n-1)*(n-1)*2;
+  aXYZ.reserve( np*3 );
+  for(unsigned int iz=0;iz<n+1;++iz){ // height
+    for(unsigned int ix=0;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(unsigned int iy=0;iy<n;++iy){
+      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int ix=n;ix>0;--ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(+0.5);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+    for(int iy=n;iy>0;--iy){
+      aXYZ.push_back(-0.5);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5+r*iz);
+    }
+  }
+  for(unsigned int iy=1;iy<n;++iy){
+    for(unsigned int ix=1;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(-0.5);
+    }
+  }
+  for(unsigned int iy=1;iy<n;++iy){
+    for(unsigned int ix=1;ix<n;++ix){
+      aXYZ.push_back(-0.5+r*ix);
+      aXYZ.push_back(-0.5+r*iy);
+      aXYZ.push_back(+0.5);
+    }
+  }
+  // -------------------------------------------------
+  const unsigned int ntri = n*n*6*2;
+  aTri.reserve(ntri*3);
+  for(unsigned int iz=0;iz<n;++iz){
+    for(unsigned int ixy=0;ixy<4*n;++ixy){
+      unsigned int i0 = ixy          +4*n*iz;
+      unsigned int i1 = (ixy+1)%(4*n)+4*n*iz;
+      unsigned int i2 = (ixy+1)%(4*n)+4*n*(iz+1);
+      unsigned int i3 = ixy          +4*n*(iz+1);
+      aTri.push_back(i0);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      // ----------------------------
+      aTri.push_back(i2);
+      aTri.push_back(i3);
+      aTri.push_back(i0);
+    }
+  }
+  // bottom
+  for(unsigned int ix=0;ix<n;++ix){
+    for(unsigned int iy=0;iy<n;++iy){
+      unsigned int i0, i1, i2, i3;
+      i0 = 4*n*(n+1) + (iy-1)*(n-1)+(ix-1);
+      i1 = 4*n*(n+1) + (iy-1)*(n-1)+(ix+0);
+      i2 = 4*n*(n+1) + (iy+0)*(n-1)+(ix+0);
+      i3 = 4*n*(n+1) + (iy+0)*(n-1)+(ix-1);
+      if( ix==0 ){
+        i0 = (iy==0) ? 0 : 4*n-iy;
+        i3 = 4*n-iy-1;
+      }
+      if( ix==n-1 ){
+        i1 = n+iy;
+        i2 = n+iy+1;
+      }
+      if( iy==0 ){
+        i0 = ix;
+        i1 = ix+1;
+      }
+      if( iy==n-1 ){
+        i2 = 3*n-ix-1;
+        i3 = 3*n-ix+0;
+      }
+      aTri.push_back(i1);
+      aTri.push_back(i0);
+      aTri.push_back(i2);
+      //
+      aTri.push_back(i3);
+      aTri.push_back(i2);
+      aTri.push_back(i0);
+    }
+  }
+  // top
+  unsigned int nps  = 4*n*(n+1); // side vertex
+  unsigned int nps0 = 4*n*n; // side vertex
+  for(unsigned int ix=0;ix<n;++ix){
+    for(unsigned int iy=0;iy<n;++iy){
+      unsigned int i0, i1, i2, i3;
+      i0 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix-1);
+      i1 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix+0);
+      i2 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix+0);
+      i3 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix-1);
+      if( ix==0 ){
+        i0 = (iy==0) ? nps0 : nps0+4*n-iy;
+        i3 = nps0+4*n-iy-1;
+      }
+      if( ix==n-1 ){
+        i1 = nps0+n+iy;
+        i2 = nps0+n+iy+1;
+      }
+      if( iy==0 ){
+        i0 = nps0+ix;
+        i1 = nps0+ix+1;
+      }
+      if( iy==n-1 ){
+        i2 = nps0+3*n-ix-1;
+        i3 = nps0+3*n-ix+0;
+      }
+      aTri.push_back(i0);
+      aTri.push_back(i1);
+      aTri.push_back(i2);
+      //
+      aTri.push_back(i2);
+      aTri.push_back(i3);
+      aTri.push_back(i0);
+    }
+  }
+}
+template void dfm2::MeshTri3D_Cube(
+    std::vector<float>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    unsigned int n);
+
+template void dfm2::MeshTri3D_Cube(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    unsigned int n);
+
+// ---------------------------------------
+
 // p0: -x, -y, -z
 // p1: +x, -y, -z
 // p2: -x, +y, -z

@@ -43,10 +43,10 @@ void PySetTopology_ExtrudeTri2Tet
 {
   assert( AssertNumpyArray2D(npTet, -1, 4) );
   assert( AssertNumpyArray2D(npTri, -1, 3) );
-  SetTopology_ExtrudeTri2Tet((unsigned int*)(npTet.request().ptr),
-                             nXY,
-                             npTri.data(), npTri.shape()[0],
-                             nlayer);
+  dfm2::SetTopology_ExtrudeTri2Tet((unsigned int*)(npTet.request().ptr),
+      nXY,
+      npTri.data(), npTri.shape()[0],
+      nlayer);
 }
 
 // --------------------------------------------------------
@@ -310,9 +310,9 @@ PyQuality_MeshTri2D
   assert( AssertNumpyArray2D(np_tri, -1, 3) );
   double max_aspect;
   double min_area;
-  Quality_MeshTri2D(max_aspect, min_area,
-                    np_xy.data(),
-                    np_tri.data(), np_tri.shape()[0]);
+  dfm2::Quality_MeshTri2D(max_aspect, min_area,
+      np_xy.data(),
+      np_tri.data(), np_tri.shape()[0]);
    return std::make_tuple(max_aspect, min_area);
 }
 
