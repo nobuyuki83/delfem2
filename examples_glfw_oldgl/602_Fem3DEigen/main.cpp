@@ -64,8 +64,8 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
 {
   const unsigned int nDoF = nXYZ*3;
   std::vector<double> aMassLumpedSqrt(nXYZ);
-  MassPoint_Tet3D(aMassLumpedSqrt.data(),
-                   1, aXYZ, nXYZ, aTet,nTet);
+  dfm2::MassPoint_Tet3D(aMassLumpedSqrt.data(),
+      1, aXYZ, nXYZ, aTet,nTet);
   
   for(unsigned int ip=0;ip<nXYZ;++ip){
     aMassLumpedSqrt[ip] = sqrt(aMassLumpedSqrt[ip]);
@@ -294,9 +294,9 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aTri;
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
-    ExtrudeTri2Tet(1, 0.1,
-                   aXYZ,aTet,
-                   aXY,aTri);
+    dfm2::ExtrudeTri2Tet(1, 0.1,
+        aXYZ,aTet,
+        aXY,aTri);
   }
   
   

@@ -277,9 +277,9 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aTri;
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
-    ExtrudeTri2Tet(3, 0.075,
-                   aXYZ,aTet,
-                   aXY,aTri);
+    dfm2::ExtrudeTri2Tet(3, 0.075,
+        aXYZ,aTet,
+        aXY,aTri);
   }
   aDisp.assign(aXYZ.size(), 0.0);
   aVelo.assign(aXYZ.size(), 0.0);

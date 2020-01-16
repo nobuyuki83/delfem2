@@ -85,16 +85,7 @@ static inline double largest(double x0, double x1, double x2) {
   return wmax;
 }
 
-/*
-void dfm2::updateMinMaxXYZ
-(double& x_min, double& x_max,
- double& y_min, double& y_max,
- double& z_min, double& z_max,
- //
- double x, double y, double z)
-{
-}
- */
+// -----------------------------------------------------------------
 
 void dfm2::MinMaxXYZ(
     double mm[6],
@@ -124,9 +115,60 @@ void CenterWidth_MinMaxXYZ
   wz = z_max-z_min;
 }
 
+// -----------------------------------------------------------------------------
+
+template<typename T>
+void dfm2::updateMinMaxXYZ(
+    T& x_min, T& x_max,
+    T& y_min, T& y_max,
+    T& z_min, T& z_max,
+    T x, T y, T z)
+{
+  if( x_min > x_max ){
+    x_min = x_max = x;
+    y_min = y_max = y;
+    z_min = z_max = z;
+    return;
+  }
+  x_min = (x_min < x) ? x_min : x;
+  x_max = (x_max > x) ? x_max : x;
+  y_min = (y_min < y) ? y_min : y;
+  y_max = (y_max > y) ? y_max : y;
+  z_min = (z_min < z) ? z_min : z;
+  z_max = (z_max > z) ? z_max : z;
+}
+template void dfm2::updateMinMaxXYZ(float& x_min, float& x_max,
+                                    float& y_min, float& y_max,
+                                    float& z_min, float& z_max,
+                                    float X, float Y, float Z);
+template void dfm2::updateMinMaxXYZ(double& x_min, double& x_max,
+                                    double& y_min, double& y_max,
+                                    double& z_min, double& z_max,
+                                    double X, double Y, double Z);
+
+// -----------------------------
+
+template<typename T>
+void dfm2::BB3_Points3(
+    T bb3[6],
+    const T* aXYZ,
+    const unsigned int nXYZ)
+{
+  bb3[0] = +1;
+  bb3[3] = -1;
+  for(unsigned int ixyz=0;ixyz<nXYZ;++ixyz){
+    updateMinMaxXYZ(bb3[0], bb3[3], bb3[1], bb3[4], bb3[2], bb3[5],
+                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
+  }
+}
+template void dfm2::BB3_Points3(double bb3[6],
+                                const double* aXYZ, const unsigned int nXYZ);
+template void dfm2::BB3_Points3(float bb3[6],
+                                const float* aXYZ, const unsigned int nXYZ);
+
 // --------------------------------------------------------------------------------
 
-void RemoveUnreferencedPoints_MeshElem
+void dfm2::RemoveUnreferencedPoints_MeshElem
 (std::vector<double>& aXYZ1,
  std::vector<unsigned int>& aElem1,
  std::vector<int>& aMap01,
@@ -191,9 +233,7 @@ void dfm2::Normal_MeshTri3D
   }  
 }
 
-
-
-void Quality_MeshTri2D
+void dfm2::Quality_MeshTri2D
 (double& max_aspect, double& min_area,
  const double* aXY,
  const unsigned int* aTri, unsigned int nTri)
@@ -481,9 +521,9 @@ void dfm2::Scale_Points3D (
 
 // ---------------------------------------
 
-void CenterOfGravity
-(double& cgx, double& cgy, double& cgz,
-const std::vector<double>& aXYZ)
+void dfm2::CenterOfGravity(
+    double& cgx, double& cgy, double& cgz,
+    const std::vector<double>& aXYZ)
 {
   cgx = 0;
   cgy = 0;
@@ -512,10 +552,10 @@ static double TetVolume3D(const double v1[3],
 }
 
 
-void CenterOfGravity_Solid
-(double& cgx, double& cgy, double& cgz,
-const std::vector<double>& aXYZ,
-const std::vector<int>& aTri)
+void dfm2::CenterOfGravity_Solid(
+    double& cgx, double& cgy, double& cgz,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTri)
 { // center of gravity
   cgx = 0.0;
   cgy = 0.0;
@@ -540,7 +580,7 @@ const std::vector<int>& aTri)
   cgz /= tw;
 }
 
-void CenterOfGravity_Shell
+void dfm2::CenterOfGravity_Shell
 (double& cgx, double& cgy, double& cgz,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
@@ -568,7 +608,7 @@ void CenterOfGravity_Shell
 }
 
 
-double CenterOfGravity_TriMsh3DFlg_Shell
+double dfm2::CenterOfGravity_TriMsh3DFlg_Shell
 (double& cgx, double& cgy, double& cgz,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
@@ -599,7 +639,7 @@ double CenterOfGravity_TriMsh3DFlg_Shell
   return tw;
 }
 
-void CenterOfGravity_Tri
+void dfm2::CenterOfGravity_Tri
 (double& cgx, double& cgy, double& cgz,
  int itri,
  const std::vector<double>& aXYZ,
@@ -621,7 +661,7 @@ void CenterOfGravity_Tri
 
 // -----------------------------------------------------------------------------------------
 
-void SetTopology_ExtrudeTri2Tet
+void dfm2::SetTopology_ExtrudeTri2Tet
 (unsigned int* aTet,
  int nXY,
  const unsigned int* aTri, int nTri,
@@ -671,7 +711,7 @@ void SetTopology_ExtrudeTri2Tet
   }
 }
 
-void ExtrudeTri2Tet
+void dfm2::ExtrudeTri2Tet
 (int nlayer, double h,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTet,
@@ -695,11 +735,11 @@ void ExtrudeTri2Tet
 
 // -----------------------------------------------------------------------
 
-void LaplacianSmoothing
-(std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup)
+void dfm2::LaplacianSmoothing(
+    std::vector<double>& aXYZ,
+    const std::vector<int>& aTri,
+    const std::vector<int>& elsup_ind,
+    const std::vector<int> elsup)
 {
   for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
     double sum_area = 0.0;
@@ -844,24 +884,17 @@ double SolidAngleTri3D
   return v;
 }
 
-void makeSolidAngle
+void dfm2::makeSolidAngle
 (std::vector<double>& aSolidAngle,
  const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm, 
  std::vector<int>& elsup_ind,
  std::vector<int>& elsup)
 {
-  const int nXYZ = (int)aXYZ.size()/3;
-  /*
-  std::vector<double> aNorm;
-  MakeNormal(aNorm, aXYZ, aTri);
-  std::vector<int> elsup_ind,elsup;
-  makeTriSurroundingPoint(elsup_ind,elsup,
-                          aTri,(int)aXYZ.size()/3);
-   */
+  const unsigned int nXYZ = aXYZ.size()/3;
   aSolidAngle.resize(nXYZ);
-  for(int ip=0;ip<nXYZ;++ip){
+  for(unsigned int ip=0;ip<nXYZ;++ip){
     const double n0[3] = {aNorm[ip*3+0], aNorm[ip*3+1], aNorm[ip*3+2]};
     const double p0[3] = {aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]};
     double sa = 0;
@@ -892,7 +925,7 @@ void makeSolidAngle
 }
 
 
-void MassPoint_Tet3D
+void dfm2::MassPoint_Tet3D
 (double* aMassMatrixLumped,
  double rho,
  const double* aXYZ, unsigned int nXYZ,
@@ -916,7 +949,7 @@ void MassPoint_Tet3D
   }
 }
 
-void MassPoint_Tri2D
+void dfm2::MassPoint_Tri2D
 (double* aMassMatrixLumped,
  double rho,
  const double* aXY, unsigned int nXY,
@@ -940,7 +973,7 @@ void MassPoint_Tri2D
 // TODO: make this handle open surface (average face & edge independently)
 void dfm2::SubdivisionPoints_QuadCatmullClark
 (std::vector<double>& aXYZ1,
- ///
+ // ------------------------
  const std::vector<unsigned int>& aQuad1,
  const std::vector<int>& aEdgeFace0,
  const std::vector<unsigned int> &psupIndQuad0,
@@ -950,14 +983,6 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
  const double* aXYZ0,
  unsigned int nXYZ0)
 {
-  /*
-  std::vector<int> aEdgeFace0;
-  std::vector<int> psupIndQuad0, psupQuad0;
-
-  QuadSubdiv(aQuad1,
-             psupIndQuad0,psupQuad0, aEdgeFace0,
-             aQuad0, nv0);
-   */
   const unsigned int nv0 = nXYZ0;
   const unsigned int ne0 = psupQuad0.size();
   const unsigned int nq0 = nQuad0;
@@ -1019,7 +1044,7 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
 
 void dfm2::SubdivisionPoints_Quad
 (std::vector<double>& aXYZ1,
- ///
+ // ------------
  const std::vector<int>& aQuad1,
  const std::vector<int>& aEdgeFace0,
  const std::vector<int>& psupIndQuad0,
@@ -1027,14 +1052,6 @@ void dfm2::SubdivisionPoints_Quad
  const std::vector<int>& aQuad0,
  const std::vector<double>& aXYZ0)
 {
-  /*
-   std::vector<int> aEdgeFace0;
-   std::vector<int> psupIndQuad0, psupQuad0;
-   
-   QuadSubdiv(aQuad1,
-   psupIndQuad0,psupQuad0, aEdgeFace0,
-   aQuad0, nv0);
-   */
   const int nv0 = (int)aXYZ0.size()/3;
   const int ne0 = (int)psupQuad0.size();
   const int nq0 = (int)aQuad0.size()/4;
@@ -1066,7 +1083,7 @@ void dfm2::SubdivisionPoints_Quad
 
 void dfm2::SubdivisionPoints_Hex
 (std::vector<double>& aXYZ1,
- ///
+ // -------------
  const std::vector<unsigned int> &psupIndHex0,
  const std::vector<unsigned int> &psupHex0,
  const std::vector<unsigned int>& aQuadHex0,
@@ -1115,7 +1132,7 @@ void dfm2::SubdivisionPoints_Hex
   }
 }
 
-void CenterOfGravity_Tet
+void dfm2::CenterOfGravity_Tet
 (double& v_tot,
  double& cgx, double& cgy, double& cgz,
  const std::vector<double>& aXYZC,
