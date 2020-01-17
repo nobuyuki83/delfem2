@@ -24,7 +24,7 @@ int main() {
   clock_t time0 = clock();
 
   float minmax[6];
-  dfm2::cuda::cuda_MinMax_Point3D(minmax,
+  dfm2::cuda::cuda_MinMax_Points3F(minmax,
       aXYZ.data(), aXYZ.size()/3);
   printf("min xyz %f %f %f\n",minmax[0],minmax[1],minmax[2]);
   printf("max xyz %f %f %f\n",minmax[3],minmax[4],minmax[5]);

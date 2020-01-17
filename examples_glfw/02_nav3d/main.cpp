@@ -1,9 +1,8 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/primitive.h"
 
 // ---
-
 #if defined(_MSC_VER)
   #include <windows.h>
 #endif
@@ -44,7 +43,7 @@ void draw(GLFWwindow* window)
   viewer.DrawEnd_oldGL();
 }
 
-int main(void)
+int main()
 {
   viewer.Init_newGL();
   
@@ -60,8 +59,9 @@ int main(void)
   {
     std::vector<double> aXYZd;
     std::vector<unsigned int> aTri;
-    delfem2::MeshTri3D_Torus(aXYZd, aTri,
-                             1.0, 0.2);
+    delfem2::MeshTri3_Torus(aXYZd, aTri,
+                            1.0, 0.2,
+                            32,18);
     shdr.Initialize(aXYZd, aTri);
   }
  

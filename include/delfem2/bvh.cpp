@@ -215,7 +215,8 @@ std::uint32_t expandBits(std::uint32_t v)
   return v;
 }
 
-std::uint32_t delfem2::MortonCode(double x, double y, double z)
+template <typename T>
+std::uint32_t delfem2::MortonCode(T x, T y, T z)
 {
   auto ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
   auto iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
@@ -228,6 +229,9 @@ std::uint32_t delfem2::MortonCode(double x, double y, double z)
   std::uint32_t ixyz = ix * 4 + iy * 2 + iz;
   return ixyz;
 }
+template std::uint32_t delfem2::MortonCode(float x, float y, float z);
+template std::uint32_t delfem2::MortonCode(double x, double y, double z);
+
 
 inline unsigned int clz(uint32_t x){
 #ifdef __GNUC__ // GCC compiler
@@ -348,27 +352,27 @@ public:
   }
 };
 
-
+template <typename T>
 void dfm2::GetSortedMortenCode
  (std::vector<unsigned int>& aSortedId,
   std::vector<unsigned int>& aSortedMc,
-  const std::vector<double>& aXYZ,
-  const double minmax_xyz[6])
+  const std::vector<T>& aXYZ,
+  const T minmax_xyz[6])
 {
   std::vector<CPairMtcInd> aNodeBVH; // array of BVH node
   const std::size_t np = aXYZ.size()/3;
   aNodeBVH.resize(np);
-  const double x_min = minmax_xyz[0];
-  const double x_max = minmax_xyz[1];
-  const double y_min = minmax_xyz[2];
-  const double y_max = minmax_xyz[3];
-  const double z_min = minmax_xyz[4];
-  const double z_max = minmax_xyz[5];
+  const T x_min = minmax_xyz[0];
+  const T x_max = minmax_xyz[1];
+  const T y_min = minmax_xyz[2];
+  const T y_max = minmax_xyz[3];
+  const T z_min = minmax_xyz[4];
+  const T z_max = minmax_xyz[5];
   for(unsigned ip=0;ip<np;++ip){
-    double x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
-    double y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
-    double z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);
-    aNodeBVH[ip].imtc = dfm2::MortonCode(x,y, z);
+    T x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
+    T y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
+    T z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);
+    aNodeBVH[ip].imtc = dfm2::MortonCode(x,y,z);
     aNodeBVH[ip].iobj = ip;
   }
   std::sort(aNodeBVH.begin(), aNodeBVH.end());
@@ -380,6 +384,18 @@ void dfm2::GetSortedMortenCode
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
+template void dfm2::GetSortedMortenCode(
+    std::vector<unsigned int>& aSortedId,
+     std::vector<uint32_t>& aSortedMc,
+     const std::vector<float>& aXYZ,
+     const float minmax_xyz[6]);
+template void dfm2::GetSortedMortenCode(
+    std::vector<unsigned int>& aSortedId,
+    std::vector<uint32_t>& aSortedMc,
+    const std::vector<double>& aXYZ,
+    const double minmax_xyz[6]);
+
+// ----------------------------------
 
 void dfm2::BVH_TreeTopology_Morton
 (std::vector<dfm2::CNodeBVH2>& aNodeBVH,

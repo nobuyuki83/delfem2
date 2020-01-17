@@ -17,15 +17,7 @@
 #define NEARLY_ZERO 1.e-16
 
 template <typename T>
-double Distance3(const T p0[3], const T p1[3])
-{
-  return sqrt(
-      (p1[0]-p0[0])*(p1[0]-p0[0]) +
-      (p1[1]-p0[1])*(p1[1]-p0[1]) +
-      (p1[2]-p0[2])*(p1[2]-p0[2]) );
-}
-template double Distance3(const double p0[3], const double p1[3]);
-template double Distance3(const float p0[3], const float p1[3]);
+T Distance3(const T p0[3], const T p1[3]);
 
 double ScalarTripleProduct3D(const double a[], const double b[], const double c[]);
 double Dot3D(const double a[], const double b[]);

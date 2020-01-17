@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <thrust/device_vector.h>
+#include <thrust/copy.h>
+#include <thrust/sort.h>
 #include "cuda_runtime.h"
 
 #include "cu_matvec.h"
@@ -35,6 +38,14 @@ void atomicMinFloat(float * const address, const float value)
   } while (assumed != old);
 }
 
+__device__
+float kernel_dist3(
+    const float p0[3],
+    const float p1[3])
+{
+  float v = (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
+  return sqrtf(v);
+}
 
 // -------------------------------------------------------------------
 
@@ -234,7 +245,7 @@ void kernel_MinMax_TPB256(
   }
 }
 
-void dfm2::cuda::cuda_MinMax_Point3D(
+void dfm2::cuda::cuda_MinMax_Points3F(
     float *h_minmax,
     const float *h_XYZ,
     unsigned int np)
@@ -267,20 +278,10 @@ void dfm2::cuda::cuda_MinMax_Point3D(
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-__device__
-void kernel_dist3(
-    float *d,
-    const float p0[3],
-    const float p1[3])
-{
-  float v = (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
-  *d = sqrtf(v);
-}
-
 __global__
-void kernel_CentRad_MeshTri3D_TPB256(
+void kernel_CentRad_MeshTri3D_TPB64(
     float *dXYZ_c,
-    float *dRad,
+    float *dMaxRad,
     const float *dXYZ,
     const unsigned int nXYZ,
     const unsigned int *dTri,
@@ -304,29 +305,45 @@ void kernel_CentRad_MeshTri3D_TPB256(
   dXYZ_c[itri*3+1] = pc[1];
   dXYZ_c[itri*3+2] = pc[2];
   // ---------------------
-  float l0,l1,l2;
-  kernel_dist3(&l0, pc, p0);
-  kernel_dist3(&l1, pc, p1);
-  kernel_dist3(&l2, pc, p2);
-  if( l0 > l1 && l0 > l2 ){ dRad[itri] = l0; return; }
-  if( l1 > l0 && l1 > l2 ){ dRad[itri] = l1; return; }
-  dRad[itri] = l2;
+  const float l0 = kernel_dist3(pc, p0);
+  const float l1 = kernel_dist3(pc, p1);
+  const float l2 = kernel_dist3(pc, p2);
+  float lm = l0;
+  if( l1 > lm ){ lm = l1; }
+  if( l2 > lm ){ lm = l2; }
+  const unsigned int TPB = 64;
+  assert( blockDim.x == TPB );
+  __shared__ float sRad[TPB];
+  const unsigned int s_idx = threadIdx.x;
+  sRad[s_idx] = lm;
+  __syncthreads();
+  if( s_idx == 0 ) {
+    int ns = TPB;
+    if( blockDim.x * (blockIdx.x+1) > nTri ) {
+      ns = nTri - blockDim.x * blockIdx.x;
+    }
+    float blockRadMax = sRad[0];
+    for(int ins=1;ins<ns;++ins){
+      if( sRad[ins] > blockRadMax ){ blockRadMax = sRad[ins]; }
+    }
+    atomicMaxFloat(dMaxRad, blockRadMax);
+  }
 }
 
-void dfm2::cuda::cuda_CentRad_MeshTri3D(
+void dfm2::cuda::cuda_CentsMaxRad_MeshTri3F(
     float* hXYZ_c,
-    float* hRad,
+    float* hMaxRad,
     const float *hXYZ,
     const unsigned int nXYZ,
     const unsigned int *hTri,
     const unsigned int nTri)
 {
-  float *dXYZ, *dXYZ_c, *dRad;
+  float *dXYZ, *dXYZ_c, *dMaxRad;
   unsigned int *dTri;
   cudaMalloc((void **) &dXYZ, sizeof(float) * nXYZ * 3);
   cudaMalloc((void **) &dTri, sizeof(unsigned int) * nTri * 3);
   cudaMalloc((void **) &dXYZ_c, sizeof(float) * nTri * 3);
-  cudaMalloc((void **) &dRad, sizeof(float) * nTri);
+  cudaMalloc((void **) &dMaxRad, sizeof(float) );
   cudaMemcpy(dXYZ,
              hXYZ, sizeof(float) * nXYZ * 3, cudaMemcpyHostToDevice);
   cudaMemcpy(dTri,
@@ -336,18 +353,87 @@ void dfm2::cuda::cuda_CentRad_MeshTri3D(
     const unsigned int BLOCK = 64;
     dim3 grid( (nTri-1)/BLOCK + 1 );
     dim3 block( BLOCK );
-    kernel_CentRad_MeshTri3D_TPB256 <<< grid, block >>> (dXYZ_c, dRad,
+    kernel_CentRad_MeshTri3D_TPB64 <<< grid, block >>> (dXYZ_c, dMaxRad,
         dXYZ, nXYZ,
         dTri, nTri);
   }
 
   cudaMemcpy(hXYZ_c,
              dXYZ_c, sizeof(float) * nTri * 3, cudaMemcpyDeviceToHost);
-  cudaMemcpy(hRad,
-             dRad, sizeof(float) * nTri, cudaMemcpyDeviceToHost);
+  cudaMemcpy(hMaxRad,
+             dMaxRad, sizeof(float), cudaMemcpyDeviceToHost);
 
   cudaFree(dTri);
   cudaFree(dXYZ);
   cudaFree(dXYZ_c);
-  cudaFree(dRad);
+  cudaFree(dMaxRad);
+}
+
+// --------------------------------------------------------------------------------
+
+__device__
+unsigned int device_ExpandBits(unsigned int v)
+{
+  v = (v * 0x00010001u) & 0xFF0000FFu;
+  v = (v * 0x00000101u) & 0x0F00F00Fu;
+  v = (v * 0x00000011u) & 0xC30C30C3u;
+  v = (v * 0x00000005u) & 0x49249249u;
+  return v;
+}
+
+__device__
+unsigned int device_MortonCode(float x, float y, float z)
+{
+  auto ix = (unsigned int)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
+  auto iy = (unsigned int)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
+  auto iz = (unsigned int)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
+  //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
+  ix = device_ExpandBits(ix);
+  iy = device_ExpandBits(iy);
+  iz = device_ExpandBits(iz);
+  //  std::cout << std::bitset<30>(ix) << " " << std::bitset<30>(iy) << " " << std::bitset<30>(iz) << std::endl;
+  return ix * 4 + iy * 2 + iz;
+}
+
+__global__
+void kernel_MortonCode_Points3F_TPB64(
+    unsigned int *dMC,
+    const float *dXYZ,
+    const unsigned int nXYZ)
+{
+  const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
+  if( idx >= nXYZ ) return;
+  // ----------------------------
+  const float x0 = dXYZ[idx*3+0];
+  const float y0 = dXYZ[idx*3+1];
+  const float z0 = dXYZ[idx*3+2];
+  unsigned int mc = device_MortonCode(x0,y0,z0);
+  dMC[idx] = mc;
+}
+
+void dfm2::cuda::cuda_MortonCode_Points3F(
+    unsigned int *hMC,
+    const float *hXYZ,
+    const unsigned int nXYZ)
+{
+  float *dXYZ;
+  unsigned int *dMC;
+  cudaMalloc((void **) &dXYZ, sizeof(float) * nXYZ * 3);
+  cudaMalloc((void **) &dMC, sizeof(unsigned int) * nXYZ);
+  cudaMemcpy(dXYZ,
+             hXYZ, sizeof(float) * nXYZ * 3, cudaMemcpyHostToDevice);
+
+  {
+    const unsigned int BLOCK = 64;
+    dim3 grid( (nXYZ-1)/BLOCK+1 );
+    dim3 block( BLOCK );
+    kernel_MortonCode_Points3F_TPB64 <<< grid, block >>> (dMC,
+        dXYZ, nXYZ);
+  }
+
+  cudaMemcpy(hMC,
+             dMC, sizeof(unsigned int) * nXYZ, cudaMemcpyDeviceToHost);
+
+  cudaFree(dXYZ);
+  cudaFree(dMC);
 }

@@ -19,13 +19,17 @@ namespace delfem2 {
 // 3D primitives
   
 //! @details y axis is the pole
-void MeshTri3D_Sphere(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
-                      double r,
-                      int nla, int nlo);
+void MeshTri3D_Sphere(
+    std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
+    double r,
+    int nla, int nlo);
+
 //! @details y axis is the axis of cylinder
-void MeshTri3D_CylinderOpen(std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
-                            double r, double l,
-                            int nr, int nl);
+void MeshTri3D_CylinderOpen(
+    std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
+    double r, double l,
+    int nr, int nl);
+
 //! @details y axis is the axis of cylinder.
 //! The first poit and the last points are at the center of the caps
 void MeshTri3D_CylinderClosed(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
@@ -33,20 +37,23 @@ void MeshTri3D_CylinderClosed(std::vector<double>& aXYZ, std::vector<unsigned in
                               int nlo, int nl);
 
 template <typename T>
-void MeshTri3D_Cube
-    (std::vector<T>& aXYZ,
-     std::vector<unsigned int>& aTri,
-     unsigned int n);
+void MeshTri3D_Cube(
+    std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    unsigned int n);
 
 
 void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
                     double r, int nr, int nth);
 void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
                            std::vector<unsigned int>& aTri);
-void MeshTri3D_Torus(std::vector<double>& aXYZ,
-                     std::vector<unsigned int>& aTri,
-                     double r, double l);
 
+template <typename T>
+void MeshTri3_Torus(
+    std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    double r, double l,
+    unsigned int nr, unsigned int nl);
                               
 void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad);
 void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,

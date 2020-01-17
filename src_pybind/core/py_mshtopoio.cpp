@@ -447,8 +447,8 @@ PyMeshTri3D_Torus(double r0, double r1)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  dfm2::MeshTri3D_Torus(aXYZ,aTri,
-                        r0,r1);
+  dfm2::MeshTri3_Torus(aXYZ,aTri,
+                       r0, r1, 18, 32);
   py::array_t<unsigned int> npTri({(int)aTri.size()/3,3}, aTri.data());
   py::array_t<double> npXYZ({(int)aXYZ.size()/3,3}, aXYZ.data());
   return std::make_tuple(npXYZ,npTri);

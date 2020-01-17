@@ -74,6 +74,15 @@ static inline double Distance3D(const double p0[3], const double p1[3]){
 }
  */
 
+static double Distance3(const double p0[3], const double p1[3]) {
+  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+static float Distance3(const float p0[3], const float p1[3]) {
+  return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+
 static inline double Distance2D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) );
 }
@@ -433,6 +442,46 @@ void dfm2::GetCenterWidthLocal(
   CenterWidth_MinMaxXYZ(lcx,lcy,lcz, lwx,lwy,lwz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
+
+// -------------------------------------
+
+template <typename T>
+T dfm2::CentsMaxRad_MeshTri3(
+    std::vector<T>& aXYZ_c0,
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri)
+{
+  T max_rad0 = -1;
+  const unsigned int nTri = aTri.size()/3;
+  aXYZ_c0.resize(nTri*3);
+  for(size_t itri=0;itri<nTri;++itri) {
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
+    const T pc[3] = {
+        (aXYZ[i0*3+0] + aXYZ[i1*3+0] + aXYZ[i2*3+0])/3,
+        (aXYZ[i0*3+1] + aXYZ[i1*3+1] + aXYZ[i2*3+1])/3,
+        (aXYZ[i0*3+2] + aXYZ[i1*3+2] + aXYZ[i2*3+2])/3 };
+    aXYZ_c0[itri*3+0] = pc[0];
+    aXYZ_c0[itri*3+1] = pc[1];
+    aXYZ_c0[itri*3+2] = pc[2];
+    const T l0 = Distance3(pc,aXYZ.data()+i0*3);
+    const T l1 = Distance3(pc,aXYZ.data()+i1*3);
+    const T l2 = Distance3(pc,aXYZ.data()+i2*3);
+    if( max_rad0 < 0 || l0 > max_rad0 ){ max_rad0 = l0; }
+    if( max_rad0 < 0 || l1 > max_rad0 ){ max_rad0 = l1; }
+    if( max_rad0 < 0 || l2 > max_rad0 ){ max_rad0 = l2; }
+  }
+  return max_rad0;
+}
+template float dfm2::CentsMaxRad_MeshTri3(
+    std::vector<float>& aXYZ_c0,
+    const std::vector<float>& aXYZ,
+    const std::vector<unsigned int>& aTri);
+template double dfm2::CentsMaxRad_MeshTri3(
+    std::vector<double>& aXYZ_c0,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri);
 
 // -------------------------------------
 
