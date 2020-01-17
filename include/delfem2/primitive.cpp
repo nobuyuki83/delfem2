@@ -962,7 +962,7 @@ void dfm2::MeshTri3D_Icosahedron
   aTri[12*3+0]= 6; aTri[12*3+1]= 9; aTri[12*3+2]= 4;
   aTri[13*3+0]= 1; aTri[13*3+1]= 6; aTri[13*3+2]= 8;
   aTri[14*3+0]= 7; aTri[14*3+1]= 1; aTri[14*3+2]=10;
-  /////
+  // ------
   aTri[15*3+0]= 5; aTri[15*3+1]= 2; aTri[15*3+2]=11;
   aTri[16*3+0]= 2; aTri[16*3+1]= 4; aTri[16*3+2]= 9;
   aTri[17*3+0]= 4; aTri[17*3+1]= 8; aTri[17*3+2]= 6;
@@ -970,14 +970,17 @@ void dfm2::MeshTri3D_Icosahedron
   aTri[19*3+0]=10; aTri[19*3+1]= 5; aTri[19*3+2]= 7;
 }
 
-void dfm2::MeshTri3D_Torus
-(std::vector<double>& aXYZ,
+// ------------------------------------------------------------
+
+template <typename T>
+void dfm2::MeshTri3_Torus
+(std::vector<T>& aXYZ,
  std::vector<unsigned int>& aTri, 
  double radius_,
- double radius_tube_)
+ double radius_tube_,
+ unsigned int nlg,
+ unsigned int nlt)
 {
-  const unsigned int nlg = 32;
-  const unsigned int nlt = 18;
   const double rlg = 6.28/nlg;  // longtitude
   const double rlt = 6.28/nlt;  // latitude
   aXYZ.resize(nlg*nlt*3);
@@ -996,15 +999,25 @@ void dfm2::MeshTri3D_Torus
       aTri[(ilg*nlt+ilt)*6+0] = ilg*nlt+ilt;
       aTri[(ilg*nlt+ilt)*6+2] = iug*nlt+ilt;
       aTri[(ilg*nlt+ilt)*6+1] = iug*nlt+iut;
-      ////
+      //
       aTri[(ilg*nlt+ilt)*6+3] = ilg*nlt+ilt;
       aTri[(ilg*nlt+ilt)*6+5] = iug*nlt+iut;
       aTri[(ilg*nlt+ilt)*6+4] = ilg*nlt+iut;
     }
   }
 }
+template void dfm2::MeshTri3_Torus(
+    std::vector<float>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    double radius_, double radius_tube_,
+    unsigned int nr, unsigned int nl);
+template void dfm2::MeshTri3_Torus(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    double radius_, double radius_tube_,
+    unsigned int nr, unsigned int nl);
 
-
+// ------------------------------------------------------------------------------------------------------
 
 /*
 double CSDF3_Combine::Projection

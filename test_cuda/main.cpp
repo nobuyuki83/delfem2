@@ -7,6 +7,8 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
 #include "delfem2/vec3.h"
+#include "delfem2/bv.h"
+#include "delfem2/bvh.h"
 
 #include "delfem2/cuda/cu_matvec.h"
 
@@ -59,8 +61,8 @@ TEST(matvec,minmax_po3d)
                       aXYZ.data(), aXYZ.size()/3);
 
     float bb3B[6];
-    dfm2::cuda::cuda_MinMax_Point3D(bb3B,
-                                    aXYZ.data(), aXYZ.size() / 3);
+    dfm2::cuda::cuda_MinMax_Points3F(bb3B,
+                                     aXYZ.data(), aXYZ.size() / 3);
 
     for(int i=0;i<6;++i) {
       EXPECT_FLOAT_EQ(bb3A[0], bb3B[0]);
@@ -94,16 +96,16 @@ TEST(matvec,dot)
 
 
 TEST(matvec,matmat) {
-  std::mt19937 engine(0);
+  std::mt19937 engin(0);
   std::uniform_int_distribution<unsigned int> dist0(1, 400);
   std::uniform_real_distribution<float> dist1(-1.0, 1.0);
-
+  // ------------------------------
   for (int itr = 0; itr < 10; ++itr) {
-    const unsigned int n = dist0(engine);
+    const unsigned int n = dist0(engin);
     std::vector<float> A(n*n), B(n*n);
     for(int i=0;i<n*n;++i){
-      A[i] = dist1(engine);
-      B[i] = dist1(engine);
+      A[i] = dist1(engin);
+      B[i] = dist1(engin);
     }
     // ---------------------------
     std::vector<float> C0(n*n);
@@ -130,50 +132,68 @@ TEST(matvec,matmat) {
 
 TEST(matvec,meshtri3d_centrad)
 {
+  std::mt19937 engin(0);
+  std::uniform_int_distribution<unsigned int> dist0(3, 100);
+  // ----------------------
   std::vector<float> aXYZ;
   std::vector<unsigned int> aTri;
-  dfm2::MeshTri3D_Cube(aXYZ,aTri,100);
-  const unsigned int nTri = aTri.size()/3;
-  // -----------------------------------------------------
-  std::vector<float> aXYZ_c0(nTri*3);
-  std::vector<float> aRad0(nTri);
-  for(size_t itri=0;itri<nTri;++itri) {
-    const unsigned int i0 = aTri[itri*3+0];
-    const unsigned int i1 = aTri[itri*3+1];
-    const unsigned int i2 = aTri[itri*3+2];
-    const float pc[3] = {
-        (aXYZ[i0*3+0] + aXYZ[i1*3+0] + aXYZ[i2*3+0])/3.f,
-        (aXYZ[i0*3+1] + aXYZ[i1*3+1] + aXYZ[i2*3+1])/3.f,
-        (aXYZ[i0*3+2] + aXYZ[i1*3+2] + aXYZ[i2*3+2])/3.f };
-    aXYZ_c0[itri*3+0] = pc[0];
-    aXYZ_c0[itri*3+1] = pc[1];
-    aXYZ_c0[itri*3+2] = pc[2];
-    double l0 = Distance3(pc,aXYZ.data()+i0*3);
-    double l1 = Distance3(pc,aXYZ.data()+i1*3);
-    double l2 = Distance3(pc,aXYZ.data()+i2*3);
-    if( l0 > l1 && l0 > l2 ){ aRad0[itri] = l0; }
-    else if( l1 > l0 && l1 > l2 ){ aRad0[itri] = l1; }
-    else{ aRad0[itri] = l2; }
+  for(int itr=0;itr<100;++itr) {
+    unsigned int nr = dist0(engin);
+    unsigned int nl = dist0(engin);
+    dfm2::MeshTri3_Torus(aXYZ, aTri,
+                         0.5, 0.20, nr, nl );
+    const unsigned int nTri = aTri.size() / 3;
+    // -----------------------------------------------------
+    std::vector<float> aXYZ_c0;
+    float max_rad0 = -1;
+    max_rad0 = dfm2::CentsMaxRad_MeshTri3(aXYZ_c0,
+                                          aXYZ, aTri);
+    // ------------------
+    std::vector<float> aXYZ_c1(nTri * 3);
+    float max_rad1;
+    dfm2::cuda::cuda_CentsMaxRad_MeshTri3F(
+        aXYZ_c1.data(), &max_rad1,
+        aXYZ.data(), aXYZ.size() / 3,
+        aTri.data(), nTri);
+    // ------------------
+    for (unsigned int itri = 0; itri < nTri; ++itri) {
+      EXPECT_FLOAT_EQ(aXYZ_c0[itri * 3 + 0], aXYZ_c1[itri * 3 + 0]);
+      EXPECT_FLOAT_EQ(aXYZ_c0[itri * 3 + 1], aXYZ_c1[itri * 3 + 1]);
+      EXPECT_FLOAT_EQ(aXYZ_c0[itri * 3 + 2], aXYZ_c1[itri * 3 + 2]);
+    }
+    EXPECT_FLOAT_EQ(max_rad0, max_rad1);
   }
-  // ------------------
-  std::vector<float> aXYZ_c1(nTri*3);
-  std::vector<float> aRad1(nTri);
-  dfm2::cuda::cuda_CentRad_MeshTri3D(
-      aXYZ_c1.data(), aRad1.data(),
-      aXYZ.data(), aXYZ.size()/3,
-      aTri.data(), nTri);
-  // ------------------
-  for(unsigned int itri=0;itri<nTri;++itri){
-    EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+0],aXYZ_c1[itri*3+0]);
-    EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+1],aXYZ_c1[itri*3+1]);
-    EXPECT_FLOAT_EQ(aXYZ_c0[itri*3+2],aXYZ_c1[itri*3+2]);
-    EXPECT_FLOAT_EQ(aRad0[itri],aRad1[itri]);
+}
+
+
+TEST(bvh,morton_code) {
+  std::vector<float> aXYZ; // 3d points
+  std::uniform_real_distribution<> udist(0.0, 1.0);
+  std::mt19937 rng(0);
+
+  const unsigned int N = 10000;
+  aXYZ.resize(N * 3);
+  for (int i = 0; i < N; ++i) {
+    aXYZ[i * 3 + 0] = udist(rng);
+    aXYZ[i * 3 + 1] = udist(rng);
+    aXYZ[i * 3 + 2] = udist(rng);
   }
-  // ---------------------------------------------------------------
+  std::vector<uint32_t> aMC0(N);
+  for(int i=0;i<N;++i) {
+    aMC0[i] = dfm2::MortonCode(aXYZ[i*3+0],aXYZ[i*3+1],aXYZ[i*3+2]);
+  }
+
+  std::vector<uint32_t> aMC1(N);
+  dfm2::cuda::cuda_MortonCode_Points3F(aMC1.data(),aXYZ.data(),aXYZ.size()/3);
+
+  for(int i=0;i<N;++i){
+    EXPECT_EQ(aMC0[i],aMC1[i]);
+  }
+
+
 
 
 }
-
 
 
 

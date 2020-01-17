@@ -86,6 +86,8 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
                          const double ley[3],
                          const double lez[3]);
 
+
+
 // ------------------------------------------
 
 
@@ -129,6 +131,17 @@ void CG_Point3 (T cg[3],
 // points above here
 // ----------------------------------------------------------------------------------------------
 // mesh from here
+
+/**
+ * @brief center positions of each triangle and the maximum radius of the triangle
+ * @details this funciton is implemented for "float" and double.
+ * the aXYZ_c0 will be resized to aTri.size()/3
+ */
+template <typename T>
+T CentsMaxRad_MeshTri3(
+    std::vector<T>& aXYZ_c0,
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri);
 
 void CG_Tri(double& cgx, double& cgy, double& cgz,
             int itri,

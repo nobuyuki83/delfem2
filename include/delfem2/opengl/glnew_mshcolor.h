@@ -70,6 +70,7 @@ public:
   int Loc_MatrixModelView;
   int Loc_Color;
   delfem2::CColor color_face = delfem2::CColor(1.0,0.0,0.0,0.0);
+  float line_width = 1.0;
 };
 
 

@@ -182,6 +182,18 @@ void transposeMat3(double t[], const double a[])
 
 // -----------------------------------
 
+template <>
+double Distance3(const double p0[3], const double p1[3]) {
+  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+template <>
+float Distance3(const float p0[3], const float p1[3]) {
+  return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+// ------------------------------------------
+
 void GetNearest_LineSegPoint3D
 (double pn[3],
  const double p[3], // point
@@ -201,7 +213,6 @@ void GetNearest_LineSegPoint3D
   pn[0] = s[0]+t*d[0];
   pn[1] = s[1]+t*d[1];
   pn[2] = s[2]+t*d[2];
-  return;
 }
 
 
@@ -265,7 +276,6 @@ void GetNearest_TrianglePoint3D
   pn[2] = r01[2];
   r0 = Distance3D(pn,q1)/Distance3D(q0,q1);
   r1 = 1-r0;
-  return;
 }
 
 

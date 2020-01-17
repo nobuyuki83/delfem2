@@ -101,7 +101,7 @@ void CShader_Points::Draw(float mP[16], float mMV[16]) const
   ::glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
   ::glUniform3f(Loc_Color, color_face.r,color_face.g, color_face.b);
   ::glBindVertexArray(this->vao.VAO);
-  ::glPointSize(5);
+  ::glPointSize(1);
   ::glDrawArrays(GL_POINTS, 0, nPoint);
 }
 
@@ -203,6 +203,7 @@ void CShader_TriMesh::Draw(float mP[16], float mMV[16]) const
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
   glUniformMatrix4fv(Loc_MatrixModelView, 1, GL_FALSE, mMV);
   glUniform3f(Loc_Color, this->color_face.r , this->color_face.g, this->color_face.b);
+  glLineWidth(this->line_width);
   vao.Draw(0); // draw face
   glUniform3f(Loc_Color, 0,0,0);
   vao.Draw(1); // draw line

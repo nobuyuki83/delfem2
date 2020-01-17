@@ -25,20 +25,26 @@ void cuda_MatMat(
 
 // -------------------------------------------------------------
 
-void cuda_MinMax_Point3D(
+void cuda_MinMax_Points3F(
     float *p_minmax,
     const float *p_XYZ,
     unsigned int np);
 
 // -------------------------------------------------------------
 
-void cuda_CentRad_MeshTri3D(
+void cuda_CentsMaxRad_MeshTri3F(
     float* pXYZ_cent,
-    float* pRad,
+    float* max_rad,
     const float *aXYZ,
     const unsigned int nXYZ,
     const unsigned int *aTri,
     const unsigned int nTri);
+
+void cuda_MortonCode_Points3F(
+    unsigned int *aMorton,
+    const float *aXYZ,
+    const unsigned int nXYZ);
+
 
 } // cuda
 } // delfem2
