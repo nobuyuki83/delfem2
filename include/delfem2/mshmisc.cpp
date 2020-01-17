@@ -40,13 +40,17 @@ static double TriArea3D(const double v1[3], const double v2[3], const double v3[
   return sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
 }
 
-static void UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3])
+
+template <typename T>
+inline static void UnitNormalAreaTri3
+ (T n[3], T& a,
+  const T v1[3], const T v2[3], const T v3[3])
 {
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
   a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const double invlen = 0.5/a;
+  const T invlen = 0.5/a;
   n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
 }
 
@@ -83,6 +87,20 @@ static inline double largest(double x0, double x1, double x2) {
   wmax = (x1 > wmax) ? x1 : wmax;
   wmax = (x2 > wmax) ? x2 : wmax;
   return wmax;
+}
+
+template <typename T>
+static T TetVolume3D
+ (const T v1[3],
+  const T v2[3],
+  const T v3[3],
+  const T v4[3])
+{
+  return
+  ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
+   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
+   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
+   ) * 0.16666666666666666666666666666667;
 }
 
 // -----------------------------------------------------------------
@@ -219,7 +237,7 @@ void dfm2::Normal_MeshTri3D
     double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
     double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
     double un[3], area;    
-    UnitNormalAreaTri3D(un,area, p0,p1,p2); 
+    UnitNormalAreaTri3(un,area, p0,p1,p2); 
     aNorm[i0*3+0] += un[0];  aNorm[i0*3+1] += un[1];  aNorm[i0*3+2] += un[2];
     aNorm[i1*3+0] += un[0];  aNorm[i1*3+1] += un[1];  aNorm[i1*3+2] += un[2];    
     aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];    
@@ -298,7 +316,7 @@ const std::vector<double>& aXYZ)
                     aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
   }
   CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
-                           x_min,x_max, y_min,y_max, z_min,z_max);
+                        x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
 void dfm2::CenterWidth_Points3D
@@ -418,30 +436,75 @@ void dfm2::GetCenterWidthLocal(
 
 // -------------------------------------
 
-void dfm2::Scale_PointsXD
-(std::vector<double>& aXYZ,
- double s)
+template <typename T>
+void dfm2::Scale_PointsX
+(std::vector<T>& aXYZ,
+ T s)
 {
   const unsigned int n = aXYZ.size();
   for (unsigned int i = 0; i<n; ++i){ aXYZ[i] *= s; }
 }
+template void dfm2::Scale_PointsX(std::vector<float>& aXYZ, float s);
+template void dfm2::Scale_PointsX(std::vector<double>& aXYZ, double s);
 
+// --------------
 
-void dfm2::Translate_Points3D
-(std::vector<double>& aXYZ,
-double tx, double ty, double tz)
+template <typename T>
+void dfm2::Scale_Points3
+ (T* pXYZs_,
+  const unsigned int nnode_,
+  T s)
 {
-  const int nXYZ = (int)aXYZ.size()/3;
-  for (int ixyz = 0; ixyz<nXYZ; ixyz++){
+  for(unsigned int ino=0;ino<nnode_;ino++){
+    pXYZs_[ino*3+0] *= s;
+    pXYZs_[ino*3+1] *= s;
+    pXYZs_[ino*3+2] *= s;
+  }
+}
+template void dfm2::Scale_Points3(float* pXYZ, const unsigned int n, float s);
+template void dfm2::Scale_Points3(double* pXYZ, const unsigned int n, double s);
+
+// --------------
+
+template <typename T>
+void dfm2::Translate_Points3
+(std::vector<T>& aXYZ,
+T tx, T ty, T tz)
+{
+  const unsigned int nXYZ = aXYZ.size()/3;
+  for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
     aXYZ[ixyz*3+0] += tx;
     aXYZ[ixyz*3+1] += ty;
     aXYZ[ixyz*3+2] += tz;
   }
 }
+template void dfm2::Translate_Points3(std::vector<float>& aXYZ, float tx, float ty, float tz);
+template void dfm2::Translate_Points3(std::vector<double>& aXYZ, double tx, double ty, double tz);
 
-void dfm2::Translate_Points2D
- (std::vector<double>& aXY,
-  double tx, double ty)
+// --------------
+
+template <typename T>
+void dfm2::Translate_Points3
+(T* pXYZs_,
+ const unsigned int nnode_,
+ // ----
+ T tx, T ty, T tz)
+{
+  for(unsigned int ino=0;ino<nnode_;ino++){
+    pXYZs_[ino*3+0] += tx;
+    pXYZs_[ino*3+1] += ty;
+    pXYZs_[ino*3+2] += tz;
+  }
+}
+template void dfm2::Translate_Points3(float* pXYZ, unsigned int nN, float tx, float ty, float tz);
+template void dfm2::Translate_Points3(double* pXYZ, unsigned int nN, double tx, double ty, double tz);
+
+// --------------
+
+template <typename T>
+void dfm2::Translate_Points2
+ (std::vector<T>& aXY,
+  T tx, T ty)
 {
   const unsigned int np = aXY.size()/2;
   for (unsigned int ip = 0; ip<np; ip++){
@@ -449,6 +512,10 @@ void dfm2::Translate_Points2D
     aXY[ip*2+1] += ty;
   }
 }
+template void dfm2::Translate_Points2(std::vector<float>& aXYZ, float tx, float ty);
+template void dfm2::Translate_Points2(std::vector<double>& aXYZ, double tx, double ty);
+
+// --------------
 
 void dfm2::Rotate_Points3D
 (std::vector<double>& aXYZ,
@@ -463,8 +530,8 @@ double radx, double rady, double radz)
     sin(psi)*cos(theta), sin(psi)*sin(theta)*sin(phi)+cos(psi)*cos(phi), sin(psi)*sin(theta)*cos(phi)-cos(psi)*sin(phi),
     -sin(theta),         cos(theta)*sin(phi),                            cos(theta)*cos(phi) };
   // ----------
-  const int nXYZ = (int)aXYZ.size()/3;
-  for (int ixyz = 0; ixyz<nXYZ; ++ixyz){
+  const unsigned int nXYZ = aXYZ.size()/3;
+  for (unsigned int ixyz = 0; ixyz<nXYZ; ++ixyz){
     double p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
     double res[3];  MatVec3(mat, p, res);
     aXYZ[ixyz*3+0] = res[0];
@@ -487,81 +554,49 @@ void dfm2::Normalize_Points3D
  double s)
 {
   double cx, cy, cz, wx, wy, wz;
-  CenterWidth_Points3D(cx, cy, cz, wx, wy, wz, aXYZ);
-  Translate_Points3D(aXYZ,
-            -cx, -cy, -cz);
+  CenterWidth_Points3D(cx, cy, cz, wx, wy, wz,
+                       aXYZ);
+  Translate_Points3(aXYZ,
+                    -cx, -cy, -cz);
   double wmax = largest(wx, wy, wz);
-  Scale_PointsXD(aXYZ,
-                 s/wmax);
+  Scale_PointsX(aXYZ,
+                s/wmax);
 }
 
-void dfm2::Translate_Points3D
- (double tx, double ty, double tz,
-  const unsigned int nnode_,
-  double* pXYZs_)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] += tx;
-    pXYZs_[ino*3+1] += ty;
-    pXYZs_[ino*3+2] += tz;
-  }
-}
 
-void dfm2::Scale_Points3D (
-    double s,
-    const unsigned int nnode_,
-    double* pXYZs_)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] *= s;
-    pXYZs_[ino*3+1] *= s;
-    pXYZs_[ino*3+2] *= s;
-  }
-}
 
 // ---------------------------------------
 
-void dfm2::CenterOfGravity(
-    double& cgx, double& cgy, double& cgz,
-    const std::vector<double>& aXYZ)
+template <typename T>
+void dfm2::CG_Point3
+ (T cg[3],
+  const std::vector<T>& aXYZ)
 {
-  cgx = 0;
-  cgy = 0;
-  cgz = 0;
-  int nXYZ = (int)aXYZ.size()/3;
-  for (int ixyz = 0; ixyz<nXYZ; ixyz++){
-    cgx += aXYZ[ixyz*3+0];
-    cgy += aXYZ[ixyz*3+1];
-    cgz += aXYZ[ixyz*3+2];
+  cg[0] = cg[1] = cg[2] = 0;
+  unsigned int nXYZ = aXYZ.size()/3;
+  for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
+    cg[0] += aXYZ[ixyz*3+0];
+    cg[1] += aXYZ[ixyz*3+1];
+    cg[2] += aXYZ[ixyz*3+2];
   }
-  cgx /= nXYZ;
-  cgy /= nXYZ;
-  cgz /= nXYZ;
+  cg[0] /= nXYZ;
+  cg[1] /= nXYZ;
+  cg[2] /= nXYZ;
 }
+template void dfm2::CG_Point3(float cg[3], const std::vector<float>& aXYZ);
+template void dfm2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
 
-static double TetVolume3D(const double v1[3],
-  const double v2[3],
-  const double v3[3],
-  const double v4[3])
-{
-  return
-    ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
-    -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
-    +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
-    ) * 0.16666666666666666666666666666667;
-}
+// ----------------------------------------
 
-
-void dfm2::CenterOfGravity_Solid(
+void dfm2::CG_MeshTri3_Solid(
     double& cgx, double& cgy, double& cgz,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aTri)
 { // center of gravity
-  cgx = 0.0;
-  cgy = 0.0;
-  cgz = 0.0;
+  cgx = cgy = cgz = 0.0;
   double tw = 0;
-  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
+  const unsigned int nTri = aTri.size()/3;
+  for (std::size_t itri = 0; itri<nTri; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
@@ -580,16 +615,15 @@ void dfm2::CenterOfGravity_Solid(
   cgz /= tw;
 }
 
-void dfm2::CenterOfGravity_Shell
+void dfm2::CG_MeshTri3_Shell
 (double& cgx, double& cgy, double& cgz,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
 { // center of gravity
-  cgx = 0.0;
-  cgy = 0.0;
-  cgz = 0.0;
+  cgx = cgy = cgz = 0.0;
   double tw = 0;
-  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
+  const unsigned int nTri = aTri.size()/3;
+  for (std::size_t itri = 0; itri<nTri; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
@@ -608,7 +642,7 @@ void dfm2::CenterOfGravity_Shell
 }
 
 
-double dfm2::CenterOfGravity_TriMsh3DFlg_Shell
+double dfm2::CG_TriMsh3Flg_Shell
 (double& cgx, double& cgy, double& cgz,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
@@ -639,7 +673,7 @@ double dfm2::CenterOfGravity_TriMsh3DFlg_Shell
   return tw;
 }
 
-void dfm2::CenterOfGravity_Tri
+void dfm2::CG_Tri
 (double& cgx, double& cgy, double& cgz,
  int itri,
  const std::vector<double>& aXYZ,
@@ -658,6 +692,33 @@ void dfm2::CenterOfGravity_Tri
   cgz = (q1[2]+q2[2]+q3[2])*0.333333;
 }
 
+template <typename T>
+void dfm2::CG_MeshTet3
+ (T& v_tot,
+  T cg[3],
+  const std::vector<T>& aXYZC,
+  const std::vector<unsigned int>& aTet)
+{
+  v_tot = cg[0] = cg[1] = cg[2] = 0.0;
+  const T* pXYZ = aXYZC.data();
+  const size_t nTet = aTet.size()/4;
+  for(size_t it=0;it<nTet;++it){
+    const T* p0 = pXYZ+aTet[it*4+0]*3;
+    const T* p1 = pXYZ+aTet[it*4+1]*3;
+    const T* p2 = pXYZ+aTet[it*4+2]*3;
+    const T* p3 = pXYZ+aTet[it*4+3]*3;
+    const double v = TetVolume3D(p0, p1, p2, p3);
+    v_tot += v;
+    cg[0] += v*(p0[0]+p1[0]+p2[0]+p3[0])*0.25;
+    cg[1] += v*(p0[1]+p1[1]+p2[1]+p3[1])*0.25;
+    cg[2] += v*(p0[2]+p1[2]+p2[2]+p3[2])*0.25;
+  }
+  cg[0] /= v_tot;
+  cg[1] /= v_tot;
+  cg[2] /= v_tot;
+}
+template void dfm2::CG_MeshTet3(float& v_tot, float cg[3], const std::vector<float>& aXYZ, const std::vector<unsigned int>& aTet);
+template void dfm2::CG_MeshTet3(double& v_tot, double cg[3], const std::vector<double>& aXYZ, const std::vector<unsigned int>& aTet);
 
 // -----------------------------------------------------------------------------------------
 
@@ -1132,29 +1193,4 @@ void dfm2::SubdivisionPoints_Hex
   }
 }
 
-void dfm2::CenterOfGravity_Tet
-(double& v_tot,
- double& cgx, double& cgy, double& cgz,
- const std::vector<double>& aXYZC,
- const std::vector<int>& aTetC)
-{
-  cgx = 0.0;
-  cgy = 0.0;
-  cgz = 0.0;
-  v_tot = 0;
-  const double* pXYZ = aXYZC.data();
-  for(std::size_t it=0;it<aTetC.size()/4;++it){
-    const double* p0 = pXYZ+aTetC[it*4+0]*3;
-    const double* p1 = pXYZ+aTetC[it*4+1]*3;
-    const double* p2 = pXYZ+aTetC[it*4+2]*3;
-    const double* p3 = pXYZ+aTetC[it*4+3]*3;
-    double v = TetVolume3D(p0, p1, p2, p3);
-    v_tot += v;
-    cgx += v*(p0[0]+p1[0]+p2[0]+p3[0])*0.25;
-    cgy += v*(p0[1]+p1[1]+p2[1]+p3[1])*0.25;
-    cgz += v*(p0[2]+p1[2]+p2[2]+p3[2])*0.25;
-  }
-  cgx /= v_tot;
-  cgy /= v_tot;
-  cgz /= v_tot;
-}
+

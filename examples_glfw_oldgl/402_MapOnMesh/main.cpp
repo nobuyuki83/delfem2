@@ -50,14 +50,14 @@ void InitializeProblem() {
     double cx, cy, cz, wx, wy, wz;
     dfm2::CenterWidth_Points3D(cx, cy, cz, wx, wy, wz,
                                aXYZ);
-    dfm2::Translate_Points3D(aXYZ,
-                             -cx, -cy, -cz);
+    dfm2::Translate_Points3(aXYZ,
+                            -cx, -cy, -cz);
     double wm = wx;
     wm = (wx > wm) ? wx : wm;
     wm = (wy > wm) ? wy : wm;
     wm = (wz > wm) ? wz : wm;
-    dfm2::Scale_PointsXD(aXYZ,
-                         1.5 / wm);
+    dfm2::Scale_PointsX(aXYZ,
+                        1.5 / wm);
     dfm2::Rotate_Points3D(aXYZ,
                           -M_PI * 0.5, 0, 0);
   }

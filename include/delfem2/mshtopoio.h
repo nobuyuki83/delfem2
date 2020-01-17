@@ -93,8 +93,8 @@ public:
     return em;
   }
   void ScaleXYZ(double s){
-    delfem2::Scale_PointsXD(aPos,
-                            s);
+    delfem2::Scale_PointsX(aPos,
+                           s);
   }
 public:
   delfem2::MESHELEM_TYPE elem_type;

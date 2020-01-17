@@ -102,7 +102,7 @@ void MeshTri3D_GeodesicPolyhedron
   }
 }
 
-////////
+// ----------------------
 
 void CMeshMultiElem::ReadObj(const std::string& path_obj)
 {
@@ -146,14 +146,14 @@ std::vector<double> CMeshMultiElem::AABB3_MinMax() const
 
 void CMeshMultiElem::ScaleXYZ(double s)
 {
-  delfem2::Scale_PointsXD(aXYZ,
-                          s);
+  delfem2::Scale_PointsX(aXYZ,
+                         s);
 }
 
 void CMeshMultiElem::TranslateXYZ(double x, double y, double z)
 {
-  delfem2::Translate_Points3D(aXYZ,
-                              x,y,z);
+  delfem2::Translate_Points3(aXYZ,
+                             x,y,z);
 }
 
 void Load_Mtl

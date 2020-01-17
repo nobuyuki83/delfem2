@@ -66,10 +66,10 @@ void Hoge()
                              ndiv,ndiv);
     delfem2::convert2Tri_Quad(aTri,
                               aQuad);
-    delfem2::Translate_Points2D(aXY,
-                       -ndiv*0.5, -ndiv*0.5);
-    delfem2::Scale_PointsXD(aXY,
-                            1.0/ndiv);
+    delfem2::Translate_Points2(aXY,
+                               -ndiv*0.5, -ndiv*0.5);
+    delfem2::Scale_PointsX(aXY,
+                           1.0/ndiv);
   }
   
   { // make value
