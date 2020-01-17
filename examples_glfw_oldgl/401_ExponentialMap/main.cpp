@@ -217,14 +217,14 @@ void SetNewProblem()
       delfem2::CenterWidth_Points3D(cx,cy,cz,
                                     wx,wy,wz,
                                     aXYZ);
-      delfem2::Translate_Points3D(aXYZ,
-                         -cx,-cy,-cz);
+      delfem2::Translate_Points3(aXYZ,
+                                 -cx,-cy,-cz);
       double wm = wx;
       wm = ( wx > wm ) ? wx : wm;
       wm = ( wy > wm ) ? wy : wm;
       wm = ( wz > wm ) ? wz : wm;
-      delfem2::Scale_PointsXD(aXYZ,
-                              2.0/wm);
+      delfem2::Scale_PointsX(aXYZ,
+                             2.0/wm);
     }
   }
   {

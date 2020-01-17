@@ -22,6 +22,7 @@ namespace delfem2{
 
 /**
  * @brief update minimum and maximum coordinates
+ * @details implemented for "float" and "double"
  */
 template<typename T>
 void updateMinMaxXYZ(T& x_min, T& x_max,
@@ -33,6 +34,7 @@ void updateMinMaxXYZ(T& x_min, T& x_max,
  * @param bb3 (out) bounding box in the order of <minx, miny, minz, maxx, maxy, maxz>
  * @param aXYZ (in) array of 3D coordinates of points
  * @param nXYZ (in) number of points
+ * @details implemented for "float" and "double"
  */
 template<typename T>
 void BB3_Points3(
@@ -93,46 +95,64 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
  */
 void Rotate_Points3D(std::vector<double>& aXYZ,
                      double radx, double rady, double radz);
-void Translate_Points3D(std::vector<double>& aXYZ,
-                        double tx, double ty, double tz);
-void Translate_Points3D(double tx, double ty, double tz,
-                        const unsigned int nnode_, double* pXYZs_);
-void Translate_Points2D(std::vector<double>& aXY,
-                        double tx, double ty);
-void Scale_PointsXD(std::vector<double>& aXYZ,
-                    double s);
-void Scale_Points3D(double s,
-                    const unsigned int nnode_, double* pXYZs_);
+  
+template <typename T>
+void Translate_Points3(std::vector<T>& aXYZ,
+                       T tx, T ty, T tz);
+template <typename T>
+void Translate_Points3(T* pXYZs_,
+                       const unsigned int nnode_,
+                       T tx, T ty, T tz);
+template <typename T>
+void Translate_Points2(std::vector<T>& aXY,
+                       T tx, T ty);
+  
+template <typename T>
+void Scale_PointsX(std::vector<T>& aXYZ,
+                   T s);
+template <typename T>
+void Scale_Points3(T* pXYZs_,
+                   const unsigned int nnode_,
+                   T s);
+  
 double Size_Points3D_LongestAABBEdge(const std::vector<double>& aXYZ);
 void Normalize_Points3D(std::vector<double>& aXYZ,
                         double s = 1.0);
+  
+/**
+ * @details implemented for "float" and "double"
+ */
+template <typename T>
+void CG_Point3 (T cg[3],
+                const std::vector<T>& aXYZ);
 
-// ------------------------------------------------------------
+// points above here
+// ----------------------------------------------------------------------------------------------
+// mesh from here
 
-void CenterOfGravity(double& cgx, double& cgy, double& cgz,
-                     const std::vector<double>& aXYZ);
-void CenterOfGravity_Tri(double& cgx, double& cgy, double& cgz,
-                         int itri,
-                         const std::vector<double>& aXYZ,
-                         const std::vector<int>& aTri);
-double CenterOfGravity_TriMsh3DFlg_Shell(double& cgx, double& cgy, double& cgz,
-                                         const std::vector<double>& aXYZ,
-                                         const std::vector<int>& aTri,
-                                         int iflg,
-                                         const std::vector<int>& aFlg);
-void CenterOfGravity_Shell(double& cgx, double& cgy, double& cgz,
+void CG_Tri(double& cgx, double& cgy, double& cgz,
+            int itri,
+            const std::vector<double>& aXYZ,
+            const std::vector<int>& aTri);
+double CG_TriMsh3Flg_Shell(double& cgx, double& cgy, double& cgz,
                            const std::vector<double>& aXYZ,
-                           const std::vector<int>& aTri);
-void CenterOfGravity_Solid(double& cgx, double& cgy, double& cgz,
-                           const std::vector<double>& aXYZ,
-                           const std::vector<int>& aTri);
-void CenterOfGravity_Tet(double& v_tot,
-                         double& cgx, double& cgy, double& cgz,
-                         const std::vector<double>& aXYZC,
-                         const std::vector<int>& aTetC);
-
-// -------------------------------------------------------------
-
+                           const std::vector<int>& aTri,
+                           int iflg,
+                           const std::vector<int>& aFlg);
+void CG_MeshTri3_Shell(double& cgx, double& cgy, double& cgz,
+                       const std::vector<double>& aXYZ,
+                       const std::vector<int>& aTri);
+void CG_MeshTri3_Solid(double& cgx, double& cgy, double& cgz,
+                       const std::vector<double>& aXYZ,
+                       const std::vector<int>& aTri);
+template <typename T>
+void CG_MeshTet3(T& v_tot,
+                 T cg[3],
+                 const std::vector<T>& aXYZ,
+                 const std::vector<unsigned int>& aTet);
+  
+// ---------------------------------
+  
 void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZ1,
                                        std::vector<unsigned int>& aElem1,
                                        std::vector<int>& aMap01,
