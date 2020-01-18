@@ -16,6 +16,7 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------------
 
+
 TEST(matvec,vecscale)
 {
   std::uniform_int_distribution<unsigned int> distUI(1,2000);
@@ -32,40 +33,6 @@ TEST(matvec,vecscale)
 
     for (int i = 0; i < n; i++) {
       EXPECT_FLOAT_EQ(in[i]*scale,out[i]);
-    }
-  }
-}
-
-
-TEST(matvec,minmax_po3d)
-{
-  std::mt19937 engine(0);
-  std::uniform_int_distribution<unsigned int> dist0(1, 20000);
-  std::uniform_real_distribution<float> dist1(-1.0, 1.0);
-  std::uniform_real_distribution<float> dist2(-2.0, 2.0);
-
-  for(int itr=0;itr<300;++itr) {
-    std::vector<float> aXYZ;
-    {
-      const unsigned int np = dist0(engine);
-      aXYZ.resize(np * 3);
-      for (int ip = 0; ip < np; ++ip) {
-        aXYZ[ip * 3 + 0] = dist1(engine) * 1.0 + dist2(engine);
-        aXYZ[ip * 3 + 1] = dist1(engine) * 0.5 + dist2(engine);
-        aXYZ[ip * 3 + 2] = dist1(engine) * 0.3 + dist2(engine);
-      }
-    }
-
-    float bb3A[6];
-    dfm2::BB3_Points3(bb3A,
-                      aXYZ.data(), aXYZ.size()/3);
-
-    float bb3B[6];
-    dfm2::cuda::cuda_MinMax_Points3F(bb3B,
-                                     aXYZ.data(), aXYZ.size() / 3);
-
-    for(int i=0;i<6;++i) {
-      EXPECT_FLOAT_EQ(bb3A[0], bb3B[0]);
     }
   }
 }
@@ -93,7 +60,6 @@ TEST(matvec,dot)
     EXPECT_NEAR(dot0,dot1,1.0e-3);
   }
 }
-
 
 TEST(matvec,matmat) {
   std::mt19937 engin(0);
@@ -129,6 +95,45 @@ TEST(matvec,matmat) {
   }
 }
 
+
+
+TEST(matvec,minmax_po3d)
+{
+  std::mt19937 engine(0);
+  std::uniform_int_distribution<unsigned int> dist0(1, 20000);
+  std::uniform_real_distribution<float> dist1(-1.0, 1.0);
+  std::uniform_real_distribution<float> dist2(-2.0, 2.0);
+
+  for(int itr=0;itr<300;++itr) {
+    std::vector<float> aXYZ;
+    {
+      const unsigned int np = dist0(engine);
+      aXYZ.resize(np * 3);
+      for (int ip = 0; ip < np; ++ip) {
+        aXYZ[ip * 3 + 0] = dist1(engine) * 1.0 + dist2(engine);
+        aXYZ[ip * 3 + 1] = dist1(engine) * 0.5 + dist2(engine);
+        aXYZ[ip * 3 + 2] = dist1(engine) * 0.3 + dist2(engine);
+      }
+    }
+
+    float min3A[3], max3A[3];
+    dfm2::Min3Max3_Points3(min3A,max3A,
+        aXYZ.data(), aXYZ.size()/3);
+
+    float min3B[3], max3B[3];
+    dfm2::cuda::cuda_Min3Max3_Points3F(min3B,max3B,
+        aXYZ.data(), aXYZ.size() / 3);
+
+    EXPECT_FLOAT_EQ(min3A[0], min3B[0]);
+    EXPECT_FLOAT_EQ(min3A[1], min3B[1]);
+    EXPECT_FLOAT_EQ(min3A[2], min3B[2]);
+    EXPECT_FLOAT_EQ(max3A[0], max3B[0]);
+    EXPECT_FLOAT_EQ(max3A[1], max3B[1]);
+    EXPECT_FLOAT_EQ(max3A[2], max3B[2]);
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 TEST(matvec,meshtri3d_centrad)
 {
@@ -189,7 +194,6 @@ TEST(bvh,morton_code) {
   for(int i=0;i<N;++i){
     EXPECT_EQ(aMC0[i],aMC1[i]);
   }
-
 
 
 

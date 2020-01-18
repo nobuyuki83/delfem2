@@ -37,8 +37,9 @@ void updateMinMaxXYZ(T& x_min, T& x_max,
  * @details implemented for "float" and "double"
  */
 template<typename T>
-void BB3_Points3(
-    T bb3[6],
+void Min3Max3_Points3(
+    T min3[3],
+    T max3[3],
     const T* aXYZ,
     const unsigned int nXYZ);
 

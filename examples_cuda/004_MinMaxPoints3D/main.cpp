@@ -23,11 +23,11 @@ int main() {
 
   clock_t time0 = clock();
 
-  float minmax[6];
-  dfm2::cuda::cuda_MinMax_Points3F(minmax,
+  float min3[3],max3[3];
+  dfm2::cuda::cuda_Min3Max3_Points3F(min3,max3,
       aXYZ.data(), aXYZ.size()/3);
-  printf("min xyz %f %f %f\n",minmax[0],minmax[1],minmax[2]);
-  printf("max xyz %f %f %f\n",minmax[3],minmax[4],minmax[5]);
+  printf("min xyz %f %f %f\n",min3[0],min3[1],min3[2]);
+  printf("max xyz %f %f %f\n",max3[0],max3[1],max3[2]);
 
   clock_t time1 = clock();
   printf("on gpu it takes %.2f sec \n",(double)(time1-time0)/CLOCKS_PER_SEC);

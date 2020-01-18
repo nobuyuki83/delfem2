@@ -13,7 +13,7 @@ namespace dfm2 = delfem2;
 // -------------------------------------------------------------------
 
 __device__
-void atomicMaxFloat(float * const address, const float value)
+void device_AtomicMaxFloat(float * const address, const float value)
 {
   if ( *address >= value ) { return; }
   int * const address_as_i = (int *)address;
@@ -26,7 +26,7 @@ void atomicMaxFloat(float * const address, const float value)
 }
 
 __device__
-void atomicMinFloat(float * const address, const float value)
+void device_AtomicMinFloat(float * const address, const float value)
 {
   if ( *address <= value ) { return; }
   int * const address_as_i = (int *)address;
@@ -47,6 +47,31 @@ float kernel_dist3(
   return sqrtf(v);
 }
 
+
+__device__
+unsigned int device_ExpandBits(unsigned int v)
+{
+  v = (v * 0x00010001u) & 0xFF0000FFu;
+  v = (v * 0x00000101u) & 0x0F00F00Fu;
+  v = (v * 0x00000011u) & 0xC30C30C3u;
+  v = (v * 0x00000005u) & 0x49249249u;
+  return v;
+}
+
+__device__
+unsigned int device_MortonCode(float x, float y, float z)
+{
+  auto ix = (unsigned int)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
+  auto iy = (unsigned int)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
+  auto iz = (unsigned int)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
+  //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
+  ix = device_ExpandBits(ix);
+  iy = device_ExpandBits(iy);
+  iz = device_ExpandBits(iz);
+  //  std::cout << std::bitset<30>(ix) << " " << std::bitset<30>(iy) << " " << std::bitset<30>(iz) << std::endl;
+  return ix * 4 + iy * 2 + iz;
+}
+
 // -------------------------------------------------------------------
 
 __global__
@@ -65,20 +90,19 @@ void dfm2::cuda::cuda_VecScale(
     float *hOut,
     const float *hIn,
     float scale,
-    const int n)
+    const unsigned int n)
 {
-  float *dOut; cudaMalloc((void**)&dOut, sizeof(float)*n);
-  float *dIn;  cudaMalloc((void**)&dIn,  sizeof(float)*n);
-  cudaMemcpy(dIn, hIn, sizeof(float)*n, cudaMemcpyHostToDevice);
-
-  const unsigned int tpb = 64;
-  const unsigned int nblk = (unsigned int)((n-1)/tpb+1);
-  kernel_VecScale<<<nblk, tpb>>>(dOut, dIn, scale, n);
-  cudaDeviceSynchronize();
-
-  cudaMemcpy(hOut, dOut, n * sizeof(float), cudaMemcpyDeviceToHost);
-  cudaFree(dOut);
-  cudaFree(dIn);
+  const thrust::device_vector<float> dIn(hIn,hIn+n);
+  thrust::device_vector<float> dOut(n);
+  {
+    const unsigned int tpb = 64;
+    const unsigned int nblk = (unsigned int) ((n - 1) / tpb + 1);
+    kernel_VecScale <<< nblk, tpb >>> (
+        thrust::raw_pointer_cast(dOut.data()),
+        thrust::raw_pointer_cast(dIn.data()),
+        scale, n);
+  }
+  thrust::copy(dOut.begin(),dOut.end(), hOut);
 }
 
 
@@ -123,27 +147,21 @@ float dfm2::cuda::cuda_Dot(
     const float* h_B,
     unsigned int n)
 {
-  float *d_A, *d_B, *d_res;
-  cudaMalloc((void **) &d_A, sizeof(float) * n);
-  cudaMalloc((void **) &d_B, sizeof(float) * n);
-  cudaMalloc((void **) &d_res, sizeof(float));
-
-  cudaMemset((void **) &d_res, 0.f, sizeof(float));
-  cudaMemcpy(d_A, h_A, sizeof(float) * n, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_B, h_B, sizeof(float) * n, cudaMemcpyHostToDevice);
-
-  const unsigned int BLOCK = 64;
-  dim3 grid( (n-1)/BLOCK + 1);
-  dim3 block(BLOCK);
-
-  kernel_Dot_TPB64 << < grid, block >> > (d_res, d_A, d_B, n);
-
+  const thrust::device_vector<float> d_A(h_A, h_A+n);
+  const thrust::device_vector<float> d_B(h_B, h_B+n);
+  thrust::device_vector<float> d_R(1, 0.f);
+  {
+    const unsigned int BLOCK = 64;
+    dim3 grid((n - 1) / BLOCK + 1);
+    dim3 block(BLOCK);
+    kernel_Dot_TPB64 <<< grid, block >>> (
+        thrust::raw_pointer_cast(d_R.data()),
+        thrust::raw_pointer_cast(d_A.data()),
+        thrust::raw_pointer_cast(d_B.data()),
+        n);
+  }
   float h_res;
-  cudaMemcpy(&h_res, d_res, sizeof(float), cudaMemcpyDeviceToHost);
-
-  cudaFree(d_A);
-  cudaFree(d_B);
-  cudaFree(d_res);
+  thrust::copy(d_R.begin(), d_R.end(), &h_res);
   return h_res;
 }
 
@@ -188,26 +206,21 @@ void dfm2::cuda::cuda_MatMat(
     const float *h_B,
     unsigned int WIDTH)
 {
-  float *d_A, *d_B, *d_C;
-  cudaMalloc((void **) &d_A, sizeof(float) * WIDTH * WIDTH);
-  cudaMalloc((void **) &d_B, sizeof(float) * WIDTH * WIDTH);
-  cudaMalloc((void **) &d_C, sizeof(float) * WIDTH * WIDTH);
-
-  cudaMemcpy(d_A, h_A, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_B, h_B, sizeof(float) * WIDTH * WIDTH, cudaMemcpyHostToDevice);
-
-  const unsigned int BLOCK = 16;
-  dim3 grid( (WIDTH-1)/BLOCK+1, (WIDTH-1)/BLOCK+1);
-  dim3 block(BLOCK, BLOCK);
-
-  kernel_MatMat_TPB16 << < grid, block >> > (d_C, d_A, d_B, WIDTH);
-
-  cudaMemcpy(h_C_gpu,
-             d_C, sizeof(float) * WIDTH * WIDTH, cudaMemcpyDeviceToHost);
-
-  cudaFree(d_A);
-  cudaFree(d_B);
-  cudaFree(d_C);
+  const thrust::device_vector<float> d_A(h_A,h_A+WIDTH*WIDTH);
+  const thrust::device_vector<float> d_B(h_B,h_B+WIDTH*WIDTH);
+  thrust::device_vector<float> d_C(WIDTH*WIDTH);
+  {
+    const unsigned int BLOCK = 16;
+    dim3 grid((WIDTH - 1) / BLOCK + 1, (WIDTH - 1) / BLOCK + 1);
+    dim3 block(BLOCK, BLOCK);
+    kernel_MatMat_TPB16 << < grid, block >> > (
+        thrust::raw_pointer_cast(d_C.data()),
+//        d_C1,
+        thrust::raw_pointer_cast(d_A.data()),
+        thrust::raw_pointer_cast(d_B.data()),
+        WIDTH);
+  }
+  thrust::copy(d_C.begin(), d_C.end(), h_C_gpu);
 }
 
 // ------------------------------------------------------------------------
@@ -240,40 +253,34 @@ void kernel_MinMax_TPB256(
       if( s_XYZ[is][idy] < vmin ){ vmin = s_XYZ[is][idy]; }
       if( s_XYZ[is][idy] > vmax ){ vmax = s_XYZ[is][idy]; }
     }
-    atomicMinFloat(d_minmax+idy+0,vmin);
-    atomicMaxFloat(d_minmax+idy+3,vmax);
+    device_AtomicMinFloat(d_minmax+idy+0,vmin);
+    device_AtomicMaxFloat(d_minmax+idy+3,vmax);
   }
 }
 
-void dfm2::cuda::cuda_MinMax_Points3F(
-    float *h_minmax,
+void dfm2::cuda::cuda_Min3Max3_Points3F(
+    float *h_min3,
+    float *h_max3,
     const float *h_XYZ,
     unsigned int np)
 {
-  h_minmax[0] = h_minmax[3] = h_XYZ[0];
-  h_minmax[1] = h_minmax[4] = h_XYZ[1];
-  h_minmax[2] = h_minmax[5] = h_XYZ[2];
+  h_min3[0] = h_max3[0] = h_XYZ[0];
+  h_min3[1] = h_max3[1] = h_XYZ[1];
+  h_min3[2] = h_max3[2] = h_XYZ[2];
   // --------------------------------------
-  float *d_minmax, *d_XYZ;
-  cudaMalloc((void **) &d_minmax, sizeof(float) * 6);
-  cudaMalloc((void **) &d_XYZ, sizeof(float) * np * 3);
-  cudaMemcpy(d_XYZ,
-             h_XYZ, sizeof(float) * np * 3, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_minmax,
-             h_minmax, sizeof(float) * 6, cudaMemcpyHostToDevice);
-
+  const thrust::device_vector<float> d_XYZ(h_XYZ,h_XYZ+np*3);
+  thrust::device_vector<float> d_minmax(6);
   {
     const unsigned int BLOCK = 256;
     dim3 grid((np - 1) / BLOCK + 1);
     dim3 block(BLOCK, 3);
-    kernel_MinMax_TPB256 <<< grid, block >>> (d_minmax, d_XYZ, np);
+    kernel_MinMax_TPB256 <<< grid, block >>> (
+        thrust::raw_pointer_cast(d_minmax.data()),
+        thrust::raw_pointer_cast(d_XYZ.data()),
+        np);
   }
-
-  cudaMemcpy(h_minmax,
-             d_minmax, sizeof(float) * 6, cudaMemcpyDeviceToHost);
-
-  cudaFree(d_minmax);
-  cudaFree(d_XYZ);
+  thrust::copy(d_minmax.begin()+0,d_minmax.begin()+3, h_min3);
+  thrust::copy(d_minmax.begin()+3,d_minmax.begin()+6, h_max3);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -294,6 +301,7 @@ void kernel_CentRad_MeshTri3D_TPB64(
   const unsigned int i0 = dTri[itri*3+0];
   const unsigned int i1 = dTri[itri*3+1];
   const unsigned int i2 = dTri[itri*3+2];
+  assert( i0 < nXYZ && i1 < nXYZ && i2 < nXYZ );
   const float p0[3] = {dXYZ[i0*3+0],dXYZ[i0*3+1],dXYZ[i0*3+2]};
   const float p1[3] = {dXYZ[i1*3+0],dXYZ[i1*3+1],dXYZ[i1*3+2]};
   const float p2[3] = {dXYZ[i2*3+0],dXYZ[i2*3+1],dXYZ[i2*3+2]};
@@ -326,7 +334,7 @@ void kernel_CentRad_MeshTri3D_TPB64(
     for(int ins=1;ins<ns;++ins){
       if( sRad[ins] > blockRadMax ){ blockRadMax = sRad[ins]; }
     }
-    atomicMaxFloat(dMaxRad, blockRadMax);
+    device_AtomicMaxFloat(dMaxRad, blockRadMax);
   }
 }
 
@@ -338,62 +346,27 @@ void dfm2::cuda::cuda_CentsMaxRad_MeshTri3F(
     const unsigned int *hTri,
     const unsigned int nTri)
 {
-  float *dXYZ, *dXYZ_c, *dMaxRad;
-  unsigned int *dTri;
-  cudaMalloc((void **) &dXYZ, sizeof(float) * nXYZ * 3);
-  cudaMalloc((void **) &dTri, sizeof(unsigned int) * nTri * 3);
-  cudaMalloc((void **) &dXYZ_c, sizeof(float) * nTri * 3);
-  cudaMalloc((void **) &dMaxRad, sizeof(float) );
-  cudaMemcpy(dXYZ,
-             hXYZ, sizeof(float) * nXYZ * 3, cudaMemcpyHostToDevice);
-  cudaMemcpy(dTri,
-             hTri, sizeof(unsigned int) * nTri * 3, cudaMemcpyHostToDevice);
-
+  const thrust::device_vector<float> dXYZ(hXYZ, hXYZ+nXYZ*3);
+  const thrust::device_vector<unsigned int> dTri(hTri, hTri+nTri*3);
+  thrust::device_vector<float> dMaxRad(1);
+  thrust::device_vector<float> dXYZ_c(nTri*3);
   {
     const unsigned int BLOCK = 64;
     dim3 grid( (nTri-1)/BLOCK + 1 );
     dim3 block( BLOCK );
-    kernel_CentRad_MeshTri3D_TPB64 <<< grid, block >>> (dXYZ_c, dMaxRad,
-        dXYZ, nXYZ,
-        dTri, nTri);
+    kernel_CentRad_MeshTri3D_TPB64 <<< grid, block >>> (
+        thrust::raw_pointer_cast(dXYZ_c.data()),
+        thrust::raw_pointer_cast(dMaxRad.data()),
+        thrust::raw_pointer_cast(dXYZ.data()),
+        nXYZ,
+        thrust::raw_pointer_cast(dTri.data()),
+        nTri);
   }
-
-  cudaMemcpy(hXYZ_c,
-             dXYZ_c, sizeof(float) * nTri * 3, cudaMemcpyDeviceToHost);
-  cudaMemcpy(hMaxRad,
-             dMaxRad, sizeof(float), cudaMemcpyDeviceToHost);
-
-  cudaFree(dTri);
-  cudaFree(dXYZ);
-  cudaFree(dXYZ_c);
-  cudaFree(dMaxRad);
+  thrust::copy(dXYZ_c.begin(), dXYZ_c.end(), hXYZ_c);
+  thrust::copy(dMaxRad.begin(), dMaxRad.end(), hMaxRad);
 }
 
 // --------------------------------------------------------------------------------
-
-__device__
-unsigned int device_ExpandBits(unsigned int v)
-{
-  v = (v * 0x00010001u) & 0xFF0000FFu;
-  v = (v * 0x00000101u) & 0x0F00F00Fu;
-  v = (v * 0x00000011u) & 0xC30C30C3u;
-  v = (v * 0x00000005u) & 0x49249249u;
-  return v;
-}
-
-__device__
-unsigned int device_MortonCode(float x, float y, float z)
-{
-  auto ix = (unsigned int)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
-  auto iy = (unsigned int)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
-  auto iz = (unsigned int)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
-  //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
-  ix = device_ExpandBits(ix);
-  iy = device_ExpandBits(iy);
-  iz = device_ExpandBits(iz);
-  //  std::cout << std::bitset<30>(ix) << " " << std::bitset<30>(iy) << " " << std::bitset<30>(iz) << std::endl;
-  return ix * 4 + iy * 2 + iz;
-}
 
 __global__
 void kernel_MortonCode_Points3F_TPB64(
@@ -416,24 +389,16 @@ void dfm2::cuda::cuda_MortonCode_Points3F(
     const float *hXYZ,
     const unsigned int nXYZ)
 {
-  float *dXYZ;
-  unsigned int *dMC;
-  cudaMalloc((void **) &dXYZ, sizeof(float) * nXYZ * 3);
-  cudaMalloc((void **) &dMC, sizeof(unsigned int) * nXYZ);
-  cudaMemcpy(dXYZ,
-             hXYZ, sizeof(float) * nXYZ * 3, cudaMemcpyHostToDevice);
-
+  const thrust::device_vector<float> dXYZ(hXYZ, hXYZ+nXYZ*3);
+  thrust::device_vector<unsigned int> dMC(nXYZ);
   {
     const unsigned int BLOCK = 64;
     dim3 grid( (nXYZ-1)/BLOCK+1 );
     dim3 block( BLOCK );
-    kernel_MortonCode_Points3F_TPB64 <<< grid, block >>> (dMC,
-        dXYZ, nXYZ);
+    kernel_MortonCode_Points3F_TPB64 <<< grid, block >>> (
+        thrust::raw_pointer_cast(dMC.data()),
+        thrust::raw_pointer_cast(dXYZ.data()),
+        nXYZ);
   }
-
-  cudaMemcpy(hMC,
-             dMC, sizeof(unsigned int) * nXYZ, cudaMemcpyDeviceToHost);
-
-  cudaFree(dXYZ);
-  cudaFree(dMC);
+  thrust::copy(dMC.begin(), dMC.end(), hMC);
 }
