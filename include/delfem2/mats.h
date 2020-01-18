@@ -13,7 +13,7 @@
 #include <complex>
 
 namespace delfem2 {
-
+  
 template<typename T>
 class CMatrixSparse {
 public:
@@ -150,6 +150,16 @@ public:
 
 double CheckSymmetry(const delfem2::CMatrixSparse<double> &mat);
   
+template<typename T>
+T Dot(const std::vector<T> &r_vec,
+      const std::vector<T> &u_vec);
+
+template<typename T>
+T Dot(const T *va,
+       const T *vb,
+       unsigned int n);
+
+  
 } // delfem2
 
 void SetMasterSlave(delfem2::CMatrixSparse<double> &mat, const int *aMSFlag);
@@ -169,10 +179,6 @@ void XPlusAY(std::vector<T> &X,
              const std::vector<T> &Y);
 
 template<typename T>
-T Dot(const std::vector<T> &r_vec,
-      const std::vector<T> &u_vec);
-
-template<typename T>
 void AXPY(T a,
           const std::vector<T> &x,
           std::vector<T> &y);
@@ -188,10 +194,6 @@ void setRHS_Zero(std::vector<T> &vec_b,
                  const std::vector<int> &aBCFlag,
                  int iflag_nonzero);
 
-template<typename T>
-T DotX(const T *va,
-       const T *vb,
-       unsigned int n);
 
 std::complex<double> MultSumX(const std::complex<double> *va,
                               const std::complex<double> *vb,

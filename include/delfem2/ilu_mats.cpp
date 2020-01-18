@@ -480,7 +480,7 @@ std::vector<double> delfem2::Solve_PCG
   
 	double inv_sqnorm_res0;
 	{
-		const double sqnorm_res0 = DotX(r_vec,r_vec,ndof);
+		const double sqnorm_res0 = Dot(r_vec,r_vec,ndof);
     aResHistry.push_back(sqrt(sqnorm_res0));
 		if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
 		inv_sqnorm_res0 = 1.0 / sqnorm_res0;
@@ -492,7 +492,7 @@ std::vector<double> delfem2::Solve_PCG
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-	double rPr = DotX(r_vec,Pr_vec.data(),ndof);
+	double rPr = Dot(r_vec,Pr_vec.data(),ndof);
 	for(unsigned int iitr=0;iitr<max_nitr;iitr++){
 		{
       std::vector<double>& Ap_vec = Pr_vec;      
@@ -505,7 +505,7 @@ std::vector<double> delfem2::Solve_PCG
       AXPY(+alpha,p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
     }
 		{	// Converge Judgement
-			double sqnorm_res = DotX(r_vec,r_vec,ndof);
+			double sqnorm_res = Dot(r_vec,r_vec,ndof);
       aResHistry.push_back(sqrt(sqnorm_res));
       double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
@@ -515,7 +515,7 @@ std::vector<double> delfem2::Solve_PCG
       for(unsigned int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
 			ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
-			const double rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
+			const double rPr1 = Dot(r_vec,Pr_vec.data(),ndof);
       // beta = rPr1/rPr
 			double beta = rPr1/rPr;
 			rPr = rPr1;
@@ -525,7 +525,7 @@ std::vector<double> delfem2::Solve_PCG
 	}
   {
     // Converge Judgement
-    double sq_norm_res = DotX(r_vec,r_vec,ndof);
+    double sq_norm_res = Dot(r_vec,r_vec,ndof);
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
@@ -548,7 +548,7 @@ std::vector<double> delfem2::Solve_PCG
   
   double inv_sqnorm_res0;
   {
-    const double sqnorm_res0 = DotX(r_vec,r_vec,ndof).real();
+    const double sqnorm_res0 = Dot(r_vec,r_vec,ndof).real();
     aResHistry.push_back(sqnorm_res0);
     if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
     inv_sqnorm_res0 = 1.0 / sqnorm_res0;
@@ -560,7 +560,7 @@ std::vector<double> delfem2::Solve_PCG
   // {p} = {Pr}
   std::vector<COMPLEX> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-  COMPLEX rPr = DotX(r_vec,Pr_vec.data(),ndof);
+  COMPLEX rPr = Dot(r_vec,Pr_vec.data(),ndof);
   for(unsigned int iitr=0;iitr<max_nitr;iitr++){
     {
       std::vector<COMPLEX>& Ap_vec = Pr_vec;
@@ -573,7 +573,7 @@ std::vector<double> delfem2::Solve_PCG
       AXPY(+alpha,p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
     }
     {  // Converge Judgement
-      double sqnorm_res = DotX(r_vec,r_vec,ndof).real();
+      double sqnorm_res = Dot(r_vec,r_vec,ndof).real();
       double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
       aResHistry.push_back(conv_ratio);
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
@@ -583,7 +583,7 @@ std::vector<double> delfem2::Solve_PCG
       for(unsigned int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
       ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
-      const COMPLEX rPr1 = DotX(r_vec,Pr_vec.data(),ndof);
+      const COMPLEX rPr1 = Dot(r_vec,Pr_vec.data(),ndof);
       // beta = rPr1/rPr
       COMPLEX beta = rPr1/rPr;
       rPr = rPr1;
@@ -593,7 +593,7 @@ std::vector<double> delfem2::Solve_PCG
   }
   {
     // Converge Judgement
-    double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
+    double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
@@ -619,7 +619,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof);
+    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof);
     if( sq_norm_res_ini < 1.0e-60 ){
       aResHistry.push_back( sqrt( sq_norm_res_ini ) );
       return aResHistry;
@@ -643,7 +643,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
     Mp_vec = p_vec;
     ilu.Solve(Mp_vec);
     // calc (r,r0*)
-    const double r_r2 = DotX(r_vec,r0_vec.data(),ndof);
+    const double r_r2 = Dot(r_vec,r0_vec.data(),ndof);
     // calc {AMp_vec} = [A]*{Mp_vec}
     mat.MatVec(1.0, Mp_vec.data(), 0.0, AMp_vec.data());
     // calc alpha
@@ -667,14 +667,14 @@ std::vector<double> delfem2::Solve_PBiCGStab
     for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; } // update residual
     AXPY(-omega,AMs_vec.data(),r_vec,ndof);
     {
-      const double sq_norm_res = DotX(r_vec,r_vec,ndof);
+      const double sq_norm_res = Dot(r_vec,r_vec,ndof);
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aResHistry.push_back( conv_ratio );
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
     }
     double beta;
     {	// calc beta
-      const double tmp1 = DotX(r_vec,r0_vec.data(),ndof);
+      const double tmp1 = Dot(r_vec,r0_vec.data(),ndof);
       beta = tmp1 * alpha / (r_r2*omega);
     }
     // update p_vector
@@ -707,7 +707,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof).real();
+    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof).real();
     if( sq_norm_res_ini < 1.0e-60 ){
       aResHistry.push_back( sqrt( sq_norm_res_ini ) );
       return aResHistry;
@@ -725,7 +725,7 @@ std::vector<double> delfem2::Solve_PBiCGStab
   std::vector<COMPLEX> p_vec(r_vec,r_vec+ndof);  // {p} = {r}
   
   // calc (r,r0*)
-  COMPLEX r_r0 = DotX(r_vec,r0_vec.data(),ndof);
+  COMPLEX r_r0 = Dot(r_vec,r0_vec.data(),ndof);
   
   for(unsigned int itr=0;itr<max_niter;itr++){
     // {Mp_vec} = [M^-1]*{p}
@@ -747,14 +747,14 @@ std::vector<double> delfem2::Solve_PBiCGStab
     for(unsigned int i=0;i<ndof;++i){ x_vec[i] = x_vec[i]+alpha*Mp_vec[i]+omega*Ms_vec[i]; }
     for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]-omega*AMs_vec[i]; }
     {
-      const double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
+      const double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aResHistry.push_back( conv_ratio );
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
     }
     COMPLEX beta;
     {  // calc beta
-      const COMPLEX tmp1 = DotX(r_vec,r0_vec.data(),ndof);
+      const COMPLEX tmp1 = Dot(r_vec,r0_vec.data(),ndof);
       beta = (tmp1*alpha)/(r_r0*omega);
       r_r0 = tmp1;
     }
@@ -784,7 +784,7 @@ std::vector<double> dfm2::Solve_PCOCG
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof).real();
+    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof).real();
     if( sq_norm_res_ini < 1.0e-60 ){
       aResHistry.push_back( sqrt( sq_norm_res_ini ) );
       return aResHistry;
@@ -805,7 +805,7 @@ std::vector<double> dfm2::Solve_PCOCG
     AXPY(+alpha,p_vec.data(), x_vec,ndof);
     AXPY(-alpha,Ap_vec.data(), r_vec,ndof);
     {
-      const double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
+      const double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aResHistry.push_back( conv_ratio );
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }

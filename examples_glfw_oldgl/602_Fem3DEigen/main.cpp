@@ -209,7 +209,7 @@ void Solve(){
   aTmp1 = aTmp0;
   aConv = Solve_PCG(aTmp1.data(), aMode.data(),
                     conv_ratio, iteration, mat_A, ilu_A);
-  double lam0 = DotX(aTmp0.data(), aMode.data(), aTmp0.size());
+  double lam0 = dfm2::Dot(aTmp0.data(), aMode.data(), aTmp0.size());
   std::cout << 1.0/lam0 << std::endl;
   aTmp0 = aMode;
   ////
