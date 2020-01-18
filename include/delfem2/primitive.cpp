@@ -5,14 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 #include <vector>
 #include <cmath>
-//#include <iostream>
-//#include <cassert>
-//#include <fstream>
-//#include <ctime>
-
 #include "delfem2/primitive.h"
 
 namespace dfm2 = delfem2;
@@ -732,15 +726,12 @@ void dfm2::MeshTri3D_Cube
     }
   }
 }
-template void dfm2::MeshTri3D_Cube(
-    std::vector<float>& aXYZ,
-    std::vector<unsigned int>& aTri,
-    unsigned int n);
-
-template void dfm2::MeshTri3D_Cube(
-    std::vector<double>& aXYZ,
-    std::vector<unsigned int>& aTri,
-    unsigned int n);
+template void dfm2::MeshTri3D_Cube(std::vector<float>& aXYZ,
+                                   std::vector<unsigned int>& aTri,
+                                   unsigned int n);
+template void dfm2::MeshTri3D_Cube(std::vector<double>& aXYZ,
+                                   std::vector<unsigned int>& aTri,
+                                   unsigned int n);
 
 // ---------------------------------------
 

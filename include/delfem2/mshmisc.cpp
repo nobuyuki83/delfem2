@@ -191,9 +191,9 @@ void dfm2::Min3Max3_Points3(
   }
 }
 template void dfm2::Min3Max3_Points3(double min3[3], double max3[3],
-    const double* aXYZ, const unsigned int nXYZ);
+                                     const double* aXYZ, const unsigned int nXYZ);
 template void dfm2::Min3Max3_Points3(float min3[3], float max3[3],
-    const float* aXYZ, const unsigned int nXYZ);
+                                     const float* aXYZ, const unsigned int nXYZ);
 
 // --------------------------------------------------------------------------------
 
@@ -476,14 +476,12 @@ T dfm2::CentsMaxRad_MeshTri3(
   }
   return max_rad0;
 }
-template float dfm2::CentsMaxRad_MeshTri3(
-    std::vector<float>& aXYZ_c0,
-    const std::vector<float>& aXYZ,
-    const std::vector<unsigned int>& aTri);
-template double dfm2::CentsMaxRad_MeshTri3(
-    std::vector<double>& aXYZ_c0,
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTri);
+template float dfm2::CentsMaxRad_MeshTri3(std::vector<float>& aXYZ_c0,
+                                          const std::vector<float>& aXYZ,
+                                          const std::vector<unsigned int>& aTri);
+template double dfm2::CentsMaxRad_MeshTri3(std::vector<double>& aXYZ_c0,
+                                           const std::vector<double>& aXYZ,
+                                           const std::vector<unsigned int>& aTri);
 
 // -------------------------------------
 
@@ -639,39 +637,49 @@ template void dfm2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
 
 // ----------------------------------------
 
+template <typename T>
 void dfm2::CG_MeshTri3_Solid(
-    double& cgx, double& cgy, double& cgz,
-    const std::vector<double>& aXYZ,
-    const std::vector<int>& aTri)
+    T cg[3],
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri)
 { // center of gravity
-  cgx = cgy = cgz = 0.0;
+  cg[0] = cg[1] = cg[2] = 0.0;
   double tw = 0;
   const unsigned int nTri = aTri.size()/3;
   for (std::size_t itri = 0; itri<nTri; itri++){
     unsigned int i1 = aTri[itri*3+0];
     unsigned int i2 = aTri[itri*3+1];
     unsigned int i3 = aTri[itri*3+2];
-    const double q0[3] = { 0, 0, 0 };
-    const double q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
-    const double q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double v = ::TetVolume3D(q0, q1, q2, q3);
+    const T q0[3] = { 0, 0, 0 };
+    const T q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
+    const T q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
+    const T q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
+    T v = ::TetVolume3D(q0, q1, q2, q3);
     tw += v;
-    cgx += (q0[0]+q1[0]+q2[0]+q3[0])*0.25*v;
-    cgy += (q0[1]+q1[1]+q2[1]+q3[1])*0.25*v;
-    cgz += (q0[2]+q1[2]+q2[2]+q3[2])*0.25*v;
+    cg[0] += (q0[0]+q1[0]+q2[0]+q3[0])*0.25*v;
+    cg[1] += (q0[1]+q1[1]+q2[1]+q3[1])*0.25*v;
+    cg[2] += (q0[2]+q1[2]+q2[2]+q3[2])*0.25*v;
   }
-  cgx /= tw;
-  cgy /= tw;
-  cgz /= tw;
+  cg[0] /= tw;
+  cg[1] /= tw;
+  cg[2] /= tw;
 }
+template void dfm2::CG_MeshTri3_Solid(float cg[3],
+                                      const std::vector<float>& aXYZ,
+                                      const std::vector<unsigned int>& aTri);
+template void dfm2::CG_MeshTri3_Solid(double cg[3],
+                                      const std::vector<double>& aXYZ,
+                                      const std::vector<unsigned int>& aTri);
 
+// ----------------------------------------
+
+template <typename T>
 void dfm2::CG_MeshTri3_Shell
-(double& cgx, double& cgy, double& cgz,
- const std::vector<double>& aXYZ,
- const std::vector<int>& aTri)
+(T cg[3],
+ const std::vector<T>& aXYZ,
+ const std::vector<unsigned int>& aTri)
 { // center of gravity
-  cgx = cgy = cgz = 0.0;
+  cg[0] = cg[1] = cg[2] = 0.0;
   double tw = 0;
   const unsigned int nTri = aTri.size()/3;
   for (std::size_t itri = 0; itri<nTri; itri++){
@@ -683,28 +691,35 @@ void dfm2::CG_MeshTri3_Shell
     const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
     double a = TriArea3D(q1, q2, q3);
     tw += a;
-    cgx += (q1[0]+q2[0]+q3[0])*0.333333*a;
-    cgy += (q1[1]+q2[1]+q3[1])*0.333333*a;
-    cgz += (q1[2]+q2[2]+q3[2])*0.333333*a;
+    cg[0] += (q1[0]+q2[0]+q3[0])*0.333333*a;
+    cg[1] += (q1[1]+q2[1]+q3[1])*0.333333*a;
+    cg[2] += (q1[2]+q2[2]+q3[2])*0.333333*a;
   }
-  cgx /= tw;
-  cgy /= tw;
-  cgz /= tw;
+  cg[0] /= tw;
+  cg[1] /= tw;
+  cg[2] /= tw;
 }
+template void dfm2::CG_MeshTri3_Shell(float cg[3],
+                                      const std::vector<float>& aXYZ,
+                                      const std::vector<unsigned int>& aTri);
+template void dfm2::CG_MeshTri3_Shell(double cg[3],
+                                      const std::vector<double>& aXYZ,
+                                      const std::vector<unsigned int>& aTri);
 
+// ------------------------------------------
 
-double dfm2::CG_TriMsh3Flg_Shell
-(double& cgx, double& cgy, double& cgz,
- const std::vector<double>& aXYZ,
- const std::vector<int>& aTri,
+template <typename T>
+T dfm2::CG_TriMsh3Flg_Shell
+(T cg[3],
+ const std::vector<T>& aXYZ,
+ const std::vector<unsigned int>& aTri,
  int iflg,
  const std::vector<int>& aFlg)
 {
-  cgx = 0.0;
-  cgy = 0.0;
-  cgz = 0.0;
+  cg[0] = cg[1] = cg[2] = 0.0;
   double tw = 0;
-  for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
+  const std::size_t nTri = aTri.size()/3;
+  for (std::size_t itri = 0; itri<nTri; itri++){
     if( aFlg[itri] != iflg ) continue;
     const unsigned int i1 = aTri[itri*3+0];
     const unsigned int i2 = aTri[itri*3+1];
@@ -714,15 +729,29 @@ double dfm2::CG_TriMsh3Flg_Shell
     const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
     double a = TriArea3D(q1, q2, q3);
     tw += a;
-    cgx += (q1[0]+q2[0]+q3[0])*0.333333*a;
-    cgy += (q1[1]+q2[1]+q3[1])*0.333333*a;
-    cgz += (q1[2]+q2[2]+q3[2])*0.333333*a;
+    cg[0] += (q1[0]+q2[0]+q3[0])*0.333333*a;
+    cg[1] += (q1[1]+q2[1]+q3[1])*0.333333*a;
+    cg[2] += (q1[2]+q2[2]+q3[2])*0.333333*a;
   }
-  cgx /= tw;
-  cgy /= tw;
-  cgz /= tw;
+  cg[0] /= tw;
+  cg[1] /= tw;
+  cg[2] /= tw;
   return tw;
 }
+
+template float dfm2::CG_TriMsh3Flg_Shell(float cg[3],
+                                         const std::vector<float>& aXYZ,
+                                         const std::vector<unsigned int>& aTri,
+                                         int iflg,
+                                         const std::vector<int>& aFlg);
+
+template double dfm2::CG_TriMsh3Flg_Shell(double cg[3],
+                                          const std::vector<double>& aXYZ,
+                                          const std::vector<unsigned int>& aTri,
+                                          int iflg,
+                                          const std::vector<int>& aFlg);
+
+// ------------------------------------------
 
 void dfm2::CG_Tri
 (double& cgx, double& cgy, double& cgz,
