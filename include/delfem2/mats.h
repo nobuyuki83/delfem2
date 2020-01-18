@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_MATRIX_SPARSE_H
-#define DFM2_MATRIX_SPARSE_H
+#ifndef DFM2_MATS_H
+#define DFM2_MATS_H
 
 #include <vector>
 #include <cassert>
@@ -148,167 +148,9 @@ public:
   std::vector<T> valDia;
 };
 
-
-// Calc Matrix Vector Product
-// {Y} = alpha*[A]{x} + beta*{Y}
-template<>
-void CMatrixSparse<double>::MatVec(double alpha,
-                                   const double *pX,
-                                   double beta,
-                                   double *pY) const;
-
-} // end namespace delfem2
-
-
-// ---------------------------------------------------------------
-// implementation of the template functions from here
-
-template<typename T>
-void delfem2::CMatrixSparse<T>::MatVec
-    (T alpha,
-     const T *x,
-     T beta,
-     T *y) const {
-  const int blksize = len_col * len_row;
-  const T *vcrs = valCrs.data();
-  const T *vdia = valDia.data();
-  const unsigned int *colind = colInd.data();
-  const unsigned int *rowptr = rowPtr.data();
-  // ---------------------------------------------
-  for (unsigned int iblk = 0; iblk < nblk_col; iblk++) {
-    for (unsigned int idof = 0; idof < len_col; idof++) {
-      y[iblk * len_col + idof] *= beta;
-    }
-    const unsigned int colind0 = colind[iblk];
-    const unsigned int colind1 = colind[iblk + 1];
-    for (unsigned int icrs = colind0; icrs < colind1; icrs++) {
-      assert(icrs < rowPtr.size());
-      const unsigned int jblk0 = rowptr[icrs];
-      assert(jblk0 < nblk_row);
-      for (unsigned int idof = 0; idof < len_col; idof++) {
-        for (unsigned int jdof = 0; jdof < len_row; jdof++) {
-          y[iblk * len_col + idof] += alpha * vcrs[icrs * blksize + idof * len_col + jdof] * x[jblk0 * len_row + jdof];
-        }
-      }
-    }
-    for (unsigned int idof = 0; idof < len_col; idof++) {
-      for (unsigned int jdof = 0; jdof < len_row; jdof++) {
-        y[iblk * len_col + idof] += alpha * vdia[iblk * blksize + idof * len_col + jdof] * x[iblk * len_row + jdof];
-      }
-    }
-  }
-}
-
-template<typename T>
-void delfem2::CMatrixSparse<T>::SetFixedBC_Dia(
-    const int *bc_flag) {
-  assert(!this->valDia.empty());
-  assert(this->nblk_row == this->nblk_col);
-  assert(this->len_row == this->len_col);
-  const int blksize = len_col * len_row;
-  for (unsigned int iblk = 0; iblk < nblk_col; iblk++) { // set diagonal
-    for (unsigned int ilen = 0; ilen < len_col; ilen++) {
-      if (bc_flag[iblk * len_col + ilen] == 0) continue;
-      for (unsigned int jlen = 0; jlen < len_row; jlen++) {
-        valDia[iblk * blksize + ilen * len_col + jlen] = 0.0;
-        valDia[iblk * blksize + jlen * len_col + ilen] = 0.0;
-      }
-      valDia[iblk * blksize + ilen * len_col + ilen] = 1.0;
-    }
-  }
-}
-
-template<typename T>
-void delfem2::CMatrixSparse<T>::SetFixedBC_Row(
-    const int *bc_flag) {
-  assert(!this->valDia.empty());
-  assert(this->nblk_row == this->nblk_col);
-  assert(this->len_row == this->len_col);
-  const int blksize = len_col * len_row;
-  for (unsigned int iblk = 0; iblk < nblk_col; iblk++) { // set row
-    for (unsigned int icrs = colInd[iblk]; icrs < colInd[iblk + 1]; icrs++) {
-      for (unsigned int ilen = 0; ilen < len_col; ilen++) {
-        if (bc_flag[iblk * len_col + ilen] == 0) continue;
-        for (unsigned int jlen = 0; jlen < len_row; jlen++) {
-          valCrs[icrs * blksize + ilen * len_col + jlen] = 0.0;
-        }
-      }
-    }
-  }
-}
-
-template<typename T>
-void delfem2::CMatrixSparse<T>::SetFixedBC_Col(
-    const int *bc_flag) {
-  assert(!this->valDia.empty());
-  assert(this->nblk_row == this->nblk_col);
-  assert(this->len_row == this->len_col);
-  const int blksize = len_col * len_row;
-  for (unsigned int icrs = 0; icrs < rowPtr.size(); icrs++) { // set column
-    const int jblk1 = rowPtr[icrs];
-    for (unsigned int jlen = 0; jlen < len_row; jlen++) {
-      if (bc_flag[jblk1 * len_row + jlen] == 0) continue;
-      for (unsigned int ilen = 0; ilen < len_col; ilen++) {
-        valCrs[icrs * blksize + ilen * len_col + jlen] = 0.0;
-      }
-    }
-  }
-}
-
-template<typename T>
-bool delfem2::CMatrixSparse<T>::Mearge
-    (unsigned int nblkel_col, const unsigned int *blkel_col,
-     unsigned int nblkel_row, const unsigned int *blkel_row,
-     unsigned int blksize, const T *emat,
-     std::vector<int> &marge_buffer) {
-  assert(!valCrs.empty());
-  assert(!valDia.empty());
-  assert(blksize == len_col * len_row);
-  marge_buffer.resize(nblk_row);
-  const unsigned int *colind = colInd.data();
-  const unsigned int *rowptr = rowPtr.data();
-  T *vcrs = valCrs.data();
-  T *vdia = valDia.data();
-  for (unsigned int iblkel = 0; iblkel < nblkel_col; iblkel++) {
-    const unsigned int iblk1 = blkel_col[iblkel];
-    assert(iblk1 < nblk_col);
-    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
-      assert(jpsup < rowPtr.size());
-      const int jblk1 = rowptr[jpsup];
-      marge_buffer[jblk1] = jpsup;
-    }
-    for (unsigned int jblkel = 0; jblkel < nblkel_row; jblkel++) {
-      const unsigned int jblk1 = blkel_row[jblkel];
-      assert(jblk1 < nblk_row);
-      if (iblk1 == jblk1) {  // Marge Diagonal
-        const T *pval_in = &emat[(iblkel * nblkel_row + iblkel) * blksize];
-        T *pval_out = &vdia[iblk1 * blksize];
-        for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
-      } else {  // Marge Non-Diagonal
-        if (marge_buffer[jblk1] == -1) continue;
-        assert(marge_buffer[jblk1] >= 0 && marge_buffer[jblk1] < (int) rowPtr.size());
-        const int jpsup1 = marge_buffer[jblk1];
-        assert(rowPtr[jpsup1] == jblk1);
-        const T *pval_in = &emat[(iblkel * nblkel_row + jblkel) * blksize];
-        T *pval_out = &vcrs[jpsup1 * blksize];
-        for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
-      }
-    }
-    for (unsigned int jpsup = colind[iblk1]; jpsup < colind[iblk1 + 1]; jpsup++) {
-      assert(jpsup < rowPtr.size());
-      const int jblk1 = rowptr[jpsup];
-      marge_buffer[jblk1] = -1;
-    }
-  }
-  return true;
-}
-
-
-// --------------------------------------------------------------
-
-namespace delfem2 {
 double CheckSymmetry(const delfem2::CMatrixSparse<double> &mat);
-}
+  
+} // delfem2
 
 void SetMasterSlave(delfem2::CMatrixSparse<double> &mat, const int *aMSFlag);
 

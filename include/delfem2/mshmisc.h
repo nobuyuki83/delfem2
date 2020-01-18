@@ -7,7 +7,7 @@
 
 
 /**
- * @details this file should not depends on anything other than std::vector
+ * @details this file should not depends on anything except for  std::vector
  */
 
 #ifndef DFM2_MSH_H
@@ -132,6 +132,13 @@ void CG_Point3 (T cg[3],
 // points above here
 // ----------------------------------------------------------------------------------------------
 // mesh from here
+  
+
+void CG_Tri(double& cgx, double& cgy, double& cgz,
+            int itri,
+            const std::vector<double>& aXYZ,
+            const std::vector<int>& aTri);
+
 
 /**
  * @brief center positions of each triangle and the maximum radius of the triangle
@@ -139,26 +146,26 @@ void CG_Point3 (T cg[3],
  * the aXYZ_c0 will be resized to aTri.size()/3
  */
 template <typename T>
-T CentsMaxRad_MeshTri3(
-    std::vector<T>& aXYZ_c0,
-    const std::vector<T>& aXYZ,
-    const std::vector<unsigned int>& aTri);
-
-void CG_Tri(double& cgx, double& cgy, double& cgz,
-            int itri,
-            const std::vector<double>& aXYZ,
-            const std::vector<int>& aTri);
-double CG_TriMsh3Flg_Shell(double& cgx, double& cgy, double& cgz,
-                           const std::vector<double>& aXYZ,
-                           const std::vector<int>& aTri,
-                           int iflg,
-                           const std::vector<int>& aFlg);
-void CG_MeshTri3_Shell(double& cgx, double& cgy, double& cgz,
-                       const std::vector<double>& aXYZ,
-                       const std::vector<int>& aTri);
-void CG_MeshTri3_Solid(double& cgx, double& cgy, double& cgz,
-                       const std::vector<double>& aXYZ,
-                       const std::vector<int>& aTri);
+T CentsMaxRad_MeshTri3(std::vector<T>& aXYZ_c0,
+                       const std::vector<T>& aXYZ,
+                       const std::vector<unsigned int>& aTri);
+  
+template <typename T>
+void CG_MeshTri3_Shell(T cg[3],
+                       const std::vector<T>& aXYZ,
+                       const std::vector<unsigned int>& aTri);
+  
+template <typename T>
+T CG_TriMsh3Flg_Shell(T cg[3],
+                      const std::vector<T>& aXYZ,
+                      const std::vector<unsigned int>& aTri,
+                      int iflg,
+                      const std::vector<int>& aFlg);
+  
+template <typename T>
+void CG_MeshTri3_Solid(T cg[3],
+                       const std::vector<T>& aXYZ,
+                       const std::vector<unsigned int>& aTri);
 template <typename T>
 void CG_MeshTet3(T& v_tot,
                  T cg[3],
