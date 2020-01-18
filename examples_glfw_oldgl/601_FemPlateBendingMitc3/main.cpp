@@ -102,7 +102,7 @@ void SolveProblem_PlateBendingMITC3()
                                                            aXY0.data(), aXY0.size()/2,
                                                            aTri.data(), aTri.size()/3,
                                                            aVal.data());
-  std::cout << Dot(vec_b, vec_b) << std::endl;
+  std::cout << dfm2::Dot(vec_b, vec_b) << std::endl;
   mat_A.SetFixedBC(aBCFlag.data());
   setRHS_Zero(vec_b, aBCFlag,0);
   //

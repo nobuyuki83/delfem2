@@ -508,37 +508,39 @@ void MatSparse_ScaleBlkLen_LeftRight
 
 // ----------------------------------------------------------------------
 
-template <>
-double Dot
-(const std::vector<double>& r_vec,
- const std::vector<double>& u_vec)
+template <typename T>
+T dfm2::Dot
+(const std::vector<T>& r_vec,
+ const std::vector<T>& u_vec)
 {
   const std::size_t n = r_vec.size();
   assert( u_vec.size() == n );
-  double r = 0.0;
-  for(unsigned int i=0;i<n;i++){
-    r += r_vec[i]*u_vec[i];
-  }
+  T r = 0.0;
+  for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
   return r;
 }
+template float dfm2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
+template double dfm2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
+template COMPLEX dfm2::Dot(const std::vector<COMPLEX>& r_vec, const std::vector<COMPLEX>& u_vec);
 
-template <>
-COMPLEX Dot
-(const std::vector<COMPLEX>& va,
- const std::vector<COMPLEX>& vb)
+// -----------------------------
+
+template<typename T>
+T dfm2::Dot
+ (const T* va,
+  const T* vb,
+  unsigned int n)
 {
-  const std::size_t n = va.size();
-  assert( vb.size() == n );
-  double sr = 0.0, si = 0.0;
-  for(unsigned int i=0;i<n;++i){
-    const COMPLEX& a = va[i];
-    const COMPLEX& b = vb[i];
-    sr += a.real()*b.real() + a.imag()*b.imag();
-    si += a.imag()*b.real() - a.real()*b.imag();
-  }
-  return {sr,si};
+  T r = 0.0;
+  for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
+  return r;
 }
+template float dfm2::Dot(const float* va, const float* vb, unsigned int n);
+template double dfm2::Dot(const double* va, const double* vb, unsigned int n);
+template COMPLEX dfm2::Dot(const COMPLEX* va, const COMPLEX* vb, unsigned int n);
 
+
+// -------------------------------------------------
 
 // {y} = {y} + a * {x}
 template<>
@@ -564,33 +566,6 @@ void AXPY
   for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
 
-template<>
-double DotX
-(const double* va,
- const double* vb,
- unsigned int n)
-{
-  double r = 0.0;
-  for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
-  return r;
-}
-
-template<>
-COMPLEX DotX
-(const COMPLEX* va,
- const COMPLEX* vb,
- unsigned int n)
-{
-  double sr = 0.0;
-  double si = 0.0;
-  for(unsigned int i=0;i<n;i++){
-    const COMPLEX& a = va[i];
-    const COMPLEX& b = vb[i];
-    sr += a.real()*b.real() + a.imag()*b.imag();
-    si += a.imag()*b.real() - a.real()*b.imag();
-  }
-  return {sr,si};
-}
 
 COMPLEX MultSumX
 (const COMPLEX* va,
@@ -700,7 +675,7 @@ Solve_CG
   assert(r_vec.size() == ndof);
   std::vector<double> aConv;
   x_vec.assign(ndof,0.0);   // {x} = 0
-  double sqnorm_res = Dot(r_vec,r_vec);
+  double sqnorm_res = dfm2::Dot(r_vec,r_vec);
   if( sqnorm_res < 1.0e-30 ){ return aConv; }
 	double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
   std::vector<double> Ap_vec(ndof);
@@ -709,12 +684,12 @@ Solve_CG
 		double alpha;
 		{	// alpha = (r,r) / (p,Ap)
 			mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
-			const double pAp = Dot(p_vec,Ap_vec);
+			const double pAp = dfm2::Dot(p_vec,Ap_vec);
 			alpha = sqnorm_res / pAp;
 		}
 		AXPY(alpha,p_vec,x_vec);    // {x} = +alpha*{ p} + {x} (update x)
 		AXPY(-alpha,Ap_vec,r_vec);  // {r} = -alpha*{Ap} + {r}
-		const double sqnorm_res_new = Dot(r_vec,r_vec);
+		const double sqnorm_res_new = dfm2::Dot(r_vec,r_vec);
     double conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res_ini );
     aConv.push_back(conv_ratio);
 		if( conv_ratio < conv_ratio_tol ){ return aConv; }
@@ -743,7 +718,7 @@ std::vector<double> Solve_CG
   assert(r_vec.size() == ndof);
   std::vector<double> aConv;
   x_vec.assign(ndof,0.0);   // {x} = 0
-  double sqnorm_res = Dot(r_vec,r_vec).real();
+  double sqnorm_res = dfm2::Dot(r_vec,r_vec).real();
   if( sqnorm_res < 1.0e-30 ){ return aConv; }
   const double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
   std::vector<COMPLEX> Ap_vec(ndof);
@@ -752,14 +727,14 @@ std::vector<double> Solve_CG
     double alpha;
     {  // alpha = (r,r) / (p,Ap)
       mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
-      COMPLEX C_pAp = Dot(p_vec,Ap_vec);
+      COMPLEX C_pAp = dfm2::Dot(p_vec,Ap_vec);
       assert( fabs(C_pAp.imag())<1.0e-3 );
       const double pAp = C_pAp.real();
       alpha = sqnorm_res / pAp;
     }
     AXPY(COMPLEX(+alpha),p_vec,x_vec);    // {x} = +alpha*{ p} + {x} (updatex)
     AXPY(COMPLEX(-alpha),Ap_vec,r_vec);  // {r} = -alpha*{Ap} + {r}
-    double sqnorm_res_new = Dot(r_vec,r_vec).real();
+    double sqnorm_res_new = dfm2::Dot(r_vec,r_vec).real();
     const double conv_ratio = sqrt( sqnorm_res * inv_sqnorm_res_ini );
     aConv.push_back(conv_ratio);
     if( conv_ratio < conv_ratio_tol ){ return aConv; }
@@ -791,7 +766,7 @@ Solve_BiCGSTAB
   std::vector<double> aConv;
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = Dot(r_vec, r_vec).real();
+    const double sq_norm_res_ini = dfm2::Dot(r_vec, r_vec).real();
     if( sq_norm_res_ini < 1.0e-30 ){ return aConv; }
     sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
   }
@@ -805,18 +780,18 @@ Solve_BiCGSTAB
   
   const std::vector<COMPLEX> r0_vec = r_vec;   // {r2} = {r}
   p_vec = r_vec;    // {p} = {r}
-  COMPLEX r_r0 = Dot(r_vec,r0_vec);   // calc ({r},{r2})
+  COMPLEX r_r0 = dfm2::Dot(r_vec,r0_vec);   // calc ({r},{r2})
   
   for(unsigned int iitr=0;iitr<max_niter;iitr++){
     mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data()); // calc {Ap} = [A]*{p}
-    const COMPLEX alpha = r_r0 / Dot(Ap_vec,r0_vec); // alhpa = ({r},{r2}) / ({Ap},{r2})
+    const COMPLEX alpha = r_r0 / dfm2::Dot(Ap_vec,r0_vec); // alhpa = ({r},{r2}) / ({Ap},{r2})
     // {s} = {r} - alpha*{Ap}
     s_vec = r_vec;
     AXPY(-alpha, Ap_vec, s_vec);
     // calc {As} = [A]*{s}
     mat.MatVec(1.0,s_vec.data(),0.0,As_vec.data());
     // calc omega
-    const COMPLEX omega = Dot(s_vec,As_vec) / Dot(As_vec,As_vec).real();  // omega=({As},{s})/({As},{As})
+    const COMPLEX omega = dfm2::Dot(s_vec,As_vec) / dfm2::Dot(As_vec,As_vec).real();  // omega=({As},{s})/({As},{As})
     // ix += alpha*{p} + omega*{s} (update solution)
     AXPY(alpha,p_vec,x_vec);
     AXPY(omega,s_vec,x_vec);
@@ -824,13 +799,13 @@ Solve_BiCGSTAB
     r_vec = s_vec;
     AXPY(-omega,As_vec,r_vec);
     {
-      const double sq_norm_res = Dot(r_vec,r_vec).real();
+      const double sq_norm_res = dfm2::Dot(r_vec,r_vec).real();
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aConv.push_back(conv_ratio);
       if( conv_ratio < conv_ratio_tol ){ return aConv; }
     }
     { // compute beta
-      const COMPLEX tmp1 = Dot(r_vec,r0_vec);
+      const COMPLEX tmp1 = dfm2::Dot(r_vec,r0_vec);
       const COMPLEX beta = (tmp1*alpha)/(r_r0*omega); // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
       r_r0 = tmp1;
        // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
@@ -861,7 +836,7 @@ Solve_BiCGSTAB
   std::vector<double> aConv;
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = Dot(r_vec, r_vec);
+    const double sq_norm_res_ini = dfm2::Dot(r_vec, r_vec);
     if( sq_norm_res_ini < 1.0e-30 ){ return aConv; }
     sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
   }
@@ -876,13 +851,13 @@ Solve_BiCGSTAB
   
   r2_vec = r_vec;   // {r2} = {r}
   p_vec = r_vec;    // {p} = {r}
-  double r_r2 = Dot(r_vec,r2_vec);   // calc ({r},{r2})
+  double r_r2 = dfm2::Dot(r_vec,r2_vec);   // calc ({r},{r2})
   
   for(unsigned int iitr=0;iitr<max_niter;iitr++){
     mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data()); // calc {Ap} = [A]*{p}
     double alpha;
     { // alhpa = ({r},{r2}) / ({Ap},{r2})
-      const double denominator = Dot(Ap_vec,r2_vec);
+      const double denominator = dfm2::Dot(Ap_vec,r2_vec);
       alpha = r_r2 / denominator;
     }
     // {s} = {r} - alpha*{Ap}
@@ -893,8 +868,8 @@ Solve_BiCGSTAB
     // calc omega
     double omega;
     { // omega = ({As},{s}) / ({As},{As})
-      const double denominator = Dot(As_vec,As_vec);
-      const double numerator = Dot(As_vec,s_vec);
+      const double denominator = dfm2::Dot(As_vec,As_vec);
+      const double numerator = dfm2::Dot(As_vec,s_vec);
       omega = numerator / denominator;
     }
     // ix += alpha*{p} + omega*{s} (update solution)
@@ -904,13 +879,13 @@ Solve_BiCGSTAB
     r_vec = s_vec;
     AXPY(-omega,As_vec,r_vec);
     {
-      const double sq_norm_res = Dot(r_vec,r_vec);
+      const double sq_norm_res = dfm2::Dot(r_vec,r_vec);
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aConv.push_back(conv_ratio);
       if( conv_ratio < conv_ratio_tol ){ return aConv; }
     }
     { // compute beta
-      const double tmp1 = Dot(r_vec,r2_vec);
+      const double tmp1 = dfm2::Dot(r_vec,r2_vec);
       const double beta = (tmp1*alpha) / (r_r2*omega);     // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
       r_r2 = tmp1;
       // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
@@ -965,7 +940,7 @@ void NormalizeX(
     double* p0,
     unsigned int n)
 {
-  const double ss = DotX(p0,p0,n);
+  const double ss = dfm2::Dot(p0,p0,n);
   ScaleX(p0,n,1.0/sqrt(ss));
 }
 
@@ -974,7 +949,7 @@ void OrthogonalizeToUnitVectorX(
     const double* p0,
     unsigned int n)
 {
-  double d = DotX(p0, p1, n);
+  double d = dfm2::Dot(p0, p1, n);
   for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
 }
 

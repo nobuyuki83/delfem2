@@ -187,7 +187,7 @@ void Solve(){
   aConv = Solve_PCG(aTmp1.data(), aMode.data(),
                     conv_ratio, iteration, mat_A, ilu_A);
   {
-    double lam0 = DotX(aTmp0.data(), aMode.data(), aTmp0.size());
+    double lam0 = dfm2::Dot(aTmp0.data(), aMode.data(), aTmp0.size());
     double freq_sim = sqrt(1.0/lam0-offset_dia)/(2*M_PI);
     std::cout << "freq theo" << freq_theo << "   freq_sim:" << freq_sim << "   " << freq_theo/freq_sim  << "     " << aConv.size() << std::endl;
   }
