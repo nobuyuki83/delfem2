@@ -5,7 +5,7 @@ void cuda_VecScale(
     float *hOut,
     const float *hIn,
     float scale,
-    const int n);
+    const unsigned int n);
 
 // -------------------------------------------------------------
 
@@ -16,7 +16,6 @@ float cuda_Dot(
 
 // -------------------------------------------------------------
 
-
 void cuda_MatMat(
     float *h_C_gpu,
     const float *h_A,
@@ -25,8 +24,9 @@ void cuda_MatMat(
 
 // -------------------------------------------------------------
 
-void cuda_MinMax_Points3F(
-    float *p_minmax,
+void cuda_Min3Max3_Points3F(
+    float *p_min3,
+    float *p_max3,
     const float *p_XYZ,
     unsigned int np);
 

@@ -120,7 +120,8 @@ void dfm2::MinMaxXYZ(
 {
   mm[0] = +1;
   mm[1] = -1;
-  for(std::size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+  const unsigned int nXYZ = aXYZ.size()/3;
+  for(unsigned ixyz=0;ixyz<nXYZ;++ixyz){
     updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
                     aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
   }
@@ -176,22 +177,23 @@ template void dfm2::updateMinMaxXYZ(double& x_min, double& x_max,
 // -----------------------------
 
 template<typename T>
-void dfm2::BB3_Points3(
-    T bb3[6],
+void dfm2::Min3Max3_Points3(
+    T min3[3],
+    T max3[3],
     const T* aXYZ,
     const unsigned int nXYZ)
 {
-  bb3[0] = +1;
-  bb3[3] = -1;
+  min3[0] = +1;
+  max3[0] = -1;
   for(unsigned int ixyz=0;ixyz<nXYZ;++ixyz){
-    updateMinMaxXYZ(bb3[0], bb3[3], bb3[1], bb3[4], bb3[2], bb3[5],
+    updateMinMaxXYZ(min3[0], max3[0], min3[1], max3[1], min3[2], max3[2],
                     aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
   }
 }
-template void dfm2::BB3_Points3(double bb3[6],
-                                const double* aXYZ, const unsigned int nXYZ);
-template void dfm2::BB3_Points3(float bb3[6],
-                                const float* aXYZ, const unsigned int nXYZ);
+template void dfm2::Min3Max3_Points3(double min3[3], double max3[3],
+    const double* aXYZ, const unsigned int nXYZ);
+template void dfm2::Min3Max3_Points3(float min3[3], float max3[3],
+    const float* aXYZ, const unsigned int nXYZ);
 
 // --------------------------------------------------------------------------------
 
@@ -454,7 +456,7 @@ T dfm2::CentsMaxRad_MeshTri3(
   T max_rad0 = -1;
   const unsigned int nTri = aTri.size()/3;
   aXYZ_c0.resize(nTri*3);
-  for(size_t itri=0;itri<nTri;++itri) {
+  for(std::size_t itri=0;itri<nTri;++itri) {
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
@@ -750,8 +752,8 @@ void dfm2::CG_MeshTet3
 {
   v_tot = cg[0] = cg[1] = cg[2] = 0.0;
   const T* pXYZ = aXYZC.data();
-  const size_t nTet = aTet.size()/4;
-  for(size_t it=0;it<nTet;++it){
+  const std::size_t nTet = aTet.size()/4;
+  for(std::size_t it=0;it<nTet;++it){
     const T* p0 = pXYZ+aTet[it*4+0]*3;
     const T* p1 = pXYZ+aTet[it*4+1]*3;
     const T* p2 = pXYZ+aTet[it*4+2]*3;
