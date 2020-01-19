@@ -117,14 +117,15 @@ void SetProblem()
     dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
         aXYZ0,aTri);
     dfm2::Normalize_Points3D(aXYZ0,1.0);
-    dfm2::Rotate_Points3D(aXYZ0, -M_PI*0.5, 0.0, 0.0);
+    dfm2::Rotate_Points3(aXYZ0,
+                         -M_PI*0.5, 0.0, 0.0);
   }
 
   {
     std::vector<unsigned int> psup_ind, psup;
-    JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                aTri.data(), aTri.size()/3, 3,
-                                                (int)aXYZ0.size()/3);
+    dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                      aTri.data(), aTri.size()/3, 3,
+                                                      (int)aXYZ0.size()/3);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.Initialize(aXYZ0.size()/3, 3, true);
     mat_A.SetPattern(psup_ind.data(), psup_ind.size(),

@@ -43,21 +43,22 @@ void Min3Max3_Points3(
     const T* aXYZ,
     const unsigned int nXYZ);
 
-
-void MinMaxXYZ(
-    double mm[6],
-    const std::vector<double>& aXYZ);
-
-
 // center & width
-void GetCenterWidth(double& cx, double& cy, double& cz,
-                    double& wx, double& wy, double& wz,
-                    const int nXYZ, const double* paXYZ);
-void CenterWidth_Points3D(double& cx, double& cy, double& cz,
-                          double& wx, double& wy, double& wz,
-                          const std::vector<double>& aXYZ);
-void CenterWidth_Points3D(double cw[6],
-                          const std::vector<double>& aXYZ);
+template <typename T>
+void CenterWidth_Point3(T& cx, T& cy, T& cz,
+                        T& wx, T& wy, T& wz,
+                        const T* paXYZ, unsigned int nXYZ);
+  
+template <typename T>
+void CenterWidth_Points3(T& cx, T& cy, T& cz,
+                         T& wx, T& wy, T& wz,
+                         const std::vector<T>& aXYZ);
+  
+template <typename T>
+void CenterWidth_Points3(T c[3],
+                         T w[3],
+                         const std::vector<T>& aXYZ);
+  
 void GetCenterWidthGroup(double& cx, double& cy, double& cz,
                          double& wx, double& wy, double& wz,
                          const std::vector<double>& aXYZ,
@@ -96,9 +97,10 @@ void GetCenterWidthLocal(double& lcx, double& lcy, double& lcz,
  * @brief rotate with the Bryant angle (in the  order of XYZ) around the origin.
  * @details the angles are in the radian.
  */
-void Rotate_Points3D(std::vector<double>& aXYZ,
-                     double radx, double rady, double radz);
-  
+template <typename T>
+void Rotate_Points3(std::vector<T>& aXYZ,
+                    T radx, T rady, T radz);
+
 template <typename T>
 void Translate_Points3(std::vector<T>& aXYZ,
                        T tx, T ty, T tz);

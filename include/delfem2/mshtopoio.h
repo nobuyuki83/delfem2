@@ -42,14 +42,16 @@ public:
   }
 //  void Draw() const;
   std::vector<double> AABB3_MinMax() const{
-    double cw[6]; delfem2::CenterWidth_Points3D(cw, aPos);
+    double c[3], w[3];
+    delfem2::CenterWidth_Points3(c, w,
+                                 aPos);
     std::vector<double> aabb(6);
-    aabb[0] = cw[0]-0.5*cw[3];
-    aabb[1] = cw[0]+0.5*cw[3];
-    aabb[2] = cw[1]-0.5*cw[4];
-    aabb[3] = cw[1]+0.5*cw[4];
-    aabb[4] = cw[2]-0.5*cw[5];
-    aabb[5] = cw[2]+0.5*cw[5];
+    aabb[0] = c[0]-0.5*w[0];
+    aabb[1] = c[0]+0.5*w[0];
+    aabb[2] = c[1]-0.5*w[1];
+    aabb[3] = c[1]+0.5*w[1];
+    aabb[4] = c[2]-0.5*w[2];
+    aabb[5] = c[2]+0.5*w[2];
     return aabb;
   }
   void Read(const std::string& fname){

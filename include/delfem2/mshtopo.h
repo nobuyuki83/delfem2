@@ -225,7 +225,6 @@ void JArray_AddMasterSlavePattern(
 
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,
                       const std::vector<unsigned int>& aQuad);
-} // namespace delfem2
 
 void convert2Tri(
     std::vector<int>& aTri,
@@ -249,9 +248,6 @@ void FlipElement(
     const std::vector<int>& aElem,
     const std::vector<delfem2::MESHELEM_TYPE>& aElemType);
 
-// -------------------
-
-namespace delfem2 {
 
 /**
  * @function make elsup
@@ -326,7 +322,7 @@ void makeSurroundingRelationship(std::vector<int> &aElemFaceInd,
                                  const std::vector<delfem2::MESHELEM_TYPE> &aElemType,
                                  const std::vector<unsigned int> &elsup_ind,
                                  const std::vector<unsigned int> &elsup);
-}
+
 // -------------------
 // make boundary
 
@@ -346,7 +342,6 @@ void makeBoundary(std::vector<int>& aElemInd_Bound,
 // edge unidir (ip0<ip1)
 // line (array of 2)
 
-namespace delfem2{
 void JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int>& psup_ind,
     std::vector<unsigned int>& psup,
@@ -356,7 +351,7 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood(
     const std::vector<unsigned int> &elsup,
     unsigned int nnoel,
     unsigned int nPoint);
-}
+
 
 void JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int>& psup_ind,
@@ -393,7 +388,7 @@ void JArrayEdge_MeshElem(
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
     bool is_bidirectional);
-
+  
 void MeshLine_JArrayEdge(
     std::vector<unsigned int>& aLine,
     //
@@ -414,6 +409,11 @@ void MarkConnectedElements(std::vector<int>& aIndGroup,
                             int igroup,
                             const std::vector<int>& aTriSurRel,
                             const int nfael);
+void MarkConnectedElements(std::vector<int>& aIndGroup,
+                           unsigned int itri_ker,
+                           int igroup,
+                           const std::vector<int>& aElemFaceInd,
+                           const std::vector<int>& aElemFaceRel);
 void MakeGroupElem(int& ngroup,
                    std::vector<int>& aIndGroup,
                    const std::vector<int>& aElem,
@@ -448,9 +448,6 @@ void ClipGroup(std::vector<int>& aElemInd1,
                const std::vector<int>& aIndGroup);
 
 // -----------------------------------------------
-
-namespace delfem2 {
-
 
 void QuadSubdiv(std::vector<unsigned int> &aQuad1,
                 std::vector<unsigned int> &psup_ind,
@@ -523,9 +520,9 @@ public:
   void makeBoundary(CElemMixed& emb,
                     const std::vector<int>& aElemFaceInd,
                     const std::vector<int>& aElemFaceRel){
-    ::makeBoundary(emb.aElemInd, emb.aElem, emb.aElemType,
-                   aElemInd, aElem, aElemType,
-                   aElemFaceInd, aElemFaceRel);
+    delfem2::makeBoundary(emb.aElemInd, emb.aElem, emb.aElemType,
+                          aElemInd, aElem, aElemType,
+                          aElemFaceInd, aElemFaceRel);
   }
   void makeBoundary(CElemMixed& emb, int nPo){
     std::vector<unsigned int> elsup_ind, elsup;
@@ -540,30 +537,30 @@ public:
                      std::vector<int>& aIndGroup,
                      const std::vector<int>& aElemFaceInd,
                      const std::vector<int>& aElemFaceRel){
-    ::MakeGroupElem(ngroup, aIndGroup,
-                    aElemInd, aElem,
-                    aElemFaceInd, aElemFaceRel);
+    delfem2::MakeGroupElem(ngroup, aIndGroup,
+                           aElemInd, aElem,
+                           aElemFaceInd, aElemFaceRel);
   }
   void MakeGroupElem(int& ngroup,
                      std::vector<int>& aIndGroup,
                      int nPo){
-    ::MakeGroupElem(ngroup, aIndGroup,
-                    aElemInd, aElem, aElemType, nPo);
+    delfem2::MakeGroupElem(ngroup, aIndGroup,
+                           aElemInd, aElem, aElemType, nPo);
   }
   void ClipGroup(CElemMixed& em,
                  int igroup,
                  const std::vector<int>& aIndGroup){
-    ::ClipGroup(em.aElemInd,em.aElem,em.aElemType,
-                aElemInd,aElem,aElemType,
-                igroup,aIndGroup);
+    delfem2::ClipGroup(em.aElemInd,em.aElem,em.aElemType,
+                       aElemInd,aElem,aElemType,
+                       igroup,aIndGroup);
   }
   void FlipElement(std::vector<int>& aElem_Flip){
-    ::FlipElement(aElem_Flip,
-           aElemInd,aElem,aElemType);
+    delfem2::FlipElement(aElem_Flip,
+                         aElemInd,aElem,aElemType);
   }
   void getTriElement(std::vector<int>& aTri){
-    ::convert2Tri(aTri,
-                  aElemInd,aElem,aElemType);
+    delfem2::convert2Tri(aTri,
+                         aElemInd,aElem,aElemType);
   }
 private:
 public:
@@ -572,6 +569,6 @@ public:
   std::vector<delfem2::MESHELEM_TYPE> aElemType;
 };
   
-}
-
+} // end namespace delfem2
+ 
 #endif /* meshtopo_hpp */

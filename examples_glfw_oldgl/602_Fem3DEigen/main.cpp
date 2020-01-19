@@ -165,9 +165,9 @@ void InitializeProblem_ShellEigenPB()
   aTmp0.assign(nDoF, 0.0);
   //////
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),

@@ -89,9 +89,9 @@ void InitializeProblem_Poisson()
   }
   //////
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
@@ -160,9 +160,9 @@ void InitializeProblem_Diffusion()
   }
   //////
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
@@ -233,9 +233,9 @@ void InitializeProblem_ShellEigenPB()
   }
   //////
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
@@ -306,9 +306,9 @@ void InitializeProblem_LinearSolid_Dynamic()
   }
   //////
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   /*
   CJaggedArray crs;
@@ -403,9 +403,9 @@ void InitializeProblem_Stokes_Static()
   crs.Sort();
    */
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
@@ -486,9 +486,9 @@ void InitializeProblem_Stokes_Dynamic()
   crs.Sort();
    */
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);
@@ -577,9 +577,9 @@ void InitializeProblem_NavierStokes_Dynamic()
   crs.Sort();
    */
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTet.data(), aTet.size()/4, 4,
-                                              (int)aXYZ.size()/3);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTet.data(), aTet.size()/4, 4,
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   ////
   mat_A.Initialize(np, 4, true);

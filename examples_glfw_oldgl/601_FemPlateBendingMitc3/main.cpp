@@ -78,9 +78,9 @@ void InitializeProblem_PlateBendingMITC3()
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTri.data(), aTri.size()/3, 3,
-                                              (int)aXY0.size()/2);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTri.data(), aTri.size()/3, 3,
+                                                    (int)aXY0.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 3, true);

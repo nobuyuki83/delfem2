@@ -131,7 +131,7 @@ void dfm2::JArray_AddDiagonal
 }
 
 // in the edge ip -> jp, it holds (ip < jp)
-void JArrayEdgeUnidir_PointSurPoint
+void dfm2::JArrayEdgeUnidir_PointSurPoint
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
  //
@@ -209,8 +209,8 @@ void dfm2::JArrayElemSurPoint_MeshElem
 
 // ------------------------------
 
-void ElemQuad_DihedralTri
-(std::vector<unsigned int>& aQuad,
+void dfm2::ElemQuad_DihedralTri
+ (std::vector<unsigned int>& aQuad,
  const unsigned int* aTri, int nTri,
  int np)
 {
@@ -257,7 +257,7 @@ void dfm2::convert2Tri_Quad
   }
 }
 
-void convert2Tri
+void dfm2::convert2Tri
 (std::vector<int>& aTri,
  //
  const std::vector<int>& aElemInd,
@@ -282,7 +282,7 @@ void convert2Tri
   }
 }
 
-void FlipElement_Tri(std::vector<int>& aTri)
+void dfm2::FlipElement_Tri(std::vector<int>& aTri)
 {
   for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     //    int i0 = aTri[itri*3+0];
@@ -293,9 +293,9 @@ void FlipElement_Tri(std::vector<int>& aTri)
   }
 }
 
-void FlipElement
+void dfm2::FlipElement
 (std::vector<int>& aElem_Flip,
- ////
+ // ----------
  const std::vector<int>& aElemInd,
  const std::vector<int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
@@ -571,7 +571,7 @@ void dfm2::makeSurroundingRelationship
   }
 }
 
-void makeBoundary
+void dfm2::makeBoundary
 (std::vector<int>& aElemInd_Bound,
  std::vector<int>& aElem_Bound,
  std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
@@ -665,7 +665,7 @@ void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
   psup_ind[0] = 0;
 }
 
-void JArrayPointSurPoint_MeshOneRingNeighborhood
+void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood
 (std::vector<unsigned int>& psup_ind,
  std::vector<unsigned int>& psup,
  //
@@ -681,10 +681,10 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood
                           pElem, elsup_ind,elsup, nPoEl, nPo);
 }
 
-void makeOneRingNeighborhood_TriFan
+void dfm2::makeOneRingNeighborhood_TriFan
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
- ////
+ // ----------------------
  const std::vector<int>& aTri,
  const std::vector<int>& aTriSurRel,
  const std::vector<int>& elsup_ind,
@@ -725,7 +725,7 @@ void makeOneRingNeighborhood_TriFan
   }
 }
 
-void JArrayEdge_MeshElem
+void dfm2::JArrayEdge_MeshElem
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
  //
@@ -767,7 +767,7 @@ void JArrayEdge_MeshElem
 }
 
 
-void MeshLine_JArrayEdge
+void dfm2::MeshLine_JArrayEdge
 (std::vector<unsigned int>& aLine,
  //
  const std::vector<unsigned int> &psup_ind,
@@ -784,7 +784,7 @@ void MeshLine_JArrayEdge
   }
 }
 
-void MeshLine_MeshElem
+void dfm2::MeshLine_MeshElem
 (std::vector<unsigned int>& aLine,
  const unsigned int* aElm0,
  unsigned int nElem,
@@ -925,7 +925,7 @@ void dfm2::JArray_AddMasterSlavePattern
 
 // ---------------------------------------
 
-void MarkConnectedElements
+void dfm2::MarkConnectedElements
 (std::vector<int>& aIndGroup,
  int itri_ker,
  int igroup,
@@ -949,7 +949,7 @@ void MarkConnectedElements
   }
 }
 
-void MarkConnectedElements
+void dfm2::MarkConnectedElements
 (std::vector<int>& aIndGroup,
  unsigned int itri_ker,
  int igroup,
@@ -975,7 +975,7 @@ void MarkConnectedElements
   }
 }
 
-void MakeGroupElem
+void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  const std::vector<int>& aTri,
@@ -998,7 +998,7 @@ void MakeGroupElem
   ngroup = igroup+1;
 }
 
-void MakeGroupElem_Tri
+void dfm2::MakeGroupElem_Tri
 (int& ngroup,
  std::vector<int>& aIndGroup,
  const std::vector<int>& aTri,
@@ -1008,7 +1008,7 @@ void MakeGroupElem_Tri
                 aTri,aTriSurRel,3,3);
 }
 
-void MakeGroupElem
+void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  // -----------
@@ -1037,7 +1037,7 @@ void MakeGroupElem
 }
 
 
-void MakeGroupElem
+void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  //
@@ -1057,7 +1057,7 @@ void MakeGroupElem
                 aElemInd,aElem,aElemFaceInd,aElemFaceRel);
 }
 
-void ClipGroup
+void dfm2::ClipGroup
  (std::vector<int>& aElemInd1,
   std::vector<int>& aElem1,
   std::vector<dfm2::MESHELEM_TYPE>& aElemType1,

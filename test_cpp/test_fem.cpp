@@ -130,9 +130,9 @@ TEST(fem,plate_bending_mitc3_cantilever)
     dfm2::CPreconditionerILU<double> ilu_A;
     {
       std::vector<unsigned int> psup_ind, psup;
-      JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                  aTri.data(), aTri.size()/3, 3,
-                                                  (int)aXY0.size()/2);
+      dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                        aTri.data(), aTri.size()/3, 3,
+                                                        (int)aXY0.size()/2);
       dfm2::JArray_Sort(psup_ind, psup);
       ////
       const int np = (int)aXY0.size()/2;
@@ -157,7 +157,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
                                                                aVal.data());
       mat_A.SetFixedBC(aBCFlag.data());
       setRHS_Zero(vec_b, aBCFlag,0);
-      // ///////////////////////
+      // --------------------------
       std::vector<double> vec_x;
       {
         ilu_A.SetValueILU(mat_A);
