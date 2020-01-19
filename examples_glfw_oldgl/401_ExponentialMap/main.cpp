@@ -214,9 +214,9 @@ void SetNewProblem()
                       aXYZ, aTri);
     {
       double cx,cy,cz, wx,wy,wz;
-      delfem2::CenterWidth_Points3D(cx,cy,cz,
-                                    wx,wy,wz,
-                                    aXYZ);
+      delfem2::CenterWidth_Points3(cx,cy,cz,
+                                   wx,wy,wz,
+                                   aXYZ);
       delfem2::Translate_Points3(aXYZ,
                                  -cx,-cy,-cz);
       double wm = wx;

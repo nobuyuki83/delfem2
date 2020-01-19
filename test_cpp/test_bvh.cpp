@@ -35,7 +35,8 @@ TEST(bvh,inclusion_sphere)
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ, 0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
   dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
@@ -67,8 +68,8 @@ TEST(bvh,inclusion_aabb)
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ,
-                             0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
   dfm2::CBVH_MeshTri3D<dfm2::CBV3D_AABB> bvh;
@@ -100,7 +101,8 @@ TEST(bvh,nearestinc_sphere)
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ, 0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
 //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
   std::vector<double> aNorm(aXYZ.size());
@@ -135,7 +137,7 @@ TEST(bvh,nearestinc_sphere)
     }
     CVector3 n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
     EXPECT_EQ( n0*(p0-q1)>0, itr%2==0);
-    //////
+    // ---------------------
     {
       CPointElemSurf pes2;
       double dist_tri = -1, dist_bv = 0.1;
@@ -157,8 +159,8 @@ TEST(bvh,nearest_range) // find global nearest from range
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ,
-                    0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
@@ -225,7 +227,8 @@ TEST(bvh,nearest_point) // find global nearest directry
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ, 0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
@@ -256,8 +259,8 @@ TEST(bvh,sdf) // find global nearest directry
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ,
-                             0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
@@ -289,8 +292,8 @@ TEST(bvh,lineintersection)
   std::vector<unsigned int> aTri;
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri, 1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ,
-                             0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
@@ -351,8 +354,8 @@ TEST(bvh,rayintersection)
   { // make a unit sphere
     delfem2::MeshTri3D_Sphere(aXYZ, aTri,
                               1.0, 64, 32);
-    delfem2::Rotate_Points3D(aXYZ,
-                             0.2, 0.3, 0.4);
+    delfem2::Rotate_Points3(aXYZ,
+                            0.2, 0.3, 0.4);
   }
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),

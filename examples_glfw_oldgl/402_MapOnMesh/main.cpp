@@ -48,8 +48,8 @@ void InitializeProblem() {
     dfm2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
                    aXYZ, aTri);
     double cx, cy, cz, wx, wy, wz;
-    dfm2::CenterWidth_Points3D(cx, cy, cz, wx, wy, wz,
-                               aXYZ);
+    dfm2::CenterWidth_Points3(cx, cy, cz, wx, wy, wz,
+                              aXYZ);
     dfm2::Translate_Points3(aXYZ,
                             -cx, -cy, -cz);
     double wm = wx;
@@ -58,8 +58,8 @@ void InitializeProblem() {
     wm = (wz > wm) ? wz : wm;
     dfm2::Scale_PointsX(aXYZ,
                         1.5 / wm);
-    dfm2::Rotate_Points3D(aXYZ,
-                          -M_PI * 0.5, 0, 0);
+    dfm2::Rotate_Points3(aXYZ,
+                         -M_PI * 0.5, 0.0, 0.0);
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;

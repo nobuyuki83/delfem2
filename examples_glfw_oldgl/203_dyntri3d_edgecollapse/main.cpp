@@ -47,8 +47,8 @@ void SetNewProblem()
                     nnode,pXYZs, ntri,aTriInd);
   {
     double cx,cy,cz, wx,wy,wz;
-    delfem2::GetCenterWidth(cx,cy,cz, wx,wy,wz,
-                            nnode,pXYZs);
+    delfem2::CenterWidth_Point3(cx,cy,cz, wx,wy,wz,
+                                pXYZs,nnode);
     delfem2::Translate_Points3(pXYZs,
                                nnode,-cx,-cy,-cz);
     double wm = wx;

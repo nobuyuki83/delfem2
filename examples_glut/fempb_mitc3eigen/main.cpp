@@ -123,7 +123,7 @@ void MakeMesh(){
     aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(+leny*0.5);
     aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
   }
-  //////////////////////////////
+  // ----------------------------
   std::vector<dfm2::CEPo2> aPo2D;
   std::vector<dfm2::ETri> aETri;
   std::vector<CVector2> aVec2;
@@ -139,18 +139,18 @@ void InitializeProblem_ShellEigenPB()
   const int np = (int)aXY0.size()/2;
   const int nDoF = np*3;
   aTmp0.assign(nDoF, 0.0);
-  //////
+  // --------------------------------------
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              aTri.data(), aTri.size()/3, 3,
-                                              (int)aXY0.size()/2);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    aTri.data(), aTri.size()/3, 3,
+                                                    (int)aXY0.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
   
-  ///////////////////////////////////////////
+  // ------------------------------
   aMassLumpedSqrtInv.resize(nDoF);
   aModesKer.resize(nDoF*3);
   SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3(aMassLumpedSqrtInv.data(),

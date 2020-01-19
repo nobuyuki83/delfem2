@@ -256,8 +256,8 @@ std::tuple<py::array_t<unsigned int>, py::array_t<unsigned int>>
 PyJArray_MeshPsup(const py::array_t<unsigned int>& elm, int npoint)
 {
   std::vector<unsigned int> psup_ind, psup;
-  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                              elm.data(), elm.shape()[0], elm.shape()[1], npoint);
+  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                    elm.data(), elm.shape()[0], elm.shape()[1], npoint);
   py::array_t<unsigned int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<unsigned int> np_psup((pybind11::size_t)psup.size(), psup.data());
   return std::forward_as_tuple(np_psup_ind, np_psup);
@@ -296,7 +296,7 @@ py::array_t<unsigned int> PyElemQuad_DihedralTri
   assert( AssertNumpyArray2D(aTri, -1, 3) );
   const unsigned int nTri = aTri.shape()[0];
   std::vector<unsigned int> aQuad;
-  ElemQuad_DihedralTri(aQuad, aTri.data(), nTri, np);
+  dfm2::ElemQuad_DihedralTri(aQuad, aTri.data(), nTri, np);
   py::array_t<unsigned int> npQuad({(int)aQuad.size()/4,4}, aQuad.data());
   return npQuad;
 }
@@ -379,8 +379,8 @@ py::array_t<unsigned int> PyEdge_Mesh
   JArrayEdge_MeshElem(edge_ind, edge,
                       elm.data(), type, elsup_ind, elsup, false);
   std::vector<unsigned int> aLine;
-  MeshLine_JArrayEdge(aLine,
-                      edge_ind, edge);
+  dfm2::MeshLine_JArrayEdge(aLine,
+                            edge_ind, edge);
   py::array_t<unsigned int> npLine({(int)aLine.size()/2,2}, aLine.data());
   return npLine;
 }

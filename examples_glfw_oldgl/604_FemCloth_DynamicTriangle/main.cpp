@@ -174,13 +174,14 @@ int main(int argc,char* argv[])
     aTri[it*3+1] = aETri[it].v[1];
     aTri[it*3+2] = aETri[it].v[2];
   }
-  ElemQuad_DihedralTri(aQuad,aTri.data(),aTri.size()/3,aXYZ0.size()/3);
+  dfm2::ElemQuad_DihedralTri(aQuad,
+                             aTri.data(),aTri.size()/3,aXYZ0.size()/3);
   {
     const std::size_t np = aXYZ0.size()/3;
     mat_A.Initialize(np,3,true);
     std::vector<unsigned int> psup_ind,psup;
-    JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                aQuad.data(),aQuad.size()/4, 4, np);
+    dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+                                                      aQuad.data(),aQuad.size()/4, 4, np);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
     ilu_A.Initialize_ILU0(mat_A);

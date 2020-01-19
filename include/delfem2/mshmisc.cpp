@@ -55,24 +55,13 @@ inline static void UnitNormalAreaTri3
 }
 
 
-static void MatVec3(const double m[9], const double x[3], double y[3]){
+template <typename T>
+static void MatVec3(T y[3],
+                    const T m[9], const T x[3]){
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
-
-/*
-static void VecMat3(const double x[3], const double m[9],  double y[3]){
-  y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
-  y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
-  y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
-}
- */
-/*
-static inline double Distance3D(const double p0[3], const double p1[3]){
-  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
-}
- */
 
 static double Distance3(const double p0[3], const double p1[3]) {
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
@@ -112,28 +101,46 @@ static T TetVolume3D
    ) * 0.16666666666666666666666666666667;
 }
 
-// -----------------------------------------------------------------
-
-void dfm2::MinMaxXYZ(
-    double mm[6],
-    const std::vector<double>& aXYZ)
+static void Mat3_Bryant(double m[9],
+                        double rx, double ry, double rz)
 {
-  mm[0] = +1;
-  mm[1] = -1;
-  const unsigned int nXYZ = aXYZ.size()/3;
-  for(unsigned ixyz=0;ixyz<nXYZ;++ixyz){
-    updateMinMaxXYZ(mm[0], mm[1], mm[2], mm[3], mm[4], mm[5],
-                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
-  }
+  m[0] = cos(rz)*cos(ry);
+  m[1] = cos(rz)*sin(ry)*sin(rx)-sin(rz)*cos(rx);
+  m[2] = cos(rz)*sin(ry)*cos(rx)+sin(rz)*sin(rx);
+  m[3] = sin(rz)*cos(ry);
+  m[4] = sin(rz)*sin(ry)*sin(rx)+cos(rz)*cos(rx);
+  m[5] = sin(rz)*sin(ry)*cos(rx)-cos(rz)*sin(rx);
+  m[6] = -sin(ry);
+  m[7] = cos(ry)*sin(rx);
+  m[8] = cos(ry)*cos(rx);
 }
 
+static void Mat3_Bryant(float m[9],
+                        float rx, float ry, float rz)
+{
+  m[0] = cosf(rz)*cosf(ry);
+  m[1] = cosf(rz)*sinf(ry)*sinf(rx)-sinf(rz)*cosf(rx);
+  m[2] = cosf(rz)*sinf(ry)*cosf(rx)+sinf(rz)*sinf(rx);
+  m[3] = sinf(rz)*cosf(ry);
+  m[4] = sinf(rz)*sinf(ry)*sinf(rx)+cosf(rz)*cosf(rx);
+  m[5] = sinf(rz)*sinf(ry)*cosf(rx)-cosf(rz)*sinf(rx);
+  m[6] = -sinf(ry);
+  m[7] = cosf(ry)*sinf(rx);
+  m[8] = cosf(ry)*cosf(rx);
+}
+
+// static function above
+// -----------------------------------------------------------------
+// exposed function below
+
+template <typename T>
 void CenterWidth_MinMaxXYZ
-(double& cx, double& cy, double& cz,
- double& wx, double& wy, double& wz,
+(T& cx, T& cy, T& cz,
+ T& wx, T& wy, T& wz,
  //
- double x_min, double x_max,
- double y_min, double y_max,
- double z_min, double z_max)
+ T x_min, T x_max,
+ T y_min, T y_max,
+ T z_min, T z_max)
 {
   cx = (x_min+x_max)*0.5;
   cy = (y_min+y_max)*0.5;
@@ -197,131 +204,44 @@ template void dfm2::Min3Max3_Points3(float min3[3], float max3[3],
 
 // --------------------------------------------------------------------------------
 
-void dfm2::RemoveUnreferencedPoints_MeshElem
-(std::vector<double>& aXYZ1,
- std::vector<unsigned int>& aElem1,
- std::vector<int>& aMap01,
- unsigned int ndim,
- const std::vector<double>& aXYZ0,
- const std::vector<unsigned int>& aElem0)
-{
-  unsigned int np0 = aXYZ0.size()/ndim;
-  aMap01.assign(np0,-2);
-  for(int ip : aElem0){
-    aMap01[ip] = -1;
-  }
-  int npj = 0;
-  for(unsigned int ip=0;ip<np0;++ip){
-    if( aMap01[ip] == -2 ) continue;
-    aMap01[ip] = npj;
-    npj++;
-  }
-  aXYZ1.resize(npj*ndim);
-  for(unsigned int ip=0;ip<np0;++ip){
-    if( aMap01[ip] == -2 ) continue;
-    int jp = aMap01[ip];
-    for(unsigned int idim=0;idim<ndim;++idim){
-      aXYZ1[jp*ndim+idim] = aXYZ0[ip*ndim+idim];
-    }
-  }
-  aElem1.resize(aElem0.size());
-  for(std::size_t it=0;it<aElem0.size();++it){
-    int ip = aElem0[it];
-    int jp = aMap01[ip];
-    aElem1[it] = jp;
-  }
-}
-
-void dfm2::Normal_MeshTri3D
- (double* aNorm,
-  const double* aXYZ,
-  unsigned int nXYZ,
-  const unsigned int* aTri,
-  unsigned int nTri)
-{
-  for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
-  for(unsigned int itri=0;itri<nTri;itri++){
-    const unsigned int i0 = aTri[itri*3+0];
-    const unsigned int i1 = aTri[itri*3+1];
-    const unsigned int i2 = aTri[itri*3+2];
-    double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
-    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
-    double un[3], area;    
-    UnitNormalAreaTri3(un,area, p0,p1,p2); 
-    aNorm[i0*3+0] += un[0];  aNorm[i0*3+1] += un[1];  aNorm[i0*3+2] += un[2];
-    aNorm[i1*3+0] += un[0];  aNorm[i1*3+1] += un[1];  aNorm[i1*3+2] += un[2];    
-    aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];    
-  }
-  for(unsigned int ino=0;ino<nXYZ;ino++){
-    const double n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
-    const double invlen = 1.0/Length3D(n);
-    aNorm[ino*3+0] *= invlen;
-    aNorm[ino*3+1] *= invlen;
-    aNorm[ino*3+2] *= invlen;    
-  }  
-}
-
-void dfm2::Quality_MeshTri2D
-(double& max_aspect, double& min_area,
- const double* aXY,
- const unsigned int* aTri, unsigned int nTri)
-{
-  max_aspect = 0;
-  min_area = 0;
-  for(unsigned int itri=0;itri<nTri;itri++){
-    const unsigned int i0 = aTri[itri*3+0];
-    const unsigned int i1 = aTri[itri*3+1];
-    const unsigned int i2 = aTri[itri*3+2];
-    const double* p0 = aXY+i0*2;
-    const double* p1 = aXY+i1*2;
-    const double* p2 = aXY+i2*2;
-    const double area = TriArea2D(p0,p1,p2);
-    const double len01 = Distance2D(p0,p1);
-    const double len12 = Distance2D(p1,p2);
-    const double len20 = Distance2D(p2,p0);
-    const double len_ave = (len01+len12+len20)/3.0;
-    const double aspect = len_ave * len_ave / area;
-    if( itri == 0 ){
-      max_aspect = aspect;
-      min_area = area;
-    }
-    else{
-      if( aspect > max_aspect ){ max_aspect = aspect; }
-      if( area < min_area ){ min_area = area; }
-    }
-  }
-}
-
-// ------------------------------------------------------------------------------
-
-void dfm2::GetCenterWidth
-(double& cx, double& cy, double& cz,
- double& wx, double& wy, double& wz,
- const int nXYZ, const double* paXYZ)
+template <typename T>
+void dfm2::CenterWidth_Point3
+(T& cx, T& cy, T& cz,
+ T& wx, T& wy, T& wz,
+ const T* paXYZ, const unsigned int nXYZ)
 {
   if( paXYZ == 0 ){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  double x_min=paXYZ[0], x_max=paXYZ[0];
-  double y_min=paXYZ[1], y_max=paXYZ[1];
-  double z_min=paXYZ[2], z_max=paXYZ[2];
-  for(int ino=0;ino<nXYZ;ino++){
+  T x_min=paXYZ[0], x_max=paXYZ[0];
+  T y_min=paXYZ[1], y_max=paXYZ[1];
+  T z_min=paXYZ[2], z_max=paXYZ[2];
+  for(unsigned int ino=0;ino<nXYZ;ino++){
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                     paXYZ[ino*3+0], paXYZ[ino*3+1], paXYZ[ino*3+2]);
   }
   CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
 }
+template void dfm2::CenterWidth_Point3 (float& cx, float& cy, float& cz,
+                                        float& wx, float& wy, float& wz,
+                                        const float* paXYZ, const unsigned int nXYZ);
+template void dfm2::CenterWidth_Point3 (double& cx, double& cy, double& cz,
+                                        double& wx, double& wy, double& wz,
+                                        const double* paXYZ, const unsigned int nXYZ);
 
-void dfm2::CenterWidth_Points3D
-(double& cx, double& cy, double& cz,
-double& wx, double& wy, double& wz,
-const std::vector<double>& aXYZ)
+
+// ---------------------------------
+
+template <typename T>
+void dfm2::CenterWidth_Points3
+(T& cx, T& cy, T& cz,
+ T& wx, T& wy, T& wz,
+ const std::vector<T>& aXYZ)
 {
   const int np = (int)aXYZ.size()/3;
   if(np==0){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  double x_min=aXYZ[0], x_max=aXYZ[0];
-  double y_min=aXYZ[1], y_max=aXYZ[1];
-  double z_min=aXYZ[2], z_max=aXYZ[2];
+  T x_min=aXYZ[0], x_max=aXYZ[0];
+  T y_min=aXYZ[1], y_max=aXYZ[1];
+  T z_min=aXYZ[2], z_max=aXYZ[2];
   for (int ip=0; ip<np; ++ip){
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                     aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
@@ -329,14 +249,33 @@ const std::vector<double>& aXYZ)
   CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
                         x_min,x_max, y_min,y_max, z_min,z_max);
 }
+template void dfm2::CenterWidth_Points3 (float& cx, float& cy, float& cz,
+                                         float& wx, float& wy, float& wz,
+                                         const std::vector<float>& aXYZ);
+template void dfm2::CenterWidth_Points3 (double& cx, double& cy, double& cz,
+                                         double& wx, double& wy, double& wz,
+                                         const std::vector<double>& aXYZ);
 
-void dfm2::CenterWidth_Points3D
-(double cw[6],
- const std::vector<double>& aXYZ)
+// -------------------------------------
+
+template <typename T>
+void dfm2::CenterWidth_Points3(T c[3],
+                               T w[3],
+                               const std::vector<T>& aXYZ)
 {
-  CenterWidth_Points3D(cw[0],cw[1],cw[2],cw[3],cw[4],cw[5],
-                 aXYZ);
+  dfm2::CenterWidth_Points3(c[0],c[1],c[2],
+                            w[0],w[1],w[2],
+                            aXYZ);
 }
+template void dfm2::CenterWidth_Points3(float c[3],
+                                        float w[3],
+                                        const std::vector<float>& aXYZ);
+template void dfm2::CenterWidth_Points3(double c[3],
+                                        double w[3],
+                                        const std::vector<double>& aXYZ);
+
+
+// -------------------------------------
 
 void dfm2::GetCenterWidthGroup
 (double& cx, double& cy, double& cz,
@@ -566,48 +505,45 @@ template void dfm2::Translate_Points2(std::vector<double>& aXYZ, double tx, doub
 
 // --------------
 
-void dfm2::Rotate_Points3D
-(std::vector<double>& aXYZ,
-double radx, double rady, double radz)
+template <typename T>
+void dfm2::Rotate_Points3
+(std::vector<T>& aXYZ,
+T radx, T rady, T radz)
 {
-  const double phi = radx;
-  const double theta = rady;
-  const double psi = radz;
-  // ----------
-  const double mat[9] = {
-    cos(psi)*cos(theta), cos(psi)*sin(theta)*sin(phi)-sin(psi)*cos(phi), cos(psi)*sin(theta)*cos(phi)+sin(psi)*sin(phi),
-    sin(psi)*cos(theta), sin(psi)*sin(theta)*sin(phi)+cos(psi)*cos(phi), sin(psi)*sin(theta)*cos(phi)-cos(psi)*sin(phi),
-    -sin(theta),         cos(theta)*sin(phi),                            cos(theta)*cos(phi) };
-  // ----------
+  T mat[9]; Mat3_Bryant(mat, radx, rady, radz);
+  T* pXYZ = aXYZ.data();
   const unsigned int nXYZ = aXYZ.size()/3;
   for (unsigned int ixyz = 0; ixyz<nXYZ; ++ixyz){
-    double p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
-    double res[3];  MatVec3(mat, p, res);
-    aXYZ[ixyz*3+0] = res[0];
-    aXYZ[ixyz*3+1] = res[1];
-    aXYZ[ixyz*3+2] = res[2];
+    const T p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
+    MatVec3(pXYZ+ixyz*3,  mat, p);
   }
 }
+template void dfm2::Rotate_Points3 (std::vector<float>& aXYZ,
+                                    float radx, float rady, float radz);
+template void dfm2::Rotate_Points3 (std::vector<double>& aXYZ,
+                                    double radx, double rady, double radz);
+
+// -----------------------------------------
 
 double dfm2::Size_Points3D_LongestAABBEdge
  (const std::vector<double>& aXYZ)
 {
-  double cx, cy, cz, wx, wy, wz;
-  CenterWidth_Points3D(cx, cy, cz, wx, wy, wz, aXYZ);
-  double wmax = largest(wx, wy, wz);
-  return wmax;
+  double c[3], w[3];
+  CenterWidth_Points3(c, w,
+                      aXYZ);
+  return largest(w[0], w[1], w[2]);
 }
 
 void dfm2::Normalize_Points3D
 (std::vector<double>& aXYZ,
  double s)
 {
-  double cx, cy, cz, wx, wy, wz;
-  CenterWidth_Points3D(cx, cy, cz, wx, wy, wz,
-                       aXYZ);
+  double c[3], w[3];
+  CenterWidth_Points3(c,w,
+                      aXYZ);
   Translate_Points3(aXYZ,
-                    -cx, -cy, -cz);
-  double wmax = largest(wx, wy, wz);
+                    -c[0], -c[1], -c[2]);
+  double wmax = largest(w[0], w[1], w[2]);
   Scale_PointsX(aXYZ,
                 s/wmax);
 }
@@ -635,7 +571,105 @@ void dfm2::CG_Point3
 template void dfm2::CG_Point3(float cg[3], const std::vector<float>& aXYZ);
 template void dfm2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
 
-// ----------------------------------------
+// -----------------------------------------------------------------------------------
+
+
+void dfm2::RemoveUnreferencedPoints_MeshElem
+ (std::vector<double>& aXYZ1,
+  std::vector<unsigned int>& aElem1,
+  std::vector<int>& aMap01,
+  unsigned int ndim,
+  const std::vector<double>& aXYZ0,
+  const std::vector<unsigned int>& aElem0)
+{
+  unsigned int np0 = aXYZ0.size()/ndim;
+  aMap01.assign(np0,-2);
+  for(int ip : aElem0){
+    aMap01[ip] = -1;
+  }
+  int npj = 0;
+  for(unsigned int ip=0;ip<np0;++ip){
+    if( aMap01[ip] == -2 ) continue;
+    aMap01[ip] = npj;
+    npj++;
+  }
+  aXYZ1.resize(npj*ndim);
+  for(unsigned int ip=0;ip<np0;++ip){
+    if( aMap01[ip] == -2 ) continue;
+    int jp = aMap01[ip];
+    for(unsigned int idim=0;idim<ndim;++idim){
+      aXYZ1[jp*ndim+idim] = aXYZ0[ip*ndim+idim];
+    }
+  }
+  aElem1.resize(aElem0.size());
+  for(std::size_t it=0;it<aElem0.size();++it){
+    int ip = aElem0[it];
+    int jp = aMap01[ip];
+    aElem1[it] = jp;
+  }
+}
+
+void dfm2::Normal_MeshTri3D
+(double* aNorm,
+ const double* aXYZ,
+ unsigned int nXYZ,
+ const unsigned int* aTri,
+ unsigned int nTri)
+{
+  for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
+  for(unsigned int itri=0;itri<nTri;itri++){
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
+    double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
+    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
+    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
+    double un[3], area;
+    UnitNormalAreaTri3(un,area, p0,p1,p2);
+    aNorm[i0*3+0] += un[0];  aNorm[i0*3+1] += un[1];  aNorm[i0*3+2] += un[2];
+    aNorm[i1*3+0] += un[0];  aNorm[i1*3+1] += un[1];  aNorm[i1*3+2] += un[2];
+    aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];
+  }
+  for(unsigned int ino=0;ino<nXYZ;ino++){
+    const double n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
+    const double invlen = 1.0/Length3D(n);
+    aNorm[ino*3+0] *= invlen;
+    aNorm[ino*3+1] *= invlen;
+    aNorm[ino*3+2] *= invlen;
+  }
+}
+
+void dfm2::Quality_MeshTri2D
+ (double& max_aspect, double& min_area,
+  const double* aXY,
+  const unsigned int* aTri, unsigned int nTri)
+{
+  max_aspect = 0;
+  min_area = 0;
+  for(unsigned int itri=0;itri<nTri;itri++){
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
+    const double* p0 = aXY+i0*2;
+    const double* p1 = aXY+i1*2;
+    const double* p2 = aXY+i2*2;
+    const double area = TriArea2D(p0,p1,p2);
+    const double len01 = Distance2D(p0,p1);
+    const double len12 = Distance2D(p1,p2);
+    const double len20 = Distance2D(p2,p0);
+    const double len_ave = (len01+len12+len20)/3.0;
+    const double aspect = len_ave * len_ave / area;
+    if( itri == 0 ){
+      max_aspect = aspect;
+      min_area = area;
+    }
+    else{
+      if( aspect > max_aspect ){ max_aspect = aspect; }
+      if( area < min_area ){ min_area = area; }
+    }
+  }
+}
+
 
 template <typename T>
 void dfm2::CG_MeshTri3_Solid(
