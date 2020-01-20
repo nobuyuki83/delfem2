@@ -123,7 +123,7 @@ void myGlutMouse(int button, int state, int x, int y)
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   CVector2 sp0(nav.mouse_x, nav.mouse_y);
-  const CVector3 src_pick = screenUnProjection(CVector3(sp0.x,sp0.y, 0.0), mMV,mPj);
+  const CVector3 src_pick = screenUnProjection(CVector3(sp0.x(),sp0.y(), 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
     CVector3 offsym(0,0,0);

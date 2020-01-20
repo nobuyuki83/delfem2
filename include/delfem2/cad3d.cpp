@@ -918,11 +918,11 @@ bool FindFittingPoint
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
       CVector2 q0 = aP2D[iq+0];
       CVector2 q1 = aP2D[iq+1];
-      if( (q0.x-p2d_org.x)*(q1.x-p2d_org.x) < 0 ){
-        p2d_near.x = p2d_org.x;
-        p2d_near.y = ((q0+q1)*0.5).y;
-        p2d_norm.x = (q1-q0).y;
-        p2d_norm.y = (q0-q1).x;
+      if( (q0.x()-p2d_org.x())*(q1.x()-p2d_org.x()) < 0 ){
+        p2d_near.p[0] = p2d_org.x();
+        p2d_near.p[1] = ((q0+q1)*0.5).y();
+        p2d_norm.p[0] = (q1-q0).y();
+        p2d_norm.p[1] = (q0-q1).x();
         isHit = true;
         break;
       }
@@ -933,11 +933,11 @@ bool FindFittingPoint
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
       CVector2 q0 = aP2D[iq+0];
       CVector2 q1 = aP2D[iq+1];
-      if( (q0.y-p2d_org.y)*(q1.y-p2d_org.y) < 0 ){
-        p2d_near.x = ((q0+q1)*0.5).x;
-        p2d_near.y = p2d_org.y;
-        p2d_norm.x = (q1-q0).y;
-        p2d_norm.y = (q0-q1).x;
+      if( (q0.y()-p2d_org.y())*(q1.y()-p2d_org.y()) < 0 ){
+        p2d_near.p[0] = ((q0+q1)*0.5).x();
+        p2d_near.p[1] = p2d_org.y();
+        p2d_norm.p[0] = (q1-q0).y();
+        p2d_norm.p[1] = (q0-q1).x();
         isHit = true;
         break;
       }
@@ -1000,7 +1000,7 @@ bool MovePointsAlongSketch
   CVector3 plane_ey(0,0,0); plane_ey[(inorm+2)%3] = 1;
   std::vector<CVector2> aP2D;
   for(const auto& sp0 : aStroke1){
-    CVector3 src = screenUnProjection(CVector3(sp0.x,sp0.y,0), mMV, mPj);
+    CVector3 src = screenUnProjection(CVector3(sp0.x(),sp0.y(),0), mMV, mPj);
     CVector3 dir = screenUnProjection(CVector3(0,0,1), mMV, mPj);
     CVector3 p = intersection_Plane_Line(plane_org, plane_nrm, src,dir);
     aP2D.emplace_back((p-plane_org)*plane_ex,(p-plane_org)*plane_ey);
@@ -1016,8 +1016,8 @@ bool MovePointsAlongSketch
     bool res = FindFittingPoint(p2d_near,p2d_norm,
                                 p2d_org, aP2D, isConstX,isConstY,view_height*0.2);
     if( res ){
-      CVector3 p3d_near = plane_org + p2d_near.x*plane_ex + p2d_near.y*plane_ey;
-      CVector3 n3d_near = p2d_norm.x*plane_ex + p2d_norm.y*plane_ey;
+      CVector3 p3d_near = plane_org + p2d_near.x()*plane_ex + p2d_near.y()*plane_ey;
+      CVector3 n3d_near = p2d_norm.x()*plane_ex + p2d_norm.y()*plane_ey;
       v.pos = p3d_near;
       v.norm = n3d_near;
       is_moved = true;

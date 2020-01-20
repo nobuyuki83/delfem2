@@ -195,8 +195,8 @@ void PyCopyMeshDynTri2D
   {
     double* pP = (double*)(npPos.request().ptr);
     for(int ip=0;ip<np;++ip){
-      pP[ip*2+0] = mesh.aVec2[ip].x;
-      pP[ip*2+1] = mesh.aVec2[ip].y;
+      pP[ip*2+0] = mesh.aVec2[ip].x();
+      pP[ip*2+1] = mesh.aVec2[ip].y();
     }
   }
   {

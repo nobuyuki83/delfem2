@@ -41,9 +41,9 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
     const CVector2& p0 = aVec2[i0];
     const CVector2& p1 = aVec2[i1];
     const CVector2& p2 = aVec2[i2];
-    ::glVertex2d(p0.x,p0.y);
-    ::glVertex2d(p1.x,p1.y);
-    ::glVertex2d(p2.x,p2.y);
+    ::glVertex2d(p0.x(),p0.y());
+    ::glVertex2d(p1.x(),p1.y());
+    ::glVertex2d(p2.x(),p2.y());
   }
   ::glEnd();
 }
@@ -67,9 +67,9 @@ void dfm2::opengl::DrawMeshDynTri_Edge
     const CVector2& p0 = aVec2[i0];
     const CVector2& p1 = aVec2[i1];
     const CVector2& p2 = aVec2[i2];
-    glVertex2d(p0.x,p0.y);  glVertex2d(p1.x,p1.y);
-    glVertex2d(p1.x,p1.y);  glVertex2d(p2.x,p2.y);
-    glVertex2d(p2.x,p2.y);  glVertex2d(p0.x,p0.y);
+    glVertex2d(p0.x(),p0.y());  glVertex2d(p1.x(),p1.y());
+    glVertex2d(p1.x(),p1.y());  glVertex2d(p2.x(),p2.y());
+    glVertex2d(p2.x(),p2.y());  glVertex2d(p0.x(),p0.y());
   }
   ::glEnd();
 }
@@ -190,7 +190,7 @@ void dfm2::opengl::Draw_CCad2DEdge
     if( edge.type_edge == 1 ){
       assert( edge.param.size() == 4 );
       const CVector2 lx = (edge.p1 - edge.p0).Normalize();
-      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 ly = CVector2(lx.y(),-lx.x());
       const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
       const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
       ::glColor3d(0,1,0);
@@ -231,7 +231,7 @@ void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
   for(size_t iv=0;iv<aVtx.size();++iv){
     if( (int)iv == ivtx_picked ){ ::glColor3d(1,1,0); }
     else{ ::glColor3d(1,0,0); }
-    ::glVertex3d( aVtx[iv].pos.x, aVtx[iv].pos.y, 0.0);
+    ::glVertex3d( aVtx[iv].pos.x(), aVtx[iv].pos.y(), 0.0);
   }
   ::glEnd();
   //

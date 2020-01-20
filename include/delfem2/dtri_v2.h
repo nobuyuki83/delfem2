@@ -181,8 +181,8 @@ public:
   {
     aVec2.resize(nPo);
     for(int ipo=0;ipo<nPo;ipo++){
-      aVec2[ipo].x = aXY[ipo*2+0];
-      aVec2[ipo].y = aXY[ipo*2+1];
+      aVec2[ipo].p[0] = aXY[ipo*2+0];
+      aVec2[ipo].p[1] = aXY[ipo*2+1];
     }
     InitializeMesh(aEPo, aETri,
                    aTri, nTri, nPo);
@@ -190,8 +190,8 @@ public:
   void setXY(const double* aXY, int nPo){
     assert((int)aVec2.size()==nPo);
     for(int ipo=0;ipo<nPo;ipo++){
-      aVec2[ipo].x = aXY[ipo*2+0];
-      aVec2[ipo].y = aXY[ipo*2+1];
+      aVec2[ipo].p[0] = aXY[ipo*2+0];
+      aVec2[ipo].p[1] = aXY[ipo*2+1];
     }
   }
   void Check()
@@ -202,11 +202,11 @@ public:
   }
   std::vector<double> MinMax_XYZ() const {
     double x_min,x_max, y_min,y_max;
-    x_min=x_max=aVec2[0].x;
-    y_min=y_max=aVec2[0].y;
+    x_min=x_max=aVec2[0].x();
+    y_min=y_max=aVec2[0].y();
     for(unsigned int ipo=0;ipo<aEPo.size();ipo++){
-      const double x = aVec2[ipo].x;
-      const double y = aVec2[ipo].y;
+      const double x = aVec2[ipo].x();
+      const double y = aVec2[ipo].y();
       x_min = (x_min < x) ? x_min : x;
       x_max = (x_max > x) ? x_max : x;
       y_min = (y_min < y) ? y_min : y;

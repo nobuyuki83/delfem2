@@ -28,7 +28,16 @@ template <typename T>
 T Length2(const T v[2]);
 
 template <typename T>
-T Distance2D(const T v1[2], const T v2[2]);
+T Distance2(const T v1[2], const T v2[2]);
+  
+template <typename T>
+void MatVec2(T w[2], const T A[4], const T v[2]);
+  
+template <typename T>
+void MatMat2(T AB[4], const T A[4], const T B[4]);
+
+template <typename T>
+T SquareLength2(const T v[2]);
   
 }
 
@@ -38,10 +47,7 @@ double SqDistance2D(const double v1[2], const double v2[2]);
 
 void noise2D(double noise[2]);
 bool InverseMat2(double invB[4], const double B[4]);
-void matMat2(double AB[4], const double A[4], const double B[4]);
-void MatVec2(double w[2], const double A[4], const double v[2]);
 void setNormalized2(double w[2]);
-double sqLen2(const double v[2]);
 void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);
 void RotationalComponentOfMatrix2(double R[4], const double M[4]);
@@ -60,40 +66,38 @@ std::istream &operator>>(std::istream &input, CVector2& v);
  */
 class CVector2{
 public:
-	CVector2(){
-    x = 0; y = 0;
-  }
+  CVector2(): p{0.0, 0.0} {}
 	CVector2( const CVector2& rhs ){
-		this->x = rhs.x;
-		this->y = rhs.y;
+		this->p[0] = rhs.p[0];
+		this->p[1] = rhs.p[1];
 	}
 	CVector2(double x, double y){
-		this->x = x;
-		this->y = y;
+		this->p[0] = x;
+		this->p[1] = y;
 	}
 	
 	friend double Dot(const CVector2&, const CVector2&);
   CVector2 operator-() const{
-    return CVector2(-x,-y);
+    return CVector2(-p[0],-p[1]);
   }
 	inline CVector2& operator+=(const CVector2& rhs){
-		x += rhs.x;
-		y += rhs.y;
+		p[0] += rhs.p[0];
+		p[1] += rhs.p[1];
 		return *this;
 	}
 	inline CVector2& operator-=(const CVector2& rhs){
-		x -= rhs.x;
-		y -= rhs.y;
+		p[0] -= rhs.p[0];
+		p[1] -= rhs.p[1];
 		return *this;
 	}
 	inline CVector2& operator*=(double scale){
-		x *= scale;
-		y *= scale;
+		p[0] *= scale;
+		p[1] *= scale;
 		return *this;
   }
   inline CVector2& operator/=(double d){
     if (fabs(d) < 1.0e-6){ assert(0); return *this; }
-    x /= d; y /= d;
+    p[0] /= d; p[1] /= d;
     return *this;
   }
 	inline CVector2 operator+(const CVector2& rhs) const {
@@ -105,21 +109,21 @@ public:
 		return v -= rhs;
 	}
   inline double operator[](int i) const{
-    if (i==0) return x;
-    if (i==1) return y;
+    if (i==0) return p[0];
+    if (i==1) return p[1];
     return 0;
   }
   inline double& operator[](int i){
-    if (i==0) return x;
-    if (i==1) return y;
+    if (i==0) return p[0];
+    if (i==1) return p[1];
     assert(0);
-    return x;
+    return p[0];
   }
 	//! @brief normalize length
 	inline void SetNormalizedVector(){
 		const double mag = Length();
-		x /= mag;
-		y /= mag;
+		p[0] /= mag;
+		p[1] /= mag;
 	}
   CVector2 Normalize() const {
     CVector2 r(*this);
@@ -128,18 +132,21 @@ public:
   }
 	//! set zero vector
 	inline void SetZero(){
-		x = 0.0;
-		y = 0.0;
+		p[0] = 0.0;
+		p[1] = 0.0;
 	}
+  inline double x() const { return p[0]; }
+  inline double y() const { return p[1]; }
   double Length() const{
-		return sqrt( x*x+y*y );
+		return sqrt( p[0]*p[0]+p[1]*p[1] );
 	}
   double SqLength() const{
-		return x*x+y*y;
+		return p[0]*p[0]+p[1]*p[1];
 	}
 public:
-	double x;	//!< x coordinate value
-	double y;	//!< y coordinate value
+//	double x;	//!< x coordinate value
+//	double y;	//!< y coordinate value
+  double p[2];
 };
 
 CVector2 operator*(double c, const CVector2& v0);
@@ -326,8 +333,8 @@ public:
   bool IsIntersectSphere(const CVector2& vec, const double radius ) const
   {
     if( !isActive() ) return false;
-    if( vec.x < x_min-radius || vec.x > x_max+radius ||
-       vec.y < y_min-radius || vec.y > y_max+radius ) return false;
+    if( vec.p[0] < x_min-radius || vec.p[0] > x_max+radius ||
+       vec.p[1] < y_min-radius || vec.p[1] > y_max+radius ) return false;
     return true;
   }
   bool IsIntersect(const CBoundingBox2D& bb_j, double clearance) const
@@ -373,8 +380,8 @@ public:
   bool IsInside(const CVector2& vec)
   {
     if( !isActive() ) return false;
-    if(   vec.x >= x_min && vec.x <= x_max
-       && vec.y >= y_min && vec.y <= y_max ) return true;
+    if(   vec.p[0] >= x_min && vec.p[0] <= x_max
+       && vec.p[1] >= y_min && vec.p[1] <= y_max ) return true;
     return false;
   }
 public:

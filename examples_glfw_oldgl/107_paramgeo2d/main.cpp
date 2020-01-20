@@ -53,7 +53,7 @@ void SetExample(int ndeg, int ncp)
   //
   aCtrlPoint.assign(ncp, CVector2(0,0));  //7+2+1 = 10
   for(unsigned int i=0;i<aCtrlPoint.size();++i){
-    aCtrlPoint[i].x = i*2.0/(aCtrlPoint.size()-1)-1.0;
+    aCtrlPoint[i].p[0] = i*2.0/(aCtrlPoint.size()-1)-1.0;
   }
 }
 
@@ -94,8 +94,8 @@ int main(int argc,char* argv[])
         std::mt19937 mt(rd());
         std::uniform_real_distribution<> dist(-0.01, 0.01);
         for(auto & icp : aCtrlPoint){
-          icp.x += dist(mt);
-          icp.y += dist(mt);
+          icp.p[0] += dist(mt);
+          icp.p[1] += dist(mt);
         }
         dfm2::SampleBSpline(polyline0, nsmpl, ndegree, aKnotFlat, aCtrlPoint);
       }
