@@ -36,14 +36,18 @@ template double dfm2::Dot2(const double v1[2], const double v2[2]);
 
 // --------------------------------------
 
+namespace delfem2 { // template specialization need to be done in the namespace
+  
 template <>
-double dfm2::Length2(const double v[2]){
+double Length2(const double v[2]){
   return sqrt(v[0]*v[0]+v[1]*v[1]);
 }
 
 template <>
-float dfm2::Length2(const float v[2]){
+float Length2(const float v[2]){
   return sqrtf(v[0]*v[0]+v[1]*v[1]);
+}
+  
 }
 
 // --------------------------------------
