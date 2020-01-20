@@ -62,27 +62,34 @@ static void QuatConjVec(double vo[], const double q[], const double vi[])
 
 // ----------------------------------------
 
-
+namespace delfem2 { // template specialization need to be done in the namespace
+  
 template <>
-double dfm2::Distance3(const double p0[3], const double p1[3]) {
+double Distance3(const double p0[3], const double p1[3]) {
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
 template <>
-float dfm2::Distance3(const float p0[3], const float p1[3]) {
+float Distance3(const float p0[3], const float p1[3]) {
   return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+  
 }
 
 // -------------------------
 
+namespace delfem2 { // template specialization need to be done in the namespace
+
 template <>
-double dfm2::Length3(const double v[3]){
+double Length3(const double v[3]){
   return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
 }
 
 template <>
-float dfm2::Length3(const float v[3]){
+float Length3(const float v[3]){
   return sqrtf( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+}
+  
 }
 
 // ---------------------------------
