@@ -63,16 +63,16 @@ void GetLocalExpMap(
     const double lc[9],
     const double q[3])
 {
-  const double dist = Distance3(p, q);
+  const double dist = dfm2::Distance3(p, q);
   if( dist < 1.0e-20 ){ u=0; v=0; return; }
   double pq[3] = { q[0]-p[0], q[1]-p[1], q[2]-p[2] };
   {
-    const double dot = Dot3D(pq,lc);
+    const double dot = dfm2::Dot3(pq,lc);
     pq[0] -= dot*lc[0];
     pq[1] -= dot*lc[1];
     pq[2] -= dot*lc[2];
   }
-  const double len = Length3D(pq);
+  const double len = dfm2::Length3(pq);
   if( len < 1.0e-10 ){ u=0; v=0; return; }
   {
     const double c = dist/len;
@@ -80,8 +80,8 @@ void GetLocalExpMap(
     pq[1] *= c;
     pq[2] *= c;
   }
-  u = Dot3D(pq,lc+3);
-  v = Dot3D(pq,lc+6);
+  u = dfm2::Dot3(pq,lc+3);
+  v = dfm2::Dot3(pq,lc+6);
 }
 
 void GetGeodesic(
@@ -105,10 +105,10 @@ void MakeLocalCoord(
     const double lcp[9] )
 {
   double anrp[3];
-  Cross3D(anrp, lrn, lcp);
-  const double snrp = Length3D(anrp);
+  dfm2::Cross3(anrp, lrn, lcp);
+  const double snrp = dfm2::Length3(anrp);
   if( snrp > 1.0e-5 ){
-    const double cnrp = Dot3D(lcp,lrn);
+    const double cnrp = dfm2::Dot3(lcp,lrn);
     const double t = atan2(snrp,cnrp);
     anrp[0] *= 1.0/snrp;
     anrp[1] *= 1.0/snrp;
@@ -139,7 +139,7 @@ void MakeExpMap_Point(
   // -------
   double LocCoord_ker[9];
   for(unsigned int i=0;i<6;i++){ LocCoord_ker[i] = aLocCoord[iker*6+i]; }
-  Cross3D(LocCoord_ker+6, LocCoord_ker+0, LocCoord_ker+3);
+  dfm2::Cross3(LocCoord_ker+6, LocCoord_ker+0, LocCoord_ker+3);
   // --------
   aNode[iker].itype = 1;
   aNode[iker].mesh_dist  = 0;
@@ -172,7 +172,7 @@ void MakeExpMap_Point(
     for(unsigned int ipsup=psup_ind[ifix];ipsup<psup_ind[ifix+1];++ipsup){
       unsigned int ino1 = psup[ipsup];
       if( aNode[ino1].itype == 2 ) continue;
-      const double len = Distance3(aXYZ.data()+ifix*3,aXYZ.data()+ino1*3);
+      const double len = dfm2::Distance3(aXYZ.data()+ifix*3,aXYZ.data()+ino1*3);
       const double weight = 1.0/len;
       const double dist0 = aNode[ifix].mesh_dist+len;
       double u, v;
@@ -296,7 +296,7 @@ void myGlutDisplay()
     ::glColor3d(1,1,1);
     ::glBegin(GL_LINES);
     ::glVertex3d(px,py,pz);
-    ::glVertex3d(px+ex.x, py+ex.y, pz+ex.z);
+    ::glVertex3d(px+ex.x(), py+ex.y(), pz+ex.z());
     ::glEnd();
   }
   

@@ -8,27 +8,71 @@
 #include <cstdlib>
 #include "delfem2/vec2.h"
 
-double TriArea2D(const double v1[2], const double v2[2], const double v3[2]){
-  double z = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  return z*0.5;
+namespace dfm2 = delfem2;
+
+// ------------------------------------------
+
+template <typename T>
+T dfm2::TriArea2D(
+    const T v1[2],
+    const T v2[2],
+    const T v3[2])
+{
+  T v0 = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
+  return 0.5*v0;
 }
+template float dfm2::TriArea2D(const float v1[2], const float v2[2], const float v3[2]);
+template double dfm2::TriArea2D(const double v1[2], const double v2[2], const double v3[2]);
+
+// --------------------------------------
+
+template <typename T>
+T dfm2::Dot2(const T w[2], const T v[2])
+{
+  return w[0]*v[0]+w[1]*v[1];
+}
+template float dfm2::Dot2(const float v1[2], const float v2[2]);
+template double dfm2::Dot2(const double v1[2], const double v2[2]);
+
+// --------------------------------------
+
+template <>
+double dfm2::Length2(const double v[2]){
+  return sqrt(v[0]*v[0]+v[1]*v[1]);
+}
+
+template <>
+float dfm2::Length2(const float v[2]){
+  return sqrtf(v[0]*v[0]+v[1]*v[1]);
+}
+
+// --------------------------------------
+
+template <>
+double dfm2::Distance2D(const double v1[2], const double v2[2]){
+  return sqrt( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
+}
+
+template <>
+float dfm2::Distance2D(const float v1[2], const float v2[2]){
+  return sqrtf( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
+}
+
+// -------------------------------------
 
 double SqDistance2D(const double v1[2], const double v2[2]){
   return (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]);
 }
 
-double Distance2D(const double v1[2], const double v2[2]){
-  return sqrt( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
-}
 
 static bool IsCrossLines(const double po_s0[], const double po_e0[],
                          const double po_s1[], const double po_e1[] )
 {
-  const double area1 = TriArea2D(po_s0,po_e0,po_s1);
-  const double area2 = TriArea2D(po_s0,po_e0,po_e1);
+  const double area1 = dfm2::TriArea2D(po_s0,po_e0,po_s1);
+  const double area2 = dfm2::TriArea2D(po_s0,po_e0,po_e1);
   if( area1 * area2 > 0.0 ) return false;
-  const double area3 = TriArea2D(po_s1,po_e1,po_s0);
-  const double area4 = TriArea2D(po_s1,po_e1,po_e0);
+  const double area3 = dfm2::TriArea2D(po_s1,po_e1,po_s0);
+  const double area4 = dfm2::TriArea2D(po_s1,po_e1,po_e0);
   if( area3 * area4 > 0.0 ) return false;
   return true;
 }
@@ -77,14 +121,7 @@ void setNormalized2(double w[2])
   w[1] *= invl;
 }
 
-double dot2(const double w[2], const double v[2])
-{
-  return w[0]*v[0]+w[1]*v[1];
-}
 
-double len2(const double v[2]){
-  return sqrt(v[0]*v[0]+v[1]*v[1]);
-}
 
 double sqLen2(const double v[2]){
   return v[0]*v[0]+v[1]*v[1];
@@ -291,8 +328,7 @@ CVector2 rotate90(const CVector2& p0)
   return CVector2(-p0.y,p0.x);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-
+// ---------------------------------------------------------------
 
 CVector2 Mat2Vec(const double A[4], const CVector2& v)
 {
@@ -892,7 +928,7 @@ void MakeMassMatrixTri
     {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
     {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
     {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
-  const double Area = TriArea2D(P[0], P[1], P[2]);
+  const double Area = dfm2::TriArea2D(P[0], P[1], P[2]);
   {
     const double tmp = rho*Area/3.0;
     M[0] = M[4] = M[8] = tmp;
@@ -922,8 +958,8 @@ bool IsInclude_Loop
       if( ipo1 == ixy_end ){ ipo1 = ixy_stt; }
       const double p0[2] = {aXY[ipo0].x,aXY[ipo0].y};
       const double p1[2] = {aXY[ipo1].x,aXY[ipo1].y};
-      const double area0 = TriArea2D(co,codir,p0);
-      const double area1 = TriArea2D(co,p1,codir);
+      const double area0 = dfm2::TriArea2D(co,codir,p0);
+      const double area1 = dfm2::TriArea2D(co,p1,codir);
       double r1 =  area0 / (area0+area1);
       double r0 =  area1 / (area0+area1);
       if( fabs(area0+area1) < 1.0e-20 ){
@@ -956,7 +992,7 @@ bool CheckInputBoundaryForTriangulation
 (const std::vector<int>& loopIP_ind,
  const std::vector<CVector2>& aXY)
 {
-  ////////////////////////////////
+  // ------------------------------------
   // enter Input check section
 
   assert( loopIP_ind.size() >= 2 );

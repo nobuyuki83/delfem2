@@ -292,8 +292,8 @@ std::vector<double> CGPUSampler::getGPos(int ix, int iy) const
   double ly = (iy+0.5)*lengrid;
   CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
   std::vector<double> res;
-  res.push_back(vp.x);
-  res.push_back(vp.y);
-  res.push_back(vp.z);
+  res.push_back(vp.x());
+  res.push_back(vp.y());
+  res.push_back(vp.z());
   return res;
 }

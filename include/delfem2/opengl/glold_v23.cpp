@@ -32,23 +32,23 @@ namespace dfm2 = delfem2;
 
 void delfem2::opengl::myGlVertex(const CVector3& v)
 {
-  ::glVertex3d(v.x,v.y,v.z);
+  ::glVertex3d(v.x(),v.y(),v.z());
 }
 
 void delfem2::opengl::myGlTranslate(const CVector3& v)
 {
-  ::glTranslated(v.x,v.y,v.z);
+  ::glTranslated(v.x(),v.y(),v.z());
 }
 
 void delfem2::opengl::myGlNormal(const CVector3& n)
 {
-  ::glNormal3d(n.x,n.y,n.z);
+  ::glNormal3d(n.x(),n.y(),n.z());
 }
 
 void delfem2::opengl::myGlNormal(const CVector3& a, const CVector3& b, const CVector3& c)
 {
   CVector3 n; UnitNormal(n, a, b, c);
-  ::glNormal3d(n.x,n.y,n.z);
+  ::glNormal3d(n.x(),n.y(),n.z());
 }
 
 void delfem2::opengl::myGlVertex(int i, const std::vector<CVector3>& aV)
@@ -75,10 +75,10 @@ void delfem2::opengl::ModelTransformation
   const CVector3& dy = Cross(dz,dx);
   const CVector3& o = origin;
   double A[16];
-  A[ 0] = dx.x;  A[ 1] = dx.y;  A[ 2] = dx.z;  A[ 3] = 0;
-  A[ 4] = dy.x;  A[ 5] = dy.y;  A[ 6] = dy.z;  A[ 7] = 0;
-  A[ 8] = dz.x;  A[ 9] = dz.y;  A[10] = dz.z;  A[11] = 0;
-  A[12] = +o.x;  A[13] =  +o.y; A[14] = +o.z;  A[15] = 1;
+  A[ 0] = dx.x();  A[ 1] = dx.y();  A[ 2] = dx.z();  A[ 3] = 0;
+  A[ 4] = dy.x();  A[ 5] = dy.y();  A[ 6] = dy.z();  A[ 7] = 0;
+  A[ 8] = dz.x();  A[ 9] = dz.y();  A[10] = dz.z();  A[11] = 0;
+  A[12] = +o.x();  A[13] = +o.y();  A[14] = +o.z();  A[15] = 1;
   ::glMultMatrixd(A);
 }
 
@@ -88,10 +88,10 @@ void delfem2::opengl::ViewTransformation
   const CVector3& dy = Cross(dz,dx);
   CVector3 o(dx*origin,dy*origin,dz*origin);
   double A[16];
-  A[ 0] = dx.x;  A[ 1] = dy.x;  A[ 2] = dz.x;  A[ 3] = 0;
-  A[ 4] = dx.y;  A[ 5] = dy.y;  A[ 6] = dz.y;  A[ 7] = 0;
-  A[ 8] = dx.z;  A[ 9] = dy.z;  A[10] = dz.z;  A[11] = 0;
-  A[12] = -o.x;  A[13] = -o.y;  A[14] = -o.z;  A[15] = 1;
+  A[ 0] = dx.x();  A[ 1] = dy.x();  A[ 2] = dz.x();  A[ 3] = 0;
+  A[ 4] = dx.y();  A[ 5] = dy.y();  A[ 6] = dz.y();  A[ 7] = 0;
+  A[ 8] = dx.z();  A[ 9] = dy.z();  A[10] = dz.z();  A[11] = 0;
+  A[12] = -o.x();  A[13] = -o.y();  A[14] = -o.z();  A[15] = 1;
   ::glMultMatrixd(A);
 }
 
@@ -233,7 +233,7 @@ void delfem2::opengl::DrawCircleArrow
       CVector3 s1 = sin((idiv+1)*dt)*x + cos((idiv+1)*dt)*y;
       for(int jdiv=0;jdiv<ndivt;jdiv++){
         CVector3 n = sin((jdiv+0)*dt)*s0 + cos((jdiv+0)*dt)*z;
-        ::glNormal3d(n.x,n.y,n.z);
+        ::glNormal3d(n.x(),n.y(),n.z());
         myGlVertex(q0 + r0*sin((jdiv+0)*dt)*s0 + r0*cos((jdiv+0)*dt)*z);
         myGlVertex(q0 + r0*sin((jdiv+1)*dt)*s0 + r0*cos((jdiv+1)*dt)*z);
         myGlVertex(q1 + r0*sin((jdiv+1)*dt)*s1 + r0*cos((jdiv+1)*dt)*z);
@@ -256,7 +256,7 @@ void delfem2::opengl::DrawCircleArrow
       CVector3 v1 = q0 + r1*sin((jdiv+1)*dt)*s0 + r1*cos((jdiv+1)*dt)*z;
       const CVector3& v2 = q1;
       CVector3 n; UnitNormal(n, v0, v2, v1);
-      ::glNormal3d(n.x,n.y,n.z);
+      ::glNormal3d(n.x(),n.y(),n.z());
       myGlVertex(v0);
       myGlVertex(v2);
       myGlVertex(v1);

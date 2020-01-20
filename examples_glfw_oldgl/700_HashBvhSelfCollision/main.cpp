@@ -47,8 +47,8 @@ void myGlutDisplay()
   ::glColor3d(1,0,0);
   ::glBegin(GL_LINES);
   for(const auto & itp : aITP){
-    glVertex3d(itp.P[0].x, itp.P[0].y, itp.P[0].z);
-    glVertex3d(itp.P[1].x, itp.P[1].y, itp.P[1].z);
+    glVertex3d(itp.P[0].x(), itp.P[0].y(), itp.P[0].z());
+    glVertex3d(itp.P[1].x(), itp.P[1].y(), itp.P[1].z());
   }
   ::glEnd();
   
@@ -93,9 +93,9 @@ int main(int argc,char* argv[])
       std::vector<double> aElemCenter(ntri*3);
       for(unsigned int itri=0;itri<ntri;++itri){
         CVector3 p0 = cg_Tri(itri, aTri, aXYZ);
-        aElemCenter[itri*3+0] = p0.x;
-        aElemCenter[itri*3+1] = p0.y;
-        aElemCenter[itri*3+2] = p0.z;
+        aElemCenter[itri*3+0] = p0.x();
+        aElemCenter[itri*3+1] = p0.y();
+        aElemCenter[itri*3+2] = p0.z();
       }
       std::vector<int> aTriSurRel;
       makeSurroundingRelationship(aTriSurRel,

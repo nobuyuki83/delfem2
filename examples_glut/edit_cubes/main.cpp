@@ -70,7 +70,7 @@ void myGlutDisplay(void)
   nav.SetGL_Camera();
   
   CVector3 offsym(0,0,0);
-  if( imode_sym == 2 ){ offsym.z = -elen*0.5; }
+  if( imode_sym == 2 ){ offsym.p[2] = -elen*0.5; }
   for(int ic=0;ic<aCubeGrid.size();++ic){
     Draw_CubeGrid(ic==icube_picked, iface_picked, elen, org+offsym, aCubeGrid[ic]);
   }
@@ -127,7 +127,7 @@ void myGlutMouse(int button, int state, int x, int y)
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
     CVector3 offsym(0,0,0);
-    if( imode_sym == 2 ){ offsym.z = -elen*0.5; }
+    if( imode_sym == 2 ){ offsym.p[2] = -elen*0.5; }
     double src_pick0[3]; src_pick.CopyValueTo(src_pick0);
     double dir_pick0[3]; dir_pick.CopyValueTo(dir_pick0);
     double offsym0[3];   offsym.CopyValueTo(offsym0);

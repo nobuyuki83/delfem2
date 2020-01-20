@@ -51,12 +51,12 @@ TEST(bvh,inclusion_sphere)
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3D_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
-      bool is_intersect = bv.isInclude_Point(p0.x, p0.y, p0.z);
+      bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
         const int ichild0 = node.ichild[0];
         const int ichild1 = node.ichild[1];
-        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x, p0.y, p0.z) );
-        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x, p0.y, p0.z) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x(), p0.y(), p0.z()) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x(), p0.y(), p0.z()) );
       }
     }
   }
@@ -84,12 +84,12 @@ TEST(bvh,inclusion_aabb)
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3D_AABB& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
-      bool is_intersect = bv.isInclude_Point(p0.x, p0.y, p0.z);
+      bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
         const int ichild0 = node.ichild[0];
         const int ichild1 = node.ichild[1];
-        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x, p0.y, p0.z) );
-        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x, p0.y, p0.z) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x(), p0.y(), p0.z()) );
+        EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x(), p0.y(), p0.z()) );
       }
     }
   }
@@ -142,7 +142,7 @@ TEST(bvh,nearestinc_sphere)
       CPointElemSurf pes2;
       double dist_tri = -1, dist_bv = 0.1;
       dfm2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri, dist_bv, pes2,
-                                                     p0.x, p0.y, p0.z, 0.1,
+                                                     p0.x(), p0.y(), p0.z(), 0.1,
                                                      aXYZ.data(), aXYZ.size()/3,
                                                      aTri.data(), aXYZ.size()/3,
                                                      bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
@@ -174,7 +174,7 @@ TEST(bvh,nearest_range) // find global nearest from range
     {
       double dist_min=-1, dist_max = -1;
       dfm2::BVH_Range_DistToNearestPoint(dist_min, dist_max,
-                                         p0.x, p0.y, p0.z,
+                                         p0.x(), p0.y(), p0.z(),
                                          bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       bool is_max = false;
       for(int it=0;it<aTri.size()/3;++it){
@@ -184,7 +184,7 @@ TEST(bvh,nearest_range) // find global nearest from range
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
         }
         double min0, max0;
-        bb.Range_DistToPoint(min0, max0, p0.x, p0.y, p0.z);
+        bb.Range_DistToPoint(min0, max0, p0.x(), p0.y(), p0.z());
         EXPECT_GE( max0, dist_max );
         EXPECT_GE( min0, dist_min );
         if( max0 < dist_max+1.0e-10 ){ is_max = true; }
@@ -193,7 +193,7 @@ TEST(bvh,nearest_range) // find global nearest from range
       std::vector<int> aIndElem;
       BVH_GetIndElem_InsideRange(aIndElem,
                                  dist_min,dist_max,
-                                 p0.x, p0.y, p0.z,
+                                 p0.x(), p0.y(), p0.z(),
                                  bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       EXPECT_GT(aIndElem.size(), 0);
       std::vector<int> aFlg(aTri.size()/3,0);
@@ -208,7 +208,7 @@ TEST(bvh,nearest_range) // find global nearest from range
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
         }
         double min0, max0;
-        bb.Range_DistToPoint(min0, max0, p0.x, p0.y, p0.z);
+        bb.Range_DistToPoint(min0, max0, p0.x(), p0.y(), p0.z());
         if( aFlg[itri] == 1 ){ // inside range
           EXPECT_LE(min0,dist_max);
           EXPECT_GE(max0,dist_min);
@@ -237,9 +237,9 @@ TEST(bvh,nearest_point) // find global nearest directry
   for(int itr=0;itr<1000;++itr){
     CVector3 p0;
     {
-      p0.x = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.y = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.z = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.p[0] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.p[1] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.p[2] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
     }
     CPointElemSurf pes1 = bvh.NearestPoint_Global(p0,aXYZ,aTri);
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
@@ -272,9 +272,9 @@ TEST(bvh,sdf) // find global nearest directry
   for(int itr=0;itr<1000;++itr){
     CVector3 p0;
     {
-      p0.x = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.y = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.z = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      p0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
     }
     if( (p0.Length()-1.0)<1.0e-3 ){ continue; }
     CVector3 n0;
@@ -305,12 +305,12 @@ TEST(bvh,lineintersection)
   for(int itr=0;itr<100;++itr){
     CVector3 s0, d0;
     {
-      s0.x = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.y = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.z = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.x = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.y = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.z = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      s0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      s0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      s0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      d0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      d0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      d0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       d0.SetNormalizedVector();
     }
     double ps0[3]; s0.CopyValueTo(ps0);
@@ -367,12 +367,12 @@ TEST(bvh,rayintersection)
   for(int itr=0;itr<100;++itr){
     CVector3 s0, d0;
     {
-      s0.x = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.y = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.z = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.x = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.y = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.z = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      s0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      s0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      s0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      d0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      d0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
+      d0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       d0.SetNormalizedVector();
     }
     double ps0[3]; s0.CopyValueTo(ps0);

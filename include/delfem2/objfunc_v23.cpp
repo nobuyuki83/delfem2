@@ -8,9 +8,11 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-
 #include "delfem2/objfunc_v23.h"
 
+namespace dfm2 = delfem2;
+
+// ---------------------------------------
 
 void PBD_Post
 (std::vector<double>& aXYZ,
@@ -94,7 +96,7 @@ void PBD_Update_Const3
     A[2*3+2] += MinvC[2*np*ndim+i]*dCdp[2*np*ndim+i];
   }
   double Ainv[nc*nc]; InverseMat3(Ainv, A);
-  double lmd[nc]; MatVec3(lmd, Ainv, C);
+  double lmd[nc]; dfm2::MatVec3(lmd, Ainv, C);
   for(int ine=0;ine<np;++ine){
     const int ip0 = aIP[ine];
     for(int ic=0;ic<nc;++ic){
@@ -111,7 +113,7 @@ void PBD_ConstProj_Rigid3D
  double stiffness,
  const int* clstr_ind, int nclstr_ind,
  const int* clstr,     int nclstr0,
- const double* aXYZ0,   int nXYZ0)
+ const double* aXYZ0,  int nXYZ0)
 {
   const int nclstr = nclstr_ind-1;
   for(int iclstr=0;iclstr<nclstr;++iclstr){
@@ -148,9 +150,9 @@ void PBD_ConstProj_Rigid3D
       CVector3 dq = CVector3(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2])-qc;
       CVector3 pg = pc+Mat3Vec(R, dq); // goal position
       CVector3 pg2 = stiffness*pg+(1-stiffness)*CVector3(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
-      aXYZt[ip*3+0] = pg2.x;
-      aXYZt[ip*3+1] = pg2.y;
-      aXYZt[ip*3+2] = pg2.z;
+      aXYZt[ip*3+0] = pg2.p[0];
+      aXYZt[ip*3+1] = pg2.p[1];
+      aXYZt[ip*3+2] = pg2.p[2];
     }
   }  
 }
@@ -222,9 +224,9 @@ void PBD_CdC_TriStrain2D3D
     0.5*( Dot(gd1,gd1) - Dot(Gd1,Gd1) ),
     1.0*( Dot(gd0,gd1) - Dot(Gd0,Gd1) ) };
   
-  const double GuGu_xx[3] = { Gu0.x*Gu0.x, Gu1.x*Gu1.x, Gu0.x*Gu1.x };
-  const double GuGu_yy[3] = { Gu0.y*Gu0.y, Gu1.y*Gu1.y, Gu0.y*Gu1.y };
-  const double GuGu_xy[3] = { 2.0*Gu0.x*Gu0.y, 2.0*Gu1.x*Gu1.y, Gu0.x*Gu1.y+Gu0.y*Gu1.x };
+  const double GuGu_xx[3] = { Gu0.x()*Gu0.x(), Gu1.x()*Gu1.x(), Gu0.x()*Gu1.x() };
+  const double GuGu_yy[3] = { Gu0.y()*Gu0.y(), Gu1.y()*Gu1.y(), Gu0.y()*Gu1.y() };
+  const double GuGu_xy[3] = { 2.0*Gu0.x()*Gu0.y(), 2.0*Gu1.x()*Gu1.y(), Gu0.x()*Gu1.y()+Gu0.y()*Gu1.x() };
   C[0] = E2[0]*GuGu_xx[0] + E2[1]*GuGu_xx[1] + E2[2]*GuGu_xx[2];
   C[1] = E2[0]*GuGu_yy[0] + E2[1]*GuGu_yy[1] + E2[2]*GuGu_yy[2];
   C[2] = E2[0]*GuGu_xy[0] + E2[1]*GuGu_xy[1] + E2[2]*GuGu_xy[2];
@@ -286,9 +288,9 @@ void PBD_ConstraintProjection_DistanceTri2D3D
  const double p[3][3] // (in) deformed triangle vertex positions
 )
 {
-  const double L12 = Distance2D(P[1],P[2]);
-  const double L20 = Distance2D(P[2],P[0]);
-  const double L01 = Distance2D(P[0],P[1]);
+  const double L12 = dfm2::Distance2D(P[1],P[2]);
+  const double L20 = dfm2::Distance2D(P[2],P[0]);
+  const double L01 = dfm2::Distance2D(P[0],P[1]);
   CVector3 v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
   CVector3 v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
   CVector3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
@@ -447,12 +449,12 @@ void PBD_ConstraintProjection_DistanceTet
  const double p[4][3] // (in) deformed triangle vertex positions
 )
 {
-  const double L01 = Distance3(P[0],P[1]);
-  const double L02 = Distance3(P[0],P[2]);
-  const double L03 = Distance3(P[0],P[3]);
-  const double L12 = Distance3(P[1],P[2]);
-  const double L13 = Distance3(P[1],P[3]);
-  const double L23 = Distance3(P[2],P[3]);
+  const double L01 = dfm2::Distance3(P[0],P[1]);
+  const double L02 = dfm2::Distance3(P[0],P[2]);
+  const double L03 = dfm2::Distance3(P[0],P[3]);
+  const double L12 = dfm2::Distance3(P[1],P[2]);
+  const double L13 = dfm2::Distance3(P[1],P[3]);
+  const double L23 = dfm2::Distance3(P[2],P[3]);
   CVector3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
   CVector3 v02(p[0][0]-p[2][0], p[0][1]-p[2][1], p[0][2]-p[2][2]);
   CVector3 v03(p[0][0]-p[3][0], p[0][1]-p[3][1], p[0][2]-p[3][2]);
@@ -495,9 +497,9 @@ void PBD_CdC_QuadBend
  const double P[4][3],
  const double p[4][3])
 {
-  const double A0 = TriArea3D(P[0],P[2],P[3]);
-  const double A1 = TriArea3D(P[1],P[3],P[2]);
-  const double L = Distance3(P[2],P[3]);
+  const double A0 = dfm2::Area_Tri3(P[0],P[2],P[3]);
+  const double A1 = dfm2::Area_Tri3(P[1],P[3],P[2]);
+  const double L = dfm2::Distance3(P[2],P[3]);
   const double H0 = 2.0*A0/L;
   const double H1 = 2.0*A1/L;
   const CVector3 e23(P[3][0]-P[2][0], P[3][1]-P[2][1], P[3][2]-P[2][2]);
@@ -540,11 +542,11 @@ void PBD_Seam
     const double p[2][3] = {
       {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
       {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
-    double d0 = Distance3(p[0], p[1]);
+    double d0 = dfm2::Distance3(p[0], p[1]);
     double dLen = 0.01;
     if( d0 > dLen ){
       double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
-      const double l01 = Length3D(n01);
+      const double l01 = dfm2::Length3(n01);
       const double invl01 = 1.0/l01;
       n01[0] *= invl01;
       n01[1] *= invl01;

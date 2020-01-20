@@ -21,7 +21,7 @@ namespace dfm2 = delfem2;
 
 
 void dfm2::MakeInnerRelationTri
-(std::vector<ETri>& aTri, const unsigned int npoin,
+(std::vector<CDynTri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
@@ -72,7 +72,7 @@ void dfm2::MakeInnerRelationTri
 
 bool dfm2::JArray_MakeElSuP
 (std::vector<int>& elsup_ind, std::vector<int>& elsup,
- const std::vector<ETri>& aTri, const unsigned int npoin)
+ const std::vector<CDynTri>& aTri, const unsigned int npoin)
 {
   elsup_ind.assign(npoin+1, 0);
   for(const auto & itri : aTri){
@@ -101,7 +101,7 @@ bool dfm2::JArray_MakeElSuP
 
 void dfm2::JArray_PSuP
 (std::vector<int>& psup_ind, std::vector<int>& psup,
- const std::vector<ETri>& aTri, const unsigned int npoin,
+ const std::vector<CDynTri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind, const std::vector<int>& elsup)
 {
   std::vector<unsigned int> aflg(npoin,0);
@@ -146,8 +146,8 @@ bool dfm2::InsertPoint_ElemEdge
 (const int ipo_ins,    //the index of the new point
  const int itri_ins,  //triangle index
  const int ied_ins,  //edge index
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri )
+ std::vector<CDynPntSur>& aPo,
+ std::vector<CDynTri>& aTri )
 {
   assert(itri_ins < (int)aTri.size());
   assert(ipo_ins < (int)aPo.size());
@@ -181,8 +181,8 @@ bool dfm2::InsertPoint_ElemEdge
   
   aTri.resize(aTri.size()+2);
   
-  ETri old0 = aTri[itri_ins];
-  ETri old1 = aTri[itri_adj];
+  CDynTri old0 = aTri[itri_ins];
+  CDynTri old1 = aTri[itri_adj];
   
   const int ino0_0 = ied_ins;
   const int ino1_0 = (ied_ins+1)%3; //noelTriEdge[ied_ins][0];
@@ -204,7 +204,7 @@ bool dfm2::InsertPoint_ElemEdge
   aPo[old1.v[ino0_1]].e = itri3;  aPo[old1.v[ino0_1]].d = 1;
   
   {
-    ETri& ref_tri = aTri[itri0];
+    CDynTri& ref_tri = aTri[itri0];
     ////////////////
     ref_tri.v[0] = ipo_ins;          ref_tri.v[1] = old0.v[ino2_0];  ref_tri.v[2] = old0.v[ino0_0];
     ref_tri.s2[0] = old0.s2[ino1_0];  ref_tri.s2[1] = itri1;          ref_tri.s2[2] = itri3;
@@ -222,7 +222,7 @@ bool dfm2::InsertPoint_ElemEdge
     ref_tri.r2[2] = 0;
   }
   {
-    ETri& ref_tri = aTri[itri1];
+    CDynTri& ref_tri = aTri[itri1];
     ////////////////
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old0.v[ino0_0];  ref_tri.v[2] = old0.v[ino1_0];
     ref_tri.s2[0] = old0.s2[ino2_0];  ref_tri.s2[1] = itri2;      ref_tri.s2[2] = itri0;
@@ -240,7 +240,7 @@ bool dfm2::InsertPoint_ElemEdge
     ref_tri.r2[2] = 0;
   }
   {
-    ETri& ref_tri = aTri[itri2];
+    CDynTri& ref_tri = aTri[itri2];
     ////////////////
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old1.v[ino2_1];  ref_tri.v[2] = old1.v[ino0_1];
     ref_tri.s2[0] = old1.s2[ino1_1];  ref_tri.s2[1] = itri3;      ref_tri.s2[2] = itri1;
@@ -258,7 +258,7 @@ bool dfm2::InsertPoint_ElemEdge
     ref_tri.r2[2] = 0;
   }
   {
-    ETri& ref_tri = aTri[itri3];
+    CDynTri& ref_tri = aTri[itri3];
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old1.v[ino0_1];  ref_tri.v[2] = old1.v[ino1_1];
     ref_tri.s2[0] = old1.s2[ino2_1];  ref_tri.s2[1] = itri0;      ref_tri.s2[2] = itri2;
     if (old1.s2[ino2_1]>=0&&old1.s2[ino2_1]<(int)aTri.size()){
@@ -281,8 +281,8 @@ bool dfm2::InsertPoint_ElemEdge
 bool dfm2::InsertPoint_Elem
 (const int ipo_ins,
  const int itri_ins,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri)
+ std::vector<CDynPntSur>& aPo,
+ std::vector<CDynTri>& aTri)
 {
   assert(itri_ins < (int)aTri.size());
   assert(ipo_ins < (int)aPo.size());
@@ -305,7 +305,7 @@ bool dfm2::InsertPoint_Elem
   const int itri2 = (int)aTri.size()+1;
   
   aTri.resize(aTri.size()+2);
-  const ETri old_tri = aTri[itri_ins];
+  const CDynTri old_tri = aTri[itri_ins];
   
   aPo[ipo_ins].e = itri0;        aPo[ipo_ins].d = 0;
   aPo[old_tri.v[0]].e = itri1;  aPo[old_tri.v[0]].d = 2;
@@ -313,7 +313,7 @@ bool dfm2::InsertPoint_Elem
   aPo[old_tri.v[2]].e = itri0;  aPo[old_tri.v[2]].d = 2;
   
   {
-    ETri& ref_tri = aTri[itri0];
+    CDynTri& ref_tri = aTri[itri0];
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old_tri.v[1];  ref_tri.v[2] = old_tri.v[2];
     ref_tri.s2[0] = old_tri.s2[0];  ref_tri.s2[1] = itri1;      ref_tri.s2[2] = itri2;
     if (old_tri.s2[0]>=0&&old_tri.s2[0]<(int)aTri.size()){
@@ -329,7 +329,7 @@ bool dfm2::InsertPoint_Elem
     ref_tri.r2[2] = 0;
   }
   {
-    ETri& ref_tri = aTri[itri1];
+    CDynTri& ref_tri = aTri[itri1];
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old_tri.v[2];  ref_tri.v[2] = old_tri.v[0];
     ref_tri.s2[0] = old_tri.s2[1];  ref_tri.s2[1] = itri2;      ref_tri.s2[2] = itri0;
     if (old_tri.s2[1]>=0&&old_tri.s2[1]<(int)aTri.size()){
@@ -345,7 +345,7 @@ bool dfm2::InsertPoint_Elem
     ref_tri.r2[2] = 0;
   }
   {
-    ETri& ref_tri = aTri[itri2];
+    CDynTri& ref_tri = aTri[itri2];
     ref_tri.v[0] = ipo_ins;     ref_tri.v[1] = old_tri.v[0];  ref_tri.v[2] = old_tri.v[1];
     ref_tri.s2[0] = old_tri.s2[2];  ref_tri.s2[1] = itri0;      ref_tri.s2[2] = itri1;
     if (old_tri.s2[2]>=0&&old_tri.s2[2]<(int)aTri.size()){
@@ -367,8 +367,8 @@ bool dfm2::InsertPoint_Elem
 bool dfm2::FlipEdge(
     unsigned int itri0,
     unsigned int ied0,
-    std::vector<CEPo2>& aPo,
-    std::vector<ETri>& aTri)
+    std::vector<CDynPntSur>& aPo,
+    std::vector<CDynTri>& aTri)
 {
   assert(itri0 < aTri.size());
   assert(ied0 < 3);
@@ -395,8 +395,8 @@ bool dfm2::FlipEdge(
   
   //  std::cout << itri0 << "-" << ied0 << "    " << itri1 << "-" << ied1 << std::endl;
   
-  ETri old0 = aTri[itri0];
-  ETri old1 = aTri[itri1];
+  CDynTri old0 = aTri[itri0];
+  CDynTri old1 = aTri[itri1];
   
   const unsigned int no0_0 = ied0;
   const unsigned int no1_0 = (ied0+1)%3; //noelTriEdge[ied0][0];
@@ -415,7 +415,7 @@ bool dfm2::FlipEdge(
   aPo[old1.v[no0_1]].e = itri1;  aPo[old1.v[no0_1]].d = 2;
   
   {
-    ETri& ref_tri = aTri[itri0];
+    CDynTri& ref_tri = aTri[itri0];
     // -------------------
     ref_tri.v[0] = old0.v[no1_0];  ref_tri.v[1] = old1.v[no0_1];  ref_tri.v[2] = old0.v[no0_0];
     ref_tri.s2[0] = itri1;      ref_tri.s2[1] = old0.s2[no2_0];  ref_tri.s2[2] = old1.s2[no1_1];
@@ -444,7 +444,7 @@ bool dfm2::FlipEdge(
   }
   
   {
-    ETri& ref_tri = aTri[itri1];
+    CDynTri& ref_tri = aTri[itri1];
     // -------------------------
     ref_tri.v[0] = old1.v[no1_1];  ref_tri.v[1] = old0.v[no0_0];    ref_tri.v[2] = old1.v[no0_1];
     ref_tri.s2[0] = (int)itri0;    ref_tri.s2[1] = old1.s2[no2_1];  ref_tri.s2[2] = old0.s2[no1_0];
@@ -477,8 +477,8 @@ bool dfm2::FindEdge_LookAroundPoint
 (unsigned int &itri0,unsigned int &inotri0, unsigned &inotri1,
  ///
  const int ipo0, const int ipo1,
- const std::vector<CEPo2>& aPo,
- const std::vector<ETri>& aTri)
+ const std::vector<CDynPntSur>& aPo,
+ const std::vector<CDynTri>& aTri)
 {
   const int itri_ini = aPo[ipo0].e;
   const unsigned int inotri_ini = aPo[ipo0].d;
@@ -550,7 +550,7 @@ bool dfm2::FindEdge_LookAllTriangles
 (int& itri0, int& iedtri0,
  ///
  const int ipo0, const int ipo1,
- const std::vector<ETri>& aTri)
+ const std::vector<CDynTri>& aTri)
 {
   for(size_t itri=0;itri<aTri.size();++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
@@ -566,11 +566,11 @@ bool dfm2::FindEdge_LookAllTriangles
   return false;
 }
 
-bool dfm2::CheckTri( const std::vector<ETri>& aTri )
+bool dfm2::CheckTri( const std::vector<CDynTri>& aTri )
 {
 	const int ntri = (int)aTri.size();
 	for(int itri=0;itri<ntri;itri++){
-		const ETri& ref_tri = aTri[itri];
+		const CDynTri& ref_tri = aTri[itri];
     /*		for(int inotri=0;inotri<nNoTri;inotri++){
      assert( ref_tri.v[inotri] >= 0 );
      }*/
@@ -598,15 +598,15 @@ bool dfm2::CheckTri( const std::vector<ETri>& aTri )
 }
 
 bool dfm2::CheckTri
-(const std::vector<CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri,
+(const std::vector<CDynPntSur>& aPo3D,
+ const std::vector<CDynTri>& aSTri,
  bool is_assert)
 {
   const int npo = (int)aPo3D.size();
   const int ntri = (int)aSTri.size();
   
   for (int itri = 0; itri<ntri; itri++){
-    const ETri& tri0 = aSTri[itri];
+    const CDynTri& tri0 = aSTri[itri];
     if( tri0.v[0] == -1 ){
       assert(tri0.v[1] == -1);
       assert(tri0.v[2] == -1);
@@ -681,8 +681,8 @@ bool dfm2::CheckTri
 
 
 void dfm2::InitializeMesh
-(std::vector<CEPo2>& aPo3D,
- std::vector<ETri>& aSTri,
+(std::vector<CDynPntSur>& aPo3D,
+ std::vector<CDynTri>& aSTri,
  ////
  const unsigned int* aTri, int nTri,
  int nXYZ)
@@ -723,7 +723,7 @@ void dfm2::MoveCCW
  unsigned int &inotri_cur,
  bool& flag_is_wall,
  ////
- std::vector<ETri>& aTri)
+ std::vector<CDynTri>& aTri)
 {
   const unsigned int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
   if (aTri[itri_cur].s2[inotri1]==-1){ flag_is_wall = true; return; }
@@ -738,8 +738,8 @@ void dfm2::MoveCCW
 
 bool dfm2::DeleteTri
 (int itri_to,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri)
+ std::vector<CDynPntSur>& aPo,
+ std::vector<CDynTri>& aTri)
 {
   if (itri_to>=(int)aTri.size()) return true;
   {
@@ -775,8 +775,8 @@ bool dfm2::DeleteTri
 bool dfm2::Collapse_ElemEdge
 (const int itri_del,
  const int ied_del,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri)
+ std::vector<CDynPntSur>& aPo,
+ std::vector<CDynTri>& aTri)
 {
   assert( itri_del >= 0 && itri_del < (int)aTri.size() );
   assert( ied_del >= 0 && ied_del < 3 );
@@ -830,8 +830,8 @@ bool dfm2::Collapse_ElemEdge
   if (aTri[itri5].s2[ino1_5]==itri4) return false;
   if (itri2==itri5 && itri3==itri4) return false;
   
-  const ETri old0 = aTri[itri0];
-  const ETri old1 = aTri[itri1];
+  const CDynTri old0 = aTri[itri0];
+  const CDynTri old1 = aTri[itri1];
   
   int ipo0 = old0.v[ino0_0];
   int ipo1 = old0.v[ino1_0];
@@ -932,7 +932,7 @@ bool dfm2::Collapse_ElemEdge
   };
   
   { // change itri2
-    ETri& tri = aTri[itri2];
+    CDynTri& tri = aTri[itri2];
     //    tri.g2[ino0_2] = old0.g2[ino2_0];
     tri.s2[ino0_2] = old0.s2[ino2_0];
     if (old0.s2[ino2_0]>=0&&old0.s2[ino2_0]<(int)aTri.size()){
@@ -946,7 +946,7 @@ bool dfm2::Collapse_ElemEdge
   }
   
   { // change itri3
-    ETri& tri = aTri[itri3];
+    CDynTri& tri = aTri[itri3];
     //    tri.g2[ino0_3] = old0.g2[ino1_0];
     tri.s2[ino0_3] = old0.s2[ino1_0];
     if (old0.s2[ino1_0]>=0&&old0.s2[ino1_0]<(int)aTri.size()){
@@ -961,7 +961,7 @@ bool dfm2::Collapse_ElemEdge
   }
   
   { // change itri4
-    ETri& tri = aTri[itri4];
+    CDynTri& tri = aTri[itri4];
     //    tri.g2[ino0_4] = old1.g2[ino2_1];
     tri.s2[ino0_4] = old1.s2[ino2_1];
     //    if( old1.g2[ino2_1] == -2 || old1.g2[ino2_1] == -3 ){
@@ -978,7 +978,7 @@ bool dfm2::Collapse_ElemEdge
   }
   
   { // change itri5
-    ETri& tri = aTri[itri5];
+    CDynTri& tri = aTri[itri5];
     //    tri.g2[ino0_5] = old1.g2[ino1_1];
     tri.s2[ino0_5] = old1.s2[ino1_1];
     //    if( old1.g2[ino1_1] == -2 || old1.g2[ino1_1] == -3 ){
@@ -1033,8 +1033,8 @@ bool dfm2::Collapse_ElemEdge
 void dfm2::GetTriArrayAroundPoint
 (std::vector< std::pair<int,int> >& aTriSurPo,
  int ipoin,
- const std::vector<CEPo2>& aPo,
- const std::vector<ETri>& aTri)
+ const std::vector<CDynPntSur>& aPo,
+ const std::vector<CDynTri>& aTri)
 {
   const int itri_ini = aPo[ipoin].e;
   const unsigned int inoel_c_ini = aPo[ipoin].d;
@@ -1074,7 +1074,7 @@ void dfm2::GetTriArrayAroundPoint
 void dfm2::extractHoles
 (std::vector< std::vector<int> >& aIndP_Hole,
  const int npo,
- const std::vector<ETri>& aETri)
+ const std::vector<CDynTri>& aETri)
 {
   aIndP_Hole.clear();
   std::multimap<int,int> mapConnection;

@@ -97,18 +97,18 @@ void CCad3D_Face::Initialize
     int iv0 = (dir0) ? e0.iv0 : e0.iv1;
     {
       CVector3 p0 = (dir0) ? e0.p0 : e0.p1;
-      aXYZ_B1.push_back(p0.x);
-      aXYZ_B1.push_back(p0.y);
-      aXYZ_B1.push_back(p0.z);
+      aXYZ_B1.push_back(p0.x());
+      aXYZ_B1.push_back(p0.y());
+      aXYZ_B1.push_back(p0.z());
     }
     const unsigned nep = e0.aP.size();
     for(int iep=0;iep<nep-1;++iep){
       unsigned int iep0 = (dir0) ? iep : nep-1-iep;
       double ratio = (double)iep0/(nep-1.0);
       CVector3 pep = (1-ratio)*e0.p0 + ratio*e0.p1;
-      aXYZ_B0.push_back(pep.x);
-      aXYZ_B0.push_back(pep.y);
-      aXYZ_B0.push_back(pep.z);
+      aXYZ_B0.push_back(pep.x());
+      aXYZ_B0.push_back(pep.y());
+      aXYZ_B0.push_back(pep.z());
       CFacePointInfo pinfo;
       if( iep==0 ){
         pinfo.itype = 0;
@@ -165,8 +165,8 @@ void CCad3D_Face::Initialize
                          loopIP_ind,aVec2);
     }
     {
-      std::vector<dfm2::CEPo2> aPo2D;
-      std::vector<dfm2::ETri> aETri;
+      std::vector<dfm2::CDynPntSur> aPo2D;
+      std::vector<dfm2::CDynTri> aETri;
       Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                      loopIP_ind,loopIP);
       if( elen > 1.0e-10 ){
@@ -204,9 +204,9 @@ void CCad3D_Face::MovePoints
     if( aPInfo[ip].itype == 0 ){
       int iv0 = aPInfo[ip].iv;
       aPInfo[ip].n = aVertex[iv0].norm;
-      aXYZ[ip*3+0] = aVertex[iv0].pos.x;
-      aXYZ[ip*3+1] = aVertex[iv0].pos.y;
-      aXYZ[ip*3+2] = aVertex[iv0].pos.z;
+      aXYZ[ip*3+0] = aVertex[iv0].pos.x();
+      aXYZ[ip*3+1] = aVertex[iv0].pos.y();
+      aXYZ[ip*3+2] = aVertex[iv0].pos.z();
     }
     else if( aPInfo[ip].itype == 1 ){
       int ie0 = aPInfo[ip].ie;
@@ -216,9 +216,9 @@ void CCad3D_Face::MovePoints
       CVector3 nep = ne^te;
       nep.SetNormalizedVector();
       aPInfo[ip].n = nep;
-      aXYZ[ip*3+0] = aEdge[ie0].aP[iep0].x;
-      aXYZ[ip*3+1] = aEdge[ie0].aP[iep0].y;
-      aXYZ[ip*3+2] = aEdge[ie0].aP[iep0].z;
+      aXYZ[ip*3+0] = aEdge[ie0].aP[iep0].x();
+      aXYZ[ip*3+1] = aEdge[ie0].aP[iep0].y();
+      aXYZ[ip*3+2] = aEdge[ie0].aP[iep0].z();
     }
   }
   //////
@@ -241,9 +241,9 @@ void CCad3D_Face::MovePoints
       const std::vector<double>& aW1 = aPInfo[ip].aW1;
       assert( aW1.size() == 3 );
       CVector3 p =  delfem2::getPointCoonsTri_CubicBezierEdge(aW1[0],aW1[1],aW1[2],aP);
-      aXYZ[ip*3+0] = p.x;
-      aXYZ[ip*3+1] = p.y;
-      aXYZ[ip*3+2] = p.z;
+      aXYZ[ip*3+0] = p.x();
+      aXYZ[ip*3+1] = p.y();
+      aXYZ[ip*3+2] = p.z();
     }
   }
   else if( aIE.size() == 4 ){
@@ -272,9 +272,9 @@ void CCad3D_Face::MovePoints
       const double v = aW1[2] + aW1[3];
 //      CVector3 p =  getPointCoons_CubicBezier(u,v,aP);
       CVector3 p =  dfm2::getPointHermetianQuad(u,v,aP);
-      aXYZ[ip*3+0] = p.x;
-      aXYZ[ip*3+1] = p.y;
-      aXYZ[ip*3+2] = p.z;
+      aXYZ[ip*3+0] = p.x();
+      aXYZ[ip*3+1] = p.y();
+      aXYZ[ip*3+2] = p.z();
     }
   }
   else{
@@ -1100,23 +1100,23 @@ void BuildTriMesh
   for(std::size_t iv=0;iv<aVertex.size();++iv){
     CCad3D_Vertex& v = aVertex[iv];
     int iq0 = (int)aXYZ.size()/3;
-    aXYZ.push_back(+v.pos.x);
-    aXYZ.push_back(+v.pos.y);
-    aXYZ.push_back(+v.pos.z);
+    aXYZ.push_back(+v.pos.x());
+    aXYZ.push_back(+v.pos.y());
+    aXYZ.push_back(+v.pos.z());
     v.iq_right = iq0;
     if( aIsSymVtx[iv] == 1 ){
       aVertex[iv].iq_left = iq0;
     }
     else{
       if( isym == 2 ){
-        aXYZ.push_back(+v.pos.x);
-        aXYZ.push_back(+v.pos.y);
-        aXYZ.push_back(-v.pos.z);
+        aXYZ.push_back(+v.pos.x());
+        aXYZ.push_back(+v.pos.y());
+        aXYZ.push_back(-v.pos.z());
       }
       else if( isym == 0 ){
-        aXYZ.push_back(-v.pos.x);
-        aXYZ.push_back(+v.pos.y);
-        aXYZ.push_back(+v.pos.z);
+        aXYZ.push_back(-v.pos.x());
+        aXYZ.push_back(+v.pos.y());
+        aXYZ.push_back(+v.pos.z());
       }
       aVertex[iv].iq_left = iq0+1;
     }
@@ -1135,23 +1135,23 @@ void BuildTriMesh
     e.aIQ_RightLeft[(np-1)*2+1] = aVertex[iv1].iq_left;
     for(int ip=1;ip<np-1;++ip){
       int iq0 = (int)aXYZ.size()/3;
-      aXYZ.push_back(+e.aP[ip].x);
-      aXYZ.push_back(+e.aP[ip].y);
-      aXYZ.push_back(+e.aP[ip].z);
+      aXYZ.push_back(+e.aP[ip].x());
+      aXYZ.push_back(+e.aP[ip].y());
+      aXYZ.push_back(+e.aP[ip].z());
       e.aIQ_RightLeft[ip*2+0] = iq0;
       if( e.is_sim ){
         e.aIQ_RightLeft[ip*2+1] = iq0;
       }
       else{
         if( isym == 2 ){
-          aXYZ.push_back(+e.aP[ip].x);
-          aXYZ.push_back(+e.aP[ip].y);
-          aXYZ.push_back(-e.aP[ip].z);
+          aXYZ.push_back(+e.aP[ip].x());
+          aXYZ.push_back(+e.aP[ip].y());
+          aXYZ.push_back(-e.aP[ip].z());
         }
         else if( isym == 0 ){
-          aXYZ.push_back(-e.aP[ip].x);
-          aXYZ.push_back(+e.aP[ip].y);
-          aXYZ.push_back(+e.aP[ip].z);
+          aXYZ.push_back(-e.aP[ip].x());
+          aXYZ.push_back(+e.aP[ip].y());
+          aXYZ.push_back(+e.aP[ip].z());
         }
         e.aIQ_RightLeft[ip*2+1] = iq0+1;
       }

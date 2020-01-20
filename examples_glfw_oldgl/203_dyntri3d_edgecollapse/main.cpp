@@ -23,17 +23,17 @@ namespace dfm2 = delfem2;
 // ---------------------------
 
 void MyGlVertex3dv(CVector3& p){
-  ::glVertex3d(p.x, p.y, p.z);
+  ::glVertex3d(p.x(), p.y(), p.z());
 }
 
 void MyGlNormal3dv(CVector3& n){
-  ::glNormal3d(n.x, n.y, n.z);
+  ::glNormal3d(n.x(), n.y(), n.z());
 }
 
 double cur_time = 0.0;
 double dt = 0.1;
-std::vector<dfm2::CEPo2> aPo;
-std::vector<dfm2::ETri> aTri;
+std::vector<dfm2::CDynPntSur> aPo;
+std::vector<dfm2::CDynTri> aTri;
 std::vector<CVector3> aVec3;
 
 void SetNewProblem()
@@ -61,9 +61,9 @@ void SetNewProblem()
   aPo.resize(nnode);
   aVec3.resize(nnode);
   for(unsigned int ipo=0;ipo<aPo.size();ipo++){
-    aVec3[ipo].x = pXYZs[ipo*3+0];
-    aVec3[ipo].y = pXYZs[ipo*3+1];
-    aVec3[ipo].z = pXYZs[ipo*3+2];
+    aVec3[ipo].p[0] = pXYZs[ipo*3+0];
+    aVec3[ipo].p[1] = pXYZs[ipo*3+1];
+    aVec3[ipo].p[2] = pXYZs[ipo*3+2];
   }
   InitializeMesh(aPo, aTri,
                  aTriInd,ntri,aVec3.size());

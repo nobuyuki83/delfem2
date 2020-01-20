@@ -24,7 +24,7 @@ namespace dfm2 = delfem2;
 // -------------------------------------------------
 
 void dfm2::opengl::DrawMeshDynTri_FaceNorm
-(const std::vector<ETri>& aSTri,
+(const std::vector<CDynTri>& aSTri,
  const std::vector<CVector2>& aVec2)
 {
   ::glDisable(GL_LIGHTING);
@@ -49,7 +49,7 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
 }
 
 void dfm2::opengl::DrawMeshDynTri_Edge
-(const std::vector<ETri>& aSTri,
+(const std::vector<CDynTri>& aSTri,
  const std::vector<CVector2>& aVec2)
 {
   ::glDisable(GL_LIGHTING);
@@ -76,7 +76,7 @@ void dfm2::opengl::DrawMeshDynTri_Edge
 
 
 void dfm2::opengl::DrawMeshDynTri_FaceNorm
-(const std::vector<ETri>& aSTri,
+(const std::vector<CDynTri>& aSTri,
  const std::vector<CVector3>& aVec3)
 {
   //  ::glPushAttrib(GL_ENABLE_BIT);
@@ -95,26 +95,26 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
     }
     {
       CVector3 n; UnitNormal(n, aVec3[i0], aVec3[i1], aVec3[i2]);
-      ::glNormal3d(n.x,n.y,n.z);
+      ::glNormal3d(n.x(),n.y(),n.z());
     }
     {
       CVector3 p0 = aVec3[i0];
-      ::glVertex3d(p0.x,p0.y,p0.z);
+      ::glVertex3d(p0.x(),p0.y(),p0.z());
     }
     {
       CVector3 p1 = aVec3[i1];
-      ::glVertex3d(p1.x,p1.y,p1.z);
+      ::glVertex3d(p1.x(),p1.y(),p1.z());
     }
     {
       CVector3 p2 = aVec3[i2];
-      ::glVertex3d(p2.x,p2.y,p2.z);
+      ::glVertex3d(p2.x(),p2.y(),p2.z());
     }
   }
   ::glEnd();
 }
 
 void dfm2::opengl::DrawMeshDynTri_Edge
-(const std::vector<ETri>& aSTri,
+(const std::vector<CDynTri>& aSTri,
  const std::vector<CVector3>& aVec3)
 {
   ::glDisable(GL_LIGHTING);
@@ -132,12 +132,12 @@ void dfm2::opengl::DrawMeshDynTri_Edge
     const CVector3& p0 = aVec3[i0];
     const CVector3& p1 = aVec3[i1];
     const CVector3& p2 = aVec3[i2];
-    glVertex3d(p0.x,p0.y,p0.z);
-    glVertex3d(p1.x,p1.y,p1.z);
-    glVertex3d(p1.x,p1.y,p1.z);
-    glVertex3d(p2.x,p2.y,p2.z);
-    glVertex3d(p2.x,p2.y,p2.z);
-    glVertex3d(p0.x,p0.y,p0.z);
+    glVertex3d(p0.x(),p0.y(),p0.z());
+    glVertex3d(p1.x(),p1.y(),p1.z());
+    glVertex3d(p1.x(),p1.y(),p1.z());
+    glVertex3d(p2.x(),p2.y(),p2.z());
+    glVertex3d(p2.x(),p2.y(),p2.z());
+    glVertex3d(p0.x(),p0.y(),p0.z());
   }
   ::glEnd();
 }
@@ -145,7 +145,7 @@ void dfm2::opengl::DrawMeshDynTri_Edge
 
 void dfm2::opengl::DrawMeshDynTri3D_Edge
 (const std::vector<double>& aXYZ,
- const std::vector<ETri>& aSTri)
+ const std::vector<CDynTri>& aSTri)
 {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);

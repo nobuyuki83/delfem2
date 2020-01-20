@@ -103,7 +103,7 @@ public:
     double dist = -1, dist_min = rad_exp;
     pes.itri = -1;
     delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist,dist_min, pes,
-                                                      p0.x, p0.y, p0.z, rad_exp,
+                                                      p0.x(), p0.y(), p0.z(), rad_exp,
                                                       aXYZ, nXYZ, aTri, nTri,
                                                       iroot_bvh, aNodeBVH, aBB_BVH);
     if( pes.itri == -1 ){ return dist_min; }
@@ -125,7 +125,7 @@ public:
     CPointElemSurf pes;
     double dist_min = -1;
     BVH_NearestPoint_MeshTri3D(dist_min, pes,
-                               p0.x, p0.y, p0.z,
+                               p0.x(), p0.y(), p0.z(),
                                aXYZ, aTri, iroot_bvh, aNodeBVH, aBB_BVH);
     return pes;
   }
@@ -141,13 +141,13 @@ public:
     {
       double dist_min = -1;
       delfem2::BVH_NearestPoint_MeshTri3D(dist_min, pes,
-                                          p0.x, p0.y, p0.z,
+                                          p0.x(), p0.y(), p0.z(),
                                           aXYZ, aTri,
                                           iroot_bvh, aNodeBVH, aBB_BVH);
     }
     const CVector3 q0 = pes.Pos_Tri(aXYZ, aTri);
     double dist = (q0-p0).Length();
-    if( !aBB_BVH[iroot_bvh].isInclude_Point(p0.x,p0.y,p0.z) ){ // outside
+    if( !aBB_BVH[iroot_bvh].isInclude_Point(p0.x(),p0.y(),p0.z()) ){ // outside
       n0 = (p0-q0).Normalize();
       return -dist;
     }
@@ -329,9 +329,9 @@ void delfem2::Project_PointsIncludedInBVH_Outside
                                         p0,pes,aXYZ0,aTri0,aNorm0);
 //    std::cout << sdf+cc << std::endl;
     if( sdf+cc < 0 ) continue;
-    aXYZt[ip*3+0] += (sdf+cc)*n0.x;
-    aXYZt[ip*3+1] += (sdf+cc)*n0.y;
-    aXYZt[ip*3+2] += (sdf+cc)*n0.z;
+    aXYZt[ip*3+0] += (sdf+cc)*n0.x();
+    aXYZt[ip*3+1] += (sdf+cc)*n0.y();
+    aXYZt[ip*3+2] += (sdf+cc)*n0.z();
   }
 }
 
@@ -395,9 +395,9 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache
     aInfoNearest[ip].sdf = sdf;
     aInfoNearest[ip].is_active = true;
     if( sdf+cc < 0 ) continue;
-    aXYZt[ip*3+0] += (sdf+cc)*n0.x;
-    aXYZt[ip*3+1] += (sdf+cc)*n0.y;
-    aXYZt[ip*3+2] += (sdf+cc)*n0.z;
+    aXYZt[ip*3+0] += (sdf+cc)*n0.x();
+    aXYZt[ip*3+1] += (sdf+cc)*n0.y();
+    aXYZt[ip*3+2] += (sdf+cc)*n0.z();
   }
 }
 

@@ -47,7 +47,7 @@ void myGlutDisplay()
     ::glColor3d(0,0,0);
     ::glPointSize(10);
     ::glBegin(GL_POINTS);
-    ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
+    ::glVertex3d(aCG_CS[ics].x(), aCG_CS[ics].y(), aCG_CS[ics].z());
     ::glEnd();
   }
   for(size_t ics=0;ics<ReebGraphCS.size();++ics){
@@ -58,8 +58,8 @@ void myGlutDisplay()
       ::glColor3d(0,0,0);
       ::glLineWidth(3);
       ::glBegin(GL_LINES);
-      ::glVertex3d(aCG_CS[ics].x, aCG_CS[ics].y, aCG_CS[ics].z);
-      ::glVertex3d(aCG_CS[jcs].x, aCG_CS[jcs].y, aCG_CS[jcs].z);
+      ::glVertex3d(aCG_CS[ics].x(), aCG_CS[ics].y(), aCG_CS[ics].z());
+      ::glVertex3d(aCG_CS[jcs].x(), aCG_CS[jcs].y(), aCG_CS[jcs].z());
       ::glEnd();
     }
   }
@@ -116,9 +116,9 @@ void Hoge(){
                                 pA,pB,po);
       const double area0 = n0[0]*nrm[0] + n0[1]*nrm[1] + n0[2]*nrm[2];
       sum_area += area0;
-      cg.x += area0*(po[0]+pA[0]+pB[0])/3.0;
-      cg.y += area0*(po[1]+pA[1]+pB[1])/3.0;
-      cg.z += area0*(po[2]+pA[2]+pB[2])/3.0;
+      cg.p[0] += area0*(po[0]+pA[0]+pB[0])/3.0;
+      cg.p[1] += area0*(po[1]+pA[1]+pB[1])/3.0;
+      cg.p[2] += area0*(po[2]+pA[2]+pB[2])/3.0;
     }
     cg /= sum_area;
     aCG_CS[ics] = cg;

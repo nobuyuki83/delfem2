@@ -10,36 +10,57 @@
 #define DFM2_VEC3_H
 
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <vector>
 
 #define NEARLY_ZERO 1.e-16
 
+
+namespace delfem2 {
+
 template <typename T>
 T Distance3(const T p0[3], const T p1[3]);
 
+template <typename T>
+T Length3(const T v[3]);
+  
+template <typename T>
+T Dot3(const T a[3], const T b[3]);
+  
+template <typename T>
+T Volume_Tet3(const T v1[3], const T v2[3], const T v3[3], const T v4[3]);
+  
+template <typename T>
+void Cross3(T r[3],
+            const T v1[3], const T v2[3]);
+
+template <typename T>
+void Normalize3(T v[3]);
+
+template <typename T>
+T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
+  
+template <typename T>
+void MatVec3(T y[3],
+             const T m[9], const T x[3]);
+  
+}
+
+
 double ScalarTripleProduct3D(const double a[], const double b[], const double c[]);
-double Dot3D(const double a[], const double b[]);
-double Length3D(const double v[3]);
-void Normalize3D(double v[3]);
+
 double SquareLength3D(const double v[3]);
 double SquareDistance3D(const double p0[3], const double p1[3]);
-double TriArea3D(const double v1[3], const double v2[3], const double v3[3]);
-double TetVolume3D(const double v1[3], const double v2[3], const double v3[3], const double v4[3] );
 void UnitNormalAreaTri3D(double n[3], double& a,
                          const double v1[3], const double v2[3], const double v3[3]);
 void NormalTri3D(double n[3],
                  const double v1[3], const double v2[3], const double v3[3]);
-void Cross3D(double r[3],
-             const double v1[3], const double v2[3]);
 void InverseMat3(double Ainv[],
                  const double A[]);
 void transposeMat3(double At[],
                    const double A[]);
 void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
-void MatVec3(double y[3],
-             const double m[9], const double x[3]);
 void MatTransVec3(double y[3],
                   const double m[9], const double x[3]);
 void VecMat3(double y[3],
@@ -70,61 +91,71 @@ std::istream &operator>>(std::istream &input, CVector3& v);
 class CVector3  
 {
 public:
-	CVector3(double vx, double vy, double vz) : x(vx), y(vy), z(vz){}
-	CVector3(): x(0.0), y(0.0), z(0.0){}
-	CVector3(const CVector3& rhs){ x = rhs.x; y = rhs.y; z = rhs.z; }
-  CVector3(const double* prhs){ x = prhs[0]; y = prhs[1]; z = prhs[2]; }
-  CVector3(const float* prhs){ x = prhs[0]; y = prhs[1]; z = prhs[2]; }
-  CVector3(const std::vector<double>& v){ x = v[0]; y = v[1]; z = v[2]; }
+  CVector3(double vx, double vy, double vz) : p{vx,vy,vz} {}
+  CVector3(): p{0.0, 0.0, 0.0} {}
+	CVector3(const CVector3& rhs){ p[0] = rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
+  CVector3(const double* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
+  CVector3(const float* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
+  CVector3(const std::vector<double>& v){ p[0] = v[0]; p[1] = v[1]; p[2] = v[2]; }
 	virtual ~CVector3(){}
 
   std::vector<double> stlvec() const {
-    std::vector<double> d(3);
-    d[0] = x; d[1] = y; d[2] = z;
+    std::vector<double> d = {p[0], p[1], p[2]};
     return d;
   }
-	void SetVector(double vx, double vy, double vz){ x = vx; y = vy; z = vz; }
-  void CopyValueTo(double* v) const { v[0]=x; v[1]=y; v[2]=z; }
-  void CopyValueToScale(double* v, double s) const { v[0]=x*s; v[1]=y*s; v[2]=z*s; }
+	void SetVector(double vx, double vy, double vz){ p[0] = vx; p[1] = vy; p[2] = vz; }
+  void CopyValueTo(double* v) const { v[0]=p[0]; v[1]=p[1]; v[2]=p[2]; }
+  void CopyValueToScale(double* v, double s) const { v[0]=p[0]*s; v[1]=p[1]*s; v[2]=p[2]*s; }
 
 	inline const CVector3 operator-() const{ return -1.0*(*this); }
 	inline const CVector3 operator+() const{ return *this; }  
 	inline CVector3& operator=(const CVector3& rhs){
-		if( this != &rhs ){ x = rhs.x; y = rhs.y; z = rhs.z; }
+		if( this != &rhs ){ p[0]= rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
 		return *this;
 	}
 	inline CVector3& operator+=(const CVector3& rhs){
-		x += rhs.x; y += rhs.y; z += rhs.z;
+		p[0] += rhs.p[0];
+    p[1] += rhs.p[1];
+    p[2] += rhs.p[2];
 		return *this;
 	}
 	inline CVector3& operator-=(const CVector3& rhs){
-		x -= rhs.x; y -= rhs.y; z -= rhs.z;
+		p[0] -= rhs.p[0];
+    p[1] -= rhs.p[1];
+    p[2] -= rhs.p[2];
 		return *this;
 	}
 	inline CVector3& operator*=(double d){
-		x *= d; y *= d; z *= d;
+		p[0] *= d;
+    p[1] *= d;
+    p[2] *= d;
 		return *this;
 	}
 	inline CVector3& operator/=(double d){
 		if( fabs(d) < NEARLY_ZERO ){ return *this; }
-		x /= d; y /= d; z /= d;
+		p[0] /= d;
+    p[1] /= d;
+    p[2] /= d;
 		return *this;
 	}
   inline double operator[](int i) const{
-    if( i == 0 ) return x;
-    if( i == 1 ) return y;
-    if( i == 2 ) return z;
+    if( i == 0 ) return p[0];
+    if( i == 1 ) return p[1];
+    if( i == 2 ) return p[2];
     return 0;
   }
   inline double& operator[](int i){
-    if( i == 0 ) return x;
-    if( i == 1 ) return y;
-    if( i == 2 ) return z;
+    if( i == 0 ) return p[0];
+    if( i == 1 ) return p[1];
+    if( i == 2 ) return p[2];
     assert(0);
-    return x;
+    return p[0];
   }  
 	inline CVector3 operator+(){ return *this; }
-	inline CVector3 operator-(){ return CVector3(-x,-y,-z); }
+	inline CVector3 operator-(){ return CVector3(-p[0],-p[1],-p[2]); }
+  inline double x() const { return p[0]; }
+  inline double y() const { return p[1]; }
+  inline double z() const { return p[2]; }
 
 	friend bool operator==(const CVector3&, const CVector3&);
 	friend bool operator!=(const CVector3&, const CVector3&);
@@ -136,15 +167,15 @@ public:
     r.SetNormalizedVector();
     return r;
   }
-	inline double Length()  const{ return sqrt( x*x+y*y+z*z ); }
-	inline double DLength() const{ return x*x+y*y+z*z; }
+	inline double Length()  const{ return sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
+	inline double DLength() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
 	void SetNormalizedVector();
 	void SetZero();
   void Print() const {
-    std::cout << x << " " << y << " " << z << std::endl;
+    std::cout <<p[0]<< " " << p[1] << " " << p[2] << std::endl;
   }
   bool isNaN() const{
-    double s=x+y+z;
+    double s=p[0]+p[1]+p[2];
     return !(s > s-1.0);
   }
   static CVector3 Axis(int idim){
@@ -153,9 +184,12 @@ public:
     return r;
   }
 public:
+  double p[3];
+  /*
 	double x;	//!< x axis coordinate
 	double y;	//!< y axis coordinate
 	double z;	//!< z axis coordinate
+   */
 };
 
 
@@ -326,7 +360,7 @@ bool IsInside_Orgin_BoundingBoxPoint6(const CVector3& p0,
 double volume_OrgTet(const CVector3& v1,
                      const CVector3& v2,
                      const CVector3& v3 );
-double volume_Tet(const CVector3& v0,
+double Volume_Tet(const CVector3& v0,
                   const CVector3& v1,
                   const CVector3& v2,
                   const CVector3& v3 );
@@ -464,9 +498,9 @@ inline CVector3 cg_Tri(unsigned int itri,
   int i0 = aTri[itri*3+0];
   int i1 = aTri[itri*3+1];
   int i2 = aTri[itri*3+2];
-  p.x = (aXYZ[i0*3+0]+aXYZ[i1*3+0]+aXYZ[i2*3+0])/3.0;
-  p.y = (aXYZ[i0*3+1]+aXYZ[i1*3+1]+aXYZ[i2*3+1])/3.0;
-  p.z = (aXYZ[i0*3+2]+aXYZ[i1*3+2]+aXYZ[i2*3+2])/3.0;
+  p.p[0] = (aXYZ[i0*3+0]+aXYZ[i1*3+0]+aXYZ[i2*3+0])/3.0;
+  p.p[1] = (aXYZ[i0*3+1]+aXYZ[i1*3+1]+aXYZ[i2*3+1])/3.0;
+  p.p[2] = (aXYZ[i0*3+2]+aXYZ[i1*3+2]+aXYZ[i2*3+2])/3.0;
   return p;
 }
 

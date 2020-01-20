@@ -16,9 +16,9 @@ namespace dfm2 = delfem2;
 
 CVector3 posGrid(int ig, int jg, double lenGrid, int ngrid){
   CVector3 p;
-  p.x = ig*lenGrid/ngrid-lenGrid*0.5;
-  p.y = jg*lenGrid/ngrid-lenGrid*0.5;
-  p.z = 0;
+  p.p[0] = ig*lenGrid/ngrid-lenGrid*0.5;
+  p.p[1] = jg*lenGrid/ngrid-lenGrid*0.5;
+  p.p[2] = 0;
   return p;
 }
 

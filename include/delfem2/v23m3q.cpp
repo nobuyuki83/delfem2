@@ -12,22 +12,26 @@
 //
 #include "delfem2/v23m3q.h"
 
+namespace dfm2 = delfem2;
+
+// ----------------------------------------
+
 CVector2 screenXYProjection
 (const CVector3& v,
  const float* mMV,
  const float* mPj)
 {
   CVector3 sp0 = screenProjection(v,mMV,mPj);
-  return CVector2(sp0.x,sp0.y);
+  return CVector2(sp0.x(),sp0.y());
 }
 
 CVector3 GetCartesianRotationVector(const CMatrix3& m)
 {
   const double* mat = m.mat;
   CVector3 a;
-  a.x = mat[7]-mat[5];
-  a.y = mat[2]-mat[6];
-  a.z = mat[3]-mat[1];
+  a.p[0] = mat[7]-mat[5];
+  a.p[1] = mat[2]-mat[6];
+  a.p[2] = mat[3]-mat[1];
   double act = (m.Trace()-1)*0.5;
   if( act > +1 ){ act = +1; }
   if( act < -1 ){ act = -1; }
@@ -43,9 +47,9 @@ CVector3 GetSpinVector(const CMatrix3& m)
 {
   const double* mat = m.mat;
   CVector3 r;
-  r.x = (mat[7]-mat[5])*0.5;
-  r.y = (mat[2]-mat[6])*0.5;
-  r.z = (mat[3]-mat[1])*0.5;
+  r.p[0] = (mat[7]-mat[5])*0.5;
+  r.p[1] = (mat[2]-mat[6])*0.5;
+  r.p[2] = (mat[3]-mat[1])*0.5;
   return r;
 }
 
@@ -53,9 +57,10 @@ CVector3 MatVec(const CMatrix3& m, const CVector3& vec0)
 {
   const double* mat = m.mat;
   CVector3 vec1;
-  vec1.x = mat[0]*vec0.x + mat[1]*vec0.y + mat[2]*vec0.z;
-  vec1.y = mat[3]*vec0.x + mat[4]*vec0.y + mat[5]*vec0.z;
-  vec1.z = mat[6]*vec0.x + mat[7]*vec0.y + mat[8]*vec0.z;
+//  vec1.p[0] = mat[0]*vec0.x + mat[1]*vec0.y + mat[2]*vec0.z;
+//  vec1.p[1] = mat[3]*vec0.x + mat[4]*vec0.y + mat[5]*vec0.z;
+//  vec1.p[2] = mat[6]*vec0.x + mat[7]*vec0.y + mat[8]*vec0.z;
+  dfm2::MatVec3(vec1.p, m.mat,vec0.p);
   return vec1;
 }
 
@@ -63,9 +68,10 @@ CVector3 MatVecTrans(const CMatrix3& m, const CVector3& vec0)
 {
   CVector3 vec1;
   const double* mat = m.mat;
-  vec1.x = mat[0]*vec0.x + mat[3]*vec0.y + mat[6]*vec0.z;
-  vec1.y = mat[1]*vec0.x + mat[4]*vec0.y + mat[7]*vec0.z;
-  vec1.z = mat[2]*vec0.x + mat[5]*vec0.y + mat[8]*vec0.z;
+  MatTransVec3(vec1.p, m.mat,vec0.p);
+//  vec1.x = mat[0]*vec0.x + mat[3]*vec0.y + mat[6]*vec0.z;
+//  vec1.y = mat[1]*vec0.x + mat[4]*vec0.y + mat[7]*vec0.z;
+//  vec1.z = mat[2]*vec0.x + mat[5]*vec0.y + mat[8]*vec0.z;
   return vec1;
 }
 
@@ -74,40 +80,40 @@ CVector3 MatVecTrans(const CMatrix3& m, const CVector3& vec0)
 void SetDiag(CMatrix3& m, const CVector3& d)
 {
   double* mat = m.mat;
-  mat[0*3+0] = d.x;
-  mat[1*3+1] = d.y;
-  mat[2*3+2] = d.z;
+  mat[0*3+0] = d.x();
+  mat[1*3+1] = d.y();
+  mat[2*3+2] = d.z();
 }
 
 void SetRotMatrix_Cartesian(CMatrix3& m, const CVector3& v)
 {
-  const double vec[3] = { v.x, v.y, v.z };
-  m.SetRotMatrix_Cartesian(vec);
+//  const double vec[3] = { v.x, v.y, v.z };
+  m.SetRotMatrix_Cartesian(v.p);
 }
 
 void SetSpinTensor(CMatrix3& m, const CVector3& vec0)
 {
   double* mat = m.mat;
-  mat[0] =  0;       mat[1] = -vec0.z;   mat[2] = +vec0.y;
-  mat[3] = +vec0.z;  mat[4] = 0;         mat[5] = -vec0.x;
-  mat[6] = -vec0.y;  mat[7] = +vec0.x;   mat[8] = 0;
+  mat[0] =  0;       mat[1] = -vec0.z();   mat[2] = +vec0.y();
+  mat[3] = +vec0.z();  mat[4] = 0;         mat[5] = -vec0.x();
+  mat[6] = -vec0.y();  mat[7] = +vec0.x();   mat[8] = 0;
 }
 
 void SetOuterProduct(CMatrix3& m, const CVector3& vec0, const CVector3& vec1 )
 {
   double* mat = m.mat;
-  mat[0] = vec0.x*vec1.x; mat[1] = vec0.x*vec1.y; mat[2] = vec0.x*vec1.z;
-  mat[3] = vec0.y*vec1.x; mat[4] = vec0.y*vec1.y; mat[5] = vec0.y*vec1.z;
-  mat[6] = vec0.z*vec1.x; mat[7] = vec0.z*vec1.y; mat[8] = vec0.z*vec1.z;
+  mat[0] = vec0.x()*vec1.x(); mat[1] = vec0.x()*vec1.y(); mat[2] = vec0.x()*vec1.z();
+  mat[3] = vec0.y()*vec1.x(); mat[4] = vec0.y()*vec1.y(); mat[5] = vec0.y()*vec1.z();
+  mat[6] = vec0.z()*vec1.x(); mat[7] = vec0.z()*vec1.y(); mat[8] = vec0.z()*vec1.z();
 }
 
 void SetProjection(CMatrix3& m, const CVector3& vec0)
 {
   double* mat = m.mat;
   const CVector3& u = vec0.Normalize();
-  mat[0] = 1-u.x*u.x; mat[1] = 0-u.x*u.y; mat[2] = 0-u.x*u.z;
-  mat[3] = 0-u.y*u.x; mat[4] = 1-u.y*u.y; mat[5] = 0-u.y*u.z;
-  mat[6] = 0-u.z*u.x; mat[7] = 0-u.z*u.y; mat[8] = 1-u.z*u.z;
+  mat[0] = 1-u.x()*u.x(); mat[1] = 0-u.x()*u.y(); mat[2] = 0-u.x()*u.z();
+  mat[3] = 0-u.y()*u.x(); mat[4] = 1-u.y()*u.y(); mat[5] = 0-u.y()*u.z();
+  mat[6] = 0-u.z()*u.x(); mat[7] = 0-u.z()*u.y(); mat[8] = 1-u.z()*u.z();
 }
 
 //////////
@@ -140,9 +146,9 @@ CMatrix3 Mat3(const CVector3& vec0, const CVector3& vec1, const CVector3& vec2)
 {
   CMatrix3 m;
   double* mat = m.mat;
-  mat[0*3+0]=vec0.x; mat[0*3+1]=vec1.x; mat[0*3+2]=vec2.x;
-  mat[1*3+0]=vec0.y; mat[1*3+1]=vec1.y; mat[1*3+2]=vec2.y;
-  mat[2*3+0]=vec0.z; mat[2*3+1]=vec1.z; mat[2*3+2]=vec2.z;
+  mat[0*3+0]=vec0.x(); mat[0*3+1]=vec1.x(); mat[0*3+2]=vec2.x();
+  mat[1*3+0]=vec0.y(); mat[1*3+1]=vec1.y(); mat[1*3+2]=vec2.y();
+  mat[2*3+0]=vec0.z(); mat[2*3+1]=vec1.z(); mat[2*3+2]=vec2.z();
   return m;
 }
 
@@ -162,7 +168,7 @@ CMatrix3 Mat3_OuterProduct(const CVector3& vec0, const CVector3& vec1 )
 CMatrix3 Mat3_RotCartesian(const CVector3& vec0)
 {
   CMatrix3 m;
-  m.SetRotMatrix_Cartesian(vec0.x, vec0.y, vec0.z);
+  m.SetRotMatrix_Cartesian(vec0.x(), vec0.y(), vec0.z());
   return m;
 }
 
@@ -188,29 +194,29 @@ CMatrix3 Mat3_MinimumRotation
   const double st2 = n*n;
   CMatrix3 m;
   if( st2 < 1.0e-4f ){
-    m.mat[0] = 1.f    +0.5f*(n.x*n.x-st2);
-    m.mat[1] =    -n.z+0.5f*(n.x*n.y);
-    m.mat[2] =    +n.y+0.5f*(n.x*n.z);
-    m.mat[3] =    +n.z+0.5f*(n.y*n.x);
-    m.mat[4] = 1.f    +0.5f*(n.y*n.y-st2);
-    m.mat[5] =    -n.x+0.5f*(n.y*n.z);
-    m.mat[6] =    -n.y+0.5f*(n.z*n.x);
-    m.mat[7] =    +n.x+0.5f*(n.z*n.y);
-    m.mat[8] = 1.f    +0.5f*(n.z*n.z-st2);
+    m.mat[0] = 1.f    +0.5f*(n.x()*n.x()-st2);
+    m.mat[1] =    -n.z()+0.5f*(n.x()*n.y());
+    m.mat[2] =    +n.y()+0.5f*(n.x()*n.z());
+    m.mat[3] =    +n.z()+0.5f*(n.y()*n.x());
+    m.mat[4] = 1.f    +0.5f*(n.y()*n.y()-st2);
+    m.mat[5] =    -n.x()+0.5f*(n.y()*n.z());
+    m.mat[6] =    -n.y()+0.5f*(n.z()*n.x());
+    m.mat[7] =    +n.x()+0.5f*(n.z()*n.y());
+    m.mat[8] = 1.f    +0.5f*(n.z()*n.z()-st2);
     return m;
   }
   const double st = sqrt(st2);
   const double ct = ep*eq;
   n.SetNormalizedVector();
-  m.mat[0] = ct       +(1.f-ct)*n.x*n.x;
-  m.mat[1] =   -n.z*st+(1.f-ct)*n.x*n.y;
-  m.mat[2] =   +n.y*st+(1.f-ct)*n.x*n.z;
-  m.mat[3] =   +n.z*st+(1.f-ct)*n.y*n.x;
-  m.mat[4] = ct       +(1.f-ct)*n.y*n.y;
-  m.mat[5] =   -n.x*st+(1.f-ct)*n.y*n.z;
-  m.mat[6] =   -n.y*st+(1.f-ct)*n.z*n.x;
-  m.mat[7] =   +n.x*st+(1.f-ct)*n.z*n.y;
-  m.mat[8] = ct       +(1.f-ct)*n.z*n.z;
+  m.mat[0] = ct       +(1.f-ct)*n.x()*n.x();
+  m.mat[1] =   -n.z()*st+(1.f-ct)*n.x()*n.y();
+  m.mat[2] =   +n.y()*st+(1.f-ct)*n.x()*n.z();
+  m.mat[3] =   +n.z()*st+(1.f-ct)*n.y()*n.x();
+  m.mat[4] = ct       +(1.f-ct)*n.y()*n.y();
+  m.mat[5] =   -n.x()*st+(1.f-ct)*n.y()*n.z();
+  m.mat[6] =   -n.y()*st+(1.f-ct)*n.z()*n.x();
+  m.mat[7] =   +n.x()*st+(1.f-ct)*n.z()*n.y();
+  m.mat[8] = ct       +(1.f-ct)*n.z()*n.z();
   return m;
 }
 
@@ -274,9 +280,9 @@ void Energy_MIPS
   CVector3 dECd1 = t01*p0 + t11*p1 + t12*p2;
   CVector3 dECd2 = t02*p0 + t12*p1 + t22*p2;
   ////
-  dE[0][0]=dECd0.x; dE[0][1]=dECd0.y; dE[0][2]=dECd0.z;
-  dE[1][0]=dECd1.x; dE[1][1]=dECd1.y; dE[1][2]=dECd1.z;
-  dE[2][0]=dECd2.x; dE[2][1]=dECd2.y; dE[2][2]=dECd2.z;
+  dE[0][0]=dECd0.x(); dE[0][1]=dECd0.y(); dE[0][2]=dECd0.z();
+  dE[1][0]=dECd1.x(); dE[1][1]=dECd1.y(); dE[1][2]=dECd1.z();
+  dE[2][0]=dECd2.x(); dE[2][1]=dECd2.y(); dE[2][2]=dECd2.z();
   
   CMatrix3 (*op)(const CVector3&, const CVector3&) = Mat3_OuterProduct;
   
@@ -447,9 +453,9 @@ CMatrix3 Mat3_IrotPoint
 void Mat4_MatTransl(double m[16], const CMatrix3& mat, const CVector3& trans)
 {
   mat.AffineMatrixTrans(m);
-  m[3*4+0] = trans.x;
-  m[3*4+1] = trans.y;
-  m[3*4+2] = trans.z;
+  m[3*4+0] = trans.x();
+  m[3*4+1] = trans.y();
+  m[3*4+2] = trans.z();
 }
 
 
@@ -461,9 +467,9 @@ void Mat4_ScaleMatTransl(double m[16], double scale, const CMatrix3& mat, const 
     m[i*4+j] *= scale;
   }
   }
-  m[3*4+0] = trans.x;
-  m[3*4+1] = trans.y;
-  m[3*4+2] = trans.z;
+  m[3*4+0] = trans.x();
+  m[3*4+1] = trans.y();
+  m[3*4+2] = trans.z();
 }
 
 
@@ -580,7 +586,7 @@ bool DragHandlerRot_PosQuat
     CVector3 v0(0,0,0); v0[ielem] = 1;
     CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
+    double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, dq, quat);
     QuatCopy(quat,qtmp);
     return true;
@@ -600,7 +606,7 @@ bool DragHandlerRot_Mat4
     CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
     CVector3 pos(mat[3],mat[7],mat[11]);
     const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
-    const double dq[4] = { cos(ar*0.5), v0.x*sin(ar*0.5), v0.y*sin(ar*0.5), v0.z*sin(ar*0.5) };
+    const double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, quat, dq);
     QuatCopy(quat,qtmp);
     return true;
@@ -651,7 +657,7 @@ double DragCircle
   double angl = area / ( (sp0-spo0).Length() * (sp1-spo0).Length() );
   {
     CVector3 a3 = screenUnProjectionDirection(axis,mMV,mPj);
-    if( a3.z < 0 ){ angl *= -1; }
+    if( a3.z() < 0 ){ angl *= -1; }
   }
   return angl;
   //  CMatrix3 R; R.SetRotMatrix_Cartesian(angl*axis);

@@ -13,7 +13,7 @@
 
 static void myGlVertex3d(const CVector3& v)
 {
-  ::glVertex3d(v.x,v.y,v.z);
+  ::glVertex3d(v.x(),v.y(),v.z());
 }
 
 static void myGlVertex3d
@@ -21,7 +21,7 @@ static void myGlVertex3d
  const std::vector<CVector3>& aV)
 {
   const CVector3& v = aV[i];
-  ::glVertex3d(v.x,v.y,v.z);
+  ::glVertex3d(v.x(), v.y(), v.z());
 }
 
 int main(int argc,char* argv[])
@@ -42,9 +42,9 @@ int main(int argc,char* argv[])
         int nXYZ = 100;
         aXYZ.resize(nXYZ);
         for(int ixyz=0;ixyz<nXYZ;ixyz++){
-          aXYZ[ixyz].x = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-          aXYZ[ixyz].y = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
-          aXYZ[ixyz].z = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
+          aXYZ[ixyz].p[0] = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
+          aXYZ[ixyz].p[1] = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
+          aXYZ[ixyz].p[2] = 2.0*(double)rand()/(RAND_MAX+1.0)-1.0;
         }
         delfem2::ConvexHull(aTri,aXYZ);
       }
