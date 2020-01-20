@@ -55,12 +55,12 @@ float Length2(const float v[2]){
 namespace delfem2 { // template specialization need to be done in the namespace
 
 template <>
-double dfm2::Distance2(const double v1[2], const double v2[2]){
+double Distance2(const double v1[2], const double v2[2]){
   return sqrt( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
 }
 
 template <>
-float dfm2::Distance2(const float v1[2], const float v2[2]){
+float Distance2(const float v1[2], const float v2[2]){
   return sqrtf( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
 }
   
