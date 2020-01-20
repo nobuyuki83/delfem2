@@ -16,16 +16,31 @@
 
 // -----------------------------------------------------
 
-double TriArea2D(const double v1[2], const double v2[2], const double v3[2]);
+namespace delfem2 {
+  
+template <typename T>
+T TriArea2D(const T v1[2], const T v2[2], const T v3[2]);
+
+template <typename T>
+T Dot2(const T w[2], const T v[2]);
+ 
+template <typename T>
+T Length2(const T v[2]);
+
+template <typename T>
+T Distance2D(const T v1[2], const T v2[2]);
+  
+}
+
+
+
 double SqDistance2D(const double v1[2], const double v2[2]);
-double Distance2D(const double v1[2], const double v2[2]);
+
 void noise2D(double noise[2]);
 bool InverseMat2(double invB[4], const double B[4]);
 void matMat2(double AB[4], const double A[4], const double B[4]);
 void MatVec2(double w[2], const double A[4], const double v[2]);
 void setNormalized2(double w[2]);
-double dot2(const double w[2], const double v[2]);
-double len2(const double v[2]);
 double sqLen2(const double v[2]);
 void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);

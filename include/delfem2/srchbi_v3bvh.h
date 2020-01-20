@@ -113,7 +113,7 @@ bool delfem2::IsContact_FV_Proximity
  const double delta)
 {
   if( ino3 == ino0 || ino3 == ino1 || ino3 == ino2 ){ return false; }
-  if( !bb.isInclude_Point(p3.x,p3.y,p3.z) ) return false;
+  if( !bb.isInclude_Point(p3.x(),p3.y(),p3.z()) ) return false;
   double height = fabs( Height(p0,p1,p2,p3) );
   if( height > delta ) return false;
   double w0,w1;
@@ -138,16 +138,16 @@ bool delfem2::IsContact_EE_CCD
   double eps = 1.0e-10;
   if( ino0 == jno0 || ino0 == jno1 || ino1 == jno0 || ino1 == jno1 ) return false;
   T bbq;
-  bbq.AddPoint(q0s.x,q0s.y,q0s.z, eps);
-  bbq.AddPoint(q1s.x,q1s.y,q1s.z, eps);
-  bbq.AddPoint(q0e.x,q0e.y,q0e.z, eps);
-  bbq.AddPoint(q1e.x,q1e.z,q1e.z, eps);
+  bbq.AddPoint(q0s.x(),q0s.y(),q0s.z(), eps);
+  bbq.AddPoint(q1s.x(),q1s.y(),q1s.z(), eps);
+  bbq.AddPoint(q0e.x(),q0e.y(),q0e.z(), eps);
+  bbq.AddPoint(q1e.x(),q1e.z(),q1e.z(), eps);
   ////
   T bbp;
-  bbp.AddPoint(p0s.x,p0s.y,p0s.z, eps);
-  bbp.AddPoint(p1s.x,p1s.y,p1s.z, eps);
-  bbp.AddPoint(p0e.x,p0e.y,p0e.z, eps);
-  bbp.AddPoint(p1e.x,p1e.y,p1e.z, eps);
+  bbp.AddPoint(p0s.x(),p0s.y(),p0s.z(), eps);
+  bbp.AddPoint(p1s.x(),p1s.y(),p1s.z(), eps);
+  bbp.AddPoint(p0e.x(),p0e.y(),p0e.z(), eps);
+  bbp.AddPoint(p1e.x(),p1e.y(),p1e.z(), eps);
   if( !bbp.IsIntersect(bbq) ) return false;
   ////
   const double t = FindCoplanerInterp(p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
@@ -344,8 +344,8 @@ bool delfem2::IsContact_FV_CCD
   if( ino3 == ino0 || ino3 == ino1 || ino3 == ino2 ){ return false; }
   { // culling
     T bbp;
-    bbp.AddPoint(p3.x,p3.y,p3.z, eps);
-    bbp.AddPoint(q3.x,q3.y,q3.z, eps);
+    bbp.AddPoint(p3.x(),p3.y(),p3.z(), eps);
+    bbp.AddPoint(q3.x(),q3.y(),q3.z(), eps);
     if( !bb.IsIntersect(bbp) ) return false;
   }
   return IsContact_FV_CCD2(ino0, ino1,ino2,ino3, p0,p1,p2,p3, q0, q1,q2,q3);

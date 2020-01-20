@@ -23,77 +23,77 @@
 
 namespace delfem2 {
 
-bool CheckTri(const std::vector<CEPo2>& aPo3D,
-              const std::vector<ETri>& aSTri,
+bool CheckTri(const std::vector<CDynPntSur>& aPo3D,
+              const std::vector<CDynTri>& aSTri,
               const std::vector<CVector2>& aXYZ);
 
 bool DelaunayAroundPoint(int ipo0,
-                         std::vector<CEPo2>& aPo,
-                         std::vector<ETri>& aTri,
+                         std::vector<CDynPntSur>& aPo,
+                         std::vector<CDynTri>& aTri,
                          const std::vector<CVector2>& aVec2);
 
 void MeshTri2D_Export(std::vector<double>& aXY_out,
                       std::vector<unsigned int>& aTri_out,
                       const std::vector<CVector2>& aVec2,
-                      const std::vector<ETri>& aTri_in);
+                      const std::vector<CDynTri>& aTri_in);
 
-void Meshing_Initialize(std::vector<CEPo2>& aPo2D,
-                        std::vector<ETri>& aTri,
+void Meshing_Initialize(std::vector<CDynPntSur>& aPo2D,
+                        std::vector<CDynTri>& aTri,
                         std::vector<CVector2>& aVec2);
 
 void FlagConnected(std::vector<int>& inout_flg,
-                   const std::vector<ETri>& aTri_in,
+                   const std::vector<CDynTri>& aTri_in,
                    unsigned int itri0_ker,
                    int iflag);
 
-void DeleteTriFlag(std::vector<ETri>& aTri_in,
+void DeleteTriFlag(std::vector<CDynTri>& aTri_in,
                    std::vector<int>& aFlg,
                    int flag);
 
-void EnforceEdge(std::vector<CEPo2>& aPo2D,
-                 std::vector<ETri>& aTri,
+void EnforceEdge(std::vector<CDynPntSur>& aPo2D,
+                 std::vector<CDynTri>& aTri,
                  int i0, int i1,
                  const std::vector<CVector2>& aVec2);
 
-void Meshing_SingleConnectedShape2D(std::vector<CEPo2>& aPo2D,
+void Meshing_SingleConnectedShape2D(std::vector<CDynPntSur>& aPo2D,
                                     std::vector<CVector2>& aVec2,
-                                    std::vector<ETri>& aETri,
+                                    std::vector<CDynTri>& aETri,
                                     const std::vector<int>& loopIP_ind,
                                     const std::vector<int>& loopIP);
 void DeleteUnrefPoints(std::vector<CVector2>& aVec2,
-                  std::vector<CEPo2>& aPo2D,
-                  std::vector<ETri>& aTri_in,
+                  std::vector<CDynPntSur>& aPo2D,
+                  std::vector<CDynTri>& aTri_in,
                   const std::vector<int>& aPoDel);
 void DeletePointsFlag(std::vector<CVector2>& aVec1,
-                      std::vector<CEPo2>& aPo1,
-                      std::vector<ETri>& aTri,
+                      std::vector<CDynPntSur>& aPo1,
+                      std::vector<CDynTri>& aTri,
                       std::vector<int>& aFlgPnt1,
                       int iflg);
 void MakeSuperTriangle(std::vector<CVector2>& aVec2,
-                       std::vector<CEPo2>& aPo2D,
-                       std::vector<ETri>& aTri,
+                       std::vector<CDynPntSur>& aPo2D,
+                       std::vector<CDynTri>& aTri,
                        const double bound_2d[4]);
 void AddPointsMesh(const std::vector<CVector2>& aVec2,
-                   std::vector<CEPo2>& aPo2D,
-                   std::vector<ETri>& aTri,
+                   std::vector<CDynPntSur>& aPo2D,
+                   std::vector<CDynTri>& aTri,
                    int ipoin,
                    double MIN_TRI_AREA);
 void MakeInvMassLumped_Tri(std::vector<double>& aInvMassLumped,
                            double rho,
                            const std::vector<CVector2>& aVec2,
-                           const std::vector<ETri>& aETri);
+                           const std::vector<CDynTri>& aETri);
 void MinMaxTriArea(double& min_area,
                    double& max_area,
                    const std::vector<CVector2>& aVec2,
-                   const std::vector<ETri>& aETri);
+                   const std::vector<CDynTri>& aETri);
 
 void CMeshTri2D(std::vector<double>& aXY,
                 std::vector<unsigned int>& aTri,
                 std::vector<CVector2>& aVec2,
-                std::vector<ETri>& aETri);
+                std::vector<CDynTri>& aETri);
 
-void GenMesh(std::vector<CEPo2>& aPo2D,
-             std::vector<ETri>& aETri,
+void GenMesh(std::vector<CDynPntSur>& aPo2D,
+             std::vector<CDynTri>& aETri,
              std::vector<CVector2>& aVec2,
              const std::vector< std::vector<double> >& aaXY,
              double resolution_edge,
@@ -115,8 +115,8 @@ public:
   double elen;
 };
 
-void MeshingInside(std::vector<CEPo2>& aPo2D,
-                   std::vector<ETri>& aTri,
+void MeshingInside(std::vector<CDynPntSur>& aPo2D,
+                   std::vector<CDynTri>& aTri,
                    std::vector<CVector2>& aVec2,
                    std::vector<int>& aFlagPnt,
                    std::vector<int>& aFlagTri,
@@ -165,12 +165,12 @@ public:
 void RefinementPlan_EdgeLongerThan_InsideCircle(CCmdRefineMesh& aCmd,
                                                 double elen,
                                                 double px, double py, double rad,
-                                                const std::vector<CEPo2>& aPo2D,
+                                                const std::vector<CDynPntSur>& aPo2D,
                                                 const std::vector<CVector2>& aVec2,
-                                                const std::vector<ETri>& aETri);
+                                                const std::vector<CDynTri>& aETri);
 
-void RefineMesh(std::vector<CEPo2>& aPo3D,
-                std::vector<ETri>& aSTri,
+void RefineMesh(std::vector<CDynPntSur>& aPo3D,
+                std::vector<CDynTri>& aSTri,
                 std::vector<CVector2>& aVec2,
                 CCmdRefineMesh& aCmd);
 
@@ -231,7 +231,7 @@ public:
     }
     const int ipo0 = aEPo.size();
     aVec2.push_back(v2);
-    aEPo.push_back(CEPo2());
+    aEPo.push_back(CDynPntSur());
     InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
     return ipo0;
   }
@@ -287,8 +287,8 @@ public:
   int nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
 public:
-  std::vector<CEPo2> aEPo;
-  std::vector<ETri> aETri;
+  std::vector<CDynPntSur> aEPo;
+  std::vector<CDynTri> aETri;
   std::vector<CVector2> aVec2;
 };
   

@@ -19,8 +19,8 @@ static int InsertPoint_Mesh
  (const int itri0,
   double& r0,
   double& r1,
-  std::vector<dfm2::CEPo2>& aPo3D,
-  std::vector<dfm2::ETri>& aSTri,
+  std::vector<dfm2::CDynPntSur>& aPo3D,
+  std::vector<dfm2::CDynTri>& aSTri,
   std::vector<CVector3>& aXYZ)
 {
   if (itri0==-1) return -1;
@@ -51,7 +51,7 @@ static bool pickMesh
   const CVector3& org,
   const CVector3& dir,
   int itri_start, // starting triangle
-  const std::vector<dfm2::ETri>& aSTri,
+  const std::vector<dfm2::CDynTri>& aSTri,
   const std::vector<CVector3>& aXYZ)
 {
   int itri1 = itri_start;
@@ -63,9 +63,9 @@ static bool pickMesh
     const CVector3& tp0 = aXYZ[ip0];
     const CVector3& p1 = aXYZ[ip1];
     const CVector3& p2 = aXYZ[ip2];
-    const double v0 = volume_Tet(p1, p2, org, org+dir);
-    const double v1 = volume_Tet(p2, tp0, org, org+dir);
-    const double v2 = volume_Tet(tp0, p1, org, org+dir);
+    const double v0 = Volume_Tet(p1, p2, org, org+dir);
+    const double v1 = Volume_Tet(p2, tp0, org, org+dir);
+    const double v2 = Volume_Tet(tp0, p1, org, org+dir);
     const double r0 = v0/(v0+v1+v2);
     const double r1 = v1/(v0+v1+v2);
     const double r2 = v2/(v0+v1+v2);
@@ -116,7 +116,7 @@ static int pickTriangle
   const CVector3& org,
   const CVector3& dir,
   int itri_start, // starting triangle
-  const std::vector<dfm2::ETri>& aSTri,
+  const std::vector<dfm2::CDynTri>& aSTri,
   const std::vector<CVector3>& aXYZ)
 {
   int itri1 = itri_start;
@@ -128,9 +128,9 @@ static int pickTriangle
     const CVector3& tp0 = aXYZ[ip0];
     const CVector3& p1 = aXYZ[ip1];
     const CVector3& p2 = aXYZ[ip2];
-    double v0 = volume_Tet(p1, p2, org, org+dir);
-    double v1 = volume_Tet(p2, tp0, org, org+dir);
-    double v2 = volume_Tet(tp0, p1, org, org+dir);
+    double v0 = Volume_Tet(p1, p2, org, org+dir);
+    double v1 = Volume_Tet(p2, tp0, org, org+dir);
+    double v2 = Volume_Tet(tp0, p1, org, org+dir);
     if (v0>0&&v1>0&&v2>0){
       double r0 = v0/(v0+v1+v2);
       double r1 = v1/(v0+v1+v2);
@@ -156,7 +156,7 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
  (CVector3 &intersectionPoint,
   const CVector3 &line0,
   const CVector3 &line1,
-  const std::vector<dfm2::ETri>& aTri,
+  const std::vector<dfm2::CDynTri>& aTri,
   const std::vector<CVector3>& aVec3,
   const CVector3 &targetPoint)
 {
@@ -173,9 +173,9 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
   for (auto & i : intersectionPoints)
   {
     float currSquareDistance =
-    (i.x - targetPoint.x) * (i.x - targetPoint.x) +
-    (i.y - targetPoint.y) * (i.y - targetPoint.y) +
-    (i.z - targetPoint.z) * (i.z - targetPoint.z);
+    (i.x() - targetPoint.x()) * (i.x() - targetPoint.x()) +
+    (i.y() - targetPoint.y()) * (i.y() - targetPoint.y()) +
+    (i.z() - targetPoint.z()) * (i.z() - targetPoint.z());
     if (currSquareDistance < minSquareDistance)
     {
       intersectionPoint = i;
@@ -192,7 +192,7 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
 
 CVector3 dfm2::normalTri
 (int itri0,
- const std::vector<ETri>& aSTri,
+ const std::vector<CDynTri>& aSTri,
  const std::vector<CVector3>& aXYZ)
 {
   int i0 = aSTri[itri0].v[0];
@@ -204,8 +204,8 @@ CVector3 dfm2::normalTri
 
 
 bool dfm2::CheckTri
-(const std::vector<CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri,
+(const std::vector<CDynPntSur>& aPo3D,
+ const std::vector<CDynTri>& aSTri,
  const std::vector<CVector3>& aXYZ)
 {
   for (const auto & ref_tri : aSTri){
@@ -231,7 +231,7 @@ bool dfm2::FindRayTriangleMeshIntersections
 (std::vector<CVector3> &intersectionPoints,
  const CVector3 &line0,
  const CVector3 &line1,
- const std::vector<ETri>& aTri,
+ const std::vector<CDynTri>& aTri,
  const std::vector<CVector3>& aVec3)
 {
 	intersectionPoints.clear();
@@ -256,8 +256,8 @@ bool dfm2::FindRayTriangleMeshIntersections
 
 bool dfm2::DelaunayAroundPoint
 (int ipo0,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri,
+ std::vector<CDynPntSur>& aPo,
+ std::vector<CDynTri>& aTri,
  const std::vector<CVector3>& aVec3)
 {
   assert(ipo0 < (int)aPo.size());

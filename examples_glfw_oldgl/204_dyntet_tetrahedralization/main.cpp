@@ -61,7 +61,7 @@ int it_wrong = -1;
 
 static void myGlVertex3d(const CVector3& v)
 {
-  ::glVertex3d(v.x, v.y, v.z);
+  ::glVertex3d(v.x(), v.y(), v.z());
 }
 
 
@@ -90,7 +90,7 @@ void myGlutDisplay()
     ::glPointSize(1);
     ::glBegin(GL_POINTS);
     for (auto & ip : aPo3D){
-      glVertex3d(ip.p.x, ip.p.y, ip.p.z);
+      glVertex3d(ip.p.x(), ip.p.y(), ip.p.z());
     }
     ::glEnd();
     ///

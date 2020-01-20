@@ -398,9 +398,9 @@ TEST(mathfunc,sherical_harmonics_orthgonality)
     CVector3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
     double area = SolidAngleTri(p0, p1, p2);
     area_sum += area;
-    double a0[N]; makeArray_SphericalHarmonics(a0, norder, p0.x,p0.y,p0.z);
-    double a1[N]; makeArray_SphericalHarmonics(a1, norder, p1.x,p1.y,p1.z);
-    double a2[N]; makeArray_SphericalHarmonics(a2, norder, p2.x,p2.y,p2.z);
+    double a0[N]; makeArray_SphericalHarmonics(a0, norder, p0.p[0],p0.p[1],p0.p[2]);
+    double a1[N]; makeArray_SphericalHarmonics(a1, norder, p1.p[0],p1.p[1],p1.p[2]);
+    double a2[N]; makeArray_SphericalHarmonics(a2, norder, p2.p[0],p2.p[1],p2.p[2]);
     for(int ish=0;ish<N;++ish){
       for(int jsh=0;jsh<N;++jsh){
         double val = 2*a0[ish]*a0[jsh] + 2*a1[ish]*a1[jsh] + 2*a2[ish]*a2[jsh];

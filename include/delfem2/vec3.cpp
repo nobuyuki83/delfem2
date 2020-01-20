@@ -10,7 +10,6 @@
 #include <cmath>
 #include <map>
 #include <stack>
-
 #include "delfem2/vec3.h"
 
 #ifndef M_PI
@@ -34,6 +33,7 @@ static void QuatVec(double vo[], const double q[], const double vi[])
   double yz = q[2] * q[3] * 2.0;
   double zx = q[3] * q[1] * 2.0;
   double xw = q[1] * q[0] * 2.0;
+
   double yw = q[2] * q[0] * 2.0;
   double zw = q[3] * q[0] * 2.0;
   
@@ -62,31 +62,118 @@ static void QuatConjVec(double vo[], const double q[], const double vi[])
 
 // ----------------------------------------
 
-double ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
-  return a[0]*(b[1]*c[2] - b[2]*c[1])
-  +a[1]*(b[2]*c[0] - b[0]*c[2])
-  +a[2]*(b[0]*c[1] - b[1]*c[0]);
+
+template <>
+double dfm2::Distance3(const double p0[3], const double p1[3]) {
+  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
-double Dot3D(const double a[], const double b[]){
+template <>
+float dfm2::Distance3(const float p0[3], const float p1[3]) {
+  return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
+}
+
+// -------------------------
+
+template <>
+double dfm2::Length3(const double v[3]){
+  return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+}
+
+template <>
+float dfm2::Length3(const float v[3]){
+  return sqrtf( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+}
+
+// ---------------------------------
+
+template <typename T>
+T dfm2::Dot3(const T a[3], const T b[3]){
   return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 }
+template float dfm2::Dot3(const float a[3], const float b[3]);
+template double dfm2::Dot3(const double a[3], const double b[3]);
 
-void Cross3D(double r[3], const double v1[3], const double v2[3]){
+
+// ---------------------------------
+
+template <typename T>
+T dfm2::Volume_Tet3
+ (const T v1[3],
+  const T v2[3],
+  const T v3[3],
+  const T v4[3])
+{
+  return
+  ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
+   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
+   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
+   ) * 0.16666666666666666666666666666667;
+}
+template float dfm2::Volume_Tet3(const float v1[3], const float v2[3], const float v3[3], const float v4[3]);
+template double dfm2::Volume_Tet3(const double v1[3], const double v2[3], const double v3[3], const double v4[3]);
+
+// ---------------------------------
+
+template <typename T>
+void dfm2::Cross3(T r[3], const T v1[3], const T v2[3]){
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
+template void dfm2::Cross3(float r[3], const float v1[3], const float v2[3]);
+template void dfm2::Cross3(double r[3], const double v1[3], const double v2[3]);
 
-double Length3D(const double v[3]){
-  return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
-}
 
-void Normalize3D(double v[3]){
+// ---------------------------------
+
+template <typename T>
+void dfm2::Normalize3(T v[3])
+{
   double len = sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
   v[0] /= len;
   v[1] /= len;
   v[2] /= len;
+}
+template void dfm2::Normalize3(float v[3]);
+template void dfm2::Normalize3(double v[3]);
+
+// ---------------------------------
+
+template <typename T>
+T dfm2::Area_Tri3(const T v1[3], const T v2[3], const T v3[3]){
+  const T n[3] = {
+    ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] ),
+    ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] ),
+    ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] ) };
+  return 0.5*Length3(n);
+}
+template float dfm2::Area_Tri3(const float v1[3], const float v2[3], const float v3[3]);
+template double dfm2::Area_Tri3(const double v1[3], const double v2[3], const double v3[3]);
+
+// ----------------------------------
+
+template <typename T>
+void dfm2::MatVec3
+ (T y[3],
+  const T m[9], const T x[3])
+{
+   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
+   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
+   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
+}
+template void dfm2::MatVec3(float y[3], const float m[9], const float x[3]);
+template void dfm2::MatVec3(double y[3], const double m[9], const double x[3]);
+
+
+
+
+// ------------------------------------
+
+double ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
+  return a[0]*(b[1]*c[2] - b[2]*c[1])
+  +a[1]*(b[2]*c[0] - b[0]*c[2])
+  +a[2]*(b[0]*c[1] - b[1]*c[0]);
 }
 
 double SquareLength3D(const double v[3]){
@@ -95,30 +182,6 @@ double SquareLength3D(const double v[3]){
 
 double SquareDistance3D(const double p0[3], const double p1[3]){
   return (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
-}
-
-double Distance3D(const double p0[3], const double p1[3]){
-  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
-}
-
-double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
-  double x, y, z;
-  x = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-  y = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-  z = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  return 0.5*sqrt( x*x + y*y + z*z );
-}
-double TetVolume3D
-(const double v1[3],
- const double v2[3],
- const double v3[3],
- const double v4[3])
-{
-  return
-  ((v2[0]-v1[0])*((v3[1]-v1[1])*(v4[2]-v1[2])-(v4[1]-v1[1])*(v3[2]-v1[2]))
-   -(v2[1]-v1[1])*((v3[0]-v1[0])*(v4[2]-v1[2])-(v4[0]-v1[0])*(v3[2]-v1[2]))
-   +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
-   ) * 0.16666666666666666666666666666667;
 }
 
 void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
@@ -134,18 +197,6 @@ void NormalTri3D(double n[3], const double v1[3], const double v2[3], const doub
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-}
-
-double VolumeTet3D(const double v1[3],
-                    const double v2[3],
-                    const double v3[3],
-                    const double v4[3] )
-{
-  return
-  (   ( v2[0] - v1[0] )*( ( v3[1] - v1[1] )*( v4[2] - v1[2] ) - ( v4[1] - v1[1] )*( v3[2] - v1[2] ) )
-   -  ( v2[1] - v1[1] )*( ( v3[0] - v1[0] )*( v4[2] - v1[2] ) - ( v4[0] - v1[0] )*( v3[2] - v1[2] ) )
-   +  ( v2[2] - v1[2] )*( ( v3[0] - v1[0] )*( v4[1] - v1[1] ) - ( v4[0] - v1[0] )*( v3[1] - v1[1] ) )
-   ) * 0.16666666666666666666666666666667;
 }
 
 // t is a tmporary buffer size of 9
@@ -180,18 +231,6 @@ void transposeMat3(double t[], const double a[])
   t[8] = a[8];
 }
 
-// -----------------------------------
-
-template <>
-double Distance3(const double p0[3], const double p1[3]) {
-  return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
-}
-
-template <>
-float Distance3(const float p0[3], const float p1[3]) {
-  return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
-}
-
 // ------------------------------------------
 
 void GetNearest_LineSegPoint3D
@@ -202,10 +241,10 @@ void GetNearest_LineSegPoint3D
 {
   const double d[3] = { e[0]-s[0], e[1]-s[1], e[2]-s[2] };
   double t = 0.5;
-  if (Dot3D(d, d)>1.0e-20){
+  if ( dfm2::Dot3(d, d)>1.0e-20){
     const double ps[3] = { s[0]-p[0], s[1]-p[1], s[2]-p[2] };
-    double a = Dot3D(d, d);
-    double b = Dot3D(d, ps);
+    double a = dfm2::Dot3(d, d);
+    double b = dfm2::Dot3(d, ps);
     t = -b/a;
     if (t<0) t = 0;
     if (t>1) t = 1;
@@ -226,12 +265,12 @@ void GetNearest_TrianglePoint3D
 {
   double area, n012[3]; UnitNormalAreaTri3D(n012, area, q0, q1, q2);
   const double pe[3] = { ps[0]+n012[0], ps[1]+n012[1], ps[2]+n012[2] };
-  const double v012 = VolumeTet3D(ps, q0, q1, q2);
+  const double v012 = dfm2::Volume_Tet3(ps, q0, q1, q2);
   if (fabs(v012) > 1.0e-10){
     const double sign = (v012 > 0) ? +1 : -1;
-    const double v0 = VolumeTet3D(ps, q1, q2, pe)*sign;
-    const double v1 = VolumeTet3D(ps, q2, q0, pe)*sign;
-    const double v2 = VolumeTet3D(ps, q0, q1, pe)*sign;
+    const double v0 = dfm2::Volume_Tet3(ps, q1, q2, pe)*sign;
+    const double v1 = dfm2::Volume_Tet3(ps, q2, q0, pe)*sign;
+    const double v2 = dfm2::Volume_Tet3(ps, q0, q1, pe)*sign;
     assert(fabs(v0+v1+v2) > 1.0e-10);
     double inv_v012 = 1.0/(v0+v1+v2);
     r0 = v0*inv_v012;
@@ -248,16 +287,16 @@ void GetNearest_TrianglePoint3D
   double r12[3]; GetNearest_LineSegPoint3D(r12, ps, q1, q2);
   double r20[3]; GetNearest_LineSegPoint3D(r20, ps, q2, q0);
   double r01[3]; GetNearest_LineSegPoint3D(r01, ps, q0, q1);
-  const double d12 = Distance3D(r12, ps);
-  const double d20 = Distance3D(r20, ps);
-  const double d01 = Distance3D(r01, ps);
+  const double d12 = dfm2::Distance3(r12, ps);
+  const double d20 = dfm2::Distance3(r20, ps);
+  const double d01 = dfm2::Distance3(r01, ps);
   if (d12 < d20){
     if (d12 < d01){ // 12 is the smallest
       pn[0] = r12[0];
       pn[1] = r12[1];
       pn[2] = r12[2];
       r0 = 0;
-      r1 = Distance3D(pn,q2)/Distance3D(q1,q2);
+      r1 = dfm2::Distance3(pn,q2)/dfm2::Distance3(q1,q2);
       return;
     }
   }
@@ -266,7 +305,7 @@ void GetNearest_TrianglePoint3D
       pn[0] = r20[0];
       pn[1] = r20[1];
       pn[2] = r20[2];
-      r0 = Distance3D(pn,q2)/Distance3D(q0,q2);
+      r0 = dfm2::Distance3(pn,q2)/dfm2::Distance3(q0,q2);
       r1 = 0;
       return;
     }
@@ -274,7 +313,7 @@ void GetNearest_TrianglePoint3D
   pn[0] = r01[0];
   pn[1] = r01[1];
   pn[2] = r01[2];
-  r0 = Distance3D(pn,q1)/Distance3D(q0,q1);
+  r0 = dfm2::Distance3(pn,q1)/dfm2::Distance3(q0,q1);
   r1 = 1-r0;
 }
 
@@ -284,19 +323,19 @@ void GetVertical2Vector3D
  double vec_x[3], double vec_y[3])
 {
   const double vec_s[3] = {0,1,0};
-  Cross3D(vec_x,vec_s,vec_n);
-  const double len = Length3D(vec_x);
+  dfm2::Cross3(vec_x,vec_s,vec_n);
+  const double len = dfm2::Length3(vec_x);
   if( len < 1.0e-10 ){
     const double vec_t[3] = {1,0,0};
-    Cross3D(vec_x,vec_t,vec_n);  // z????
-    Cross3D(vec_y,vec_n,vec_x);  // x????
+    dfm2::Cross3(vec_x,vec_t,vec_n);  // z????
+    dfm2::Cross3(vec_y,vec_n,vec_x);  // x????
   }
   else{
     const double invlen = 1.0/len;
     vec_x[0] *= invlen;
     vec_x[1] *= invlen;
     vec_x[2] *= invlen;
-    Cross3D(vec_y,vec_n,vec_x);
+    dfm2::Cross3(vec_y,vec_n,vec_x);
   }
 }
 
@@ -326,13 +365,7 @@ void VecMat3
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-void MatVec3
-(double y[3],
- const double m[9], const double x[3]){
-  y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
-  y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
-  y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
-}
+
 
 void MatTransVec3
 (double y[3],
@@ -356,16 +389,17 @@ void Mat4Vec3
 
 double Dot(const CVector3 &arg1, const CVector3 &arg2)
 {
-  return arg1.x*arg2.x + arg1.y*arg2.y + arg1.z*arg2.z;
+  return dfm2::Dot3(arg1.p,arg2.p);
 }
 
 // cross product
 CVector3 Cross(const CVector3& arg1, const CVector3& arg2)
 {
   CVector3 temp;
-  temp.x = arg1.y*arg2.z - arg1.z*arg2.y;
-  temp.y = arg1.z*arg2.x - arg1.x*arg2.z;
-  temp.z = arg1.x*arg2.y - arg1.y*arg2.x;
+  dfm2::Cross3(temp.p, arg1.p, arg2.p);
+//  temp.x = arg1.y*arg2.z - arg1.z*arg2.y;
+//  temp.y = arg1.z*arg2.x - arg1.x*arg2.z;
+//  temp.z = arg1.x*arg2.y - arg1.y*arg2.x;
   return temp;
 }
 
@@ -418,13 +452,13 @@ CVector3 operator^ (const CVector3& lhs, const CVector3& rhs){
 std::ostream &operator<<(std::ostream &output, const CVector3& v)
 {
   output.setf(std::ios::scientific);
-  output << v.x << " " << v.y << " " << v.z;
+  output << v.p[0] << " " << v.p[1] << " " << v.p[2];
   return output;
 }
 
 std::istream &operator>>(std::istream &input, CVector3& v)
 {
-  input >> v.x >> v.y >> v.z;
+  input >> v.p[0] >> v.p[1] >> v.p[2];
   return input;
 }
 
@@ -447,45 +481,47 @@ std::istream &operator>>(std::istream &input, std::vector<CVector3>& aV){
 
 CVector3 Mat3Vec(const double mat[9], const CVector3& v){
   CVector3 u;
-  u.x = mat[0]*v.x + mat[1]*v.y + mat[2]*v.z;
-  u.y = mat[3]*v.x + mat[4]*v.y + mat[5]*v.z;
-  u.z = mat[6]*v.x + mat[7]*v.y + mat[8]*v.z;
+  dfm2::MatVec3(u.p, mat, v.p);
   return u;
+//  u.x = mat[0]*v.x + mat[1]*v.y + mat[2]*v.z;
+//  u.y = mat[3]*v.x + mat[4]*v.y + mat[5]*v.z;
+//  u.z = mat[6]*v.x + mat[7]*v.y + mat[8]*v.z;
 }
 
 
 CVector3 Mat4Vec(const double mat[16], const CVector3& v){
   CVector3 u;
-  u.x = mat[0]*v.x + mat[1]*v.y + mat[ 2]*v.z;
-  u.y = mat[4]*v.x + mat[5]*v.y + mat[ 6]*v.z;
-  u.z = mat[8]*v.x + mat[9]*v.y + mat[10]*v.z;
+  Mat4Vec3(u.p, mat, v.p);
   return u;
+//  u.x = mat[0]*v.x + mat[1]*v.y + mat[ 2]*v.z;
+//  u.y = mat[4]*v.x + mat[5]*v.y + mat[ 6]*v.z;
+//  u.z = mat[8]*v.x + mat[9]*v.y + mat[10]*v.z;
 }
 
 CVector3 QuatVec(const double quat[4], const CVector3& v0){
-  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; QuatVec(v1a,quat,v0a);
+//  const double v0a[3] = {v0.x,v0.y,v0.z};
+  double v1a[3]; QuatVec(v1a,quat,v0.p);
   return CVector3(v1a[0],v1a[1],v1a[2]);
 }
 
 CVector3 QuatConjVec(const double quat[4], const CVector3& v0){
-  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; QuatConjVec(v1a,quat,v0a);
+//  const double v0a[3] = {v0.x,v0.y,v0.z};
+  double v1a[3]; QuatConjVec(v1a,quat,v0.p);
   return CVector3(v1a[0],v1a[1],v1a[2]);
 }
 
-
-////////////////////////////////////////////
+// ------------------------------------------------------------
 
 double ScalarTripleProduct(const CVector3& a, const CVector3& b, const CVector3& c){
-  return a.x*(b.y*c.z - b.z*c.y) + a.y*(b.z*c.x - b.x*c.z) + a.z*(b.x*c.y - b.y*c.x);
+//  return a.x*(b.y*c.z - b.z*c.y) + a.y*(b.z*c.x - b.x*c.z) + a.z*(b.x*c.y - b.y*c.x);
+  return a.p[0]*(b.p[1]*c.p[2] - b.p[2]*c.p[1]) + a.p[1]*(b.p[2]*c.p[0] - b.p[0]*c.p[2]) + a.p[2]*(b.p[0]*c.p[1] - b.p[1]*c.p[0]);
 }
 
 
 bool operator== (const CVector3& lhs, const CVector3& rhs){
-  if( fabs(lhs.x - rhs.x) < NEARLY_ZERO
-     && fabs(lhs.y - rhs.y) < NEARLY_ZERO
-     && fabs(lhs.z - rhs.z) < NEARLY_ZERO ){ return true; }
+  if( fabs(lhs.p[0] - rhs.p[0]) < NEARLY_ZERO
+     && fabs(lhs.p[1] - rhs.p[1]) < NEARLY_ZERO
+     && fabs(lhs.p[2] - rhs.p[2]) < NEARLY_ZERO ){ return true; }
   else{ return false; }
 }
 
@@ -496,31 +532,23 @@ bool operator!= (const CVector3& lhs, const CVector3& rhs){
 void CVector3::SetNormalizedVector()
 {
   double invmag = 1.0/Length();
-  x *= invmag;
-  y *= invmag;
-  z *= invmag;
+  p[0] *= invmag;
+  p[1] *= invmag;
+  p[2] *= invmag;
 }
 
 void CVector3::SetZero()
 {
-  x = 0.0;
-  y = 0.0;
-  z = 0.0;
+  p[0] = 0.0;
+  p[1] = 0.0;
+  p[2] = 0.0;
 }
 
 //! Hight of a tetrahedra
 double Height(const CVector3& v1, const CVector3& v2, const CVector3& v3, const CVector3& v4){
-  // get normal vector
-  double dtmp_x = (v2.y-v1.y)*(v3.z-v1.z)-(v2.z-v1.z)*(v3.y-v1.y);
-  double dtmp_y = (v2.z-v1.z)*(v3.x-v1.x)-(v2.x-v1.x)*(v3.z-v1.z);
-  double dtmp_z = (v2.x-v1.x)*(v3.y-v1.y)-(v2.y-v1.y)*(v3.x-v1.x);
-  
-  // normalize normal vector
-  const double dtmp1 = 1.0 / sqrt( dtmp_x*dtmp_x + dtmp_y*dtmp_y + dtmp_z*dtmp_z );
-  dtmp_x *= dtmp1;
-  dtmp_y *= dtmp1;
-  dtmp_z *= dtmp1;
-  return (v4.x-v1.x)*dtmp_x+(v4.y-v1.y)*dtmp_y+(v4.z-v1.z)*dtmp_z;
+  double n[3]; NormalTri3D(n, v1.p,v2.p,v3.p);
+  dfm2::Normalize3(n);
+  return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
 }
 
 // -------------------------------------------------------------------------
@@ -543,7 +571,7 @@ void GetVertical2Vector
   }
 }
 
-////////////////////////////////////////////////////////////////
+// --------------------------------------------------------
 
 CVector3 nearest_Line_Point
 (const CVector3& p, // point
@@ -942,9 +970,9 @@ bool intersection_Plane_Line
  const CVector3& src, const CVector3& dir,
  const CVector3& q0, const CVector3& q1, const CVector3& q2)
 {
-  r0 = volume_Tet(src, src+dir, q1, q2);
-  r1 = volume_Tet(src, src+dir, q2, q0);
-  r2 = volume_Tet(src, src+dir, q0, q1);
+  r0 = Volume_Tet(src, src+dir, q1, q2);
+  r1 = Volume_Tet(src, src+dir, q2, q0);
+  r2 = Volume_Tet(src, src+dir, q0, q1);
   double v012 = (r0+r1+r2);
   double v012_inv = 1.0/v012;
   r0 *= v012_inv;
@@ -1082,12 +1110,12 @@ void iteration_barycentricCoord_Origin_Solid
  const CVector3& dpdr2,
  double damp=1.0)
 {
-  const double cxx = dpdr0.x*dpdr0.x + dpdr1.x*dpdr1.x + dpdr2.x*dpdr2.x;
-  const double cxy = dpdr0.x*dpdr0.y + dpdr1.x*dpdr1.y + dpdr2.x*dpdr2.y;
-  const double cxz = dpdr0.x*dpdr0.z + dpdr1.x*dpdr1.z + dpdr2.x*dpdr2.z;
-  const double cyy = dpdr0.y*dpdr0.y + dpdr1.y*dpdr1.y + dpdr2.y*dpdr2.y;
-  const double cyz = dpdr0.y*dpdr0.z + dpdr1.y*dpdr1.z + dpdr2.y*dpdr2.z;
-  const double czz = dpdr0.z*dpdr0.z + dpdr1.z*dpdr1.z + dpdr2.z*dpdr2.z;
+  const double cxx = dpdr0.p[0]*dpdr0.p[0] + dpdr1.p[0]*dpdr1.p[0] + dpdr2.p[0]*dpdr2.p[0];
+  const double cxy = dpdr0.p[0]*dpdr0.p[1] + dpdr1.p[0]*dpdr1.p[1] + dpdr2.p[0]*dpdr2.p[1];
+  const double cxz = dpdr0.p[0]*dpdr0.p[2] + dpdr1.p[0]*dpdr1.p[2] + dpdr2.p[0]*dpdr2.p[2];
+  const double cyy = dpdr0.p[1]*dpdr0.p[1] + dpdr1.p[1]*dpdr1.p[1] + dpdr2.p[1]*dpdr2.p[1];
+  const double cyz = dpdr0.p[1]*dpdr0.p[2] + dpdr1.p[1]*dpdr1.p[2] + dpdr2.p[1]*dpdr2.p[2];
+  const double czz = dpdr0.p[2]*dpdr0.p[2] + dpdr1.p[2]*dpdr1.p[2] + dpdr2.p[2]*dpdr2.p[2];
   double C[9] = {cxx,cxy,cxz, cxy,cyy,cyz, cxz,cyz,czz};
   double Cinv[9]; InverseMat3(Cinv, C);
   const CVector3 d = damp*Mat3Vec(Cinv,q);
@@ -1172,12 +1200,12 @@ bool IsInside_Orgin_BoundingBoxPoint6
  const CVector3& p4,
  const CVector3& p5)
 {
-  if( p0.x>0 && p1.x>0 && p2.x>0 && p3.x>0 && p4.x>0 && p5.x>0 ){ return false; }
-  if( p0.x<0 && p1.x<0 && p2.x<0 && p3.x<0 && p4.x<0 && p5.x<0 ){ return false; }
-  if( p0.y>0 && p1.y>0 && p2.y>0 && p3.y>0 && p4.y>0 && p5.y>0 ){ return false; }
-  if( p0.y<0 && p1.y<0 && p2.y<0 && p3.y<0 && p4.y<0 && p5.y<0 ){ return false; }
-  if( p0.z>0 && p1.z>0 && p2.z>0 && p3.z>0 && p4.z>0 && p5.z>0 ){ return false; }
-  if( p0.z<0 && p1.z<0 && p2.z<0 && p3.z<0 && p4.z<0 && p5.z<0 ){ return false; }
+  if( p0.p[0]>0 && p1.p[0]>0 && p2.p[0]>0 && p3.p[0]>0 && p4.p[0]>0 && p5.p[0]>0 ){ return false; }
+  if( p0.p[0]<0 && p1.p[0]<0 && p2.p[0]<0 && p3.p[0]<0 && p4.p[0]<0 && p5.p[0]<0 ){ return false; }
+  if( p0.p[1]>0 && p1.p[1]>0 && p2.p[1]>0 && p3.p[1]>0 && p4.p[1]>0 && p5.p[1]>0 ){ return false; }
+  if( p0.p[1]<0 && p1.p[1]<0 && p2.p[1]<0 && p3.p[1]<0 && p4.p[1]<0 && p5.p[1]<0 ){ return false; }
+  if( p0.p[2]>0 && p1.p[2]>0 && p2.p[2]>0 && p3.p[2]>0 && p4.p[2]>0 && p5.p[2]>0 ){ return false; }
+  if( p0.p[2]<0 && p1.p[2]<0 && p2.p[2]<0 && p3.p[2]<0 && p4.p[2]<0 && p5.p[2]<0 ){ return false; }
   return true;
 }
 
@@ -1188,12 +1216,12 @@ bool IsInside_Orgin_BoundingBoxPoint5
  const CVector3& p3,
  const CVector3& p4)
 {
-  if( p0.x>0 && p1.x>0 && p2.x>0 && p3.x>0 && p4.x>0 ){ return false; }
-  if( p0.x<0 && p1.x<0 && p2.x<0 && p3.x<0 && p4.x<0 ){ return false; }
-  if( p0.y>0 && p1.y>0 && p2.y>0 && p3.y>0 && p4.y>0 ){ return false; }
-  if( p0.y<0 && p1.y<0 && p2.y<0 && p3.y<0 && p4.y<0 ){ return false; }
-  if( p0.z>0 && p1.z>0 && p2.z>0 && p3.z>0 && p4.z>0 ){ return false; }
-  if( p0.z<0 && p1.z<0 && p2.z<0 && p3.z<0 && p4.z<0 ){ return false; }
+  if( p0.p[0]>0 && p1.p[0]>0 && p2.p[0]>0 && p3.p[0]>0 && p4.p[0]>0 ){ return false; }
+  if( p0.p[0]<0 && p1.p[0]<0 && p2.p[0]<0 && p3.p[0]<0 && p4.p[0]<0 ){ return false; }
+  if( p0.p[1]>0 && p1.p[1]>0 && p2.p[1]>0 && p3.p[1]>0 && p4.p[1]>0 ){ return false; }
+  if( p0.p[1]<0 && p1.p[1]<0 && p2.p[1]<0 && p3.p[1]<0 && p4.p[1]<0 ){ return false; }
+  if( p0.p[2]>0 && p1.p[2]>0 && p2.p[2]>0 && p3.p[2]>0 && p4.p[2]>0 ){ return false; }
+  if( p0.p[2]<0 && p1.p[2]<0 && p2.p[2]<0 && p3.p[2]<0 && p4.p[2]<0 ){ return false; }
   return true;
 }
 
@@ -1203,12 +1231,12 @@ bool IsInside_Orgin_BoundingBoxPoint4
  const CVector3& p2,
  const CVector3& p3)
 {
-  if( p0.x>0 && p1.x>0 && p2.x>0 && p3.x>0 ){ return false; }
-  if( p0.x<0 && p1.x<0 && p2.x<0 && p3.x<0 ){ return false; }
-  if( p0.y>0 && p1.y>0 && p2.y>0 && p3.y>0 ){ return false; }
-  if( p0.y<0 && p1.y<0 && p2.y<0 && p3.y<0 ){ return false; }
-  if( p0.z>0 && p1.z>0 && p2.z>0 && p3.z>0 ){ return false; }
-  if( p0.z<0 && p1.z<0 && p2.z<0 && p3.z<0 ){ return false; }
+  if( p0.p[0]>0 && p1.p[0]>0 && p2.p[0]>0 && p3.p[0]>0 ){ return false; }
+  if( p0.p[0]<0 && p1.p[0]<0 && p2.p[0]<0 && p3.p[0]<0 ){ return false; }
+  if( p0.p[1]>0 && p1.p[1]>0 && p2.p[1]>0 && p3.p[1]>0 ){ return false; }
+  if( p0.p[1]<0 && p1.p[1]<0 && p2.p[1]<0 && p3.p[1]<0 ){ return false; }
+  if( p0.p[2]>0 && p1.p[2]>0 && p2.p[2]>0 && p3.p[2]>0 ){ return false; }
+  if( p0.p[2]<0 && p1.p[2]<0 && p2.p[2]<0 && p3.p[2]<0 ){ return false; }
   return true;
 }
 
@@ -1287,12 +1315,12 @@ bool IsContact_EE_Proximity
  const double delta)
 {
   if( ino0 == jno0 || ino0 == jno1 || ino1 == jno0 || ino1 == jno1 ) return false;
-  if( q0.x+delta < p0.x && q0.x+delta < p1.x && q1.x+delta < p0.x && q1.x+delta < p1.x ) return false;
-  if( q0.x-delta > p0.x && q0.x-delta > p1.x && q1.x-delta > p0.x && q1.x-delta > p1.x ) return false;
-  if( q0.y+delta < p0.y && q0.y+delta < p1.y && q1.y+delta < p0.y && q1.y+delta < p1.y ) return false;
-  if( q0.y-delta > p0.y && q0.y-delta > p1.y && q1.y-delta > p0.y && q1.y-delta > p1.y ) return false;
-  if( q0.z+delta < p0.z && q0.z+delta < p1.z && q1.z+delta < p0.z && q1.z+delta < p1.z ) return false;
-  if( q0.z-delta > p0.z && q0.z-delta > p1.z && q1.z-delta > p0.z && q1.z-delta > p1.z ) return false;
+  if( q0.p[0]+delta < p0.p[0] && q0.p[0]+delta < p1.p[0] && q1.p[0]+delta < p0.p[0] && q1.p[0]+delta < p1.p[0] ) return false;
+  if( q0.p[0]-delta > p0.p[0] && q0.p[0]-delta > p1.p[0] && q1.p[0]-delta > p0.p[0] && q1.p[0]-delta > p1.p[0] ) return false;
+  if( q0.p[1]+delta < p0.p[1] && q0.p[1]+delta < p1.p[1] && q1.p[1]+delta < p0.p[1] && q1.p[1]+delta < p1.p[1] ) return false;
+  if( q0.p[1]-delta > p0.p[1] && q0.p[1]-delta > p1.p[1] && q1.p[1]-delta > p0.p[1] && q1.p[1]-delta > p1.p[1] ) return false;
+  if( q0.p[2]+delta < p0.p[2] && q0.p[2]+delta < p1.p[2] && q1.p[2]+delta < p0.p[2] && q1.p[2]+delta < p1.p[2] ) return false;
+  if( q0.p[2]-delta > p0.p[2] && q0.p[2]-delta > p1.p[2] && q1.p[2]-delta > p0.p[2] && q1.p[2]-delta > p1.p[2] ) return false;
   double ratio_p, ratio_q;
   double dist = DistanceEdgeEdge(p0, p1, q0, q1, ratio_p, ratio_q);
   if( dist > delta ) return false;
@@ -1536,9 +1564,9 @@ static CVector3 mult_GlAffineMatrix
  const CVector3& p)
 {
   CVector3 v;
-  v.x = m[0*4+0]*p.x + m[1*4+0]*p.y + m[2*4+0]*p.z + m[3*4+0];
-  v.y = m[0*4+1]*p.x + m[1*4+1]*p.y + m[2*4+1]*p.z + m[3*4+1];
-  v.z = m[0*4+2]*p.x + m[1*4+2]*p.y + m[2*4+2]*p.z + m[3*4+2];
+  v.p[0] = m[0*4+0]*p.p[0] + m[1*4+0]*p.p[1] + m[2*4+0]*p.p[2] + m[3*4+0];
+  v.p[1] = m[0*4+1]*p.p[0] + m[1*4+1]*p.p[1] + m[2*4+1]*p.p[2] + m[3*4+1];
+  v.p[2] = m[0*4+2]*p.p[0] + m[1*4+2]*p.p[1] + m[2*4+2]*p.p[2] + m[3*4+2];
   return v;
 }
 
@@ -1586,17 +1614,17 @@ CVector3 screenProjection(const CVector3& v,
 {
   CVector3 v0 = mult_GlAffineMatrix(mMV, v );
   CVector3 v1 = mult_GlAffineMatrix(mPj, v0);
-  float w1 = mPj[11]*v0.z + mPj[15];
-  return CVector3(v1.x/w1, v1.y/w1, 0.0);
+  float w1 = mPj[11]*v0.p[2] + mPj[15];
+  return CVector3(v1.p[0]/w1, v1.p[1]/w1, 0.0);
 }
 
 CVector3 screenUnProjection(const CVector3& v,
                             const float* mMV, const float* mPj)
 {
   float D = mPj[11] + mPj[15]; // z is 1 after model view
-  CVector3 v0( D*v.x, D*v.y, 0.0 );
+  CVector3 v0( D*v.p[0], D*v.p[1], 0.0 );
   CVector3 v1 = solve_GlAffineMatrix(mPj, v0);
-  v1.z = 1;
+  v1.p[2] = 1;
   CVector3 v2 = solve_GlAffineMatrix(mMV, v1);
   return v2;
 }
@@ -1616,14 +1644,14 @@ CVector3 screenDepthDirection
  const float* mPj)
 {
   float Dv = mPj[11] + mPj[15]; // z is 1 after model view
-  CVector3 v0( Dv*v.x, Dv*v.y, 0.0 );
+  CVector3 v0( Dv*v.p[0], Dv*v.p[1], 0.0 );
   CVector3 v1 = solve_GlAffineMatrix(mPj, v0);
-  v1.z = 1;
+  v1.p[2] = 1;
   ////
   float Du = mPj[11]*2.f + mPj[15]; // z is 1 after model view
-  CVector3 u0( Du*v.x, Du*v.y, 0.0 );
+  CVector3 u0( Du*v.p[0], Du*v.p[1], 0.0 );
   CVector3 u1 = solve_GlAffineMatrix(mPj, u0);
-  u1.z = 2;
+  u1.p[2] = 2;
   ////
   CVector3 v2 = solve_GlAffineMatrixDirection(mMV, (v1-u1) );
   v2.SetNormalizedVector();
@@ -1633,15 +1661,15 @@ CVector3 screenDepthDirection
 // ----------------------------------------------------------------------------
 
 //! Volume of a tetrahedra
-double volume_Tet
+double Volume_Tet
 (const CVector3& v0,
  const CVector3& v1,
  const CVector3& v2,
  const CVector3& v3 )
 {
-  double v = (v1.x-v0.x)*( (v2.y-v0.y)*(v3.z-v0.z) - (v3.y-v0.y)*(v2.z-v0.z) )
-           + (v1.y-v0.y)*( (v2.z-v0.z)*(v3.x-v0.x) - (v3.z-v0.z)*(v2.x-v0.x) )
-           + (v1.z-v0.z)*( (v2.x-v0.x)*(v3.y-v0.y) - (v3.x-v0.x)*(v2.y-v0.y) );
+  double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
+           + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
+           + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
   return v*0.16666666666666666666666666666667;
 }
 
@@ -1651,9 +1679,9 @@ double volume_OrgTet
  const CVector3& v2,
  const CVector3& v3 )
 {
-  double v = v1.x*(v2.y*v3.z-v3.y*v2.z)
-           + v1.y*(v2.z*v3.x-v3.z*v2.x)
-           + v1.z*(v2.x*v3.y-v3.x*v2.y);
+  double v = v1.p[0]*(v2.p[1]*v3.p[2]-v3.p[1]*v2.p[2])
+           + v1.p[1]*(v2.p[2]*v3.p[0]-v3.p[2]*v2.p[0])
+           + v1.p[2]*(v2.p[0]*v3.p[1]-v3.p[0]*v2.p[1]);
   return v*0.16666666666666666666666666666667;
 }
 
@@ -1664,10 +1692,10 @@ double volume_Pyramid
  const CVector3& p3,
  const CVector3& p4)
 {
-  double v0124 = volume_Tet(p0, p1, p2, p4);
-  double v0234 = volume_Tet(p0, p2, p3, p4);
-  double v0134 = volume_Tet(p0, p1, p3, p4);
-  double v2314 = volume_Tet(p2, p3, p1, p4);
+  double v0124 = Volume_Tet(p0, p1, p2, p4);
+  double v0234 = Volume_Tet(p0, p2, p3, p4);
+  double v0134 = Volume_Tet(p0, p1, p3, p4);
+  double v2314 = Volume_Tet(p2, p3, p1, p4);
   double v0 = v0124+v0234;
   double v1 = v0134+v2314;
   return (v0+v1)*0.5;
@@ -1682,8 +1710,8 @@ double volume_Wedge
  const CVector3& p5)
 {
   CVector3 pm = (p0+p1+p2+p3+p4+p5)/6.0;
-  double vm012 = volume_Tet(pm,p0,p1,p2);
-  double vm435 = volume_Tet(pm,p4,p3,p5);
+  double vm012 = Volume_Tet(pm,p0,p1,p2);
+  double vm435 = Volume_Tet(pm,p4,p3,p5);
   double vp0143 = volume_Pyramid(p0,p1,p4,p3,pm);
   double vp1254 = volume_Pyramid(p1,p2,p5,p4,pm);
   double vp2035 = volume_Pyramid(p2,p2,p3,p5,pm);
@@ -1709,53 +1737,53 @@ const CVector3& v3)
   return v;
 }
 
-////////////////////////////////////////////////
+// ------------------------------------------------------------------
 
 void Cross( CVector3& lhs, const CVector3& v1, const CVector3& v2 ){
-  lhs.x = v1.y*v2.z - v2.y*v1.z;
-  lhs.y = v1.z*v2.x - v2.z*v1.x;
-  lhs.z = v1.x*v2.y - v2.x*v1.y;
+  lhs.p[0] = v1.p[1]*v2.p[2] - v2.p[1]*v1.p[2];
+  lhs.p[1] = v1.p[2]*v2.p[0] - v2.p[2]*v1.p[0];
+  lhs.p[2] = v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
 
 double TriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
 {
   double x, y, z;
-  x = ( v2.y - v1.y )*( v3.z - v1.z ) - ( v3.y - v1.y )*( v2.z - v1.z );
-  y = ( v2.z - v1.z )*( v3.x - v1.x ) - ( v3.z - v1.z )*( v2.x - v1.x );
-  z = ( v2.x - v1.x )*( v3.y - v1.y ) - ( v3.x - v1.x )*( v2.y - v1.y );
+  x = ( v2.p[1] - v1.p[1] )*( v3.p[2] - v1.p[2] ) - ( v3.p[1] - v1.p[1] )*( v2.p[2] - v1.p[2] );
+  y = ( v2.p[2] - v1.p[2] )*( v3.p[0] - v1.p[0] ) - ( v3.p[2] - v1.p[2] )*( v2.p[0] - v1.p[0] );
+  z = ( v2.p[0] - v1.p[0] )*( v3.p[1] - v1.p[1] ) - ( v3.p[0] - v1.p[0] )*( v2.p[1] - v1.p[1] );
   return 0.5*sqrt( x*x + y*y + z*z );
 }
 
 
 double SquareTriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
 {
-  double dtmp_x = (v2.y-v1.y)*(v3.z-v1.z)-(v2.z-v1.z)*(v3.y-v1.y);
-  double dtmp_y = (v2.z-v1.z)*(v3.x-v1.x)-(v2.x-v1.x)*(v3.z-v1.z);
-  double dtmp_z = (v2.x-v1.x)*(v3.y-v1.y)-(v2.y-v1.y)*(v3.x-v1.x);
+  double dtmp_x = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
+  double dtmp_y = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
+  double dtmp_z = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
   return (dtmp_x*dtmp_x + dtmp_y*dtmp_y + dtmp_z*dtmp_z)*0.25;
 }
 
 double SquareDistance(const CVector3& ipo0, const CVector3& ipo1)
 {
-  return	( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y ) + ( ipo1.z - ipo0.z )*( ipo1.z - ipo0.z );
+  return	( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] ) + ( ipo1.p[2] - ipo0.p[2] )*( ipo1.p[2] - ipo0.p[2] );
 }
 
 double SquareLength(const CVector3& point)
 {
-  return	point.x*point.x + point.y*point.y + point.z*point.z;
+  return	point.p[0]*point.p[0] + point.p[1]*point.p[1] + point.p[2]*point.p[2];
 }
 
 
 //! length of vector
 double Length(const CVector3& point)
 {
-  return	sqrt( point.x*point.x + point.y*point.y + point.z*point.z );
+  return dfm2::Length3(point.p);
 }
 
 //! distance between two points
 double Distance(const CVector3& p0, const CVector3& p1)
 {
-  return	sqrt( SquareDistance(p0,p1) );
+  return dfm2::Distance3(p0.p, p1.p);
 }
 
 
@@ -1834,9 +1862,9 @@ void Normal
  const CVector3& v2,
  const CVector3& v3)
 {
-  vnorm.x = (v2.y-v1.y)*(v3.z-v1.z)-(v2.z-v1.z)*(v3.y-v1.y);
-  vnorm.y = (v2.z-v1.z)*(v3.x-v1.x)-(v2.x-v1.x)*(v3.z-v1.z);
-  vnorm.z = (v2.x-v1.x)*(v3.y-v1.y)-(v2.y-v1.y)*(v3.x-v1.x);
+  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
+  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
+  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
 }
 
 CVector3 Normal
@@ -1845,9 +1873,9 @@ const CVector3& v2,
 const CVector3& v3)
 {
   CVector3 vnorm;
-  vnorm.x = (v2.y-v1.y)*(v3.z-v1.z)-(v2.z-v1.z)*(v3.y-v1.y);
-  vnorm.y = (v2.z-v1.z)*(v3.x-v1.x)-(v2.x-v1.x)*(v3.z-v1.z);
-  vnorm.z = (v2.x-v1.x)*(v3.y-v1.y)-(v2.y-v1.y)*(v3.x-v1.x);
+  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
+  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
+  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
   return vnorm;
 }
 
@@ -1860,13 +1888,13 @@ void UnitNormal
  const CVector3& v2,
  const CVector3& v3)
 {
-  vnorm.x = (v2.y-v1.y)*(v3.z-v1.z)-(v2.z-v1.z)*(v3.y-v1.y);
-  vnorm.y = (v2.z-v1.z)*(v3.x-v1.x)-(v2.x-v1.x)*(v3.z-v1.z);
-  vnorm.z = (v2.x-v1.x)*(v3.y-v1.y)-(v2.y-v1.y)*(v3.x-v1.x);
+  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
+  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
+  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
   const double dtmp1 = 1.0 / Length(vnorm);
-  vnorm.x *= dtmp1;
-  vnorm.y *= dtmp1;
-  vnorm.z *= dtmp1;
+  vnorm.p[0] *= dtmp1;
+  vnorm.p[1] *= dtmp1;
+  vnorm.p[2] *= dtmp1;
 }
 
 CVector3 UnitNormal
@@ -1875,13 +1903,13 @@ const CVector3& v2,
 const CVector3& v3)
 {
   CVector3 vnorm;
-  vnorm.x = (v2.y-v1.y)*(v3.z-v1.z)-(v2.z-v1.z)*(v3.y-v1.y);
-  vnorm.y = (v2.z-v1.z)*(v3.x-v1.x)-(v2.x-v1.x)*(v3.z-v1.z);
-  vnorm.z = (v2.x-v1.x)*(v3.y-v1.y)-(v2.y-v1.y)*(v3.x-v1.x);
+  vnorm.p[0] = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
+  vnorm.p[1] = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
+  vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
   const double dtmp1 = 1.0/Length(vnorm);
-  vnorm.x *= dtmp1;
-  vnorm.y *= dtmp1;
-  vnorm.z *= dtmp1;
+  vnorm.p[0] *= dtmp1;
+  vnorm.p[1] *= dtmp1;
+  vnorm.p[2] *= dtmp1;
   return vnorm;
 }
 
@@ -1894,9 +1922,9 @@ double SquareCircumradius
  const CVector3& ipo3)
 {
   double base[3][3] = {
-    { ipo1.x-ipo0.x, ipo1.y-ipo0.y, ipo1.z-ipo0.z },
-    { ipo2.x-ipo0.x, ipo2.y-ipo0.y, ipo2.z-ipo0.z },
-    { ipo3.x-ipo0.x, ipo3.y-ipo0.y, ipo3.z-ipo0.z }
+    { ipo1.p[0]-ipo0.p[0], ipo1.p[1]-ipo0.p[1], ipo1.p[2]-ipo0.p[2] },
+    { ipo2.p[0]-ipo0.p[0], ipo2.p[1]-ipo0.p[1], ipo2.p[2]-ipo0.p[2] },
+    { ipo3.p[0]-ipo0.p[0], ipo3.p[1]-ipo0.p[1], ipo3.p[2]-ipo0.p[2] }
   };
   double s[6] = {
     base[0][0]*base[0][0]+base[0][1]*base[0][1]+base[0][2]*base[0][2],
@@ -1906,7 +1934,7 @@ double SquareCircumradius
     base[2][0]*base[0][0]+base[2][1]*base[0][1]+base[2][2]*base[0][2],
     base[0][0]*base[1][0]+base[0][1]*base[1][1]+base[0][2]*base[1][2],
   };
-  const double vol = volume_Tet(ipo0,ipo1,ipo2,ipo3)*6.0;
+  const double vol = Volume_Tet(ipo0,ipo1,ipo2,ipo3)*6.0;
   if( vol < 1.0e-20 ){ assert(0); }
   const double inv_det = 1.0 / (vol*vol);
   double t[6] = {
@@ -1926,9 +1954,9 @@ double SquareCircumradius
   /*
    const double square_radius = 0.5*(u[0]*s[0]+u[1]*s[1]+u[2]*s[2]);
    CVector3 vec1;
-   vec1.x = base[0][0]*u[0]+base[1][0]*u[1]+base[2][0]*u[2] + ipo0.x;
-   vec1.y = base[0][1]*u[0]+base[1][1]*u[1]+base[2][1]*u[2] + ipo0.y;
-   vec1.z = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.z;
+   vec1.p[0] = base[0][0]*u[0]+base[1][0]*u[1]+base[2][0]*u[2] + ipo0.p[0];
+   vec1.p[1] = base[0][1]*u[0]+base[1][1]*u[1]+base[2][1]*u[2] + ipo0.p[1];
+   vec1.p[2] = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.p[2];
    std::cout << square_radius << " ";
    std::cout << SquareLength(vec1,ipo0) << " ";
    std::cout << SquareLength(vec1,ipo1) << " ";
@@ -1946,9 +1974,9 @@ CVector3 CircumCenter
 {
   
   double base[3][3] = {
-    { ipo1.x-ipo0.x, ipo1.y-ipo0.y, ipo1.z-ipo0.z },
-    { ipo2.x-ipo0.x, ipo2.y-ipo0.y, ipo2.z-ipo0.z },
-    { ipo3.x-ipo0.x, ipo3.y-ipo0.y, ipo3.z-ipo0.z }
+    { ipo1.p[0]-ipo0.p[0], ipo1.p[1]-ipo0.p[1], ipo1.p[2]-ipo0.p[2] },
+    { ipo2.p[0]-ipo0.p[0], ipo2.p[1]-ipo0.p[1], ipo2.p[2]-ipo0.p[2] },
+    { ipo3.p[0]-ipo0.p[0], ipo3.p[1]-ipo0.p[1], ipo3.p[2]-ipo0.p[2] }
   };
   double s[6] = {
     base[0][0]*base[0][0]+base[0][1]*base[0][1]+base[0][2]*base[0][2],
@@ -1958,7 +1986,7 @@ CVector3 CircumCenter
     base[2][0]*base[0][0]+base[2][1]*base[0][1]+base[2][2]*base[0][2],
     base[0][0]*base[1][0]+base[0][1]*base[1][1]+base[0][2]*base[1][2],
   };
-  const double vol = volume_Tet(ipo0,ipo1,ipo2,ipo3)*6.0;
+  const double vol = Volume_Tet(ipo0,ipo1,ipo2,ipo3)*6.0;
   if( vol < 1.0e-20 ){ assert(0); }
   const double inv_det = 1.0 / (vol*vol);
   double t[6] = {
@@ -1976,9 +2004,9 @@ CVector3 CircumCenter
   };
   //    const double square_radius = 0.5*(u[0]*s[0]+u[1]*s[1]+u[2]*s[2]);
   CVector3 vec1;
-  vec1.x = base[0][0]*u[0]+base[1][0]*u[1]+base[2][0]*u[2] + ipo0.x;
-  vec1.y = base[0][1]*u[0]+base[1][1]*u[1]+base[2][1]*u[2] + ipo0.y;
-  vec1.z = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.z;
+  vec1.p[0] = base[0][0]*u[0]+base[1][0]*u[1]+base[2][0]*u[2] + ipo0.p[0];
+  vec1.p[1] = base[0][1]*u[0]+base[1][1]*u[1]+base[2][1]*u[2] + ipo0.p[1];
+  vec1.p[2] = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.p[2];
   return vec1;
 }
 
@@ -2184,23 +2212,23 @@ CVector3 RotateVector(const CVector3& vec0, const CVector3& rot )
   e2.SetNormalizedVector();
   CVector3 e1 = ::Cross(e2,e0);
   assert( fabs( e1.Length() - 1 ) < 1.0e-10 );
-  //	assert( e2.x*vec_0.x + e2.y*vec_0.y + e2.z*vec_0.z < 1.0e-10 );
+  //	assert( e2.p[0]*vec_0.p[0] + e2.p[1]*vec_0.p[1] + e2.p[2]*vec_0.p[2] < 1.0e-10 );
   const double dot00 = Dot(vec0,e0);
   const double dot01 = Dot(vec0,e1);
   const double cost = cos(theta);
   const double sint = sin(theta);
   CVector3 vec1;
-  vec1.x = dot00*e0.x + dot01*cost*e1.x + dot01*sint*e2.x;
-  vec1.y = dot00*e0.y + dot01*cost*e1.y + dot01*sint*e2.y;
-  vec1.z = dot00*e0.z + dot01*cost*e1.z + dot01*sint*e2.z;
+  vec1.p[0] = dot00*e0.p[0] + dot01*cost*e1.p[0] + dot01*sint*e2.p[0];
+  vec1.p[1] = dot00*e0.p[1] + dot01*cost*e1.p[1] + dot01*sint*e2.p[1];
+  vec1.p[2] = dot00*e0.p[2] + dot01*cost*e1.p[2] + dot01*sint*e2.p[2];
   return vec1;
 }
 
 CVector3 RandVector(){
   CVector3 r;
-  r.x = (2*(double)rand()/(RAND_MAX+1.0)-1);
-  r.y = (2*(double)rand()/(RAND_MAX+1.0)-1);
-  r.z = (2*(double)rand()/(RAND_MAX+1.0)-1);
+  r.p[0] = (2*(double)rand()/(RAND_MAX+1.0)-1);
+  r.p[1] = (2*(double)rand()/(RAND_MAX+1.0)-1);
+  r.p[2] = (2*(double)rand()/(RAND_MAX+1.0)-1);
   return r;
 }
 
@@ -2283,9 +2311,9 @@ void CheckConstDiff_Bend()
 {
   CVector3 p[4];
   for(int ino=0;ino<4;++ino){
-    p[ino].x = (double)rand()/(RAND_MAX+1.0);
-    p[ino].y = (double)rand()/(RAND_MAX+1.0);
-    p[ino].z = (double)rand()/(RAND_MAX+1.0);
+    p[ino].p[0] = (double)rand()/(RAND_MAX+1.0);
+    p[ino].p[1] = (double)rand()/(RAND_MAX+1.0);
+    p[ino].p[2] = (double)rand()/(RAND_MAX+1.0);
   }
   double C; CVector3 dC[4];
   GetConstConstDiff_Bend(C, dC, p[0],p[1],p[2],p[3]);
@@ -2301,8 +2329,7 @@ void CheckConstDiff_Bend()
   }
 }
 
-
-////////////////////////////////////////////////
+// --------------------------------------------------
 // TODO: following should be move to mesh class?
 
 double TriArea
@@ -2316,7 +2343,7 @@ double volume_Tet
 ( int iv1, int iv2, int iv3, int iv4,
  const std::vector<CVector3>& aPoint)
 {
-  return volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
+  return Volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
 }
 
 // -------------------------------------

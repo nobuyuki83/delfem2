@@ -449,9 +449,9 @@ int main(int argc,char* argv[])
       std::vector<double> aElemCenter(ntri*3);
       for(int itri=0;itri<ntri;++itri){
         CVector3 p = cg_Tri(itri, aTri, aXYZ);
-        aElemCenter[itri*3+0] = p.x;
-        aElemCenter[itri*3+1] = p.y;
-        aElemCenter[itri*3+2] = p.z;
+        aElemCenter[itri*3+0] = p.x();
+        aElemCenter[itri*3+1] = p.y();
+        aElemCenter[itri*3+2] = p.z();
       }
       std::vector<int> aTriSurRel;
       makeSurroundingRelationship(aTriSurRel,

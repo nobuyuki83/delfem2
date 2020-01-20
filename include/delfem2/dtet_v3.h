@@ -256,14 +256,14 @@ public:
 	CEPo3D(double x, double y, double z) 
         : p(x,y,z), e(-1), poel(0), old_p(-1){}
 	bool operator < (const CEPo3D& rhs){
-		if( fabs( this->p.x - rhs.p.x ) > 1.0e-5 ){
-			return this->p.x < rhs.p.x;
+		if( fabs( this->p.x() - rhs.p.x() ) > 1.0e-5 ){
+			return this->p.x() < rhs.p.x();
 		}
-		if( fabs( this->p.y - rhs.p.y ) > 1.0e-5 ){
-			return this->p.y < rhs.p.y;
+		if( fabs( this->p.y() - rhs.p.y() ) > 1.0e-5 ){
+			return this->p.y() < rhs.p.y();
 		}
-		if( fabs( this->p.z - rhs.p.z ) > 1.0e-5 ){
-			return this->p.z < rhs.p.z;
+		if( fabs( this->p.z() - rhs.p.z() ) > 1.0e-5 ){
+			return this->p.z() < rhs.p.z();
 		}
 		return false;
 	}
@@ -603,7 +603,7 @@ inline double TetVolume
 (unsigned int iv1, unsigned int iv2, unsigned int iv3, unsigned int iv4,
  const std::vector<CEPo3D>& point)
 {
-	return volume_Tet( point[iv1].p, point[iv2].p, point[iv3].p, point[iv4].p );
+	return Volume_Tet( point[iv1].p, point[iv2].p, point[iv3].p, point[iv4].p );
 }
 
 //! volume of tetrahedra
@@ -611,7 +611,7 @@ inline double TetVolume
 (const CETet& tet,
  const std::vector<CEPo3D>& node)
 {
-	return volume_Tet(
+	return Volume_Tet(
 		node[ tet.v[0] ].p,
 		node[ tet.v[1] ].p, 
 		node[ tet.v[2] ].p, 
@@ -777,7 +777,7 @@ inline double Criterion_Asp(
 				+	TriArea( po0, po2, po3 )
 				+	TriArea( po0, po3, po1 )
 				+ TriArea( po0, po1, po2 );
-	double inscribed_radius = volume_Tet(po0,po1,po2,po3) * 3.0 / saface;
+	double inscribed_radius = Volume_Tet(po0,po1,po2,po3) * 3.0 / saface;
 	double circum_radius = Circumradius(po0,po1,po2,po3);
 	return circum_radius / inscribed_radius;
 }
@@ -864,9 +864,9 @@ inline int DetDelaunay
  const CVector3& v4)
 {
 	// ３角形v1,v2,v3の外接円の中心を求める。
-	const double dtmp1 = (v2.x-v3.x)*(v2.x-v3.x)+(v2.y-v3.y)*(v2.y-v3.y)+(v2.z-v3.z)*(v2.z-v3.z);
-	const double dtmp2 = (v3.x-v1.x)*(v3.x-v1.x)+(v3.y-v1.y)*(v3.y-v1.y)+(v3.z-v1.z)*(v3.z-v1.z);
-	const double dtmp3 = (v1.x-v2.x)*(v1.x-v2.x)+(v1.y-v2.y)*(v1.y-v2.y)+(v1.z-v2.z)*(v1.z-v2.z);
+	const double dtmp1 = (v2.x()-v3.x())*(v2.x()-v3.x())+(v2.y()-v3.y())*(v2.y()-v3.y())+(v2.z()-v3.z())*(v2.z()-v3.z());
+	const double dtmp2 = (v3.x()-v1.x())*(v3.x()-v1.x())+(v3.y()-v1.y())*(v3.y()-v1.y())+(v3.z()-v1.z())*(v3.z()-v1.z());
+	const double dtmp3 = (v1.x()-v2.x())*(v1.x()-v2.x())+(v1.y()-v2.y())*(v1.y()-v2.y())+(v1.z()-v2.z())*(v1.z()-v2.z());
 
 	double qarea = SquareTriArea(v1,v2,v3);
 	const double etmp1 = dtmp1*(dtmp2+dtmp3-dtmp1) / (16.0 * qarea );
@@ -874,9 +874,9 @@ inline int DetDelaunay
 	const double etmp3 = dtmp3*(dtmp1+dtmp2-dtmp3) / (16.0 * qarea );
 
 	CVector3 out_center(
-		etmp1*v1.x + etmp2*v2.x + etmp3*v3.x,
-		etmp1*v1.y + etmp2*v2.y + etmp3*v3.y,
-		etmp1*v1.z + etmp2*v2.z + etmp3*v3.z );
+		etmp1*v1.x() + etmp2*v2.x() + etmp3*v3.x(),
+		etmp1*v1.y() + etmp2*v2.y() + etmp3*v3.y(),
+		etmp1*v1.z() + etmp2*v2.z() + etmp3*v3.z() );
 	
 	const double qradius = SquareDistance( out_center, v1 );
 	assert( fabs( qradius - SquareDistance(out_center,v2) ) < 1.0e-10 );
@@ -918,18 +918,18 @@ inline double DetDelaunay3D
  const CVector3& v5)
 {
 	const double a[12] = {
-		v1.x-v5.x,	//  0
-		v2.x-v5.x,	//  1
-		v3.x-v5.x,	//  2
-		v4.x-v5.x,	//  3
-		v1.y-v5.y,	//  4
-		v2.y-v5.y,	//  5
-		v3.y-v5.y,	//  6
-		v4.y-v5.y,	//  7
-		v1.z-v5.z,	//  8
-		v2.z-v5.z,	//  9
-		v3.z-v5.z,	// 10
-		v4.z-v5.z,	// 11
+		v1.x()-v5.x(),	//  0
+		v2.x()-v5.x(),	//  1
+		v3.x()-v5.x(),	//  2
+		v4.x()-v5.x(),	//  3
+		v1.y()-v5.y(),	//  4
+		v2.y()-v5.y(),	//  5
+		v3.y()-v5.y(),	//  6
+		v4.y()-v5.y(),	//  7
+		v1.z()-v5.z(),	//  8
+		v2.z()-v5.z(),	//  9
+		v3.z()-v5.z(),	// 10
+		v4.z()-v5.z(),	// 11
 	};
 	const double b[6] = {
 		a[ 6]*a[11]-a[ 7]*a[10],	// 0
@@ -939,10 +939,11 @@ inline double DetDelaunay3D
 		a[ 6]*a[ 8]-a[ 4]*a[10],	// 4
 		a[ 4]*a[ 9]-a[ 5]*a[ 8],	// 5 
 	};
-	return	-( a[0]*(v1.x+v5.x)+a[4]*(v1.y+v5.y)+a[ 8]*(v1.z+v5.z) )*( a[ 1]*b[0]-a[ 2]*b[1]+a[ 3]*b[2] )
-			+( a[1]*(v2.x+v5.x)+a[5]*(v2.y+v5.y)+a[ 9]*(v2.z+v5.z) )*( a[ 0]*b[0]+a[ 2]*b[3]-a[ 3]*b[4] )
-			-( a[2]*(v3.x+v5.x)+a[6]*(v3.y+v5.y)+a[10]*(v3.z+v5.z) )*( a[ 0]*b[1]+a[ 1]*b[3]+a[ 3]*b[5] )
-			+( a[3]*(v4.x+v5.x)+a[7]*(v4.y+v5.y)+a[11]*(v4.z+v5.z) )*( a[ 0]*b[2]+a[ 1]*b[4]+a[ 2]*b[5] );
+	return
+      -( a[0]*(v1.x()+v5.x())+a[4]*(v1.y()+v5.y())+a[ 8]*(v1.z()+v5.z()) )*( a[ 1]*b[0]-a[ 2]*b[1]+a[ 3]*b[2] )
+			+( a[1]*(v2.x()+v5.x())+a[5]*(v2.y()+v5.y())+a[ 9]*(v2.z()+v5.z()) )*( a[ 0]*b[0]+a[ 2]*b[3]-a[ 3]*b[4] )
+			-( a[2]*(v3.x()+v5.x())+a[6]*(v3.y()+v5.y())+a[10]*(v3.z()+v5.z()) )*( a[ 0]*b[1]+a[ 1]*b[3]+a[ 3]*b[5] )
+			+( a[3]*(v4.x()+v5.x())+a[7]*(v4.y()+v5.y())+a[11]*(v4.z()+v5.z()) )*( a[ 0]*b[2]+a[ 1]*b[4]+a[ 2]*b[5] );
 }
 
 /*! 

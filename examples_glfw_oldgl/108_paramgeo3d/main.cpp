@@ -90,9 +90,9 @@ void Random()
     std::mt19937 mt(rd());
     std::uniform_real_distribution<> dist(-1.0, 1.0);
     for(int iCP=0;iCP<16;iCP++) {
-      aCP[iCP].x = dist(mt);
-      aCP[iCP].y = dist(mt);
-      aCP[iCP].z = dist(mt);
+      aCP[iCP].p[0] = dist(mt);
+      aCP[iCP].p[1] = dist(mt);
+      aCP[iCP].p[2] = dist(mt);
     }
   }
   aIndCP.resize(16);
@@ -125,13 +125,13 @@ void Random()
 
 static void myGlVertex3d(const CVector3& v)
 {
-  ::glVertex3d(v.x,v.y,v.z);
+  ::glVertex3d(v.x(),v.y(),v.z());
 }
 
 static void myGlVertex3d(int i, const std::vector<CVector3>& aV)
 {
   const CVector3& v = aV[i];
-  ::glVertex3d(v.x,v.y,v.z);
+  ::glVertex3d(v.x(),v.y(),v.z());
 }
 
 

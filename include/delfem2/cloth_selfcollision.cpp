@@ -64,18 +64,18 @@ void SelfCollisionImpulse_Proximity
       double imp_mod = 2*imp_min / (1+w0*w0+w1*w1+w2*w2);
       imp_mod /= mass;
       imp_mod *= 0.25;
-      aUVWm[ino0*3+0] += -norm.x*imp_mod*w0;
-      aUVWm[ino0*3+1] += -norm.y*imp_mod*w0;
-      aUVWm[ino0*3+2] += -norm.z*imp_mod*w0;
-      aUVWm[ino1*3+0] += -norm.x*imp_mod*w1;
-      aUVWm[ino1*3+1] += -norm.y*imp_mod*w1;
-      aUVWm[ino1*3+2] += -norm.z*imp_mod*w1;
-      aUVWm[ino2*3+0] += -norm.x*imp_mod*w2;
-      aUVWm[ino2*3+1] += -norm.y*imp_mod*w2;
-      aUVWm[ino2*3+2] += -norm.z*imp_mod*w2;
-      aUVWm[ino3*3+0] += +norm.x*imp_mod;
-      aUVWm[ino3*3+1] += +norm.y*imp_mod;
-      aUVWm[ino3*3+2] += +norm.z*imp_mod;
+      aUVWm[ino0*3+0] += -norm.x()*imp_mod*w0;
+      aUVWm[ino0*3+1] += -norm.y()*imp_mod*w0;
+      aUVWm[ino0*3+2] += -norm.z()*imp_mod*w0;
+      aUVWm[ino1*3+0] += -norm.x()*imp_mod*w1;
+      aUVWm[ino1*3+1] += -norm.y()*imp_mod*w1;
+      aUVWm[ino1*3+2] += -norm.z()*imp_mod*w1;
+      aUVWm[ino2*3+0] += -norm.x()*imp_mod*w2;
+      aUVWm[ino2*3+1] += -norm.y()*imp_mod*w2;
+      aUVWm[ino2*3+2] += -norm.z()*imp_mod*w2;
+      aUVWm[ino3*3+0] += +norm.x()*imp_mod;
+      aUVWm[ino3*3+1] += +norm.y()*imp_mod;
+      aUVWm[ino3*3+2] += +norm.z()*imp_mod;
     }
     else{ // edge-edge
       double w01,w23;
@@ -97,18 +97,18 @@ void SelfCollisionImpulse_Proximity
       double imp_mod = 2*imp_min / ( w01*w01+(1-w01)*(1-w01) + w23*w23+(1-w23)*(1-w23) );
       imp_mod /= mass;
       imp_mod *= 0.25;      
-      aUVWm[ino0*3+0] += -norm.x*imp_mod*(1-w01);
-      aUVWm[ino0*3+1] += -norm.y*imp_mod*(1-w01);
-      aUVWm[ino0*3+2] += -norm.z*imp_mod*(1-w01);
-      aUVWm[ino1*3+0] += -norm.x*imp_mod*w01;
-      aUVWm[ino1*3+1] += -norm.y*imp_mod*w01;
-      aUVWm[ino1*3+2] += -norm.z*imp_mod*w01;
-      aUVWm[ino2*3+0] += +norm.x*imp_mod*(1-w23);
-      aUVWm[ino2*3+1] += +norm.y*imp_mod*(1-w23);
-      aUVWm[ino2*3+2] += +norm.z*imp_mod*(1-w23);
-      aUVWm[ino3*3+0] += +norm.x*imp_mod*w23;
-      aUVWm[ino3*3+1] += +norm.y*imp_mod*w23;
-      aUVWm[ino3*3+2] += +norm.z*imp_mod*w23;
+      aUVWm[ino0*3+0] += -norm.x()*imp_mod*(1-w01);
+      aUVWm[ino0*3+1] += -norm.y()*imp_mod*(1-w01);
+      aUVWm[ino0*3+2] += -norm.z()*imp_mod*(1-w01);
+      aUVWm[ino1*3+0] += -norm.x()*imp_mod*w01;
+      aUVWm[ino1*3+1] += -norm.y()*imp_mod*w01;
+      aUVWm[ino1*3+2] += -norm.z()*imp_mod*w01;
+      aUVWm[ino2*3+0] += +norm.x()*imp_mod*(1-w23);
+      aUVWm[ino2*3+1] += +norm.y()*imp_mod*(1-w23);
+      aUVWm[ino2*3+2] += +norm.z()*imp_mod*(1-w23);
+      aUVWm[ino3*3+0] += +norm.x()*imp_mod*w23;
+      aUVWm[ino3*3+1] += +norm.y()*imp_mod*w23;
+      aUVWm[ino3*3+2] += +norm.z()*imp_mod*w23;
     }
   }
 }
@@ -163,18 +163,18 @@ void SelfCollisionImpulse_CCD
       double imp_mod = 2*imp/(1.0+w0*w0+w1*w1+w2*w2);
       imp_mod /= mass;
       imp_mod *= 0.1;
-      aUVWm[ino0*3+0] += -norm.x*imp_mod*w0;
-      aUVWm[ino0*3+1] += -norm.y*imp_mod*w0;
-      aUVWm[ino0*3+2] += -norm.z*imp_mod*w0;
-      aUVWm[ino1*3+0] += -norm.x*imp_mod*w1;
-      aUVWm[ino1*3+1] += -norm.y*imp_mod*w1;
-      aUVWm[ino1*3+2] += -norm.z*imp_mod*w1;
-      aUVWm[ino2*3+0] += -norm.x*imp_mod*w2;
-      aUVWm[ino2*3+1] += -norm.y*imp_mod*w2;
-      aUVWm[ino2*3+2] += -norm.z*imp_mod*w2;
-      aUVWm[ino3*3+0] += +norm.x*imp_mod;
-      aUVWm[ino3*3+1] += +norm.y*imp_mod;
-      aUVWm[ino3*3+2] += +norm.z*imp_mod;
+      aUVWm[ino0*3+0] += -norm.x()*imp_mod*w0;
+      aUVWm[ino0*3+1] += -norm.y()*imp_mod*w0;
+      aUVWm[ino0*3+2] += -norm.z()*imp_mod*w0;
+      aUVWm[ino1*3+0] += -norm.x()*imp_mod*w1;
+      aUVWm[ino1*3+1] += -norm.y()*imp_mod*w1;
+      aUVWm[ino1*3+2] += -norm.z()*imp_mod*w1;
+      aUVWm[ino2*3+0] += -norm.x()*imp_mod*w2;
+      aUVWm[ino2*3+1] += -norm.y()*imp_mod*w2;
+      aUVWm[ino2*3+2] += -norm.z()*imp_mod*w2;
+      aUVWm[ino3*3+0] += +norm.x()*imp_mod;
+      aUVWm[ino3*3+1] += +norm.y()*imp_mod;
+      aUVWm[ino3*3+2] += +norm.z()*imp_mod;
     }
     else{ // edge-edge
       double w01,w23;
@@ -197,18 +197,18 @@ void SelfCollisionImpulse_CCD
       double imp_mod = 2*imp/( w01*w01+(1-w01)*(1-w01) + w23*w23+(1-w23)*(1-w23) );
       imp_mod /= mass;
       imp_mod *= 0.1;
-      aUVWm[ino0*3+0] += -norm.x*imp_mod*(1-w01);
-      aUVWm[ino0*3+1] += -norm.y*imp_mod*(1-w01);
-      aUVWm[ino0*3+2] += -norm.z*imp_mod*(1-w01);
-      aUVWm[ino1*3+0] += -norm.x*imp_mod*w01;
-      aUVWm[ino1*3+1] += -norm.y*imp_mod*w01;
-      aUVWm[ino1*3+2] += -norm.z*imp_mod*w01;
-      aUVWm[ino2*3+0] += +norm.x*imp_mod*(1-w23);
-      aUVWm[ino2*3+1] += +norm.y*imp_mod*(1-w23);
-      aUVWm[ino2*3+2] += +norm.z*imp_mod*(1-w23);
-      aUVWm[ino3*3+0] += +norm.x*imp_mod*w23;
-      aUVWm[ino3*3+1] += +norm.y*imp_mod*w23;
-      aUVWm[ino3*3+2] += +norm.z*imp_mod*w23;
+      aUVWm[ino0*3+0] += -norm.x()*imp_mod*(1-w01);
+      aUVWm[ino0*3+1] += -norm.y()*imp_mod*(1-w01);
+      aUVWm[ino0*3+2] += -norm.z()*imp_mod*(1-w01);
+      aUVWm[ino1*3+0] += -norm.x()*imp_mod*w01;
+      aUVWm[ino1*3+1] += -norm.y()*imp_mod*w01;
+      aUVWm[ino1*3+2] += -norm.z()*imp_mod*w01;
+      aUVWm[ino2*3+0] += +norm.x()*imp_mod*(1-w23);
+      aUVWm[ino2*3+1] += +norm.y()*imp_mod*(1-w23);
+      aUVWm[ino2*3+2] += +norm.z()*imp_mod*(1-w23);
+      aUVWm[ino3*3+0] += +norm.x()*imp_mod*w23;
+      aUVWm[ino3*3+1] += +norm.y()*imp_mod*w23;
+      aUVWm[ino3*3+2] += +norm.z()*imp_mod*w23;
     }
   }
 }
@@ -332,16 +332,16 @@ void ApplyRigidImpactZone
     double Iinv[9];
     CalcInvMat3(Iinv,I);
     CVector3 omg;
-    omg.x = Iinv[0]*L.x + Iinv[1]*L.y + Iinv[2]*L.z;
-    omg.y = Iinv[3]*L.x + Iinv[4]*L.y + Iinv[5]*L.z;
-    omg.z = Iinv[6]*L.x + Iinv[7]*L.y + Iinv[8]*L.z;
+    omg.p[0] = Iinv[0]*L.x() + Iinv[1]*L.y() + Iinv[2]*L.z();
+    omg.p[1] = Iinv[3]*L.x() + Iinv[4]*L.y() + Iinv[5]*L.z();
+    omg.p[2] = Iinv[6]*L.x() + Iinv[7]*L.y() + Iinv[8]*L.z();
     // 中間速度の更新
     for(int ino : aInd){
       CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
       CVector3 rot = -Cross(p-gc,omg);
-      aUVWm[ino*3+0] = av.x + rot.x;
-      aUVWm[ino*3+1] = av.y + rot.y;
-      aUVWm[ino*3+2] = av.z + rot.z;
+      aUVWm[ino*3+0] = av.x() + rot.x();
+      aUVWm[ino*3+1] = av.y() + rot.y();
+      aUVWm[ino*3+2] = av.z() + rot.z();
     }
   }
 }

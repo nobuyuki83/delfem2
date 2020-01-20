@@ -17,9 +17,9 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-std::vector<dfm2::CEPo2> aPo2D;
+std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<CVector2> aVec2;
-std::vector<dfm2::ETri> aETri;
+std::vector<dfm2::CDynTri> aETri;
 std::vector<int> loopIP_ind, loopIP;
 
 // --------------------------------------------

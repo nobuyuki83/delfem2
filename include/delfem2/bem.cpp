@@ -768,12 +768,12 @@ void setGradVeloVortexParticles
 void CGrid_Vortex::drawBoundingBox() const
 {
   if (nx<=1||ny<=1||nz<=1){ return; }
-  double min_x = cnt.x-nx*h*0.5;
-  double max_x = cnt.x+nx*h*0.5;
-  double min_y = cnt.y-ny*h*0.5;
-  double max_y = cnt.y+ny*h*0.5;
-  double min_z = cnt.z-nz*h*0.5;
-  double max_z = cnt.z+nz*h*0.5;
+  double min_x = cnt.x()-nx*h*0.5;
+  double max_x = cnt.x()+nx*h*0.5;
+  double min_y = cnt.y()-ny*h*0.5;
+  double max_y = cnt.y()+ny*h*0.5;
+  double min_z = cnt.z()-nz*h*0.5;
+  double max_z = cnt.z()+nz*h*0.5;
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_LINES);
   ::glVertex3d(min_x, min_y, min_z); ::glVertex3d(max_x, min_y, min_z);
@@ -807,17 +807,17 @@ void viscousityVortexParticleGrid
     grid.cnt = CVector3(0, 0, 0);
     return;
   }
-  min_x = max_x = aVortexParticle[0].pos.x;
-  min_y = max_y = aVortexParticle[0].pos.y;
-  min_z = max_z = aVortexParticle[0].pos.z;
+  min_x = max_x = aVortexParticle[0].pos.x();
+  min_y = max_y = aVortexParticle[0].pos.y();
+  min_z = max_z = aVortexParticle[0].pos.z();
   for (int ivp = 1; ivp<aVortexParticle.size(); ++ivp){
     CVector3 p = aVortexParticle[ivp].pos;
-    if (p.x<min_x){ min_x = p.x; }
-    if (p.x>max_x){ max_x = p.x; }
-    if (p.y<min_y){ min_y = p.y; }
-    if (p.y>max_y){ max_y = p.y; }
-    if (p.z<min_z){ min_z = p.z; }
-    if (p.z>max_z){ max_z = p.z; }
+    if (p.x()<min_x){ min_x = p.x(); }
+    if (p.x()>max_x){ max_x = p.x(); }
+    if (p.y()<min_y){ min_y = p.y(); }
+    if (p.y()>max_y){ max_y = p.y(); }
+    if (p.z()<min_z){ min_z = p.z(); }
+    if (p.z()>max_z){ max_z = p.z(); }
   }
   grid.cnt = CVector3(min_x+max_x, min_y+max_y, min_z+max_z)*0.5;
   max_x += h; 
@@ -843,15 +843,15 @@ void viscousityVortexParticleGrid
   }
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     CVector3 p = aVortexParticle[ivp].pos;
-    int ix = (p.x-(grid.cnt.x-h*nx*0.5))/h;
-    int iy = (p.y-(grid.cnt.y-h*ny*0.5))/h;
-    int iz = (p.z-(grid.cnt.z-h*nz*0.5))/h;
+    int ix = (p.x()-(grid.cnt.x()-h*nx*0.5))/h;
+    int iy = (p.y()-(grid.cnt.y()-h*ny*0.5))/h;
+    int iz = (p.z()-(grid.cnt.z()-h*nz*0.5))/h;
     assert(ix>=0&&ix<nx);
     assert(iy>=0&&iy<ny);
     assert(iz>=0&&iz<nz);
-    double rx = (p.x-(grid.cnt.x-h*nx*0.5)-ix*h)/h;
-    double ry = (p.y-(grid.cnt.y-h*ny*0.5)-iy*h)/h;
-    double rz = (p.z-(grid.cnt.z-h*nz*0.5)-iz*h)/h;
+    double rx = (p.x()-(grid.cnt.x()-h*nx*0.5)-ix*h)/h;
+    double ry = (p.y()-(grid.cnt.y()-h*ny*0.5)-iy*h)/h;
+    double rz = (p.z()-(grid.cnt.z()-h*nz*0.5)-iz*h)/h;
     assert(rx>=-1.0e-5&&rx<=1.0+1.0e-5);
     assert(ry>=-1.0e-5&&ry<=1.0+1.0e-5);
     assert(rz>=-1.0e-5&&rz<=1.0+1.0e-5);

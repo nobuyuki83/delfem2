@@ -18,22 +18,22 @@
 namespace delfem2 {
 
 CVector3 normalTri(int itri0,
-                   const std::vector<ETri>& aSTri,
+                   const std::vector<CDynTri>& aSTri,
                    const std::vector<CVector3>& aVec3);
 
-bool CheckTri(const std::vector<CEPo2>& aPo3D,
-              const std::vector<ETri>& aSTri,
+bool CheckTri(const std::vector<CDynPntSur>& aPo3D,
+              const std::vector<CDynTri>& aSTri,
               const std::vector<CVector3>& aVec3);
 
 bool FindRayTriangleMeshIntersections(std::vector<CVector3> &intersectionPoints,
                                       const CVector3 &line0,
                                       const CVector3 &line1,
-                                      const std::vector<ETri>& aTri,
+                                      const std::vector<CDynTri>& aTri,
                                       const std::vector<CVector3>& aVec3);
 
 bool DelaunayAroundPoint(int ipo0,
-                         std::vector<CEPo2>& aPo,
-                         std::vector<ETri>& aTri,
+                         std::vector<CDynPntSur>& aPo,
+                         std::vector<CDynTri>& aTri,
                          const std::vector<CVector3>& aVec3);
 
 // -------------------------------------------------------
@@ -47,14 +47,14 @@ public:
     aVec3.resize(nPo);
     for(int ipo=0;ipo<nPo;ipo++){
       if( ndim == 3 ){
-        aVec3[ipo].x = aPo[ipo*3+0];
-        aVec3[ipo].y = aPo[ipo*3+1];
-        aVec3[ipo].z = aPo[ipo*3+2];
+        aVec3[ipo].p[0] = aPo[ipo*3+0];
+        aVec3[ipo].p[1] = aPo[ipo*3+1];
+        aVec3[ipo].p[2] = aPo[ipo*3+2];
       }
       else if( ndim == 2 ){
-        aVec3[ipo].x = aPo[ipo*2+0];
-        aVec3[ipo].y = aPo[ipo*2+1];
-        aVec3[ipo].z = 0.0;
+        aVec3[ipo].p[0] = aPo[ipo*2+0];
+        aVec3[ipo].p[1] = aPo[ipo*2+1];
+        aVec3[ipo].p[2] = 0.0;
       }
     }
     InitializeMesh(aEPo, aETri,
@@ -68,13 +68,13 @@ public:
   }
   std::vector<double> MinMax_XYZ() const {
     double x_min,x_max, y_min,y_max, z_min,z_max;
-    x_min=x_max=aVec3[0].x;
-    y_min=y_max=aVec3[0].y;
-    z_min=z_max=aVec3[0].z;
+    x_min=x_max=aVec3[0].x();
+    y_min=y_max=aVec3[0].y();
+    z_min=z_max=aVec3[0].z();
     for(unsigned int ipo=0;ipo<aEPo.size();ipo++){
-      const double x = aVec3[ipo].x;
-      const double y = aVec3[ipo].y;
-      const double z = aVec3[ipo].z;
+      const double x = aVec3[ipo].x();
+      const double y = aVec3[ipo].y();
+      const double z = aVec3[ipo].z();
       x_min = (x_min < x) ? x_min : x;
       x_max = (x_max > x) ? x_max : x;
       y_min = (y_min < y) ? y_min : y;
@@ -101,7 +101,7 @@ public:
       v3 = r0*aVec3[i0]+r1*aVec3[i1]+(1-r0-r1)*aVec3[i2];
     }
     aVec3.push_back(v3);
-    aEPo.push_back(CEPo2());
+    aEPo.push_back(CDynPntSur());
     InsertPoint_Elem(ipo0, itri0, aEPo, aETri);
     return ipo0;
   }
@@ -112,8 +112,8 @@ public:
   int nPoint() const { return aEPo.size(); }
   void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
 public:
-  std::vector<CEPo2> aEPo;
-  std::vector<ETri> aETri;
+  std::vector<CDynPntSur> aEPo;
+  std::vector<CDynTri> aETri;
   std::vector<CVector3> aVec3;
 };
   

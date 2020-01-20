@@ -163,7 +163,7 @@ void myGlutDisplay()
     auto v0 = PES.Pos_Tri(aXYZ,aTri);
     float gray[4] = {0.0f,0.0f,1.0f,1.f};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, gray);
-    dfm2::opengl::DrawSphereAt(32,32,0.02, v0.x,v0.y,v0.z);
+    dfm2::opengl::DrawSphereAt(32,32,0.02, v0.x(),v0.y(),v0.z());
   }
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_DEPTH_TEST);

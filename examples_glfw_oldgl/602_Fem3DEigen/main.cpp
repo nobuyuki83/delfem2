@@ -25,8 +25,8 @@ namespace dfm2 = delfem2;
 
 void GenMesh
 (std::vector<CVector2>& aVec2,
- std::vector<dfm2::CEPo2>& aPo2D,
- std::vector<dfm2::ETri>& aETri,
+ std::vector<dfm2::CDynPntSur>& aPo2D,
+ std::vector<dfm2::CDynTri>& aETri,
  double elen,
  const std::vector< std::vector<double> >& aaXY)
 {
@@ -285,8 +285,8 @@ int main(int argc,char* argv[])
     }
 
     std::vector<CVector2> aVec2;
-    std::vector<dfm2::CEPo2> aPo2D;
-    std::vector<dfm2::ETri> aETri;
+    std::vector<dfm2::CDynPntSur> aPo2D;
+    std::vector<dfm2::CDynTri> aETri;
     GenMesh(aVec2,aPo2D,aETri,
             0.05, aaXY);
     std::cout << aVec2.size() << " " << aPo2D.size() << " " << aETri.size() << std::endl;

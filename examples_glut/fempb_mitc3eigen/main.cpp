@@ -124,8 +124,8 @@ void MakeMesh(){
     aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
   }
   // ----------------------------
-  std::vector<dfm2::CEPo2> aPo2D;
-  std::vector<dfm2::ETri> aETri;
+  std::vector<dfm2::CDynPntSur> aPo2D;
+  std::vector<dfm2::CDynTri> aETri;
   std::vector<CVector2> aVec2;
   GenMesh(aPo2D, aETri, aVec2,
           aaXY, 0.01, 0.01);
@@ -201,9 +201,7 @@ void Solve(){
   }
 }
 
-//////////////////////////////////////////////////////////////
-
-
+// ---------------------------------------------
 
 void myGlutDisplay(void)
 {
@@ -317,7 +315,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         for(int i=0;i<6;++i){
           (&C[0][0])[i] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
         }
-        double a0 = TriArea2D(C[0], C[1], C[2]);
+        double a0 = dfm2::TriArea2D(C[0], C[1], C[2]);
         if( a0 < 0.1 ) continue;
         double u[3][3];
         for(int i=0;i<9;++i){

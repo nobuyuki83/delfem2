@@ -1424,7 +1424,7 @@ std::vector<int>& tmp_buffer)
       const CVector3& p1 = aPo3D[i1].p;
       const CVector3& p2 = aPo3D[i2].p;
       const CVector3& p3 = aPo3D[i3].p;
-      double vol = volume_Tet(p0, p1, p2, p3);
+      double vol = Volume_Tet(p0, p1, p2, p3);
       assert(vol>1.0e-10);
 //      std::cout<<"   inew:" << inew << "  it_new:" << it_new<<" "<<vol<<"  "<< i0 << " " << i1<<" "<<i2<< " " << i3<<std::endl;
     }

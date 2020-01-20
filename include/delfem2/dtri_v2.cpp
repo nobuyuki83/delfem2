@@ -17,8 +17,8 @@ namespace dfm2 = delfem2;
 bool LaplacianArroundPoint
  (std::vector<CVector2>& aVec2,
   int ipoin,
-  const std::vector<dfm2::CEPo2>& aPo,
-  const std::vector<dfm2::ETri>& aTri)
+  const std::vector<dfm2::CDynPntSur>& aPo,
+  const std::vector<dfm2::CDynTri>& aTri)
 {
   assert( aVec2.size() == aPo.size() );
   const unsigned int itri_ini = aPo[ipoin].e;
@@ -68,8 +68,8 @@ bool LaplacianArroundPoint
 bool FindEdgePoint_AcrossEdge
  (unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double& ratio,
   int ipo0, int ipo1,
-  const std::vector<dfm2::CEPo2>& po,
-  const std::vector<dfm2::ETri>& tri,
+  const std::vector<dfm2::CDynPntSur>& po,
+  const std::vector<dfm2::CDynTri>& tri,
   const std::vector<CVector2>& aVec2)
 {
   const unsigned int itri_ini = po[ipo0].e;
@@ -169,8 +169,8 @@ bool FindEdgePoint_AcrossEdge
 // --------------------------------------------------------
 
 bool dfm2::CheckTri
-(const std::vector<CEPo2>& aPo3D,
- const std::vector<ETri>& aSTri,
+(const std::vector<CDynPntSur>& aPo3D,
+ const std::vector<CDynTri>& aSTri,
  const std::vector<CVector2>& aXYZ)
 {
   for (const auto & ref_tri : aSTri){
@@ -192,8 +192,8 @@ bool dfm2::CheckTri
 
 bool dfm2::DelaunayAroundPoint
 (int ipo0,
- std::vector<CEPo2>& aPo,
- std::vector<ETri>& aTri,
+ std::vector<CDynPntSur>& aPo,
+ std::vector<CDynTri>& aTri,
  const std::vector<CVector2>& aVec2)
 {
   assert( aVec2.size() == aPo.size() );
@@ -288,13 +288,9 @@ bool dfm2::DelaunayAroundPoint
   return true;
 }
 
-
-
-
-
 void dfm2::MeshingInside
-(std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri,
+(std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aTri,
  std::vector<CVector2>& aVec2,
  std::vector<int>& aFlagPnt,
  std::vector<int>& aFlagTri,
@@ -350,8 +346,8 @@ void dfm2::MeshingInside
 
 void dfm2::MakeSuperTriangle
 (std::vector<CVector2>& aVec2,
- std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri,
+ std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aTri,
  const double bound_2d[4])
 { // super triangle
   assert( aVec2.size() == aPo2D.size() );
@@ -391,7 +387,7 @@ void dfm2::MakeSuperTriangle
   aPo2D[npo+2].e = 0;  aPo2D[npo+2].d = 2;
   
   aTri.resize(1);
-  ETri& tri = aTri[0];
+  CDynTri& tri = aTri[0];
   tri.v[0] = npo+0;
   tri.v[1] = npo+1;
   tri.v[2] = npo+2;
@@ -405,8 +401,8 @@ void dfm2::MakeSuperTriangle
 
 void dfm2::AddPointsMesh
 (const std::vector<CVector2>& aVec2,
- std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri,
+ std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aTri,
  int ipoin,
  double MIN_TRI_AREA)
 {
@@ -418,7 +414,7 @@ void dfm2::AddPointsMesh
   int iflg1 = 0, iflg2 = 0;
   for(int itri=0;itri<(int)aTri.size();itri++){
     iflg1 = 0; iflg2 = 0;
-    const ETri& ref_tri = aTri[itri];
+    const CDynTri& ref_tri = aTri[itri];
     if( TriArea(po_add, aVec2[ref_tri.v[1]], aVec2[ref_tri.v[2]] ) > MIN_TRI_AREA ){
       iflg1++; iflg2 += 0;
     }
@@ -469,8 +465,8 @@ void dfm2::AddPointsMesh
 }
 
 void dfm2::EnforceEdge
-(std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri,
+(std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aTri,
  int i0, int i1,
  const std::vector<CVector2>& aVec2)
 { // enforce edge
@@ -533,7 +529,7 @@ void dfm2::EnforceEdge
 
 void dfm2::FlagConnected
 (std::vector<int>& inout_flg,
- const std::vector<ETri>& aTri_in,
+ const std::vector<CDynTri>& aTri_in,
  unsigned int itri0_ker,
  int iflag)
 {
@@ -561,7 +557,7 @@ void dfm2::FlagConnected
 }
 
 void dfm2::DeleteTriFlag
-(std::vector<ETri>& aTri1,
+(std::vector<CDynTri>& aTri1,
  std::vector<int>& aFlg1,
  int iflag)
 {
@@ -575,7 +571,7 @@ void dfm2::DeleteTriFlag
       ntri1++;
     }
   }
-  const std::vector<ETri> aTri0 = aTri1;
+  const std::vector<CDynTri> aTri0 = aTri1;
   const std::vector<int> aFlg0 = aFlg1;
   aTri1.clear();
   aTri1.resize( ntri1 );
@@ -604,8 +600,8 @@ void dfm2::DeleteTriFlag
 
 void dfm2::DeleteUnrefPoints
 (std::vector<CVector2>& aVec2,
- std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri_in,
+ std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aTri_in,
  const std::vector<int>& aPoDel)
 {
   assert( aPo2D.size() == aVec2.size() );
@@ -624,7 +620,7 @@ void dfm2::DeleteUnrefPoints
     }
   }
   {
-    std::vector<CEPo2> aPo_tmp = aPo2D;
+    std::vector<CDynPntSur> aPo_tmp = aPo2D;
     std::vector<CVector2> aVec2_tmp = aVec2;
     aPo2D.resize( npo_pos );
     aVec2.resize( npo_pos );
@@ -649,8 +645,8 @@ void dfm2::DeleteUnrefPoints
 
 void dfm2::DeletePointsFlag
 (std::vector<CVector2>& aVec1,
- std::vector<CEPo2>& aPo1,
- std::vector<ETri>& aTri,
+ std::vector<CDynPntSur>& aPo1,
+ std::vector<CDynTri>& aTri,
  std::vector<int>& aFlgPnt1,
  int iflg)
 {
@@ -669,7 +665,7 @@ void dfm2::DeletePointsFlag
     }
   }
   {
-    std::vector<CEPo2> aPo0 = aPo1;
+    std::vector<CDynPntSur> aPo0 = aPo1;
     std::vector<CVector2> aVec0 = aVec1;
     std::vector<int> aFlgPnt0 = aFlgPnt1;
     aPo1.resize( npo1 );
@@ -696,8 +692,8 @@ void dfm2::DeletePointsFlag
 }
 
 void dfm2::Meshing_Initialize
-(std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aTri,
+(std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aTri,
  std::vector<CVector2>& aVec2)
 {
   aPo2D.resize(aVec2.size());
@@ -774,7 +770,7 @@ void dfm2::MeshTri2D_Export
 (std::vector<double>& aXY_out,
  std::vector<unsigned int>& aTri_out,
  const std::vector<CVector2>& aVec2,
- const std::vector<ETri>& aTri_in)
+ const std::vector<CDynTri>& aTri_in)
 {
   aTri_out.clear();
   aXY_out.clear();
@@ -955,9 +951,9 @@ void PrepareInput
 
 
 void dfm2::Meshing_SingleConnectedShape2D
-(std::vector<CEPo2>& aPo2D,
+(std::vector<CDynPntSur>& aPo2D,
  std::vector<CVector2>& aVec2,
- std::vector<ETri>& aETri,
+ std::vector<CDynTri>& aETri,
  const std::vector<int>& loopIP_ind,
  const std::vector<int>& loopIP)
 {
@@ -1004,7 +1000,7 @@ void dfm2::CMeshTri2D
 (std::vector<double>& aXY,
  std::vector<unsigned int>& aTri,
  std::vector<CVector2>& aVec2,
- std::vector<ETri>& aETri)
+ std::vector<CDynTri>& aETri)
 {
   aXY.resize(aVec2.size()*2);
   for(size_t ip=0;ip<aVec2.size();++ip){
@@ -1024,9 +1020,9 @@ void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
 (CCmdRefineMesh& aCmd,
  double elen,
  double px, double py, double rad,
- const std::vector<CEPo2>& aPo2D,
+ const std::vector<CDynPntSur>& aPo2D,
  const std::vector<CVector2>& aVec2,
- const std::vector<ETri>& aETri)
+ const std::vector<CDynTri>& aETri)
 {
   std::set<CCmdRefineMesh::CCmdEdge> setCmd;
   for(const auto & itri : aETri){
@@ -1053,8 +1049,8 @@ void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
 
 // TODO: implement this function
 void dfm2::RefineMesh
-(std::vector<CEPo2>& aEPo2,
- std::vector<ETri>& aSTri,
+(std::vector<CDynPntSur>& aEPo2,
+ std::vector<CDynTri>& aSTri,
  std::vector<CVector2>& aVec2,
  CCmdRefineMesh& aCmd)
 {
@@ -1079,7 +1075,7 @@ void dfm2::RefineMesh
       int ipo = aIV_free.top();
       aIV_free.pop();
       aVec2[ipo] = v01;
-      aEPo2[ipo] = CEPo2();
+      aEPo2[ipo] = CDynPntSur();
       cmd.ipo_new = ipo;
     }
   }
@@ -1095,7 +1091,7 @@ void dfm2::MakeInvMassLumped_Tri
 (std::vector<double>& aInvMassLumped,
  double rho,
  const std::vector<CVector2>& aVec2,
- const std::vector<ETri>& aETri)
+ const std::vector<CDynTri>& aETri)
 {
   aInvMassLumped.assign(aVec2.size(),0.0);
   for(const auto & it : aETri){
@@ -1120,7 +1116,7 @@ void dfm2::MinMaxTriArea
 (double& min_area,
  double& max_area,
  const std::vector<CVector2>& aVec2,
- const std::vector<ETri>& aETri)
+ const std::vector<CDynTri>& aETri)
 {
   for(size_t it=0;it<aETri.size();++it){
     const int i0 = aETri[it].v[0];
@@ -1142,8 +1138,8 @@ void dfm2::MinMaxTriArea
 
 
 void dfm2::GenMesh
-(std::vector<CEPo2>& aPo2D,
- std::vector<ETri>& aETri,
+(std::vector<CDynPntSur>& aPo2D,
+ std::vector<CDynTri>& aETri,
  std::vector<CVector2>& aVec2,
  const std::vector< std::vector<double> >& aaXY,
  double resolution_edge,

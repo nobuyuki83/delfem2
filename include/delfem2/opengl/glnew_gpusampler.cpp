@@ -42,7 +42,7 @@ void ScaleX(double* p0, int n, double s)
   for(int i=0;i<n;++i){ p0[i] *= s; }
 }
 
-void Normalize(double* p0, int n)
+void NormalizeX(double* p0, int n)
 {
   const double ss = DotX(p0,p0,n);
   ScaleX(p0,n,1.0/sqrt(ss));
@@ -107,8 +107,8 @@ void CGPUSampler::SetCoord
   z_axis[0] = dir_prj[0];   z_axis[1] = dir_prj[1];   z_axis[2] = dir_prj[2];
   origin[0] = org_prj[0];   origin[1] = org_prj[1];   origin[2] = org_prj[2];
   x_axis[0] = dir_width[0]; x_axis[1] = dir_width[1]; x_axis[2] = dir_width[2];
-  Normalize(z_axis,3);
-  Normalize(x_axis,3);
+  NormalizeX(z_axis,3);
+  NormalizeX(x_axis,3);
 }
 
 void CGPUSampler::Matrix_MVP
@@ -118,8 +118,8 @@ void CGPUSampler::Matrix_MVP
   {
     const double* ax = this->x_axis;
     const double* az = this->z_axis;
-    double ay[3]; Cross3D(ay, az, ax);
-    const double o[3] = { Dot3D(ax,origin), Dot3D(ay,origin), Dot3D(az,origin) };
+    double ay[3]; dfm2::Cross3(ay, az, ax);
+    const double o[3] = { dfm2::Dot3(ax,origin), dfm2::Dot3(ay,origin), dfm2::Dot3(az,origin) };
     mMV[ 0] = ax[0];  mMV[ 1] = ay[0];  mMV[ 2] = az[0];  mMV[ 3] = 0;
     mMV[ 4] = ax[1];  mMV[ 5] = ay[1];  mMV[ 6] = az[1];  mMV[ 7] = 0;
     mMV[ 8] = ax[2];  mMV[ 9] = ay[2];  mMV[10] = az[2];  mMV[11] = 0;
@@ -204,7 +204,7 @@ void CGPUSampler::End()
     std::vector<double> aXYZ(nResX*nResY*3);
     const double* ax = this->x_axis;
     const double* az = this->z_axis;
-    double ay[3]; Cross3D(ay, az, ax);
+    double ay[3]; dfm2::Cross3(ay, az, ax);
     for(int iy=0;iy<nResY;++iy){
       for(int ix=0;ix<nResX;++ix){
         int ip = iy*nResX+ix;
@@ -329,10 +329,10 @@ void CGPUSampler::InitGL() {
     CVector3 p2 = origin + lx*dx + ly*dy;
     CVector3 p3 = origin + ly*dy;
     std::vector<double> aPos3d = {
-        p0.x, p0.y, p0.z,
-        p1.x, p1.y, p1.z,
-        p2.x, p2.y, p2.z,
-        p3.x, p3.y, p3.z,
+        p0.x(), p0.y(), p0.z(),
+        p1.x(), p1.y(), p1.z(),
+        p2.x(), p2.y(), p2.z(),
+        p3.x(), p3.y(), p3.z(),
     };
     std::vector<unsigned int> aTri = {
         0, 1, 2,
@@ -359,7 +359,7 @@ void CGPUSampler::Draw(float mP[16], float mV[16]) const
   {
     const double* ax = this->x_axis;
     const double* az = this->z_axis;
-    double ay[3]; Cross3D(ay, az, ax);
+    double ay[3]; dfm2::Cross3(ay, az, ax);
     const double* o = this->origin;
     mM[ 0] = ax[0];  mM[ 1] = ax[1];  mM[ 2] = ax[2];  mM[ 3] = 0;
     mM[ 4] = ay[0];  mM[ 5] = ay[1];  mM[ 6] = ay[2];  mM[ 7] = 0;
@@ -393,9 +393,9 @@ std::vector<double> CGPUSampler::getGPos(int ix, int iy) const
   double lx = (ix+0.5)*lengrid;
   double ly = (iy+0.5)*lengrid;
   CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
-  std::vector<double> res;
-  res.push_back(vp.x);
-  res.push_back(vp.y);
-  res.push_back(vp.z);
-  return res;
+//  std::vector<double> res;
+//  res.push_back(vp.x());
+//  res.push_back(vp.y());
+//  res.push_back(vp.z());
+  return vp.stlvec();
 }

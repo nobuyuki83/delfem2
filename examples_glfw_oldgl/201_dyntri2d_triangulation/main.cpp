@@ -31,7 +31,7 @@ double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
     const double p0[2] = { aCV[ipo0*2+0], aCV[ipo0*2+1] };
     const double p1[2] = { aCV[ipo1*2+0], aCV[ipo1*2+1] };
     const double p2[2] = { 0, 0 };
-    double a0 = TriArea2D(p0, p1, p2);
+    double a0 = dfm2::TriArea2D(p0, p1, p2);
     double cg0[2] = { (p0[0]+p1[0]+p2[0])/3.0, (p0[1]+p1[1]+p2[1])/3.0 };
     cg[0] += cg0[0]*a0;
     cg[1] += cg0[1]*a0;
@@ -180,9 +180,9 @@ void drawMesh
 
 // --------------------------------
 
-std::vector<dfm2::CEPo2> aPo2D;
+std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<CVector2> aVec2;
-std::vector<dfm2::ETri> aETri;
+std::vector<dfm2::CDynTri> aETri;
 std::vector<int> loopIP_ind, loopIP;
 
 int idp_nearest = -1;

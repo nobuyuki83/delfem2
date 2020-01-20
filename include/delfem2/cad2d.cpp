@@ -513,14 +513,14 @@ void GetBound
 
 void GenMeshCadFace
 (std::vector<CVector2>& aVec2,
- std::vector<dfm2::ETri>& aETri,
+ std::vector<dfm2::CDynTri>& aETri,
  const dfm2::CCad2D_FaceGeo& facegeo, unsigned int iface0,
  const CCadTopo& topo,
  const std::vector<dfm2::CCad2D_VtxGeo>& aVtxGeo,
  const std::vector<dfm2::CCad2D_EdgeGeo>& aEdgeGeo)
 {
   assert( iface0<topo.aFace.size() );
-  std::vector<dfm2::CEPo2> aPo2D;
+  std::vector<dfm2::CDynPntSur> aPo2D;
   {
     aPo2D.resize(aVec2.size());
     for(size_t ixys=0;ixys<aVec2.size();ixys++){
@@ -629,7 +629,7 @@ void dfm2::CCad2D::Tessellation()
     }
   }
   for(size_t ifc=0;ifc<topo.aFace.size();++ifc){
-    std::vector<ETri> aETri;
+    std::vector<CDynTri> aETri;
     GenMeshCadFace(aVec2, aETri,
                    aFace[ifc],ifc,
                    topo,
@@ -686,7 +686,7 @@ void dfm2::CMesher_Cad2D::Meshing
       aFlgTri.resize(dmsh.aETri.size(),0);
     }
     for(size_t ifc=1;ifc<cad.aFace.size();++ifc){ // face index bigger than 0
-      std::vector<ETri> aETri;
+      std::vector<CDynTri> aETri;
       GenMeshCadFace(dmsh.aVec2, aETri,
                      cad.aFace[ifc], ifc,
                      cad.topo,cad.aVtx,aEdgeGeo);

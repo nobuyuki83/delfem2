@@ -62,7 +62,7 @@ public:
   CShader_MeshDTri2D(){
   }
   void MakeBuffer(const std::vector<CVector2>& aVec2,
-                  const std::vector<ETri>& aETri);
+                  const std::vector<CDynTri>& aETri);
   void Draw(const float mP[16],
             const float mMV[16]) const;
   void Compile();
@@ -75,8 +75,8 @@ public:
   CGL4_VAO_Mesh vao;
 };
   
-}
+} // namespace opnegl
   
-}
+} // namespace delfem2
 
 #endif /* gl4_v23dtricad_h */

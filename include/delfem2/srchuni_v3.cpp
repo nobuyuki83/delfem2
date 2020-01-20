@@ -40,11 +40,11 @@ void CPointElemSolid::setPos_Tet
   const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
   const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
   const CVector3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
-  double v0 = volume_Tet( q,p1,p2,p3);
-  double v1 = volume_Tet(p0, q,p2,p3);
-  double v2 = volume_Tet(p0,p1, q,p3);
+  double v0 = Volume_Tet( q,p1,p2,p3);
+  double v1 = Volume_Tet(p0, q,p2,p3);
+  double v2 = Volume_Tet(p0,p1, q,p3);
   //    double v3 = volume_Tet(p0,p1,p2, q);
-  double vt = volume_Tet(p0,p1,p2,p3);
+  double vt = Volume_Tet(p0,p1,p2,p3);
   this->ielem = it0;
   this->r0 = v0/vt;
   this->r1 = v1/vt;
@@ -129,9 +129,9 @@ CVector3 CPointElemSurf::Pos_TetFace
   int iq1 = aTet[itet*4+ielno1];
   int iq2 = aTet[itet*4+ielno2];
   CVector3 p;
-  p.x = r0*aXYZ[iq0*3+0]+r1*aXYZ[iq1*3+0]+r2*aXYZ[iq2*3+0];
-  p.y = r0*aXYZ[iq0*3+1]+r1*aXYZ[iq1*3+1]+r2*aXYZ[iq2*3+1];
-  p.z = r0*aXYZ[iq0*3+2]+r1*aXYZ[iq1*3+2]+r2*aXYZ[iq2*3+2];
+  p.p[0] = r0*aXYZ[iq0*3+0]+r1*aXYZ[iq1*3+0]+r2*aXYZ[iq2*3+0];
+  p.p[1] = r0*aXYZ[iq0*3+1]+r1*aXYZ[iq1*3+1]+r2*aXYZ[iq2*3+1];
+  p.p[2] = r0*aXYZ[iq0*3+2]+r1*aXYZ[iq1*3+2]+r2*aXYZ[iq2*3+2];
   return p;
 }
 
@@ -302,9 +302,9 @@ bool intersectRay_Tri3D
  const CVector3& org, const CVector3& dir,
  const CVector3& p0, const CVector3& p1, const CVector3& p2)
 {
-  const double v0 = volume_Tet(p1, p2, org, org+dir);
-  const double v1 = volume_Tet(p2, p0, org, org+dir);
-  const double v2 = volume_Tet(p0, p1, org, org+dir);
+  const double v0 = Volume_Tet(p1, p2, org, org+dir);
+  const double v1 = Volume_Tet(p2, p0, org, org+dir);
+  const double v2 = Volume_Tet(p0, p1, org, org+dir);
   const double vt = v0+v1+v2;
   r0 = v0/vt;
   r1 = v1/vt;
@@ -488,9 +488,9 @@ CPointElemSurf Nearest_Point_MeshTri3D
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
     const int i2 = aTri[it*3+2];
-    const CVector3 p0(aXYZ[i0*3+0]-q.x, aXYZ[i0*3+1]-q.y, aXYZ[i0*3+2]-q.z);
-    const CVector3 p1(aXYZ[i1*3+0]-q.x, aXYZ[i1*3+1]-q.y, aXYZ[i1*3+2]-q.z);
-    const CVector3 p2(aXYZ[i2*3+0]-q.x, aXYZ[i2*3+1]-q.y, aXYZ[i2*3+2]-q.z);
+    const CVector3 p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
+    const CVector3 p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
+    const CVector3 p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
     double r0,r1;
     CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
     double dist = p_min.DLength();
@@ -516,9 +516,9 @@ CPointElemSurf Nearest_Point_MeshTri3DPart
     const unsigned int i0 = aTri[itri0*3+0];
     const unsigned int i1 = aTri[itri0*3+1];
     const unsigned int i2 = aTri[itri0*3+2];
-    const CVector3 p0(aXYZ[i0*3+0]-q.x, aXYZ[i0*3+1]-q.y, aXYZ[i0*3+2]-q.z);
-    const CVector3 p1(aXYZ[i1*3+0]-q.x, aXYZ[i1*3+1]-q.y, aXYZ[i1*3+2]-q.z);
-    const CVector3 p2(aXYZ[i2*3+0]-q.x, aXYZ[i2*3+1]-q.y, aXYZ[i2*3+2]-q.z);
+    const CVector3 p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
+    const CVector3 p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
+    const CVector3 p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
     double r0,r1;
     CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
     assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
@@ -568,10 +568,10 @@ CPointElemSolid Nearest_Point_MeshTet3D
     const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
     const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     const CVector3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
-    double v0 = volume_Tet(p, p1,p2,p3);
-    double v1 = volume_Tet(p0,p, p2,p3);
-    double v2 = volume_Tet(p0,p1,p, p3);
-    double v3 = volume_Tet(p0,p1,p2,p );
+    double v0 = Volume_Tet(p, p1,p2,p3);
+    double v1 = Volume_Tet(p0,p, p2,p3);
+    double v2 = Volume_Tet(p0,p1,p, p3);
+    double v3 = Volume_Tet(p0,p1,p2,p );
     double vt = (v0+v1+v2+v3);
     if (v0>-eps*vt && v1>-eps*vt && v2>-eps*vt && v3>-eps*vt ){
       double r0 = v0/(v0+v1+v2+v3);
@@ -585,14 +585,10 @@ CPointElemSolid Nearest_Point_MeshTet3D
     else if( v2<v0 && v2<v1 && v2<v3 ){ itet1 = aTetSurRel[itet1*8+2*2+0]; }
     else{                               itet1 = aTetSurRel[itet1*8+3*2+0]; }
   }
-  ////
   return CPointElemSolid();
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------------
 
 CPointElemSurf Nearest_Point_MeshTetFace3D
 (const CVector3& p0,
@@ -710,9 +706,9 @@ double DistanceToTri
   const unsigned int i0 = aTri[itri0*3+0];
   const unsigned int i1 = aTri[itri0*3+1];
   const unsigned int i2 = aTri[itri0*3+2];
-  const CVector3 p0(aXYZ[i0*3+0]-p.x, aXYZ[i0*3+1]-p.y, aXYZ[i0*3+2]-p.z);
-  const CVector3 p1(aXYZ[i1*3+0]-p.x, aXYZ[i1*3+1]-p.y, aXYZ[i1*3+2]-p.z);
-  const CVector3 p2(aXYZ[i2*3+0]-p.x, aXYZ[i2*3+1]-p.y, aXYZ[i2*3+2]-p.z);
+  const CVector3 p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
+  const CVector3 p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
+  const CVector3 p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
   double r0,r1;
   CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
   assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
@@ -733,9 +729,9 @@ double DistanceToTri
   const unsigned int i0 = aTri[itri0*3+0];
   const unsigned int i1 = aTri[itri0*3+1];
   const unsigned int i2 = aTri[itri0*3+2];
-  const CVector3 p0(aXYZ[i0*3+0]-p.x, aXYZ[i0*3+1]-p.y, aXYZ[i0*3+2]-p.z);
-  const CVector3 p1(aXYZ[i1*3+0]-p.x, aXYZ[i1*3+1]-p.y, aXYZ[i1*3+2]-p.z);
-  const CVector3 p2(aXYZ[i2*3+0]-p.x, aXYZ[i2*3+1]-p.y, aXYZ[i2*3+2]-p.z);
+  const CVector3 p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
+  const CVector3 p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
+  const CVector3 p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
   double r0,r1;
   CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
   assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );

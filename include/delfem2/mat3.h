@@ -11,7 +11,7 @@
 
 #include <vector>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <limits> // using NaN Check
 

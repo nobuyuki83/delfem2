@@ -58,7 +58,7 @@ void Draw_RigBone
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
     const CVector3 pos = aBone[ibone].Pos();
-    delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x,pos.y,pos.z);
+    delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x(),pos.y(),pos.z());
   }
   if(is_selected){
     dfm2::opengl::DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
