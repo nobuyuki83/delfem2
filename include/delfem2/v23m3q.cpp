@@ -55,20 +55,20 @@ CVector3 GetSpinVector(const CMatrix3& m)
 
 CVector3 MatVec(const CMatrix3& m, const CVector3& vec0)
 {
-  const double* mat = m.mat;
   CVector3 vec1;
-//  vec1.p[0] = mat[0]*vec0.x + mat[1]*vec0.y + mat[2]*vec0.z;
-//  vec1.p[1] = mat[3]*vec0.x + mat[4]*vec0.y + mat[5]*vec0.z;
-//  vec1.p[2] = mat[6]*vec0.x + mat[7]*vec0.y + mat[8]*vec0.z;
   dfm2::MatVec3(vec1.p, m.mat,vec0.p);
   return vec1;
+    //  const double* mat = m.mat;
+    //  vec1.p[0] = mat[0]*vec0.x + mat[1]*vec0.y + mat[2]*vec0.z;
+    //  vec1.p[1] = mat[3]*vec0.x + mat[4]*vec0.y + mat[5]*vec0.z;
+    //  vec1.p[2] = mat[6]*vec0.x + mat[7]*vec0.y + mat[8]*vec0.z;
 }
 
 CVector3 MatVecTrans(const CMatrix3& m, const CVector3& vec0)
 {
   CVector3 vec1;
-  const double* mat = m.mat;
   MatTransVec3(vec1.p, m.mat,vec0.p);
+//  const double* mat = m.mat;
 //  vec1.x = mat[0]*vec0.x + mat[3]*vec0.y + mat[6]*vec0.z;
 //  vec1.y = mat[1]*vec0.x + mat[4]*vec0.y + mat[7]*vec0.z;
 //  vec1.z = mat[2]*vec0.x + mat[5]*vec0.y + mat[8]*vec0.z;
@@ -472,11 +472,7 @@ void Mat4_ScaleMatTransl(double m[16], double scale, const CMatrix3& mat, const 
   m[3*4+2] = trans.z();
 }
 
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// ---------------------------------------------------------------------------------------
 
 bool isPickCircle
 (const CVector3& axis,

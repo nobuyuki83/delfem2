@@ -57,7 +57,7 @@ public:
         aW.resize(nxy*nv);
         for(int ixy=0;ixy<nxy;++ixy){
           MeanValueCoordinate2D(aW.data()+nv*ixy,
-                                dmsh.aVec2[ixy].x, dmsh.aVec2[ixy].y,
+                                dmsh.aVec2[ixy].x(), dmsh.aVec2[ixy].y(),
                                 aXYVtx.data(), aXYVtx.size()/2);
           double sum = 0.0;
           for(int iv=0;iv<nv;++iv){
@@ -87,11 +87,11 @@ public:
       int nv = aXYVtx.size()/2;
       int np = dmsh.aVec2.size();
       for(int ip=0;ip<np;++ip){
-        dmsh.aVec2[ip].x = 0.0;
-        dmsh.aVec2[ip].y = 0.0;
+        dmsh.aVec2[ip].p[0] = 0.0;
+        dmsh.aVec2[ip].p[1] = 0.0;
         for(int iv=0;iv<nv;++iv){
-          dmsh.aVec2[ip].x += aW[ip*nv+iv]*aXYVtx[iv*2+0];
-          dmsh.aVec2[ip].y += aW[ip*nv+iv]*aXYVtx[iv*2+1];
+          dmsh.aVec2[ip].p[0] += aW[ip*nv+iv]*aXYVtx[iv*2+0];
+          dmsh.aVec2[ip].p[1] += aW[ip*nv+iv]*aXYVtx[iv*2+1];
         }
       }
       shdr_dmsh.MakeBuffer(dmsh.aVec2, dmsh.aETri);

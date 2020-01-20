@@ -39,7 +39,7 @@ void dfm2::CCad2D::Pick
     if( edge.type_edge == 1 ){
       assert( edge.param.size() == 4 );
       const CVector2 lx = (edge.p1 - edge.p0).Normalize();
-      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 ly = CVector2(lx.y(), -lx.x());
       const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
       const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
       if( Distance(pin, q0) < view_height*0.05 ){ this->ipicked_elem = 1; return; }
@@ -51,8 +51,8 @@ void dfm2::CCad2D::Pick
   this->iedge_picked = -1;
   this->iface_picked = -1;
   for(unsigned int ivtx=0;ivtx<aVtx.size();++ivtx){
-    double x1 = aVtx[ivtx].pos.x;
-    double y1 = aVtx[ivtx].pos.y;
+    double x1 = aVtx[ivtx].pos.x();
+    double y1 = aVtx[ivtx].pos.y();
     double dist = sqrt( (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1) );
     if( dist < view_height*0.05 ){
       this->ivtx_picked = ivtx;
@@ -83,8 +83,8 @@ void dfm2::CCad2D::DragPicked
  (double p1x, double p1y, double p0x, double p0y)
 {
   if( ivtx_picked >= 0 && ivtx_picked < (int)aVtx.size() ){
-    aVtx[ivtx_picked].pos.x = p1x;
-    aVtx[ivtx_picked].pos.y = p1y;
+    aVtx[ivtx_picked].pos.p[0] = p1x;
+    aVtx[ivtx_picked].pos.p[1] = p1y;
     Tessellation(); // tesselation for visualization
     return;
   }
@@ -92,17 +92,17 @@ void dfm2::CCad2D::DragPicked
     if( ipicked_elem == 0 ){
       int iv0 = topo.aEdge[iedge_picked].iv0;
       int iv1 = topo.aEdge[iedge_picked].iv1;
-      aVtx[iv0].pos.x += p1x-p0x;
-      aVtx[iv0].pos.y += p1y-p0y;
-      aVtx[iv1].pos.x += p1x-p0x;
-      aVtx[iv1].pos.y += p1y-p0y;
+      aVtx[iv0].pos.p[0] += p1x-p0x;
+      aVtx[iv0].pos.p[1] += p1y-p0y;
+      aVtx[iv1].pos.p[0] += p1x-p0x;
+      aVtx[iv1].pos.p[1] += p1y-p0y;
     }
     else{
       CCad2D_EdgeGeo& edge = aEdge[iedge_picked];
       if( edge.type_edge == 1 ){
         assert( edge.param.size() == 4 );
         const CVector2 lx = (edge.p1 - edge.p0).Normalize();
-        const CVector2 ly = CVector2(lx.y,-lx.x);
+        const CVector2 ly = CVector2(lx.y(),-lx.x());
         if( ipicked_elem == 1 ){
           edge.param[0] = (CVector2(p1x,p1y)- edge.p0 )*lx;
           edge.param[1] = (CVector2(p1x,p1y)- edge.p0 )*ly;
@@ -119,8 +119,8 @@ void dfm2::CCad2D::DragPicked
   if( iface_picked >= 0 && iface_picked < (int)aFace.size() ){
     std::vector<int> aIdV = topo.aLoop[iface_picked].GetArray_IdVertex(topo.aEdge);
     for(int iv1 : aIdV){
-      aVtx[iv1].pos.x += p1x-p0x;
-      aVtx[iv1].pos.y += p1y-p0y;
+      aVtx[iv1].pos.p[0] += p1x-p0x;
+      aVtx[iv1].pos.p[1] += p1y-p0y;
     }
     Tessellation(); // tesselation for visualization
     return;
@@ -233,24 +233,24 @@ std::vector<double> dfm2::CCad2D::XY_VtxCtrl_Face
     bool dir = iie.second;
     if( dir ){
       const int iv = topo.aEdge[ie0].iv0;
-      aXY.push_back( aVtx[iv].pos.x );
-      aXY.push_back( aVtx[iv].pos.y );
+      aXY.push_back( aVtx[iv].pos.x() );
+      aXY.push_back( aVtx[iv].pos.y() );
       if( aEdge[ie0].type_edge == 1 ){
         const CCad2D_EdgeGeo& edge = aEdge[ie0];
         const CVector2 lx = (edge.p1 - edge.p0).Normalize();
-        const CVector2 ly = CVector2(lx.y,-lx.x);
+        const CVector2 ly = CVector2(lx.y(),-lx.x());
         const CVector2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
         const CVector2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
-        aXY.push_back( q0.x );
-        aXY.push_back( q0.y );
-        aXY.push_back( q1.x );
-        aXY.push_back( q1.y );
+        aXY.push_back( q0.x() );
+        aXY.push_back( q0.y() );
+        aXY.push_back( q1.x() );
+        aXY.push_back( q1.y() );
       }
     }
     else{
       const int iv = topo.aEdge[ie0].iv1;
-      aXY.push_back( aVtx[iv].pos.x );
-      aXY.push_back( aVtx[iv].pos.y );
+      aXY.push_back( aVtx[iv].pos.x() );
+      aXY.push_back( aVtx[iv].pos.y() );
     }
   }
   /*
@@ -273,8 +273,8 @@ std::vector<int> dfm2::CCad2D::Ind_Vtx_Face
 std::vector<double> dfm2::CCad2D::XY_Vtx(int ivtx) const
 {
   std::vector<double> xy;
-  xy.push_back(aVtx[ivtx].pos.x);
-  xy.push_back(aVtx[ivtx].pos.y);
+  xy.push_back(aVtx[ivtx].pos.x());
+  xy.push_back(aVtx[ivtx].pos.y());
   return xy;
 }
 
@@ -317,7 +317,7 @@ void dfm2::CCad2D_EdgeGeo::GenMesh
   }
   if( this->type_edge == 1 ){
     const CVector2 lx = (this->p1 - this->p0);
-    const CVector2 ly = CVector2(lx.y,-lx.x);
+    const CVector2 ly = CVector2(lx.y(), -lx.x());
     const CVector2 q0 = p0 + param[0]*lx + param[1]*ly;
     const CVector2 q1 = p1 + param[2]*lx + param[3]*ly;
     int ndiv = 10;
@@ -396,8 +396,8 @@ void dfm2::CCad2D::MeshForVisualization
   const std::vector<CVector2>& aVec2 = aVec2_Tessellation;
   aXYf.reserve(aVec2.size()*2);
   for(const auto & iv : aVec2){
-    aXYf.push_back(iv.x);
-    aXYf.push_back(iv.y);
+    aXYf.push_back(iv.x());
+    aXYf.push_back(iv.y());
   }
   aaLine.resize(aEdge.size());
   for(size_t ie=0;ie<aEdge.size();++ie){
@@ -488,25 +488,25 @@ void GetBound
   {
     int ie0 = aIE[0].first;
     const CVector2& p0 = aEdgeGeo[ie0].p0;
-    bound_2d[0] = p0.x;
-    bound_2d[1] = p0.x;
-    bound_2d[2] = p0.y;
-    bound_2d[3] = p0.y;
+    bound_2d[0] = p0.x();
+    bound_2d[1] = p0.x();
+    bound_2d[2] = p0.y();
+    bound_2d[3] = p0.y();
   }
   for(const auto & iie : aIE){
     const unsigned int ie0 = iie.first;
     {
       const CVector2& p0 = aEdgeGeo[ie0].p0;
-      if( p0.x < bound_2d[0] ){ bound_2d[0] = p0.x; }
-      if( p0.x > bound_2d[1] ){ bound_2d[1] = p0.x; }
-      if( p0.y < bound_2d[2] ){ bound_2d[2] = p0.y; }
-      if( p0.y > bound_2d[3] ){ bound_2d[3] = p0.y; }
+      if( p0.x() < bound_2d[0] ){ bound_2d[0] = p0.x(); }
+      if( p0.x() > bound_2d[1] ){ bound_2d[1] = p0.x(); }
+      if( p0.y() < bound_2d[2] ){ bound_2d[2] = p0.y(); }
+      if( p0.y() > bound_2d[3] ){ bound_2d[3] = p0.y(); }
     }
     for(const auto & p0 : aEdgeGeo[ie0].aP){
-      if( p0.x < bound_2d[0] ){ bound_2d[0] = p0.x; }
-      if( p0.x > bound_2d[1] ){ bound_2d[1] = p0.x; }
-      if( p0.y < bound_2d[2] ){ bound_2d[2] = p0.y; }
-      if( p0.y > bound_2d[3] ){ bound_2d[3] = p0.y; }
+      if( p0.x() < bound_2d[0] ){ bound_2d[0] = p0.x(); }
+      if( p0.x() > bound_2d[1] ){ bound_2d[1] = p0.x(); }
+      if( p0.y() < bound_2d[2] ){ bound_2d[2] = p0.y(); }
+      if( p0.y() > bound_2d[3] ){ bound_2d[3] = p0.y(); }
     }
   }
 }
@@ -852,10 +852,10 @@ bool dfm2::WriteCAD_DXF
         const CVector2& pe = cad.aVtx[id_ve].pos;
         if( cad.aEdge[ie0].type_edge == 0 ){
           fprintf(fp,"  0\nLINE\n  8\n%d\n  6\nCONTINUOUS\n  62\n7\n",il0);
-          fprintf(fp,"  10\n%lf\n",ps.x*scale);
-          fprintf(fp,"  20\n%lf\n",ps.y*scale);
-          fprintf(fp,"  11\n%lf\n",pe.x*scale);
-          fprintf(fp,"  21\n%lf\n",pe.y*scale);
+          fprintf(fp,"  10\n%lf\n",ps.x()*scale);
+          fprintf(fp,"  20\n%lf\n",ps.y()*scale);
+          fprintf(fp,"  11\n%lf\n",pe.x()*scale);
+          fprintf(fp,"  21\n%lf\n",pe.y()*scale);
         }
         /*
         else if( this->GetEdgeCurveType(id_e) == 1 ){ // Arc
@@ -952,15 +952,15 @@ void LoopEdgeCad2D_SVGPathD
   CVector2 pos_cur;
   for(int is=0;;){
     if( aStr1[is] == "M" ){
-      pos_cur.x = myStod(aStr1[is+1]);
-      pos_cur.y = myStod(aStr1[is+2]);
+      pos_cur.p[0] = myStod(aStr1[is+1]);
+      pos_cur.p[1] = myStod(aStr1[is+2]);
       is += 3;
       for(;;){
         if( isAlphabet(aStr1[is][0]) ){ break; }
         dfm2::CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1.x = myStod(aStr1[is+0]);
-        e.p1.y = myStod(aStr1[is+1]);
+        e.p1.p[0] = myStod(aStr1[is+0]);
+        e.p1.p[1] = myStod(aStr1[is+1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;
@@ -972,7 +972,7 @@ void LoopEdgeCad2D_SVGPathD
       e.p1 = CVector2( myStod(aStr1[is+5]), myStod(aStr1[is+6]) );
       double len01 = (e.p1 - e.p0).Length();
       const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
-      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 ly = CVector2(lx.y(), -lx.x());
       e.type_edge = 1;
       e.param.resize(4,0.0);
       CVector2 p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );
@@ -991,7 +991,7 @@ void LoopEdgeCad2D_SVGPathD
         e.p1 = CVector2( myStod(aStr1[is+4]), myStod(aStr1[is+5]) );
         double len01 = (e.p1 - e.p0).Length();
         const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
-        const CVector2 ly = CVector2(lx.y,-lx.x);
+        const CVector2 ly = CVector2(lx.y(),-lx.x());
         e.type_edge = 1;
         e.param.resize(4,0.0);
         CVector2 p2( myStod(aStr1[is+0]), myStod(aStr1[is+1]) );
@@ -1008,15 +1008,15 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "c" ){
       dfm2::CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1 = CVector2(pos_cur.x + myStod(aStr1[is+5]),
-                      pos_cur.y + myStod(aStr1[is+6]) );
-      CVector2 p2(pos_cur.x + myStod(aStr1[is+1]),
-                  pos_cur.y + myStod(aStr1[is+2]) );
-      CVector2 p3(pos_cur.x + myStod(aStr1[is+3]),
-                  pos_cur.y + myStod(aStr1[is+4]) );
+      e.p1 = CVector2(pos_cur.x() + myStod(aStr1[is+5]),
+                      pos_cur.y() + myStod(aStr1[is+6]) );
+      CVector2 p2(pos_cur.x() + myStod(aStr1[is+1]),
+                  pos_cur.y() + myStod(aStr1[is+2]) );
+      CVector2 p3(pos_cur.x() + myStod(aStr1[is+3]),
+                  pos_cur.y() + myStod(aStr1[is+4]) );
       double len01 = (e.p1 - e.p0).Length();
       const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
-      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 ly = CVector2(lx.y(),-lx.x());
       e.type_edge = 1;
       e.param.resize(4,0.0);
       e.param[0] = (p2-e.p0)*lx;
@@ -1030,8 +1030,8 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "l" ){
       dfm2::CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1.x = pos_cur.x + myStod(aStr1[is+1]);
-      e.p1.y = pos_cur.y + myStod(aStr1[is+2]);
+      e.p1.p[0] = pos_cur.x() + myStod(aStr1[is+1]);
+      e.p1.p[1] = pos_cur.y() + myStod(aStr1[is+2]);
       pos_cur = e.p1;
       aEdge.push_back(e);
       is += 3;
@@ -1039,8 +1039,8 @@ void LoopEdgeCad2D_SVGPathD
         if( isAlphabet(aStr1[is][0]) ){ break; }
         dfm2::CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1.x = pos_cur.x + myStod(aStr1[is+0]);
-        e.p1.y = pos_cur.y + myStod(aStr1[is+1]);
+        e.p1.p[0] = pos_cur.x() + myStod(aStr1[is+0]);
+        e.p1.p[1] = pos_cur.y() + myStod(aStr1[is+1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;
@@ -1049,8 +1049,8 @@ void LoopEdgeCad2D_SVGPathD
     else if( aStr1[is] == "L" ){
       dfm2::CCad2D_EdgeGeo e;
       e.p0 = pos_cur;
-      e.p1.x = myStod(aStr1[is+1]);
-      e.p1.y = myStod(aStr1[is+2]);
+      e.p1.p[0] = myStod(aStr1[is+1]);
+      e.p1.p[1] = myStod(aStr1[is+2]);
       pos_cur = e.p1;
       aEdge.push_back(e);
       is += 3;
@@ -1058,8 +1058,8 @@ void LoopEdgeCad2D_SVGPathD
         if( isAlphabet(aStr1[is][0]) ){ break; }
         dfm2::CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
-        e.p1.x = myStod(aStr1[is+0]);
-        e.p1.y = myStod(aStr1[is+1]);
+        e.p1.p[0] = myStod(aStr1[is+0]);
+        e.p1.p[1] = myStod(aStr1[is+1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;
@@ -1071,7 +1071,7 @@ void LoopEdgeCad2D_SVGPathD
       e.p1 = CVector2( myStod(aStr1[is+3]), myStod(aStr1[is+4]) );
       double len01 = (e.p1 - e.p0).Length();
       const CVector2 lx = (e.p1 - e.p0)/(len01*len01);
-      const CVector2 ly = CVector2(lx.y,-lx.x);
+      const CVector2 ly = CVector2(lx.y(), -lx.x());
       e.type_edge = 1;
       e.param.resize(4,0.0);
       CVector2 p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );

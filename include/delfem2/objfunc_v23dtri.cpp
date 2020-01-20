@@ -50,9 +50,9 @@ void PBD_TriStrain
       it.v[1],
       it.v[2]};
     const double P[3][2] = {
-      {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
-      {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
-      {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
+      {aVec2[aIP[0]].x(),aVec2[aIP[0]].y()},
+      {aVec2[aIP[1]].x(),aVec2[aIP[1]].y()},
+      {aVec2[aIP[2]].x(),aVec2[aIP[2]].y()} };
     double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
     double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
     double m[3] = {1,1,1};
@@ -80,10 +80,10 @@ void PBD_Bend
         aETri[it].v[(ie+1)%3],
         aETri[it].v[(ie+2)%3] };
       const double P[4][3] = {
-        {aVec2[aIP[0]].x,aVec2[aIP[0]].y, 0.0},
-        {aVec2[aIP[1]].x,aVec2[aIP[1]].y, 0.0},
-        {aVec2[aIP[2]].x,aVec2[aIP[2]].y, 0.0},
-        {aVec2[aIP[3]].x,aVec2[aIP[3]].y, 0.0} };
+        {aVec2[aIP[0]].x(),aVec2[aIP[0]].y(), 0.0},
+        {aVec2[aIP[1]].x(),aVec2[aIP[1]].y(), 0.0},
+        {aVec2[aIP[2]].x(),aVec2[aIP[2]].y(), 0.0},
+        {aVec2[aIP[3]].x(),aVec2[aIP[3]].y(), 0.0} };
       double p[4][3]; FetchData(&p[0][0], 4, 3, aIP, aXYZt, 3);
       double C[3], dCdp[3][12];
       PBD_CdC_QuadBend(C, dCdp,

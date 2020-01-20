@@ -245,7 +245,7 @@ void myGlutDisplay(void)
     ::glBegin(GL_LINE_LOOP);
     for(int iip=loopIP_ind[iloop];iip<loopIP_ind[iloop+1];iip++){
       const int ip = loopIP[iip];
-      ::glVertex3d(aVec2[ip].x, aVec2[ip].y, 0.1);
+      ::glVertex3d(aVec2[ip].x(), aVec2[ip].y(), 0.1);
     }
     ::glEnd();
   }

@@ -49,16 +49,50 @@ float dfm2::Length2(const float v[2]){
 // --------------------------------------
 
 template <>
-double dfm2::Distance2D(const double v1[2], const double v2[2]){
+double dfm2::Distance2(const double v1[2], const double v2[2]){
   return sqrt( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
 }
 
 template <>
-float dfm2::Distance2D(const float v1[2], const float v2[2]){
+float dfm2::Distance2(const float v1[2], const float v2[2]){
   return sqrtf( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
 }
 
 // -------------------------------------
+
+template <typename T>
+void dfm2::MatVec2(T w[2], const T A[4], const T v[2])
+{
+  w[0] = A[0*2+0]*v[0]+A[0*2+1]*v[1];
+  w[1] = A[1*2+0]*v[0]+A[1*2+1]*v[1];
+}
+template void dfm2::MatVec2(float w[2], const float A[4], const float v[2]);
+template void dfm2::MatVec2(double w[2], const double A[4], const double v[2]);
+
+// -------------------------------------
+
+template <typename T>
+void dfm2::MatMat2(T AB[4], const T A[4], const T B[4])
+{
+  AB[0*2+0] = A[0*2+0]*B[0*2+0]+A[0*2+1]*B[1*2+0];
+  AB[0*2+1] = A[0*2+0]*B[0*2+1]+A[0*2+1]*B[1*2+1];
+  AB[1*2+0] = A[1*2+0]*B[0*2+0]+A[1*2+1]*B[1*2+0];
+  AB[1*2+1] = A[1*2+0]*B[0*2+1]+A[1*2+1]*B[1*2+1];
+}
+
+template void dfm2::MatMat2(float AB[4], const float A[4], const float B[4]);
+template void dfm2::MatMat2(double AB[4], const double A[4], const double B[4]);
+
+// --------------------------------------------------
+
+template <typename T>
+T dfm2::SquareLength2(const T v[2]){
+  return v[0]*v[0]+v[1]*v[1];
+}
+template float dfm2::SquareLength2(const float v[2]);
+template double dfm2::SquareLength2(const double v[2]);
+
+// ------------------------------------------------
 
 double SqDistance2D(const double v1[2], const double v2[2]){
   return (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]);
@@ -99,19 +133,6 @@ bool InverseMat2(double invB[4], const double B[4])
   return true;
 }
 
-void matMat2(double AB[4], const double A[4], const double B[4])
-{
-  AB[0*2+0] = A[0*2+0]*B[0*2+0]+A[0*2+1]*B[1*2+0];
-  AB[0*2+1] = A[0*2+0]*B[0*2+1]+A[0*2+1]*B[1*2+1];
-  AB[1*2+0] = A[1*2+0]*B[0*2+0]+A[1*2+1]*B[1*2+0];
-  AB[1*2+1] = A[1*2+0]*B[0*2+1]+A[1*2+1]*B[1*2+1];
-}
-
-void MatVec2(double w[2], const double A[4], const double v[2])
-{
-  w[0] = A[0*2+0]*v[0]+A[0*2+1]*v[1];
-  w[1] = A[1*2+0]*v[0]+A[1*2+1]*v[1];
-}
 
 void setNormalized2(double w[2])
 {
@@ -123,9 +144,7 @@ void setNormalized2(double w[2])
 
 
 
-double sqLen2(const double v[2]){
-  return v[0]*v[0]+v[1]*v[1];
-}
+
 
 void gramian2(double AtA[3], const double A[4])
 {
@@ -181,10 +200,10 @@ void RotationalComponentOfMatrix2(double R[4], const double M[4])
       l1 = 0.5*(b-d);
       v0[0] = G[1];
       v0[1] = G[3]-l1;
-      if (sqLen2(v0)>eps){ setNormalized2(v0); }
+      if (dfm2::SquareLength2(v0)>eps){ setNormalized2(v0); }
       v1[0] = G[0]-l0;
       v1[1] = G[2];
-      if (sqLen2(v1)>eps){ setNormalized2(v1); }
+      if (dfm2::SquareLength2(v1)>eps){ setNormalized2(v1); }
     }
   }
   double V[4] = { v0[0], v1[0], v0[1], v1[1] };
@@ -193,7 +212,7 @@ void RotationalComponentOfMatrix2(double R[4], const double M[4])
   double il0 = 1.0/sqrt(l0);
   double il1 = 1.0/sqrt(l1);
   double invS[4]; VLVt2(invS, il0, il1, V);
-  matMat2(R, A, invS);
+  dfm2::MatMat2(R, A, invS);
 }
 
 
@@ -276,34 +295,34 @@ void MeanValueCoordinate2D
 std::ostream &operator<<(std::ostream &output, const CVector2& v)
 {
   output.setf(std::ios::scientific);
-  output<<v.x<<" "<<v.y;
+  output<<v.p[0]<<" "<<v.p[1];
   return output;
 }
 
 std::istream &operator>>(std::istream &input, CVector2& v)
 {
-  input>>v.x>>v.y;
+  input>>v.p[0]>>v.p[1];
   return input;
 }
 
 CVector2 operator*(double c, const CVector2& v0)
 {
-  return CVector2(v0.x*c,v0.y*c);
+  return CVector2(v0.p[0]*c, v0.p[1]*c);
 }
 
 CVector2 operator*(const CVector2& v0, double c)
 {
-  return CVector2(v0.x*c,v0.y*c);
+  return CVector2(v0.p[0]*c, v0.p[1]*c);
 }
 
 double operator * (const CVector2& lhs, const CVector2& rhs)
 {
-  return lhs.x*rhs.x + lhs.y*rhs.y;
+  return dfm2::Dot2(lhs.p, rhs.p);// lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
 }
 
 double operator ^ (const CVector2& lhs, const CVector2& rhs)
 {
-  return lhs.x*rhs.y - lhs.y*rhs.x;
+  return lhs.p[0]*rhs.p[1] - lhs.p[1]*rhs.p[0];
 }
 
 //! divide by real number
@@ -318,14 +337,14 @@ CVector2 rotate(const CVector2& p0, double theta)
 {
   CVector2 p1;
   double c = cos(theta), s = sin(theta);
-  p1.x = c*p0.x-s*p0.y;
-  p1.y = s*p0.x+c*p0.y;
+  p1.p[0] = c*p0.p[0] - s*p0.p[1];
+  p1.p[1] = s*p0.p[0] + c*p0.p[1];
   return p1;
 }
 
 CVector2 rotate90(const CVector2& p0)
 {
-  return CVector2(-p0.y,p0.x);
+  return CVector2(-p0.p[1], p0.p[0]);
 }
 
 // ---------------------------------------------------------------
@@ -333,9 +352,10 @@ CVector2 rotate90(const CVector2& p0)
 CVector2 Mat2Vec(const double A[4], const CVector2& v)
 {
   CVector2 w;
-  w.x = A[0]*v.x+A[1]*v.y;
-  w.y = A[2]*v.x+A[3]*v.y;
+  dfm2::MatVec2(w.p, A, v.p);
   return w;
+  //  w.p[0] = A[0]*v.p[0]+A[1]*v.p[1];
+  //  w.p[1] = A[2]*v.p[0]+A[3]*v.p[1];
 }
 
 //! Area of the Triangle
@@ -344,25 +364,25 @@ double TriArea
  const CVector2& v2,
  const CVector2& v3)
 {
-  return 0.5*( (v2.x-v1.x)*(v3.y-v1.y) - (v3.x-v1.x)*(v2.y-v1.y) );
+  return 0.5*( (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1]) - (v3.p[0]-v1.p[0])*(v2.p[1]-v1.p[1]) );
 }
 
 inline double Cross(const CVector2& v1, const CVector2& v2){
-  return v1.x*v2.y - v2.x*v1.y;
+  return v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
 
 inline double SquareLength
 (const CVector2& ipo0, const CVector2& ipo1)
 {
-  return  ( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y );
+  return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
 }
 
 double SquareLength(const CVector2& point){
-  return  point.x*point.x + point.y*point.y;
+  return  point.p[0]*point.p[0] + point.p[1]*point.p[1];
 }
 
 double Length(const CVector2& point){
-  return  point.Length();
+  return dfm2::Length2(point.p);
 }
 
 // Distance between two points
@@ -370,7 +390,8 @@ double Distance
 (const CVector2& ipo0,
  const CVector2& ipo1)
 {
-  return  sqrt( ( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y ) );
+  return dfm2::Distance2(ipo0.p, ipo1.p);
+    //sqrt( ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] ) );
 }
 
 // Distance between two points
@@ -378,7 +399,7 @@ double SquareDistance
 (const CVector2& ipo0,
  const CVector2& ipo1)
 {
-  return  ( ipo1.x - ipo0.x )*( ipo1.x - ipo0.x ) + ( ipo1.y - ipo0.y )*( ipo1.y - ipo0.y );
+  return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
 }
 
 // Hight of a triangle : between v1 and line of v2-v3
@@ -391,7 +412,7 @@ double TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3){
 // compute dot product
 double Dot(const CVector2& ipo0, const CVector2& ipo1)
 {
-  return  ipo0.x*ipo1.x + ipo0.y*ipo1.y;
+  return dfm2::Dot2(ipo0.p, ipo1.p); // ipo0.p[0]*ipo1.p[0] + ipo0.p[1]*ipo1.p[1];
 }
 
 // get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
@@ -430,14 +451,14 @@ bool IsCross_LineSeg_LineSeg
  const CVector2& po_s1, const CVector2& po_e1 )
 {
   {
-    const double min0x = ( po_s0.x < po_e0.x ) ? po_s0.x : po_e0.x;
-    const double max0x = ( po_s0.x > po_e0.x ) ? po_s0.x : po_e0.x;
-    const double max1x = ( po_s1.x > po_e1.x ) ? po_s1.x : po_e1.x;
-    const double min1x = ( po_s1.x < po_e1.x ) ? po_s1.x : po_e1.x;
-    const double min0y = ( po_s0.y < po_e0.y ) ? po_s0.y : po_e0.y;
-    const double max0y = ( po_s0.y > po_e0.y ) ? po_s0.y : po_e0.y;
-    const double max1y = ( po_s1.y > po_e1.y ) ? po_s1.y : po_e1.y;
-    const double min1y = ( po_s1.y < po_e1.y ) ? po_s1.y : po_e1.y;
+    const double min0x = ( po_s0.p[0] < po_e0.p[0] ) ? po_s0.p[0] : po_e0.p[0];
+    const double max0x = ( po_s0.p[0] > po_e0.p[0] ) ? po_s0.p[0] : po_e0.p[0];
+    const double max1x = ( po_s1.p[0] > po_e1.p[0] ) ? po_s1.p[0] : po_e1.p[0];
+    const double min1x = ( po_s1.p[0] < po_e1.p[0] ) ? po_s1.p[0] : po_e1.p[0];
+    const double min0y = ( po_s0.p[1] < po_e0.p[1] ) ? po_s0.p[1] : po_e0.p[1];
+    const double max0y = ( po_s0.p[1] > po_e0.p[1] ) ? po_s0.p[1] : po_e0.p[1];
+    const double max1y = ( po_s1.p[1] > po_e1.p[1] ) ? po_s1.p[1] : po_e1.p[1];
+    const double min1y = ( po_s1.p[1] < po_e1.p[1] ) ? po_s1.p[1] : po_e1.p[1];
     const double len = ((max0x-min0x)+(max0y-min0y)+(max1x-min1x)+(max1y-min1y))*0.0001;
     //		std::cout << len << std::endl;
     if( max1x+len < min0x ) return false;
@@ -505,8 +526,8 @@ bool CenterCircumcircle
   const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
   const double etmp2 = tmp_val*dtmp2*(dtmp0+dtmp1-dtmp2);
   
-  center.x = etmp0*p0.x + etmp1*p1.x + etmp2*p2.x;
-  center.y = etmp0*p0.y + etmp1*p1.y + etmp2*p2.y;
+  center.p[0] = etmp0*p0.p[0] + etmp1*p1.p[0] + etmp2*p2.p[0];
+  center.p[1] = etmp0*p0.p[1] + etmp1*p1.p[1] + etmp2*p2.p[1];
   return true;
 }
 
@@ -535,8 +556,8 @@ int DetDelaunay
 	const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
 	const double etmp2 = tmp_val*dtmp2*(dtmp0+dtmp1-dtmp2);
   
-	const CVector2 out_center(etmp0*p0.x + etmp1*p1.x + etmp2*p2.x,
-                            etmp0*p0.y + etmp1*p1.y + etmp2*p2.y );
+	const CVector2 out_center(etmp0*p0.p[0] + etmp1*p1.p[0] + etmp2*p2.p[0],
+                            etmp0*p0.p[1] + etmp1*p1.p[1] + etmp2*p2.p[1] );
   
 	const double qradius = SquareLength(out_center,p0);
 	const double qdistance = SquareLength(out_center,p3);
@@ -684,8 +705,8 @@ void Translate
  double dx, double dy)
 {
   for(auto & ip : aP){
-    ip.x += dx;
-    ip.y += dy;
+    ip.p[0] += dx;
+    ip.p[1] += dy;
   }
 }
 
@@ -694,10 +715,10 @@ void Rotate
  double dt)
 {
   for(auto & ip : aP){
-    double x0 = ip.x;
-    double y0 = ip.y;
-    ip.x = cos(dt)*x0 - sin(dt)*y0;
-    ip.y = sin(dt)*x0 + cos(dt)*y0;
+    double x0 = ip.p[0];
+    double y0 = ip.p[1];
+    ip.p[0] = cos(dt)*x0 - sin(dt)*y0;
+    ip.p[1] = sin(dt)*x0 + cos(dt)*y0;
   }
 }
 
@@ -777,27 +798,27 @@ void SecondMomentOfArea_Polygon
   for(unsigned int iseg=0;iseg<nseg;iseg++){
     unsigned int ip0 = (iseg+0)%nseg;
     unsigned int ip1 = (iseg+1)%nseg;
-    double x0 = aVec2D[ip0].x;
-    double y0 = aVec2D[ip0].y;
-    double x1 = aVec2D[ip1].x;
-    double y1 = aVec2D[ip1].y;
+    double x0 = aVec2D[ip0].p[0];
+    double y0 = aVec2D[ip0].p[1];
+    double x1 = aVec2D[ip1].p[0];
+    double y1 = aVec2D[ip1].p[1];
     double ai = x0*y1 - x1*y0;
     area += ai;
-    cg.x += ai*(x0+x1)/3.0;
-    cg.y += ai*(y0+y1)/3.0;
+    cg.p[0] += ai*(x0+x1)/3.0;
+    cg.p[1] += ai*(y0+y1)/3.0;
   }
-  cg.x /= area;
-  cg.y /= area;
+  cg.p[0] /= area;
+  cg.p[1] /= area;
   area *= 0.5;
   ////////
   double Ix=0, Iy=0, Ixy=0;
   for(unsigned int iseg=0;iseg<nseg;iseg++){
     unsigned int ip0 = (iseg+0)%nseg;
     unsigned int ip1 = (iseg+1)%nseg;
-    double x0 = aVec2D[ip0].x-cg.x;
-    double y0 = aVec2D[ip0].y-cg.y;
-    double x1 = aVec2D[ip1].x-cg.x;
-    double y1 = aVec2D[ip1].y-cg.y;
+    double x0 = aVec2D[ip0].p[0]-cg.p[0];
+    double y0 = aVec2D[ip0].p[1]-cg.p[1];
+    double x1 = aVec2D[ip1].p[0]-cg.p[0];
+    double y1 = aVec2D[ip1].p[1]-cg.p[1];
     double ai = x0*y1 - x1*y0;
     Ix  += ai*(y0*y0 + y0*y1 + y1*y1)/12.0;
     Iy  += ai*(x0*x0 + x0*x1 + x1*x1)/12.0;
@@ -838,8 +859,8 @@ void JArray_FromVecVec_XY
   for(int iloop=0;iloop<(int)nloop;iloop++){
     const int nxys = (int)aVecAry0[iloop].size()/2;
     for(int ixys=0;ixys<nxys;ixys++){
-      aXY[npo_sum].x = aVecAry0[iloop][ixys*2+0];
-      aXY[npo_sum].y = aVecAry0[iloop][ixys*2+1];
+      aXY[npo_sum].p[0] = aVecAry0[iloop][ixys*2+0];
+      aXY[npo_sum].p[1] = aVecAry0[iloop][ixys*2+1];
       npo_sum++;
     }
   }
@@ -925,9 +946,9 @@ void MakeMassMatrixTri
   assert( aIP[1]<aVec2.size() );
   assert( aIP[2]<aVec2.size() );
   const double P[3][2] = {
-    {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
-    {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
-    {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
+    {aVec2[aIP[0]].p[0],aVec2[aIP[0]].p[1]},
+    {aVec2[aIP[1]].p[0],aVec2[aIP[1]].p[1]},
+    {aVec2[aIP[2]].p[0],aVec2[aIP[2]].p[1]} };
   const double Area = dfm2::TriArea2D(P[0], P[1], P[2]);
   {
     const double tmp = rho*Area/3.0;
@@ -956,8 +977,8 @@ bool IsInclude_Loop
       const int ipo0 = ixys;
       int ipo1 = ixys+1;
       if( ipo1 == ixy_end ){ ipo1 = ixy_stt; }
-      const double p0[2] = {aXY[ipo0].x,aXY[ipo0].y};
-      const double p1[2] = {aXY[ipo1].x,aXY[ipo1].y};
+      const double p0[2] = {aXY[ipo0].p[0],aXY[ipo0].p[1]};
+      const double p1[2] = {aXY[ipo1].p[0],aXY[ipo1].p[1]};
       const double area0 = dfm2::TriArea2D(co,codir,p0);
       const double area1 = dfm2::TriArea2D(co,p1,codir);
       double r1 =  area0 / (area0+area1);
@@ -972,8 +993,8 @@ bool IsInclude_Loop
       }
       if( r0*r1 < 0 ){ continue; }
       double po2[2] = {
-        r0*aXY[ipo0].x+r1*aXY[ipo1].x,
-        r0*aXY[ipo0].y+r1*aXY[ipo1].y };
+        r0*aXY[ipo0].p[0]+r1*aXY[ipo1].p[0],
+        r0*aXY[ipo0].p[1]+r1*aXY[ipo1].p[1] };
       //      const double area2 = TriArea2D(co,codir,po2);
       double d = (po2[0]-co[0])*dir[0] + (po2[1]-co[1])*dir[1];
       if( d > 0 ) inum_cross++;
@@ -1008,7 +1029,7 @@ bool CheckInputBoundaryForTriangulation
     // check inclusion of loops
     for(unsigned int iloop=1;iloop<nloop;iloop++){
       for(int ipo=loopIP_ind[iloop];ipo<loopIP_ind[iloop+1];ipo++){
-        const double pi[2] = {aXY[ipo].x,aXY[ipo].y};
+        const double pi[2] = {aXY[ipo].p[0],aXY[ipo].p[1]};
         if( !IsInclude_Loop(pi,
                             loopIP_ind[0],loopIP_ind[1],
                             aXY) ) return false;
@@ -1019,7 +1040,7 @@ bool CheckInputBoundaryForTriangulation
       for(unsigned int jloop=0;jloop<nloop;jloop++){
         if( iloop == jloop ) continue;
         for(int jpo=loopIP_ind[jloop];jpo<loopIP_ind[jloop+1];jpo++){
-          const double pj[2] = {aXY[jpo].x,aXY[jpo].y};
+          const double pj[2] = {aXY[jpo].p[0],aXY[jpo].p[1]};
           if( IsInclude_Loop(pj,
                              loopIP_ind[iloop],loopIP_ind[iloop+1],
                              aXY) ) return false;
@@ -1034,8 +1055,8 @@ bool CheckInputBoundaryForTriangulation
       for(int ie=0;ie<nei;ie++){
         const int i0 = loopIP_ind[iloop] + (ie+0)%nei;
         const int i1 = loopIP_ind[iloop] + (ie+1)%nei;
-        const double pi0[2] = {aXY[i0].x,aXY[i0].y};
-        const double pi1[2] = {aXY[i1].x,aXY[i1].y};
+        const double pi0[2] = {aXY[i0].p[0],aXY[i0].p[1]};
+        const double pi1[2] = {aXY[i1].p[0],aXY[i1].p[1]};
         const double xmax_i = ( pi1[0] > pi0[0] ) ? pi1[0] : pi0[0];
         const double xmin_i = ( pi1[0] < pi0[0] ) ? pi1[0] : pi0[0];
         const double ymax_i = ( pi1[1] > pi0[1] ) ? pi1[1] : pi0[1];
@@ -1044,8 +1065,8 @@ bool CheckInputBoundaryForTriangulation
           const int j0 = loopIP_ind[iloop] + (je+0)%nei;
           const int j1 = loopIP_ind[iloop] + (je+1)%nei;
           if( i0 == j0 || i0 == j1 || i1 == j0 || i1 == j1 ){ continue; }
-          const double pj0[2] = {aXY[j0].x,aXY[j0].y};
-          const double pj1[2] = {aXY[j1].x,aXY[j1].y};
+          const double pj0[2] = {aXY[j0].p[0],aXY[j0].p[1]};
+          const double pj1[2] = {aXY[j1].p[0],aXY[j1].p[1]};
           const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
           const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
           const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
@@ -1064,8 +1085,8 @@ bool CheckInputBoundaryForTriangulation
             const int jpo0 = loopIP_ind[jloop] + jbar;
             int jpo1 = loopIP_ind[jloop] + jbar+1;
             if( jbar == nbar_j-1 ){ jpo1 = loopIP_ind[jloop]; }
-            const double pj0[2] = {aXY[jpo0].x,aXY[jpo0].y};
-            const double pj1[2] = {aXY[jpo1].y,aXY[jpo1].y};
+            const double pj0[2] = {aXY[jpo0].p[0],aXY[jpo0].p[1]};
+            const double pj1[2] = {aXY[jpo1].p[1],aXY[jpo1].p[1]};
             const double xmax_j = ( pj1[0] > pj0[0] ) ? pj1[0] : pj0[0];
             const double xmin_j = ( pj1[0] < pj0[0] ) ? pj1[0] : pj0[0];
             const double ymax_j = ( pj1[1] > pj0[1] ) ? pj1[1] : pj0[1];
@@ -1086,7 +1107,6 @@ bool CheckInputBoundaryForTriangulation
     if( is_intersect ) return false;
   }
   // end of input check section
-  ////////////////////////////////////////////////
   return true;
 }
 
@@ -1106,8 +1126,8 @@ XY_Polygon(const std::vector<CVector2>& aP)
   std::vector<double> res;
   res.reserve(aP.size()*2);
   for(const auto & ip : aP){
-    res.push_back(ip.x);
-    res.push_back(ip.y);
+    res.push_back(ip.p[0]);
+    res.push_back(ip.p[1]);
   }
   return res;
 }

@@ -194,8 +194,8 @@ void PBD_ConstProj_Rigid2D
       CVector2 dq = CVector2(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
       CVector2 pg = pc+Mat2Vec(R, dq); // goal position
       CVector2 pg2 = stiffness*pg+(1-stiffness)*CVector2(aXYt[ip*2+0],aXYt[ip*2+1]);
-      aXYt[ip*2+0] = pg2.x;
-      aXYt[ip*2+1] = pg2.y;
+      aXYt[ip*2+0] = pg2.x();
+      aXYt[ip*2+1] = pg2.y();
     }
   }
 }
@@ -288,9 +288,9 @@ void PBD_ConstraintProjection_DistanceTri2D3D
  const double p[3][3] // (in) deformed triangle vertex positions
 )
 {
-  const double L12 = dfm2::Distance2D(P[1],P[2]);
-  const double L20 = dfm2::Distance2D(P[2],P[0]);
-  const double L01 = dfm2::Distance2D(P[0],P[1]);
+  const double L12 = dfm2::Distance2(P[1],P[2]);
+  const double L20 = dfm2::Distance2(P[2],P[0]);
+  const double L01 = dfm2::Distance2(P[0],P[1]);
   CVector3 v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
   CVector3 v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
   CVector3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);

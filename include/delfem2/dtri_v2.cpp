@@ -37,8 +37,8 @@ bool LaplacianArroundPoint
     assert( inoel_c0 < 3 );
     assert( aTri[itri0].v[inoel_c0] == ipoin );
     {
-      vec_delta.x += aVec2[ aTri[itri0].v[inoel_b0] ].x;
-      vec_delta.y += aVec2[ aTri[itri0].v[inoel_b0] ].y;
+      vec_delta.p[0] += aVec2[ aTri[itri0].v[inoel_b0] ].x();
+      vec_delta.p[1] += aVec2[ aTri[itri0].v[inoel_b0] ].y();
       ntri_around++;
     }
     if( aTri[itri0].s2[inoel_b0] >= 0 ){
@@ -60,8 +60,8 @@ bool LaplacianArroundPoint
     }
   }
   if( is_bound_flg ) return false;
-  aVec2[ipoin].x = vec_delta.x / ntri_around;
-  aVec2[ipoin].y = vec_delta.y / ntri_around;
+  aVec2[ipoin].p[0] = vec_delta.x() / ntri_around;
+  aVec2[ipoin].p[1] = vec_delta.y() / ntri_around;
   return true;
 }
 
@@ -311,16 +311,16 @@ void dfm2::MeshingInside
                                   aVec2[aTri[itri].v[1]],
                                   aVec2[aTri[itri].v[2]]);
       const double pcnt[2] = {
-        (aVec2[aTri[itri].v[0]].x + aVec2[aTri[itri].v[1]].x + aVec2[aTri[itri].v[2]].x)/3.0,
-        (aVec2[aTri[itri].v[0]].y + aVec2[aTri[itri].v[1]].y + aVec2[aTri[itri].v[2]].y)/3.0
+        (aVec2[aTri[itri].v[0]].x() + aVec2[aTri[itri].v[1]].x() + aVec2[aTri[itri].v[2]].x())/3.0,
+        (aVec2[aTri[itri].v[0]].y() + aVec2[aTri[itri].v[1]].y() + aVec2[aTri[itri].v[2]].y())/3.0
       };
       double len2 = len*mesh_density.edgeLengthRatio(pcnt[0], pcnt[1]);
       if( area < len2 * len2 * ratio ){ continue; }
       const int ipo0 = (int)aPo2D.size();
       aPo2D.resize( aPo2D.size()+1 );
       aVec2.resize( aVec2.size()+1 );
-      aVec2[ipo0].x = (aVec2[aTri[itri].v[0]].x+aVec2[aTri[itri].v[1]].x+aVec2[aTri[itri].v[2]].x)/3.0;
-      aVec2[ipo0].y = (aVec2[aTri[itri].v[0]].y+aVec2[aTri[itri].v[1]].y+aVec2[aTri[itri].v[2]].y)/3.0;
+      aVec2[ipo0].p[0] = (aVec2[aTri[itri].v[0]].x()+aVec2[aTri[itri].v[1]].x()+aVec2[aTri[itri].v[2]].x())/3.0;
+      aVec2[ipo0].p[1] = (aVec2[aTri[itri].v[0]].y()+aVec2[aTri[itri].v[1]].y()+aVec2[aTri[itri].v[2]].y())/3.0;
       InsertPoint_Elem(ipo0,itri,aPo2D,aTri);
       const int iflgtri = aFlagTri[itri];
       aFlagTri.push_back( iflgtri );
@@ -703,15 +703,15 @@ void dfm2::Meshing_Initialize
   }
   {
     double bound_2d[4];
-    bound_2d[0] = aVec2[0].x;
-    bound_2d[1] = aVec2[0].x;
-    bound_2d[2] = aVec2[0].y;
-    bound_2d[3] = aVec2[0].y;
+    bound_2d[0] = aVec2[0].x();
+    bound_2d[1] = aVec2[0].x();
+    bound_2d[2] = aVec2[0].y();
+    bound_2d[3] = aVec2[0].y();
     for(int ipoin=1;ipoin<(int)aPo2D.size();ipoin++){
-      if( aVec2[ipoin].x < bound_2d[0] ){ bound_2d[0] = aVec2[ipoin].x; }
-      if( aVec2[ipoin].x > bound_2d[1] ){ bound_2d[1] = aVec2[ipoin].x; }
-      if( aVec2[ipoin].y < bound_2d[2] ){ bound_2d[2] = aVec2[ipoin].y; }
-      if( aVec2[ipoin].y > bound_2d[3] ){ bound_2d[3] = aVec2[ipoin].y; }
+      if( aVec2[ipoin].x() < bound_2d[0] ){ bound_2d[0] = aVec2[ipoin].x(); }
+      if( aVec2[ipoin].x() > bound_2d[1] ){ bound_2d[1] = aVec2[ipoin].x(); }
+      if( aVec2[ipoin].y() < bound_2d[2] ){ bound_2d[2] = aVec2[ipoin].y(); }
+      if( aVec2[ipoin].y() > bound_2d[3] ){ bound_2d[3] = aVec2[ipoin].y(); }
     }
     MakeSuperTriangle(aVec2, aPo2D, aTri,
                       bound_2d);
@@ -784,8 +784,8 @@ void dfm2::MeshTri2D_Export
   const int nxy_out = (int)aVec2.size();
   aXY_out.resize(nxy_out*2);
   for(int ixy=0;ixy<nxy_out;ixy++){
-    aXY_out[ixy*2+0] = aVec2[ixy].x;
-    aXY_out[ixy*2+1] = aVec2[ixy].y;
+    aXY_out[ixy*2+0] = aVec2[ixy].x();
+    aXY_out[ixy*2+1] = aVec2[ixy].y();
   }
 }
 
@@ -1004,8 +1004,8 @@ void dfm2::CMeshTri2D
 {
   aXY.resize(aVec2.size()*2);
   for(size_t ip=0;ip<aVec2.size();++ip){
-    aXY[ip*2+0] = aVec2[ip].x;
-    aXY[ip*2+1] = aVec2[ip].y;
+    aXY[ip*2+0] = aVec2[ip].x();
+    aXY[ip*2+1] = aVec2[ip].y();
   }
   aTri.resize(aETri.size()*3);
   for(size_t it=0;it<aETri.size();++it){
@@ -1097,9 +1097,9 @@ void dfm2::MakeInvMassLumped_Tri
   for(const auto & it : aETri){
     const int aIP[3] = {it.v[0],it.v[1],it.v[2]};
     double P[3][2] = {
-      {aVec2[aIP[0]].x,aVec2[aIP[0]].y},
-      {aVec2[aIP[1]].x,aVec2[aIP[1]].y},
-      {aVec2[aIP[2]].x,aVec2[aIP[2]].y} };
+      {aVec2[aIP[0]].x(),aVec2[aIP[0]].y()},
+      {aVec2[aIP[1]].x(),aVec2[aIP[1]].y()},
+      {aVec2[aIP[2]].x(),aVec2[aIP[2]].y()} };
     const double Area = TriArea2D(P[0], P[1], P[2]);
     for(int ip : aIP){
       aInvMassLumped[ip] += Area*rho/3.0;
@@ -1123,9 +1123,9 @@ void dfm2::MinMaxTriArea
     const int i1 = aETri[it].v[1];
     const int i2 = aETri[it].v[2];
     double P[3][2] = {
-      {aVec2[i0].x,aVec2[i0].y},
-      {aVec2[i1].x,aVec2[i1].y},
-      {aVec2[i2].x,aVec2[i2].y} };
+      {aVec2[i0].x(),aVec2[i0].y()},
+      {aVec2[i1].x(),aVec2[i1].y()},
+      {aVec2[i2].x(),aVec2[i2].y()} };
     const double Area = TriArea2D(P[0], P[1], P[2]);
     if( it == 0 ){
       min_area = max_area = Area;

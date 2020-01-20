@@ -6,7 +6,6 @@
  */
 
 #include <map>
-
 #include "delfem2/srchuni_v3.h"
 
 CVector3 CPointElemSolid::getPos_Tet
