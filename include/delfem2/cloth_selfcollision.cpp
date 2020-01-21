@@ -36,14 +36,14 @@ void SelfCollisionImpulse_Proximity
     const int ino1 = ce.ino1;
     const int ino2 = ce.ino2;
     const int ino3 = ce.ino3;
-    CVector3 p0( aXYZ[ ino0*3+0], aXYZ[ ino0*3+1], aXYZ[ ino0*3+2] );
-    CVector3 p1( aXYZ[ ino1*3+0], aXYZ[ ino1*3+1], aXYZ[ ino1*3+2] );
-    CVector3 p2( aXYZ[ ino2*3+0], aXYZ[ ino2*3+1], aXYZ[ ino2*3+2] );
-    CVector3 p3( aXYZ[ ino3*3+0], aXYZ[ ino3*3+1], aXYZ[ ino3*3+2] );
-    CVector3 v0( aUVWm[ino0*3+0], aUVWm[ino0*3+1], aUVWm[ino0*3+2] );
-    CVector3 v1( aUVWm[ino1*3+0], aUVWm[ino1*3+1], aUVWm[ino1*3+2] );
-    CVector3 v2( aUVWm[ino2*3+0], aUVWm[ino2*3+1], aUVWm[ino2*3+2] );
-    CVector3 v3( aUVWm[ino3*3+0], aUVWm[ino3*3+1], aUVWm[ino3*3+2] );
+    dfm2::CVector3 p0( aXYZ[ ino0*3+0], aXYZ[ ino0*3+1], aXYZ[ ino0*3+2] );
+    dfm2::CVector3 p1( aXYZ[ ino1*3+0], aXYZ[ ino1*3+1], aXYZ[ ino1*3+2] );
+    dfm2::CVector3 p2( aXYZ[ ino2*3+0], aXYZ[ ino2*3+1], aXYZ[ ino2*3+2] );
+    dfm2::CVector3 p3( aXYZ[ ino3*3+0], aXYZ[ ino3*3+1], aXYZ[ ino3*3+2] );
+    dfm2::CVector3 v0( aUVWm[ino0*3+0], aUVWm[ino0*3+1], aUVWm[ino0*3+2] );
+    dfm2::CVector3 v1( aUVWm[ino1*3+0], aUVWm[ino1*3+1], aUVWm[ino1*3+2] );
+    dfm2::CVector3 v2( aUVWm[ino2*3+0], aUVWm[ino2*3+1], aUVWm[ino2*3+2] );
+    dfm2::CVector3 v3( aUVWm[ino3*3+0], aUVWm[ino3*3+1], aUVWm[ino3*3+2] );
     if( ce.is_fv ){ // face-vtx      
       double w0,w1;
       {
@@ -53,8 +53,8 @@ void SelfCollisionImpulse_Proximity
         if( dist > delta ) continue;
       }
       double w2 = 1.0 - w0 - w1;
-      CVector3 pc = w0*p0 + w1*p1 + w2*p2;
-      CVector3 norm = p3-pc; norm.SetNormalizedVector();
+      dfm2::CVector3 pc = w0*p0 + w1*p1 + w2*p2;
+      dfm2::CVector3 norm = p3-pc; norm.SetNormalizedVector();
       double p_depth = delta - Dot(p3-pc,norm); // penetration depth 
       double rel_v = Dot(v3-w0*v0-w1*v1-w2*v2,norm);
       if( rel_v > 0.1*p_depth/dt ) continue;
@@ -85,9 +85,9 @@ void SelfCollisionImpulse_Proximity
         if( w23 < 0 || w23 > 1 ) continue;
         if( dist > delta ) continue;
       }
-      CVector3 c01 = (1-w01)*p0 + w01*p1;
-      CVector3 c23 = (1-w23)*p2 + w23*p3;
-      CVector3 norm = (c23-c01); norm.SetNormalizedVector();
+      dfm2::CVector3 c01 = (1-w01)*p0 + w01*p1;
+      dfm2::CVector3 c23 = (1-w23)*p2 + w23*p3;
+      dfm2::CVector3 norm = (c23-c01); norm.SetNormalizedVector();
       double p_depth = delta - (c23-c01).Length();
       double rel_v = Dot((1-w23)*v2+w23*v3-(1-w01)*v0-w01*v1,norm);
       if( rel_v > 0.1*p_depth/dt ) continue;
@@ -132,31 +132,31 @@ void SelfCollisionImpulse_CCD
     const int ino1 = ce.ino1;
     const int ino2 = ce.ino2;
     const int ino3 = ce.ino3;
-    CVector3 p0( aXYZ[ ino0*3+0], aXYZ[ ino0*3+1], aXYZ[ ino0*3+2] );
-    CVector3 p1( aXYZ[ ino1*3+0], aXYZ[ ino1*3+1], aXYZ[ ino1*3+2] );
-    CVector3 p2( aXYZ[ ino2*3+0], aXYZ[ ino2*3+1], aXYZ[ ino2*3+2] );
-    CVector3 p3( aXYZ[ ino3*3+0], aXYZ[ ino3*3+1], aXYZ[ ino3*3+2] );
-    CVector3 v0( aUVWm[ino0*3+0], aUVWm[ino0*3+1], aUVWm[ino0*3+2] );
-    CVector3 v1( aUVWm[ino1*3+0], aUVWm[ino1*3+1], aUVWm[ino1*3+2] );
-    CVector3 v2( aUVWm[ino2*3+0], aUVWm[ino2*3+1], aUVWm[ino2*3+2] );
-    CVector3 v3( aUVWm[ino3*3+0], aUVWm[ino3*3+1], aUVWm[ino3*3+2] );    
+    dfm2::CVector3 p0( aXYZ[ ino0*3+0], aXYZ[ ino0*3+1], aXYZ[ ino0*3+2] );
+    dfm2::CVector3 p1( aXYZ[ ino1*3+0], aXYZ[ ino1*3+1], aXYZ[ ino1*3+2] );
+    dfm2::CVector3 p2( aXYZ[ ino2*3+0], aXYZ[ ino2*3+1], aXYZ[ ino2*3+2] );
+    dfm2::CVector3 p3( aXYZ[ ino3*3+0], aXYZ[ ino3*3+1], aXYZ[ ino3*3+2] );
+    dfm2::CVector3 v0( aUVWm[ino0*3+0], aUVWm[ino0*3+1], aUVWm[ino0*3+2] );
+    dfm2::CVector3 v1( aUVWm[ino1*3+0], aUVWm[ino1*3+1], aUVWm[ino1*3+2] );
+    dfm2::CVector3 v2( aUVWm[ino2*3+0], aUVWm[ino2*3+1], aUVWm[ino2*3+2] );
+    dfm2::CVector3 v3( aUVWm[ino3*3+0], aUVWm[ino3*3+1], aUVWm[ino3*3+2] );
     double t = FindCoplanerInterp(p0,p1,p2,p3, p0+v0,p1+v1,p2+v2,p3+v3);
     if( t < 0 || t > 1 ) continue;
     if( ce.is_fv ){ // face-vtx
       double w0,w1;
       {        
-        CVector3 p0m = p0 + t*v0;
-        CVector3 p1m = p1 + t*v1;
-        CVector3 p2m = p2 + t*v2;
-        CVector3 p3m = p3 + t*v3;
+        dfm2::CVector3 p0m = p0 + t*v0;
+        dfm2::CVector3 p1m = p1 + t*v1;
+        dfm2::CVector3 p2m = p2 + t*v2;
+        dfm2::CVector3 p3m = p3 + t*v3;
         double dist = DistanceFaceVertex(p0m, p1m, p2m, p3m, w0,w1);
         if( w0 < 0 || w0 > 1 ) continue;
         if( w1 < 0 || w1 > 1 ) continue;
         if( dist > delta ) continue;
       }
       double w2 = 1.0 - w0 - w1;
-      CVector3 pc = w0*p0 + w1*p1 + w2*p2;
-      CVector3 norm = p3 - pc; norm.SetNormalizedVector();
+      dfm2::CVector3 pc = w0*p0 + w1*p1 + w2*p2;
+      dfm2::CVector3 norm = p3 - pc; norm.SetNormalizedVector();
       double rel_v = Dot(v3-w0*v0-w1*v1-w2*v2,norm); // relative velocity (positive if separating)
       if( rel_v > 0.1*delta/dt ) continue; // separating
       double imp = mass*(0.1*delta/dt-rel_v);
@@ -179,18 +179,18 @@ void SelfCollisionImpulse_CCD
     else{ // edge-edge
       double w01,w23;
       {
-        CVector3 p0m = p0 + t*v0;
-        CVector3 p1m = p1 + t*v1;
-        CVector3 p2m = p2 + t*v2;
-        CVector3 p3m = p3 + t*v3;
+        dfm2::CVector3 p0m = p0 + t*v0;
+        dfm2::CVector3 p1m = p1 + t*v1;
+        dfm2::CVector3 p2m = p2 + t*v2;
+        dfm2::CVector3 p3m = p3 + t*v3;
         double dist = DistanceEdgeEdge(p0m, p1m, p2m, p3m, w01,w23);
         if( w01 < 0 || w01 > 1 ) continue;
         if( w23 < 0 || w23 > 1 ) continue;
         if( dist > delta ) continue;
       }      
-      CVector3 c01 = (1-w01)*p0 + w01*p1;
-      CVector3 c23 = (1-w23)*p2 + w23*p3;
-      CVector3 norm = (c23-c01); norm.SetNormalizedVector();
+      dfm2::CVector3 c01 = (1-w01)*p0 + w01*p1;
+      dfm2::CVector3 c23 = (1-w23)*p2 + w23*p3;
+      dfm2::CVector3 norm = (c23-c01); norm.SetNormalizedVector();
       double rel_v = Dot((1-w23)*v2+w23*v3-(1-w01)*v0-w01*v1,norm);
       if( rel_v > 0.1*delta/dt ) continue; // separating
       double imp = mass*(0.1*delta/dt-rel_v); // reasonable
@@ -309,21 +309,21 @@ void ApplyRigidImpactZone
     for(auto jtr=iriz.begin();jtr!=iriz.end();jtr++){
       aInd.push_back(*jtr);
     }
-    CVector3 gc(0,0,0); // 重心位置
-    CVector3 av(0,0,0); // 平均速度
+    dfm2::CVector3 gc(0,0,0); // 重心位置
+    dfm2::CVector3 av(0,0,0); // 平均速度
     for(int ino : aInd){
-      gc += CVector3(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
-      av += CVector3(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
+      gc += dfm2::CVector3(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
+      av += dfm2::CVector3(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
     }
     gc /= (double)aInd.size();
     av /= (double)aInd.size();
-    CVector3 L(0,0,0); // 角運動量
+    dfm2::CVector3 L(0,0,0); // 角運動量
     double I[9] = {0,0,0, 0,0,0, 0,0,0}; // 慣性テンソル
     for(int ino : aInd){
-      CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
-      CVector3 v(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
+      dfm2::CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
+      dfm2::CVector3 v(aUVWm0[ino*3+0],aUVWm0[ino*3+1],aUVWm0[ino*3+2]);
       L += Cross(p-gc,v-av);
-      CVector3 q = p-gc;
+      dfm2::CVector3 q = p-gc;
       I[0] += v*v - q[0]*q[0];  I[1] +=     - q[0]*q[1];  I[2] +=     - q[0]*q[2];
       I[3] +=     - q[1]*q[0];  I[4] += v*v - q[1]*q[1];  I[5] +=     - q[1]*q[2];
       I[6] +=     - q[2]*q[0];  I[7] +=     - q[2]*q[1];  I[8] += v*v - q[2]*q[2];
@@ -331,14 +331,14 @@ void ApplyRigidImpactZone
     // 角速度を求める
     double Iinv[9];
     CalcInvMat3(Iinv,I);
-    CVector3 omg;
+    dfm2::CVector3 omg;
     omg.p[0] = Iinv[0]*L.x() + Iinv[1]*L.y() + Iinv[2]*L.z();
     omg.p[1] = Iinv[3]*L.x() + Iinv[4]*L.y() + Iinv[5]*L.z();
     omg.p[2] = Iinv[6]*L.x() + Iinv[7]*L.y() + Iinv[8]*L.z();
     // 中間速度の更新
     for(int ino : aInd){
-      CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
-      CVector3 rot = -Cross(p-gc,omg);
+      dfm2::CVector3 p(aXYZ[  ino*3+0],aXYZ[  ino*3+1],aXYZ[  ino*3+2]);
+      dfm2::CVector3 rot = -Cross(p-gc,omg);
       aUVWm[ino*3+0] = av.x() + rot.x();
       aUVWm[ino*3+1] = av.y() + rot.y();
       aUVWm[ino*3+2] = av.z() + rot.z();

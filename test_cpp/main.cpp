@@ -393,9 +393,9 @@ TEST(mathfunc,sherical_harmonics_orthgonality)
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
     const int i2 = aTri[it*3+2];
-    CVector3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
-    CVector3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
-    CVector3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+    dfm2::CVector3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+    dfm2::CVector3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+    dfm2::CVector3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
     double area = SolidAngleTri(p0, p1, p2);
     area_sum += area;
     double a0[N]; makeArray_SphericalHarmonics(a0, norder, p0.p[0],p0.p[1],p0.p[2]);

@@ -51,7 +51,7 @@ EDIT_MODE edit_mode = EDIT_NONE;
 int imode_sym = 2;
 
 const double elen = 1.0;
-const CVector3 org(0,0,0);
+const dfm2::CVector3 org(0,0,0);
 std::vector<CCubeGrid> aCubeGrid;
 int icube_picked;
 int iface_picked;
@@ -71,7 +71,7 @@ void myGlutDisplay(void)
   
   nav.SetGL_Camera();
   
-  CVector3 offsym(0,0,0);
+  dfm2::CVector3 offsym(0,0,0);
   if( imode_sym == 2 ){ offsym.p[2] = -elen*0.5; }
   for(int ic=0;ic<aCubeGrid.size();++ic){
     Draw_CubeGrid(ic==icube_picked, iface_picked, elen, org+offsym, aCubeGrid[ic]);
@@ -125,10 +125,10 @@ void myGlutMouse(int button, int state, int x, int y)
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
   dfm2::CVector2 sp0(nav.mouse_x, nav.mouse_y);
-  const CVector3 src_pick = screenUnProjection(CVector3(sp0.x(),sp0.y(), 0.0), mMV,mPj);
-  const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
+  const dfm2::CVector3 src_pick = screenUnProjection(dfm2::CVector3(sp0.x(),sp0.y(), 0.0), mMV,mPj);
+  const dfm2::CVector3 dir_pick = screenUnProjectionDirection(dfm2::CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){
-    CVector3 offsym(0,0,0);
+    dfm2::CVector3 offsym(0,0,0);
     if( imode_sym == 2 ){ offsym.p[2] = -elen*0.5; }
     double src_pick0[3]; src_pick.CopyValueTo(src_pick0);
     double dir_pick0[3]; dir_pick.CopyValueTo(dir_pick0);

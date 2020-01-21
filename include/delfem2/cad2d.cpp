@@ -438,7 +438,7 @@ double dfm2::AreaLoop
     for(unsigned int iseg=0;iseg<nseg;++iseg){
       const CVector2 q0 = (iseg==0) ? ie.p0 : aP[iseg-1];
       const CVector2 q1 = (iseg==nseg-1) ?ie.p1 : aP[iseg];
-      a0 += TriArea(qo, q0, q1);
+      a0 += Area_Tri(qo, q0, q1);
     }
   }
   return a0;

@@ -8,7 +8,11 @@
 #include <map>
 #include "delfem2/srchuni_v3.h"
 
-CVector3 CPointElemSolid::getPos_Tet
+namespace dfm2 = delfem2;
+
+// ----------------------------------------------
+
+dfm2::CVector3 dfm2::CPointElemSolid::getPos_Tet
 (const std::vector<double> &aXYZ,
  const std::vector<int> &aTet) const
 {
@@ -24,7 +28,7 @@ CVector3 CPointElemSolid::getPos_Tet
   return r0*p0+r1*p1+r2*p2+(1.0-r0-r1-r2)*p3;
 }
 
-void CPointElemSolid::setPos_Tet
+void dfm2::CPointElemSolid::setPos_Tet
 (int it0,
  const CVector3 &q,
  const std::vector<double> &aXYZ,
@@ -50,7 +54,7 @@ void CPointElemSolid::setPos_Tet
   this->r2 = v2/vt;
 }
 
-CVector3 CPointElemSurf::Pos_Tri
+dfm2::CVector3 dfm2::CPointElemSurf::Pos_Tri
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri) const
 {
@@ -64,7 +68,7 @@ CVector3 CPointElemSurf::Pos_Tri
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
 
-CVector3 CPointElemSurf::Pos_Tri
+dfm2::CVector3 dfm2::CPointElemSurf::Pos_Tri
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri) const
 {
@@ -78,7 +82,7 @@ CVector3 CPointElemSurf::Pos_Tri
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
 
-CVector3 CPointElemSurf::UNorm_Tri
+dfm2::CVector3 dfm2::CPointElemSurf::UNorm_Tri
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm) const
@@ -93,7 +97,7 @@ CVector3 CPointElemSurf::UNorm_Tri
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
 
-CVector3 CPointElemSurf::UNorm_Tri
+dfm2::CVector3 dfm2::CPointElemSurf::UNorm_Tri
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri,
  const double* aNorm) const
@@ -108,7 +112,7 @@ CVector3 CPointElemSurf::UNorm_Tri
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
 
-CVector3 CPointElemSurf::Pos_TetFace
+dfm2::CVector3 dfm2::CPointElemSurf::Pos_TetFace
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,
  const std::vector<int>& aTetFace) const
@@ -135,7 +139,7 @@ CVector3 CPointElemSurf::Pos_TetFace
 }
 
 
-bool CPointElemSurf::Check
+bool dfm2::CPointElemSurf::Check
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  double eps) const
@@ -246,6 +250,7 @@ bool CPointElemSurf::Check
  */
 
 
+namespace delfem2 {
 std::ostream &operator<<(std::ostream &output, const CPointElemSurf& v)
 {
   output.setf(std::ios::scientific);
@@ -257,6 +262,8 @@ std::istream &operator>>(std::istream &input, CPointElemSurf& v)
 {
   input>>v.itri>>v.r0>>v.r1;
   return input;
+}
+  
 }
 
 /*
@@ -296,7 +303,7 @@ void weightInTriangle
 }
  */
 
-bool intersectRay_Tri3D
+bool dfm2::intersectRay_Tri3D
 (double& r0, double& r1,
  const CVector3& org, const CVector3& dir,
  const CVector3& p0, const CVector3& p1, const CVector3& p2)
@@ -314,8 +321,8 @@ bool intersectRay_Tri3D
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 
-std::vector<CPointElemSurf>
-IntersectionLine_MeshTri3D
+std::vector<dfm2::CPointElemSurf>
+dfm2::IntersectionLine_MeshTri3D
 (const CVector3& org, const CVector3& dir,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
@@ -337,7 +344,7 @@ IntersectionLine_MeshTri3D
   return aPES;
 }
 
-void IntersectionRay_MeshTri3D (
+void dfm2::IntersectionRay_MeshTri3D (
     std::map<double,CPointElemSurf>& mapDepthPES,
     const CVector3& org, const CVector3& dir,
     const std::vector<unsigned int>& aTri,
@@ -355,7 +362,7 @@ void IntersectionRay_MeshTri3D (
   }
 }
 
-void IntersectionRay_MeshTri3DPart
+void dfm2::IntersectionRay_MeshTri3DPart
 (std::map<double,CPointElemSurf>& mapDepthPES,
  const CVector3& org, const CVector3& dir,
  const std::vector<unsigned int>& aTri,
@@ -475,7 +482,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
 
 // ----------------------------------------------------------
 
-CPointElemSurf Nearest_Point_MeshTri3D
+dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3D
 (const CVector3& q,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
@@ -503,7 +510,7 @@ CPointElemSurf Nearest_Point_MeshTri3D
 }
 
 
-CPointElemSurf Nearest_Point_MeshTri3DPart
+dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3DPart
 (const CVector3& q,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
@@ -532,7 +539,7 @@ CPointElemSurf Nearest_Point_MeshTri3DPart
 
 // ----------------------------------------------------------------------------
 
-CPointElemSolid Nearest_Point_MeshTet3D
+dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
 (const CVector3& q,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet)
@@ -547,7 +554,7 @@ CPointElemSolid Nearest_Point_MeshTet3D
   return CPointElemSolid();
 }
 
-CPointElemSolid Nearest_Point_MeshTet3D
+dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
 (const CVector3& p,
  int itet_start, // starting triangle
  const std::vector<double>& aXYZ,
@@ -589,7 +596,7 @@ CPointElemSolid Nearest_Point_MeshTet3D
 
 // ---------------------------------------------------------------
 
-CPointElemSurf Nearest_Point_MeshTetFace3D
+dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTetFace3D
 (const CVector3& p0,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,
@@ -632,9 +639,9 @@ CPointElemSurf Nearest_Point_MeshTetFace3D
     CVector3 q0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
     CVector3 q1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
     CVector3 q2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
-    double a0 = TriArea(p_min, q1,q2);
-    double a1 = TriArea(p_min, q2,q0);
-    double a2 = TriArea(p_min, q0,q1);
+    double a0 = Area_Tri(p_min, q1,q2);
+    double a1 = Area_Tri(p_min, q2,q0);
+    double a2 = Area_Tri(p_min, q0,q1);
     double inva = 1.0/(a0+a1+a2);
     a0 *= inva;
     a1 *= inva;
@@ -648,7 +655,7 @@ CPointElemSurf Nearest_Point_MeshTetFace3D
 }
 
 
-double SDFNormal_NearestPoint
+double dfm2::SDFNormal_NearestPoint
 (CVector3& n0,
  const CVector3& p0,
  const CPointElemSurf& pes,
@@ -671,7 +678,7 @@ double SDFNormal_NearestPoint
   }
 }
 
-double SDFNormal_NearestPoint
+double dfm2::SDFNormal_NearestPoint
 (CVector3& n0,
  const CVector3& p0,
  const CPointElemSurf& pes,
@@ -695,7 +702,7 @@ double SDFNormal_NearestPoint
 }
 
 
-double DistanceToTri
+double dfm2::DistanceToTri
 (CPointElemSurf& pes,
  const CVector3& p,
  unsigned int itri0,
@@ -718,7 +725,7 @@ double DistanceToTri
 }
 
 
-double DistanceToTri
+double dfm2::DistanceToTri
 (CPointElemSurf& pes,
  const CVector3& p,
  unsigned int itri0,

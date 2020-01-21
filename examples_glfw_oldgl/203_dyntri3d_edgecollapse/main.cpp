@@ -22,11 +22,11 @@ namespace dfm2 = delfem2;
 
 // ---------------------------
 
-void MyGlVertex3dv(CVector3& p){
+void MyGlVertex3dv(dfm2::CVector3& p){
   ::glVertex3d(p.x(), p.y(), p.z());
 }
 
-void MyGlNormal3dv(CVector3& n){
+void MyGlNormal3dv(dfm2::CVector3& n){
   ::glNormal3d(n.x(), n.y(), n.z());
 }
 
@@ -34,7 +34,7 @@ double cur_time = 0.0;
 double dt = 0.1;
 std::vector<dfm2::CDynPntSur> aPo;
 std::vector<dfm2::CDynTri> aTri;
-std::vector<CVector3> aVec3;
+std::vector<dfm2::CVector3> aVec3;
 
 void SetNewProblem()
 {

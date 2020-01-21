@@ -205,10 +205,9 @@ bool dfm2::InsertPoint_ElemEdge
   
   {
     CDynTri& ref_tri = aTri[itri0];
-    ////////////////
     ref_tri.v[0] = ipo_ins;          ref_tri.v[1] = old0.v[ino2_0];  ref_tri.v[2] = old0.v[ino0_0];
     ref_tri.s2[0] = old0.s2[ino1_0];  ref_tri.s2[1] = itri1;          ref_tri.s2[2] = itri3;
-    ////////////////
+    // -----------------------------
     if (old0.s2[ino1_0]>=0&&old0.s2[ino1_0]<(int)aTri.size()){
       assert(old0.r2[ino1_0] < 3);
       const unsigned int* rel = relTriTri[old0.r2[ino1_0]];
@@ -223,10 +222,9 @@ bool dfm2::InsertPoint_ElemEdge
   }
   {
     CDynTri& ref_tri = aTri[itri1];
-    ////////////////
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old0.v[ino0_0];  ref_tri.v[2] = old0.v[ino1_0];
     ref_tri.s2[0] = old0.s2[ino2_0];  ref_tri.s2[1] = itri2;      ref_tri.s2[2] = itri0;
-    ////////////////
+    // -------
     if (old0.s2[ino2_0]>=0&&old0.s2[ino2_0]<(int)aTri.size()){
       assert(old0.r2[ino2_0] < 3);
       const unsigned int* rel = relTriTri[old0.r2[ino2_0]];
@@ -241,10 +239,9 @@ bool dfm2::InsertPoint_ElemEdge
   }
   {
     CDynTri& ref_tri = aTri[itri2];
-    ////////////////
     ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old1.v[ino2_1];  ref_tri.v[2] = old1.v[ino0_1];
     ref_tri.s2[0] = old1.s2[ino1_1];  ref_tri.s2[1] = itri3;      ref_tri.s2[2] = itri1;
-    ////////////////
+    // ------------------
     if (old1.s2[ino1_1]>=0&&old1.s2[ino1_1]<(int)aTri.size()){
       assert(old1.r2[ino1_1] < 3);
       const unsigned int* rel = relTriTri[old1.r2[ino1_1]];

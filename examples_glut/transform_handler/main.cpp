@@ -37,7 +37,7 @@ public:
     quat[2] = 0.0;
     quat[3] = 0.0;
     ielem_picked = -1;
-    pos = CVector3(0,0,0);
+    pos = dfm2::CVector3(0,0,0);
   }
   void Draw() const{
     delfem2::opengl::DrawHandlerRotation_PosQuat(pos, quat, size, ielem_picked);
@@ -47,10 +47,10 @@ public:
       ielem_picked = -1;
       return;
     }
-    CVector3 src = screenUnProjection(CVector3(spx,spy,0), mMV, mPj);
-    CVector3 dir = screenUnProjectionDirection(CVector3(0,0,1),mMV, mPj);
+    dfm2::CVector3 src = screenUnProjection(dfm2::CVector3(spx,spy,0), mMV, mPj);
+    dfm2::CVector3 dir = screenUnProjectionDirection(dfm2::CVector3(0,0,1),mMV, mPj);
     double wh = 1.0/mPj[5];
-    ielem_picked = dfm2::PickHandlerRotation_PosQuat(src,dir, CVector3(0,0,0), quat,size,wh*tol);
+    ielem_picked = dfm2::PickHandlerRotation_PosQuat(src,dir, dfm2::CVector3(0,0,0), quat,size,wh*tol);
   }
   void Drag(double sp0x,double sp0y, double sp1x,double sp1y, float mMV[16], float mPj[16]){
     const dfm2::CVector2 sp0(sp0x,sp0y);
@@ -60,7 +60,7 @@ public:
   }
 public:
   double size;
-  CVector3 pos;
+  dfm2::CVector3 pos;
   double quat[4];
   int ielem_picked;
 };

@@ -172,26 +172,34 @@ void dfm2::MatVec3
 template void dfm2::MatVec3(float y[3], const float m[9], const float x[3]);
 template void dfm2::MatVec3(double y[3], const double m[9], const double x[3]);
 
+// ------------------------------------
 
-
+template <typename T>
+T dfm2::SquareDistance3(const T p0[3], const T p1[3]){
+  return (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
+}
+template float dfm2::SquareDistance3(const float p0[3], const float p1[3]);
+template double dfm2::SquareDistance3(const double p0[3], const double p1[3]);
 
 // ------------------------------------
 
-double ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
+template <typename T>
+T dfm2::SquareLength3(const T v[3]){
+  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+}
+template float dfm2::SquareLength3(const float v[3]);
+template double dfm2::SquareLength3(const double v[3]);
+
+// ------------------------------------
+
+double dfm2::ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
   return a[0]*(b[1]*c[2] - b[2]*c[1])
   +a[1]*(b[2]*c[0] - b[0]*c[2])
   +a[2]*(b[0]*c[1] - b[1]*c[0]);
 }
 
-double SquareLength3D(const double v[3]){
-  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
-}
 
-double SquareDistance3D(const double p0[3], const double p1[3]){
-  return (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
-}
-
-void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
+void dfm2::UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
@@ -200,14 +208,16 @@ void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const doub
   n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
 }
 
-void NormalTri3D(double n[3], const double v1[3], const double v2[3], const double v3[3]){
+void dfm2::NormalTri3D(double n[3], const double v1[3], const double v2[3], const double v3[3]){
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
 }
 
 // t is a tmporary buffer size of 9
-void InverseMat3(double Ainv[], const double A[])
+void dfm2::InverseMat3
+(double Ainv[],
+ const double A[])
 {
   const double det =
   + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
@@ -270,7 +280,7 @@ void GetNearest_TrianglePoint3D
  const double q1[3],
  const double q2[3])
 {
-  double area, n012[3]; UnitNormalAreaTri3D(n012, area, q0, q1, q2);
+  double area, n012[3]; dfm2::UnitNormalAreaTri3D(n012, area, q0, q1, q2);
   const double pe[3] = { ps[0]+n012[0], ps[1]+n012[1], ps[2]+n012[2] };
   const double v012 = dfm2::Volume_Tet3(ps, q0, q1, q2);
   if (fabs(v012) > 1.0e-10){
@@ -325,7 +335,7 @@ void GetNearest_TrianglePoint3D
 }
 
 
-void GetVertical2Vector3D
+void dfm2::GetVertical2Vector3D
 (const double vec_n[3],
  double vec_x[3], double vec_y[3])
 {
@@ -346,7 +356,7 @@ void GetVertical2Vector3D
   }
 }
 
-void GetRotMatrix_Rodrigues3D
+void dfm2::GetRotMatrix_Rodrigues3D
 (double rot[9],
  const double n[3], double theta)
 {
@@ -363,7 +373,7 @@ void GetRotMatrix_Rodrigues3D
   rot[8] = ct+(1-ct)*n[2]*n[2];
 }
 
-void VecMat3
+void dfm2::VecMat3
 (double y[3],
  const double x[3], const double m[9])
 {
@@ -374,7 +384,7 @@ void VecMat3
 
 
 
-void MatTransVec3
+void dfm2::MatTransVec3
 (double y[3],
  const double m[9], const double x[3])
 {
@@ -383,7 +393,7 @@ void MatTransVec3
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-void Mat4Vec3
+void dfm2::Mat4Vec3
 (double vo[3],
  const double M[16], const double vi[3])
 {
@@ -394,13 +404,13 @@ void Mat4Vec3
 
 // ---------------------------------------------------------------------------
 
-double Dot(const CVector3 &arg1, const CVector3 &arg2)
+double dfm2::Dot(const CVector3 &arg1, const CVector3 &arg2)
 {
   return dfm2::Dot3(arg1.p,arg2.p);
 }
 
 // cross product
-CVector3 Cross(const CVector3& arg1, const CVector3& arg2)
+dfm2::CVector3 dfm2::Cross(const CVector3& arg1, const CVector3& arg2)
 {
   CVector3 temp;
   dfm2::Cross3(temp.p, arg1.p, arg2.p);
@@ -409,6 +419,8 @@ CVector3 Cross(const CVector3& arg1, const CVector3& arg2)
 //  temp.z = arg1.x*arg2.y - arg1.y*arg2.x;
   return temp;
 }
+
+namespace delfem2 {
 
 //! add
 CVector3 operator+ (const CVector3& lhs, const CVector3& rhs){
@@ -485,8 +497,10 @@ std::istream &operator>>(std::istream &input, std::vector<CVector3>& aV){
   }
   return input;
 }
+  
+}
 
-CVector3 Mat3Vec(const double mat[9], const CVector3& v){
+dfm2::CVector3 dfm2::Mat3Vec(const double mat[9], const CVector3& v){
   CVector3 u;
   dfm2::MatVec3(u.p, mat, v.p);
   return u;
@@ -496,7 +510,7 @@ CVector3 Mat3Vec(const double mat[9], const CVector3& v){
 }
 
 
-CVector3 Mat4Vec(const double mat[16], const CVector3& v){
+dfm2::CVector3 dfm2::Mat4Vec(const double mat[16], const CVector3& v){
   CVector3 u;
   Mat4Vec3(u.p, mat, v.p);
   return u;
@@ -505,26 +519,37 @@ CVector3 Mat4Vec(const double mat[16], const CVector3& v){
 //  u.z = mat[8]*v.x + mat[9]*v.y + mat[10]*v.z;
 }
 
-CVector3 QuatVec(const double quat[4], const CVector3& v0){
+dfm2::CVector3 dfm2::QuatVec
+(const double quat[4],
+ const CVector3& v0)
+{
 //  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; QuatVec(v1a,quat,v0.p);
+  double v1a[3]; ::QuatVec(v1a,quat,v0.p);
   return CVector3(v1a[0],v1a[1],v1a[2]);
 }
 
-CVector3 QuatConjVec(const double quat[4], const CVector3& v0){
+dfm2::CVector3 dfm2::QuatConjVec
+(const double quat[4],
+ const CVector3& v0)
+{
 //  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; QuatConjVec(v1a,quat,v0.p);
+  double v1a[3]; ::QuatConjVec(v1a,quat,v0.p);
   return CVector3(v1a[0],v1a[1],v1a[2]);
 }
 
 // ------------------------------------------------------------
 
-double ScalarTripleProduct(const CVector3& a, const CVector3& b, const CVector3& c){
+double dfm2::ScalarTripleProduct
+(const CVector3& a,
+ const CVector3& b,
+ const CVector3& c)
+{
 //  return a.x*(b.y*c.z - b.z*c.y) + a.y*(b.z*c.x - b.x*c.z) + a.z*(b.x*c.y - b.y*c.x);
   return a.p[0]*(b.p[1]*c.p[2] - b.p[2]*c.p[1]) + a.p[1]*(b.p[2]*c.p[0] - b.p[0]*c.p[2]) + a.p[2]*(b.p[0]*c.p[1] - b.p[1]*c.p[0]);
 }
 
-
+ namespace delfem2 {
+  
 bool operator== (const CVector3& lhs, const CVector3& rhs){
   if( fabs(lhs.p[0] - rhs.p[0]) < NEARLY_ZERO
      && fabs(lhs.p[1] - rhs.p[1]) < NEARLY_ZERO
@@ -535,8 +560,10 @@ bool operator== (const CVector3& lhs, const CVector3& rhs){
 bool operator!= (const CVector3& lhs, const CVector3& rhs){
   return !(lhs == rhs);
 }
+  
+} // namespace delfem2
 
-void CVector3::SetNormalizedVector()
+void dfm2::CVector3::SetNormalizedVector()
 {
   double invmag = 1.0/Length();
   p[0] *= invmag;
@@ -544,7 +571,7 @@ void CVector3::SetNormalizedVector()
   p[2] *= invmag;
 }
 
-void CVector3::SetZero()
+void dfm2::CVector3::SetZero()
 {
   p[0] = 0.0;
   p[1] = 0.0;
@@ -552,7 +579,12 @@ void CVector3::SetZero()
 }
 
 //! Hight of a tetrahedra
-double Height(const CVector3& v1, const CVector3& v2, const CVector3& v3, const CVector3& v4){
+double dfm2::Height
+(const CVector3& v1,
+ const CVector3& v2,
+ const CVector3& v3,
+ const CVector3& v4)
+{
   double n[3]; NormalTri3D(n, v1.p,v2.p,v3.p);
   dfm2::Normalize3(n);
   return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
@@ -560,27 +592,28 @@ double Height(const CVector3& v1, const CVector3& v2, const CVector3& v3, const 
 
 // -------------------------------------------------------------------------
 
-void GetVertical2Vector
+void dfm2::GetVertical2Vector
 (const CVector3& vec_n,
- CVector3& vec_x, CVector3& vec_y)
+ CVector3& vec_x,
+ CVector3& vec_y)
 {
-  vec_x = ::Cross(CVector3(0,1,0),vec_n);
+  vec_x = dfm2::Cross(CVector3(0,1,0),vec_n);
   const double len = vec_x.Length();
   if( len < 1.0e-10 ){
-    vec_x = ::Cross(CVector3(1,0,0),vec_n);  // z????
+    vec_x = dfm2::Cross(CVector3(1,0,0),vec_n);  // z????
     vec_x.SetNormalizedVector();
-    vec_y = ::Cross(vec_n,vec_x);  // x????
+    vec_y = dfm2::Cross(vec_n,vec_x);  // x????
   }
   else{
     const double invlen = 1.0/len;
     vec_x *= invlen;
-    vec_y = ::Cross(vec_n,vec_x);
+    vec_y = dfm2::Cross(vec_n,vec_x);
   }
 }
 
 // --------------------------------------------------------
 
-CVector3 nearest_Line_Point
+dfm2::CVector3 dfm2::nearest_Line_Point
 (const CVector3& p, // point
  const CVector3& s, // source
  const CVector3& d) // direction
@@ -593,7 +626,7 @@ CVector3 nearest_Line_Point
   return s+t*d;
 }
 
-CVector3 nearest_Line_Point
+dfm2::CVector3 dfm2::nearest_Line_Point
 (double& t,
  const CVector3& p, // point
  const CVector3& s, // source
@@ -610,7 +643,7 @@ CVector3 nearest_Line_Point
   return s+t*d;
 }
 
-CVector3 nearest_Origin_LineSeg
+dfm2::CVector3 dfm2::nearest_Origin_LineSeg
 (const CVector3& s, // start
  const CVector3& e) // end
 {
@@ -626,7 +659,7 @@ CVector3 nearest_Origin_LineSeg
 
 // r0==0 -> p0==org
 // r0==1 -> p1==org
-CVector3 nearest_Origin_LineSeg
+dfm2::CVector3 dfm2::nearest_Origin_LineSeg
 (double& r0,
  const CVector3& p0, // start
  const CVector3& p1) // end
@@ -644,7 +677,7 @@ CVector3 nearest_Origin_LineSeg
   return (1.0-r0)*p0+r0*p1;
 }
 
-CVector3 nearest_LineSeg_Point
+dfm2::CVector3 dfm2::nearest_LineSeg_Point
 (const CVector3& p, // point
  const CVector3& s, // start
  const CVector3& e) // end
@@ -662,7 +695,7 @@ CVector3 nearest_LineSeg_Point
   return s+t*d;
 }
 
-CVector3 nearest_LineSeg_Point
+dfm2::CVector3 dfm2::nearest_LineSeg_Point
 (double& t,
  const CVector3& p, // point
  const CVector3& s, // source
@@ -683,7 +716,7 @@ CVector3 nearest_LineSeg_Point
 }
 
 // Da,Db is nearest point scaled by D
-void nearest_Line_Line
+void dfm2::nearest_Line_Line
 (double& D, CVector3& Da, CVector3& Db,
  const CVector3& pa_, const CVector3& va,
  const CVector3& pb_, const CVector3& vb)
@@ -700,7 +733,7 @@ void nearest_Line_Line
   Db = D*pb_+db*vb;
 }
 
-void nearest_Line_Line
+void dfm2::nearest_Line_Line
 (double& D, CVector3& Da, CVector3& Db, double& ta, double& tb,
  const CVector3& pa_, const CVector3& va,
  const CVector3& pb_, const CVector3& vb)
@@ -717,7 +750,7 @@ void nearest_Line_Line
   Db = D*pb_+tb*vb;
 }
 
-CVector3 nearest_Plane_Point
+dfm2::CVector3 dfm2::nearest_Plane_Point
 (const CVector3& p, // point
  const CVector3& o, // origin
  const CVector3& n) // normal
@@ -726,7 +759,7 @@ CVector3 nearest_Plane_Point
   return p + ((o-p)*n0)*n0;
 }
 
-CVector3 Nearest_Orgin_PlaneTri
+dfm2::CVector3 dfm2::Nearest_Orgin_PlaneTri
 (double& r0,
  double& r1,
  const CVector3& q0,
@@ -746,7 +779,7 @@ CVector3 Nearest_Orgin_PlaneTri
   return q0*r0 + q1*r1 + q2*r2;
 }
 
-CVector3 Nearest_Origin_Tri
+dfm2::CVector3 dfm2::Nearest_Origin_Tri
 (double& r0,
  double& r1,
  const CVector3& q0,
@@ -782,9 +815,13 @@ CVector3 Nearest_Origin_Tri
   return p_min;
 }
 
-CVector3 nearst_Origin_Quad
-(double& s0, double& s1,
- const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3)
+dfm2::CVector3 dfm2::nearst_Origin_Quad
+(double& s0,
+ double& s1,
+ const CVector3& q0,
+ const CVector3& q1,
+ const CVector3& q2,
+ const CVector3& q3)
 {
   double dist_min = -1;
   CVector3 q_min;
@@ -940,7 +977,7 @@ CVector3 nearest_Origin_Tet
 }
  */
 
-void Nearest_Line_Circle
+void dfm2::Nearest_Line_Circle
 (CVector3& p0,
  CVector3& q0,
  const CVector3& src,
@@ -950,7 +987,7 @@ void Nearest_Line_Circle
  double rad)
 {
   const int nitr = 4;
-  ////
+  // ---------------------------------------
   CVector3 ex,ey; GetVertical2Vector(normal, ex, ey);
   double u0;
   {
@@ -969,9 +1006,9 @@ void Nearest_Line_Circle
   }
 }
 
-////////////////////////////////////////////////////////////////
+// -----------------------------------------------------
 
-bool intersection_Plane_Line
+bool dfm2::intersection_Plane_Line
 (CVector3& p0, double& r0, double& r1, double& r2,
  double eps,
  const CVector3& src, const CVector3& dir,
@@ -989,7 +1026,7 @@ bool intersection_Plane_Line
   return r0 > eps && r1 > eps && r2 > eps;
 }
 
-CVector3 intersection_Plane_Line
+dfm2::CVector3 dfm2::intersection_Plane_Line
 (const CVector3& o, // one point on plane
  const CVector3& n, // plane normal
  const CVector3& s, // one point on line
@@ -1001,14 +1038,14 @@ CVector3 intersection_Plane_Line
 
 void iteration_intersection_Line_Quad
 (double& t0, double& t1,
- const CVector3& src, const CVector3& u, const CVector3& v,
- const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3)
+ const dfm2::CVector3& src, const dfm2::CVector3& u, const dfm2::CVector3& v,
+ const dfm2::CVector3& q0, const dfm2::CVector3& q1, const dfm2::CVector3& q2, const dfm2::CVector3& q3)
 {
-  CVector3 q = (1-t0)*(1-t1)*q0 + t0*(1-t1)*q1 + t0*t1*q2 + (1-t0)*t1*q3;
-  CVector3 pq = q-src;
-  CVector3 dqt0 = -(1-t1)*q0 + (1-t1)*q1 + t1*q2 - t1*q3;
-  CVector3 dqt1 = -(1-t0)*q0 - t0*q1 + t0*q2 + (1-t0)*q3;
-  CVector3 ddqt0t1 = q0 - q1 + q2 - q3;
+  dfm2::CVector3 q = (1-t0)*(1-t1)*q0 + t0*(1-t1)*q1 + t0*t1*q2 + (1-t0)*t1*q3;
+  dfm2::CVector3 pq = q-src;
+  dfm2::CVector3 dqt0 = -(1-t1)*q0 + (1-t1)*q1 + t1*q2 - t1*q3;
+  dfm2::CVector3 dqt1 = -(1-t0)*q0 - t0*q1 + t0*q2 + (1-t0)*q3;
+  dfm2::CVector3 ddqt0t1 = q0 - q1 + q2 - q3;
   double f0 = -u*pq;
   double f1 = -v*pq;
   double A00 = u*dqt0;
@@ -1027,7 +1064,7 @@ void iteration_intersection_Line_Quad
   t1 += d1;
 }
 
-bool intersection_Point_Quad
+bool dfm2::intersection_Point_Quad
 (CVector3& psec, double& s0, double& s1,
  const CVector3& src, const CVector3& dir,
  const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3)
@@ -1071,7 +1108,7 @@ bool intersection_Point_Quad
 
 // ------------------------------------------------------------------------------
 
-CVector3 positionBarycentricCoord_Pyramid
+dfm2::CVector3 dfm2::positionBarycentricCoord_Pyramid
 (double r0,
  double r1,
  double r2,
@@ -1088,7 +1125,7 @@ CVector3 positionBarycentricCoord_Pyramid
   + r2*p4;
 }
 
-CVector3 positionBarycentricCoord_Wedge
+dfm2::CVector3 dfm2::positionBarycentricCoord_Wedge
 (double r0,
  double r1,
  double r2,
@@ -1107,7 +1144,7 @@ CVector3 positionBarycentricCoord_Wedge
   + r2*(1.0-r0-r1)*p5;
 }
 
-void iteration_barycentricCoord_Origin_Solid
+void dfm2::iteration_barycentricCoord_Origin_Solid
 (double& r0,
  double& r1,
  double& r2,
@@ -1115,7 +1152,7 @@ void iteration_barycentricCoord_Origin_Solid
  const CVector3& dpdr0,
  const CVector3& dpdr1,
  const CVector3& dpdr2,
- double damp=1.0)
+ double damp)
 {
   const double cxx = dpdr0.p[0]*dpdr0.p[0] + dpdr1.p[0]*dpdr1.p[0] + dpdr2.p[0]*dpdr2.p[0];
   const double cxy = dpdr0.p[0]*dpdr0.p[1] + dpdr1.p[0]*dpdr1.p[1] + dpdr2.p[0]*dpdr2.p[1];
@@ -1131,7 +1168,7 @@ void iteration_barycentricCoord_Origin_Solid
   r2 -= dpdr2*d;
 }
 
-bool barycentricCoord_Origin_Tet
+bool dfm2::barycentricCoord_Origin_Tet
 (double& r0,
  double& r1,
  double& r2,
@@ -1151,7 +1188,7 @@ bool barycentricCoord_Origin_Tet
   return true;
 }
 
-bool barycentricCoord_Origin_Pyramid
+bool dfm2::barycentricCoord_Origin_Pyramid
 (double& r0,
  double& r1,
  double& r2,
@@ -1174,7 +1211,7 @@ bool barycentricCoord_Origin_Pyramid
   return true;
 }
 
-bool barycentricCoord_Origin_Wedge
+bool dfm2::barycentricCoord_Origin_Wedge
 (double& r0,
  double& r1,
  double& r2,
@@ -1199,7 +1236,7 @@ bool barycentricCoord_Origin_Wedge
 }
 
 
-bool IsInside_Orgin_BoundingBoxPoint6
+bool dfm2::IsInside_Orgin_BoundingBoxPoint6
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& p2,
@@ -1216,7 +1253,7 @@ bool IsInside_Orgin_BoundingBoxPoint6
   return true;
 }
 
-bool IsInside_Orgin_BoundingBoxPoint5
+bool dfm2::IsInside_Orgin_BoundingBoxPoint5
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& p2,
@@ -1232,7 +1269,7 @@ bool IsInside_Orgin_BoundingBoxPoint5
   return true;
 }
 
-bool IsInside_Orgin_BoundingBoxPoint4
+bool dfm2::IsInside_Orgin_BoundingBoxPoint4
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& p2,
@@ -1250,7 +1287,7 @@ bool IsInside_Orgin_BoundingBoxPoint4
 // ----------------------------------------------------------------------
 
 // distance VF
-double DistanceFaceVertex
+double dfm2::DistanceFaceVertex
 (const CVector3& p0, const CVector3& p1, const CVector3& p2,
  const CVector3& p3,
  double& w0, double& w1)
@@ -1272,7 +1309,7 @@ double DistanceFaceVertex
 }
 
 //　distance EE
-double DistanceEdgeEdge
+double dfm2::DistanceEdgeEdge
 (const CVector3& p0, const CVector3& p1,
  const CVector3& q0, const CVector3& q1,
  double& ratio_p, double& ratio_q)
@@ -1316,9 +1353,15 @@ double DistanceEdgeEdge
 }
 
 // EEの距離が所定の距離以下にあるかどうか
-bool IsContact_EE_Proximity
-(int ino0,        int ino1,        int jno0,        int jno1,
- const CVector3& p0, const CVector3& p1, const CVector3& q0, const CVector3& q1,
+bool dfm2::IsContact_EE_Proximity
+(int ino0,
+ int ino1,
+ int jno0,
+ int jno1,
+ const CVector3& p0,
+ const CVector3& p1,
+ const CVector3& q0,
+ const CVector3& q1,
  const double delta)
 {
   if( ino0 == jno0 || ino0 == jno1 || ino1 == jno0 || ino1 == jno1 ) return false;
@@ -1376,7 +1419,7 @@ static double FindRootCubic
 }
 
 // ４つの点が同一平面上にならぶような補間係数を探す
-double FindCoplanerInterp
+double dfm2::FindCoplanerInterp
 (const CVector3& s0, const CVector3& s1, const CVector3& s2, const CVector3& s3,
  const CVector3& e0, const CVector3& e1, const CVector3& e2, const CVector3& e3)
 {
@@ -1443,10 +1486,19 @@ double FindCoplanerInterp
 }
 
 // CCDのFVで接触する要素を検出
-bool IsContact_FV_CCD2
-(int ino0,        int ino1,        int ino2,        int ino3,
- const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
- const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3)
+bool dfm2::IsContact_FV_CCD2
+(int ino0,
+ int ino1,
+ int ino2,
+ int ino3,
+ const CVector3& p0,
+ const CVector3& p1,
+ const CVector3& p2,
+ const CVector3& p3,
+ const CVector3& q0,
+ const CVector3& q1,
+ const CVector3& q2,
+ const CVector3& q3)
 {
   { // CSAT
     CVector3 n = Cross(p1-p0,p2-p0);
@@ -1492,7 +1544,7 @@ bool IsContact_FV_CCD2
 }
 
 
-bool isIntersectTriPair
+bool dfm2::isIntersectTriPair
 (CVector3& P0, CVector3& P1,
  int itri, int jtri,
  const std::vector<unsigned int>& aTri,
@@ -1566,7 +1618,7 @@ bool isIntersectTriPair
 
 
 // matrix are column major
-static CVector3 mult_GlAffineMatrix
+dfm2::CVector3 dfm2::mult_GlAffineMatrix
 (const float* m,
  const CVector3& p)
 {
@@ -1577,8 +1629,9 @@ static CVector3 mult_GlAffineMatrix
   return v;
 }
 
-CVector3 solve_GlAffineMatrix(const float* m,
-                              const CVector3& p)
+dfm2::CVector3 dfm2::solve_GlAffineMatrix
+(const float* m,
+ const CVector3& p)
 {
   CVector3 v = p - CVector3(m[3*4+0],m[3*4+1],m[3*4+2]);
   double M[9] = {
@@ -1591,8 +1644,9 @@ CVector3 solve_GlAffineMatrix(const float* m,
 //  return Minv*v;
 }
 
-CVector3 solve_GlAffineMatrixDirection(const float* m,
-                                       const CVector3& v)
+dfm2::CVector3 dfm2::solve_GlAffineMatrixDirection
+(const float* m,
+ const CVector3& v)
 {
   double M[9] = {
     m[0*4+0],m[1*4+0],m[2*4+0],
@@ -1616,8 +1670,10 @@ CVector3 solve_GlAffineMatrixDirection(const float* m,
 
 // ----------------------
 
-CVector3 screenProjection(const CVector3& v,
-                          const float* mMV, const float* mPj)
+dfm2::CVector3 dfm2::screenProjection
+(const CVector3& v,
+ const float* mMV,
+ const float* mPj)
 {
   CVector3 v0 = mult_GlAffineMatrix(mMV, v );
   CVector3 v1 = mult_GlAffineMatrix(mPj, v0);
@@ -1625,8 +1681,9 @@ CVector3 screenProjection(const CVector3& v,
   return CVector3(v1.p[0]/w1, v1.p[1]/w1, 0.0);
 }
 
-CVector3 screenUnProjection(const CVector3& v,
-                            const float* mMV, const float* mPj)
+dfm2::CVector3 dfm2::screenUnProjection
+(const CVector3& v,
+ const float* mMV, const float* mPj)
 {
   float D = mPj[11] + mPj[15]; // z is 1 after model view
   CVector3 v0( D*v.p[0], D*v.p[1], 0.0 );
@@ -1636,8 +1693,10 @@ CVector3 screenUnProjection(const CVector3& v,
   return v2;
 }
 
-CVector3 screenUnProjectionDirection(const CVector3& v,
-                                     const float* mMV, const float* mPj)
+dfm2::CVector3 dfm2::screenUnProjectionDirection
+(const CVector3& v,
+ const float* mMV,
+ const float* mPj)
 {
   CVector3 v0 = solve_GlAffineMatrixDirection(mPj, v);
   CVector3 v1 = solve_GlAffineMatrixDirection(mMV, v0);
@@ -1645,7 +1704,7 @@ CVector3 screenUnProjectionDirection(const CVector3& v,
   return v1;
 }
 
-CVector3 screenDepthDirection
+dfm2::CVector3 dfm2::screenDepthDirection
 (const CVector3& v,
  const float* mMV,
  const float* mPj)
@@ -1668,20 +1727,23 @@ CVector3 screenDepthDirection
 // ----------------------------------------------------------------------------
 
 //! Volume of a tetrahedra
-double Volume_Tet
+double dfm2::Volume_Tet
 (const CVector3& v0,
  const CVector3& v1,
  const CVector3& v2,
  const CVector3& v3 )
 {
+  return dfm2::Volume_Tet3(v0.p, v1.p, v2.p, v3.p);
+  /*
   double v = (v1.p[0]-v0.p[0])*( (v2.p[1]-v0.p[1])*(v3.p[2]-v0.p[2]) - (v3.p[1]-v0.p[1])*(v2.p[2]-v0.p[2]) )
            + (v1.p[1]-v0.p[1])*( (v2.p[2]-v0.p[2])*(v3.p[0]-v0.p[0]) - (v3.p[2]-v0.p[2])*(v2.p[0]-v0.p[0]) )
            + (v1.p[2]-v0.p[2])*( (v2.p[0]-v0.p[0])*(v3.p[1]-v0.p[1]) - (v3.p[0]-v0.p[0])*(v2.p[1]-v0.p[1]) );
   return v*0.16666666666666666666666666666667;
+   */
 }
 
 //! Volume of a tetrahedra v0 is orgin
-double volume_OrgTet
+double dfm2::volume_OrgTet
 (const CVector3& v1,
  const CVector3& v2,
  const CVector3& v3 )
@@ -1692,7 +1754,7 @@ double volume_OrgTet
   return v*0.16666666666666666666666666666667;
 }
 
-double volume_Pyramid
+double dfm2::volume_Pyramid
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& p2,
@@ -1708,7 +1770,7 @@ double volume_Pyramid
   return (v0+v1)*0.5;
 }
 
-double volume_Wedge
+double dfm2::volume_Wedge
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& p2,
@@ -1727,10 +1789,10 @@ double volume_Wedge
 
 // ---------------------------------------------------------------
 
-double SolidAngleTri
+double dfm2::SolidAngleTri
 (const CVector3& v1,
-const CVector3& v2,
-const CVector3& v3)
+ const CVector3& v2,
+ const CVector3& v3)
 {
   double l1 = v1.Length();
   double l2 = v2.Length();
@@ -1746,13 +1808,20 @@ const CVector3& v3)
 
 // ------------------------------------------------------------------
 
-void Cross( CVector3& lhs, const CVector3& v1, const CVector3& v2 ){
+void dfm2::Cross
+(CVector3& lhs,
+ const CVector3& v1,
+ const CVector3& v2 )
+{
   lhs.p[0] = v1.p[1]*v2.p[2] - v2.p[1]*v1.p[2];
   lhs.p[1] = v1.p[2]*v2.p[0] - v2.p[2]*v1.p[0];
   lhs.p[2] = v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
 
-double TriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
+double dfm2::Area_Tri
+(const CVector3& v1,
+ const CVector3& v2,
+ const CVector3& v3)
 {
   double x, y, z;
   x = ( v2.p[1] - v1.p[1] )*( v3.p[2] - v1.p[2] ) - ( v3.p[1] - v1.p[1] )*( v2.p[2] - v1.p[2] );
@@ -1762,7 +1831,7 @@ double TriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
 }
 
 
-double SquareTriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
+double dfm2::SquareTriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
 {
   double dtmp_x = (v2.p[1]-v1.p[1])*(v3.p[2]-v1.p[2])-(v2.p[2]-v1.p[2])*(v3.p[1]-v1.p[1]);
   double dtmp_y = (v2.p[2]-v1.p[2])*(v3.p[0]-v1.p[0])-(v2.p[0]-v1.p[0])*(v3.p[2]-v1.p[2]);
@@ -1770,35 +1839,39 @@ double SquareTriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3)
   return (dtmp_x*dtmp_x + dtmp_y*dtmp_y + dtmp_z*dtmp_z)*0.25;
 }
 
-double SquareDistance(const CVector3& ipo0, const CVector3& ipo1)
+double dfm2::SquareDistance
+(const CVector3& ipo0,
+ const CVector3& ipo1)
 {
   return	( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] ) + ( ipo1.p[2] - ipo0.p[2] )*( ipo1.p[2] - ipo0.p[2] );
 }
 
-double SquareLength(const CVector3& point)
+double dfm2::SquareLength(const CVector3& point)
 {
   return	point.p[0]*point.p[0] + point.p[1]*point.p[1] + point.p[2]*point.p[2];
 }
 
 
 //! length of vector
-double Length(const CVector3& point)
+double dfm2::Length(const CVector3& point)
 {
   return dfm2::Length3(point.p);
 }
 
 //! distance between two points
-double Distance(const CVector3& p0, const CVector3& p1)
+double dfm2::Distance
+(const CVector3& p0,
+ const CVector3& p1)
 {
   return dfm2::Distance3(p0.p, p1.p);
 }
 
 
-double SqareLongestEdgeLength
+double dfm2::SqareLongestEdgeLength
 (const CVector3& ipo0,
-const CVector3& ipo1,
-const CVector3& ipo2,
-const CVector3& ipo3 )
+ const CVector3& ipo1,
+ const CVector3& ipo2,
+ const CVector3& ipo3 )
 {
   double edge1, edge2;
   edge1 = SquareDistance( ipo0, ipo1 );
@@ -1815,9 +1888,9 @@ const CVector3& ipo3 )
   return edge1;
 }
 
-////////////////////////////////////////////////
+// --------------------------------------
 
-double LongestEdgeLength
+double dfm2::LongestEdgeLength
 (const CVector3& ipo0,
  const CVector3& ipo1,
  const CVector3& ipo2,
@@ -1826,9 +1899,9 @@ double LongestEdgeLength
   return sqrt( SqareLongestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
 }
 
-////////////////////////////////////////////////
+// --------------------------------------
 
-double SqareShortestEdgeLength
+double dfm2::SqareShortestEdgeLength
 (const CVector3& ipo0,
  const CVector3& ipo1,
  const CVector3& ipo2,
@@ -1849,10 +1922,10 @@ double SqareShortestEdgeLength
   return edge1;
 }
 
-////////////////////////////////////////////////
+// -----------------------------------------
 
 
-double ShortestEdgeLength
+double dfm2::ShortestEdgeLength
 (const CVector3& ipo0,
  const CVector3& ipo1,
  const CVector3& ipo2,
@@ -1861,9 +1934,9 @@ double ShortestEdgeLength
   return sqrt( SqareShortestEdgeLength(ipo0,ipo1,ipo2,ipo3) );
 }
 
-////////////////////////////////////////////////
+// -------------------------------------------
 
-void Normal
+void dfm2::Normal
 (CVector3& vnorm,
  const CVector3& v1,
  const CVector3& v2,
@@ -1874,7 +1947,7 @@ void Normal
   vnorm.p[2] = (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1])-(v2.p[1]-v1.p[1])*(v3.p[0]-v1.p[0]);
 }
 
-CVector3 Normal
+dfm2::CVector3 dfm2::Normal
 (const CVector3& v1,
 const CVector3& v2,
 const CVector3& v3)
@@ -1887,9 +1960,9 @@ const CVector3& v3)
 }
 
 
-////////////////////////////////////////////////
+// --------------------------------------------
 
-void UnitNormal
+void dfm2::UnitNormal
 (CVector3& vnorm,
  const CVector3& v1,
  const CVector3& v2,
@@ -1904,7 +1977,7 @@ void UnitNormal
   vnorm.p[2] *= dtmp1;
 }
 
-CVector3 UnitNormal
+dfm2::CVector3 dfm2::UnitNormal
 (const CVector3& v1,
 const CVector3& v2,
 const CVector3& v3)
@@ -1920,9 +1993,9 @@ const CVector3& v3)
   return vnorm;
 }
 
-////////////////////////////////////////////////
+// ---------------------------------------------------
 
-double SquareCircumradius
+double dfm2::SquareCircumradius
 (const CVector3& ipo0,
  const CVector3& ipo1,
  const CVector3& ipo2,
@@ -1973,7 +2046,7 @@ double SquareCircumradius
    */
 }
 
-CVector3 CircumCenter
+dfm2::CVector3 dfm2::CircumCenter
 (const CVector3& ipo0,
  const CVector3& ipo1,
  const CVector3& ipo2,
@@ -2017,7 +2090,7 @@ CVector3 CircumCenter
   return vec1;
 }
 
-void MeanValueCoordinate
+void dfm2::MeanValueCoordinate
 (double w[3],
  const CVector3& v0,
  const CVector3& v1,
@@ -2068,13 +2141,9 @@ void MeanValueCoordinate
   w[2] = (t2-c1*t0-c0*t1)/(d2*sin(t0)*s1);
 }
 
+// --------------------------------------------------
 
-
-////////////////////////////////////////////////
-
-
-
-CVector3 ProjectPointOnTriangle
+dfm2::CVector3 dfm2::ProjectPointOnTriangle
 (const CVector3 &p0,
  const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3)
 {
@@ -2086,7 +2155,7 @@ CVector3 ProjectPointOnTriangle
   return p0 + p0ProjectedP0;
 }
 
-bool isRayIntersectingTriangle
+bool dfm2::isRayIntersectingTriangle
 (const CVector3 &line0, const CVector3 &line1,
  const CVector3 &tri0, const CVector3 &tri1, const CVector3 &tri2,
  CVector3 &intersectionPoint)
@@ -2119,7 +2188,7 @@ bool isRayIntersectingTriangle
   return true;
 }
 
-bool isPointInsideTriangle
+bool dfm2::isPointInsideTriangle
 (const CVector3 &p0,
  const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3)
 {
@@ -2133,7 +2202,7 @@ bool isPointInsideTriangle
   }
 }
 
-bool isPointSameSide
+bool dfm2::isPointSameSide
 (const CVector3 &p0, const CVector3 &p1,
  const CVector3 &line_p0, const CVector3 &line_p1)
 {
@@ -2157,13 +2226,13 @@ bool isPointSameSide
  * 1 :       on
  * 2 :       outsdie
  */
-int DetDelaunay
+int dfm2::DetDelaunay
 (const CVector3& p0,
 const CVector3& p1,
 const CVector3& p2,
 const CVector3& p3)
 {
-  const double area = TriArea(p0, p1, p2);
+  const double area = Area_Tri(p0, p1, p2);
   if (fabs(area) < 1.0e-10){
     return 3;
   }
@@ -2194,7 +2263,7 @@ const CVector3& p3)
 /**
  * @brief curcumradius of a tetrahedra
  */
-double Circumradius
+double dfm2::Circumradius
 (const CVector3& ipo0,
  const CVector3& ipo1,
  const CVector3& ipo2,
@@ -2204,7 +2273,7 @@ double Circumradius
 }
 
 
-CVector3 RotateVector(const CVector3& vec0, const CVector3& rot )
+dfm2::CVector3 dfm2::RotateVector(const CVector3& vec0, const CVector3& rot )
 {
   const double theta = rot.Length();
   if( theta < 1.0e-30 ){
@@ -2212,12 +2281,12 @@ CVector3 RotateVector(const CVector3& vec0, const CVector3& rot )
   }
   CVector3 e0 = rot;
   e0.SetNormalizedVector();
-  CVector3 e2 = ::Cross(e0,vec0);
+  CVector3 e2 = dfm2::Cross(e0,vec0);
   if( e2.Length() < 1.0e-30 ){
     return vec0;
   }
   e2.SetNormalizedVector();
-  CVector3 e1 = ::Cross(e2,e0);
+  CVector3 e1 = dfm2::Cross(e2,e0);
   assert( fabs( e1.Length() - 1 ) < 1.0e-10 );
   //	assert( e2.p[0]*vec_0.p[0] + e2.p[1]*vec_0.p[1] + e2.p[2]*vec_0.p[2] < 1.0e-10 );
   const double dot00 = Dot(vec0,e0);
@@ -2231,7 +2300,7 @@ CVector3 RotateVector(const CVector3& vec0, const CVector3& rot )
   return vec1;
 }
 
-CVector3 RandVector(){
+dfm2::CVector3 dfm2::RandVector(){
   CVector3 r;
   r.p[0] = (2*(double)rand()/(RAND_MAX+1.0)-1);
   r.p[1] = (2*(double)rand()/(RAND_MAX+1.0)-1);
@@ -2239,7 +2308,7 @@ CVector3 RandVector(){
   return r;
 }
 
-CVector3 RandUnitVector(){
+dfm2::CVector3 dfm2::RandUnitVector(){
   for(int itr=0;itr<100;itr++){
     CVector3 r = RandVector();
     double l = r.Length();
@@ -2251,7 +2320,7 @@ CVector3 RandUnitVector(){
   return CVector3(1,0,0);
 }
 
-CVector3 RandGaussVector()
+dfm2::CVector3 dfm2::RandGaussVector()
 {
   double a0 = rand()/(RAND_MAX+1.0);
   double a1 = rand()/(RAND_MAX+1.0);
@@ -2270,7 +2339,7 @@ CVector3 RandGaussVector()
 // using <vector> from here
 
 
-void GetConstConstDiff_Bend
+void dfm2::GetConstConstDiff_Bend
 (double& C, CVector3 dC[4],
  const CVector3& p0,
  const CVector3& p1,
@@ -2314,7 +2383,7 @@ void GetConstConstDiff_Bend
  }
  */
 
-void CheckConstDiff_Bend()
+void dfm2::CheckConstDiff_Bend()
 {
   CVector3 p[4];
   for(int ino=0;ino<4;++ino){
@@ -2339,15 +2408,15 @@ void CheckConstDiff_Bend()
 // --------------------------------------------------
 // TODO: following should be move to mesh class?
 
-double TriArea
+double dfm2::TriArea
 (const int iv1, const int iv2, const int iv3,
  const std::vector<CVector3>& aPoint )
 {
-  return TriArea(aPoint[iv1],aPoint[iv2],aPoint[iv3]);
+  return Area_Tri(aPoint[iv1],aPoint[iv2],aPoint[iv3]);
 }
 
-double volume_Tet
-( int iv1, int iv2, int iv3, int iv4,
+double dfm2::volume_Tet
+(int iv1, int iv2, int iv3, int iv4,
  const std::vector<CVector3>& aPoint)
 {
   return Volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
@@ -2355,7 +2424,7 @@ double volume_Tet
 
 // -------------------------------------
 
-bool IsOut
+bool dfm2::IsOut
 (int itri, const CVector3& v,
  const std::vector<CVector3>& aXYZ,
  const std::vector<int>& aTri)
@@ -2397,7 +2466,7 @@ void dfm2::ConvexHull
   aTriSur[10] = std::make_pair(2,2);
   aTriSur[11] = std::make_pair(1,1);
   {
-    double vol = ::volume_Tet(0, 1, 2, 3, aXYZ);
+    double vol = dfm2::volume_Tet(0, 1, 2, 3, aXYZ);
     if( vol < 0 ){
       aTri[ 0] = 3;  aTri[ 1] = 2;  aTri[ 2] = 1; // 0
       aTri[ 3] = 2;  aTri[ 4] = 3;  aTri[ 5] = 0; // 1

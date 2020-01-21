@@ -15,8 +15,7 @@
 
 #include "delfem2/dtet_v3.h"
 
-
-//using namespace Msh;
+namespace dfm2 = delfem2;
 
 const unsigned int nTri5 = 10;
 const unsigned int tri5[nTri5][3] = {
@@ -1206,7 +1205,7 @@ std::vector<int>& tmp_buffer)
   std::vector<COld> aOld;
   {
     tmp_buffer.resize(aSTet.size()*4, -1);
-    const CVector3& p_ins = aPo3D[ip_ins].p;
+    const dfm2::CVector3& p_ins = aPo3D[ip_ins].p;
     std::stack< std::pair<int, int> > stackFace;
     stackFace.push(std::make_pair(itet_ins, 0));
     stackFace.push(std::make_pair(itet_ins, 1));
@@ -1420,10 +1419,10 @@ std::vector<int>& tmp_buffer)
       int i1 = aSTet[it_new].v[1];
       int i2 = aSTet[it_new].v[2];
       int i3 = aSTet[it_new].v[3];
-      const CVector3& p0 = aPo3D[i0].p;
-      const CVector3& p1 = aPo3D[i1].p;
-      const CVector3& p2 = aPo3D[i2].p;
-      const CVector3& p3 = aPo3D[i3].p;
+      const dfm2::CVector3& p0 = aPo3D[i0].p;
+      const dfm2::CVector3& p1 = aPo3D[i1].p;
+      const dfm2::CVector3& p2 = aPo3D[i2].p;
+      const dfm2::CVector3& p3 = aPo3D[i3].p;
       double vol = Volume_Tet(p0, p1, p2, p3);
       assert(vol>1.0e-10);
 //      std::cout<<"   inew:" << inew << "  it_new:" << it_new<<" "<<vol<<"  "<< i0 << " " << i1<<" "<<i2<< " " << i3<<std::endl;

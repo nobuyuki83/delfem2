@@ -40,7 +40,6 @@ static double TriArea3D(const double v1[3], const double v2[3], const double v3[
   return sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
 }
 
-
 template <typename T>
 inline static void UnitNormalAreaTri3
  (T n[3], T& a,

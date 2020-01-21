@@ -57,14 +57,14 @@ void Draw_RigBone
   { // draw point
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
-    const CVector3 pos = aBone[ibone].Pos();
+    const dfm2::CVector3 pos = aBone[ibone].Pos();
     delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x(),pos.y(),pos.z());
   }
   if(is_selected){
     dfm2::opengl::DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
     int ibone_parent = aBone[ibone].ibone_parent;
     if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
-      const CVector3 pp(aBone[ibone_parent].Pos());
+      const dfm2::CVector3 pp(aBone[ibone_parent].Pos());
     }
     else{
     }

@@ -110,6 +110,43 @@ template double dfm2::SquareDistance2(const double v1[2], const double v2[2]);
 
 // ------------------------------------------------
 
+namespace delfem2 {
+  
+template <>
+void GaussianDistribution2(float noise[2])
+{
+  float a0 = rand()/(RAND_MAX+1.0);
+  float a1 = rand()/(RAND_MAX+1.0);
+  noise[0] = sqrtf(-2.0*logf(a0))*cosf(3.1415*2*a1);
+  noise[1] = sqrtf(-2.0*logf(a0))*sinf(3.1415*2*a1);
+}
+
+template <>
+void GaussianDistribution2(double noise[2])
+{
+  double a0 = rand()/(RAND_MAX+1.0);
+  double a1 = rand()/(RAND_MAX+1.0);
+  noise[0] = sqrt(-2.0*log(a0))*cos(3.1415*2*a1);
+  noise[1] = sqrt(-2.0*log(a0))*sin(3.1415*2*a1);
+}
+  
+}
+
+// ------------------------------------------------
+
+template <typename T>
+void dfm2::Normalize2(T w[2])
+{
+  double l = Length2(w);
+  double invl = 1.0/l;
+  w[0] *= invl;
+  w[1] *= invl;
+}
+template void dfm2::Normalize2(float w[2]);
+template void dfm2::Normalize2(double w[2]);
+
+// --------------------------------------------------------------
+
 static bool IsCrossLines(const double po_s0[], const double po_e0[],
                          const double po_s1[], const double po_e1[] )
 {
@@ -120,16 +157,6 @@ static bool IsCrossLines(const double po_s0[], const double po_e0[],
   const double area4 = dfm2::TriArea2D(po_s1,po_e1,po_e0);
   if( area3 * area4 > 0.0 ) return false;
   return true;
-}
-
-void noise2D(double noise[2])
-{
-  double a0 = rand()/(RAND_MAX+1.0);
-  double a1 = rand()/(RAND_MAX+1.0);
-  double x = sqrt(-2.0*log(a0))*cos(3.1415*2*a1);
-  double y = sqrt(-2.0*log(a0))*sin(3.1415*2*a1);
-  noise[0] = x;
-  noise[1] = y;
 }
 
 bool InverseMat2(double invB[4], const double B[4])
@@ -143,19 +170,6 @@ bool InverseMat2(double invB[4], const double B[4])
   invB[3] = +invdet*B[0];
   return true;
 }
-
-
-void setNormalized2(double w[2])
-{
-  double l = sqrt(w[0]*w[0]+w[1]*w[1]);
-  double invl = 1.0/l;
-  w[0] *= invl;
-  w[1] *= invl;
-}
-
-
-
-
 
 void gramian2(double AtA[3], const double A[4])
 {
@@ -211,10 +225,10 @@ void RotationalComponentOfMatrix2(double R[4], const double M[4])
       l1 = 0.5*(b-d);
       v0[0] = G[1];
       v0[1] = G[3]-l1;
-      if (dfm2::SquareLength2(v0)>eps){ setNormalized2(v0); }
+      if (dfm2::SquareLength2(v0)>eps){ dfm2::Normalize2(v0); }
       v1[0] = G[0]-l0;
       v1[1] = G[2];
-      if (dfm2::SquareLength2(v1)>eps){ setNormalized2(v1); }
+      if (dfm2::SquareLength2(v1)>eps){ dfm2::Normalize2(v1); }
     }
   }
   double V[4] = { v0[0], v1[0], v0[1], v1[1] };
@@ -348,6 +362,8 @@ CVector2 operator / (const CVector2& vec, double d)
   
 } // namespace delfem2
 
+// -----------------------------------------------------------------
+
 dfm2::CVector2 dfm2::rotate
  (const CVector2& p0, double theta)
 {
@@ -376,7 +392,7 @@ dfm2::CVector2 dfm2::Mat2Vec(const double A[4], const CVector2& v)
 }
 
 //! Area of the Triangle
-double dfm2::TriArea
+double dfm2::Area_Tri
 (const CVector2& v1,
  const CVector2& v2,
  const CVector2& v3)
@@ -386,12 +402,6 @@ double dfm2::TriArea
 
 inline double dfm2::Cross(const CVector2& v1, const CVector2& v2){
   return v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
-}
-
-inline double dfm2::SquareLength
-(const CVector2& ipo0, const CVector2& ipo1)
-{
-  return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
 }
 
 double dfm2::SquareLength(const CVector2& point)
@@ -424,8 +434,8 @@ double dfm2::SquareDistance
 
 // Hight of a triangle : between v1 and line of v2-v3
 double dfm2::TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3){
-  const double area = TriArea(v1,v2,v3);
-  const double len = sqrt( SquareLength(v2,v3) );
+  const double area = Area_Tri(v1,v2,v3);
+  const double len = sqrt( SquareDistance(v2,v3) );
   return area*2.0/len;
 }
 
@@ -486,10 +496,10 @@ bool dfm2::IsCross_LineSeg_LineSeg
     if( max1y+len < min0y ) return false;
     if( max0y+len < min1y ) return false;
   }
-  const double area1 = TriArea(po_s0,po_e0,po_s1);
-  const double area2 = TriArea(po_s0,po_e0,po_e1);
-  const double area3 = TriArea(po_s1,po_e1,po_s0);
-  const double area4 = TriArea(po_s1,po_e1,po_e0);  
+  const double area1 = Area_Tri(po_s0,po_e0,po_s1);
+  const double area2 = Area_Tri(po_s0,po_e0,po_e1);
+  const double area3 = Area_Tri(po_s1,po_e1,po_s0);
+  const double area4 = Area_Tri(po_s1,po_e1,po_e0);  
   //	std::cout << area1 << " " << area2 << " " << area3 << " " << area4 << std::endl;
   const double a12 = area1*area2; if( a12 > 0 ) return false;
   const double a34 = area3*area4; if( a34 > 0 ) return false;
@@ -518,11 +528,11 @@ double dfm2::SquareCircumradius
  const CVector2& p1,
  const CVector2& p2 )
 {
-	const double area = TriArea(p0,p1,p2);
+	const double area = Area_Tri(p0,p1,p2);
   
-	const double dtmp0 = SquareLength(p1,p2);
-	const double dtmp1 = SquareLength(p0,p2);
-	const double dtmp2 = SquareLength(p0,p1);
+	const double dtmp0 = SquareDistance(p1,p2);
+	const double dtmp1 = SquareDistance(p0,p2);
+	const double dtmp2 = SquareDistance(p0,p1);
   
 	return dtmp0*dtmp1*dtmp2/(16.0*area*area);
 }
@@ -534,13 +544,13 @@ bool dfm2::CenterCircumcircle
  const CVector2& p2,
  CVector2& center)
 {
-  const double area = TriArea(p0,p1,p2);
+  const double area = Area_Tri(p0,p1,p2);
   if( fabs(area) < 1.0e-10 ){ return false; }
   const double tmp_val = 1.0/(area*area*16.0);
   
-  const double dtmp0 = SquareLength(p1,p2);
-  const double dtmp1 = SquareLength(p0,p2);
-  const double dtmp2 = SquareLength(p0,p1);
+  const double dtmp0 = SquareDistance(p1,p2);
+  const double dtmp1 = SquareDistance(p0,p2);
+  const double dtmp2 = SquareDistance(p0,p1);
   
   const double etmp0 = tmp_val*dtmp0*(dtmp1+dtmp2-dtmp0);
   const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
@@ -562,15 +572,15 @@ int dfm2::DetDelaunay
  const CVector2& p2,
  const CVector2& p3)
 {
-	const double area = TriArea(p0,p1,p2);
+	const double area = Area_Tri(p0,p1,p2);
 	if( fabs(area) < 1.0e-10 ){
 		return 3;
 	}
 	const double tmp_val = 1.0/(area*area*16.0);
   
-	const double dtmp0 = SquareLength(p1,p2);
-	const double dtmp1 = SquareLength(p0,p2);
-	const double dtmp2 = SquareLength(p0,p1);
+	const double dtmp0 = SquareDistance(p1,p2);
+	const double dtmp1 = SquareDistance(p0,p2);
+	const double dtmp2 = SquareDistance(p0,p1);
   
 	const double etmp0 = tmp_val*dtmp0*(dtmp1+dtmp2-dtmp0);
 	const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
@@ -579,8 +589,8 @@ int dfm2::DetDelaunay
 	const CVector2 out_center(etmp0*p0.p[0] + etmp1*p1.p[0] + etmp2*p2.p[0],
                             etmp0*p0.p[1] + etmp1*p1.p[1] + etmp2*p2.p[1] );
   
-	const double qradius = SquareLength(out_center,p0);
-	const double qdistance = SquareLength(out_center,p3);
+	const double qradius = SquareDistance(out_center,p0);
+	const double qdistance = SquareDistance(out_center,p3);
   
   //	assert( fabs( qradius - SquareLength(out_center,p1) ) < 1.0e-10*qradius );
   //	assert( fabs( qradius - SquareLength(out_center,p2) ) < 1.0e-10*qradius );
@@ -611,7 +621,7 @@ double dfm2::Area_Tri
 (const int iv1, const int iv2, const int iv3,
  const std::vector<CVector2>& point )
 {
-  return TriArea(point[iv1],point[iv2],point[iv3]);
+  return Area_Tri(point[iv1],point[iv2],point[iv3]);
 }
 
 void dfm2::Polyline_CubicBezierCurve
@@ -661,7 +671,7 @@ double dfm2::Area_Polygon(const std::vector<CVector2>& aP)
   const int ne = aP.size();
   double area_loop = 0.0;
   for(int ie=0;ie<ne;ie++){
-    area_loop += TriArea(vtmp, aP[(ie+0)%ne], aP[(ie+1)%ne]);
+    area_loop += Area_Tri(vtmp, aP[(ie+0)%ne], aP[(ie+1)%ne]);
   }
   return area_loop;
 }
@@ -1173,7 +1183,7 @@ void dfm2::FixLoopOrientation
         const int iipo1 = loopIP_ind[iloop]+(ibar+1)%nbar;
         const int ipo0 = loop_old[iipo0];
         const int ipo1 = loop_old[iipo1];
-        area_loop += TriArea(vtmp, aXY[ipo0], aXY[ipo1]);
+        area_loop += Area_Tri(vtmp, aXY[ipo0], aXY[ipo1]);
       }
     }
     const int nbar0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];

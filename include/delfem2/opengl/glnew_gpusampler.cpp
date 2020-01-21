@@ -320,14 +320,14 @@ void CGPUSampler::InitGL() {
   { // draw texture
     shdr1.Compile();
     // --------------
-    const CVector3& dx = x_axis;
-    const CVector3& dy = Cross(z_axis,dx);
+    const dfm2::CVector3& dx = x_axis;
+    const dfm2::CVector3& dy = Cross(z_axis,dx);
     const double lx = lengrid*nResX;
     const double ly = lengrid*nResY;
-    CVector3 p0 = origin;
-    CVector3 p1 = origin + lx*dx;
-    CVector3 p2 = origin + lx*dx + ly*dy;
-    CVector3 p3 = origin + ly*dy;
+    dfm2::CVector3 p0 = origin;
+    dfm2::CVector3 p1 = origin + lx*dx;
+    dfm2::CVector3 p2 = origin + lx*dx + ly*dy;
+    dfm2::CVector3 p3 = origin + ly*dy;
     std::vector<double> aPos3d = {
         p0.x(), p0.y(), p0.z(),
         p1.x(), p1.y(), p1.z(),
@@ -386,13 +386,13 @@ void CGPUSampler::Draw(float mP[16], float mV[16]) const
 
 std::vector<double> CGPUSampler::getGPos(int ix, int iy) const
 {
-  const CVector3& dx = x_axis;
-  const CVector3& dz = z_axis;
-  const CVector3& dy = Cross(dz,dx);
+  const dfm2::CVector3& dx = x_axis;
+  const dfm2::CVector3& dz = z_axis;
+  const dfm2::CVector3& dy = Cross(dz,dx);
   double lz = aZ[iy*nResX+ix];
   double lx = (ix+0.5)*lengrid;
   double ly = (iy+0.5)*lengrid;
-  CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
+  dfm2::CVector3 vp = lx*dx+ly*dy+lz*dz + origin;
 //  std::vector<double> res;
 //  res.push_back(vp.x());
 //  res.push_back(vp.y());

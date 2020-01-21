@@ -9,6 +9,8 @@
 #include "delfem2/vec3.h"
 #include "delfem2/voxel.h"
 
+namespace dfm2 = delfem2;
+
 const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 4, 6, 2 }, // -x
   { 1, 3, 7, 5 }, // +x
@@ -17,13 +19,13 @@ const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 2, 3, 1 }, // -z
   { 4, 5, 7, 6 } }; // +z
 
-const CVector3 normalHexFace[6] = {
-  CVector3(-1, 0, 0),
-  CVector3(+1, 0, 0),
-  CVector3( 0,-1, 0),
-  CVector3( 0,+1, 0),
-  CVector3( 0, 0,-1),
-  CVector3( 0, 0,+1)
+const dfm2::CVector3 normalHexFace[6] = {
+  dfm2::CVector3(-1, 0, 0),
+  dfm2::CVector3(+1, 0, 0),
+  dfm2::CVector3( 0,-1, 0),
+  dfm2::CVector3( 0,+1, 0),
+  dfm2::CVector3( 0, 0,-1),
+  dfm2::CVector3( 0, 0,+1)
 };
 
 bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz)
@@ -269,10 +271,7 @@ int Adj_Grid
   return igv1;
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+// ---------------------------------------------------------------------
 
 void Pick_CubeGrid
 (int& icube_pic, int& iface_pic,
@@ -281,7 +280,7 @@ void Pick_CubeGrid
  const double org[3],
  const std::vector<CCubeGrid>& aCube)
 {
-  CVector3 dir_pic(dir_pic_);
+  dfm2::CVector3 dir_pic(dir_pic_);
   //////
   icube_pic = -1;
   double depth_min = 0;
@@ -290,27 +289,27 @@ void Pick_CubeGrid
     int ih = aCube[ivox].ivx;
     int jh = aCube[ivox].ivy;
     int kh = aCube[ivox].ivz;
-    CVector3 cnt =  org + elen*CVector3(ih+0.5,jh+0.5,kh+0.5);
+    dfm2::CVector3 cnt =  org + elen*dfm2::CVector3(ih+0.5,jh+0.5,kh+0.5);
     {
-      CVector3 q = nearest_Line_Point(cnt, src_pic, dir_pic);
+      dfm2::CVector3 q = nearest_Line_Point(cnt, src_pic, dir_pic);
       if( (q-cnt).Length() > elen  ) continue;
     }
-    CVector3 aP[8] = {
-      org + elen*CVector3(ih+0,jh+0,kh+0),
-      org + elen*CVector3(ih+1,jh+0,kh+0),
-      org + elen*CVector3(ih+0,jh+1,kh+0),
-      org + elen*CVector3(ih+1,jh+1,kh+0),
-      org + elen*CVector3(ih+0,jh+0,kh+1),
-      org + elen*CVector3(ih+1,jh+0,kh+1),
-      org + elen*CVector3(ih+0,jh+1,kh+1),
-      org + elen*CVector3(ih+1,jh+1,kh+1) };
+    dfm2::CVector3 aP[8] = {
+      org + elen*dfm2::CVector3(ih+0,jh+0,kh+0),
+      org + elen*dfm2::CVector3(ih+1,jh+0,kh+0),
+      org + elen*dfm2::CVector3(ih+0,jh+1,kh+0),
+      org + elen*dfm2::CVector3(ih+1,jh+1,kh+0),
+      org + elen*dfm2::CVector3(ih+0,jh+0,kh+1),
+      org + elen*dfm2::CVector3(ih+1,jh+0,kh+1),
+      org + elen*dfm2::CVector3(ih+0,jh+1,kh+1),
+      org + elen*dfm2::CVector3(ih+1,jh+1,kh+1) };
     for(int iface=0;iface<6;++iface){
-      const CVector3& n = normalHexFace[iface];
-      const CVector3& p0 = aP[noelElemFace_Vox[iface][0]];
-      const CVector3& p1 = aP[noelElemFace_Vox[iface][1]];
+      const dfm2::CVector3& n = normalHexFace[iface];
+      const dfm2::CVector3& p0 = aP[noelElemFace_Vox[iface][0]];
+      const dfm2::CVector3& p1 = aP[noelElemFace_Vox[iface][1]];
       //      const CVector3& p2 = aP[noelHexFace[iface][2]];
-      const CVector3& p3 = aP[noelElemFace_Vox[iface][3]];
-      const CVector3 pi = intersection_Plane_Line(p0,n, src_pic,dir_pic);
+      const dfm2::CVector3& p3 = aP[noelElemFace_Vox[iface][3]];
+      const dfm2::CVector3 pi = intersection_Plane_Line(p0,n, src_pic,dir_pic);
       const double r0 = (pi-p0)*(p1-p0)/(elen*elen);
       const double r1 = (pi-p0)*(p3-p0)/(elen*elen);
       if( r0>0 && r0<1 && r1>0 && r1< 1 ){

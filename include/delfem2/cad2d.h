@@ -93,9 +93,9 @@ public:
       const CVector2& p0 = aVec2[i0];
       const CVector2& p1 = aVec2[i1];
       const CVector2& p2 = aVec2[i2];
-      double a0 = TriArea(q0, p1, p2);
-      double a1 = TriArea(p0, q0, p2);
-      double a2 = TriArea(p0, p1, q0);
+      double a0 = Area_Tri(q0, p1, p2);
+      double a1 = Area_Tri(p0, q0, p2);
+      double a2 = Area_Tri(p0, p1, q0);
       if( a0 > 0 && a1 > 0 && a2 > 0 ){ return true; }
     }
     return false;

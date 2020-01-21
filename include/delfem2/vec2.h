@@ -41,12 +41,17 @@ T SquareLength2(const T v[2]);
 
 template <typename T>
 T SquareDistance2(const T v1[2], const T v2[2]);
+  
+template <typename T>
+void GaussianDistribution2(T noise[2]);
+  
+template <typename T>
+void Normalize2(T w[2]);
 }
 
 
-void noise2D(double noise[2]);
+
 bool InverseMat2(double invB[4], const double B[4]);
-void setNormalized2(double w[2]);
 void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);
 void RotationalComponentOfMatrix2(double R[4], const double M[4]);
@@ -145,8 +150,6 @@ public:
 		return p[0]*p[0]+p[1]*p[1];
 	}
 public:
-//	double x;	//!< x coordinate value
-//	double y;	//!< y coordinate value
   double p[2];
 };
 
@@ -163,11 +166,11 @@ CVector2 rotate90(const CVector2& p0);
 CVector2 Mat2Vec(const double A[4], const CVector2& v);
 
 //! @brief Area of the Triangle
-double TriArea(const CVector2& v1,
+double Area_Tri(const CVector2& v1,
                const CVector2& v2,
                const CVector2& v3);
 double Cross(const CVector2& v1, const CVector2& v2);
-double SquareLength(const CVector2& ipo0, const CVector2& ipo1);
+double SquareDistance(const CVector2& ipo0, const CVector2& ipo1);
 double SquareLength(const CVector2& point);
 double Length(const CVector2& point);
 
