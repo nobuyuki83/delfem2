@@ -705,7 +705,7 @@ double rad_vp)
   CVector3 dratio = dlen/rad_vp;
   CVector3 df0 = (exp(-ratio*ratio*ratio)*3*ratio*ratio)*dratio;
   CVector3 dg0 = (1.0/(4*M_PI*len*len*len))*df0-(3*f0/(4*M_PI*len*len*len*len))*dlen;
-  return Mat3_OuterProduct(circ_vp^v, dg0)+g0*Mat3_Spin(circ_vp);
+  return dfm2::Mat3_OuterProduct(circ_vp^v, dg0)+g0*dfm2::Mat3_Spin(circ_vp);
 }
 
 CVector3 veloVortexParticles

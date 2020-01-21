@@ -46,19 +46,19 @@ void CCad3D_Face::DrawBackFace() const
 
 */
 
-void DrawFace(const CCad3D_Face& cf)
+void DrawFace(const dfm2::CCad3D_Face& cf)
 {
   dfm2::opengl::DrawMeshTri3D_FaceNorm(cf.aXYZ, cf.aTri, cf.aNorm);
 }
 
-void DrawEdge(const CCad3D_Face& cf)
+void DrawEdge(const dfm2::CCad3D_Face& cf)
 {
   ::glLineWidth(1);
   dfm2::opengl::DrawMeshTri3D_Edge(cf.aXYZ, cf.aTri);
 }
 
 void DrawFace_RightSelected
- (const CCad3D& cad,
+ (const dfm2::CCad3D& cad,
   bool is_edge)
 {
   {
@@ -83,7 +83,7 @@ void DrawFace_RightSelected
 
 
 void DrawHandler
- (const CCad3D_Edge& e,
+ (const dfm2::CCad3D_Edge& e,
   int ielem_picked, double view_height)
 {
   ::glColor3d(0,1,0);
@@ -113,7 +113,7 @@ void DrawHandler
 }
 
 void DrawLine
- (const CCad3D_Edge& ed,
+ (const dfm2::CCad3D_Edge& ed,
   bool is_picked, double view_height)
 {
   ::glDisable(GL_LIGHTING);
@@ -133,7 +133,7 @@ void DrawLine
 }
 
 void Draw
- (const CCad3D_Vertex& vtx,
+ (const dfm2::CCad3D_Vertex& vtx,
   bool is_selected, int ielem, double view_height)
 {
   ::glDisable(GL_LIGHTING);
@@ -174,11 +174,11 @@ void Draw
 }
 
 void DrawVtxEdgeHandler
- (const CCad3D& cad,
+ (const dfm2::CCad3D& cad,
   double view_height)
 {
   {
-    const std::vector<CCad3D_Vertex>& aVertex = cad.aVertex;
+    const std::vector<dfm2::CCad3D_Vertex>& aVertex = cad.aVertex;
     for(std::size_t icp=0;icp<aVertex.size();++icp){
       Draw(aVertex[icp], icp==cad.ivtx_picked, cad.ielem_vtx_picked, view_height);
     }
@@ -192,7 +192,7 @@ void DrawVtxEdgeHandler
     //  glEnable(GL_MULTISAMPLE);
   
   {
-    const std::vector<CCad3D_Edge>& aEdge = cad.aEdge;
+    const std::vector<dfm2::CCad3D_Edge>& aEdge = cad.aEdge;
     dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Blue());
     for(int ie=0;ie<(int)aEdge.size();++ie){
       bool is_loop0 = std::find(cad.aIE_picked.begin(), cad.aIE_picked.end(), std::make_pair(ie,true ) ) != cad.aIE_picked.end();
@@ -273,7 +273,7 @@ int main(int argc,char* argv[])
       cad.Initialize_Sphere();
       nav.camera.view_height = 1.5;
       nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_YTOP;
-      cad.imode_edit = CCad3D::EDIT_MOVE;
+      cad.imode_edit = dfm2::CCad3D::EDIT_MOVE;
     }
     void Draw(){
       this->DrawBegin_oldGL();
@@ -285,19 +285,19 @@ int main(int argc,char* argv[])
       const CVector3 src_pick(src), dir_pick(dir);
       float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
       cad.MouseDown(src_pick, dir_pick,
-                    CVector2(nav.mouse_x,nav.mouse_y),
+                    dfm2::CVector2(nav.mouse_x,nav.mouse_y),
                     mMV,mPrj,
                     nav.camera.view_height);
     }
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
-      CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
-      CVector2 sp1(nav.mouse_x, nav.mouse_y);
+      dfm2::CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
+      dfm2::CVector2 sp1(nav.mouse_x, nav.mouse_y);
       const CVector3 src_pick(src1), dir_pick(dir);
       float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
       cad.MouseMotion(src_pick,dir_pick, sp0,sp1, mMV, mPrj);
     }
   public:
-    CCad3D cad;
+    dfm2::CCad3D cad;
   };
   // -------------
   CCAD3DViewer viewer;

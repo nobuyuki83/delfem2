@@ -38,12 +38,11 @@ void MatMat2(T AB[4], const T A[4], const T B[4]);
 
 template <typename T>
 T SquareLength2(const T v[2]);
-  
+
+template <typename T>
+T SquareDistance2(const T v1[2], const T v2[2]);
 }
 
-
-
-double SqDistance2D(const double v1[2], const double v2[2]);
 
 void noise2D(double noise[2]);
 bool InverseMat2(double invB[4], const double B[4]);
@@ -53,6 +52,8 @@ void VLVt2(double A[4], double l0, double l1, const double V[4]);
 void RotationalComponentOfMatrix2(double R[4], const double M[4]);
 
 // -----------------------------------------------------
+
+namespace delfem2 {
 
 class CVector2;
 
@@ -244,7 +245,7 @@ void Rotate(std::vector<CVector2>& aP,
             double dt);
 
 //! @brief Area of the Triangle (3 indexes and vertex array)
-double TriArea(const int iv1, const int iv2, const int iv3,
+double Area_Tri(const int iv1, const int iv2, const int iv3,
                const std::vector<CVector2>& point );
 
 void Polyline_CubicBezierCurve(std::vector<CVector2>& aP,
@@ -268,9 +269,11 @@ void SecondMomentOfArea_Polygon(CVector2& cg,  double& area,
 double Length_Polygon(const std::vector<CVector2>& aP);
 double Area_Polygon(const std::vector<CVector2>& aP);
 
+
 void MeanValueCoordinate2D(double *aW,
                            double px, double py,
                            const double *aXY, unsigned int nXY);
+
 void MeanValueCoordinate(std::vector<double>& aW,
                          CVector2& p,
                          std::vector<CVector2>& aVtx);
@@ -303,9 +306,14 @@ void MakeMassMatrixTri(double M[9],
                        double rho,
                        const unsigned int aIP[3],
                        const std::vector<CVector2>& aVec2);
+  
+bool IsInclude_Loop(const double co[],
+                    const int ixy_stt, const int ixy_end,
+                    const std::vector<CVector2>& aXY);
 
 bool CheckInputBoundaryForTriangulation (const std::vector<int>& loopIP_ind,
                                          const std::vector<CVector2>& aXY);
+  
 
 // -------------------------------------------------------------
 
@@ -387,6 +395,8 @@ public:
 public:
   double x_min,x_max,  y_min,y_max;
 };
+  
+}
 
 #endif // VEC_2
 

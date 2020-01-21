@@ -15,8 +15,13 @@
 #include "mat3.h"
 #include "quat.h"
 
+namespace delfem2 {
+
 CVector3 operator* (const CVector3& v, const CMatrix3& m);
 CVector3 operator* (const CMatrix3& m, const CVector3& v);
+  
+CVector3 MatVec(const CMatrix3& m, const CVector3& vec0);
+CVector3 MatVecTrans(const CMatrix3& m, const CVector3& vec0);
 
 // ---------------------------------------------
 
@@ -110,6 +115,12 @@ double DragCircle(const CVector2& sp0,
                   const CVector3& axis,
                   const float* mMV,
                   const float* mPj);
+ 
+void Energy_MIPS(double& E, double dE[3][3], double ddE[3][3][3][3],
+                 const double c[3][3],
+                 const double C[3][3]);
 
+  
+}
 
 #endif /* vec23mat3quat_hpp */

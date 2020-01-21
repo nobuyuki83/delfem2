@@ -21,6 +21,9 @@
 #ifndef M_PI
   #define M_PI 3.141592653589793
 #endif
+
+namespace dfm2 = delfem2;
+
 // -------------------------------------
 
 int main(int argc,char* argv[])
@@ -77,7 +80,7 @@ int main(int argc,char* argv[])
         std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       }
       if( iframe % nframe == 0 ){
-        CBoundingBox2D bb = cad.BB();
+        dfm2::CBoundingBox2D bb = cad.BB();
         viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
         viewer.nav.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
         viewer.nav.camera.trans[2] = 0.0;

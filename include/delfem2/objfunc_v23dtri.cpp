@@ -38,7 +38,7 @@ static void FetchData
   }
 }
 
-void PBD_TriStrain
+void dfm2::PBD_TriStrain
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,
@@ -60,7 +60,7 @@ void PBD_TriStrain
   }
 }
 
-void PBD_Bend
+void dfm2::PBD_Bend
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,

@@ -49,7 +49,7 @@ namespace dfm2 = delfem2;
 
 std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
-std::vector<CVector2> aVec2;
+std::vector<dfm2::CVector2> aVec2;
 std::vector<unsigned int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
@@ -78,22 +78,22 @@ bool is_animation = false;
 
 void StepTime()
 {
-  PBD_Pre3D(aXYZt,
-            dt, gravity, aXYZ, aUVW, aBCFlag);
-  PBD_TriStrain(aXYZt.data(),
-                aXYZt.size()/3, aETri, aVec2);
-  PBD_Bend(aXYZt.data(),
-           aXYZt.size()/3, aETri, aVec2);
-  PBD_Seam(aXYZt.data(),
-           aXYZt.size()/3, aLine.data(), aLine.size()/2);
+  dfm2::PBD_Pre3D(aXYZt,
+                  dt, gravity, aXYZ, aUVW, aBCFlag);
+  dfm2::PBD_TriStrain(aXYZt.data(),
+                      aXYZt.size()/3, aETri, aVec2);
+  dfm2::PBD_Bend(aXYZt.data(),
+                 aXYZt.size()/3, aETri, aVec2);
+  dfm2::PBD_Seam(aXYZt.data(),
+                 aXYZt.size()/3, aLine.data(), aLine.size()/2);
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
                                                   aXYZt.size()/3,
                                                   contact_clearance,bvh,
                                                   aXYZ_Contact.data(), aXYZ_Contact.size()/3,
                                                   aTri_Contact.data(), aTri_Contact.size()/3,
                                                   aNorm_Contact.data(), rad_explore);
-  PBD_Post(aXYZ, aUVW,
-           dt, aXYZt, aBCFlag);
+  dfm2::PBD_Post(aXYZ, aUVW,
+                 dt, aXYZt, aBCFlag);
 
 }
 
@@ -189,7 +189,7 @@ void myGlutSpecial(int key, int x, int y){
 class CRigidTrans_2DTo3D
 {
 public:
-  CVector2 org2;
+  dfm2::CVector2 org2;
   CVector3 org3;
   CMatrix3 R;
 };
@@ -236,26 +236,26 @@ int main(int argc,char* argv[])
   aXYZ.resize(np*3);
   {
     CRigidTrans_2DTo3D rt23;
-    rt23.org2 = CVector2(2.5,0.5);
+    rt23.org2 = dfm2::CVector2(2.5,0.5);
     rt23.org3 = CVector3(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
     for(int ip : aIP){
       CVector3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-      CVector3 p1 = rt23.org3+rt23.R*p0;
+      CVector3 p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
       aXYZ[ip*3+0] = p1.x();
       aXYZ[ip*3+1] = p1.y();
       aXYZ[ip*3+2] = p1.z();
     }
     {
       CRigidTrans_2DTo3D rt23;
-      rt23.org2 = CVector2(0.5,0.5);
+      rt23.org2 = dfm2::CVector2(0.5,0.5);
       rt23.org3 = CVector3(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
       for(int ip : aIP){
         CVector3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-        CVector3 p1 = rt23.org3+rt23.R*p0;
+        CVector3 p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
         aXYZ[ip*3+0] = p1.x();
         aXYZ[ip*3+1] = p1.y();
         aXYZ[ip*3+2] = p1.z();

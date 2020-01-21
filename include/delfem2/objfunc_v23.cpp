@@ -14,7 +14,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------
 
-void PBD_Post
+void dfm2::PBD_Post
 (std::vector<double>& aXYZ,
  std::vector<double>& aUVW,
  double dt,
@@ -36,7 +36,7 @@ void PBD_Post
   }
 }
 
-void PBD_Pre3D
+void dfm2::PBD_Pre3D
 (std::vector<double>& aXYZt,
  double dt,
  const double gravity[3],
@@ -62,7 +62,7 @@ void PBD_Pre3D
 }
 
 
-void PBD_Update_Const3
+void dfm2::PBD_Update_Const3
 (double* aXYZt,
  const int np,
  const int ndim,
@@ -108,7 +108,7 @@ void PBD_Update_Const3
   }
 }
 
-void PBD_ConstProj_Rigid3D
+void dfm2::PBD_ConstProj_Rigid3D
 (double* aXYZt,
  double stiffness,
  const int* clstr_ind, int nclstr_ind,
@@ -157,7 +157,7 @@ void PBD_ConstProj_Rigid3D
   }  
 }
 
-void PBD_ConstProj_Rigid2D
+void dfm2::PBD_ConstProj_Rigid2D
 (double* aXYt,
  double stiffness,
  const unsigned int *clstr_ind, unsigned int nclstr_ind,
@@ -200,7 +200,7 @@ void PBD_ConstProj_Rigid2D
   }
 }
 
-void PBD_CdC_TriStrain2D3D
+void dfm2::PBD_CdC_TriStrain2D3D
 (double C[3],
  double dCdp[3][9],
  const double P[3][2], // (in) undeformed triangle vertex positions
@@ -252,7 +252,7 @@ void PBD_CdC_TriStrain2D3D
   dC2dp2.CopyValueTo(dCdp[2]+2*3);
 }
 
-double Check_CdC_TriStrain
+double dfm2::Check_CdC_TriStrain
 (const double P[3][2], // (in) undeformed triangle vertex positions
  const double p[3][3], // (in) deformed triangle vertex positions)
  double eps)
@@ -281,7 +281,7 @@ double Check_CdC_TriStrain
 
 
 
-void PBD_ConstraintProjection_DistanceTri2D3D
+void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
 (double C[3],
  double dCdp[3][9],
  const double P[3][2], // (in) undeformed triangle vertex positions
@@ -310,7 +310,7 @@ void PBD_ConstraintProjection_DistanceTri2D3D
 }
 
 
-void Check_ConstraintProjection_DistanceTri2D3D
+void dfm2::Check_ConstraintProjection_DistanceTri2D3D
 (const double P[3][2], // (in) undeformed triangle vertex positions
  const double p[3][3] // (in) deformed triangle vertex positions)
 )
@@ -335,7 +335,7 @@ void Check_ConstraintProjection_DistanceTri2D3D
   }
 }
 
-void PBD_ConstraintProjection_EnergyStVK
+void dfm2::PBD_ConstraintProjection_EnergyStVK
 (double& C, // (out) energy
  double dCdp[9], // (out) 1st derivative of energy
  ////
@@ -418,7 +418,7 @@ void PBD_ConstraintProjection_EnergyStVK
 }
 
 
-void Check_ConstraintProjection_EnergyStVK
+void dfm2::Check_ConstraintProjection_EnergyStVK
 (const double P[3][2], // (in) undeformed triangle vertex positions
  const double p[3][3], // (in) deformed triangle vertex positions)
  const double lambda,
@@ -442,7 +442,7 @@ void Check_ConstraintProjection_EnergyStVK
 }
 
 
-void PBD_ConstraintProjection_DistanceTet
+void dfm2::PBD_ConstraintProjection_DistanceTet
 (double C[6],
  double dCdp[6][12],
  const double P[4][3], // (in) undeformed triangle vertex positions
@@ -491,7 +491,7 @@ void PBD_ConstraintProjection_DistanceTet
 }
 
 
-void PBD_CdC_QuadBend
+void dfm2::PBD_CdC_QuadBend
 (double C[3],
  double dCdp[3][12],
  const double P[4][3],
@@ -530,7 +530,7 @@ void PBD_CdC_QuadBend
 }
 
 
-void PBD_Seam
+void dfm2::PBD_Seam
 (double* aXYZt,
  unsigned int nXYZ,
  const unsigned int* aLine,

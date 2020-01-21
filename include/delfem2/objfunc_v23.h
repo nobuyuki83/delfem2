@@ -11,6 +11,8 @@
 
 #include <vector>
 
+namespace delfem2 {
+
 void PBD_Pre3D(std::vector<double>& aXYZt,
                double dt,
                const double gravity[3],
@@ -88,5 +90,7 @@ void PBD_Seam(double* aXYZt,
               unsigned int nXYZ,
               const unsigned int* aLine,
               unsigned int nline);
+  
+}
 
 #endif /* pbd_v23_h */

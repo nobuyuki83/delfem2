@@ -6,13 +6,17 @@
  */
 
 
-#ifndef OBJFUNC_V23DTRI_h
-#define OBJFUNC_V23DTRI_h
+#ifndef DFM2_OBJFUNC_V23DTRI_h
+#define DFM2_OBJFUNC_V23DTRI_h
 
 #include <vector>
 
 #include "delfem2/dtri.h"
 #include "delfem2/dtri_v2.h"
+
+// ------------------------------
+
+namespace delfem2 {
 
 void PBD_TriStrain(double* aXYZt,
                    unsigned int nXYZ,
@@ -23,5 +27,7 @@ void PBD_Bend(double* aXYZt,
               unsigned int nXYZ,
               const std::vector<delfem2::CDynTri>& aETri,
               const std::vector<CVector2>& aVec2);
+  
+} // namespace delfem2
 
 #endif /* pbd_v23_h */

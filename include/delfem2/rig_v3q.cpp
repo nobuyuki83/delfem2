@@ -10,10 +10,10 @@
 #include <map>
 #include <cassert>
 #include <sstream>
-
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/funcs.h" // isFileExists
+// -----
 #include "delfem2/v23m3q.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/rig_v3q.h"
@@ -21,6 +21,10 @@
 #ifndef M_PI 
 #define M_PI 3.1415926535
 #endif
+
+namespace dfm2 = delfem2;
+
+// ------------------------------------------------------------
 
 static double myStod(const std::string& str){
   char* e;
@@ -88,7 +92,7 @@ static void CalcInvMat(double* a, const int n, int& info )
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------------------
 
 int CRigBone::PickHandler
 (const CVector3& org,
@@ -96,9 +100,9 @@ int CRigBone::PickHandler
  double rad_handlr,
  double tol) const
 {
-  return PickHandlerRotation_Mat4(org,dir,
-                                  Mat, rad_handlr,
-                                  tol);
+  return dfm2::PickHandlerRotation_Mat4(org,dir,
+                                        Mat, rad_handlr,
+                                        tol);
 }
 
 void CRigBone::SetRotationBryant

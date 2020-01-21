@@ -87,7 +87,6 @@ void dfm2::MatMat2(T AB[4], const T A[4], const T B[4])
   AB[1*2+0] = A[1*2+0]*B[0*2+0]+A[1*2+1]*B[1*2+0];
   AB[1*2+1] = A[1*2+0]*B[0*2+1]+A[1*2+1]*B[1*2+1];
 }
-
 template void dfm2::MatMat2(float AB[4], const float A[4], const float B[4]);
 template void dfm2::MatMat2(double AB[4], const double A[4], const double B[4]);
 
@@ -102,10 +101,14 @@ template double dfm2::SquareLength2(const double v[2]);
 
 // ------------------------------------------------
 
-double SqDistance2D(const double v1[2], const double v2[2]){
+template <typename T>
+T dfm2::SquareDistance2(const T v1[2], const T v2[2]){
   return (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]);
 }
+template float dfm2::SquareDistance2(const float v1[2], const float v2[2]);
+template double dfm2::SquareDistance2(const double v1[2], const double v2[2]);
 
+// ------------------------------------------------
 
 static bool IsCrossLines(const double po_s0[], const double po_e0[],
                          const double po_s1[], const double po_e1[] )
@@ -250,7 +253,7 @@ void makeSplineLoop
 }
 
 
-void MeanValueCoordinate2D
+void dfm2::MeanValueCoordinate2D
 (double *aW,
  double px, double py,
  const double *aXY,
@@ -299,65 +302,71 @@ void MeanValueCoordinate2D
 }
 
 // ------------------------------------------------------------------------
+namespace delfem2 {
+  
 
-std::ostream &operator<<(std::ostream &output, const CVector2& v)
+std::ostream &operator<<(std::ostream &output, const dfm2::CVector2& v)
 {
   output.setf(std::ios::scientific);
   output<<v.p[0]<<" "<<v.p[1];
   return output;
 }
 
-std::istream &operator>>(std::istream &input, CVector2& v)
+std::istream &operator>>(std::istream &input, dfm2::CVector2& v)
 {
   input>>v.p[0]>>v.p[1];
   return input;
 }
 
-CVector2 operator*(double c, const CVector2& v0)
+dfm2::CVector2 operator*(double c, const dfm2::CVector2& v0)
 {
-  return CVector2(v0.p[0]*c, v0.p[1]*c);
+  return dfm2::CVector2(v0.p[0]*c, v0.p[1]*c);
 }
 
-CVector2 operator*(const CVector2& v0, double c)
+dfm2::CVector2 operator*(const dfm2::CVector2& v0, double c)
 {
-  return CVector2(v0.p[0]*c, v0.p[1]*c);
+  return dfm2::CVector2(v0.p[0]*c, v0.p[1]*c);
 }
 
-double operator * (const CVector2& lhs, const CVector2& rhs)
+double operator * (const dfm2::CVector2& lhs, const dfm2::CVector2& rhs)
 {
   return dfm2::Dot2(lhs.p, rhs.p);// lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
 }
 
-double operator ^ (const CVector2& lhs, const CVector2& rhs)
+double operator ^ (const dfm2::CVector2& lhs, const dfm2::CVector2& rhs)
 {
   return lhs.p[0]*rhs.p[1] - lhs.p[1]*rhs.p[0];
 }
 
 //! divide by real number
-CVector2 operator/ (const CVector2& vec, double d)
+CVector2 operator / (const CVector2& vec, double d)
 {
   CVector2 temp = vec;
   temp /= d;
   return temp;
 }
+  
+} // namespace delfem2
 
-CVector2 rotate(const CVector2& p0, double theta)
+dfm2::CVector2 dfm2::rotate
+ (const CVector2& p0, double theta)
 {
-  CVector2 p1;
+  dfm2::CVector2 p1;
   double c = cos(theta), s = sin(theta);
   p1.p[0] = c*p0.p[0] - s*p0.p[1];
   p1.p[1] = s*p0.p[0] + c*p0.p[1];
   return p1;
 }
 
-CVector2 rotate90(const CVector2& p0)
+dfm2::CVector2 dfm2::rotate90
+ (const CVector2& p0)
 {
   return CVector2(-p0.p[1], p0.p[0]);
 }
 
 // ---------------------------------------------------------------
 
-CVector2 Mat2Vec(const double A[4], const CVector2& v)
+dfm2::CVector2 dfm2::Mat2Vec(const double A[4], const CVector2& v)
 {
   CVector2 w;
   dfm2::MatVec2(w.p, A, v.p);
@@ -367,7 +376,7 @@ CVector2 Mat2Vec(const double A[4], const CVector2& v)
 }
 
 //! Area of the Triangle
-double TriArea
+double dfm2::TriArea
 (const CVector2& v1,
  const CVector2& v2,
  const CVector2& v3)
@@ -375,26 +384,28 @@ double TriArea
   return 0.5*( (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1]) - (v3.p[0]-v1.p[0])*(v2.p[1]-v1.p[1]) );
 }
 
-inline double Cross(const CVector2& v1, const CVector2& v2){
+inline double dfm2::Cross(const CVector2& v1, const CVector2& v2){
   return v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
 
-inline double SquareLength
+inline double dfm2::SquareLength
 (const CVector2& ipo0, const CVector2& ipo1)
 {
   return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
 }
 
-double SquareLength(const CVector2& point){
+double dfm2::SquareLength(const CVector2& point)
+{
   return  point.p[0]*point.p[0] + point.p[1]*point.p[1];
 }
 
-double Length(const CVector2& point){
+double dfm2::Length(const CVector2& point)
+{
   return dfm2::Length2(point.p);
 }
 
 // Distance between two points
-double Distance
+double dfm2::Distance
 (const CVector2& ipo0,
  const CVector2& ipo1)
 {
@@ -403,29 +414,30 @@ double Distance
 }
 
 // Distance between two points
-double SquareDistance
+double dfm2::SquareDistance
 (const CVector2& ipo0,
  const CVector2& ipo1)
 {
-  return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
+  return dfm2::SquareDistance2(ipo0.p, ipo1.p);
+//  return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
 }
 
 // Hight of a triangle : between v1 and line of v2-v3
-double TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3){
+double dfm2::TriHeight(const CVector2& v1, const CVector2& v2, const CVector2& v3){
   const double area = TriArea(v1,v2,v3);
   const double len = sqrt( SquareLength(v2,v3) );
   return area*2.0/len;
 }
 
 // compute dot product
-double Dot(const CVector2& ipo0, const CVector2& ipo1)
+double dfm2::Dot(const CVector2& ipo0, const CVector2& ipo1)
 {
   return dfm2::Dot2(ipo0.p, ipo1.p); // ipo0.p[0]*ipo1.p[0] + ipo0.p[1]*ipo1.p[1];
 }
 
 // get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 // this one has implementation in header because GetDist_LineSeg_Point below refers this
-double FindNearestPointParameter_Line_Point
+double dfm2::FindNearestPointParameter_Line_Point
 (const CVector2& po_c,
  const CVector2& po_s, const CVector2& po_e)
 {
@@ -436,7 +448,7 @@ double FindNearestPointParameter_Line_Point
   return -b/a;
 }
 
-CVector2 GetNearest_LineSeg_Point
+dfm2::CVector2 dfm2::GetNearest_LineSeg_Point
 (const CVector2& po_c,
  const CVector2& po_s, const CVector2& po_e)
 {
@@ -446,7 +458,7 @@ CVector2 GetNearest_LineSeg_Point
   return po_s+t*(po_e-po_s);
 }
 
-double GetDist_LineSeg_Point
+double dfm2::GetDist_LineSeg_Point
 (const CVector2& po_c,
  const CVector2& po_s, const CVector2& po_e)
 {
@@ -454,7 +466,7 @@ double GetDist_LineSeg_Point
   return Distance(p, po_c);
 }
 
-bool IsCross_LineSeg_LineSeg
+bool dfm2::IsCross_LineSeg_LineSeg
 (const CVector2& po_s0, const CVector2& po_e0,
  const CVector2& po_s1, const CVector2& po_e1 )
 {
@@ -484,7 +496,7 @@ bool IsCross_LineSeg_LineSeg
   return true;
 }
 
-double GetDist_LineSeg_LineSeg
+double dfm2::GetDist_LineSeg_LineSeg
 (const CVector2& po_s0, const CVector2& po_e0,
  const CVector2& po_s1, const CVector2& po_e1)
 {
@@ -501,7 +513,7 @@ double GetDist_LineSeg_LineSeg
 }
 
 // square root of circumradius
-double SquareCircumradius
+double dfm2::SquareCircumradius
 (const CVector2& p0,
  const CVector2& p1,
  const CVector2& p2 )
@@ -516,7 +528,7 @@ double SquareCircumradius
 }
 
 //! center of the circumcircle
-bool CenterCircumcircle
+bool dfm2::CenterCircumcircle
 (const CVector2& p0,
  const CVector2& p1,
  const CVector2& p2,
@@ -544,7 +556,7 @@ bool CenterCircumcircle
 // 0 : p3 is inside circum circle on the p0,p1,p2
 // 1 :       on
 // 2 :       outsdie
-int DetDelaunay
+int dfm2::DetDelaunay
 (const CVector2& p0,
  const CVector2& p1,
  const CVector2& p2,
@@ -582,7 +594,7 @@ int DetDelaunay
 	return 0;
 }
 
-CVector2 pointCurve_BezierCubic
+dfm2::CVector2 dfm2::pointCurve_BezierCubic
 (double t,
  const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4)
 {
@@ -595,14 +607,14 @@ CVector2 pointCurve_BezierCubic
 // std::vector starts from here
 
 //! Area of the Triangle (3 indexes and vertex array)
-double TriArea
+double dfm2::Area_Tri
 (const int iv1, const int iv2, const int iv3,
  const std::vector<CVector2>& point )
 {
   return TriArea(point[iv1],point[iv2],point[iv3]);
 }
 
-void Polyline_CubicBezierCurve
+void dfm2::Polyline_CubicBezierCurve
 (std::vector<CVector2>& aP,
  const int n, 
  const std::vector<CVector2>& aCP)
@@ -618,7 +630,7 @@ void Polyline_CubicBezierCurve
   aP[ns*n] = aCP[ns*3];
 }
 
-void Polyline_BezierCubic
+void dfm2::Polyline_BezierCubic
 (std::vector<CVector2>& aP,
  const unsigned int n,
  const CVector2& p1, const CVector2& p2, const CVector2& p3, const CVector2& p4)
@@ -631,7 +643,7 @@ void Polyline_BezierCubic
   }
 }
 
-double Length_Polygon
+double dfm2::Length_Polygon
 (const std::vector<CVector2>& aP)
 {
   double len = 0;
@@ -643,7 +655,7 @@ double Length_Polygon
 }
 
 
-double Area_Polygon(const std::vector<CVector2>& aP)
+double dfm2::Area_Polygon(const std::vector<CVector2>& aP)
 {
   CVector2 vtmp(0,0);
   const int ne = aP.size();
@@ -654,7 +666,7 @@ double Area_Polygon(const std::vector<CVector2>& aP)
   return area_loop;
 }
 
-void MeanValueCoordinate
+void dfm2::MeanValueCoordinate
 (std::vector<double>& aW,
  CVector2& p,
  std::vector<CVector2>& aVtx)
@@ -708,7 +720,7 @@ void makeRandomLoop
 }
 
 
-void Translate
+void dfm2::Translate
 (std::vector<CVector2>& aP,
  double dx, double dy)
 {
@@ -718,7 +730,7 @@ void Translate
   }
 }
 
-void Rotate
+void dfm2::Rotate
 (std::vector<CVector2>& aP,
  double dt)
 {
@@ -730,7 +742,7 @@ void Rotate
   }
 }
 
-std::vector<CVector2> Polyline_Resample_Polyline
+std::vector<dfm2::CVector2> dfm2::Polyline_Resample_Polyline
 (const std::vector<CVector2>& stroke0,
  double l)
 {
@@ -762,7 +774,7 @@ std::vector<CVector2> Polyline_Resample_Polyline
   return stroke;
 }
 
-std::vector<CVector2> Polygon_Resample_Polygon
+std::vector<dfm2::CVector2> dfm2::Polygon_Resample_Polygon
 (const std::vector<CVector2>& stroke0,
  double l)
 {
@@ -794,7 +806,7 @@ std::vector<CVector2> Polygon_Resample_Polygon
 }
 
 
-void SecondMomentOfArea_Polygon
+void dfm2::SecondMomentOfArea_Polygon
 (CVector2& cg,  double& area,
  CVector2& pa1, double& I1,
  CVector2& pa2, double& I2,
@@ -847,7 +859,7 @@ void SecondMomentOfArea_Polygon
 
 
 
-void JArray_FromVecVec_XY
+void dfm2::JArray_FromVecVec_XY
 (std::vector<int>& aIndXYs,
  std::vector<int>& loopIP0,
  std::vector<CVector2>& aXY,
@@ -879,7 +891,7 @@ void JArray_FromVecVec_XY
 }
 
 
-void ResamplingLoop
+void dfm2::ResamplingLoop
 (std::vector<int>& loopIP1_ind,
  std::vector<int>& loopIP1,
  std::vector<CVector2>& aVec2,
@@ -944,7 +956,7 @@ void ResamplingLoop
   assert( loopIP1.size() == ivtx0 );
 }
 
-void MakeMassMatrixTri
+void dfm2::MakeMassMatrixTri
 (double M[9],
  double rho,
  const unsigned int aIP[3],
@@ -970,7 +982,7 @@ void MakeMassMatrixTri
   }
 }
 
-bool IsInclude_Loop
+bool dfm2::IsInclude_Loop
 (const double co[],
  const int ixy_stt, const int ixy_end,
  const std::vector<CVector2>& aXY)
@@ -1017,7 +1029,7 @@ bool IsInclude_Loop
 
 
 
-bool CheckInputBoundaryForTriangulation
+bool dfm2::CheckInputBoundaryForTriangulation
 (const std::vector<int>& loopIP_ind,
  const std::vector<CVector2>& aXY)
 {
@@ -1118,8 +1130,8 @@ bool CheckInputBoundaryForTriangulation
   return true;
 }
 
-std::vector<CVector2>
-Polygon_Invert(const std::vector<CVector2>& aP)
+std::vector<dfm2::CVector2> dfm2::Polygon_Invert
+ (const std::vector<CVector2>& aP)
 {
   std::vector<CVector2> res;
   for(int ip=(int)aP.size()-1;ip>=0;--ip){
@@ -1128,8 +1140,8 @@ Polygon_Invert(const std::vector<CVector2>& aP)
   return res;
 }
 
-std::vector<double>
-XY_Polygon(const std::vector<CVector2>& aP)
+std::vector<double> dfm2::XY_Polygon
+ (const std::vector<CVector2>& aP)
 {
   std::vector<double> res;
   res.reserve(aP.size()*2);
@@ -1142,7 +1154,7 @@ XY_Polygon(const std::vector<CVector2>& aP)
 
 
 
-void FixLoopOrientation
+void dfm2::FixLoopOrientation
 (std::vector<int>& loopIP,
  const std::vector<int>& loopIP_ind,
  const std::vector<CVector2>& aXY)

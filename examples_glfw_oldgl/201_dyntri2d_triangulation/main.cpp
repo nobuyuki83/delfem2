@@ -181,7 +181,7 @@ void drawMesh
 // --------------------------------
 
 std::vector<dfm2::CDynPntSur> aPo2D;
-std::vector<CVector2> aVec2;
+std::vector<dfm2::CVector2> aVec2;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<int> loopIP_ind, loopIP;
 

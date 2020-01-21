@@ -33,7 +33,7 @@ namespace dfm2 = delfem2;
 
 
 void GenMesh
-(std::vector<CVector2>& aVec2,
+(std::vector<dfm2::CVector2>& aVec2,
  std::vector<dfm2::CDynPntSur>& aPo2D,
  std::vector<dfm2::CDynTri>& aETri,
  double elen,
@@ -41,16 +41,16 @@ void GenMesh
 {
   std::vector<int> loopIP_ind, loopIP;
   {
-    JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
-                         aaXY);
-    if( !CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
+    dfm2::JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
+                               aaXY);
+    if( !dfm2::CheckInputBoundaryForTriangulation(loopIP_ind,aVec2) ){
       return;
     }
-    FixLoopOrientation(loopIP,
-                       loopIP_ind,aVec2);
+    dfm2::FixLoopOrientation(loopIP,
+                             loopIP_ind,aVec2);
     if( elen > 10e-10 ){
-      ResamplingLoop(loopIP_ind,loopIP,aVec2,
-                     elen );
+      dfm2::ResamplingLoop(loopIP_ind,loopIP,aVec2,
+                           elen );
     }
   }
   ////
@@ -87,7 +87,7 @@ void RotationAtMeshPoints
       CVector3 pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
                   aXYZ[jp*3+1]+aDisp[jp*3+1],
                   aXYZ[jp*3+2]+aDisp[jp*3+2]);
-      A += Mat3_OuterProduct(pj-pi,Pj-Pi);
+      A += dfm2::Mat3_OuterProduct(pj-pi,Pj-Pi);
     }
     GetRotPolarDecomp(aR.data()+ip*9,
                       A.mat, 100);
@@ -268,7 +268,7 @@ int main(int argc,char* argv[])
         -1,+0.1 };
       aaXY.emplace_back(aXY,aXY+8 );
     }
-    std::vector<CVector2> aVec2;
+    std::vector<dfm2::CVector2> aVec2;
     std::vector<dfm2::CDynPntSur> aPo2D;
     std::vector<dfm2::CDynTri> aETri;
     GenMesh(aVec2,aPo2D,aETri,

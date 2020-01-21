@@ -524,7 +524,7 @@ void PyPBD_ConstProj_Rigid2D
  const py::array_t<unsigned int>& npClstr,
  const py::array_t<double>& npXY)
 {
-  PBD_ConstProj_Rigid2D((double*)(npXYt.request().ptr),
+  dfm2::PBD_ConstProj_Rigid2D((double*)(npXYt.request().ptr),
                   stiffness,
                   npClstrInd.data(), npClstrInd.size(),
                   npClstr.data(),    npClstr.size(),
@@ -539,7 +539,7 @@ void PyConstProj_Rigid3D
  const py::array_t<int>& npClstr,
  const py::array_t<double>& npXYZ)
 {
-  PBD_ConstProj_Rigid3D((double*)(npXYZt.request().ptr),
+  dfm2::PBD_ConstProj_Rigid3D((double*)(npXYZt.request().ptr),
                         stiffness,
                         npClstrInd.data(), npClstrInd.size(),
                         npClstr.data(),    npClstr.size(),
@@ -552,7 +552,7 @@ void PyPBD_ConstProj_ClothStretch
 {
   double* aXYZt = (double*)(npXYZt.request().ptr);
   const std::vector<dfm2::CDynTri>& aETri = mesh.aETri;
-  const std::vector<CVector2>& aVec2 = mesh.aVec2;
+  const std::vector<dfm2::CVector2>& aVec2 = mesh.aVec2;
   PBD_TriStrain(aXYZt,
                 npXYZt.shape()[0], aETri, aVec2);
 }
@@ -564,7 +564,7 @@ void PyPBD_ConstProj_ClothBend
   assert( npXYZt.ndim() == 2 );
   assert( npXYZt.shape()[1] == 3 );
   const std::vector<dfm2::CDynTri>& aETri = mesh.aETri;
-  const std::vector<CVector2>& aVec2 = mesh.aVec2;
+  const std::vector<dfm2::CVector2>& aVec2 = mesh.aVec2;
   double* aXYZt = (double*)(npXYZt.request().ptr);
   PBD_Bend(aXYZt,
            npXYZt.shape()[0],
@@ -580,9 +580,9 @@ void PyPBD_ConstProj_Seam
   assert( AssertNumpyArray2D(npLine, -1, 2) );
   double* aXYZt = (double*)(npXYZt.request().ptr);
   const unsigned int nline = npLine.shape()[0];
-  PBD_Seam(aXYZt,
-           npXYZt.shape()[0],
-           npLine.data(), nline);
+  dfm2::PBD_Seam(aXYZt,
+                 npXYZt.shape()[0],
+                 npLine.data(), nline);
 }
 
 void PyPBD_ConstProj_Contact

@@ -21,6 +21,12 @@
 #include "delfem2/opengl/glold_color.h"
 #include "../glut_cam.h"
 
+namespace dfm2 = delfem2;
+
+// ------------------------------------------------------
+
+namespace delfem2 {
+
 class CRigidBodyState
 {
 public:
@@ -34,7 +40,7 @@ public:
     rb_out.velo    = velo  + dt*vOpA[0];
     rb_out.Omega   = Omega + dt*vOpA[1];
     rb_out.pos     = pos   + dt*vOpA[2];
-    CMatrix3 dR = Mat3_RotCartesian(dt*vOpA[3]);
+    CMatrix3 dR = dfm2::Mat3_RotCartesian(dt*vOpA[3]);
     if( dR.isNaN() ) dR.SetZero();
     rb_out.R  = R*dR;
     return rb_out;
@@ -104,6 +110,8 @@ CRigidBodyState StepTime_RungeKutta4
   return rb0.Step(dt/6.0, vrb1234);
 }
 
+}
+
 // ------------------------------------------------
 
 bool is_animation;
@@ -111,9 +119,9 @@ bool is_animation;
 CNav3D_GLUT nav;
 
 double dt;
-CRigidBodyState rbs;
-CRigidBodyInertia rbi;
-CRigidBodyForceModel rbfm;
+dfm2::CRigidBodyState rbs;
+dfm2::CRigidBodyInertia rbi;
+dfm2::CRigidBodyForceModel rbfm;
 
 // ------------------------------------------------
 
@@ -248,9 +256,9 @@ int main(int argc,char* argv[])
   {
     rbi.Irot = CMatrix3::Zero();
     CVector3 ex(1,0,0), ey(0,1,0), ez(0,0,1);
-    rbi.Irot += 1.0*Mat3_OuterProduct(ex,ex);
-    rbi.Irot += 3.0*Mat3_OuterProduct(ey,ey);
-    rbi.Irot += 5.0*Mat3_OuterProduct(ez,ez);
+    rbi.Irot += 1.0*dfm2::Mat3_OuterProduct(ex,ex);
+    rbi.Irot += 3.0*dfm2::Mat3_OuterProduct(ey,ey);
+    rbi.Irot += 5.0*dfm2::Mat3_OuterProduct(ez,ez);
   }
   rbi.invIrot = rbi.Irot.Inverse();
   
