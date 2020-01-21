@@ -29,14 +29,27 @@ CVector2 screenXYProjection(const CVector3& v,
                             const float* mMV,
                             const float* mPj);
 
+void SetProjection(CMatrix3& m, const CVector3& vec0);
+void SetDiag(CMatrix3& m, const CVector3& d);
+void SetRotMatrix_Cartesian(CMatrix3& m, const CVector3& v);
+void SetSpinTensor(CMatrix3& m, const CVector3& vec0);
+void SetOuterProduct(CMatrix3& m,
+                     const CVector3& vec0,
+                     const CVector3& vec1 );
+CVector3 GetSpinVector(const CMatrix3& m);
+CVector3 GetCartesianRotationVector(const CMatrix3& m);
 
+  
 // --------------------------------------------
 
 CMatrix3 Mat3(const CVector3& vec0,
               const CVector3& vec1,
               const CVector3& vec2);
+CMatrix3 Mat3(const CVector3& vec0);
+CMatrix3 Mat3(const CVector3& vec0,
+              const CVector3& vec1);
+CMatrix3 RotMatrix_Cartesian(const CVector3& v);
 CMatrix3 Mat3_RotCartesian(const CVector3& vec0);
-
 CMatrix3 Mat3_OuterProduct(const CVector3& vec0,
                       const CVector3& vec1 );
 CMatrix3 Mat3_Spin(const CVector3& vec0);
@@ -55,6 +68,7 @@ CMatrix3 Mat3_IrotTriSolid(const CVector3& d0,
 CMatrix3 Mat3_IrotLineSeg(const CVector3& d0,
                           const CVector3& d1);
 CMatrix3 Mat3_IrotPoint(const CVector3& d0);
+CMatrix3 Mirror(const CVector3& n);
 
 void Mat4_MatTransl(double m[16],
                     const CMatrix3& mat, const CVector3& trans);
@@ -115,6 +129,14 @@ double DragCircle(const CVector2& sp0,
                   const CVector3& axis,
                   const float* mMV,
                   const float* mPj);
+  
+bool isPickCircle(const CVector2& sp,
+                  const CVector3& p,
+                  const CVector3& axis,
+                  double r,
+                  const float* mMV,
+                  const float* mPj,
+                  double pick_tol);
  
 void Energy_MIPS(double& E, double dE[3][3], double ddE[3][3][3][3],
                  const double c[3][3],

@@ -114,9 +114,9 @@ void MakeLocalCoord(
     anrp[1] *= 1.0/snrp;
     anrp[2] *= 1.0/snrp;
     double rot[9];
-    GetRotMatrix_Rodrigues3D(rot, anrp, t);
-    VecMat3(lrx, lcp+3, rot);
-    VecMat3(lry, lcp+6, rot);
+    dfm2::GetRotMatrix_Rodrigues3D(rot, anrp, t);
+    dfm2::VecMat3(lrx, lcp+3, rot);
+    dfm2::VecMat3(lry, lcp+6, rot);
   }
   else{
     lrx[0]=lcp[3];  lrx[1]=lcp[4];  lrx[2]=lcp[5];
@@ -242,7 +242,7 @@ void SetNewProblem()
     aLocCoord.resize(np*6);
     for(unsigned int ip=0;ip<np;++ip){
       double tmp[3];
-      GetVertical2Vector3D(aNorm.data()+ip*3, aLocCoord.data()+ip*6+3, tmp);
+      dfm2::GetVertical2Vector3D(aNorm.data()+ip*3, aLocCoord.data()+ip*6+3, tmp);
       aLocCoord[ip*6+0] = aNorm[ip*3+0];
       aLocCoord[ip*6+1] = aNorm[ip*3+1];
       aLocCoord[ip*6+2] = aNorm[ip*3+2];
@@ -289,7 +289,7 @@ void myGlutDisplay()
     dfm2::opengl::DrawSphere(16,16);
     ::glPopMatrix();
     ////
-    CVector3 ex(aLocCoord[iker*6+3],aLocCoord[iker*6+4],aLocCoord[iker*6+5]);
+    dfm2::CVector3 ex(aLocCoord[iker*6+3],aLocCoord[iker*6+4],aLocCoord[iker*6+5]);
     ex *= 0.2;
     ::glLineWidth(3);
     ::glDisable(GL_LIGHTING);

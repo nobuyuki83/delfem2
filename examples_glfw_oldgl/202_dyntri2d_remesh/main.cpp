@@ -57,7 +57,7 @@ void Coarse(double px, double py)
       for(int jjt=0;jjt<npsup-2;++jjt){
         const int ip2 = aPSuP[(iit+jjt+1)%npsup];
         const int ip3 = aPSuP[(iit+jjt+2)%npsup];
-        double area = TriArea(aVec2[ip1],aVec2[ip2],aVec2[ip3]);
+        double area = Area_Tri(aVec2[ip1],aVec2[ip2],aVec2[ip3]);
         if( jjt == 0 || area < min_area ){ min_area = area; }
       }
       if( min_area > 1.0e-10 ){
@@ -88,7 +88,7 @@ void GenMesh()
     double xys[8] = {-0.5,-0.5, +0.5,-0.5, +0.5,+0.5, -0.5,+0.5};
     aaXY[0].assign(xys,xys+8);
   }
-  /////
+  // --------------------------------
   const double elen = 0.11;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,

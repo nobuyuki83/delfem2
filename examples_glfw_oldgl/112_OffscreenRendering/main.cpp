@@ -94,9 +94,9 @@ int main(int argc,char* argv[])
   double elen = 0.02;
   sampler.Init(nres, nres, "4byte",true);
   sampler.SetCoord(elen, 4.0,
-                   CVector3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-                   CVector3(0,0,-1).stlvec(),
-                   CVector3(1,0,0).stlvec() );
+                   delfem2::CVector3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
+                   delfem2::CVector3(0,0,-1).stlvec(),
+                   delfem2::CVector3(1,0,0).stlvec() );
   sampler.SetColor(1, 0, 0);
   sampler.draw_len_axis = 1.0;
 

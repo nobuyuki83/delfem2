@@ -190,7 +190,7 @@ class CRigidTrans_2DTo3D
 {
 public:
   dfm2::CVector2 org2;
-  CVector3 org3;
+  dfm2::CVector3 org3;
   CMatrix3 R;
 };
 
@@ -237,12 +237,12 @@ int main(int argc,char* argv[])
   {
     CRigidTrans_2DTo3D rt23;
     rt23.org2 = dfm2::CVector2(2.5,0.5);
-    rt23.org3 = CVector3(0.0, 0.0, 0.5);
+    rt23.org3 = dfm2::CVector3(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
     for(int ip : aIP){
-      CVector3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-      CVector3 p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
+      dfm2::CVector3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
+      dfm2::CVector3 p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
       aXYZ[ip*3+0] = p1.x();
       aXYZ[ip*3+1] = p1.y();
       aXYZ[ip*3+2] = p1.z();
@@ -250,12 +250,12 @@ int main(int argc,char* argv[])
     {
       CRigidTrans_2DTo3D rt23;
       rt23.org2 = dfm2::CVector2(0.5,0.5);
-      rt23.org3 = CVector3(0.0, 0.0, -0.5);
+      rt23.org3 = dfm2::CVector3(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
       for(int ip : aIP){
-        CVector3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-        CVector3 p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
+        dfm2::CVector3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
+        dfm2::CVector3 p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
         aXYZ[ip*3+0] = p1.x();
         aXYZ[ip*3+1] = p1.y();
         aXYZ[ip*3+2] = p1.z();

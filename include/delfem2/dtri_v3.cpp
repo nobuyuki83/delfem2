@@ -21,17 +21,17 @@ static int InsertPoint_Mesh
   double& r1,
   std::vector<dfm2::CDynPntSur>& aPo3D,
   std::vector<dfm2::CDynTri>& aSTri,
-  std::vector<CVector3>& aXYZ)
+  std::vector<dfm2::CVector3>& aXYZ)
 {
   if (itri0==-1) return -1;
-  CVector3 pos;
+  dfm2::CVector3 pos;
   {
     const int i0 = aSTri[itri0].v[0];
     const int i1 = aSTri[itri0].v[1];
     const int i2 = aSTri[itri0].v[2];
-    const CVector3& p0 = aXYZ[i0];
-    const CVector3& p1 = aXYZ[i1];
-    const CVector3& p2 = aXYZ[i2];
+    const dfm2::CVector3& p0 = aXYZ[i0];
+    const dfm2::CVector3& p1 = aXYZ[i1];
+    const dfm2::CVector3& p2 = aXYZ[i2];
     pos = r0*p0 + r1*p1 + (1-r0-r1)*p2;
   }
   int ipo_ins = (int)aPo3D.size();
@@ -43,16 +43,16 @@ static int InsertPoint_Mesh
 
 
 static bool pickMesh
- (CVector3& p,
+ (dfm2::CVector3& p,
   int& itriOut,
   double& r0Out,
   double& r1Out,
-  ////
-  const CVector3& org,
-  const CVector3& dir,
+  //
+  const dfm2::CVector3& org,
+  const dfm2::CVector3& dir,
   int itri_start, // starting triangle
   const std::vector<dfm2::CDynTri>& aSTri,
-  const std::vector<CVector3>& aXYZ)
+  const std::vector<dfm2::CVector3>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -60,9 +60,9 @@ static bool pickMesh
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const CVector3& tp0 = aXYZ[ip0];
-    const CVector3& p1 = aXYZ[ip1];
-    const CVector3& p2 = aXYZ[ip2];
+    const dfm2::CVector3& tp0 = aXYZ[ip0];
+    const dfm2::CVector3& p1 = aXYZ[ip1];
+    const dfm2::CVector3& p2 = aXYZ[ip2];
     const double v0 = Volume_Tet(p1, p2, org, org+dir);
     const double v1 = Volume_Tet(p2, tp0, org, org+dir);
     const double v2 = Volume_Tet(tp0, p1, org, org+dir);
@@ -112,12 +112,12 @@ static bool pickMesh
 
 
 static int pickTriangle
- (CVector3& p,
-  const CVector3& org,
-  const CVector3& dir,
+ (dfm2::CVector3& p,
+  const dfm2::CVector3& org,
+  const dfm2::CVector3& dir,
   int itri_start, // starting triangle
   const std::vector<dfm2::CDynTri>& aSTri,
-  const std::vector<CVector3>& aXYZ)
+  const std::vector<dfm2::CVector3>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -125,9 +125,9 @@ static int pickTriangle
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const CVector3& tp0 = aXYZ[ip0];
-    const CVector3& p1 = aXYZ[ip1];
-    const CVector3& p2 = aXYZ[ip2];
+    const dfm2::CVector3& tp0 = aXYZ[ip0];
+    const dfm2::CVector3& p1 = aXYZ[ip1];
+    const dfm2::CVector3& p2 = aXYZ[ip2];
     double v0 = Volume_Tet(p1, p2, org, org+dir);
     double v1 = Volume_Tet(p2, tp0, org, org+dir);
     double v2 = Volume_Tet(tp0, p1, org, org+dir);
@@ -153,14 +153,14 @@ static int pickTriangle
 
 
 static bool FindRayTriangleMeshIntersectionClosestToPoint
- (CVector3 &intersectionPoint,
-  const CVector3 &line0,
-  const CVector3 &line1,
+ (dfm2::CVector3 &intersectionPoint,
+  const dfm2::CVector3 &line0,
+  const dfm2::CVector3 &line1,
   const std::vector<dfm2::CDynTri>& aTri,
-  const std::vector<CVector3>& aVec3,
-  const CVector3 &targetPoint)
+  const std::vector<dfm2::CVector3>& aVec3,
+  const dfm2::CVector3 &targetPoint)
 {
-  std::vector<CVector3> intersectionPoints;
+  std::vector<dfm2::CVector3> intersectionPoints;
   if (!FindRayTriangleMeshIntersections(intersectionPoints,
                                         line0, line1,
                                         aTri, aVec3))
@@ -190,7 +190,7 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
 // --------------------------------------------------------------------------
 // expose functions
 
-CVector3 dfm2::normalTri
+dfm2::CVector3 dfm2::normalTri
 (int itri0,
  const std::vector<CDynTri>& aSTri,
  const std::vector<CVector3>& aXYZ)
@@ -216,7 +216,7 @@ bool dfm2::CheckTri
     assert( i0 >=0 && i0 < (int)aPo3D.size() );
     assert( i1 >=0 && i1 < (int)aPo3D.size() );
     assert( i2 >=0 && i2 < (int)aPo3D.size() );
-    double area = TriArea(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
+    double area = Area_Tri(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
     if (area<1.0e-10){ // very small volume
       assert(0);
       abort();

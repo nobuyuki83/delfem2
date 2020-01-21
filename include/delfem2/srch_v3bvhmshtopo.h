@@ -342,8 +342,8 @@ public:
     is_active = false;
   }
 public:
-  CPointElemSurf pes;
-  CVector3 pos;
+  delfem2::CPointElemSurf pes;
+  delfem2::CVector3 pos;
   double sdf;
   bool is_active;
 };

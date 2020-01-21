@@ -12,6 +12,18 @@
 #include "delfem2/vec3.h"
 
 namespace delfem2 {
+  
+CVector3 QuadBilinear(int iq, double r0, double r1,
+                      std::vector<int>& aQuad,
+                      std::vector<CVector3>& aPoint);
+
+  
+CVector3 getPointCoonsQuad_CubicBezier(double u, double v,
+                                        CVector3 aP[12]);
+  
+void getCubicBezierSurface(const int n, // number of segment
+                           std::vector<CVector3>& aP,
+                           const std::vector<CVector3>& aCP);
 
 CVector3 getPointCoonsQuad_CubicBezierEdge(double u, double v,
                                            CVector3 aP[12]);

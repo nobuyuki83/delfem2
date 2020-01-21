@@ -50,8 +50,8 @@ bool dfm2::CCad3D_Edge::isPick
 }
 
 void FaceCenterNormal(
-  CVector3& cg, 
-  CVector3& nf,
+  dfm2::CVector3& cg,
+  dfm2::CVector3& nf,
   const std::vector< std::pair<unsigned int,bool> >& aIE,
   const std::vector<dfm2::CCad3D_Edge>& aEdge)
 {
@@ -61,8 +61,8 @@ void FaceCenterNormal(
   for (unsigned int iie = 0; iie<nIE; ++iie){
     int ie0 = aIE[(iie+0)%nIE].first;
     bool dir0 = aIE[(iie+0)%nIE].second;    
-    CVector3 pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
-    CVector3 pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
+    dfm2::CVector3 pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
+    dfm2::CVector3 pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
     double lenAB = Distance(pA, pB);
     cg += (pA+pB)*(0.5*lenAB);
     len_tot += lenAB;
@@ -74,8 +74,8 @@ void FaceCenterNormal(
     int ie0 = aIE[(iie+0)%nIE].first;
 //    int ie1 = aIE[(iie+1)%nIE].first;
     bool dir0 = aIE[(iie+0)%nIE].second;
-    CVector3 pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
-    CVector3 pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
+    dfm2::CVector3 pA = dir0 ? aEdge[ie0].p0 : aEdge[ie0].p1;
+    dfm2::CVector3 pB = dir0 ? aEdge[ie0].p1 : aEdge[ie0].p0;
     nf += ((pA-cg)^(pB-cg));
   }
   nf.SetNormalizedVector();
@@ -533,11 +533,11 @@ void AddSphere_ZSym
  double elen)
 {
   int icp0 = (int)aVertex.size();
-  aVertex.emplace_back(CVector3(-1, 0, 0) ); // icp0+0
-  aVertex.emplace_back(CVector3( 0,+1, 0) ); // icp0+1
-  aVertex.emplace_back(CVector3(+1, 0, 0) ); // icp0+2
-  aVertex.emplace_back(CVector3( 0,-1, 0) ); // icp0+3
-  aVertex.emplace_back(CVector3( 0, 0,+1) ); // icp0+4
+  aVertex.emplace_back(dfm2::CVector3(-1, 0, 0) ); // icp0+0
+  aVertex.emplace_back(dfm2::CVector3( 0,+1, 0) ); // icp0+1
+  aVertex.emplace_back(dfm2::CVector3(+1, 0, 0) ); // icp0+2
+  aVertex.emplace_back(dfm2::CVector3( 0,-1, 0) ); // icp0+3
+  aVertex.emplace_back(dfm2::CVector3( 0, 0,+1) ); // icp0+4
   ////
   ////
   int ie0 = (int)aEdge.size();
@@ -619,22 +619,22 @@ void AddTorus_XSym
  double elen)
 {
   int icp0 = (int)aVertex.size();
-  aVertex.emplace_back(CVector3(0,-1.0, 0.0) ); // icp0+0
-  aVertex.emplace_back(CVector3(0,-0.3, 0.0) ); // icp0+0
-  aVertex.emplace_back(CVector3(0, 0.0,+1.0) ); // icp0+1
-  aVertex.emplace_back(CVector3(0, 0.0,+0.3) ); // icp0+1
-  aVertex.emplace_back(CVector3(0,+1.0, 0.0) ); // icp0+2
-  aVertex.emplace_back(CVector3(0,+0.3, 0.0) ); // icp0+2
-  aVertex.emplace_back(CVector3(0, 0.0,-1.0) ); // icp0+3
-  aVertex.emplace_back(CVector3(0, 0.0,-0.3) ); // icp0+3
-  aVertex[icp0+0].norm = CVector3(0,-1,0);
-  aVertex[icp0+1].norm = CVector3(0,+1,0);
-  aVertex[icp0+2].norm = CVector3(0,0,+1);
-  aVertex[icp0+3].norm = CVector3(0,0,-1);
-  aVertex[icp0+4].norm = CVector3(0,+1,0);
-  aVertex[icp0+5].norm = CVector3(0,-1,0);
-  aVertex[icp0+6].norm = CVector3(0,0,-1);
-  aVertex[icp0+7].norm = CVector3(0,0,+1);
+  aVertex.emplace_back(dfm2::CVector3(0,-1.0, 0.0) ); // icp0+0
+  aVertex.emplace_back(dfm2::CVector3(0,-0.3, 0.0) ); // icp0+0
+  aVertex.emplace_back(dfm2::CVector3(0, 0.0,+1.0) ); // icp0+1
+  aVertex.emplace_back(dfm2::CVector3(0, 0.0,+0.3) ); // icp0+1
+  aVertex.emplace_back(dfm2::CVector3(0,+1.0, 0.0) ); // icp0+2
+  aVertex.emplace_back(dfm2::CVector3(0,+0.3, 0.0) ); // icp0+2
+  aVertex.emplace_back(dfm2::CVector3(0, 0.0,-1.0) ); // icp0+3
+  aVertex.emplace_back(dfm2::CVector3(0, 0.0,-0.3) ); // icp0+3
+  aVertex[icp0+0].norm = dfm2::CVector3(0,-1,0);
+  aVertex[icp0+1].norm = dfm2::CVector3(0,+1,0);
+  aVertex[icp0+2].norm = dfm2::CVector3(0,0,+1);
+  aVertex[icp0+3].norm = dfm2::CVector3(0,0,-1);
+  aVertex[icp0+4].norm = dfm2::CVector3(0,+1,0);
+  aVertex[icp0+5].norm = dfm2::CVector3(0,-1,0);
+  aVertex[icp0+6].norm = dfm2::CVector3(0,0,-1);
+  aVertex[icp0+7].norm = dfm2::CVector3(0,0,+1);
   /////
   int ie0 = (int)aEdge.size();
   aEdge.emplace_back(icp0+0,icp0+2,true,0 ); // 0
@@ -806,14 +806,14 @@ void AddCube
 double elen)
 {
   int iv0 = (int)aVertex.size();
-  aVertex.emplace_back(CVector3(-1, -1, -1)); // icp0+0
-  aVertex.emplace_back(CVector3(-1, -1, +1)); // icp0+1
-  aVertex.emplace_back(CVector3(-1, +1, -1)); // icp0+2
-  aVertex.emplace_back(CVector3(-1, +1, +1)); // icp0+3
-  aVertex.emplace_back(CVector3(+1, -1, -1)); // icp0+4
-  aVertex.emplace_back(CVector3(+1, -1, +1)); // icp0+5
-  aVertex.emplace_back(CVector3(+1, +1, -1)); // icp0+6
-  aVertex.emplace_back(CVector3(+1, +1, +1)); // icp0+7
+  aVertex.emplace_back(dfm2::CVector3(-1, -1, -1)); // icp0+0
+  aVertex.emplace_back(dfm2::CVector3(-1, -1, +1)); // icp0+1
+  aVertex.emplace_back(dfm2::CVector3(-1, +1, -1)); // icp0+2
+  aVertex.emplace_back(dfm2::CVector3(-1, +1, +1)); // icp0+3
+  aVertex.emplace_back(dfm2::CVector3(+1, -1, -1)); // icp0+4
+  aVertex.emplace_back(dfm2::CVector3(+1, -1, +1)); // icp0+5
+  aVertex.emplace_back(dfm2::CVector3(+1, +1, -1)); // icp0+6
+  aVertex.emplace_back(dfm2::CVector3(+1, +1, +1)); // icp0+7
   ////
   int ie0 = (int)aEdge.size();
   aEdge.emplace_back(iv0+0, iv0+1, false, 0); // 0

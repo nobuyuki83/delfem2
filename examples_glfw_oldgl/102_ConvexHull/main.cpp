@@ -9,18 +9,20 @@
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glold_funcs.h"
 
+namespace dfm2 = delfem2;
+
 // ---------------------------------------
 
-static void myGlVertex3d(const CVector3& v)
+static void myGlVertex3d(const dfm2::CVector3& v)
 {
   ::glVertex3d(v.x(),v.y(),v.z());
 }
 
 static void myGlVertex3d
 (unsigned int i,
- const std::vector<CVector3>& aV)
+ const std::vector<dfm2::CVector3>& aV)
 {
-  const CVector3& v = aV[i];
+  const dfm2::CVector3& v = aV[i];
   ::glVertex3d(v.x(), v.y(), v.z());
 }
 
@@ -31,7 +33,7 @@ int main(int argc,char* argv[])
   
   viewer.nav.camera.view_height = 1.5;
   
-  std::vector<CVector3> aXYZ;
+  std::vector<dfm2::CVector3> aXYZ;
   std::vector<int> aTri;
     
   while (!glfwWindowShouldClose(viewer.window))

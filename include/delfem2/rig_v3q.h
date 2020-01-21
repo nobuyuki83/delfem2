@@ -17,7 +17,7 @@
 
 #include "delfem2/vec3.h"
 
-class CVector3;
+//class delfem2::CVector3;
 
 class CRigBone
 {
@@ -28,7 +28,7 @@ public:
       invBindMat[ 5] = 1.0;
       invBindMat[10] = 1.0;
       invBindMat[15] = 1.0;
-      //////////
+      //
       scale = 1;
       rot[0] = 1;
       rot[1] = 0;
@@ -39,13 +39,13 @@ public:
       trans[2] = 0;
       ibone_parent = -1;
     }
-  CVector3 Pos() const{
-    return CVector3(Mat[3],Mat[7],Mat[11]);
+  delfem2::CVector3 Pos() const{
+    return delfem2::CVector3(Mat[3],Mat[7],Mat[11]);
   }
   void SetRotationBryant(double rx, double ry, double rz);
   void SetTranslation(double tx, double ty, double tz);
-  int PickHandler(const CVector3& org,
-                  const CVector3& dir,
+  int PickHandler(const delfem2::CVector3& org,
+                  const delfem2::CVector3& dir,
                   double rad_handlr,
                   double tol) const;
   void AffineJoint(const double a[16]) const;
@@ -67,13 +67,13 @@ void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
 void PickBone(int& ibone_selected,
               int& ielem_selected,
               const std::vector<CRigBone>& aBone,
-              const CVector3& src,
-              const CVector3& dir,
+              const delfem2::CVector3& src,
+              const delfem2::CVector3& dir,
               double rad_hndlr,
               double tol);
 
 
-////////////////////////////////////////////////////////////////////////
+// ----------------------------------
 
 void UpdateRigSkin(double* aXYZ,
                    const double* aXYZ0,
@@ -84,7 +84,7 @@ void UpdateRigSkin(double* aXYZ,
                    const double* aRigWeight,
                    const unsigned int* aRigJoint);
 
-////////////////////////////////////////////////////////////////////////
+// ------------------------------------
 
 class CChannel_BioVisionHierarchy
 {

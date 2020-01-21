@@ -255,17 +255,17 @@ int main(int argc,char* argv[])
   rbi.mass = 1.0;
   {
     rbi.Irot = CMatrix3::Zero();
-    CVector3 ex(1,0,0), ey(0,1,0), ez(0,0,1);
+    dfm2::CVector3 ex(1,0,0), ey(0,1,0), ez(0,0,1);
     rbi.Irot += 1.0*dfm2::Mat3_OuterProduct(ex,ex);
     rbi.Irot += 3.0*dfm2::Mat3_OuterProduct(ey,ey);
     rbi.Irot += 5.0*dfm2::Mat3_OuterProduct(ez,ez);
   }
   rbi.invIrot = rbi.Irot.Inverse();
   
-  rbs.pos = CVector3(0,0,0);
+  rbs.pos = dfm2::CVector3(0,0,0);
   rbs.R = CMatrix3::Identity();
-  rbs.velo = CVector3(0,0,0);
-  rbs.Omega = CVector3(1,1,1);
+  rbs.velo = dfm2::CVector3(0,0,0);
+  rbs.Omega = dfm2::CVector3(1,1,1);
   
   dt = 0.05;
   

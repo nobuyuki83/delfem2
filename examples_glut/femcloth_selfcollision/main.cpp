@@ -159,7 +159,7 @@ void MakeNormal()
       { aXYZ[ip0*3+0],aXYZ[ip0*3+1],aXYZ[ip0*3+2] },
       { aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2] },
       { aXYZ[ip2*3+0],aXYZ[ip2*3+1],aXYZ[ip2*3+2] } };
-    double n[3],area; UnitNormalAreaTri3D(n, area, c[0], c[1], c[2]);
+    double n[3],area; dfm2::UnitNormalAreaTri3D(n, area, c[0], c[1], c[2]);
     aNormal[ip0*3+0] += n[0];  aNormal[ip0*3+1] += n[1];  aNormal[ip0*3+2] += n[2];
     aNormal[ip1*3+0] += n[0];  aNormal[ip1*3+1] += n[1];  aNormal[ip1*3+2] += n[2];
     aNormal[ip2*3+0] += n[0];  aNormal[ip2*3+1] += n[1];  aNormal[ip2*3+2] += n[2];
@@ -448,7 +448,7 @@ int main(int argc,char* argv[])
       const int ntri = (int)aTri.size()/3;
       std::vector<double> aElemCenter(ntri*3);
       for(int itri=0;itri<ntri;++itri){
-        CVector3 p = cg_Tri(itri, aTri, aXYZ);
+        dfm2::CVector3 p = dfm2::cg_Tri(itri, aTri, aXYZ);
         aElemCenter[itri*3+0] = p.x();
         aElemCenter[itri*3+1] = p.y();
         aElemCenter[itri*3+2] = p.z();

@@ -95,8 +95,8 @@ static void CalcInvMat(double* a, const int n, int& info )
 // ------------------------------------------------------------
 
 int CRigBone::PickHandler
-(const CVector3& org,
- const CVector3& dir,
+(const dfm2::CVector3& org,
+ const dfm2::CVector3& dir,
  double rad_handlr,
  double tol) const
 {
@@ -370,8 +370,8 @@ void PickBone
 (int& ibone_selected,
  int& ielem_selected,
  const std::vector<CRigBone>& aBone,
- const CVector3& src,
- const CVector3& dir,
+ const dfm2::CVector3& src,
+ const dfm2::CVector3& dir,
  double rad_hndlr,
  double tol)
 {
@@ -385,7 +385,7 @@ void PickBone
   if( ielem_selected == -1 ){
     ibone_selected = -1;
     for(int ibone=0;ibone<(int)aBone.size();++ibone){
-      CVector3 pos(aBone[ibone].Pos());
+      delfem2::CVector3 pos(aBone[ibone].Pos());
       double distance = Distance(nearest_Line_Point(pos, src, dir),pos);
       if( distance < tol ){
         ibone_selected = ibone;
