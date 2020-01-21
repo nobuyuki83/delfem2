@@ -266,7 +266,7 @@ std::pair<int,int> delfem2::determineRange
   int d = delta(i, i + 1, sorted_morton_code, size) - delta(i, i - 1, sorted_morton_code, size);
   d = d > 0 ? 1 : -1;
   
-    //compute the upper bound for the length of the range
+  //compute the upper bound for the length of the range
   int delta_min = delta(i, i - d, sorted_morton_code, size);
   int lmax = 2;
   while (delta(i, i + lmax*d, sorted_morton_code, size)>delta_min)
@@ -274,7 +274,7 @@ std::pair<int,int> delfem2::determineRange
     lmax = lmax * 2;
   }
   
-    //find the other end using binary search
+  //find the other end using binary search
   int l = 0;
   for (int t = lmax / 2; t >= 1; t /= 2)
   {
@@ -345,7 +345,7 @@ int delfem2::findSplit(const unsigned int* sorted_morton_code, int start, int la
 class CPairMtcInd{
 public:
   std::uint32_t imtc;
-  std::uint32_t iobj;
+  unsigned int iobj;
 public:
   bool operator < (const CPairMtcInd& rhs) const {
     return this->imtc < rhs.imtc;
@@ -353,21 +353,22 @@ public:
 };
 
 template <typename T>
-void dfm2::GetSortedMortenCode
- (std::vector<unsigned int>& aSortedId,
-  std::vector<unsigned int>& aSortedMc,
-  const std::vector<T>& aXYZ,
-  const T minmax_xyz[6])
+void dfm2::GetSortedMortenCode(
+    std::vector<unsigned int> &aSortedId,
+    std::vector<std::uint32_t> &aSortedMc,
+    const std::vector<T> &aXYZ,
+    const T min_xyz[3],
+    const T max_xyz[3])
 {
   std::vector<CPairMtcInd> aNodeBVH; // array of BVH node
   const std::size_t np = aXYZ.size()/3;
   aNodeBVH.resize(np);
-  const T x_min = minmax_xyz[0];
-  const T x_max = minmax_xyz[1];
-  const T y_min = minmax_xyz[2];
-  const T y_max = minmax_xyz[3];
-  const T z_min = minmax_xyz[4];
-  const T z_max = minmax_xyz[5];
+  const T x_min = min_xyz[0];
+  const T y_min = min_xyz[1];
+  const T z_min = min_xyz[2];
+  const T x_max = max_xyz[0];
+  const T y_max = max_xyz[1];
+  const T z_max = max_xyz[2];
   for(unsigned ip=0;ip<np;++ip){
     T x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
     T y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
@@ -386,14 +387,16 @@ void dfm2::GetSortedMortenCode
 }
 template void dfm2::GetSortedMortenCode(
     std::vector<unsigned int>& aSortedId,
-     std::vector<uint32_t>& aSortedMc,
-     const std::vector<float>& aXYZ,
-     const float minmax_xyz[6]);
+    std::vector<uint32_t>& aSortedMc,
+    const std::vector<float>& aXYZ,
+    const float min_xyz[3],
+    const float max_xyz[3]);
 template void dfm2::GetSortedMortenCode(
     std::vector<unsigned int>& aSortedId,
     std::vector<uint32_t>& aSortedMc,
     const std::vector<double>& aXYZ,
-    const double minmax_xyz[6]);
+    const double min_xyz[3],
+    const double max_xyz[3]);
 
 // ----------------------------------
 

@@ -35,8 +35,9 @@ int main(int argc,char* argv[])
   {
     const unsigned int N = 1000;
     aXYZ.resize(N*3);
-    const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
-    dfm2::CBV3D_AABB bb(minmax_xyz);
+    const double min_xyz[3] = {-1,-1,-1};
+    const double max_xyz[3] = {+1,+1,+1};
+    dfm2::CBV3D_AABB bb(min_xyz, max_xyz);
     {
       std::random_device dev;
       std::mt19937 rng(dev());
@@ -50,7 +51,7 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aSortedId;
     std::vector<unsigned int> aSortedMc;
     dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
-                              aXYZ,minmax_xyz);
+                              aXYZ,min_xyz,max_xyz);
     /*
     {
       for(int ini=0;ini<aSortedMc.size()-1;++ini){

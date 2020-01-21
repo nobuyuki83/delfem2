@@ -450,8 +450,9 @@ TEST(bvh,morton_code)
   std::vector<double> aXYZ; // 3d points
   const unsigned int N = 10000;
   aXYZ.resize(N*3);
-  const double minmax_xyz[6] = {-1,+1, -1,+1, -1,+1};
-  dfm2::CBV3D_AABB bb(minmax_xyz);
+  const double min_xyz[3] = {-1,-1,-1};
+  const double max_xyz[3] = {+1,+1,+1};
+  dfm2::CBV3D_AABB bb(min_xyz,max_xyz);
   std::random_device dev;
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(0.0, 1.0);
@@ -463,7 +464,7 @@ TEST(bvh,morton_code)
   std::vector<unsigned int> aSortedId;
   std::vector<unsigned int> aSortedMc;
   dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
-                            aXYZ,minmax_xyz);
+                            aXYZ,min_xyz,max_xyz);
   for(int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<int,int> range = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, ini);
     int isplit = dfm2::findSplit(aSortedMc.data(), range.first, range.second);
