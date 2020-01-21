@@ -15,7 +15,7 @@ namespace dfm2 = delfem2;
 // --------------------------------------------------------
 
 bool LaplacianArroundPoint
- (std::vector<CVector2>& aVec2,
+ (std::vector<dfm2::CVector2>& aVec2,
   int ipoin,
   const std::vector<dfm2::CDynPntSur>& aPo,
   const std::vector<dfm2::CDynTri>& aTri)
@@ -30,7 +30,7 @@ bool LaplacianArroundPoint
   unsigned int inoel_c0 = inoel_c_ini;
   unsigned int inoel_b0 = (inoel_c0+1)%3;
   bool is_bound_flg = false;
-  CVector2 vec_delta = aVec2[ipoin];
+  dfm2::CVector2 vec_delta = aVec2[ipoin];
   unsigned int ntri_around = 1;
   for(;;){
     assert( itri0 <  aTri.size() );
@@ -70,7 +70,7 @@ bool FindEdgePoint_AcrossEdge
   int ipo0, int ipo1,
   const std::vector<dfm2::CDynPntSur>& po,
   const std::vector<dfm2::CDynTri>& tri,
-  const std::vector<CVector2>& aVec2)
+  const std::vector<dfm2::CVector2>& aVec2)
 {
   const unsigned int itri_ini = po[ipo0].e;
   const unsigned int inotri_ini = po[ipo0].d;

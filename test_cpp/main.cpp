@@ -303,19 +303,19 @@ TEST(vec2,second_moment_of_area)
     double r4 = (double)rand()/(RAND_MAX+1.0);
     double a = 10*r0;
     double b = a*(3*r1+1);
-    std::vector<CVector2> aVec2;
+    std::vector<dfm2::CVector2> aVec2;
     {
-      aVec2.push_back( CVector2(-a*0.5,-b*0.5) );
-      aVec2.push_back( CVector2(+a*0.5,-b*0.5) );
-      aVec2.push_back( CVector2(+a*0.5,+b*0.5) );
-      aVec2.push_back( CVector2(-a*0.5,+b*0.5) );
+      aVec2.push_back( dfm2::CVector2(-a*0.5,-b*0.5) );
+      aVec2.push_back( dfm2::CVector2(+a*0.5,-b*0.5) );
+      aVec2.push_back( dfm2::CVector2(+a*0.5,+b*0.5) );
+      aVec2.push_back( dfm2::CVector2(-a*0.5,+b*0.5) );
       double theta0 = r4*3.1415*2.0;
-      Rotate(aVec2,theta0);
-      Translate(aVec2, r2*10-5,r3*10-5);
+      dfm2::Rotate(aVec2,theta0);
+      dfm2::Translate(aVec2, r2*10-5,r3*10-5);
     }
-    CVector2 cg,pa1,pa2;
+    dfm2::CVector2 cg,pa1,pa2;
     double area,I1,I2;
-    SecondMomentOfArea_Polygon(cg,area, pa1,I1, pa2,I2,
+    dfm2::SecondMomentOfArea_Polygon(cg,area, pa1,I1, pa2,I2,
                                aVec2);
     EXPECT_NEAR(area, a*b, 1.0e-10);
     EXPECT_NEAR(pa1*pa2, 0.0, 1.0e-10 );

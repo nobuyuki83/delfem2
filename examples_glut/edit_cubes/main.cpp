@@ -34,6 +34,8 @@
   #define M_PI 3.141592653589793
 #endif
 
+namespace dfm2 = delfem2;
+
 // -----------------------------------------
 
 CNav3D_GLUT nav;
@@ -112,8 +114,8 @@ void myGlutMotion( int x, int y ){
   if( nav.imodifier != 0){ return; }
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
-  CVector2 sp1(nav.mouse_x, nav.mouse_y);
+  dfm2::CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
+  dfm2::CVector2 sp1(nav.mouse_x, nav.mouse_y);
 }
 
 void myGlutMouse(int button, int state, int x, int y)
@@ -122,7 +124,7 @@ void myGlutMouse(int button, int state, int x, int y)
   if( nav.imodifier != 0 ) return;
   float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
   float mPj[16]; glGetFloatv(GL_PROJECTION_MATRIX, mPj);
-  CVector2 sp0(nav.mouse_x, nav.mouse_y);
+  dfm2::CVector2 sp0(nav.mouse_x, nav.mouse_y);
   const CVector3 src_pick = screenUnProjection(CVector3(sp0.x(),sp0.y(), 0.0), mMV,mPj);
   const CVector3 dir_pick = screenUnProjectionDirection(CVector3(0.0,  0, -1.0 ), mMV,mPj);
   if( state == GLUT_DOWN ){

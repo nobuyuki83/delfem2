@@ -21,6 +21,8 @@
   #define M_PI 3.141592653589793
 #endif
 
+namespace dfm2 = delfem2;
+
 // ----------------------------------------------
 
 int main(int argc,char* argv[])
@@ -46,9 +48,9 @@ int main(int argc,char* argv[])
       const int nXY = aXY.size()/2;
       aW.resize(nXY*nv);
       for(int ip=0;ip<nXY;++ip){
-        MeanValueCoordinate2D(aW.data()+nv*ip,
-                              aXY[ip*2+0], aXY[ip*2+1],
-                              aXY_bound.data(), aXY_bound.size()/2);
+        dfm2::MeanValueCoordinate2D(aW.data()+nv*ip,
+                                    aXY[ip*2+0], aXY[ip*2+1],
+                                    aXY_bound.data(), aXY_bound.size()/2);
         double sum = 0.0;
         for(int ipb=0;ipb<aXY_bound.size()/2;++ipb){
           sum += aW[nv*ip+ipb];

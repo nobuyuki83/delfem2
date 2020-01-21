@@ -27,7 +27,10 @@ namespace dfm2 = delfem2;
 // ------------------------------------
 
 
-bool CCad3D_Edge::isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const
+bool dfm2::CCad3D_Edge::isPick
+ (double& ratio,
+  const CVector2& sp0,
+  const float mMV[16], const float mPj[16]) const
 {
   const int np = (int)aP.size();
   for(int ie=0;ie<np-1;ie++){
@@ -50,7 +53,7 @@ void FaceCenterNormal(
   CVector3& cg, 
   CVector3& nf,
   const std::vector< std::pair<unsigned int,bool> >& aIE,
-  const std::vector<CCad3D_Edge>& aEdge)
+  const std::vector<dfm2::CCad3D_Edge>& aEdge)
 {
   const std::size_t nIE = aIE.size();
   cg.SetZero();
@@ -80,7 +83,7 @@ void FaceCenterNormal(
 
 // -----------------------------------------------
 
-void CCad3D_Face::Initialize
+void dfm2::CCad3D_Face::Initialize
 (const std::vector<CCad3D_Vertex>& aVertex,
  const std::vector<CCad3D_Edge>& aEdge,
  double elen)
@@ -195,7 +198,7 @@ void CCad3D_Face::Initialize
   MovePoints(aVertex,aEdge);
 }
 
-void CCad3D_Face::MovePoints
+void dfm2::CCad3D_Face::MovePoints
 (const std::vector<CCad3D_Vertex>& aVertex,
  const std::vector<CCad3D_Edge>& aEdge)
 {
@@ -310,11 +313,11 @@ void CCad3D_Face::MovePoints
 
 // ---------------------------------------------
 
-int AddPointEdge
+int dfm2::AddPointEdge
 (int ie_div, double ratio_edge,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+ std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  double elen)
 {
   if( ie_div < 0 || ie_div >= aEdge.size() ) return -1;
@@ -331,9 +334,9 @@ int AddPointEdge
       }
     }
     nv.SetNormalizedVector();
-    //////
+    // --------------
     CVector3 p = aEdge[ie_div].GetPosInEdge(ratio_edge);
-    CCad3D_Vertex v(p);
+    dfm2::CCad3D_Vertex v(p);
     {
       int ien = aEdge[ie_div].inorm;
       v.isConst[ien] = true;
@@ -368,11 +371,11 @@ int AddPointEdge
   return iv_new;
 }
 
-void ConectEdge
+void dfm2::ConectEdge
 (int iv0, int iv1, int iface_div, int inorm_new,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+ std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  double elen)
 {
   if( iface_div < 0 || iface_div >= (int)aFace.size() ) return;
@@ -419,7 +422,7 @@ void ConectEdge
     for(int iie=iie0;iie%nie!=iie1;++iie){
       aIE0.push_back( aIE[iie%nie] );
     }
-    CCad3D_Face face(aIE0);
+    dfm2::CCad3D_Face face(aIE0);
     face.Initialize(aVertex, aEdge, elen);
     aFace.push_back(face);
   }
@@ -431,10 +434,10 @@ void ConectEdge
   }
 }
 
-void MakeItSmooth
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace)
+void dfm2::MakeItSmooth
+(std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace)
 {
   for(auto & iv : aVertex){
     iv.norm.SetZero();
@@ -469,11 +472,11 @@ void MakeItSmooth
   }
 }
 
-void findEdgeGroup
+void dfm2::findEdgeGroup
 (std::vector< std::pair<int,bool> >& aIE,
  int iedge0,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge)
+ std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge)
 {
   aIE.clear();
   if( iedge0 < 0 || iedge0 >= aEdge.size() ) return;
@@ -524,9 +527,9 @@ void findEdgeGroup
 }
 
 void AddSphere_ZSym
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+(std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  double elen)
 {
   int icp0 = (int)aVertex.size();
@@ -538,14 +541,14 @@ void AddSphere_ZSym
   ////
   ////
   int ie0 = (int)aEdge.size();
-  CCad3D_Edge e0(icp0+0,icp0+1,true,2);
-  CCad3D_Edge e1(icp0+1,icp0+2,true,2);
-  CCad3D_Edge e2(icp0+2,icp0+3,true,2);
-  CCad3D_Edge e3(icp0+3,icp0+0,true,2);
-  CCad3D_Edge e4(icp0+4,icp0+0,false,1);
-  CCad3D_Edge e5(icp0+4,icp0+1,false,0);
-  CCad3D_Edge e6(icp0+2,icp0+4,false,1);
-  CCad3D_Edge e7(icp0+3,icp0+4,false,0);
+  dfm2::CCad3D_Edge e0(icp0+0,icp0+1,true,2);
+  dfm2::CCad3D_Edge e1(icp0+1,icp0+2,true,2);
+  dfm2::CCad3D_Edge e2(icp0+2,icp0+3,true,2);
+  dfm2::CCad3D_Edge e3(icp0+3,icp0+0,true,2);
+  dfm2::CCad3D_Edge e4(icp0+4,icp0+0,false,1);
+  dfm2::CCad3D_Edge e5(icp0+4,icp0+1,false,0);
+  dfm2::CCad3D_Edge e6(icp0+2,icp0+4,false,1);
+  dfm2::CCad3D_Edge e7(icp0+3,icp0+4,false,0);
   aEdge.push_back(e0);
   aEdge.push_back(e1);
   aEdge.push_back(e2);
@@ -606,13 +609,13 @@ void AddSphere_ZSym
   for(int ifc=ifc0;ifc<ifc0+4;ifc++){
     aFace[ifc].Initialize(aVertex,aEdge, elen); // ie0+0
   }
-  MakeItSmooth(aVertex,aEdge,aFace);
+  dfm2::MakeItSmooth(aVertex,aEdge,aFace);
 }
 
 void AddTorus_XSym
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+(std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  double elen)
 {
   int icp0 = (int)aVertex.size();
@@ -709,10 +712,10 @@ void AddTorus_XSym
 }
 
 
-void AddSphere_XSym
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+void dfm2::AddSphere_XSym
+(std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  double elen)
 {
   int icp0 = (int)aVertex.size();
@@ -723,14 +726,14 @@ void AddSphere_XSym
   aVertex.emplace_back(CVector3(1, 0, 0) ); // icp0+4
   //------------------
   int ie0 = (int)aEdge.size();
-  CCad3D_Edge e0(icp0+0,icp0+1,true,0);
-  CCad3D_Edge e1(icp0+1,icp0+2,true,0);
-  CCad3D_Edge e2(icp0+2,icp0+3,true,0);
-  CCad3D_Edge e3(icp0+3,icp0+0,true,0);
-  CCad3D_Edge e4(icp0+4,icp0+0,false,2);
-  CCad3D_Edge e5(icp0+4,icp0+1,false,1);
-  CCad3D_Edge e6(icp0+2,icp0+4,false,2);
-  CCad3D_Edge e7(icp0+3,icp0+4,false,1);
+  dfm2::CCad3D_Edge e0(icp0+0,icp0+1,true,0);
+  dfm2::CCad3D_Edge e1(icp0+1,icp0+2,true,0);
+  dfm2::CCad3D_Edge e2(icp0+2,icp0+3,true,0);
+  dfm2::CCad3D_Edge e3(icp0+3,icp0+0,true,0);
+  dfm2::CCad3D_Edge e4(icp0+4,icp0+0,false,2);
+  dfm2::CCad3D_Edge e5(icp0+4,icp0+1,false,1);
+  dfm2::CCad3D_Edge e6(icp0+2,icp0+4,false,2);
+  dfm2::CCad3D_Edge e7(icp0+3,icp0+4,false,1);
   aEdge.push_back(e0);
   aEdge.push_back(e1);
   aEdge.push_back(e2);
@@ -791,15 +794,15 @@ void AddSphere_XSym
   for(int ifc=ifc0;ifc<ifc0+4;ifc++){
     aFace[ifc].Initialize(aVertex,aEdge, elen); // ie0+0
   }
-  MakeItSmooth(aVertex,aEdge,aFace);
+  dfm2::MakeItSmooth(aVertex,aEdge,aFace);
 }
 
 
 
 void AddCube
-(std::vector<CCad3D_Vertex>& aVertex,
-std::vector<CCad3D_Edge>& aEdge,
-std::vector<CCad3D_Face>& aFace,
+(std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
 double elen)
 {
   int iv0 = (int)aVertex.size();
@@ -900,15 +903,14 @@ double elen)
   for (int ifc = ifc0; ifc<ifc0+6; ifc++){
     aFace[ifc].Initialize(aVertex, aEdge, elen); // ie0+0
   }
-  
-  MakeItSmooth(aVertex, aEdge, aFace);  
+  dfm2::MakeItSmooth(aVertex, aEdge, aFace);
 }
 
-bool FindFittingPoint
-(CVector2& p2d_near,
- CVector2& p2d_norm,
- const CVector2& p2d_org,
- const std::vector<CVector2>& aP2D,
+bool dfm2::FindFittingPoint
+(dfm2::CVector2& p2d_near,
+ dfm2::CVector2& p2d_norm,
+ const dfm2::CVector2& p2d_org,
+ const std::vector<dfm2::CVector2>& aP2D,
  bool isConstX, bool isConstY,
  double half_view_height)
 {
@@ -916,8 +918,8 @@ bool FindFittingPoint
   if( isConstX &&  isConstY ){ return false; }
   else if( isConstX && !isConstY ){
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
-      CVector2 q0 = aP2D[iq+0];
-      CVector2 q1 = aP2D[iq+1];
+      dfm2::CVector2 q0 = aP2D[iq+0];
+      dfm2::CVector2 q1 = aP2D[iq+1];
       if( (q0.x()-p2d_org.x())*(q1.x()-p2d_org.x()) < 0 ){
         p2d_near.p[0] = p2d_org.x();
         p2d_near.p[1] = ((q0+q1)*0.5).y();
@@ -931,8 +933,8 @@ bool FindFittingPoint
   else if( !isConstX && isConstY ){
     assert( !aP2D.empty() );
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
-      CVector2 q0 = aP2D[iq+0];
-      CVector2 q1 = aP2D[iq+1];
+      dfm2::CVector2 q0 = aP2D[iq+0];
+      dfm2::CVector2 q1 = aP2D[iq+1];
       if( (q0.y()-p2d_org.y())*(q1.y()-p2d_org.y()) < 0 ){
         p2d_near.p[0] = ((q0+q1)*0.5).x();
         p2d_near.p[1] = p2d_org.y();
@@ -962,9 +964,9 @@ bool FindFittingPoint
   return true;
 }
 
-std::vector<int> getPointsInEdges
+std::vector<int> dfm2::getPointsInEdges
 (const std::vector< std::pair<int,bool > >& aIE_picked,
- const std::vector<CCad3D_Edge>& aEdge)
+ const std::vector<dfm2::CCad3D_Edge>& aEdge)
 {
   std::vector<int> aIP;
   for(size_t iie=0;iie<aIE_picked.size()+1;++iie){
@@ -983,22 +985,23 @@ std::vector<int> getPointsInEdges
   return aIP;
 }
 
-bool MovePointsAlongSketch
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- const std::vector<CVector2>& aStroke,
+bool dfm2::MovePointsAlongSketch
+(std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
+ // ------------
+ const std::vector<dfm2::CVector2>& aStroke,
  const std::vector< std::pair<int,bool > >& aIE_picked,
  const CVector3& plane_org, int inorm,
  float mMV[16], float mPj[16], double view_height)
 {
   // resampling
-  std::vector<CVector2> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
+  std::vector<dfm2::CVector2> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
   //
   CVector3 plane_nrm(0,0,0); plane_nrm[inorm] = 1;
   CVector3 plane_ex(0,0,0); plane_ex[(inorm+1)%3] = 1;
   CVector3 plane_ey(0,0,0); plane_ey[(inorm+2)%3] = 1;
-  std::vector<CVector2> aP2D;
+  std::vector<dfm2::CVector2> aP2D;
   for(const auto& sp0 : aStroke1){
     CVector3 src = screenUnProjection(CVector3(sp0.x(),sp0.y(),0), mMV, mPj);
     CVector3 dir = screenUnProjection(CVector3(0,0,1), mMV, mPj);
@@ -1006,15 +1009,15 @@ bool MovePointsAlongSketch
     aP2D.emplace_back((p-plane_org)*plane_ex,(p-plane_org)*plane_ey);
   }
   bool is_moved = false;
-  std::vector<int> aIP = getPointsInEdges(aIE_picked,aEdge);
+  std::vector<int> aIP = dfm2::getPointsInEdges(aIE_picked,aEdge);
   for(int iv0 : aIP){
-    CCad3D_Vertex& v = aVertex[iv0];
-    CVector2 p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
+    dfm2::CCad3D_Vertex& v = aVertex[iv0];
+    dfm2::CVector2 p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
     const bool isConstX = v.isConst[(inorm+1)%3];
     const bool isConstY = v.isConst[(inorm+2)%3];
-    CVector2 p2d_near, p2d_norm;
-    bool res = FindFittingPoint(p2d_near,p2d_norm,
-                                p2d_org, aP2D, isConstX,isConstY,view_height*0.2);
+    dfm2::CVector2 p2d_near, p2d_norm;
+    bool res = dfm2::FindFittingPoint(p2d_near,p2d_norm,
+                                      p2d_org, aP2D, isConstX,isConstY,view_height*0.2);
     if( res ){
       CVector3 p3d_near = plane_org + p2d_near.x()*plane_ex + p2d_near.y()*plane_ey;
       CVector3 n3d_near = p2d_norm.x()*plane_ex + p2d_norm.y()*plane_ey;
@@ -1036,12 +1039,12 @@ bool MovePointsAlongSketch
 }
 
 
-void DivideFace
+void dfm2::DivideFace
 (int ifc,
  const CVector3& org, int inorm,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+ std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  double elen)
 {
   if( inorm == -1 ) return;
@@ -1059,7 +1062,7 @@ void DivideFace
     if(      fabs(ratio-1.0)<1.0e-5 ){ iv0 = aEdge[ie0].iv1; }
     else if( fabs(ratio-0.0)<1.0e-5 ){ iv0 = aEdge[ie0].iv0; }
     else if( ratio < 0.01 || ratio > 0.99 ) continue;
-    else{ iv0 = AddPointEdge(ie0, ratio, aVertex, aEdge, aFace, elen); }
+    else{ iv0 = dfm2::AddPointEdge(ie0, ratio, aVertex, aEdge, aFace, elen); }
     setIV_new.insert(iv0);
   }
   if( setIV_new.size() != 2 ) return;
@@ -1071,19 +1074,19 @@ void DivideFace
     CVector3 n0 = aVertex[iv0].norm;
     CVector3 n1 = aVertex[iv1].norm;
     CVector3 v = Cross(n0+n1,n01);
-    if( v*(p1-p0) > 0 ){ ConectEdge(iv0,iv1, ifc, inorm, aVertex, aEdge, aFace, elen); }
-    else{                ConectEdge(iv1,iv0, ifc, inorm, aVertex, aEdge, aFace, elen); }
+    if( v*(p1-p0) > 0 ){ dfm2::ConectEdge(iv0,iv1, ifc, inorm, aVertex, aEdge, aFace, elen); }
+    else{                dfm2::ConectEdge(iv1,iv0, ifc, inorm, aVertex, aEdge, aFace, elen); }
   }
 }
 
-void BuildTriMesh
+void dfm2::BuildTriMesh
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  std::vector<int>& aTriSurRel,
  std::vector<double>& aNorm,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
+ std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ std::vector<dfm2::CCad3D_Edge>& aEdge,
+ std::vector<dfm2::CCad3D_Face>& aFace,
  int isym)
 {
   std::vector<int> aIsSymVtx(aVertex.size(),0);
@@ -1098,7 +1101,7 @@ void BuildTriMesh
   }
   aXYZ.resize(0);
   for(std::size_t iv=0;iv<aVertex.size();++iv){
-    CCad3D_Vertex& v = aVertex[iv];
+    dfm2::CCad3D_Vertex& v = aVertex[iv];
     int iq0 = (int)aXYZ.size()/3;
     aXYZ.push_back(+v.pos.x());
     aXYZ.push_back(+v.pos.y());
@@ -1160,7 +1163,7 @@ void BuildTriMesh
   for(auto & fc : aFace){
     std::size_t np = fc.aPInfo.size();
     for(std::size_t ip=0;ip<np;++ip){
-      CCad3D_Face::CFacePointInfo& pinfo = fc.aPInfo[ip];
+      dfm2::CCad3D_Face::CFacePointInfo& pinfo = fc.aPInfo[ip];
       if( pinfo.itype == 0 ){
         int iv0 = pinfo.iv;
         pinfo.iq_right = aVertex[iv0].iq_right;
@@ -1226,13 +1229,14 @@ void BuildTriMesh
 
 }
 
-void UpdateTriMesh
-(std::vector<double>& aXYZ, std::vector<double>& aNorm,
- /////
+void dfm2::UpdateTriMesh
+(std::vector<double>& aXYZ,
+ std::vector<double>& aNorm,
+ // ---------------------
  const std::vector<unsigned int>& aTri,
- const std::vector<CCad3D_Vertex>& aVertex,
- const std::vector<CCad3D_Edge>& aEdge,
- const std::vector<CCad3D_Face>& aFace,
+ const std::vector<dfm2::CCad3D_Vertex>& aVertex,
+ const std::vector<dfm2::CCad3D_Edge>& aEdge,
+ const std::vector<dfm2::CCad3D_Face>& aFace,
  int isym)
 {
   for(const auto & fc : aFace){
@@ -1271,7 +1275,7 @@ void UpdateTriMesh
 }
 
 
-void CCad3D::Pick
+void dfm2::CCad3D::Pick
 (const CVector3& src_pick, const CVector3& dir_pick,
  const CVector2& sp0, float mMV[16], float mPj[16],
  double view_height)
@@ -1420,17 +1424,19 @@ void CCad3D::Pick
   }
 }
 
-void CCad3D::MouseUp(float mMV[16], float mPj[16], double view_height)
+void dfm2::CCad3D::MouseUp
+ (float mMV[16],
+  float mPj[16], double view_height)
 {
   
   if( imode_edit == EDIT_SKETCH ){
     if( aStroke.size() > 3 && iedge_picked != -1 ){
-      bool res = MovePointsAlongSketch(aVertex,aEdge,aFace,
-                                  aStroke,aIE_picked,
-                                  plane_org,aEdge[iedge_picked].inorm,
-                                  mMV,mPj,view_height);
+      bool res = dfm2::MovePointsAlongSketch(aVertex,aEdge,aFace,
+                                             aStroke,aIE_picked,
+                                             plane_org,aEdge[iedge_picked].inorm,
+                                             mMV,mPj,view_height);
       if( res ){
-        UpdateTriMesh(aXYZ,aNorm, aTri,aVertex,aEdge,aFace,isym);
+        dfm2::UpdateTriMesh(aXYZ,aNorm, aTri,aVertex,aEdge,aFace,isym);
       }
       else{
         plane_inorm = -1;
@@ -1442,7 +1448,7 @@ void CCad3D::MouseUp(float mMV[16], float mPj[16], double view_height)
   }
 }
 
-bool CCad3D::ReflectChangeForCurveAndSurface
+bool dfm2::CCad3D::ReflectChangeForCurveAndSurface
 (std::vector<int>& aIsMoved_Edge,
  const std::vector<int>& aIsMoved_Vtx)
 {
@@ -1468,12 +1474,12 @@ bool CCad3D::ReflectChangeForCurveAndSurface
     is_edit = true;
   }
   if( is_edit ){
-    UpdateTriMesh(aXYZ,aNorm, aTri,aVertex,aEdge,aFace,isym);
+    dfm2::UpdateTriMesh(aXYZ,aNorm, aTri,aVertex,aEdge,aFace,isym);
   }
   return is_edit;
 }
 
-bool CCad3D::MouseMotion
+bool dfm2::CCad3D::MouseMotion
 (const CVector3& src_pick, const CVector3& dir_pick,
  const CVector2& sp0, const CVector2& sp1,
  float mMV[16], float mPj[16])
@@ -1546,7 +1552,7 @@ bool CCad3D::MouseMotion
   return false;
 }
 
-void CCad3D::MouseDown
+void dfm2::CCad3D::MouseDown
 (const CVector3& src_pick, const CVector3& dir_pick,
  const CVector2& sp0, float mMV[16], float mPj[16],
  double view_height)
@@ -1569,7 +1575,7 @@ void CCad3D::MouseDown
     if( plane_inorm != -1 ){
       for(std::size_t ifc=0;ifc<aFace.size();++ifc){
         if( aFace[ifc].isPick(src_pick, dir_pick) ){
-          DivideFace(ifc,plane_org,plane_inorm,
+          dfm2::DivideFace(ifc,plane_org,plane_inorm,
                      aVertex,aEdge,aFace, elen);
           BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
           return;
@@ -1583,7 +1589,7 @@ void CCad3D::MouseDown
   }
 }
 
-bool CCad3D::isSym(int iv) const{
+bool dfm2::CCad3D::isSym(int iv) const{
   for(const auto & ie : aEdge){
     if( !ie.is_sim ) continue;
     if( ie.iv0 == iv ) return true;
@@ -1592,7 +1598,7 @@ bool CCad3D::isSym(int iv) const{
   return false;
 }
 
-void CCad3D::WriteFile(std::ofstream& fout) const
+void dfm2::CCad3D::WriteFile(std::ofstream& fout) const
 {
   fout << aVertex.size() << std::endl;
   for(std::size_t iv=0;iv<aVertex.size();++iv){
@@ -1613,7 +1619,7 @@ void CCad3D::WriteFile(std::ofstream& fout) const
   }
 }
 
-void CCad3D::ReadFile(std::ifstream& fin)
+void dfm2::CCad3D::ReadFile(std::ifstream& fin)
 {
   int nv = 0;
   fin >> nv;

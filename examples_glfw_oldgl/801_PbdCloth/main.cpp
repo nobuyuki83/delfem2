@@ -19,7 +19,7 @@ namespace dfm2 = delfem2;
 
 std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
-std::vector<CVector2> aVec2;
+std::vector<dfm2::CVector2> aVec2;
 std::vector<unsigned int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
@@ -34,16 +34,16 @@ bool is_animation = false;
 
 void StepTime()
 {
-  PBD_Pre3D(aXYZt,
-            dt, gravity, aXYZ, aUVW, aBCFlag);
-  PBD_TriStrain(aXYZt.data(),
+  dfm2::PBD_Pre3D(aXYZt,
+                  dt, gravity, aXYZ, aUVW, aBCFlag);
+  dfm2::PBD_TriStrain(aXYZt.data(),
                 aXYZt.size()/3, aETri, aVec2);
-  PBD_Bend(aXYZt.data(),
+  dfm2::PBD_Bend(aXYZt.data(),
            aXYZt.size()/3, aETri, aVec2);
-  PBD_Seam(aXYZt.data(),
-           aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  PBD_Post(aXYZ, aUVW,
-           dt, aXYZt, aBCFlag);
+  dfm2::PBD_Seam(aXYZt.data(),
+                 aXYZt.size()/3, aLine.data(), aLine.size()/2);
+  dfm2::PBD_Post(aXYZ, aUVW,
+                 dt, aXYZt, aBCFlag);
 
 }
 

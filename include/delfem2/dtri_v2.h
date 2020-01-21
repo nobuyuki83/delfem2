@@ -292,6 +292,6 @@ public:
   std::vector<CVector2> aVec2;
 };
   
-}
+} // namespace delfem2
 
 #endif // #endif DTRI_V2_H

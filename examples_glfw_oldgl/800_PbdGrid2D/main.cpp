@@ -37,11 +37,11 @@ void stepTime
   }
   { // deform
     for (int itr=0; itr<nitr; itr++){
-      PBD_ConstProj_Rigid2D(aTmp.data(),
-                            0.5,
-                            clstr_ind.data(), clstr_ind.size(),
-                            clstr.data(), clstr.size(),
-                            aXY0.data(), aXY0.size());
+      dfm2::PBD_ConstProj_Rigid2D(aTmp.data(),
+                                  0.5,
+                                  clstr_ind.data(), clstr_ind.size(),
+                                  clstr.data(), clstr.size(),
+                                  aXY0.data(), aXY0.size());
     }
   }
   for(size_t ip=0;ip<aXY0.size()/2;++ip){

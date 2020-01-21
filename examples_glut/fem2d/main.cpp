@@ -184,8 +184,8 @@ void MakeMesh(){
     aaXY[0].push_back(+len); aaXY[0].push_back(-len);
   }
   aaXY.push_back(aXY0);
-  //////////////////////////////
-  std::vector<CVector2> aVec2;
+  // ---------------------------------
+  std::vector<dfm2::CVector2> aVec2;
   const double elen = 0.05;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,

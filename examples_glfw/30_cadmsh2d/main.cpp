@@ -30,6 +30,10 @@
 #include "delfem2/opengl/glfw_cam.h"
 #include "delfem2/opengl/glfw_viewer.hpp"
 
+namespace dfm2 = delfem2;
+
+// -------------------------------------
+
 class CCadDtri_Viewer : public delfem2::opengl::CViewer_GLFW {
 public:
   CCadDtri_Viewer(){
@@ -56,9 +60,9 @@ public:
         const int nv = aXYVtx.size()/2;
         aW.resize(nxy*nv);
         for(int ixy=0;ixy<nxy;++ixy){
-          MeanValueCoordinate2D(aW.data()+nv*ixy,
-                                dmsh.aVec2[ixy].x(), dmsh.aVec2[ixy].y(),
-                                aXYVtx.data(), aXYVtx.size()/2);
+          dfm2::MeanValueCoordinate2D(aW.data()+nv*ixy,
+                                      dmsh.aVec2[ixy].x(), dmsh.aVec2[ixy].y(),
+                                      aXYVtx.data(), aXYVtx.size()/2);
           double sum = 0.0;
           for(int iv=0;iv<nv;++iv){
             sum += aW[nv*ixy+iv];

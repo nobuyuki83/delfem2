@@ -103,9 +103,9 @@ py::array_t<double> PyMVC
   py::array_t<double> aW({np,npb});
   auto buff_w = aW.request();
   for(int ip=0;ip<np;++ip){
-    MeanValueCoordinate2D((double*)buff_w.ptr+ip*npb,
-                          XY.at(ip,0), XY.at(ip,1),
-                          XY_bound.data(), npb);
+    dfm2::MeanValueCoordinate2D((double*)buff_w.ptr+ip*npb,
+                                XY.at(ip,0), XY.at(ip,1),
+                                XY_bound.data(), npb);
   }
   return aW;
 }

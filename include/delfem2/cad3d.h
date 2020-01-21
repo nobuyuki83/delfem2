@@ -8,6 +8,10 @@
 
 #include "delfem2/opengl/glold_color.h"
 
+// -------------------------------------
+
+namespace delfem2 {
+
 class CCad3D_Vertex{
 public:
   CCad3D_Vertex(){
@@ -300,7 +304,7 @@ void BuildTriMesh
 void UpdateTriMesh
 (std::vector<double>& aXYZ,
  std::vector<double>& aNorm,
- const std::vector<int>& aTri,
+ const std::vector<unsigned int>& aTri,
  const std::vector<CCad3D_Vertex>& aVertex,
  const std::vector<CCad3D_Edge>& aEdge,
  const std::vector<CCad3D_Face>& aFace,
@@ -437,6 +441,7 @@ public:
   delfem2::CColor color_face_selected;
 };
 
+} // namespace delfem2;
 
 
 #endif /* cad3d_h */

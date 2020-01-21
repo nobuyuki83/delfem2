@@ -46,7 +46,7 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
         10.0*(rand()/(RAND_MAX+1.0)-0.5),
         10.0*(rand()/(RAND_MAX+1.0)-0.5) },
     };
-    double diff = Check_CdC_TriStrain(P, p, 1.0e-5);
+    double diff = dfm2::Check_CdC_TriStrain(P, p, 1.0e-5);
     EXPECT_LT(diff, 0.2);
   }
 }
@@ -106,7 +106,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
       // ---------------------
       std::vector<dfm2::CDynPntSur> aPo2D;
       std::vector<dfm2::CDynTri> aETri;
-      std::vector<CVector2> aVec2;
+      std::vector<dfm2::CVector2> aVec2;
       GenMesh(aPo2D, aETri, aVec2,
               aaXY, elen, elen);
       MeshTri2D_Export(aXY0,aTri,
