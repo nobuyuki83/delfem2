@@ -48,7 +48,8 @@ void cuda_CentsMaxRad_MeshTri3F(
     const unsigned int nTri);
 
 void cuda_MortonCode_Points3F(
-    unsigned int *aMorton,
+    unsigned int *aSortedId,
+    std::uint32_t *aSortedMc,
     const float *aXYZ,
     const unsigned int nXYZ);
 

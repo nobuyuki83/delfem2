@@ -81,6 +81,23 @@ public:
     z_max = minmaxXYZ[5];
     is_active = true;
   }
+  CBV3D_AABB(const double minXYZ[3], const double maxXYZ[3])
+  {
+    if( minXYZ[0] > maxXYZ[0] ){
+      x_min=0;  x_max=0;
+      y_min=0;  y_max=0;
+      z_min=0;  z_max=0;
+      is_active = false;
+      return;
+    }
+    x_min = minXYZ[0];
+    y_min = minXYZ[1];
+    z_min = minXYZ[2];
+    x_max = maxXYZ[0];
+    y_max = maxXYZ[1];
+    z_max = maxXYZ[2];
+    is_active = true;
+  }
   double DiagonalLength() const{
     double x0 = x_max - x_min;
     double y0 = y_max - y_min;

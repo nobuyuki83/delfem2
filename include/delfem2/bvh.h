@@ -36,10 +36,8 @@ template <typename T>
 std::uint32_t MortonCode(T x, T y, T z);
 
 template <typename T>
-void GetSortedMortenCode(std::vector<unsigned int>& aSortedId,
-                         std::vector<uint32_t>& aSortedMc,
-                         const std::vector<T>& aXYZ,
-                         const T minmax_xyz[6]);
+void GetSortedMortenCode(std::vector<unsigned int> &aSortedId, std::vector<unsigned int> &aSortedMc,
+                         const std::vector<T> &aXYZ, const T min_xyz[3], const T max_xyz[3]);
   
 void BVH_TreeTopology_Morton(std::vector<CNodeBVH2>& aNodeBVH,
                              const std::vector<unsigned int>& aSortedId,

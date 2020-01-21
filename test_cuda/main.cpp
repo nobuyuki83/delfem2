@@ -180,35 +180,37 @@ TEST(matvec,meshtri3d_centrad)
 
 TEST(bvh,morton_code) {
   std::vector<float> aXYZ; // 3d points
-  std::uniform_real_distribution<> udist(0.0, 1.0);
+  std::uniform_real_distribution<> udist0(0.0, 1.0);
+  std::uniform_int_distribution<> udist1(0, 10000);
   std::mt19937 rng(0);
-
-  const unsigned int N = 10000;
-  aXYZ.resize(N * 3);
-  for (int i = 0; i < N; ++i) {
-    aXYZ[i * 3 + 0] = udist(rng);
-    aXYZ[i * 3 + 1] = udist(rng);
-    aXYZ[i * 3 + 2] = udist(rng);
+  // -----------------------------------
+  for(int itr=0;itr<10;++itr) {
+    const unsigned int N = udist1(rng);
+    const float min_xyz[3] = {0.f, 0.f, 0.f};
+    const float max_xyz[3] = {1.f, 1.f, 1.f};
+    aXYZ.resize(N * 3);
+    for (int i = 0; i < N; ++i) {
+      aXYZ[i * 3 + 0] = udist0(rng);
+      aXYZ[i * 3 + 1] = udist0(rng);
+      aXYZ[i * 3 + 2] = udist0(rng);
+    }
+    // --------------------------------------
+    std::vector<unsigned int> aSortedId0;
+    std::vector<std::uint32_t> aSortedMc0;
+    dfm2::GetSortedMortenCode(aSortedId0,aSortedMc0,
+                              aXYZ, min_xyz, max_xyz);
+    // ---------------------------------------------
+    std::vector<unsigned int> aSortedId1(N);
+    std::vector<std::uint32_t> aSortedMc1(N);
+    dfm2::cuda::cuda_MortonCode_Points3F(aSortedId1.data(), aSortedMc1.data(),
+                                         aXYZ.data(), aXYZ.size() / 3);
+    // ------------------------------------------
+    for (unsigned int i = 0; i < N; ++i) {
+      EXPECT_EQ(aSortedMc0[i], aSortedMc1[i]);
+      EXPECT_EQ(aSortedId0[i], aSortedId1[i]);
+    }
   }
-  std::vector<uint32_t> aMC0(N);
-  for(int i=0;i<N;++i) {
-    aMC0[i] = dfm2::MortonCode(aXYZ[i*3+0],aXYZ[i*3+1],aXYZ[i*3+2]);
-  }
-
-  std::vector<uint32_t> aMC1(N);
-  dfm2::cuda::cuda_MortonCode_Points3F(aMC1.data(),aXYZ.data(),aXYZ.size()/3);
-
-  for(int i=0;i<N;++i){
-    EXPECT_EQ(aMC0[i],aMC1[i]);
-  }
-
-
-
 }
-
-
-
-
 
 
 

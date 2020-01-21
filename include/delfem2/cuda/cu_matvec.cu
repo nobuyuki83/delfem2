@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <cstdint>
 #include <thrust/device_vector.h>
 #include <thrust/copy.h>
 #include <thrust/sort.h>
@@ -78,6 +79,51 @@ unsigned int device_MortonCode(float x, float y, float z)
   iz = device_ExpandBits(iz);
   //  std::cout << std::bitset<30>(ix) << " " << std::bitset<30>(iy) << " " << std::bitset<30>(iz) << std::endl;
   return ix * 4 + iy * 2 + iz;
+}
+
+__device__
+int delta(unsigned int* sortedMortonCodes, int x, int y, int numObjects)
+{
+  if (x >= 0 && x <= numObjects - 1 && y >= 0 && y <= numObjects - 1)
+  {
+//         return __clz(sortedMortonCodes[x] ^ sortedMortonCodes[y]);
+#if HASH_64
+    return __clzll(sortedMortonCodes[x] ^ sortedMortonCodes[y]);
+#else
+    return __clz(sortedMortonCodes[x] ^ sortedMortonCodes[y]);
+#endif
+  }
+  return -1;
+}
+
+__device__
+int2 determineRange(unsigned int* sortedMortonCodes, int numObjects, int idx)
+{
+  int d = delta(sortedMortonCodes, idx, idx + 1, numObjects) - delta(sortedMortonCodes, idx, idx - 1, numObjects);
+  d = d > 0 ? 1 : -1;
+
+  //compute the upper bound for the length of the range
+  int dmin = delta(sortedMortonCodes, idx, idx - d, numObjects);
+  int lmax = 2;
+  while (delta(sortedMortonCodes, idx, idx + lmax * d, numObjects) > dmin){
+    lmax = lmax * 2;
+  }
+
+  //find the other end using binary search
+  int l = 0;
+  for (int t = lmax / 2; t >= 1; t /= 2)
+  {
+    if (delta(sortedMortonCodes, idx, idx + (l + t)*d, numObjects) > dmin)
+    l += t;
+  }
+  int j = idx + l*d;
+
+  int2 range;
+  range.x = min(idx, j);
+  range.y = max(idx, j);
+  if (idx == 38043 || idx == 38044 || idx == 38045 || idx == 38046 || idx == 38047 || idx == 38048)
+  printf("idx %d range :%d - %d j: %d morton: %d\n", idx, range.x, range.y, j, sortedMortonCodes[idx]);
+  return range;
 }
 
 // -------------------------------------------------------------------
@@ -377,13 +423,15 @@ void dfm2::cuda::cuda_CentsMaxRad_MeshTri3F(
 // --------------------------------------------------------------------------------
 
 __global__
-void kernel_MortonCode_Points3F_TPB64(
+void kernel_MortonCodeId_Points3F_TPB64(
     unsigned int *dMC,
+    unsigned int *dId,
     const float *dXYZ,
     const unsigned int nXYZ)
 {
   const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
   if( idx >= nXYZ ) return;
+  dId[idx] = idx;
   // ----------------------------
   const float x0 = dXYZ[idx*3+0];
   const float y0 = dXYZ[idx*3+1];
@@ -393,20 +441,25 @@ void kernel_MortonCode_Points3F_TPB64(
 }
 
 void dfm2::cuda::cuda_MortonCode_Points3F(
-    unsigned int *hMC,
+    unsigned int *hSortedId,
+    std::uint32_t *hSortedMc,
     const float *hXYZ,
     const unsigned int nXYZ)
 {
   const thrust::device_vector<float> dXYZ(hXYZ, hXYZ+nXYZ*3);
   thrust::device_vector<unsigned int> dMC(nXYZ);
+  thrust::device_vector<unsigned int> dId(nXYZ);
   {
     const unsigned int BLOCK = 64;
     dim3 grid( (nXYZ-1)/BLOCK+1 );
     dim3 block( BLOCK );
-    kernel_MortonCode_Points3F_TPB64 <<< grid, block >>> (
+    kernel_MortonCodeId_Points3F_TPB64 <<< grid, block >>> (
         thrust::raw_pointer_cast(dMC.data()),
+        thrust::raw_pointer_cast(dId.data()),
         thrust::raw_pointer_cast(dXYZ.data()),
         nXYZ);
   }
-  thrust::copy(dMC.begin(), dMC.end(), hMC);
+  thrust::sort_by_key(dMC.begin(),dMC.end(),dId.begin());
+  thrust::copy(dMC.begin(), dMC.end(), hSortedMc);
+  thrust::copy(dId.begin(), dId.end(), hSortedId);
 }
