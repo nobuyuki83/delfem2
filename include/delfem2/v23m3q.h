@@ -17,122 +17,122 @@
 
 namespace delfem2 {
 
-CVector3 operator* (const CVector3& v, const CMatrix3& m);
-CVector3 operator* (const CMatrix3& m, const CVector3& v);
+CVec3 operator* (const CVec3& v, const CMatrix3& m);
+CVec3 operator* (const CMatrix3& m, const CVec3& v);
   
-CVector3 MatVec(const CMatrix3& m, const CVector3& vec0);
-CVector3 MatVecTrans(const CMatrix3& m, const CVector3& vec0);
+CVec3 MatVec(const CMatrix3& m, const CVec3& vec0);
+CVec3 MatVecTrans(const CMatrix3& m, const CVec3& vec0);
 
 // ---------------------------------------------
 
-CVector2 screenXYProjection(const CVector3& v,
+CVec2 screenXYProjection(const CVec3& v,
                             const float* mMV,
                             const float* mPj);
 
-void SetProjection(CMatrix3& m, const CVector3& vec0);
-void SetDiag(CMatrix3& m, const CVector3& d);
-void SetRotMatrix_Cartesian(CMatrix3& m, const CVector3& v);
-void SetSpinTensor(CMatrix3& m, const CVector3& vec0);
+void SetProjection(CMatrix3& m, const CVec3& vec0);
+void SetDiag(CMatrix3& m, const CVec3& d);
+void SetRotMatrix_Cartesian(CMatrix3& m, const CVec3& v);
+void SetSpinTensor(CMatrix3& m, const CVec3& vec0);
 void SetOuterProduct(CMatrix3& m,
-                     const CVector3& vec0,
-                     const CVector3& vec1 );
-CVector3 GetSpinVector(const CMatrix3& m);
-CVector3 GetCartesianRotationVector(const CMatrix3& m);
+                     const CVec3& vec0,
+                     const CVec3& vec1 );
+CVec3 GetSpinVector(const CMatrix3& m);
+CVec3 GetCartesianRotationVector(const CMatrix3& m);
 
   
 // --------------------------------------------
 
-CMatrix3 Mat3(const CVector3& vec0,
-              const CVector3& vec1,
-              const CVector3& vec2);
-CMatrix3 Mat3(const CVector3& vec0);
-CMatrix3 Mat3(const CVector3& vec0,
-              const CVector3& vec1);
-CMatrix3 RotMatrix_Cartesian(const CVector3& v);
-CMatrix3 Mat3_RotCartesian(const CVector3& vec0);
-CMatrix3 Mat3_OuterProduct(const CVector3& vec0,
-                      const CVector3& vec1 );
-CMatrix3 Mat3_Spin(const CVector3& vec0);
-CMatrix3 Mat3_ParallelTransport(const CVector3& p0,
-                                const CVector3& p1,
-                                const CVector3& q0,
-                                const CVector3& q1);
-CMatrix3 Mat3_MinimumRotation(const CVector3& V,
-                              const CVector3& v);
-CMatrix3 Mat3_IrotTri(const CVector3& d0,
-                      const CVector3& d1,
-                      const CVector3& d2);
-CMatrix3 Mat3_IrotTriSolid(const CVector3& d0,
-                           const CVector3& d1,
-                           const CVector3& d2);
-CMatrix3 Mat3_IrotLineSeg(const CVector3& d0,
-                          const CVector3& d1);
-CMatrix3 Mat3_IrotPoint(const CVector3& d0);
-CMatrix3 Mirror(const CVector3& n);
+CMatrix3 Mat3(const CVec3& vec0,
+              const CVec3& vec1,
+              const CVec3& vec2);
+CMatrix3 Mat3(const CVec3& vec0);
+CMatrix3 Mat3(const CVec3& vec0,
+              const CVec3& vec1);
+CMatrix3 RotMatrix_Cartesian(const CVec3& v);
+CMatrix3 Mat3_RotCartesian(const CVec3& vec0);
+CMatrix3 Mat3_OuterProduct(const CVec3& vec0,
+                      const CVec3& vec1 );
+CMatrix3 Mat3_Spin(const CVec3& vec0);
+CMatrix3 Mat3_ParallelTransport(const CVec3& p0,
+                                const CVec3& p1,
+                                const CVec3& q0,
+                                const CVec3& q1);
+CMatrix3 Mat3_MinimumRotation(const CVec3& V,
+                              const CVec3& v);
+CMatrix3 Mat3_IrotTri(const CVec3& d0,
+                      const CVec3& d1,
+                      const CVec3& d2);
+CMatrix3 Mat3_IrotTriSolid(const CVec3& d0,
+                           const CVec3& d1,
+                           const CVec3& d2);
+CMatrix3 Mat3_IrotLineSeg(const CVec3& d0,
+                          const CVec3& d1);
+CMatrix3 Mat3_IrotPoint(const CVec3& d0);
+CMatrix3 Mirror(const CVec3& n);
 
 void Mat4_MatTransl(double m[16],
-                    const CMatrix3& mat, const CVector3& trans);
+                    const CMatrix3& mat, const CVec3& trans);
 void Mat4_ScaleMatTransl(double m[16],
-                         double scale, const CMatrix3& mat, const CVector3& trans);
+                         double scale, const CMatrix3& mat, const CVec3& trans);
 
-int PickHandlerRotation_PosQuat(const CVector3& src, const CVector3& dir,
-                                const CVector3& pos, const double quat[4], double rad,
+int PickHandlerRotation_PosQuat(const CVec3& src, const CVec3& dir,
+                                const CVec3& pos, const double quat[4], double rad,
                                 double tol);
-int PickHandlerRotation_Mat4(const CVector3& src, const CVector3& dir,
+int PickHandlerRotation_Mat4(const CVec3& src, const CVec3& dir,
                              const double mat[16], double rad,
                              double tol);
 bool DragHandlerRot_PosQuat(double quat[4], int ielem,
-                            const CVector2& sp0, const CVector2& sp1,
-                            const CVector3& pos,
+                            const CVec2& sp0, const CVec2& sp1,
+                            const CVec3& pos,
                             const float mMV[16], const float mPj[16]);
 bool DragHandlerRot_Mat4(double quat[4], int ielem,
-                         const CVector2& sp0, const CVector2& sp1, double mat[16],
+                         const CVec2& sp0, const CVec2& sp1, double mat[16],
                          const float mMV[16], const float mPj[16]);
-CVector3 drag_AxisHandler(const CVector2& sp0,
-                          const CVector2& sp1,
-                          const CVector3& p,
-                          const CVector3& axis,
+CVec3 drag_AxisHandler(const CVec2& sp0,
+                          const CVec2& sp1,
+                          const CVec3& p,
+                          const CVec3& axis,
                           double len,
                           const float* mMV,
                           const float* mPj);
-bool isPickPoint(const CVector2& sp,
-                 const CVector3& p,
+bool isPickPoint(const CVec2& sp,
+                 const CVec3& p,
                  const float* mMV,
                  const float* mPj,
                  double pick_tol);
-bool isPick_AxisHandler(const CVector2& sp,
-                        const CVector3& p,
-                        const CVector3& axis,
+bool isPick_AxisHandler(const CVec2& sp,
+                        const CVec3& p,
+                        const CVec3& axis,
                         double len,
                         const float* mMV,
                         const float* mPj,
                         double pick_tol);
-bool isPickQuad(const CVector3& p0,
-                const CVector3& p1,
-                const CVector3& p2,
-                const CVector3& p3,
-                const CVector2& sp,
-                const CVector3& pick_dir,
+bool isPickQuad(const CVec3& p0,
+                const CVec3& p1,
+                const CVec3& p2,
+                const CVec3& p3,
+                const CVec2& sp,
+                const CVec3& pick_dir,
                 const float mMV[16],
                 const float mPj[16],
                 double eps);
 
-bool isPickCircle(const CVector3& axis,
-                  const CVector3& org,
+bool isPickCircle(const CVec3& axis,
+                  const CVec3& org,
                   double rad,
-                  const CVector3& src,
-                  const CVector3& dir,
+                  const CVec3& src,
+                  const CVec3& dir,
                   double pick_tol);
-double DragCircle(const CVector2& sp0,
-                  const CVector2& sp1,
-                  const CVector3& p,
-                  const CVector3& axis,
+double DragCircle(const CVec2& sp0,
+                  const CVec2& sp1,
+                  const CVec3& p,
+                  const CVec3& axis,
                   const float* mMV,
                   const float* mPj);
   
-bool isPickCircle(const CVector2& sp,
-                  const CVector3& p,
-                  const CVector3& axis,
+bool isPickCircle(const CVec2& sp,
+                  const CVec3& p,
+                  const CVec3& axis,
                   double r,
                   const float* mMV,
                   const float* mPj,

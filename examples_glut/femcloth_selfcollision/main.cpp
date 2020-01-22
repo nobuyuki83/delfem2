@@ -448,7 +448,7 @@ int main(int argc,char* argv[])
       const int ntri = (int)aTri.size()/3;
       std::vector<double> aElemCenter(ntri*3);
       for(int itri=0;itri<ntri;++itri){
-        dfm2::CVector3 p = dfm2::cg_Tri(itri, aTri, aXYZ);
+        dfm2::CVec3 p = dfm2::cg_Tri(itri, aTri, aXYZ);
         aElemCenter[itri*3+0] = p.x();
         aElemCenter[itri*3+1] = p.y();
         aElemCenter[itri*3+2] = p.z();

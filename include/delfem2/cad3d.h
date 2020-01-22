@@ -15,12 +15,12 @@ namespace delfem2 {
 class CCad3D_Vertex{
 public:
   CCad3D_Vertex(){
-    pos = CVector3(0,0,0);
+    pos = CVec3(0,0,0);
     isConst[0] = false;
     isConst[1] = false;
     isConst[2] = false;
   }
-  CCad3D_Vertex(const CVector3& p){
+  CCad3D_Vertex(const CVec3& p){
     pos = p;
     isConst[0] = false;
     isConst[1] = false;
@@ -36,8 +36,8 @@ public:
     fin >> norm;
   }
 public:
-  CVector3 pos;
-  CVector3 norm;
+  CVec3 pos;
+  CVec3 norm;
   bool isConst[3];
   int iq_right; // id of mesh point right
   int iq_left;  // id of mesh point left
@@ -62,24 +62,24 @@ public:
     r0 = 0.35;
     r1 = 0.35;
   }
-  CVector3 getNorm() const {
+  CVec3 getNorm() const {
     if( inorm >=0 && inorm < 3){
-      CVector3 norm(0,0,0);
+      CVec3 norm(0,0,0);
       norm[inorm] = 1.0;
       return norm;
     }
-    return CVector3(0,1,0);
+    return CVec3(0,1,0);
   }
   void MovePoints(const std::vector<CCad3D_Vertex>& aVertex){
     if( aP.size()<2 ) return;
     p0 = aVertex[iv0].pos;
     p1 = aVertex[iv1].pos;
     const double len01 = (p1-p0).Length();
-    CVector3 n0 = aVertex[iv0].norm;
-    CVector3 n1 = aVertex[iv1].norm;
-    CVector3 en = this->getNorm();
-    CVector3 v0 = Cross(+n0,en); //if( v0*(p1-p0)<0 ){ v0*=-1; }
-    CVector3 v1 = Cross(-n1,en); //if( v1*(p0-p1)<0 ){ v1*=-1; }
+    CVec3 n0 = aVertex[iv0].norm;
+    CVec3 n1 = aVertex[iv1].norm;
+    CVec3 en = this->getNorm();
+    CVec3 v0 = Cross(+n0,en); //if( v0*(p1-p0)<0 ){ v0*=-1; }
+    CVec3 v1 = Cross(-n1,en); //if( v1*(p0-p1)<0 ){ v1*=-1; }
     q0 = p0 + v0*len01*r0;
     q1 = p1 + v1*len01*r1;
     const int ndiv = (int)aP.size()-1;
@@ -96,17 +96,17 @@ public:
     aP.resize((ndiv+1));
     MovePoints(aVertex);
   }
-  bool isPick(double& ratio, const CVector2& sp0, const float mMV[16], const float mPj[16]) const;
-  bool GetParameterIntersection(double& t, const CVector3& org, const CVector3& nrm) const {
+  bool isPick(double& ratio, const CVec2& sp0, const float mMV[16], const float mPj[16]) const;
+  bool GetParameterIntersection(double& t, const CVec3& org, const CVec3& nrm) const {
     return delfem2::getParameterCubicBezier_IntersectionWithPlane(t, org,nrm, p0,q0,q1,p1);
   }
-  CVector3 GetPosInEdge(double t) const {
+  CVec3 GetPosInEdge(double t) const {
     return delfem2::getPointCubicBezierCurve(t, p0, q0, q1, p1);
   }
-  CVector3 GetTangentInEdge(double t) const {
+  CVec3 GetTangentInEdge(double t) const {
     return delfem2::getTangentCubicBezierCurve(t, p0, q0, q1, p1);
   }
-  CVector3 getVtxPos(bool is_root, int ioff) const {
+  CVec3 getVtxPos(bool is_root, int ioff) const {
     if( is_root ){
       if(      ioff == 0 ){ return p0; }
       else if( ioff == 1 ){ return q0; }
@@ -119,7 +119,7 @@ public:
       else if( ioff == 2 ){ return q0; }
       else if( ioff == 3 ){ return p0; }
     }
-    return CVector3(0,0,0);
+    return CVec3(0,0,0);
   }
 //  void DrawLine(bool is_picked, double view_height) const;
 //  void DrawHandler(int ielem_picked, double view_height) const;
@@ -143,8 +143,8 @@ public:
   double r0;
   double r1;
   ///
-  CVector3 p0,p1,q0,q1;
-  std::vector<CVector3> aP;
+  CVec3 p0,p1,q0,q1;
+  std::vector<CVec3> aP;
   bool is_sim;
   std::vector<int> aIQ_RightLeft;
 };
@@ -170,7 +170,7 @@ public:
   void Initialize(const std::vector<CCad3D_Vertex>& aCtrlPoint,
                   const std::vector<CCad3D_Edge>& aEdge,
                   double elen);
-  bool isPick(const CVector3& org, const CVector3& dir){
+  bool isPick(const CVec3& org, const CVec3& dir){
     std::map<double,CPointElemSurf> mapDepthPES;
     IntersectionRay_MeshTri3D(mapDepthPES,
                               org,dir, aTri,aXYZ);
@@ -207,7 +207,7 @@ public:
     int iv;
     int ie;
     int iep;
-    CVector3 n;
+    CVec3 n;
     std::vector<double> aW0;
     std::vector<double> aW1;
     int iq_right;
@@ -262,10 +262,10 @@ void AddCube(std::vector<CCad3D_Vertex>& aVertex,
              double elen);
 
 bool FindFittingPoint
-(CVector2& p2d_near,
- CVector2& p2d_norm,
- const CVector2& p2d_org,
- const std::vector<CVector2>& aP2D,
+(CVec2& p2d_near,
+ CVec2& p2d_norm,
+ const CVec2& p2d_org,
+ const std::vector<CVec2>& aP2D,
  bool isConstX, bool isConstY,
  double half_view_height);
 
@@ -277,14 +277,14 @@ bool MovePointsAlongSketch
 (std::vector<CCad3D_Vertex>& aVertex,
  std::vector<CCad3D_Edge>& aEdge,
  std::vector<CCad3D_Face>& aFace,
- const std::vector<CVector2>& aStroke,
+ const std::vector<CVec2>& aStroke,
  const std::vector< std::pair<int,bool > >& aIE_picked,
- const CVector3& plane_org, int inorm,
+ const CVec3& plane_org, int inorm,
  float mMV[16], float mPj[16], double view_height);
 
 void DivideFace
 (int ifc,
- const CVector3& org, int inorm,
+ const CVec3& org, int inorm,
  std::vector<CCad3D_Vertex>& aVertex,
  std::vector<CCad3D_Edge>& aEdge,
  std::vector<CCad3D_Face>& aFace,
@@ -355,8 +355,8 @@ public:
     BuildTriMesh(aXYZ, aTri, aTriSurRel, aNorm, aVertex, aEdge, aFace, isym);
   }
   void Pick
-  (const CVector3& src_pick, const CVector3& dir_pick,
-   const CVector2& sp0, float mMV[16], float mPj[16],
+  (const CVec3& src_pick, const CVec3& dir_pick,
+   const CVec2& sp0, float mMV[16], float mPj[16],
    double view_height);
   
 //  void DrawFace_LeftRight() const;  
@@ -365,12 +365,12 @@ public:
   
   bool ReflectChangeForCurveAndSurface(std::vector<int>& aIsMoved_Edge,
                                        const std::vector<int>& aIsMoved_Vtx);
-  void MouseDown(const CVector3& src_pick, const CVector3& dir_pick,
-                 const CVector2& sp0, float mMV[16], float mPj[16],
+  void MouseDown(const CVec3& src_pick, const CVec3& dir_pick,
+                 const CVec2& sp0, float mMV[16], float mPj[16],
                  double view_height);
   void MouseUp(float mMV[16], float mPj[16], double view_height);
-  bool MouseMotion(const CVector3& src_pick, const CVector3& dir_pick,
-                   const CVector2& sp0, const CVector2& sp1,
+  bool MouseMotion(const CVec3& src_pick, const CVec3& dir_pick,
+                   const CVec2& sp0, const CVec2& sp1,
                    float mMV[16], float mPj[16]);
   
   void WriteFile(std::ofstream& fout) const;
@@ -419,10 +419,10 @@ public:
   std::vector< std::pair<int,bool > > aIE_picked;
   
   int plane_inorm; // if it is 0,1,2 it shouws plane
-  CVector3 plane_org;
+  CVec3 plane_org;
   double plane_sizeX; // norm[(inrom+1)%3]
   double plane_sizeY; // norm[(inrom+2)%3]
-  std::vector<CVector2> aStroke;
+  std::vector<CVec2> aStroke;
   
   // face related pick
   int iface_picked;

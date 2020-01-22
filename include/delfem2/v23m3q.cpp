@@ -16,20 +16,20 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-dfm2::CVector2 dfm2::screenXYProjection
-(const CVector3& v,
+dfm2::CVec2 dfm2::screenXYProjection
+(const CVec3& v,
  const float* mMV,
  const float* mPj)
 {
-  CVector3 sp0 = screenProjection(v,mMV,mPj);
-  return dfm2::CVector2(sp0.x(),sp0.y());
+  CVec3 sp0 = screenProjection(v,mMV,mPj);
+  return dfm2::CVec2(sp0.x(),sp0.y());
 }
 
-dfm2::CVector3 dfm2::GetCartesianRotationVector
+dfm2::CVec3 dfm2::GetCartesianRotationVector
  (const CMatrix3& m)
 {
   const double* mat = m.mat;
-  CVector3 a;
+  CVec3 a;
   a.p[0] = mat[7]-mat[5];
   a.p[1] = mat[2]-mat[6];
   a.p[2] = mat[3]-mat[1];
@@ -44,19 +44,19 @@ dfm2::CVector3 dfm2::GetCartesianRotationVector
   return a;
 }
 
-dfm2::CVector3 dfm2::GetSpinVector(const CMatrix3& m)
+dfm2::CVec3 dfm2::GetSpinVector(const CMatrix3& m)
 {
   const double* mat = m.mat;
-  CVector3 r;
+  CVec3 r;
   r.p[0] = (mat[7]-mat[5])*0.5;
   r.p[1] = (mat[2]-mat[6])*0.5;
   r.p[2] = (mat[3]-mat[1])*0.5;
   return r;
 }
 
-dfm2::CVector3 dfm2::MatVec(const CMatrix3& m, const CVector3& vec0)
+dfm2::CVec3 dfm2::MatVec(const CMatrix3& m, const CVec3& vec0)
 {
-  CVector3 vec1;
+  CVec3 vec1;
   dfm2::MatVec3(vec1.p, m.mat,vec0.p);
   return vec1;
     //  const double* mat = m.mat;
@@ -65,10 +65,10 @@ dfm2::CVector3 dfm2::MatVec(const CMatrix3& m, const CVector3& vec0)
     //  vec1.p[2] = mat[6]*vec0.x + mat[7]*vec0.y + mat[8]*vec0.z;
 }
 
-dfm2::CVector3 dfm2::MatVecTrans
- (const CMatrix3& m, const CVector3& vec0)
+dfm2::CVec3 dfm2::MatVecTrans
+ (const CMatrix3& m, const CVec3& vec0)
 {
-  CVector3 vec1;
+  CVec3 vec1;
   MatTransVec3(vec1.p, m.mat,vec0.p);
 //  const double* mat = m.mat;
 //  vec1.x = mat[0]*vec0.x + mat[3]*vec0.y + mat[6]*vec0.z;
@@ -79,7 +79,7 @@ dfm2::CVector3 dfm2::MatVecTrans
 
 // ---------------------------------------------------------------------
 
-void dfm2::SetDiag(CMatrix3& m, const CVector3& d)
+void dfm2::SetDiag(CMatrix3& m, const CVec3& d)
 {
   double* mat = m.mat;
   mat[0*3+0] = d.x();
@@ -87,13 +87,13 @@ void dfm2::SetDiag(CMatrix3& m, const CVector3& d)
   mat[2*3+2] = d.z();
 }
 
-void dfm2::SetRotMatrix_Cartesian(CMatrix3& m, const CVector3& v)
+void dfm2::SetRotMatrix_Cartesian(CMatrix3& m, const CVec3& v)
 {
 //  const double vec[3] = { v.x, v.y, v.z };
   m.SetRotMatrix_Cartesian(v.p);
 }
 
-void dfm2::SetSpinTensor(CMatrix3& m, const CVector3& vec0)
+void dfm2::SetSpinTensor(CMatrix3& m, const CVec3& vec0)
 {
   double* mat = m.mat;
   mat[0] =  0;       mat[1] = -vec0.z();   mat[2] = +vec0.y();
@@ -103,8 +103,8 @@ void dfm2::SetSpinTensor(CMatrix3& m, const CVector3& vec0)
 
 void dfm2::SetOuterProduct
  (CMatrix3& m,
-  const CVector3& vec0,
-  const CVector3& vec1 )
+  const CVec3& vec0,
+  const CVec3& vec1 )
 {
   double* mat = m.mat;
   mat[0] = vec0.x()*vec1.x(); mat[1] = vec0.x()*vec1.y(); mat[2] = vec0.x()*vec1.z();
@@ -112,10 +112,10 @@ void dfm2::SetOuterProduct
   mat[6] = vec0.z()*vec1.x(); mat[7] = vec0.z()*vec1.y(); mat[8] = vec0.z()*vec1.z();
 }
 
-void dfm2::SetProjection(CMatrix3& m, const CVector3& vec0)
+void dfm2::SetProjection(CMatrix3& m, const CVec3& vec0)
 {
   double* mat = m.mat;
-  const CVector3& u = vec0.Normalize();
+  const CVec3& u = vec0.Normalize();
   mat[0] = 1-u.x()*u.x(); mat[1] = 0-u.x()*u.y(); mat[2] = 0-u.x()*u.z();
   mat[3] = 0-u.y()*u.x(); mat[4] = 1-u.y()*u.y(); mat[5] = 0-u.y()*u.z();
   mat[6] = 0-u.z()*u.x(); mat[7] = 0-u.z()*u.y(); mat[8] = 1-u.z()*u.z();
@@ -123,32 +123,32 @@ void dfm2::SetProjection(CMatrix3& m, const CVector3& vec0)
 
 // ----------------------------
 
-dfm2::CMatrix3 dfm2::Mirror(const CVector3& n)
+dfm2::CMatrix3 dfm2::Mirror(const CVec3& n)
 {
-  CVector3 N = n;
+  CVec3 N = n;
   N.SetNormalizedVector();
   return CMatrix3::Identity() - 2*dfm2::Mat3_OuterProduct(N,N);
 }
 
-dfm2::CMatrix3 dfm2::RotMatrix_Cartesian(const CVector3& v){
+dfm2::CMatrix3 dfm2::RotMatrix_Cartesian(const CVec3& v){
  CMatrix3 m;
  SetRotMatrix_Cartesian(m,v);
  return m;
 }
 
-dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0){
+dfm2::CMatrix3 dfm2::Mat3(const CVec3& vec0){
   CMatrix3 m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1){
+dfm2::CMatrix3 dfm2::Mat3(const CVec3& vec0, const CVec3& vec1){
   CMatrix3 m;
   SetOuterProduct(m,vec0, vec1);
   return m;
 }
 
-dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1, const CVector3& vec2)
+dfm2::CMatrix3 dfm2::Mat3(const CVec3& vec0, const CVec3& vec1, const CVec3& vec2)
 {
   CMatrix3 m;
   double* mat = m.mat;
@@ -158,20 +158,20 @@ dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1, const CVec
   return m;
 }
 
-dfm2::CMatrix3 dfm2::Mat3_Spin(const CVector3& vec0){
+dfm2::CMatrix3 dfm2::Mat3_Spin(const CVec3& vec0){
   CMatrix3 m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-dfm2::CMatrix3 dfm2::Mat3_OuterProduct(const CVector3& vec0, const CVector3& vec1 )
+dfm2::CMatrix3 dfm2::Mat3_OuterProduct(const CVec3& vec0, const CVec3& vec1 )
 {
   CMatrix3 m;
   SetOuterProduct(m,vec0,vec1);
   return m;
 }
 
-dfm2::CMatrix3 dfm2::Mat3_RotCartesian(const CVector3& vec0)
+dfm2::CMatrix3 dfm2::Mat3_RotCartesian(const CVec3& vec0)
 {
   CMatrix3 m;
   m.SetRotMatrix_Cartesian(vec0.x(), vec0.y(), vec0.z());
@@ -182,11 +182,11 @@ dfm2::CMatrix3 dfm2::Mat3_RotCartesian(const CVector3& vec0)
 
 namespace delfem2 {
   
-CVector3 operator* (const CVector3& v, const CMatrix3& m){
+CVec3 operator* (const CVec3& v, const CMatrix3& m){
   return MatVecTrans(m,v);
 }
   
-CVector3 operator* (const CMatrix3& m, const CVector3& v)
+CVec3 operator* (const CMatrix3& m, const CVec3& v)
 {
   return MatVec(m,v);
 }
@@ -196,12 +196,12 @@ CVector3 operator* (const CMatrix3& m, const CVector3& v)
 // ------------------------------
 
 dfm2::CMatrix3 dfm2::Mat3_MinimumRotation
-(const CVector3& V,
- const CVector3& v)
+(const CVec3& V,
+ const CVec3& v)
 {
-  CVector3 ep = V.Normalize();
-  CVector3 eq = v.Normalize();
-  CVector3 n = ep^eq;
+  CVec3 ep = V.Normalize();
+  CVec3 eq = v.Normalize();
+  CVec3 n = ep^eq;
   const double st2 = n*n;
   CMatrix3 m;
   if( st2 < 1.0e-4f ){
@@ -255,16 +255,16 @@ void dfm2::Energy_MIPS
    //  double E_area = Area/area + area/Area;
    //  E = E_angle*E_area;
    */
-  CVector3 p0(c[0][0],c[0][1],c[0][2]);
-  CVector3 p1(c[1][0],c[1][1],c[1][2]);
-  CVector3 p2(c[2][0],c[2][1],c[2][2]);
-  CVector3 P0(C[0][0],C[0][1],C[0][2]);
-  CVector3 P1(C[1][0],C[1][1],C[1][2]);
-  CVector3 P2(C[2][0],C[2][1],C[2][2]);
-  CVector3 v01 = p1-p0;
-  CVector3 v12 = p2-p1;
-  CVector3 v20 = p0-p2;
-  CVector3 n = v01^v20;
+  CVec3 p0(c[0][0],c[0][1],c[0][2]);
+  CVec3 p1(c[1][0],c[1][1],c[1][2]);
+  CVec3 p2(c[2][0],c[2][1],c[2][2]);
+  CVec3 P0(C[0][0],C[0][1],C[0][2]);
+  CVec3 P1(C[1][0],C[1][1],C[1][2]);
+  CVec3 P2(C[2][0],C[2][1],C[2][2]);
+  CVec3 v01 = p1-p0;
+  CVec3 v12 = p2-p1;
+  CVec3 v20 = p0-p2;
+  CVec3 n = v01^v20;
   double area = n.Length()*0.5;
   double Area = ((P1-P0)^(P2-P0)).Length()*0.5;
   double la = (p1-p2)*(p1-p2);
@@ -287,20 +287,20 @@ void dfm2::Energy_MIPS
   double t01 = (-2*lA-2*lB+2*lC)*tmp0;
   double t02 = (-2*lA+2*lB-2*lC)*tmp0;
   double t12 = (+2*lA-2*lB-2*lC)*tmp0;
-  CVector3 dECd0 = t00*p0 + t01*p1 + t02*p2;
-  CVector3 dECd1 = t01*p0 + t11*p1 + t12*p2;
-  CVector3 dECd2 = t02*p0 + t12*p1 + t22*p2;
+  CVec3 dECd0 = t00*p0 + t01*p1 + t02*p2;
+  CVec3 dECd1 = t01*p0 + t11*p1 + t12*p2;
+  CVec3 dECd2 = t02*p0 + t12*p1 + t22*p2;
   ////
   dE[0][0]=dECd0.x(); dE[0][1]=dECd0.y(); dE[0][2]=dECd0.z();
   dE[1][0]=dECd1.x(); dE[1][1]=dECd1.y(); dE[1][2]=dECd1.z();
   dE[2][0]=dECd2.x(); dE[2][1]=dECd2.y(); dE[2][2]=dECd2.z();
   
-  CMatrix3 (*op)(const CVector3&, const CVector3&) = Mat3_OuterProduct;
+  CMatrix3 (*op)(const CVec3&, const CVec3&) = Mat3_OuterProduct;
   
   double tmp1 = 0.25/area;
-  CVector3 dad0 = ((v20*v12)*v01-(v01*v12)*v20)*tmp1;
-  CVector3 dad1 = ((v01*v20)*v12-(v12*v20)*v01)*tmp1;
-  CVector3 dad2 = ((v12*v01)*v20-(v20*v01)*v12)*tmp1;
+  CVec3 dad0 = ((v20*v12)*v01-(v01*v12)*v20)*tmp1;
+  CVec3 dad1 = ((v01*v20)*v12-(v12*v20)*v01)*tmp1;
+  CVec3 dad2 = ((v12*v01)*v20-(v20*v01)*v12)*tmp1;
   CMatrix3 ddad0d0 = (CMatrix3::Identity(v12*v12) - op(v12,v12) - 4*op(dad0,dad0))*tmp1;
   CMatrix3 ddad0d1 = (CMatrix3::Identity(v20*v12) - op(v20,v12-v01) - op(v01,v20) - 4*op(dad0,dad1))*tmp1;
   CMatrix3 ddad0d2 = (CMatrix3::Identity(v01*v12) - op(v01,v12-v20) - op(v20,v01) - 4*op(dad0,dad2))*tmp1;
@@ -393,23 +393,23 @@ void CheckEnergyMIPS(){
 }
 
 dfm2::CMatrix3 dfm2::Mat3_ParallelTransport
-(const CVector3& p0,
- const CVector3& p1,
- const CVector3& q0,
- const CVector3& q1)
+(const CVec3& p0,
+ const CVec3& p1,
+ const CVec3& q0,
+ const CVec3& q1)
 {
   return Mat3_MinimumRotation(p1-p0, q1-q0);
 }
 
 // moment of inertia around origin triangle vtx (origin,d0,d1,d2) the area_density=1
 dfm2::CMatrix3 dfm2::Mat3_IrotTri
-(const CVector3& d0,
- const CVector3& d1,
- const CVector3& d2)
+(const CVec3& d0,
+ const CVec3& d1,
+ const CVec3& d2)
 {
   // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
   
-  CVector3 dv = d0+d1+d2;
+  CVec3 dv = d0+d1+d2;
   CMatrix3 I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
   double tr0 = I0.Trace();
   CMatrix3 I = tr0*CMatrix3::Identity()-I0;
@@ -421,13 +421,13 @@ dfm2::CMatrix3 dfm2::Mat3_IrotTri
 
 // moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
 dfm2::CMatrix3 dfm2::Mat3_IrotTriSolid
-(const CVector3& d0,
- const CVector3& d1,
- const CVector3& d2)
+(const CVec3& d0,
+ const CVec3& d1,
+ const CVec3& d2)
 {
   // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
   
-  CVector3 dv = d0+d1+d2;
+  CVec3 dv = d0+d1+d2;
   CMatrix3 I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
   double tr0 = I0.Trace();
   CMatrix3 I = tr0*CMatrix3::Identity()-I0;
@@ -438,30 +438,30 @@ dfm2::CMatrix3 dfm2::Mat3_IrotTriSolid
 }
 
 dfm2::CMatrix3 dfm2::Mat3_IrotLineSeg
-(const CVector3& d0,
- const CVector3& d1)
+(const CVec3& d0,
+ const CVec3& d1)
 {
-  CVector3 dv = d1-d0;
+  CVec3 dv = d1-d0;
   double l = dv.Length();
   CMatrix3 I;
   {
     I = dv.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(dv,dv);
     I *= l/12.0;
   }
-  CVector3 p = (d0+d1)*0.5;
+  CVec3 p = (d0+d1)*0.5;
   I += l*(p.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(p,p));
   return I;
 }
 
 dfm2::CMatrix3 dfm2::Mat3_IrotPoint
-(const CVector3& d0)
+(const CVec3& d0)
 {
   return (d0.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(d0,d0));
 }
 
 
 
-void dfm2::Mat4_MatTransl(double m[16], const CMatrix3& mat, const CVector3& trans)
+void dfm2::Mat4_MatTransl(double m[16], const CMatrix3& mat, const CVec3& trans)
 {
   mat.AffineMatrixTrans(m);
   m[3*4+0] = trans.x();
@@ -470,7 +470,7 @@ void dfm2::Mat4_MatTransl(double m[16], const CMatrix3& mat, const CVector3& tra
 }
 
 
-void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMatrix3& mat, const CVector3& trans)
+void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMatrix3& mat, const CVec3& trans)
 {
   mat.AffineMatrixTrans(m);
   for(int i=0;i<3;++i){
@@ -486,29 +486,29 @@ void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMatrix3& mat, 
 // ---------------------------------------------------------------------------------------
 
 bool dfm2::isPickCircle
-(const CVector3& axis,
- const CVector3& org,
+(const CVec3& axis,
+ const CVec3& org,
  double rad,
- const CVector3& src,
- const CVector3& dir,
+ const CVec3& src,
+ const CVec3& dir,
  double pick_tol)
 {
   double t = ((org-src)*axis)/(dir*axis);
-  CVector3 p0 = src+t*dir;
+  CVec3 p0 = src+t*dir;
   double rad0 = (p0-org).Length();
   return fabs(rad - rad0) < pick_tol;
 }
 
 bool dfm2::isPickQuad
-(const CVector3& p0,const CVector3& p1,const CVector3& p2,const CVector3& p3,
- const dfm2::CVector2& sp, const CVector3& pick_dir,
+(const CVec3& p0,const CVec3& p1,const CVec3& p2,const CVec3& p3,
+ const dfm2::CVec2& sp, const CVec3& pick_dir,
  const float mMV[16], const float mPj[16],
  double eps)
 {
-  const dfm2::CVector2 sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
-  const dfm2::CVector2 sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
-  const dfm2::CVector2 sp2 = dfm2::screenXYProjection(p2, mMV, mPj);
-  const dfm2::CVector2 sp3 = dfm2::screenXYProjection(p3, mMV, mPj);
+  const dfm2::CVec2 sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
+  const dfm2::CVec2 sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
+  const dfm2::CVec2 sp2 = dfm2::screenXYProjection(p2, mMV, mPj);
+  const dfm2::CVec2 sp3 = dfm2::screenXYProjection(p3, mMV, mPj);
   double a01 = dfm2::Area_Tri(sp,sp0,sp1);
   double a12 = dfm2::Area_Tri(sp,sp1,sp2);
   double a23 = dfm2::Area_Tri(sp,sp2,sp3);
@@ -520,21 +520,21 @@ bool dfm2::isPickQuad
   a23 /= a0123;
   a30 /= a0123;
   if( a01<eps || a12<eps || a23<eps || a30<eps ){ return false; }
-  CVector3 n0123 = Normal(p0,p1,p2) + Normal(p1,p2,p3) + Normal(p2,p3,p0) + Normal(p3,p0,p1);
+  CVec3 n0123 = Normal(p0,p1,p2) + Normal(p1,p2,p3) + Normal(p2,p3,p0) + Normal(p3,p0,p1);
   return n0123 * pick_dir <= 0;
 }
 
 int dfm2::PickHandlerRotation_PosQuat
-(const CVector3& src, const CVector3& dir,
- const CVector3& pos, const double quat[4], double rad,
+(const CVec3& src, const CVec3& dir,
+ const CVec3& pos, const double quat[4], double rad,
  double tol)
 {
-  CVector3 ax = QuatVec(quat,CVector3(1,0,0));
-  CVector3 ay = QuatVec(quat,CVector3(0,1,0));
-  CVector3 az = QuatVec(quat,CVector3(0,0,1));
-  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
-  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
-  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
+  CVec3 ax = QuatVec(quat,CVec3(1,0,0));
+  CVec3 ay = QuatVec(quat,CVec3(0,1,0));
+  CVec3 az = QuatVec(quat,CVec3(0,0,1));
+  CVec3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
+  CVec3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
+  CVec3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
   double dx = (px-src)*dir;
   double dy = (py-src)*dir;
   double dz = (pz-src)*dir;
@@ -553,17 +553,17 @@ int dfm2::PickHandlerRotation_PosQuat
 }
 
 int dfm2::PickHandlerRotation_Mat4
-(const CVector3& src, const CVector3& dir,
+(const CVec3& src, const CVec3& dir,
  const double mat[16], double rad,
  double tol)
 {
-  CVector3 ax = Mat4Vec(mat,CVector3(1,0,0));
-  CVector3 ay = Mat4Vec(mat,CVector3(0,1,0));
-  CVector3 az = Mat4Vec(mat,CVector3(0,0,1));
-  CVector3 pos(mat[3],mat[7],mat[11]);
-  CVector3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
-  CVector3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
-  CVector3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
+  CVec3 ax = Mat4Vec(mat,CVec3(1,0,0));
+  CVec3 ay = Mat4Vec(mat,CVec3(0,1,0));
+  CVec3 az = Mat4Vec(mat,CVec3(0,0,1));
+  CVec3 pos(mat[3],mat[7],mat[11]);
+  CVec3 px,qx; Nearest_Line_Circle(px,qx, src,dir, pos,ax, rad);
+  CVec3 py,qy; Nearest_Line_Circle(py,qy, src,dir, pos,ay, rad);
+  CVec3 pz,qz; Nearest_Line_Circle(pz,qz, src,dir, pos,az, rad);
   double dx = (px-src)*dir;
   double dy = (py-src)*dir;
   double dz = (pz-src)*dir;
@@ -583,16 +583,16 @@ int dfm2::PickHandlerRotation_Mat4
 
 bool dfm2::DragHandlerRot_PosQuat
 (double quat[4], int ielem,
- const dfm2::CVector2& sp0,
- const dfm2::CVector2& sp1,
- const CVector3& pos,
+ const dfm2::CVec2& sp0,
+ const dfm2::CVec2& sp1,
+ const CVec3& pos,
  const float mMV[16], const float mPj[16])
 {
   if( ielem>=0 && ielem<3 ){
     double vi[3] = {0,0,0}; vi[ielem] = 1;
     double vo[3]; dfm2::QuatVec(vo, quat, vi);
-    CVector3 v0(0,0,0); v0[ielem] = 1;
-    CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
+    CVec3 v0(0,0,0); v0[ielem] = 1;
+    CVec3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
     double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, dq, quat);
@@ -604,15 +604,15 @@ bool dfm2::DragHandlerRot_PosQuat
 
 bool dfm2::DragHandlerRot_Mat4
 (double quat[4], int ielem,
- const dfm2::CVector2& sp0, const dfm2::CVector2& sp1, double mat[16],
+ const dfm2::CVec2& sp0, const dfm2::CVec2& sp1, double mat[16],
  const float mMV[16], const float mPj[16])
 {
   if( ielem>=0 && ielem<3 ){
     double vi[3] = {0,0,0}; vi[ielem] = 1;
     double vo[3]; Mat4Vec3(vo, mat, vi);
-    CVector3 v0(0,0,0); v0[ielem] = 1;
-    CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
-    CVector3 pos(mat[3],mat[7],mat[11]);
+    CVec3 v0(0,0,0); v0[ielem] = 1;
+    CVec3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
+    CVec3 pos(mat[3],mat[7],mat[11]);
     const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
     const double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, quat, dq);
@@ -623,48 +623,48 @@ bool dfm2::DragHandlerRot_Mat4
 }
 
 bool dfm2::isPick_AxisHandler
-(const dfm2::CVector2& sp,
- const CVector3& p,
- const CVector3& axis,
+(const dfm2::CVec2& sp,
+ const CVec3& p,
+ const CVec3& axis,
  double len,
  const float* mMV,
  const float* mPj,
  double pick_tol)
 {
-  dfm2::CVector2 sp0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
-  dfm2::CVector2 sp1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
+  dfm2::CVec2 sp0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
+  dfm2::CVec2 sp1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
   double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
   return sdist < pick_tol;
 }
 
-dfm2::CVector3 dfm2::drag_AxisHandler
-(const dfm2::CVector2& sp0,
- const dfm2::CVector2& sp1,
- const CVector3& p,
- const CVector3& axis,
+dfm2::CVec3 dfm2::drag_AxisHandler
+(const dfm2::CVec2& sp0,
+ const dfm2::CVec2& sp1,
+ const CVec3& p,
+ const CVec3& axis,
  double len,
  const float* mMV,
  const float* mPj)
 {
-  dfm2::CVector2 spa0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
-  dfm2::CVector2 spa1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
+  dfm2::CVec2 spa0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
+  dfm2::CVec2 spa1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
   double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
   return r*axis*len;
 }
 
 double dfm2::DragCircle
-(const dfm2::CVector2& sp0,
- const dfm2::CVector2& sp1,
- const CVector3& p,
- const CVector3& axis,
+(const dfm2::CVec2& sp0,
+ const dfm2::CVec2& sp1,
+ const CVec3& p,
+ const CVec3& axis,
  const float* mMV,
  const float* mPj)
 {
-  dfm2::CVector2 spo0 = dfm2::screenXYProjection(p, mMV, mPj);
+  dfm2::CVec2 spo0 = dfm2::screenXYProjection(p, mMV, mPj);
   double area = Area_Tri(sp0, spo0, sp1);
   double angl = area / ( (sp0-spo0).Length() * (sp1-spo0).Length() );
   {
-    CVector3 a3 = screenUnProjectionDirection(axis,mMV,mPj);
+    CVec3 a3 = screenUnProjectionDirection(axis,mMV,mPj);
     if( a3.z() < 0 ){ angl *= -1; }
   }
   return angl;
@@ -673,20 +673,20 @@ double dfm2::DragCircle
 }
 
 bool dfm2::isPickPoint
-(const dfm2::CVector2& sp,
- const CVector3& p,
+(const dfm2::CVec2& sp,
+ const CVec3& p,
  const float* mMV,
  const float* mPj,
  double pick_tol)
 {
-  dfm2::CVector2 sp0 = dfm2::screenXYProjection(p, mMV, mPj);
+  dfm2::CVec2 sp0 = dfm2::screenXYProjection(p, mMV, mPj);
   return (sp - sp0).Length() < pick_tol;
 }
 
 bool dfm2::isPickCircle
-(const dfm2::CVector2& sp,
- const CVector3& p,
- const CVector3& axis,
+(const dfm2::CVec2& sp,
+ const CVec3& p,
+ const CVec3& axis,
  double r,
  const float* mMV,
  const float* mPj,
@@ -694,13 +694,13 @@ bool dfm2::isPickCircle
 {
   const int ndiv = 32;
   double rdiv = 3.1415*2.0/ndiv;
-  CVector3 x,y; GetVertical2Vector(axis, x, y);
+  CVec3 x,y; GetVertical2Vector(axis, x, y);
   for(int idiv=0;idiv<ndiv+1;idiv++){
     int jdiv = idiv+1;
-    CVector3 p0 = p+(r*sin(rdiv*idiv))*x+(r*cos(rdiv*idiv))*y;
-    CVector3 p1 = p+(r*sin(rdiv*jdiv))*x+(r*cos(rdiv*jdiv))*y;
-    dfm2::CVector2 sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
-    dfm2::CVector2 sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
+    CVec3 p0 = p+(r*sin(rdiv*idiv))*x+(r*cos(rdiv*idiv))*y;
+    CVec3 p1 = p+(r*sin(rdiv*jdiv))*x+(r*cos(rdiv*jdiv))*y;
+    dfm2::CVec2 sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
+    dfm2::CVec2 sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
     double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
     if( sdist < pick_tol ){ return true; }
   }

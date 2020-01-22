@@ -55,7 +55,7 @@ void MakeMesh(){
   }
   std::vector<dfm2::CDynPntSur> aPo2D;
   std::vector<dfm2::CDynTri> aETri;
-  std::vector<dfm2::CVector2> aVec2;
+  std::vector<dfm2::CVec2> aVec2;
   GenMesh(aPo2D, aETri, aVec2,
           aaXY, 0.03, 0.03);
   MeshTri2D_Export(aXY0,aTri,
@@ -168,7 +168,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         for(int i=0;i<6;++i){
           (&C[0][0])[i] = 10.0*dist0(mt);
         }
-        double a0 = dfm2::TriArea2D(C[0], C[1], C[2]);
+        double a0 = dfm2::Area_Tri2(C[0], C[1], C[2]);
         if( a0 < 0.1 ) continue;
         double u[3][3];
         for(int i=0;i<9;++i){

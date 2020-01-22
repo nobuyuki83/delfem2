@@ -33,7 +33,7 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
       { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
         10.0*(rand()/(RAND_MAX+1.0)-0.5) },
     };
-    double a0 = dfm2::TriArea2D(P[0], P[1], P[2]);
+    double a0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
     if( fabs(a0) < 0.1 ) continue;
     const double p[3][3] = {
       { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
@@ -59,7 +59,7 @@ TEST(fem,plate_bending_mitc3_emat)
     for(int i=0;i<6;++i){
       (&C[0][0])[i] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
     }
-    double a0 = dfm2::TriArea2D(C[0], C[1], C[2]);
+    double a0 = dfm2::Area_Tri2(C[0], C[1], C[2]);
     if( a0 < 0.1 ) continue;
     double u[3][3];
     for(int i=0;i<9;++i){
@@ -106,7 +106,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
       // ---------------------
       std::vector<dfm2::CDynPntSur> aPo2D;
       std::vector<dfm2::CDynTri> aETri;
-      std::vector<dfm2::CVector2> aVec2;
+      std::vector<dfm2::CVec2> aVec2;
       GenMesh(aPo2D, aETri, aVec2,
               aaXY, elen, elen);
       MeshTri2D_Export(aXY0,aTri,

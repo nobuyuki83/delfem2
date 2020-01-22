@@ -24,17 +24,17 @@ namespace opengl{
 
 
 void DrawMeshDynTri_FaceNorm(const std::vector<CDynTri>& aSTri,
-                             const std::vector<CVector3>& aVec3);
+                             const std::vector<CVec3>& aVec3);
 
 void DrawMeshDynTri_Edge(const std::vector<CDynTri>& aSTri,
-                         const std::vector<CVector3>& aVec3);
+                         const std::vector<CVec3>& aVec3);
 
 
 void DrawMeshDynTri_Edge(const std::vector<CDynTri>& aSTri,
-                         const std::vector<CVector2>& aVec2);
+                         const std::vector<CVec2>& aVec2);
 
 void DrawMeshDynTri_FaceNorm(const std::vector<CDynTri>& aSTri,
-                             const std::vector<CVector2>& aVec2);
+                             const std::vector<CVec2>& aVec2);
 
 void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
                            const std::vector<CDynTri>& aSTri);

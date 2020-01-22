@@ -21,17 +21,17 @@ static int InsertPoint_Mesh
   double& r1,
   std::vector<dfm2::CDynPntSur>& aPo3D,
   std::vector<dfm2::CDynTri>& aSTri,
-  std::vector<dfm2::CVector3>& aXYZ)
+  std::vector<dfm2::CVec3>& aXYZ)
 {
   if (itri0==-1) return -1;
-  dfm2::CVector3 pos;
+  dfm2::CVec3 pos;
   {
     const int i0 = aSTri[itri0].v[0];
     const int i1 = aSTri[itri0].v[1];
     const int i2 = aSTri[itri0].v[2];
-    const dfm2::CVector3& p0 = aXYZ[i0];
-    const dfm2::CVector3& p1 = aXYZ[i1];
-    const dfm2::CVector3& p2 = aXYZ[i2];
+    const dfm2::CVec3& p0 = aXYZ[i0];
+    const dfm2::CVec3& p1 = aXYZ[i1];
+    const dfm2::CVec3& p2 = aXYZ[i2];
     pos = r0*p0 + r1*p1 + (1-r0-r1)*p2;
   }
   int ipo_ins = (int)aPo3D.size();
@@ -43,16 +43,16 @@ static int InsertPoint_Mesh
 
 
 static bool pickMesh
- (dfm2::CVector3& p,
+ (dfm2::CVec3& p,
   int& itriOut,
   double& r0Out,
   double& r1Out,
   //
-  const dfm2::CVector3& org,
-  const dfm2::CVector3& dir,
+  const dfm2::CVec3& org,
+  const dfm2::CVec3& dir,
   int itri_start, // starting triangle
   const std::vector<dfm2::CDynTri>& aSTri,
-  const std::vector<dfm2::CVector3>& aXYZ)
+  const std::vector<dfm2::CVec3>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -60,9 +60,9 @@ static bool pickMesh
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const dfm2::CVector3& tp0 = aXYZ[ip0];
-    const dfm2::CVector3& p1 = aXYZ[ip1];
-    const dfm2::CVector3& p2 = aXYZ[ip2];
+    const dfm2::CVec3& tp0 = aXYZ[ip0];
+    const dfm2::CVec3& p1 = aXYZ[ip1];
+    const dfm2::CVec3& p2 = aXYZ[ip2];
     const double v0 = Volume_Tet(p1, p2, org, org+dir);
     const double v1 = Volume_Tet(p2, tp0, org, org+dir);
     const double v2 = Volume_Tet(tp0, p1, org, org+dir);
@@ -112,12 +112,12 @@ static bool pickMesh
 
 
 static int pickTriangle
- (dfm2::CVector3& p,
-  const dfm2::CVector3& org,
-  const dfm2::CVector3& dir,
+ (dfm2::CVec3& p,
+  const dfm2::CVec3& org,
+  const dfm2::CVec3& dir,
   int itri_start, // starting triangle
   const std::vector<dfm2::CDynTri>& aSTri,
-  const std::vector<dfm2::CVector3>& aXYZ)
+  const std::vector<dfm2::CVec3>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -125,9 +125,9 @@ static int pickTriangle
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const dfm2::CVector3& tp0 = aXYZ[ip0];
-    const dfm2::CVector3& p1 = aXYZ[ip1];
-    const dfm2::CVector3& p2 = aXYZ[ip2];
+    const dfm2::CVec3& tp0 = aXYZ[ip0];
+    const dfm2::CVec3& p1 = aXYZ[ip1];
+    const dfm2::CVec3& p2 = aXYZ[ip2];
     double v0 = Volume_Tet(p1, p2, org, org+dir);
     double v1 = Volume_Tet(p2, tp0, org, org+dir);
     double v2 = Volume_Tet(tp0, p1, org, org+dir);
@@ -153,14 +153,14 @@ static int pickTriangle
 
 
 static bool FindRayTriangleMeshIntersectionClosestToPoint
- (dfm2::CVector3 &intersectionPoint,
-  const dfm2::CVector3 &line0,
-  const dfm2::CVector3 &line1,
+ (dfm2::CVec3 &intersectionPoint,
+  const dfm2::CVec3 &line0,
+  const dfm2::CVec3 &line1,
   const std::vector<dfm2::CDynTri>& aTri,
-  const std::vector<dfm2::CVector3>& aVec3,
-  const dfm2::CVector3 &targetPoint)
+  const std::vector<dfm2::CVec3>& aVec3,
+  const dfm2::CVec3 &targetPoint)
 {
-  std::vector<dfm2::CVector3> intersectionPoints;
+  std::vector<dfm2::CVec3> intersectionPoints;
   if (!FindRayTriangleMeshIntersections(intersectionPoints,
                                         line0, line1,
                                         aTri, aVec3))
@@ -190,15 +190,15 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
 // --------------------------------------------------------------------------
 // expose functions
 
-dfm2::CVector3 dfm2::normalTri
+dfm2::CVec3 dfm2::normalTri
 (int itri0,
  const std::vector<CDynTri>& aSTri,
- const std::vector<CVector3>& aXYZ)
+ const std::vector<CVec3>& aXYZ)
 {
   int i0 = aSTri[itri0].v[0];
   int i1 = aSTri[itri0].v[1];
   int i2 = aSTri[itri0].v[2];
-  CVector3 n = Normal(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
+  CVec3 n = Normal(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
   return n.Normalize();
 }
 
@@ -206,7 +206,7 @@ dfm2::CVector3 dfm2::normalTri
 bool dfm2::CheckTri
 (const std::vector<CDynPntSur>& aPo3D,
  const std::vector<CDynTri>& aSTri,
- const std::vector<CVector3>& aXYZ)
+ const std::vector<CVec3>& aXYZ)
 {
   for (const auto & ref_tri : aSTri){
     const int i0 = ref_tri.v[0];
@@ -228,18 +228,18 @@ bool dfm2::CheckTri
 
 
 bool dfm2::FindRayTriangleMeshIntersections
-(std::vector<CVector3> &intersectionPoints,
- const CVector3 &line0,
- const CVector3 &line1,
+(std::vector<CVec3> &intersectionPoints,
+ const CVec3 &line0,
+ const CVec3 &line1,
  const std::vector<CDynTri>& aTri,
- const std::vector<CVector3>& aVec3)
+ const std::vector<CVec3>& aVec3)
 {
 	intersectionPoints.clear();
   
 	// Find all the intersection points between this ray and all triangles in the mesh
 	for (const auto & i : aTri)
 	{
-		CVector3 intersectionPoint;
+		CVec3 intersectionPoint;
 		if (isRayIntersectingTriangle(line0, line1,
                                   aVec3[i.v[0]],
                                   aVec3[i.v[1]],
@@ -258,7 +258,7 @@ bool dfm2::DelaunayAroundPoint
 (int ipo0,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri,
- const std::vector<CVector3>& aVec3)
+ const std::vector<CVec3>& aVec3)
 {
   assert(ipo0 < (int)aPo.size());
   if (aPo[ipo0].e==-1) return true;

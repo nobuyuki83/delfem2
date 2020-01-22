@@ -42,7 +42,7 @@ void dfm2::PBD_TriStrain
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,
- const std::vector<CVector2>& aVec2)
+ const std::vector<CVec2>& aVec2)
 {
   for(const auto & it : aETri){
     const int aIP[3] = {
@@ -64,7 +64,7 @@ void dfm2::PBD_Bend
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,
- const std::vector<CVector2>& aVec2)
+ const std::vector<CVec2>& aVec2)
 {
   for(size_t it=0;it<aETri.size();++it){
     for(int ie=0;ie<3;++ie){
