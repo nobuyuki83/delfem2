@@ -123,7 +123,6 @@ public:
 //	double real;	//!< real part
 };
   
-template class CQuaternion<double>;
   
 }
 

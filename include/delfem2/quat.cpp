@@ -213,6 +213,12 @@ CQuaternion::CQuaternion(const CVector3D& a_vector, const CVector3D& b_vector){
 }
  */
 
+// functions for Quaternion above
+// --------------------------------------------------------------------------------------------
+// CQuaternion from here
+
+template class dfm2::CQuaternion<double>;
+template class dfm2::CQuaternion<float>;
 
 namespace delfem2{
   

@@ -268,7 +268,7 @@ public:
 		return false;
 	}
 public:
-  delfem2::CVector3 p;
+  delfem2::CVec3 p;
 	int e;		//< element nubmer
 	int poel;	// element point number
   int old_p;	//!< 変更前の節点番号
@@ -288,15 +288,15 @@ public:
     const int i3 = v[3];  
     this->cent = CircumCenter(aPo3D[i0].p,aPo3D[i1].p,aPo3D[i2].p,aPo3D[i3].p);
   }
-  bool isInside(const delfem2::CVector3& p, const std::vector<CEPo3D>& aPo3D) const {
+  bool isInside(const delfem2::CVec3& p, const std::vector<CEPo3D>& aPo3D) const {
     const int i0 = v[0];
     const int i1 = v[1];
     const int i2 = v[2];
     const int i3 = v[3];
-    const delfem2::CVector3& p0 = aPo3D[i0].p;
-    const delfem2::CVector3& p1 = aPo3D[i1].p;
-    const delfem2::CVector3& p2 = aPo3D[i2].p;
-    const delfem2::CVector3& p3 = aPo3D[i3].p;
+    const delfem2::CVec3& p0 = aPo3D[i0].p;
+    const delfem2::CVec3& p1 = aPo3D[i1].p;
+    const delfem2::CVec3& p2 = aPo3D[i2].p;
+    const delfem2::CVec3& p3 = aPo3D[i3].p;
     double sqrad = SquareDistance(p0,cent)+SquareDistance(p1,cent)+SquareDistance(p2,cent)+SquareDistance(p3,cent);
     return sqrad > SquareDistance(p,cent)*4.0;
   }
@@ -307,7 +307,7 @@ public:
 	int g[4];
 	int f[4];
   ////
-  delfem2::CVector3 cent; // center of circumscribed sphere
+  delfem2::CVec3 cent; // center of circumscribed sphere
 };
 
 /*
@@ -705,7 +705,7 @@ inline double ShortestEdgeLength(const int itet,
 
 //! 法線の取得(長さ１とは限らない)
 inline void Normal(
-		delfem2::CVector3& vnorm,
+		delfem2::CVec3& vnorm,
 		const unsigned int itet0, const unsigned int iface0, 
 		const std::vector<CETet>& tet, const std::vector<CEPo3D>& node)
 {
@@ -721,7 +721,7 @@ inline void Normal(
 
 //! ３角形の単位法線
 inline void UnitNormal(
-		delfem2::CVector3& vnorm,
+		delfem2::CVec3& vnorm,
 		const int itet0,
 		const int iface0,
 		const std::vector<CETet>& aTet,
@@ -768,10 +768,10 @@ inline double Circumradius(
 ////////////////////////////////////////////////
 
 inline double Criterion_Asp(
-		const delfem2::CVector3& po0,
-		const delfem2::CVector3& po1,
-		const delfem2::CVector3& po2,
-		const delfem2::CVector3& po3)
+		const delfem2::CVec3& po0,
+		const delfem2::CVec3& po1,
+		const delfem2::CVec3& po2,
+		const delfem2::CVec3& po3)
 {
 	double saface = Area_Tri( po1, po3, po2 )
 				+	Area_Tri( po0, po2, po3 )
@@ -858,10 +858,10 @@ v1, v2, v3の外接球の中でもっとも半径の大きな球(中心はv1,v2,
 @retval -1 入っていれば
 */
 inline int DetDelaunay
-(const delfem2::CVector3& v1,
- const delfem2::CVector3& v2,
- const delfem2::CVector3& v3,
- const delfem2::CVector3& v4)
+(const delfem2::CVec3& v1,
+ const delfem2::CVec3& v2,
+ const delfem2::CVec3& v3,
+ const delfem2::CVec3& v4)
 {
 	// ３角形v1,v2,v3の外接円の中心を求める。
 	const double dtmp1 = (v2.x()-v3.x())*(v2.x()-v3.x())+(v2.y()-v3.y())*(v2.y()-v3.y())+(v2.z()-v3.z())*(v2.z()-v3.z());
@@ -873,7 +873,7 @@ inline int DetDelaunay
 	const double etmp2 = dtmp2*(dtmp3+dtmp1-dtmp2) / (16.0 * qarea );
 	const double etmp3 = dtmp3*(dtmp1+dtmp2-dtmp3) / (16.0 * qarea );
 
-	delfem2::CVector3 out_center(
+	delfem2::CVec3 out_center(
 		etmp1*v1.x() + etmp2*v2.x() + etmp3*v3.x(),
 		etmp1*v1.y() + etmp2*v2.y() + etmp3*v3.y(),
 		etmp1*v1.z() + etmp2*v2.z() + etmp3*v3.z() );
@@ -911,11 +911,11 @@ v1, v2, v3，v4の外接球の中にv5が含まれているかどうか調べる
 @retval <0 入っていれば
 */
 inline double DetDelaunay3D
-(const delfem2::CVector3& v1,
- const delfem2::CVector3& v2,
- const delfem2::CVector3& v3,
- const delfem2::CVector3& v4,
- const delfem2::CVector3& v5)
+(const delfem2::CVec3& v1,
+ const delfem2::CVec3& v2,
+ const delfem2::CVec3& v3,
+ const delfem2::CVec3& v4,
+ const delfem2::CVec3& v5)
 {
 	const double a[12] = {
 		v1.x()-v5.x(),	//  0
@@ -960,7 +960,7 @@ v1, v2, v3，v4の外接球の中にv5が含まれているかどうか調べる
 */
 inline double DetDelaunay3D
 ( const int v1, const int v2, const int v3, const int v4, const int v5,
- const std::vector<delfem2::CVector3>& node )
+ const std::vector<delfem2::CVec3>& node )
 {
 	return DetDelaunay3D(node[v1],node[v2],node[v3],node[v4],node[v5]);
 }

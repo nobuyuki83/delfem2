@@ -164,9 +164,9 @@ void SetProblem(int iprob)
     {
     public:
       virtual double SignedDistance(double x, double y, double z) const {
-        dfm2::CVector3 n0;
+        dfm2::CVec3 n0;
         return obj.SignedDistanceFunction(n0,
-                                          dfm2::CVector3(x,y,z), aXYZ_Tri, aTri, aNorm);
+                                          dfm2::CVec3(x,y,z), aXYZ_Tri, aTri, aNorm);
       }
       virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                          double px, double py, double pz) const

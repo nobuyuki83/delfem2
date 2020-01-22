@@ -768,7 +768,7 @@ static void myGlVertex3d
   ::glVertex3d(aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] );
 }
 
-//static void myGlVertex3d(const CVector3& v){
+//static void myGlVertex3d(const CVec3& v){
 //  ::glVertex3d(v.x, v.y, v.z);
 //}
 
@@ -835,8 +835,8 @@ void myGlutDisplay(void)
       glShadeModel(GL_FLAT);
     }
     for(int ip=0;ip<aXYZ.size()/3;++ip){
-      const dfm2::CVector3 p(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
-      const dfm2::CVector3 v(aVal[ip*4+0],aVal[ip*4+1],aVal[ip*4+2]);
+      const dfm2::CVec3 p(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
+      const dfm2::CVec3 v(aVal[ip*4+0],aVal[ip*4+1],aVal[ip*4+2]);
       double a = 0.1;
       delfem2::opengl::DrawArrow(p, a*v);
     }

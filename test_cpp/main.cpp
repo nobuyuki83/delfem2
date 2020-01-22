@@ -307,17 +307,17 @@ TEST(vec2,second_moment_of_area)
     double r4 = (double)rand()/(RAND_MAX+1.0);
     double a = 10*r0;
     double b = a*(3*r1+1);
-    std::vector<dfm2::CVector2> aVec2;
+    std::vector<dfm2::CVec2> aVec2;
     {
-      aVec2.push_back( dfm2::CVector2(-a*0.5,-b*0.5) );
-      aVec2.push_back( dfm2::CVector2(+a*0.5,-b*0.5) );
-      aVec2.push_back( dfm2::CVector2(+a*0.5,+b*0.5) );
-      aVec2.push_back( dfm2::CVector2(-a*0.5,+b*0.5) );
+      aVec2.push_back( dfm2::CVec2(-a*0.5,-b*0.5) );
+      aVec2.push_back( dfm2::CVec2(+a*0.5,-b*0.5) );
+      aVec2.push_back( dfm2::CVec2(+a*0.5,+b*0.5) );
+      aVec2.push_back( dfm2::CVec2(-a*0.5,+b*0.5) );
       double theta0 = r4*3.1415*2.0;
       dfm2::Rotate(aVec2,theta0);
       dfm2::Translate(aVec2, r2*10-5,r3*10-5);
     }
-    dfm2::CVector2 cg,pa1,pa2;
+    dfm2::CVec2 cg,pa1,pa2;
     double area,I1,I2;
     dfm2::SecondMomentOfArea_Polygon(cg,area, pa1,I1, pa2,I2,
                                aVec2);
@@ -397,9 +397,9 @@ TEST(mathfunc,sherical_harmonics_orthgonality)
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
     const int i2 = aTri[it*3+2];
-    dfm2::CVector3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
-    dfm2::CVector3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
-    dfm2::CVector3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+    dfm2::CVec3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+    dfm2::CVec3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+    dfm2::CVec3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
     double area = SolidAngleTri(p0, p1, p2);
     area_sum += area;
     double a0[N]; makeArray_SphericalHarmonics(a0, norder, p0.p[0],p0.p[1],p0.p[2]);

@@ -18,11 +18,11 @@ namespace dfm2 = delfem2;
 
 // -----------------------------------
 
-dfm2::CVector3 GetPointSurf
+dfm2::CVec3 GetPointSurf
 (double u, double v,
  int isurf,
  std::vector<int>& aIndCP,
- std::vector<dfm2::CVector3>& aCP)
+ std::vector<dfm2::CVec3>& aCP)
 {
   int i00 = aIndCP[isurf*16+ 0];
   int i01 = aIndCP[isurf*16+ 1];
@@ -48,11 +48,11 @@ dfm2::CVector3 GetPointSurf
 }
 
 void AddQuads
-(std::vector<dfm2::CVector3>& aPQuad,
+(std::vector<dfm2::CVec3>& aPQuad,
  int n,
  int isurf,
  std::vector<int>& aIndCP,
- std::vector<dfm2::CVector3>& aCP)
+ std::vector<dfm2::CVec3>& aCP)
 {
   for (int i = 0; i<(n+1); i++){
     for (int j = 0; j<(n+1); j++){
@@ -64,7 +64,7 @@ void AddQuads
         if(ic==3){ jv++; }
         double u = (double)iu/n;
         double v = (double)jv/n;
-        dfm2::CVector3 p = GetPointSurf(u, v, isurf, aIndCP, aCP);
+        dfm2::CVec3 p = GetPointSurf(u, v, isurf, aIndCP, aCP);
         aPQuad.push_back(p);
       }
     }
@@ -75,8 +75,8 @@ void AddQuads
 // -----------------------------
 
 std::vector<int> aIndCP;
-std::vector<dfm2::CVector3> aCP;
-std::vector<dfm2::CVector3> aPQuad;
+std::vector<dfm2::CVec3> aCP;
+std::vector<dfm2::CVec3> aPQuad;
 int n = 20;
 
 // ------------------------------
@@ -97,25 +97,25 @@ void Random()
   }
   aIndCP.resize(16);
   for(int i=0;i<16;++i){ aIndCP[i] = i; }
-  aCP[ 0] += dfm2::CVector3(-2,-2,0);
-  aCP[ 1] += dfm2::CVector3(-2,-1,0);
-  aCP[ 2] += dfm2::CVector3(-2,+1,0);
-  aCP[ 3] += dfm2::CVector3(-2,+2,0);
+  aCP[ 0] += dfm2::CVec3(-2,-2,0);
+  aCP[ 1] += dfm2::CVec3(-2,-1,0);
+  aCP[ 2] += dfm2::CVec3(-2,+1,0);
+  aCP[ 3] += dfm2::CVec3(-2,+2,0);
   ////
-  aCP[ 4] += dfm2::CVector3(-1,-2,0);
-  aCP[ 5] += dfm2::CVector3(-1,-1,0);
-  aCP[ 6] += dfm2::CVector3(-1,+1,0);
-  aCP[ 7] += dfm2::CVector3(-1,+2,0);
+  aCP[ 4] += dfm2::CVec3(-1,-2,0);
+  aCP[ 5] += dfm2::CVec3(-1,-1,0);
+  aCP[ 6] += dfm2::CVec3(-1,+1,0);
+  aCP[ 7] += dfm2::CVec3(-1,+2,0);
   ////
-  aCP[ 8] += dfm2::CVector3(+1,-2,0);
-  aCP[ 9] += dfm2::CVector3(+1,-1,0);
-  aCP[10] += dfm2::CVector3(+1,+1,0);
-  aCP[11] += dfm2::CVector3(+1,+2,0);
+  aCP[ 8] += dfm2::CVec3(+1,-2,0);
+  aCP[ 9] += dfm2::CVec3(+1,-1,0);
+  aCP[10] += dfm2::CVec3(+1,+1,0);
+  aCP[11] += dfm2::CVec3(+1,+2,0);
   ////
-  aCP[12] += dfm2::CVector3(+2,-2,0);
-  aCP[13] += dfm2::CVector3(+2,-1,0);
-  aCP[14] += dfm2::CVector3(+2,+1,0);
-  aCP[15] += dfm2::CVector3(+2,+2,0);
+  aCP[12] += dfm2::CVec3(+2,-2,0);
+  aCP[13] += dfm2::CVec3(+2,-1,0);
+  aCP[14] += dfm2::CVec3(+2,+1,0);
+  aCP[15] += dfm2::CVec3(+2,+2,0);
   
   /////
   aPQuad.clear();
@@ -123,14 +123,14 @@ void Random()
 }
 
 
-static void myGlVertex3d(const dfm2::CVector3& v)
+static void myGlVertex3d(const dfm2::CVec3& v)
 {
   ::glVertex3d(v.x(),v.y(),v.z());
 }
 
-static void myGlVertex3d(int i, const std::vector<dfm2::CVector3>& aV)
+static void myGlVertex3d(int i, const std::vector<dfm2::CVec3>& aV)
 {
-  const dfm2::CVector3& v = aV[i];
+  const dfm2::CVec3& v = aV[i];
   ::glVertex3d(v.x(),v.y(),v.z());
 }
 

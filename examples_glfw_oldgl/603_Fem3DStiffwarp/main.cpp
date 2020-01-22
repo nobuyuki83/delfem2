@@ -33,7 +33,7 @@ namespace dfm2 = delfem2;
 
 
 void GenMesh
-(std::vector<dfm2::CVector2>& aVec2,
+(std::vector<dfm2::CVec2>& aVec2,
  std::vector<dfm2::CDynPntSur>& aPo2D,
  std::vector<dfm2::CDynTri>& aETri,
  double elen,
@@ -75,16 +75,16 @@ void RotationAtMeshPoints
   const unsigned int np = aXYZ.size()/3;
   aR.resize(np*9);
   for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    dfm2::CVector3 Pi(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
-    dfm2::CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
+    dfm2::CVec3 Pi(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
+    dfm2::CVec3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                 aXYZ[ip*3+1]+aDisp[ip*3+1],
                 aXYZ[ip*3+2]+aDisp[ip*3+2]);
     dfm2::CMatrix3 A;
     A.SetZero();
     for(unsigned int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
       int jp = psup[jjp];
-      dfm2::CVector3 Pj(aXYZ[jp*3+0],aXYZ[jp*3+1],aXYZ[jp*3+2]);
-      dfm2::CVector3 pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
+      dfm2::CVec3 Pj(aXYZ[jp*3+0],aXYZ[jp*3+1],aXYZ[jp*3+2]);
+      dfm2::CVec3 pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
                   aXYZ[jp*3+1]+aDisp[jp*3+1],
                   aXYZ[jp*3+2]+aDisp[jp*3+2]);
       A += dfm2::Mat3_OuterProduct(pj-pi,Pj-Pi);
@@ -222,12 +222,12 @@ void myGlutDisplay()
   
   ::glDisable(GL_LIGHTING);
   for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    dfm2::CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
+    dfm2::CVec3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                       aXYZ[ip*3+1]+aDisp[ip*3+1],
                       aXYZ[ip*3+2]+aDisp[ip*3+2]);
-    dfm2::CVector3 ex(aR[ip*9+0],aR[ip*9+3],aR[ip*9+6]);
-    dfm2::CVector3 ey(aR[ip*9+1],aR[ip*9+4],aR[ip*9+7]);
-    dfm2::CVector3 ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
+    dfm2::CVec3 ex(aR[ip*9+0],aR[ip*9+3],aR[ip*9+6]);
+    dfm2::CVec3 ey(aR[ip*9+1],aR[ip*9+4],aR[ip*9+7]);
+    dfm2::CVec3 ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
     ::glBegin(GL_LINES);
     ::glColor3d(1,0,0);
     delfem2::opengl::myGlVertex(pi);
@@ -268,7 +268,7 @@ int main(int argc,char* argv[])
         -1,+0.1 };
       aaXY.emplace_back(aXY,aXY+8 );
     }
-    std::vector<dfm2::CVector2> aVec2;
+    std::vector<dfm2::CVec2> aVec2;
     std::vector<dfm2::CDynPntSur> aPo2D;
     std::vector<dfm2::CDynTri> aETri;
     GenMesh(aVec2,aPo2D,aETri,

@@ -552,7 +552,7 @@ void PyPBD_ConstProj_ClothStretch
 {
   double* aXYZt = (double*)(npXYZt.request().ptr);
   const std::vector<dfm2::CDynTri>& aETri = mesh.aETri;
-  const std::vector<dfm2::CVector2>& aVec2 = mesh.aVec2;
+  const std::vector<dfm2::CVec2>& aVec2 = mesh.aVec2;
   PBD_TriStrain(aXYZt,
                 npXYZt.shape()[0], aETri, aVec2);
 }
@@ -564,7 +564,7 @@ void PyPBD_ConstProj_ClothBend
   assert( npXYZt.ndim() == 2 );
   assert( npXYZt.shape()[1] == 3 );
   const std::vector<dfm2::CDynTri>& aETri = mesh.aETri;
-  const std::vector<dfm2::CVector2>& aVec2 = mesh.aVec2;
+  const std::vector<dfm2::CVec2>& aVec2 = mesh.aVec2;
   double* aXYZt = (double*)(npXYZt.request().ptr);
   PBD_Bend(aXYZt,
            npXYZt.shape()[0],

@@ -17,19 +17,19 @@ namespace delfem2 {
 
 template <typename T>
 bool IsContact_FV_Proximity(int ino0, int ino1, int ino2, int ino3,
-                            const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
+                            const CVec3& p0, const CVec3& p1, const CVec3& p2, const CVec3& p3,
                             const T& bb,
                             const double delta);
 
 template <typename T>
 bool IsContact_EE_CCD(int ino0,         int ino1,         int jno0,         int jno1,
-                      const CVector3& p0s, const CVector3& p1s, const CVector3& q0s, const CVector3& q1s,
-                      const CVector3& p0e, const CVector3& p1e, const CVector3& q0e, const CVector3& q1e);
+                      const CVec3& p0s, const CVec3& p1s, const CVec3& q0s, const CVec3& q1s,
+                      const CVec3& p0e, const CVec3& p1e, const CVec3& q0e, const CVec3& q1e);
 
 template <typename T>
 bool IsContact_FV_CCD(int ino0,        int ino1,        int ino2,        int ino3,
-                      const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
-                      const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3,
+                      const CVec3& p0, const CVec3& p1, const CVec3& p2, const CVec3& p3,
+                      const CVec3& q0, const CVec3& q1, const CVec3& q2, const CVec3& q3,
                       const T& bb);
 
 // -------------
@@ -108,7 +108,7 @@ void GetIntersectTriPairs(std::vector<CIntersectTriPair>& aIntersectTriPair,
 template <typename T>
 bool delfem2::IsContact_FV_Proximity
 (int ino0, int ino1, int ino2, int ino3,
- const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
+ const CVec3& p0, const CVec3& p1, const CVec3& p2, const CVec3& p3,
  const T& bb,
  const double delta)
 {
@@ -132,8 +132,8 @@ bool delfem2::IsContact_FV_Proximity
 template <typename T>
 bool delfem2::IsContact_EE_CCD
 (int ino0,         int ino1,         int jno0,         int jno1,
- const CVector3& p0s, const CVector3& p1s, const CVector3& q0s, const CVector3& q1s,
- const CVector3& p0e, const CVector3& p1e, const CVector3& q0e, const CVector3& q1e)
+ const CVec3& p0s, const CVec3& p1s, const CVec3& q0s, const CVec3& q1s,
+ const CVec3& p0e, const CVec3& p1e, const CVec3& q0e, const CVec3& q1e)
 {
   double eps = 1.0e-10;
   if( ino0 == jno0 || ino0 == jno1 || ino1 == jno0 || ino1 == jno1 ) return false;
@@ -152,10 +152,10 @@ bool delfem2::IsContact_EE_CCD
   ////
   const double t = FindCoplanerInterp(p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
   if( t < 0 || t > 1 ) return false;
-  CVector3 p0m = (1-t)*p0s + t*p0e;
-  CVector3 p1m = (1-t)*p1s + t*p1e;
-  CVector3 q0m = (1-t)*q0s + t*q0e;
-  CVector3 q1m = (1-t)*q1s + t*q1e;
+  CVec3 p0m = (1-t)*p0s + t*p0e;
+  CVec3 p1m = (1-t)*p1s + t*p1e;
+  CVec3 q0m = (1-t)*q0s + t*q0e;
+  CVec3 q1m = (1-t)*q1s + t*q1e;
   double w0,w1;
   double dist = DistanceEdgeEdge(p0m, p1m, q0m, q1m, w0,w1);
   if( w0 < 0 || w0 > 1 ) return false;
@@ -256,12 +256,12 @@ void delfem2::GetContactElement_Proximity
     const int jn0 = aTri[jtri*3+0];
     const int jn1 = aTri[jtri*3+1];
     const int jn2 = aTri[jtri*3+2];
-    const CVector3 p0(aXYZ[in0*3+0], aXYZ[in0*3+1], aXYZ[in0*3+2]);
-    const CVector3 p1(aXYZ[in1*3+0], aXYZ[in1*3+1], aXYZ[in1*3+2]);
-    const CVector3 p2(aXYZ[in2*3+0], aXYZ[in2*3+1], aXYZ[in2*3+2]);
-    const CVector3 q0(aXYZ[jn0*3+0], aXYZ[jn0*3+1], aXYZ[jn0*3+2]);
-    const CVector3 q1(aXYZ[jn1*3+0], aXYZ[jn1*3+1], aXYZ[jn1*3+2]);
-    const CVector3 q2(aXYZ[jn2*3+0], aXYZ[jn2*3+1], aXYZ[jn2*3+2]);
+    const CVec3 p0(aXYZ[in0*3+0], aXYZ[in0*3+1], aXYZ[in0*3+2]);
+    const CVec3 p1(aXYZ[in1*3+0], aXYZ[in1*3+1], aXYZ[in1*3+2]);
+    const CVec3 p2(aXYZ[in2*3+0], aXYZ[in2*3+1], aXYZ[in2*3+2]);
+    const CVec3 q0(aXYZ[jn0*3+0], aXYZ[jn0*3+1], aXYZ[jn0*3+2]);
+    const CVec3 q1(aXYZ[jn1*3+0], aXYZ[jn1*3+1], aXYZ[jn1*3+2]);
+    const CVec3 q2(aXYZ[jn2*3+0], aXYZ[jn2*3+1], aXYZ[jn2*3+2]);
     if( IsContact_FV_Proximity(   in0,in1,in2,jn0, p0,p1,p2,q0, aBB[ichild0_0], delta) ){
       aContactElem.insert( CContactElement(true,    in0,in1,in2,jn0) );
     }
@@ -336,8 +336,8 @@ void delfem2::GetContactElement_Proximity
 template <typename T>
 bool delfem2::IsContact_FV_CCD
 (int ino0,        int ino1,        int ino2,        int ino3,
- const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
- const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3,
+ const CVec3& p0, const CVec3& p1, const CVec3& p2, const CVec3& p3,
+ const CVec3& q0, const CVec3& q1, const CVec3& q2, const CVec3& q3,
  const T& bb)
 {
   double eps = 1.0e-10;
@@ -397,18 +397,18 @@ void delfem2::GetContactElement_CCD
     int jn0 = aTri[jtri*3+0];
     int jn1 = aTri[jtri*3+1];
     int jn2 = aTri[jtri*3+2];
-    const CVector3 p0s(aXYZ[in0*3+0],                  aXYZ[in0*3+1],                  aXYZ[in0*3+2]);
-    const CVector3 p1s(aXYZ[in1*3+0],                  aXYZ[in1*3+1],                  aXYZ[in1*3+2]);
-    const CVector3 p2s(aXYZ[in2*3+0],                  aXYZ[in2*3+1],                  aXYZ[in2*3+2]);
-    const CVector3 q0s(aXYZ[jn0*3+0],                  aXYZ[jn0*3+1],                  aXYZ[jn0*3+2]);
-    const CVector3 q1s(aXYZ[jn1*3+0],                  aXYZ[jn1*3+1],                  aXYZ[jn1*3+2]);
-    const CVector3 q2s(aXYZ[jn2*3+0],                  aXYZ[jn2*3+1],                  aXYZ[jn2*3+2]);
-    const CVector3 p0e(aXYZ[in0*3+0]+dt*aUVW[in0*3+0], aXYZ[in0*3+1]+dt*aUVW[in0*3+1], aXYZ[in0*3+2]+dt*aUVW[in0*3+2]);
-    const CVector3 p1e(aXYZ[in1*3+0]+dt*aUVW[in1*3+0], aXYZ[in1*3+1]+dt*aUVW[in1*3+1], aXYZ[in1*3+2]+dt*aUVW[in1*3+2]);
-    const CVector3 p2e(aXYZ[in2*3+0]+dt*aUVW[in2*3+0], aXYZ[in2*3+1]+dt*aUVW[in2*3+1], aXYZ[in2*3+2]+dt*aUVW[in2*3+2]);
-    const CVector3 q0e(aXYZ[jn0*3+0]+dt*aUVW[jn0*3+0], aXYZ[jn0*3+1]+dt*aUVW[jn0*3+1], aXYZ[jn0*3+2]+dt*aUVW[jn0*3+2]);
-    const CVector3 q1e(aXYZ[jn1*3+0]+dt*aUVW[jn1*3+0], aXYZ[jn1*3+1]+dt*aUVW[jn1*3+1], aXYZ[jn1*3+2]+dt*aUVW[jn1*3+2]);
-    const CVector3 q2e(aXYZ[jn2*3+0]+dt*aUVW[jn2*3+0], aXYZ[jn2*3+1]+dt*aUVW[jn2*3+1], aXYZ[jn2*3+2]+dt*aUVW[jn2*3+2]);
+    const CVec3 p0s(aXYZ[in0*3+0],                  aXYZ[in0*3+1],                  aXYZ[in0*3+2]);
+    const CVec3 p1s(aXYZ[in1*3+0],                  aXYZ[in1*3+1],                  aXYZ[in1*3+2]);
+    const CVec3 p2s(aXYZ[in2*3+0],                  aXYZ[in2*3+1],                  aXYZ[in2*3+2]);
+    const CVec3 q0s(aXYZ[jn0*3+0],                  aXYZ[jn0*3+1],                  aXYZ[jn0*3+2]);
+    const CVec3 q1s(aXYZ[jn1*3+0],                  aXYZ[jn1*3+1],                  aXYZ[jn1*3+2]);
+    const CVec3 q2s(aXYZ[jn2*3+0],                  aXYZ[jn2*3+1],                  aXYZ[jn2*3+2]);
+    const CVec3 p0e(aXYZ[in0*3+0]+dt*aUVW[in0*3+0], aXYZ[in0*3+1]+dt*aUVW[in0*3+1], aXYZ[in0*3+2]+dt*aUVW[in0*3+2]);
+    const CVec3 p1e(aXYZ[in1*3+0]+dt*aUVW[in1*3+0], aXYZ[in1*3+1]+dt*aUVW[in1*3+1], aXYZ[in1*3+2]+dt*aUVW[in1*3+2]);
+    const CVec3 p2e(aXYZ[in2*3+0]+dt*aUVW[in2*3+0], aXYZ[in2*3+1]+dt*aUVW[in2*3+1], aXYZ[in2*3+2]+dt*aUVW[in2*3+2]);
+    const CVec3 q0e(aXYZ[jn0*3+0]+dt*aUVW[jn0*3+0], aXYZ[jn0*3+1]+dt*aUVW[jn0*3+1], aXYZ[jn0*3+2]+dt*aUVW[jn0*3+2]);
+    const CVec3 q1e(aXYZ[jn1*3+0]+dt*aUVW[jn1*3+0], aXYZ[jn1*3+1]+dt*aUVW[jn1*3+1], aXYZ[jn1*3+2]+dt*aUVW[jn1*3+2]);
+    const CVec3 q2e(aXYZ[jn2*3+0]+dt*aUVW[jn2*3+0], aXYZ[jn2*3+1]+dt*aUVW[jn2*3+1], aXYZ[jn2*3+2]+dt*aUVW[jn2*3+2]);
     
     if( IsContact_FV_CCD(      in0,in1,in2,jn0, p0s,p1s,p2s,q0s, p0e,p1e,p2e,q0e, aBB[ibvh0]) ){
       aContactElem.insert( CContactElement(true, in0,in1,in2,jn0) );
@@ -489,7 +489,7 @@ class CIntersectTriPair
 {
 public:
   int itri, jtri;
-  CVector3 P[2];
+  CVec3 P[2];
 };
   
 }
@@ -531,7 +531,7 @@ void delfem2::GetIntersectTriPairs
   else if(  is_leaf0 &&  is_leaf1 ){
     const int itri = ichild0_0;
     const int jtri = ichild1_0;
-    CVector3 P0,P1;
+    CVec3 P0,P1;
     bool res = isIntersectTriPair(P0,P1,
                                   itri, jtri, aTri, aXYZ);
     if( !res ){ return; }

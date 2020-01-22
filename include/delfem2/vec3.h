@@ -74,32 +74,33 @@ void Mat4Vec3(double vo[3],
 
 // -------------------------------------------------------------
 
-class CVector3;
-double Dot(const CVector3 &arg1, const CVector3 &arg2);
-CVector3 Cross(const CVector3& arg1, const CVector3& arg2);
-CVector3 operator + (const CVector3& lhs, const CVector3& rhs);
-CVector3 operator - (const CVector3& lhs, const CVector3& rhs);
-CVector3 operator * (double d, const CVector3& rhs);
-CVector3 operator * (const CVector3& vec, double d);
-double operator * (const CVector3& lhs, const CVector3& rhs);
-CVector3 operator / (const CVector3& vec, double d);
-CVector3 operator ^ (const CVector3& lhs, const CVector3& rhs);
-std::ostream &operator<<(std::ostream &output, const CVector3& v);
-std::istream &operator>>(std::istream &input, CVector3& v);
+class CVec3;
+double Dot(const CVec3 &arg1, const CVec3 &arg2);
+CVec3 Cross(const CVec3& arg1, const CVec3& arg2);
+CVec3 operator + (const CVec3& lhs, const CVec3& rhs);
+CVec3 operator - (const CVec3& lhs, const CVec3& rhs);
+CVec3 operator * (double d, const CVec3& rhs);
+CVec3 operator * (const CVec3& vec, double d);
+double operator * (const CVec3& lhs, const CVec3& rhs);
+CVec3 operator / (const CVec3& vec, double d);
+CVec3 operator ^ (const CVec3& lhs, const CVec3& rhs);
+std::ostream &operator<<(std::ostream &output, const CVec3& v);
+std::istream &operator>>(std::istream &input, CVec3& v);
 
 /**
  * @brief 3 dimentional vector class
+ * @todo use template for this class 
  */
-class CVector3  
+class CVec3  
 {
 public:
-  CVector3(double vx, double vy, double vz) : p{vx,vy,vz} {}
-  CVector3(): p{0.0, 0.0, 0.0} {}
-	CVector3(const CVector3& rhs){ p[0] = rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
-  CVector3(const double* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
-  CVector3(const float* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
-  CVector3(const std::vector<double>& v){ p[0] = v[0]; p[1] = v[1]; p[2] = v[2]; }
-	virtual ~CVector3(){}
+  CVec3(double vx, double vy, double vz) : p{vx,vy,vz} {}
+  CVec3(): p{0.0, 0.0, 0.0} {}
+	CVec3(const CVec3& rhs){ p[0] = rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
+  CVec3(const double* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
+  CVec3(const float* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
+  CVec3(const std::vector<double>& v){ p[0] = v[0]; p[1] = v[1]; p[2] = v[2]; }
+	virtual ~CVec3(){}
 
   std::vector<double> stlvec() const {
     std::vector<double> d = {p[0], p[1], p[2]};
@@ -109,31 +110,31 @@ public:
   void CopyValueTo(double* v) const { v[0]=p[0]; v[1]=p[1]; v[2]=p[2]; }
   void CopyValueToScale(double* v, double s) const { v[0]=p[0]*s; v[1]=p[1]*s; v[2]=p[2]*s; }
 
-	inline const CVector3 operator-() const{ return -1.0*(*this); }
-	inline const CVector3 operator+() const{ return *this; }  
-	inline CVector3& operator=(const CVector3& rhs){
+	inline const CVec3 operator-() const{ return -1.0*(*this); }
+	inline const CVec3 operator+() const{ return *this; }  
+	inline CVec3& operator=(const CVec3& rhs){
 		if( this != &rhs ){ p[0]= rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
 		return *this;
 	}
-	inline CVector3& operator+=(const CVector3& rhs){
+	inline CVec3& operator+=(const CVec3& rhs){
 		p[0] += rhs.p[0];
     p[1] += rhs.p[1];
     p[2] += rhs.p[2];
 		return *this;
 	}
-	inline CVector3& operator-=(const CVector3& rhs){
+	inline CVec3& operator-=(const CVec3& rhs){
 		p[0] -= rhs.p[0];
     p[1] -= rhs.p[1];
     p[2] -= rhs.p[2];
 		return *this;
 	}
-	inline CVector3& operator*=(double d){
+	inline CVec3& operator*=(double d){
 		p[0] *= d;
     p[1] *= d;
     p[2] *= d;
 		return *this;
 	}
-	inline CVector3& operator/=(double d){
+	inline CVec3& operator/=(double d){
 		if( fabs(d) < NEARLY_ZERO ){ return *this; }
 		p[0] /= d;
     p[1] /= d;
@@ -153,19 +154,19 @@ public:
     assert(0);
     return p[0];
   }  
-	inline CVector3 operator+(){ return *this; }
-	inline CVector3 operator-(){ return CVector3(-p[0],-p[1],-p[2]); }
+	inline CVec3 operator+(){ return *this; }
+	inline CVec3 operator-(){ return CVec3(-p[0],-p[1],-p[2]); }
   inline double x() const { return p[0]; }
   inline double y() const { return p[1]; }
   inline double z() const { return p[2]; }
 
-	friend bool operator==(const CVector3&, const CVector3&);
-	friend bool operator!=(const CVector3&, const CVector3&);
+	friend bool operator==(const CVec3&, const CVec3&);
+	friend bool operator!=(const CVec3&, const CVec3&);
 
-	friend CVector3 Cross(const CVector3&, const CVector3&);
-	friend double Dot(const CVector3&, const CVector3&);
-  CVector3 Normalize() const {
-    CVector3 r = (*this);
+	friend CVec3 Cross(const CVec3&, const CVec3&);
+	friend double Dot(const CVec3&, const CVec3&);
+  CVec3 Normalize() const {
+    CVec3 r = (*this);
     r.SetNormalizedVector();
     return r;
   }
@@ -180,8 +181,8 @@ public:
     double s=p[0]+p[1]+p[2];
     return !(s > s-1.0);
   }
-  static CVector3 Axis(int idim){
-    CVector3 r(0,0,0);
+  static CVec3 Axis(int idim){
+    CVec3 r(0,0,0);
     if( idim >= 0 && idim < 3) { r[idim] = 1; }
     return r;
   }
@@ -198,144 +199,144 @@ public:
 // --------------------------------------------------------------------------
 // rule about naming, the method starts "Set" change it self (not const)
   
-CVector3 mult_GlAffineMatrix(const float* m,
-                             const CVector3& p);
-CVector3 solve_GlAffineMatrix(const float* m,
-                              const CVector3& p);
-CVector3 solve_GlAffineMatrixDirection(const float* m,
-                                       const CVector3& v);
+CVec3 mult_GlAffineMatrix(const float* m,
+                             const CVec3& p);
+CVec3 solve_GlAffineMatrix(const float* m,
+                              const CVec3& p);
+CVec3 solve_GlAffineMatrixDirection(const float* m,
+                                       const CVec3& v);
 
-CVector3 Mat3Vec(const double M[ 9], const CVector3& v);
-CVector3 Mat4Vec(const double M[16], const CVector3& v);
-CVector3 QuatVec(const double quat[4], const CVector3& v0);
-CVector3 QuatConjVec(const double quat[4], const CVector3& v0);
-CVector3 screenProjection(const CVector3& v,
+CVec3 Mat3Vec(const double M[ 9], const CVec3& v);
+CVec3 Mat4Vec(const double M[16], const CVec3& v);
+CVec3 QuatVec(const double quat[4], const CVec3& v0);
+CVec3 QuatConjVec(const double quat[4], const CVec3& v0);
+CVec3 screenProjection(const CVec3& v,
                           const float* mMV, const float* mPj);
 // opposite to the screen normal
-CVector3 screenDepthDirection(const CVector3& v,
+CVec3 screenDepthDirection(const CVec3& v,
                               const float* mMV,
                               const float* mPj);
-CVector3 screenUnProjection(const CVector3& v,
+CVec3 screenUnProjection(const CVec3& v,
                             const float* mMV,
                             const float* mPj);
-CVector3 screenUnProjectionDirection(const CVector3& v,
+CVec3 screenUnProjectionDirection(const CVec3& v,
                                      const float* mMV,
                                      const float* mPj);
-CVector3 screenDepthDirection(const CVector3& v,
+CVec3 screenDepthDirection(const CVec3& v,
                               const float* mMV,
                               const float* mPj);
 
-double ScalarTripleProduct(const CVector3& a, const CVector3& b, const CVector3& c);
-bool operator == (const CVector3& lhs, const CVector3& rhs);
-bool operator != (const CVector3& lhs, const CVector3& rhs);
-double Height(const CVector3& v1, const CVector3& v2, const CVector3& v3, const CVector3& v4);
-void GetVertical2Vector (const CVector3& vec_n, CVector3& vec_x, CVector3& vec_y);
+double ScalarTripleProduct(const CVec3& a, const CVec3& b, const CVec3& c);
+bool operator == (const CVec3& lhs, const CVec3& rhs);
+bool operator != (const CVec3& lhs, const CVec3& rhs);
+double Height(const CVec3& v1, const CVec3& v2, const CVec3& v3, const CVec3& v4);
+void GetVertical2Vector (const CVec3& vec_n, CVec3& vec_x, CVec3& vec_y);
 
 // --------------------------------------------------------------
 
-CVector3 nearest_Line_Point(const CVector3& p, // point
-                              const CVector3& s, // source
-                              const CVector3& d);
-CVector3 nearest_Line_Point(double& t,
-                              const CVector3& p, // point
-                              const CVector3& s, // source
-                              const CVector3& d); // direction
-CVector3 nearest_LineSeg_Point(const CVector3& p, // point
-                                 const CVector3& s, // source
-                                 const CVector3& e); // end
-CVector3 nearest_LineSeg_Point(double& t,
-                                 const CVector3& p, // point
-                                 const CVector3& s,
-                                 const CVector3& e); // direction
-CVector3 nearest_Plane_Point(const CVector3& p, // point
-                             const CVector3& o, // origin
-                             const CVector3& n); // normal
-CVector3 Nearest_Origin_Tri(double& r0,
+CVec3 nearest_Line_Point(const CVec3& p, // point
+                              const CVec3& s, // source
+                              const CVec3& d);
+CVec3 nearest_Line_Point(double& t,
+                              const CVec3& p, // point
+                              const CVec3& s, // source
+                              const CVec3& d); // direction
+CVec3 nearest_LineSeg_Point(const CVec3& p, // point
+                                 const CVec3& s, // source
+                                 const CVec3& e); // end
+CVec3 nearest_LineSeg_Point(double& t,
+                                 const CVec3& p, // point
+                                 const CVec3& s,
+                                 const CVec3& e); // direction
+CVec3 nearest_Plane_Point(const CVec3& p, // point
+                             const CVec3& o, // origin
+                             const CVec3& n); // normal
+CVec3 Nearest_Origin_Tri(double& r0,
                             double& r1,
-                            const CVector3& q0,
-                            const CVector3& q1,
-                            const CVector3& q2);
-CVector3 nearst_Origin_Quad(double& s0, double& s1,
-                            const CVector3& p,
-                            const CVector3& q0,
-                            const CVector3& q1,
-                            const CVector3& q2,
-                            const CVector3& q3);
+                            const CVec3& q0,
+                            const CVec3& q1,
+                            const CVec3& q2);
+CVec3 nearst_Origin_Quad(double& s0, double& s1,
+                            const CVec3& p,
+                            const CVec3& q0,
+                            const CVec3& q1,
+                            const CVec3& q2,
+                            const CVec3& q3);
 
-void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
-                         const CVector3& pa_, const CVector3& va,
-                         const CVector3& pb_, const CVector3& vb);
-void nearest_Line_Line(double& D, CVector3& Da, CVector3& Db,
+void nearest_Line_Line(double& D, CVec3& Da, CVec3& Db,
+                         const CVec3& pa_, const CVec3& va,
+                         const CVec3& pb_, const CVec3& vb);
+void nearest_Line_Line(double& D, CVec3& Da, CVec3& Db,
                          double& ta, double& tb,
-                         const CVector3& pa_, const CVector3& va,
-                         const CVector3& pb_, const CVector3& vb);
-void Nearest_Line_Circle(CVector3& p0,
-                         CVector3& q0,
-                         const CVector3& src,
-                         const CVector3& dir,
-                         const CVector3& org,
-                         const CVector3& normal,
+                         const CVec3& pa_, const CVec3& va,
+                         const CVec3& pb_, const CVec3& vb);
+void Nearest_Line_Circle(CVec3& p0,
+                         CVec3& q0,
+                         const CVec3& src,
+                         const CVec3& dir,
+                         const CVec3& org,
+                         const CVec3& normal,
                          double rad);
   
-CVector3 nearst_Origin_Quad(double& s0,
+CVec3 nearst_Origin_Quad(double& s0,
                             double& s1,
-                            const CVector3& q0,
-                            const CVector3& q1,
-                            const CVector3& q2,
-                            const CVector3& q3);
+                            const CVec3& q0,
+                            const CVec3& q1,
+                            const CVec3& q2,
+                            const CVec3& q3);
   
-CVector3 nearest_Origin_LineSeg(const CVector3& s, // start
-                                const CVector3& e); // end
+CVec3 nearest_Origin_LineSeg(const CVec3& s, // start
+                                const CVec3& e); // end
 
 // r0==0 -> p0==org
 // r0==1 -> p1==org
-CVector3 nearest_Origin_LineSeg(double& r0,
-                                const CVector3& p0, // start
-                                const CVector3& p1); // end
+CVec3 nearest_Origin_LineSeg(double& r0,
+                                const CVec3& p0, // start
+                                const CVec3& p1); // end
 
   
-CVector3 Nearest_Orgin_PlaneTri(double& r0,
+CVec3 Nearest_Orgin_PlaneTri(double& r0,
                                 double& r1,
-                                const CVector3& q0,
-                                const CVector3& q1,
-                                const CVector3& q2);
+                                const CVec3& q0,
+                                const CVec3& q1,
+                                const CVec3& q2);
     
 // -----------------------------------------
 
-bool intersection_Plane_Line(CVector3& p0, double& r0, double& r1, double& r2,
+bool intersection_Plane_Line(CVec3& p0, double& r0, double& r1, double& r2,
                              double eps,
-                             const CVector3& src, const CVector3& dir,
-                             const CVector3& q0, const CVector3& q1, const CVector3& q2);
-bool intersection_Point_Quad(CVector3& psec, double& s0, double& s1,
-                             const CVector3& src, const CVector3& dir,
-                             const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3);
-CVector3 intersection_Plane_Line(const CVector3& o, // one point on plane
-                                 const CVector3& n, // plane normal
-                                 const CVector3& s, // one point on line
-                                 const CVector3& d); // direction of line
+                             const CVec3& src, const CVec3& dir,
+                             const CVec3& q0, const CVec3& q1, const CVec3& q2);
+bool intersection_Point_Quad(CVec3& psec, double& s0, double& s1,
+                             const CVec3& src, const CVec3& dir,
+                             const CVec3& q0, const CVec3& q1, const CVec3& q2, const CVec3& q3);
+CVec3 intersection_Plane_Line(const CVec3& o, // one point on plane
+                                 const CVec3& n, // plane normal
+                                 const CVec3& s, // one point on line
+                                 const CVec3& d); // direction of line
 
 // ----------------------------------------------------------------------------------
 
-double DistanceFaceVertex(const CVector3& p0, const CVector3& p1, const CVector3& p2,
-                          const CVector3& p3,
+double DistanceFaceVertex(const CVec3& p0, const CVec3& p1, const CVec3& p2,
+                          const CVec3& p3,
                           double& w0, double& w1);
 
-double DistanceEdgeEdge(const CVector3& p0, const CVector3& p1,
-                        const CVector3& q0, const CVector3& q1,
+double DistanceEdgeEdge(const CVec3& p0, const CVec3& p1,
+                        const CVec3& q0, const CVec3& q1,
                         double& ratio_p, double& ratio_q);
 
-double FindCoplanerInterp(const CVector3& s0, const CVector3& s1, const CVector3& s2, const CVector3& s3,
-                          const CVector3& e0, const CVector3& e1, const CVector3& e2, const CVector3& e3);
+double FindCoplanerInterp(const CVec3& s0, const CVec3& s1, const CVec3& s2, const CVec3& s3,
+                          const CVec3& e0, const CVec3& e1, const CVec3& e2, const CVec3& e3);
 
 bool IsContact_EE_Proximity(int ino0,        int ino1,        int jno0,        int jno1,
-                            const CVector3& p0, const CVector3& p1, const CVector3& q0, const CVector3& q1,
+                            const CVec3& p0, const CVec3& p1, const CVec3& q0, const CVec3& q1,
                             const double delta);
 
 bool IsContact_FV_CCD2(int ino0,        int ino1,        int ino2,        int ino3,
-                       const CVector3& p0, const CVector3& p1, const CVector3& p2, const CVector3& p3,
-                       const CVector3& q0, const CVector3& q1, const CVector3& q2, const CVector3& q3);
+                       const CVec3& p0, const CVec3& p1, const CVec3& p2, const CVec3& p3,
+                       const CVec3& q0, const CVec3& q1, const CVec3& q2, const CVec3& q3);
 
-bool isIntersectTriPair(CVector3& P0, CVector3& P1,
+bool isIntersectTriPair(CVec3& P0, CVec3& P1,
                         int itri, int jtri,
                         const std::vector<unsigned int>& aTri,
                         const std::vector<double>& aXYZ);
@@ -345,149 +346,149 @@ bool isIntersectTriPair(CVector3& P0, CVector3& P1,
 bool barycentricCoord_Origin_Tet(double& r0,
                                  double& r1,
                                  double& r2,
-                                 const CVector3& p0,
-                                 const CVector3& p1,
-                                 const CVector3& p2,
-                                 const CVector3& p3);
+                                 const CVec3& p0,
+                                 const CVec3& p1,
+                                 const CVec3& p2,
+                                 const CVec3& p3);
 bool barycentricCoord_Origin_Pyramid(double& r0,
                                      double& r1,
                                      double& r2,
-                                     const CVector3& p0,
-                                     const CVector3& p1,
-                                     const CVector3& p2,
-                                     const CVector3& p3,
-                                     const CVector3& p4);
+                                     const CVec3& p0,
+                                     const CVec3& p1,
+                                     const CVec3& p2,
+                                     const CVec3& p3,
+                                     const CVec3& p4);
 bool barycentricCoord_Origin_Wedge(double& r0,
                                    double& r1,
                                    double& r2,
-                                   const CVector3& p0,
-                                   const CVector3& p1,
-                                   const CVector3& p2,
-                                   const CVector3& p3,
-                                   const CVector3& p4,
-                                   const CVector3& p5);
+                                   const CVec3& p0,
+                                   const CVec3& p1,
+                                   const CVec3& p2,
+                                   const CVec3& p3,
+                                   const CVec3& p4,
+                                   const CVec3& p5);
   
-CVector3 positionBarycentricCoord_Pyramid(double r0,
+CVec3 positionBarycentricCoord_Pyramid(double r0,
                                           double r1,
                                           double r2,
-                                          const CVector3& p0,
-                                          const CVector3& p1,
-                                          const CVector3& p2,
-                                          const CVector3& p3,
-                                          const CVector3& p4);
+                                          const CVec3& p0,
+                                          const CVec3& p1,
+                                          const CVec3& p2,
+                                          const CVec3& p3,
+                                          const CVec3& p4);
   
-CVector3 positionBarycentricCoord_Wedge(double r0,
+CVec3 positionBarycentricCoord_Wedge(double r0,
                                         double r1,
                                         double r2,
-                                        const CVector3& p0,
-                                        const CVector3& p1,
-                                        const CVector3& p2,
-                                        const CVector3& p3,
-                                        const CVector3& p4,
-                                        const CVector3& p5);
+                                        const CVec3& p0,
+                                        const CVec3& p1,
+                                        const CVec3& p2,
+                                        const CVec3& p3,
+                                        const CVec3& p4,
+                                        const CVec3& p5);
   
 void iteration_barycentricCoord_Origin_Solid(double& r0,
                                              double& r1,
                                              double& r2,
-                                             const CVector3& q, // q=positionBarycentricCoord_Wedge
-                                             const CVector3& dpdr0,
-                                             const CVector3& dpdr1,
-                                             const CVector3& dpdr2,
+                                             const CVec3& q, // q=positionBarycentricCoord_Wedge
+                                             const CVec3& dpdr0,
+                                             const CVec3& dpdr1,
+                                             const CVec3& dpdr2,
                                              double damp=1.0);
 
   
 // ---------------------------------------------------------
 
-bool IsInside_Orgin_BoundingBoxPoint4(const CVector3& p0,
-                                    const CVector3& p1,
-                                    const CVector3& p2,
-                                    const CVector3& p3);
+bool IsInside_Orgin_BoundingBoxPoint4(const CVec3& p0,
+                                    const CVec3& p1,
+                                    const CVec3& p2,
+                                    const CVec3& p3);
 
-bool IsInside_Orgin_BoundingBoxPoint5(const CVector3& p0,
-                                    const CVector3& p1,
-                                    const CVector3& p2,
-                                    const CVector3& p3,
-                                    const CVector3& p4);
+bool IsInside_Orgin_BoundingBoxPoint5(const CVec3& p0,
+                                    const CVec3& p1,
+                                    const CVec3& p2,
+                                    const CVec3& p3,
+                                    const CVec3& p4);
 
-bool IsInside_Orgin_BoundingBoxPoint6(const CVector3& p0,
-                                    const CVector3& p1,
-                                    const CVector3& p2,
-                                    const CVector3& p3,
-                                    const CVector3& p4,
-                                    const CVector3& p5);
+bool IsInside_Orgin_BoundingBoxPoint6(const CVec3& p0,
+                                    const CVec3& p1,
+                                    const CVec3& p2,
+                                    const CVec3& p3,
+                                    const CVec3& p4,
+                                    const CVec3& p5);
 
 // -----------------------------------------------
 
-double volume_OrgTet(const CVector3& v1,
-                     const CVector3& v2,
-                     const CVector3& v3 );
-double Volume_Tet(const CVector3& v0,
-                  const CVector3& v1,
-                  const CVector3& v2,
-                  const CVector3& v3 );
-double volume_Pyramid(const CVector3& p0,
-                      const CVector3& p1,
-                      const CVector3& p2,
-                      const CVector3& p3,
-                      const CVector3& p4);
-double volume_Wedge(const CVector3& p0,
-                    const CVector3& p1,
-                    const CVector3& p2,
-                    const CVector3& p3,
-                    const CVector3& p4,
-                    const CVector3& p5);
+double volume_OrgTet(const CVec3& v1,
+                     const CVec3& v2,
+                     const CVec3& v3 );
+double Volume_Tet(const CVec3& v0,
+                  const CVec3& v1,
+                  const CVec3& v2,
+                  const CVec3& v3 );
+double volume_Pyramid(const CVec3& p0,
+                      const CVec3& p1,
+                      const CVec3& p2,
+                      const CVec3& p3,
+                      const CVec3& p4);
+double volume_Wedge(const CVec3& p0,
+                    const CVec3& p1,
+                    const CVec3& p2,
+                    const CVec3& p3,
+                    const CVec3& p4,
+                    const CVec3& p5);
 
 // ---------------------------------------------
 
-double SolidAngleTri(const CVector3& v1,
-                     const CVector3& v2,
-                     const CVector3& v3);
+double SolidAngleTri(const CVec3& v1,
+                     const CVec3& v2,
+                     const CVec3& v3);
 
-void Cross( CVector3& lhs, const CVector3& v1, const CVector3& v2 );
-double Area_Tri(const CVector3& v1, const CVector3& v2, const CVector3& v3);
-double SquareTriArea(const CVector3& v1, const CVector3& v2, const CVector3& v3);
-double SquareDistance(const CVector3& ipo0, const CVector3& ipo1);
-double SquareLength(const CVector3& point);
-double Length(const CVector3& point);
-double Distance(const CVector3& ipo0, const CVector3& ipo1);
+void Cross( CVec3& lhs, const CVec3& v1, const CVec3& v2 );
+double Area_Tri(const CVec3& v1, const CVec3& v2, const CVec3& v3);
+double SquareTriArea(const CVec3& v1, const CVec3& v2, const CVec3& v3);
+double SquareDistance(const CVec3& ipo0, const CVec3& ipo1);
+double SquareLength(const CVec3& point);
+double Length(const CVec3& point);
+double Distance(const CVec3& ipo0, const CVec3& ipo1);
 
-double SqareLongestEdgeLength(const CVector3& ipo0,
-                              const CVector3& ipo1,
-                              const CVector3& ipo2,
-                              const CVector3& ipo3 );
+double SqareLongestEdgeLength(const CVec3& ipo0,
+                              const CVec3& ipo1,
+                              const CVec3& ipo2,
+                              const CVec3& ipo3 );
 
-double LongestEdgeLength(const CVector3& ipo0,
-                         const CVector3& ipo1,
-                         const CVector3& ipo2,
-                         const CVector3& ipo3 );
+double LongestEdgeLength(const CVec3& ipo0,
+                         const CVec3& ipo1,
+                         const CVec3& ipo2,
+                         const CVec3& ipo3 );
 
-double SqareShortestEdgeLength(const CVector3& ipo0,
-                               const CVector3& ipo1,
-                               const CVector3& ipo2,
-                               const CVector3& ipo3 );
+double SqareShortestEdgeLength(const CVec3& ipo0,
+                               const CVec3& ipo1,
+                               const CVec3& ipo2,
+                               const CVec3& ipo3 );
 
-double ShortestEdgeLength(const CVector3& ipo0,
-                          const CVector3& ipo1,
-                          const CVector3& ipo2,
-                          const CVector3& ipo3 );
+double ShortestEdgeLength(const CVec3& ipo0,
+                          const CVec3& ipo1,
+                          const CVec3& ipo2,
+                          const CVec3& ipo3 );
 
-void Normal(CVector3& vnorm,
-            const CVector3& v1,
-            const CVector3& v2,
-            const CVector3& v3);
+void Normal(CVec3& vnorm,
+            const CVec3& v1,
+            const CVec3& v2,
+            const CVec3& v3);
 
-CVector3 Normal(const CVector3& v1,
-                const CVector3& v2,
-                const CVector3& v3);
+CVec3 Normal(const CVec3& v1,
+                const CVec3& v2,
+                const CVec3& v3);
 
-void UnitNormal(CVector3& vnorm,
-                const CVector3& v1,
-                const CVector3& v2,
-                const CVector3& v3);
+void UnitNormal(CVec3& vnorm,
+                const CVec3& v1,
+                const CVec3& v2,
+                const CVec3& v3);
   
-CVector3 UnitNormal(const CVector3& v1,
-                    const CVector3& v2,
-                    const CVector3& v3);
+CVec3 UnitNormal(const CVec3& v1,
+                    const CVec3& v2,
+                    const CVec3& v3);
   
 /**
  * @function check if Delaunay condition satisfied
@@ -496,52 +497,52 @@ CVector3 UnitNormal(const CVector3& v1,
  * 1 :       on
  * 2 :       outsdie
  */
-int DetDelaunay(const CVector3& p0,
-                const CVector3& p1,
-                const CVector3& p2,
-                const CVector3& p3);
+int DetDelaunay(const CVec3& p0,
+                const CVec3& p1,
+                const CVec3& p2,
+                const CVec3& p3);
 
-double SquareCircumradius(const CVector3& ipo0,
-                          const CVector3& ipo1,
-                          const CVector3& ipo2,
-                          const CVector3& ipo3);
+double SquareCircumradius(const CVec3& ipo0,
+                          const CVec3& ipo1,
+                          const CVec3& ipo2,
+                          const CVec3& ipo3);
 
-CVector3 CircumCenter(const CVector3& ipo0,
-                      const CVector3& ipo1,
-                      const CVector3& ipo2,
-                      const CVector3& ipo3);
+CVec3 CircumCenter(const CVec3& ipo0,
+                      const CVec3& ipo1,
+                      const CVec3& ipo2,
+                      const CVec3& ipo3);
 
-double Circumradius(const CVector3& ipo0,
-                    const CVector3& ipo1,
-                    const CVector3& ipo2,
-                    const CVector3& ipo3);
-CVector3 RotateVector(const CVector3& vec0, const CVector3& rot );
-CVector3 RandVector();
-CVector3 RandUnitVector();
-CVector3 RandGaussVector();
+double Circumradius(const CVec3& ipo0,
+                    const CVec3& ipo1,
+                    const CVec3& ipo2,
+                    const CVec3& ipo3);
+CVec3 RotateVector(const CVec3& vec0, const CVec3& rot );
+CVec3 RandVector();
+CVec3 RandUnitVector();
+CVec3 RandGaussVector();
 
 void MeanValueCoordinate(double w[3],
-                         const CVector3& v0,
-                         const CVector3& v1,
-                         const CVector3& v2);
+                         const CVec3& v0,
+                         const CVec3& v1,
+                         const CVec3& v2);
 
-CVector3 ProjectPointOnTriangle(const CVector3 &p0,
-                                const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3);
-bool isPointInsideTriangle(const CVector3 &p0,
-                           const CVector3 &tri_p1, const CVector3 &tri_p2, const CVector3 &tri_p3);
-bool isPointSameSide(const CVector3 &p0, const CVector3 &p1,
-                     const CVector3 &line_p0, const CVector3 &line_p1);
-bool isRayIntersectingTriangle(const CVector3 &line0, const CVector3 &line1,
-                               const CVector3 &tri0, const CVector3 &tri1, const CVector3 &tri2,
-                               CVector3 &intersectionPoint);
+CVec3 ProjectPointOnTriangle(const CVec3 &p0,
+                                const CVec3 &tri_p1, const CVec3 &tri_p2, const CVec3 &tri_p3);
+bool isPointInsideTriangle(const CVec3 &p0,
+                           const CVec3 &tri_p1, const CVec3 &tri_p2, const CVec3 &tri_p3);
+bool isPointSameSide(const CVec3 &p0, const CVec3 &p1,
+                     const CVec3 &line_p0, const CVec3 &line_p1);
+bool isRayIntersectingTriangle(const CVec3 &line0, const CVec3 &line1,
+                               const CVec3 &tri0, const CVec3 &tri1, const CVec3 &tri2,
+                               CVec3 &intersectionPoint);
 
 void GetConstConstDiff_Bend(double& C,
-                            CVector3 dC[4],
+                            CVec3 dC[4],
                             // -----
-                            const CVector3& p0,
-                            const CVector3& p1,
-                            const CVector3& p2,
-                            const CVector3& p3);
+                            const CVec3& p0,
+                            const CVec3& p1,
+                            const CVec3& p2,
+                            const CVec3& p3);
   
 void CheckConstDiff_Bend();
   
@@ -549,26 +550,26 @@ void CheckConstDiff_Bend();
 // here starts std::vector<CVector3>
 
 double TetVolume( int iv1, int iv2, int iv3, int iv4,
-                 const std::vector<CVector3>& node);
+                 const std::vector<CVec3>& node);
 
 double volume_Tet(int iv1, int iv2, int iv3, int iv4,
-                  const std::vector<CVector3>& aPoint);
+                  const std::vector<CVec3>& aPoint);
 
 double TriArea(const int iv1, const int iv2, const int iv3,
-               const std::vector<CVector3>& node );
+               const std::vector<CVec3>& node );
 
-bool IsOut(int itri, const CVector3& v,
-           const std::vector<CVector3>& aXYZ,
+bool IsOut(int itri, const CVec3& v,
+           const std::vector<CVec3>& aXYZ,
            const std::vector<int>& aTri);
   
 void ConvexHull(std::vector<int>& aTri,
-                const std::vector<CVector3>& aXYZ);
+                const std::vector<CVec3>& aXYZ);
 
-inline CVector3 cg_Tri(unsigned int itri,
+inline CVec3 cg_Tri(unsigned int itri,
                        const std::vector<unsigned int>& aTri,
                        const std::vector<double>& aXYZ)
 {
-  CVector3 p;
+  CVec3 p;
   int i0 = aTri[itri*3+0];
   int i1 = aTri[itri*3+1];
   int i2 = aTri[itri*3+2];
@@ -578,21 +579,21 @@ inline CVector3 cg_Tri(unsigned int itri,
   return p;
 }
 
-inline CVector3 normalTri(int itri,
+inline CVec3 normalTri(int itri,
                           const std::vector<int>& aTri,
                           const std::vector<double>& aXYZ)
 {
   int i0 = aTri[itri*3+0];
   int i1 = aTri[itri*3+1];
   int i2 = aTri[itri*3+2];
-  CVector3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
-  CVector3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
-  CVector3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+  CVec3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+  CVec3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+  CVec3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
   return (p1-p0)^(p2-p0);
 }
 
-std::ostream &operator<<(std::ostream &output, const std::vector<CVector3>& aV);
-std::istream &operator>>(std::istream &input, std::vector<CVector3>& aV);
+std::ostream &operator<<(std::ostream &output, const std::vector<CVec3>& aV);
+std::istream &operator>>(std::istream &input, std::vector<CVec3>& aV);
 
 } // end namespace delfem2
 

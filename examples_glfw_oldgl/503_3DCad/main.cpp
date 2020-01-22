@@ -142,18 +142,18 @@ void Draw
     ::glDisable(GL_LIGHTING);
     if( !vtx.isConst[0] ){
       ::glColor3d(1, 0, 0);
-      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVector3(+s, 0, 0));
-      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVector3(-s, 0, 0));
+      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVec3(+s, 0, 0));
+      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVec3(-s, 0, 0));
     }
     if( !vtx.isConst[1] ){
       ::glColor3d(0, 1, 0);
-      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVector3(0, +s, 0));
-      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVector3(0, -s, 0));
+      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVec3(0, +s, 0));
+      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVec3(0, -s, 0));
     }
     if( !vtx.isConst[2] ){
       ::glColor3d(0, 0, 1);
-      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVector3(0, 0, +s));
-      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVector3(0, 0, -s));
+      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVec3(0, 0, +s));
+      dfm2::opengl::DrawArrow(vtx.pos, dfm2::CVec3(0, 0, -s));
     }
   }
   else{
@@ -208,16 +208,16 @@ void DrawVtxEdgeHandler
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_CULL_FACE);
   if( cad.plane_inorm >= 0 && cad.plane_inorm < 3 ){
-    dfm2::CVector3 plane_org = cad.plane_org;
+    dfm2::CVec3 plane_org = cad.plane_org;
     double plane_sizeX = cad.plane_sizeX;
     double plane_sizeY = cad.plane_sizeY;
     dfm2::opengl::myGlColorDiffuse(dfm2::CColor(0.0, 0.0, 1.0, 0.5));
-    dfm2::CVector3 plane_ex = dfm2::CVector3::Axis((cad.plane_inorm+1)%3);
-    dfm2::CVector3 plane_ey = dfm2::CVector3::Axis((cad.plane_inorm+2)%3);
-    dfm2::CVector3 p0 = plane_org-plane_sizeX*plane_ex-plane_sizeY*plane_ey;
-    dfm2::CVector3 p1 = plane_org+plane_sizeX*plane_ex-plane_sizeY*plane_ey;
-    dfm2::CVector3 p2 = plane_org+plane_sizeX*plane_ex+plane_sizeY*plane_ey;
-    dfm2::CVector3 p3 = plane_org-plane_sizeX*plane_ex+plane_sizeY*plane_ey;
+    dfm2::CVec3 plane_ex = dfm2::CVec3::Axis((cad.plane_inorm+1)%3);
+    dfm2::CVec3 plane_ey = dfm2::CVec3::Axis((cad.plane_inorm+2)%3);
+    dfm2::CVec3 p0 = plane_org-plane_sizeX*plane_ex-plane_sizeY*plane_ey;
+    dfm2::CVec3 p1 = plane_org+plane_sizeX*plane_ex-plane_sizeY*plane_ey;
+    dfm2::CVec3 p2 = plane_org+plane_sizeX*plane_ex+plane_sizeY*plane_ey;
+    dfm2::CVec3 p3 = plane_org-plane_sizeX*plane_ex+plane_sizeY*plane_ey;
     ::glBegin(GL_QUADS);
     dfm2::opengl::myGlVertex(p0);
     dfm2::opengl::myGlVertex(p1);
@@ -282,17 +282,17 @@ int main(int argc,char* argv[])
       this->DrawEnd_oldGL();
     }
     void mouse_press(const float src[3], const float dir[3]) override{
-      const dfm2::CVector3 src_pick(src), dir_pick(dir);
+      const dfm2::CVec3 src_pick(src), dir_pick(dir);
       float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
       cad.MouseDown(src_pick, dir_pick,
-                    dfm2::CVector2(nav.mouse_x,nav.mouse_y),
+                    dfm2::CVec2(nav.mouse_x,nav.mouse_y),
                     mMV,mPrj,
                     nav.camera.view_height);
     }
     void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
-      dfm2::CVector2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
-      dfm2::CVector2 sp1(nav.mouse_x, nav.mouse_y);
-      const dfm2::CVector3 src_pick(src1), dir_pick(dir);
+      dfm2::CVec2 sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
+      dfm2::CVec2 sp1(nav.mouse_x, nav.mouse_y);
+      const dfm2::CVec3 src_pick(src1), dir_pick(dir);
       float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
       cad.MouseMotion(src_pick,dir_pick, sp0,sp1, mMV, mPrj);
     }

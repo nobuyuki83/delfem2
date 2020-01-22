@@ -12,7 +12,7 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------------
 
-dfm2::CVector3 dfm2::CPointElemSolid::getPos_Tet
+dfm2::CVec3 dfm2::CPointElemSolid::getPos_Tet
 (const std::vector<double> &aXYZ,
  const std::vector<int> &aTet) const
 {
@@ -21,16 +21,16 @@ dfm2::CVector3 dfm2::CPointElemSolid::getPos_Tet
   int ip1 = aTet[ielem*4+1];
   int ip2 = aTet[ielem*4+2];
   int ip3 = aTet[ielem*4+3];
-  const CVector3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-  const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-  const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
-  const CVector3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
+  const CVec3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
+  const CVec3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
+  const CVec3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+  const CVec3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
   return r0*p0+r1*p1+r2*p2+(1.0-r0-r1-r2)*p3;
 }
 
 void dfm2::CPointElemSolid::setPos_Tet
 (int it0,
- const CVector3 &q,
+ const CVec3 &q,
  const std::vector<double> &aXYZ,
  const std::vector<int> &aTet)
 {
@@ -39,10 +39,10 @@ void dfm2::CPointElemSolid::setPos_Tet
   int ip1 = aTet[it0*4+1];
   int ip2 = aTet[it0*4+2];
   int ip3 = aTet[it0*4+3];
-  const CVector3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-  const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-  const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
-  const CVector3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
+  const CVec3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
+  const CVec3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
+  const CVec3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+  const CVec3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
   double v0 = Volume_Tet( q,p1,p2,p3);
   double v1 = Volume_Tet(p0, q,p2,p3);
   double v2 = Volume_Tet(p0,p1, q,p3);
@@ -54,7 +54,7 @@ void dfm2::CPointElemSolid::setPos_Tet
   this->r2 = v2/vt;
 }
 
-dfm2::CVector3 dfm2::CPointElemSurf::Pos_Tri
+dfm2::CVec3 dfm2::CPointElemSurf::Pos_Tri
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri) const
 {
@@ -62,13 +62,13 @@ dfm2::CVector3 dfm2::CPointElemSurf::Pos_Tri
   const int i0 = aTri[itri*3+0];
   const int i1 = aTri[itri*3+1];
   const int i2 = aTri[itri*3+2];
-  const CVector3 p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
-  const CVector3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
-  const CVector3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
+  const CVec3 p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
+  const CVec3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
+  const CVec3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
 
-dfm2::CVector3 dfm2::CPointElemSurf::Pos_Tri
+dfm2::CVec3 dfm2::CPointElemSurf::Pos_Tri
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri) const
 {
@@ -76,13 +76,13 @@ dfm2::CVector3 dfm2::CPointElemSurf::Pos_Tri
   const unsigned int i0 = aTri[itri*3+0];
   const unsigned int i1 = aTri[itri*3+1];
   const unsigned int i2 = aTri[itri*3+2];
-  const CVector3 p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
-  const CVector3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
-  const CVector3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
+  const CVec3 p0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
+  const CVec3 p1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
+  const CVec3 p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
 
-dfm2::CVector3 dfm2::CPointElemSurf::UNorm_Tri
+dfm2::CVec3 dfm2::CPointElemSurf::UNorm_Tri
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm) const
@@ -91,13 +91,13 @@ dfm2::CVector3 dfm2::CPointElemSurf::UNorm_Tri
   const int i0 = aTri[itri*3+0];
   const int i1 = aTri[itri*3+1];
   const int i2 = aTri[itri*3+2];
-  const CVector3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
-  const CVector3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
-  const CVector3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
+  const CVec3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
+  const CVec3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
+  const CVec3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
 
-dfm2::CVector3 dfm2::CPointElemSurf::UNorm_Tri
+dfm2::CVec3 dfm2::CPointElemSurf::UNorm_Tri
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri,
  const double* aNorm) const
@@ -106,13 +106,13 @@ dfm2::CVector3 dfm2::CPointElemSurf::UNorm_Tri
   const unsigned int i0 = aTri[itri*3+0];
   const unsigned int i1 = aTri[itri*3+1];
   const unsigned int i2 = aTri[itri*3+2];
-  const CVector3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
-  const CVector3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
-  const CVector3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
+  const CVec3 n0(aNorm[i0*3+0], aNorm[i0*3+1], aNorm[i0*3+2]);
+  const CVec3 n1(aNorm[i1*3+0], aNorm[i1*3+1], aNorm[i1*3+2]);
+  const CVec3 n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
 
-dfm2::CVector3 dfm2::CPointElemSurf::Pos_TetFace
+dfm2::CVec3 dfm2::CPointElemSurf::Pos_TetFace
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,
  const std::vector<int>& aTetFace) const
@@ -131,7 +131,7 @@ dfm2::CVector3 dfm2::CPointElemSurf::Pos_TetFace
   int iq0 = aTet[itet*4+ielno0];
   int iq1 = aTet[itet*4+ielno1];
   int iq2 = aTet[itet*4+ielno2];
-  CVector3 p;
+  CVec3 p;
   p.p[0] = r0*aXYZ[iq0*3+0]+r1*aXYZ[iq1*3+0]+r2*aXYZ[iq2*3+0];
   p.p[1] = r0*aXYZ[iq0*3+1]+r1*aXYZ[iq1*3+1]+r2*aXYZ[iq2*3+1];
   p.p[2] = r0*aXYZ[iq0*3+2]+r1*aXYZ[iq1*3+2]+r2*aXYZ[iq2*3+2];
@@ -305,8 +305,8 @@ void weightInTriangle
 
 bool dfm2::intersectRay_Tri3D
 (double& r0, double& r1,
- const CVector3& org, const CVector3& dir,
- const CVector3& p0, const CVector3& p1, const CVector3& p2)
+ const CVec3& org, const CVec3& dir,
+ const CVec3& p0, const CVec3& p1, const CVec3& p2)
 {
   const double v0 = Volume_Tet(p1, p2, org, org+dir);
   const double v1 = Volume_Tet(p2, p0, org, org+dir);
@@ -323,7 +323,7 @@ bool dfm2::intersectRay_Tri3D
 
 std::vector<dfm2::CPointElemSurf>
 dfm2::IntersectionLine_MeshTri3D
-(const CVector3& org, const CVector3& dir,
+(const CVec3& org, const CVec3& dir,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ)
 {
@@ -332,9 +332,9 @@ dfm2::IntersectionLine_MeshTri3D
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
     const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
-    const CVector3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-    const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-    const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+    const CVec3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
+    const CVec3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
+    const CVec3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     double r0, r1;
     bool res = intersectRay_Tri3D(r0,r1,
                                 org, dir, p0,p1,p2);
@@ -346,7 +346,7 @@ dfm2::IntersectionLine_MeshTri3D
 
 void dfm2::IntersectionRay_MeshTri3D (
     std::map<double,CPointElemSurf>& mapDepthPES,
-    const CVector3& org, const CVector3& dir,
+    const CVec3& org, const CVec3& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aXYZ)
 {
@@ -355,7 +355,7 @@ void dfm2::IntersectionRay_MeshTri3D (
       aTri, aXYZ);
   mapDepthPES.clear();
   for(auto pes : aPES){
-    CVector3 p0 = pes.Pos_Tri(aXYZ,aTri);
+    CVec3 p0 = pes.Pos_Tri(aXYZ,aTri);
     double depth = (p0-org)*dir;
     if( depth < 0 ) continue;
     mapDepthPES.insert( std::make_pair(depth, pes) );
@@ -364,7 +364,7 @@ void dfm2::IntersectionRay_MeshTri3D (
 
 void dfm2::IntersectionRay_MeshTri3DPart
 (std::map<double,CPointElemSurf>& mapDepthPES,
- const CVector3& org, const CVector3& dir,
+ const CVec3& org, const CVec3& dir,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aIndTri)
@@ -374,15 +374,15 @@ void dfm2::IntersectionRay_MeshTri3DPart
     const unsigned int ip0 = aTri[itri*3+0];  assert(ip0<aXYZ.size()/3);
     const unsigned int ip1 = aTri[itri*3+1];  assert(ip1<aXYZ.size()/3);
     const unsigned int ip2 = aTri[itri*3+2];  assert(ip2<aXYZ.size()/3);
-    const CVector3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-    const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-    const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+    const CVec3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
+    const CVec3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
+    const CVec3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     double r0, r1;
     bool res = intersectRay_Tri3D(r0,r1,
                                   org, dir, p0,p1,p2);
     if( !res ){ continue; }
     double r2 = 1-r0-r1;
-    CVector3 q0 = p0*r0+p1*r1+p2*r2;
+    CVec3 q0 = p0*r0+p1*r1+p2*r2;
     double depth = (q0-org)*dir/dir.DLength();
     if( depth < 0 ) continue;
     mapDepthPES.insert( std::make_pair(depth,CPointElemSurf(itri,r0,r1)) );
@@ -483,7 +483,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
 // ----------------------------------------------------------
 
 dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3D
-(const CVector3& q,
+(const CVec3& q,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
 {
@@ -494,11 +494,11 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3D
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
     const int i2 = aTri[it*3+2];
-    const CVector3 p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
-    const CVector3 p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
-    const CVector3 p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
+    const CVec3 p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
+    const CVec3 p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
+    const CVec3 p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
     double r0,r1;
-    CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+    CVec3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
     double dist = p_min.DLength();
     if( min_dist<0 || dist < min_dist ){
       min_dist = dist;
@@ -511,7 +511,7 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3D
 
 
 dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3DPart
-(const CVector3& q,
+(const CVec3& q,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<int>& aIndTri_Cand)
@@ -522,11 +522,11 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3DPart
     const unsigned int i0 = aTri[itri0*3+0];
     const unsigned int i1 = aTri[itri0*3+1];
     const unsigned int i2 = aTri[itri0*3+2];
-    const CVector3 p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
-    const CVector3 p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
-    const CVector3 p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
+    const CVec3 p0(aXYZ[i0*3+0]-q.x(), aXYZ[i0*3+1]-q.y(), aXYZ[i0*3+2]-q.z() );
+    const CVec3 p1(aXYZ[i1*3+0]-q.x(), aXYZ[i1*3+1]-q.y(), aXYZ[i1*3+2]-q.z() );
+    const CVec3 p2(aXYZ[i2*3+0]-q.x(), aXYZ[i2*3+1]-q.y(), aXYZ[i2*3+2]-q.z() );
     double r0,r1;
-    CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+    CVec3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
     assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
     double dist = p_min.DLength();
     if( min_dist<0 || dist < min_dist ){
@@ -540,7 +540,7 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTri3DPart
 // ----------------------------------------------------------------------------
 
 dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
-(const CVector3& q,
+(const CVec3& q,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet)
 {
@@ -555,7 +555,7 @@ dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
 }
 
 dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
-(const CVector3& p,
+(const CVec3& p,
  int itet_start, // starting triangle
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,
@@ -570,10 +570,10 @@ dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
     int ip1 = aTet[itet1*4+1];
     int ip2 = aTet[itet1*4+2];
     int ip3 = aTet[itet1*4+3];
-    const CVector3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-    const CVector3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-    const CVector3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
-    const CVector3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
+    const CVec3 p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
+    const CVec3 p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
+    const CVec3 p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+    const CVec3 p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
     double v0 = Volume_Tet(p, p1,p2,p3);
     double v1 = Volume_Tet(p0,p, p2,p3);
     double v2 = Volume_Tet(p0,p1,p, p3);
@@ -597,7 +597,7 @@ dfm2::CPointElemSolid dfm2::Nearest_Point_MeshTet3D
 // ---------------------------------------------------------------
 
 dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTetFace3D
-(const CVector3& p0,
+(const CVec3& p0,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTet,
  const std::vector<int>& aTetFaceSrf)
@@ -610,18 +610,18 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTetFace3D
   ////
   double dist_min=-1.0;
   int itf_min = -1;
-  CVector3 p_min;
+  CVec3 p_min;
   for(size_t itf=0;itf<aTetFaceSrf.size()/2;++itf){
     int itet = aTetFaceSrf[itf*2+0];
     int iface = aTetFaceSrf[itf*2+1];
     const int i0 = aTet[itet*4+noelTetFace[iface][0]];
     const int i1 = aTet[itet*4+noelTetFace[iface][1]];
     const int i2 = aTet[itet*4+noelTetFace[iface][2]];
-    CVector3 q0 = CVector3(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2])-p0;
-    CVector3 q1 = CVector3(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2])-p0;
-    CVector3 q2 = CVector3(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2])-p0;
+    CVec3 q0 = CVec3(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2])-p0;
+    CVec3 q1 = CVec3(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2])-p0;
+    CVec3 q2 = CVec3(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2])-p0;
     double r0,r1;
-    CVector3 p2 = Nearest_Origin_Tri(r0,r1, q0,q1,q2);
+    CVec3 p2 = Nearest_Origin_Tri(r0,r1, q0,q1,q2);
     double dist = p2.Length();
     if( itf_min == -1 || dist < dist_min ){
       dist_min = dist;
@@ -636,9 +636,9 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTetFace3D
     const int i0 = aTet[itet*4+noelTetFace[iface][0]];
     const int i1 = aTet[itet*4+noelTetFace[iface][1]];
     const int i2 = aTet[itet*4+noelTetFace[iface][2]];
-    CVector3 q0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
-    CVector3 q1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
-    CVector3 q2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+    CVec3 q0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+    CVec3 q1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+    CVec3 q2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
     double a0 = Area_Tri(p_min, q1,q2);
     double a1 = Area_Tri(p_min, q2,q0);
     double a2 = Area_Tri(p_min, q0,q1);
@@ -656,16 +656,16 @@ dfm2::CPointElemSurf dfm2::Nearest_Point_MeshTetFace3D
 
 
 double dfm2::SDFNormal_NearestPoint
-(CVector3& n0,
- const CVector3& p0,
+(CVec3& n0,
+ const CVec3& p0,
  const CPointElemSurf& pes,
  const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri,
  const double* aNorm)
 {
-  CVector3 q1 = pes.Pos_Tri(aXYZ,nXYZ,aTri,nTri);
+  CVec3 q1 = pes.Pos_Tri(aXYZ,nXYZ,aTri,nTri);
   double dist = (q1-p0).Length();
-  CVector3 n1 = pes.UNorm_Tri(aXYZ,nXYZ,aTri,nTri,aNorm);
+  CVec3 n1 = pes.UNorm_Tri(aXYZ,nXYZ,aTri,nTri,aNorm);
   if( (q1-p0)*n1 > 0 ){  //inside
     if( dist < 1.0e-6 ){ n0 = n1; }
     else{ n0 = (q1-p0).Normalize(); }
@@ -679,16 +679,16 @@ double dfm2::SDFNormal_NearestPoint
 }
 
 double dfm2::SDFNormal_NearestPoint
-(CVector3& n0,
- const CVector3& p0,
+(CVec3& n0,
+ const CVec3& p0,
  const CPointElemSurf& pes,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm)
 {
-  CVector3 q1 = pes.Pos_Tri(aXYZ,aTri);
+  CVec3 q1 = pes.Pos_Tri(aXYZ,aTri);
   double dist = (q1-p0).Length();
-  CVector3 n1 = pes.UNorm_Tri(aXYZ,aTri,aNorm);
+  CVec3 n1 = pes.UNorm_Tri(aXYZ,aTri,aNorm);
   if( (q1-p0)*n1 > 0 ){  //inside
     if( dist < 1.0e-6 ){ n0 = n1; }
     else{ n0 = (q1-p0).Normalize(); }
@@ -704,7 +704,7 @@ double dfm2::SDFNormal_NearestPoint
 
 double dfm2::DistanceToTri
 (CPointElemSurf& pes,
- const CVector3& p,
+ const CVec3& p,
  unsigned int itri0,
  const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
@@ -712,11 +712,11 @@ double dfm2::DistanceToTri
   const unsigned int i0 = aTri[itri0*3+0];
   const unsigned int i1 = aTri[itri0*3+1];
   const unsigned int i2 = aTri[itri0*3+2];
-  const CVector3 p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
-  const CVector3 p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
-  const CVector3 p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
+  const CVec3 p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
+  const CVec3 p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
+  const CVec3 p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
   double r0,r1;
-  CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+  CVec3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
   assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
   pes.itri = itri0;
   pes.r0 = r0;
@@ -727,7 +727,7 @@ double dfm2::DistanceToTri
 
 double dfm2::DistanceToTri
 (CPointElemSurf& pes,
- const CVector3& p,
+ const CVec3& p,
  unsigned int itri0,
  const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri)
@@ -735,11 +735,11 @@ double dfm2::DistanceToTri
   const unsigned int i0 = aTri[itri0*3+0];
   const unsigned int i1 = aTri[itri0*3+1];
   const unsigned int i2 = aTri[itri0*3+2];
-  const CVector3 p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
-  const CVector3 p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
-  const CVector3 p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
+  const CVec3 p0(aXYZ[i0*3+0]-p.p[0], aXYZ[i0*3+1]-p.p[1], aXYZ[i0*3+2]-p.p[2]);
+  const CVec3 p1(aXYZ[i1*3+0]-p.p[0], aXYZ[i1*3+1]-p.p[1], aXYZ[i1*3+2]-p.p[2]);
+  const CVec3 p2(aXYZ[i2*3+0]-p.p[0], aXYZ[i2*3+1]-p.p[1], aXYZ[i2*3+2]-p.p[2]);
   double r0,r1;
-  CVector3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
+  CVec3 p_min = Nearest_Origin_Tri(r0,r1, p0,p1,p2);
   assert( r0 > -1.0e-10 && r1 > -1.0e-10 && (1-r0-r1) > -1.0e-10 );
   pes.itri = itri0;
   pes.r0 = r0;

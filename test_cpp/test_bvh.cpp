@@ -47,7 +47,7 @@ TEST(bvh,inclusion_sphere)
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-1.0, 1.0);
   for(int itr=0;itr<10000;++itr){
-    dfm2::CVector3 p0(udist(rng), udist(rng), udist(rng));
+    dfm2::CVec3 p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3D_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -80,7 +80,7 @@ TEST(bvh,inclusion_aabb)
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-1.0, 1.0);
   for(int itr=0;itr<10000;++itr){
-    dfm2::CVector3 p0(udist(rng), udist(rng), udist(rng));
+    dfm2::CVec3 p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3D_AABB& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -116,7 +116,7 @@ TEST(bvh,nearestinc_sphere)
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-5.0, 5.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVector3 p0(udist(rng), udist(rng), udist(rng));
+    dfm2::CVec3 p0(udist(rng), udist(rng), udist(rng));
     {
       p0.SetNormalizedVector();
       if( itr % 2 == 0 ){ p0 *= 1.02; } // outside included in bvh
@@ -129,13 +129,13 @@ TEST(bvh,nearestinc_sphere)
     EXPECT_LE( dist1, 0.1 );
     EXPECT_GE( dist1, 0.0 );
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
-    dfm2::CVector3 q1 = pes1.Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3 q1 = pes1.Pos_Tri(aXYZ, aTri);
     {
       dfm2::CPointElemSurf pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
-      dfm2::CVector3 q0 = pes0.Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3 q0 = pes0.Pos_Tri(aXYZ, aTri);
       EXPECT_LT(Distance(q0,q1),1.0e-10);
     }
-    dfm2::CVector3 n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
+    dfm2::CVec3 n0 = pes1.UNorm_Tri(aXYZ, aTri, aNorm);
     EXPECT_EQ( n0*(p0-q1)>0, itr%2==0);
     // ---------------------
     {
@@ -146,7 +146,7 @@ TEST(bvh,nearestinc_sphere)
                                                      aXYZ.data(), aXYZ.size()/3,
                                                      aTri.data(), aXYZ.size()/3,
                                                      bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
-      dfm2::CVector3 q2 = pes2.Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3 q2 = pes2.Pos_Tri(aXYZ, aTri);
       EXPECT_LT(Distance(q2,q1),1.0e-10);
     }
   }
@@ -170,7 +170,7 @@ TEST(bvh,nearest_range) // find global nearest from range
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-5.0, 5.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVector3 p0(udist(rng), udist(rng), udist(rng));
+    dfm2::CVec3 p0(udist(rng), udist(rng), udist(rng));
     {
       double dist_min=-1, dist_max = -1;
       dfm2::BVH_Range_DistToNearestPoint(dist_min, dist_max,
@@ -235,7 +235,7 @@ TEST(bvh,nearest_point) // find global nearest directry
            aTri.data(), aTri.size()/3,
            0.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVector3 p0;
+    dfm2::CVec3 p0;
     {
       p0.p[0] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
       p0.p[1] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
@@ -243,10 +243,10 @@ TEST(bvh,nearest_point) // find global nearest directry
     }
     dfm2::CPointElemSurf pes1 = bvh.NearestPoint_Global(p0,aXYZ,aTri);
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
-    dfm2::CVector3 q1 = pes1.Pos_Tri(aXYZ, aTri);
+    dfm2::CVec3 q1 = pes1.Pos_Tri(aXYZ, aTri);
     {
       dfm2::CPointElemSurf pes0 = Nearest_Point_MeshTri3D(p0, aXYZ, aTri);
-      dfm2::CVector3 q0 = pes0.Pos_Tri(aXYZ, aTri);
+      dfm2::CVec3 q0 = pes0.Pos_Tri(aXYZ, aTri);
       EXPECT_LT(Distance(q0,q1),1.0e-10);
     }
   }
@@ -270,14 +270,14 @@ TEST(bvh,sdf) // find global nearest directry
            aTri.data(), aTri.size()/3,
            0.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVector3 p0;
+    dfm2::CVec3 p0;
     {
       p0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       p0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       p0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
     }
     if( (p0.Length()-1.0)<1.0e-3 ){ continue; }
-    dfm2::CVector3 n0;
+    dfm2::CVec3 n0;
     double sdf = bvh.SignedDistanceFunction(n0,
                                             p0, aXYZ, aTri, aNorm);
     EXPECT_NEAR(1-p0.Length(), sdf, 1.0e-2);
@@ -303,7 +303,7 @@ TEST(bvh,lineintersection)
            aTri.data(), aTri.size()/3,
            1.0e-5);
   for(int itr=0;itr<100;++itr){
-    dfm2::CVector3 s0, d0;
+    dfm2::CVec3 s0, d0;
     {
       s0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       s0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
@@ -365,7 +365,7 @@ TEST(bvh,rayintersection)
            aTri.data(), aTri.size()/3,
            1.0e-5);
   for(int itr=0;itr<100;++itr){
-    dfm2::CVector3 s0, d0;
+    dfm2::CVec3 s0, d0;
     {
       s0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       s0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
@@ -420,8 +420,8 @@ TEST(bvh,rayintersection)
         EXPECT_FLOAT_EQ(itr0->first,itr1->first);
         dfm2::CPointElemSurf pes0 = itr0->second;
         dfm2::CPointElemSurf pes1 = itr1->second;
-        dfm2::CVector3 q0 = pes0.Pos_Tri(aXYZ, aTri);
-        dfm2::CVector3 q1 = pes1.Pos_Tri(aXYZ, aTri);
+        dfm2::CVec3 q0 = pes0.Pos_Tri(aXYZ, aTri);
+        dfm2::CVec3 q1 = pes1.Pos_Tri(aXYZ, aTri);
         EXPECT_NEAR(Distance(q0,q1), 0.0, 1.0e-10);
       }
     }

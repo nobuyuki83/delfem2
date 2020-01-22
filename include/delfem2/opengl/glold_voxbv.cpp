@@ -28,8 +28,8 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-static void myGlNormal(const dfm2::CVector3& n){ ::glNormal3d(n.x(),n.y(),n.z()); }
-static void myGlVertex(const dfm2::CVector3& v){ ::glVertex3d(v.x(),v.y(),v.z()); }
+static void myGlNormal(const dfm2::CVec3& n){ ::glNormal3d(n.x(),n.y(),n.z()); }
+static void myGlVertex(const dfm2::CVec3& v){ ::glVertex3d(v.x(),v.y(),v.z()); }
 static void myGlColorDiffuse(float r, float g, float b, float a){
   ::glColor4d(r, g, b, a );
   float c[4] = {r, g, b, a};
@@ -46,33 +46,33 @@ const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 2, 3, 1 }, // -z
   { 4, 5, 7, 6 } }; // +z
 
-const dfm2::CVector3 normalHexFace[6] = {
-  dfm2::CVector3(-1, 0, 0),
-  dfm2::CVector3(+1, 0, 0),
-  dfm2::CVector3( 0,-1, 0),
-  dfm2::CVector3( 0,+1, 0),
-  dfm2::CVector3( 0, 0,-1),
-  dfm2::CVector3( 0, 0,+1)
+const dfm2::CVec3 normalHexFace[6] = {
+  dfm2::CVec3(-1, 0, 0),
+  dfm2::CVec3(+1, 0, 0),
+  dfm2::CVec3( 0,-1, 0),
+  dfm2::CVec3( 0,+1, 0),
+  dfm2::CVec3( 0, 0,-1),
+  dfm2::CVec3( 0, 0,+1)
 };
 
 void Draw_CubeGrid
 (bool is_picked, int iface_picked,
- double elen, const dfm2::CVector3& org,
+ double elen, const dfm2::CVec3& org,
  const CCubeGrid& cube)
 {
   if( !cube.is_active ) return;
   int ih = cube.ivx;
   int jh = cube.ivy;
   int kh = cube.ivz;
-  dfm2::CVector3 aP[8] = {
-    org + elen * dfm2::CVector3(ih+0,jh+0,kh+0),
-    org + elen * dfm2::CVector3(ih+1,jh+0,kh+0),
-    org + elen * dfm2::CVector3(ih+0,jh+1,kh+0),
-    org + elen * dfm2::CVector3(ih+1,jh+1,kh+0),
-    org + elen * dfm2::CVector3(ih+0,jh+0,kh+1),
-    org + elen * dfm2::CVector3(ih+1,jh+0,kh+1),
-    org + elen * dfm2::CVector3(ih+0,jh+1,kh+1),
-    org + elen * dfm2::CVector3(ih+1,jh+1,kh+1) };
+  dfm2::CVec3 aP[8] = {
+    org + elen * dfm2::CVec3(ih+0,jh+0,kh+0),
+    org + elen * dfm2::CVec3(ih+1,jh+0,kh+0),
+    org + elen * dfm2::CVec3(ih+0,jh+1,kh+0),
+    org + elen * dfm2::CVec3(ih+1,jh+1,kh+0),
+    org + elen * dfm2::CVec3(ih+0,jh+0,kh+1),
+    org + elen * dfm2::CVec3(ih+1,jh+0,kh+1),
+    org + elen * dfm2::CVec3(ih+0,jh+1,kh+1),
+    org + elen * dfm2::CVec3(ih+1,jh+1,kh+1) };
   ::glEnable(GL_LIGHTING);
   ::glBegin(GL_QUADS);
   for(int iface=0;iface<6;++iface){

@@ -95,7 +95,7 @@ public:
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
   double Nearest_Point_IncludedInBVH(CPointElemSurf& pes,
-                                     const CVector3& p0,
+                                     const CVec3& p0,
                                      double rad_exp, // look leaf inside this radius
                                      const double* aXYZ, unsigned int nXYZ,
                                      const unsigned int* aTri, unsigned int nTri) const{
@@ -118,7 +118,7 @@ public:
      aIndTri_Cand);
      */
   }
-  CPointElemSurf NearestPoint_Global(const CVector3& p0,
+  CPointElemSurf NearestPoint_Global(const CVec3& p0,
                                      const std::vector<double>& aXYZ,
                                      const std::vector<unsigned int>& aTri) const {
     assert( aBB_BVH.size() == aNodeBVH.size() );
@@ -130,8 +130,8 @@ public:
     return pes;
   }
     // inside positive
-  double SignedDistanceFunction(CVector3& n0,
-                                const CVector3& p0,
+  double SignedDistanceFunction(CVec3& n0,
+                                const CVec3& p0,
                                 const std::vector<double>& aXYZ,
                                 const std::vector<unsigned int>& aTri,
                                 const std::vector<double>& aNorm) const
@@ -145,19 +145,19 @@ public:
                                           aXYZ, aTri,
                                           iroot_bvh, aNodeBVH, aBB_BVH);
     }
-    const CVector3 q0 = pes.Pos_Tri(aXYZ, aTri);
+    const CVec3 q0 = pes.Pos_Tri(aXYZ, aTri);
     double dist = (q0-p0).Length();
     if( !aBB_BVH[iroot_bvh].isInclude_Point(p0.x(),p0.y(),p0.z()) ){ // outside
       n0 = (p0-q0).Normalize();
       return -dist;
     }
-    const CVector3 n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
+    const CVec3 n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
     if( dist < 1.0e-6 ){
       n0 = n1;
       if( (q0-p0)*n1 > 0 ){ return dist; } //inside
       return -dist; // outside
     }
-    CVector3 dir = (cg_Tri(pes.itri, aTri, aXYZ)-p0).Normalize();
+    CVec3 dir = (cg_Tri(pes.itri, aTri, aXYZ)-p0).Normalize();
     if( (q0-p0)*n1 < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
     std::vector<int> aIndElem;
     double ps0[3]; p0.CopyValueTo(ps0);
@@ -197,7 +197,7 @@ class CInfoNearest
     }
   public:
     CPointElemSurf pes;
-    CVector3 pos;
+    CVec3 pos;
     double sdf;
     bool is_active;
 };
@@ -242,7 +242,7 @@ void delfem2::BVH_NearestPoint_MeshTri3D
     const unsigned int itri0 = ichild0;
     CPointElemSurf pes_tmp;
     double dist = DistanceToTri(pes_tmp,
-                                CVector3(px,py,pz),
+                                CVec3(px,py,pz),
                                 itri0, aXYZ,aTri);
     if( dist_min<0 || dist < dist_min ){
       dist_min = dist;
@@ -284,7 +284,7 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D
       const unsigned int itri0 = ichild0;
       CPointElemSurf pes_tmp;
       const double dist0 = DistanceToTri(pes_tmp,
-                                         CVector3(px,py,pz),
+                                         CVec3(px,py,pz),
                                          itri0, aXYZ,nXYZ, aTri,nTri);
       if( dist_tri<0 || dist0 < dist_tri ){
         dist_tri = dist0;
@@ -316,7 +316,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside
  const std::vector<double>& aNorm0)
 {
   for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
-    CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
+    CVec3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
     CPointElemSurf pes;
     bvh.Nearest_Point_IncludedInBVH(pes,
                                     p0, 0.0,
@@ -324,7 +324,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside
                                     aTri0.data(),aTri0.size()/3);
     /////
     if( pes.itri == -1 ){ continue; }
-    CVector3 n0;
+    CVec3 n0;
     double sdf = SDFNormal_NearestPoint(n0,
                                         p0,pes,aXYZ0,aTri0,aNorm0);
 //    std::cout << sdf+cc << std::endl;
@@ -343,7 +343,7 @@ public:
   }
 public:
   delfem2::CPointElemSurf pes;
-  delfem2::CVector3 pos;
+  delfem2::CVec3 pos;
   double sdf;
   bool is_active;
 };
@@ -363,7 +363,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache
   const unsigned int np = nXYZt;
   aInfoNearest.resize(np);
   for(unsigned int ip=0;ip<np;++ip){
-    CVector3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
+    CVec3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
     if( aInfoNearest[ip].is_active ){
       double dp = Distance(p0,aInfoNearest[ip].pos);
       if( aInfoNearest[ip].sdf + dp + cc < 0 ){
@@ -386,7 +386,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache
       }
       continue;
     }
-    CVector3 n0;
+    CVec3 n0;
     double sdf = SDFNormal_NearestPoint(n0,
                                         aInfoNearest[ip].pos, aInfoNearest[ip].pes,
                                         pXYZ0, nXYZ0,

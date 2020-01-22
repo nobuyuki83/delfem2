@@ -29,6 +29,9 @@ void GetRGB_HSV(float&r, float& g, float& b,
 
 // -------------------------------------------------------------
 
+/**
+ * @todo use template for this class
+ */
 class CColor
 {
 public:

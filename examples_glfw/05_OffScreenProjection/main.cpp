@@ -64,9 +64,9 @@ int main()
     double elen = 0.01;
     sampler.Init(nres, nres, "4byte",false);
     sampler.SetCoord(elen, 4.0,
-                     dfm2::CVector3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-                     dfm2::CVector3(0,0,-1).stlvec(),
-                     dfm2::CVector3(1,0,0).stlvec() );
+                     dfm2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
+                     dfm2::CVec3(0,0,-1).stlvec(),
+                     dfm2::CVec3(1,0,0).stlvec() );
     sampler.SetColor(1, 0, 0);
     sampler.draw_len_axis = 1.0;
     sampler.bgcolor = {1,1,1};

@@ -17,24 +17,24 @@
 
 namespace delfem2 {
 
-CVector3 normalTri(int itri0,
+CVec3 normalTri(int itri0,
                    const std::vector<CDynTri>& aSTri,
-                   const std::vector<CVector3>& aVec3);
+                   const std::vector<CVec3>& aVec3);
 
 bool CheckTri(const std::vector<CDynPntSur>& aPo3D,
               const std::vector<CDynTri>& aSTri,
-              const std::vector<CVector3>& aVec3);
+              const std::vector<CVec3>& aVec3);
 
-bool FindRayTriangleMeshIntersections(std::vector<CVector3> &intersectionPoints,
-                                      const CVector3 &line0,
-                                      const CVector3 &line1,
+bool FindRayTriangleMeshIntersections(std::vector<CVec3> &intersectionPoints,
+                                      const CVec3 &line0,
+                                      const CVec3 &line1,
                                       const std::vector<CDynTri>& aTri,
-                                      const std::vector<CVector3>& aVec3);
+                                      const std::vector<CVec3>& aVec3);
 
 bool DelaunayAroundPoint(int ipo0,
                          std::vector<CDynPntSur>& aPo,
                          std::vector<CDynTri>& aTri,
-                         const std::vector<CVector3>& aVec3);
+                         const std::vector<CVec3>& aVec3);
 
 // -------------------------------------------------------
 
@@ -93,7 +93,7 @@ public:
   }
   int insertPointElem(int itri0, double r0, double r1){
     const int ipo0 = aEPo.size();
-    CVector3 v3;
+    CVec3 v3;
     {
       int i0 = aETri[itri0].v[0];
       int i1 = aETri[itri0].v[1];
@@ -114,7 +114,7 @@ public:
 public:
   std::vector<CDynPntSur> aEPo;
   std::vector<CDynTri> aETri;
-  std::vector<CVector3> aVec3;
+  std::vector<CVec3> aVec3;
 };
   
 }

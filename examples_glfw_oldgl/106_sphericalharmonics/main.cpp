@@ -40,10 +40,10 @@ static void drawShphere_Heatmap
       double x1 = sin(dr*ilo1);
       double z0 = cos(dr*ilo0);
       double z1 = cos(dr*ilo1);
-      dfm2::CVector3 a(r0*x0,y0,r0*z0);
-      dfm2::CVector3 b(r0*x1,y0,r0*z1);
-      dfm2::CVector3 c(r1*x1,y1,r1*z1);
-      dfm2::CVector3 d(r1*x0,y1,r1*z0);
+      dfm2::CVec3 a(r0*x0,y0,r0*z0);
+      dfm2::CVec3 b(r0*x1,y0,r0*z1);
+      dfm2::CVec3 c(r1*x1,y1,r1*z1);
+      dfm2::CVec3 d(r1*x0,y1,r1*z0);
       {
         double x = (r0+r1)*(x0+x1)*0.25;
         double y = (y0+y1)*0.5;
@@ -89,10 +89,10 @@ static void drawShphere_Radius
       double x1 = sin(dlo*ilo1);
       double z0 = cos(dlo*ilo0);
       double z1 = cos(dlo*ilo1);
-      dfm2::CVector3 a(r0*x0,y0,r0*z0);
-      dfm2::CVector3 b(r0*x1,y0,r0*z1);
-      dfm2::CVector3 c(r1*x1,y1,r1*z1);
-      dfm2::CVector3 d(r1*x0,y1,r1*z0);
+      dfm2::CVec3 a(r0*x0,y0,r0*z0);
+      dfm2::CVec3 b(r0*x1,y0,r0*z1);
+      dfm2::CVec3 c(r1*x1,y1,r1*z1);
+      dfm2::CVec3 d(r1*x0,y1,r1*z0);
       double va = value(a.x(),a.y(),a.z());
       double vb = value(b.x(),b.y(),b.z());
       double vc = value(c.x(),c.y(),c.z());
