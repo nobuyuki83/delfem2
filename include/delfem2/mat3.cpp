@@ -10,9 +10,12 @@
 
 namespace dfm2 = delfem2;
 
+// --------------------------------------------------------
+
+template <typename T>
 void dfm2::MatMat3
-(double* C,
- const double* A, const double* B)
+(T* C,
+ const T* A, const T* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -20,10 +23,15 @@ void dfm2::MatMat3
     }
   }
 }
+template void dfm2::MatMat3(float* C, const float* A, const float* B);
+template void dfm2::MatMat3(double* C, const double* A, const double* B);
 
+// ---------------------------------------
+
+template <typename T>
 void dfm2::MatMatTrans3
-(double* C,
- const double* A, const double* B)
+(T* C,
+ const T* A, const T* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -31,10 +39,15 @@ void dfm2::MatMatTrans3
     }
   }
 }
+template void dfm2::MatMatTrans3 (float* C, const float* A, const float* B);
+template void dfm2::MatMatTrans3 (double* C, const double* A, const double* B);
 
+// ---------------------------------------
+
+template <typename T>
 void dfm2::MatTransMat3
-(double* C,
- const double* A, const double* B)
+(T* C,
+ const T* A, const T* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -42,6 +55,22 @@ void dfm2::MatTransMat3
     }
   }
 }
+template void dfm2::MatTransMat3 (float* C, const float* A, const float* B);
+template void dfm2::MatTransMat3 (double* C, const double* A, const double* B);
+
+
+// ---------------------------------------
+
+template <typename T>
+T dfm2::Det_Mat3(const T U[9])
+{
+  return + U[0]*U[4]*U[8] + U[3]*U[7]*U[2] + U[6]*U[1]*U[5]
+  - U[0]*U[7]*U[5] - U[6]*U[4]*U[2] - U[3]*U[1]*U[8];
+}
+template float dfm2::Det_Mat3(const float U[9]);
+template double dfm2::Det_Mat3(const double U[9]);
+
+// ---------------------------------------
 
 double sqnormFrobenius
 (const double sm[6])
@@ -155,12 +184,6 @@ double estimationMaxEigenValue(const double mtm[6])
   return maxl;
 }
 
-double dfm2::Det(const double U[9])
-{
-  return + U[0]*U[4]*U[8] + U[3]*U[7]*U[2] + U[6]*U[1]*U[5]
-  - U[0]*U[7]*U[5] - U[6]*U[4]*U[2] - U[3]*U[1]*U[8];
-}
-
 void dfm2::svd3
 (double U[9], double G[3], double V[9],
  const double m[9],
@@ -201,7 +224,7 @@ void dfm2::svd3
     double lu[3]; eigenSym3(U,lu,
                             mmt,nitr);
   }
-  const double detU = Det(U);
+  const double detU = Det_Mat3(U);
   if( detU < 0 ){
     U[2]=-U[2];
     U[5]=-U[5];

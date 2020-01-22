@@ -13,9 +13,39 @@
 #  define M_PI 3.141592
 #endif
 
+namespace dfm2 = delfem2;
+
+// ----------------------------------
+
+template <typename T>
+void dfm2::Normalize_Quat(T q[])
+{
+  const double len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
+  double invlen = 1.0/len;
+  q[0] *= invlen;
+  q[1] *= invlen;
+  q[2] *= invlen;
+  q[3] *= invlen;
+}
+template void dfm2::Normalize_Quat(float q[]);
+template void dfm2::Normalize_Quat(double q[]);
+
+// -----------------------------------
+
+template <typename T>
+void dfm2::SetIdentity_Quat(T q[4]){
+  q[0] = 1;
+  q[1] = 0;
+  q[2] = 0;
+  q[3] = 0;
+}
+template void dfm2::SetIdentity_Quat(float q[4]);
+template void dfm2::SetIdentity_Quat(double q[4]);
+
+// -------------------------------------
 
 // multiply two quaternion
-void QuatQuat(double r[], const double p[], const double q[])
+void dfm2::QuatQuat(double r[], const double p[], const double q[])
 {
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
   r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
@@ -23,15 +53,8 @@ void QuatQuat(double r[], const double p[], const double q[])
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
 
-void QuatSetIdentity(double q[]){
-  q[0] = 1;
-  q[1] = 0;
-  q[2] = 0;
-  q[3] = 0;
-}
-
 // transform vector with quaternion
-void QuatVec(double vo[], const double q[], const double vi[])
+void dfm2::QuatVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -49,7 +72,7 @@ void QuatVec(double vo[], const double q[], const double vi[])
 }
 
 // transform vector with conjugate of quaternion
-void QuatConjVec(double vo[], const double q[], const double vi[])
+void dfm2::QuatConjVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -67,7 +90,7 @@ void QuatConjVec(double vo[], const double q[], const double vi[])
 }
 
 // copy quaternion
-void QuatCopy(double r[], const double p[])
+void dfm2::QuatCopy(double r[], const double p[])
 {
   r[0] = p[0];
   r[1] = p[1];
@@ -75,17 +98,19 @@ void QuatCopy(double r[], const double p[])
   r[3] = p[3];
 }
 
-void Quat_Bryant(double q[4],
-                 double x, double y, double z)
+void dfm2::Quat_Bryant
+ (double q[4],
+  double x, double y, double z)
 {
   const double dqx[4] = { cos(x*0.5), sin(x*0.5), 0.0, 0.0 };
   const double dqy[4] = { cos(y*0.5), 0.0, sin(y*0.5), 0.0 };
   const double dqz[4] = { cos(z*0.5), 0.0, 0.0, sin(z*0.5) };
-  double qtmp_yx[4]; QuatQuat(qtmp_yx, dqy, dqx);
-  QuatQuat(q, dqz, qtmp_yx);
+  double qtmp_yx[4]; dfm2::QuatQuat(qtmp_yx, dqy, dqx);
+  dfm2::QuatQuat(q, dqz, qtmp_yx);
 }
 
-void Mat4_Quat(double r[], const double q[])
+void dfm2::Mat4_Quat
+ (double r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -136,23 +161,13 @@ void Mat4_QuatConj(double r[], const double q[])
   r[15] = 1.0;
 }
 
-void QuatNormalize(double q[])
-{
-  const double len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
-  double invlen = 1.0/len;
-  q[0] *= invlen;
-  q[1] *= invlen;
-  q[2] *= invlen;
-  q[3] *= invlen;
-}
-
-void Mat4_ScaleRotTrans
+void dfm2::Mat4_ScaleRotTrans
 (double m[16],
  double scale,
  const double quat[4],
  const double trans[3])
 {
-  Mat4_Quat(m, quat);
+  dfm2::Mat4_Quat(m, quat);
   for(int i=0;i<3;++i){
     for(int j=0;j<3;++j){
       m[i*4+j] *= scale;
@@ -163,7 +178,7 @@ void Mat4_ScaleRotTrans
   m[2*4+3] = trans[2];
 }
 
-void MatMat4(double m01[16],
+void dfm2::MatMat4(double m01[16],
              const double m0[16], const double m1[16])
 {
   for(int i=0;i<4;++i){
@@ -173,7 +188,7 @@ void MatMat4(double m01[16],
   }
 }
 
-void Copy_Mat4(double m1[16], const double m0[16])
+void dfm2::Copy_Mat4(double m1[16], const double m0[16])
 {
   for(int i=0;i<16;++i){ m1[i] = m0[i]; }
 }
@@ -199,17 +214,23 @@ CQuaternion::CQuaternion(const CVector3D& a_vector, const CVector3D& b_vector){
  */
 
 
-//////////////////////////////////////////////////////////////////////
-// �񃁃��o�֐��̔�t�����h�֐�
-//////////////////////////////////////////////////////////////////////
+namespace delfem2{
+  
+template <typename T>
+CQuaternion<T> operator + (const CQuaternion<T>& lhs, const CQuaternion<T>& rhs)
+{
+  return CQuaternion<T>(lhs.q[0]+rhs.q[0],
+                        lhs.q[1]+rhs.q[1],
+                        lhs.q[2]+rhs.q[2],
+                        lhs.q[3]+rhs.q[3]);
+}
+template CQuaternion<double> operator + (const CQuaternion<double>& lhs, const CQuaternion<double>& rhs);
+template CQuaternion<float> operator + (const CQuaternion<float>& lhs, const CQuaternion<float>& rhs);
+  
+  
+} // end namespace delfem2
 
 /*
-CQuaternion operator+(const CQuaternion& lhs, const CQuaternion& rhs){
-    CQuaternion temp = lhs;
-	temp += rhs;
-    return temp;
-}
-
 CQuaternion operator-(const CQuaternion& lhs, const CQuaternion& rhs){
     CQuaternion temp = lhs;
 	temp -= rhs;

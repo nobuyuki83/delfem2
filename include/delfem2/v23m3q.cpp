@@ -590,7 +590,7 @@ bool dfm2::DragHandlerRot_PosQuat
 {
   if( ielem>=0 && ielem<3 ){
     double vi[3] = {0,0,0}; vi[ielem] = 1;
-    double vo[3]; ::QuatVec(vo, quat, vi);
+    double vo[3]; dfm2::QuatVec(vo, quat, vi);
     CVector3 v0(0,0,0); v0[ielem] = 1;
     CVector3 v1(vo[0],vo[1],vo[2]); v1.SetNormalizedVector();
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
