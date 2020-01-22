@@ -157,8 +157,7 @@ void DevideElemAryConnex
     list_ch1.push_back(itri);
   }
   assert( !list_ch1.empty() );
-  
-  /////
+  // ---------------------------
   if( list_ch0.size() == 1 ){
     aNodeBVH[inode_ch0].ichild[0] = list_ch0[0];
     aNodeBVH[inode_ch0].ichild[1] = -1;
@@ -168,8 +167,7 @@ void DevideElemAryConnex
                        list_ch0,nfael,aElemSur,aElemCenter);
   }
   list_ch0.clear();
-  
-  //////
+  // -----------------------------
   if( list_ch1.size() == 1 ){
     aNodeBVH[inode_ch1].ichild[0] = list_ch1[0];
     aNodeBVH[inode_ch1].ichild[1] = -1;
@@ -314,9 +312,9 @@ int delfem2::findSplit(const unsigned int* sorted_morton_code, int start, int la
       return (start + last) / 2;
     }
     
-      // Use binary search to find where the next bit differs.
-      // Specifically, we are looking for the highest object that
-      // shares more than commonPrefix bits with the first one.
+    // Use binary search to find where the next bit differs.
+    // Specifically, we are looking for the highest object that
+    // shares more than commonPrefix bits with the first one.
     
     int split = start; // initial guess
     int step = last - start;

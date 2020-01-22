@@ -191,7 +191,7 @@ class CRigidTrans_2DTo3D
 public:
   dfm2::CVector2 org2;
   dfm2::CVector3 org3;
-  CMatrix3 R;
+  dfm2::CMatrix3 R;
 };
 
 int main(int argc,char* argv[])

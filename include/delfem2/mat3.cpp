@@ -6,10 +6,11 @@
  */
 
 #include <random>
-
 #include "delfem2/mat3.h"
 
-void MatMat3
+namespace dfm2 = delfem2;
+
+void dfm2::MatMat3
 (double* C,
  const double* A, const double* B)
 {
@@ -20,7 +21,7 @@ void MatMat3
   }
 }
 
-void MatMatTrans3
+void dfm2::MatMatTrans3
 (double* C,
  const double* A, const double* B)
 {
@@ -31,7 +32,7 @@ void MatMatTrans3
   }
 }
 
-void MatTransMat3
+void dfm2::MatTransMat3
 (double* C,
  const double* A, const double* B)
 {
@@ -52,7 +53,7 @@ double sqnormFrobenius
 // sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
 // M = ULU^T
 // u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
-bool eigenSym3
+bool dfm2::eigenSym3
 (double u[9], double l[3],
  const double sm[6],
  int nitr)
@@ -154,13 +155,13 @@ double estimationMaxEigenValue(const double mtm[6])
   return maxl;
 }
 
-double Det(const double U[9])
+double dfm2::Det(const double U[9])
 {
   return + U[0]*U[4]*U[8] + U[3]*U[7]*U[2] + U[6]*U[1]*U[5]
   - U[0]*U[7]*U[5] - U[6]*U[4]*U[2] - U[3]*U[1]*U[8];
 }
 
-void svd3
+void dfm2::svd3
 (double U[9], double G[3], double V[9],
  const double m[9],
  int nitr)
@@ -209,9 +210,9 @@ void svd3
   }
 }
 
-void GetRotPolarDecomp
+void dfm2::GetRotPolarDecomp
 (double R[9],
- ////
+ //
  const double am[9],
  int nitr)
 {
@@ -243,7 +244,9 @@ void SetMatrix3_Quaternion(double r[], const double q[])
   r[8] = 1.0 - x2 - y2;
 }
 
-//////////////////////////////////////////////////////////////
+// -----------------------------------
+
+namespace delfem2 {
 
 CMatrix3 operator* (double d, const CMatrix3& rhs){
   CMatrix3 temp = rhs;
@@ -295,54 +298,48 @@ std::istream &operator>>(std::istream &input, CMatrix3& m)
   input >> m.mat[2*3+0] >> m.mat[2*3+1] >> m.mat[2*3+2];
   return input;
 }
+  
+}
 
 // -------------------------------------------------------------------
 
-CMatrix3::CMatrix3():
+dfm2::CMatrix3::CMatrix3():
  mat{0.,0.,0., 0.,0.,0., 0.,0.,0.}
 {}
 
-CMatrix3::CMatrix3(const double s):
+dfm2::CMatrix3::CMatrix3(const double s):
  mat{s,0,0, 0,s,0, 0,0,s}
 {}
 
-CMatrix3::CMatrix3(double v00, double v01, double v02,
-                   double v10, double v11, double v12,
-                   double v20, double v21, double v22):
+dfm2::CMatrix3::CMatrix3(double v00, double v01, double v02,
+                         double v10, double v11, double v12,
+                         double v20, double v21, double v22):
  mat{v00,v01,v02, v10,v11,v12, v20,v21,v22}
 {}
 
-CMatrix3::CMatrix3(double x, double y, double z):
+dfm2::CMatrix3::CMatrix3(double x, double y, double z):
  mat{x,0,0, 0,y,0, 0,0,z}
 {}
 
-CMatrix3::CMatrix3(const double m[9]):
+dfm2::CMatrix3::CMatrix3(const double m[9]):
  mat{m[0],m[1],m[2], m[3],m[4],m[5], m[6],m[7],m[8]}
 {}
 
-
-
-
-
-void CMatrix3::MatVec(const double vec0[], double vec1[]) const
+void dfm2::CMatrix3::MatVec(const double vec0[], double vec1[]) const
 {
   vec1[0] = mat[0]*vec0[0] + mat[1]*vec0[1] + mat[2]*vec0[2];
   vec1[1] = mat[3]*vec0[0] + mat[4]*vec0[1] + mat[5]*vec0[2];
   vec1[2] = mat[6]*vec0[0] + mat[7]*vec0[1] + mat[8]*vec0[2];
 }
 
-void CMatrix3::MatVecTrans(const double vec0[], double vec1[]) const
+void dfm2::CMatrix3::MatVecTrans(const double vec0[], double vec1[]) const
 {
   vec1[0] = mat[0]*vec0[0] + mat[3]*vec0[1] + mat[6]*vec0[2];
   vec1[1] = mat[1]*vec0[0] + mat[4]*vec0[1] + mat[7]*vec0[2];
   vec1[2] = mat[2]*vec0[0] + mat[5]*vec0[1] + mat[8]*vec0[2];
 }
 
-
-
-
-
-CMatrix3 CMatrix3::MatMat(const CMatrix3& mat0) const{
+dfm2::CMatrix3 dfm2::CMatrix3::MatMat(const CMatrix3& mat0) const{
   CMatrix3 m;
   for(unsigned int i=0;i<3;i++){
     for(unsigned int j=0;j<3;j++){
@@ -355,7 +352,7 @@ CMatrix3 CMatrix3::MatMat(const CMatrix3& mat0) const{
   return m;
 }
 
-CMatrix3 CMatrix3::MatMatTrans(const CMatrix3& mat0) const
+dfm2::CMatrix3 dfm2::CMatrix3::MatMatTrans(const CMatrix3& mat0) const
 {
   CMatrix3 m;
   for(unsigned int i=0;i<3;i++){
@@ -370,7 +367,7 @@ CMatrix3 CMatrix3::MatMatTrans(const CMatrix3& mat0) const
 }
 
 
-CMatrix3 CMatrix3::Inverse() const
+dfm2::CMatrix3 dfm2::CMatrix3::Inverse() const
 {
   CMatrix3 mi = *this;
   mi.SetInverse();
@@ -379,7 +376,7 @@ CMatrix3 CMatrix3::Inverse() const
 
 // ------------------------------------------------------------------
 
-void CMatrix3::SetInverse()
+void dfm2::CMatrix3::SetInverse()
 {
   const double det = this->Det();
   const double inv_det = 1.0/det;
@@ -399,7 +396,7 @@ void CMatrix3::SetInverse()
 
 
 
-void CMatrix3::SetSymetric(const double sm[6])
+void dfm2::CMatrix3::SetSymetric(const double sm[6])
 {
   mat[0] = sm[0];
   mat[1] = sm[5];
@@ -412,13 +409,13 @@ void CMatrix3::SetSymetric(const double sm[6])
   mat[8] = sm[2];
 }
 
-void CMatrix3::SetZero()
+void dfm2::CMatrix3::SetZero()
 {
   for(double & i : mat){ i = 0.0; }
 }
 
 
-void CMatrix3::SetRandom(){
+void dfm2::CMatrix3::SetRandom(){
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> score(-50.0, 50.0);
@@ -427,7 +424,7 @@ void CMatrix3::SetRandom(){
   }
 }
 
-void CMatrix3::SetRotMatrix_Cartesian(const double vec[])
+void dfm2::CMatrix3::SetRotMatrix_Cartesian(const double vec[])
 {
   double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
@@ -452,14 +449,14 @@ void CMatrix3::SetRotMatrix_Cartesian(const double vec[])
   mat[2*3+2] = c0        +(1-c0)*n[2]*n[2];
 }
 
-void CMatrix3::SetRotMatrix_Cartesian(double x, double y, double z){
+void dfm2::CMatrix3::SetRotMatrix_Cartesian(double x, double y, double z){
   const double vec[3] = { x, y, z };
   this->SetRotMatrix_Cartesian(vec);
 }
 
 
 
-void CMatrix3::SetRotMatrix_Rodrigues(const double vec[])
+void dfm2::CMatrix3::SetRotMatrix_Rodrigues(const double vec[])
 {
   const double sqlen = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   const double tmp1 = 1.0/(1+0.25*sqlen);
@@ -474,7 +471,7 @@ void CMatrix3::SetRotMatrix_Rodrigues(const double vec[])
   mat[8] = 1+tmp1*(       +0.5*vec[2]*vec[2]-0.5*sqlen);
 }
 
-void CMatrix3::SetRotMatrix_CRV(const double crv[])
+void dfm2::CMatrix3::SetRotMatrix_CRV(const double crv[])
 {
   const double c0 = 0.125*( 16.0 - crv[0]*crv[0] - crv[1]*crv[1] - crv[2]*crv[2] );
   const double tmp = 1.0/( (4.0-c0)*(4.0-c0) );
@@ -489,11 +486,11 @@ void CMatrix3::SetRotMatrix_CRV(const double crv[])
   mat[2*3+2] = tmp*( (c0*c0+8*c0-16) + 2*crv[2]*crv[2] );
 }
 
-void CMatrix3::SetRotMatrix_Quaternion(const double quat[]){
+void dfm2::CMatrix3::SetRotMatrix_Quaternion(const double quat[]){
   SetMatrix3_Quaternion(mat, quat);
 }
 
-void CMatrix3::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
+void dfm2::CMatrix3::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
 {
   CMatrix3 mx; double rvx[3] = {rx,0,0}; mx.SetRotMatrix_Cartesian(rvx);
   CMatrix3 my; double rvy[3] = {0,ry,0}; my.SetRotMatrix_Cartesian(rvy);
@@ -504,7 +501,7 @@ void CMatrix3::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
   *this = m;
 }
 
-void CMatrix3::GetQuat_RotMatrix(double quat[]) const{
+void dfm2::CMatrix3::GetQuat_RotMatrix(double quat[]) const{
   const double smat[16] = {
     1+mat[0*3+0]+mat[1*3+1]+mat[2*3+2],
     mat[2*3+1]-mat[1*3+2],
@@ -536,7 +533,7 @@ void CMatrix3::GetQuat_RotMatrix(double quat[]) const{
   }
 }
 
-void CMatrix3::GetCRV_RotMatrix(double crv[]) const{
+void dfm2::CMatrix3::GetCRV_RotMatrix(double crv[]) const{
   double eparam2[4];
   this->GetQuat_RotMatrix(eparam2);
   crv[0] = 4*eparam2[1]/(1+eparam2[0]);
@@ -545,7 +542,7 @@ void CMatrix3::GetCRV_RotMatrix(double crv[]) const{
 }
 
 
-void CMatrix3::SetIdentity(double scale)
+void dfm2::CMatrix3::SetIdentity(double scale)
 {
   mat[0] = scale; mat[1] = 0;     mat[2] = 0;
   mat[3] = 0;     mat[4] = scale; mat[5] = 0;
@@ -559,7 +556,7 @@ void CMatrix3::SetIdentity(double scale)
 // ----------------------------------------------------------
 // 4x4 matrix
 
-void MatVec4
+void dfm2::MatVec4
 (double v[4],
  const double A[16],
  const double x[4])
@@ -570,7 +567,7 @@ void MatVec4
   v[3] = A[3*4+0]*x[0] + A[3*4+1]*x[1] + A[3*4+2]*x[2] + A[3*4+3]*x[3];
 }
 
-void Affine3D
+void dfm2::Affine3D
 (double y0[3],
  const double a[16],
  const double x0[3])
@@ -582,7 +579,7 @@ void Affine3D
   y0[2] = y1[2]/y1[3];
 }
 
-void SetAffine_Scale
+void dfm2::SetAffine_Scale
 (double A[16],
  double s)
 {

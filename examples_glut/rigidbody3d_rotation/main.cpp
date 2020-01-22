@@ -254,7 +254,7 @@ int main(int argc,char* argv[])
   
   rbi.mass = 1.0;
   {
-    rbi.Irot = CMatrix3::Zero();
+    rbi.Irot = dfm2::CMatrix3::Zero();
     dfm2::CVector3 ex(1,0,0), ey(0,1,0), ez(0,0,1);
     rbi.Irot += 1.0*dfm2::Mat3_OuterProduct(ex,ex);
     rbi.Irot += 3.0*dfm2::Mat3_OuterProduct(ey,ey);
@@ -263,7 +263,7 @@ int main(int argc,char* argv[])
   rbi.invIrot = rbi.Irot.Inverse();
   
   rbs.pos = dfm2::CVector3(0,0,0);
-  rbs.R = CMatrix3::Identity();
+  rbs.R = dfm2::CMatrix3::Identity();
   rbs.velo = dfm2::CVector3(0,0,0);
   rbs.Omega = dfm2::CVector3(1,1,1);
   

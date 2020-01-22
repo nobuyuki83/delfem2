@@ -687,7 +687,7 @@ double rad_vp)
   return g0*(circ_vp^v);
 }
 
-CMatrix3 gradveloVortexParticle
+dfm2::CMatrix3 gradveloVortexParticle
 (dfm2::CVector3& velo_eval,
 const dfm2::CVector3& pos_eval,
 const dfm2::CVector3& pos_vp,
@@ -722,13 +722,13 @@ int ivp_self)
   return velo_res;
 }
 
-CMatrix3 gradveloVortexParticles
+dfm2::CMatrix3 gradveloVortexParticles
 (dfm2::CVector3& velo,
 const dfm2::CVector3& p0,
 const std::vector<CVortexParticle>& aVortexParticle,
 int ivp_self)
 {
-  CMatrix3 m_res; m_res.SetZero();
+  dfm2::CMatrix3 m_res; m_res.SetZero();
   velo = dfm2::CVector3(0, 0, 0);
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     if (ivp==ivp_self) continue;
@@ -751,7 +751,7 @@ void setGradVeloVortexParticles
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
 //    dfm2::CVector3 velo = veloVortexParticles(aVortexParticle[ivp].pos, aVortexParticle, ivp);
     dfm2::CVector3 velo;
-    CMatrix3 grad_velo = gradveloVortexParticles(velo, aVortexParticle[ivp].pos, aVortexParticle, ivp);
+    dfm2::CMatrix3 grad_velo = gradveloVortexParticles(velo, aVortexParticle[ivp].pos, aVortexParticle, ivp);
     aVortexParticle[ivp].velo = velo;
     aVortexParticle[ivp].gradvelo = grad_velo;
     /*

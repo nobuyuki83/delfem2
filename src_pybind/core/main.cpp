@@ -112,7 +112,7 @@ py::array_t<double> PyMVC
 
 py::array_t<double> PyRotMat3_Cartesian(const std::vector<double>& d)
 {
-  CMatrix3 m;
+  dfm2::CMatrix3 m;
   m.SetRotMatrix_Cartesian(d[0], d[1], d[2]);
   py::array_t<double> npR({3,3});
   for(int i=0;i<3;++i){
