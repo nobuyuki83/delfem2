@@ -163,8 +163,8 @@ void UpdateRigSkin
       unsigned int ij = aRigJoint[ip*4+iij];
       sum_w += w;
       assert (ij<aBone.size());
-      double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
-      double pos0b[4]; MatVec4(pos0b,aBone[ij].Mat,pos0a);
+      double pos0a[4]; dfm2::MatVec4(pos0a,aBone[ij].invBindMat,pos0);
+      double pos0b[4]; dfm2::MatVec4(pos0b,aBone[ij].Mat,pos0a);
       pos1[0] += w*pos0b[0];
       pos1[1] += w*pos0b[1];
       pos1[2] += w*pos0b[2];

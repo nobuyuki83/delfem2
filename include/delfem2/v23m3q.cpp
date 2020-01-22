@@ -123,32 +123,32 @@ void dfm2::SetProjection(CMatrix3& m, const CVector3& vec0)
 
 // ----------------------------
 
-CMatrix3 dfm2::Mirror(const CVector3& n)
+dfm2::CMatrix3 dfm2::Mirror(const CVector3& n)
 {
   CVector3 N = n;
   N.SetNormalizedVector();
   return CMatrix3::Identity() - 2*dfm2::Mat3_OuterProduct(N,N);
 }
 
-CMatrix3 dfm2::RotMatrix_Cartesian(const CVector3& v){
+dfm2::CMatrix3 dfm2::RotMatrix_Cartesian(const CVector3& v){
  CMatrix3 m;
  SetRotMatrix_Cartesian(m,v);
  return m;
 }
 
-CMatrix3 dfm2::Mat3(const CVector3& vec0){
+dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0){
   CMatrix3 m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1){
+dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1){
   CMatrix3 m;
   SetOuterProduct(m,vec0, vec1);
   return m;
 }
 
-CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1, const CVector3& vec2)
+dfm2::CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1, const CVector3& vec2)
 {
   CMatrix3 m;
   double* mat = m.mat;
@@ -158,20 +158,20 @@ CMatrix3 dfm2::Mat3(const CVector3& vec0, const CVector3& vec1, const CVector3& 
   return m;
 }
 
-CMatrix3 dfm2::Mat3_Spin(const CVector3& vec0){
+dfm2::CMatrix3 dfm2::Mat3_Spin(const CVector3& vec0){
   CMatrix3 m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-CMatrix3 dfm2::Mat3_OuterProduct(const CVector3& vec0, const CVector3& vec1 )
+dfm2::CMatrix3 dfm2::Mat3_OuterProduct(const CVector3& vec0, const CVector3& vec1 )
 {
   CMatrix3 m;
   SetOuterProduct(m,vec0,vec1);
   return m;
 }
 
-CMatrix3 dfm2::Mat3_RotCartesian(const CVector3& vec0)
+dfm2::CMatrix3 dfm2::Mat3_RotCartesian(const CVector3& vec0)
 {
   CMatrix3 m;
   m.SetRotMatrix_Cartesian(vec0.x(), vec0.y(), vec0.z());
@@ -195,7 +195,7 @@ CVector3 operator* (const CMatrix3& m, const CVector3& v)
 
 // ------------------------------
 
-CMatrix3 dfm2::Mat3_MinimumRotation
+dfm2::CMatrix3 dfm2::Mat3_MinimumRotation
 (const CVector3& V,
  const CVector3& v)
 {
@@ -356,7 +356,7 @@ void CheckEnergyMIPS(){
     ino[2] = (double)rand()/(RAND_MAX+1.0);
   }
   double c[3][3];
-  CMatrix3 m;
+  dfm2::CMatrix3 m;
   m.SetRotMatrix_Cartesian(0.3, 1.0, 0.5);
   for(int ino=0;ino<3;++ino){
     m.MatVec(C[ino], c[ino]);
@@ -392,7 +392,7 @@ void CheckEnergyMIPS(){
   }
 }
 
-CMatrix3 dfm2::Mat3_ParallelTransport
+dfm2::CMatrix3 dfm2::Mat3_ParallelTransport
 (const CVector3& p0,
  const CVector3& p1,
  const CVector3& q0,
@@ -402,7 +402,7 @@ CMatrix3 dfm2::Mat3_ParallelTransport
 }
 
 // moment of inertia around origin triangle vtx (origin,d0,d1,d2) the area_density=1
-CMatrix3 dfm2::Mat3_IrotTri
+dfm2::CMatrix3 dfm2::Mat3_IrotTri
 (const CVector3& d0,
  const CVector3& d1,
  const CVector3& d2)
@@ -420,7 +420,7 @@ CMatrix3 dfm2::Mat3_IrotTri
 }
 
 // moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
-CMatrix3 dfm2::Mat3_IrotTriSolid
+dfm2::CMatrix3 dfm2::Mat3_IrotTriSolid
 (const CVector3& d0,
  const CVector3& d1,
  const CVector3& d2)
@@ -437,7 +437,7 @@ CMatrix3 dfm2::Mat3_IrotTriSolid
   return I;
 }
 
-CMatrix3 dfm2::Mat3_IrotLineSeg
+dfm2::CMatrix3 dfm2::Mat3_IrotLineSeg
 (const CVector3& d0,
  const CVector3& d1)
 {
@@ -453,7 +453,7 @@ CMatrix3 dfm2::Mat3_IrotLineSeg
   return I;
 }
 
-CMatrix3 dfm2::Mat3_IrotPoint
+dfm2::CMatrix3 dfm2::Mat3_IrotPoint
 (const CVector3& d0)
 {
   return (d0.DLength()*CMatrix3::Identity()-Mat3_OuterProduct(d0,d0));

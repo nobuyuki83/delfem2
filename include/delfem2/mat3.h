@@ -17,6 +17,10 @@
 
 #define NEARLY_ZERO 1.e-16
 
+// -----------------------------
+
+namespace delfem2 {
+
 void MatMat3(double* UL,
              const double* U, const double* L);
 void MatMatTrans3(double* ULUt,
@@ -45,6 +49,20 @@ void GetRotPolarDecomp(double R[9],
                        const double am[9],
                        int nitr);
 
+  // ------------------------------------------------
+
+void MatVec4(double v[4],
+             const double A[16],
+             const double x[4]);
+void Affine3D(double y0[3],
+              const double a[16],
+              const double x0[3]);
+void SetAffine_Scale(double A[16],
+                     double s);
+void SetAffine_Trans(double A[16],
+                     double dx, double dy, double dz);
+void SetAffine_Rotate_Rodriguez(double A[16],
+                                double dx, double dy, double dz);
 
 
 // --------------------------------
@@ -203,19 +221,7 @@ public:
 };
 
 
-// ------------------------------------------------
-
-void MatVec4(double v[4],
-             const double A[16],
-             const double x[4]);
-void Affine3D(double y0[3],
-              const double a[16],
-              const double x0[3]);
-void SetAffine_Scale(double A[16],
-                     double s);
-void SetAffine_Trans(double A[16],
-                     double dx, double dy, double dz);
-void SetAffine_Rotate_Rodriguez(double A[16],
-                                double dx, double dy, double dz);
+  
+}
 
 #endif

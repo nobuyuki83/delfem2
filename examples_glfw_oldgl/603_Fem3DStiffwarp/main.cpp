@@ -79,7 +79,7 @@ void RotationAtMeshPoints
     dfm2::CVector3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                 aXYZ[ip*3+1]+aDisp[ip*3+1],
                 aXYZ[ip*3+2]+aDisp[ip*3+2]);
-    CMatrix3 A;
+    dfm2::CMatrix3 A;
     A.SetZero();
     for(unsigned int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
       int jp = psup[jjp];
@@ -89,8 +89,8 @@ void RotationAtMeshPoints
                   aXYZ[jp*3+2]+aDisp[jp*3+2]);
       A += dfm2::Mat3_OuterProduct(pj-pi,Pj-Pi);
     }
-    GetRotPolarDecomp(aR.data()+ip*9,
-                      A.mat, 100);
+    dfm2::GetRotPolarDecomp(aR.data()+ip*9,
+                            A.mat, 100);
   }
 }
 
