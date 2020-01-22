@@ -191,6 +191,7 @@ def winDraw3d(list_obj:list,
   if not window.is_valid:
     print("aborting opening window..")
     return
+  glew_init()
   window.color_bg = bgcolor
   for obj in list_obj:
     if hasattr(obj, 'init_gl'):
@@ -279,9 +280,9 @@ class GPUSamplerBufferGLFW:
                is_depth: bool):
     self.win = WindowGLFW(isVisible=False)
     glew_init()
-    self.fbm = CppFrameBufferManager()
-    self.fbm.set_buffer_size(win_size[0],win_size[1], format_color,is_depth)
-    self.fbm.start()
+#    self.fbm = CppFrameBufferManager()
+#    self.fbm.set_buffer_size(win_size[0],win_size[1], format_color,is_depth)
+#    self.fbm.start()
     self.is_open = True
 
   def __enter__(self):
@@ -295,7 +296,7 @@ class GPUSamplerBufferGLFW:
 
   def close(self):
     if self.is_open:
-      self.fbm.end()
+#      self.fbm.end()
       self.win.close()
     self.is_open = False
 

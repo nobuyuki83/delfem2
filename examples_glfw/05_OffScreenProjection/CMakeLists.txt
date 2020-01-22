@@ -29,16 +29,17 @@ set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
-    ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
-    ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp
-    ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
+    ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
+    ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
+    ${DELFEM2_INC}/mshmisc.h                  ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/primitive.h                ${DELFEM2_INC}/primitive.cpp
+    ${DELFEM2_INC}/vec3.h                     ${DELFEM2_INC}/vec3.cpp
 
-    ${DELFEM2_INC}/opengl/gl_tex.h          ${DELFEM2_INC}/opengl/gl_tex.cpp
-    ${DELFEM2_INC}/opengl/gl_funcs.h        ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl_smplr.h          ${DELFEM2_INC}/opengl/gl_smplr.cpp
+    ${DELFEM2_INC}/opengl/gl_tex.h            ${DELFEM2_INC}/opengl/gl_tex.cpp
+    ${DELFEM2_INC}/opengl/gl_funcs.h          ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_funcs.h       ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-    ${DELFEM2_INC}/opengl/glnew_gpusampler.h  ${DELFEM2_INC}/opengl/glnew_gpusampler.cpp
+    ${DELFEM2_INC}/opengl/glnew_smplr.h       ${DELFEM2_INC}/opengl/glnew_smplr.cpp
     ${DELFEM2_INC}/opengl/glnew_mshcolor.h    ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
     ${DELFEM2_INC}/opengl/glfw_viewer.hpp     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
     ${DELFEM2_INC}/opengl/glfw_cam.h

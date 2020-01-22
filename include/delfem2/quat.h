@@ -42,41 +42,41 @@ void Copy_Mat4(double m1[16],
 // -------------------------------------------------------
 
 template <typename T>
-class CQuaternion;
+class CQuat;
 
 template <typename T>
-CQuaternion<T> operator+(const CQuaternion<T>&, const CQuaternion<T>&);
+CQuat<T> operator+(const CQuat<T>&, const CQuat<T>&);
 
 template <typename T>
-CQuaternion<T> operator-(const CQuaternion<T>&, const CQuaternion<T>&);
+CQuat<T> operator-(const CQuat<T>&, const CQuat<T>&);
 
 template <typename T>
-CQuaternion<T> operator*(double, const CQuaternion<T>&);	//!< multiply scalar
+CQuat<T> operator*(double, const CQuat<T>&);	//!< multiply scalar
   
 template <typename T>
-CQuaternion<T> operator*(const CQuaternion<T>&, T);	//!< multiply scalar
+CQuat<T> operator*(const CQuat<T>&, T);	//!< multiply scalar
   
 template <typename T>
-CQuaternion<T> operator/(const CQuaternion<T>&, T);	//!< divide by scalar
+CQuat<T> operator/(const CQuat<T>&, T);	//!< divide by scalar
   
 template <typename T>
-CQuaternion<T> operator*(const CQuaternion<T>&, const CQuaternion<T>&);
+CQuat<T> operator*(const CQuat<T>&, const CQuat<T>&);
 
 template <typename T>
-CQuaternion<T> SphericalLinearInterp(const CQuaternion<T>&, const CQuaternion<T>&, T);
+CQuat<T> SphericalLinearInterp(const CQuat<T>&, const CQuat<T>&, T);
 
   
 /**
  * @brief class of Quaternion
  **/
 template <typename T>
-class CQuaternion  
+class CQuat  
 {
 public:
-  CQuaternion() : q{1,0,0,0} {}
-  CQuaternion(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
-  CQuaternion(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
-  ~CQuaternion(){}
+  CQuat() : q{1,0,0,0} {}
+  CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
+  CQuat(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
+  ~CQuat(){}
   /*
 	CQuaternion(const CQuaternion& rhs)
 		:vector( rhs.vector ){

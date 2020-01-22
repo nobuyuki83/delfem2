@@ -20,7 +20,7 @@ from ..c_core import \
   write_vtk_pointscalar, \
   write_vtk_pointvector
 
-from .c_gl import CppGPUSampler, depth_buffer, color_buffer_4float
+from .c_gl import CppGPUSampler, depth_buffer
 from .c_gl import ColorMap
 from .c_gl import get_texture, setSomeLighting, setup_glsl
 from .c_gl import cppDrawEdge_CppMeshDynTri2D, cppDrawEdge_CppMeshDynTri3D, cppDraw_CppCad2D
