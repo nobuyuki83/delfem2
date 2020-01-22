@@ -199,77 +199,77 @@ void dfm2::Copy_Mat4(double m1[16], const double m0[16])
 //////////////////////////////////////////////////////////////////////
 
 /*
-CQuaternion::CQuaternion(const CVector3D& axis ){
+CQuat::CQuat(const CVector3D& axis ){
 	AxisToQuat( axis );
 }
 
-CQuaternion::CQuaternion(double real, const CVector3D& vector){
+CQuat::CQuat(double real, const CVector3D& vector){
 	this->real = real;
 	this->vector = vector;
 }
 
-CQuaternion::CQuaternion(const CVector3D& a_vector, const CVector3D& b_vector){
+CQuat::CQuat(const CVector3D& a_vector, const CVector3D& b_vector){
 	VectorTrans(a_vector, b_vector);
 }
  */
 
 // functions for Quaternion above
 // --------------------------------------------------------------------------------------------
-// CQuaternion from here
+// CQuat from here
 
-template class dfm2::CQuaternion<double>;
-template class dfm2::CQuaternion<float>;
+template class dfm2::CQuat<double>;
+template class dfm2::CQuat<float>;
 
 namespace delfem2{
   
 template <typename T>
-CQuaternion<T> operator + (const CQuaternion<T>& lhs, const CQuaternion<T>& rhs)
+CQuat<T> operator + (const CQuat<T>& lhs, const CQuat<T>& rhs)
 {
-  return CQuaternion<T>(lhs.q[0]+rhs.q[0],
+  return CQuat<T>(lhs.q[0]+rhs.q[0],
                         lhs.q[1]+rhs.q[1],
                         lhs.q[2]+rhs.q[2],
                         lhs.q[3]+rhs.q[3]);
 }
-template CQuaternion<double> operator + (const CQuaternion<double>& lhs, const CQuaternion<double>& rhs);
-template CQuaternion<float> operator + (const CQuaternion<float>& lhs, const CQuaternion<float>& rhs);
+template CQuat<double> operator + (const CQuat<double>& lhs, const CQuat<double>& rhs);
+template CQuat<float> operator + (const CQuat<float>& lhs, const CQuat<float>& rhs);
   
   
 } // end namespace delfem2
 
 /*
-CQuaternion operator-(const CQuaternion& lhs, const CQuaternion& rhs){
-    CQuaternion temp = lhs;
+CQuat operator-(const CQuat& lhs, const CQuat& rhs){
+    CQuat temp = lhs;
 	temp -= rhs;
     return temp;
 }
 
-CQuaternion operator*(const CQuaternion& quat, double d){
-    CQuaternion temp = quat;
+CQuat operator*(const CQuat& quat, double d){
+    CQuat temp = quat;
 	temp *= d;
     return temp;
 }
 
-CQuaternion operator*(double d, const CQuaternion& quat){
-    CQuaternion temp = quat;
+CQuat operator*(double d, const CQuat& quat){
+    CQuat temp = quat;
     temp *= d;
 	return temp;
 }
 
-CQuaternion operator*(const CQuaternion& lhs, const CQuaternion& rhs){
-    CQuaternion temp = lhs;
+CQuat operator*(const CQuat& lhs, const CQuat& rhs){
+    CQuat temp = lhs;
     temp *= rhs;
 	return temp;
 }
 
-CVector3D Rotate(const CQuaternion& quat, const CVector3D& vec){
-	CQuaternion tmp(0, vec);
+CVector3D Rotate(const CQuat& quat, const CVector3D& vec){
+	CQuat tmp(0, vec);
 	tmp = quat *  (tmp * quat.GetConjugate());  
 //	tmp = quat.GetConjugate() *  tmp * quat ;   
 	return tmp.GetVector();
 }
 
-CVector3D UnRotate(const CQuaternion& quat, const CVector3D& vec){
-	CQuaternion tmp(0, vec);
+CVector3D UnRotate(const CQuat& quat, const CVector3D& vec){
+	CQuat tmp(0, vec);
 	tmp = (quat.GetConjugate() *  tmp) * quat ; 
 //	tmp = quat *  tmp * quat.GetConjugate();    
 	return tmp.GetVector();
@@ -281,12 +281,12 @@ CVector3D UnRotate(const CQuaternion& quat, const CVector3D& vec){
 //////////////////////////////////////////////////////////////////////
 
 
-bool operator==(const CQuaternion& lhs, const CQuaternion& rhs){
+bool operator==(const CQuat& lhs, const CQuat& rhs){
 	if( fabs(lhs.real - rhs.real) < NEARLY_ZERO && lhs == rhs )	return true;
 	else return false;
 }
 
-bool operator!=(const CQuaternion& lhs, const CQuaternion& rhs){
+bool operator!=(const CQuat& lhs, const CQuat& rhs){
 	if( lhs == rhs ) return false;
 	else return true;
 }
@@ -295,7 +295,7 @@ bool operator!=(const CQuaternion& lhs, const CQuaternion& rhs){
 // �����o�֐��̔�t�����h�֐��@
 //////////////////////////////////////////////////////////////////////
 
-CQuaternion& CQuaternion::operator = (const CQuaternion& rhs){
+CQuat& CQuat::operator = (const CQuat& rhs){
 	if( this != &rhs ){
 		real = rhs.real;
 		vector = rhs.vector;
@@ -303,44 +303,44 @@ CQuaternion& CQuaternion::operator = (const CQuaternion& rhs){
 	return *this;
 }
 
-CQuaternion& CQuaternion::operator *= (const CQuaternion& rhs){
+CQuat& CQuat::operator *= (const CQuat& rhs){
 	const double last_real = real;
 	real = real * rhs.real - Dot( vector, rhs.vector );
 	vector = ( (rhs.vector * last_real) + (vector * rhs.real) ) + Cross( vector, rhs.vector );
 	return *this;
 }
 
-CQuaternion& CQuaternion::operator *= (double d){
+CQuat& CQuat::operator *= (double d){
 	real *= d;
 	vector *= d;
 	return *this;
 }
 
-CQuaternion& CQuaternion::operator += (const CQuaternion& rhs){
+CQuat& CQuat::operator += (const CQuat& rhs){
 	real += rhs.real;
 	vector += rhs.vector;
 	return *this;
 }
 
-CQuaternion& CQuaternion::operator -= (const CQuaternion& rhs){
+CQuat& CQuat::operator -= (const CQuat& rhs){
 	real -= rhs.real;
 	vector -= rhs.vector;
 	return *this;
 }
 
-CQuaternion CQuaternion::GetInverse() const
+CQuat CQuat::GetInverse() const
 {
   double invslen = 1.0/SquareLength();
-	CQuaternion tmp(real*invslen, vector*(-invslen));
+	CQuat tmp(real*invslen, vector*(-invslen));
 	return tmp;
 }
 
-CQuaternion CQuaternion::GetConjugate() const{
-	CQuaternion tmp(real, vector*(-1.0));
+CQuat CQuat::GetConjugate() const{
+	CQuat tmp(real, vector*(-1.0));
 	return tmp;
 }
 
-void CQuaternion::RotMatrix44(double* m) const
+void CQuat::RotMatrix44(double* m) const
 {
   
 	double vx=vector.x, vy=vector.y, vz=vector.z;
@@ -368,7 +368,7 @@ void CQuaternion::RotMatrix44(double* m) const
 
 
 
-void CQuaternion::RotMatrix33(double* m) const
+void CQuat::RotMatrix33(double* m) const
 {
 	double vx=vector.x, vy=vector.y, vz=vector.z;
 
@@ -385,14 +385,14 @@ void CQuaternion::RotMatrix33(double* m) const
 	m[8] = 1.0 - 2.0 * ( vy * vy + vx * vx );
 }
 
-void CQuaternion::Normalize()
+void CQuat::Normalize()
 {	
 	const double len = ( real * real + vector.DLength() );
 	real /= len;
 	vector /= len;
 }
 
-void CQuaternion::AxisToQuat(const CVector3D &axis )
+void CQuat::AxisToQuat(const CVector3D &axis )
 {
 	const double phi = axis.Length();
 	if( phi < 1.0e-30 ){
@@ -406,7 +406,7 @@ void CQuaternion::AxisToQuat(const CVector3D &axis )
 	real = cos( phi * 0.5 );
 }
 
-void CQuaternion::VectorTrans(const CVector3D& a_vector, const CVector3D& b_vector){
+void CQuat::VectorTrans(const CVector3D& a_vector, const CVector3D& b_vector){
 	vector = Cross(a_vector, b_vector);
 	if( vector.DLength() < NEARLY_ZERO ){
 		real = 1.0;
@@ -419,18 +419,18 @@ void CQuaternion::VectorTrans(const CVector3D& a_vector, const CVector3D& b_vect
 	vector *= sqrt( 0.5*(1-cos_theta) );
 }
 
-double CQuaternion::SquareLength() const
+double CQuat::SquareLength() const
 {
 	return real*real + vector.DLength();
 }
 
 
-double CQuaternion::Length() const
+double CQuat::Length() const
 {
 	return sqrt( real*real + vector.DLength() );
 }
 
-CQuaternion SphericalLinearInterp(const CQuaternion& q0, const CQuaternion& q1, double t)
+CQuat SphericalLinearInterp(const CQuat& q0, const CQuat& q1, double t)
 {  
   
   double qr = q0.real * q1.real + Dot(q0.vector,q1.vector);
@@ -442,7 +442,7 @@ CQuaternion SphericalLinearInterp(const CQuaternion& q0, const CQuaternion& q1, 
   double pt = ph * t;
   double t1 = sin(pt) / sp;
   double t0 = sin(ph - pt) / sp;    
-  CQuaternion q;
+  CQuat q;
   q.real = t0*q0.real + t1*q1.real;
   q.vector = t0*q0.vector + t1*q1.vector;
   return q;

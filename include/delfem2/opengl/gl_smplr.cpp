@@ -25,24 +25,24 @@
 #endif
 
 #include "delfem2/vec3.h"
-#include "delfem2/opengl/glnew_gpusampler.h"
+#include "delfem2/opengl/gl_smplr.h"
 
 namespace dfm2 = delfem2;
 
 // --------------------------------------------------------
 
-double DotX(const double* p0, const double* p1, int ndof){
+static double DotX(const double* p0, const double* p1, int ndof){
   double v=0;
   for(int i=0;i<ndof;++i){ v += p0[i]*p1[i]; }
   return v;
 }
 
-void ScaleX(double* p0, int n, double s)
+static void ScaleX(double* p0, int n, double s)
 {
   for(int i=0;i<n;++i){ p0[i] *= s; }
 }
 
-void NormalizeX(double* p0, int n)
+static void NormalizeX(double* p0, int n)
 {
   const double ss = DotX(p0,p0,n);
   ScaleX(p0,n,1.0/sqrt(ss));
@@ -76,12 +76,13 @@ inline void MultiplyMatrices4by4OpenGL_FLOAT(
 }
 
 // --------------------------------------------
-
+/*
 void CGPUSampler::SetColor(double r, double g, double b){
   color[0] = r;
   color[1] = g;
   color[2] = b;
 }
+ */
 
 void CGPUSampler::Init(int nw, int nh,
                        std::string sFormatPixelColor, bool isDepth)
@@ -89,11 +90,8 @@ void CGPUSampler::Init(int nw, int nh,
   this->nResX = nw;
   this->nResY = nh;
   const int npix = nw*nh;
-  /////
-  if( isDepth ){ aZ.resize(npix,0); }
-  else{ aZ.clear(); }
-  // -------------
   id_tex_color = 0;
+  id_tex_depth = 0;
 }
 
 void CGPUSampler::SetCoord
@@ -179,6 +177,8 @@ void CGPUSampler::Start()
   else if( bgcolor.size() == 3 ){ ::glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0); }
   else if( bgcolor.size() > 0  ){ ::glClearColor(bgcolor[0], bgcolor[0], bgcolor[0], 1.0 ); }
   else{                           ::glClearColor(1.0, 1.0, 1.0, 1.0 ); }
+  
+  ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
 
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   ::glDisable(GL_BLEND);
@@ -188,38 +188,40 @@ void CGPUSampler::Start()
 void CGPUSampler::End()
 {
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  ::glViewport(view[0], view[1], view[2], view[3]);  
+}
 
-  { // get depth from texture
+void CGPUSampler::ExtractFromTexture_Depth
+ (std::vector<float>& aZ)
+{
 #ifdef EMSCRIPTEN
-    std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
-      ::glViewport(view[0], view[1], view[2], view[3]);
-    return;
+  std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
+  return;
 #endif
-    std::vector<float> aDepth;
-    aDepth.resize(nResX*nResY);
-    ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
-    ::glGetTexImage(GL_TEXTURE_2D, 0,
-        GL_DEPTH_COMPONENT, GL_FLOAT,
-        (void*)aDepth.data());
-    std::vector<double> aXYZ(nResX*nResY*3);
-    const double* ax = this->x_axis;
-    const double* az = this->z_axis;
-    double ay[3]; dfm2::Cross3(ay, az, ax);
-    for(int iy=0;iy<nResY;++iy){
-      for(int ix=0;ix<nResX;++ix){
-        int ip = iy*nResX+ix;
-        double lz = -aDepth[ip]*this->z_range;
-        double lx = (ix+0.5)*lengrid;
-        double ly = (iy+0.5)*lengrid;
-        aXYZ[ip*3+0] = origin[0] + lx*ax[0] + ly*ay[0] + lz*az[0];
-        aXYZ[ip*3+1] = origin[1] + lx*ax[1] + ly*ay[1] + lz*az[1];
-        aXYZ[ip*3+2] = origin[2] + lx*ax[2] + ly*ay[2] + lz*az[2];
-      }
-    }
-    shdr2.Initialize(aXYZ);
-  }
-  
-  ::glViewport(view[0], view[1], view[2], view[3]);
+  aZ.resize(nResX*nResY);
+  ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
+  ::glBindTexture(GL_TEXTURE_2D, id_tex_depth);
+  ::glGetTexImage(GL_TEXTURE_2D, 0,
+                  GL_DEPTH_COMPONENT, GL_FLOAT,
+                  (void*)aZ.data());
+  ::glBindTexture(GL_TEXTURE_2D, 0);
+  ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void CGPUSampler::ExtractFromTexture_Color
+(std::vector<std::uint8_t>& aRGBA)
+{
+#ifdef EMSCRIPTEN
+  std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
+  return;
+#endif
+  aRGBA.resize(nResX*nResY*4);
+  ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
+  ::glGetTexImage(GL_TEXTURE_2D, 0,
+                  GL_RGBA, GL_UNSIGNED_BYTE,
+                  (void*)aRGBA.data());
+  ::glBindTexture(GL_TEXTURE_2D, 0);
+  ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void CGPUSampler::InitGL() {
@@ -280,122 +282,8 @@ void CGPUSampler::InitGL() {
       std::cout << GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER << std::endl;
       std::cout << GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER << std::endl;
     }
-  }
-  //
-  { // draw grid
-    this->shdr0.Compile();
-    double xmin = 0.0;
-    double xmax = lengrid*nResX;
-    double ymin = 0.0;
-    double ymax = lengrid*nResY;
-    double zmin = 0.0;
-    double zmax = -z_range;
-    std::vector<double> aPos3d = {
-        xmin, ymin, zmin,
-        xmin, ymin, zmax,
-        xmin, ymax, zmin,
-        xmin, ymax, zmax,
-        xmax, ymin, zmin,
-        xmax, ymin, zmax,
-        xmax, ymax, zmin,
-        xmax, ymax, zmax,
-    };
-    std::vector<unsigned int> aTri = {
-        0,  1,
-        1,  3,
-        2,  3,
-        0,  2,
-        4,  5,
-        5,  7,
-        6,  7,
-        4,  6,
-        0,  4,
-        1,  5,
-        2,  6,
-        3,  7,
-    };
-    shdr0.Initialize(aPos3d, aTri);
-  }
-  // -----
-  { // draw texture
-    shdr1.Compile();
-    // --------------
-    const dfm2::CVec3& dx = x_axis;
-    const dfm2::CVec3& dy = Cross(z_axis,dx);
-    const double lx = lengrid*nResX;
-    const double ly = lengrid*nResY;
-    dfm2::CVec3 p0 = origin;
-    dfm2::CVec3 p1 = origin + lx*dx;
-    dfm2::CVec3 p2 = origin + lx*dx + ly*dy;
-    dfm2::CVec3 p3 = origin + ly*dy;
-    std::vector<double> aPos3d = {
-        p0.x(), p0.y(), p0.z(),
-        p1.x(), p1.y(), p1.z(),
-        p2.x(), p2.y(), p2.z(),
-        p3.x(), p3.y(), p3.z(),
-    };
-    std::vector<unsigned int> aTri = {
-        0, 1, 2,
-        0, 2, 3,
-    };
-    std::vector<double> aTex2d = {
-        0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
-        0.0, 1.0
-    };
-    shdr1.Initialize(aPos3d, aTri, aTex2d);
-  }
-
-  {
-    shdr2.Compile();
+    ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 }
 
-void CGPUSampler::Draw(float mP[16], float mV[16]) const
-{
- ::glLineWidth(5);
-  float mM[16];
-  {
-    const double* ax = this->x_axis;
-    const double* az = this->z_axis;
-    double ay[3]; dfm2::Cross3(ay, az, ax);
-    const double* o = this->origin;
-    mM[ 0] = ax[0];  mM[ 1] = ax[1];  mM[ 2] = ax[2];  mM[ 3] = 0;
-    mM[ 4] = ay[0];  mM[ 5] = ay[1];  mM[ 6] = ay[2];  mM[ 7] = 0;
-    mM[ 8] = az[0];  mM[ 9] = az[1];  mM[10] = az[2];  mM[11] = 0;
-    mM[12] = +o[0];  mM[13] = +o[1];  mM[14] = +o[2];  mM[15] = 1;
-  }
-  float mMV[16];
-  for(int i=0;i<4;++i){
-    for(int j=0;j<4;++j) {
-      mMV[i*4+j] = 0;
-      for(int k=0;k<4;++k){
-        mMV[i*4+j] += mM[i*4+k] *  mV[k*4+j];
-      }
-    }
-  }
-  shdr0.Draw(mP,mMV);
-  shdr2.Draw(mP,mV);
-  glEnable(GL_TEXTURE_2D);
-  glActiveTexture(0);
-  glBindTexture(GL_TEXTURE_2D, this->id_tex_color);
-  shdr1.Draw(mP,mV);
-  glBindTexture(GL_TEXTURE_2D, 0);
-}
 
-std::vector<double> CGPUSampler::getGPos(int ix, int iy) const
-{
-  const dfm2::CVec3& dx = x_axis;
-  const dfm2::CVec3& dz = z_axis;
-  const dfm2::CVec3& dy = Cross(dz,dx);
-  double lz = aZ[iy*nResX+ix];
-  double lx = (ix+0.5)*lengrid;
-  double ly = (iy+0.5)*lengrid;
-  dfm2::CVec3 vp = lx*dx+ly*dy+lz*dz + origin;
-//  std::vector<double> res;
-//  res.push_back(vp.x());
-//  res.push_back(vp.y());
-//  res.push_back(vp.z());
-  return vp.stlvec();
-}

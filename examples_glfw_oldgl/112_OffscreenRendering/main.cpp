@@ -13,17 +13,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
-#include "delfem2/opengl/gl_framebuffer.h" // compile using GLEW (-DUSE_GLEW)
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_v23.h"
-#include "delfem2/opengl/glold_gpusampler.h"
+#include "delfem2/opengl/glold_smplr.h"
 
 // ------------------------------------------------------
 
 double cur_time = 0.0;
-CGPUSampler sampler;
-CFrameBufferManager fbm;
+CGPUSamplerDrawer sampler;
 bool is_animation = true;
 bool is_depth = false;
 std::vector<double> aXYZ;
@@ -54,15 +52,13 @@ void myGlutDisplay()
 
 void myGlutIdle(){
   if(is_animation){
-    fbm.Start();
     sampler.Start();
     ::glDisable(GL_LIGHTING);
     ::glColor3d(1,1,1);
     ::glEnable(GL_LIGHTING);
     Draw();
     sampler.End();
-    sampler.LoadTex(); // move the sampled image to a texture
-    fbm.End();
+    sampler.GetDepth();
     cur_time += 1;
   }
 }
@@ -72,14 +68,23 @@ int main(int argc,char* argv[])
   delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
   delfem2::Normalize_Points3D(aXYZ,1.0);
-
+  
+  int nres = 256;
+  double elen = 0.01;
+  sampler.Init(nres, nres);
+  sampler.SetCoord(elen, 4.0,
+                   delfem2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
+                   delfem2::CVec3(0,0,-1).stlvec(),
+                   delfem2::CVec3(1,0,0).stlvec() );
+  sampler.SetPointColor(1, 0, 0);
+  sampler.draw_len_axis = 1.0;
+  
   // --------------
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
-
+  viewer.nav.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
@@ -87,18 +92,8 @@ int main(int argc,char* argv[])
 
   delfem2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
-
-  fbm.Init(512, 512, "4byte",true);
-
-  int nres = 128;
-  double elen = 0.02;
-  sampler.Init(nres, nres, "4byte",true);
-  sampler.SetCoord(elen, 4.0,
-                   delfem2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-                   delfem2::CVec3(0,0,-1).stlvec(),
-                   delfem2::CVec3(1,0,0).stlvec() );
-  sampler.SetColor(1, 0, 0);
-  sampler.draw_len_axis = 1.0;
+  
+  sampler.InitGL(); // move the sampled image to a texture
 
   cur_time = 0.0;
   while (!glfwWindowShouldClose(viewer.window))

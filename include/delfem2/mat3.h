@@ -73,15 +73,15 @@ void SetAffine_Rotate_Rodriguez(double A[16],
 
 // --------------------------------
 
-class CMatrix3; // this pre-definition is needed for following functions
-CMatrix3 operator+ (const CMatrix3& lhs, const CMatrix3& rhs);
-CMatrix3 operator- (const CMatrix3& lhs, const CMatrix3& rhs);
-CMatrix3 operator* (double d, const CMatrix3& rhs);
-CMatrix3 operator* (const CMatrix3& m, double d);
-CMatrix3 operator* (const CMatrix3& lhs, const CMatrix3& rhs);
-CMatrix3 operator/ (const CMatrix3& m, double d);
-std::ostream &operator<<(std::ostream &output, const CMatrix3& m);
-std::istream &operator>>(std::istream &output, CMatrix3& m);
+class CMat3; // this pre-definition is needed for following functions
+CMat3 operator+ (const CMat3& lhs, const CMat3& rhs);
+CMat3 operator- (const CMat3& lhs, const CMat3& rhs);
+CMat3 operator* (double d, const CMat3& rhs);
+CMat3 operator* (const CMat3& m, double d);
+CMat3 operator* (const CMat3& lhs, const CMat3& rhs);
+CMat3 operator/ (const CMat3& m, double d);
+std::ostream &operator<<(std::ostream &output, const CMat3& m);
+std::istream &operator>>(std::istream &output, CMat3& m);
 
 static bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
 
@@ -89,16 +89,16 @@ static bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
  * @brief class of 3x3 matrix
  * @todo use template for this class 
  */
-class CMatrix3
+class CMat3
 {
 public:
-  CMatrix3();
-  CMatrix3(const double s);
-  CMatrix3(double v00, double v01, double v02,
+  CMat3();
+  CMat3(const double s);
+  CMat3(double v00, double v01, double v02,
            double v10, double v11, double v12,
            double v20, double v21, double v22);
-  CMatrix3(double x, double y, double z);
-  CMatrix3(const double m[9]);
+  CMat3(double x, double y, double z);
+  CMat3(const double m[9]);
   // ---------------
   void GetElements(double m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
   void AffineMatrixTrans(double m[16]) const {
@@ -115,11 +115,11 @@ public:
   void MatVec(const double vec0[], double vec1[]) const;
   void MatVecTrans(const double vec0[], double vec1[]) const;
 //  CVector3 MatVecTrans(const CVector3& vec0) const;
-  CMatrix3 MatMat(const CMatrix3& mat0) const;
-  CMatrix3 MatMatTrans(const CMatrix3& mat0) const;
+  CMat3 MatMat(const CMat3& mat0) const;
+  CMat3 MatMatTrans(const CMat3& mat0) const;
   // ----------------
-  CMatrix3 Sym() const{
-    CMatrix3 m;
+  CMat3 Sym() const{
+    CMat3 m;
     for(unsigned int i=0;i<3;i++){
     for(unsigned int j=0;j<3;j++){
       m.mat[i*3+j] = (mat[i*3+j]+mat[j*3+i])*0.5;
@@ -127,21 +127,21 @@ public:
     }
     return m;
   }
-  inline const CMatrix3 operator-() const{ return (*this)*(-1.0); }
-  inline const CMatrix3 operator+() const{ return (*this); }
-  inline CMatrix3& operator+=(const CMatrix3& rhs){
+  inline const CMat3 operator-() const{ return (*this)*(-1.0); }
+  inline const CMat3 operator+() const{ return (*this); }
+  inline CMat3& operator+=(const CMat3& rhs){
     for(unsigned int i=0;i<9;i++){ mat[i] += rhs.mat[i]; }
 		return *this;
 	}  
-  inline CMatrix3& operator-=(const CMatrix3& rhs){
+  inline CMat3& operator-=(const CMat3& rhs){
     for(unsigned int i=0;i<9;i++){ mat[i] -= rhs.mat[i]; }
 		return *this;
 	}    
-	inline CMatrix3& operator*=(double d){
+	inline CMat3& operator*=(double d){
     for(unsigned int i=0;i<9;i++){ mat[i] *= d; }
 		return *this;
 	}
-	inline CMatrix3& operator/=(double d){
+	inline CMat3& operator/=(double d){
     double invd = 1.0/d;
     for(unsigned int i=0;i<9;i++){ mat[i] *= invd; }
 		return *this;
@@ -153,7 +153,7 @@ public:
     return this->mat[i*3+j];
   }
   // -------------------------
-  CMatrix3 Inverse() const;
+  CMat3 Inverse() const;
   // -------------------------
   void SetInverse();
   void SetSymetric(const double sm[6]);
@@ -170,8 +170,8 @@ public:
   void GetCRV_RotMatrix(double crv[]) const;
   void GetQuat_RotMatrix(double quat[]) const;
   // ------------------------
-  CMatrix3 Trans() const {
-    CMatrix3 m;
+  CMat3 Trans() const {
+    CMat3 m;
     m.mat[0] = mat[0]; m.mat[1] = mat[3]; m.mat[2] = mat[6];
     m.mat[3] = mat[1]; m.mat[4] = mat[4]; m.mat[5] = mat[7];
     m.mat[6] = mat[2]; m.mat[7] = mat[5]; m.mat[8] = mat[8];    
@@ -197,7 +197,7 @@ public:
     return mat[0]+mat[4]+mat[8];
   }
   double SecondInvarint() const {
-    const CMatrix3& m2 = (*this)*(*this);
+    const CMat3& m2 = (*this)*(*this);
     const double tr = this->Trace();
     return 0.5*(tr*tr-m2.Trace());
   }
@@ -206,19 +206,19 @@ public:
     std::cout << mat[3] << " " << mat[4] << " " << mat[5] << std::endl;
     std::cout << mat[6] << " " << mat[7] << " " << mat[8] << std::endl;
   }
-  void PolerDecomp(CMatrix3& R, int nitr) const{
+  void PolerDecomp(CMat3& R, int nitr) const{
     GetRotPolarDecomp(R.mat,
                       mat, nitr);
   }
   // --------------------
   // static functions
-  static CMatrix3 Identity(double scale = 1){
-    CMatrix3 m;
+  static CMat3 Identity(double scale = 1){
+    CMat3 m;
     m.SetIdentity(scale);
     return m;
   }
-  static CMatrix3 Zero(){
-    CMatrix3 m;
+  static CMat3 Zero(){
+    CMat3 m;
     m.SetZero();
     return m;
   }

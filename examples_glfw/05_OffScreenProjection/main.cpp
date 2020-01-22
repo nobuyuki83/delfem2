@@ -24,7 +24,7 @@
 #endif
 
 #include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/glnew_gpusampler.h"
+#include "delfem2/opengl/glnew_smplr.h"
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glfw_cam.h"
 
@@ -35,7 +35,7 @@ namespace dfm2 = delfem2;
 CShader_TriMesh shdr0;
 CShader_Points shdr1;
 delfem2::opengl::CViewer_GLFW viewer;
-CGPUSampler sampler;
+CGPUSamplerDraw sampler;
 
 // ---------------------------
 
@@ -67,7 +67,6 @@ int main()
                      dfm2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
                      dfm2::CVec3(0,0,-1).stlvec(),
                      dfm2::CVec3(1,0,0).stlvec() );
-    sampler.SetColor(1, 0, 0);
     sampler.draw_len_axis = 1.0;
     sampler.bgcolor = {1,1,1};
   }
@@ -97,6 +96,7 @@ int main()
   sampler.Matrix_MVP(mMV,mP);
   shdr0.Draw(mP,mMV);
   sampler.End();
+  sampler.SetDepth();
 
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;

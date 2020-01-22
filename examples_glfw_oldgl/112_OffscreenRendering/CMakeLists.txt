@@ -46,9 +46,9 @@ add_executable(${PROJECT_NAME}
 
     ${DELFEM2_INC}/v23m3q.h                  ${DELFEM2_INC}/v23m3q.cpp
 
-    ${DELFEM2_INC}/opengl/gl_framebuffer.h   ${DELFEM2_INC}/opengl/gl_framebuffer.cpp
+    ${DELFEM2_INC}/opengl/gl_smplr.h         ${DELFEM2_INC}/opengl/gl_smplr.cpp
     ${DELFEM2_INC}/opengl/glold_v3color.h    ${DELFEM2_INC}/opengl/glold_v3color.cpp
-    ${DELFEM2_INC}/opengl/glold_gpusampler.h ${DELFEM2_INC}/opengl/glold_gpusampler.cpp
+    ${DELFEM2_INC}/opengl/glold_smplr.h      ${DELFEM2_INC}/opengl/glold_smplr.cpp
     ${DELFEM2_INC}/opengl/glold_v23.h        ${DELFEM2_INC}/opengl/glold_v23.cpp
     ${DELFEM2_INC}/opengl/glold_color.cpp    ${DELFEM2_INC}/opengl/glold_color.h
     ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp

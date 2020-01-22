@@ -168,18 +168,18 @@ TEST(mat3, eigen3)
       sm[i] = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
     }
     double l[3];
-    dfm2::CMatrix3 U;
+    dfm2::CMat3 U;
     dfm2::eigenSym3(U.mat, l,
               sm,20);
     {
-      double diffU = (U.Trans()*U-dfm2::CMatrix3::Identity()).SqNorm_Frobenius();
+      double diffU = (U.Trans()*U-dfm2::CMat3::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
     }
     {
       double L[9] = {l[0],0,0, 0,l[1],0, 0,0,l[2]};
-      dfm2::CMatrix3 UL; dfm2::MatMat3(UL.mat,U.mat,L);
-      dfm2::CMatrix3 ULUt; dfm2::MatMatTrans3(ULUt.mat, UL.mat, U.mat);
-      dfm2::CMatrix3 SM; SM.SetSymetric(sm);
+      dfm2::CMat3 UL; dfm2::MatMat3(UL.mat,U.mat,L);
+      dfm2::CMat3 ULUt; dfm2::MatMatTrans3(ULUt.mat, UL.mat, U.mat);
+      dfm2::CMat3 SM; SM.SetSymetric(sm);
       double diff = (ULUt-SM).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-6);
     }
@@ -192,18 +192,18 @@ TEST(mat3, eigen3)
     }
     sm[5] = -sm[4];
     double l[3];
-    dfm2::CMatrix3 U;
+    dfm2::CMat3 U;
     dfm2::eigenSym3(U.mat, l,
               sm,20);
     {
-      double diffU = (U.Trans()*U-dfm2::CMatrix3::Identity()).SqNorm_Frobenius();
+      double diffU = (U.Trans()*U-dfm2::CMat3::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
     }
     {
       double L[9] = {l[0],0,0, 0,l[1],0, 0,0,l[2]};
-      dfm2::CMatrix3 UL; dfm2::MatMat3(UL.mat,U.mat,L);
-      dfm2::CMatrix3 ULUt; dfm2::MatMatTrans3(ULUt.mat, UL.mat, U.mat);
-      dfm2::CMatrix3 SM; SM.SetSymetric(sm);
+      dfm2::CMat3 UL; dfm2::MatMat3(UL.mat,U.mat,L);
+      dfm2::CMat3 ULUt; dfm2::MatMatTrans3(ULUt.mat, UL.mat, U.mat);
+      dfm2::CMat3 SM; SM.SetSymetric(sm);
       double diff = (ULUt-SM).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-6);
     }
@@ -214,23 +214,23 @@ TEST(mat3, eigen3)
 TEST(mat3, svd3)
 {
   for(int itr=0;itr<10000;itr++){
-    dfm2::CMatrix3 M; M.SetRandom();
+    dfm2::CMat3 M; M.SetRandom();
     double g[3];
-    dfm2::CMatrix3 U,V;
+    dfm2::CMat3 U,V;
     dfm2::svd3(U.mat,g,V.mat,
          M.mat,20);
     {
-      double diffU = (U.Trans()*U-dfm2::CMatrix3::Identity()).SqNorm_Frobenius();
+      double diffU = (U.Trans()*U-dfm2::CMat3::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-6);
     }
     {
-      double diffV = (V.Trans()*V-dfm2::CMatrix3::Identity()).SqNorm_Frobenius();
+      double diffV = (V.Trans()*V-dfm2::CMat3::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffV, 0.0, 1.0e-10);
     }
     {
       const double G[9] = {g[0],0,0, 0,g[1],0, 0,0,g[2]};
-      dfm2::CMatrix3 UG;   dfm2::MatMat3(UG.mat, U.mat,G);
-      dfm2::CMatrix3 UGVt; dfm2::MatMatTrans3(UGVt.mat, UG.mat,V.mat);
+      dfm2::CMat3 UG;   dfm2::MatMat3(UG.mat, U.mat,G);
+      dfm2::CMat3 UGVt; dfm2::MatMatTrans3(UGVt.mat, UG.mat,V.mat);
       double diff = (UGVt - M).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-10);
     }
@@ -241,19 +241,19 @@ TEST(mat3, svd3)
 TEST(mat3, rot_comp)
 {
   for(int itr=0;itr<10000;itr++){
-    dfm2::CMatrix3 M; M.SetRandom();
-    dfm2::CMatrix3 R; dfm2::GetRotPolarDecomp(R.mat, M.mat, 40);
+    dfm2::CMat3 M; M.SetRandom();
+    dfm2::CMat3 R; dfm2::GetRotPolarDecomp(R.mat, M.mat, 40);
     {
-      double diff = (R.Trans()*R-dfm2::CMatrix3::Identity()).SqNorm_Frobenius();
+      double diff = (R.Trans()*R-dfm2::CMat3::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-5);
     }
     {
-      dfm2::CMatrix3 MR = M.MatMat(R.Trans());
+      dfm2::CMat3 MR = M.MatMat(R.Trans());
       double diff0 = (MR-MR.Sym()).SqNorm_Frobenius();
       EXPECT_NEAR(diff0, 0.0, 1.0e-5);
     }
     {
-      dfm2::CMatrix3 RM = (R.Trans()).MatMat(M);
+      dfm2::CMat3 RM = (R.Trans()).MatMat(M);
       double diff1 = (RM-RM.Sym()).SqNorm_Frobenius();
       EXPECT_NEAR(diff1, 0.0, 1.0e-5);
     }
@@ -267,24 +267,24 @@ TEST(mat3, quat)
   for(int itr=0;itr<10000;itr++){
     double quat[4] = { dist(mtd), dist(mtd), dist(mtd), dist(mtd) };
     dfm2::Normalize_Quat(quat);
-    dfm2::CMatrix3 R;
+    dfm2::CMat3 R;
     R.SetRotMatrix_Quaternion(quat);
     {
-      double diff = (R.Trans()*R-dfm2::CMatrix3::Identity()).SqNorm_Frobenius();
+      double diff = (R.Trans()*R-dfm2::CMat3::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-14);
     }
     double puat[4];
     R.GetQuat_RotMatrix(puat);
-    dfm2::CMatrix3 P;
+    dfm2::CMat3 P;
     P.SetRotMatrix_Quaternion(puat);
     double diff = (P-R).SqNorm_Frobenius();
     EXPECT_NEAR(diff, 0.0, 1.0e-20);
   }
   
   for(int itr=0;itr<10000;itr++){
-    dfm2::CQuaternion<double> q0(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
-    dfm2::CQuaternion<double> q1(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
-    dfm2::CQuaternion<double> q2 = q0 + q1;
+    dfm2::CQuat<double> q0(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
+    dfm2::CQuat<double> q1(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
+    dfm2::CQuat<double> q2 = q0 + q1;
   }
 }
 
