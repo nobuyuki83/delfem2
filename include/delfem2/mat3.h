@@ -21,13 +21,21 @@
 
 namespace delfem2 {
 
-void MatMat3(double* UL,
-             const double* U, const double* L);
-void MatMatTrans3(double* ULUt,
-                  const double* UL, const double* U);
-void MatTransMat3(double* C,
-                  const double* A, const double* B);
+template <typename T>
+void MatMat3(T* UL,
+             const T* U, const T* L);
+  
+template <typename T>
+void MatMatTrans3(T* ULUt,
+                  const T* UL, const T* U);
+  
+template <typename T>
+void MatTransMat3(T* C,
+                  const T* A, const T* B);
 
+template <typename T>
+T Det_Mat3(const T U[9]);
+  
 /**
  * @brief compute eigen value & vector for symmmetric matrix
  * @details
@@ -42,8 +50,6 @@ bool eigenSym3(double u[9], double l[3],
 void svd3(double U[9], double G[3], double V[9],
           const double m[9],
           int nitr);
-
-double Det(const double U[9]);
 
 void GetRotPolarDecomp(double R[9],
                        const double am[9],

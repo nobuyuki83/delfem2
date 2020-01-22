@@ -90,7 +90,7 @@ void myGlutDisplay(void)
   ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
   {
     ::glPushMatrix();
-    double M[16]; Mat4_Quat(M, hndlr_rot.quat);
+    double M[16]; dfm2::Mat4_Quat(M, hndlr_rot.quat);
     glMultMatrixd(M);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);

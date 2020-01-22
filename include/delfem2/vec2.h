@@ -59,7 +59,7 @@ void RotationalComponentOfMatrix2(double R[4], const double M[4]);
 // -----------------------------------------------------
 
 namespace delfem2 {
-
+  
 class CVector2;
 
 CVector2 operator*(double, const CVector2&);

@@ -6,7 +6,7 @@
  */
 
 #include <iostream>
-
+#include <random>
 #include "gtest/gtest.h"
 
 #include "delfem2/vec2.h"
@@ -262,13 +262,11 @@ TEST(mat3, rot_comp)
 
 TEST(mat3, quat)
 {
+  std::uniform_real_distribution<double> dist(-50.0, +50.0);
+  std::mt19937 mtd;
   for(int itr=0;itr<10000;itr++){
-    double quat[4];
-    quat[0] = (rand()/(RAND_MAX+1.0))*100-50;
-    quat[1] = (rand()/(RAND_MAX+1.0))*100-50;
-    quat[2] = (rand()/(RAND_MAX+1.0))*100-50;
-    quat[3] = (rand()/(RAND_MAX+1.0))*100-50;
-    QuatNormalize(quat);
+    double quat[4] = { dist(mtd), dist(mtd), dist(mtd), dist(mtd) };
+    dfm2::Normalize_Quat(quat);
     dfm2::CMatrix3 R;
     R.SetRotMatrix_Quaternion(quat);
     {
@@ -281,6 +279,12 @@ TEST(mat3, quat)
     P.SetRotMatrix_Quaternion(puat);
     double diff = (P-R).SqNorm_Frobenius();
     EXPECT_NEAR(diff, 0.0, 1.0e-20);
+  }
+  
+  for(int itr=0;itr<10000;itr++){
+    dfm2::CQuaternion<double> q0(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
+    dfm2::CQuaternion<double> q1(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
+    dfm2::CQuaternion<double> q2 = q0 + q1;
   }
 }
 

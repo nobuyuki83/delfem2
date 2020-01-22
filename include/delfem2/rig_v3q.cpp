@@ -108,7 +108,7 @@ int CRigBone::PickHandler
 void CRigBone::SetRotationBryant
 (double rx, double ry, double rz)
 {
-  Quat_Bryant(rot, rx, ry, rz);
+  dfm2::Quat_Bryant(rot, rx, ry, rz);
 }
 
 void CRigBone::SetTranslation
@@ -125,19 +125,19 @@ void UpdateBoneRotTrans
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
-      Mat4_ScaleRotTrans(aBone[ibone].Mat,
-                         aBone[ibone].scale,
-                         aBone[ibone].rot,
-                         aBone[ibone].trans);
+      dfm2::Mat4_ScaleRotTrans(aBone[ibone].Mat,
+                               aBone[ibone].scale,
+                               aBone[ibone].rot,
+                               aBone[ibone].trans);
       continue;
     }
     double M01[16];
-    Mat4_ScaleRotTrans(M01,
-                       aBone[ibone].scale,
-                       aBone[ibone].rot,
-                       aBone[ibone].trans);
-    MatMat4(aBone[ibone].Mat,
-            aBone[ibone_p].Mat,M01);
+    dfm2::Mat4_ScaleRotTrans(M01,
+                             aBone[ibone].scale,
+                             aBone[ibone].rot,
+                             aBone[ibone].trans);
+    dfm2::MatMat4(aBone[ibone].Mat,
+                  aBone[ibone_p].Mat,M01);
   }
 }
 
@@ -359,8 +359,8 @@ void SetPose_BioVisionHierarchy
       double v0[3] = {0,0,0};
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
-      double qtmp[4]; QuatQuat(qtmp, aBone[ibone].rot, dq);
-      QuatCopy(aBone[ibone].rot,qtmp);
+      double qtmp[4]; dfm2::QuatQuat(qtmp, aBone[ibone].rot, dq);
+      dfm2::QuatCopy(aBone[ibone].rot,qtmp);
     }
   }
   UpdateBoneRotTrans(aBone);

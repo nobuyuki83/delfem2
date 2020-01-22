@@ -13,15 +13,21 @@
 #ifndef DFM2_QUAT_H
 #define DFM2_QUAT_H
 
-void QuatSetIdentity(double q[]);
+namespace delfem2 {
+
+template <typename T>
+void Normalize_Quat(T q[4]);
+
+template <typename T>
+void SetIdentity_Quat(T q[4]);
+  
+  
 void QuatCopy(double r[], const double p[]);
 void QuatQuat(double r[], const double p[], const double q[]);
 void QuatVec(double vo[], const double q[], const double vi[]);
 void QuatConjVec(double vo[], const double q[], const double vi[]);
-void QuatNormalize(double q[]);
 void Quat_Bryant(double q[4],
                  double x, double y, double z);
-
 void Mat4_Quat(double r[],
                const double q[]);
 void Mat4_QuatConj(double r[],
@@ -32,23 +38,44 @@ void MatMat4(double m01[16],
              const double m0[16], const double m1[16]);
 void Copy_Mat4(double m1[16],
                const double m0[16]);
+  
+// -------------------------------------------------------
 
+template <typename T>
 class CQuaternion;
 
-CQuaternion operator+(const CQuaternion&, const CQuaternion&);
-CQuaternion operator-(const CQuaternion&, const CQuaternion&);
-CQuaternion operator*(double, const CQuaternion&);	//!< multiply scalar
-CQuaternion operator*(const CQuaternion&, double);	//!< multiply scalar
-CQuaternion operator/(const CQuaternion&, double);	//!< divide by scalar
-CQuaternion operator*(const CQuaternion&, const CQuaternion&);
-  
-CQuaternion SphericalLinearInterp(const CQuaternion&, const CQuaternion&, double);
+template <typename T>
+CQuaternion<T> operator+(const CQuaternion<T>&, const CQuaternion<T>&);
 
-//! @brief class of Quaternion
+template <typename T>
+CQuaternion<T> operator-(const CQuaternion<T>&, const CQuaternion<T>&);
+
+template <typename T>
+CQuaternion<T> operator*(double, const CQuaternion<T>&);	//!< multiply scalar
+  
+template <typename T>
+CQuaternion<T> operator*(const CQuaternion<T>&, T);	//!< multiply scalar
+  
+template <typename T>
+CQuaternion<T> operator/(const CQuaternion<T>&, T);	//!< divide by scalar
+  
+template <typename T>
+CQuaternion<T> operator*(const CQuaternion<T>&, const CQuaternion<T>&);
+
+template <typename T>
+CQuaternion<T> SphericalLinearInterp(const CQuaternion<T>&, const CQuaternion<T>&, T);
+
+  
+/**
+ * @brief class of Quaternion
+ **/
+template <typename T>
 class CQuaternion  
 {
 public:
-  CQuaternion(){ q[0]=1.0; q[1]=0.0; q[2]=0.0; q[3]=0.0; }
+  CQuaternion() : q{1,0,0,0} {}
+  CQuaternion(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
+  CQuaternion(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
   ~CQuaternion(){}
   /*
 	CQuaternion(const CQuaternion& rhs)
@@ -90,10 +117,14 @@ public:
 	double Length() const;
   double SquareLength() const;
 	*/
-private:
-  double q[4]; // w,x,y,z
+public:
+  T q[4]; // w,x,y,z
 //	CVector3D vector;	//!< imaginary part
 //	double real;	//!< real part
 };
+  
+template class CQuaternion<double>;
+  
+}
 
 #endif // !defined(QUATERNION_H)

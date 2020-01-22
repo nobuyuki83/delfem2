@@ -29,7 +29,6 @@ namespace dfm2 = delfem2;
 int main(int argc,char* argv[])
 {
   delfem2::CCad2D cad;
-  
   // --------------------
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
