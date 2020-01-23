@@ -84,8 +84,9 @@ void CGPUSampler::SetColor(double r, double g, double b){
 }
  */
 
-void CGPUSampler::Init(int nw, int nh,
-                       std::string sFormatPixelColor, bool isDepth)
+void dfm2::opengl::CGPUSampler::Init
+ (int nw, int nh,
+  std::string sFormatPixelColor, bool isDepth)
 {
   this->nResX = nw;
   this->nResY = nh;
@@ -94,7 +95,7 @@ void CGPUSampler::Init(int nw, int nh,
   id_tex_depth = 0;
 }
 
-void CGPUSampler::SetCoord
+void delfem2::opengl::CGPUSampler::SetCoord
 (double elen, double depth_max,
  const std::vector<double>& org_prj,
  const std::vector<double>& dir_prj,
@@ -109,7 +110,7 @@ void CGPUSampler::SetCoord
   NormalizeX(x_axis,3);
 }
 
-void CGPUSampler::Matrix_MVP
+void delfem2::opengl::CGPUSampler::Matrix_MVP
  (float mMV[16],
   float mP[16]) const
 {
@@ -168,7 +169,7 @@ void CGPUSampler::Matrix_MVP
 }
 
 
-void CGPUSampler::Start()
+void dfm2::opengl::CGPUSampler::Start()
 {
   glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0, nResX, nResY);
@@ -185,13 +186,13 @@ void CGPUSampler::Start()
   ::glEnable(GL_DEPTH_TEST);
 }
 
-void CGPUSampler::End()
+void dfm2::opengl::CGPUSampler::End()
 {
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   ::glViewport(view[0], view[1], view[2], view[3]);  
 }
 
-void CGPUSampler::ExtractFromTexture_Depth
+void dfm2::opengl::CGPUSampler::ExtractFromTexture_Depth
  (std::vector<float>& aZ)
 {
 #ifdef EMSCRIPTEN
@@ -208,7 +209,7 @@ void CGPUSampler::ExtractFromTexture_Depth
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void CGPUSampler::ExtractFromTexture_Color
+void dfm2::opengl::CGPUSampler::ExtractFromTexture_Color
 (std::vector<std::uint8_t>& aRGBA)
 {
 #ifdef EMSCRIPTEN
@@ -224,7 +225,8 @@ void CGPUSampler::ExtractFromTexture_Color
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void CGPUSampler::InitGL() {
+void dfm2::opengl::CGPUSampler::InitGL()
+{
   ::glEnable(GL_TEXTURE_2D);
   ::glActiveTexture(GL_TEXTURE0);
 

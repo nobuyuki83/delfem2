@@ -18,10 +18,12 @@
 #include "delfem2/opengl/glold_v23.h"
 #include "delfem2/opengl/glold_smplr.h"
 
+namespace dfm2 = delfem2;
+
 // ------------------------------------------------------
 
 double cur_time = 0.0;
-CGPUSamplerDrawer sampler;
+dfm2::opengl::CGPUSamplerDrawer sampler;
 bool is_animation = true;
 bool is_depth = false;
 std::vector<double> aXYZ;
@@ -31,13 +33,13 @@ std::vector<unsigned int> aTri;
 
 void Draw(){
   ::glRotated(+cur_time, 1,0,0);
-  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
+  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
   ::glRotated(-cur_time, 1,0,0);
 }
 
 void myGlutDisplay()
 {
-  delfem2::opengl::DrawBackground( delfem2::CColor(0.2,0.7,0.7) );
+  dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
 //  ::glDisable(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
   
@@ -65,32 +67,32 @@ void myGlutIdle(){
 
 int main(int argc,char* argv[])
 {
-  delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+  dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
-  delfem2::Normalize_Points3D(aXYZ,1.0);
+  dfm2::Normalize_Points3D(aXYZ,1.0);
   
   int nres = 256;
   double elen = 0.01;
   sampler.Init(nres, nres);
   sampler.SetCoord(elen, 4.0,
-                   delfem2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-                   delfem2::CVec3(0,0,-1).stlvec(),
-                   delfem2::CVec3(1,0,0).stlvec() );
+                   dfm2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
+                   dfm2::CVec3(0,0,-1).stlvec(),
+                   dfm2::CVec3(1,0,0).stlvec() );
   sampler.SetPointColor(1, 0, 0);
   sampler.draw_len_axis = 1.0;
   
   // --------------
-  delfem2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 2.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = dfm2::CAMERA_ROT_TBALL;
   viewer.nav.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
 
-  delfem2::opengl::setSomeLighting();
+  dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
   
   sampler.InitGL(); // move the sampled image to a texture

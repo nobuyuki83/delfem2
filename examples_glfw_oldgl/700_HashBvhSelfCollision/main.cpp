@@ -92,7 +92,7 @@ int main(int argc,char* argv[])
       const size_t ntri = aTri.size()/3;
       std::vector<double> aElemCenter(ntri*3);
       for(unsigned int itri=0;itri<ntri;++itri){
-        dfm2::CVec3 p0 = dfm2::cg_Tri(itri, aTri, aXYZ);
+        dfm2::CVec3 p0 = dfm2::CG_Tri3(itri, aTri, aXYZ);
         aElemCenter[itri*3+0] = p0.x();
         aElemCenter[itri*3+1] = p0.y();
         aElemCenter[itri*3+2] = p0.z();

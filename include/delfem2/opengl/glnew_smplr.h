@@ -14,6 +14,9 @@
 #include "delfem2/opengl/glnew_mshcolor.h"
 #include "delfem2/opengl/gl_smplr.h"
 
+namespace delfem2{
+namespace opengl{
+
 class CGPUSamplerDraw : public CGPUSampler
 {
 public:
@@ -38,5 +41,8 @@ public:
   CShader_TriMesh_Tex shdr1;
   CShader_Points shdr2;
 };
+  
+}
+}
 
 #endif /* depth_hpp */

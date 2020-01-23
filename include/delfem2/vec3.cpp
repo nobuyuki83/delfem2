@@ -192,12 +192,37 @@ template double dfm2::SquareLength3(const double v[3]);
 
 // ------------------------------------
 
-double dfm2::ScalarTripleProduct3D(const double a[], const double b[], const double c[]){
+template <typename T>
+T dfm2::ScalarTripleProduct3(const T a[], const T b[], const T c[])
+{
   return a[0]*(b[1]*c[2] - b[2]*c[1])
   +a[1]*(b[2]*c[0] - b[0]*c[2])
   +a[2]*(b[0]*c[1] - b[1]*c[0]);
 }
+template float dfm2::ScalarTripleProduct3(const float a[], const float b[], const float c[]);
+template double dfm2::ScalarTripleProduct3(const double a[], const double b[], const double c[]);
 
+// -------------------------------------
+
+  // t is a tmporary buffer size of 9
+template <typename T>
+void dfm2::Transpose_Mat3(T t[9],
+                          const T a[9])
+{
+  t[0] = a[0];
+  t[1] = a[3];
+  t[2] = a[6];
+  t[3] = a[1];
+  t[4] = a[4];
+  t[5] = a[7];
+  t[6] = a[2];
+  t[7] = a[5];
+  t[8] = a[8];
+}
+template void dfm2::Transpose_Mat3(float t[], const float a[]);
+template void dfm2::Transpose_Mat3(double t[], const double a[]);
+
+// --------------------------------------
 
 void dfm2::UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
@@ -234,19 +259,7 @@ void dfm2::InverseMat3
   Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
 }
 
-// t is a tmporary buffer size of 9
-void transposeMat3(double t[], const double a[])
-{
-  t[0] = a[0];
-  t[1] = a[3];
-  t[2] = a[6];
-  t[3] = a[1];
-  t[4] = a[4];
-  t[5] = a[7];
-  t[6] = a[2];
-  t[7] = a[5];
-  t[8] = a[8];
-}
+
 
 // ------------------------------------------
 
@@ -767,9 +780,9 @@ dfm2::CVec3 dfm2::Nearest_Orgin_PlaneTri
  const CVec3& q2)
 {
   const CVec3 n1 = ((q1-q0)^(q2-q0)).Normalize();
-  const double v0 = volume_OrgTet(q1, q2, n1);
-  const double v1 = volume_OrgTet(q2, q0, n1);
-  const double v2 = volume_OrgTet(q0, q1, n1);
+  const double v0 = Volume_OrgTet(q1, q2, n1);
+  const double v1 = Volume_OrgTet(q2, q0, n1);
+  const double v2 = Volume_OrgTet(q0, q1, n1);
   assert( fabs(v0+v1+v2) > 1.0e-10 );
   double vt_inv = 1.0/(v0+v1+v2);
   double r2;
@@ -1177,10 +1190,10 @@ bool dfm2::barycentricCoord_Origin_Tet
  const CVec3& p2,
  const CVec3& p3)
 {
-  double v0 = volume_OrgTet(p1, p2, p3);
-  double v1 = volume_OrgTet(p2, p0, p3);
-  double v2 = volume_OrgTet(p1, p3, p0);
-  double v3 = volume_OrgTet(p1, p0, p2);
+  double v0 = Volume_OrgTet(p1, p2, p3);
+  double v1 = Volume_OrgTet(p2, p0, p3);
+  double v2 = Volume_OrgTet(p1, p3, p0);
+  double v3 = Volume_OrgTet(p1, p0, p2);
   double vt_inv = 1.0/(v0+v1+v2+v3);
   r0 = v0*vt_inv;
   r1 = v1*vt_inv;
@@ -1743,7 +1756,7 @@ double dfm2::Volume_Tet
 }
 
 //! Volume of a tetrahedra v0 is orgin
-double dfm2::volume_OrgTet
+double dfm2::Volume_OrgTet
 (const CVec3& v1,
  const CVec3& v2,
  const CVec3& v3 )
@@ -1754,7 +1767,7 @@ double dfm2::volume_OrgTet
   return v*0.16666666666666666666666666666667;
 }
 
-double dfm2::volume_Pyramid
+double dfm2::Volume_Pyramid
 (const CVec3& p0,
  const CVec3& p1,
  const CVec3& p2,
@@ -1770,7 +1783,7 @@ double dfm2::volume_Pyramid
   return (v0+v1)*0.5;
 }
 
-double dfm2::volume_Wedge
+double dfm2::Volume_Wedge
 (const CVec3& p0,
  const CVec3& p1,
  const CVec3& p2,
@@ -1781,9 +1794,9 @@ double dfm2::volume_Wedge
   CVec3 pm = (p0+p1+p2+p3+p4+p5)/6.0;
   double vm012 = Volume_Tet(pm,p0,p1,p2);
   double vm435 = Volume_Tet(pm,p4,p3,p5);
-  double vp0143 = volume_Pyramid(p0,p1,p4,p3,pm);
-  double vp1254 = volume_Pyramid(p1,p2,p5,p4,pm);
-  double vp2035 = volume_Pyramid(p2,p2,p3,p5,pm);
+  double vp0143 = Volume_Pyramid(p0,p1,p4,p3,pm);
+  double vp1254 = Volume_Pyramid(p1,p2,p5,p4,pm);
+  double vp2035 = Volume_Pyramid(p2,p2,p3,p5,pm);
   return vm012+vm435+vp0143+vp1254+vp2035;
 }
 
@@ -2408,14 +2421,14 @@ void dfm2::CheckConstDiff_Bend()
 // --------------------------------------------------
 // TODO: following should be move to mesh class?
 
-double dfm2::TriArea
+double dfm2::Area_Tri
 (const int iv1, const int iv2, const int iv3,
  const std::vector<CVec3>& aPoint )
 {
   return Area_Tri(aPoint[iv1],aPoint[iv2],aPoint[iv3]);
 }
 
-double dfm2::volume_Tet
+double dfm2::Volume_Tet
 (int iv1, int iv2, int iv3, int iv4,
  const std::vector<CVec3>& aPoint)
 {
@@ -2466,7 +2479,7 @@ void dfm2::ConvexHull
   aTriSur[10] = std::make_pair(2,2);
   aTriSur[11] = std::make_pair(1,1);
   {
-    double vol = dfm2::volume_Tet(0, 1, 2, 3, aXYZ);
+    double vol = dfm2::Volume_Tet(0, 1, 2, 3, aXYZ);
     if( vol < 0 ){
       aTri[ 0] = 3;  aTri[ 1] = 2;  aTri[ 2] = 1; // 0
       aTri[ 3] = 2;  aTri[ 4] = 3;  aTri[ 5] = 0; // 1
