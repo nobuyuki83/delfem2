@@ -7,10 +7,11 @@
 #include "delfem2/opengl/glold_smplr.h"
 
 namespace py = pybind11;
+namespace dfm2 = delfem2;
 
 // -----------------
 
-py::array_t<float> depth_buffer(CGPUSamplerDrawer& sampler)
+py::array_t<float> depth_buffer(dfm2::opengl::CGPUSamplerDrawer& sampler)
 {
   std::vector<float> aZ;
   sampler.ExtractFromTexture_Depth(aZ);
@@ -23,7 +24,7 @@ py::array_t<float> depth_buffer(CGPUSamplerDrawer& sampler)
                                    ndim, shape, strides));
 }
 
-py::array_t<unsigned char> color_buffer_4byte(CGPUSamplerDrawer& sampler)
+py::array_t<unsigned char> color_buffer_4byte(dfm2::opengl::CGPUSamplerDrawer& sampler)
 {
   std::vector<unsigned char> aRGBA;
   sampler.ExtractFromTexture_Color(aRGBA);
@@ -62,33 +63,33 @@ void init_sampler(py::module &m)
   
   // ---------------------------------------
   // Depth&Color Sampler
-  py::class_<CGPUSamplerDrawer>(m,"CppGPUSampler", "sample color and depth in the frame buffer")
+  py::class_<dfm2::opengl::CGPUSamplerDrawer>(m,"CppGPUSampler", "sample color and depth in the frame buffer")
   .def(py::init<>())
-  .def("draw",       &CGPUSamplerDrawer::Draw)
-  .def("minmax_xyz", &CGPUSamplerDrawer::MinMaxXYZ)
-  .def("init_gl",    &CGPUSamplerDrawer::InitGL)
+  .def("draw",       &dfm2::opengl::CGPUSamplerDrawer::Draw)
+  .def("minmax_xyz", &dfm2::opengl::CGPUSamplerDrawer::MinMaxXYZ)
+  .def("init_gl",    &dfm2::opengl::CGPUSamplerDrawer::InitGL)
   // --------------------------
-  .def("init",       &CGPUSamplerDrawer::Init,
+  .def("init",       &dfm2::opengl::CGPUSamplerDrawer::Init,
        py::arg("size_res_width"),
        py::arg("size_res_height") )
-  .def("set_coordinate", &CGPUSamplerDrawer::SetCoord,
+  .def("set_coordinate", &dfm2::opengl::CGPUSamplerDrawer::SetCoord,
        py::arg("len_grid"),
        py::arg("depth_max"),
        py::arg("org"),
        py::arg("dir_prj"),
        py::arg("dir_width"))
   // ---------------
-  .def("start",      &CGPUSamplerDrawer::Start)
-  .def("end",        &CGPUSamplerDrawer::End)
-  .def("get_pos_ray_collide",   &CGPUSamplerDrawer::getGPos)
-  .def("set_zero_to_depth",     &CGPUSamplerDrawer::SetZeroToDepth)
-  .def("get_depth",             &CGPUSamplerDrawer::GetDepth)
-  .def("get_color",             &CGPUSamplerDrawer::GetColor)
-  .def_readwrite("bgcolor",     &CGPUSamplerDrawer::bgcolor)
-  .def_readwrite("point_color", &CGPUSamplerDrawer::colorPoint)
-  .def_readwrite("len_axis",    &CGPUSamplerDrawer::draw_len_axis)
-  .def_readwrite("is_draw_tex", &CGPUSamplerDrawer::isDrawTex)
-  .def_readwrite("point_size",  &CGPUSamplerDrawer::pointSize);
+  .def("start",      &dfm2::opengl::CGPUSamplerDrawer::Start)
+  .def("end",        &dfm2::opengl::CGPUSamplerDrawer::End)
+  .def("get_pos_ray_collide",   &dfm2::opengl::CGPUSamplerDrawer::getGPos)
+  .def("set_zero_to_depth",     &dfm2::opengl::CGPUSamplerDrawer::SetZeroToDepth)
+  .def("get_depth",             &dfm2::opengl::CGPUSamplerDrawer::GetDepth)
+  .def("get_color",             &dfm2::opengl::CGPUSamplerDrawer::GetColor)
+  .def_readwrite("bgcolor",     &dfm2::opengl::CGPUSamplerDrawer::bgcolor)
+  .def_readwrite("point_color", &dfm2::opengl::CGPUSamplerDrawer::colorPoint)
+  .def_readwrite("len_axis",    &dfm2::opengl::CGPUSamplerDrawer::draw_len_axis)
+  .def_readwrite("is_draw_tex", &dfm2::opengl::CGPUSamplerDrawer::isDrawTex)
+  .def_readwrite("point_size",  &dfm2::opengl::CGPUSamplerDrawer::pointSize);
   
   
   m.def("depth_buffer", &depth_buffer);

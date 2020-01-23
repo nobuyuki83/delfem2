@@ -13,6 +13,10 @@
 #include <vector>
 #include "delfem2/opengl/gl_smplr.h"
 
+namespace delfem2 {
+namespace opengl {
+
+
 class CGPUSamplerDrawer : public CGPUSampler
 {
 public:
@@ -47,5 +51,8 @@ public:
   unsigned int pointSize;
   bool isDrawTex;
 };
+  
+}
+}
 
 #endif /* depth_hpp */

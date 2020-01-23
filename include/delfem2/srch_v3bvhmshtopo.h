@@ -157,7 +157,7 @@ public:
       if( (q0-p0)*n1 > 0 ){ return dist; } //inside
       return -dist; // outside
     }
-    CVec3 dir = (cg_Tri(pes.itri, aTri, aXYZ)-p0).Normalize();
+    CVec3 dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).Normalize();
     if( (q0-p0)*n1 < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
     std::vector<int> aIndElem;
     double ps0[3]; p0.CopyValueTo(ps0);

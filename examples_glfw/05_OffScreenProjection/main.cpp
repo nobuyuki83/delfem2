@@ -35,7 +35,7 @@ namespace dfm2 = delfem2;
 CShader_TriMesh shdr0;
 CShader_Points shdr1;
 delfem2::opengl::CViewer_GLFW viewer;
-CGPUSamplerDraw sampler;
+dfm2::opengl::CGPUSamplerDraw sampler;
 
 // ---------------------------
 

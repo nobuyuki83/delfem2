@@ -23,7 +23,6 @@
 #else
   #include <GL/gl.h>
 #endif
-////
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_v23.h"  // vec3, mat3
 #include "delfem2/opengl/glold_smplr.h"
@@ -32,19 +31,19 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-void CGPUSamplerDrawer::SetPointColor(double r, double g, double b){
+void dfm2::opengl::CGPUSamplerDrawer::SetPointColor(double r, double g, double b){
   colorPoint[0] = r;
   colorPoint[1] = g;
   colorPoint[2] = b;
 }
 
-void CGPUSamplerDrawer::Init(int nw, int nh)
+void dfm2::opengl::CGPUSamplerDrawer::Init(int nw, int nh)
 {
   this->nResX = nw;
   this->nResY = nh;
 }
 
-void CGPUSamplerDrawer::InitGL() {
+void dfm2::opengl::CGPUSamplerDrawer::InitGL() {
   CGPUSampler::InitGL();
   if( aRGBA.size() == nResX*nResY*4 ){
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
@@ -56,7 +55,7 @@ void CGPUSamplerDrawer::InitGL() {
 }
 
 
-void CGPUSamplerDrawer::SetView(){
+void dfm2::opengl::CGPUSamplerDrawer::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
   delfem2::opengl::ViewTransformation(x_axis,z_axis,origin);
@@ -68,23 +67,23 @@ void CGPUSamplerDrawer::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
 }
 
-void CGPUSamplerDrawer::Start()
+void dfm2::opengl::CGPUSamplerDrawer::Start()
 {
   CGPUSampler::Start();
   this->SetView();
 }
 
-void CGPUSamplerDrawer::GetDepth()
+void dfm2::opengl::CGPUSamplerDrawer::GetDepth()
 {
   CGPUSampler::ExtractFromTexture_Depth(aZ);
 }
 
-void CGPUSamplerDrawer::GetColor()
+void dfm2::opengl::CGPUSamplerDrawer::GetColor()
 {
   CGPUSampler::ExtractFromTexture_Color(aRGBA);
 }
 
-void CGPUSamplerDrawer::Draw() const {
+void dfm2::opengl::CGPUSamplerDrawer::Draw() const {
   ::glPointSize(this->pointSize);
   this->Draw_Point();
   // -----------
@@ -119,7 +118,7 @@ void CGPUSamplerDrawer::Draw() const {
   }
 }
 
-void CGPUSamplerDrawer::Draw_Axis() const
+void dfm2::opengl::CGPUSamplerDrawer::Draw_Axis() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -128,7 +127,7 @@ void CGPUSamplerDrawer::Draw_Axis() const
     ::glPopMatrix();
 }
 
-void CGPUSamplerDrawer::Draw_BoundingBox() const
+void dfm2::opengl::CGPUSamplerDrawer::Draw_BoundingBox() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -138,7 +137,7 @@ void CGPUSamplerDrawer::Draw_BoundingBox() const
   ::glPopMatrix();
 }
 
-void CGPUSamplerDrawer::Draw_Point() const
+void dfm2::opengl::CGPUSamplerDrawer::Draw_Point() const
 {
   ::glDisable(GL_LIGHTING);
   if( aZ.size() != nResX*nResY ) return;
@@ -161,7 +160,7 @@ void CGPUSamplerDrawer::Draw_Point() const
   ::glEnd();
 }
 
-std::vector<double> CGPUSamplerDrawer::getGPos(int ix, int iy) const
+std::vector<double> dfm2::opengl::CGPUSamplerDrawer::getGPos(int ix, int iy) const
 {
   const dfm2::CVec3& dx = x_axis;
   const dfm2::CVec3& dz = z_axis;

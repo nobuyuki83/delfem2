@@ -51,17 +51,21 @@ template <typename T>
 void MatVec3(T y[3],
              const T m[9], const T x[3]);
 
+template <typename T>
+T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
 
-double ScalarTripleProduct3D(const double a[], const double b[], const double c[]);
-
+template <typename T>
+void Transpose_Mat3(T At[],
+                   const T A[]);
+  
+// --------------------------------
+  
 void UnitNormalAreaTri3D(double n[3], double& a,
                          const double v1[3], const double v2[3], const double v3[3]);
 void NormalTri3D(double n[3],
                  const double v1[3], const double v2[3], const double v3[3]);
 void InverseMat3(double Ainv[],
                  const double A[]);
-void transposeMat3(double At[],
-                   const double A[]);
 void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
 void MatTransVec3(double y[3],
                   const double m[9], const double x[3]);
@@ -188,11 +192,6 @@ public:
   }
 public:
   double p[3];
-  /*
-	double x;	//!< x axis coordinate
-	double y;	//!< y axis coordinate
-	double z;	//!< z axis coordinate
-   */
 };
 
 
@@ -419,19 +418,19 @@ bool IsInside_Orgin_BoundingBoxPoint6(const CVec3& p0,
 
 // -----------------------------------------------
 
-double volume_OrgTet(const CVec3& v1,
+double Volume_OrgTet(const CVec3& v1,
                      const CVec3& v2,
                      const CVec3& v3 );
 double Volume_Tet(const CVec3& v0,
                   const CVec3& v1,
                   const CVec3& v2,
                   const CVec3& v3 );
-double volume_Pyramid(const CVec3& p0,
+double Volume_Pyramid(const CVec3& p0,
                       const CVec3& p1,
                       const CVec3& p2,
                       const CVec3& p3,
                       const CVec3& p4);
-double volume_Wedge(const CVec3& p0,
+double Volume_Wedge(const CVec3& p0,
                     const CVec3& p1,
                     const CVec3& p2,
                     const CVec3& p3,
@@ -548,15 +547,12 @@ void CheckConstDiff_Bend();
   
 // ----------------------------------------------------------
 // here starts std::vector<CVector3>
-
-double TetVolume( int iv1, int iv2, int iv3, int iv4,
-                 const std::vector<CVec3>& node);
-
-double volume_Tet(int iv1, int iv2, int iv3, int iv4,
+  
+double Volume_Tet(int iv1, int iv2, int iv3, int iv4,
                   const std::vector<CVec3>& aPoint);
 
-double TriArea(const int iv1, const int iv2, const int iv3,
-               const std::vector<CVec3>& node );
+double Area_Tri(const int iv1, const int iv2, const int iv3,
+                const std::vector<CVec3>& node );
 
 bool IsOut(int itri, const CVec3& v,
            const std::vector<CVec3>& aXYZ,
@@ -565,9 +561,9 @@ bool IsOut(int itri, const CVec3& v,
 void ConvexHull(std::vector<int>& aTri,
                 const std::vector<CVec3>& aXYZ);
 
-inline CVec3 cg_Tri(unsigned int itri,
-                       const std::vector<unsigned int>& aTri,
-                       const std::vector<double>& aXYZ)
+inline CVec3 CG_Tri3(unsigned int itri,
+                     const std::vector<unsigned int>& aTri,
+                     const std::vector<double>& aXYZ)
 {
   CVec3 p;
   int i0 = aTri[itri*3+0];
@@ -579,9 +575,9 @@ inline CVec3 cg_Tri(unsigned int itri,
   return p;
 }
 
-inline CVec3 normalTri(int itri,
-                          const std::vector<int>& aTri,
-                          const std::vector<double>& aXYZ)
+inline CVec3 Normal_Tri3(int itri,
+                         const std::vector<int>& aTri,
+                         const std::vector<double>& aXYZ)
 {
   int i0 = aTri[itri*3+0];
   int i1 = aTri[itri*3+1];

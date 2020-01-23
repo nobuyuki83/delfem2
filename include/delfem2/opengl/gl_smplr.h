@@ -12,6 +12,9 @@
 #include <stdio.h>
 #include <vector>
 
+namespace delfem2 {
+namespace opengl {
+
 class CGPUSampler
 {
 public:
@@ -64,5 +67,8 @@ public:
 protected:
   int view[4];
 };
+  
+} // opengl
+} // delfem2
 
 #endif /* depth_hpp */
