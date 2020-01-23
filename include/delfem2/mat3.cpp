@@ -72,11 +72,16 @@ template double dfm2::Det_Mat3(const double U[9]);
 
 // ---------------------------------------
 
-double sqnormFrobenius
-(const double sm[6])
+template <typename T>
+T dfm2::SquareNormFrobenius_SymMat3
+(const T sm[6])
 {
   return sm[0]*sm[0] + sm[1]*sm[1] + sm[2]*sm[2] + 2*(sm[3]*sm[3] + sm[4]*sm[4] + sm[5]*sm[5]);
 }
+template float dfm2::SquareNormFrobenius_SymMat3(const float sm[6]);
+template double dfm2::SquareNormFrobenius_SymMat3(const double sm[6]);
+
+// ---------------------------------------
 
 // compute eigen value & vector for symmmetric matrix
 // sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
@@ -92,7 +97,7 @@ bool dfm2::eigenSym3
   u[0]=u[4]=u[8]=1.0;
   u[1]=u[2]=u[3]=u[5]=u[6]=u[7]=0.0;
   l[0]=l[1]=l[2]=0.0;
-  double dnrm = sqnormFrobenius(sm);
+  double dnrm = SquareNormFrobenius_SymMat3(sm);
   if( dnrm < 1.0e-30 ){ return false; } // this matrix is too small
   const double scale = sqrt(dnrm);
   const double invscl = 1.0/scale;
@@ -271,41 +276,57 @@ void SetMatrix3_Quaternion(double r[], const double q[])
 
 namespace delfem2 {
 
-CMat3 operator* (double d, const CMat3& rhs){
-  CMat3 temp = rhs;
+template <typename T>
+CMat3<T> operator* (double d, const CMat3<T>& rhs){
+  CMat3<T> temp = rhs;
   temp *= d;
   return temp;
 }
+template CMat3<double> operator* (double d, const CMat3<double>& rhs);
 
-CMat3 operator* (const CMat3& m, double d){
-  CMat3 t = m;
+template <typename T>
+CMat3<T> operator* (const CMat3<T>& m, double d){
+  CMat3<T> t = m;
   t *= d;
   return t;
 }
+template CMat3<double> operator* (const CMat3<double>& m, double d);
 
-CMat3 operator/ (const CMat3& m, double d){
-  CMat3 temp = m;
+template <typename T>
+CMat3<T> operator/ (const CMat3<T>& m, double d){
+  CMat3<T> temp = m;
   temp /= d;
   return temp;
 }
 
-CMat3 operator+ (const CMat3& lhs, const CMat3& rhs){
-  CMat3 temp = lhs;
+template <typename T>
+CMat3<T> operator+ (const CMat3<T>& lhs, const CMat3<T>& rhs){
+  CMat3<T> temp = lhs;
   temp += rhs;
   return temp;
 }
+template CMat3<double> operator+ (const CMat3<double>& lhs, const CMat3<double>& rhs);
 
-CMat3 operator* (const CMat3& lhs, const CMat3& rhs){
+template <typename T>
+CMat3<T> operator* (const CMat3<T>& lhs, const CMat3<T>& rhs){
   return lhs.MatMat(rhs);
 }
+template CMat3<double> operator* (const CMat3<double>& lhs, const CMat3<double>& rhs);
+  
+// ------------------------------
 
-CMat3 operator- (const CMat3& lhs, const CMat3& rhs){
-  CMat3 temp = lhs;
+template <typename T>
+CMat3<T> operator- (const CMat3<T>& lhs, const CMat3<T>& rhs){
+  CMat3<T> temp = lhs;
   temp -= rhs;
   return temp;
 }
+template CMat3<double> operator- (const CMat3<double>& lhs, const CMat3<double>& rhs);
+  
+// ------------------------------
 
-std::ostream &operator<<(std::ostream &output, const CMat3& m)
+template <typename T>
+std::ostream &operator<<(std::ostream &output, const CMat3<T>& m)
 {
   output.setf(std::ios::scientific);
   output << m.mat[0*3+0] << " " << m.mat[0*3+1] << " " << m.mat[0*3+2] << " ";
@@ -314,7 +335,8 @@ std::ostream &operator<<(std::ostream &output, const CMat3& m)
   return output;
 }
 
-std::istream &operator>>(std::istream &input, CMat3& m)
+template <typename T>
+std::istream &operator>>(std::istream &input, CMat3<T>& m)
 {
   input >> m.mat[0*3+0] >> m.mat[0*3+1] >> m.mat[0*3+2];
   input >> m.mat[1*3+0] >> m.mat[1*3+1] >> m.mat[1*3+2];
@@ -325,44 +347,56 @@ std::istream &operator>>(std::istream &input, CMat3& m)
 }
 
 // -------------------------------------------------------------------
-
-dfm2::CMat3::CMat3():
+  
+template <typename T>
+dfm2::CMat3<T>::CMat3():
  mat{0.,0.,0., 0.,0.,0., 0.,0.,0.}
 {}
+template dfm2::CMat3<double>::CMat3();
+  
+// ---------------------
 
-dfm2::CMat3::CMat3(const double s):
+template <typename T>
+dfm2::CMat3<T>::CMat3(const double s):
  mat{s,0,0, 0,s,0, 0,0,s}
 {}
 
-dfm2::CMat3::CMat3(double v00, double v01, double v02,
-                         double v10, double v11, double v12,
-                         double v20, double v21, double v22):
+template <typename T>
+dfm2::CMat3<T>::CMat3(double v00, double v01, double v02,
+                      double v10, double v11, double v12,
+                      double v20, double v21, double v22):
  mat{v00,v01,v02, v10,v11,v12, v20,v21,v22}
 {}
 
-dfm2::CMat3::CMat3(double x, double y, double z):
+template <typename T>
+dfm2::CMat3<T>::CMat3(double x, double y, double z):
  mat{x,0,0, 0,y,0, 0,0,z}
 {}
 
-dfm2::CMat3::CMat3(const double m[9]):
+template <typename T>
+dfm2::CMat3<T>::CMat3(const double m[9]):
  mat{m[0],m[1],m[2], m[3],m[4],m[5], m[6],m[7],m[8]}
 {}
 
-void dfm2::CMat3::MatVec(const double vec0[], double vec1[]) const
+template <typename T>
+void dfm2::CMat3<T>::MatVec(const double vec0[], double vec1[]) const
 {
   vec1[0] = mat[0]*vec0[0] + mat[1]*vec0[1] + mat[2]*vec0[2];
   vec1[1] = mat[3]*vec0[0] + mat[4]*vec0[1] + mat[5]*vec0[2];
   vec1[2] = mat[6]*vec0[0] + mat[7]*vec0[1] + mat[8]*vec0[2];
 }
+template void dfm2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
 
-void dfm2::CMat3::MatVecTrans(const double vec0[], double vec1[]) const
+template <typename T>
+void dfm2::CMat3<T>::MatVecTrans(const double vec0[], double vec1[]) const
 {
   vec1[0] = mat[0]*vec0[0] + mat[3]*vec0[1] + mat[6]*vec0[2];
   vec1[1] = mat[1]*vec0[0] + mat[4]*vec0[1] + mat[7]*vec0[2];
   vec1[2] = mat[2]*vec0[0] + mat[5]*vec0[1] + mat[8]*vec0[2];
 }
 
-dfm2::CMat3 dfm2::CMat3::MatMat(const CMat3& mat0) const{
+template <typename T>
+dfm2::CMat3<T> dfm2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
   CMat3 m;
   for(unsigned int i=0;i<3;i++){
     for(unsigned int j=0;j<3;j++){
@@ -375,7 +409,8 @@ dfm2::CMat3 dfm2::CMat3::MatMat(const CMat3& mat0) const{
   return m;
 }
 
-dfm2::CMat3 dfm2::CMat3::MatMatTrans(const CMat3& mat0) const
+template <typename T>
+dfm2::CMat3<T> dfm2::CMat3<T>::MatMatTrans(const CMat3<T>& mat0) const
 {
   CMat3 m;
   for(unsigned int i=0;i<3;i++){
@@ -389,17 +424,19 @@ dfm2::CMat3 dfm2::CMat3::MatMatTrans(const CMat3& mat0) const
   return m;
 }
 
-
-dfm2::CMat3 dfm2::CMat3::Inverse() const
+template <typename T>
+dfm2::CMat3<T> dfm2::CMat3<T>::Inverse() const
 {
   CMat3 mi = *this;
   mi.SetInverse();
   return mi;
 }
+template dfm2::CMat3<double> dfm2::CMat3<double>::Inverse() const;
 
 // ------------------------------------------------------------------
 
-void dfm2::CMat3::SetInverse()
+template <typename T>
+void dfm2::CMat3<T>::SetInverse()
 {
   const double det = this->Det();
   const double inv_det = 1.0/det;
@@ -418,8 +455,8 @@ void dfm2::CMat3::SetInverse()
 }
 
 
-
-void dfm2::CMat3::SetSymetric(const double sm[6])
+template <typename T>
+void dfm2::CMat3<T>::SetSymetric(const double sm[6])
 {
   mat[0] = sm[0];
   mat[1] = sm[5];
@@ -431,14 +468,22 @@ void dfm2::CMat3::SetSymetric(const double sm[6])
   mat[7] = sm[3];
   mat[8] = sm[2];
 }
+template void dfm2::CMat3<float>::SetSymetric(const double sm[6]);
+template void dfm2::CMat3<double>::SetSymetric(const double sm[6]);
 
-void dfm2::CMat3::SetZero()
+// --------------------------------
+
+template <typename T>
+void dfm2::CMat3<T>::SetZero()
 {
   for(double & i : mat){ i = 0.0; }
 }
+template void dfm2::CMat3<double>::SetZero();
+  
+// --------------------
 
-
-void dfm2::CMat3::SetRandom(){
+template <>
+void dfm2::CMat3<double>::SetRandom(){
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> score(-50.0, 50.0);
@@ -447,7 +492,8 @@ void dfm2::CMat3::SetRandom(){
   }
 }
 
-void dfm2::CMat3::SetRotMatrix_Cartesian(const double vec[])
+template <typename T>
+void dfm2::CMat3<T>::SetRotMatrix_Cartesian(const double vec[])
 {
   double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
@@ -471,15 +517,21 @@ void dfm2::CMat3::SetRotMatrix_Cartesian(const double vec[])
   mat[2*3+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
   mat[2*3+2] = c0        +(1-c0)*n[2]*n[2];
 }
+template void dfm2::CMat3<double>::SetRotMatrix_Cartesian(const double vec[]);
+  
+// -------------------------------
 
-void dfm2::CMat3::SetRotMatrix_Cartesian(double x, double y, double z){
+template <typename T>
+void dfm2::CMat3<T>::SetRotMatrix_Cartesian(double x, double y, double z){
   const double vec[3] = { x, y, z };
   this->SetRotMatrix_Cartesian(vec);
 }
+template void dfm2::CMat3<double>::SetRotMatrix_Cartesian(double x, double y, double z);
+  
+// ----------------------------------
 
-
-
-void dfm2::CMat3::SetRotMatrix_Rodrigues(const double vec[])
+template <typename T>
+void dfm2::CMat3<T>::SetRotMatrix_Rodrigues(const double vec[])
 {
   const double sqlen = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   const double tmp1 = 1.0/(1+0.25*sqlen);
@@ -494,7 +546,8 @@ void dfm2::CMat3::SetRotMatrix_Rodrigues(const double vec[])
   mat[8] = 1+tmp1*(       +0.5*vec[2]*vec[2]-0.5*sqlen);
 }
 
-void dfm2::CMat3::SetRotMatrix_CRV(const double crv[])
+template <typename T>
+void dfm2::CMat3<T>::SetRotMatrix_CRV(const double crv[])
 {
   const double c0 = 0.125*( 16.0 - crv[0]*crv[0] - crv[1]*crv[1] - crv[2]*crv[2] );
   const double tmp = 1.0/( (4.0-c0)*(4.0-c0) );
@@ -509,11 +562,14 @@ void dfm2::CMat3::SetRotMatrix_CRV(const double crv[])
   mat[2*3+2] = tmp*( (c0*c0+8*c0-16) + 2*crv[2]*crv[2] );
 }
 
-void dfm2::CMat3::SetRotMatrix_Quaternion(const double quat[]){
+template <typename T>
+void dfm2::CMat3<T>::SetRotMatrix_Quaternion(const double quat[]){
   SetMatrix3_Quaternion(mat, quat);
 }
+template void dfm2::CMat3<double>::SetRotMatrix_Quaternion(const double quat[]);
 
-void dfm2::CMat3::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
+template <typename T>
+void dfm2::CMat3<T>::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
 {
   CMat3 mx; double rvx[3] = {rx,0,0}; mx.SetRotMatrix_Cartesian(rvx);
   CMat3 my; double rvy[3] = {0,ry,0}; my.SetRotMatrix_Cartesian(rvy);
@@ -524,7 +580,8 @@ void dfm2::CMat3::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
   *this = m;
 }
 
-void dfm2::CMat3::GetQuat_RotMatrix(double quat[]) const{
+template <typename T>
+void dfm2::CMat3<T>::GetQuat_RotMatrix(double quat[]) const{
   const double smat[16] = {
     1+mat[0*3+0]+mat[1*3+1]+mat[2*3+2],
     mat[2*3+1]-mat[1*3+2],
@@ -555,8 +612,10 @@ void dfm2::CMat3::GetQuat_RotMatrix(double quat[]) const{
     quat[k] = smat[imax*4+k]*0.25/quat[imax];
   }
 }
+template void dfm2::CMat3<double>::GetQuat_RotMatrix(double quat[]) const;
 
-void dfm2::CMat3::GetCRV_RotMatrix(double crv[]) const{
+template <typename T>
+void dfm2::CMat3<T>::GetCRV_RotMatrix(double crv[]) const{
   double eparam2[4];
   this->GetQuat_RotMatrix(eparam2);
   crv[0] = 4*eparam2[1]/(1+eparam2[0]);
@@ -564,47 +623,58 @@ void dfm2::CMat3::GetCRV_RotMatrix(double crv[]) const{
   crv[2] = 4*eparam2[3]/(1+eparam2[0]);
 }
 
-
-void dfm2::CMat3::SetIdentity(double scale)
+template <typename T>
+void dfm2::CMat3<T>::SetIdentity(double scale)
 {
   mat[0] = scale; mat[1] = 0;     mat[2] = 0;
   mat[3] = 0;     mat[4] = scale; mat[5] = 0;
   mat[6] = 0;     mat[7] = 0;     mat[8] = scale;
 }
-
-
-
+template void dfm2::CMat3<double>::SetIdentity(double scale);
+template void dfm2::CMat3<float>::SetIdentity(double scale);
 
 
 // ----------------------------------------------------------
 // 4x4 matrix
 
+template <typename T>
 void dfm2::MatVec4
-(double v[4],
- const double A[16],
- const double x[4])
+(T v[4],
+ const T A[16],
+ const T x[4])
 {
   v[0] = A[0*4+0]*x[0] + A[0*4+1]*x[1] + A[0*4+2]*x[2] + A[0*4+3]*x[3];
   v[1] = A[1*4+0]*x[0] + A[1*4+1]*x[1] + A[1*4+2]*x[2] + A[1*4+3]*x[3];
   v[2] = A[2*4+0]*x[0] + A[2*4+1]*x[1] + A[2*4+2]*x[2] + A[2*4+3]*x[3];
   v[3] = A[3*4+0]*x[0] + A[3*4+1]*x[1] + A[3*4+2]*x[2] + A[3*4+3]*x[3];
 }
+template void dfm2::MatVec4(float v[4], const float A[16], const float x[4]);
+template void dfm2::MatVec4(double v[4], const double A[16], const double x[4]);
+  
+// ---------------------------
 
-void dfm2::Affine3D
-(double y0[3],
- const double a[16],
- const double x0[3])
+template <typename T>
+void dfm2::AffMat3Vec3Projection
+(T y0[3],
+ const T a[16],
+ const T x0[3])
 {
-  const double x1[4] = {x0[0], x0[1], x0[2], 1.0};
-  double y1[4]; MatVec4(y1,a,x1);
+  const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
+  T y1[4]; MatVec4(y1,a,x1);
   y0[0] = y1[0]/y1[3];
   y0[1] = y1[1]/y1[3];
   y0[2] = y1[2]/y1[3];
 }
+template void dfm2::AffMat3Vec3Projection(float y0[3], const float a[16], const float x0[3]);
+template void dfm2::AffMat3Vec3Projection(double y0[3], const double a[16], const double x0[3]);
 
-void dfm2::SetAffine_Scale
-(double A[16],
- double s)
+  
+// ----------------------
+
+template <typename T>
+void dfm2::AffMat3_Scale
+(T A[16],
+ T s)
 {
   for(int i=0;i<16;++i){ A[i] = 0.0; }
   A[0*4+0] = s;
@@ -612,10 +682,15 @@ void dfm2::SetAffine_Scale
   A[2*4+2] = s;
   A[3*4+3] = 1.0;
 }
+template void dfm2::AffMat3_Scale(float A[16], float s);
+template void dfm2::AffMat3_Scale(double A[16], double s);
+  
+// ------------------------
 
-void SetAffine_Trans
-(double A[16],
- double dx, double dy, double dz)
+template <typename T>
+void dfm2::AffMat3_Translation
+(T A[16],
+ T dx, T dy, T dz)
 {
   for(int i=0;i<16;++i){ A[i] = 0.0; }
   for(int i=0;i<4;++i){ A[i*4+i] = 1.0; }
@@ -623,10 +698,15 @@ void SetAffine_Trans
   A[1*4+3] = dy;
   A[2*4+3] = dz;
 }
+template void dfm2::AffMat3_Translation(float A[16],  float dx, float dy, float dz);
+template void dfm2::AffMat3_Translation(double A[16],  double dx, double dy, double dz);
+  
+// --------------------------
 
-void SetAffine_Rotate_Rodriguez
-(double A[16],
- double dx, double dy, double dz)
+template <typename T>
+void dfm2::AffMat3_Rotate_Rodriguez
+(T A[16],
+ T dx, T dy, T dz)
 {
   for(int i=0;i<16;++i){ A[i] = 0.0; }
   //
@@ -652,5 +732,10 @@ void SetAffine_Rotate_Rodriguez
   A[3*4+2] = 0.0;
   A[3*4+3] = 1.0;
 }
+template void dfm2::AffMat3_Rotate_Rodriguez(float A[16],
+                                             float dx, float dy, float dz);
+template void dfm2::AffMat3_Rotate_Rodriguez(double A[16],
+                                             double dx, double dy, double dz);
+
 
 

@@ -1505,7 +1505,7 @@ bool dfm2::CCad3D::MouseMotion
       const double len0 = (aEdge[ie0].p0-aEdge[ie0].p1).Length();
       if( (qs-pv).Length() < 0.01*len0 ) return false;
       if( (qe-pv).Length() < 0.01*len0 ) return false;
-      CMat3 R = Mat3_MinimumRotation(qs-pv, qe-pv);
+      CMat3d R = Mat3_MinimumRotation(qs-pv, qe-pv);
       aVertex[iv].norm = R*(aVertex[iv].norm);
       double len1 = (qe-pv).Length();
       if( ielem_edge_picked==2 ){ aEdge[ie0].r0 = len1/len0; }

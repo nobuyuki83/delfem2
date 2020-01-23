@@ -36,6 +36,11 @@ void MatTransMat3(T* C,
 template <typename T>
 T Det_Mat3(const T U[9]);
   
+template <typename T>
+T SquareNormFrobenius_SymMat3(const T sm[6]);
+  
+
+  
 /**
  * @brief compute eigen value & vector for symmmetric matrix
  * @details
@@ -55,40 +60,68 @@ void GetRotPolarDecomp(double R[9],
                        const double am[9],
                        int nitr);
 
-  // ------------------------------------------------
+// ------------------------------------------------
+  
+template <typename T>
+void AffMat3_Scale(T A[16],
+                   T s);
+  
+template <typename T>
+void AffMat3_Translation(T A[16],
+                         T dx, T dy, T dz);
 
-void MatVec4(double v[4],
-             const double A[16],
-             const double x[4]);
-void Affine3D(double y0[3],
-              const double a[16],
-              const double x0[3]);
-void SetAffine_Scale(double A[16],
-                     double s);
-void SetAffine_Trans(double A[16],
-                     double dx, double dy, double dz);
-void SetAffine_Rotate_Rodriguez(double A[16],
-                                double dx, double dy, double dz);
+template <typename T>
+void AffMat3_Rotate_Rodriguez(T A[16],
+                              T dx, T dy, T dz);
 
+template <typename T>
+void MatVec4(T v[4],
+             const T A[16],
+             const T x[4]);
+
+template <typename T>
+void AffMat3Vec3Projection(T y0[3],
+                           const T a[16],
+                           const T x0[3]);
+
+  
 
 // --------------------------------
-
+  
+template <typename T>
 class CMat3; // this pre-definition is needed for following functions
-CMat3 operator+ (const CMat3& lhs, const CMat3& rhs);
-CMat3 operator- (const CMat3& lhs, const CMat3& rhs);
-CMat3 operator* (double d, const CMat3& rhs);
-CMat3 operator* (const CMat3& m, double d);
-CMat3 operator* (const CMat3& lhs, const CMat3& rhs);
-CMat3 operator/ (const CMat3& m, double d);
-std::ostream &operator<<(std::ostream &output, const CMat3& m);
-std::istream &operator>>(std::istream &output, CMat3& m);
 
-static bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
+template <typename T>
+CMat3<T> operator+ (const CMat3<T>& lhs, const CMat3<T>& rhs);
+
+template <typename T>
+CMat3<T> operator- (const CMat3<T>& lhs, const CMat3<T>& rhs);
+
+template <typename T>
+CMat3<T> operator* (double d, const CMat3<T>& rhs);
+
+template <typename T>
+CMat3<T> operator* (const CMat3<T>& m, double d);
+  
+template <typename T>
+CMat3<T> operator* (const CMat3<T>& lhs, const CMat3<T>& rhs);
+
+template <typename T>
+CMat3<T> operator/ (const CMat3<T>& m, double d);
+
+template <typename T>
+std::ostream &operator<<(std::ostream &output, const CMat3<T>& m);
+  
+template <typename T>
+std::istream &operator>>(std::istream &output, CMat3<T>& m);
+
+static inline bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
 
 /**
  * @brief class of 3x3 matrix
  * @todo use template for this class 
  */
+template <typename T>
 class CMat3
 {
 public:
@@ -227,8 +260,9 @@ public:
   double mat[9];  
 };
 
+using CMat3d = CMat3<double>;
+using CMat3f = CMat3<float>;
 
-  
 }
 
 #endif

@@ -79,7 +79,7 @@ void RotationAtMeshPoints
     dfm2::CVec3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                 aXYZ[ip*3+1]+aDisp[ip*3+1],
                 aXYZ[ip*3+2]+aDisp[ip*3+2]);
-    dfm2::CMat3 A;
+    dfm2::CMat3d A;
     A.SetZero();
     for(unsigned int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
       int jp = psup[jjp];
