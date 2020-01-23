@@ -106,12 +106,12 @@ public:
   delfem2::CVec3 circ; // circulation
   delfem2::CVec3 circ0;
   double rad; // radius
-  delfem2::CMat3 m;
+  delfem2::CMat3d m;
   //
   delfem2::CVec3 velo;
   delfem2::CVec3 velo_pre;
-  delfem2::CMat3 gradvelo;
-  delfem2::CMat3 gradvelo_pre;
+  delfem2::CMat3d gradvelo;
+  delfem2::CMat3d gradvelo_pre;
 public:
   void stepTime_AdamsBashforth(double dt){
 //           pos += velo*dt;
@@ -125,7 +125,7 @@ delfem2::CVec3 veloVortexParticles(const delfem2::CVec3& p0,
                              const std::vector<CVortexParticle>& aVortexParticle,
                              int ivp_self);
 
-delfem2::CMat3 gradveloVortexParticles(delfem2::CVec3& velo,
+delfem2::CMat3d gradveloVortexParticles(delfem2::CVec3& velo,
                                           const delfem2::CVec3& p0,
                                           const std::vector<CVortexParticle>& aVortexParticle,
                                           int ivp_self);

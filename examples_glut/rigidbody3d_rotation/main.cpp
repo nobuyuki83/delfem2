@@ -31,7 +31,7 @@ class CRigidBodyState
 {
 public:
   CVec3 pos;
-  CMat3 R;
+  CMat3d R;
   CVec3 velo;
   CVec3 Omega;
 public:
@@ -40,7 +40,7 @@ public:
     rb_out.velo    = velo  + dt*vOpA[0];
     rb_out.Omega   = Omega + dt*vOpA[1];
     rb_out.pos     = pos   + dt*vOpA[2];
-    CMat3 dR = dfm2::Mat3_RotCartesian(dt*vOpA[3]);
+    CMat3d dR = dfm2::Mat3_RotCartesian(dt*vOpA[3]);
     if( dR.isNaN() ) dR.SetZero();
     rb_out.R  = R*dR;
     return rb_out;
@@ -51,8 +51,8 @@ class CRigidBodyInertia
 {
 public:
   double mass;
-  CMat3 Irot;
-  CMat3 invIrot;
+  CMat3d Irot;
+  CMat3d invIrot;
 };
 
 class CRigidBodyForceModel
@@ -254,7 +254,7 @@ int main(int argc,char* argv[])
   
   rbi.mass = 1.0;
   {
-    rbi.Irot = dfm2::CMat3::Zero();
+    rbi.Irot = dfm2::CMat3d::Zero();
     dfm2::CVec3 ex(1,0,0), ey(0,1,0), ez(0,0,1);
     rbi.Irot += 1.0*dfm2::Mat3_OuterProduct(ex,ex);
     rbi.Irot += 3.0*dfm2::Mat3_OuterProduct(ey,ey);
@@ -263,7 +263,7 @@ int main(int argc,char* argv[])
   rbi.invIrot = rbi.Irot.Inverse();
   
   rbs.pos = dfm2::CVec3(0,0,0);
-  rbs.R = dfm2::CMat3::Identity();
+  rbs.R = dfm2::CMat3d::Identity();
   rbs.velo = dfm2::CVec3(0,0,0);
   rbs.Omega = dfm2::CVec3(1,1,1);
   

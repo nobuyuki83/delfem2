@@ -17,11 +17,11 @@
 
 namespace delfem2 {
 
-CVec3 operator* (const CVec3& v, const CMat3& m);
-CVec3 operator* (const CMat3& m, const CVec3& v);
+CVec3 operator* (const CVec3& v, const CMat3d& m);
+CVec3 operator* (const CMat3d& m, const CVec3& v);
   
-CVec3 MatVec(const CMat3& m, const CVec3& vec0);
-CVec3 MatVecTrans(const CMat3& m, const CVec3& vec0);
+CVec3 MatVec(const CMat3d& m, const CVec3& vec0);
+CVec3 MatVecTrans(const CMat3d& m, const CVec3& vec0);
 
 // ---------------------------------------------
 
@@ -29,51 +29,51 @@ CVec2 screenXYProjection(const CVec3& v,
                             const float* mMV,
                             const float* mPj);
 
-void SetProjection(CMat3& m, const CVec3& vec0);
-void SetDiag(CMat3& m, const CVec3& d);
-void SetRotMatrix_Cartesian(CMat3& m, const CVec3& v);
-void SetSpinTensor(CMat3& m, const CVec3& vec0);
-void SetOuterProduct(CMat3& m,
+void SetProjection(CMat3d& m, const CVec3& vec0);
+void SetDiag(CMat3d& m, const CVec3& d);
+void SetRotMatrix_Cartesian(CMat3d& m, const CVec3& v);
+void SetSpinTensor(CMat3d& m, const CVec3& vec0);
+void SetOuterProduct(CMat3d& m,
                      const CVec3& vec0,
                      const CVec3& vec1 );
-CVec3 GetSpinVector(const CMat3& m);
-CVec3 GetCartesianRotationVector(const CMat3& m);
+CVec3 GetSpinVector(const CMat3d& m);
+CVec3 GetCartesianRotationVector(const CMat3d& m);
 
   
 // --------------------------------------------
 
-CMat3 Mat3(const CVec3& vec0,
+CMat3d Mat3(const CVec3& vec0,
               const CVec3& vec1,
               const CVec3& vec2);
-CMat3 Mat3(const CVec3& vec0);
-CMat3 Mat3(const CVec3& vec0,
+CMat3d Mat3(const CVec3& vec0);
+CMat3d Mat3(const CVec3& vec0,
               const CVec3& vec1);
-CMat3 RotMatrix_Cartesian(const CVec3& v);
-CMat3 Mat3_RotCartesian(const CVec3& vec0);
-CMat3 Mat3_OuterProduct(const CVec3& vec0,
+CMat3d RotMatrix_Cartesian(const CVec3& v);
+CMat3d Mat3_RotCartesian(const CVec3& vec0);
+CMat3d Mat3_OuterProduct(const CVec3& vec0,
                       const CVec3& vec1 );
-CMat3 Mat3_Spin(const CVec3& vec0);
-CMat3 Mat3_ParallelTransport(const CVec3& p0,
+CMat3d Mat3_Spin(const CVec3& vec0);
+CMat3d Mat3_ParallelTransport(const CVec3& p0,
                                 const CVec3& p1,
                                 const CVec3& q0,
                                 const CVec3& q1);
-CMat3 Mat3_MinimumRotation(const CVec3& V,
+CMat3d Mat3_MinimumRotation(const CVec3& V,
                               const CVec3& v);
-CMat3 Mat3_IrotTri(const CVec3& d0,
+CMat3d Mat3_IrotTri(const CVec3& d0,
                       const CVec3& d1,
                       const CVec3& d2);
-CMat3 Mat3_IrotTriSolid(const CVec3& d0,
+CMat3d Mat3_IrotTriSolid(const CVec3& d0,
                            const CVec3& d1,
                            const CVec3& d2);
-CMat3 Mat3_IrotLineSeg(const CVec3& d0,
+CMat3d Mat3_IrotLineSeg(const CVec3& d0,
                           const CVec3& d1);
-CMat3 Mat3_IrotPoint(const CVec3& d0);
-CMat3 Mirror(const CVec3& n);
+CMat3d Mat3_IrotPoint(const CVec3& d0);
+CMat3d Mirror(const CVec3& n);
 
 void Mat4_MatTransl(double m[16],
-                    const CMat3& mat, const CVec3& trans);
+                    const CMat3d& mat, const CVec3& trans);
 void Mat4_ScaleMatTransl(double m[16],
-                         double scale, const CMat3& mat, const CVec3& trans);
+                         double scale, const CMat3d& mat, const CVec3& trans);
 
 int PickHandlerRotation_PosQuat(const CVec3& src, const CVec3& dir,
                                 const CVec3& pos, const double quat[4], double rad,

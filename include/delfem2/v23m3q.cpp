@@ -26,7 +26,7 @@ dfm2::CVec2 dfm2::screenXYProjection
 }
 
 dfm2::CVec3 dfm2::GetCartesianRotationVector
- (const CMat3& m)
+ (const CMat3d& m)
 {
   const double* mat = m.mat;
   CVec3 a;
@@ -44,7 +44,7 @@ dfm2::CVec3 dfm2::GetCartesianRotationVector
   return a;
 }
 
-dfm2::CVec3 dfm2::GetSpinVector(const CMat3& m)
+dfm2::CVec3 dfm2::GetSpinVector(const CMat3d& m)
 {
   const double* mat = m.mat;
   CVec3 r;
@@ -54,7 +54,7 @@ dfm2::CVec3 dfm2::GetSpinVector(const CMat3& m)
   return r;
 }
 
-dfm2::CVec3 dfm2::MatVec(const CMat3& m, const CVec3& vec0)
+dfm2::CVec3 dfm2::MatVec(const CMat3d& m, const CVec3& vec0)
 {
   CVec3 vec1;
   dfm2::MatVec3(vec1.p, m.mat,vec0.p);
@@ -66,7 +66,7 @@ dfm2::CVec3 dfm2::MatVec(const CMat3& m, const CVec3& vec0)
 }
 
 dfm2::CVec3 dfm2::MatVecTrans
- (const CMat3& m, const CVec3& vec0)
+ (const CMat3d& m, const CVec3& vec0)
 {
   CVec3 vec1;
   MatTransVec3(vec1.p, m.mat,vec0.p);
@@ -79,7 +79,7 @@ dfm2::CVec3 dfm2::MatVecTrans
 
 // ---------------------------------------------------------------------
 
-void dfm2::SetDiag(CMat3& m, const CVec3& d)
+void dfm2::SetDiag(CMat3d& m, const CVec3& d)
 {
   double* mat = m.mat;
   mat[0*3+0] = d.x();
@@ -87,13 +87,13 @@ void dfm2::SetDiag(CMat3& m, const CVec3& d)
   mat[2*3+2] = d.z();
 }
 
-void dfm2::SetRotMatrix_Cartesian(CMat3& m, const CVec3& v)
+void dfm2::SetRotMatrix_Cartesian(CMat3d& m, const CVec3& v)
 {
 //  const double vec[3] = { v.x, v.y, v.z };
   m.SetRotMatrix_Cartesian(v.p);
 }
 
-void dfm2::SetSpinTensor(CMat3& m, const CVec3& vec0)
+void dfm2::SetSpinTensor(CMat3d& m, const CVec3& vec0)
 {
   double* mat = m.mat;
   mat[0] =  0;       mat[1] = -vec0.z();   mat[2] = +vec0.y();
@@ -102,7 +102,7 @@ void dfm2::SetSpinTensor(CMat3& m, const CVec3& vec0)
 }
 
 void dfm2::SetOuterProduct
- (CMat3& m,
+ (CMat3d& m,
   const CVec3& vec0,
   const CVec3& vec1 )
 {
@@ -112,7 +112,7 @@ void dfm2::SetOuterProduct
   mat[6] = vec0.z()*vec1.x(); mat[7] = vec0.z()*vec1.y(); mat[8] = vec0.z()*vec1.z();
 }
 
-void dfm2::SetProjection(CMat3& m, const CVec3& vec0)
+void dfm2::SetProjection(CMat3d& m, const CVec3& vec0)
 {
   double* mat = m.mat;
   const CVec3& u = vec0.Normalize();
@@ -123,34 +123,34 @@ void dfm2::SetProjection(CMat3& m, const CVec3& vec0)
 
 // ----------------------------
 
-dfm2::CMat3 dfm2::Mirror(const CVec3& n)
+dfm2::CMat3d dfm2::Mirror(const CVec3& n)
 {
   CVec3 N = n;
   N.SetNormalizedVector();
-  return CMat3::Identity() - 2*dfm2::Mat3_OuterProduct(N,N);
+  return CMat3d::Identity() - 2*dfm2::Mat3_OuterProduct(N,N);
 }
 
-dfm2::CMat3 dfm2::RotMatrix_Cartesian(const CVec3& v){
- CMat3 m;
+dfm2::CMat3d dfm2::RotMatrix_Cartesian(const CVec3& v){
+ CMat3d m;
  SetRotMatrix_Cartesian(m,v);
  return m;
 }
 
-dfm2::CMat3 dfm2::Mat3(const CVec3& vec0){
-  CMat3 m;
+dfm2::CMat3d dfm2::Mat3(const CVec3& vec0){
+  CMat3d m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-dfm2::CMat3 dfm2::Mat3(const CVec3& vec0, const CVec3& vec1){
-  CMat3 m;
+dfm2::CMat3d dfm2::Mat3(const CVec3& vec0, const CVec3& vec1){
+  CMat3d m;
   SetOuterProduct(m,vec0, vec1);
   return m;
 }
 
-dfm2::CMat3 dfm2::Mat3(const CVec3& vec0, const CVec3& vec1, const CVec3& vec2)
+dfm2::CMat3d dfm2::Mat3(const CVec3& vec0, const CVec3& vec1, const CVec3& vec2)
 {
-  CMat3 m;
+  CMat3d m;
   double* mat = m.mat;
   mat[0*3+0]=vec0.x(); mat[0*3+1]=vec1.x(); mat[0*3+2]=vec2.x();
   mat[1*3+0]=vec0.y(); mat[1*3+1]=vec1.y(); mat[1*3+2]=vec2.y();
@@ -158,22 +158,22 @@ dfm2::CMat3 dfm2::Mat3(const CVec3& vec0, const CVec3& vec1, const CVec3& vec2)
   return m;
 }
 
-dfm2::CMat3 dfm2::Mat3_Spin(const CVec3& vec0){
-  CMat3 m;
+dfm2::CMat3d dfm2::Mat3_Spin(const CVec3& vec0){
+  CMat3d m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-dfm2::CMat3 dfm2::Mat3_OuterProduct(const CVec3& vec0, const CVec3& vec1 )
+dfm2::CMat3d dfm2::Mat3_OuterProduct(const CVec3& vec0, const CVec3& vec1 )
 {
-  CMat3 m;
+  CMat3d m;
   SetOuterProduct(m,vec0,vec1);
   return m;
 }
 
-dfm2::CMat3 dfm2::Mat3_RotCartesian(const CVec3& vec0)
+dfm2::CMat3d dfm2::Mat3_RotCartesian(const CVec3& vec0)
 {
-  CMat3 m;
+  CMat3d m;
   m.SetRotMatrix_Cartesian(vec0.x(), vec0.y(), vec0.z());
   return m;
 }
@@ -182,11 +182,11 @@ dfm2::CMat3 dfm2::Mat3_RotCartesian(const CVec3& vec0)
 
 namespace delfem2 {
   
-CVec3 operator* (const CVec3& v, const CMat3& m){
+CVec3 operator* (const CVec3& v, const CMat3d& m){
   return MatVecTrans(m,v);
 }
   
-CVec3 operator* (const CMat3& m, const CVec3& v)
+CVec3 operator* (const CMat3d& m, const CVec3& v)
 {
   return MatVec(m,v);
 }
@@ -195,7 +195,7 @@ CVec3 operator* (const CMat3& m, const CVec3& v)
 
 // ------------------------------
 
-dfm2::CMat3 dfm2::Mat3_MinimumRotation
+dfm2::CMat3d dfm2::Mat3_MinimumRotation
 (const CVec3& V,
  const CVec3& v)
 {
@@ -203,7 +203,7 @@ dfm2::CMat3 dfm2::Mat3_MinimumRotation
   CVec3 eq = v.Normalize();
   CVec3 n = ep^eq;
   const double st2 = n*n;
-  CMat3 m;
+  CMat3d m;
   if( st2 < 1.0e-4f ){
     m.mat[0] = 1.f    +0.5f*(n.x()*n.x()-st2);
     m.mat[1] =    -n.z()+0.5f*(n.x()*n.y());
@@ -295,21 +295,21 @@ void dfm2::Energy_MIPS
   dE[1][0]=dECd1.x(); dE[1][1]=dECd1.y(); dE[1][2]=dECd1.z();
   dE[2][0]=dECd2.x(); dE[2][1]=dECd2.y(); dE[2][2]=dECd2.z();
   
-  CMat3 (*op)(const CVec3&, const CVec3&) = Mat3_OuterProduct;
+  CMat3d (*op)(const CVec3&, const CVec3&) = Mat3_OuterProduct;
   
   double tmp1 = 0.25/area;
   CVec3 dad0 = ((v20*v12)*v01-(v01*v12)*v20)*tmp1;
   CVec3 dad1 = ((v01*v20)*v12-(v12*v20)*v01)*tmp1;
   CVec3 dad2 = ((v12*v01)*v20-(v20*v01)*v12)*tmp1;
-  CMat3 ddad0d0 = (CMat3::Identity(v12*v12) - op(v12,v12) - 4*op(dad0,dad0))*tmp1;
-  CMat3 ddad0d1 = (CMat3::Identity(v20*v12) - op(v20,v12-v01) - op(v01,v20) - 4*op(dad0,dad1))*tmp1;
-  CMat3 ddad0d2 = (CMat3::Identity(v01*v12) - op(v01,v12-v20) - op(v20,v01) - 4*op(dad0,dad2))*tmp1;
-  CMat3 ddad1d0 = (CMat3::Identity(v12*v20) - op(v12,v20-v01) - op(v01,v12) - 4*op(dad1,dad0))*tmp1;
-  CMat3 ddad1d1 = (CMat3::Identity(v20*v20) - op(v20,v20)                             - 4*op(dad1,dad1))*tmp1;
-  CMat3 ddad1d2 = (CMat3::Identity(v01*v20) - op(v01,v20-v12) - op(v12,v01) - 4*op(dad1,dad2))*tmp1;
-  CMat3 ddad2d0 = (CMat3::Identity(v12*v01) - op(v12,v01-v20) - op(v20,v12) - 4*op(dad2,dad0))*tmp1;
-  CMat3 ddad2d1 = (CMat3::Identity(v20*v01) - op(v20,v01-v12) - op(v12,v20) - 4*op(dad2,dad1))*tmp1;
-  CMat3 ddad2d2 = (CMat3::Identity(v01*v01) - op(v01,v01)                             - 4*op(dad2,dad2))*tmp1;
+  CMat3d ddad0d0 = (CMat3d::Identity(v12*v12) - op(v12,v12) - 4*op(dad0,dad0))*tmp1;
+  CMat3d ddad0d1 = (CMat3d::Identity(v20*v12) - op(v20,v12-v01) - op(v01,v20) - 4*op(dad0,dad1))*tmp1;
+  CMat3d ddad0d2 = (CMat3d::Identity(v01*v12) - op(v01,v12-v20) - op(v20,v01) - 4*op(dad0,dad2))*tmp1;
+  CMat3d ddad1d0 = (CMat3d::Identity(v12*v20) - op(v12,v20-v01) - op(v01,v12) - 4*op(dad1,dad0))*tmp1;
+  CMat3d ddad1d1 = (CMat3d::Identity(v20*v20) - op(v20,v20)                             - 4*op(dad1,dad1))*tmp1;
+  CMat3d ddad1d2 = (CMat3d::Identity(v01*v20) - op(v01,v20-v12) - op(v12,v01) - 4*op(dad1,dad2))*tmp1;
+  CMat3d ddad2d0 = (CMat3d::Identity(v12*v01) - op(v12,v01-v20) - op(v20,v12) - 4*op(dad2,dad0))*tmp1;
+  CMat3d ddad2d1 = (CMat3d::Identity(v20*v01) - op(v20,v01-v12) - op(v12,v20) - 4*op(dad2,dad1))*tmp1;
+  CMat3d ddad2d2 = (CMat3d::Identity(v01*v01) - op(v01,v01)                             - 4*op(dad2,dad2))*tmp1;
   
   double ADR = Area/area+area/Area;
   double EA = ADR;
@@ -323,15 +323,15 @@ void dfm2::Energy_MIPS
     dE[1][idim]=EC*dEA*dad1[idim]+EA*dECd1[idim];
     dE[2][idim]=EC*dEA*dad2[idim]+EA*dECd2[idim];
   }
-  CMat3 ddEd0d0 = EC*dEA*ddad0d0 + EC*ddEA*op(dad0,dad0) + EA*CMat3::Identity(t00) + dEA*op(dad0,dECd0)*2;
-  CMat3 ddEd0d1 = EC*dEA*ddad0d1 + EC*ddEA*op(dad0,dad1) + EA*CMat3::Identity(t01) + dEA*op(dad0,dECd1) + dEA*op(dad1,dECd0);
-  CMat3 ddEd0d2 = EC*dEA*ddad0d2 + EC*ddEA*op(dad0,dad2) + EA*CMat3::Identity(t02) + dEA*op(dad0,dECd2) + dEA*op(dad2,dECd0);
-  CMat3 ddEd1d0 = EC*dEA*ddad1d0 + EC*ddEA*op(dad1,dad0) + EA*CMat3::Identity(t01) + dEA*op(dad1,dECd0) + dEA*op(dad0,dECd1);
-  CMat3 ddEd1d1 = EC*dEA*ddad1d1 + EC*ddEA*op(dad1,dad1) + EA*CMat3::Identity(t11) + dEA*op(dad1,dECd1)*2;
-  CMat3 ddEd1d2 = EC*dEA*ddad1d2 + EC*ddEA*op(dad1,dad2) + EA*CMat3::Identity(t12) + dEA*op(dad1,dECd2) + dEA*op(dad2,dECd1);
-  CMat3 ddEd2d0 = EC*dEA*ddad2d0 + EC*ddEA*op(dad2,dad0) + EA*CMat3::Identity(t02) + dEA*op(dad2,dECd0) + dEA*op(dad0,dECd2);
-  CMat3 ddEd2d1 = EC*dEA*ddad2d1 + EC*ddEA*op(dad2,dad1) + EA*CMat3::Identity(t12) + dEA*op(dad2,dECd1) + dEA*op(dad1,dECd2);
-  CMat3 ddEd2d2 = EC*dEA*ddad2d2 + EC*ddEA*op(dad2,dad2) + EA*CMat3::Identity(t22) + dEA*op(dad2,dECd2)*2;
+  CMat3d ddEd0d0 = EC*dEA*ddad0d0 + EC*ddEA*op(dad0,dad0) + EA*CMat3d::Identity(t00) + dEA*op(dad0,dECd0)*2;
+  CMat3d ddEd0d1 = EC*dEA*ddad0d1 + EC*ddEA*op(dad0,dad1) + EA*CMat3d::Identity(t01) + dEA*op(dad0,dECd1) + dEA*op(dad1,dECd0);
+  CMat3d ddEd0d2 = EC*dEA*ddad0d2 + EC*ddEA*op(dad0,dad2) + EA*CMat3d::Identity(t02) + dEA*op(dad0,dECd2) + dEA*op(dad2,dECd0);
+  CMat3d ddEd1d0 = EC*dEA*ddad1d0 + EC*ddEA*op(dad1,dad0) + EA*CMat3d::Identity(t01) + dEA*op(dad1,dECd0) + dEA*op(dad0,dECd1);
+  CMat3d ddEd1d1 = EC*dEA*ddad1d1 + EC*ddEA*op(dad1,dad1) + EA*CMat3d::Identity(t11) + dEA*op(dad1,dECd1)*2;
+  CMat3d ddEd1d2 = EC*dEA*ddad1d2 + EC*ddEA*op(dad1,dad2) + EA*CMat3d::Identity(t12) + dEA*op(dad1,dECd2) + dEA*op(dad2,dECd1);
+  CMat3d ddEd2d0 = EC*dEA*ddad2d0 + EC*ddEA*op(dad2,dad0) + EA*CMat3d::Identity(t02) + dEA*op(dad2,dECd0) + dEA*op(dad0,dECd2);
+  CMat3d ddEd2d1 = EC*dEA*ddad2d1 + EC*ddEA*op(dad2,dad1) + EA*CMat3d::Identity(t12) + dEA*op(dad2,dECd1) + dEA*op(dad1,dECd2);
+  CMat3d ddEd2d2 = EC*dEA*ddad2d2 + EC*ddEA*op(dad2,dad2) + EA*CMat3d::Identity(t22) + dEA*op(dad2,dECd2)*2;
   
   for(int idim=0;idim<3;++idim){
     for(int jdim=0;jdim<3;++jdim){
@@ -356,7 +356,7 @@ void CheckEnergyMIPS(){
     ino[2] = (double)rand()/(RAND_MAX+1.0);
   }
   double c[3][3];
-  dfm2::CMat3 m;
+  dfm2::CMat3d m;
   m.SetRotMatrix_Cartesian(0.3, 1.0, 0.5);
   for(int ino=0;ino<3;++ino){
     m.MatVec(C[ino], c[ino]);
@@ -392,7 +392,7 @@ void CheckEnergyMIPS(){
   }
 }
 
-dfm2::CMat3 dfm2::Mat3_ParallelTransport
+dfm2::CMat3d dfm2::Mat3_ParallelTransport
 (const CVec3& p0,
  const CVec3& p1,
  const CVec3& q0,
@@ -402,7 +402,7 @@ dfm2::CMat3 dfm2::Mat3_ParallelTransport
 }
 
 // moment of inertia around origin triangle vtx (origin,d0,d1,d2) the area_density=1
-dfm2::CMat3 dfm2::Mat3_IrotTri
+dfm2::CMat3d dfm2::Mat3_IrotTri
 (const CVec3& d0,
  const CVec3& d1,
  const CVec3& d2)
@@ -410,9 +410,9 @@ dfm2::CMat3 dfm2::Mat3_IrotTri
   // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
   
   CVec3 dv = d0+d1+d2;
-  CMat3 I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
+  CMat3d I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
   double tr0 = I0.Trace();
-  CMat3 I = tr0*CMat3::Identity()-I0;
+  CMat3d I = tr0*CMat3d::Identity()-I0;
   
   double darea = ((d1-d0)^(d2-d0)).Length();
   I *= darea/24.0;
@@ -420,7 +420,7 @@ dfm2::CMat3 dfm2::Mat3_IrotTri
 }
 
 // moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
-dfm2::CMat3 dfm2::Mat3_IrotTriSolid
+dfm2::CMat3d dfm2::Mat3_IrotTriSolid
 (const CVec3& d0,
  const CVec3& d1,
  const CVec3& d2)
@@ -428,40 +428,40 @@ dfm2::CMat3 dfm2::Mat3_IrotTriSolid
   // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
   
   CVec3 dv = d0+d1+d2;
-  CMat3 I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
+  CMat3d I0 = Mat3_OuterProduct(d0,d0) + Mat3_OuterProduct(d1,d1) + Mat3_OuterProduct(d2,d2) + Mat3_OuterProduct(dv,dv);
   double tr0 = I0.Trace();
-  CMat3 I = tr0*CMat3::Identity()-I0;
+  CMat3d I = tr0*CMat3d::Identity()-I0;
   
   double darea = (d0*(d1^d2));
   I *= darea/120.0;
   return I;
 }
 
-dfm2::CMat3 dfm2::Mat3_IrotLineSeg
+dfm2::CMat3d dfm2::Mat3_IrotLineSeg
 (const CVec3& d0,
  const CVec3& d1)
 {
   CVec3 dv = d1-d0;
   double l = dv.Length();
-  CMat3 I;
+  CMat3d I;
   {
-    I = dv.DLength()*CMat3::Identity()-Mat3_OuterProduct(dv,dv);
+    I = dv.DLength()*CMat3d::Identity()-Mat3_OuterProduct(dv,dv);
     I *= l/12.0;
   }
   CVec3 p = (d0+d1)*0.5;
-  I += l*(p.DLength()*CMat3::Identity()-Mat3_OuterProduct(p,p));
+  I += l*(p.DLength()*CMat3d::Identity()-Mat3_OuterProduct(p,p));
   return I;
 }
 
-dfm2::CMat3 dfm2::Mat3_IrotPoint
+dfm2::CMat3d dfm2::Mat3_IrotPoint
 (const CVec3& d0)
 {
-  return (d0.DLength()*CMat3::Identity()-Mat3_OuterProduct(d0,d0));
+  return (d0.DLength()*CMat3d::Identity()-Mat3_OuterProduct(d0,d0));
 }
 
 
 
-void dfm2::Mat4_MatTransl(double m[16], const CMat3& mat, const CVec3& trans)
+void dfm2::Mat4_MatTransl(double m[16], const CMat3d& mat, const CVec3& trans)
 {
   mat.AffineMatrixTrans(m);
   m[3*4+0] = trans.x();
@@ -470,7 +470,7 @@ void dfm2::Mat4_MatTransl(double m[16], const CMat3& mat, const CVec3& trans)
 }
 
 
-void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMat3& mat, const CVec3& trans)
+void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMat3d& mat, const CVec3& trans)
 {
   mat.AffineMatrixTrans(m);
   for(int i=0;i<3;++i){
