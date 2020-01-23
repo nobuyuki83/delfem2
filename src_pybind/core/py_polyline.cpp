@@ -246,10 +246,10 @@ double distance(
   assert(i1<np);
   assert(i2<np);
 #endif
-  dfm2::CVec2 v0(aXY[i0*2+0], aXY[i0*2+1]);
-  dfm2::CVec2 v1(aXY[i1*2+0], aXY[i1*2+1]);
-  dfm2::CVec2 v2(aXY[i2*2+0], aXY[i2*2+1]);
-  dfm2::CVec2 vn = GetNearest_LineSeg_Point(v2,v0,v1);
+  dfm2::CVec2d v0(aXY[i0*2+0], aXY[i0*2+1]);
+  dfm2::CVec2d v1(aXY[i1*2+0], aXY[i1*2+1]);
+  dfm2::CVec2d v2(aXY[i2*2+0], aXY[i2*2+1]);
+  dfm2::CVec2d vn = GetNearest_LineSeg_Point(v2,v0,v1);
   return Distance(vn,v2);
 }
 

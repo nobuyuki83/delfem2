@@ -27,10 +27,10 @@ int ndegree = 2;
 std::vector<int> aKnotMulti;
 std::vector<double> aKnot;
 std::vector<double> aKnotFlat;
-std::vector<dfm2::CVec2> aCtrlPoint;
+std::vector<dfm2::CVec2d> aCtrlPoint;
 
 const int nsmpl = 100;
-std::vector<dfm2::CVec2> polyline0; // current test
+std::vector<dfm2::CVec2d> polyline0; // current test
 
 namespace dfm2 = delfem2;
 
@@ -53,7 +53,7 @@ void SetExample(int ndeg, int ncp)
     std::cout << "knot" << ik << " " << aKnotFlat[ik] << std::endl;
   }
   //
-  aCtrlPoint.assign(ncp, dfm2::CVec2(0,0));  //7+2+1 = 10
+  aCtrlPoint.assign(ncp, dfm2::CVec2d(0,0));  //7+2+1 = 10
   for(unsigned int i=0;i<aCtrlPoint.size();++i){
     aCtrlPoint[i].p[0] = i*2.0/(aCtrlPoint.size()-1)-1.0;
   }

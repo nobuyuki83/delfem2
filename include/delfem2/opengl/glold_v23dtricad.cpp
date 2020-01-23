@@ -25,7 +25,7 @@ namespace dfm2 = delfem2;
 
 void dfm2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<CDynTri>& aSTri,
- const std::vector<CVec2>& aVec2)
+ const std::vector<CVec2d>& aVec2)
 {
   ::glDisable(GL_LIGHTING);
   ::glBegin(GL_TRIANGLES);
@@ -38,9 +38,9 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
       assert( i2 == -1 );
       continue;
     }
-    const CVec2& p0 = aVec2[i0];
-    const CVec2& p1 = aVec2[i1];
-    const CVec2& p2 = aVec2[i2];
+    const CVec2d& p0 = aVec2[i0];
+    const CVec2d& p1 = aVec2[i1];
+    const CVec2d& p2 = aVec2[i2];
     ::glVertex2d(p0.x(),p0.y());
     ::glVertex2d(p1.x(),p1.y());
     ::glVertex2d(p2.x(),p2.y());
@@ -50,7 +50,7 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
 
 void dfm2::opengl::DrawMeshDynTri_Edge
 (const std::vector<CDynTri>& aSTri,
- const std::vector<CVec2>& aVec2)
+ const std::vector<CVec2d>& aVec2)
 {
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(1);
@@ -64,9 +64,9 @@ void dfm2::opengl::DrawMeshDynTri_Edge
       assert( i1 == -1 );
       assert( i2 == -1 );
     }
-    const CVec2& p0 = aVec2[i0];
-    const CVec2& p1 = aVec2[i1];
-    const CVec2& p2 = aVec2[i2];
+    const CVec2d& p0 = aVec2[i0];
+    const CVec2d& p1 = aVec2[i1];
+    const CVec2d& p2 = aVec2[i2];
     glVertex2d(p0.x(),p0.y());  glVertex2d(p1.x(),p1.y());
     glVertex2d(p1.x(),p1.y());  glVertex2d(p2.x(),p2.y());
     glVertex2d(p2.x(),p2.y());  glVertex2d(p0.x(),p0.y());
@@ -189,10 +189,10 @@ void dfm2::opengl::Draw_CCad2DEdge
   if( is_selected ){
     if( edge.type_edge == 1 ){
       assert( edge.param.size() == 4 );
-      const CVec2 lx = (edge.p1 - edge.p0).Normalize();
-      const CVec2 ly = CVec2(lx.y(),-lx.x());
-      const CVec2 q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
-      const CVec2 q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
+      const CVec2d lx = (edge.p1 - edge.p0).Normalize();
+      const CVec2d ly = CVec2d(lx.y(),-lx.x());
+      const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
+      const CVec2d q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
       dfm2::opengl::myGlVertex(edge.p0);

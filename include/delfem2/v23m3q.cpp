@@ -16,13 +16,13 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-dfm2::CVec2 dfm2::screenXYProjection
+dfm2::CVec2d dfm2::screenXYProjection
 (const CVec3& v,
  const float* mMV,
  const float* mPj)
 {
   CVec3 sp0 = screenProjection(v,mMV,mPj);
-  return dfm2::CVec2(sp0.x(),sp0.y());
+  return dfm2::CVec2d(sp0.x(),sp0.y());
 }
 
 dfm2::CVec3 dfm2::GetCartesianRotationVector
@@ -501,14 +501,14 @@ bool dfm2::isPickCircle
 
 bool dfm2::isPickQuad
 (const CVec3& p0,const CVec3& p1,const CVec3& p2,const CVec3& p3,
- const dfm2::CVec2& sp, const CVec3& pick_dir,
+ const dfm2::CVec2d& sp, const CVec3& pick_dir,
  const float mMV[16], const float mPj[16],
  double eps)
 {
-  const dfm2::CVec2 sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
-  const dfm2::CVec2 sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
-  const dfm2::CVec2 sp2 = dfm2::screenXYProjection(p2, mMV, mPj);
-  const dfm2::CVec2 sp3 = dfm2::screenXYProjection(p3, mMV, mPj);
+  const dfm2::CVec2d sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
+  const dfm2::CVec2d sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
+  const dfm2::CVec2d sp2 = dfm2::screenXYProjection(p2, mMV, mPj);
+  const dfm2::CVec2d sp3 = dfm2::screenXYProjection(p3, mMV, mPj);
   double a01 = dfm2::Area_Tri(sp,sp0,sp1);
   double a12 = dfm2::Area_Tri(sp,sp1,sp2);
   double a23 = dfm2::Area_Tri(sp,sp2,sp3);
@@ -583,8 +583,8 @@ int dfm2::PickHandlerRotation_Mat4
 
 bool dfm2::DragHandlerRot_PosQuat
 (double quat[4], int ielem,
- const dfm2::CVec2& sp0,
- const dfm2::CVec2& sp1,
+ const dfm2::CVec2d& sp0,
+ const dfm2::CVec2d& sp1,
  const CVec3& pos,
  const float mMV[16], const float mPj[16])
 {
@@ -604,7 +604,7 @@ bool dfm2::DragHandlerRot_PosQuat
 
 bool dfm2::DragHandlerRot_Mat4
 (double quat[4], int ielem,
- const dfm2::CVec2& sp0, const dfm2::CVec2& sp1, double mat[16],
+ const dfm2::CVec2d& sp0, const dfm2::CVec2d& sp1, double mat[16],
  const float mMV[16], const float mPj[16])
 {
   if( ielem>=0 && ielem<3 ){
@@ -623,7 +623,7 @@ bool dfm2::DragHandlerRot_Mat4
 }
 
 bool dfm2::isPick_AxisHandler
-(const dfm2::CVec2& sp,
+(const dfm2::CVec2d& sp,
  const CVec3& p,
  const CVec3& axis,
  double len,
@@ -631,36 +631,36 @@ bool dfm2::isPick_AxisHandler
  const float* mPj,
  double pick_tol)
 {
-  dfm2::CVec2 sp0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
-  dfm2::CVec2 sp1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
+  dfm2::CVec2d sp0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
+  dfm2::CVec2d sp1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
   double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
   return sdist < pick_tol;
 }
 
 dfm2::CVec3 dfm2::drag_AxisHandler
-(const dfm2::CVec2& sp0,
- const dfm2::CVec2& sp1,
+(const dfm2::CVec2d& sp0,
+ const dfm2::CVec2d& sp1,
  const CVec3& p,
  const CVec3& axis,
  double len,
  const float* mMV,
  const float* mPj)
 {
-  dfm2::CVec2 spa0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
-  dfm2::CVec2 spa1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
+  dfm2::CVec2d spa0 = dfm2::screenXYProjection(p+len*axis, mMV, mPj);
+  dfm2::CVec2d spa1 = dfm2::screenXYProjection(p-len*axis, mMV, mPj);
   double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
   return r*axis*len;
 }
 
 double dfm2::DragCircle
-(const dfm2::CVec2& sp0,
- const dfm2::CVec2& sp1,
+(const dfm2::CVec2d& sp0,
+ const dfm2::CVec2d& sp1,
  const CVec3& p,
  const CVec3& axis,
  const float* mMV,
  const float* mPj)
 {
-  dfm2::CVec2 spo0 = dfm2::screenXYProjection(p, mMV, mPj);
+  dfm2::CVec2d spo0 = dfm2::screenXYProjection(p, mMV, mPj);
   double area = Area_Tri(sp0, spo0, sp1);
   double angl = area / ( (sp0-spo0).Length() * (sp1-spo0).Length() );
   {
@@ -673,18 +673,18 @@ double dfm2::DragCircle
 }
 
 bool dfm2::isPickPoint
-(const dfm2::CVec2& sp,
+(const dfm2::CVec2d& sp,
  const CVec3& p,
  const float* mMV,
  const float* mPj,
  double pick_tol)
 {
-  dfm2::CVec2 sp0 = dfm2::screenXYProjection(p, mMV, mPj);
+  dfm2::CVec2d sp0 = dfm2::screenXYProjection(p, mMV, mPj);
   return (sp - sp0).Length() < pick_tol;
 }
 
 bool dfm2::isPickCircle
-(const dfm2::CVec2& sp,
+(const dfm2::CVec2d& sp,
  const CVec3& p,
  const CVec3& axis,
  double r,
@@ -699,8 +699,8 @@ bool dfm2::isPickCircle
     int jdiv = idiv+1;
     CVec3 p0 = p+(r*sin(rdiv*idiv))*x+(r*cos(rdiv*idiv))*y;
     CVec3 p1 = p+(r*sin(rdiv*jdiv))*x+(r*cos(rdiv*jdiv))*y;
-    dfm2::CVec2 sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
-    dfm2::CVec2 sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
+    dfm2::CVec2d sp0 = dfm2::screenXYProjection(p0, mMV, mPj);
+    dfm2::CVec2d sp1 = dfm2::screenXYProjection(p1, mMV, mPj);
     double sdist = GetDist_LineSeg_Point(sp, sp0, sp1);
     if( sdist < pick_tol ){ return true; }
   }

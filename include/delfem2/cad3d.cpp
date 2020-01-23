@@ -29,7 +29,7 @@ namespace dfm2 = delfem2;
 
 bool dfm2::CCad3D_Edge::isPick
  (double& ratio,
-  const CVec2& sp0,
+  const CVec2d& sp0,
   const float mMV[16], const float mPj[16]) const
 {
   const int np = (int)aP.size();
@@ -38,8 +38,8 @@ bool dfm2::CCad3D_Edge::isPick
     int ip1 = ie+1;
     CVec3 p0 = aP[ip0];
     CVec3 p1 = aP[ip1];
-    CVec2 s0 = screenXYProjection(p0, mMV, mPj);
-    CVec2 s1 = screenXYProjection(p1, mMV, mPj);
+    CVec2d s0 = screenXYProjection(p0, mMV, mPj);
+    CVec2d s1 = screenXYProjection(p1, mMV, mPj);
     double dist = GetDist_LineSeg_Point(sp0,s0,s1);
     if( dist < 0.03 ){
       ratio = (ip0+0.5)/(np-1.0);
@@ -156,7 +156,7 @@ void dfm2::CCad3D_Face::Initialize
     aaXY.push_back(aXY_B0);
     /////
     std::vector<int> loopIP_ind,loopIP;
-    std::vector<CVec2> aVec2;
+    std::vector<CVec2d> aVec2;
     double elen = 0.05;
     {
       JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
@@ -907,10 +907,10 @@ double elen)
 }
 
 bool dfm2::FindFittingPoint
-(dfm2::CVec2& p2d_near,
- dfm2::CVec2& p2d_norm,
- const dfm2::CVec2& p2d_org,
- const std::vector<dfm2::CVec2>& aP2D,
+(dfm2::CVec2d& p2d_near,
+ dfm2::CVec2d& p2d_norm,
+ const dfm2::CVec2d& p2d_org,
+ const std::vector<dfm2::CVec2d>& aP2D,
  bool isConstX, bool isConstY,
  double half_view_height)
 {
@@ -918,8 +918,8 @@ bool dfm2::FindFittingPoint
   if( isConstX &&  isConstY ){ return false; }
   else if( isConstX && !isConstY ){
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
-      dfm2::CVec2 q0 = aP2D[iq+0];
-      dfm2::CVec2 q1 = aP2D[iq+1];
+      dfm2::CVec2d q0 = aP2D[iq+0];
+      dfm2::CVec2d q1 = aP2D[iq+1];
       if( (q0.x()-p2d_org.x())*(q1.x()-p2d_org.x()) < 0 ){
         p2d_near.p[0] = p2d_org.x();
         p2d_near.p[1] = ((q0+q1)*0.5).y();
@@ -933,8 +933,8 @@ bool dfm2::FindFittingPoint
   else if( !isConstX && isConstY ){
     assert( !aP2D.empty() );
     for(std::size_t iq=0;iq<aP2D.size()-1;++iq){
-      dfm2::CVec2 q0 = aP2D[iq+0];
-      dfm2::CVec2 q1 = aP2D[iq+1];
+      dfm2::CVec2d q0 = aP2D[iq+0];
+      dfm2::CVec2d q1 = aP2D[iq+1];
       if( (q0.y()-p2d_org.y())*(q1.y()-p2d_org.y()) < 0 ){
         p2d_near.p[0] = ((q0+q1)*0.5).x();
         p2d_near.p[1] = p2d_org.y();
@@ -990,18 +990,18 @@ bool dfm2::MovePointsAlongSketch
  std::vector<dfm2::CCad3D_Edge>& aEdge,
  std::vector<dfm2::CCad3D_Face>& aFace,
  // ------------
- const std::vector<dfm2::CVec2>& aStroke,
+ const std::vector<dfm2::CVec2d>& aStroke,
  const std::vector< std::pair<int,bool > >& aIE_picked,
  const CVec3& plane_org, int inorm,
  float mMV[16], float mPj[16], double view_height)
 {
   // resampling
-  std::vector<dfm2::CVec2> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
+  std::vector<dfm2::CVec2d> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
   //
   CVec3 plane_nrm(0,0,0); plane_nrm[inorm] = 1;
   CVec3 plane_ex(0,0,0); plane_ex[(inorm+1)%3] = 1;
   CVec3 plane_ey(0,0,0); plane_ey[(inorm+2)%3] = 1;
-  std::vector<dfm2::CVec2> aP2D;
+  std::vector<dfm2::CVec2d> aP2D;
   for(const auto& sp0 : aStroke1){
     CVec3 src = screenUnProjection(CVec3(sp0.x(),sp0.y(),0), mMV, mPj);
     CVec3 dir = screenUnProjection(CVec3(0,0,1), mMV, mPj);
@@ -1012,10 +1012,10 @@ bool dfm2::MovePointsAlongSketch
   std::vector<int> aIP = dfm2::getPointsInEdges(aIE_picked,aEdge);
   for(int iv0 : aIP){
     dfm2::CCad3D_Vertex& v = aVertex[iv0];
-    dfm2::CVec2 p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
+    dfm2::CVec2d p2d_org((v.pos-plane_org)*plane_ex, (v.pos-plane_org)*plane_ey);
     const bool isConstX = v.isConst[(inorm+1)%3];
     const bool isConstY = v.isConst[(inorm+2)%3];
-    dfm2::CVec2 p2d_near, p2d_norm;
+    dfm2::CVec2d p2d_near, p2d_norm;
     bool res = dfm2::FindFittingPoint(p2d_near,p2d_norm,
                                       p2d_org, aP2D, isConstX,isConstY,view_height*0.2);
     if( res ){
@@ -1277,7 +1277,7 @@ void dfm2::UpdateTriMesh
 
 void dfm2::CCad3D::Pick
 (const CVec3& src_pick, const CVec3& dir_pick,
- const CVec2& sp0, float mMV[16], float mPj[16],
+ const CVec2d& sp0, float mMV[16], float mPj[16],
  double view_height)
 {
   if (ivtx_picked>=0&&ivtx_picked<(int)aVertex.size()){
@@ -1318,7 +1318,7 @@ void dfm2::CCad3D::Pick
   if( iedge_picked != -1 ){ // edge was picked
     ielem_edge_picked = 0;
     {
-      CVec2 sp = screenXYProjection(aEdge[iedge_picked].q0, mMV, mPj);
+      CVec2d sp = screenXYProjection(aEdge[iedge_picked].q0, mMV, mPj);
       if( (sp0-sp).Length() < 0.05 ){
         ielem_edge_picked = 2;
         iface_picked = -1;
@@ -1326,7 +1326,7 @@ void dfm2::CCad3D::Pick
       }
     }
     {
-      CVec2 sp = screenXYProjection(aEdge[iedge_picked].q1, mMV, mPj);
+      CVec2d sp = screenXYProjection(aEdge[iedge_picked].q1, mMV, mPj);
       if( (sp0-sp).Length() < 0.05 ){
         ielem_edge_picked = 3;
         iface_picked = -1;
@@ -1341,7 +1341,7 @@ void dfm2::CCad3D::Pick
         plane_org+plane_sizeX*plane_ex-plane_sizeY*plane_ey,
         plane_org+plane_sizeX*plane_ex+plane_sizeY*plane_ey,
         plane_org-plane_sizeX*plane_ex+plane_sizeY*plane_ey };
-      CVec2 sp[4]  = {
+      CVec2d sp[4]  = {
         screenXYProjection(aP[0], mMV, mPj),
         screenXYProjection(aP[1], mMV, mPj),
         screenXYProjection(aP[2], mMV, mPj),
@@ -1481,7 +1481,7 @@ bool dfm2::CCad3D::ReflectChangeForCurveAndSurface
 
 bool dfm2::CCad3D::MouseMotion
 (const CVec3& src_pick, const CVec3& dir_pick,
- const CVec2& sp0, const CVec2& sp1,
+ const CVec2d& sp0, const CVec2d& sp1,
  float mMV[16], float mPj[16])
 {
   if( imode_edit == EDIT_MOVE ){
@@ -1517,8 +1517,8 @@ bool dfm2::CCad3D::MouseMotion
       if( !aEdge[iedge_picked].is_sim  ){
         int iaxis = aEdge[iedge_picked].inorm;
         CVec3 axis(0, 0, 0); axis[iaxis] = 1;
-        CVec2 spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
-        CVec2 spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
+        CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
+        CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
         double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
         CVec3 d = r*axis;
         plane_org += d;
@@ -1540,8 +1540,8 @@ bool dfm2::CCad3D::MouseMotion
       int iaxis = aEdge[iedge_picked].inorm;
       if( iaxis>=0 && iaxis<3 ){
         CVec3 axis(0, 0, 0); axis[iaxis] = 1;
-        CVec2 spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
-        CVec2 spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
+        CVec2d spa0 = screenXYProjection(plane_org+axis, mMV, mPj);
+        CVec2d spa1 = screenXYProjection(plane_org-axis, mMV, mPj);
         double r = (spa0-spa1)*(sp1-sp0)/(spa0-spa1).SqLength();
         CVec3 d = r*axis;
         plane_org += d;
@@ -1554,7 +1554,7 @@ bool dfm2::CCad3D::MouseMotion
 
 void dfm2::CCad3D::MouseDown
 (const CVec3& src_pick, const CVec3& dir_pick,
- const CVec2& sp0, float mMV[16], float mPj[16],
+ const CVec2d& sp0, float mMV[16], float mPj[16],
  double view_height)
 {
   if( imode_edit == EDIT_ADD_POINT_EDGE ){

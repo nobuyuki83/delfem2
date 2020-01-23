@@ -275,7 +275,7 @@ void dfm2::MeanValueCoordinate2D
 {
   for(unsigned int iv=0;iv<nv;++iv){ aW[iv] = 0.0; }
   for(unsigned int iv=0;iv<nv;++iv){
-    CVec2 v0(aXY[iv*2+0]-px,aXY[iv*2+1]-py);
+    CVec2d v0(aXY[iv*2+0]-px,aXY[iv*2+1]-py);
     if( v0.Length() > 1.0e-10 ){ continue; }
     aW[iv] = 1.0;
     return;
@@ -283,8 +283,8 @@ void dfm2::MeanValueCoordinate2D
   for(unsigned int ie=0;ie<nv;++ie){
     unsigned int iv0 = (ie+0)%nv;
     unsigned int iv1 = (ie+1)%nv;
-    CVec2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
-    CVec2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
+    CVec2d v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
+    CVec2d v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
     const double l0 = v0.Length();
     const double l1 = v1.Length();
     if( fabs((v0*v1)/(l0*l1)+1) > 1.0e-10 ){ continue; }
@@ -297,9 +297,9 @@ void dfm2::MeanValueCoordinate2D
     unsigned int iv0 = (ie+0)%nv;
     unsigned int iv1 = (ie+1)%nv;
     unsigned int iv2 = (ie+2)%nv;
-    CVec2 v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
-    CVec2 v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
-    CVec2 v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
+    CVec2d v0(aXY[iv0*2+0]-px,aXY[iv0*2+1]-py);
+    CVec2d v1(aXY[iv1*2+0]-px,aXY[iv1*2+1]-py);
+    CVec2d v2(aXY[iv2*2+0]-px,aXY[iv2*2+1]-py);
     double c01 = (v0*v1)/(v0.Length()*v1.Length());
     double s01 = (Cross(v0,v1)>0)?1:-1;
     double c12 = (v1*v2)/(v1.Length()*v2.Length());
@@ -318,149 +318,177 @@ void dfm2::MeanValueCoordinate2D
 // ------------------------------------------------------------------------
 namespace delfem2 {
   
-
-std::ostream &operator<<(std::ostream &output, const dfm2::CVec2& v)
+template <typename T>
+std::ostream &operator<<(std::ostream &output, const dfm2::CVec2<T>& v)
 {
   output.setf(std::ios::scientific);
   output<<v.p[0]<<" "<<v.p[1];
   return output;
 }
 
-std::istream &operator>>(std::istream &input, dfm2::CVec2& v)
+template <typename T>
+std::istream &operator>>(std::istream &input, dfm2::CVec2<T>& v)
 {
   input>>v.p[0]>>v.p[1];
   return input;
 }
 
-dfm2::CVec2 operator*(double c, const dfm2::CVec2& v0)
+template <typename T>
+dfm2::CVec2<T> operator*(double c, const dfm2::CVec2<T>& v0)
 {
-  return dfm2::CVec2(v0.p[0]*c, v0.p[1]*c);
+  return dfm2::CVec2<T>(v0.p[0]*c, v0.p[1]*c);
 }
+template dfm2::CVec2<double> operator*(double c, const dfm2::CVec2<double>& v0);
 
-dfm2::CVec2 operator*(const dfm2::CVec2& v0, double c)
+template <typename T>
+dfm2::CVec2<T> operator*(const dfm2::CVec2<T>& v0, double c)
 {
-  return dfm2::CVec2(v0.p[0]*c, v0.p[1]*c);
+  return dfm2::CVec2<T>(v0.p[0]*c, v0.p[1]*c);
 }
+template dfm2::CVec2<double> operator*(const dfm2::CVec2<double>& v0, double c);
 
-double operator * (const dfm2::CVec2& lhs, const dfm2::CVec2& rhs)
+template <typename T>
+double operator * (const dfm2::CVec2<T>& lhs, const dfm2::CVec2<T>& rhs)
 {
   return dfm2::Dot2(lhs.p, rhs.p);// lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
 }
 
-double operator ^ (const dfm2::CVec2& lhs, const dfm2::CVec2& rhs)
+template <typename T>
+double operator ^ (const dfm2::CVec2<T>& lhs, const dfm2::CVec2<T>& rhs)
 {
   return lhs.p[0]*rhs.p[1] - lhs.p[1]*rhs.p[0];
 }
 
 //! divide by real number
-CVec2 operator / (const CVec2& vec, double d)
+template <typename T>
+CVec2<T> operator / (const CVec2<T>& vec, double d)
 {
-  CVec2 temp = vec;
+  CVec2<T> temp = vec;
   temp /= d;
   return temp;
 }
+template CVec2<double> operator / (const CVec2<double>& vec, double d);
   
 } // namespace delfem2
 
 // -----------------------------------------------------------------
 
-dfm2::CVec2 dfm2::rotate
- (const CVec2& p0, double theta)
+template <typename T>
+dfm2::CVec2<T> dfm2::rotate
+ (const CVec2<T>& p0, double theta)
 {
-  dfm2::CVec2 p1;
+  dfm2::CVec2<T> p1;
   double c = cos(theta), s = sin(theta);
   p1.p[0] = c*p0.p[0] - s*p0.p[1];
   p1.p[1] = s*p0.p[0] + c*p0.p[1];
   return p1;
 }
 
-dfm2::CVec2 dfm2::rotate90
- (const CVec2& p0)
+template <typename T>
+dfm2::CVec2<T> dfm2::rotate90
+ (const CVec2<T>& p0)
 {
-  return CVec2(-p0.p[1], p0.p[0]);
+  return CVec2<T>(-p0.p[1], p0.p[0]);
 }
 
 // ---------------------------------------------------------------
 
-dfm2::CVec2 dfm2::Mat2Vec(const double A[4], const CVec2& v)
+template <typename T>
+dfm2::CVec2<T> dfm2::Mat2Vec(const double A[4], const CVec2<T>& v)
 {
-  CVec2 w;
+  CVec2<T> w;
   dfm2::MatVec2(w.p, A, v.p);
   return w;
   //  w.p[0] = A[0]*v.p[0]+A[1]*v.p[1];
   //  w.p[1] = A[2]*v.p[0]+A[3]*v.p[1];
 }
+template dfm2::CVec2<double> dfm2::Mat2Vec(const double A[4], const CVec2<double>& v);
+
+// --------------------------------
 
 //! Area of the Triangle
+template <typename T>
 double dfm2::Area_Tri
-(const CVec2& v1,
- const CVec2& v2,
- const CVec2& v3)
+(const CVec2<T>& v1,
+ const CVec2<T>& v2,
+ const CVec2<T>& v3)
 {
   return 0.5*( (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1]) - (v3.p[0]-v1.p[0])*(v2.p[1]-v1.p[1]) );
 }
+template double dfm2::Area_Tri(const CVec2<double>& v1, const CVec2<double>& v2, const CVec2<double>& v3);
 
-inline double dfm2::Cross(const CVec2& v1, const CVec2& v2){
+
+template <typename T>
+inline double dfm2::Cross(const CVec2<T>& v1, const CVec2<T>& v2){
   return v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
 
-double dfm2::SquareLength(const CVec2& point)
+template <typename T>
+double dfm2::SquareLength(const CVec2<T>& point)
 {
   return  point.p[0]*point.p[0] + point.p[1]*point.p[1];
 }
 
-double dfm2::Length(const CVec2& point)
+template <typename T>
+double dfm2::Length(const CVec2<T>& point)
 {
   return dfm2::Length2(point.p);
 }
 
 // Distance between two points
+template <typename T>
 double dfm2::Distance
-(const CVec2& ipo0,
- const CVec2& ipo1)
+(const CVec2<T>& ipo0,
+ const CVec2<T>& ipo1)
 {
   return dfm2::Distance2(ipo0.p, ipo1.p);
     //sqrt( ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] ) );
 }
 
 // Distance between two points
+template <typename T>
 double dfm2::SquareDistance
-(const CVec2& ipo0,
- const CVec2& ipo1)
+(const CVec2<T>& ipo0,
+ const CVec2<T>& ipo1)
 {
   return dfm2::SquareDistance2(ipo0.p, ipo1.p);
 //  return  ( ipo1.p[0] - ipo0.p[0] )*( ipo1.p[0] - ipo0.p[0] ) + ( ipo1.p[1] - ipo0.p[1] )*( ipo1.p[1] - ipo0.p[1] );
 }
 
 // Hight of a triangle : between v1 and line of v2-v3
-double dfm2::TriHeight(const CVec2& v1, const CVec2& v2, const CVec2& v3){
+template <typename T>
+double dfm2::TriHeight(const CVec2<T>& v1, const CVec2<T>& v2, const CVec2<T>& v3){
   const double area = Area_Tri(v1,v2,v3);
   const double len = sqrt( SquareDistance(v2,v3) );
   return area*2.0/len;
 }
 
 // compute dot product
-double dfm2::Dot(const CVec2& ipo0, const CVec2& ipo1)
+template <typename T>
+double dfm2::Dot(const CVec2<T>& ipo0, const CVec2<T>& ipo1)
 {
-  return dfm2::Dot2(ipo0.p, ipo1.p); // ipo0.p[0]*ipo1.p[0] + ipo0.p[1]*ipo1.p[1];
+  return dfm2::Dot2(ipo0.p, ipo1.p);
 }
+template double dfm2::Dot(const CVec2<double>& ipo0, const CVec2<double>& ipo1);
 
 // get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 // this one has implementation in header because GetDist_LineSeg_Point below refers this
+template <typename T>
 double dfm2::FindNearestPointParameter_Line_Point
-(const CVec2& po_c,
- const CVec2& po_s, const CVec2& po_e)
+(const CVec2<T>& po_c,
+ const CVec2<T>& po_s, const CVec2<T>& po_e)
 {
-  const CVec2& es = po_e-po_s;
-  const CVec2& sc = po_s-po_c;
+  const CVec2<T>& es = po_e-po_s;
+  const CVec2<T>& sc = po_s-po_c;
   const double a = SquareLength(es);
   const double b = Dot(es, sc);
   return -b/a;
 }
 
-dfm2::CVec2 dfm2::GetNearest_LineSeg_Point
-(const CVec2& po_c,
- const CVec2& po_s, const CVec2& po_e)
+template <typename T>
+dfm2::CVec2<T> dfm2::GetNearest_LineSeg_Point
+(const CVec2<T>& po_c,
+ const CVec2<T>& po_s, const CVec2<T>& po_e)
 {
   double t = FindNearestPointParameter_Line_Point(po_c, po_s, po_e);
   if (t < 0){ return po_s; }
@@ -468,17 +496,21 @@ dfm2::CVec2 dfm2::GetNearest_LineSeg_Point
   return po_s+t*(po_e-po_s);
 }
 
+template <typename T>
 double dfm2::GetDist_LineSeg_Point
-(const CVec2& po_c,
- const CVec2& po_s, const CVec2& po_e)
+(const CVec2<T>& po_c,
+ const CVec2<T>& po_s, const CVec2<T>& po_e)
 {
-  CVec2 p = GetNearest_LineSeg_Point(po_c, po_s,po_e);
+  CVec2<T> p = GetNearest_LineSeg_Point(po_c, po_s,po_e);
   return Distance(p, po_c);
 }
+template double dfm2::GetDist_LineSeg_Point(const CVec2<double>& po_c, const CVec2<double>& po_s, const CVec2<double>& po_e);
 
+
+template <typename T>
 bool dfm2::IsCross_LineSeg_LineSeg
-(const CVec2& po_s0, const CVec2& po_e0,
- const CVec2& po_s1, const CVec2& po_e1 )
+(const CVec2<T>& po_s0, const CVec2<T>& po_e0,
+ const CVec2<T>& po_s1, const CVec2<T>& po_e1 )
 {
   {
     const double min0x = ( po_s0.p[0] < po_e0.p[0] ) ? po_s0.p[0] : po_e0.p[0];
@@ -506,9 +538,10 @@ bool dfm2::IsCross_LineSeg_LineSeg
   return true;
 }
 
+template <typename T>
 double dfm2::GetDist_LineSeg_LineSeg
-(const CVec2& po_s0, const CVec2& po_e0,
- const CVec2& po_s1, const CVec2& po_e1)
+(const CVec2<T>& po_s0, const CVec2<T>& po_e0,
+ const CVec2<T>& po_s1, const CVec2<T>& po_e1)
 {
   if( IsCross_LineSeg_LineSeg(po_s0,po_e0, po_s1,po_e1) ) return -1;
   const double ds1 = GetDist_LineSeg_Point(po_s0,po_s1,po_e1);
@@ -523,10 +556,11 @@ double dfm2::GetDist_LineSeg_LineSeg
 }
 
 // square root of circumradius
+template <typename T>
 double dfm2::SquareCircumradius
-(const CVec2& p0,
- const CVec2& p1,
- const CVec2& p2 )
+(const CVec2<T>& p0,
+ const CVec2<T>& p1,
+ const CVec2<T>& p2 )
 {
 	const double area = Area_Tri(p0,p1,p2);
   
@@ -538,11 +572,12 @@ double dfm2::SquareCircumradius
 }
 
 //! center of the circumcircle
+template <typename T>
 bool dfm2::CenterCircumcircle
-(const CVec2& p0,
- const CVec2& p1,
- const CVec2& p2,
- CVec2& center)
+(const CVec2<T>& p0,
+ const CVec2<T>& p1,
+ const CVec2<T>& p2,
+ CVec2<T>& center)
 {
   const double area = Area_Tri(p0,p1,p2);
   if( fabs(area) < 1.0e-10 ){ return false; }
@@ -566,11 +601,12 @@ bool dfm2::CenterCircumcircle
 // 0 : p3 is inside circum circle on the p0,p1,p2
 // 1 :       on
 // 2 :       outsdie
+template <typename T>
 int dfm2::DetDelaunay
-(const CVec2& p0,
- const CVec2& p1,
- const CVec2& p2,
- const CVec2& p3)
+(const CVec2<T>& p0,
+ const CVec2<T>& p1,
+ const CVec2<T>& p2,
+ const CVec2<T>& p3)
 {
 	const double area = Area_Tri(p0,p1,p2);
 	if( fabs(area) < 1.0e-10 ){
@@ -586,7 +622,7 @@ int dfm2::DetDelaunay
 	const double etmp1 = tmp_val*dtmp1*(dtmp0+dtmp2-dtmp1);
 	const double etmp2 = tmp_val*dtmp2*(dtmp0+dtmp1-dtmp2);
   
-	const CVec2 out_center(etmp0*p0.p[0] + etmp1*p1.p[0] + etmp2*p2.p[0],
+	const CVec2<T> out_center(etmp0*p0.p[0] + etmp1*p1.p[0] + etmp2*p2.p[0],
                             etmp0*p0.p[1] + etmp1*p1.p[1] + etmp2*p2.p[1] );
   
 	const double qradius = SquareDistance(out_center,p0);
@@ -603,31 +639,41 @@ int dfm2::DetDelaunay
 	}
 	return 0;
 }
+template int dfm2::DetDelaunay(const CVec2<double>& p0, const CVec2<double>& p1, const CVec2<double>& p2, const CVec2<double>& p3);
 
-dfm2::CVec2 dfm2::pointCurve_BezierCubic
+
+
+template <typename T>
+dfm2::CVec2<T> dfm2::pointCurve_BezierCubic
 (double t,
- const CVec2& p1, const CVec2& p2, const CVec2& p3, const CVec2& p4)
+ const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3, const CVec2<T>& p4)
 {
   double tp = 1.0-t;
   return t*t*t*p4 + 3*t*t*tp*p3 + 3*t*tp*tp*p2 + tp*tp*tp*p1;
 }
-
+template dfm2::CVec2<float> dfm2::pointCurve_BezierCubic(double t,
+                                                         const CVec2<float>& p1,
+                                                         const CVec2<float>& p2,
+                                                         const CVec2<float>& p3,
+                                                         const CVec2<float>& p4);
 
 // ----------------------------------------------------------------------------------
 // std::vector starts from here
 
 //! Area of the Triangle (3 indexes and vertex array)
+template <typename T>
 double dfm2::Area_Tri
 (const int iv1, const int iv2, const int iv3,
- const std::vector<CVec2>& point )
+ const std::vector<CVec2<T>>& point )
 {
   return Area_Tri(point[iv1],point[iv2],point[iv3]);
 }
 
+template <typename T>
 void dfm2::Polyline_CubicBezierCurve
-(std::vector<CVec2>& aP,
+(std::vector<CVec2<T>>& aP,
  const int n, 
- const std::vector<CVec2>& aCP)
+ const std::vector<CVec2<T>>& aCP)
 {
   int ns = (int)(aCP.size()/3);
   aP.resize(ns*n+1);
@@ -639,11 +685,16 @@ void dfm2::Polyline_CubicBezierCurve
   }
   aP[ns*n] = aCP[ns*3];
 }
+template void dfm2::Polyline_CubicBezierCurve(std::vector<CVec2<double>>& aP, const int n, const std::vector<CVec2<double>>& aCP);
 
+
+// ------------------------------
+
+template <typename T>
 void dfm2::Polyline_BezierCubic
-(std::vector<CVec2>& aP,
+(std::vector<CVec2<T>>& aP,
  const unsigned int n,
- const CVec2& p1, const CVec2& p2, const CVec2& p3, const CVec2& p4)
+ const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3, const CVec2<T>& p4)
 {
   aP.resize(n);
   for(unsigned int i=0;i<n;++i){
@@ -652,9 +703,15 @@ void dfm2::Polyline_BezierCubic
                                    p1, p2, p3, p4);
   }
 }
+template void dfm2::Polyline_BezierCubic
+ (std::vector<CVec2<double>>& aP,
+  const unsigned int n,
+  const CVec2<double>& p1, const CVec2<double>& p2, const CVec2<double>& p3, const CVec2<double>& p4);
 
+
+template <typename T>
 double dfm2::Length_Polygon
-(const std::vector<CVec2>& aP)
+(const std::vector<CVec2<T>>& aP)
 {
   double len = 0;
   for(size_t ip0=0;ip0<aP.size()-1;ip0++){
@@ -663,11 +720,14 @@ double dfm2::Length_Polygon
   }
   return len;
 }
+template double dfm2::Length_Polygon(const std::vector<CVec2<double>>& aP);
 
+// ---------------------------------------
 
-double dfm2::Area_Polygon(const std::vector<CVec2>& aP)
+template <typename T>
+double dfm2::Area_Polygon(const std::vector<CVec2<T>>& aP)
 {
-  CVec2 vtmp(0,0);
+  CVec2<T> vtmp(0,0);
   const int ne = aP.size();
   double area_loop = 0.0;
   for(int ie=0;ie<ne;ie++){
@@ -676,10 +736,11 @@ double dfm2::Area_Polygon(const std::vector<CVec2>& aP)
   return area_loop;
 }
 
+template <typename T>
 void dfm2::MeanValueCoordinate
 (std::vector<double>& aW,
- CVec2& p,
- std::vector<CVec2>& aVtx)
+ CVec2<T>& p,
+ std::vector<CVec2<T>>& aVtx)
 {
   const int nv = (int)aVtx.size();
   aW.assign(nv,0.0);
@@ -688,9 +749,9 @@ void dfm2::MeanValueCoordinate
     int iv0 = (ie+0)%nv;
     int iv1 = (ie+1)%nv;
     int iv2 = (ie+2)%nv;
-    CVec2 v0 = aVtx[iv0]-p;
-    CVec2 v1 = aVtx[iv1]-p;
-    CVec2 v2 = aVtx[iv2]-p;
+    CVec2<T> v0 = aVtx[iv0]-p;
+    CVec2<T> v1 = aVtx[iv1]-p;
+    CVec2<T> v2 = aVtx[iv2]-p;
     double c01 = (v0*v1)/(v0.Length()*v1.Length());
     double c12 = (v1*v2)/(v1.Length()*v2.Length());
     double t01 = sqrt((1-c01)/(1+c01));
@@ -705,7 +766,7 @@ void dfm2::MeanValueCoordinate
 }
 
 
-
+template <typename T>
 void makeRandomLoop
 (unsigned int nCV,
  std::vector<double>& aCV)
@@ -729,9 +790,9 @@ void makeRandomLoop
   }
 }
 
-
+template <typename T>
 void dfm2::Translate
-(std::vector<CVec2>& aP,
+(std::vector<CVec2<T>>& aP,
  double dx, double dy)
 {
   for(auto & ip : aP){
@@ -739,9 +800,13 @@ void dfm2::Translate
     ip.p[1] += dy;
   }
 }
+template void dfm2::Translate(std::vector<CVec2<double>>& aP, double dx, double dy);
 
+// ----------------------------
+
+template <>
 void dfm2::Rotate
-(std::vector<CVec2>& aP,
+(std::vector<CVec2<double>>& aP,
  double dt)
 {
   for(auto & ip : aP){
@@ -752,15 +817,18 @@ void dfm2::Rotate
   }
 }
 
-std::vector<dfm2::CVec2> dfm2::Polyline_Resample_Polyline
-(const std::vector<CVec2>& stroke0,
+// ----------------------------
+
+template <typename T>
+std::vector<dfm2::CVec2<T>> dfm2::Polyline_Resample_Polyline
+(const std::vector<CVec2<T>>& stroke0,
  double l)
 {
   if( stroke0.empty() ){
-    std::vector<CVec2> a;
+    std::vector<CVec2<T>> a;
     return a;
   }
-  std::vector<CVec2> stroke;
+  std::vector<CVec2<T>> stroke;
   stroke.push_back( stroke0[0] );
   int jcur = 0;
   double rcur = 0;
@@ -783,12 +851,16 @@ std::vector<dfm2::CVec2> dfm2::Polyline_Resample_Polyline
   //  stroke.push_back( stroke0.back() );
   return stroke;
 }
+template std::vector<dfm2::CVec2<double>> dfm2::Polyline_Resample_Polyline(const std::vector<CVec2<double>>& stroke0, double l);
 
-std::vector<dfm2::CVec2> dfm2::Polygon_Resample_Polygon
-(const std::vector<CVec2>& stroke0,
+// ------------------------------------------------------------
+
+template <typename T>
+std::vector<dfm2::CVec2<T>> dfm2::Polygon_Resample_Polygon
+(const std::vector<CVec2<T>>& stroke0,
  double l)
 {
-  std::vector<CVec2> stroke;
+  std::vector<CVec2<T>> stroke;
   if( stroke0.empty() ) return stroke;
   stroke.push_back( stroke0[0] );
   int jcur = 0;
@@ -816,15 +888,16 @@ std::vector<dfm2::CVec2> dfm2::Polygon_Resample_Polygon
 }
 
 
+template <typename T>
 void dfm2::SecondMomentOfArea_Polygon
-(CVec2& cg,  double& area,
- CVec2& pa1, double& I1,
- CVec2& pa2, double& I2,
- const std::vector<CVec2>& aVec2D)
+(CVec2<T>& cg,  double& area,
+ CVec2<T>& pa1, double& I1,
+ CVec2<T>& pa2, double& I2,
+ const std::vector<CVec2<T>>& aVec2D)
 {
   area = 0;
   const unsigned int nseg = aVec2D.size();
-  cg = CVec2(0.0, 0.0);
+  cg = CVec2<T>(0.0, 0.0);
   for(unsigned int iseg=0;iseg<nseg;iseg++){
     unsigned int ip0 = (iseg+0)%nseg;
     unsigned int ip1 = (iseg+1)%nseg;
@@ -840,7 +913,7 @@ void dfm2::SecondMomentOfArea_Polygon
   cg.p[0] /= area;
   cg.p[1] /= area;
   area *= 0.5;
-  ////////
+  // ----------------
   double Ix=0, Iy=0, Ixy=0;
   for(unsigned int iseg=0;iseg<nseg;iseg++){
     unsigned int ip0 = (iseg+0)%nseg;
@@ -855,24 +928,28 @@ void dfm2::SecondMomentOfArea_Polygon
     Ixy += ai*(x0*y0 + 0.5*x0*y1 + 0.5*x1*y0 + x1*y1)/12.0;
   }
   if( fabs(Ix-Iy)+fabs(Ixy) < 1.0e-20 ){
-    pa1 = CVec2(1,0);
-    pa2 = CVec2(0,1);
+    pa1 = CVec2<T>(1,0);
+    pa2 = CVec2<T>(0,1);
     return;
   }
   double phi = 0.5*atan2(-2*Ixy,Ix-Iy);
-  pa1 = CVec2(+cos(phi), +sin(phi));
-  pa2 = CVec2(-sin(phi), +cos(phi));
+  pa1 = CVec2<T>(+cos(phi), +sin(phi));
+  pa2 = CVec2<T>(-sin(phi), +cos(phi));
   I1 = 0.5*(Ix+Iy)+0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
   I2 = 0.5*(Ix+Iy)-0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
 }
+template void dfm2::SecondMomentOfArea_Polygon(CVec2<double>& cg,  double& area,
+                                               CVec2<double>& pa1, double& I1,
+                                               CVec2<double>& pa2, double& I2,
+                                               const std::vector<CVec2<double>>& aVec2D);
 
+// ----------------------------------------
 
-
-
+template <typename T>
 void dfm2::JArray_FromVecVec_XY
 (std::vector<int>& aIndXYs,
  std::vector<int>& loopIP0,
- std::vector<CVec2>& aXY,
+ std::vector<CVec2<T>>& aXY,
  const std::vector< std::vector<double> >& aVecAry0)
 {
   const int nloop = (int)aVecAry0.size();
@@ -899,12 +976,16 @@ void dfm2::JArray_FromVecVec_XY
     loopIP0[ip] = ip;
   }
 }
+template void dfm2::JArray_FromVecVec_XY(std::vector<int>& aIndXYs, std::vector<int>& loopIP0, std::vector<CVec2<double>>& aXY,
+                                         const std::vector< std::vector<double> >& aVecAry0);
 
+// --------------------------
 
+template <typename T>
 void dfm2::ResamplingLoop
 (std::vector<int>& loopIP1_ind,
  std::vector<int>& loopIP1,
- std::vector<CVec2>& aVec2,
+ std::vector<CVec2<T>>& aVec2,
  double max_edge_length)
 {
   assert( aVec2.size() == loopIP1.size() );
@@ -921,13 +1002,13 @@ void dfm2::ResamplingLoop
         const int iipo1 = loopIP0_ind[iloop]+(ip+1)%np; assert( iipo1>=0 && iipo1<(int)loopIP0.size() );
         const int ipo0 = loopIP0[iipo0]; assert(ipo0>=0&&ipo0<(int)aVec2.size());
         const int ipo1 = loopIP0[iipo1]; assert(ipo1>=0&&ipo1<(int)aVec2.size());
-        const CVec2 po0 = aVec2[ipo0]; // never use reference here because aVec2 will resize afterward
-        const CVec2 po1 = aVec2[ipo1]; // never use reference here because aVec2 will resize afterward
+        const CVec2<T> po0 = aVec2[ipo0]; // never use reference here because aVec2 will resize afterward
+        const CVec2<T> po1 = aVec2[ipo1]; // never use reference here because aVec2 will resize afterward
         const int nadd = (int)( Distance( po0, po1 ) / max_edge_length);
         if( nadd == 0 ) continue;
         for(int iadd=0;iadd<nadd;++iadd){
           double r2 = (double)(iadd+1)/(nadd+1);
-          CVec2 v2 = (1-r2)*po0 + r2*po1;
+          CVec2<T> v2 = (1-r2)*po0 + r2*po1;
           const int ipo2 = aVec2.size();
           aVec2.push_back(v2);
           assert( iipo0>=0 && iipo0<(int)aPoInEd.size() );
@@ -965,12 +1046,16 @@ void dfm2::ResamplingLoop
   assert( loopIP1.size() == aVec2.size() );
   assert( loopIP1.size() == ivtx0 );
 }
+template void dfm2::ResamplingLoop(std::vector<int>& loopIP1_ind, std::vector<int>& loopIP1, std::vector<CVec2<double>>& aVec2,
+                                   double max_edge_length);
 
+
+template <typename T>
 void dfm2::MakeMassMatrixTri
 (double M[9],
  double rho,
  const unsigned int aIP[3],
- const std::vector<CVec2>& aVec2)
+ const std::vector<CVec2<T>>& aVec2)
 {
   assert( aIP[0]<aVec2.size() );
   assert( aIP[1]<aVec2.size() );
@@ -992,10 +1077,11 @@ void dfm2::MakeMassMatrixTri
   }
 }
 
+template <typename T>
 bool dfm2::IsInclude_Loop
 (const double co[],
  const int ixy_stt, const int ixy_end,
- const std::vector<CVec2>& aXY)
+ const std::vector<CVec2<T>>& aXY)
 {
   int inum_cross = 0;
   for(int itr=0;itr<10;itr++){
@@ -1036,12 +1122,10 @@ bool dfm2::IsInclude_Loop
   return false;
 }
 
-
-
-
+template <typename T>
 bool dfm2::CheckInputBoundaryForTriangulation
 (const std::vector<int>& loopIP_ind,
- const std::vector<CVec2>& aXY)
+ const std::vector<CVec2<T>>& aXY)
 {
   // ------------------------------------
   // enter Input check section
@@ -1139,19 +1223,24 @@ bool dfm2::CheckInputBoundaryForTriangulation
   // end of input check section
   return true;
 }
+template bool dfm2::CheckInputBoundaryForTriangulation(const std::vector<int>& loopIP_ind, const std::vector<CVec2<double>>& aXY);
 
-std::vector<dfm2::CVec2> dfm2::Polygon_Invert
- (const std::vector<CVec2>& aP)
+// -------------------------------------------
+
+template <typename T>
+std::vector<dfm2::CVec2<T>> dfm2::Polygon_Invert
+ (const std::vector<CVec2<T>>& aP)
 {
-  std::vector<CVec2> res;
+  std::vector<CVec2<T>> res;
   for(int ip=(int)aP.size()-1;ip>=0;--ip){
     res.push_back(aP[ip]);
   }
   return res;
 }
 
+template <typename T>
 std::vector<double> dfm2::XY_Polygon
- (const std::vector<CVec2>& aP)
+ (const std::vector<CVec2<T>>& aP)
 {
   std::vector<double> res;
   res.reserve(aP.size()*2);
@@ -1162,12 +1251,11 @@ std::vector<double> dfm2::XY_Polygon
   return res;
 }
 
-
-
+template <typename T>
 void dfm2::FixLoopOrientation
 (std::vector<int>& loopIP,
  const std::vector<int>& loopIP_ind,
- const std::vector<CVec2>& aXY)
+ const std::vector<CVec2<T>>& aXY)
 {
   const std::vector<int> loop_old = loopIP;
   assert( loopIP_ind.size()>1 );
@@ -1176,7 +1264,7 @@ void dfm2::FixLoopOrientation
   for(unsigned int iloop=0;iloop<nloop;iloop++){
     double area_loop = 0;
     { // area of this loop
-      CVec2 vtmp(0,0);
+      CVec2<T> vtmp(0,0);
       const int nbar = loopIP_ind[iloop+1]-loopIP_ind[iloop];
       for(int ibar=0;ibar<nbar;ibar++){
         const int iipo0 = loopIP_ind[iloop]+(ibar+0)%nbar;
@@ -1205,7 +1293,8 @@ void dfm2::FixLoopOrientation
     }
   }
 }
-
+template void dfm2::FixLoopOrientation(std::vector<int>& loopIP,
+                                       const std::vector<int>& loopIP_ind, const std::vector<CVec2<double>>& aXY);
 
 
 

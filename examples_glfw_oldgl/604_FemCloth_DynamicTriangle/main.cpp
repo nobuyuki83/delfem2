@@ -38,7 +38,7 @@ public:
 
 std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
-std::vector<dfm2::CVec2> aVec2;
+std::vector<dfm2::CVec2d> aVec2;
 std::vector<double> aXYZ0; // undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // deformed vertex velocity

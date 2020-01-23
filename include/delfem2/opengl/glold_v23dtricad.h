@@ -31,10 +31,10 @@ void DrawMeshDynTri_Edge(const std::vector<CDynTri>& aSTri,
 
 
 void DrawMeshDynTri_Edge(const std::vector<CDynTri>& aSTri,
-                         const std::vector<CVec2>& aVec2);
+                         const std::vector<CVec2d>& aVec2);
 
 void DrawMeshDynTri_FaceNorm(const std::vector<CDynTri>& aSTri,
-                             const std::vector<CVec2>& aVec2);
+                             const std::vector<CVec2d>& aVec2);
 
 void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
                            const std::vector<CDynTri>& aSTri);

@@ -166,12 +166,12 @@ void dfm2::PBD_ConstProj_Rigid2D
 {
   const unsigned int nclstr = nclstr_ind-1;
   for(unsigned int iclstr=0;iclstr<nclstr;++iclstr){
-    CVec2 pc(0, 0), qc(0, 0);
+    CVec2d pc(0, 0), qc(0, 0);
     for (unsigned int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       assert( iip < nclstr0 );
       const unsigned int ip = clstr[iip]; assert( ip < nXY0 );
-      qc += CVec2(aXY0[ip*2+0],aXY0[ip*2+1]);
-      pc += CVec2(aXYt[ip*2+0],aXYt[ip*2+1]);
+      qc += CVec2d(aXY0[ip*2+0],aXY0[ip*2+1]);
+      pc += CVec2d(aXYt[ip*2+0],aXYt[ip*2+1]);
     }
     qc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
     pc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
@@ -179,8 +179,8 @@ void dfm2::PBD_ConstProj_Rigid2D
     double A[4] = { 0, 0, 0, 0 };
     for (unsigned int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const unsigned int ip = clstr[iip];
-      const CVec2 dq = CVec2(aXY0[ip*2+0],aXY0[ip*2+1])-qc; // undeform
-      const CVec2 dp = CVec2(aXYt[ip*2+0],aXYt[ip*2+1])-pc; // deform
+      const CVec2d dq = CVec2d(aXY0[ip*2+0],aXY0[ip*2+1])-qc; // undeform
+      const CVec2d dp = CVec2d(aXYt[ip*2+0],aXYt[ip*2+1])-pc; // deform
       A[0*2+0] += dp[0]*dq[0];
       A[0*2+1] += dp[0]*dq[1];
       A[1*2+0] += dp[1]*dq[0];
@@ -191,9 +191,9 @@ void dfm2::PBD_ConstProj_Rigid2D
     
     for (unsigned int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const unsigned int ip = clstr[iip];
-      CVec2 dq = CVec2(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
-      CVec2 pg = pc+Mat2Vec(R, dq); // goal position
-      CVec2 pg2 = stiffness*pg+(1-stiffness)*CVec2(aXYt[ip*2+0],aXYt[ip*2+1]);
+      CVec2d dq = CVec2d(aXY0[ip*2+0],aXY0[ip*2+1])-qc;
+      CVec2d pg = pc+Mat2Vec(R, dq); // goal position
+      CVec2d pg2 = stiffness*pg+(1-stiffness)*CVec2d(aXYt[ip*2+0],aXYt[ip*2+1]);
       aXYt[ip*2+0] = pg2.x();
       aXYt[ip*2+1] = pg2.y();
     }

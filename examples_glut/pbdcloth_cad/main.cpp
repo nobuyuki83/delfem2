@@ -37,7 +37,7 @@ namespace dfm2 = delfem2;
 
 std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
-std::vector<dfm2::CVec2> aVec2;
+std::vector<dfm2::CVec2d> aVec2;
 std::vector<unsigned int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
@@ -173,7 +173,7 @@ void myGlutSpecial(int key, int x, int y){
 class CRigidTrans_2DTo3D
 {
 public:
-  dfm2::CVec2 org2;
+  dfm2::CVec2d org2;
   dfm2::CVec3 org3;
   dfm2::CMat3d R;
 };
@@ -220,7 +220,7 @@ int main(int argc,char* argv[])
   aXYZ.resize(np*3);
   {
     CRigidTrans_2DTo3D rt23;
-    rt23.org2 = dfm2::CVec2(2.5,0.5);
+    rt23.org2 = dfm2::CVec2d(2.5,0.5);
     rt23.org3 = dfm2::CVec3(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
@@ -234,7 +234,7 @@ int main(int argc,char* argv[])
     }
     {
       CRigidTrans_2DTo3D rt23;
-      rt23.org2 = dfm2::CVec2(0.5,0.5);
+      rt23.org2 = dfm2::CVec2d(0.5,0.5);
       rt23.org3 = dfm2::CVec3(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);

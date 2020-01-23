@@ -97,12 +97,12 @@ void delfem2::opengl::ViewTransformation
 
 void delfem2::opengl::myGlVertex(
     unsigned int i,
-    const std::vector<CVec2>& aP)
+    const std::vector<CVec2d>& aP)
 {
   ::glVertex3d(aP[i].x(), aP[i].y(), +0.0);
 }
 
-void delfem2::opengl::myGlVertex(const CVec2& v)
+void delfem2::opengl::myGlVertex(const CVec2d& v)
 {
   ::glVertex2d(v.x(), v.y());
 }
@@ -380,7 +380,7 @@ void delfem2::opengl::DrawSingleQuad_FaceNorm
 
 
 void delfem2::opengl::drawPolyLine
-(const std::vector<CVec2>& aP)
+(const std::vector<CVec2d>& aP)
 {
   ::glBegin(GL_LINES);
   for (size_t ip = 0; ip<aP.size()-1; ip++){
@@ -417,7 +417,7 @@ void delfem2::opengl::drawPolyLine3D
 }
 
 void delfem2::opengl::drawPolyLine2D
- (const std::vector<CVec2>& aP)
+ (const std::vector<CVec2d>& aP)
 {
   ::glBegin(GL_LINES);
   for (unsigned int ip = 0; ip<aP.size()-1; ip++){
@@ -436,7 +436,7 @@ void delfem2::opengl::drawPolyLine2D
 }
 
 void delfem2::opengl::Draw_MeshTri
-(const std::vector<CVec2>& aP,
+(const std::vector<CVec2d>& aP,
  const std::vector<unsigned int>& aTri)
 {
   const int nTri = (int)aTri.size()/3;
@@ -445,9 +445,9 @@ void delfem2::opengl::Draw_MeshTri
     const int i0 = aTri[itri*3+0];
     const int i1 = aTri[itri*3+1];
     const int i2 = aTri[itri*3+2];
-    const CVec2& v0 = aP[i0];
-    const CVec2& v1 = aP[i1];
-    const CVec2& v2 = aP[i2];
+    const CVec2d& v0 = aP[i0];
+    const CVec2d& v1 = aP[i1];
+    const CVec2d& v2 = aP[i2];
     myGlVertex(v0);
     myGlVertex(v1);
     myGlVertex(v2);
@@ -456,7 +456,7 @@ void delfem2::opengl::Draw_MeshTri
 }
 
 void delfem2::opengl::Draw_MeshTri_Edge
-(const std::vector<CVec2>& aP,
+(const std::vector<CVec2d>& aP,
  const std::vector<unsigned int>& aTri)
 {
   //  const unsigned int nxys = (int)aXY.size()/2;
@@ -467,9 +467,9 @@ void delfem2::opengl::Draw_MeshTri_Edge
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
-    const CVec2& v0 = aP[i0];
-    const CVec2& v1 = aP[i1];
-    const CVec2& v2 = aP[i2];
+    const CVec2d& v0 = aP[i0];
+    const CVec2d& v1 = aP[i1];
+    const CVec2d& v2 = aP[i2];
     myGlVertex(v0);  myGlVertex(v1);
     myGlVertex(v1);  myGlVertex(v2);
     myGlVertex(v2);  myGlVertex(v0);
