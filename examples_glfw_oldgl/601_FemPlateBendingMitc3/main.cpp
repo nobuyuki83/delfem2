@@ -55,7 +55,7 @@ void MakeMesh(){
   }
   std::vector<dfm2::CDynPntSur> aPo2D;
   std::vector<dfm2::CDynTri> aETri;
-  std::vector<dfm2::CVec2> aVec2;
+  std::vector<dfm2::CVec2d> aVec2;
   GenMesh(aPo2D, aETri, aVec2,
           aaXY, 0.03, 0.03);
   MeshTri2D_Export(aXY0,aTri,

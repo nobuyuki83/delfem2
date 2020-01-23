@@ -78,7 +78,7 @@ void DrawGridOutside(int ndivx, int ndivy, int ndivz,
 // ------------
 // mesh from here
 void DrawPoint3D(const std::vector<CVec3>& aPoint);
-void drawPolyLine(const std::vector<CVec2>& aP);
+void drawPolyLine(const std::vector<CVec2d>& aP);
 void DrawMeshQuad_Face(const std::vector<CVec3>& aPoint,
                        const std::vector<unsigned int>& aQuad);
 void DrawMeshTri_Edge(const std::vector<CVec3>& aP,
@@ -103,16 +103,16 @@ void DrawHandlerRotation_Mat4(const double Mat[16],
 // vec2 starts here
 
 void myGlVertex(unsigned int i,
-                const std::vector<CVec2>& aP);
+                const std::vector<CVec2d>& aP);
 
-void myGlVertex(const CVec2& v);
+void myGlVertex(const CVec2d& v);
 
-void drawPolyLine2D(const std::vector<CVec2>& aP);
+void drawPolyLine2D(const std::vector<CVec2d>& aP);
 
-void Draw_MeshTri(const std::vector<CVec2>& aP,
+void Draw_MeshTri(const std::vector<CVec2d>& aP,
                   const std::vector<unsigned int>& aTri);
 
-void Draw_MeshTri_Edge(const std::vector<CVec2>& aP,
+void Draw_MeshTri_Edge(const std::vector<CVec2d>& aP,
                        const std::vector<unsigned int>& aTri);
   
 } // end namespace opengl

@@ -19,7 +19,7 @@ namespace dfm2 = delfem2;
 
 std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
-std::vector<dfm2::CVec2> aVec2;
+std::vector<dfm2::CVec2d> aVec2;
 std::vector<unsigned int> aLine;
 std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;

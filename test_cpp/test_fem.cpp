@@ -106,7 +106,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
       // ---------------------
       std::vector<dfm2::CDynPntSur> aPo2D;
       std::vector<dfm2::CDynTri> aETri;
-      std::vector<dfm2::CVec2> aVec2;
+      std::vector<dfm2::CVec2d> aVec2;
       GenMesh(aPo2D, aETri, aVec2,
               aaXY, elen, elen);
       MeshTri2D_Export(aXY0,aTri,

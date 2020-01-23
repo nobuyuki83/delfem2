@@ -21,12 +21,12 @@ namespace delfem2 {
 void PBD_TriStrain(double* aXYZt,
                    unsigned int nXYZ,
                    const std::vector<delfem2::CDynTri>& aETri,
-                   const std::vector<CVec2>& aVec2);
+                   const std::vector<CVec2d>& aVec2);
 
 void PBD_Bend(double* aXYZt,
               unsigned int nXYZ,
               const std::vector<delfem2::CDynTri>& aETri,
-              const std::vector<CVec2>& aVec2);
+              const std::vector<CVec2d>& aVec2);
   
 } // namespace delfem2
 

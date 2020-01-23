@@ -353,7 +353,7 @@ void dfm2::opengl::CShader_Cad2D::Draw
 
 
 void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
- (const std::vector<CVec2>& aVec2,
+ (const std::vector<CVec2d>& aVec2,
   const std::vector<CDynTri>& aETri)
 {
   std::vector<float> aXYf;

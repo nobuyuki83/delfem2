@@ -25,9 +25,9 @@ CVec3 MatVecTrans(const CMat3d& m, const CVec3& vec0);
 
 // ---------------------------------------------
 
-CVec2 screenXYProjection(const CVec3& v,
-                            const float* mMV,
-                            const float* mPj);
+CVec2d screenXYProjection(const CVec3& v,
+                          const float* mMV,
+                          const float* mPj);
 
 void SetProjection(CMat3d& m, const CVec3& vec0);
 void SetDiag(CMat3d& m, const CVec3& d);
@@ -82,25 +82,25 @@ int PickHandlerRotation_Mat4(const CVec3& src, const CVec3& dir,
                              const double mat[16], double rad,
                              double tol);
 bool DragHandlerRot_PosQuat(double quat[4], int ielem,
-                            const CVec2& sp0, const CVec2& sp1,
+                            const CVec2d& sp0, const CVec2d& sp1,
                             const CVec3& pos,
                             const float mMV[16], const float mPj[16]);
 bool DragHandlerRot_Mat4(double quat[4], int ielem,
-                         const CVec2& sp0, const CVec2& sp1, double mat[16],
+                         const CVec2d& sp0, const CVec2d& sp1, double mat[16],
                          const float mMV[16], const float mPj[16]);
-CVec3 drag_AxisHandler(const CVec2& sp0,
-                          const CVec2& sp1,
-                          const CVec3& p,
-                          const CVec3& axis,
-                          double len,
-                          const float* mMV,
-                          const float* mPj);
-bool isPickPoint(const CVec2& sp,
+CVec3 drag_AxisHandler(const CVec2d& sp0,
+                       const CVec2d& sp1,
+                       const CVec3& p,
+                       const CVec3& axis,
+                       double len,
+                       const float* mMV,
+                       const float* mPj);
+bool isPickPoint(const CVec2d& sp,
                  const CVec3& p,
                  const float* mMV,
                  const float* mPj,
                  double pick_tol);
-bool isPick_AxisHandler(const CVec2& sp,
+bool isPick_AxisHandler(const CVec2d& sp,
                         const CVec3& p,
                         const CVec3& axis,
                         double len,
@@ -111,7 +111,7 @@ bool isPickQuad(const CVec3& p0,
                 const CVec3& p1,
                 const CVec3& p2,
                 const CVec3& p3,
-                const CVec2& sp,
+                const CVec2d& sp,
                 const CVec3& pick_dir,
                 const float mMV[16],
                 const float mPj[16],
@@ -123,14 +123,14 @@ bool isPickCircle(const CVec3& axis,
                   const CVec3& src,
                   const CVec3& dir,
                   double pick_tol);
-double DragCircle(const CVec2& sp0,
-                  const CVec2& sp1,
+double DragCircle(const CVec2d& sp0,
+                  const CVec2d& sp1,
                   const CVec3& p,
                   const CVec3& axis,
                   const float* mMV,
                   const float* mPj);
   
-bool isPickCircle(const CVec2& sp,
+bool isPickCircle(const CVec2d& sp,
                   const CVec3& p,
                   const CVec3& axis,
                   double r,

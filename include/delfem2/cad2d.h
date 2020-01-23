@@ -18,9 +18,9 @@ namespace delfem2 {
 
 class CCad2D_VtxGeo{
 public:
-  CCad2D_VtxGeo(const CVec2& p) : pos(p){}
+  CCad2D_VtxGeo(const CVec2d& p) : pos(p){}
 public:
-  CVec2 pos;
+  CVec2d pos;
 };
 
 /**
@@ -44,11 +44,11 @@ public:
     return bb;
   }
 public:
-  CVec2 p0,p1;
+  CVec2d p0,p1;
   int type_edge; // 0: line, 1:Cubic Bezier
   std::vector<double> param;
   ///
-  std::vector<CVec2> aP;
+  std::vector<CVec2d> aP;
   int ip0; //!< ip0 is the p0's point index when mesh is generated
 };
 
@@ -83,16 +83,16 @@ public:
 public:
   bool IsInside
   (double x, double y,
-   const std::vector<CVec2>& aVec2) const
+   const std::vector<CVec2d>& aVec2) const
   {
     for(unsigned int it=0;it<aTri.size()/3;++it){
-      const CVec2 q0(x,y);
+      const CVec2d q0(x,y);
       const int i0 = aTri[it*3+0];
       const int i1 = aTri[it*3+1];
       const int i2 = aTri[it*3+2];
-      const CVec2& p0 = aVec2[i0];
-      const CVec2& p1 = aVec2[i1];
-      const CVec2& p2 = aVec2[i2];
+      const CVec2d& p0 = aVec2[i0];
+      const CVec2d& p1 = aVec2[i1];
+      const CVec2d& p2 = aVec2[i2];
       double a0 = Area_Tri(q0, p1, p2);
       double a1 = Area_Tri(p0, q0, p2);
       double a2 = Area_Tri(p0, p1, q0);
@@ -177,7 +177,7 @@ public:
   std::vector<CCad2D_VtxGeo> aVtx;
   std::vector<CCad2D_EdgeGeo> aEdge;
   std::vector<CCad2D_FaceGeo> aFace;
-  std::vector<CVec2> aVec2_Tessellation;
+  std::vector<CVec2d> aVec2_Tessellation;
   
   int ivtx_picked;
   int iedge_picked;

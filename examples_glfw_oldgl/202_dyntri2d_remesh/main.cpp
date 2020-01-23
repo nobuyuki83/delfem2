@@ -18,7 +18,7 @@ namespace dfm2 = delfem2;
 // --------------------------------------------
 
 std::vector<dfm2::CDynPntSur> aPo2D;
-std::vector<dfm2::CVec2> aVec2;
+std::vector<dfm2::CVec2d> aVec2;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<int> loopIP_ind, loopIP;
 
@@ -37,7 +37,7 @@ void Coarse(double px, double py)
 {
   for(int ip=(int)aPo2D.size()-1;ip>=0;--ip){
     if( aPo2D[ip].e == -1 ){ continue; }
-    if( Distance(aVec2[ip],dfm2::CVec2(px,py)) > 0.1 ){ continue; }
+    if( Distance(aVec2[ip],dfm2::CVec2d(px,py)) > 0.1 ){ continue; }
     std::vector< std::pair<int,int> > aTriSuP;
     GetTriArrayAroundPoint(aTriSuP,
                            ip,aPo2D,aETri);

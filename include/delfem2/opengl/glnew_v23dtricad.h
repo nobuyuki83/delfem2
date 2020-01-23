@@ -61,7 +61,7 @@ class CShader_MeshDTri2D
 public:
   CShader_MeshDTri2D(){
   }
-  void MakeBuffer(const std::vector<CVec2>& aVec2,
+  void MakeBuffer(const std::vector<CVec2d>& aVec2,
                   const std::vector<CDynTri>& aETri);
   void Draw(const float mP[16],
             const float mMV[16]) const;
