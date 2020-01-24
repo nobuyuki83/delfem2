@@ -324,8 +324,8 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         double thickness = (rand()+1.0)/(RAND_MAX+1.0);
         double lambda = (rand()+1.0)/(RAND_MAX+1.0);
         double myu = (rand()+1.0)/(RAND_MAX+1.0);
-        double diff = Check_WdWddW_PlateBendingMITC3(C, u,
-                                                     thickness,lambda,myu, 1.0e-5);
+        double diff = dfm2::Check_WdWddW_PlateBendingMITC3(C, u,
+                                                           thickness,lambda,myu, 1.0e-5);
         std::cout << itr << " " << diff << std::endl;
       }
     }
