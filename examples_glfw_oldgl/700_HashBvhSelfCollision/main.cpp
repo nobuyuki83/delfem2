@@ -26,7 +26,7 @@ std::vector<unsigned int> aTri;  // index of triangles
 int iroot_bvh; // index BVH root node
 std::vector<dfm2::CNodeBVH2> aNodeBVH; // array of BVH node
 std::vector<dfm2::CBV3D_Sphere> aBB_BVH; // array of AABB same size as aNodeBVH
-std::vector<dfm2::CIntersectTriPair> aITP;
+std::vector<dfm2::CIntersectTriPair<double>> aITP;
 
 // data for camera
 double cur_time = 0;
@@ -92,7 +92,7 @@ int main(int argc,char* argv[])
       const size_t ntri = aTri.size()/3;
       std::vector<double> aElemCenter(ntri*3);
       for(unsigned int itri=0;itri<ntri;++itri){
-        dfm2::CVec3 p0 = dfm2::CG_Tri3(itri, aTri, aXYZ);
+        dfm2::CVec3d p0 = dfm2::CG_Tri3(itri, aTri, aXYZ);
         aElemCenter[itri*3+0] = p0.x();
         aElemCenter[itri*3+1] = p0.y();
         aElemCenter[itri*3+2] = p0.z();

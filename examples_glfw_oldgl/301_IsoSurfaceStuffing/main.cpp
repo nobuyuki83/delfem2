@@ -164,9 +164,9 @@ void SetProblem(int iprob)
     {
     public:
       virtual double SignedDistance(double x, double y, double z) const {
-        dfm2::CVec3 n0;
+        dfm2::CVec3d n0;
         return obj.SignedDistanceFunction(n0,
-                                          dfm2::CVec3(x,y,z), aXYZ_Tri, aTri, aNorm);
+                                          dfm2::CVec3d(x,y,z), aXYZ_Tri, aTri, aNorm);
       }
       virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
                          double px, double py, double pz) const
@@ -177,7 +177,7 @@ void SetProblem(int iprob)
         nlayer = 2;
       }
     public:
-      dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> obj;
+      dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> obj;
       std::vector<double> aNorm;
       std::vector<unsigned int> aTri;
       std::vector<double> aXYZ_Tri;

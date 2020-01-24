@@ -176,15 +176,15 @@ void SetProblem(int iprob)
     {
     public:
       double sdf(double x, double y, double z) const override {
-        dfm2::CVec3 n0;
+        dfm2::CVec3d n0;
         double sdf0 = obj.SignedDistanceFunction(n0,
-                                                 dfm2::CVec3(x,y,z),
+                                                 dfm2::CVec3d(x,y,z),
                                                  aXYZ, aTri, aNorm);
         return sdf0;
       }
     public:
       std::vector<double> aNorm;
-      dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> obj;
+      dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> obj;
     };
     CMesh mesh;
     {

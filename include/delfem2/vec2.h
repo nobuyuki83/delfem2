@@ -78,6 +78,21 @@ std::ostream &operator<<(std::ostream &output, const CVec2<T>& v);
   
 template <typename T>
 std::istream &operator>>(std::istream &input, CVec2<T>& v);
+  
+template <typename T>
+CVec2<T> operator*(double c, const CVec2<T>& v0);
+
+template <typename T>
+CVec2<T> operator*(const CVec2<T>& v0, double c);
+
+template <typename T>
+double operator * (const CVec2<T>& lhs, const CVec2<T>& rhs);
+
+template <typename T>
+double operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs);
+
+template <typename T>
+CVec2<T> operator/ (const CVec2<T>& vec, double d); //! divide by real number
 
 /**
  * @brief 2 dimensional vector class
@@ -166,27 +181,9 @@ public:
   double p[2];
 };
   
-using CVec2d = CVec2<double>;
-using CVec2f = CVec2<float>;
-
-template <typename T>
-CVec2<T> operator*(double c, const CVec2<T>& v0);
-  
-template <typename T>
-CVec2<T> operator*(const CVec2<T>& v0, double c);
-
-template <typename T>
-double operator * (const CVec2<T>& lhs, const CVec2<T>& rhs);
-
-template <typename T>
-double operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs);
-
-template <typename T>
-CVec2<T> operator/ (const CVec2<T>& vec, double d); //! divide by real number
-
 template <typename T>
 CVec2<T> rotate(const CVec2<T>& p0, double theta);
-  
+
 template <typename T>
 CVec2<T> rotate90(const CVec2<T>& p0);
 
@@ -469,6 +466,9 @@ public:
 public:
   double x_min,x_max,  y_min,y_max;
 };
+  
+using CVec2d = CVec2<double>;
+using CVec2f = CVec2<float>;
   
 }
 

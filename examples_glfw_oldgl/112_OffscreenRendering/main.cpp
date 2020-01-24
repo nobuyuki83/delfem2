@@ -75,9 +75,9 @@ int main(int argc,char* argv[])
   double elen = 0.01;
   sampler.Init(nres, nres);
   sampler.SetCoord(elen, 4.0,
-                   dfm2::CVec3(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
-                   dfm2::CVec3(0,0,-1).stlvec(),
-                   dfm2::CVec3(1,0,0).stlvec() );
+                   dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
+                   dfm2::CVec3d(0,0,-1).stlvec(),
+                   dfm2::CVec3d(1,0,0).stlvec() );
   sampler.SetPointColor(1, 0, 0);
   sampler.draw_len_axis = 1.0;
   

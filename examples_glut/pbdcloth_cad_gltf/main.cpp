@@ -55,12 +55,12 @@ std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-std::vector<dfm2::CInfoNearest> aInfoNearest;
+std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
 
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
 std::vector<double> aNorm_Contact(aXYZ.size());
-dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere> bvh;
+dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere,double> bvh;
 std::vector<double> aXYZ0_Contact;
 std::vector<double> aRigWeight_Contact;
 std::vector<unsigned int> aRigJoint_Contact;
@@ -190,7 +190,7 @@ class CRigidTrans_2DTo3D
 {
 public:
   dfm2::CVec2d org2;
-  dfm2::CVec3 org3;
+  dfm2::CVec3d org3;
   dfm2::CMat3d R;
 };
 
@@ -237,12 +237,12 @@ int main(int argc,char* argv[])
   {
     CRigidTrans_2DTo3D rt23;
     rt23.org2 = dfm2::CVec2d(2.5,0.5);
-    rt23.org3 = dfm2::CVec3(0.0, 0.0, 0.5);
+    rt23.org3 = dfm2::CVec3d(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
     for(int ip : aIP){
-      dfm2::CVec3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-      dfm2::CVec3 p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
+      dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
+      dfm2::CVec3d p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
       aXYZ[ip*3+0] = p1.x();
       aXYZ[ip*3+1] = p1.y();
       aXYZ[ip*3+2] = p1.z();
@@ -250,12 +250,12 @@ int main(int argc,char* argv[])
     {
       CRigidTrans_2DTo3D rt23;
       rt23.org2 = dfm2::CVec2d(0.5,0.5);
-      rt23.org3 = dfm2::CVec3(0.0, 0.0, -0.5);
+      rt23.org3 = dfm2::CVec3d(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
       for(int ip : aIP){
-        dfm2::CVec3 p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-        dfm2::CVec3 p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
+        dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
+        dfm2::CVec3d p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
         aXYZ[ip*3+0] = p1.x();
         aXYZ[ip*3+1] = p1.y();
         aXYZ[ip*3+2] = p1.z();

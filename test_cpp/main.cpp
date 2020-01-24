@@ -337,7 +337,7 @@ TEST(vec2,second_moment_of_area)
 
 TEST(meshtopo,quad_subdiv0)
 {
-  CVoxelGrid3D vg;
+  dfm2::CVoxelGrid3D vg;
   vg.Add(0,0,0);
   {
     std::vector<double> aXYZ0;
@@ -355,7 +355,7 @@ TEST(meshtopo,quad_subdiv0)
 
 TEST(meshtopo,quad_subdiv1)
 {
-  CVoxelGrid3D vg;
+  dfm2::CVoxelGrid3D vg;
   vg.Add(0,0,0);
   vg.Add(1,0,0);
   vg.Add(1,1,0);
@@ -397,9 +397,9 @@ TEST(mathfunc,sherical_harmonics_orthgonality)
     const int i0 = aTri[it*3+0];
     const int i1 = aTri[it*3+1];
     const int i2 = aTri[it*3+2];
-    dfm2::CVec3 p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
-    dfm2::CVec3 p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
-    dfm2::CVec3 p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
+    dfm2::CVec3d p0(aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2]);
+    dfm2::CVec3d p1(aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2]);
+    dfm2::CVec3d p2(aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2]);
     double area = SolidAngleTri(p0, p1, p2);
     area_sum += area;
     double a0[N]; makeArray_SphericalHarmonics(a0, norder, p0.p[0],p0.p[1],p0.p[2]);

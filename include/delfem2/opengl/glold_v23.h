@@ -16,85 +16,85 @@ namespace delfem2{
 namespace opengl
 {
 
-void myGlVertex(const CVec3& v);
-void myGlTranslate(const CVec3& v);
-void myGlNormal(const CVec3& n);
-void myGlNormal(const CVec3& a, const CVec3& b, const CVec3& c);
-void myGlVertex(int i, const std::vector<CVec3>& aV);
+void myGlVertex(const CVec3d& v);
+void myGlTranslate(const CVec3d& v);
+void myGlNormal(const CVec3d& n);
+void myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c);
+void myGlVertex(int i, const std::vector<CVec3d>& aV);
 void myGlVertex2(int i, const std::vector<double>& vec);
 void myGlVertex3(unsigned int i, const std::vector<double>& vec);
-void ModelTransformation(const CVec3& dx, const CVec3& dz, const CVec3& origin);
-void ViewTransformation(const CVec3& dx, const CVec3& dz, const CVec3& origin);
+void ModelTransformation(const CVec3d& dx, const CVec3d& dz, const CVec3d& origin);
+void ViewTransformation(const CVec3d& dx, const CVec3d& dz, const CVec3d& origin);
 
 // -------------------------------------
 
-void DrawArcSolid(const CVec3& axis,
-                  const CVec3& org,
+void DrawArcSolid(const CVec3d& axis,
+                  const CVec3d& org,
                   double ru, // rin
                   double rv, // rout
                   double rads,
                   double rade);
-void DrawArrow(const CVec3& p0,
-               const CVec3& d,
+void DrawArrow(const CVec3d& p0,
+               const CVec3d& d,
                int ndivt=16);
-void DrawCircleArrow(const CVec3& org, CVec3 axis, double offset);
-void DrawCylinder(const CVec3& p0,
-                  const CVec3& p1,
+void DrawCircleArrow(const CVec3d& org, CVec3d axis, double offset);
+void DrawCylinder(const CVec3d& p0,
+                  const CVec3d& p1,
                   double r);
-void DrawCylinderWire(const CVec3& p0,
-                      const CVec3& p1,
+void DrawCylinderWire(const CVec3d& p0,
+                      const CVec3d& p1,
                       double r);
-void DrawSingleQuad_FaceNorm(const CVec3& p0,
-                             const CVec3& p1,
-                             const CVec3& p2,
-                             const CVec3& p3);
-void DrawSingleQuad_Edge(const CVec3& p0,
-                         const CVec3& p1,
-                         const CVec3& p2,
-                         const CVec3& p3);
-void DrawSingleHex_Edge(const CVec3& p0,
-                        const CVec3& p1,
-                        const CVec3& p2,
-                        const CVec3& p3,
-                        const CVec3& p4,
-                        const CVec3& p5,
-                        const CVec3& p6,
-                        const CVec3& p7);
-void drawPolyLine3D(const std::vector<CVec3>& aP);
+void DrawSingleQuad_FaceNorm(const CVec3d& p0,
+                             const CVec3d& p1,
+                             const CVec3d& p2,
+                             const CVec3d& p3);
+void DrawSingleQuad_Edge(const CVec3d& p0,
+                         const CVec3d& p1,
+                         const CVec3d& p2,
+                         const CVec3d& p3);
+void DrawSingleHex_Edge(const CVec3d& p0,
+                        const CVec3d& p1,
+                        const CVec3d& p2,
+                        const CVec3d& p3,
+                        const CVec3d& p4,
+                        const CVec3d& p5,
+                        const CVec3d& p6,
+                        const CVec3d& p7);
+void drawPolyLine3D(const std::vector<CVec3d>& aP);
 
-void DrawCircleWire(const CVec3& axis,
-                    const CVec3& org,
+void DrawCircleWire(const CVec3d& axis,
+                    const CVec3d& org,
                     double r);
-void DrawCircleSolid(const CVec3& axis,
-                     const CVec3& org,
+void DrawCircleSolid(const CVec3d& axis,
+                     const CVec3d& org,
                      double r);
 void DrawGrid2D(int ndivx, int ndivy,
-                const CVec3& ex, const CVec3& ey, const CVec3& org);
+                const CVec3d& ex, const CVec3d& ey, const CVec3d& org);
 void DrawGridOutside(int ndivx, int ndivy, int ndivz,
                      double elen,
-                     const CVec3& org);
+                     const CVec3d& org);
   
 
 // ------------
 // mesh from here
-void DrawPoint3D(const std::vector<CVec3>& aPoint);
+void DrawPoint3D(const std::vector<CVec3d>& aPoint);
 void drawPolyLine(const std::vector<CVec2d>& aP);
-void DrawMeshQuad_Face(const std::vector<CVec3>& aPoint,
+void DrawMeshQuad_Face(const std::vector<CVec3d>& aPoint,
                        const std::vector<unsigned int>& aQuad);
-void DrawMeshTri_Edge(const std::vector<CVec3>& aP,
+void DrawMeshTri_Edge(const std::vector<CVec3d>& aP,
                       const std::vector<unsigned int>& aTri);
-void DrawTriMeshNorm(const std::vector<CVec3>& aP,
+void DrawTriMeshNorm(const std::vector<CVec3d>& aP,
                      const std::vector<int>& aTri);
-void DrawMeshTri_Edge(const std::vector<CVec3>& aP,
+void DrawMeshTri_Edge(const std::vector<CVec3d>& aP,
                       const std::vector<unsigned int>& aTri);
-void DrawQuad3D_Edge(const std::vector<CVec3>& aPoint,
+void DrawQuad3D_Edge(const std::vector<CVec3d>& aPoint,
                      const std::vector<unsigned int>& aQuad);
 
 // -----------
 // Handler
 
-void DrawAxisHandler(double s, const CVec3& p);
-void DrawHandlerRotation_PosQuat(const CVec3& pos, const double quat[4],
+void DrawAxisHandler(double s, const CVec3d& p);
+void DrawHandlerRotation_PosQuat(const CVec3d& pos, const double quat[4],
                                  double size, int ielem_picked);
 void DrawHandlerRotation_Mat4(const double Mat[16],
                               double size, int ielem_picked);

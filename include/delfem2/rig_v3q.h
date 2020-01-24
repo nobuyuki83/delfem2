@@ -39,13 +39,13 @@ public:
       trans[2] = 0;
       ibone_parent = -1;
     }
-  delfem2::CVec3 Pos() const{
-    return delfem2::CVec3(Mat[3],Mat[7],Mat[11]);
+  delfem2::CVec3d Pos() const{
+    return delfem2::CVec3d(Mat[3],Mat[7],Mat[11]);
   }
   void SetRotationBryant(double rx, double ry, double rz);
   void SetTranslation(double tx, double ty, double tz);
-  int PickHandler(const delfem2::CVec3& org,
-                  const delfem2::CVec3& dir,
+  int PickHandler(const delfem2::CVec3d& org,
+                  const delfem2::CVec3d& dir,
                   double rad_handlr,
                   double tol) const;
   void AffineJoint(const double a[16]) const;
@@ -67,8 +67,8 @@ void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
 void PickBone(int& ibone_selected,
               int& ielem_selected,
               const std::vector<CRigBone>& aBone,
-              const delfem2::CVec3& src,
-              const delfem2::CVec3& dir,
+              const delfem2::CVec3d& src,
+              const delfem2::CVec3d& dir,
               double rad_hndlr,
               double tol);
 

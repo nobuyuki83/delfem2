@@ -75,16 +75,16 @@ void RotationAtMeshPoints
   const unsigned int np = aXYZ.size()/3;
   aR.resize(np*9);
   for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    dfm2::CVec3 Pi(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
-    dfm2::CVec3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
+    dfm2::CVec3d Pi(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
+    dfm2::CVec3d pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                 aXYZ[ip*3+1]+aDisp[ip*3+1],
                 aXYZ[ip*3+2]+aDisp[ip*3+2]);
     dfm2::CMat3d A;
     A.SetZero();
     for(unsigned int jjp=psup_ind[ip];jjp<psup_ind[ip+1];++jjp){
       int jp = psup[jjp];
-      dfm2::CVec3 Pj(aXYZ[jp*3+0],aXYZ[jp*3+1],aXYZ[jp*3+2]);
-      dfm2::CVec3 pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
+      dfm2::CVec3d Pj(aXYZ[jp*3+0],aXYZ[jp*3+1],aXYZ[jp*3+2]);
+      dfm2::CVec3d pj(aXYZ[jp*3+0]+aDisp[jp*3+0],
                   aXYZ[jp*3+1]+aDisp[jp*3+1],
                   aXYZ[jp*3+2]+aDisp[jp*3+2]);
       A += dfm2::Mat3_OuterProduct(pj-pi,Pj-Pi);
@@ -222,12 +222,12 @@ void myGlutDisplay()
   
   ::glDisable(GL_LIGHTING);
   for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    dfm2::CVec3 pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
+    dfm2::CVec3d pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
                       aXYZ[ip*3+1]+aDisp[ip*3+1],
                       aXYZ[ip*3+2]+aDisp[ip*3+2]);
-    dfm2::CVec3 ex(aR[ip*9+0],aR[ip*9+3],aR[ip*9+6]);
-    dfm2::CVec3 ey(aR[ip*9+1],aR[ip*9+4],aR[ip*9+7]);
-    dfm2::CVec3 ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
+    dfm2::CVec3d ex(aR[ip*9+0],aR[ip*9+3],aR[ip*9+6]);
+    dfm2::CVec3d ey(aR[ip*9+1],aR[ip*9+4],aR[ip*9+7]);
+    dfm2::CVec3d ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
     ::glBegin(GL_LINES);
     ::glColor3d(1,0,0);
     delfem2::opengl::myGlVertex(pi);

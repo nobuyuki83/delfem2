@@ -15,8 +15,8 @@
 #include "delfem2/bv.h"
 
 void Draw_CubeGrid(bool is_picked, int iface_picked,
-                   double elen, const delfem2::CVec3& org,
-                   const CCubeGrid& cube);
+                   double elen, const delfem2::CVec3d& org,
+                   const delfem2::CCubeGrid& cube);
 
 
 #endif /* gl_voxsdf_hpp */

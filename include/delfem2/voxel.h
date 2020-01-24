@@ -5,10 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef VOXEL_H
-#define VOXEL_H
+#ifndef DFM2_VOXEL_H
+#define DFM2_VOXEL_H
 
 #include <vector>
+
+
+namespace delfem2 {
 
 int Adj_Grid(int ivox_picked, int iface_picked,
              int ndivx, int ndivy, int ndivz);
@@ -172,5 +175,7 @@ public:
   int iorgx, iorgy, iorgz;
   std::vector<int> aIsVox;
 };
+  
+}
 
 #endif
