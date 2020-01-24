@@ -17,10 +17,12 @@
 
 namespace delfem2 {
   
+template <typename T>
 bool intersectRay_Tri3D(double& r0, double& r1,
-                        const CVec3& org, const CVec3& dir,
-                        const CVec3& p0, const CVec3& p1, const CVec3& p2);
+                        const CVec3<T>& org, const CVec3<T>& dir,
+                        const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2);
 
+template <typename T>
 class CPointElemSolid{
 public:
   CPointElemSolid(): ielem(-1), r0(0), r1(0), r2(0) {}
@@ -38,29 +40,30 @@ public:
     if( fabs(r0)>eps && fabs(r1)>eps && fabs(r2)>eps && fabs(r3)<eps ){ return 3; }
     return -1;
   }
-  delfem2::CVec3 getPos_Tet(const std::vector<double>& aXYZ, const std::vector<int>& aTet) const;
-  void setPos_Tet(int it0, const delfem2::CVec3& q, const std::vector<double>& aXYZ, const std::vector<int>& aTet);
+  delfem2::CVec3<T> getPos_Tet(const std::vector<double>& aXYZ, const std::vector<int>& aTet) const;
+  void setPos_Tet(int it0, const delfem2::CVec3<T>& q, const std::vector<double>& aXYZ, const std::vector<int>& aTet);
 public:
   int ielem;
   double r0, r1, r2;
 };
 
 // class for point in a triangle
+template <typename T>
 class CPointElemSurf{
 public:
   CPointElemSurf() : itri(-1), r0(0), r1(0) {}
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
-  delfem2::CVec3 Pos_Tri(const std::vector<double>& aXYZ,
+  delfem2::CVec3<T> Pos_Tri(const std::vector<double>& aXYZ,
                    const std::vector<unsigned int>& aTri) const;
-  delfem2::CVec3 Pos_Tri(const double* aXYZ, unsigned int nXYZ,
+  delfem2::CVec3<T> Pos_Tri(const double* aXYZ, unsigned int nXYZ,
                    const unsigned int* aTri, unsigned int nTri) const;
-  delfem2::CVec3 Pos_TetFace(const std::vector<double>& aXYZ,
+  delfem2::CVec3<T> Pos_TetFace(const std::vector<double>& aXYZ,
                        const std::vector<int>& aTet,
                        const std::vector<int>& aTetFace) const;
-  delfem2::CVec3 UNorm_Tri(const std::vector<double>& aXYZ,
+  delfem2::CVec3<T> UNorm_Tri(const std::vector<double>& aXYZ,
                      const std::vector<unsigned int>& aTri,
                      const std::vector<double>& aNorm) const;
-  delfem2::CVec3 UNorm_Tri(const double* aXYZ, unsigned int nXYZ,
+  delfem2::CVec3<T> UNorm_Tri(const double* aXYZ, unsigned int nXYZ,
                      const unsigned int* aTri, unsigned int nTri,
                      const double* aNorm) const;
   bool Check(const std::vector<double>& aXYZ,
@@ -70,25 +73,34 @@ public:
   int itri; // can be -1
   double r0, r1;
 };
-std::ostream &operator<<(std::ostream &output, const CPointElemSurf& v);
-std::istream &operator>>(std::istream &input, CPointElemSurf& v);
+  
+template <typename T>
+std::ostream &operator<<(std::ostream &output, const CPointElemSurf<T>& v);
+  
+template <typename T>
+std::istream &operator>>(std::istream &input, CPointElemSurf<T>& v);
 
 // ----------------------------------------------------------
 
-std::vector<CPointElemSurf>
+template <typename T>
+std::vector<CPointElemSurf<T>>
 IntersectionLine_MeshTri3D(
-    const delfem2::CVec3& org, const delfem2::CVec3& dir,
+    const delfem2::CVec3<T>& org, const delfem2::CVec3<T>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aXYZ);
 
+template <typename T>
 void IntersectionRay_MeshTri3D (
-    std::map<double,CPointElemSurf>& mapDepthPES,
-    const delfem2::CVec3& org, const delfem2::CVec3& dir,
+    std::map<double,CPointElemSurf<T>>& mapDepthPES,
+    const delfem2::CVec3<T>& org, const delfem2::CVec3<T>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aXYZ);
+  
+  
 
-void IntersectionRay_MeshTri3DPart(std::map<double,CPointElemSurf>& mapDepthPES,
-                                   const delfem2::CVec3& org, const delfem2::CVec3& dir,
+template <typename T>
+void IntersectionRay_MeshTri3DPart(std::map<double,CPointElemSurf<T>>& mapDepthPES,
+                                   const delfem2::CVec3<T>& org, const delfem2::CVec3<T>& dir,
                                    const std::vector<unsigned int>& aTri,
                                    const std::vector<double>& aXYZ,
                                    const std::vector<int>& aIndTri);
@@ -125,48 +137,61 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const delfem2::CVector3& org, const d
 // below functions for nearest
 
 
-CPointElemSurf Nearest_Point_MeshTri3D(const delfem2::CVec3& q,
+template <typename T>
+CPointElemSurf<T> Nearest_Point_MeshTri3D(const delfem2::CVec3<T>& q,
                                        const std::vector<double>& aXYZ,
                                        const std::vector<unsigned int>& aTri);
-CPointElemSurf Nearest_Point_MeshTri3DPart(const delfem2::CVec3& q,
+
+template <typename T>
+CPointElemSurf<T> Nearest_Point_MeshTri3DPart(const delfem2::CVec3<T>& q,
                                            const std::vector<double>& aXYZ,
                                            const std::vector<unsigned int>& aTri,
                                            const std::vector<int>& aIndTri_Cand);
-CPointElemSurf Nearest_Point_MeshTetFace3D(const delfem2::CVec3& p0,
+
+template <typename T>
+CPointElemSurf<T> Nearest_Point_MeshTetFace3D(const delfem2::CVec3<T>& p0,
                                            const std::vector<double>& aXYZ,
                                            const std::vector<int>& aTet,
                                            const std::vector<int>& aTetFaceSrf);
-CPointElemSolid Nearest_Point_MeshTet3D(const delfem2::CVec3& q,
+  
+template <typename T>
+CPointElemSolid<T> Nearest_Point_MeshTet3D(const delfem2::CVec3<T>& q,
                                         const std::vector<double>& aXYZ,
                                         const std::vector<int>& aTet);
-CPointElemSolid Nearest_Point_MeshTet3D(const delfem2::CVec3& p,
+  
+template <typename T>
+CPointElemSolid<T> Nearest_Point_MeshTet3D(const delfem2::CVec3<T>& p,
                                         int itet_start, // starting triangle
                                         const std::vector<double>& aXYZ,
                                         const std::vector<int>& aTet,
                                         const std::vector<int>& aTetSurRel);
 
-double SDFNormal_NearestPoint(delfem2::CVec3& n0,
-                              const delfem2::CVec3& p0,
-                              const CPointElemSurf& pes,
+template <typename T>
+double SDFNormal_NearestPoint(delfem2::CVec3<T>& n0,
+                              const delfem2::CVec3<T>& p0,
+                              const CPointElemSurf<T>& pes,
                               const std::vector<double>& aXYZ,
                               const std::vector<unsigned int>& aTri,
                               const std::vector<double>& aNorm);
 
-double SDFNormal_NearestPoint(delfem2::CVec3& n0,
-                              const delfem2::CVec3& p0,
-                              const CPointElemSurf& pes,
+template <typename T>
+double SDFNormal_NearestPoint(delfem2::CVec3<T>& n0,
+                              const delfem2::CVec3<T>& p0,
+                              const CPointElemSurf<T>& pes,
                               const double* aXYZ, unsigned int nXYZ,
                               const unsigned int* aTri, unsigned int nTri,
                               const double* aNorm);
 
-double DistanceToTri(CPointElemSurf& pes,
-                     const delfem2::CVec3& p,
+template <typename T>
+double DistanceToTri(CPointElemSurf<T>& pes,
+                     const delfem2::CVec3<T>& p,
                      unsigned int itri0,
                      const std::vector<double>& aXYZ,
                      const std::vector<unsigned int>& aTri);
 
-double DistanceToTri(CPointElemSurf& pes,
-                     const delfem2::CVec3& p,
+template <typename T>
+double DistanceToTri(CPointElemSurf<T>& pes,
+                     const delfem2::CVec3<T>& p,
                      unsigned int itri0,
                      const double* aXYZ, unsigned int nXYZ,
                      const unsigned int* aTri, unsigned int nTri);

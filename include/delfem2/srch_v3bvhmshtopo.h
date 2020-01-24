@@ -19,9 +19,9 @@
 namespace delfem2 {
   
 // potential maximum distance of the nearest point
-template <typename T>
+template <typename T, typename S>
 void BVH_NearestPoint_MeshTri3D (double& dist_min,
-                                 CPointElemSurf& pes,
+                                 CPointElemSurf<S>& pes,
                                  //
                                  double px, double py, double pz,
                                  const std::vector<double>& aXYZ,
@@ -31,10 +31,10 @@ void BVH_NearestPoint_MeshTri3D (double& dist_min,
                                  const std::vector<T>& aBB);
   
 // potential maximum distance of the nearest point
-template <typename T>
+template <typename T, typename S>
 void BVH_NearestPoint_IncludedInBVH_MeshTri3D (double& dist_tri, // minimum distance to triangle
                                                double& dist_bv, // minimum distance to leaf bounding volume
-                                               CPointElemSurf& pes,
+                                               CPointElemSurf<S>& pes,
                                                //
                                                double px, double py, double pz,
                                                double rad_exp, // exploring distance
@@ -44,7 +44,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D (double& dist_tri, // minimum dist
                                                const std::vector<delfem2::CNodeBVH2>& aBVH,
                                                const std::vector<T>& aBB);
 
-template <typename T>
+template <typename T, typename S>
 class CBVH_MeshTri3D
 {
 public:
@@ -94,8 +94,8 @@ public:
                          aNodeBVH,aBB_BVH);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
-  double Nearest_Point_IncludedInBVH(CPointElemSurf& pes,
-                                     const CVec3& p0,
+  double Nearest_Point_IncludedInBVH(CPointElemSurf<S>& pes,
+                                     const CVec3<S>& p0,
                                      double rad_exp, // look leaf inside this radius
                                      const double* aXYZ, unsigned int nXYZ,
                                      const unsigned int* aTri, unsigned int nTri) const{
@@ -118,11 +118,11 @@ public:
      aIndTri_Cand);
      */
   }
-  CPointElemSurf NearestPoint_Global(const CVec3& p0,
+  CPointElemSurf<S> NearestPoint_Global(const CVec3<S>& p0,
                                      const std::vector<double>& aXYZ,
                                      const std::vector<unsigned int>& aTri) const {
     assert( aBB_BVH.size() == aNodeBVH.size() );
-    CPointElemSurf pes;
+    CPointElemSurf<S> pes;
     double dist_min = -1;
     BVH_NearestPoint_MeshTri3D(dist_min, pes,
                                p0.x(), p0.y(), p0.z(),
@@ -130,14 +130,14 @@ public:
     return pes;
   }
     // inside positive
-  double SignedDistanceFunction(CVec3& n0,
-                                const CVec3& p0,
+  double SignedDistanceFunction(CVec3<S>& n0,
+                                const CVec3<S>& p0,
                                 const std::vector<double>& aXYZ,
                                 const std::vector<unsigned int>& aTri,
                                 const std::vector<double>& aNorm) const
   {
     assert( aBB_BVH.size() == aNodeBVH.size() );
-    CPointElemSurf pes;
+    CPointElemSurf<S> pes;
     {
       double dist_min = -1;
       delfem2::BVH_NearestPoint_MeshTri3D(dist_min, pes,
@@ -145,26 +145,26 @@ public:
                                           aXYZ, aTri,
                                           iroot_bvh, aNodeBVH, aBB_BVH);
     }
-    const CVec3 q0 = pes.Pos_Tri(aXYZ, aTri);
+    const CVec3<S> q0 = pes.Pos_Tri(aXYZ, aTri);
     double dist = (q0-p0).Length();
     if( !aBB_BVH[iroot_bvh].isInclude_Point(p0.x(),p0.y(),p0.z()) ){ // outside
       n0 = (p0-q0).Normalize();
       return -dist;
     }
-    const CVec3 n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
+    const CVec3<S> n1 = pes.UNorm_Tri(aXYZ, aTri, aNorm);
     if( dist < 1.0e-6 ){
       n0 = n1;
       if( (q0-p0)*n1 > 0 ){ return dist; } //inside
       return -dist; // outside
     }
-    CVec3 dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).Normalize();
+    CVec3<S> dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).Normalize();
     if( (q0-p0)*n1 < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
     std::vector<int> aIndElem;
     double ps0[3]; p0.CopyValueTo(ps0);
     double pd0[3]; dir.CopyValueTo(pd0);
     BVH_GetIndElem_IntersectRay(aIndElem, ps0, pd0,
                                 iroot_bvh, aNodeBVH, aBB_BVH);
-    std::map<double,CPointElemSurf> mapDepthPES1;
+    std::map<double,CPointElemSurf<S>> mapDepthPES1;
     IntersectionRay_MeshTri3DPart(mapDepthPES1,
                                   p0, dir,
                                   aTri, aXYZ, aIndElem);
@@ -181,14 +181,15 @@ public:
   std::vector<T> aBB_BVH;
 };
   
-template <typename T>
+template <typename T, typename S>
 void Project_PointsIncludedInBVH_Outside(std::vector<double>& aXYZt,
                                          double cc,
-                                         const CBVH_MeshTri3D<T>& bvh,
+                                         const CBVH_MeshTri3D<T,S>& bvh,
                                          const std::vector<double>& aXYZ0,
                                          const std::vector<unsigned int>& aTri0,
                                          const std::vector<double>& aNorm0);
   
+template <typename T>
 class CInfoNearest
 {
   public:
@@ -196,18 +197,18 @@ class CInfoNearest
       is_active = false;
     }
   public:
-    CPointElemSurf pes;
-    CVec3 pos;
+    CPointElemSurf<T> pes;
+    CVec3<T> pos;
     double sdf;
     bool is_active;
 };
 
-template <typename T>
+template <typename T, typename S>
 void Project_PointsIncludedInBVH_Outside_Cache(double* aXYZt,
-                                               std::vector<CInfoNearest>& aInfoNearest,
+                                               std::vector<CInfoNearest<S>>& aInfoNearest,
                                                unsigned int nXYZt,
                                                double cc,
-                                               const CBVH_MeshTri3D<T>& bvh,
+                                               const CBVH_MeshTri3D<T,S>& bvh,
                                                const double* pXYZ0, unsigned int nXYZ0,
                                                const unsigned int* pTri0, unsigned int nTri0,
                                                const double* pNorm0,
@@ -219,10 +220,10 @@ void Project_PointsIncludedInBVH_Outside_Cache(double* aXYZt,
 // implemnatation for the template functions
 
 // potential maximum distance of the nearest point
-template <typename T>
+template <typename T, typename S>
 void delfem2::BVH_NearestPoint_MeshTri3D
 (double& dist_min,
- CPointElemSurf& pes,
+ CPointElemSurf<S>& pes,
  /////
  double px, double py, double pz,
  const std::vector<double>& aXYZ,
@@ -240,9 +241,9 @@ void delfem2::BVH_NearestPoint_MeshTri3D
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
     const unsigned int itri0 = ichild0;
-    CPointElemSurf pes_tmp;
+    CPointElemSurf<S> pes_tmp;
     double dist = DistanceToTri(pes_tmp,
-                                CVec3(px,py,pz),
+                                CVec3<S>(px,py,pz),
                                 itri0, aXYZ,aTri);
     if( dist_min<0 || dist < dist_min ){
       dist_min = dist;
@@ -256,11 +257,11 @@ void delfem2::BVH_NearestPoint_MeshTri3D
 }
 
 // potential maximum distance of the nearest point
-template <typename T>
+template <typename T, typename S>
 void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D
 (double& dist_tri, // minimum distance to triangle
  double& dist_bv, // minimum distance to leaf bounding volume
- CPointElemSurf& pes,
+ CPointElemSurf<S>& pes,
  /////
  double px, double py, double pz,
  double rad_exp, // exploring distance
@@ -282,9 +283,9 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D
     if( min0 == 0.0 ){
       dist_bv = 0.0;
       const unsigned int itri0 = ichild0;
-      CPointElemSurf pes_tmp;
+      CPointElemSurf<S> pes_tmp;
       const double dist0 = DistanceToTri(pes_tmp,
-                                         CVec3(px,py,pz),
+                                         CVec3<S>(px,py,pz),
                                          itri0, aXYZ,nXYZ, aTri,nTri);
       if( dist_tri<0 || dist0 < dist_tri ){
         dist_tri = dist0;
@@ -306,25 +307,25 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D
 
 // ----------------------
 
-template <typename T>
+template <typename T, typename REAL>
 void delfem2::Project_PointsIncludedInBVH_Outside
 (std::vector<double>& aXYZt,
  double cc,
- const delfem2::CBVH_MeshTri3D<T>& bvh,
+ const delfem2::CBVH_MeshTri3D<T, REAL>& bvh,
  const std::vector<double>& aXYZ0,
  const std::vector<unsigned int>& aTri0,
  const std::vector<double>& aNorm0)
 {
   for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
-    CVec3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
-    CPointElemSurf pes;
+    CVec3<REAL> p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
+    CPointElemSurf<REAL> pes;
     bvh.Nearest_Point_IncludedInBVH(pes,
                                     p0, 0.0,
                                     aXYZ0.data(),aXYZ0.size()/3,
                                     aTri0.data(),aTri0.size()/3);
     /////
     if( pes.itri == -1 ){ continue; }
-    CVec3 n0;
+    CVec3<REAL> n0;
     double sdf = SDFNormal_NearestPoint(n0,
                                         p0,pes,aXYZ0,aTri0,aNorm0);
 //    std::cout << sdf+cc << std::endl;
@@ -335,6 +336,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside
   }
 }
 
+template <typename T>
 class CInfoNearest
 {
 public:
@@ -342,19 +344,19 @@ public:
     is_active = false;
   }
 public:
-  delfem2::CPointElemSurf pes;
-  delfem2::CVec3 pos;
+  delfem2::CPointElemSurf<T> pes;
+  delfem2::CVec3<T> pos;
   double sdf;
   bool is_active;
 };
 
-template <typename T>
+template <typename T, typename REAL>
 void delfem2::Project_PointsIncludedInBVH_Outside_Cache
 (double* aXYZt,
- std::vector<delfem2::CInfoNearest>& aInfoNearest,
+ std::vector<delfem2::CInfoNearest<REAL>>& aInfoNearest,
  unsigned int nXYZt,
  double cc,
- const delfem2::CBVH_MeshTri3D<T>& bvh,
+ const delfem2::CBVH_MeshTri3D<T,REAL>& bvh,
  const double* pXYZ0, unsigned int nXYZ0,
  const unsigned int* pTri0, unsigned int nTri0,
  const double* pNorm0,
@@ -363,7 +365,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache
   const unsigned int np = nXYZt;
   aInfoNearest.resize(np);
   for(unsigned int ip=0;ip<np;++ip){
-    CVec3 p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
+    CVec3<REAL> p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
     if( aInfoNearest[ip].is_active ){
       double dp = Distance(p0,aInfoNearest[ip].pos);
       if( aInfoNearest[ip].sdf + dp + cc < 0 ){
@@ -386,7 +388,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache
       }
       continue;
     }
-    CVec3 n0;
+    CVec3<REAL> n0;
     double sdf = SDFNormal_NearestPoint(n0,
                                         aInfoNearest[ip].pos, aInfoNearest[ip].pes,
                                         pXYZ0, nXYZ0,
@@ -400,5 +402,6 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache
     aXYZt[ip*3+2] += (sdf+cc)*n0.z();
   }
 }
+
 
 #endif

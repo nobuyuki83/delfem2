@@ -13,51 +13,51 @@
 
 namespace delfem2 {
   
-CVec3 QuadBilinear(int iq, double r0, double r1,
+CVec3d QuadBilinear(int iq, double r0, double r1,
                       std::vector<int>& aQuad,
-                      std::vector<CVec3>& aPoint);
+                      std::vector<CVec3d>& aPoint);
 
   
-CVec3 getPointCoonsQuad_CubicBezier(double u, double v,
-                                        CVec3 aP[12]);
+CVec3d getPointCoonsQuad_CubicBezier(double u, double v,
+                                        CVec3d aP[12]);
   
 void getCubicBezierSurface(const int n, // number of segment
-                           std::vector<CVec3>& aP,
-                           const std::vector<CVec3>& aCP);
+                           std::vector<CVec3d>& aP,
+                           const std::vector<CVec3d>& aCP);
 
-CVec3 getPointCoonsQuad_CubicBezierEdge(double u, double v,
-                                           CVec3 aP[12]);
+CVec3d getPointCoonsQuad_CubicBezierEdge(double u, double v,
+                                           CVec3d aP[12]);
 
-CVec3 getPointCoonsTri_CubicBezierEdge(double u, double v, double w,
-                                          CVec3 aP[9]);
+CVec3d getPointCoonsTri_CubicBezierEdge(double u, double v, double w,
+                                          CVec3d aP[9]);
 
-CVec3 getPointHermetianQuad(double u, double v,
-                               CVec3 aP[12]);
+CVec3d getPointHermetianQuad(double u, double v,
+                               CVec3d aP[12]);
 
-CVec3 getPointCubicBezierCurve
+CVec3d getPointCubicBezierCurve
 (double t,
- const CVec3& p1, const CVec3& p2, const CVec3& p3, const CVec3& p4);
+ const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
 
-CVec3 getTangentCubicBezierCurve
+CVec3d getTangentCubicBezierCurve
 (double t,
- const CVec3& p1, const CVec3& p2, const CVec3& p3, const CVec3& p4);
+ const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
 
 bool getParameterCubicBezier_IntersectionWithPlane
 (double& t,
- const CVec3& org, const CVec3& nrm,
- const CVec3& p1, const CVec3& p2, const CVec3& p3, const CVec3& p4);
+ const CVec3d& org, const CVec3d& nrm,
+ const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
 
 // Bezier
-CVec3 getPointSurfaceBezierCubic
+CVec3d getPointSurfaceBezierCubic
 (double u, double v,
- const CVec3& p00, const CVec3& p01, const CVec3& p02, const CVec3& p03,
- const CVec3& p10, const CVec3& p11, const CVec3& p12, const CVec3& p13,
- const CVec3& p20, const CVec3& p21, const CVec3& p22, const CVec3& p23,
- const CVec3& p30, const CVec3& p31, const CVec3& p32, const CVec3& p33);
+ const CVec3d& p00, const CVec3d& p01, const CVec3d& p02, const CVec3d& p03,
+ const CVec3d& p10, const CVec3d& p11, const CVec3d& p12, const CVec3d& p13,
+ const CVec3d& p20, const CVec3d& p21, const CVec3d& p22, const CVec3d& p23,
+ const CVec3d& p30, const CVec3d& p31, const CVec3d& p32, const CVec3d& p33);
 
 void getCubicBezierCurve(const int n,
-                         std::vector<CVec3>& aP,
-                         const std::vector<CVec3>& aCP);
+                         std::vector<CVec3d>& aP,
+                         const std::vector<CVec3d>& aCP);
 
 void FlatKnot(std::vector<double>& aKnotFlat,
               const std::vector<int>& aKnotMulti,

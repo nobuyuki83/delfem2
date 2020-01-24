@@ -95,14 +95,14 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw() const {
   this->Draw_BoundingBox();
   // -----------
   if( id_tex_color > 0 && this->isDrawTex ){
-    const dfm2::CVec3& dx = x_axis;
-    const dfm2::CVec3& dy = Cross(z_axis,dx);
+    const dfm2::CVec3d& dx = x_axis;
+    const dfm2::CVec3d& dy = CVec3d(z_axis)^dx;
     const double lx = lengrid*nResX;
     const double ly = lengrid*nResY;
-    dfm2::CVec3 p0 = origin;
-    dfm2::CVec3 p1 = origin + lx*dx;
-    dfm2::CVec3 p2 = origin + lx*dx + ly*dy;
-    dfm2::CVec3 p3 = origin + ly*dy;
+    dfm2::CVec3d p0 = origin;
+    dfm2::CVec3d p1 = p0 + lx*dx;
+    dfm2::CVec3d p2 = p0 + lx*dx + ly*dy;
+    dfm2::CVec3d p3 = p0 + ly*dy;
     ::glEnable(GL_TEXTURE_2D);
     ::glDisable(GL_LIGHTING);
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
@@ -144,16 +144,16 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw_Point() const
   if( colorPoint.size() == 3 ){ ::glColor3dv(colorPoint.data()); }
   if( colorPoint.size() == 4 ){ ::glColor4dv(colorPoint.data()); }
   //
-  const dfm2::CVec3& dx = x_axis;
-  const dfm2::CVec3& dz = z_axis;
-  const dfm2::CVec3& dy = Cross(dz,dx);
+  const dfm2::CVec3d& dx = x_axis;
+  const dfm2::CVec3d& dz = z_axis;
+  const dfm2::CVec3d& dy = Cross(dz,dx);
   ::glBegin(GL_POINTS);
   for(unsigned int iy=0;iy<nResY;++iy){
     for(unsigned int ix=0;ix<nResX;++ix){
       double lz = -aZ[iy*nResX+ix]*z_range;
       double lx = (ix+0.5)*lengrid;
       double ly = (iy+0.5)*lengrid;
-      dfm2::CVec3 vp = lx*dx+ly*dy+lz*dz + origin;
+      dfm2::CVec3d vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);
       delfem2::opengl::myGlVertex(vp);
     }
   }
@@ -162,13 +162,13 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw_Point() const
 
 std::vector<double> dfm2::opengl::CGPUSamplerDrawer::getGPos(int ix, int iy) const
 {
-  const dfm2::CVec3& dx = x_axis;
-  const dfm2::CVec3& dz = z_axis;
-  const dfm2::CVec3& dy = Cross(dz,dx);
+  const dfm2::CVec3d& dx = x_axis;
+  const dfm2::CVec3d& dz = z_axis;
+  const dfm2::CVec3d& dy = Cross(dz,dx);
   double lz = -aZ[iy*nResX+ix]*z_range;
   double lx = (ix+0.5)*lengrid;
   double ly = (iy+0.5)*lengrid;
-  dfm2::CVec3 vp = lx*dx+ly*dy+lz*dz + origin;
+  dfm2::CVec3d vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);
     //  std::vector<double> res;
     //  res.push_back(vp.x());
     //  res.push_back(vp.y());

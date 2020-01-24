@@ -14,8 +14,8 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-dfm2::CVec3 posGrid(int ig, int jg, double lenGrid, int ngrid){
-  dfm2::CVec3 p;
+dfm2::CVec3d posGrid(int ig, int jg, double lenGrid, int ngrid){
+  dfm2::CVec3d p;
   p.p[0] = ig*lenGrid/ngrid-lenGrid*0.5;
   p.p[1] = jg*lenGrid/ngrid-lenGrid*0.5;
   p.p[2] = 0;
@@ -24,7 +24,7 @@ dfm2::CVec3 posGrid(int ig, int jg, double lenGrid, int ngrid){
 
 // ------------------------------------
 
-dfm2::CVec3 Velo;
+dfm2::CVec3d Velo;
 
 std::vector<unsigned int> aTri;
 std::vector<double> aXYZ;
@@ -34,7 +34,7 @@ double min_sol,max_sol;
 
 double lenGrid = 1.0;
 int ngrid = 45;
-std::vector<dfm2::CVec3> aValGrid;
+std::vector<dfm2::CVec3d> aValGrid;
 
 int imode_draw = 0;
 
@@ -72,8 +72,8 @@ void SetProblem()
   aValGrid.resize( (ngrid+1)*(ngrid+1) );
   for(int ig=0;ig<ngrid+1;ig++){
     for(int jg=0;jg<ngrid+1;jg++){
-      dfm2::CVec3 p = posGrid(ig,jg,lenGrid,ngrid);
-      dfm2::CVec3 gradphi_pos;
+      dfm2::CVec3d p = posGrid(ig,jg,lenGrid,ngrid);
+      dfm2::CVec3d gradphi_pos;
       double phi_pos;
       evaluateField_PotentialFlow_Order0th(phi_pos,gradphi_pos,
                                            p, Velo,
@@ -135,8 +135,8 @@ void myGlutDisplay(void)
   {
     for(int ig=0;ig<ngrid+1;ig++){
     for(int jg=0;jg<ngrid+1;jg++){
-      dfm2::CVec3 p = posGrid(ig, jg, lenGrid, ngrid);
-      dfm2::CVec3 val0 = aValGrid[ig*(ngrid+1)+jg];
+      dfm2::CVec3d p = posGrid(ig, jg, lenGrid, ngrid);
+      dfm2::CVec3d val0 = aValGrid[ig*(ngrid+1)+jg];
       ::glColor3d(1, 0, 0);
       dfm2::opengl::DrawArrow(p, val0*0.03);
       //

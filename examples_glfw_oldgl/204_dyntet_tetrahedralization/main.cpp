@@ -59,7 +59,7 @@ int it_wrong = -1;
 // --------------------------------------
 
 
-static void myGlVertex3d(const dfm2::CVec3& v)
+static void myGlVertex3d(const dfm2::CVec3d& v)
 {
   ::glVertex3d(v.x(), v.y(), v.z());
 }
@@ -128,10 +128,10 @@ void Initialize()
   {
     double len = 3.0;
     aPo3D.resize(4);
-    aPo3D[0].p = dfm2::CVec3(-len, +len, -len); aPo3D[0].e = 0; aPo3D[0].poel = 0;
-    aPo3D[1].p = dfm2::CVec3(+len, -len, -len); aPo3D[1].e = 0; aPo3D[1].poel = 1;
-    aPo3D[2].p = dfm2::CVec3(+len, +len, +len); aPo3D[2].e = 0; aPo3D[2].poel = 2;
-    aPo3D[3].p = dfm2::CVec3(-len, -len, +len); aPo3D[3].e = 0; aPo3D[3].poel = 3;
+    aPo3D[0].p = dfm2::CVec3d(-len, +len, -len); aPo3D[0].e = 0; aPo3D[0].poel = 0;
+    aPo3D[1].p = dfm2::CVec3d(+len, -len, -len); aPo3D[1].e = 0; aPo3D[1].poel = 1;
+    aPo3D[2].p = dfm2::CVec3d(+len, +len, +len); aPo3D[2].e = 0; aPo3D[2].poel = 2;
+    aPo3D[3].p = dfm2::CVec3d(-len, -len, +len); aPo3D[3].e = 0; aPo3D[3].poel = 3;
     aSTet.resize(1);
     aSTet[0].v[0] = 0;
     aSTet[0].v[1] = 1;
@@ -158,7 +158,7 @@ void AddRandomPoint()
     double z0 = dist(mt);
     int ip_ins = (int)aPo3D.size();
     aPo3D.resize(ip_ins+1);
-    aPo3D[ip_ins].p = dfm2::CVec3(x0,y0,z0);
+    aPo3D[ip_ins].p = dfm2::CVec3d(x0,y0,z0);
     aPo3D[ip_ins].e = -1;
     aPo3D[ip_ins].poel = -1;
     int itet_ins = -1;
@@ -206,7 +206,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
         double z0 = aXYZ[ixyz*3+2];
         int ip_ins = (int)aPo3D.size();
         aPo3D.resize(ip_ins+1);
-        aPo3D[ip_ins].p = dfm2::CVec3(x0,y0,z0);
+        aPo3D[ip_ins].p = dfm2::CVec3d(x0,y0,z0);
         aPo3D[ip_ins].e = -1;
         aPo3D[ip_ins].poel = -1;
         int itet_ins = -1;

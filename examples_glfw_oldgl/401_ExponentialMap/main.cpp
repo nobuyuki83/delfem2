@@ -289,7 +289,7 @@ void myGlutDisplay()
     dfm2::opengl::DrawSphere(16,16);
     ::glPopMatrix();
     ////
-    dfm2::CVec3 ex(aLocCoord[iker*6+3],aLocCoord[iker*6+4],aLocCoord[iker*6+5]);
+    dfm2::CVec3d ex(aLocCoord[iker*6+3],aLocCoord[iker*6+4],aLocCoord[iker*6+5]);
     ex *= 0.2;
     ::glLineWidth(3);
     ::glDisable(GL_LIGHTING);

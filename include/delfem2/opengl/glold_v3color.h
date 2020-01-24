@@ -15,10 +15,10 @@
 #include <stdio.h>
 
 void DrawQuad_ScalarQ1
-(const delfem2::CVec3& p0,
- const delfem2::CVec3& p1,
- const delfem2::CVec3& p2,
- const delfem2::CVec3& p3,
+(const delfem2::CVec3d& p0,
+ const delfem2::CVec3d& p1,
+ const delfem2::CVec3d& p2,
+ const delfem2::CVec3d& p3,
  double v0, double v1, double v2, double v3,
  const std::vector<std::pair<double, delfem2::CColor> >& colorMap);
 

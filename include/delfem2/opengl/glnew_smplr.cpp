@@ -96,14 +96,14 @@ void dfm2::opengl::CGPUSamplerDraw::InitGL() {
   { // draw texture
     shdr1.Compile();
     // --------------
-    const dfm2::CVec3& dx = x_axis;
-    const dfm2::CVec3& dy = Cross(z_axis,dx);
+    const dfm2::CVec3d& dx = x_axis;
+    const dfm2::CVec3d& dy = dfm2::CVec3d(z_axis)^dx;
     const double lx = lengrid*nResX;
     const double ly = lengrid*nResY;
-    dfm2::CVec3 p0 = origin;
-    dfm2::CVec3 p1 = origin + lx*dx;
-    dfm2::CVec3 p2 = origin + lx*dx + ly*dy;
-    dfm2::CVec3 p3 = origin + ly*dy;
+    dfm2::CVec3d p0 = origin;
+    dfm2::CVec3d p1 = p0 + lx*dx;
+    dfm2::CVec3d p2 = p0 + lx*dx + ly*dy;
+    dfm2::CVec3d p3 = p0 + ly*dy;
     std::vector<double> aPos3d = {
         p0.x(), p0.y(), p0.z(),
         p1.x(), p1.y(), p1.z(),

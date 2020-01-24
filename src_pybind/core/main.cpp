@@ -46,7 +46,7 @@ void init_sdf(py::module &m);
 // voxel related
 
 std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
-(const CVoxelGrid3D& vg)
+(const dfm2::CVoxelGrid3D& vg)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aQuad;
@@ -55,7 +55,7 @@ std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
 }
 
 std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
-(const CVoxelGrid3D& vg)
+(const dfm2::CVoxelGrid3D& vg)
 {
   std::vector<double> aXYZ;
   std::vector<int> aHex;
@@ -286,9 +286,9 @@ PYBIND11_MODULE(c_core, m) {
   
   // --------
   // voxel
-  py::class_<CVoxelGrid3D>(m, "CppVoxelGrid", "voxel grid class")
+  py::class_<dfm2::CVoxelGrid3D>(m, "CppVoxelGrid", "voxel grid class")
   .def(py::init<>())
-  .def("add",&CVoxelGrid3D::Add,"add voxel at the integer coordinate");
+  .def("add",&dfm2::CVoxelGrid3D::Add,"add voxel at the integer coordinate");
   
   m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
   m.def("meshhex3d_voxelgrid", &PyMeshHex3D_VoxelGrid);

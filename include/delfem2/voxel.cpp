@@ -19,16 +19,16 @@ const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 2, 3, 1 }, // -z
   { 4, 5, 7, 6 } }; // +z
 
-const dfm2::CVec3 normalHexFace[6] = {
-  dfm2::CVec3(-1, 0, 0),
-  dfm2::CVec3(+1, 0, 0),
-  dfm2::CVec3( 0,-1, 0),
-  dfm2::CVec3( 0,+1, 0),
-  dfm2::CVec3( 0, 0,-1),
-  dfm2::CVec3( 0, 0,+1)
+const dfm2::CVec3d normalHexFace[6] = {
+  dfm2::CVec3d(-1, 0, 0),
+  dfm2::CVec3d(+1, 0, 0),
+  dfm2::CVec3d( 0,-1, 0),
+  dfm2::CVec3d( 0,+1, 0),
+  dfm2::CVec3d( 0, 0,-1),
+  dfm2::CVec3d( 0, 0,+1)
 };
 
-bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz)
+bool dfm2::IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz)
 {
   if( igvx < aabb[0] || igvx >= aabb[1] ){ return false; }
   if( igvy < aabb[2] || igvy >= aabb[3] ){ return false; }
@@ -36,7 +36,7 @@ bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz)
   return true;
 }
 
-void Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
+void dfm2::Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 {
   const int ipx0 = ivx+0;  const int ipx1 = ivx+1;
   const int ipy0 = ivy+0;  const int ipy1 = ivy+1;
@@ -57,7 +57,7 @@ void Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 }
 
 
-void MeshQuad3D_VoxelGrid
+void dfm2::MeshQuad3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
  int ndivx, int ndivy, int ndivz,
  int ioffx, int ioffy, int ioffz,
@@ -119,7 +119,7 @@ void MeshQuad3D_VoxelGrid
   }
 }
 
-void MeshHex3D_VoxelGrid
+void dfm2::MeshHex3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<int>& aHex,
  int ndivx, int ndivy, int ndivz,
  int ioffx, int ioffy, int ioffz,
@@ -175,7 +175,7 @@ void MeshHex3D_VoxelGrid
 
 
 
-void MeshTet3D_VoxelGrid
+void dfm2::MeshTet3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<int>& aTet,
  int ndivx, int ndivy, int ndivz,
  int ioffx, int ioffy, int ioffz,
@@ -250,7 +250,7 @@ void MeshTet3D_VoxelGrid
   }
 }
 
-int Adj_Grid
+int dfm2::Adj_Grid
 (int igridvox, int iface,
  int ndivx, int ndivy, int ndivz)
 {
@@ -273,15 +273,15 @@ int Adj_Grid
 
 // ---------------------------------------------------------------------
 
-void Pick_CubeGrid
+void dfm2::Pick_CubeGrid
 (int& icube_pic, int& iface_pic,
- const double src_pic[3], const double dir_pic_[3],
+ const double src_pic_[3], const double dir_pic_[3],
  double elen,
- const double org[3],
+ const double org_[3],
  const std::vector<CCubeGrid>& aCube)
 {
-  dfm2::CVec3 dir_pic(dir_pic_);
-  //////
+  dfm2::CVec3d dir_pic(dir_pic_), org(org_), src_pic(src_pic_);
+  // // -----------------------------------
   icube_pic = -1;
   double depth_min = 0;
   for(std::size_t ivox=0;ivox<aCube.size();++ivox){
@@ -289,27 +289,27 @@ void Pick_CubeGrid
     int ih = aCube[ivox].ivx;
     int jh = aCube[ivox].ivy;
     int kh = aCube[ivox].ivz;
-    dfm2::CVec3 cnt =  org + elen*dfm2::CVec3(ih+0.5,jh+0.5,kh+0.5);
+    dfm2::CVec3d cnt =  org + elen*dfm2::CVec3d(ih+0.5,jh+0.5,kh+0.5);
     {
-      dfm2::CVec3 q = nearest_Line_Point(cnt, src_pic, dir_pic);
+      dfm2::CVec3d q = nearest_Line_Point(cnt, src_pic, dir_pic);
       if( (q-cnt).Length() > elen  ) continue;
     }
-    dfm2::CVec3 aP[8] = {
-      org + elen*dfm2::CVec3(ih+0,jh+0,kh+0),
-      org + elen*dfm2::CVec3(ih+1,jh+0,kh+0),
-      org + elen*dfm2::CVec3(ih+0,jh+1,kh+0),
-      org + elen*dfm2::CVec3(ih+1,jh+1,kh+0),
-      org + elen*dfm2::CVec3(ih+0,jh+0,kh+1),
-      org + elen*dfm2::CVec3(ih+1,jh+0,kh+1),
-      org + elen*dfm2::CVec3(ih+0,jh+1,kh+1),
-      org + elen*dfm2::CVec3(ih+1,jh+1,kh+1) };
+    dfm2::CVec3d aP[8] = {
+      org + elen*dfm2::CVec3d(ih+0,jh+0,kh+0),
+      org + elen*dfm2::CVec3d(ih+1,jh+0,kh+0),
+      org + elen*dfm2::CVec3d(ih+0,jh+1,kh+0),
+      org + elen*dfm2::CVec3d(ih+1,jh+1,kh+0),
+      org + elen*dfm2::CVec3d(ih+0,jh+0,kh+1),
+      org + elen*dfm2::CVec3d(ih+1,jh+0,kh+1),
+      org + elen*dfm2::CVec3d(ih+0,jh+1,kh+1),
+      org + elen*dfm2::CVec3d(ih+1,jh+1,kh+1) };
     for(int iface=0;iface<6;++iface){
-      const dfm2::CVec3& n = normalHexFace[iface];
-      const dfm2::CVec3& p0 = aP[noelElemFace_Vox[iface][0]];
-      const dfm2::CVec3& p1 = aP[noelElemFace_Vox[iface][1]];
+      const dfm2::CVec3d& n = normalHexFace[iface];
+      const dfm2::CVec3d& p0 = aP[noelElemFace_Vox[iface][0]];
+      const dfm2::CVec3d& p1 = aP[noelElemFace_Vox[iface][1]];
       //      const CVector3& p2 = aP[noelHexFace[iface][2]];
-      const dfm2::CVec3& p3 = aP[noelElemFace_Vox[iface][3]];
-      const dfm2::CVec3 pi = intersection_Plane_Line(p0,n, src_pic,dir_pic);
+      const dfm2::CVec3d& p3 = aP[noelElemFace_Vox[iface][3]];
+      const dfm2::CVec3d pi = intersection_Plane_Line(p0,n, src_pic,dir_pic);
       const double r0 = (pi-p0)*(p1-p0)/(elen*elen);
       const double r1 = (pi-p0)*(p3-p0)/(elen*elen);
       if( r0>0 && r0<1 && r1>0 && r1< 1 ){
@@ -324,7 +324,7 @@ void Pick_CubeGrid
   }
 }
 
-void Adj_CubeGrid
+void dfm2::Adj_CubeGrid
 (int& ivx, int& ivy, int& ivz,
  int icube, int iface,
  std::vector<CCubeGrid>& aCube)
@@ -340,7 +340,7 @@ void Adj_CubeGrid
   if( iface == 5 ){ ivz += 1; }
 }
 
-void Add_CubeGrid
+void dfm2::Add_CubeGrid
 (std::vector<CCubeGrid>& aCube,
  int ivx1, int ivy1, int ivz1)
 {
@@ -361,7 +361,7 @@ void Add_CubeGrid
   }
 }
 
-void Del_CubeGrid
+void dfm2::Del_CubeGrid
 (std::vector<CCubeGrid>& aCube,
  int i1, int j1, int k1)
 {
@@ -379,7 +379,7 @@ void Del_CubeGrid
 }
 
 
-void AABB_CubeGrid
+void dfm2::AABB_CubeGrid
 (int aabb[6],
  const std::vector<CCubeGrid>& aCube)
 {

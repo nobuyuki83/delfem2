@@ -117,12 +117,12 @@ void dfm2::PBD_ConstProj_Rigid3D
 {
   const int nclstr = nclstr_ind-1;
   for(int iclstr=0;iclstr<nclstr;++iclstr){
-    CVec3 pc(0, 0, 0), qc(0, 0, 0);
+    CVec3d pc(0, 0, 0), qc(0, 0, 0);
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const int ip = clstr[iip];
       assert( ip < nclstr0 );
-      qc += CVec3(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2]);
-      pc += CVec3(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
+      qc += CVec3d(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2]);
+      pc += CVec3d(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
     }
     qc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
     pc /= (clstr_ind[iclstr+1]-clstr_ind[iclstr]);
@@ -130,8 +130,8 @@ void dfm2::PBD_ConstProj_Rigid3D
     double A[9] = { 0,0,0,  0,0,0, 0,0,0 };
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const int ip = clstr[iip];
-      const CVec3 dq = CVec3(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2])-qc; // undeform
-      const CVec3 dp = CVec3(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZ0[ip*3+2])-pc; // deform
+      const CVec3d dq = CVec3d(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2])-qc; // undeform
+      const CVec3d dp = CVec3d(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZ0[ip*3+2])-pc; // deform
       A[0*3+0] += dp[0]*dq[0];
       A[0*3+1] += dp[0]*dq[1];
       A[0*3+2] += dp[0]*dq[2];
@@ -147,9 +147,9 @@ void dfm2::PBD_ConstProj_Rigid3D
     
     for (int iip=clstr_ind[iclstr];iip<clstr_ind[iclstr+1]; iip++){
       const int ip = clstr[iip];
-      CVec3 dq = CVec3(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2])-qc;
-      CVec3 pg = pc+Mat3Vec(R, dq); // goal position
-      CVec3 pg2 = stiffness*pg+(1-stiffness)*CVec3(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
+      CVec3d dq = CVec3d(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2])-qc;
+      CVec3d pg = pc+Mat3Vec(R, dq); // goal position
+      CVec3d pg2 = stiffness*pg+(1-stiffness)*CVec3d(aXYZt[ip*3+0],aXYZt[ip*3+1],aXYZt[ip*3+2]);
       aXYZt[ip*3+0] = pg2.p[0];
       aXYZt[ip*3+1] = pg2.p[1];
       aXYZt[ip*3+2] = pg2.p[2];
@@ -207,17 +207,17 @@ void dfm2::PBD_CdC_TriStrain2D3D
  const double p[3][3] // (in) deformed triangle vertex positions
 )
 {
-  const CVec3 Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
-  const CVec3 Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
-  CVec3 Gd2 = Cross(Gd0, Gd1);
+  const CVec3d Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
+  const CVec3d Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
+  CVec3d Gd2 = Cross(Gd0, Gd1);
   const double Area = Gd2.Length()*0.5;
   Gd2 /= (Area*2.0);
   
-  CVec3 Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
-  CVec3 Gu1 = Cross( Gd2, Gd0 ); Gu1 /= Dot(Gu1,Gd1);
+  CVec3d Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
+  CVec3d Gu1 = Cross( Gd2, Gd0 ); Gu1 /= Dot(Gu1,Gd1);
   
-  const CVec3 gd0( p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2] );
-  const CVec3 gd1( p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2] );
+  const CVec3d gd0( p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2] );
+  const CVec3d gd1( p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2] );
   
   const double E2[3] = {  // green lagrange strain (with engineer's notation)
     0.5*( Dot(gd0,gd0) - Dot(Gd0,Gd0) ),
@@ -231,15 +231,15 @@ void dfm2::PBD_CdC_TriStrain2D3D
   C[1] = E2[0]*GuGu_yy[0] + E2[1]*GuGu_yy[1] + E2[2]*GuGu_yy[2];
   C[2] = E2[0]*GuGu_xy[0] + E2[1]*GuGu_xy[1] + E2[2]*GuGu_xy[2];
   
-  const CVec3 dC0dp0 = -(GuGu_xx[0]+GuGu_xx[2])*gd0 - (GuGu_xx[1]+GuGu_xx[2])*gd1;
-  const CVec3 dC0dp1 = GuGu_xx[0]*gd0 + GuGu_xx[2]*gd1;
-  const CVec3 dC0dp2 = GuGu_xx[1]*gd1 + GuGu_xx[2]*gd0;
-  const CVec3 dC1dp0 = -(GuGu_yy[0]+GuGu_yy[2])*gd0 - (GuGu_yy[1]+GuGu_yy[2])*gd1;
-  const CVec3 dC1dp1 = GuGu_yy[0]*gd0 + GuGu_yy[2]*gd1;
-  const CVec3 dC1dp2 = GuGu_yy[1]*gd1 + GuGu_yy[2]*gd0;
-  const CVec3 dC2dp0 = -(GuGu_xy[0]+GuGu_xy[2])*gd0 - (GuGu_xy[1]+GuGu_xy[2])*gd1;
-  const CVec3 dC2dp1 = GuGu_xy[0]*gd0 + GuGu_xy[2]*gd1;
-  const CVec3 dC2dp2 = GuGu_xy[1]*gd1 + GuGu_xy[2]*gd0;
+  const CVec3d dC0dp0 = -(GuGu_xx[0]+GuGu_xx[2])*gd0 - (GuGu_xx[1]+GuGu_xx[2])*gd1;
+  const CVec3d dC0dp1 = GuGu_xx[0]*gd0 + GuGu_xx[2]*gd1;
+  const CVec3d dC0dp2 = GuGu_xx[1]*gd1 + GuGu_xx[2]*gd0;
+  const CVec3d dC1dp0 = -(GuGu_yy[0]+GuGu_yy[2])*gd0 - (GuGu_yy[1]+GuGu_yy[2])*gd1;
+  const CVec3d dC1dp1 = GuGu_yy[0]*gd0 + GuGu_yy[2]*gd1;
+  const CVec3d dC1dp2 = GuGu_yy[1]*gd1 + GuGu_yy[2]*gd0;
+  const CVec3d dC2dp0 = -(GuGu_xy[0]+GuGu_xy[2])*gd0 - (GuGu_xy[1]+GuGu_xy[2])*gd1;
+  const CVec3d dC2dp1 = GuGu_xy[0]*gd0 + GuGu_xy[2]*gd1;
+  const CVec3d dC2dp2 = GuGu_xy[1]*gd1 + GuGu_xy[2]*gd0;
   
   dC0dp0.CopyValueTo(dCdp[0]+0*3);
   dC0dp1.CopyValueTo(dCdp[0]+1*3);
@@ -291,9 +291,9 @@ void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
   const double L12 = dfm2::Distance2(P[1],P[2]);
   const double L20 = dfm2::Distance2(P[2],P[0]);
   const double L01 = dfm2::Distance2(P[0],P[1]);
-  CVec3 v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
-  CVec3 v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
-  CVec3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
+  CVec3d v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
+  CVec3d v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
+  CVec3d v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
   const double l12 = v12.Length();
   const double l20 = v20.Length();
   const double l01 = v01.Length();
@@ -345,17 +345,17 @@ void dfm2::PBD_ConstraintProjection_EnergyStVK
  const double myu)     // (in) Lame's 2nd parameter
 {
   
-  const CVec3 Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
-  const CVec3 Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
-  CVec3 Gd2 = Cross(Gd0, Gd1);
+  const CVec3d Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
+  const CVec3d Gd1( P[2][0]-P[0][0], P[2][1]-P[0][1], 0.0 );
+  CVec3d Gd2 = Cross(Gd0, Gd1);
   const double Area = Gd2.Length()*0.5;
   Gd2 /= (Area*2.0);
   
-  CVec3 Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
-  CVec3 Gu1 = Cross( Gd2, Gd0 ); Gu1 /= Dot(Gu1,Gd1);
+  CVec3d Gu0 = Cross( Gd1, Gd2 ); Gu0 /= Dot(Gu0,Gd0);
+  CVec3d Gu1 = Cross( Gd2, Gd0 ); Gu1 /= Dot(Gu1,Gd1);
   
-  const CVec3 gd0( p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2] );
-  const CVec3 gd1( p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2] );
+  const CVec3d gd0( p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2] );
+  const CVec3d gd1( p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2] );
   
   const double E2[3] = {  // green lagrange strain (with engineer's notation)
     0.5*( Dot(gd0,gd0) - Dot(Gd0,Gd0) ),
@@ -455,12 +455,12 @@ void dfm2::PBD_ConstraintProjection_DistanceTet
   const double L12 = dfm2::Distance3(P[1],P[2]);
   const double L13 = dfm2::Distance3(P[1],P[3]);
   const double L23 = dfm2::Distance3(P[2],P[3]);
-  CVec3 v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
-  CVec3 v02(p[0][0]-p[2][0], p[0][1]-p[2][1], p[0][2]-p[2][2]);
-  CVec3 v03(p[0][0]-p[3][0], p[0][1]-p[3][1], p[0][2]-p[3][2]);
-  CVec3 v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
-  CVec3 v13(p[1][0]-p[3][0], p[1][1]-p[3][1], p[1][2]-p[3][2]);
-  CVec3 v23(p[2][0]-p[3][0], p[2][1]-p[3][1], p[2][2]-p[3][2]);
+  CVec3d v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
+  CVec3d v02(p[0][0]-p[2][0], p[0][1]-p[2][1], p[0][2]-p[2][2]);
+  CVec3d v03(p[0][0]-p[3][0], p[0][1]-p[3][1], p[0][2]-p[3][2]);
+  CVec3d v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
+  CVec3d v13(p[1][0]-p[3][0], p[1][1]-p[3][1], p[1][2]-p[3][2]);
+  CVec3d v23(p[2][0]-p[3][0], p[2][1]-p[3][1], p[2][2]-p[3][2]);
   const double l01 = v01.Length();
   const double l02 = v02.Length();
   const double l03 = v03.Length();
@@ -502,11 +502,11 @@ void dfm2::PBD_CdC_QuadBend
   const double L = dfm2::Distance3(P[2],P[3]);
   const double H0 = 2.0*A0/L;
   const double H1 = 2.0*A1/L;
-  const CVec3 e23(P[3][0]-P[2][0], P[3][1]-P[2][1], P[3][2]-P[2][2]);
-  const CVec3 e02(P[2][0]-P[0][0], P[2][1]-P[0][1], P[2][2]-P[0][2]);
-  const CVec3 e03(P[3][0]-P[0][0], P[3][1]-P[0][1], P[3][2]-P[0][2]);
-  const CVec3 e12(P[2][0]-P[1][0], P[2][1]-P[1][1], P[2][2]-P[1][2]);
-  const CVec3 e13(P[3][0]-P[1][0], P[3][1]-P[1][1], P[3][2]-P[1][2]);
+  const CVec3d e23(P[3][0]-P[2][0], P[3][1]-P[2][1], P[3][2]-P[2][2]);
+  const CVec3d e02(P[2][0]-P[0][0], P[2][1]-P[0][1], P[2][2]-P[0][2]);
+  const CVec3d e03(P[3][0]-P[0][0], P[3][1]-P[0][1], P[3][2]-P[0][2]);
+  const CVec3d e12(P[2][0]-P[1][0], P[2][1]-P[1][1], P[2][2]-P[1][2]);
+  const CVec3d e13(P[3][0]-P[1][0], P[3][1]-P[1][1], P[3][2]-P[1][2]);
   const double cot023 = -(e02*e23)/H0;
   const double cot032 = +(e03*e23)/H0;
   const double cot123 = -(e12*e23)/H1;

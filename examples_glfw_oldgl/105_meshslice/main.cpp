@@ -21,7 +21,7 @@ std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<delfem2::CSliceTriMesh> aCS;
 std::vector< std::set<unsigned int> > ReebGraphCS;
-std::vector<dfm2::CVec3> aCG_CS;
+std::vector<dfm2::CVec3d> aCG_CS;
 
 // ---------------------------
 
@@ -109,7 +109,7 @@ void Hoge(){
     const double h0 = aHeight[aCS[ics].IndHeight()];
     const double po[3] = {org[0]+nrm[0]*h0,  org[1]+nrm[1]*h0,  org[2]+nrm[2]*h0 };
     double sum_area = 0.0;
-    dfm2::CVec3 cg(0,0,0);
+    dfm2::CVec3d cg(0,0,0);
     for(auto & iseg : aCS[ics].aTriInfo){
       double pA[3],pB[3];
       iseg.Pos3D(pA,pB,

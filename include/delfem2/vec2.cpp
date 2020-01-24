@@ -429,9 +429,11 @@ template double dfm2::Area_Tri(const CVec2d& v1, const CVec2d& v2, const CVec2d&
 
 
 template <typename T>
-inline double dfm2::Cross(const CVec2<T>& v1, const CVec2<T>& v2){
+double dfm2::Cross(const CVec2<T>& v1, const CVec2<T>& v2){
   return v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
+template double dfm2::Cross(const CVec2d& v1, const CVec2d& v2);
+
 
 template <typename T>
 double dfm2::SquareLength(const CVec2<T>& point)
