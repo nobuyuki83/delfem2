@@ -300,7 +300,7 @@ template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Col(const int *bc_flag
 
 // -----------------------------------------------------------------
 
-void SetMasterSlave
+void dfm2::SetMasterSlave
 (dfm2::CMatrixSparse<double>& mat,
  const int* aMSFlag)
 {
@@ -452,7 +452,7 @@ void SetMasterSlave
   }
 }
 
-void MatSparse_ScaleBlk_LeftRight
+void dfm2::MatSparse_ScaleBlk_LeftRight
 (dfm2::CMatrixSparse<double>& mat,
  const double* scale)
 {
@@ -476,7 +476,7 @@ void MatSparse_ScaleBlk_LeftRight
   }
 }
 
-void MatSparse_ScaleBlkLen_LeftRight
+void dfm2::MatSparse_ScaleBlkLen_LeftRight
 (dfm2::CMatrixSparse<double>& mat,
  const double* scale)
 {
@@ -544,7 +544,7 @@ template COMPLEX dfm2::Dot(const COMPLEX* va, const COMPLEX* vb, unsigned int n)
 
 // {y} = {y} + a * {x}
 template<>
-void AXPY
+void dfm2::AXPY
 (double a,
  const std::vector<double>& x,
  std::vector<double>& y)
@@ -556,7 +556,7 @@ void AXPY
 
 // {y} = {y} + a * {x}
 template<>
-void AXPY
+void dfm2::AXPY
 (COMPLEX a,
  const std::vector<COMPLEX>& x,
  std::vector<COMPLEX>& y)
@@ -567,7 +567,7 @@ void AXPY
 }
 
 
-COMPLEX MultSumX
+COMPLEX dfm2::MultSumX
 (const COMPLEX* va,
  const COMPLEX* vb,
  unsigned int n)
@@ -584,7 +584,7 @@ COMPLEX MultSumX
 
 // {y} = {y} + a * {x}
 template <>
-void AXPY
+void dfm2::AXPY
 (double a,
  const double* x,
  double* y,
@@ -594,7 +594,7 @@ void AXPY
 }
 
 template <>
-void AXPY
+void dfm2::AXPY
 (COMPLEX a,
  const COMPLEX* x,
  COMPLEX* y,
@@ -605,7 +605,7 @@ void AXPY
 
 
 template <>
-void XPlusAY
+void dfm2::XPlusAY
 (std::vector<double>& X,
  const int nDoF,
  const std::vector<int>& aBCFlag,
@@ -619,7 +619,7 @@ void XPlusAY
 }
 
 template <>
-void XPlusAY
+void dfm2::XPlusAY
 (std::vector<std::complex<double> >& X,
  const int nDoF,
  const std::vector<int>& aBCFlag,
@@ -634,7 +634,7 @@ void XPlusAY
 
 
 template<>
-void setRHS_Zero
+void dfm2::setRHS_Zero
 (std::vector<double>& vec_b,
  const std::vector<int>& aBCFlag,
  int iflag_nonzero)
@@ -647,7 +647,7 @@ void setRHS_Zero
 }
 
 template<>
-void setRHS_Zero
+void dfm2::setRHS_Zero
 (std::vector<COMPLEX>& vec_b,
  const std::vector<int>& aBCFlag,
  int iflag_nonzero)
@@ -661,7 +661,7 @@ void setRHS_Zero
 
 template <>
 std::vector<double>
-Solve_CG
+dfm2::Solve_CG
 (std::vector<double>& r_vec,
  std::vector<double>& x_vec,
  double conv_ratio_tol,
@@ -704,7 +704,7 @@ Solve_CG
 
 
 template <>
-std::vector<double> Solve_CG
+std::vector<double> dfm2::Solve_CG
 (std::vector<COMPLEX>& r_vec,
  std::vector<COMPLEX>& x_vec,
  double conv_ratio_tol,
@@ -750,7 +750,7 @@ std::vector<double> Solve_CG
 
 template <>
 std::vector<double>
-Solve_BiCGSTAB
+dfm2::Solve_BiCGSTAB
 (std::vector<COMPLEX>& r_vec,
  std::vector<COMPLEX>& x_vec,
  double conv_ratio_tol,
@@ -820,7 +820,7 @@ Solve_BiCGSTAB
 
 template <>
 std::vector<double>
-Solve_BiCGSTAB
+dfm2::Solve_BiCGSTAB
 (std::vector<double>& r_vec,
  std::vector<double>& x_vec,
  double conv_ratio_tol,
@@ -899,7 +899,7 @@ Solve_BiCGSTAB
 
 
 
-void XPlusAYBZ
+void dfm2::XPlusAYBZ
 (std::vector<double>& X,
  const int nDoF,
  const std::vector<int>& aBCFlag,
@@ -914,7 +914,7 @@ void XPlusAYBZ
   }
 }
 
-void XPlusAYBZCW
+void dfm2::XPlusAYBZCW
 (std::vector<double>& X,
  const int nDoF,
  const std::vector<int>& aBCFlag,
@@ -931,12 +931,12 @@ void XPlusAYBZCW
   }
 }
 
-void ScaleX(double* p0, int n, double s)
+void dfm2::ScaleX(double* p0, int n, double s)
 {
   for(int i=0;i<n;++i){ p0[i] *= s; }
 }
 
-void NormalizeX(
+void dfm2::NormalizeX(
     double* p0,
     unsigned int n)
 {
@@ -944,7 +944,7 @@ void NormalizeX(
   ScaleX(p0,n,1.0/sqrt(ss));
 }
 
-void OrthogonalizeToUnitVectorX(
+void dfm2::OrthogonalizeToUnitVectorX(
     double* p1,
     const double* p0,
     unsigned int n)
@@ -954,7 +954,7 @@ void OrthogonalizeToUnitVectorX(
 }
 
 
-void setRHS_MasterSlave(
+void dfm2::setRHS_MasterSlave(
     double* vec_b,
     int nDoF,
     const int* aMSFlag)

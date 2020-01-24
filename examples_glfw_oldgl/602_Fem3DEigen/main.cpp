@@ -91,27 +91,27 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
       p4[ip*3+0] = -z0*m0;  p4[ip*3+2] = +x0*m0;
       p5[ip*3+1] = -x0*m0;  p5[ip*3+0] = +y0*m0;
     }
-    NormalizeX(p0,nDoF);
-    OrthogonalizeToUnitVectorX(p1, p0, nDoF);
-    OrthogonalizeToUnitVectorX(p2, p0, nDoF);
-    OrthogonalizeToUnitVectorX(p3, p0, nDoF);
-    OrthogonalizeToUnitVectorX(p4, p0, nDoF);
-    OrthogonalizeToUnitVectorX(p5, p0, nDoF);
-    NormalizeX(p1,nDoF);
-    OrthogonalizeToUnitVectorX(p2, p1, nDoF);
-    OrthogonalizeToUnitVectorX(p3, p1, nDoF);
-    OrthogonalizeToUnitVectorX(p4, p1, nDoF);
-    OrthogonalizeToUnitVectorX(p5, p1, nDoF);
-    NormalizeX(p2,nDoF);
-    OrthogonalizeToUnitVectorX(p3, p2, nDoF);
-    OrthogonalizeToUnitVectorX(p4, p2, nDoF);
-    OrthogonalizeToUnitVectorX(p5, p2, nDoF);
-    NormalizeX(p3,nDoF);
-    OrthogonalizeToUnitVectorX(p4, p3, nDoF);
-    OrthogonalizeToUnitVectorX(p5, p3, nDoF);
-    NormalizeX(p4,nDoF);
-    OrthogonalizeToUnitVectorX(p5, p4, nDoF);
-    NormalizeX(p5,nDoF);
+    dfm2::NormalizeX(p0,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p1, p0, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p2, p0, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p3, p0, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p4, p0, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p5, p0, nDoF);
+    dfm2::NormalizeX(p1,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p2, p1, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p3, p1, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p4, p1, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p5, p1, nDoF);
+    dfm2::NormalizeX(p2,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p3, p2, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p4, p2, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p5, p2, nDoF);
+    dfm2::NormalizeX(p3,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p4, p3, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p5, p3, nDoF);
+    dfm2::NormalizeX(p4,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p5, p4, nDoF);
+    dfm2::NormalizeX(p5,nDoF);
   }
   
   for(unsigned int ip=0;ip<nXYZ;++ip){
@@ -146,13 +146,13 @@ void RemoveKernel()
   const double* p4 = aModesKer.data()+nDoF*4;
   const double* p5 = aModesKer.data()+nDoF*5;
   double* p = aTmp0.data();
-  OrthogonalizeToUnitVectorX(p, p0, nDoF);
-  OrthogonalizeToUnitVectorX(p, p1, nDoF);
-  OrthogonalizeToUnitVectorX(p, p2, nDoF);
-  OrthogonalizeToUnitVectorX(p, p3, nDoF);
-  OrthogonalizeToUnitVectorX(p, p4, nDoF);
-  OrthogonalizeToUnitVectorX(p, p5, nDoF);
-  NormalizeX(p, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p0, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p1, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p2, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p3, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p4, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p5, nDoF);
+  dfm2::NormalizeX(p, nDoF);
 }
 
 

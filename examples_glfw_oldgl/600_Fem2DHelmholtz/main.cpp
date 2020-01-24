@@ -110,7 +110,7 @@ void SolveProblem_Poisson()
   }
   
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // ----------------
   std::vector<std::complex<double> > vec_x;
   ilu_A.SetValueILU(mat_A);
@@ -134,8 +134,8 @@ void SolveProblem_Poisson()
 
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //
-  XPlusAY(aCVal,
-          nDoF,aBCFlag, std::complex<double>(1.0),vec_x);
+  dfm2::XPlusAY(aCVal,
+                nDoF,aBCFlag, std::complex<double>(1.0),vec_x);
 }
 
 

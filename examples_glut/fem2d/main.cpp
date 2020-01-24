@@ -253,7 +253,7 @@ void SolveProblem_Poisson()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np;
-  ///////////////////////////
+  // -----------------------
   const double alpha = 1.0;
   const double source = 1.0;
   mat_A.SetZero();
@@ -264,8 +264,8 @@ void SolveProblem_Poisson()
                                        aTri1.data(),aTri1.size()/3,
                                        aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
-  ///////////////////////////
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
+  // ------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -274,12 +274,12 @@ void SolveProblem_Poisson()
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration, mat_A,ilu_A);
-  ///////////////////////////
-  XPlusAY(aVal,nDoF,aBCFlag,
+  // ----------------
+  dfm2::XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// -------------------------------
 // iproblem: 1
 void SolveProblem_Diffusion()
 {
@@ -298,7 +298,7 @@ void SolveProblem_Diffusion()
                                         aTri1.data(), aTri1.size()/3,
                                         aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   ///////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -310,11 +310,11 @@ void SolveProblem_Diffusion()
             conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   ///////////////////
-  XPlusAYBZ(aVal,nDoF,aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aVelo);
-  XPlusAY(aVelo,nDoF,aBCFlag,
-          1.0,vec_x);
+  dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
+                  dt_timestep*gamma_newmark,vec_x,
+                  dt_timestep,aVelo);
+  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
+                1.0,vec_x);
 }
 
 // -------------------------------
@@ -389,10 +389,10 @@ void SolveProblem_LinearSolid_Static()
                                                  aTri1.data(), aTri1.size()/3,
                                                  aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
                  aMSFlag.data());
-  setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+  dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   // ---------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -404,7 +404,7 @@ void SolveProblem_LinearSolid_Static()
             conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   // --------------
-  XPlusAY(aVal,nDoF,aBCFlag,
+  dfm2::XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
   for(int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
@@ -434,10 +434,10 @@ void SolveProblem_LinearSolid_Dynamic()
                                                       aTri1.data(), aTri1.size()/3,
                                                       aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   SetMasterSlave(mat_A,
                  aMSFlag.data());
-  setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+  dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   //////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -449,15 +449,15 @@ void SolveProblem_LinearSolid_Dynamic()
             conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //////////////////////////////
-  XPlusAYBZCW(aVal, nDoF, aBCFlag,
-              dt_timestep,aVelo,
-              0.5*dt_timestep*dt_timestep,aAcc,
-              dt_timestep*dt_timestep*beta_newmark,vec_x);
-  XPlusAYBZ(aVelo,nDoF, aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aAcc);
-  XPlusAY(aAcc, nDoF, aBCFlag,
-          1.0, vec_x);
+  dfm2::XPlusAYBZCW(aVal, nDoF, aBCFlag,
+                    dt_timestep,aVelo,
+                    0.5*dt_timestep*dt_timestep,aAcc,
+                    dt_timestep*dt_timestep*beta_newmark,vec_x);
+  dfm2::XPlusAYBZ(aVelo,nDoF, aBCFlag,
+                  dt_timestep*gamma_newmark,vec_x,
+                  dt_timestep,aAcc);
+  dfm2::XPlusAY(aAcc, nDoF, aBCFlag,
+                1.0, vec_x);
   for(int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
     if( jdof == -1 ) continue;
@@ -604,11 +604,11 @@ void SolveProblem_Stokes_Static()
                                    aTri1.data(), aTri1.size()/3,
                                    aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
     SetMasterSlave(mat_A,
                    aMSFlag.data());
-    setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+    dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   //////////////////////////
   std::vector<double> vec_x;
@@ -620,8 +620,8 @@ void SolveProblem_Stokes_Static()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
-  //////////////////////////
-  XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
+  // ------------------------------
+  dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
     for(int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
@@ -652,11 +652,11 @@ void SolveProblem_Stokes_Dynamic()
                                     aTri1.data(), aTri1.size()/3,
                                     aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
     SetMasterSlave(mat_A,
                    aMSFlag.data());
-    setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+    dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   //////////////////////////
   std::vector<double> vec_x;
@@ -669,11 +669,11 @@ void SolveProblem_Stokes_Dynamic()
             conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   //////////////////////////
-  XPlusAYBZ(aVal,nDoF, aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aVelo);
-  XPlusAY(aVelo, nDoF, aBCFlag,
-          1.0, vec_x);
+  dfm2::XPlusAYBZ(aVal,nDoF, aBCFlag,
+                  dt_timestep*gamma_newmark,vec_x,
+                  dt_timestep,aVelo);
+  dfm2::XPlusAY(aVelo, nDoF, aBCFlag,
+                1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
     for(int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
@@ -705,11 +705,11 @@ void SolveProblem_NavierStokes_Dynamic()
                                    aTri1.data(), aTri1.size()/3,
                                    aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   if( aMSFlag.size() == vec_b.size() ){
     SetMasterSlave(mat_A,
                    aMSFlag.data());
-    setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
+    dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
   // ----------------------------
   std::vector<double> vec_x;
@@ -723,10 +723,10 @@ void SolveProblem_NavierStokes_Dynamic()
 //  SolveLinSys_BiCGStab(mat_A,vec_b,vec_x,ilu_A,
 //                       conv_ratio, iteration);
   //////////////////////////////
-  XPlusAYBZ(aVal,nDoF, aBCFlag,
+  dfm2::XPlusAYBZ(aVal,nDoF, aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
             dt_timestep,aVelo);
-  XPlusAY(aVelo, nDoF, aBCFlag,
+  dfm2::XPlusAY(aVelo, nDoF, aBCFlag,
           1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
     for(int idof=0;idof<nDoF;++idof){

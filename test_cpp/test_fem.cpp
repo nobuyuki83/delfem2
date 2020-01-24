@@ -156,7 +156,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
                                                                aTri.data(), aTri.size()/3,
                                                                aVal.data());
       mat_A.SetFixedBC(aBCFlag.data());
-      setRHS_Zero(vec_b, aBCFlag,0);
+      dfm2::setRHS_Zero(vec_b, aBCFlag,0);
       // --------------------------
       std::vector<double> vec_x;
       {
@@ -170,8 +170,8 @@ TEST(fem,plate_bending_mitc3_cantilever)
         EXPECT_LT( conv[conv.size()-1], 1.0e-5);
       }
       // -------------------------
-      XPlusAY(aVal,nDoF,aBCFlag,
-              1.0,vec_x);
+      dfm2::XPlusAY(aVal,nDoF,aBCFlag,
+                    1.0,vec_x);
     }
     {
       assert( fabs(lambda)<1.0e-10 );

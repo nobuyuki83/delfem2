@@ -104,7 +104,7 @@ void SolveProblem_PlateBendingMITC3()
                                                            aVal.data());
   std::cout << dfm2::Dot(vec_b, vec_b) << std::endl;
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   //
   std::vector<double> vec_x;
   {
@@ -116,8 +116,8 @@ void SolveProblem_PlateBendingMITC3()
     std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
   }
   //
-  XPlusAY(aVal,nDoF,aBCFlag,
-          1.0,vec_x);
+  dfm2::XPlusAY(aVal,nDoF,aBCFlag,
+                1.0,vec_x);
 }
 
 void myGlutDisplay()

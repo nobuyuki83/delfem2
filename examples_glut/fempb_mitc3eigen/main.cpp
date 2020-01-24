@@ -56,12 +56,12 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
       p1[ip*3+0] = +y0*m0;  p1[ip*3+1] = m1;
       p2[ip*3+0] = -x0*m0;  p2[ip*3+2] = m2;
     }
-    NormalizeX(p0,nDoF);
-    OrthogonalizeToUnitVectorX(p1, p0, nDoF);
-    OrthogonalizeToUnitVectorX(p2, p0, nDoF);
-    NormalizeX(p1,nDoF);
-    OrthogonalizeToUnitVectorX(p2, p1, nDoF);
-    NormalizeX(p2,nDoF);
+    dfm2::NormalizeX(p0,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p1, p0, nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p2, p0, nDoF);
+    dfm2::NormalizeX(p1,nDoF);
+    dfm2::OrthogonalizeToUnitVectorX(p2, p1, nDoF);
+    dfm2::NormalizeX(p2,nDoF);
   }
   for(int i=0;i<nDoF;++i){ aMassLumpedSqrtInv[i] = 1.0/aMassLumpedSqrt[i]; }
 }
@@ -74,10 +74,10 @@ void RemoveKernel(std::vector<double>& aTmp0,
   const double* p1 = aModesKer.data()+nDoF*1;
   const double* p2 = aModesKer.data()+nDoF*2;
   double* p = aTmp0.data();
-  OrthogonalizeToUnitVectorX(p, p0, nDoF);
-  OrthogonalizeToUnitVectorX(p, p1, nDoF);
-  OrthogonalizeToUnitVectorX(p, p2, nDoF);
-  NormalizeX(p, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p0, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p1, nDoF);
+  dfm2::OrthogonalizeToUnitVectorX(p, p2, nDoF);
+  dfm2::NormalizeX(p, nDoF);
 }
 
 

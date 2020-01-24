@@ -159,8 +159,7 @@ T Dot(const T *va,
        const T *vb,
        unsigned int n);
 
-  
-} // delfem2
+
 
 void SetMasterSlave(delfem2::CMatrixSparse<double> &mat, const int *aMSFlag);
 
@@ -246,4 +245,6 @@ Solve_BiCGSTAB(std::vector<T> &r_vec,
                unsigned int num_iter,
                const delfem2::CMatrixSparse<T> &mat);
 
+} // delfem2
+  
 #endif // MATDIA_CRS_H

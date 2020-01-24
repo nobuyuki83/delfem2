@@ -269,7 +269,7 @@ void SolveProblem_Poisson()
                                        aTri1.data(),aTri1.size()/3,
                                        aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // -----------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -280,8 +280,8 @@ void SolveProblem_Poisson()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration, mat_A,ilu_A);
   // -----------------------
-  XPlusAY(aVal,nDoF,aBCFlag,
-          1.0,vec_x);
+  dfm2::XPlusAY(aVal,nDoF,aBCFlag,
+                1.0,vec_x);
 }
 
 // ----------------------------------------------------------
