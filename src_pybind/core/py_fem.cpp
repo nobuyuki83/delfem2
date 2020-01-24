@@ -416,7 +416,7 @@ double PyMergeLinSys_Contact
  const py::array_t<double>& aXYZ)
 {
   if( apSDF.empty() ) return 0;
-  class CMyInput : public CInput_Contact
+  class CMyInput : public dfm2::CInput_Contact
   {
   public:
     CMyInput(const std::vector<const dfm2::CSDF3*>& apSDF){ this->apSDF = apSDF; }

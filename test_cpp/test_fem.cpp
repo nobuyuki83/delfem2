@@ -68,8 +68,8 @@ TEST(fem,plate_bending_mitc3_emat)
     double thickness = (rand()+1.0)/(RAND_MAX+1.0);
     double lambda = (rand()+1.0)/(RAND_MAX+1.0);
     double myu = (rand()+1.0)/(RAND_MAX+1.0);
-    double diff = Check_WdWddW_PlateBendingMITC3(C, u,
-                                                 thickness,lambda,myu, 1.0e-6);
+    double diff = dfm2::Check_WdWddW_PlateBendingMITC3(C, u,
+                                                       thickness,lambda,myu, 1.0e-6);
     EXPECT_LT(diff,2.0e-3);
   }
 }

@@ -28,7 +28,7 @@ namespace dfm2 = delfem2;
 // ---------------------------------------
 
 
-class CInput_ContactNothing: public CInput_Contact
+class CInput_ContactNothing: public dfm2::CInput_Contact
 {
 public:
   double penetrationNormal(double& nx, double &ny, double& nz,
@@ -39,7 +39,7 @@ public:
 };
 
 
-class CInput_ContactPlane: public CInput_Contact
+class CInput_ContactPlane: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
                            double px, double py, double pz) const
@@ -49,7 +49,7 @@ class CInput_ContactPlane: public CInput_Contact
   }
 };
 
-class CInput_ContactSphere: public CInput_Contact
+class CInput_ContactSphere: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
                            double px, double py, double pz) const
@@ -100,7 +100,7 @@ void StepTime()
   CInput_ContactPlane c0;
   CInput_ContactNothing c1;
   CInput_ContactSphere c2;
-  CInput_Contact* ic = 0;
+  dfm2::CInput_Contact* ic = 0;
   int imode_contact = 0;
   if(      imode_contact == 1 ){ ic = &c0; }
   if(      imode_contact == 0 ){ ic = &c1; }

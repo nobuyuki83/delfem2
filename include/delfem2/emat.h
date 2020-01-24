@@ -5,10 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef EMAT_h
-#define EMAT_h
+#ifndef DFM2_EMAT_h
+#define DFM2_EMAT_h
 
 #include <complex>
+
+namespace delfem2 {
 
 /**
  * @brief derivative of a shape function of a triangle and constant compornent
@@ -227,4 +229,6 @@ double Check_WdWddW_PlateBendingMITC3(const double C[3][2],
                                       const double myu,
                                       double eps);
 
+}
+  
 #endif /* fem_ematrix_h */

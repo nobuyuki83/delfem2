@@ -14,6 +14,8 @@ typedef std::complex<double> COMPLEX;
 
 #include "delfem2/emat.h"
 
+namespace dfm2 = delfem2;
+
 
 // --------------------------------------------------------
 
@@ -195,7 +197,8 @@ void TriAreaCoord(double vc_p[],
 }
 
 // derivative of a shape function of a triangle and constant compornent 
-void TriDlDx(double dldx[][2], double const_term[],
+void dfm2::TriDlDx
+ (double dldx[][2], double const_term[],
   const double p0[], const double p1[], const double p2[])
 {
   const double area = TriArea2D(p0, p1, p2);
@@ -314,7 +317,7 @@ void MakeConstMatrix3D
   C[5][5] = lambda*GuGu2[5]*GuGu2[5] + 1*myu*(GuGu2[5]*GuGu2[5] + GuGu2[0]*GuGu2[2]); // 02(5):20(5) 02(5):20(5) 00(0):22(2)
 }
 
-void EMat_Poisson_Tri2D
+void dfm2::EMat_Poisson_Tri2D
 (double eres[3], double emat[3][3],
  const double alpha, const double source,
  const double coords[3][2],
@@ -345,7 +348,7 @@ void EMat_Poisson_Tri2D
 }
 
 
-void EMat_Helmholtz_Tri2D
+void dfm2::EMat_Helmholtz_Tri2D
 (std::complex<double> eres[3],
  std::complex<double> emat[3][3],
  const double wave_length,
@@ -381,7 +384,7 @@ void EMat_Helmholtz_Tri2D
   }
 }
 
-void EMat_SommerfeltRadiationBC_Line2D
+void dfm2::EMat_SommerfeltRadiationBC_Line2D
 (COMPLEX eres[2],
  COMPLEX emat[2][2],
  double wave_length,
@@ -408,7 +411,7 @@ void EMat_SommerfeltRadiationBC_Line2D
 }
 
 
-void EMat_Diffusion_Tri2D
+void dfm2::EMat_Diffusion_Tri2D
 (double eres[3],
  double emat[3][3],
  const double alpha, const double source,
@@ -464,7 +467,7 @@ void EMat_Diffusion_Tri2D
   }
 }
 
-void EMat_SolidStaticLinear_Tri2D
+void dfm2::EMat_SolidStaticLinear_Tri2D
 (double eres[3][2],
  double emat[3][3][2][2],
  const double myu, const double lambda,
@@ -496,7 +499,7 @@ void EMat_SolidStaticLinear_Tri2D
     eres[ino][1] = area*rho*g_y*0.33333333333333333;
   }
   
-  ////////////////////////////////////////////////////////////////////////////////////
+  // ----------------------------------------------
   for(int ino=0;ino<nno;ino++){
     for(int jno=0;jno<nno;jno++){
       eres[ino][0] -= emat[ino][jno][0][0]*disp[jno][0]+emat[ino][jno][0][1]*disp[jno][1];
@@ -506,7 +509,7 @@ void EMat_SolidStaticLinear_Tri2D
 }
 
 
-void EMat_SolidDynamicLinear_Tri2D
+void dfm2::EMat_SolidDynamicLinear_Tri2D
 (double eres[3][2],
  double emat[3][3][2][2],
  const double myu, const double lambda,
@@ -560,7 +563,6 @@ void EMat_SolidDynamicLinear_Tri2D
     eres[ino][1] = area*rho*g_y*0.33333333333333333333333333;
   }
   
-  ////////////////////////////////////////////////////////////////////////////////////
   
   {	// calc coeff matrix for newmark-beta
     double dtmp1 = beta_newmark*dt_timestep*dt_timestep;
@@ -608,7 +610,7 @@ void MakeMat_Stokes2D_Static_P1P1
   const double area = TriArea2D(coords[0],coords[1],coords[2]);
   
   double dldx[nno][ndim], const_term[nno];
-  TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
+  dfm2::TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   
   ////////////////////////////////////////////////////////////
   
@@ -655,8 +657,6 @@ void MakeMat_Stokes2D_Static_P1P1
   eres_p[1] = 0;
   eres_p[2] = 0;
   
-  ////////////////////////////////////////////////////////////////////////////////////
-  
   for(unsigned int ino=0;ino<nno;ino++){
     for(unsigned int jno=0;jno<nno;jno++){
       eres_u[ino][0] -= emat_uu[ino][jno][0][0]*velo[jno][0]+emat_uu[ino][jno][0][1]*velo[jno][1];
@@ -678,7 +678,7 @@ void MakeMat_Stokes2D_Static_P1P1
   }
 }
 
-void EMat_Stokes2D_Static_P1
+void dfm2::EMat_Stokes2D_Static_P1
 (double alpha, double g_x, double g_y,
  const double coords[][2],
  const double velo_press[3][3],
@@ -737,9 +737,8 @@ void MakeMat_Stokes2D_Dynamic_Newmark_P1P1
   ////
   const double area = TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][ndim], const_term[nno];
-  TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
+  dfm2::TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
 
-  //////////////////////////////////////////////////////////////////////////////
   double eCmat_uu[3][3][2][2];
   for(int ino=0;ino<nno;ino++){
     for(int jno=0;jno<nno;jno++){
@@ -860,7 +859,7 @@ void MakeMat_Stokes2D_Dynamic_Newmark_P1P1
   }
 }
 
-void EMat_Stokes2D_Dynamic_P1
+void dfm2::EMat_Stokes2D_Dynamic_P1
 (double alpha, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[][2],
@@ -924,8 +923,6 @@ void EMat_Stokes2D_Dynamic_P1
     eres[ino][2] = 0.0;
   }
   
-  ////////////////////////////////
-  
   {
     double dtmp1 = gamma_newmark*dt_timestep;
     for(int i=0;i<3*3*3*3;++i){
@@ -958,7 +955,7 @@ void MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
 
 	const double area = TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[3][2], const_term[3];
-	TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
+	dfm2::TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   const double velo_ave[2] = {
     (velo[0][0]+velo[1][0]+velo[2][0])/3.0,
     (velo[0][1]+velo[1][1]+velo[2][1])/3.0 };
@@ -1175,7 +1172,7 @@ void MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
   }
 }
 
-void EMat_NavierStokes2D_Dynamic_P1
+void dfm2::EMat_NavierStokes2D_Dynamic_P1
 (double myu, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[][2],
@@ -1649,7 +1646,7 @@ static bool AddLinearSystem_Poisson2D_P1(
 */
 
 // compute energy and its 1st and 2nd derivative for cloth bending
-void WdWddW_Bend
+void dfm2::WdWddW_Bend
 (double& W,  // (out) strain energy
  double dW[4][3], // (out) 1st derivative of energy
  double ddW[4][4][3][3], // (out) 2nd derivative of energy
@@ -1765,7 +1762,7 @@ void MakePositiveDefinite_Sim22(const double s2[3],double s3[3])
 }
 
 
-void WdWddW_CST
+void dfm2::WdWddW_CST
 (double& W, // (out) energy
  double dW[3][3], // (out) 1st derivative of energy
  double ddW[3][3][3][3], // (out) 2nd derivative of energy
@@ -1874,7 +1871,7 @@ void WdWddW_CST
 
 
 // compute energy and its 1st and 2nd derivative for contact against object
-void WdWddW_Contact
+void dfm2::WdWddW_Contact
 (double& W,  // (out) energy
  double dW[3], // (out) 1st derivative of energy
  double ddW[3][3], // (out) 2nd derivative of energy
@@ -1913,12 +1910,7 @@ void WdWddW_Contact
 }
 
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------------
 
 
 const static unsigned int NIntTetGauss[4] = {
@@ -2019,7 +2011,7 @@ static inline void TetDlDx(double dldx[][3], double a[],
 }
 
 
-void ddW_SolidLinear_Tet3D
+void dfm2::ddW_SolidLinear_Tet3D
 (double* eKmat,
  double lambda, double myu,
  double vol, double dldx[4][3],
@@ -2049,7 +2041,7 @@ void ddW_SolidLinear_Tet3D
   }
 }
 
-void ddW_MassConsistentVal3D_Tet3D
+void dfm2::ddW_MassConsistentVal3D_Tet3D
 (double* eMmat,
  double rho, double vol,
  bool is_add,
@@ -2077,7 +2069,7 @@ void ddW_MassConsistentVal3D_Tet3D
 
 ////////////
 
-void EMat_Poisson_Tet3D
+void dfm2::EMat_Poisson_Tet3D
 (double eres[4],
  double emat[4][4],
  const double alpha, const double source,
@@ -2109,7 +2101,7 @@ void EMat_Poisson_Tet3D
   }
 }
 
-void EMat_Diffusion_Newmark_Tet3D
+void dfm2::EMat_Diffusion_Newmark_Tet3D
 (double eres[4],
  double emat[4][4],
  const double alpha, const double source,
@@ -2312,7 +2304,7 @@ const double disp[10][3])
 }
 
 
-void EMat_SolidLinear_Static_Tet
+void dfm2::EMat_SolidLinear_Static_Tet
 (double emat[4][4][3][3],
  double eres[4][3],
  const double myu, const double lambda,
@@ -2341,7 +2333,7 @@ void EMat_SolidLinear_Static_Tet
   }
 }
 
-void MakeMat_LinearSolid3D_Static_Q1
+void dfm2::MakeMat_LinearSolid3D_Static_Q1
 (const double myu, const double lambda,
  const double rho, const double g_x, const double g_y, const double g_z,
  const double coords[8][3],
@@ -2402,7 +2394,7 @@ void MakeMat_LinearSolid3D_Static_Q1
 
 
 
-void EMat_SolidLinear_NewmarkBeta_MeshTet3D
+void dfm2::EMat_SolidLinear_NewmarkBeta_MeshTet3D
 (double eres[4][3],
  double emat[4][4][3][3],
  const double myu, const double lambda,
@@ -2491,7 +2483,7 @@ void MakeMat_Stokes3D_Static_P1P1
   double dldx[nno][ndim], const_term[nno];
   TetDlDx(dldx, const_term,   coords[0], coords[1], coords[2], coords[3]);
   
-  ////////////////////////////////////////////////////////////
+  // --------------------------------------------------
   
   for(unsigned int i=0;i<nno*nno*ndim*ndim;i++){ *(&emat_uu[0][0][0][0]+i) = 0.0; }
   for(unsigned int ino=0;ino<nno;ino++){
@@ -2567,7 +2559,7 @@ void MakeMat_Stokes3D_Static_P1P1
 
 
 
-void MakeMat_Stokes3D_Static_P1
+void dfm2::MakeMat_Stokes3D_Static_P1
 (double alpha, double g_x, double g_y, double g_z,
  const double coords[4][3],
  const double velo_press[4][4],
@@ -2782,7 +2774,7 @@ void MakeMat_Stokes3D_Dynamic_Newmark_P1P1
   }
 }
 
-void MakeMat_Stokes3D_Dynamic_P1
+void dfm2::MakeMat_Stokes3D_Dynamic_P1
 (double alpha, double rho, double g_x, double g_y, double g_z,
  const double dt_timestep, const double gamma_newmark,
  const double coords[4][3],
@@ -3211,7 +3203,7 @@ void MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1
 }
 
 
-void MakeMat_NavierStokes3D_Dynamic_P1
+void dfm2::MakeMat_NavierStokes3D_Dynamic_P1
 (double myu, double rho, double g_x, double g_y, double g_z,
  const double dt_timestep, const double gamma_newmark,
  const double coords[4][3],
@@ -3277,7 +3269,7 @@ void MakeMat_NavierStokes3D_Dynamic_P1
 
 
 
-/////////////////////////////
+// ------------------------------
 
 void MakeCurveture
 (double B1[][3], double B2[][3][2],
@@ -3320,7 +3312,7 @@ void MakeCurveture
   
   double dldx[3][2];
   double const_term[3];
-  TriDlDx(dldx,const_term,coord0,coord1,coord2);
+  dfm2::TriDlDx(dldx,const_term,coord0,coord1,coord2);
   
   for(unsigned int i=0;i<3;i++){
     B1[0][i] =  dldx[1][0]*H1[2][i]+dldx[2][0]*H1[3][i];
@@ -3412,7 +3404,7 @@ void MakeMat_PlateBendingDKT
 
 
 
-void WdWddW_PlateBendingMITC3
+void dfm2::WdWddW_PlateBendingMITC3
 (double& W,
  double dW[3][3],
  double ddW[3][3][3][3],
@@ -3585,7 +3577,7 @@ void WdWddW_PlateBendingMITC3
   }
 }
 
-double Check_WdWddW_PlateBendingMITC3
+double dfm2::Check_WdWddW_PlateBendingMITC3
 (const double C[3][2],
  const double u0[3][3],
  const double thickness,

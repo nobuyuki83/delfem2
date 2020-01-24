@@ -23,7 +23,7 @@ namespace dfm2 = delfem2;
 // -------------------------------------------
 
 
-class CInput_ContactNothing: public CInput_Contact
+class CInput_ContactNothing: public dfm2::CInput_Contact
 {
 public:
   double penetrationNormal(double& nx, double &ny, double& nz,

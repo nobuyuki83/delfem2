@@ -7,6 +7,10 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
+namespace dfm2 = delfem2;
+
+// -------------------------------------
+
 /**
  * @brief compute total energy and its first and second derivatives
  */
@@ -33,7 +37,7 @@ void AddWdW_Cloth
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
     }
     double e, de[3][3], dde[3][3][3][3];
-    WdWddW_CST( e,de,dde, C,c, lambda,myu );
+    dfm2::WdWddW_CST( e,de,dde, C,c, lambda,myu );
     W += e;  // marge energy
     // marge de
     for(int ino=0;ino<3;ino++){
@@ -51,7 +55,7 @@ void AddWdW_Cloth
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
     }
     double e, de[4][3], dde[4][4][3][3];
-    WdWddW_Bend( e,de,dde, C,c, stiff_bend );
+    dfm2::WdWddW_Bend( e,de,dde, C,c, stiff_bend );
     W += e;  // marge energy
     // marge de
     for(int ino=0;ino<4;ino++){
@@ -103,7 +107,7 @@ void StepTime_InternalDynamics
  double mass_point, // (in) mass for a point
  double stiff_contact,
  double contact_clearance,
- const CInput_Contact& input_contact)
+ const dfm2::CInput_Contact& input_contact)
 {
   const size_t np = aXYZ.size()/3; // number of point，頂点数
   const int nDof = np*3; // degree of freedom，全自由度数
@@ -174,7 +178,7 @@ void StepTime_InternalDynamicsILU
  double mass_point, // (in) mass for a point，頂点あたりの質量
  double stiff_contact,
  double contact_clearance,
- const CInput_Contact& input_contact)
+ const dfm2::CInput_Contact& input_contact)
 {
   const unsigned int np = aXYZ.size()/3; 
   const unsigned int nDof = np*3;

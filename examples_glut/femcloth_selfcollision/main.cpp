@@ -176,7 +176,7 @@ void MakeNormal()
   }
 }
 
-class CInput_ContactPlane: public CInput_Contact
+class CInput_ContactPlane: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
                            double px, double py, double pz) const
@@ -186,7 +186,7 @@ class CInput_ContactPlane: public CInput_Contact
   }
 };
 
-class CInput_ContactSphere: public CInput_Contact
+class CInput_ContactSphere: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
                            double px, double py, double pz) const
@@ -209,7 +209,7 @@ void StepTime()
 {
   CInput_ContactPlane c0;
   CInput_ContactSphere c1;
-  CInput_Contact* ic = 0;
+  dfm2::CInput_Contact* ic = 0;
   if(      imode_contact == 0 ){ ic = &c0; }
   if(      imode_contact == 1 ){ ic = &c1; }
   /////
