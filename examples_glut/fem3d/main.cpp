@@ -121,7 +121,7 @@ void SolveProblem_Poisson()
                                        aTet.data(), aTet.size()/4,
                                        aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -131,9 +131,9 @@ void SolveProblem_Poisson()
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
-  /////////////////////////////
-  XPlusAY(aVal,nDoF,aBCFlag,
-          1.0,vec_x);
+  // ------------------------------
+  dfm2::XPlusAY(aVal,nDoF,aBCFlag,
+                1.0,vec_x);
 }
 
 
@@ -193,7 +193,7 @@ void SolveProblem_Diffusion()
                                         aTet.data(), aTet.size()/4,
                                         aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -203,13 +203,13 @@ void SolveProblem_Diffusion()
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
-  /////////////////////////////
-  XPlusAYBZ(aVal,nDoF,aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aVelo);
-  XPlusAY(aVelo,nDoF,aBCFlag,
-          1.0,vec_x);
-  /////////////////////////////
+  // ----------------------
+  dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
+                  dt_timestep*gamma_newmark,vec_x,
+                  dt_timestep,aVelo);
+  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
+                1.0,vec_x);
+  // -----------------------
   dt_timestep = 0.03;
 }
 
@@ -266,7 +266,7 @@ void SolveProblem_LinearSolid_Static()
                                                  aTet.data(), aTet.size()/4,
                                                  aVal.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // --------------------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -277,7 +277,7 @@ void SolveProblem_LinearSolid_Static()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
   // ------------------------------
-  XPlusAY(aVal, nDoF, aBCFlag,
+  dfm2::XPlusAY(aVal, nDoF, aBCFlag,
     1.0, vec_x);
 }
 
@@ -342,7 +342,7 @@ void SolveProblem_LinearSolid_Dynamic()
                                                       aTet.data(), aTet.size()/4,
                                                       aVal.data(),aVelo.data(),aAcc.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -353,15 +353,15 @@ void SolveProblem_LinearSolid_Dynamic()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
-  XPlusAYBZCW(aVal, nDoF, aBCFlag,
-              dt_timestep,aVelo,
-              0.5*dt_timestep*dt_timestep,aAcc,
-              dt_timestep*dt_timestep*beta_newmark,vec_x);
-  XPlusAYBZ(aVelo,nDoF, aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aAcc);
-  XPlusAY(aAcc, nDoF, aBCFlag,
-          1.0, vec_x);
+  dfm2::XPlusAYBZCW(aVal, nDoF, aBCFlag,
+                    dt_timestep,aVelo,
+                    0.5*dt_timestep*dt_timestep,aAcc,
+                    dt_timestep*dt_timestep*beta_newmark,vec_x);
+  dfm2::XPlusAYBZ(aVelo,nDoF, aBCFlag,
+                  dt_timestep*gamma_newmark,vec_x,
+                  dt_timestep,aAcc);
+  dfm2::XPlusAY(aAcc, nDoF, aBCFlag,
+                1.0, vec_x);
 }
 
 
@@ -433,7 +433,7 @@ void SolveProblem_Stokes_Static()
                                     aXYZ,aTet,
                                     aVal,aVelo);
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -444,7 +444,7 @@ void SolveProblem_Stokes_Static()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
-  XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
+  dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
 }
 
 void InitializeProblem_Stokes_Dynamic()
@@ -517,7 +517,7 @@ void SolveProblem_Stokes_Dynamic()
                                      aXYZ,aTet,
                                      aVal,aVelo);
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   /////////////////////////////
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
@@ -528,10 +528,10 @@ void SolveProblem_Stokes_Dynamic()
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration,mat_A,ilu_A);
   /////////////////////////////
-  XPlusAYBZ(aVal,nDoF,aBCFlag,
+  dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
             dt_timestep,aVelo);
-  XPlusAY(aVelo,nDoF,aBCFlag,
+  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
           1.0,vec_x);
 }
 
@@ -609,7 +609,7 @@ void SolveProblem_NavierStokes_Dynamic()
                                            aXYZ,aTet,
                                            aVal,aVelo);
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b, aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b, aBCFlag,0);
   // --------------------------------------
   std::vector<double> vec_x;
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A,aBCFlag);
@@ -622,11 +622,11 @@ void SolveProblem_NavierStokes_Dynamic()
                   conv_ratio,iteration,mat_A,ilu_A);
 //  Solve_BiCGStab(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   // ----------------------------------------
-  XPlusAYBZ(aVal,nDoF,aBCFlag,
-            dt_timestep*gamma_newmark,vec_x,
-            dt_timestep,aVelo);
-  XPlusAY(aVelo,nDoF,aBCFlag,
-          1.0,vec_x);
+  dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
+                  dt_timestep*gamma_newmark,vec_x,
+                  dt_timestep,aVelo);
+  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
+                1.0,vec_x);
   /////
   dt_timestep = 0.0025;
 }

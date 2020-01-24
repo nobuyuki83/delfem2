@@ -118,8 +118,8 @@ void LinearSystem_SetMasterSlave
   SetMasterSlave(mss,
                  np_ms.data());
   auto buff_b = np_b.request();
-  setRHS_MasterSlave((double*)buff_b.ptr,
-                     np_b.shape()[0]*np_b.shape()[1], np_ms.data());
+  dfm2::setRHS_MasterSlave((double*)buff_b.ptr,
+                           np_b.shape()[0]*np_b.shape()[1], np_ms.data());
 }
 
 

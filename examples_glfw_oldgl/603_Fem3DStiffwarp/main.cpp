@@ -148,7 +148,7 @@ void Solve_Linear()
                                                  aDisp.data(),
                                                  aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b,aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b,aBCFlag,0);
   //
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
@@ -157,11 +157,11 @@ void Solve_Linear()
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
                                               1.0e-4, 1000, mat_A, ilu_A);
   //
-  XPlusAYBZ(aDisp,nDoF,aBCFlag,
-            dt, dv,
-            dt, aVelo);
-  XPlusAY(aVelo,nDoF,aBCFlag,
-          1.0, dv);
+  dfm2::XPlusAYBZ(aDisp,nDoF,aBCFlag,
+                  dt, dv,
+                  dt, aVelo);
+  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
+                1.0, dv);
   std::cout << "conv; " << aConv.size() <<  std::endl;
 }
 
@@ -183,7 +183,7 @@ void Solve_StiffnessWarping()
                                                     aVelo.data(),
                                                     aR);
   mat_A.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_b,aBCFlag,0);
+  dfm2::setRHS_Zero(vec_b,aBCFlag,0);
   // -------------------
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
@@ -191,11 +191,11 @@ void Solve_StiffnessWarping()
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
                                               1.0e-4, 1000, mat_A, ilu_A);
-  XPlusAYBZ(aDisp,nDoF,aBCFlag,
-            dt, dv,
-            dt, aVelo);
-  XPlusAY(aVelo,nDoF,aBCFlag,
-          1.0,dv);
+  dfm2::XPlusAYBZ(aDisp,nDoF,aBCFlag,
+                  dt, dv,
+                  dt, aVelo);
+  dfm2::XPlusAY(aVelo,nDoF,aBCFlag,
+                1.0,dv);
   std::cout << "conv; " << aConv.size() <<  std::endl;
 }
 
