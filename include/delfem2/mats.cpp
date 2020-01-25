@@ -613,37 +613,39 @@ COMPLEX dfm2::MultSumX
   return s;
 }
 
+// ---------------------------------------------------------------
 
+namespace delfem2 {
 
-
-
-template <>
-void dfm2::XPlusAY
-(std::vector<double>& X,
+template<>
+void XPlusAY
+(std::vector<double> &X,
  const int nDoF,
- const std::vector<int>& aBCFlag,
+ const std::vector<int> &aBCFlag,
  double alpha,
- const std::vector<double>& Y)
+ const std::vector<double> &Y)
 {
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i];
+  for (int i = 0; i < nDoF; ++i) {
+    if (aBCFlag[i] != 0) continue;
+    X[i] += alpha * Y[i];
   }
 }
 
-template <>
-void dfm2::XPlusAY
-(std::vector<std::complex<double> >& X,
+template<>
+void XPlusAY
+(std::vector<std::complex<double> > &X,
  const int nDoF,
- const std::vector<int>& aBCFlag,
+ const std::vector<int> &aBCFlag,
  std::complex<double> alpha,
- const std::vector<std::complex<double> >& Y)
+ const std::vector<std::complex<double> > &Y)
 {
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i];
+  for (int i = 0; i < nDoF; ++i) {
+    if (aBCFlag[i] != 0) continue;
+    X[i] += alpha * Y[i];
   }
 }
+
+} // end namespace delfem2
 
 // -------------------------------------
 
