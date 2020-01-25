@@ -427,28 +427,34 @@ void kernel_MortonCodeId_Points3F_TPB64(
     unsigned int *dMC,
     unsigned int *dId,
     const float *dXYZ,
-    const unsigned int nXYZ)
+    const unsigned int nXYZ,
+    const float* min_xyz,
+    const float* max_xyz)
 {
   const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
   if( idx >= nXYZ ) return;
   dId[idx] = idx;
   // ----------------------------
-  const float x0 = dXYZ[idx*3+0];
-  const float y0 = dXYZ[idx*3+1];
-  const float z0 = dXYZ[idx*3+2];
+  const float x0 = (dXYZ[idx*3+0]-min_xyz[0])/(max_xyz[0]-min_xyz[0]);
+  const float y0 = (dXYZ[idx*3+1]-min_xyz[1])/(max_xyz[1]-min_xyz[1]);
+  const float z0 = (dXYZ[idx*3+2]-min_xyz[2])/(max_xyz[2]-min_xyz[2]);
   unsigned int mc = device_MortonCode(x0,y0,z0);
   dMC[idx] = mc;
 }
 
-void dfm2::cuda::cuda_MortonCode_Points3F(
+void dfm2::cuda::cuda_MortonCode_Points3FSorted(
     unsigned int *hSortedId,
     std::uint32_t *hSortedMc,
     const float *hXYZ,
-    const unsigned int nXYZ)
+    const unsigned int nXYZ,
+    const float* hMinXYZ,
+    const float* hMaxXYZ)
 {
   const thrust::device_vector<float> dXYZ(hXYZ, hXYZ+nXYZ*3);
   thrust::device_vector<unsigned int> dMC(nXYZ);
   thrust::device_vector<unsigned int> dId(nXYZ);
+  thrust::device_vector<float> dMinXYZ(hMinXYZ,hMinXYZ+6);
+  thrust::device_vector<float> dMaxXYZ(hMaxXYZ,hMaxXYZ+6);
   {
     const unsigned int BLOCK = 64;
     dim3 grid( (nXYZ-1)/BLOCK+1 );
@@ -457,9 +463,173 @@ void dfm2::cuda::cuda_MortonCode_Points3F(
         thrust::raw_pointer_cast(dMC.data()),
         thrust::raw_pointer_cast(dId.data()),
         thrust::raw_pointer_cast(dXYZ.data()),
-        nXYZ);
+        nXYZ,
+        thrust::raw_pointer_cast(dMinXYZ.data()),
+        thrust::raw_pointer_cast(dMaxXYZ.data()));
   }
   thrust::sort_by_key(dMC.begin(),dMC.end(),dId.begin());
   thrust::copy(dMC.begin(), dMC.end(), hSortedMc);
   thrust::copy(dId.begin(), dId.end(), hSortedId);
+}
+
+// ------------------------------------------------
+
+__device__
+int device_Delta(int i, int j, const unsigned int* sortedMC, int nMC)
+{
+  if ( j<0 || j >= nMC ){ return -1; }
+  return __clz(sortedMC[i] ^ sortedMC[j]);
+}
+
+__device__
+int2 device_MortonCode_DeterminRange
+(const unsigned int* sortedMC,
+ int nMC,
+ int imc)
+{
+  if( imc == 0 ){ return make_int2(0,nMC-1); }
+  // ----------------------
+  const std::uint32_t mc0 = sortedMC[imc-1];
+  const std::uint32_t mc1 = sortedMC[imc+0];
+  const std::uint32_t mc2 = sortedMC[imc+1];
+  if( mc0 == mc1 && mc1 == mc2 ){ // for hash value collision
+    int jmc=imc+1;
+    for(;jmc<nMC;++jmc){
+      if( sortedMC[jmc] != mc1 ) break;
+    }
+    return make_int2(imc,jmc-1);
+  }
+  int d = device_Delta(imc, imc + 1, sortedMC, nMC) - device_Delta(imc, imc - 1, sortedMC, nMC);
+  d = d > 0 ? 1 : -1;
+
+  //compute the upper bound for the length of the range
+  const int delta_min = device_Delta(imc, imc - d, sortedMC, nMC);
+  int lmax = 2;
+  while (device_Delta(imc, imc + lmax*d, sortedMC, nMC)>delta_min)
+  {
+    lmax = lmax * 2;
+  }
+
+  //find the other end using binary search
+  int l = 0;
+  for (int t = lmax / 2; t >= 1; t /= 2)
+  {
+    if (device_Delta(imc, imc + (l + t)*d, sortedMC, nMC)>delta_min)
+    {
+      l = l + t;
+    }
+  }
+  int j = imc + l*d;
+
+  int2 range = make_int2(-1,-1);
+  if (imc <= j) { range.x = imc; range.y = j; }
+  else { range.x = j; range.y = imc; }
+  return range;
+}
+
+__device__
+int device_MortonCode_FindSplit
+(const unsigned int* sortedMC,
+ unsigned int iMC_start,
+ unsigned int iMC_last)
+{
+  //return -1 if there is only
+  //one primitive under this node.
+  if (iMC_start == iMC_last) { return -1; }
+
+  // ------------------------------
+  const int common_prefix = __clz(sortedMC[iMC_start] ^ sortedMC[iMC_last]);
+
+  //handle duplicated morton code
+  if (common_prefix == 32 ){ return iMC_start; } // sizeof(std::uint32_t)*8
+
+  // Use binary search to find where the next bit differs.
+  // Specifically, we are looking for the highest object that
+  // shares more than commonPrefix bits with the first one.
+  const std::uint32_t mcStart = sortedMC[iMC_start];
+  int iMC_split = iMC_start; // initial guess
+  int step = iMC_last - iMC_start;
+  do
+  {
+    step = (step + 1) >> 1; // exponential decrease
+    const int newSplit = iMC_split + step; // proposed new position
+    if (newSplit < iMC_last){
+      const unsigned int splitCode = sortedMC[newSplit];
+      int splitPrefix = __clz(mcStart ^ splitCode);
+      if (splitPrefix > common_prefix){
+        iMC_split = newSplit; // accept proposal
+      }
+    }
+  }
+  while (step > 1);
+  return iMC_split;
+}
+
+__global__
+void kernel_MortonCode_BVHTopology_TPB64(
+dfm2::CNodeBVH2* dNodeBVH,
+const unsigned int *dSortedMC,
+const unsigned int *dSortedId,
+const unsigned int nMC)
+{
+  const unsigned int idx = blockDim.x * blockIdx.x + threadIdx.x;
+  if (idx >= nMC-1) return;
+  const unsigned int ini = idx;
+  const unsigned int nni = nMC-1;
+  // -------------------------------
+  const int2 range = device_MortonCode_DeterminRange(dSortedMC,nMC,ini);
+  const int isplit = device_MortonCode_FindSplit(dSortedMC,range.x,range.y);
+//  printf("%d --> %d %d  %d\n",ini, range.x, range.y, isplit);
+  // -------------------------------
+  if( range.x == isplit ){
+    const int inlA = nni+isplit;
+    dNodeBVH[ini].ichild[0] = inlA;
+    dNodeBVH[inlA].iroot = ini;
+    dNodeBVH[inlA].ichild[0] = dSortedId[isplit];
+    dNodeBVH[inlA].ichild[1] = -1;
+  }
+  else{
+    const int iniA = isplit;
+    dNodeBVH[ini].ichild[0] = iniA;
+    dNodeBVH[iniA].iroot = ini;
+  }
+  // ----
+  if( range.y == isplit+1 ){
+    const int inlB = nni+isplit+1;
+    dNodeBVH[ini].ichild[1] = inlB;
+    dNodeBVH[inlB].iroot = ini;
+    dNodeBVH[inlB].ichild[0] = dSortedId[isplit+1];
+    dNodeBVH[inlB].ichild[1] = -1;
+  }
+  else{
+    const int iniB = isplit+1;
+    dNodeBVH[ini].ichild[1] = iniB;
+    dNodeBVH[iniB].iroot = ini;
+  }
+}
+
+
+
+
+void dfm2::cuda::cuda_MortonCode_BVHTopology(
+  CNodeBVH2* hNodeBVH,
+  const unsigned int* aSortedId,
+  const std::uint32_t* aSortedMc,
+  unsigned int N)
+{
+  const thrust::device_vector<std::uint32_t> dMC(aSortedMc,aSortedMc+N);
+  const thrust::device_vector<unsigned int> dId(aSortedId,aSortedId+N);
+  thrust::device_vector<dfm2::CNodeBVH2> dNodeBVH(N*2-1);
+  // ----------------------------------
+  {
+    const unsigned int BLOCK = 64;
+    dim3 grid( (N-1)/BLOCK+1 );
+    dim3 block( BLOCK );
+    kernel_MortonCode_BVHTopology_TPB64 <<< grid, block >>> (
+      thrust::raw_pointer_cast(dNodeBVH.data()),
+      thrust::raw_pointer_cast(dMC.data()),
+      thrust::raw_pointer_cast(dId.data()),
+      N);
+  }
+  thrust::copy(dNodeBVH.begin(), dNodeBVH.end(), hNodeBVH);
 }

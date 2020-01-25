@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <vector>
 #include <random>
+#include <bitset>
 #include "gtest/gtest.h"
 
 #include "delfem2/mshmisc.h"
@@ -178,36 +179,82 @@ TEST(matvec,meshtri3d_centrad)
 }
 
 
+
+void mark_child(std::vector<int>& aFlg,
+                unsigned int inode0,
+                const std::vector<dfm2::CNodeBVH2>& aNode)
+{
+  assert( inode0 < aNode.size() );
+  if( aNode[inode0].ichild[1] == -1 ){ // leaf
+    const unsigned int in0 = aNode[inode0].ichild[0];
+    assert( in0 < aFlg.size() );
+    aFlg[in0] += 1;
+    return;
+  }
+  const unsigned int in0 = aNode[inode0].ichild[0];
+  const unsigned int in1 = aNode[inode0].ichild[1];
+  mark_child(aFlg, in0, aNode);
+  mark_child(aFlg, in1, aNode);
+}
+
 TEST(bvh,morton_code) {
   std::vector<float> aXYZ; // 3d points
   std::uniform_real_distribution<> udist0(0.0, 1.0);
-  std::uniform_int_distribution<> udist1(0, 10000);
+  std::uniform_int_distribution<> udist1(0, 100000);
   std::mt19937 rng(0);
   // -----------------------------------
   for(int itr=0;itr<10;++itr) {
-    const unsigned int N = udist1(rng);
-    const float min_xyz[3] = {0.f, 0.f, 0.f};
-    const float max_xyz[3] = {1.f, 1.f, 1.f};
-    aXYZ.resize(N * 3);
-    for (int i = 0; i < N; ++i) {
-      aXYZ[i * 3 + 0] = udist0(rng);
-      aXYZ[i * 3 + 1] = udist0(rng);
-      aXYZ[i * 3 + 2] = udist0(rng);
+    const float bbmin[3] = {0.f, 0.f, 0.f};
+    const float bbmax[3] = {1.f, 1.f, 1.f};
+    {
+      const unsigned int N = udist1(rng);
+      aXYZ.resize(N * 3);
+      for (int i = 0; i < N; ++i) {
+        aXYZ[i * 3 + 0] = udist0(rng);
+        aXYZ[i * 3 + 1] = udist0(rng);
+        aXYZ[i * 3 + 2] = udist0(rng);
+      }
     }
-    // --------------------------------------
-    std::vector<unsigned int> aSortedId0;
-    std::vector<std::uint32_t> aSortedMc0;
-    dfm2::GetSortedMortenCode(aSortedId0,aSortedMc0,
-                              aXYZ, min_xyz, max_xyz);
     // ---------------------------------------------
-    std::vector<unsigned int> aSortedId1(N);
-    std::vector<std::uint32_t> aSortedMc1(N);
-    dfm2::cuda::cuda_MortonCode_Points3F(aSortedId1.data(), aSortedMc1.data(),
-                                         aXYZ.data(), aXYZ.size() / 3);
-    // ------------------------------------------
-    for (unsigned int i = 0; i < N; ++i) {
-      EXPECT_EQ(aSortedMc0[i], aSortedMc1[i]);
-      EXPECT_EQ(aSortedId0[i], aSortedId1[i]);
+    const unsigned int N = aXYZ.size()/3;
+    std::vector<unsigned int> aSortedId(N);
+    std::vector<std::uint32_t> aSortedMc(N);
+    dfm2::cuda::cuda_MortonCode_Points3FSorted(aSortedId.data(), aSortedMc.data(),
+                                               aXYZ.data(), aXYZ.size() / 3,
+                                               bbmin, bbmax);
+    { // check sorted morton code
+      for(unsigned int imc=1;imc<aSortedMc.size();++imc){
+        std::uint32_t mc0 = aSortedMc[imc-1];
+        std::uint32_t mc1 = aSortedMc[imc+0];
+        EXPECT_LE( mc0, mc1 );
+      }
+      for(unsigned int imc=0;imc<aSortedMc.size();++imc){
+        std::uint32_t mc0 = aSortedMc[imc];
+        unsigned int ip = aSortedId[imc];
+        float x0 = aXYZ[ip*3+0];
+        float y0 = aXYZ[ip*3+1];
+        float z0 = aXYZ[ip*3+2];
+        float x1 = (x0-bbmin[0])/(bbmax[0]-bbmin[0]);
+        float y1 = (y0-bbmin[1])/(bbmax[1]-bbmin[1]);
+        float z1 = (z0-bbmin[2])/(bbmax[2]-bbmin[2]);
+        std::uint32_t mc1 = dfm2::MortonCode(x1,y1,z1);
+        EXPECT_EQ( mc0, mc1 );
+      }
+      /*
+      for(unsigned int imc=0;imc<aSortedMc.size();++imc){
+        std::cout << std::bitset<32>(aSortedMc[imc]) << " " << imc << std::endl;
+      }
+       */
+    }
+    std::vector<dfm2::CNodeBVH2> aNodeBVH(N*2-1);
+    dfm2::cuda::cuda_MortonCode_BVHTopology(aNodeBVH.data(),
+                                            aSortedId.data(), aSortedMc.data(), N);
+    {
+      std::vector<int> aFlg(aXYZ.size()/3,0);
+      mark_child(aFlg, 0, aNodeBVH);
+      for(int i=0;i<aXYZ.size()/3;++i){
+        EXPECT_EQ(aFlg[i],1);
+      }
     }
   }
 }

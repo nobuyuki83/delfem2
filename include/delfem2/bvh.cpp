@@ -247,7 +247,7 @@ inline unsigned int clz(uint32_t x){
 #endif
 }
 
-int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
+static int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
 {
   if (j<0 || j >= length){
     return -1;
