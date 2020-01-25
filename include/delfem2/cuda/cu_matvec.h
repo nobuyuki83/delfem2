@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/bvh.h"
+
 namespace delfem2 {
 namespace cuda{
 
@@ -47,12 +49,19 @@ void cuda_CentsMaxRad_MeshTri3F(
     const unsigned int *aTri,
     const unsigned int nTri);
 
-void cuda_MortonCode_Points3F(
+void cuda_MortonCode_Points3FSorted(
     unsigned int *aSortedId,
     std::uint32_t *aSortedMc,
     const float *aXYZ,
-    const unsigned int nXYZ);
+    const unsigned int nXYZ,
+    const float* hMinXYZ,
+    const float* hMaxXYZ);
 
+void cuda_MortonCode_BVHTopology(
+    CNodeBVH2* aNodeBVH,
+    const unsigned int* aSortedId,
+    const std::uint32_t* aSortedMc,
+    unsigned int N);
 
 } // cuda
 } // delfem2
