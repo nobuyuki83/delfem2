@@ -464,143 +464,149 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
 
 // -----------------------------------------------
 
-template <>
-std::vector<double> delfem2::Solve_PCG
-(double* r_vec,
- double* x_vec,
+namespace delfem2 {
+
+template<>
+std::vector<double> Solve_PCG
+(double *r_vec,
+ double *x_vec,
  double conv_ratio_tol,
  unsigned int max_nitr,
- const CMatrixSparse<double>& mat,
- const delfem2::CPreconditionerILU<double>& ilu)
-{
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
+ const CMatrixSparse<double> &mat,
+ const delfem2::CPreconditionerILU<double> &ilu) {
+  const unsigned int ndof = mat.nblk_col * mat.len_col;
   std::vector<double> aResHistry;
-  
-  for(unsigned int i=0;i<ndof;i++){ x_vec[i] = 0; }    // {x} = 0
-  
-	double inv_sqnorm_res0;
-	{
-		const double sqnorm_res0 = Dot(r_vec,r_vec,ndof);
+
+  for (unsigned int i = 0; i < ndof; i++) { x_vec[i] = 0; }    // {x} = 0
+
+  double inv_sqnorm_res0;
+  {
+    const double sqnorm_res0 = Dot(r_vec, r_vec, ndof);
     aResHistry.push_back(sqrt(sqnorm_res0));
-		if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
-		inv_sqnorm_res0 = 1.0 / sqnorm_res0;
-	}
-  
+    if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
+    inv_sqnorm_res0 = 1.0 / sqnorm_res0;
+  }
+
   // {Pr} = [P]{r}
-  std::vector<double> Pr_vec(r_vec,r_vec+ndof);
+  std::vector<double> Pr_vec(r_vec, r_vec + ndof);
   ilu.Solve(Pr_vec);
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-	double rPr = Dot(r_vec,Pr_vec.data(),ndof);
-	for(unsigned int iitr=0;iitr<max_nitr;iitr++){
-		{
-      std::vector<double>& Ap_vec = Pr_vec;      
+  double rPr = Dot(r_vec, Pr_vec.data(), ndof);
+  for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
+    {
+      std::vector<double> &Ap_vec = Pr_vec;
       // {Ap} = [A]{p}
-			mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
+      mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data());
       // alpha = ({r},{Pr})/({p},{Ap})
-			const double pAp = Dot(p_vec,Ap_vec);
-			double alpha = rPr / pAp;
-      AXPY(-alpha,Ap_vec.data(),r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
-      AXPY(+alpha,p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
+      const double pAp = Dot(p_vec, Ap_vec);
+      double alpha = rPr / pAp;
+      AXPY(-alpha, Ap_vec.data(), r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
+      AXPY(+alpha, p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
     }
-		{	// Converge Judgement
-			double sqnorm_res = Dot(r_vec,r_vec,ndof);
+    {  // Converge Judgement
+      double sqnorm_res = Dot(r_vec, r_vec, ndof);
       aResHistry.push_back(sqrt(sqnorm_res));
-      double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
-      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
-		}
-		{	// calc beta
-      // {Pr} = [P]{r}
-      for(unsigned int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
-			ilu.Solve(Pr_vec);
-      // rPr1 = ({r},{Pr})
-			const double rPr1 = Dot(r_vec,Pr_vec.data(),ndof);
-      // beta = rPr1/rPr
-			double beta = rPr1/rPr;
-			rPr = rPr1;
-      // {p} = {Pr} + beta*{p}
-      for(unsigned int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
+      double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
+      if (conv_ratio < conv_ratio_tol) { return aResHistry; }
     }
-	}
+    {  // calc beta
+      // {Pr} = [P]{r}
+      for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
+      ilu.Solve(Pr_vec);
+      // rPr1 = ({r},{Pr})
+      const double rPr1 = Dot(r_vec, Pr_vec.data(), ndof);
+      // beta = rPr1/rPr
+      double beta = rPr1 / rPr;
+      rPr = rPr1;
+      // {p} = {Pr} + beta*{p}
+      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
+    }
+  }
   {
     // Converge Judgement
-    double sq_norm_res = Dot(r_vec,r_vec,ndof);
+    double sq_norm_res = Dot(r_vec, r_vec, ndof);
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
 }
 
 
-template <>
-std::vector<double> delfem2::Solve_PCG
-(COMPLEX* r_vec,
- COMPLEX* x_vec,
+template<>
+std::vector<double> Solve_PCG
+(COMPLEX *r_vec,
+ COMPLEX *x_vec,
  double conv_ratio_tol,
  unsigned int max_nitr,
- const CMatrixSparse<COMPLEX>& mat,
- const delfem2::CPreconditionerILU<COMPLEX>& ilu)
-{
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
+ const CMatrixSparse<COMPLEX> &mat,
+ const delfem2::CPreconditionerILU<COMPLEX> &ilu) {
+  const unsigned int ndof = mat.nblk_col * mat.len_col;
   std::vector<double> aResHistry;
-  
-  for(unsigned int i=0;i<ndof;i++){ x_vec[i] = COMPLEX(0.0,0.0); }    // {x} = 0
-  
+
+  for (unsigned int i = 0; i < ndof; i++) { x_vec[i] = COMPLEX(0.0, 0.0); }    // {x} = 0
+
   double inv_sqnorm_res0;
   {
-    const double sqnorm_res0 = Dot(r_vec,r_vec,ndof).real();
+    const double sqnorm_res0 = Dot(r_vec, r_vec, ndof).real();
     aResHistry.push_back(sqnorm_res0);
-    if( sqnorm_res0 < 1.0e-30 ){ return aResHistry; }
+    if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
     inv_sqnorm_res0 = 1.0 / sqnorm_res0;
   }
-  
+
   // {Pr} = [P]{r}
-  std::vector<COMPLEX> Pr_vec(r_vec,r_vec+ndof);
+  std::vector<COMPLEX> Pr_vec(r_vec, r_vec + ndof);
   ilu.Solve(Pr_vec);
   // {p} = {Pr}
   std::vector<COMPLEX> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-  COMPLEX rPr = Dot(r_vec,Pr_vec.data(),ndof);
-  for(unsigned int iitr=0;iitr<max_nitr;iitr++){
+  COMPLEX rPr = Dot(r_vec, Pr_vec.data(), ndof);
+  for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
     {
-      std::vector<COMPLEX>& Ap_vec = Pr_vec;
+      std::vector<COMPLEX> &Ap_vec = Pr_vec;
       // {Ap} = [A]{p}
-      mat.MatVec(1.0,p_vec.data(),0.0,Ap_vec.data());
+      mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data());
       // alpha = ({r},{Pr})/({p},{Ap})
-      const double pAp = Dot(p_vec,Ap_vec).real();
+      const double pAp = Dot(p_vec, Ap_vec).real();
       COMPLEX alpha = rPr / pAp;
-      AXPY(-alpha,Ap_vec.data(),r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
-      AXPY(+alpha,p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
+      AXPY(-alpha, Ap_vec.data(), r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
+      AXPY(+alpha, p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
     }
     {  // Converge Judgement
-      double sqnorm_res = Dot(r_vec,r_vec,ndof).real();
-      double conv_ratio = sqrt(sqnorm_res*inv_sqnorm_res0);
+      double sqnorm_res = Dot(r_vec, r_vec, ndof).real();
+      double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
       aResHistry.push_back(conv_ratio);
-      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
+      if (conv_ratio < conv_ratio_tol) { return aResHistry; }
     }
     {  // calc beta
       // {Pr} = [P]{r}
-      for(unsigned int i=0;i<ndof;i++){ Pr_vec[i] = r_vec[i]; }
+      for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
       ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
-      const COMPLEX rPr1 = Dot(r_vec,Pr_vec.data(),ndof);
+      const COMPLEX rPr1 = Dot(r_vec, Pr_vec.data(), ndof);
       // beta = rPr1/rPr
-      COMPLEX beta = rPr1/rPr;
+      COMPLEX beta = rPr1 / rPr;
       rPr = rPr1;
       // {p} = {Pr} + beta*{p}
-      for(unsigned int i=0;i<ndof;i++){ p_vec[i] = Pr_vec[i] + beta*p_vec[i]; }
+      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
     }
   }
   {
     // Converge Judgement
-    double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
+    double sq_norm_res = Dot(r_vec, r_vec, ndof).real();
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
 }
 
+} // end namespace delfem2
+
+// -----------------------------------------------------------------------------------
+
+namespace delfem2 {
+
 template <>
-std::vector<double> delfem2::Solve_PBiCGStab
+std::vector<double> Solve_PBiCGStab
 (double* r_vec,
  double* x_vec,
  double conv_ratio_tol,
@@ -686,10 +692,8 @@ std::vector<double> delfem2::Solve_PBiCGStab
   return aResHistry;
 }
 
-
-
 template <>
-std::vector<double> delfem2::Solve_PBiCGStab
+std::vector<double> Solve_PBiCGStab
 (COMPLEX* r_vec,
  COMPLEX* x_vec,
  double conv_ratio_tol,
@@ -764,6 +768,10 @@ std::vector<double> delfem2::Solve_PBiCGStab
   
   return aResHistry;
 }
+
+} // end namespace delfem2
+
+// ----------------------------------------------------------------------------
 
 
 std::vector<double> dfm2::Solve_PCOCG

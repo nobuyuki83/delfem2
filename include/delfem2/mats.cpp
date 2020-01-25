@@ -574,7 +574,7 @@ namespace delfem2 {
 
 // {y} = {y} + a * {x}
 template <>
-void dfm2::AXPY
+void AXPY
     (double a,
      const double* x,
      double* y,
@@ -584,7 +584,7 @@ void dfm2::AXPY
 }
 
 template <>
-void dfm2::AXPY
+void AXPY
     (COMPLEX a,
      const COMPLEX* x,
      COMPLEX* y,
@@ -650,10 +650,11 @@ void dfm2::XPlusAY
 namespace delfem2 {
 
 template<>
-void dfm2::setRHS_Zero
-    (std::vector<double> &vec_b,
-     const std::vector<int> &aBCFlag,
-     int iflag_nonzero) {
+void setRHS_Zero
+(std::vector<double> &vec_b,
+ const std::vector<int> &aBCFlag,
+ int iflag_nonzero)
+{
   const std::size_t ndof = vec_b.size();
   for (unsigned int i = 0; i < ndof; ++i) {
     if (aBCFlag[i] == iflag_nonzero) continue;
@@ -662,10 +663,11 @@ void dfm2::setRHS_Zero
 }
 
 template<>
-void dfm2::setRHS_Zero
-    (std::vector<COMPLEX> &vec_b,
-     const std::vector<int> &aBCFlag,
-     int iflag_nonzero) {
+void setRHS_Zero
+(std::vector<COMPLEX> &vec_b,
+ const std::vector<int> &aBCFlag,
+ int iflag_nonzero)
+{
   const int ndof = (int) vec_b.size();
   for (int i = 0; i < ndof; ++i) {
     if (aBCFlag[i] == iflag_nonzero) continue;
@@ -681,12 +683,13 @@ namespace delfem2 {
 
 template<>
 std::vector<double>
-dfm2::Solve_CG
-    (std::vector<double> &r_vec,
-     std::vector<double> &x_vec,
-     double conv_ratio_tol,
-     unsigned int max_iteration,
-     const dfm2::CMatrixSparse<double> &mat) {
+Solve_CG
+(std::vector<double> &r_vec,
+ std::vector<double> &x_vec,
+ double conv_ratio_tol,
+ unsigned int max_iteration,
+ const dfm2::CMatrixSparse<double> &mat)
+{
   assert(!mat.valDia.empty());
   assert(mat.nblk_col == mat.nblk_row);
   assert(mat.len_col == mat.len_row);
@@ -724,12 +727,13 @@ dfm2::Solve_CG
 
 template<>
 std::vector<double>
-dfm2::Solve_CG
-    (std::vector<COMPLEX> &r_vec,
-     std::vector<COMPLEX> &x_vec,
-     double conv_ratio_tol,
-     unsigned int max_iteration,
-     const dfm2::CMatrixSparse<COMPLEX> &mat) {
+Solve_CG
+(std::vector<COMPLEX> &r_vec,
+ std::vector<COMPLEX> &x_vec,
+ double conv_ratio_tol,
+ unsigned int max_iteration,
+ const dfm2::CMatrixSparse<COMPLEX> &mat)
+{
   assert(!mat.valDia.empty());
   assert(mat.nblk_col == mat.nblk_row);
   assert(mat.len_col == mat.len_row);
@@ -774,12 +778,13 @@ namespace delfem2 {
 
 template<>
 std::vector<double>
-dfm2::Solve_BiCGSTAB
-    (std::vector<COMPLEX> &r_vec,
-     std::vector<COMPLEX> &x_vec,
-     double conv_ratio_tol,
-     unsigned int max_niter,
-     const dfm2::CMatrixSparse<COMPLEX> &mat) {
+Solve_BiCGSTAB
+(std::vector<COMPLEX> &r_vec,
+ std::vector<COMPLEX> &x_vec,
+ double conv_ratio_tol,
+ unsigned int max_niter,
+ const dfm2::CMatrixSparse<COMPLEX> &mat)
+{
   assert(!mat.valDia.empty());
   assert(mat.nblk_col == mat.nblk_row);
   assert(mat.len_col == mat.len_row);
@@ -843,12 +848,13 @@ dfm2::Solve_BiCGSTAB
 
 template<>
 std::vector<double>
-dfm2::Solve_BiCGSTAB
-    (std::vector<double> &r_vec,
-     std::vector<double> &x_vec,
-     double conv_ratio_tol,
-     unsigned int max_niter,
-     const dfm2::CMatrixSparse<double> &mat) {
+Solve_BiCGSTAB
+(std::vector<double> &r_vec,
+ std::vector<double> &x_vec,
+ double conv_ratio_tol,
+ unsigned int max_niter,
+ const dfm2::CMatrixSparse<double> &mat)
+{
   assert(!mat.valDia.empty());
   assert(mat.nblk_col == mat.nblk_row);
   assert(mat.len_col == mat.len_row);
