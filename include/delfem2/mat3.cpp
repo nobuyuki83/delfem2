@@ -482,15 +482,21 @@ template void dfm2::CMat3<double>::SetZero();
   
 // --------------------
 
-template <>
-void dfm2::CMat3<double>::SetRandom(){
+namespace delfem2 {
+
+template<>
+void CMat3<double>::SetRandom() {
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> score(-50.0, 50.0);
-  for(double & v : mat){
+  for (double &v : mat) {
     v = score(mt);
   }
 }
+
+}
+
+// -----------------------------------------
 
 template <typename T>
 void dfm2::CMat3<T>::SetRotMatrix_Cartesian(const double vec[])

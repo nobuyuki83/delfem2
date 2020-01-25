@@ -828,17 +828,18 @@ template void dfm2::Translate(std::vector<CVec2d>& aP, double dx, double dy);
 
 // ----------------------------
 
-template <>
-void dfm2::Rotate
-(std::vector<CVec2d>& aP,
- double dt)
-{
-  for(auto & ip : aP){
+namespace delfem2 {
+
+template<>
+void Rotate(std::vector<CVec2d> &aP, double dt) {
+  for (auto &ip : aP) {
     double x0 = ip.p[0];
     double y0 = ip.p[1];
-    ip.p[0] = cos(dt)*x0 - sin(dt)*y0;
-    ip.p[1] = sin(dt)*x0 + cos(dt)*y0;
+    ip.p[0] = cos(dt) * x0 - sin(dt) * y0;
+    ip.p[1] = sin(dt) * x0 + cos(dt) * y0;
   }
+}
+
 }
 
 // ----------------------------
