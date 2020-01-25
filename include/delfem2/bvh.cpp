@@ -463,11 +463,12 @@ void dfm2::Check_MortonCode_Sort
     std::uint32_t mc1 = dfm2::MortonCode(x1,y1,z1);
     assert( mc0 == mc1 );
   }
+  /*
   for(int ip=0;ip<aSortedId.size();++ip){
     std::uint32_t mc0 = aSortedMc[ip];
     std::cout << std::bitset<32>(mc0) << " " << ip << " " << mc0 << std::endl;
-    
   }
+   */
 }
 
 void dfm2::Check_MortonCode_RangeSplit
