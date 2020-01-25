@@ -29,8 +29,12 @@ int BVH_MakeTreeTopology(std::vector<CNodeBVH2>& aNodeBVH,
                          const std::vector<int>& aElemSur,
                          const std::vector<double>& aElemCenter);
   
-int findSplit(const unsigned int* sorted_morton_code, int start, int last);
-std::pair<int,int> determineRange(const unsigned int* sorted_morton_code, int numInternalNode, int i);
+int MortonCode_FindSplit(const std::uint32_t* sortedMC,
+              unsigned int start,
+              unsigned int last);
+std::pair<int,int> MortonCode_DeterminRange(const std::uint32_t* sortedMC,
+                                  int nMC,
+                                  int i);
 
 template <typename T>
 std::uint32_t MortonCode(T x, T y, T z);
@@ -42,6 +46,15 @@ void GetSortedMortenCode(std::vector<unsigned int> &aSortedId, std::vector<unsig
 void BVH_TreeTopology_Morton(std::vector<CNodeBVH2>& aNodeBVH,
                              const std::vector<unsigned int>& aSortedId,
                              const std::vector<unsigned int>& aSortedMc);
+
+void Check_BVH(const std::vector<CNodeBVH2>& aNodeBVH,
+               unsigned int N);
+void Check_MortonCode_RangeSplit(const std::vector<std::uint32_t>& aSortedMc);
+void Check_MortonCode_Sort(const std::vector<unsigned int>& aSortedId,
+                           const std::vector<std::uint32_t>& aSortedMc,
+                           const std::vector<double> aXYZ,
+                           const double bbmin[3], const double bbmax[3]);
+
 
 
 // -------------------------------------------------------------------
