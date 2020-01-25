@@ -257,17 +257,30 @@ int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
   }
 }
 
-std::pair<int,int> delfem2::determineRange
-(const unsigned int* sorted_morton_code, int numInternalNode, int i)
+std::pair<int,int> delfem2::MortonCode_DeterminRange
+(const std::uint32_t* sortedMC,
+ int nMC,
+ int imc)
 {
-  int size = numInternalNode + 1;
-  int d = delta(i, i + 1, sorted_morton_code, size) - delta(i, i - 1, sorted_morton_code, size);
+  if( imc == 0 ){ return std::make_pair(0,nMC-1); }
+  // ----------------------
+  const std::uint32_t mc0 = sortedMC[imc-1];
+  const std::uint32_t mc1 = sortedMC[imc+0];
+  const std::uint32_t mc2 = sortedMC[imc+1];
+  if( mc0 == mc1 && mc1 == mc2 ){ // for hash value collision
+    int jmc=imc+1;
+    for(;jmc<nMC;++jmc){
+      if( sortedMC[jmc] != mc1 ) break;
+    }
+    return std::make_pair(imc,jmc-1);
+  }
+  int d = delta(imc, imc + 1, sortedMC, nMC) - delta(imc, imc - 1, sortedMC, nMC);
   d = d > 0 ? 1 : -1;
   
   //compute the upper bound for the length of the range
-  int delta_min = delta(i, i - d, sorted_morton_code, size);
+  const int delta_min = delta(imc, imc - d, sortedMC, nMC);
   int lmax = 2;
-  while (delta(i, i + lmax*d, sorted_morton_code, size)>delta_min)
+  while (delta(imc, imc + lmax*d, sortedMC, nMC)>delta_min)
   {
     lmax = lmax * 2;
   }
@@ -276,67 +289,55 @@ std::pair<int,int> delfem2::determineRange
   int l = 0;
   for (int t = lmax / 2; t >= 1; t /= 2)
   {
-    if (delta(i, i + (l + t)*d, sorted_morton_code, size)>delta_min)
+    if (delta(imc, imc + (l + t)*d, sortedMC, nMC)>delta_min)
     {
       l = l + t;
     }
   }
-  int j = i + l*d;
+  int j = imc + l*d;
   
   std::pair<int,int> range;
-  if (i <= j) { range.first = i; range.second = j; }
-  else { range.first = j; range.second = i; }
+  if (imc <= j) { range.first = imc; range.second = j; }
+  else { range.first = j; range.second = imc; }
   return range;
 }
 
-bool is_diff_at_bit(unsigned int val1, unsigned int val2, int n)
+int delfem2::MortonCode_FindSplit
+ (const std::uint32_t* sortedMC,
+  unsigned int iMC_start,
+  unsigned int iMC_last)
 {
-  return val1 >> (31 - n) != val2 >> (31 - n);
-}
-
-int delfem2::findSplit(const unsigned int* sorted_morton_code, int start, int last)
-{
-    //return -1 if there is only
-    //one primitive under this node.
-  if (start == last)
+  //return -1 if there is only
+  //one primitive under this node.
+  if (iMC_start == iMC_last) { return -1; }
+  
+  // ------------------------------
+  const int common_prefix = clz(sortedMC[iMC_start] ^ sortedMC[iMC_last]);
+  
+  //handle duplicated morton code
+  if (common_prefix == 32 ){ return iMC_start; } // sizeof(std::uint32_t)*8
+  
+  // Use binary search to find where the next bit differs.
+  // Specifically, we are looking for the highest object that
+  // shares more than commonPrefix bits with the first one.
+  const std::uint32_t mcStart = sortedMC[iMC_start];
+  int iMC_split = iMC_start; // initial guess
+  int step = iMC_last - iMC_start;
+  do
   {
-    return -1;
-  }
-  else
-  {
-    int common_prefix = clz(sorted_morton_code[start] ^ sorted_morton_code[last]);
-    
-      //handle duplicated morton code separately
-    if (common_prefix == 32)
+    step = (step + 1) >> 1; // exponential decrease
+    const int newSplit = iMC_split + step; // proposed new position
+    if (newSplit < iMC_last)
     {
-      return (start + last) / 2;
-    }
-    
-    // Use binary search to find where the next bit differs.
-    // Specifically, we are looking for the highest object that
-    // shares more than commonPrefix bits with the first one.
-    
-    int split = start; // initial guess
-    int step = last - start;
-    do
-    {
-      step = (step + 1) >> 1; // exponential decrease
-      int newSplit = split + step; // proposed new position
-      
-      if (newSplit < last)
-      {
-        bool is_diff = is_diff_at_bit(sorted_morton_code[start],
-                                      sorted_morton_code[newSplit],
-                                      common_prefix);
-        if (!is_diff)
-        {
-          split = newSplit; // accept proposal
-        }
+      std::uint32_t splitCode = sortedMC[newSplit];
+      int splitPrefix = clz(mcStart ^ splitCode);
+      if (splitPrefix > common_prefix){
+        iMC_split = newSplit; // accept proposal
       }
-    } while (step > 1);
-    
-    return split;
+    }
   }
+  while (step > 1);
+  return iMC_split;
 }
 
 
@@ -346,7 +347,7 @@ public:
   unsigned int iobj;
 public:
   bool operator < (const CPairMtcInd& rhs) const {
-    return this->imtc < rhs.imtc;
+    return (this->imtc < rhs.imtc);
   }
 };
 
@@ -407,8 +408,8 @@ void dfm2::BVH_TreeTopology_Morton
   aNodeBVH[0].iroot = -1;
   const unsigned int nni = aSortedMc.size()-1; // number of internal node
   for(unsigned int ini=0;ini<nni;++ini){
-    const std::pair<int,int> range = dfm2::determineRange(aSortedMc.data(), aSortedMc.size()-1, ini);
-    int isplit = dfm2::findSplit(aSortedMc.data(), range.first, range.second);
+    const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
+    int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
     assert( isplit != -1 );
     if( range.first == isplit ){
       const int inlA = nni+isplit;
@@ -435,5 +436,82 @@ void dfm2::BVH_TreeTopology_Morton
       aNodeBVH[ini].ichild[1] = iniB;
       aNodeBVH[iniB].iroot = ini;
     }
+  }
+}
+
+
+void dfm2::Check_MortonCode_Sort
+(const std::vector<unsigned int>& aSortedId,
+ const std::vector<std::uint32_t>& aSortedMc,
+ const std::vector<double> aXYZ,
+ const double bbmin[3], const double bbmax[3])
+{
+  for(unsigned int imc=1;imc<aSortedMc.size();++imc){
+    std::uint32_t mc0 = aSortedMc[imc-1];
+    std::uint32_t mc1 = aSortedMc[imc+0];
+    assert( mc0 <= mc1 );
+  }
+  for(unsigned int imc=0;imc<aSortedMc.size();++imc){
+    std::uint32_t mc0 = aSortedMc[imc];
+    unsigned int ip = aSortedId[imc];
+    double x0 = aXYZ[ip*3+0];
+    double y0 = aXYZ[ip*3+1];
+    double z0 = aXYZ[ip*3+2];
+    double x1 = (x0-bbmin[0])/(bbmax[0]-bbmin[0]);
+    double y1 = (y0-bbmin[1])/(bbmax[1]-bbmin[1]);
+    double z1 = (z0-bbmin[2])/(bbmax[2]-bbmin[2]);
+    std::uint32_t mc1 = dfm2::MortonCode(x1,y1,z1);
+    assert( mc0 == mc1 );
+  }
+  for(int ip=0;ip<aSortedId.size();++ip){
+    std::uint32_t mc0 = aSortedMc[ip];
+    std::cout << std::bitset<32>(mc0) << " " << ip << " " << mc0 << std::endl;
+    
+  }
+}
+
+void dfm2::Check_MortonCode_RangeSplit
+(const std::vector<std::uint32_t>& aSortedMc)
+{
+  for(int ini=0;ini<aSortedMc.size()-1;++ini){
+    const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
+    int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
+    const std::pair<int,int> rangeA = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
+    const std::pair<int,int> rangeB = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
+    assert( range.first == rangeA.first );
+    assert( range.second == rangeB.second );
+    {
+      const int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
+      const int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
+      assert( last1+1 == first1 );
+    }
+  }
+}
+
+static void mark_child(std::vector<int>& aFlg,
+                unsigned int inode0,
+                const std::vector<dfm2::CNodeBVH2>& aNode)
+{
+  assert( inode0 < aNode.size() );
+  if( aNode[inode0].ichild[1] == -1 ){ // leaf
+    const unsigned int in0 = aNode[inode0].ichild[0];
+    assert( in0 < aFlg.size() );
+    aFlg[in0] += 1;
+    return;
+  }
+  const unsigned int in0 = aNode[inode0].ichild[0];
+  const unsigned int in1 = aNode[inode0].ichild[1];
+  mark_child(aFlg, in0, aNode);
+  mark_child(aFlg, in1, aNode);
+}
+
+void dfm2::Check_BVH
+(const std::vector<dfm2::CNodeBVH2>& aNodeBVH,
+ unsigned int N)
+{
+  std::vector<int> aFlg(N,0);
+  mark_child(aFlg, 0, aNodeBVH);
+  for(int i=0;i<N;++i){
+    assert(aFlg[i]==1);
   }
 }
