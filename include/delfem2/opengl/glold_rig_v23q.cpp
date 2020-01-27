@@ -50,7 +50,7 @@ void Draw_RigBone
 (int ibone,
  bool is_selected,
  int ielem_selected,
- const std::vector<CRigBone>& aBone,
+ const std::vector<dfm2::CRigBone>& aBone,
  double rad_bone_sphere,
  double rad_rot_hndlr)
 {
@@ -72,7 +72,7 @@ void Draw_RigBone
 }
 
 void DrawBone
-(const std::vector<CRigBone>& aBone,
+(const std::vector<dfm2::CRigBone>& aBone,
  int ibone_selected,
  int ielem_selected,
  double rad_bone_sphere,
@@ -88,10 +88,10 @@ void DrawBone
   }
   // draw edges whilte
   for( int ibone=0;ibone<(int)aBone.size();++ibone){
-    const CRigBone& bone = aBone[ibone];
+    const dfm2::CRigBone& bone = aBone[ibone];
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
-    const CRigBone& bone_p = aBone[ibone_p];
+    const dfm2::CRigBone& bone_p = aBone[ibone_p];
     bool is_selected_p = (ibone_p == ibone_selected);
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
     else{              ::glColor3d(0.0,0.0,0.0); }

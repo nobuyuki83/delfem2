@@ -19,8 +19,7 @@
 #include "delfem2/rig_v3q.h"
 
 
-
-void DrawBone(const std::vector<CRigBone>& aBone,
+void DrawBone(const std::vector<delfem2::CRigBone>& aBone,
               int ibone_selected,
               int ielem_selected,
               double rad_bone_sphere,

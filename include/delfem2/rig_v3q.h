@@ -6,8 +6,8 @@
  */
 
 
-#ifndef RIG_V3Q_H
-#define RIG_V3Q_H
+#ifndef DFM2_RIG_V3Q_H
+#define DFM2_RIG_V3Q_H
 
 #include <stdio.h>
 #include <iostream>
@@ -17,7 +17,7 @@
 
 #include "delfem2/vec3.h"
 
-//class delfem2::CVector3;
+namespace delfem2 {
 
 class CRigBone
 {
@@ -112,33 +112,7 @@ void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
 
 
 
-/*
-class CBoneGoal
-{
-public:
-  CBoneGoal(){
-    itype = 0; // 0:position, 1:on line
-  }
-  void GetGoalPos(double* pos_trg,
-                  const double* org_rot,
-                  const double* pos_cur) const;
-public:
-  int ibone;
-  ////
-  int itype;
-  double pos[3];
-  double dir[3];
-};
- */
+} // namespace delfem2
 
-//void BoneOptimization(std::vector<CBone_RigMsh>& aBone,
-//                      const std::vector<CBoneGoal>& aBoneGoal);
+#endif // #define DFM2_RIG_V3Q_H
 
-//void DrawBoneTarget(const std::vector<CBoneGoal>& aBoneGoal,
-//                    const std::vector<CBone_RigMsh>& aBone);
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-#endif /* rigmesh_hpp */

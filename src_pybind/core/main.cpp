@@ -160,7 +160,7 @@ public:
     UpdateBoneRotTrans(aRigBone);
   }
 public:
-  std::vector<CRigBone> aRigBone;
+  std::vector<dfm2::CRigBone> aRigBone;
 };
 
 CBoneArray
@@ -358,7 +358,7 @@ PYBIND11_MODULE(c_core, m) {
   m.def("CppGLTF_GetMeshInfo",   &PyGLTF_GetMeshInfo);
   m.def("CppGLTF_GetBones",      &PyGLTF_GetBones);
   m.def("update_rig_skin",       &PyUpdateRigSkin);
-  m.def("update_bone_transform", &UpdateBoneRotTrans);
+  m.def("update_bone_transform", &dfm2::UpdateBoneRotTrans);
 
   // ------------------------------------------
 
