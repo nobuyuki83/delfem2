@@ -11,6 +11,10 @@
 #include "tinygltf/tiny_gltf.h"
 #include "io_gltf.h"
 
+namespace dfm2 = delfem2;
+
+
+// -----------------------------------------------------
 
 static void CalcInvMat(double* a, const int n, int& info )
 {
@@ -309,7 +313,7 @@ void GetMeshInfo
 }
 
 void GetBoneBinding
-(std::vector<CRigBone>& aBone,
+(std::vector<dfm2::CRigBone>& aBone,
  const tinygltf::Model& model)
 {
   const tinygltf::Skin& skin = model.skins[0];
@@ -327,7 +331,7 @@ void GetBoneBinding
 }
 
 void SetBone
-(std::vector<CRigBone>& aBone,
+(std::vector<dfm2::CRigBone>& aBone,
  const tinygltf::Model& model,
  int inode_cur, int ibone_p,
  const std::vector<int>& mapNode2Bone)
@@ -388,7 +392,7 @@ void CGLTF::GetMeshInfo
 }
 
 void CGLTF::GetBone
-(std::vector<CRigBone>& aBone,
+(std::vector<dfm2::CRigBone>& aBone,
  int iskin) const
 {
   aBone.resize( model->skins[0].joints.size() );

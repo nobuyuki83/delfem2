@@ -16,12 +16,14 @@
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
 
+namespace dfm2 = delfem2;
+
 // -------------------------------------------
 
 int main(int argc,char* argv[])
 {
-  std::vector<CRigBone> aBone;
-  std::vector<CChannel_BioVisionHierarchy> aChannelRotTransBone;
+  std::vector<dfm2::CRigBone> aBone;
+  std::vector<dfm2::CChannel_BioVisionHierarchy> aChannelRotTransBone;
   int nframe = 0;
   std::vector<double> aValRotTransBone;
 

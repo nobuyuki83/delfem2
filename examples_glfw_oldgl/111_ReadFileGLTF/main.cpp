@@ -18,6 +18,8 @@
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
 
+namespace dfm2 = delfem2;
+
 // ---------------------------------
 
 int main(int argc,char* argv[])
@@ -27,7 +29,7 @@ int main(int argc,char* argv[])
   std::vector<double> aRigWeight;
   std::vector<unsigned int> aRigJoint;
   std::vector<double> aXYZ;
-  std::vector<CRigBone> aBone;
+  std::vector<dfm2::CRigBone> aBone;
   {
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
 //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";

@@ -64,7 +64,7 @@ dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere,double> bvh;
 std::vector<double> aXYZ0_Contact;
 std::vector<double> aRigWeight_Contact;
 std::vector<unsigned int> aRigJoint_Contact;
-std::vector<CRigBone> aBone;
+std::vector<dfm2::CRigBone> aBone;
 
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, 0.0};

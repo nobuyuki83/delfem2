@@ -94,7 +94,7 @@ static void CalcInvMat(double* a, const int n, int& info )
 
 // ------------------------------------------------------------
 
-int CRigBone::PickHandler
+int dfm2::CRigBone::PickHandler
 (const dfm2::CVec3d& org,
  const dfm2::CVec3d& dir,
  double rad_handlr,
@@ -105,13 +105,13 @@ int CRigBone::PickHandler
                                         tol);
 }
 
-void CRigBone::SetRotationBryant
+void dfm2::CRigBone::SetRotationBryant
 (double rx, double ry, double rz)
 {
   dfm2::Quat_Bryant(rot, rx, ry, rz);
 }
 
-void CRigBone::SetTranslation
+void dfm2::CRigBone::SetTranslation
 (double tx, double ty, double tz)
 {
   this->trans[0] = tx;
@@ -119,8 +119,8 @@ void CRigBone::SetTranslation
   this->trans[2] = tz;
 }
 
-void UpdateBoneRotTrans
-(std::vector<CRigBone>& aBone)
+void dfm2::UpdateBoneRotTrans
+(std::vector<dfm2::CRigBone>& aBone)
 {
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
@@ -143,13 +143,13 @@ void UpdateBoneRotTrans
 
 
 
-void UpdateRigSkin
+void dfm2::UpdateRigSkin
 (double* aXYZ,
  const double* aXYZ0,
  unsigned int nXYZ,
  const unsigned int* aTri,
  unsigned int nTri,
- const std::vector<CRigBone>& aBone,
+ const std::vector<dfm2::CRigBone>& aBone,
  const double* aRigWeight,
  const unsigned int* aRigJoint)
 {
@@ -180,12 +180,12 @@ void UpdateRigSkin
 }
 
 
-////////////////////////////////////////////////////////////////////////////
+// ------------------------------------
 // from here BioVisionHierarchy
 
-void Read_BioVisionHierarchy
-(std::vector<CRigBone>& aBone,
- std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
+void dfm2::Read_BioVisionHierarchy
+(std::vector<dfm2::CRigBone>& aBone,
+ std::vector<dfm2::CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  int& nframe,
  std::vector<double>& aValueRotTransBone,
  const std::string& path_bvh)
@@ -198,7 +198,7 @@ void Read_BioVisionHierarchy
   }
   aBone.clear();
   aChannelRotTransBone.clear();
-  ///////////////////////////////////////////
+  //
   std::string line;
   std::vector<int> stackIndBone;
   while(std::getline(fin,line)){
@@ -212,7 +212,7 @@ void Read_BioVisionHierarchy
     }
     else if( aToken[0] == "ROOT" ){
       assert(aBone.size()==0);
-      CRigBone br;
+      dfm2::CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
@@ -265,14 +265,14 @@ void Read_BioVisionHierarchy
       }
     }
     else if( aToken[0] == "JOINT" ){
-      CRigBone br;
+      dfm2::CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
     }
     else if( aToken[0] == "End" ){
       assert(aToken[1] == "Site");
-      CRigBone br;
+      dfm2::CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
@@ -307,9 +307,9 @@ void Read_BioVisionHierarchy
       aValueRotTransBone[iframe*nchannel+ich] = myStod(aToken[ich]);
     }
   }
-  ///////
+  // ---------------
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
-    CRigBone& bone = aBone[ibone];
+    dfm2::CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
     bone.rot[0] = 1.0;
     bone.rot[1] = 0.0;
@@ -319,7 +319,7 @@ void Read_BioVisionHierarchy
     bone.trans[1] = 0.0;
     bone.trans[2] = 0.0;
     if( bone.ibone_parent != -1 ){
-      const CRigBone& bone_p = aBone[bone.ibone_parent];
+      const dfm2::CRigBone& bone_p = aBone[bone.ibone_parent];
       bone.trans[0] = (-bone.invBindMat[ 3])-(-bone_p.invBindMat[ 3]);
       bone.trans[1] = (-bone.invBindMat[ 7])-(-bone_p.invBindMat[ 7]);
       bone.trans[2] = (-bone.invBindMat[11])-(-bone_p.invBindMat[11]);
@@ -332,9 +332,9 @@ void Read_BioVisionHierarchy
 }
 
 
-void SetPose_BioVisionHierarchy
-(std::vector<CRigBone>& aBone,
- const std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
+void dfm2::SetPose_BioVisionHierarchy
+(std::vector<dfm2::CRigBone>& aBone,
+ const std::vector<dfm2::CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  const double *aVal)
 {
   for(auto & bone : aBone){
@@ -363,20 +363,20 @@ void SetPose_BioVisionHierarchy
       dfm2::QuatCopy(aBone[ibone].rot,qtmp);
     }
   }
-  UpdateBoneRotTrans(aBone);
+  dfm2::UpdateBoneRotTrans(aBone);
 }
 
 void PickBone
 (int& ibone_selected,
  int& ielem_selected,
- const std::vector<CRigBone>& aBone,
+ const std::vector<dfm2::CRigBone>& aBone,
  const dfm2::CVec3d& src,
  const dfm2::CVec3d& dir,
  double rad_hndlr,
  double tol)
 {
   if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
-    const CRigBone& bone = aBone[ibone_selected];
+    const dfm2::CRigBone& bone = aBone[ibone_selected];
     ielem_selected = bone.PickHandler(src,dir,rad_hndlr,tol);
   }
   else{
