@@ -216,7 +216,7 @@ def winDraw3d(list_obj:list,
   for obj in list_obj:
     if hasattr(obj, 'minmax_xyz'):
       aabb3.add_minmax_xyz(obj.minmax_xyz())
-  if not aabb3.isActive:
+  if not aabb3.is_active():
     aabb3.set_minmax_xyz(-1,+1, -1,+1, -1,+1)
   window.wm.camera.adjust_scale_trans(aabb3.list_xyz())
   window.wm.camera.scale = camera_scale

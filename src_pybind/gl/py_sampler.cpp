@@ -66,9 +66,9 @@ void init_sampler(py::module &m)
   py::class_<dfm2::opengl::CGPUSamplerDrawer>(m,"CppGPUSampler", "sample color and depth in the frame buffer")
   .def(py::init<>())
   .def("draw",       &dfm2::opengl::CGPUSamplerDrawer::Draw)
-  .def("minmax_xyz", &dfm2::opengl::CGPUSamplerDrawer::MinMaxXYZ)
   .def("init_gl",    &dfm2::opengl::CGPUSamplerDrawer::InitGL)
-  // --------------------------
+  .def("minmax_xyz", &dfm2::opengl::CGPUSamplerDrawer::MinMaxXYZ)
+  //
   .def("init",       &dfm2::opengl::CGPUSamplerDrawer::Init,
        py::arg("size_res_width"),
        py::arg("size_res_height") )
@@ -78,7 +78,6 @@ void init_sampler(py::module &m)
        py::arg("org"),
        py::arg("dir_prj"),
        py::arg("dir_width"))
-  // ---------------
   .def("start",      &dfm2::opengl::CGPUSamplerDrawer::Start)
   .def("end",        &dfm2::opengl::CGPUSamplerDrawer::End)
   .def("get_pos_ray_collide",   &dfm2::opengl::CGPUSamplerDrawer::getGPos)
@@ -90,8 +89,7 @@ void init_sampler(py::module &m)
   .def_readwrite("len_axis",    &dfm2::opengl::CGPUSamplerDrawer::draw_len_axis)
   .def_readwrite("is_draw_tex", &dfm2::opengl::CGPUSamplerDrawer::isDrawTex)
   .def_readwrite("point_size",  &dfm2::opengl::CGPUSamplerDrawer::pointSize);
-  
-  
+    
   m.def("depth_buffer", &depth_buffer);
   m.def("color_buffer_4byte", &color_buffer_4byte);
 //  m.def("color_buffer_4float", &color_buffer_4float);

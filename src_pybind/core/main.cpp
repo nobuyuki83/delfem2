@@ -271,18 +271,19 @@ PYBIND11_MODULE(c_core, m) {
   
   // -------------------------
   // axis arrigned boudning box
-  py::class_<dfm2::CBV3D_AABB>(m,"AABB3", "3D axis aligned bounding box class")
+  py::class_<dfm2::CBV3_AABB>(m,"AABB3", "3D axis aligned bounding box class")
   .def(py::init<>())
+  .def(py::init<const std::vector<double>&, const std::vector<double>&>())
   .def(py::init<const std::vector<double>&>())
-  .def("__str__",            &dfm2::CBV3D_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
-  .def("minmax_xyz",         &dfm2::CBV3D_AABB::MinMaxXYZ)
-  .def("set_minmax_xyz",     &dfm2::CBV3D_AABB::SetMinMaxXYZ)
-  .def("add_minmax_xyz",     &dfm2::CBV3D_AABB::Add_AABBMinMax)
-  .def("list_xyz",           &dfm2::CBV3D_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
-  .def("diagonal_length",    &dfm2::CBV3D_AABB::DiagonalLength, "diagonal length of the bounding box")
-  .def("max_length",         &dfm2::CBV3D_AABB::MaxLength, "diagonal length of the bounding box")
-  .def("center",             &dfm2::CBV3D_AABB::Center, "center position")
-  .def_readwrite("isActive", &dfm2::CBV3D_AABB::is_active);
+  .def("__str__",            &dfm2::CBV3_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
+  .def("minmax_xyz",         &dfm2::CBV3_AABB::AABBVec3)
+  .def("set_minmax_xyz",     &dfm2::CBV3_AABB::Set_AABBVec3)
+  .def("add_minmax_xyz",     &dfm2::CBV3_AABB::Add_AABBVec3)
+  .def("list_xyz",           &dfm2::CBV3_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
+  .def("diagonal_length",    &dfm2::CBV3_AABB::DiagonalLength, "diagonal length of the bounding box")
+  .def("max_length",         &dfm2::CBV3_AABB::MaxLength, "diagonal length of the bounding box")
+  .def("center",             &dfm2::CBV3_AABB::Center, "center position")
+  .def("is_active",          &dfm2::CBV3_AABB::IsActive);
   
   // --------
   // voxel
@@ -297,10 +298,11 @@ PYBIND11_MODULE(c_core, m) {
   // cad
   py::class_<dfm2::CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
+  .def("minmax_xyz",     &dfm2::CCad2D::MinMaxXYZ)
+  //
   .def("clear",          &dfm2::CCad2D::Clear)
   .def("pick",           &dfm2::CCad2D::Pick)
   .def("drag_picked",    &dfm2::CCad2D::DragPicked)
-  .def("minmax_xyz",     &dfm2::CCad2D::MinMaxXYZ)
   .def("add_polygon",    &dfm2::CCad2D::AddPolygon)
   .def("add_vtx_edge",   &dfm2::CCad2D::AddVtxEdge)
   .def("add_vtx_face",   &dfm2::CCad2D::AddVtxFace)

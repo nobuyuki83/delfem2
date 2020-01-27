@@ -469,27 +469,30 @@ void init_mshtopoio(py::module &m){
   
   py::class_<CMeshMultiElem>(m,"CppMeshMultiElem")
   .def(py::init<>())
-  .def("read_obj",    &CMeshMultiElem::ReadObj)
   .def("minmax_xyz",  &CMeshMultiElem::AABB3_MinMax)
+  //
+  .def("read_obj",    &CMeshMultiElem::ReadObj)
   .def("scaleXYZ",    &CMeshMultiElem::ScaleXYZ)
   .def("translateXYZ",&CMeshMultiElem::TranslateXYZ);
   
   py::class_<dfm2::CMeshDynTri3D>(m, "CppMeshDynTri3D")
   .def(py::init<>())
+  .def("minmax_xyz",            &dfm2::CMeshDynTri3D::MinMax_XYZ)
+  //
   .def("check",                 &dfm2::CMeshDynTri3D::Check)
   .def("ntri",                  &dfm2::CMeshDynTri3D::nTri)
   .def("delete_tri_edge",       &dfm2::CMeshDynTri3D::DeleteTriEdge)
-  .def("minmax_xyz",            &dfm2::CMeshDynTri3D::MinMax_XYZ)
   .def("insert_point_elem",     &dfm2::CMeshDynTri3D::insertPointElem)
   .def("delaunay_around_point", &dfm2::CMeshDynTri3D::DelaunayAroundPoint);
   
   py::class_<dfm2::CMeshDynTri2D>(m, "CppMeshDynTri2D")
   .def(py::init<>())
+  .def("minmax_xyz",            &dfm2::CMeshDynTri2D::MinMax_XYZ)
+  //
   .def("check",                 &dfm2::CMeshDynTri2D::Check)
   .def("ntri",                  &dfm2::CMeshDynTri2D::nTri)
   .def("npoint",                &dfm2::CMeshDynTri2D::nPoint)
   .def("delete_tri_edge",       &dfm2::CMeshDynTri2D::DeleteTriEdge)
-  .def("minmax_xyz",            &dfm2::CMeshDynTri2D::MinMax_XYZ)
   .def("insert_point_elem",     &dfm2::CMeshDynTri2D::insertPointElem)
   .def("delaunay_around_point", &dfm2::CMeshDynTri2D::DelaunayAroundPoint)
   .def("meshing_loops",         &dfm2::CMeshDynTri2D::meshing_loops)

@@ -25,7 +25,7 @@ std::vector<unsigned int> aTri;  // index of triangles
 // variables for self-collision
 int iroot_bvh; // index BVH root node
 std::vector<dfm2::CNodeBVH2> aNodeBVH; // array of BVH node
-std::vector<dfm2::CBV3D_Sphere> aBB_BVH; // array of AABB same size as aNodeBVH
+std::vector<dfm2::CBV3_Sphere> aBB_BVH; // array of AABB same size as aNodeBVH
 std::vector<dfm2::CIntersectTriPair<double>> aITP;
 
 // data for camera
