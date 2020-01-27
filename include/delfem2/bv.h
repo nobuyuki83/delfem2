@@ -18,281 +18,234 @@
 namespace delfem2 {
 
 /**
- * @class 3D bounding box
+ * @class 3D axis alligned bounding box
  */
-class CBV3D_AABB
+class CBV3_AABB
 {
 public:
-	CBV3D_AABB(){
-		x_min=0;	x_max=0;
-		y_min=0;	y_max=0;
-		z_min=0;	z_max=0;
-		is_active = false;
-	}
-	CBV3D_AABB(double x_min0,double x_max0,
-             double y_min0,double y_max0,
-             double z_min0,double z_max0)
-  : x_min(x_min0),x_max(x_max0),
-  y_min(y_min0),y_max(y_max0),
-  z_min(z_min0),z_max(z_max0)
-	{
-		assert( x_min <= x_max );
-		assert( y_min <= y_max );
-		assert( z_min <= z_max );
-		is_active = true;
-	}
-	CBV3D_AABB(const CBV3D_AABB& bb )
-  : x_min(bb.x_min),x_max(bb.x_max),
-  y_min(bb.y_min),y_max(bb.y_max),
-  z_min(bb.z_min),z_max(bb.z_max),
-  is_active(bb.is_active){
-  }
-  CBV3D_AABB(const std::vector<double>& minmaxXYZ)
-  {
-    if( minmaxXYZ[0] > minmaxXYZ[1] ){
-      x_min=0;  x_max=0;
-      y_min=0;  y_max=0;
-      z_min=0;  z_max=0;
-      is_active = false;
-      return;
-    }
-    x_min = minmaxXYZ[0];
-    x_max = minmaxXYZ[1];
-    y_min = minmaxXYZ[2];
-    y_max = minmaxXYZ[3];
-    z_min = minmaxXYZ[4];
-    z_max = minmaxXYZ[5];
-    is_active = true;
-  }
-  CBV3D_AABB(const double minmaxXYZ[6])
-  {
-    if( minmaxXYZ[0] > minmaxXYZ[1] ){
-      x_min=0;  x_max=0;
-      y_min=0;  y_max=0;
-      z_min=0;  z_max=0;
-      is_active = false;
-      return;
-    }
-    x_min = minmaxXYZ[0];
-    x_max = minmaxXYZ[1];
-    y_min = minmaxXYZ[2];
-    y_max = minmaxXYZ[3];
-    z_min = minmaxXYZ[4];
-    z_max = minmaxXYZ[5];
-    is_active = true;
-  }
-  CBV3D_AABB(const double minXYZ[3], const double maxXYZ[3])
-  {
-    if( minXYZ[0] > maxXYZ[0] ){
-      x_min=0;  x_max=0;
-      y_min=0;  y_max=0;
-      z_min=0;  z_max=0;
-      is_active = false;
-      return;
-    }
-    x_min = minXYZ[0];
-    y_min = minXYZ[1];
-    z_min = minXYZ[2];
-    x_max = maxXYZ[0];
-    y_max = maxXYZ[1];
-    z_max = maxXYZ[2];
-    is_active = true;
+	CBV3_AABB(): bbmin{+1,0,0},bbmax{-1,0,0} {}
+	CBV3_AABB(const CBV3_AABB& bb ):
+    bbmin{bb.bbmin[0], bb.bbmin[1], bb.bbmin[2]},
+    bbmax{bb.bbmax[0], bb.bbmax[1], bb.bbmax[2]} {}
+  CBV3_AABB(const std::vector<double>& bbmin, const std::vector<double>& bbmax):
+    bbmin{bbmin[0], bbmin[1], bbmin[2]},
+    bbmax{bbmax[0], bbmax[1], bbmax[2]} {}
+  CBV3_AABB(const double bbmin[3], const double bbmax[3]):
+    bbmin{bbmin[0], bbmin[1], bbmin[2]},
+    bbmax{bbmax[0], bbmax[1], bbmax[2]} {}
+  CBV3_AABB(const std::vector<double>& bb):
+    bbmin{bb[0], bb[2], bb[4]},
+    bbmax{bb[1], bb[3], bb[5]} {}
+  // ------------
+  bool IsActive() const {
+    if( bbmin[0] > bbmax[0] ){ return false; }
+    return true;
   }
   double DiagonalLength() const{
-    double x0 = x_max - x_min;
-    double y0 = y_max - y_min;
-    double z0 = z_max - z_min;
+    double x0 = bbmax[0] - bbmin[0];
+    double y0 = bbmax[1] - bbmin[1];
+    double z0 = bbmax[2] - bbmin[2];
     return sqrt(x0*x0+y0*y0+z0*z0);
   }
   double MaxLength() const{
-    double x0 = x_max - x_min;
-    double y0 = y_max - y_min;
-    double z0 = z_max - z_min;
+    double x0 = bbmax[0] - bbmin[0];
+    double y0 = bbmax[1] - bbmin[1];
+    double z0 = bbmax[2] - bbmin[2];
     if( x0 > y0 && x0 > z0 ){ return x0; }
     else if( y0 > x0 && y0 > z0 ){ return y0; }
     return z0;
   }
-  void SetMinMaxXYZ(double x_min, double x_max,
-                    double y_min, double y_max,
-                    double z_min, double z_max)
-  {
-    this->x_min = x_min;  this->x_max = x_max;
-    this->y_min = y_min;  this->y_max = y_max;
-    this->z_min = z_min;  this->z_max = z_max;
-  }
   void SetCenterWidth(double cx, double cy, double cz,
                       double wx, double wy, double wz)
   {
-    x_min = cx-wx*0.5; x_max = cx+wx*0.5;
-    y_min = cy-wy*0.5; y_max = cy+wy*0.5;
-    z_min = cz-wz*0.5; z_max = cz+wz*0.5;
+    bbmin[0] = cx-wx*0.5; bbmax[0] = cx+wx*0.5;
+    bbmin[1] = cy-wy*0.5; bbmax[1] = cy+wy*0.5;
+    bbmin[2] = cz-wz*0.5; bbmax[2] = cz+wz*0.5;
   }
   void GetCenterWidth(double& cx, double& cy, double& cz,
                       double& wx, double& wy, double& wz)
   {
-    cx = (x_max+x_min)*0.5;
-    cy = (y_max+y_min)*0.5;
-    cz = (z_max+z_min)*0.5;
-    wx = (x_max-x_min);
-    wy = (y_max-y_min);
-    wz = (z_max-z_min);
+    cx = (bbmax[0]+bbmin[0])*0.5;
+    cy = (bbmax[1]+bbmin[1])*0.5;
+    cz = (bbmax[2]+bbmin[2])*0.5;
+    wx = (bbmax[0]-bbmin[0]);
+    wy = (bbmax[1]-bbmin[1]);
+    wz = (bbmax[2]-bbmin[2]);
   }
-	CBV3D_AABB& operator+=(const CBV3D_AABB& bb)
+	CBV3_AABB& operator+=(const CBV3_AABB& bb)
 	{
-		if( !bb.is_active ) return *this;
-		if( !is_active ){
-			x_max = bb.x_max;	x_min = bb.x_min;
-			y_max = bb.y_max;	y_min = bb.y_min;
-			z_max = bb.z_max;	z_min = bb.z_min;
-      this->is_active = bb.is_active;
+		if( !bb.IsActive() ) return *this;
+		if( !this->IsActive() ){
+			bbmax[0] = bb.bbmax[0];	bbmin[0] = bb.bbmin[0];
+			bbmax[1] = bb.bbmax[1];	bbmin[1] = bb.bbmin[1];
+			bbmax[2] = bb.bbmax[2];	bbmin[2] = bb.bbmin[2];
 			return *this;
 		}
-    x_min = ( x_min < bb.x_min ) ? x_min : bb.x_min;
-		x_max = ( x_max > bb.x_max ) ? x_max : bb.x_max;
-    y_min = ( y_min < bb.y_min ) ? y_min : bb.y_min;
-		y_max = ( y_max > bb.y_max ) ? y_max : bb.y_max;
-    z_min = ( z_min < bb.z_min ) ? z_min : bb.z_min;
-		z_max = ( z_max > bb.z_max ) ? z_max : bb.z_max;
+    bbmin[0] = ( bbmin[0] < bb.bbmin[0] ) ? bbmin[0] : bb.bbmin[0];
+		bbmax[0] = ( bbmax[0] > bb.bbmax[0] ) ? bbmax[0] : bb.bbmax[0];
+    bbmin[1] = ( bbmin[1] < bb.bbmin[1] ) ? bbmin[1] : bb.bbmin[1];
+		bbmax[1] = ( bbmax[1] > bb.bbmax[1] ) ? bbmax[1] : bb.bbmax[1];
+    bbmin[2] = ( bbmin[2] < bb.bbmin[2] ) ? bbmin[2] : bb.bbmin[2];
+		bbmax[2] = ( bbmax[2] > bb.bbmax[2] ) ? bbmax[2] : bb.bbmax[2];
 		return *this;
 	}
-  void Add_AABBMinMax(const std::vector<double>& aabb){
-    assert(aabb.size()==6);
-    CBV3D_AABB aabb0(aabb);
+  void Add_AABBVec3(const std::vector<double>& bbvec)
+  {
+    assert(bbvec.size()==6);
+    CBV3_AABB aabb0(bbvec);
     (*this) += aabb0;
   }
-  bool IsIntersect(const CBV3D_AABB& bb) const
+  void Set_AABBVec3(const std::vector<double>& bbvec)
   {
-    if( !is_active ) return false;
-    if( !bb.is_active ) return false;
-    if( x_min > bb.x_max ) return false;
-    if( x_max < bb.x_min ) return false;
-    if( y_min > bb.y_max ) return false;
-    if( y_max < bb.y_min ) return false;
-    if( z_min > bb.z_max ) return false;
-    if( z_max < bb.z_min ) return false;
+    assert(bbvec.size()==6);
+    this->bbmin[0] = bbvec[0];
+    this->bbmin[1] = bbvec[2];
+    this->bbmin[2] = bbvec[4];
+    this->bbmax[0] = bbvec[1];
+    this->bbmax[1] = bbvec[3];
+    this->bbmax[2] = bbvec[5];
+  }
+  void Add_MinMax(const std::vector<double>& bbmin, const std::vector<double>& bbmax)
+  {
+    assert(bbmin.size()==3);
+    assert(bbmax.size()==3);
+    CBV3_AABB aabb0(bbmin.data(), bbmax.data());
+    (*this) += aabb0;
+  }
+  void Set_MinMax(const std::vector<double>& bbmin, const std::vector<double>& bbmax)
+  {
+    assert(bbmin.size()==3);
+    assert(bbmax.size()==3);
+    this->bbmin[0] = bbmin[0];
+    this->bbmin[1] = bbmin[1];
+    this->bbmin[2] = bbmin[2];
+    this->bbmax[0] = bbmax[0];
+    this->bbmax[1] = bbmax[1];
+    this->bbmax[2] = bbmax[2];
+  }
+  bool IsIntersect(const CBV3_AABB& bb) const
+  {
+    if( !IsActive() ) return false;
+    if( !bb.IsActive() ) return false;
+    if( bbmin[0] > bb.bbmax[0] ) return false;
+    if( bbmin[1] > bb.bbmax[1] ) return false;
+    if( bbmin[2] > bb.bbmax[2] ) return false;
+    //
+    if( bbmax[0] < bb.bbmin[0] ) return false;
+    if( bbmax[1] < bb.bbmin[1] ) return false;
+    if( bbmax[2] < bb.bbmin[2] ) return false;
     return true;
   }
-  CBV3D_AABB& operator+=(const double v[3])
+  CBV3_AABB& operator+=(const double v[3])
 	{
-		if( !is_active ){
-			x_max = v[0];	x_min = v[0];
-			y_max = v[1];	y_min = v[1];
-			z_max = v[2];	z_min = v[2];
-      this->is_active = true;
+		if( !IsActive() ){
+			bbmax[0] = bbmin[0] = v[0];
+			bbmax[1] = bbmin[1] = v[1];
+			bbmax[2] = bbmin[2] = v[2];
 			return *this;
 		}
-    x_min = ( x_min < v[0] ) ? x_min : v[0];
-		x_max = ( x_max > v[0] ) ? x_max : v[0];
-    y_min = ( y_min < v[1] ) ? y_min : v[1];
-		y_max = ( y_max > v[1] ) ? y_max : v[1];
-    z_min = ( z_min < v[2] ) ? z_min : v[2];
-		z_max = ( z_max > v[2] ) ? z_max : v[2];
+    bbmin[0] = ( bbmin[0] < v[0] ) ? bbmin[0] : v[0];
+    bbmin[1] = ( bbmin[1] < v[1] ) ? bbmin[1] : v[1];
+    bbmin[2] = ( bbmin[2] < v[2] ) ? bbmin[2] : v[2];
+    //
+    bbmax[0] = ( bbmax[0] > v[0] ) ? bbmax[0] : v[0];
+    bbmax[1] = ( bbmax[1] > v[1] ) ? bbmax[1] : v[1];
+		bbmax[2] = ( bbmax[2] > v[2] ) ? bbmax[2] : v[2];
 		return *this;
 	}
   void AddPoint(double x, double y, double z, double eps){
     if( eps <= 0 ){ return; }
-    if( is_active ){ // something inside
-      x_min = ( x_min < x-eps ) ? x_min : x-eps;
-      x_max = ( x_max > x+eps ) ? x_max : x+eps;
-      y_min = ( y_min < y-eps ) ? y_min : y-eps;
-      y_max = ( y_max > y+eps ) ? y_max : y+eps;
-      z_min = ( z_min < z-eps ) ? z_min : z-eps;
-      z_max = ( z_max > z+eps ) ? z_max : z+eps;
+    if( IsActive() ){ // something inside
+      bbmin[0] = ( bbmin[0] < x-eps ) ? bbmin[0] : x-eps;
+      bbmin[1] = ( bbmin[1] < y-eps ) ? bbmin[1] : y-eps;
+      bbmin[2] = ( bbmin[2] < z-eps ) ? bbmin[2] : z-eps;
+      //
+      bbmax[0] = ( bbmax[0] > x+eps ) ? bbmax[0] : x+eps;
+      bbmax[1] = ( bbmax[1] > y+eps ) ? bbmax[1] : y+eps;
+      bbmax[2] = ( bbmax[2] > z+eps ) ? bbmax[2] : z+eps;
     }
     else{ // empty
-      is_active = true;
-      x_min = x-eps;  x_max = x+eps;
-      y_min = y-eps;  y_max = y+eps;
-      z_min = z-eps;  z_max = z+eps;
+      bbmin[0] = x-eps;  bbmax[0] = x+eps;
+      bbmin[1] = y-eps;  bbmax[1] = y+eps;
+      bbmin[2] = z-eps;  bbmax[2] = z+eps;
     }
     return;
   }
   double MinimumDistance(double x, double y, double z) const
   {
     double x0, y0, z0;
-    if(      x < x_min ){ x0 = x_min; }
-    else if( x < x_max ){ x0 = x;     }
-    else{                 x0 = x_max; }
-    if(      y < y_min ){ y0 = y_min; }
-    else if( y < y_max ){ y0 = y;     }
-    else{                 y0 = y_max; }
-    if(      z < z_min ){ z0 = z_min; }
-    else if( z < z_max ){ z0 = z;     }
-    else{                 z0 = z_max; }
+    if(      x < bbmin[0] ){ x0 = bbmin[0]; }
+    else if( x < bbmax[0] ){ x0 = x;     }
+    else{                 x0 = bbmax[0]; }
+    if(      y < bbmin[1] ){ y0 = bbmin[1]; }
+    else if( y < bbmax[1] ){ y0 = y;     }
+    else{                 y0 = bbmax[1]; }
+    if(      z < bbmin[2] ){ z0 = bbmin[2]; }
+    else if( z < bbmax[2] ){ z0 = z;     }
+    else{                 z0 = bbmax[2]; }
     return sqrt( (x0-x)*(x0-x) + (y0-y)*(y0-y) + (z0-z)*(z0-z) );
   }
   bool isInclude_Point(double x, double y, double z) const
   {
-   if( !is_active ) return false;
-   if(   x >= x_min && x <= x_max
-      && y >= y_min && y <= y_max
-      && z >= z_min && z <= z_max ) return true;
+   if( !IsActive() ) return false;
+   if(   x >= bbmin[0] && x <= bbmax[0]
+      && y >= bbmin[1] && y <= bbmax[1]
+      && z >= bbmin[2] && z <= bbmax[2] ) return true;
    return false;
   }
-  std::vector<double> MinMaxXYZ(){
+  std::vector<double> AABBVec3(){
     std::vector<double> mm(6);
-    if( !this->is_active ){
-      mm[0] = +1;
-      mm[1] = -1;
-      return mm;
-    }
-    mm[0] = x_min;  mm[1] = x_max;
-    mm[2] = y_min;  mm[3] = y_max;
-    mm[4] = z_min;  mm[5] = z_max;
+    mm[0] = bbmin[0];  mm[1] = bbmax[0];
+    mm[2] = bbmin[1];  mm[3] = bbmax[1];
+    mm[4] = bbmin[2];  mm[5] = bbmax[2];
     return mm;
   }
   std::vector<double> Center(){
-    std::vector<double> mm(3);
-    mm[0] = (x_min+x_max)*0.5;
-    mm[1] = (y_min+y_max)*0.5;
-    mm[2] = (z_min+z_max)*0.5;
-    return mm;
+    return {
+      (bbmin[0]+bbmax[0])*0.5,
+      (bbmin[1]+bbmax[1])*0.5,
+      (bbmin[2]+bbmax[2])*0.5 };
   }
   std::vector<double> Point3D_Vox(){
     std::vector<double> aP(3*8);
-    aP[0*3+0]=x_min; aP[0*3+1]=y_min; aP[0*3+2]=z_min;
-    aP[1*3+0]=x_max; aP[1*3+1]=y_min; aP[1*3+2]=z_min;
-    aP[2*3+0]=x_min; aP[2*3+1]=y_max; aP[2*3+2]=z_min;
-    aP[3*3+0]=x_max; aP[3*3+1]=y_max; aP[3*3+2]=z_min;
-    aP[4*3+0]=x_min; aP[4*3+1]=y_min; aP[4*3+2]=z_max;
-    aP[5*3+0]=x_max; aP[5*3+1]=y_min; aP[5*3+2]=z_max;
-    aP[6*3+0]=x_min; aP[6*3+1]=y_max; aP[6*3+2]=z_max;
-    aP[7*3+0]=x_max; aP[7*3+1]=y_max; aP[7*3+2]=z_max;
+    aP[0*3+0]=bbmin[0]; aP[0*3+1]=bbmin[1]; aP[0*3+2]=bbmin[2];
+    aP[1*3+0]=bbmax[0]; aP[1*3+1]=bbmin[1]; aP[1*3+2]=bbmin[2];
+    aP[2*3+0]=bbmin[0]; aP[2*3+1]=bbmax[1]; aP[2*3+2]=bbmin[2];
+    aP[3*3+0]=bbmax[0]; aP[3*3+1]=bbmax[1]; aP[3*3+2]=bbmin[2];
+    aP[4*3+0]=bbmin[0]; aP[4*3+1]=bbmin[1]; aP[4*3+2]=bbmax[2];
+    aP[5*3+0]=bbmax[0]; aP[5*3+1]=bbmin[1]; aP[5*3+2]=bbmax[2];
+    aP[6*3+0]=bbmin[0]; aP[6*3+1]=bbmax[1]; aP[6*3+2]=bbmax[2];
+    aP[7*3+0]=bbmax[0]; aP[7*3+1]=bbmax[1]; aP[7*3+2]=bbmax[2];
     return aP;
   }
   std::string str(){
     std::stringstream ss;
-    ss << x_min << " " << x_max << " " << y_min << " " << y_max << " " << z_min << " " << z_max;
+    ss << bbmin[0] << " " << bbmax[0] << " " << bbmin[1] << " " << bbmax[1] << " " << bbmin[2] << " " << bbmax[2];
     return ss.str();
   }
 public:
-  double x_min,x_max;
-  double y_min,y_max;
-  double z_min,z_max;
-	bool is_active;	//!< false if there is nothing inside
+  double bbmin[3], bbmax[3];
 };
 
 // --------------------------------------------
 
-class CBV3D_Sphere
+class CBV3_Sphere
 {
 public:
-  double cx,cy,cz,r;
-public:
-  CBV3D_Sphere(){
-    cx=cy=cz;
+  CBV3_Sphere(){
+    c[0]=c[1]=c[2];
     r = -1; // if r is negative this is not active yet
   }
   void AddPoint(double x,double y,double z, double R){
     assert( R >= 0 );
     if( r < 0 ){ // empty
-      cx=x; cy=y; cz=z; r=R;
+      c[0]=x; c[1]=y; c[2]=z; r=R;
       return;
     }
-    const double L = sqrt((x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz));
+    const double L = sqrt((x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]));
     if( r>L+R ){ return; } // including
     if( R>L+r){ // included
-      cx=x; cy=y; cz=z; r=R;
+      c[0]=x; c[1]=y; c[2]=z; r=R;
       return;
     }
     if( fabs(L) < 1.0e-5*fabs(r+R) ){ // almost co-centric
@@ -302,56 +255,56 @@ public:
     const double r0 = 0.5*(L+r-R)/L;
     const double r1 = 0.5*(L+R-r)/L;
     assert( r0 >= 0 && r1 >= 0 );
-    cx = r0*cx + r1*x;
-    cy = r0*cy + r1*y;
-    cz = r0*cz + r1*z;
+    c[0] = r0*c[0] + r1*x;
+    c[1] = r0*c[1] + r1*y;
+    c[2] = r0*c[2] + r1*z;
     r = 0.5*(L+r+R);
     return;
   }
-  bool IsIntersect(const CBV3D_Sphere& bb) const
+  bool IsIntersect(const CBV3_Sphere& bb) const
   {
-    const double L = sqrt((bb.cx-cx)*(bb.cx-cx) + (bb.cy-cy)*(bb.cy-cy) + (bb.cz-cz)*(bb.cz-cz));
+    const double L = sqrt((bb.c[0]-c[0])*(bb.c[0]-c[0]) + (bb.c[1]-c[1])*(bb.c[1]-c[1]) + (bb.c[2]-c[2])*(bb.c[2]-c[2]));
     if( L > bb.r + r ) return false;
     return true;
   }
   bool IsIntersectLine(const double src[3], const double dir[3]) const {
-    double ratio = dir[0]*(cx-src[0]) + dir[1]*(cy-src[1]) + dir[2]*(cz-src[2]);
+    double ratio = dir[0]*(c[0]-src[0]) + dir[1]*(c[1]-src[1]) + dir[2]*(c[2]-src[2]);
     ratio = ratio/(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
     const double px = src[0] + ratio*dir[0];
     const double py = src[1] + ratio*dir[1];
     const double pz = src[2] + ratio*dir[2];
-    const double L = sqrt((px-cx)*(px-cx) + (py-cy)*(py-cy) + (pz-cz)*(pz-cz));
-    assert( fabs(dir[0]*(px-cx) + dir[1]*(py-cy) + dir[2]*(pz-cz)) < 1.0e-10 );
+    const double L = sqrt((px-c[0])*(px-c[0]) + (py-c[1])*(py-c[1]) + (pz-c[2])*(pz-c[2]));
+    assert( fabs(dir[0]*(px-c[0]) + dir[1]*(py-c[1]) + dir[2]*(pz-c[2])) < 1.0e-10 );
     if( L <= r ){ return true; }
     return false;
   }
   bool IsIntersectRay(const double src[3], const double dir[3]) const {
-    const double L0 = sqrt((src[0]-cx)*(src[0]-cx) + (src[1]-cy)*(src[1]-cy) + (src[2]-cz)*(src[2]-cz));
+    const double L0 = sqrt((src[0]-c[0])*(src[0]-c[0]) + (src[1]-c[1])*(src[1]-c[1]) + (src[2]-c[2])*(src[2]-c[2]));
     if( L0 <= r ){ return true; } // source included
-    double ratio = dir[0]*(cx-src[0]) + dir[1]*(cy-src[1]) + dir[2]*(cz-src[2]);
+    double ratio = dir[0]*(c[0]-src[0]) + dir[1]*(c[1]-src[1]) + dir[2]*(c[2]-src[2]);
     ratio = ratio/(dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]);
     if( ratio < 0 ){ return false; }
     const double px = src[0] + ratio*dir[0];
     const double py = src[1] + ratio*dir[1];
     const double pz = src[2] + ratio*dir[2];
-    const double L = sqrt((px-cx)*(px-cx) + (py-cy)*(py-cy) + (pz-cz)*(pz-cz));
-    assert( fabs(dir[0]*(px-cx) + dir[1]*(py-cy) + dir[2]*(pz-cz)) < 1.0e-10 );
+    const double L = sqrt((px-c[0])*(px-c[0]) + (py-c[1])*(py-c[1]) + (pz-c[2])*(pz-c[2]));
+    assert( fabs(dir[0]*(px-c[0]) + dir[1]*(py-c[1]) + dir[2]*(pz-c[2])) < 1.0e-10 );
     if( L <= r ){ return true; }
     return false;
   }
-  CBV3D_Sphere& operator+=(const CBV3D_Sphere& bb)
+  CBV3_Sphere& operator+=(const CBV3_Sphere& bb)
   {
-    this->AddPoint(bb.cx,bb.cy,bb.cz, bb.r);
+    this->AddPoint(bb.c[0],bb.c[1],bb.c[2], bb.r);
     return *this;
   }
   bool isInclude_Point(double x, double y, double z) const {
-    const double L = (x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz);
+    const double L = (x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]);
     if( L < r*r ){ return true; }
     return false;
   }
   void Range_DistToPoint(double& min0, double& max0,
                       double x, double y, double z) const {
-    const double L = sqrt((x-cx)*(x-cx) + (y-cy)*(y-cy) + (z-cz)*(z-cz));
+    const double L = sqrt((x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]));
     if( L < r ){
       min0 = 0;
       max0 = r+L;
@@ -360,6 +313,9 @@ public:
     min0 = L-r;
     max0 = L+r;
   }
+public:
+  double r;
+  double c[3];
 };
   
 } // namespace delfem2

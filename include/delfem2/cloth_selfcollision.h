@@ -29,6 +29,6 @@ void GetIntermidiateVelocityContactResolved
  const std::vector<unsigned int> &psup,
  int iroot_bvh,
  const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
- std::vector<delfem2::CBV3D_AABB>& aBB);
+ std::vector<delfem2::CBV3_AABB>& aBB);
     
 #endif

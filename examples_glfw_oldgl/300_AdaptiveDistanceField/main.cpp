@@ -184,7 +184,7 @@ void SetProblem(int iprob)
       }
     public:
       std::vector<double> aNorm;
-      dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> obj;
+      dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> obj;
     };
     CMesh mesh;
     {

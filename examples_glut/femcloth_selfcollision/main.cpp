@@ -135,7 +135,7 @@ std::vector<double> aNormal; // deformed vertex noamals，変形中の頂点の�
 // variables for self-collision
 int iroot_bvh; // index of the root BVH node
 std::vector<delfem2::CNodeBVH2> aNodeBVH; // array of BVH node
-std::vector<delfem2::CBV3D_AABB> aBB_BVH; // array of AABB
+std::vector<delfem2::CBV3_AABB> aBB_BVH; // array of AABB
 //CJaggedArray aEdge;
 std::vector<unsigned int> psup_ind,psup;
 

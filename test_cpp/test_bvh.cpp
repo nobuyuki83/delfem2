@@ -39,7 +39,7 @@ TEST(bvh,inclusion_sphere)
                             0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -49,7 +49,7 @@ TEST(bvh,inclusion_sphere)
   for(int itr=0;itr<10000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3D_Sphere& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -72,7 +72,7 @@ TEST(bvh,inclusion_aabb)
                             0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_AABB, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3_AABB, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -82,7 +82,7 @@ TEST(bvh,inclusion_aabb)
   for(int itr=0;itr<10000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3D_AABB& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3_AABB& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -108,7 +108,7 @@ TEST(bvh,nearestinc_sphere)
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -162,7 +162,7 @@ TEST(bvh,nearest_range) // find global nearest from range
     delfem2::Rotate_Points3(aXYZ,
                             0.2, 0.3, 0.4);
   }
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -178,7 +178,7 @@ TEST(bvh,nearest_range) // find global nearest from range
                                          bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       bool is_max = false;
       for(int it=0;it<aTri.size()/3;++it){
-        dfm2::CBV3D_Sphere bb;
+        dfm2::CBV3_Sphere bb;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[it*3+inoel];
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
@@ -202,7 +202,7 @@ TEST(bvh,nearest_range) // find global nearest from range
         aFlg[itri0] = 1;
       }
       for(int itri=0;itri<aTri.size()/3;++itri){
-        dfm2::CBV3D_Sphere bb;
+        dfm2::CBV3_Sphere bb;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[itri*3+inoel];
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
@@ -230,7 +230,7 @@ TEST(bvh,nearest_point) // find global nearest directry
     delfem2::Rotate_Points3(aXYZ,
                             0.2, 0.3, 0.4);
   }
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -265,7 +265,7 @@ TEST(bvh,sdf) // find global nearest directry
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -298,7 +298,7 @@ TEST(bvh,lineintersection)
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  delfem2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  delfem2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            1.0e-5);
@@ -316,7 +316,7 @@ TEST(bvh,lineintersection)
     double ps0[3]; s0.CopyValueTo(ps0);
     double pd0[3]; d0.CopyValueTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3D_Sphere& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectLine(ps0,pd0);
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -335,7 +335,7 @@ TEST(bvh,lineintersection)
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
-      dfm2::CBV3D_Sphere bb;
+      dfm2::CBV3_Sphere bb;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
         bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 1.0e-5);
@@ -360,7 +360,7 @@ TEST(bvh,rayintersection)
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                             aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  delfem2::CBVH_MeshTri3D<dfm2::CBV3D_Sphere, double> bvh;
+  delfem2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            1.0e-5);
@@ -378,7 +378,7 @@ TEST(bvh,rayintersection)
     double ps0[3]; s0.CopyValueTo(ps0);
     double pd0[3]; d0.CopyValueTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3D_Sphere& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectRay(ps0,pd0);
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -396,7 +396,7 @@ TEST(bvh,rayintersection)
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
-      dfm2::CBV3D_Sphere bb;
+      dfm2::CBV3_Sphere bb;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
         bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 1.0e-5);
@@ -450,7 +450,7 @@ TEST(bvh,morton_code)
   std::vector<double> aXYZ; // 3d points
   const double min_xyz[3] = {-1,-1,-1};
   const double max_xyz[3] = {+1,+1,+1};
-  dfm2::CBV3D_AABB bb(min_xyz,max_xyz);
+  dfm2::CBV3_AABB bb(min_xyz,max_xyz);
   {
     const unsigned int N = 10000;
     aXYZ.resize(N*3);
@@ -458,9 +458,9 @@ TEST(bvh,morton_code)
     std::mt19937 rng(dev());
     std::uniform_real_distribution<> udist(0.0, 1.0);
     for(int i=0;i<N;++i){
-      aXYZ[i*3+0] = (bb.x_max -  bb.x_min) * udist(rng) + bb.x_min;
-      aXYZ[i*3+1] = (bb.y_max -  bb.y_min) * udist(rng) + bb.y_min;
-      aXYZ[i*3+2] = (bb.z_max -  bb.z_min) * udist(rng) + bb.z_min;
+      aXYZ[i*3+0] = (bb.bbmax[0] -  bb.bbmin[0]) * udist(rng) + bb.bbmin[0];
+      aXYZ[i*3+1] = (bb.bbmax[1] -  bb.bbmin[1]) * udist(rng) + bb.bbmin[1];
+      aXYZ[i*3+2] = (bb.bbmax[2] -  bb.bbmin[2]) * udist(rng) + bb.bbmin[2];
     }
     srand(3);
     for(int iip=0;iip<3;++iip){ // hash collision

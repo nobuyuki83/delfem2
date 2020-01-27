@@ -213,8 +213,8 @@ std::uint32_t expandBits(std::uint32_t v)
   return v;
 }
 
-template <typename T>
-std::uint32_t delfem2::MortonCode(T x, T y, T z)
+template <typename REAL>
+std::uint32_t delfem2::MortonCode(REAL x, REAL y, REAL z)
 {
   auto ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
   auto iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
@@ -321,12 +321,12 @@ int delfem2::MortonCode_FindSplit
   // Specifically, we are looking for the highest object that
   // shares more than commonPrefix bits with the first one.
   const std::uint32_t mcStart = sortedMC[iMC_start];
-  int iMC_split = iMC_start; // initial guess
+  unsigned int iMC_split = iMC_start; // initial guess
   int step = iMC_last - iMC_start;
   do
   {
     step = (step + 1) >> 1; // exponential decrease
-    const int newSplit = iMC_split + step; // proposed new position
+    const unsigned int newSplit = iMC_split + step; // proposed new position
     if (newSplit < iMC_last)
     {
       std::uint32_t splitCode = sortedMC[newSplit];
@@ -351,27 +351,29 @@ public:
   }
 };
 
-template <typename T>
+
+
+template <typename REAL>
 void dfm2::GetSortedMortenCode(
     std::vector<unsigned int> &aSortedId,
     std::vector<std::uint32_t> &aSortedMc,
-    const std::vector<T> &aXYZ,
-    const T min_xyz[3],
-    const T max_xyz[3])
+    const std::vector<REAL> &aXYZ,
+    const REAL min_xyz[3],
+    const REAL max_xyz[3])
 {
   std::vector<CPairMtcInd> aNodeBVH; // array of BVH node
   const std::size_t np = aXYZ.size()/3;
   aNodeBVH.resize(np);
-  const T x_min = min_xyz[0];
-  const T y_min = min_xyz[1];
-  const T z_min = min_xyz[2];
-  const T x_max = max_xyz[0];
-  const T y_max = max_xyz[1];
-  const T z_max = max_xyz[2];
+  const REAL x_min = min_xyz[0];
+  const REAL y_min = min_xyz[1];
+  const REAL z_min = min_xyz[2];
+  const REAL x_max = max_xyz[0];
+  const REAL y_max = max_xyz[1];
+  const REAL z_max = max_xyz[2];
   for(unsigned ip=0;ip<np;++ip){
-    T x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
-    T y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
-    T z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);
+    const REAL x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
+    const REAL y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
+    const REAL z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);
     aNodeBVH[ip].imtc = dfm2::MortonCode(x,y,z);
     aNodeBVH[ip].iobj = ip;
   }
@@ -384,18 +386,16 @@ void dfm2::GetSortedMortenCode(
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
-template void dfm2::GetSortedMortenCode(
-    std::vector<unsigned int>& aSortedId,
-    std::vector<uint32_t>& aSortedMc,
-    const std::vector<float>& aXYZ,
-    const float min_xyz[3],
-    const float max_xyz[3]);
-template void dfm2::GetSortedMortenCode(
-    std::vector<unsigned int>& aSortedId,
-    std::vector<uint32_t>& aSortedMc,
-    const std::vector<double>& aXYZ,
-    const double min_xyz[3],
-    const double max_xyz[3]);
+template void dfm2::GetSortedMortenCode(std::vector<unsigned int>& aSortedId,
+                                        std::vector<std::uint32_t>& aSortedMc,
+                                        const std::vector<float>& aXYZ,
+                                        const float min_xyz[3],
+                                        const float max_xyz[3]);
+template void dfm2::GetSortedMortenCode(std::vector<unsigned int>& aSortedId,
+                                        std::vector<std::uint32_t>& aSortedMc,
+                                        const std::vector<double>& aXYZ,
+                                        const double min_xyz[3],
+                                        const double max_xyz[3]);
 
 // ----------------------------------
 
@@ -474,7 +474,8 @@ void dfm2::Check_MortonCode_Sort
 void dfm2::Check_MortonCode_RangeSplit
 (const std::vector<std::uint32_t>& aSortedMc)
 {
-  for(int ini=0;ini<aSortedMc.size()-1;++ini){
+  assert(aSortedMc.size()>0);
+  for(unsigned int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
     int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
     const std::pair<int,int> rangeA = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
@@ -512,7 +513,7 @@ void dfm2::Check_BVH
 {
   std::vector<int> aFlg(N,0);
   mark_child(aFlg, 0, aNodeBVH);
-  for(int i=0;i<N;++i){
+  for(unsigned int i=0;i<N;++i){
     assert(aFlg[i]==1);
   }
 }

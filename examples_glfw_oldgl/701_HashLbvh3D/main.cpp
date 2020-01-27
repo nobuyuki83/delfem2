@@ -35,7 +35,7 @@ int main(int argc,char* argv[])
   {
     const double min_xyz[3] = {-1,-1,-1};
     const double max_xyz[3] = {+1,+1,+1};
-    dfm2::CBV3D_AABB bb(min_xyz, max_xyz);
+    dfm2::CBV3_AABB bb(min_xyz, max_xyz);
     {
       const unsigned int N = 10000;
       aXYZ.resize(N*3);
@@ -43,9 +43,9 @@ int main(int argc,char* argv[])
       std::mt19937 rng(dev());
       std::uniform_real_distribution<> udist(0.0, 1.0);
       for(unsigned int i=0;i<N;++i) {
-        aXYZ[i * 3 + 0] = (bb.x_max - bb.x_min) * udist(rng) + bb.x_min;
-        aXYZ[i * 3 + 1] = (bb.y_max - bb.y_min) * udist(rng) + bb.y_min;
-        aXYZ[i * 3 + 2] = (bb.z_max - bb.z_min) * udist(rng) + bb.z_min;
+        aXYZ[i * 3 + 0] = (bb.bbmax[0] - bb.bbmin[0]) * udist(rng) + bb.bbmin[0];
+        aXYZ[i * 3 + 1] = (bb.bbmax[1] - bb.bbmin[1]) * udist(rng) + bb.bbmin[1];
+        aXYZ[i * 3 + 2] = (bb.bbmax[2] - bb.bbmin[2]) * udist(rng) + bb.bbmin[2];
       }
       srand(3);
       for(int iip=0;iip<10;++iip){ // hash collision
@@ -66,9 +66,7 @@ int main(int argc,char* argv[])
     dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
                               aXYZ,min_xyz,max_xyz);
     {
-      const double bbmin[3] = {bb.x_min, bb.y_min, bb.z_min};
-      const double bbmax[3] = {bb.x_max, bb.y_max, bb.z_max};
-      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bbmin, bbmax);
+      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
     }
     dfm2::Check_MortonCode_RangeSplit(aSortedMc);
     dfm2::BVH_TreeTopology_Morton(aNodeBVH,
