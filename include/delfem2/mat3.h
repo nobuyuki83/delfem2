@@ -121,17 +121,20 @@ static inline bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
  * @brief class of 3x3 matrix
  * @todo use template for this class 
  */
-template <typename T>
+template <typename REAL>
 class CMat3
 {
 public:
   CMat3();
-  CMat3(const double s);
+  CMat3(const REAL s);
   CMat3(double v00, double v01, double v02,
            double v10, double v11, double v12,
            double v20, double v21, double v22);
-  CMat3(double x, double y, double z);
-  CMat3(const double m[9]);
+  CMat3(REAL x, REAL y, REAL z);
+  CMat3(const REAL m[9]);
+  // ---------------
+  REAL* data() { return mat; }
+  const REAL* data() const { return mat; }
   // ---------------
   void GetElements(double m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
   void AffineMatrixTrans(double m[16]) const {
@@ -140,9 +143,7 @@ public:
     m[0*4+2] = mat[6];  m[1*4+2] = mat[7];  m[2*4+2] = mat[8];  m[3*4+2] = 0;
     m[0*4+3] = 0;       m[1*4+3] = 0;       m[2*4+3] = 0;       m[3*4+3] = 1;
   }
-  double Get(int i, int j) const {
-    return mat[i*3+j];
-  }
+  double Get(int i, int j) const { return mat[i*3+j]; }
   // ---------------
 //  CVector3 MatVec(const CVector3& vec0) const;
   void MatVec(const double vec0[], double vec1[]) const;
@@ -257,7 +258,7 @@ public:
   }
 
 public:
-  double mat[9];  
+  REAL mat[9];
 };
 
 using CMat3d = CMat3<double>;

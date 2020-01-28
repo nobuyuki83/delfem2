@@ -271,19 +271,20 @@ PYBIND11_MODULE(c_core, m) {
   
   // -------------------------
   // axis arrigned boudning box
-  py::class_<dfm2::CBV3_AABB>(m,"AABB3", "3D axis aligned bounding box class")
+  py::class_<dfm2::CBV3d_AABB>(m,"AABB3", "3D axis aligned bounding box class")
   .def(py::init<>())
   .def(py::init<const std::vector<double>&, const std::vector<double>&>())
   .def(py::init<const std::vector<double>&>())
-  .def("__str__",            &dfm2::CBV3_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
-  .def("minmax_xyz",         &dfm2::CBV3_AABB::AABBVec3)
-  .def("set_minmax_xyz",     &dfm2::CBV3_AABB::Set_AABBVec3)
-  .def("add_minmax_xyz",     &dfm2::CBV3_AABB::Add_AABBVec3)
-  .def("list_xyz",           &dfm2::CBV3_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
-  .def("diagonal_length",    &dfm2::CBV3_AABB::DiagonalLength, "diagonal length of the bounding box")
-  .def("max_length",         &dfm2::CBV3_AABB::MaxLength, "diagonal length of the bounding box")
-  .def("center",             &dfm2::CBV3_AABB::Center, "center position")
-  .def("is_active",          &dfm2::CBV3_AABB::IsActive);
+  .def("__str__",            &dfm2::CBV3d_AABB::str, "print x_min,x_max,y_min,y_max,z_min,z_max")
+  .def("minmax_xyz",         &dfm2::CBV3d_AABB::AABBVec3)
+  // 
+  .def("set_minmax_xyz",     &dfm2::CBV3d_AABB::Set_AABBVec3)
+  .def("add_minmax_xyz",     &dfm2::CBV3d_AABB::Add_AABBVec3)
+  .def("list_xyz",           &dfm2::CBV3d_AABB::Point3D_Vox, "corner xyz coords in voxel point order")
+  .def("diagonal_length",    &dfm2::CBV3d_AABB::DiagonalLength, "diagonal length of the bounding box")
+  .def("max_length",         &dfm2::CBV3d_AABB::MaxLength, "diagonal length of the bounding box")
+  .def("center",             &dfm2::CBV3d_AABB::Center, "center position")
+  .def("is_active",          &dfm2::CBV3d_AABB::IsActive);
   
   // --------
   // voxel

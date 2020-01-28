@@ -72,7 +72,7 @@ TEST(bvh,inclusion_aabb)
                             0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3_AABB, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_AABB, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -82,7 +82,7 @@ TEST(bvh,inclusion_aabb)
   for(int itr=0;itr<10000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3_AABB& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3d_AABB& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -450,7 +450,7 @@ TEST(bvh,morton_code)
   std::vector<double> aXYZ; // 3d points
   const double min_xyz[3] = {-1,-1,-1};
   const double max_xyz[3] = {+1,+1,+1};
-  dfm2::CBV3_AABB bb(min_xyz,max_xyz);
+  dfm2::CBV3d_AABB bb(min_xyz,max_xyz);
   {
     const unsigned int N = 10000;
     aXYZ.resize(N*3);
