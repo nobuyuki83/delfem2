@@ -35,7 +35,7 @@ int main(int argc,char* argv[])
   {
     const double min_xyz[3] = {-1,-1,-1};
     const double max_xyz[3] = {+1,+1,+1};
-    dfm2::CBV3_AABB bb(min_xyz, max_xyz);
+    dfm2::CBV3d_AABB bb(min_xyz, max_xyz);
     {
       const unsigned int N = 10000;
       aXYZ.resize(N*3);

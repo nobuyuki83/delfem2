@@ -113,7 +113,7 @@ void Draw_CubeGrid
 
 
 
-void Draw(const dfm2::CBV3_AABB& aabb)
+void Draw(const dfm2::CBV3d_AABB& aabb)
 {
   double x_min = aabb.bbmin[0];
   double x_max = aabb.bbmax[0];
@@ -121,7 +121,7 @@ void Draw(const dfm2::CBV3_AABB& aabb)
   double y_max = aabb.bbmax[1];
   double z_min = aabb.bbmin[2];
   double z_max = aabb.bbmax[2];
-  /////
+  //
   const double pxyz[3] = {x_min,y_min,z_min};
   const double pxyZ[3] = {x_min,y_min,z_max};
   const double pxYz[3] = {x_min,y_max,z_min};
