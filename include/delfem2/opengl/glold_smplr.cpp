@@ -31,31 +31,25 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-void dfm2::opengl::CGPUSamplerDrawer::SetPointColor(double r, double g, double b){
+void dfm2::opengl::CRender2Tex_DrawOldGL::SetPointColor(double r, double g, double b){
   colorPoint[0] = r;
   colorPoint[1] = g;
   colorPoint[2] = b;
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::Init(int nw, int nh)
-{
-  this->nResX = nw;
-  this->nResY = nh;
-}
-
-void dfm2::opengl::CGPUSamplerDrawer::InitGL() {
-  CGPUSampler::InitGL();
-  if( aRGBA.size() == nResX*nResY*4 ){
+void dfm2::opengl::CRender2Tex_DrawOldGL::InitGL() {
+  CRender2Tex::InitGL();
+  if( aRGBA_8ui.size() == nResX*nResY*4 ){
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
       // define size and format of level 0
     ::glTexImage2D(GL_TEXTURE_2D, 0,
                    GL_RGBA, nResX, nResY, 0,
-                   GL_RGBA, GL_UNSIGNED_BYTE, aRGBA.data());
+                   GL_RGBA, GL_UNSIGNED_BYTE, aRGBA_8ui.data());
   }
 }
 
 
-void dfm2::opengl::CGPUSamplerDrawer::SetView(){
+void dfm2::opengl::CRender2Tex_DrawOldGL::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
   delfem2::opengl::ViewTransformation(x_axis,z_axis,origin);
@@ -67,23 +61,28 @@ void dfm2::opengl::CGPUSamplerDrawer::SetView(){
   ::glMatrixMode(GL_MODELVIEW);
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::Start()
+void dfm2::opengl::CRender2Tex_DrawOldGL::Start()
 {
-  CGPUSampler::Start();
+  CRender2Tex::Start();
   this->SetView();
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::GetDepth()
+void dfm2::opengl::CRender2Tex_DrawOldGL::GetDepth()
 {
-  CGPUSampler::ExtractFromTexture_Depth(aZ);
+  CRender2Tex::ExtractFromTexture_Depth(aZ);
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::GetColor()
+void dfm2::opengl::CRender2Tex_DrawOldGL::GetColor()
 {
-  CGPUSampler::ExtractFromTexture_Color(aRGBA);
+  if( is_rgba_8ui ){
+    CRender2Tex::ExtractFromTexture_RGBA8UI(aRGBA_8ui);
+  }
+  else{
+    CRender2Tex::ExtractFromTexture_RGBA32F(aRGBA_32f);
+  }
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::Draw() const {
+void dfm2::opengl::CRender2Tex_DrawOldGL::Draw() const {
   ::glPointSize(this->pointSize);
   this->Draw_Point();
   // -----------
@@ -118,7 +117,7 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw() const {
   }
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::Draw_Axis() const
+void dfm2::opengl::CRender2Tex_DrawOldGL::Draw_Axis() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -127,7 +126,7 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw_Axis() const
     ::glPopMatrix();
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::Draw_BoundingBox() const
+void dfm2::opengl::CRender2Tex_DrawOldGL::Draw_BoundingBox() const
 {
   ::glMatrixMode(GL_MODELVIEW);
   ::glPushMatrix();
@@ -137,7 +136,7 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw_BoundingBox() const
   ::glPopMatrix();
 }
 
-void dfm2::opengl::CGPUSamplerDrawer::Draw_Point() const
+void dfm2::opengl::CRender2Tex_DrawOldGL::Draw_Point() const
 {
   ::glDisable(GL_LIGHTING);
   if( aZ.size() != nResX*nResY ) return;
@@ -160,7 +159,7 @@ void dfm2::opengl::CGPUSamplerDrawer::Draw_Point() const
   ::glEnd();
 }
 
-std::vector<double> dfm2::opengl::CGPUSamplerDrawer::getGPos(int ix, int iy) const
+std::vector<double> dfm2::opengl::CRender2Tex_DrawOldGL::getGPos(int ix, int iy) const
 {
   const dfm2::CVec3d& dx = x_axis;
   const dfm2::CVec3d& dz = z_axis;

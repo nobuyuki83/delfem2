@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-import sys
-sys.path.append("..")
+import OpenGL.GL as gl
 import PyDelFEM2 as dfm2
 import PyDelFEM2.gl.glfw
 
@@ -20,16 +19,19 @@ def main():
   axis.line_width=3
 
   sampler = dfm2.gl.CppGPUSampler()
-  sampler.init(size_res_width=256,size_res_height=256)
+  sampler.set_texture_property(size_res_width=256,size_res_height=256, is_rgba_8ui=True)
   sampler.set_coordinate(len_grid=0.2, depth_max=100.0,
                        org=[0, -50, 0], dir_prj=[0, -1.0, 0], dir_width=[1, 0, 0])  
   sampler.point_color = [0,0,1,1]
   sampler.len_axis = 10
-  sampler.bgcolor = [1,1,0,1]
 
   with dfm2.gl.glfw.GPUSamplerBufferGLFW([512, 512], format_color="4byte", is_depth=True):
     sampler.init_gl()
     sampler.start()
+    gl.glClearColor(1,0,1,1)
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+    gl.glDisable(gl.GL_LIGHTING)
+    gl.glDisable(gl.GL_BLEND)
     msh.draw()
     sampler.end()
     sampler.get_depth()

@@ -14,7 +14,6 @@ from typing import List
 
 from ._gl import Camera, screenUnProjection, screenUnProjectionDirection, AxisXYZ, getOpenglInfo
 
-from .c_gl import CppFrameBufferManager
 from .c_gl import glew_init, setSomeLighting
 
 from ..c_core import AABB3
