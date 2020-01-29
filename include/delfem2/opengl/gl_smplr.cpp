@@ -13,7 +13,8 @@
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
-
+#include "delfem2/vec3.h"
+// ------
 #include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
@@ -23,8 +24,6 @@
 #else
   #include <GL/gl.h>
 #endif
-
-#include "delfem2/vec3.h"
 #include "delfem2/opengl/gl_smplr.h"
 
 namespace dfm2 = delfem2;
@@ -48,54 +47,10 @@ static void NormalizeX(double* p0, int n)
   ScaleX(p0,n,1.0/sqrt(ss));
 }
 
-//PURPOSE:      For square matrices. This is column major for OpenGL
-inline void MultiplyMatrices4by4OpenGL_FLOAT(
-    float *result,
-    const float *m1,
-    const float *m2)
-{
-  result[ 0]=m1[0]*m2[0]+  m1[4]*m2[1]+  m1[8]*m2[2]+  m1[12]*m2[3];
-  result[ 4]=m1[0]*m2[4]+  m1[4]*m2[5]+  m1[8]*m2[6]+  m1[12]*m2[7];
-  result[ 8]=m1[0]*m2[8]+  m1[4]*m2[9]+  m1[8]*m2[10]+  m1[12]*m2[11];
-  result[12]=m1[0]*m2[12]+   m1[4]*m2[13]+  m1[8]*m2[14]+  m1[12]*m2[15];
-
-  result[ 1]=m1[1]*m2[0]+  m1[5]*m2[1]+  m1[9]*m2[2]+  m1[13]*m2[3];
-  result[ 5]=m1[1]*m2[4]+  m1[5]*m2[5]+  m1[9]*m2[6]+  m1[13]*m2[7];
-  result[ 9]=m1[1]*m2[8]+  m1[5]*m2[9]+  m1[9]*m2[10]+  m1[13]*m2[11];
-  result[13]=m1[1]*m2[12]+  m1[5]*m2[13]+  m1[9]*m2[14]+  m1[13]*m2[15];
-
-  result[ 2]=m1[2]*m2[0]+  m1[6]*m2[1]+  m1[10]*m2[2]+  m1[14]*m2[3];
-  result[ 6]=m1[2]*m2[4]+  m1[6]*m2[5]+  m1[10]*m2[6]+  m1[14]*m2[7];
-  result[10]=m1[2]*m2[8]+  m1[6]*m2[9]+  m1[10]*m2[10]+  m1[14]*m2[11];
-  result[14]=m1[2]*m2[12]+   m1[6]*m2[13]+  m1[10]*m2[14]+  m1[14]*m2[15];
-
-  result[ 3]=m1[3]*m2[0]+  m1[7]*m2[1]+  m1[11]*m2[2]+  m1[15]*m2[3];
-  result[ 7]=m1[3]*m2[4]+  m1[7]*m2[5]+  m1[11]*m2[6]+  m1[15]*m2[7];
-  result[11]=m1[3]*m2[8]+   m1[7]*m2[9]+  m1[11]*m2[10]+  m1[15]*m2[11];
-  result[15]=m1[3]*m2[12]+   m1[7]*m2[13]+  m1[11]*m2[14]+  m1[15]*m2[15];
-}
-
 // --------------------------------------------
-/*
-void CGPUSampler::SetColor(double r, double g, double b){
-  color[0] = r;
-  color[1] = g;
-  color[2] = b;
-}
- */
 
-void dfm2::opengl::CGPUSampler::Init
- (int nw, int nh,
-  std::string sFormatPixelColor, bool isDepth)
-{
-  this->nResX = nw;
-  this->nResY = nh;
-  const int npix = nw*nh;
-  id_tex_color = 0;
-  id_tex_depth = 0;
-}
 
-void delfem2::opengl::CGPUSampler::SetCoord
+void delfem2::opengl::CRender2Tex::SetCoord
 (double elen, double depth_max,
  const std::vector<double>& org_prj,
  const std::vector<double>& dir_prj,
@@ -110,7 +65,7 @@ void delfem2::opengl::CGPUSampler::SetCoord
   NormalizeX(x_axis,3);
 }
 
-void delfem2::opengl::CGPUSampler::Matrix_MVP
+void delfem2::opengl::CRender2Tex::AffMatT3f_MVP
  (float mMV[16],
   float mP[16]) const
 {
@@ -131,68 +86,28 @@ void delfem2::opengl::CGPUSampler::Matrix_MVP
     double t = +lengrid*nResY;
     double n = -z_range;
     double f = 0;
-    /*
-    mP[0*4+0] = 2.0/(r-l);
-    mP[0*4+1] = 0.0;
-    mP[0*4+2] = 0.0;
-    mP[0*4+3] = -(l+r)/(r-l);
-    mP[1*4+0] = 0.0;
-    mP[1*4+1] = 2.0/(t-b);
-    mP[1*4+2] = 0.0;
-    mP[1*4+3] = -(t+b)/(t-b);
-    mP[2*4+0] = 0.0;
-    mP[2*4+1] = 0.0;
-    mP[2*4+2] = 2.0/(n-f);
-    mP[2*4+3] = -(n+f)/(n-f);
-    mP[3*4+0] = 0.0;
-    mP[3*4+1] = 0.0;
-    mP[3*4+2] = 0.0;
-    mP[3*4+3] = 1.0;
-     */
-    mP[0*4+0] = 2.0/(r-l);
-    mP[1*4+0] = 0.0;
-    mP[2*4+0] = 0.0;
-    mP[3*4+0] = -(l+r)/(r-l);
-    mP[0*4+1] = 0.0;
-    mP[1*4+1] = 2.0/(t-b);
-    mP[2*4+1] = 0.0;
-    mP[3*4+1] = -(t+b)/(t-b);
-    mP[0*4+2] = 0.0;
-    mP[1*4+2] = 0.0;
-    mP[2*4+2] = 2.0/(n-f);
-    mP[3*4+2] = -(n+f)/(n-f);
-    mP[0*4+3] = 0.0;
-    mP[1*4+3] = 0.0;
-    mP[2*4+3] = 0.0;
-    mP[3*4+3] = 1.0;
+    mP[0*4+0] = 2.0/(r-l);    mP[1*4+0] = 0.0;         mP[2*4+0] = 0.0;        mP[3*4+0] = -(l+r)/(r-l);
+    mP[0*4+1] = 0.0;          mP[1*4+1] = 2.0/(t-b);   mP[2*4+1] = 0.0;        mP[3*4+1] = -(t+b)/(t-b);
+    mP[0*4+2] = 0.0;          mP[1*4+2] = 0.0;         mP[2*4+2] = 2.0/(n-f);  mP[3*4+2] = -(n+f)/(n-f);
+    mP[0*4+3] = 0.0;          mP[1*4+3] = 0.0;         mP[2*4+3] = 0.0;        mP[3*4+3] = 1.0;
   }
 }
 
 
-void dfm2::opengl::CGPUSampler::Start()
+void dfm2::opengl::CRender2Tex::Start()
 {
   glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0, nResX, nResY);
-
-  if(      bgcolor.size() == 4 ){ ::glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], bgcolor[3]); }
-  else if( bgcolor.size() == 3 ){ ::glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0); }
-  else if( bgcolor.size() > 0  ){ ::glClearColor(bgcolor[0], bgcolor[0], bgcolor[0], 1.0 ); }
-  else{                           ::glClearColor(1.0, 1.0, 1.0, 1.0 ); }
-  
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
-
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glDisable(GL_BLEND);
-  ::glEnable(GL_DEPTH_TEST);
 }
 
-void dfm2::opengl::CGPUSampler::End()
+void dfm2::opengl::CRender2Tex::End()
 {
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   ::glViewport(view[0], view[1], view[2], view[3]);  
 }
 
-void dfm2::opengl::CGPUSampler::ExtractFromTexture_Depth
+void dfm2::opengl::CRender2Tex::ExtractFromTexture_Depth
  (std::vector<float>& aZ)
 {
 #ifdef EMSCRIPTEN
@@ -209,7 +124,7 @@ void dfm2::opengl::CGPUSampler::ExtractFromTexture_Depth
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void dfm2::opengl::CGPUSampler::ExtractFromTexture_Color
+void dfm2::opengl::CRender2Tex::ExtractFromTexture_RGBA8UI
 (std::vector<std::uint8_t>& aRGBA)
 {
 #ifdef EMSCRIPTEN
@@ -225,21 +140,45 @@ void dfm2::opengl::CGPUSampler::ExtractFromTexture_Color
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void dfm2::opengl::CGPUSampler::InitGL()
+void dfm2::opengl::CRender2Tex::ExtractFromTexture_RGBA32F
+ (std::vector<float>& aRGBA)
+{
+#ifdef EMSCRIPTEN
+  std::cout << "the function \"glGetTexImage\" is not supported in emscripten" << std::endl;
+  return;
+#endif
+  aRGBA.resize(nResX*nResY*4);
+  std::vector<float> aF_RGBA(nResX*nResY*4);
+  ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
+  ::glGetTexImage(GL_TEXTURE_2D, 0,
+                  GL_RGBA, GL_FLOAT,
+                  (void*)aF_RGBA.data());
+  ::glBindTexture(GL_TEXTURE_2D, 0);
+  ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+void dfm2::opengl::CRender2Tex::InitGL()
 {
   ::glEnable(GL_TEXTURE_2D);
   ::glActiveTexture(GL_TEXTURE0);
 
   { // initialize color texture
-    // create to render to
+    // create and bind texture
     if( id_tex_color > 0 ){ glDeleteTextures(1, &id_tex_color); }
     ::glGenTextures(1, &id_tex_color);
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
     // define size and format of level 0
-    ::glTexImage2D(GL_TEXTURE_2D, 0,
-                   GL_RGBA, nResX, nResY, 0,
-                   GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-//                   GL_RGBA, GL_FLOAT, nullptr);
+    if( is_rgba_8ui ){
+      ::glTexImage2D(GL_TEXTURE_2D, 0,
+                     GL_RGBA, nResX, nResY, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    }
+    else{
+      ::glTexImage2D(GL_TEXTURE_2D, 0,
+                     GL_RGBA, nResX, nResY, 0,
+                     GL_RGBA, GL_FLOAT, nullptr);
+    }
     // set the filtering so we don't need mips
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

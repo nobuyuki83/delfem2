@@ -35,7 +35,7 @@ namespace dfm2 = delfem2;
 CShader_TriMesh shdr0;
 CShader_Points shdr1;
 delfem2::opengl::CViewer_GLFW viewer;
-dfm2::opengl::CGPUSamplerDraw sampler;
+dfm2::opengl::CRender2Tex_DrawNewGL sampler;
 
 // ---------------------------
 
@@ -62,13 +62,12 @@ int main()
   {
     int nres = 256;
     double elen = 0.01;
-    sampler.Init(nres, nres, "4byte",false);
+    sampler.SetTextureProperty(nres, nres, true);
     sampler.SetCoord(elen, 4.0,
                      dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
                      dfm2::CVec3d(0,0,-1).stlvec(),
                      dfm2::CVec3d(1,0,0).stlvec() );
     sampler.draw_len_axis = 1.0;
-    sampler.bgcolor = {1,1,1};
   }
 
   viewer.Init_newGL();
@@ -90,14 +89,16 @@ int main()
     shdr0.Compile();
     shdr0.Initialize(aXYZ, aTri);
   }
-
   sampler.Start();
-  float mMV[16], mP[16];
-  sampler.Matrix_MVP(mMV,mP);
+  ::glClearColor(1.0, 1.0, 1.0, 1.0 );
+  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  ::glDisable(GL_BLEND);
+  ::glEnable(GL_DEPTH_TEST);
+  float mMV[16], mP[16]; sampler.AffMatT3f_MVP(mMV,mP);
   shdr0.Draw(mP,mMV);
   sampler.End();
   sampler.SetDepth();
-
+  //
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   

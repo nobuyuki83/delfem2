@@ -662,7 +662,7 @@ template void dfm2::MatVec4(double v[4], const double A[16], const double x[4]);
 // ---------------------------
 
 template <typename T>
-void dfm2::AffMat3Vec3Projection
+void dfm2::Vec3_AffMat3Vec3Projection
 (T y0[3],
  const T a[16],
  const T x0[3])
@@ -673,8 +673,8 @@ void dfm2::AffMat3Vec3Projection
   y0[1] = y1[1]/y1[3];
   y0[2] = y1[2]/y1[3];
 }
-template void dfm2::AffMat3Vec3Projection(float y0[3], const float a[16], const float x0[3]);
-template void dfm2::AffMat3Vec3Projection(double y0[3], const double a[16], const double x0[3]);
+template void dfm2::Vec3_AffMat3Vec3Projection(float y0[3], const float a[16], const float x0[3]);
+template void dfm2::Vec3_AffMat3Vec3Projection(double y0[3], const double a[16], const double x0[3]);
 
   
 // ----------------------
