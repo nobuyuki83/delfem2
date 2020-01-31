@@ -17,16 +17,13 @@
 namespace delfem2{
 namespace opengl{
 
-class CGPUSamplerDraw : public CGPUSampler
+class CRender2Tex_DrawNewGL : public CRender2Tex
 {
 public:
-  CGPUSamplerDraw(){
+  CRender2Tex_DrawNewGL(){
     pointSize = 3;
     isDrawTex = true;
     draw_len_axis = 1.0;
-  }
-  CGPUSamplerDraw(int nw, int nh, std::string sFormatPixelColor, bool isDepth){
-    this->Init(nw,nh,sFormatPixelColor,isDepth);
   }
   // --------------
   void Draw(float mP[16], float mMV[16]) const;

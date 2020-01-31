@@ -80,7 +80,7 @@ void MatVec4(T v[4],
              const T x[4]);
 
 template <typename T>
-void AffMat3Vec3Projection(T y0[3],
+void Vec3_AffMat3Vec3Projection(T y0[3],
                            const T a[16],
                            const T x0[3]);
 
