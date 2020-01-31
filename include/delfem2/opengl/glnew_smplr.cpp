@@ -32,10 +32,10 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-void dfm2::opengl::CGPUSamplerDraw::SetDepth()
+void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
 {
   std::vector<float> aZ;
-  CGPUSampler::ExtractFromTexture_Depth(aZ);
+  CRender2Tex::ExtractFromTexture_Depth(aZ);
   assert( aZ.size() == nResX*nResY );
   std::vector<double> aXYZ(nResX*nResY*3);
   const double* ax = this->x_axis;
@@ -55,8 +55,8 @@ void dfm2::opengl::CGPUSamplerDraw::SetDepth()
   shdr2.Initialize(aXYZ);
 }
 
-void dfm2::opengl::CGPUSamplerDraw::InitGL() {
-  CGPUSampler::InitGL();
+void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL() {
+  CRender2Tex::InitGL();
   //
   { // draw grid
     this->shdr0.Compile();
@@ -128,7 +128,7 @@ void dfm2::opengl::CGPUSamplerDraw::InitGL() {
   }
 }
 
-void dfm2::opengl::CGPUSamplerDraw::Draw(float mP[16], float mV[16]) const
+void dfm2::opengl::CRender2Tex_DrawNewGL::Draw(float mP[16], float mV[16]) const
 {
  ::glLineWidth(5);
   float mM[16];

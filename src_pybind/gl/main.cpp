@@ -1,25 +1,21 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-
 #include <vector>
 #include <map>
 #include <deque>
-
-#include "glad/glad.h"
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <OpenGL/gl.h>
-#else
-  #include <GL/gl.h>
-#endif
-
 #include "delfem2/dtri_v2.h"
 #include "delfem2/dtri_v3.h"
 #include "delfem2/mshtopo.h"
 
+// -------------------------
+#include "glad/glad.h"
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 #include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/gl_framebuffer.h" // have to be included in the beginning
-
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_v23dtricad.h"

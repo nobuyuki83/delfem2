@@ -23,7 +23,6 @@ namespace dfm2 = delfem2;
 // ------------------------------------------------------
 
 double cur_time = 0.0;
-dfm2::opengl::CGPUSamplerDrawer sampler;
 bool is_animation = true;
 bool is_depth = false;
 std::vector<double> aXYZ;
@@ -37,12 +36,10 @@ void Draw(){
   ::glRotated(-cur_time, 1,0,0);
 }
 
-void myGlutDisplay()
+void myGlutDisplay(const dfm2::opengl::CRender2Tex_DrawOldGL& sampler)
 {
   dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
-//  ::glDisable(GL_LIGHTING);
   ::glEnable(GL_LIGHTING);
-  
   ::glColor3d(1,1,1);
   Draw();
 
@@ -52,15 +49,18 @@ void myGlutDisplay()
   sampler.Draw();
 }
 
-void myGlutIdle(){
+void myGlutIdle(dfm2::opengl::CRender2Tex_DrawOldGL& sampler){
   if(is_animation){
     sampler.Start();
-    ::glDisable(GL_LIGHTING);
-    ::glColor3d(1,1,1);
+    ::glClearColor(1.0, 1.0, 1.0, 1.0 );
+    ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    ::glEnable(GL_DEPTH_TEST);
+    ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
     Draw();
     sampler.End();
     sampler.GetDepth();
+    sampler.GetColor();
     cur_time += 1;
   }
 }
@@ -70,18 +70,18 @@ int main(int argc,char* argv[])
   dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ,aTri);
   dfm2::Normalize_Points3D(aXYZ,1.0);
-  
-  int nres = 256;
-  double elen = 0.01;
-  sampler.Init(nres, nres);
+  // ---------------------------------------
+  int nres = 64;
+  double elen = 0.04;
+  dfm2::opengl::CRender2Tex_DrawOldGL sampler;
+  sampler.SetTextureProperty(nres, nres, true);
   sampler.SetCoord(elen, 4.0,
                    dfm2::CVec3d(-nres*elen*0.5,nres*elen*0.5,-2).stlvec(),
                    dfm2::CVec3d(0,0,-1).stlvec(),
                    dfm2::CVec3d(1,0,0).stlvec() );
   sampler.SetPointColor(1, 0, 0);
   sampler.draw_len_axis = 1.0;
-  
-  // --------------
+  // ---------------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 2.0;
@@ -101,10 +101,10 @@ int main(int argc,char* argv[])
   while (!glfwWindowShouldClose(viewer.window))
   {
     cur_time += 0.1;
-    myGlutIdle();
+    myGlutIdle(sampler);
     // ----
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(sampler);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

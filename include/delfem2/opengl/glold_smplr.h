@@ -17,39 +17,40 @@ namespace delfem2 {
 namespace opengl {
 
 
-class CGPUSamplerDrawer : public CGPUSampler
+class CRender2Tex_DrawOldGL : public CRender2Tex
 {
 public:
-  CGPUSamplerDrawer(){
+  CRender2Tex_DrawOldGL()
+  {
     pointSize = 3;
     isDrawTex = true;
-    colorPoint = {1,0,0,1};
     draw_len_axis = 1.0;
+    colorPoint = {1,1,1,1};
   }
   // ------------
-  void Init(int nw, int nh);
-  void InitGL();
-  void Draw() const;
+  virtual void InitGL(); // override function
+  virtual void Start(); // override function
   // ----------
+  void Draw() const;
   void Draw_Axis() const;
   void Draw_Point() const;
   void Draw_BoundingBox() const;
   void SetView();
   // ------------
   void SetPointColor(double r, double g, double b);
-  void Start();
   void SetZeroToDepth(){ for(unsigned int i=0;i<aZ.size();++i){ aZ[i] = 0.0; } }
   std::vector<double> getGPos(int ix, int iy) const;
   void GetDepth();
   void GetColor();
 public:
   std::vector<float> aZ;
-  std::vector<unsigned char> aRGBA;
+  std::vector<unsigned char> aRGBA_8ui;
+  std::vector<float> aRGBA_32f;
   // -------------------
-  std::vector<double> colorPoint;
   double draw_len_axis;
   unsigned int pointSize;
   bool isDrawTex;
+  std::vector<double> colorPoint;
 };
   
 }

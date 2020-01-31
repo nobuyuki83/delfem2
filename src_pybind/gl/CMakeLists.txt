@@ -40,8 +40,7 @@ set(INPUT_SRC
 
     ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/gl_tex.h             ${DELFEM2_INC}/opengl/gl_tex.cpp
-    ${DELFEM2_INC}/opengl/gl_framebuffer.h     ${DELFEM2_INC}/opengl/gl_framebuffer.cpp
-    ${DELFEM2_INC}/opengl/gl_smplr.h        ${DELFEM2_INC}/opengl/gl_smplr.cpp
+    ${DELFEM2_INC}/opengl/gl_smplr.h           ${DELFEM2_INC}/opengl/gl_smplr.cpp
 
     ${DELFEM2_INC}/opengl/glold_voxbv.h        ${DELFEM2_INC}/opengl/glold_voxbv.cpp
     ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
