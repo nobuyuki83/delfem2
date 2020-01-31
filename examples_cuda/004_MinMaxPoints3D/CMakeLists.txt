@@ -14,8 +14,8 @@ message("Runtime: " ${CUDA_CUDART_LIBRARY})
 if(CUDA_FOUND)
   message("Cuda version: " ${CUDA_VERSION})
     CUDA_ADD_EXECUTABLE(${PROJECT_NAME}
-        ${DELFEM2_INC}/cuda/cu_matvec.cu
-        ${DELFEM2_INC}/cuda/cu_matvec.h
+        ${DELFEM2_INC}/cuda/cu_bvh.cu
+        ${DELFEM2_INC}/cuda/cu_bvh.h
         main.cpp)
 endif()
 

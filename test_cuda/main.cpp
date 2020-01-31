@@ -19,6 +19,7 @@
 #include "delfem2/bvh.h"
 
 #include "delfem2/cuda/cu_matvec.h"
+#include "delfem2/cuda/cu_bvh.h"
 
 namespace dfm2 = delfem2;
 
@@ -103,9 +104,139 @@ TEST(matvec,matmat) {
   }
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 
-TEST(matvec,minmax_po3d)
+
+void mark_child(std::vector<int>& aFlgBranch,
+                std::vector<int>& aFlgLeaf,
+                std::vector<int>& aFlgID,
+                unsigned int nID,
+                unsigned int inode0,
+                const std::vector<dfm2::CNodeBVH2>& aNode)
+{
+  assert( inode0 < aNode.size() );
+  if( aNode[inode0].ichild[1] == -1 ){ // leaf
+    assert(inode0>=nID-1 && inode0<nID*2-1);
+    aFlgLeaf[inode0-(nID-1)] += 1;
+    const unsigned int in0 = aNode[inode0].ichild[0];
+    assert( in0 < aFlgID.size() );
+    aFlgID[in0] += 1;
+    return;
+  }
+  aFlgBranch[inode0] += 1;
+  const unsigned int in0 = aNode[inode0].ichild[0];
+  const unsigned int in1 = aNode[inode0].ichild[1];
+  mark_child(aFlgBranch, aFlgLeaf, aFlgID, nID, in0, aNode);
+  mark_child(aFlgBranch, aFlgLeaf, aFlgID, nID, in1, aNode);
+}
+
+
+TEST(bvh,aabb_tri)
+{
+  std::mt19937 engin(0);
+  std::uniform_int_distribution<unsigned int> dist0(3, 200);
+  std::vector<float> aXYZ;
+  std::vector<unsigned int> aTri;
+  //
+  for(int itr=0;itr<10;++itr) {
+    unsigned int nr = dist0(engin);
+    unsigned int nl = dist0(engin);
+    dfm2::MeshTri3_Torus(aXYZ, aTri,
+                         0.5, 0.20, nr, nl);
+    for(int ip=0;ip<aXYZ.size()/3;++ip){
+      aXYZ[ip*3+0] += 0.05*rand()/(RAND_MAX+1.0);
+      aXYZ[ip*3+1] += 0.05*rand()/(RAND_MAX+1.0);
+      aXYZ[ip*3+2] += 0.05*rand()/(RAND_MAX+1.0);
+    }
+    const unsigned int nTri = aTri.size() / 3;
+    // -----------------------------------------------------
+    std::vector<float> aXYZ_c(nTri * 3);
+    float max_rad1;
+    dfm2::cuda::cuda_CentsMaxRad_MeshTri3F(
+        aXYZ_c.data(), &max_rad1,
+        aXYZ.data(), aXYZ.size() / 3,
+        aTri.data(), nTri);
+    float bbmin3[3], bbmax3[3];
+    dfm2::cuda::cuda_Min3Max3_Points3F(bbmin3,bbmax3,
+                                       aXYZ_c.data(), aXYZ_c.size() / 3);
+    std::vector<dfm2::CNodeBVH2> aNodeBVH(nTri * 2 - 1);
+    {
+      std::vector<unsigned int> aSortedId(nTri);
+      std::vector<std::uint32_t> aSortedMc(nTri);
+      dfm2::cuda::cuda_MortonCode_Points3FSorted(aSortedId.data(), aSortedMc.data(),
+                                                 aXYZ_c.data(), aXYZ_c.size() / 3,
+                                                 bbmin3, bbmax3);
+      dfm2::cuda::cuda_MortonCode_BVHTopology(aNodeBVH.data(),
+                                              aSortedId.data(), aSortedMc.data(), nTri);
+      { // test result against CPU
+        std::vector<dfm2::CNodeBVH2> aNodeBVH1(nTri*2-1);
+        dfm2::BVH_TreeTopology_Morton(aNodeBVH1,
+                                      aSortedId, aSortedMc);
+        EXPECT_EQ(aNodeBVH.size(), aNodeBVH1.size());
+        for(int ibb=0;ibb<aNodeBVH.size();++ibb) {
+          EXPECT_EQ( aNodeBVH[ibb].iroot, aNodeBVH1[ibb].iroot );
+          EXPECT_EQ( aNodeBVH[ibb].ichild[0], aNodeBVH1[ibb].ichild[0] );
+          EXPECT_EQ( aNodeBVH[ibb].ichild[1], aNodeBVH1[ibb].ichild[1] );
+        }
+      }
+    }
+    // --------------------------------------------
+    std::vector<dfm2::CBV3f_AABB> aAABB(nTri*2-1);
+    dfm2::cuda::cuda_BVHGeometry((float*)(aAABB.data()),
+                                 aNodeBVH.data(),
+                                 aXYZ.data(), aXYZ.size()/3,
+                                 aTri.data(), nTri);
+
+    {
+      std::vector<dfm2::CBV3f_AABB> aAABB1(nTri*2-1);
+      dfm2::BVH_BuildBVHGeometry_Mesh(
+          aAABB1,
+          0, aNodeBVH,
+          0.0,
+          aXYZ.data(),aXYZ.size()/3,
+          aTri.data(),3,aTri.size()/3);
+      for(int ibb=0;ibb<aAABB.size();++ibb){
+        EXPECT_FLOAT_EQ(aAABB[ibb].bbmin[0], aAABB1[ibb].bbmin[0] );
+        EXPECT_FLOAT_EQ(aAABB[ibb].bbmin[1], aAABB1[ibb].bbmin[1] );
+        EXPECT_FLOAT_EQ(aAABB[ibb].bbmin[2], aAABB1[ibb].bbmin[2] );
+        EXPECT_FLOAT_EQ(aAABB[ibb].bbmax[0], aAABB1[ibb].bbmax[0] );
+        EXPECT_FLOAT_EQ(aAABB[ibb].bbmax[1], aAABB1[ibb].bbmax[1] );
+        EXPECT_FLOAT_EQ(aAABB[ibb].bbmax[2], aAABB1[ibb].bbmax[2] );
+      }
+    }
+    // ---------------------------------------------
+    {
+      const unsigned int N = nTri;
+      std::vector<int> aFlgBranch(N-1,0);
+      std::vector<int> aFlgLeaf(N,0);
+      std::vector<int> aFlgID(N,0);
+      mark_child(aFlgBranch,aFlgLeaf,aFlgID, N, 0, aNodeBVH);
+      for(int i=0;i<N;++i){
+        EXPECT_EQ(aFlgID[i],1);
+        EXPECT_EQ(aFlgLeaf[i],1);
+      }
+      for(int i=0;i<N-1;++i) {
+        EXPECT_EQ(aFlgBranch[i],1);
+      }
+    }
+    EXPECT_EQ( aNodeBVH.size(), aAABB.size() );
+    for(int ibb=0;ibb<aAABB.size();++ibb){
+      int iroot = aNodeBVH[ibb].iroot;
+      EXPECT_TRUE( aNodeBVH[iroot].ichild[0] == ibb || aNodeBVH[iroot].ichild[1] == ibb );
+      if( iroot == -1 ){ continue; }
+      const dfm2::CBV3f_AABB& aabbp = aAABB[iroot];
+      const dfm2::CBV3f_AABB& aabbc = aAABB[ibb];
+      EXPECT_TRUE(aabbp.IsActive());
+      EXPECT_TRUE(aabbc.IsActive());
+      EXPECT_TRUE( aabbp.IsInclude_AABB3(aabbc) ); // parent includes children
+    }
+  }
+}
+
+TEST(bvh,minmax_po3d)
 {
   std::mt19937 engine(0);
   std::uniform_int_distribution<unsigned int> dist0(1, 20000);
@@ -141,9 +272,7 @@ TEST(matvec,minmax_po3d)
   }
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
-
-TEST(matvec,meshtri3d_centrad)
+TEST(bvh,meshtri3d_centrad)
 {
   std::mt19937 engin(0);
   std::uniform_int_distribution<unsigned int> dist0(3, 100);
@@ -176,25 +305,6 @@ TEST(matvec,meshtri3d_centrad)
     }
     EXPECT_FLOAT_EQ(max_rad0, max_rad1);
   }
-}
-
-
-
-void mark_child(std::vector<int>& aFlg,
-                unsigned int inode0,
-                const std::vector<dfm2::CNodeBVH2>& aNode)
-{
-  assert( inode0 < aNode.size() );
-  if( aNode[inode0].ichild[1] == -1 ){ // leaf
-    const unsigned int in0 = aNode[inode0].ichild[0];
-    assert( in0 < aFlg.size() );
-    aFlg[in0] += 1;
-    return;
-  }
-  const unsigned int in0 = aNode[inode0].ichild[0];
-  const unsigned int in1 = aNode[inode0].ichild[1];
-  mark_child(aFlg, in0, aNode);
-  mark_child(aFlg, in1, aNode);
 }
 
 TEST(bvh,morton_code) {
@@ -240,24 +350,48 @@ TEST(bvh,morton_code) {
         std::uint32_t mc1 = dfm2::MortonCode(x1,y1,z1);
         EXPECT_EQ( mc0, mc1 );
       }
-      /*
-      for(unsigned int imc=0;imc<aSortedMc.size();++imc){
-        std::cout << std::bitset<32>(aSortedMc[imc]) << " " << imc << std::endl;
-      }
-       */
     }
     std::vector<dfm2::CNodeBVH2> aNodeBVH(N*2-1);
     dfm2::cuda::cuda_MortonCode_BVHTopology(aNodeBVH.data(),
                                             aSortedId.data(), aSortedMc.data(), N);
     {
-      std::vector<int> aFlg(aXYZ.size()/3,0);
-      mark_child(aFlg, 0, aNodeBVH);
-      for(int i=0;i<aXYZ.size()/3;++i){
-        EXPECT_EQ(aFlg[i],1);
+      std::vector<dfm2::CNodeBVH2> aNodeBVH1(N*2-1);
+      dfm2::BVH_TreeTopology_Morton(aNodeBVH1,
+          aSortedId, aSortedMc);
+      EXPECT_EQ(aNodeBVH.size(), aNodeBVH1.size());
+      for(int ibb=0;ibb<aNodeBVH.size();++ibb) {
+        EXPECT_EQ( aNodeBVH[ibb].iroot, aNodeBVH1[ibb].iroot );
+        EXPECT_EQ( aNodeBVH[ibb].ichild[0], aNodeBVH1[ibb].ichild[0] );
+        EXPECT_EQ( aNodeBVH[ibb].ichild[1], aNodeBVH1[ibb].ichild[1] );
+      }
+    }
+    // --------------------------------------------
+    for(int ibb=0;ibb<aNodeBVH.size();++ibb) {
+      int iroot = aNodeBVH[ibb].iroot;
+      EXPECT_TRUE(aNodeBVH[iroot].ichild[0] == ibb || aNodeBVH[iroot].ichild[1] == ibb);
+      if( aNodeBVH[ibb].ichild[1] == -1 ){ // leaf
+        int itri = aNodeBVH[ibb].ichild[0];
+        EXPECT_GE(itri,0);
+        EXPECT_LT(itri, N);
+      }
+    }
+    {
+      std::vector<int> aFlgBranch(aXYZ.size()/3-1,0);
+      std::vector<int> aFlgLeaf(aXYZ.size()/3,0);
+      std::vector<int> aFlgID(aXYZ.size()/3,0);
+      mark_child(aFlgBranch,aFlgLeaf,aFlgID, N, 0, aNodeBVH);
+      for(int i=0;i<N;++i){
+        EXPECT_EQ(aFlgID[i],1);
+        EXPECT_EQ(aFlgLeaf[i],1);
+      }
+      for(int i=0;i<N-1;++i) {
+        EXPECT_EQ(aFlgBranch[i],1);
       }
     }
   }
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 
 

@@ -87,11 +87,13 @@ public:
                       double margin)
   {
     assert( margin >= 0 );
-    BVH_BuildBVHGeometry(iroot_bvh,
-                         margin,
-                         pXYZ,nXYZ,
-                         pTri,3,nTri,
-                         aNodeBVH,aBB_BVH);
+    BVH_BuildBVHGeometry_Mesh(
+        aBB_BVH,
+        //
+        iroot_bvh, aNodeBVH,
+        margin,
+        pXYZ,nXYZ,
+        pTri,3,nTri);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
   double Nearest_Point_IncludedInBVH(CPointElemSurf<S>& pes,

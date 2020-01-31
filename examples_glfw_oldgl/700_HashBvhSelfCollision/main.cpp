@@ -66,12 +66,13 @@ void myGlutIdle(){
       aXYZ[ip*3+1] =  aXYZ0[ip*3+1] + aUVW[ip*3+1]*d;
       aXYZ[ip*3+2] =  aXYZ0[ip*3+2] + aUVW[ip*3+2]*d;
     }
-    ////
-    BVH_BuildBVHGeometry(iroot_bvh,
-                         1.0e-5,
-                         aXYZ.data(),aXYZ.size()/3,
-                         aTri.data(),3,aTri.size()/3,
-                         aNodeBVH,aBB_BVH);
+    ///
+    BVH_BuildBVHGeometry_Mesh(
+        aBB_BVH,
+        iroot_bvh,aNodeBVH,
+        1.0e-5,
+        aXYZ.data(),aXYZ.size()/3,
+        aTri.data(),3,aTri.size()/3);
     aITP.clear();
     dfm2::GetIntersectTriPairs(aITP,
                                aXYZ,aTri,

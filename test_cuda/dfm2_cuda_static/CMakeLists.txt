@@ -9,8 +9,10 @@ message("Cuda version: " ${CUDA_VERSION})
 
 if(CUDA_FOUND)
     CUDA_ADD_LIBRARY(${PROJ_NAME} STATIC
-        ${DELFEM2_INC}/cuda/cu_matvec.cu
-        ${DELFEM2_INC}/cuda/cu_matvec.h
+            ${DELFEM2_INC}/cuda/cu_matvec.cu
+            ${DELFEM2_INC}/cuda/cu_matvec.h
+            ${DELFEM2_INC}/cuda/cu_bvh.cu
+            ${DELFEM2_INC}/cuda/cu_bvh.h
     )
 endif()
 

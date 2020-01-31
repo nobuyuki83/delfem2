@@ -1924,7 +1924,7 @@ dfm2::CVec3<T> dfm2::screenDepthDirection
 
 //! Volume of a tetrahedra
 template <typename T>
-double dfm2::Volume_Tet
+T dfm2::Volume_Tet
 (const CVec3<T>& v0,
  const CVec3<T>& v1,
  const CVec3<T>& v2,
@@ -1938,6 +1938,9 @@ double dfm2::Volume_Tet
   return v*0.16666666666666666666666666666667;
    */
 }
+template double dfm2::Volume_Tet(const CVec3d& v0, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3 );
+template float dfm2::Volume_Tet(const CVec3f& v0, const CVec3f& v1, const CVec3f& v2, const CVec3f& v3 );
+
 
 //! Volume of a tetrahedra v0 is orgin
 template <typename T>

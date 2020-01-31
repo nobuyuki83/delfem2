@@ -3,7 +3,7 @@
 #include <ctime>
 #include <random>
 
-#include "delfem2/cuda/cu_matvec.h"
+#include "delfem2/cuda/cu_bvh.h"
 
 namespace dfm2 = delfem2;
 
