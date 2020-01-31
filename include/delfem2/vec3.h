@@ -520,10 +520,11 @@ double Volume_OrgTet(const CVec3<T>& v1,
                      const CVec3<T>& v3 );
   
 template <typename T>
-double Volume_Tet(const CVec3<T>& v0,
-                  const CVec3<T>& v1,
-                  const CVec3<T>& v2,
-                  const CVec3<T>& v3 );
+T Volume_Tet(
+    const CVec3<T>& v0,
+    const CVec3<T>& v1,
+    const CVec3<T>& v2,
+    const CVec3<T>& v3 );
 
 template <typename T>
 double Volume_Pyramid(const CVec3<T>& p0,

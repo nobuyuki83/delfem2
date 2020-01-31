@@ -42,6 +42,10 @@ public:
     if( bbmin[0] > bbmax[0] ){ return false; }
     return true;
   }
+  void Set_Inactive() {
+	  bbmin[0] = +1;
+	  bbmax[0] = -1;
+	}
   REAL DiagonalLength() const{
     REAL x0 = bbmax[0] - bbmin[0];
     REAL y0 = bbmax[1] - bbmin[1];
@@ -83,10 +87,10 @@ public:
 			return *this;
 		}
     bbmin[0] = ( bbmin[0] < bb.bbmin[0] ) ? bbmin[0] : bb.bbmin[0];
-		bbmax[0] = ( bbmax[0] > bb.bbmax[0] ) ? bbmax[0] : bb.bbmax[0];
     bbmin[1] = ( bbmin[1] < bb.bbmin[1] ) ? bbmin[1] : bb.bbmin[1];
-		bbmax[1] = ( bbmax[1] > bb.bbmax[1] ) ? bbmax[1] : bb.bbmax[1];
     bbmin[2] = ( bbmin[2] < bb.bbmin[2] ) ? bbmin[2] : bb.bbmin[2];
+		bbmax[0] = ( bbmax[0] > bb.bbmax[0] ) ? bbmax[0] : bb.bbmax[0];
+		bbmax[1] = ( bbmax[1] > bb.bbmax[1] ) ? bbmax[1] : bb.bbmax[1];
 		bbmax[2] = ( bbmax[2] > bb.bbmax[2] ) ? bbmax[2] : bb.bbmax[2];
 		return *this;
 	}
@@ -156,9 +160,16 @@ public:
 		bbmax[2] = ( bbmax[2] > v[2] ) ? bbmax[2] : v[2];
 		return *this;
 	}
+	/**
+	 * expand the aabb such that a point is included with a margin
+	 * @param x x-coordinte
+	 * @param y y-coorinate
+	 * @param z z-coordinate
+	 * @param eps margin. if negative, do nothing
+	 */
   void AddPoint(REAL x, REAL y, REAL z, REAL eps){
-    if( eps <= 0 ){ return; }
-    if( !IsActive() ){ // something inside
+    if( eps < 0 ){ return; }
+    if( !this->IsActive() ){ // something inside
       bbmin[0] = x-eps;  bbmax[0] = x+eps;
       bbmin[1] = y-eps;  bbmax[1] = y+eps;
       bbmin[2] = z-eps;  bbmax[2] = z+eps;
@@ -167,7 +178,6 @@ public:
     bbmin[0] = ( bbmin[0] < x-eps ) ? bbmin[0] : x-eps;
     bbmin[1] = ( bbmin[1] < y-eps ) ? bbmin[1] : y-eps;
     bbmin[2] = ( bbmin[2] < z-eps ) ? bbmin[2] : z-eps;
-    //
     bbmax[0] = ( bbmax[0] > x+eps ) ? bbmax[0] : x+eps;
     bbmax[1] = ( bbmax[1] > y+eps ) ? bbmax[1] : y+eps;
     bbmax[2] = ( bbmax[2] > z+eps ) ? bbmax[2] : z+eps;
@@ -193,6 +203,18 @@ public:
       && y >= bbmin[1] && y <= bbmax[1]
       && z >= bbmin[2] && z <= bbmax[2] ) return true;
    return false;
+  }
+  bool IsInclude_AABB3(const CBV3_AABB<REAL>& bb) const
+  {
+    if( !this->IsActive() ) return false;
+    if( !bb.IsActive() ) return true;
+    if( this->bbmin[0] <= bb.bbmin[0] &&
+        this->bbmin[1] <= bb.bbmin[1] &&
+        this->bbmin[2] <= bb.bbmin[2] &&
+        this->bbmax[0] >= bb.bbmax[0] &&
+        this->bbmax[1] >= bb.bbmax[1] &&
+        this->bbmax[2] >= bb.bbmax[2] ) return true;
+    return false;
   }
   std::vector<REAL> AABBVec3(){
     return {
@@ -224,6 +246,7 @@ public:
     return ss.str();
   }
 public:
+  // the order of the declarations should not be changed since it is used by cuda BVH.
   REAL bbmin[3], bbmax[3];
 };
 using CBV3d_AABB = CBV3_AABB<double>;
@@ -268,6 +291,9 @@ public:
     const double L = sqrt((bb.c[0]-c[0])*(bb.c[0]-c[0]) + (bb.c[1]-c[1])*(bb.c[1]-c[1]) + (bb.c[2]-c[2])*(bb.c[2]-c[2]));
     if( L > bb.r + r ) return false;
     return true;
+  }
+  void Set_Inactive() {
+    r = -1.0;
   }
   bool IsIntersectLine(const double src[3], const double dir[3]) const {
     double ratio = dir[0]*(c[0]-src[0]) + dir[1]*(c[1]-src[1]) + dir[2]*(c[2]-src[2]);
