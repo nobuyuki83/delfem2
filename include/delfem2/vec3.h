@@ -57,7 +57,16 @@ T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
 template <typename T>
 void Transpose_Mat3(T At[],
                    const T A[]);
-  
+
+template <typename REAL>
+void AverageTwo3(REAL po[3],
+                 const REAL p0[3], const REAL p1[3]);
+
+template <typename REAL>
+void AverageFour3(REAL po[3],
+                  const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
+
+ 
 // --------------------------------
   
 void UnitNormalAreaTri3D(double n[3], double& a,
@@ -286,6 +295,12 @@ double Height(const CVec3<T>& v1, const CVec3<T>& v2, const CVec3<T>& v3, const 
   
 template <typename T>
 void GetVertical2Vector (const CVec3<T>& vec_n, CVec3<T>& vec_x, CVec3<T>& vec_y);
+
+template <typename T>
+bool IntersectRay_Tri3(T& r0, T& r1,
+                       const CVec3<T>& org, const CVec3<T>& dir,
+                       const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2,
+                       T eps);
 
 // --------------------------------------------------------------
 

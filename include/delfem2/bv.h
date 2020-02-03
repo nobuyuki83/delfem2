@@ -246,7 +246,7 @@ public:
     return ss.str();
   }
 public:
-  // the order of the declarations should not be changed since it is used by cuda BVH.
+  // the order of this declarations should not be changed since it is used by cuda BVH.
   REAL bbmin[3], bbmax[3];
 };
 using CBV3d_AABB = CBV3_AABB<double>;
@@ -254,6 +254,10 @@ using CBV3f_AABB = CBV3_AABB<float>;
 
 // --------------------------------------------
 
+/**
+ * @class bounding volume with sphere
+ */
+template <typename REAL>
 class CBV3_Sphere
 {
 public:
@@ -342,9 +346,11 @@ public:
     max0 = L+r;
   }
 public:
-  double r;
-  double c[3];
+  REAL r;
+  REAL c[3];
 };
+using CBV3f_Sphere = CBV3_Sphere<float>;
+using CBV3d_Sphere = CBV3_Sphere<double>;
   
 } // namespace delfem2
 

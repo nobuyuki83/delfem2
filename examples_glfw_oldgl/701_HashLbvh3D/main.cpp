@@ -13,7 +13,7 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 // input parameter for simulation
-std::vector<double> aXYZ; // 3d points
+std::vector<double> aXYZ_Tri; // 3d points
 std::vector<dfm2::CNodeBVH2> aNodeBVH;
 
 // ----------------------------------------
@@ -24,8 +24,8 @@ void myGlutDisplay()
   ::glColor3d(0,0,0);
   ::glPointSize(3);
   ::glBegin(GL_POINTS);
-  for(size_t ip=0;ip<aXYZ.size()/3;++ip){
-    ::glVertex3d(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2]);
+  for(size_t ip=0;ip<aXYZ_Tri.size()/3;++ip){
+    ::glVertex3d(aXYZ_Tri[ip*3+0],aXYZ_Tri[ip*3+1],aXYZ_Tri[ip*3+2]);
   }
   ::glEnd();
 }
@@ -38,40 +38,40 @@ int main(int argc,char* argv[])
     dfm2::CBV3d_AABB bb(min_xyz, max_xyz);
     {
       const unsigned int N = 10000;
-      aXYZ.resize(N*3);
+      aXYZ_Tri.resize(N*3);
       std::random_device dev;
       std::mt19937 rng(dev());
       std::uniform_real_distribution<> udist(0.0, 1.0);
       for(unsigned int i=0;i<N;++i) {
-        aXYZ[i * 3 + 0] = (bb.bbmax[0] - bb.bbmin[0]) * udist(rng) + bb.bbmin[0];
-        aXYZ[i * 3 + 1] = (bb.bbmax[1] - bb.bbmin[1]) * udist(rng) + bb.bbmin[1];
-        aXYZ[i * 3 + 2] = (bb.bbmax[2] - bb.bbmin[2]) * udist(rng) + bb.bbmin[2];
+        aXYZ_Tri[i * 3 + 0] = (bb.bbmax[0] - bb.bbmin[0]) * udist(rng) + bb.bbmin[0];
+        aXYZ_Tri[i * 3 + 1] = (bb.bbmax[1] - bb.bbmin[1]) * udist(rng) + bb.bbmin[1];
+        aXYZ_Tri[i * 3 + 2] = (bb.bbmax[2] - bb.bbmin[2]) * udist(rng) + bb.bbmin[2];
       }
       srand(3);
       for(int iip=0;iip<10;++iip){ // hash collision
         const unsigned int ip = N*(rand()/(RAND_MAX+1.0));
         assert( N >= 0 && ip < N);
-        double x0 = aXYZ[ip*3+0];
-        double y0 = aXYZ[ip*3+1];
-        double z0 = aXYZ[ip*3+2];
+        double x0 = aXYZ_Tri[ip*3+0];
+        double y0 = aXYZ_Tri[ip*3+1];
+        double z0 = aXYZ_Tri[ip*3+2];
         for(int itr=0;itr<2;itr++){
-          aXYZ.insert(aXYZ.begin(), z0);
-          aXYZ.insert(aXYZ.begin(), y0);
-          aXYZ.insert(aXYZ.begin(), x0);
+          aXYZ_Tri.insert(aXYZ_Tri.begin(), z0);
+          aXYZ_Tri.insert(aXYZ_Tri.begin(), y0);
+          aXYZ_Tri.insert(aXYZ_Tri.begin(), x0);
         }
       }
     }
     std::vector<unsigned int> aSortedId;
     std::vector<std::uint32_t> aSortedMc;
     dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
-                              aXYZ,min_xyz,max_xyz);
+                              aXYZ_Tri,min_xyz,max_xyz);
     {
-      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
+      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ_Tri, bb.bbmin, bb.bbmax);
     }
     dfm2::Check_MortonCode_RangeSplit(aSortedMc);
     dfm2::BVH_TreeTopology_Morton(aNodeBVH,
                                   aSortedId,aSortedMc);
-    dfm2::Check_BVH(aNodeBVH,aXYZ.size()/3);
+    dfm2::Check_BVH(aNodeBVH,aXYZ_Tri.size()/3);
   }
   
   dfm2::opengl::CViewer_GLFW viewer;

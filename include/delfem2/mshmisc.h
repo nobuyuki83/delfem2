@@ -183,9 +183,21 @@ void RemoveUnreferencedPoints_MeshElem(std::vector<double>& aXYZ1,
                                        const std::vector<double>& aXYZ0,
                                        const std::vector<unsigned int>& aElem0);
 
+/**
+ * @brief Normal at the vertex of a triangle mesh.
+ */
 void Normal_MeshTri3D(double *aNorm,
                       const double *aXYZ, unsigned int nXYZ,
                       const unsigned int *aTri, unsigned int nTri);
+ 
+/**
+ * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"
+ */
+template <typename REAL>
+void Normal_MeshQuad3(
+    std::vector<REAL>& aNorm,
+    const std::vector<REAL>& aXYZ,
+    const std::vector<unsigned int>& aQuad);
 
 void Quality_MeshTri2D(
     double &max_aspect, double &min_area,
@@ -255,13 +267,11 @@ void SubdivisionPoints_QuadCatmullClark(std::vector<double>& aXYZ1,
                                         const std::vector<unsigned int> &psupQuad0,
                                         const unsigned int* aQuad0, unsigned int nQuad0,
                                         const double* aXYZ0, unsigned int nXYZ0);
-void SubdivisionPoints_Quad(std::vector<double>& aXYZ1,
+  
+void SubdivPoints3_MeshQuad(std::vector<double>& aXYZ1,
                             //
-                            const std::vector<int>& aQuad1,
                             const std::vector<int>& aEdgeFace0,
-                            const std::vector<int>& psupIndQuad0,
-                            const std::vector<int>& psupQuad0,
-                            const std::vector<int>& aQuad0,
+                            const std::vector<unsigned int>& aQuad0,
                             const std::vector<double>& aXYZ0);
 
 void SubdivisionPoints_Hex(std::vector<double>& aXYZ1,

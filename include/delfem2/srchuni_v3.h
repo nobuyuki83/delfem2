@@ -18,11 +18,6 @@
 namespace delfem2 {
   
 template <typename T>
-bool intersectRay_Tri3D(double& r0, double& r1,
-                        const CVec3<T>& org, const CVec3<T>& dir,
-                        const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2);
-
-template <typename T>
 class CPointElemSolid{
 public:
   CPointElemSolid(): ielem(-1), r0(0), r1(0), r2(0) {}
@@ -82,28 +77,31 @@ std::istream &operator>>(std::istream &input, CPointElemSurf<T>& v);
 
 // ----------------------------------------------------------
 
-template <typename T>
-std::vector<CPointElemSurf<T>>
-IntersectionLine_MeshTri3D(
-    const delfem2::CVec3<T>& org, const delfem2::CVec3<T>& dir,
+template <typename REAL>
+std::vector<CPointElemSurf<REAL>> IntersectionLine_MeshTri3(
+    const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
     const std::vector<unsigned int>& aTri,
-    const std::vector<double>& aXYZ);
+    const std::vector<REAL>& aXYZ,
+    REAL eps);
 
-template <typename T>
-void IntersectionRay_MeshTri3D (
-    std::map<double,CPointElemSurf<T>>& mapDepthPES,
-    const delfem2::CVec3<T>& org, const delfem2::CVec3<T>& dir,
+
+template <typename REAL>
+void IntersectionRay_MeshTri3 (
+    std::map<REAL,CPointElemSurf<REAL>>& mapDepthPES,
+    const delfem2::CVec3<REAL>& org,
+    const delfem2::CVec3<REAL>& dir,
     const std::vector<unsigned int>& aTri,
-    const std::vector<double>& aXYZ);
+    const std::vector<REAL>& aXYZ,
+    REAL eps );
   
-  
-
-template <typename T>
-void IntersectionRay_MeshTri3DPart(std::map<double,CPointElemSurf<T>>& mapDepthPES,
-                                   const delfem2::CVec3<T>& org, const delfem2::CVec3<T>& dir,
+template <typename REAL>
+void IntersectionRay_MeshTri3DPart(std::map<REAL,CPointElemSurf<REAL>>& mapDepthPES,
+                                   const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
                                    const std::vector<unsigned int>& aTri,
-                                   const std::vector<double>& aXYZ,
-                                   const std::vector<int>& aIndTri);
+                                   const std::vector<REAL>& aXYZ,
+                                   const std::vector<int>& aIndTri,
+                                   REAL eps);
+
 /*
  CPointElemSurf intersect_Ray_Tri3D(double& depth,
  const delfem2::CVector3& org, const delfem2::CVector3& dir,

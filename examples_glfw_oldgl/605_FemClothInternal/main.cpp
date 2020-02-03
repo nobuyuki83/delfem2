@@ -9,14 +9,10 @@
 #include "delfem2/cloth_internal.h"
 
 // ------------------------------
-#if defined(__APPLE__) && defined(__MACH__)
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
@@ -90,7 +86,6 @@ dfm2::CMatrixSparse<double> mat_A; // coefficient matrix
 dfm2::CPreconditionerILU<double>  ilu_A; // ilu decomposition of the coefficient matrix
 
 bool is_animation;
-CNav3D_GLUT nav;
 int imode_draw = 0;
 
 /* ------------------------------------------------------------------------ */
@@ -126,17 +121,6 @@ void myGlutDisplay(void)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  nav.SetGL_Camera();
-  /*
-   ::glMatrixMode(GL_MODELVIEW);
-   ::glLoadIdentity();
-   ::glTranslated(camera_trans[0],camera_trans[1],camera_trans[2]);
-   {
-   double R_view_3d[16];
-   QuatRot(R_view_3d, camera_qrot);
-   ::glMultMatrixd(R_view_3d);
-   }
-   */
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
   ::glColor3d(0,0,0);
@@ -189,81 +173,15 @@ void myGlutDisplay(void)
     ::glColor3d(1,0,0);    
     ::glPushMatrix();
     ::glTranslated(0.1, 0.5, -0.8);
-    ::glutWireSphere(0.3, 16, 16);
+//    ::glutWireSphere(0.3, 16, 16);
     ::glPopMatrix();
   }
   
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }  
   
-  ShowFPS();
-  
-  ::glutSwapBuffers();
 }
 
-void myGlutIdle(){
-  
-  if( is_animation ){
-    StepTime();
-  }
-  
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  glViewport(0,0, w, h);
-  ::glutPostRedisplay();
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
-
-
-void myGlutMotion( int x, int y ){
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y){
-  nav.glutMouse(button, state, x, y);
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key)
-  {
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-      is_animation = !is_animation;
-      break;
-    case 'd': // change draw mode
-      imode_draw++;
-      if( imode_draw >= 2 ){
-        imode_draw = 0;
-      }
-      break;
-    case 't':
-      StepTime();
-      break;
-    case ' ':
-      imode_contact++;
-      aXYZ = aXYZ0;
-      aUVW.assign(aUVW.size(),0.0);
-      if( imode_contact >= 3 ){
-        imode_contact = 0;
-      }
-      break;
-  }
-  ::glutPostRedisplay();
-}
 
 int main(int argc,char* argv[])
 {
@@ -287,35 +205,25 @@ int main(int argc,char* argv[])
     ilu_A.Initialize_ILU0(mat_A);
   }
   
-  
-  glutInit(&argc, argv);
-  
-  // Initialize GLUT window 3D
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("3D View");
-  glutDisplayFunc(myGlutDisplay);
-  glutIdleFunc(myGlutIdle);
-  glutReshapeFunc(myGlutResize);
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutSpecialFunc(myGlutSpecial);
-  
-  // -----------------------------
-  
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  delfem2::opengl::setSomeLighting();
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   delfem2::opengl::setSomeLighting();
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
-  nav.camera.psi = 3.1415*0.2;
-  nav.camera.theta = 3.1415*0.1;
-  nav.camera.view_height = 2;
-  
-  
-  glutMainLoop();
-  return 0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
+  viewer.nav.camera.psi = 3.1415*0.2;
+  viewer.nav.camera.theta = 3.1415*0.1;
+  viewer.nav.camera.view_height = 2;
+  while(!glfwWindowShouldClose(viewer.window)) {
+    StepTime();
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
 
 

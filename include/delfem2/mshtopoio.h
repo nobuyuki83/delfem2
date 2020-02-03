@@ -82,9 +82,9 @@ public:
       std::vector<unsigned int>& aQuad1 = em.aElem;
       std::vector<int> aEdgeFace0;
       std::vector<unsigned int> psupIndQuad0, psupQuad0;
-      delfem2::QuadSubdiv(aQuad1,
-          psupIndQuad0,psupQuad0, aEdgeFace0,
-                 aQuad0.data(), aQuad0.size()/4, aXYZ0.size()/3);
+      delfem2::SubdivTopo_MeshQuad(aQuad1,
+                                   psupIndQuad0,psupQuad0, aEdgeFace0,
+                                   aQuad0.data(), aQuad0.size()/4, aXYZ0.size()/3);
       // ----------------
       std::vector<double>& aXYZ1 = em.aPos;
       delfem2::SubdivisionPoints_QuadCatmullClark(aXYZ1,

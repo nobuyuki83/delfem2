@@ -1139,7 +1139,7 @@ int dfm2::findFace(
 }
 
 // new points is in the order of [old points], [edge points], [face points]
-void dfm2::QuadSubdiv
+void dfm2::SubdivTopo_MeshQuad
 (std::vector<unsigned int>& aQuad1,
  std::vector<unsigned int> &psup_ind,
  std::vector<unsigned int> &psup,
@@ -1149,8 +1149,8 @@ void dfm2::QuadSubdiv
 {
   const unsigned int nq0 = nQuad0;
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
-                           aQuad0,nQuad0,4,nPoint0);
+  JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
+                              aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
                        aQuad0, dfm2::MESHELEM_QUAD, elsup_ind, elsup,
                        false); // is_bidirectional = false

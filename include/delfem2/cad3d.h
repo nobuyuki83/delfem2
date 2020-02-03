@@ -172,8 +172,9 @@ public:
                   double elen);
   bool isPick(const CVec3d& org, const CVec3d& dir){
     std::map<double,CPointElemSurf<double>> mapDepthPES;
-    IntersectionRay_MeshTri3D(mapDepthPES,
-                              org,dir, aTri,aXYZ);
+    IntersectionRay_MeshTri3(mapDepthPES,
+                             org,dir, aTri,aXYZ,
+                             0.0);
     if( mapDepthPES.empty() ){ return true; }
     return false;
   }

@@ -12,7 +12,7 @@ ENDIF()
 
 ##########################################
 
-project(402_maponmesh)
+project(402_GridOnMesh)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

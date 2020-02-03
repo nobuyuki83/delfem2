@@ -123,7 +123,7 @@ void Draw(const delfem2::CADF3& adf)
 
 delfem2::CADF3 adf;
 std::vector<unsigned int> aTri;
-std::vector<double> aXYZ;
+std::vector<double> aXYZ_Tri;
 
 // ---------------
 
@@ -179,24 +179,24 @@ void SetProblem(int iprob)
         dfm2::CVec3d n0;
         double sdf0 = obj.SignedDistanceFunction(n0,
                                                  dfm2::CVec3d(x,y,z),
-                                                 aXYZ, aTri, aNorm);
+                                                 aXYZ_Tri, aTri, aNorm);
         return sdf0;
       }
     public:
       std::vector<double> aNorm;
-      dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> obj;
+      dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> obj;
     };
     CMesh mesh;
     {
       std::cout << PATH_INPUT_DIR << std::endl;
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ, aTri);
-      delfem2::Normalize_Points3D(aXYZ,1.7);
-      mesh.obj.Init(aXYZ.data(), aXYZ.size()/3,
+      delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply", aXYZ_Tri, aTri);
+      delfem2::Normalize_Points3D(aXYZ_Tri,1.7);
+      mesh.obj.Init(aXYZ_Tri.data(), aXYZ_Tri.size()/3,
                     aTri.data(), aTri.size()/3,
                     0.0);
-      mesh.aNorm.resize(aXYZ.size());
+      mesh.aNorm.resize(aXYZ_Tri.size());
       delfem2::Normal_MeshTri3D(mesh.aNorm.data(),
-                                aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+                                aXYZ_Tri.data(), aXYZ_Tri.size()/3, aTri.data(), aTri.size()/3);
     }
     double bb[6] = { -1, 1, -1, 1, -1,1 };
     adf.SetUp(mesh, bb);

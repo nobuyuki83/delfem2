@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(104_noise3d)
+project(104_Noise3d)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

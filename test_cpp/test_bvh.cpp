@@ -39,7 +39,7 @@ TEST(bvh,inclusion_sphere)
                             0.2, 0.3, 0.4);
   }
   //  std::cout << "ntri: " << aTri.size()/3 << std::endl;
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -49,7 +49,7 @@ TEST(bvh,inclusion_sphere)
   for(int itr=0;itr<10000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3_Sphere& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -108,7 +108,7 @@ TEST(bvh,nearestinc_sphere)
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.03);
@@ -162,7 +162,7 @@ TEST(bvh,nearest_range) // find global nearest from range
     delfem2::Rotate_Points3(aXYZ,
                             0.2, 0.3, 0.4);
   }
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -178,7 +178,7 @@ TEST(bvh,nearest_range) // find global nearest from range
                                          bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       bool is_max = false;
       for(int it=0;it<aTri.size()/3;++it){
-        dfm2::CBV3_Sphere bb;
+        dfm2::CBV3d_Sphere bb;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[it*3+inoel];
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
@@ -202,7 +202,7 @@ TEST(bvh,nearest_range) // find global nearest from range
         aFlg[itri0] = 1;
       }
       for(int itri=0;itri<aTri.size()/3;++itri){
-        dfm2::CBV3_Sphere bb;
+        dfm2::CBV3d_Sphere bb;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[itri*3+inoel];
           bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
@@ -230,7 +230,7 @@ TEST(bvh,nearest_point) // find global nearest directry
     delfem2::Rotate_Points3(aXYZ,
                             0.2, 0.3, 0.4);
   }
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -265,7 +265,7 @@ TEST(bvh,sdf) // find global nearest directry
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            0.0);
@@ -298,7 +298,7 @@ TEST(bvh,lineintersection)
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                    aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  delfem2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  delfem2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            1.0e-5);
@@ -316,7 +316,7 @@ TEST(bvh,lineintersection)
     double ps0[3]; s0.CopyValueTo(ps0);
     double pd0[3]; d0.CopyValueTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3_Sphere& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectLine(ps0,pd0);
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -335,7 +335,7 @@ TEST(bvh,lineintersection)
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
-      dfm2::CBV3_Sphere bb;
+      dfm2::CBV3d_Sphere bb;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
         bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 1.0e-5);
@@ -360,7 +360,7 @@ TEST(bvh,rayintersection)
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                             aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
-  delfem2::CBVH_MeshTri3D<dfm2::CBV3_Sphere, double> bvh;
+  delfem2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere, double> bvh;
   bvh.Init(aXYZ.data(), aXYZ.size()/3,
            aTri.data(), aTri.size()/3,
            1.0e-5);
@@ -378,7 +378,7 @@ TEST(bvh,rayintersection)
     double ps0[3]; s0.CopyValueTo(ps0);
     double pd0[3]; d0.CopyValueTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
-      const dfm2::CBV3_Sphere& bv = bvh.aBB_BVH[ibvh];
+      const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectRay(ps0,pd0);
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
@@ -396,7 +396,7 @@ TEST(bvh,rayintersection)
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
-      dfm2::CBV3_Sphere bb;
+      dfm2::CBV3d_Sphere bb;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
         bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 1.0e-5);
@@ -406,12 +406,14 @@ TEST(bvh,rayintersection)
     }
     {
       std::map<double,dfm2::CPointElemSurf<double> > mapDepthPES0;
-      IntersectionRay_MeshTri3D(mapDepthPES0,
-                                s0, d0, aTri, aXYZ);
+      IntersectionRay_MeshTri3(mapDepthPES0,
+                                s0, d0, aTri, aXYZ,
+                               0.0);
       std::map<double,dfm2::CPointElemSurf<double> > mapDepthPES1;
       IntersectionRay_MeshTri3DPart(mapDepthPES1,
                                     s0, d0,
-                                    aTri, aXYZ, aIndElem);
+                                    aTri, aXYZ, aIndElem,
+                                    0.0);
       EXPECT_EQ(mapDepthPES0.size(),mapDepthPES1.size());
       int N = mapDepthPES0.size();
       auto itr0 = mapDepthPES0.begin();

@@ -6,6 +6,7 @@
  */
 
 #include <map>
+#include "delfem2/vec3.h"
 #include "delfem2/srchuni_v3.h"
 
 namespace dfm2 = delfem2;
@@ -347,35 +348,17 @@ void weightInTriangle
 }
  */
 
-template <typename T>
-bool dfm2::intersectRay_Tri3D
-(double& r0, double& r1,
- const CVec3<T>& org, const CVec3<T>& dir,
- const CVec3<T>& p0,  const CVec3<T>& p1, const CVec3<T>& p2)
-{
-  const T v0 = Volume_Tet(p1, p2, org, org+dir);
-  const T v1 = Volume_Tet(p2, p0, org, org+dir);
-  const T v2 = Volume_Tet(p0, p1, org, org+dir);
-  const T vt = v0+v1+v2;
-  r0 = v0/vt;
-  r1 = v1/vt;
-  const T r2 = v2/vt;
-  return r0 > 0 && r1 > 0 && r2 > 0;
-}
-template bool dfm2::intersectRay_Tri3D(double& r0, double& r1,
-                                       const CVec3d& org, const CVec3d& dir,
-                                       const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2);
-
-
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 
 template <typename T>
 std::vector<dfm2::CPointElemSurf<T>>
-dfm2::IntersectionLine_MeshTri3D
-(const CVec3<T>& org, const CVec3<T>& dir,
+dfm2::IntersectionLine_MeshTri3
+(const CVec3<T>& org,
+ const CVec3<T>& dir,
  const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXYZ)
+ const std::vector<T>& aXYZ,
+ T eps)
 {
   std::vector<CPointElemSurf<T>> aPES;
   for(size_t itri=0;itri<aTri.size()/3;++itri){
@@ -386,30 +369,34 @@ dfm2::IntersectionLine_MeshTri3D
     const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
     const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     double r0, r1;
-    bool res = intersectRay_Tri3D(r0,r1,
-                                org, dir, p0,p1,p2);
+    bool res = dfm2::IntersectRay_Tri3(r0,r1,
+                                       org, dir, p0,p1,p2,
+                                       eps);
     if( !res ){ continue; }
     aPES.emplace_back(itri,r0,r1 );
   }
   return aPES;
 }
 template std::vector<dfm2::CPointElemSurf<double>>
-  dfm2::IntersectionLine_MeshTri3D(const CVec3d& org, const CVec3d& dir,
-                                   const std::vector<unsigned int>& aTri,
-                                   const std::vector<double>& aXYZ);
+  dfm2::IntersectionLine_MeshTri3(const CVec3<double>& org, const CVec3<double>& dir,
+                                  const std::vector<unsigned int>& aTri,
+                                  const std::vector<double>& aXYZ,
+                                  double eps);
   
 // -------------------------------------
 
 template <typename T>
-void dfm2::IntersectionRay_MeshTri3D (
-    std::map<double,CPointElemSurf<T>>& mapDepthPES,
+void dfm2::IntersectionRay_MeshTri3 (
+    std::map<T,CPointElemSurf<T>>& mapDepthPES,
     const CVec3<T>& org, const CVec3<T>& dir,
     const std::vector<unsigned int>& aTri,
-    const std::vector<double>& aXYZ)
+    const std::vector<T>& aXYZ,
+    T eps)
 {
-  const std::vector<CPointElemSurf<T>> aPES = IntersectionLine_MeshTri3D(
+  const std::vector<CPointElemSurf<T>> aPES = IntersectionLine_MeshTri3(
       org, dir,
-      aTri, aXYZ);
+      aTri, aXYZ,
+      eps);
   mapDepthPES.clear();
   for(auto pes : aPES){
     CVec3<T> p0 = pes.Pos_Tri(aXYZ,aTri);
@@ -418,20 +405,22 @@ void dfm2::IntersectionRay_MeshTri3D (
     mapDepthPES.insert( std::make_pair(depth, pes) );
   }
 }
-template void dfm2::IntersectionRay_MeshTri3D (std::map<double,CPointElemSurf<double>>& mapDepthPES,
-                                               const CVec3d& org, const CVec3d& dir,
-                                               const std::vector<unsigned int>& aTri,
-                                               const std::vector<double>& aXYZ);
+template void dfm2::IntersectionRay_MeshTri3 (std::map<double,CPointElemSurf<double>>& mapDepthPES,
+                                              const CVec3<double>& org, const CVec3<double>& dir,
+                                              const std::vector<unsigned int>& aTri,
+                                              const std::vector<double>& aXYZ,
+                                              double eps);
   
 // ----------------------
 
 template <typename T>
 void dfm2::IntersectionRay_MeshTri3DPart
-(std::map<double,CPointElemSurf<T>>& mapDepthPES,
+(std::map<T,CPointElemSurf<T>>& mapDepthPES,
  const CVec3<T>& org, const CVec3<T>& dir,
  const std::vector<unsigned int>& aTri,
- const std::vector<double>& aXYZ,
- const std::vector<int>& aIndTri)
+ const std::vector<T>& aXYZ,
+ const std::vector<int>& aIndTri,
+ T eps)
 {
   mapDepthPES.clear();
   for(int itri : aIndTri){
@@ -442,8 +431,9 @@ void dfm2::IntersectionRay_MeshTri3DPart
     const CVec3<T> p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
     const CVec3<T> p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     double r0, r1;
-    bool res = intersectRay_Tri3D(r0,r1,
-                                  org, dir, p0,p1,p2);
+    bool res = IntersectRay_Tri3(r0,r1,
+                                 org, dir, p0,p1,p2,
+                                 eps);
     if( !res ){ continue; }
     double r2 = 1-r0-r1;
     CVec3<T> q0 = p0*r0+p1*r1+p2*r2;
@@ -453,10 +443,11 @@ void dfm2::IntersectionRay_MeshTri3DPart
   }
 }
 template void dfm2::IntersectionRay_MeshTri3DPart (std::map<double,CPointElemSurf<double>>& mapDepthPES,
-                                                   const CVec3d& org, const CVec3d& dir,
+                                                   const CVec3<double>& org, const CVec3<double>& dir,
                                                    const std::vector<unsigned int>& aTri,
                                                    const std::vector<double>& aXYZ,
-                                                   const std::vector<int>& aIndTri);
+                                                   const std::vector<int>& aIndTri,
+                                                   double eps);
 
 /*
 CPointElemSurf intersect_Ray_MeshTriFlag3D

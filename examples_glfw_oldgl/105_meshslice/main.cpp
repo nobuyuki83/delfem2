@@ -17,7 +17,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------
 
-std::vector<double> aXYZ;
+std::vector<double> aXYZ_Tri;
 std::vector<unsigned int> aTri;
 std::vector<delfem2::CSliceTriMesh> aCS;
 std::vector< std::set<unsigned int> > ReebGraphCS;
@@ -28,7 +28,7 @@ std::vector<dfm2::CVec3d> aCG_CS;
 void myGlutDisplay()
 {
   ::glEnable(GL_LIGHTING);
-  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Tri, aTri);
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
@@ -37,7 +37,7 @@ void myGlutDisplay()
     ::glBegin(GL_LINE_LOOP);
     for(const auto & seg : cs.aTriInfo){
       double pA[3],pB[3]; seg.Pos3D(pA,pB,
-                                    aXYZ,aTri);
+                                    aXYZ_Tri,aTri);
       ::glVertex3d(pA[0],pA[1],pA[2]);
     }
     ::glEnd();
@@ -70,11 +70,11 @@ void myGlutDisplay()
 
 void Hoge(){
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-           aXYZ,aTri);
-  delfem2::Normalize_Points3D(aXYZ);
+           aXYZ_Tri,aTri);
+  delfem2::Normalize_Points3D(aXYZ_Tri);
   std::vector<int> aTriSurRel;
   makeSurroundingRelationship(aTriSurRel,
-                              aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
+                              aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ_Tri.size()/3);
   
   
   std::vector<double> aHeight;
@@ -88,11 +88,11 @@ void Hoge(){
   const double nrm[3] = {0,1,0};
   const double org[3] = {0,0,0};
   {
-    std::vector<double> aHeightVtx(aXYZ.size()/3);
-    for(size_t ip=0;ip<aXYZ.size()/3;++ip){
-      double x0 = aXYZ[ip*3+0] - org[0];
-      double y0 = aXYZ[ip*3+1] - org[1];
-      double z0 = aXYZ[ip*3+2] - org[2];
+    std::vector<double> aHeightVtx(aXYZ_Tri.size()/3);
+    for(size_t ip=0;ip<aXYZ_Tri.size()/3;++ip){
+      double x0 = aXYZ_Tri[ip*3+0] - org[0];
+      double y0 = aXYZ_Tri[ip*3+1] - org[1];
+      double z0 = aXYZ_Tri[ip*3+2] - org[2];
       aHeightVtx[ip] = nrm[0]*x0 + nrm[1]*y0 + nrm[2]*z0;
     }
     Slice_MeshTri3D_Heights(aCS,
@@ -113,7 +113,7 @@ void Hoge(){
     for(auto & iseg : aCS[ics].aTriInfo){
       double pA[3],pB[3];
       iseg.Pos3D(pA,pB,
-                                    aXYZ,aTri);
+                                    aXYZ_Tri,aTri);
       double n0[3]; dfm2::NormalTri3D(n0,
                                       pA,pB,po);
       const double area0 = n0[0]*nrm[0] + n0[1]*nrm[1] + n0[2]*nrm[2];
