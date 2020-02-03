@@ -18,8 +18,12 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------
 
-static double Length3D(const double p[3]){
+static double Length3(const double p[3]){
   return sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
+}
+
+static double Length3(const float p[3]){
+  return sqrtf(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
 
 static void Cross3D(double r[3], const double v1[3], const double v2[3]){
@@ -570,7 +574,9 @@ void dfm2::CG_Point3
 template void dfm2::CG_Point3(float cg[3], const std::vector<float>& aXYZ);
 template void dfm2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
 
-// -----------------------------------------------------------------------------------
+// above: points3
+// --------------------------------------------------------------------------------------------------------------------
+// below: mesh
 
 
 void dfm2::RemoveUnreferencedPoints_MeshElem
@@ -620,9 +626,9 @@ void dfm2::Normal_MeshTri3D
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
-    double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
-    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
+    const double* p0 = aXYZ+i0*3;
+    const double* p1 = aXYZ+i1*3;
+    const double* p2 = aXYZ+i2*3;
     double un[3], area;
     UnitNormalAreaTri3(un,area, p0,p1,p2);
     aNorm[i0*3+0] += un[0];  aNorm[i0*3+1] += un[1];  aNorm[i0*3+2] += un[2];
@@ -631,12 +637,58 @@ void dfm2::Normal_MeshTri3D
   }
   for(unsigned int ino=0;ino<nXYZ;ino++){
     const double n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
-    const double invlen = 1.0/Length3D(n);
+    const double invlen = 1.0/Length3(n);
     aNorm[ino*3+0] *= invlen;
     aNorm[ino*3+1] *= invlen;
     aNorm[ino*3+2] *= invlen;
   }
 }
+
+template <typename REAL>
+void dfm2::Normal_MeshQuad3
+ (std::vector<REAL>& aNorm,
+  const std::vector<REAL>& aXYZ,
+  const std::vector<unsigned int>& aQuad)
+{
+  const unsigned int nXYZ = aXYZ.size()/3;
+  const unsigned int nQuad = aQuad.size()/4;
+  aNorm.resize(nXYZ*3);
+  // -------
+  for(unsigned int i=0;i<nXYZ*3;i++){ aNorm[i] = 0; }
+  for(unsigned int iquad=0;iquad<nQuad;++iquad){
+    const unsigned int i0 = aQuad[iquad*4+0];
+    const unsigned int i1 = aQuad[iquad*4+1];
+    const unsigned int i2 = aQuad[iquad*4+2];
+    const unsigned int i3 = aQuad[iquad*4+3];
+    const REAL* p0 = aXYZ.data()+i0*3;
+    const REAL* p1 = aXYZ.data()+i1*3;
+    const REAL* p2 = aXYZ.data()+i2*3;
+    const REAL* p3 = aXYZ.data()+i3*3;
+    REAL un0[3], a0; UnitNormalAreaTri3(un0,a0, p3,p0,p1);
+    REAL un1[3], a1; UnitNormalAreaTri3(un1,a1, p0,p1,p2);
+    REAL un2[3], a2; UnitNormalAreaTri3(un2,a2, p1,p2,p3);
+    REAL un3[3], a3; UnitNormalAreaTri3(un3,a3, p2,p3,p0);
+    aNorm[i0*3+0] += un0[0];  aNorm[i0*3+1] += un0[1];  aNorm[i0*3+2] += un0[2];
+    aNorm[i1*3+0] += un1[0];  aNorm[i1*3+1] += un1[1];  aNorm[i1*3+2] += un1[2];
+    aNorm[i2*3+0] += un2[0];  aNorm[i2*3+1] += un2[1];  aNorm[i2*3+2] += un2[2];
+    aNorm[i3*3+0] += un3[0];  aNorm[i3*3+1] += un3[1];  aNorm[i3*3+2] += un3[2];
+  }
+  for(unsigned int ino=0;ino<nXYZ;ino++){
+    const REAL n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
+    const REAL invlen = 1.0/Length3(n);
+    aNorm[ino*3+0] *= invlen;
+    aNorm[ino*3+1] *= invlen;
+    aNorm[ino*3+2] *= invlen;
+  }
+}
+template void dfm2::Normal_MeshQuad3(std::vector<float>& aNorm,
+                                     const std::vector<float>& aXYZ,
+                                     const std::vector<unsigned int>& aQuad);
+template void dfm2::Normal_MeshQuad3(std::vector<double>& aNorm,
+                                     const std::vector<double>& aXYZ,
+                                     const std::vector<unsigned int>& aQuad);
+
+
 
 void dfm2::Quality_MeshTri2D
  (double& max_aspect, double& min_area,
@@ -1045,9 +1097,9 @@ double SolidAngleTri3D
  const double v2[3],
  const double v3[3])
 {
-  double l1 = Length3D(v1);
-  double l2 = Length3D(v2);
-  double l3 = Length3D(v3);
+  double l1 = Length3(v1);
+  double l2 = Length3(v2);
+  double l3 = Length3(v3);
   double crs_v1_v2[3]; Cross3D(crs_v1_v2,v1,v2);
   double den = Dot(crs_v1_v2,v3);
   double num = l1*l2*l3+(Dot(v1,v2))*l3+(Dot(v2,v3))*l1+(Dot(v3,v1))*l2;
@@ -1216,34 +1268,31 @@ void dfm2::SubdivisionPoints_QuadCatmullClark
   }
 }
 
-void dfm2::SubdivisionPoints_Quad
+void dfm2::SubdivPoints3_MeshQuad
 (std::vector<double>& aXYZ1,
  // ------------
- const std::vector<int>& aQuad1,
  const std::vector<int>& aEdgeFace0,
- const std::vector<int>& psupIndQuad0,
- const std::vector<int>& psupQuad0,
- const std::vector<int>& aQuad0,
+ const std::vector<unsigned int>& aQuad0,
  const std::vector<double>& aXYZ0)
 {
-  const int nv0 = (int)aXYZ0.size()/3;
-  const int ne0 = (int)psupQuad0.size();
-  const int nq0 = (int)aQuad0.size()/4;
-  assert( (int)aEdgeFace0.size() == ne0*4 );
+  const unsigned int nv0 = aXYZ0.size()/3;
+  const unsigned int ne0 = aEdgeFace0.size()/4;
+  const unsigned int nq0 = aQuad0.size()/4;
+  assert( aEdgeFace0.size() == ne0*4 );
   aXYZ1.resize((nv0+ne0+nq0)*3);
-  for(int iv=0;iv<nv0;++iv){
+  for(unsigned int iv=0;iv<nv0;++iv){
     aXYZ1[iv*3+0] = aXYZ0[iv*3+0];
     aXYZ1[iv*3+1] = aXYZ0[iv*3+1];
     aXYZ1[iv*3+2] = aXYZ0[iv*3+2];
   }
-  for(int ie=0;ie<ne0;++ie){
+  for(unsigned int ie=0;ie<ne0;++ie){
     const int iv0 = aEdgeFace0[ie*4+0];
     const int iv1 = aEdgeFace0[ie*4+1];
     aXYZ1[(nv0+ie)*3+0] = (aXYZ0[iv0*3+0] + aXYZ0[iv1*3+0])*0.5;
     aXYZ1[(nv0+ie)*3+1] = (aXYZ0[iv0*3+1] + aXYZ0[iv1*3+1])*0.5;
     aXYZ1[(nv0+ie)*3+2] = (aXYZ0[iv0*3+2] + aXYZ0[iv1*3+2])*0.5;
   }
-  for(int iq=0;iq<nq0;++iq){
+  for(unsigned int iq=0;iq<nq0;++iq){
     const int iv0 = aQuad0[iq*4+0];
     const int iv1 = aQuad0[iq*4+1];
     const int iv2 = aQuad0[iq*4+2];

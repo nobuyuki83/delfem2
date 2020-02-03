@@ -82,8 +82,12 @@ void DrawPoints2D_Vectors(const double* aXY, int nXY,
                           int nstride,
                           int noffset,
                           double mag);
-void DrawPoints2D_Points(std::vector<double>& aXY);
-void DrawPoints3D_Points(std::vector<double>& aXYZ);
+void DrawPoints2d_Points(const std::vector<double>& aXY);
+void DrawPoints3d_Points(const std::vector<double>& aXYZ);
+void DrawPoints3d_NormVtx(const std::vector<double>& aXYZ,
+                          const std::vector<double>& aNrm,
+                          double scale);
+
 
 // --------------
 // Draw Line
@@ -118,7 +122,7 @@ void DrawMeshTri3D_FaceNorm(const std::vector<double>& aXYZ,
                             const std::vector<unsigned int>& aTriVtx,
                             const std::vector<double>& aNorm,
                             const std::vector<unsigned int>& aTriNrm);
-////
+//
 void DrawMeshTri3DPart_FaceNorm(const std::vector<double>& aXYZ,
                             const std::vector<int>& aTri,
                             const std::vector<int>& aIndTri);

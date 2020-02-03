@@ -109,9 +109,9 @@ PyMeshQuad3D_Subviv
   std::vector<unsigned int> aQuad1;
   std::vector<unsigned int> psupIndQuad0, psupQuad0;
   std::vector<int> aEdgeFace0;
-  dfm2::QuadSubdiv(aQuad1,
-      psupIndQuad0,psupQuad0, aEdgeFace0,
-      aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
+  dfm2::SubdivTopo_MeshQuad(aQuad1,
+                            psupIndQuad0,psupQuad0, aEdgeFace0,
+                            aQuad0.data(), aQuad0.shape()[0], aXYZ0.shape()[0]);
   //
   std::vector<double> aXYZ1;
   dfm2::SubdivisionPoints_QuadCatmullClark(aXYZ1,

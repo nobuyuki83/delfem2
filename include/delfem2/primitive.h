@@ -18,20 +18,29 @@ namespace delfem2 {
 // -----------------------
 // 3D primitives
   
-//! @details y axis is the pole
+/**
+ * @brief a function to make a triangle mesh of sphere. The y axis is the pole.
+ * @param radius  radius of  a sphere
+ * @param nlong  number of subdivision in y-axis (longtitude)
+ * @param nlat numbef of subdivision around the cross section of XZ plane (latitude)
+ */
 void MeshTri3D_Sphere(
     std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
-    double r,
-    int nla, int nlo);
+    double radius,
+    int nlong, int nlat);
 
-//! @details y axis is the axis of cylinder
+/**
+ * @details y axis is the axis of cylinder
+ */
 void MeshTri3D_CylinderOpen(
     std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
     double r, double l,
     int nr, int nl);
 
-//! @details y axis is the axis of cylinder.
-//! The first poit and the last points are at the center of the caps
+/**
+ * @details y axis is the axis of cylinder.
+ * The first poit and the last points are at the center of the caps
+ */
 void MeshTri3D_CylinderClosed(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
                               double r, double l,
                               int nlo, int nl);
@@ -48,20 +57,32 @@ void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
 void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
                            std::vector<unsigned int>& aTri);
 
-template <typename T>
+// -----------------------
+// below: cube
+  
+/**
+ * @brief triangle mesh of torus. This function is defiend for "flaot" and "double"
+ */
+template <typename REAL>
 void MeshTri3_Torus(
-    std::vector<T>& aXYZ,
+    std::vector<REAL>& aXYZ,
     std::vector<unsigned int>& aTri,
     double r, double l,
     unsigned int nr, unsigned int nl);
                               
 void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad);
-void MeshQuad3D_CubeVox(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
-                        double x_min, double x_max,
-                        double y_min, double y_max,
-                        double z_min, double z_max);
+    
+/**
+ * @brief making a quad mesh of a cube. The order of the vertex is same as voxel element
+ * @details defined for "float" and "double"
+ */
+template<typename REAL>
+void MeshQuad3_CubeVox(std::vector<REAL>& aXYZ, std::vector<unsigned int>& aQuad,
+                       const REAL bbmin[3], const REAL bbmax[3]);
   
-// -----------------------
+// above: cube
+// above: 3D primitives
+// -------------------------------------------------
 // 2D primitives
   
 void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,

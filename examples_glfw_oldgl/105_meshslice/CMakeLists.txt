@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(105_meshslice)
+project(105_MeshSlice)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

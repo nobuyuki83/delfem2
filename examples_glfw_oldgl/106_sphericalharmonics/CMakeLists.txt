@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(106_sphericalharmonics)
+project(106_SphericalHarmonics)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

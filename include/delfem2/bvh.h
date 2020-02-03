@@ -16,6 +16,9 @@
 
 namespace delfem2 {
 
+/**
+ * @details this class is used from cuda. So don't add default constructor. Cuda needs constructor with __device__  flag.
+ */
 class CNodeBVH2
 {
 public:
@@ -23,28 +26,49 @@ public:
   int ichild[2]; // if ichild[1] == -1, then this is leaf and ichild[0] is the stored number
 };
 
-// make BVH topology
+/**
+ * @details make BVH topology in a top-down manner
+ */
 int BVH_MakeTreeTopology(std::vector<CNodeBVH2>& aNodeBVH,
                          const int nfael,
                          const std::vector<int>& aElemSur,
                          const std::vector<double>& aElemCenter);
+
+/**
+ * @details check if the leaf is visited once
+ */
+void Check_BVH(const std::vector<CNodeBVH2>& aNodeBVH,
+               unsigned int nLeaf);
   
+  
+// --------------------------------------------
+// code related to Morten code
+
+/**
+ * @returns return -1 if start == last
+ * @details find split in BVH construction
+ * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
+ */
 int MortonCode_FindSplit(const std::uint32_t* sortedMC,
               unsigned int start,
               unsigned int last);
+  
+/**
+ * @details find range in parallel BVH construction
+ * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
+ */
 std::pair<int,int> MortonCode_DeterminRange(const std::uint32_t* sortedMC,
                                   int nMC,
                                   int i);
 
-  
 /**
  * @brief compute morton code for 3d coordinates of a point. Each coordinate must be within the range of [0,1]
  * @details defined for "float" and "double"
+ * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
  */
 template <typename REAL>
 std::uint32_t MortonCode(REAL x, REAL y, REAL z);
 
-  
 /**
  * @details defined for "float" and "double"
  */
@@ -58,18 +82,15 @@ void BVH_TreeTopology_Morton(std::vector<CNodeBVH2>& aNodeBVH,
                              const std::vector<unsigned int>& aSortedId,
                              const std::vector<unsigned int>& aSortedMc);
 
-void Check_BVH(const std::vector<CNodeBVH2>& aNodeBVH,
-               unsigned int N);
 void Check_MortonCode_RangeSplit(const std::vector<std::uint32_t>& aSortedMc);
 void Check_MortonCode_Sort(const std::vector<unsigned int>& aSortedId,
                            const std::vector<std::uint32_t>& aSortedMc,
                            const std::vector<double> aXYZ,
                            const double bbmin[3], const double bbmax[3]);
 
-
-
+// above: code related to morton code
 // -------------------------------------------------------------------
-// template functions from here
+// below: template functions from here
   
 /**
  * @brief build Bounding Box for AABB
@@ -91,10 +112,15 @@ void BVH_BuildBVHGeometry_Points(
     double margin,
     const REAL* aXYZ, unsigned int nXYZ);
 
+/**
+ * @brief construct bounding volume of branch nodes under ibvh_root
+ * @details the bounding volume for leaf nodes should be set beforehand.
+ * construction is donw in the top-down manner
+ */
 template <typename BBOX>
 void BVH_BuildGeometryBranch(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    int ibvh_root,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH);
 
 template <typename BBOX>
@@ -153,6 +179,7 @@ void BVH_GetIndElem_InsideRange(std::vector<int>& aIndElem,
 
 
 // --------------------------------------------------------------
+// below: implementation for template functions
 
 /**
  * @brief build Bounding Box for AABB

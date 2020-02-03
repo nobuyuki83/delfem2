@@ -255,7 +255,7 @@ void FlipElement(
 void JArrayElemSurPoint_MeshElem(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
-    // ----------
+    //
     const unsigned int *pElem,
     unsigned int nElem,
     unsigned int nPoEl,
@@ -264,14 +264,14 @@ void JArrayElemSurPoint_MeshElem(
 void JArrayElemSurPoint_MeshTri(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
-    // ----------
+    //
     const std::vector<unsigned int> &aTri,
     int nXYZ);
 
 void JArrayElemSurPoint_MeshMix(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
-    // ----------
+    //
     const std::vector<int> &aElemInd,
     const std::vector<int> &aElem,
     const int nPo);
@@ -449,12 +449,19 @@ void ClipGroup(std::vector<int>& aElemInd1,
 
 // -----------------------------------------------
 
-void QuadSubdiv(std::vector<unsigned int> &aQuad1,
-                std::vector<unsigned int> &psup_ind,
-                std::vector<unsigned int> &psup,
-                std::vector<int> &aEdgeFace0,
-                const unsigned int *aQuad0, unsigned int nQuad0,
-                unsigned int nPoint0);
+/**
+ * @brief making topology for subdivision of quad
+ * @details new points is in the order of [old points], [edge points], [face points]
+ * @param aQuad1 (out) new connectivity
+ * @param aEdgeFace0 (out) two end points on a edge and two quads touching the edge
+ */
+void SubdivTopo_MeshQuad(
+    std::vector<unsigned int> &aQuad1,
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
+    std::vector<int> &aEdgeFace0,
+    const unsigned int *aQuad0, unsigned int nQuad0,
+    unsigned int nPoint0);
 
 void HexSubdiv(std::vector<unsigned int> &aHex1,
                std::vector<unsigned int> &psupIndHex0,

@@ -13,7 +13,6 @@
 #include "delfem2/dtri_v2.h"
 
 // ------------------
-
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glold_funcs.h"
@@ -40,7 +39,7 @@ std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<dfm2::CVec2d> aVec2;
 std::vector<double> aXYZ0; // undeformed vertex positions
-std::vector<double> aXYZ; // deformed vertex positions
+std::vector<double> aXYZ_Tri; // deformed vertex positions
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
 std::vector<unsigned int> aTri;  // index of triangles
@@ -97,7 +96,7 @@ void StepTime()
   const double contact_clearance = 0.02;
   ////
   CInput_ContactNothing c1;
-  StepTime_InternalDynamicsILU(aXYZ, aUVW, mat_A, ilu_A,
+  StepTime_InternalDynamicsILU(aXYZ_Tri, aUVW, mat_A, ilu_A,
                                aXYZ0, aBCFlag,
                                aTri, aQuad,
                                time_step_size,
@@ -133,12 +132,12 @@ void myGlutDisplay()
     ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
     ::glEnable(GL_DEPTH_TEST);
      */
-    delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Tri, aTri);
   }
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
+  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Tri, aTri);
 
 }
 
@@ -166,7 +165,7 @@ int main(int argc,char* argv[])
     aXYZ0[ip*3+1] = aVec2[ip].y();
     aXYZ0[ip*3+2] = 0.0;
   }
-  aXYZ = aXYZ0;
+  aXYZ_Tri = aXYZ0;
   /////
   aTri.resize(aETri.size()*3);
   for(std::size_t it=0;it<aETri.size();++it){
@@ -186,10 +185,10 @@ int main(int argc,char* argv[])
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(), psup.data(),psup.size());
     ilu_A.Initialize_ILU0(mat_A);
   }
-  aUVW.resize(aXYZ.size(),0.0);
-  aBCFlag.resize(aXYZ.size(),0);
-  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    if( aXYZ[ip*3+0]  < -0.49*lenx ){
+  aUVW.resize(aXYZ_Tri.size(),0.0);
+  aBCFlag.resize(aXYZ_Tri.size(),0);
+  for(std::size_t ip=0;ip<aXYZ_Tri.size()/3;++ip){
+    if( aXYZ_Tri[ip*3+0]  < -0.49*lenx ){
       aBCFlag[ip*3+0] = 1;
       aBCFlag[ip*3+1] = 1;
       aBCFlag[ip*3+2] = 1;

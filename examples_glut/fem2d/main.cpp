@@ -771,7 +771,7 @@ void myGlutDisplay(void)
     delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
     ::glPointSize(2);
     ::glColor3d(0,0,0);
-    delfem2::opengl::DrawPoints2D_Points(aXY1);
+    delfem2::opengl::DrawPoints2d_Points(aXY1);
   }
   else if( iproblem == 2 || iproblem == 3 ){
     delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
@@ -790,7 +790,7 @@ void myGlutDisplay(void)
     delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
     ::glPointSize(2);
     ::glColor3d(0,0,0);
-    delfem2::opengl::DrawPoints2D_Points(aXY1);
+    delfem2::opengl::DrawPoints2d_Points(aXY1);
   }
   
   ShowFPS();

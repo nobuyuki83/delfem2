@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(604_femcloth_dtri)
+project(605_FemClothInternal)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -23,30 +23,27 @@ set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_DIR}/include
-    ${DELFEM2_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_DIR}/include
+  ${DELFEM2_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
-    ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
-    ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
-    ${DELFEM2_INC}/emat.h                      ${DELFEM2_INC}/emat.cpp
-    ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
-    ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
-
-    ${DELFEM2_INC}/ilu_mats.h                  ${DELFEM2_INC}/ilu_mats.cpp
-    ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
-    ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
-    ${DELFEM2_INC}/cloth_internal.h
-    ${DELFEM2_INC}/srchbi_v3bvh.h
+  ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp
+  ${DELFEM2_INC}/emat.h                    ${DELFEM2_INC}/emat.cpp
+  ${DELFEM2_INC}/mats.h                    ${DELFEM2_INC}/mats.cpp
+          
+  ${DELFEM2_INC}/ilu_mats.h                ${DELFEM2_INC}/ilu_mats.cpp
+  ${DELFEM2_INC}/fem_emats.h               ${DELFEM2_INC}/fem_emats.cpp
   
-    ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.hpp      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
-  main.cpp  
+  main.cpp
 )
 
 IF(APPLE)
@@ -77,3 +74,5 @@ ELSEIF(MSVC)
         ${OPENGL_LIBRARY})
   endif()
 ENDIF()
+
+

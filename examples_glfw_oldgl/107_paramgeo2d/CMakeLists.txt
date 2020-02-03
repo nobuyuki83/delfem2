@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(107_paramgeo2d)
+project(107_ParamGeo2d)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

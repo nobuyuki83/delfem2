@@ -4,8 +4,8 @@ project(examples_glut)
 
 # opengl
 add_subdirectory(00_viewer3d)
-add_subdirectory(01_shader)
 add_subdirectory(glbuffer)
+add_subdirectory(shader)
 
 # geometry
 add_subdirectory(edit_cubes)
@@ -16,7 +16,6 @@ add_subdirectory(rigidbody3d_rotation)
 
 add_subdirectory(fem2d)
 add_subdirectory(fem3d)
-add_subdirectory(femcloth_internal)
 add_subdirectory(femcloth_selfcollision)
 add_subdirectory(fempb_mitc3eigen)
 

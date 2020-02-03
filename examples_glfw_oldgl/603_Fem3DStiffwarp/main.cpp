@@ -101,7 +101,7 @@ bool is_animatio = false;
 bool is_stiffness_warping = true;
 
 std::vector<unsigned int> aTet;
-std::vector<double> aXYZ;
+std::vector<double> aXYZ_Tri;
 std::vector<double> aDisp;
 std::vector<double> aVelo;
 std::vector<int> aBCFlag;
@@ -122,10 +122,10 @@ std::vector<double> aR;
 
 void InitializeProblem_ShellEigenPB()
 {
-  const int np = (int)aXYZ.size()/3;
+  const int np = (int)aXYZ_Tri.size()/3;
   dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                     aTet.data(), aTet.size()/4, 4,
-                                                    (int)aXYZ.size()/3);
+                                                    (int)aXYZ_Tri.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -138,12 +138,12 @@ void InitializeProblem_ShellEigenPB()
 void Solve_Linear()
 {
   mat_A.SetZero();
-  vec_b.assign(aXYZ.size(),0.0);
+  vec_b.assign(aXYZ_Tri.size(),0.0);
   dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(mat_A, vec_b.data(),
                                                  myu, lambda,
                                                  rho, gravity,
                                                  dt,
-                                                 aXYZ.data(), aXYZ.size()/3,
+                                                 aXYZ_Tri.data(), aXYZ_Tri.size()/3,
                                                  aTet.data(), aTet.size()/4,
                                                  aDisp.data(),
                                                  aVelo.data());
@@ -152,7 +152,7 @@ void Solve_Linear()
   //
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
-  const int nDoF = aXYZ.size();
+  const int nDoF = aXYZ_Tri.size();
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
                                               1.0e-4, 1000, mat_A, ilu_A);
@@ -169,15 +169,15 @@ void Solve_Linear()
 void Solve_StiffnessWarping()
 {
   RotationAtMeshPoints(aR,
-                       aXYZ,aDisp,psup_ind,psup);
+                       aXYZ_Tri,aDisp,psup_ind,psup);
   // ----------------------
   mat_A.SetZero();
-  vec_b.assign(aXYZ.size(),0.0);
+  vec_b.assign(aXYZ_Tri.size(),0.0);
   dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(mat_A, vec_b.data(),
                                                     myu, lambda,
                                                     rho, gravity,
                                                     dt,
-                                                    aXYZ.data(), aXYZ.size()/3,
+                                                    aXYZ_Tri.data(), aXYZ_Tri.size()/3,
                                                     aTet.data(), aTet.size()/4,
                                                     aDisp.data(),
                                                     aVelo.data(),
@@ -187,7 +187,7 @@ void Solve_StiffnessWarping()
   // -------------------
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
-  const int nDoF = aXYZ.size();
+  const int nDoF = aXYZ_Tri.size();
   std::vector<double> dv(nDoF,0.0);
   std::vector<double> aConv = Solve_PBiCGStab(vec_b.data(), dv.data(),
                                               1.0e-4, 1000, mat_A, ilu_A);
@@ -214,17 +214,17 @@ void myGlutDisplay()
   
   { // defomred edge
     ::glColor3d(0,0,0);
-    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ_Tri.data(),
                                             aTet.data(),aTet.size()/4,
                                             aDisp.data(),
                                             1.0);
   }
   
   ::glDisable(GL_LIGHTING);
-  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    dfm2::CVec3d pi(aXYZ[ip*3+0]+aDisp[ip*3+0],
-                      aXYZ[ip*3+1]+aDisp[ip*3+1],
-                      aXYZ[ip*3+2]+aDisp[ip*3+2]);
+  for(std::size_t ip=0;ip<aXYZ_Tri.size()/3;++ip){
+    dfm2::CVec3d pi(aXYZ_Tri[ip*3+0]+aDisp[ip*3+0],
+                      aXYZ_Tri[ip*3+1]+aDisp[ip*3+1],
+                      aXYZ_Tri[ip*3+2]+aDisp[ip*3+2]);
     dfm2::CVec3d ex(aR[ip*9+0],aR[ip*9+3],aR[ip*9+6]);
     dfm2::CVec3d ey(aR[ip*9+1],aR[ip*9+4],aR[ip*9+7]);
     dfm2::CVec3d ez(aR[ip*9+2],aR[ip*9+5],aR[ip*9+8]);
@@ -249,7 +249,7 @@ void myGlutDisplay()
       ::glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,color);
       glShadeModel(GL_FLAT);
     }
-    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
+    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ_Tri.data(),
                                    aTet.data(), aTet.size()/4);
 
   }
@@ -278,14 +278,14 @@ int main(int argc,char* argv[])
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
     dfm2::ExtrudeTri2Tet(3, 0.075,
-        aXYZ,aTet,
+        aXYZ_Tri,aTet,
         aXY,aTri);
   }
-  aDisp.assign(aXYZ.size(), 0.0);
-  aVelo.assign(aXYZ.size(), 0.0);
-  aBCFlag.assign(aXYZ.size(),0);
-  for(std::size_t ip=0;ip<aXYZ.size()/3;++ip){
-    double x0 = aXYZ[ip*3+0];
+  aDisp.assign(aXYZ_Tri.size(), 0.0);
+  aVelo.assign(aXYZ_Tri.size(), 0.0);
+  aBCFlag.assign(aXYZ_Tri.size(),0);
+  for(std::size_t ip=0;ip<aXYZ_Tri.size()/3;++ip){
+    double x0 = aXYZ_Tri[ip*3+0];
     if( fabs(x0+1)<1.0e-10 ){
       aBCFlag[ip*3+0] = 1;
       aBCFlag[ip*3+1] = 1;
@@ -294,7 +294,7 @@ int main(int argc,char* argv[])
   }
   InitializeProblem_ShellEigenPB();
   RotationAtMeshPoints(aR,
-                       aXYZ,aDisp,psup_ind,psup);
+                       aXYZ_Tri,aDisp,psup_ind,psup);
 
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.nav.camera.view_height = 2.0;

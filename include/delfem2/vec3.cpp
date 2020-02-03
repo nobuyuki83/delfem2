@@ -435,7 +435,38 @@ dfm2::CVec3<T> dfm2::Cross(const CVec3<T>& arg1, const CVec3<T>& arg2)
   return temp;
 }
 template dfm2::CVec3d dfm2::Cross(const CVec3d& arg1, const CVec3d& arg2);
- 
+
+// ----------------------------
+
+template <typename REAL>
+void dfm2::AverageTwo3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3])
+{
+  po[0] = (p0[0]+p1[0])*0.5;
+  po[1] = (p0[1]+p1[1])*0.5;
+  po[2] = (p0[2]+p1[2])*0.5;
+}
+template void dfm2::AverageTwo3(float po[3], const float p0[3], const float p1[3]);
+template void dfm2::AverageTwo3(double po[3], const double p0[3], const double p1[3]);
+
+// ----------------------------
+
+template <typename REAL>
+void dfm2::AverageFour3(
+    REAL po[3],
+    const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3])
+{
+  po[0] = (p0[0]+p1[0]+p2[0]+p3[0])*0.25;
+  po[1] = (p0[1]+p1[1]+p2[1]+p3[1])*0.25;
+  po[2] = (p0[2]+p1[2]+p2[2]+p3[2])*0.25;
+}
+template void dfm2::AverageFour3(float po[3],
+                                 const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
+template void dfm2::AverageFour3(double po[3],
+                                 const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
+
+
 
 // ----------------------------------------
 
@@ -662,6 +693,7 @@ void dfm2::CVec3<T>::SetZero()
   p[2] = 0.0;
 }
 template void dfm2::CVec3<double>::SetZero();
+
   
 // --------------------------------
 
@@ -707,6 +739,29 @@ template void dfm2::GetVertical2Vector(const CVec3d& vec_n,
                                        CVec3d& vec_x,
                                        CVec3d& vec_y);
 
+// --------------------
+    
+template <typename REAL>
+bool dfm2::IntersectRay_Tri3(
+    REAL& r0, REAL& r1,
+    const CVec3<REAL>& org, const CVec3<REAL>& dir,
+    const CVec3<REAL>& p0,  const CVec3<REAL>& p1, const CVec3<REAL>& p2,
+    REAL eps)
+{
+  const REAL v0 = Volume_Tet(p1, p2, org, org+dir);
+  const REAL v1 = Volume_Tet(p2, p0, org, org+dir);
+  const REAL v2 = Volume_Tet(p0, p1, org, org+dir);
+  const REAL vt = v0+v1+v2;
+  r0 = v0/vt;
+  r1 = v1/vt;
+  const REAL r2 = v2/vt;
+  return (r0 >= -eps && r1 >= -eps && r2 >= -eps);
+}
+template bool dfm2::IntersectRay_Tri3(double& r0, double& r1,
+                                      const CVec3d& org, const CVec3d& dir,
+                                      const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
+                                      double eps);
+ 
 // --------------------------------------------------------
 
 template <typename T>

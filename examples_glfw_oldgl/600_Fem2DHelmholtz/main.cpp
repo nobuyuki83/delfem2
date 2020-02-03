@@ -44,19 +44,19 @@ std::vector<std::complex<double> > vec_b;
 // ---------------------------------------------------
 
 void MakeMesh(){
-  delfem2::CCad2D cad2d;
+  dfm2::CCad2D cad2d;
   {
     double xy[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
     std::vector<double> aXY(xy,xy+8);
     cad2d.AddPolygon(aXY);
   }
   cad2d.AddVtxFace(0.0, 0.0, 0);
-  delfem2::CMesher_Cad2D mshr;
+  dfm2::CMesher_Cad2D mshr;
   mshr.edge_length = 0.05;
-  delfem2::CMeshDynTri2D dmsh;
+  dfm2::CMeshDynTri2D dmsh;
   mshr.Meshing(dmsh, cad2d);
-  MeshTri2D_Export(aXY1, aTri1,
-                   dmsh.aVec2, dmsh.aETri);
+  dfm2::MeshTri2D_Export(aXY1, aTri1,
+                         dmsh.aVec2, dmsh.aETri);
   
   aaIP.resize(4);
   aaIP[0] = mshr.IndPoint_IndEdge(0, true, cad2d);
@@ -143,15 +143,15 @@ void SolveProblem_Poisson()
 
 void myGlutDisplay()
 {
-  delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
+  dfm2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
   ::glPointSize(2);
   ::glColor3d(0,0,0);
-  delfem2::opengl::DrawPoints2D_Points(aXY1);
+  dfm2::opengl::DrawPoints2d_Points(aXY1);
   
-  std::vector< std::pair<double,delfem2::CColor> > colorMap;
+  std::vector< std::pair<double,dfm2::CColor> > colorMap;
 //  makeHeatMap_BlueGrayRed(colorMap, -0.2, +0.2);
-  delfem2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2, +0.2);
-  delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+  dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2, +0.2);
+  dfm2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
                                  aTri1.data(),aTri1.size()/3,
                                  aVal.data(),1,colorMap);
 }
@@ -164,7 +164,7 @@ int main(int argc,char* argv[])
   aVal.resize(aCVal.size(),0.1);
   for(size_t ip=0;ip<aVal.size();++ip){ aVal[ip] = aCVal[ip].real(); }
   
-  delfem2::opengl::CViewer_GLFW viewer;
+  dfm2::opengl::CViewer_GLFW viewer;
   viewer.nav.camera.view_height = 1.5;
   viewer.Init_oldGL();
   while(!glfwWindowShouldClose(viewer.window)){

@@ -337,7 +337,7 @@ unsigned int dfm2::CTorus::FindInOut(double px, double py, double pz) const
 	return 1;
 }
 
-// ---------------------------------------------
+// --------------------------------------------------------------------------
 
 void dfm2::MeshQuad2D_Grid
 (std::vector<double>& aXYZ,
@@ -538,42 +538,42 @@ void dfm2::MeshTri3D_CylinderClosed
 void dfm2::MeshTri3D_Sphere
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
- double r,
- int nla, int nlo)
+ double radius,
+ int nlong, int nlat)
 {
   aXYZ.clear();
   aTri.clear();
-  if( nla <= 1 || nlo <= 2 ){ return; }
+  if( nlong <= 1 || nlat <= 2 ){ return; }
   const double pi = 3.1415926535;
-  double dl = pi/nla;
-  double dr = 2.0*pi/nlo;
-  aXYZ.reserve( (nlo*(nla-1)+2)*3 );
-  for(int ila=0;ila<nla+1;ila++){
+  double dl = pi/nlong;
+  double dr = 2.0*pi/nlat;
+  aXYZ.reserve( (nlat*(nlong-1)+2)*3 );
+  for(int ila=0;ila<nlong+1;ila++){
     double y0 = cos(dl*ila);
     double r0 = sin(dl*ila);
-    for(int ilo=0;ilo<nlo;ilo++){
+    for(int ilo=0;ilo<nlat;ilo++){
       double x0 = r0*sin(dr*ilo);
       double z0 = r0*cos(dr*ilo);
-      aXYZ.push_back(r*x0);
-      aXYZ.push_back(r*y0);
-      aXYZ.push_back(r*z0);
-      if( ila == 0 || ila == nla ){ break; }
+      aXYZ.push_back(radius*x0);
+      aXYZ.push_back(radius*y0);
+      aXYZ.push_back(radius*z0);
+      if( ila == 0 || ila == nlong ){ break; }
     }
   }
-  /////
-  int ntri = nlo*(nla-1)*2+nlo*2;
+  //
+  int ntri = nlat*(nlong-1)*2+nlat*2;
   aTri.reserve(ntri*3);
-  for(int ilo=0;ilo<nlo;ilo++){
+  for(int ilo=0;ilo<nlat;ilo++){
     aTri.push_back(0);
-    aTri.push_back((ilo+0)%nlo+1);
-    aTri.push_back((ilo+1)%nlo+1);
+    aTri.push_back((ilo+0)%nlat+1);
+    aTri.push_back((ilo+1)%nlat+1);
   }
-  for(int ila=0;ila<nla-2;ila++){
-    for(int ilo=0;ilo<nlo;ilo++){
-      int i1 = (ila+0)*nlo+1+(ilo+0)%nlo;
-      int i2 = (ila+0)*nlo+1+(ilo+1)%nlo;
-      int i3 = (ila+1)*nlo+1+(ilo+1)%nlo;
-      int i4 = (ila+1)*nlo+1+(ilo+0)%nlo;
+  for(int ila=0;ila<nlong-2;ila++){
+    for(int ilo=0;ilo<nlat;ilo++){
+      int i1 = (ila+0)*nlat+1+(ilo+0)%nlat;
+      int i2 = (ila+0)*nlat+1+(ilo+1)%nlat;
+      int i3 = (ila+1)*nlat+1+(ilo+1)%nlat;
+      int i4 = (ila+1)*nlat+1+(ilo+0)%nlat;
       aTri.push_back(i3);
       aTri.push_back(i2);
       aTri.push_back(i1);
@@ -582,10 +582,10 @@ void dfm2::MeshTri3D_Sphere
       aTri.push_back(i1);
     }
   }
-  for(int ilo=0;ilo<nlo;ilo++){
-    aTri.push_back(nlo*(nla-1)+1);
-    aTri.push_back((nla-2)*nlo+1+(ilo+1)%nlo);
-    aTri.push_back((nla-2)*nlo+1+(ilo+0)%nlo);
+  for(int ilo=0;ilo<nlat;ilo++){
+    aTri.push_back(nlat*(nlong-1)+1);
+    aTri.push_back((nlong-2)*nlat+1+(ilo+1)%nlat);
+    aTri.push_back((nlong-2)*nlat+1+(ilo+0)%nlat);
   }
 }
 
@@ -760,24 +760,31 @@ void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
   aQuad[5*4+0] = 4;    aQuad[5*4+1] = 5;   aQuad[5*4+2] = 7;   aQuad[5*4+3] = 6;
 }
 
-void dfm2::MeshQuad3D_CubeVox
-(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
- double x_min, double x_max,
- double y_min, double y_max,
- double z_min, double z_max)
+template<typename REAL>
+void dfm2::MeshQuad3_CubeVox
+ (std::vector<REAL>& aXYZ,
+ std::vector<unsigned int>& aQuad,
+ const REAL bbmin[3], const REAL bbmax[3])
 {
   aXYZ.resize(0);
   aXYZ.reserve(8*3);
-  aXYZ.push_back(x_min);    aXYZ.push_back(y_min);    aXYZ.push_back(z_min);
-  aXYZ.push_back(x_max);    aXYZ.push_back(y_min);    aXYZ.push_back(z_min);
-  aXYZ.push_back(x_min);    aXYZ.push_back(y_max);    aXYZ.push_back(z_min);
-  aXYZ.push_back(x_max);    aXYZ.push_back(y_max);    aXYZ.push_back(z_min);
-  aXYZ.push_back(x_min);    aXYZ.push_back(y_min);    aXYZ.push_back(z_max);
-  aXYZ.push_back(x_max);    aXYZ.push_back(y_min);    aXYZ.push_back(z_max);
-  aXYZ.push_back(x_min);    aXYZ.push_back(y_max);    aXYZ.push_back(z_max);
-  aXYZ.push_back(x_max);    aXYZ.push_back(y_max);    aXYZ.push_back(z_max);
+  aXYZ.push_back(bbmin[0]);    aXYZ.push_back(bbmin[1]);    aXYZ.push_back(bbmin[2]);
+  aXYZ.push_back(bbmax[0]);    aXYZ.push_back(bbmin[1]);    aXYZ.push_back(bbmin[2]);
+  aXYZ.push_back(bbmin[0]);    aXYZ.push_back(bbmax[1]);    aXYZ.push_back(bbmin[2]);
+  aXYZ.push_back(bbmax[0]);    aXYZ.push_back(bbmax[1]);    aXYZ.push_back(bbmin[2]);
+  aXYZ.push_back(bbmin[0]);    aXYZ.push_back(bbmin[1]);    aXYZ.push_back(bbmax[2]);
+  aXYZ.push_back(bbmax[0]);    aXYZ.push_back(bbmin[1]);    aXYZ.push_back(bbmax[2]);
+  aXYZ.push_back(bbmin[0]);    aXYZ.push_back(bbmax[1]);    aXYZ.push_back(bbmax[2]);
+  aXYZ.push_back(bbmax[0]);    aXYZ.push_back(bbmax[1]);    aXYZ.push_back(bbmax[2]);
   SetTopoQuad_CubeVox(aQuad);
 }
+template void dfm2::MeshQuad3_CubeVox(std::vector<double>& aXYZ,
+                                      std::vector<unsigned int>& aQuad,
+                                      const double bbmin[3], const double bbmax[3]);
+template void dfm2::MeshQuad3_CubeVox(std::vector<float>& aXYZ,
+                                      std::vector<unsigned int>& aQuad,
+                                      const float bbmin[3], const float bbmax[3]);
+
 
 /*
 void dfm2::MeshTri3D_Cube
@@ -934,7 +941,7 @@ void dfm2::MeshTri3D_Icosahedron
   aXYZ[ 9*3+0]=-1;    aXYZ[ 9*3+1]=+p;   aXYZ[ 9*3+2]= 0;
   aXYZ[10*3+0]=+1;    aXYZ[10*3+1]=-p;   aXYZ[10*3+2]= 0;
   aXYZ[11*3+0]=+1;    aXYZ[11*3+1]=+p;   aXYZ[11*3+2]= 0;
-  /////
+  //
   aTri.resize(20*3);
   aTri[ 0*3+0]= 7; aTri[ 0*3+1]=11; aTri[ 0*3+2]= 3;
   aTri[ 1*3+0]=11; aTri[ 1*3+1]= 9; aTri[ 1*3+2]= 3;

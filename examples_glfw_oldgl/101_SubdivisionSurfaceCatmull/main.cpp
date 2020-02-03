@@ -36,15 +36,19 @@ int main(int argc,char* argv[])
   
   aaXYZ.resize(nlevel_subdiv+1);
   aaQuad.resize(nlevel_subdiv+1);
-  delfem2::MeshQuad3D_CubeVox(aaXYZ[0],aaQuad[0],
-                     -1,+1,  -1,+1,  -1,+1);
+  {
+    const double bbmin[3] = {-1,-1,-1};
+    const double bbmax[3] = {+1,+1,+1};
+    delfem2::MeshQuad3_CubeVox(aaXYZ[0],aaQuad[0],
+                               bbmin, bbmax);
+  }
   for(unsigned int il=0;il<nlevel_subdiv;++il){
     const std::vector<double>& aXYZ0 = aaXYZ[il];
     const std::vector<unsigned int>& aQuad0 = aaQuad[il];
     std::vector<unsigned int>& aQuad1 = aaQuad[il+1];
     std::vector<int> aEdgeFace0;
     std::vector<unsigned int> psupIndQuad0, psupQuad0;
-    dfm2::QuadSubdiv(aQuad1,
+    dfm2::SubdivTopo_MeshQuad(aQuad1,
         psupIndQuad0,psupQuad0, aEdgeFace0,
         aQuad0.data(), (unsigned int)(aQuad0.size()/4),
         (unsigned int)(aXYZ0.size()/3));
