@@ -87,9 +87,10 @@ python3 setup.py install
 
 For Ubuntu if you don't have git install it with ```sudo apt-get install git```
 
-## Acknowledgement
 
-For the testing DelFEM2 used following models:
+# Acknowledgement
+
+For the testing, DelFEM2 used following models:
 
 - Rigged Figure (CC License): https://github.com/cx20/gltf-test/tree/master/sampleModels/RiggedFigure
 - Cesium Man (CC License): https://github.com/cx20/gltf-test/tree/master/sampleModels/CesiumMan 
