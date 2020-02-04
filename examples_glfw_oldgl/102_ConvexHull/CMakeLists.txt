@@ -14,7 +14,7 @@ ENDIF()
 
 ####################################
 
-project(102_convhull)
+project(102_ConvexHull)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

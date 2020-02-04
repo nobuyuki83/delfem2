@@ -128,7 +128,7 @@ py::array_t<double> PyRotMat3_Cartesian(const std::vector<double>& d)
 
 std::tuple<py::array_t<double>, py::array_t<unsigned int>, py::array_t<double>, py::array_t<unsigned int>>
 PyGLTF_GetMeshInfo
-(const CGLTF& gltf,
+(const dfm2::CGLTF& gltf,
  int imesh, int iprimitive)
 {
   std::vector<double> aXYZ0;
@@ -165,7 +165,7 @@ public:
 
 CBoneArray
 PyGLTF_GetBones
-(const CGLTF& gltf,
+(const dfm2::CGLTF& gltf,
  int iskin)
 {
   CBoneArray BA;
@@ -346,10 +346,10 @@ PYBIND11_MODULE(c_core, m) {
   
   m.def("numpyXYTri_MeshDynTri2D",&NumpyXYTri_MeshDynTri2D);
   
-  py::class_<CGLTF>(m,"CppGLTF")
+  py::class_<dfm2::CGLTF>(m,"CppGLTF")
   .def(py::init<>())
-  .def("read", &CGLTF::Read)
-  .def("print", &CGLTF::Print);
+  .def("read", &dfm2::CGLTF::Read)
+  .def("print", &dfm2::CGLTF::Print);
   
   py::class_<CBoneArray>(m,"CppBoneArray")
   .def("set_translation", &CBoneArray::SetTranslation)

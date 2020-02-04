@@ -185,7 +185,7 @@ void SetProblem(int iprob)
     {
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
                mesh.aXYZ_Tri, mesh.aTri);
-      delfem2::Normalize_Points3D(mesh.aXYZ_Tri,2.3);
+      delfem2::Normalize_Points3(mesh.aXYZ_Tri,2.3);
       mesh.obj.Init(mesh.aXYZ_Tri.data(), mesh.aXYZ_Tri.size()/3,
                     mesh.aTri.data(), mesh.aTri.size()/3,
                     0.0);

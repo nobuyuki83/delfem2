@@ -150,6 +150,7 @@ void dfm2::opengl::CRender2Tex_DrawOldGL::Draw_Point() const
   for(unsigned int iy=0;iy<nResY;++iy){
     for(unsigned int ix=0;ix<nResX;++ix){
       double lz = -aZ[iy*nResX+ix]*z_range;
+      if( this->isDrawOnlyHitPoints && lz <= -z_range*0.9 ){ continue; }
       double lx = (ix+0.5)*lengrid;
       double ly = (iy+0.5)*lengrid;
       dfm2::CVec3d vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);

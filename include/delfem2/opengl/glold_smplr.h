@@ -20,13 +20,8 @@ namespace opengl {
 class CRender2Tex_DrawOldGL : public CRender2Tex
 {
 public:
-  CRender2Tex_DrawOldGL()
-  {
-    pointSize = 3;
-    isDrawTex = true;
-    draw_len_axis = 1.0;
-    colorPoint = {1,1,1,1};
-  }
+  CRender2Tex_DrawOldGL(){}
+  virtual ~CRender2Tex_DrawOldGL(){}
   // ------------
   virtual void InitGL(); // override function
   virtual void Start(); // override function
@@ -47,10 +42,11 @@ public:
   std::vector<unsigned char> aRGBA_8ui;
   std::vector<float> aRGBA_32f;
   // -------------------
-  double draw_len_axis;
-  unsigned int pointSize;
-  bool isDrawTex;
-  std::vector<double> colorPoint;
+  double draw_len_axis = 1.0;
+  unsigned int pointSize = 3;
+  bool isDrawTex = true;
+  bool isDrawOnlyHitPoints = false;
+  std::vector<double> colorPoint = {1,1,1,1};
 };
   
 }

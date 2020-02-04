@@ -194,7 +194,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       std::vector<unsigned int> aTri;
       delfem2::Read_Obj("models/bunny2k.obj",
                         aXYZ, aTri);
-      delfem2::Normalize_Points3D(aXYZ);
+      delfem2::Normalize_Points3(aXYZ);
       delfem2::Scale_PointsX(aXYZ,
                              2.0);
       // -------------------------

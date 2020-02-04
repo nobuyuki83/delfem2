@@ -42,6 +42,7 @@ static void QuatVec(double vo[], const double q[], const double vi[])
   vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 
+
 // there is formal implementation in quat.cpp so this is static to avoid dumplicated
 static void QuatConjVec(double vo[], const double q[], const double vi[])
 {

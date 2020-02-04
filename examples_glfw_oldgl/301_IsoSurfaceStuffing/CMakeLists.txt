@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(301_isosurface)
+project(301_IsoSurfaceStaffing)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

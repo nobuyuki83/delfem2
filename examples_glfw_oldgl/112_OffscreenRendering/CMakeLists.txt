@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(112_offscreen)
+project(112_OffscreenRendering)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

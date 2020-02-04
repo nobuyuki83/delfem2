@@ -6,8 +6,8 @@
  */
 
 
-#ifndef MSHIO_H
-#define MSHIO_H
+#ifndef DFM2_MSHIO_H
+#define DFM2_MSHIO_H
 
 #include <cstdio>
 #include <vector>

@@ -11,6 +11,8 @@ namespace tinygltf{
   class Model;
 };
 
+namespace delfem2 {
+
 void Print(const tinygltf::Model& model);
 
 void GetMeshInfo(std::vector<double>& aXYZ,
@@ -43,6 +45,8 @@ public:
 public:
   tinygltf::Model* model;
 };
+
+}
 
 
 #endif
