@@ -82,8 +82,8 @@ void MeshQuad3_CubeVox(std::vector<REAL>& aXYZ, std::vector<unsigned int>& aQuad
   
 // above: cube
 // above: 3D primitives
-// -------------------------------------------------
-// 2D primitives
+// --------------------------------------------------------------------------------------------------------------
+// below: 2D primitives
   
 void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                      int nx, int ny);

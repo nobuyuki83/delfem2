@@ -257,7 +257,7 @@ int main(int argc,char* argv[])
   std::vector<unsigned int> aTri;
   delfem2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
                     aXYZ, aTri);
-  delfem2::Normalize_Points3D(aXYZ);
+  delfem2::Normalize_Points3(aXYZ);
   std::vector<double> aNorm(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                             aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);

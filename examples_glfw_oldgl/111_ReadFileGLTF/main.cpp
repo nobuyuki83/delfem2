@@ -32,11 +32,12 @@ int main(int argc,char* argv[])
   std::vector<dfm2::CRigBone> aBone;
   {
 //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
-//      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
-//    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
-//    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Monster.glb";
+//    std::string path_glb = std::string(PATH_INPUT_DIR)+"/Monster.glb";
+    
+    //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
+    //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
     std::string path_glb = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
-    CGLTF gltf;
+    dfm2::CGLTF gltf;
     gltf.Read(path_glb);
     gltf.Print();
     gltf.GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint, 0,0);

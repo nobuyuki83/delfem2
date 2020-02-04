@@ -313,9 +313,9 @@ int main(int argc,char* argv[])
       if (!err.empty()) { printf("Err: %s\n", err.c_str()); }
       if (!ret) { printf("Failed to parse glTF\n"); return -1; }
       
-      Print(model);
-      ////
-      GetMeshInfo(aXYZ0_Contact, aTri_Contact, aRigWeight_Contact, aRigJoint_Contact,
+      dfm2::Print(model);
+      //
+      dfm2::GetMeshInfo(aXYZ0_Contact, aTri_Contact, aRigWeight_Contact, aRigJoint_Contact,
                   model, 0, 0);
       if( !model.skins.empty() ){
         aBone.resize( model.skins[0].joints.size() );

@@ -537,21 +537,25 @@ double dfm2::Size_Points3D_LongestAABBEdge
   return largest(w[0], w[1], w[2]);
 }
 
-void dfm2::Normalize_Points3D
-(std::vector<double>& aXYZ,
- double s)
+
+// ---------------------------------------
+
+template <typename T>
+void dfm2::Normalize_Points3
+(std::vector<T>& aXYZ,
+ T s)
 {
-  double c[3], w[3];
+  T c[3], w[3];
   CenterWidth_Points3(c,w,
                       aXYZ);
   Translate_Points3(aXYZ,
                     -c[0], -c[1], -c[2]);
-  double wmax = largest(w[0], w[1], w[2]);
+  T wmax = largest(w[0], w[1], w[2]);
   Scale_PointsX(aXYZ,
                 s/wmax);
 }
-
-
+template void dfm2::Normalize_Points3 (std::vector<float>& aXYZ,  float s);
+template void dfm2::Normalize_Points3 (std::vector<double>& aXYZ,  double s);
 
 // ---------------------------------------
 

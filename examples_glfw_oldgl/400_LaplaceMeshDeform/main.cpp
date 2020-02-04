@@ -8,6 +8,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 
+// ----------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.hpp"
 #include "delfem2/opengl/glold_funcs.h"
@@ -116,7 +117,7 @@ void SetProblem()
   {
     dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
         aXYZ0,aTri);
-    dfm2::Normalize_Points3D(aXYZ0,1.0);
+    dfm2::Normalize_Points3(aXYZ0,1.0);
     dfm2::Rotate_Points3(aXYZ0,
                          -M_PI*0.5, 0.0, 0.0);
   }

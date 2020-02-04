@@ -119,10 +119,17 @@ template <typename T>
 void Scale_Points3(T* pXYZs_,
                    const unsigned int nnode_,
                    T s);
-  
+
+
+/**
+ * @brief uniformly scale the coordinate of opints such that the longest edge of axis-aligned boudning box is the scale.
+ * @param length_longest_aabb_edge length of longest edge of axis-aligned bounding box
+ */
+template <typename REAL>
+void Normalize_Points3(std::vector<REAL>& aXYZ,
+                       REAL length_longest_aabb_edge = 1.0);
+
 double Size_Points3D_LongestAABBEdge(const std::vector<double>& aXYZ);
-void Normalize_Points3D(std::vector<double>& aXYZ,
-                        double s = 1.0);
   
 /**
  * @details implemented for "float" and "double"

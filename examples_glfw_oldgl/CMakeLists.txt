@@ -9,7 +9,7 @@ add_subdirectory(000_OpenWindowWithGLFW)
 
 # basic funcs
 add_subdirectory(100_ViewNavigationIn3D)
-add_subdirectory(101_SubdivisionSurfaceCatmull)
+add_subdirectory(101_SubdivCatmull)
 add_subdirectory(102_ConvexHull)
 add_subdirectory(103_Noise2)
 add_subdirectory(104_Noise3)
@@ -21,6 +21,7 @@ add_subdirectory(109_ContourLine2D)
 add_subdirectory(110_ReadFileBVH)
 add_subdirectory(111_ReadFileGLTF)
 add_subdirectory(112_OffscreenRendering)
+add_subdirectory(113_ProjectionBox)
 
 
 # meshing

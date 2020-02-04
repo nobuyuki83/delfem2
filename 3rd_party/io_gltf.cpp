@@ -113,7 +113,7 @@ bool GetArray_Double
   return false;
 }
 
-void Print(const tinygltf::Model& model){
+void dfm2::Print(const tinygltf::Model& model){
   for(size_t ib=0;ib<model.buffers.size();++ib){
     std::cout << "buffer: " << ib << " name: " << model.buffers[ib].name << std::endl;
     std::cout << "buffer: " << ib << " size: " << model.buffers[ib].data.size() << std::endl;
@@ -235,7 +235,7 @@ void Print(const tinygltf::Model& model){
   }
 }
 
-void GetMeshInfo
+void dfm2::GetMeshInfo
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  std::vector<double>& aRigWeight,
@@ -247,7 +247,7 @@ void GetMeshInfo
   aTri.clear();
   aRigJoint.clear();
   aRigWeight.clear();
-  //////
+  //
   const tinygltf::Primitive& primitive = model.meshes[imsh].primitives[iprimitive];
   GetArray_UInt(aTri,
                 model, primitive.indices);
@@ -312,7 +312,7 @@ void GetMeshInfo
   }
 }
 
-void GetBoneBinding
+void dfm2::GetBoneBinding
 (std::vector<dfm2::CRigBone>& aBone,
  const tinygltf::Model& model)
 {
@@ -330,7 +330,7 @@ void GetBoneBinding
   }
 }
 
-void SetBone
+void dfm2::SetBone
 (std::vector<dfm2::CRigBone>& aBone,
  const tinygltf::Model& model,
  int inode_cur, int ibone_p,
@@ -358,7 +358,7 @@ void SetBone
 }
 
 
-bool CGLTF::Read(const std::string& fpath)
+bool dfm2::CGLTF::Read(const std::string& fpath)
 {
   std::string err;
   std::string warn;
@@ -374,24 +374,24 @@ bool CGLTF::Read(const std::string& fpath)
 
 
 
-void CGLTF::Print() const
+void dfm2::CGLTF::Print() const
 {
-  ::Print(*model);
+  dfm2::Print(*model);
 }
 
 
-void CGLTF::GetMeshInfo
+void dfm2::CGLTF::GetMeshInfo
 (std::vector<double>& aXYZ0,
  std::vector<unsigned int>& aTri,
  std::vector<double>& aRigWeight,
  std::vector<unsigned int>& aRigJoint,
  int imesh, int iprimitive) const
 {
-  ::GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint,
+  dfm2::GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint,
                 *model, imesh, iprimitive);
 }
 
-void CGLTF::GetBone
+void dfm2::CGLTF::GetBone
 (std::vector<dfm2::CRigBone>& aBone,
  int iskin) const
 {

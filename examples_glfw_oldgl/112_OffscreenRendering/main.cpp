@@ -69,7 +69,8 @@ int main(int argc,char* argv[])
 {
   dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
     aXYZ_Tri,aTri);
-  dfm2::Normalize_Points3D(aXYZ_Tri,1.0);
+  dfm2::Normalize_Points3(aXYZ_Tri,
+                          1.0);
   // ---------------------------------------
   int nres = 64;
   double elen = 0.04;

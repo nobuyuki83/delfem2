@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(109_contour)
+project(109_ContourLine2D)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

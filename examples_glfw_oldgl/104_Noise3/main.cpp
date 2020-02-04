@@ -128,7 +128,7 @@ int main(int argc,char* argv[])
 {
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ_Tri,aTri);
-  delfem2::Normalize_Points3D(aXYZ_Tri);
+  delfem2::Normalize_Points3(aXYZ_Tri);
   
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();

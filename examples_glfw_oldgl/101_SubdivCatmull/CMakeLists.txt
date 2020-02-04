@@ -14,7 +14,7 @@ ENDIF()
 
 ####################################
 
-project(101_subdiv)
+project(101_SubdivCatmull)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
