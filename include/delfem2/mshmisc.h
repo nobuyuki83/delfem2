@@ -62,22 +62,22 @@ void CenterWidth_Points3(T c[3],
 void GetCenterWidthGroup(double& cx, double& cy, double& cz,
                          double& wx, double& wy, double& wz,
                          const std::vector<double>& aXYZ,
-                         const std::vector<int>& aElem,
+                         const std::vector<unsigned int>& aElem,
                          const int nnoel,
                          int igroup,
                          const std::vector<int>& aIndGroup);
 void GetCenterWidthGroup(double& cx, double& cy, double& cz,
                          double& wx, double& wy, double& wz,
                          const std::vector<double>& aXYZ,
-                         const std::vector<int>& aElemInd,
-                         const std::vector<int>& aElem,
+                         const std::vector<unsigned int>& aElemInd,
+                         const std::vector<unsigned int>& aElem,
                          int igroup,
                          const std::vector<int>& aIndGroup);
 void GetCenterWidth3DGroup(double cw[6],
                            //
                            const std::vector<double>& aXYZ,
-                           const std::vector<int>& aElemInd,
-                           const std::vector<int>& aElem,
+                           const std::vector<unsigned int>& aElemInd,
+                           const std::vector<unsigned int>& aElem,
                            int igroup,
                            const std::vector<int>& aIndGroup);
 // local coordinate
