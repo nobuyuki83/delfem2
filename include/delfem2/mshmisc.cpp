@@ -285,7 +285,7 @@ void dfm2::GetCenterWidthGroup
  double& wx, double& wy, double& wz,
  // ----------
  const std::vector<double>& aXYZ,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElem,
  const int nnoel,
  int igroup,
  const std::vector<int>& aIndGroup)
@@ -320,8 +320,8 @@ void dfm2::GetCenterWidthGroup
   double& wx, double& wy, double& wz,
   //
   const std::vector<double>& aXYZ,
-  const std::vector<int>& aElemInd,
-  const std::vector<int>& aElem,
+  const std::vector<unsigned int>& aElemInd,
+  const std::vector<unsigned int>& aElem,
   int igroup,
   const std::vector<int>& aIndGroup)
 {
@@ -354,8 +354,8 @@ void dfm2::GetCenterWidth3DGroup
  (double cw[6],
   //
   const std::vector<double>& aXYZ,
-  const std::vector<int>& aElemInd,
-  const std::vector<int>& aElem,
+  const std::vector<unsigned int>& aElemInd,
+  const std::vector<unsigned int>& aElem,
   int igroup,
   const std::vector<int>& aIndGroup)
 {

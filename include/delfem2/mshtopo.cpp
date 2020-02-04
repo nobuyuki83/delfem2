@@ -257,11 +257,11 @@ void dfm2::convert2Tri_Quad
   }
 }
 
-void dfm2::convert2Tri
-(std::vector<int>& aTri,
+void dfm2::Convert2Tri_MeshMix
+(std::vector<unsigned int>& aTri,
  //
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   const std::size_t nElem0 = aElemInd.size()-1;
@@ -282,7 +282,7 @@ void dfm2::convert2Tri
   }
 }
 
-void dfm2::FlipElement_Tri(std::vector<int>& aTri)
+void dfm2::FlipElement_Tri(std::vector<unsigned int>& aTri)
 {
   for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     //    int i0 = aTri[itri*3+0];
@@ -293,11 +293,11 @@ void dfm2::FlipElement_Tri(std::vector<int>& aTri)
   }
 }
 
-void dfm2::FlipElement
+void dfm2::FlipElement_MeshMix
 (std::vector<int>& aElem_Flip,
  // ----------
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   aElem_Flip.resize(aElem.size());
@@ -320,9 +320,9 @@ void dfm2::FlipElement
 void dfm2::AddElement
 (const dfm2::MESHELEM_TYPE& femelem_type,
  const std::vector<int>& aElemIn,
- ////
- std::vector<int>& aElemInd,
- std::vector<int>& aElem,
+ //
+ std::vector<unsigned int>& aElemInd,
+ std::vector<unsigned int>& aElem,
  std::vector<dfm2::MESHELEM_TYPE>& aElemType)
 {
   const int nnoel = nNodeElem(femelem_type);
@@ -358,14 +358,14 @@ void dfm2::JArrayElemSurPoint_MeshMix
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ---
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const int nPo)
 {
   const std::size_t nElem = aElemInd.size()-1;
   elsup_ind.assign(nPo+1,0);
   for(unsigned int ielem=0;ielem<nElem;ielem++){
-    for(int iino=aElemInd[ielem];iino<aElemInd[ielem+1];iino++){
+    for(unsigned int iino=aElemInd[ielem];iino<aElemInd[ielem+1];iino++){
       int ino1 = aElem[iino];
       if( ino1 == -1 ){ break; }
       elsup_ind[ino1+1] += 1;
@@ -377,7 +377,7 @@ void dfm2::JArrayElemSurPoint_MeshMix
   unsigned int nelsup = elsup_ind[nPo];
   elsup.resize(nelsup);
   for(unsigned int ielem=0;ielem<nElem;ielem++){
-    for(int iino=aElemInd[ielem];iino<aElemInd[ielem+1];iino++){
+    for(unsigned int iino=aElemInd[ielem];iino<aElemInd[ielem+1];iino++){
       int ino1 = aElem[iino];
       if( ino1 == -1 ){ break; }
       int ind1 = elsup_ind[ino1];
@@ -489,8 +489,8 @@ void dfm2::makeSurroundingRelationship
 void dfm2::makeSurroundingRelationship
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  const int nXYZ)
 {
@@ -507,8 +507,8 @@ void dfm2::makeSurroundingRelationship
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  //
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE> &aElemType,
  const std::vector<unsigned int> &elsup_ind,
  const std::vector<unsigned int> &elsup)
@@ -572,12 +572,12 @@ void dfm2::makeSurroundingRelationship
 }
 
 void dfm2::makeBoundary
-(std::vector<int>& aElemInd_Bound,
- std::vector<int>& aElem_Bound,
+(std::vector<unsigned int>& aElemInd_Bound,
+ std::vector<unsigned int>& aElem_Bound,
  std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
  //
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  const std::vector<int>& aElemFaceInd,
  const std::vector<int>& aElemFaceRel)
@@ -1012,8 +1012,8 @@ void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  // -----------
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<int>& aElemFaceInd,
  const std::vector<int>& aElemFaceRel)
 {
@@ -1041,8 +1041,8 @@ void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  //
- const std::vector<int>& aElemInd,
- const std::vector<int>& aElem,
+ const std::vector<unsigned int>& aElemInd,
+ const std::vector<unsigned int>& aElem,
  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
  int nPo)
 {
@@ -1058,12 +1058,12 @@ void dfm2::MakeGroupElem
 }
 
 void dfm2::ClipGroup
- (std::vector<int>& aElemInd1,
-  std::vector<int>& aElem1,
+ (std::vector<unsigned int>& aElemInd1,
+  std::vector<unsigned int>& aElem1,
   std::vector<dfm2::MESHELEM_TYPE>& aElemType1,
   //
-  const std::vector<int>& aElemInd,
-  const std::vector<int>& aElem,
+  const std::vector<unsigned int>& aElemInd,
+  const std::vector<unsigned int>& aElem,
   const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
   int igroup,
   const std::vector<int>& aIndGroup)
@@ -1079,7 +1079,7 @@ void dfm2::ClipGroup
     dfm2::MESHELEM_TYPE type = aElemType[ie];
     aElemType1.push_back(type);
     aElemInd1.push_back( nNodeElem(type) );
-    for(int iip=aElemInd[ie];iip<aElemInd[ie+1];++iip){
+    for(unsigned int iip=aElemInd[ie];iip<aElemInd[ie+1];++iip){
       int ip0 = aElem[iip];
       aElem1.push_back(ip0);
     }
