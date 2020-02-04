@@ -454,9 +454,9 @@ int main(int argc,char* argv[])
         aElemCenter[itri*3+2] = p.z();
       }
       std::vector<int> aTriSurRel;
-      makeSurroundingRelationship(aTriSurRel,
-                                  aTri.data(), aTri.size()/3,
-                                  delfem2::MESHELEM_TRI, aXYZ.size()/3);
+      dfm2::ElSuEl_MeshElem(aTriSurRel,
+                            aTri.data(), aTri.size()/3,
+                            delfem2::MESHELEM_TRI, aXYZ.size()/3);
       iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,
                                        3,aTriSurRel,aElemCenter);
     }

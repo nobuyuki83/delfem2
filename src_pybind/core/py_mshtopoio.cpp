@@ -133,7 +133,7 @@ PyMeshHex3D_Subviv
   std::vector<unsigned int> aHex1;
   std::vector<unsigned int> psupIndHex0, psupHex0;
   std::vector<unsigned int> aQuadHex0;
-  dfm2::HexSubdiv(aHex1,
+  dfm2::SubdivTopo_MeshHex(aHex1,
       psupIndHex0, psupHex0,
       aQuadHex0,
       //
@@ -373,7 +373,7 @@ py::array_t<unsigned int> PyEdge_Mesh
   assert( AssertNumpyArray2D(pos, -1, pos.shape()[1]) );
   assert( AssertNumpyArray2D(elm, -1, nNodeElem(type)) );
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
                               elm.data(), elm.shape()[0], elm.shape()[1], pos.shape()[0]);
   std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,

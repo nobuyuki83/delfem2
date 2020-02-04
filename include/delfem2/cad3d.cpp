@@ -1218,7 +1218,7 @@ void dfm2::BuildTriMesh
       aXYZ[iq0*3+2] += (double)rand()/(RAND_MAX+1.0)*1.0e-5;
     }
   }
-  makeSurroundingRelationship(aTriSurRel,
+  ElSuEl_MeshElem(aTriSurRel,
                               aTri.data(),aTri.size()/3,
                               delfem2::MESHELEM_TRI,
                               (int)aXYZ.size()/3);

@@ -41,8 +41,8 @@ TEST(slice,test1){
            aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
   std::vector<int> aTriSurRel;
-  makeSurroundingRelationship(aTriSurRel,
-                              aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI, aXYZ.size()/3);
+  dfm2::ElSuEl_MeshElem(aTriSurRel,
+                        aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI, aXYZ.size()/3);
   // ----------------------
   std::vector<double> aHeight;
   aHeight.push_back(-0.3);

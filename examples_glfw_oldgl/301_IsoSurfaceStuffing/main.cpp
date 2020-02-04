@@ -205,7 +205,7 @@ void SetProblem(int iprob)
   }
   
   std::vector<int> aTetSurRel;
-  makeSurroundingRelationship(aTetSurRel,
+  ElSuEl_MeshElem(aTetSurRel,
                               aTet.data(), aTet.size()/4,
                               delfem2::MESHELEM_TET,
                               aXYZ_Tri.size()/3);

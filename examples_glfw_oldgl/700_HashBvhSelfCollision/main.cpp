@@ -99,7 +99,7 @@ int main(int argc,char* argv[])
         aElemCenter[itri*3+2] = p0.z();
       }
       std::vector<int> aTriSurRel;
-      dfm2::makeSurroundingRelationship(aTriSurRel,
+      dfm2::ElSuEl_MeshElem(aTriSurRel,
                                         aTri.data(), aTri.size()/3,
                                         delfem2::MESHELEM_TRI, aXYZ_Tri.size()/3);
       iroot_bvh = dfm2::BVH_MakeTreeTopology(aNodeBVH,

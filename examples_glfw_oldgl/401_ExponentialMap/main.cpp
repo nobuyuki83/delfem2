@@ -229,7 +229,7 @@ void SetNewProblem()
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
-    dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+    dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
         aTri.data(), aTri.size()/3, 3, aXYZ_Tri.size()/3);
     dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
         aTri.data(), elsup_ind, elsup, 3, aXYZ_Tri.size()/3);

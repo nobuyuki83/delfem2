@@ -49,8 +49,8 @@ void MeshTri3D_GeodesicPolyhedron
   // -------
   const unsigned int np0 = aXYZ0.size()/3;
   std::vector<unsigned int> elsup_ind, elsup;
-  delfem2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
-      aTri0.data(), aTri0.size()/3, 3, np0);
+  delfem2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
+                                 aTri0.data(), aTri0.size()/3, 3, np0);
   // -------
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,

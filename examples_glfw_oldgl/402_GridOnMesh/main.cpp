@@ -63,9 +63,9 @@ void InitializeProblem() {
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
-    dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+    dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
                                       aTri.data(), aTri.size() / 3, 3, aXYZ_Tri.size() / 3);
-    dfm2::makeSurroundingRelationship(aElSurRel,
+    dfm2::ElSuEl_MeshElem(aElSurRel,
                                       aTri.data(), aTri.size() / 3, 3,
                                       elsup_ind, elsup,
                                       3, 2, dfm2::noelElemFace_Tri);
