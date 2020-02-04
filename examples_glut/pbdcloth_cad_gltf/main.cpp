@@ -18,7 +18,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-
+// ------
 #include "delfem2/v23m3q.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
@@ -32,7 +32,6 @@
 #include "io_gltf.h"
 
 // ----------------------------
-
 #ifdef __APPLE__
   #include <GLUT/glut.h>
 #else

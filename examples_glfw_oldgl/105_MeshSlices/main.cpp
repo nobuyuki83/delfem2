@@ -73,7 +73,7 @@ void Hoge(){
            aXYZ_Tri,aTri);
   delfem2::Normalize_Points3(aXYZ_Tri);
   std::vector<int> aTriSurRel;
-  makeSurroundingRelationship(aTriSurRel,
+  ElSuEl_MeshElem(aTriSurRel,
                               aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ_Tri.size()/3);
   
   

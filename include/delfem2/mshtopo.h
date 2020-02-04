@@ -250,9 +250,9 @@ void FlipElement_MeshMix(
 
 
 /**
- * @function make elsup
+ * @brief make elem surrounding point
  */
-void JArrayElemSurPoint_MeshElem(
+void JArray_ElSuP_MeshElem(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     //
@@ -261,18 +261,20 @@ void JArrayElemSurPoint_MeshElem(
     unsigned int nPoEl,
     unsigned int nPo);
 
-void JArrayElemSurPoint_MeshTri(
+/**
+ * @brief make elem surrounding point for triangle mesh
+ */
+void JArray_ElSuP_MeshTri(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     //
     const std::vector<unsigned int> &aTri,
     int nXYZ);
 
-
 /**
- * @function elem surrounding point for mixed element
+ * @brief elem surrounding point for mixed element
  */
-void JArrayElemSurPoint_MeshMix(
+void JArray_ElSuP_MeshMix(
     std::vector<unsigned int> &elsup_ind,
     std::vector<unsigned int> &elsup,
     //
@@ -296,7 +298,7 @@ void JArrayElemSurPoint_MeshMix(
  * @param nnofa how many nodes are shared with a nighbouring element
  * @param noelElemFace
  */
-void makeSurroundingRelationship(
+void ElSuEl_MeshElem(
     std::vector<int> &aElSurRel,
     const unsigned int *aEl, unsigned int nEl, int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
@@ -305,13 +307,13 @@ void makeSurroundingRelationship(
     const int nnofa,
     const int (*noelElemFace)[4]);
 
-void makeSurroundingRelationship(
+void ElSuEl_MeshElem(
     std::vector<int> &aElemSurRel,
     const unsigned int *aElem, unsigned int nElem,
     delfem2::MESHELEM_TYPE type,
     const unsigned int nXYZ);
 
-void makeSurroundingRelationship(
+void ElSuEl_MeshMix(
     std::vector<int> &aElemFaceInd,
     std::vector<int> &aElemFaceRel,
     const std::vector<unsigned int> &aElemInd,
@@ -319,33 +321,39 @@ void makeSurroundingRelationship(
     const std::vector<delfem2::MESHELEM_TYPE> &aElemType,
     const int nPo);
 
-void makeSurroundingRelationship(std::vector<int> &aElemFaceInd,
-                                 std::vector<int> &aElemFaceRel,
-                                 const std::vector<unsigned int> &aElemInd,
-                                 const std::vector<unsigned int> &aElem,
-                                 const std::vector<delfem2::MESHELEM_TYPE> &aElemType,
-                                 const std::vector<unsigned int> &elsup_ind,
-                                 const std::vector<unsigned int> &elsup);
+/**
+ * @brief the relationship between neighboring elements for mixed mesh
+ */
+void ElSuEl_MeshMix(
+    std::vector<int> &aElemFaceInd,
+    std::vector<int> &aElemFaceRel,
+    //
+    const std::vector<unsigned int> &aElemInd,
+    const std::vector<unsigned int> &aElem,
+    const std::vector<delfem2::MESHELEM_TYPE> &aElemType,
+    const std::vector<unsigned int> &elsup_ind,
+    const std::vector<unsigned int> &elsup);
 
 // -------------------
 // make boundary
 
-void makeBoundary(std::vector<unsigned int>& aElemInd_Bound,
-                  std::vector<unsigned int>& aElem_Bound,
-                  std::vector<delfem2::MESHELEM_TYPE>& aElemType_Bound,
-                  //
-                  const std::vector<unsigned int>& aElemInd,
-                  const std::vector<unsigned int>& aElem,
-                  const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
-                  const std::vector<int>& aElemFaceInd,
-                  const std::vector<int>& aElemFaceRel);
+void Boundary_MeshMix(
+    std::vector<unsigned int>& aElemInd_Bound,
+    std::vector<unsigned int>& aElem_Bound,
+    std::vector<delfem2::MESHELEM_TYPE>& aElemType_Bound,
+    //
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
+    const std::vector<int>& aElemFaceInd,
+    const std::vector<int>& aElemFaceRel);
 
-// -------------------------------
-// make psup
-// psup -> edge bidirectional
-// edge unidir (ip0<ip1)
-// line (array of 2)
-
+/**
+ * @brief make point surrounding poitn
+ * @details psup -> edge bidirectional
+ * edge unidir (ip0<ip1)
+ * line (array of 2)
+ */
 void JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int>& psup_ind,
     std::vector<unsigned int>& psup,
@@ -401,6 +409,7 @@ void MeshLine_JArrayEdge(
 
 void MeshLine_MeshElem(
     std::vector<unsigned int>& aLine,
+    //
     const unsigned int* aElm0,
     unsigned int nElem,
     delfem2::MESHELEM_TYPE elem_type,
@@ -408,48 +417,63 @@ void MeshLine_MeshElem(
 
 // ------------------------------------
 
-void MarkConnectedElements(std::vector<int>& aIndGroup,
-                            int itri_ker,
-                            int igroup,
-                            const std::vector<int>& aTriSurRel,
-                            const int nfael);
-void MarkConnectedElements(std::vector<int>& aIndGroup,
-                           unsigned int itri_ker,
-                           int igroup,
-                           const std::vector<int>& aElemFaceInd,
-                           const std::vector<int>& aElemFaceRel);
-void MakeGroupElem(int& ngroup,
-                   std::vector<int>& aIndGroup,
-                   const std::vector<int>& aElem,
-                   const std::vector<int>& aElemSurRel,
-                   const int nfael,
-                   const int nnoel);
-void MakeGroupElem_Tri(int& ngroup,
-                       std::vector<int>& aIndGroup,
-                       const std::vector<int>& aTri,
-                       const std::vector<int>& aTriSurRel);
-void MakeGroupElem(int& ngroup,
-                   std::vector<int>& aIndGroup,
-                   const std::vector<unsigned int>& aElemInd,
-                   const std::vector<unsigned int>& aElem,
-                   const std::vector<int>& aElemFaceInd,
-                   const std::vector<int>& aElemFaceRel);
-void MakeGroupElem(int& ngroup,
-                   std::vector<int>& aIndGroup,
-                   //
-                   const std::vector<unsigned int>& aElemInd,
-                   const std::vector<unsigned int>& aElem,
-                   const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
-                   int nPo);
-void ClipGroup(std::vector<unsigned int>& aElemInd1,
-               std::vector<unsigned int>& aElem1,
-               std::vector<delfem2::MESHELEM_TYPE>& aElemType1,
-               //
-               const std::vector<unsigned int>& aElemInd,
-               const std::vector<unsigned int>& aElem,
-               const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
-               int igroup,
-               const std::vector<int>& aIndGroup);
+void MarkConnectedElements(
+    std::vector<int>& aIndGroup,
+    int itri_ker,
+    int igroup,
+    const std::vector<int>& aTriSurRel,
+    const int nfael);
+
+void MarkConnectedElements(
+    std::vector<int>& aIndGroup,
+    unsigned int itri_ker,
+    int igroup,
+    const std::vector<int>& aElemFaceInd,
+    const std::vector<int>& aElemFaceRel);
+
+void MakeGroupElem(
+    int& ngroup,
+    std::vector<int>& aIndGroup,
+    const std::vector<int>& aElem,
+    const std::vector<int>& aElemSurRel,
+    const int nfael,
+    const int nnoel);
+
+void MakeGroupElem_Tri(
+    int& ngroup,
+    std::vector<int>& aIndGroup,
+    const std::vector<int>& aTri,
+    const std::vector<int>& aTriSurRel);
+
+void MakeGroupElem(
+    int& ngroup,
+    std::vector<int>& aIndGroup,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<int>& aElemFaceInd,
+    const std::vector<int>& aElemFaceRel);
+
+void MakeGroupElem_MeshMix(
+    int& ngroup,
+    std::vector<int>& aIndGroup,
+    //
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
+    int nPo);
+
+// ------------------------------
+
+void ClipGroup_MeshMix(
+    std::vector<unsigned int>& aElemInd1,
+    std::vector<unsigned int>& aElem1,
+    std::vector<delfem2::MESHELEM_TYPE>& aElemType1,
+    //
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<delfem2::MESHELEM_TYPE>& aElemType,
+    int igroup,
+    const std::vector<int>& aIndGroup);
 
 // -----------------------------------------------
 
@@ -467,77 +491,87 @@ void SubdivTopo_MeshQuad(
     const unsigned int *aQuad0, unsigned int nQuad0,
     unsigned int nPoint0);
 
-void HexSubdiv(std::vector<unsigned int> &aHex1,
-               std::vector<unsigned int> &psupIndHex0,
-               std::vector<unsigned int> &psupHex0,
-               std::vector<unsigned int> &aQuadHex0,
-               const unsigned int *aHex0, int nHex0,
-               const int nhp0);
+void SubdivTopo_MeshHex(
+    std::vector<unsigned int> &aHex1,
+    std::vector<unsigned int> &psupIndHex0,
+    std::vector<unsigned int> &psupHex0,
+    std::vector<unsigned int> &aQuadHex0,
+    const unsigned int *aHex0, int nHex0,
+    const int nhp0);
 
-void TetSubdiv(std::vector<unsigned int> &aTet1,
-               std::vector<unsigned int> &psup_ind,
-               std::vector<unsigned int> &psup,
-               const unsigned int *aTet0, int nTet0,
-               unsigned int nPoint0);
+void SubdivTopo_MeshTet(
+    std::vector<unsigned int> &aTet1,
+    std::vector<unsigned int> &psup_ind,
+    std::vector<unsigned int> &psup,
+    const unsigned int *aTet0, int nTet0,
+    unsigned int nPoint0);
 
-int findEdge(unsigned int ip0, unsigned int ip1,
-             const std::vector<unsigned int> &psup_ind,
-             const std::vector<unsigned int> &psup);
+int findEdge(
+    unsigned int ip0, unsigned int ip1,
+    const std::vector<unsigned int> &psup_ind,
+    const std::vector<unsigned int> &psup);
 
-int findFace(unsigned int ip0, unsigned int ip1, unsigned int ip2, unsigned int ip3,
-             const std::vector<unsigned int> &aQuad,
-             const std::vector<unsigned int> &elsupInd,
-             const std::vector<unsigned int> &elsup);
+int findFace(
+    unsigned int ip0, unsigned int ip1, unsigned int ip2, unsigned int ip3,
+    const std::vector<unsigned int> &aQuad,
+    const std::vector<unsigned int> &elsupInd,
+    const std::vector<unsigned int> &elsup);
 
 // ---------------------------------------------------
 
-void AddElement(const delfem2::MESHELEM_TYPE& femelem_type,
-                const std::vector<int>& aElemIn,
-                //
-                std::vector<unsigned int>& aElemInd,
-                std::vector<unsigned int>& aElem,
-                std::vector<delfem2::MESHELEM_TYPE>& aElemType);
-  
+void AddElement(
+    const delfem2::MESHELEM_TYPE& femelem_type,
+    const std::vector<int>& aElemIn,
+    //
+    std::vector<unsigned int>& aElemInd,
+    std::vector<unsigned int>& aElem,
+    std::vector<delfem2::MESHELEM_TYPE>& aElemType);
+
 class CElemMixed{
 public:
   CElemMixed(){
     aElemInd.resize(1,0);
   }
-  void AddElement(const MESHELEM_TYPE& femelem_type,
-                  const std::vector<int>& aElemIn) {
+  void AddElement(
+      const MESHELEM_TYPE& femelem_type,
+      const std::vector<int>& aElemIn) {
     ::delfem2::AddElement(femelem_type,aElemIn,
                           aElemInd,aElem,aElemType);
   }
-  void MakeElemSurroundingPoint(std::vector<unsigned int>& elsup_ind,
-                                std::vector<unsigned int>& elsup,
-                                const int nPo) {
-    ::delfem2::JArrayElemSurPoint_MeshMix(elsup_ind,elsup,
+  void MakeElemSurroundingPoint(
+      std::vector<unsigned int>& elsup_ind,
+      std::vector<unsigned int>& elsup,
+      const int nPo) {
+    ::delfem2::JArray_ElSuP_MeshMix(elsup_ind,elsup,
                                         aElemInd,aElem,nPo);
   }
-  void MakeSurroundingRelationship(std::vector<int>& aElemFaceInd,
-                                   std::vector<int>& aElemFaceRel,
-                                   //
-                                   const std::vector<unsigned int>& elsup_ind,
-                                   const std::vector<unsigned int>& elsup) const {
-    ::delfem2::makeSurroundingRelationship(aElemFaceInd, aElemFaceRel,
+  void MakeSurroundingRelationship(
+      std::vector<int>& aElemFaceInd,
+      std::vector<int>& aElemFaceRel,
+      //
+      const std::vector<unsigned int>& elsup_ind,
+      const std::vector<unsigned int>& elsup) const {
+    ::delfem2::ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
                                            aElemInd,aElem,aElemType,
                                            elsup_ind,elsup);
   }
-  void MakeSurroundingRelationship(std::vector<int>& aElemFaceInd,
-                                   std::vector<int>& aElemFaceRel,
-                                   const int nPo) const {
-    ::delfem2::makeSurroundingRelationship(aElemFaceInd, aElemFaceRel,
+  void MakeSurroundingRelationship(
+      std::vector<int>& aElemFaceInd,
+      std::vector<int>& aElemFaceRel,
+      const int nPo) const {
+    ::delfem2::ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
                                            aElemInd,aElem,aElemType,nPo);
   }
   int nElem() const {  return (int)aElemInd.size()-1; }
-  void makeBoundary(CElemMixed& emb,
-                    const std::vector<int>& aElemFaceInd,
-                    const std::vector<int>& aElemFaceRel){
-    ::delfem2::makeBoundary(emb.aElemInd, emb.aElem, emb.aElemType,
+  void makeBoundary(
+      CElemMixed& emb,
+      const std::vector<int>& aElemFaceInd,
+      const std::vector<int>& aElemFaceRel) {
+    ::delfem2::Boundary_MeshMix(emb.aElemInd, emb.aElem, emb.aElemType,
                             aElemInd, aElem, aElemType,
                             aElemFaceInd, aElemFaceRel);
   }
-  void makeBoundary(CElemMixed& emb, int nPo){
+  void makeBoundary(CElemMixed& emb, int nPo ){
     std::vector<unsigned int> elsup_ind, elsup;
     this->MakeElemSurroundingPoint(elsup_ind, elsup, nPo);
     std::vector<int> aElemFaceInd, aElemFaceRel;
@@ -546,24 +580,27 @@ public:
     this->makeBoundary(emb,
                     aElemFaceInd, aElemFaceRel);
   }
-  void MakeGroupElem(int& ngroup,
-                     std::vector<int>& aIndGroup,
-                     const std::vector<int>& aElemFaceInd,
-                     const std::vector<int>& aElemFaceRel){
+  void MakeGroupElem(
+      int& ngroup,
+      std::vector<int>& aIndGroup,
+      const std::vector<int>& aElemFaceInd,
+      const std::vector<int>& aElemFaceRel) {
     ::delfem2::MakeGroupElem(ngroup, aIndGroup,
                              aElemInd, aElem,
                              aElemFaceInd, aElemFaceRel);
   }
-  void MakeGroupElem(int& ngroup,
-                     std::vector<int>& aIndGroup,
-                     int nPo){
-    ::delfem2::MakeGroupElem(ngroup, aIndGroup,
+  void MakeGroupElem(
+      int& ngroup,
+      std::vector<int>& aIndGroup,
+      int nPo){
+    ::delfem2::MakeGroupElem_MeshMix(ngroup, aIndGroup,
                            aElemInd, aElem, aElemType, nPo);
   }
-  void ClipGroup(CElemMixed& em,
-                 int igroup,
-                 const std::vector<int>& aIndGroup){
-    ::delfem2::ClipGroup(em.aElemInd,em.aElem,em.aElemType,
+  void ClipGroup(
+      CElemMixed& em,
+      int igroup,
+      const std::vector<int>& aIndGroup){
+    ::delfem2::ClipGroup_MeshMix(em.aElemInd,em.aElem,em.aElemType,
                        aElemInd,aElem,aElemType,
                        igroup,aIndGroup);
   }

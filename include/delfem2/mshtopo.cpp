@@ -171,7 +171,7 @@ void dfm2::JArrayEdgeUnidir_PointSurPoint
   edge_ind[0] = 0;
 }
 
-void dfm2::JArrayElemSurPoint_MeshElem
+void dfm2::JArray_ElSuP_MeshElem
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ----------
@@ -215,7 +215,7 @@ void dfm2::ElemQuad_DihedralTri
  int np)
 {
   std::vector<int> aElemSurRel;
-  makeSurroundingRelationship(aElemSurRel,
+  ElSuEl_MeshElem(aElemSurRel,
                               aTri, nTri,
                               dfm2::MESHELEM_TRI, np);
   for(int itri=0; itri<nTri; ++itri){
@@ -343,18 +343,18 @@ void dfm2::AddElement
 // --------------------------------------
 
 
-void dfm2::JArrayElemSurPoint_MeshTri
+void dfm2::JArray_ElSuP_MeshTri
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // --
  const std::vector<unsigned int>& aTri,
  int nXYZ)
 {
-  JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+  JArray_ElSuP_MeshElem(elsup_ind, elsup,
                            aTri.data(), aTri.size()/3, 3, nXYZ);
 }
 
-void dfm2::JArrayElemSurPoint_MeshMix
+void dfm2::JArray_ElSuP_MeshMix
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ---
@@ -393,7 +393,7 @@ void dfm2::JArrayElemSurPoint_MeshMix
 
 // ----------------------------------------------------------------------------------------------------------
 
-void dfm2::makeSurroundingRelationship
+void dfm2::ElSuEl_MeshElem
 (std::vector<int>& aElSurRel,
  const unsigned int* aEl, unsigned int nEl, int nNoEl,
  const std::vector<unsigned int> &elsup_ind,
@@ -467,7 +467,7 @@ void makeSurroundingRelationship
 }
  */
 
-void dfm2::makeSurroundingRelationship
+void dfm2::ElSuEl_MeshElem
 (std::vector<int>& aElemSurRel,
  const unsigned int* aElem, unsigned int nElem,
  dfm2::MESHELEM_TYPE type,
@@ -475,18 +475,18 @@ void dfm2::makeSurroundingRelationship
 {
   const int nNoEl = nNodeElem(type);
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
       aElem, nElem, nNoEl, nXYZ);
   const int nfael = nFaceElem(type);
   const int nnofa = nNodeElemFace(type, 0);
-  dfm2::makeSurroundingRelationship(aElemSurRel,
+  dfm2::ElSuEl_MeshElem(aElemSurRel,
       aElem, nElem, nNoEl,
       elsup_ind,elsup,
       nfael, nnofa, dfm2::noelElemFace(type));
 }
 
 
-void dfm2::makeSurroundingRelationship
+void dfm2::ElSuEl_MeshMix
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  const std::vector<unsigned int>& aElemInd,
@@ -495,15 +495,15 @@ void dfm2::makeSurroundingRelationship
  const int nXYZ)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshMix(elsup_ind, elsup,
+  dfm2::JArray_ElSuP_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,
                            nXYZ);
-  makeSurroundingRelationship(aElemFaceInd,aElemFaceRel,
+  ElSuEl_MeshMix(aElemFaceInd,aElemFaceRel,
                               aElemInd, aElem, aElemType,
                               elsup_ind,elsup);
 }
 
-void dfm2::makeSurroundingRelationship
+void dfm2::ElSuEl_MeshMix
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  //
@@ -571,7 +571,7 @@ void dfm2::makeSurroundingRelationship
   }
 }
 
-void dfm2::makeBoundary
+void dfm2::Boundary_MeshMix
 (std::vector<unsigned int>& aElemInd_Bound,
  std::vector<unsigned int>& aElem_Bound,
  std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
@@ -675,7 +675,7 @@ void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood
  unsigned int nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
       pElem, nEl, nPoEl, nPo);
   dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                           pElem, elsup_ind,elsup, nPoEl, nPo);
@@ -793,7 +793,7 @@ void dfm2::MeshLine_MeshElem
 {
   std::vector<unsigned int> elsup_ind,elsup;
   const unsigned int nPoEl = dfm2::mapMeshElemType2NNodeElem[elem_type];
-  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind, elsup,
+  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
                            aElm0, nElem, nPoEl, nPo);
   std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,
@@ -1037,7 +1037,7 @@ void dfm2::MakeGroupElem
 }
 
 
-void dfm2::MakeGroupElem
+void dfm2::MakeGroupElem_MeshMix
 (int& ngroup,
  std::vector<int>& aIndGroup,
  //
@@ -1047,17 +1047,17 @@ void dfm2::MakeGroupElem
  int nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshMix(elsup_ind, elsup,
+  dfm2::JArray_ElSuP_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,nPo);
   std::vector<int> aElemFaceInd, aElemFaceRel;
-  dfm2::makeSurroundingRelationship(aElemFaceInd, aElemFaceRel,
+  dfm2::ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
       aElemInd,aElem,aElemType,
       elsup_ind, elsup);
   MakeGroupElem(ngroup, aIndGroup,
                 aElemInd,aElem,aElemFaceInd,aElemFaceRel);
 }
 
-void dfm2::ClipGroup
+void dfm2::ClipGroup_MeshMix
  (std::vector<unsigned int>& aElemInd1,
   std::vector<unsigned int>& aElem1,
   std::vector<dfm2::MESHELEM_TYPE>& aElemType1,
@@ -1149,7 +1149,7 @@ void dfm2::SubdivTopo_MeshQuad
 {
   const unsigned int nq0 = nQuad0;
   std::vector<unsigned int> elsup_ind, elsup;
-  JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
+  JArray_ElSuP_MeshElem(elsup_ind,elsup,
                               aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
                        aQuad0, dfm2::MESHELEM_QUAD, elsup_ind, elsup,
@@ -1207,7 +1207,7 @@ void dfm2::SubdivTopo_MeshQuad
 
 
 // new points is in the order of [old points], [edge points]
-void dfm2::TetSubdiv
+void dfm2::SubdivTopo_MeshTet
 (std::vector<unsigned int>& aTet1,
  std::vector<unsigned int> &psup_ind,
  std::vector<unsigned int> &psup,
@@ -1216,7 +1216,7 @@ void dfm2::TetSubdiv
 {
   const int nt0 = nTet0;
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArrayElemSurPoint_MeshElem(elsup_ind,elsup,
+  dfm2::JArray_ElSuP_MeshElem(elsup_ind,elsup,
       aTet0,nTet0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
                        aTet0, dfm2::MESHELEM_TET, elsup_ind, elsup,
@@ -1407,7 +1407,7 @@ void VoxSubdiv
 
 // -------------------------------------
 
-void dfm2::HexSubdiv
+void dfm2::SubdivTopo_MeshHex
 (std::vector<unsigned int>& aHex1,
  std::vector<unsigned int> &psupIndHex0,
  std::vector<unsigned int> &psupHex0,
@@ -1418,7 +1418,7 @@ void dfm2::HexSubdiv
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
   std::vector<unsigned int> elsupIndHex0, elsupHex0;
-  dfm2::JArrayElemSurPoint_MeshElem(elsupIndHex0, elsupHex0,
+  dfm2::JArray_ElSuP_MeshElem(elsupIndHex0, elsupHex0,
                            aHex0,nHex0,8,nhp0);
   
   //edge
@@ -1430,7 +1430,7 @@ void dfm2::HexSubdiv
   aQuadHex0.clear();
   {
     std::vector<int> aHexSurRel0;
-    makeSurroundingRelationship(aHexSurRel0,
+    ElSuEl_MeshElem(aHexSurRel0,
                                 aHex0,nHex0,8,
                                 elsupIndHex0,elsupHex0,
                                 nFaceElem(dfm2::MESHELEM_HEX),
@@ -1449,7 +1449,7 @@ void dfm2::HexSubdiv
     }
   }
   std::vector<unsigned int> elsupIndQuadHex0, elsupQuadHex0;
-  dfm2::JArrayElemSurPoint_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
+  dfm2::JArray_ElSuP_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
       aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   
   const int neh0 = (int)psupHex0.size();

@@ -69,7 +69,7 @@ public:
       }
       {
         std::vector<int> aTriSurRel;
-        makeSurroundingRelationship(aTriSurRel,
+        ElSuEl_MeshElem(aTriSurRel,
             pTri, nTri,
             delfem2::MESHELEM_TRI, nXYZ);
         iroot_bvh = BVH_MakeTreeTopology(aNodeBVH,

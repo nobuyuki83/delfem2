@@ -49,11 +49,12 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME}
-	${DELFEM2_INC}/primitive.cpp            ${DELFEM2_INC}/primitive.h		${DELFEM2_INC}/quat.cpp                 ${DELFEM2_INC}/quat.h
+	${DELFEM2_INC}/primitive.cpp            ${DELFEM2_INC}/primitive.h
+  ${DELFEM2_INC}/quat.cpp                 ${DELFEM2_INC}/quat.h
 	${DELFEM2_INC}/vec3.cpp                 ${DELFEM2_INC}/vec3.h
 	${DELFEM2_INC}/vec2.cpp                 ${DELFEM2_INC}/vec2.h
 	${DELFEM2_INC}/mat3.cpp                 ${DELFEM2_INC}/mat3.h
-    ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
 	${DELFEM2_INC}/mats.h                   ${DELFEM2_INC}/mats.cpp
 	${DELFEM2_INC}/emat.h                   ${DELFEM2_INC}/emat.cpp
 	${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
@@ -64,9 +65,9 @@ add_executable(${PROJECT_NAME}
 	${DELFEM2_INC}/ilu_mats.h               ${DELFEM2_INC}/ilu_mats.cpp
 	${DELFEM2_INC}/fem_emats.h              ${DELFEM2_INC}/fem_emats.cpp
 
-	${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
-    ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+	${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h       ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 	main.cpp
 )
 
