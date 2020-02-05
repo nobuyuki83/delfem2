@@ -100,16 +100,19 @@ void BVH_BuildBVHGeometry_Mesh(
     std::vector<BBOX>& aBB,
     int ibvh,
     const std::vector<CNodeBVH2>& aNodeBVH,
-    double margin,
+    REAL margin,
     const REAL* aXYZ, unsigned int nXYZ,
     const unsigned int* aElem, unsigned int nnoel, unsigned int nElem);
 
+
+/**
+ * @brief build geometry of BVH for point set
+ */
 template <typename BBOX, typename REAL>
 void BVH_BuildBVHGeometry_Points(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<CNodeBVH2>& aNodeBVH,
-    double margin,
     const REAL* aXYZ, unsigned int nXYZ);
 
 /**
@@ -124,74 +127,81 @@ void BVH_BuildGeometryBranch(
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH);
 
 template <typename BBOX>
-void BuildBoundingBoxesBVH_Dynamic(int ibvh,
-                                   double dt,
-                                   const std::vector<double>& aXYZ,
-                                   const std::vector<double>& aUVW,
-                                   const std::vector<unsigned int>& aTri,
-                                   const std::vector<CNodeBVH2>& aNodeBVH,
-                                   std::vector<BBOX>& aBB);
+void BuildBoundingBoxesBVH_Dynamic(
+    int ibvh,
+    double dt,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aUVW,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<CNodeBVH2>& aNodeBVH,
+    std::vector<BBOX>& aBB);
   
 template <typename BBOX>
-void BVH_GetIndElem_IncludePoint(std::vector<int>& aIndElem,
-                                 //
-                                 double px, double py, double pz,
-                                 int ibvh,
-                                 const std::vector<CNodeBVH2>& aBVH,
-                                 const std::vector<BBOX>& aBB);
+void BVH_GetIndElem_IncludePoint(
+    std::vector<int>& aIndElem,
+    //
+    double px, double py, double pz,
+    int ibvh,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
   
 /**
  * @brief potential maximum distance of the nearest point
  * @details set some value with min > max for input  e.g,. min=+1, max=-1
  */
 template <typename BBOX>
-void BVH_Range_DistToNearestPoint(double& min, double& max,
-                                  //
-                                  const double p[3],
-                                  unsigned int ibvh,
-                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                  const std::vector<BBOX>& aBB);
+void BVH_Range_DistToNearestPoint(
+    double& min, double& max,
+    //
+    const double p[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 /**
  * @brief find nearest point
  * @param min
  * @param aBB a bounding box of nodes
  */
-template <typename BBOX>
-void BVH_IndPoint_NearestPoint(unsigned int& ip,
-                               double& dist_cur,
-                               //
-                               const double p[3],
-                               unsigned int ibvh,
-                               const std::vector<delfem2::CNodeBVH2>& aBVH,
-                               const std::vector<BBOX>& aBB);
+template <typename BBOX, typename REAL>
+void BVH_IndPoint_NearestPoint(
+    unsigned int& ip,
+    REAL& dist_cur,
+    //
+    const REAL p[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 
 template <typename BBOX>
-void  BVH_GetIndElem_IntersectRay(std::vector<int>& aIndElem,
-                                  //
-                                  const double src[3], const double dir[3],
-                                  int ibvh,
-                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                  const std::vector<BBOX>& aBB);
+void  BVH_GetIndElem_IntersectRay(
+    std::vector<int>& aIndElem,
+    //
+    const double src[3], const double dir[3],
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
   
   
 template <typename BBOX>
-void BVH_GetIndElem_IntersectLine(std::vector<int>& aIndElem,
-                                  //
-                                  const double src[3], const double dir[3],
-                                  int ibvh,
-                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                  const std::vector<BBOX>& aBB);
+void BVH_GetIndElem_IntersectLine(
+    std::vector<int>& aIndElem,
+    //
+    const double src[3], const double dir[3],
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
   
 template <typename BBOX>
-void BVH_GetIndElem_InsideRange(std::vector<int>& aIndElem,
-                                //
-                                double min, double max,
-                                double px, double py, double pz,
-                                int ibvh,
-                                const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                const std::vector<BBOX>& aBB);
+void BVH_GetIndElem_InsideRange(
+    std::vector<int>& aIndElem,
+    //
+    double min, double max,
+    double px, double py, double pz,
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
   
 } // end namespace delfem2
 
@@ -207,7 +217,7 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
     std::vector<BBOX>& aBB,
     int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
-    double margin,
+    REAL margin,
     const REAL* aXYZ, unsigned int nXYZ,
     const unsigned int* aElem, unsigned int nnoel, unsigned int nElem)
 {
@@ -223,7 +233,7 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
     bb.Set_Inactive();
     for(unsigned int inoel=0;inoel<nnoel;++inoel){
       const unsigned int ino0 = aElem[ielem*nnoel+inoel];
-      bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], margin);
+      bb.AddPoint(aXYZ+ino0*3, margin);
     }
     return;
   }
@@ -241,9 +251,8 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
 template <typename BBOX, typename REAL>
 void delfem2::BVH_BuildBVHGeometry_Points(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
-    double margin,
     const REAL* aXYZ, unsigned int nXYZ)
 {
   aBB.resize( aNodeBVH.size() );
@@ -255,14 +264,14 @@ void delfem2::BVH_BuildBVHGeometry_Points(
     const unsigned int ip = ichild0;
     assert( ip < nXYZ );
     BBOX& bb = aBB[ibvh];
-    bb.AddPoint(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2],0.0);
+    bb.AddPoint(aXYZ+ip*3, 0.0);
     return;
   }
   // branch node is the bounding volume of child nodes
   assert( aNodeBVH[ichild0].iroot == ibvh );
   assert( aNodeBVH[ichild1].iroot == ibvh );
-  BVH_BuildBVHGeometry_Points(aBB,  ichild0,aNodeBVH, margin, aXYZ,nXYZ);
-  BVH_BuildBVHGeometry_Points(aBB,  ichild1,aNodeBVH, margin, aXYZ,nXYZ);
+  BVH_BuildBVHGeometry_Points(aBB,  ichild0,aNodeBVH, aXYZ,nXYZ);
+  BVH_BuildBVHGeometry_Points(aBB,  ichild1,aNodeBVH, aXYZ,nXYZ);
   BBOX& bb = aBB[ibvh];
   bb  = aBB[ichild0];
   bb += aBB[ichild1];
@@ -355,12 +364,15 @@ void delfem2::BuildBoundingBoxesBVH_Dynamic
     const int ino2 = aTri[itri*3+2];
     BBOX& bb = aBB[ibvh];
     bb.bbmin[0] = +1; bb.bbmax[0] = -1;
-    bb.AddPoint(aXYZ[ino0*3+0],aXYZ[ino0*3+1],aXYZ[ino0*3+2], eps);
-    bb.AddPoint(aXYZ[ino1*3+0],aXYZ[ino1*3+1],aXYZ[ino1*3+2], eps);
-    bb.AddPoint(aXYZ[ino2*3+0],aXYZ[ino2*3+1],aXYZ[ino2*3+2], eps);
-    bb.AddPoint(aXYZ[ino0*3+0]+dt*aUVW[ino0*3+0], aXYZ[ino0*3+1]+dt*aUVW[ino0*3+1], aXYZ[ino0*3+2]+dt*aUVW[ino0*3+2], eps);
-    bb.AddPoint(aXYZ[ino1*3+0]+dt*aUVW[ino1*3+0], aXYZ[ino1*3+1]+dt*aUVW[ino1*3+1], aXYZ[ino1*3+2]+dt*aUVW[ino1*3+2], eps);
-    bb.AddPoint(aXYZ[ino2*3+0]+dt*aUVW[ino2*3+0], aXYZ[ino2*3+1]+dt*aUVW[ino2*3+1], aXYZ[ino2*3+2]+dt*aUVW[ino2*3+2], eps);
+    bb.AddPoint(aXYZ.data()+ino0*3, eps);
+    bb.AddPoint(aXYZ.data()+ino1*3, eps);
+    bb.AddPoint(aXYZ.data()+ino2*3, eps);
+    const double p0[3] = {aXYZ[ino0*3+0]+dt*aUVW[ino0*3+0], aXYZ[ino0*3+1]+dt*aUVW[ino0*3+1], aXYZ[ino0*3+2]+dt*aUVW[ino0*3+2]};
+    const double p1[3] = {aXYZ[ino1*3+0]+dt*aUVW[ino1*3+0], aXYZ[ino1*3+1]+dt*aUVW[ino1*3+1], aXYZ[ino1*3+2]+dt*aUVW[ino1*3+2]};
+    const double p2[3] = {aXYZ[ino2*3+0]+dt*aUVW[ino2*3+0], aXYZ[ino2*3+1]+dt*aUVW[ino2*3+1], aXYZ[ino2*3+2]+dt*aUVW[ino2*3+2]};
+    bb.AddPoint(p0, eps);
+    bb.AddPoint(p1, eps);
+    bb.AddPoint(p2, eps);
     return;
   }
   // internal node,内部ノードは子ノードのBounding Volume
@@ -435,19 +447,20 @@ void delfem2::BVH_Range_DistToNearestPoint
 
 /**
  * @brief index of the point nearest to the given point
+ * @details the cur_dist should be input as a negative value (e.g., cur_dist=-1)
  */
-template <typename BBOX>
+template <typename BBOX, typename REAL>
 void delfem2::BVH_IndPoint_NearestPoint
  (unsigned int& ip,
-  double& cur_dist,
+  REAL& cur_dist,
   //
-  const double p[3],
+  const REAL p[3],
   unsigned int ibvh,
   const std::vector<delfem2::CNodeBVH2>& aBVH,
   const std::vector<BBOX>& aBB)
 {
   assert( aBVH.size() == aBB.size() );
-  double min0=+1.0, max0=-1.0;
+  REAL min0=+1.0, max0=-1.0;
   aBB[ibvh].Range_DistToPoint(min0,max0, p[0],p[1],p[2]);
   if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
   if( cur_dist > 0 && min0>cur_dist ){ return; } // current range [min,max] is valid and nearer than [min0,min0].

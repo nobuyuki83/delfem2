@@ -27,6 +27,8 @@ make
 ./test_cuda
 cd ../../
 
+echo "test for C++ finished"
+
 #######################
 
 cd 3rd_party/glfw
