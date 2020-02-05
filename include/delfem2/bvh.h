@@ -93,7 +93,8 @@ void Check_MortonCode_Sort(
     const std::vector<unsigned int>& aSortedId,
     const std::vector<std::uint32_t>& aSortedMc,
     const std::vector<double> aXYZ,
-    const double bbmin[3], const double bbmax[3]);
+    const double bbmin[3],
+    const double bbmax[3]);
 
 // above: code related to morton code
 // -------------------------------------------------------------------
