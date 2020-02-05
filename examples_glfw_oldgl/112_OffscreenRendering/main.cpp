@@ -25,14 +25,14 @@ namespace dfm2 = delfem2;
 double cur_time = 0.0;
 bool is_animation = true;
 bool is_depth = false;
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 
 // ------------------------------------------------------
 
 void Draw(){
   ::glRotated(+cur_time, 1,0,0);
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Tri,aTri);
+  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
   ::glRotated(-cur_time, 1,0,0);
 }
 
@@ -68,8 +68,8 @@ void myGlutIdle(dfm2::opengl::CRender2Tex_DrawOldGL& sampler){
 int main(int argc,char* argv[])
 {
   dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
-    aXYZ_Tri,aTri);
-  dfm2::Normalize_Points3(aXYZ_Tri,
+    aXYZ,aTri);
+  dfm2::Normalize_Points3(aXYZ,
                           1.0);
   // ---------------------------------------
   int nres = 64;

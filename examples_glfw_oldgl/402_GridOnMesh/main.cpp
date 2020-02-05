@@ -25,7 +25,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<double> aNorm;
 std::vector<int> aElSurRel;
@@ -46,25 +46,25 @@ std::vector<dfm2::CPointElemSurf<double>> aPES1;
 void InitializeProblem() {
   {
     dfm2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",
-                   aXYZ_Tri, aTri);
+                   aXYZ, aTri);
     double cx, cy, cz, wx, wy, wz;
     dfm2::CenterWidth_Points3(cx, cy, cz, wx, wy, wz,
-                              aXYZ_Tri);
-    dfm2::Translate_Points3(aXYZ_Tri,
+                              aXYZ);
+    dfm2::Translate_Points3(aXYZ,
                             -cx, -cy, -cz);
     double wm = wx;
     wm = (wx > wm) ? wx : wm;
     wm = (wy > wm) ? wy : wm;
     wm = (wz > wm) ? wz : wm;
-    dfm2::Scale_PointsX(aXYZ_Tri,
+    dfm2::Scale_PointsX(aXYZ,
                         1.5 / wm);
-    dfm2::Rotate_Points3(aXYZ_Tri,
+    dfm2::Rotate_Points3(aXYZ,
                          -M_PI * 0.5, 0.0, 0.0);
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                                      aTri.data(), aTri.size() / 3, 3, aXYZ_Tri.size() / 3);
+                                      aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
     dfm2::ElSuEl_MeshElem(aElSurRel,
                                       aTri.data(), aTri.size() / 3, 3,
                                       elsup_ind, elsup,
@@ -81,7 +81,7 @@ void UpdateProblem() {
       const dfm2::CVec3d o3d(o2d[0],o2d[1],10);
       std::map<double,dfm2::CPointElemSurf<double>> mapDepthPES;
       IntersectionRay_MeshTri3(mapDepthPES,
-                               o3d,dir,aTri,aXYZ_Tri,
+                               o3d,dir,aTri,aXYZ,
                                0.0);
       if( !mapDepthPES.empty() ){
         aPES0.push_back(mapDepthPES.begin()->second);
@@ -101,20 +101,20 @@ void UpdateProblem() {
     }
   }
   {
-    aNorm.resize(aXYZ_Tri.size());
+    aNorm.resize(aXYZ.size());
     dfm2::Normal_MeshTri3D(aNorm.data(),
-        aXYZ_Tri.data(), aXYZ_Tri.size()/3, aTri.data(),aTri.size()/3);
+        aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
   }
   {
     aPES1.clear();
-    dfm2::CVec3d p0 = aPES0[0].Pos_Tri(aXYZ_Tri,aTri);
-    dfm2::CVec3d p1 = aPES0[1].Pos_Tri(aXYZ_Tri,aTri);
-    dfm2::CVec3d p2 = aPES0[2].Pos_Tri(aXYZ_Tri,aTri);
-    dfm2::CVec3d p3 = aPES0[3].Pos_Tri(aXYZ_Tri,aTri);
-    dfm2::CVec3d n0 = aPES0[0].UNorm_Tri(aXYZ_Tri,aTri,aNorm);
-    dfm2::CVec3d n1 = aPES0[1].UNorm_Tri(aXYZ_Tri,aTri,aNorm);
-    dfm2::CVec3d n2 = aPES0[2].UNorm_Tri(aXYZ_Tri,aTri,aNorm);
-    dfm2::CVec3d n3 = aPES0[3].UNorm_Tri(aXYZ_Tri,aTri,aNorm);
+    dfm2::CVec3d p0 = aPES0[0].Pos_Tri(aXYZ,aTri);
+    dfm2::CVec3d p1 = aPES0[1].Pos_Tri(aXYZ,aTri);
+    dfm2::CVec3d p2 = aPES0[2].Pos_Tri(aXYZ,aTri);
+    dfm2::CVec3d p3 = aPES0[3].Pos_Tri(aXYZ,aTri);
+    dfm2::CVec3d n0 = aPES0[0].UNorm_Tri(aXYZ,aTri,aNorm);
+    dfm2::CVec3d n1 = aPES0[1].UNorm_Tri(aXYZ,aTri,aNorm);
+    dfm2::CVec3d n2 = aPES0[2].UNorm_Tri(aXYZ,aTri,aNorm);
+    dfm2::CVec3d n3 = aPES0[3].UNorm_Tri(aXYZ,aTri,aNorm);
     for(int i=0;i<ndiv+1;++i){
       for(int j=0;j<ndiv+1;++j) {
         double ri = (double)i/ndiv;
@@ -126,11 +126,11 @@ void UpdateProblem() {
         const dfm2::CVec3d pA = r0*p0 + r1*p1 + r2*p2 + r3*p3;
         const dfm2::CVec3d nA = r0*n0 + r1*n1 + r2*n2 + r3*n3;
         const std::vector<dfm2::CPointElemSurf<double>> aPES = IntersectionLine_MeshTri3(pA, nA,
-                                                                                         aTri, aXYZ_Tri,
+                                                                                         aTri, aXYZ,
                                                                                          0.0);
         std::map<double,dfm2::CPointElemSurf<double>> mapPES;
         for(auto pes : aPES){
-          dfm2::CVec3d p_intersec = pes.Pos_Tri(aXYZ_Tri,aTri);
+          dfm2::CVec3d p_intersec = pes.Pos_Tri(aXYZ,aTri);
           mapPES.insert( std::make_pair( Distance(p_intersec,pA), pes) );
         }
         if( mapPES.empty() ) {
@@ -158,10 +158,10 @@ void myGlutDisplay()
     float shine[4] = {0,0,0,0};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shine);
     ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127.0);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Tri,aTri);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
   }
   for(auto PES : aPES0){
-    auto v0 = PES.Pos_Tri(aXYZ_Tri,aTri);
+    auto v0 = PES.Pos_Tri(aXYZ,aTri);
     float gray[4] = {0.0f,0.0f,1.0f,1.f};
     ::glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, gray);
     dfm2::opengl::DrawSphereAt(32,32,0.02, v0.x(),v0.y(),v0.z());
@@ -171,10 +171,10 @@ void myGlutDisplay()
   ::glBegin(GL_QUADS);
   for(unsigned int idiv=0;idiv<ndiv;++idiv){
     for(unsigned int jdiv=0;jdiv<ndiv;++jdiv){
-      dfm2::CVec3d p0 = aPES1[(idiv+0)*(ndiv+1)+(jdiv+0)].Pos_Tri(aXYZ_Tri,aTri);
-      dfm2::CVec3d p1 = aPES1[(idiv+1)*(ndiv+1)+(jdiv+0)].Pos_Tri(aXYZ_Tri,aTri);
-      dfm2::CVec3d p2 = aPES1[(idiv+1)*(ndiv+1)+(jdiv+1)].Pos_Tri(aXYZ_Tri,aTri);
-      dfm2::CVec3d p3 = aPES1[(idiv+0)*(ndiv+1)+(jdiv+1)].Pos_Tri(aXYZ_Tri,aTri);
+      dfm2::CVec3d p0 = aPES1[(idiv+0)*(ndiv+1)+(jdiv+0)].Pos_Tri(aXYZ,aTri);
+      dfm2::CVec3d p1 = aPES1[(idiv+1)*(ndiv+1)+(jdiv+0)].Pos_Tri(aXYZ,aTri);
+      dfm2::CVec3d p2 = aPES1[(idiv+1)*(ndiv+1)+(jdiv+1)].Pos_Tri(aXYZ,aTri);
+      dfm2::CVec3d p3 = aPES1[(idiv+0)*(ndiv+1)+(jdiv+1)].Pos_Tri(aXYZ,aTri);
       if( (idiv+jdiv)%2 == 0 ){
         ::glColor3d(0,0,0);
       }

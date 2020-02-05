@@ -16,7 +16,7 @@
 #include "delfem2/opengl/glold_funcs.h"
 
 // -----------------------------
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<int> aP;
 std::vector<double> aGrad;
@@ -31,7 +31,7 @@ void myGlutDisplay()
   glEnable(GL_TEXTURE_GEN_S);
   glEnable(GL_TEXTURE_GEN_T);
   glEnable(GL_TEXTURE_GEN_R);
-  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Tri, aTri);
+  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
 //  ::glutSolidTeapot(1.0);
   //    glutSolidSphere(1.0, 32, 16);
   //  glutSolidDodecahedron();
@@ -127,8 +127,8 @@ void ComputePerlin(){
 int main(int argc,char* argv[])
 {
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-           aXYZ_Tri,aTri);
-  delfem2::Normalize_Points3(aXYZ_Tri);
+           aXYZ,aTri);
+  delfem2::Normalize_Points3(aXYZ);
   
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();

@@ -29,7 +29,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------
 
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 
 const unsigned int nsubdiv = 3;
@@ -42,7 +42,7 @@ std::vector< std::vector<unsigned int>> aaQuad;
 
 void InitializeProblem() {
     
-  dfm2::MeshTri3D_Sphere(aXYZ_Tri, aTri,
+  dfm2::MeshTri3D_Sphere(aXYZ, aTri,
                          1.0, 12, 34);
                 
   {
@@ -56,8 +56,8 @@ void InitializeProblem() {
   for(int ip=0;ip<aXYZ_Quad.size()/3;++ip){
     dfm2::CVec3d p0(aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2]);
     dfm2::CPointElemSurf<double> pes0 = Nearest_Point_MeshTri3D(p0,
-                                                                aXYZ_Tri, aTri);
-    dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ_Tri, aTri);
+                                                                aXYZ, aTri);
+    dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
     aXYZ_Quad[ip*3+0] = q0.x();
     aXYZ_Quad[ip*3+1] = q0.y();
     aXYZ_Quad[ip*3+2] = q0.z();
@@ -107,17 +107,17 @@ void InitializeProblem() {
       const dfm2::CVec3d p0( aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2] );
       const dfm2::CVec3d n0( aNorm_Quad[ip*3+0], aNorm_Quad[ip*3+1], aNorm_Quad[ip*3+2] );
       std::vector<dfm2::CPointElemSurf<double>> aPES = IntersectionLine_MeshTri3(p0, n0,
-                                                                                 aTri, aXYZ_Tri,
+                                                                                 aTri, aXYZ,
                                                                                  1.0e-3);
       std::map<double, dfm2::CPointElemSurf<double>> mapPES;
       for(unsigned int ipes=0;ipes<aPES.size();++ipes){
-        dfm2::CVec3d q0 = aPES[ipes].Pos_Tri(aXYZ_Tri, aTri);
+        dfm2::CVec3d q0 = aPES[ipes].Pos_Tri(aXYZ, aTri);
         double h = (q0-p0)*n0;
         mapPES.insert( std::make_pair(-h,aPES[ipes]) );
       }
       if( !aPES.empty() ){
         dfm2::CPointElemSurf<double>& pes0 = mapPES.begin()->second;
-        dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ_Tri, aTri);
+        dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
         aXYZ_Quad[ip*3+0] = q0.x();
         aXYZ_Quad[ip*3+1] = q0.y();
         aXYZ_Quad[ip*3+2] = q0.z();
@@ -165,7 +165,7 @@ void myGlutDisplay()
   }
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1.0, 1.0, 1.0);
-  dfm2::opengl::DrawMeshTri3D_Edge(aXYZ_Tri, aTri);
+  dfm2::opengl::DrawMeshTri3D_Edge(aXYZ, aTri);
   
   ::glEnd();
   ::glEnable(GL_DEPTH_TEST);

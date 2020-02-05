@@ -18,7 +18,7 @@ namespace dfm2 = delfem2;
 /* ------------------------------------------------------------------------ */
 // input parameter for simulation
 std::vector<double> aXYZ0; // undeformed vertex positions
-std::vector<double> aXYZ_Tri; // deformed vertex positions
+std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aUVW; // vertex deformation modes
 std::vector<unsigned int> aTri;  // index of triangles
 
@@ -40,7 +40,7 @@ void myGlutDisplay()
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   //  Draw_SurfaceMeshNorm(aXYZ, aTri, aNormal);
-  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Tri,aTri);
+  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ,aTri);
   
   ::glDisable(GL_LIGHTING);
   ::glLineWidth(2);
@@ -61,21 +61,21 @@ void myGlutIdle(){
   {
     cur_time += 0.02;
     double d = sin(cur_time);
-    for(int ip=0;ip<(int)aXYZ_Tri.size()/3;ip++){
-      aXYZ_Tri[ip*3+0] =  aXYZ0[ip*3+0] + aUVW[ip*3+0]*d;
-      aXYZ_Tri[ip*3+1] =  aXYZ0[ip*3+1] + aUVW[ip*3+1]*d;
-      aXYZ_Tri[ip*3+2] =  aXYZ0[ip*3+2] + aUVW[ip*3+2]*d;
+    for(int ip=0;ip<(int)aXYZ.size()/3;ip++){
+      aXYZ[ip*3+0] =  aXYZ0[ip*3+0] + aUVW[ip*3+0]*d;
+      aXYZ[ip*3+1] =  aXYZ0[ip*3+1] + aUVW[ip*3+1]*d;
+      aXYZ[ip*3+2] =  aXYZ0[ip*3+2] + aUVW[ip*3+2]*d;
     }
     ///
     dfm2::BVH_BuildBVHGeometry_Mesh(
         aBB_BVH,
         iroot_bvh,aNodeBVH,
         1.0e-5,
-        aXYZ_Tri.data(),aXYZ_Tri.size()/3,
+        aXYZ.data(),aXYZ.size()/3,
         aTri.data(),3,aTri.size()/3);
     aITP.clear();
     dfm2::GetIntersectTriPairs(aITP,
-                               aXYZ_Tri,aTri,
+                               aXYZ,aTri,
                                iroot_bvh,
                                aNodeBVH,aBB_BVH); // output
     std::cout << aITP.size() << std::endl;
@@ -88,12 +88,12 @@ int main(int argc,char* argv[])
     delfem2::MeshTri3D_Sphere(aXYZ0, aTri, 1.0, 16, 16);
     delfem2::Rotate_Points3(aXYZ0,
                             0.2, 0.3, 0.4);
-    aXYZ_Tri = aXYZ0;
+    aXYZ = aXYZ0;
     {
       const size_t ntri = aTri.size()/3;
       std::vector<double> aElemCenter(ntri*3);
       for(unsigned int itri=0;itri<ntri;++itri){
-        dfm2::CVec3d p0 = dfm2::CG_Tri3(itri, aTri, aXYZ_Tri);
+        dfm2::CVec3d p0 = dfm2::CG_Tri3(itri, aTri, aXYZ);
         aElemCenter[itri*3+0] = p0.x();
         aElemCenter[itri*3+1] = p0.y();
         aElemCenter[itri*3+2] = p0.z();
@@ -101,7 +101,7 @@ int main(int argc,char* argv[])
       std::vector<int> aTriSurRel;
       dfm2::ElSuEl_MeshElem(aTriSurRel,
                                         aTri.data(), aTri.size()/3,
-                                        delfem2::MESHELEM_TRI, aXYZ_Tri.size()/3);
+                                        delfem2::MESHELEM_TRI, aXYZ.size()/3);
       iroot_bvh = dfm2::BVH_MakeTreeTopology(aNodeBVH,
                                              3,aTriSurRel,
                                              aElemCenter);
@@ -110,9 +110,9 @@ int main(int argc,char* argv[])
     //    aEdge.SetEdgeOfElem(aTri,(int)aTri.size()/3,3, aXYZ.size()/3,false);
   }
   {
-    aUVW.assign(aXYZ_Tri.size(),0.0);
-    for(size_t ixyz=0;ixyz<aXYZ_Tri.size()/3;++ixyz){
-      double x0 = aXYZ_Tri[ixyz*3+0];
+    aUVW.assign(aXYZ.size(),0.0);
+    for(size_t ixyz=0;ixyz<aXYZ.size()/3;++ixyz){
+      double x0 = aXYZ[ixyz*3+0];
       aUVW[ixyz*3+0] = -3*x0*x0*x0*x0*x0;
     }
   }
