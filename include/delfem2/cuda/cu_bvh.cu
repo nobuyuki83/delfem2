@@ -45,15 +45,16 @@ void device_AtomicMinFloat(float * const address, const float value)
   } while (assumed != old);
 }
 
-__device__
-float kernel_dist3(
-    const float p0[3],
-    const float p1[3])
-{
-  float v = (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
-  return sqrtf(v);
-}
 
+template <typename REAL>
+__device__
+float device_Distance3(
+    const REAL p0[3],
+    const REAL p1[3])
+{
+  const REAL v = (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
+  return sqrt(v);
+}
 
 __device__
 unsigned int device_ExpandBits(unsigned int v)
@@ -170,25 +171,106 @@ int device_MortonCode_FindSplit(
   return iMC_split;
 }
 
-__device__
-void device_AddPointBVH(
-    float* aabb,
-    float x, float y, float z, float eps)
+template <typename REAL>
+class CudaBV_Sphere
 {
-  if( eps < 0 ){ return; }
-  if( aabb[0] > aabb[3] ){ // empty aabb
-    aabb[0] = x-eps;  aabb[3] = x+eps;
-    aabb[1] = y-eps;  aabb[4] = y+eps;
-    aabb[2] = z-eps;  aabb[5] = z+eps;
+public:
+  __device__
+  void Set_Inactive() { r = -1; }
+  __device__
+  void AddPoint(const REAL p[3], REAL R){
+    if( R < 0 ){ return; }
+    if( r < 0 ){ c[0]=p[0]; c[1]=p[1]; c[2]=p[2]; r=R; return; }
+    const REAL L = device_Distance3(p,c);
+    if( r>L+R ){ return; } // including
+    if( R>L+r){ // included
+      c[0]=p[0]; c[1]=p[1]; c[2]=p[2]; r=R;
+      return;
+    }
+    if( fabs(L) <= 1.0e-5*fabs(r+R) ){ // almost co-centric
+      r = L+R;
+      return;
+    }
+    const REAL r0 = 0.5*(L+r-R)/L;
+    const REAL r1 = 0.5*(L+R-r)/L;
+    assert( r0 >= 0 && r1 >= 0 );
+    c[0] = r0*c[0] + r1*p[0];
+    c[1] = r0*c[1] + r1*p[1];
+    c[2] = r0*c[2] + r1*p[2];
+    r = 0.5*(L+r+R);
     return;
   }
-  aabb[0] = ( aabb[0] < x-eps ) ? aabb[0] : x-eps;
-  aabb[1] = ( aabb[1] < y-eps ) ? aabb[1] : y-eps;
-  aabb[2] = ( aabb[2] < z-eps ) ? aabb[2] : z-eps;
-  aabb[3] = ( aabb[3] > x+eps ) ? aabb[3] : x+eps;
-  aabb[4] = ( aabb[4] > y+eps ) ? aabb[4] : y+eps;
-  aabb[5] = ( aabb[5] > z+eps ) ? aabb[5] : z+eps;
-}
+  __device__
+  void Add(const CudaBV_Sphere<REAL>& bb) {
+    this->AddPoint(bb.c,bb.r);
+  }
+  __device__
+  void Range_DistToPoint(REAL& min0, REAL& max0,
+                         const REAL p[3]) const {
+    if( r < 0 ){ return; }
+    const REAL L = device_Distance3(p,c);
+    if( L < r ){
+      min0 = 0;
+      max0 = r+L;
+      return;
+    }
+    min0 = L-r;
+    max0 = L+r;
+  }
+public:
+  REAL r, c[3];
+};
+
+template <typename REAL>
+class CudaBV_AABB3
+{
+public:
+  __device__
+  void Set_Inactive() {
+    bbmin[0] = +1;
+    bbmax[0] = -1;
+  }
+  __device__
+  bool IsActive() const {
+    if( bbmin[0] > bbmax[0] ){ return false; }
+    return true;
+  }
+  __device__
+  void AddPoint(const REAL p[3], REAL eps){
+    if( eps < 0 ){ return; }
+    if( !this->IsActive() ){ // something inside
+      bbmin[0] = p[0]-eps;  bbmax[0] = p[0]+eps;
+      bbmin[1] = p[1]-eps;  bbmax[1] = p[1]+eps;
+      bbmin[2] = p[2]-eps;  bbmax[2] = p[2]+eps;
+      return;
+    }
+    bbmin[0] = ( bbmin[0] < p[0]-eps ) ? bbmin[0] : p[0]-eps;
+    bbmin[1] = ( bbmin[1] < p[1]-eps ) ? bbmin[1] : p[1]-eps;
+    bbmin[2] = ( bbmin[2] < p[2]-eps ) ? bbmin[2] : p[2]-eps;
+    bbmax[0] = ( bbmax[0] > p[0]+eps ) ? bbmax[0] : p[0]+eps;
+    bbmax[1] = ( bbmax[1] > p[1]+eps ) ? bbmax[1] : p[1]+eps;
+    bbmax[2] = ( bbmax[2] > p[2]+eps ) ? bbmax[2] : p[2]+eps;
+  }
+  __device__
+  void Add(const CudaBV_AABB3<REAL>& bb){
+    if( !bb.IsActive() ){ return; }
+    if( !this->IsActive() ){
+      bbmax[0] = bb.bbmax[0];	bbmin[0] = bb.bbmin[0];
+      bbmax[1] = bb.bbmax[1];	bbmin[1] = bb.bbmin[1];
+      bbmax[2] = bb.bbmax[2];	bbmin[2] = bb.bbmin[2];
+      return;
+    }
+    bbmin[0] = ( bbmin[0] < bb.bbmin[0] ) ? bbmin[0] : bb.bbmin[0];
+    bbmin[1] = ( bbmin[1] < bb.bbmin[1] ) ? bbmin[1] : bb.bbmin[1];
+    bbmin[2] = ( bbmin[2] < bb.bbmin[2] ) ? bbmin[2] : bb.bbmin[2];
+    bbmax[0] = ( bbmax[0] > bb.bbmax[0] ) ? bbmax[0] : bb.bbmax[0];
+    bbmax[1] = ( bbmax[1] > bb.bbmax[1] ) ? bbmax[1] : bb.bbmax[1];
+    bbmax[2] = ( bbmax[2] > bb.bbmax[2] ) ? bbmax[2] : bb.bbmax[2];
+    return;
+  }
+public:
+  REAL bbmin[3], bbmax[3];
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
@@ -282,9 +364,9 @@ void kernel_CentRad_MeshTri3D_TPB64(
   dXYZ_c[itri*3+1] = pc[1];
   dXYZ_c[itri*3+2] = pc[2];
   // ---------------------
-  const float l0 = kernel_dist3(pc, p0);
-  const float l1 = kernel_dist3(pc, p1);
-  const float l2 = kernel_dist3(pc, p2);
+  const float l0 = device_Distance3(pc, p0);
+  const float l1 = device_Distance3(pc, p1);
+  const float l2 = device_Distance3(pc, p2);
   float lm = l0;
   if( l1 > lm ){ lm = l1; }
   if( l2 > lm ){ lm = l2; }
@@ -461,33 +543,12 @@ void dfm2::cuda::cuda_MortonCode_BVHTopology(
   hNodeBVH[0].iroot = -1;
 }
 
-
 // ------------------------------------------------------------------------
 
-__device__
-void device_AABB3_AddAABB3(
-    float* bb0,
-    const float* bb1)
-{
-  if( bb1[0] > bb1[3] ){ return; } // bb1 is inactive
-  if( bb0[0] > bb0[3] ){ // bb0 is inactive
-    bb0[0] = bb1[0];  bb0[1] = bb1[1];  bb0[2] = bb1[2];
-    bb0[3] = bb1[3];  bb0[4] = bb1[4];  bb0[5] = bb1[5];
-    return;
-  }
-  bb0[0] = ( bb0[0] < bb1[0] ) ? bb0[0] : bb1[0];
-  bb0[1] = ( bb0[1] < bb1[1] ) ? bb0[1] : bb1[1];
-  bb0[2] = ( bb0[2] < bb1[2] ) ? bb0[2] : bb1[2];
-  //
-  bb0[3] = ( bb0[3] > bb1[3] ) ? bb0[3] : bb1[3];
-  bb0[4] = ( bb0[4] > bb1[4] ) ? bb0[4] : bb1[4];
-  bb0[5] = ( bb0[5] > bb1[5] ) ? bb0[5] : bb1[5];
-}
-
-
+template <typename BBOX>
 __global__
-void kernel_BVHGeometry_TPB64(
-    float* dAABB,
+void kernel_BVHGeometry(
+    BBOX* dBox,
     int* dNum,
     //
     const dfm2::CNodeBVH2* dNodeBVH,
@@ -510,12 +571,10 @@ void kernel_BVHGeometry_TPB64(
     const float *p0 = dXYZ + i0 * 3;
     const float *p1 = dXYZ + i1 * 3;
     const float *p2 = dXYZ + i2 * 3;
-    float *bb0 = dAABB + (nTri - 1 + ino) * 6;
-    bb0[0] = +1;
-    bb0[3] = -1;
-    device_AddPointBVH(bb0, p0[0], p0[1], p0[2], eps);
-    device_AddPointBVH(bb0, p1[0], p1[1], p1[2], eps);
-    device_AddPointBVH(bb0, p2[0], p2[1], p2[2], eps);
+    dBox[nTri-1+ino].Set_Inactive();
+    dBox[nTri-1+ino].AddPoint(p0,eps);
+    dBox[nTri-1+ino].AddPoint(p1,eps);
+    dBox[nTri-1+ino].AddPoint(p2,eps);
   }
   // ----------------------------------------------------
   unsigned int ino0 = dNodeBVH[nTri-1+ino].iroot;
@@ -535,15 +594,9 @@ void kernel_BVHGeometry_TPB64(
     }
     __threadfence(); // sync global memory
     // ---------------------------------------
-    {
-      const float* bbc0 = dAABB+inoc0*6;
-      const float* bbc1 = dAABB+inoc1*6;
-      float* bb0 = dAABB+ino0*6;
-      bb0[0] = +1;
-      bb0[3] = -1;
-      device_AABB3_AddAABB3(bb0, bbc0);
-      device_AABB3_AddAABB3(bb0, bbc1);
-    }
+    dBox[ino0].Set_Inactive();
+    dBox[ino0].Add(dBox[inoc0]);
+    dBox[ino0].Add(dBox[inoc1]);
     // ----------------------------------------
     if( dNodeBVH[ino0].iroot == -1 ){ assert(ino0==0); return; }
     ino0 = dNodeBVH[ino0].iroot;
@@ -551,8 +604,8 @@ void kernel_BVHGeometry_TPB64(
 }
 
 
-void dfm2::cuda::cuda_BVHGeometry(
-    float* hAABB,
+void dfm2::cuda::cuda_BVHGeometry_AABB3f(
+    dfm2::CBV3_AABB<float>* hAABB,
     const CNodeBVH2* hNodeBVH,
     const float* hXYZ,
     unsigned int nXYZ,
@@ -562,14 +615,14 @@ void dfm2::cuda::cuda_BVHGeometry(
   const thrust::device_vector<dfm2::CNodeBVH2> dNodeBVH(hNodeBVH, hNodeBVH+2*nTri-1);
   const thrust::device_vector<float> dXYZ(hXYZ, hXYZ+nXYZ*3);
   const thrust::device_vector<unsigned int> dTri(hTri, hTri+nTri*3);
-  thrust::device_vector<float> dAABB( (2*nTri-1)*6, -0.1);
+  thrust::device_vector<CudaBV_AABB3<float>> dAABB( 2*nTri-1 );
   thrust::device_vector<int> dNum(nTri-1, 0);
   // -----------------------------
   {
     const unsigned int BLOCK = 512;
     dim3 grid((nTri - 1) / BLOCK + 1);
     dim3 block(BLOCK);
-    kernel_BVHGeometry_TPB64 << < grid, block >> > (
+    kernel_BVHGeometry <<< grid, block >>> (
         thrust::raw_pointer_cast(dAABB.data()),
         thrust::raw_pointer_cast(dNum.data()),
         //
@@ -580,6 +633,153 @@ void dfm2::cuda::cuda_BVHGeometry(
         0.0);
   }
   // ------------------------------
-  thrust::copy(dAABB.begin(), dAABB.end(), hAABB);
+  cudaMemcpy(hAABB,
+      thrust::raw_pointer_cast(dAABB.data()),
+      sizeof(CudaBV_AABB3<float>)*dAABB.size(),
+      cudaMemcpyDeviceToHost);
 }
 
+template <typename REAL>
+void dfm2::cuda::cuda_BVHGeometry_Sphere(
+    dfm2::CBV3_Sphere<REAL>* hAABB,
+    const CNodeBVH2* hNodeBVH,
+    const REAL* hXYZ,
+    unsigned int nXYZ,
+    const unsigned int* hTri,
+    unsigned int nTri)
+{
+  const thrust::device_vector<dfm2::CNodeBVH2> dNodeBVH(hNodeBVH, hNodeBVH+2*nTri-1);
+  const thrust::device_vector<REAL> dXYZ(hXYZ, hXYZ+nXYZ*3);
+  const thrust::device_vector<unsigned int> dTri(hTri, hTri+nTri*3);
+  thrust::device_vector<CudaBV_Sphere<REAL>> dAABB( 2*nTri-1 );
+  thrust::device_vector<int> dNum(nTri-1, 0);
+  // -----------------------------
+  {
+    const unsigned int BLOCK = 512;
+    dim3 grid((nTri - 1) / BLOCK + 1);
+    dim3 block(BLOCK);
+    kernel_BVHGeometry <<< grid, block >>> (
+        thrust::raw_pointer_cast(dAABB.data()),
+            thrust::raw_pointer_cast(dNum.data()),
+            //
+            thrust::raw_pointer_cast(dNodeBVH.data()),
+            thrust::raw_pointer_cast(dXYZ.data()),
+            thrust::raw_pointer_cast(dTri.data()),
+            nTri,
+            0.0);
+  }
+  // ------------------------------
+  cudaMemcpy(hAABB,
+             thrust::raw_pointer_cast(dAABB.data()),
+             sizeof(CudaBV_Sphere<REAL>)*dAABB.size(),
+             cudaMemcpyDeviceToHost);
+}
+template void dfm2::cuda::cuda_BVHGeometry_Sphere(
+    dfm2::CBV3_Sphere<float>* hAABB,
+    const CNodeBVH2* hNodeBVH,
+    const float* hXYZ,
+    unsigned int nXYZ,
+    const unsigned int* hTri,
+    unsigned int nTri);
+
+// -------------------------------------------------------------------------
+
+__device__
+void device_BVH_IndPoint_NearestPoint(
+    unsigned int* ip,
+    float* cur_dist,
+    //
+    const float p[3],
+    unsigned int ibvh,
+    const delfem2::CNodeBVH2* aNodeBVH,
+    const CudaBV_Sphere<float>* dBVSphere)
+{
+  float min0=+1.0, max0=-1.0;
+  dBVSphere[ibvh].Range_DistToPoint(min0,max0,p);
+  //
+  if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
+  if( *cur_dist > 0 && min0> *cur_dist ){ return; } // current range [min,max] is valid and nearer than [min0,min0].
+  const int ichild0 = aNodeBVH[ibvh].ichild[0];
+  const int ichild1 = aNodeBVH[ibvh].ichild[1];
+  if( ichild1 == -1 ){ // leaf
+    assert( min0 == max0 ); // because this is point
+    if( *cur_dist < 0 || max0 < *cur_dist ){ // current range is inactive
+      *cur_dist = max0;
+      *ip = ichild0;
+    }
+    return;
+  }
+  // ------------------
+  device_BVH_IndPoint_NearestPoint(
+      ip,cur_dist,
+      p, ichild0,aNodeBVH,dBVSphere);
+  device_BVH_IndPoint_NearestPoint(
+      ip,cur_dist,
+      p, ichild1,aNodeBVH,dBVSphere);
+}
+
+template <typename REAL>
+__global__
+void kernel_BVHNearestPoint(
+    unsigned int* dId,
+    //
+    const REAL* dXYZ1,
+    unsigned int nXYZ1,
+    const dfm2::CNodeBVH2* dNodeBVH,
+    unsigned int nNodeBVH,
+    const CudaBV_Sphere<REAL>* dBVSphere)
+{
+  const unsigned int ip1 = blockDim.x * blockIdx.x + threadIdx.x;
+  if (ip1 >= nXYZ1 ) return;
+  const float p1[3] = {dXYZ1[ip1*3+0], dXYZ1[ip1*3+1], dXYZ1[ip1*3+2]};
+  float cur_dist = -1;
+  device_BVH_IndPoint_NearestPoint(
+      dId+ip1, &cur_dist,
+      //
+      p1,0,dNodeBVH,dBVSphere);
+}
+
+template <typename REAL>
+void dfm2::cuda::cuda_BVH_NearestPoint(
+    unsigned int* hInd,
+    //
+    const REAL* hXYZ1,
+    unsigned int nXYZ1,
+    const CNodeBVH2* hNodeBVH0,
+    unsigned int nNodeBVH0,
+    const dfm2::CBV3_Sphere<REAL>* hBVSphere0)
+{
+  const thrust::device_vector<REAL> dXYZ1(hXYZ1, hXYZ1+nXYZ1*3);
+  const thrust::device_vector<dfm2::CNodeBVH2> dNodeBVH0(hNodeBVH0, hNodeBVH0+nNodeBVH0);
+  const thrust::device_vector<CudaBV_Sphere<REAL>> dBVSphere0(nNodeBVH0);
+  cudaMemcpy(
+      (void*)thrust::raw_pointer_cast(dBVSphere0.data()),
+      hBVSphere0,
+      sizeof(CudaBV_Sphere<REAL>)*nNodeBVH0,
+      cudaMemcpyHostToDevice);
+  thrust::device_vector<unsigned int> dInd(nXYZ1, 0);
+  // -----------------------------
+  {
+    cudaDeviceSetLimit(cudaLimitStackSize, 4096);
+    const unsigned int BLOCK = 512;
+    dim3 grid((nXYZ1 - 1) / BLOCK + 1);
+    dim3 block(BLOCK);
+    kernel_BVHNearestPoint << < grid, block >> > (
+        thrust::raw_pointer_cast(dInd.data()),
+        //
+        thrust::raw_pointer_cast(dXYZ1.data()),
+        nXYZ1,
+        thrust::raw_pointer_cast(dNodeBVH0.data()),
+        nNodeBVH0,
+        thrust::raw_pointer_cast(dBVSphere0.data()));
+  }
+  thrust::copy(dInd.begin(), dInd.end(), hInd);
+}
+template void dfm2::cuda::cuda_BVH_NearestPoint(
+    unsigned int* hInd,
+    //
+    const float* hXYZ1,
+    unsigned int nXYZ1,
+    const CNodeBVH2* hNodeBVH0,
+    unsigned int nNodeBVH0,
+    const dfm2::CBV3_Sphere<float>* hBVSphere0);
