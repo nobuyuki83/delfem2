@@ -170,52 +170,53 @@ TEST(bvh,nearest_range) // find global nearest from range
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-5.0, 5.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
+    const dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng)); // random points
+    double dist_min=+1, dist_max = -1;
+    dfm2::BVH_Range_DistToNearestPoint(dist_min, dist_max,
+                                       p0.data(),
+                                       bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     {
-      double dist_min=-1, dist_max = -1;
-      dfm2::BVH_Range_DistToNearestPoint(dist_min, dist_max,
-                                         p0.x(), p0.y(), p0.z(),
-                                         bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       bool is_max = false;
       for(int it=0;it<aTri.size()/3;++it){
-        dfm2::CBV3d_Sphere bb;
+        dfm2::CBV3d_Sphere bb_tri;
         for(int inoel=0;inoel<3;++inoel){
           const int ino0 = aTri[it*3+inoel];
-          bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
+          bb_tri.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
         }
         double min0, max0;
-        bb.Range_DistToPoint(min0, max0, p0.x(), p0.y(), p0.z());
+        bb_tri.Range_DistToPoint(min0, max0,
+                                 p0.x(), p0.y(), p0.z());
         EXPECT_GE( max0, dist_max );
         EXPECT_GE( min0, dist_min );
         if( max0 < dist_max+1.0e-10 ){ is_max = true; }
       }
       EXPECT_TRUE( is_max );
-      std::vector<int> aIndElem;
-      BVH_GetIndElem_InsideRange(aIndElem,
-                                 dist_min,dist_max,
-                                 p0.x(), p0.y(), p0.z(),
-                                 bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
-      EXPECT_GT(aIndElem.size(), 0);
-      std::vector<int> aFlg(aTri.size()/3,0);
-      for(int iit=0;iit<aIndElem.size();++iit){
-        int itri0 = aIndElem[iit];
-        aFlg[itri0] = 1;
+    }
+    std::vector<int> aIndElem;
+    BVH_GetIndElem_InsideRange(aIndElem,
+                               dist_min,dist_max,
+                               p0.x(), p0.y(), p0.z(),
+                               bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+    EXPECT_GT(aIndElem.size(), 0);
+    std::vector<int> aFlg(aTri.size()/3,0);
+    for(int iit=0;iit<aIndElem.size();++iit){
+      int itri0 = aIndElem[iit];
+      aFlg[itri0] = 1;
+    }
+    for(int itri=0;itri<aTri.size()/3;++itri){
+      dfm2::CBV3d_Sphere bb_tri;
+      for(int inoel=0;inoel<3;++inoel){
+        const int ino0 = aTri[itri*3+inoel];
+        bb_tri.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
       }
-      for(int itri=0;itri<aTri.size()/3;++itri){
-        dfm2::CBV3d_Sphere bb;
-        for(int inoel=0;inoel<3;++inoel){
-          const int ino0 = aTri[itri*3+inoel];
-          bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], 0.0);
-        }
-        double min0, max0;
-        bb.Range_DistToPoint(min0, max0, p0.x(), p0.y(), p0.z());
-        if( aFlg[itri] == 1 ){ // inside range
-          EXPECT_LE(min0,dist_max);
-          EXPECT_GE(max0,dist_min);
-        }
-        else{ // outside range
-          EXPECT_TRUE((min0>dist_max)||(max0<dist_min));
-        }
+      double min0, max0;
+      bb_tri.Range_DistToPoint(min0, max0, p0.x(), p0.y(), p0.z());
+      if( aFlg[itri] == 1 ){ // inside range
+        EXPECT_LE(min0,dist_max);
+        EXPECT_GE(max0,dist_min);
+      }
+      else{ // outside range
+        EXPECT_TRUE((min0>dist_max)||(max0<dist_min));
       }
     }
   }
@@ -430,21 +431,28 @@ TEST(bvh,rayintersection)
   }
 }
 
-void mark_child(std::vector<int>& aFlg,
+void mark_child(std::vector<int>& aFlgBranch,
+                std::vector<int>& aFlgLeaf,
+                std::vector<int>& aFlgID,
+                unsigned int nID,
                 unsigned int inode0,
                 const std::vector<dfm2::CNodeBVH2>& aNode)
 {
-  assert( inode0 < aNode.size() );
+  EXPECT_TRUE( inode0 < aNode.size() );
   if( aNode[inode0].ichild[1] == -1 ){ // leaf
+    EXPECT_TRUE(inode0>=nID-1 && inode0<nID*2-1);
+    aFlgLeaf[inode0-(nID-1)] += 1;
     const unsigned int in0 = aNode[inode0].ichild[0];
-    assert( in0 < aFlg.size() );
-    aFlg[in0] += 1;
+    EXPECT_TRUE( in0 < aFlgID.size() );
+    aFlgID[in0] += 1;
     return;
   }
+  EXPECT_TRUE(inode0<nID-1);
+  aFlgBranch[inode0] += 1;
   const unsigned int in0 = aNode[inode0].ichild[0];
   const unsigned int in1 = aNode[inode0].ichild[1];
-  mark_child(aFlg, in0, aNode);
-  mark_child(aFlg, in1, aNode);
+  mark_child(aFlgBranch, aFlgLeaf, aFlgID, nID, in0, aNode);
+  mark_child(aFlgBranch, aFlgLeaf, aFlgID, nID, in1, aNode);
 }
 
 TEST(bvh,morton_code)
@@ -468,9 +476,9 @@ TEST(bvh,morton_code)
     for(int iip=0;iip<3;++iip){ // hash collision
       const unsigned int ip = N*(rand()/(RAND_MAX+1.0));
       assert( N >= 0 && ip < N);
-      double x0 = aXYZ[ip*3+0];
-      double y0 = aXYZ[ip*3+1];
-      double z0 = aXYZ[ip*3+2];
+      const double x0 = aXYZ[ip*3+0];
+      const double y0 = aXYZ[ip*3+1];
+      const double z0 = aXYZ[ip*3+2];
       for(int itr=0;itr<2;itr++){
         aXYZ.insert(aXYZ.begin(), z0);
         aXYZ.insert(aXYZ.begin(), y0);
@@ -478,30 +486,59 @@ TEST(bvh,morton_code)
       }
     }
   }
-  std::vector<unsigned int> aSortedId;
-  std::vector<unsigned int> aSortedMc;
+  std::vector<unsigned int> aSortedId, aSortedMc;
   dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
-                            aXYZ,min_xyz,max_xyz);
+                            aXYZ,
+                            min_xyz,max_xyz);
   for(int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
     int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
     const std::pair<int,int> rangeA = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
     const std::pair<int,int> rangeB = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
-    assert( range.first == rangeA.first );
-    assert( range.second == rangeB.second );
+    EXPECT_EQ( range.first, rangeA.first );
+    EXPECT_EQ( range.second, rangeB.second );
     {
       const int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
       const int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
-      assert( last1+1 == first1 );
+      EXPECT_EQ( last1+1, first1 );
     }
   }
   // ---------------
   std::vector<dfm2::CNodeBVH2> aNodeBVH;
   dfm2::BVH_TreeTopology_Morton(aNodeBVH,
                                 aSortedId,aSortedMc);
-  std::vector<int> aFlg(aXYZ.size()/3,0);
-  mark_child(aFlg, 0, aNodeBVH);
-  for(int i=0;i<aXYZ.size()/3;++i){
-    EXPECT_EQ(aFlg[i],1);
+  {
+    const unsigned int N = aXYZ.size()/3;
+    std::vector<int> aFlgBranch(N-1,0);
+    std::vector<int> aFlgLeaf(N,0);
+    std::vector<int> aFlgID(N,0);
+    mark_child(aFlgBranch,aFlgLeaf,aFlgID, N,
+               0,aNodeBVH);
+    for(unsigned int i=0;i<N;++i){
+      EXPECT_EQ(aFlgLeaf[i],1);
+      EXPECT_EQ(aFlgID[i],1);
+    }
+    for(int i=0;i<N-1;++i){
+      EXPECT_EQ(aFlgBranch[i],1);
+    }
+  }
+  // ----------------
+  std::vector<dfm2::CBV3_Sphere<double>> aAABB;
+  dfm2::BVH_BuildBVHGeometry_Points(aAABB, 0, aNodeBVH, 0.0,
+                                    aXYZ.data(), aXYZ.size()/3);
+  for(int itr=0;itr<100;++itr){
+    const double cur_time = itr*0.07 + 0.02;
+    const  double p0[3] = {
+      1.5*(bb.bbmax[0]-bb.bbmin[0])*sin(cur_time*1)-(bb.bbmax[0]+bb.bbmin[0])*0.5,
+      1.5*(bb.bbmax[1]-bb.bbmin[1])*sin(cur_time*2)-(bb.bbmax[1]+bb.bbmin[1])*0.5,
+      1.5*(bb.bbmax[2]-bb.bbmin[2])*sin(cur_time*3)-(bb.bbmax[2]+bb.bbmin[2])*0.5 };
+    double dist = -1;
+    unsigned int ip_nearest = 0;
+    dfm2::BVH_IndPoint_NearestPoint(ip_nearest, dist, p0, 0,
+                                    aNodeBVH,aAABB);
+    for(unsigned int ip=0;ip<aXYZ.size()/3;++ip){
+      double dist0 = dfm2::Distance3(p0, aXYZ.data()+ip*3);
+      EXPECT_GE(dist0,dist);
+    }
   }
 }

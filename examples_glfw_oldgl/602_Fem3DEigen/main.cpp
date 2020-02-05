@@ -123,7 +123,7 @@ void SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(
 // ---------------------------------------
 
 std::vector<unsigned int> aTet;
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<double> aMassLumpedSqrtInv;
 std::vector<double> aTmp0;
 std::vector<double> aTmp1;
@@ -138,7 +138,7 @@ dfm2::CPreconditionerILU<double>  ilu_A;
 
 void RemoveKernel()
 {
-  const int nDoF = aXYZ_Tri.size();
+  const int nDoF = aXYZ.size();
   const double* p0 = aModesKer.data()+nDoF*0;
   const double* p1 = aModesKer.data()+nDoF*1;
   const double* p2 = aModesKer.data()+nDoF*2;
@@ -160,14 +160,14 @@ void RemoveKernel()
 
 void InitializeProblem_ShellEigenPB()
 {
-  const int np = (int)aXYZ_Tri.size()/3;
+  const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
   aTmp0.assign(nDoF, 0.0);
   //////
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                                                     aTet.data(), aTet.size()/4, 4,
-                                                    (int)aXYZ_Tri.size()/3);
+                                                    (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -178,7 +178,7 @@ void InitializeProblem_ShellEigenPB()
   aModesKer.resize(nDoF*6);
   SetValue_SolidEigen3D_MassLumpedSqrtInv_KernelModes6(aMassLumpedSqrtInv.data(),
                                           aModesKer.data(),
-                                          aXYZ_Tri.data(), aXYZ_Tri.size()/3,
+                                          aXYZ.data(), aXYZ.size()/3,
                                           aTet.data(), aTet.size()/4);
   // -----------------------
   double myu = 1.0;
@@ -190,7 +190,7 @@ void InitializeProblem_ShellEigenPB()
   double gravity[3] = {0,0,0};
   dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(mat_A, aMode.data(),
                                                  myu, lambda, rho, gravity,
-                                                 aXYZ_Tri.data(), aXYZ_Tri.size()/3,
+                                                 aXYZ.data(), aXYZ.size()/3,
                                                  aTet.data(), aTet.size()/4,
                                                  aTmp0.data());
   MatSparse_ScaleBlk_LeftRight(mat_A,
@@ -243,7 +243,7 @@ void myGlutDisplay()
   
   {
     ::glColor3d(0,0,0);
-    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ_Tri.data(),
+    delfem2::opengl::DrawMeshTet3D_EdgeDisp(aXYZ.data(),
                                             aTet.data(),aTet.size()/4,
                                             aMode.data(),
                                             0.1);
@@ -255,7 +255,7 @@ void myGlutDisplay()
       glShadeModel(GL_FLAT);
     }
     
-    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ_Tri.data(),
+    delfem2::opengl::DrawMeshTet3D_FaceNorm(aXYZ.data(),
                                             aTet.data(), aTet.size()/4);
 
   }
@@ -295,13 +295,13 @@ int main(int argc,char* argv[])
     CMeshTri2D(aXY,aTri,
                aVec2,aETri);
     dfm2::ExtrudeTri2Tet(1, 0.1,
-        aXYZ_Tri,aTet,
+        aXYZ,aTet,
         aXY,aTri);
   }
   
   
-  aTmp0.assign(aXYZ_Tri.size(),0.0);
-  aMode.assign(aXYZ_Tri.size(),0.0);
+  aTmp0.assign(aXYZ.size(),0.0);
+  aMode.assign(aXYZ.size(),0.0);
   
   InitializeProblem_ShellEigenPB();
 
@@ -309,7 +309,7 @@ int main(int argc,char* argv[])
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_real_distribution<> dist(-1.0, +1.0);
-    for(std::size_t i=0;i<aXYZ_Tri.size();++i) {
+    for(std::size_t i=0;i<aXYZ.size();++i) {
       aTmp0[i] = dist(mt);
     }
   }

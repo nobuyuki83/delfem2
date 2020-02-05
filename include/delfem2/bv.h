@@ -266,7 +266,9 @@ public:
     r = -1; // if r is negative this is not active yet
   }
   void AddPoint(double x,double y,double z, double R){
-    assert( R >= 0 );
+    if( R < 0 ){
+      return;
+    }
     if( r < 0 ){ // empty
       c[0]=x; c[1]=y; c[2]=z; r=R;
       return;
@@ -277,7 +279,7 @@ public:
       c[0]=x; c[1]=y; c[2]=z; r=R;
       return;
     }
-    if( fabs(L) < 1.0e-5*fabs(r+R) ){ // almost co-centric
+    if( fabs(L) <= 1.0e-5*fabs(r+R) ){ // almost co-centric
       r = L+R;
       return;
     }
@@ -334,8 +336,13 @@ public:
     if( L < r*r ){ return true; }
     return false;
   }
+  /**
+   * @brief minimum and maximum distance of this bounding box from a point (x,y,z)
+   * do nothing when this bounding box is inactive
+   */
   void Range_DistToPoint(double& min0, double& max0,
-                      double x, double y, double z) const {
+                         double x, double y, double z) const {
+    if( r < 0 ){ return; }
     const double L = sqrt((x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]));
     if( L < r ){
       min0 = 0;

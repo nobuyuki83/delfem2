@@ -21,7 +21,7 @@ std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<dfm2::CVec2d> aVec2;
 std::vector<unsigned int> aLine;
-std::vector<double> aXYZ_Tri; // deformed vertex positions
+std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
@@ -35,14 +35,14 @@ bool is_animation = false;
 void StepTime()
 {
   dfm2::PBD_Pre3D(aXYZt,
-                  dt, gravity, aXYZ_Tri, aUVW, aBCFlag);
+                  dt, gravity, aXYZ, aUVW, aBCFlag);
   dfm2::PBD_TriStrain(aXYZt.data(),
                 aXYZt.size()/3, aETri, aVec2);
   dfm2::PBD_Bend(aXYZt.data(),
            aXYZt.size()/3, aETri, aVec2);
   dfm2::PBD_Seam(aXYZt.data(),
                  aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  dfm2::PBD_Post(aXYZ_Tri, aUVW,
+  dfm2::PBD_Post(aXYZ, aUVW,
                  dt, aXYZt, aBCFlag);
 
 }
@@ -67,7 +67,7 @@ void myGlutDisplay(void)
   
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ_Tri, aETri);
+  delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 }
 
 int main(int argc,char* argv[])
@@ -89,17 +89,17 @@ int main(int argc,char* argv[])
   }
   // -------------
   const int np = aPo2D.size();
-  aXYZ_Tri.resize(np*3);
+  aXYZ.resize(np*3);
   for(int ip=0;ip<np;++ip){
-    aXYZ_Tri[ip*3+0] = aVec2[ip].x();
-    aXYZ_Tri[ip*3+1] = aVec2[ip].y();
-    aXYZ_Tri[ip*3+2] = 0.0;
+    aXYZ[ip*3+0] = aVec2[ip].x();
+    aXYZ[ip*3+1] = aVec2[ip].y();
+    aXYZ[ip*3+2] = 0.0;
   }
-  aXYZt = aXYZ_Tri;
+  aXYZt = aXYZ;
   aUVW.resize(np*3,0.0);
   aBCFlag.resize(np,0);
   for(int ip=0;ip<np;++ip){
-    if( aXYZ_Tri[ip*3+1]  > +0.59 ){
+    if( aXYZ[ip*3+1]  > +0.59 ){
       aBCFlag[ip] = 1;
     }
   }
@@ -107,15 +107,15 @@ int main(int argc,char* argv[])
   { // make aLine
     std::map<int,int> mapY2Ip;
     for(int ip=0;ip<np;++ip){
-      if( aXYZ_Tri[ip*3+0]  > +0.49 ){
-        double y0 = aXYZ_Tri[ip*3+1];
+      if( aXYZ[ip*3+0]  > +0.49 ){
+        double y0 = aXYZ[ip*3+1];
         int iy = (int)(y0/0.0132);
         mapY2Ip[iy] = ip;
       }
     }
     for(int ip=0;ip<np;++ip){
-      if( aXYZ_Tri[ip*3+0]  < -0.49 ){
-        double y1 = aXYZ_Tri[ip*3+1];
+      if( aXYZ[ip*3+0]  < -0.49 ){
+        double y1 = aXYZ[ip*3+1];
         int iy = (int)(y1/0.0132);
         assert( mapY2Ip.find(iy) != mapY2Ip.end() );
         int ip0 = mapY2Ip[iy];

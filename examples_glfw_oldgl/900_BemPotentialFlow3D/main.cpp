@@ -27,7 +27,7 @@ dfm2::CVec3d posGrid(int ig, int jg, double lenGrid, int ngrid){
 dfm2::CVec3d Velo;
 
 std::vector<unsigned int> aTri;
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 
 std::vector<double> aSol;
 double min_sol,max_sol;
@@ -42,8 +42,8 @@ int imode_draw = 0;
 
 void SetProblem()
 {
-  dfm2::MeshTri3D_Cube(aXYZ_Tri, aTri, 10);
-  for(int i=0;i<aXYZ_Tri.size();++i){ aXYZ_Tri[i] *= 0.3; }
+  dfm2::MeshTri3D_Cube(aXYZ, aTri, 10);
+  for(int i=0;i<aXYZ.size();++i){ aXYZ[i] *= 0.3; }
   Velo.SetZero();
   Velo[0] = 1.0;
   {
@@ -52,7 +52,7 @@ void SetProblem()
                                             //
                                             Velo,
                                             1,
-                                            aXYZ_Tri,
+                                            aXYZ,
                                             aTri);
     aSol.assign(aTri.size()/3,0.0);
     double conv_ratio = 1.0e-8;
@@ -78,7 +78,7 @@ void SetProblem()
       evaluateField_PotentialFlow_Order0th(phi_pos,gradphi_pos,
                                            p, Velo,
                                            1,
-                                           aSol,aXYZ_Tri,aTri);
+                                           aSol,aXYZ,aTri);
       aValGrid[ ig*(ngrid+1)+jg ] = gradphi_pos;
     }
   }
@@ -108,9 +108,9 @@ void myGlutDisplay(void)
         const int i1 = aTri[itri*3+0];
         const int i2 = aTri[itri*3+1];
         const int i3 = aTri[itri*3+2];
-        dfm2::opengl::myGlVertex3(i1, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i2, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i3, aXYZ_Tri);
+        dfm2::opengl::myGlVertex3(i1, aXYZ);
+        dfm2::opengl::myGlVertex3(i2, aXYZ);
+        dfm2::opengl::myGlVertex3(i3, aXYZ);
       }
       ::glEnd();
       // ---------
@@ -121,12 +121,12 @@ void myGlutDisplay(void)
         const unsigned int i1 = aTri[itri*3+0];
         const unsigned int i2 = aTri[itri*3+1];
         const unsigned int i3 = aTri[itri*3+2];
-        dfm2::opengl::myGlVertex3(i1, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i2, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i2, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i3, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i3, aXYZ_Tri);
-        dfm2::opengl::myGlVertex3(i1, aXYZ_Tri);
+        dfm2::opengl::myGlVertex3(i1, aXYZ);
+        dfm2::opengl::myGlVertex3(i2, aXYZ);
+        dfm2::opengl::myGlVertex3(i2, aXYZ);
+        dfm2::opengl::myGlVertex3(i3, aXYZ);
+        dfm2::opengl::myGlVertex3(i3, aXYZ);
+        dfm2::opengl::myGlVertex3(i1, aXYZ);
       }
       ::glEnd();
     }

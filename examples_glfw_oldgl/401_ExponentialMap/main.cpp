@@ -193,7 +193,7 @@ void MakeExpMap_Point(
 
 // ---------------------------------------------------
 
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<double> aTex;
 std::vector<double> aLocCoord;
@@ -211,34 +211,34 @@ void SetNewProblem()
   
   {
     delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_2k.ply",
-                      aXYZ_Tri, aTri);
+                      aXYZ, aTri);
     {
       double cx,cy,cz, wx,wy,wz;
       delfem2::CenterWidth_Points3(cx,cy,cz,
                                    wx,wy,wz,
-                                   aXYZ_Tri);
-      delfem2::Translate_Points3(aXYZ_Tri,
+                                   aXYZ);
+      delfem2::Translate_Points3(aXYZ,
                                  -cx,-cy,-cz);
       double wm = wx;
       wm = ( wx > wm ) ? wx : wm;
       wm = ( wy > wm ) ? wy : wm;
       wm = ( wz > wm ) ? wz : wm;
-      delfem2::Scale_PointsX(aXYZ_Tri,
+      delfem2::Scale_PointsX(aXYZ,
                              2.0/wm);
     }
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
-        aTri.data(), aTri.size()/3, 3, aXYZ_Tri.size()/3);
+        aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
     dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-        aTri.data(), elsup_ind, elsup, 3, aXYZ_Tri.size()/3);
+        aTri.data(), elsup_ind, elsup, 3, aXYZ.size()/3);
   }
   {
-    std::vector<double> aNorm(aXYZ_Tri.size());
+    std::vector<double> aNorm(aXYZ.size());
     delfem2::Normal_MeshTri3D(aNorm.data(),
-        aXYZ_Tri.data(), aXYZ_Tri.size()/3, aTri.data(),aTri.size()/3);
-    const unsigned int np = aXYZ_Tri.size()/3;
+        aXYZ.data(), aXYZ.size()/3, aTri.data(),aTri.size()/3);
+    const unsigned int np = aXYZ.size()/3;
     aLocCoord.resize(np*6);
     for(unsigned int ip=0;ip<np;++ip){
       double tmp[3];
@@ -249,8 +249,8 @@ void SetNewProblem()
     }
     aTex.resize(np*2);
     for(unsigned int ip=0;ip<np;++ip){
-      aTex[ip*2+0] = aXYZ_Tri[ip*3+0];
-      aTex[ip*2+1] = aXYZ_Tri[ip*3+1];
+      aTex[ip*2+0] = aXYZ[ip*3+0];
+      aTex[ip*2+1] = aXYZ[ip*3+1];
     }
   }
   
@@ -278,9 +278,9 @@ void myGlutDisplay()
       ::glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 127.0);
       //    ::glColor3d(1,1,1);
     }
-    double px = aXYZ_Tri[iker*3+0];
-    double py = aXYZ_Tri[iker*3+1];
-    double pz = aXYZ_Tri[iker*3+2];
+    double px = aXYZ[iker*3+0];
+    double py = aXYZ[iker*3+1];
+    double pz = aXYZ[iker*3+2];
     ::glDisable(GL_LIGHTING);
     ::glPushMatrix();
     ::glTranslated(+px, +py, +pz);
@@ -355,17 +355,17 @@ void myGlutDisplay()
     ::glNormal3dv(aLocCoord.data()+i0*6);
     ::glTexCoord2d(aTex[i0*2+0]*r+0.5,aTex[i0*2+1]*r+0.5);
     //    ::glColor3d(pn0[0]*0.5+0.5, pn0[1]*0.5+0.5, pn0[2]*0.5+0.5);
-    ::glVertex3dv(aXYZ_Tri.data()+i0*3);
+    ::glVertex3dv(aXYZ.data()+i0*3);
     //
     ::glNormal3dv(aLocCoord.data()+i1*6);
     ::glTexCoord2d(aTex[i1*2+0]*r+0.5,aTex[i1*2+1]*r+0.5);
     //    ::glColor3d(pn1[0]*0.5+0.5, pn1[1]*0.5+0.5, pn1[2]*0.5+0.5);
-    ::glVertex3dv(aXYZ_Tri.data()+i1*3);
+    ::glVertex3dv(aXYZ.data()+i1*3);
     //
     ::glNormal3dv(aLocCoord.data()+i2*6);
     ::glTexCoord2d(aTex[i2*2+0]*r+0.5,aTex[i2*2+1]*r+0.5);
     //    ::glColor3d(pn2[0]*0.5+0.5, pn2[1]*0.5+0.5, pn2[2]*0.5+0.5);
-    ::glVertex3dv(aXYZ_Tri.data()+i2*3);
+    ::glVertex3dv(aXYZ.data()+i2*3);
   }
   ::glEnd();
   if( !is_lighting ){ ::glDisable(GL_LIGHTING); }
@@ -399,11 +399,11 @@ int main(int argc,char* argv[])
   while (!glfwWindowShouldClose(viewer.window))
   {
     if( iframe % 100 == 0 ){
-      iker = (int)((aXYZ_Tri.size()/3.0)*(double)rand()/(1.0+RAND_MAX));
+      iker = (int)((aXYZ.size()/3.0)*(double)rand()/(1.0+RAND_MAX));
       MakeExpMap_Point
           (aTex,aLocCoord,
            iker,
-           aXYZ_Tri,psup_ind,psup);
+           aXYZ,psup_ind,psup);
       iframe = 0;
     }
     iframe++;

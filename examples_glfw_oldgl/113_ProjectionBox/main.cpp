@@ -23,13 +23,13 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 
 // ------------------------------------------------------
 
 void Draw(){
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Tri,aTri);
+  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
 }
 
 void myGlutDisplay(const std::vector<dfm2::opengl::CRender2Tex_DrawOldGL>& aSampler)
@@ -50,8 +50,8 @@ void myGlutDisplay(const std::vector<dfm2::opengl::CRender2Tex_DrawOldGL>& aSamp
 int main(int argc,char* argv[])
 {
   dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/rollsRoyce.obj",
-    aXYZ_Tri,aTri);
-  dfm2::Normalize_Points3(aXYZ_Tri,4.0);
+    aXYZ,aTri);
+  dfm2::Normalize_Points3(aXYZ,4.0);
   // ---------------------------------------
   
   std::vector<dfm2::opengl::CRender2Tex_DrawOldGL> aSampler;

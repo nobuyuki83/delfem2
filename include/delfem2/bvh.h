@@ -140,15 +140,33 @@ void BVH_GetIndElem_IncludePoint(std::vector<int>& aIndElem,
                                  const std::vector<CNodeBVH2>& aBVH,
                                  const std::vector<BBOX>& aBB);
   
-// potential maximum distance of the nearest point
+/**
+ * @brief potential maximum distance of the nearest point
+ * @details set some value with min > max for input  e.g,. min=+1, max=-1
+ */
 template <typename BBOX>
 void BVH_Range_DistToNearestPoint(double& min, double& max,
                                   //
-                                  double px, double py, double pz,
-                                  int ibvh,
+                                  const double p[3],
+                                  unsigned int ibvh,
                                   const std::vector<delfem2::CNodeBVH2>& aBVH,
                                   const std::vector<BBOX>& aBB);
-  
+
+/**
+ * @brief find nearest point
+ * @param min
+ * @param aBB a bounding box of nodes
+ */
+template <typename BBOX>
+void BVH_IndPoint_NearestPoint(unsigned int& ip,
+                               double& dist_cur,
+                               //
+                               const double p[3],
+                               unsigned int ibvh,
+                               const std::vector<delfem2::CNodeBVH2>& aBVH,
+                               const std::vector<BBOX>& aBB);
+
+
 template <typename BBOX>
 void  BVH_GetIndElem_IntersectRay(std::vector<int>& aIndElem,
                                   //
@@ -237,6 +255,7 @@ void delfem2::BVH_BuildBVHGeometry_Points(
     const unsigned int ip = ichild0;
     assert( ip < nXYZ );
     BBOX& bb = aBB[ibvh];
+    bb.AddPoint(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2],0.0);
     return;
   }
   // branch node is the bounding volume of child nodes
@@ -379,26 +398,28 @@ void delfem2::BVH_GetIndElem_IncludePoint
   BVH_GetIndElem_IncludePoint(aIndElem, px,py,pz, ichild1,  aBVH,aBB);
 }
 
-
-// potential maximum distance of the nearest point
+/**
+ * @brief potential maximum distance of the nearest point
+ * @details set some value with min > max for input  e.g,. min=+1, max=-1
+ */
 template <typename BBOX>
 void delfem2::BVH_Range_DistToNearestPoint
 (double& min, double& max,
  //
- double px, double py, double pz,
- int ibvh,
+ const double p[3],
+ unsigned int ibvh,
  const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<BBOX>& aBB)
 {
-  double min0, max0;
-  aBB[ibvh].Range_DistToPoint(min0,max0, px,py,pz);
-  assert( min0 >= 0 && max0 >= min0 );
+  double min0=+1.0, max0=-1.0;
+  aBB[ibvh].Range_DistToPoint(min0,max0, p[0],p[1],p[2]);
+  if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
   //
-  if( max>=0 && min0>max ){ return; }
+  if( max>=min && min0>max ){ return; } // current range [min,max] is valid and nearer than [min0,min0].
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
-    if( max<0 ){
+    if( max<min ){ // current range is inactive
       max = max0;
       min = min0;
       return;
@@ -408,8 +429,41 @@ void delfem2::BVH_Range_DistToNearestPoint
     return;
   }
   //
-  BVH_Range_DistToNearestPoint(min,max, px,py,pz, ichild0,aBVH,aBB);
-  BVH_Range_DistToNearestPoint(min,max, px,py,pz, ichild1,aBVH,aBB);
+  BVH_Range_DistToNearestPoint(min,max, p, ichild0,aBVH,aBB);
+  BVH_Range_DistToNearestPoint(min,max, p, ichild1,aBVH,aBB);
+}
+
+/**
+ * @brief index of the point nearest to the given point
+ */
+template <typename BBOX>
+void delfem2::BVH_IndPoint_NearestPoint
+ (unsigned int& ip,
+  double& cur_dist,
+  //
+  const double p[3],
+  unsigned int ibvh,
+  const std::vector<delfem2::CNodeBVH2>& aBVH,
+  const std::vector<BBOX>& aBB)
+{
+  assert( aBVH.size() == aBB.size() );
+  double min0=+1.0, max0=-1.0;
+  aBB[ibvh].Range_DistToPoint(min0,max0, p[0],p[1],p[2]);
+  if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
+  if( cur_dist > 0 && min0>cur_dist ){ return; } // current range [min,max] is valid and nearer than [min0,min0].
+  const int ichild0 = aBVH[ibvh].ichild[0];
+  const int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == -1 ){ // leaf
+    assert( min0 == max0 ); // because this is point
+    if( cur_dist < 0 || max0 < cur_dist ){ // current range is inactive
+      cur_dist = max0;
+      ip = ichild0;
+    }
+    return;
+  }
+  //
+  BVH_IndPoint_NearestPoint(ip,cur_dist, p, ichild0,aBVH,aBB);
+  BVH_IndPoint_NearestPoint(ip,cur_dist, p, ichild1,aBVH,aBB);
 }
 
 template <typename BBOX>
@@ -436,7 +490,7 @@ void delfem2::BVH_GetIndElem_InsideRange
     aIndElem.push_back(ichild0);
     return;
   }
-  /////
+  //
   BVH_GetIndElem_InsideRange(aIndElem, min,max, px,py,pz, ichild0,aBVH,aBB);
   BVH_GetIndElem_InsideRange(aIndElem, min,max, px,py,pz, ichild1,aBVH,aBB);
 }

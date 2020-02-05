@@ -31,7 +31,7 @@ namespace dfm2 = delfem2;
 // ------------------------------------------
 
 
-std::vector<double> aXYZ_Tri;
+std::vector<double> aXYZ;
 std::vector<unsigned int> aTet;
 std::vector<unsigned int> aTetSurface;
 std::vector<dfm2::CColor> aTetColor;
@@ -79,7 +79,7 @@ void SetProblem(int iprob)
     double rad = 1.5;
     CInSphere sphere(rad);
     double cent[3] = {0,0,0};
-    IsoSurfaceStuffing(aXYZ_Tri, aTet,aIsOnSurfXYZ,
+    IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
                        sphere, 0.2, rad*4.0, cent);
   }
   else if( iprob ==  1 ){
@@ -112,7 +112,7 @@ void SetProblem(int iprob)
     const double hwz = 0.41;
     double cent[3] = {0,0,0};
     CInBox box(hwx,hwy,hwz);
-    dfm2::IsoSurfaceStuffing(aXYZ_Tri, aTet,aIsOnSurfXYZ,
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet,aIsOnSurfXYZ,
                        box, 0.1, 2.00, cent);
   }
   else if( iprob == 2 ){
@@ -156,7 +156,7 @@ void SetProblem(int iprob)
       dfm2::CSphere sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
-    dfm2::IsoSurfaceStuffing(aXYZ_Tri, aTet, aIsOnSurfXYZ,
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                        cav_sphere, 0.2, 3.00, cent);
   }
   if( iprob == 3 ){
@@ -195,7 +195,7 @@ void SetProblem(int iprob)
                                 mesh.aTri.data(), mesh.aTri.size()/3);
     }
     double cent[3] = {0,0,0};
-    dfm2::IsoSurfaceStuffing(aXYZ_Tri, aTet, aIsOnSurfXYZ,
+    dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,
                              mesh, 0.18, 3.0, cent);
   }
   
@@ -208,7 +208,7 @@ void SetProblem(int iprob)
   ElSuEl_MeshElem(aTetSurRel,
                               aTet.data(), aTet.size()/4,
                               delfem2::MESHELEM_TET,
-                              aXYZ_Tri.size()/3);
+                              aXYZ.size()/3);
   aTetSurface.clear();
   for(size_t it=0;it<aTet.size()/4;++it){
     for(int ift=0;ift<4;++ift){
@@ -226,14 +226,14 @@ void myGlutDisplay(void)
 {
   ::glEnable(GL_LIGHTING);
   if( imode_draw == 0 ){
-    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ_Tri,aTet,aTetColor,
+    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ,aTet,aTetColor,
                               vis_cut_org, vis_cut_nrm);
   }
   else if( imode_draw == 1 ){
-    dfm2::opengl::DrawMeshTet3DSurface_Edge(aXYZ_Tri, aTet, aTetSurface);
+    dfm2::opengl::DrawMeshTet3DSurface_Edge(aXYZ, aTet, aTetSurface);
   }
   else if( imode_draw == 2 ){
-    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ_Tri,aTet1,aTetColor1,
+    dfm2::opengl::DrawMeshTet3D_Cut(aXYZ,aTet1,aTetColor1,
                                     vis_cut_org, vis_cut_nrm);
   }
 }

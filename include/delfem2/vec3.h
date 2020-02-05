@@ -218,6 +218,8 @@ public:
     if( idim >= 0 && idim < 3) { r[idim] = 1; }
     return r;
   }
+  T* data() { return p; }
+  const T* data() const { return p; }
 public:
   double p[3];
 };
@@ -758,8 +760,8 @@ inline CVec3<T> Normal_Tri3(int itri,
 }
 
 
-  using CVec3d = CVec3<double>;
-  using CVec3f = CVec3<float>;
+using CVec3d = CVec3<double>;
+using CVec3f = CVec3<float>;
 
 
 
