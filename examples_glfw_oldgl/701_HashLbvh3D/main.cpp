@@ -66,10 +66,10 @@ int main(int argc,char* argv[])
       srand(3);
       for(int iip=0;iip<10;++iip){ // hash collision
         const unsigned int ip = N*(rand()/(RAND_MAX+1.0));
-        assert( N >= 0 && ip < N);
-        double x0 = aXYZ[ip*3+0];
-        double y0 = aXYZ[ip*3+1];
-        double z0 = aXYZ[ip*3+2];
+        assert(ip < N);
+        const double x0 = aXYZ[ip*3+0];
+        const double y0 = aXYZ[ip*3+1];
+        const double z0 = aXYZ[ip*3+2];
         for(int itr=0;itr<2;itr++){
           aXYZ.insert(aXYZ.begin(), z0);
           aXYZ.insert(aXYZ.begin(), y0);
@@ -81,15 +81,15 @@ int main(int argc,char* argv[])
     std::vector<std::uint32_t> aSortedMc;
     dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
                               aXYZ,min_xyz,max_xyz);
-    {
-      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
-    }
-    dfm2::Check_MortonCode_RangeSplit(aSortedMc);
     dfm2::BVH_TreeTopology_Morton(aNodeBVH,
                                   aSortedId,aSortedMc);
-    dfm2::Check_BVH(aNodeBVH,aXYZ.size()/3);
     dfm2::BVH_BuildBVHGeometry_Points(aAABB, 0, aNodeBVH, 0.0,
                                       aXYZ.data(), aXYZ.size()/3);
+    { // for debug
+      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
+      dfm2::Check_MortonCode_RangeSplit(aSortedMc);
+      dfm2::Check_BVH(aNodeBVH,aXYZ.size()/3);
+    }
   }
   
   dfm2::opengl::CViewer_GLFW viewer;
@@ -106,8 +106,10 @@ int main(int argc,char* argv[])
     // -----------
     double dist = -1;
     ip_nearest = 0;
-    dfm2::BVH_IndPoint_NearestPoint(ip_nearest, dist, p0, 0,
-                                    aNodeBVH,aAABB);
+    dfm2::BVH_IndPoint_NearestPoint(ip_nearest, dist,
+                                    p0,
+                                    0, aNodeBVH,
+                                    aAABB);
     // -----------
     viewer.DrawBegin_oldGL();
     myGlutDisplay();

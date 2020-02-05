@@ -357,6 +357,10 @@ public:
   REAL c[3];
 };
 using CBV3f_Sphere = CBV3_Sphere<float>;
+
+/**
+ * @brief 3D bounding volume of sphere with "double" precision
+ */
 using CBV3d_Sphere = CBV3_Sphere<double>;
   
 } // namespace delfem2

@@ -69,24 +69,31 @@ std::pair<int,int> MortonCode_DeterminRange(const std::uint32_t* sortedMC,
 template <typename REAL>
 std::uint32_t MortonCode(REAL x, REAL y, REAL z);
 
+
 /**
  * @details defined for "float" and "double"
  */
 template <typename REAL>
-void GetSortedMortenCode(std::vector<unsigned int> &aSortedId,
-                         std::vector<unsigned int> &aSortedMc,
-                         const std::vector<REAL> &aXYZ,
-                         const REAL min_xyz[3], const REAL max_xyz[3]);
+void GetSortedMortenCode(
+    std::vector<unsigned int> &aSortedId,
+    std::vector<unsigned int> &aSortedMc,
+    const std::vector<REAL> &aXYZ,
+    const REAL min_xyz[3],
+    const REAL max_xyz[3]);
   
-void BVH_TreeTopology_Morton(std::vector<CNodeBVH2>& aNodeBVH,
-                             const std::vector<unsigned int>& aSortedId,
-                             const std::vector<unsigned int>& aSortedMc);
+void BVH_TreeTopology_Morton(
+    std::vector<CNodeBVH2>& aNodeBVH,
+    const std::vector<unsigned int>& aSortedId,
+    const std::vector<unsigned int>& aSortedMc);
 
-void Check_MortonCode_RangeSplit(const std::vector<std::uint32_t>& aSortedMc);
-void Check_MortonCode_Sort(const std::vector<unsigned int>& aSortedId,
-                           const std::vector<std::uint32_t>& aSortedMc,
-                           const std::vector<double> aXYZ,
-                           const double bbmin[3], const double bbmax[3]);
+void Check_MortonCode_RangeSplit(
+    const std::vector<std::uint32_t>& aSortedMc);
+
+void Check_MortonCode_Sort(
+    const std::vector<unsigned int>& aSortedId,
+    const std::vector<std::uint32_t>& aSortedMc,
+    const std::vector<double> aXYZ,
+    const double bbmin[3], const double bbmax[3]);
 
 // above: code related to morton code
 // -------------------------------------------------------------------
@@ -124,33 +131,36 @@ void BVH_BuildGeometryBranch(
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH);
 
 template <typename BBOX>
-void BuildBoundingBoxesBVH_Dynamic(int ibvh,
-                                   double dt,
-                                   const std::vector<double>& aXYZ,
-                                   const std::vector<double>& aUVW,
-                                   const std::vector<unsigned int>& aTri,
-                                   const std::vector<CNodeBVH2>& aNodeBVH,
-                                   std::vector<BBOX>& aBB);
+void BuildBoundingBoxesBVH_Dynamic(
+    int ibvh,
+    double dt,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aUVW,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<CNodeBVH2>& aNodeBVH,
+    std::vector<BBOX>& aBB);
   
 template <typename BBOX>
-void BVH_GetIndElem_IncludePoint(std::vector<int>& aIndElem,
-                                 //
-                                 double px, double py, double pz,
-                                 int ibvh,
-                                 const std::vector<CNodeBVH2>& aBVH,
-                                 const std::vector<BBOX>& aBB);
+void BVH_GetIndElem_IncludePoint(
+    std::vector<int>& aIndElem,
+    //
+    double px, double py, double pz,
+    int ibvh,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
   
 /**
  * @brief potential maximum distance of the nearest point
  * @details set some value with min > max for input  e.g,. min=+1, max=-1
  */
 template <typename BBOX>
-void BVH_Range_DistToNearestPoint(double& min, double& max,
-                                  //
-                                  const double p[3],
-                                  unsigned int ibvh,
-                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                  const std::vector<BBOX>& aBB);
+void BVH_Range_DistToNearestPoint(
+    double& min, double& max,
+    //
+    const double p[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 /**
  * @brief find nearest point
@@ -158,40 +168,43 @@ void BVH_Range_DistToNearestPoint(double& min, double& max,
  * @param aBB a bounding box of nodes
  */
 template <typename BBOX>
-void BVH_IndPoint_NearestPoint(unsigned int& ip,
-                               double& dist_cur,
-                               //
-                               const double p[3],
-                               unsigned int ibvh,
-                               const std::vector<delfem2::CNodeBVH2>& aBVH,
-                               const std::vector<BBOX>& aBB);
+void BVH_IndPoint_NearestPoint(
+    unsigned int& ip,
+    double& dist_cur,
+    //
+    const double p[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 
 template <typename BBOX>
-void  BVH_GetIndElem_IntersectRay(std::vector<int>& aIndElem,
-                                  //
-                                  const double src[3], const double dir[3],
-                                  int ibvh,
-                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                  const std::vector<BBOX>& aBB);
-  
-  
+void BVH_GetIndElem_IntersectRay(
+    std::vector<int>& aIndElem,
+    //
+    const double src[3], const double dir[3],
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
+
 template <typename BBOX>
-void BVH_GetIndElem_IntersectLine(std::vector<int>& aIndElem,
-                                  //
-                                  const double src[3], const double dir[3],
-                                  int ibvh,
-                                  const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                  const std::vector<BBOX>& aBB);
-  
+void BVH_GetIndElem_IntersectLine(
+    std::vector<int>& aIndElem,
+    //
+    const double src[3], const double dir[3],
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
+
 template <typename BBOX>
-void BVH_GetIndElem_InsideRange(std::vector<int>& aIndElem,
-                                //
-                                double min, double max,
-                                double px, double py, double pz,
-                                int ibvh,
-                                const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                const std::vector<BBOX>& aBB);
+void BVH_GetIndElem_InsideRange(
+    std::vector<int>& aIndElem,
+    //
+    double min, double max,
+    double px, double py, double pz,
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
   
 } // end namespace delfem2
 
