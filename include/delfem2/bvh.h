@@ -29,16 +29,18 @@ public:
 /**
  * @details make BVH topology in a top-down manner
  */
-int BVH_MakeTreeTopology(std::vector<CNodeBVH2>& aNodeBVH,
-                         const int nfael,
-                         const std::vector<int>& aElemSur,
-                         const std::vector<double>& aElemCenter);
+int BVHTopology_TopDown_MeshElem(
+    std::vector<CNodeBVH2>& aNodeBVH,
+    const int nfael,
+    const std::vector<int>& aElemSur,
+    const std::vector<double>& aElemCenter);
 
 /**
  * @details check if the leaf is visited once
  */
-void Check_BVH(const std::vector<CNodeBVH2>& aNodeBVH,
-               unsigned int nLeaf);
+void Check_BVH(
+    const std::vector<CNodeBVH2>& aNodeBVH,
+    unsigned int nLeaf);
   
   
 // --------------------------------------------
@@ -74,14 +76,14 @@ std::uint32_t MortonCode(REAL x, REAL y, REAL z);
  * @details defined for "float" and "double"
  */
 template <typename REAL>
-void GetSortedMortenCode(
+void SortedMortenCode_Points3(
     std::vector<unsigned int> &aSortedId,
     std::vector<unsigned int> &aSortedMc,
     const std::vector<REAL> &aXYZ,
     const REAL min_xyz[3],
     const REAL max_xyz[3]);
   
-void BVH_TreeTopology_Morton(
+void BVHTopology_Morton(
     std::vector<CNodeBVH2>& aNodeBVH,
     const std::vector<unsigned int>& aSortedId,
     const std::vector<unsigned int>& aSortedMc);
@@ -108,16 +110,19 @@ void BVH_BuildBVHGeometry_Mesh(
     std::vector<BBOX>& aBB,
     int ibvh,
     const std::vector<CNodeBVH2>& aNodeBVH,
-    double margin,
+    REAL margin,
     const REAL* aXYZ, unsigned int nXYZ,
     const unsigned int* aElem, unsigned int nnoel, unsigned int nElem);
 
+
+/**
+ * @brief build geometry of BVH for point set
+ */
 template <typename BBOX, typename REAL>
-void BVH_BuildBVHGeometry_Points(
+void BVHGeometry_Points(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<CNodeBVH2>& aNodeBVH,
-    double margin,
     const REAL* aXYZ, unsigned int nXYZ);
 
 /**
@@ -168,12 +173,12 @@ void BVH_Range_DistToNearestPoint(
  * @param min
  * @param aBB a bounding box of nodes
  */
-template <typename BBOX>
+template <typename BBOX, typename REAL>
 void BVH_IndPoint_NearestPoint(
     unsigned int& ip,
-    double& dist_cur,
+    REAL& dist_cur,
     //
-    const double p[3],
+    const REAL p[3],
     unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BBOX>& aBB);
@@ -221,7 +226,7 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
     std::vector<BBOX>& aBB,
     int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
-    double margin,
+    REAL margin,
     const REAL* aXYZ, unsigned int nXYZ,
     const unsigned int* aElem, unsigned int nnoel, unsigned int nElem)
 {
@@ -237,7 +242,7 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
     bb.Set_Inactive();
     for(unsigned int inoel=0;inoel<nnoel;++inoel){
       const unsigned int ino0 = aElem[ielem*nnoel+inoel];
-      bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], margin);
+      bb.AddPoint(aXYZ+ino0*3, margin);
     }
     return;
   }
@@ -253,11 +258,10 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
 }
 
 template <typename BBOX, typename REAL>
-void delfem2::BVH_BuildBVHGeometry_Points(
+void delfem2::BVHGeometry_Points(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
-    double margin,
     const REAL* aXYZ, unsigned int nXYZ)
 {
   aBB.resize( aNodeBVH.size() );
@@ -269,14 +273,14 @@ void delfem2::BVH_BuildBVHGeometry_Points(
     const unsigned int ip = ichild0;
     assert( ip < nXYZ );
     BBOX& bb = aBB[ibvh];
-    bb.AddPoint(aXYZ[ip*3+0],aXYZ[ip*3+1],aXYZ[ip*3+2],0.0);
+    bb.AddPoint(aXYZ+ip*3, 0.0);
     return;
   }
   // branch node is the bounding volume of child nodes
   assert( aNodeBVH[ichild0].iroot == ibvh );
   assert( aNodeBVH[ichild1].iroot == ibvh );
-  BVH_BuildBVHGeometry_Points(aBB,  ichild0,aNodeBVH, margin, aXYZ,nXYZ);
-  BVH_BuildBVHGeometry_Points(aBB,  ichild1,aNodeBVH, margin, aXYZ,nXYZ);
+  delfem2::BVHGeometry_Points(aBB,  ichild0,aNodeBVH, aXYZ,nXYZ);
+  delfem2::BVHGeometry_Points(aBB,  ichild1,aNodeBVH, aXYZ,nXYZ);
   BBOX& bb = aBB[ibvh];
   bb  = aBB[ichild0];
   bb += aBB[ichild1];
@@ -369,12 +373,15 @@ void delfem2::BuildBoundingBoxesBVH_Dynamic
     const int ino2 = aTri[itri*3+2];
     BBOX& bb = aBB[ibvh];
     bb.bbmin[0] = +1; bb.bbmax[0] = -1;
-    bb.AddPoint(aXYZ[ino0*3+0],aXYZ[ino0*3+1],aXYZ[ino0*3+2], eps);
-    bb.AddPoint(aXYZ[ino1*3+0],aXYZ[ino1*3+1],aXYZ[ino1*3+2], eps);
-    bb.AddPoint(aXYZ[ino2*3+0],aXYZ[ino2*3+1],aXYZ[ino2*3+2], eps);
-    bb.AddPoint(aXYZ[ino0*3+0]+dt*aUVW[ino0*3+0], aXYZ[ino0*3+1]+dt*aUVW[ino0*3+1], aXYZ[ino0*3+2]+dt*aUVW[ino0*3+2], eps);
-    bb.AddPoint(aXYZ[ino1*3+0]+dt*aUVW[ino1*3+0], aXYZ[ino1*3+1]+dt*aUVW[ino1*3+1], aXYZ[ino1*3+2]+dt*aUVW[ino1*3+2], eps);
-    bb.AddPoint(aXYZ[ino2*3+0]+dt*aUVW[ino2*3+0], aXYZ[ino2*3+1]+dt*aUVW[ino2*3+1], aXYZ[ino2*3+2]+dt*aUVW[ino2*3+2], eps);
+    bb.AddPoint(aXYZ.data()+ino0*3, eps);
+    bb.AddPoint(aXYZ.data()+ino1*3, eps);
+    bb.AddPoint(aXYZ.data()+ino2*3, eps);
+    const double p0[3] = {aXYZ[ino0*3+0]+dt*aUVW[ino0*3+0], aXYZ[ino0*3+1]+dt*aUVW[ino0*3+1], aXYZ[ino0*3+2]+dt*aUVW[ino0*3+2]};
+    const double p1[3] = {aXYZ[ino1*3+0]+dt*aUVW[ino1*3+0], aXYZ[ino1*3+1]+dt*aUVW[ino1*3+1], aXYZ[ino1*3+2]+dt*aUVW[ino1*3+2]};
+    const double p2[3] = {aXYZ[ino2*3+0]+dt*aUVW[ino2*3+0], aXYZ[ino2*3+1]+dt*aUVW[ino2*3+1], aXYZ[ino2*3+2]+dt*aUVW[ino2*3+2]};
+    bb.AddPoint(p0, eps);
+    bb.AddPoint(p1, eps);
+    bb.AddPoint(p2, eps);
     return;
   }
   // internal node,内部ノードは子ノードのBounding Volume
@@ -449,19 +456,20 @@ void delfem2::BVH_Range_DistToNearestPoint
 
 /**
  * @brief index of the point nearest to the given point
+ * @details the cur_dist should be input as a negative value (e.g., cur_dist=-1)
  */
-template <typename BBOX>
+template <typename BBOX, typename REAL>
 void delfem2::BVH_IndPoint_NearestPoint
  (unsigned int& ip,
-  double& cur_dist,
+  REAL& cur_dist,
   //
-  const double p[3],
+  const REAL p[3],
   unsigned int ibvh,
   const std::vector<delfem2::CNodeBVH2>& aBVH,
   const std::vector<BBOX>& aBB)
 {
   assert( aBVH.size() == aBB.size() );
-  double min0=+1.0, max0=-1.0;
+  REAL min0=+1.0, max0=-1.0;
   aBB[ibvh].Range_DistToPoint(min0,max0, p[0],p[1],p[2]);
   if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
   if( cur_dist > 0 && min0>cur_dist ){ return; } // current range [min,max] is valid and nearer than [min0,min0].

@@ -13,61 +13,69 @@
 
 namespace delfem2 {
   
-CVec3d QuadBilinear(int iq, double r0, double r1,
-                      std::vector<int>& aQuad,
-                      std::vector<CVec3d>& aPoint);
+CVec3d QuadBilinear(
+    int iq, double r0, double r1,
+    std::vector<int>& aQuad,
+    std::vector<CVec3d>& aPoint);
 
+CVec3d getPointCoonsQuad_CubicBezier(
+    double u, double v,
+    CVec3d aP[12]);
   
-CVec3d getPointCoonsQuad_CubicBezier(double u, double v,
-                                        CVec3d aP[12]);
-  
-void getCubicBezierSurface(const int n, // number of segment
-                           std::vector<CVec3d>& aP,
-                           const std::vector<CVec3d>& aCP);
+void getCubicBezierSurface(
+    const int n, // number of segment
+    std::vector<CVec3d>& aP,
+    const std::vector<CVec3d>& aCP);
 
-CVec3d getPointCoonsQuad_CubicBezierEdge(double u, double v,
-                                           CVec3d aP[12]);
+CVec3d getPointCoonsQuad_CubicBezierEdge(
+    double u, double v,
+    CVec3d aP[12]);
 
-CVec3d getPointCoonsTri_CubicBezierEdge(double u, double v, double w,
-                                          CVec3d aP[9]);
+CVec3d getPointCoonsTri_CubicBezierEdge(
+    double u, double v, double w,
+    CVec3d aP[9]);
 
-CVec3d getPointHermetianQuad(double u, double v,
-                               CVec3d aP[12]);
+CVec3d getPointHermetianQuad(
+    double u, double v,
+    CVec3d aP[12]);
 
-CVec3d getPointCubicBezierCurve
-(double t,
- const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
+CVec3d getPointCubicBezierCurve(
+    double t,
+    const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
 
-CVec3d getTangentCubicBezierCurve
-(double t,
- const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
+CVec3d getTangentCubicBezierCurve(
+    double t,
+    const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
 
-bool getParameterCubicBezier_IntersectionWithPlane
-(double& t,
- const CVec3d& org, const CVec3d& nrm,
- const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
+bool getParameterCubicBezier_IntersectionWithPlane(
+    double& t,
+    const CVec3d& org, const CVec3d& nrm,
+    const CVec3d& p1, const CVec3d& p2, const CVec3d& p3, const CVec3d& p4);
 
 // Bezier
-CVec3d getPointSurfaceBezierCubic
-(double u, double v,
- const CVec3d& p00, const CVec3d& p01, const CVec3d& p02, const CVec3d& p03,
- const CVec3d& p10, const CVec3d& p11, const CVec3d& p12, const CVec3d& p13,
- const CVec3d& p20, const CVec3d& p21, const CVec3d& p22, const CVec3d& p23,
- const CVec3d& p30, const CVec3d& p31, const CVec3d& p32, const CVec3d& p33);
+CVec3d getPointSurfaceBezierCubic(
+    double u, double v,
+    const CVec3d& p00, const CVec3d& p01, const CVec3d& p02, const CVec3d& p03,
+    const CVec3d& p10, const CVec3d& p11, const CVec3d& p12, const CVec3d& p13,
+    const CVec3d& p20, const CVec3d& p21, const CVec3d& p22, const CVec3d& p23,
+    const CVec3d& p30, const CVec3d& p31, const CVec3d& p32, const CVec3d& p33);
 
-void getCubicBezierCurve(const int n,
-                         std::vector<CVec3d>& aP,
-                         const std::vector<CVec3d>& aCP);
+void getCubicBezierCurve(
+    const int n,
+    std::vector<CVec3d>& aP,
+    const std::vector<CVec3d>& aCP);
 
-void FlatKnot(std::vector<double>& aKnotFlat,
-              const std::vector<int>& aKnotMulti,
-              const std::vector<double>& aKnot);
+void FlatKnot(
+    std::vector<double>& aKnotFlat,
+    const std::vector<int>& aKnotMulti,
+    const std::vector<double>& aKnot);
 
 template <typename T>
-T DeBoorBSpline(double u,
-                int ndegree,
-                const std::vector<T>& aCP,
-                const std::vector<double>& aKnot)
+T DeBoorBSpline(
+    double u,
+    int ndegree,
+    const std::vector<T>& aCP,
+    const std::vector<double>& aKnot)
 {
   assert( ndegree>0 );
   assert( aKnot.size() == aCP.size()+ndegree+1 );
@@ -102,11 +110,12 @@ T DeBoorBSpline(double u,
 }
 
 template <typename T>
-void SampleBSpline(std::vector<T>& polyline0,
-                   const int nsmpl,
-                   const int ndegree,
-                   const std::vector<double>& aKnotFlat,
-                   const std::vector<T>& aCtrlPoint)
+void SampleBSpline(
+    std::vector<T>& polyline0,
+    const int nsmpl,
+    const int ndegree,
+    const std::vector<double>& aKnotFlat,
+    const std::vector<T>& aCtrlPoint)
 {
   polyline0.clear();
   double u0 = aKnotFlat[0];

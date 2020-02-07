@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(203_dyntri3d_edgecollapse)
+project(203_DynTri3_EdgeCollapse)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

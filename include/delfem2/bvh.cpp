@@ -6,7 +6,6 @@
  */
 
 #include <cstdio>
-#include <set>
 #include <cmath>
 #include <algorithm>
 
@@ -178,7 +177,7 @@ void DevideElemAryConnex
   }
 }
 
-int dfm2::BVH_MakeTreeTopology
+int dfm2::BVHTopology_TopDown_MeshElem
 (std::vector<dfm2::CNodeBVH2>& aNodeBVH,
  const int nfael,
  const std::vector<int>& aElemSur,
@@ -354,7 +353,7 @@ public:
 
 
 template <typename REAL>
-void dfm2::GetSortedMortenCode(
+void dfm2::SortedMortenCode_Points3(
     std::vector<unsigned int> &aSortedId,
     std::vector<std::uint32_t> &aSortedMc,
     const std::vector<REAL> &aXYZ,
@@ -386,20 +385,22 @@ void dfm2::GetSortedMortenCode(
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
-template void dfm2::GetSortedMortenCode(std::vector<unsigned int>& aSortedId,
-                                        std::vector<std::uint32_t>& aSortedMc,
-                                        const std::vector<float>& aXYZ,
-                                        const float min_xyz[3],
-                                        const float max_xyz[3]);
-template void dfm2::GetSortedMortenCode(std::vector<unsigned int>& aSortedId,
-                                        std::vector<std::uint32_t>& aSortedMc,
-                                        const std::vector<double>& aXYZ,
-                                        const double min_xyz[3],
-                                        const double max_xyz[3]);
+template void dfm2::SortedMortenCode_Points3(
+    std::vector<unsigned int>& aSortedId,
+    std::vector<std::uint32_t>& aSortedMc,
+    const std::vector<float>& aXYZ,
+    const float min_xyz[3],
+    const float max_xyz[3]);
+template void dfm2::SortedMortenCode_Points3(
+    std::vector<unsigned int>& aSortedId,
+    std::vector<std::uint32_t>& aSortedMc,
+    const std::vector<double>& aXYZ,
+    const double min_xyz[3],
+    const double max_xyz[3]);
 
 // ----------------------------------
 
-void dfm2::BVH_TreeTopology_Morton
+void dfm2::BVHTopology_Morton
 (std::vector<dfm2::CNodeBVH2>& aNodeBVH,
  const std::vector<unsigned int>& aSortedId,
  const std::vector<unsigned int>& aSortedMc)

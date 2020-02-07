@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(204_dyntet_tetrahedralization)
+project(204_DynTet_Tetrahedralization)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

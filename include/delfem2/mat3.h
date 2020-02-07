@@ -119,7 +119,6 @@ static inline bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
 
 /**
  * @brief class of 3x3 matrix
- * @todo use template for this class 
  */
 template <typename REAL>
 class CMat3

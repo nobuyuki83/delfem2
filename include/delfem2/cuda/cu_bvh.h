@@ -41,14 +41,32 @@ void cuda_MortonCode_BVHTopology(
     const std::uint32_t* aSortedMc,
     unsigned int N);
 
-void cuda_BVHGeometry(
-    float* aAABB,
+void cuda_BVHGeometry_AABB3f(
+    CBV3_AABB<float>* aAABB,
     const CNodeBVH2* aNodeBVH,
     const float* aXYZ,
     unsigned int nXYZ,
     const unsigned int* aTri,
     unsigned int nTri);
 
+template <typename REAL>
+void cuda_BVHGeometry_Sphere(
+    CBV3_Sphere<REAL>* aSphere,
+    const CNodeBVH2* aNodeBVH,
+    const REAL* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri);
+
+template <typename REAL>
+void cuda_BVH_NearestPoint(
+    unsigned int* hInd,
+    //
+    const REAL* hXYZ1,
+    unsigned int nXYZ1,
+    const CNodeBVH2* hNodeBVH0,
+    unsigned int nNodeBVH0,
+    const CBV3_Sphere<REAL>* hBVSphere0);
 
 } // cuda
 } // delfem2
