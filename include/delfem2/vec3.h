@@ -255,8 +255,8 @@ CVec3<T> Mat4Vec(const double M[16], const CVec3<T>& v);
 template <typename T>
 CVec3<T> QuatVec(const double quat[4], const CVec3<T>& v0);
   
-template <typename T>
-CVec3<T> QuatConjVec(const double quat[4], const CVec3<T>& v0);
+template <typename REAL>
+CVec3<REAL> QuatConjVec(const REAL quat[4], const CVec3<REAL>& v0);
   
 template <typename T>
 CVec3<T> screenProjection(const CVec3<T>& v,

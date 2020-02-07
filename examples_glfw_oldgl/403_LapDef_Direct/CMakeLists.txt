@@ -12,7 +12,7 @@ ENDIF()
 
 ##########################################
 
-project(400_LapMshDef_Direct)
+project(403_LapDef_Direct)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
