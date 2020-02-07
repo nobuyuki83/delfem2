@@ -20,7 +20,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------------------
 
-static bool isnan_vector3(double x) { return x!=x; }
+static bool MyIsnan(double x) { return x!=x; }
 
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
@@ -44,22 +44,27 @@ static void QuatVec(double vo[], const double q[], const double vi[])
 
 
 // there is formal implementation in quat.cpp so this is static to avoid dumplicated
-inline static void QuatConjVec(double vo[], const double q[], const double vi[])
+template <typename REAL>
+static void MyQuatConjVec(
+    REAL vo[3],
+    const REAL q[4],
+    const REAL vi[3])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  
+  REAL x2 = q[1] * q[1] * 2.0;
+  REAL y2 = q[2] * q[2] * 2.0;
+  REAL z2 = q[3] * q[3] * 2.0;
+  REAL xy = q[1] * q[2] * 2.0;
+  REAL yz = q[2] * q[3] * 2.0;
+  REAL zx = q[3] * q[1] * 2.0;
+  REAL xw = q[1] * q[0] * 2.0;
+  REAL yw = q[2] * q[0] * 2.0;
+  REAL zw = q[3] * q[0] * 2.0;
   vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
   vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
+template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
+template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3]);
 
 
 // ----------------------------------------
@@ -633,16 +638,19 @@ template dfm2::CVec3d dfm2::QuatVec (const double quat[4], const CVec3d& v0);
   
 // ----------------------------
 
-template <typename T>
-dfm2::CVec3<T> dfm2::QuatConjVec
-(const double quat[4],
- const CVec3<T>& v0)
+template <typename REAL>
+dfm2::CVec3<REAL> dfm2::QuatConjVec
+(const REAL quat[4],
+ const CVec3<REAL>& v0)
 {
-//  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3];
- ::QuatConjVec(v1a,quat,v0.p);
-  return CVec3<T>(v1a[0],v1a[1],v1a[2]);
+  REAL v1a[3];
+  MyQuatConjVec(v1a,
+                quat,v0.p);
+  return CVec3<REAL>(v1a[0],v1a[1],v1a[2]);
 }
+//template dfm2::CVec3f dfm2::QuatConjVec(const float quat[4], const CVec3f& v0);
+template dfm2::CVec3d dfm2::QuatConjVec(const double quat[4], const CVec3d& v0);
+
 
 // ------------------------------------------------------------
 
@@ -2423,7 +2431,7 @@ void dfm2::MeanValueCoordinate
   double s0 = sign*sqrt(1.0-c0*c0);
   double s1 = sign*sqrt(1.0-c1*c1);
   double s2 = sign*sqrt(1.0-c2*c2);
-  if( isnan_vector3(s0) || isnan_vector3(s1) || isnan_vector3(s2) ){
+  if( MyIsnan(s0) || MyIsnan(s1) || MyIsnan(s2) ){
     w[0] = 0;
     w[1] = 0;
     w[2] = 0;
@@ -2439,6 +2447,10 @@ void dfm2::MeanValueCoordinate
   w[1] = (t1-c0*t2-c2*t0)/(d1*sin(t2)*s0);
   w[2] = (t2-c1*t0-c0*t1)/(d2*sin(t0)*s1);
 }
+template void dfm2::MeanValueCoordinate(double w[3],
+                                        const CVec3d& v0,
+                                        const CVec3d& v1,
+                                        const CVec3d& v2);
 
 // --------------------------------------------------
 

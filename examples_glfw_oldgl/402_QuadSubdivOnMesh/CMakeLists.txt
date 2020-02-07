@@ -12,7 +12,7 @@ ENDIF()
 
 ##########################################
 
-project(403_QuadsubdivOnMesh)
+project(402_QuadsubdivOnMesh)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

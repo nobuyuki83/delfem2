@@ -12,7 +12,7 @@ ENDIF()
 
 ##########################################
 
-project(401_ExponentialMap)
+project(401_GridOnMesh)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -39,12 +39,14 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
     ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
-    ${DELFEM2_INC}/imgio.h                  ${DELFEM2_INC}/imgio.cpp
 
-    ${DELFEM2_INC}/opengl/gl_tex.h        ${DELFEM2_INC}/opengl/gl_tex.cpp    
-    ${DELFEM2_INC}/opengl/glold_color.h   ${DELFEM2_INC}/opengl/glold_color.cpp
-    ${DELFEM2_INC}/opengl/glold_funcs.h   ${DELFEM2_INC}/opengl/glold_funcs.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.h   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+    ${DELFEM2_INC}/srchuni_v3.h             ${DELFEM2_INC}/srchuni_v3.cpp
+
+    ${DELFEM2_INC}/opengl/gl_tex.h          ${DELFEM2_INC}/opengl/gl_tex.cpp
+    ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp
+    ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
+    ${DELFEM2_INC}/opengl/glold_v23.h       ${DELFEM2_INC}/opengl/glold_v23.cpp
+    ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
     main.cpp
 )
 

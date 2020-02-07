@@ -27,7 +27,7 @@ add_subdirectory(113_ProjectionBox)
 # meshing
 add_subdirectory(201_DynTri2dTriangulation)
 add_subdirectory(202_DynTri2dRemesh)
-add_subdirectory(203_DynTri3dEdgecollapse)
+add_subdirectory(203_DynTri3dEdgeCollapses)
 add_subdirectory(204_DynTetTetrahedralization)
 
 
@@ -36,10 +36,10 @@ add_subdirectory(300_AdaptiveDistanceField)
 add_subdirectory(301_IsoSurfaceStuffing)
 
 
-add_subdirectory(400_LapMshDef_Direct)
-add_subdirectory(401_ExponentialMap)
-add_subdirectory(402_GridOnMesh)
-add_subdirectory(403_QuadSubdivOnMesh)
+add_subdirectory(400_ExponentialMap)
+add_subdirectory(401_GridOnMesh)
+add_subdirectory(402_QuadSubdivOnMesh)
+add_subdirectory(403_LapDef_Direct)
 
 
 # cad
