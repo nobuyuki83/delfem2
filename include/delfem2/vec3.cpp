@@ -44,7 +44,7 @@ static void QuatVec(double vo[], const double q[], const double vi[])
 
 
 // there is formal implementation in quat.cpp so this is static to avoid dumplicated
-static void QuatConjVec(double vo[], const double q[], const double vi[])
+inline static void QuatConjVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -60,6 +60,7 @@ static void QuatConjVec(double vo[], const double q[], const double vi[])
   vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
+
 
 // ----------------------------------------
 
@@ -638,7 +639,8 @@ dfm2::CVec3<T> dfm2::QuatConjVec
  const CVec3<T>& v0)
 {
 //  const double v0a[3] = {v0.x,v0.y,v0.z};
-  double v1a[3]; ::QuatConjVec(v1a,quat,v0.p);
+  double v1a[3];
+ ::QuatConjVec(v1a,quat,v0.p);
   return CVec3<T>(v1a[0],v1a[1],v1a[2]);
 }
 

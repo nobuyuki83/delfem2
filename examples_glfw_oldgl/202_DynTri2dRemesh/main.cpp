@@ -10,7 +10,7 @@
 #include "delfem2/dtri_v2.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_v23dtricad.h"
 
 namespace dfm2 = delfem2;

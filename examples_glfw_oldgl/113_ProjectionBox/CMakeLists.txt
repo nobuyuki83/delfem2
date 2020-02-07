@@ -52,7 +52,7 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/opengl/glold_v23.h        ${DELFEM2_INC}/opengl/glold_v23.cpp
     ${DELFEM2_INC}/opengl/glold_color.cpp    ${DELFEM2_INC}/opengl/glold_color.h
     ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.hpp    ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+    ${DELFEM2_INC}/opengl/glfw_viewer.h      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c

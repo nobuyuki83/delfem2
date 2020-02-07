@@ -12,7 +12,7 @@
 #include "delfem2/paramgeo_v23.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.h"
 
 namespace dfm2 = delfem2;
 

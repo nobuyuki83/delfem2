@@ -37,8 +37,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp                 
   ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp  
 
-  ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   
   main.cpp
 )

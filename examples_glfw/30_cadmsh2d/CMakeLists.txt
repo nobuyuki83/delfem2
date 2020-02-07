@@ -9,7 +9,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(NOT EMSCRIPTEN)
   IF(MSVC)
-    set(CMAKE_CXX_FLAGS "/W4 /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 -O2 -std=c++11")
+    set(CMAKE_CXX_FLAGS "-O2 -std=c++11 /W4 \
+    /wd4100 /wd4458 /wd4577 \
+    /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 \
+    /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
   ELSE()
     set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
   ENDIF()
@@ -38,11 +41,11 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
   ${DELFEM2_INC}/opengl/glnew_funcs.h      ${DELFEM2_INC}/opengl/glnew_funcs.cpp
   ${DELFEM2_INC}/opengl/glnew_v23dtricad.h ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.h      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   ${DELFEM2_INC}/opengl/glfw_cam.h
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp    ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   
-    ${3RD_PARTY}/glad4/include/glad/glad.h
-    ${3RD_PARTY}/glad4/src/glad.c
+  ${3RD_PARTY}/glad4/include/glad/glad.h
+  ${3RD_PARTY}/glad4/src/glad.c
   
   main.cpp
 )

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(603_fem25d_stiffwarp)
-
+enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
@@ -12,6 +11,9 @@ else()
 set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations" )
 endif()
 
+##########################################
+
+project(603_Fem3StiffWarp)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -48,7 +50,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_v23.h     ${DELFEM2_INC}/opengl/glold_v23.cpp
   ${DELFEM2_INC}/opengl/glold_color.h   ${DELFEM2_INC}/opengl/glold_color.cpp
   ${DELFEM2_INC}/opengl/glold_funcs.h   ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp                     
+  ${DELFEM2_INC}/opengl/glfw_viewer.h   ${DELFEM2_INC}/opengl/glfw_viewer.cpp                     
 
   main.cpp
 )

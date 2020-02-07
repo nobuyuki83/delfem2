@@ -19,7 +19,7 @@
 #include "delfem2/opengl/glnew_funcs.h"
 #include "delfem2/opengl/glnew_mshcolor.h"
 #include "delfem2/opengl/glfw_cam.h"
-#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.h"
 
 // ---------------------------
 CShader_TriMesh shdr;
