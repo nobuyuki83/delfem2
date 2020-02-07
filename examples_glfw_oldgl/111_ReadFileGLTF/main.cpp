@@ -12,9 +12,8 @@
 #include "io_gltf.h"
 
 // ------------------
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
 

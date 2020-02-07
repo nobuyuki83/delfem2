@@ -6,7 +6,7 @@
  */
 
 /**
- * @brief dynamic triangle mesh class
+ * @brief dynamic triangle mesh class & functions
  */
 
 #ifndef DFM2_DTRI_V2_H

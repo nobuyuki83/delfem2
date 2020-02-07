@@ -13,7 +13,7 @@
 #include <cstdlib>
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw_viewer.hpp"
+#include "delfem2/opengl/glfw_viewer.h"
 
 int main()
 {

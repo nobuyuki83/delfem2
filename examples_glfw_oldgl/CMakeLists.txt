@@ -25,10 +25,10 @@ add_subdirectory(113_ProjectionBox)
 
 
 # meshing
-add_subdirectory(201_dyntri2d_triangulation)
-add_subdirectory(202_dyntri2d_remesh)
-add_subdirectory(203_dyntri3d_edgecollapse)
-add_subdirectory(204_dyntet_tetrahedralization)
+add_subdirectory(201_DynTri2dTriangulation)
+add_subdirectory(202_DynTri2dRemesh)
+add_subdirectory(203_DynTri3dEdgecollapse)
+add_subdirectory(204_DynTetTetrahedralization)
 
 
 # immplicit shape
@@ -36,7 +36,7 @@ add_subdirectory(300_AdaptiveDistanceField)
 add_subdirectory(301_IsoSurfaceStuffing)
 
 
-add_subdirectory(400_LaplaceMeshDeform)
+add_subdirectory(400_LapMshDef_Direct)
 add_subdirectory(401_ExponentialMap)
 add_subdirectory(402_GridOnMesh)
 add_subdirectory(403_QuadSubdivOnMesh)

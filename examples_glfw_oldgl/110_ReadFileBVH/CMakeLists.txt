@@ -45,7 +45,7 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
 
     ${DELFEM2_INC}/opengl/gl_tex.h          ${DELFEM2_INC}/opengl/gl_tex.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+    ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
     ${DELFEM2_INC}/opengl/glold_rig_v23q.h  ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
     ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp

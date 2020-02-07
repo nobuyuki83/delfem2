@@ -14,7 +14,7 @@ ENDIF()
 
 ####################################
 
-project(601_fempb_mitc3)
+project(601_FemPlateBendingMitc3)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -47,7 +47,7 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp   ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
   main.cpp
 )

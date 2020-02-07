@@ -10,7 +10,7 @@
  */
 
 #ifndef DFM2_SRCHBI_V3BVH_H
-#define DFM2_SRCBHI_V3BVH_H
+#define DFM2_SRCHBI_V3BVH_H
 
 #include <stdio.h>
 

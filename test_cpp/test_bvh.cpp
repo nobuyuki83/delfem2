@@ -499,9 +499,9 @@ TEST(bvh,morton_code)
     }
   }
   std::vector<unsigned int> aSortedId, aSortedMc;
-  dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
-                            aXYZ,
-                            min_xyz,max_xyz);
+  dfm2::SortedMortenCode_Points3(aSortedId,aSortedMc,
+                                 aXYZ,
+                                 min_xyz,max_xyz);
   for(int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
     int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
@@ -517,8 +517,8 @@ TEST(bvh,morton_code)
   }
   // ---------------
   std::vector<dfm2::CNodeBVH2> aNodeBVH;
-  dfm2::BVH_TreeTopology_Morton(aNodeBVH,
-                                aSortedId,aSortedMc);
+  dfm2::BVHTopology_Morton(aNodeBVH,
+                           aSortedId,aSortedMc);
   {
     const unsigned int N = aXYZ.size()/3;
     std::vector<int> aFlgBranch(N-1,0);
@@ -536,8 +536,8 @@ TEST(bvh,morton_code)
   }
   // ----------------
   std::vector<dfm2::CBV3_Sphere<double>> aAABB;
-  dfm2::BVH_BuildBVHGeometry_Points(aAABB, 0, aNodeBVH,
-                                    aXYZ.data(), aXYZ.size()/3);
+  dfm2::BVHGeometry_Points(aAABB, 0, aNodeBVH,
+                           aXYZ.data(), aXYZ.size()/3);
   for(int itr=0;itr<100;++itr){
     const double cur_time = itr*0.07 + 0.02;
     const  double p0[3] = {

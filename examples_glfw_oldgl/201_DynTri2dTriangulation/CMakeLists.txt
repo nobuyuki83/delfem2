@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(204_DynTet_Tetrahedralization)
+project(201_DynTri2Triangulation)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -31,17 +31,17 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec3.h                  ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/camera.h                ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                 ${DELFEM2_INC}/color.cpp
-  ${DELFEM2_INC}/mshmisc.h               ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/mshio.h                 ${DELFEM2_INC}/mshio.cpp
-  ${DELFEM2_INC}/mshtopo.h               ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h                    ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp  
+  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp
        
-  ${DELFEM2_INC}/dtet_v3.h               ${DELFEM2_INC}/dtet_v3.cpp
-  
-  ${DELFEM2_INC}/opengl/glold_color.h      ${DELFEM2_INC}/opengl/glold_color.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.hpp  ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/dtri_v2.h                 ${DELFEM2_INC}/dtri_v2.cpp
+                
+  ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h        ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_v23dtricad.h ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.h      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   main.cpp
 )
 
@@ -73,7 +73,3 @@ ELSEIF(MSVC)
       ${OPENGL_LIBRARY})
   endif()
 ENDIF()
-
-
-
-
