@@ -79,13 +79,13 @@ int main(int argc,char* argv[])
     }
     std::vector<unsigned int> aSortedId;
     std::vector<std::uint32_t> aSortedMc;
-    dfm2::GetSortedMortenCode(aSortedId,aSortedMc,
-                              aXYZ,min_xyz,max_xyz);
-    dfm2::BVH_TreeTopology_Morton(aNodeBVH,
-                                  aSortedId,aSortedMc);
-    dfm2::BVH_BuildBVHGeometry_Points(aAABB, 0, aNodeBVH, 0.0,
-                                      aXYZ.data(), aXYZ.size()/3);
-    { // for debug
+    dfm2::SortedMortenCode_Points3(aSortedId,aSortedMc,
+                                   aXYZ,min_xyz,max_xyz);
+    dfm2::BVHTopology_Morton(aNodeBVH,
+                             aSortedId,aSortedMc);
+    dfm2::BVHGeometry_Points(aAABB, 0, aNodeBVH,
+                             aXYZ.data(), aXYZ.size()/3);
+    {
       dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
       dfm2::Check_MortonCode_RangeSplit(aSortedMc);
       dfm2::Check_BVH(aNodeBVH,aXYZ.size()/3);

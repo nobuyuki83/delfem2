@@ -52,10 +52,13 @@ void MeshTri3D_Cube(
     unsigned int n);
 
 
-void MeshTri3D_Disk(std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
-                    double r, int nr, int nth);
-void MeshTri3D_Icosahedron(std::vector<double>& aXYZ,
-                           std::vector<unsigned int>& aTri);
+void MeshTri3D_Disk(
+    std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
+    double r, int nr, int nth);
+
+void MeshTri3D_Icosahedron(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri);
 
 // -----------------------
 // below: cube
@@ -70,23 +73,29 @@ void MeshTri3_Torus(
     double r, double l,
     unsigned int nr, unsigned int nl);
                               
-void SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad);
+void SetTopoQuad_CubeVox(
+    std::vector<unsigned int>& aQuad);
     
 /**
  * @brief making a quad mesh of a cube. The order of the vertex is same as voxel element
  * @details defined for "float" and "double"
  */
 template<typename REAL>
-void MeshQuad3_CubeVox(std::vector<REAL>& aXYZ, std::vector<unsigned int>& aQuad,
-                       const REAL bbmin[3], const REAL bbmax[3]);
+void MeshQuad3_CubeVox(
+    std::vector<REAL>& aXYZ,
+    std::vector<unsigned int>& aQuad,
+    const REAL bbmin[3],
+    const REAL bbmax[3]);
   
 // above: cube
 // above: 3D primitives
 // --------------------------------------------------------------------------------------------------------------
 // below: 2D primitives
   
-void MeshQuad2D_Grid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
-                     int nx, int ny);
+void MeshQuad2D_Grid(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aQuad,
+    int nx, int ny);
 
 // -------------------------------------------------------------
 // primivive classes from here

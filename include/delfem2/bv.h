@@ -167,20 +167,20 @@ public:
 	 * @param z z-coordinate
 	 * @param eps margin. if negative, do nothing
 	 */
-  void AddPoint(REAL x, REAL y, REAL z, REAL eps){
+  void AddPoint(const REAL p[3], REAL eps){
     if( eps < 0 ){ return; }
     if( !this->IsActive() ){ // something inside
-      bbmin[0] = x-eps;  bbmax[0] = x+eps;
-      bbmin[1] = y-eps;  bbmax[1] = y+eps;
-      bbmin[2] = z-eps;  bbmax[2] = z+eps;
+      bbmin[0] = p[0]-eps;  bbmax[0] = p[0]+eps;
+      bbmin[1] = p[1]-eps;  bbmax[1] = p[1]+eps;
+      bbmin[2] = p[2]-eps;  bbmax[2] = p[2]+eps;
       return;
     }
-    bbmin[0] = ( bbmin[0] < x-eps ) ? bbmin[0] : x-eps;
-    bbmin[1] = ( bbmin[1] < y-eps ) ? bbmin[1] : y-eps;
-    bbmin[2] = ( bbmin[2] < z-eps ) ? bbmin[2] : z-eps;
-    bbmax[0] = ( bbmax[0] > x+eps ) ? bbmax[0] : x+eps;
-    bbmax[1] = ( bbmax[1] > y+eps ) ? bbmax[1] : y+eps;
-    bbmax[2] = ( bbmax[2] > z+eps ) ? bbmax[2] : z+eps;
+    bbmin[0] = ( bbmin[0] < p[0]-eps ) ? bbmin[0] : p[0]-eps;
+    bbmin[1] = ( bbmin[1] < p[1]-eps ) ? bbmin[1] : p[1]-eps;
+    bbmin[2] = ( bbmin[2] < p[2]-eps ) ? bbmin[2] : p[2]-eps;
+    bbmax[0] = ( bbmax[0] > p[0]+eps ) ? bbmax[0] : p[0]+eps;
+    bbmax[1] = ( bbmax[1] > p[1]+eps ) ? bbmax[1] : p[1]+eps;
+    bbmax[2] = ( bbmax[2] > p[2]+eps ) ? bbmax[2] : p[2]+eps;
   }
   REAL MinimumDistance(REAL x, REAL y, REAL z) const
   {
@@ -265,41 +265,42 @@ public:
     c[0]=c[1]=c[2];
     r = -1; // if r is negative this is not active yet
   }
-  void AddPoint(double x,double y,double z, double R){
-    if( R < 0 ){
-      return;
-    }
+  void AddPoint(const REAL p[3], REAL R){
+    if( R < 0 ){ return; }
     if( r < 0 ){ // empty
-      c[0]=x; c[1]=y; c[2]=z; r=R;
+      c[0]=p[0]; c[1]=p[1]; c[2]=p[2]; r=R;
       return;
     }
-    const double L = sqrt((x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]));
+    const REAL L = this->Distance3(p,c);
     if( r>L+R ){ return; } // including
     if( R>L+r){ // included
-      c[0]=x; c[1]=y; c[2]=z; r=R;
+      c[0]=p[0]; c[1]=p[1]; c[2]=p[2]; r=R;
       return;
     }
     if( fabs(L) <= 1.0e-5*fabs(r+R) ){ // almost co-centric
       r = L+R;
       return;
     }
-    const double r0 = 0.5*(L+r-R)/L;
-    const double r1 = 0.5*(L+R-r)/L;
+    const REAL r0 = 0.5*(L+r-R)/L;
+    const REAL r1 = 0.5*(L+R-r)/L;
     assert( r0 >= 0 && r1 >= 0 );
-    c[0] = r0*c[0] + r1*x;
-    c[1] = r0*c[1] + r1*y;
-    c[2] = r0*c[2] + r1*z;
+    c[0] = r0*c[0] + r1*p[0];
+    c[1] = r0*c[1] + r1*p[1];
+    c[2] = r0*c[2] + r1*p[2];
     r = 0.5*(L+r+R);
     return;
   }
   bool IsIntersect(const CBV3_Sphere& bb) const
   {
-    const double L = sqrt((bb.c[0]-c[0])*(bb.c[0]-c[0]) + (bb.c[1]-c[1])*(bb.c[1]-c[1]) + (bb.c[2]-c[2])*(bb.c[2]-c[2]));
+    const double L = this->Distance3(bb.c,c);
     if( L > bb.r + r ) return false;
     return true;
   }
   void Set_Inactive() {
     r = -1.0;
+  }
+  bool IsActive() const {
+    return r >= 0;
   }
   bool IsIntersectLine(const double src[3], const double dir[3]) const {
     double ratio = dir[0]*(c[0]-src[0]) + dir[1]*(c[1]-src[1]) + dir[2]*(c[2]-src[2]);
@@ -328,7 +329,7 @@ public:
   }
   CBV3_Sphere& operator+=(const CBV3_Sphere& bb)
   {
-    this->AddPoint(bb.c[0],bb.c[1],bb.c[2], bb.r);
+    this->AddPoint(bb.c, bb.r);
     return *this;
   }
   bool isInclude_Point(double x, double y, double z) const {
@@ -336,14 +337,20 @@ public:
     if( L < r*r ){ return true; }
     return false;
   }
+  bool IsInclude(const CBV3_Sphere& bv, double margin) const {
+    const double LL = (bv.c[0]-c[0])*(bv.c[0]-c[0]) + (bv.c[1]-c[1])*(bv.c[1]-c[1]) + (bv.c[2]-c[2])*(bv.c[2]-c[2]);
+    const double L = sqrtf(LL);
+    if( L+bv.r <= r+margin ){ return true; }
+    return false;
+  }
   /**
    * @brief minimum and maximum distance of this bounding box from a point (x,y,z)
    * do nothing when this bounding box is inactive
    */
-  void Range_DistToPoint(double& min0, double& max0,
-                         double x, double y, double z) const {
+  void Range_DistToPoint(REAL& min0, REAL& max0,
+                         REAL x, REAL y, REAL z) const {
     if( r < 0 ){ return; }
-    const double L = sqrt((x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]));
+    const REAL L = sqrt((x-c[0])*(x-c[0]) + (y-c[1])*(y-c[1]) + (z-c[2])*(z-c[2]));
     if( L < r ){
       min0 = 0;
       max0 = r+L;
@@ -353,8 +360,18 @@ public:
     max0 = L+r;
   }
 public:
+  // the order of this declarations should not be changed since it is used by cuda BVH.
   REAL r;
   REAL c[3];
+private:
+  static REAL Distance3(const REAL p[3], const REAL q[3]) {
+    return sqrt((p[0]-q[0])*(p[0]-q[0]) + (p[1]-q[1])*(p[1]-q[1]) + (p[2]-q[2])*(p[2]-q[2]) );
+  }
+  /*
+  static float Distance3(const float p[3], const float q[3]) {
+    return sqrtf((p[0]-q[0])*(p[0]-q[0]) + (p[1]-q[1])*(p[1]-q[1]) + (p[2]-q[2])*(p[2]-q[2]) );
+  }
+   */
 };
 using CBV3f_Sphere = CBV3_Sphere<float>;
 

@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(202_dyntri2d_remesh)
+project(202_DynTri2Remesh)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

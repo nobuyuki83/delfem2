@@ -41,30 +41,33 @@ public:
  * @details this functions is defined for "double" and "std::comple<double>"
  */
 template <typename T>
-std::vector<double> Solve_PBiCGStab(T* r_vec,
-                                    T* x_vec,
-                                    double conv_ratio,
-                                    unsigned int num_iter,
-                                    const CMatrixSparse<T>& mat,
-                                    const CPreconditionerILU<T>& ilu);
+std::vector<double> Solve_PBiCGStab(
+    T* r_vec,
+    T* x_vec,
+    double conv_ratio,
+    unsigned int num_iter,
+    const CMatrixSparse<T>& mat,
+    const CPreconditionerILU<T>& ilu);
 
 /**
  * @details this functions is defined for "double" and "std::comple<double>"
  */
 template <typename T>
-std::vector<double> Solve_PCG(T* r_vec,
-                              T* u_vec,
-                              double conv_ratio,
-                              unsigned int iteration,
-                              const CMatrixSparse<T>& mat,
-                              const CPreconditionerILU<T>& ilu);
+std::vector<double> Solve_PCG(
+    T* r_vec,
+    T* u_vec,
+    double conv_ratio,
+    unsigned int iteration,
+    const CMatrixSparse<T>& mat,
+    const CPreconditionerILU<T>& ilu);
 
-std::vector<double> Solve_PCOCG(std::complex<double>* r_vec,
-                                std::complex<double>* x_vec,
-                                double conv_ratio_tol,
-                                unsigned int max_niter,
-                                const CMatrixSparse<std::complex<double> >& mat,
-                                const CPreconditionerILU<std::complex<double> >& ilu);
+std::vector<double> Solve_PCOCG(
+    std::complex<double>* r_vec,
+    std::complex<double>* x_vec,
+    double conv_ratio_tol,
+    unsigned int max_niter,
+    const CMatrixSparse<std::complex<double> >& mat,
+    const CPreconditionerILU<std::complex<double> >& ilu);
  
 template <>
 bool delfem2::CPreconditionerILU<std::complex<double> >::DoILUDecomp();

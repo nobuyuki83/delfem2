@@ -1,4 +1,3 @@
-project(300_adf3d)
 cmake_minimum_required(VERSION 2.8)
 
 enable_language(CXX)
@@ -13,6 +12,8 @@ ELSE()
 ENDIF()
 
 ####################################
+
+project(300_Adf3)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

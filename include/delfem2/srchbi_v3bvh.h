@@ -5,8 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef COLLISIONTRI_V3BVH_H
-#define COLLISIONTRI_V3BVH_H
+/**
+ * @details bilatial search (elemnet-to-element) using bvh
+ */
+
+#ifndef DFM2_SRCHBI_V3BVH_H
+#define DFM2_SRCBHI_V3BVH_H
 
 #include <stdio.h>
 
@@ -16,90 +20,99 @@
 namespace delfem2 {
 
 template <typename BBOX>
-bool IsContact_FV_Proximity(int ino0, int ino1, int ino2, int ino3,
-                            const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3,
-                            const BBOX& bb,
-                            const double delta);
+bool IsContact_FV_Proximity(
+    int ino0, int ino1, int ino2, int ino3,
+    const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3,
+    const BBOX& bb,
+    const double delta);
 
 template <typename BBOX>
-bool IsContact_EE_CCD(int ino0,         int ino1,         int jno0,         int jno1,
-                      const CVec3d& p0s, const CVec3d& p1s, const CVec3d& q0s, const CVec3d& q1s,
-                      const CVec3d& p0e, const CVec3d& p1e, const CVec3d& q0e, const CVec3d& q1e);
+bool IsContact_EE_CCD(
+    int ino0,         int ino1,         int jno0,         int jno1,
+    const CVec3d& p0s, const CVec3d& p1s, const CVec3d& q0s, const CVec3d& q1s,
+    const CVec3d& p0e, const CVec3d& p1e, const CVec3d& q0e, const CVec3d& q1e);
 
 template <typename BBOX>
-bool IsContact_FV_CCD(int ino0,        int ino1,        int ino2,        int ino3,
-                      const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3,
-                      const CVec3d& q0, const CVec3d& q1, const CVec3d& q2, const CVec3d& q3,
-                      const BBOX& bb);
+bool IsContact_FV_CCD(
+    int ino0,        int ino1,        int ino2,        int ino3,
+    const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3,
+    const CVec3d& q0, const CVec3d& q1, const CVec3d& q2, const CVec3d& q3,
+    const BBOX& bb);
 
 // -------------
 class CContactElement;
 
 template <typename BBOX>
-void GetContactElement_Proximity(std::set<CContactElement>& aContactElem,
-                                 // ----------
-                                 double delta,
-                                 const std::vector<double>& aXYZ,
-                                 const std::vector<unsigned int>& aTri,
-                                 int ibvh0, int ibvh1,
-                                 const std::vector<CNodeBVH2>& aBVH,
-                                 const std::vector<BBOX>& aBB);
+void GetContactElement_Proximity(
+    std::set<CContactElement>& aContactElem,
+    // ----------
+    double delta,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    int ibvh0, int ibvh1,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 template <typename BBOX>
-void GetContactElement_Proximity(std::set<CContactElement>& aContactElem,
-                                 // ----------
-                                 double delta,
-                                 const std::vector<double>& aXYZ,
-                                 const std::vector<unsigned int>& aTri,
-                                 int ibvh,
-                                 const std::vector<CNodeBVH2>& aBVH,
-                                 const std::vector<BBOX>& aBB);
+void GetContactElement_Proximity(
+    std::set<CContactElement>& aContactElem,
+    // ----------
+    double delta,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    int ibvh,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 template <typename BBOX>
-void GetContactElement_CCD(std::set<CContactElement>& aContactElem,
-                           // ------------
-                           double dt,
-                           double delta,
-                           const std::vector<double>& aXYZ,
-                           const std::vector<double>& aUVW,
-                           const std::vector<unsigned int>& aTri,
-                           int ibvh,
-                           const std::vector<CNodeBVH2>& aBVH,
-                           const std::vector<BBOX>& aBB);
+void GetContactElement_CCD(
+    std::set<CContactElement>& aContactElem,
+    // ------------
+    double dt,
+    double delta,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aUVW,
+    const std::vector<unsigned int>& aTri,
+    int ibvh,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 template <typename BBOX>
-void GetContactElement_CCD(std::set<CContactElement>& aContactElem,
-                           // --------------
-                           double dt,
-                           double delta,
-                           const std::vector<double>& aXYZ,
-                           const std::vector<double>& aUVW,
-                           const std::vector<unsigned int>& aTri,
-                           int ibvh0, int ibvh1,
-                           const std::vector<CNodeBVH2>& aBVH,
-                           const std::vector<BBOX>& aBB);
+void GetContactElement_CCD(
+    std::set<CContactElement>& aContactElem,
+    // --------------
+    double dt,
+    double delta,
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aUVW,
+    const std::vector<unsigned int>& aTri,
+    int ibvh0, int ibvh1,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 // ------------------------
 template <typename REAL>
 class CIntersectTriPair;
 
 template <typename BBOX>
-void GetIntersectTriPairs(std::vector<CIntersectTriPair<double>>& aIntersectTriPair,
-                          // --------------
-                          const std::vector<double>& aXYZ,
-                          const std::vector<unsigned int>& aTri,
-                          int ibvh,
-                          const std::vector<CNodeBVH2>& aBVH,
-                          const std::vector<BBOX>& aBB);
+void GetIntersectTriPairs(
+    std::vector<CIntersectTriPair<double>>& aIntersectTriPair,
+    // --------------
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    int ibvh,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 template <typename BBOX>
-void GetIntersectTriPairs(std::vector<CIntersectTriPair<double>>& aIntersectTriPair,
-                          // ------------------
-                          const std::vector<double>& aXYZ,
-                          const std::vector<unsigned int>& aTri,
-                          int ibvh0, int ibvh1,
-                          const std::vector<CNodeBVH2>& aBVH,
-                          const std::vector<BBOX>& aBB);
+void GetIntersectTriPairs(
+    std::vector<CIntersectTriPair<double>>& aIntersectTriPair,
+    // ------------------
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    int ibvh0, int ibvh1,
+    const std::vector<CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB);
 
 } // end namespace delfem2
 
@@ -139,18 +152,18 @@ bool delfem2::IsContact_EE_CCD
   double eps = 1.0e-10;
   if( ino0 == jno0 || ino0 == jno1 || ino1 == jno0 || ino1 == jno1 ) return false;
   BBOX bbq;
-  bbq.AddPoint(q0s.x(),q0s.y(),q0s.z(), eps);
-  bbq.AddPoint(q1s.x(),q1s.y(),q1s.z(), eps);
-  bbq.AddPoint(q0e.x(),q0e.y(),q0e.z(), eps);
-  bbq.AddPoint(q1e.x(),q1e.z(),q1e.z(), eps);
-  ////
+  bbq.AddPoint(q0s.data(), eps);
+  bbq.AddPoint(q1s.data(), eps);
+  bbq.AddPoint(q0e.data(), eps);
+  bbq.AddPoint(q1e.data(), eps);
+  //
   BBOX bbp;
-  bbp.AddPoint(p0s.x(),p0s.y(),p0s.z(), eps);
-  bbp.AddPoint(p1s.x(),p1s.y(),p1s.z(), eps);
-  bbp.AddPoint(p0e.x(),p0e.y(),p0e.z(), eps);
-  bbp.AddPoint(p1e.x(),p1e.y(),p1e.z(), eps);
+  bbp.AddPoint(p0s.data(), eps);
+  bbp.AddPoint(p1s.data(), eps);
+  bbp.AddPoint(p0e.data(), eps);
+  bbp.AddPoint(p1e.data(), eps);
   if( !bbp.IsIntersect(bbq) ) return false;
-  ////
+  //
   const double t = FindCoplanerInterp(p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
   if( t < 0 || t > 1 ) return false;
   CVec3d p0m = (1-t)*p0s + t*p0e;
@@ -345,8 +358,8 @@ bool delfem2::IsContact_FV_CCD
   if( ino3 == ino0 || ino3 == ino1 || ino3 == ino2 ){ return false; }
   { // culling
     T bbp;
-    bbp.AddPoint(p3.x(),p3.y(),p3.z(), eps);
-    bbp.AddPoint(q3.x(),q3.y(),q3.z(), eps);
+    bbp.AddPoint(p3.data(), eps);
+    bbp.AddPoint(q3.data(), eps);
     if( !bb.IsIntersect(bbp) ) return false;
   }
   return IsContact_FV_CCD2(ino0, ino1,ino2,ino3, p0,p1,p2,p3, q0, q1,q2,q3);

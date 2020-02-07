@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(201_dyntri2d_triangulation)
+project(201_DynTri2Triangulation)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
