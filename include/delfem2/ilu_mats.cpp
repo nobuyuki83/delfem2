@@ -462,452 +462,11 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
 }
 
 
-// -----------------------------------------------
-
-namespace delfem2 {
-
-template<>
-std::vector<double> Solve_PCG
-(double *r_vec,
- double *x_vec,
- double conv_ratio_tol,
- unsigned int max_nitr,
- const CMatrixSparse<double> &mat,
- const delfem2::CPreconditionerILU<double> &ilu) {
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
-  std::vector<double> aResHistry;
-
-  for (unsigned int i = 0; i < ndof; i++) { x_vec[i] = 0; }    // {x} = 0
-
-  double inv_sqnorm_res0;
-  {
-    const double sqnorm_res0 = Dot(r_vec, r_vec, ndof);
-    aResHistry.push_back(sqrt(sqnorm_res0));
-    if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
-    inv_sqnorm_res0 = 1.0 / sqnorm_res0;
-  }
-
-  // {Pr} = [P]{r}
-  std::vector<double> Pr_vec(r_vec, r_vec + ndof);
-  ilu.Solve(Pr_vec);
-  // {p} = {Pr}
-  std::vector<double> p_vec = Pr_vec;
-  // rPr = ({r},{Pr})
-  double rPr = Dot(r_vec, Pr_vec.data(), ndof);
-  for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
-    {
-      std::vector<double> &Ap_vec = Pr_vec;
-      // {Ap} = [A]{p}
-      mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data());
-      // alpha = ({r},{Pr})/({p},{Ap})
-      const double pAp = Dot(p_vec, Ap_vec);
-      double alpha = rPr / pAp;
-      AXPY(-alpha, Ap_vec.data(), r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
-      AXPY(+alpha, p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
-    }
-    {  // Converge Judgement
-      double sqnorm_res = Dot(r_vec, r_vec, ndof);
-      aResHistry.push_back(sqrt(sqnorm_res));
-      double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
-      if (conv_ratio < conv_ratio_tol) { return aResHistry; }
-    }
-    {  // calc beta
-      // {Pr} = [P]{r}
-      for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
-      ilu.Solve(Pr_vec);
-      // rPr1 = ({r},{Pr})
-      const double rPr1 = Dot(r_vec, Pr_vec.data(), ndof);
-      // beta = rPr1/rPr
-      double beta = rPr1 / rPr;
-      rPr = rPr1;
-      // {p} = {Pr} + beta*{p}
-      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
-    }
-  }
-  {
-    // Converge Judgement
-    double sq_norm_res = Dot(r_vec, r_vec, ndof);
-    aResHistry.push_back(sqrt(sq_norm_res));
-  }
-  return aResHistry;
-}
-
-
-template<>
-std::vector<double> Solve_PCG
-(COMPLEX *r_vec,
- COMPLEX *x_vec,
- double conv_ratio_tol,
- unsigned int max_nitr,
- const CMatrixSparse<COMPLEX> &mat,
- const delfem2::CPreconditionerILU<COMPLEX> &ilu) {
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
-  std::vector<double> aResHistry;
-
-  for (unsigned int i = 0; i < ndof; i++) { x_vec[i] = COMPLEX(0.0, 0.0); }    // {x} = 0
-
-  double inv_sqnorm_res0;
-  {
-    const double sqnorm_res0 = Dot(r_vec, r_vec, ndof).real();
-    aResHistry.push_back(sqnorm_res0);
-    if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
-    inv_sqnorm_res0 = 1.0 / sqnorm_res0;
-  }
-
-  // {Pr} = [P]{r}
-  std::vector<COMPLEX> Pr_vec(r_vec, r_vec + ndof);
-  ilu.Solve(Pr_vec);
-  // {p} = {Pr}
-  std::vector<COMPLEX> p_vec = Pr_vec;
-  // rPr = ({r},{Pr})
-  COMPLEX rPr = Dot(r_vec, Pr_vec.data(), ndof);
-  for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
-    {
-      std::vector<COMPLEX> &Ap_vec = Pr_vec;
-      // {Ap} = [A]{p}
-      mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data());
-      // alpha = ({r},{Pr})/({p},{Ap})
-      const double pAp = Dot(p_vec, Ap_vec).real();
-      COMPLEX alpha = rPr / pAp;
-      AXPY(-alpha, Ap_vec.data(), r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
-      AXPY(+alpha, p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
-    }
-    {  // Converge Judgement
-      double sqnorm_res = Dot(r_vec, r_vec, ndof).real();
-      double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
-      aResHistry.push_back(conv_ratio);
-      if (conv_ratio < conv_ratio_tol) { return aResHistry; }
-    }
-    {  // calc beta
-      // {Pr} = [P]{r}
-      for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
-      ilu.Solve(Pr_vec);
-      // rPr1 = ({r},{Pr})
-      const COMPLEX rPr1 = Dot(r_vec, Pr_vec.data(), ndof);
-      // beta = rPr1/rPr
-      COMPLEX beta = rPr1 / rPr;
-      rPr = rPr1;
-      // {p} = {Pr} + beta*{p}
-      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
-    }
-  }
-  {
-    // Converge Judgement
-    double sq_norm_res = Dot(r_vec, r_vec, ndof).real();
-    aResHistry.push_back(sqrt(sq_norm_res));
-  }
-  return aResHistry;
-}
-
-} // end namespace delfem2
-
-// -----------------------------------------------------------------------------------
-
-namespace delfem2 {
-
-template <>
-std::vector<double> Solve_PBiCGStab
-(double* r_vec,
- double* x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const CMatrixSparse<double>& mat,
- const delfem2::CPreconditionerILU<double>& ilu)
-{
-  assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
-  std::vector<double> aResHistry;
-  
-  // {u} = 0
-  for(unsigned int i=0;i<ndof;++i){ x_vec[i] = 0.0; }
-  
-  double sq_inv_norm_res_ini;
-  {
-    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof);
-    if( sq_norm_res_ini < 1.0e-60 ){
-      aResHistry.push_back( sqrt( sq_norm_res_ini ) );
-      return aResHistry;
-    }
-    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
-  }
-  
-//    std::cout << "SqIniRes : " << ls.DOT(ir,ir) << std::endl;
-    
-  std::vector<double> s_vec(ndof);
-  std::vector<double> Ms_vec(ndof);
-  std::vector<double> AMs_vec(ndof);
-  std::vector<double> Mp_vec(ndof);
-  std::vector<double> AMp_vec(ndof);
-  
-  const std::vector<double> r0_vec(r_vec,r_vec+ndof);   // {r2} = {r}
-  std::vector<double> p_vec(r_vec,r_vec+ndof);  // {p} = {r}
-  
-  for(unsigned int iitr=1;iitr<max_niter;iitr++){
-    // {Mp_vec} = [M^-1]*{p}
-    Mp_vec = p_vec;
-    ilu.Solve(Mp_vec);
-    // calc (r,r0*)
-    const double r_r2 = Dot(r_vec,r0_vec.data(),ndof);
-    // calc {AMp_vec} = [A]*{Mp_vec}
-    mat.MatVec(1.0, Mp_vec.data(), 0.0, AMp_vec.data());
-    // calc alpha
-    const double alpha = r_r2 / Dot(AMp_vec,r0_vec);
-    // calc s_vector
-    s_vec.assign(r_vec,r_vec+ndof);
-    AXPY(-alpha,AMp_vec,s_vec);
-    // {Ms_vec} = [M^-1]*{s}
-    Ms_vec = s_vec;
-    ilu.Solve(Ms_vec);
-    // calc {AMs_vec} = [A]*{Ms_vec}
-    mat.MatVec(1.0,Ms_vec.data(),0.0,AMs_vec.data());
-    double omega;
-    {	// calc omega
-      const double denominator = Dot(AMs_vec,AMs_vec);
-      const double numerator = Dot(s_vec,AMs_vec);
-      omega = numerator / denominator;
-    }
-    AXPY(alpha,Mp_vec.data(),x_vec,ndof);
-    AXPY(omega,Ms_vec.data(),x_vec,ndof);
-    for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; } // update residual
-    AXPY(-omega,AMs_vec.data(),r_vec,ndof);
-    {
-      const double sq_norm_res = Dot(r_vec,r_vec,ndof);
-      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
-      aResHistry.push_back( conv_ratio );
-      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
-    }
-    double beta;
-    {	// calc beta
-      const double tmp1 = Dot(r_vec,r0_vec.data(),ndof);
-      beta = tmp1 * alpha / (r_r2*omega);
-    }
-    // update p_vector
-    for(unsigned int i=0;i<ndof;++i){ p_vec[i] *= beta; }
-    AXPY(1.0,r_vec,p_vec.data(),ndof);
-    AXPY(-beta*omega,AMp_vec,p_vec);
-  }
-  
-  return aResHistry;
-}
-
-template <>
-std::vector<double> Solve_PBiCGStab
-(COMPLEX* r_vec,
- COMPLEX* x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const CMatrixSparse<COMPLEX>& mat,
- const delfem2::CPreconditionerILU<COMPLEX>& ilu)
-{
-  assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
-  std::vector<double> aResHistry;
-  
-  for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
-  
-  double sq_inv_norm_res_ini;
-  {
-    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof).real();
-    if( sq_norm_res_ini < 1.0e-60 ){
-      aResHistry.push_back( sqrt( sq_norm_res_ini ) );
-      return aResHistry;
-    }
-    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
-  }
-  
-  std::vector<COMPLEX> s_vec(ndof);
-  std::vector<COMPLEX> Ms_vec(ndof);
-  std::vector<COMPLEX> AMs_vec(ndof);
-  std::vector<COMPLEX> Mp_vec(ndof);
-  std::vector<COMPLEX> AMp_vec(ndof);
-  
-  const std::vector<COMPLEX> r0_vec(r_vec,r_vec+ndof);   // {r2} = {r}
-  std::vector<COMPLEX> p_vec(r_vec,r_vec+ndof);  // {p} = {r}
-  
-  // calc (r,r0*)
-  COMPLEX r_r0 = Dot(r_vec,r0_vec.data(),ndof);
-  
-  for(unsigned int itr=0;itr<max_niter;itr++){
-    // {Mp_vec} = [M^-1]*{p}
-    Mp_vec.assign(p_vec.begin(),p_vec.end());
-    ilu.Solve(Mp_vec);
-    // calc {AMp_vec} = [A]*{Mp_vec}
-    mat.MatVec(COMPLEX(1,0), Mp_vec.data(), COMPLEX(0,0), AMp_vec.data());
-    // calc alpha
-    const COMPLEX alpha = r_r0 / Dot(AMp_vec,r0_vec);
-    // calc s_vector
-    s_vec.assign(r_vec,r_vec+ndof);
-    AXPY(-alpha,AMp_vec,s_vec);
-    // {Ms_vec} = [M^-1]*{s}
-    Ms_vec.assign(s_vec.begin(),s_vec.end());
-    ilu.Solve(Ms_vec);
-    // calc {AMs_vec} = [A]*{Ms_vec}
-    mat.MatVec(COMPLEX(1,0),Ms_vec.data(), COMPLEX(0,0), AMs_vec.data());
-    const COMPLEX omega = Dot(s_vec,AMs_vec) / Dot(AMs_vec,AMs_vec).real();
-    for(unsigned int i=0;i<ndof;++i){ x_vec[i] = x_vec[i]+alpha*Mp_vec[i]+omega*Ms_vec[i]; }
-    for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]-omega*AMs_vec[i]; }
-    {
-      const double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
-      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
-      aResHistry.push_back( conv_ratio );
-      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
-    }
-    COMPLEX beta;
-    {  // calc beta
-      const COMPLEX tmp1 = Dot(r_vec,r0_vec.data(),ndof);
-      beta = (tmp1*alpha)/(r_r0*omega);
-      r_r0 = tmp1;
-    }
-    // update p_vector
-    for(unsigned int i=0;i<ndof;++i){ p_vec[i] = r_vec[i]+beta*(p_vec[i]-omega*AMp_vec[i]); }
-  }
-  
-  return aResHistry;
-}
-
-} // end namespace delfem2
-
-// ----------------------------------------------------------------------------
-
-
-std::vector<double> dfm2::Solve_PCOCG
-(COMPLEX* r_vec,
- COMPLEX* x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const CMatrixSparse<COMPLEX>& mat,
- const delfem2::CPreconditionerILU<COMPLEX>& ilu)
-{
-  assert( !mat.valDia.empty() );
-  assert( mat.nblk_col == mat.nblk_row );
-  assert( mat.len_col == mat.len_row );
-  const unsigned int ndof = mat.nblk_col*mat.len_col;
-  std::vector<double> aResHistry;
-  
-  for(unsigned int i=0;i<ndof;++i){ x_vec[i] = COMPLEX(0.0,0.0); }   // {u} = 0
-  
-  double sq_inv_norm_res_ini;
-  {
-    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof).real();
-    if( sq_norm_res_ini < 1.0e-60 ){
-      aResHistry.push_back( sqrt( sq_norm_res_ini ) );
-      return aResHistry;
-    }
-    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
-  }
-  
-  std::vector<COMPLEX> Ap_vec(ndof);
-  std::vector<COMPLEX> w_vec(r_vec,r_vec+ndof);
-  ilu.Solve(w_vec);
-  
-  std::vector<COMPLEX> p_vec = w_vec;  // {p} = {w}
-  COMPLEX r_w = MultSumX(r_vec,w_vec.data(),ndof);
-  
-  for(unsigned int itr=0;itr<max_niter;itr++){
-    mat.MatVec(COMPLEX(1,0), p_vec.data(), COMPLEX(0,0), Ap_vec.data());
-    const COMPLEX alpha = r_w / MultSumX(p_vec.data(),Ap_vec.data(),ndof);
-    AXPY(+alpha,p_vec.data(), x_vec,ndof);
-    AXPY(-alpha,Ap_vec.data(), r_vec,ndof);
-    {
-      const double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
-      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
-      aResHistry.push_back( conv_ratio );
-      if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
-    }
-    w_vec.assign(r_vec,r_vec+ndof);
-    ilu.Solve(w_vec);
-    COMPLEX beta;
-    {  // calc beta
-      const COMPLEX tmp1 = MultSumX(r_vec,w_vec.data(),ndof);
-      beta = tmp1/r_w;
-      r_w = tmp1;
-    }
-    for(unsigned int i=0;i<ndof;++i){ p_vec[i] = w_vec[i] + beta*p_vec[i]; }
-  }
-  
-  return aResHistry;
-}
-
-
-template <typename T>
-void delfem2::CPreconditionerILU<T>::Initialize_ILU0
- (const CMatrixSparse<T>& m)
-{
-  this->mat = m;
-  const int nblk = m.nblk_col;
-  m_diaInd.resize(nblk);
-  for(int iblk=0;iblk<nblk;iblk++){
-    m_diaInd[iblk] = mat.colInd[iblk+1];
-    for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
-      assert( icrs < mat.rowPtr.size() );
-      const int jblk0 = mat.rowPtr[icrs];
-      assert( jblk0 < nblk );
-      if( jblk0 > iblk ){
-        m_diaInd[iblk] = icrs;
-        break;
-      }
-    }
-  }
-}
-template void dfm2::CPreconditionerILU<double>::Initialize_ILU0(const CMatrixSparse<double>& m);
-template void dfm2::CPreconditionerILU<COMPLEX>::Initialize_ILU0(const CMatrixSparse<COMPLEX>& m);
-
-// -----------------------------------------------------------------
-
-template <typename T>
-void delfem2::CPreconditionerILU<T>::SetValueILU
- (const CMatrixSparse<T>& rhs)
-{
-  const unsigned int nblk = mat.nblk_col;
-  const unsigned int len = mat.len_col;
-  assert( rhs.nblk_col == nblk );
-  assert( rhs.nblk_row == nblk );
-  assert( rhs.len_col == len );
-  assert( rhs.len_row == len );
-  const unsigned int blksize = len*len;
-  std::vector<int> row2crs(nblk,-1);
-  {
-    const unsigned int n = mat.rowPtr.size()*len*len;
-    for(unsigned int i=0;i<n;++i){ mat.valCrs[i] = 0.0; }
-  }
-  for(unsigned int iblk=0;iblk<nblk;iblk++){
-    for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<mat.rowPtr.size() );
-      const unsigned int jblk0 = mat.rowPtr[ijcrs];
-      assert( jblk0 < nblk );
-      row2crs[jblk0] = ijcrs;
-    }
-    for(unsigned int ijcrs=rhs.colInd[iblk];ijcrs<rhs.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<rhs.rowPtr.size() );
-      const unsigned int jblk0 = rhs.rowPtr[ijcrs];
-      assert( jblk0<nblk );
-      const int ijcrs0 = row2crs[jblk0];
-      if( ijcrs0 == -1 ) continue;
-      const T* pval_in = &rhs.valCrs[ijcrs*blksize];
-      T* pval_out = &mat.valCrs[ijcrs0*blksize];
-      for(unsigned int i=0;i<blksize;i++){ *(pval_out+i) = *(pval_in+i); }
-    }
-    for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
-      assert( ijcrs<mat.rowPtr.size() );
-      const unsigned int jblk0 = mat.rowPtr[ijcrs];
-      assert( jblk0 < nblk );
-      row2crs[jblk0] = -1;
-    }
-  }
-  for(unsigned int i=0;i<nblk*blksize;i++){ mat.valDia[i] = rhs.valDia[i]; }
-}
-template void dfm2::CPreconditionerILU<double>::SetValueILU(const CMatrixSparse<double>& rhs);
-template void dfm2::CPreconditionerILU<COMPLEX>::SetValueILU(const CMatrixSparse<COMPLEX>& rhs);
-
 // -----------------------------------------------------
 
 template <typename T>
 void delfem2::CPreconditionerILU<T>::ForwardSubstitution
- ( std::vector<T>& vec ) const
+( std::vector<T>& vec ) const
 {
   const unsigned int len = mat.len_col;
   const unsigned int nblk = mat.nblk_col;
@@ -917,7 +476,7 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-      // -------------------------
+    // -------------------------
     for(unsigned int iblk=0;iblk<nblk;iblk++){
       T lvec_i = vec[iblk];
       for(unsigned int ijcrs=colind[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
@@ -934,7 +493,7 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-      // ------------------------
+    // ------------------------
     T pTmpVec[2];
     for(unsigned int iblk=0;iblk<nblk;iblk++){
       pTmpVec[0] = vec[iblk*2+0];
@@ -961,7 +520,7 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-      // -------------------------
+    // -------------------------
     T pTmpVec[3];
     for(unsigned int iblk=0;iblk<nblk;iblk++){
       pTmpVec[0] = vec[iblk*3+0];
@@ -992,7 +551,7 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
     const T* vdia = mat.valDia.data();
-      // ------------
+    // ------------
     T pTmpVec[4];
     for (unsigned int iblk = 0; iblk<nblk; iblk++){
       pTmpVec[0] = vec[iblk*4+0];
@@ -1051,11 +610,12 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     }
   }
 }
-
+template void dfm2::CPreconditionerILU<double>::ForwardSubstitution( std::vector<double>& vec ) const;
+template void dfm2::CPreconditionerILU<COMPLEX>::ForwardSubstitution( std::vector<COMPLEX>& vec ) const;
 
 template <typename T>
 void delfem2::CPreconditionerILU<T>::BackwardSubstitution
- ( std::vector<T>& vec ) const
+( std::vector<T>& vec ) const
 {
   const unsigned int len = mat.len_col;
   const int nblk = mat.nblk_col;
@@ -1064,7 +624,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-      // -------------------------------
+    // -------------------------------
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
       T lvec_i = vec[iblk];
@@ -1081,7 +641,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-      // ----------------------------
+    // ----------------------------
     T pTmpVec[2];
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
@@ -1107,7 +667,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-      // --------------------
+    // --------------------
     T pTmpVec[3];
     for(int iblk=nblk-1;iblk>=0;iblk--){
       assert( (int)iblk < nblk );
@@ -1137,7 +697,7 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     const unsigned int* colind = mat.colInd.data();
     const unsigned int* rowptr = mat.rowPtr.data();
     const T* vcrs = mat.valCrs.data();
-      // -----------------------------
+    // -----------------------------
     T pTmpVec[4];
     for (int iblk = nblk-1; iblk>=0; iblk--){
       assert((int)iblk < nblk);
@@ -1192,6 +752,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     }
   }
 }
+template void dfm2::CPreconditionerILU<double>::BackwardSubstitution( std::vector<double>& vec ) const;
+template void dfm2::CPreconditionerILU<COMPLEX>::BackwardSubstitution( std::vector<COMPLEX>& vec ) const;
 
 class CRowLev{
 public:
@@ -1207,20 +769,20 @@ public:
   int row;
   int lev;
 };
-      
+
 class CRowLevNext{
-  public:
-    unsigned int row;
-    unsigned int lev;
-    int next;
+public:
+  unsigned int row;
+  unsigned int lev;
+  int next;
 };
 
 
-  // if(lev_fill == -1){ take all the fills }
+// if(lev_fill == -1){ take all the fills }
 template <typename T>
 void delfem2::CPreconditionerILU<T>::Initialize_ILUk
- (const CMatrixSparse<T>& m,
-  int lev_fill)
+(const CMatrixSparse<T>& m,
+ int lev_fill)
 {
   
   if (lev_fill==0){
@@ -1228,8 +790,8 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
     return;
   }
   
-    //  std::cout << "hoe" << m.nblk_col << " " << m.len_col << " " << m.rowPtr.size() << std::endl;
-    //  std::cout << "fua" << mat.nblk_col << " " << mat.len_col << " " << mat.rowPtr.size() << std::endl;
+  //  std::cout << "hoe" << m.nblk_col << " " << m.len_col << " " << m.rowPtr.size() << std::endl;
+  //  std::cout << "fua" << mat.nblk_col << " " << mat.len_col << " " << mat.rowPtr.size() << std::endl;
   
   std::vector<CRowLev> aRowLev;
   aRowLev.reserve(m.rowPtr.size()*4);
@@ -1282,7 +844,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
         assert(listNonzero[jnz_cur].row < jblk0);
         if (jblk0==iblk) continue; // already filled-in on the diagonal
         
-          // check if this is fill in
+        // check if this is fill in
         bool is_fill_in = false;
         for (;;){
           const int jnz_nex = listNonzero[jnz_cur].next;
@@ -1295,7 +857,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
         }
         if (!is_fill_in){ continue; }
         
-          // pick up fill in
+        // pick up fill in
         const unsigned int max_lev0 = (ik_lev0 > kj_lev0) ? ik_lev0 : kj_lev0;
         const unsigned  int inz_last = listNonzero.size();
         listNonzero.resize(listNonzero.size()+1);
@@ -1310,7 +872,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
       if (knz_cur==-1) break;
     }
     
-      // -------------------------------------
+    // -------------------------------------
     
     {
       aRowLev.resize(mat.colInd[iblk]+listNonzero.size());
@@ -1340,7 +902,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
   
   {
     const unsigned int ncrs = mat.rowPtr.size();
-      //    std::cout << aRowLev.size() << " " << ncrs << std::endl;
+    //    std::cout << aRowLev.size() << " " << ncrs << std::endl;
     assert(aRowLev.size()==ncrs);
     mat.rowPtr.resize(ncrs);
     for (unsigned int icrs = 0; icrs<ncrs; ++icrs){
@@ -1350,9 +912,80 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
     mat.valCrs.resize(ncrs*blksize);
     assert(!mat.valDia.empty());
     mat.valDia = m.valDia;
-      //    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
+    //    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
   }
 }
 
 template void dfm2::CPreconditionerILU<double>::Initialize_ILUk(const CMatrixSparse<double>& m, int lev_fill);
 template void dfm2::CPreconditionerILU<COMPLEX>::Initialize_ILUk(const CMatrixSparse<COMPLEX>& m, int lev_fill);
+
+
+template <typename T>
+void delfem2::CPreconditionerILU<T>::SetValueILU
+ (const CMatrixSparse<T>& rhs)
+{
+  const unsigned int nblk = mat.nblk_col;
+  const unsigned int len = mat.len_col;
+  assert( rhs.nblk_col == nblk );
+  assert( rhs.nblk_row == nblk );
+  assert( rhs.len_col == len );
+  assert( rhs.len_row == len );
+  const unsigned int blksize = len*len;
+  std::vector<int> row2crs(nblk,-1);
+  {
+    const unsigned int n = mat.rowPtr.size()*len*len;
+    for(unsigned int i=0;i<n;++i){ mat.valCrs[i] = 0.0; }
+  }
+  for(unsigned int iblk=0;iblk<nblk;iblk++){
+    for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<mat.rowPtr.size() );
+      const unsigned int jblk0 = mat.rowPtr[ijcrs];
+      assert( jblk0 < nblk );
+      row2crs[jblk0] = ijcrs;
+    }
+    for(unsigned int ijcrs=rhs.colInd[iblk];ijcrs<rhs.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<rhs.rowPtr.size() );
+      const unsigned int jblk0 = rhs.rowPtr[ijcrs];
+      assert( jblk0<nblk );
+      const int ijcrs0 = row2crs[jblk0];
+      if( ijcrs0 == -1 ) continue;
+      const T* pval_in = &rhs.valCrs[ijcrs*blksize];
+      T* pval_out = &mat.valCrs[ijcrs0*blksize];
+      for(unsigned int i=0;i<blksize;i++){ *(pval_out+i) = *(pval_in+i); }
+    }
+    for(unsigned int ijcrs=mat.colInd[iblk];ijcrs<mat.colInd[iblk+1];ijcrs++){
+      assert( ijcrs<mat.rowPtr.size() );
+      const unsigned int jblk0 = mat.rowPtr[ijcrs];
+      assert( jblk0 < nblk );
+      row2crs[jblk0] = -1;
+    }
+  }
+  for(unsigned int i=0;i<nblk*blksize;i++){ mat.valDia[i] = rhs.valDia[i]; }
+}
+template void dfm2::CPreconditionerILU<double>::SetValueILU(const CMatrixSparse<double>& rhs);
+template void dfm2::CPreconditionerILU<COMPLEX>::SetValueILU(const CMatrixSparse<COMPLEX>& rhs);
+
+
+template <typename T>
+void delfem2::CPreconditionerILU<T>::Initialize_ILU0
+ (const CMatrixSparse<T>& m)
+{
+  this->mat = m;
+  const int nblk = m.nblk_col;
+  m_diaInd.resize(nblk);
+  for(int iblk=0;iblk<nblk;iblk++){
+    m_diaInd[iblk] = mat.colInd[iblk+1];
+    for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
+      assert( icrs < mat.rowPtr.size() );
+      const int jblk0 = mat.rowPtr[icrs];
+      assert( jblk0 < nblk );
+      if( jblk0 > iblk ){
+        m_diaInd[iblk] = icrs;
+        break;
+      }
+    }
+  }
+}
+template void dfm2::CPreconditionerILU<double>::Initialize_ILU0(const CMatrixSparse<double>& m);
+template void dfm2::CPreconditionerILU<COMPLEX>::Initialize_ILU0(const CMatrixSparse<COMPLEX>& m);
+

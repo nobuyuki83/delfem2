@@ -39,7 +39,7 @@ add_subdirectory(301_IsoSurfaceStuffing)
 add_subdirectory(400_ExponentialMap)
 add_subdirectory(401_GridOnMesh)
 add_subdirectory(402_QuadSubdivOnMesh)
-add_subdirectory(403_LapDef_Direct)
+add_subdirectory(403_LaplacianMeshDeformation)
 
 
 # cad

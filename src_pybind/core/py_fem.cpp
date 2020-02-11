@@ -17,6 +17,7 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
+#include "delfem2/vecxitrsol.h"
 #include "delfem2/sdf.h"
 
 #include "delfem2/ilu_mats.h"

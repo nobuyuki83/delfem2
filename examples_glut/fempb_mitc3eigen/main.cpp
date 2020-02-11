@@ -6,6 +6,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/mats.h"
 #include "delfem2/vec2.h"
+#include "delfem2/vecxitrsol.h"
 
 #include "delfem2/ilu_mats.h"
 #include "delfem2/dtri_v2.h"
@@ -141,15 +142,14 @@ void InitializeProblem_ShellEigenPB()
   aTmp0.assign(nDoF, 0.0);
   // --------------------------------------
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                    aTri.data(), aTri.size()/3, 3,
-                                                    (int)aXY0.size()/2);
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                             aTri.data(), aTri.size()/3, 3,
+                             (int)aXY0.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   mat_A.Initialize(np, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
                    psup.data(),     psup.size());
   ilu_A.Initialize_ILU0(mat_A);
-  
   // ------------------------------
   aMassLumpedSqrtInv.resize(nDoF);
   aModesKer.resize(nDoF*3);
@@ -158,10 +158,7 @@ void InitializeProblem_ShellEigenPB()
                                                             rho, thickness,
                                                             aXY0.data(), aXY0.size()/2,
                                                             aTri.data(), aTri.size()/3);
-  
-  ////////////////////////////////////////////
-  
-
+  // -------------------------------
   mat_A.SetZero();
   aMode.assign(nDoF, 0.0);
   aTmp0.assign(nDoF, 0.0);

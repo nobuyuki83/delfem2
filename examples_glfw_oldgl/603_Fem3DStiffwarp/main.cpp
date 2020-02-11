@@ -16,6 +16,7 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mats.h"
 #include "delfem2/dtri.h"
+#include "delfem2/vecxitrsol.h"
 
 #include "delfem2/v23m3q.h"
 #include "delfem2/ilu_mats.h"
@@ -123,7 +124,7 @@ std::vector<double> aR;
 void InitializeProblem_ShellEigenPB()
 {
   const int np = (int)aXYZ.size()/3;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                                     aTet.data(), aTet.size()/4, 4,
                                                     (int)aXYZ.size()/3);
   dfm2::JArray_Sort(psup_ind, psup);

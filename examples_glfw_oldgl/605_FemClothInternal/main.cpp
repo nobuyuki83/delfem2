@@ -197,7 +197,7 @@ int main(int argc,char* argv[])
 //    MakeNormal(aNormal, aXYZ, aTri);
     mat_A.Initialize(np,3,true);
     std::vector<unsigned int> psup_ind,psup;
-    dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                                       aQuad.data(),aQuad.size()/4, 4, np);
     dfm2::JArray_Sort(psup_ind, psup);
     mat_A.SetPattern(psup_ind.data(),psup_ind.size(),

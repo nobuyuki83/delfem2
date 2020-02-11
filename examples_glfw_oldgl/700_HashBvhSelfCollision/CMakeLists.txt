@@ -36,7 +36,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp               
   ${DELFEM2_INC}/bvh.h                    ${DELFEM2_INC}/bvh.cpp
-  ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp          
+  ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp
+  ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/bv.h                                          
   
   ${DELFEM2_INC}/srchbi_v3bvh.h

@@ -112,7 +112,7 @@ int main(int argc,char* argv[])
   aUV1.resize(aXY0.size());
   
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                                     aQuad.data(), aQuad.size()/4, 4,
                                                     aXY0.size()/2);
     //  Print_IndexedArray(psup_ind, psup);

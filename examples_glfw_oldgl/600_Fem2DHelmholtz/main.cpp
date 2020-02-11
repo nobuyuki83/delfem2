@@ -12,6 +12,7 @@
 #include <complex>
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
+#include "delfem2/vecxitrsol.h"
 //
 #include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
@@ -75,7 +76,7 @@ void InitializeProblem_Scalar()
   aCVal[ipCenter] = 1;
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                                     aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   //
@@ -121,8 +122,8 @@ void SolveProblem_Poisson()
                                               1.0e-4, 400, mat_A, ilu_A);
    */
   /*
-   std::vector<double> aConv = Solve_BiCGSTAB(vec_b, vec_x,
-   1.0e-4,400, mat_A);
+   std::vector<double> aConv = Solve_BiCGSTAB_Complex(vec_b, vec_x,
+                                                      1.0e-4,400, mat_A);
    */
   std::vector<double> aConv = Solve_PCOCG(vec_b.data(), vec_x.data(),
                                           1.0e-4, 400, mat_A, ilu_A);

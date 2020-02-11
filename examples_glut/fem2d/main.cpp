@@ -7,6 +7,7 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/dtri.h"
 #include "delfem2/mats.h"
+#include "delfem2/vecxitrsol.h"
 #include "delfem2/color.h"
 
 #include "delfem2/dtri_v2.h"
@@ -236,18 +237,18 @@ void InitializeProblem_Scalar()
     aBCFlag[ip0] = 1;
   }
    */
-  //////
+  //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                    aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                             aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
-  ////
+  //
   mat_A.Initialize(np, 1, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
   ilu_A.Initialize_ILU0(mat_A);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------
 // iproblem: 0
 void SolveProblem_Poisson()
 {
@@ -272,8 +273,12 @@ void SolveProblem_Poisson()
   ilu_A.SetValueILU(mat_A);
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
+  /*
   Solve_PCG(vec_b.data(),vec_x.data(),
             conv_ratio,iteration, mat_A,ilu_A);
+   */
+  Solve_CG(vec_b.data(),vec_x.data(),
+           vec_b.size(), conv_ratio,iteration, mat_A);
   // ----------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
           1.0,vec_x);
@@ -350,8 +355,8 @@ void InitializeProblem_Solid()
   }
   // -----------
   std::vector<unsigned int> psup_ind0, psup0;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind0, psup0,
-                                                    aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  dfm2::JArray_PSuP_MeshElem(psup_ind0, psup0,
+                             aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),2,
@@ -500,10 +505,10 @@ void InitializeProblem_Fluid()
       aVal[ip*3+0] = 10;
     }
   }
-  //////
+  //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                    aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                             aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   /*
    CJaggedArray crs;
@@ -563,16 +568,16 @@ void InitializeProblem_Fluid2()
       }
     }
   }
-  ///////
+  //
   std::vector<unsigned int> psup_ind0, psup0;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind0, psup0,
-                                                    aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
+  dfm2::JArray_PSuP_MeshElem(psup_ind0, psup0,
+                             aTri1.data(), aTri1.size()/3, 3, (int)aXY1.size()/2);
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_AddMasterSlavePattern(psup_ind, psup,
                         aMSFlag.data(),3,
                         psup_ind0.data(), psup_ind0.size(), psup0.data());
   dfm2::JArray_Sort(psup_ind, psup);
-  //////
+  //
   /*
    CJaggedArray crs;
    crs.SetEdgeOfElem(aTri1, (int)aTri1.size()/3, 3, (int)aXY1.size()/2, false);
@@ -722,7 +727,7 @@ void SolveProblem_NavierStokes_Dynamic()
                   conv_ratio,iteration, mat_A,ilu_A);
 //  SolveLinSys_BiCGStab(mat_A,vec_b,vec_x,ilu_A,
 //                       conv_ratio, iteration);
-  //////////////////////////////
+  // -----------------------
   dfm2::XPlusAYBZ(aVal,nDoF, aBCFlag,
             dt_timestep*gamma_newmark,vec_x,
             dt_timestep,aVelo);

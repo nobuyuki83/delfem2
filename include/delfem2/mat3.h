@@ -61,30 +61,61 @@ void GetRotPolarDecomp(double R[9],
                        int nitr);
 
 // ------------------------------------------------
-  
-template <typename T>
-void AffMat3_Scale(T A[16],
-                   T s);
-  
-template <typename T>
-void AffMat3_Translation(T A[16],
-                         T dx, T dy, T dz);
-
-template <typename T>
-void AffMat3_Rotate_Rodriguez(T A[16],
-                              T dx, T dy, T dz);
 
 template <typename T>
 void MatVec4(T v[4],
-             const T A[16],
-             const T x[4]);
+    const T A[16],
+    const T x[4]);
 
 template <typename T>
-void Vec3_AffMat3Vec3Projection(T y0[3],
-                           const T a[16],
-                           const T x0[3]);
+void MatMat4(
+    T* C,
+    const T* A,
+    const T* B);
 
+
+
+template <typename REAL>
+void AffMat3_Identity(
+    REAL A[16]);
   
+template <typename REAL>
+void AffMat3_Scale(
+    REAL A[16],
+    REAL s);
+  
+template <typename REAL>
+void AffMat3_Translation(REAL A[16],
+                         REAL dx, REAL dy, REAL dz);
+
+template <typename T>
+void AffMat3_RotationRodriguez(T A[16],
+                              T dx, T dy, T dz);
+
+template <typename T>
+void Vec3_AffMat3Vec3Projection(
+    T y0[3],
+    const T a[16],
+    const T x0[3]);
+
+/**
+ * @brief multiply rotation affine matrix from left to an affine matrix in 3D
+ * @details the ritation is parmeterized with a rodriguez angle
+ */
+template <typename REAL>
+void Rotate_AffMat3_Rodriguez(
+    REAL A[16],
+    const REAL v[3]);
+
+/**
+ * @brief multiply translation affine matrix from left to an affine matrix in 3D
+ */
+template <typename REAL>
+void Translate_AffMat3(
+    REAL A[16],
+    const REAL v[3]);
+
+
 
 // --------------------------------
   

@@ -59,10 +59,6 @@ dfm2::CVec3d dfm2::MatVec(const CMat3d& m, const CVec3d& vec0)
   CVec3d vec1;
   dfm2::MatVec3(vec1.p, m.mat,vec0.p);
   return vec1;
-    //  const double* mat = m.mat;
-    //  vec1.p[0] = mat[0]*vec0.x + mat[1]*vec0.y + mat[2]*vec0.z;
-    //  vec1.p[1] = mat[3]*vec0.x + mat[4]*vec0.y + mat[5]*vec0.z;
-    //  vec1.p[2] = mat[6]*vec0.x + mat[7]*vec0.y + mat[8]*vec0.z;
 }
 
 dfm2::CVec3d dfm2::MatVecTrans
@@ -70,10 +66,6 @@ dfm2::CVec3d dfm2::MatVecTrans
 {
   CVec3d vec1;
   MatTransVec3(vec1.p, m.mat,vec0.p);
-//  const double* mat = m.mat;
-//  vec1.x = mat[0]*vec0.x + mat[3]*vec0.y + mat[6]*vec0.z;
-//  vec1.y = mat[1]*vec0.x + mat[4]*vec0.y + mat[7]*vec0.z;
-//  vec1.z = mat[2]*vec0.x + mat[5]*vec0.y + mat[8]*vec0.z;
   return vec1;
 }
 

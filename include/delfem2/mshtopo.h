@@ -349,7 +349,7 @@ void Boundary_MeshMix(
     const std::vector<int>& aElemFaceRel);
 
 /**
- * @brief make point surrounding poitn
+ * @brief make point surrounding point
  * @details psup -> edge bidirectional
  * edge unidir (ip0<ip1)
  * line (array of 2)
@@ -364,8 +364,11 @@ void JArrayPointSurPoint_MeshOneRingNeighborhood(
     unsigned int nnoel,
     unsigned int nPoint);
 
-
-void JArrayPointSurPoint_MeshOneRingNeighborhood(
+/**
+ * @brief compute indexes of points surrounding a point as a jagged array
+ * @param nPoEl number of nodes in an element 
+ */
+void JArray_PSuP_MeshElem(
     std::vector<unsigned int>& psup_ind,
     std::vector<unsigned int>& psup,
     //

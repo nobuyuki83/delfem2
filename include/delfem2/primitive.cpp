@@ -462,21 +462,21 @@ void dfm2::MeshTri3D_CylinderClosed
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  double r, double l,
- int nlo, int nl)
+ int nr, int nl)
 {
   int nla = nl+2;
   aXYZ.clear();
   aTri.clear();
-  if (nla<=1||nlo<=2){ return; }
+  if (nla<=1||nr<=2){ return; }
   const double pi = 3.1415926535;
   double dl = l/nl;
-  double dr = 2.0*pi/nlo;
-  aXYZ.reserve((nlo*(nla-1)+2)*3);
+  double dr = 2.0*pi/nr;
+  aXYZ.reserve((nr*(nla-1)+2)*3);
   for (int ila = 0; ila<nla+1; ila++){
     double y0 = -0.5*l+dl*(ila-1);
     if (ila==0  ){ y0 = -0.5*l; }
     if (ila==nla){ y0 = +0.5*l; }
-    for (int ilo = 0; ilo<nlo; ilo++){
+    for (int ilo = 0; ilo<nr; ilo++){
       double x0 = r*cos(dr*ilo);
       double z0 = r*sin(dr*ilo);
       if (ila==0){
@@ -499,19 +499,19 @@ void dfm2::MeshTri3D_CylinderClosed
     }
   }
   // ------------------------------------
-  int ntri = nlo*(nla-1)*2+nlo*2;
+  int ntri = nr*(nla-1)*2+nr*2;
   aTri.reserve(ntri*3);
-  for (int ilo = 0; ilo<nlo; ilo++){
+  for (int ilo = 0; ilo<nr; ilo++){
     aTri.push_back(0);
-    aTri.push_back((ilo+0)%nlo+1);
-    aTri.push_back((ilo+1)%nlo+1);
+    aTri.push_back((ilo+0)%nr+1);
+    aTri.push_back((ilo+1)%nr+1);
   }
   for (int ila = 0; ila<nla-2; ila++){
-    for (int ilo = 0; ilo<nlo; ilo++){
-      int i1 = (ila+0)*nlo+1+(ilo+0)%nlo;
-      int i2 = (ila+0)*nlo+1+(ilo+1)%nlo;
-      int i3 = (ila+1)*nlo+1+(ilo+1)%nlo;
-      int i4 = (ila+1)*nlo+1+(ilo+0)%nlo;
+    for (int ilo = 0; ilo<nr; ilo++){
+      int i1 = (ila+0)*nr+1+(ilo+0)%nr;
+      int i2 = (ila+0)*nr+1+(ilo+1)%nr;
+      int i3 = (ila+1)*nr+1+(ilo+1)%nr;
+      int i4 = (ila+1)*nr+1+(ilo+0)%nr;
       aTri.push_back(i3);
       aTri.push_back(i2);
       aTri.push_back(i1);
@@ -520,10 +520,10 @@ void dfm2::MeshTri3D_CylinderClosed
       aTri.push_back(i1);
     }
   }
-  for (int ilo = 0; ilo<nlo; ilo++){
-    aTri.push_back(nlo*(nla-1)+1);
-    aTri.push_back((nla-2)*nlo+1+(ilo+1)%nlo);
-    aTri.push_back((nla-2)*nlo+1+(ilo+0)%nlo);
+  for (int ilo = 0; ilo<nr; ilo++){
+    aTri.push_back(nr*(nla-1)+1);
+    aTri.push_back((nla-2)*nr+1+(ilo+1)%nr);
+    aTri.push_back((nla-2)*nr+1+(ilo+0)%nr);
   }
   /*
    for(int itri=0;itri<aTri.size()/3;itri++){

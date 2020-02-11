@@ -659,6 +659,22 @@ void dfm2::MatVec4
 template void dfm2::MatVec4(float v[4], const float A[16], const float x[4]);
 template void dfm2::MatVec4(double v[4], const double A[16], const double x[4]);
   
+
+template <typename T>
+void dfm2::MatMat4
+(T* C,
+ const T* A, const T* B)
+{
+  for(int i=0;i<4;i++){
+    for(int j=0;j<4;j++){
+      C[i*4+j] = A[i*4+0]*B[0*4+j] + A[i*4+1]*B[1*4+j] + A[i*4+2]*B[2*4+j] + A[i*4+3]*B[3*4+j];
+    }
+  }
+}
+template void dfm2::MatMat4(float* C, const float* A, const float* B);
+template void dfm2::MatMat4(double* C, const double* A, const double* B);
+
+  
 // ---------------------------
 
 template <typename T>
@@ -700,7 +716,7 @@ void dfm2::AffMat3_Translation
 (T A[16],
  T dx, T dy, T dz)
 {
-  for(int i=0;i<16;++i){ A[i] = 0.0; }
+  for(auto i=0;i<16;++i){ A[i] = 0.0; }
   for(int i=0;i<4;++i){ A[i*4+i] = 1.0; }
   A[0*4+3] = dx;
   A[1*4+3] = dy;
@@ -712,7 +728,7 @@ template void dfm2::AffMat3_Translation(double A[16],  double dx, double dy, dou
 // --------------------------
 
 template <typename T>
-void dfm2::AffMat3_Rotate_Rodriguez
+void dfm2::AffMat3_RotationRodriguez
 (T A[16],
  T dx, T dy, T dz)
 {
@@ -740,10 +756,55 @@ void dfm2::AffMat3_Rotate_Rodriguez
   A[3*4+2] = 0.0;
   A[3*4+3] = 1.0;
 }
-template void dfm2::AffMat3_Rotate_Rodriguez(float A[16],
+template void dfm2::AffMat3_RotationRodriguez(float A[16],
                                              float dx, float dy, float dz);
-template void dfm2::AffMat3_Rotate_Rodriguez(double A[16],
+template void dfm2::AffMat3_RotationRodriguez(double A[16],
                                              double dx, double dy, double dz);
 
+// ------------------------------------------------
 
+template <typename REAL>
+void dfm2::AffMat3_Identity(
+    REAL A[16])
+{
+  for(int i=0;i<16;++i){ A[i] = 0; }
+  A[0*4+0] = 1;
+  A[1*4+1] = 1;
+  A[2*4+2] = 1;
+  A[3*4+3] = 1;
+}
+template void dfm2::AffMat3_Identity(float A[16]);
+template void dfm2::AffMat3_Identity(double A[16]);
+
+  
+// ------------------------------------------------
+  
+template <typename REAL>
+void dfm2::Rotate_AffMat3_Rodriguez(
+    REAL A[16],
+    const REAL V[3])
+{
+  REAL B[16];
+  AffMat3_RotationRodriguez(B,
+                            V[0],V[1],V[2]);
+  REAL C[16];
+  MatMat4(C,B,A);
+  
+  for(int i=0;i<16;++i){ A[i] = C[i]; }
+}
+template void dfm2::Rotate_AffMat3_Rodriguez(float A[16], const float V[3]);
+template void dfm2::Rotate_AffMat3_Rodriguez(double A[16], const double V[3]);
+  
+  
+template <typename REAL>
+void dfm2::Translate_AffMat3(
+    REAL A[16],
+    const REAL V[3])
+{
+  A[0*4+3] += V[0];
+  A[1*4+3] += V[1];
+  A[2*4+3] += V[2];
+}
+template void dfm2::Translate_AffMat3(float A[16], const float V[3]);
+template void dfm2::Translate_AffMat3(double A[16], const double V[3]);
 

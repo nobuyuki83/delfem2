@@ -14,16 +14,65 @@
 typedef std::complex<double> COMPLEX;
 namespace dfm2 = delfem2;
 
+
+static double MatNorm_Assym(
+                     const double* V0,
+                     unsigned int n0,
+                     unsigned int m0,
+                     const double* V1)
+{
+  double s = 0.0;
+  for(unsigned int i=0;i<n0;++i){
+    for(unsigned int j=0;j<m0;++j){
+      double v0 = V0[i*m0+j];
+      double v1 = V1[j*n0+i];
+      s += (v0-v1)*(v0-v1);
+    }
+  }
+  return s;
+}
+
+static double MatNorm(
+               const double* V,
+               unsigned int n,
+               unsigned int m)
+{
+  double s = 0.0;
+  for(unsigned int i=0;i<n;++i){
+    for(unsigned int j=0;j<m;++j){
+      double v = V[i*m+j];
+      s += v*v;
+    }
+  }
+  return s;
+}
+
+static double MatNorm_Assym(
+                     const double* V,
+                     unsigned int n)
+{
+  double s = 0.0;
+  for(unsigned int i=0;i<n;++i){
+    for(unsigned int j=0;j<n;++j){
+      double v0 = V[i*n+j];
+      double v1 = V[j*n+i];
+      s += (v0-v1)*(v0-v1);
+    }
+  }
+  return s;
+}
+
+
 // -------------------------------------------------------
 
 // Calc Matrix Vector Product
 // {y} = alpha*[A]{x} + beta*{y}
 template <typename T>
 void dfm2::CMatrixSparse<T>::MatVec
-(T alpha,
+(T* y,
+ T alpha,
  const T* x,
- T beta,
- T* y) const
+ T beta) const
 {
 	const unsigned int blksize = len_col*len_col;
 	if( len_col == 1 && len_row == 1 ){
@@ -163,9 +212,9 @@ void dfm2::CMatrixSparse<T>::MatVec
 		}
 	}
 }
-template void delfem2::CMatrixSparse<float>::MatVec(float alpha, const float *x, float beta, float *y) const;
-template void delfem2::CMatrixSparse<double>::MatVec(double alpha, const double *x, double beta, double *y) const;
-template void delfem2::CMatrixSparse<COMPLEX>::MatVec(COMPLEX alpha, const COMPLEX *x, COMPLEX beta, COMPLEX *y) const;
+template void delfem2::CMatrixSparse<float>::MatVec(float *y, float alpha, const float *x, float beta) const;
+template void delfem2::CMatrixSparse<double>::MatVec(double *y, double alpha, const double *x, double beta) const;
+template void delfem2::CMatrixSparse<COMPLEX>::MatVec(COMPLEX *y, COMPLEX alpha, const COMPLEX *x, COMPLEX beta) const;
 
 // ----------------------------------
 
@@ -504,550 +553,6 @@ void dfm2::MatSparse_ScaleBlkLen_LeftRight
       }
     }
   }
-}
-
-// ----------------------------------------------------------------------
-
-template <typename T>
-T dfm2::Dot
-(const std::vector<T>& r_vec,
- const std::vector<T>& u_vec)
-{
-  const std::size_t n = r_vec.size();
-  assert( u_vec.size() == n );
-  T r = 0.0;
-  for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
-  return r;
-}
-template float dfm2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
-template double dfm2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
-template COMPLEX dfm2::Dot(const std::vector<COMPLEX>& r_vec, const std::vector<COMPLEX>& u_vec);
-
-// -----------------------------
-
-template<typename T>
-T dfm2::Dot
- (const T* va,
-  const T* vb,
-  unsigned int n)
-{
-  T r = 0.0;
-  for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
-  return r;
-}
-template float dfm2::Dot(const float* va, const float* vb, unsigned int n);
-template double dfm2::Dot(const double* va, const double* vb, unsigned int n);
-template COMPLEX dfm2::Dot(const COMPLEX* va, const COMPLEX* vb, unsigned int n);
-
-
-// -------------------------------------------------
-
-namespace delfem2 {
-
-// {y} = {y} + a * {x}
-template<>
-void AXPY
-    (double a,
-     const std::vector<double> &x,
-     std::vector<double> &y) {
-  const std::size_t n = x.size();
-  assert(y.size() == n);
-  for (unsigned int i = 0; i < n; i++) { y[i] += a * x[i]; }
-}
-
-// {y} = {y} + a * {x}
-template<>
-void AXPY
-    (COMPLEX a,
-     const std::vector<COMPLEX> &x,
-     std::vector<COMPLEX> &y) {
-  const std::size_t n = x.size();
-  assert(y.size() == n);
-  for (unsigned int i = 0; i < n; i++) { y[i] += a * x[i]; }
-}
-
-}
-
-// -----------------------------------------------------------
-
-namespace delfem2 {
-
-// {y} = {y} + a * {x}
-template <>
-void AXPY
-    (double a,
-     const double* x,
-     double* y,
-     unsigned int n)
-{
-  for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
-}
-
-template <>
-void AXPY
-    (COMPLEX a,
-     const COMPLEX* x,
-     COMPLEX* y,
-     unsigned int n)
-{
-  for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
-}
-
-}
-
-
-// -----------------------------------------------------------
-
-
-COMPLEX dfm2::MultSumX
-(const COMPLEX* va,
- const COMPLEX* vb,
- unsigned int n)
-{
-  COMPLEX s(0,0);
-  for(unsigned int i=0;i<n;++i){
-    const COMPLEX& a = va[i];
-    const COMPLEX& b = vb[i];
-    s += a*b;
-  }
-  return s;
-}
-
-// ---------------------------------------------------------------
-
-namespace delfem2 {
-
-template<>
-void XPlusAY
-(std::vector<double> &X,
- const int nDoF,
- const std::vector<int> &aBCFlag,
- double alpha,
- const std::vector<double> &Y)
-{
-  for (int i = 0; i < nDoF; ++i) {
-    if (aBCFlag[i] != 0) continue;
-    X[i] += alpha * Y[i];
-  }
-}
-
-template<>
-void XPlusAY
-(std::vector<std::complex<double> > &X,
- const int nDoF,
- const std::vector<int> &aBCFlag,
- std::complex<double> alpha,
- const std::vector<std::complex<double> > &Y)
-{
-  for (int i = 0; i < nDoF; ++i) {
-    if (aBCFlag[i] != 0) continue;
-    X[i] += alpha * Y[i];
-  }
-}
-
-} // end namespace delfem2
-
-// -------------------------------------
-
-namespace delfem2 {
-
-template<>
-void setRHS_Zero
-(std::vector<double> &vec_b,
- const std::vector<int> &aBCFlag,
- int iflag_nonzero)
-{
-  const std::size_t ndof = vec_b.size();
-  for (unsigned int i = 0; i < ndof; ++i) {
-    if (aBCFlag[i] == iflag_nonzero) continue;
-    vec_b[i] = 0;
-  }
-}
-
-template<>
-void setRHS_Zero
-(std::vector<COMPLEX> &vec_b,
- const std::vector<int> &aBCFlag,
- int iflag_nonzero)
-{
-  const int ndof = (int) vec_b.size();
-  for (int i = 0; i < ndof; ++i) {
-    if (aBCFlag[i] == iflag_nonzero) continue;
-    vec_b[i] = 0;
-  }
-}
-
-}
-
-// -------------------------------------------------
-
-namespace delfem2 {
-
-template<>
-std::vector<double>
-Solve_CG
-(std::vector<double> &r_vec,
- std::vector<double> &x_vec,
- double conv_ratio_tol,
- unsigned int max_iteration,
- const dfm2::CMatrixSparse<double> &mat)
-{
-  assert(!mat.valDia.empty());
-  assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
-  assert(r_vec.size() == ndof);
-  std::vector<double> aConv;
-  x_vec.assign(ndof, 0.0);   // {x} = 0
-  double sqnorm_res = dfm2::Dot(r_vec, r_vec);
-  if (sqnorm_res < 1.0e-30) { return aConv; }
-  double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
-  std::vector<double> Ap_vec(ndof);
-  std::vector<double> p_vec = r_vec;  // {p} = {r}  (Set Initial Serch Direction)
-  for (unsigned int iitr = 0; iitr < max_iteration; iitr++) {
-    double alpha;
-    {  // alpha = (r,r) / (p,Ap)
-      mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data());
-      const double pAp = dfm2::Dot(p_vec, Ap_vec);
-      alpha = sqnorm_res / pAp;
-    }
-    AXPY(alpha, p_vec, x_vec);    // {x} = +alpha*{ p} + {x} (update x)
-    AXPY(-alpha, Ap_vec, r_vec);  // {r} = -alpha*{Ap} + {r}
-    const double sqnorm_res_new = dfm2::Dot(r_vec, r_vec);
-    double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res_ini);
-    aConv.push_back(conv_ratio);
-    if (conv_ratio < conv_ratio_tol) { return aConv; }
-    {
-      const double beta = sqnorm_res_new / sqnorm_res;      // beta = (r1,r1) / (r0,r0)
-      sqnorm_res = sqnorm_res_new;
-      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = r_vec[i] + beta * p_vec[i]; } // {p} = {r} + beta*{p}
-    }
-  }
-  return aConv;
-}
-
-
-template<>
-std::vector<double>
-Solve_CG
-(std::vector<COMPLEX> &r_vec,
- std::vector<COMPLEX> &x_vec,
- double conv_ratio_tol,
- unsigned int max_iteration,
- const dfm2::CMatrixSparse<COMPLEX> &mat)
-{
-  assert(!mat.valDia.empty());
-  assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
-  assert(r_vec.size() == ndof);
-  std::vector<double> aConv;
-  x_vec.assign(ndof, 0.0);   // {x} = 0
-  double sqnorm_res = dfm2::Dot(r_vec, r_vec).real();
-  if (sqnorm_res < 1.0e-30) { return aConv; }
-  const double inv_sqnorm_res_ini = 1.0 / sqnorm_res;
-  std::vector<COMPLEX> Ap_vec(ndof);
-  std::vector<COMPLEX> p_vec = r_vec;// {p} = {r} (Set Initial Serch Direction)
-  for (unsigned int iitr = 0; iitr < max_iteration; iitr++) {
-    double alpha;
-    {  // alpha = (r,r) / (p,Ap)
-      mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data());
-      COMPLEX C_pAp = dfm2::Dot(p_vec, Ap_vec);
-      assert(fabs(C_pAp.imag()) < 1.0e-3);
-      const double pAp = C_pAp.real();
-      alpha = sqnorm_res / pAp;
-    }
-    AXPY(COMPLEX(+alpha), p_vec, x_vec);    // {x} = +alpha*{ p} + {x} (updatex)
-    AXPY(COMPLEX(-alpha), Ap_vec, r_vec);  // {r} = -alpha*{Ap} + {r}
-    double sqnorm_res_new = dfm2::Dot(r_vec, r_vec).real();
-    const double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res_ini);
-    aConv.push_back(conv_ratio);
-    if (conv_ratio < conv_ratio_tol) { return aConv; }
-    { // update p
-      const double beta = sqnorm_res_new / sqnorm_res;  // beta = (r1,r1) / (r0,r0)
-      sqnorm_res = sqnorm_res_new;
-      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = r_vec[i] + beta * p_vec[i]; } // {p} = {r} + beta*{p}
-    }
-  }
-  return aConv;
-}
-
-}
-
-// -------------------------------------------------------------------------
-
-namespace delfem2 {
-
-template<>
-std::vector<double>
-Solve_BiCGSTAB
-(std::vector<COMPLEX> &r_vec,
- std::vector<COMPLEX> &x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const dfm2::CMatrixSparse<COMPLEX> &mat)
-{
-  assert(!mat.valDia.empty());
-  assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
-  assert(r_vec.size() == ndof);
-
-  std::vector<double> aConv;
-  double sq_inv_norm_res_ini;
-  {
-    const double sq_norm_res_ini = dfm2::Dot(r_vec, r_vec).real();
-    if (sq_norm_res_ini < 1.0e-30) { return aConv; }
-    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
-  }
-
-  std::vector<COMPLEX> s_vec(ndof);
-  std::vector<COMPLEX> As_vec(ndof);
-  std::vector<COMPLEX> p_vec(ndof);
-  std::vector<COMPLEX> Ap_vec(ndof);
-
-  x_vec.assign(ndof, 0.0);
-
-  const std::vector<COMPLEX> r0_vec = r_vec;   // {r2} = {r}
-  p_vec = r_vec;    // {p} = {r}
-  COMPLEX r_r0 = dfm2::Dot(r_vec, r0_vec);   // calc ({r},{r2})
-
-  for (unsigned int iitr = 0; iitr < max_niter; iitr++) {
-    mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data()); // calc {Ap} = [A]*{p}
-    const COMPLEX alpha = r_r0 / dfm2::Dot(Ap_vec, r0_vec); // alhpa = ({r},{r2}) / ({Ap},{r2})
-    // {s} = {r} - alpha*{Ap}
-    s_vec = r_vec;
-    AXPY(-alpha, Ap_vec, s_vec);
-    // calc {As} = [A]*{s}
-    mat.MatVec(1.0, s_vec.data(), 0.0, As_vec.data());
-    // calc omega
-    const COMPLEX omega = dfm2::Dot(s_vec, As_vec) / dfm2::Dot(As_vec, As_vec).real();  // omega=({As},{s})/({As},{As})
-    // ix += alpha*{p} + omega*{s} (update solution)
-    AXPY(alpha, p_vec, x_vec);
-    AXPY(omega, s_vec, x_vec);
-    // {r} = {s} - omega*{As} (update residual)
-    r_vec = s_vec;
-    AXPY(-omega, As_vec, r_vec);
-    {
-      const double sq_norm_res = dfm2::Dot(r_vec, r_vec).real();
-      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
-      aConv.push_back(conv_ratio);
-      if (conv_ratio < conv_ratio_tol) { return aConv; }
-    }
-    { // compute beta
-      const COMPLEX tmp1 = dfm2::Dot(r_vec, r0_vec);
-      const COMPLEX beta = (tmp1 * alpha) / (r_r0 * omega); // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
-      r_r0 = tmp1;
-      // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
-      for (unsigned int i = 0; i < ndof; ++i) { p_vec[i] *= beta; }
-      AXPY(COMPLEX(1.0), r_vec, p_vec);
-      AXPY(-beta * omega, Ap_vec, p_vec);
-    }
-  }
-  return aConv;
-}
-
-
-template<>
-std::vector<double>
-Solve_BiCGSTAB
-(std::vector<double> &r_vec,
- std::vector<double> &x_vec,
- double conv_ratio_tol,
- unsigned int max_niter,
- const dfm2::CMatrixSparse<double> &mat)
-{
-  assert(!mat.valDia.empty());
-  assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
-  assert(r_vec.size() == ndof);
-
-  std::vector<double> aConv;
-  double sq_inv_norm_res_ini;
-  {
-    const double sq_norm_res_ini = dfm2::Dot(r_vec, r_vec);
-    if (sq_norm_res_ini < 1.0e-30) { return aConv; }
-    sq_inv_norm_res_ini = 1.0 / sq_norm_res_ini;
-  }
-
-  std::vector<double> s_vec(ndof);
-  std::vector<double> As_vec(ndof);
-  std::vector<double> p_vec(ndof);
-  std::vector<double> Ap_vec(ndof);
-  std::vector<double> r2_vec(ndof);
-
-  x_vec.assign(ndof, 0.0);
-
-  r2_vec = r_vec;   // {r2} = {r}
-  p_vec = r_vec;    // {p} = {r}
-  double r_r2 = dfm2::Dot(r_vec, r2_vec);   // calc ({r},{r2})
-
-  for (unsigned int iitr = 0; iitr < max_niter; iitr++) {
-    mat.MatVec(1.0, p_vec.data(), 0.0, Ap_vec.data()); // calc {Ap} = [A]*{p}
-    double alpha;
-    { // alhpa = ({r},{r2}) / ({Ap},{r2})
-      const double denominator = dfm2::Dot(Ap_vec, r2_vec);
-      alpha = r_r2 / denominator;
-    }
-    // {s} = {r} - alpha*{Ap}
-    s_vec = r_vec;
-    AXPY(-alpha, Ap_vec, s_vec);
-    // calc {As} = [A]*{s}
-    mat.MatVec(1.0, s_vec.data(), 0.0, As_vec.data());
-    // calc omega
-    double omega;
-    { // omega = ({As},{s}) / ({As},{As})
-      const double denominator = dfm2::Dot(As_vec, As_vec);
-      const double numerator = dfm2::Dot(As_vec, s_vec);
-      omega = numerator / denominator;
-    }
-    // ix += alpha*{p} + omega*{s} (update solution)
-    AXPY(alpha, p_vec, x_vec);
-    AXPY(omega, s_vec, x_vec);
-    // {r} = {s} - omega*{As} (update residual)
-    r_vec = s_vec;
-    AXPY(-omega, As_vec, r_vec);
-    {
-      const double sq_norm_res = dfm2::Dot(r_vec, r_vec);
-      const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
-      aConv.push_back(conv_ratio);
-      if (conv_ratio < conv_ratio_tol) { return aConv; }
-    }
-    { // compute beta
-      const double tmp1 = dfm2::Dot(r_vec, r2_vec);
-      const double beta = (tmp1 * alpha) / (r_r2 * omega);     // beta = ({r},{r2})^new/({r},{r2})^old * alpha / omega
-      r_r2 = tmp1;
-      // {p} = {r} + beta*({p}-omega*[A]*{p})  (update p_vector)
-      for (unsigned int i = 0; i < ndof; ++i) { p_vec[i] *= beta; }
-      AXPY(1.0, r_vec, p_vec);
-      AXPY(-beta * omega, Ap_vec, p_vec);
-    }
-  }
-  return aConv;
-}
-
-}
-
-// ----------------------------------------------------------
-
-
-void dfm2::XPlusAYBZ
-(std::vector<double>& X,
- const int nDoF,
- const std::vector<int>& aBCFlag,
- double alpha,
- const std::vector<double>& Y,
- double beta,
- const std::vector<double>& Z)
-{
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i] + beta*Z[i];
-  }
-}
-
-void dfm2::XPlusAYBZCW
-(std::vector<double>& X,
- const int nDoF,
- const std::vector<int>& aBCFlag,
- double alpha,
- const std::vector<double>& Y,
- double beta,
- const std::vector<double>& Z,
- double gamma,
- const std::vector<double>& W)
-{
-  for(int i=0;i<nDoF;++i ){
-    if( aBCFlag[i] !=0 ) continue;
-    X[i] += alpha*Y[i] + beta*Z[i] + gamma*W[i];
-  }
-}
-
-// -------------------------------------------------------------------
-
-void dfm2::ScaleX(double* p0, int n, double s)
-{
-  for(int i=0;i<n;++i){ p0[i] *= s; }
-}
-
-void dfm2::NormalizeX(
-    double* p0,
-    unsigned int n)
-{
-  const double ss = dfm2::Dot(p0,p0,n);
-  ScaleX(p0,n,1.0/sqrt(ss));
-}
-
-void dfm2::OrthogonalizeToUnitVectorX(
-    double* p1,
-    const double* p0,
-    unsigned int n)
-{
-  double d = dfm2::Dot(p0, p1, n);
-  for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
-}
-
-
-void dfm2::setRHS_MasterSlave(
-    double* vec_b,
-    int nDoF,
-    const int* aMSFlag)
-{
-  for(int idof=0;idof<nDoF;++idof){
-    int jdof = aMSFlag[idof];
-    if( jdof == -1 ) continue;
-    vec_b[jdof] += vec_b[idof];
-    vec_b[idof] = 0;
-  }
-}
-
-
-double MatNorm_Assym(
-    const double* V0,
-    unsigned int n0,
-    unsigned int m0,
-    const double* V1)
-{
-  double s = 0.0;
-  for(unsigned int i=0;i<n0;++i){
-    for(unsigned int j=0;j<m0;++j){
-      double v0 = V0[i*m0+j];
-      double v1 = V1[j*n0+i];
-      s += (v0-v1)*(v0-v1);
-    }
-  }
-  return s;
-}
-
-double MatNorm(
-    const double* V,
-    unsigned int n,
-    unsigned int m)
-{
-  double s = 0.0;
-  for(unsigned int i=0;i<n;++i){
-    for(unsigned int j=0;j<m;++j){
-      double v = V[i*m+j];
-      s += v*v;
-    }
-  }
-  return s;
-}
-
-double MatNorm_Assym(
-    const double* V,
-    unsigned int n)
-{
-  double s = 0.0;
-  for(unsigned int i=0;i<n;++i){
-    for(unsigned int j=0;j<n;++j){
-      double v0 = V[i*n+j];
-      double v1 = V[j*n+i];
-      s += (v0-v1)*(v0-v1);
-    }
-  }
-  return s;
 }
 
 double dfm2::CheckSymmetry(
