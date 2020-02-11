@@ -45,6 +45,7 @@ set(INPUT_SRC
     ${DELFEM2_INC}/color.h              ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/slice.h              ${DELFEM2_INC}/slice.cpp
     ${DELFEM2_INC}/bvh.h                ${DELFEM2_INC}/bvh.cpp
+    ${DELFEM2_INC}/vecxitrsol.h         ${DELFEM2_INC}/vecxitrsol.cpp
     ${DELFEM2_INC}/bv.h
 
     ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp

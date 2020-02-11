@@ -85,8 +85,9 @@ public:
   /**
    * @brief Matrix vector product as: {y} = alpha * [A]{x} + beta * {y}
    */
-  void MatVec(T alpha, const T *x, T beta,
-              T *y) const;
+  void MatVec(T *y,
+              T alpha, const T *x,
+              T beta) const;
 
   void SetFixedBC_Dia(const int *pBCFlag);
 
@@ -95,10 +96,10 @@ public:
   void SetFixedBC_Row(const int *pBCFlag);
 
   /**
- * @brief if pBCFlag is *not* 0 for a dof, set all the off-diagonal componenet to zero and set diagonal to one.
- * @details pBCFlag need to have memory at least larger than nlen*nblk
- * This matrix need to be a squared matrix
- */
+   * @brief if pBCFlag is *not* 0 for a dof, set all the off-diagonal componenet to zero and set diagonal to one.
+   * @details pBCFlag need to have memory at least larger than nlen*nblk
+   * This matrix need to be a squared matrix
+   */
   void SetFixedBC(const int *pBCFlag){
     this->SetFixedBC_Dia(pBCFlag);
     this->SetFixedBC_Row(pBCFlag);
@@ -120,8 +121,8 @@ public:
 
   /**
    * @brief add vector to diagonal component
-   * @param[in] lm a lumped mass vector with size of nblk
-   * @param[in] scale scaling factor for the lumped mass (typically 1/dt^2).
+   * @param lm        (in) a lumped mass vector with size of nblk
+   * @param scale (in) scaling factor for the lumped mass (typically 1/dt^2).
    * @details the matrix need to be square matrix
    */
   void AddDia_LumpedMass(const T *lm, double scale) {
@@ -150,17 +151,6 @@ public:
 
 double CheckSymmetry(const delfem2::CMatrixSparse<double> &mat);
   
-template<typename T>
-T Dot(const std::vector<T> &r_vec,
-      const std::vector<T> &u_vec);
-
-template<typename T>
-T Dot(const T *va,
-       const T *vb,
-       unsigned int n);
-
-
-
 void SetMasterSlave(delfem2::CMatrixSparse<double> &mat, const int *aMSFlag);
 
 void MatSparse_ScaleBlk_LeftRight(delfem2::CMatrixSparse<double> &mat,
@@ -168,82 +158,6 @@ void MatSparse_ScaleBlk_LeftRight(delfem2::CMatrixSparse<double> &mat,
 
 void MatSparse_ScaleBlkLen_LeftRight(delfem2::CMatrixSparse<double> &mat,
                                      const double *scale);
-
-
-template<typename T>
-void XPlusAY(std::vector<T> &X,
-             const int nDoF,
-             const std::vector<int> &aBCFlag,
-             T alpha,
-             const std::vector<T> &Y);
-
-template<typename T>
-void AXPY(T a,
-          const std::vector<T> &x,
-          std::vector<T> &y);
-
-template<typename T>
-void AXPY(T a,
-          const T *x,
-          T *y,
-          unsigned int n);
-
-template<typename T>
-void setRHS_Zero(std::vector<T> &vec_b,
-                 const std::vector<int> &aBCFlag,
-                 int iflag_nonzero);
-
-
-std::complex<double> MultSumX(const std::complex<double> *va,
-                              const std::complex<double> *vb,
-                              unsigned int n);
-
-void XPlusAYBZ(std::vector<double> &X,
-               const int nDoF,
-               const std::vector<int> &aBCFlag,
-               double alpha,
-               const std::vector<double> &Y,
-               double beta,
-               const std::vector<double> &Z);
-
-void XPlusAYBZCW(std::vector<double> &X,
-                 const int nDoF,
-                 const std::vector<int> &aBCFlag,
-                 double alpha,
-                 const std::vector<double> &Y,
-                 double beta,
-                 const std::vector<double> &Z,
-                 double gamma,
-                 const std::vector<double> &W);
-
-void ScaleX(double *p0, int n, double s);
-
-void NormalizeX(double *p0, unsigned int n);
-
-void OrthogonalizeToUnitVectorX(double *p1,
-                                const double *p0, unsigned int n);
-
-// set boundary condition
-
-void setRHS_MasterSlave(double *vec_b,
-                        int nDoF,
-                        const int *aMSFlag);
-
-template<typename T>
-std::vector<double>
-Solve_CG(std::vector<T> &r_vec,
-         std::vector<T> &u_vec,
-         double conv_ratio,
-         unsigned int iteration,
-         const delfem2::CMatrixSparse<T> &mat);
-
-template<typename T>
-std::vector<double>
-Solve_BiCGSTAB(std::vector<T> &r_vec,
-               std::vector<T> &x_vec,
-               double conv_ratio,
-               unsigned int num_iter,
-               const delfem2::CMatrixSparse<T> &mat);
 
 } // delfem2
   

@@ -256,11 +256,12 @@ std::tuple<py::array_t<unsigned int>, py::array_t<unsigned int>>
 PyJArray_MeshPsup(const py::array_t<unsigned int>& elm, int npoint)
 {
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
-                                                    elm.data(), elm.shape()[0], elm.shape()[1], npoint);
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                             elm.data(), elm.shape()[0], elm.shape()[1],
+                             npoint);
   py::array_t<unsigned int> np_psup_ind((pybind11::size_t)psup_ind.size(), psup_ind.data());
   py::array_t<unsigned int> np_psup((pybind11::size_t)psup.size(), psup.data());
-  return std::forward_as_tuple(np_psup_ind, np_psup);
+  return std::make_tuple(np_psup_ind, np_psup);
 }
 
 void PyJArray_Sort

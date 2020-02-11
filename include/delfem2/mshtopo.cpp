@@ -665,7 +665,7 @@ void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
   psup_ind[0] = 0;
 }
 
-void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood
+void dfm2::JArray_PSuP_MeshElem
 (std::vector<unsigned int>& psup_ind,
  std::vector<unsigned int>& psup,
  //

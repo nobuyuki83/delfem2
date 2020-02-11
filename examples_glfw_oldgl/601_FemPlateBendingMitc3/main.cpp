@@ -5,6 +5,7 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/vec2.h"
+#include "delfem2/vecxitrsol.h"
 //
 #include "delfem2/ilu_mats.h"
 #include "delfem2/dtri_v2.h"
@@ -78,7 +79,7 @@ void InitializeProblem_PlateBendingMITC3()
   }
   //
   std::vector<unsigned int> psup_ind, psup;
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+  dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                                     aTri.data(), aTri.size()/3, 3,
                                                     (int)aXY0.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);

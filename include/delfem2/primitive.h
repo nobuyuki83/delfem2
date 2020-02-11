@@ -38,12 +38,17 @@ void MeshTri3D_CylinderOpen(
     int nr, int nl);
 
 /**
+ * @brief makae a mesh of 3D cylinder with closed ends
  * @details y axis is the axis of cylinder.
  * The first poit and the last points are at the center of the caps
+ * @param nr number of division for circumference
+ * @param nl number of division in axis direction
  */
-void MeshTri3D_CylinderClosed(std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
-                              double r, double l,
-                              int nlo, int nl);
+void MeshTri3D_CylinderClosed(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    double r, double l,
+    int nr, int nl);
 
 template <typename T>
 void MeshTri3D_Cube(

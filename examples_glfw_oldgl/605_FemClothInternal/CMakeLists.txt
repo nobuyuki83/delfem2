@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/emat.h                    ${DELFEM2_INC}/emat.cpp
   ${DELFEM2_INC}/mats.h                    ${DELFEM2_INC}/mats.cpp
+  ${DELFEM2_INC}/vecxitrsol.h              ${DELFEM2_INC}/vecxitrsol.cpp
           
   ${DELFEM2_INC}/ilu_mats.h                ${DELFEM2_INC}/ilu_mats.cpp
   ${DELFEM2_INC}/fem_emats.h               ${DELFEM2_INC}/fem_emats.cpp
