@@ -1044,7 +1044,7 @@ void dfm2::opengl::Draw_AABB3D_MinMaxXYZ_Edge
   ::glEnd();
 }
 
-// //////////////////////////////////////////////////////////////////////////////////////////////////
+// -----------------------------------------------------
 
 void dfm2::opengl::DrawMeshTri3D_FaceNorm
 (const double* paXYZ,

@@ -10,6 +10,21 @@
 
 namespace dfm2 = delfem2;
 
+// ------------------------
+
+template <typename REAL>
+void dfm2::Mat3_Spin(
+    REAL* mat,
+    const REAL* v)
+{
+  mat[0] =  0;     mat[1] = -v[2];   mat[2] = +v[1];
+  mat[3] = +v[2];  mat[4] = 0;       mat[5] = -v[0];
+  mat[6] = -v[1];  mat[7] = +v[0];   mat[8] = 0;
+}
+template void dfm2::Mat3_Spin(float* mat, const float* v);
+template void dfm2::Mat3_Spin(double* mat, const double* v);
+
+
 // --------------------------------------------------------
 
 template <typename T>
@@ -641,8 +656,8 @@ void dfm2::CMat3<T>::SetIdentity(double scale)
 template void dfm2::CMat3<double>::SetIdentity(double scale);
 template void dfm2::CMat3<float>::SetIdentity(double scale);
 
-
-// ----------------------------------------------------------
+// 3x3 matrix
+// -------------------------------------------------------------------------------------------
 // 4x4 matrix
 
 template <typename T>

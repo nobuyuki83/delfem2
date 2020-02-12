@@ -88,8 +88,17 @@ public:
   void MatVec(T *y,
               T alpha, const T *x,
               T beta) const;
-
-  void SetFixedBC_Dia(const int *pBCFlag);
+  /**
+   * @brief Matrix vector product as: {y} = alpha * [A]^T{x} + beta * {y}
+   */
+  void MatTVec(T *y,
+               T alpha, const T *x,
+               T beta) const;
+  
+  /**
+   * @brief set fixed bc for diagonal block matrix where( pBCFlag[i] != 0).
+   */
+  void SetFixedBC_Dia(const int *pBCFlag, T val_dia);
 
   void SetFixedBC_Col(const int *pBCFlag);
 
@@ -101,7 +110,7 @@ public:
    * This matrix need to be a squared matrix
    */
   void SetFixedBC(const int *pBCFlag){
-    this->SetFixedBC_Dia(pBCFlag);
+    this->SetFixedBC_Dia(pBCFlag,1.0);
     this->SetFixedBC_Row(pBCFlag);
     this->SetFixedBC_Col(pBCFlag);
   }
@@ -143,7 +152,13 @@ public:
   unsigned int nblk_row;
   unsigned int len_col;
   unsigned int len_row;
+  /**
+   * @brief entry indeces where the row starts in CRS data structure
+   */
   std::vector<unsigned int> colInd;
+  /**
+   * @brief row index of CRS data structure
+   */
   std::vector<unsigned int> rowPtr;
   std::vector<T> valCrs;
   std::vector<T> valDia;

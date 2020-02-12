@@ -74,7 +74,10 @@ void dfm2::CMatrixSparse<T>::MatVec
  const T* x,
  T beta) const
 {
-	const unsigned int blksize = len_col*len_col;
+  const unsigned int ndofcol = len_col*nblk_col;
+  for(unsigned int i=0;i<ndofcol;++i){ y[i] *= beta; }
+  const unsigned int blksize = len_col*len_row;
+  // --------
 	if( len_col == 1 && len_row == 1 ){
 		const T* vcrs  = valCrs.data();
 		const T* vdia = valDia.data();
@@ -83,7 +86,6 @@ void dfm2::CMatrixSparse<T>::MatVec
 		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
 			T& vy = y[iblk];
-			vy *= beta;
 			const unsigned int colind0 = colind[iblk];
 			const unsigned int colind1 = colind[iblk+1];
 			for(unsigned int icrs=colind0;icrs<colind1;icrs++){
@@ -102,8 +104,6 @@ void dfm2::CMatrixSparse<T>::MatVec
 		const unsigned int* rowptr = rowPtr.data();
 		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-			y[iblk*2+0] *= beta;
-			y[iblk*2+1] *= beta;
 			const unsigned int icrs0 = colind[iblk];
 			const unsigned int icrs1 = colind[iblk+1];
 			for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
@@ -124,9 +124,6 @@ void dfm2::CMatrixSparse<T>::MatVec
 		const unsigned int* rowptr = rowPtr.data();
 		//
 		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-			y[iblk*3+0] *= beta;
-			y[iblk*3+1] *= beta;
-			y[iblk*3+2] *= beta;
 			const unsigned int icrs0 = colind[iblk];
 			const unsigned int icrs1 = colind[iblk+1];
 			for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
@@ -150,6 +147,158 @@ void dfm2::CMatrixSparse<T>::MatVec
 		}
   }
 	else if( len_col == 4 && len_row == 4 ){
+    const T* vcrs  = valCrs.data();
+    const T* vdia = valDia.data();
+    const unsigned int* colind = colInd.data();
+    const unsigned int* rowptr = rowPtr.data();
+    //
+    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+      const unsigned int icrs0 = colind[iblk];
+      const unsigned int icrs1 = colind[iblk+1];
+      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
+        assert( icrs < rowPtr.size() );
+        const unsigned int jblk0 = rowptr[icrs];
+        assert( jblk0 < nblk_row );
+        const unsigned int i0 = iblk*4;
+        const unsigned int j0 = jblk0*4;
+        const unsigned int k0 = icrs*16;
+        y[i0+0] += alpha*(vcrs[k0+ 0]*x[j0+0]+vcrs[k0+ 1]*x[j0+1]+vcrs[k0+ 2]*x[j0+2]+vcrs[k0+ 3]*x[j0+3]);
+        y[i0+1] += alpha*(vcrs[k0+ 4]*x[j0+0]+vcrs[k0+ 5]*x[j0+1]+vcrs[k0+ 6]*x[j0+2]+vcrs[k0+ 7]*x[j0+3]);
+        y[i0+2] += alpha*(vcrs[k0+ 8]*x[j0+0]+vcrs[k0+ 9]*x[j0+1]+vcrs[k0+10]*x[j0+2]+vcrs[k0+11]*x[j0+3]);
+        y[i0+3] += alpha*(vcrs[k0+12]*x[j0+0]+vcrs[k0+13]*x[j0+1]+vcrs[k0+14]*x[j0+2]+vcrs[k0+15]*x[j0+3]);
+      }
+      {
+        const unsigned int i0 = iblk*4;
+        const unsigned int k0 = iblk*16;
+        y[i0+0] += alpha*(vdia[k0+ 0]*x[i0+0]+vdia[k0+ 1]*x[i0+1]+vdia[k0+ 2]*x[i0+2]+vdia[k0+ 3]*x[i0+3]);
+        y[i0+1] += alpha*(vdia[k0+ 4]*x[i0+0]+vdia[k0+ 5]*x[i0+1]+vdia[k0+ 6]*x[i0+2]+vdia[k0+ 7]*x[i0+3]);
+        y[i0+2] += alpha*(vdia[k0+ 8]*x[i0+0]+vdia[k0+ 9]*x[i0+1]+vdia[k0+10]*x[i0+2]+vdia[k0+11]*x[i0+3]);
+        y[i0+3] += alpha*(vdia[k0+12]*x[i0+0]+vdia[k0+13]*x[i0+1]+vdia[k0+14]*x[i0+2]+vdia[k0+15]*x[i0+3]);
+      }
+    }
+  }
+	else{
+		const T* vcrs  = valCrs.data();
+		const T* vdia = valDia.data();
+		const unsigned int* colind = colInd.data();
+		const unsigned int* rowptr = rowPtr.data();
+		//
+		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+			const unsigned int colind0 = colind[iblk];
+			const unsigned int colind1 = colind[iblk+1];
+			for(unsigned int icrs=colind0;icrs<colind1;icrs++){
+				assert( icrs < rowPtr.size() );
+				const unsigned int jblk0 = rowptr[icrs];
+				assert( jblk0 < nblk_row );
+				for(unsigned int idof=0;idof<len_col;idof++){
+          for(unsigned int jdof=0;jdof<len_row;jdof++){
+            y[iblk*len_col+idof] += alpha * vcrs[icrs*blksize+idof*len_row+jdof] * x[jblk0*len_row+jdof];
+          }
+				}
+			}
+			for(unsigned int idof=0;idof<len_col;idof++){
+        for(unsigned int jdof=0;jdof<len_row;jdof++){
+          y[iblk*len_col+idof] += alpha * vdia[iblk*blksize+idof*len_row+jdof] * x[iblk*len_row+jdof];
+        }
+			}
+		}
+	}
+}
+template void delfem2::CMatrixSparse<float>::MatVec(float *y, float alpha, const float *x, float beta) const;
+template void delfem2::CMatrixSparse<double>::MatVec(double *y, double alpha, const double *x, double beta) const;
+template void delfem2::CMatrixSparse<COMPLEX>::MatVec(COMPLEX *y, COMPLEX alpha, const COMPLEX *x, COMPLEX beta) const;
+
+// -------------------------------------------------------
+
+// Calc Matrix Vector Product
+// {y} = alpha*[A]^T{x} + beta*{y}
+template <typename T>
+void dfm2::CMatrixSparse<T>::MatTVec
+ (T* y,
+  T alpha,
+  const T* x,
+  T beta) const
+{
+  const unsigned int ndofrow = len_row*nblk_row;
+  for(unsigned int i=0;i<ndofrow;++i){ y[i] *= beta; }
+  const unsigned int blksize = len_col*len_row;
+  // ---------
+  /*
+  if( len_col == 1 && len_row == 1 ){
+    const T* vcrs  = valCrs.data();
+    const T* vdia = valDia.data();
+    const unsigned int* colind = colInd.data();
+    const unsigned int* rowptr = rowPtr.data();
+    //
+    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+      T& vy = y[iblk];
+      vy *= beta;
+      const unsigned int colind0 = colind[iblk];
+      const unsigned int colind1 = colind[iblk+1];
+      for(unsigned int icrs=colind0;icrs<colind1;icrs++){
+        assert( icrs < rowPtr.size() );
+        const unsigned int jblk0 = rowptr[icrs];
+        assert( jblk0 < nblk_row );
+        vy += alpha * vcrs[icrs] * x[jblk0];
+      }
+      vy += alpha * vdia[iblk] * x[iblk];
+    }
+  }
+  else if( len_col == 2 && len_row == 2 ){
+    const T* vcrs  = valCrs.data();
+    const T* vdia = valDia.data();
+    const unsigned int* colind = colInd.data();
+    const unsigned int* rowptr = rowPtr.data();
+    //
+    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+      y[iblk*2+0] *= beta;
+      y[iblk*2+1] *= beta;
+      const unsigned int icrs0 = colind[iblk];
+      const unsigned int icrs1 = colind[iblk+1];
+      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
+        assert( icrs < rowPtr.size() );
+        const unsigned int jblk0 = rowptr[icrs];
+        assert( jblk0 < nblk_row );
+        y[iblk*2+0] += alpha * ( vcrs[icrs*4  ]*x[jblk0*2+0] + vcrs[icrs*4+1]*x[jblk0*2+1] );
+        y[iblk*2+1] += alpha * ( vcrs[icrs*4+2]*x[jblk0*2+0] + vcrs[icrs*4+3]*x[jblk0*2+1] );
+      }
+      y[iblk*2+0] += alpha * ( vdia[iblk*4+0]*x[iblk*2+0] + vdia[iblk*4+1]*x[iblk*2+1] );
+      y[iblk*2+1] += alpha * ( vdia[iblk*4+2]*x[iblk*2+0] + vdia[iblk*4+3]*x[iblk*2+1] );
+    }
+  }
+  else if( len_col == 3 && len_row == 3 ){
+    const T* vcrs  = valCrs.data();
+    const T* vdia = valDia.data();
+    const unsigned int* colind = colInd.data();
+    const unsigned int* rowptr = rowPtr.data();
+    //
+    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+      y[iblk*3+0] *= beta;
+      y[iblk*3+1] *= beta;
+      y[iblk*3+2] *= beta;
+      const unsigned int icrs0 = colind[iblk];
+      const unsigned int icrs1 = colind[iblk+1];
+      for(unsigned int icrs=icrs0;icrs<icrs1;icrs++){
+        assert( icrs < rowPtr.size() );
+        const unsigned int jblk0 = rowptr[icrs];
+        assert( jblk0 < nblk_row );
+        const unsigned int i0 = iblk*3;
+        const unsigned int j0 = jblk0*3;
+        const unsigned int k0 = icrs*9;
+        y[i0+0] += alpha*(vcrs[k0+0]*x[j0+0]+vcrs[k0+1]*x[j0+1]+vcrs[k0+2]*x[j0+2]);
+        y[i0+1] += alpha*(vcrs[k0+3]*x[j0+0]+vcrs[k0+4]*x[j0+1]+vcrs[k0+5]*x[j0+2]);
+        y[i0+2] += alpha*(vcrs[k0+6]*x[j0+0]+vcrs[k0+7]*x[j0+1]+vcrs[k0+8]*x[j0+2]);
+      }
+      {
+        const unsigned int i0 = iblk*3;
+        const unsigned int k0 = iblk*9;
+        y[i0+0] += alpha*(vdia[k0+0]*x[i0+0]+vdia[k0+1]*x[i0+1]+vdia[k0+2]*x[i0+2]);
+        y[i0+1] += alpha*(vdia[k0+3]*x[i0+0]+vdia[k0+4]*x[i0+1]+vdia[k0+5]*x[i0+2]);
+        y[i0+2] += alpha*(vdia[k0+6]*x[i0+0]+vdia[k0+7]*x[i0+1]+vdia[k0+8]*x[i0+2]);
+      }
+    }
+  }
+  else if( len_col == 4 && len_row == 4 ){
     const T* vcrs  = valCrs.data();
     const T* vdia = valDia.data();
     const unsigned int* colind = colInd.data();
@@ -184,37 +333,39 @@ void dfm2::CMatrixSparse<T>::MatVec
       }
     }
   }
-	else{
-		const T* vcrs  = valCrs.data();
-		const T* vdia = valDia.data();
-		const unsigned int* colind = colInd.data();
-		const unsigned int* rowptr = rowPtr.data();
-		//
-		for(unsigned int iblk=0;iblk<nblk_col;iblk++){
-			for(unsigned int idof=0;idof<len_col;idof++){ y[iblk*len_col+idof] *= beta; }
-			const unsigned int colind0 = colind[iblk];
-			const unsigned int colind1 = colind[iblk+1];
-			for(unsigned int icrs=colind0;icrs<colind1;icrs++){
-				assert( icrs < rowPtr.size() );
-				const unsigned int jblk0 = rowptr[icrs];
-				assert( jblk0 < nblk_row );
-				for(unsigned int idof=0;idof<len_col;idof++){
-				for(unsigned int jdof=0;jdof<len_row;jdof++){
-					y[iblk*len_col+idof] += alpha * vcrs[icrs*blksize+idof*len_col+jdof] * x[jblk0*len_row+jdof];
-				}
-				}
-			}
-			for(unsigned int idof=0;idof<len_col;idof++){
-			for(unsigned int jdof=0;jdof<len_row;jdof++){
-				y[iblk*len_col+idof] += alpha * vdia[iblk*blksize+idof*len_col+jdof] * x[iblk*len_row+jdof];
-			}
-			}
-		}
-	}
+  else{
+   */
+  {
+    const T* vcrs  = valCrs.data();
+    const T* vdia = valDia.data();
+    const unsigned int* colind = colInd.data();
+    const unsigned int* rowptr = rowPtr.data();
+    //
+    for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+      const unsigned int colind0 = colind[iblk];
+      const unsigned int colind1 = colind[iblk+1];
+      for(unsigned int icrs=colind0;icrs<colind1;icrs++){
+        assert( icrs < rowPtr.size() );
+        const unsigned int jblk0 = rowptr[icrs];
+        assert( jblk0 < nblk_row );
+        for(unsigned int idof=0;idof<len_col;idof++){
+          for(unsigned int jdof=0;jdof<len_row;jdof++){
+            y[jblk0*len_row+jdof] += alpha * vcrs[icrs*blksize+idof*len_row+jdof] * x[iblk*len_col+idof];
+          }
+        }
+      }
+      for(unsigned int jdof=0;jdof<len_row;jdof++){
+        for(unsigned int idof=0;idof<len_col;idof++){
+          y[iblk*len_row+jdof] += alpha * vdia[iblk*blksize+idof*len_row+jdof] * x[iblk*len_col+idof];
+        }
+      }
+    }
+  }
 }
-template void delfem2::CMatrixSparse<float>::MatVec(float *y, float alpha, const float *x, float beta) const;
-template void delfem2::CMatrixSparse<double>::MatVec(double *y, double alpha, const double *x, double beta) const;
-template void delfem2::CMatrixSparse<COMPLEX>::MatVec(COMPLEX *y, COMPLEX alpha, const COMPLEX *x, COMPLEX beta) const;
+template void delfem2::CMatrixSparse<float>::MatTVec(float *y, float alpha, const float *x, float beta) const;
+template void delfem2::CMatrixSparse<double>::MatTVec(double *y, double alpha, const double *x, double beta) const;
+template void delfem2::CMatrixSparse<COMPLEX>::MatTVec(COMPLEX *y, COMPLEX alpha, const COMPLEX *x, COMPLEX beta) const;
+
 
 // ----------------------------------
 
@@ -282,7 +433,9 @@ template bool delfem2::CMatrixSparse<COMPLEX>::Mearge(unsigned int nblkel_col, c
 // -----------------------------------------------------------------
 
 template<typename T>
-void delfem2::CMatrixSparse<T>::SetFixedBC_Dia(const int *bc_flag)
+void delfem2::CMatrixSparse<T>::SetFixedBC_Dia(
+    const int *bc_flag,
+    T val_dia)
 {
   assert(!this->valDia.empty());
   assert(this->nblk_row == this->nblk_col);
@@ -295,13 +448,13 @@ void delfem2::CMatrixSparse<T>::SetFixedBC_Dia(const int *bc_flag)
         valDia[iblk * blksize + ilen * len_col + jlen] = 0.0;
         valDia[iblk * blksize + jlen * len_col + ilen] = 0.0;
       }
-      valDia[iblk * blksize + ilen * len_col + ilen] = 1.0;
+      valDia[iblk * blksize + ilen * len_col + ilen] = val_dia;
     }
   }
 }
-template void delfem2::CMatrixSparse<float>::SetFixedBC_Dia(const int *bc_flag);
-template void delfem2::CMatrixSparse<double>::SetFixedBC_Dia(const int *bc_flag);
-template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Dia(const int *bc_flag);
+template void delfem2::CMatrixSparse<float>::SetFixedBC_Dia(const int *bc_flag, float val_dia);
+template void delfem2::CMatrixSparse<double>::SetFixedBC_Dia(const int *bc_flag, double val_dia);
+template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Dia(const int *bc_flag, COMPLEX val_dia);
 
 
 template<typename T>

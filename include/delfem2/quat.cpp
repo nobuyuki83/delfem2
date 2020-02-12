@@ -33,14 +33,14 @@ template void dfm2::Normalize_Quat(double q[]);
 // -----------------------------------
 
 template <typename T>
-void dfm2::SetIdentity_Quat(T q[4]){
+void dfm2::Quat_Identity(T q[4]){
   q[0] = 1;
   q[1] = 0;
   q[2] = 0;
   q[3] = 0;
 }
-template void dfm2::SetIdentity_Quat(float q[4]);
-template void dfm2::SetIdentity_Quat(double q[4]);
+template void dfm2::Quat_Identity(float q[4]);
+template void dfm2::Quat_Identity(double q[4]);
 
 // -------------------------------------
 
@@ -65,7 +65,6 @@ void dfm2::QuatVec(double vo[], const double q[], const double vi[])
   double xw = q[1] * q[0] * 2.0;
   double yw = q[2] * q[0] * 2.0;
   double zw = q[3] * q[0] * 2.0;
-  
   vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
   vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
   vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];

@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file 3x3 matrix class (CMat3) and functions
+ */
+
 
 #ifndef DFM2_MAT3_H
 #define DFM2_MAT3_H
@@ -20,6 +24,11 @@
 // -----------------------------
 
 namespace delfem2 {
+
+template <typename REAL>
+void Mat3_Spin(
+    REAL* mat,
+    const REAL* v);
 
 template <typename T>
 void MatMat3(T* UL,
@@ -38,9 +47,7 @@ T Det_Mat3(const T U[9]);
   
 template <typename T>
 T SquareNormFrobenius_SymMat3(const T sm[6]);
-  
 
-  
 /**
  * @brief compute eigen value & vector for symmmetric matrix
  * @details
@@ -72,7 +79,6 @@ void MatMat4(
     T* C,
     const T* A,
     const T* B);
-
 
 
 template <typename REAL>

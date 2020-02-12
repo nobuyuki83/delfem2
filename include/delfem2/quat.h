@@ -18,8 +18,11 @@ namespace delfem2 {
 template <typename T>
 void Normalize_Quat(T q[4]);
 
+/**
+ * @brief Set Identity in the quaternion
+ */
 template <typename T>
-void SetIdentity_Quat(T q[4]);
+void Quat_Identity(T q[4]);
   
   
 void QuatCopy(double r[], const double p[]);
