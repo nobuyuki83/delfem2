@@ -21,20 +21,40 @@ T dfm2::Dot(
     const std::vector<T>& r_vec,
     const std::vector<T>& u_vec)
 {
+  assert( r_vec.size() == u_vec.size() );
   const std::size_t n = r_vec.size();
-  assert( u_vec.size() == n );
-  T r = 0.0;
+  T r = 0;
   for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
   return r;
 }
 template float dfm2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
 template double dfm2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
-template COMPLEX dfm2::Dot(const std::vector<COMPLEX>& r_vec, const std::vector<COMPLEX>& u_vec);
+
+namespace delfem2 {
+
+template <>
+COMPLEX Dot(
+    const std::vector<COMPLEX>& va,
+    const std::vector<COMPLEX>& vb)
+{
+  const std::size_t n = va.size();
+  assert( vb.size() == n );
+  double sr = 0.0, si = 0.0;
+  for(unsigned int i=0;i<n;++i){
+    const COMPLEX& a = va[i];
+    const COMPLEX& b = vb[i];
+    sr += a.real()*b.real() + a.imag()*b.imag();
+    si += a.imag()*b.real() - a.real()*b.imag();
+  }
+  return {sr,si};
+}
+
+}
 
 // -----------------------------
 
 template<typename T>
-T dfm2::Dot(
+T dfm2::DotX(
     const T* va,
     const T* vb,
     unsigned int n)
@@ -43,9 +63,29 @@ T dfm2::Dot(
   for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
   return r;
 }
-template float dfm2::Dot(const float* va, const float* vb, unsigned int n);
-template double dfm2::Dot(const double* va, const double* vb, unsigned int n);
-template COMPLEX dfm2::Dot(const COMPLEX* va, const COMPLEX* vb, unsigned int n);
+template float dfm2::DotX(const float* va, const float* vb, unsigned int n);
+template double dfm2::DotX(const double* va, const double* vb, unsigned int n);
+
+namespace delfem2 {
+
+template <>
+COMPLEX DotX
+ (const COMPLEX* va,
+  const COMPLEX* vb,
+  unsigned int n)
+{
+  double sr = 0.0;
+  double si = 0.0;
+  for(unsigned int i=0;i<n;i++){
+    const COMPLEX& a = va[i];
+    const COMPLEX& b = vb[i];
+    sr += a.real()*b.real() + a.imag()*b.imag();
+    si += a.imag()*b.real() - a.real()*b.imag();
+  }
+  return {sr,si};
+}
+
+}
 
 
 // -------------------------------------------------
@@ -75,11 +115,11 @@ namespace delfem2 {
 
 // {y} = {y} + a * {x}
 template <typename VAL>
-void AXPY
-    (VAL a,
-     const VAL* x,
-     VAL* y,
-     unsigned int n)
+void AXPY(
+    VAL a,
+    const VAL* x,
+    VAL* y,
+    unsigned int n)
 {
   for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
@@ -90,7 +130,41 @@ template void AXPY(COMPLEX a, const COMPLEX* x, COMPLEX* y, unsigned int n);
 }
 
 
+// --------
+
+template <typename VAL>
+void dfm2::ScaleX(
+    VAL* p0,
+    VAL s,
+    unsigned int n)
+{
+  for(unsigned int i=0;i<n;++i){ p0[i] *= s; }
+}
+template void dfm2::ScaleX(float* p0, float s, unsigned int n);
+template void dfm2::ScaleX(double* p0, double s, unsigned int n);
+
+
+
 // -----------------------------------------------------------
+
+
+
+void dfm2::NormalizeX(
+                      double* p0,
+                      unsigned int n)
+{
+  const double ss = dfm2::DotX(p0,p0,n);
+  ScaleX(p0,1.0/sqrt(ss),n);
+}
+
+void dfm2::OrthogonalizeToUnitVectorX(
+                                      double* p1,
+                                      const double* p0,
+                                      unsigned int n)
+{
+  double d = dfm2::DotX(p0, p1, n);
+  for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
+}
 
 
 COMPLEX dfm2::MultSumX
@@ -207,27 +281,6 @@ void dfm2::XPlusAYBZCW
 
 // -------------------------------------------------------------------
 
-void dfm2::ScaleX(double* p0, int n, double s)
-{
-  for(int i=0;i<n;++i){ p0[i] *= s; }
-}
-
-void dfm2::NormalizeX(
-                      double* p0,
-                      unsigned int n)
-{
-  const double ss = dfm2::Dot(p0,p0,n);
-  ScaleX(p0,n,1.0/sqrt(ss));
-}
-
-void dfm2::OrthogonalizeToUnitVectorX(
-                                      double* p1,
-                                      const double* p0,
-                                      unsigned int n)
-{
-  double d = dfm2::Dot(p0, p1, n);
-  for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
-}
 
 
 void dfm2::setRHS_MasterSlave(

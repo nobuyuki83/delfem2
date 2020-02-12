@@ -11,19 +11,31 @@
 #include <vector>
 #include <cassert>
 #include <complex>
+#include <iostream>
 
 namespace delfem2 {
+
+/**
+ *@brief inner prodcut of a vector
+ *@details defiend for "double", "float", "std::complex<double>". Inner product of complex value using conjugate value
+ */
+template<typename T>
+T DotX(
+    const T *va,
+    const T *vb,
+    unsigned int n);
+
+template <typename T>
+void ScaleX(
+    T *p0,
+    T s,
+    unsigned int n);
 
 template<typename T>
 T Dot(
     const std::vector<T> &r_vec,
     const std::vector<T> &u_vec);
 
-template<typename T>
-T Dot(
-    const T *va,
-    const T *vb,
-    unsigned int n);
 
 template<typename T>
 void XPlusAY(
@@ -74,7 +86,6 @@ void XPlusAYBZCW(std::vector<double> &X,
                  double gamma,
                  const std::vector<double> &W);
 
-void ScaleX(double *p0, int n, double s);
 
 void NormalizeX(double *p0, unsigned int n);
 
@@ -89,6 +100,10 @@ void setRHS_MasterSlave(double *vec_b,
 
 // --------------------------
 
+/**
+ * @brief solve linear system using conjugate gradient method
+ * @param mat (in)  a template class with member function "MatVec"
+ */
 template<typename REAL, typename MAT>
 std::vector<REAL>
 Solve_CG(
@@ -99,16 +114,12 @@ Solve_CG(
     unsigned int max_iteration,
     const MAT& mat)
 {
-  assert(!mat.valDia.empty());
-  assert(mat.nblk_col == mat.nblk_row);
-  assert(mat.len_col == mat.len_row);
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
   std::vector<REAL> aConv;
   for(int i=0;i<N;++i){ u_vec[i] = 0; }
-  REAL sqnorm_res = Dot(r_vec, r_vec, N);
+  REAL sqnorm_res = DotX(r_vec, r_vec, N);
   if (sqnorm_res < 1.0e-30) { return aConv; }
   REAL inv_sqnorm_res_ini = 1 / sqnorm_res;
-  std::vector<REAL> Ap_vec(ndof);
+  std::vector<REAL> Ap_vec(N);
   std::vector<REAL> p_vec(r_vec,r_vec+N);  // {p} = {r}  (Set Initial Serch Direction)
   for (unsigned int iitr = 0; iitr < max_iteration; iitr++) {
     REAL alpha;
@@ -120,19 +131,22 @@ Solve_CG(
     }
     AXPY(alpha, p_vec.data(), u_vec, N);    // {x} = +alpha*{ p} + {x} (update x)
     AXPY(-alpha, Ap_vec.data(), r_vec, N);  // {r} = -alpha*{Ap} + {r}
-    const REAL sqnorm_res_new = Dot(r_vec, r_vec, N);
-    REAL conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res_ini);
+    const REAL sqnorm_res_new = DotX(r_vec, r_vec, N);
+    REAL conv_ratio = sqrt(sqnorm_res_new * inv_sqnorm_res_ini);
     aConv.push_back(conv_ratio);
     if (conv_ratio < conv_ratio_tol) { return aConv; }
     {
       const REAL beta = sqnorm_res_new / sqnorm_res;      // beta = (r1,r1) / (r0,r0)
       sqnorm_res = sqnorm_res_new;
-      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = r_vec[i] + beta * p_vec[i]; } // {p} = {r} + beta*{p}
+      for (unsigned int i = 0; i < N; i++) { p_vec[i] = r_vec[i] + beta * p_vec[i]; } // {p} = {r} + beta*{p}
     }
   }
   return aConv;
 }
 
+/**
+ * @brief solve complex linear system using conjugate gradient method
+ */
 template<typename REAL, typename MAT>
 std::vector<REAL>
 Solve_CG_Complex(
@@ -354,7 +368,7 @@ std::vector<double> Solve_PBiCGStab
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof);
+    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof);
     if( sq_norm_res_ini < 1.0e-60 ){
       aResHistry.push_back( sqrt( sq_norm_res_ini ) );
       return aResHistry;
@@ -378,7 +392,7 @@ std::vector<double> Solve_PBiCGStab
     Mp_vec = p_vec;
     ilu.Solve(Mp_vec);
     // calc (r,r0*)
-    const double r_r2 = Dot(r_vec,r0_vec.data(),ndof);
+    const double r_r2 = DotX(r_vec,r0_vec.data(),ndof);
     // calc {AMp_vec} = [A]*{Mp_vec}
     mat.MatVec(AMp_vec.data(),
                1.0, Mp_vec.data(), 0.0);
@@ -404,14 +418,14 @@ std::vector<double> Solve_PBiCGStab
     for(unsigned int i=0;i<ndof;++i){ r_vec[i] = s_vec[i]; } // update residual
     AXPY(-omega,AMs_vec.data(),r_vec,ndof);
     {
-      const double sq_norm_res = Dot(r_vec,r_vec,ndof);
+      const double sq_norm_res = DotX(r_vec,r_vec,ndof);
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aResHistry.push_back( conv_ratio );
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
     }
     double beta;
     {  // calc beta
-      const double tmp1 = Dot(r_vec,r0_vec.data(),ndof);
+      const double tmp1 = DotX(r_vec,r0_vec.data(),ndof);
       beta = tmp1 * alpha / (r_r2*omega);
     }
     // update p_vector
@@ -504,6 +518,10 @@ std::vector<double> Solve_PBiCGStab_Complex
   return aResHistry;
 }
 
+
+/**
+ * @brief solve a real-valued linear system using the conjugate gradient method with preconditioner
+ */
 template <typename REAL, typename MAT, typename PREC>
 std::vector<double> Solve_PCG
 (REAL *r_vec,
@@ -520,7 +538,7 @@ std::vector<double> Solve_PCG
   
   double inv_sqnorm_res0;
   {
-    const double sqnorm_res0 = Dot(r_vec, r_vec, ndof);
+    const double sqnorm_res0 = DotX(r_vec, r_vec, ndof);
     aResHistry.push_back(sqrt(sqnorm_res0));
     if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
     inv_sqnorm_res0 = 1.0 / sqnorm_res0;
@@ -532,7 +550,7 @@ std::vector<double> Solve_PCG
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-  double rPr = Dot(r_vec, Pr_vec.data(), ndof);
+  double rPr = DotX(r_vec, Pr_vec.data(), ndof);
   for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
     {
       std::vector<double> &Ap_vec = Pr_vec;
@@ -546,7 +564,7 @@ std::vector<double> Solve_PCG
       AXPY(+alpha, p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
     }
     {  // Converge Judgement
-      double sqnorm_res = Dot(r_vec, r_vec, ndof);
+      double sqnorm_res = DotX(r_vec, r_vec, ndof);
       aResHistry.push_back(sqrt(sqnorm_res));
       double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
       if (conv_ratio < conv_ratio_tol) { return aResHistry; }
@@ -556,7 +574,7 @@ std::vector<double> Solve_PCG
       for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
       ilu.Solve(Pr_vec);
       // rPr1 = ({r},{Pr})
-      const double rPr1 = Dot(r_vec, Pr_vec.data(), ndof);
+      const double rPr1 = DotX(r_vec, Pr_vec.data(), ndof);
       // beta = rPr1/rPr
       double beta = rPr1 / rPr;
       rPr = rPr1;
@@ -566,7 +584,7 @@ std::vector<double> Solve_PCG
   }
   {
     // Converge Judgement
-    double sq_norm_res = Dot(r_vec, r_vec, ndof);
+    double sq_norm_res = DotX(r_vec, r_vec, ndof);
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
@@ -664,7 +682,7 @@ std::vector<double> Solve_PCOCG
   
   double sq_inv_norm_res_ini;
   {
-    const double sq_norm_res_ini = Dot(r_vec,r_vec,ndof).real();
+    const double sq_norm_res_ini = DotX(r_vec,r_vec,ndof).real();
     if( sq_norm_res_ini < 1.0e-60 ){
       aResHistry.push_back( sqrt( sq_norm_res_ini ) );
       return aResHistry;
@@ -686,7 +704,7 @@ std::vector<double> Solve_PCOCG
     AXPY(+alpha,p_vec.data(), x_vec,ndof);
     AXPY(-alpha,Ap_vec.data(), r_vec,ndof);
     {
-      const double sq_norm_res = Dot(r_vec,r_vec,ndof).real();
+      const double sq_norm_res = DotX(r_vec,r_vec,ndof).real();
       const double conv_ratio = sqrt(sq_norm_res * sq_inv_norm_res_ini);
       aResHistry.push_back( conv_ratio );
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cmath>
+#include "delfem2/quat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mats.h"
@@ -46,7 +47,38 @@ void SetLinSys_LaplaceGraph_MeshTri3(
   }
 }
 
-
+void SetFixedBoundaryCondition(
+    std::vector<double>& aRhs,
+    unsigned int iframe,
+    const std::vector<double>& aXYZ0,
+    const std::vector<int>& aBCFlag)
+{
+  double A[16];
+  {
+    dfm2::AffMat3_Identity(A);
+    const double trans0[3] = {0, -0.8, 0};
+    dfm2::Translate_AffMat3(A,
+                            trans0);
+    const double axis0[3] = {0, +0.0, 1.0*sin(0.07*iframe)};
+    dfm2::Rotate_AffMat3_Rodriguez(A,
+                                   axis0);
+    const double trans1[3] = {0.2*sin(0.03*iframe), +0.6+0.2*cos(0.05*iframe), 0};
+    dfm2::Translate_AffMat3(A,
+                            trans1);
+  }
+  const unsigned int np = aRhs.size()/3;
+  for(unsigned int ip=0;ip<np;++ip){
+    if( aBCFlag[ip*3+0] == 0 ){ continue; }
+    if( aBCFlag[ip*3+0] == 1 ){
+      aRhs[ip*3+0] = aXYZ0[ip*3+0];
+      aRhs[ip*3+1] = aXYZ0[ip*3+1];
+      aRhs[ip*3+2] = aXYZ0[ip*3+2];
+    }
+    if( aBCFlag[ip*3+0] == 2 ) {
+      dfm2::Vec3_AffMat3Vec3Projection(aRhs.data()+ip*3, A, aXYZ0.data()+ip*3);
+    }
+  }
+}
 
 
 // ------------------------------------
@@ -54,10 +86,12 @@ void SetLinSys_LaplaceGraph_MeshTri3(
 std::vector<unsigned int> aTri;
 std::vector<double> aXYZ0;
 std::vector<double> aXYZ1;
-std::vector<double> aDelta;
-
-dfm2::CMatrixSparse<double> mat_A;
+std::vector<double> aQuat;
 std::vector<int> aBCFlag;
+
+unsigned int imode = 2;
+dfm2::CMatrixSparse<double> mat_A;
+
 
 // ------------------------------------------
 
@@ -93,47 +127,9 @@ void SetProblem()
       }
     }
   }
-  // ---------------------------------
-  SetLinSys_LaplaceGraph_MeshTri3(mat_A);
-  aDelta.resize(aXYZ0.size());
-  mat_A.MatVec(aDelta.data(),
-               1.0, aXYZ0.data(), 0.0);
-  mat_A.SetFixedBC_Dia(aBCFlag.data());
-  mat_A.SetFixedBC_Row(aBCFlag.data());
+  aXYZ1 = aXYZ0; // intial guess
 }
 
-void SetFixedBoundaryCondition(std::vector<double>& aRhs,
-                               unsigned int iframe)
-{
-  double A[16];
-  {
-    dfm2::AffMat3_Identity(A);
-    const double trans0[3] = {0, -0.8, 0};
-    dfm2::Translate_AffMat3(A,
-                            trans0);
-    const double axis0[3] = {0, +0.0, 0.5*sin(0.1*iframe)};
-    dfm2::Rotate_AffMat3_Rodriguez(A,
-                                   axis0);
-    const double trans1[3] = {0.2*sin(0.03*iframe), +0.6-0.2*cos(0.05*iframe), 0};
-    dfm2::Translate_AffMat3(A,
-                            trans1);
-  }
-  const unsigned int np = aRhs.size()/3;
-  for(unsigned int ip=0;ip<np;++ip){
-    if( aBCFlag[ip*3+0] == 0 ){ continue; }
-    if( aBCFlag[ip*3+0] == 1 ){
-      aRhs[ip*3+0] = aXYZ0[ip*3+0];
-      aRhs[ip*3+1] = aXYZ0[ip*3+1];
-      aRhs[ip*3+2] = aXYZ0[ip*3+2];
-    }
-    if( aBCFlag[ip*3+0] == 2 ) {
-      dfm2::Vec3_AffMat3Vec3Projection(aRhs.data()+ip*3, A, aXYZ0.data()+ip*3);
-    }
-  }
-}
-
-
-// -------------------------------------------
 // -------------------------------------------
 
 void myGlutDisplay()
@@ -141,9 +137,10 @@ void myGlutDisplay()
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1,aTri);
-  ::glColor3d(0,0,0);
+  ::glColor3d(0.8,0.8,0.8);
   dfm2::opengl::DrawMeshTri3D_Edge(aXYZ0.data(),aXYZ0.size()/3,
                                    aTri.data(),aTri.size()/3);
+  ::glColor3d(0,0,0);
   dfm2::opengl::DrawMeshTri3D_Edge(aXYZ1.data(),aXYZ1.size()/3,
                                    aTri.data(),aTri.size()/3);
   
@@ -174,13 +171,201 @@ int main(int argc,char* argv[])
   int iframe = 0;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    std::vector<double> aRhs = aDelta;
-    SetFixedBoundaryCondition(aRhs,iframe);
-    aXYZ1 = aXYZ0;
-    std::vector<double> aRes = Solve_BiCGSTAB(aRhs,
-                                              aXYZ1, 1.0e-5, 100, mat_A);
-    std::cout << aRes.size() << std::endl;
-
+    if( imode == 0 ){
+      SetLinSys_LaplaceGraph_MeshTri3(mat_A);
+      std::vector<double> aDelta(aXYZ0.size());
+      mat_A.MatVec(aDelta.data(),
+                   1.0, aXYZ0.data(), 0.0);
+      // ----------
+      std::vector<double> aRhs = aDelta;
+      SetFixedBoundaryCondition(aRhs,
+                                iframe,aXYZ0,aBCFlag);
+      mat_A.SetFixedBC_Dia(aBCFlag.data(), 1.0);
+      mat_A.SetFixedBC_Row(aBCFlag.data());
+      aXYZ1 = aXYZ0;
+      std::vector<double> aRes = Solve_BiCGSTAB(aRhs,
+                                                aXYZ1, 1.0e-5, 100, mat_A);
+      std::cout << aRes.size() << std::endl;
+    }
+    else if( imode == 1 ){
+      SetLinSys_LaplaceGraph_MeshTri3(mat_A);
+      const double weight_bc = 100.0;
+      class CAtA {
+      public:
+        CAtA(const dfm2::CMatrixSparse<double>& A0,
+             const std::vector<int>& aFlg0,
+             double weight_bc0): A(A0), aBCFlag(aFlg0), weight_bc(weight_bc0){
+          vec_tmp.resize(aFlg0.size());
+        }
+        void MatVec(double* y,
+                    double alpha, const double* vec,  double beta) const {
+          A.MatVec(vec_tmp.data(),
+                   1, vec, 0.0);
+          A.MatTVec(y,
+                    alpha, vec_tmp.data(), beta);
+          for(int i=0;i<aBCFlag.size();++i){
+            if( aBCFlag[i] == 0 ){ continue; }
+            y[i] += weight_bc*vec[i];
+          }
+        }
+      public:
+        const dfm2::CMatrixSparse<double>& A;
+        const std::vector<int>& aBCFlag;
+        const double weight_bc;
+        mutable std::vector<double> vec_tmp;
+      } mat_AtA(mat_A, aBCFlag, weight_bc);
+      // ----------
+      std::vector<double> aRhs(aXYZ0.size(),0.0);
+      {
+        const unsigned int np = aXYZ0.size()/3;
+        std::vector<double> aTmp(np*3,0.0);
+        for(unsigned int ip=0;ip<np;++ip){
+          const double* p0i = aXYZ0.data()+ip*3;
+          const double* p1i = aXYZ1.data()+ip*3;
+          double* tmp = aTmp.data()+ip*3;
+          for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
+            unsigned int jp0 = mat_A.rowPtr[icrs];
+            const double* p0j = aXYZ0.data()+jp0*3;
+            const double* p1j = aXYZ1.data()+jp0*3;
+            const double v0ij[3] = { p0j[0]-p0i[0], p0j[1]-p0i[1], p0j[2]-p0i[2] };
+            const double v1ij[3] = { p1j[0]-p1i[0], p1j[1]-p1i[1], p1j[2]-p1i[2] };
+            tmp[0] += +(v0ij[0] - v1ij[0]);
+            tmp[1] += +(v0ij[1] - v1ij[1]);
+            tmp[1] += +(v0ij[2] - v1ij[2]);
+          }
+        }
+        mat_A.MatTVec(aRhs.data(),
+                       -1.0, aTmp.data(), 0.0);
+      }
+      {
+        const unsigned int np = aXYZ0.size()/3;
+        std::vector<double> aGoal(np*3);
+        SetFixedBoundaryCondition(aGoal,
+                                  iframe,aXYZ0,aBCFlag);
+        for(int i=0;i<np*3;++i){
+          if( aBCFlag[i] == 0 ){ continue; }
+          aRhs[i] += (aGoal[i]-aXYZ1[i])*weight_bc;
+        }
+      }
+      std::vector<double> aUpd(aXYZ0.size(),0.0);
+      std::vector<double> aRes = dfm2::Solve_CG(aRhs.data(), aUpd.data(),
+                                                aRhs.size(), 1.0e-5, 300, mat_AtA);
+      for(int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
+    }
+    else if( imode == 2 ){
+      const unsigned int np = aXYZ0.size()/3;
+      if( iframe == 0 ){
+        aQuat.resize(np*4);
+        for(int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); }
+      }
+      SetLinSys_LaplaceGraph_MeshTri3(mat_A);
+      const double weight_bc = 100.0;
+      class CAtA {
+      public:
+        CAtA(const dfm2::CMatrixSparse<double>& A0,
+             const std::vector<int>& aFlg0,
+             double weight_bc0): A(A0), aBCFlag(aFlg0), weight_bc(weight_bc0){
+          unsigned int np = aFlg0.size()/3;
+          this->vec_tmp.resize(np*3);
+          this->aDiaRot.resize(np*9);
+          this->aSpin.resize(np*9);
+        }
+        void MatVec(double* y,
+                    double alpha, const double* vec,  double beta) const {
+          const unsigned int np = aBCFlag.size()/3;
+          for(int i=0;i<np*6;++i){ y[i] *= beta; }
+          // displacement part
+          A.MatVec(vec_tmp.data(),
+                   1, vec, 0);
+//          MatVec_BlkDia();
+          A.MatTVec(y,
+                    alpha, vec_tmp.data(), 0);
+          // fixed boundary condition
+          for(int i=0;i<np*3;++i){
+            if( aBCFlag[i] == 0 ){ continue; }
+            y[i] += weight_bc*vec[i];
+          }
+          /*
+          for(int ip=np;ip<np;++ip){
+            double* yi = y+np*3+ip*3;
+            const double* vi = vec+np*3+ip*3;
+            dfm2::MatVec3(yi, aDiaRot.data()+ip*9, vi);
+          }
+           */
+          for(int i=np*3;i<np*6;++i){
+            y[i] = vec[i];
+          }
+        }
+      public:
+        const dfm2::CMatrixSparse<double>& A;
+        const std::vector<int>& aBCFlag;
+        const double weight_bc;
+        std::vector<double> aDiaRot, aSpin;
+        mutable std::vector<double> vec_tmp;
+      } mat_AtA(mat_A, aBCFlag, weight_bc);
+      // ---------
+      std::vector<double> aRhs(np*6,0.0);
+      {
+        std::vector<double> aTmp(np*3,0.0);
+        for(unsigned int ip=0;ip<np;++ip){
+          const double* p0i = aXYZ0.data()+ip*3;
+          const double* p1i = aXYZ1.data()+ip*3;
+          double d0[3] = {0,0,0}, d1[3] = {0,0,0};
+          for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
+            const unsigned int jp0 = mat_A.rowPtr[icrs];
+            d0[0] += aXYZ0[jp0*3+0]-p0i[0];
+            d0[1] += aXYZ0[jp0*3+1]-p0i[1];
+            d0[2] += aXYZ0[jp0*3+2]-p0i[2];
+            d1[0] += aXYZ1[jp0*3+0]-p1i[0];
+            d1[1] += aXYZ1[jp0*3+1]-p1i[1];
+            d1[2] += aXYZ1[jp0*3+2]-p1i[2];
+          }
+          double Rd0[3]; dfm2::QuatVec(Rd0, aQuat.data()+ip*4, d0);
+          {
+            aRhs[ip*3+0] += d1[0] - Rd0[0];
+            aRhs[ip*3+1] += d1[1] - Rd0[1];
+            aRhs[ip*3+2] += d1[2] - Rd0[2];
+          }
+          {
+            double linrot[3]; dfm2::Cross3(linrot,
+                                           d1, Rd0);
+            aRhs[np*3+ip*3+0] += linrot[0];
+            aRhs[np*3+ip*3+1] += linrot[1];
+            aRhs[np*3+ip*3+2] += linrot[2];
+          }
+          {
+            double* matT = mat_AtA.aDiaRot.data()+ip*9;
+            double d0 = dfm2::Dot3(Rd0,Rd0);
+            for(int i=0;i<3;++i){
+              for(int j=0;j<3;++j){
+                matT[i*3+j] += Rd0[i]*Rd0[j];
+              }
+              matT[i*3+i] -= d0;
+            }
+          }
+          {
+            dfm2::Mat3_Spin(mat_AtA.aSpin.data()+ip*9, Rd0);
+          }
+        }
+        mat_A.MatTVec(aRhs.data(),
+                      -1.0, aTmp.data(), 0.0);
+      }
+      { // set boundary condition
+        const unsigned int np = aXYZ0.size()/3;
+        std::vector<double> aGoal(np*3);
+        SetFixedBoundaryCondition(aGoal,
+                                  iframe,aXYZ0,aBCFlag);
+        for(int i=0;i<np*3;++i){
+          if( aBCFlag[i] == 0 ){ continue; }
+          aRhs[i] += (aGoal[i]-aXYZ1[i])*weight_bc;
+        }
+      }
+      std::vector<double> aUpd(np*6, 0.0);
+      std::vector<double> aRes = dfm2::Solve_CG(aRhs.data(), aUpd.data(),
+                                                np*6, 1.0e-5, 300, mat_AtA);
+      std::cout << iframe << " " << aRes.size() << std::endl;
+      for(int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
+    }
     // ------
     iframe++;
     viewer.DrawBegin_oldGL();

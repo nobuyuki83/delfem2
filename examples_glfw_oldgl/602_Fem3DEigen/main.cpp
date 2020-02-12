@@ -164,7 +164,7 @@ void InitializeProblem_ShellEigenPB()
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
   aTmp0.assign(nDoF, 0.0);
-  //////
+  //
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                                     aTet.data(), aTet.size()/4, 4,
@@ -210,7 +210,7 @@ void Solve(){
   aTmp1 = aTmp0;
   aConv = Solve_PCG(aTmp1.data(), aMode.data(),
                     conv_ratio, iteration, mat_A, ilu_A);
-  double lam0 = dfm2::Dot(aTmp0.data(), aMode.data(), aTmp0.size());
+  double lam0 = dfm2::DotX(aTmp0.data(), aMode.data(), aTmp0.size());
   std::cout << 1.0/lam0 << std::endl;
   aTmp0 = aMode;
   ////

@@ -32,7 +32,6 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------
 
-
 void GenMesh
 (std::vector<dfm2::CVec2d>& aVec2,
  std::vector<dfm2::CDynPntSur>& aPo2D,

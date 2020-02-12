@@ -47,6 +47,10 @@ void Normalize3(T v[3]);
 template <typename T>
 T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
   
+
+/**
+ * @brief matrix vector product for 3x3 matrix {y} := [m]{x}
+ */
 template <typename T>
 void MatVec3(T y[3],
              const T m[9], const T x[3]);
@@ -125,7 +129,6 @@ std::istream &operator>>(std::istream &input, std::vector<CVec3<T> >& aV);
   
 /**
  * @brief 3 dimentional vector class
- * @todo use template for this class 
  */
 template <typename T>
 class CVec3
@@ -221,8 +224,12 @@ public:
   T* data() { return p; }
   const T* data() const { return p; }
 public:
-  double p[3];
+  T p[3];
 };
+using CVec3d = CVec3<double>;
+using CVec3f = CVec3<float>;
+
+// ------------------------------
   
 template <typename T>
 double Dot(const CVec3<T>& arg1, const CVec3<T>& arg2);
@@ -760,8 +767,6 @@ inline CVec3<T> Normal_Tri3(int itri,
 }
 
 
-using CVec3d = CVec3<double>;
-using CVec3f = CVec3<float>;
 
 
 

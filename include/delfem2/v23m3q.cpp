@@ -87,10 +87,13 @@ void dfm2::SetRotMatrix_Cartesian(CMat3d& m, const CVec3d& v)
 
 void dfm2::SetSpinTensor(CMat3d& m, const CVec3d& vec0)
 {
+  Mat3_Spin(m.mat, vec0.p);
+  /*
   double* mat = m.mat;
-  mat[0] =  0;       mat[1] = -vec0.z();   mat[2] = +vec0.y();
-  mat[3] = +vec0.z();  mat[4] = 0;         mat[5] = -vec0.x();
+  mat[0] =  0;         mat[1] = -vec0.z();   mat[2] = +vec0.y();
+  mat[3] = +vec0.z();  mat[4] = 0;           mat[5] = -vec0.x();
   mat[6] = -vec0.y();  mat[7] = +vec0.x();   mat[8] = 0;
+   */
 }
 
 void dfm2::SetOuterProduct
