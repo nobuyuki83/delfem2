@@ -39,8 +39,8 @@ void MatMatTrans3(T* ULUt,
                   const T* UL, const T* U);
   
 template <typename T>
-void MatTransMat3(T* C,
-                  const T* A, const T* B);
+void Mat3_MatTMat(T* C,
+              const T* A, const T* B);
 
 template <typename T>
 T Det_Mat3(const T U[9]);

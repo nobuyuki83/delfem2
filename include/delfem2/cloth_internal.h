@@ -224,7 +224,7 @@ void StepTime_InternalDynamicsILU
   int iteration = 100;
   std::vector<double> vec_x(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio, iteration, mat_A,ilu_A);
+            vec_b.size(), conv_ratio, iteration, mat_A,ilu_A);
 //  std::cout << "  conv_ratio:" << conv_ratio << "  iteration:" << iteration << std::endl;
   // update position
   for(unsigned int i=0;i<nDof;i++){

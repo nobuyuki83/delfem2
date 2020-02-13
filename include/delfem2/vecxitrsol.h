@@ -390,7 +390,7 @@ std::vector<double> Solve_PBiCGStab
   for(unsigned int iitr=1;iitr<max_niter;iitr++){
     // {Mp_vec} = [M^-1]*{p}
     Mp_vec = p_vec;
-    ilu.Solve(Mp_vec);
+    ilu.Solve(Mp_vec.data());
     // calc (r,r0*)
     const double r_r2 = DotX(r_vec,r0_vec.data(),ndof);
     // calc {AMp_vec} = [A]*{Mp_vec}
@@ -403,7 +403,7 @@ std::vector<double> Solve_PBiCGStab
     AXPY(-alpha,AMp_vec,s_vec);
     // {Ms_vec} = [M^-1]*{s}
     Ms_vec = s_vec;
-    ilu.Solve(Ms_vec);
+    ilu.Solve(Ms_vec.data());
     // calc {AMs_vec} = [A]*{Ms_vec}
     mat.MatVec(AMs_vec.data(),
                1.0,Ms_vec.data(),0.0);
@@ -523,34 +523,34 @@ std::vector<double> Solve_PBiCGStab_Complex
  * @brief solve a real-valued linear system using the conjugate gradient method with preconditioner
  */
 template <typename REAL, typename MAT, typename PREC>
-std::vector<double> Solve_PCG
-(REAL *r_vec,
- REAL *x_vec,
- double conv_ratio_tol,
- unsigned int max_nitr,
- const MAT &mat,
- const PREC &ilu)
+std::vector<double> Solve_PCG(
+    REAL *r_vec,
+    REAL *x_vec,
+    unsigned int N,
+    double conv_ratio_tol,
+    unsigned int max_nitr,
+    const MAT &mat,
+    const PREC &ilu)
 {
-  const unsigned int ndof = mat.nblk_col * mat.len_col;
   std::vector<double> aResHistry;
   
-  for (unsigned int i = 0; i < ndof; i++) { x_vec[i] = 0; }    // {x} = 0
+  for (unsigned int i = 0; i < N; i++) { x_vec[i] = 0; }    // {x} = 0
   
   double inv_sqnorm_res0;
   {
-    const double sqnorm_res0 = DotX(r_vec, r_vec, ndof);
+    const double sqnorm_res0 = DotX(r_vec, r_vec, N);
     aResHistry.push_back(sqrt(sqnorm_res0));
     if (sqnorm_res0 < 1.0e-30) { return aResHistry; }
     inv_sqnorm_res0 = 1.0 / sqnorm_res0;
   }
   
   // {Pr} = [P]{r}
-  std::vector<double> Pr_vec(r_vec, r_vec + ndof);
-  ilu.Solve(Pr_vec);
+  std::vector<double> Pr_vec(r_vec, r_vec + N);
+  ilu.Solve(Pr_vec.data());
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
-  double rPr = DotX(r_vec, Pr_vec.data(), ndof);
+  double rPr = DotX(r_vec, Pr_vec.data(), N);
   for (unsigned int iitr = 0; iitr < max_nitr; iitr++) {
     {
       std::vector<double> &Ap_vec = Pr_vec;
@@ -560,31 +560,31 @@ std::vector<double> Solve_PCG
       // alpha = ({r},{Pr})/({p},{Ap})
       const double pAp = Dot(p_vec, Ap_vec);
       double alpha = rPr / pAp;
-      AXPY(-alpha, Ap_vec.data(), r_vec, ndof);       // {r} = -alpha*{Ap} + {r}
-      AXPY(+alpha, p_vec.data(), x_vec, ndof);       // {x} = +alpha*{p } + {x}
+      AXPY(-alpha, Ap_vec.data(), r_vec, N);       // {r} = -alpha*{Ap} + {r}
+      AXPY(+alpha, p_vec.data(), x_vec, N);       // {x} = +alpha*{p } + {x}
     }
     {  // Converge Judgement
-      double sqnorm_res = DotX(r_vec, r_vec, ndof);
+      const double sqnorm_res = DotX(r_vec, r_vec, N);
       aResHistry.push_back(sqrt(sqnorm_res));
-      double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
+      const double conv_ratio = sqrt(sqnorm_res * inv_sqnorm_res0);
       if (conv_ratio < conv_ratio_tol) { return aResHistry; }
     }
     {  // calc beta
        // {Pr} = [P]{r}
-      for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
-      ilu.Solve(Pr_vec);
+      for (unsigned int i = 0; i < N; i++) { Pr_vec[i] = r_vec[i]; }
+      ilu.Solve(Pr_vec.data());
       // rPr1 = ({r},{Pr})
-      const double rPr1 = DotX(r_vec, Pr_vec.data(), ndof);
+      const double rPr1 = DotX(r_vec, Pr_vec.data(), N);
       // beta = rPr1/rPr
       double beta = rPr1 / rPr;
       rPr = rPr1;
       // {p} = {Pr} + beta*{p}
-      for (unsigned int i = 0; i < ndof; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
+      for (unsigned int i = 0; i < N; i++) { p_vec[i] = Pr_vec[i] + beta * p_vec[i]; }
     }
   }
   {
     // Converge Judgement
-    double sq_norm_res = DotX(r_vec, r_vec, ndof);
+    double sq_norm_res = DotX(r_vec, r_vec, N);
     aResHistry.push_back(sqrt(sq_norm_res));
   }
   return aResHistry;
@@ -692,7 +692,7 @@ std::vector<double> Solve_PCOCG
   
   std::vector<COMPLEX> Ap_vec(ndof);
   std::vector<COMPLEX> w_vec(r_vec,r_vec+ndof);
-  ilu.Solve(w_vec);
+  ilu.Solve(w_vec.data());
   
   std::vector<COMPLEX> p_vec = w_vec;  // {p} = {w}
   COMPLEX r_w = MultSumX(r_vec,w_vec.data(),ndof);
@@ -710,7 +710,7 @@ std::vector<double> Solve_PCOCG
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
     }
     w_vec.assign(r_vec,r_vec+ndof);
-    ilu.Solve(w_vec);
+    ilu.Solve(w_vec.data());
     COMPLEX beta;
     {  // calc beta
       const COMPLEX tmp1 = MultSumX(r_vec,w_vec.data(),ndof);

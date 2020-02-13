@@ -304,7 +304,7 @@ void SolveProblem_Diffusion()
                                         aVal.data(),aVelo.data());
   mat_A.SetFixedBC(aBCFlag.data());
   dfm2::setRHS_Zero(vec_b, aBCFlag,0);
-  ///////////////////
+  // ------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -312,9 +312,11 @@ void SolveProblem_Diffusion()
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio,iteration, mat_A,ilu_A);
+            vec_b.size(),
+            conv_ratio,iteration,
+            mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
-  ///////////////////
+  // -----------------
   dfm2::XPlusAYBZ(aVal,nDoF,aBCFlag,
                   dt_timestep*gamma_newmark,vec_x,
                   dt_timestep,aVelo);
@@ -406,7 +408,9 @@ void SolveProblem_LinearSolid_Static()
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio,iteration, mat_A,ilu_A);
+            vec_b.size(),
+            conv_ratio,iteration,
+            mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   // --------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
@@ -443,7 +447,7 @@ void SolveProblem_LinearSolid_Dynamic()
   SetMasterSlave(mat_A,
                  aMSFlag.data());
   dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
-  //////////////////////////////
+  // -----------------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -451,9 +455,11 @@ void SolveProblem_LinearSolid_Dynamic()
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio,iteration, mat_A,ilu_A);
+            vec_b.size(),
+            conv_ratio,iteration,
+            mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
-  //////////////////////////////
+  // -----------------------------
   dfm2::XPlusAYBZCW(aVal, nDoF, aBCFlag,
                     dt_timestep,aVelo,
                     0.5*dt_timestep*dt_timestep,aAcc,
@@ -615,7 +621,7 @@ void SolveProblem_Stokes_Static()
                    aMSFlag.data());
     dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
-  //////////////////////////
+  // -----------------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -623,7 +629,9 @@ void SolveProblem_Stokes_Static()
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio,iteration, mat_A,ilu_A);
+            vec_b.size(),
+            conv_ratio,iteration,
+            mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
   // ------------------------------
   dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
@@ -663,7 +671,7 @@ void SolveProblem_Stokes_Dynamic()
                    aMSFlag.data());
     dfm2::setRHS_MasterSlave(vec_b.data(),vec_b.size(),aMSFlag.data());
   }
-  //////////////////////////
+  // -------------------
   std::vector<double> vec_x;
   double conv_ratio = 1.0e-4;
   int iteration = 1000;
@@ -671,9 +679,11 @@ void SolveProblem_Stokes_Dynamic()
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio,iteration, mat_A,ilu_A);
+            vec_b.size(),
+            conv_ratio,iteration,
+            mat_A,ilu_A);
 //  SolveLinSys_PCG(mat_A,vec_b,vec_x,ilu_A, conv_ratio,iteration);
-  //////////////////////////
+  // --------------------
   dfm2::XPlusAYBZ(aVal,nDoF, aBCFlag,
                   dt_timestep*gamma_newmark,vec_x,
                   dt_timestep,aVelo);

@@ -24,10 +24,19 @@ void Normalize_Quat(T q[4]);
 template <typename T>
 void Quat_Identity(T q[4]);
   
-  
+/**
+ * @brief transform vector with quaternion vo  = q vi adj(q)
+ */
+template <typename REAL>
+void QuatVec(
+    REAL vo[],
+    const REAL q[],
+    const REAL vi[]);
+
+
 void QuatCopy(double r[], const double p[]);
 void QuatQuat(double r[], const double p[], const double q[]);
-void QuatVec(double vo[], const double q[], const double vi[]);
+
 void QuatConjVec(double vo[], const double q[], const double vi[]);
 void Quat_Bryant(double q[4],
                  double x, double y, double z);

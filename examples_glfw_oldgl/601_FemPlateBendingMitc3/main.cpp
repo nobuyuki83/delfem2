@@ -112,7 +112,9 @@ void SolveProblem_PlateBendingMITC3()
     ilu_A.SetValueILU(mat_A);
     ilu_A.DoILUDecomp();
     vec_x.resize(vec_b.size());
-    std::vector<double> conv = Solve_PCG(vec_b.data(), vec_x.data(), 1.0e-5, 1000,
+    std::vector<double> conv = Solve_PCG(vec_b.data(), vec_x.data(),
+                                         vec_b.size(),
+                                         1.0e-5, 1000,
                                          mat_A, ilu_A);
     std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
   }

@@ -134,10 +134,14 @@ std::vector<double> PySolve_PCG
  const dfm2::CPreconditionerILU<double>& ilu_A)
 {
   //  std::cout << "solve pcg" << std::endl;
+  assert( vec_x.size() == vec_b.size() );
+  assert( vec_x.size() == mat_A.nblk_col*mat_A.len_col );
+  const unsigned int N = vec_b.size();
   auto buff_vecb = vec_b.request();
   auto buff_vecx = vec_x.request();
   return Solve_PCG((double*)buff_vecb.ptr,
                    (double*)buff_vecx.ptr,
+                   N,
                    conv_ratio,iteration,
                    mat_A,ilu_A);
 }

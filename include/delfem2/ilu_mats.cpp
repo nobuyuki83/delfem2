@@ -466,7 +466,7 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
 
 template <typename T>
 void delfem2::CPreconditionerILU<T>::ForwardSubstitution
-( std::vector<T>& vec ) const
+( T* vec ) const
 {
   const unsigned int len = mat.len_col;
   const unsigned int nblk = mat.nblk_col;
@@ -610,12 +610,12 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     }
   }
 }
-template void dfm2::CPreconditionerILU<double>::ForwardSubstitution( std::vector<double>& vec ) const;
-template void dfm2::CPreconditionerILU<COMPLEX>::ForwardSubstitution( std::vector<COMPLEX>& vec ) const;
+template void dfm2::CPreconditionerILU<double>::ForwardSubstitution( double* vec ) const;
+template void dfm2::CPreconditionerILU<COMPLEX>::ForwardSubstitution( COMPLEX* vec ) const;
 
 template <typename T>
 void delfem2::CPreconditionerILU<T>::BackwardSubstitution
-( std::vector<T>& vec ) const
+( T* vec ) const
 {
   const unsigned int len = mat.len_col;
   const int nblk = mat.nblk_col;
@@ -752,8 +752,8 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     }
   }
 }
-template void dfm2::CPreconditionerILU<double>::BackwardSubstitution( std::vector<double>& vec ) const;
-template void dfm2::CPreconditionerILU<COMPLEX>::BackwardSubstitution( std::vector<COMPLEX>& vec ) const;
+template void dfm2::CPreconditionerILU<double>::BackwardSubstitution(  double* vec ) const;
+template void dfm2::CPreconditionerILU<COMPLEX>::BackwardSubstitution( COMPLEX* vec ) const;
 
 class CRowLev{
 public:
