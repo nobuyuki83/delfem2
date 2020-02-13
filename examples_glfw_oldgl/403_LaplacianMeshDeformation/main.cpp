@@ -325,6 +325,7 @@ void LapDef_LinearEnergyNonCoupled(int iframe, bool is_preconditioner)
 
 // --------------------------------------------------
 
+/*
 void LapDef_LinearEnergyCoupled(int iframe)
 {
   const unsigned int np = aXYZ0.size()/3;
@@ -368,16 +369,14 @@ void LapDef_LinearEnergyCoupled(int iframe)
         y[np*3+ip*3+1] += +tmp[1]*alpha;
         y[np*3+ip*3+2] += +tmp[2]*alpha;
       }
-      /*
-       for(int ip=np;ip<np;++ip){
-       const double* vi = vec+np*3+ip*3;
-       double tmp[3] = {0,0,0};
-       dfm2::MatVec3(tmp, aDiaRot.data()+ip*9, vi);
-       y[np*3+ip*3+0] += tmp[0];
-       y[np*3+ip*3+1] += tmp[1];
-       y[np*3+ip*3+2] += tmp[2];
-       }
-       */
+//       for(int ip=np;ip<np;++ip){
+//       const double* vi = vec+np*3+ip*3;
+//       double tmp[3] = {0,0,0};
+//       dfm2::MatVec3(tmp, aDiaRot.data()+ip*9, vi);
+//       y[np*3+ip*3+0] += tmp[0];
+//       y[np*3+ip*3+1] += tmp[1];
+//       y[np*3+ip*3+2] += tmp[2];
+//       }
       for(int i=np*3;i<np*6;++i){
         y[i] += 0.03*vec[i];
       }
@@ -425,18 +424,16 @@ void LapDef_LinearEnergyCoupled(int iframe)
           aRhs[np*3+ip*3+1] += linrot[1];
           aRhs[np*3+ip*3+2] += linrot[2];
         }
-        /*
-         {
-         double* matT = mat_AtA.aDiaRot.data()+ip*9;
-         double d0 = dfm2::Dot3(Rd0,Rd0);
-         for(int i=0;i<3;++i){
-         for(int j=0;j<3;++j){
-         matT[i*3+j] += Rd0[i]*Rd0[j];
-         }
-         matT[i*3+i] -= d0;
-         }
-         }
-         */
+//         {
+//         double* matT = mat_AtA.aDiaRot.data()+ip*9;
+//         double d0 = dfm2::Dot3(Rd0,Rd0);
+//         for(int i=0;i<3;++i){
+//         for(int j=0;j<3;++j){
+//         matT[i*3+j] += Rd0[i]*Rd0[j];
+//         }
+//         matT[i*3+i] -= d0;
+//         }
+//         }
         {
           dfm2::Mat3_Spin(mat_AtA.aSpin.data()+ip*9, Rd0);
         }
@@ -478,8 +475,9 @@ void LapDef_LinearEnergyCoupled(int iframe)
     double q1[4]; dfm2::QuatQuat(q1, q0,aQuat.data()+ip*4);
     dfm2::QuatCopy(aQuat.data()+ip*4, q1);
   }
-  
 }
+ */
+ 
 
 
 int main(int argc,char* argv[])
@@ -499,9 +497,6 @@ int main(int argc,char* argv[])
     }
     else if( imode == 1 ){
       LapDef_LinearEnergyNonCoupled(iframe,true);
-    }
-    else if( imode == 2 ){
-      LapDef_LinearEnergyCoupled(iframe);
     }
     // ------
     iframe++;
