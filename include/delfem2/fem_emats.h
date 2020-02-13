@@ -14,8 +14,8 @@
  */
 
 
-#ifndef DFM2_FEM_H
-#define DFM2_FEM_H
+#ifndef DFM2_FEM_EMATS_H
+#define DFM2_FEM_EMATS_H
 
 #include <cassert>
 #include <vector>

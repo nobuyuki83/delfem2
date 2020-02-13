@@ -24,7 +24,6 @@ void dfm2::Mat3_Spin(
 template void dfm2::Mat3_Spin(float* mat, const float* v);
 template void dfm2::Mat3_Spin(double* mat, const double* v);
 
-
 // --------------------------------------------------------
 
 template <typename T>
@@ -44,9 +43,10 @@ template void dfm2::MatMat3(double* C, const double* A, const double* B);
 // ---------------------------------------
 
 template <typename T>
-void dfm2::MatMatTrans3
-(T* C,
- const T* A, const T* B)
+void dfm2::MatMatT3(
+    T* C,
+    const T* A,
+    const T* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -54,15 +54,15 @@ void dfm2::MatMatTrans3
     }
   }
 }
-template void dfm2::MatMatTrans3 (float* C, const float* A, const float* B);
-template void dfm2::MatMatTrans3 (double* C, const double* A, const double* B);
+template void dfm2::MatMatT3(float* C, const float* A, const float* B);
+template void dfm2::MatMatT3(double* C, const double* A, const double* B);
 
 // ---------------------------------------
 
 template <typename T>
-void dfm2::Mat3_MatTMat
-(T* C,
- const T* A, const T* B)
+void dfm2::MatTMat3(
+    T* C,
+    const T* A, const T* B)
 {
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
@@ -70,9 +70,25 @@ void dfm2::Mat3_MatTMat
     }
   }
 }
-template void dfm2::Mat3_MatTMat(float* C, const float* A, const float* B);
-template void dfm2::Mat3_MatTMat(double* C, const double* A, const double* B);
+template void dfm2::MatTMat3(float* C, const float* A, const float* B);
+template void dfm2::MatTMat3(double* C, const double* A, const double* B);
 
+// --------------------------------------
+
+template <typename T>
+void dfm2::MatTMat3_ScaleAdd(
+    T* C,
+    const T* A, const T* B,
+    T alpha, T beta)
+{
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      C[i*3+j] = beta*C[i*3+j] + alpha*(A[0*3+i]*B[0*3+j] + A[1*3+i]*B[1*3+j] + A[2*3+i]*B[2*3+j]);
+    }
+  }
+}
+template void dfm2::MatTMat3_ScaleAdd(float* C, const float* A, const float* B, float alpha, float beta);
+template void dfm2::MatTMat3_ScaleAdd(double* C, const double* A, const double* B, double alpha, double beta);
 
 // ---------------------------------------
 
@@ -262,7 +278,7 @@ void dfm2::GetRotPolarDecomp
   double U[9], G[3], V[9];
   svd3(U,G,V,
        am,nitr);
-  MatMatTrans3(R,U,V);
+  MatMatT3(R,U,V);
 }
 
 void SetMatrix3_Quaternion(double r[], const double q[])

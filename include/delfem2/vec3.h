@@ -33,20 +33,9 @@ T SquareLength3(const T v[3]);
   
 template <typename T>
 T Dot3(const T a[3], const T b[3]);
-  
-template <typename T>
-T Volume_Tet3(const T v1[3], const T v2[3], const T v3[3], const T v4[3]);
-  
-template <typename T>
-void Cross3(T r[3],
-            const T v1[3], const T v2[3]);
 
 template <typename T>
 void Normalize3(T v[3]);
-
-template <typename T>
-T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
-  
 
 /**
  * @brief matrix vector product for 3x3 matrix {y} := [m]{x}
@@ -56,11 +45,8 @@ void MatVec3(T y[3],
              const T m[9], const T x[3]);
 
 template <typename T>
-T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
-
-template <typename T>
 void Transpose_Mat3(T At[],
-                   const T A[]);
+                    const T A[]);
 
 template <typename REAL>
 void AverageTwo3(REAL po[3],
@@ -70,6 +56,25 @@ template <typename REAL>
 void AverageFour3(REAL po[3],
                   const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
 
+void MatTransVec3(double y[3],
+                  const double m[9], const double x[3]);
+void VecMat3(double y[3],
+             const double x[3], const double m[9]);
+
+// -----------------------------
+  
+template <typename T>
+T Volume_Tet3(const T v1[3], const T v2[3], const T v3[3], const T v4[3]);
+  
+template <typename T>
+void Cross3(T r[3],
+            const T v1[3], const T v2[3]);
+
+template <typename T>
+T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
+  
+template <typename T>
+T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
  
 // --------------------------------
   
@@ -80,10 +85,6 @@ void NormalTri3D(double n[3],
 void InverseMat3(double Ainv[],
                  const double A[]);
 void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
-void MatTransVec3(double y[3],
-                  const double m[9], const double x[3]);
-void VecMat3(double y[3],
-             const double x[3], const double m[9]);
 void GetRotMatrix_Rodrigues3D(double rot[9],
                               const double n[3], double theta);
 void Mat4Vec3(double vo[3],

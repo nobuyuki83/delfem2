@@ -220,19 +220,21 @@ void LapDef_LinearEnergyDisponly(int iframe, bool is_preconditioner)
       const unsigned int np = aFlg0.size()/3;
       vec_tmp.resize(np*3);
 
-      // make preconditioner
+      // make jacobi preconditioner
       aDiaInv.assign(np*9,0.0);
       for(unsigned int ip=0;ip<np;++ip){
         for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
           unsigned int jp0 = mat_A.rowPtr[icrs];
-          double mm[9]; dfm2::Mat3_MatTMat(mm,
-                                           mat_A.valCrs.data()+icrs*9, mat_A.valCrs.data()+icrs*9);
-          for(int i=0;i<9;++i){ aDiaInv[jp0*9+i] += mm[i]; }
+          dfm2::MatTMat3_ScaleAdd(aDiaInv.data()+jp0*9,
+                                  mat_A.valCrs.data()+icrs*9,
+                                  mat_A.valCrs.data()+icrs*9,
+                                  1.0, 0.0); // del. prev. value and set new vaue
         }
         {
-          double mm[9]; dfm2::Mat3_MatTMat(mm,
-                                           mat_A.valDia.data()+ip*9, mat_A.valDia.data()+ip*9);
-          for(int i=0;i<9;++i){ aDiaInv[ip*9+i] += mm[i]; }
+          dfm2::MatTMat3_ScaleAdd(aDiaInv.data()+ip*9,
+                                  mat_A.valDia.data()+ip*9,
+                                  mat_A.valDia.data()+ip*9,
+                                  1.0, 0.0); // del. prev. value and set new vaue
         }
       }
       for(int ip=0;ip<np;++ip){
@@ -281,7 +283,7 @@ void LapDef_LinearEnergyDisponly(int iframe, bool is_preconditioner)
   for(int i=0;i<aXYZ0.size();++i){ // adding noise for debuggng purpose
     aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
   }
-  {
+  { // making RHS vector for elastic deformation
     const unsigned int np = aXYZ0.size()/3;
     std::vector<double> aTmp(np*3,0.0);
     for(unsigned int ip=0;ip<np;++ip){
@@ -298,7 +300,7 @@ void LapDef_LinearEnergyDisponly(int iframe, bool is_preconditioner)
     mat_A.MatTVec(aRhs.data(),
                   -1.0, aTmp.data(), 0.0);
   }
-  {
+  { // making RHS vector for fixed boundary condition
     const unsigned int np = aXYZ0.size()/3;
     std::vector<double> aGoal(np*3);
     SetFixedBoundaryCondition(aGoal,
