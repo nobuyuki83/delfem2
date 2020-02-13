@@ -17,22 +17,20 @@
 // -----------------------------------------------------
 
 namespace delfem2 {
-  
-template <typename T>
-T Area_Tri2(const T v1[2], const T v2[2], const T v3[2]);
+
 
 template <typename T>
 T Dot2(const T w[2], const T v[2]);
- 
+
 template <typename T>
 T Length2(const T v[2]);
 
 template <typename T>
 T Distance2(const T v1[2], const T v2[2]);
-  
+
 template <typename T>
 void MatVec2(T w[2], const T A[4], const T v[2]);
-  
+
 template <typename T>
 void MatMat2(T AB[4], const T A[4], const T B[4]);
 
@@ -41,12 +39,17 @@ T SquareLength2(const T v[2]);
 
 template <typename T>
 T SquareDistance2(const T v1[2], const T v2[2]);
+
+template <typename T>
+void Normalize2(T w[2]);
+
+// ----------------------------------------------------
+  
+template <typename T>
+T Area_Tri2(const T v1[2], const T v2[2], const T v3[2]);
   
 template <typename T>
 void GaussianDistribution2(T noise[2]);
-  
-template <typename T>
-void Normalize2(T w[2]);
   
 void MeanValueCoordinate2D(double *aW,
                            double px, double py,
@@ -58,7 +61,6 @@ bool InverseMat2(double invB[4], const double B[4]);
 void gramian2(double AtA[3], const double A[4]);
 void VLVt2(double A[4], double l0, double l1, const double V[4]);
 void RotationalComponentOfMatrix2(double R[4], const double M[4]);
-
 
 // -----------------------------------------------------
 

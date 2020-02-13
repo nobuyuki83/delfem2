@@ -35,12 +35,29 @@ void MatMat3(T* UL,
              const T* U, const T* L);
   
 template <typename T>
-void MatMatTrans3(T* ULUt,
-                  const T* UL, const T* U);
+void MatMatT3(
+    T* ULUt,
+    const T* UL,
+    const T* U);
   
+/**
+ * @brief product of a transposed 3x3 matrix and another 3x3 matrix. [C] = [A]^T[B}
+ * @details row major data structure
+ */
 template <typename T>
-void Mat3_MatTMat(T* C,
+void MatTMat3(T* C,
               const T* A, const T* B);
+
+/**
+ * @brief adding scaled product of a transposed 3x3 matrix and another 3x3 matrix. [C] = \alpha * [A]^T[B} + \beta* [C]
+ * @details row major data structure
+ */
+template <typename T>
+void MatTMat3_ScaleAdd(
+    T* C,
+    const T* A, const T* B,
+    T alpha, T beta);
+
 
 template <typename T>
 T Det_Mat3(const T U[9]);
