@@ -106,7 +106,7 @@ static inline void CalcInvMat3(double a[], double t[] )
 	a[8] = inv_det*(t[0]*t[4]-t[1]*t[3]);
 }
 
-/* --------------------------------------------------------------------- */
+// -----------------------------------------------------------------
 
 
 template <typename T>
@@ -121,9 +121,13 @@ delfem2::CPreconditionerILU<T>::CPreconditionerILU(const CPreconditionerILU<T>& 
   }
 }
 
+// -------------------------------------------------------------------
+
+namespace delfem2{
+
 // numerical factorization
 template <>
-bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
+bool CPreconditionerILU<double>::DoILUDecomp()
 {
   const int nmax_sing = 10;
 	int icnt_sing = 0;
@@ -385,11 +389,9 @@ bool delfem2::CPreconditionerILU<double>::DoILUDecomp()
 	return true;
 }
 
-
-
 // numerical factorization
 template <>
-bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
+bool CPreconditionerILU<COMPLEX>::DoILUDecomp()
 {
 //  const int nmax_sing = 10;
 //  int icnt_sing = 0;
@@ -459,6 +461,8 @@ bool delfem2::CPreconditionerILU<COMPLEX>::DoILUDecomp()
     abort();
   }
   return true;
+}
+
 }
 
 
