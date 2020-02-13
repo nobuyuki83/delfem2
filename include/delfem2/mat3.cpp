@@ -60,7 +60,7 @@ template void dfm2::MatMatTrans3 (double* C, const double* A, const double* B);
 // ---------------------------------------
 
 template <typename T>
-void dfm2::MatTransMat3
+void dfm2::Mat3_MatTMat
 (T* C,
  const T* A, const T* B)
 {
@@ -70,8 +70,8 @@ void dfm2::MatTransMat3
     }
   }
 }
-template void dfm2::MatTransMat3 (float* C, const float* A, const float* B);
-template void dfm2::MatTransMat3 (double* C, const double* A, const double* B);
+template void dfm2::Mat3_MatTMat(float* C, const float* A, const float* B);
+template void dfm2::Mat3_MatTMat(double* C, const double* A, const double* B);
 
 
 // ---------------------------------------

@@ -319,7 +319,7 @@ void SolveProblem_LinearSolid_Static()
   ilu_A.DoILUDecomp();
   vec_x.resize(vec_b.size());
   Solve_PCG(vec_b.data(),vec_x.data(),
-            conv_ratio,iteration, mat_A,ilu_A);
+            vec_b.size(), conv_ratio,iteration, mat_A,ilu_A);
   // --------------
   dfm2::XPlusAY(aVal,nDoF,aBCFlag,
                 1.0,vec_x);

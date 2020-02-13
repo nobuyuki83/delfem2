@@ -24,14 +24,14 @@ public:
   void Initialize_ILU0(const CMatrixSparse<T>& m);
   void Initialize_ILUk(const CMatrixSparse<T>& m, int fill_level);
   void SetValueILU(const CMatrixSparse<T>& m);
-  void Solve(std::vector<T>& vec) const{
+  void Solve(T* vec) const{
 		this->ForwardSubstitution(vec);
 		this->BackwardSubstitution(vec);
   }
   bool DoILUDecomp();
 private:
-  void ForwardSubstitution(  std::vector<T>& vec ) const;
-  void BackwardSubstitution( std::vector<T>& vec ) const;
+  void ForwardSubstitution(  T* vec ) const;
+  void BackwardSubstitution( T* vec ) const;
 public:
   CMatrixSparse<T> mat;
   std::vector<unsigned int> m_diaInd;

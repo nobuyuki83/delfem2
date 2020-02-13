@@ -211,18 +211,6 @@ def pbd_cloth():
 
 
 def main():
-  cad = dfm2.Cad2D()
-  cad.add_polygon(list_xy=[-1,-0.2, +1,-0.2, +1,+0.2, -1,+0.2])
-  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
-  msh2 = mesher.meshing(cad)
-  femShellPlateBendingMitc3_Static(cad, mesher, msh2)
-  femShellPlateBendingMitc3_Eigen(msh2)
-#  return
-
-  msh25 = dfm2.Mesh()
-  msh25.set_extrude(msh2,1)
-  msh25.np_pos[:,2] *= 0.05
-  femSolidLinear_Eigen(msh25)
 
   cad = dfm2.Cad2D()
   cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,+1, -1,+1])
@@ -251,6 +239,19 @@ def main():
   pbd1(cad,mesh)
 
   pbd_cloth()
+
+  cad = dfm2.Cad2D()
+  cad.add_polygon(list_xy=[-1, -0.2, +1, -0.2, +1, +0.2, -1, +0.2])
+  mesher = dfm2.Mesher_Cad2D(edge_length=0.05)
+  msh2 = mesher.meshing(cad)
+  femShellPlateBendingMitc3_Static(cad, mesher, msh2)
+  femShellPlateBendingMitc3_Eigen(msh2)
+  #  return
+
+  msh25 = dfm2.Mesh()
+  msh25.set_extrude(msh2, 1)
+  msh25.np_pos[:, 2] *= 0.05
+  femSolidLinear_Eigen(msh25)
 
 if __name__ == "__main__":
   main()

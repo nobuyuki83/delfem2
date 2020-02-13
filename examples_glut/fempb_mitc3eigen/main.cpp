@@ -182,7 +182,9 @@ void Solve(){
   std::vector<double> aConv;
   aTmp1 = aTmp0;
   aConv = Solve_PCG(aTmp1.data(), aMode.data(),
-                    conv_ratio, iteration, mat_A, ilu_A);
+                    aTmp1.size(),
+                    conv_ratio, iteration,
+                    mat_A, ilu_A);
   {
     double lam0 = dfm2::DotX(aTmp0.data(), aMode.data(), aTmp0.size());
     double freq_sim = sqrt(1.0/lam0-offset_dia)/(2*M_PI);
