@@ -12,12 +12,13 @@
 #include "delfem2/mat3.h"
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
-#include "delfem2/fem_emats.h"
-#include "delfem2/ilu_mats.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
 #include "delfem2/vecxitrsol.h"
+//
+#include "delfem2/fem_emats.h"
+#include "delfem2/ilu_mats.h"
 
 // ----------------
 #include <GLFW/glfw3.h>
@@ -187,7 +188,7 @@ void myGlutDisplay()
   }
 }
 
-void LapDef_LinearDirectNonCoupled(int iframe)
+void LapDef_LinearDirectDisponly(int iframe)
 {
   SetLinSys_LaplaceGraph_MeshTri3(mat_A);
   std::vector<double> aDelta(aXYZ0.size());
@@ -207,7 +208,7 @@ void LapDef_LinearDirectNonCoupled(int iframe)
 
 // --------------------------------------------------
 
-void LapDef_LinearEnergyNonCoupled(int iframe, bool is_preconditioner)
+void LapDef_LinearEnergyDisponly(int iframe, bool is_preconditioner)
 {
   SetLinSys_LaplaceGraph_MeshTri3(mat_A);
   const double weight_bc = 100.0;
@@ -277,22 +278,21 @@ void LapDef_LinearEnergyNonCoupled(int iframe, bool is_preconditioner)
   } mat_AtA(mat_A, aBCFlag, weight_bc);
   // ----------
   std::vector<double> aRhs(aXYZ0.size(),0.0);
+  for(int i=0;i<aXYZ0.size();++i){ // adding noise for debuggng purpose
+    aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
+  }
   {
     const unsigned int np = aXYZ0.size()/3;
     std::vector<double> aTmp(np*3,0.0);
     for(unsigned int ip=0;ip<np;++ip){
-      const double* p0i = aXYZ0.data()+ip*3;
-      const double* p1i = aXYZ1.data()+ip*3;
       double* tmp = aTmp.data()+ip*3;
       for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
         unsigned int jp0 = mat_A.rowPtr[icrs];
-        const double* p0j = aXYZ0.data()+jp0*3;
-        const double* p1j = aXYZ1.data()+jp0*3;
-        const double d0[3] = { p0j[0]-p0i[0], p0j[1]-p0i[1], p0j[2]-p0i[2] };
-        const double d1[3] = { p1j[0]-p1i[0], p1j[1]-p1i[1], p1j[2]-p1i[2] };
+        const double d0[3] = { aXYZ0[jp0*3+0]-aXYZ0[ip*3+0], aXYZ0[jp0*3+1]-aXYZ0[ip*3+1], aXYZ0[jp0*3+2]-aXYZ0[ip*3+2] };
+        const double d1[3] = { aXYZ1[jp0*3+0]-aXYZ1[ip*3+0], aXYZ1[jp0*3+1]-aXYZ1[ip*3+1], aXYZ1[jp0*3+2]-aXYZ1[ip*3+2] };
         tmp[0] += +(d0[0] - d1[0]);
         tmp[1] += +(d0[1] - d1[1]);
-        tmp[1] += +(d0[2] - d1[2]);
+        tmp[2] += +(d0[2] - d1[2]);
       }
     }
     mat_A.MatTVec(aRhs.data(),
@@ -316,7 +316,7 @@ void LapDef_LinearEnergyNonCoupled(int iframe, bool is_preconditioner)
   }
   else{
     std::vector<double> aRes = dfm2::Solve_CG(aRhs.data(), aUpd.data(),
-                                              aRhs.size(), 1.0e-5, 300, mat_AtA);
+                                              aRhs.size(), 1.0e-7, 300, mat_AtA);
     std::cout << aRes.size() << std::endl;
   }
   for(int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
@@ -493,10 +493,10 @@ int main(int argc,char* argv[])
   while (!glfwWindowShouldClose(viewer.window))
   {
     if( imode == 0 ){
-      LapDef_LinearDirectNonCoupled(iframe);
+      LapDef_LinearDirectDisponly(iframe);
     }
     else if( imode == 1 ){
-      LapDef_LinearEnergyNonCoupled(iframe,true);
+      LapDef_LinearEnergyDisponly(iframe,false);
     }
     // ------
     iframe++;
