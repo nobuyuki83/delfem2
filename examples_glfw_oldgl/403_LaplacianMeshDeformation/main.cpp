@@ -48,7 +48,7 @@ void SetLinSys_LaplaceGraph_MeshTri3(
   }
 }
 
-void SetFixedBoundaryCondition(
+void SetDisplacementAtFixedBoundary(
     std::vector<double>& aRhs,
     unsigned int iframe,
     const std::vector<double>& aXYZ0,
@@ -196,7 +196,7 @@ void LapDef_LinearDirectDisponly(int iframe)
                1.0, aXYZ0.data(), 0.0);
   // ----------
   std::vector<double> aRhs = aDelta;
-  SetFixedBoundaryCondition(aRhs,
+  SetDisplacementAtFixedBoundary(aRhs,
                             iframe,aXYZ0,aBCFlag);
   mat_A.SetFixedBC_Dia(aBCFlag.data(), 1.0);
   mat_A.SetFixedBC_Row(aBCFlag.data());
@@ -301,7 +301,7 @@ void LapDef_LinearEnergyDisponly(int iframe, bool is_preconditioner)
   { // making RHS vector for fixed boundary condition
     const unsigned int np = aXYZ0.size()/3;
     std::vector<double> aGoal(np*3);
-    SetFixedBoundaryCondition(aGoal,
+    SetDisplacementAtFixedBoundary(aGoal,
                               iframe,aXYZ0,aBCFlag);
     for(int i=0;i<np*3;++i){
       if( aBCFlag[i] == 0 ){ continue; }

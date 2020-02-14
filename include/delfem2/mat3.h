@@ -26,8 +26,16 @@
 namespace delfem2 {
 
 template <typename REAL>
-void Mat3_Spin(REAL* mat,
-               const REAL* v);
+void Mat3_Spin(
+    REAL* mat,
+    const REAL* v);
+
+template <typename REAL>
+void Mat3_Spin_ScaleAdd(
+    REAL* mat,
+    const REAL* v,
+    REAL alpha, REAL beta);
+
 
 template <typename REAL>
 void Mat3_Identity(REAL* mat,

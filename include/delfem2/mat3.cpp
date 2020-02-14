@@ -98,6 +98,28 @@ template void dfm2::Mat3_Spin(double* mat, const double* v);
 
 // ---------------------------------------------------------
 
+
+template <typename REAL>
+void dfm2::Mat3_Spin_ScaleAdd(
+    REAL* m,
+    const REAL* v,
+    REAL alpha, REAL beta)
+{
+  m[0] = beta*m[0];
+  m[1] = beta*m[1] - v[2]*alpha;
+  m[2] = beta*m[2] + v[1]*alpha;
+  m[3] = beta*m[3] + v[2]*alpha;
+  m[4] = beta*m[4];
+  m[5] = beta*m[5] - v[0]*alpha;
+  m[6] = beta*m[6] - v[1]*alpha;
+  m[7] = beta*m[7] + v[0]*alpha;
+  m[8] = beta*m[8];
+}
+template void dfm2::Mat3_Spin_ScaleAdd(float* mat, const float* v, float alpha, float beta);
+template void dfm2::Mat3_Spin_ScaleAdd(double* mat, const double* v, double alpha, double beta);
+
+// ---------------------------------------------------------
+
 template <typename REAL>
 void dfm2::Mat3_Identity_ScaleAdd(
     REAL* mat,
