@@ -66,6 +66,47 @@ static void MyQuatConjVec(
 template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
 template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3]);
 
+// -----------------------------
+
+template <typename REAL>
+static void MyInverse_Mat3
+ (REAL Ainv[9],
+  const REAL A[9])
+{
+  const REAL det =
+  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
+  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
+  const REAL inv_det = 1.0/det;
+  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
+  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
+  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
+  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
+  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
+  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
+  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
+  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
+  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
+}
+
+template <typename T>
+static void MyMatVec3
+ (T y[3],
+  const T m[9], const T x[3])
+{
+  y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
+  y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
+  y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
+}
+
+static void MyMat4Vec3
+(double vo[3],
+ const double M[16], const double vi[3])
+{
+  vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
+  vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
+  vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
+}
+
 
 // ----------------------------------------
 
@@ -168,20 +209,6 @@ template double dfm2::Area_Tri3(const double v1[3], const double v2[3], const do
 // ----------------------------------
 
 template <typename T>
-void dfm2::MatVec3
- (T y[3],
-  const T m[9], const T x[3])
-{
-   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
-   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
-   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
-}
-template void dfm2::MatVec3(float y[3], const float m[9], const float x[3]);
-template void dfm2::MatVec3(double y[3], const double m[9], const double x[3]);
-
-// ------------------------------------
-
-template <typename T>
 T dfm2::SquareDistance3(const T p0[3], const T p1[3]){
   return (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
 }
@@ -209,64 +236,40 @@ T dfm2::ScalarTripleProduct3(const T a[], const T b[], const T c[])
 template float dfm2::ScalarTripleProduct3(const float a[], const float b[], const float c[]);
 template double dfm2::ScalarTripleProduct3(const double a[], const double b[], const double c[]);
 
-// -------------------------------------
+// -----------------------------------------
 
-  // t is a tmporary buffer size of 9
-template <typename T>
-void dfm2::Transpose_Mat3(T t[9],
-                          const T a[9])
+template <typename REAL>
+void dfm2::NormalTri3(
+    REAL n[3],
+    const REAL v1[3],
+    const REAL v2[3],
+    const REAL v3[3])
 {
-  t[0] = a[0];
-  t[1] = a[3];
-  t[2] = a[6];
-  t[3] = a[1];
-  t[4] = a[4];
-  t[5] = a[7];
-  t[6] = a[2];
-  t[7] = a[5];
-  t[8] = a[8];
-}
-template void dfm2::Transpose_Mat3(float t[], const float a[]);
-template void dfm2::Transpose_Mat3(double t[], const double a[]);
-
-// --------------------------------------
-
-void dfm2::UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
+}
+template void dfm2::NormalTri3(float n[3], const float v1[3], const float v2[3], const float v3[3]);
+template void dfm2::NormalTri3(double n[3], const double v1[3], const double v2[3], const double v3[3]);
+
+// ------------------------------------------
+
+template <typename REAL>
+void dfm2::UnitNormalAreaTri3(
+    REAL n[3],
+    REAL& a,
+    const REAL v1[3], const REAL v2[3], const REAL v3[3])
+{
+  NormalTri3(n,
+             v1, v2, v3);
+  a = Length3(n)*0.5;//sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
   const double invlen = 0.5/a;
-  n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
+  n[0]*=invlen;  n[1]*=invlen;  n[2]*=invlen;
 }
-
-void dfm2::NormalTri3D(double n[3], const double v1[3], const double v2[3], const double v3[3]){
-  n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-  n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-  n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-}
-
-// t is a tmporary buffer size of 9
-void dfm2::InverseMat3
-(double Ainv[],
- const double A[])
-{
-  const double det =
-  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
-  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
-  const double inv_det = 1.0/det;
-  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
-  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
-  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
-  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
-  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
-  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
-  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
-  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
-  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
-}
-
-
+template void dfm2::UnitNormalAreaTri3(float n[3], float& a,
+                                       const float v1[3], const float v2[3], const float v3[3]);
+template void dfm2::UnitNormalAreaTri3(double n[3], double& a,
+                                       const double v1[3], const double v2[3], const double v3[3]);
 
 // ------------------------------------------
 
@@ -300,7 +303,7 @@ void GetNearest_TrianglePoint3D
  const double q1[3],
  const double q2[3])
 {
-  double area, n012[3]; dfm2::UnitNormalAreaTri3D(n012, area, q0, q1, q2);
+  double area, n012[3]; dfm2::UnitNormalAreaTri3(n012, area, q0, q1, q2);
   const double pe[3] = { ps[0]+n012[0], ps[1]+n012[1], ps[2]+n012[2] };
   const double v012 = dfm2::Volume_Tet3(ps, q0, q1, q2);
   if (fabs(v012) > 1.0e-10){
@@ -374,52 +377,6 @@ void dfm2::GetVertical2Vector3D
     vec_x[2] *= invlen;
     dfm2::Cross3(vec_y,vec_n,vec_x);
   }
-}
-
-void dfm2::GetRotMatrix_Rodrigues3D
-(double rot[9],
- const double n[3], double theta)
-{
-  const double ct = cos(theta);
-  const double st = sin(theta);
-  rot[0] = ct+(1-ct)*n[0]*n[0];
-  rot[1] =    (1-ct)*n[1]*n[0]-st*n[2];
-  rot[2] =    (1-ct)*n[2]*n[0]+st*n[1];
-  rot[3] =    (1-ct)*n[0]*n[1]+st*n[2];
-  rot[4] = ct+(1-ct)*n[1]*n[1];
-  rot[5] =    (1-ct)*n[2]*n[1]-st*n[0];
-  rot[6] =    (1-ct)*n[0]*n[2]-st*n[1];
-  rot[7] =    (1-ct)*n[1]*n[2]+st*n[0];
-  rot[8] = ct+(1-ct)*n[2]*n[2];
-}
-
-void dfm2::VecMat3
-(double y[3],
- const double x[3], const double m[9])
-{
-  y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
-  y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
-  y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
-}
-
-
-
-void dfm2::MatTransVec3
-(double y[3],
- const double m[9], const double x[3])
-{
-  y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
-  y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
-  y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
-}
-
-void dfm2::Mat4Vec3
-(double vo[3],
- const double M[16], const double vi[3])
-{
-  vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
-  vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
-  vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
 }
 
 // ---------------------------------------------------------------------------
@@ -608,7 +565,7 @@ std::istream &operator>>(std::istream &input, std::vector<CVec3<T>>& aV){
 template <typename T>
 dfm2::CVec3<T> dfm2::Mat3Vec(const double mat[9], const CVec3<T>& v){
   CVec3<T> u;
-  dfm2::MatVec3(u.p, mat, v.p);
+  MyMatVec3(u.p, mat, v.p);
   return u;
 }
 template dfm2::CVec3<double> dfm2::Mat3Vec(const double mat[9], const CVec3<double>& v);
@@ -619,7 +576,7 @@ template <typename T>
 dfm2::CVec3<T> dfm2::Mat4Vec(const double mat[16], const CVec3<T>& v)
 {
   CVec3<T> u;
-  Mat4Vec3(u.p, mat, v.p);
+  MyMat4Vec3(u.p, mat, v.p);
   return u;
 }
 template dfm2::CVec3d dfm2::Mat4Vec(const double mat[16], const CVec3d& v);
@@ -716,7 +673,7 @@ double dfm2::Height
  const CVec3<T>& v3,
  const CVec3<T>& v4)
 {
-  double n[3]; NormalTri3D(n, v1.p,v2.p,v3.p);
+  double n[3]; NormalTri3(n, v1.p,v2.p,v3.p);
   dfm2::Normalize3(n);
   return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
 }
@@ -1365,7 +1322,7 @@ void dfm2::iteration_barycentricCoord_Origin_Solid
   const double cyz = dpdr0.p[1]*dpdr0.p[2] + dpdr1.p[1]*dpdr1.p[2] + dpdr2.p[1]*dpdr2.p[2];
   const double czz = dpdr0.p[2]*dpdr0.p[2] + dpdr1.p[2]*dpdr1.p[2] + dpdr2.p[2]*dpdr2.p[2];
   double C[9] = {cxx,cxy,cxz, cxy,cyy,cyz, cxz,cyz,czz};
-  double Cinv[9]; InverseMat3(Cinv, C);
+  double Cinv[9]; MyInverse_Mat3(Cinv, C);
   const CVec3<T> d = damp*Mat3Vec(Cinv,q);
   r0 -= dpdr0*d;
   r1 -= dpdr1*d;
@@ -1885,7 +1842,7 @@ dfm2::CVec3<T> dfm2::solve_GlAffineMatrix
     m[0*4+0],m[1*4+0],m[2*4+0],
     m[0*4+1],m[1*4+1],m[2*4+1],
     m[0*4+2],m[1*4+2],m[2*4+2] };
-  double Minv[9];  InverseMat3(Minv, M);
+  double Minv[9]; MyInverse_Mat3(Minv, M);
   return Mat3Vec(Minv,v);
 //  CMatrix3 Minv = M.Inverse();  
 //  return Minv*v;
@@ -1900,7 +1857,7 @@ dfm2::CVec3<T> dfm2::solve_GlAffineMatrixDirection
     m[0*4+0],m[1*4+0],m[2*4+0],
     m[0*4+1],m[1*4+1],m[2*4+1],
     m[0*4+2],m[1*4+2],m[2*4+2] };
-  double Minv[9];  InverseMat3(Minv, M);
+  double Minv[9]; MyInverse_Mat3(Minv, M);
   return Mat3Vec(Minv,v);
   /*
   CMatrix3 M(m[0*4+0],m[1*4+0],m[2*4+0],

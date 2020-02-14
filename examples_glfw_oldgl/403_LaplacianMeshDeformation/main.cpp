@@ -7,11 +7,11 @@
 
 #include <iostream>
 #include <cmath>
-#include "delfem2/quat.h"
-#include "delfem2/mshtopo.h"
 #include "delfem2/mat3.h"
+#include "delfem2/quat.h"
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
+#include "delfem2/mshtopo.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
@@ -128,7 +128,7 @@ void SetProblem()
       }
     }
   }
-  aXYZ1 = aXYZ0; // intial guess
+  aXYZ1 = aXYZ0; // intial guess  
 }
 
 // -------------------------------------------
@@ -244,9 +244,7 @@ void LapDef_LinearEnergyDisponly(int iframe, bool is_preconditioner)
         }
       }
       for(unsigned int ip=0;ip<np;++ip){
-        double mi[9];
-        dfm2::InverseMat3(mi, aDiaInv.data()+ip*9);
-        for(int i=0;i<9;++i){ aDiaInv[ip*9+i] = mi[i]; }
+        dfm2::Inverse_Mat3(aDiaInv.data()+ip*9);
       }
     }
     void MatVec(double* y,
@@ -498,7 +496,7 @@ int main(int argc,char* argv[])
       LapDef_LinearDirectDisponly(iframe);
     }
     else if( imode == 1 ){
-      LapDef_LinearEnergyDisponly(iframe,false);
+      LapDef_LinearEnergyDisponly(iframe,true);
     }
     // ------
     iframe++;

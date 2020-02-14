@@ -159,7 +159,7 @@ void MakeNormal()
       { aXYZ[ip0*3+0],aXYZ[ip0*3+1],aXYZ[ip0*3+2] },
       { aXYZ[ip1*3+0],aXYZ[ip1*3+1],aXYZ[ip1*3+2] },
       { aXYZ[ip2*3+0],aXYZ[ip2*3+1],aXYZ[ip2*3+2] } };
-    double n[3],area; dfm2::UnitNormalAreaTri3D(n, area, c[0], c[1], c[2]);
+    double n[3],area; dfm2::UnitNormalAreaTri3(n, area, c[0], c[1], c[2]);
     aNormal[ip0*3+0] += n[0];  aNormal[ip0*3+1] += n[1];  aNormal[ip0*3+2] += n[2];
     aNormal[ip1*3+0] += n[0];  aNormal[ip1*3+1] += n[1];  aNormal[ip1*3+2] += n[2];
     aNormal[ip2*3+0] += n[0];  aNormal[ip2*3+1] += n[1];  aNormal[ip2*3+2] += n[2];

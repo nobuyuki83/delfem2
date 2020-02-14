@@ -65,7 +65,7 @@ dfm2::CVec3d dfm2::MatVecTrans
  (const CMat3d& m, const CVec3d& vec0)
 {
   CVec3d vec1;
-  MatTransVec3(vec1.p, m.mat,vec0.p);
+  MatTVec3(vec1.p, m.mat,vec0.p);
   return vec1;
 }
 

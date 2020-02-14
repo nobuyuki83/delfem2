@@ -113,8 +113,8 @@ void Hoge(){
     for(auto & iseg : aCS[ics].aTriInfo){
       double pA[3],pB[3];
       iseg.Pos3D(pA,pB,
-                                    aXYZ,aTri);
-      double n0[3]; dfm2::NormalTri3D(n0,
+                 aXYZ,aTri);
+      double n0[3]; dfm2::NormalTri3(n0,
                                       pA,pB,po);
       const double area0 = n0[0]*nrm[0] + n0[1]*nrm[1] + n0[2]*nrm[2];
       sum_area += area0;

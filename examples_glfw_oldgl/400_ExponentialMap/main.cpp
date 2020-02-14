@@ -15,6 +15,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
 #include "delfem2/imgio.h"
 
 // gl related includes
@@ -110,11 +111,11 @@ void MakeLocalCoord(
   if( snrp > 1.0e-5 ){
     const double cnrp = dfm2::Dot3(lcp,lrn);
     const double t = atan2(snrp,cnrp);
-    anrp[0] *= 1.0/snrp;
-    anrp[1] *= 1.0/snrp;
-    anrp[2] *= 1.0/snrp;
+    anrp[0] *= t/snrp;
+    anrp[1] *= t/snrp;
+    anrp[2] *= t/snrp;
     double rot[9];
-    dfm2::GetRotMatrix_Rodrigues3D(rot, anrp, t);
+    dfm2::Mat3_Rotation_Cartesian(rot, anrp);
     dfm2::VecMat3(lrx, lcp+3, rot);
     dfm2::VecMat3(lry, lcp+6, rot);
   }

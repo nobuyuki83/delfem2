@@ -12,6 +12,78 @@ namespace dfm2 = delfem2;
 
 // ------------------------
 
+// t is a tmporary buffer size of 9
+template <typename T>
+void dfm2::Transpose_Mat3(T t[9],
+                          const T a[9])
+{
+  t[0] = a[0];
+  t[1] = a[3];
+  t[2] = a[6];
+  t[3] = a[1];
+  t[4] = a[4];
+  t[5] = a[7];
+  t[6] = a[2];
+  t[7] = a[5];
+  t[8] = a[8];
+}
+template void dfm2::Transpose_Mat3(float t[], const float a[]);
+template void dfm2::Transpose_Mat3(double t[], const double a[]);
+
+// --------------------------------------
+
+template <typename REAL>
+void dfm2::Inverse_Mat3
+(REAL Ainv[9],
+ const REAL A[9])
+{
+  const REAL det =
+  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
+  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
+  const REAL inv_det = 1.0/det;
+  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
+  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
+  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
+  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
+  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
+  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
+  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
+  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
+  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
+}
+template void dfm2::Inverse_Mat3(float Ainv[9], const float A[9]);
+template void dfm2::Inverse_Mat3(double Ainv[9], const double A[9]);
+
+
+// --------------------------------------
+
+template <typename REAL>
+void dfm2::Inverse_Mat3
+ (REAL A[9])
+{
+  const REAL B[9] = {
+    A[0],A[1],A[2],
+    A[3],A[4],A[5],
+    A[6],A[7],A[8] };
+  const REAL det =
+  + B[0]*B[4]*B[8] + B[3]*B[7]*B[2] + B[6]*B[1]*B[5]
+  - B[0]*B[7]*B[5] - B[6]*B[4]*B[2] - B[3]*B[1]*B[8];
+  const REAL inv_det = 1.0/det;
+  A[0] = inv_det*(B[4]*B[8]-B[5]*B[7]);
+  A[1] = inv_det*(B[2]*B[7]-B[1]*B[8]);
+  A[2] = inv_det*(B[1]*B[5]-B[2]*B[4]);
+  A[3] = inv_det*(B[5]*B[6]-B[3]*B[8]);
+  A[4] = inv_det*(B[0]*B[8]-B[2]*B[6]);
+  A[5] = inv_det*(B[2]*B[3]-B[0]*B[5]);
+  A[6] = inv_det*(B[3]*B[7]-B[4]*B[6]);
+  A[7] = inv_det*(B[1]*B[6]-B[0]*B[7]);
+  A[8] = inv_det*(B[0]*B[4]-B[1]*B[3]);
+}
+template void dfm2::Inverse_Mat3(float Ainv[9]);
+template void dfm2::Inverse_Mat3(double Ainv[9]);
+
+// -----------------------------------
+
 template <typename REAL>
 void dfm2::Mat3_Spin(
     REAL* mat,
@@ -24,7 +96,120 @@ void dfm2::Mat3_Spin(
 template void dfm2::Mat3_Spin(float* mat, const float* v);
 template void dfm2::Mat3_Spin(double* mat, const double* v);
 
+// ---------------------------------------------------------
+
+template <typename REAL>
+void dfm2::Mat3_Identity_ScaleAdd(
+    REAL* mat,
+    REAL alpha, REAL beta)
+{
+  mat[0] = beta*mat[0] + alpha;
+  mat[1] = beta*mat[1];
+  mat[2] = beta*mat[2];
+  mat[3] = beta*mat[3];
+  mat[4] = beta*mat[4] + alpha;
+  mat[5] = beta*mat[5];
+  mat[6] = beta*mat[6];
+  mat[7] = beta*mat[7];
+  mat[8] = beta*mat[8] + alpha;
+}
+template void dfm2::Mat3_Identity_ScaleAdd(float* mat, float alpha, float beta);
+template void dfm2::Mat3_Identity_ScaleAdd(double* mat, double alpha, double beta);
+
+template <typename REAL>
+void dfm2::Mat3_Identity(REAL* mat,
+                   REAL alpha)
+{
+  mat[0] = alpha;
+  mat[1] = 0;
+  mat[2] = 0;
+  mat[3] = 0;
+  mat[4] = alpha;
+  mat[5] = 0;
+  mat[6] = 0;
+  mat[7] = 0;
+  mat[8] = alpha;
+}
+template void dfm2::Mat3_Identity(float* mat, float alpha);
+template void dfm2::Mat3_Identity(double* mat, double alpha);
+
 // --------------------------------------------------------
+
+
+template <typename T>
+void dfm2::MatVec3
+(T y[3],
+ const T m[9], const T x[3])
+{
+  y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
+  y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
+  y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
+}
+template void dfm2::MatVec3(float y[3], const float m[9], const float x[3]);
+template void dfm2::MatVec3(double y[3], const double m[9], const double x[3]);
+
+// ----------------------------
+
+template <typename T>
+void dfm2::MatVec3_ScaleAdd(
+    T y[3],
+    const T m[9], const T x[3],
+    T alpha, T beta)
+{
+  y[0] = beta*y[0] + alpha*(m[0]*x[0] + m[1]*x[1] + m[2]*x[2]);
+  y[1] = beta*y[1] + alpha*(m[3]*x[0] + m[4]*x[1] + m[5]*x[2]);
+  y[2] = beta*y[2] + alpha*(m[6]*x[0] + m[7]*x[1] + m[8]*x[2]);
+}
+template void dfm2::MatVec3_ScaleAdd(float y[3],
+                                     const float m[9], const float x[3], float alpha, float beta);
+template void dfm2::MatVec3_ScaleAdd(double y[3],
+                                     const double m[9], const double x[3], double alpha, double beta);
+
+
+void dfm2::VecMat3
+ (double y[3],
+  const double x[3], const double m[9])
+{
+  y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
+  y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
+  y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
+}
+
+void dfm2::MatTVec3(
+    double y[3],
+    const double m[9], const double x[3])
+{
+  y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
+  y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
+  y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
+}
+
+
+template <typename T>
+void dfm2::MatTVec3_ScaleAdd(
+    T y[3],
+    const T m[9], const T x[3],
+    T alpha, T beta)
+{
+  y[0] = beta*y[0] + alpha*(m[0]*x[0] + m[3]*x[1] + m[6]*x[2]);
+  y[1] = beta*y[1] + alpha*(m[1]*x[0] + m[4]*x[1] + m[7]*x[2]);
+  y[2] = beta*y[2] + alpha*(m[2]*x[0] + m[5]*x[1] + m[8]*x[2]);
+}
+template void dfm2::MatTVec3_ScaleAdd(float y[3], const float m[9], const float x[3], float alpha, float beta);
+template void dfm2::MatTVec3_ScaleAdd(double y[3], const double m[9], const double x[3], double alpha, double beta);
+
+
+
+void dfm2::Mat4Vec3
+ (double vo[3],
+  const double M[16], const double vi[3])
+{
+  vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
+  vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
+  vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
+}
+
+// ------------------------------------
 
 template <typename T>
 void dfm2::MatMat3
@@ -111,6 +296,39 @@ T dfm2::SquareNormFrobenius_SymMat3
 }
 template float dfm2::SquareNormFrobenius_SymMat3(const float sm[6]);
 template double dfm2::SquareNormFrobenius_SymMat3(const double sm[6]);
+
+// ---------------------------------------
+
+template <typename REAL>
+void dfm2::Mat3_Rotation_Cartesian(
+    REAL mat[9],
+    const REAL vec[3])
+{
+  double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
+  if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
+    mat[0] = 1;        mat[1] = -vec[2];  mat[2] = +vec[1];
+    mat[3] = +vec[2];  mat[4] = 1;        mat[5] = -vec[0];
+    mat[6] = -vec[1];  mat[7] = +vec[0];  mat[8] = 1;
+    return;
+  }
+  double t = sqrt(sqt);
+  double invt = 1.0/t;
+  double n[3] = { vec[0]*invt, vec[1]*invt, vec[2]*invt };
+  const double c0 = cos(t);
+  const double s0 = sin(t);
+  mat[0*3+0] = c0        +(1-c0)*n[0]*n[0];
+  mat[0*3+1] =   -n[2]*s0+(1-c0)*n[0]*n[1];
+  mat[0*3+2] =   +n[1]*s0+(1-c0)*n[0]*n[2];
+  mat[1*3+0] =   +n[2]*s0+(1-c0)*n[1]*n[0];
+  mat[1*3+1] = c0        +(1-c0)*n[1]*n[1];
+  mat[1*3+2] =   -n[0]*s0+(1-c0)*n[1]*n[2];
+  mat[2*3+0] =   -n[1]*s0+(1-c0)*n[2]*n[0];
+  mat[2*3+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
+  mat[2*3+2] = c0        +(1-c0)*n[2]*n[2];
+}
+template void dfm2::Mat3_Rotation_Cartesian(float mat[9], const float vec[3]);
+template void dfm2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
+
 
 // ---------------------------------------
 

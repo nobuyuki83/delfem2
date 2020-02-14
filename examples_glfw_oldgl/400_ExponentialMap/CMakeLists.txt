@@ -34,6 +34,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
+    ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
     ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp

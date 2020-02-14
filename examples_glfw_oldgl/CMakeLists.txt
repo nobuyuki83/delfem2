@@ -40,6 +40,7 @@ add_subdirectory(400_ExponentialMap)
 add_subdirectory(401_GridOnMesh)
 add_subdirectory(402_QuadSubdivOnMesh)
 add_subdirectory(403_LaplacianMeshDeformation)
+add_subdirectory(404_AsRigidAsPossibleDeformation)
 
 
 # cad

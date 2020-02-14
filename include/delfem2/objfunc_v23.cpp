@@ -73,7 +73,7 @@ void dfm2::PBD_Update_Const3
 {
   std::vector<double> mi(np);
   for(int ip=0;ip<np;++ip){ mi[ip] = 1.0/m[ip]; }
-  /////
+  //
   const int nc = 3;
   std::vector<double> MinvC(nc*np*ndim);
   for(int ic=0;ic<nc;++ic){
@@ -95,7 +95,7 @@ void dfm2::PBD_Update_Const3
     A[2*3+1] += MinvC[2*np*ndim+i]*dCdp[1*np*ndim+i];
     A[2*3+2] += MinvC[2*np*ndim+i]*dCdp[2*np*ndim+i];
   }
-  double Ainv[nc*nc]; InverseMat3(Ainv, A);
+  double Ainv[nc*nc]; Inverse_Mat3(Ainv, A);
   double lmd[nc]; dfm2::MatVec3(lmd, Ainv, C);
   for(int ine=0;ine<np;++ine){
     const int ip0 = aIP[ine];
