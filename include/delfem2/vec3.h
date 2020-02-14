@@ -37,17 +37,6 @@ T Dot3(const T a[3], const T b[3]);
 template <typename T>
 void Normalize3(T v[3]);
 
-/**
- * @brief matrix vector product for 3x3 matrix {y} := [m]{x}
- */
-template <typename T>
-void MatVec3(T y[3],
-             const T m[9], const T x[3]);
-
-template <typename T>
-void Transpose_Mat3(T At[],
-                    const T A[]);
-
 template <typename REAL>
 void AverageTwo3(REAL po[3],
                  const REAL p0[3], const REAL p1[3]);
@@ -56,12 +45,9 @@ template <typename REAL>
 void AverageFour3(REAL po[3],
                   const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
 
-void MatTransVec3(double y[3],
-                  const double m[9], const double x[3]);
-void VecMat3(double y[3],
-             const double x[3], const double m[9]);
-
+// above: functions general for any dimensions
 // -----------------------------
+// below: functions specific to 3 dimension
   
 template <typename T>
 T Volume_Tet3(const T v1[3], const T v2[3], const T v3[3], const T v4[3]);
@@ -75,20 +61,21 @@ T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
   
 template <typename T>
 T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
- 
+
+template <typename T>
+void NormalTri3(T n[3],
+                const T v1[3], const T v2[3], const T v3[3]);
+
+
+template <typename REAL>
+void UnitNormalAreaTri3(
+    REAL n[3], REAL& a,
+    const REAL v1[3], const REAL v2[3], const REAL v3[3]);
+
 // --------------------------------
   
-void UnitNormalAreaTri3D(double n[3], double& a,
-                         const double v1[3], const double v2[3], const double v3[3]);
-void NormalTri3D(double n[3],
-                 const double v1[3], const double v2[3], const double v3[3]);
-void InverseMat3(double Ainv[],
-                 const double A[]);
 void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
-void GetRotMatrix_Rodrigues3D(double rot[9],
-                              const double n[3], double theta);
-void Mat4Vec3(double vo[3],
-              const double M[16], const double vi[3]);
+
 
 // -------------------------------------------------------------
 

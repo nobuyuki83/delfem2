@@ -26,9 +26,27 @@
 namespace delfem2 {
 
 template <typename REAL>
-void Mat3_Spin(
-    REAL* mat,
-    const REAL* v);
+void Mat3_Spin(REAL* mat,
+               const REAL* v);
+
+template <typename REAL>
+void Mat3_Identity(REAL* mat,
+                   REAL alpha);
+
+template <typename REAL>
+void Mat3_Identity_ScaleAdd(REAL* mat,
+                            REAL alpha=1, REAL beta=0);
+
+template <typename T>
+void Transpose_Mat3(T At[],
+                    const T A[]);
+
+template <typename REAL>
+void Inverse_Mat3(REAL Ainv[],
+                  const REAL A[]);
+
+template <typename REAL>
+void Inverse_Mat3(REAL Ainv[9]);
 
 template <typename T>
 void MatMat3(T* UL,
@@ -65,6 +83,11 @@ T Det_Mat3(const T U[9]);
 template <typename T>
 T SquareNormFrobenius_SymMat3(const T sm[6]);
 
+template <typename REAL>
+void Mat3_Rotation_Cartesian(
+    REAL mat[9],
+    const REAL vec[3]);
+
 /**
  * @brief compute eigen value & vector for symmmetric matrix
  * @details
@@ -85,6 +108,39 @@ void GetRotPolarDecomp(double R[9],
                        int nitr);
 
 // ------------------------------------------------
+
+void MatTVec3(
+    double y[3],
+    const double m[9], const double x[3]);
+
+/**
+ * @brief {y} = \beta*{y} + \alpha*[M]^T{x}
+ */
+template <typename T>
+void MatTVec3_ScaleAdd(
+    T y[3],
+    const T m[9], const T x[3],
+    T alpha, T beta);
+
+/**
+ * @brief matrix vector product for 3x3 matrix {y} := [m]{x}
+ */
+template <typename T>
+void MatVec3(T y[3],
+             const T m[9], const T x[3]);
+
+template <typename T>
+void MatVec3_ScaleAdd(T y[3],
+                      const T m[9], const T x[3],
+                      T alpha, T beta);
+
+void VecMat3(double y[3],
+             const double x[3], const double m[9]);
+void Mat4Vec3(double vo[3],
+              const double M[16],
+              const double vi[3]);
+
+// -------------------------------
 
 template <typename T>
 void MatVec4(T v[4],

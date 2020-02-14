@@ -182,6 +182,8 @@ public:
 public:
   double p[2];
 };
+using CVec2d = CVec2<double>;
+using CVec2f = CVec2<float>;
   
 template <typename T>
 CVec2<T> rotate(const CVec2<T>& p0, double theta);
@@ -469,8 +471,6 @@ public:
   double x_min,x_max,  y_min,y_max;
 };
   
-using CVec2d = CVec2<double>;
-using CVec2f = CVec2<float>;
   
 }
 
