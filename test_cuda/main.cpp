@@ -270,7 +270,7 @@ TEST(bvh,morton_code) {
                                             aSortedId.data(), aSortedMc.data(), N);
     { // check topology
       std::vector<dfm2::CNodeBVH2> aNodeBVH1(N*2-1);
-      dfm2::BVH_TreeTopology_Morton(aNodeBVH1,
+      dfm2::BVHTopology_Morton(aNodeBVH1,
           aSortedId, aSortedMc);
       EXPECT_EQ(aNodeBVH.size(), aNodeBVH1.size());
       for(unsigned int ibb=0;ibb<aNodeBVH.size();++ibb) {
@@ -301,7 +301,7 @@ TEST(bvh,morton_code) {
     } // end checking bvh topology
     // ------------------------------------------------------
     std::vector<dfm2::CBV3_Sphere<float>> aAABB1;
-    dfm2::BVH_BuildBVHGeometry_Points(aAABB1, 0, aNodeBVH,
+    dfm2::BVHGeometry_Points(aAABB1, 0, aNodeBVH,
                                       aXYZ.data(), aXYZ.size()/3);
 
     { // compare nearest points
@@ -373,7 +373,7 @@ TEST(bvh,aabb_tri)
       // -------------------------------------
       { // check topology against CPU
         std::vector<dfm2::CNodeBVH2> aNodeBVH1(nTri * 2 - 1);
-        dfm2::BVH_TreeTopology_Morton(aNodeBVH1,
+        dfm2::BVHTopology_Morton(aNodeBVH1,
                                       aSortedId, aSortedMc);
         EXPECT_EQ(aNodeBVH.size(), aNodeBVH1.size());
         for (int ibb = 0; ibb < aNodeBVH.size(); ++ibb) {
