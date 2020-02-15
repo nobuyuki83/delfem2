@@ -591,7 +591,7 @@ bool dfm2::DragHandlerRot_PosQuat
     double ar = -DragCircle(sp0,sp1, pos, v1, mMV, mPj);
     double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, dq, quat);
-    QuatCopy(quat,qtmp);
+    Copy_Quat(quat,qtmp);
     return true;
   }
   return false;
@@ -611,7 +611,7 @@ bool dfm2::DragHandlerRot_Mat4
     const double ar = DragCircle(sp0,sp1, pos, v1, mMV, mPj);
     const double dq[4] = { cos(ar*0.5), v0.x()*sin(ar*0.5), v0.y()*sin(ar*0.5), v0.z()*sin(ar*0.5) };
     double qtmp[4]; QuatQuat(qtmp, quat, dq);
-    QuatCopy(quat,qtmp);
+    Copy_Quat(quat,qtmp);
     return true;
   }
   return false;
