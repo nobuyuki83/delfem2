@@ -23,9 +23,28 @@ void Normalize_Quat(T q[4]);
  */
 template <typename T>
 void Quat_Identity(T q[4]);
+
+
+template <typename REAL>
+void Quat_Bryant(
+    REAL q[4],
+    REAL x, REAL y, REAL z);
+
+/**
+ * @brief Quaternion for cartesian rotation angle (3D axis with magnitude of rotation angle)
+ * @tparam REAL float and double
+ * @param q (out)
+ * @param a (in)
+ */
+template <typename REAL>
+void Quat_CartesianAngle(
+    REAL q[4],
+    const REAL a[3]);
+
   
 /**
- * @brief transform vector with quaternion vo  = q vi adj(q)
+ * @func transform a 3D vector with quaternion vo  = q*vi*adj(q)
+ * @tparam REAL float or double
  */
 template <typename REAL>
 void QuatVec(
@@ -33,13 +52,34 @@ void QuatVec(
     const REAL q[],
     const REAL vi[]);
 
+/**
+ * @func copy quaternion
+ * @tparam REAL float or double
+ */
+template <typename REAL>
+void Copy_Quat(
+    REAL r[],
+    const REAL p[]);
 
-void QuatCopy(double r[], const double p[]);
-void QuatQuat(double r[], const double p[], const double q[]);
+/**
+ * @brief multiply two quaternion
+ * @tparam REAL float or double
+ * @param r (out)
+ * @param p (in) lhs quaternion as 4D array (r,x,y,z)
+ * @param q (in) rhs quaternion as 4D array (r,z,y,z)
+ * @details quaternions don't commute (qp!=pq)
+ */
+template <typename REAL>
+void QuatQuat(
+    REAL r[],
+    const REAL p[],
+    const REAL q[]);
 
 void QuatConjVec(double vo[], const double q[], const double vi[]);
-void Quat_Bryant(double q[4],
-                 double x, double y, double z);
+
+// ----------
+
+
 void Mat4_Quat(double r[],
                const double q[]);
 void Mat4_QuatConj(double r[],
@@ -79,7 +119,7 @@ CQuat<T> SphericalLinearInterp(const CQuat<T>&, const CQuat<T>&, T);
 
   
 /**
- * @brief class of Quaternion
+ * @class class of Quaternion
  **/
 template <typename T>
 class CQuat  

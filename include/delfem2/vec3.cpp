@@ -152,6 +152,23 @@ template double dfm2::Dot3(const double a[3], const double b[3]);
 
 // ---------------------------------
 
+template <typename REAL>
+void dfm2::Add3(
+    REAL vo[3],
+    const REAL vi[3])
+{
+  vo[0] += vi[0];
+  vo[1] += vi[1];
+  vo[2] += vi[2];
+}
+template void dfm2::Add3(float vo[3], const float vi[3]);
+template void dfm2::Add3(double vo[3], const double vi[3]);
+
+
+
+
+// ---------------------------------
+
 template <typename T>
 T dfm2::Volume_Tet3
  (const T v1[3],

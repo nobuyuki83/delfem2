@@ -25,6 +25,12 @@
 
 namespace delfem2 {
 
+/**
+ * @func Set spin 3x3 matrix (skew asymetric matrix)
+ * @tparam REAL float and double
+ * @param mat pointer of 3x3 matrix
+ * @param v ponter of 3 vector
+ */
 template <typename REAL>
 void Mat3_Spin(
     REAL* mat,
@@ -38,12 +44,14 @@ void Mat3_Spin_ScaleAdd(
 
 
 template <typename REAL>
-void Mat3_Identity(REAL* mat,
-                   REAL alpha);
+void Mat3_Identity(
+    REAL* mat,
+    REAL alpha);
 
 template <typename REAL>
-void Mat3_Identity_ScaleAdd(REAL* mat,
-                            REAL alpha=1, REAL beta=0);
+void Mat3_Identity_ScaleAdd(
+    REAL* mat,
+    REAL alpha=1, REAL beta=0);
 
 template <typename T>
 void Transpose_Mat3(T At[],
@@ -67,15 +75,18 @@ void MatMatT3(
     const T* U);
   
 /**
- * @brief product of a transposed 3x3 matrix and another 3x3 matrix. [C] = [A]^T[B}
+ * @func product of a transposed 3x3 matrix and another 3x3 matrix.
+ * [C] = [A]^T[B}
  * @details row major data structure
  */
 template <typename T>
-void MatTMat3(T* C,
-              const T* A, const T* B);
+void MatTMat3(
+    T* C,
+    const T* A, const T* B);
 
 /**
- * @brief adding scaled product of a transposed 3x3 matrix and another 3x3 matrix. [C] = \alpha * [A]^T[B} + \beta* [C]
+ * @func adding scaled product of a transposed 3x3 matrix and another 3x3 matrix.
+ * [C] = alpha * [A]^T[B} + beta* [C]
  * @details row major data structure
  */
 template <typename T>
@@ -97,7 +108,7 @@ void Mat3_Rotation_Cartesian(
     const REAL vec[3]);
 
 /**
- * @brief compute eigen value & vector for symmmetric matrix
+ * @func compute eigen value & vector for symmmetric matrix
  * @details
  * sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
  * M = ULU^T
@@ -122,7 +133,7 @@ void MatTVec3(
     const double m[9], const double x[3]);
 
 /**
- * @brief {y} = \beta*{y} + \alpha*[M]^T{x}
+ * @func {y} = beta*{y} + alpha*[M]^T{x}
  */
 template <typename T>
 void MatTVec3_ScaleAdd(
@@ -131,7 +142,7 @@ void MatTVec3_ScaleAdd(
     T alpha, T beta);
 
 /**
- * @brief matrix vector product for 3x3 matrix {y} := [m]{x}
+ * @func matrix vector product for 3x3 matrix {y} := [m]{x}
  */
 template <typename T>
 void MatVec3(T y[3],
@@ -186,7 +197,7 @@ void Vec3_AffMat3Vec3Projection(
     const T x0[3]);
 
 /**
- * @brief multiply rotation affine matrix from left to an affine matrix in 3D
+ * @func multiply rotation affine matrix from left to an affine matrix in 3D
  * @details the ritation is parmeterized with a rodriguez angle
  */
 template <typename REAL>
@@ -195,7 +206,7 @@ void Rotate_AffMat3_Rodriguez(
     const REAL v[3]);
 
 /**
- * @brief multiply translation affine matrix from left to an affine matrix in 3D
+ * @func multiply translation affine matrix from left to an affine matrix in 3D
  */
 template <typename REAL>
 void Translate_AffMat3(
@@ -236,7 +247,7 @@ std::istream &operator>>(std::istream &output, CMat3<T>& m);
 static inline bool myIsNAN_Matrix3(double d){ return !(d > d-1); }
 
 /**
- * @brief class of 3x3 matrix
+ * @class class of 3x3 matrix
  */
 template <typename REAL>
 class CMat3

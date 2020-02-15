@@ -68,16 +68,23 @@ template void dfm2::QuatVec(double vo[3], const double q[4], const double vi[3])
 
 // -------------------------------------
 
-// multiply two quaternion
-void dfm2::QuatQuat(double r[], const double p[], const double q[])
+// multiply two quaternions
+template <typename REAL>
+void dfm2::QuatQuat(
+    REAL r[],
+    const REAL p[],
+    const REAL q[])
 {
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
   r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
   r[2] = p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1];
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
+template void dfm2::QuatQuat(float r[], const float p[], const float q[]);
+template void dfm2::QuatQuat(double r[], const double p[], const double q[]);
 
 
+// ----------------------------------------
 
 // transform vector with conjugate of quaternion
 void dfm2::QuatConjVec(double vo[], const double q[], const double vi[])
@@ -97,25 +104,70 @@ void dfm2::QuatConjVec(double vo[], const double q[], const double vi[])
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 
+// -------------------------
+
 // copy quaternion
-void dfm2::QuatCopy(double r[], const double p[])
+template <typename REAL>
+void dfm2::Copy_Quat(
+    REAL r[],
+    const REAL p[])
 {
   r[0] = p[0];
   r[1] = p[1];
   r[2] = p[2];
   r[3] = p[3];
 }
+template void dfm2::Copy_Quat(float r[], const float p[]);
+template void dfm2::Copy_Quat(double r[], const double p[]);
 
-void dfm2::Quat_Bryant
- (double q[4],
-  double x, double y, double z)
-{
-  const double dqx[4] = { cos(x*0.5), sin(x*0.5), 0.0, 0.0 };
-  const double dqy[4] = { cos(y*0.5), 0.0, sin(y*0.5), 0.0 };
-  const double dqz[4] = { cos(z*0.5), 0.0, 0.0, sin(z*0.5) };
-  double qtmp_yx[4]; dfm2::QuatQuat(qtmp_yx, dqy, dqx);
+// -------------------------
+
+namespace delfem2 {
+
+template<>
+void Quat_Bryant
+    (double q[4],
+     double x, double y, double z) {
+  const double dqx[4] = {cos(x * 0.5), sin(x * 0.5), 0.0, 0.0};
+  const double dqy[4] = {cos(y * 0.5), 0.0, sin(y * 0.5), 0.0};
+  const double dqz[4] = {cos(z * 0.5), 0.0, 0.0, sin(z * 0.5)};
+  double qtmp_yx[4];
+  dfm2::QuatQuat(qtmp_yx, dqy, dqx);
   dfm2::QuatQuat(q, dqz, qtmp_yx);
 }
+
+template<>
+void Quat_Bryant(
+    float q[4],
+    float x, float y, float z) {
+  const float dqx[4] = {cosf(x * 0.5f), sinf(x * 0.5f), 0.f, 0.f};
+  const float dqy[4] = {cosf(y * 0.5f), 0.f, sinf(y * 0.5f), 0.f};
+  const float dqz[4] = {cosf(z * 0.5f), 0.f, 0.f, sinf(z * 0.5f)};
+  float qtmp_yx[4];
+  dfm2::QuatQuat(qtmp_yx, dqy, dqx);
+  dfm2::QuatQuat(q, dqz, qtmp_yx);
+}
+
+}
+
+// ------------------------
+
+namespace delfem2 {
+
+template <>
+void Quat_CartesianAngle(
+    double q[4],
+    const double a[3]) {
+  const double lena = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+  q[0] = cos(lena * 0.5);
+  q[1] = sin(lena * 0.5) * a[0] / lena;
+  q[2] = sin(lena * 0.5) * a[1] / lena;
+  q[3] = sin(lena * 0.5) * a[2] / lena;
+}
+
+}
+
+// ---------------------------------------------------------------------
 
 void dfm2::Mat4_Quat
  (double r[], const double q[])

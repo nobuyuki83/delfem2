@@ -45,6 +45,17 @@ template <typename REAL>
 void AverageFour3(REAL po[3],
                   const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
 
+/**
+ * @func add values for 3-array (vo += vi)
+ * @tparam REAL float and double
+ * @param vo (out)
+ * @param vi (in)
+ */
+template <typename REAL>
+  void Add3(
+    REAL vo[3],
+    const REAL vi[3]);
+
 // above: functions general for any dimensions
 // -----------------------------
 // below: functions specific to 3 dimension
@@ -116,7 +127,7 @@ template <typename T>
 std::istream &operator>>(std::istream &input, std::vector<CVec3<T> >& aV);
   
 /**
- * @brief 3 dimentional vector class
+ * @class 3 dimentional vector class
  */
 template <typename T>
 class CVec3

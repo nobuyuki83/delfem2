@@ -360,7 +360,7 @@ void dfm2::SetPose_BioVisionHierarchy
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
       double qtmp[4]; dfm2::QuatQuat(qtmp, aBone[ibone].rot, dq);
-      dfm2::QuatCopy(aBone[ibone].rot,qtmp);
+      dfm2::Copy_Quat(aBone[ibone].rot,qtmp);
     }
   }
   dfm2::UpdateBoneRotTrans(aBone);
