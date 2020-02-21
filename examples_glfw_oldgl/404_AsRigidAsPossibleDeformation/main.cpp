@@ -450,7 +450,7 @@ int main(int argc,char* argv[])
   }
 
   
-  while (!glfwWindowShouldClose(viewer.window)){
+  while (true){
     const double weight_bc = 100.0;
     int iframe = 0;
     {

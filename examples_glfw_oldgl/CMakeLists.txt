@@ -34,7 +34,8 @@ add_subdirectory(204_DynTetTetrahedralization)
 # immplicit shape
 add_subdirectory(300_AdaptiveDistanceField)
 add_subdirectory(301_IsoSurfaceStuffing)
-
+add_subdirectory(302_HashBvhSelfCollision)
+add_subdirectory(303_HashLbvh3D)
 
 add_subdirectory(400_ExponentialMap)
 add_subdirectory(401_GridOnMesh)
@@ -56,14 +57,9 @@ add_subdirectory(602_Fem3DEigen)
 add_subdirectory(603_Fem3DStiffwarp)
 add_subdirectory(604_FemCloth_DynamicTriangle)
 add_subdirectory(605_FemClothInternal)
-
-# spatial hash 
-add_subdirectory(700_HashBvhSelfCollision)
-add_subdirectory(701_HashLbvh3D)
-
-# pbd
-add_subdirectory(800_PbdGrid2D)
-add_subdirectory(801_PbdCloth)
+add_subdirectory(606_PbdGrid2D)
+add_subdirectory(607_PbdCloth)
+add_subdirectory(608_FdmFluid2D)
 
 #bem
 add_subdirectory(900_BemPotentialFlow3D)

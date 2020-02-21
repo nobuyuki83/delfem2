@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(700_hashbvh_selfcollision)
+project(302_HashBvhSelfCollision)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
