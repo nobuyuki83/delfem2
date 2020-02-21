@@ -98,7 +98,6 @@ template void dfm2::Mat3_Spin(double* mat, const double* v);
 
 // ---------------------------------------------------------
 
-
 template <typename REAL>
 void dfm2::Mat3_Spin_ScaleAdd(
     REAL* m,
@@ -646,9 +645,10 @@ dfm2::CMat3<T>::CMat3(const T m[9]):
 template <typename T>
 void dfm2::CMat3<T>::MatVec(const double vec0[], double vec1[]) const
 {
-  vec1[0] = mat[0]*vec0[0] + mat[1]*vec0[1] + mat[2]*vec0[2];
-  vec1[1] = mat[3]*vec0[0] + mat[4]*vec0[1] + mat[5]*vec0[2];
-  vec1[2] = mat[6]*vec0[0] + mat[7]*vec0[1] + mat[8]*vec0[2];
+  ::dfm2::MatVec3(vec1, mat, vec0);
+//  vec1[0] = mat[0]*vec0[0] + mat[1]*vec0[1] + mat[2]*vec0[2];
+//  vec1[1] = mat[3]*vec0[0] + mat[4]*vec0[1] + mat[5]*vec0[2];
+//  vec1[2] = mat[6]*vec0[0] + mat[7]*vec0[1] + mat[8]*vec0[2];
 }
 template void dfm2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
 
@@ -665,6 +665,9 @@ template void dfm2::CMat3<double>::MatVecTrans(const double vec0[], double vec1[
 template <typename T>
 dfm2::CMat3<T> dfm2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
   CMat3 m;
+  ::dfm2::MatMat3(m.mat,
+                  this->mat, mat0.mat);
+  /*
   for(unsigned int i=0;i<3;i++){
     for(unsigned int j=0;j<3;j++){
       m.mat[i*3+j] =
@@ -673,6 +676,7 @@ dfm2::CMat3<T> dfm2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
       + mat[i*3+2]*mat0.mat[2*3+j];
     }
   }
+   */
   return m;
 }
 template dfm2::CMat3<double> dfm2::CMat3<double>::MatMat(const CMat3<double>& mat0) const;
@@ -708,20 +712,21 @@ template dfm2::CMat3<double> dfm2::CMat3<double>::Inverse() const;
 template <typename T>
 void dfm2::CMat3<T>::SetInverse()
 {
+  ::dfm2::Inverse_Mat3(mat);
+  /*
   const double det = this->Det();
   const double inv_det = 1.0/det;
   double t[9]; for(int i=0;i<9;i++){ t[i] = this->mat[i]; }
   mat[0] = inv_det*(t[4]*t[8]-t[5]*t[7]);
   mat[1] = inv_det*(t[2]*t[7]-t[1]*t[8]);
   mat[2] = inv_det*(t[1]*t[5]-t[2]*t[4]);
-  
   mat[3] = inv_det*(t[5]*t[6]-t[3]*t[8]);
   mat[4] = inv_det*(t[0]*t[8]-t[2]*t[6]);
   mat[5] = inv_det*(t[2]*t[3]-t[0]*t[5]);
-  
   mat[6] = inv_det*(t[3]*t[7]-t[4]*t[6]);
   mat[7] = inv_det*(t[1]*t[6]-t[0]*t[7]);
   mat[8] = inv_det*(t[0]*t[4]-t[1]*t[3]);
+   */
 }
 template void dfm2::CMat3<double>::SetInverse();
 template void dfm2::CMat3<float>::SetInverse();
