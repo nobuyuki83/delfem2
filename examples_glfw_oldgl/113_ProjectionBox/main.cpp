@@ -28,7 +28,7 @@ std::vector<unsigned int> aTri;
 
 // ------------------------------------------------------
 
-void Draw(){
+void DrawObject(){
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
 }
 
@@ -37,7 +37,7 @@ void myGlutDisplay(const std::vector<dfm2::opengl::CRender2Tex_DrawOldGL>& aSamp
   dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1,1,1);
-  Draw();
+  DrawObject();
 
   glPointSize(3);
   float mMV[16]; glGetFloatv(GL_MODELVIEW, mMV);
@@ -131,7 +131,7 @@ int main(int argc,char* argv[])
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    Draw();
+    DrawObject();
     smplr.End();
     smplr.GetDepth();
     smplr.GetColor();

@@ -584,12 +584,9 @@ int main(int argc,char* argv[])
         for (int ip = 0; ip < np; ++ip) {
           dfm2::Add3(aXYZ1.data() + ip * 3, aUpd.data() + ip * 3);
           double q0[4];
-          aUpd[np * 3 + ip * 3 + 0] *= 0.25;
-          aUpd[np * 3 + ip * 3 + 1] *= 0.25;
-          aUpd[np * 3 + ip * 3 + 2] *= 0.25;
           dfm2::Quat_CartesianAngle(q0, aUpd.data() + np * 3 + ip * 3);
           double q1[4];
-          dfm2::QuatQuat(q1, q0, aQuat.data() + ip * 4);
+          dfm2::QuatQuat(q1, aQuat.data() + ip * 4, q0);
           dfm2::Copy_Quat(aQuat.data() + ip * 4, q1);
         }
         // ------

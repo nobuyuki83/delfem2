@@ -449,7 +449,9 @@ template void dfm2::AverageFour3(double po[3],
 
 
 
-// ----------------------------------------
+// above: without CVec3
+// --------------------------------------------------------------------------------------------
+// below: with CVec3
 
 namespace delfem2 {
   
@@ -484,7 +486,9 @@ CVec3<T> operator - (const CVec3<T>& lhs, const CVec3<T>& rhs){
   temp -= rhs;
   return temp;
 }
-  template CVec3d operator - (const CVec3d& lhs, const CVec3d& rhs);
+template CVec3f operator - (const CVec3f& lhs, const CVec3f& rhs);
+template CVec3d operator - (const CVec3d& lhs, const CVec3d& rhs);
+
   
 // ------------------
 
@@ -746,7 +750,10 @@ template bool dfm2::IntersectRay_Tri3(double& r0, double& r1,
                                       const CVec3d& org, const CVec3d& dir,
                                       const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
                                       double eps);
- 
+  
+// --------------------------
+
+
 // --------------------------------------------------------
 
 template <typename T>

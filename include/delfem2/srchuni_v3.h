@@ -55,6 +55,10 @@ public:
   delfem2::CVec3<T> Pos_TetFace(const std::vector<double>& aXYZ,
                        const std::vector<int>& aTet,
                        const std::vector<int>& aTetFace) const;
+  delfem2::CVec3<T> Pos_Grid(
+      unsigned int nx, unsigned int ny,
+      double el,
+      std::vector<float>& aH) const;
   delfem2::CVec3<T> UNorm_Tri(const std::vector<double>& aXYZ,
                      const std::vector<unsigned int>& aTri,
                      const std::vector<double>& aNorm) const;
@@ -95,12 +99,13 @@ void IntersectionRay_MeshTri3 (
     REAL eps );
   
 template <typename REAL>
-void IntersectionRay_MeshTri3DPart(std::map<REAL,CPointElemSurf<REAL>>& mapDepthPES,
-                                   const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
-                                   const std::vector<unsigned int>& aTri,
-                                   const std::vector<REAL>& aXYZ,
-                                   const std::vector<int>& aIndTri,
-                                   REAL eps);
+void IntersectionRay_MeshTri3DPart(
+    std::map<REAL,CPointElemSurf<REAL>>& mapDepthPES,
+    const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<REAL>& aXYZ,
+    const std::vector<int>& aIndTri,
+    REAL eps);
 
 /*
  CPointElemSurf intersect_Ray_Tri3D(double& depth,
@@ -129,6 +134,13 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const delfem2::CVector3& org, const d
                                            int iflag,
                                            const std::vector<int>& aFlag);
  */
+
+void IntersectionLine_Hightfield(
+    std::vector<CPointElemSurf<double>>& aPos,
+    const double src[3],
+    const double dir[3],
+    double nx, double ny, double elen,
+    const std::vector<float>& aH);
 
 // above functions for ray interesection
 // -----------------------------------------------------------
