@@ -22,7 +22,7 @@ add_subdirectory(110_ReadFileBVH)
 add_subdirectory(111_ReadFileGLTF)
 add_subdirectory(112_OffscreenRendering)
 add_subdirectory(113_ProjectionBox)
-
+add_subdirectory(114_CollisionLineHightfield)
 
 # meshing
 add_subdirectory(201_DynTri2dTriangulation)

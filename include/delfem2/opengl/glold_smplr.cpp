@@ -70,6 +70,9 @@ void dfm2::opengl::CRender2Tex_DrawOldGL::Start()
 void dfm2::opengl::CRender2Tex_DrawOldGL::GetDepth()
 {
   CRender2Tex::ExtractFromTexture_Depth(aZ);
+  for(auto& z: aZ){
+    z *= -this->z_range;
+  }
 }
 
 void dfm2::opengl::CRender2Tex_DrawOldGL::GetColor()
@@ -149,7 +152,7 @@ void dfm2::opengl::CRender2Tex_DrawOldGL::Draw_Point() const
   ::glBegin(GL_POINTS);
   for(unsigned int iy=0;iy<nResY;++iy){
     for(unsigned int ix=0;ix<nResX;++ix){
-      double lz = -aZ[iy*nResX+ix]*z_range;
+      double lz = aZ[iy*nResX+ix];
       if( this->isDrawOnlyHitPoints && lz <= -z_range*0.9 ){ continue; }
       double lx = (ix+0.5)*lengrid;
       double ly = (iy+0.5)*lengrid;

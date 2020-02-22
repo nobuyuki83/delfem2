@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(100_nav3d)
+project(100_Nav3D)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

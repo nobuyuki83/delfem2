@@ -13,7 +13,7 @@ ENDIF()
 
 ######################################################
 
-project(000_openwin)
+project(000_OpenWin)
 
 set(3RD_PARTY           "../../3rd_party")
 set(GLFW_DIR "${3RD_PARTY}/glfw")

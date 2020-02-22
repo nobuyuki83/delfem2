@@ -170,9 +170,29 @@ dfm2::CVec3<T> dfm2::CPointElemSurf<T>::Pos_TetFace
   p.p[2] = r0*aXYZ[iq0*3+2]+r1*aXYZ[iq1*3+2]+r2*aXYZ[iq2*3+2];
   return p;
 }
-template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_TetFace(const std::vector<double>& aXYZ,
-                                                                const std::vector<int>& aTet,
-                                                                const std::vector<int>& aTetFace) const;
+template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_TetFace(
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTet,
+    const std::vector<int>& aTetFace) const;
+
+// ----------------------------------------
+
+template <typename T>
+dfm2::CVec3<T> dfm2::CPointElemSurf<T>::Pos_Grid(
+    unsigned int nx, unsigned int ny, double el, std::vector<float>& aH) const
+{
+  int iey = (this->itri/2)/nx;
+  int iex = (this->itri/2)-nx*iey;
+  CVec3<T> p00( (iex+0)*el, (iey+0)*el, aH[(iey+0)*nx+(iex+0)] );
+  CVec3<T> p10( (iex+1)*el, (iey+0)*el, aH[(iey+0)*nx+(iex+1)] );
+  CVec3<T> p01( (iex+0)*el, (iey+1)*el, aH[(iey+1)*nx+(iex+0)] );
+  CVec3<T> p11( (iex+1)*el, (iey+1)*el, aH[(iey+1)*nx+(iex+1)] );
+  if( this->itri%2 == 0 ){ return p00*r0 + p10*r1 + p11*(1-r0-r1); }
+  return p00*r0 + p11*r1 + p01*(1-r0-r1);
+}
+template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_Grid(
+    unsigned int nx, unsigned int ny,
+    double el, std::vector<float>& aH) const;
 
 // ----------------------------------------
 
@@ -293,23 +313,25 @@ template bool dfm2::CPointElemSurf<double>::Check (const std::vector<double>& aX
 
 
 namespace delfem2 {
-  
+
 template <typename T>
-std::ostream &operator<<(std::ostream &output, const CPointElemSurf<T>& v)
+std::ostream &operator << (std::ostream &output,
+                           const CPointElemSurf<T>& v)
 {
   output.setf(std::ios::scientific);
-  output<<v.itri<<" "<<v.r0<<" "<<v.r1;
+  output << v.itri << " " << v.r0 << " " << v.r1;
   return output;
 }
 
 template <typename T>
-std::istream &operator>>(std::istream &input, CPointElemSurf<T>& v)
-{
+std::istream &operator >> (std::istream &input,
+                           CPointElemSurf<T>& v){
   input>>v.itri>>v.r0>>v.r1;
   return input;
 }
   
 }
+    
 
 /*
 CVector3 MidPoint
@@ -382,6 +404,7 @@ template std::vector<dfm2::CPointElemSurf<double>>
                                   const std::vector<unsigned int>& aTri,
                                   const std::vector<double>& aXYZ,
                                   double eps);
+
   
 // -------------------------------------
 
@@ -410,7 +433,7 @@ template void dfm2::IntersectionRay_MeshTri3 (std::map<double,CPointElemSurf<dou
                                               const std::vector<unsigned int>& aTri,
                                               const std::vector<double>& aXYZ,
                                               double eps);
-  
+
 // ----------------------
 
 template <typename T>
@@ -448,6 +471,8 @@ template void dfm2::IntersectionRay_MeshTri3DPart (std::map<double,CPointElemSur
                                                    const std::vector<double>& aXYZ,
                                                    const std::vector<int>& aIndTri,
                                                    double eps);
+  
+// -----------------------------------------------
 
 /*
 CPointElemSurf intersect_Ray_MeshTriFlag3D
@@ -539,6 +564,35 @@ CPointElemSurf intersect_Ray_MeshTri3D
 }
  */
 
+
+void dfm2::IntersectionLine_Hightfield(
+    std::vector<CPointElemSurf<double>>& aPes,
+    const double src[3],
+    const double dir[3],
+    double nx, double ny, double elen,
+    const std::vector<float>& aH)
+{
+  for(int iey=0;iey<ny-1;++iey){
+    for(int iex=0;iex<nx-1;++iex){
+      const double p00[3] = {(iex+0)*elen,(iey+0)*elen,aH[(iey+0)*nx+(iex+0)]};
+      const double p10[3] = {(iex+1)*elen,(iey+0)*elen,aH[(iey+0)*nx+(iex+1)]};
+      const double p01[3] = {(iex+0)*elen,(iey+1)*elen,aH[(iey+1)*nx+(iex+0)]};
+      const double p11[3] = {(iex+1)*elen,(iey+1)*elen,aH[(iey+1)*nx+(iex+1)]};
+      double r0=1.0, r1=1.0;
+      if( dfm2::IntersectRay_Tri3(r0, r1,
+          dfm2::CVec3d(src), dfm2::CVec3d(dir),
+          dfm2::CVec3d(p00), dfm2::CVec3d(p10), dfm2::CVec3d(p11), 1.0e-3) ){
+        aPes.emplace_back((iey*nx+iex)*2+0, r0,r1);
+      }
+      // ---------------------
+      if( dfm2::IntersectRay_Tri3(r0, r1,
+          dfm2::CVec3d(src), dfm2::CVec3d(dir),
+          dfm2::CVec3d(p00), dfm2::CVec3d(p11), dfm2::CVec3d(p01), 1.0e-3) ){
+        aPes.emplace_back((iey*nx+iex)*2+1, r0,r1);
+      }
+    } // iex
+  } // iey
+}
 
 // ----------------------------------------------------------
 

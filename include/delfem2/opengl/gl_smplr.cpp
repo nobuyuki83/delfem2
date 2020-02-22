@@ -13,7 +13,6 @@
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
-#include "delfem2/vec3.h"
 // ------
 #include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
@@ -28,7 +27,7 @@
 
 namespace dfm2 = delfem2;
 
-// --------------------------------------------------------
+// ---------------------------------------------
 
 static double DotX(const double* p0, const double* p1, int ndof){
   double v=0;
@@ -46,6 +45,22 @@ static void NormalizeX(double* p0, int n)
   const double ss = DotX(p0,p0,n);
   ScaleX(p0,n,1.0/sqrt(ss));
 }
+
+template <typename T>
+static T MyDot3(const T a[3], const T b[3]){
+  return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+}
+template float MyDot3(const float a[3], const float b[3]);
+template double MyDot3(const double a[3], const double b[3]);
+
+template <typename T>
+void MyCross3(T r[3], const T v1[3], const T v2[3]){
+  r[0] = v1[1]*v2[2] - v2[1]*v1[2];
+  r[1] = v1[2]*v2[0] - v2[2]*v1[0];
+  r[2] = v1[0]*v2[1] - v2[0]*v1[1];
+}
+template void MyCross3(float r[3], const float v1[3], const float v2[3]);
+template void MyCross3(double r[3], const double v1[3], const double v2[3]);
 
 // --------------------------------------------
 
@@ -69,11 +84,11 @@ void delfem2::opengl::CRender2Tex::AffMatT3f_MVP
  (float mMV[16],
   float mP[16]) const
 {
-  {
+  { // global to local
     const double* ax = this->x_axis;
     const double* az = this->z_axis;
-    double ay[3]; dfm2::Cross3(ay, az, ax);
-    const double o[3] = { dfm2::Dot3(ax,origin), dfm2::Dot3(ay,origin), dfm2::Dot3(az,origin) };
+    double ay[3]; MyCross3(ay, az, ax);
+    const double o[3] = { MyDot3(ax,origin), MyDot3(ay,origin), MyDot3(az,origin) };
     mMV[ 0] = ax[0];  mMV[ 1] = ay[0];  mMV[ 2] = az[0];  mMV[ 3] = 0;
     mMV[ 4] = ax[1];  mMV[ 5] = ay[1];  mMV[ 6] = az[1];  mMV[ 7] = 0;
     mMV[ 8] = ax[2];  mMV[ 9] = ay[2];  mMV[10] = az[2];  mMV[11] = 0;
