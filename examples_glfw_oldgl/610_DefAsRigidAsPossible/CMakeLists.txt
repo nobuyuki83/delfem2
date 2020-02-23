@@ -12,7 +12,7 @@ ENDIF()
 
 ##########################################
 
-project(403_LaplacianMeshDeformation)
+project(610_DefAsRigidAsPossible)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -21,23 +21,6 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
-
-add_definitions(-DUSE_MKL)
-
-set(MKL_ROOT
-	C:/MKL
-	/opt/intel/mkl
-	$ENV{MKLROOT})
-
-find_path(MKL_INCLUDE_DIR mkl.h 
-	PATHS ${MKL_ROOT} 
-	PATH_SUFFIXES include)
-
-find_library(MKL_LIBRARY_CORE
-  libmkl_core.a
-  PATHS ${MKL_ROOT}/lib ${MKL_ROOT}/lib/intel64)
-get_filename_component(MKL_LIBRARY 
-  ${MKL_LIBRARY_CORE} DIRECTORY)
 
 find_package(OpenGL REQUIRED)
 
@@ -55,12 +38,10 @@ add_executable(${PROJECT_NAME}
 	${DELFEM2_INC}/vec2.cpp                 ${DELFEM2_INC}/vec2.h
 	${DELFEM2_INC}/mat3.cpp                 ${DELFEM2_INC}/mat3.h
   ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
-	${DELFEM2_INC}/mats.h                   ${DELFEM2_INC}/mats.cpp
 	${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
 	${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
 	${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
-
 	${DELFEM2_INC}/v23m3q.cpp               ${DELFEM2_INC}/v23m3q.h
 
 	${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp

@@ -9,20 +9,16 @@
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/color.h"
-
+// ----------
 #include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
 // ---------
-#ifdef __APPLE__
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_funcs.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
@@ -158,14 +154,6 @@ dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double> ilu_A;
 
-int press_button = -1;
-double mov_begin_x, mov_begin_y;
-double mag = 1.5;
-
-// 0: poisson
-// 1: diffusion
-int iproblem = 0;
-bool is_animation = false;
 double dt_timestep = 0.01;
 double gamma_newmark = 0.6;
 double beta_newmark = 0.36;
@@ -706,7 +694,7 @@ void SolveProblem_NavierStokes_Dynamic()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*3;
-  //////////////////////////////
+  // ----------------------
   double myu = 0.01;
   double rho = 1;
   double g_x = 0.0;
@@ -754,249 +742,183 @@ void SolveProblem_NavierStokes_Dynamic()
   }
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-void myGlutResize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  glutPostRedisplay();
-}
-
-void myGlutDisplay(void)
-{
-  ::glClearColor(0.2, .7, 0.7, 1.0);
-  //	::glClearColor(0.0, .0, 0.0, 1.0);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1, 4.0 );
-  
-  delfem2::opengl::setGL_Camera2D();
-  
-  if( iproblem == 0 || iproblem == 1 ){
-    {
-      std::vector< std::pair<double,delfem2::CColor> > colorMap;
-      ColorMap_BlueGrayRed(colorMap, 0, +0.1);
-      delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
-                                     aTri1.data(),aTri1.size()/3,
-                                     aVal.data(),1,colorMap);
-    }
-    delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
-    ::glPointSize(2);
-    ::glColor3d(0,0,0);
-    delfem2::opengl::DrawPoints2d_Points(aXY1);
-  }
-  else if( iproblem == 2 || iproblem == 3 ){
-    delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
-                                     aTri1.data(), aTri1.size()/3,
-                                     aVal.data(), 2);
-  }
-  else if( iproblem == 4 || iproblem == 5 || iproblem == 6
-          || iproblem == 7 || iproblem == 8 || iproblem == 9 )
+void DrawScalar(){
+  ::glDisable(GL_LIGHTING);
   {
     std::vector< std::pair<double,delfem2::CColor> > colorMap;
-    delfem2::ColorMap_BlueGrayRed(colorMap, -30, +30);
+    ColorMap_BlueGrayRed(colorMap, 0, +0.1);
     delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
-                                   aTri1.data(),aTri1.size()/3,
-                                   aVal.data()+2,3,colorMap);
-    ::glColor3d(0,0,0);    
-    delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
-    ::glPointSize(2);
-    ::glColor3d(0,0,0);
-    delfem2::opengl::DrawPoints2d_Points(aXY1);
+                                            aTri1.data(),aTri1.size()/3,
+                                            aVal.data(),1,colorMap);
   }
-  
-  ShowFPS();
-  
-  glutSwapBuffers();
+  ::glColor3d(0,0,0);
+  delfem2::opengl::DrawMeshTri2D_Edge(aTri1,aXY1);
+  ::glPointSize(2);
+  ::glColor3d(0,0,0);
+  delfem2::opengl::DrawPoints2d_Points(aXY1);
 }
 
-void myGlutIdle(){
-  if( is_animation ){
-    if( iproblem == 1){
-      SolveProblem_Diffusion();
-    }
-    if( iproblem == 3){
-      SolveProblem_LinearSolid_Dynamic();
-    }
-    if( iproblem == 5 || iproblem == 8 ){
-      SolveProblem_Stokes_Dynamic();
-    }
-    if( iproblem == 6 || iproblem == 9 ){
-      SolveProblem_NavierStokes_Dynamic();
-    }
-  }
-  ::glutPostRedisplay();
+void DrawVelocityField(){
+  std::vector< std::pair<double,delfem2::CColor> > colorMap;
+  delfem2::ColorMap_BlueGrayRed(colorMap, -30, +30);
+  delfem2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
+                                          aTri1.data(),aTri1.size()/3,
+                                          aVal.data()+2,3,colorMap);
+  ::glColor3d(0,0,0);
+  delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
+  ::glPointSize(2);
+  ::glColor3d(0,0,0);
+  delfem2::opengl::DrawPoints2d_Points(aXY1);
 }
 
-void myGlutMotion( int x, int y ){
-  GLint viewport[4];
-  ::glGetIntegerv(GL_VIEWPORT,viewport);
-  const int win_w = viewport[2];
-  const int win_h = viewport[3];
-  const double mov_end_x = (2.0*x-win_w)/win_w;
-  const double mov_end_y = (win_h-2.0*y)/win_h;
-  mov_begin_x = mov_end_x;
-  mov_begin_y = mov_end_y;
-  ::glutPostRedisplay();
-}
 
-void myGlutMouse(int button, int state, int x, int y)
+int main(int argc,char* argv[])
 {
-  GLint viewport[4];
-  ::glGetIntegerv(GL_VIEWPORT,viewport);
-  const int win_w = viewport[2];
-  const int win_h = viewport[3];
-  mov_begin_x = (2.0*x-win_w)/win_w;
-  mov_begin_y = (win_h-2.0*y)/win_h;
-  press_button = button;
-  if( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN ){
-  }
-  else if( button == GLUT_LEFT_BUTTON && state == GLUT_UP){
-    press_button = -1;
-  }
-}
-
-void Solve(bool is_next)
-{
-  if( is_next ){ iproblem = (iproblem+1)%10; }
-  const int np = aXY1.size()/2;
-  if( iproblem == 0 ){
-    is_animation = false;
+  
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 1.5;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  delfem2::opengl::setSomeLighting();
+  
+  while (true){
+    MakeMesh();
+    int iframe = 0;
+    const unsigned int np = aXY1.size()/2;
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "Poisson");
     aVal.assign(np, 0.0);
     InitializeProblem_Scalar();
     SolveProblem_Poisson();
-  }
-  else if( iproblem == 1 ){
-    is_animation = true;
+    for(;iframe<50;++iframe){ // poisson
+      viewer.DrawBegin_oldGL();
+      DrawScalar();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "Diffusion");
     aVal.assign(np, 0.0);
     aVelo.assign(np, 0.0);
     InitializeProblem_Scalar();
     SolveProblem_Diffusion();
-  }
-  else if( iproblem == 2 ){
-    is_animation = false;
+    for(;iframe<150;++iframe){
+      SolveProblem_Diffusion();
+      // -------
+      viewer.DrawBegin_oldGL();
+      DrawScalar();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "Linear Elastic Static");
     aVal.assign(np*2, 0.0);
     InitializeProblem_Solid();
     SolveProblem_LinearSolid_Static();
-  }
-  else if( iproblem == 3 ){
-    is_animation = true;
+    for(;iframe<200;++iframe){
+      viewer.DrawBegin_oldGL();
+      delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
+                                                aTri1.data(), aTri1.size()/3,
+                                                aVal.data(), 2);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "Linear Elastic Dynamic");
     aVal.assign(np*2, 0.0);
     aVelo.assign(np*2, 0.0);
     aAcc.assign(np*2, 0.0);
     InitializeProblem_Solid();
-    SolveProblem_LinearSolid_Dynamic();
-  }
-  else if( iproblem == 4 ){
-    is_animation = false;
+    for(;iframe<300;++iframe){
+      SolveProblem_LinearSolid_Dynamic();
+      //
+      viewer.DrawBegin_oldGL();
+      delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
+                                                aTri1.data(), aTri1.size()/3,
+                                                aVal.data(), 2);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ----------------------------
+    glfwSetWindowTitle(viewer.window, "Stokes Static");
     aVal.assign(np*3, 0.0);
     InitializeProblem_Fluid();
     SolveProblem_Stokes_Static();
-  }
-  else if( iproblem == 5 ){
-    is_animation = true;
+    for(;iframe<350;++iframe){
+      viewer.DrawBegin_oldGL();
+      DrawVelocityField();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ----------------------------
+    glfwSetWindowTitle(viewer.window, "Stokes Dynamic");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
     InitializeProblem_Fluid();
-    SolveProblem_Stokes_Dynamic();
-  }
-  else if( iproblem == 6 ){
-    is_animation = true;
+    for(;iframe<450;++iframe){
+      SolveProblem_Stokes_Dynamic();
+      //
+      viewer.DrawBegin_oldGL();
+      DrawVelocityField();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // -----------------------------
+    glfwSetWindowTitle(viewer.window, "Navier-Stokes");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
     InitializeProblem_Fluid();
-    SolveProblem_NavierStokes_Dynamic();
-  }
-  else if( iproblem == 7 ){
-    is_animation = false;
+    for(;iframe<550;++iframe){
+      SolveProblem_NavierStokes_Dynamic();
+      //
+      viewer.DrawBegin_oldGL();
+      DrawVelocityField();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ----------------------------
+    glfwSetWindowTitle(viewer.window, "Stokes Static");
     aVal.assign(np*3, 0.0);
+    aVelo.assign(np*3, 0.0);
     InitializeProblem_Fluid2();
     SolveProblem_Stokes_Static();
-  }
-  else if( iproblem == 8 ){
-    is_animation = true;
+    for(;iframe<600;++iframe){
+      viewer.DrawBegin_oldGL();
+      DrawVelocityField();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ----------------------------
+    glfwSetWindowTitle(viewer.window, "Stokes Dynamic");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
     InitializeProblem_Fluid2();
-    SolveProblem_Stokes_Dynamic();
-  }
-  else if( iproblem == 9 ){
-    is_animation = true;
+    for(;iframe<700;++iframe){
+      SolveProblem_Stokes_Dynamic();
+      //
+      viewer.DrawBegin_oldGL();
+      DrawVelocityField();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // -----------------------------
+    glfwSetWindowTitle(viewer.window, "Navier-Stokes");
     aVal.assign(np*3, 0.0);
     aVelo.assign(np*3, 0.0);
     InitializeProblem_Fluid2();
     SolveProblem_NavierStokes_Dynamic();
+    for(;iframe<800;++iframe){
+      SolveProblem_NavierStokes_Dynamic();
+      //
+      viewer.DrawBegin_oldGL();
+      DrawVelocityField();
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
   }
-}
-
-void myGlutKeyboard(unsigned char key, int x, int y)
-{
-  switch (key) {
-    case 'q':
-    case 'Q':
-    case '\033':  /* '\033' ÇÕ ESC ÇÃ ASCII ÉRÅ[Éh */
-      exit(0);
-      break;
-    case 'a':
-      is_animation = !is_animation; 
-      break;
-    case 'm':
-      MakeMesh();
-      Solve(false);
-      break;
-    case ' ':
-      Solve(true);
-      break;
-    default:
-      break;
-  }
-}
-
-void myGlutSpecial(int key, int x, int y){
-  switch(key){
-    case GLUT_KEY_PAGE_UP:
-      mag *= 1.0/0.9;
-      break;
-    case GLUT_KEY_PAGE_DOWN:
-      mag *= 0.9;
-      break;
-  }
-  ::myGlutResize(-1,-1);
-  ::glutPostRedisplay();
-}
-
-int main(int argc,char* argv[])
-{
-  // Initailze GLUT
-  ::glutInitWindowPosition(200,200);
-  ::glutInitWindowSize(1000, 500);
-  ::glutInit(&argc, argv);
-  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  ::glutCreateWindow("Cad View");
   
-  // Set callback function
-  ::glutMotionFunc(myGlutMotion);
-  ::glutMouseFunc(myGlutMouse);
-  ::glutDisplayFunc(myGlutDisplay);
-  ::glutReshapeFunc(myGlutResize);
-  ::glutKeyboardFunc(myGlutKeyboard);
-  ::glutSpecialFunc(myGlutSpecial);
-  ::glutIdleFunc(myGlutIdle);
-  
-  MakeMesh();
-  Solve(false);
-  //  InitializeProblem_Scalar();
-  //  SolveProblem_Poisson();
-  //InitializeProblem_LinearSolid_Static();
-  //SolveProblem_LinearSolid_Static();
-  //  InitializeProblem_LinearSolid_Dynamic();
-  //  SolveProblem_LinearSolid_Dynamic();
-  iproblem = 0;
-  
-  // Enter main loop
-  ::glutMainLoop();
-  return 0;
+CLOSE:
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

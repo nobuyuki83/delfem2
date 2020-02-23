@@ -42,6 +42,8 @@ public:
   double r0, r1, r2;
 };
 
+// --------------------------------------------------
+
 // class for point in a triangle
 template <typename T>
 class CPointElemSurf{
@@ -74,10 +76,20 @@ public:
 };
   
 template <typename T>
-std::ostream &operator<<(std::ostream &output, const CPointElemSurf<T>& v);
-  
+std::ostream &operator << (std::ostream &output,
+                           const CPointElemSurf<T>& v)
+{
+  output.setf(std::ios::scientific);
+  output << v.itri << " " << v.r0 << " " << v.r1;
+  return output;
+}
+
 template <typename T>
-std::istream &operator>>(std::istream &input, CPointElemSurf<T>& v);
+std::istream &operator >> (std::istream &input,
+                           CPointElemSurf<T>& v){
+  input>>v.itri>>v.r0>>v.r1;
+  return input;
+}
 
 // ----------------------------------------------------------
 
@@ -137,6 +149,8 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const delfem2::CVector3& org, const d
 
 void IntersectionLine_Hightfield(
     std::vector<CPointElemSurf<double>>& aPos,
+    //
+    double hmin, double hmax,
     const double src[3],
     const double dir[3],
     double nx, double ny, double elen,

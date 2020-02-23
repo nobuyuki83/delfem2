@@ -13,8 +13,6 @@ add_subdirectory(transform_handler)
 
 # fem
 add_subdirectory(rigidbody3d_rotation)
-
-add_subdirectory(fem2d)
 add_subdirectory(fem3d)
 add_subdirectory(femcloth_selfcollision)
 add_subdirectory(fempb_mitc3eigen)

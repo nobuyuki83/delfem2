@@ -312,26 +312,7 @@ template bool dfm2::CPointElemSurf<double>::Check (const std::vector<double>& aX
  */
 
 
-namespace delfem2 {
-
-template <typename T>
-std::ostream &operator << (std::ostream &output,
-                           const CPointElemSurf<T>& v)
-{
-  output.setf(std::ios::scientific);
-  output << v.itri << " " << v.r0 << " " << v.r1;
-  return output;
-}
-
-template <typename T>
-std::istream &operator >> (std::istream &input,
-                           CPointElemSurf<T>& v){
-  input>>v.itri>>v.r0>>v.r1;
-  return input;
-}
-  
-}
-    
+   
 
 /*
 CVector3 MidPoint
@@ -567,6 +548,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
 
 void dfm2::IntersectionLine_Hightfield(
     std::vector<CPointElemSurf<double>>& aPes,
+    double hmin, double hmax,
     const double src[3],
     const double dir[3],
     double nx, double ny, double elen,
@@ -574,10 +556,20 @@ void dfm2::IntersectionLine_Hightfield(
 {
   for(int iey=0;iey<ny-1;++iey){
     for(int iex=0;iex<nx-1;++iex){
-      const double p00[3] = {(iex+0)*elen,(iey+0)*elen,aH[(iey+0)*nx+(iex+0)]};
-      const double p10[3] = {(iex+1)*elen,(iey+0)*elen,aH[(iey+0)*nx+(iex+1)]};
-      const double p01[3] = {(iex+0)*elen,(iey+1)*elen,aH[(iey+1)*nx+(iex+0)]};
-      const double p11[3] = {(iex+1)*elen,(iey+1)*elen,aH[(iey+1)*nx+(iex+1)]};
+      const double h00 = aH[(iey+0)*nx+(iex+0)];
+      const double h10 = aH[(iey+0)*nx+(iex+1)];
+      const double h01 = aH[(iey+1)*nx+(iex+0)];
+      const double h11 = aH[(iey+1)*nx+(iex+1)];
+      if( hmin < hmax ){
+        if( h00 < hmin || h00 > hmax ) continue;
+        if( h10 < hmin || h10 > hmax ) continue;
+        if( h01 < hmin || h01 > hmax ) continue;
+        if( h11 < hmin || h11 > hmax ) continue;
+      }
+      const double p00[3] = {(iex+0)*elen,(iey+0)*elen,h00};
+      const double p10[3] = {(iex+1)*elen,(iey+0)*elen,h10};
+      const double p01[3] = {(iex+0)*elen,(iey+1)*elen,h01};
+      const double p11[3] = {(iex+1)*elen,(iey+1)*elen,h11};
       double r0=1.0, r1=1.0;
       if( dfm2::IntersectRay_Tri3(r0, r1,
           dfm2::CVec3d(src), dfm2::CVec3d(dir),
