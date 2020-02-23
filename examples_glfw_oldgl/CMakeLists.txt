@@ -40,8 +40,6 @@ add_subdirectory(303_HashLbvh3D)
 add_subdirectory(400_ExponentialMap)
 add_subdirectory(401_GridOnMesh)
 add_subdirectory(402_QuadSubdivOnMesh)
-add_subdirectory(403_LaplacianMeshDeformation)
-add_subdirectory(404_AsRigidAsPossibleDeformation)
 
 
 # cad
@@ -60,6 +58,9 @@ add_subdirectory(605_FemClothInternal)
 add_subdirectory(606_PbdGrid2D)
 add_subdirectory(607_PbdCloth)
 add_subdirectory(608_FdmFluid2D)
+add_subdirectory(609_DefLaplacian)
+add_subdirectory(610_DefAsRigidAsPossible)
+add_subdirectory(611_Fem2D)
 
 #bem
 add_subdirectory(900_BemPotentialFlow3D)

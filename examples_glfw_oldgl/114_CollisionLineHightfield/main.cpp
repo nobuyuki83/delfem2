@@ -100,6 +100,7 @@ int main(int argc,char* argv[])
       const double ldir[3] = { dir*ex, dir*ey, dir*ez };
       std::vector<dfm2::CPointElemSurf<double>> aPES;
       dfm2::IntersectionLine_Hightfield(aPES,
+          -sampler.z_range*0.999, -sampler.z_range*0.001,
           lsrc, ldir,
           sampler.nResX, sampler.nResY,
           sampler.lengrid,
