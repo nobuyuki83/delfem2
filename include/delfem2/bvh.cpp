@@ -23,7 +23,7 @@ void DevideElemAryConnex
 (int iroot_node,
  std::vector<int>& aElem2Node,
  std::vector<dfm2::CNodeBVH2>& aNodeBVH,
- ////
+ //
  const std::vector<int>& list,
  const int nfael,
  const std::vector<int>& aElemSur,
@@ -70,7 +70,7 @@ void DevideElemAryConnex
     if( lenx > leny && lenx > lenz ){ dir[0] = 1; }
     if( leny > lenz && leny > lenx ){ dir[1] = 1; }
     if( lenz > lenx && lenz > leny ){ dir[2] = 1; }
-  }
+  }  
   double org[3] = {(x_min+x_max)*0.5,  (y_min+y_max)*0.5,  (z_min+z_max)*0.5};
   int itri_ker = -1;
   for(int itri0 : list){
@@ -134,7 +134,7 @@ void DevideElemAryConnex
       int itri0 = stack.top();
       stack.pop();
       for(int ifael=0;ifael<nfael;ifael++){
-        int jtri = aElemSur[itri0*6+nfael*2+0];
+        int jtri = aElemSur[itri0*nfael*2+ifael*2+0];
         if( jtri == -1 ) continue;
         if( aElem2Node[jtri] != iroot_node ) continue;
         assert( jtri < (int)aElemCenter.size() );
