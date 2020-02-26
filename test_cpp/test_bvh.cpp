@@ -46,8 +46,8 @@ TEST(bvh,inclusion_sphere)
     EXPECT_EQ(bvh.aNodeBVH.size(), bvh.aBB_BVH.size());
     for (unsigned int ibb = 0; ibb < bvh.aBB_BVH.size(); ++ibb) {
       int iroot = bvh.aNodeBVH[ibb].iroot;
-      EXPECT_TRUE(bvh.aNodeBVH[iroot].ichild[0] == ibb || bvh.aNodeBVH[iroot].ichild[1] == ibb);
       if (iroot == -1) { continue; }
+      EXPECT_TRUE(bvh.aNodeBVH[iroot].ichild[0] == ibb || bvh.aNodeBVH[iroot].ichild[1] == ibb);
       const dfm2::CBV3d_Sphere &aabbp = bvh.aBB_BVH[iroot];
       const dfm2::CBV3d_Sphere &aabbc = bvh.aBB_BVH[ibb];
       EXPECT_TRUE(aabbp.IsActive());

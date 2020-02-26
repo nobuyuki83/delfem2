@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 if(MSVC)
   # GTest is static compiled by default
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")    
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")  
   set(CMAKE_CXX_FLAGS "/wd4267")
 endif()
 
@@ -66,11 +66,11 @@ add_executable(${MY_BINARY_NAME}
 
 if(MSVC)
   if(CMAKE_CL_64)
-    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/googletest/buildVS64/lib/Release/gtest_main.lib)
-    set(GTEST_LIBRARY      ${GTEST_DIR}/googletest/buildVS64/lib/Release/gtest.lib)
+    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/buildVS64/lib/Release/gtest_main.lib)
+    set(GTEST_LIBRARY      ${GTEST_DIR}/buildVS64/lib/Release/gtest.lib)
   else()
-    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/googletest/buildVS32/lib/Release/gtest_main.lib)
-    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/googletest/buildVS32/lib/Release/gtest.lib)
+    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/buildVS32/lib/Release/gtest_main.lib)
+    set(GTEST_MAIN_LIBRARY ${GTEST_DIR}/buildVS32/lib/Release/gtest.lib)
   endif()
   target_link_libraries(${MY_BINARY_NAME}
     ${GTEST_LIBRARY}

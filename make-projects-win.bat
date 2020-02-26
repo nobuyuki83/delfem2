@@ -3,10 +3,17 @@ git submodule update --init --recursive
 : ################################
 : test cpp
 
-cd test_cpp/googletest
+cd 3rd_party/googletest
 mkdir buildVS64
+cd buildVS64
+cmake -A x64 -Dgtest_force_shared_crt=ON .. 
+cmake --build . --config Release
+cd ../../..
+
+cd 3rd_party/googletest
+mkdir buildVS32
 cd buildVS32
-cmake -A x64 .. 
+cmake -A Win32 -Dgtest_force_shared_crt=ON .. 
 cmake --build . --config Release
 cd ../../..
 
@@ -15,7 +22,7 @@ mkdir buildVS64
 cd buildVS64
 cmake -A x64 ..
 cmake --build . --config Release
-Release/runUnitTests.exe
+"Release/runUnitTests.exe"
 cd ../../
 
 cd test_cpp
@@ -23,11 +30,20 @@ mkdir buildVS32
 cd buildVS32
 cmake -A Win32 ..
 cmake --build . --config Release
-Release/runUnitTests.exe
+"Release/runUnitTests.exe"
 cd ../../
+
+goto :eof
 
 : ################################
 : glfw
+
+cd 3rd_party/glfw
+cmake -A x64 .
+cmake --build . --config Release
+cd ../..
+
+
 
 cd src_cpp/external/glfw
 mkdir buildVS64
@@ -42,24 +58,6 @@ cmake -A Win32 ..
 cmake --build . --config Release
 rem cmake --build . --config Debug
 cd ../
-cd ../../../
-
-
-: ###############################
-: pybind
-
-cd src_pybind/core
-mkdir buildVS64
-cd buildVS64
-cmake -A x64 ..
-cmake --build . --config Release
-cd ../../../
-
-cd src_pybind/gl
-mkdir buildVS64
-cd buildVS64
-cmake -A x64 ..
-cmake --build . --config Release
 cd ../../../
 
 
@@ -97,6 +95,27 @@ cd buildVS64
 cmake -A x64 ..
 cmake --build . --config Release
 cd ../../
+
+
+
+: ###############################
+: pybind
+
+cd src_pybind/core
+mkdir buildVS64
+cd buildVS64
+cmake -A x64 ..
+cmake --build . --config Release
+cd ../../../
+
+cd src_pybind/gl
+mkdir buildVS64
+cd buildVS64
+cmake -A x64 ..
+cmake --build . --config Release
+cd ../../../
+
+
 
 : cd examples_cpp
 : mkdir buildVS64
