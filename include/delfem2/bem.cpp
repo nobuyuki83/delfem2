@@ -12,10 +12,15 @@
 #define M_PI 3.141592653589793
 #endif
 
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
+#if defined(__APPLE__) && defined(__MACH__) // Mac
+  #include <OpenGL/gl.h>
+#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
+  #include <GL/gl.h>
+#elif defined(_WIN32) // windows
+  #include <windows.h>
+  #include <GL/gl.h>
+#else // linux
+  #include <GL/gl.h>
 #endif
 
 namespace dfm2 = delfem2;
