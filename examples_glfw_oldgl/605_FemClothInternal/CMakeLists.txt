@@ -23,7 +23,6 @@ set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include

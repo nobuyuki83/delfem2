@@ -33,48 +33,34 @@ cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
 
-goto :eof
-
 : ################################
-: glfw
+: build glfw
 
 cd 3rd_party/glfw
-cmake -A x64 .
+rem mkdir buildVS64 
+rem cd buildVS64
+rem cmake .. -A x64 
+cmake . -A x64
 cmake --build . --config Release
+rem cd ../../..
 cd ../..
-
-
-
-cd src_cpp/external/glfw
-mkdir buildVS64
-cd buildVS64
-cmake -A x64 ..
-cmake --build . --config Release
-rem cmake --build . --config Debug
-cd ..
-mkdir buildVS32
-cd buildVS32
-cmake -A Win32 ..
-cmake --build . --config Release
-rem cmake --build . --config Debug
-cd ../
-cd ../../../
-
 
 : ##############################
 : glfw_oldgl
 
 cd examples_glfw_oldgl
-mkdir buildVS32
-cd buildVS32
-cmake -A Win32 ..
-cmake --build . --config Release
-cd ../../
-
-cd examples_glfw_oldgl
 mkdir buildVS64
 cd buildVS64
 cmake -A x64 ..
+cmake --build . --config Release
+cd ../../
+
+goto :eof
+
+cd examples_glfw_oldgl
+mkdir buildVS32
+cd buildVS32
+cmake -A Win32 ..
 cmake --build . --config Release
 cd ../../
 
