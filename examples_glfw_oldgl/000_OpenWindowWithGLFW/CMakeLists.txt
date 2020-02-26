@@ -55,11 +55,11 @@ ELSEIF(WIN32)
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")    
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
+      ${GLFW_DIR}/src/Release/glfw3.lib
       ${OPENGL_LIBRARY})
   else()
     target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/buildVS32/src/Release/glfw3.lib
+      ${GLFW_DIR}/src/Release/glfw3.lib
       ${OPENGL_LIBRARY})
   endif()
 ENDIF()
