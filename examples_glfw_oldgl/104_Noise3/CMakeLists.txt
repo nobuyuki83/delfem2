@@ -23,11 +23,15 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
+set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad3/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
+
 find_package(OpenGL REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include
   ${DELFEM2_INCLUDE_DIR}
+  ${GLAD_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME}
@@ -40,6 +44,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_funcs.h    ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_color.h    ${DELFEM2_INC}/opengl/glold_color.cpp
   ${DELFEM2_INC}/opengl/glfw_viewer.h    ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+
+  ${3RD_PARTY}/glad3/include/glad/glad.h
+  ${3RD_PARTY}/glad3/src/glad.c
 
   main.cpp
 )

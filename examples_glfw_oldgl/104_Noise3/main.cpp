@@ -11,6 +11,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_funcs.h"
