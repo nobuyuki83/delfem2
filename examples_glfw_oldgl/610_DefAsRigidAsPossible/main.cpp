@@ -264,7 +264,7 @@ public:
         dfm2::Mat3_Spin_ScaleAdd(
             aMatEdge.data()+ipsup*27+18,
             Rd0,
-            +1.0, 0.0);
+            -1.0, 0.0);
       }
     }
     this->JacobiTVecTmp(aRhs,
@@ -506,7 +506,7 @@ int main(int argc,char* argv[])
         for(int ip=0;ip<np;++ip){
           dfm2::Add3(aXYZ1.data()+ip*3, aUpd.data()+ip*3);
           double q0[4]; dfm2::Quat_CartesianAngle(q0, aUpd.data()+np*3+ip*3);
-          double q1[4]; dfm2::QuatQuat(q1, q0,aQuat.data()+ip*4);
+          double q1[4]; dfm2::QuatQuat(q1, q0, aQuat.data()+ip*4);
           dfm2::Copy_Quat(aQuat.data()+ip*4, q1);
         }
         // ------
@@ -586,7 +586,7 @@ int main(int argc,char* argv[])
           double q0[4];
           dfm2::Quat_CartesianAngle(q0, aUpd.data() + np * 3 + ip * 3);
           double q1[4];
-          dfm2::QuatQuat(q1, aQuat.data() + ip * 4, q0);
+          dfm2::QuatQuat(q1, q0, aQuat.data() + ip * 4);
           dfm2::Copy_Quat(aQuat.data() + ip * 4, q1);
         }
         // ------

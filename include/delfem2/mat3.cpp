@@ -221,9 +221,10 @@ template void dfm2::MatTVec3_ScaleAdd(double y[3], const double m[9], const doub
 
 
 
-void dfm2::Mat4Vec3
- (double vo[3],
-  const double M[16], const double vi[3])
+void dfm2::Mat4Vec3(
+    double vo[3],
+    const double M[16],
+    const double vi[3])
 {
   vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
   vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
@@ -391,7 +392,7 @@ bool dfm2::eigenSym3
       sms[3] = 0; // (ct*ct-st*st)*m[3]+st*ct*(m[1]-m[2]);
       sms[4] = st*m[5]+ct*m[4];
       sms[5] = ct*m[5]-st*m[4];
-      ////
+      //
       u[1] = +ct*v[1]-st*v[2];
       u[2] = +st*v[1]+ct*v[2];
       u[4] = +ct*v[4]-st*v[5];
@@ -431,7 +432,7 @@ bool dfm2::eigenSym3
       sms[3] = st*m[4]+ct*m[3];
       sms[4] = ct*m[4]-st*m[3];
       sms[5] = 0; // (ct*ct-st*st)*m[5]+st*ct*(m[0]-m[1]);
-      /////
+      //
       u[0] = +ct*v[0]-st*v[1];
       u[1] = +st*v[0]+ct*v[1];
       u[3] = +ct*v[3]-st*v[4];
@@ -520,6 +521,9 @@ void dfm2::GetRotPolarDecomp
   MatMatT3(R,U,V);
 }
 
+
+// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+// row major matrix
 void SetMatrix3_Quaternion(double r[], const double q[])
 {
   double x2 = q[1] * q[1] * 2.0;

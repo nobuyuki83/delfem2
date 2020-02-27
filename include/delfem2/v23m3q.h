@@ -50,24 +50,49 @@ CMat3d Mat3(const CVec3d& vec0,
               const CVec3d& vec1);
 CMat3d RotMatrix_Cartesian(const CVec3d& v);
 CMat3d Mat3_RotCartesian(const CVec3d& vec0);
-CMat3d Mat3_OuterProduct(const CVec3d& vec0,
-                      const CVec3d& vec1 );
+
+/**
+ * @brief output outer product Vec0 * Vec1^T
+ */
+CMat3d Mat3_OuterProduct(
+    const CVec3d& vec0,
+    const CVec3d& vec1 );
 CMat3d Mat3_Spin(const CVec3d& vec0);
 CMat3d Mat3_ParallelTransport(const CVec3d& p0,
                                 const CVec3d& p1,
                                 const CVec3d& q0,
                                 const CVec3d& q1);
-CMat3d Mat3_MinimumRotation(const CVec3d& V,
-                              const CVec3d& v);
+
+/**
+ * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
+ * @param V (in) rotation from
+ * @param v (in) rotation to
+ */
+template <typename REAL>
+CMat3<REAL> Mat3_MinimumRotation(
+      const CVec3<REAL>& V,
+      const CVec3<REAL>& v);
+
+// --------------------------------------
+// below: inertia tensor
+
 CMat3d Mat3_IrotTri(const CVec3d& d0,
                       const CVec3d& d1,
                       const CVec3d& d2);
+
+/**
+ * @brief moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
+ */
 CMat3d Mat3_IrotTriSolid(const CVec3d& d0,
                            const CVec3d& d1,
                            const CVec3d& d2);
 CMat3d Mat3_IrotLineSeg(const CVec3d& d0,
                           const CVec3d& d1);
 CMat3d Mat3_IrotPoint(const CVec3d& d0);
+
+// above: inertia tensor
+// ---------------------------------------
+
 CMat3d Mirror(const CVec3d& n);
 
 void Mat4_MatTransl(double m[16],
@@ -136,13 +161,7 @@ bool isPickCircle(const CVec2d& sp,
                   double r,
                   const float* mMV,
                   const float* mPj,
-                  double pick_tol);
- 
-void Energy_MIPS(double& E, double dE[3][3], double ddE[3][3][3][3],
-                 const double c[3][3],
-                 const double C[3][3]);
-
-  
+                  double pick_tol);  
 }
 
 #endif /* vec23mat3quat_hpp */

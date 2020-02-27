@@ -15,6 +15,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 
+#include "delfem2/v23m3q.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
@@ -52,6 +53,76 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
   }
 }
 
+
+TEST(objfunc_v23, MIPS)
+{
+  double C[3][3];
+  for(auto & ino : C){
+    ino[0] = (double)rand()/(RAND_MAX+1.0);
+    ino[1] = (double)rand()/(RAND_MAX+1.0);
+    ino[2] = (double)rand()/(RAND_MAX+1.0);
+  }
+  double c[3][3];
+  dfm2::CMat3d m;
+  m.SetRotMatrix_Cartesian(0.3, 1.0, 0.5);
+  for(int ino=0;ino<3;++ino){
+    m.MatVec(C[ino], c[ino]);
+  }
+  double E, dE[3][3], ddE[3][3][3][3];
+  dfm2::Energy_MIPS(E, dE, ddE,
+                    c, C);
+  for(int ino=0;ino<3;++ino){
+    for(int idim=0;idim<3;++idim){
+      double c1[3][3] = {
+        {c[0][0],c[0][1],c[0][2]},
+        {c[1][0],c[1][1],c[1][2]},
+        {c[2][0],c[2][1],c[2][2]} };
+      double eps = 1.0e-5;
+      c1[ino][idim] += eps;
+      double E1, dE1[3][3], ddE1[3][3][3][3];
+      dfm2::Energy_MIPS(E1, dE1, ddE1,
+                        c1, C);
+      EXPECT_NEAR( (E1-E)/eps, dE[ino][idim], 1.0e-3);
+      for(int jno=0;jno<3;++jno){
+        for(int jdim=0;jdim<3;++jdim){
+          EXPECT_NEAR( (dE1[jno][jdim]-dE[jno][jdim])/eps, ddE[jno][ino][jdim][idim], 1.e-3);
+        }
+      }
+    }
+  }
+}
+
+TEST(objfunc_v23, distancetri2d3d)
+{
+  double P[3][2];  // undeformed triangle vertex positions
+  for(auto & P0 : P){
+    P0[0] = (double)rand()/(RAND_MAX+1.0);
+    P0[1] = (double)rand()/(RAND_MAX+1.0);
+  }
+  double p[3][3]; //  deformed triangle vertex positions)
+  for(auto & p0 : p){
+    p0[0] = (double)rand()/(RAND_MAX+1.0);
+    p0[1] = (double)rand()/(RAND_MAX+1.0);
+    p0[2] = (double)rand()/(RAND_MAX+1.0);
+  }
+   // --------------
+  double C[3], dCdp[3][9];
+  dfm2::PBD_ConstraintProjection_DistanceTri2D3D(C, dCdp, P, p);
+  for(int ine=0;ine<3;++ine){
+    for(int idim=0;idim<3;++idim){
+      double eps = 1.0e-6;
+      double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
+      p1[ine][idim] += eps;
+      double C1[3], dCdp1[3][9];
+      dfm2::PBD_ConstraintProjection_DistanceTri2D3D(C1, dCdp1, P, p1);
+      EXPECT_NEAR( (C1[0]-C[0])/eps, dCdp[0][ine*3+idim], 1.0e-5 );
+      EXPECT_NEAR( (C1[1]-C[1])/eps, dCdp[1][ine*3+idim], 1.0e-5 );
+      EXPECT_NEAR( (C1[2]-C[2])/eps, dCdp[2][ine*3+idim], 1.0e-5 );
+    }
+  }
+}
+
+// ------------------------------------------------------------
 
 TEST(fem,plate_bending_mitc3_emat)
 {

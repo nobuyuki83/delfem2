@@ -48,7 +48,8 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
   ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/bv.h
-
+  
+  ${DELFEM2_INC}/v23m3q.h            ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
   ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp

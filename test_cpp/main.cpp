@@ -23,6 +23,8 @@
 #include "delfem2/primitive.h"
 #include "delfem2/slice.h"
 
+#include "delfem2/v23m3q.h"
+
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
@@ -333,7 +335,6 @@ TEST(vec2,second_moment_of_area)
     EXPECT_NEAR(I2,           b*a*a*a/12.0, 1.0e-10 );
   }
 }
-
 
 TEST(meshtopo,quad_subdiv0)
 {

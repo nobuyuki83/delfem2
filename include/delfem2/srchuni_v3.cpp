@@ -29,7 +29,8 @@ dfm2::CVec3<T> dfm2::CPointElemSolid<T>::getPos_Tet
   const CVec3<T> p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
   return r0*p0+r1*p1+r2*p2+(1.0-r0-r1-r2)*p3;
 }
-template dfm2::CVec3d dfm2::CPointElemSolid<double>::getPos_Tet(const std::vector<double> &aXYZ, const std::vector<int> &aTet) const;
+template dfm2::CVec3d dfm2::CPointElemSolid<double>::getPos_Tet(const std::vector<double> &aXYZ,
+                                                                const std::vector<int> &aTet) const;
 
 // ----------------------------------------
 
