@@ -149,7 +149,7 @@ public:
   delfem2::CVec3d cnt;
   std::vector<CDataVtx> aDataVtx; // (nx+1)*(ny+1)*(nz+1)
 public:
-  void drawBoundingBox() const;
+//  void drawBoundingBox() const;
 };
 
 void viscousityVortexParticleGrid(std::vector<CVortexParticle>& aVortexParticle,
