@@ -12,17 +12,6 @@
 #define M_PI 3.141592653589793
 #endif
 
-#if defined(__APPLE__) && defined(__MACH__) // Mac
-  #include <OpenGL/gl.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-  #include <GL/gl.h>
-#elif defined(_WIN32) // windows
-  #include <windows.h>
-  #include <GL/gl.h>
-#else // linux
-  #include <GL/gl.h>
-#endif
-
 namespace dfm2 = delfem2;
 
 // ---------------------------
@@ -769,7 +758,7 @@ void setGradVeloVortexParticles
   }
 }
 
-
+/*
 void CGrid_Vortex::drawBoundingBox() const
 {
   if (nx<=1||ny<=1||nz<=1){ return; }
@@ -797,6 +786,7 @@ void CGrid_Vortex::drawBoundingBox() const
   ::glVertex3d(max_x, min_y, min_z);  ::glVertex3d(max_x, min_y, max_z);
   ::glEnd();
 }
+ */
 
 
 void viscousityVortexParticleGrid
