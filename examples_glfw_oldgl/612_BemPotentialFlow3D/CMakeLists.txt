@@ -12,7 +12,7 @@ ENDIF()
 
 ##########################################
 
-project(900_bem_potentialflow3d)
+project(612_BemPotentialFlow3D)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -94,11 +94,11 @@ ELSEIF(UNIX)
 ELSEIF(MSVC)
   if(CMAKE_CL_64)
     target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
+      ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
       ${OPENGL_LIBRARY})
   else()
     target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
+      ${GLFW_DIR}/buildVS32/src/Release/glfw3.lib
       ${OPENGL_LIBRARY})
   endif()
 ENDIF()

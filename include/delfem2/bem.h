@@ -51,7 +51,9 @@ void makeLinearSystem_PotentialFlow_Order0th(std::vector<double>& A,
                                              const std::vector<double>& aXYZ,
                                              const std::vector<unsigned int> &aTri);
 
-//! @brief evaluate BEM solution where the value is constant over a triangle
+/**
+ * @brief evaluate BEM solution where the value is constant over a triangle
+ */
 void evaluateField_PotentialFlow_Order0th(double& phi_pos,
                                           delfem2::CVec3d& gradphi_pos,
                                           //

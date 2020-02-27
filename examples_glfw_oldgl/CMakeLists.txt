@@ -6,7 +6,6 @@ project(examples_glfw_oldgl)
 # simple examples without delfem2 
 add_subdirectory(000_OpenWindowWithGLFW)
 
-
 # basic funcs
 add_subdirectory(100_ViewNavigationIn3D)
 add_subdirectory(101_SubdivCatmull)
@@ -23,6 +22,9 @@ add_subdirectory(111_ReadFileGLTF)
 add_subdirectory(112_OffscreenRendering)
 add_subdirectory(113_ProjectionBox)
 add_subdirectory(114_CollisionLineHightfield)
+add_subdirectory(115_ExponentialMap)
+add_subdirectory(116_GridOnMesh)
+add_subdirectory(117_QuadSubdivOnMesh)
 
 # meshing
 add_subdirectory(201_DynTri2dTriangulation)
@@ -36,10 +38,6 @@ add_subdirectory(300_AdaptiveDistanceField)
 add_subdirectory(301_IsoSurfaceStuffing)
 add_subdirectory(302_HashBvhSelfCollision)
 add_subdirectory(303_HashLbvh3D)
-
-add_subdirectory(400_ExponentialMap)
-add_subdirectory(401_GridOnMesh)
-add_subdirectory(402_QuadSubdivOnMesh)
 
 
 # cad
@@ -61,7 +59,5 @@ add_subdirectory(608_FdmFluid2D)
 add_subdirectory(609_DefLaplacian)
 add_subdirectory(610_DefAsRigidAsPossible)
 add_subdirectory(611_Fem2D)
-
-#bem
-add_subdirectory(900_BemPotentialFlow3D)
+add_subdirectory(612_BemPotentialFlow3D)
 
