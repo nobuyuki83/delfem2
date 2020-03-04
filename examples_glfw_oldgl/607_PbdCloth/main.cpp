@@ -132,13 +132,7 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   while (!glfwWindowShouldClose(viewer.window))
   {
-    {
-      static int iframe = 0;
-      if( iframe % 5 == 0 ){
-        StepTime();
-      }
-      iframe++;
-    }
+    StepTime();
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
     viewer.DrawEnd_oldGL();

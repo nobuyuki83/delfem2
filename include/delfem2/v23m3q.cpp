@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cmath>
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
@@ -155,7 +156,7 @@ dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0, const CVec3d& vec1, const CVec3d& ve
 
 dfm2::CMat3d dfm2::Mat3_Spin(const CVec3d& vec0){
   CMat3d m;
-  SetSpinTensor(m,vec0);
+  ::dfm2::Mat3_Spin(m.mat,vec0.p);
   return m;
 }
 

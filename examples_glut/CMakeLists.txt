@@ -15,7 +15,6 @@ add_subdirectory(transform_handler)
 add_subdirectory(rigidbody3d_rotation)
 add_subdirectory(fem3d)
 add_subdirectory(femcloth_selfcollision)
-add_subdirectory(fempb_mitc3eigen)
 
 # pbd
 add_subdirectory(pbdcloth_cad)

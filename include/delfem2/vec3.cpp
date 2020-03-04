@@ -684,6 +684,17 @@ void dfm2::CVec3<T>::SetZero()
 template void dfm2::CVec3<double>::SetZero();
 
   
+// -----------------------
+  
+template <typename T>
+void dfm2::CVec3<T>::SetRandom()
+{
+  p[0] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
+  p[1] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
+  p[2] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
+}
+template void dfm2::CVec3<double>::SetRandom();
+  
 // --------------------------------
 
 //! Hight of a tetrahedra
