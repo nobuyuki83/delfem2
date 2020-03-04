@@ -208,6 +208,7 @@ public:
 	inline double DLength() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
 	void SetNormalizedVector();
 	void SetZero();
+  void SetRandom();
   void Print() const {
     std::cout <<p[0]<< " " << p[1] << " " << p[2] << std::endl;
   }

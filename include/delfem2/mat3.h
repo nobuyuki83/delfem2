@@ -392,6 +392,13 @@ public:
 using CMat3d = CMat3<double>;
 using CMat3f = CMat3<float>;
 
+template <typename T>
+CMat3<T> Mat3_Identity(T alpha){
+  CMat3<T> m;
+  Mat3_Identity(m.mat, alpha);
+  return m;
+}
+
 }
 
 #endif
