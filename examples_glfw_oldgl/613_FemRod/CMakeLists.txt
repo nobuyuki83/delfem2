@@ -36,6 +36,8 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/quat.h                     ${DELFEM2_INC}/quat.cpp
   ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
   ${DELFEM2_INC}/mats.h                     ${DELFEM2_INC}/mats.cpp
+  ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
         
   ${DELFEM2_INC}/v23m3q.h                   ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/objfunc_v23.h              ${DELFEM2_INC}/objfunc_v23.cpp

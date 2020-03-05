@@ -240,15 +240,6 @@ void WdWddW_PlateBendingMITC3(double& W,
     double thk,
     double lambda,
     double myu);
-
-double Check_WdWddW_PlateBendingMITC3(
-    const double C[3][2],
-    const double u0[3][3],
-    const double thickness,
-    const double lambda,
-    const double myu,
-    double eps);
-
 }
   
 #endif /* fem_ematrix_h */
