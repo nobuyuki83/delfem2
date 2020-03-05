@@ -1071,7 +1071,7 @@ void MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
     }
   }
 
-	////////////////
+	// ------------------------------
   double eMmat_uu[3][3][2][2];
 	{	// add inertia term
 		const double dtmp1 = area*rho*0.0833333333333333;
@@ -2684,7 +2684,7 @@ void MakeMat_Stokes3D_Dynamic_Newmark_P1P1
     }
   }
   
-  ////////////////
+  // -------------------------
   double eMmat_uu[4][4][3][3];
   {
     const double dtmp1 = vol*rho*0.05;
@@ -2718,8 +2718,7 @@ void MakeMat_Stokes3D_Dynamic_Newmark_P1P1
   eres_p[2] = 0;
   eres_p[3] = 0;
   
-  ////////////////////////////////
-  
+  // --------------------------------
   {
     double dtmp1 = gamma_newmark*dt_timestep;
     for(int ino=0;ino<nno;ino++){
@@ -3142,8 +3141,7 @@ void MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1
 //			eres_p[ino] += area*tau*(dldx[ino][0]*g_x+dldx[ino][1]*g_y);
 //   }
   
-  //////////////////////////////////////////////////////////////////////
-  
+  // ----------------------------------
   {
     double dtmp1 = gamma*dt;
     for(int i=0;i<nno*nno*ndim*ndim;i++){
@@ -3425,11 +3423,11 @@ void dfm2::WdWddW_PlateBendingMITC3
     Cross3D(Gu[0], Gd[1], Gd[2]);
     const double invtmp1 = 1.0/Dot3D(Gu[0],Gd[0]);
     Gu[0][0] *= invtmp1;  Gu[0][1] *= invtmp1;  Gu[0][2] *= invtmp1;
-    ////
+    //
     Cross3D(Gu[1], Gd[2], Gd[0]);
     const double invtmp2 = 1.0/Dot3D(Gu[1],Gd[1]);
     Gu[1][0] *= invtmp2;  Gu[1][1] *= invtmp2;  Gu[1][2] *= invtmp2;
-    ////
+    //
     Cross3D(Gu[2], Gd[0], Gd[1]);
     const double invtmp3 = 1.0/Dot3D(Gu[2],Gd[2]);
     Gu[2][0] *= invtmp3;  Gu[2][1] *= invtmp3;  Gu[2][2] *= invtmp3;
@@ -3577,46 +3575,7 @@ void dfm2::WdWddW_PlateBendingMITC3
   }
 }
 
-double dfm2::Check_WdWddW_PlateBendingMITC3
-(const double C[3][2],
- const double u0[3][3],
- const double thickness,
- const double lambda,
- const double myu,
- double eps)
-{
-  double W0, dW0[3][3], ddW0[3][3][3][3];
-  W0 = 0.0;
-  for(int i=0;i<9;++i){ (&dW0[0][0])[i] = 0.0; }
-  for(int i=0;i<81;++i){ (&ddW0[0][0][0][0])[i] = 0.0; }
-  WdWddW_PlateBendingMITC3(W0,dW0,ddW0,
-                           C,u0,
-                           thickness,lambda,myu);
-  double sum0 = 0.0, sum1 = 0.0;
-  for(int ino=0;ino<3;++ino){
-    for(int idof=0;idof<3;++idof){
-      double u1[3][3]; for(int i=0;i<9;++i){ (&u1[0][0])[i] = (&u0[0][0])[i]; }
-      u1[ino][idof] += eps;
-      double W1, dW1[3][3], ddW1[3][3][3][3];
-      W1 = 0.0;
-      for(int i=0;i<9;++i){ (&dW1[0][0])[i] = 0.0; }
-      for(int i=0;i<81;++i){ (&ddW1[0][0][0][0])[i] = 0.0; }
-      WdWddW_PlateBendingMITC3(W1,dW1,ddW1,
-                               C,u1,
-                               thickness,lambda,myu);
-      sum0 += fabs( (W1-W0)/eps - dW0[ino][idof]);
-      ///      std::cout << "   " << ino << " " << idof << " " << (W1-W0)/eps << " " << dW0[ino][idof] << "    " << fabs((W1-W0)/eps - dW0[ino][idof]) << std::endl;
-      
-      for(int jno=0;jno<3;++jno){
-        for(int jdof=0;jdof<3;++jdof){
-          sum1 += fabs( (dW1[jno][jdof]-dW0[jno][jdof])/eps - ddW0[ino][jno][idof][jdof] );
-          //          std::cout << "  " << ino << " " << idof << " " << jno << " " << jdof << " --> " << (dW1[jno][jdof]-dW0[jno][jdof])/eps << " " << ddW0[ino][jno][idof][jdof] << std::endl;
-        }
-      }
-    }
-  }
-  return sum1+sum0;
-}
+
 
 
 

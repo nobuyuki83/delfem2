@@ -206,7 +206,7 @@ void MakeMesh(){
   std::cout<<"  ntri;"<<aTri1.size()/3<<"  nXY:"<<aXY1.size()/2<<std::endl;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------
 // iproblem: 0, 1
 void InitializeProblem_Scalar()
 {
@@ -466,14 +466,14 @@ void SolveProblem_LinearSolid_Dynamic()
   }
 }
 
-/////////////////////////////////////////////////////////////////////
+// -----------------------------
 // iproblem: 4, 5, 6
 void InitializeProblem_Fluid()
 {
   // set boundary condition
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*3;
-  ///////
+  // -----------
   aBCFlag.assign(nDoF, 0);
   for(int ip=0;ip<np;++ip){
     const double px = aXY1[ip*2+0];
@@ -516,7 +516,7 @@ void InitializeProblem_Fluid()
   //  ilu_A.Initialize_ILUk(mat_A, 5);
 }
 
-/////////////////////////////////////////////////////////////////////
+// ---------------------------
 // iproblem: 7,8,9
 void InitializeProblem_Fluid2()
 {
@@ -585,13 +585,13 @@ void InitializeProblem_Fluid2()
   //  ilu_A.Initialize_ILUk(mat_A, 5);
 }
 
-/////////////////////////////////////////////////////////////////////
+// -----------------------------------
 // iproblem: 4
 void SolveProblem_Stokes_Static()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*3;
-  //////////////////////////
+  // ---------------------
   double myu = 1.0;
   double g_x = 0.0;
   double g_y = -0.0;
@@ -633,13 +633,13 @@ void SolveProblem_Stokes_Static()
   }
 }
 
-/////////////////////////////////////////////////////////////////////
+// ----------------------------------
 // iprob:5
 void SolveProblem_Stokes_Dynamic()
 {
   const int np = (int)aXY1.size()/2;
   const int nDoF = np*3;
-  //////////////////////////
+  // --------------------
   double myu = 1.0;
   double rho = 10;
   double g_x = 0.0;

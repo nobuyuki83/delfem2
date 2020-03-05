@@ -64,11 +64,6 @@ void PBD_CdC_TriStrain2D3D(
     const double P[3][2], // (in) undeformed triangle vertex positions
     const double p[3][3]); // (in) deformed triangle vertex positions
 
-double Check_CdC_TriStrain(
-    const double P[3][2], // (in) undeformed triangle vertex positions
-    const double p[3][3], // (in) deformed triangle vertex positions)
-    double epsilon);
-
 void PBD_ConstraintProjection_DistanceTri2D3D(
     double C[3],
     double dCdp[3][9],
@@ -107,7 +102,7 @@ void PBD_Seam(
     const unsigned int* aLine,
     unsigned int nline);
 
-void Energy_MIPS(
+void WdWddW_MIPS(
     double& E, double dE[3][3], double ddE[3][3][3][3],
     const double c[3][3],
     const double C[3][3]);

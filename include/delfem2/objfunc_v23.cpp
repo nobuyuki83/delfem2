@@ -253,35 +253,6 @@ void dfm2::PBD_CdC_TriStrain2D3D
   dC2dp2.CopyValueTo(dCdp[2]+2*3);
 }
 
-double dfm2::Check_CdC_TriStrain
-(const double P[3][2], // (in) undeformed triangle vertex positions
- const double p[3][3], // (in) deformed triangle vertex positions)
- double eps)
-{
-  double sum_diff = 0.0;
-  double C[3], dCdp[3][9];
-  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
-  for(int ine=0;ine<3;++ine){
-    for(int idim=0;idim<3;++idim){
-      double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
-      p1[ine][idim] += eps;
-      double C1[3], dCdp1[3][9];
-      PBD_CdC_TriStrain2D3D(C1, dCdp1, P, p1);
-      double diff0 = (C1[0]-C[0])/eps-dCdp[0][ine*3+idim];
-      double diff1 = (C1[1]-C[1])/eps-dCdp[1][ine*3+idim];
-      double diff2 = (C1[2]-C[2])/eps-dCdp[2][ine*3+idim];
-      diff0 = abs(diff0);
-      diff1 = abs(diff1);
-      diff2 = abs(diff2);
-      sum_diff += diff0 + diff1 + diff2;
-//      std::cout << diff0 << " " << diff1 << " " << diff2 << std::endl;
-    }
-  }
-  return sum_diff;
-}
-
-
-
 void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
 (double C[3],
  double dCdp[3][9],
@@ -309,9 +280,6 @@ void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
   v20.CopyValueTo(dCdp[1]+3*2);  v20.CopyValueToScale(dCdp[1]+3*0,-1.0);
   v01.CopyValueTo(dCdp[2]+3*0);  v01.CopyValueToScale(dCdp[2]+3*1,-1.0);
 }
-
-
-
 
 void dfm2::PBD_ConstraintProjection_EnergyStVK
 (double& C, // (out) energy
@@ -548,7 +516,7 @@ void dfm2::PBD_Seam
 }
 
 
-void dfm2::Energy_MIPS
+void dfm2::WdWddW_MIPS
  (double& E, double dE[3][3], double ddE[3][3][3][3],
   const double c[3][3],
   const double C[3][3])

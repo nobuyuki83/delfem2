@@ -60,5 +60,6 @@ add_subdirectory(609_DefLaplacian)
 add_subdirectory(610_DefAsRigidAsPossible)
 add_subdirectory(611_Fem2D)
 add_subdirectory(612_BemPotentialFlow3D)
+add_subdirectory(613_FemRod)
 add_subdirectory(614_FemMitc3Eigen)
 

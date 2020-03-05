@@ -5,6 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @discussion maybe splitting this file into "vecx.h" and "itersol.h" in the future
+ */
+
 #ifndef DFM2_VECXITRSOL_H
 #define DFM2_VECXITRSOL_H
 
@@ -196,7 +200,7 @@ Solve_CG_Complex(
 
 template<typename REAL, typename MAT>
 std::vector<REAL>
-Solve_BiCGSTAB(
+Solve_BiCGStab(
     std::vector<REAL> &r_vec,
     std::vector<REAL> &x_vec,
     REAL conv_ratio_tol,

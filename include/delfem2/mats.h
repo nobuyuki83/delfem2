@@ -109,7 +109,7 @@ public:
   void SetFixedBC_Row(const int *pBCFlag);
 
   /**
-   * @func if pBCFlag is *not* 0 for a dof, set all the off-diagonal componenet to zero and set diagonal to one.
+   * @func     if pBCFlag is *not* 0 for a dof, set all the off-diagonal componenet to zero and set diagonal to one.
    * @details pBCFlag need to have memory at least larger than nlen*nblk
    * This matrix need to be a squared matrix
    */

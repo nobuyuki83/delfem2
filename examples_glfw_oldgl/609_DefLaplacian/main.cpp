@@ -158,8 +158,8 @@ void LapDef_LinearDirectDisponly(
   mat_A.SetFixedBC_Dia(aBCFlag.data(), 1.0);
   mat_A.SetFixedBC_Row(aBCFlag.data());
   aXYZ1 = aXYZ0;
-  std::vector<double> aRes = Solve_BiCGSTAB(aRhs,
-                                            aXYZ1, 1.0e-5, 100, mat_A);
+  std::vector<double> aRes = Solve_BiCGStab(aRhs, aXYZ1,
+                                            1.0e-5, 100, mat_A);
   std::cout << aRes.size() << std::endl;
 }
 

@@ -221,6 +221,11 @@ public:
     if( idim >= 0 && idim < 3) { r[idim] = 1; }
     return r;
   }
+  static CVec3 Random(){
+    CVec3 v;
+    v.SetRandom();
+    return v;
+  }
   T* data() { return p; }
   const T* data() const { return p; }
 public:

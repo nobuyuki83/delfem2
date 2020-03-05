@@ -6,7 +6,7 @@
  */
 
 #include <iostream>
-
+#include <random>
 #include "gtest/gtest.h"
 
 #include "delfem2/vec2.h"
@@ -48,8 +48,27 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
         10.0*(rand()/(RAND_MAX+1.0)-0.5),
         10.0*(rand()/(RAND_MAX+1.0)-0.5) },
     };
-    double diff = dfm2::Check_CdC_TriStrain(P, p, 1.0e-5);
-    EXPECT_LT(diff, 0.2);
+    const double eps = 1.0e-5;
+    double sum_diff = 0.0;
+    double C[3], dCdp[3][9];
+    dfm2::PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
+    for(int ine=0;ine<3;++ine){
+      for(int idim=0;idim<3;++idim){
+        double p1[3][3]; for(int i=0;i<9;++i){ (&p1[0][0])[i] = (&p[0][0])[i]; }
+        p1[ine][idim] += eps;
+        double C1[3], dCdp1[3][9];
+        dfm2::PBD_CdC_TriStrain2D3D(C1, dCdp1, P, p1);
+        double diff0 = (C1[0]-C[0])/eps-dCdp[0][ine*3+idim];
+        double diff1 = (C1[1]-C[1])/eps-dCdp[1][ine*3+idim];
+        double diff2 = (C1[2]-C[2])/eps-dCdp[2][ine*3+idim];
+        diff0 = abs(diff0);
+        diff1 = abs(diff1);
+        diff2 = abs(diff2);
+        sum_diff += diff0 + diff1 + diff2;
+        //      std::cout << diff0 << " " << diff1 << " " << diff2 << std::endl;
+      }
+    }
+    EXPECT_LT(sum_diff, 0.2);
   }
 }
 
@@ -69,7 +88,7 @@ TEST(objfunc_v23, MIPS)
     m.MatVec(C[ino], c[ino]);
   }
   double E, dE[3][3], ddE[3][3][3][3];
-  dfm2::Energy_MIPS(E, dE, ddE,
+  dfm2::WdWddW_MIPS(E, dE, ddE,
                     c, C);
   for(int ino=0;ino<3;++ino){
     for(int idim=0;idim<3;++idim){
@@ -80,7 +99,7 @@ TEST(objfunc_v23, MIPS)
       double eps = 1.0e-5;
       c1[ino][idim] += eps;
       double E1, dE1[3][3], ddE1[3][3][3][3];
-      dfm2::Energy_MIPS(E1, dE1, ddE1,
+      dfm2::WdWddW_MIPS(E1, dE1, ddE1,
                         c1, C);
       EXPECT_NEAR( (E1-E)/eps, dE[ino][idim], 1.0e-3);
       for(int jno=0;jno<3;++jno){
@@ -124,8 +143,73 @@ TEST(objfunc_v23, distancetri2d3d)
 
 // ------------------------------------------------------------
 
+double Check_WdWddW_PlateBendingMITC3
+ (const double C[3][2],
+  const double u0[3][3],
+  const double thickness,
+  const double lambda,
+  const double myu,
+  double eps)
+{
+  double W0, dW0[3][3], ddW0[3][3][3][3];
+  W0 = 0.0;
+  for(int i=0;i<9;++i){ (&dW0[0][0])[i] = 0.0; }
+  for(int i=0;i<81;++i){ (&ddW0[0][0][0][0])[i] = 0.0; }
+  dfm2::WdWddW_PlateBendingMITC3(W0,dW0,ddW0,
+                           C,u0,
+                           thickness,lambda,myu);
+  double sum0 = 0.0, sum1 = 0.0;
+  for(int ino=0;ino<3;++ino){
+    for(int idof=0;idof<3;++idof){
+      double u1[3][3]; for(int i=0;i<9;++i){ (&u1[0][0])[i] = (&u0[0][0])[i]; }
+      u1[ino][idof] += eps;
+      double W1, dW1[3][3], ddW1[3][3][3][3];
+      W1 = 0.0;
+      for(int i=0;i<9;++i){ (&dW1[0][0])[i] = 0.0; }
+      for(int i=0;i<81;++i){ (&ddW1[0][0][0][0])[i] = 0.0; }
+      dfm2::WdWddW_PlateBendingMITC3(W1,dW1,ddW1,
+                                     C,u1,
+                                     thickness,lambda,myu);
+      sum0 += fabs( (W1-W0)/eps - dW0[ino][idof]);
+      ///      std::cout << "   " << ino << " " << idof << " " << (W1-W0)/eps << " " << dW0[ino][idof] << "    " << fabs((W1-W0)/eps - dW0[ino][idof]) << std::endl;
+      
+      for(int jno=0;jno<3;++jno){
+        for(int jdof=0;jdof<3;++jdof){
+          sum1 += fabs( (dW1[jno][jdof]-dW0[jno][jdof])/eps - ddW0[ino][jno][idof][jdof] );
+          //          std::cout << "  " << ino << " " << idof << " " << jno << " " << jdof << " --> " << (dW1[jno][jdof]-dW0[jno][jdof])/eps << " " << ddW0[ino][jno][idof][jdof] << std::endl;
+        }
+      }
+    }
+  }
+  return sum1+sum0;
+}
+
 TEST(fem,plate_bending_mitc3_emat)
 {
+  {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<> dist0(-0.5, +0.5);
+    std::uniform_real_distribution<> dist1(+1.0e-10, +1.0);
+    for(int itr=0;itr<200;++itr){
+      double C[3][2];
+      for(int i=0;i<6;++i){
+        (&C[0][0])[i] = 10.0*dist0(mt);
+      }
+      double a0 = dfm2::Area_Tri2(C[0], C[1], C[2]);
+      if( a0 < 0.1 ) continue;
+      double u[3][3];
+      for(int i=0;i<9;++i){
+        (&u[0][0])[i] = 1.0*dist0(mt);
+      }
+      double thickness1 = dist1(mt);
+      double lambda1 = dist1(mt);
+      double myu1 = dist1(mt);
+      double diff = Check_WdWddW_PlateBendingMITC3(C, u,
+                                                   thickness1,lambda1,myu1, 1.0e-5);
+      EXPECT_LT(diff,1.0e-2);
+    }
+  }
   for(int itr=0;itr<200;++itr){
     double C[3][2];
     for(int i=0;i<6;++i){
@@ -140,11 +224,12 @@ TEST(fem,plate_bending_mitc3_emat)
     double thickness = (rand()+1.0)/(RAND_MAX+1.0);
     double lambda = (rand()+1.0)/(RAND_MAX+1.0);
     double myu = (rand()+1.0)/(RAND_MAX+1.0);
-    double diff = dfm2::Check_WdWddW_PlateBendingMITC3(C, u,
-                                                       thickness,lambda,myu, 1.0e-6);
+    double diff = Check_WdWddW_PlateBendingMITC3(C, u,
+                                                 thickness,lambda,myu, 1.0e-6);
     EXPECT_LT(diff,2.0e-3);
   }
 }
+
 
 TEST(fem,plate_bending_mitc3_cantilever)
 {
@@ -206,7 +291,7 @@ TEST(fem,plate_bending_mitc3_cantilever)
                                  aTri.data(), aTri.size()/3, 3,
                                  (int)aXY0.size()/2);
       dfm2::JArray_Sort(psup_ind, psup);
-      ////
+      //
       const int np = (int)aXY0.size()/2;
       mat_A.Initialize(np, 3, true);
       mat_A.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());

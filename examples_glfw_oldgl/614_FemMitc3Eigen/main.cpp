@@ -7,7 +7,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vecxitrsol.h"
-
+//
 #include "delfem2/ilu_mats.h"
 #include "delfem2/dtri_v2.h"
 #include "delfem2/fem_emats.h"
@@ -184,10 +184,10 @@ void Solve(){
     std::cout << "freq theo" << freq_theo << "   freq_sim:" << freq_sim << "   " << freq_theo/freq_sim  << "     " << aConv.size() << std::endl;
   }
   aTmp0 = aMode;
-  ////
+  //
   RemoveKernel(aTmp0,
                aModesKer);
-  ////
+  //
   for(unsigned int i=0;i<aTmp0.size();++i){
     aMode[i] = aTmp0[i]*aMassLumpedSqrtInv[i];
   }
@@ -259,27 +259,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       }
       break;
     }
-    case 'c':
-    {
-      for(int itr=0;itr<200;++itr){
-        double C[3][2];
-        for(int i=0;i<6;++i){
-          (&C[0][0])[i] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-        }
-        double a0 = dfm2::Area_Tri2(C[0], C[1], C[2]);
-        if( a0 < 0.1 ) continue;
-        double u[3][3];
-        for(int i=0;i<9;++i){
-          (&u[0][0])[i] = 1.0*(rand()/(RAND_MAX+1.0)-0.5);
-        }
-        double thickness = (rand()+1.0)/(RAND_MAX+1.0);
-        double lambda = (rand()+1.0)/(RAND_MAX+1.0);
-        double myu = (rand()+1.0)/(RAND_MAX+1.0);
-        double diff = dfm2::Check_WdWddW_PlateBendingMITC3(C, u,
-                                                           thickness,lambda,myu, 1.0e-5);
-        std::cout << itr << " " << diff << std::endl;
-      }
-    }
   }
 }
 
@@ -292,6 +271,7 @@ int main(int argc,char* argv[])
   // --------------------------------
   viewer.nav.camera.view_height = 0.2;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
+  viewer.nav.camera.Rot_Camera(0.5, 0.5);
   delfem2::opengl::setSomeLighting();
   
   MakeMesh();

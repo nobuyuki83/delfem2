@@ -1,8 +1,11 @@
 #include <cstdlib>
 #include <vector>
 #include <set>
+#include <random>
 #include "delfem2/mat3.h"
 #include "delfem2/mats.h"
+#include "delfem2/mshtopo.h"
+#include "delfem2/vecxitrsol.h"
 //
 #include "delfem2/v23m3q.h"
 
@@ -10,23 +13,12 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_v23dtricad.h"
+#include "delfem2/opengl/glold_v23.h"
 #include "delfem2/opengl/glold_funcs.h"
 
 namespace dfm2 = delfem2;
 
 // -------------------------------------
-
-void StepTime()
-{
-
-}
-
-// -------------------------------------
-
-void myGlutDisplay(void)
-{
-}
-
 
 /**
  * @brief energy W and its derivative dW and second derivative ddW
@@ -38,8 +30,9 @@ void RodFrameTrans(dfm2::CVec3d frm[3],
                    const dfm2::CVec3d& du,
                    double dtheta)
 {
-  assert( fabs(S0.Length() - 1.0) < 1.0e-10 );
-  assert( fabs(S0*V01) < 1.0e-10 );
+//  std::cout << "      "  << S0.Length() << std::endl;
+  assert( fabs(S0.Length() - 1.0) < 1.0e-3 );
+  assert( fabs(S0*V01) < 1.0e-3 );
   const dfm2::CVec3d U0 = V01.Normalize();
   const dfm2::CVec3d T0 = U0^S0;
   frm[2] = (V01+du).Normalize();
@@ -471,12 +464,14 @@ double WdWddW_Rod(
     //
     const dfm2::CVec3d P[3],
     const dfm2::CVec3d S[2],
-    const double off[3])
+    const double off[3],
+    bool is_exact)
 {
-  assert( fabs(S[0].Length() - 1.0) < 1.0e-10 );
-  assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-10 );
-  assert( fabs(S[1].Length() - 1.0) < 1.0e-10 );
-  assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-10 );
+//  std::cout << S[0].Length() << std::endl;
+  assert( fabs(S[0].Length() - 1.0) < 1.0e-5 );
+  assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-5 );
+  assert( fabs(S[1].Length() - 1.0) < 1.0e-5 );
+  assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-5 );
   dfm2::CVec3d F0[3];
   {
     F0[2] = (P[1]-P[0]).Normalize();
@@ -550,7 +545,7 @@ double WdWddW_Rod(
     }
     AddOuterProduct(ddV_ddP, ddV_dtdP, ddV_ddt,
                     1.0, dR0_P, dR0_t, dR0_P, dR0_t);
-    {
+    if( is_exact ){
       double t0 = R[iaxis]/Y;
       AddDiffDiff_DotFrames(ddV_ddP, ddV_dtdP,ddV_ddt,
                             +t0, jaxis, kaxis, P,F0, F1, dF0_dv, dF0_dt,dF1_dv,dF1_dt);
@@ -566,7 +561,7 @@ double WdWddW_Rod(
     }
   }
   // ---------------
-  {
+  if( is_exact ){
     double t0 = -(R[0]*X[0]+R[1]*X[1]+R[2]*X[2])/(Y*Y);
     AddDiffDiff_DotFrames(ddV_ddP, ddV_dtdP,ddV_ddt,
                           t0, 0, 0, P,F0, F1, dF0_dv, dF0_dt,dF1_dv,dF1_dt);
@@ -615,7 +610,7 @@ void Check_WdWddW_Rod()
   double ddW_ddt[2][2];
   double W = WdWddW_Rod(dW_dP,dW_dt,
                              ddW_ddP, ddW_dtdP,ddW_ddt,
-                             P, S, off);
+                             P, S, off, true);
   // -----------------------
   double eps = 1.0e-7;
   dfm2::CVec3d dP[3];
@@ -641,7 +636,7 @@ void Check_WdWddW_Rod()
     double ddw_ddt[2][2];
     w = WdWddW_Rod(dw_dP, dw_dt,
                         ddw_ddP, ddw_dtdP, ddw_ddt,
-                        p, s, off);
+                        p, s, off, true);
   }
   {
     const double val0 = (w-W)/eps;
@@ -700,6 +695,76 @@ void Check_WdWddW_Rod()
   std::cout << std::endl;
 }
 
+
+double WdWddW_SquareLengthLineseg3D
+(dfm2::CVec3d dW_dP[2],
+ dfm2::CMat3d ddW_ddP[2][2],
+ //
+ const dfm2::CVec3d P[2],
+ double L0)
+{
+  double l  = sqrt(+ (P[0][0]-P[1][0])*(P[0][0]-P[1][0])
+                    + (P[0][1]-P[1][1])*(P[0][1]-P[1][1])
+                    + (P[0][2]-P[1][2])*(P[0][2]-P[1][2]));
+  dfm2::CVec3d v = P[0]-P[1];
+  double R = L0-l;
+  dW_dP[0] = (-R/l)*v;
+  dW_dP[1] = (+R/l)*v;
+  dfm2::CMat3d m = L0/(l*l*l)*dfm2::Mat3_OuterProduct(v, v) + (l-L0)/l*dfm2::Mat3_Identity(1.0);
+  ddW_ddP[0][0] = m;
+  ddW_ddP[0][1] = -m;
+  ddW_ddP[1][0] = -m;
+  ddW_ddP[1][1] = m;
+  return 0.5*R*R;
+}
+
+void Check_WdWddW_SquareLengthLineseg3D()
+{
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<double> dist(-1,+1);
+  dfm2::CVec3d P[2];
+  P[0].SetRandom();
+  P[1].SetRandom();
+  dfm2::CVec3d dW_dP[2];
+  dfm2::CMat3d ddW_ddP[2][2];
+  const double L0 = 1.0;
+  double W = WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
+                                          P, L0);
+  // -----
+  double eps = 1.0e-5;
+  dfm2::CVec3d dP[2];
+  dP[0].SetRandom(); dP[0] *= eps;
+  dP[1].SetRandom(); dP[1] *= eps;
+  const dfm2::CVec3d p[2] = { P[0]+dP[0], P[1]+dP[1] };
+  double w;
+  dfm2::CVec3d dw_dP[2];
+  {
+    dfm2::CMat3d ddw_ddP[2][2];
+    const double L0 = 1.0;
+    w = WdWddW_SquareLengthLineseg3D(dw_dP, ddw_ddP,
+                                     p, L0);
+  }
+  {
+    const double val0 = (w-W)/eps;
+    const double val1 = (+dW_dP[0]*dP[0]+dW_dP[1]*dP[1])/eps;
+    std::cout << "diff_W : " << val0-val1 << " ---> " << val0 << " " << val1 << std::endl;
+  }
+  {
+    const dfm2::CVec3d val0 = (dw_dP[0]-dW_dP[0])/eps;
+    const dfm2::CVec3d val1 = (+ddW_ddP[0][0]*dP[0]+ddW_ddP[0][1]*dP[1])/eps;
+    std::cout << "diff_P0 : " << val0-val1 << " ---> " << val0 << " " << val1 << std::endl;
+  }
+  {
+    const dfm2::CVec3d val0 = (dw_dP[1]-dW_dP[1])/eps;
+    const dfm2::CVec3d val1 = (+ddW_ddP[1][0]*dP[0]+ddW_ddP[1][1]*dP[1])/eps;
+    std::cout << "diff_P0 : " << val0-val1 << " ---> " << val0 << " " << val1 << std::endl;
+  }
+}
+
+
+
+
 void Check(){
   std::cout << "#######" << std::endl;
   std::cout << "##Frame" << std::endl;
@@ -724,27 +789,337 @@ void Check(){
   Check_WdWddW_Rod();
   std::cout << "#" << std::endl;
   Check_WdWddW_Rod();
+  std::cout << "#########" << std::endl;
+  std::cout << "##LineSeg" << std::endl;
+  Check_WdWddW_SquareLengthLineseg3D();
+  std::cout << "#" << std::endl;
+  Check_WdWddW_SquareLengthLineseg3D();
+  std::cout << "#" << std::endl;
+  Check_WdWddW_SquareLengthLineseg3D();
+}
+
+// -------------------------------------
+
+void myGlutDisplay
+(const std::vector<dfm2::CVec3d>& aP,
+ const std::vector<dfm2::CVec3d>& aS,
+ const std::vector<unsigned int>& aElemSeg)
+{
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(1,0,0);
+  ::glPointSize(10);
+  ::glBegin(GL_POINTS);
+  for(int ip=0;ip<aP.size();++ip){
+    ::glVertex3d(aP[ip].x(), aP[ip].y(), aP[ip].z());
+  }
+  ::glEnd();
+  // ------------
+  ::glColor3d(0,0,0);
+  ::glLineWidth(3);
+  ::glBegin(GL_LINES);
+  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+    unsigned int i0 = aElemSeg[iseg*2+0]; assert( i0 < aP.size() );
+    unsigned int i1 = aElemSeg[iseg*2+1]; assert( i1 < aP.size() );
+    ::glVertex3d(aP[i0].x(), aP[i0].y(), aP[i0].z());
+    ::glVertex3d(aP[i1].x(), aP[i1].y(), aP[i1].z());
+  }
+  ::glEnd();
+  // --------------
+  ::glBegin(GL_LINES);
+  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+    unsigned int i0 = aElemSeg[iseg*2+0]; assert( i0 < aP.size() );
+    unsigned int i1 = aElemSeg[iseg*2+1]; assert( i1 < aP.size() );
+    dfm2::CVec3d p01 = 0.5*(aP[i0]+aP[i1]);
+    double l01 = (aP[i0]-aP[i1]).Length();
+    dfm2::opengl::myGlVertex(p01);
+    dfm2::opengl::myGlVertex(p01+(l01*0.5)*aS[iseg]);
+  }
+  ::glEnd();
+}
+
+void Solve
+(std::vector<dfm2::CVec3d>& aP,
+ std::vector<dfm2::CVec3d>& aS,
+ dfm2::CMatrixSparse<double>& mats,
+ const std::vector<dfm2::CVec3d>& aP0,
+ const std::vector<unsigned int>& aElemSeg,
+ const std::vector<unsigned int>& aElemRod,
+ const std::vector<int>& aBCFlag)
+{
+  const unsigned int nNode = aBCFlag.size()/3;
+  mats.SetZero();
+  std::vector<double> vec_r;
+  vec_r.assign(nNode*3, 0.0);
+  std::vector<int> tmp_buffer;
+  double W = 0;
+  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+    const unsigned int i0 = aElemSeg[iseg*2+0];
+    const unsigned int i1 = aElemSeg[iseg*2+1];
+    const unsigned int* aINoel = aElemSeg.data()+iseg*2;
+    const double L0 = (aP0[i0]-aP0[i1]).Length();
+    const dfm2::CVec3d aPE[2] = { aP[i0], aP[i1] };
+    // --------------
+    dfm2::CVec3d dW_dP[2];
+    dfm2::CMat3d ddW_ddP[2][2];
+    W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
+                                      aPE, L0);
+    {
+      double eM[2*2*3*3];
+      for(int in=0;in<2;++in){
+        for(int jn=0;jn<2;++jn){
+          ddW_ddP[in][jn].CopyValueToPtr(eM+(in*2+jn)*9);
+        }
+      }
+      mats.Mearge(2, aINoel, 2, aINoel, 9, eM, tmp_buffer);
+    }
+    {
+      for (int inoel=0; inoel<2; inoel++){
+        const unsigned int ip = aINoel[inoel];
+        vec_r[ip*3+0] -= dW_dP[inoel].x();
+        vec_r[ip*3+1] -= dW_dP[inoel].y();
+        vec_r[ip*3+2] -= dW_dP[inoel].z();
+      }
+    }
+  }
+  for(int irod=0;irod<aElemRod.size()/5;++irod){
+    const unsigned int* aINoel = aElemRod.data()+irod*5;
+    const unsigned int nP = aP.size();
+    const dfm2::CVec3d aPE[3] = { aP[aINoel[0]], aP[aINoel[1]], aP[aINoel[2]] };
+    const dfm2::CVec3d aSE[2] = {
+      aS[aINoel[3]-nP],
+      aS[aINoel[4]-nP] };
+    const double off[3] = {0,0,0};
+    // ------
+    dfm2::CVec3d dW_dP[3];
+    double dW_dt[2];
+    dfm2::CMat3d ddW_ddP[3][3];
+    dfm2::CVec3d ddW_dtdP[2][3];
+    double ddW_ddt[2][2];
+    W +=  WdWddW_Rod(dW_dP,dW_dt,ddW_ddP,ddW_dtdP,ddW_ddt,
+                     aPE,aSE,off, false);
+    {
+      double eM[5][5][3][3];
+      for(int i=0;i<5*5*3*3;++i){ (&eM[0][0][0][0])[i] = 0.0; }
+      for(int in=0;in<3;++in){
+        for(int jn=0;jn<3;++jn){
+//          dfm2::CMat3d t = ddW_ddP[in][jn].Trans();
+//          t.CopyValueToPtr(&eM[in][jn][0][0]);
+          ddW_ddP[in][jn].CopyValueToPtr(&eM[in][jn][0][0]);
+        }
+      }
+      for(int in=0;in<2;++in){
+        for(int jn=0;jn<3;++jn){
+          eM[3+in][jn][0][0] = ddW_dtdP[in][jn].x();
+          eM[3+in][jn][0][1] = ddW_dtdP[in][jn].y();
+          eM[3+in][jn][0][2] = ddW_dtdP[in][jn].z();
+        }
+      }
+      for(int in=0;in<3;++in){
+        for(int jn=0;jn<2;++jn){
+          eM[in][jn+3][0][0] = ddW_dtdP[jn][in].x();
+          eM[in][jn+3][1][0] = ddW_dtdP[jn][in].y();
+          eM[in][jn+3][2][0] = ddW_dtdP[jn][in].z();
+        }
+      }
+      for(int in=0;in<2;++in){
+        for(int jn=0;jn<2;++jn){
+          eM[in+3][jn+3][0][0] = ddW_ddt[in][jn];
+        }
+      }
+      mats.Mearge(5, aINoel, 5, aINoel, 9, &eM[0][0][0][0], tmp_buffer);
+    }
+    {
+      for (int inoel=0; inoel<3; inoel++){
+        const unsigned int ip = aINoel[inoel];
+        vec_r[ip*3+0] -= dW_dP[inoel].x();
+        vec_r[ip*3+1] -= dW_dP[inoel].y();
+        vec_r[ip*3+2] -= dW_dP[inoel].z();
+      }
+      for (int inoel=0; inoel<2; inoel++){
+        const unsigned int in0 = aINoel[3+inoel];
+        vec_r[in0*3+0] -= dW_dt[inoel];
+      }
+    }
+  }
+//  std::cout << dfm2::CheckSymmetry(mats) << std::endl;
+//  mats.AddDia(0.1);
+  std::cout << "energy:" << W << std::endl;
+  //    std::cout << "sym: " << dfm2::CheckSymmetry(mats) << std::endl;
+  mats.SetFixedBC(aBCFlag.data());
+  dfm2::setRHS_Zero(vec_r, aBCFlag,0);
+  std::vector<double> vec_x;
+  vec_x.assign(nNode*3, 0.0);
+ {
+   auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
+   vec_r.size(), 1.0e-4, 100, mats);
+   if( aConvHist.size() > 0 ){
+     std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
+   }
+ }
+  /*
+  {
+    auto aConvHist = dfm2::Solve_BiCGStab(vec_r,vec_x,
+                                          1.0e-4, 300, mats);
+    if( aConvHist.size() > 0 ){
+      std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
+    }
+  }
+   */
+  //    for(int i=0;i<vec_x.size();++i){
+  //      std::cout << i << " " << vec_x[i] << std::endl;
+  //    }
+  assert( aS.size() == aElemSeg.size()/2 );
+  for(int is=0;is<aS.size();++is){
+    unsigned int i0 = aElemSeg[is*2+0];
+    unsigned int i1 = aElemSeg[is*2+1];
+    dfm2::CVec3d V01 = aP[i1]-aP[i0];
+    dfm2::CVec3d du(vec_x[i1*3+0]-vec_x[i0*3+0],
+                    vec_x[i1*3+1]-vec_x[i0*3+1],
+                    vec_x[i1*3+2]-vec_x[i0*3+2]);
+    const unsigned int np = aP.size();
+    const double dtheta = vec_x[ np*3 + is*3 ];
+    dfm2::CVec3d frm[3];
+    RodFrameTrans(frm,
+                  aS[is],V01,du,dtheta);
+    aS[is] = frm[0];
+  }
+  for(int ip=0;ip<aP.size();++ip){
+    aP[ip].p[0] += vec_x[ip*3+0];
+    aP[ip].p[1] += vec_x[ip*3+1];
+    aP[ip].p[2] += vec_x[ip*3+2];
+  }
+  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+    const unsigned int i0 = aElemSeg[iseg*2+0];
+    const unsigned int i1 = aElemSeg[iseg*2+1];
+    const dfm2::CVec3d& p0 = aP[i0];
+    const dfm2::CVec3d& p1 = aP[i1];
+    const dfm2::CVec3d e01 = (p1-p0).Normalize();
+    aS[iseg] -= (aS[iseg]*e01)*e01;
+    aS[iseg].SetNormalizedVector();
+  }
+}
+
+
+void MakeProblemSetting
+(std::vector<dfm2::CVec3d>& aP0,
+ std::vector<unsigned int>& aElemSeg,
+ std::vector<unsigned int>& aElemRod,
+ std::vector<int>& aBCFlag, // if value this is not 0, it is fixed boundary condition
+ unsigned int np)
+{
+  double elen = 2.0/np;
+  aP0.resize(np);
+  for(int ip=0;ip<np;++ip){
+    aP0[ip] = dfm2::CVec3d(-1.0+ip*elen, 0.0, 0.0);
+  };
+  unsigned int ns = np-1;
+  aElemSeg.resize(ns*2);
+  for(int is=0;is<ns;++is){
+    aElemSeg[is*2+0] = is+0;
+    aElemSeg[is*2+1] = is+1;
+  }
+  unsigned int nr = ns-1;
+  aElemRod.resize(nr*5);
+  for(int ir=0;ir<nr;++ir){
+    aElemRod[ir*5+0] = ir+0;
+    aElemRod[ir*5+1] = ir+1;
+    aElemRod[ir*5+2] = ir+2;
+    aElemRod[ir*5+3] = np+ir+0;
+    aElemRod[ir*5+4] = np+ir+1;
+  };
+  const unsigned int nNode = np+ns;
+  aBCFlag.assign(nNode*3, 0);
+  {
+    unsigned int np = aP0.size();
+    aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
+    aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
+    aBCFlag[(np+0)*3+0] = 1;
+    for(int is=0;is<ns;++is){
+      aBCFlag[(np+is)*3+1] = 1;
+      aBCFlag[(np+is)*3+2] = 1;
+    }
+  }
 }
 
 int main(int argc,char* argv[])
 {
   Check();
   // -----
-  std::vector<unsigned int> aElem;
-  // -----
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.0;
+  viewer.nav.camera.view_height = 1.5;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
-  while (!glfwWindowShouldClose(viewer.window))
+  // -----
+  std::vector<dfm2::CVec3d> aP0;
+  std::vector<unsigned int> aElemSeg, aElemRod;
+  std::vector<int> aBCFlag;
+  MakeProblemSetting(aP0,aElemSeg,aElemRod, aBCFlag,
+                     30);
+  dfm2::CMatrixSparse<double> mats;
   {
-    StepTime();
-    viewer.DrawBegin_oldGL();
-    myGlutDisplay();
-    viewer.DrawEnd_oldGL();
+    unsigned int nNode = aElemSeg.size()/2 + aP0.size();
+    std::vector<unsigned int> psup_ind, psup;
+    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                               aElemRod.data(), aElemRod.size()/5, 5, nNode);
+    /*
+    std::vector<unsigned int> psup_ind, psup;
+    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                               aElemSeg.data(), aElemRod.size()/2, 2, nNode);
+     */
+    dfm2::JArray_Sort(psup_ind, psup);
+    mats.Initialize(nNode, 3, true);
+    mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
   }
-  
+  // -----------------
+  std::vector<dfm2::CVec3d> aP = aP0;
+  std::vector<dfm2::CVec3d> aS(aElemSeg.size()/2);
+  assert( aP.size() == aP0.size() );
+  assert( aS.size() == aElemSeg.size()/2);
+  // ------
+  int iframe = 0;
+  while (true)
+  {
+    if( iframe % 200 == 0 ){
+      for(int ip=0;ip<aP.size();++ip){
+        aP[ip] = aP0[ip];
+        auto rnd = dfm2::CVec3d::Random()*3.0;
+        if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
+        if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
+        if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
+      }
+      unsigned int ns = aS.size();
+      for(int is=0;is<ns;++is){
+        aS[is] = dfm2::CVec3d(0,1,0);
+        auto rnd = dfm2::CVec3d::Random()*3.0;
+        const unsigned int np = aP.size();
+        if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x(); }
+        if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y(); }
+        if( aBCFlag[(np+is)*3+2] == 0 ){ aS[is].p[2] += rnd.z(); }
+      }
+      for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+        const unsigned int i0 = aElemSeg[iseg*2+0];
+        const unsigned int i1 = aElemSeg[iseg*2+1];
+        const dfm2::CVec3d& p0 = aP[i0];
+        const dfm2::CVec3d& p1 = aP[i1];
+        const dfm2::CVec3d e01 = (p1-p0).Normalize();
+        assert( iseg < aS.size() );
+        aS[iseg] -= (aS[iseg]*e01)*e01;
+        aS[iseg].SetNormalizedVector();
+      }
+    }
+    {
+      Solve(aP, aS, mats,
+            aP0, aElemSeg, aElemRod, aBCFlag);
+    }
+    iframe = iframe+1;
+    // -------------
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(aP,aS,aElemSeg);
+    viewer.DrawEnd_oldGL();
+    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+  }
+EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

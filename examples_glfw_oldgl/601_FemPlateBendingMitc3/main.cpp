@@ -162,28 +162,6 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
       exit(0);  /* '\033' ? ESC ? ASCII ??? */
     case 'c':
     {
-      std::random_device rd;
-      std::mt19937 mt(rd());
-      std::uniform_real_distribution<> dist0(-0.5, +0.5);
-      std::uniform_real_distribution<> dist1(+1.0e-10, +1.0);
-      for(int itr=0;itr<200;++itr){
-        double C[3][2];
-        for(int i=0;i<6;++i){
-          (&C[0][0])[i] = 10.0*dist0(mt);
-        }
-        double a0 = dfm2::Area_Tri2(C[0], C[1], C[2]);
-        if( a0 < 0.1 ) continue;
-        double u[3][3];
-        for(int i=0;i<9;++i){
-          (&u[0][0])[i] = 1.0*dist0(mt);
-        }
-        double thickness1 = dist1(mt);
-        double lambda1 = dist1(mt);
-        double myu1 = dist1(mt);
-        double diff = dfm2::Check_WdWddW_PlateBendingMITC3(C, u,
-                                                           thickness1,lambda1,myu1, 1.0e-5);
-        std::cout << itr << " " << diff << std::endl;
-      }
     }
   }
 }
