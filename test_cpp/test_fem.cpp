@@ -163,7 +163,7 @@ TEST(objfunc_v23, pbd_energy_stvk)
         p1[ine][idim] += eps;
         double C1, dCdp1[9];
         dfm2::PBD_ConstraintProjection_EnergyStVK(C1, dCdp1, P, p1, lambda, myu);
-        EXPECT_NEAR( (C1-C)/eps, dCdp[ine*3+idim], 1.0e-2 );
+        EXPECT_NEAR( (C1-C)/eps, dCdp[ine*3+idim], 1.0e-3*(1+fabs(dCdp[ine*3+idim])) );
       }
     }
   }
@@ -524,17 +524,17 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
     {
       const double val0 = (w-W)/eps;
       const double val1 = (+dW_dP[0]*dP[0]+dW_dP[1]*dP[1])/eps;
-      EXPECT_NEAR( val0, val1, 1.0e-3 );
+      EXPECT_NEAR( val0, val1, 1.0e-3*(1+fabs(val1)) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[0]-dW_dP[0])/eps;
       const dfm2::CVec3d val1 = (+ddW_ddP[0][0]*dP[0]+ddW_ddP[0][1]*dP[1])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-4 );
+      EXPECT_LT( (val0-val1).Length(), 1.0e-4*(1+val1.Length()) );
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[1]-dW_dP[1])/eps;
       const dfm2::CVec3d val1 = (+ddW_ddP[1][0]*dP[0]+ddW_ddP[1][1]*dP[1])/eps;
-      EXPECT_LT( (val0-val1).Length(), 1.0e-4 );
+      EXPECT_LT( (val0-val1).Length(), 1.0e-4*(1+val1.Length()) );
     }
   }
 }
