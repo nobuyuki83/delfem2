@@ -10,6 +10,8 @@
 #define OBJFUNC_v23_h
 
 #include <vector>
+#include "delfem2/mat3.h"
+#include "delfem2/vec3.h"
 
 namespace delfem2 {
 
@@ -84,12 +86,6 @@ void PBD_ConstraintProjection_DistanceTet(
     const double P[4][3], // (in) undeformed triangle vertex positions
     const double p[4][3]); // (in) deformed triangle vertex positions
 
-void Check_ConstraintProjection_EnergyStVK(
-    const double P[3][2], // (in) undeformed triangle vertex positions
-    const double p[3][3], // (in) deformed triangle vertex positions)
-    const double lambda,
-    const double myu);
-
 void PBD_CdC_QuadBend(
     double C[3],
     double dCdp[3][12],
@@ -107,6 +103,90 @@ void WdWddW_MIPS(
     const double c[3][3],
     const double C[3][3]);
   
+/**
+ * @brief energy W and its derivative dW and second derivative ddW
+ * where W = a^T R(dn) b(theta)
+ */
+void RodFrameTrans(CVec3d frm[3],
+                   const CVec3d& S0,
+                   const CVec3d& V01,
+                   const CVec3d& du,
+                   double dtheta);
+
+void DiffFrameRod(CMat3d dF_dv[3], // first-order derivative
+                  CVec3d dF_dt[3],
+                  //
+                  double l01,
+                  const CVec3d Frm[3]);
+
+/**
+ * @brief energy W and its derivative dW and second derivative ddW
+ * where W = a^T R(dn) b(theta)
+ */
+void DifDifFrameRod(CMat3d& ddW_ddv,
+                    CVec3d& ddW_dvdt, // second-order derrivative
+                    double& ddW_dtt,
+                    //
+                    unsigned int iaxis,
+                    double l01,
+                    const CVec3d& Q,
+                    const CVec3d Frm[3]);
+
+void AddDiff_DotFrames(CVec3d dV_dP[3],
+                       double dV_dt[2],
+                       //
+                       double c,
+                       unsigned int i,
+                       unsigned int j,
+                       const CVec3d Frm0[3],
+                       const CVec3d Frm1[3],
+                       const CMat3d dF0_dv[3],
+                       const CVec3d dF0_dt[3],
+                       const CMat3d dF1_dv[3],
+                       const CVec3d dF1_dt[3]);
+
+void AddDiffDiff_DotFrames(CMat3d ddV_ddP[3][3],
+                           CVec3d ddV_dtdP[2][3],
+                           double ddV_ddt[2][2],
+                           //
+                           double c,
+                           unsigned int i,
+                           unsigned int j,
+                           const CVec3d P[3],
+                           const CVec3d F0[3],
+                           const CVec3d F1[3],
+                           const CMat3d dF0_dv[3],
+                           const CVec3d dF0_dt[3],
+                           const CMat3d dF1_dv[3],
+                           const CVec3d dF1_dt[3]);
+
+double WdWddW_DotFrame(CVec3d dV_dP[3],
+                       double dV_dt[2],
+                       CMat3d ddV_ddP[3][3],
+                       CVec3d ddV_dtdP[2][3],
+                       double ddV_ddt[2][2],
+                       //
+                       const CVec3d P[3],
+                       const CVec3d S[2],
+                       const double off[3]);
+
+double WdWddW_Rod(CVec3d dV_dP[3],
+                  double dV_dt[2],
+                  CMat3d ddV_ddP[3][3],
+                  CVec3d ddV_dtdP[2][3],
+                  double ddV_ddt[2][2],
+                  //
+                  const CVec3d P[3],
+                  const CVec3d S[2],
+                  const double off[3],
+                  bool is_exact);
+
+double WdWddW_SquareLengthLineseg3D(CVec3d dW_dP[2],
+                                    CMat3d ddW_ddP[2][2],
+                                    //
+                                    const CVec3d P[2],
+                                    double L0);
+
 }
 
 #endif /* pbd_v23_h */
