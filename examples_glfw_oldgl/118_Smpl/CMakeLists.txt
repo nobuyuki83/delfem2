@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(smpl_cpp)
+project(118_Smpl)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -35,6 +35,7 @@ include_directories(
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
   ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
+  ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
   
   ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp

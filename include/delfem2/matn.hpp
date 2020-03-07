@@ -31,6 +31,20 @@ void MatMat
 }
 
 
+template <typename REAL, unsigned int NCOL, unsigned int NROW>
+void MatVec
+(REAL* y,
+ const REAL* A, const REAL* x)
+{
+  for(unsigned int i=0;i<NCOL;++i){
+    y[i] = 0;
+    for(unsigned int j=0;j<NROW;++j){
+      y[i] += A[i*NROW+j]*x[j];
+    }
+  }
+}
+
+
 }
 
 #endif /* DFM2_VM_H */
