@@ -299,3 +299,14 @@ void dfm2::setRHS_MasterSlave(
 
 
 
+void dfm2::MatVec(double* y,
+                  double* A, unsigned int ncol, unsigned int nrow,
+                  double* x)
+{
+  for(unsigned int i=0;i<ncol;++i){
+    y[i] = 0;
+    for(unsigned int j=0;j<nrow;++j){
+      y[i] += A[i*nrow+j]*x[j];
+    }
+  }
+}

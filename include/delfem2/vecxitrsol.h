@@ -102,6 +102,10 @@ void setRHS_MasterSlave(double *vec_b,
                         int nDoF,
                         const int *aMSFlag);
 
+void MatVec(double* y,
+            double* A, unsigned int ncol, unsigned int nrow,
+            double* x);
+
 // --------------------------
 
 /**
