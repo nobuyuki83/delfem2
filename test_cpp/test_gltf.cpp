@@ -20,13 +20,12 @@
 TEST(gltf,formatcheck)
 {
   tinygltf::TinyGLTF loader;
-  for(int ifile=0;ifile<5;++ifile){
+  for(int ifile=0;ifile<4;++ifile){
     std::string path_glb = std::string(PATH_INPUT_DIR);
     if(      ifile == 0 ){ path_glb += "/Duck.glb"; }
     else if( ifile == 1 ){ path_glb += "/RiggedSimple.glb"; }
     else if( ifile == 2 ){ path_glb += "/RiggedFigure.glb"; }
-    else if( ifile == 3 ){ path_glb += "/Monster.glb"; }
-    else if( ifile == 4 ){ path_glb += "/CesiumMan.glb"; }
+    else if( ifile == 3 ){ path_glb += "/CesiumMan.glb"; }
     tinygltf::Model model;
     std::string err;
     std::string warn;

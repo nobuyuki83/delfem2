@@ -13,3 +13,6 @@
 [submodule "3rd_party/pybind11"]
 	path = 3rd_party/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "3rd_party/cnpy"]
+	path = 3rd_party/cnpy
+	url = https://github.com/rogersce/cnpy.git

@@ -140,5 +140,10 @@ python3 setup.py develop
 cd ../../
 
 
+################################
+# SMPL
+
+cd test_inputs
+python3 smpl_preprocess.py 
 
 

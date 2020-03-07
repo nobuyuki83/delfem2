@@ -174,7 +174,6 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
   for(int itr=0;itr<100;++itr){
     dfm2::CVec3d V01;
     V01.SetRandom();
-    //  V01.SetNormalizedVector();
     dfm2::CVec3d Frm[3];
     {
       Frm[2] = V01;

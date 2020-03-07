@@ -21,8 +21,6 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------
 
-// -------------------------------------
-
 void myGlutDisplay
 (const std::vector<dfm2::CVec3d>& aP,
  const std::vector<dfm2::CVec3d>& aS,
@@ -284,11 +282,6 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> psup_ind, psup;
     dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                aElemRod.data(), aElemRod.size()/5, 5, nNode);
-    /*
-    std::vector<unsigned int> psup_ind, psup;
-    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                               aElemSeg.data(), aElemRod.size()/2, 2, nNode);
-     */
     dfm2::JArray_Sort(psup_ind, psup);
     mats.Initialize(nNode, 3, true);
     mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());

@@ -136,13 +136,10 @@ int main(int argc,char* argv[])
   
   ComputePerlin();
   
-  /*
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
-   */
-  
   printf("OpenGL version supported by this platform (%s): \n",
          glGetString(GL_VERSION));
   
