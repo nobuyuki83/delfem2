@@ -35,7 +35,6 @@ build:
           cmake ..
           make
           ./runUnitTests
-          make test
     - script:
         name: compile glut examples
         code: |
