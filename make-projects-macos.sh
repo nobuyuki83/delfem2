@@ -142,8 +142,9 @@ cd ../../
 
 ################################
 # SMPL
-
+pip3 install chumpy
 cd test_inputs
 python3 smpl_preprocess.py 
+pip3 uninstall chumpy -y
 
 

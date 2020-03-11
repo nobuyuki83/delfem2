@@ -10,12 +10,11 @@
 #include <map>
 #include <cassert>
 #include <sstream>
+#include <fstream>
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
-#include "delfem2/funcs.h" // isFileExists
 // -----
 #include "delfem2/v23m3q.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/rig_v3q.h"
 
 #ifndef M_PI 
@@ -91,6 +90,37 @@ static void CalcInvMat(double* a, const int n, int& info )
     }
   }
 }
+
+static std::string MyReplace
+ (const std::string& str,
+  const char cf,
+  const char ct)
+{
+  const int n = str.size();
+  //
+  std::string ss(str);
+  for(int i=0;i<n;++i){
+    if( ss[i] != cf ){ continue; }
+    ss[i] = ct;
+  }
+  return ss;
+}
+
+static std::vector<std::string> MySplit
+ (const std::string& str,
+  char delimiter)
+{
+  std::vector<std::string> aToken;
+  aToken.clear();
+  std::stringstream data(str);
+  std::string line;
+  while(std::getline(data,line,delimiter)){
+    if( line.empty() ){ continue; }
+    aToken.push_back(line);
+  }
+  return aToken;
+}
+
 
 // ------------------------------------------------------------
 
@@ -204,8 +234,8 @@ void dfm2::Read_BioVisionHierarchy
   while(std::getline(fin,line)){
     if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
     if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
-    line = Replace(line, '\t', ' ');
-    std::vector<std::string> aToken = Split(line,' ');
+    line = MyReplace(line, '\t', ' ');
+    std::vector<std::string> aToken = MySplit(line,' ');
     std::cout << aToken[0] << std::endl;
     if( aToken[0] == "HIERARCHY" ){
       assert(aBone.empty());
@@ -297,10 +327,10 @@ void dfm2::Read_BioVisionHierarchy
   aValueRotTransBone.resize(nframe*nchannel);
   for(int iframe=0;iframe<nframe;++iframe){
     std::getline(fin,line);
-    line = Replace(line, '\t', ' ');
+    line = MyReplace(line, '\t', ' ');
     if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
     if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
-    std::vector<std::string> aToken = Split(line,' ');
+    std::vector<std::string> aToken = MySplit(line,' ');
 //    std::cout << aToken.size() << " " << aChannelRotTransBone.size() << std::endl;
     assert(aToken.size()==aChannelRotTransBone.size());
     for(int ich=0;ich<nchannel;++ich){
@@ -393,6 +423,46 @@ void PickBone
         break;
       }
     }
+  }
+}
+
+
+
+void dfm2::SetMat4AffineBone_FromJointRelativeRotation
+ (std::vector<double>& aMat4AffineBone,
+  const double trans_root[3],
+  const std::vector<double>& aQuatRelativeRot,
+  const std::vector<int>& aIndBoneParent,
+  const std::vector<double>& aJntPos0)
+{
+  const unsigned int nBone = aIndBoneParent.size();
+  assert( nBone >= 1 );
+  assert( aMat4AffineBone.size() == nBone*16 );
+  dfm2::Mat4_ScaleRotTrans(aMat4AffineBone.data(),
+                           1.0, aQuatRelativeRot.data(), trans_root);
+  for(int ibone=1;ibone<nBone;++ibone){
+    int ibp = aIndBoneParent[ibone];
+    assert( ibp >= 0 && ibp < nBone );
+    double p1[3];
+    dfm2::Vec3_AffMat3Vec3Projection(p1,
+                                     aMat4AffineBone.data()+ibp*16, aJntPos0.data()+ibone*3);
+    double m0[16];
+    dfm2::Mat4_AffineTranslation(m0,
+                                 -p1[0], -p1[1], -p1[2]);
+    double m1[16];
+    dfm2::Mat4_Quat(m1,
+                    aQuatRelativeRot.data()+ibone*4);
+    double m2[16];
+    dfm2::Mat4_AffineTranslation(m2,
+                                 +p1[0], +p1[1], +p1[2]);
+    double m3[16];
+    dfm2::MatMat4(m3,
+                  m1,m0);
+    double m4[16];
+    dfm2::MatMat4(m4,
+                  m2,m3);
+    dfm2::MatMat4(aMat4AffineBone.data()+ibone*16,
+                  aMat4AffineBone.data()+ibp*16, m4);
   }
 }
 

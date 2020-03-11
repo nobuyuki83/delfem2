@@ -58,9 +58,9 @@ int main(int argc,char* argv[])
     // --------------------
     viewer.DrawBegin_oldGL();
     delfem2::opengl::DrawAxis(10);
-    DrawBone(aBone,
-             -1, -1,
-             0.1, 1.0);
+    dfm2::opengl::DrawBone(aBone,
+                           -1, -1,
+                           0.1, 1.0);
     viewer.DrawEnd_oldGL();
   }
   glfwDestroyWindow(viewer.window);

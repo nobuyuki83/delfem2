@@ -8,14 +8,7 @@
 
 #include "delfem2/mat3.h"
 #include "delfem2/vec3.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/rig_v3q.h"
-//#include <set>
-//#include <map>
-//#include <cassert>
-//#include "delfem2/quat.h"
-//#include "delfem2/funcs.h" // isFileExists
-//#include "delfem2/v23m3q.h"
 
 
 // -------------------------
@@ -34,8 +27,6 @@
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_v23.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
-//#include "delfem2/opengl/gl2_color.h"
-//#include "delfem2/opengl/gl_tex.h"
 
 
 #ifndef M_PI 
@@ -46,7 +37,7 @@ namespace dfm2 = delfem2;
 
 // -------------------------------------------------------
 
-void Draw_RigBone
+void dfm2::opengl::Draw_RigBone
 (int ibone,
  bool is_selected,
  int ielem_selected,
@@ -71,7 +62,7 @@ void Draw_RigBone
   }
 }
 
-void DrawBone
+void dfm2::opengl::DrawBone
 (const std::vector<dfm2::CRigBone>& aBone,
  int ibone_selected,
  int ielem_selected,
@@ -102,3 +93,23 @@ void DrawBone
   }
 }
 
+void dfm2::opengl::DrawJoints(
+    const std::vector<double>& aJntPos,
+    const std::vector<int>& aIndBoneParent)
+{
+  for(int ib=0;ib<aJntPos.size()/3;++ib){
+    const double* p = aJntPos.data()+ib*3;
+    ::glColor3d(1,0,0);
+    ::glDisable(GL_LIGHTING);
+    ::glDisable(GL_DEPTH_TEST);
+    dfm2::opengl::DrawSphereAt(8, 8, 0.01, p[0], p[1], p[2]);
+    int ibp = aIndBoneParent[ib];
+    if( ibp == -1 ){ continue; }
+    const double* pp = aJntPos.data()+ibp*3;
+    ::glColor3d(0,0,0);
+    ::glBegin(GL_LINES);
+    ::glVertex3dv(p);
+    ::glVertex3dv(pp);
+    ::glEnd();
+  }
+}

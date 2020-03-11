@@ -127,6 +127,15 @@ void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
                                 const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
                                 const double *aVal);
 
+/**
+ * @brief Set 3D affine matrix that transfrom from intial position from the deformed poisition for each bones.
+ */
+void SetMat4AffineBone_FromJointRelativeRotation(
+    std::vector<double>& aMat4AffineBone,
+    const double trans_root[3],
+    const std::vector<double>& aQuatRelativeRot,
+    const std::vector<int>& aIndBoneParent,
+    const std::vector<double>& aJntPos0);
 
 
 } // namespace delfem2
