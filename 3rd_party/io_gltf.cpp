@@ -325,8 +325,8 @@ void dfm2::GetBoneBinding
         aBone[ij].invBindMat[i*4+j] = M[ij*16+j*4+i];
       }
     }
-    for(int i=0;i<16;++i){ aBone[ij].Mat[i] = aBone[ij].invBindMat[i]; }
-    int info; CalcInvMat(aBone[ij].Mat, 4, info);
+    for(int i=0;i<16;++i){ aBone[ij].affmat3Global[i] = aBone[ij].invBindMat[i]; }
+    int info; CalcInvMat(aBone[ij].affmat3Global, 4, info);
   }
 }
 
@@ -344,10 +344,10 @@ void dfm2::SetBone
   aBone[ibone].trans[0] = node.translation[0];
   aBone[ibone].trans[1] = node.translation[1];
   aBone[ibone].trans[2] = node.translation[2];
-  aBone[ibone].rot[0] = node.rotation[3];
-  aBone[ibone].rot[1] = node.rotation[0];
-  aBone[ibone].rot[2] = node.rotation[1];
-  aBone[ibone].rot[3] = node.rotation[2];
+  aBone[ibone].quatRelativeRot[0] = node.rotation[3];
+  aBone[ibone].quatRelativeRot[1] = node.rotation[0];
+  aBone[ibone].quatRelativeRot[2] = node.rotation[1];
+  aBone[ibone].quatRelativeRot[3] = node.rotation[2];
   aBone[ibone].name = node.name;
   if( !node.scale.empty() ){ aBone[ibone].scale = node.scale[0]; }
   else{ aBone[ibone].scale = 1;  }

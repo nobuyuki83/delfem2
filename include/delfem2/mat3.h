@@ -174,21 +174,23 @@ void MatMat4(
 
 
 template <typename REAL>
-void AffMat3_Identity(
+void Mat4_Identity(
     REAL A[16]);
   
 template <typename REAL>
-void AffMat3_Scale(
+void Mat4_AffineScale(
     REAL A[16],
     REAL s);
   
 template <typename REAL>
-void AffMat3_Translation(REAL A[16],
-                         REAL dx, REAL dy, REAL dz);
+void Mat4_AffineTranslation(
+    REAL A[16],
+    REAL dx, REAL dy, REAL dz);
 
 template <typename T>
-void AffMat3_RotationRodriguez(T A[16],
-                              T dx, T dy, T dz);
+void Mat4_AffineRotationRodriguez(
+    T A[16],
+    T dx, T dy, T dz);
 
 template <typename T>
 void Vec3_AffMat3Vec3Projection(
@@ -201,7 +203,7 @@ void Vec3_AffMat3Vec3Projection(
  * @details the ritation is parmeterized with a rodriguez angle
  */
 template <typename REAL>
-void Rotate_AffMat3_Rodriguez(
+void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
@@ -209,7 +211,7 @@ void Rotate_AffMat3_Rodriguez(
  * @func multiply translation affine matrix from left to an affine matrix in 3D
  */
 template <typename REAL>
-void Translate_AffMat3(
+void Translate_Mat4Affine(
     REAL A[16],
     const REAL v[3]);
 

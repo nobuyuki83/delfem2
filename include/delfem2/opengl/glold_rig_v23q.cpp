@@ -61,7 +61,7 @@ void Draw_RigBone
     delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x(),pos.y(),pos.z());
   }
   if(is_selected){
-    dfm2::opengl::DrawHandlerRotation_Mat4(aBone[ibone].Mat, rad_rot_hndlr, ielem_selected);
+    dfm2::opengl::DrawHandlerRotation_Mat4(aBone[ibone].affmat3Global, rad_rot_hndlr, ielem_selected);
     int ibone_parent = aBone[ibone].ibone_parent;
     if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
       const dfm2::CVec3d pp(aBone[ibone_parent].Pos());

@@ -19,6 +19,9 @@
 
 namespace delfem2 {
 
+/**
+ *@brief articulated rigid body for character rigging
+ */
 class CRigBone
 {
 public:
@@ -30,17 +33,17 @@ public:
       invBindMat[15] = 1.0;
       //
       scale = 1;
-      rot[0] = 1;
-      rot[1] = 0;
-      rot[2] = 0;
-      rot[3] = 0;
+      quatRelativeRot[0] = 1;
+      quatRelativeRot[1] = 0;
+      quatRelativeRot[2] = 0;
+      quatRelativeRot[3] = 0;
       trans[0] = 0;
       trans[1] = 0;
       trans[2] = 0;
       ibone_parent = -1;
     }
   delfem2::CVec3d Pos() const{
-    return delfem2::CVec3d(Mat[3],Mat[7],Mat[11]);
+    return delfem2::CVec3d(affmat3Global[3],affmat3Global[7],affmat3Global[11]);
   }
   void SetRotationBryant(double rx, double ry, double rz);
   void SetTranslation(double tx, double ty, double tz);
@@ -50,18 +53,29 @@ public:
                   double tol) const;
   void AffineJoint(const double a[16]) const;
 public:
+  double invBindMat[16];
   std::string name;
   int ibone_parent;
-  /////
-  double invBindMat[16];
-  double Mat[16];
-  //////
-  double rot[4]; // rotation of the joint from parent joint (quaternion w,x,y,z)
   double trans[3]; // position of the joint position from parent joint
   double scale; // scale
+  
+  /**
+   * @brief rotation of the joint from parent joint (quaternion w,x,y,z).
+   * @details this value will be changed  when pose is edited
+   */
+  double quatRelativeRot[4];
+
+  /**
+   * @brief global affine matrix of this bone
+   * @details this value will be set when the pose is edited using the function
+   * "void UpdateBoneRotTrans(std::vector<CRigBone>& aBone)"
+   */
+  double affmat3Global[16];
 };
 
-
+/**
+ * @brief set "CRgidiBone.affmat3Global" based on "CRigidBone.quadRelativeRot"
+ */
 void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
 
 void PickBone(int& ibone_selected,
@@ -106,6 +120,9 @@ void Read_BioVisionHierarchy(std::vector<CRigBone>& aBone,
                              std::vector<double>& aChannelValue,
                              const std::string& path_bvh);
 
+/**
+ * @brief set value to CRigBone.rot (bone rotation from parent bone)
+ */
 void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
                                 const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
                                 const double *aVal);
