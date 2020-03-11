@@ -92,10 +92,10 @@ For Ubuntu if you don't have git install it with ```sudo apt-get install git```
 
 For the testing, DelFEM2 used following models:
 
-- Rigged Figure (CC License): https://github.com/cx20/gltf-test/tree/master/sampleModels/RiggedFigure
-- Cesium Man (CC License): https://github.com/cx20/gltf-test/tree/master/sampleModels/CesiumMan 
-- Rolls Royce (CC-BY License): https://poly.google.com/view/3DtJTlxgO_U
-
+- ```test_piputs/RiggedFigure.glb```from https://github.com/cx20/gltf-test/tree/master/sampleModels/RiggedFigure
+- ```test_inputs/CesiumMan.glb``` from https://github.com/cx20/gltf-test/tree/master/sampleModels/CesiumMan 
+- ```test_inputs/rollsRoyce.obj``` from https://poly.google.com/view/3DtJTlxgO_U
+- ```test_inputs/walk.bvh``` from https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/cmu-bvh-conversion
 
 
 

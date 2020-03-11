@@ -976,7 +976,7 @@ template void dfm2::Vec3_AffMat3Vec3Projection(double y0[3], const double a[16],
 // ----------------------
 
 template <typename T>
-void dfm2::AffMat3_Scale
+void dfm2::Mat4_AffineScale
 (T A[16],
  T s)
 {
@@ -986,13 +986,13 @@ void dfm2::AffMat3_Scale
   A[2*4+2] = s;
   A[3*4+3] = 1.0;
 }
-template void dfm2::AffMat3_Scale(float A[16], float s);
-template void dfm2::AffMat3_Scale(double A[16], double s);
+template void dfm2::Mat4_AffineScale(float A[16], float s);
+template void dfm2::Mat4_AffineScale(double A[16], double s);
   
 // ------------------------
 
 template <typename T>
-void dfm2::AffMat3_Translation
+void dfm2::Mat4_AffineTranslation
 (T A[16],
  T dx, T dy, T dz)
 {
@@ -1002,13 +1002,13 @@ void dfm2::AffMat3_Translation
   A[1*4+3] = dy;
   A[2*4+3] = dz;
 }
-template void dfm2::AffMat3_Translation(float A[16],  float dx, float dy, float dz);
-template void dfm2::AffMat3_Translation(double A[16],  double dx, double dy, double dz);
+template void dfm2::Mat4_AffineTranslation(float A[16],  float dx, float dy, float dz);
+template void dfm2::Mat4_AffineTranslation(double A[16],  double dx, double dy, double dz);
   
 // --------------------------
 
 template <typename T>
-void dfm2::AffMat3_RotationRodriguez
+void dfm2::Mat4_AffineRotationRodriguez
 (T A[16],
  T dx, T dy, T dz)
 {
@@ -1036,15 +1036,15 @@ void dfm2::AffMat3_RotationRodriguez
   A[3*4+2] = 0.0;
   A[3*4+3] = 1.0;
 }
-template void dfm2::AffMat3_RotationRodriguez(float A[16],
-                                             float dx, float dy, float dz);
-template void dfm2::AffMat3_RotationRodriguez(double A[16],
-                                             double dx, double dy, double dz);
+template void dfm2::Mat4_AffineRotationRodriguez(float A[16],
+                                                 float dx, float dy, float dz);
+template void dfm2::Mat4_AffineRotationRodriguez(double A[16],
+                                                 double dx, double dy, double dz);
 
 // ------------------------------------------------
 
 template <typename REAL>
-void dfm2::AffMat3_Identity(
+void dfm2::Mat4_Identity(
     REAL A[16])
 {
   for(int i=0;i<16;++i){ A[i] = 0; }
@@ -1053,31 +1053,31 @@ void dfm2::AffMat3_Identity(
   A[2*4+2] = 1;
   A[3*4+3] = 1;
 }
-template void dfm2::AffMat3_Identity(float A[16]);
-template void dfm2::AffMat3_Identity(double A[16]);
+template void dfm2::Mat4_Identity(float A[16]);
+template void dfm2::Mat4_Identity(double A[16]);
 
   
 // ------------------------------------------------
   
 template <typename REAL>
-void dfm2::Rotate_AffMat3_Rodriguez(
+void dfm2::Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL V[3])
 {
   REAL B[16];
-  AffMat3_RotationRodriguez(B,
-                            V[0],V[1],V[2]);
+  Mat4_AffineRotationRodriguez(B,
+                               V[0],V[1],V[2]);
   REAL C[16];
   MatMat4(C,B,A);
   
   for(int i=0;i<16;++i){ A[i] = C[i]; }
 }
-template void dfm2::Rotate_AffMat3_Rodriguez(float A[16], const float V[3]);
-template void dfm2::Rotate_AffMat3_Rodriguez(double A[16], const double V[3]);
+template void dfm2::Rotate_Mat4AffineRodriguez(float A[16], const float V[3]);
+template void dfm2::Rotate_Mat4AffineRodriguez(double A[16], const double V[3]);
   
   
 template <typename REAL>
-void dfm2::Translate_AffMat3(
+void dfm2::Translate_Mat4Affine(
     REAL A[16],
     const REAL V[3])
 {
@@ -1085,6 +1085,6 @@ void dfm2::Translate_AffMat3(
   A[1*4+3] += V[1];
   A[2*4+3] += V[2];
 }
-template void dfm2::Translate_AffMat3(float A[16], const float V[3]);
-template void dfm2::Translate_AffMat3(double A[16], const double V[3]);
+template void dfm2::Translate_Mat4Affine(float A[16], const float V[3]);
+template void dfm2::Translate_Mat4Affine(double A[16], const double V[3]);
 

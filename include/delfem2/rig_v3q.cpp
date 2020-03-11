@@ -101,14 +101,14 @@ int dfm2::CRigBone::PickHandler
  double tol) const
 {
   return dfm2::PickHandlerRotation_Mat4(org,dir,
-                                        Mat, rad_handlr,
+                                        affmat3Global, rad_handlr,
                                         tol);
 }
 
 void dfm2::CRigBone::SetRotationBryant
 (double rx, double ry, double rz)
 {
-  dfm2::Quat_Bryant(rot, rx, ry, rz);
+  dfm2::Quat_Bryant(quatRelativeRot, rx, ry, rz);
 }
 
 void dfm2::CRigBone::SetTranslation
@@ -125,19 +125,19 @@ void dfm2::UpdateBoneRotTrans
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
-      dfm2::Mat4_ScaleRotTrans(aBone[ibone].Mat,
+      dfm2::Mat4_ScaleRotTrans(aBone[ibone].affmat3Global,
                                aBone[ibone].scale,
-                               aBone[ibone].rot,
+                               aBone[ibone].quatRelativeRot,
                                aBone[ibone].trans);
       continue;
     }
     double M01[16];
     dfm2::Mat4_ScaleRotTrans(M01,
                              aBone[ibone].scale,
-                             aBone[ibone].rot,
+                             aBone[ibone].quatRelativeRot,
                              aBone[ibone].trans);
-    dfm2::MatMat4(aBone[ibone].Mat,
-                  aBone[ibone_p].Mat,M01);
+    dfm2::MatMat4(aBone[ibone].affmat3Global,
+                  aBone[ibone_p].affmat3Global,M01);
   }
 }
 
@@ -164,7 +164,7 @@ void dfm2::UpdateRigSkin
       sum_w += w;
       assert (ij<aBone.size());
       double pos0a[4]; dfm2::MatVec4(pos0a,aBone[ij].invBindMat,pos0);
-      double pos0b[4]; dfm2::MatVec4(pos0b,aBone[ij].Mat,pos0a);
+      double pos0b[4]; dfm2::MatVec4(pos0b,aBone[ij].affmat3Global,pos0a);
       pos1[0] += w*pos0b[0];
       pos1[1] += w*pos0b[1];
       pos1[2] += w*pos0b[2];
@@ -311,10 +311,10 @@ void dfm2::Read_BioVisionHierarchy
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     dfm2::CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
-    bone.rot[0] = 1.0;
-    bone.rot[1] = 0.0;
-    bone.rot[2] = 0.0;
-    bone.rot[3] = 0.0;
+    bone.quatRelativeRot[0] = 1.0;
+    bone.quatRelativeRot[1] = 0.0;
+    bone.quatRelativeRot[2] = 0.0;
+    bone.quatRelativeRot[3] = 0.0;
     bone.trans[0] = 0.0;
     bone.trans[1] = 0.0;
     bone.trans[2] = 0.0;
@@ -326,8 +326,8 @@ void dfm2::Read_BioVisionHierarchy
     }
   }
   for(auto & bone : aBone){
-    for(int i=0;i<16;++i){ bone.Mat[i] = bone.invBindMat[i]; }
-    int info; CalcInvMat(bone.Mat, 4, info);
+    for(int i=0;i<16;++i){ bone.affmat3Global[i] = bone.invBindMat[i]; }
+    int info; CalcInvMat(bone.affmat3Global, 4, info);
   }
 }
 
@@ -338,10 +338,10 @@ void dfm2::SetPose_BioVisionHierarchy
  const double *aVal)
 {
   for(auto & bone : aBone){
-    bone.rot[0] = 1.0;
-    bone.rot[1] = 0.0;
-    bone.rot[2] = 0.0;
-    bone.rot[3] = 0.0;
+    bone.quatRelativeRot[0] = 1.0;
+    bone.quatRelativeRot[1] = 0.0;
+    bone.quatRelativeRot[2] = 0.0;
+    bone.quatRelativeRot[3] = 0.0;
   }
   const int nch = aChannelRotTransBone.size();
   for(int ich=0;ich<nch;++ich){
@@ -359,8 +359,9 @@ void dfm2::SetPose_BioVisionHierarchy
       double v0[3] = {0,0,0};
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
-      double qtmp[4]; dfm2::QuatQuat(qtmp, aBone[ibone].rot, dq);
-      dfm2::Copy_Quat(aBone[ibone].rot,qtmp);
+      double qtmp[4]; dfm2::QuatQuat(qtmp,
+                                     aBone[ibone].quatRelativeRot, dq);
+      dfm2::Copy_Quat(aBone[ibone].quatRelativeRot,qtmp);
     }
   }
   dfm2::UpdateBoneRotTrans(aBone);

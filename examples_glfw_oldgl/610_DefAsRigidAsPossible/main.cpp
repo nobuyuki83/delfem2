@@ -32,15 +32,15 @@ void SetDisplacementAtFixedBoundary(
 {
   double A[16];
   {
-    dfm2::AffMat3_Identity(A);
+    dfm2::Mat4_Identity(A);
     const double trans0[3] = {0, -0.8, 0};
-    dfm2::Translate_AffMat3(A,
+    dfm2::Translate_Mat4Affine(A,
                             trans0);
     const double axis0[3] = {0, +2.0*sin(0.03*iframe), 1.0*sin(0.07*iframe)};
-    dfm2::Rotate_AffMat3_Rodriguez(A,
+    dfm2::Rotate_Mat4AffineRodriguez(A,
                                    axis0);
     const double trans1[3] = {0.2*sin(0.03*iframe), +0.5+0.1*cos(0.05*iframe), 0};
-    dfm2::Translate_AffMat3(A,
+    dfm2::Translate_Mat4Affine(A,
                             trans1);
   }
   const unsigned int np = aRhs.size()/3;
