@@ -66,9 +66,9 @@ int main(int argc,char* argv[])
     delfem2::opengl::DrawAxis(1);    
     
     ::glDisable(GL_DEPTH_TEST);
-    DrawBone(aBone,
-             -1, -1,
-             0.01, 1.0);
+    delfem2::opengl::DrawBone(aBone,
+                              -1, -1,
+                              0.01, 1.0);
     ::glEnable(GL_DEPTH_TEST);
     viewer.DrawEnd_oldGL();
   }

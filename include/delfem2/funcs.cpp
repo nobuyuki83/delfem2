@@ -171,7 +171,7 @@ std::string Replace
  const char ct)
 {
   const int n = str.size();
-  ///
+  //
   std::string ss(str);
   for(int i=0;i<n;++i){
     if( ss[i] != cf ){ continue; }

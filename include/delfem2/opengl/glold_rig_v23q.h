@@ -18,11 +18,29 @@
 #include "delfem2/vec3.h"
 #include "delfem2/rig_v3q.h"
 
+namespace delfem2 {
+namespace opengl{
+
+void Draw_RigBone(
+    int ibone,
+    bool is_selected,
+    int ielem_selected,
+    const std::vector<delfem2::CRigBone>& aBone,
+    double rad_bone_sphere,
+    double rad_rot_hndlr);
 
 void DrawBone(const std::vector<delfem2::CRigBone>& aBone,
-              int ibone_selected,
-              int ielem_selected,
-              double rad_bone_sphere,
-              double rad_rot_hndlr);
+    int ibone_selected,
+    int ielem_selected,
+    double rad_bone_sphere,
+    double rad_rot_hndlr);
+
+void DrawJoints(
+    const std::vector<double>& aJntPos,
+    const std::vector<int>& aIndBoneParent);
+
+}
+}
+
 
 #endif /* rigmesh_hpp */
