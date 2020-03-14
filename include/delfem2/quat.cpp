@@ -244,8 +244,10 @@ void dfm2::Mat4_ScaleRotTrans
   m[2*4+3] = trans[2];
 }
 
-void dfm2::MatMat4(double m01[16],
-             const double m0[16], const double m1[16])
+void dfm2::MatMat4(
+    double m01[16],
+    const double m0[16],
+    const double m1[16])
 {
   for(int i=0;i<4;++i){
     for(int j=0;j<4;++j){
@@ -260,9 +262,9 @@ void dfm2::Copy_Mat4(double m1[16], const double m0[16])
 }
 
 
-//////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////
 // �\�z/����
-//////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////
 
 /*
 CQuat::CQuat(const CVector3D& axis ){

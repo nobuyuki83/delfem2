@@ -17,9 +17,10 @@ void dfm2::cnpy::LoadSmpl(
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
     std::vector<int>& aIndBoneParent,
-    std::vector<double>& aJntPos0)
+    std::vector<double>& aJntPos0,
+    const std::string& fpath)
 {
-  ::cnpy::npz_t my_npz = ::cnpy::npz_load(std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+  ::cnpy::npz_t my_npz = ::cnpy::npz_load(fpath);
   const unsigned int nP = my_npz["vertices_template"].shape[0];
   assert( my_npz["vertices_template"].shape[1] == 3 );
   aXYZ0 = my_npz["vertices_template"].as_vec<double>();

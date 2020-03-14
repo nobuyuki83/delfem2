@@ -38,10 +38,9 @@ int main()
                        aW,
                        aTri,
                        aIndBoneParent,
-                       aJntPos0);
-  
+                       aJntPos0,
+                       std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
   // ----------------------------------
-  
   std::vector<double> aMat4AffineBone; // global affine matrix of a bone
   {
     const unsigned int nbone = aIndBoneParent.size();
@@ -66,12 +65,14 @@ int main()
   viewer.Init_oldGL();
   dfm2::opengl::setSomeLighting();
 
+  int iframe = 0;
   while (true)
   {
-    {
+    iframe = (iframe+1)%50;
+    if( iframe ==0 ){
       std::random_device rd;
       std::mt19937 mt(rd());
-      std::uniform_real_distribution<double> dist(-0.1,+0.1);
+      std::uniform_real_distribution<double> dist(-0.2,+0.2);
       const unsigned int nBone = aIndBoneParent.size();
       for(int ibone=0;ibone<nBone;++ibone){
         double* q = aQuatRelativeRot.data()+ibone*4;
@@ -84,24 +85,25 @@ int main()
       const double trans_root[3] = {dist(mt),dist(mt),dist(mt)};
       dfm2::SetMat4AffineBone_FromJointRelativeRotation(aMat4AffineBone,
                                                         trans_root, aQuatRelativeRot, aIndBoneParent, aJntPos0);
-    }
-    for(int ibone=0;ibone<aIndBoneParent.size();++ibone){
-      dfm2::Vec3_AffMat3Vec3Projection(aJntPos1.data()+ibone*3,
-                                       aMat4AffineBone.data()+ibone*16, aJntPos0.data()+ibone*3);
-    }
-    {
-      const unsigned int nbone = aIndBoneParent.size();
-      for(int ip=0;ip<aXYZ0.size()/3;++ip){
-        const double* p0 = aXYZ0.data()+ip*3;
-        double* p1 = aXYZ1.data()+ip*3;
-        p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
-        for(int ibone=0;ibone<nbone;++ibone){
-          double p2[3];
-          dfm2::Vec3_AffMat3Vec3Projection(p2,
-                                           aMat4AffineBone.data()+ibone*16, p0);
-          p1[0] += aW[ip*nbone+ibone]*p2[0];
-          p1[1] += aW[ip*nbone+ibone]*p2[1];
-          p1[2] += aW[ip*nbone+ibone]*p2[2];
+      // -------------
+      for(int ibone=0;ibone<aIndBoneParent.size();++ibone){
+        dfm2::Vec3_AffMat3Vec3Projection(aJntPos1.data()+ibone*3,
+                                         aMat4AffineBone.data()+ibone*16, aJntPos0.data()+ibone*3);
+      }
+      {
+        const unsigned int nbone = aIndBoneParent.size();
+        for(int ip=0;ip<aXYZ0.size()/3;++ip){
+          const double* p0 = aXYZ0.data()+ip*3;
+          double* p1 = aXYZ1.data()+ip*3;
+          p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
+          for(int ibone=0;ibone<nbone;++ibone){
+            double p2[3];
+            dfm2::Vec3_AffMat3Vec3Projection(p2,
+                                             aMat4AffineBone.data()+ibone*16, p0);
+            p1[0] += aW[ip*nbone+ibone]*p2[0];
+            p1[1] += aW[ip*nbone+ibone]*p2[1];
+            p1[2] += aW[ip*nbone+ibone]*p2[2];
+          }
         }
       }
     }
@@ -112,6 +114,8 @@ int main()
     ::glEnable(GL_DEPTH_TEST);
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
     dfm2::opengl::DrawJoints(aJntPos1, aIndBoneParent);
+//    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
+//    dfm2::opengl::DrawJoints(aJntPos0, aIndBoneParent);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
