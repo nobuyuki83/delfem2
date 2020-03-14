@@ -11,7 +11,7 @@ Aside from the C++ implementation, python wrapper called PyDelFEM2 is provided. 
 
 ```
 import PyDelFEM2 as dfm2
-import PyDelFEM2.gl._glfw
+import PyDelFEM2.gl.glfw
 
 cad = dfm2.Cad2D()
 cad.add_polygon(list_xy=[-1,-1, +1,-1, +1,0, +0,+0, 0,+1, -1,+1.0])
@@ -96,6 +96,7 @@ For the testing, DelFEM2 used following models:
 - ```test_inputs/CesiumMan.glb``` from https://github.com/cx20/gltf-test/tree/master/sampleModels/CesiumMan 
 - ```test_inputs/rollsRoyce.obj``` from https://poly.google.com/view/3DtJTlxgO_U
 - ```test_inputs/walk.bvh``` from https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/cmu-bvh-conversion
+- ```test_inputs/jump.bvh``` from https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/cmu-bvh-conversion
 
 
 
