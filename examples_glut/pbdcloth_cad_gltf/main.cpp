@@ -93,7 +93,6 @@ void StepTime()
                                                   aNorm_Contact.data(), rad_explore);
   dfm2::PBD_Post(aXYZ, aUVW,
                  dt, aXYZt, aBCFlag);
-
 }
 
 // ---------------------------------------

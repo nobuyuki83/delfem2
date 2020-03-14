@@ -26,6 +26,7 @@ add_subdirectory(115_ExponentialMap)
 add_subdirectory(116_GridOnMesh)
 add_subdirectory(117_QuadSubdivOnMesh)
 add_subdirectory(118_Smpl)
+add_subdirectory(119_SmplRigTransfer)
 
 # meshing
 add_subdirectory(201_DynTri2dTriangulation)

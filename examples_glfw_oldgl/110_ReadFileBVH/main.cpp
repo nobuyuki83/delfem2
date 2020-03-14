@@ -27,8 +27,8 @@ int main(int argc,char* argv[])
   int nframe = 0;
   std::vector<double> aValRotTransBone;
 
-  std::string path_bvh = std::string(PATH_INPUT_DIR)+"/walk.bvh";
-  std::cout << "path:" << path_bvh << std::endl;
+  std::string path_bvh = std::string(PATH_INPUT_DIR)+"/jump.bvh";
+//  std::cout << "path:" << path_bvh << std::endl;
   Read_BioVisionHierarchy(aBone,aChannelRotTransBone,nframe,aValRotTransBone,
                           path_bvh);
   UpdateBoneRotTrans(aBone);

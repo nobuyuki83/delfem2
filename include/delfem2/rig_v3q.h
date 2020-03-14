@@ -21,6 +21,7 @@ namespace delfem2 {
 
 /**
  *@brief articulated rigid body for character rigging
+ *@details this class support rig in GlTF and BioVision BVH
  */
 class CRigBone
 {
@@ -53,10 +54,17 @@ public:
                   double tol) const;
   void AffineJoint(const double a[16]) const;
 public:
+  std::string name; // initialized and stay constant
+  
+  /**
+   * @details Inverse of Affine matrix to send this bone to the origin and reference config
+   */
   double invBindMat[16];
-  std::string name;
-  int ibone_parent;
+  
+  int ibone_parent; // initialized and stay constant
+  
   double trans[3]; // position of the joint position from parent joint
+  
   double scale; // scale
   
   /**
@@ -66,12 +74,16 @@ public:
   double quatRelativeRot[4];
 
   /**
-   * @brief global affine matrix of this bone
+   * @brief affine matrix  to send bone in the origin to the deformed pose
    * @details this value will be set when the pose is edited using the function
    * "void UpdateBoneRotTrans(std::vector<CRigBone>& aBone)"
    */
   double affmat3Global[16];
 };
+
+
+
+
 
 /**
  * @brief set "CRgidiBone.affmat3Global" based on "CRigidBone.quadRelativeRot"

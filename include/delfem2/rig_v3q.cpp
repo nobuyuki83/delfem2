@@ -236,7 +236,7 @@ void dfm2::Read_BioVisionHierarchy
     if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
     line = MyReplace(line, '\t', ' ');
     std::vector<std::string> aToken = MySplit(line,' ');
-    std::cout << aToken[0] << std::endl;
+//    std::cout << aToken[0] << std::endl;
     if( aToken[0] == "HIERARCHY" ){
       assert(aBone.empty());
     }
@@ -318,10 +318,10 @@ void dfm2::Read_BioVisionHierarchy
       std::getline(fin,line);
       std::stringstream ss(line);
       ss >> stmp0 >> nframe;
-      std::cout << "frame: " << nframe << std::endl;
+//      std::cout << "frame: " << nframe << std::endl;
     }
     std::getline(fin,line);
-    std::cout << "frametime: " << line << std::endl;
+//    std::cout << "frametime: " << line << std::endl;
   }
   const int nchannel = aChannelRotTransBone.size();
   aValueRotTransBone.resize(nframe*nchannel);
@@ -443,12 +443,12 @@ void dfm2::SetMat4AffineBone_FromJointRelativeRotation
   for(int ibone=1;ibone<nBone;++ibone){
     int ibp = aIndBoneParent[ibone];
     assert( ibp >= 0 && ibp < nBone );
-    double p1[3];
-    dfm2::Vec3_AffMat3Vec3Projection(p1,
-                                     aMat4AffineBone.data()+ibp*16, aJntPos0.data()+ibone*3);
+    // inv binding mat
+    double p1[3] = {aJntPos0[ibone*3+0], aJntPos0[ibone*3+1], aJntPos0[ibone*3+2]};
     double m0[16];
     dfm2::Mat4_AffineTranslation(m0,
                                  -p1[0], -p1[1], -p1[2]);
+    // mat
     double m1[16];
     dfm2::Mat4_Quat(m1,
                     aQuatRelativeRot.data()+ibone*4);
@@ -462,7 +462,8 @@ void dfm2::SetMat4AffineBone_FromJointRelativeRotation
     dfm2::MatMat4(m4,
                   m2,m3);
     dfm2::MatMat4(aMat4AffineBone.data()+ibone*16,
-                  aMat4AffineBone.data()+ibp*16, m4);
+                  aMat4AffineBone.data()+ibp*16,
+                  m4);
   }
 }
 

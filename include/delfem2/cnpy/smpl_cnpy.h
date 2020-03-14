@@ -17,7 +17,8 @@ void LoadSmpl(std::vector<double>& aXYZ0,
               std::vector<double>& aW,
               std::vector<unsigned int>& aTri,
               std::vector<int>& aIndBoneParent,
-              std::vector<double>& aJntRgrs);
+              std::vector<double>& aJntRgrs,
+              const std::string& fpath);
 
 }
 }

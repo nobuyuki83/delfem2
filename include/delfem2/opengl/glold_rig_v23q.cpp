@@ -99,7 +99,7 @@ void dfm2::opengl::DrawJoints(
 {
   for(int ib=0;ib<aJntPos.size()/3;++ib){
     const double* p = aJntPos.data()+ib*3;
-    ::glColor3d(1,0,0);
+    ::glColor3d(0,0,1);
     ::glDisable(GL_LIGHTING);
     ::glDisable(GL_DEPTH_TEST);
     dfm2::opengl::DrawSphereAt(8, 8, 0.01, p[0], p[1], p[2]);
