@@ -32,15 +32,11 @@
 #include "io_gltf.h"
 
 // ----------------------------
-#ifdef __APPLE__
-  #include <GLUT/glut.h>
-#else
-  #include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_v23dtricad.h"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
@@ -70,7 +66,6 @@ const double gravity[3] = {0.0, 0.0, 0.0};
 const double contact_clearance = 0.0001;
 const double rad_explore = 0.1;
 
-CNav3D_GLUT nav;
 bool is_animation = false;
 
 // ------------------------------------
@@ -97,12 +92,6 @@ void StepTime()
 
 // ---------------------------------------
 
-void myGlutResize(int w, int h)
-{
-  glViewport(0, 0, w, h);
-  ::glutPostRedisplay();
-}
-
 void myGlutDisplay()
 {
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -111,8 +100,6 @@ void myGlutDisplay()
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1, 4.0 );
-  
-  nav.SetGL_Camera();
   
   ::glPointSize(5);
   ::glLineWidth(1);
@@ -136,53 +123,7 @@ void myGlutDisplay()
   delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
                                       aTri_Contact.data(), aTri_Contact.size()/3);
 //  DrawSphere_Edge(rad0);
-
-  
-  ShowFPS();
-  
-  glutSwapBuffers();
 }
-
-
-void myGlutIdle(){
-  if( is_animation ){
-    StepTime();
-  }
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x,y);
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x,y);
-}
-
-void myGlutKeyboard(unsigned char key, int x, int y)
-{
-  switch (key) {
-    case 'q':
-    case 'Q':
-    case '\033':  /* '\033' ÇÕ ESC ÇÃ ASCII ÉRÅ[Éh */
-      exit(0);
-      break;
-    case 'a':
-    {
-      is_animation = !is_animation;
-      break;
-    }
-    default:
-      break;
-  }
-}
-
-void myGlutSpecial(int key, int x, int y){
-  nav.glutSpecial(key,x,y);
-}
-
 
 class CRigidTrans_2DTo3D
 {
@@ -194,22 +135,6 @@ public:
 
 int main(int argc,char* argv[])
 {
-  // Initailze GLUT
-  ::glutInitWindowPosition(200,200);
-  ::glutInitWindowSize(400, 300);
-  ::glutInit(&argc, argv);
-  ::glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  ::glutCreateWindow("Cad View");
-  
-  // Set callback function
-  ::glutMotionFunc(myGlutMotion);
-  ::glutMouseFunc(myGlutMouse);
-  ::glutDisplayFunc(myGlutDisplay);
-  ::glutReshapeFunc(myGlutResize);
-  ::glutKeyboardFunc(myGlutKeyboard);
-  ::glutSpecialFunc(myGlutSpecial);
-  ::glutIdleFunc(myGlutIdle);
-  
   delfem2::CCad2D cad;
   {
     const double xys0[8] = { -0.0,-0.0,  +1.0,-0.0, +1.0,+1.0, -0.0,+1.0, };
@@ -348,12 +273,25 @@ int main(int argc,char* argv[])
              0.01);
   }
 
-  
-  nav.camera.view_height = 1.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
-  
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 1.0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
   // Enter main loop
-  ::glutMainLoop();
-  return 0;
+  
+  while (true)
+  {
+    StepTime();
+    // ------------
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    glfwSwapBuffers(viewer.window);
+    glfwPollEvents();
+    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+  }
+  EXIT:
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
