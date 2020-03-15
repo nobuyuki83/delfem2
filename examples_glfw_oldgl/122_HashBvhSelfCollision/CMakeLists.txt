@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(300_Adf3)
+project(122_HashBvhSelfCollision)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -31,22 +31,20 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp  
+  ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp      
+  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp    
   ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
-  ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
-  ${DELFEM2_INC}/adf.h                    ${DELFEM2_INC}/adf.cpp
-  ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp
+  ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp               
   ${DELFEM2_INC}/bvh.h                    ${DELFEM2_INC}/bvh.cpp
-  ${DELFEM2_INC}/bv.h
-
-  ${DELFEM2_INC}/srchuni_v3.h             ${DELFEM2_INC}/srchuni_v3.cpp
+  ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp
+  ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
+  ${DELFEM2_INC}/bv.h                                          
+  
   ${DELFEM2_INC}/srchbi_v3bvh.h
-  ${DELFEM2_INC}/srch_v3bvhmshtopo.h
-
+  
   ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+
   main.cpp
 )
 
@@ -78,7 +76,4 @@ ELSEIF(MSVC)
       ${OPENGL_LIBRARY})
   endif()
 ENDIF()
-
-
-
 

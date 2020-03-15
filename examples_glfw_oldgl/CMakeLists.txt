@@ -27,20 +27,16 @@ add_subdirectory(116_GridOnMesh)
 add_subdirectory(117_QuadSubdivOnMesh)
 add_subdirectory(118_Smpl)
 add_subdirectory(119_SmplRigTransfer)
+add_subdirectory(120_AdaptiveDistanceField)
+add_subdirectory(121_IsoSurfaceStuffing)
+add_subdirectory(122_HashBvhSelfCollision)
+add_subdirectory(123_HashLbvh3D)
 
 # meshing
 add_subdirectory(201_DynTri2dTriangulation)
 add_subdirectory(202_DynTri2dRemesh)
 add_subdirectory(203_DynTri3dEdgeCollapses)
 add_subdirectory(204_DynTetTetrahedralization)
-
-
-# immplicit shape
-add_subdirectory(300_AdaptiveDistanceField)
-add_subdirectory(301_IsoSurfaceStuffing)
-add_subdirectory(302_HashBvhSelfCollision)
-add_subdirectory(303_HashLbvh3D)
-
 
 # cad
 add_subdirectory(500_2DCad)
@@ -64,4 +60,6 @@ add_subdirectory(611_Fem2D)
 add_subdirectory(612_BemPotentialFlow3D)
 add_subdirectory(613_FemRod)
 add_subdirectory(614_FemMitc3Eigen)
+add_subdirectory(615_PbdClothCad)
+add_subdirectory(616_PbdClothCadGltf)
 

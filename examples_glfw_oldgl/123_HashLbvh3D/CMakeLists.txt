@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(303_HashLbvh3D)
+project(123_HashLbvh3D)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

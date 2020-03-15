@@ -1,7 +1,4 @@
 cmake_minimum_required(VERSION 2.8)
-project(pbdcloth_cad_gltf)
-
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
@@ -12,19 +9,23 @@ else()
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations  -std=c++11")
 endif()
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+####################################
+
+project(616_PbdClothCadGltf)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(GLFW_DIR "${3RD_PARTY}/glfw")
+get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)  
 
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLUT_INCLUDE_DIR}
+  ${GLFW_DIR}/include  
   ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}
+  ${3RD_PARTY}  
 )
 
 add_executable(${PROJECT_NAME}
@@ -54,15 +55,39 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
   ${DELFEM2_INC}/opengl/glold_v23dtricad.h  ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
   ${DELFEM2_INC}/opengl/glold_rig_v23q.h    ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
-  
-  ${3RD_PARTY}/io_gltf.h
-  ${3RD_PARTY}/io_gltf.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.h       ${DELFEM2_INC}/opengl/glfw_viewer.cpp  
+
+  ${3RD_PARTY}/io_gltf.h                    ${3RD_PARTY}/io_gltf.cpp
 
   main.cpp  
 )
 
-target_link_libraries(${PROJECT_NAME}  
- ${GLUT_LIBRARY} 
- ${OPENGL_LIBRARY}
-)
+IF(APPLE)
+  find_library( COCOA_LIBRARY Cocoa )
+  find_library( IOKIT_LIBRARY IOKit )
+  find_library( COREVIDEO_LIBRARY CoreVideo )
+  target_link_libraries(${PROJECT_NAME}
+    ${OPENGL_LIBRARY}
+    ${GLFW_DIR}/src/libglfw3.a
+    ${COCOA_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${COREVIDEO_LIBRARY}
+  )
+ELSEIF(UNIX)
+  target_link_libraries(${PROJECT_NAME}
+    ${OPENGL_LIBRARY}
+    ${GLFW_DIR}/src/libglfw3.a
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+  )
+ELSEIF(MSVC)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    target_link_libraries(${PROJECT_NAME} 
+      ${GLFW_DIR}/src/Release/glfw3.lib
+      ${OPENGL_LIBRARY})
+  else()
+    target_link_libraries(${PROJECT_NAME} 
+      ${GLFW_DIR}/src/Release/glfw3.lib
+      ${OPENGL_LIBRARY})
+  endif()
+ENDIF()
 

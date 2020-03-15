@@ -56,7 +56,7 @@ public:
 public:
   std::string name; // initialized and stay constant
   
-  /**
+  /** 
    * @details Inverse of Affine matrix to send this bone to the origin and reference config
    */
   double invBindMat[16];
