@@ -33,10 +33,10 @@ int main(int argc,char* argv[])
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
-  while(!glfwWindowShouldClose(viewer.window)){
+  while(true){
     {
       static int iframe = 0;
-      const int nframe = 300;
+      const int nframe = 10;
       if( iframe == nframe*0 ){
         cad.Clear();
         const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
@@ -48,7 +48,7 @@ int main(int argc,char* argv[])
       else if( iframe == nframe*2 ){
         double param[4] = {0.2, 0.3, -0.2, 0.3};
         std::vector<double> vparam(param,param+4);
-        cad.SetEdgeType( 0, 1, vparam );
+        cad.SetEdgeType( 0, dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
       }
       else if( iframe == nframe*3 ){
         cad.AddVtxEdge(-0.0, +0.8, 2);
@@ -59,25 +59,6 @@ int main(int argc,char* argv[])
         cad.AddPolygon(std::vector<double>(poly,poly+8) );
         cad.AddVtxEdge(x0, -0.2, 5);
       }
-      else if( iframe == nframe*5 || iframe == nframe*6 || iframe == nframe*7 )  {
-        std::string path_svg;
-        if( iframe == nframe*5 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape0.svg"; }
-        if( iframe == nframe*6 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
-        if( iframe == nframe*7 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
-          //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg";
-          //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/shape3.svg";
-        std::vector<delfem2::CCad2D_EdgeGeo> aEdge;
-        LoopEdgeCCad2D_ReadSVG(aEdge,
-                               path_svg);
-        Transform_LoopEdgeCad2D(aEdge,false,true,1.0,1.0);
-        if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
-        aEdge = RemoveEdgeWithZeroLength(aEdge);
-        for(auto & ie : aEdge){ ie.GenMesh(-1); }
-        std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
-        cad.Clear();
-        cad.AddFace(aEdge);
-        std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
-      }
       if( iframe % nframe == 0 ){
         dfm2::CBoundingBox2D bb = cad.BB();
         viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
@@ -86,13 +67,15 @@ int main(int argc,char* argv[])
         viewer.nav.camera.view_height = 0.5*sqrt( (bb.x_max-bb.x_min)*(bb.x_max-bb.x_min) + (bb.y_max-bb.y_min)*(bb.y_max-bb.y_min) );
         viewer.nav.camera.scale = 1.0;
       }
-      iframe = (iframe+1)%(nframe*8);
+      iframe = (iframe+1)%(nframe*5);
     }
+    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     // --------------------
     viewer.DrawBegin_oldGL();
     delfem2::opengl::Draw_CCad2D(cad);
     viewer.DrawEnd_oldGL();
   }
+EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

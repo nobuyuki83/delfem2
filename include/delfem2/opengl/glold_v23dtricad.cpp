@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <iostream>
+
 
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
@@ -187,9 +189,9 @@ void dfm2::opengl::Draw_CCad2DEdge
   ::glEnd();
   //
   if( is_selected ){
-    if( edge.type_edge == 1 ){
+    if( edge.type_edge == dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC ){
       assert( edge.param.size() == 4 );
-      const CVec2d lx = (edge.p1 - edge.p0).Normalize();
+      const CVec2d lx = (edge.p1 - edge.p0);
       const CVec2d ly = CVec2d(lx.y(),-lx.x());
       const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
       const CVec2d q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
@@ -209,6 +211,24 @@ void dfm2::opengl::Draw_CCad2DEdge
       else{ ::glColor3d(0.0, 0.8, 0.0 ); }
       ::glBegin(GL_POINTS);
       dfm2::opengl::myGlVertex(q1);
+      ::glEnd();
+    }
+    else if( edge.type_edge == dfm2::CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
+      assert( edge.param.size() == 2 );
+      const CVec2d lx = (edge.p1 - edge.p0);
+      const CVec2d ly = CVec2d(lx.y(),-lx.x());
+      const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
+      ::glColor3d(0,1,0);
+      ::glBegin(GL_LINES);
+      dfm2::opengl::myGlVertex(edge.p0);
+      dfm2::opengl::myGlVertex(q0);
+      dfm2::opengl::myGlVertex(edge.p1);
+      dfm2::opengl::myGlVertex(q0);
+      ::glEnd();
+      if( ipicked_elem == 1 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
+      else{ ::glColor3d(0.0, 0.8, 0.0 ); }
+      ::glBegin(GL_POINTS);
+      dfm2::opengl::myGlVertex(q0);
       ::glEnd();
     }
   }

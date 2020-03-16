@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-#import unittest,
 import pytest
 import numpy, random, os, sys, math
 import PyDelFEM2 as dfm2
@@ -34,12 +33,12 @@ class Test_CppCad2D():
     if is_gl:
         dfm2.gl.glfw.winDraw3d([ccad],nframe=20)
 
-    ccad.set_edge_type(0, 1, [0.2, 0.3, -0.2, 0.3])
+    ccad.set_edge_type(0, dfm2.CAD_EDGE_GEOM_BEZIER_CUBIC, [0.2, 0.3, -0.2, 0.3])
     assert ccad.check()
     if is_gl:
         dfm2.gl.glfw.winDraw3d([ccad], nframe=20)
 
-    ccad.set_edge_type(0, 0, [])
+    ccad.set_edge_type(0, dfm2.CAD_EDGE_GEOM_LINE, [])
     assert ccad.check()
     if is_gl:
         dfm2.gl.glfw.winDraw3d([ccad], nframe=20)

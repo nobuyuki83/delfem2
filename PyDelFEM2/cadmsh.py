@@ -10,6 +10,7 @@ import numpy, os
 from typing import Tuple, List
 
 from .c_core import CppCad2D, CppMeshDynTri2D, CppMesher_Cad2D, CppVoxelGrid, CppMapper, AABB3
+from .c_core import CAD_EDGE_GEOM_LINE, CAD_EDGE_GEOM_BEZIER_CUBIC, CAD_EDGE_GEOM_BEZIER_QUADRATIC
 from .c_core import cppCad2D_ImportSVG, cppSVG_Polyline
 from .c_core import TRI, QUAD, HEX, TET, LINE
 from .c_core import \

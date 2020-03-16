@@ -36,7 +36,7 @@ public:
     {
       double param[4] = {0.2, 0.3, -0.2, 0.3};
       std::vector<double> vparam(param,param+4);
-      cad.SetEdgeType( 0, 1, vparam );
+      cad.SetEdgeType( 0, delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
     }
   }
   virtual void mouse_press(const float src[3], const float dir[3]) {

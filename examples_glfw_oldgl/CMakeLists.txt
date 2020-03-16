@@ -39,10 +39,11 @@ add_subdirectory(203_DynTri3dEdgeCollapses)
 add_subdirectory(204_DynTetTetrahedralization)
 
 # cad
-add_subdirectory(500_2DCad)
-add_subdirectory(501_2DCadEdit)
-add_subdirectory(502_2DCadMeshEdit)
-add_subdirectory(503_3DCad)
+add_subdirectory(500_Cad2d)
+add_subdirectory(501_Cad2dEdit)
+add_subdirectory(502_Cad2dMeshEdit)
+add_subdirectory(503_Cad3d)
+add_subdirectory(504_Cad2dSvg)
 
 # fem
 add_subdirectory(600_Fem2DHelmholtz)

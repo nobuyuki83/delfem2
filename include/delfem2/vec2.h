@@ -289,6 +289,11 @@ CVec2<T> pointCurve_BezierCubic
 (double t,
  const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3, const CVec2<T>& p4);
 
+template <typename T>
+CVec2<T> pointCurve_BezierQuadratic
+(double t,
+ const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3);
+
 
 // ---------------------------------------------------------------
 
@@ -317,6 +322,11 @@ void Polyline_BezierCubic(std::vector<CVec2<T> >& aP,
                           const unsigned int n,
                           const CVec2<T>& p1, const CVec2<T>& p2,
                           const CVec2<T>& p3, const CVec2<T>& p4);
+
+template <typename T>
+void Polyline_BezierQuadratic(std::vector<CVec2<T>>& aP,
+                              const unsigned int n,
+                              const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3);
 
 template <typename T>
 std::vector<CVec2<T> > Polygon_Resample_Polygon(const std::vector<CVec2<T> >& stroke0,

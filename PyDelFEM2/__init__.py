@@ -13,7 +13,6 @@ from .c_core import meshdyntri3d_initialize, isosurface
 from .c_core import cad_getPointsEdge, mvc
 from .c_core import CppMeshDynTri3D, CppCad2D
 from .c_core import CppGLTF, CppGLTF_GetMeshInfo, CppGLTF_GetBones, update_rig_skin, update_bone_transform
-#from .c_core import RigidBodyAssembly_Static, RigidBody, Joint
 
 from .c_core import isoline_svg
 
@@ -35,6 +34,7 @@ from .fem import \
 from .cadmsh import SDF
 from .cadmsh import Cad2D, VoxelGrid, Mesh, CadMesh2D, MeshDynTri2D, Mesher_Cad2D
 from .cadmsh import TET, TRI, HEX, QUAD, LINE
+from .cadmsh import CAD_EDGE_GEOM_BEZIER_CUBIC, CAD_EDGE_GEOM_LINE, CAD_EDGE_GEOM_BEZIER_QUADRATIC
 from .cadmsh import Collider_PointsToMeshTri3D
 
 from .util import Trans_Rigid2DTo3D
