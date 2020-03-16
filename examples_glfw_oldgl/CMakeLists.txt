@@ -62,4 +62,5 @@ add_subdirectory(613_FemRod)
 add_subdirectory(614_FemMitc3Eigen)
 add_subdirectory(615_PbdClothCad)
 add_subdirectory(616_PbdClothCadGltf)
+add_subdirectory(617_PbdClothCadSmpl)
 

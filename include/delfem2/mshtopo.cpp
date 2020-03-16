@@ -402,7 +402,7 @@ void dfm2::ElSuEl_MeshElem
  const int nnofa,
  const int (*noelElemFace)[4])
 {
-  assert( elsup_ind.size()>=2 );
+  assert( elsup_ind.size()>=1 );
   const std::size_t np = elsup_ind.size()-1;
   
   aElSurRel.assign(nEl*nfael*2,-1);

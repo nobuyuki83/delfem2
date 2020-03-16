@@ -38,14 +38,16 @@ public:
       quatRelativeRot[1] = 0;
       quatRelativeRot[2] = 0;
       quatRelativeRot[3] = 0;
-      trans[0] = 0;
-      trans[1] = 0;
-      trans[2] = 0;
+      transRelative[0] = 0;
+      transRelative[1] = 0;
+      transRelative[2] = 0;
       ibone_parent = -1;
     }
   delfem2::CVec3d Pos() const{
     return delfem2::CVec3d(affmat3Global[3],affmat3Global[7],affmat3Global[11]);
   }
+  void DeformSkin(double pos2[3],
+                  const double pos0[3]);
   void SetRotationBryant(double rx, double ry, double rz);
   void SetTranslation(double tx, double ty, double tz);
   int PickHandler(const delfem2::CVec3d& org,
@@ -57,13 +59,13 @@ public:
   std::string name; // initialized and stay constant
   
   /** 
-   * @details Inverse of Affine matrix to send this bone to the origin and reference config
+   * @details Inverse of Affine matrix to send the skin to the bone reference config. The joint position of this bone will be mapped to the origin
    */
   double invBindMat[16];
   
   int ibone_parent; // initialized and stay constant
   
-  double trans[3]; // position of the joint position from parent joint
+  double transRelative[3]; // position of the joint position from parent joint
   
   double scale; // scale
   
@@ -74,16 +76,12 @@ public:
   double quatRelativeRot[4];
 
   /**
-   * @brief affine matrix  to send bone in the origin to the deformed pose
+   * @brief affine matrix  to send bone from the origin to the deformed pose
    * @details this value will be set when the pose is edited using the function
    * "void UpdateBoneRotTrans(std::vector<CRigBone>& aBone)"
    */
   double affmat3Global[16];
 };
-
-
-
-
 
 /**
  * @brief set "CRgidiBone.affmat3Global" based on "CRigidBone.quadRelativeRot"
@@ -138,6 +136,15 @@ void Read_BioVisionHierarchy(std::vector<CRigBone>& aBone,
 void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
                                 const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
                                 const double *aVal);
+
+
+// --------------------------------------
+
+void Smpl2Rig(std::vector<CRigBone>& aBone,
+              const std::vector<int>& aIndBoneParent,
+              const std::vector<double>& aXYZ0,
+              const std::vector<double>& aJntRgrs);
+
 
 /**
  * @brief Set 3D affine matrix that transfrom from intial position from the deformed poisition for each bones.

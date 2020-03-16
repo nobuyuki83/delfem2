@@ -254,7 +254,7 @@ int main(int argc,char* argv[])
       }
       {
         dfm2::Quat_Bryant(aBone[0].quatRelativeRot, -90.0/180.0*3.1415, 0.0, 0.0);
-        aBone[0].trans[2] -= 1.0;
+        aBone[0].transRelative[2] -= 1.0;
 //        Quat_Bryant(aBone[0].rot, 0, 0, 0);
       }
       UpdateBoneRotTrans(aBone);
