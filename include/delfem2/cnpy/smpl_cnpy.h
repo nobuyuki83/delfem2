@@ -20,6 +20,7 @@ void LoadSmpl(std::vector<double>& aXYZ0,
               std::vector<double>& aJntRgrs,
               const std::string& fpath);
 
+  
 }
 }
 

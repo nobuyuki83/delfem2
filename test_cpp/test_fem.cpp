@@ -582,10 +582,14 @@ TEST(fem,plate_bending_mitc3_emat)
         dfm2::WdWddW_PlateBendingMITC3(W1,dW1,ddW1,
                                        C,u1,
                                        thickness1,lambda1,myu1);
-        EXPECT_NEAR( (W1-W0)/eps,  dW0[ino][idof], 1.0e-2);
+        EXPECT_NEAR( (W1-W0)/eps,
+                    dW0[ino][idof],
+                    1.0e-3*(1.0+fabs(dW0[ino][idof])) );
         for(int jno=0;jno<3;++jno){
           for(int jdof=0;jdof<3;++jdof){
-            EXPECT_NEAR( (dW1[jno][jdof]-dW0[jno][jdof])/eps,  ddW0[ino][jno][idof][jdof], 1.0e-2 );
+            EXPECT_NEAR( (dW1[jno][jdof]-dW0[jno][jdof])/eps,
+                        ddW0[ino][jno][idof][jdof],
+                        1.0e-3*(1.0+fabs(ddW0[ino][jno][idof][jdof])) );
           }
         }
       }

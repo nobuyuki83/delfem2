@@ -267,27 +267,30 @@ TEST(mat3, quat)
   std::uniform_real_distribution<double> dist(-50.0, +50.0);
   std::mt19937 mtd;
   for(int itr=0;itr<10000;itr++){
-    double quat[4] = { dist(mtd), dist(mtd), dist(mtd), dist(mtd) };
-    dfm2::Normalize_Quat(quat);
-    dfm2::CMat3d R;
-    R.SetRotMatrix_Quaternion(quat);
+    double quat0[4] = { dist(mtd), dist(mtd), dist(mtd), dist(mtd) };
+    dfm2::Normalize_Quat(quat0);
+    dfm2::CMat3d R0;
+    R0.SetRotMatrix_Quaternion(quat0);
     {
-      double diff = (R.Trans()*R-dfm2::CMat3d::Identity()).SqNorm_Frobenius();
+      double diff = (R0.Trans()*R0-dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diff, 0.0, 1.0e-14);
     }
-    double puat[4];
-    R.GetQuat_RotMatrix(puat);
-    dfm2::CMat3d P;
-    P.SetRotMatrix_Quaternion(puat);
-    double diff = (P-R).SqNorm_Frobenius();
-    EXPECT_NEAR(diff, 0.0, 1.0e-20);
+    { // q0 -> R0 -> q1 -> R1
+      double quat1[4];
+      R0.GetQuat_RotMatrix(quat1);
+      dfm2::CMat3d R1;
+      R1.SetRotMatrix_Quaternion(quat1);
+      double diff = (R1-R0).SqNorm_Frobenius();
+      EXPECT_NEAR(diff, 0.0, 1.0e-20);
+    }
+    {
+      dfm2::CVec3d v0(dist(mtd),dist(mtd),dist(mtd) );
+      dfm2::CVec3d qv0 = dfm2::QuatVec(quat0, v0);
+      dfm2::CVec3d Rv0 = dfm2::MatVec(R0, v0);
+      EXPECT_LT( (qv0 - Rv0).Length(), 1.0e-20 );
+    }
   }
   
-  for(int itr=0;itr<10000;itr++){
-    dfm2::CQuat<double> q0(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
-    dfm2::CQuat<double> q1(dist(mtd),dist(mtd),dist(mtd),dist(mtd) );
-    dfm2::CQuat<double> q2 = q0 + q1;
-  }
 }
 
 TEST(mshio,load_obj)

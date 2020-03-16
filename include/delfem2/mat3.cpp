@@ -717,20 +717,6 @@ template <typename T>
 void dfm2::CMat3<T>::SetInverse()
 {
   ::dfm2::Inverse_Mat3(mat);
-  /*
-  const double det = this->Det();
-  const double inv_det = 1.0/det;
-  double t[9]; for(int i=0;i<9;i++){ t[i] = this->mat[i]; }
-  mat[0] = inv_det*(t[4]*t[8]-t[5]*t[7]);
-  mat[1] = inv_det*(t[2]*t[7]-t[1]*t[8]);
-  mat[2] = inv_det*(t[1]*t[5]-t[2]*t[4]);
-  mat[3] = inv_det*(t[5]*t[6]-t[3]*t[8]);
-  mat[4] = inv_det*(t[0]*t[8]-t[2]*t[6]);
-  mat[5] = inv_det*(t[2]*t[3]-t[0]*t[5]);
-  mat[6] = inv_det*(t[3]*t[7]-t[4]*t[6]);
-  mat[7] = inv_det*(t[1]*t[6]-t[0]*t[7]);
-  mat[8] = inv_det*(t[0]*t[4]-t[1]*t[3]);
-   */
 }
 template void dfm2::CMat3<double>::SetInverse();
 template void dfm2::CMat3<float>::SetInverse();

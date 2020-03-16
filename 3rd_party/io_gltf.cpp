@@ -341,9 +341,9 @@ void dfm2::SetBone
   const int ibone = mapNode2Bone[inode_cur];
   assert(ibone>=0&&ibone<(int)aBone.size());
   aBone[ibone].ibone_parent = ibone_p;
-  aBone[ibone].trans[0] = node.translation[0];
-  aBone[ibone].trans[1] = node.translation[1];
-  aBone[ibone].trans[2] = node.translation[2];
+  aBone[ibone].transRelative[0] = node.translation[0];
+  aBone[ibone].transRelative[1] = node.translation[1];
+  aBone[ibone].transRelative[2] = node.translation[2];
   aBone[ibone].quatRelativeRot[0] = node.rotation[3];
   aBone[ibone].quatRelativeRot[1] = node.rotation[0];
   aBone[ibone].quatRelativeRot[2] = node.rotation[1];

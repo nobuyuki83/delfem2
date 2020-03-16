@@ -17,7 +17,7 @@ void dfm2::cnpy::LoadSmpl(
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
     std::vector<int>& aIndBoneParent,
-    std::vector<double>& aJntPos0,
+    std::vector<double>& aJntRgrs,
     const std::string& fpath)
 {
   ::cnpy::npz_t my_npz = ::cnpy::npz_load(fpath);
@@ -41,22 +41,8 @@ void dfm2::cnpy::LoadSmpl(
   assert( my_npz["joint_regressor"].shape[0] == nBone );
   assert( my_npz["joint_regressor"].shape[1] == nP );
   std::cout << my_npz["joint_regressor"].fortran_order << std::endl;
-  const std::vector<double> aJntRgrs = my_npz["joint_regressor"].as_vec<double>();
+  aJntRgrs = my_npz["joint_regressor"].as_vec<double>();
   assert( aJntRgrs.size() == nBone*nP );
-  
-  {
-    const unsigned int nP = aXYZ0.size()/3;
-    const unsigned int nBone = aIndBoneParent.size();
-    aJntPos0.assign(nBone*3, 0.0);
-    for(int ib=0;ib<nBone;++ib){
-      aJntPos0[ib*3+0] = 0;
-      aJntPos0[ib*3+1] = 0;
-      aJntPos0[ib*3+2] = 0;
-      for(int ip=0;ip<nP;++ip){
-        aJntPos0[ib*3+0] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+0];
-        aJntPos0[ib*3+1] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+1];
-        aJntPos0[ib*3+2] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+2];
-      }
-    }
-  }
 }
+
+
