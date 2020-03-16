@@ -10,6 +10,7 @@
     </style>
   </defs>
   <title>tshirt</title>
-  <image width="620" height="465" transform="translate(0 0) scale(1.69)" xlink:href="../../../Desktop/prj_update-5822a58cad427-l-1.jpg"/>
+  <image width="620" height="465" transform="scale(1.69)" xlink:href="../../../Desktop/prj_update-5822a58cad427-l-1.jpg"/>
   <path class="cls-1" d="M342,526l-74.76,22.07c18.23,68.42,16.61,119.46-14.57,144.6v248H551.32V698q-54-42.66-17.34-144l-74.66-28C417.33,545.05,377.53,549.59,342,526Z" transform="translate(-203.98 -329.48)"/>
+  <path class="cls-1" d="M595,549c31.56,69.74,20.57,112.71-9,144l-1,249H882.23L880,693C844.3,664.3,850.08,611,869,550l-78-22c-19,84-102,76-116-1Z" transform="translate(-203.98 -329.48)"/>
 </svg>

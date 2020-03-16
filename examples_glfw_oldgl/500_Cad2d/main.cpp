@@ -46,7 +46,7 @@ int main(int argc,char* argv[])
         cad.AddVtxFace(0.0, 0.1, 0);
       }
       else if( iframe == nframe*2 ){
-        double param[4] = {0.2, 0.3, -0.2, 0.3};
+        double param[4] = {0.2, 0.3, 0.8, 0.3};
         std::vector<double> vparam(param,param+4);
         cad.SetEdgeType( 0, dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
       }
