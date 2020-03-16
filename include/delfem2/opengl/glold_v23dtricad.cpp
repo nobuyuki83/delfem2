@@ -194,7 +194,7 @@ void dfm2::opengl::Draw_CCad2DEdge
       const CVec2d lx = (edge.p1 - edge.p0);
       const CVec2d ly = CVec2d(lx.y(),-lx.x());
       const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
-      const CVec2d q1 = edge.p1 + edge.param[2]*lx + edge.param[3]*ly;
+      const CVec2d q1 = edge.p0 + edge.param[2]*lx + edge.param[3]*ly;
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
       dfm2::opengl::myGlVertex(edge.p0);

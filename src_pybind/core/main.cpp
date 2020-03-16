@@ -208,14 +208,18 @@ void PyCad2D_ImportSVG
   double scale_x,
   double scale_y)
 {
-  std::vector<dfm2::CCad2D_EdgeGeo> aEdge;
-  LoopEdgeCCad2D_ReadSVG(aEdge,
+  std::vector< std::vector<dfm2::CCad2D_EdgeGeo> > aaEdge;
+  LoopEdgeCCad2D_ReadSVG(aaEdge,
                          path_svg);
-  Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
-  if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
-  aEdge = RemoveEdgeWithZeroLength(aEdge);
-  for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
-  cad.AddFace(aEdge);
+  cad.Clear();
+  for(unsigned int ie=0;ie<aaEdge.size();++ie){
+    std::vector<dfm2::CCad2D_EdgeGeo> aEdge = aaEdge[ie];
+    Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
+    if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
+    aEdge = RemoveEdgeWithZeroLength(aEdge);
+    for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+    cad.AddFace(aEdge);
+  }
 }
 
 
@@ -295,7 +299,7 @@ PYBIND11_MODULE(c_core, m) {
   m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
   m.def("meshhex3d_voxelgrid", &PyMeshHex3D_VoxelGrid);
   
-  // ----
+  // -------------
   // cad
   py::class_<dfm2::CCad2D>(m, "CppCad2D", "2D CAD class")
   .def(py::init<>())
