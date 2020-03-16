@@ -57,7 +57,7 @@ template <typename REAL>
     const REAL vi[3]);
 
 // above: functions general for any dimensions
-// -----------------------------
+// ------------------------------------------------
 // below: functions specific to 3 dimension
   
 template <typename T>

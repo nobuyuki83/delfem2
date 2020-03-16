@@ -681,6 +681,19 @@ template dfm2::CVec2d dfm2::pointCurve_BezierCubic(double t,
                                                    const CVec2d& p3,
                                                    const CVec2d& p4);
 
+template <typename T>
+dfm2::CVec2<T> dfm2::pointCurve_BezierQuadratic
+ (double t,
+  const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3)
+{
+  double tp = 1.0-t;
+  return (t*t)*p3 + (2*t*tp)*p2 + (tp*tp)*p1;
+}
+template dfm2::CVec2d dfm2::pointCurve_BezierQuadratic(double t,
+                                                       const CVec2d& p1,
+                                                       const CVec2d& p2,
+                                                       const CVec2d& p3);
+
 // ----------------------------------------------------------------------------------
 // std::vector starts from here
 
@@ -732,6 +745,27 @@ template void dfm2::Polyline_BezierCubic
   const unsigned int n,
   const CVec2d& p1, const CVec2d& p2, const CVec2d& p3, const CVec2d& p4);
 
+// --------------
+
+template <typename T>
+void dfm2::Polyline_BezierQuadratic
+ (std::vector<CVec2<T>>& aP,
+  const unsigned int n,
+  const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3)
+{
+  aP.resize(n);
+  for(unsigned int i=0;i<n;++i){
+    const double t = (double)i/(n-1.0);
+    aP[i] = pointCurve_BezierQuadratic(t,
+                                       p1, p2, p3);
+  }
+}
+template void dfm2::Polyline_BezierQuadratic
+(std::vector<CVec2d>& aP,
+ const unsigned int n,
+ const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);
+
+// --------------
 
 template <typename T>
 double dfm2::Length_Polygon

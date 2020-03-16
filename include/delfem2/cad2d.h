@@ -29,8 +29,13 @@ public:
  */
 class CCad2D_EdgeGeo{
 public:
+  enum EDGE_TYPE {
+    LINE = 0,
+    BEZIER_CUBIC = 1,
+    BEZIER_QUADRATIC = 2,
+  };
   CCad2D_EdgeGeo(){
-    type_edge = 0;
+    type_edge = LINE;
     ip0 = -1;
   }
   void GenMesh(double elen);
@@ -45,9 +50,9 @@ public:
   }
 public:
   CVec2d p0,p1;
-  int type_edge; // 0: line, 1:Cubic Bezier
+  EDGE_TYPE type_edge; // 0: line, 1:Cubic Bezier 2: Quadratic Bezier
   std::vector<double> param;
-  ///
+  //
   std::vector<CVec2d> aP;
   int ip0; //!< ip0 is the p0's point index when mesh is generated
 };
@@ -165,7 +170,7 @@ public:
   void AddFace(const std::vector<CCad2D_EdgeGeo>& aEdge);
   void AddVtxFace(double x0, double y0, unsigned int ifc_add);
   void AddVtxEdge(double x, double y, unsigned int ie_add);
-  void SetEdgeType(int iedge, int itype, std::vector<double>& param){
+  void SetEdgeType(int iedge, CCad2D_EdgeGeo::EDGE_TYPE itype, std::vector<double>& param){
     assert( iedge >= 0 && iedge< (int)aEdge.size() );
     aEdge[iedge].type_edge = itype;
     aEdge[iedge].param = param;

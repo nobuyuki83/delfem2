@@ -306,7 +306,7 @@ void dfm2::CCad2D_EdgeGeo::GenMesh
 (double elen)
 {
   aP.clear();
-  if( type_edge == 0 ){
+  if( type_edge == LINE ){
     if( elen < 0 ){ return; }
     const int nadd = (int)( this->Length() / elen);
     for(int iadd=0;iadd<nadd;++iadd){
@@ -315,7 +315,7 @@ void dfm2::CCad2D_EdgeGeo::GenMesh
       aP.push_back(v2);
     }
   }
-  if( this->type_edge == 1 ){
+  if( this->type_edge == BEZIER_CUBIC ){
     const CVec2d lx = (this->p1 - this->p0);
     const CVec2d ly = CVec2d(lx.y(), -lx.x());
     const CVec2d q0 = p0 + param[0]*lx + param[1]*ly;
@@ -331,6 +331,24 @@ void dfm2::CCad2D_EdgeGeo::GenMesh
     for(int ip=1;ip<ndiv;++ip){
       double t = (double)ip/ndiv;
       CVec2d pos = pointCurve_BezierCubic(t, p0, q0, q1, p1);
+      aP.push_back(pos);
+    }
+  }
+  if( this->type_edge == BEZIER_QUADRATIC ){
+    const CVec2d lx = (this->p1 - this->p0);
+    const CVec2d ly = CVec2d(lx.y(), -lx.x());
+    const CVec2d q0 = p0 + param[0]*lx + param[1]*ly;
+    int ndiv = 10;
+    if( elen > 0 ){
+      std::vector<CVec2d> aP0;
+      Polyline_BezierQuadratic(aP0,
+                           20, p0,q0,p1);
+      const double len0 = Length_Polygon(aP0);
+      ndiv = (int)(len0 / elen);
+    }
+    for(int ip=1;ip<ndiv;++ip){
+      double t = (double)ip/ndiv;
+      CVec2d pos = pointCurve_BezierQuadratic(t, p0, q0, p1);
       aP.push_back(pos);
     }
   }
@@ -973,7 +991,7 @@ void LoopEdgeCad2D_SVGPathD
       double len01 = (e.p1 - e.p0).Length();
       const dfm2::CVec2d lx = (e.p1 - e.p0)/(len01*len01);
       const dfm2::CVec2d ly = dfm2::CVec2d(lx.y(), -lx.x());
-      e.type_edge = 1;
+      e.type_edge = dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC;
       e.param.resize(4,0.0);
       dfm2::CVec2d p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );
       dfm2::CVec2d p3( myStod(aStr1[is+3]), myStod(aStr1[is+4]) );
@@ -992,7 +1010,7 @@ void LoopEdgeCad2D_SVGPathD
         double len01 = (e.p1 - e.p0).Length();
         const dfm2::CVec2d lx = (e.p1 - e.p0)/(len01*len01);
         const dfm2::CVec2d ly = dfm2::CVec2d(lx.y(),-lx.x());
-        e.type_edge = 1;
+        e.type_edge = dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC;
         e.param.resize(4,0.0);
         dfm2::CVec2d p2( myStod(aStr1[is+0]), myStod(aStr1[is+1]) );
         dfm2::CVec2d p3( myStod(aStr1[is+2]), myStod(aStr1[is+3]) );
@@ -1017,7 +1035,7 @@ void LoopEdgeCad2D_SVGPathD
       double len01 = (e.p1 - e.p0).Length();
       const dfm2::CVec2d lx = (e.p1 - e.p0)/(len01*len01);
       const dfm2::CVec2d ly = dfm2::CVec2d(lx.y(),-lx.x());
-      e.type_edge = 1;
+      e.type_edge = dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC;
       e.param.resize(4,0.0);
       e.param[0] = (p2-e.p0)*lx;
       e.param[1] = (p2-e.p0)*ly;
@@ -1072,7 +1090,7 @@ void LoopEdgeCad2D_SVGPathD
       double len01 = (e.p1 - e.p0).Length();
       const dfm2::CVec2d lx = (e.p1 - e.p0)/(len01*len01);
       const dfm2::CVec2d ly = dfm2::CVec2d(lx.y(), -lx.x());
-      e.type_edge = 1;
+      e.type_edge = dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC;
       e.param.resize(4,0.0);
       dfm2::CVec2d p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );
       dfm2::CVec2d p3 = e.p1;
@@ -1080,6 +1098,58 @@ void LoopEdgeCad2D_SVGPathD
       e.param[1] = (p2-e.p0)*ly;
       e.param[2] = (p3-e.p1)*lx;
       e.param[3] = (p3-e.p1)*ly;
+      aEdge.push_back(e);
+      pos_cur = e.p1;
+      is += 5;
+    }
+    else if( aStr1[is] == "v" ){
+      dfm2::CCad2D_EdgeGeo e;
+      {
+        e.p0 = pos_cur;
+        e.p1 = dfm2::CVec2d( pos_cur.x(), pos_cur.y()+myStod(aStr1[is+1]) );
+        e.type_edge = dfm2::CCad2D_EdgeGeo::LINE;
+      }
+      pos_cur = e.p1;
+      aEdge.push_back(e);
+      is += 2;
+    }
+    else if( aStr1[is] == "V" ){
+      dfm2::CCad2D_EdgeGeo e;
+      {
+        e.p0 = pos_cur;
+        e.p1 = dfm2::CVec2d( pos_cur.x(), myStod(aStr1[is+1]) );
+        e.type_edge = dfm2::CCad2D_EdgeGeo::LINE;
+      }
+      aEdge.push_back(e);
+      pos_cur = e.p1;
+      is += 2;
+    }
+    else if( aStr1[is] == "H" ){
+      dfm2::CCad2D_EdgeGeo e;
+      {
+        e.p0 = pos_cur;
+        e.p1 = dfm2::CVec2d( myStod(aStr1[is+1]), pos_cur.y() );
+        e.type_edge = dfm2::CCad2D_EdgeGeo::LINE;
+      }
+      aEdge.push_back(e);
+      pos_cur = e.p1;
+      is += 2;
+    }
+    else if( aStr1[is] == "q" ){
+      const dfm2::CVec2d p0 = pos_cur;
+      const dfm2::CVec2d p1( p0.x()+myStod(aStr1[is+1]), p0.y()+myStod(aStr1[is+2]) );
+      const dfm2::CVec2d p2( p0.x()+myStod(aStr1[is+3]), p0.y()+myStod(aStr1[is+4]) );
+      const dfm2::CVec2d lx = (p2-p0)/(p2-p0).SqLength();
+      const dfm2::CVec2d ly = -dfm2::CVec2d(lx.y(), -lx.x());
+      dfm2::CCad2D_EdgeGeo e;
+      {
+        e.p0 = pos_cur;
+        e.p1 = p2;
+        e.type_edge = dfm2::CCad2D_EdgeGeo::BEZIER_QUADRATIC;
+        e.param.resize(2);
+        e.param[0] = (p1-p0)*lx;
+        e.param[1] = (p1-p0)*ly;
+      }
       aEdge.push_back(e);
       pos_cur = e.p1;
       is += 5;
@@ -1120,13 +1190,11 @@ void dfm2::LoopEdgeCCad2D_ReadSVG
   std::vector<char> aC;
   if( !GetFileContents(aC, fname) ){ return; }
   
-  /*
   std::cout << "svg file content: ";
   for(unsigned int ic=0;ic<aC.size();++ic){
     std::cout << aC[ic];
   }
   std::cout << std::endl;
-   */
   
   std::vector< std::string > aStr;
   XML_SeparateTagContent(aStr,
@@ -1140,20 +1208,20 @@ void dfm2::LoopEdgeCCad2D_ReadSVG
         break;
       }
     }
-//    std::cout << "str_path: " << str_path << std::endl;
+    std::cout << "str_path: " << str_path << std::endl;
     if( str_path != "" ){
       std::map< std::string, std::string > mapAttr;
       ParseAttributes(mapAttr,
                       str_path);
       std::string str_path_d = mapAttr["d"];
-//      std::cout << "str_path_d: " << str_path_d << std::endl;
+      std::cout << "str_path_d: " << str_path_d << std::endl;
       str_path_d = Remove(str_path_d, " \n");
       std::vector<std::string> aStr1 = SVG_Split_Path_d(str_path_d);
-      /*
+      
       for(unsigned int is=0;is<aStr1.size();++is){
         std::cout << is << " " << aStr1[is] << std::endl;
       }
-       */
+      
       LoopEdgeCad2D_SVGPathD(aEdge,
                              aStr1);
     }

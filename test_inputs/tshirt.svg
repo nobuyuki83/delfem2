@@ -1,0 +1,15 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36.9cm" height="27.68cm" viewBox="0 0 1046 784.5">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: red;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <title>tshirt</title>
+  <image width="620" height="465" transform="translate(0 0) scale(1.69)" xlink:href="../../../Desktop/prj_update-5822a58cad427-l-1.jpg"/>
+  <path class="cls-1" d="M342,526l-74.76,22.07c18.23,68.42,16.61,119.46-14.57,144.6v248H551.32V698q-54-42.66-17.34-144l-74.66-28C417.33,545.05,377.53,549.59,342,526Z" transform="translate(-203.98 -329.48)"/>
+</svg>

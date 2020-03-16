@@ -323,6 +323,12 @@ PYBIND11_MODULE(c_core, m) {
   .def_readwrite("iedge_picked",  &dfm2::CCad2D::iedge_picked)
   .def_readwrite("iface_picked",  &dfm2::CCad2D::iface_picked);
   
+  py::enum_<dfm2::CCad2D_EdgeGeo::EDGE_TYPE>(m, "CAD_EDGE_GEOM_TYPE")
+  .value("CAD_EDGE_GEOM_LINE",             dfm2::CCad2D_EdgeGeo::LINE)
+  .value("CAD_EDGE_GEOM_BEZIER_CUBIC",     dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC)
+  .value("CAD_EDGE_GEOM_BEZIER_QUADRATIC", dfm2::CCad2D_EdgeGeo::BEZIER_QUADRATIC)
+  .export_values();
+  
   m.def("cppCad2D_ImportSVG",
         &PyCad2D_ImportSVG);
   m.def("cppSVG_Polyline",

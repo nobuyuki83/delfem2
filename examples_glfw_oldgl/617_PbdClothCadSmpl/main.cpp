@@ -18,7 +18,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-// ------
+//
 #include "delfem2/v23m3q.h"
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
@@ -234,6 +234,10 @@ int main(int argc,char* argv[])
              aTri_Contact.data(), aTri_Contact.size()/3,
              0.01);
   }
+  
+  // above: data preparation
+  // ----------------------------------------------
+  // below: opengl
 
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();

@@ -33,17 +33,17 @@ void BVH_NearestPoint_MeshTri3D (
   
 // potential maximum distance of the nearest point
 template <typename T, typename REAL>
-void BVH_NearestPoint_IncludedInBVH_MeshTri3D (double& dist_tri, // minimum distance to triangle
-                                               double& dist_bv, // minimum distance to leaf bounding volume
-                                               CPointElemSurf<REAL>& pes,
-                                               //
-                                               double px, double py, double pz,
-                                               double rad_exp, // exploring distance
-                                               const double* aXYZ, unsigned int nXYZ,
-                                               const unsigned int* aTri, unsigned int nTri,
-                                               int ibvh,
-                                               const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                               const std::vector<T>& aBB);
+void BVH_NearestPoint_IncludedInBVH_MeshTri3D(double& dist_tri, // minimum distance to triangle
+                                              double& dist_bv, // minimum distance to leaf bounding volume
+                                              CPointElemSurf<REAL>& pes,
+                                              //
+                                              double px, double py, double pz,
+                                              double rad_exp, // exploring distance
+                                              const double* aXYZ, unsigned int nXYZ,
+                                              const unsigned int* aTri, unsigned int nTri,
+                                              int ibvh,
+                                              const std::vector<delfem2::CNodeBVH2>& aBVH,
+                                              const std::vector<T>& aBB);
 
 template <typename BV, typename REAL>
 class CBVH_MeshTri3D
