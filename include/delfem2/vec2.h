@@ -441,6 +441,9 @@ public:
     std::vector<double> bb(tmp,tmp+6);
     return bb;
   }
+  double LengthDiagonal() const {
+    return sqrt( (x_max-x_min)*(x_max-x_min) + (y_max-y_min)*(y_max-y_min) );
+  }
   
   // -------------------------------
   // non const functions from here

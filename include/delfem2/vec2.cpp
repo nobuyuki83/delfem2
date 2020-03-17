@@ -771,6 +771,7 @@ template <typename T>
 double dfm2::Length_Polygon
 (const std::vector<CVec2<T>>& aP)
 {
+  if( aP.size() < 2 ){ return 0; }
   double len = 0;
   for(size_t ip0=0;ip0<aP.size()-1;ip0++){
     size_t ip1 = ip0+1;

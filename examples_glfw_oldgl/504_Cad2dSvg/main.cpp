@@ -42,38 +42,20 @@ int main(int argc,char* argv[])
       if( iframe == nframe_interval*1 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
       if( iframe == nframe_interval*2 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
       if( iframe == nframe_interval*3 ){ path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg"; }
-      path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg";
-      std::vector< std::vector<delfem2::CCad2D_EdgeGeo> > aaEdge;
-      std::cout << "########################" << std::endl;
-      LoopEdgeCCad2D_ReadSVG(aaEdge,
-                             path_svg);
-      std::cout << "### " << aaEdge.size() << std::endl;
-      cad.Clear();
-      for(int iae=0;iae<aaEdge.size();++iae){
-        std::vector<delfem2::CCad2D_EdgeGeo> aEdge = aaEdge[iae];
-        Transform_LoopEdgeCad2D(aEdge,false,true,1.0,1.0);
-        std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
-        if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
-        aEdge = RemoveEdgeWithZeroLength(aEdge);
-        for(auto & ie : aEdge){ ie.GenMesh(-1); }
-        std::cout << aEdge.size() << "  " << AreaLoop(aEdge) << std::endl;
-        cad.AddFace(aEdge);
-      }
-      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
+      dfm2::ReadSVG_Cad2D(cad, path_svg, 1.0);
+//      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2D bb = cad.BB();
       viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
       viewer.nav.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
       viewer.nav.camera.trans[2] = 0.0;
-      viewer.nav.camera.view_height = 0.5*sqrt( (bb.x_max-bb.x_min)*(bb.x_max-bb.x_min) + (bb.y_max-bb.y_min)*(bb.y_max-bb.y_min) );
+      viewer.nav.camera.view_height = 0.5*bb.LengthDiagonal();
       viewer.nav.camera.scale = 1.0;
+      std::cout << path_svg << " " << bb.LengthDiagonal() << std::endl;
     }
     iframe = (iframe+1)%(nframe_interval*4);
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     // --------------------
     viewer.DrawBegin_oldGL();
-    cad.iedge_picked = 5;
-    cad.ipicked_elem = 1;
-    cad.is_draw_face = true;
     delfem2::opengl::Draw_CCad2D(cad);
     viewer.DrawEnd_oldGL();
   }

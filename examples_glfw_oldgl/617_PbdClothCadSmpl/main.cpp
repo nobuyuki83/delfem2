@@ -61,7 +61,7 @@ std::vector<unsigned int> aRigJoint_Contact;
 std::vector<dfm2::CRigBone> aBone;
 
 const double dt = 0.01;
-const double gravity[3] = {0.0, 0.0, 0.0};
+const double gravity[3] = {0.0, -0.1, 0.0};
 const double contact_clearance = 0.0001;
 const double rad_explore = 0.1;
 
@@ -134,79 +134,88 @@ public:
 
 int main(int argc,char* argv[])
 {
-  delfem2::CCad2D cad;
-  {
-    const double xys0[8] = { -0.0,-0.0,  +1.0,-0.0, +1.0,+1.0, -0.0,+1.0, };
-    const double xys1[8] = { +2.0,-0.0,  +3.0,-0.0, +3.0,+1.0, +2.0,+1.0, };
-    cad.AddPolygon(std::vector<double>(xys0,xys0+8));
-    cad.AddPolygon(std::vector<double>(xys1,xys1+8));
-  }
-  delfem2::CMesher_Cad2D mesher;
-  mesher.edge_length = 0.03;
-  delfem2::CMeshDynTri2D dmesh;
-  mesher.Meshing(dmesh,
-                 cad);
-  dmesh.Check();
-  aPo2D = dmesh.aEPo;
-  aETri = dmesh.aETri;
-  aVec2 = dmesh.aVec2;
-
   // -----------------------------
-  const int np = aPo2D.size();
-  aUVW.resize(np*3,0.0);
-  aBCFlag.resize(np,0);
-  aXYZ.resize(np*3);
+  // below: input data
+  delfem2::CCad2D cad;
+  double scale_adjust = 1.7;
   {
-    CRigidTrans_2DTo3D rt23;
-    rt23.org2 = dfm2::CVec2d(2.5,0.5);
-    rt23.org3 = dfm2::CVec3d(0.0, 0.0, 0.5);
-    rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
-    std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
+    std::string path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg";
+    dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
+  }
+  std::vector<unsigned int> aIESeam = {
+    15, 6,
+    13, 0,
+    4, 9,
+    11, 2
+  };
+  delfem2::CMesher_Cad2D mesher;
+  mesher.edge_length = 0.015;
+  std::vector<CRigidTrans_2DTo3D> aRT23;
+  { // initial position
+    aRT23.resize(2);
+    { // back body
+      CRigidTrans_2DTo3D& rt23 = aRT23[0];
+      rt23.org2 = dfm2::CVec2d(0.189,-0.5)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(0.0, 0.1, -0.2);
+      rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+    }
+    { // front body
+      CRigidTrans_2DTo3D& rt23 = aRT23[1];
+      rt23.org2 = dfm2::CVec2d(0.506,-0.5)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(0.0, 0.1, +0.2);
+      rt23.R.SetIdentity();
+    }
+  }
+  // above: input data
+  // -----------------------------------
+  // below: data preparation
+  { // make the seam edge equal number of division
+    const double el = mesher.edge_length;
+    for(int ie=0;ie<aIESeam.size()/2;++ie){
+      const unsigned int ie0 = aIESeam[ie*2+0];
+      const unsigned int ie1 = aIESeam[ie*2+1];
+      const double l0 = cad.aEdge[ie0].LengthMesh();
+      const double l1 = cad.aEdge[ie1].LengthMesh();
+      const unsigned int ndiv = (int)(0.5*(l0+l1)/el+1);
+      mesher.mapIdEd_NDiv[ie0] = ndiv;
+      mesher.mapIdEd_NDiv[ie1] = ndiv;
+    }
+    delfem2::CMeshDynTri2D dmesh;
+    mesher.Meshing(dmesh,
+                   cad);
+    dmesh.Check();
+    aPo2D = dmesh.aEPo;
+    aETri = dmesh.aETri;
+    aVec2 = dmesh.aVec2;
+  }
+  {
+    const int np = aPo2D.size();
+    aUVW.resize(np*3,0.0);
+    aBCFlag.resize(np,0);
+    aXYZ.resize(np*3);
+  }
+  for(int ifc=0;ifc<cad.aFace.size();++ifc){
+    const CRigidTrans_2DTo3D& rt23 = aRT23[ifc];
+    std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,ifc), cad);
     for(int ip : aIP){
       dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
       dfm2::CVec3d p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
-      aXYZ[ip*3+0] = p1.x();
-      aXYZ[ip*3+1] = p1.y();
-      aXYZ[ip*3+2] = p1.z();
+      p1.CopyValueTo(aXYZ.data()+ip*3);
     }
-    {
-      CRigidTrans_2DTo3D rt23;
-      rt23.org2 = dfm2::CVec2d(0.5,0.5);
-      rt23.org3 = dfm2::CVec3d(0.0, 0.0, -0.5);
-      rt23.R.SetIdentity();
-      std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
-      for(int ip : aIP){
-        dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-        dfm2::CVec3d p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
-        aXYZ[ip*3+0] = p1.x();
-        aXYZ[ip*3+1] = p1.y();
-        aXYZ[ip*3+2] = p1.z();
-      }
-    }
-    aLine.clear();
-    {
-      std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(1, true, cad);
-      std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
-      const int npe = aIP0.size();
-      assert( aIP1.size() == npe );
-      for(int iip=0;iip<npe;++iip){
-        int ip0 = aIP0[iip];
-        int ip1 = aIP1[npe-iip-1];
-        aLine.push_back(ip0);
-        aLine.push_back(ip1);
-      }
-    }
-    {
-      std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
-      std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
-      const std::size_t npe = aIP0.size();
-      assert( aIP1.size() == npe );
-      for(unsigned int iip=0;iip<npe;++iip){
-        unsigned int ip0 = aIP0[iip];
-        unsigned int ip1 = aIP1[npe-iip-1];
-        aLine.push_back(ip0);
-        aLine.push_back(ip1);
-      }
+  }
+  aLine.clear();
+  for(int ie=0;ie<aIESeam.size()/2;++ie){
+    unsigned int ie0 = aIESeam[ie*2+0];
+    unsigned int ie1 = aIESeam[ie*2+1];
+    std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(ie0, true, cad);
+    std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(ie1, true, cad);
+    const int npe = aIP0.size();
+    assert( aIP1.size() == npe );
+    for(int iip=0;iip<npe;++iip){
+      int ip0 = aIP0[iip];
+      int ip1 = aIP1[npe-iip-1];
+      aLine.push_back(ip0);
+      aLine.push_back(ip1);
     }
   }
   aXYZt = aXYZ;
@@ -252,6 +261,14 @@ int main(int argc,char* argv[])
     // ------------
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
+    for( auto& rt : aRT23 ){
+      ::glPointSize(10);
+      ::glColor3d(0,0,0);
+      ::glBegin(GL_POINTS);
+      dfm2::CVec3d v = rt.org3;
+      ::glVertex3dv(v.p);
+      ::glEnd();
+    }
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
