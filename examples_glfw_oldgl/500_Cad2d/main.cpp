@@ -33,41 +33,41 @@ int main(int argc,char* argv[])
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
+  int iframe = 0;
   while(true){
     {
-      static int iframe = 0;
-      const int nframe = 10;
-      if( iframe == nframe*0 ){
+      const int nframe_interval = 10;
+      if( iframe == nframe_interval*0 ){
         cad.Clear();
         const double poly[8] = {-1,-1, +1,-1, +1,+1, -1,+1};
         cad.AddPolygon(std::vector<double>(poly,poly+8));
       }
-      else if( iframe == nframe*1 ){
+      else if( iframe == nframe_interval*1 ){
         cad.AddVtxFace(0.0, 0.1, 0);
       }
-      else if( iframe == nframe*2 ){
+      else if( iframe == nframe_interval*2 ){
         double param[4] = {0.2, 0.3, 0.8, 0.3};
         std::vector<double> vparam(param,param+4);
         cad.SetEdgeType( 0, dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
       }
-      else if( iframe == nframe*3 ){
+      else if( iframe == nframe_interval*3 ){
         cad.AddVtxEdge(-0.0, +0.8, 2);
       }
-      else if( iframe == nframe*4 ){
+      else if( iframe == nframe_interval*4 ){
         double x0 = 2.1, y0 = 0.0;
         const double poly[8] = {x0-1,y0-1, x0+1,y0-1, x0+1,y0+1, x0-1,y0+1};
         cad.AddPolygon(std::vector<double>(poly,poly+8) );
         cad.AddVtxEdge(x0, -0.2, 5);
       }
-      if( iframe % nframe == 0 ){
+      if( iframe % nframe_interval == 0 ){
         dfm2::CBoundingBox2D bb = cad.BB();
         viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
         viewer.nav.camera.trans[1] = -(bb.y_min+bb.y_max)*0.5;
         viewer.nav.camera.trans[2] = 0.0;
-        viewer.nav.camera.view_height = 0.5*sqrt( (bb.x_max-bb.x_min)*(bb.x_max-bb.x_min) + (bb.y_max-bb.y_min)*(bb.y_max-bb.y_min) );
+        viewer.nav.camera.view_height = 0.5*bb.LengthDiagonal();
         viewer.nav.camera.scale = 1.0;
       }
-      iframe = (iframe+1)%(nframe*5);
+      iframe = (iframe+1)%(nframe_interval*5);
     }
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     // --------------------

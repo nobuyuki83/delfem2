@@ -209,7 +209,7 @@ void PyCad2D_ImportSVG
   double scale_y)
 {
   std::vector< std::vector<dfm2::CCad2D_EdgeGeo> > aaEdge;
-  LoopEdgeCCad2D_ReadSVG(aaEdge,
+  ReadSVG_LoopEdgeCCad2D(aaEdge,
                          path_svg);
   cad.Clear();
   for(unsigned int ie=0;ie<aaEdge.size();++ie){
@@ -217,7 +217,7 @@ void PyCad2D_ImportSVG
     Transform_LoopEdgeCad2D(aEdge,false,true,scale_x,scale_y);
     if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
     aEdge = RemoveEdgeWithZeroLength(aEdge);
-    for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMesh(-1); }
+    for(unsigned int ie=0;ie<aEdge.size();++ie){ aEdge[ie].GenMeshLength(-1); }
     cad.AddFace(aEdge);
   }
 }

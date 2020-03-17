@@ -38,9 +38,11 @@ public:
     type_edge = LINE;
     ip0 = -1;
   }
-  void GenMesh(double elen);
+  void GenMeshNDiv(unsigned int ndiv);
+  void GenMeshLength(double elen);
   double Distance(double x, double y) const;
-  double Length() const;
+  double LengthMesh() const;
+  double LengthNDiv(unsigned int ndiv) const;
   CBoundingBox2D BB() const{
     CBoundingBox2D bb;
     bb.Add(p0.x(),p0.y());
@@ -73,9 +75,8 @@ CBoundingBox2D BB_LoopEdgeCad2D(const std::vector<CCad2D_EdgeGeo>& aEdge);
  * @details read an SVG image file and output first path elemnet as a loop of curves.
  * If there is no path element, output first polygon elmenet if they are.
  */
-void LoopEdgeCCad2D_ReadSVG(std::vector< std::vector<CCad2D_EdgeGeo> >& aaEdge,
+void ReadSVG_LoopEdgeCCad2D(std::vector< std::vector<CCad2D_EdgeGeo> >& aaEdge,
                             const std::string& fname);
-
 
 
 
@@ -192,6 +193,12 @@ public:
   bool is_draw_face;
 };
 
+
+void ReadSVG_Cad2D(CCad2D& cad,
+                   const std::string& fpath,
+                   double scale);
+
+
 /**
  * @brief  write the shape of cad into DXF file
  */
@@ -221,6 +228,7 @@ public:
                                              const CCad2D& cad2d);
 public:
   double edge_length;
+  std::map<unsigned int, unsigned int> mapIdEd_NDiv;
   //
   unsigned int nvtx;
   unsigned int nedge;
