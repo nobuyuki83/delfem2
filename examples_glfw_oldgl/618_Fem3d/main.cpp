@@ -21,22 +21,15 @@
 #include "delfem2/fem_emats.h"
 
 // ---------------
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_color.h"
 #include "delfem2/opengl/glold_v23.h"
 #include "delfem2/opengl/glold_funcs.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
 // ------------------------
-
-CNav3D_GLUT nav;
 
 std::vector<unsigned int> aTet;
 std::vector<double> aXYZ;
@@ -52,14 +45,6 @@ dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 delfem2::CPreconditionerILU<double>  ilu_A;
 
-// 0: poission
-// 1: heat diffusion
-// 2: static linear solid
-// 3: dynamic linear solid
-int iphysics = 0;
-int ishape = 0;
-////
-bool is_animation = false;
 double cur_time = 0.0;
 double dt_timestep = 0.01;
 //double gamma_newmark = 0.6;
@@ -71,7 +56,6 @@ double beta_newmark = 0.5;
 
 void InitializeProblem_Poisson()
 {
-  is_animation = false;
   const int np = (int)aXYZ.size()/3;
   aVal.assign(np, 0.0);
   aBCFlag.assign(np, 0);
@@ -142,7 +126,6 @@ void SolveProblem_Poisson()
 
 void InitializeProblem_Diffusion()
 {
-  is_animation = true;
   double len = 1.1;
   const int np = (int)aXYZ.size()/3;
   aVal.assign(np, 0.0);
@@ -291,7 +274,6 @@ void SolveProblem_LinearSolid_Static()
 
 void InitializeProblem_LinearSolid_Dynamic()
 {
-  is_animation = true;
   const double len = 1.1;
   // set boundary condition
   const int np = (int)aXYZ.size()/3;
@@ -376,11 +358,10 @@ void SolveProblem_LinearSolid_Dynamic()
 
 void InitializeProblem_Stokes_Static()
 {
-  is_animation = false;
   // set boundary condition
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
-  ///////
+  //
   aVal.assign(np*4, 0.0);
   aBCFlag.assign(nDoF, 0);
   assert(aIsSurf.size() == np);
@@ -460,7 +441,6 @@ void SolveProblem_Stokes_Static()
 
 void InitializeProblem_Stokes_Dynamic()
 {
-  is_animation = true;
   // set boundary condition
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
@@ -551,7 +531,6 @@ void SolveProblem_Stokes_Dynamic()
 
 void InitializeProblem_NavierStokes_Dynamic()
 {
-  is_animation = true;
   // set boundary condition
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
@@ -568,6 +547,7 @@ void InitializeProblem_NavierStokes_Dynamic()
     aBCFlag[ip*4+0] = 1;
     aBCFlag[ip*4+1] = 1;
     aBCFlag[ip*4+2] = 1;
+    int ishape = 0;
     if( ishape == 0 || ishape == 1 ){
       if( py > +0.48 ){
         aVal[ip*4+0] = 10;
@@ -608,7 +588,7 @@ void SolveProblem_NavierStokes_Dynamic()
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
-  /////////////////////////////
+  //
   double myu = 1;
   double rho = 1000.0;
   double g_x = 0.0;
@@ -681,7 +661,6 @@ public:
 void SetMesh(int ishape)
 {
   ::glMatrixMode(GL_MODELVIEW);
-  nav.camera.view_height = 1.0;
   
   if(ishape==0){
     const double rad = 0.5;
@@ -735,7 +714,7 @@ void SetMesh(int ishape)
   }
 }
 
-
+/*
 void Solve(bool is_next)
 {
   cur_time = 0.0;
@@ -770,9 +749,10 @@ void Solve(bool is_next)
   }
   std::cout<<"node number:" << aXYZ.size()/3<<std::endl;
 }
+ */
 
 
-//////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------
 
 static void myGlVertex3d
 (unsigned int ixyz,
@@ -785,7 +765,7 @@ static void myGlVertex3d
 //  ::glVertex3d(v.x, v.y, v.z);
 //}
 
-void myGlutDisplay(void)
+void myGlutDisplay(int iphysics)
 {
 //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
 	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
@@ -793,9 +773,7 @@ void myGlutDisplay(void)
 	::glEnable(GL_DEPTH_TEST);
 
 	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 3.1f, 2.0f );
-
-  nav.SetGL_Camera();
+  ::glPolygonOffset( 3.1f, 2.0f );
 
 //  glEnable(GL_BLEND);
 //  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -860,28 +838,9 @@ void myGlutDisplay(void)
   else{              ::glDisable(GL_LIGHTING); }
 
   ::glColor3d(0,0,0);
-  ShowFPS();
-  ::glutSwapBuffers();
 }
 
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0, 0, w, h);
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-  ::glutPostRedisplay();
-}
-
+/*
 void myGlutKeyboard(unsigned char Key, int x, int y)
 {
   switch (Key)
@@ -889,7 +848,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
   case 'q':
   case 'Q':
   case '\033':
-    exit(0);  /* '\033' ? ESC ? ASCII ??? */
+    exit(0);
   case 'a':
     {
       is_animation = !is_animation;
@@ -910,12 +869,13 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 //	::glMatrixMode(GL_PROJECTION);
 //	::glLoadIdentity();
 //	Com::View::SetProjectionTransform(camera);
-	::glutPostRedisplay();
+//	::glutPostRedisplay();
 }
+ */
 
 
-
-void myGlutIdle(){
+/*
+void myGlutIdle(int iphysics){
   if( is_animation ){
     bool is_dynamic = false;
     if( iphysics == 1){
@@ -939,45 +899,97 @@ void myGlutIdle(){
       std::cout << "current time: " << cur_time << std::endl;
     }
   }
-  ::glutPostRedisplay();
+//  ::glutPostRedisplay();
 }
-
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
+ */
 
 
 int main(int argc,char* argv[])
 {
-	// Initialize GLUT
-	glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
-	glutInit(&argc, argv);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-	glutCreateWindow("FEM View");
-
-	// Define callback functions
-	glutDisplayFunc(myGlutDisplay);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-	glutIdleFunc(myGlutIdle);
-  
-  iphysics = 0;
-  SetMesh(0);
-  Solve(false);
-
-//  InitializeProblem_LinearSolid3D_Static();
-//  SolveProblem_LinearSolid3D_Static();
-
-  
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 1.5;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
 
-  glutMainLoop();
-	return 0;
+  while (true){
+    SetMesh(0);
+    int iframe = 0;
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "Poisson");
+    InitializeProblem_Poisson();
+    SolveProblem_Poisson();
+    for(;iframe<50;++iframe){ // poisson
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(0);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "Diffusion");
+    InitializeProblem_Diffusion();
+    SolveProblem_Diffusion();
+    for(;iframe<100;++iframe){
+      SolveProblem_Diffusion();
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(1);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "SolidLinearStatic");
+    InitializeProblem_ShellEigenPB();
+    SolveProblem_LinearSolid_Static();
+    for(;iframe<150;++iframe){
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(2);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "SolidLinearDynamic");
+    InitializeProblem_LinearSolid_Dynamic();
+    for(;iframe<200;++iframe){
+      SolveProblem_LinearSolid_Dynamic();
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(3);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "StokesStatic");
+    InitializeProblem_Stokes_Static();
+    SolveProblem_Stokes_Static();
+    for(;iframe<250;++iframe){
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(4);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "StokesDynamic");
+    InitializeProblem_Stokes_Dynamic();
+    for(;iframe<300;++iframe){
+      SolveProblem_Stokes_Dynamic();
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(5);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+    // ---------------------------
+    glfwSetWindowTitle(viewer.window, "NavierStokesDynamic");
+    InitializeProblem_NavierStokes_Dynamic();
+    for(;iframe<350;++iframe){
+      SolveProblem_NavierStokes_Dynamic();
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(6);
+      viewer.DrawEnd_oldGL();
+      if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+    }
+  }
+  
+CLOSE:
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

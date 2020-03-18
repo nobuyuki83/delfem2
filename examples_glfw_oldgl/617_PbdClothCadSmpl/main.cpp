@@ -29,7 +29,6 @@
 //
 #include "delfem2/cnpy/smpl_cnpy.h"
 
-
 // ----------------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw_viewer.h"
@@ -40,36 +39,27 @@
 namespace dfm2 = delfem2;
 
 // --------------------------------------------
-
-std::vector<dfm2::CDynPntSur> aPo2D;
-std::vector<dfm2::CDynTri> aETri;
-std::vector<dfm2::CVec2d> aVec2;
-std::vector<unsigned int> aLine;
-std::vector<double> aXYZ; // deformed vertex positions
-std::vector<double> aXYZt;
-std::vector<double> aUVW; // deformed vertex velocity
-std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
-
-std::vector<double> aXYZ_Contact;
-std::vector<unsigned int> aTri_Contact;
-std::vector<double> aNorm_Contact(aXYZ.size());
-dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh;
-std::vector<double> aXYZ0_Contact;
-std::vector<double> aRigWeight_Contact;
-std::vector<unsigned int> aRigJoint_Contact;
-std::vector<dfm2::CRigBone> aBone;
-
 const double dt = 0.01;
 const double gravity[3] = {0.0, -0.1, 0.0};
 const double contact_clearance = 0.0001;
 const double rad_explore = 0.1;
 
-bool is_animation = false;
-
 // ------------------------------------
 
-void StepTime()
+void StepTime
+ (std::vector<double>& aXYZ, // deformed vertex positions
+ std::vector<double>& aXYZt,
+ std::vector<double>& aUVW, // deformed vertex velocity
+ std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
+ std::vector<dfm2::CInfoNearest<double>>& aInfoNearest,
+ const std::vector<dfm2::CDynTri>& aETri,
+ const std::vector<dfm2::CVec2d>& aVec2,
+ const std::vector<unsigned int>& aLine,
+ //
+ std::vector<double>& aXYZ_Contact,
+ std::vector<unsigned int>& aTri_Contact,
+ std::vector<double>& aNorm_Contact,
+ dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double>& bvh)
 {
   dfm2::PBD_Pre3D(aXYZt,
                   dt, gravity, aXYZ, aUVW, aBCFlag);
@@ -91,7 +81,8 @@ void StepTime()
 
 // ---------------------------------------
 
-void myGlutDisplay()
+void myGlutDisplay(const std::vector<dfm2::CDynTri>& aETri,
+                   const std::vector<dfm2::CVec2d>& aVec2)
 {
   ::glClearColor(1.0, 1.0, 1.0, 1.0);
   //  ::glClearColor(0.0, .0, 0.0, 1.0);
@@ -114,13 +105,7 @@ void myGlutDisplay()
 //    DrawMeshTri3D_FaceNorm(aXYZ, aTri);
   }
   
-  ::glDisable(GL_LIGHTING);
-  ::glColor3d(0,0,0);
-  delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
 
-  ::glColor3d(1,0,0);
-  delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                                      aTri_Contact.data(), aTri_Contact.size()/3);
 //  DrawSphere_Edge(rad0);
 }
 
@@ -168,7 +153,10 @@ int main(int argc,char* argv[])
   }
   // above: input data
   // -----------------------------------
-  // below: data preparation
+  // below: data preparation (derived)
+  
+  std::vector<dfm2::CDynTri> aETri;
+  std::vector<dfm2::CVec2d> aVec2;
   { // make the seam edge equal number of division
     const double el = mesher.edge_length;
     for(int ie=0;ie<aIESeam.size()/2;++ie){
@@ -184,12 +172,18 @@ int main(int argc,char* argv[])
     mesher.Meshing(dmesh,
                    cad);
     dmesh.Check();
-    aPo2D = dmesh.aEPo;
+//    std::vector<dfm2::CDynPntSur> aPo2D;
+//    aPo2D = dmesh.aEPo;
     aETri = dmesh.aETri;
     aVec2 = dmesh.aVec2;
   }
+  std::vector<double> aXYZ; // deformed vertex positions
+  std::vector<double> aXYZt;
+  std::vector<double> aUVW; // deformed vertex velocity
+  std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
+  std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
   {
-    const int np = aPo2D.size();
+    const int np = aVec2.size();
     aUVW.resize(np*3,0.0);
     aBCFlag.resize(np,0);
     aXYZ.resize(np*3);
@@ -203,7 +197,7 @@ int main(int argc,char* argv[])
       p1.CopyValueTo(aXYZ.data()+ip*3);
     }
   }
-  aLine.clear();
+  std::vector<unsigned int> aLine;
   for(int ie=0;ie<aIESeam.size()/2;++ie){
     unsigned int ie0 = aIESeam[ie*2+0];
     unsigned int ie1 = aIESeam[ie*2+1];
@@ -220,10 +214,19 @@ int main(int argc,char* argv[])
   }
   aXYZt = aXYZ;
   
+  // ----------
+  
+  std::vector<double> aXYZ_Contact;
+  std::vector<unsigned int> aTri_Contact;
+  std::vector<double> aNorm_Contact(aXYZ.size());
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh;
+  std::vector<double> aXYZ0_Contact;
   {
+    std::vector<dfm2::CRigBone> aBone;
     { // makineg aBone
       std::vector<int> aIndBoneParent;
       std::vector<double> aJntRgrs0;
+      std::vector<double> aRigWeight_Contact;
       dfm2::cnpy::LoadSmpl(aXYZ0_Contact,
                            aRigWeight_Contact,
                            aTri_Contact,
@@ -232,8 +235,8 @@ int main(int argc,char* argv[])
                            std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
       dfm2::Smpl2Rig(aBone,
                      aIndBoneParent, aXYZ0_Contact, aJntRgrs0);
+      dfm2::UpdateBoneRotTrans(aBone);
     }
-    dfm2::UpdateBoneRotTrans(aBone);
     aXYZ_Contact = aXYZ0_Contact;
     aNorm_Contact.resize(aXYZ_Contact.size());
     delfem2::Normal_MeshTri3D(aNorm_Contact.data(),
@@ -244,9 +247,9 @@ int main(int argc,char* argv[])
              0.01);
   }
   
-  // above: data preparation
+  // above: data preparation (derived)
   // ----------------------------------------------
-  // below: opengl
+  // below: opengl and UI
 
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
@@ -257,10 +260,12 @@ int main(int argc,char* argv[])
   
   while (true)
   {
-    StepTime();
+    StepTime(aXYZ, aXYZt, aUVW, aBCFlag, aInfoNearest,
+             aETri,aVec2,aLine,
+             aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh);
     // ------------
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+//    myGlutDisplay(aETri,aVec2);
     for( auto& rt : aRT23 ){
       ::glPointSize(10);
       ::glColor3d(0,0,0);
@@ -269,6 +274,17 @@ int main(int argc,char* argv[])
       ::glVertex3dv(v.p);
       ::glEnd();
     }
+    ::glColor3d(1,0,0);
+//    delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+//                                        aTri_Contact.data(), aTri_Contact.size()/3);
+    ::glEnable(GL_LIGHTING);
+    delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Contact.data(),
+                                            aTri_Contact.data(), aTri_Contact.size()/3);
+    ::glDisable(GL_LIGHTING);
+    ::glColor3d(0,0,0);
+//    delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
+    delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
+
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
