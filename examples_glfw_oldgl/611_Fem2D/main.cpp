@@ -774,7 +774,6 @@ void DrawVelocityField(){
 
 int main(int argc,char* argv[])
 {
-  
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.5;
