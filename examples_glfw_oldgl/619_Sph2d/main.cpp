@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+/**
+ * @file implementation based on "Müller et al., Particle-based fluid simulation for interactive applications. SCA 2003"
+ */
+
+// ----------------------
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -31,10 +44,12 @@ void SPH_DensityPressure
   double H,
   double SPH_SIMSCALE,
   double SPH_PMASS,
-  double Poly6Kern,
   double SPH_RESTDENSITY,
   double SPH_INTSTIFF)
 {
+  const double Poly6Kern = 315.0 / ( 64.0 * M_PI * pow( H, 9 ) );
+//  const double SpikyKern = -45.0 / ( M_PI * pow( H, 6 ) );
+//  const double LapKern   = 45.0 / ( M_PI * pow( H, 6 ) );
   for(unsigned int ips=0;ips<ps.size();ips++){
     SParticle& ps0 = ps[ips];
     double sum = 0.0;
@@ -59,13 +74,14 @@ void SPH_DensityPressure
 }
 
 void SPH_Force
-( std::vector<SParticle>& ps ,
+(std::vector<SParticle>& ps,
  double H,
  double SPH_SIMSCALE,
- double LapKern,
- double SpikyKern,
  double SPH_VISC)
 {
+//  const double Poly6Kern = 315.0 / ( 64.0 * M_PI * pow( H, 9 ) );
+  const double SpikyKern = -45.0 / ( M_PI * pow( H, 6 ) );
+  const double LapKern   = 45.0 / ( M_PI * pow( H, 6 ) );
   for(unsigned int ips=0;ips<ps.size();ips++){
     SParticle& ps0 = ps[ips];
     double force[3] = { 0,0,0 };
@@ -170,20 +186,15 @@ void SPH_UpdatePosition
 // --------------------------------
 
 double H;
+double DT;
+double RADIUS;
+double EPSILON;
+double MIN[3];
+double MAX[3];
 double SPH_PMASS;
 double SPH_INTSTIFF;
 double SPH_EXTSTIFF;
 double SPH_EXTDAMP;
-double Poly6Kern;
-double SpikyKern;
-double LapKern;
-double DT;
-double RADIUS;
-double EPSILON;
-double INITMIN[3];
-double INITMAX[3];
-double MIN[3];
-double MAX[3];
 double SPH_PDIST;
 double SPH_SIMSCALE;
 double SPH_RESTDENSITY;
@@ -194,22 +205,17 @@ std::vector<SParticle> ps;
 void init( std::vector<SParticle>& ps )
 {
   H         = 0.01; // m
-  SPH_PMASS = 0.00020543; // kg
-  SPH_INTSTIFF = 1.00;  //
-  SPH_EXTSTIFF = 50000.0; // penalty coefficient of the wall repulsion force
-  SPH_EXTDAMP  = 256.0; // damping of the wall repulsion force
-  Poly6Kern = 315.0 / ( 64.0 * M_PI * pow( H, 9 ) );
-  SpikyKern = -45.0 / ( M_PI * pow( H, 6 ) );
-  LapKern   = 45.0 / ( M_PI * pow( H, 6 ) );
   DT        = 0.001;
   RADIUS    = 0.001; // m
   EPSILON   = 0.00001;
   // size of water column
-  INITMIN[0] =  0.0; INITMIN[1] =  0.0; INITMIN[2] = 0.0;
-  INITMAX[0] = 10.0; INITMAX[1] = 20.0; INITMAX[2] = 0.0;
   // size of box
   MIN[0] =  0.0; MIN[1] =  0.0; MIN[2] = -10.0;
   MAX[0] = 20.0; MAX[1] = 20.0; MAX[2] =  10.0;
+  SPH_PMASS = 0.00020543; // kg
+  SPH_INTSTIFF = 1.00;  //
+  SPH_EXTSTIFF = 50000.0; // penalty coefficient of the wall repulsion force
+  SPH_EXTDAMP  = 256.0; // damping of the wall repulsion force
   SPH_RESTDENSITY = 600.0; // kg / m^3
   SPH_PDIST = pow( SPH_PMASS / SPH_RESTDENSITY, 1/3.0 );
   SPH_SIMSCALE = 0.008; // unit size
@@ -220,18 +226,22 @@ void init( std::vector<SParticle>& ps )
   d = SPH_PDIST * 0.87 / SPH_SIMSCALE;
   
   ps.clear();
-  for ( double z = INITMIN[2]; z <= INITMAX[2]; z += d ) {
-  for ( double y = INITMIN[1]; y <= INITMAX[1]; y += d ) {
-  for ( double x = INITMIN[0]; x <= INITMAX[0]; x += d ) {
-    SParticle p;    
-    p.r[0] = x; p.r[1] = y; p.r[2] = z;
-    p.r[0] += -0.05 + rand() * 0.1 / RAND_MAX;
-    p.r[1] += -0.05 + rand() * 0.1 / RAND_MAX;
-    p.r[2] += -0.05 + rand() * 0.1 / RAND_MAX;
-    p.v[0] = 0.0; p.v[1] = 0.0; p.v[2] = 0.0;
-    ps.push_back( p );
-  }
-  }
+  {
+    const double INITMIN[3] = { 0.0, 0.0, 0.0};
+    const double INITMAX[3] = { 10.0, 20.0, 0.0};
+    for ( double z = INITMIN[2]; z <= INITMAX[2]; z += d ) {
+    for ( double y = INITMIN[1]; y <= INITMAX[1]; y += d ) {
+    for ( double x = INITMIN[0]; x <= INITMAX[0]; x += d ) {
+      SParticle p;
+      p.r[0] = x; p.r[1] = y; p.r[2] = z;
+      p.r[0] += -0.05 + rand() * 0.1 / RAND_MAX;
+      p.r[1] += -0.05 + rand() * 0.1 / RAND_MAX;
+      p.r[2] += -0.05 + rand() * 0.1 / RAND_MAX;
+      p.v[0] = 0.0; p.v[1] = 0.0; p.v[2] = 0.0;
+      ps.push_back( p );
+    }
+    }
+    }
   }
 }
       
@@ -280,9 +290,9 @@ int main(int argc, char *argv[])
   while (true){
     {
       SPH_DensityPressure( ps,
-                          H,SPH_SIMSCALE,SPH_PMASS,Poly6Kern,SPH_RESTDENSITY,SPH_INTSTIFF);
+                          H,SPH_SIMSCALE,SPH_PMASS,SPH_RESTDENSITY,SPH_INTSTIFF);
       SPH_Force(ps,
-                H,SPH_SIMSCALE,LapKern,SpikyKern,SPH_VISC);
+                H,SPH_SIMSCALE,SPH_VISC);
       SPH_UpdatePosition( ps,
                          SPH_PMASS,SPH_LIMIT,SPH_SIMSCALE,SPH_EXTSTIFF,SPH_EXTDAMP,
                          DT,EPSILON,MIN,MAX,RADIUS);
