@@ -31,6 +31,7 @@ add_subdirectory(120_AdaptiveDistanceField)
 add_subdirectory(121_IsoSurfaceStuffing)
 add_subdirectory(122_HashBvhSelfCollision)
 add_subdirectory(123_HashLbvh3D)
+add_subdirectory(124_4RotSymField)
 
 # meshing
 add_subdirectory(201_DynTri2dTriangulation)
