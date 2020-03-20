@@ -56,7 +56,8 @@ void dfm2::PBD_TriStrain
     double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
     double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
     double m[3] = {1,1,1};
-    PBD_Update_Const3(aXYZt, 3, 3, m, C, &dCdp[0][0], aIP);
+    PBD_Update_Const3(aXYZt,
+                      3, 3, m, C, &dCdp[0][0], aIP, 1.0);
   }
 }
 
@@ -64,7 +65,8 @@ void dfm2::PBD_Bend
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,
- const std::vector<CVec2d>& aVec2)
+ const std::vector<CVec2d>& aVec2,
+ double ratio)
 {
   for(size_t it=0;it<aETri.size();++it){
     for(int ie=0;ie<3;++ie){
@@ -89,7 +91,8 @@ void dfm2::PBD_Bend
       PBD_CdC_QuadBend(C, dCdp,
                        P, p);
       double m[4] = {1,1,1,1};
-      PBD_Update_Const3(aXYZt, 4,3, m, C, &dCdp[0][0], aIP);
+      PBD_Update_Const3(aXYZt,
+                        4,3, m, C, &dCdp[0][0], aIP, ratio);
     }
   }
 }

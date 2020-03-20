@@ -26,7 +26,8 @@ void PBD_TriStrain(double* aXYZt,
 void PBD_Bend(double* aXYZt,
               unsigned int nXYZ,
               const std::vector<delfem2::CDynTri>& aETri,
-              const std::vector<CVec2d>& aVec2);
+              const std::vector<CVec2d>& aVec2,
+              double ratio);
   
 } // namespace delfem2
 

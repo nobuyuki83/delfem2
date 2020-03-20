@@ -853,6 +853,7 @@ void dfm2::CMat3<T>::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
   m = m.MatMat(mx);
   *this = m;
 }
+template void dfm2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, double rz);
 
 template <typename T>
 void dfm2::CMat3<T>::GetQuat_RotMatrix(double quat[]) const{

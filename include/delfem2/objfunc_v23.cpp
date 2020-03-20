@@ -70,7 +70,8 @@ void dfm2::PBD_Update_Const3
  const double* m,
  const double* C,
  const double* dCdp,
- const int* aIP)
+ const int* aIP,
+ double ratio)
 {
   std::vector<double> mi(np);
   for(int ip=0;ip<np;++ip){ mi[ip] = 1.0/m[ip]; }
@@ -102,7 +103,7 @@ void dfm2::PBD_Update_Const3
     const int ip0 = aIP[ine];
     for(int ic=0;ic<nc;++ic){
       for(int idim=0;idim<ndim;++idim){
-        aXYZt[ip0*3+idim] -= MinvC[ic*np*ndim+ine*ndim+idim]*lmd[ic];
+        aXYZt[ip0*3+idim] -= ratio*MinvC[ic*np*ndim+ine*ndim+idim]*lmd[ic];
       }
     }
 

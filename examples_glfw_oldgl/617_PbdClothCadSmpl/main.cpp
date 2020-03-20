@@ -18,6 +18,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
+#include "delfem2/color.h"
 //
 #include "delfem2/v23m3q.h"
 #include "delfem2/objfunc_v23.h"
@@ -35,6 +36,7 @@
 #include "delfem2/opengl/glold_v23dtricad.h"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
+#include "delfem2/opengl/glold_color.h"
 
 namespace dfm2 = delfem2;
 
@@ -66,7 +68,7 @@ void StepTime
   dfm2::PBD_TriStrain(aXYZt.data(),
                       aXYZt.size()/3, aETri, aVec2);
   dfm2::PBD_Bend(aXYZt.data(),
-                 aXYZt.size()/3, aETri, aVec2);
+                 aXYZt.size()/3, aETri, aVec2, 0.5);
   dfm2::PBD_Seam(aXYZt.data(),
                  aXYZt.size()/3, aLine.data(), aLine.size()/2);
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
@@ -112,9 +114,31 @@ void myGlutDisplay(const std::vector<dfm2::CDynTri>& aETri,
 class CRigidTrans_2DTo3D
 {
 public:
+  dfm2::CVec3d Transform(const dfm2::CVec2d& pi) const {
+    dfm2::CVec3d p0(pi.x()-org2.x(), pi.y()-org2.y(),0.0);
+    dfm2::CVec3d p2 = p0;
+    if( radinv_x < 1.0e-5 ) {
+      double x0 = p0.x();
+      p2.p[0] = x0;
+      p2.p[2] = -0.5*radinv_x*x0*x0;
+    }
+    else{
+      double x0 = p0.x();
+      p2.p[0] = (1.0/radinv_x)*sin(radinv_x*x0);
+      p2.p[2] = -(1.0/radinv_x)*(1-cos(radinv_x*x0));
+    }
+    dfm2::CVec3d p3 = org3+ dfm2::MatVec(R,p2);
+    return p3;
+  }
+public:
+  CRigidTrans_2DTo3D(){
+    radinv_x = 0.0;
+    R.SetIdentity();
+  }
   dfm2::CVec2d org2;
   dfm2::CVec3d org3;
   dfm2::CMat3d R;
+  double radinv_x;
 };
 
 int main(int argc,char* argv[])
@@ -131,13 +155,19 @@ int main(int argc,char* argv[])
     15, 6,
     13, 0,
     4, 9,
-    11, 2
+    11, 2,
+    20, 17,
+    22, 25,
+    1, 18,
+    12, 19,
+    5, 24,
+    8, 23
   };
   delfem2::CMesher_Cad2D mesher;
   mesher.edge_length = 0.015;
   std::vector<CRigidTrans_2DTo3D> aRT23;
   { // initial position
-    aRT23.resize(2);
+    aRT23.resize(4);
     { // back body
       CRigidTrans_2DTo3D& rt23 = aRT23[0];
       rt23.org2 = dfm2::CVec2d(0.189,-0.5)*scale_adjust;
@@ -150,6 +180,21 @@ int main(int argc,char* argv[])
       rt23.org3 = dfm2::CVec3d(0.0, 0.1, +0.2);
       rt23.R.SetIdentity();
     }
+    { // front body
+      CRigidTrans_2DTo3D& rt23 = aRT23[2];
+      rt23.org2 = dfm2::CVec2d(0.833,-0.45)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(+0.3, 0.3, +0.0);
+      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, +M_PI*0.5, 0.0);
+      rt23.radinv_x = 13;
+    }
+    { // front body
+      CRigidTrans_2DTo3D& rt23 = aRT23[3];
+      rt23.org2 = dfm2::CVec2d(1.148,-0.45)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(-0.3, 0.3, +0.0);
+      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, -M_PI*0.5, 0.0);
+      rt23.radinv_x = 13;
+    }
+
   }
   // above: input data
   // -----------------------------------
@@ -192,9 +237,7 @@ int main(int argc,char* argv[])
     const CRigidTrans_2DTo3D& rt23 = aRT23[ifc];
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,ifc), cad);
     for(int ip : aIP){
-      dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
-      dfm2::CVec3d p1 = rt23.org3+ dfm2::MatVec(rt23.R,p0);
-      p1.CopyValueTo(aXYZ.data()+ip*3);
+      rt23.Transform(aVec2[ip]).CopyValueTo(aXYZ.data()+ip*3);
     }
   }
   std::vector<unsigned int> aLine;
@@ -274,6 +317,8 @@ int main(int argc,char* argv[])
       ::glVertex3dv(v.p);
       ::glEnd();
     }
+    ::glEnable(GL_LIGHTING);
+    dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8) );
     ::glColor3d(1,0,0);
 //    delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
 //                                        aTri_Contact.data(), aTri_Contact.size()/3);
@@ -284,7 +329,9 @@ int main(int argc,char* argv[])
     ::glColor3d(0,0,0);
 //    delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
     delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
-
+    ::glEnable(GL_LIGHTING);
+    dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Red() );
+    delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aXYZ.data());
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }

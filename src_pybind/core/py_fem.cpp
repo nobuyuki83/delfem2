@@ -573,7 +573,8 @@ void PyPBD_ConstProj_ClothBend
   double* aXYZt = (double*)(npXYZt.request().ptr);
   PBD_Bend(aXYZt,
            npXYZt.shape()[0],
-           aETri, aVec2);
+           aETri, aVec2,
+           1.0);
 }
 
 
