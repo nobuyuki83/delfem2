@@ -30,6 +30,7 @@ set(INPUT_SRC
     ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
+    ${DELFEM2_INC}/mat4.h               ${DELFEM2_INC}/mat4.cpp
     ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp

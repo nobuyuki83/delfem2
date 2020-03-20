@@ -155,66 +155,12 @@ void MatVec3_ScaleAdd(T y[3],
 
 void VecMat3(double y[3],
              const double x[3], const double m[9]);
-void Mat4Vec3(double vo[3],
-              const double M[16],
-              const double vi[3]);
-
-// -------------------------------
 
 template <typename T>
-void MatVec4(T v[4],
-    const T A[16],
-    const T x[4]);
-
-template <typename T>
-void MatMat4(
-    T* C,
-    const T* A,
-    const T* B);
-
-
-template <typename REAL>
-void Mat4_Identity(
-    REAL A[16]);
-  
-template <typename REAL>
-void Mat4_AffineScale(
-    REAL A[16],
-    REAL s);
-  
-template <typename REAL>
-void Mat4_AffineTranslation(
-    REAL A[16],
-    REAL dx, REAL dy, REAL dz);
-
-template <typename T>
-void Mat4_AffineRotationRodriguez(
-    T A[16],
-    T dx, T dy, T dz);
-
-template <typename T>
-void Vec3_AffMat3Vec3Projection(
+void Vec3_Mat4Vec3_AffineProjection(
     T y0[3],
     const T a[16],
     const T x0[3]);
-
-/**
- * @func multiply rotation affine matrix from left to an affine matrix in 3D
- * @details the ritation is parmeterized with a rodriguez angle
- */
-template <typename REAL>
-void Rotate_Mat4AffineRodriguez(
-    REAL A[16],
-    const REAL v[3]);
-
-/**
- * @func multiply translation affine matrix from left to an affine matrix in 3D
- */
-template <typename REAL>
-void Translate_Mat4Affine(
-    REAL A[16],
-    const REAL v[3]);
-
 
 
 // --------------------------------

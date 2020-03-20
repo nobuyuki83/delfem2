@@ -34,8 +34,6 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-  ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
   ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp  
   ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp  
   ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
@@ -43,7 +41,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp  
   ${DELFEM2_INC}/bv.h            
             
-  ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/paramgeo_v23.h              ${DELFEM2_INC}/paramgeo_v23.cpp
   ${DELFEM2_INC}/cad2d.h                     ${DELFEM2_INC}/cad2d.cpp
   ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp

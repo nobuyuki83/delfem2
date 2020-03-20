@@ -1022,26 +1022,9 @@ void LoopEdgeCad2D_SVGPathD
         is += 2;
       }
     }
-    else if( aStr1[is] == "C" ){
-      dfm2::CCad2D_EdgeGeo e;
-      e.p0 = pos_cur;
-      e.p1 = dfm2::CVec2d( myStod(aStr1[is+5]), myStod(aStr1[is+6]) );
-      double len01 = (e.p1 - e.p0).Length();
-      const dfm2::CVec2d lx = (e.p1 - e.p0)/(len01*len01);
-      const dfm2::CVec2d ly = dfm2::CVec2d(lx.y(), -lx.x());
-      e.type_edge = dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC;
-      e.param.resize(4,0.0);
-      dfm2::CVec2d p2( myStod(aStr1[is+1]), myStod(aStr1[is+2]) );
-      dfm2::CVec2d p3( myStod(aStr1[is+3]), myStod(aStr1[is+4]) );
-      e.param[0] = (p2-e.p0)*lx;
-      e.param[1] = (p2-e.p0)*ly;
-      e.param[2] = (p3-e.p0)*lx;
-      e.param[3] = (p3-e.p0)*ly;
-      aEdge.push_back(e);
-      pos_cur = e.p1;
-      is += 7;
-      for(;;){
-        if( isAlphabet(aStr1[is][0]) ){ break; }
+    else if( aStr1[is] == "C" ){ // cubic Bezier absolute coordinates
+      ++is;
+      for(;;){ // loop for poly Bezier
         dfm2::CCad2D_EdgeGeo e;
         e.p0 = pos_cur;
         e.p1 = dfm2::CVec2d( myStod(aStr1[is+4]), myStod(aStr1[is+5]) );
@@ -1059,6 +1042,7 @@ void LoopEdgeCad2D_SVGPathD
         aEdge.push_back(e);
         pos_cur = e.p1;
         is += 6;
+        if( isAlphabet(aStr1[is][0]) ){ break; }
       }
     }
     else if( aStr1[is] == "c" ){
