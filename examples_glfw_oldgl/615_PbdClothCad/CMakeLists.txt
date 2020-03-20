@@ -22,7 +22,6 @@ set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include
@@ -50,7 +49,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/objfunc_v23.h             ${DELFEM2_INC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h         ${DELFEM2_INC}/objfunc_v23dtri.cpp
   ${DELFEM2_INC}/dtri_v2.h                 ${DELFEM2_INC}/dtri_v2.cpp
-  ${DELFEM2_INC}/cad2d.h                   ${DELFEM2_INC}/cad2d.cpp
+  ${DELFEM2_INC}/cad2d_v2dtri.h            ${DELFEM2_INC}/cad2d_v2dtri.cpp
   ${DELFEM2_INC}/srchuni_v3.h              ${DELFEM2_INC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 

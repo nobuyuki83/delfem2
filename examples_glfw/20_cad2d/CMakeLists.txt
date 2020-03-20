@@ -35,7 +35,7 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
 
-    ${DELFEM2_INC}/cad2d.h                     ${DELFEM2_INC}/cad2d.cpp
+    ${DELFEM2_INC}/cad2d_v2dtri.h              ${DELFEM2_INC}/cad2d_v2dtri.cpp
     ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
 
     ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp

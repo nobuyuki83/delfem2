@@ -7,8 +7,9 @@
 
 #include <iostream>
 #include <math.h>
-#include "delfem2/cad2d.h"
 #include "delfem2/vec3.h"
+//
+#include "delfem2/cad2d_v2dtri.h"
 
 // ----
 

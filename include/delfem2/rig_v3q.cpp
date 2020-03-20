@@ -424,11 +424,11 @@ void dfm2::Smpl2Rig(
     const unsigned int nP = aXYZ0.size()/3;
     const unsigned int nBone = aIndBoneParent.size();
     aJntPos0.assign(nBone*3, 0.0);
-    for(int ib=0;ib<nBone;++ib){
+    for(unsigned int ib=0;ib<nBone;++ib){
       aJntPos0[ib*3+0] = 0;
       aJntPos0[ib*3+1] = 0;
       aJntPos0[ib*3+2] = 0;
-      for(int ip=0;ip<nP;++ip){
+      for(unsigned int ip=0;ip<nP;++ip){
         aJntPos0[ib*3+0] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+0];
         aJntPos0[ib*3+1] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+1];
         aJntPos0[ib*3+2] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+2];
@@ -436,7 +436,7 @@ void dfm2::Smpl2Rig(
     }
   }
   aBone.resize(nbone);
-  for(int ib=0;ib<nbone;++ib){
+  for(unsigned int ib=0;ib<nbone;++ib){
     int ibp = aIndBoneParent[ib];
     aBone[ib].ibone_parent = ibp;
     aBone[ib].invBindMat[ 3] = -aJntPos0[ib*3+0];
@@ -502,30 +502,21 @@ void dfm2::SetMat4AffineBone_FromJointRelativeRotation
   assert( aMat4AffineBone.size() == nBone*16 );
   dfm2::Mat4_ScaleRotTrans(aMat4AffineBone.data(),
                            1.0, aQuatRelativeRot.data(), trans_root);
-  for(int ibone=1;ibone<nBone;++ibone){
+  for(unsigned int ibone=1;ibone<nBone;++ibone){
     int ibp = aIndBoneParent[ibone];
-    assert( ibp >= 0 && ibp < nBone );
+    assert( ibp >= 0 && ibp < (int)nBone );
     // inv binding mat
     double p1[3] = {aJntPos0[ibone*3+0], aJntPos0[ibone*3+1], aJntPos0[ibone*3+2]};
-    double m0[16];
-    dfm2::Mat4_AffineTranslation(m0,
-                                 -p1[0], -p1[1], -p1[2]);
-    // mat
-    double m1[16];
-    dfm2::Mat4_Quat(m1,
+    dfm2::CMat4<double> M0, M1, M2;
+    M0.Set_AffineTranslate(-p1[0], -p1[1], -p1[2]);
+    dfm2::Mat4_Quat(M1.mat,
                     aQuatRelativeRot.data()+ibone*4);
-    double m2[16];
-    dfm2::Mat4_AffineTranslation(m2,
-                                 +p1[0], +p1[1], +p1[2]);
-    double m3[16];
-    dfm2::MatMat4(m3,
-                  m1,m0);
-    double m4[16];
-    dfm2::MatMat4(m4,
-                  m2,m3);
+    M2.Set_AffineTranslate(+p1[0], +p1[1], +p1[2]);
+    dfm2::CMat4<double> M3 = M1.MatMat(M0);
+    dfm2::CMat4<double> M4 = M2.MatMat(M3);
     dfm2::MatMat4(aMat4AffineBone.data()+ibone*16,
                   aMat4AffineBone.data()+ibp*16,
-                  m4);
+                  M4.mat);
   }
 }
 

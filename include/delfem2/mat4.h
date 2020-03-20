@@ -86,6 +86,32 @@ void Vec3_Mat4Vec3_AffineProjection(
                                 const T a[16],
                                 const T x0[3]);
 
+template <typename REAL>
+class CMat4 {
+public:
+  CMat4 (){
+  };
+public:
+  void Set_AffineTranslate(REAL x, REAL y, REAL z){
+    Mat4_AffineTranslation(mat,
+                           x, y, z);
+  }
+  void Set_Quaternion(const REAL* q){
+    Mat4_Quat(mat,
+              q);
+  }
+  void SetIdentity() {
+    for(auto& v : mat){ v = 0; }
+    mat[0*4+0] = 1.0;
+    mat[1*4+1] = 1.0;
+    mat[2*4+2] = 1.0;
+    mat[3*4+3] = 1.0;
+  }
+  CMat4<REAL> MatMat(const CMat4<REAL>& mat0) const;
+public:
+  REAL mat[16];
+};
+
 }
 
 #endif

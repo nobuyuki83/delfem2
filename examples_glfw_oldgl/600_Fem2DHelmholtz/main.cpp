@@ -17,7 +17,7 @@
 #include "delfem2/dtri_v2.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
-#include "delfem2/cad2d.h"
+#include "delfem2/cad2d_v2dtri.h"
 
 // ---------------
 #include <GLFW/glfw3.h>

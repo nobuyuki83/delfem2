@@ -24,7 +24,7 @@
 #include "delfem2/objfunc_v23.h"
 #include "delfem2/objfunc_v23dtri.h"
 #include "delfem2/dtri_v2.h"
-#include "delfem2/cad2d.h"
+#include "delfem2/cad2d_v2dtri.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_v3q.h"
 //
