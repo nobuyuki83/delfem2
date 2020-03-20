@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cmath>
 #include "delfem2/mat3.h"
+#include "delfem2/mat4.h"
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshio.h"
@@ -71,7 +72,7 @@ void SetDisplacementAtFixedBoundary(
       aRhs[ip*3+2] = aXYZ0[ip*3+2];
     }
     if( aBCFlag[ip*3+0] == 2 ) {
-      dfm2::Vec3_AffMat3Vec3Projection(aRhs.data()+ip*3, A, aXYZ0.data()+ip*3);
+      dfm2::Vec3_Mat4Vec3_AffineProjection(aRhs.data()+ip*3, A, aXYZ0.data()+ip*3);
     }
   }
 }

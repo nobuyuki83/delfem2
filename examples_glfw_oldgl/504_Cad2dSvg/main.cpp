@@ -42,7 +42,6 @@ int main(int argc,char* argv[])
       if( iframe == nframe_interval*1 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
       if( iframe == nframe_interval*2 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
       if( iframe == nframe_interval*3 ){ path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg"; }
-      path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg";
       dfm2::ReadSVG_Cad2D(cad,
                           path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
