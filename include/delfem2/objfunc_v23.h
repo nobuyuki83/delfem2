@@ -44,7 +44,8 @@ void PBD_Update_Const3(
     const double* m,
     const double* C,
     const double* dCdp,
-    const int* aIP);
+    const int* aIP,
+    double ratio);
 
 void PBD_ConstProj_Rigid2D(
     double* aXYt,

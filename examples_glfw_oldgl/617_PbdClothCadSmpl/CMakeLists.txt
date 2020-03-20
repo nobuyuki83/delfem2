@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/bvh.h                      ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/funcs.h                    ${DELFEM2_INC}/funcs.cpp
   ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
+  ${DELFEM2_INC}/color.h                    ${DELFEM2_INC}/color.cpp
   ${DELFEM2_INC}/bv.h        
       
   ${DELFEM2_INC}/dtri_v2.h                  ${DELFEM2_INC}/dtri_v2.cpp
@@ -56,8 +57,9 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
   ${DELFEM2_INC}/opengl/glold_v23dtricad.h  ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/glold_color.h       ${DELFEM2_INC}/opengl/glold_color.cpp  
   ${DELFEM2_INC}/opengl/glold_rig_v23q.h    ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.h       ${DELFEM2_INC}/opengl/glfw_viewer.cpp  
+  ${DELFEM2_INC}/opengl/glfw_viewer.h       ${DELFEM2_INC}/opengl/glfw_viewer.cpp
 
   ${3RD_PARTY}/cnpy/cnpy.h                  ${3RD_PARTY}/cnpy/cnpy.cpp  
 

@@ -38,6 +38,14 @@ public:
     type_edge = LINE;
     ip0 = -1;
   }
+  CCad2D_EdgeGeo(const CCad2D_EdgeGeo& e){
+    this->p0 = e.p0;
+    this->p1 = e.p1;
+    this->type_edge = e.type_edge;
+    this->param = e.param;
+    this->aP = e.aP;
+    this->ip0 = e.ip0;    
+  }
   void GenMeshNDiv(unsigned int ndiv);
   void GenMeshLength(double elen);
   double Distance(double x, double y) const;

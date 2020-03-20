@@ -115,6 +115,41 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
+void dfm2::opengl::DrawMeshDynTri_FaceNorm
+ (const std::vector<CDynTri>& aSTri,
+  const double* aXYZ)
+{
+  //  ::glPushAttrib(GL_ENABLE_BIT);
+  
+  ::glEnable(GL_LIGHTING);
+  //  ::myGlColorDiffuse(CColor::Orange());
+  ::glBegin(GL_TRIANGLES);
+  for (const auto & itri : aSTri){
+    const int i0 = itri.v[0];
+    const int i1 = itri.v[1];
+    const int i2 = itri.v[2];
+    if( i0 == -1 ){
+      assert( i1 == -1 );
+      assert( i2 == -1 );
+      continue;
+    }
+    const double* p0 = aXYZ+i0*3;
+    const double* p1 = aXYZ+i1*3;
+    const double* p2 = aXYZ+i2*3;
+    {
+      double a, n[3];
+      UnitNormalAreaTri3(n, a,
+                         p0, p1, p2);
+      ::glNormal3dv(n);
+    }
+    ::glVertex3dv(p0);
+    ::glVertex3dv(p1);
+    ::glVertex3dv(p2);
+  }
+  ::glEnd();
+}
+
+
 void dfm2::opengl::DrawMeshDynTri_Edge
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aVec3)

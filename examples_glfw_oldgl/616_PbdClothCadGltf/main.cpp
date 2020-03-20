@@ -77,7 +77,7 @@ void StepTime()
   dfm2::PBD_TriStrain(aXYZt.data(),
                       aXYZt.size()/3, aETri, aVec2);
   dfm2::PBD_Bend(aXYZt.data(),
-                 aXYZt.size()/3, aETri, aVec2);
+                 aXYZt.size()/3, aETri, aVec2, 1.0);
   dfm2::PBD_Seam(aXYZt.data(),
                  aXYZt.size()/3, aLine.data(), aLine.size()/2);
   dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,

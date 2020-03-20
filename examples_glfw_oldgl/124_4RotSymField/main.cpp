@@ -6,8 +6,8 @@
 */
 
 /**
- * @brief demo for view navigation in 3D
- * @details this demo is for showing CViewer_GLFW funtinoalities
+ * @brief implementation of 4 rotatoinal symetry field
+ * @details implementation is based on "Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung. Instant field-aligned meshes. Siggraph Asia 2015"
  */
 
 #include <cstdlib>

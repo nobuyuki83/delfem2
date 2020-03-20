@@ -42,7 +42,9 @@ int main(int argc,char* argv[])
       if( iframe == nframe_interval*1 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
       if( iframe == nframe_interval*2 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
       if( iframe == nframe_interval*3 ){ path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg"; }
-      dfm2::ReadSVG_Cad2D(cad, path_svg, 1.0);
+      path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg";
+      dfm2::ReadSVG_Cad2D(cad,
+                          path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
       dfm2::CBoundingBox2D bb = cad.BB();
       viewer.nav.camera.trans[0] = -(bb.x_min+bb.x_max)*0.5;
@@ -50,7 +52,7 @@ int main(int argc,char* argv[])
       viewer.nav.camera.trans[2] = 0.0;
       viewer.nav.camera.view_height = 0.5*bb.LengthDiagonal();
       viewer.nav.camera.scale = 1.0;
-      std::cout << path_svg << " " << bb.LengthDiagonal() << std::endl;
+      cad.iedge_picked = 22;
     }
     iframe = (iframe+1)%(nframe_interval*4);
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
