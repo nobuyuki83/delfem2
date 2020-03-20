@@ -58,7 +58,7 @@ set(INPUT_SRC
     ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_INC}/dtri_v3.cpp
     ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
     ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
-    ${DELFEM2_INC}/cad2d.h              ${DELFEM2_INC}/cad2d.cpp
+    ${DELFEM2_INC}/cad2d_v2dtri.h       ${DELFEM2_INC}/cad2d_v2dtri.cpp
     ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_INC}/srchuni_v3.cpp
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
 

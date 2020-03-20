@@ -46,7 +46,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/dtri_v2.h                ${DELFEM2_INC}/dtri_v2.cpp
   ${DELFEM2_INC}/objfunc_v23.h            ${DELFEM2_INC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h        ${DELFEM2_INC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/cad2d.h                  ${DELFEM2_INC}/cad2d.cpp
+  ${DELFEM2_INC}/cad2d_v2dtri.h           ${DELFEM2_INC}/cad2d_v2dtri.cpp
   ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
   ${DELFEM2_INC}/v23m3q.h                 ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/srchuni_v3.h             ${DELFEM2_INC}/srchuni_v3.cpp

@@ -165,7 +165,8 @@ void dfm2::Rotate_Mat4AffineRodriguez(
   Mat4_AffineRotationRodriguez(B,
                                V[0],V[1],V[2]);
   REAL C[16];
-  MatMat4(C,B,A);
+  MatMat4(C,
+      B,A);
   
   for(int i=0;i<16;++i){ A[i] = C[i]; }
 }
@@ -185,3 +186,13 @@ void dfm2::Translate_Mat4Affine(
 template void dfm2::Translate_Mat4Affine(float A[16], const float V[3]);
 template void dfm2::Translate_Mat4Affine(double A[16], const double V[3]);
 
+
+
+template <typename T>
+dfm2::CMat4<T> dfm2::CMat4<T>::MatMat(const CMat4<T>& mat0) const{
+  CMat4 m;
+  ::dfm2::MatMat4(m.mat,
+                  this->mat, mat0.mat);
+  return m;
+}
+template dfm2::CMat4<double> dfm2::CMat4<double>::MatMat(const CMat4<double>& mat0) const;

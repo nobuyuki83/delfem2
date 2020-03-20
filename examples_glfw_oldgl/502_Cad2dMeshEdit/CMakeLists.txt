@@ -42,13 +42,13 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/bv.h            
             
   ${DELFEM2_INC}/paramgeo_v23.h              ${DELFEM2_INC}/paramgeo_v23.cpp
-  ${DELFEM2_INC}/cad2d.h                     ${DELFEM2_INC}/cad2d.cpp
+  ${DELFEM2_INC}/cad2d_v2dtri.h              ${DELFEM2_INC}/cad2d_v2dtri.cpp
   ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
 
-  ${DELFEM2_INC}/opengl/glold_v23.h            ${DELFEM2_INC}/opengl/glold_v23.cpp
-  ${DELFEM2_INC}/opengl/glold_v23dtricad.h     ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
-  ${DELFEM2_INC}/opengl/glold_funcs.h          ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.h          ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h          ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_v23dtricad.h   ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glfw_viewer.h        ${DELFEM2_INC}/opengl/glfw_viewer.cpp
   
   main.cpp
 )
