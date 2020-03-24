@@ -243,15 +243,15 @@ void dfm2::PBD_CdC_TriStrain2D3D
   const CVec3d dC2dp1 = GuGu_xy[0]*gd0 + GuGu_xy[2]*gd1;
   const CVec3d dC2dp2 = GuGu_xy[1]*gd1 + GuGu_xy[2]*gd0;
   
-  dC0dp0.CopyValueTo(dCdp[0]+0*3);
-  dC0dp1.CopyValueTo(dCdp[0]+1*3);
-  dC0dp2.CopyValueTo(dCdp[0]+2*3);
-  dC1dp0.CopyValueTo(dCdp[1]+0*3);
-  dC1dp1.CopyValueTo(dCdp[1]+1*3);
-  dC1dp2.CopyValueTo(dCdp[1]+2*3);
-  dC2dp0.CopyValueTo(dCdp[2]+0*3);
-  dC2dp1.CopyValueTo(dCdp[2]+1*3);
-  dC2dp2.CopyValueTo(dCdp[2]+2*3);
+  dC0dp0.CopyTo(dCdp[0]+0*3);
+  dC0dp1.CopyTo(dCdp[0]+1*3);
+  dC0dp2.CopyTo(dCdp[0]+2*3);
+  dC1dp0.CopyTo(dCdp[1]+0*3);
+  dC1dp1.CopyTo(dCdp[1]+1*3);
+  dC1dp2.CopyTo(dCdp[1]+2*3);
+  dC2dp0.CopyTo(dCdp[2]+0*3);
+  dC2dp1.CopyTo(dCdp[2]+1*3);
+  dC2dp2.CopyTo(dCdp[2]+2*3);
 }
 
 void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
@@ -277,9 +277,9 @@ void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
   v20 /= l20;
   v01 /= l01;
   for(int i=0;i<27;++i){ (&dCdp[0][0])[i] = 0.0; }
-  v12.CopyValueTo(dCdp[0]+3*1);  v12.CopyValueToScale(dCdp[0]+3*2,-1.0);
-  v20.CopyValueTo(dCdp[1]+3*2);  v20.CopyValueToScale(dCdp[1]+3*0,-1.0);
-  v01.CopyValueTo(dCdp[2]+3*0);  v01.CopyValueToScale(dCdp[2]+3*1,-1.0);
+  v12.CopyTo(dCdp[0]+3*1);  v12.CopyToScale(dCdp[0]+3*2,-1.0);
+  v20.CopyTo(dCdp[1]+3*2);  v20.CopyToScale(dCdp[1]+3*0,-1.0);
+  v01.CopyTo(dCdp[2]+3*0);  v01.CopyToScale(dCdp[2]+3*1,-1.0);
 }
 
 void dfm2::PBD_ConstraintProjection_EnergyStVK
@@ -405,12 +405,12 @@ void dfm2::PBD_ConstraintProjection_DistanceTet
   v23 /= l23;
   ////
   for(int i=0;i<6*3*4;++i){ (&dCdp[0][0])[i] = 0.0; }
-  v01.CopyValueTo(dCdp[0]+0*3);  v01.CopyValueToScale(dCdp[0]+1*3,-1.0);
-  v02.CopyValueTo(dCdp[1]+0*3);  v02.CopyValueToScale(dCdp[1]+2*3,-1.0);
-  v03.CopyValueTo(dCdp[2]+0*3);  v03.CopyValueToScale(dCdp[2]+3*3,-1.0);
-  v12.CopyValueTo(dCdp[3]+1*3);  v12.CopyValueToScale(dCdp[3]+2*3,-1.0);
-  v13.CopyValueTo(dCdp[4]+1*3);  v13.CopyValueToScale(dCdp[4]+3*3,-1.0);
-  v23.CopyValueTo(dCdp[5]+2*3);  v23.CopyValueToScale(dCdp[5]+3*3,-1.0);
+  v01.CopyTo(dCdp[0]+0*3);  v01.CopyToScale(dCdp[0]+1*3,-1.0);
+  v02.CopyTo(dCdp[1]+0*3);  v02.CopyToScale(dCdp[1]+2*3,-1.0);
+  v03.CopyTo(dCdp[2]+0*3);  v03.CopyToScale(dCdp[2]+3*3,-1.0);
+  v12.CopyTo(dCdp[3]+1*3);  v12.CopyToScale(dCdp[3]+2*3,-1.0);
+  v13.CopyTo(dCdp[4]+1*3);  v13.CopyToScale(dCdp[4]+3*3,-1.0);
+  v23.CopyTo(dCdp[5]+2*3);  v23.CopyToScale(dCdp[5]+3*3,-1.0);
 }
 
 

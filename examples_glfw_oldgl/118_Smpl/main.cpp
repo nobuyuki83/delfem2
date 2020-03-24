@@ -59,36 +59,13 @@ int main()
   {
     iframe = (iframe+1)%50;
     if( iframe ==0 ){
-      std::random_device rd;
-      std::mt19937 mt(rd());
-      std::uniform_real_distribution<double> dist(-0.2,+0.2);
-      const unsigned int nBone = aBone.size();
-      for(int ibone=0;ibone<nBone;++ibone){
-        double* q = aBone[ibone].quatRelativeRot;
-        q[0] = 1.0;
-        q[1] = dist(mt);
-        q[2] = dist(mt);
-        q[3] = dist(mt);
-        dfm2::Normalize_Quat(q);
+      for(int ibone=0;ibone<aBone.size();++ibone){
+        dfm2::CQuatd::Random(0.2).CopyTo(aBone[ibone].quatRelativeRot);
       }
-      aBone[0].transRelative[0] = dist(mt);
-      aBone[0].transRelative[1] = dist(mt);
-      aBone[0].transRelative[2] = dist(mt);
+      dfm2::CVec3d::Random().CopyToScale(aBone[0].transRelative, 0.2);
       dfm2::UpdateBoneRotTrans(aBone);
-      {
-        for(int ip=0;ip<aXYZ0.size()/3;++ip){
-          const double* p0 = aXYZ0.data()+ip*3;
-          double* p1 = aXYZ1.data()+ip*3;
-          p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
-          for(int ibone=0;ibone<nBone;++ibone){
-            double p2[3];
-            aBone[ibone].DeformSkin(p2, p0);
-            p1[0] += aW[ip*nBone+ibone]*p2[0];
-            p1[1] += aW[ip*nBone+ibone]*p2[1];
-            p1[2] += aW[ip*nBone+ibone]*p2[2];
-          }
-        }
-      }
+      dfm2::Skinning_LBS(aXYZ1,
+                         aXYZ0, aBone, aW);
     }
     
     // -------------------

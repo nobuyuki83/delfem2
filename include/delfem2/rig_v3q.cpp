@@ -145,7 +145,8 @@ void dfm2::CRigBone::SetRotationBryant
 }
 
 void dfm2::CRigBone::DeformSkin(double pos2[3],
-                                const double pos0[3]){
+                                const double pos0[3]) const 
+{
   const double pos0a[4] = {pos0[0], pos0[1], pos0[2], 1.0};
   double pos1a[4]; MatVec4(pos1a,invBindMat,pos0a);
   double pos2a[4]; MatVec4(pos2a,affmat3Global,pos1a);
@@ -166,21 +167,16 @@ void dfm2::UpdateBoneRotTrans
 (std::vector<dfm2::CRigBone>& aBone)
 {
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
+    dfm2::CMat4d m01 = CMat4d::Translate(aBone[ibone].transRelative);
+    m01 = m01 * CMat4d::Quat(aBone[ibone].quatRelativeRot);
+    m01 = m01 * CMat4d::Scale(aBone[ibone].scale);
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
-      dfm2::Mat4_ScaleRotTrans(aBone[ibone].affmat3Global,
-                               aBone[ibone].scale,
-                               aBone[ibone].quatRelativeRot,
-                               aBone[ibone].transRelative);
+      dfm2::Copy_Mat4( aBone[ibone].affmat3Global, m01.mat );
       continue;
     }
-    double M01[16];
-    dfm2::Mat4_ScaleRotTrans(M01,
-                             aBone[ibone].scale,
-                             aBone[ibone].quatRelativeRot,
-                             aBone[ibone].transRelative);
     dfm2::MatMat4(aBone[ibone].affmat3Global,
-                  aBone[ibone_p].affmat3Global,M01);
+                  aBone[ibone_p].affmat3Global, m01.mat);
   }
 }
 
@@ -219,6 +215,31 @@ void dfm2::UpdateRigSkin
     aXYZ[ip*3+0] = pos1[0];
     aXYZ[ip*3+1] = pos1[1];
     aXYZ[ip*3+2] = pos1[2];
+  }
+}
+
+
+void dfm2::Skinning_LBS
+ (std::vector<double>& aXYZ1,
+  const std::vector<double>& aXYZ0,
+  const std::vector<dfm2::CRigBone>& aBone,
+  const std::vector<double>& aW)
+{
+  const unsigned int nBone = aBone.size();
+  const unsigned int nP = aXYZ0.size()/3;
+  aXYZ1.resize(aXYZ0.size());
+  assert( aW.size() == nBone*nP );
+  for(int ip=0;ip<nP;++ip){
+    const double* p0 = aXYZ0.data()+ip*3;
+    double* p1 = aXYZ1.data()+ip*3;
+    p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
+    for(int ibone=0;ibone<nBone;++ibone){
+      double p2[3];
+      aBone[ibone].DeformSkin(p2, p0);
+      p1[0] += aW[ip*nBone+ibone]*p2[0];
+      p1[1] += aW[ip*nBone+ibone]*p2[1];
+      p1[2] += aW[ip*nBone+ibone]*p2[2];
+    }
   }
 }
 

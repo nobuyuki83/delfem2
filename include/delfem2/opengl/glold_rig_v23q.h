@@ -6,8 +6,8 @@
  */
 
 
-#ifndef GL_RIG_V23Q_H
-#define GL_RIG_V23Q_H
+#ifndef GLOLD_RIG_V23Q_H
+#define GLOLD_RIG_V23Q_H
 
 #include <stdio.h>
 #include <iostream>

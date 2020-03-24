@@ -33,6 +33,7 @@ include_directories(
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                    ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/quat.h                    ${DELFEM2_INC}/quat.cpp
   ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp  
   ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp
        

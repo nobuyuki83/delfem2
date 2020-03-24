@@ -220,8 +220,11 @@ public:
     m[0*4+3] = 0;       m[1*4+3] = 0;       m[2*4+3] = 0;       m[3*4+3] = 1;
   }
   double Get(int i, int j) const { return mat[i*3+j]; }
-  void CopyValueToPtr(REAL* ptr) const {
+  void CopyTo(REAL* ptr) const {
     for(int i=0;i<9;++i){ ptr[i] = mat[i]; }
+  }
+  void CopyToScale(REAL* ptr, REAL s) const {
+    for(int i=0;i<9;++i){ ptr[i] = mat[i]*s; }
   }
   // ---------------
 //  CVector3 MatVec(const CVector3& vec0) const;
@@ -335,7 +338,11 @@ public:
     m.SetZero();
     return m;
   }
-
+  static CMat3 Spin(const REAL* v){
+    CMat3 m;
+    Mat3_Spin(m.mat, v);
+    return m;
+  }
 public:
   REAL mat[9];
 };

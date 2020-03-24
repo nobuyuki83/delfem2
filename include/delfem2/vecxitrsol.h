@@ -6,7 +6,7 @@
  */
 
 /**
- * @discussion maybe splitting this file into "vecx.h" and "itersol.h" in the future
+ * @discussion splitting this file into "vecx.h" and "itersol.h" in the future
  */
 
 #ifndef DFM2_VECXITRSOL_H

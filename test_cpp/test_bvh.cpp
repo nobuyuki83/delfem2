@@ -326,8 +326,8 @@ TEST(bvh,lineintersection)
       d0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       d0.SetNormalizedVector();
     }
-    double ps0[3]; s0.CopyValueTo(ps0);
-    double pd0[3]; d0.CopyValueTo(pd0);
+    double ps0[3]; s0.CopyTo(ps0);
+    double pd0[3]; d0.CopyTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
@@ -388,8 +388,8 @@ TEST(bvh,rayintersection)
       d0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
       d0.SetNormalizedVector();
     }
-    double ps0[3]; s0.CopyValueTo(ps0);
-    double pd0[3]; d0.CopyValueTo(pd0);
+    double ps0[3]; s0.CopyTo(ps0);
+    double pd0[3]; d0.CopyTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];

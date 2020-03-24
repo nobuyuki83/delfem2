@@ -186,7 +186,7 @@ std::string Remove
 {
   const int n = str.size();
   const int ndel = del.size();
-  ///
+  //
   std::string ss;
   ss.reserve(n);
   for(int i=0;i<n;++i){
@@ -217,7 +217,7 @@ std::string RemoveBeginning
 {
   const int n = str.size();
   const int ndel = del.size();
-  ///
+  //
   int istat = 0;
   for(int i=0;i<n;++i){
     bool is_del = false;

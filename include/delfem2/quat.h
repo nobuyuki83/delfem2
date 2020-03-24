@@ -13,6 +13,8 @@
 #ifndef DFM2_QUAT_H
 #define DFM2_QUAT_H
 
+#include <random>
+
 namespace delfem2 {
 
 template <typename T>
@@ -84,6 +86,9 @@ void Mat4_Quat(double r[],
                const double q[]);
 void Mat4_QuatConj(double r[],
                    const double q[]);
+/**
+ * @brief applying transformation in the order of scale, rotation and translation
+ */
 void Mat4_ScaleRotTrans(double m[16],
                         double scale, const double quat[4], const double trans[3]);
 void MatMat4(double m01[16],
@@ -129,6 +134,19 @@ public:
   CQuat(const T rhs[4]) : q{rhs[0], rhs[1], rhs[2], rhs[3]} {};
   CQuat(T r, T v0, T v1, T v2) : q{r, v0, v1, v2} {};
   ~CQuat(){}
+  // -----------
+  static CQuat Random(T a){
+    CQuat<T> q;
+    q.q[0] = 1.0;
+    q.q[1] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    q.q[2] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    q.q[3] = 2*a*rand()/(RAND_MAX+1.0)-a;
+    Normalize_Quat(q.q);
+    return q;
+  }
+  void CopyTo(T* v) const {
+    Copy_Quat(v, q);
+  }
   /*
 	CQuaternion(const CQuaternion& rhs)
 		:vector( rhs.vector ){
@@ -174,7 +192,8 @@ public:
 //	CVector3D vector;	//!< imaginary part
 //	double real;	//!< real part
 };
-  
+using CQuatd = CQuat<double>;
+using CQuatf = CQuat<float>;
   
 }
 

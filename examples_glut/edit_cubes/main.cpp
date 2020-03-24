@@ -130,9 +130,9 @@ void myGlutMouse(int button, int state, int x, int y)
   if( state == GLUT_DOWN ){
     dfm2::CVec3d offsym(0,0,0);
     if( imode_sym == 2 ){ offsym.p[2] = -elen*0.5; }
-    double src_pick0[3]; src_pick.CopyValueTo(src_pick0);
-    double dir_pick0[3]; dir_pick.CopyValueTo(dir_pick0);
-    double offsym0[3];   offsym.CopyValueTo(offsym0);
+    double src_pick0[3]; src_pick.CopyTo(src_pick0);
+    double dir_pick0[3]; dir_pick.CopyTo(dir_pick0);
+    double offsym0[3];   offsym.CopyTo(offsym0);
     Pick_CubeGrid(icube_picked, iface_picked,
                   src_pick0,dir_pick0, elen, offsym0, aCubeGrid);
     if( edit_mode == EDIT_ADD ){

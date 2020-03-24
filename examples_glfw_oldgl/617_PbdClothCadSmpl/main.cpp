@@ -237,7 +237,7 @@ int main(int argc,char* argv[])
     const CRigidTrans_2DTo3D& rt23 = aRT23[ifc];
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,ifc), cad);
     for(int ip : aIP){
-      rt23.Transform(aVec2[ip]).CopyValueTo(aXYZ.data()+ip*3);
+      rt23.Transform(aVec2[ip]).CopyTo(aXYZ.data()+ip*3);
     }
   }
   std::vector<unsigned int> aLine;
