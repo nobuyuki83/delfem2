@@ -5,6 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @discussion It might be nice to separate dependency of v2 from v3 and quat
+ * because 2D application does not use v3 and quat
+ */
+
+
+
 #ifndef DFM2_GL2_V23_H
 #define DFM2_GL2_V23_H
 
@@ -15,6 +22,28 @@
 namespace delfem2{
 namespace opengl
 {
+
+// ------------------------------------------------------------------------------------
+// vec2 starts here
+
+void myGlVertex(unsigned int i,
+                const std::vector<CVec2d>& aP);
+
+void myGlVertex(const CVec2d& v);
+
+void drawPolyLine(const std::vector<CVec2d>& aP);
+
+void drawPolyLine2D(const std::vector<CVec2d>& aP);
+
+void Draw_MeshTri(const std::vector<CVec2d>& aP,
+                  const std::vector<unsigned int>& aTri);
+
+void Draw_MeshTri_Edge(const std::vector<CVec2d>& aP,
+                       const std::vector<unsigned int>& aTri);
+
+
+// ------------------------------------------------------------------------------------
+// vec3 starts here
 
 void myGlVertex(const CVec3d& v);
 void myGlTranslate(const CVec3d& v);
@@ -78,7 +107,6 @@ void DrawGridOutside(int ndivx, int ndivy, int ndivz,
 // ------------
 // mesh from here
 void DrawPoint3D(const std::vector<CVec3d>& aPoint);
-void drawPolyLine(const std::vector<CVec2d>& aP);
 void DrawMeshQuad_Face(const std::vector<CVec3d>& aPoint,
                        const std::vector<unsigned int>& aQuad);
 void DrawMeshTri_Edge(const std::vector<CVec3d>& aP,
@@ -100,20 +128,14 @@ void DrawHandlerRotation_Mat4(const double Mat[16],
                               double size, int ielem_picked);
 
 // ----------------
-// vec2 starts here
+// quaternion
 
-void myGlVertex(unsigned int i,
-                const std::vector<CVec2d>& aP);
+void Draw_QuaternionsCoordinateAxes(
+    const std::vector<double>& aXYZ1,
+    const std::vector<double>& aQuat,
+    double l);
 
-void myGlVertex(const CVec2d& v);
 
-void drawPolyLine2D(const std::vector<CVec2d>& aP);
-
-void Draw_MeshTri(const std::vector<CVec2d>& aP,
-                  const std::vector<unsigned int>& aTri);
-
-void Draw_MeshTri_Edge(const std::vector<CVec2d>& aP,
-                       const std::vector<unsigned int>& aTri);
   
 } // end namespace opengl
 } // end namespace delfem2

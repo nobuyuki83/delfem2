@@ -127,6 +127,11 @@ dfm2::CMat3d dfm2::Mirror(const CVec3d& n)
   return CMat3d::Identity() - 2*dfm2::Mat3_OuterProduct(N,N);
 }
 
+dfm2::CMat3d dfm2::Mat3_CrossCross(const CVec3d& v)
+{
+  return Mat3(v)*Mat3(v);
+}
+
 dfm2::CMat3d dfm2::RotMatrix_Cartesian(const CVec3d& v){
  CMat3d m;
  SetRotMatrix_Cartesian(m,v);
@@ -553,3 +558,25 @@ bool dfm2::isPickCircle
   return false;
 }
 
+// ----------------------------------------------------
+// quaternion
+
+namespace delfem2 {
+
+CVec3d operator* (const CQuatd& q, const CVec3d& v)
+{
+  CVec3d p;
+  QuatVec(p.p, q.q, v.p);
+  return p;
+}
+
+}
+
+// ------------
+
+dfm2::CQuatd dfm2::Quat_CartesianAngle(const CVec3d& p)
+{
+  CQuatd q;
+  Quat_CartesianAngle(q.q, p.p);
+  return q;
+}

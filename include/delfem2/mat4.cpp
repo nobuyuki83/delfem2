@@ -69,6 +69,23 @@ void dfm2::Vec3_Mat4Vec3_AffineProjection
 template void dfm2::Vec3_Mat4Vec3_AffineProjection(float y0[3], const float a[16], const float x0[3]);
 template void dfm2::Vec3_Mat4Vec3_AffineProjection(double y0[3], const double a[16], const double x0[3]);
 
+// ----------------------
+
+template <typename T>
+void dfm2::Vec3_Mat4Vec3_Affine
+ (T y0[3],
+  const T a[16],
+  const T x0[3])
+{
+  const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
+  T y1[4]; MatVec4(y1,a,x1);
+  y0[0] = y1[0];
+  y0[1] = y1[1];
+  y0[2] = y1[2];
+}
+template void dfm2::Vec3_Mat4Vec3_Affine(float y0[3], const float a[16], const float x0[3]);
+template void dfm2::Vec3_Mat4Vec3_Affine(double y0[3], const double a[16], const double x0[3]);
+
   
 // ----------------------
 
@@ -196,3 +213,65 @@ dfm2::CMat4<T> dfm2::CMat4<T>::MatMat(const CMat4<T>& mat0) const{
   return m;
 }
 template dfm2::CMat4<double> dfm2::CMat4<double>::MatMat(const CMat4<double>& mat0) const;
+
+
+
+template <typename REAL>
+dfm2::CMat4<REAL> dfm2::CMat4<REAL>::Quat(const REAL* q)
+{
+  CMat4<REAL> m;
+  double x2 = q[1] * q[1] * 2.0;
+  double y2 = q[2] * q[2] * 2.0;
+  double z2 = q[3] * q[3] * 2.0;
+  double xy = q[1] * q[2] * 2.0;
+  double yz = q[2] * q[3] * 2.0;
+  double zx = q[3] * q[1] * 2.0;
+  double xw = q[1] * q[0] * 2.0;
+  double yw = q[2] * q[0] * 2.0;
+  double zw = q[3] * q[0] * 2.0;
+  m.SetZero();
+  m.mat[0*4+0] = 1.0 - y2 - z2; m.mat[0*4+1] = xy - zw;         m.mat[0*4+2] = zx + yw;
+  m.mat[1*4+0] = xy + zw;       m.mat[1*4+1] = 1.0 - z2 - x2;   m.mat[1*4+2] = yz - xw;
+  m.mat[2*4+0] = zx - yw;       m.mat[2*4+1] = yz + xw;         m.mat[2*4+2] = 1.0 - x2 - y2;
+  m.mat[3*4+3] = 1.0;
+  return m;
+}
+template dfm2::CMat4<double> dfm2::CMat4<double>::Quat(const double* q);
+
+// ---------------------------
+
+namespace delfem2{
+
+template <typename T>
+CMat4<T> operator * (const CMat4<T>& lhs, const CMat4<T>& rhs)
+{
+  CMat4<T> q;
+  MatMat4(q.mat, lhs.mat, rhs.mat);
+  return q;
+}
+template CMat4d operator * (const CMat4d& lhs, const CMat4d& rhs);
+template CMat4f operator * (const CMat4f& lhs, const CMat4f& rhs);
+
+
+template <typename T>
+CMat4<T> operator - (const CMat4<T>& lhs, const CMat4<T>& rhs)
+{
+  CMat4<T> q;
+  for(int i=0;i<16;++i){ q.mat[i] = lhs.mat[i] - rhs.mat[i]; }
+  return q;
+}
+template CMat4d operator - (const CMat4d& lhs, const CMat4d& rhs);
+template CMat4f operator - (const CMat4f& lhs, const CMat4f& rhs);
+
+
+template <typename T>
+CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs)
+{
+  CMat4<T> q;
+  for(int i=0;i<16;++i){ q.mat[i] = lhs.mat[i] + rhs.mat[i]; }
+  return q;
+}
+template CMat4d operator + (const CMat4d& lhs, const CMat4d& rhs);
+template CMat4f operator + (const CMat4f& lhs, const CMat4f& rhs);
+
+}

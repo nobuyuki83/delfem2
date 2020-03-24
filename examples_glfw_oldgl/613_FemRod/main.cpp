@@ -88,7 +88,7 @@ void Solve
       double eM[2*2*3*3];
       for(int in=0;in<2;++in){
         for(int jn=0;jn<2;++jn){
-          ddW_ddP[in][jn].CopyValueToPtr(eM+(in*2+jn)*9);
+          ddW_ddP[in][jn].CopyTo(eM+(in*2+jn)*9);
         }
       }
       mats.Mearge(2, aINoel, 2, aINoel, 9, eM, tmp_buffer);
@@ -125,7 +125,7 @@ void Solve
         for(int jn=0;jn<3;++jn){
 //          dfm2::CMat3d t = ddW_ddP[in][jn].Trans();
 //          t.CopyValueToPtr(&eM[in][jn][0][0]);
-          ddW_ddP[in][jn].CopyValueToPtr(&eM[in][jn][0][0]);
+          ddW_ddP[in][jn].CopyTo(&eM[in][jn][0][0]);
         }
       }
       for(int in=0;in<2;++in){

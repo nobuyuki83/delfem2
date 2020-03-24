@@ -47,7 +47,7 @@ public:
     return delfem2::CVec3d(affmat3Global[3],affmat3Global[7],affmat3Global[11]);
   }
   void DeformSkin(double pos2[3],
-                  const double pos0[3]);
+                  const double pos0[3]) const;
   void SetRotationBryant(double rx, double ry, double rz);
   void SetTranslation(double tx, double ty, double tz);
   int PickHandler(const delfem2::CVec3d& org,
@@ -107,6 +107,13 @@ void UpdateRigSkin(double* aXYZ,
                    const std::vector<CRigBone>& aBone,
                    const double* aRigWeight,
                    const unsigned int* aRigJoint);
+
+void Skinning_LBS(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<CRigBone>& aBone,
+    const std::vector<double>& aW);
+
 
 // ------------------------------------
 

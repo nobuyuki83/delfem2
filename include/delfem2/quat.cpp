@@ -166,7 +166,15 @@ template <>
 void Quat_CartesianAngle(
     double q[4],
     const double a[3]) {
-  const double lena = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+  const double sqlen = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
+  if( sqlen < 1.0e-10 ){
+    q[0] = 1-0.125*sqlen;
+    q[1] = 0.5 * a[0];
+    q[2] = 0.5 * a[1];
+    q[3] = 0.5 * a[2];
+    return;
+  }
+  const double lena = sqrt(sqlen);
   q[0] = cos(lena * 0.5);
   q[1] = sin(lena * 0.5) * a[0] / lena;
   q[2] = sin(lena * 0.5) * a[1] / lena;
@@ -189,7 +197,6 @@ void dfm2::Mat4_Quat
   double xw = q[1] * q[0] * 2.0;
   double yw = q[2] * q[0] * 2.0;
   double zw = q[3] * q[0] * 2.0;
-  
   r[ 0] = 1.0 - y2 - z2;
   r[ 1] = xy - zw;
   r[ 2] = zx + yw;
@@ -303,6 +310,16 @@ CQuat<T> operator + (const CQuat<T>& lhs, const CQuat<T>& rhs)
 template CQuat<double> operator + (const CQuat<double>& lhs, const CQuat<double>& rhs);
 template CQuat<float> operator + (const CQuat<float>& lhs, const CQuat<float>& rhs);
   
+
+template <typename T>
+CQuat<T> operator * (const CQuat<T>& lhs, const CQuat<T>& rhs)
+{
+  CQuat<T> q;
+  QuatQuat(q.q, lhs.q, rhs.q);
+  return q;
+}
+template CQuat<double> operator * (const CQuat<double>& lhs, const CQuat<double>& rhs);
+template CQuat<float> operator * (const CQuat<float>& lhs, const CQuat<float>& rhs);
   
 } // end namespace delfem2
 

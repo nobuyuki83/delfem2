@@ -70,7 +70,7 @@ void Smooth4RotSym
       o_new = (o_new - (o_new*n0)*n0).Normalize();
       weight += 1.0;
     }
-    o_new.CopyValueTo(aOdir.data()+ip0*3);
+    o_new.CopyTo(aOdir.data()+ip0*3);
   }
 }
 
@@ -106,7 +106,7 @@ void Smooth4RotSym_RandomPermutation
       o_new = (o_new - (o_new*n0)*n0).Normalize();
       weight += 1.0;
     }
-    o_new.CopyValueTo(aOdir.data()+ip0*3);
+    o_new.CopyTo(aOdir.data()+ip0*3);
   }
 }
 
@@ -121,7 +121,7 @@ void InitializeTangentField
     dfm2::CVec3d o = dfm2::CVec3d::Random();
     dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).Normalize();
     o = (o - (o*n)*n).Normalize();
-    o.CopyValueTo(aOdir.data()+ip*3);
+    o.CopyTo(aOdir.data()+ip*3);
   }
 }
 

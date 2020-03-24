@@ -394,38 +394,7 @@ void Draw_BCFlag(const std::vector<double>& aXYZ1,
   ::glEnd();
 }
 
-void Draw_Coord(const std::vector<double>& aXYZ1,
-                const std::vector<double>& aQuat)
-{
-  ::glLineWidth(2);
-  ::glBegin(GL_LINES);
-  double l = 0.04;
-  for(unsigned int ip=0;ip<aXYZ1.size()/3;++ip){
-    const double* p = aXYZ1.data()+ip*3;
-    {
-      double ex0[3] = {1,0,0};
-      double ex[3]; dfm2::QuatVec(ex, aQuat.data()+ip*4, ex0);
-      ::glColor3d(1,0,0);
-      ::glVertex3dv(p);
-      ::glVertex3d(p[0]+l*ex[0], p[1]+l*ex[1], p[2]+l*ex[2]);
-    }
-    {
-      double ey0[3] = {0,1,0};
-      double ey[3]; dfm2::QuatVec(ey, aQuat.data()+ip*4, ey0);
-      ::glColor3d(0,1,0);
-      ::glVertex3dv(p);
-      ::glVertex3d(p[0]+l*ey[0], p[1]+l*ey[1], p[2]+l*ey[2]);
-    }
-    {
-      double ez0[3] = {0,0,1};
-      double ez[3]; dfm2::QuatVec(ez, aQuat.data()+ip*4, ez0);
-      ::glColor3d(0,0,1);
-      ::glVertex3dv(p);
-      ::glVertex3d(p[0]+l*ez[0], p[1]+l*ez[1], p[2]+l*ez[2]);
-    }
-  }
-  ::glEnd();
-}
+
 
 // --------------------------------------------------
 
@@ -487,7 +456,7 @@ int main(int argc,char* argv[])
       glfwSetWindowTitle(viewer.window, "Linear Disprot without Prec");
       unsigned int np = aXYZ0.size()/3;
       CDeformer_ARAP def1(psup_ind, psup, weight_bc, aBCFlag);
-      std::vector<double> aQuat(np*4);
+      std::vector<double> aQuat(np*4); // array of quaternion
       for(;iframe<100;++iframe){
         for(int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); }
         for(int i=0;i<np*3;++i){ // adding noise for debuggng purpose
@@ -514,7 +483,7 @@ int main(int argc,char* argv[])
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
-        Draw_Coord(aXYZ1,aQuat);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
         viewer.DrawEnd_oldGL();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       } // end of frame loop
@@ -552,7 +521,7 @@ int main(int argc,char* argv[])
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
-        Draw_Coord(aXYZ1,aQuat);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
         viewer.DrawEnd_oldGL();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       } // end of frame loop
@@ -594,7 +563,7 @@ int main(int argc,char* argv[])
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
-        Draw_Coord(aXYZ1,aQuat);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
         viewer.DrawEnd_oldGL();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       } // end of frame loop
