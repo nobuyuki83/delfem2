@@ -26,7 +26,7 @@
 #endif
 
 #include "delfem2/vec3.h"
-#include "delfem2/opengl/glnew_smplr.h"
+#include "delfem2/opengl/render2tex_glnew.h"
 
 namespace dfm2 = delfem2;
 

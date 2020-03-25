@@ -23,7 +23,7 @@
 #else
   #include <GL/gl.h>
 #endif
-#include "delfem2/opengl/gl_smplr.h"
+#include "delfem2/opengl/render2tex_gl.h"
 
 namespace dfm2 = delfem2;
 

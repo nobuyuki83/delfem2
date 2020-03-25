@@ -16,3 +16,6 @@
 [submodule "3rd_party/cnpy"]
 	path = 3rd_party/cnpy
 	url = https://github.com/rogersce/cnpy.git
+[submodule "3rd_party/cereal"]
+	path = 3rd_party/cereal
+	url = https://github.com/USCiLab/cereal.git

@@ -25,7 +25,7 @@
 #endif
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_v23.h"  // vec3, mat3
-#include "delfem2/opengl/glold_smplr.h"
+#include "delfem2/opengl/render2tex_glold.h"
 
 namespace dfm2 = delfem2;
 
@@ -177,4 +177,62 @@ std::vector<double> dfm2::opengl::CRender2Tex_DrawOldGL::getGPos(int ix, int iy)
     //  res.push_back(vp.y());
     //  res.push_back(vp.z());
   return vp.stlvec();
+}
+
+
+// --------------------------------------------------------
+
+void dfm2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(unsigned int nresX,
+                                                         unsigned int nresY,
+                                                         unsigned int nresZ,
+                                                         double elen)
+{
+  aSampler.resize(6);
+  aSampler[0].SetTextureProperty(nresY, nresZ, true); // +x
+  aSampler[0].SetCoord(elen, elen*nresX,
+                       dfm2::CVec3d(+0.5*elen*nresX,-0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
+                       dfm2::CVec3d(+1,  0, 0).stlvec(),
+                       dfm2::CVec3d( 0, +1, 0).stlvec() );
+  aSampler[0].SetPointColor(1.0, 0.0, 0.0);
+  //
+  aSampler[1].SetTextureProperty(nresY, nresZ, true); // -x
+  aSampler[1].SetCoord(elen, elen*nresX,
+                       dfm2::CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
+                       dfm2::CVec3d(-1,  0, 0).stlvec(),
+                       dfm2::CVec3d( 0, +1, 0).stlvec() );
+  aSampler[1].SetPointColor(1.0, 0.5, 0.5);
+  //
+  aSampler[2].SetTextureProperty(nresX, nresZ, true); // +y
+  aSampler[2].SetCoord(elen, elen*nresY,
+                       dfm2::CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
+                       dfm2::CVec3d(0,+1,0).stlvec(),
+                       dfm2::CVec3d(1,+0,0).stlvec() );
+  aSampler[2].SetPointColor(0.0, 1.0, 0.0);
+  //
+  aSampler[3].SetTextureProperty(nresX, nresZ, true); // -y
+  aSampler[3].SetCoord(elen, elen*nresY,
+                       dfm2::CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
+                       dfm2::CVec3d(0,-1,0).stlvec(),
+                       dfm2::CVec3d(1,+0,0).stlvec() );
+  aSampler[3].SetPointColor(0.5, 1.0, 0.5);
+  //
+  aSampler[4].SetTextureProperty(nresX, nresY, true);
+  aSampler[4].SetCoord(elen, elen*nresZ,
+                       dfm2::CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
+                       dfm2::CVec3d(0,0,+1).stlvec(),
+                       dfm2::CVec3d(1,0,0).stlvec() );
+  aSampler[4].SetPointColor(0.0, 0.0, 1.0);
+  //
+  aSampler[5].SetTextureProperty(nresX, nresY, true);
+  aSampler[5].SetCoord(elen, elen*nresZ,
+                       dfm2::CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
+                       dfm2::CVec3d(0,0,-1).stlvec(),
+                       dfm2::CVec3d(1,0,0).stlvec() );
+  aSampler[5].SetPointColor(0.5, 0.5, 1.0);
+  // ------------------------
+  for(auto& smplr : aSampler){
+    smplr.draw_len_axis = 0.2;
+    smplr.isDrawTex = false;
+    smplr.isDrawOnlyHitPoints = true;
+  }
 }

@@ -21,7 +21,8 @@
 
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glnew_funcs.h"
-#include "delfem2/opengl/glfw_cam.h"
+//
+#include "delfem2/opengl/glfw/cam_glfw.h"
 
 class CShader
 {

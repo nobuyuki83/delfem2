@@ -10,7 +10,7 @@
 #include <cassert>
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw_viewer.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 // ---------------
 

@@ -9,9 +9,10 @@
 
 // --------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glfw_viewer.h"
 #include "delfem2/opengl/glold_v23dtricad.h"
 #include "delfem2/opengl/glold_funcs.h"
+//
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 

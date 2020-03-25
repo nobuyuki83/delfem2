@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "delfem2/opengl/glfw_cam.h" // for CNav3D_GLFW
+#include "delfem2/opengl/glfw/cam_glfw.h" // for CNav3D_GLFW
 
 // ------------------------------------------------------
 

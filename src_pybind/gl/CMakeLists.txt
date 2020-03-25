@@ -40,14 +40,14 @@ set(INPUT_SRC
 
     ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/gl_tex.h             ${DELFEM2_INC}/opengl/gl_tex.cpp
-    ${DELFEM2_INC}/opengl/gl_smplr.h           ${DELFEM2_INC}/opengl/gl_smplr.cpp
+    ${DELFEM2_INC}/opengl/render2tex_gl.h      ${DELFEM2_INC}/opengl/render2tex_gl.cpp
 
+    ${DELFEM2_INC}/opengl/render2tex_glold.h   ${DELFEM2_INC}/opengl/render2tex_glold.cpp        
     ${DELFEM2_INC}/opengl/glold_voxbv.h        ${DELFEM2_INC}/opengl/glold_voxbv.cpp
     ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
     ${DELFEM2_INC}/opengl/glold_color.h        ${DELFEM2_INC}/opengl/glold_color.cpp
     ${DELFEM2_INC}/opengl/glold_v23.h          ${DELFEM2_INC}/opengl/glold_v23.cpp
     ${DELFEM2_INC}/opengl/glold_v23dtricad.h   ${DELFEM2_INC}/opengl/glold_v23dtricad.cpp
-    ${DELFEM2_INC}/opengl/glold_smplr.h        ${DELFEM2_INC}/opengl/glold_smplr.cpp
   
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c
