@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/gl_smplr.h"
+#include "delfem2/opengl/render2tex_gl.h"
 
 namespace delfem2{
 namespace opengl{

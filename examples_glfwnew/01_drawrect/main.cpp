@@ -15,7 +15,8 @@
 
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glnew_funcs.h"
-#include "delfem2/opengl/glfw_cam.h"
+//#include "delfem2/opengl/glnew_funcs.h"
+//#include "delfem2/opengl/glfw/glfw_cam.h"
 
 static void callback_error(int error, const char* description)
 {

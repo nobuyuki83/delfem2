@@ -103,6 +103,7 @@ void DrawGridOutside(int ndivx, int ndivy, int ndivz,
                      double elen,
                      const CVec3d& org);
   
+void DrawAxisHandler(double s, const CVec3d& p);
 
 // ------------
 // mesh from here
@@ -118,17 +119,22 @@ void DrawMeshTri_Edge(const std::vector<CVec3d>& aP,
 void DrawQuad3D_Edge(const std::vector<CVec3d>& aPoint,
                      const std::vector<unsigned int>& aQuad);
 
-// -----------
-// Handler
+// CVec3
+// --------------------------------------------------------------------
+// CMat4
 
-void DrawAxisHandler(double s, const CVec3d& p);
-void DrawHandlerRotation_PosQuat(const CVec3d& pos, const double quat[4],
-                                 double size, int ielem_picked);
-void DrawHandlerRotation_Mat4(const double Mat[16],
-                              double size, int ielem_picked);
+void DrawHandlerRotation_Mat4
+ (const double Mat[16],
+  double size, int ielem_picked);
 
-// ----------------
-// quaternion
+// CMat4
+// --------------------------------------------------------------------
+// CQuaternion
+
+void DrawHandlerRotation_PosQuat
+ (const CVec3d& pos, const double quat[4],
+  double size, int ielem_picked);
+
 
 void Draw_QuaternionsCoordinateAxes(
     const std::vector<double>& aXYZ1,

@@ -41,8 +41,9 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_funcs.h        ${DELFEM2_INC}/opengl/glnew_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_v23dtricad.h   ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.h        ${DELFEM2_INC}/opengl/glfw_viewer.cpp
-    ${DELFEM2_INC}/opengl/glfw_cam.h
+    
+    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
+    ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
 
     ${3RD_PARTY}/glad4/include/glad/glad.h
     ${3RD_PARTY}/glad4/src/glad.c

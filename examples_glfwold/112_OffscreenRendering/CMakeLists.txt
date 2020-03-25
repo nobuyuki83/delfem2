@@ -47,13 +47,14 @@ add_executable(${PROJECT_NAME}
 
     ${DELFEM2_INC}/v23m3q.h                  ${DELFEM2_INC}/v23m3q.cpp
 
-    ${DELFEM2_INC}/opengl/gl_smplr.h         ${DELFEM2_INC}/opengl/gl_smplr.cpp
-    ${DELFEM2_INC}/opengl/glold_v3color.h    ${DELFEM2_INC}/opengl/glold_v3color.cpp
-    ${DELFEM2_INC}/opengl/glold_smplr.h      ${DELFEM2_INC}/opengl/glold_smplr.cpp
-    ${DELFEM2_INC}/opengl/glold_v23.h        ${DELFEM2_INC}/opengl/glold_v23.cpp
-    ${DELFEM2_INC}/opengl/glold_color.cpp    ${DELFEM2_INC}/opengl/glold_color.h
-    ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp
-    ${DELFEM2_INC}/opengl/glfw_viewer.h      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+    ${DELFEM2_INC}/opengl/render2tex_gl.h     ${DELFEM2_INC}/opengl/render2tex_gl.cpp
+    ${DELFEM2_INC}/opengl/render2tex_glold.h  ${DELFEM2_INC}/opengl/render2tex_glold.cpp        
+    ${DELFEM2_INC}/opengl/glold_v3color.h     ${DELFEM2_INC}/opengl/glold_v3color.cpp
+    ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
+    ${DELFEM2_INC}/opengl/glold_color.cpp     ${DELFEM2_INC}/opengl/glold_color.h
+    ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
+    
+    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
 
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c

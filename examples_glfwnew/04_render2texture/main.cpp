@@ -25,8 +25,9 @@
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/gl_tex.h"
 #include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/glfw_viewer.h"
-#include "delfem2/opengl/glfw_cam.h"
+//
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/glfw/cam_glfw.h"
 
 namespace dfm2 = delfem2;
 

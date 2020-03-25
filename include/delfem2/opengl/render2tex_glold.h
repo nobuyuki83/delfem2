@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <vector>
-#include "delfem2/opengl/gl_smplr.h"
+#include "delfem2/opengl/render2tex_gl.h"
 
 namespace delfem2 {
 namespace opengl {
@@ -49,6 +49,23 @@ public:
   std::vector<double> colorPoint = {1,1,1,1};
 };
   
+class CRender2Tex_DrawOldGL_BOX {
+public:
+  std::vector<CRender2Tex_DrawOldGL> aSampler;
+  
+public:
+  void Draw() const {
+    for(auto& smplr: aSampler){
+      smplr.Draw();
+    }
+  }
+  void Initialize(unsigned int nresX,
+                  unsigned int nresY,
+                  unsigned int nresZ,
+                  double elen);
+  
+};
+
 }
 }
 

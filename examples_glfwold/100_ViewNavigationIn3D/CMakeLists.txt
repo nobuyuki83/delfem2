@@ -32,7 +32,7 @@ include_directories(
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp
   
-  ${DELFEM2_INC}/opengl/glfw_viewer.h      ${DELFEM2_INC}/opengl/glfw_viewer.cpp
+  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
   
   main.cpp
 )

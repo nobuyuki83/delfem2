@@ -638,9 +638,6 @@ template <typename T>
 void dfm2::CMat3<T>::MatVec(const double vec0[], double vec1[]) const
 {
   ::dfm2::MatVec3(vec1, mat, vec0);
-//  vec1[0] = mat[0]*vec0[0] + mat[1]*vec0[1] + mat[2]*vec0[2];
-//  vec1[1] = mat[3]*vec0[0] + mat[4]*vec0[1] + mat[5]*vec0[2];
-//  vec1[2] = mat[6]*vec0[0] + mat[7]*vec0[1] + mat[8]*vec0[2];
 }
 template void dfm2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
 
@@ -659,16 +656,6 @@ dfm2::CMat3<T> dfm2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
   CMat3 m;
   ::dfm2::MatMat3(m.mat,
                   this->mat, mat0.mat);
-  /*
-  for(unsigned int i=0;i<3;i++){
-    for(unsigned int j=0;j<3;j++){
-      m.mat[i*3+j] =
-      mat[i*3+0]*mat0.mat[0*3+j]
-      + mat[i*3+1]*mat0.mat[1*3+j]
-      + mat[i*3+2]*mat0.mat[2*3+j];
-    }
-  }
-   */
   return m;
 }
 template dfm2::CMat3<double> dfm2::CMat3<double>::MatMat(const CMat3<double>& mat0) const;
