@@ -6,6 +6,11 @@
  */
 
 
+/**
+ * @discussion this file may be split into v2 and v3m34q.
+ * 2D application and 3D application typically don't have the same dependency
+ */
+
 #ifndef DFM2_V23M3Q_H
 #define DFM2_V23M3Q_H
 

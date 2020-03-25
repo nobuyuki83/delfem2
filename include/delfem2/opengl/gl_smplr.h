@@ -72,7 +72,7 @@ public:
   double origin[3];
   // --------------
 protected:
-  int view[4];
+  int view[4]; // viewport information
 };
   
 } // opengl

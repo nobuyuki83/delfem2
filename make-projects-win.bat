@@ -48,7 +48,7 @@ cd ../..
 : ##############################
 : glfw_oldgl
 
-cd examples_glfw_oldgl
+cd examples_glfwold
 mkdir buildVS64
 cd buildVS64
 cmake -A x64 ..
@@ -57,7 +57,7 @@ cd ../../
 
 goto :eof
 
-cd examples_glfw_oldgl
+cd examples_glfwold
 mkdir buildVS32
 cd buildVS32
 cmake -A Win32 ..
@@ -68,14 +68,14 @@ cd ../../
 : ##############################
 : glfw_newgl
 
-cd examples_glfw
+cd examples_glfwnew
 mkdir buildVS32
 cd buildVS32
 cmake -A Win32 ..
 cmake --build . --config Release
 cd ../../
 
-cd examples_glfw
+cd examples_glfwnew
 mkdir buildVS64
 cd buildVS64
 cmake -A x64 ..

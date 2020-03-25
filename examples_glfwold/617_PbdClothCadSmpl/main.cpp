@@ -38,6 +38,10 @@
 #include "delfem2/opengl/glold_rig_v23q.h"
 #include "delfem2/opengl/glold_color.h"
 
+#ifndef M_PI
+  M_PI 3.14159265359
+#endif
+
 namespace dfm2 = delfem2;
 
 // --------------------------------------------

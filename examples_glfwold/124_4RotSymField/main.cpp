@@ -74,6 +74,7 @@ void Smooth4RotSym
   }
 }
 
+/*
 void Smooth4RotSym_RandomPermutation
  (std::vector<double>& aOdir,
   std::vector<unsigned int>& permutation0,
@@ -109,6 +110,7 @@ void Smooth4RotSym_RandomPermutation
     o_new.CopyTo(aOdir.data()+ip0*3);
   }
 }
+ */
 
 
 void InitializeTangentField
@@ -146,8 +148,8 @@ int main()
   dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                              aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
   
-  std::vector<unsigned int> permutation0(aXYZ.size()/3);
-  for(unsigned int i=0;i<aXYZ.size()/3;++i){ permutation0[i] = i; }
+//  std::vector<unsigned int> permutation0(aXYZ.size()/3);
+//  for(unsigned int i=0;i<aXYZ.size()/3;++i){ permutation0[i] = i; }
   
   // ------------------
   delfem2::opengl::CViewer_GLFW viewer;

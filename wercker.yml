@@ -51,9 +51,9 @@ build:
           cmake .
           make          
     - script:
-        name: compile glfw examples
+        name: compile glfw_old examples
         code: |
-          cd examples_glfw_oldgl
+          cd examples_glfwold
           mkdir buildMake
           cd buildMake
           cmake ..
@@ -62,7 +62,7 @@ build:
     - script:
         name: compile glfw examples
         code: |
-          cd examples_glfw
+          cd examples_glfwnew
           mkdir buildMake
           cd buildMake
           cmake ..
