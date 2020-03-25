@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(examples_glfw)
+project(examples_glfwnew)
 
 add_subdirectory(00_openwin)
 add_subdirectory(01_drawrect)

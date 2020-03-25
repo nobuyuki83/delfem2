@@ -21,6 +21,10 @@
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_v23.h"
 
+#ifndef M_PI
+  M_PI 3.141592
+#endif
+
 namespace dfm2 = delfem2;
 
 // ---------------------------------------------------

@@ -36,14 +36,14 @@ cmake .
 make
 cd ../..
 
-cd examples_glfw
+cd examples_glfwnew
 mkdir buildMake
 cd buildMake
 cmake ..
 make
 cd ../../
 
-cd examples_glfw_oldgl
+cd examples_glfwold
 mkdir buildMake
 cd buildMake
 cmake ..

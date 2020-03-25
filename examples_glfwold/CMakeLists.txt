@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(examples_glfw_oldgl)
+project(examples_glfwold)
 
 
 # simple examples without delfem2 

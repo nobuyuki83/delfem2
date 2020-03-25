@@ -11,14 +11,14 @@ cmake .
 make
 cd ../..
 
-cd examples_glfw
+cd examples_glfwnew
 mkdir buildXcode
 cd buildXcode
 cmake -G Xcode ..
 cmake --build .
 cd ../../
 
-cd examples_glfw
+cd examples_glfwnew
 mkdir buildEm
 cd buildEm
 cmake -DEMSCRIPTEN ..
@@ -29,14 +29,14 @@ cd ../../
 ################################
 # build examples_glut
 
-cd examples_glfw_oldgl
+cd examples_glfwold
 mkdir buildMake
 cd buildMake
 cmake ..
 make
 cd ../../
 
-cd examples_glfw_oldgl
+cd examples_glfwold
 mkdir buildXcode
 cd buildXcode
 cmake -G Xcode ..
