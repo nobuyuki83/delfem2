@@ -36,7 +36,7 @@ add_subdirectory(203_DynTri3dEdgeCollapses)
 add_subdirectory(204_DynTetTetrahedralization)
 
 # rigging
-add_subdirectory(300_RigSmpl)
+add_subdirectory(300_RigSmplArticulated)
 add_subdirectory(301_RigSmplTransfer)
 add_subdirectory(302_RigReadFileBVH)
 add_subdirectory(303_RigReadFileGLTF)
