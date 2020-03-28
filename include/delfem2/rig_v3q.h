@@ -20,6 +20,20 @@
 namespace delfem2 {
 
 /**
+ * @brief Set 3D affine matrix that transfrom from intial position from the deformed poisition for each bones.
+ * @details this funcition is for rigging without the class "CRigBone"
+ */
+void SetMat4AffineBone_FromJointRelativeRotation(
+                                                 std::vector<double>& aMat4AffineBone,
+                                                 const double trans_root[3],
+                                                 const std::vector<double>& aQuatRelativeRot,
+                                                 const std::vector<int>& aIndBoneParent,
+                                                 const std::vector<double>& aJntPos0);
+
+// ----------------------------------------------
+// CRigBone
+
+/**
  *@brief articulated rigid body for character rigging
  *@details this class support rig in GlTF and BioVision BVH
  */
@@ -115,6 +129,85 @@ void Skinning_LBS(
     const std::vector<double>& aW);
 
 
+// --------------------------------------
+
+void Smpl2Rig(std::vector<CRigBone>& aBone,
+              const std::vector<int>& aIndBoneParent,
+              const std::vector<double>& aXYZ0,
+              const std::vector<double>& aJntRgrs);
+
+// --------------------------------------
+
+void Rig_SkinReferncePositionsBoneWeighted(
+    std::vector<double>& aRefPosAff,
+    const std::vector<CRigBone> aBone1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aW);
+
+// ------------------------------------
+
+
+
+class CTarget
+{
+public:
+  unsigned int ib;
+  CVec3d pos;
+public:
+  void WdW
+  (std::vector<double>& aW,
+   std::vector<double>& adW,
+   const std::vector<CRigBone>& aBone,
+   std::vector<double>& aL) const; // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
+};
+
+void Rig_SensitivityBoneTransform(double* aL, // [ ndim(3), nBone, ndim(4) ]
+                                  unsigned int ib_s,
+                                  unsigned int idim_s,
+                                  const std::vector<CRigBone> aBone1);
+
+/*
+ void Rig_SkinReferncePositionsBoneWeighted_Eigen
+ (Eigen::MatrixXd& emRefPosAff,
+ const std::vector<CRigBone> aBone1,
+ const std::vector<double>& aXYZ0,
+ const std::vector<double>& aW);
+ */
+
+void Rig_SensitivityBoneTransform_Eigen(std::vector<double>& Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
+                                        std::vector<double>& Ly, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
+                                        std::vector<double>& Lz, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
+                                        unsigned int ib_s,
+                                        double idim_s,
+                                        bool is_rot,
+                                        const std::vector<CRigBone> aBone1);
+
+void Rig_WdW_Target_Eigen(std::vector<double>& aW,
+                          std::vector<double>& adW,
+                          const std::vector<CRigBone>& aBone,
+                          const CTarget& target,
+                          const std::vector<double>& Lx,  // [ nsns, nBone*4 ]
+                          const std::vector<double>& Ly,  // [ nsns, nBone*4 ]
+                          const std::vector<double>& Lz); // [ nsns, nBone*4 ]
+
+void Rig_SensitivitySkin_BoneRotation_Eigen(std::vector<double>& dSkinX,
+                                            std::vector<double>& dSkinY,
+                                            std::vector<double>& dSkinZ,
+                                            const std::vector<CRigBone>& aBone1,
+                                            const std::vector<double>& aXYZ0,
+                                            const std::vector<double>& aW,
+                                            const std::vector<double>& Lx, // [ nBone*3, nBone*4 ]
+                                            const std::vector<double>& Ly, // [ nBone*3, nBone*4 ]
+                                            const std::vector<double>& Lz); // [ nBone*3, nBone*4 ]
+
+void Rig_SensitivitySkin_BoneRotation(
+                                      std::vector<double>& aSns, // np*ndim(3) * nb*3
+                                      const std::vector<CRigBone> aBone1,
+                                      const std::vector<double>& aXYZ0,
+                                      const std::vector<double>& aW,
+                                      const std::vector<double>& aL);
+
+
 // ------------------------------------
 
 class CChannel_BioVisionHierarchy
@@ -145,23 +238,6 @@ void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
                                 const double *aVal);
 
 
-// --------------------------------------
-
-void Smpl2Rig(std::vector<CRigBone>& aBone,
-              const std::vector<int>& aIndBoneParent,
-              const std::vector<double>& aXYZ0,
-              const std::vector<double>& aJntRgrs);
-
-
-/**
- * @brief Set 3D affine matrix that transfrom from intial position from the deformed poisition for each bones.
- */
-void SetMat4AffineBone_FromJointRelativeRotation(
-    std::vector<double>& aMat4AffineBone,
-    const double trans_root[3],
-    const std::vector<double>& aQuatRelativeRot,
-    const std::vector<int>& aIndBoneParent,
-    const std::vector<double>& aJntPos0);
 
 
 } // namespace delfem2

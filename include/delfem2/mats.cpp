@@ -399,8 +399,12 @@ bool delfem2::CMatrixSparse<T>::Mearge
         const T *pval_in = &emat[(iblkel * nblkel_row + iblkel) * blksize];
         T *pval_out = &vdia[iblk1 * blksize];
         for (unsigned int i = 0; i < blksize; i++) { pval_out[i] += pval_in[i]; }
-      } else {  // Marge Non-Diagonal
-        if (marge_buffer[jblk1] == -1) continue;
+      }
+      else {  // Marge Non-Diagonal
+        if (marge_buffer[jblk1] == -1) {
+          assert(0);
+          return false;
+        }
         assert(marge_buffer[jblk1] >= 0 && marge_buffer[jblk1] < (int) rowPtr.size());
         const int jpsup1 = marge_buffer[jblk1];
         assert(rowPtr[jpsup1] == jblk1);

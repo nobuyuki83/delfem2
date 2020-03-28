@@ -536,3 +536,10 @@ CQuat SphericalLinearInterp(const CQuat& q0, const CQuat& q1, double t)
 }
 
 */
+
+
+// CQuat
+// -----------------------------
+// std::vector
+
+

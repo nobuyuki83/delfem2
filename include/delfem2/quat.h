@@ -194,6 +194,10 @@ public:
 };
 using CQuatd = CQuat<double>;
 using CQuatf = CQuat<float>;
+
+
+
+
   
 }
 

@@ -566,7 +566,8 @@ namespace delfem2 {
 CVec3d operator* (const CQuatd& q, const CVec3d& v)
 {
   CVec3d p;
-  QuatVec(p.p, q.q, v.p);
+  QuatVec(p.p,
+          q.q, v.p);
   return p;
 }
 
@@ -579,4 +580,33 @@ dfm2::CQuatd dfm2::Quat_CartesianAngle(const CVec3d& p)
   CQuatd q;
   Quat_CartesianAngle(q.q, p.p);
   return q;
+}
+
+
+void dfm2::UpdateRotationsByMatchingCluster
+ (std::vector<double>& aQuat1,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aXYZ1,
+  const std::vector<unsigned int>& psup_ind,
+  const std::vector<unsigned int>& psup)
+{
+  const unsigned int np = aXYZ0.size()/3;
+  for(unsigned int ip=0;ip<np;++ip){
+    const dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
+    const dfm2::CVec3d pi(aXYZ1.data()+ip*3);
+    const dfm2::CQuatd Qi(aQuat1.data()+ip*4);
+    dfm2::CMat3d Mat; Mat.SetZero();
+    dfm2::CVec3d rhs; rhs.SetZero();
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const unsigned int jp = psup[ipsup];
+      const dfm2::CVec3d v0 = Qi*(dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
+      const dfm2::CVec3d v1 = dfm2::CVec3d(aXYZ1.data()+jp*3)-pi-v0;
+      Mat += dfm2::Mat3_CrossCross(v0);
+      rhs += v1^v0;
+    }
+    dfm2::CVec3d sol = Mat.Inverse()*rhs;
+    dfm2::CQuatd q0 = dfm2::Quat_CartesianAngle(sol);
+    dfm2::CQuatd q1 = q0*dfm2::CQuatd(aQuat1.data()+ip*4);
+    q1.CopyTo(aQuat1.data()+ip*4);
+  }
 }
