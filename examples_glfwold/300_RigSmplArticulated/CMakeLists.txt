@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(300_RigSmpl)
+project(300_RigSmplArticulated)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
