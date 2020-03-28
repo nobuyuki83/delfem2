@@ -109,6 +109,11 @@ CMat4<T> operator - (const CMat4<T>& lhs, const CMat4<T>& rhs);
 template <typename T>
 CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 
+/**
+ * @brief 4x4 matrix class
+ * @class 4x4 matrix class
+ * @details Row major data storage. The template is defined for "float" and "double"
+ */
 template <typename REAL>
 class CMat4 {
 public:

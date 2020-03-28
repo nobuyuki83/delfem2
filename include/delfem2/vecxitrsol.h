@@ -24,22 +24,30 @@ namespace delfem2 {
  *@details defiend for "double", "float", "std::complex<double>". Inner product of complex value using conjugate value
  */
 template<typename T>
-T DotX(
-    const T *va,
-    const T *vb,
-    unsigned int n);
-
-template <typename T>
-void ScaleX(
-    T *p0,
-    T s,
-    unsigned int n);
+T DotX
+ (const T *va,
+  const T *vb,
+  unsigned int n);
 
 template<typename T>
-T Dot(
-    const std::vector<T> &r_vec,
-    const std::vector<T> &u_vec);
+T Dot
+ (const std::vector<T> &r_vec,
+  const std::vector<T> &u_vec);
 
+/**
+ * @brief Eucledian distance
+ */
+template<typename T>
+T Distance
+ (const std::vector<T> &r_vec,
+  const std::vector<T> &u_vec);
+
+
+template <typename T>
+void ScaleX
+ (T *p0,
+  T s,
+  unsigned int n);
 
 template<typename T>
 void XPlusAY(
@@ -103,14 +111,24 @@ void setRHS_MasterSlave(double *vec_b,
                         const int *aMSFlag);
 
 void MatVec(double* y,
-            double* A, unsigned int ncol, unsigned int nrow,
-            double* x);
+            const double* A, unsigned int ncol, unsigned int nrow,
+            const double* x);
 
-// --------------------------
+/**
+ * @param y vector size of nrow
+ * @param A a row-major matrix with size [ncol, nrow]
+ * @param x vector size of ncol
+ */
+void MatTVec(double* y,
+             const double* A, unsigned int ncol, unsigned int nrow,
+             const double* x);
+
+
+// ----------------------------------------------------------------------
 
 /**
  * @brief solve linear system using conjugate gradient method
- * @param mat (in)  a template class with member function "MatVec"
+ * @param mat (in)  a template class with member function "MatVec" with  {y} = alpha*[A]{x} + beta*{y}
  */
 template<typename REAL, typename MAT>
 std::vector<REAL>

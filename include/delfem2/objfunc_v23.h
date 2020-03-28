@@ -188,6 +188,29 @@ double WdWddW_SquareLengthLineseg3D(CVec3d dW_dP[2],
                                     const CVec3d P[2],
                                     double L0);
 
+double W_ArapEnergy
+ (const std::vector<double>& aXYZ0,
+  const std::vector<double>& aXYZ1,
+  const std::vector<double>& aQuat1,
+  const std::vector<unsigned int>& psup_ind,
+  const std::vector<unsigned int>& psup);
+
+void dW_ArapEnergy
+ (std::vector<double>& aRes,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aXYZ1,
+  const std::vector<double>& aQuat1,
+  const std::vector<unsigned int>& psup_ind,
+  const std::vector<unsigned int>& psup);
+
+void ddW_ArapEnergy
+ (std::vector<double>& eM,
+  const std::vector<unsigned int>& aIP,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aQuat1);
+
+
+
 }
 
 #endif /* pbd_v23_h */

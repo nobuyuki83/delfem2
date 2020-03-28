@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(125_SmplIk)
+project(305_RigSmplIkArap)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
@@ -34,29 +34,30 @@ include_directories(
 
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                   ${DELFEM2_INC}/vec2.cpp
-  ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/mat4.h                   ${DELFEM2_INC}/mat4.cpp
-  ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp
-  ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
-  ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
-  ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
-  ${DELFEM2_INC}/mats.h                   ${DELFEM2_INC}/mats.cpp
-  
-  ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
-  ${DELFEM2_INC}/v23m3q.h                 ${DELFEM2_INC}/v23m3q.cpp
-  
-  ${DELFEM2_INC}/cnpy/smpl_cnpy.h         ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
-
-  ${DELFEM2_INC}/opengl/glold_rig_v23q.h  ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
-  ${DELFEM2_INC}/opengl/glold_v23.h       ${DELFEM2_INC}/opengl/glold_v23.cpp
-  ${DELFEM2_INC}/opengl/glfw_viewer.h     ${DELFEM2_INC}/opengl/glfw_viewer.cpp
-  ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp
-  ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
-
-  ${3RD_PARTY}/cnpy/cnpy.h                ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${DELFEM2_INC}/vec2.h                        ${DELFEM2_INC}/vec2.cpp
+  ${DELFEM2_INC}/vec3.h                        ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/mat3.h                        ${DELFEM2_INC}/mat3.cpp
+  ${DELFEM2_INC}/mat4.h                        ${DELFEM2_INC}/mat4.cpp
+  ${DELFEM2_INC}/quat.h                        ${DELFEM2_INC}/quat.cpp
+  ${DELFEM2_INC}/camera.h                      ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/color.h                       ${DELFEM2_INC}/color.cpp
+  ${DELFEM2_INC}/mshtopo.h                     ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/vecxitrsol.h                  ${DELFEM2_INC}/vecxitrsol.cpp
+  ${DELFEM2_INC}/mats.h                        ${DELFEM2_INC}/mats.cpp
+       
+  ${DELFEM2_INC}/v23m3q.h                      ${DELFEM2_INC}/v23m3q.cpp
+  ${DELFEM2_INC}/objfunc_v23.h                 ${DELFEM2_INC}/objfunc_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_v23.h            ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/glold_color.h          ${DELFEM2_INC}/opengl/glold_color.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h          ${DELFEM2_INC}/opengl/glold_funcs.cpp
+       
+  ${3RD_PARTY}/cnpy/cnpy.h                     ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${DELFEM2_INC}/cnpy/smpl_cnpy.h              ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
+       
+  ${DELFEM2_INC}/rig_v3q.h                     ${DELFEM2_INC}/rig_v3q.cpp
+  ${DELFEM2_INC}/opengl/glold_rig_v23q.h       ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
+       
+  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
   
   main.cpp
 )

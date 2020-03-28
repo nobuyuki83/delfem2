@@ -221,6 +221,15 @@ void JArray_AddMasterSlavePattern(
     int npsup_ind0,
     const unsigned int *psup0);
 
+/**
+ * @details compute 2-ring neighborhood from 1-ring neighborhood
+ */
+void JArray_Extend(
+    std::vector<unsigned int>& psup_ind1,
+    std::vector<unsigned int>& psup1,
+    const std::vector<unsigned int>& psup_ind0,
+    const std::vector<unsigned int>& psup0);
+
 // ---------------------------------------------------
 
 void convert2Tri_Quad(std::vector<unsigned int>& aTri,

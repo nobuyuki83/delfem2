@@ -51,7 +51,8 @@ COMPLEX Dot(
 
 }
 
-// -----------------------------
+// ----------------------------------------------
+// dotx
 
 template<typename T>
 T dfm2::DotX(
@@ -86,6 +87,23 @@ COMPLEX DotX
 }
 
 }
+
+
+// ----------------------------------------------
+// distance
+
+template<typename T>
+T dfm2::Distance(const std::vector<T>& va,
+                 const std::vector<T>& vb)
+{
+  const unsigned int n = va.size();
+  T r = 0.0;
+  for(unsigned int i=0;i<n;i++){ r += (va[i]-vb[i])*(va[i]-vb[i]); }
+  return r;
+}
+template float dfm2::Distance(const std::vector<float>& va, const std::vector<float>& vb);
+template double dfm2::Distance(const std::vector<double>& va, const std::vector<double>& vb);
+
 
 
 // -------------------------------------------------
@@ -300,13 +318,63 @@ void dfm2::setRHS_MasterSlave(
 
 
 void dfm2::MatVec(double* y,
-                  double* A, unsigned int ncol, unsigned int nrow,
-                  double* x)
+                  const double* A, unsigned int ncol, unsigned int nrow,
+                  const double* x)
 {
   for(unsigned int i=0;i<ncol;++i){
     y[i] = 0;
     for(unsigned int j=0;j<nrow;++j){
       y[i] += A[i*nrow+j]*x[j];
+    }
+  }
+}
+
+
+
+void dfm2::MatTVec(double* y,
+                   const double* A, unsigned int ncol, unsigned int nrow,
+                   const double* x)
+{
+  for(unsigned int j=0;j<nrow;++j){  y[j] = 0; }
+  for(unsigned int i=0;i<ncol;++i){
+    for(unsigned int j=0;j<nrow;++j){
+      y[j] += A[i*nrow+j]*x[i];
+    }
+  }
+}
+
+
+
+void MatMatX
+ (double* M, // [ni, nj]
+  unsigned int ni, unsigned int nj,
+  const double*A, // [ni, nk]
+  unsigned int nk,
+  const double* B) // [nk, nj]
+{
+  for(int i=0;i<ni;++i){
+    for(int j=0;j<nj;++j){
+      M[i*nj+j] = 0.0;
+      for(int k=0;k<nk;++k){
+        M[i*nj+j] += A[i*nk+k] * B[k*nj+j];
+      }
+    }
+  }
+}
+
+void MatMatTX
+(double* M, // [ni, nj]
+ unsigned int ni, unsigned int nj,
+ const double*A, // [ni, nk]
+ unsigned int nk,
+ const double* B) // [nj, nk]
+{
+  for(int i=0;i<ni;++i){
+    for(int j=0;j<nj;++j){
+      M[i*nj+j] = 0.0;
+      for(int k=0;k<nk;++k){
+        M[i*nj+j] += A[i*nk+k] * B[j*nk+k];
+      }
     }
   }
 }

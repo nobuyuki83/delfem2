@@ -226,6 +226,9 @@ public:
   void CopyToScale(REAL* ptr, REAL s) const {
     for(int i=0;i<9;++i){ ptr[i] = mat[i]*s; }
   }
+  void AddToScale(REAL* ptr, REAL s) const {
+    for(int i=0;i<9;++i){ ptr[i] += mat[i]*s; }
+  }
   // ---------------
 //  CVector3 MatVec(const CVector3& vec0) const;
   void MatVec(const double vec0[], double vec1[]) const;
@@ -341,6 +344,28 @@ public:
   static CMat3 Spin(const REAL* v){
     CMat3 m;
     Mat3_Spin(m.mat, v);
+    return m;
+  }
+  static CMat3 Quat(const REAL* q){
+    REAL x2 = q[1] * q[1] * 2.0;
+    REAL y2 = q[2] * q[2] * 2.0;
+    REAL z2 = q[3] * q[3] * 2.0;
+    REAL xy = q[1] * q[2] * 2.0;
+    REAL yz = q[2] * q[3] * 2.0;
+    REAL zx = q[3] * q[1] * 2.0;
+    REAL xw = q[1] * q[0] * 2.0;
+    REAL yw = q[2] * q[0] * 2.0;
+    REAL zw = q[3] * q[0] * 2.0;
+    CMat3<REAL> m;
+    m.mat[0*3+0] = 1.0 - y2 - z2;
+    m.mat[0*3+1] = xy - zw;
+    m.mat[0*3+2] = zx + yw;
+    m.mat[1*3+0] = xy + zw;
+    m.mat[1*3+1] = 1.0 - z2 - x2;
+    m.mat[1*3+2] = yz - xw;
+    m.mat[2*3+0] = zx - yw;
+    m.mat[2*3+1] = yz + xw;
+    m.mat[2*3+2] = 1.0 - x2 - y2;
     return m;
   }
 public:

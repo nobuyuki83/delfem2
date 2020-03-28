@@ -124,6 +124,16 @@ static std::vector<std::string> MySplit
   return aToken;
 }
 
+static double MyDotX(
+                     const double* va,
+                     const double* vb,
+                     unsigned int n)
+{
+  double r = 0.0;
+  for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
+  return r;
+}
+
 
 // ------------------------------------------------------------
 
@@ -542,148 +552,304 @@ void dfm2::SetMat4AffineBone_FromJointRelativeRotation
 }
 
 
-
-/*
-void CBoneGoal::GetGoalPos
-(double* pos_trg,
- const double* org_rot,
- const double* pos_cur) const
+void dfm2::Rig_SkinReferncePositionsBoneWeighted
+ (std::vector<double>& aRefPosAff,  // [ np, nBone*4 ]
+  const std::vector<dfm2::CRigBone> aBone1,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aW)
 {
-  if( itype == 0 ){
-    pos_trg[0] = pos[0];
-    pos_trg[1] = pos[1];
-    pos_trg[2] = pos[2];
-  }
-  else if( itype == 1 ){
-    CVector3 s0(pos);
-    CVector3 d0(dir);
-    double t0,t1;
-    {
-      double rad = Distance3D(pos_cur,org_rot);
-      double a = d0*d0;
-      double b = 2*(s0-org_rot)*d0;
-      double c = (s0-org_rot)*(s0-org_rot)-rad*rad;
-      double t01 = -0.5*b/a;
-      double det = b*b-4*a*c;
-      t0=t01;
-      t1=t01;
-      if( det > 0 ){
-        t0 -= 0.5*sqrt(det)/a;
-        t1 += 0.5*sqrt(det)/a;
-      }
-    }
-    CVector3 p0 = s0+t0*d0;
-    CVector3 p1 = s0+t1*d0;
-    if( (pos_cur-p0).Length()<(pos_cur-p1).Length() ){
-      pos_trg[0] = p0[0];
-      pos_trg[1] = p0[1];
-      pos_trg[2] = p0[2];
-    }
-    else{
-      pos_trg[0] = p1[0];
-      pos_trg[1] = p1[1];
-      pos_trg[2] = p1[2];
+  const unsigned int np = aXYZ0.size()/3;
+  const unsigned int nb = aBone1.size();
+  aRefPosAff.resize(np*nb*4);
+  for(int ip=0;ip<np;++ip){
+    double p0a[4] = {aXYZ0[ip*3+0], aXYZ0[ip*3+1], aXYZ0[ip*3+2], 1.0};
+    for(int ib=0;ib<nb;++ib){
+      double p0b[4]; dfm2::MatVec4(p0b,
+                                   aBone1[ib].invBindMat, p0a);
+      aRefPosAff[ip*(nb*4)+ib*4+0] = aW[ip*nb+ib]*p0b[0];
+      aRefPosAff[ip*(nb*4)+ib*4+1] = aW[ip*nb+ib]*p0b[1];
+      aRefPosAff[ip*(nb*4)+ib*4+2] = aW[ip*nb+ib]*p0b[2];
+      aRefPosAff[ip*(nb*4)+ib*4+3] = aW[ip*nb+ib];
     }
   }
 }
-*/
-/*
-void BoneOptimization
-(std::vector<CBone_RigMsh>& aBone,
- const std::vector<CBoneGoal>& aBoneGoal)
+
+
+
+
+
+// --------------------------------------
+
+
+void dfm2::CTarget::WdW
+ (std::vector<double>& aW,
+  std::vector<double>& adW,
+  const std::vector<dfm2::CRigBone>& aBone,
+  std::vector<double>& aL) const // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
 {
-  if( aBoneGoal.empty() ) return;
-  ///
-  std::vector< std::vector<int> > src2trg(aBone.size());
-  for(int itrg=0;itrg<(int)aBoneGoal.size();++itrg){
-    int ib0 = aBoneGoal[itrg].ibone;
-    //  src2trg[ib0].push_back(itrg); // this should be added if we set goal apart from the bone
-    for(;;){
-      int ib1 = aBone[ib0].ibone_parent;
-      if( ib1 < 0 ){ break; }
-      assert( ib1 < (int)aBoneGoal.size() );
-      src2trg[ib1].push_back(itrg);
-      ib0 = ib1;
+  const dfm2::CVec3d p0 = aBone[ib].Pos();
+  const unsigned int ncnst = 2;
+  {
+    double sqx = pos.x()-p0.x();
+    double sqy = pos.y()-p0.y();
+    aW.push_back(sqx);
+    aW.push_back(sqy);
+  }
+  const unsigned int nb = aBone.size();
+  const unsigned int istat = adW.size();
+  adW.resize(istat+ncnst*nb*3);
+  for(int ibs=0;ibs<nb;++ibs){
+    for(int idims=0;idims<3;++idims){
+      double dx = aL[(idims*nb+ibs)*(3*nb*4)+0*(nb*4)+ib*4+3];
+      double dy = aL[(idims*nb+ibs)*(3*nb*4)+1*(nb*4)+ib*4+3];
+      double dz = aL[(idims*nb+ibs)*(3*nb*4)+2*(nb*4)+ib*4+3];
+      adW[istat+0*(nb*3)+ibs*3+idims] = -dx;
+      adW[istat+1*(nb*3)+ibs*3+idims] = -dy;
+    }
+  }
+}
+
+void dfm2::Rig_SensitivityBoneTransform
+(double* aL, // [ ndim(3), nBone, ndim(4) ]
+ unsigned int ib_s,
+ unsigned int idim_s,
+ const std::vector<dfm2::CRigBone> aBone1)
+{
+  const unsigned int nb = aBone1.size();
+  std::vector<double> aM(nb*16);
+  {
+    for(std::size_t ibone=0;ibone<aBone1.size();++ibone){
+      dfm2::CMat4d m01 = dfm2::CMat4d::Scale(aBone1[ibone].scale);
+      m01 = dfm2::CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
+      if( ibone == ib_s ){
+        dfm2::CMat3d dn1 = dfm2::CMat3d::Spin(dfm2::CVec3d::Axis(idim_s).p) + dfm2::CMat3d::Identity();
+        dfm2::CMat4d dm1 = dfm2::CMat4d::Mat3(dn1.mat);
+        m01 = dm1 * m01;
+      }
+      m01 = dfm2::CMat4d::Translate(aBone1[ibone].transRelative) * m01;
+      const int ibone_p = aBone1[ibone].ibone_parent;
+      if( ibone_p < 0 || ibone_p >= (int)aBone1.size() ){ // root bone
+        dfm2::Copy_Mat4( aM.data()+ibone*16, m01.mat );
+        continue;
+      }
+      dfm2::MatMat4(aM.data()+ibone*16,
+                    aM.data()+ibone_p*16, m01.mat);
+    }
+  }
+  for(int idim=0;idim<3;++idim){
+    for(std::size_t ib=0;ib<nb;++ib){
+      for(int jdim=0;jdim<4;++jdim){
+        aL[idim*nb*4+ib*4+jdim] = aM[ib*16+idim*4+jdim] - aBone1[ib].affmat3Global[idim*4+jdim];
+      }
+    }
+  }
+}
+
+
+void dfm2::Rig_SensitivityBoneTransform_Eigen
+(std::vector<double>& Lx, // [ nsns, nBone*4 ]
+ std::vector<double>& Ly, // [ nsns, nBone*4 ]
+ std::vector<double>& Lz, // [ nsns, nBone*4 ]
+ unsigned int ib_s,
+ double idim_s,
+ bool is_rot,
+ const std::vector<dfm2::CRigBone> aBone1)
+{
+  const unsigned int nb = aBone1.size();
+  unsigned int istat = Lx.size();
+  assert( Ly.size() == istat );
+  assert( Lz.size() == istat );
+  Lx.resize(istat+nb*4);
+  Ly.resize(istat+nb*4);
+  Lz.resize(istat+nb*4);
+  std::vector<double> aM(nb*16);
+  
+  for(std::size_t ibone=0;ibone<aBone1.size();++ibone){
+    dfm2::CMat4d m01 = dfm2::CMat4d::Scale(aBone1[ibone].scale);
+    m01 = dfm2::CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
+    if( ibone == ib_s && is_rot ){
+      dfm2::CMat3d dn1 = dfm2::CMat3d::Spin(dfm2::CVec3d::Axis(idim_s).p) + dfm2::CMat3d::Identity();
+      dfm2::CMat4d dm1 = dfm2::CMat4d::Mat3(dn1.mat);
+      m01 = dm1 * m01;
+    }
+    m01 = dfm2::CMat4d::Translate(aBone1[ibone].transRelative) * m01;
+    if( ibone == ib_s && !is_rot ){
+      m01 = dfm2::CMat4d::Translate(dfm2::CVec3d::Axis(idim_s).p) * m01;
+    }
+    const int ibone_p = aBone1[ibone].ibone_parent;
+    if( ibone_p < 0 || ibone_p >= (int)aBone1.size() ){ // root bone
+      dfm2::Copy_Mat4( aM.data()+ibone*16, m01.mat );
+      continue;
+    }
+    dfm2::MatMat4(aM.data()+ibone*16,
+                  aM.data()+ibone_p*16, m01.mat);
+  }
+  for(std::size_t ib=0;ib<nb;++ib){
+    for(int jdim=0;jdim<4;++jdim){
+      Lx[istat+ib*4+jdim] = aM[ib*16+0*4+jdim] - aBone1[ib].affmat3Global[0*4+jdim];
+      Ly[istat+ib*4+jdim] = aM[ib*16+1*4+jdim] - aBone1[ib].affmat3Global[1*4+jdim];
+      Lz[istat+ib*4+jdim] = aM[ib*16+2*4+jdim] - aBone1[ib].affmat3Global[2*4+jdim];
     }
   }
   
-  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
-    //  for(int ibone=aBone.size()-1;ibone>=0;--ibone){
-    if( src2trg[ibone].empty() ){ continue; }
-    //    std::cout << "optimize bone:" << ibone << std::endl;
-    {
-      const CVector3 org(aBone[ibone].pos);
-      CMatrix3 A;
-      double len = 0.0;
-      for(unsigned int iitrg=0;iitrg<src2trg[ibone].size();++iitrg){
-        const int itrg = src2trg[ibone][iitrg];
-        const int ib0 = aBoneGoal[itrg].ibone;
-        double pos_goal[3];
-        aBoneGoal[itrg].GetGoalPos(pos_goal,
-                                   aBone[ibone].pos, aBone[ib0].pos);
-        CVector3 a = CVector3(aBone[ib0].pos) - org;
-        CVector3 b = pos_goal-org;
-        A += Mat3_OuterProduct(a,b);
-        len += a.Length() + b.Length();
-      }
-      A += CMatrix3::Identity()*len*len*1.0e-3;
-      CMatrix3 R; GetRotPolarDecomp(R.mat, A.mat, 20);
-      double quat[4]; R.GetQuat_RotMatrix(quat);
-      double quat0[4]; QuatMult(quat0, aBone[ibone].quat_joint,quat);
-      QuatCopy(aBone[ibone].quat_joint,quat0);
-      UpdateBoneRotTrans(aBone);
-    }
-    {
-      double off[3] = {0,0,0};
-      double w = 0;
-      for(unsigned int itrg=0;itrg<aBoneGoal.size();++itrg){
-        const int ib0 = aBoneGoal[itrg].ibone;
-        double pos_goal[3];
-        aBoneGoal[itrg].GetGoalPos(pos_goal,
-                                   aBone[ibone].pos, aBone[ib0].pos);
-        off[0] += aBone[ib0].pos[0] - pos_goal[0];
-        off[1] += aBone[ib0].pos[1] - pos_goal[1];
-        off[2] += aBone[ib0].pos[2] - pos_goal[2];
-        w += 1.0;
-      }
-      off[0] /= w;
-      off[1] /= w;
-      off[2] /= w;
-      for(unsigned int jbone=0;jbone<aBone.size();++jbone){
-        aBone[jbone].pos[0] -= off[0];
-        aBone[jbone].pos[1] -= off[1];
-        aBone[jbone].pos[2] -= off[2];
-      }
-    }
-  }
 }
- */
-/*
-void DrawBoneTarget
-(const std::vector<CBoneGoal>& aBoneGoal,
- const std::vector<CBone_RigMsh>& aBone)
+
+
+
+
+void dfm2::Rig_SensitivitySkin_BoneRotation
+ (std::vector<double>& aSns, // [nb*3, np*ndim(3)]
+  const std::vector<dfm2::CRigBone> aBone1,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aW,
+  const std::vector<double>& aL) // [ [3, nb],  ndim(3),  [nBone, ndim(4)]] ]
 {
-  double bone_rad = 6;
-  ::glDisable(GL_LIGHTING);
-  for(unsigned int itrg=0;itrg<aBoneGoal.size();++itrg){
-    const CBoneGoal& bg = aBoneGoal[itrg];
-    if( bg.itype == 0 ){ ::glColor3d(0,0,1); }
-    if( bg.itype == 1 ){ ::glColor3d(0,0,0); }
-    const double* pos = bg.pos;
-    DrawSphereAt(32, 32, bone_rad, pos[0],pos[1],pos[2]);
-    if( bg.itype == 1 ){
-      CVector3 dir(bg.dir);
-      CVector3 src(bg.pos);
-      ::glBegin(GL_LINES);
-      myGlVertex(src+1000*dir);
-      myGlVertex(src-1000*dir);
-      ::glEnd();
+  std::vector<double> aRefPos; // [np, nb*4]
+  Rig_SkinReferncePositionsBoneWeighted(aRefPos,
+                                        aBone1, aXYZ0, aW);
+  // -------------
+  //  std::vector<double> aL; // 3*nb*4
+  const unsigned int nb = aBone1.size();
+  const unsigned int np = aXYZ0.size()/3;
+  aSns.resize(nb*3 * np*3);
+  for(int ib_s=0;ib_s<nb;++ib_s){
+    for(int idim_s=0;idim_s<3;++idim_s){
+      for(int ip=0;ip<np;++ip){
+        for(int idim=0;idim<3;++idim){
+          aSns[(np*3)*(ib_s*3+idim_s)+(ip*3+idim)] = MyDotX(aL.data()+(idim_s*nb+ib_s)*(3*nb*4)+idim*nb*4,
+                                                            aRefPos.data()+ip*nb*4,
+                                                            nb*4);
+        }
+      }
     }
   }
 }
+
+/*
+ void dfm2::Rig_SkinReferncePositionsBoneWeighted_Eigen
+ (Eigen::MatrixXd& emRefPosAff,
+ const std::vector<dfm2::CRigBone> aBone1,
+ const std::vector<double>& aXYZ0,
+ const std::vector<double>& aW)
+ {
+ const unsigned int np = aXYZ0.size()/3;
+ const unsigned int nb = aBone1.size();
+ emRefPosAff.resize(np, nb*4);
+ for(int ip=0;ip<np;++ip){
+ double p0a[4] = {aXYZ0[ip*3+0], aXYZ0[ip*3+1], aXYZ0[ip*3+2], 1.0};
+ for(int ib=0;ib<nb;++ib){
+ double p0b[4]; dfm2::MatVec4(p0b,
+ aBone1[ib].invBindMat, p0a);
+ emRefPosAff(ip, ib*4+0) = aW[ip*nb+ib]*p0b[0];
+ emRefPosAff(ip, ib*4+1) = aW[ip*nb+ib]*p0b[1];
+ emRefPosAff(ip, ib*4+2) = aW[ip*nb+ib]*p0b[2];
+ emRefPosAff(ip, ib*4+3) = aW[ip*nb+ib];
+ }
+ }
+ }
  */
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
+static void MyMatMatX
+ (double* M, // [ni, nj]
+  unsigned int ni, unsigned int nj,
+  const double*A, // [ni, nk]
+  unsigned int nk,
+  const double* B) // [nk, nj]
+{
+  for(int i=0;i<ni;++i){
+    for(int j=0;j<nj;++j){
+      M[i*nj+j] = 0.0;
+      for(int k=0;k<nk;++k){
+        M[i*nj+j] += A[i*nk+k] * B[k*nj+j];
+      }
+    }
+  }
+}
 
+static void MyMatMatTX
+(double* M, // [ni, nj]
+ unsigned int ni, unsigned int nj,
+ const double*A, // [ni, nk]
+ unsigned int nk,
+ const double* B) // [nj, nk]
+{
+  for(int i=0;i<ni;++i){
+    for(int j=0;j<nj;++j){
+      M[i*nj+j] = 0.0;
+      for(int k=0;k<nk;++k){
+        M[i*nj+j] += A[i*nk+k] * B[j*nk+k];
+      }
+    }
+  }
+}
+
+void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
+(std::vector<double>& dSkinX, // [ np, nsns ]
+ std::vector<double>& dSkinY, // [ np, nsns ]
+ std::vector<double>& dSkinZ, // [ np, nsns ]
+ const std::vector<dfm2::CRigBone>& aBone1,
+ const std::vector<double>& aXYZ0,
+ const std::vector<double>& aW,
+ const std::vector<double>& Lx, // [ nsns, nBone*4 ]
+ const std::vector<double>& Ly, // [ nsns, nBone*4 ]
+ const std::vector<double>& Lz) // [ nsns, nBone*4 ]
+{
+  const unsigned int nb = aBone1.size();
+  const unsigned int np = aXYZ0.size()/3;
+  const unsigned int nsns = nb*3;
+  assert( Lx.size() == nb*4 * nsns );
+  assert( Ly.size() == nb*4 * nsns );
+  assert( Lz.size() == nb*4 * nsns );
+  
+  std::vector<double> aRefPos; // [ np, nBone*4 ]
+  Rig_SkinReferncePositionsBoneWeighted(aRefPos,
+                                        aBone1,aXYZ0,aW);
+  
+  dSkinX.resize(np*nsns);
+  dSkinY.resize(np*nsns);
+  dSkinZ.resize(np*nsns);
+  MyMatMatTX(dSkinX.data(),
+             np, nsns, aRefPos.data(), nb*4, Lx.data());
+  MyMatMatTX(dSkinY.data(),
+             np, nsns, aRefPos.data(), nb*4, Ly.data());
+  MyMatMatTX(dSkinZ.data(),
+             np, nsns, aRefPos.data(), nb*4, Lz.data());
+}
+
+
+void dfm2::Rig_WdW_Target_Eigen
+ (std::vector<double>& aW,
+  std::vector<double>& adW,
+  const std::vector<dfm2::CRigBone>& aBone,
+  const dfm2::CTarget& target,
+  const std::vector<double>& Lx, // [ nsns, nBone*4 ]
+  const std::vector<double>& Ly, // [ nsns, nBone*4 ]
+  const std::vector<double>& Lz) // [ nsns, nBone*4 ]
+{
+  const unsigned int nb = aBone.size();
+  const unsigned int nsns = Lx.size()/(nb*4);
+  assert( Lx.size() == nsns*nb*4 );
+  assert( Ly.size() == nsns*nb*4 );
+  assert( Lz.size() == nsns*nb*4 );
+  // --------
+  unsigned int ib = target.ib;
+  const dfm2::CVec3d pos = target.pos;
+  // ---------------
+  const dfm2::CVec3d p0 = aBone[ib].Pos();
+  const unsigned int ncnst = 2;
+  {
+    double sqx = pos.x()-p0.x();
+    double sqy = pos.y()-p0.y();
+    aW.push_back(sqx);
+    aW.push_back(sqy);
+  }
+  const unsigned int istat = adW.size();
+  adW.resize(istat+ncnst*nsns);
+  for(int isns=0;isns<nsns;++isns){
+    double dx = Lx[isns*(nb*4) + ib*4+3];
+    double dy = Ly[isns*(nb*4) + ib*4+3];
+    double dz = Lz[isns*(nb*4) + ib*4+3];
+    adW[istat+0*nsns+isns] = -dx;
+    adW[istat+1*nsns+isns] = -dy;
+  }
+}

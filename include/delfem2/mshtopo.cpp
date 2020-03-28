@@ -207,7 +207,58 @@ void dfm2::JArray_ElSuP_MeshElem
   elsup_ind[0] = 0;
 }
 
-// ------------------------------
+/**
+ * @details compute 2-ring neighborhood from 1-ring neighborhood
+ */
+void dfm2::JArray_Extend
+(std::vector<unsigned int>& psup_ind1,
+ std::vector<unsigned int>& psup1,
+ const std::vector<unsigned int>& psup_ind0,
+ const std::vector<unsigned int>& psup0)
+{
+  unsigned int np = psup_ind0.size()-1;
+  psup_ind1.assign(np+1, 0);
+  std::vector<int> aflg(np,-1);
+  for(unsigned int ip=0;ip<np;++ip){
+    for(unsigned int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
+      unsigned int jp0 = psup0[ipsup];
+      for(unsigned int jpsup=psup_ind0[jp0];jpsup<psup_ind0[jp0+1];++jpsup){
+        unsigned int kp0 = psup0[jpsup];
+        if( aflg[kp0] == ip || kp0 == ip ){ continue; }
+        ++psup_ind1[ip+1];
+        aflg[kp0] = ip;
+      }
+    }
+  }
+  // ---------
+  for(int ip=0;ip<np;++ip){
+    psup_ind1[ip+1] += psup_ind1[ip];
+  }
+  psup1.resize(psup_ind1[np]);
+  // ---------
+  aflg.assign(np,-1);
+  for(unsigned int ip=0;ip<np;++ip){
+    for(unsigned int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
+      unsigned int jp0 = psup0[ipsup];
+      for(unsigned int jpsup=psup_ind0[jp0];jpsup<psup_ind0[jp0+1];++jpsup){
+        unsigned int kp0 = psup0[jpsup];
+        if( aflg[kp0] == ip || kp0 == ip ){ continue; }
+        unsigned int kpsup = psup_ind1[ip];
+        ++psup_ind1[ip];
+        psup1[kpsup] = kp0;
+        aflg[kp0] = ip;
+      }
+    }
+  }
+  for(int ip=np;ip>=1;--ip){
+    psup_ind1[ip] = psup_ind1[ip-1];
+  }
+  psup_ind1[0] = 0;
+}
+
+// JArray
+// -----------------------------------------------------------------
+// Elem
 
 void dfm2::ElemQuad_DihedralTri
  (std::vector<unsigned int>& aQuad,

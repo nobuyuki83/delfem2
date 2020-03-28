@@ -191,6 +191,18 @@ CVec3d operator* (const CQuatd& v, const CVec3d& m);
 
 CQuatd Quat_CartesianAngle(const CVec3d& p);
 
+
+/**
+ * @discussion interface doesn't have CQuat, CMat3, CVec3, but the implementation has it.
+ */
+void UpdateRotationsByMatchingCluster
+(std::vector<double>& aQuat1,
+ const std::vector<double>& aXYZ0,
+ const std::vector<double>& aXYZ1,
+ const std::vector<unsigned int>& psup_ind,
+ const std::vector<unsigned int>& psup);
+
+
 }
 
 #endif /* vec23mat3quat_hpp */

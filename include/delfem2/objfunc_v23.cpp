@@ -989,3 +989,102 @@ double dfm2::WdWddW_SquareLengthLineseg3D
   ddW_ddP[1][1] = m;
   return 0.5*R*R;
 }
+
+double dfm2::W_ArapEnergy
+(const std::vector<double>& aXYZ0,
+ const std::vector<double>& aXYZ1,
+ const std::vector<double>& aQuat1,
+ const std::vector<unsigned int>& psup_ind,
+ const std::vector<unsigned int>& psup)
+{
+  const unsigned int np = aXYZ0.size()/3;
+  assert( aXYZ1.size() == np*3 );
+  assert( aQuat1.size() == np*4 );
+  assert( psup_ind.size() == np+1 );
+  double w = 0.0;
+  for(unsigned int ip=0;ip<np;++ip){
+    dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
+    dfm2::CVec3d pi(aXYZ1.data()+ip*3);
+    dfm2::CQuatd Qi(aQuat1.data()+4*ip);
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const unsigned int jp = psup[ipsup];
+      const dfm2::CVec3d v0 = Qi*(dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
+      dfm2::CVec3d pj(aXYZ1.data()+jp*3);
+      const dfm2::CVec3d v1 = pj-pi;
+      dfm2::CVec3d v = v0-v1;
+      w += v*v;
+      //      w += v1*v1;
+    }
+  }
+  return 0.5*w;
+}
+
+void dfm2::dW_ArapEnergy
+(std::vector<double>& aRes,
+ const std::vector<double>& aXYZ0,
+ const std::vector<double>& aXYZ1,
+ const std::vector<double>& aQuat1,
+ const std::vector<unsigned int>& psup_ind,
+ const std::vector<unsigned int>& psup)
+{
+  const unsigned int np = aXYZ0.size()/3;
+  assert( aXYZ1.size() == np*3 );
+  aRes.assign(np*3, 0.0);
+  for(unsigned int ip=0;ip<np;++ip){
+    const dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
+    const dfm2::CVec3d pi(aXYZ1.data()+ip*3);
+    const dfm2::CQuatd Qi(aQuat1.data()+ip*4);
+    dfm2::CMat3d LM; LM.SetZero();
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const unsigned int jp = psup[ipsup];
+      const dfm2::CVec3d v0 = Qi*(dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
+      dfm2::CVec3d pj(aXYZ1.data()+jp*3);
+      const dfm2::CVec3d v1 = pj-pi;
+      const dfm2::CVec3d r = -(v1-v0);
+      //      const dfm2::CVec3d r = -v1;
+      r.AddToScale(aRes.data()+ip*3, +1);
+      r.AddToScale(aRes.data()+jp*3, -1);
+    }
+  }
+}
+
+void dfm2::ddW_ArapEnergy
+ (std::vector<double>& eM,
+  const std::vector<unsigned int>& aIP,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aQuat1)
+{
+  const unsigned int nIP = aIP.size();
+  const unsigned int nNg = nIP-1; // number of neighbor
+  unsigned int ip = aIP[nNg];
+  const dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
+  dfm2::CMat3d LM; LM.SetZero();
+  for(unsigned int iip=0;iip<nNg;++iip){
+    const unsigned int jp = aIP[iip];
+    const dfm2::CVec3d v0 = (dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
+    LM += dfm2::Mat3_CrossCross(v0);
+  }
+  dfm2::CMat3d LMi = LM.Inverse();
+  dfm2::CMat3d R = dfm2::CMat3d::Quat(aQuat1.data()+ip*4);
+  //    LMi = R*LMi*R.Trans();
+  eM.assign(nIP*nIP*9, 0.0);
+  for(int jjp=0;jjp<nNg;++jjp){
+    for(int kkp=0;kkp<nNg;++kkp){
+      const dfm2::CVec3d vj = (dfm2::CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
+      const dfm2::CVec3d vk = (dfm2::CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
+      dfm2::CMat3d L1 = R*dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p)*R.Trans();
+      //        L1 = dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p);
+      L1.AddToScale(eM.data()+(kkp*nIP+jjp)*9, -1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, -1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, +1.0);
+      L1.AddToScale(eM.data()+(kkp*nIP+nNg)*9, +1.0);
+    }
+    {
+      dfm2::CMat3d L1 = dfm2::CMat3d::Identity();
+      L1.AddToScale(eM.data()+(jjp*nIP+jjp)*9, +1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, +1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, -1.0);
+      L1.AddToScale(eM.data()+(jjp*nIP+nNg)*9, -1.0);
+    }
+  }
+}
