@@ -38,7 +38,7 @@ add_subdirectory(204_DynTetTetrahedralization)
 # rigging
 add_subdirectory(300_RigSmplArticulated)
 add_subdirectory(301_RigSmplTransfer)
-add_subdirectory(302_RigReadFileBVH)
+add_subdirectory(302_RigReadFileBiovision)
 add_subdirectory(303_RigReadFileGLTF)
 add_subdirectory(304_RigSmplIk)
 add_subdirectory(305_RigSmplIkArap)
