@@ -51,7 +51,7 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/opengl/render2tex_gl.h     ${DELFEM2_INC}/opengl/render2tex_gl.cpp
     ${DELFEM2_INC}/opengl/render2tex_glold.h  ${DELFEM2_INC}/opengl/render2tex_glold.cpp        
     ${DELFEM2_INC}/opengl/glold_v3color.h     ${DELFEM2_INC}/opengl/glold_v3color.cpp
-    ${DELFEM2_INC}/opengl/glold_v23.h         ${DELFEM2_INC}/opengl/glold_v23.cpp
+    ${DELFEM2_INC}/opengl/v3q_glold.h         ${DELFEM2_INC}/opengl/v3q_glold.cpp
     ${DELFEM2_INC}/opengl/glold_color.cpp     ${DELFEM2_INC}/opengl/glold_color.h
     ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
     

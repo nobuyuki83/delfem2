@@ -35,7 +35,7 @@ add_executable(${PROJECT_NAME}
        
   ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_color.h        ${DELFEM2_INC}/opengl/glold_color.cpp   
-  ${DELFEM2_INC}/opengl/glold_v23.h          ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
                         
   main.cpp
 )

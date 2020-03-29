@@ -11,7 +11,7 @@
 #include "delfem2/paramgeo_v23.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v2_glold.h"
 #include "delfem2/opengl/glold_funcs.h"
 //
 #include "delfem2/opengl/glfw/viewer_glfw.h"

@@ -31,18 +31,18 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec3.h                  ${DELFEM2_INC}/vec3.cpp
-  ${DELFEM2_INC}/camera.h                ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                 ${DELFEM2_INC}/color.cpp
-  ${DELFEM2_INC}/mshmisc.h               ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/mshio.h                 ${DELFEM2_INC}/mshio.cpp
-  ${DELFEM2_INC}/mshtopo.h               ${DELFEM2_INC}/mshtopo.cpp
-       
-  ${DELFEM2_INC}/dtet_v3.h               ${DELFEM2_INC}/dtet_v3.cpp
+  ${DELFEM2_INC}/vec3.h                       ${DELFEM2_INC}/vec3.cpp
+  ${DELFEM2_INC}/camera.h                     ${DELFEM2_INC}/camera.cpp
+  ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
+  ${DELFEM2_INC}/mshmisc.h                    ${DELFEM2_INC}/mshmisc.cpp
+  ${DELFEM2_INC}/mshio.h                      ${DELFEM2_INC}/mshio.cpp
+  ${DELFEM2_INC}/mshtopo.h                    ${DELFEM2_INC}/mshtopo.cpp
+
+  ${DELFEM2_INC}/dtet_v3.h                    ${DELFEM2_INC}/dtet_v3.cpp
+
+  ${DELFEM2_INC}/opengl/glold_color.h         ${DELFEM2_INC}/opengl/glold_color.cpp
   
-  ${DELFEM2_INC}/opengl/glold_color.h    ${DELFEM2_INC}/opengl/glold_color.cpp
-  
-  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
+  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
 
   main.cpp
 )

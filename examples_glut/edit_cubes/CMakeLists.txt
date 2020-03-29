@@ -32,7 +32,7 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/voxel.h                 ${DELFEM2_INC}/voxel.cpp      
 
   ${DELFEM2_INC}/opengl/glold_voxbv.h    ${DELFEM2_INC}/opengl/glold_voxbv.cpp
-  ${DELFEM2_INC}/opengl/glold_v23.h      ${DELFEM2_INC}/opengl/glold_v23.cpp
+  ${DELFEM2_INC}/opengl/v3q_glold.h      ${DELFEM2_INC}/opengl/v3q_glold.cpp
   ${DELFEM2_INC}/opengl/glold_funcs.h    ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_color.h    ${DELFEM2_INC}/opengl/glold_color.cpp
 

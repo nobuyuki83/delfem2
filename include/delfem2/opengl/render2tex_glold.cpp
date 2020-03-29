@@ -13,6 +13,7 @@
 #include <stack>
 #include <cstring>
 #include <cstdlib>
+#include "delfem2/vec3.h"
 
 #include "glad/glad.h" // gl3.0+
 #if defined(__APPLE__) && defined(__MACH__) // Mac
@@ -24,7 +25,7 @@
   #include <GL/gl.h>
 #endif
 #include "delfem2/opengl/glold_funcs.h"
-#include "delfem2/opengl/glold_v23.h"  // vec3, mat3
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/render2tex_glold.h"
 
 namespace dfm2 = delfem2;

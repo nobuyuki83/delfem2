@@ -602,7 +602,7 @@ void dfm2::CTarget::WdW
     for(int idims=0;idims<3;++idims){
       double dx = aL[(idims*nb+ibs)*(3*nb*4)+0*(nb*4)+ib*4+3];
       double dy = aL[(idims*nb+ibs)*(3*nb*4)+1*(nb*4)+ib*4+3];
-      double dz = aL[(idims*nb+ibs)*(3*nb*4)+2*(nb*4)+ib*4+3];
+//      double dz = aL[(idims*nb+ibs)*(3*nb*4)+2*(nb*4)+ib*4+3];
       adW[istat+0*(nb*3)+ibs*3+idims] = -dx;
       adW[istat+1*(nb*3)+ibs*3+idims] = -dy;
     }
@@ -848,7 +848,7 @@ void dfm2::Rig_WdW_Target_Eigen
   for(int isns=0;isns<nsns;++isns){
     double dx = Lx[isns*(nb*4) + ib*4+3];
     double dy = Ly[isns*(nb*4) + ib*4+3];
-    double dz = Lz[isns*(nb*4) + ib*4+3];
+//    double dz = Lz[isns*(nb*4) + ib*4+3];
     adW[istat+0*nsns+isns] = -dx;
     adW[istat+1*nsns+isns] = -dy;
   }

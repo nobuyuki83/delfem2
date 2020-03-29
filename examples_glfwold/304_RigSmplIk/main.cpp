@@ -12,7 +12,7 @@
 
 #include <cstdlib>
 #include <random>
-#include <time.h>
+#include <ctime>
 #include <GLFW/glfw3.h>
 
 #include "delfem2/vec3.h"
@@ -25,7 +25,7 @@
 //
 #include "delfem2/v23m3q.h"
 #include "delfem2/opengl/glold_funcs.h"
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v3q_glold.h"
 //
 #include "delfem2/cnpy/smpl_cnpy.h"
 

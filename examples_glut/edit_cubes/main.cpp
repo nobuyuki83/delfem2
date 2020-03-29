@@ -10,6 +10,7 @@
 #include <math.h>
 #include <time.h>
 #include <complex>
+#include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mshmisc.h"
@@ -26,7 +27,7 @@
 
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glold_voxbv.h"
 #include "../glut_cam.h"
 

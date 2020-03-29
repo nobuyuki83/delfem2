@@ -65,7 +65,7 @@ add_executable(${PROJECT_NAME}
 	${DELFEM2_INC}/v23m3q.cpp               ${DELFEM2_INC}/v23m3q.h
 
 	${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  ${DELFEM2_INC}/opengl/glold_v23.h       ${DELFEM2_INC}/opengl/glold_v23.cpp
+#  ${DELFEM2_INC}/opengl/glold_v23.h       ${DELFEM2_INC}/opengl/glold_v23.cpp
   
   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
   

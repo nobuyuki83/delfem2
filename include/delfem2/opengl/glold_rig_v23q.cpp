@@ -25,7 +25,7 @@
 #endif
 
 #include "delfem2/opengl/glold_funcs.h"
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glold_rig_v23q.h"
 
 
