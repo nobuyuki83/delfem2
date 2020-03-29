@@ -5,13 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 #include <vector>
 #include "delfem2/dtri_v2.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glold_v23dtricad.h"
+#include "delfem2/opengl/caddtri_v2_glold.h"
 //
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

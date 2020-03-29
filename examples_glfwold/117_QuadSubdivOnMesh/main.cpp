@@ -21,7 +21,6 @@
 // gl related includes
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glold_funcs.h"
-#include "delfem2/opengl/glold_v23.h"
 //
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

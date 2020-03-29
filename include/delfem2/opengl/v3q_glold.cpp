@@ -19,11 +19,10 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v3q_glold.h"
 
 namespace dfm2 = delfem2;
 
@@ -54,11 +53,6 @@ void delfem2::opengl::myGlVertex(int i, const std::vector<CVec3d>& aV)
 {
   const CVec3d& v = aV[i];
   opengl::myGlVertex(v);
-}
-
-void delfem2::opengl::myGlVertex2(int i, const std::vector<double>& vec)
-{
-  ::glVertex3d(vec[i*2], vec[i*2+1], +0.0);
 }
 
 void delfem2::opengl::myGlVertex3(
@@ -92,18 +86,6 @@ void delfem2::opengl::ViewTransformation
   A[ 8] = dx.z();  A[ 9] = dy.z();  A[10] = dz.z();  A[11] = 0;
   A[12] = -o.x();  A[13] = -o.y();  A[14] = -o.z();  A[15] = 1;
   ::glMultMatrixd(A);
-}
-
-void delfem2::opengl::myGlVertex(
-    unsigned int i,
-    const std::vector<CVec2d>& aP)
-{
-  ::glVertex3d(aP[i].x(), aP[i].y(), +0.0);
-}
-
-void delfem2::opengl::myGlVertex(const CVec2d& v)
-{
-  ::glVertex2d(v.x(), v.y());
 }
 
 //--------------------------------------------------------
@@ -377,25 +359,6 @@ void delfem2::opengl::DrawSingleQuad_FaceNorm
   ::glEnd();
 }
 
-
-void delfem2::opengl::drawPolyLine
-(const std::vector<CVec2d>& aP)
-{
-  ::glBegin(GL_LINES);
-  for (size_t ip = 0; ip<aP.size()-1; ip++){
-    unsigned int jp = ip+1;
-    opengl::myGlVertex(ip,aP);
-    opengl::myGlVertex(jp,aP);
-  }
-  ::glEnd();
-  //
-  ::glBegin(GL_POINTS);
-  for (size_t ip = 0; ip<aP.size(); ip++){
-    opengl::myGlVertex(ip,aP);
-  }
-  ::glEnd();
-}
-
 void delfem2::opengl::drawPolyLine3D
  (const std::vector<CVec3d>& aP)
 {
@@ -411,67 +374,6 @@ void delfem2::opengl::drawPolyLine3D
   ::glBegin(GL_POINTS);
   for (size_t ip = 0; ip<aP.size(); ip++){
     myGlVertex(ip,aP);
-  }
-  ::glEnd();
-}
-
-void delfem2::opengl::drawPolyLine2D
- (const std::vector<CVec2d>& aP)
-{
-  ::glBegin(GL_LINES);
-  for (unsigned int ip = 0; ip<aP.size()-1; ip++){
-    unsigned int jp = ip+1;
-    myGlVertex(ip,aP);
-    myGlVertex(jp,aP);
-  }
-  ::glEnd();
-  
-  ////
-  ::glBegin(GL_POINTS);
-  for (unsigned int ip = 0; ip<aP.size(); ip++){
-    myGlVertex(ip,aP);
-  }
-  ::glEnd();
-}
-
-void delfem2::opengl::Draw_MeshTri
-(const std::vector<CVec2d>& aP,
- const std::vector<unsigned int>& aTri)
-{
-  const int nTri = (int)aTri.size()/3;
-  ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;itri++){
-    const int i0 = aTri[itri*3+0];
-    const int i1 = aTri[itri*3+1];
-    const int i2 = aTri[itri*3+2];
-    const CVec2d& v0 = aP[i0];
-    const CVec2d& v1 = aP[i1];
-    const CVec2d& v2 = aP[i2];
-    myGlVertex(v0);
-    myGlVertex(v1);
-    myGlVertex(v2);
-  }
-  ::glEnd();
-}
-
-void delfem2::opengl::Draw_MeshTri_Edge
-(const std::vector<CVec2d>& aP,
- const std::vector<unsigned int>& aTri)
-{
-  //  const unsigned int nxys = (int)aXY.size()/2;
-  ::glColor3d(0,0,0);
-  ::glBegin(GL_LINES);
-  const int nTri = (int)aTri.size()/3;
-  for(int itri=0;itri<nTri;itri++){
-    const unsigned int i0 = aTri[itri*3+0];
-    const unsigned int i1 = aTri[itri*3+1];
-    const unsigned int i2 = aTri[itri*3+2];
-    const CVec2d& v0 = aP[i0];
-    const CVec2d& v1 = aP[i1];
-    const CVec2d& v2 = aP[i2];
-    myGlVertex(v0);  myGlVertex(v1);
-    myGlVertex(v1);  myGlVertex(v2);
-    myGlVertex(v2);  myGlVertex(v0);
   }
   ::glEnd();
 }

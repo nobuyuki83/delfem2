@@ -10,37 +10,16 @@
  * because 2D application does not use v3 and quat
  */
 
-
-
-#ifndef DFM2_GL2_V23_H
-#define DFM2_GL2_V23_H
+#ifndef DFM2_V3Q_GLOLD_H
+#define DFM2_V3Q_GLOLD_H
 
 #include <vector>
-#include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
+#include "delfem2/quat.h"
 
 namespace delfem2{
 namespace opengl
 {
-
-// ------------------------------------------------------------------------------------
-// vec2 starts here
-
-void myGlVertex(unsigned int i,
-                const std::vector<CVec2d>& aP);
-
-void myGlVertex(const CVec2d& v);
-
-void drawPolyLine(const std::vector<CVec2d>& aP);
-
-void drawPolyLine2D(const std::vector<CVec2d>& aP);
-
-void Draw_MeshTri(const std::vector<CVec2d>& aP,
-                  const std::vector<unsigned int>& aTri);
-
-void Draw_MeshTri_Edge(const std::vector<CVec2d>& aP,
-                       const std::vector<unsigned int>& aTri);
-
 
 // ------------------------------------------------------------------------------------
 // vec3 starts here
@@ -50,7 +29,6 @@ void myGlTranslate(const CVec3d& v);
 void myGlNormal(const CVec3d& n);
 void myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c);
 void myGlVertex(int i, const std::vector<CVec3d>& aV);
-void myGlVertex2(int i, const std::vector<double>& vec);
 void myGlVertex3(unsigned int i, const std::vector<double>& vec);
 void ModelTransformation(const CVec3d& dx, const CVec3d& dz, const CVec3d& origin);
 void ViewTransformation(const CVec3d& dx, const CVec3d& dz, const CVec3d& origin);

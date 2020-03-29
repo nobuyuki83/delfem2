@@ -18,8 +18,10 @@
 #include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
-#include "delfem2/opengl/glold_v23dtricad.h"
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/caddtri_v2_glold.h"
+#include "delfem2/opengl/caddtri_v3_glold.h"
+#include "delfem2/opengl/v2_glold.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glold_voxbv.h"
 
 namespace py = pybind11;

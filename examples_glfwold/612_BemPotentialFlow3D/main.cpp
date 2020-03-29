@@ -8,7 +8,7 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v3q_glold.h"
 
 namespace dfm2 = delfem2;
 

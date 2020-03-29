@@ -21,7 +21,7 @@
 
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glold_color.h"
-#include "delfem2/opengl/glold_v23.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
