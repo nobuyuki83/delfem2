@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_GL_SMPLR_H
-#define DFM2_GL_SMPLR_H
+#ifndef DFM2_RENDER2TEX_GL_H
+#define DFM2_RENDER2TEX_GL_H
 
 #include <stdio.h>
 #include <vector>

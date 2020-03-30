@@ -24,11 +24,11 @@ namespace delfem2 {
  * @details this funcition is for rigging without the class "CRigBone"
  */
 void SetMat4AffineBone_FromJointRelativeRotation(
-                                                 std::vector<double>& aMat4AffineBone,
-                                                 const double trans_root[3],
-                                                 const std::vector<double>& aQuatRelativeRot,
-                                                 const std::vector<int>& aIndBoneParent,
-                                                 const std::vector<double>& aJntPos0);
+    std::vector<double>& aMat4AffineBone,
+    const double trans_root[3],
+    const std::vector<double>& aQuatRelativeRot,
+    const std::vector<int>& aIndBoneParent,
+    const std::vector<double>& aJntPos0);
 
 // ----------------------------------------------
 // CRigBone
@@ -102,25 +102,27 @@ public:
  */
 void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
 
-void PickBone(int& ibone_selected,
-              int& ielem_selected,
-              const std::vector<CRigBone>& aBone,
-              const delfem2::CVec3d& src,
-              const delfem2::CVec3d& dir,
-              double rad_hndlr,
-              double tol);
+void PickBone(
+    int& ibone_selected,
+    int& ielem_selected,
+    const std::vector<CRigBone>& aBone,
+    const delfem2::CVec3d& src,
+    const delfem2::CVec3d& dir,
+    double rad_hndlr,
+    double tol);
 
 
 // ----------------------------------
 
-void UpdateRigSkin(double* aXYZ,
-                   const double* aXYZ0,
-                   unsigned int nXYZ,
-                   const unsigned int* aTri,
-                   unsigned int nTri,
-                   const std::vector<CRigBone>& aBone,
-                   const double* aRigWeight,
-                   const unsigned int* aRigJoint);
+void UpdateRigSkin(
+    double* aXYZ,
+    const double* aXYZ0,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const std::vector<CRigBone>& aBone,
+    const double* aRigWeight,
+    const unsigned int* aRigJoint);
 
 void Skinning_LBS(
     std::vector<double>& aXYZ1,
@@ -131,10 +133,11 @@ void Skinning_LBS(
 
 // --------------------------------------
 
-void Smpl2Rig(std::vector<CRigBone>& aBone,
-              const std::vector<int>& aIndBoneParent,
-              const std::vector<double>& aXYZ0,
-              const std::vector<double>& aJntRgrs);
+void Smpl2Rig(
+    std::vector<CRigBone>& aBone,
+    const std::vector<int>& aIndBoneParent,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aJntRgrs);
 
 // --------------------------------------
 
@@ -174,38 +177,41 @@ void Rig_SensitivityBoneTransform(double* aL, // [ ndim(3), nBone, ndim(4) ]
  const std::vector<double>& aW);
  */
 
-void Rig_SensitivityBoneTransform_Eigen(std::vector<double>& Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
-                                        std::vector<double>& Ly, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
-                                        std::vector<double>& Lz, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
-                                        unsigned int ib_s,
-                                        double idim_s,
-                                        bool is_rot,
-                                        const std::vector<CRigBone> aBone1);
+void Rig_SensitivityBoneTransform_Eigen(
+    std::vector<double>& Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
+    std::vector<double>& Ly, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
+    std::vector<double>& Lz, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
+    unsigned int ib_s,
+    double idim_s,
+    bool is_rot,
+    const std::vector<CRigBone> aBone1);
 
-void Rig_WdW_Target_Eigen(std::vector<double>& aW,
-                          std::vector<double>& adW,
-                          const std::vector<CRigBone>& aBone,
-                          const CTarget& target,
-                          const std::vector<double>& Lx,  // [ nsns, nBone*4 ]
-                          const std::vector<double>& Ly,  // [ nsns, nBone*4 ]
-                          const std::vector<double>& Lz); // [ nsns, nBone*4 ]
+void Rig_WdW_Target_Eigen(
+    std::vector<double>& aW,
+    std::vector<double>& adW,
+    const std::vector<CRigBone>& aBone,
+    const CTarget& target,
+    const std::vector<double>& Lx,  // [ nsns, nBone*4 ]
+    const std::vector<double>& Ly,  // [ nsns, nBone*4 ]
+    const std::vector<double>& Lz); // [ nsns, nBone*4 ]
 
-void Rig_SensitivitySkin_BoneRotation_Eigen(std::vector<double>& dSkinX,
-                                            std::vector<double>& dSkinY,
-                                            std::vector<double>& dSkinZ,
-                                            const std::vector<CRigBone>& aBone1,
-                                            const std::vector<double>& aXYZ0,
-                                            const std::vector<double>& aW,
-                                            const std::vector<double>& Lx, // [ nBone*3, nBone*4 ]
-                                            const std::vector<double>& Ly, // [ nBone*3, nBone*4 ]
-                                            const std::vector<double>& Lz); // [ nBone*3, nBone*4 ]
+void Rig_SensitivitySkin_BoneRotation_Eigen(
+    std::vector<double>& dSkinX,
+    std::vector<double>& dSkinY,
+    std::vector<double>& dSkinZ,
+    const std::vector<CRigBone>& aBone1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aW,
+    const std::vector<double>& Lx, // [ nBone*3, nBone*4 ]
+    const std::vector<double>& Ly, // [ nBone*3, nBone*4 ]
+    const std::vector<double>& Lz); // [ nBone*3, nBone*4 ]
 
 void Rig_SensitivitySkin_BoneRotation(
-                                      std::vector<double>& aSns, // np*ndim(3) * nb*3
-                                      const std::vector<CRigBone> aBone1,
-                                      const std::vector<double>& aXYZ0,
-                                      const std::vector<double>& aW,
-                                      const std::vector<double>& aL);
+    std::vector<double>& aSns, // np*ndim(3) * nb*3
+    const std::vector<CRigBone> aBone1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aW,
+    const std::vector<double>& aL);
 
 
 // ------------------------------------
@@ -224,18 +230,20 @@ public:
   bool isrot;
 };
 
-void Read_BioVisionHierarchy(std::vector<CRigBone>& aBone,
-                             std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
-                             int& nframe,
-                             std::vector<double>& aChannelValue,
-                             const std::string& path_bvh);
+void Read_BioVisionHierarchy(
+    std::vector<CRigBone>& aBone,
+    std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
+    int& nframe,
+    std::vector<double>& aChannelValue,
+    const std::string& path_bvh);
 
 /**
  * @brief set value to CRigBone.rot (bone rotation from parent bone)
  */
-void SetPose_BioVisionHierarchy(std::vector<CRigBone>& aBone,
-                                const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
-                                const double *aVal);
+void SetPose_BioVisionHierarchy(
+    std::vector<CRigBone>& aBone,
+    const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
+    const double *aVal);
 
 
 

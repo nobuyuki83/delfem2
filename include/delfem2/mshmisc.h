@@ -10,8 +10,8 @@
  * @details this file should not depends on anything except for  std::vector
  */
 
-#ifndef DFM2_MSH_H
-#define DFM2_MSH_H
+#ifndef DFM2_MSHMISC_H
+#define DFM2_MSHMISC_H
 
 #include <vector>
 
