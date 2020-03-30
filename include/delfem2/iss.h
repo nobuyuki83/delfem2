@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#ifndef DFM2_ISS_H
+#define DFM2_ISS_H
 
 #include <vector>
 
@@ -60,3 +62,5 @@ void makeBackgroundLattice(std::vector<CPointLattice>& aPoint, std::vector<unsig
                            double elen, int  ndiv, const double org[3]);
 
 }
+
+#endif

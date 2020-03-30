@@ -9,14 +9,13 @@
 #include "delfem2/cloth_selfcollision.h"
 
 // ------------------
-
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glold_funcs.h"
-#include "../glut_cam.h"
+#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/v3q_glold.h"
+//
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+
 
 namespace dfm2 = delfem2;
 
@@ -141,7 +140,6 @@ std::vector<unsigned int> psup_ind,psup;
 
 // data for camera
 bool is_animation;
-CNav3D_GLUT nav;
 int imode_draw = 0;
 /* ------------------------------------------------------------------------ */
 
@@ -254,16 +252,7 @@ void StepTime()
 
 void myGlutDisplay(void)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-	::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-	::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	::glEnable(GL_DEPTH_TEST);
-  
-	::glEnable(GL_POLYGON_OFFSET_FILL );
-	::glPolygonOffset( 1.1f, 4.0f );
-  
-  nav.SetGL_Camera();
-  
+ 
   bool is_lighting = glIsEnabled(GL_LIGHTING);
   
   { // draw triangle
@@ -351,19 +340,20 @@ void myGlutDisplay(void)
     ::glPushMatrix();
     const double radius = 3.0;
     ::glTranslated(0.5, 0.0, +2.0);
-    ::glutWireSphere(radius, 16, 16);
+//    ::glutWireSphere(radius, 16, 16);
     ::glPopMatrix();
   }
   
   ::glColor3d(0,0,0);
-  ShowFPS();
+//  ShowFPS();
   
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
   else{              ::glDisable(GL_LIGHTING); }  
   
-  ::glutSwapBuffers();
+//  ::glutSwapBuffers();
 }
 
+/*
 void myGlutIdle(){
     
   if( is_animation ){
@@ -406,7 +396,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     case 'q':
     case 'Q':
     case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
+      exit(0);  // '\033' ? ESC ? ASCII ???
     case 'a':
       is_animation = !is_animation;
       break;
@@ -430,6 +420,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
   }
 	::glutPostRedisplay();
 }
+ */
 
 int main(int argc,char* argv[])
 {
@@ -475,23 +466,27 @@ int main(int argc,char* argv[])
     ilu_A.Initialize_ILU0(mat_A);
   }
   
-  glutInit(&argc, argv);
-  
-	// Initialize GLUT window 3D
-  glutInitWindowPosition(200,200);
-	glutInitWindowSize(400, 300);
- 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
-  glutCreateWindow("3D View");
-	glutDisplayFunc(myGlutDisplay);
-	glutIdleFunc(myGlutIdle);
-	glutReshapeFunc(myGlutResize);
-	glutMotionFunc(myGlutMotion);
-	glutMouseFunc(myGlutMouse);
-	glutKeyboardFunc(myGlutKeyboard);
-	glutSpecialFunc(myGlutSpecial);
-  
   // ---------------------------
   
+  
+  delfem2::opengl::CViewer_GLFW viewer;
+  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
+  viewer.nav.camera.psi = 3.1415*0.2;
+  viewer.nav.camera.theta = 3.1415*0.1;
+  viewer.nav.camera.view_height = 2.0;
+  viewer.Init_oldGL();
+  delfem2::opengl::setSomeLighting();
+  while(!glfwWindowShouldClose(viewer.window)) {
+    StepTime();
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay();
+    viewer.DrawEnd_oldGL();
+  }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+
+  /*
   delfem2::opengl::setSomeLighting();
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0);
   nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
@@ -501,6 +496,7 @@ int main(int argc,char* argv[])
  
   glutMainLoop();
 	return 0;
+   */
 }
 
 

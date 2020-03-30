@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include "delfem2/vec3.h"
+
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
@@ -16,7 +18,6 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glold_funcs.h"
 //
 #include "delfem2/opengl/caddtri_v3_glold.h"
