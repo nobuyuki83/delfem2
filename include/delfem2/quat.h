@@ -89,6 +89,7 @@ DFM2_INLINE void QuatConjVec(
 // ----------
 
 
+/*
 DFM2_INLINE void Mat4_Quat(
     double r[],
     const double q[]);
@@ -96,6 +97,7 @@ DFM2_INLINE void Mat4_Quat(
 DFM2_INLINE void Mat4_QuatConj(
     double r[],
     const double q[]);
+ */
 
 /**
  * @brief applying transformation in the order of scale, rotation and translation
@@ -211,7 +213,7 @@ using CQuatf = CQuat<float>;
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#include "quat.cpp"
+#include "delfem2/quat.cpp"
 #endif
 
 #endif // !defined(DFM2_QUAT_H)

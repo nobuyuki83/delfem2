@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.0)
 # compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
 ##########################################
 
 set(CMAKE_CXX_STANDARD 11)
@@ -23,6 +25,8 @@ set(3RD_PARTY           "../../3rd_party")
 add_executable(${PROJECT_NAME}
   main.cpp
 )
+
+########################################
 
 if (NOT EMSCRIPTEN)
   set(GLFW_DIR "${3RD_PARTY}/glfw")

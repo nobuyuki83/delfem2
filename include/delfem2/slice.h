@@ -6,8 +6,8 @@
  */
 
 
-#ifndef SLICE_H
-#define SLICE_H
+#ifndef DFM2_SLICE_H
+#define DFM2_SLICE_H
 
 #include <stdio.h>
 #include <set>

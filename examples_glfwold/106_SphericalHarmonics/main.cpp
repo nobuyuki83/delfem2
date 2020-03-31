@@ -144,13 +144,9 @@ int main(int argc,char* argv[])
   while (!glfwWindowShouldClose(viewer.window))
   {
     {
-      static int iframe = 0;
-      if( iframe == 0 ){
-        ++m;
-        if( m > l ){ l++; m=-l; }
-        if( l >= nl ){ l=0; m=0; }
-      }
-      iframe = (iframe+1)%50;
+      ++m;
+      if( m > l ){ l++; m=-l; }
+      if( l >= nl ){ l=0; m=0; }
     }
     viewer.DrawBegin_oldGL();
     ::glEnable(GL_LIGHTING);

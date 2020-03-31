@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 # compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
 ########################################
 
 set(CMAKE_CXX_STANDARD 11)
@@ -26,6 +28,11 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
 
+set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad4/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
+
+##########################
+
 add_executable(${PROJECT_NAME}
 
     ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
@@ -37,8 +44,7 @@ add_executable(${PROJECT_NAME}
     main.cpp
 )
 
-set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad4/include")
-get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
+#######################################
 
 if (NOT EMSCRIPTEN)
   set(GLFW_DIR "${3RD_PARTY}/glfw")

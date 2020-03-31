@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
-project(01_shader)
+
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+#######################
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -10,6 +13,10 @@ if(MSVC)
 else()
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
 endif()
+
+#######################
+
+project(01_shader)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -28,8 +35,19 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
+IF(NOT USE_HEADERONLY)
+  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      )
+ELSE()
+  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+ENDIF()
+
+
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/imgio.h                ${DELFEM2_INC}/imgio.cpp
 
     ${DELFEM2_INC}/opengl/gl_tex.h        ${DELFEM2_INC}/opengl/gl_tex.cpp
@@ -38,7 +56,7 @@ add_executable(${PROJECT_NAME}
 
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c
-
+    ${SRC_DFM2}
     main.cpp
 )
 

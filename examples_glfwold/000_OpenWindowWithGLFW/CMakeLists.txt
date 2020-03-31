@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+######################################################
+
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -29,6 +33,8 @@ include_directories(
 add_executable(${PROJECT_NAME}
   main.cpp
 )
+
+#######################################################
 
 IF(APPLE)
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")

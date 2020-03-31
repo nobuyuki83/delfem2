@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+######################################################
+
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -31,7 +35,17 @@ include_directories(
   ${3RD_PARTY}
 )
 
-# add_definitions(-DDFM2_STATIC_LIBRARY)
+IF(NOT USE_HEADERONLY)
+  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      )
+ELSE()
+  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+ENDIF()
+
 add_executable(${PROJECT_NAME}
  ${DELFEM2_INC}/vec2.h                       ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
@@ -40,7 +54,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
   ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
-  ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
   ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
                
   ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
@@ -56,14 +69,10 @@ add_executable(${PROJECT_NAME}
 
   ${3RD_PARTY}/io_gltf.h
   ${3RD_PARTY}/io_gltf.cpp
+  ${SRC_DFM2}
+
   main.cpp
 )
-# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-if(DFM2_STATIC_LIBRARY)
-set(INPUT_SRC
-    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-    ${INPUT_SRC})
-endif()
 
 ###############################################
 

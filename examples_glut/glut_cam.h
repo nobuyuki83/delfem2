@@ -243,7 +243,7 @@ public:
   int iwin;
   int imodifier;
   int ibutton;
-  delfem2::CCamera camera;
+  delfem2::CCamera<double> camera;
   double mouse_x, mouse_y;
   double dx;
   double dy;

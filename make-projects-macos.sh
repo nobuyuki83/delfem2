@@ -5,7 +5,7 @@ echo "#################################"
 git submodule update --init --recursive
 
 echo "################################"
-echo "build examples_glfw"
+echo "build examples_glfwnew"
 echo "################################"
 
 cd 3rd_party/glfw
@@ -47,8 +47,15 @@ make
 cd ../../
 
 cd examples_glfwold
-mkdir buildXcode
-cd buildXcode
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake --build .
+cd ../../
+
+cd examples_glfwold
+mkdir buildXcodeStatic
+cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 cmake --build .
 cd ../../

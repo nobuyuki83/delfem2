@@ -17,9 +17,8 @@ namespace dfm2 = delfem2;
 
 // -----------------------------------------------------------------------
 
-
 //! @brief multiply two quaternion
-static void QuatQuat(double r[], const double p[], const double q[])
+DFM2_INLINE void QuatQuat(double r[], const double p[], const double q[])
 {
   r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
   r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
@@ -28,7 +27,7 @@ static void QuatQuat(double r[], const double p[], const double q[])
 }
 
 //! @brief transform vector with quaternion
-inline void QuatVec(double vo[], const double q[], const double vi[])
+DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -46,7 +45,7 @@ inline void QuatVec(double vo[], const double q[], const double vi[])
 }
 
 //! @brief transform vector with conjugate of quaternion
-inline void QuatConjVec(double vo[], const double q[], const double vi[])
+DFM2_INLINE void QuatConjVec(double vo[], const double q[], const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -66,7 +65,7 @@ inline void QuatConjVec(double vo[], const double q[], const double vi[])
 
 
 //! @brief copy quaternion
-static void CopyQuat
+DFM2_INLINE void CopyQuat
  (double r[],
   const double p[])
 {
@@ -76,7 +75,7 @@ static void CopyQuat
   r[3] = p[3];
 }
 
-static void Mat4f_Quat(float r[], const double q[])
+DFM2_INLINE void Mat4f_Quat(float r[], const double q[])
 {
   auto x2 = (float)(q[1] * q[1] * 2.0);
   auto y2 = (float)(q[2] * q[2] * 2.0);
@@ -102,7 +101,7 @@ static void Mat4f_Quat(float r[], const double q[])
 }
 
 
-void Mat4f_Identity(float r[])
+DFM2_INLINE void Mat4f_Identity(float r[])
 {
   r[ 0] = 1.0;  r[ 1] = 0.0;  r[ 2] = 0.0;  r[ 3] = 0.0;
   r[ 4] = 0.0;  r[ 5] = 1.0;  r[ 6] = 0.0;  r[ 7] = 0.0;
@@ -111,7 +110,7 @@ void Mat4f_Identity(float r[])
 }
 
 
-static void Normalize3D(float vec[3])
+DFM2_INLINE void Normalize3D(float vec[3])
 {
   float len = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
   float leninv = 1.0/len;
@@ -120,17 +119,114 @@ static void Normalize3D(float vec[3])
   vec[2] *= leninv;
 }
 
-static void Cross3D(float r[3], const float v1[3], const float v2[3]){
+DFM2_INLINE void Cross3D(float r[3], const float v1[3], const float v2[3]){
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
 
+DFM2_INLINE void InverseMat3
+(float Ainv[],
+ const float A[])
+{
+  const float det =
+  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
+  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
+  const float inv_det = 1.f/det;
+  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
+  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
+  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
+  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
+  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
+  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
+  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
+  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
+  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
+}
+
+DFM2_INLINE void Mat3Vec
+(float vo[3],
+ const float mat[9],
+ const float vi[3])
+{
+  vo[0] = mat[0]*vi[0] + mat[1]*vi[1] + mat[2]*vi[2];
+  vo[1] = mat[3]*vi[0] + mat[4]*vi[1] + mat[5]*vi[2];
+  vo[2] = mat[6]*vi[0] + mat[7]*vi[1] + mat[8]*vi[2];
+}
+
+DFM2_INLINE void glhOrthof2
+ (float mP[16],
+  double l, double r,
+  double b, double t,
+  double n, double f)
+{
+  mP[0*4+0] = 2.0/(r-l);
+  mP[0*4+1] = 0.0;
+  mP[0*4+2] = 0.0;
+  mP[0*4+3] = -(l+r)/(r-l);
+  
+  mP[1*4+0] = 0.0;
+  mP[1*4+1] = 2.0/(t-b);
+  mP[1*4+2] = 0.0;
+  mP[1*4+3] = -(t+b)/(t-b);
+  
+  mP[2*4+0] = 0.0;
+  mP[2*4+1] = 0.0;
+  mP[2*4+2] = 2.0/(n-f);
+  mP[2*4+3] = -(n+f)/(n-f);
+  
+  mP[3*4+0] = 0.0;
+  mP[3*4+1] = 0.0;
+  mP[3*4+2] = 0.0;
+  mP[3*4+3] = 1.0;
+}
+
+
+DFM2_INLINE void solve_GlAffineMatrix
+(float vo[3],
+ const float m[16],
+ const float p[3])
+{
+  const float v[3] = {p[0]-m[3*4+0], p[1]-m[3*4+1], p[2]-m[3*4+2]};
+  const float M[9] = {
+    m[0*4+0],m[1*4+0],m[2*4+0],
+    m[0*4+1],m[1*4+1],m[2*4+1],
+    m[0*4+2],m[1*4+2],m[2*4+2] };
+  float Minv[9];  InverseMat3(Minv, M);
+  Mat3Vec(vo,
+          Minv,v);
+}
+
+DFM2_INLINE void solve_GlAffineMatrixDirection
+ (float vo[3],
+  const float m[16],
+  const float vi[3])
+{
+  const float M[9] = {
+    m[0*4+0],m[1*4+0],m[2*4+0],
+    m[0*4+1],m[1*4+1],m[2*4+1],
+    m[0*4+2],m[1*4+2],m[2*4+2] };
+  float Minv[9];  InverseMat3(Minv, M);
+  Mat3Vec(vo,
+          Minv,vi);
+  /*
+   CMatrix3 M(m[0*4+0],m[1*4+0],m[2*4+0],
+   m[0*4+1],m[1*4+1],m[2*4+1],
+   m[0*4+2],m[1*4+2],m[2*4+2]);
+   */
+  /*
+   CMatrix3 M(m[0*4+0], m[0*4+1], m[0*4+2],
+   m[1*4+0], m[1*4+1], m[1*4+2],
+   m[2*4+0], m[2*4+1], m[2*4+2]);
+   */
+  //  CMatrix3 Minv = M.Inverse();
+  //  return Minv*v;
+}
 
 // static functions ends here
-//----------------------------------------------------------------------------------------
+// =====================================================
 
-void dfm2::glhFrustumf2
+DFM2_INLINE void dfm2::glhFrustumf2
 (float *matrix,
  float left, float right,
  float bottom, float top,
@@ -162,7 +258,7 @@ void dfm2::glhFrustumf2
 //matrix will receive the calculated perspective matrix.
 //You would have to upload to your shader
 // or use glLoadMatrixf if you aren't using shaders.
-void dfm2::glhPerspectivef2
+DFM2_INLINE void dfm2::glhPerspectivef2
 (float *matrix,
  float fovyInDegrees, float aspectRatio,
  float znear, float zfar)
@@ -177,7 +273,7 @@ void dfm2::glhPerspectivef2
 }
 
 
-void dfm2::glhTranslatef2
+DFM2_INLINE void dfm2::glhTranslatef2
 (float *matrix,
  float x, float y, float z)
 {
@@ -188,7 +284,7 @@ void dfm2::glhTranslatef2
 }
 
 //PURPOSE:      For square matrices. This is column major for OpenGL
-inline void MultiplyMatrices4by4OpenGL_FLOAT
+DFM2_INLINE void MultiplyMatrices4by4OpenGL_FLOAT
  (float *result,
   const float *m1,
   const float *m2)
@@ -214,7 +310,7 @@ inline void MultiplyMatrices4by4OpenGL_FLOAT
   result[15]=m1[3]*m2[12]+   m1[7]*m2[13]+  m1[11]*m2[14]+  m1[15]*m2[15];
 }
 
-void dfm2::glhLookAtf2
+DFM2_INLINE void dfm2::glhLookAtf2
 ( float *matrix,
  float eyex, float eyey, float eyez,
  float cntx, float cnty, float cntz,
@@ -269,105 +365,8 @@ void dfm2::glhLookAtf2
 }
 
 
-void glhOrthof2
-(float mP[16],
- double l, double r,
- double b, double t,
- double n, double f)
-{
-  mP[0*4+0] = 2.0/(r-l);
-  mP[0*4+1] = 0.0;
-  mP[0*4+2] = 0.0;
-  mP[0*4+3] = -(l+r)/(r-l);
-  
-  mP[1*4+0] = 0.0;
-  mP[1*4+1] = 2.0/(t-b);
-  mP[1*4+2] = 0.0;
-  mP[1*4+3] = -(t+b)/(t-b);
-  
-  mP[2*4+0] = 0.0;
-  mP[2*4+1] = 0.0;
-  mP[2*4+2] = 2.0/(n-f);
-  mP[2*4+3] = -(n+f)/(n-f);
-  
-  mP[3*4+0] = 0.0;
-  mP[3*4+1] = 0.0;
-  mP[3*4+2] = 0.0;
-  mP[3*4+3] = 1.0;
-}
 
-
-void InverseMat3
- (float Ainv[],
-  const float A[])
-{
-  const float det =
-  + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
-  - A[0]*A[7]*A[5] - A[6]*A[4]*A[2] - A[3]*A[1]*A[8];
-  const float inv_det = 1.f/det;
-  Ainv[0] = inv_det*(A[4]*A[8]-A[5]*A[7]);
-  Ainv[1] = inv_det*(A[2]*A[7]-A[1]*A[8]);
-  Ainv[2] = inv_det*(A[1]*A[5]-A[2]*A[4]);
-  Ainv[3] = inv_det*(A[5]*A[6]-A[3]*A[8]);
-  Ainv[4] = inv_det*(A[0]*A[8]-A[2]*A[6]);
-  Ainv[5] = inv_det*(A[2]*A[3]-A[0]*A[5]);
-  Ainv[6] = inv_det*(A[3]*A[7]-A[4]*A[6]);
-  Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
-  Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
-}
-
-void Mat3Vec
- (float vo[3],
-  const float mat[9],
-  const float vi[3])
-{
-  vo[0] = mat[0]*vi[0] + mat[1]*vi[1] + mat[2]*vi[2];
-  vo[1] = mat[3]*vi[0] + mat[4]*vi[1] + mat[5]*vi[2];
-  vo[2] = mat[6]*vi[0] + mat[7]*vi[1] + mat[8]*vi[2];
-}
-
-void solve_GlAffineMatrix
- (float vo[3],
-  const float m[16],
-  const float p[3])
-{
-  const float v[3] = {p[0]-m[3*4+0], p[1]-m[3*4+1], p[2]-m[3*4+2]};
-  const float M[9] = {
-    m[0*4+0],m[1*4+0],m[2*4+0],
-    m[0*4+1],m[1*4+1],m[2*4+1],
-    m[0*4+2],m[1*4+2],m[2*4+2] };
-  float Minv[9];  InverseMat3(Minv, M);
-  Mat3Vec(vo,
-          Minv,v);
-}
-
-void solve_GlAffineMatrixDirection
-(float vo[3],
- const float m[16],
- const float vi[3])
-{
-  const float M[9] = {
-    m[0*4+0],m[1*4+0],m[2*4+0],
-    m[0*4+1],m[1*4+1],m[2*4+1],
-    m[0*4+2],m[1*4+2],m[2*4+2] };
-  float Minv[9];  InverseMat3(Minv, M);
-  Mat3Vec(vo,
-          Minv,vi);
-  /*
-   CMatrix3 M(m[0*4+0],m[1*4+0],m[2*4+0],
-   m[0*4+1],m[1*4+1],m[2*4+1],
-   m[0*4+2],m[1*4+2],m[2*4+2]);
-   */
-  /*
-   CMatrix3 M(m[0*4+0], m[0*4+1], m[0*4+2],
-   m[1*4+0], m[1*4+1], m[1*4+2],
-   m[2*4+0], m[2*4+1], m[2*4+2]);
-   */
-    //  CMatrix3 Minv = M.Inverse();
-    //  return Minv*v;
-}
-
-void dfm2::screenUnProjection
+DFM2_INLINE void dfm2::screenUnProjection
  (float vout[3],
   const float v[3],
   const float mMV[16],
@@ -376,11 +375,11 @@ void dfm2::screenUnProjection
   const float D = mPj[11] + mPj[15]; // z is 1 after model view
   const float v0[3] = { D*v[0], D*v[1], 0.0 };
   float v1[3];
-  solve_GlAffineMatrix(v1,
-                       mPj, v0);
+  ::solve_GlAffineMatrix(v1,
+                         mPj, v0);
   v1[2] = 1;
-  solve_GlAffineMatrix(vout,
-                       mMV, v1);
+  ::solve_GlAffineMatrix(vout,
+                         mMV, v1);
 }
 
 
@@ -395,27 +394,26 @@ void dfm2::screenUnProjectionDirection
 //  v1.SetNormalizedVector();
 //  return v1;
   float v1[3];
-  solve_GlAffineMatrixDirection(v1,
-                                mPj, vi);
+  ::solve_GlAffineMatrixDirection(v1,
+                                  mPj, vi);
   v1[2] = 1;
-  solve_GlAffineMatrixDirection(vo,
-                                mMV, v1);
+  ::solve_GlAffineMatrixDirection(vo,
+                                  mMV, v1);
   Normalize3D(vo);
 }
 
 
-// ----------------------------------------------------
+// =================================================
 // implementation of CCamera class starts here
 
-
-void dfm2::CCamera::Affine4f_Projection
+template <typename REAL>
+void dfm2::CCamera<REAL>::Affine4f_Projection
 (float mP[16], double asp, double depth) const 
 {
   if( is_pars ){
     glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
   }
   else{
-    ////
     glhOrthof2(mP,
                -view_height/scale*asp,
                +view_height/scale*asp,
@@ -425,8 +423,13 @@ void dfm2::CCamera::Affine4f_Projection
                +depth*10);
   }
 }
+template void dfm2::CCamera<double>::Affine4f_Projection
+(float mP[16], double asp, double depth) const;
 
-void dfm2::CCamera::Affine4f_ModelView
+// ----------------------------
+
+template <typename REAL>
+void dfm2::CCamera<REAL>::Affine4f_ModelView
 (float mMV[16]) const
 {
   /*
@@ -464,11 +467,23 @@ void dfm2::CCamera::Affine4f_ModelView
   }
   MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
 }
+template void dfm2::CCamera<double>::Affine4f_ModelView
+ (float mMV[16]) const;
 
-void dfm2::CCamera::Scale(double s){
+// -------------------------
+
+template <typename REAL>
+void dfm2::CCamera<REAL>::Scale(double s){
   scale *= s;
 }
-void dfm2::CCamera::Rot_Camera(double dx, double dy){
+#ifdef DFM2_STATIC_LIBRARY
+template void dfm2::CCamera<double>::Scale(double s);
+#endif
+  
+// --------------------------
+
+template <typename REAL>
+void dfm2::CCamera<REAL>::Rot_Camera(double dx, double dy){
     if(      camera_rot_mode == CAMERA_ROT_YTOP ){
       theta -= dx;
       psi   -= dy;
@@ -487,16 +502,28 @@ void dfm2::CCamera::Rot_Camera(double dx, double dy){
       }
     }
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void dfm2::CCamera<double>::Rot_Camera(double dx, double dy);
+#endif
 
-void dfm2::CCamera::Pan_Camera(double dx, double dy){
+// ------------------------
+
+template <typename REAL>
+void dfm2::CCamera<REAL>::Pan_Camera(double dx, double dy){
     double s = view_height/scale;
     trans[0] += s*dx;
     trans[1] += s*dy;
     trans[2] += s*0.0;
   
 }
+#ifdef DFM2_STATIC_LIBRARY
+template void dfm2::CCamera<double>::Pan_Camera(double dx, double dy);
+#endif
 
-std::ostream &operator<<(std::ostream &output, dfm2::CCamera& c)
+// ------------------------
+
+template <typename REAL>
+std::ostream &operator<<(std::ostream &output, dfm2::CCamera<REAL>& c)
 {
   output.setf(std::ios::scientific);
   output << c.is_pars << std::endl;
@@ -510,7 +537,8 @@ std::ostream &operator<<(std::ostream &output, dfm2::CCamera& c)
   return output;
 }
 
-std::istream &operator>>(std::istream &input, dfm2::CCamera& c)
+template <typename REAL>
+std::istream &operator>>(std::istream &input, dfm2::CCamera<REAL>& c)
 {
   {
     int is0; input >> is0; c.is_pars = (bool)is0;
