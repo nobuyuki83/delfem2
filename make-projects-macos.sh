@@ -1,10 +1,12 @@
-#################################
-# download & build submodules
+echo "#################################"
+echo "download & build submodules"
+echo "#################################"
 
 git submodule update --init --recursive
 
-################################
-# build examples_glfw
+echo "################################"
+echo "build examples_glfw"
+echo "################################"
 
 cd 3rd_party/glfw
 cmake .
@@ -21,30 +23,39 @@ cd ../../
 cd examples_glfwnew
 mkdir buildEm
 cd buildEm
-cmake -DEMSCRIPTEN ..
+cmake -DEMSCRIPTEN=ON ..
 make
 cd ../../
 
 
-################################
-# build examples_glut
+echo "################################"
+echo "build examples_glfwold"
+echo "################################"
 
 cd examples_glfwold
-mkdir buildMake
-cd buildMake
-cmake ..
+mkdir buildMakeHdronly 
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make
+cd ../../
+
+cd examples_glfwold
+mkdir buildMakeStatic 
+cd buildMakeStatic
+cmake -DUSE_HEADERONLY=OFF ..
 make
 cd ../../
 
 cd examples_glfwold
 mkdir buildXcode
 cd buildXcode
-cmake -G Xcode ..
+cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 cmake --build .
 cd ../../
 
-################################
-# build examples_glut
+echo "################################"
+echo "build examples_glut"
+echo "################################"
 
 cd examples_glut
 mkdir buildMake
@@ -107,8 +118,9 @@ python3 setup.py test
 #twine upload dist/*
 
 
-################################
-# test cpp
+echo "###############################"
+echo "test cpp"
+echo "###############################"
 # (this takes time so put it in the end)
 
 cd "3rd_party/googletest"

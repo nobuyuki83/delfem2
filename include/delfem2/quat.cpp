@@ -18,7 +18,7 @@ namespace dfm2 = delfem2;
 // ----------------------------------
 
 template <typename T>
-void dfm2::Normalize_Quat(T q[])
+DFM2_INLINE void dfm2::Normalize_Quat(T q[])
 {
   const double len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
   double invlen = 1.0/len;
@@ -33,7 +33,7 @@ template void dfm2::Normalize_Quat(double q[]);
 // -----------------------------------
 
 template <typename T>
-void dfm2::Quat_Identity(T q[4]){
+DFM2_INLINE void dfm2::Quat_Identity(T q[4]){
   q[0] = 1;
   q[1] = 0;
   q[2] = 0;
@@ -48,7 +48,7 @@ template void dfm2::Quat_Identity(double q[4]);
  * @details for the relationship between quaternion and rotation matrix, take a look at https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
  */
 template <typename T>
-void dfm2::QuatVec(
+DFM2_INLINE void dfm2::QuatVec(
     T vo[3],
     const T q[4],
     const T vi[3])
@@ -76,7 +76,7 @@ template void dfm2::QuatVec(double vo[3], const double q[4], const double vi[3])
 
 // multiply two quaternions
 template <typename REAL>
-void dfm2::QuatQuat(
+DFM2_INLINE void dfm2::QuatQuat(
     REAL r[],
     const REAL p[],
     const REAL q[])
@@ -93,7 +93,10 @@ template void dfm2::QuatQuat(double r[], const double p[], const double q[]);
 // ----------------------------------------
 
 // transform vector with conjugate of quaternion
-void dfm2::QuatConjVec(double vo[], const double q[], const double vi[])
+DFM2_INLINE void dfm2::QuatConjVec(
+    double vo[],
+    const double q[],
+    const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -116,7 +119,7 @@ void dfm2::QuatConjVec(double vo[], const double q[], const double vi[])
 
 // copy quaternion
 template <typename REAL>
-void dfm2::Copy_Quat(
+DFM2_INLINE void dfm2::Copy_Quat(
     REAL r[],
     const REAL p[])
 {
@@ -133,9 +136,10 @@ template void dfm2::Copy_Quat(double r[], const double p[]);
 namespace delfem2 {
 
 template<>
-void Quat_Bryant
+DFM2_INLINE void Quat_Bryant
     (double q[4],
-     double x, double y, double z) {
+     double x, double y, double z)
+{
   const double dqx[4] = {cos(x * 0.5), sin(x * 0.5), 0.0, 0.0};
   const double dqy[4] = {cos(y * 0.5), 0.0, sin(y * 0.5), 0.0};
   const double dqz[4] = {cos(z * 0.5), 0.0, 0.0, sin(z * 0.5)};
@@ -145,7 +149,7 @@ void Quat_Bryant
 }
 
 template<>
-void Quat_Bryant(
+DFM2_INLINE void Quat_Bryant(
     float q[4],
     float x, float y, float z) {
   const float dqx[4] = {cosf(x * 0.5f), sinf(x * 0.5f), 0.f, 0.f};
@@ -163,7 +167,7 @@ void Quat_Bryant(
 namespace delfem2 {
 
 template <>
-void Quat_CartesianAngle(
+DFM2_INLINE void Quat_CartesianAngle(
     double q[4],
     const double a[3]) {
   const double sqlen = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
@@ -185,91 +189,11 @@ void Quat_CartesianAngle(
 
 // ---------------------------------------------------------------------
 
-void dfm2::Mat4_Quat
- (double r[], const double q[])
-{
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  r[ 0] = 1.0 - y2 - z2;
-  r[ 1] = xy - zw;
-  r[ 2] = zx + yw;
-  r[ 4] = xy + zw;
-  r[ 5] = 1.0 - z2 - x2;
-  r[ 6] = yz - xw;
-  r[ 8] = zx - yw;
-  r[ 9] = yz + xw;
-  r[10] = 1.0 - x2 - y2;
-  r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
-  r[15] = 1.0;
-}
 
-// return transpose matrix of Mat4_Quat
-void Mat4_QuatConj(double r[], const double q[])
-{
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  
-  r[ 0] = 1.0 - y2 - z2;
-  r[ 1] = xy + zw;
-  r[ 2] = zx - yw;
-  r[ 4] = xy - zw;
-  r[ 5] = 1.0 - z2 - x2;
-  r[ 6] = yz + xw;
-  r[ 8] = zx + yw;
-  r[ 9] = yz - xw;
-  r[10] = 1.0 - x2 - y2;
-  r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
-  r[15] = 1.0;
-}
 
-void dfm2::Mat4_ScaleRotTrans
-(double m[16],
- double scale,
- const double quat[4],
- const double trans[3])
-{
-  dfm2::Mat4_Quat(m, quat);
-  for(int i=0;i<3;++i){
-    for(int j=0;j<3;++j){
-      m[i*4+j] *= scale;
-    }
-  }
-  m[0*4+3] = trans[0];
-  m[1*4+3] = trans[1];
-  m[2*4+3] = trans[2];
-}
+/*
 
-void dfm2::MatMat4(
-    double m01[16],
-    const double m0[16],
-    const double m1[16])
-{
-  for(int i=0;i<4;++i){
-    for(int j=0;j<4;++j){
-      m01[i*4+j] = m0[i*4+0]*m1[0*4+j] + m0[i*4+1]*m1[1*4+j] + m0[i*4+2]*m1[2*4+j] + m0[i*4+3]*m1[3*4+j];
-    }
-  }
-}
-
-void dfm2::Copy_Mat4(double m1[16], const double m0[16])
-{
-  for(int i=0;i<16;++i){ m1[i] = m0[i]; }
-}
-
+*/
 
 // ///////////////////////////////////////////////////////////////////
 // �\�z/����

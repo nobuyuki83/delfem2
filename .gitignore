@@ -38,6 +38,8 @@ cmake-build-release
 delfem2.egg-info
 buildXcode
 buildMake
+buildMakeHdronly
+buildMakeStatic
 buildVS
 buildVS32
 buildVS64

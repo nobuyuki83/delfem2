@@ -31,12 +31,12 @@ include_directories(
   ${3RD_PARTY}
 )
 
+# add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${PROJECT_NAME}
  ${DELFEM2_INC}/vec2.h                       ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
   ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
-  ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
   ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
   ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
@@ -44,19 +44,28 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
                
   ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp
-  ${DELFEM2_INC}/rig_v3q.h                   ${DELFEM2_INC}/rig_v3q.cpp
-
-  ${DELFEM2_INC}/opengl/glold_rig_v23q.h     ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
+  
   ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_color.h        ${DELFEM2_INC}/opengl/glold_color.cpp
   ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
   
-  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
+  ${DELFEM2_INC}/rig_v3q.h                   ${DELFEM2_INC}/rig_v3q.cpp
+  ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h    ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
+  
+  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
 
   ${3RD_PARTY}/io_gltf.h
   ${3RD_PARTY}/io_gltf.cpp
   main.cpp
 )
+# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+if(DFM2_STATIC_LIBRARY)
+set(INPUT_SRC
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${INPUT_SRC})
+endif()
+
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )

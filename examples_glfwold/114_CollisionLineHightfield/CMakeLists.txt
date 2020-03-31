@@ -34,12 +34,12 @@ include_directories(
     ${DELFEM2_INCLUDE_DIR}
 )
 
+# add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h                    ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h                    ${DELFEM2_INC}/mat3.cpp
     ${DELFEM2_INC}/mat4.h                    ${DELFEM2_INC}/mat4.cpp
-    ${DELFEM2_INC}/quat.h                    ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/color.h                   ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/mshio.h                   ${DELFEM2_INC}/mshio.cpp
@@ -62,6 +62,12 @@ add_executable(${PROJECT_NAME}
 
     main.cpp
 )
+# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+if(DFM2_STATIC_LIBRARY)
+set(INPUT_SRC
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${INPUT_SRC})
+endif()
 
 #####################################
 

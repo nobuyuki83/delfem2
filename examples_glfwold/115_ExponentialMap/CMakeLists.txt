@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+option(WITH_HEADERLESS "BUILD_CODE_WITH_HEADERLESS" OFF)
+
+###################################
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(MSVC)

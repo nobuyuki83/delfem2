@@ -6,7 +6,7 @@
  */
 
 /**
- * @file 3x3 matrix class (CMat3) and functions
+ * @file 4x4 matrix class (CMat4) and functions
  */
 
 
@@ -25,17 +25,12 @@
 
 namespace delfem2 {
 
-
-void Mat4Vec3(double vo[3],
-              const double M[16],
-              const double vi[3]);
-
-// -------------------------------
-
-template <typename T>
-void MatVec4(T v[4],
-    const T A[16],
-    const T x[4]);
+template <typename REAL>
+void Copy_Mat4(REAL M0[16],
+               const REAL M1[16])
+{
+  for(int i=0;i<16;++i){ M0[i] = M1[i]; }
+}
 
 template <typename T>
 void MatMat4(
@@ -43,16 +38,15 @@ void MatMat4(
     const T* A,
     const T* B);
 
-
 template <typename REAL>
 void Mat4_Identity(
     REAL A[16]);
-  
+
 template <typename REAL>
 void Mat4_AffineScale(
     REAL A[16],
     REAL s);
-  
+
 template <typename REAL>
 void Mat4_AffineTranslation(
     REAL A[16],
@@ -72,6 +66,18 @@ void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
+template <typename T>
+void MatVec4(T v[4],
+             const T A[16],
+             const T x[4]);
+
+// --------------------------------
+// functions mat4 and vec3
+
+void Mat4Vec3(double vo[3],
+              const double M[16],
+              const double vi[3]);
+
 /**
  * @func multiply translation affine matrix from left to an affine matrix in 3D
  */
@@ -90,12 +96,20 @@ void Vec3_Mat4Vec3_Affine(T y0[3],
                           const T a[16],
                           const T x0[3]);
 
-template <typename REAL>
-void Copy_Mat4(REAL M0[16],
-               const REAL M1[16])
-{
-  for(int i=0;i<16;++i){ M0[i] = M1[i]; }
-}
+// ------------------------------------
+// function with mat4 and quarternion
+
+void Mat4_Quat
+    (double r[], const double q[]);
+
+void Mat4_QuatConj
+    (double r[], const double q[]);
+
+void Mat4_ScaleRotTrans(
+    double m[16],
+    double scale,
+    const double quat[4],
+    const double trans[3]);
 
 template<typename T>
 class CMat4;

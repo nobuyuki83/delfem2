@@ -32,13 +32,12 @@ include_directories(
   ${3RD_PARTY}
 )
 
-
+# add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec2.h                     ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                     ${DELFEM2_INC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h                     ${DELFEM2_INC}/mat3.cpp
   ${DELFEM2_INC}/mat4.h                     ${DELFEM2_INC}/mat4.cpp
-  ${DELFEM2_INC}/quat.h                     ${DELFEM2_INC}/quat.cpp
   ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
   ${DELFEM2_INC}/color.h                    ${DELFEM2_INC}/color.cpp
   ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
@@ -57,10 +56,18 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h           ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
     
   ${DELFEM2_INC}/rig_v3q.h                  ${DELFEM2_INC}/rig_v3q.cpp
-  ${DELFEM2_INC}/opengl/glold_rig_v23q.h    ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
+  ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
   
   main.cpp
 )
+# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+if(DFM2_STATIC_LIBRARY)
+set(INPUT_SRC
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${INPUT_SRC})
+endif()
+
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )

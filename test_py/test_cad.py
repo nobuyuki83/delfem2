@@ -72,7 +72,7 @@ class Test_Cad2D():
     assert cad.iedge_picked() == 0 
     assert cad.iface_picked() == -1 
     ####
-    cad.pick(-0.1,-0.1, 2.0)
+    cad.pick(-0.1432143,-0.1653542343, 2.0)
     assert cad.ivtx_picked() == -1 
     assert cad.iedge_picked() == -1 
     assert cad.iface_picked() == 0 
