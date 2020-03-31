@@ -28,7 +28,7 @@
 #include "delfem2/cnpy/smpl_cnpy.h"
 
 #include "delfem2/rig_v3q.h"
-#include "delfem2/opengl/glold_rig_v23q.h"
+#include "delfem2/opengl/rig_v3m3q_glold.h"
 
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/v3q_glold.h"
@@ -123,7 +123,7 @@ void Solve_MinEnergyArap
 (std::vector<double>& aXYZ1,
  std::vector<dfm2::CRigBone>& aBone,
  std::vector<double>& aQuat1,
- const std::vector<double>& KMat, // [3*nb*4, 3*nb*4]
+ const std::vector<double>& KMat, // [nsns, nsns]
  //
  const std::vector<dfm2::CTarget>& aTarget,
  const std::vector<double>& aXYZ0,
@@ -132,57 +132,34 @@ void Solve_MinEnergyArap
  const std::vector<unsigned int>& psup)
 {
   
-  const double weight_rig = 1;
+  const double weight_rig = 1000;
   
   class CSystemMatrix_Reduced{
   public:
-    CSystemMatrix_Reduced(const std::vector<double>& Lx_, // [ nsns, nb*4 ]
-                          const std::vector<double>& Ly_, // [ nsns, nb*4 ]
-                          const std::vector<double>& Lz_, // [ nsns, nb*4 ]
-                          unsigned int nb_,
-                          const std::vector<double>& K_, // [ 3*nb*4, 3*nb*4 ]
-                          unsigned int nMode_,
-                          unsigned int np_,
-                          const std::vector<double>& adC_,
+    CSystemMatrix_Reduced(unsigned int nsns_,
+                          const std::vector<double>& K_, // [ nsns, nsns ]
                           unsigned int nC_,
+                          const std::vector<double>& adC_, // [ nc, nsns]
                           double weight_rig_) :
-    Lx(Lx_), Ly(Ly_), Lz(Lz_), nb(nb_), // [np, nsns]
-    K(K_),
-    nsns(nMode_), np(np_), adC(adC_), nc(nC_), weight_rig(weight_rig_)
+      nsns(nsns_), K(K_),
+      nc(nC_), adC(adC_), weight_rig(weight_rig_)
     {
-//      std::cout << "constructor reduced system matrix " << std::endl;
-      assert( Lx.size() == nsns*nb*4 );
-      assert( Ly.size() == nsns*nb*4 );
-      assert( Lz.size() == nsns*nb*4 );
-      assert( K.size() == 3*nb*4 * 3*nb*4 );
-      tmpD0.resize(np*3);
-      tmpD1.resize(np*3);
+      assert( K.size() == nsns * nsns );
+      assert( adC.size() == nc * nsns );
       tmpC0.resize(nc);
       tmpM0.resize(nsns);
     }
   public:
     void MatVec(double* y,
-                double alpha, const double* x, double beta) const {
-      std::vector<double> t2(nsns,0.0);
-      {
-        std::vector<double> t0(3*nb*4,0.0);
-        for(int isns=0;isns<nsns;++isns){
-          for(int j=0;j<nb*4;++j){
-            t0[0*nb*4+j] += Lx[isns*(nb*4)+j]*x[isns];
-            t0[1*nb*4+j] += Ly[isns*(nb*4)+j]*x[isns];
-            t0[2*nb*4+j] += Lz[isns*(nb*4)+j]*x[isns];
-          }
-        }
-        std::vector<double> t1(3*nb*4,0.0);
-        dfm2::MatVec(t1.data(), K.data(), 3*nb*4, 3*nb*4, t0.data());
-        for(int isns=0;isns<nsns;++isns){
-          t2[isns] = 0.0;
-          for(int j=0;j<nb*4;++j){
-            t2[isns]
-            += Lx[isns*(nb*4)+j]*t1[0*nb*4+j]
-            +  Ly[isns*(nb*4)+j]*t1[1*nb*4+j]
-            +  Lz[isns*(nb*4)+j]*t1[2*nb*4+j];
-          }
+                double alpha, const double* x, double beta) const
+    {
+      for(int isns=0;isns<nsns;++isns){
+        y[isns] = beta*y[isns];
+      }
+      // ----
+      for(int isns=0;isns<nsns;++isns){
+        for(int jsns=0;jsns<nsns;++jsns){
+          y[isns] += alpha*K[isns*nsns+jsns]*x[jsns];
         }
       }
       // ----
@@ -190,21 +167,17 @@ void Solve_MinEnergyArap
                    adC.data(), nc, nsns, x);
       dfm2::MatTVec(tmpM0.data(),
                     adC.data(), nc, nsns, tmpC0.data());
-      for(int i=0;i<nsns;++i){ y[i] = beta*x[i] + alpha*(weight_rig*tmpM0[i]+t2[i]); }
+      for(int isns=0;isns<nsns;++isns){
+        y[isns] += alpha*weight_rig*tmpM0[isns];
+      }
     }
   public:
-    const std::vector<double>& Lx;
-    const std::vector<double>& Ly;
-    const std::vector<double>& Lz;
-    unsigned int nb;
+    const unsigned int nsns;
     const std::vector<double>& K;
-    unsigned int nsns;
-    unsigned int np;
+    const unsigned int nc;
     const std::vector<double>& adC;
-    unsigned int nc;
-    double weight_rig;
-    mutable std::vector<double> tmpD0;
-    mutable std::vector<double> tmpD1;
+    const double weight_rig;
+    // ------
     mutable std::vector<double> tmpC0;
     mutable std::vector<double> tmpM0;
   };
@@ -215,17 +188,19 @@ void Solve_MinEnergyArap
   
   // --------------
   std::vector<double> Lx, Ly, Lz; // [ nsns, nbone*4 ]
-  for(int ibs=0;ibs<aBone.size();++ibs){
+  {
+    for(int ibs=0;ibs<aBone.size();++ibs){
+      for(int idims=0;idims<3;++idims){
+        dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
+                                                 ibs,idims,true,
+                                                 aBone);
+      }
+    }
     for(int idims=0;idims<3;++idims){
       dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               ibs,idims,true,
+                                               0,idims,false,
                                                aBone);
     }
-  }
-  for(int idims=0;idims<3;++idims){
-    dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                             0,idims,false,
-                                             aBone);
   }
   // --------------
   
@@ -241,9 +216,8 @@ void Solve_MinEnergyArap
   
   // ----------
 
-  CSystemMatrix_Reduced mat(Lx, Ly, Lz, nb, KMat,
-                            nsns,np,
-                            adC0, nc,
+  CSystemMatrix_Reduced mat(nsns, KMat,
+                            nc, adC0,
                             weight_rig);
   
   std::vector<double> r(nsns,0.0);
@@ -384,7 +358,7 @@ int main()
     }
   }
   
-  std::vector<double> K; // [3*nb*4, 3*nb*4]
+  std::vector<double> K; // [nsns, nsns]
   {
     const unsigned int np = aXYZ1.size()/3;
     dfm2::CMatrixSparse<double> Mat;
@@ -413,31 +387,72 @@ int main()
                    tmp_buffer);
       }
     }
-    std::vector<double> aRefPos; // [ np, nBone*4 ]
-    Rig_SkinReferncePositionsBoneWeighted(aRefPos,
-                                          aBone,aXYZ0,aW);
-    const unsigned int M = aBone.size()*4;
-    K.resize(3*M*3*M);
-    for(int i=0;i<3;++i){
-    for(int mi=0;mi<M;++mi){
-      std::vector<double> vi(np*3);
-      for(int ip=0;ip<np;++ip){ vi[ip*3+i] = aRefPos[ip*M+mi]; }
+    
+    std::vector<double> dSkin; // [nsns, np*3]
+    {
+      std::vector<double> aRefPos; // [ np, nBone*4 ]
+      Rig_SkinReferncePositionsBoneWeighted(aRefPos,
+                                            aBone,aXYZ0,aW);
+      
+      std::vector<double> Lx, Ly, Lz; // [ nsns, nbone*4 ]
+      { // make sensitivity of bone transformations
+        for(int ibs=0;ibs<aBone.size();++ibs){
+          for(int idims=0;idims<3;++idims){
+            dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
+                                                     ibs,idims,true,
+                                                     aBone);
+          }
+        }
+        for(int idims=0;idims<3;++idims){
+          dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
+                                                   0,idims,false,
+                                                   aBone);
+        }
+      }
+      const unsigned int nb = aBone.size();
+      const unsigned int nsns = Lx.size() / (nb*4);
+      assert( Ly.size() == nsns*nb*4 );
+      assert( Lz.size() == nsns*nb*4 );
+      dSkin.resize( nsns * (np*3) );
+      for(int isns=0;isns<nsns;++isns){
+       for(int ip=0;ip<np;++ip){
+          double dx = 0.0, dy = 0.0, dz = 0.0;
+          for(int j=0;j<nb*4;++j){
+            dx += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
+            dy += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
+            dz += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
+          }
+          dSkin[ isns*(np*3) + ip*3+0 ] = dx;
+          dSkin[ isns*(np*3) + ip*3+1 ] = dy;
+          dSkin[ isns*(np*3) + ip*3+2 ] = dz;
+        }
+      }
+    }
+    
+    const unsigned int nsns = dSkin.size()/(np*3);
+    K.resize( nsns*nsns );
+    for(int isns=0;isns<nsns;++isns){
+      const std::vector<double> vi(dSkin.data()+isns*(np*3), dSkin.data()+(isns+1)*(np*3));
       std::vector<double> t0(np*3);
       Mat.MatVec(t0.data(), 1.0, vi.data(), 0.0);
       // -----
-      for(int j=0;j<3;++j){
-      for(int mj=0;mj<M;++mj){
-        if( j*M+mj > i*M+mi ){ continue; }
-        std::vector<double> vj(np*3);
-        for(int jp=0;jp<np;++jp){ vj[jp*3+j] = aRefPos[jp*M+mj]; }
+      for(int jsns=0;jsns<nsns;++jsns){
+//        if( jsns > isns ){ continue; }
+        const std::vector<double> vj(dSkin.data()+jsns*(np*3), dSkin.data()+(jsns+1)*(np*3));
         // -----
-        K[(i*M+mi)*(3*M)+(j*M+mj)] = dfm2::Dot(t0, vj);
-        K[(j*M+mj)*(3*M)+(i*M+mi)] = K[(i*M+mi)*(3*M)+(j*M+mj)];
+        K[isns*nsns+jsns] = dfm2::Dot(t0, vj);
+        K[jsns*nsns+isns] = K[isns*nsns+jsns];
       }
+    }
+    for(int isns=0;isns<nsns;++isns){
+      std::cout << isns << " " << K[isns*nsns+isns] << std::endl;
+    }
+    for(int isns=0;isns<nsns;++isns){
+      for(int jsns=0;jsns<nsns;++jsns){
+        std::cout << isns << " " << jsns << " " <<  K[jsns*nsns+isns] << " " << K[isns*nsns+jsns] << std::endl;
       }
-      
     }
-    }
+    std::cout << "nsns: " << nsns << std::endl;
   }
     
   // -----------

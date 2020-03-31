@@ -11,7 +11,6 @@
 #include <cassert>
 #include <sstream>
 #include <fstream>
-#include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mat4.h"

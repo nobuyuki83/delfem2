@@ -28,45 +28,54 @@ include_directories(
   ${3RD_PARTY}  
 )
 
+# add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                     ${DELFEM2_INC}/vec2.cpp                 
-  ${DELFEM2_INC}/vec3.h                     ${DELFEM2_INC}/vec3.cpp                 
-  ${DELFEM2_INC}/mat3.h                     ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/mat4.h                     ${DELFEM2_INC}/mat4.cpp                 
-  ${DELFEM2_INC}/quat.h                     ${DELFEM2_INC}/quat.cpp 
-  ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp                  
-  ${DELFEM2_INC}/dtri.h                     ${DELFEM2_INC}/dtri.cpp
-  ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
-  ${DELFEM2_INC}/mshmisc.h                  ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/bvh.h                      ${DELFEM2_INC}/bvh.cpp
-  ${DELFEM2_INC}/funcs.h                    ${DELFEM2_INC}/funcs.cpp
-  ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
-  ${DELFEM2_INC}/color.h                    ${DELFEM2_INC}/color.cpp
-  ${DELFEM2_INC}/bv.h        
-      
-  ${DELFEM2_INC}/dtri_v2.h                  ${DELFEM2_INC}/dtri_v2.cpp
-  ${DELFEM2_INC}/objfunc_v23.h              ${DELFEM2_INC}/objfunc_v23.cpp
-  ${DELFEM2_INC}/objfunc_v23dtri.h          ${DELFEM2_INC}/objfunc_v23dtri.cpp
-  ${DELFEM2_INC}/cad2d_v2dtri.h             ${DELFEM2_INC}/cad2d_v2dtri.cpp
-  ${DELFEM2_INC}/rig_v3q.h                  ${DELFEM2_INC}/rig_v3q.cpp
-  ${DELFEM2_INC}/v23m3q.h                   ${DELFEM2_INC}/v23m3q.cpp
-  ${DELFEM2_INC}/srchuni_v3.h               ${DELFEM2_INC}/srchuni_v3.cpp
-  ${DELFEM2_INC}/srch_v3bvhmshtopo.h
-
-  ${DELFEM2_INC}/cnpy/smpl_cnpy.h           ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp  
+    ${DELFEM2_INC}/vec2.h                       ${DELFEM2_INC}/vec2.cpp
+    ${DELFEM2_INC}/vec3.h                       ${DELFEM2_INC}/vec3.cpp
+    ${DELFEM2_INC}/mat3.h                       ${DELFEM2_INC}/mat3.cpp
+    ${DELFEM2_INC}/mat4.h                       ${DELFEM2_INC}/mat4.cpp
+    ${DELFEM2_INC}/camera.h                     ${DELFEM2_INC}/camera.cpp
+    ${DELFEM2_INC}/dtri.h                       ${DELFEM2_INC}/dtri.cpp
+    ${DELFEM2_INC}/mshtopo.h                    ${DELFEM2_INC}/mshtopo.cpp
+    ${DELFEM2_INC}/mshmisc.h                    ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/bvh.h                        ${DELFEM2_INC}/bvh.cpp
+    ${DELFEM2_INC}/funcs.h                      ${DELFEM2_INC}/funcs.cpp
+    ${DELFEM2_INC}/vecxitrsol.h                 ${DELFEM2_INC}/vecxitrsol.cpp
+    ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
+    ${DELFEM2_INC}/bv.h
+    
+    ${DELFEM2_INC}/dtri_v2.h                    ${DELFEM2_INC}/dtri_v2.cpp
+    ${DELFEM2_INC}/objfunc_v23.h                ${DELFEM2_INC}/objfunc_v23.cpp
+    ${DELFEM2_INC}/objfunc_v23dtri.h            ${DELFEM2_INC}/objfunc_v23dtri.cpp
+    ${DELFEM2_INC}/v23m3q.h                     ${DELFEM2_INC}/v23m3q.cpp
+    ${DELFEM2_INC}/srchuni_v3.h                 ${DELFEM2_INC}/srchuni_v3.cpp
+    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
   
-    ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
-    ${DELFEM2_INC}/opengl/glold_color.h       ${DELFEM2_INC}/opengl/glold_color.cpp
-    ${DELFEM2_INC}/opengl/glold_rig_v23q.h    ${DELFEM2_INC}/opengl/glold_rig_v23q.cpp
-    ${DELFEM2_INC}/opengl/v3q_glold.h         ${DELFEM2_INC}/opengl/v3q_glold.cpp
-    ${DELFEM2_INC}/opengl/caddtri_v3_glold.h  ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
+    ${DELFEM2_INC}/opengl/glold_funcs.h         ${DELFEM2_INC}/opengl/glold_funcs.cpp
+    ${DELFEM2_INC}/opengl/glold_color.h         ${DELFEM2_INC}/opengl/glold_color.cpp
+    ${DELFEM2_INC}/opengl/v3q_glold.h           ${DELFEM2_INC}/opengl/v3q_glold.cpp
+  
+    ${DELFEM2_INC}/rig_v3q.h                    ${DELFEM2_INC}/rig_v3q.cpp
+    ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h     ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
+  
+    ${DELFEM2_INC}/cad2d_v2dtri.h               ${DELFEM2_INC}/cad2d_v2dtri.cpp
+    ${DELFEM2_INC}/opengl/caddtri_v3_glold.h    ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
 
-  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-
-  ${3RD_PARTY}/cnpy/cnpy.h                  ${3RD_PARTY}/cnpy/cnpy.cpp  
+    ${3RD_PARTY}/cnpy/cnpy.h                    ${3RD_PARTY}/cnpy/cnpy.cpp
+    ${DELFEM2_INC}/cnpy/smpl_cnpy.h             ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
+  
+    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
 
   main.cpp  
 )
+# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+if(DFM2_STATIC_LIBRARY)
+set(INPUT_SRC
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${INPUT_SRC})
+endif()
+
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )

@@ -27,12 +27,12 @@ include_directories(
 )
 
 # Add test cpp file
+# add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                 ${DELFEM2_INC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h                 ${DELFEM2_INC}/mat3.cpp
   ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
-  ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
   ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
   ${DELFEM2_INC}/specialfuncs.h         ${DELFEM2_INC}/specialfuncs.cpp
   ${DELFEM2_INC}/mshmisc.h              ${DELFEM2_INC}/mshmisc.cpp
@@ -65,6 +65,12 @@ add_executable(${MY_BINARY_NAME}
   test_fem.cpp
   main.cpp  
 )
+# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+if(DFM2_STATIC_LIBRARY)
+set(INPUT_SRC
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${INPUT_SRC})
+endif()
 
 if(MSVC)
   if(CMAKE_CL_64)

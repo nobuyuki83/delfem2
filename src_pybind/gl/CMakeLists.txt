@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(PROJ_NAME c_gl)
-project(${PROJ_NAME})
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+#########################################################
 
 if(MSVC)
   set(CMAKE_CXX_FLAGS "/W4  -O2 \
@@ -15,6 +16,11 @@ else()
     -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable")
 endif()
 
+################################
+
+set(PROJ_NAME c_gl)
+project(${PROJ_NAME})
+
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
@@ -25,12 +31,20 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
+if(NOT USE_HEADERONLY)
+  message("compile as static libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      )
+else()
+  message("compile as headeronly library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+endif()
 
 set(INPUT_SRC
     ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
-    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
@@ -54,10 +68,13 @@ set(INPUT_SRC
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c
 
+    ${SRC_DFM2}
+
     py_sampler.cpp
     py_texture.cpp
     main.cpp
 )
+
 
 find_package(OpenGL REQUIRED)
 

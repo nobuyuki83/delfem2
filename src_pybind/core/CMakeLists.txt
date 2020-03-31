@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+#########################################################
+
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -26,12 +30,21 @@ set(3RD_PARTY           "../../3rd_party")
 set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
+if(NOT USE_HEADERONLY)
+  message("compile as static libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      )
+else()
+  message("compile as headeronly library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+endif()
+
 set(INPUT_SRC
     ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
     ${DELFEM2_INC}/mat4.h               ${DELFEM2_INC}/mat4.cpp
-    ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
     ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
@@ -64,6 +77,8 @@ set(INPUT_SRC
 
     ${3RD_PARTY}/io_gltf.h
     ${3RD_PARTY}/io_gltf.cpp
+
+    ${SRC_DFM2}    
 
     ../py_funcs.h
 

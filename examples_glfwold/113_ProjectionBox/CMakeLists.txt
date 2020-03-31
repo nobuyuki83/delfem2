@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+option(WITH_HEADERLESS "BUILD_CODE_WITH_HEADERLESS" ON)
+
+###################################
+
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -34,12 +38,18 @@ include_directories(
     ${DELFEM2_INCLUDE_DIR}
 )
 
+if(NOT WITH_HEADERLESS)
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      )
+endif()
+
 add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/vec2.h                     ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h                     ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h                     ${DELFEM2_INC}/mat3.cpp
     ${DELFEM2_INC}/mat4.h                     ${DELFEM2_INC}/mat4.cpp
-    ${DELFEM2_INC}/quat.h                     ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/color.h                    ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/mshio.h                    ${DELFEM2_INC}/mshio.cpp
@@ -59,8 +69,16 @@ add_executable(${PROJECT_NAME}
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c
 
+    ${SRC_DFM2}
+
     main.cpp
 )
+# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+if(DFM2_STATIC_LIBRARY)
+set(INPUT_SRC
+    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+    ${INPUT_SRC})
+endif()
 
 #####################################
 

@@ -14,21 +14,25 @@
 #define DFM2_QUAT_H
 
 #include <random>
+#include "delfem2/dfm2_inline.h"
+
 
 namespace delfem2 {
 
 template <typename T>
-void Normalize_Quat(T q[4]);
+DFM2_INLINE void Normalize_Quat(
+    T q[4]);
 
 /**
  * @brief Set Identity in the quaternion
  */
 template <typename T>
-void Quat_Identity(T q[4]);
+DFM2_INLINE void Quat_Identity(
+    T q[4]);
 
 
 template <typename REAL>
-void Quat_Bryant(
+DFM2_INLINE void Quat_Bryant(
     REAL q[4],
     REAL x, REAL y, REAL z);
 
@@ -39,7 +43,7 @@ void Quat_Bryant(
  * @param a (in)
  */
 template <typename REAL>
-void Quat_CartesianAngle(
+DFM2_INLINE void Quat_CartesianAngle(
     REAL q[4],
     const REAL a[3]);
 
@@ -49,7 +53,7 @@ void Quat_CartesianAngle(
  * @tparam REAL float or double
  */
 template <typename REAL>
-void QuatVec(
+DFM2_INLINE void QuatVec(
     REAL vo[],
     const REAL q[],
     const REAL vi[]);
@@ -59,7 +63,7 @@ void QuatVec(
  * @tparam REAL float or double
  */
 template <typename REAL>
-void Copy_Quat(
+DFM2_INLINE void Copy_Quat(
     REAL r[],
     const REAL p[]);
 
@@ -72,29 +76,38 @@ void Copy_Quat(
  * @details quaternions don't commute (qp!=pq)
  */
 template <typename REAL>
-void QuatQuat(
+DFM2_INLINE void QuatQuat(
     REAL r[],
     const REAL p[],
     const REAL q[]);
 
-void QuatConjVec(double vo[], const double q[], const double vi[]);
+DFM2_INLINE void QuatConjVec(
+    double vo[],
+    const double q[],
+    const double vi[]);
 
 // ----------
 
 
-void Mat4_Quat(double r[],
-               const double q[]);
-void Mat4_QuatConj(double r[],
-                   const double q[]);
+DFM2_INLINE void Mat4_Quat(
+    double r[],
+    const double q[]);
+
+DFM2_INLINE void Mat4_QuatConj(
+    double r[],
+    const double q[]);
+
 /**
  * @brief applying transformation in the order of scale, rotation and translation
  */
+ /*
 void Mat4_ScaleRotTrans(double m[16],
                         double scale, const double quat[4], const double trans[3]);
 void MatMat4(double m01[16],
              const double m0[16], const double m1[16]);
 void Copy_Mat4(double m1[16],
                const double m0[16]);
+               */
   
 // -------------------------------------------------------
 
@@ -194,11 +207,11 @@ public:
 };
 using CQuatd = CQuat<double>;
 using CQuatf = CQuat<float>;
-
-
-
-
   
 }
 
-#endif // !defined(QUATERNION_H)
+#ifndef DFM2_STATIC_LIBRARY
+#include "quat.cpp"
+#endif
+
+#endif // !defined(DFM2_QUAT_H)
