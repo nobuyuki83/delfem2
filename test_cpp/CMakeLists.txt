@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
+
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+################################
+
 set(CMAKE_CXX_STANDARD 11)
 if(MSVC)
   # GTest is static compiled by default
@@ -6,6 +11,8 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")  
   set(CMAKE_CXX_FLAGS "/wd4267")
 endif()
+
+################################
 
 project(testsDelFEM2)
 set(MY_BINARY_NAME runUnitTests)
@@ -27,12 +34,23 @@ include_directories(
 )
 
 # Add test cpp file
-# add_definitions(-DDFM2_STATIC_LIBRARY)
+
+IF(NOT USE_HEADERONLY)
+  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
+      )
+ELSE()
+  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+ENDIF()
+
 add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                 ${DELFEM2_INC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h                 ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
   ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
   ${DELFEM2_INC}/specialfuncs.h         ${DELFEM2_INC}/specialfuncs.cpp
   ${DELFEM2_INC}/mshmisc.h              ${DELFEM2_INC}/mshmisc.cpp
@@ -50,7 +68,7 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/bv.h
   
-  ${DELFEM2_INC}/v23m3q.h            ${DELFEM2_INC}/v23m3q.cpp
+  ${DELFEM2_INC}/v23m3q.h               ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
   ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp
@@ -58,19 +76,13 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/srchuni_v3.h           ${DELFEM2_INC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h
   ${DELFEM2_INC}/srch_v3bvhmshtopo.h
-
+  ${SRC_DFM2}
   test_bvh.cpp
   test_lp.cpp
   test_gltf.cpp
   test_fem.cpp
   main.cpp  
 )
-# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-if(DFM2_STATIC_LIBRARY)
-set(INPUT_SRC
-    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-    ${INPUT_SRC})
-endif()
 
 if(MSVC)
   if(CMAKE_CL_64)

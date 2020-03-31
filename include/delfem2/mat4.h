@@ -18,6 +18,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits> // using NaN Check
+#include "delfem2/dfm2_inline.h"
 
 #define NEARLY_ZERO 1.e-16
 
@@ -66,17 +67,21 @@ void Rotate_Mat4AffineRodriguez(
     REAL A[16],
     const REAL v[3]);
 
+// ------------------------
+
 template <typename T>
-void MatVec4(T v[4],
-             const T A[16],
-             const T x[4]);
+DFM2_INLINE void MatVec4(
+    T v[4],
+    const T A[16],
+    const T x[4]);
 
 // --------------------------------
 // functions mat4 and vec3
 
-void Mat4Vec3(double vo[3],
-              const double M[16],
-              const double vi[3]);
+DFM2_INLINE void Mat4Vec3(
+     double vo[3],
+     const double M[16],
+     const double vi[3]);
 
 /**
  * @func multiply translation affine matrix from left to an affine matrix in 3D
@@ -99,13 +104,13 @@ void Vec3_Mat4Vec3_Affine(T y0[3],
 // ------------------------------------
 // function with mat4 and quarternion
 
-void Mat4_Quat
-    (double r[], const double q[]);
+DFM2_INLINE void Mat4_Quat(
+    double r[], const double q[]);
 
-void Mat4_QuatConj
-    (double r[], const double q[]);
+DFM2_INLINE void Mat4_QuatConj(
+    double r[], const double q[]);
 
-void Mat4_ScaleRotTrans(
+DFM2_INLINE void Mat4_ScaleRotTrans(
     double m[16],
     double scale,
     const double quat[4],
@@ -202,5 +207,9 @@ using CMat4d = CMat4<double>;
 using CMat4f = CMat4<float>;
 
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/mat4.cpp"
+#endif
 
 #endif

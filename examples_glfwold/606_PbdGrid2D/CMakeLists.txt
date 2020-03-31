@@ -38,8 +38,9 @@ IF(NOT USE_HEADERONLY)
   message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
-      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h             ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/mat4.h               ${DELFEM2_INC}/mat4.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -49,7 +50,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec2.h                   ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                   ${DELFEM2_INC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/mat4.h                   ${DELFEM2_INC}/mat4.cpp
   ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
   ${DELFEM2_INC}/primitive.h              ${DELFEM2_INC}/primitive.cpp

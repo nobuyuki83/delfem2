@@ -50,14 +50,14 @@ cd examples_glfwold
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
-cmake --build .
+# cmake --build . # skip build to save time
 cd ../../
 
 cd examples_glfwold
 mkdir buildXcodeStatic
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
-cmake --build .
+# cmake --build . # skip build to save time
 cd ../../
 
 echo "################################"
@@ -136,15 +136,27 @@ make
 cd ../../
 
 cd test_cpp
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
+mkdir buildXcodeStatic
+cd buildXcodeStatic
+cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 cd ../../
 
 cd test_cpp
-mkdir buildMake
-cd buildMake
-cmake ..
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cd ../../
+
+cd test_cpp
+mkdir buildMakeHdronly
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+cd ../../
+
+cd test_cpp
+mkdir buildMakeStatic
+cd buildMakeStatic
+cmake -DUSE_HEADERONLY=OFF ..
 make
 ./runUnitTests
 cd ../../
