@@ -6,8 +6,8 @@
  */
 
 
-#ifndef GLFW_FUNCS_H
-#define GLFW_FUNCS_H
+#ifndef DFM2_CAM_GLFW_H
+#define DFM2_CAM_GLFW_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,12 +15,6 @@
 #include <GLFW/glfw3.h>
 
 #include "delfem2/camera.h"
-
-
-/*
-
- */
-
 
 
 /**
@@ -170,7 +164,7 @@ public:
 public:
   int imodifier;
   int ibutton;
-  delfem2::CCamera camera;
+  delfem2::CCamera<double> camera;
   double mouse_x, mouse_y;
   double dx, dy;
   double mouse_x_down, mouse_y_down;

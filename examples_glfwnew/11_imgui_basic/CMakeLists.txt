@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8.12)
 # compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
 #####################################
 
 set(CMAKE_CXX_STANDARD 11)
@@ -40,6 +42,8 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
+##############################
+
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include
@@ -49,9 +53,18 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
+IF(NOT USE_HEADERONLY)
+  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(SRC_DFM2
+      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      )
+ELSE()
+  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
+ENDIF()
+
 add_executable(${PROJECT_NAME}
-    main.cpp
-  
     ${DELFEM2_INC}/opengl/gl_funcs.h    ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_funcs.h     ${DELFEM2_INC}/opengl/glnew_funcs.cpp
   
@@ -66,7 +79,11 @@ add_executable(${PROJECT_NAME}
   
     ${3RD_PARTY}/glad4/include/glad/glad.h
     ${3RD_PARTY}/glad4/src/glad.c
-)
+        ${SRC_DFM2}
+        main.cpp
+        )
+
+###########################
 
 if (NOT EMSCRIPTEN)
   IF(APPLE)

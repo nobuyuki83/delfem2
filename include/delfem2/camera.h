@@ -17,33 +17,42 @@
 #include <math.h>
 #include <stdio.h> // memcpy
 #include <string.h>
+#include "delfem2/dfm2_inline.h"
 
 // ---------------------------------------------------
 
 namespace delfem2{
 
-void glhFrustumf2(float *matrix, float left, float right, float bottom, float top,
-                  float znear, float zfar);
-void glhPerspectivef2(float *matrix, float fovyInDegrees, float aspectRatio,
-                      float znear, float zfar);
-void glhTranslatef2(float *matrix, float x, float y, float z);
-void glhLookAtf2(float *matrix,
-                 float eyex, float eyey, float eyez,
-                 float cntx, float cnty, float cntz,
-                 float upx, float upy, float upz );
+DFM2_INLINE void glhFrustumf2
+ (float *matrix, float left, float right, float bottom, float top,
+  float znear, float zfar);
+DFM2_INLINE void glhPerspectivef2
+ (float *matrix, float fovyInDegrees, float aspectRatio,
+  float znear, float zfar);
+
+DFM2_INLINE void glhTranslatef2
+ (float *matrix, float x, float y, float z);
+
+DFM2_INLINE void glhLookAtf2
+ (float *matrix,
+  float eyex, float eyey, float eyez,
+  float cntx, float cnty, float cntz,
+  float upx, float upy, float upz );
 
 // ----------------------------------------------------
 
 
-void screenUnProjection(float vout[3],
-                        const float v[3],
-                        const float mMV[16],
-                        const float mPj[16]);
+DFM2_INLINE void screenUnProjection
+ (float vout[3],
+  const float v[3],
+  const float mMV[16],
+  const float mPj[16]);
 
-void screenUnProjectionDirection (float vo[3],
-                                  const float vi[3],
-                                  const float mMV[16],
-                                  const float mPj[16]);
+DFM2_INLINE void screenUnProjectionDirection
+ (float vo[3],
+  const float vi[3],
+  const float mMV[16],
+  const float mPj[16]);
 
 // ----------------------------------------------------
 
@@ -55,6 +64,7 @@ enum CAMERA_ROT_MODE
   CAMERA_ROT_TBALL
 };
 
+template <typename REAL>
 class CCamera
 {
 public:
@@ -109,10 +119,16 @@ public:
   double Quat_tball[4];
 };
 
+template <typename REAL>
+std::ostream &operator<<(std::ostream &output, CCamera<REAL>& c);
 
-std::ostream &operator<<(std::ostream &output, CCamera& c);
-std::istream &operator>>(std::istream &input, CCamera& c);
+template <typename REAL>
+std::istream &operator>>(std::istream &input, CCamera<REAL>& c);
 
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/camera.cpp"
+#endif
 
 #endif

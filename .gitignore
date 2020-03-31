@@ -37,6 +37,8 @@ cmake-build-release
 .eggs
 delfem2.egg-info
 buildXcode
+buildXcodeHdronly
+buildXcodeStatic
 buildMake
 buildMakeHdronly
 buildMakeStatic
