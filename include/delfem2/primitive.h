@@ -10,8 +10,8 @@
 
 #include <math.h>
 #include <vector>
-
 #include "delfem2/sdf.h"
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -328,10 +328,12 @@ public:
 
 // --------------------------------------------------------------------------------------------------------------------
 
-
-
-
 } // end of delfem2
+
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/primitive.cpp"
+#endif
 
 
 #endif
