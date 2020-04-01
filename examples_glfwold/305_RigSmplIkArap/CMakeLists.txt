@@ -43,6 +43,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                    ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h                  ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.h                    ${DELFEM2_INC}/mat4.cpp
+      ${DELFEM2_INC}/color.h                       ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ELSE()
@@ -53,7 +54,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vec2.h                        ${DELFEM2_INC}/vec2.cpp
   ${DELFEM2_INC}/vec3.h                        ${DELFEM2_INC}/vec3.cpp
   ${DELFEM2_INC}/mat3.h                        ${DELFEM2_INC}/mat3.cpp
-  ${DELFEM2_INC}/color.h                       ${DELFEM2_INC}/color.cpp
   ${DELFEM2_INC}/mshtopo.h                     ${DELFEM2_INC}/mshtopo.cpp
   ${DELFEM2_INC}/vecxitrsol.h                  ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/mats.h                        ${DELFEM2_INC}/mats.cpp

@@ -37,9 +37,10 @@ IF(NOT USE_HEADERONLY)
   message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
-      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/quat.h                       ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h                     ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.h                       ${DELFEM2_INC}/mat4.cpp
+      ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ELSE()
@@ -57,7 +58,6 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/bvh.h                        ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/funcs.h                      ${DELFEM2_INC}/funcs.cpp
     ${DELFEM2_INC}/vecxitrsol.h                 ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/bv.h
     
     ${DELFEM2_INC}/dtri_v2.h                    ${DELFEM2_INC}/dtri_v2.cpp

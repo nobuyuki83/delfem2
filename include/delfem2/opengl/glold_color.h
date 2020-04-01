@@ -21,7 +21,6 @@
 #include <math.h>
 #include <vector>
 #include <assert.h>
-
 #include "delfem2/color.h"
 
 namespace delfem2{
