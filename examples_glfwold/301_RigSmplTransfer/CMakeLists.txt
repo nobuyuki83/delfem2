@@ -43,6 +43,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.h                   ${DELFEM2_INC}/mat4.cpp
+      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -67,7 +68,6 @@ add_executable(${PROJECT_NAME}
   ${3RD_PARTY}/cnpy/cnpy.h                ${3RD_PARTY}/cnpy/cnpy.cpp
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h         ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
   
-  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
   ${SRC_DFM2}
 
   main.cpp

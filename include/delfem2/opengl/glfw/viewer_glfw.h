@@ -5,13 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_GLFW_VIEWER_H
-#define DFM2_GLFW_VIEWER_H
+#ifndef DFM2_VIEWER_GLFW_H
+#define DFM2_VIEWER_GLFW_H
 
 #include <stdio.h>
 #include <iostream>
 
 #include "delfem2/opengl/glfw/cam_glfw.h" // for CNav3D_GLFW
+#include "delfem2/dfm2_inline.h"
 
 // ------------------------------------------------------
 
@@ -36,5 +37,9 @@ public:
   
 }
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+# include "delfem2/opengl/glfw/viewer_glfw.cpp"
+#endif
 
 #endif /* glfw_viewer_hpp */
