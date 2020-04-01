@@ -9,7 +9,7 @@
 
 using namespace delfem2;
 
-void delfem2::GetRGB_HSV
+DFM2_INLINE void delfem2::GetRGB_HSV
 (float&r, float& g, float& b,
  float h, float s, float v)
 {
@@ -52,7 +52,7 @@ void delfem2::GetRGB_HSV
 
 // ------------------------------------------------------------
 
-void delfem2::interpolateColor
+DFM2_INLINE void delfem2::interpolateColor
 (CColor& Cout, float r, const CColor& C0, const CColor& C1)
 {
   Cout.r = (1-r)*C0.r+r*C1.r;
@@ -61,7 +61,7 @@ void delfem2::interpolateColor
   Cout.a = (1-r)*C0.a+r*C1.a;
 }
 
-void delfem2::heatmap(double input,double* color)
+DFM2_INLINE void delfem2::heatmap(double input,double* color)
 {
   if(0 <=input&&input <=0.25){
     color[0] = 0.0;
@@ -95,7 +95,8 @@ void delfem2::heatmap(double input,double* color)
   }
 }
 
-CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE CColor delfem2::getColor
+ (double input, const std::vector<std::pair<double, CColor> >& colorMap)
 {
   if (colorMap.empty()) return CColor::Black();
   if (input < colorMap[0].first){
@@ -114,7 +115,8 @@ CColor delfem2::getColor(double input, const std::vector<std::pair<double, CColo
   return colorMap[colorMap.size()-1].second;
 }
 
-void delfem2::ColorMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
+DFM2_INLINE void delfem2::ColorMap_BlueGrayRed
+ (std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
   colorMap.emplace_back(min+diff*0, CColor(0.0f, 0.0f, 1.0f, 1.0f)); // blue
@@ -124,7 +126,8 @@ void delfem2::ColorMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colo
   colorMap.emplace_back(min+diff*4, CColor(1.0f, 0.0f, 0.0f, 1.0f)); // red
 }
 
-void delfem2::ColorMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
+DFM2_INLINE void delfem2::ColorMap_BlueCyanGreenYellowRed
+ (std::vector<std::pair<double, CColor> >& colorMap, float min, float max, float alpha)
 {
   double diff = (max-min)*0.25;
   colorMap.emplace_back(min+diff*0, CColor(0.0f, 0.0f, 1.0f, alpha)); // blue
@@ -134,7 +137,8 @@ void delfem2::ColorMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CCol
   colorMap.emplace_back(min+diff*4, CColor(1.0f, 0.0f, 0.0f, alpha)); // red
 }
 
-void delfem2::ColorMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
+DFM2_INLINE void delfem2::ColorMap_RedYellowGreenCyanBlue
+ (std::vector<std::pair<double, CColor> >& colorMap, float min, float max)
 {
   double diff = (max-min)*0.25;
   colorMap.emplace_back(min+diff*0, CColor(1.0f, 0.0f, 0.0f, 1.0f)); // red
@@ -146,7 +150,7 @@ void delfem2::ColorMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CCol
 
 // ----------------------------------------------------
 
-void delfem2::Write_Ply_Tri2DMesh_HeightColor
+DFM2_INLINE void delfem2::Write_Ply_Tri2DMesh_HeightColor
 (const std::string& fname,
  const std::vector<int>& aTri1,
  const std::vector<double>& aXY1,

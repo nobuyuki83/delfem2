@@ -25,8 +25,14 @@
 
 namespace delfem2{
 
-void GetRGB_HSV(float&r, float& g, float& b,
-                float h, float s, float v);
+DFM2_INLINE void GetRGB_HSV
+ (float&r, float& g, float& b,
+  float h, float s, float v);
+
+
+DFM2_INLINE void heatmap(double input, double* color);
+DFM2_INLINE void heatmap_glColor(double input);
+DFM2_INLINE void heatmap_glDiffuse(double input);
 
 // -------------------------------------------------------------
 
@@ -124,24 +130,24 @@ public:
   float a;
 };
 
-void interpolateColor(CColor& Cout, float r, const CColor& C0, const CColor& C1);
-
-void heatmap(double input,double* color);
-void heatmap_glColor(double input);
-void heatmap_glDiffuse(double input);
+DFM2_INLINE void interpolateColor(CColor& Cout, float r, const CColor& C0, const CColor& C1);
 
 // ------------------------------------------------------------
 // std::vector from here
 
-CColor getColor(double input, const std::vector<std::pair<double, CColor> >& colorMap);
+DFM2_INLINE CColor getColor
+ (double input, const std::vector<std::pair<double, CColor> >& colorMap);
 
 
-void ColorMap_BlueGrayRed(std::vector<std::pair<double, CColor> >& colorMap,
-                             float min, float max);
-void ColorMap_BlueCyanGreenYellowRed(std::vector<std::pair<double, CColor> >& colorMap,
-                                        float min, float max, float alpha=1);
-void ColorMap_RedYellowGreenCyanBlue(std::vector<std::pair<double, CColor> >& colorMap,
-                                        float min, float max);
+DFM2_INLINE void ColorMap_BlueGrayRed
+ (std::vector<std::pair<double, CColor> >& colorMap,
+  float min, float max);
+DFM2_INLINE void ColorMap_BlueCyanGreenYellowRed
+ (std::vector<std::pair<double, CColor> >& colorMap,
+  float min, float max, float alpha=1);
+DFM2_INLINE void ColorMap_RedYellowGreenCyanBlue
+ (std::vector<std::pair<double, CColor> >& colorMap,
+  float min, float max);
 
 class CColorMap
 {
@@ -161,15 +167,17 @@ public:
 
 // ---------------------------------------------------------------
 
-void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,
-                                     const std::vector<int>& aTri1,
-                                     const std::vector<double>& aXY1,
-                                     const std::vector<double>& aVal,
-                                     std::vector< std::pair<double,CColor> >& colorMap);
+DFM2_INLINE void Write_Ply_Tri2DMesh_HeightColor
+ (const std::string& fname,
+  const std::vector<int>& aTri1,
+  const std::vector<double>& aXY1,
+  const std::vector<double>& aVal,
+  std::vector< std::pair<double,CColor> >& colorMap);
   
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/color.cpp"
 #endif
 
 #endif
