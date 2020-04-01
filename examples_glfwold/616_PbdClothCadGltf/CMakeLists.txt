@@ -40,6 +40,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.h                     ${DELFEM2_INC}/mat4.cpp
+      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -73,8 +74,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/rig_v3q.h                  ${DELFEM2_INC}/rig_v3q.cpp
   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
   
-  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-
   ${3RD_PARTY}/io_gltf.h                    ${3RD_PARTY}/io_gltf.cpp
   ${SRC_DFM2}
   main.cpp  

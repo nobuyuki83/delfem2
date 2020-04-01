@@ -294,7 +294,7 @@ void Draw
   { // draw bone
     ::glDisable(GL_DEPTH_TEST);
     ::glDisable(GL_LIGHTING);
-    ::glPointSize(10);
+    ::glPointSize(20);
     ::glBegin(GL_POINTS);
     for(int it=0;it<aTarget.size();++it){
       const unsigned int ib = aTarget[it].ib;

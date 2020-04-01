@@ -51,6 +51,11 @@ void Solve_MinRigging
                                                aBone);
     }
   }
+  for(int idims=0;idims<3;++idims){
+    dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
+                                             0,idims,false,
+                                             aBone);
+  }
   
   std::vector<double> aC0; // [nC]
   std::vector<double> adC0; // [nC, nb*3 ]
@@ -59,49 +64,55 @@ void Solve_MinRigging
                                aBone,aTarget[it],Lx,Ly,Lz);
   }
   
-  const unsigned int nMode = aBone.size()*3;
+  const unsigned int nsns = Lx.size()/(aBone.size()*4);
   const unsigned int nC = aC0.size();
   
   class CSystemMatrix{
   public:
     CSystemMatrix(const std::vector<double>& adC_,
                   unsigned int nC_,
-                  unsigned int nMode_) :
-    adC(adC_), nC(nC_), nMode(nMode_)
+                  unsigned int nsns_) :
+    adC(adC_), nC(nC_), nsns(nsns_)
     {
 //      std::cout << "constructor reduced system matrix " << std::endl;
-      assert(adC.size()==nMode*nC);
+      assert(adC.size()==nsns*nC);
       tmpC0.resize(nC_);
     }
   public:
     void MatVec(double* y,
                 double alpha, const double* x, double beta) const {
       dfm2::MatVec(tmpC0.data(),
-                    adC.data(), nC, nMode, x);
+                    adC.data(), nC, nsns, x);
       dfm2::MatTVec(y,
-                   adC.data(), nC, nMode, tmpC0.data());
-      for(int i=0;i<nMode;++i){ y[i] += (beta+0.01)*x[i]; }
+                   adC.data(), nC, nsns, tmpC0.data());
+      for(int i=0;i<nsns;++i){ y[i] += (beta+0.01)*x[i]; }
     }
   public:
     const std::vector<double>& adC;
     unsigned int nC;
-    unsigned int nMode;
+    unsigned int nsns;
     mutable std::vector<double> tmpC0;
-  } mat(adC0, nC, nMode);
+  } mat(adC0, nC, nsns);
   
-  std::vector<double> r(nMode,0.0);
+  std::vector<double> r(nsns,0.0);
   dfm2::MatTVec(r.data(),
-                adC0.data(), nC, nMode, aC0.data());
+                adC0.data(), nC, nsns, aC0.data());
   
-  std::vector<double> u(nMode,0.0);
+  std::vector<double> u(nsns,0.0);
   std::vector<double> reshist = dfm2::Solve_CG(r.data(), u.data(),
-                                               nMode, 1.0e-3, 100, mat);
+                                               nsns, 1.0e-3, 100, mat);
 //  std::cout << "convergence" << reshist.size() << std::endl;
   for(int ib=0;ib<aBone.size();++ib){
     dfm2::CVec3d vec_rot(u.data()+ib*3);
     dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(-vec_rot);
     dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone[ib].quatRelativeRot);
     q0.CopyTo(aBone[ib].quatRelativeRot);
+  }
+  {
+    dfm2::CVec3d vec_trans(u.data()+aBone.size()*3);
+    aBone[0].transRelative[0] -= vec_trans.x();
+    aBone[0].transRelative[1] -= vec_trans.y();
+    aBone[0].transRelative[2] -= vec_trans.z();
   }
   dfm2::UpdateBoneRotTrans(aBone);
 }
@@ -222,9 +233,22 @@ int main()
   
   std::vector<dfm2::CTarget> aTarget;
   {
-    aTarget.resize(1);
-    aTarget[0].ib = 20;
-    aTarget[0].pos = dfm2::CVec3d(0.5, -0.1, -0.04);
+    {
+      dfm2::CTarget t;
+      t.ib = 20;
+      t.pos = aBone[t.ib].Pos();
+      aTarget.push_back(t);
+    }
+    {
+      dfm2::CTarget t;
+      t.ib = 10;
+      t.pos = aBone[t.ib].Pos();
+      aTarget.push_back(t);
+    }
+  }
+  std::vector< dfm2::CVec3d > aTargetOriginPos;
+  for(int it=0;it<aTarget.size();++it){
+    aTargetOriginPos.push_back(aTarget[it].pos);
   }
   
   // -----------
@@ -241,7 +265,8 @@ int main()
   {
     iframe++;
     {
-      aTarget[0].pos = dfm2::CVec3d(0.6+0.1*cos(0.1*iframe), 0.1+0.1*sin(0.1*iframe), -0.04);
+      aTarget[0].pos = aTargetOriginPos[0] + 0.4*dfm2::CVec3d(1-cos(0.1*iframe), sin(0.1*iframe), 0.0);
+      aTarget[1].pos = aTargetOriginPos[1] + 0.1*dfm2::CVec3d(sin(0.1*iframe), 1-cos(0.1*iframe), 0.0);
       Solve_MinRigging(aBone, aTarget);
       Skinning_LBS(aXYZ1,
                    aXYZ0, aBone, aW);
