@@ -39,12 +39,16 @@ template double dfm2::Dot2(const double v1[2], const double v2[2]);
 namespace delfem2 { // template specialization need to be done in the namespace
   
 template <>
-double Length2(const double v[2]){
+DFM2_INLINE double Length2
+ (const double v[2])
+{
   return sqrt(v[0]*v[0]+v[1]*v[1]);
 }
 
 template <>
-float Length2(const float v[2]){
+DFM2_INLINE float Length2
+ (const float v[2])
+{
   return sqrtf(v[0]*v[0]+v[1]*v[1]);
 }
   
@@ -55,12 +59,18 @@ float Length2(const float v[2]){
 namespace delfem2 { // template specialization need to be done in the namespace
 
 template <>
-double Distance2(const double v1[2], const double v2[2]){
+DFM2_INLINE double Distance2
+ (const double v1[2],
+  const double v2[2])
+{
   return sqrt( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
 }
 
 template <>
-float Distance2(const float v1[2], const float v2[2]){
+DFM2_INLINE float Distance2
+ (const float v1[2],
+  const float v2[2])
+{
   return sqrtf( (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]) );
 }
   
@@ -113,7 +123,7 @@ template double dfm2::SquareDistance2(const double v1[2], const double v2[2]);
 namespace delfem2 {
   
 template <>
-void GaussianDistribution2(float noise[2])
+DFM2_INLINE void GaussianDistribution2(float noise[2])
 {
   float a0 = rand()/(RAND_MAX+1.0);
   float a1 = rand()/(RAND_MAX+1.0);
@@ -122,7 +132,7 @@ void GaussianDistribution2(float noise[2])
 }
 
 template <>
-void GaussianDistribution2(double noise[2])
+DFM2_INLINE void GaussianDistribution2(double noise[2])
 {
   double a0 = rand()/(RAND_MAX+1.0);
   double a1 = rand()/(RAND_MAX+1.0);
@@ -159,7 +169,9 @@ static bool IsCrossLines(const double po_s0[], const double po_e0[],
   return true;
 }
 
-bool InverseMat2(double invB[4], const double B[4])
+DFM2_INLINE bool InverseMat2
+ (double invB[4],
+  const double B[4])
 {
   double det = B[0]*B[3]-B[1]*B[2];
   if (fabs(det)<1.0e-10) return false;
@@ -171,7 +183,9 @@ bool InverseMat2(double invB[4], const double B[4])
   return true;
 }
 
-void gramian2(double AtA[3], const double A[4])
+DFM2_INLINE void gramian2
+ (double AtA[3],
+  const double A[4])
 {
   AtA[0] = A[0*2+0]*A[0*2+0]+A[1*2+0]*A[1*2+0];
   AtA[1] = A[0*2+0]*A[0*2+1]+A[1*2+0]*A[1*2+1];
@@ -179,7 +193,11 @@ void gramian2(double AtA[3], const double A[4])
   AtA[3] = A[0*2+1]*A[0*2+1]+A[1*2+1]*A[1*2+1];
 }
 
-void VLVt2(double A[4], double l0, double l1, const double V[4])
+DFM2_INLINE void VLVt2
+ (double A[4],
+  double l0,
+  double l1,
+  const double V[4])
 {
   A[0] = l0*V[0]*V[0]+l1*V[1]*V[1];
   A[1] = l0*V[2]*V[0]+l1*V[3]*V[1];
@@ -188,7 +206,8 @@ void VLVt2(double A[4], double l0, double l1, const double V[4])
 }
 
 
-void RotationalComponentOfMatrix2(double R[4], const double M[4])
+DFM2_INLINE void RotationalComponentOfMatrix2
+ (double R[4], const double M[4])
 {
   const double eps = 1.0e-20;
   double A[4];
@@ -241,7 +260,7 @@ void RotationalComponentOfMatrix2(double R[4], const double M[4])
 }
 
 
-void makeSplineLoop
+DFM2_INLINE void makeSplineLoop
 (const std::vector<double>& aCV,
  std::vector<double>& aVecCurve)
 {
@@ -267,7 +286,7 @@ void makeSplineLoop
 }
 
 
-void dfm2::MeanValueCoordinate2D
+DFM2_INLINE void dfm2::MeanValueCoordinate2D
 (double *aW,
  double px, double py,
  const double *aXY,
@@ -866,7 +885,7 @@ template void dfm2::Translate(std::vector<CVec2d>& aP, double dx, double dy);
 namespace delfem2 {
 
 template<>
-void Rotate(std::vector<CVec2d> &aP, double dt) {
+DFM2_INLINE void Rotate(std::vector<CVec2d> &aP, double dt) {
   for (auto &ip : aP) {
     double x0 = ip.p[0];
     double y0 = ip.p[1];

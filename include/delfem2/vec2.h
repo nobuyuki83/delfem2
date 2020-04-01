@@ -13,6 +13,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include "delfem2/dfm2_inline.h"
 
 // -----------------------------------------------------
 
@@ -23,7 +24,7 @@ template <typename T>
 T Dot2(const T w[2], const T v[2]);
 
 template <typename T>
-T Length2(const T v[2]);
+DFM2_INLINE T Length2(const T v[2]);
 
 template <typename T>
 T Distance2(const T v1[2], const T v2[2]);
@@ -49,18 +50,31 @@ template <typename T>
 T Area_Tri2(const T v1[2], const T v2[2], const T v3[2]);
   
 template <typename T>
-void GaussianDistribution2(T noise[2]);
+DFM2_INLINE void GaussianDistribution2(T noise[2]);
   
-void MeanValueCoordinate2D(double *aW,
-                           double px, double py,
-                           const double *aXY, unsigned int nXY);
+DFM2_INLINE void MeanValueCoordinate2D
+ (double *aW,
+  double px, double py,
+  const double *aXY, unsigned int nXY);
   
 } // end namespace delfem2
 
-bool InverseMat2(double invB[4], const double B[4]);
-void gramian2(double AtA[3], const double A[4]);
-void VLVt2(double A[4], double l0, double l1, const double V[4]);
-void RotationalComponentOfMatrix2(double R[4], const double M[4]);
+DFM2_INLINE bool InverseMat2
+ (double invB[4],
+  const double B[4]);
+
+DFM2_INLINE void gramian2
+ (double AtA[3],
+  const double A[4]);
+
+DFM2_INLINE void VLVt2
+ (double A[4],
+  double l0, double l1,
+  const double V[4]);
+
+DFM2_INLINE void RotationalComponentOfMatrix2
+ (double R[4],
+  const double M[4]);
 
 // -----------------------------------------------------
 
@@ -304,8 +318,9 @@ void Translate(std::vector<CVec2<T> >& aP,
                double dx, double dy);
 
 template <typename T>
-void Rotate(std::vector<CVec2<T> >& aP,
-            double dt);
+DFM2_INLINE void Rotate
+ (std::vector<CVec2<T> >& aP,
+  double dt);
 
 //! @brief Area of the Triangle (3 indexes and vertex array)
 template <typename T>
@@ -358,8 +373,9 @@ void makeRandomLoop(unsigned int nCV,
                     std::vector<double>& aCV);
 
 template <typename T>
-void makeSplineLoop(const std::vector<double>& aCV,
-                    std::vector<double>& aVecCurve);
+DFM2_INLINE void makeSplineLoop
+ (const std::vector<double>& aCV,
+  std::vector<double>& aVecCurve);
 
 template <typename T>
 void FixLoopOrientation(std::vector<int>& loopIP,
@@ -483,9 +499,12 @@ public:
 public:
   double x_min,x_max,  y_min,y_max;
 };
-  
-  
+    
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/vec2.cpp"
+#endif
 
 #endif // VEC_2
 
