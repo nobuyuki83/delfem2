@@ -35,6 +35,8 @@ IF(NOT USE_HEADERONLY)
   set(SRC_DFM2
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
+      ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -58,13 +60,10 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
   ${DELFEM2_INC}/opengl/glnew_funcs.h    ${DELFEM2_INC}/opengl/glnew_funcs.cpp
   ${DELFEM2_INC}/opengl/glnew_mshcolor.h ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
-  
-  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-  ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
 
   ${3RD_PARTY}/glad4/include/glad/glad.h
   ${3RD_PARTY}/glad4/src/glad.c
-
+  ${SRC_DFM2}
   main.cpp
 )
 

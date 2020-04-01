@@ -21,6 +21,7 @@
 #include <math.h>
 #include <vector>
 #include <cassert>
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2{
 
@@ -167,5 +168,8 @@ void Write_Ply_Tri2DMesh_HeightColor(const std::string& fname,
                                      std::vector< std::pair<double,CColor> >& colorMap);
   
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#endif
 
 #endif
