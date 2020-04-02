@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ######################################################
 
@@ -39,7 +39,6 @@ include_directories(
 )
 
 if(NOT USE_HEADERONLY)
-  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h                       ${DELFEM2_INC}/vec2.cpp
@@ -50,8 +49,6 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
-else()
-  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 endif()
 
 add_executable(${PROJECT_NAME}

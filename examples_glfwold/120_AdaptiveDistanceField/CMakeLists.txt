@@ -34,8 +34,7 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
-if(NOT USE_HEADERONLY)
-  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+if(NOT USE_HEADERONLY) 
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
       ${DELFEM2_INC}/vec3.h                         ${DELFEM2_INC}/vec3.cpp
@@ -44,8 +43,6 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/primitive.h                    ${DELFEM2_INC}/primitive.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
-else()
-  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 endif()
 
 add_executable(${PROJECT_NAME}
