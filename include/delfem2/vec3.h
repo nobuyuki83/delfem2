@@ -13,29 +13,29 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include "delfem2/dfm2_inline.h"
 
 #define NEARLY_ZERO 1.e-16
-
 
 namespace delfem2 {
 
 template <typename T>
-T Distance3(const T p0[3], const T p1[3]);
+DFM2_INLINE T Distance3(const T p0[3], const T p1[3]);
 
 template <typename T>
-T SquareDistance3(const T p0[3], const T p1[3]);
+DFM2_INLINE T SquareDistance3(const T p0[3], const T p1[3]);
 
 template <typename T>
-T Length3(const T v[3]);
+DFM2_INLINE T Length3(const T v[3]);
 
 template <typename T>
-T SquareLength3(const T v[3]);
+DFM2_INLINE T SquareLength3(const T v[3]);
   
 template <typename T>
-T Dot3(const T a[3], const T b[3]);
+DFM2_INLINE T Dot3(const T a[3], const T b[3]);
 
 template <typename T>
-void Normalize3(T v[3]);
+DFM2_INLINE void Normalize3(T v[3]);
 
 template <typename REAL>
 void AverageTwo3(REAL po[3],
@@ -52,9 +52,9 @@ void AverageFour3(REAL po[3],
  * @param vi (in)
  */
 template <typename REAL>
-  void Add3(
-    REAL vo[3],
-    const REAL vi[3]);
+DFM2_INLINE void Add3
+ (REAL vo[3],
+  const REAL vi[3]);
 
 // above: functions general for any dimensions
 // ------------------------------------------------
@@ -85,7 +85,18 @@ void UnitNormalAreaTri3(
 
 // --------------------------------
   
-void GetVertical2Vector3D(const double vec_n[3], double vec_x[3], double vec_y[3]);
+DFM2_INLINE void GetVertical2Vector3D
+ (const double vec_n[3],
+  double vec_x[3],
+  double vec_y[3]);
+
+DFM2_INLINE void GetNearest_TrianglePoint3D
+ (double pn[3],
+  double& r0, double& r1,
+  const double ps[3], // origin point
+  const double q0[3],
+  const double q1[3],
+  const double q2[3]);
 
 
 // -------------------------------------------------------------
@@ -266,7 +277,9 @@ template <typename T>
 CVec3<T> Mat4Vec(const double M[16], const CVec3<T>& v);
   
 template <typename T>
-CVec3<T> QuatVec(const double quat[4], const CVec3<T>& v0);
+DFM2_INLINE CVec3<T> QuatVec
+ (const double quat[4],
+  const CVec3<T>& v0);
   
 template <typename REAL>
 CVec3<REAL> QuatConjVec(const REAL quat[4], const CVec3<REAL>& v0);
@@ -710,18 +723,7 @@ template <typename T>
 bool isRayIntersectingTriangle(const CVec3<T> &line0, const CVec3<T> &line1,
                                const CVec3<T> &tri0, const CVec3<T> &tri1, const CVec3<T> &tri2,
                                CVec3<T> &intersectionPoint);
-
-template <typename T>
-void GetConstConstDiff_Bend(double& C,
-                            CVec3<T> dC[4],
-                            // -----
-                            const CVec3<T>& p0,
-                            const CVec3<T>& p1,
-                            const CVec3<T>& p2,
-                            const CVec3<T>& p3);
   
-template <typename T>
-void CheckConstDiff_Bend();
   
 // ----------------------------------------------------------
 // here starts std::vector<CVector3>
@@ -772,11 +774,11 @@ inline CVec3<T> Normal_Tri3(int itri,
   return (p1-p0)^(p2-p0);
 }
 
-
-
-
-
 } // end namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/vec3.cpp"
+#endif
 
 
 #endif // VEC3_H

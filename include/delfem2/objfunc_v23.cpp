@@ -1088,3 +1088,42 @@ void dfm2::ddW_ArapEnergy
     }
   }
 }
+
+
+
+template <typename T>
+void dfm2::GetConstConstDiff_Bend
+ (double& C, CVec3<T> dC[4],
+  const CVec3<T>& p0,
+  const CVec3<T>& p1,
+  const CVec3<T>& p2,
+  const CVec3<T>& p3)
+{
+  const CVec3<T> v02 = p2-p0;
+  const CVec3<T> v03 = p3-p0;
+  const CVec3<T> v12 = p2-p1;
+  const CVec3<T> v13 = p3-p1;
+  const CVec3<T> v23 = p3-p2;
+  ////
+  const CVec3<T> A = v02^v03;
+  const CVec3<T> B = v13^v12;
+  const double lA = A.Length();
+  const double lB = B.Length();
+  const CVec3<T> a = A/lA;
+  const CVec3<T> b = B/lB;
+  const double ab = a*b;
+  //  C = acos(ab);
+  C = ab-1;
+  const double sab = 1.0;//-1.0/sin(C);
+  const CVec3<T> tmpBA = (b-a*(a*b))*(sab/lA);
+  const CVec3<T> tmpAB = (a-b*(b*a))*(sab/lB);
+  dC[0] = (tmpBA^v23);
+  dC[1] = (v23^tmpAB);
+  dC[2] = (v03^tmpBA) + (tmpAB^v13);
+  dC[3] = (tmpBA^v02) + (v12^tmpAB);
+}
+template void dfm2::GetConstConstDiff_Bend(double& C, CVec3d dC[4],
+                                           const CVec3d& p0,
+                                           const CVec3d& p1,
+                                           const CVec3d& p2,
+                                           const CVec3d& p3);
