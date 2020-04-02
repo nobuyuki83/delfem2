@@ -67,6 +67,30 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
   }
 }
 
+TEST(objfunc_v23, Bend)
+{
+  dfm2::CVec3d p[4];
+  for(int ino=0;ino<4;++ino){
+    p[ino].p[0] = (double)rand()/(RAND_MAX+1.0);
+    p[ino].p[1] = (double)rand()/(RAND_MAX+1.0);
+    p[ino].p[2] = (double)rand()/(RAND_MAX+1.0);
+  }
+  double C; dfm2::CVec3d dC[4];
+  GetConstConstDiff_Bend(C, dC, p[0],p[1],p[2],p[3]);
+  for(int ino=0;ino<4;++ino){
+    for(int idim=0;idim<3;++idim){
+      dfm2::CVec3d p1[4] = {p[0],p[1],p[2],p[3]};
+      double eps = 1.0e-5;
+      p1[ino][idim] += eps;
+      double C1; dfm2::CVec3d dC1[4];
+      GetConstConstDiff_Bend(C1, dC1, p1[0],p1[1],p1[2],p1[3]);
+      double val0 = (C1-C)/eps;
+      double val1 = dC[ino][idim];
+      EXPECT_LT( fabs(val0-val1)/fabs(val1), 1.0e-4 );
+    }
+  }
+}
+
 
 TEST(objfunc_v23, MIPS)
 {

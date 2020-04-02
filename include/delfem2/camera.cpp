@@ -26,6 +26,9 @@ DFM2_INLINE void QuatQuat(double r[], const double p[], const double q[])
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
 
+namespace delfem2 {
+namespace camera {
+
 //! @brief transform vector with quaternion
 DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
 {
@@ -42,6 +45,9 @@ DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
   vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
   vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
   vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+}
+
+}
 }
 
 //! @brief transform vector with conjugate of quaternion

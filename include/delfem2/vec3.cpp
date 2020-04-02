@@ -22,9 +22,16 @@ namespace dfm2 = delfem2;
 
 static bool MyIsnan(double x) { return x!=x; }
 
+
+namespace delfem2 {
+namespace vec3 {
+
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
-static void QuatVec(double vo[], const double q[], const double vi[])
+DFM2_INLINE void MyQuatVec
+ (double vo[],
+  const double q[],
+  const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -38,9 +45,9 @@ static void QuatVec(double vo[], const double q[], const double vi[])
   vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
   vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
-//  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
-//  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
-//  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
+}
+
+}
 }
 
 
@@ -67,8 +74,10 @@ static void MyQuatConjVec(
 //  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
 //  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
 template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3]);
+#endif
 
 // -----------------------------
 
@@ -117,12 +126,18 @@ static void MyMat4Vec3
 namespace delfem2 { // template specialization need to be done in the namespace
   
 template <>
-double Distance3(const double p0[3], const double p1[3]) {
+DFM2_INLINE double Distance3
+ (const double p0[3],
+  const double p1[3])
+{
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
 template <>
-float Distance3(const float p0[3], const float p1[3]) {
+DFM2_INLINE float Distance3
+ (const float p0[3],
+  const float p1[3])
+{
   return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
   
@@ -133,12 +148,12 @@ float Distance3(const float p0[3], const float p1[3]) {
 namespace delfem2 { // template specialization need to be done in the namespace
 
 template <>
-double Length3(const double v[3]){
+DFM2_INLINE double Length3(const double v[3]){
   return sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
 }
 
 template <>
-float Length3(const float v[3]){
+DFM2_INLINE float Length3(const float v[3]){
   return sqrtf( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
 }
   
@@ -147,17 +162,19 @@ float Length3(const float v[3]){
 // ---------------------------------
 
 template <typename T>
-T dfm2::Dot3(const T a[3], const T b[3]){
+DFM2_INLINE T dfm2::Dot3(const T a[3], const T b[3]){
   return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::Dot3(const float a[3], const float b[3]);
 template double dfm2::Dot3(const double a[3], const double b[3]);
+#endif
 
 
 // ---------------------------------
 
 template <typename REAL>
-void dfm2::Add3(
+DFM2_INLINE void dfm2::Add3(
     REAL vo[3],
     const REAL vi[3])
 {
@@ -165,11 +182,10 @@ void dfm2::Add3(
   vo[1] += vi[1];
   vo[2] += vi[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Add3(float vo[3], const float vi[3]);
 template void dfm2::Add3(double vo[3], const double vi[3]);
-
-
-
+#endif
 
 // ---------------------------------
 
@@ -186,8 +202,10 @@ T dfm2::Volume_Tet3
    +(v2[2]-v1[2])*((v3[0]-v1[0])*(v4[1]-v1[1])-(v4[0]-v1[0])*(v3[1]-v1[1]))
    ) * 0.16666666666666666666666666666667;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::Volume_Tet3(const float v1[3], const float v2[3], const float v3[3], const float v4[3]);
 template double dfm2::Volume_Tet3(const double v1[3], const double v2[3], const double v3[3], const double v4[3]);
+#endif
 
 // ---------------------------------
 
@@ -197,22 +215,26 @@ void dfm2::Cross3(T r[3], const T v1[3], const T v2[3]){
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Cross3(float r[3], const float v1[3], const float v2[3]);
 template void dfm2::Cross3(double r[3], const double v1[3], const double v2[3]);
+#endif
 
 
 // ---------------------------------
 
 template <typename T>
-void dfm2::Normalize3(T v[3])
+DFM2_INLINE void dfm2::Normalize3(T v[3])
 {
   double len = sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
   v[0] /= len;
   v[1] /= len;
   v[2] /= len;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Normalize3(float v[3]);
 template void dfm2::Normalize3(double v[3]);
+#endif
 
 // ---------------------------------
 
@@ -224,26 +246,32 @@ T dfm2::Area_Tri3(const T v1[3], const T v2[3], const T v3[3]){
     ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] ) };
   return 0.5*Length3(n);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::Area_Tri3(const float v1[3], const float v2[3], const float v3[3]);
 template double dfm2::Area_Tri3(const double v1[3], const double v2[3], const double v3[3]);
+#endif
 
 // ----------------------------------
 
 template <typename T>
-T dfm2::SquareDistance3(const T p0[3], const T p1[3]){
+DFM2_INLINE T dfm2::SquareDistance3(const T p0[3], const T p1[3]){
   return (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::SquareDistance3(const float p0[3], const float p1[3]);
 template double dfm2::SquareDistance3(const double p0[3], const double p1[3]);
+#endif
 
 // ------------------------------------
 
 template <typename T>
-T dfm2::SquareLength3(const T v[3]){
+DFM2_INLINE T dfm2::SquareLength3(const T v[3]){
   return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::SquareLength3(const float v[3]);
 template double dfm2::SquareLength3(const double v[3]);
+#endif
 
 // ------------------------------------
 
@@ -254,8 +282,10 @@ T dfm2::ScalarTripleProduct3(const T a[], const T b[], const T c[])
   +a[1]*(b[2]*c[0] - b[0]*c[2])
   +a[2]*(b[0]*c[1] - b[1]*c[0]);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::ScalarTripleProduct3(const float a[], const float b[], const float c[]);
 template double dfm2::ScalarTripleProduct3(const double a[], const double b[], const double c[]);
+#endif
 
 // -----------------------------------------
 
@@ -270,8 +300,10 @@ void dfm2::NormalTri3(
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
   n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::NormalTri3(float n[3], const float v1[3], const float v2[3], const float v3[3]);
 template void dfm2::NormalTri3(double n[3], const double v1[3], const double v2[3], const double v3[3]);
+#endif
 
 // ------------------------------------------
 
@@ -287,14 +319,16 @@ void dfm2::UnitNormalAreaTri3(
   const double invlen = 0.5/a;
   n[0]*=invlen;  n[1]*=invlen;  n[2]*=invlen;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::UnitNormalAreaTri3(float n[3], float& a,
                                        const float v1[3], const float v2[3], const float v3[3]);
 template void dfm2::UnitNormalAreaTri3(double n[3], double& a,
                                        const double v1[3], const double v2[3], const double v3[3]);
+#endif
 
 // ------------------------------------------
 
-void GetNearest_LineSegPoint3D
+DFM2_INLINE void GetNearest_LineSegPoint3D
 (double pn[3],
  const double p[3], // point
  const double s[3], // source
@@ -316,7 +350,7 @@ void GetNearest_LineSegPoint3D
 }
 
 
-void GetNearest_TrianglePoint3D
+DFM2_INLINE void GetNearest_TrianglePoint3D
 (double pn[3],
  double& r0, double& r1,
  const double ps[3], // origin point
@@ -379,9 +413,10 @@ void GetNearest_TrianglePoint3D
 }
 
 
-void dfm2::GetVertical2Vector3D
+DFM2_INLINE void dfm2::GetVertical2Vector3D
 (const double vec_n[3],
- double vec_x[3], double vec_y[3])
+ double vec_x[3],
+ double vec_y[3])
 {
   const double vec_s[3] = {0,1,0};
   dfm2::Cross3(vec_x,vec_s,vec_n);
@@ -407,7 +442,9 @@ double dfm2::Dot(const CVec3<T>& arg1, const CVec3<T>& arg2)
 {
   return Dot3(arg1.p,arg2.p);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template double dfm2::Dot(const CVec3d& arg1, const CVec3d& arg2);
+#endif
  
 // ----------------------------
 
@@ -419,7 +456,9 @@ dfm2::CVec3<T> dfm2::Cross(const CVec3<T>& arg1, const CVec3<T>& arg2)
   Cross3(temp.p, arg1.p, arg2.p);
   return temp;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3d dfm2::Cross(const CVec3d& arg1, const CVec3d& arg2);
+#endif
 
 // ----------------------------
 
@@ -432,8 +471,10 @@ void dfm2::AverageTwo3(
   po[1] = (p0[1]+p1[1])*0.5;
   po[2] = (p0[2]+p1[2])*0.5;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::AverageTwo3(float po[3], const float p0[3], const float p1[3]);
 template void dfm2::AverageTwo3(double po[3], const double p0[3], const double p1[3]);
+#endif
 
 // ----------------------------
 
@@ -446,10 +487,12 @@ void dfm2::AverageFour3(
   po[1] = (p0[1]+p1[1]+p2[1]+p3[1])*0.25;
   po[2] = (p0[2]+p1[2]+p2[2]+p3[2])*0.25;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::AverageFour3(float po[3],
                                  const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
 template void dfm2::AverageFour3(double po[3],
                                  const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
+#endif
 
 
 
@@ -479,7 +522,9 @@ CVec3<T> operator+ (const CVec3<T>& lhs, const CVec3<T>& rhs){
   temp += rhs;
   return temp;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3d operator+ (const CVec3d& lhs, const CVec3d& rhs);
+#endif
   
 // ------------------
 
@@ -490,8 +535,10 @@ CVec3<T> operator - (const CVec3<T>& lhs, const CVec3<T>& rhs){
   temp -= rhs;
   return temp;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3f operator - (const CVec3f& lhs, const CVec3f& rhs);
 template CVec3d operator - (const CVec3d& lhs, const CVec3d& rhs);
+#endif
 
   
 // ------------------
@@ -503,7 +550,9 @@ CVec3<T> operator* (double d, const CVec3<T>& rhs){
   temp *= d;
   return temp;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3d operator* (double d, const CVec3d& rhs);
+#endif
 
 //! scale
 template <typename T>
@@ -512,7 +561,9 @@ CVec3<T> operator* (const CVec3<T>& vec, double d){
   temp *= d;
   return temp;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3d operator* (const CVec3d& vec, double d);
+#endif
   
 // -----------------------
 
@@ -609,14 +660,16 @@ template dfm2::CVec3d dfm2::Mat4Vec(const double mat[16], const CVec3d& v);
 // ------------------------
 
 template <typename T>
-dfm2::CVec3<T> dfm2::QuatVec
+DFM2_INLINE dfm2::CVec3<T> dfm2::QuatVec
 (const double quat[4],
  const CVec3<T>& v0)
 {
-  double v1a[3]; ::QuatVec(v1a,quat,v0.p);
+  double v1a[3]; vec3::MyQuatVec(v1a,quat,v0.p);
   return CVec3<T>(v1a[0],v1a[1],v1a[2]);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3d dfm2::QuatVec (const double quat[4], const CVec3d& v0);
+#endif
   
 // ----------------------------
 
@@ -713,10 +766,12 @@ double dfm2::Height
   dfm2::Normalize3(n);
   return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template double dfm2::Height(const CVec3d& v1,
                              const CVec3d& v2,
                              const CVec3d& v3,
                              const CVec3d& v4);
+#endif
 
 // -------------------------------------------------------------------------
 
@@ -761,13 +816,12 @@ bool dfm2::IntersectRay_Tri3(
   const REAL r2 = v2/vt;
   return (r0 >= -eps && r1 >= -eps && r2 >= -eps);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template bool dfm2::IntersectRay_Tri3(double& r0, double& r1,
                                       const CVec3d& org, const CVec3d& dir,
                                       const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
                                       double eps);
-  
-// --------------------------
-
+#endif
 
 // --------------------------------------------------------
 
@@ -784,9 +838,11 @@ dfm2::CVec3<T> dfm2::nearest_Line_Point
   double t = -b/a;
   return s+t*d;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3d dfm2::nearest_Line_Point(const CVec3d& p, // point
                                                const CVec3d& s, // source
                                                const CVec3d& d); // direction
+#endif
 
 // -------------------------------------------------------
 
@@ -1183,6 +1239,7 @@ void dfm2::Nearest_Line_Circle
     u0 = (q0-src)*dir/(dir*dir);
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Nearest_Line_Circle(CVec3d& p0,
                                         CVec3d& q0,
                                         const CVec3d& src,
@@ -1190,6 +1247,7 @@ template void dfm2::Nearest_Line_Circle(CVec3d& p0,
                                         const CVec3d& org, // center of the circle
                                         const CVec3d& normal, // normal of the circle
                                         double rad);
+#endif
 
 // -----------------------------------------------------
 
@@ -1211,10 +1269,12 @@ bool dfm2::intersection_Plane_Line
   p0 = r0*q0 + r1*q1 + r2*q2;
   return r0 > eps && r1 > eps && r2 > eps;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template bool dfm2::intersection_Plane_Line(CVec3d& p0, double& r0, double& r1, double& r2,
                                             double eps,
                                             const CVec3d& src, const CVec3d& dir,
                                             const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
+#endif
 
 
 template <typename T>
@@ -1227,10 +1287,13 @@ dfm2::CVec3<T> dfm2::intersection_Plane_Line
   double t = ((o-s)*n)/(d*n);
   return s + t*d;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3d dfm2::intersection_Plane_Line(const CVec3d& o, // one point on plane
                                                     const CVec3d& n, // plane normal
                                                     const CVec3d& s, // one point on line
                                                     const CVec3d& d); // direction of line
+#endif
+  
 template <typename T>
 void iteration_intersection_Line_Quad
 (double& t0, double& t1,
@@ -1560,9 +1623,11 @@ double dfm2::DistanceEdgeEdge
   CVec3<T> qc = q0 + ratio_q*vq;
   return (pc-qc).Length();
 }
+#ifdef DFM2_STATIC_LIBRARY
 template double dfm2::DistanceEdgeEdge(const CVec3d& p0, const CVec3d& p1,
                                        const CVec3d& q0, const CVec3d& q1,
                                        double& ratio_p, double& ratio_q);
+#endif
 
 // EEの距離が所定の距離以下にあるかどうか
 template <typename T>
@@ -1595,6 +1660,7 @@ bool dfm2::IsContact_EE_Proximity
   const CVec3<T>& qm = (1-ratio_q)*q0 + ratio_q*q1;
   return (pm - qm).Length() <= delta;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template bool dfm2::IsContact_EE_Proximity(int ino0,
                                            int ino1,
                                            int jno0,
@@ -1604,6 +1670,7 @@ template bool dfm2::IsContact_EE_Proximity(int ino0,
                                            const CVec3d& q0,
                                            const CVec3d& q1,
                                            const double delta);
+#endif
 
 // 三次関数を評価する関数
 inline double EvaluateCubic
@@ -2462,6 +2529,8 @@ dfm2::CVec3<T> dfm2::ProjectPointOnTriangle
   
   return p0 + p0ProjectedP0;
 }
+  
+// ----------------------
 
 template <typename T>
 bool dfm2::isRayIntersectingTriangle
@@ -2496,10 +2565,12 @@ bool dfm2::isRayIntersectingTriangle
   
   return true;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template bool dfm2::isRayIntersectingTriangle
   (const CVec3d &line0, const CVec3d &line1,
    const CVec3d &tri0, const CVec3d &tri1, const CVec3d &tri2,
    CVec3d &intersectionPoint);
+#endif
   
 // ----------------------------------------
 
@@ -2577,10 +2648,12 @@ const CVec3<T>& p3)
   }
   return 0;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template int dfm2::DetDelaunay(const CVec3d& p0,
                                const CVec3d& p1,
                                const CVec3d& p2,
                                const CVec3d& p3);
+#endif
   
 // -------------------------------------------
 
@@ -2596,6 +2669,8 @@ double dfm2::Circumradius
 {
   return sqrt( SquareCircumradius(ipo0,ipo1,ipo2,ipo3) );
 }
+  
+// --------------------------------
 
 template <typename T>
 dfm2::CVec3<T> dfm2::RotateVector(const CVec3<T>& vec0, const CVec3<T>& rot )
@@ -2665,74 +2740,6 @@ dfm2::CVec3<T> dfm2::RandGaussVector()
 
 // ----------------------------------------------------------------------------------------
 // using <vector> from here
-
-template <typename T>
-void dfm2::GetConstConstDiff_Bend
-(double& C, CVec3<T> dC[4],
- const CVec3<T>& p0,
- const CVec3<T>& p1,
- const CVec3<T>& p2,
- const CVec3<T>& p3)
-{
-  const CVec3<T> v02 = p2-p0;
-  const CVec3<T> v03 = p3-p0;
-  const CVec3<T> v12 = p2-p1;
-  const CVec3<T> v13 = p3-p1;
-  const CVec3<T> v23 = p3-p2;
-  ////
-  const CVec3<T> A = v02^v03;
-  const CVec3<T> B = v13^v12;
-  const double lA = A.Length();
-  const double lB = B.Length();
-  const CVec3<T> a = A/lA;
-  const CVec3<T> b = B/lB;
-  const double ab = a*b;
-  //  C = acos(ab);
-  C = ab-1;
-  const double sab = 1.0;//-1.0/sin(C);
-  const CVec3<T> tmpBA = (b-a*(a*b))*(sab/lA);
-  const CVec3<T> tmpAB = (a-b*(b*a))*(sab/lB);
-  dC[0] = (tmpBA^v23);
-  dC[1] = (v23^tmpAB);
-  dC[2] = (v03^tmpBA) + (tmpAB^v13);
-  dC[3] = (tmpBA^v02) + (v12^tmpAB);
-}
-/*
- {
- CVector3& p0 = aXYZ1[ip0];
- CVector3& p1 = aXYZ1[ip1];
- const double len01_ini = (aXYZ_ini[ip1]-aXYZ_ini[ip0]).length();
- const double len01 = (p1-p0).length();
- double w0 = aInvMass[ip0];
- double w1 = aInvMass[ip1];
- const float4& n01 = (p1-p0)/len01;
- p0 += +w0/(w0+w1)*(len01-len01_ini)*n01;
- p1 += -w1/(w0+w1)*(len01-len01_ini)*n01;
- }
- */
-
-
-void CheckConstDiff_Bend()
-{
-  dfm2::CVec3d p[4];
-  for(int ino=0;ino<4;++ino){
-    p[ino].p[0] = (double)rand()/(RAND_MAX+1.0);
-    p[ino].p[1] = (double)rand()/(RAND_MAX+1.0);
-    p[ino].p[2] = (double)rand()/(RAND_MAX+1.0);
-  }
-  double C; dfm2::CVec3d dC[4];
-  GetConstConstDiff_Bend(C, dC, p[0],p[1],p[2],p[3]);
-  for(int ino=0;ino<4;++ino){
-    for(int idim=0;idim<3;++idim){
-      dfm2::CVec3d p1[4] = {p[0],p[1],p[2],p[3]};
-      double eps = 1.0e-4;
-      p1[ino][idim] += eps;
-      double C1; dfm2::CVec3d dC1[4];
-      GetConstConstDiff_Bend(C1, dC1, p1[0],p1[1],p1[2],p1[3]);
-      std::cout << "   " << ino << " " << idim << "   -->  " << (C1-C)/eps << " " << dC[ino][idim] << std::endl;
-    }
-  }
-}
 
 // --------------------------------------------------
 // TODO: following should be move to mesh class?

@@ -210,6 +210,15 @@ void ddW_ArapEnergy
   const std::vector<double>& aQuat1);
 
 
+template <typename T>
+void GetConstConstDiff_Bend
+ (double& C,
+  CVec3<T> dC[4],
+  // -----
+  const CVec3<T>& p0,
+  const CVec3<T>& p1,
+  const CVec3<T>& p2,
+  const CVec3<T>& p3);
 
 }
 
