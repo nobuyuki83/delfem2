@@ -41,11 +41,13 @@ IF(NOT USE_HEADERONLY)
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
       ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
-      ${DELFEM2_INC}/mat3.h                   ${DELFEM2_INC}/mat3.cpp
+      ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
       ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
+      
+      ${DELFEM2_INC}/v23m34q.h                   ${DELFEM2_INC}/v23m34q.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
@@ -53,7 +55,6 @@ ENDIF()
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
   
-  ${DELFEM2_INC}/v23m3q.h                 ${DELFEM2_INC}/v23m3q.cpp
     
   ${DELFEM2_INC}/opengl/v3q_glold.h       ${DELFEM2_INC}/opengl/v3q_glold.cpp
   ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp

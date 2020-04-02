@@ -15,7 +15,7 @@
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat3.h"
-#include "delfem2/v23m3q.h"
+#include "delfem2/v23m34q.h"
 //
 #include "delfem2/rig_v3q.h"
 #include "delfem2/cnpy/smpl_cnpy.h"

@@ -12,13 +12,13 @@
 #include "delfem2/mat4.h"
 #include "delfem2/quat.h"
 //
-#include "delfem2/v23m3q.h"
+#include "delfem2/v23m34q.h"
 
 namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-dfm2::CVec2d dfm2::screenXYProjection
+DFM2_INLINE dfm2::CVec2d dfm2::screenXYProjection
 (const CVec3d& v,
  const float* mMV,
  const float* mPj)
@@ -27,7 +27,7 @@ dfm2::CVec2d dfm2::screenXYProjection
   return dfm2::CVec2d(sp0.x(),sp0.y());
 }
 
-dfm2::CVec3d dfm2::GetCartesianRotationVector
+DFM2_INLINE dfm2::CVec3d dfm2::GetCartesianRotationVector
  (const CMat3d& m)
 {
   const double* mat = m.mat;
@@ -46,7 +46,7 @@ dfm2::CVec3d dfm2::GetCartesianRotationVector
   return a;
 }
 
-dfm2::CVec3d dfm2::GetSpinVector(const CMat3d& m)
+DFM2_INLINE dfm2::CVec3d dfm2::GetSpinVector(const CMat3d& m)
 {
   const double* mat = m.mat;
   CVec3d r;
@@ -56,14 +56,14 @@ dfm2::CVec3d dfm2::GetSpinVector(const CMat3d& m)
   return r;
 }
 
-dfm2::CVec3d dfm2::MatVec(const CMat3d& m, const CVec3d& vec0)
+DFM2_INLINE dfm2::CVec3d dfm2::MatVec(const CMat3d& m, const CVec3d& vec0)
 {
   CVec3d vec1;
   dfm2::MatVec3(vec1.p, m.mat,vec0.p);
   return vec1;
 }
 
-dfm2::CVec3d dfm2::MatVecTrans
+DFM2_INLINE dfm2::CVec3d dfm2::MatVecTrans
  (const CMat3d& m, const CVec3d& vec0)
 {
   CVec3d vec1;
@@ -73,7 +73,9 @@ dfm2::CVec3d dfm2::MatVecTrans
 
 // ---------------------------------------------------------------------
 
-void dfm2::SetDiag(CMat3d& m, const CVec3d& d)
+DFM2_INLINE void dfm2::SetDiag
+ (CMat3d& m,
+  const CVec3d& d)
 {
   double* mat = m.mat;
   mat[0*3+0] = d.x();
@@ -81,24 +83,19 @@ void dfm2::SetDiag(CMat3d& m, const CVec3d& d)
   mat[2*3+2] = d.z();
 }
 
-void dfm2::SetRotMatrix_Cartesian(CMat3d& m, const CVec3d& v)
+DFM2_INLINE void dfm2::SetRotMatrix_Cartesian
+ (CMat3d& m,
+  const CVec3d& v)
 {
-//  const double vec[3] = { v.x, v.y, v.z };
   m.SetRotMatrix_Cartesian(v.p);
 }
 
-void dfm2::SetSpinTensor(CMat3d& m, const CVec3d& vec0)
+DFM2_INLINE void dfm2::SetSpinTensor(CMat3d& m, const CVec3d& vec0)
 {
   Mat3_Spin(m.mat, vec0.p);
-  /*
-  double* mat = m.mat;
-  mat[0] =  0;         mat[1] = -vec0.z();   mat[2] = +vec0.y();
-  mat[3] = +vec0.z();  mat[4] = 0;           mat[5] = -vec0.x();
-  mat[6] = -vec0.y();  mat[7] = +vec0.x();   mat[8] = 0;
-   */
 }
 
-void dfm2::SetOuterProduct
+DFM2_INLINE void dfm2::SetOuterProduct
  (CMat3d& m,
   const CVec3d& vec0,
   const CVec3d& vec1 )
@@ -109,7 +106,7 @@ void dfm2::SetOuterProduct
   mat[6] = vec0.z()*vec1.x(); mat[7] = vec0.z()*vec1.y(); mat[8] = vec0.z()*vec1.z();
 }
 
-void dfm2::SetProjection(CMat3d& m, const CVec3d& vec0)
+DFM2_INLINE void dfm2::SetProjection(CMat3d& m, const CVec3d& vec0)
 {
   double* mat = m.mat;
   const CVec3d& u = vec0.Normalize();
@@ -120,37 +117,37 @@ void dfm2::SetProjection(CMat3d& m, const CVec3d& vec0)
 
 // ----------------------------
 
-dfm2::CMat3d dfm2::Mirror(const CVec3d& n)
+DFM2_INLINE dfm2::CMat3d dfm2::Mirror(const CVec3d& n)
 {
   CVec3d N = n;
   N.SetNormalizedVector();
   return CMat3d::Identity() - 2*dfm2::Mat3_OuterProduct(N,N);
 }
 
-dfm2::CMat3d dfm2::Mat3_CrossCross(const CVec3d& v)
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_CrossCross(const CVec3d& v)
 {
   return Mat3(v)*Mat3(v);
 }
 
-dfm2::CMat3d dfm2::RotMatrix_Cartesian(const CVec3d& v){
+DFM2_INLINE dfm2::CMat3d dfm2::RotMatrix_Cartesian(const CVec3d& v){
  CMat3d m;
  SetRotMatrix_Cartesian(m,v);
  return m;
 }
 
-dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0){
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0){
   CMat3d m;
   SetSpinTensor(m,vec0);
   return m;
 }
 
-dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0, const CVec3d& vec1){
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0, const CVec3d& vec1){
   CMat3d m;
   SetOuterProduct(m,vec0, vec1);
   return m;
 }
 
-dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0, const CVec3d& vec1, const CVec3d& vec2)
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0, const CVec3d& vec1, const CVec3d& vec2)
 {
   CMat3d m;
   double* mat = m.mat;
@@ -160,20 +157,20 @@ dfm2::CMat3d dfm2::Mat3(const CVec3d& vec0, const CVec3d& vec1, const CVec3d& ve
   return m;
 }
 
-dfm2::CMat3d dfm2::Mat3_Spin(const CVec3d& vec0){
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_Spin(const CVec3d& vec0){
   CMat3d m;
   ::dfm2::Mat3_Spin(m.mat,vec0.p);
   return m;
 }
 
-dfm2::CMat3d dfm2::Mat3_OuterProduct(const CVec3d& vec0, const CVec3d& vec1 )
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_OuterProduct(const CVec3d& vec0, const CVec3d& vec1 )
 {
   CMat3d m;
   SetOuterProduct(m,vec0,vec1);
   return m;
 }
 
-dfm2::CMat3d dfm2::Mat3_RotCartesian(const CVec3d& vec0)
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_RotCartesian(const CVec3d& vec0)
 {
   CMat3d m;
   m.SetRotMatrix_Cartesian(vec0.x(), vec0.y(), vec0.z());
@@ -184,11 +181,11 @@ dfm2::CMat3d dfm2::Mat3_RotCartesian(const CVec3d& vec0)
 
 namespace delfem2 {
   
-CVec3d operator* (const CVec3d& v, const CMat3d& m){
+DFM2_INLINE CVec3d operator* (const CVec3d& v, const CMat3d& m){
   return MatVecTrans(m,v);
 }
   
-CVec3d operator* (const CMat3d& m, const CVec3d& v)
+DFM2_INLINE CVec3d operator* (const CMat3d& m, const CVec3d& v)
 {
   return MatVec(m,v);
 }
@@ -238,7 +235,7 @@ template dfm2::CMat3d dfm2::Mat3_MinimumRotation(const CVec3d& V, const CVec3d& 
 
 // --------------------------
 
-dfm2::CMat3d dfm2::Mat3_ParallelTransport
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_ParallelTransport
 (const CVec3d& p0,
  const CVec3d& p1,
  const CVec3d& q0,
@@ -252,7 +249,7 @@ dfm2::CMat3d dfm2::Mat3_ParallelTransport
 
 // moment of inertia around origin triangle vtx (origin,d0,d1,d2) the area_density=1
 // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
-dfm2::CMat3d dfm2::Mat3_IrotTri
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_IrotTri
 (const CVec3d& d0,
  const CVec3d& d1,
  const CVec3d& d2)
@@ -270,7 +267,7 @@ dfm2::CMat3d dfm2::Mat3_IrotTri
 
 // moment of inertia triangle pyramid with vtx (origin,d0,d1,d2) volume_density = 1
 // see http://www.dcs.warwick.ac.uk/~rahil/files/RigidBodySimulation.pdf
-dfm2::CMat3d dfm2::Mat3_IrotTriSolid
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_IrotTriSolid
 (const CVec3d& d0,
  const CVec3d& d1,
  const CVec3d& d2)
@@ -285,7 +282,7 @@ dfm2::CMat3d dfm2::Mat3_IrotTriSolid
   return I;
 }
 
-dfm2::CMat3d dfm2::Mat3_IrotLineSeg
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_IrotLineSeg
 (const CVec3d& d0,
  const CVec3d& d1)
 {
@@ -301,7 +298,7 @@ dfm2::CMat3d dfm2::Mat3_IrotLineSeg
   return I;
 }
 
-dfm2::CMat3d dfm2::Mat3_IrotPoint
+DFM2_INLINE dfm2::CMat3d dfm2::Mat3_IrotPoint
 (const CVec3d& d0)
 {
   return (d0.DLength()*CMat3d::Identity()-Mat3_OuterProduct(d0,d0));
@@ -312,7 +309,7 @@ dfm2::CMat3d dfm2::Mat3_IrotPoint
 // ---------------------------------------------------------------------
 
 
-void dfm2::Mat4_MatTransl(double m[16], const CMat3d& mat, const CVec3d& trans)
+DFM2_INLINE void dfm2::Mat4_MatTransl(double m[16], const CMat3d& mat, const CVec3d& trans)
 {
   mat.AffineMatrixTrans(m);
   m[3*4+0] = trans.x();
@@ -321,7 +318,11 @@ void dfm2::Mat4_MatTransl(double m[16], const CMat3d& mat, const CVec3d& trans)
 }
 
 
-void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMat3d& mat, const CVec3d& trans)
+DFM2_INLINE void dfm2::Mat4_ScaleMatTransl
+ (double m[16],
+  double scale,
+  const CMat3d& mat,
+  const CVec3d& trans)
 {
   mat.AffineMatrixTrans(m);
   for(int i=0;i<3;++i){
@@ -336,7 +337,7 @@ void dfm2::Mat4_ScaleMatTransl(double m[16], double scale, const CMat3d& mat, co
 
 // ---------------------------------------------------------------------------------------
 
-bool dfm2::isPickCircle
+DFM2_INLINE bool dfm2::isPickCircle
 (const CVec3d& axis,
  const CVec3d& org,
  double rad,
@@ -375,7 +376,7 @@ bool dfm2::isPickQuad
   return n0123 * pick_dir <= 0;
 }
 
-int dfm2::PickHandlerRotation_PosQuat
+DFM2_INLINE int dfm2::PickHandlerRotation_PosQuat
 (const CVec3d& src, const CVec3d& dir,
  const CVec3d& pos, const double quat[4], double rad,
  double tol)
@@ -403,7 +404,7 @@ int dfm2::PickHandlerRotation_PosQuat
   return -1;
 }
 
-int dfm2::PickHandlerRotation_Mat4
+DFM2_INLINE int dfm2::PickHandlerRotation_Mat4
 (const CVec3d& src, const CVec3d& dir,
  const double mat[16], double rad,
  double tol)
@@ -432,7 +433,7 @@ int dfm2::PickHandlerRotation_Mat4
 }
 
 
-bool dfm2::DragHandlerRot_PosQuat
+DFM2_INLINE bool dfm2::DragHandlerRot_PosQuat
 (double quat[4], int ielem,
  const dfm2::CVec2d& sp0,
  const dfm2::CVec2d& sp1,
@@ -473,7 +474,7 @@ bool dfm2::DragHandlerRot_Mat4
   return false;
 }
 
-bool dfm2::isPick_AxisHandler
+DFM2_INLINE bool dfm2::isPick_AxisHandler
 (const dfm2::CVec2d& sp,
  const CVec3d& p,
  const CVec3d& axis,
@@ -488,7 +489,7 @@ bool dfm2::isPick_AxisHandler
   return sdist < pick_tol;
 }
 
-dfm2::CVec3d dfm2::drag_AxisHandler
+DFM2_INLINE dfm2::CVec3d dfm2::drag_AxisHandler
 (const dfm2::CVec2d& sp0,
  const dfm2::CVec2d& sp1,
  const CVec3d& p,
@@ -503,7 +504,7 @@ dfm2::CVec3d dfm2::drag_AxisHandler
   return r*axis*len;
 }
 
-double dfm2::DragCircle
+DFM2_INLINE double dfm2::DragCircle
 (const dfm2::CVec2d& sp0,
  const dfm2::CVec2d& sp1,
  const CVec3d& p,
@@ -523,7 +524,7 @@ double dfm2::DragCircle
   //  return R;
 }
 
-bool dfm2::isPickPoint
+DFM2_INLINE bool dfm2::isPickPoint
 (const dfm2::CVec2d& sp,
  const CVec3d& p,
  const float* mMV,
@@ -534,7 +535,7 @@ bool dfm2::isPickPoint
   return (sp - sp0).Length() < pick_tol;
 }
 
-bool dfm2::isPickCircle
+DFM2_INLINE bool dfm2::isPickCircle
 (const dfm2::CVec2d& sp,
  const CVec3d& p,
  const CVec3d& axis,
@@ -563,7 +564,7 @@ bool dfm2::isPickCircle
 
 namespace delfem2 {
 
-CVec3d operator* (const CQuatd& q, const CVec3d& v)
+DFM2_INLINE CVec3d operator* (const CQuatd& q, const CVec3d& v)
 {
   CVec3d p;
   QuatVec(p.p,
@@ -575,7 +576,7 @@ CVec3d operator* (const CQuatd& q, const CVec3d& v)
 
 // ------------
 
-dfm2::CQuatd dfm2::Quat_CartesianAngle(const CVec3d& p)
+DFM2_INLINE dfm2::CQuatd dfm2::Quat_CartesianAngle(const CVec3d& p)
 {
   CQuatd q;
   Quat_CartesianAngle(q.q, p.p);
@@ -583,7 +584,7 @@ dfm2::CQuatd dfm2::Quat_CartesianAngle(const CVec3d& p)
 }
 
 
-void dfm2::UpdateRotationsByMatchingCluster
+DFM2_INLINE void dfm2::UpdateRotationsByMatchingCluster
  (std::vector<double>& aQuat1,
   const std::vector<double>& aXYZ0,
   const std::vector<double>& aXYZ1,

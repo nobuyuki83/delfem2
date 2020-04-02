@@ -45,6 +45,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.cpp                 ${DELFEM2_INC}/mat4.h
       ${DELFEM2_INC}/primitive.cpp            ${DELFEM2_INC}/primitive.h
+      ${DELFEM2_INC}/v23m34q.cpp               ${DELFEM2_INC}/v23m34q.h
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
@@ -55,9 +56,7 @@ add_executable(${PROJECT_NAME}
 	${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
   
-	${DELFEM2_INC}/v23m3q.cpp               ${DELFEM2_INC}/v23m3q.h
-
-	${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
+  ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/v3q_glold.h       ${DELFEM2_INC}/opengl/v3q_glold.cpp
   
   ${SRC_DFM2}
