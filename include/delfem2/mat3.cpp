@@ -10,6 +10,44 @@
 
 namespace dfm2 = delfem2;
 
+
+// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+// row major matrix
+DFM2_INLINE void SetMatrix3_Quaternion(double r[], const double q[])
+{
+  double x2 = q[1] * q[1] * 2.0;
+  double y2 = q[2] * q[2] * 2.0;
+  double z2 = q[3] * q[3] * 2.0;
+  double xy = q[1] * q[2] * 2.0;
+  double yz = q[2] * q[3] * 2.0;
+  double zx = q[3] * q[1] * 2.0;
+  double xw = q[1] * q[0] * 2.0;
+  double yw = q[2] * q[0] * 2.0;
+  double zw = q[3] * q[0] * 2.0;
+  r[0] = 1.0 - y2 - z2;
+  r[1] = xy - zw;
+  r[2] = zx + yw;
+  r[3] = xy + zw;
+  r[4] = 1.0 - z2 - x2;
+  r[5] = yz - xw;
+  r[6] = zx - yw;
+  r[7] = yz + xw;
+  r[8] = 1.0 - x2 - y2;
+}
+
+DFM2_INLINE double estimationMaxEigenValue(const double mtm[6])
+{
+  double maxl = 1;
+  {  // estimation of maximum eigen value using Gerschgorin's circle theorem
+    maxl = mtm[0] + fabs(mtm[3])+fabs(mtm[5]);
+    const double tmp2 = mtm[1] + fabs(mtm[3])+fabs(mtm[4]);
+    maxl = ( tmp2 > maxl ) ? tmp2 : maxl;
+    const double tmp3 = mtm[2] + fabs(mtm[5])+fabs(mtm[4]);
+    maxl = ( tmp3 > maxl ) ? tmp3 : maxl;
+  }
+  return maxl;
+}
+
 // ------------------------
 
 // t is a tmporary buffer size of 9
@@ -187,7 +225,7 @@ template void dfm2::MatVec3_ScaleAdd(double y[3],
                                      const double m[9], const double x[3], double alpha, double beta);
 
 
-void dfm2::VecMat3
+DFM2_INLINE void dfm2::VecMat3
  (double y[3],
   const double x[3], const double m[9])
 {
@@ -196,9 +234,9 @@ void dfm2::VecMat3
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-void dfm2::MatTVec3(
-    double y[3],
-    const double m[9], const double x[3])
+DFM2_INLINE void dfm2::MatTVec3
+ (double y[3],
+  const double m[9], const double x[3])
 {
   y[0] = m[0]*x[0] + m[3]*x[1] + m[6]*x[2];
   y[1] = m[1]*x[0] + m[4]*x[1] + m[7]*x[2];
@@ -346,7 +384,7 @@ template void dfm2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
 // sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
 // M = ULU^T
 // u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
-bool dfm2::eigenSym3
+DFM2_INLINE bool dfm2::eigenSym3
 (double u[9], double l[3],
  const double sm[6],
  int nitr)
@@ -435,20 +473,7 @@ bool dfm2::eigenSym3
   return true;
 }
 
-double estimationMaxEigenValue(const double mtm[6])
-{
-  double maxl = 1;
-  {  // estimation of maximum eigen value using Gerschgorin's circle theorem
-    maxl = mtm[0] + fabs(mtm[3])+fabs(mtm[5]);
-    const double tmp2 = mtm[1] + fabs(mtm[3])+fabs(mtm[4]);
-    maxl = ( tmp2 > maxl ) ? tmp2 : maxl;
-    const double tmp3 = mtm[2] + fabs(mtm[5])+fabs(mtm[4]);
-    maxl = ( tmp3 > maxl ) ? tmp3 : maxl;
-  }
-  return maxl;
-}
-
-void dfm2::svd3
+DFM2_INLINE void dfm2::svd3
 (double U[9], double G[3], double V[9],
  const double m[9],
  int nitr)
@@ -497,7 +522,7 @@ void dfm2::svd3
   }
 }
 
-void dfm2::GetRotPolarDecomp
+DFM2_INLINE void dfm2::GetRotPolarDecomp
 (double R[9],
  //
  const double am[9],
@@ -510,29 +535,7 @@ void dfm2::GetRotPolarDecomp
 }
 
 
-// https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
-// row major matrix
-void SetMatrix3_Quaternion(double r[], const double q[])
-{
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  r[0] = 1.0 - y2 - z2;
-  r[1] = xy - zw;
-  r[2] = zx + yw;
-  r[3] = xy + zw;
-  r[4] = 1.0 - z2 - x2;
-  r[5] = yz - xw;
-  r[6] = zx - yw;
-  r[7] = yz + xw;
-  r[8] = 1.0 - x2 - y2;
-}
+
 
 // -----------------------------------
 
@@ -727,8 +730,8 @@ template void dfm2::CMat3<double>::SetZero();
 
 namespace delfem2 {
 
-template<>
-void CMat3<double>::SetRandom() {
+template <>
+DFM2_INLINE void CMat3<double>::SetRandom() {
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> score(-50.0, 50.0);

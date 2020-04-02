@@ -2,15 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 if(USE_HEADERONLY)
 	message("$$$$$$$$$$$$$$$$$$$$$")
-	message("generate project as HEADER-ONLY library:  USE_HEADERONLY=${USE_HEADERONLY}")	
-	message("$$$$$$$$$$$$$$$$$$$$$")	
+	message("generate project as HEADER-ONLY library:  USE_HEADERONLY=${USE_HEADERONLY}")
 	project(examples_glfwold_hdronly)
 ELSE()
 	message("$$$$$$$$$$$$$$$$$$$$$")
 	message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
-	message("$$$$$$$$$$$$$$$$$$$$$")
 	project(examples_glfwold_static)
-
 ENDIF()
 
 # simple examples without delfem2 

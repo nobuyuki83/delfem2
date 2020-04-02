@@ -18,6 +18,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits> // using NaN Check
+#include "delfem2/dfm2_inline.h"
 
 #define NEARLY_ZERO 1.e-16
 
@@ -114,21 +115,24 @@ void Mat3_Rotation_Cartesian(
  * M = ULU^T
  * u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
  */
-bool eigenSym3(double u[9], double l[3],
-               const double sm[6],
-               int nitr);
+DFM2_INLINE bool eigenSym3
+ (double u[9], double l[3],
+  const double sm[6],
+  int nitr);
 
-void svd3(double U[9], double G[3], double V[9],
-          const double m[9],
-          int nitr);
+DFM2_INLINE void svd3
+ (double U[9], double G[3], double V[9],
+  const double m[9],
+  int nitr);
 
-void GetRotPolarDecomp(double R[9],
-                       const double am[9],
-                       int nitr);
+DFM2_INLINE void GetRotPolarDecomp
+ (double R[9],
+  const double am[9],
+  int nitr);
 
 // ------------------------------------------------
 
-void MatTVec3(
+DFM2_INLINE void MatTVec3(
     double y[3],
     const double m[9], const double x[3]);
 
@@ -153,8 +157,9 @@ void MatVec3_ScaleAdd(T y[3],
                       const T m[9], const T x[3],
                       T alpha, T beta);
 
-void VecMat3(double y[3],
-             const double x[3], const double m[9]);
+DFM2_INLINE void VecMat3
+ (double y[3],
+  const double x[3], const double m[9]);
 
 template <typename T>
 void Vec3_Mat4Vec3_AffineProjection(
@@ -383,5 +388,9 @@ CMat3<T> Mat3_Identity(T alpha){
 }
 
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/mat3.cpp"
+#endif
 
 #endif
