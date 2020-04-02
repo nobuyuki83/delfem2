@@ -18,7 +18,7 @@
 #include "delfem2/dtri.h"
 #include "delfem2/vecxitrsol.h"
 
-#include "delfem2/v23m3q.h"
+#include "delfem2/v23m34q.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/dtri_v2.h"

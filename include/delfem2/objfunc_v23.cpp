@@ -8,7 +8,7 @@
 #include "delfem2/vec2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/v23m3q.h"
+#include "delfem2/v23m34q.h"
 #include "delfem2/objfunc_v23.h"
 
 namespace dfm2 = delfem2;

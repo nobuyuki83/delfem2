@@ -46,10 +46,12 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
       ${DELFEM2_INC}/vec3.h                 ${DELFEM2_INC}/vec3.cpp
       ${DELFEM2_INC}/mat3.h                 ${DELFEM2_INC}/mat3.cpp
+      ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
-      ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/primitive.h            ${DELFEM2_INC}/primitive.cpp
+      
+      ${DELFEM2_INC}/v23m34q.h              ${DELFEM2_INC}/v23m34q.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -72,7 +74,6 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/bv.h
   
-  ${DELFEM2_INC}/v23m3q.h               ${DELFEM2_INC}/v23m3q.cpp
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
   ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp

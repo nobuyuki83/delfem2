@@ -9,7 +9,7 @@
 #include <math.h>
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/v23m3q.h"
+#include "delfem2/v23m34q.h"
 
 // ----------
 #if defined(__APPLE__) && defined(__MACH__)

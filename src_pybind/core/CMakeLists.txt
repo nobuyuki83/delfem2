@@ -31,20 +31,18 @@ set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
 if(NOT USE_HEADERONLY)
-  message("compile as static libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
+      ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
+      ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
+      ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
+      ${DELFEM2_INC}/mat4.h               ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/v23m34q.h             ${DELFEM2_INC}/v23m34q.cpp
       )
-else()
-  message("compile as headeronly library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 endif()
 
 set(INPUT_SRC
-    ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
-    ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
-    ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
-    ${DELFEM2_INC}/mat4.h               ${DELFEM2_INC}/mat4.cpp
     ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
     ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
@@ -67,7 +65,6 @@ set(INPUT_SRC
     ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_INC}/objfunc_v23.cpp
     ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_INC}/objfunc_v23dtri.cpp
     ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_INC}/rig_v3q.cpp
-    ${DELFEM2_INC}/v23m3q.h             ${DELFEM2_INC}/v23m3q.cpp
     ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_INC}/dtri_v3.cpp
     ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
     ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
