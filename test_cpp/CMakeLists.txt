@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ################################
 
@@ -14,7 +14,11 @@ endif()
 
 ################################
 
-project(testsDelFEM2)
+if(USE_HEADERONLY)
+  project(test_hdronly)
+ELSE()
+  project(test_static)
+ENDIF()
 set(MY_BINARY_NAME runUnitTests)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../test_inputs")
@@ -36,7 +40,7 @@ include_directories(
 # Add test cpp file
 
 IF(NOT USE_HEADERONLY)
-  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
+  message("compile as STATIC libary: ${PROJECT_NAME} USE_HEADERONLY=${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h                 ${DELFEM2_INC}/vec2.cpp
@@ -44,6 +48,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
+      ${DELFEM2_INC}/primitive.h            ${DELFEM2_INC}/primitive.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -60,7 +65,6 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp
   ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
   ${DELFEM2_INC}/bvh.h                  ${DELFEM2_INC}/bvh.cpp
-  ${DELFEM2_INC}/primitive.h            ${DELFEM2_INC}/primitive.cpp
   ${DELFEM2_INC}/slice.h                ${DELFEM2_INC}/slice.cpp
   ${DELFEM2_INC}/emat.h                 ${DELFEM2_INC}/emat.cpp
   ${DELFEM2_INC}/dtri.h                 ${DELFEM2_INC}/dtri.cpp

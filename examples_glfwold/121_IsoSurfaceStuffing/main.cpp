@@ -75,7 +75,7 @@ void SetProblem(int iprob)
         ilevel_vol = -1;
       }
     public:
-      dfm2::CSphere sp;
+      dfm2::CSphere<double> sp;
     };
     double rad = 1.5;
     CInSphere sphere(rad);
@@ -106,7 +106,7 @@ void SetProblem(int iprob)
         nlayer = 1;
       }
     public:
-      dfm2::CBox bx;
+      dfm2::CBox<double> bx;
     };
     const double hwx = 0.91;
     const double hwy = 0.61;
@@ -153,8 +153,8 @@ void SetProblem(int iprob)
         nlayer = 1;
       }
     public:
-      dfm2::CBox box;
-      dfm2::CSphere sphere;
+      dfm2::CBox<double> box;
+      dfm2::CSphere<double> sphere;
     } cav_sphere;
     double cent[3] = {0,0,0};
     dfm2::IsoSurfaceStuffing(aXYZ, aTet, aIsOnSurfXYZ,

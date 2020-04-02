@@ -158,11 +158,11 @@ void init_sdf(py::module &m){
   // SDF
   py::class_<dfm2::CSDF3>(m, "CppSDF3");
   
-  py::class_<delfem2::CSphere, dfm2::CSDF3>(m, "CppSDF3_Sphere")
+  py::class_<delfem2::CSphere<double>, dfm2::CSDF3>(m, "CppSDF3_Sphere")
   .def(py::init<>())
   .def(py::init<double,const std::vector<double>&,bool>())
-  .def_readwrite("cent", &delfem2::CSphere::cent_)
-  .def_readwrite("rad",  &delfem2::CSphere::radius_);
+  .def_readwrite("cent", &delfem2::CSphere<double>::cent_)
+  .def_readwrite("rad",  &delfem2::CSphere<double>::radius_);
   
   py::class_<CPyCollision_Points_MeshTri3D>(m, "CppClliderPointsMeshTri3D")
   .def("set_mesh", &CPyCollision_Points_MeshTri3D::SetMesh)

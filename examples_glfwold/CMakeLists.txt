@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(examples_glfwold)
-
+if(USE_HEADERONLY)
+	project(examples_glfwold_hdronly)
+ELSE()
+	project(examples_glfwold_static)
+ENDIF()
 
 # simple examples without delfem2 
 add_subdirectory(000_OpenWindowWithGLFW)

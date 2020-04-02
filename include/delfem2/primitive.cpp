@@ -145,204 +145,11 @@ const double e[3]) // end
 }
 */
 
-// ----------------------------------------------------
 
-dfm2::CPlane::CPlane(const double n[3], const double o[3])
-{
-  normal_[0] = n[0];
-	normal_[1] = n[1];
-	normal_[2] = n[2];
-	//
-	origin_[0] = o[0];
-  origin_[1] = o[1];
-	origin_[2] = o[2];
-}
-
-double dfm2::CPlane::Projection
-(double n[3],
- double px, double py, double pz) const // normal
-{
-	n[0] = normal_[0];		
-	n[1] = normal_[1];		
-	n[2] = normal_[2];		
-	return -( normal_[0]*(px-origin_[0]) + normal_[1]*(py-origin_[1]) + normal_[2]*(pz-origin_[2]) );
-}
-
-// -------------------------------------------------------
-
-
-dfm2::CSphere::CSphere
- (double r, const std::vector<double>& c, bool is_out){
-  cent_.resize(3);
-	cent_[0] = c[0];
-	cent_[1] = c[1];
-	cent_[2] = c[2];
-	radius_ = r;
-	this->is_out_ = is_out;
-}
-
-// return penetration depth (inside is positive)
-double dfm2::CSphere::Projection
-(double n[3],
- double px, double py, double pz) const // normal outward
-{
-	double dir[3] = { px-cent_[0], py-cent_[1], pz-cent_[2] };
-	const double len = sqrt( dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2] );		
-	const double invlen = 1.0/len;
-	if( !is_out_ ){
-		n[0] = -dir[0]*invlen;
-		n[1] = -dir[1]*invlen;		
-		n[2] = -dir[2]*invlen;
-		return +len-radius_;
-	}
-	n[0] = dir[0]*invlen;
-	n[1] = dir[1]*invlen;		
-	n[2] = dir[2]*invlen;	
-	return radius_-len;
-}
-
-unsigned int dfm2::CSphere::FindInOut(double px, double py, double pz) const
-{
-	double n[3];
-	double pd = this->Projection(n, px, py, pz);
-	if( !is_out_ ) pd *= -1.0;
-	if( pd > 0 ){ return 0; }
-	return 1;
-}
-
-bool dfm2::CSphere::IntersectionPoint
-(double p[3], 
- const double o[3], const double d[3]) const 
-{
-  const double q[3] = { o[0]-cent_[0], o[1]-cent_[1], o[2]-cent_[2] };
-  const double a = d[0]*d[0] + d[1]*d[1] + d[2]*d[2];
-  const double b = q[0]*d[0] + q[1]*d[1] + q[2]*d[2];
-  const double c = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] - radius_*radius_;
-  const double det = b*b-a*c;
-  if( det < 0 )  return false;
-  const double t = (-b+sqrt(det))/a;
-  p[0] = o[0] + t*d[0];
-  p[1] = o[1] + t*d[1];
-  p[2] = o[2] + t*d[2];  
-  return true;
-}
-
-
-// --------------------------------------------------
-
-dfm2::CCylinder::CCylinder
-(double r, const double cnt[3], const double dir[3], bool is_out){
-	cent_[0] = cnt[0];
-	cent_[1] = cnt[1];
-	cent_[2] = cnt[2];
-  dir_[0] = dir[0];
-  dir_[1] = dir[1];
-  dir_[2] = dir[2];
-	radius_ = r;
-	this->is_out_ = is_out;
-}
-
-
-// return penetration depth (inside is positive)
-double dfm2::CCylinder::Projection
-(double n[3],
- double px, double py, double pz) const // normal outward
-{
-  double dd = dir_[0]*dir_[0] + dir_[1]*dir_[1] + dir_[2]*dir_[2];
-  double pod = (px-cent_[0])*dir_[0]+(py-cent_[1])*dir_[1]+(pz-cent_[2])*dir_[2];
-  double a = pod/dd;
-  double hp[3] = { cent_[0]+a*dir_[0], cent_[1]+a*dir_[1], cent_[2]+a*dir_[2] };
-	double d[3] = { px-hp[0], py-hp[1], pz-hp[2] };
-	const double len = sqrt( d[0]*d[0]+d[1]*d[1]+d[2]*d[2] );		
-	const double invlen = 1.0/len;
-	if( !is_out_ ){
-		n[0] = -d[0]*invlen;
-		n[1] = -d[1]*invlen;		
-		n[2] = -d[2]*invlen;
-		return +len-radius_;
-	}
-	n[0] = d[0]*invlen;
-	n[1] = d[1]*invlen;		
-	n[2] = d[2]*invlen;	
-	return radius_-len;
-}
-
-unsigned int dfm2::CCylinder::FindInOut(double px, double py, double pz) const
-{
-	double n[3];
-	double pd = this->Projection(n,
-                               px, py, pz);
-	if( !is_out_ ) pd *= -1.0;
-	if( pd > 0 ){ return 0; }
-	return 1;
-}
-
-bool dfm2::CCylinder::IntersectionPoint
-(double p[3], 
- const double o[3], const double d[3]) const 
-{
-  const double q[3] = { o[0]-cent_[0], o[1]-cent_[1], o[2]-cent_[2] };
-  const double a = d[0]*d[0] + d[1]*d[1] + d[2]*d[2];
-  const double b = q[0]*d[0] + q[1]*d[1] + q[2]*d[2];
-  const double c = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] - radius_*radius_;
-  const double det = b*b-a*c;
-  if( det < 0 )  return false;
-  const double t = (-b+sqrt(det))/a;
-  p[0] = o[0] + t*d[0];
-  p[1] = o[1] + t*d[1];
-  p[2] = o[2] + t*d[2];
-  return true;
-}
-
-// --------------------------------------------------------
-
-// return penetration depth (inside is positive)
-double dfm2::CTorus::Projection
-(double n[3],
- double px, double py, double pz) const // normal outward
-{
-	double dir[3] = { px-cent_[0], py-cent_[1], pz-cent_[2] };
-	const double t = dir[2];
-//	dir[0] -= t*norm_[0];
-//	dir[1] -= t*norm_[1];
-	dir[2] -= t;		
-	const double len = sqrt( dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2] );
-	if( len < 1.0e-20 ){	// vertical to the center of torus
-		return radius_tube_ - radius_;
-	}
-	const double invlen = 1.0/len;
-	dir[0] *= invlen;
-	dir[1] *= invlen;		
-	dir[2] *= invlen;
-	double p[3];
-	p[0] = cent_[0]+radius_*dir[0];		
-	p[1] = cent_[1]+radius_*dir[1];		
-	p[2] = cent_[2]+radius_*dir[2];		
-	double dir2[3] = { px-p[0], py-p[1], pz-p[2] };
-	const double len2 = sqrt( dir2[0]*dir2[0]+dir2[1]*dir2[1]+dir2[2]*dir2[2] );
-	const double invlen2 = 1.0/len2;
-	n[0] = dir2[0]*invlen2;
-	n[1] = dir2[1]*invlen2;		
-	n[2] = dir2[2]*invlen2;
-	//		std::cout << len << " " << len2 << std::endl;
-	return radius_tube_-len2;
-}
-	
-unsigned int dfm2::CTorus::FindInOut(double px, double py, double pz) const
-{
-	double n[3];
-	const double pd = this->Projection(n,
-                                     px, py, pz);
-	if( pd > 0 ){ return 0; }
-	return 1;
-}
-
-// --------------------------------------------------------------------------
-
-void dfm2::MeshQuad2D_Grid
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aQuad,
- int nx, int ny)
+DFM2_INLINE void dfm2::MeshQuad2D_Grid
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int>& aQuad,
+  int nx, int ny)
 {
   int np = (nx+1)*(ny+1);
   aXYZ.resize(np*2);
@@ -365,10 +172,10 @@ void dfm2::MeshQuad2D_Grid
   }
 }
 
-void dfm2::MeshTri3D_Disk
-(std::vector<double>& aXYZ,
- std::vector<unsigned int> &aTri,
- double r, int nr, int nth)
+DFM2_INLINE void dfm2::MeshTri3D_Disk
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int> &aTri,
+  double r, int nr, int nth)
 {
   aXYZ.clear();
   aTri.clear();
@@ -413,13 +220,11 @@ void dfm2::MeshTri3D_Disk
   }
 }
 
-
-
-void dfm2::MeshTri3D_CylinderOpen
-(std::vector<double>& aXYZ,
- std::vector<unsigned int> &aTri,
- double r, double l,
- int nr, int nl)
+DFM2_INLINE void dfm2::MeshTri3D_CylinderOpen
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int> &aTri,
+  double r, double l,
+  int nr, int nl)
 {
   aXYZ.clear();
   aTri.clear();
@@ -458,11 +263,11 @@ void dfm2::MeshTri3D_CylinderOpen
   }
 }
 
-void dfm2::MeshTri3D_CylinderClosed
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTri,
- double r, double l,
- int nr, int nl)
+DFM2_INLINE void dfm2::MeshTri3D_CylinderClosed
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int>& aTri,
+  double r, double l,
+  int nr, int nl)
 {
   int nla = nl+2;
   aXYZ.clear();
@@ -535,11 +340,11 @@ void dfm2::MeshTri3D_CylinderClosed
    */
 }
 
-void dfm2::MeshTri3D_Sphere
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTri,
- double radius,
- int nlong, int nlat)
+DFM2_INLINE void dfm2::MeshTri3D_Sphere
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int>& aTri,
+  double radius,
+  int nlong, int nlat)
 {
   aXYZ.clear();
   aTri.clear();
@@ -589,13 +394,11 @@ void dfm2::MeshTri3D_Sphere
   }
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
-
 template <typename T>
-void dfm2::MeshTri3D_Cube
-    (std::vector<T>& aXYZ,
-     std::vector<unsigned int>& aTri,
-     unsigned int n)
+DFM2_INLINE void dfm2::MeshTri3D_Cube
+(std::vector<T>& aXYZ,
+ std::vector<unsigned int>& aTri,
+ unsigned int n)
 {
   aXYZ.clear();
   aTri.clear();
@@ -749,7 +552,7 @@ template void dfm2::MeshTri3D_Cube(std::vector<double>& aXYZ,
 // f3: +y
 // f4: -z
 // f5: +z
-void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
+DFM2_INLINE void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 {
   aQuad.resize(6*4);
   aQuad[0*4+0] = 0;    aQuad[0*4+1] = 4;   aQuad[0*4+2] = 6;   aQuad[0*4+3] = 2;
@@ -762,7 +565,7 @@ void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 
 template<typename REAL>
 void dfm2::MeshQuad3_CubeVox
- (std::vector<REAL>& aXYZ,
+(std::vector<REAL>& aXYZ,
  std::vector<unsigned int>& aQuad,
  const REAL bbmin[3], const REAL bbmax[3])
 {
@@ -787,145 +590,145 @@ template void dfm2::MeshQuad3_CubeVox(std::vector<float>& aXYZ,
 
 
 /*
-void dfm2::MeshTri3D_Cube
-(std::vector<double>& aXYZ,
+ void dfm2::MeshTri3D_Cube
+ (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  int n)
-{
-  aXYZ.clear();
-  aTri.clear();
-  if( n < 1 ){ return; }
-  double r = 1.0/n;
-  const int np = 4*n*(n+1)+(n-1)*(n-1)*2;
-  aXYZ.reserve( np*3 );
-  for(int iz=0;iz<n+1;++iz){ // height
-    for(int ix=0;ix<n;++ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(-0.5);
-      aXYZ.push_back(-0.5+r*iz);
-    }
-    for(int iy=0;iy<n;++iy){
-      aXYZ.push_back(+0.5);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(-0.5+r*iz);
-    }
-    for(int ix=n;ix>0;--ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(+0.5);
-      aXYZ.push_back(-0.5+r*iz);
-    }
-    for(int iy=n;iy>0;--iy){
-      aXYZ.push_back(-0.5);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(-0.5+r*iz);
-    }
-  }
-  for(int iy=1;iy<n;++iy){
-    for(int ix=1;ix<n;++ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(-0.5);
-    }
-  }
-  for(int iy=1;iy<n;++iy){
-    for(int ix=1;ix<n;++ix){
-      aXYZ.push_back(-0.5+r*ix);
-      aXYZ.push_back(-0.5+r*iy);
-      aXYZ.push_back(+0.5);
-    }
-  }
-  /////
-  int ntri = n*n*6*2;
-  aTri.reserve(ntri*3);
-  for(int iz=0;iz<n;++iz){
-    for(int ixy=0;ixy<4*n;++ixy){
-      int i0 = ixy          +4*n*iz;
-      int i1 = (ixy+1)%(4*n)+4*n*iz;
-      int i2 = (ixy+1)%(4*n)+4*n*(iz+1);
-      int i3 = ixy          +4*n*(iz+1);
-      aTri.push_back(i0);
-      aTri.push_back(i1);
-      aTri.push_back(i2);
-      ///
-      aTri.push_back(i2);
-      aTri.push_back(i3);
-      aTri.push_back(i0);
-    }
-  }
-  // bottom
-  for(int ix=0;ix<n;++ix){
-    for(int iy=0;iy<n;++iy){
-      int i0, i1, i2, i3;
-      i0 = 4*n*(n+1) + (iy-1)*(n-1)+(ix-1);
-      i1 = 4*n*(n+1) + (iy-1)*(n-1)+(ix+0);
-      i2 = 4*n*(n+1) + (iy+0)*(n-1)+(ix+0);
-      i3 = 4*n*(n+1) + (iy+0)*(n-1)+(ix-1);
-      if( ix==0 ){
-        i0 = (iy==0) ? 0 : 4*n-iy;
-        i3 = 4*n-iy-1;
-      }
-      if( ix==n-1 ){
-        i1 = n+iy;
-        i2 = n+iy+1;
-      }
-      if( iy==0 ){
-        i0 = ix;
-        i1 = ix+1;
-      }
-      if( iy==n-1 ){
-        i2 = 3*n-ix-1;
-        i3 = 3*n-ix+0;
-      }
-      aTri.push_back(i1);
-      aTri.push_back(i0);
-      aTri.push_back(i2);
-      ///
-      aTri.push_back(i3);
-      aTri.push_back(i2);
-      aTri.push_back(i0);
-    }
-  }
-  // top
-  int nps  = 4*n*(n+1); // side vertex
-  int nps0 = 4*n*n; // side vertex
-  for(int ix=0;ix<n;++ix){
-    for(int iy=0;iy<n;++iy){
-      int i0, i1, i2, i3;
-      i0 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix-1);
-      i1 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix+0);
-      i2 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix+0);
-      i3 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix-1);
-      if( ix==0 ){
-        i0 = (iy==0) ? nps0 : nps0+4*n-iy;
-        i3 = nps0+4*n-iy-1;
-      }
-      if( ix==n-1 ){
-        i1 = nps0+n+iy;
-        i2 = nps0+n+iy+1;
-      }
-      if( iy==0 ){
-        i0 = nps0+ix;
-        i1 = nps0+ix+1;
-      }
-      if( iy==n-1 ){
-        i2 = nps0+3*n-ix-1;
-        i3 = nps0+3*n-ix+0;
-      }
-      aTri.push_back(i0);
-      aTri.push_back(i1);
-      aTri.push_back(i2);
-      ///
-      aTri.push_back(i2);
-      aTri.push_back(i3);
-      aTri.push_back(i0);
-    }
-  }
-}
-*/
+ {
+ aXYZ.clear();
+ aTri.clear();
+ if( n < 1 ){ return; }
+ double r = 1.0/n;
+ const int np = 4*n*(n+1)+(n-1)*(n-1)*2;
+ aXYZ.reserve( np*3 );
+ for(int iz=0;iz<n+1;++iz){ // height
+ for(int ix=0;ix<n;++ix){
+ aXYZ.push_back(-0.5+r*ix);
+ aXYZ.push_back(-0.5);
+ aXYZ.push_back(-0.5+r*iz);
+ }
+ for(int iy=0;iy<n;++iy){
+ aXYZ.push_back(+0.5);
+ aXYZ.push_back(-0.5+r*iy);
+ aXYZ.push_back(-0.5+r*iz);
+ }
+ for(int ix=n;ix>0;--ix){
+ aXYZ.push_back(-0.5+r*ix);
+ aXYZ.push_back(+0.5);
+ aXYZ.push_back(-0.5+r*iz);
+ }
+ for(int iy=n;iy>0;--iy){
+ aXYZ.push_back(-0.5);
+ aXYZ.push_back(-0.5+r*iy);
+ aXYZ.push_back(-0.5+r*iz);
+ }
+ }
+ for(int iy=1;iy<n;++iy){
+ for(int ix=1;ix<n;++ix){
+ aXYZ.push_back(-0.5+r*ix);
+ aXYZ.push_back(-0.5+r*iy);
+ aXYZ.push_back(-0.5);
+ }
+ }
+ for(int iy=1;iy<n;++iy){
+ for(int ix=1;ix<n;++ix){
+ aXYZ.push_back(-0.5+r*ix);
+ aXYZ.push_back(-0.5+r*iy);
+ aXYZ.push_back(+0.5);
+ }
+ }
+ /////
+ int ntri = n*n*6*2;
+ aTri.reserve(ntri*3);
+ for(int iz=0;iz<n;++iz){
+ for(int ixy=0;ixy<4*n;++ixy){
+ int i0 = ixy          +4*n*iz;
+ int i1 = (ixy+1)%(4*n)+4*n*iz;
+ int i2 = (ixy+1)%(4*n)+4*n*(iz+1);
+ int i3 = ixy          +4*n*(iz+1);
+ aTri.push_back(i0);
+ aTri.push_back(i1);
+ aTri.push_back(i2);
+ ///
+ aTri.push_back(i2);
+ aTri.push_back(i3);
+ aTri.push_back(i0);
+ }
+ }
+ // bottom
+ for(int ix=0;ix<n;++ix){
+ for(int iy=0;iy<n;++iy){
+ int i0, i1, i2, i3;
+ i0 = 4*n*(n+1) + (iy-1)*(n-1)+(ix-1);
+ i1 = 4*n*(n+1) + (iy-1)*(n-1)+(ix+0);
+ i2 = 4*n*(n+1) + (iy+0)*(n-1)+(ix+0);
+ i3 = 4*n*(n+1) + (iy+0)*(n-1)+(ix-1);
+ if( ix==0 ){
+ i0 = (iy==0) ? 0 : 4*n-iy;
+ i3 = 4*n-iy-1;
+ }
+ if( ix==n-1 ){
+ i1 = n+iy;
+ i2 = n+iy+1;
+ }
+ if( iy==0 ){
+ i0 = ix;
+ i1 = ix+1;
+ }
+ if( iy==n-1 ){
+ i2 = 3*n-ix-1;
+ i3 = 3*n-ix+0;
+ }
+ aTri.push_back(i1);
+ aTri.push_back(i0);
+ aTri.push_back(i2);
+ ///
+ aTri.push_back(i3);
+ aTri.push_back(i2);
+ aTri.push_back(i0);
+ }
+ }
+ // top
+ int nps  = 4*n*(n+1); // side vertex
+ int nps0 = 4*n*n; // side vertex
+ for(int ix=0;ix<n;++ix){
+ for(int iy=0;iy<n;++iy){
+ int i0, i1, i2, i3;
+ i0 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix-1);
+ i1 = nps + (n-1)*(n-1) + (iy-1)*(n-1)+(ix+0);
+ i2 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix+0);
+ i3 = nps + (n-1)*(n-1) + (iy+0)*(n-1)+(ix-1);
+ if( ix==0 ){
+ i0 = (iy==0) ? nps0 : nps0+4*n-iy;
+ i3 = nps0+4*n-iy-1;
+ }
+ if( ix==n-1 ){
+ i1 = nps0+n+iy;
+ i2 = nps0+n+iy+1;
+ }
+ if( iy==0 ){
+ i0 = nps0+ix;
+ i1 = nps0+ix+1;
+ }
+ if( iy==n-1 ){
+ i2 = nps0+3*n-ix-1;
+ i3 = nps0+3*n-ix+0;
+ }
+ aTri.push_back(i0);
+ aTri.push_back(i1);
+ aTri.push_back(i2);
+ ///
+ aTri.push_back(i2);
+ aTri.push_back(i3);
+ aTri.push_back(i0);
+ }
+ }
+ }
+ */
 
-void dfm2::MeshTri3D_Icosahedron
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTri)
+DFM2_INLINE void dfm2::MeshTri3D_Icosahedron
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int>& aTri)
 {
   double p = (1+sqrt(5))*0.5;
   aXYZ.resize(12*3);
@@ -971,13 +774,13 @@ void dfm2::MeshTri3D_Icosahedron
 // ------------------------------------------------------------
 
 template <typename T>
-void dfm2::MeshTri3_Torus
-(std::vector<T>& aXYZ,
- std::vector<unsigned int>& aTri, 
- double radius_,
- double radius_tube_,
- unsigned int nlg,
- unsigned int nlt)
+DFM2_INLINE void dfm2::MeshTri3_Torus
+ (std::vector<T>& aXYZ,
+  std::vector<unsigned int>& aTri,
+  double radius_,
+  double radius_tube_,
+  unsigned int nlg,
+  unsigned int nlt)
 {
   const double rlg = 6.28/nlg;  // longtitude
   const double rlt = 6.28/nlt;  // latitude
@@ -1005,15 +808,239 @@ void dfm2::MeshTri3_Torus
   }
 }
 template void dfm2::MeshTri3_Torus(
-    std::vector<float>& aXYZ,
-    std::vector<unsigned int>& aTri,
-    double radius_, double radius_tube_,
-    unsigned int nr, unsigned int nl);
+                                   std::vector<float>& aXYZ,
+                                   std::vector<unsigned int>& aTri,
+                                   double radius_, double radius_tube_,
+                                   unsigned int nr, unsigned int nl);
 template void dfm2::MeshTri3_Torus(
-    std::vector<double>& aXYZ,
-    std::vector<unsigned int>& aTri,
-    double radius_, double radius_tube_,
-    unsigned int nr, unsigned int nl);
+                                   std::vector<double>& aXYZ,
+                                   std::vector<unsigned int>& aTri,
+                                   double radius_, double radius_tube_,
+                                   unsigned int nr, unsigned int nl);
+
+// =========================================================================
+
+template <typename REAL>
+dfm2::CPlane<REAL>::CPlane(const double n[3], const double o[3])
+{
+  normal_[0] = n[0];
+	normal_[1] = n[1];
+	normal_[2] = n[2];
+	//
+	origin_[0] = o[0];
+  origin_[1] = o[1];
+	origin_[2] = o[2];
+}
+
+template <typename REAL>
+double dfm2::CPlane<REAL>::Projection
+(double n[3],
+ double px, double py, double pz) const // normal
+{
+	n[0] = normal_[0];		
+	n[1] = normal_[1];		
+	n[2] = normal_[2];		
+	return -( normal_[0]*(px-origin_[0]) + normal_[1]*(py-origin_[1]) + normal_[2]*(pz-origin_[2]) );
+}
+
+// -------------------------------------------------------
+
+template <typename REAL>
+dfm2::CSphere<REAL>::CSphere
+ (double r, const std::vector<double>& c, bool is_out)
+{
+  cent_.resize(3);
+	cent_[0] = c[0];
+	cent_[1] = c[1];
+	cent_[2] = c[2];
+	radius_ = r;
+	this->is_out_ = is_out;
+}
+template dfm2::CSphere<double>::CSphere
+ (double r, const std::vector<double>& c, bool is_out);
+
+// ----------------
+
+// return penetration depth (inside is positive)
+template <typename REAL>
+double dfm2::CSphere<REAL>::Projection
+(double n[3],
+ double px, double py, double pz) const // normal outward
+{
+	double dir[3] = { px-cent_[0], py-cent_[1], pz-cent_[2] };
+	const double len = sqrt( dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2] );		
+	const double invlen = 1.0/len;
+	if( !is_out_ ){
+		n[0] = -dir[0]*invlen;
+		n[1] = -dir[1]*invlen;		
+		n[2] = -dir[2]*invlen;
+		return +len-radius_;
+	}
+	n[0] = dir[0]*invlen;
+	n[1] = dir[1]*invlen;		
+	n[2] = dir[2]*invlen;	
+	return radius_-len;
+}
+template double dfm2::CSphere<double>::Projection
+ (double n[3],
+  double px, double py, double pz) const; // normal outward
+
+// -----------------------------------------
+
+template <typename REAL>
+unsigned int dfm2::CSphere<REAL>::FindInOut(double px, double py, double pz) const
+{
+	double n[3];
+	double pd = this->Projection(n, px, py, pz);
+	if( !is_out_ ) pd *= -1.0;
+	if( pd > 0 ){ return 0; }
+	return 1;
+}
+
+template <typename REAL>
+bool dfm2::CSphere<REAL>::IntersectionPoint
+(double p[3], 
+ const double o[3], const double d[3]) const 
+{
+  const double q[3] = { o[0]-cent_[0], o[1]-cent_[1], o[2]-cent_[2] };
+  const double a = d[0]*d[0] + d[1]*d[1] + d[2]*d[2];
+  const double b = q[0]*d[0] + q[1]*d[1] + q[2]*d[2];
+  const double c = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] - radius_*radius_;
+  const double det = b*b-a*c;
+  if( det < 0 )  return false;
+  const double t = (-b+sqrt(det))/a;
+  p[0] = o[0] + t*d[0];
+  p[1] = o[1] + t*d[1];
+  p[2] = o[2] + t*d[2];  
+  return true;
+}
+
+
+// --------------------------------------------------
+
+template <typename REAL>
+dfm2::CCylinder<REAL>::CCylinder
+(double r, const double cnt[3], const double dir[3], bool is_out){
+	cent_[0] = cnt[0];
+	cent_[1] = cnt[1];
+	cent_[2] = cnt[2];
+  dir_[0] = dir[0];
+  dir_[1] = dir[1];
+  dir_[2] = dir[2];
+	radius_ = r;
+	this->is_out_ = is_out;
+}
+
+
+// return penetration depth (inside is positive)
+template <typename REAL>
+double dfm2::CCylinder<REAL>::Projection
+(double n[3],
+ double px, double py, double pz) const // normal outward
+{
+  double dd = dir_[0]*dir_[0] + dir_[1]*dir_[1] + dir_[2]*dir_[2];
+  double pod = (px-cent_[0])*dir_[0]+(py-cent_[1])*dir_[1]+(pz-cent_[2])*dir_[2];
+  double a = pod/dd;
+  double hp[3] = { cent_[0]+a*dir_[0], cent_[1]+a*dir_[1], cent_[2]+a*dir_[2] };
+	double d[3] = { px-hp[0], py-hp[1], pz-hp[2] };
+	const double len = sqrt( d[0]*d[0]+d[1]*d[1]+d[2]*d[2] );		
+	const double invlen = 1.0/len;
+	if( !is_out_ ){
+		n[0] = -d[0]*invlen;
+		n[1] = -d[1]*invlen;		
+		n[2] = -d[2]*invlen;
+		return +len-radius_;
+	}
+	n[0] = d[0]*invlen;
+	n[1] = d[1]*invlen;		
+	n[2] = d[2]*invlen;	
+	return radius_-len;
+}
+
+template <typename REAL>
+unsigned int dfm2::CCylinder<REAL>::FindInOut(double px, double py, double pz) const
+{
+	double n[3];
+	double pd = this->Projection(n,
+                               px, py, pz);
+	if( !is_out_ ) pd *= -1.0;
+	if( pd > 0 ){ return 0; }
+	return 1;
+}
+
+template <typename REAL>
+bool dfm2::CCylinder<REAL>::IntersectionPoint
+(double p[3], 
+ const double o[3], const double d[3]) const 
+{
+  const double q[3] = { o[0]-cent_[0], o[1]-cent_[1], o[2]-cent_[2] };
+  const double a = d[0]*d[0] + d[1]*d[1] + d[2]*d[2];
+  const double b = q[0]*d[0] + q[1]*d[1] + q[2]*d[2];
+  const double c = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] - radius_*radius_;
+  const double det = b*b-a*c;
+  if( det < 0 )  return false;
+  const double t = (-b+sqrt(det))/a;
+  p[0] = o[0] + t*d[0];
+  p[1] = o[1] + t*d[1];
+  p[2] = o[2] + t*d[2];
+  return true;
+}
+
+// --------------------------------------------------------
+
+// return penetration depth (inside is positive)
+template <typename REAL>
+double dfm2::CTorus<REAL>::Projection
+(double n[3],
+ double px, double py, double pz) const // normal outward
+{
+	double dir[3] = { px-cent_[0], py-cent_[1], pz-cent_[2] };
+	const double t = dir[2];
+//	dir[0] -= t*norm_[0];
+//	dir[1] -= t*norm_[1];
+	dir[2] -= t;		
+	const double len = sqrt( dir[0]*dir[0]+dir[1]*dir[1]+dir[2]*dir[2] );
+	if( len < 1.0e-20 ){	// vertical to the center of torus
+		return radius_tube_ - radius_;
+	}
+	const double invlen = 1.0/len;
+	dir[0] *= invlen;
+	dir[1] *= invlen;		
+	dir[2] *= invlen;
+	double p[3];
+	p[0] = cent_[0]+radius_*dir[0];		
+	p[1] = cent_[1]+radius_*dir[1];		
+	p[2] = cent_[2]+radius_*dir[2];		
+	double dir2[3] = { px-p[0], py-p[1], pz-p[2] };
+	const double len2 = sqrt( dir2[0]*dir2[0]+dir2[1]*dir2[1]+dir2[2]*dir2[2] );
+	const double invlen2 = 1.0/len2;
+	n[0] = dir2[0]*invlen2;
+	n[1] = dir2[1]*invlen2;		
+	n[2] = dir2[2]*invlen2;
+	//		std::cout << len << " " << len2 << std::endl;
+	return radius_tube_-len2;
+}
+template double dfm2::CTorus<double>::Projection
+ (double n[3],
+  double px, double py, double pz) const; // normal outward
+
+// ------------------
+	
+template <typename REAL>
+unsigned int dfm2::CTorus<REAL>::FindInOut(double px, double py, double pz) const
+{
+	double n[3];
+	const double pd = this->Projection(n,
+                                     px, py, pz);
+	if( pd > 0 ){ return 0; }
+	return 1;
+}
+
+// --------------------------------------------------------------------------
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 
 // ------------------------------------------------------------------------------------------------------
 
