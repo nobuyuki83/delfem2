@@ -141,7 +141,7 @@ void SetProblem(int iprob)
                               x, y, z);
       }
     public:
-      delfem2::CSphere obj;
+      delfem2::CSphere<double> obj;
     };
     CInSphere sphere;
     sphere.obj.radius_ = 0.5;
@@ -161,7 +161,7 @@ void SetProblem(int iprob)
                               x, y, z);
       }
     public:
-      delfem2::CTorus obj;
+      delfem2::CTorus<double> obj;
     };
     CInTorus torus;
     torus.obj.radius_ = 0.5;

@@ -36,17 +36,17 @@ if(NOT USE_HEADERONLY)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
+      ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
+      ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
       )
 else()
   message("compile as headeronly library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 endif()
 
 set(INPUT_SRC
-    ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
-    ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
     ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
-    ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
-    ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/voxel.h                     ${DELFEM2_INC}/voxel.cpp
     ${DELFEM2_INC}/v23m3q.h                    ${DELFEM2_INC}/v23m3q.cpp

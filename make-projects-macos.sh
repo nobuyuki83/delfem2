@@ -151,6 +151,7 @@ cd test_cpp
 mkdir buildMakeHdronly
 cd buildMakeHdronly
 cmake -DUSE_HEADERONLY=ON ..
+make
 cd ../../
 
 cd test_cpp

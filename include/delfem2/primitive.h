@@ -24,7 +24,7 @@ namespace delfem2 {
  * @param nlong  number of subdivision in y-axis (longtitude)
  * @param nlat numbef of subdivision around the cross section of XZ plane (latitude)
  */
-void MeshTri3D_Sphere(
+DFM2_INLINE void MeshTri3D_Sphere(
     std::vector<double>& aXYZ, std::vector<unsigned int>& aTri,
     double radius,
     int nlong, int nlat);
@@ -32,7 +32,7 @@ void MeshTri3D_Sphere(
 /**
  * @details y axis is the axis of cylinder
  */
-void MeshTri3D_CylinderOpen(
+DFM2_INLINE void MeshTri3D_CylinderOpen(
     std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
     double r, double l,
     int nr, int nl);
@@ -44,24 +44,24 @@ void MeshTri3D_CylinderOpen(
  * @param nr number of division for circumference
  * @param nl number of division in axis direction
  */
-void MeshTri3D_CylinderClosed(
+DFM2_INLINE void MeshTri3D_CylinderClosed(
     std::vector<double>& aXYZ,
     std::vector<unsigned int>& aTri,
     double r, double l,
     int nr, int nl);
 
 template <typename T>
-void MeshTri3D_Cube(
+DFM2_INLINE void MeshTri3D_Cube(
     std::vector<T>& aXYZ,
     std::vector<unsigned int>& aTri,
     unsigned int n);
 
 
-void MeshTri3D_Disk(
+DFM2_INLINE void MeshTri3D_Disk(
     std::vector<double>& aXYZ, std::vector<unsigned int> &aTri,
     double r, int nr, int nth);
 
-void MeshTri3D_Icosahedron(
+DFM2_INLINE void MeshTri3D_Icosahedron(
     std::vector<double>& aXYZ,
     std::vector<unsigned int>& aTri);
 
@@ -72,13 +72,13 @@ void MeshTri3D_Icosahedron(
  * @brief triangle mesh of torus. This function is defiend for "flaot" and "double"
  */
 template <typename REAL>
-void MeshTri3_Torus(
+DFM2_INLINE void MeshTri3_Torus(
     std::vector<REAL>& aXYZ,
     std::vector<unsigned int>& aTri,
     double r, double l,
     unsigned int nr, unsigned int nl);
                               
-void SetTopoQuad_CubeVox(
+DFM2_INLINE void SetTopoQuad_CubeVox(
     std::vector<unsigned int>& aQuad);
     
 /**
@@ -86,7 +86,7 @@ void SetTopoQuad_CubeVox(
  * @details defined for "float" and "double"
  */
 template<typename REAL>
-void MeshQuad3_CubeVox(
+DFM2_INLINE void MeshQuad3_CubeVox(
     std::vector<REAL>& aXYZ,
     std::vector<unsigned int>& aQuad,
     const REAL bbmin[3],
@@ -97,7 +97,7 @@ void MeshQuad3_CubeVox(
 // --------------------------------------------------------------------------------------------------------------
 // below: 2D primitives
   
-void MeshQuad2D_Grid(
+DFM2_INLINE void MeshQuad2D_Grid(
     std::vector<double>& aXYZ,
     std::vector<unsigned int>& aQuad,
     int nx, int ny);
@@ -105,6 +105,7 @@ void MeshQuad2D_Grid(
 // -------------------------------------------------------------
 // primivive classes from here
 
+template <typename REAL>
 class CPlane: public CSDF3
 {
 public:
@@ -116,6 +117,7 @@ public:
   double origin_[3] = {0,0,0};
 };
 
+template <typename REAL>
 class CSphere: public CSDF3
 {
 public:
@@ -133,7 +135,7 @@ public:
 	bool is_out_ = true;	// true:normal points outward
 };
 
-
+template <typename REAL>
 class CCylinder: public CSDF3
 {
 public:
@@ -156,7 +158,7 @@ public:
 	bool is_out_ = true;	// true:normal points outward
 };
 
-
+template <typename REAL>
 class CTorus: public CSDF3
 {
 public:
@@ -171,6 +173,7 @@ public:
 	double radius_tube_ = 0.2;
 };
 
+template <typename REAL>
 class CBox: public CSDF3
 {
 public:
