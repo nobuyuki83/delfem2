@@ -216,7 +216,7 @@ DFM2_INLINE void dfm2::JArray_Extend
  const std::vector<unsigned int>& psup_ind0,
  const std::vector<unsigned int>& psup0)
 {
-  unsigned int np = psup_ind0.size()-1;
+  const unsigned int np = psup_ind0.size()-1;
   psup_ind1.assign(np+1, 0);
   std::vector<int> aflg(np,-1);
   for(unsigned int ip=0;ip<np;++ip){
@@ -224,14 +224,14 @@ DFM2_INLINE void dfm2::JArray_Extend
       unsigned int jp0 = psup0[ipsup];
       for(unsigned int jpsup=psup_ind0[jp0];jpsup<psup_ind0[jp0+1];++jpsup){
         unsigned int kp0 = psup0[jpsup];
-        if( aflg[kp0] == ip || kp0 == ip ){ continue; }
+        if( aflg[kp0] == (int)ip || kp0 == ip ){ continue; }
         ++psup_ind1[ip+1];
         aflg[kp0] = ip;
       }
     }
   }
   // ---------
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     psup_ind1[ip+1] += psup_ind1[ip];
   }
   psup1.resize(psup_ind1[np]);
@@ -242,7 +242,7 @@ DFM2_INLINE void dfm2::JArray_Extend
       unsigned int jp0 = psup0[ipsup];
       for(unsigned int jpsup=psup_ind0[jp0];jpsup<psup_ind0[jp0+1];++jpsup){
         unsigned int kp0 = psup0[jpsup];
-        if( aflg[kp0] == ip || kp0 == ip ){ continue; }
+        if( aflg[kp0] == (int)ip || kp0 == ip ){ continue; }
         unsigned int kpsup = psup_ind1[ip];
         ++psup_ind1[ip];
         psup1[kpsup] = kp0;

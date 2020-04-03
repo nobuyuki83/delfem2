@@ -39,13 +39,14 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mat4.h               ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/primitive.h          ${DELFEM2_INC}/primitive.cpp
+      ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
+      
       ${DELFEM2_INC}/v23m34q.h            ${DELFEM2_INC}/v23m34q.cpp
       )
 endif()
 
 set(INPUT_SRC
     ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
     ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
     ${DELFEM2_INC}/funcs.h              ${DELFEM2_INC}/funcs.cpp
     ${DELFEM2_INC}/voxel.h              ${DELFEM2_INC}/voxel.cpp

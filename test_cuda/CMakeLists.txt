@@ -11,6 +11,7 @@ get_filename_component(GTEST_DIR ${3RD_PARTY}/googletest ABSOLUTE)
 
 enable_testing()
 
+add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 add_executable(${PROJ_NAME}
     ${DELFEM2_INC}/mshmisc.h      ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/primitive.h    ${DELFEM2_INC}/primitive.cpp

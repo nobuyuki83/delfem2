@@ -133,6 +133,41 @@ static double MyDotX(
   return r;
 }
 
+/*
+static void MyMatMatX
+(double* M, // [ni, nj]
+ unsigned int ni, unsigned int nj,
+ const double*A, // [ni, nk]
+ unsigned int nk,
+ const double* B) // [nk, nj]
+{
+  for(int i=0;i<ni;++i){
+    for(int j=0;j<nj;++j){
+      M[i*nj+j] = 0.0;
+      for(int k=0;k<nk;++k){
+        M[i*nj+j] += A[i*nk+k] * B[k*nj+j];
+      }
+    }
+  }
+}
+ */
+
+static void MyMatMatTX
+ (double* M, // [ni, nj]
+  unsigned int ni, unsigned int nj,
+  const double*A, // [ni, nk]
+  unsigned int nk,
+  const double* B) // [nj, nk]
+{
+  for(int i=0;i<ni;++i){
+    for(int j=0;j<nj;++j){
+      M[i*nj+j] = 0.0;
+      for(int k=0;k<nk;++k){
+        M[i*nj+j] += A[i*nk+k] * B[j*nk+k];
+      }
+    }
+  }
+}
 
 // ------------------------------------------------------------
 
@@ -748,39 +783,7 @@ void dfm2::Rig_SensitivitySkin_BoneRotation
  }
  */
 
-static void MyMatMatX
- (double* M, // [ni, nj]
-  unsigned int ni, unsigned int nj,
-  const double*A, // [ni, nk]
-  unsigned int nk,
-  const double* B) // [nk, nj]
-{
-  for(int i=0;i<ni;++i){
-    for(int j=0;j<nj;++j){
-      M[i*nj+j] = 0.0;
-      for(int k=0;k<nk;++k){
-        M[i*nj+j] += A[i*nk+k] * B[k*nj+j];
-      }
-    }
-  }
-}
 
-static void MyMatMatTX
-(double* M, // [ni, nj]
- unsigned int ni, unsigned int nj,
- const double*A, // [ni, nk]
- unsigned int nk,
- const double* B) // [nj, nk]
-{
-  for(int i=0;i<ni;++i){
-    for(int j=0;j<nj;++j){
-      M[i*nj+j] = 0.0;
-      for(int k=0;k<nk;++k){
-        M[i*nj+j] += A[i*nk+k] * B[j*nk+k];
-      }
-    }
-  }
-}
 
 void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
 (std::vector<double>& dSkinX, // [ np, nsns ]

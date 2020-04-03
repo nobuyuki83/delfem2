@@ -1343,7 +1343,7 @@ void dfm2::opengl::DrawMeshTri3D_FaceNorm
  const std::vector<unsigned int>& aTriNrm)
 {
   const unsigned int nTri = aTriVtx.size()/3;
-  assert( (int)aTriNrm.size() == nTri*3 );
+  assert( aTriNrm.size() == nTri*3 );
   ::glBegin(GL_TRIANGLES);
   for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int iv1 = aTriVtx[itri*3+0];

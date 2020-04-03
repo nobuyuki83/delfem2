@@ -20,7 +20,7 @@
 
 // gl related includes
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/tex_gl.h"
 #include "delfem2/opengl/glold_funcs.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

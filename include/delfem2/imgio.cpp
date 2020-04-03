@@ -93,7 +93,7 @@ int dfm2::LoadImage_PPMAscii(
   image.resize(width*height*3);
   const auto buffSize = (unsigned int)(4*3*width*1.2);  // ÇøÇÂÇ¡Ç∆ó]ï™ñ⁄Ç…Ç∆Ç¡ÇƒÇ®Ç≠
   std::vector<char> buff(buffSize);
-  int icnt = 0;
+  unsigned int icnt = 0;
   while (icnt<width*height*3) {
     char* cres = fgets(buff.data(),buffSize,fp);
     if( cres == nullptr ){ return -1; }

@@ -5,11 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef tex_h
-#define tex_h
+#ifndef DFM2_TEX_GL_H
+#define DFM2_TEX_GL_H
 
 #include <vector>
 #include <string>
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 namespace opengl {
@@ -27,9 +28,15 @@ public:
     this->w = 0;
     this->h = 0;
     aRGB.clear();
+    min_x = min_y = 0;
+    max_x = max_y = 0;
   }
 
   CTexture(int w, int h, const unsigned char *pD, const std::string &typeData) {
+    this->Initialize(w,h, pD, typeData);
+  }
+  
+  void Initialize(int w, int h, const unsigned char *pD, const std::string &typeData){
     this->h = h;
     this->w = w;
     this->aRGB.assign(pD, pD + h * w * 3);
@@ -48,9 +55,9 @@ public:
     this->max_y = (double) h;
   }
 
-  void LoadTex();
+  void InitGL();
 
-  void Draw();
+  void Draw_oldGL();
 
   std::vector<double> MinMaxXYZ() const {
     std::vector<double> m(6, 0.0);
@@ -142,5 +149,9 @@ public:
 
 }
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/tex_gl.cpp"
+#endif
 
 #endif
