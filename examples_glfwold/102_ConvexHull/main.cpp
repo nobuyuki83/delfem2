@@ -1,9 +1,9 @@
 #include <vector>
 #include <cstdlib>
 #include "delfem2/vec3.h"
+#include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/primitive.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glold_funcs.h"

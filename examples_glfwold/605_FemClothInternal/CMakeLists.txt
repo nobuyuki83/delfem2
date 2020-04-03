@@ -38,12 +38,13 @@ IF(NOT USE_HEADERONLY)
   set(SRC_DFM2
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+        ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp
+
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp
   ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/emat.h                    ${DELFEM2_INC}/emat.cpp
   ${DELFEM2_INC}/mats.h                    ${DELFEM2_INC}/mats.cpp

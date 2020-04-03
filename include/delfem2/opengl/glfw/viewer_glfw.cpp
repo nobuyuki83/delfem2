@@ -160,12 +160,17 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL()
   
   float mP[16], mMV[16];
   nav.Matrix_MVP(mMV, mP, this->window);
+  
+  // glnew will skip compilling following section
+#ifdef GL_PROJECTION
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMultMatrixf(mP);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glMultMatrixf(mMV);
+#endif
+  
 }
 
 void delfem2::opengl::CViewer_GLFW::DrawEnd_oldGL()

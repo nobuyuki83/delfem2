@@ -14,9 +14,16 @@ make
 cd ../..
 
 cd examples_glfwnew
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake --build .
+cd ../../
+
+cd examples_glfwnew
+mkdir buildXcodeStatic
+cd buildXcodeStatic
+cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 cmake --build .
 cd ../../
 

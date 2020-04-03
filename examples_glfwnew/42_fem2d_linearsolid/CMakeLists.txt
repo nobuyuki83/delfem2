@@ -30,39 +30,34 @@ set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 IF(NOT USE_HEADERONLY)
-  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
-      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/vec2.h                     ${DELFEM2_INC}/vec2.cpp
+      ${DELFEM2_INC}/color.h                    ${DELFEM2_INC}/color.cpp
+      ${DELFEM2_INC}/quat.h                     ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
       )
-ELSE()
-  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                  ${DELFEM2_INC}/vec2.cpp     
-  ${DELFEM2_INC}/camera.h                ${DELFEM2_INC}/camera.cpp
-  ${DELFEM2_INC}/color.h                 ${DELFEM2_INC}/color.cpp           
-  ${DELFEM2_INC}/mshmisc.h               ${DELFEM2_INC}/mshmisc.cpp              
-  ${DELFEM2_INC}/mshtopo.h               ${DELFEM2_INC}/mshtopo.cpp        
-  ${DELFEM2_INC}/dtri.h                  ${DELFEM2_INC}/dtri.cpp         
-  ${DELFEM2_INC}/mats.h                  ${DELFEM2_INC}/mats.cpp    
-  ${DELFEM2_INC}/emat.h                  ${DELFEM2_INC}/emat.cpp
-  ${DELFEM2_INC}/vecxitrsol.h            ${DELFEM2_INC}/vecxitrsol.cpp
-        
-  ${DELFEM2_INC}/dtri_v2.h               ${DELFEM2_INC}/dtri_v2.cpp
-  ${DELFEM2_INC}/ilu_mats.h              ${DELFEM2_INC}/ilu_mats.cpp       
-  ${DELFEM2_INC}/fem_emats.h             ${DELFEM2_INC}/fem_emats.cpp                      
-
-  ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
-  ${DELFEM2_INC}/opengl/glnew_funcs.h    ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-  ${DELFEM2_INC}/opengl/glnew_mshcolor.h ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
-
-  ${3RD_PARTY}/glad4/include/glad/glad.h
-  ${3RD_PARTY}/glad4/src/glad.c
+  ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp
+  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp
+  ${DELFEM2_INC}/mats.h                    ${DELFEM2_INC}/mats.cpp
+  ${DELFEM2_INC}/emat.h                    ${DELFEM2_INC}/emat.cpp
+  ${DELFEM2_INC}/vecxitrsol.h              ${DELFEM2_INC}/vecxitrsol.cpp
+          
+  ${DELFEM2_INC}/dtri_v2.h                 ${DELFEM2_INC}/dtri_v2.cpp
+  ${DELFEM2_INC}/ilu_mats.h                ${DELFEM2_INC}/ilu_mats.cpp
+  ${DELFEM2_INC}/fem_emats.h               ${DELFEM2_INC}/fem_emats.cpp
+  
+  ${DELFEM2_INC}/opengl/gl_funcs.h         ${DELFEM2_INC}/opengl/gl_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_funcs.h      ${DELFEM2_INC}/opengl/glnew_funcs.cpp
+  ${DELFEM2_INC}/opengl/glnew_mshcolor.h   ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
+  
+  ${3RD_PARTY}/glad4/include/glad/glad.h   ${3RD_PARTY}/glad4/src/glad.c
   ${SRC_DFM2}
   main.cpp
 )

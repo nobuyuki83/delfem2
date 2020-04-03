@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(examples_glfwnew)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+if(USE_HEADERONLY)
+  message("$$$$$$$$$$$$$$$$$$$$$")
+  message("generate project as HEADER-ONLY library:  USE_HEADERONLY=${USE_HEADERONLY}")
+  project(examples_glfnew_hdronly)
+ELSE()
+  message("$$$$$$$$$$$$$$$$$$$$$")
+  message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
+  project(examples_glfwnew_static)
+ENDIF()
 
 add_subdirectory(00_openwin)
 add_subdirectory(01_drawrect)

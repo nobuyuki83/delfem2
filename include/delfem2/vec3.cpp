@@ -20,7 +20,42 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------------------------
 
-static bool MyIsnan(double x) { return x!=x; }
+DFM2_INLINE bool MyIsnan(double x) { return x!=x; }
+
+// 三次関数を評価する関数
+DFM2_INLINE double EvaluateCubic
+ (double r2, // 入力の値
+  double k0, double k1, double k2, double k3) // 三次関数の係数
+{
+  return k0 + k1*r2 + k2*r2*r2 + k3*r2*r2*r2;
+}
+
+// 二分法における三次関数の根を探す範囲を狭める関数
+DFM2_INLINE void BisectRangeCubicRoot
+ (int& icnt,                  // (in out)何回幅を狭めたかというカウンタ
+  double& r0, double& r1, // (in,out)入力の範囲から階を探して、狭められた後の範囲を返す
+  double v0, double v1, // (in)入力の範囲の両端における値
+  double k0, double k1, double k2, double k3) // 三次関数の係数
+{
+  icnt--;
+  if( icnt <= 0 ) return;
+  double r2 = 0.5*(r0+r1); // r2はr0とr1の中点
+  double v2 = EvaluateCubic(r2, k0,k1,k2,k3); // v2はr2における値
+  if( v0*v2 < 0 ){ r1 = r2; } // r0とr2の間で符号が変化する
+  else{            r0 = r2; } // r1とr2の間で符号が変化する
+  BisectRangeCubicRoot(icnt,r0,r1,v0,v2,k0,k1,k2,k3); // r0とr1の間でさらに範囲を狭める
+}
+
+// 三次関数の根を探す関数
+DFM2_INLINE double FindRootCubic
+ (double r0, double r1,
+  double v0, double v1,
+  double k0, double k1, double k2, double k3)
+{
+  int icnt=15; // １５回範囲を狭める
+  BisectRangeCubicRoot(icnt, r0,r1, v0,v1, k0,k1,k2,k3);
+  return 0.5*(r0+r1);
+}
 
 
 namespace delfem2 {
@@ -46,6 +81,17 @@ DFM2_INLINE void MyQuatVec
   vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
+
+
+DFM2_INLINE void MyMat4Vec3
+ (double vo[3],
+  const double M[16], const double vi[3])
+{
+  vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
+  vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
+  vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
+}
+
 
 }
 }
@@ -109,15 +155,6 @@ static void MyMatVec3
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
-}
-
-static void MyMat4Vec3
-(double vo[3],
- const double M[16], const double vi[3])
-{
-  vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
-  vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
-  vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
 }
 
 
@@ -572,7 +609,9 @@ template <typename T>
 double operator* (const CVec3<T>& lhs, const CVec3<T>& rhs){
   return Dot(lhs,rhs);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template double operator* (const CVec3d& lhs, const CVec3d& rhs);
+#endif
 
 
 //! divide by real number
@@ -582,7 +621,9 @@ CVec3<T> operator/ (const CVec3<T>& vec, double d){
   temp /= d;
   return temp;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3d operator/ (const CVec3d& vec, double d);
+#endif
   
 // ----------------
 
@@ -591,7 +632,9 @@ template <typename T>
 CVec3<T> operator^ (const CVec3<T>& lhs, const CVec3<T>& rhs){
   return Cross(lhs,rhs);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CVec3<double> operator^ (const CVec3<double>& lhs, const CVec3<double>& rhs);
+#endif
   
 // ------------------
 
@@ -602,7 +645,9 @@ std::ostream &operator<<(std::ostream &output, const CVec3<T>& v)
   output << v.p[0] << " " << v.p[1] << " " << v.p[2];
   return output;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template std::ostream &operator<<(std::ostream &output, const CVec3d& v);
+#endif
   
 // ---------------------
 
@@ -612,7 +657,9 @@ std::istream &operator>>(std::istream &input, CVec3<T>& v)
   input >> v.p[0] >> v.p[1] >> v.p[2];
   return input;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template std::istream &operator>>(std::istream &input, CVec3d& v);
+#endif
   
 // ----------------------
 
@@ -644,7 +691,9 @@ dfm2::CVec3<T> dfm2::Mat3Vec(const double mat[9], const CVec3<T>& v){
   MyMatVec3(u.p, mat, v.p);
   return u;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3<double> dfm2::Mat3Vec(const double mat[9], const CVec3<double>& v);
+#endif
   
 // -------------------------
 
@@ -652,10 +701,12 @@ template <typename T>
 dfm2::CVec3<T> dfm2::Mat4Vec(const double mat[16], const CVec3<T>& v)
 {
   CVec3<T> u;
-  MyMat4Vec3(u.p, mat, v.p);
+  ::dfm2::vec3::MyMat4Vec3(u.p, mat, v.p);
   return u;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3d dfm2::Mat4Vec(const double mat[16], const CVec3d& v);
+#endif
   
 // ------------------------
 
@@ -683,8 +734,10 @@ dfm2::CVec3<REAL> dfm2::QuatConjVec
                 quat,v0.p);
   return CVec3<REAL>(v1a[0],v1a[1],v1a[2]);
 }
+#ifdef DFM2_STATIC_LIBRARY
 //template dfm2::CVec3f dfm2::QuatConjVec(const float quat[4], const CVec3f& v0);
 template dfm2::CVec3d dfm2::QuatConjVec(const double quat[4], const CVec3d& v0);
+#endif
 
 
 // ------------------------------------------------------------
@@ -727,7 +780,9 @@ void dfm2::CVec3<T>::SetNormalizedVector()
   p[1] *= invmag;
   p[2] *= invmag;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::CVec3<double>::SetNormalizedVector();
+#endif
   
 // ----------------------------
 
@@ -738,7 +793,9 @@ void dfm2::CVec3<T>::SetZero()
   p[1] = 0.0;
   p[2] = 0.0;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::CVec3<double>::SetZero();
+#endif
 
   
 // -----------------------
@@ -750,7 +807,9 @@ void dfm2::CVec3<T>::SetRandom()
   p[1] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
   p[2] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::CVec3<double>::SetRandom();
+#endif
   
 // --------------------------------
 
@@ -794,9 +853,11 @@ void dfm2::GetVertical2Vector
     vec_y = dfm2::Cross(vec_n,vec_x);
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::GetVertical2Vector(const CVec3d& vec_n,
                                        CVec3d& vec_x,
                                        CVec3d& vec_y);
+#endif
 
 // --------------------
     
@@ -1043,7 +1104,11 @@ dfm2::CVec3<T> dfm2::Nearest_Origin_Tri
   }
   return p_min;
 }
-template dfm2::CVec3d dfm2::Nearest_Origin_Tri(double& r0, double& r1, const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
+#ifdef DFM2_STATIC_LIBRARY
+template dfm2::CVec3d dfm2::Nearest_Origin_Tri
+  (double& r0, double& r1,
+   const CVec3d& q0, const CVec3d& q1, const CVec3d& q2);
+#endif
   
 // -------------------------------------------
 
@@ -1576,8 +1641,12 @@ double dfm2::DistanceFaceVertex
   CVec3<T> pw = w0*p0 + w1*p1 + w2*p2;
   return (pw-p3).Length();
 }
-template double dfm2::DistanceFaceVertex(const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3,
-                                         double& w0, double& w1);
+#ifdef DFM2_STATIC_LIBRARY
+template double dfm2::DistanceFaceVertex
+  (const CVec3d& p0, const CVec3d& p1,
+   const CVec3d& p2, const CVec3d& p3,
+   double& w0, double& w1);
+#endif
 
 //　distance EE
 template <typename T>
@@ -1624,9 +1693,10 @@ double dfm2::DistanceEdgeEdge
   return (pc-qc).Length();
 }
 #ifdef DFM2_STATIC_LIBRARY
-template double dfm2::DistanceEdgeEdge(const CVec3d& p0, const CVec3d& p1,
-                                       const CVec3d& q0, const CVec3d& q1,
-                                       double& ratio_p, double& ratio_q);
+template double dfm2::DistanceEdgeEdge
+  (const CVec3d& p0, const CVec3d& p1,
+   const CVec3d& q0, const CVec3d& q1,
+   double& ratio_p, double& ratio_q);
 #endif
 
 // EEの距離が所定の距離以下にあるかどうか
@@ -1661,51 +1731,17 @@ bool dfm2::IsContact_EE_Proximity
   return (pm - qm).Length() <= delta;
 }
 #ifdef DFM2_STATIC_LIBRARY
-template bool dfm2::IsContact_EE_Proximity(int ino0,
-                                           int ino1,
-                                           int jno0,
-                                           int jno1,
-                                           const CVec3d& p0,
-                                           const CVec3d& p1,
-                                           const CVec3d& q0,
-                                           const CVec3d& q1,
-                                           const double delta);
+template bool dfm2::IsContact_EE_Proximity
+  (int ino0,
+   int ino1,
+   int jno0,
+   int jno1,
+   const CVec3d& p0,
+   const CVec3d& p1,
+   const CVec3d& q0,
+   const CVec3d& q1,
+   const double delta);
 #endif
-
-// 三次関数を評価する関数
-inline double EvaluateCubic
-(double r2, // 入力の値
- double k0, double k1, double k2, double k3) // 三次関数の係数
-{
-  return k0 + k1*r2 + k2*r2*r2 + k3*r2*r2*r2;
-}
-
-// 二分法における三次関数の根を探す範囲を狭める関数
-static void BisectRangeCubicRoot
-(int& icnt,                  // (in out)何回幅を狭めたかというカウンタ
- double& r0, double& r1, // (in,out)入力の範囲から階を探して、狭められた後の範囲を返す
- double v0, double v1, // (in)入力の範囲の両端における値
- double k0, double k1, double k2, double k3) // 三次関数の係数
-{
-  icnt--;
-  if( icnt <= 0 ) return;
-  double r2 = 0.5*(r0+r1); // r2はr0とr1の中点
-  double v2 = EvaluateCubic(r2, k0,k1,k2,k3); // v2はr2における値
-  if( v0*v2 < 0 ){ r1 = r2; } // r0とr2の間で符号が変化する
-  else{            r0 = r2; } // r1とr2の間で符号が変化する
-  BisectRangeCubicRoot(icnt,r0,r1,v0,v2,k0,k1,k2,k3); // r0とr1の間でさらに範囲を狭める
-}
-
-// 三次関数の根を探す関数
-static double FindRootCubic
-(double r0, double r1,
- double v0, double v1,
- double k0, double k1, double k2, double k3)
-{
-  int icnt=15; // １５回範囲を狭める
-  BisectRangeCubicRoot(icnt, r0,r1, v0,v1, k0,k1,k2,k3);
-  return 0.5*(r0+r1);
-}
 
 // ４つの点が同一平面上にならぶような補間係数を探す
 template <typename T>
@@ -1833,18 +1869,21 @@ bool dfm2::IsContact_FV_CCD2
   if( w2 < 0 || w2 > 1 ) return false;
   return true;
 }
-template bool dfm2::IsContact_FV_CCD2(int ino0,
-                                      int ino1,
-                                      int ino2,
-                                      int ino3,
-                                      const CVec3d& p0,
-                                      const CVec3d& p1,
-                                      const CVec3d& p2,
-                                      const CVec3d& p3,
-                                      const CVec3d& q0,
-                                      const CVec3d& q1,
-                                      const CVec3d& q2,
-                                      const CVec3d& q3);
+#ifdef DFM2_STATIC_LIBRARY
+template bool dfm2::IsContact_FV_CCD2
+  (int ino0,
+   int ino1,
+   int ino2,
+   int ino3,
+   const CVec3d& p0,
+   const CVec3d& p1,
+   const CVec3d& p2,
+   const CVec3d& p3,
+   const CVec3d& q0,
+   const CVec3d& q1,
+   const CVec3d& q2,
+   const CVec3d& q3);
+#endif
   
 
 template <typename T>
@@ -2451,10 +2490,12 @@ dfm2::CVec3<T> dfm2::CircumCenter
   vec1.p[2] = base[0][2]*u[0]+base[1][2]*u[1]+base[2][2]*u[2] + ipo0.p[2];
   return vec1;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template dfm2::CVec3d dfm2::CircumCenter(const CVec3d& ipo0,
                                          const CVec3d& ipo1,
                                          const CVec3d& ipo2,
                                          const CVec3d& ipo3);
+#endif
   
   
 // ----------------------
@@ -2510,10 +2551,12 @@ void dfm2::MeanValueCoordinate
   w[1] = (t1-c0*t2-c2*t0)/(d1*sin(t2)*s0);
   w[2] = (t2-c1*t0-c0*t1)/(d2*sin(t0)*s1);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::MeanValueCoordinate(double w[3],
                                         const CVec3d& v0,
                                         const CVec3d& v1,
                                         const CVec3d& v2);
+#endif
 
 // --------------------------------------------------
 
@@ -2759,7 +2802,11 @@ double dfm2::Volume_Tet
 {
   return Volume_Tet(aPoint[iv1],aPoint[iv2],aPoint[iv3],aPoint[iv4]);
 }
-template double dfm2::Volume_Tet(int iv1, int iv2, int iv3, int iv4,  const std::vector<CVec3d>& aPoint);
+#ifdef DFM2_STATIC_LIBRARY
+template double dfm2::Volume_Tet
+  (int iv1, int iv2, int iv3, int iv4,
+   const std::vector<CVec3d>& aPoint);
+#endif
 
 // -------------------------------------
 
@@ -3015,6 +3062,8 @@ void dfm2::ConvexHull
     aTriSur = aTriSur1;
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::ConvexHull(std::vector<int>& aTri,
                                const std::vector<CVec3d>& aXYZ);
+#endif
 

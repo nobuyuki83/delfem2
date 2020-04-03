@@ -27,8 +27,10 @@ DFM2_INLINE void dfm2::Normalize_Quat(T q[])
   q[2] *= invlen;
   q[3] *= invlen;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Normalize_Quat(float q[]);
 template void dfm2::Normalize_Quat(double q[]);
+#endif
 
 // -----------------------------------
 
@@ -39,8 +41,10 @@ DFM2_INLINE void dfm2::Quat_Identity(T q[4]){
   q[2] = 0;
   q[3] = 0;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Quat_Identity(float q[4]);
 template void dfm2::Quat_Identity(double q[4]);
+#endif
 
 // ----------------------------------
 
@@ -69,8 +73,10 @@ DFM2_INLINE void dfm2::QuatVec(
 //  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
 //  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::QuatVec(float vo[3], const float q[4], const float vi[3]);
 template void dfm2::QuatVec(double vo[3], const double q[4], const double vi[3]);
+#endif
 
 // -------------------------------------
 
@@ -86,8 +92,10 @@ DFM2_INLINE void dfm2::QuatQuat(
   r[2] = p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1];
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::QuatQuat(float r[], const float p[], const float q[]);
 template void dfm2::QuatQuat(double r[], const double p[], const double q[]);
+#endif
 
 
 // ----------------------------------------
@@ -128,8 +136,10 @@ DFM2_INLINE void dfm2::Copy_Quat(
   r[2] = p[2];
   r[3] = p[3];
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::Copy_Quat(float r[], const float p[]);
 template void dfm2::Copy_Quat(double r[], const double p[]);
+#endif
 
 // -------------------------
 
@@ -218,8 +228,8 @@ CQuat::CQuat(const CVector3D& a_vector, const CVector3D& b_vector){
 // --------------------------------------------------------------------------------------------
 // CQuat from here
 
-template class dfm2::CQuat<double>;
-template class dfm2::CQuat<float>;
+//template class dfm2::CQuat<double>;
+//template class dfm2::CQuat<float>;
 
 namespace delfem2{
   
@@ -231,8 +241,10 @@ CQuat<T> operator + (const CQuat<T>& lhs, const CQuat<T>& rhs)
                         lhs.q[2]+rhs.q[2],
                         lhs.q[3]+rhs.q[3]);
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CQuat<double> operator + (const CQuat<double>& lhs, const CQuat<double>& rhs);
 template CQuat<float> operator + (const CQuat<float>& lhs, const CQuat<float>& rhs);
+#endif
   
 
 template <typename T>
@@ -242,8 +254,10 @@ CQuat<T> operator * (const CQuat<T>& lhs, const CQuat<T>& rhs)
   QuatQuat(q.q, lhs.q, rhs.q);
   return q;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template CQuat<double> operator * (const CQuat<double>& lhs, const CQuat<double>& rhs);
 template CQuat<float> operator * (const CQuat<float>& lhs, const CQuat<float>& rhs);
+#endif
   
 } // end namespace delfem2
 

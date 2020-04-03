@@ -18,7 +18,7 @@ namespace dfm2 = delfem2;
 
 // ---------------------------------------------
 
-void dfm2::JArray_Print
+DFM2_INLINE void dfm2::JArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
 {
@@ -33,7 +33,7 @@ void dfm2::JArray_Print
   }
 }
 
-void dfm2::JArray_Sort
+DFM2_INLINE void dfm2::JArray_Sort
 (const std::vector<unsigned int>& index,
  std::vector<unsigned int>& array)
 {
@@ -57,7 +57,7 @@ void dfm2::JArray_Sort
   }
 }
 
-void dfm2::JArray_Sort(
+DFM2_INLINE void dfm2::JArray_Sort(
     const unsigned int* index,
     const unsigned int size,
     unsigned int* array)
@@ -82,7 +82,7 @@ void dfm2::JArray_Sort(
   }
 }
 
-void dfm2::JArray_AddDiagonal
+DFM2_INLINE void dfm2::JArray_AddDiagonal
 (std::vector<unsigned int> &psup_ind1,
  std::vector<unsigned int> &psup1,
  const unsigned int *psup_ind0, int npsup_ind0,
@@ -131,7 +131,7 @@ void dfm2::JArray_AddDiagonal
 }
 
 // in the edge ip -> jp, it holds (ip < jp)
-void dfm2::JArrayEdgeUnidir_PointSurPoint
+DFM2_INLINE void dfm2::JArrayEdgeUnidir_PointSurPoint
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
  //
@@ -171,7 +171,7 @@ void dfm2::JArrayEdgeUnidir_PointSurPoint
   edge_ind[0] = 0;
 }
 
-void dfm2::JArray_ElSuP_MeshElem
+DFM2_INLINE void dfm2::JArray_ElSuP_MeshElem
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ----------
@@ -210,7 +210,7 @@ void dfm2::JArray_ElSuP_MeshElem
 /**
  * @details compute 2-ring neighborhood from 1-ring neighborhood
  */
-void dfm2::JArray_Extend
+DFM2_INLINE void dfm2::JArray_Extend
 (std::vector<unsigned int>& psup_ind1,
  std::vector<unsigned int>& psup1,
  const std::vector<unsigned int>& psup_ind0,
@@ -260,7 +260,7 @@ void dfm2::JArray_Extend
 // -----------------------------------------------------------------
 // Elem
 
-void dfm2::ElemQuad_DihedralTri
+DFM2_INLINE void dfm2::ElemQuad_DihedralTri
  (std::vector<unsigned int>& aQuad,
  const unsigned int* aTri, int nTri,
  int np)
@@ -292,7 +292,7 @@ void dfm2::ElemQuad_DihedralTri
 
 // ---------------------------------
 
-void dfm2::convert2Tri_Quad
+DFM2_INLINE void dfm2::convert2Tri_Quad
 (std::vector<unsigned int>& aTri,
  const std::vector<unsigned int>& aQuad)
 {
@@ -308,7 +308,7 @@ void dfm2::convert2Tri_Quad
   }
 }
 
-void dfm2::Convert2Tri_MeshMix
+DFM2_INLINE void dfm2::Convert2Tri_MeshMix
 (std::vector<unsigned int>& aTri,
  //
  const std::vector<unsigned int>& aElemInd,
@@ -333,7 +333,7 @@ void dfm2::Convert2Tri_MeshMix
   }
 }
 
-void dfm2::FlipElement_Tri(std::vector<unsigned int>& aTri)
+DFM2_INLINE void dfm2::FlipElement_Tri(std::vector<unsigned int>& aTri)
 {
   for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     //    int i0 = aTri[itri*3+0];
@@ -344,7 +344,7 @@ void dfm2::FlipElement_Tri(std::vector<unsigned int>& aTri)
   }
 }
 
-void dfm2::FlipElement_MeshMix
+DFM2_INLINE void dfm2::FlipElement_MeshMix
 (std::vector<int>& aElem_Flip,
  // ----------
  const std::vector<unsigned int>& aElemInd,
@@ -368,7 +368,7 @@ void dfm2::FlipElement_MeshMix
 
 // -------------------------------------
 
-void dfm2::AddElement
+DFM2_INLINE void dfm2::AddElement
 (const dfm2::MESHELEM_TYPE& femelem_type,
  const std::vector<int>& aElemIn,
  //
@@ -394,7 +394,7 @@ void dfm2::AddElement
 // --------------------------------------
 
 
-void dfm2::JArray_ElSuP_MeshTri
+DFM2_INLINE void dfm2::JArray_ElSuP_MeshTri
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // --
@@ -405,7 +405,7 @@ void dfm2::JArray_ElSuP_MeshTri
                            aTri.data(), aTri.size()/3, 3, nXYZ);
 }
 
-void dfm2::JArray_ElSuP_MeshMix
+DFM2_INLINE void dfm2::JArray_ElSuP_MeshMix
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ---
@@ -444,7 +444,7 @@ void dfm2::JArray_ElSuP_MeshMix
 
 // ----------------------------------------------------------------------------------------------------------
 
-void dfm2::ElSuEl_MeshElem
+DFM2_INLINE void dfm2::ElSuEl_MeshElem
 (std::vector<int>& aElSurRel,
  const unsigned int* aEl, unsigned int nEl, int nNoEl,
  const std::vector<unsigned int> &elsup_ind,
@@ -518,7 +518,7 @@ void makeSurroundingRelationship
 }
  */
 
-void dfm2::ElSuEl_MeshElem
+DFM2_INLINE void dfm2::ElSuEl_MeshElem
 (std::vector<int>& aElemSurRel,
  const unsigned int* aElem, unsigned int nElem,
  dfm2::MESHELEM_TYPE type,
@@ -537,7 +537,7 @@ void dfm2::ElSuEl_MeshElem
 }
 
 
-void dfm2::ElSuEl_MeshMix
+DFM2_INLINE void dfm2::ElSuEl_MeshMix
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  const std::vector<unsigned int>& aElemInd,
@@ -554,7 +554,7 @@ void dfm2::ElSuEl_MeshMix
                               elsup_ind,elsup);
 }
 
-void dfm2::ElSuEl_MeshMix
+DFM2_INLINE void dfm2::ElSuEl_MeshMix
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  //
@@ -622,7 +622,7 @@ void dfm2::ElSuEl_MeshMix
   }
 }
 
-void dfm2::Boundary_MeshMix
+DFM2_INLINE void dfm2::Boundary_MeshMix
 (std::vector<unsigned int>& aElemInd_Bound,
  std::vector<unsigned int>& aElem_Bound,
  std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
@@ -664,7 +664,7 @@ void dfm2::Boundary_MeshMix
 
 // -------------------------------------------------------------------------
 
-void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
+DFM2_INLINE void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int>& psup_ind,
     std::vector<unsigned int>& psup,
     //
@@ -716,7 +716,7 @@ void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
   psup_ind[0] = 0;
 }
 
-void dfm2::JArray_PSuP_MeshElem
+DFM2_INLINE void dfm2::JArray_PSuP_MeshElem
 (std::vector<unsigned int>& psup_ind,
  std::vector<unsigned int>& psup,
  //
@@ -732,7 +732,7 @@ void dfm2::JArray_PSuP_MeshElem
                           pElem, elsup_ind,elsup, nPoEl, nPo);
 }
 
-void dfm2::makeOneRingNeighborhood_TriFan
+DFM2_INLINE void dfm2::makeOneRingNeighborhood_TriFan
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  // ----------------------
@@ -776,7 +776,7 @@ void dfm2::makeOneRingNeighborhood_TriFan
   }
 }
 
-void dfm2::JArrayEdge_MeshElem
+DFM2_INLINE void dfm2::JArrayEdge_MeshElem
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
  //
@@ -818,7 +818,7 @@ void dfm2::JArrayEdge_MeshElem
 }
 
 
-void dfm2::MeshLine_JArrayEdge
+DFM2_INLINE void dfm2::MeshLine_JArrayEdge
 (std::vector<unsigned int>& aLine,
  //
  const std::vector<unsigned int> &psup_ind,
@@ -835,7 +835,7 @@ void dfm2::MeshLine_JArrayEdge
   }
 }
 
-void dfm2::MeshLine_MeshElem
+DFM2_INLINE void dfm2::MeshLine_MeshElem
 (std::vector<unsigned int>& aLine,
  const unsigned int* aElm0,
  unsigned int nElem,
@@ -858,7 +858,7 @@ void dfm2::MeshLine_MeshElem
 
 // -----------------------------------------
 
-void dfm2::JArray_AddMasterSlavePattern
+DFM2_INLINE void dfm2::JArray_AddMasterSlavePattern
 (std::vector<unsigned int> &index,
  std::vector<unsigned int> &array,
  const int* aMSFlag,
@@ -976,7 +976,7 @@ void dfm2::JArray_AddMasterSlavePattern
 
 // ---------------------------------------
 
-void dfm2::MarkConnectedElements
+DFM2_INLINE void dfm2::MarkConnectedElements
 (std::vector<int>& aIndGroup,
  int itri_ker,
  int igroup,
@@ -1000,7 +1000,7 @@ void dfm2::MarkConnectedElements
   }
 }
 
-void dfm2::MarkConnectedElements
+DFM2_INLINE void dfm2::MarkConnectedElements
 (std::vector<int>& aIndGroup,
  unsigned int itri_ker,
  int igroup,
@@ -1026,7 +1026,7 @@ void dfm2::MarkConnectedElements
   }
 }
 
-void dfm2::MakeGroupElem
+DFM2_INLINE void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  const std::vector<int>& aTri,
@@ -1049,7 +1049,7 @@ void dfm2::MakeGroupElem
   ngroup = igroup+1;
 }
 
-void dfm2::MakeGroupElem_Tri
+DFM2_INLINE void dfm2::MakeGroupElem_Tri
 (int& ngroup,
  std::vector<int>& aIndGroup,
  const std::vector<int>& aTri,
@@ -1059,7 +1059,7 @@ void dfm2::MakeGroupElem_Tri
                 aTri,aTriSurRel,3,3);
 }
 
-void dfm2::MakeGroupElem
+DFM2_INLINE void dfm2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  // -----------
@@ -1088,7 +1088,7 @@ void dfm2::MakeGroupElem
 }
 
 
-void dfm2::MakeGroupElem_MeshMix
+DFM2_INLINE void dfm2::MakeGroupElem_MeshMix
 (int& ngroup,
  std::vector<int>& aIndGroup,
  //
@@ -1108,7 +1108,7 @@ void dfm2::MakeGroupElem_MeshMix
                 aElemInd,aElem,aElemFaceInd,aElemFaceRel);
 }
 
-void dfm2::ClipGroup_MeshMix
+DFM2_INLINE void dfm2::ClipGroup_MeshMix
  (std::vector<unsigned int>& aElemInd1,
   std::vector<unsigned int>& aElem1,
   std::vector<dfm2::MESHELEM_TYPE>& aElemType1,
@@ -1144,7 +1144,7 @@ void dfm2::ClipGroup_MeshMix
 
 // ----------------------------------------------------
 
-int dfm2::findEdge
+DFM2_INLINE int dfm2::findEdge
 (unsigned int ip0, unsigned int ip1,
  const std::vector<unsigned int> &psup_ind,
  const std::vector<unsigned int> &psup)
@@ -1164,7 +1164,7 @@ int dfm2::findEdge
   return -1;
 }
 
-int dfm2::findFace(
+DFM2_INLINE int dfm2::findFace(
     unsigned int ip0,
     unsigned int ip1,
     unsigned int ip2,
@@ -1190,7 +1190,7 @@ int dfm2::findFace(
 }
 
 // new points is in the order of [old points], [edge points], [face points]
-void dfm2::SubdivTopo_MeshQuad
+DFM2_INLINE void dfm2::SubdivTopo_MeshQuad
 (std::vector<unsigned int>& aQuad1,
  std::vector<unsigned int> &psup_ind,
  std::vector<unsigned int> &psup,
@@ -1258,7 +1258,7 @@ void dfm2::SubdivTopo_MeshQuad
 
 
 // new points is in the order of [old points], [edge points]
-void dfm2::SubdivTopo_MeshTet
+DFM2_INLINE void dfm2::SubdivTopo_MeshTet
 (std::vector<unsigned int>& aTet1,
  std::vector<unsigned int> &psup_ind,
  std::vector<unsigned int> &psup,

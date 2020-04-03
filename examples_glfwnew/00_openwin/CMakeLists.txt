@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 # compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ##########################################
 

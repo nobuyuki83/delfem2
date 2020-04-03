@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
 option(EMSCRIPTEN "Use Emscripten:" OFF)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ####################################
 
@@ -27,24 +27,22 @@ set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
 
 IF(NOT USE_HEADERONLY)
-  message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
+      ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
+      ${DELFEM2_INC}/color.h                   ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp
+      
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
       )
-ELSE()
-  message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
-  ${DELFEM2_INC}/color.h                   ${DELFEM2_INC}/color.cpp           
   ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp              
-  ${DELFEM2_INC}/mshtopo.h                 ${DELFEM2_INC}/mshtopo.cpp        
-  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp         
+  ${DELFEM2_INC}/dtri.h                    ${DELFEM2_INC}/dtri.cpp
   ${DELFEM2_INC}/mats.h                    ${DELFEM2_INC}/mats.cpp    
   ${DELFEM2_INC}/emat.h                    ${DELFEM2_INC}/emat.cpp
   ${DELFEM2_INC}/vecxitrsol.h              ${DELFEM2_INC}/vecxitrsol.cpp     
