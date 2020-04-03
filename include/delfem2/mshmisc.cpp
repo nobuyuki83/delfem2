@@ -332,7 +332,7 @@ void dfm2::GetCenterWidthGroup
   double x_min=0, x_max=0, y_min=0, y_max=0, z_min=0, z_max=0;
   for(unsigned int ielem=0;ielem<nelem;ielem++){
     if( aIndGroup[ielem] != igroup ){ continue; }
-    for(int iip=aElemInd[ielem];iip<aElemInd[ielem+1];iip++){
+    for(unsigned int iip=aElemInd[ielem];iip<aElemInd[ielem+1];iip++){
       const int ip = aElem[iip];
       if( is_ini ){
         x_min = x_max = aXYZ[ip*3+0];

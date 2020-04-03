@@ -41,8 +41,8 @@ void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
   const double* ax = this->x_axis;
   const double* az = this->z_axis;
   double ay[3]; dfm2::Cross3(ay, az, ax);
-  for(int iy=0;iy<nResY;++iy){
-    for(int ix=0;ix<nResX;++ix){
+  for(unsigned int iy=0;iy<nResY;++iy){
+    for(unsigned int ix=0;ix<nResX;++ix){
       int ip = iy*nResX+ix;
       double lz = -aZ[ip]*this->z_range;
       double lx = (ix+0.5)*lengrid;

@@ -20,10 +20,10 @@ def main():
   cad.add_vtx_edge(2, [0.0, 0.8])
   dfm2.gl.glfw.winDraw3d([cad])
 
-  cad.set_edge_type(0, 1, [0.2, 0.3, -0.2, 0.3])
+  cad.set_edge_type(0, dfm2.CAD_EDGE_GEOM_BEZIER_CUBIC, [0.2, 0.3, 0.8, 0.3])
   dfm2.gl.glfw.winDraw3d([cad])
 
-  cad.set_edge_type(0, 0, [])
+  cad.set_edge_type(0, dfm2.CAD_EDGE_GEOM_LINE, [])
   dfm2.gl.glfw.winDraw3d([cad])
 
   cad.clear()

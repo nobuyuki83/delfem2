@@ -4,7 +4,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/tex_gl.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;
@@ -25,8 +25,8 @@ void init_texture(py::module &m) {
       //
       .def_readonly("width", &dfm2::opengl::CTexture::w)
       .def_readonly("height", &dfm2::opengl::CTexture::h)
-      .def("draw", &dfm2::opengl::CTexture::Draw)
-      .def("init_gl", &dfm2::opengl::CTexture::LoadTex)
+      .def("draw", &dfm2::opengl::CTexture::Draw_oldGL)
+      .def("init_gl", &dfm2::opengl::CTexture::InitGL)
       .def("set_minmax_xy", &dfm2::opengl::CTexture::SetMinMaxXY);
 
 

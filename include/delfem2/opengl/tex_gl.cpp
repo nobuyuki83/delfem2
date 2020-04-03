@@ -22,13 +22,13 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/tex_gl.h"
 
 namespace dfm2 = delfem2;
 
 // ------------------------
 
-void dfm2::opengl::CTexture::LoadTex()
+void dfm2::opengl::CTexture::InitGL()
 {
   if( id_tex == 0 ){
     ::glGenTextures(1, &id_tex);
@@ -38,8 +38,8 @@ void dfm2::opengl::CTexture::LoadTex()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+//  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+//  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glPixelStorei(GL_UNPACK_ALIGNMENT,1);
   assert(  aRGB.size() == w*h*3 );
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
@@ -49,8 +49,9 @@ void dfm2::opengl::CTexture::LoadTex()
 }
 
 
-void dfm2::opengl::CTexture::Draw(){
+void dfm2::opengl::CTexture::Draw_oldGL(){
   if( id_tex == 0 ){ return; }
+#ifdef GL_LIGHTING
   ::glEnable(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
   ::glBindTexture(GL_TEXTURE_2D, id_tex);
@@ -63,6 +64,7 @@ void dfm2::opengl::CTexture::Draw(){
   ::glEnd();
   ::glBindTexture(GL_TEXTURE_2D, 0);
   ::glDisable(GL_TEXTURE_2D);
+#endif
 }
 
 
@@ -194,8 +196,9 @@ void DrawTextureBackground
  */
 
 // use it for GLSL shader drawing
-void DrawRectangle_FullCanvas()
+void DrawRectangle_FullCanvas_oldGL()
 {
+#ifdef GL_MODELVIEW
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -220,6 +223,7 @@ void DrawRectangle_FullCanvas()
   glPopMatrix();
   
   glPopAttrib();
+#endif
 }
 
 
