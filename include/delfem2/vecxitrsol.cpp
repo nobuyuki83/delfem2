@@ -352,10 +352,10 @@ void MatMatX
   unsigned int nk,
   const double* B) // [nk, nj]
 {
-  for(int i=0;i<ni;++i){
-    for(int j=0;j<nj;++j){
+  for(unsigned int i=0;i<ni;++i){
+    for(unsigned int j=0;j<nj;++j){
       M[i*nj+j] = 0.0;
-      for(int k=0;k<nk;++k){
+      for(unsigned int k=0;k<nk;++k){
         M[i*nj+j] += A[i*nk+k] * B[k*nj+j];
       }
     }
@@ -369,10 +369,10 @@ void MatMatTX
  unsigned int nk,
  const double* B) // [nj, nk]
 {
-  for(int i=0;i<ni;++i){
-    for(int j=0;j<nj;++j){
+  for(unsigned int i=0;i<ni;++i){
+    for(unsigned int j=0;j<nj;++j){
       M[i*nj+j] = 0.0;
-      for(int k=0;k<nk;++k){
+      for(unsigned int k=0;k<nk;++k){
         M[i*nj+j] += A[i*nk+k] * B[j*nk+k];
       }
     }

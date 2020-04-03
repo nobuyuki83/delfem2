@@ -141,7 +141,7 @@ Solve_CG(
     const MAT& mat)
 {
   std::vector<REAL> aConv;
-  for(int i=0;i<N;++i){ u_vec[i] = 0; }
+  for(unsigned int i=0;i<N;++i){ u_vec[i] = 0; }
   REAL sqnorm_res = DotX(r_vec, r_vec, N);
   if (sqnorm_res < 1.0e-30) { return aConv; }
   REAL inv_sqnorm_res_ini = 1 / sqnorm_res;

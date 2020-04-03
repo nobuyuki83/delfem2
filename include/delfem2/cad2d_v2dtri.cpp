@@ -307,7 +307,7 @@ void dfm2::CCad2D_EdgeGeo::GenMeshNDiv
   assert( ndiv > 0 );
   aP.clear();
   if( type_edge == LINE ){
-    for(int ip=1;ip<ndiv;++ip){
+    for(unsigned int ip=1;ip<ndiv;++ip){
       double r2 = (double)ip/ndiv;
       CVec2d v2 = (1-r2)*p0 + r2*p1;
       aP.push_back(v2);
@@ -317,7 +317,7 @@ void dfm2::CCad2D_EdgeGeo::GenMeshNDiv
     const CVec2d lx = (this->p1 - this->p0);
     const CVec2d ly = CVec2d(lx.y(), -lx.x());
     const CVec2d q0 = p0 + param[0]*lx + param[1]*ly;
-    for(int ip=1;ip<ndiv;++ip){
+    for(unsigned int ip=1;ip<ndiv;++ip){
       double t = (double)ip/ndiv;
       CVec2d pos = pointCurve_BezierQuadratic(t, p0, q0, p1);
       aP.push_back(pos);
@@ -328,7 +328,7 @@ void dfm2::CCad2D_EdgeGeo::GenMeshNDiv
     const CVec2d ly = CVec2d(lx.y(), -lx.x());
     const CVec2d q0 = p0 + param[0]*lx + param[1]*ly;
     const CVec2d q1 = p0 + param[2]*lx + param[3]*ly;
-    for(int ip=1;ip<ndiv;++ip){
+    for(unsigned int ip=1;ip<ndiv;++ip){
       double t = (double)ip/ndiv;
       CVec2d pos = pointCurve_BezierCubic(t, p0, q0, q1, p1);
       aP.push_back(pos);
@@ -500,7 +500,7 @@ std::vector<dfm2::CCad2D_EdgeGeo> dfm2::InvertLoop
     eo.p0 = ei.p1;
     eo.type_edge = ei.type_edge;
     eo.param.resize(ei.param.size());
-    for(int ip=0;ip<ei.param.size()/2;++ip){
+    for(unsigned int ip=0;ip<ei.param.size()/2;++ip){
       int jp = ei.param.size()/2-1-ip;
       eo.param[ip*2+0] = 1-ei.param[jp*2+0];
       eo.param[ip*2+1] = -ei.param[jp*2+1];
@@ -1324,7 +1324,7 @@ double scale)
   ReadSVG_LoopEdgeCCad2D(aaEdge,
                          fpath);
   cad.Clear();
-  for(int iae=0;iae<aaEdge.size();++iae){
+  for(unsigned int iae=0;iae<aaEdge.size();++iae){
     std::vector<delfem2::CCad2D_EdgeGeo> aEdge = aaEdge[iae];
     Transform_LoopEdgeCad2D(aEdge,false,true,scale,scale);
     if( AreaLoop(aEdge) < 0 ){ aEdge = InvertLoop(aEdge); }
