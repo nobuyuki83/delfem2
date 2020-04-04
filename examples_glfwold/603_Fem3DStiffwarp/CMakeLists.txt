@@ -44,6 +44,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
         ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
+  ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
+
 
       ${DELFEM2_INC}/v23m34q.h             ${DELFEM2_INC}/v23m34q.cpp
       
@@ -54,8 +56,7 @@ ENDIF()
 # add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
-  ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
-  ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp 
+  ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp
   ${DELFEM2_INC}/mats.h               ${DELFEM2_INC}/mats.cpp
   ${DELFEM2_INC}/vecxitrsol.h         ${DELFEM2_INC}/vecxitrsol.cpp
 

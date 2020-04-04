@@ -9,6 +9,7 @@
 #define DFM2_DTRI_H
 
 #include <vector>
+#include "delfem2/dfm2_inline.h"
 
 // ------------------------------------------------------------------
 
@@ -41,93 +42,118 @@ public:
   unsigned int d;
 };
 
-bool JArray_MakeElSuP(std::vector<int>& elsup_ind, std::vector<int>& elsup,
-                     const std::vector<CDynTri>& aTri, const unsigned int npoin);
-void JArray_PSuP (std::vector<int>& psup_ind, std::vector<int>& psup,
-                  const std::vector<CDynTri>& aTri, const unsigned int npoin,
-                  const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
-void MakeInnerRelationTri(std::vector<CDynTri>& aTri, const unsigned int npoin,
-                          const std::vector<int>& elsup_ind,
-                          const std::vector<int>& elsup);
+DFM2_INLINE bool JArray_MakeElSuP
+ (std::vector<int>& elsup_ind, std::vector<int>& elsup,
+  const std::vector<CDynTri>& aTri, const unsigned int npoin);
 
-void JArray_PSuP(unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
-              const std::vector<CDynTri>& aTri, const unsigned int npoin,
-              const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
+DFM2_INLINE void JArray_PSuP
+ (std::vector<int>& psup_ind, std::vector<int>& psup,
+  const std::vector<CDynTri>& aTri, const unsigned int npoin,
+  const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
 
-bool CheckTri(const std::vector<CDynTri>& aETri);
-bool CheckTri(const std::vector<CDynPntSur>& aEPo2,
-              const std::vector<CDynTri>& aETri,
-              bool is_assert=true);
+DFM2_INLINE void MakeInnerRelationTri
+ (std::vector<CDynTri>& aTri, const unsigned int npoin,
+  const std::vector<int>& elsup_ind,
+  const std::vector<int>& elsup);
 
-void InitializeMesh(std::vector<CDynPntSur>& aEPo2,
-                    std::vector<CDynTri>& aETri,
-                    const unsigned int* aTri,  int nTri,
-                    int nXYZ);
+DFM2_INLINE void JArray_PSuP
+ (unsigned int* const edge_ind, unsigned int& nedge, unsigned int*& edge,
+  const std::vector<CDynTri>& aTri, const unsigned int npoin,
+  const std::vector<int>& elsup_ind, const std::vector<int>& elsup);
 
-bool FindEdge_LookAroundPoint(unsigned int &itri0,
-                              unsigned int &inotri0,
-                              unsigned &inotri1,
-                              //
-                              const int ipo0, const int ipo1,
-                              const std::vector<CDynPntSur>& aPo,
-                              const std::vector<CDynTri>& aTri);
+DFM2_INLINE bool CheckTri
+ (const std::vector<CDynTri>& aETri);
 
-bool FindEdge_LookAllTriangles(int& itri0, int& iedtri0,
-                               //
-                               const int ipo0, const int ipo1,
-                               const std::vector<CDynTri>& aETri);
+DFM2_INLINE bool CheckTri
+ (const std::vector<CDynPntSur>& aEPo2,
+  const std::vector<CDynTri>& aETri,
+  bool is_assert=true);
 
-void GetTriArrayAroundPoint(std::vector< std::pair<int,int> >& aTriSurPo,
-                          int ipoin,
-                          const std::vector<CDynPntSur>& aEPo2,
-                          const std::vector<CDynTri>& aETri);
+DFM2_INLINE void InitializeMesh
+ (std::vector<CDynPntSur>& aEPo2,
+  std::vector<CDynTri>& aETri,
+  const unsigned int* aTri,  int nTri,
+  int nXYZ);
 
-void MoveCCW(int& itri_cur,
-             unsigned int &inotri_cur,
-             bool& flag_is_wall,
-             //
-             std::vector<CDynTri>& aTri);
+DFM2_INLINE bool FindEdge_LookAroundPoint
+ (unsigned int &itri0,
+  unsigned int &inotri0,
+  unsigned &inotri1,
+  //
+  const int ipo0, const int ipo1,
+  const std::vector<CDynPntSur>& aPo,
+  const std::vector<CDynTri>& aTri);
+
+DFM2_INLINE bool FindEdge_LookAllTriangles
+ (int& itri0, int& iedtri0,
+  //
+  const int ipo0, const int ipo1,
+  const std::vector<CDynTri>& aETri);
+
+DFM2_INLINE void GetTriArrayAroundPoint
+ (std::vector< std::pair<int,int> >& aTriSurPo,
+  int ipoin,
+  const std::vector<CDynPntSur>& aEPo2,
+  const std::vector<CDynTri>& aETri);
+
+DFM2_INLINE void MoveCCW
+ (int& itri_cur,
+  unsigned int &inotri_cur,
+  bool& flag_is_wall,
+  //
+  std::vector<CDynTri>& aTri);
 
 // ---------------
 // topology edit
 
-bool FlipEdge(unsigned int itri0, unsigned int ied0,
-              std::vector<CDynPntSur>& aPo,
-              std::vector<CDynTri>& aTri);
+DFM2_INLINE bool FlipEdge
+ (unsigned int itri0, unsigned int ied0,
+  std::vector<CDynPntSur>& aPo,
+  std::vector<CDynTri>& aTri);
 
 // ----------------------
 // insert point
 
-bool InsertPoint_ElemEdge(const int ipo_ins,  //!< the index of the new point
-                          const int itri_ins, //!< triangle index
-                          const int ied_ins,  //!< edge index
-                          std::vector<CDynPntSur>& aEPo2,
-                          std::vector<CDynTri>& aETri );
+DFM2_INLINE bool InsertPoint_ElemEdge
+ (const int ipo_ins,  //!< the index of the new point
+  const int itri_ins, //!< triangle index
+  const int ied_ins,  //!< edge index
+  std::vector<CDynPntSur>& aEPo2,
+  std::vector<CDynTri>& aETri );
 
-bool InsertPoint_Elem(const int ipo_ins,
-                      const int itri_ins,
-                      std::vector<CDynPntSur>& aEPo2,
-                      std::vector<CDynTri>& aETri);
+DFM2_INLINE bool InsertPoint_Elem
+ (const int ipo_ins,
+  const int itri_ins,
+  std::vector<CDynPntSur>& aEPo2,
+  std::vector<CDynTri>& aETri);
 
 // -----------------
 // delete point
 
-bool DeleteTri(int itri_to,
-               std::vector<CDynPntSur>& aEPo2,
-               std::vector<CDynTri>& aETri);
+DFM2_INLINE bool DeleteTri
+ (int itri_to,
+  std::vector<CDynPntSur>& aEPo2,
+  std::vector<CDynTri>& aETri);
 
-bool Collapse_ElemEdge(const int itri_del,
-                       const int ied_del,
-                       std::vector<CDynPntSur>& aEPo2,
-                       std::vector<CDynTri>& aETri);
+DFM2_INLINE bool Collapse_ElemEdge
+ (const int itri_del,
+  const int ied_del,
+  std::vector<CDynPntSur>& aEPo2,
+  std::vector<CDynTri>& aETri);
 
 
 // ------------------------------------------
 
-void extractHoles(std::vector< std::vector<int> >& aIndP_Hole,
-                  const int npo,
-                  const std::vector<CDynTri>& aETri);
+DFM2_INLINE void extractHoles
+ (std::vector< std::vector<int> >& aIndP_Hole,
+  const int npo,
+  const std::vector<CDynTri>& aETri);
 
 }
+
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/dtri.cpp"
+#endif
 
 #endif // #endif DTRI_H

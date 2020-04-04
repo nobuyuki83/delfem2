@@ -20,7 +20,7 @@ namespace dfm2 = delfem2;
 // ---------------------------------------------
 
 
-void dfm2::MakeInnerRelationTri
+DFM2_INLINE void dfm2::MakeInnerRelationTri
 (std::vector<CDynTri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
@@ -70,7 +70,7 @@ void dfm2::MakeInnerRelationTri
   }
 }
 
-bool dfm2::JArray_MakeElSuP
+DFM2_INLINE bool dfm2::JArray_MakeElSuP
 (std::vector<int>& elsup_ind, std::vector<int>& elsup,
  const std::vector<CDynTri>& aTri, const unsigned int npoin)
 {
@@ -99,7 +99,7 @@ bool dfm2::JArray_MakeElSuP
   return true;
 }
 
-void dfm2::JArray_PSuP
+DFM2_INLINE void dfm2::JArray_PSuP
 (std::vector<int>& psup_ind, std::vector<int>& psup,
  const std::vector<CDynTri>& aTri, const unsigned int npoin,
  const std::vector<int>& elsup_ind, const std::vector<int>& elsup)
@@ -142,7 +142,7 @@ void dfm2::JArray_PSuP
 // -----------------------------------------------------------------
 
 
-bool dfm2::InsertPoint_ElemEdge
+DFM2_INLINE bool dfm2::InsertPoint_ElemEdge
 (const int ipo_ins,    //the index of the new point
  const int itri_ins,  //triangle index
  const int ied_ins,  //edge index
@@ -275,7 +275,7 @@ bool dfm2::InsertPoint_ElemEdge
 
 
 
-bool dfm2::InsertPoint_Elem
+DFM2_INLINE bool dfm2::InsertPoint_Elem
 (const int ipo_ins,
  const int itri_ins,
  std::vector<CDynPntSur>& aPo,
@@ -361,7 +361,7 @@ bool dfm2::InsertPoint_Elem
 }
 
 
-bool dfm2::FlipEdge(
+DFM2_INLINE bool dfm2::FlipEdge(
     unsigned int itri0,
     unsigned int ied0,
     std::vector<CDynPntSur>& aPo,
@@ -470,9 +470,9 @@ bool dfm2::FlipEdge(
 }
 
 
-bool dfm2::FindEdge_LookAroundPoint
+DFM2_INLINE bool dfm2::FindEdge_LookAroundPoint
 (unsigned int &itri0,unsigned int &inotri0, unsigned &inotri1,
- ///
+ //
  const int ipo0, const int ipo1,
  const std::vector<CDynPntSur>& aPo,
  const std::vector<CDynTri>& aTri)
@@ -543,7 +543,7 @@ bool dfm2::FindEdge_LookAroundPoint
 
 
 
-bool dfm2::FindEdge_LookAllTriangles
+DFM2_INLINE bool dfm2::FindEdge_LookAllTriangles
 (int& itri0, int& iedtri0,
  ///
  const int ipo0, const int ipo1,
@@ -563,7 +563,7 @@ bool dfm2::FindEdge_LookAllTriangles
   return false;
 }
 
-bool dfm2::CheckTri( const std::vector<CDynTri>& aTri )
+DFM2_INLINE bool dfm2::CheckTri( const std::vector<CDynTri>& aTri )
 {
 	const int ntri = (int)aTri.size();
 	for(int itri=0;itri<ntri;itri++){
@@ -594,7 +594,7 @@ bool dfm2::CheckTri( const std::vector<CDynTri>& aTri )
 	return true;
 }
 
-bool dfm2::CheckTri
+DFM2_INLINE bool dfm2::CheckTri
 (const std::vector<CDynPntSur>& aPo3D,
  const std::vector<CDynTri>& aSTri,
  bool is_assert)
@@ -676,11 +676,10 @@ bool dfm2::CheckTri
 }
 
 
-
-void dfm2::InitializeMesh
+DFM2_INLINE void dfm2::InitializeMesh
 (std::vector<CDynPntSur>& aPo3D,
  std::vector<CDynTri>& aSTri,
- ////
+ //
  const unsigned int* aTri, int nTri,
  int nXYZ)
 {
@@ -715,11 +714,11 @@ void dfm2::InitializeMesh
 
 // -----------------------------------------------------------------
 
-void dfm2::MoveCCW
+DFM2_INLINE void dfm2::MoveCCW
 (int& itri_cur,
  unsigned int &inotri_cur,
  bool& flag_is_wall,
- ////
+ //
  std::vector<CDynTri>& aTri)
 {
   const unsigned int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
@@ -733,7 +732,7 @@ void dfm2::MoveCCW
 }
 
 
-bool dfm2::DeleteTri
+DFM2_INLINE bool dfm2::DeleteTri
 (int itri_to,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri)
@@ -769,7 +768,7 @@ bool dfm2::DeleteTri
 }
 
 
-bool dfm2::Collapse_ElemEdge
+DFM2_INLINE bool dfm2::Collapse_ElemEdge
 (const int itri_del,
  const int ied_del,
  std::vector<CDynPntSur>& aPo,
@@ -1027,7 +1026,7 @@ bool dfm2::Collapse_ElemEdge
   return true;
 }
 
-void dfm2::GetTriArrayAroundPoint
+DFM2_INLINE void dfm2::GetTriArrayAroundPoint
 (std::vector< std::pair<int,int> >& aTriSurPo,
  int ipoin,
  const std::vector<CDynPntSur>& aPo,
@@ -1068,7 +1067,7 @@ void dfm2::GetTriArrayAroundPoint
 
 
 
-void dfm2::extractHoles
+DFM2_INLINE void dfm2::extractHoles
 (std::vector< std::vector<int> >& aIndP_Hole,
  const int npo,
  const std::vector<CDynTri>& aETri)

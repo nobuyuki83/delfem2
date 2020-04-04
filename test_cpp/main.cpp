@@ -26,7 +26,7 @@
 #include "delfem2/v23m34q.h"
 
 #ifndef M_PI
-#define M_PI 3.14159265359
+#  define M_PI 3.14159265359
 #endif
 
 namespace dfm2 = delfem2;
