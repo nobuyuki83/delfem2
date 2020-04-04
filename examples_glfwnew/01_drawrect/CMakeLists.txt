@@ -35,7 +35,7 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 add_executable(${PROJECT_NAME}
 
-    ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl_funcs.h          ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_funcs.h       ${DELFEM2_INC}/opengl/glnew_funcs.cpp
 
     ${3RD_PARTY}/glad4/include/glad/glad.h

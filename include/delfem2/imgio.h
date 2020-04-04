@@ -5,15 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef imgio_h
-#define imgio_h
+#ifndef DFM2_IMGIO_H
+#define DFM2_IMGIO_H
 
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <string>
 
 namespace delfem2 {
 
-bool LoadImage_PPMBinary(
+DFM2_INLINE bool LoadImage_PPMBinary(
     const std::string &filename,
     std::vector<unsigned char> &image,
     int &width, int &height);
@@ -26,7 +27,7 @@ bool LoadImage_PPMBinary(
  * @param fname file path
  * @return 0: success, 1: cannot open 2: format different
  */
-int LoadImage_PPMAscii(
+DFM2_INLINE int LoadImage_PPMAscii(
     unsigned int &width, unsigned int &height,
     std::vector<unsigned char> &image,
     const std::string &fname);
@@ -41,10 +42,14 @@ public:
   unsigned char *imageData;
 };
 
-bool LoadTGAFile(
+DFM2_INLINE bool LoadTGAFile(
     const std::string &filename,
     SFile_TGA *tgaFile);
 
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/imgio.cpp"
+#endif
 
 #endif
