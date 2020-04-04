@@ -43,6 +43,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
       ${DELFEM2_INC}/mshmisc.h                  ${DELFEM2_INC}/mshmisc.cpp
+      ${DELFEM2_INC}/imgio.h                  ${DELFEM2_INC}/imgio.cpp
       
       ${DELFEM2_INC}/opengl/tex_gl.h            ${DELFEM2_INC}/opengl/tex_gl.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
@@ -51,14 +52,11 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/imgio.h                  ${DELFEM2_INC}/imgio.cpp
-
     ${DELFEM2_INC}/opengl/gl_funcs.h        ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_funcs.h     ${DELFEM2_INC}/opengl/glnew_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_mshcolor.h  ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
     
-    ${3RD_PARTY}/glad4/include/glad/glad.h
-    ${3RD_PARTY}/glad4/src/glad.c
+    ${3RD_PARTY}/glad4/include/glad/glad.h  ${3RD_PARTY}/glad4/src/glad.c
     ${SRC_DFM2}
 
     main.cpp
