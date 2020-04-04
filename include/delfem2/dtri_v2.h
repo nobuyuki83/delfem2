@@ -15,9 +15,9 @@
 #include <map>
 #include <algorithm>
 #include <stack>
-
 #include "delfem2/vec2.h"
 #include "delfem2/dtri.h"
+#include "delfem2/dfm2_inline.h"
 
 // -------------------------------
 
@@ -27,96 +27,97 @@ namespace delfem2 {
  * @brief check whether the dynamic triangulation data is broken or not
  * @return return "true" if it is not broken
  */
-bool CheckTri(
+DFM2_INLINE bool CheckTri(
     const std::vector<CDynPntSur>& aPo3D,
     const std::vector<CDynTri>& aSTri,
     const std::vector<CVec2d>& aXYZ);
 
-bool DelaunayAroundPoint(
+DFM2_INLINE bool DelaunayAroundPoint(
     int ipo0,
     std::vector<CDynPntSur>& aPo,
     std::vector<CDynTri>& aTri,
     const std::vector<CVec2d>& aVec2);
 
-void MeshTri2D_Export(
+DFM2_INLINE void MeshTri2D_Export(
     std::vector<double>& aXY_out,
     std::vector<unsigned int>& aTri_out,
     const std::vector<CVec2d>& aVec2,
     const std::vector<CDynTri>& aTri_in);
 
-void Meshing_Initialize(
+DFM2_INLINE void Meshing_Initialize(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri,
     std::vector<CVec2d>& aVec2);
 
-void FlagConnected(std::vector<int>& inout_flg,
-                   const std::vector<CDynTri>& aTri_in,
-                   unsigned int itri0_ker,
-                   int iflag);
+DFM2_INLINE void FlagConnected
+ (std::vector<int>& inout_flg,
+  const std::vector<CDynTri>& aTri_in,
+  unsigned int itri0_ker,
+  int iflag);
 
-void DeleteTriFlag(
+DFM2_INLINE void DeleteTriFlag(
     std::vector<CDynTri>& aTri_in,
     std::vector<int>& aFlg,
     int flag);
 
-void EnforceEdge(
+DFM2_INLINE void EnforceEdge(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri,
     int i0, int i1,
     const std::vector<CVec2d>& aVec2);
 
-void Meshing_SingleConnectedShape2D(
+DFM2_INLINE void Meshing_SingleConnectedShape2D(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CVec2d>& aVec2,
     std::vector<CDynTri>& aETri,
     const std::vector<int>& loopIP_ind,
     const std::vector<int>& loopIP);
 
-void DeleteUnrefPoints(
+DFM2_INLINE void DeleteUnrefPoints(
     std::vector<CVec2d>& aVec2,
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri_in,
     const std::vector<int>& aPoDel);
 
-void DeletePointsFlag(
+DFM2_INLINE void DeletePointsFlag(
     std::vector<CVec2d>& aVec1,
     std::vector<CDynPntSur>& aPo1,
     std::vector<CDynTri>& aTri,
     std::vector<int>& aFlgPnt1,
     int iflg);
 
-void MakeSuperTriangle(
+DFM2_INLINE void MakeSuperTriangle(
     std::vector<CVec2d>& aVec2,
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri,
     const double bound_2d[4]);
 
-void AddPointsMesh(
+DFM2_INLINE void AddPointsMesh(
     const std::vector<CVec2d>& aVec2,
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri,
     int ipoin,
     double MIN_TRI_AREA);
 
-void MakeInvMassLumped_Tri(
+DFM2_INLINE void MakeInvMassLumped_Tri(
     std::vector<double>& aInvMassLumped,
     double rho,
     const std::vector<CVec2d>& aVec2,
     const std::vector<CDynTri>& aETri);
 
-void MinMaxTriArea(
+DFM2_INLINE void MinMaxTriArea(
     double& min_area,
     double& max_area,
     const std::vector<CVec2d>& aVec2,
     const std::vector<CDynTri>& aETri);
 
-void CMeshTri2D(
+DFM2_INLINE void CMeshTri2D(
     std::vector<double>& aXY,
     std::vector<unsigned int>& aTri,
     std::vector<CVec2d>& aVec2,
     std::vector<CDynTri>& aETri);
 
-void GenMesh(
+DFM2_INLINE void GenMesh(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aETri,
     std::vector<CVec2d>& aVec2,
@@ -320,5 +321,11 @@ public:
 };
   
 } // namespace delfem2
+
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/dtri_v2.cpp"
+#endif
+
 
 #endif // #endif DTRI_V2_H

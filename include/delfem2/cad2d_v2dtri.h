@@ -8,13 +8,14 @@
 
 #ifndef DFM2_CAD2D_H
 #define DFM2_CAD2D_H
-
+#include "delfem2/dfm2_inline.h"
 #include "delfem2/vec2.h"
 #include "delfem2/cadtopo.h"
 //
 #include "delfem2/dtri_v2.h"
 
 namespace delfem2 {
+
 
 class CCad2D_VtxGeo{
 public:
@@ -246,5 +247,9 @@ public:
 };
 
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/cad2d_v2dtri.cpp"
+#endif
 
 #endif

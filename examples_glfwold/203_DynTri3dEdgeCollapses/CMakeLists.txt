@@ -51,7 +51,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mshmisc.h                 ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/mshio.h                   ${DELFEM2_INC}/mshio.cpp
   ${DELFEM2_INC}/dtri_v3.h                 ${DELFEM2_INC}/dtri_v3.cpp
-        
   
   ${DELFEM2_INC}/opengl/glold_funcs.h      ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${DELFEM2_INC}/opengl/glold_color.h      ${DELFEM2_INC}/opengl/glold_color.cpp

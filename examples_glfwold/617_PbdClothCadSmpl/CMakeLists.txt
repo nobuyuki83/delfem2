@@ -44,9 +44,12 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mat4.h                       ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/mshtopo.h                    ${DELFEM2_INC}/mshtopo.cpp
-      ${DELFEM2_INC}/dtri.h                       ${DELFEM2_INC}/dtri.cpp 
-      
-      ${DELFEM2_INC}/v23m34q.h                     ${DELFEM2_INC}/v23m34q.cpp
+      ${DELFEM2_INC}/dtri.h                       ${DELFEM2_INC}/dtri.cpp
+      ${DELFEM2_INC}/bv.h
+    
+      ${DELFEM2_INC}/v23m34q.h                    ${DELFEM2_INC}/v23m34q.cpp
+      ${DELFEM2_INC}/dtri_v2.h                    ${DELFEM2_INC}/dtri_v2.cpp
+      ${DELFEM2_INC}/cad2d_v2dtri.h               ${DELFEM2_INC}/cad2d_v2dtri.cpp
       
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
@@ -57,9 +60,7 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/bvh.h                        ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/funcs.h                      ${DELFEM2_INC}/funcs.cpp
     ${DELFEM2_INC}/vecxitrsol.h                 ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/bv.h
-    
-    ${DELFEM2_INC}/dtri_v2.h                    ${DELFEM2_INC}/dtri_v2.cpp
+
     ${DELFEM2_INC}/objfunc_v23.h                ${DELFEM2_INC}/objfunc_v23.cpp
     ${DELFEM2_INC}/objfunc_v23dtri.h            ${DELFEM2_INC}/objfunc_v23dtri.cpp
     ${DELFEM2_INC}/srchuni_v3.h                 ${DELFEM2_INC}/srchuni_v3.cpp
@@ -72,7 +73,6 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/rig_v3q.h                    ${DELFEM2_INC}/rig_v3q.cpp
     ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h     ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
   
-    ${DELFEM2_INC}/cad2d_v2dtri.h               ${DELFEM2_INC}/cad2d_v2dtri.cpp
     ${DELFEM2_INC}/opengl/caddtri_v3_glold.h    ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
 
     ${3RD_PARTY}/cnpy/cnpy.h                    ${3RD_PARTY}/cnpy/cnpy.cpp

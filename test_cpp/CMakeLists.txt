@@ -54,6 +54,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/dtri.h                 ${DELFEM2_INC}/dtri.cpp
       
       ${DELFEM2_INC}/v23m34q.h              ${DELFEM2_INC}/v23m34q.cpp
+      ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -76,7 +77,6 @@ add_executable(${MY_BINARY_NAME}
   
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
-  ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp
   ${DELFEM2_INC}/objfunc_v23.h          ${DELFEM2_INC}/objfunc_v23.cpp
   ${DELFEM2_INC}/srchuni_v3.h           ${DELFEM2_INC}/srchuni_v3.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h
