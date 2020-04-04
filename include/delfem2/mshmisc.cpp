@@ -18,25 +18,28 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------
 
-static double Length3(const double p[3]){
+namespace delfem2 {
+namespace mshmisc {
+
+DFM2_INLINE double Length3(const double p[3]){
   return sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
 
-static double Length3(const float p[3]){
+DFM2_INLINE double Length3(const float p[3]){
   return sqrtf(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
 
-static void Cross3D(double r[3], const double v1[3], const double v2[3]){
+DFM2_INLINE void Cross3D(double r[3], const double v1[3], const double v2[3]){
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
 
-static double TriArea2D(const double p0[], const double p1[], const double p2[]){
+DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double p2[]){
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
-static double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
+DFM2_INLINE double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
   double n[3];
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
@@ -45,7 +48,7 @@ static double TriArea3D(const double v1[3], const double v2[3], const double v3[
 }
 
 template <typename T>
-inline static void UnitNormalAreaTri3
+DFM2_INLINE void UnitNormalAreaTri3
  (T n[3], T& a,
   const T v1[3], const T v2[3], const T v3[3])
 {
@@ -59,31 +62,30 @@ inline static void UnitNormalAreaTri3
 
 
 template <typename T>
-static void MatVec3(T y[3],
+DFM2_INLINE void MatVec3(T y[3],
                     const T m[9], const T x[3]){
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
 
-static double Distance3(const double p0[3], const double p1[3]) {
+DFM2_INLINE double Distance3(const double p0[3], const double p1[3]) {
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
-static float Distance3(const float p0[3], const float p1[3]) {
+DFM2_INLINE float Distance3(const float p0[3], const float p1[3]) {
   return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
-
-static inline double Distance2D(const double p0[3], const double p1[3]){
+DFM2_INLINE double Distance2D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) );
 }
 
-static double Dot(const double p0[3], const double p1[3]){
+DFM2_INLINE double Dot(const double p0[3], const double p1[3]){
   return p0[0]*p1[0] + p0[1]*p1[1] + p0[2]*p1[2];
 }
 
-static inline double largest(double x0, double x1, double x2) {
+DFM2_INLINE double largest(double x0, double x1, double x2) {
   double wmax = x0;
   wmax = (x1 > wmax) ? x1 : wmax;
   wmax = (x2 > wmax) ? x2 : wmax;
@@ -91,7 +93,7 @@ static inline double largest(double x0, double x1, double x2) {
 }
 
 template <typename T>
-static T TetVolume3D
+DFM2_INLINE  T TetVolume3D
  (const T v1[3],
   const T v2[3],
   const T v3[3],
@@ -104,8 +106,9 @@ static T TetVolume3D
    ) * 0.16666666666666666666666666666667;
 }
 
-static void Mat3_Bryant(double m[9],
-                        double rx, double ry, double rz)
+DFM2_INLINE void Mat3_Bryant
+ (double m[9],
+  double rx, double ry, double rz)
 {
   m[0] = cos(rz)*cos(ry);
   m[1] = cos(rz)*sin(ry)*sin(rx)-sin(rz)*cos(rx);
@@ -118,8 +121,9 @@ static void Mat3_Bryant(double m[9],
   m[8] = cos(ry)*cos(rx);
 }
 
-static void Mat3_Bryant(float m[9],
-                        float rx, float ry, float rz)
+DFM2_INLINE  void Mat3_Bryant
+ (float m[9],
+  float rx, float ry, float rz)
 {
   m[0] = cosf(rz)*cosf(ry);
   m[1] = cosf(rz)*sinf(ry)*sinf(rx)-sinf(rz)*cosf(rx);
@@ -130,6 +134,9 @@ static void Mat3_Bryant(float m[9],
   m[6] = -sinf(ry);
   m[7] = cosf(ry)*sinf(rx);
   m[8] = cosf(ry)*cosf(rx);
+}
+
+}
 }
 
 // static function above
@@ -375,13 +382,15 @@ void dfm2::GetCenterWidthLocal(
   const int nno = (int)aXYZ.size()/3;
   if (nno==0){ lcx=lcy=lcz=0; lwx=lwy=lwz=1; return; }
   const double p0[3] = {aXYZ[0],aXYZ[1],aXYZ[2]};
-  double x_min = Dot(p0,lex); double x_max = x_min;
-  double y_min = Dot(p0,ley); double y_max = y_min;
-  double z_min = Dot(p0,lez); double z_max = z_min;
+  double x_min = dfm2::mshmisc::Dot(p0,lex); double x_max = x_min;
+  double y_min = dfm2::mshmisc::Dot(p0,ley); double y_max = y_min;
+  double z_min = dfm2::mshmisc::Dot(p0,lez); double z_max = z_min;
   for (int ino = 0; ino<nno; ++ino){
     const double pi[3] = {aXYZ[ino*3+0],aXYZ[ino*3+1],aXYZ[ino*3+2]};
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                    Dot(pi,lex), Dot(pi,ley), Dot(pi,lez));
+                    dfm2::mshmisc::Dot(pi,lex),
+                    dfm2::mshmisc::Dot(pi,ley),
+                    dfm2::mshmisc::Dot(pi,lez));
   }
   CenterWidth_MinMaxXYZ(lcx,lcy,lcz, lwx,lwy,lwz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
@@ -409,9 +418,9 @@ T dfm2::CentsMaxRad_MeshTri3(
     aXYZ_c0[itri*3+0] = pc[0];
     aXYZ_c0[itri*3+1] = pc[1];
     aXYZ_c0[itri*3+2] = pc[2];
-    const T l0 = Distance3(pc,aXYZ.data()+i0*3);
-    const T l1 = Distance3(pc,aXYZ.data()+i1*3);
-    const T l2 = Distance3(pc,aXYZ.data()+i2*3);
+    const T l0 = dfm2::mshmisc::Distance3(pc,aXYZ.data()+i0*3);
+    const T l1 = dfm2::mshmisc::Distance3(pc,aXYZ.data()+i1*3);
+    const T l2 = dfm2::mshmisc::Distance3(pc,aXYZ.data()+i2*3);
     if( max_rad0 < 0 || l0 > max_rad0 ){ max_rad0 = l0; }
     if( max_rad0 < 0 || l1 > max_rad0 ){ max_rad0 = l1; }
     if( max_rad0 < 0 || l2 > max_rad0 ){ max_rad0 = l2; }
@@ -513,12 +522,12 @@ void dfm2::Rotate_Points3
 (std::vector<T>& aXYZ,
 T radx, T rady, T radz)
 {
-  T mat[9]; Mat3_Bryant(mat, radx, rady, radz);
+  T mat[9]; dfm2::mshmisc::Mat3_Bryant(mat, radx, rady, radz);
   T* pXYZ = aXYZ.data();
   const unsigned int nXYZ = aXYZ.size()/3;
   for (unsigned int ixyz = 0; ixyz<nXYZ; ++ixyz){
     const T p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
-    MatVec3(pXYZ+ixyz*3,  mat, p);
+    dfm2::mshmisc::MatVec3(pXYZ+ixyz*3,  mat, p);
   }
 }
 template void dfm2::Rotate_Points3 (std::vector<float>& aXYZ,
@@ -534,7 +543,7 @@ double dfm2::Size_Points3D_LongestAABBEdge
   double c[3], w[3];
   CenterWidth_Points3(c, w,
                       aXYZ);
-  return largest(w[0], w[1], w[2]);
+  return dfm2::mshmisc::largest(w[0], w[1], w[2]);
 }
 
 
@@ -550,7 +559,7 @@ void dfm2::Normalize_Points3
                       aXYZ);
   Translate_Points3(aXYZ,
                     -c[0], -c[1], -c[2]);
-  T wmax = largest(w[0], w[1], w[2]);
+  T wmax = dfm2::mshmisc::largest(w[0], w[1], w[2]);
   Scale_PointsX(aXYZ,
                 s/wmax);
 }
@@ -634,14 +643,14 @@ void dfm2::Normal_MeshTri3D
     const double* p1 = aXYZ+i1*3;
     const double* p2 = aXYZ+i2*3;
     double un[3], area;
-    UnitNormalAreaTri3(un,area, p0,p1,p2);
+    dfm2::mshmisc::UnitNormalAreaTri3(un,area, p0,p1,p2);
     aNorm[i0*3+0] += un[0];  aNorm[i0*3+1] += un[1];  aNorm[i0*3+2] += un[2];
     aNorm[i1*3+0] += un[0];  aNorm[i1*3+1] += un[1];  aNorm[i1*3+2] += un[2];
     aNorm[i2*3+0] += un[0];  aNorm[i2*3+1] += un[1];  aNorm[i2*3+2] += un[2];
   }
   for(unsigned int ino=0;ino<nXYZ;ino++){
     const double n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
-    const double invlen = 1.0/Length3(n);
+    const double invlen = 1.0/dfm2::mshmisc::Length3(n);
     aNorm[ino*3+0] *= invlen;
     aNorm[ino*3+1] *= invlen;
     aNorm[ino*3+2] *= invlen;
@@ -668,10 +677,10 @@ void dfm2::Normal_MeshQuad3
     const REAL* p1 = aXYZ.data()+i1*3;
     const REAL* p2 = aXYZ.data()+i2*3;
     const REAL* p3 = aXYZ.data()+i3*3;
-    REAL un0[3], a0; UnitNormalAreaTri3(un0,a0, p3,p0,p1);
-    REAL un1[3], a1; UnitNormalAreaTri3(un1,a1, p0,p1,p2);
-    REAL un2[3], a2; UnitNormalAreaTri3(un2,a2, p1,p2,p3);
-    REAL un3[3], a3; UnitNormalAreaTri3(un3,a3, p2,p3,p0);
+    REAL un0[3], a0; dfm2::mshmisc::UnitNormalAreaTri3(un0,a0, p3,p0,p1);
+    REAL un1[3], a1; dfm2::mshmisc::UnitNormalAreaTri3(un1,a1, p0,p1,p2);
+    REAL un2[3], a2; dfm2::mshmisc::UnitNormalAreaTri3(un2,a2, p1,p2,p3);
+    REAL un3[3], a3; dfm2::mshmisc::UnitNormalAreaTri3(un3,a3, p2,p3,p0);
     aNorm[i0*3+0] += un0[0];  aNorm[i0*3+1] += un0[1];  aNorm[i0*3+2] += un0[2];
     aNorm[i1*3+0] += un1[0];  aNorm[i1*3+1] += un1[1];  aNorm[i1*3+2] += un1[2];
     aNorm[i2*3+0] += un2[0];  aNorm[i2*3+1] += un2[1];  aNorm[i2*3+2] += un2[2];
@@ -679,7 +688,7 @@ void dfm2::Normal_MeshQuad3
   }
   for(unsigned int ino=0;ino<nXYZ;ino++){
     const REAL n[3] = {aNorm[ino*3+0],aNorm[ino*3+1],aNorm[ino*3+2]};
-    const REAL invlen = 1.0/Length3(n);
+    const REAL invlen = 1.0/dfm2::mshmisc::Length3(n);
     aNorm[ino*3+0] *= invlen;
     aNorm[ino*3+1] *= invlen;
     aNorm[ino*3+2] *= invlen;
@@ -708,10 +717,10 @@ void dfm2::Quality_MeshTri2D
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
-    const double area = TriArea2D(p0,p1,p2);
-    const double len01 = Distance2D(p0,p1);
-    const double len12 = Distance2D(p1,p2);
-    const double len20 = Distance2D(p2,p0);
+    const double area = dfm2::mshmisc::TriArea2D(p0,p1,p2);
+    const double len01 = dfm2::mshmisc::Distance2D(p0,p1);
+    const double len12 = dfm2::mshmisc::Distance2D(p1,p2);
+    const double len20 = dfm2::mshmisc::Distance2D(p2,p0);
     const double len_ave = (len01+len12+len20)/3.0;
     const double aspect = len_ave * len_ave / area;
     if( itri == 0 ){
@@ -743,7 +752,7 @@ void dfm2::CG_MeshTri3_Solid(
     const T q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const T q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     const T q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    T v = ::TetVolume3D(q0, q1, q2, q3);
+    T v = dfm2::mshmisc::TetVolume3D(q0, q1, q2, q3);
     tw += v;
     cg[0] += (q0[0]+q1[0]+q2[0]+q3[0])*0.25*v;
     cg[1] += (q0[1]+q1[1]+q2[1]+q3[1])*0.25*v;
@@ -778,7 +787,7 @@ void dfm2::CG_MeshTri3_Shell
     const double q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double a = TriArea3D(q1, q2, q3);
+    double a = dfm2::mshmisc::TriArea3D(q1, q2, q3);
     tw += a;
     cg[0] += (q1[0]+q2[0]+q3[0])*0.333333*a;
     cg[1] += (q1[1]+q2[1]+q3[1])*0.333333*a;
@@ -816,7 +825,7 @@ T dfm2::CG_TriMsh3Flg_Shell
     const double q1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     const double q2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
     const double q3[3] = { aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2] };
-    double a = TriArea3D(q1, q2, q3);
+    double a = dfm2::mshmisc::TriArea3D(q1, q2, q3);
     tw += a;
     cg[0] += (q1[0]+q2[0]+q3[0])*0.333333*a;
     cg[1] += (q1[1]+q2[1]+q3[1])*0.333333*a;
@@ -876,7 +885,7 @@ void dfm2::CG_MeshTet3
     const T* p1 = pXYZ+aTet[it*4+1]*3;
     const T* p2 = pXYZ+aTet[it*4+2]*3;
     const T* p3 = pXYZ+aTet[it*4+3]*3;
-    const double v = TetVolume3D(p0, p1, p2, p3);
+    const double v = dfm2::mshmisc::TetVolume3D(p0, p1, p2, p3);
     v_tot += v;
     cg[0] += v*(p0[0]+p1[0]+p2[0]+p3[0])*0.25;
     cg[1] += v*(p0[1]+p1[1]+p2[1]+p3[1])*0.25;
@@ -985,7 +994,7 @@ void dfm2::LaplacianSmoothing(
         { aXYZ[i0*3+0],aXYZ[i0*3+1],aXYZ[i0*3+2] },
         { aXYZ[i1*3+0],aXYZ[i1*3+1],aXYZ[i1*3+2] },
         { aXYZ[i2*3+0],aXYZ[i2*3+1],aXYZ[i2*3+2] } };
-      double area = TriArea3D(aP[0],aP[1],aP[2]);
+      double area = dfm2::mshmisc::TriArea3D(aP[0],aP[1],aP[2]);
       sum_area += area;
       pcnt[0] += area*(aP[0][0]+aP[1][0]+aP[2][0])/3.0;
       pcnt[1] += area*(aP[0][1]+aP[1][1]+aP[2][1])/3.0;
@@ -1096,17 +1105,20 @@ void LaplacianSmoothing_Cotan
  */
 
 
-double SolidAngleTri3D
+DFM2_INLINE double dfm2::SolidAngleTri3D
 (const double v1[3],
  const double v2[3],
  const double v3[3])
 {
-  double l1 = Length3(v1);
-  double l2 = Length3(v2);
-  double l3 = Length3(v3);
-  double crs_v1_v2[3]; Cross3D(crs_v1_v2,v1,v2);
-  double den = Dot(crs_v1_v2,v3);
-  double num = l1*l2*l3+(Dot(v1,v2))*l3+(Dot(v2,v3))*l1+(Dot(v3,v1))*l2;
+  double l1 = dfm2::mshmisc::Length3(v1);
+  double l2 = dfm2::mshmisc::Length3(v2);
+  double l3 = dfm2::mshmisc::Length3(v3);
+  double crs_v1_v2[3]; dfm2::mshmisc::Cross3D(crs_v1_v2,v1,v2);
+  double den = dfm2::mshmisc::Dot(crs_v1_v2,v3);
+  double num = l1*l2*l3
+  +(dfm2::mshmisc::Dot(v1,v2))*l3
+  +(dfm2::mshmisc::Dot(v2,v3))*l1
+  +(dfm2::mshmisc::Dot(v3,v1))*l2;
   double tho = den/num;
   double v = atan(tho);
   if (v<0){ v += 2*M_PI; }
@@ -1171,7 +1183,7 @@ void dfm2::MassPoint_Tet3D
     const double* p1 = aXYZ+i1*3;
     const double* p2 = aXYZ+i2*3;
     const double* p3 = aXYZ+i3*3;
-    const double v0123 = TetVolume3D(p0, p1, p2, p3);
+    const double v0123 = dfm2::mshmisc::TetVolume3D(p0, p1, p2, p3);
     aMassMatrixLumped[i0] += 0.25*rho*v0123;
     aMassMatrixLumped[i1] += 0.25*rho*v0123;
     aMassMatrixLumped[i2] += 0.25*rho*v0123;
@@ -1193,7 +1205,7 @@ void dfm2::MassPoint_Tri2D
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
-    const double a012 = TriArea2D(p0, p1, p2);
+    const double a012 = dfm2::mshmisc::TriArea2D(p0, p1, p2);
     aMassMatrixLumped[i0] += rho*a012/3.0;
     aMassMatrixLumped[i1] += rho*a012/3.0;
     aMassMatrixLumped[i2] += rho*a012/3.0;

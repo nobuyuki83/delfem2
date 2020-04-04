@@ -54,7 +54,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
 
   ${DELFEM2_INC}/opengl/caddtri_v2_glold.h   ${DELFEM2_INC}/opengl/caddtri_v2_glold.cpp

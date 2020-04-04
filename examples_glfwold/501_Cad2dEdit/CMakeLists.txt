@@ -41,6 +41,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
+      ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
       ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
       ${DELFEM2_INC}/bv.h
     
@@ -54,7 +55,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
   ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
 
   ${DELFEM2_INC}/opengl/caddtri_v2_glold.h   ${DELFEM2_INC}/opengl/caddtri_v2_glold.cpp

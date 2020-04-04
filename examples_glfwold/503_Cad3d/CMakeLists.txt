@@ -45,6 +45,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mat4.h                     ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/color.h                    ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/mshtopo.h                  ${DELFEM2_INC}/mshtopo.cpp
+      ${DELFEM2_INC}/mshmisc.h                  ${DELFEM2_INC}/mshmisc.cpp
       ${DELFEM2_INC}/dtri.h                     ${DELFEM2_INC}/dtri.cpp
         
       ${DELFEM2_INC}/dtri_v2.h                  ${DELFEM2_INC}/dtri_v2.cpp
@@ -55,7 +56,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshmisc.h                  ${DELFEM2_INC}/mshmisc.cpp
             
   ${DELFEM2_INC}/srchuni_v3.h               ${DELFEM2_INC}/srchuni_v3.cpp
   ${DELFEM2_INC}/paramgeo_v23.h             ${DELFEM2_INC}/paramgeo_v23.cpp
