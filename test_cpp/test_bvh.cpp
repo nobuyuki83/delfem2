@@ -58,7 +58,7 @@ TEST(bvh,inclusion_sphere)
   std::random_device dev;
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-1.0, 1.0);
-  for(int itr=0;itr<10000;++itr){
+  for(int itr=0;itr<1000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     for(unsigned int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
@@ -91,7 +91,7 @@ TEST(bvh,inclusion_aabb)
   std::random_device dev;
   std::mt19937 rng(dev());
   std::uniform_real_distribution<> udist(-1.0, 1.0);
-  for(int itr=0;itr<10000;++itr){
+  for(int itr=0;itr<1000;++itr){
     dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng));
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
       const dfm2::CBV3d_AABB& bv = bvh.aBB_BVH[ibvh];

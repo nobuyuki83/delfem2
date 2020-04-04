@@ -206,12 +206,12 @@ void PyUpdateRigSkin
   assert( npXYZ.shape()[0] == npRigWeight.shape()[0] );
   assert( npXYZ.shape()[0] == npRigJoint.shape()[0] );
   double* aXYZ = (double*)(npXYZ.request().ptr);
-  UpdateRigSkin(aXYZ,
-                npXYZ0.data(), npXYZ0.shape()[0],
-                npTri.data(), npTri.shape()[0],
-                BA.aRigBone,
-                npRigWeight.data(),
-                npRigJoint.data());
+  dfm2::Skinning_LBS_LocalWeight(aXYZ,
+                                 npXYZ0.data(), npXYZ0.shape()[0],
+                                 npTri.data(), npTri.shape()[0],
+                                 BA.aRigBone,
+                                 npRigWeight.data(),
+                                 npRigJoint.data());
 }
 
 // Rigging related ends here

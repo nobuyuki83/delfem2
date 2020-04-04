@@ -259,10 +259,10 @@ int main(int argc,char* argv[])
       }
       UpdateBoneRotTrans(aBone);
       aXYZ_Contact = aXYZ0_Contact;
-      UpdateRigSkin(aXYZ_Contact.data(),
-                    aXYZ0_Contact.data(), aXYZ0_Contact.size()/3,
-                    aTri_Contact.data(), aTri_Contact.size()/3,
-                    aBone, aRigWeight_Contact.data(), aRigJoint_Contact.data());
+      dfm2::Skinning_LBS_LocalWeight(aXYZ_Contact.data(),
+                                     aXYZ0_Contact.data(), aXYZ0_Contact.size()/3,
+                                     aTri_Contact.data(), aTri_Contact.size()/3,
+                                     aBone, aRigWeight_Contact.data(), aRigJoint_Contact.data());
     }
     aNorm_Contact.resize(aXYZ_Contact.size());
     delfem2::Normal_MeshTri3D(aNorm_Contact.data(),

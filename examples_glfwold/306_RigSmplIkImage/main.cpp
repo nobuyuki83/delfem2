@@ -124,52 +124,6 @@ void Solve_MinRigging
   dfm2::UpdateBoneRotTrans(aBone);
 }
 
-void Check
- (const std::vector<dfm2::CRigBone>& aBone,
-  const std::vector<dfm2::CTarget>& aTarget)
-{
-  std::vector<double> Lx, Ly, Lz; // [ sns, nb*4 ]
-  for(int ibs=0;ibs<aBone.size();++ibs){
-    for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               ibs,idims,true,
-                                               aBone);
-    }
-  }
-  
-  std::vector<double> aO0; // [nC]
-  std::vector<double> adO0; // [nC, nb*3 ]
-  for(int it=0;it<aTarget.size();++it){
-    dfm2::Rig_WdW_Target_Eigen(aO0,adO0,
-                               aBone,aTarget[it],Lx,Ly,Lz);
-  }
-  const double eps = 1.0e-4;
-  const unsigned int nb = aBone.size();
-  for(int ib_s=0;ib_s<aBone.size();++ib_s){
-    for(int idim_s=0;idim_s<3;++idim_s){
-      std::vector<dfm2::CRigBone> aBone1 = aBone;
-      {
-        dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(eps*dfm2::CVec3d::Axis(idim_s));
-        dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone1[ib_s].quatRelativeRot);
-        q0.CopyTo(aBone1[ib_s].quatRelativeRot);
-      }
-      dfm2::UpdateBoneRotTrans(aBone1);
-      // -------------
-      std::vector<double> aO1; // [nC]
-      std::vector<double> adO1; // [nC, nb*3 ]
-      for(int it=0;it<aTarget.size();++it){
-        dfm2::Rig_WdW_Target_Eigen(aO1,adO1,
-                                   aBone1,aTarget[it],Lx,Ly,Lz);
-      }
-      // -------------
-      for(int io=0;io<aO0.size();++io){
-        std::cout << aO0[io] << " " << (aO1[io]-aO0[io])/eps << " " << adO0[io*(3*nb)+ib_s*3+idim_s] << std::endl;
-      }
-    }
-  }
-}
-
-
 void Draw
 (const std::vector<double>& aXYZ1,
  const std::vector<unsigned int>& aTri,
@@ -312,14 +266,13 @@ int main()
   // -----------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.camera_rot_mode = dfm2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = dfm2::CAMERA_ROT_YTOP;
   dfm2::opengl::setSomeLighting();
   tex.InitGL();
 
   int iframe = 0;
   while (true)
   {
-    iframe++;
     {
       double r = iframe*0.01;
       if( r > 1 ){ r = 1; }
@@ -330,6 +283,19 @@ int main()
       Skinning_LBS(aXYZ1,
                    aXYZ0, aBone, aW);
     }
+    if( iframe > 200 ){
+      for(int ib=0;ib<aBone.size();++ib){
+        dfm2::Quat_Identity(aBone[ib].quatRelativeRot);
+      }
+      dfm2::UpdateBoneRotTrans(aBone);
+      for(int it=0;it<aTarget.size();++it){
+        aTarget[it].pos = aTargetOriginPos[it].second;
+      }
+      Solve_MinRigging(aBone, aTarget);
+      Skinning_LBS(aXYZ1,
+                   aXYZ0, aBone, aW);
+      iframe = 0;
+    }
     
     // -------------------
     viewer.DrawBegin_oldGL();
@@ -338,6 +304,7 @@ int main()
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    iframe++;
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

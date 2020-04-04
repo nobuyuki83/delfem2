@@ -9,13 +9,22 @@
 
 #include "gtest/gtest.h"
 
+#include "delfem2/quat.h"
+#include "delfem2/v23m34q.h"
 
 // Define these only in *one* .cc file.
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#define TINYGLTF_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include "tinygltf/tiny_gltf.h"
+
+#include "delfem2/rig_v3q.h"
+#include "io_gltf.h"
+
+namespace dfm2 = delfem2;
+
+// ----------------------------
 
 TEST(gltf,formatcheck)
 {
@@ -67,3 +76,173 @@ TEST(gltf,formatcheck)
   }
 }
 
+TEST(gltf,io_gltf_skin_sensitivity)
+{
+  std::vector<double> aXYZ0;
+  std::vector<unsigned int> aTri;
+  std::vector<dfm2::CRigBone> aBone;
+  std::vector<double> aW;
+  {
+    std::vector<double> aRigWeight; // [np, 4]
+    std::vector<unsigned int> aRigJoint; // [np, 4]
+    {
+      //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
+      //    std::string path_glb = std::string(PATH_INPUT_DIR)+"/Monster.glb";
+      
+      //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
+      //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
+      std::string path_glb = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
+      dfm2::CGLTF gltf;
+      gltf.Read(path_glb);
+  //    gltf.Print();
+      gltf.GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint, 0,0);
+      gltf.GetBone(aBone, 0);
+    }
+    {
+      for(int ibone=0;ibone<aBone.size();++ibone){
+        dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
+      }
+      UpdateBoneRotTrans(aBone);
+      std::vector<double> aXYZ = aXYZ0;
+      Skinning_LBS_LocalWeight(aXYZ.data(),
+                               aXYZ0.data(), aXYZ0.size()/3,
+                               aTri.data(), aTri.size()/3,
+                               aBone, aRigWeight.data(), aRigJoint.data());
+    }
+    const unsigned int np = aXYZ0.size()/3;
+    const unsigned int nb = aBone.size();
+    aW.assign(np*nb,0.0);
+    for(int ip=0;ip<np;++ip){
+      for(int iib=0;iib<4;++iib){
+        unsigned int ib = aRigJoint[ip*4+iib];
+        aW[ip*nb+ib] = aRigWeight[ip*4+iib];
+      }
+    }
+  }
+  
+  const unsigned int nb = aBone.size();
+  assert( aW.size() == aXYZ0.size()/3*nb );
+  
+  // ------------
+  std::vector<double> Lx, Ly, Lz;  // [ nsns, nb*4 ]
+  for(int ibs=0;ibs<aBone.size();++ibs){
+    for(int idims=0;idims<3;++idims){
+      dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
+                                               ibs,idims,true,
+                                               aBone);
+    }
+  }
+  for(int idims=0;idims<3;++idims){
+    dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
+                                             0,idims,false,
+                                             aBone);
+  }
+  // ---------------
+  
+  const double eps = 1.0e-4;
+  
+  { // Check Sensitivity Skin
+    for(int ibone=0;ibone<aBone.size();++ibone){
+      dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
+    }
+    UpdateBoneRotTrans(aBone);
+    std::vector<double> aRefPos; // [ np, nBone*4 ]
+    Rig_SkinReferncePositionsBoneWeighted(aRefPos,
+                                          aBone,aXYZ0,aW);
+    const unsigned int nsns = Lx.size()/(nb*4);
+    assert( nsns==(nb+1)*3 );
+    for(int isns=0;isns<nsns;++isns){
+      unsigned int ib_s = isns/3;
+      bool is_rot = true;
+      unsigned int idim_s = isns - ib_s*3;
+      if( ib_s == nb ){ ib_s = 0; is_rot = false; }
+      std::vector<dfm2::CRigBone> aBone2 = aBone;
+      if( is_rot ){
+        dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(eps*dfm2::CVec3d::Axis(idim_s));
+        dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone2[ib_s].quatRelativeRot);
+        q0.CopyTo(aBone2[ib_s].quatRelativeRot);
+      }
+      else{
+        aBone2[ib_s].transRelative[idim_s] += eps;
+      }
+      std::vector<double> aXYZ1;
+      dfm2::UpdateBoneRotTrans(aBone);
+      dfm2::Skinning_LBS(aXYZ1,
+                         aXYZ0, aBone, aW);
+      // ----------------
+      std::vector<double> aXYZ2;
+      dfm2::UpdateBoneRotTrans(aBone2);
+      dfm2::Skinning_LBS(aXYZ2,
+                         aXYZ0, aBone2, aW);
+      const unsigned int np = aXYZ0.size()/3;
+      for(int ip=0;ip<np;++ip){
+        const double val0[3] = {
+          (aXYZ2[ip*3+0] - aXYZ1[ip*3+0])/eps,
+          (aXYZ2[ip*3+1] - aXYZ1[ip*3+1])/eps,
+          (aXYZ2[ip*3+2] - aXYZ1[ip*3+2])/eps };
+        double val1[3] =  { 0, 0, 0 };
+        for(int j=0;j<nb*4;++j){
+          val1[0] += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
+          val1[1] += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
+          val1[2] += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
+        }
+        for(int i=0;i<3;++i){
+          EXPECT_NEAR(val0[i],val1[i], 1.0e-3*(fabs(val1[i])+1.0) );
+        }
+      }
+    }
+  }
+  
+  {
+    for(int ibone=0;ibone<aBone.size();++ibone){
+      dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
+    }
+    dfm2::UpdateBoneRotTrans(aBone);
+    // ----------------------
+    std::vector<dfm2::CTarget> aTarget;
+    srand(0);
+    for(int itr=0;itr<5;++itr){
+      dfm2::CTarget t;
+      t.ib = aBone.size()*(rand()/(RAND_MAX+1.0));
+      t.pos = aBone[t.ib].Pos() + dfm2::CVec3d::Random();
+      aTarget.push_back(t);
+    }
+    
+    std::vector<double> aO0; // [nC]
+    std::vector<double> adO0; // [nC, nb*3 ]
+    for(int it=0;it<aTarget.size();++it){
+      dfm2::Rig_WdW_Target_Eigen(aO0,adO0,
+                                 aBone,aTarget[it],Lx,Ly,Lz);
+    }
+    
+    const unsigned int nsns = Lx.size()/(nb*4);
+    assert( nsns==(nb+1)*3 );
+    for(int isns=0;isns<nsns;++isns){
+      unsigned int ib_s = isns/3;
+      bool is_rot = true;
+      unsigned int idim_s = isns - ib_s*3;
+      if( ib_s == nb ){ ib_s = 0; is_rot = false; }
+      std::vector<dfm2::CRigBone> aBone1 = aBone;
+      if( is_rot ){
+        dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(eps*dfm2::CVec3d::Axis(idim_s));
+        dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone1[ib_s].quatRelativeRot);
+        q0.CopyTo(aBone1[ib_s].quatRelativeRot);
+      }
+      else{
+        aBone1[ib_s].transRelative[idim_s] += eps;
+      }
+      dfm2::UpdateBoneRotTrans(aBone1);
+      // -------------
+      std::vector<double> aO1; // [nC]
+      std::vector<double> adO1; // [nC, nb*3 ]
+      for(int it=0;it<aTarget.size();++it){
+        dfm2::Rig_WdW_Target_Eigen(aO1,adO1,
+                                   aBone1,aTarget[it],Lx,Ly,Lz);
+      }
+      // -------------
+      for(int io=0;io<aO0.size();++io){
+        EXPECT_NEAR((aO1[io]-aO0[io])/eps, adO0[io*nsns+isns], 0.5*eps*(fabs(adO0[io*nsns+isns])+1.0));
+      }
+    }
+  }
+}

@@ -46,10 +46,10 @@ int main(int argc,char* argv[])
   
   UpdateBoneRotTrans(aBone);
   aXYZ = aXYZ0;
-  UpdateRigSkin(aXYZ.data(),
-                aXYZ0.data(), aXYZ0.size()/3,
-                aTri.data(), aTri.size()/3,
-                aBone, aRigWeight.data(), aRigJoint.data());
+  dfm2::Skinning_LBS_LocalWeight(aXYZ.data(),
+                                 aXYZ0.data(), aXYZ0.size()/3,
+                                 aTri.data(), aTri.size()/3,
+                                 aBone, aRigWeight.data(), aRigJoint.data());
 
   // --------------
   // opengl starts here

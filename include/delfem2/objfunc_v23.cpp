@@ -1068,8 +1068,8 @@ void dfm2::ddW_ArapEnergy
   dfm2::CMat3d R = dfm2::CMat3d::Quat(aQuat1.data()+ip*4);
   //    LMi = R*LMi*R.Trans();
   eM.assign(nIP*nIP*9, 0.0);
-  for(int jjp=0;jjp<nNg;++jjp){
-    for(int kkp=0;kkp<nNg;++kkp){
+  for(unsigned int jjp=0;jjp<nNg;++jjp){
+    for(unsigned int kkp=0;kkp<nNg;++kkp){
       const dfm2::CVec3d vj = (dfm2::CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
       const dfm2::CVec3d vk = (dfm2::CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
       dfm2::CMat3d L1 = R*dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p)*R.Trans();
