@@ -43,13 +43,13 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/primitive.h                    ${DELFEM2_INC}/primitive.cpp
       ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
       ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
+      ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
 
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 endif()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
   ${DELFEM2_INC}/adf.h                    ${DELFEM2_INC}/adf.cpp
   ${DELFEM2_INC}/bvh.h                    ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/bv.h

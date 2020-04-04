@@ -9,6 +9,7 @@
 #ifndef DFM2_MSHIO_H
 #define DFM2_MSHIO_H
 
+#include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
 #include <string>
@@ -172,5 +173,9 @@ void Read_MeshTri3D_Nas(std::vector<double> &aXYZ,
                         const char *path);
 
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/mshio.cpp"
+#endif
 
 #endif /* meshio_hpp */
