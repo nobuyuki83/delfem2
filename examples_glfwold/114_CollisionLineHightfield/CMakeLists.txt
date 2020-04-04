@@ -50,13 +50,13 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/color.h                      ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/v23m34q.h                    ${DELFEM2_INC}/v23m34q.cpp
       ${DELFEM2_INC}/mshmisc.h                    ${DELFEM2_INC}/mshmisc.cpp
-      
+          ${DELFEM2_INC}/mshio.h                    ${DELFEM2_INC}/mshio.cpp
+
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/mshio.h                    ${DELFEM2_INC}/mshio.cpp
  
     ${DELFEM2_INC}/srchuni_v3.h               ${DELFEM2_INC}/srchuni_v3.cpp
 

@@ -47,7 +47,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/primitive.cpp            ${DELFEM2_INC}/primitive.h
       ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
       ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
-
+      ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
 
       ${DELFEM2_INC}/v23m34q.cpp               ${DELFEM2_INC}/v23m34q.h
       
@@ -56,7 +56,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-	${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
   ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
   
   ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
