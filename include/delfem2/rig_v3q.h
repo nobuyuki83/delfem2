@@ -114,7 +114,7 @@ void PickBone(
 
 // ----------------------------------
 
-void UpdateRigSkin(
+void Skinning_LBS_LocalWeight(
     double* aXYZ,
     const double* aXYZ0,
     unsigned int nXYZ,
@@ -124,6 +124,9 @@ void UpdateRigSkin(
     const double* aRigWeight,
     const unsigned int* aRigJoint);
 
+/**
+ * @params aW rigging weight [np, nbone]
+ */
 void Skinning_LBS(
     std::vector<double>& aXYZ1,
     const std::vector<double>& aXYZ0,
@@ -168,14 +171,6 @@ void Rig_SensitivityBoneTransform(double* aL, // [ ndim(3), nBone, ndim(4) ]
                                   unsigned int ib_s,
                                   unsigned int idim_s,
                                   const std::vector<CRigBone> aBone1);
-
-/*
- void Rig_SkinReferncePositionsBoneWeighted_Eigen
- (Eigen::MatrixXd& emRefPosAff,
- const std::vector<CRigBone> aBone1,
- const std::vector<double>& aXYZ0,
- const std::vector<double>& aW);
- */
 
 void Rig_SensitivityBoneTransform_Eigen(
     std::vector<double>& Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]

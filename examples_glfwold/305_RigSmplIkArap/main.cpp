@@ -36,87 +36,6 @@
 
 namespace dfm2 = delfem2;
 
-// -------------------
-
-void Check_SensitivityRigSkin(
-    std::vector<dfm2::CRigBone> aBone1,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aW)
-{
-  const unsigned int nb = aBone1.size();
-  assert( aW.size() == aXYZ0.size()/3*nb );
-  
-  // ------------
-  std::vector<double> Lx, Ly, Lz;  // [ nsns, nb*4 ]
-  for(int ibs=0;ibs<aBone1.size();++ibs){
-    for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               ibs,idims,true,
-                                               aBone1);
-    }
-  }
-  for(int idims=0;idims<3;++idims){
-    dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                             0,idims,false,
-                                             aBone1);
-  }
-  // ---------------
-  
-  std::vector<double> aRefPos; // [ np, nBone*4 ]
-  Rig_SkinReferncePositionsBoneWeighted(aRefPos,
-                                        aBone1,aXYZ0,aW);
-  
-  const double eps = 1.0e-4;
-  const unsigned int nsns = Lx.size()/(nb*4);
-  assert( nsns==(nb+1)*3 );
-  for(int isns=0;isns<nsns;++isns){
-    unsigned int ib_s = isns/3;
-    bool is_rot = true;
-    unsigned int idim_s = isns - ib_s*3;
-    if( ib_s == nb ){ ib_s = 0; is_rot = false; }
-    std::vector<dfm2::CRigBone> aBone2 = aBone1;
-    if( is_rot ){
-      dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(eps*dfm2::CVec3d::Axis(idim_s));
-      dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone2[ib_s].quatRelativeRot);
-      q0.CopyTo(aBone2[ib_s].quatRelativeRot);
-    }
-    else{
-      aBone2[ib_s].transRelative[idim_s] += eps;
-    }
-    std::vector<double> aXYZ1;
-    dfm2::UpdateBoneRotTrans(aBone1);
-    dfm2::Skinning_LBS(aXYZ1,
-                       aXYZ0, aBone1, aW);
-    // ----------------
-    std::vector<double> aXYZ2;
-    dfm2::UpdateBoneRotTrans(aBone2);
-    dfm2::Skinning_LBS(aXYZ2,
-                       aXYZ0, aBone2, aW);
-    {
-      const unsigned int np = aXYZ0.size()/3;
-      // ----------------
-      double max_ratio = 0.0;
-      for(int ip=0;ip<np;++ip){
-        const double val0[3] = {
-          (aXYZ2[ip*3+0] - aXYZ1[ip*3+0])/eps,
-          (aXYZ2[ip*3+1] - aXYZ1[ip*3+1])/eps,
-          (aXYZ2[ip*3+2] - aXYZ1[ip*3+2])/eps };
-        double val1[3] =  { 0, 0, 0 };
-        for(int j=0;j<nb*4;++j){
-          val1[0] += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
-          val1[1] += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
-          val1[2] += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
-        }
-        for(int i=0;i<3;++i){
-          double ratio = fabs(val0[i]-val1[i])/(fabs(val1[i])+1.0);
-          max_ratio = (ratio >max_ratio ) ? ratio : max_ratio;
-        }
-      }
-      std::cout << "check sensitivity skin: max error ratio: " << ib_s << " " << idim_s << " " << max_ratio << std::endl;
-    }
-  }
-}
-
 // -------------------------------
 
 void Solve_MinEnergyArap
@@ -454,10 +373,6 @@ int main()
     }
     std::cout << "nsns: " << nsns << std::endl;
   }
-    
-  // -----------
-  
-  Check_SensitivityRigSkin(aBone,aXYZ0,aW);
   
   // -----------
 

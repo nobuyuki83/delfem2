@@ -159,10 +159,10 @@ static void MyMatMatTX
   unsigned int nk,
   const double* B) // [nj, nk]
 {
-  for(int i=0;i<ni;++i){
-    for(int j=0;j<nj;++j){
+  for(unsigned int i=0;i<ni;++i){
+    for(unsigned int j=0;j<nj;++j){
       M[i*nj+j] = 0.0;
-      for(int k=0;k<nk;++k){
+      for(unsigned int k=0;k<nk;++k){
         M[i*nj+j] += A[i*nk+k] * B[j*nk+k];
       }
     }
@@ -226,7 +226,7 @@ void dfm2::UpdateBoneRotTrans
 
 
 
-void dfm2::UpdateRigSkin
+void dfm2::Skinning_LBS_LocalWeight
 (double* aXYZ,
  const double* aXYZ0,
  unsigned int nXYZ,
@@ -273,11 +273,11 @@ void dfm2::Skinning_LBS
   const unsigned int nP = aXYZ0.size()/3;
   aXYZ1.resize(aXYZ0.size());
   assert( aW.size() == nBone*nP );
-  for(int ip=0;ip<nP;++ip){
+  for(unsigned int ip=0;ip<nP;++ip){
     const double* p0 = aXYZ0.data()+ip*3;
     double* p1 = aXYZ1.data()+ip*3;
     p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
-    for(int ibone=0;ibone<nBone;++ibone){
+    for(unsigned int ibone=0;ibone<nBone;++ibone){
       double p2[3];
       aBone[ibone].DeformSkin(p2, p0);
       p1[0] += aW[ip*nBone+ibone]*p2[0];
@@ -595,9 +595,9 @@ void dfm2::Rig_SkinReferncePositionsBoneWeighted
   const unsigned int np = aXYZ0.size()/3;
   const unsigned int nb = aBone1.size();
   aRefPosAff.resize(np*nb*4);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     double p0a[4] = {aXYZ0[ip*3+0], aXYZ0[ip*3+1], aXYZ0[ip*3+2], 1.0};
-    for(int ib=0;ib<nb;++ib){
+    for(unsigned int ib=0;ib<nb;++ib){
       double p0b[4]; dfm2::MatVec4(p0b,
                                    aBone1[ib].invBindMat, p0a);
       aRefPosAff[ip*(nb*4)+ib*4+0] = aW[ip*nb+ib]*p0b[0];
@@ -632,7 +632,7 @@ void dfm2::CTarget::WdW
   const unsigned int nb = aBone.size();
   const unsigned int istat = adW.size();
   adW.resize(istat+ncnst*nb*3);
-  for(int ibs=0;ibs<nb;++ibs){
+  for(unsigned int ibs=0;ibs<nb;++ibs){
     for(int idims=0;idims<3;++idims){
       double dx = aL[(idims*nb+ibs)*(3*nb*4)+0*(nb*4)+ib*4+3];
       double dy = aL[(idims*nb+ibs)*(3*nb*4)+1*(nb*4)+ib*4+3];
@@ -746,9 +746,9 @@ void dfm2::Rig_SensitivitySkin_BoneRotation
   const unsigned int nb = aBone1.size();
   const unsigned int np = aXYZ0.size()/3;
   aSns.resize(nb*3 * np*3);
-  for(int ib_s=0;ib_s<nb;++ib_s){
-    for(int idim_s=0;idim_s<3;++idim_s){
-      for(int ip=0;ip<np;++ip){
+  for(unsigned int ib_s=0;ib_s<nb;++ib_s){
+    for(unsigned int idim_s=0;idim_s<3;++idim_s){
+      for(unsigned int ip=0;ip<np;++ip){
         for(int idim=0;idim<3;++idim){
           aSns[(np*3)*(ib_s*3+idim_s)+(ip*3+idim)] = MyDotX(aL.data()+(idim_s*nb+ib_s)*(3*nb*4)+idim*nb*4,
                                                             aRefPos.data()+ip*nb*4,

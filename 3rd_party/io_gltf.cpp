@@ -261,7 +261,7 @@ void dfm2::GetMeshInfo
     if( itr != primitive.attributes.end() ){
       GetArray_Double(aXYZ,
                       model, itr->second);
-      std::cout << "has position: " << aXYZ.size()/3 << std::endl;
+//      std::cout << "has position: " << aXYZ.size()/3 << std::endl;
       /*
        for(int ip=0;ip<aXYZ.size()/3;++ip){
        std::cout << ip << " --> " << aXYZ[ip*3+0] << " " << aXYZ[ip*3+1] << " " << aXYZ[ip*3+2] << std::endl;
@@ -279,7 +279,7 @@ void dfm2::GetMeshInfo
     if( itr != primitive.attributes.end() ){
       GetArray_Double(aRigWeight,
                       model, itr->second);
-      std::cout << "has rig weight: " << aRigWeight.size()/4 << std::endl;
+//      std::cout << "has rig weight: " << aRigWeight.size()/4 << std::endl;
       //      assert( aRigWeight.size()/4 == aXYZ.size()/3 );
       /*
        for(int ir=0;ir<aRigWeight.size()/4;++ir){
@@ -297,7 +297,7 @@ void dfm2::GetMeshInfo
     if( itr != primitive.attributes.end() ){
       GetArray_UInt(aRigJoint,
                     model, itr->second);
-      std::cout << "has rig joint: " << aRigJoint.size()/4 << std::endl;
+//      std::cout << "has rig joint: " << aRigJoint.size()/4 << std::endl;
       /*
        for(int ir=0;ir<aRigJoint.size()/4;++ir){
        std::cout << ir << " --> ";
