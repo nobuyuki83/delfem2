@@ -45,6 +45,7 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
       ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
+      ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
     
       ${DELFEM2_INC}/opengl/tex_gl.h             ${DELFEM2_INC}/opengl/tex_gl.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
@@ -52,7 +53,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
     ${DELFEM2_INC}/imgio.h                  ${DELFEM2_INC}/imgio.cpp
 
