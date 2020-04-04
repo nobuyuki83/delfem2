@@ -193,7 +193,7 @@ TEST(gltf,io_gltf_skin_sensitivity)
     }
   }
   
-  {
+  { // check sensitivity target
     for(int ibone=0;ibone<aBone.size();++ibone){
       dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
     }
