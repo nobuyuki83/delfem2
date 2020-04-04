@@ -14,7 +14,7 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------------------
 
-bool LaplacianArroundPoint
+DFM2_INLINE bool LaplacianArroundPoint
  (std::vector<dfm2::CVec2d>& aVec2,
   int ipoin,
   const std::vector<dfm2::CDynPntSur>& aPo,
@@ -65,7 +65,7 @@ bool LaplacianArroundPoint
   return true;
 }
 
-bool FindEdgePoint_AcrossEdge
+DFM2_INLINE bool FindEdgePoint_AcrossEdge
  (unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double& ratio,
   int ipo0, int ipo1,
   const std::vector<dfm2::CDynPntSur>& po,
@@ -168,7 +168,7 @@ bool FindEdgePoint_AcrossEdge
 
 // --------------------------------------------------------
 
-bool dfm2::CheckTri
+DFM2_INLINE bool dfm2::CheckTri
 (const std::vector<CDynPntSur>& aPo3D,
  const std::vector<CDynTri>& aSTri,
  const std::vector<CVec2d>& aXYZ)
@@ -190,7 +190,7 @@ bool dfm2::CheckTri
   return true;
 }
 
-bool dfm2::DelaunayAroundPoint
+DFM2_INLINE bool dfm2::DelaunayAroundPoint
 (int ipo0,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri,
@@ -288,7 +288,7 @@ bool dfm2::DelaunayAroundPoint
   return true;
 }
 
-void dfm2::MeshingInside
+DFM2_INLINE void dfm2::MeshingInside
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
  std::vector<CVec2d>& aVec2,
@@ -344,7 +344,7 @@ void dfm2::MeshingInside
 }
 
 
-void dfm2::MakeSuperTriangle
+DFM2_INLINE void dfm2::MakeSuperTriangle
 (std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
@@ -399,7 +399,7 @@ void dfm2::MakeSuperTriangle
   tri.r2[2] =  0;
 }
 
-void dfm2::AddPointsMesh
+DFM2_INLINE void dfm2::AddPointsMesh
 (const std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
@@ -464,7 +464,7 @@ void dfm2::AddPointsMesh
   }
 }
 
-void dfm2::EnforceEdge
+DFM2_INLINE void dfm2::EnforceEdge
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
  int i0, int i1,
@@ -527,7 +527,7 @@ void dfm2::EnforceEdge
   }
 }
 
-void dfm2::FlagConnected
+DFM2_INLINE void dfm2::FlagConnected
 (std::vector<int>& inout_flg,
  const std::vector<CDynTri>& aTri_in,
  unsigned int itri0_ker,
@@ -556,7 +556,7 @@ void dfm2::FlagConnected
   }
 }
 
-void dfm2::DeleteTriFlag
+DFM2_INLINE void dfm2::DeleteTriFlag
 (std::vector<CDynTri>& aTri1,
  std::vector<int>& aFlg1,
  int iflag)
@@ -598,7 +598,7 @@ void dfm2::DeleteTriFlag
 }
 
 
-void dfm2::DeleteUnrefPoints
+DFM2_INLINE void dfm2::DeleteUnrefPoints
 (std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri_in,
@@ -643,7 +643,7 @@ void dfm2::DeleteUnrefPoints
 }
 
 
-void dfm2::DeletePointsFlag
+DFM2_INLINE void dfm2::DeletePointsFlag
 (std::vector<CVec2d>& aVec1,
  std::vector<CDynPntSur>& aPo1,
  std::vector<CDynTri>& aTri,
@@ -691,7 +691,7 @@ void dfm2::DeletePointsFlag
   }
 }
 
-void dfm2::Meshing_Initialize
+DFM2_INLINE void dfm2::Meshing_Initialize
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
  std::vector<CVec2d>& aVec2)
@@ -766,7 +766,7 @@ void dfm2::Meshing_Initialize
  }
  */
 
-void dfm2::MeshTri2D_Export
+DFM2_INLINE void dfm2::MeshTri2D_Export
 (std::vector<double>& aXY_out,
  std::vector<unsigned int>& aTri_out,
  const std::vector<CVec2d>& aVec2,
@@ -950,7 +950,7 @@ void PrepareInput
  */
 
 
-void dfm2::Meshing_SingleConnectedShape2D
+DFM2_INLINE void dfm2::Meshing_SingleConnectedShape2D
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CVec2d>& aVec2,
  std::vector<CDynTri>& aETri,
@@ -996,7 +996,7 @@ void dfm2::Meshing_SingleConnectedShape2D
 
 // -----------------------------------------
 
-void dfm2::CMeshTri2D
+DFM2_INLINE void dfm2::CMeshTri2D
 (std::vector<double>& aXY,
  std::vector<unsigned int>& aTri,
  std::vector<CVec2d>& aVec2,
@@ -1016,7 +1016,7 @@ void dfm2::CMeshTri2D
 }
 
 
-void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
+DFM2_INLINE void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
 (CCmdRefineMesh& aCmd,
  double elen,
  double px, double py, double rad,
@@ -1048,7 +1048,7 @@ void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
 
 
 // TODO: implement this function
-void dfm2::RefineMesh
+DFM2_INLINE void dfm2::RefineMesh
 (std::vector<CDynPntSur>& aEPo2,
  std::vector<CDynTri>& aSTri,
  std::vector<CVec2d>& aVec2,
@@ -1087,7 +1087,7 @@ void dfm2::RefineMesh
 }
 
 
-void dfm2::MakeInvMassLumped_Tri
+DFM2_INLINE void dfm2::MakeInvMassLumped_Tri
 (std::vector<double>& aInvMassLumped,
  double rho,
  const std::vector<CVec2d>& aVec2,
@@ -1112,7 +1112,7 @@ void dfm2::MakeInvMassLumped_Tri
   }
 }
 
-void dfm2::MinMaxTriArea
+DFM2_INLINE void dfm2::MinMaxTriArea
 (double& min_area,
  double& max_area,
  const std::vector<CVec2d>& aVec2,
@@ -1137,7 +1137,7 @@ void dfm2::MinMaxTriArea
 }
 
 
-void dfm2::GenMesh
+DFM2_INLINE void dfm2::GenMesh
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aETri,
  std::vector<CVec2d>& aVec2,
