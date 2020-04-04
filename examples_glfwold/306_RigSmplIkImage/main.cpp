@@ -34,7 +34,7 @@
 
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
-#include "delfem2/opengl/gl_tex.h"
+#include "delfem2/opengl/tex_gl.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -48,7 +48,7 @@ void Solve_MinRigging
 (std::vector<dfm2::CRigBone>& aBone,
  const std::vector<dfm2::CTarget>& aTarget)
 {
-  std::vector<double> Lx, Ly, Lz;
+  std::vector<double> Lx, Ly, Lz; // [nsns, nb*4]
   for(int ibs=0;ibs<aBone.size();++ibs){
     for(int idims=0;idims<3;++idims){
       dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
@@ -61,6 +61,8 @@ void Solve_MinRigging
                                              0,idims,false,
                                              aBone);
   }
+  
+  // -----------------------
   
   std::vector<double> aC0; // [nC]
   std::vector<double> adC0; // [nC, nb*3 ]
@@ -178,20 +180,26 @@ void Draw
   ::glEnable(GL_DEPTH_TEST);
   dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
   //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
-  { // draw bone
-    ::glDisable(GL_DEPTH_TEST);
-    ::glDisable(GL_LIGHTING);
-    ::glPointSize(10);
-    ::glBegin(GL_POINTS);
-    for(int it=0;it<aTarget.size();++it){
-      const unsigned int ib = aTarget[it].ib;
-      ::glColor3d(1,0,0);
-      dfm2::opengl::myGlVertex(aBone[ib].Pos());
-      ::glColor3d(1,0,0);
-      dfm2::opengl::myGlVertex(aTarget[it].pos);
-    }
-    ::glEnd();
+  ::glDisable(GL_DEPTH_TEST);
+  ::glDisable(GL_LIGHTING);
+  ::glPointSize(10);
+  ::glBegin(GL_POINTS);
+  for(int it=0;it<aTarget.size();++it){
+    const unsigned int ib = aTarget[it].ib;
+    ::glColor3d(1,0,0);
+    dfm2::opengl::myGlVertex(aBone[ib].Pos());
   }
+  ::glEnd();
+  // ------
+  ::glEnable(GL_DEPTH_TEST);
+  ::glBegin(GL_LINES);
+  ::glColor3d(1,0,0);
+  for(int it=0;it<aTarget.size();++it){
+    dfm2::CVec3d p = aTarget[it].pos;
+    dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
+    dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
+  }
+  ::glEnd();
   /*
    ::glDisable(GL_DEPTH_TEST);
    delfem2::opengl::DrawBone(aBone,
@@ -206,18 +214,20 @@ void Draw
 
 int main()
 {
-  dfm2::opengl::CTexture tex;
+  dfm2::opengl::CTexRGB_Rect2D tex;
   {
     int width, height, channels;
     unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/uglysweater.jpg").c_str(),
                                    &width, &height, &channels, 0);
     std::cout << width << " " << height << " " << channels << std::endl;
     tex.Initialize(width, height, img, "rgb");
+    delete[] img;
     double scale = 0.5;
     tex.max_x = -scale;
     tex.min_x = +scale;
     tex.max_y = -scale*height/width;
     tex.min_y = +scale*height/width;
+    tex.z = -0.5;
   }
   
   std::vector<double> aXYZ0;
@@ -252,26 +262,52 @@ int main()
   
   std::vector<dfm2::CTarget> aTarget;
   {
-    {
+    { // hip right
       dfm2::CTarget t;
-      t.ib = 20;
+      t.ib = 2;
       t.pos = aBone[t.ib].Pos();
       aTarget.push_back(t);
     }
-    {
+    { // shoulder left
       dfm2::CTarget t;
-      t.ib = 10;
+      t.ib = 16;
+      t.pos = dfm2::CVec3d(0.15, +0.25 , 0);
+      aTarget.push_back(t);
+    }
+    { // shoulder right
+      dfm2::CTarget t;
+      t.ib = 17;
       t.pos = aBone[t.ib].Pos();
+      aTarget.push_back(t);
+    }
+    { // elbow left
+      dfm2::CTarget t;
+      t.ib = 18;
+      t.pos = dfm2::CVec3d(0.2, -0.0, 0);
+      aTarget.push_back(t);
+    }
+    { // wrist left
+      dfm2::CTarget t;
+      t.ib = 20;
+      t.pos = dfm2::CVec3d(0.28, 0.15, 0);
+      aTarget.push_back(t);
+    }
+    { // wrist right
+      dfm2::CTarget t;
+      t.ib = 21;
+      t.pos =  dfm2::CVec3d(-0.18, -0.22, 0);
       aTarget.push_back(t);
     }
   }
-  std::vector< dfm2::CVec3d > aTargetOriginPos;
+  std::vector< std::pair<dfm2::CVec3d,dfm2::CVec3d> > aTargetOriginPos;
   for(int it=0;it<aTarget.size();++it){
-    aTargetOriginPos.push_back(aTarget[it].pos);
+    unsigned int ib = aTarget[it].ib;
+    aTargetOriginPos.push_back( std::make_pair(aTarget[it].pos,
+                                               aBone[ib].Pos()) );
   }
   
   // -----------
-  Check(aBone, aTarget);
+//  Check(aBone, aTarget);
      
   // -----------
   dfm2::opengl::CViewer_GLFW viewer;
@@ -285,8 +321,11 @@ int main()
   {
     iframe++;
     {
-      aTarget[0].pos = aTargetOriginPos[0] + 0.4*dfm2::CVec3d(1-cos(0.1*iframe), sin(0.1*iframe), 0.0);
-      aTarget[1].pos = aTargetOriginPos[1] + 0.1*dfm2::CVec3d(sin(0.1*iframe), 1-cos(0.1*iframe), 0.0);
+      double r = iframe*0.01;
+      if( r > 1 ){ r = 1; }
+      for(int it=0;it<aTarget.size();++it){
+        aTarget[it].pos = r*aTargetOriginPos[it].first + (1-r)*aTargetOriginPos[it].second;
+      }
       Solve_MinRigging(aBone, aTarget);
       Skinning_LBS(aXYZ1,
                    aXYZ0, aBone, aW);
@@ -295,7 +334,7 @@ int main()
     // -------------------
     viewer.DrawBegin_oldGL();
     Draw(aXYZ1,aTri,aBone,aTarget);
-    tex.Draw();
+    tex.Draw_oldGL();
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }

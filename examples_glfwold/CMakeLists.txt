@@ -51,6 +51,7 @@ add_subdirectory(302_RigReadFileBiovision)
 add_subdirectory(303_RigReadFileGLTF)
 add_subdirectory(304_RigSmplIk)
 add_subdirectory(305_RigSmplIkArap)
+add_subdirectory(306_RigSmplIkImage)
 
 # cad
 add_subdirectory(500_Cad2d)

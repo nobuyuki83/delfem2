@@ -54,17 +54,21 @@ void init_sampler(py::module &m)
 {
   // ---------------------------------------
   // Depth&Color Sampler
-  py::class_<dfm2::opengl::CRender2Tex_DrawOldGL>(m,"CppGPUSampler", "sample color and depth in the frame buffer")
+  py::class_<dfm2::opengl::CRender2Tex_DrawOldGL>(m,
+                                                  "CppGPUSampler",
+                                                  "sample color and depth in the frame buffer")
   .def(py::init<>())
   .def("draw",       &dfm2::opengl::CRender2Tex_DrawOldGL::Draw)
   .def("init_gl",    &dfm2::opengl::CRender2Tex_DrawOldGL::InitGL)
   .def("minmax_xyz", &dfm2::opengl::CRender2Tex_DrawOldGL::AABBVec3)
   //
-  .def("set_texture_property",  &dfm2::opengl::CRender2Tex_DrawOldGL::SetTextureProperty,
+  .def("set_texture_property",
+       &dfm2::opengl::CRender2Tex_DrawOldGL::SetTextureProperty,
        py::arg("size_res_width"),
        py::arg("size_res_height"),
        py::arg("is_rgba_8ui") )
-  .def("set_coordinate", &dfm2::opengl::CRender2Tex_DrawOldGL::SetCoord,
+  .def("set_coordinate",
+       &dfm2::opengl::CRender2Tex_DrawOldGL::SetCoord,
        py::arg("len_grid"),
        py::arg("depth_max"),
        py::arg("org"),

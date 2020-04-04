@@ -30,6 +30,15 @@ set(3RD_PARTY           "../../3rd_party")
 set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
+########################
+
+include_directories(
+  ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}/glad3/include
+  ${3RD_PARTY}/pybind11/include
+  ${3RD_PARTY}
+)
+
 if(NOT USE_HEADERONLY)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
@@ -89,17 +98,8 @@ set(INPUT_SRC
     main.cpp
 )
 
-set(INPUT_INCLUDE_DIR
-  ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}/glad3/include
-  ${3RD_PARTY}/pybind11/include
-  ${3RD_PARTY}
-)
-set(INPUT_LIBRARY
-)
+###########################################
 
-
-include_directories( ${INPUT_INCLUDE_DIR} )
 pybind11_add_module(${PROJ_NAME}
   ${INPUT_SRC} )
 

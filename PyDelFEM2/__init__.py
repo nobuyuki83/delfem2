@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-
+from .c_core import imread
 from .c_core import AABB3
 from .c_core import CppSDF3, CppSDF3_Sphere
 from .c_core import MathExpressionEvaluator
