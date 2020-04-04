@@ -15,28 +15,48 @@
 namespace delfem2 {
 namespace opengl {
 
-class CTexture {
+void SaveViewportAsImagePpm(const std::string &path);
+
+int SetTexture_RGB
+ (unsigned int w, unsigned int h,
+  const std::vector<unsigned char> &image);
+
+/**
+ * @param bpp byte par pixel
+ * @return texture id
+ */
+unsigned int LoadTexture
+ (const unsigned char *image,
+  const int width, const int height, const int bpp);
+
+// ----------------------------------
+
+class CTexRGB {
 public:
   std::vector<unsigned char> aRGB;
   unsigned int id_tex;
   unsigned int h, w;
-  double min_x, max_x, min_y, max_y;
+//  double min_x, max_x, min_y, max_y;
 
 public:
-  CTexture() {
+  CTexRGB() {
     id_tex = 0;
     this->w = 0;
     this->h = 0;
     aRGB.clear();
-    min_x = min_y = 0;
-    max_x = max_y = 0;
   }
 
-  CTexture(int w, int h, const unsigned char *pD, const std::string &typeData) {
+  /*
+  CTexIdAndRGBData(int w, int h,
+                   const unsigned char *pD,
+                   const std::string &typeData) {
     this->Initialize(w,h, pD, typeData);
   }
+   */
   
-  void Initialize(int w, int h, const unsigned char *pD, const std::string &typeData){
+  virtual void Initialize(int w, int h,
+                  const unsigned char *pD,
+                  const std::string &typeData){
     this->h = h;
     this->w = w;
     this->aRGB.assign(pD, pD + h * w * 3);
@@ -49,54 +69,60 @@ public:
       }
     }
     id_tex = 0;
+  }
+
+  virtual void InitGL();
+};
+
+// ----------------------------------
+
+class CTexRGB_Rect2D :
+public CTexRGB
+{
+public:
+  CTexRGB_Rect2D() : CTexRGB() {
+    min_x = min_y = 0;
+    max_x = max_y = 0;
+    z = 0;
+  }
+  
+  void Draw_oldGL();
+  
+  virtual void Initialize(int w, int h,
+                  const unsigned char *pD,
+                  const std::string &typeData){
+    CTexRGB::Initialize(w, h, pD, typeData);
     this->min_x = 0.0;
     this->max_x = (double) w;
     this->min_y = 0.0;
     this->max_y = (double) h;
   }
-
-  void InitGL();
-
-  void Draw_oldGL();
-
+  
   std::vector<double> MinMaxXYZ() const {
     std::vector<double> m(6, 0.0);
     m[0] = this->min_x;
     m[1] = this->max_x;
     m[2] = this->min_y;
     m[3] = this->max_y;
-    m[4] = 0;
-    m[5] = 0;
+    m[4] = z;
+    m[5] = z;
     return m;
   }
-
+  
   void SetMinMaxXY(const std::vector<double> &mmxy) {
     if (mmxy.size() < 4) { return; }
     this->min_x = mmxy[0];
     this->max_x = mmxy[1];
     this->min_y = mmxy[2];
     this->max_y = mmxy[3];
+    z = (mmxy[4] + mmxy[5])*0.5;
   }
+public:
+  double min_x, max_x, min_y, max_y;
+  double z;
 };
 
-void SaveImage(const std::string &path);
-
-int SetTexture_RGB(
-    unsigned int w, unsigned int h,
-    const std::vector<unsigned char> &image);
-
-unsigned int LoadTexture(
-    const unsigned char *image,
-    const int width, const int height, const int bpp);
-
-/*
-void DrawTextureBackground(
-    const unsigned int tex,
-     const int imgWidth,
-     const int imgHeight,
-     const int winWidth,
-     const int winHeight);
-*/
+// ----------------------------------
 
 class CTextureInfo {
 public:

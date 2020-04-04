@@ -16,10 +16,10 @@
 #include "../py_funcs.h"
 
 #include "delfem2/mat3.h"
+#include "delfem2/primitive.h"
 #include "delfem2/mshtopoio.h"
 #include "delfem2/voxel.h"
 #include "delfem2/bv.h"
-#include "delfem2/primitive.h"
 #include "delfem2/iss.h"
 #include "delfem2/slice.h"
 #include "delfem2/evalmathexp.h"
@@ -29,6 +29,8 @@
 
 #include "tinygltf/tiny_gltf.h"
 #include "io_gltf.h"
+
+#include "stb_image.h" // stb is already compiled in io_gltf.cpp
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;
@@ -41,6 +43,19 @@ void init_mshtopoio(py::module &m);
 void init_field(py::module &m);
 void init_fem(py::module &m);
 void init_sdf(py::module &m);
+
+// ---------------------------------
+// img related
+
+py::array_t<unsigned char> PyImRead(const std::string& d)
+{
+  int width, height, channels;
+  unsigned char *img = stbi_load(d.c_str(),
+                                 &width, &height, &channels, 0);
+  py::array_t<unsigned char> npR({height,width,channels}, img);
+  delete[] img;
+  return npR;
+}
 
 // ---------------------------------
 // voxel related
@@ -272,6 +287,9 @@ PYBIND11_MODULE(c_core, m) {
   init_fem(m);
   init_sdf(m);
 //  init_rigidbody(m);
+  
+  // ----------------------
+  m.def("imread", &PyImRead);
   
   // -------------------------
   // axis arrigned boudning box

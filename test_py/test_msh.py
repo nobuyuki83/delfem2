@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.          #
 ####################################################################
 
-#import unittest,
 import pytest
 import numpy, random, os, sys, math
 import PyDelFEM2 as dfm2
@@ -148,3 +147,13 @@ class Test_GlTF():
     if request.config.getoption('--is_gl') == "true":                  
       dfm2.gl.glfw.winDraw3d([msh, axis], winsize=(400, 300), nframe=10)
 
+
+class Test_Tex():
+  def test0(self,request):
+    path_img = "../test_inputs/lenna.png"
+    np_img = dfm2.imread(path_img)
+    tex = dfm2.gl.get_texture(np_img,"rgb")
+    print(tex.minmax_xyz())
+    axis = dfm2.gl.AxisXYZ(100)
+    if request.config.getoption('--is_gl') == "true":
+      dfm2.gl.glfw.winDraw3d([tex, axis], winsize=(400, 300), nframe=10)

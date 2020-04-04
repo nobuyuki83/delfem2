@@ -15,7 +15,7 @@ def main():
   path_img = "../test_inputs/lenna.png"
   np_img = cv2.imread(path_img)
   axis = dfm2.gl.AxisXYZ(100)
-  tex = dfm2.gl.get_texture(np_img)
+  tex = dfm2.gl.get_texture(np_img,"rgb")
   dfm2.gl.glfw.winDraw3d([axis,tex],winsize=(400,300),
                           camera_rotation=[math.pi, 0, 0])
 
