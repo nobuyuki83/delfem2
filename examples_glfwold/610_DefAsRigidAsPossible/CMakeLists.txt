@@ -43,16 +43,8 @@ ENDIF()
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
-  ${DELFEM2_INC}/opengl/v3q_glold.h       ${DELFEM2_INC}/opengl/v3q_glold.cpp
-  ${SRC_DFM2}
 	main.cpp
 )
-# add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-if(DFM2_STATIC_LIBRARY)
-set(INPUT_SRC
-    ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-    ${INPUT_SRC})
-endif()
 
 ###############################################
 

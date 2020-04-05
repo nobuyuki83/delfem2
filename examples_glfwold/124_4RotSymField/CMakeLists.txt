@@ -40,8 +40,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/opengl/v3q_glold.h           ${DELFEM2_INC}/opengl/v3q_glold.cpp
-    ${SRC_DFM2}
   main.cpp
 )
 
