@@ -55,7 +55,7 @@ public:
     return aabb;
   }
   void Read(const std::string& fname){
-    std::string sExt = pathGetExtension(fname);
+    std::string sExt = delfem2::pathGetExtension(fname);
     if( sExt == "ply") {
       delfem2::Read_Ply(fname, aPos, aElem);
     }

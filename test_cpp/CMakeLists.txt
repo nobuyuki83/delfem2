@@ -54,6 +54,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mshmisc.h              ${DELFEM2_INC}/mshmisc.cpp
       ${DELFEM2_INC}/mshio.h                ${DELFEM2_INC}/mshio.cpp
       ${DELFEM2_INC}/dtri.h                 ${DELFEM2_INC}/dtri.cpp
+      ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
       ${DELFEM2_INC}/bv.h
       
       ${DELFEM2_INC}/v23m34q.h              ${DELFEM2_INC}/v23m34q.cpp
@@ -64,7 +65,6 @@ ELSE()
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}
-  ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
   ${DELFEM2_INC}/specialfuncs.h         ${DELFEM2_INC}/specialfuncs.cpp
   ${DELFEM2_INC}/voxel.h                ${DELFEM2_INC}/voxel.cpp
   ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp

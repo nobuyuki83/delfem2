@@ -354,7 +354,7 @@ PYBIND11_MODULE(c_core, m) {
   m.def("cppCad2D_ImportSVG",
         &PyCad2D_ImportSVG);
   m.def("cppSVG_Polyline",
-        &Str_SVGPolygon);  
+        &dfm2::Str_SVGPolygon);  
   
   py::class_<dfm2::CMesher_Cad2D>(m,"CppMesher_Cad2D")
   .def(py::init<>())

@@ -41,12 +41,8 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/funcs.h                  ${DELFEM2_INC}/funcs.cpp
     ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
     ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
-    
-    ${SRC_DFM2}
-
     main.cpp
 )
 
