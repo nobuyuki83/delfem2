@@ -39,7 +39,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${SRC_DFM2}
   main.cpp
 )
 

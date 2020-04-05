@@ -43,7 +43,6 @@ ENDIF()
 
 add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/bem.cpp                    ${DELFEM2_INC}/bem.h
-    ${DELFEM2_INC}/opengl/v3q_glold.h         ${DELFEM2_INC}/opengl/v3q_glold.cpp
 		main.cpp
 )
 

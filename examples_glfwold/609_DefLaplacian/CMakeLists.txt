@@ -41,7 +41,6 @@ ENDIF()
 add_executable(${PROJECT_NAME}
 	  ${DELFEM2_INC}/mats.h                   ${DELFEM2_INC}/mats.cpp
     ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
-    ${SRC_DFM2}
    	main.cpp
 )
 

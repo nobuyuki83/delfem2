@@ -44,7 +44,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/srchuni_v3.h               ${DELFEM2_INC}/srchuni_v3.cpp
   ${DELFEM2_INC}/paramgeo_v23.h             ${DELFEM2_INC}/paramgeo_v23.cpp
   ${DELFEM2_INC}/cad3d.h                    ${DELFEM2_INC}/cad3d.cpp
-  ${DELFEM2_INC}/opengl/v3q_glold.h         ${DELFEM2_INC}/opengl/v3q_glold.cpp
   main.cpp
 )
 

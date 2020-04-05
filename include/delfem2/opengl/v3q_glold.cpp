@@ -28,41 +28,41 @@ namespace dfm2 = delfem2;
 
 //----------------------------------------------------
 
-void delfem2::opengl::myGlVertex(const CVec3d& v)
+DFM2_INLINE void delfem2::opengl::myGlVertex(const CVec3d& v)
 {
   ::glVertex3d(v.x(),v.y(),v.z());
 }
 
-void delfem2::opengl::myGlTranslate(const CVec3d& v)
+DFM2_INLINE void delfem2::opengl::myGlTranslate(const CVec3d& v)
 {
   ::glTranslated(v.x(),v.y(),v.z());
 }
 
-void delfem2::opengl::myGlNormal(const CVec3d& n)
+DFM2_INLINE void delfem2::opengl::myGlNormal(const CVec3d& n)
 {
   ::glNormal3d(n.x(),n.y(),n.z());
 }
 
-void delfem2::opengl::myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c)
+DFM2_INLINE void delfem2::opengl::myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c)
 {
   CVec3d n; UnitNormal(n, a, b, c);
   ::glNormal3d(n.x(),n.y(),n.z());
 }
 
-void delfem2::opengl::myGlVertex(int i, const std::vector<CVec3d>& aV)
+DFM2_INLINE void delfem2::opengl::myGlVertex(int i, const std::vector<CVec3d>& aV)
 {
   const CVec3d& v = aV[i];
   opengl::myGlVertex(v);
 }
 
-void delfem2::opengl::myGlVertex3(
+DFM2_INLINE void delfem2::opengl::myGlVertex3(
     unsigned int i,
     const std::vector<double>& vec)
 {
   ::glVertex3d(vec[i*3+0], vec[i*3+1], vec[i*3+2]);
 }
 
-void delfem2::opengl::ModelTransformation
+DFM2_INLINE void delfem2::opengl::ModelTransformation
  (const CVec3d& dx, const CVec3d& dz, const CVec3d& origin)
 {
   const CVec3d& dy = Cross(dz,dx);
@@ -75,7 +75,7 @@ void delfem2::opengl::ModelTransformation
   ::glMultMatrixd(A);
 }
 
-void delfem2::opengl::ViewTransformation
+DFM2_INLINE void delfem2::opengl::ViewTransformation
  (const CVec3d& dx, const CVec3d& dz, const CVec3d& origin)
 {
   const CVec3d& dy = Cross(dz,dx);
@@ -90,7 +90,7 @@ void delfem2::opengl::ViewTransformation
 
 //--------------------------------------------------------
 
-void delfem2::opengl::DrawCylinderWire
+DFM2_INLINE void delfem2::opengl::DrawCylinderWire
 (const CVec3d& p0,
  const CVec3d& p1,
  double r)
@@ -116,7 +116,7 @@ void delfem2::opengl::DrawCylinderWire
   ::glEnd();
 }
 
-void delfem2::opengl::DrawCylinder
+DFM2_INLINE void delfem2::opengl::DrawCylinder
 (const CVec3d& p0,
  const CVec3d& p1,
  double r)
@@ -154,7 +154,7 @@ void delfem2::opengl::DrawCylinder
 }
 
 
-void delfem2::opengl::DrawArrow
+DFM2_INLINE void delfem2::opengl::DrawArrow
 (const CVec3d& p0,
  const CVec3d& d,
  int ndivt)
@@ -193,7 +193,7 @@ void delfem2::opengl::DrawArrow
   }
 }
 
-void delfem2::opengl::DrawCircleArrow
+DFM2_INLINE void delfem2::opengl::DrawCircleArrow
 (const CVec3d& org, CVec3d axis, double offset)
 {
   double arrow_width_ratio = 0.1;
@@ -248,7 +248,7 @@ void delfem2::opengl::DrawCircleArrow
 
 //--------------------------------------------------------
 
-void delfem2::opengl::DrawCircleWire
+DFM2_INLINE void delfem2::opengl::DrawCircleWire
 (const CVec3d& axis,
  const CVec3d& org,
  double r)
@@ -264,7 +264,7 @@ void delfem2::opengl::DrawCircleWire
   ::glEnd();
 }
 
-void delfem2::opengl::DrawCircleSolid
+DFM2_INLINE void delfem2::opengl::DrawCircleSolid
 (const CVec3d& axis,
  const CVec3d& org,
  double r)
@@ -289,7 +289,7 @@ void delfem2::opengl::DrawCircleSolid
   }
 }
 
-void delfem2::opengl::DrawArcSolid
+DFM2_INLINE void delfem2::opengl::DrawArcSolid
 (const CVec3d& axis,
  const CVec3d& org,
  double ru, // rin
@@ -319,7 +319,7 @@ void delfem2::opengl::DrawArcSolid
   }
 }
 
-void delfem2::opengl::DrawSingleQuad_Edge
+DFM2_INLINE void delfem2::opengl::DrawSingleQuad_Edge
 (const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3)
 {
   ::glDisable(GL_LIGHTING);
@@ -332,7 +332,7 @@ void delfem2::opengl::DrawSingleQuad_Edge
   
 }
 
-void delfem2::opengl::DrawSingleQuad_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawSingleQuad_FaceNorm
 (const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3)
 {
   ::glBegin(GL_QUADS);
@@ -359,7 +359,7 @@ void delfem2::opengl::DrawSingleQuad_FaceNorm
   ::glEnd();
 }
 
-void delfem2::opengl::drawPolyLine3D
+DFM2_INLINE void delfem2::opengl::drawPolyLine3D
  (const std::vector<CVec3d>& aP)
 {
   if( aP.empty() ) return;
@@ -378,7 +378,7 @@ void delfem2::opengl::drawPolyLine3D
   ::glEnd();
 }
 
-void delfem2::opengl::DrawTriMeshNorm
+DFM2_INLINE void delfem2::opengl::DrawTriMeshNorm
 (const std::vector<CVec3d>& aP,
  const std::vector<int>& aTri)
 {
@@ -400,7 +400,7 @@ void delfem2::opengl::DrawTriMeshNorm
   ::glEnd();
 }
 
-void delfem2::opengl::DrawMeshTri_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTri_Edge
 (const std::vector<CVec3d>& aP,
  const std::vector<unsigned int>& aTri)
 {
@@ -432,7 +432,7 @@ void delfem2::opengl::DrawMeshTri_Edge
 }
 
 
-void delfem2::opengl::DrawMeshQuad_Face
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad_Face
 (const std::vector<CVec3d>& aPoint,
  const std::vector<unsigned int>& aQuad)
 {
@@ -456,7 +456,7 @@ void delfem2::opengl::DrawMeshQuad_Face
   ::glEnd();
 }
 
-void delfem2::opengl::DrawPoint3D
+DFM2_INLINE void delfem2::opengl::DrawPoint3D
 (const std::vector<CVec3d>& aPoint)
 {
   ::glDisable(GL_LIGHTING);
@@ -467,7 +467,7 @@ void delfem2::opengl::DrawPoint3D
   ::glEnd();
 }
 
-void delfem2::opengl::DrawQuad3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawQuad3D_Edge
 (const std::vector<CVec3d>& aPoint,
  const std::vector<unsigned int>& aQuad)
 {
@@ -485,7 +485,7 @@ void delfem2::opengl::DrawQuad3D_Edge
   ::glEnd();
 }
 
-void delfem2::opengl::DrawSingleHex_Edge
+DFM2_INLINE void delfem2::opengl::DrawSingleHex_Edge
 (const CVec3d& p0, const CVec3d& p1, const CVec3d& p2, const CVec3d& p3,
  const CVec3d& p4, const CVec3d& p5, const CVec3d& p6, const CVec3d& p7)
 {
@@ -511,7 +511,7 @@ void delfem2::opengl::DrawSingleHex_Edge
 }
 
 
-void delfem2::opengl::DrawGrid2D
+DFM2_INLINE void delfem2::opengl::DrawGrid2D
 (int ndivx, int ndivy,
  const CVec3d& ex, const CVec3d& ey, const CVec3d& org)
 {
@@ -532,7 +532,7 @@ void delfem2::opengl::DrawGrid2D
   ::glEnd();
 }
 
-void delfem2::opengl::DrawGridOutside
+DFM2_INLINE void delfem2::opengl::DrawGridOutside
 (int ndivx, int ndivy, int ndivz,
  double elen,
  const CVec3d& org)
@@ -547,7 +547,7 @@ void delfem2::opengl::DrawGridOutside
 
 // -----------------------------------------------------------------
 
-void delfem2::opengl::DrawAxisHandler(double s, const CVec3d& p)
+DFM2_INLINE void delfem2::opengl::DrawAxisHandler(double s, const CVec3d& p)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
@@ -566,7 +566,7 @@ void delfem2::opengl::DrawAxisHandler(double s, const CVec3d& p)
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-void delfem2::opengl::DrawHandlerRotation_PosQuat
+DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat
 (const CVec3d& pos,
  const double quat[4],
  double size,
@@ -590,7 +590,7 @@ void delfem2::opengl::DrawHandlerRotation_PosQuat
   }
 }
 
-void delfem2::opengl::DrawHandlerRotation_Mat4
+DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_Mat4
 (const double Mat[16],
  double size,
  int ielem_picked)
@@ -618,7 +618,7 @@ void delfem2::opengl::DrawHandlerRotation_Mat4
 
 // -------------------------------------------------------
 
-void dfm2::opengl::Draw_QuaternionsCoordinateAxes
+DFM2_INLINE void dfm2::opengl::Draw_QuaternionsCoordinateAxes
  (const std::vector<double>& aXYZ1,
   const std::vector<double>& aQuat,
   double l)
