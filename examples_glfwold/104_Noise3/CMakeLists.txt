@@ -47,7 +47,6 @@ endif()
 add_executable(${PROJECT_NAME}
   ${3RD_PARTY}/glad3/include/glad/glad.h ${3RD_PARTY}/glad3/src/glad.c
   ${SRC_DFM2}
-
   main.cpp
 )
 

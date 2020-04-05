@@ -5,11 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-/**
- * @discussion It might be nice to separate dependency of v2 from v3 and quat
- * because 2D application does not use v3 and quat
- */
-
 #ifndef DFM2_V3Q_GLOLD_H
 #define DFM2_V3Q_GLOLD_H
 

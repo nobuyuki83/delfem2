@@ -30,7 +30,8 @@ include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include  
   ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}  
+  ${3RD_PARTY}
+  ${3RD_PARTY}/cereal/include
 )
 
 IF(NOT USE_HEADERONLY)
