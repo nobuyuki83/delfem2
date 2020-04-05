@@ -49,8 +49,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp        
 
   ${DELFEM2_INC}/opengl/v3q_glold.h     ${DELFEM2_INC}/opengl/v3q_glold.cpp
-  
-  ${SRC_DFM2}
   main.cpp
 )
 
@@ -71,6 +69,7 @@ IF(APPLE)
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIB}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp

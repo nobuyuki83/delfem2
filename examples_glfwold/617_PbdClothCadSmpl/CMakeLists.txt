@@ -58,8 +58,6 @@ add_executable(${PROJECT_NAME}
 
     ${3RD_PARTY}/cnpy/cnpy.h                    ${3RD_PARTY}/cnpy/cnpy.cpp
     ${DELFEM2_INC}/cnpy/smpl_cnpy.h             ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
-  
-  ${SRC_DFM2}
   main.cpp  
 )
 
@@ -82,6 +80,7 @@ IF(APPLE)
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIB}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
