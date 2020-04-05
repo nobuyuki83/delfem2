@@ -8,6 +8,7 @@
 #ifndef DFM2_BVH_H
 #define DFM2_BVH_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stack>
 #include <vector>
 #include <set>
@@ -69,7 +70,7 @@ std::pair<int,int> MortonCode_DeterminRange(const std::uint32_t* sortedMC,
  * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
  */
 template <typename REAL>
-std::uint32_t MortonCode(REAL x, REAL y, REAL z);
+DFM2_INLINE std::uint32_t MortonCode(REAL x, REAL y, REAL z);
 
 
 /**
@@ -565,7 +566,9 @@ void delfem2::BVH_GetIndElem_IntersectLine
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild1,aBVH,aBB);
 }
   
-
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/bvh.cpp"
+#endif
 
 
 #endif

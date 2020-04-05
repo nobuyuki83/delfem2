@@ -41,10 +41,8 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/bvh.h                    ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/vecxitrsol.h             ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/srchbi_v3bvh.h
-  ${SRC_DFM2}
   main.cpp
 )
 
