@@ -15,11 +15,14 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-double DetSide(const double p[3], const double org[3], const double n[3]){
+namespace delfem2 {
+namespace bvh {
+
+DFM2_INLINE double DetSide(const double p[3], const double org[3], const double n[3]){
   return (p[0]-org[0])*n[0] + (p[1]-org[1])*n[1] + (p[2]-org[2])*n[2];
 }
 
-void DevideElemAryConnex
+DFM2_INLINE void DevideElemAryConnex
 (int iroot_node,
  std::vector<int>& aElem2Node,
  std::vector<dfm2::CNodeBVH2>& aNodeBVH,
@@ -177,59 +180,6 @@ void DevideElemAryConnex
   }
 }
 
-int dfm2::BVHTopology_TopDown_MeshElem
-(std::vector<dfm2::CNodeBVH2>& aNodeBVH,
- const int nfael,
- const std::vector<int>& aElemSur,
- const std::vector<double>& aElemCenter)
-{
-  aNodeBVH.clear();
-  const unsigned int nelem = aElemCenter.size()/3;
-  std::vector<int> list(nelem);
-  for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
-  std::vector<int> aElem2Node;
-  aElem2Node.resize(nelem,0);
-  aNodeBVH.resize(1);
-  aNodeBVH[0].iroot = -1;
-  DevideElemAryConnex(0,aElem2Node,aNodeBVH,
-                      list,nfael,aElemSur,aElemCenter);
-  return 0;
-}
-
-
-
-  // -------------------------------------------
-
-  // Expands a 10-bit integer into 30 bits
-  // by puting two zeros before each bit
-  // "1011011111" -> "001000001001000001001001001001"
-std::uint32_t expandBits(std::uint32_t v)
-{
-  v = (v * 0x00010001u) & 0xFF0000FFu;
-  v = (v * 0x00000101u) & 0x0F00F00Fu;
-  v = (v * 0x00000011u) & 0xC30C30C3u;
-  v = (v * 0x00000005u) & 0x49249249u;
-  return v;
-}
-
-template <typename REAL>
-std::uint32_t delfem2::MortonCode(REAL x, REAL y, REAL z)
-{
-  auto ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
-  auto iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
-  auto iz = (std::uint32_t)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
-    //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
-  ix = expandBits(ix);
-  iy = expandBits(iy);
-  iz = expandBits(iz);
-    //  std::cout << std::bitset<30>(ix) << " " << std::bitset<30>(iy) << " " << std::bitset<30>(iz) << std::endl;
-  std::uint32_t ixyz = ix * 4 + iy * 2 + iz;
-  return ixyz;
-}
-template std::uint32_t delfem2::MortonCode(float x, float y, float z);
-template std::uint32_t delfem2::MortonCode(double x, double y, double z);
-
-
 inline unsigned int clz(uint32_t x){
 #ifdef __GNUC__ // GCC compiler
   return __builtin_clz(x);
@@ -246,7 +196,7 @@ inline unsigned int clz(uint32_t x){
 #endif
 }
 
-static int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
+DFM2_INLINE int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
 {
   if (j<0 || j >= length){
     return -1;
@@ -256,7 +206,93 @@ static int delta(int i, int j, const unsigned int* sorted_morton_code, int lengt
   }
 }
 
-std::pair<int,int> delfem2::MortonCode_DeterminRange
+// Expands a 10-bit integer into 30 bits
+// by puting two zeros before each bit
+// "1011011111" -> "001000001001000001001001001001"
+DFM2_INLINE std::uint32_t expandBits(std::uint32_t v)
+{
+  v = (v * 0x00010001u) & 0xFF0000FFu;
+  v = (v * 0x00000101u) & 0x0F00F00Fu;
+  v = (v * 0x00000011u) & 0xC30C30C3u;
+  v = (v * 0x00000005u) & 0x49249249u;
+  return v;
+}
+
+class CPairMtcInd{
+public:
+  std::uint32_t imtc;
+  unsigned int iobj;
+public:
+  bool operator < (const CPairMtcInd& rhs) const {
+    return (this->imtc < rhs.imtc);
+  }
+};
+
+
+DFM2_INLINE void mark_child(std::vector<int>& aFlg,
+                       unsigned int inode0,
+                       const std::vector<dfm2::CNodeBVH2>& aNode)
+{
+  assert( inode0 < aNode.size() );
+  if( aNode[inode0].ichild[1] == -1 ){ // leaf
+    const unsigned int in0 = aNode[inode0].ichild[0];
+    assert( in0 < aFlg.size() );
+    aFlg[in0] += 1;
+    return;
+  }
+  const unsigned int in0 = aNode[inode0].ichild[0];
+  const unsigned int in1 = aNode[inode0].ichild[1];
+  mark_child(aFlg, in0, aNode);
+  mark_child(aFlg, in1, aNode);
+}
+
+}
+}
+
+// ===========================================================
+
+DFM2_INLINE int dfm2::BVHTopology_TopDown_MeshElem
+(std::vector<dfm2::CNodeBVH2>& aNodeBVH,
+ const int nfael,
+ const std::vector<int>& aElemSur,
+ const std::vector<double>& aElemCenter)
+{
+  aNodeBVH.clear();
+  const unsigned int nelem = aElemCenter.size()/3;
+  std::vector<int> list(nelem);
+  for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
+  std::vector<int> aElem2Node;
+  aElem2Node.resize(nelem,0);
+  aNodeBVH.resize(1);
+  aNodeBVH[0].iroot = -1;
+  bvh::DevideElemAryConnex(0,aElem2Node,aNodeBVH,
+                      list,nfael,aElemSur,aElemCenter);
+  return 0;
+}
+
+
+template <typename REAL>
+DFM2_INLINE std::uint32_t delfem2::MortonCode(REAL x, REAL y, REAL z)
+{
+  auto ix = (std::uint32_t)fmin(fmax(x * 1024.0f, 0.0f), 1023.0f);
+  auto iy = (std::uint32_t)fmin(fmax(y * 1024.0f, 0.0f), 1023.0f);
+  auto iz = (std::uint32_t)fmin(fmax(z * 1024.0f, 0.0f), 1023.0f);
+    //  std::cout << std::bitset<10>(ix) << " " << std::bitset<10>(iy) << " " << std::bitset<10>(iz) << std::endl;
+  ix = bvh::expandBits(ix);
+  iy = bvh::expandBits(iy);
+  iz = bvh::expandBits(iz);
+    //  std::cout << std::bitset<30>(ix) << " " << std::bitset<30>(iy) << " " << std::bitset<30>(iz) << std::endl;
+  std::uint32_t ixyz = ix * 4 + iy * 2 + iz;
+  return ixyz;
+}
+#ifdef DFM2_STATIC_LIBRARY
+template std::uint32_t delfem2::MortonCode(float x, float y, float z);
+template std::uint32_t delfem2::MortonCode(double x, double y, double z);
+#endif
+
+
+
+DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange
 (const std::uint32_t* sortedMC,
  int nMC,
  int imc)
@@ -273,13 +309,13 @@ std::pair<int,int> delfem2::MortonCode_DeterminRange
     }
     return std::make_pair(imc,jmc-1);
   }
-  int d = delta(imc, imc + 1, sortedMC, nMC) - delta(imc, imc - 1, sortedMC, nMC);
+  int d = bvh::delta(imc, imc + 1, sortedMC, nMC) - bvh::delta(imc, imc - 1, sortedMC, nMC);
   d = d > 0 ? 1 : -1;
   
   //compute the upper bound for the length of the range
-  const int delta_min = delta(imc, imc - d, sortedMC, nMC);
+  const int delta_min = bvh::delta(imc, imc - d, sortedMC, nMC);
   int lmax = 2;
-  while (delta(imc, imc + lmax*d, sortedMC, nMC)>delta_min)
+  while ( bvh::delta(imc, imc + lmax*d, sortedMC, nMC)>delta_min )
   {
     lmax = lmax * 2;
   }
@@ -288,7 +324,7 @@ std::pair<int,int> delfem2::MortonCode_DeterminRange
   int l = 0;
   for (int t = lmax / 2; t >= 1; t /= 2)
   {
-    if (delta(imc, imc + (l + t)*d, sortedMC, nMC)>delta_min)
+    if (bvh::delta(imc, imc + (l + t)*d, sortedMC, nMC)>delta_min)
     {
       l = l + t;
     }
@@ -301,7 +337,7 @@ std::pair<int,int> delfem2::MortonCode_DeterminRange
   return range;
 }
 
-int delfem2::MortonCode_FindSplit
+DFM2_INLINE int delfem2::MortonCode_FindSplit
  (const std::uint32_t* sortedMC,
   unsigned int iMC_start,
   unsigned int iMC_last)
@@ -311,7 +347,7 @@ int delfem2::MortonCode_FindSplit
   if (iMC_start == iMC_last) { return -1; }
   
   // ------------------------------
-  const int common_prefix = clz(sortedMC[iMC_start] ^ sortedMC[iMC_last]);
+  const int common_prefix = bvh::clz(sortedMC[iMC_start] ^ sortedMC[iMC_last]);
   
   //handle duplicated morton code
   if (common_prefix == 32 ){ return iMC_start; } // sizeof(std::uint32_t)*8
@@ -329,7 +365,7 @@ int delfem2::MortonCode_FindSplit
     if (newSplit < iMC_last)
     {
       std::uint32_t splitCode = sortedMC[newSplit];
-      int splitPrefix = clz(mcStart ^ splitCode);
+      int splitPrefix = bvh::clz(mcStart ^ splitCode);
       if (splitPrefix > common_prefix){
         iMC_split = newSplit; // accept proposal
       }
@@ -339,28 +375,15 @@ int delfem2::MortonCode_FindSplit
   return iMC_split;
 }
 
-
-class CPairMtcInd{
-public:
-  std::uint32_t imtc;
-  unsigned int iobj;
-public:
-  bool operator < (const CPairMtcInd& rhs) const {
-    return (this->imtc < rhs.imtc);
-  }
-};
-
-
-
 template <typename REAL>
-void dfm2::SortedMortenCode_Points3(
+DFM2_INLINE void dfm2::SortedMortenCode_Points3(
     std::vector<unsigned int> &aSortedId,
     std::vector<std::uint32_t> &aSortedMc,
     const std::vector<REAL> &aXYZ,
     const REAL min_xyz[3],
     const REAL max_xyz[3])
 {
-  std::vector<CPairMtcInd> aNodeBVH; // array of BVH node
+  std::vector<bvh::CPairMtcInd> aNodeBVH; // array of BVH node
   const std::size_t np = aXYZ.size()/3;
   aNodeBVH.resize(np);
   const REAL x_min = min_xyz[0];
@@ -385,6 +408,7 @@ void dfm2::SortedMortenCode_Points3(
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
+#ifdef DFM2_STATIC_LIBRARY
 template void dfm2::SortedMortenCode_Points3(
     std::vector<unsigned int>& aSortedId,
     std::vector<std::uint32_t>& aSortedMc,
@@ -397,10 +421,11 @@ template void dfm2::SortedMortenCode_Points3(
     const std::vector<double>& aXYZ,
     const double min_xyz[3],
     const double max_xyz[3]);
+#endif
 
 // ----------------------------------
 
-void dfm2::BVHTopology_Morton
+DFM2_INLINE void dfm2::BVHTopology_Morton
 (std::vector<dfm2::CNodeBVH2>& aNodeBVH,
  const std::vector<unsigned int>& aSortedId,
  const std::vector<unsigned int>& aSortedMc)
@@ -441,7 +466,7 @@ void dfm2::BVHTopology_Morton
 }
 
 
-void dfm2::Check_MortonCode_Sort
+DFM2_INLINE void dfm2::Check_MortonCode_Sort
 (const std::vector<unsigned int>& aSortedId,
  const std::vector<std::uint32_t>& aSortedMc,
  const std::vector<double> aXYZ,
@@ -472,7 +497,7 @@ void dfm2::Check_MortonCode_Sort
    */
 }
 
-void dfm2::Check_MortonCode_RangeSplit
+DFM2_INLINE void dfm2::Check_MortonCode_RangeSplit
 (const std::vector<std::uint32_t>& aSortedMc)
 {
   assert(aSortedMc.size()>0);
@@ -491,29 +516,12 @@ void dfm2::Check_MortonCode_RangeSplit
   }
 }
 
-static void mark_child(std::vector<int>& aFlg,
-                unsigned int inode0,
-                const std::vector<dfm2::CNodeBVH2>& aNode)
-{
-  assert( inode0 < aNode.size() );
-  if( aNode[inode0].ichild[1] == -1 ){ // leaf
-    const unsigned int in0 = aNode[inode0].ichild[0];
-    assert( in0 < aFlg.size() );
-    aFlg[in0] += 1;
-    return;
-  }
-  const unsigned int in0 = aNode[inode0].ichild[0];
-  const unsigned int in1 = aNode[inode0].ichild[1];
-  mark_child(aFlg, in0, aNode);
-  mark_child(aFlg, in1, aNode);
-}
-
-void dfm2::Check_BVH
+DFM2_INLINE void dfm2::Check_BVH
 (const std::vector<dfm2::CNodeBVH2>& aNodeBVH,
  unsigned int N)
 {
   std::vector<int> aFlg(N,0);
-  mark_child(aFlg, 0, aNodeBVH);
+  bvh::mark_child(aFlg, 0, aNodeBVH);
   for(unsigned int i=0;i<N;++i){
     assert(aFlg[i]==1);
   }

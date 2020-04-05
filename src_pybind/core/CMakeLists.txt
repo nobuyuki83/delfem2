@@ -53,40 +53,37 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mshio.h              ${DELFEM2_INC}/mshio.cpp
       ${DELFEM2_INC}/funcs.h              ${DELFEM2_INC}/funcs.cpp
       ${DELFEM2_INC}/color.h              ${DELFEM2_INC}/color.cpp
+      ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
+      ${DELFEM2_INC}/bvh.h                ${DELFEM2_INC}/bvh.cpp
+      ${DELFEM2_INC}/bv.h
       
       ${DELFEM2_INC}/v23m34q.h            ${DELFEM2_INC}/v23m34q.cpp
+      ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
+      ${DELFEM2_INC}/srch_v3bvhmshtopo.h
       )
 endif()
 
 set(INPUT_SRC
     ${DELFEM2_INC}/voxel.h              ${DELFEM2_INC}/voxel.cpp
     ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_INC}/evalmathexp.cpp
-    ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
     ${DELFEM2_INC}/mats.h               ${DELFEM2_INC}/mats.cpp
     ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp
     ${DELFEM2_INC}/iss.h                ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/slice.h              ${DELFEM2_INC}/slice.cpp
-    ${DELFEM2_INC}/bvh.h                ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/vecxitrsol.h         ${DELFEM2_INC}/vecxitrsol.cpp
-    ${DELFEM2_INC}/bv.h
-
     ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp
     ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_INC}/fem_emats.cpp
     ${DELFEM2_INC}/objfunc_v23.h        ${DELFEM2_INC}/objfunc_v23.cpp
     ${DELFEM2_INC}/objfunc_v23dtri.h    ${DELFEM2_INC}/objfunc_v23dtri.cpp
     ${DELFEM2_INC}/rig_v3q.h            ${DELFEM2_INC}/rig_v3q.cpp
     ${DELFEM2_INC}/dtri_v3.h            ${DELFEM2_INC}/dtri_v3.cpp
-    ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
     ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
     ${DELFEM2_INC}/cad2d_v2dtri.h       ${DELFEM2_INC}/cad2d_v2dtri.cpp
     ${DELFEM2_INC}/srchuni_v3.h         ${DELFEM2_INC}/srchuni_v3.cpp
-    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
-
-    ${3RD_PARTY}/io_gltf.h
-    ${3RD_PARTY}/io_gltf.cpp
-
-    ${SRC_DFM2}    
-
+    ${3RD_PARTY}/io_gltf.h              ${3RD_PARTY}/io_gltf.cpp
+    
+    ${SRC_DFM2}
+    
     ../py_funcs.h
 
     py_mshtopoio.cpp
