@@ -41,6 +41,7 @@ IF(NOT USE_HEADERONLY)
   set(SRC_DFM2
       ${DELFEM2_INC}/quat.h               ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h             ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/imgio.h              ${DELFEM2_INC}/imgio.cpp
       
       ${DELFEM2_INC}/opengl/tex_gl.h      ${DELFEM2_INC}/opengl/tex_gl.cpp
       )
@@ -50,13 +51,11 @@ ENDIF()
 
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/imgio.h                ${DELFEM2_INC}/imgio.cpp
 
-    ${DELFEM2_INC}/opengl/gl_funcs.h      ${DELFEM2_INC}/opengl/gl_funcs.cpp
-    ${DELFEM2_INC}/opengl/glold_funcs.h   ${DELFEM2_INC}/opengl/glold_funcs.cpp
+    ${DELFEM2_INC}/opengl/gl_funcs.h       ${DELFEM2_INC}/opengl/gl_funcs.cpp
+    ${DELFEM2_INC}/opengl/glold_funcs.h    ${DELFEM2_INC}/opengl/glold_funcs.cpp
 
-    ${3RD_PARTY}/glad3/include/glad/glad.h
-    ${3RD_PARTY}/glad3/src/glad.c
+    ${3RD_PARTY}/glad3/include/glad/glad.h ${3RD_PARTY}/glad3/src/glad.c
     ${SRC_DFM2}
     main.cpp
 )

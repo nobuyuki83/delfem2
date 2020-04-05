@@ -48,6 +48,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
           
       ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
+      
+      ${DELFEM2_INC}/opengl/color_glold.h   ${DELFEM2_INC}/opengl/color_glold.cpp
 
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
@@ -61,7 +63,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/ilu_mats.h           ${DELFEM2_INC}/ilu_mats.cpp
   ${DELFEM2_INC}/fem_emats.h          ${DELFEM2_INC}/fem_emats.cpp                      
 
-  ${DELFEM2_INC}/opengl/glold_color.h   ${DELFEM2_INC}/opengl/glold_color.cpp
   ${DELFEM2_INC}/opengl/glold_funcs.h   ${DELFEM2_INC}/opengl/glold_funcs.cpp
 
   ${SRC_DFM2}

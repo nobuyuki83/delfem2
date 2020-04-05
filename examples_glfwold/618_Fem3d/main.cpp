@@ -29,7 +29,7 @@
 
 // ---------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glold_funcs.h"
 //

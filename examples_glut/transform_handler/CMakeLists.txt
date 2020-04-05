@@ -42,6 +42,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
 
       ${DELFEM2_INC}/v23m34q.h                  ${DELFEM2_INC}/v23m34q.cpp
+      
+      ${DELFEM2_INC}/opengl/color_glold.h        ${DELFEM2_INC}/opengl/color_glold.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -49,7 +51,6 @@ ENDIF()
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  ${DELFEM2_INC}/opengl/glold_color.h        ${DELFEM2_INC}/opengl/glold_color.cpp   
   ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
   ${SRC_DFM2}
   main.cpp
