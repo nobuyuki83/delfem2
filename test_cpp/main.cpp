@@ -128,7 +128,7 @@ TEST(funcs,numpy_load_1df){
 TEST(funcs,split_parentheses){
   {
     std::string str = "(a,b),c,(d,e)";
-    std::vector<std::string> aS = Split_Parentheses(str, ',', "()");
+    std::vector<std::string> aS = dfm2::Split_Parentheses(str, ',', "()");
     EXPECT_EQ(aS.size(), 3);
     EXPECT_EQ(aS[0],"(a,b)");
     EXPECT_EQ(aS[1],"c");
@@ -136,14 +136,14 @@ TEST(funcs,split_parentheses){
   }
   {
     std::string str = "(a,b),c";
-    std::vector<std::string> aS = Split_Parentheses(str, ',', "()");
+    std::vector<std::string> aS = dfm2::Split_Parentheses(str, ',', "()");
     EXPECT_EQ(aS.size(), 2);
     EXPECT_EQ(aS[0],"(a,b)");
     EXPECT_EQ(aS[1],"c");
   }
   {
     std::string str = "a,(b,c)";
-    std::vector<std::string> aS = Split_Parentheses(str, ',', "()");
+    std::vector<std::string> aS = dfm2::Split_Parentheses(str, ',', "()");
     EXPECT_EQ(aS.size(), 2);
     EXPECT_EQ(aS[0],"a");
     EXPECT_EQ(aS[1],"(b,c)");
@@ -153,7 +153,7 @@ TEST(funcs,split_parentheses){
 TEST(funcs,split_quote){
   {
     std::string str = "\"a,b\",c,\"d,e\"";
-    std::vector<std::string> aS = Split_Quote(str, ',', '\"' );
+    std::vector<std::string> aS = dfm2::Split_Quote(str, ',', '\"' );
     EXPECT_EQ(aS.size(), 3);
     EXPECT_EQ(aS[0],"\"a,b\"");
     EXPECT_EQ(aS[1],"c");

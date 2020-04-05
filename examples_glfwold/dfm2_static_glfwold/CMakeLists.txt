@@ -45,6 +45,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
+    ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
     ${DELFEM2_INC}/bv.h
         
     ${DELFEM2_INC}/v23m34q.h                   ${DELFEM2_INC}/v23m34q.cpp

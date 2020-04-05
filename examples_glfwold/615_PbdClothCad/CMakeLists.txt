@@ -40,7 +40,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/funcs.h                    ${DELFEM2_INC}/funcs.cpp
   ${DELFEM2_INC}/bvh.h                      ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/objfunc_v23.h              ${DELFEM2_INC}/objfunc_v23.cpp

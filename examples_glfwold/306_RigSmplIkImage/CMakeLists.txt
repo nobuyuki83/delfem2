@@ -49,8 +49,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h           ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
   ${DELFEM2_INC}/rig_v3q.h                  ${DELFEM2_INC}/rig_v3q.cpp
   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
-    ${SRC_DFM2}
-
   main.cpp
 )
 

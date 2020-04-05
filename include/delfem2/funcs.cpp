@@ -24,13 +24,13 @@ namespace dfm2 = delfem2;
 // ----------------------------------------
 
 // probably std::stroi is safer to use but it is only for C++11
-static int myStoi(const std::string& str){
+DFM2_INLINE int dfm2::myStoi(const std::string& str){
   char* e;
   long d = std::strtol(str.c_str(),&e,0);
   return (int)d;
 }
 
-static double myStod(const std::string& str){
+DFM2_INLINE double dfm2::myStod(const std::string& str){
   char* e;
   double d = std::strtod(str.c_str(),&e);
   return d;
@@ -40,17 +40,17 @@ static double myStod(const std::string& str){
 
 // -----------------------------------------------------------
 
-bool isAlphabet(char c){
+DFM2_INLINE bool dfm2::isAlphabet(char c){
   if ( c >= 65 && c <= 90  ){ return true; }
   if(  c >= 97 && c <= 122 ){ return true; }
   return false;
 }
 
-bool isNumber(char c){
+DFM2_INLINE bool dfm2::isNumber(char c){
   return c >= 46 && c <= 57;
 }
 
-void Split
+DFM2_INLINE void dfm2::Split
 (std::vector<std::string>& aToken,
  const std::string& str,
  char delimiter)
@@ -64,7 +64,7 @@ void Split
   }
 }
 
-std::vector<std::string> Split
+DFM2_INLINE std::vector<std::string> dfm2::Split
 (const std::string& str,
  char delimiter)
 {
@@ -73,7 +73,7 @@ std::vector<std::string> Split
   return aToken;
 }
 
-std::vector<std::string> Split
+DFM2_INLINE std::vector<std::string> dfm2::Split
 (const std::string& str,
  const std::string& del)
 {
@@ -97,7 +97,7 @@ std::vector<std::string> Split
 }
 
 // "(a,b),c,(d,e)" - > "(a,b)", "c", "(d,e)"
-std::vector<std::string> Split_Parentheses
+DFM2_INLINE std::vector<std::string> dfm2::Split_Parentheses
 (const std::string& str,
  char delimiter,
  const std::string& par)
@@ -124,7 +124,7 @@ std::vector<std::string> Split_Parentheses
 }
 
 // "'a,b',c,'d,e'" - > 'a,b' + 'c' + 'd,e'
-std::vector<std::string> Split_Quote
+DFM2_INLINE std::vector<std::string> dfm2::Split_Quote
 (const std::string& str,
  char delimiter,
  char quote)
@@ -148,7 +148,8 @@ std::vector<std::string> Split_Quote
 
 
 
-std::map<std::string, std::string> ReadDictionary(const std::string& fin_path)
+DFM2_INLINE std::map<std::string, std::string>
+dfm2::ReadDictionary(const std::string& fin_path)
 {
   std::map<std::string, std::string> map0;
   ///
@@ -165,7 +166,7 @@ std::map<std::string, std::string> ReadDictionary(const std::string& fin_path)
   return map0;
 }
 
-std::string Replace
+DFM2_INLINE std::string dfm2::Replace
 (const std::string& str,
  const char cf,
  const char ct)
@@ -180,7 +181,7 @@ std::string Replace
   return ss;
 }
 
-std::string Remove
+DFM2_INLINE std::string dfm2::Remove
 (const std::string& str,
  const std::string& del)
 {
@@ -205,13 +206,13 @@ std::string Remove
   return ss;
 }
 
-std::string RemoveSpace
+DFM2_INLINE std::string dfm2::RemoveSpace
 (const std::string& str)
 {
   return Remove(str," ");
 }
 
-std::string RemoveBeginning
+DFM2_INLINE std::string dfm2::RemoveBeginning
 (const std::string& str,
  const std::string& del)
 {
@@ -233,7 +234,7 @@ std::string RemoveBeginning
   return std::string(str.begin()+istat,str.end());
 }
 
-std::string Remove_Quote
+DFM2_INLINE std::string Remove_Quote
 (const std::string& str,
  char quat)
 {
@@ -257,7 +258,7 @@ std::string Remove_Quote
 }
 
 // GetEnclosed with "()" --> "(a,(b,c),d)" -> a,(b,c),d
-std::string Get_Parentheses
+DFM2_INLINE std::string dfm2::Get_Parentheses
 (const std::string& str,
  const std::string& par)
 {
@@ -284,7 +285,8 @@ std::string Get_Parentheses
 // ----------------------------------------------------------
 
 // Read somehting like this {"command":"meshing_polygon","aXY_vertex":"0,0,0,30,30,30,30,0"}
-std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn)
+DFM2_INLINE std::map<std::string, std::string>
+dfm2::ReadDictionary_Json(const std::string& strIn)
 {
   const std::string& buff = RemoveSpace(strIn);
   const int n =  buff.length();
@@ -314,7 +316,7 @@ std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn)
   return res;
 }
 
-void ReadVector_CSV
+DFM2_INLINE void dfm2::ReadVector_CSV
 (std::vector<double>& aVal,
  const std::string& strIn)
 {
@@ -339,7 +341,8 @@ void ReadVector_CSV
 
 // ----------------------
 
-std::string getCmdOptionStr(char ** begin, char ** end, const std::string & option)
+DFM2_INLINE std::string dfm2::getCmdOptionStr
+ (char ** begin, char ** end, const std::string & option)
 {
   char ** itr = std::find(begin, end, option);
   if (itr != end && ++itr != end)
@@ -349,7 +352,8 @@ std::string getCmdOptionStr(char ** begin, char ** end, const std::string & opti
   return "";
 }
 
-int getCmdOptionInt(char ** begin, char ** end, const std::string & option, int ndef)
+DFM2_INLINE int dfm2::getCmdOptionInt
+ (char ** begin, char ** end, const std::string & option, int ndef)
 {
   char ** itr = std::find(begin, end, option);
   if (itr != end && ++itr != end)
@@ -359,12 +363,14 @@ int getCmdOptionInt(char ** begin, char ** end, const std::string & option, int 
   return ndef;
 }
 
-bool cmdOptionExists(char** begin, char** end, const std::string& option)
+DFM2_INLINE bool dfm2::cmdOptionExists
+ (char** begin, char** end, const std::string& option)
 {
   return std::find(begin, end, option) != end;
 }
 
-double getCmdOptionDouble(char ** begin, char ** end, const std::string & option, int ddef)
+DFM2_INLINE double dfm2::getCmdOptionDouble
+ (char ** begin, char ** end, const std::string & option, int ddef)
 {
   char ** itr = std::find(begin, end, option);
   if (itr != end && ++itr != end){ return myStod(*itr); }
@@ -374,7 +380,7 @@ double getCmdOptionDouble(char ** begin, char ** end, const std::string & option
 // -------------------------------------
 // file IO
 
-std::string LoadFile
+DFM2_INLINE std::string dfm2::LoadFile
 (const std::string& fname)
 {
   std::ifstream inputFile1;
@@ -388,14 +394,14 @@ std::string LoadFile
   return std::string(vdataBegin,vdataEnd);
 }
 
-bool isFileExists(const std::string& fpath)
+DFM2_INLINE bool dfm2::isFileExists(const std::string& fpath)
 {
   std::ifstream fin;
   fin.open(fpath.c_str());
   return fin.is_open();
 }
 
-std::string pathRemoveExtension(const std::string& fpath)
+DFM2_INLINE std::string dfm2::pathRemoveExtension(const std::string& fpath)
 {
   std::vector<std::string> aToken;
   Split(aToken, fpath, '.');
@@ -406,7 +412,7 @@ std::string pathRemoveExtension(const std::string& fpath)
   return sRes;
 }
 
-std::string pathGetExtension(const std::string& fpath)
+DFM2_INLINE std::string dfm2::pathGetExtension(const std::string& fpath)
 {
   std::vector<std::string> aToken;
   Split(aToken, fpath, '.');
@@ -417,18 +423,16 @@ std::string pathGetExtension(const std::string& fpath)
   return sRes;
 }
 
-std::string getPathDir(const std::string& fpath)
+DFM2_INLINE std::string dfm2::getPathDir(const std::string& fpath)
 {
   const int iloc = fpath.find_last_of('/');
   std::string sres = std::string(fpath.begin(),fpath.begin()+iloc);
   return sres;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ----------------------------------
 
-bool ReadParam
+DFM2_INLINE bool dfm2::ReadParam
 (std::vector<float>& aPara,
  const std::string& fname)
 {
@@ -451,7 +455,7 @@ bool ReadParam
 
 // Read somehting like this {'descr': '<f8', 'fortran_order': False, 'shape': (3682, 151), }
 std::map<std::string, std::string>
-dfm2::ReadDictionary_Python(const std::string& strIn)
+DFM2_INLINE dfm2::ReadDictionary_Python(const std::string& strIn)
 {
   std::string buff = RemoveSpace(strIn);
   std::map<std::string, std::string> map0;
@@ -494,7 +498,7 @@ dfm2::ReadDictionary_Python(const std::string& strIn)
   return map0;
 }
 
-bool isNaN(double x) { return x!=x; }
+//bool isNaN(double x) { return x!=x; }
 
 // 10bytes header
 struct NPY
@@ -506,7 +510,7 @@ struct NPY
 };
 
 
-bool LoadNumpy
+DFM2_INLINE bool LoadNumpy
 (int& ndim0, int& ndim1,
  FILE* fp)
 {
@@ -527,17 +531,17 @@ bool LoadNumpy
     if( n1 != npy.header_len ){ return false; }
     std::map<std::string, std::string> map0 = dfm2::ReadDictionary_Python(std::string(buff));
     std::string str_shape = map0["'shape'"];
-    str_shape = Get_Parentheses(str_shape,"()");
-    std::vector<std::string> aToken = Split(str_shape,',');
+    str_shape = dfm2::Get_Parentheses(str_shape,"()");
+    std::vector<std::string> aToken = dfm2::Split(str_shape,',');
     if( aToken.size() != 2 ){ return false; }
-    ndim0 = myStoi(aToken[0]);
-    ndim1 = myStoi(aToken[1]);
+    ndim0 = dfm2::myStoi(aToken[0]);
+    ndim1 = dfm2::myStoi(aToken[1]);
   }
   return true;
 }
 
 
-bool dfm2::LoadNumpy_2DimF
+DFM2_INLINE bool dfm2::LoadNumpy_2DimF
 (int& ndim0, int& ndim1, std::vector<float>& aData,
  const std::string& path)
 {
@@ -550,7 +554,7 @@ bool dfm2::LoadNumpy_2DimF
   return (int) n0 == size;
 }
 
-bool dfm2::LoadNumpy_2DimD
+DFM2_INLINE bool dfm2::LoadNumpy_2DimD
 (int& ndim0, int& ndim1, std::vector<double>& aData,
  const std::string& path)
 {
@@ -563,7 +567,7 @@ bool dfm2::LoadNumpy_2DimD
   return (int) n0 == size;
 }
 
-bool dfm2::LoadNumpy_1DimF
+DFM2_INLINE bool dfm2::LoadNumpy_1DimF
 (int& ndim0, std::vector<float>& aData,
  const std::string& path)
 {
@@ -611,7 +615,7 @@ bool dfm2::LoadNumpy_1DimF
 
 // ----------------------
 
-bool GetFileContents
+DFM2_INLINE bool dfm2::GetFileContents
 (std::vector<char>& aC,
  const std::string& fpath)
 {
@@ -635,7 +639,7 @@ error:
 }
 
 
-void XML_SeparateTagContent
+DFM2_INLINE void dfm2::XML_SeparateTagContent
 (std::vector<std::string>& aStr,
  const std::vector<char>& input)
 {
@@ -667,7 +671,7 @@ void XML_SeparateTagContent
 }
 
 
-void ParseAttributes
+DFM2_INLINE void dfm2::ParseAttributes
 (std::map<std::string, std::string>& mapAttr,
  const std::string& input)
 {
@@ -681,7 +685,7 @@ void ParseAttributes
 }
 
 
-std::string Str_SVGPolygon
+DFM2_INLINE std::string dfm2::Str_SVGPolygon
 (const std::vector<double>& aXY,
  double scale)
 {
