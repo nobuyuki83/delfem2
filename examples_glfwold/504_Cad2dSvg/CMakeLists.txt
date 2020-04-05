@@ -49,18 +49,15 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/cad2d_v2dtri.h              ${DELFEM2_INC}/cad2d_v2dtri.cpp
       
       ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp
+      ${DELFEM2_INC}/opengl/funcs_glold.h        ${DELFEM2_INC}/opengl/funcs_glold.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
 
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
-
   ${DELFEM2_INC}/opengl/caddtri_v2_glold.h   ${DELFEM2_INC}/opengl/caddtri_v2_glold.cpp
-  ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  
-        ${SRC_DFM2}
-
+  ${SRC_DFM2}
   main.cpp
 )
 

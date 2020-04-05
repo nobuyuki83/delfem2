@@ -37,14 +37,13 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                         ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h                       ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/vec3.h                         ${DELFEM2_INC}/vec3.cpp
+      
+      ${DELFEM2_INC}/opengl/funcs_glold.h           ${DELFEM2_INC}/opengl/funcs_glold.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
 
 add_executable(${PROJECT_NAME}
- 
-  ${DELFEM2_INC}/opengl/glold_funcs.h   ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  
   ${SRC_DFM2}
   main.cpp
 )

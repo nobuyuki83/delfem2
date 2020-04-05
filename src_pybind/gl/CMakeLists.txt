@@ -48,6 +48,7 @@ if(NOT USE_HEADERONLY)
  
       ${DELFEM2_INC}/opengl/tex_gl.h           ${DELFEM2_INC}/opengl/tex_gl.cpp
       ${DELFEM2_INC}/opengl/color_glold.h        ${DELFEM2_INC}/opengl/color_glold.cpp
+      ${DELFEM2_INC}/opengl/funcs_glold.h        ${DELFEM2_INC}/opengl/funcs_glold.cpp
       )
 endif()
 
@@ -59,7 +60,6 @@ set(INPUT_SRC
 
     ${DELFEM2_INC}/opengl/render2tex_glold.h   ${DELFEM2_INC}/opengl/render2tex_glold.cpp        
     ${DELFEM2_INC}/opengl/glold_voxbv.h        ${DELFEM2_INC}/opengl/glold_voxbv.cpp
-    ${DELFEM2_INC}/opengl/glold_funcs.h        ${DELFEM2_INC}/opengl/glold_funcs.cpp
     ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
     ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp    
     ${DELFEM2_INC}/opengl/caddtri_v2_glold.h   ${DELFEM2_INC}/opengl/caddtri_v2_glold.cpp

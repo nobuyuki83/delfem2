@@ -24,7 +24,7 @@
 #include <GL/glu.h>
 #endif
 
-#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/rig_v3m3q_glold.h"
 

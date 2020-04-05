@@ -13,9 +13,8 @@
 
 // ------------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/rig_v3m3q_glold.h"
-//
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;

@@ -52,6 +52,7 @@ IF(NOT USE_HEADERONLY)
 
       ${DELFEM2_INC}/opengl/tex_gl.h            ${DELFEM2_INC}/opengl/tex_gl.cpp
       ${DELFEM2_INC}/opengl/color_glold.h       ${DELFEM2_INC}/opengl/color_glold.cpp
+      ${DELFEM2_INC}/opengl/funcs_glold.h       ${DELFEM2_INC}/opengl/funcs_glold.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
@@ -61,7 +62,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/mats.h                     ${DELFEM2_INC}/mats.cpp
     
   ${DELFEM2_INC}/opengl/v3q_glold.h         ${DELFEM2_INC}/opengl/v3q_glold.cpp
-  ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
   
   ${3RD_PARTY}/cnpy/cnpy.h                  ${3RD_PARTY}/cnpy/cnpy.cpp
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h           ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp

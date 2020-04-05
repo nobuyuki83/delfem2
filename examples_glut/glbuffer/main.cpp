@@ -18,7 +18,7 @@
 #else
   #include <GL/glut.h>
 #endif
-#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "../glut_cam.h"
 

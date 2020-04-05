@@ -16,7 +16,7 @@
 #include <GL/gl.h>
 #endif
 #include "delfem2/opengl/gl_funcs.h"
-#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/caddtri_v2_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"

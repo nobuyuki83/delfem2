@@ -47,13 +47,13 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
 
       ${DELFEM2_INC}/opengl/color_glold.h     ${DELFEM2_INC}/opengl/color_glold.cpp
+      ${DELFEM2_INC}/opengl/funcs_glold.h       ${DELFEM2_INC}/opengl/funcs_glold.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
     ${3RD_PARTY}/glad3/include/glad/glad.h    ${3RD_PARTY}/glad3/src/glad.c
     ${SRC_DFM2}
     main.cpp
