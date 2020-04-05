@@ -43,7 +43,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/bvh.h                      ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/funcs.h                    ${DELFEM2_INC}/funcs.cpp
   ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
-  ${DELFEM2_INC}/bv.h        
       
   ${DELFEM2_INC}/objfunc_v23.h              ${DELFEM2_INC}/objfunc_v23.cpp
   ${DELFEM2_INC}/objfunc_v23dtri.h          ${DELFEM2_INC}/objfunc_v23dtri.cpp
@@ -57,7 +56,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
   
   ${3RD_PARTY}/io_gltf.h                    ${3RD_PARTY}/io_gltf.cpp
-  ${SRC_DFM2}
   main.cpp  
 )
 
@@ -78,6 +76,7 @@ IF(APPLE)
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIB}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp

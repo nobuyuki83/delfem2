@@ -70,6 +70,7 @@ IF(APPLE)
       )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIB}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
