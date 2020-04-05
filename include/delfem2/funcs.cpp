@@ -337,7 +337,7 @@ void ReadVector_CSV
   }
 }
 
-///////////////////////////////
+// ----------------------
 
 std::string getCmdOptionStr(char ** begin, char ** end, const std::string & option)
 {
@@ -371,7 +371,7 @@ double getCmdOptionDouble(char ** begin, char ** end, const std::string & option
   return ddef;
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// -------------------------------------
 // file IO
 
 std::string LoadFile
@@ -446,8 +446,8 @@ bool ReadParam
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------
+// -----------------------------
 
 // Read somehting like this {'descr': '<f8', 'fortran_order': False, 'shape': (3682, 151), }
 std::map<std::string, std::string>

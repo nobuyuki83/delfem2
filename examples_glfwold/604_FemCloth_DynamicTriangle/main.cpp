@@ -141,13 +141,6 @@ void myGlutDisplay()
 
 }
 
-
-void myGlutIdle(){
-  if( is_animation ){
-    StepTime();
-  }
-}
-
 int main(int argc,char* argv[])
 {
   double lenx = 1.0;
@@ -200,7 +193,7 @@ int main(int argc,char* argv[])
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)) {
-    myGlutIdle();
+    StepTime();
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
     viewer.DrawEnd_oldGL();

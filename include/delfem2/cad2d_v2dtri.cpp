@@ -363,6 +363,17 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD
       pos_cur = e.p1;
       is += 2;
     }
+    else if( aStr1[is] == "h" ){
+      dfm2::CCad2D_EdgeGeo e;
+      {
+        e.p0 = pos_cur;
+        e.p1 = dfm2::CVec2d( e.p0.x()+myStod(aStr1[is+1]), pos_cur.y() );
+        e.type_edge = dfm2::CCad2D_EdgeGeo::LINE;
+      }
+      aEdge.push_back(e);
+      pos_cur = e.p1;
+      is += 2;
+    }
     else if( aStr1[is] == "q" ){
       const dfm2::CVec2d p0 = pos_cur;
       const dfm2::CVec2d p1( p0.x()+myStod(aStr1[is+1]), p0.y()+myStod(aStr1[is+2]) );

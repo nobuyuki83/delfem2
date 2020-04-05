@@ -8,9 +8,14 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <limits>
 #include <vector>
 #include <set>
+#include <cereal/cereal.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/types/vector.hpp>
+//
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/mshmisc.h"
@@ -97,7 +102,7 @@ void myGlutDisplay(const std::vector<dfm2::CDynTri>& aETri,
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1, 4.0 );
   
-  ::glPointSize(5);
+  ::glPointSize(2);
   ::glLineWidth(1);
   {
     ::glDisable(GL_LIGHTING);
@@ -118,6 +123,10 @@ void myGlutDisplay(const std::vector<dfm2::CDynTri>& aETri,
 class CRigidTrans_2DTo3D
 {
 public:
+  CRigidTrans_2DTo3D(){
+    radinv_x = 0.0;
+    R.SetIdentity();
+  }
   dfm2::CVec3d Transform(const dfm2::CVec2d& pi) const {
     dfm2::CVec3d p0(pi.x()-org2.x(), pi.y()-org2.y(),0.0);
     dfm2::CVec3d p2 = p0;
@@ -135,26 +144,26 @@ public:
     return p3;
   }
 public:
-  CRigidTrans_2DTo3D(){
-    radinv_x = 0.0;
-    R.SetIdentity();
-  }
   dfm2::CVec2d org2;
   dfm2::CVec3d org3;
   dfm2::CMat3d R;
   double radinv_x;
 };
 
-int main(int argc,char* argv[])
+
+template<class Archive>
+void serialize(Archive & archive, CRigidTrans_2DTo3D &rt23)
 {
-  // -----------------------------
-  // below: input data
-  delfem2::CCad2D cad;
+  archive( cereal::make_nvp("radinv_x", rt23.radinv_x) );
+  archive( cereal::make_nvp("org2",     rt23.org2.p) );
+  archive( cereal::make_nvp("org3",     rt23.org3.p) );
+  archive( cereal::make_nvp("R",        rt23.R.mat) );
+}
+
+
+void MakeParameterJson_TShirt()
+{
   double scale_adjust = 1.7;
-  {
-    std::string path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg";
-    dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
-  }
   std::vector<unsigned int> aIESeam = {
     15, 6,
     13, 0,
@@ -167,8 +176,6 @@ int main(int argc,char* argv[])
     5, 24,
     8, 23
   };
-  delfem2::CMesher_Cad2D mesher;
-  mesher.edge_length = 0.015;
   std::vector<CRigidTrans_2DTo3D> aRT23;
   { // initial position
     aRT23.resize(4);
@@ -198,8 +205,101 @@ int main(int argc,char* argv[])
       rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, -M_PI*0.5, 0.0);
       rt23.radinv_x = 13;
     }
-
   }
+  {
+    std::ofstream fout("param_tshirt.json");
+    cereal::JSONOutputArchive o_archive(fout);
+    o_archive(cereal::make_nvp("name_cad_in_test_input", std::string("tshirt.svg") ));
+    o_archive(cereal::make_nvp("scale_adjust", scale_adjust) );
+    o_archive(cereal::make_nvp("aIESeam",aIESeam) );
+    o_archive(cereal::make_nvp("mesher.edge_length", 0.015) );
+    o_archive(cereal::make_nvp("aRT23", aRT23) );
+  }
+}
+
+void MakeParameterJson_LTShirt()
+{
+  double scale_adjust = 1.7;
+  std::vector<unsigned int> aIESeam = {
+    15, 6,
+    13, 0,
+    4, 9,
+    11, 2,
+    20, 17,
+    22, 25,
+    1, 18,
+    12, 19,
+    5, 24,
+    8, 23
+  };
+  std::vector<CRigidTrans_2DTo3D> aRT23;
+  { // initial position
+    aRT23.resize(4);
+    { // back body
+      CRigidTrans_2DTo3D& rt23 = aRT23[0];
+      rt23.org2 = dfm2::CVec2d(0.189-0.04553,-0.5+0.34009)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(0.0, 0.1, -0.15);
+      rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
+    }
+    { // front body
+      CRigidTrans_2DTo3D& rt23 = aRT23[1];
+      rt23.org2 = dfm2::CVec2d(0.506-0.04553,-0.5+0.34009)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(0.0, 0.1, +0.2);
+      rt23.R.SetIdentity();
+    }
+    { // front body
+      CRigidTrans_2DTo3D& rt23 = aRT23[2];
+      rt23.org2 = dfm2::CVec2d(0.833-0.04553,-0.45+0.34009)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(+0.3, 0.3, +0.0);
+      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, +M_PI*0.5, -0.1);
+      rt23.radinv_x = 13;
+    }
+    { // front body
+      CRigidTrans_2DTo3D& rt23 = aRT23[3];
+      rt23.org2 = dfm2::CVec2d(1.148-0.04553,-0.45+0.34009)*scale_adjust;
+      rt23.org3 = dfm2::CVec3d(-0.3, 0.3, +0.0);
+      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, -M_PI*0.5, +0.1);
+      rt23.radinv_x = 13;
+    }
+  }
+  {
+    std::ofstream fout("param_ltshirt.json");
+    cereal::JSONOutputArchive o_archive(fout);
+    o_archive(cereal::make_nvp("name_cad_in_test_input", std::string("ltshirt.svg") ));
+    o_archive(cereal::make_nvp("scale_adjust", scale_adjust) );
+    o_archive(cereal::make_nvp("aIESeam",aIESeam) );
+    o_archive(cereal::make_nvp("mesher.edge_length", 0.018) );
+    o_archive(cereal::make_nvp("aRT23", aRT23) );
+  }
+}
+
+
+int main(int argc,char* argv[])
+{
+  MakeParameterJson_TShirt(); // make parameter for t-shirt
+  MakeParameterJson_LTShirt(); // make parameter for long-tshirt
+  // -----------------------------
+  // below: input data
+  delfem2::CCad2D cad;
+  std::vector<CRigidTrans_2DTo3D> aRT23;
+  delfem2::CMesher_Cad2D mesher;
+  std::vector<unsigned int> aIESeam;
+  {
+    std::ifstream fin("param_ltshirt.json");
+//    std::ifstream fin("param_tshirt.json");
+    cereal::JSONInputArchive o_archive(fin);
+    double scale_adjust = 0.0;
+    std::string name_cad_in_test_input;
+    o_archive(cereal::make_nvp("name_cad_in_test_input", name_cad_in_test_input));
+    o_archive(cereal::make_nvp("scale_adjust",scale_adjust) );
+    o_archive(cereal::make_nvp("aIESeam",aIESeam));
+    o_archive(cereal::make_nvp("mesher.edge_length",mesher.edge_length));
+    o_archive(cereal::make_nvp("aRT23", aRT23));
+    std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
+    //    std::string path_svg = std::string(PATH_INPUT_DIR)+"/ltshirt.svg";
+    dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
+  }
+  
   // above: input data
   // -----------------------------------
   // below: data preparation (derived)
@@ -313,6 +413,7 @@ int main(int argc,char* argv[])
     // ------------
     viewer.DrawBegin_oldGL();
 //    myGlutDisplay(aETri,aVec2);
+    ::glDisable(GL_LIGHTING);
     for( auto& rt : aRT23 ){
       ::glPointSize(10);
       ::glColor3d(0,0,0);
