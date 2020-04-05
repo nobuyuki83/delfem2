@@ -15,8 +15,8 @@
 #include "delfem2/dtri.h"
 
 #include <GLFW/glfw3.h>
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/glold_funcs.h"
 
 namespace dfm2 = delfem2;
 

@@ -18,8 +18,7 @@
   #include <GL/gl.h>
 #endif
 
-#include "delfem2/opengl/glold_funcs.h"
-//
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"
 
 namespace dfm2 = delfem2;

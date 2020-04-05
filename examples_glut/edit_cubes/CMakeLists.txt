@@ -41,6 +41,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/color.h                 ${DELFEM2_INC}/color.cpp
       
       ${DELFEM2_INC}/opengl/color_glold.h    ${DELFEM2_INC}/opengl/color_glold.cpp
+      ${DELFEM2_INC}/opengl/funcs_glold.h    ${DELFEM2_INC}/opengl/funcs_glold.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
@@ -51,7 +52,6 @@ add_executable(${PROJECT_NAME}
 
   ${DELFEM2_INC}/opengl/glold_voxbv.h    ${DELFEM2_INC}/opengl/glold_voxbv.cpp
   ${DELFEM2_INC}/opengl/v3q_glold.h      ${DELFEM2_INC}/opengl/v3q_glold.cpp
-  ${DELFEM2_INC}/opengl/glold_funcs.h    ${DELFEM2_INC}/opengl/glold_funcs.cpp
   ${SRC_DFM2}
   main.cpp
 )

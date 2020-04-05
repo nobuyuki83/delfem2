@@ -30,7 +30,7 @@
 #include "delfem2/rig_v3q.h"
 #include "delfem2/opengl/rig_v3m3q_glold.h"
 
-#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

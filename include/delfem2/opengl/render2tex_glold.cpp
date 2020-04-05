@@ -24,7 +24,7 @@
 #else
   #include <GL/gl.h>
 #endif
-#include "delfem2/opengl/glold_funcs.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/render2tex_glold.h"
 

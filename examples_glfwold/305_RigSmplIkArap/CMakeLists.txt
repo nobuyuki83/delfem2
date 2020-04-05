@@ -46,11 +46,12 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/camera.h                      ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/mat4.h                        ${DELFEM2_INC}/mat4.cpp
       ${DELFEM2_INC}/color.h                       ${DELFEM2_INC}/color.cpp
-        ${DELFEM2_INC}/mshtopo.h                     ${DELFEM2_INC}/mshtopo.cpp
+        ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
         
       ${DELFEM2_INC}/v23m34q.h                     ${DELFEM2_INC}/v23m34q.cpp
       
       ${DELFEM2_INC}/opengl/color_glold.h          ${DELFEM2_INC}/opengl/color_glold.cpp
+      ${DELFEM2_INC}/opengl/funcs_glold.h          ${DELFEM2_INC}/opengl/funcs_glold.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 ENDIF()
@@ -61,7 +62,6 @@ add_executable(${PROJECT_NAME}
        
   ${DELFEM2_INC}/objfunc_v23.h                 ${DELFEM2_INC}/objfunc_v23.cpp
   ${DELFEM2_INC}/opengl/v3q_glold.h            ${DELFEM2_INC}/opengl/v3q_glold.cpp
-  ${DELFEM2_INC}/opengl/glold_funcs.h          ${DELFEM2_INC}/opengl/glold_funcs.cpp
        
   ${3RD_PARTY}/cnpy/cnpy.h                     ${3RD_PARTY}/cnpy/cnpy.cpp
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h              ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
