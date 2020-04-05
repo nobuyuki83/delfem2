@@ -6,7 +6,7 @@
 #include "delfem2/paramgeo_v23.h"
 #include "delfem2/srchuni_v3.h"
 
-#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/color_glold.h"
 
 // -------------------------------------
 

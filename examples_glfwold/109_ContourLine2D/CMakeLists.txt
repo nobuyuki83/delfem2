@@ -46,6 +46,7 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
       ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
             
+      ${DELFEM2_INC}/opengl/color_glold.h     ${DELFEM2_INC}/opengl/color_glold.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
 endif()
@@ -54,7 +55,6 @@ add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/slice.h                  ${DELFEM2_INC}/slice.cpp
 
   ${DELFEM2_INC}/opengl/glold_funcs.h     ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  ${DELFEM2_INC}/opengl/glold_color.h     ${DELFEM2_INC}/opengl/glold_color.cpp
   ${SRC_DFM2}
 
   main.cpp

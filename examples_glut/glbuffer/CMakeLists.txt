@@ -39,24 +39,22 @@ IF(NOT USE_HEADERONLY)
   message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
-      ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/quat.h                   ${DELFEM2_INC}/quat.cpp
+      ${DELFEM2_INC}/camera.h                 ${DELFEM2_INC}/camera.cpp
+      ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
+      ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
+      ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
+      ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
+
+      ${DELFEM2_INC}/opengl/color_glold.h     ${DELFEM2_INC}/opengl/color_glold.cpp
       )
 ELSE()
   message("compile as HEADER-ONLY library: ${PROJECT_NAME} ${USE_HEADERONLY}")
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/color.h                  ${DELFEM2_INC}/color.cpp
-    ${DELFEM2_INC}/mshio.h                  ${DELFEM2_INC}/mshio.cpp
-    ${DELFEM2_INC}/mshmisc.h                ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/mshtopo.h                ${DELFEM2_INC}/mshtopo.cpp
-
-    ${DELFEM2_INC}/opengl/glold_color.h       ${DELFEM2_INC}/opengl/glold_color.cpp
     ${DELFEM2_INC}/opengl/glold_funcs.h       ${DELFEM2_INC}/opengl/glold_funcs.cpp
-  
-    ${3RD_PARTY}/glad3/include/glad/glad.h
-    ${3RD_PARTY}/glad3/src/glad.c
+    ${3RD_PARTY}/glad3/include/glad/glad.h    ${3RD_PARTY}/glad3/src/glad.c
     ${SRC_DFM2}
     main.cpp
 )

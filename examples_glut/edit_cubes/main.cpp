@@ -26,7 +26,7 @@
 #endif
 
 #include "delfem2/opengl/glold_funcs.h"
-#include "delfem2/opengl/glold_color.h"
+#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glold_voxbv.h"
 #include "../glut_cam.h"
