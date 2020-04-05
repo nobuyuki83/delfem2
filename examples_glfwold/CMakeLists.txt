@@ -10,6 +10,7 @@ ELSE()
 	message("$$$$$$$$$$$$$$$$$$$$$")
 	message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
 	project(examples_glfwold_static)
+  add_subdirectory(dfm2_static_glfwold)
 ENDIF()
 
 # simple examples without delfem2 
@@ -82,7 +83,6 @@ add_subdirectory(617_PbdClothCadSmpl)
 add_subdirectory(618_Fem3d)
 add_subdirectory(619_Sph2d)
 add_subdirectory(620_FemClothSelfCollision)
-
 
 
 

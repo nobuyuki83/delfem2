@@ -53,6 +53,9 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/opengl/funcs_glold.h       ${DELFEM2_INC}/opengl/funcs_glold.cpp
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       )
+
+  set(DFM2_LIB
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
 ENDIF()
 
 add_executable(${PROJECT_NAME}
@@ -79,6 +82,7 @@ IF(APPLE)
   find_library( COREVIDEO_LIBRARY CoreVideo )
   find_library( ZIP_LIBRARY Z )
   target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIB}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a
     ${COCOA_LIBRARY}

@@ -35,31 +35,18 @@ include_directories(
 
 IF(NOT USE_HEADERONLY)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  set(SRC_DFM2
-      ${DELFEM2_INC}/vec3.h                       ${DELFEM2_INC}/vec3.cpp
-      ${DELFEM2_INC}/quat.h                       ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h                     ${DELFEM2_INC}/camera.cpp
-      ${DELFEM2_INC}/mshtopo.h              ${DELFEM2_INC}/mshtopo.cpp
-      
-      ${DELFEM2_INC}/cloth_internal.h
-      ${DELFEM2_INC}/srchbi_v3bvh.h
-  
-      ${DELFEM2_INC}/opengl/funcs_glold.h       ${DELFEM2_INC}/opengl/funcs_glold.cpp
-      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h    ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-      )
+  set(DFM2_LIB
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-
   ${DELFEM2_INC}/bvh.h                  ${DELFEM2_INC}/bvh.cpp
   ${DELFEM2_INC}/emat.h                 ${DELFEM2_INC}/emat.cpp
   ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
   ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
-  
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
   ${DELFEM2_INC}/cloth_selfcollision.h  ${DELFEM2_INC}/cloth_selfcollision.cpp
-  ${SRC_DFM2}
   main.cpp
   )
 
@@ -70,6 +57,7 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIB}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       ${COCOA_LIBRARY}

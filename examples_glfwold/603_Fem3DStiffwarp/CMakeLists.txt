@@ -35,25 +35,8 @@ include_directories(
 
 IF(NOT USE_HEADERONLY)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  set(SRC_DFM2
-      ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
-      ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
-      ${DELFEM2_INC}/mat3.h               ${DELFEM2_INC}/mat3.cpp
-      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
-      ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
-      ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
-      ${DELFEM2_INC}/mshtopo.h            ${DELFEM2_INC}/mshtopo.cpp
-      ${DELFEM2_INC}/mshmisc.h            ${DELFEM2_INC}/mshmisc.cpp
-      ${DELFEM2_INC}/dtri.h               ${DELFEM2_INC}/dtri.cpp
-  
-  ${DELFEM2_INC}/dtri_v2.h            ${DELFEM2_INC}/dtri_v2.cpp
-      ${DELFEM2_INC}/v23m34q.h             ${DELFEM2_INC}/v23m34q.cpp
-      
-      ${DELFEM2_INC}/opengl/color_glold.h   ${DELFEM2_INC}/opengl/color_glold.cpp
-      ${DELFEM2_INC}/opengl/funcs_glold.h   ${DELFEM2_INC}/opengl/funcs_glold.cpp
-      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-      )
+  set(DFM2_LIB
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
 ENDIF()
 
 # add_definitions(-DDFM2_STATIC_LIBRARY)
@@ -80,6 +63,7 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIB}
     ${OPENGL_LIBRARY}
     ${GLFW_DIR}/src/libglfw3.a
     ${COCOA_LIBRARY}
