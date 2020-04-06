@@ -48,6 +48,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
     ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
+    ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
     ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/bv.h
         

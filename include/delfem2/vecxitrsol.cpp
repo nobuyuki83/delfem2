@@ -27,8 +27,10 @@ T dfm2::Dot(
   for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
   return r;
 }
+#ifdef DFM2_STATIC_LIBRARY
 template float dfm2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
 template double dfm2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
+#endif
 
 namespace delfem2 {
 
@@ -167,18 +169,18 @@ template void dfm2::ScaleX(double* p0, double s, unsigned int n);
 
 
 
-void dfm2::NormalizeX(
-                      double* p0,
-                      unsigned int n)
+void dfm2::NormalizeX
+ (double* p0,
+  unsigned int n)
 {
   const double ss = dfm2::DotX(p0,p0,n);
   ScaleX(p0,1.0/sqrt(ss),n);
 }
 
-void dfm2::OrthogonalizeToUnitVectorX(
-                                      double* p1,
-                                      const double* p0,
-                                      unsigned int n)
+void dfm2::OrthogonalizeToUnitVectorX
+ (double* p1,
+  const double* p0,
+  unsigned int n)
 {
   double d = dfm2::DotX(p0, p1, n);
   for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
@@ -301,10 +303,10 @@ void dfm2::XPlusAYBZCW
 
 
 
-void dfm2::setRHS_MasterSlave(
-                              double* vec_b,
-                              int nDoF,
-                              const int* aMSFlag)
+void dfm2::setRHS_MasterSlave
+ (double* vec_b,
+  int nDoF,
+  const int* aMSFlag)
 {
   for(int idof=0;idof<nDoF;++idof){
     int jdof = aMSFlag[idof];
@@ -317,9 +319,10 @@ void dfm2::setRHS_MasterSlave(
 
 
 
-void dfm2::MatVec(double* y,
-                  const double* A, unsigned int ncol, unsigned int nrow,
-                  const double* x)
+void dfm2::MatVec
+ (double* y,
+  const double* A, unsigned int ncol, unsigned int nrow,
+  const double* x)
 {
   for(unsigned int i=0;i<ncol;++i){
     y[i] = 0;
@@ -331,9 +334,10 @@ void dfm2::MatVec(double* y,
 
 
 
-void dfm2::MatTVec(double* y,
-                   const double* A, unsigned int ncol, unsigned int nrow,
-                   const double* x)
+void dfm2::MatTVec
+ (double* y,
+  const double* A, unsigned int ncol, unsigned int nrow,
+  const double* x)
 {
   for(unsigned int j=0;j<nrow;++j){  y[j] = 0; }
   for(unsigned int i=0;i<ncol;++i){

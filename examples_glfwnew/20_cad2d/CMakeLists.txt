@@ -59,8 +59,7 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/opengl/glnew_funcs.h        ${DELFEM2_INC}/opengl/glnew_funcs.cpp
     ${DELFEM2_INC}/opengl/glnew_v23dtricad.h   ${DELFEM2_INC}/opengl/glnew_v23dtricad.cpp
 
-    ${3RD_PARTY}/glad4/include/glad/glad.h
-    ${3RD_PARTY}/glad4/src/glad.c
+    ${3RD_PARTY}/glad4/include/glad/glad.h     ${3RD_PARTY}/glad4/src/glad.c
     ${SRC_DFM2}
     main.cpp
 )
