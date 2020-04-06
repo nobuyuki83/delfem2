@@ -5,13 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_CADDTRI_V2_GLOLD_H
-#define DFM2_CADDTRI_V2_GLOLD_H
+#ifndef DFM2_CAD2DTRIV2_GLOLD_H
+#define DFM2_CAD2DTRIV2_GLOLD_H
 
-
-#include <stdio.h>
+#include "delfem2/dfm2_inline.h"
 #include <vector>
-
 #include "delfem2/dtri.h"
 #include "delfem2/cad2d_v2dtri.h"
 
@@ -20,29 +18,33 @@
 namespace delfem2{
 namespace opengl{
 
-void DrawMeshDynTri_FaceNorm(
+DFM2_INLINE void DrawMeshDynTri_FaceNorm(
     const std::vector<CDynTri>& aSTri,
     const double* aXYZ);
 
-void DrawMeshDynTri_Edge(
+DFM2_INLINE void DrawMeshDynTri_Edge(
     const std::vector<CDynTri>& aSTri,
     const std::vector<CVec2d>& aVec2);
 
-void DrawMeshDynTri_FaceNorm(
+DFM2_INLINE void DrawMeshDynTri_FaceNorm(
     const std::vector<CDynTri>& aSTri,
     const std::vector<CVec2d>& aVec2);
 
 // --------------------------------------------
 
-void Draw_CCad2DEdge(
+DFM2_INLINE void Draw_CCad2DEdge(
     const delfem2::CCad2D_EdgeGeo& edge,
     bool is_selected,
     int ipicked_elem);
 
-void Draw_CCad2D(
+DFM2_INLINE void Draw_CCad2D(
     const delfem2::CCad2D& cad2d);
   
 }
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/cad2dtriv2_glold.cpp"
+#endif
 
 #endif /* DFM2_CADDTRI_V2_GLOLD */

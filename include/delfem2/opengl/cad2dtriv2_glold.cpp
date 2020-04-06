@@ -18,13 +18,13 @@
 
 #include "delfem2/opengl/v2_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/caddtri_v2_glold.h"
+#include "delfem2/opengl/cad2dtriv2_glold.h"
 
 namespace dfm2 = delfem2;
 
 // -------------------------------------------------
 
-void dfm2::opengl::DrawMeshDynTri_FaceNorm
+DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec2d>& aVec2)
 {
@@ -49,7 +49,7 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
-void dfm2::opengl::DrawMeshDynTri_Edge
+DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_Edge
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec2d>& aVec2)
 {
@@ -77,7 +77,7 @@ void dfm2::opengl::DrawMeshDynTri_Edge
 
 // -------------------------------------------------------------------------
 
-void dfm2::opengl::Draw_CCad2DEdge
+DFM2_INLINE void dfm2::opengl::Draw_CCad2DEdge
  (const dfm2::CCad2D_EdgeGeo& edge,
   bool is_selected,
   int ipicked_elem)
@@ -138,7 +138,7 @@ void dfm2::opengl::Draw_CCad2DEdge
   }
 }
 
-void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
+DFM2_INLINE void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
 {
   const std::vector<dfm2::CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
   const std::vector<dfm2::CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;

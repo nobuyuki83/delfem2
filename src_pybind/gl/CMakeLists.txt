@@ -49,22 +49,19 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/opengl/tex_gl.h           ${DELFEM2_INC}/opengl/tex_gl.cpp
       ${DELFEM2_INC}/opengl/color_glold.h        ${DELFEM2_INC}/opengl/color_glold.cpp
       ${DELFEM2_INC}/opengl/funcs_glold.h        ${DELFEM2_INC}/opengl/funcs_glold.cpp
+      ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
+      ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp    
+      ${DELFEM2_INC}/opengl/cad2dtriv2_glold.h   ${DELFEM2_INC}/opengl/cad2dtriv2_glold.cpp
       )
 endif()
 
 set(INPUT_SRC
     ${DELFEM2_INC}/voxel.h                     ${DELFEM2_INC}/voxel.cpp
-
     ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/render2tex_gl.h      ${DELFEM2_INC}/opengl/render2tex_gl.cpp
-
     ${DELFEM2_INC}/opengl/render2tex_glold.h   ${DELFEM2_INC}/opengl/render2tex_glold.cpp        
     ${DELFEM2_INC}/opengl/glold_voxbv.h        ${DELFEM2_INC}/opengl/glold_voxbv.cpp
-    ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
-    ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp    
-    ${DELFEM2_INC}/opengl/caddtri_v2_glold.h   ${DELFEM2_INC}/opengl/caddtri_v2_glold.cpp
-    ${DELFEM2_INC}/opengl/caddtri_v3_glold.h   ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
-  
+    ${DELFEM2_INC}/opengl/caddtri_v3_glold.h   ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp  
     ${3RD_PARTY}/glad3/include/glad/glad.h     ${3RD_PARTY}/glad3/src/glad.c
 
     ${SRC_DFM2}

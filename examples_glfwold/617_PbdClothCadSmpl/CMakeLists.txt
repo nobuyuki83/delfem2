@@ -21,7 +21,8 @@ project(617_PbdClothCadSmpl)
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(TEST_INPUTS         "../../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)  
 
@@ -31,7 +32,7 @@ include_directories(
   ${GLFW_DIR}/include  
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
-  ${3RD_PARTY}/cereal/include
+  ${TEST_INPUTS}
 )
 
 IF(NOT USE_HEADERONLY)
@@ -45,13 +46,14 @@ add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/objfunc_v23.h                ${DELFEM2_INC}/objfunc_v23.cpp
     ${DELFEM2_INC}/objfunc_v23dtri.h            ${DELFEM2_INC}/objfunc_v23dtri.cpp
     ${DELFEM2_INC}/srchuni_v3.h                 ${DELFEM2_INC}/srchuni_v3.cpp
-    ${DELFEM2_INC}/srch_v3bvhmshtopo.h
     ${DELFEM2_INC}/rig_v3q.h                    ${DELFEM2_INC}/rig_v3q.cpp
     ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h     ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
     ${DELFEM2_INC}/opengl/caddtri_v3_glold.h    ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
     ${3RD_PARTY}/cnpy/cnpy.h                    ${3RD_PARTY}/cnpy/cnpy.cpp
     ${DELFEM2_INC}/cnpy/smpl_cnpy.h             ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
-  main.cpp  
+    ${DELFEM2_INC}/garment.h
+    ${TEST_INPUTS}/inputs_garment.h
+    main.cpp
 )
 
 

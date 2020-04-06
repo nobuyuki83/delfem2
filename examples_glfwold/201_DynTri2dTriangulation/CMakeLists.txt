@@ -41,8 +41,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/opengl/caddtri_v2_glold.h ${DELFEM2_INC}/opengl/caddtri_v2_glold.cpp
-    ${SRC_DFM2}
   main.cpp
 )
 
