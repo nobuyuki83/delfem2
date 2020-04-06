@@ -41,7 +41,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/objfunc_v23.h            ${DELFEM2_INC}/objfunc_v23.cpp
   main.cpp
 )
 

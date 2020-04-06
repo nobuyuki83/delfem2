@@ -9,12 +9,12 @@
 #ifndef DFM2_RIG_V3Q_H
 #define DFM2_RIG_V3Q_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cassert>
-
 #include "delfem2/vec3.h"
 
 namespace delfem2 {
@@ -23,7 +23,7 @@ namespace delfem2 {
  * @brief Set 3D affine matrix that transfrom from intial position from the deformed poisition for each bones.
  * @details this funcition is for rigging without the class "CRigBone"
  */
-void SetMat4AffineBone_FromJointRelativeRotation(
+DFM2_INLINE void SetMat4AffineBone_FromJointRelativeRotation(
     std::vector<double>& aMat4AffineBone,
     const double trans_root[3],
     const std::vector<double>& aQuatRelativeRot,
@@ -100,9 +100,9 @@ public:
 /**
  * @brief set "CRgidiBone.affmat3Global" based on "CRigidBone.quadRelativeRot"
  */
-void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
+DFM2_INLINE void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
 
-void PickBone(
+DFM2_INLINE void PickBone(
     int& ibone_selected,
     int& ielem_selected,
     const std::vector<CRigBone>& aBone,
@@ -114,7 +114,7 @@ void PickBone(
 
 // ----------------------------------
 
-void Skinning_LBS_LocalWeight(
+DFM2_INLINE void Skinning_LBS_LocalWeight(
     double* aXYZ,
     const double* aXYZ0,
     unsigned int nXYZ,
@@ -127,7 +127,7 @@ void Skinning_LBS_LocalWeight(
 /**
  * @params aW rigging weight [np, nbone]
  */
-void Skinning_LBS(
+DFM2_INLINE void Skinning_LBS(
     std::vector<double>& aXYZ1,
     const std::vector<double>& aXYZ0,
     const std::vector<CRigBone>& aBone,
@@ -136,7 +136,7 @@ void Skinning_LBS(
 
 // --------------------------------------
 
-void Smpl2Rig(
+DFM2_INLINE void Smpl2Rig(
     std::vector<CRigBone>& aBone,
     const std::vector<int>& aIndBoneParent,
     const std::vector<double>& aXYZ0,
@@ -144,7 +144,7 @@ void Smpl2Rig(
 
 // --------------------------------------
 
-void Rig_SkinReferncePositionsBoneWeighted(
+DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
     std::vector<double>& aRefPosAff,
     const std::vector<CRigBone> aBone1,
     const std::vector<double>& aXYZ0,
@@ -167,12 +167,12 @@ public:
    std::vector<double>& aL) const; // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
 };
 
-void Rig_SensitivityBoneTransform(double* aL, // [ ndim(3), nBone, ndim(4) ]
+DFM2_INLINE void Rig_SensitivityBoneTransform(double* aL, // [ ndim(3), nBone, ndim(4) ]
                                   unsigned int ib_s,
                                   unsigned int idim_s,
                                   const std::vector<CRigBone> aBone1);
 
-void Rig_SensitivityBoneTransform_Eigen(
+DFM2_INLINE void Rig_SensitivityBoneTransform_Eigen(
     std::vector<double>& Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
     std::vector<double>& Ly, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
     std::vector<double>& Lz, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
@@ -181,7 +181,7 @@ void Rig_SensitivityBoneTransform_Eigen(
     bool is_rot,
     const std::vector<CRigBone> aBone1);
 
-void Rig_WdW_Target_Eigen(
+DFM2_INLINE void Rig_WdW_Target_Eigen(
     std::vector<double>& aW,
     std::vector<double>& adW,
     const std::vector<CRigBone>& aBone,
@@ -190,7 +190,7 @@ void Rig_WdW_Target_Eigen(
     const std::vector<double>& Ly,  // [ nsns, nBone*4 ]
     const std::vector<double>& Lz); // [ nsns, nBone*4 ]
 
-void Rig_SensitivitySkin_BoneRotation_Eigen(
+DFM2_INLINE void Rig_SensitivitySkin_BoneRotation_Eigen(
     std::vector<double>& dSkinX,
     std::vector<double>& dSkinY,
     std::vector<double>& dSkinZ,
@@ -201,7 +201,7 @@ void Rig_SensitivitySkin_BoneRotation_Eigen(
     const std::vector<double>& Ly, // [ nBone*3, nBone*4 ]
     const std::vector<double>& Lz); // [ nBone*3, nBone*4 ]
 
-void Rig_SensitivitySkin_BoneRotation(
+DFM2_INLINE void Rig_SensitivitySkin_BoneRotation(
     std::vector<double>& aSns, // np*ndim(3) * nb*3
     const std::vector<CRigBone> aBone1,
     const std::vector<double>& aXYZ0,
@@ -225,7 +225,7 @@ public:
   bool isrot;
 };
 
-void Read_BioVisionHierarchy(
+DFM2_INLINE void Read_BioVisionHierarchy(
     std::vector<CRigBone>& aBone,
     std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
     int& nframe,
@@ -235,15 +235,16 @@ void Read_BioVisionHierarchy(
 /**
  * @brief set value to CRigBone.rot (bone rotation from parent bone)
  */
-void SetPose_BioVisionHierarchy(
+DFM2_INLINE void SetPose_BioVisionHierarchy(
     std::vector<CRigBone>& aBone,
     const std::vector<CChannel_BioVisionHierarchy>& aChannelInfo,
     const double *aVal);
 
-
-
-
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/rig_v3q.cpp"
+#endif
 
 #endif // #define DFM2_RIG_V3Q_H
 

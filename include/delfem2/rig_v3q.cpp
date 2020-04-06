@@ -26,29 +26,32 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------------
 
-static double myStod(const std::string& str){
+namespace delfem2 {
+namespace rig_v3q {
+
+DFM2_INLINE double myStod(const std::string& str){
   char* e;
   double d = std::strtod(str.c_str(),&e);
   return d;
 }
 
 // probably std::stroi is safer to use but it is only for C++11
-static int myStoi(const std::string& str){
+DFM2_INLINE int myStoi(const std::string& str){
   char* e;
   long d = std::strtol(str.c_str(),&e,0);
   return (int)d;
 }
 
-bool isActive_AABB(const double aabb[6]){
+DFM2_INLINE bool isActive_AABB(const double aabb[6]){
     return aabb[0] <= aabb[1];
 }
 
-void copy_AABB(double aabb[6], const double aabb0[6]){
+DFM2_INLINE void copy_AABB(double aabb[6], const double aabb0[6]){
   if( aabb == aabb0 ) return;
   for(int i=0;i<6;++i){ aabb[i] = aabb0[i]; }
 }
 
-void myAdd_AABB(double aabb[6], const double aabb0[6], const double aabb1[6])
+DFM2_INLINE void myAdd_AABB(double aabb[6], const double aabb0[6], const double aabb1[6])
 {
   if( !isActive_AABB(aabb0) && !isActive_AABB(aabb1) ){ aabb[0]=1; aabb[1]=-1; return; }
   if( !isActive_AABB(aabb0) ){ copy_AABB(aabb, aabb1); return; }
@@ -61,7 +64,7 @@ void myAdd_AABB(double aabb[6], const double aabb0[6], const double aabb1[6])
   aabb[5] = ( aabb0[5] > aabb1[5] ) ? aabb0[5] : aabb1[5];
 }
 
-static void CalcInvMat(double* a, const int n, int& info )
+DFM2_INLINE void CalcInvMat(double* a, const int n, int& info )
 {
   double tmp1;
   
@@ -92,7 +95,7 @@ static void CalcInvMat(double* a, const int n, int& info )
   }
 }
 
-static std::string MyReplace
+DFM2_INLINE  std::string MyReplace
  (const std::string& str,
   const char cf,
   const char ct)
@@ -107,7 +110,7 @@ static std::string MyReplace
   return ss;
 }
 
-static std::vector<std::string> MySplit
+DFM2_INLINE std::vector<std::string> MySplit
  (const std::string& str,
   char delimiter)
 {
@@ -122,7 +125,7 @@ static std::vector<std::string> MySplit
   return aToken;
 }
 
-static double MyDotX(
+DFM2_INLINE double MyDotX(
                      const double* va,
                      const double* vb,
                      unsigned int n)
@@ -151,7 +154,7 @@ static void MyMatMatX
 }
  */
 
-static void MyMatMatTX
+DFM2_INLINE  void MyMatMatTX
  (double* M, // [ni, nj]
   unsigned int ni, unsigned int nj,
   const double*A, // [ni, nk]
@@ -168,9 +171,12 @@ static void MyMatMatTX
   }
 }
 
+}
+}
+
 // ------------------------------------------------------------
 
-int dfm2::CRigBone::PickHandler
+DFM2_INLINE int dfm2::CRigBone::PickHandler
 (const dfm2::CVec3d& org,
  const dfm2::CVec3d& dir,
  double rad_handlr,
@@ -181,13 +187,13 @@ int dfm2::CRigBone::PickHandler
                                         tol);
 }
 
-void dfm2::CRigBone::SetRotationBryant
+DFM2_INLINE void dfm2::CRigBone::SetRotationBryant
 (double rx, double ry, double rz)
 {
   dfm2::Quat_Bryant(quatRelativeRot, rx, ry, rz);
 }
 
-void dfm2::CRigBone::DeformSkin(double pos2[3],
+DFM2_INLINE void dfm2::CRigBone::DeformSkin(double pos2[3],
                                 const double pos0[3]) const 
 {
   const double pos0a[4] = {pos0[0], pos0[1], pos0[2], 1.0};
@@ -198,7 +204,7 @@ void dfm2::CRigBone::DeformSkin(double pos2[3],
   pos2[2] = pos2a[2];
 }
 
-void dfm2::CRigBone::SetTranslation
+DFM2_INLINE void dfm2::CRigBone::SetTranslation
 (double tx, double ty, double tz)
 {
   this->transRelative[0] = tx;
@@ -206,7 +212,7 @@ void dfm2::CRigBone::SetTranslation
   this->transRelative[2] = tz;
 }
 
-void dfm2::UpdateBoneRotTrans
+DFM2_INLINE void dfm2::UpdateBoneRotTrans
 (std::vector<dfm2::CRigBone>& aBone)
 {
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
@@ -225,7 +231,7 @@ void dfm2::UpdateBoneRotTrans
 
 
 
-void dfm2::Skinning_LBS_LocalWeight
+DFM2_INLINE void dfm2::Skinning_LBS_LocalWeight
 (double* aXYZ,
  const double* aXYZ0,
  unsigned int nXYZ,
@@ -262,7 +268,7 @@ void dfm2::Skinning_LBS_LocalWeight
 }
 
 
-void dfm2::Skinning_LBS
+DFM2_INLINE void dfm2::Skinning_LBS
  (std::vector<double>& aXYZ1,
   const std::vector<double>& aXYZ0,
   const std::vector<dfm2::CRigBone>& aBone,
@@ -290,7 +296,7 @@ void dfm2::Skinning_LBS
 // ------------------------------------
 // from here BioVisionHierarchy
 
-void dfm2::Read_BioVisionHierarchy
+DFM2_INLINE void dfm2::Read_BioVisionHierarchy
 (std::vector<dfm2::CRigBone>& aBone,
  std::vector<dfm2::CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  int& nframe,
@@ -311,8 +317,8 @@ void dfm2::Read_BioVisionHierarchy
   while(std::getline(fin,line)){
     if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
     if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
-    line = MyReplace(line, '\t', ' ');
-    std::vector<std::string> aToken = MySplit(line,' ');
+    line = rig_v3q::MyReplace(line, '\t', ' ');
+    std::vector<std::string> aToken = rig_v3q::MySplit(line,' ');
 //    std::cout << aToken[0] << std::endl;
     if( aToken[0] == "HIERARCHY" ){
       assert(aBone.empty());
@@ -338,9 +344,9 @@ void dfm2::Read_BioVisionHierarchy
     else if( aToken[0] == "OFFSET"){
       assert( aToken.size()==4 );
       int ib = aBone.size()-1;
-      double org_x = myStod(aToken[1]);
-      double org_y = myStod(aToken[2]);
-      double org_z = myStod(aToken[3]);
+      double org_x = rig_v3q::myStod(aToken[1]);
+      double org_y = rig_v3q::myStod(aToken[2]);
+      double org_z = rig_v3q::myStod(aToken[3]);
       aBone[ib].invBindMat[ 3] = -org_x;
       aBone[ib].invBindMat[ 7] = -org_y;
       aBone[ib].invBindMat[11] = -org_z;
@@ -354,7 +360,7 @@ void dfm2::Read_BioVisionHierarchy
     }
     else if( aToken[0] == "CHANNELS" ){
       assert(aToken.size()>=2);
-      int nch = myStoi(aToken[1]);
+      int nch = rig_v3q::myStoi(aToken[1]);
       assert((int)aToken.size()==nch+2);
       assert( !aBone.empty() );
       const std::size_t ib = aBone.size()-1;
@@ -404,14 +410,14 @@ void dfm2::Read_BioVisionHierarchy
   aValueRotTransBone.resize(nframe*nchannel);
   for(int iframe=0;iframe<nframe;++iframe){
     std::getline(fin,line);
-    line = MyReplace(line, '\t', ' ');
+    line = rig_v3q::MyReplace(line, '\t', ' ');
     if (line[line.size()-1] == '\n') line.erase(line.size()-1); // remove the newline code
     if (line[line.size()-1] == '\r') line.erase(line.size()-1); // remove the newline code
-    std::vector<std::string> aToken = MySplit(line,' ');
+    std::vector<std::string> aToken = rig_v3q::MySplit(line,' ');
 //    std::cout << aToken.size() << " " << aChannelRotTransBone.size() << std::endl;
     assert(aToken.size()==aChannelRotTransBone.size());
     for(int ich=0;ich<nchannel;++ich){
-      aValueRotTransBone[iframe*nchannel+ich] = myStod(aToken[ich]);
+      aValueRotTransBone[iframe*nchannel+ich] = rig_v3q::myStod(aToken[ich]);
     }
   }
   // ---------------
@@ -434,12 +440,12 @@ void dfm2::Read_BioVisionHierarchy
   }
   for(auto & bone : aBone){
     for(int i=0;i<16;++i){ bone.affmat3Global[i] = bone.invBindMat[i]; }
-    int info; CalcInvMat(bone.affmat3Global, 4, info);
+    int info; rig_v3q::CalcInvMat(bone.affmat3Global, 4, info);
   }
 }
 
 
-void dfm2::SetPose_BioVisionHierarchy
+DFM2_INLINE void dfm2::SetPose_BioVisionHierarchy
 (std::vector<dfm2::CRigBone>& aBone,
  const std::vector<dfm2::CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  const double *aVal)
@@ -476,7 +482,7 @@ void dfm2::SetPose_BioVisionHierarchy
 
 // ----------------------------------
 
-void dfm2::Smpl2Rig(
+DFM2_INLINE void dfm2::Smpl2Rig(
               std::vector<dfm2::CRigBone>& aBone,
               const std::vector<int>& aIndBoneParent,
               const std::vector<double>& aXYZ0,
@@ -523,7 +529,7 @@ void dfm2::Smpl2Rig(
 // -------------------------------------------
 
 
-void PickBone
+DFM2_INLINE void PickBone
 (int& ibone_selected,
  int& ielem_selected,
  const std::vector<dfm2::CRigBone>& aBone,
@@ -554,7 +560,7 @@ void PickBone
 
 
 
-void dfm2::SetMat4AffineBone_FromJointRelativeRotation
+DFM2_INLINE void dfm2::SetMat4AffineBone_FromJointRelativeRotation
  (std::vector<double>& aMat4AffineBone,
   const double trans_root[3],
   const std::vector<double>& aQuatRelativeRot,
@@ -585,7 +591,7 @@ void dfm2::SetMat4AffineBone_FromJointRelativeRotation
 }
 
 
-void dfm2::Rig_SkinReferncePositionsBoneWeighted
+DFM2_INLINE void dfm2::Rig_SkinReferncePositionsBoneWeighted
  (std::vector<double>& aRefPosAff,  // [ np, nBone*4 ]
   const std::vector<dfm2::CRigBone> aBone1,
   const std::vector<double>& aXYZ0,
@@ -614,7 +620,7 @@ void dfm2::Rig_SkinReferncePositionsBoneWeighted
 // --------------------------------------
 
 
-void dfm2::CTarget::WdW
+DFM2_INLINE void dfm2::CTarget::WdW
  (std::vector<double>& aW,
   std::vector<double>& adW,
   const std::vector<dfm2::CRigBone>& aBone,
@@ -642,7 +648,7 @@ void dfm2::CTarget::WdW
   }
 }
 
-void dfm2::Rig_SensitivityBoneTransform
+DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform
 (double* aL, // [ ndim(3), nBone, ndim(4) ]
  unsigned int ib_s,
  unsigned int idim_s,
@@ -679,7 +685,7 @@ void dfm2::Rig_SensitivityBoneTransform
 }
 
 
-void dfm2::Rig_SensitivityBoneTransform_Eigen
+DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform_Eigen
 (std::vector<double>& Lx, // [ nsns, nBone*4 ]
  std::vector<double>& Ly, // [ nsns, nBone*4 ]
  std::vector<double>& Lz, // [ nsns, nBone*4 ]
@@ -730,7 +736,7 @@ void dfm2::Rig_SensitivityBoneTransform_Eigen
 
 
 
-void dfm2::Rig_SensitivitySkin_BoneRotation
+DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation
  (std::vector<double>& aSns, // [nb*3, np*ndim(3)]
   const std::vector<dfm2::CRigBone> aBone1,
   const std::vector<double>& aXYZ0,
@@ -749,9 +755,9 @@ void dfm2::Rig_SensitivitySkin_BoneRotation
     for(unsigned int idim_s=0;idim_s<3;++idim_s){
       for(unsigned int ip=0;ip<np;++ip){
         for(int idim=0;idim<3;++idim){
-          aSns[(np*3)*(ib_s*3+idim_s)+(ip*3+idim)] = MyDotX(aL.data()+(idim_s*nb+ib_s)*(3*nb*4)+idim*nb*4,
-                                                            aRefPos.data()+ip*nb*4,
-                                                            nb*4);
+          aSns[(np*3)*(ib_s*3+idim_s)+(ip*3+idim)] = rig_v3q::MyDotX(aL.data()+(idim_s*nb+ib_s)*(3*nb*4)+idim*nb*4,
+                                                                     aRefPos.data()+ip*nb*4,
+                                                                     nb*4);
         }
       }
     }
@@ -784,7 +790,7 @@ void dfm2::Rig_SensitivitySkin_BoneRotation
 
 
 
-void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
+DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
 (std::vector<double>& dSkinX, // [ np, nsns ]
  std::vector<double>& dSkinY, // [ np, nsns ]
  std::vector<double>& dSkinZ, // [ np, nsns ]
@@ -809,16 +815,16 @@ void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
   dSkinX.resize(np*nsns);
   dSkinY.resize(np*nsns);
   dSkinZ.resize(np*nsns);
-  MyMatMatTX(dSkinX.data(),
-             np, nsns, aRefPos.data(), nb*4, Lx.data());
-  MyMatMatTX(dSkinY.data(),
-             np, nsns, aRefPos.data(), nb*4, Ly.data());
-  MyMatMatTX(dSkinZ.data(),
-             np, nsns, aRefPos.data(), nb*4, Lz.data());
+  rig_v3q::MyMatMatTX(dSkinX.data(),
+                      np, nsns, aRefPos.data(), nb*4, Lx.data());
+  rig_v3q::MyMatMatTX(dSkinY.data(),
+                      np, nsns, aRefPos.data(), nb*4, Ly.data());
+  rig_v3q::MyMatMatTX(dSkinZ.data(),
+                      np, nsns, aRefPos.data(), nb*4, Lz.data());
 }
 
 
-void dfm2::Rig_WdW_Target_Eigen
+DFM2_INLINE void dfm2::Rig_WdW_Target_Eigen
  (std::vector<double>& aW,
   std::vector<double>& adW,
   const std::vector<dfm2::CRigBone>& aBone,

@@ -7,16 +7,11 @@
 
 #include <cstdio>
 
-#include "delfem2/vec2.h"
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
 #include "delfem2/dtri.h"
-
-#include "delfem2/objfunc_v23.h"
 #include "delfem2/dtri_v2.h"
 #include "delfem2/dtri_v3.h"
-
-#include "delfem2/objfunc_v23dtri.h"
+#include "delfem2/objf_v23m34q.h"
+#include "delfem2/objf_dtriv23m34q.h"
 
 namespace dfm2 = delfem2;
 

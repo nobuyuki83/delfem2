@@ -8,9 +8,9 @@
 #ifndef DFM2_CADDTRI_V3_GLOLD_H
 #define DFM2_CADDTRI_V3_GLOLD_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
-
 #include "delfem2/dtri.h"
 #include "delfem2/vec3.h"
 #include "delfem2/cad2d_v2dtri.h"
@@ -21,19 +21,27 @@ namespace delfem2{
 namespace opengl{
 
 
-void DrawMeshDynTri_FaceNorm(const std::vector<CDynTri>& aSTri,
-                             const std::vector<CVec3d>& aVec3);
+DFM2_INLINE void DrawMeshDynTri_FaceNorm
+ (const std::vector<CDynTri>& aSTri,
+  const std::vector<CVec3d>& aVec3);
 
-void DrawMeshDynTri_FaceNorm(const std::vector<CDynTri>& aSTri,
-                             const double* aXYZ);
+DFM2_INLINE void DrawMeshDynTri_FaceNorm
+ (const std::vector<CDynTri>& aSTri,
+  const double* aXYZ);
 
-void DrawMeshDynTri_Edge(const std::vector<CDynTri>& aSTri,
-                         const std::vector<CVec3d>& aVec3);
+DFM2_INLINE void DrawMeshDynTri_Edge
+ (const std::vector<CDynTri>& aSTri,
+  const std::vector<CVec3d>& aVec3);
 
-void DrawMeshDynTri3D_Edge(const std::vector<double>& aXYZ,
-                           const std::vector<CDynTri>& aSTri);
+DFM2_INLINE void DrawMeshDynTri3D_Edge
+ (const std::vector<double>& aXYZ,
+  const std::vector<CDynTri>& aSTri);
 
 }
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/caddtri_v3_glold.cpp"
+#endif
 
 #endif /* cad_dyntri_v23_gl_hpp */

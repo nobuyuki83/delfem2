@@ -18,7 +18,7 @@
 #include "delfem2/mshmisc.h"
 
 #include "delfem2/srchuni_v3.h"
-#include "delfem2/objfunc_v23.h"
+#include "delfem2/objf_v23m34q.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 
 #ifndef M_PI

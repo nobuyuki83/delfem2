@@ -9,8 +9,8 @@
 #ifndef DFM2_OBJFUNC_V23DTRI_h
 #define DFM2_OBJFUNC_V23DTRI_h
 
+#include "delfem2/dfm2_inline.h"
 #include <vector>
-
 #include "delfem2/dtri.h"
 #include "delfem2/dtri_v2.h"
 
@@ -28,7 +28,11 @@ void PBD_Bend(double* aXYZt,
               const std::vector<delfem2::CDynTri>& aETri,
               const std::vector<CVec2d>& aVec2,
               double ratio);
-  
+
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/objf_dtriv23m34q.cpp"
+#endif
 
 #endif /* pbd_v23_h */

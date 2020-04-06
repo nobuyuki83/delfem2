@@ -43,7 +43,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/srchuni_v3.h             ${DELFEM2_INC}/srchuni_v3.cpp
     main.cpp
 )
 
