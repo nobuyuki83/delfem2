@@ -20,8 +20,8 @@
 #include "delfem2/bvh.h"
 // ------
 #include "delfem2/v23m34q.h"
-#include "delfem2/objfunc_v23.h"
-#include "delfem2/objfunc_v23dtri.h"
+#include "delfem2/objf_v23m34q.h"
+#include "delfem2/objf_dtriv23m34q.h"
 #include "delfem2/dtri_v2.h"
 #include "delfem2/cad2d_v2dtri.h"
 #include "delfem2/srch_v3bvhmshtopo.h"

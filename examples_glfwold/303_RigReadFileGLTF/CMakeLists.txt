@@ -42,7 +42,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/rig_v3q.h                   ${DELFEM2_INC}/rig_v3q.cpp
   ${3RD_PARTY}/io_gltf.h                     ${3RD_PARTY}/io_gltf.cpp
   main.cpp
 )

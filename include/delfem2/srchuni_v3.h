@@ -6,9 +6,10 @@
  */
 
 
-#ifndef DFM2_MSHSRCH_V3_H
-#define DFM2_MSHSRCH_V3_H
+#ifndef DFM2_SRCHUNI_V3_H
+#define DFM2_SRCHUNI_V3_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <map>
 #include "delfem2/vec3.h"
@@ -147,7 +148,7 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const delfem2::CVector3& org, const d
                                            const std::vector<int>& aFlag);
  */
 
-void IntersectionLine_Hightfield(
+DFM2_INLINE void IntersectionLine_Hightfield(
     std::vector<CPointElemSurf<double>>& aPos,
     //
     double hmin, double hmax,
@@ -221,5 +222,9 @@ double DistanceToTri(CPointElemSurf<T>& pes,
                      const unsigned int* aTri, unsigned int nTri);
 
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/srchuni_v3.cpp"
+#endif
   
 #endif /* search_mesh_hpp */

@@ -41,7 +41,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/rig_v3q.h                ${DELFEM2_INC}/rig_v3q.cpp
     main.cpp
 )
 

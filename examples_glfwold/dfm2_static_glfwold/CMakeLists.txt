@@ -54,9 +54,14 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/v23m34q.h                   ${DELFEM2_INC}/v23m34q.cpp
     ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
     ${DELFEM2_INC}/cad2d_v2dtri.h              ${DELFEM2_INC}/cad2d_v2dtri.cpp
+    ${DELFEM2_INC}/objf_v23m34q.h              ${DELFEM2_INC}/objf_v23m34q.cpp
+    ${DELFEM2_INC}/objf_dtriv23m34q.h          ${DELFEM2_INC}/objf_dtriv23m34q.cpp
+    ${DELFEM2_INC}/rig_v3q.h                   ${DELFEM2_INC}/rig_v3q.cpp
+    ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
     ${DELFEM2_INC}/srchbi_v3bvh.h
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
     ${DELFEM2_INC}/cloth_internal.h
+    ${DELFEM2_INC}/rigopt.h
     
     ${DELFEM2_INC}/opengl/tex_gl.h             ${DELFEM2_INC}/opengl/tex_gl.cpp
     ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp
@@ -64,6 +69,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/color_glold.h        ${DELFEM2_INC}/opengl/color_glold.cpp
     ${DELFEM2_INC}/opengl/funcs_glold.h        ${DELFEM2_INC}/opengl/funcs_glold.cpp
     ${DELFEM2_INC}/opengl/cad2dtriv2_glold.h   ${DELFEM2_INC}/opengl/cad2dtriv2_glold.cpp
+    ${DELFEM2_INC}/opengl/caddtri_v3_glold.h   ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
     ${DELFEM2_INC}/opengl/rigv3_glold.h        ${DELFEM2_INC}/opengl/rigv3_glold.cpp
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
     ${DELFEM2_INC}/opengl/glfw/cam_glfw.h

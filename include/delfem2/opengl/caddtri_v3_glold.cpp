@@ -26,7 +26,7 @@ namespace dfm2 = delfem2;
 // -------------------------------------------------
 
 
-void dfm2::opengl::DrawMeshDynTri_FaceNorm
+DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aVec3)
 {
@@ -64,7 +64,7 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
-void dfm2::opengl::DrawMeshDynTri_FaceNorm
+DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
  (const std::vector<CDynTri>& aSTri,
   const double* aXYZ)
 {
@@ -99,7 +99,7 @@ void dfm2::opengl::DrawMeshDynTri_FaceNorm
 }
 
 
-void dfm2::opengl::DrawMeshDynTri_Edge
+DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_Edge
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aVec3)
 {
@@ -129,7 +129,7 @@ void dfm2::opengl::DrawMeshDynTri_Edge
 }
 
 
-void dfm2::opengl::DrawMeshDynTri3D_Edge
+DFM2_INLINE void dfm2::opengl::DrawMeshDynTri3D_Edge
 (const std::vector<double>& aXYZ,
  const std::vector<CDynTri>& aSTri)
 {

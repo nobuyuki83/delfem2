@@ -60,6 +60,9 @@ IF(NOT USE_HEADERONLY)
       
       ${DELFEM2_INC}/v23m34q.h              ${DELFEM2_INC}/v23m34q.cpp
       ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp
+      ${DELFEM2_INC}/rig_v3q.h              ${DELFEM2_INC}/rig_v3q.cpp
+      ${DELFEM2_INC}/objf_v23m34q.h         ${DELFEM2_INC}/objf_v23m34q.cpp
+      ${DELFEM2_INC}/srchuni_v3.h           ${DELFEM2_INC}/srchuni_v3.cpp
       ${DELFEM2_INC}/srchbi_v3bvh.h
       ${DELFEM2_INC}/srch_v3bvhmshtopo.h
       )
@@ -79,9 +82,6 @@ add_executable(${MY_BINARY_NAME}
   
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
-  ${DELFEM2_INC}/objfunc_v23.h          ${DELFEM2_INC}/objfunc_v23.cpp
-  ${DELFEM2_INC}/srchuni_v3.h           ${DELFEM2_INC}/srchuni_v3.cpp
-  ${DELFEM2_INC}/rig_v3q.h              ${DELFEM2_INC}/rig_v3q.cpp
   ${3RD_PARTY}/io_gltf.h                ${3RD_PARTY}/io_gltf.cpp
   
   ${SRC_DFM2}

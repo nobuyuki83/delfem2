@@ -29,8 +29,9 @@ dfm2::CVec3<T> dfm2::CPointElemSolid<T>::getPos_Tet
   const CVec3<T> p3(aXYZ[ip3*3+0], aXYZ[ip3*3+1], aXYZ[ip3*3+2]);
   return r0*p0+r1*p1+r2*p2+(1.0-r0-r1-r2)*p3;
 }
-template dfm2::CVec3d dfm2::CPointElemSolid<double>::getPos_Tet(const std::vector<double> &aXYZ,
-                                                                const std::vector<int> &aTet) const;
+template dfm2::CVec3d dfm2::CPointElemSolid<double>::getPos_Tet
+ (const std::vector<double> &aXYZ,
+  const std::vector<int> &aTet) const;
 
 // ----------------------------------------
 
@@ -60,9 +61,10 @@ void dfm2::CPointElemSolid<T>::setPos_Tet
   this->r1 = v1/vt;
   this->r2 = v2/vt;
 }
-template void dfm2::CPointElemSolid<double>::setPos_Tet(int it0, const CVec3d& q,
-                                                        const std::vector<double> &aXYZ,
-                                                        const std::vector<int> &aTet);
+template void dfm2::CPointElemSolid<double>::setPos_Tet
+ (int it0, const CVec3d& q,
+  const std::vector<double> &aXYZ,
+  const std::vector<int> &aTet);
 
 // --------------------------------------------
 
@@ -80,8 +82,9 @@ dfm2::CVec3<T> dfm2::CPointElemSurf<T>::Pos_Tri
   const CVec3<T> p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
-template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_Tri(const std::vector<double>& aXYZ,
-                                                            const std::vector<unsigned int>& aTri) const;
+template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_Tri
+ (const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri) const;
 
 // --------------------------------------------
 
@@ -99,8 +102,9 @@ dfm2::CVec3<T> dfm2::CPointElemSurf<T>::Pos_Tri
   const CVec3<T> p2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
   return r0*p0 + r1*p1 + (1.0-r0-r1)*p2;
 }
-template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_Tri(const double* aXYZ, unsigned int nXYZ,
-                                                            const unsigned int* aTri, unsigned int nTri) const;
+template dfm2::CVec3d dfm2::CPointElemSurf<double>::Pos_Tri
+ (const double* aXYZ, unsigned int nXYZ,
+  const unsigned int* aTri, unsigned int nTri) const;
 
 // -----------------------------------------------
 
@@ -120,9 +124,10 @@ dfm2::CVec3<T> dfm2::CPointElemSurf<T>::UNorm_Tri
   const CVec3<T> n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
-template dfm2::CVec3d dfm2::CPointElemSurf<double>::UNorm_Tri(const std::vector<double>& aXYZ,
-                                                              const std::vector<unsigned int>& aTri,
-                                                              const std::vector<double>& aNorm) const;
+template dfm2::CVec3d dfm2::CPointElemSurf<double>::UNorm_Tri
+ (const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri,
+  const std::vector<double>& aNorm) const;
 
 
 template <typename T>
@@ -140,9 +145,10 @@ dfm2::CVec3<T> dfm2::CPointElemSurf<T>::UNorm_Tri
   const CVec3<T> n2(aNorm[i2*3+0], aNorm[i2*3+1], aNorm[i2*3+2]);
   return (r0*n0 + r1*n1 + (1.0-r0-r1)*n2).Normalize();
 }
-template dfm2::CVec3d dfm2::CPointElemSurf<double>::UNorm_Tri(const double* aXYZ, unsigned int nXYZ,
-                                                              const unsigned int* aTri, unsigned int nTri,
-                                                              const double* aNorm) const;
+template dfm2::CVec3d dfm2::CPointElemSurf<double>::UNorm_Tri
+ (const double* aXYZ, unsigned int nXYZ,
+  const unsigned int* aTri, unsigned int nTri,
+  const double* aNorm) const;
 
 
 template <typename T>
@@ -410,11 +416,12 @@ void dfm2::IntersectionRay_MeshTri3 (
     mapDepthPES.insert( std::make_pair(depth, pes) );
   }
 }
-template void dfm2::IntersectionRay_MeshTri3 (std::map<double,CPointElemSurf<double>>& mapDepthPES,
-                                              const CVec3<double>& org, const CVec3<double>& dir,
-                                              const std::vector<unsigned int>& aTri,
-                                              const std::vector<double>& aXYZ,
-                                              double eps);
+template void dfm2::IntersectionRay_MeshTri3
+ (std::map<double,CPointElemSurf<double>>& mapDepthPES,
+  const CVec3<double>& org, const CVec3<double>& dir,
+  const std::vector<unsigned int>& aTri,
+  const std::vector<double>& aXYZ,
+  double eps);
 
 // ----------------------
 
@@ -447,12 +454,13 @@ void dfm2::IntersectionRay_MeshTri3DPart
     mapDepthPES.insert( std::make_pair(depth,CPointElemSurf<T>(itri,r0,r1)) );
   }
 }
-template void dfm2::IntersectionRay_MeshTri3DPart (std::map<double,CPointElemSurf<double>>& mapDepthPES,
-                                                   const CVec3<double>& org, const CVec3<double>& dir,
-                                                   const std::vector<unsigned int>& aTri,
-                                                   const std::vector<double>& aXYZ,
-                                                   const std::vector<int>& aIndTri,
-                                                   double eps);
+template void dfm2::IntersectionRay_MeshTri3DPart
+ (std::map<double,CPointElemSurf<double>>& mapDepthPES,
+  const CVec3<double>& org, const CVec3<double>& dir,
+  const std::vector<unsigned int>& aTri,
+  const std::vector<double>& aXYZ,
+  const std::vector<int>& aIndTri,
+  double eps);
   
 // -----------------------------------------------
 
@@ -547,7 +555,7 @@ CPointElemSurf intersect_Ray_MeshTri3D
  */
 
 
-void dfm2::IntersectionLine_Hightfield(
+DFM2_INLINE void dfm2::IntersectionLine_Hightfield(
     std::vector<CPointElemSurf<double>>& aPes,
     double hmin, double hmax,
     const double src[3],
@@ -616,9 +624,10 @@ dfm2::CPointElemSurf<T> dfm2::Nearest_Point_MeshTri3D
   assert( pes.itri != -1 );
   return pes;
 }
-template dfm2::CPointElemSurf<double> dfm2::Nearest_Point_MeshTri3D(const CVec3d& q,
-                                                                    const std::vector<double>& aXYZ,
-                                                                    const std::vector<unsigned int>& aTri);
+template dfm2::CPointElemSurf<double> dfm2::Nearest_Point_MeshTri3D
+ (const CVec3d& q,
+  const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri);
 
   
 
@@ -649,10 +658,11 @@ dfm2::CPointElemSurf<T> dfm2::Nearest_Point_MeshTri3DPart
   }
   return pes;
 }
-template dfm2::CPointElemSurf<double> dfm2::Nearest_Point_MeshTri3DPart(const CVec3d& q,
-                                                                        const std::vector<double>& aXYZ,
-                                                                        const std::vector<unsigned int>& aTri,
-                                                                        const std::vector<int>& aIndTri_Cand);
+template dfm2::CPointElemSurf<double> dfm2::Nearest_Point_MeshTri3DPart
+ (const CVec3d& q,
+  const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri,
+  const std::vector<int>& aIndTri_Cand);
 
 // ----------------------------------------------------------------------------
 
@@ -797,12 +807,13 @@ double dfm2::SDFNormal_NearestPoint
     return -dist;
   }
 }
-template double dfm2::SDFNormal_NearestPoint(CVec3d& n0,
-                                             const CVec3d& p0,
-                                             const CPointElemSurf<double>& pes,
-                                             const double* aXYZ, unsigned int nXYZ,
-                                             const unsigned int* aTri, unsigned int nTri,
-                                             const double* aNorm);
+template double dfm2::SDFNormal_NearestPoint
+ (CVec3d& n0,
+  const CVec3d& p0,
+  const CPointElemSurf<double>& pes,
+  const double* aXYZ, unsigned int nXYZ,
+  const unsigned int* aTri, unsigned int nTri,
+  const double* aNorm);
 
 template <typename T>
 double dfm2::SDFNormal_NearestPoint
@@ -827,12 +838,15 @@ double dfm2::SDFNormal_NearestPoint
     return -dist;
   }
 }
-template double dfm2::SDFNormal_NearestPoint(CVec3d& n0,
-                                             const CVec3d& p0,
-                                             const CPointElemSurf<double>& pes,
-                                             const std::vector<double>& aXYZ,
-                                             const std::vector<unsigned int>& aTri,
-                                             const std::vector<double>& aNorm);
+template double dfm2::SDFNormal_NearestPoint
+ (CVec3d& n0,
+  const CVec3d& p0,
+  const CPointElemSurf<double>& pes,
+  const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri,
+  const std::vector<double>& aNorm);
+
+
 
 template <typename T>
 double dfm2::DistanceToTri
@@ -856,11 +870,13 @@ double dfm2::DistanceToTri
   pes.r1 = r1;
   return p_min.Length();
 }
-template double dfm2::DistanceToTri(CPointElemSurf<double>& pes,
-                                    const CVec3<double>& p,
-                                    unsigned int itri0,
-                                    const std::vector<double>& aXYZ,
-                                    const std::vector<unsigned int>& aTri);
+template double dfm2::DistanceToTri
+ (CPointElemSurf<double>& pes,
+  const CVec3<double>& p,
+  unsigned int itri0,
+  const std::vector<double>& aXYZ,
+  const std::vector<unsigned int>& aTri);
+
 
 template <typename T>
 double dfm2::DistanceToTri
