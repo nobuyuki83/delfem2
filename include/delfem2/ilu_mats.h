@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_ILU_MATS
-#define DFM2_ILU_MATS
+#ifndef DFM2_ILU_MATS_H
+#define DFM2_ILU_MATS_H
 
+#include "delfem2/dfm2_inline.h"
 #include <iostream>
-
 #include "mats.h"
 
 namespace delfem2 {
@@ -36,8 +36,11 @@ public:
   CMatrixSparse<T> mat;
   std::vector<unsigned int> m_diaInd;
 };
- 
-  
+   
 } // end namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/ilu_mats.cpp"
+#endif
 
 #endif 

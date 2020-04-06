@@ -41,7 +41,6 @@ ENDIF()
 
 add_executable(${PROJECT_NAME}
     ${DELFEM2_INC}/emat.h                      ${DELFEM2_INC}/emat.cpp
-    ${DELFEM2_INC}/ilu_mats.h                  ${DELFEM2_INC}/ilu_mats.cpp
     ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
     main.cpp
 )
