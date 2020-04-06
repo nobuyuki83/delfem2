@@ -40,7 +40,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/mats.h                     ${DELFEM2_INC}/mats.cpp
   ${DELFEM2_INC}/ilu_mats.h                 ${DELFEM2_INC}/ilu_mats.cpp
   main.cpp
 )

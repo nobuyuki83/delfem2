@@ -55,6 +55,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mshio.h                ${DELFEM2_INC}/mshio.cpp
       ${DELFEM2_INC}/dtri.h                 ${DELFEM2_INC}/dtri.cpp
       ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
+      ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
       ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
       ${DELFEM2_INC}/bvh.h                  ${DELFEM2_INC}/bvh.cpp
       ${DELFEM2_INC}/bv.h
@@ -78,7 +79,6 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
   ${DELFEM2_INC}/slice.h                ${DELFEM2_INC}/slice.cpp
   ${DELFEM2_INC}/emat.h                 ${DELFEM2_INC}/emat.cpp
-  ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
   
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp

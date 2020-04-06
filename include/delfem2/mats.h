@@ -8,6 +8,7 @@
 #ifndef DFM2_MATS_H
 #define DFM2_MATS_H
 
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <cassert>
 #include <complex>
@@ -168,16 +169,25 @@ public:
   std::vector<T> valDia;
 };
 
-double CheckSymmetry(const delfem2::CMatrixSparse<double> &mat);
+DFM2_INLINE double CheckSymmetry
+ (const delfem2::CMatrixSparse<double> &mat);
   
-void SetMasterSlave(delfem2::CMatrixSparse<double> &mat, const int *aMSFlag);
+DFM2_INLINE void SetMasterSlave
+ (delfem2::CMatrixSparse<double> &mat,
+  const int *aMSFlag);
 
-void MatSparse_ScaleBlk_LeftRight(delfem2::CMatrixSparse<double> &mat,
-                                  const double *scale);
+DFM2_INLINE void MatSparse_ScaleBlk_LeftRight
+ (delfem2::CMatrixSparse<double> &mat,
+  const double *scale);
 
-void MatSparse_ScaleBlkLen_LeftRight(delfem2::CMatrixSparse<double> &mat,
-                                     const double *scale);
+DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight
+ (delfem2::CMatrixSparse<double> &mat,
+  const double *scale);
 
 } // delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/mats.cpp"
+#endif
   
 #endif // MATDIA_CRS_H
