@@ -12,6 +12,7 @@
 #ifndef DFM2_VECXITRSOL_H
 #define DFM2_VECXITRSOL_H
 
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <cassert>
 #include <complex>
@@ -749,5 +750,9 @@ std::vector<double> Solve_PCOCG
 }
 
 } // delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/vecxitrsol.cpp"
+#endif
   
 #endif // MATDIA_CRS_H

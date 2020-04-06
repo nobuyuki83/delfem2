@@ -44,8 +44,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
-  ${DELFEM2_INC}/mats.h                     ${DELFEM2_INC}/mats.cpp
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h           ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
   ${3RD_PARTY}/cnpy/cnpy.h                  ${3RD_PARTY}/cnpy/cnpy.cpp
   ${TEST_INPUTS}/inputs_imgboneloc.h

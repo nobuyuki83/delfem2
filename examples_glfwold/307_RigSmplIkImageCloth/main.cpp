@@ -228,29 +228,29 @@ int main()
     }
   }
   
-  std::vector<double> aXYZ0;
+  std::vector<double> aXYZ0_Body;
   std::vector<double> aW;
   std::vector<dfm2::CRigBone> aBone;
   std::vector<unsigned int> aTri;
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
-    dfm2::cnpy::LoadSmpl(aXYZ0,
+    dfm2::cnpy::LoadSmpl(aXYZ0_Body,
                          aW,
                          aTri,
                          aIndBoneParent,
                          aJntRgrs,
                          std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
     dfm2::Smpl2Rig(aBone,
-                   aIndBoneParent, aXYZ0, aJntRgrs);
+                   aIndBoneParent, aXYZ0_Body, aJntRgrs);
     
   }
   
-  std::vector<double> aXYZ1 = aXYZ0;
+  std::vector<double> aXYZ1 = aXYZ0_Body;
   { // initalize pose
     dfm2::UpdateBoneRotTrans(aBone);
     dfm2::Skinning_LBS(aXYZ1,
-                       aXYZ0, aBone, aW);
+                       aXYZ0_Body, aBone, aW);
   }
   std::vector< std::pair<dfm2::CVec3d,dfm2::CVec3d> > aTargetOriginPos;
   for(int it=0;it<aTarget.size();++it){
@@ -281,7 +281,7 @@ int main()
       }
       Solve_MinRigging(aBone, aTarget);
       Skinning_LBS(aXYZ1,
-                   aXYZ0, aBone, aW);
+                   aXYZ0_Body, aBone, aW);
     }
     if( iframe > 200 ){
       for(int ib=0;ib<aBone.size();++ib){
@@ -293,7 +293,7 @@ int main()
       }
       Solve_MinRigging(aBone, aTarget);
       Skinning_LBS(aXYZ1,
-                   aXYZ0, aBone, aW);
+                   aXYZ0_Body, aBone, aW);
       iframe = 0;
     }
     
