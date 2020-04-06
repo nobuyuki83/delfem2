@@ -14,108 +14,17 @@
 #include <random>
 #include <ctime>
 #include <GLFW/glfw3.h>
-
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/mat4.h"
-#include "delfem2/quat.h"
-#include "delfem2/mats.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/vecxitrsol.h"
-//
-#include "delfem2/v23m34q.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-//
-#include "delfem2/cnpy/smpl_cnpy.h"
-
+#include "delfem2/rigopt.h"
 #include "delfem2/rig_v3q.h"
 #include "delfem2/opengl/rig_v3m3q_glold.h"
-
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 
 namespace dfm2 = delfem2;
 
 // -------------------
-
-
-void Solve_MinRigging
-(std::vector<dfm2::CRigBone>& aBone,
- const std::vector<dfm2::CTarget>& aTarget)
-{
-  std::vector<double> Lx, Ly, Lz;
-  for(int ibs=0;ibs<aBone.size();++ibs){
-    for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               ibs,idims,true,
-                                               aBone);
-    }
-  }
-  for(int idims=0;idims<3;++idims){
-    dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                             0,idims,false,
-                                             aBone);
-  }
-  
-  std::vector<double> aC0; // [nC]
-  std::vector<double> adC0; // [nC, nb*3 ]
-  for(int it=0;it<aTarget.size();++it){
-    dfm2::Rig_WdW_Target_Eigen(aC0,adC0,
-                               aBone,aTarget[it],Lx,Ly,Lz);
-  }
-  
-  const unsigned int nsns = Lx.size()/(aBone.size()*4);
-  const unsigned int nC = aC0.size();
-  
-  class CSystemMatrix{
-  public:
-    CSystemMatrix(const std::vector<double>& adC_,
-                  unsigned int nC_,
-                  unsigned int nsns_) :
-    adC(adC_), nC(nC_), nsns(nsns_)
-    {
-//      std::cout << "constructor reduced system matrix " << std::endl;
-      assert(adC.size()==nsns*nC);
-      tmpC0.resize(nC_);
-    }
-  public:
-    void MatVec(double* y,
-                double alpha, const double* x, double beta) const {
-      dfm2::MatVec(tmpC0.data(),
-                    adC.data(), nC, nsns, x);
-      dfm2::MatTVec(y,
-                   adC.data(), nC, nsns, tmpC0.data());
-      for(int i=0;i<nsns;++i){ y[i] += (beta+0.01)*x[i]; }
-    }
-  public:
-    const std::vector<double>& adC;
-    unsigned int nC;
-    unsigned int nsns;
-    mutable std::vector<double> tmpC0;
-  } mat(adC0, nC, nsns);
-  
-  std::vector<double> r(nsns,0.0);
-  dfm2::MatTVec(r.data(),
-                adC0.data(), nC, nsns, aC0.data());
-  
-  std::vector<double> u(nsns,0.0);
-  std::vector<double> reshist = dfm2::Solve_CG(r.data(), u.data(),
-                                               nsns, 1.0e-3, 100, mat);
-//  std::cout << "convergence" << reshist.size() << std::endl;
-  for(int ib=0;ib<aBone.size();++ib){
-    dfm2::CVec3d vec_rot(u.data()+ib*3);
-    dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(-vec_rot);
-    dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone[ib].quatRelativeRot);
-    q0.CopyTo(aBone[ib].quatRelativeRot);
-  }
-  {
-    dfm2::CVec3d vec_trans(u.data()+aBone.size()*3);
-    aBone[0].transRelative[0] -= vec_trans.x();
-    aBone[0].transRelative[1] -= vec_trans.y();
-    aBone[0].transRelative[2] -= vec_trans.z();
-  }
-  dfm2::UpdateBoneRotTrans(aBone);
-}
 
 void Draw
 (const std::vector<double>& aXYZ1,
