@@ -14,8 +14,10 @@
 typedef std::complex<double> COMPLEX;
 namespace dfm2 = delfem2;
 
+namespace delfem2 {
+namespace mats {
 
-static double MatNorm_Assym(
+DFM2_INLINE double MatNorm_Assym(
                      const double* V0,
                      unsigned int n0,
                      unsigned int m0,
@@ -32,7 +34,7 @@ static double MatNorm_Assym(
   return s;
 }
 
-static double MatNorm(
+DFM2_INLINE double MatNorm(
                const double* V,
                unsigned int n,
                unsigned int m)
@@ -47,7 +49,7 @@ static double MatNorm(
   return s;
 }
 
-static double MatNorm_Assym(
+DFM2_INLINE double MatNorm_Assym(
                      const double* V,
                      unsigned int n)
 {
@@ -62,6 +64,8 @@ static double MatNorm_Assym(
   return s;
 }
 
+}
+}
 
 // -------------------------------------------------------
 
@@ -506,7 +510,7 @@ template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Col(const int *bc_flag
 
 // -----------------------------------------------------------------
 
-void dfm2::SetMasterSlave
+DFM2_INLINE void dfm2::SetMasterSlave
 (dfm2::CMatrixSparse<double>& mat,
  const int* aMSFlag)
 {
@@ -658,7 +662,7 @@ void dfm2::SetMasterSlave
   }
 }
 
-void dfm2::MatSparse_ScaleBlk_LeftRight
+DFM2_INLINE void dfm2::MatSparse_ScaleBlk_LeftRight
 (dfm2::CMatrixSparse<double>& mat,
  const double* scale)
 {
@@ -682,7 +686,7 @@ void dfm2::MatSparse_ScaleBlk_LeftRight
   }
 }
 
-void dfm2::MatSparse_ScaleBlkLen_LeftRight
+DFM2_INLINE void dfm2::MatSparse_ScaleBlkLen_LeftRight
 (dfm2::CMatrixSparse<double>& mat,
  const double* scale)
 {
@@ -712,8 +716,8 @@ void dfm2::MatSparse_ScaleBlkLen_LeftRight
   }
 }
 
-double dfm2::CheckSymmetry(
-    const dfm2::CMatrixSparse<double>& mat)
+DFM2_INLINE double dfm2::CheckSymmetry
+ (const dfm2::CMatrixSparse<double>& mat)
 {
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );
@@ -729,14 +733,14 @@ double dfm2::CheckSymmetry(
         if( mat.rowPtr[icrs1] == ino ){ break; }
       }
       if( icrs1 == mat.colInd[jno+1] ){ // no counterpart
-        sum += MatNorm(mat.valCrs.data()+blksize*icrs0, mat.len_col, mat.len_row);
+        sum += mats::MatNorm(mat.valCrs.data()+blksize*icrs0, mat.len_col, mat.len_row);
       }
       else{
-        sum += MatNorm_Assym(mat.valCrs.data()+blksize*icrs0, mat.len_col, mat.len_row,
+        sum += mats::MatNorm_Assym(mat.valCrs.data()+blksize*icrs0, mat.len_col, mat.len_row,
                              mat.valCrs.data()+blksize*icrs1);
       }
     }
-    sum += MatNorm_Assym(mat.valDia.data()+blksize*ino,nlen);
+    sum += mats::MatNorm_Assym(mat.valDia.data()+blksize*ino,nlen);
   }
   return sum;
 }
