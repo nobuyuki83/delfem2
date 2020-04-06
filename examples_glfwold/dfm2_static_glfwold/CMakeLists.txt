@@ -19,6 +19,7 @@ project(${PROJ_NAME})
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
+
 set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
@@ -29,6 +30,7 @@ include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include
   ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}/glad3/include
 )
 
 add_library(${PROJ_NAME} STATIC
@@ -62,6 +64,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/color_glold.h        ${DELFEM2_INC}/opengl/color_glold.cpp
     ${DELFEM2_INC}/opengl/funcs_glold.h        ${DELFEM2_INC}/opengl/funcs_glold.cpp
     ${DELFEM2_INC}/opengl/cad2dtriv2_glold.h   ${DELFEM2_INC}/opengl/cad2dtriv2_glold.cpp
+    ${DELFEM2_INC}/opengl/rigv3_glold.h        ${DELFEM2_INC}/opengl/rigv3_glold.cpp
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
     ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
 )

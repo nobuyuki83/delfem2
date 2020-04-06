@@ -6,38 +6,33 @@
  */
 
 
-#include "delfem2/mat3.h"
-#include "delfem2/vec3.h"
 #include "delfem2/rig_v3q.h"
 
-
 // -------------------------
-
 #if defined(__APPLE__) // Mac
-#include <OpenGL/gl.h>
+#  include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#  include <windows.h>
+#  include <GL/gl.h>
+#  include <GL/glu.h>
 #else
-#include <GL/gl.h>
-#include <GL/glu.h>
+#  include <GL/gl.h>
+#  include <GL/glu.h>
 #endif
 
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/rig_v3m3q_glold.h"
-
+#include "delfem2/opengl/rigv3_glold.h"
 
 #ifndef M_PI 
-#define M_PI 3.1415926535
+#  define M_PI 3.1415926535
 #endif
 
 namespace dfm2 = delfem2;
 
 // -------------------------------------------------------
 
-void dfm2::opengl::Draw_RigBone
+DFM2_INLINE void dfm2::opengl::Draw_RigBone
 (int ibone,
  bool is_selected,
  int ielem_selected,
@@ -62,7 +57,7 @@ void dfm2::opengl::Draw_RigBone
   }
 }
 
-void dfm2::opengl::DrawBone
+DFM2_INLINE void dfm2::opengl::DrawBone
 (const std::vector<dfm2::CRigBone>& aBone,
  int ibone_selected,
  int ielem_selected,
@@ -93,7 +88,7 @@ void dfm2::opengl::DrawBone
   }
 }
 
-void dfm2::opengl::DrawJoints(
+DFM2_INLINE void dfm2::opengl::DrawJoints(
     const std::vector<double>& aJntPos,
     const std::vector<int>& aIndBoneParent)
 {

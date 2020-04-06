@@ -37,7 +37,7 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/caddtri_v3_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/rig_v3m3q_glold.h"
+#include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
