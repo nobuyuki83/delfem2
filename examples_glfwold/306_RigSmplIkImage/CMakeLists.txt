@@ -22,8 +22,8 @@ project(306_RigSmplIkImage)
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
-
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(TEST_INPUTS         "../../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 
 set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
@@ -34,6 +34,7 @@ include_directories(
   ${GLFW_DIR}/include
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
+  ${TEST_INPUTS}
 )
 
 IF(NOT USE_HEADERONLY)
@@ -45,10 +46,12 @@ ENDIF()
 add_executable(${PROJECT_NAME}
   ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
   ${DELFEM2_INC}/mats.h                     ${DELFEM2_INC}/mats.cpp
-  ${3RD_PARTY}/cnpy/cnpy.h                  ${3RD_PARTY}/cnpy/cnpy.cpp
   ${DELFEM2_INC}/cnpy/smpl_cnpy.h           ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
   ${DELFEM2_INC}/rig_v3q.h                  ${DELFEM2_INC}/rig_v3q.cpp
   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.h   ${DELFEM2_INC}/opengl/rig_v3m3q_glold.cpp
+  ${DELFEM2_INC}/rigopt.h
+  ${3RD_PARTY}/cnpy/cnpy.h                  ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${TEST_INPUTS}/inputs_imgboneloc.h
   main.cpp
 )
 
