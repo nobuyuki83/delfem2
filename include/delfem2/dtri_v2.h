@@ -12,12 +12,12 @@
 #ifndef DFM2_DTRI_V2_H
 #define DFM2_DTRI_V2_H
 
+#include "delfem2/dfm2_inline.h"
 #include <map>
 #include <algorithm>
 #include <stack>
 #include "delfem2/vec2.h"
 #include "delfem2/dtri.h"
-#include "delfem2/dfm2_inline.h"
 
 // -------------------------------
 

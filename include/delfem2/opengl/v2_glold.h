@@ -10,13 +10,11 @@
  * because 2D application does not use v3 and quat
  */
 
-
-
 #ifndef DFM2_V2_GLOLD_H
 #define DFM2_V2_GLOLD_H
 
-#include <vector>
 #include "delfem2/dfm2_inline.h"
+#include <vector>
 #include "delfem2/vec2.h"
 
 namespace delfem2{
