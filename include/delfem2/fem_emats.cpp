@@ -20,8 +20,10 @@
 #include "delfem2/fem_emats.h"
 
 typedef std::complex<double> COMPLEX;
-
 namespace dfm2 = delfem2;
+
+namespace delfem2 {
+namespace fem_emats {
 
 static void FetchData(
     double* val_to,
@@ -129,9 +131,10 @@ static void MatMatTrans3
   }
 }
 
+}
+}
 
-// -------------------------------------------------------
-// -------------------------------------------------------
+// ==================================================
 
 void dfm2::MergeLinSys_Poission_MeshTri2D(
     CMatrixSparse<double>& mat_A,
@@ -144,15 +147,16 @@ void dfm2::MergeLinSys_Poission_MeshTri2D(
     int nTri,
     const double* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int nDoF = np;
-  /////
+  //
   std::vector<int> tmp_buffer(nDoF, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
     const double value[3] = { aVal[i0], aVal[i1], aVal[i2] };
     ////
     double eres[3];
@@ -179,6 +183,7 @@ void dfm2::MergeLinSys_Helmholtz_MeshTri2D(
     unsigned int nTri,
     const COMPLEX* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
   for (unsigned int iel = 0; iel<nTri; ++iel){
@@ -186,7 +191,7 @@ void dfm2::MergeLinSys_Helmholtz_MeshTri2D(
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
     const COMPLEX value[3] = { aVal[i0], aVal[i1], aVal[i2] };
     ////
     std::complex<double> eres[3];
@@ -212,6 +217,7 @@ void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     unsigned int nIPPolyline,
     const COMPLEX* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
   assert( nIPPolyline >= 2 );
@@ -219,7 +225,7 @@ void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     const unsigned int i0 = aIPPolyline[iel + 0];
     const unsigned int i1 = aIPPolyline[iel + 1];
     const unsigned int aip[2] = {i0,i1};
-    double P[2][2]; FetchData(&P[0][0],2,2,aip, aXY1);
+    double P[2][2]; lcl::FetchData(&P[0][0],2,2,aip, aXY1);
     const COMPLEX val[2] = { aVal[i0], aVal[i1] };
     //
     COMPLEX eres[2], emat[2][2];
@@ -242,6 +248,7 @@ void dfm2::MergeLinSys_Poission_MeshTet3D(
     const unsigned int* aTet, int nTet,
     const double* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (int itet = 0; itet<nTet; ++itet){
@@ -250,7 +257,7 @@ void dfm2::MergeLinSys_Poission_MeshTet3D(
     const unsigned int i2 = aTet[itet*4+2];
     const unsigned int i3 = aTet[itet*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ);
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
     ////
     double eres[4], emat[4][4];
@@ -282,13 +289,14 @@ void dfm2::MergeLinSys_Diffusion_MeshTri2D(
   ////
 //  mat_A.SetZero();
 //  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
+  namespace lcl = ::dfm2::fem_emats;
   std::vector<int> tmp_buffer(nXY, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
     const double value[3] = { aVal[ i0], aVal[ i1], aVal[ i2] };
     const double velo[ 3] = { aVelo[i0], aVelo[i1], aVelo[i2] };
     ////
@@ -322,6 +330,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTet3D(
     const double* aVal,
     const double* aVelo)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
@@ -330,7 +339,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTet3D(
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ);
+    double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ);
     const double value[4] = { aVal[ i0], aVal[ i1], aVal[ i2], aVal[ i3] };
     const double velo[ 4] = { aVelo[i0], aVelo[i1], aVelo[i2], aVelo[i3] };
     ////
@@ -360,6 +369,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
  const unsigned int* aTri1, int nTri,
  const double* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
   for(int iel=0; iel<nTri; ++iel){
@@ -367,9 +377,9 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal);
-    ////
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double disps[3][2]; lcl::FetchData(&disps[0][0],3,2,aIP, aVal);
+    //
     double eres[3][2];
     double emat[3][3][2][2];
     EMat_SolidStaticLinear_Tri2D(eres,emat,
@@ -401,6 +411,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aVelo,
     const double* aAcc)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*2;
   ////
@@ -412,10 +423,10 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double disps[3][2]; FetchData(&disps[0][0],3,2,aIP, aVal);
-    double velos[3][2]; FetchData(&velos[0][0],3,2,aIP, aVelo);
-    double accs[3][2]; FetchData(&accs[0][0],3,2,aIP, aAcc);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double disps[3][2]; lcl::FetchData(&disps[0][0],3,2,aIP, aVal);
+    double velos[3][2]; lcl::FetchData(&velos[0][0],3,2,aIP, aVelo);
+    double accs[3][2]; lcl::FetchData(&accs[0][0],3,2,aIP, aAcc);
     ////
     double eres[3][2];
     double emat[3][3][2][2];
@@ -446,6 +457,7 @@ void dfm2::MergeLinSys_StokesStatic2D(
     const unsigned int* aTri1, int nTri,
     const double* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*3;
   ////
@@ -457,8 +469,8 @@ void dfm2::MergeLinSys_StokesStatic2D(
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double velo_press[3][3]; lcl::FetchData(&velo_press[0][0],3,3,aIP, aVal);
     ////
     double eres[3][3];
     double emat[3][3][3][3];
@@ -489,6 +501,7 @@ void dfm2::MergeLinSys_StokesDynamic2D(
     const double* aVal,
     const double* aVelo)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*3;
   ////
@@ -500,9 +513,9 @@ void dfm2::MergeLinSys_StokesDynamic2D(
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double velo_press[3][3]; FetchData(&velo_press[0][0],3,3,aIP, aVal);
-    double acc_apress[3][3]; FetchData(&acc_apress[0][0],3,3,aIP, aVelo);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double velo_press[3][3]; lcl::FetchData(&velo_press[0][0],3,3,aIP, aVal);
+    double acc_apress[3][3]; lcl::FetchData(&acc_apress[0][0],3,3,aIP, aVelo);
     ////
     double eres[3][3];
     double emat[3][3][3][3];
@@ -535,6 +548,7 @@ void dfm2::MergeLinSys_NavierStokes2D(
     const double* aVal, // vx,vy,press
     const double* aDtVal) // ax,ay,apress
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*3;
   ////
@@ -546,9 +560,9 @@ void dfm2::MergeLinSys_NavierStokes2D(
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double coords[3][2]; FetchData(&coords[0][0],3,2,aIP, aXY1);
-    double velo[3][3]; FetchData(&velo[0][0],3,3,aIP, aVal);
-    double acc[3][3]; FetchData(&acc[0][0],3,3,aIP, aDtVal);
+    double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
+    double velo[3][3]; lcl::FetchData(&velo[0][0],3,3,aIP, aVal);
+    double acc[3][3]; lcl::FetchData(&acc[0][0],3,3,aIP, aDtVal);
     ////
     double eres[3][3], emat[3][3][3][3];
     EMat_NavierStokes2D_Dynamic_P1(myu, rho,  g_x, g_y,
@@ -781,6 +795,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
     const unsigned int* aTet, unsigned int nTet,
     const double* aDisp)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (unsigned int iel = 0; iel<nTet; ++iel){
@@ -789,14 +804,14 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
-    double disps[4][3]; FetchData(&disps[0][0], 4, 3, aIP, aDisp);
+    double P[4][3]; lcl::FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    double disps[4][3]; lcl::FetchData(&disps[0][0], 4, 3, aIP, aDisp);
     //
     double emat[4][4][3][3];
     for(int i=0;i<144;++i){ (&emat[0][0][0][0])[i] = 0.0; } // zero-clear
     double eres[4][3];
     {
-      const double vol = TetVolume3D(P[0],P[1],P[2],P[3]);
+      const double vol = lcl::TetVolume3D(P[0],P[1],P[2],P[3]);
       for(auto & ere : eres){
         ere[0] = vol*rho*g[0]*0.25;
         ere[1] = vol*rho*g[1]*0.25;
@@ -830,9 +845,10 @@ void dfm2::MergeLinSys_LinearSolid3D_Static_Q1(
     const std::vector<int>& aHex,
     const std::vector<double>& aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
-  ////
+  //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
@@ -846,8 +862,8 @@ void dfm2::MergeLinSys_LinearSolid3D_Static_Q1(
     const unsigned int i6 = aHex[iel*8+6];
     const unsigned int i7 = aHex[iel*8+7];
     const unsigned int aIP[8] = { i0, i1, i2, i3, i4, i5, i6, i7 };
-    double coords[8][3]; FetchData(&coords[0][0], 8, 3, aIP, aXYZ.data());
-    double disps[8][3]; FetchData(&disps[0][0], 8, 3, aIP, aVal.data());
+    double coords[8][3]; lcl::FetchData(&coords[0][0], 8, 3, aIP, aXYZ.data());
+    double disps[8][3]; lcl::FetchData(&disps[0][0], 8, 3, aIP, aVal.data());
     ////
     double eres[8][3];
     double emat[8][8][3][3];
@@ -882,6 +898,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double* aVelo,
     const double* aAcc)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
@@ -890,10 +907,10 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double P[4][3]; FetchData(&P[0][0],4,3,aIP, aXYZ);
-    double disps[4][3];  FetchData(&disps[0][0], 4,3,aIP, aVal);
-    double velos[4][3];  FetchData(&velos[0][0], 4,3,aIP, aVelo);
-    double accs[4][3];   FetchData(&accs[0][0],  4,3,aIP, aAcc);
+    double P[4][3]; lcl::FetchData(&P[0][0],4,3,aIP, aXYZ);
+    double disps[4][3]; lcl::FetchData(&disps[0][0], 4,3,aIP, aVal);
+    double velos[4][3]; lcl::FetchData(&velos[0][0], 4,3,aIP, aVelo);
+    double accs[4][3];  lcl::FetchData(&accs[0][0],  4,3,aIP, aAcc);
     ////
     double eres[4][3], emat[4][4][3][3];
     EMat_SolidLinear_NewmarkBeta_MeshTet3D(eres,emat,
@@ -927,6 +944,7 @@ void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     const double* aDisp,
     const double* aVelo)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTet; ++iel){
@@ -935,19 +953,19 @@ void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    double P[4][3]; lcl::FetchData(&P[0][0], 4, 3, aIP, aXYZ);
     double emat[4][4][3][3];
     double eres[4][3];
-    const double vol = TetVolume3D(P[0], P[1], P[2], P[3]);
+    const double vol = lcl::TetVolume3D(P[0], P[1], P[2], P[3]);
     {
       double dldx[4][3], const_term[4];
-      TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
+      lcl::TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
       ddW_SolidLinear_Tet3D(&emat[0][0][0][0],
                             lambda, myu, vol, dldx, false, 3);
     }
     {
-      double u[4][3]; FetchData(&u[0][0], 4, 3, aIP, aDisp);
-      double v[4][3]; FetchData(&v[0][0], 4, 3, aIP, aVelo);
+      double u[4][3]; lcl::FetchData(&u[0][0], 4, 3, aIP, aDisp);
+      double v[4][3]; lcl::FetchData(&v[0][0], 4, 3, aIP, aVelo);
       for(int ino=0;ino<4;++ino){
         for(int idim=0;idim<3;++idim){
           eres[ino][idim] = vol*rho*g[idim]*0.25;
@@ -991,6 +1009,7 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
  const double* aVelo,
  const std::vector<double>& aR)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXYZ;
   assert((int)aR.size()==np*9);
   // ----------------------------
@@ -1001,13 +1020,13 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = { i0, i1, i2, i3 };
-    double P[4][3]; FetchData(&P[0][0], 4, 3, aIP, aXYZ);
-    const double vol = TetVolume3D(P[0], P[1], P[2], P[3]);
+    double P[4][3]; lcl::FetchData(&P[0][0], 4, 3, aIP, aXYZ);
+    const double vol = lcl::TetVolume3D(P[0], P[1], P[2], P[3]);
     ////
     double emat[4][4][3][3];
     { // make stifness matrix with stiffness warping
       double dldx[4][3], const_term[4];
-      TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
+      lcl::TetDlDx(dldx, const_term, P[0], P[1], P[2], P[3]);
       double emat0[4][4][3][3];
       ddW_SolidLinear_Tet3D(&emat0[0][0][0][0],
                             lambda, myu, vol, dldx, false, 3);
@@ -1015,8 +1034,8 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
       for(int ino=0;ino<4;++ino){
         const double* Mi = aR.data()+aIP[ino]*9;
         for(int jno=0;jno<4;++jno){
-          MatMatTrans3(mtmp, &emat0[ino][jno][0][0], Mi);
-          MatMat3(&emat[ino][jno][0][0], Mi,mtmp);
+          lcl::MatMatTrans3(mtmp, &emat0[ino][jno][0][0], Mi);
+          lcl::MatMat3(&emat[ino][jno][0][0], Mi,mtmp);
         }
       }
     }
@@ -1027,13 +1046,13 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
         eres[ino][1] = vol*rho*g[1]*0.25;
         eres[ino][2] = vol*rho*g[2]*0.25;
       }
-      double u0[4][3]; FetchData(&u0[0][0], 4, 3, aIP, aDisp);
-      double v0[4][3]; FetchData(&v0[0][0], 4, 3, aIP, aVelo);
+      double u0[4][3]; lcl::FetchData(&u0[0][0], 4, 3, aIP, aDisp);
+      double v0[4][3]; lcl::FetchData(&v0[0][0], 4, 3, aIP, aVelo);
       for(int ino=0;ino<4;++ino){
         const double* Mi = aR.data()+aIP[ino]*9;
         for(int idim=0;idim<3;++idim){
           for(int jno=0;jno<4;++jno){
-            double Pj1[3]; MatVec3(Pj1, Mi,P[jno]);
+            double Pj1[3]; lcl::MatVec3(Pj1, Mi,P[jno]);
             double uj1[3] = {
               P[jno][0]+u0[jno][0]+dt*v0[jno][0]-Pj1[0],
               P[jno][1]+u0[jno][1]+dt*v0[jno][1]-Pj1[1],
@@ -1073,6 +1092,7 @@ void dfm2::MergeLinSys_Stokes3D_Static
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
   ////
@@ -1085,8 +1105,8 @@ void dfm2::MergeLinSys_Stokes3D_Static
     const unsigned int i2 = aTet[itet*4+2];
     const unsigned int i3 = aTet[itet*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
+    double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
+    double velo_press[4][4]; lcl::FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
     ////
     double eres[4][4];
     double emat[4][4][4][4];
@@ -1121,9 +1141,10 @@ void dfm2::MergeLinSys_Stokes3D_Dynamic
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
-  ////
+  //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
@@ -1133,9 +1154,9 @@ void dfm2::MergeLinSys_Stokes3D_Dynamic
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
-    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data());
+    double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
+    double velo_press[4][4]; lcl::FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
+    double acc_apress[4][4]; lcl::FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data());
     ////
     double eres[4][4];
     double emat[4][4][4][4];
@@ -1169,6 +1190,7 @@ void dfm2::MergeLinSys_NavierStokes3D_Dynamic
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
   ////
@@ -1181,9 +1203,9 @@ void dfm2::MergeLinSys_NavierStokes3D_Dynamic
     const unsigned int i2 = aTet[iel*4+2];
     const unsigned int i3 = aTet[iel*4+3];
     const unsigned int aIP[4] = {i0,i1,i2,i3};
-    double coords[4][3]; FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
-    double velo_press[4][4]; FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
-    double acc_apress[4][4]; FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data());
+    double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
+    double velo_press[4][4]; lcl::FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
+    double acc_apress[4][4]; lcl::FetchData(&acc_apress[0][0],4,4,aIP, aVelo.data());
     ////
     double eres[4][4], emat[4][4][4][4];
     MakeMat_NavierStokes3D_Dynamic_P1(myu, rho,  g_x, g_y,g_z,
@@ -1510,6 +1532,7 @@ void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     unsigned int nTri,
     const double* aVal)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTri; ++iel){
@@ -1517,8 +1540,8 @@ void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
     const unsigned int aIP[3] = {i0,i1,i2};
-    double P[3][2]; FetchData(&P[0][0],  3,2,aIP, aXY1);
-    double u[3][3]; FetchData(&u[0][0],   3,3,aIP, aVal);
+    double P[3][2]; lcl::FetchData(&P[0][0],  3,2,aIP, aXY1);
+    double u[3][3]; lcl::FetchData(&u[0][0],   3,3,aIP, aVal);
     ////
     double W=0.0, dW[3][3], ddW[3][3][3][3];
     for(int i=0;i<9;++i){ (&dW[0][0])[i] = 0.0; }
@@ -1527,7 +1550,7 @@ void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
                              P, u,
                              thick, lambda, myu);
     {
-      const double A = TriArea2D(P[0],P[1],P[2]);
+      const double A = lcl::TriArea2D(P[0],P[1],P[2]);
       dW[0][0] = rho*A*thick/3.0*gravity_z;
       dW[1][0] = rho*A*thick/3.0*gravity_z;
       dW[2][0] = rho*A*thick/3.0*gravity_z;
@@ -1549,6 +1572,7 @@ void dfm2::MassLumped_ShellPlateBendingMITC3
  const double* aXY, unsigned int nXY,
  const unsigned int* aTri, unsigned int nTri)
 {
+  namespace lcl = ::dfm2::fem_emats;
   const unsigned int nDoF = nXY*3;
   for(unsigned int i=0;i<nDoF;++i){ aM[i] = 0.0; }
   for(unsigned int it=0;it<nTri;++it){
@@ -1558,7 +1582,7 @@ void dfm2::MassLumped_ShellPlateBendingMITC3
     const double* p0 = aXY+i0*2;
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
-    const double a012 = TriArea2D(p0, p1, p2);
+    const double a012 = lcl::TriArea2D(p0, p1, p2);
     double m0 = a012/3.0*rho*thick;
     double m1 = a012/3.0*rho*thick*thick*thick/12.0;
     double m2 = m1;

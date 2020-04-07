@@ -42,6 +42,7 @@ IF(NOT USE_HEADERONLY)
       
       ${DELFEM2_INC}/ilu_mats.h                 ${DELFEM2_INC}/ilu_mats.cpp
       ${DELFEM2_INC}/dtri_v2.h                  ${DELFEM2_INC}/dtri_v2.cpp
+      ${DELFEM2_INC}/fem_emats.h                ${DELFEM2_INC}/fem_emats.cpp
       
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
       ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
@@ -49,8 +50,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/fem_emats.h               ${DELFEM2_INC}/fem_emats.cpp
-
   ${DELFEM2_INC}/opengl/gl_funcs.h         ${DELFEM2_INC}/opengl/gl_funcs.cpp
   ${DELFEM2_INC}/opengl/glnew_funcs.h      ${DELFEM2_INC}/opengl/glnew_funcs.cpp
   ${DELFEM2_INC}/opengl/glnew_mshcolor.h   ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
