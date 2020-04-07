@@ -57,6 +57,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
       ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
       ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp
+      ${DELFEM2_INC}/emat.h                 ${DELFEM2_INC}/emat.cpp
       ${DELFEM2_INC}/bvh.h                  ${DELFEM2_INC}/bvh.cpp
       ${DELFEM2_INC}/bv.h
       
@@ -79,7 +80,6 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp
   ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
   ${DELFEM2_INC}/slice.h                ${DELFEM2_INC}/slice.cpp
-  ${DELFEM2_INC}/emat.h                 ${DELFEM2_INC}/emat.cpp
   
   ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
   ${3RD_PARTY}/io_gltf.h                ${3RD_PARTY}/io_gltf.cpp
