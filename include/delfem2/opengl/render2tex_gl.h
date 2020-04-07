@@ -9,6 +9,7 @@
 #ifndef DFM2_RENDER2TEX_GL_H
 #define DFM2_RENDER2TEX_GL_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
 
@@ -77,5 +78,9 @@ protected:
   
 } // opengl
 } // delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/render2tex_gl.cpp"
+#endif
 
 #endif /* depth_hpp */

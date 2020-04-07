@@ -1,17 +1,15 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="1237.82" height="399.8" viewBox="0 0 1237.82 399.8">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: none;
-        stroke: red;
-        stroke-miterlimit: 10;
-        stroke-width: 2px;
-      }
-    </style>
-  </defs>
-  <title>ltshirt</title>
-  <path class="cls-1" d="M86.4,1.09,14.92,22.18C32.35,87.6,30.8,136.39,1,160.43V397.52H286.53v-232Q234.9,124.74,270,27.91L198.57,1.09C158.47,19.31,120.39,23.66,86.4,1.09Z" transform="translate(0 0)"/>
-  <path class="cls-1" d="M328.28,23.08c30.16,66.67,19.65,107.75-8.61,137.67l-.95,238.05H602.89l-2.15-238c-34.11-27.42-28.59-78.35-10.51-136.72l-74.57-21c-18.17,80.31-97.52,72.66-110.9-1Z" transform="translate(0 0)"/>
-  <path class="cls-1" d="M695.39,347.05,651.8,110.57c53.13-8.19,49.21-74,136-68,73.5,4.16,91.9,54.93,132,69.33L868.72,347.05Z" transform="translate(0 0)"/>
-  <path class="cls-1" d="M1017.62,347.05,968.69,113c48.66-4.46,53.5-71.66,134-69.16,77.5,0,82.5,47.5,134,70.5l-43.06,232.72Z" transform="translate(0 0)"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1238 399.8" style="enable-background:new 0 0 1238 399.8;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#FF0000;stroke-width:2;stroke-miterlimit:10;}
+</style>
+<title>tshirt</title>
+<path class="st0" d="M86.4,1.1L14.9,22.2C32.4,87.6,30.8,136.4,1,160.4v237.1h285.5v-232c-34.4-27.2-39.9-73.1-16.6-137.6L198.6,1.1
+	C158.5,19.3,120.4,23.7,86.4,1.1z"/>
+<path class="st0" d="M328.3,23.1c30.2,66.7,19.6,107.8-8.6,137.7l-1,238h284.2l-2.2-238c-34.1-27.4-28.6-78.4-10.5-136.7l-74.6-21
+	c-18.2,80.3-97.5,72.7-110.9-1L328.3,23.1z"/>
+<path class="st0" d="M695.4,347l-43.6-236.5c53.1-8.2,49.2-74,136-68c73.5,4.2,91.9,54.9,132,69.3L868.7,347L695.4,347z"/>
+<path class="st0" d="M1017.6,347L968.7,113c48.7-4.5,53.5-71.7,134-69.2c77.5,0,82.5,47.5,134,70.5L1193.6,347H1017.6z"/>
 </svg>

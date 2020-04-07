@@ -45,9 +45,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/opengl/render2tex_gl.h     ${DELFEM2_INC}/opengl/render2tex_gl.cpp
-    ${DELFEM2_INC}/opengl/render2tex_glold.h  ${DELFEM2_INC}/opengl/render2tex_glold.cpp        
-    ${DELFEM2_INC}/opengl/glold_v3color.h     ${DELFEM2_INC}/opengl/glold_v3color.cpp
     ${3RD_PARTY}/glad3/include/glad/glad.h    ${3RD_PARTY}/glad3/src/glad.c
     main.cpp
 )

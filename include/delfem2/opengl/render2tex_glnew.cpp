@@ -32,7 +32,7 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
+DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
 {
   std::vector<float> aZ;
   CRender2Tex::ExtractFromTexture_Depth(aZ);
@@ -44,7 +44,7 @@ void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
   for(unsigned int iy=0;iy<nResY;++iy){
     for(unsigned int ix=0;ix<nResX;++ix){
       int ip = iy*nResX+ix;
-      double lz = -aZ[ip]*this->z_range;
+      double lz = -aZ[ip]*z_range;
       double lx = (ix+0.5)*lengrid;
       double ly = (iy+0.5)*lengrid;
       aXYZ[ip*3+0] = origin[0] + lx*ax[0] + ly*ay[0] + lz*az[0];
@@ -55,7 +55,8 @@ void dfm2::opengl::CRender2Tex_DrawNewGL::SetDepth()
   shdr2.Initialize(aXYZ);
 }
 
-void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL() {
+DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL()
+{
   CRender2Tex::InitGL();
   //
   { // draw grid
@@ -128,7 +129,8 @@ void dfm2::opengl::CRender2Tex_DrawNewGL::InitGL() {
   }
 }
 
-void dfm2::opengl::CRender2Tex_DrawNewGL::Draw(float mP[16], float mV[16]) const
+DFM2_INLINE void dfm2::opengl::CRender2Tex_DrawNewGL::Draw
+ (float mP[16], float mV[16]) const
 {
  ::glLineWidth(5);
   float mM[16];

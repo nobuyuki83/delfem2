@@ -54,7 +54,7 @@ void StepTime
 (std::vector<double>& aXYZ, // deformed vertex positions
  std::vector<double>& aXYZt,
  std::vector<double>& aUVW, // deformed vertex velocity
- std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
+ const std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
  std::vector<dfm2::CInfoNearest<double>>& aInfoNearest,
  const std::vector<dfm2::CDynTri>& aETri,
  const std::vector<dfm2::CVec2d>& aVec2,
@@ -132,10 +132,10 @@ int main()
 {
   // -----------------------------
   // below: input data
-  std::vector<dfm2::CDynTri> aETri;
-  std::vector<dfm2::CVec2d> aVec2;
-  std::vector<double> aXYZ; // deformed vertex positions
-  std::vector<unsigned int> aLine;
+  std::vector<dfm2::CDynTri> aETri_Cloth;
+  std::vector<dfm2::CVec2d> aVec2_Cloth;
+  std::vector<double> aXYZ_Cloth; // deformed vertex positions
+  std::vector<unsigned int> aLine_Cloth;
   {
     std::string name_cad_in_test_input;
     double scale_adjust = 0.0;
@@ -154,44 +154,15 @@ int main()
     delfem2::CCad2D cad;
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
     // -------
-    dfm2::MeshingPattern(aETri,aVec2,aXYZ,aLine,
+    dfm2::MeshingPattern(aETri_Cloth,aVec2_Cloth,aXYZ_Cloth,aLine_Cloth,
                          aRT23,cad,aIESeam,mesher_edge_length);
   }
-  std::vector<double> aXYZt = aXYZ;
-  std::vector<double> aUVW(aXYZ.size(), 0.0);
-  std::vector<int> aBCFlag(aXYZ.size()/3, 0.0);
+  std::vector<double> aXYZt_Cloth = aXYZ_Cloth;
+  std::vector<double> aUVW_Cloth(aXYZ_Cloth.size(), 0.0);
+  const std::vector<int> aBCFlag_Cloth(aXYZ_Cloth.size()/3, 0.0);
+  std::vector<dfm2::CInfoNearest<double>> aInfoNearest_Cloth;
   
   // ----------
-  
-  std::vector<double> aXYZ0_Contact;
-  std::vector<unsigned int> aTri_Contact;
-  {
-    std::vector<dfm2::CRigBone> aBone;
-    { // makineg aBone
-      std::vector<int> aIndBoneParent;
-      std::vector<double> aJntRgrs0;
-      std::vector<double> aRigWeight_Contact;
-      dfm2::cnpy::LoadSmpl(aXYZ0_Contact,
-                           aRigWeight_Contact,
-                           aTri_Contact,
-                           aIndBoneParent,
-                           aJntRgrs0,
-                           std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-      dfm2::Smpl2Rig(aBone,
-                     aIndBoneParent, aXYZ0_Contact, aJntRgrs0);
-      dfm2::UpdateBoneRotTrans(aBone);
-    }
-  }
-  std::vector<double> aXYZ_Contact = aXYZ0_Contact;
-  std::vector<double> aNorm_Contact(aXYZ_Contact.size());
-  delfem2::Normal_MeshTri3D(aNorm_Contact.data(),
-                            aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                            aTri_Contact.data(), aTri_Contact.size()/3);
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh_Contact;
-  bvh_Contact.Init(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                   aTri_Contact.data(), aTri_Contact.size()/3,
-                   0.01);
-  std::vector<dfm2::CInfoNearest<double>> aInfoNearest_Contact;
   
   std::vector<dfm2::CTarget> aTarget;
   dfm2::opengl::CTexRGB_Rect2D tex;
@@ -229,15 +200,15 @@ int main()
   }
   
   std::vector<double> aXYZ0_Body;
-  std::vector<double> aW;
+  std::vector<double> aW_Body;
   std::vector<dfm2::CRigBone> aBone;
-  std::vector<unsigned int> aTri;
+  std::vector<unsigned int> aTri_Body;
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl(aXYZ0_Body,
-                         aW,
-                         aTri,
+                         aW_Body,
+                         aTri_Body,
                          aIndBoneParent,
                          aJntRgrs,
                          std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
@@ -246,11 +217,11 @@ int main()
     
   }
   
-  std::vector<double> aXYZ1 = aXYZ0_Body;
+  std::vector<double> aXYZ1_Body = aXYZ0_Body;
   { // initalize pose
     dfm2::UpdateBoneRotTrans(aBone);
-    dfm2::Skinning_LBS(aXYZ1,
-                       aXYZ0_Body, aBone, aW);
+    dfm2::Skinning_LBS(aXYZ1_Body,
+                       aXYZ0_Body, aBone, aW_Body);
   }
   std::vector< std::pair<dfm2::CVec3d,dfm2::CVec3d> > aTargetOriginPos;
   for(int it=0;it<aTarget.size();++it){
@@ -258,6 +229,14 @@ int main()
     aTargetOriginPos.push_back( std::make_pair(aTarget[it].pos,
                                                aBone[ib].Pos()) );
   }
+  std::vector<double> aNorm_Body(aXYZ1_Body.size());
+  delfem2::Normal_MeshTri3D(aNorm_Body.data(),
+                            aXYZ1_Body.data(), aXYZ1_Body.size()/3,
+                            aTri_Body.data(), aTri_Body.size()/3);
+  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh_Body;
+  bvh_Body.Init(aXYZ1_Body.data(), aXYZ1_Body.size()/3,
+                aTri_Body.data(), aTri_Body.size()/3,
+                0.01);
   
   // -----------
 //  Check(aBone, aTarget);
@@ -273,50 +252,71 @@ int main()
   int iframe = 0;
   while (true)
   {
-    {
-      double r = iframe*0.01;
+    const unsigned int iframe0 = 300;
+    const unsigned int iframe1 = 2000;
+    iframe++ ;
+    if( iframe < iframe0 ){
+      StepTime(aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth, aBCFlag_Cloth,
+               aInfoNearest_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
+               //
+               aXYZ1_Body, aTri_Body,aNorm_Body, bvh_Body);
+    }
+    else if( iframe < iframe1 ){
+      double r = (double)(iframe-iframe0)/(iframe1-iframe0);
       if( r > 1 ){ r = 1; }
       for(int it=0;it<aTarget.size();++it){
         aTarget[it].pos = r*aTargetOriginPos[it].first + (1-r)*aTargetOriginPos[it].second;
       }
       Solve_MinRigging(aBone, aTarget);
-      Skinning_LBS(aXYZ1,
-                   aXYZ0_Body, aBone, aW);
+      Skinning_LBS(aXYZ1_Body,
+                   aXYZ0_Body, aBone, aW_Body);
+      bvh_Body.UpdateGeometry(aXYZ1_Body.data(), aXYZ1_Body.size()/3,
+                              aTri_Body.data(), aTri_Body.size()/3, 0.01);
+      StepTime(aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth, aBCFlag_Cloth,
+               aInfoNearest_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
+               //
+               aXYZ1_Body, aTri_Body,aNorm_Body, bvh_Body);
     }
-    if( iframe > 200 ){
-      for(int ib=0;ib<aBone.size();++ib){
-        dfm2::Quat_Identity(aBone[ib].quatRelativeRot);
-      }
-      dfm2::UpdateBoneRotTrans(aBone);
-      for(int it=0;it<aTarget.size();++it){
-        aTarget[it].pos = aTargetOriginPos[it].second;
-      }
-      Solve_MinRigging(aBone, aTarget);
-      Skinning_LBS(aXYZ1,
-                   aXYZ0_Body, aBone, aW);
-      iframe = 0;
+    else{
+      StepTime(aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth, aBCFlag_Cloth,
+               aInfoNearest_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
+               //
+               aXYZ1_Body, aTri_Body,aNorm_Body, bvh_Body);
     }
     
     // -------------------
     viewer.DrawBegin_oldGL();
-    Draw(aXYZ1,aTri,aBone,aTarget);
+//    Draw(aXYZ1_Body,aTri_Body,aBone,aTarget);
     tex.Draw_oldGL();
     {
       ::glEnable(GL_LIGHTING);
       dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8) );
-      ::glColor3d(1,0,0);
       //    delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
       //                                        aTri_Contact.data(), aTri_Contact.size()/3);
+      // draw body
       ::glEnable(GL_LIGHTING);
-      delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ_Contact.data(),
-                                              aTri_Contact.data(), aTri_Contact.size()/3);
+      dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8) );
+      delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1_Body.data(),
+                                              aTri_Body.data(), aTri_Body.size()/3);
+      // draw cloth
       ::glDisable(GL_LIGHTING);
       ::glColor3d(0,0,0);
       //    delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
-      delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ, aETri);
+      delfem2::opengl::DrawMeshDynTri3D_Edge(aXYZ_Cloth, aETri_Cloth);
+      // draw cloth
       ::glEnable(GL_LIGHTING);
       dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Red() );
-      delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aXYZ.data());
+      delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri_Cloth, aXYZ_Cloth.data());
+      // draw target
+      ::glEnable(GL_DEPTH_TEST);
+      ::glBegin(GL_LINES);
+      ::glColor3d(1,0,0);
+      for(int it=0;it<aTarget.size();++it){
+        dfm2::CVec3d p = aTarget[it].pos;
+        dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
+        dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
+      }
+      ::glEnd();
     }
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();

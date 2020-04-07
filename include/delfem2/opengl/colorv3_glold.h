@@ -5,21 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef funcs_glcolorvec3_hpp
-#define funcs_glcolorvec3_hpp
+#ifndef DFM2_COLORV3_GLOLD_H
+#define DFM2_COLORV3_GLOLD_H
 
+#include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
-
-#include "delfem2/opengl/color_glold.h"
-
+#include "delfem2/color.h"
 #include <stdio.h>
 
-void DrawQuad_ScalarQ1
+DFM2_INLINE void DrawQuad_ScalarQ1
 (const delfem2::CVec3d& p0,
  const delfem2::CVec3d& p1,
  const delfem2::CVec3d& p2,
  const delfem2::CVec3d& p3,
  double v0, double v1, double v2, double v3,
  const std::vector<std::pair<double, delfem2::CColor> >& colorMap);
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/colorv3_glold.cpp"
+#endif
 
 #endif /* funcs_glcolorvec3_hpp */
