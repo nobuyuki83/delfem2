@@ -9,7 +9,7 @@
 #include <vector>
 #include <random>
 #include "delfem2/vec3.h"
-#include "delfem2/paramgeo_v23.h"
+#include "delfem2/pgeo.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"

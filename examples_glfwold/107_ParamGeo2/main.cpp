@@ -8,7 +8,7 @@
 #include <iostream>
 #include <random>
 #include "delfem2/vec2.h"
-#include "delfem2/paramgeo_v23.h"
+#include "delfem2/pgeo.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/v2_glold.h"
