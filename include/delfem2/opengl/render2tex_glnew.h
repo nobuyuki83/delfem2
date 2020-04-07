@@ -6,9 +6,10 @@
  */
 
 
-#ifndef DFM2_GLNEW_GPLSAMPLER_H
-#define DFM2_GLNEW_GPLSAMPLER_H
+#ifndef DFM2_RENDER2TEX_GLNEW_H
+#define DFM2_RENDER2TEX_GLNEW_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
 #include "delfem2/opengl/glnew_mshcolor.h"
@@ -41,5 +42,9 @@ public:
   
 }
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/render2tex_glnew.cpp"
+#endif
 
 #endif /* depth_hpp */

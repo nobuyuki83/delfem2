@@ -10,21 +10,21 @@
 // -------
 
 #if defined(__APPLE__)
-#include <OpenGL/gl.h>
+#  include <OpenGL/gl.h>
 #elif defined(_MSC_VER) // windows
-#include <windows.h>
-#include <GL/gl.h>
+#  include <windows.h>
+#  include <GL/gl.h>
 #else
-#include <GL/gl.h>
+#  include <GL/gl.h>
 #endif
 
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glold_v3color.h"
+#include "delfem2/opengl/colorv3_glold.h"
 
 // -----------------------------
 
-void DrawQuad_ScalarQ1
+DFM2_INLINE void DrawQuad_ScalarQ1
 (const delfem2::CVec3d& p0,
  const delfem2::CVec3d& p1,
  const delfem2::CVec3d& p2,
