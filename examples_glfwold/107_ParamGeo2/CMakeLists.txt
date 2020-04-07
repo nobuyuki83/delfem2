@@ -41,8 +41,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/paramgeo_v23.h            ${DELFEM2_INC}/paramgeo_v23.cpp
-    ${SRC_DFM2}
     main.cpp
 )
 
