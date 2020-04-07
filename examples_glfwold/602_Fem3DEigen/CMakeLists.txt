@@ -39,9 +39,7 @@ IF(NOT USE_HEADERONLY)
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
 ENDIF()
 
-# add_definitions(-DDFM2_STATIC_LIBRARY)
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/fem_emats.h              ${DELFEM2_INC}/fem_emats.cpp
   main.cpp
 )
 

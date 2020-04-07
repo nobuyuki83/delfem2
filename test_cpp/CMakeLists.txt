@@ -62,6 +62,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/bv.h
       
       ${DELFEM2_INC}/v23m34q.h              ${DELFEM2_INC}/v23m34q.cpp
+      ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
       ${DELFEM2_INC}/dtri_v2.h              ${DELFEM2_INC}/dtri_v2.cpp
       ${DELFEM2_INC}/ilu_mats.h             ${DELFEM2_INC}/ilu_mats.cpp
       ${DELFEM2_INC}/rig_v3q.h              ${DELFEM2_INC}/rig_v3q.cpp
@@ -81,8 +82,7 @@ add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
   ${DELFEM2_INC}/slice.h                ${DELFEM2_INC}/slice.cpp
   
-  ${DELFEM2_INC}/fem_emats.h            ${DELFEM2_INC}/fem_emats.cpp
-  ${3RD_PARTY}/io_gltf.h                ${3RD_PARTY}/io_gltf.cpp
+ ${3RD_PARTY}/io_gltf.h                ${3RD_PARTY}/io_gltf.cpp
   
   ${SRC_DFM2}
   test_bvh.cpp

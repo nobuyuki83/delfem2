@@ -17,9 +17,9 @@
 #ifndef DFM2_FEM_EMATS_H
 #define DFM2_FEM_EMATS_H
 
+#include "delfem2/dfm2_inline.h"
 #include <cassert>
 #include <vector>
-
 #include "delfem2/mats.h"
 #include "delfem2/emat.h"
 
@@ -27,7 +27,7 @@
 
 namespace delfem2 {
 
-void MergeLinSys_Poission_MeshTri2D(
+DFM2_INLINE void MergeLinSys_Poission_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -36,7 +36,7 @@ void MergeLinSys_Poission_MeshTri2D(
     const unsigned int* aTri1, int nTri,
     const double* aVal);
 
-void MergeLinSys_Poission_MeshTet3D(
+DFM2_INLINE void MergeLinSys_Poission_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -45,7 +45,7 @@ void MergeLinSys_Poission_MeshTet3D(
     const unsigned int* aTet, int nTet,
     const double* aVal);
 
-void MergeLinSys_Helmholtz_MeshTri2D(
+DFM2_INLINE void MergeLinSys_Helmholtz_MeshTri2D(
     CMatrixSparse<std::complex<double> >& mat_A,
     std::complex<double>* vec_b,
     const double wave_length,
@@ -55,7 +55,7 @@ void MergeLinSys_Helmholtz_MeshTri2D(
     unsigned int nTri,
     const std::complex<double>* aVal);
 
-void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
+DFM2_INLINE void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     CMatrixSparse<std::complex<double>> &mat_A,
     std::complex<double>* vec_b,
     const double wave_length,
@@ -65,7 +65,7 @@ void MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     unsigned int nIPPolyline,
     const std::complex<double>* aVal);
 
-void MergeLinSys_Diffusion_MeshTri2D(
+DFM2_INLINE void MergeLinSys_Diffusion_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -78,7 +78,7 @@ void MergeLinSys_Diffusion_MeshTri2D(
     const double* aVal,
     const double* aVelo);
 
-void MergeLinSys_Diffusion_MeshTet3D(
+DFM2_INLINE void MergeLinSys_Diffusion_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -93,7 +93,7 @@ void MergeLinSys_Diffusion_MeshTet3D(
     const double* aVal,
     const double* aVelo);
 
-void MergeLinSys_SolidLinear_Static_MeshTri2D(
+DFM2_INLINE void MergeLinSys_SolidLinear_Static_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -105,7 +105,7 @@ void MergeLinSys_SolidLinear_Static_MeshTri2D(
     const unsigned int* aTri1, int nTri,
     const double* aVal);
 
-void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
+DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -122,7 +122,7 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aVelo,
     const double* aAcc);
 
-void MergeLinSys_StokesStatic2D(
+DFM2_INLINE void MergeLinSys_StokesStatic2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -132,7 +132,7 @@ void MergeLinSys_StokesStatic2D(
     const unsigned int* aTri1, int nTri1,
     const double* aVal);
 
-void MergeLinSys_StokesDynamic2D(
+DFM2_INLINE void MergeLinSys_StokesDynamic2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -146,7 +146,7 @@ void MergeLinSys_StokesDynamic2D(
     const double* aVal,
     const double* aVelo);
 
-void MergeLinSys_NavierStokes2D(
+DFM2_INLINE void MergeLinSys_NavierStokes2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -160,7 +160,7 @@ void MergeLinSys_NavierStokes2D(
     const double* aVal,
     const double* aVelo);
 
-double MergeLinSys_Cloth(
+DFM2_INLINE double MergeLinSys_Cloth(
     CMatrixSparse<double>& mat_A, // (out) second derivative of energy
     double* vec_b, // (out) first derivative of energy
     //
@@ -172,7 +172,7 @@ double MergeLinSys_Cloth(
     const unsigned int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
     const double* aXYZ);
 
-double MergeLinSys_Contact(
+DFM2_INLINE double MergeLinSys_Contact(
     CMatrixSparse<double>& ddW,
     double* dW, // (out) first derivative of energy
     //
@@ -181,7 +181,7 @@ double MergeLinSys_Contact(
     const CInput_Contact& input,
     const double* aXYZ,  int nXYZ);
 
-void MergeLinSys_SolidLinear_Static_MeshTet3D(
+DFM2_INLINE void MergeLinSys_SolidLinear_Static_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -192,7 +192,7 @@ void MergeLinSys_SolidLinear_Static_MeshTet3D(
     const unsigned int* aTet, unsigned int nTet,
     const double* aDisp);
 
-void MergeLinSys_LinearSolid3D_Static_Q1(
+DFM2_INLINE void MergeLinSys_LinearSolid3D_Static_Q1(
     CMatrixSparse<double>& mat_A,
     std::vector<double>& vec_b,
     const double myu,
@@ -205,7 +205,7 @@ void MergeLinSys_LinearSolid3D_Static_Q1(
     const std::vector<int>& aHex,
     const std::vector<double>& aVal);
 
-void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
+DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -221,7 +221,7 @@ void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double* aVelo,
     const double* aAcc);
 
-void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
+DFM2_INLINE void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -234,7 +234,7 @@ void MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     const double* aDisp,
     const double* aVelo);
 
-void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
+DFM2_INLINE void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -248,7 +248,7 @@ void MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D(
     const double* aVelo,
     const std::vector<double>& aR);
 
-void MergeLinSys_Stokes3D_Static(
+DFM2_INLINE void MergeLinSys_Stokes3D_Static(
     CMatrixSparse<double>& mat_A,
     std::vector<double>& vec_b,
     const double myu,
@@ -716,6 +716,9 @@ aDispEdge[ipo*3+2] = vecUpd.GetValue(ipo+ncorner,2);
  }
  */
 
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/fem_emats.cpp"
+#endif
 
 
 #endif /* fem_utility_h */
