@@ -64,25 +64,25 @@ DFM2_INLINE std::string LoadFile(const std::string& fname);
 DFM2_INLINE std::vector<std::string> Split(const std::string& str,
                                char delimiter);
 DFM2_INLINE void Split(std::vector<std::string>& aToken,
-           const std::string& str,
-           char delimiter);
+                       const std::string& str,
+                       char delimiter);
 DFM2_INLINE std::vector<std::string> Split(const std::string& str,
-                               const std::string& del);
+                                           const std::string& del);
 DFM2_INLINE std::vector<std::string> Split_Parentheses(const std::string& str,
-                                           char delimiter,
-                                           const std::string& par);
+                                                       char delimiter,
+                                                       const std::string& par);
 DFM2_INLINE std::vector<std::string> Split_Quote(const std::string& str,
                                      char delimiter,
                                      char quote);
 DFM2_INLINE std::string Get_Parentheses(const std::string& str,
-                        const std::string& par);
+                                        const std::string& par);
 DFM2_INLINE std::string Replace(const std::string& str,
-                    const char cf, const char ct);
+                                const char cf, const char ct);
 DFM2_INLINE std::string Remove(const std::string& str,
-                   const std::string& del);
+                               const std::string& del);
 DFM2_INLINE std::string RemoveSpace(const std::string& str);
 DFM2_INLINE std::string RemoveBeginning(const std::string& str,
-                            const std::string& del);
+                                        const std::string& del);
 
 DFM2_INLINE std::map<std::string, std::string> ReadDictionary(const std::string& path);
 DFM2_INLINE std::map<std::string, std::string> ReadDictionary_Json(const std::string& strIn);

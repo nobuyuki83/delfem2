@@ -61,6 +61,7 @@ add_subdirectory(501_Cad2dEdit)
 add_subdirectory(502_Cad2dMeshEdit)
 add_subdirectory(503_Cad3d)
 add_subdirectory(504_Cad2dSvg)
+add_subdirectory(505_Cad3ReadStep)
 
 # fem
 add_subdirectory(600_Fem2DHelmholtz)
