@@ -8,7 +8,7 @@
 
 #ifndef DFM2_ADF_H
 #define DFM2_ADF_H
-//#include "delfem2/dfm2_inline.h"
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 
 namespace delfem2 {
@@ -75,5 +75,9 @@ public:
 };
   
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/adf.cpp"
+#endif
 
 #endif /* adaptive_distance_field_h */
