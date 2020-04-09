@@ -13,17 +13,6 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-bool isAlphabetUpper(int iascii){
-  if( iascii >= 65 && iascii <= 90 ) return true;
-  return false;
-}
-
-bool isNumeric(int iascii){
-  if(iascii >= 48 && iascii <= 57 ) return true;
-  return false;
-}
-
-
 int getEntity
 (std::string& type,
  std::string& arg,
@@ -54,7 +43,7 @@ int getEntity
   int id;
   for(id=ic;id<s.size();++id){
     int iascii = (int)s[id];
-    if( !isAlphabetUpper(iascii) && !isNumeric(iascii) && (iascii != 95)  ) break;
+    if( !dfm2::isAlphabetUpper(iascii) && !dfm2::isNumeric(iascii) && (iascii != 95)  ) break;
 //    if( s[id] == '(' ) break;
   }
   /*

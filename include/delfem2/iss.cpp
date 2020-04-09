@@ -44,7 +44,10 @@ static double Distance3D(const double p0[3], const double p1[3]){
 }
  */
 
-static void makeElemSurroundingPoint
+namespace delfem2 {
+namespace iss {
+
+DFM2_INLINE void makeElemSurroundingPoint
 (std::vector<int>& elsup_ind,
  std::vector<int>& elsup,
  ////
@@ -81,10 +84,10 @@ static void makeElemSurroundingPoint
   elsup_ind[0] = 0;
 }
 
-static void makeOneRingNeighborhood
+void makeOneRingNeighborhood
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
- ////
+ //
  const std::vector<unsigned int>& aElem,
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup,
@@ -1749,7 +1752,8 @@ void cutoutTetFromLattice
   }
 }
 
-
+} // namespace iss
+} // namespace delfem2
 
 /**
  * @brief internal function for debug
@@ -1760,8 +1764,8 @@ void dfm2::makeBackgroundLattice
  const dfm2::CInput_IsosurfaceStuffing& input,
  double elen, int  ndiv, const double org[3])
 {
-  std::vector<CCell> aCell;
-  makeLatticeCoasestLevel(aPointLattice, aCell,
+  std::vector<iss::CCell> aCell;
+  iss::makeLatticeCoasestLevel(aPointLattice, aCell,
                           input, elen, ndiv, org);
   for(int icell=0;icell<(int)aCell.size();++icell){
     int icntr0 = aCell[icell].aIP[26];
@@ -1773,9 +1777,9 @@ void dfm2::makeBackgroundLattice
     double cz = aPointLattice[icntr0].pos[2];
     const int ilevel_parent = aCell[icell].ilevel;
     for(int ichild=0;ichild<8;++ichild){
-      const double ccx = cx + aCellPointDirection[ichild][0]*size_parent*0.25;
-      const double ccy = cy + aCellPointDirection[ichild][1]*size_parent*0.25;
-      const double ccz = cz + aCellPointDirection[ichild][2]*size_parent*0.25;
+      const double ccx = cx + iss::aCellPointDirection[ichild][0]*size_parent*0.25;
+      const double ccy = cy + iss::aCellPointDirection[ichild][1]*size_parent*0.25;
+      const double ccz = cz + iss::aCellPointDirection[ichild][2]*size_parent*0.25;
       double sdf0; int level_vol_goal, level_srf, nlayer;
       input.Level(level_vol_goal,level_srf,nlayer,sdf0,
                   ccx, ccy, ccz);
@@ -1795,7 +1799,7 @@ void dfm2::makeBackgroundLattice
          level_srf_goal >= (ilevel_parent+1) )
       {
         aCell[icell].aIC_Cld[ichild] = (int)aCell.size();
-        CCell cc(size_parent*0.5,ilevel_parent+1,icell,ichild);
+        iss::CCell cc(size_parent*0.5,ilevel_parent+1,icell,ichild);
         {
           cc.aIP[26] = (int)aPointLattice.size();
           dfm2::CPointLattice p(ccx,ccy,ccz,sdf0);
@@ -1842,17 +1846,17 @@ bool dfm2::IsoSurfaceStuffing
     std::vector<int> psup_ind, psup;
     {
       std::vector<int> elsup_ind, elsup;
-      makeElemSurroundingPoint(elsup_ind, elsup, aTetLattice, 4, (int)aPointLattice.size());
-      makeOneRingNeighborhood(psup_ind, psup, aTetLattice, elsup_ind, elsup, 4, (int)aPointLattice.size());
+      iss::makeElemSurroundingPoint(elsup_ind, elsup, aTetLattice, 4, (int)aPointLattice.size());
+      iss::makeOneRingNeighborhood(psup_ind, psup, aTetLattice, elsup_ind, elsup, 4, (int)aPointLattice.size());
     }
-    WarpLattice(aPointLattice,
-                psup_ind,psup);
-    MakeCutPoint(aXYZ, mapLat2Out, lat2cut_ind,lat2cut,
-                 aPointLattice,psup_ind,psup);
+    iss::WarpLattice(aPointLattice,
+                     psup_ind,psup);
+    iss::MakeCutPoint(aXYZ, mapLat2Out, lat2cut_ind,lat2cut,
+                     aPointLattice,psup_ind,psup);
   }
   
-  cutoutTetFromLattice(aTet,
-                       aPointLattice,aTetLattice, mapLat2Out, lat2cut_ind, lat2cut);
+  iss::cutoutTetFromLattice(aTet,
+                            aPointLattice,aTetLattice, mapLat2Out, lat2cut_ind, lat2cut);
   
   {
     aIsOnSurfXYZ.assign((int)aXYZ.size()/3,1);

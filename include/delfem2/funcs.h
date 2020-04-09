@@ -146,7 +146,9 @@ DFM2_INLINE void XML_SeparateTagContent
  * @brief check  if c is alphabet (e.g., A-Za-z) or not
  */
 DFM2_INLINE bool isAlphabet(char c);
-DFM2_INLINE bool isNumber(char c);
+//DFM2_INLINE bool isNumber(char c);
+DFM2_INLINE bool isAlphabetUpper(int iascii);
+DFM2_INLINE bool isNumeric(int iascii);
 
 }
 

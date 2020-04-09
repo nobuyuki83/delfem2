@@ -168,7 +168,7 @@ DFM2_INLINE std::vector<std::string> SVG_Split_Path_d
   unsigned int imark = 0;
   std::vector<std::string> aS;
   for(size_t i=0;i<s0.size();++i){
-    if( dfm2::isNumber(s0[i]) ) continue;
+    if( dfm2::isNumeric(s0[i]) ) continue;
     if( s0[i] == ',' ){
       std::string s1(s0.begin()+imark, s0.begin()+i);
       aS.push_back( s1 );

@@ -41,7 +41,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/iss.h                      ${DELFEM2_INC}/iss.cpp
   main.cpp
 )
 

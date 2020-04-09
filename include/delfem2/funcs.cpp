@@ -46,8 +46,20 @@ DFM2_INLINE bool dfm2::isAlphabet(char c){
   return false;
 }
 
+/*
 DFM2_INLINE bool dfm2::isNumber(char c){
   return c >= 46 && c <= 57;
+}
+ */
+
+DFM2_INLINE bool dfm2::isAlphabetUpper(int iascii){
+  if( iascii >= 65 && iascii <= 90 ) return true;
+  return false;
+}
+
+DFM2_INLINE bool dfm2::isNumeric(int iascii){
+  if(iascii >= 48 && iascii <= 57 ) return true;
+  return false;
 }
 
 DFM2_INLINE void dfm2::Split

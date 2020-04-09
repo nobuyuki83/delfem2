@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
 #ifndef DFM2_ADF_H
 #define DFM2_ADF_H
-
+//#include "delfem2/dfm2_inline.h"
 #include <vector>
 
 namespace delfem2 {
