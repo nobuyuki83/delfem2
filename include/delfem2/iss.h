@@ -8,6 +8,7 @@
 #ifndef DFM2_ISS_H
 #define DFM2_ISS_H
 
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 
 namespace delfem2 {
@@ -27,14 +28,15 @@ public:
   }
 };
 
-bool IsoSurfaceStuffing(std::vector<double>& aXYZ,
-                        std::vector<unsigned int>& aTet,
-                        std::vector<int>& aIsOnSurfXYZ,
-                        ////
-                        const CInput_IsosurfaceStuffing& input,
-                        double elen_in,
-                        double width,
-                        const double center[3]);
+bool IsoSurfaceStuffing
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int>& aTet,
+  std::vector<int>& aIsOnSurfXYZ,
+  //
+  const CInput_IsosurfaceStuffing& input,
+  double elen_in,
+  double width,
+  const double center[3]);
 
 class CPointLattice
 {
@@ -57,10 +59,16 @@ public:
   int iflg;
 };
 
-void makeBackgroundLattice(std::vector<CPointLattice>& aPoint, std::vector<unsigned int>& aTet,
-                           const CInput_IsosurfaceStuffing& input,
-                           double elen, int  ndiv, const double org[3]);
+void makeBackgroundLattice
+ (std::vector<CPointLattice>& aPoint,
+  std::vector<unsigned int>& aTet,
+  const CInput_IsosurfaceStuffing& input,
+  double elen, int  ndiv, const double org[3]);
 
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/iss.cpp"
+#endif
 
 #endif

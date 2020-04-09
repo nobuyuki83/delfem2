@@ -51,6 +51,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
     ${DELFEM2_INC}/emat.h                      ${DELFEM2_INC}/emat.cpp
     ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
+    ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/bv.h
     ${DELFEM2_INC}/pgeo.h
