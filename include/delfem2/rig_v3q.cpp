@@ -852,7 +852,7 @@ DFM2_INLINE void dfm2::Rig_WdW_Target_Eigen
   }
   const unsigned int istat = adW.size();
   adW.resize(istat+ncnst*nsns);
-  for(int isns=0;isns<nsns;++isns){
+  for(unsigned int isns=0;isns<nsns;++isns){
     double dx = Lx[isns*(nb*4) + ib*4+3];
     double dy = Ly[isns*(nb*4) + ib*4+3];
 //    double dz = Lz[isns*(nb*4) + ib*4+3];

@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_DTRI_V3_H
-#define DFM2_DTRI_V3_H
+#ifndef DFM2_DTRIV3_H
+#define DFM2_DTRIV3_H
 
+#include "delfem2/dfm2_inline.h"
 #include <map>
 #include <algorithm>
 #include <stack>
@@ -118,5 +119,9 @@ public:
 };
   
 }
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/dtriv3.cpp"
+#endif
 
 #endif // #endif SURFACE_MESH_H

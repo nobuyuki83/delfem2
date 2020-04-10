@@ -5,7 +5,7 @@
 #include <map>
 #include <deque>
 #include "delfem2/dtri_v2.h"
-#include "delfem2/dtri_v3.h"
+#include "delfem2/dtriv3.h"
 #include "delfem2/mshtopo.h"
 
 // -------------------------

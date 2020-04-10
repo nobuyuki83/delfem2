@@ -60,6 +60,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/v23m34q.h                   ${DELFEM2_INC}/v23m34q.cpp
     ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
     ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
+    ${DELFEM2_INC}/dtriv3.h                    ${DELFEM2_INC}/dtriv3.cpp
     ${DELFEM2_INC}/ilu_mats.h                  ${DELFEM2_INC}/ilu_mats.cpp
     ${DELFEM2_INC}/cad2d_v2dtri.h              ${DELFEM2_INC}/cad2d_v2dtri.cpp
     ${DELFEM2_INC}/objf_v23m34q.h              ${DELFEM2_INC}/objf_v23m34q.cpp

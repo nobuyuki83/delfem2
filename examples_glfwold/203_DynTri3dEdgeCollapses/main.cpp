@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
-#include "delfem2/dtri_v3.h"
+#include "delfem2/dtriv3.h"
 #include "delfem2/dtri.h"
 
 #include <GLFW/glfw3.h>
