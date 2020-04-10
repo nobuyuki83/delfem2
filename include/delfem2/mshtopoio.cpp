@@ -15,10 +15,11 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/mshtopoio.h"
 #include "delfem2/primitive.h"
-
-#include "delfem2/dtri_v3.h"
+//
+#include "delfem2/dtriv3.h"
+//
+#include "delfem2/mshtopoio.h"
 
 namespace dfm2 = delfem2;
 

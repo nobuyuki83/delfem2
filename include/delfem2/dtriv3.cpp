@@ -8,14 +8,16 @@
 
 #include <set>
 #include <algorithm>
-
-#include "delfem2/dtri_v3.h"
+#include "delfem2/dtriv3.h"
 
 namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-static int InsertPoint_Mesh
+namespace delfem2{
+namespace dtriv3{
+
+DFM2_INLINE int InsertPoint_Mesh
  (const int itri0,
   double& r0,
   double& r1,
@@ -42,7 +44,7 @@ static int InsertPoint_Mesh
 }
 
 
-static bool pickMesh
+DFM2_INLINE bool pickMesh
  (dfm2::CVec3d& p,
   int& itriOut,
   double& r0Out,
@@ -111,7 +113,7 @@ static bool pickMesh
 }
 
 
-static int pickTriangle
+DFM2_INLINE int pickTriangle
  (dfm2::CVec3d& p,
   const dfm2::CVec3d& org,
   const dfm2::CVec3d& dir,
@@ -152,7 +154,7 @@ static int pickTriangle
 }
 
 
-static bool FindRayTriangleMeshIntersectionClosestToPoint
+DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
  (dfm2::CVec3d &intersectionPoint,
   const dfm2::CVec3d &line0,
   const dfm2::CVec3d &line1,
@@ -185,6 +187,9 @@ static bool FindRayTriangleMeshIntersectionClosestToPoint
   
   return true;
 }
+
+} // namespace dtriv3
+} // namespace delfem2
 
 // static functions
 // --------------------------------------------------------------------------

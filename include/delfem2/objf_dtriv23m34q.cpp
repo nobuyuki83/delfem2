@@ -9,7 +9,7 @@
 
 #include "delfem2/dtri.h"
 #include "delfem2/dtri_v2.h"
-#include "delfem2/dtri_v3.h"
+#include "delfem2/dtriv3.h"
 #include "delfem2/objf_v23m34q.h"
 #include "delfem2/objf_dtriv23m34q.h"
 

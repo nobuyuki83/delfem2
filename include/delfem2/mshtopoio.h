@@ -18,8 +18,9 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/funcs.h"
 
-void MeshTri3D_GeodesicPolyhedron(std::vector<double>& aXYZ1,
-                                  std::vector<unsigned int>& aTri1);
+void MeshTri3D_GeodesicPolyhedron
+ (std::vector<double>& aXYZ1,
+  std::vector<unsigned int>& aTri1);
 
 class CMeshElem{
 public:
