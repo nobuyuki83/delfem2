@@ -89,14 +89,16 @@ class Mesh():
     self.np_pos[:,1] += mag*d[1]
     self.np_pos[:,2] += mag*d[2]
 
-  def normalize(self):
+  def normalize(self, size=-1.0):
     bb = self.minmax_xyz()
     lenx = bb[1]-bb[0]
     leny = bb[3]-bb[2]
     lenz = bb[5]-bb[4]
     self.translate([-0.5*(bb[1]+bb[0]), -0.5*(bb[3]+bb[2]), -0.5*(bb[5]+bb[4])])
     lenmax = max(lenx,leny,lenz)
-    self.scale_xyz(1.0/lenmax)
+    if size < 0.0:
+      size = 1.0
+    self.scale_xyz(size/lenmax)
 
   def rotate(self,d:List[float]):
     R = rotmat3_cartesian(d)

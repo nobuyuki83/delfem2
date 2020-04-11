@@ -99,5 +99,6 @@ For the testing, DelFEM2 used following models:
 - ```test_inputs/jump.bvh``` from https://sites.google.com/a/cgspeed.com/cgspeed/motion-capture/cmu-bvh-conversion
 - ```test_input/uglysweater.jpg``` from https://www.flickr.com/photos/74812695@N00/6516495819
 - ```test_input/bolt.STEP``` from https://grabcad.com/library/anchor-bolt-2
+- ```test_inputs/epping_forest_01_1k.hdr``` from https://hdrihaven.com/hdri/?h=epping_forest_01
 
 
