@@ -68,4 +68,4 @@ test_inputs/basicModel_f_lbs_10_207_0_v1.0.0.pkl
 test_inputs/basicModel_m_lbs_10_207_0_v1.0.0.pkl
 test_inputs/smpl_model_f.npz
 test_inputs/smpl_model_m.npz
-blender/out
+examples_blender/out
