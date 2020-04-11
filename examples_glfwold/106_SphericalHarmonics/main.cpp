@@ -117,7 +117,7 @@ static void drawShphere_Radius
 const int nl = 10;
 int l=0;
 int m=0;
-std::vector<COMPLEX> aDecmpSH;
+std::vector<dfm2::COMPLEX> aDecmpSH;
 std::vector<double> aDecmpSHReal;
 
 // -------------------------------
@@ -126,7 +126,7 @@ double evaluateSH(double x, double y, double z)
 {
   double a[100];
 //  makeEvaluationArraySH(l+1,a, x,y,z);
-  makeArray_SphericalHarmonics(a, l+1, x,y,z);
+  dfm2::makeArray_SphericalHarmonics(a, l+1, x,y,z);
   int ish = l*(l+1)+m;
   return a[ish];
 }

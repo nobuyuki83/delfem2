@@ -41,6 +41,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
     ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/primitive.h                 ${DELFEM2_INC}/primitive.cpp
+    ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
@@ -48,6 +49,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
     ${DELFEM2_INC}/dtri.h                      ${DELFEM2_INC}/dtri.cpp
     ${DELFEM2_INC}/funcs.h                     ${DELFEM2_INC}/funcs.cpp
+    ${DELFEM2_INC}/slice.h                     ${DELFEM2_INC}/slice.cpp
     ${DELFEM2_INC}/vecxitrsol.h                ${DELFEM2_INC}/vecxitrsol.cpp
     ${DELFEM2_INC}/emat.h                      ${DELFEM2_INC}/emat.cpp
     ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
@@ -56,11 +58,13 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/bv.h
     ${DELFEM2_INC}/pgeo.h
+    ${DELFEM2_INC}/rigopt.h
         
     ${DELFEM2_INC}/v23m34q.h                   ${DELFEM2_INC}/v23m34q.cpp
     ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
     ${DELFEM2_INC}/dtri_v2.h                   ${DELFEM2_INC}/dtri_v2.cpp
     ${DELFEM2_INC}/dtriv3.h                    ${DELFEM2_INC}/dtriv3.cpp
+    ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
     ${DELFEM2_INC}/ilu_mats.h                  ${DELFEM2_INC}/ilu_mats.cpp
     ${DELFEM2_INC}/cad2d_v2dtri.h              ${DELFEM2_INC}/cad2d_v2dtri.cpp
     ${DELFEM2_INC}/objf_v23m34q.h              ${DELFEM2_INC}/objf_v23m34q.cpp

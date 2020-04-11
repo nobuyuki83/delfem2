@@ -41,8 +41,6 @@ IF(NOT USE_HEADERONLY)
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/dtet_v3.h                    ${DELFEM2_INC}/dtet_v3.cpp
-  ${SRC_DFM2}
   main.cpp
 )
 

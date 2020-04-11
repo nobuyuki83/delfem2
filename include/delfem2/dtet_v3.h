@@ -1,13 +1,23 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#ifndef DFM2_DTET_V3_H
+#define DFM2_DTET_V3_H
+
+#include "delfem2/dfm2_inline.h"
 #include <math.h>
 #include <vector>
 #include <cassert>
 #include <map>
-
 #include "vec3.h"
 
-const double ILL_CRT = 1.0e+20;
+namespace delfem2 {
 
-////////////////////////////////////////////////////////////////
+const double ILL_CRT = 1.0e+20;
 
 /*! 
 四面体のある面の番号
@@ -364,19 +374,24 @@ bool CheckTet(const std::vector<CETet>& tet);
 
 
 //! 四面体分割の辺のリストを得る
-bool MakeEdgeTet(unsigned int& nedge,
-			  unsigned int*& edge_ind,
-			  unsigned int*& edge,
-			  const std::vector<CETet>& tet,
-			  const unsigned int nnode);
-//! 各ノードを囲む四面体の１つを作る
-bool MakeOneTetSurNo(const std::vector<CETet>& tet,
-				  std::vector<CEPo3D>& point);
+bool MakeEdgeTet
+ (unsigned int& nedge,
+  unsigned int*& edge_ind,
+  unsigned int*& edge,
+  const std::vector<CETet>& tet,
+  const unsigned int nnode);
 
-////////////////
+//! 各ノードを囲む四面体の１つを作る
+bool MakeOneTetSurNo
+ (const std::vector<CETet>& tet,
+  std::vector<CEPo3D>& point);
+
+
 
 //! 四面体を囲む四面体を作る
 bool MakeTetSurTet(std::vector<CETet>& tet);
+
+
 //! ６面体を囲む６面体を作る
 //bool MakeHexSurHex(std::vector<SHex>& aHex);
 //! ３角形を囲む３角形を作る
@@ -392,11 +407,13 @@ bool MakeHexSurNo(unsigned int& ntetsuno,
 				  const unsigned int nnode );
  */
 //! 点を囲む四面体のリストを作る
-bool MakeTetSurNo(const std::vector<CETet>& aTet,
-				  const unsigned int nnode,
-				  unsigned int& ntetsuno,
-				  unsigned int*& tetsuno_ind,
-				  unsigned int*& tetsuno );
+bool MakeTetSurNo
+ (const std::vector<CETet>& aTet,
+  const unsigned int nnode,
+  unsigned int& ntetsuno,
+  unsigned int*& tetsuno_ind,
+  unsigned int*& tetsuno );
+
 /*
 //! 点を囲む３角形のリストを作る
 bool MakeTriSurNo(unsigned int& ntrisuno,
@@ -469,33 +486,39 @@ bool GetAddPointEdgeCrt(const ElemAroundEdge& elared,
  */
 
 //! 四面体の辺に点を加える
-bool AddPointTet_Edge(const ElemAroundEdge& elared,
-				  const unsigned int ipo_ins,
-				  std::vector<CEPo3D>& node,
-				  std::vector<CETet>& tet);
+bool AddPointTet_Edge
+ (const ElemAroundEdge& elared,
+  const unsigned int ipo_ins,
+  std::vector<CEPo3D>& node,
+  std::vector<CETet>& tet);
 
 /*! 
  * @breaf Add point inside tetrahedra and maintain delaunay
  * @param tmp_buffer should be an array of -1. (if input values are all -1, then output values are -1)
  */
-void AddPointTetDelaunay(int ip_ins,
-                         int itet_ins,
-                         std::vector<CEPo3D>& aPo3D,
-                         std::vector<CETet>& aSTet,
-                         std::vector<int>& tmp_buffer);
+void AddPointTetDelaunay
+ (int ip_ins,
+  int itet_ins,
+  std::vector<CEPo3D>& aPo3D,
+  std::vector<CETet>& aSTet,
+  std::vector<int>& tmp_buffer);
+
 
 //! 四面体の中に点を加える
-bool AddPointTet_Elem(const unsigned int itet0,
-				  const unsigned int ipo_ins,
-				  std::vector<CEPo3D>& po,
-				  std::vector<CETet>& tet);
+bool AddPointTet_Elem
+ (const unsigned int itet0,
+  const unsigned int ipo_ins,
+  std::vector<CEPo3D>& po,
+  std::vector<CETet>& tet);
 
 //! 四面体の面に点を加える
-bool AddPointTet_Face(const unsigned int itet0, 
-				  const unsigned int ifatet,
-				  const unsigned int ipo_ins,
-				  std::vector<CEPo3D>& po,
-				  std::vector<CETet>& tet);
+bool AddPointTet_Face
+ (const unsigned int itet0,
+  const unsigned int ifatet,
+  const unsigned int ipo_ins,
+  std::vector<CEPo3D>& po,
+  std::vector<CETet>& tet);
+
 /*
 //! 辺を消去する
 bool EdgeDel(const ElemAroundEdge& elared,
@@ -512,10 +535,11 @@ bool GetEdgeDelCrt(const ElemAroundEdge& elared,
  */
 
 //! 辺周りの要素を取得
-bool MakeElemAroundEdge( ElemAroundEdge& elared,
-                        const int itet0,
-                        const int idedge0,
-                        const std::vector<CETet>& tet );
+bool MakeElemAroundEdge
+ ( ElemAroundEdge& elared,
+  const int itet0,
+  const int idedge0,
+  const std::vector<CETet>& tet );
 
 /*
 double MaxCrtElemAroundPoint(const ElemAroundPoint& elarpo,
@@ -523,15 +547,16 @@ double MaxCrtElemAroundPoint(const ElemAroundPoint& elarpo,
 						  const std::vector<CPoint3D>& node);
  */
 
-/*! 
- * get list of tetrahedra around a point
+/**
+ * @brief get list of tetrahedra around a point
  */
-bool MakeElemAroundPoint( ElemAroundPoint& elarpo,
-                         const int itet0,
-                         const int inoel0,
-                         const std::vector<CETet>& tet );
+bool MakeElemAroundPoint
+ ( ElemAroundPoint& elarpo,
+  const int itet0,
+  const int inoel0,
+  const std::vector<CETet>& tet );
 
-////////////////
+
 
 /*
 double MaxCrtElemAroundEdge(const ElemAroundEdge& elared,
@@ -545,29 +570,34 @@ bool GetEdgeSwapPtnCrt(const ElemAroundEdge& elared,
 				const std::vector<CPoint3D>& node );
  */
 
-bool EdgeSwapTet(const ElemAroundEdge& elared,
-		  const int ptn,
-		  std::vector<CETet>& tet,
-		  std::vector<CEPo3D>& point );
+bool EdgeSwapTet
+ (const ElemAroundEdge& elared,
+  const int ptn,
+  std::vector<CETet>& tet,
+  std::vector<CEPo3D>& point );
 
-////////////////
+// -------------------------
 
+/*
 bool GetFaceSwapCrt(const int itet0,
 					const int iface0,
 					double& max_crt,
 					const std::vector<CETet>& tet,
 					const std::vector<CEPo3D>& node );
+ */
 
-bool FaceSwapTet(const unsigned int itet0, 
-				  const unsigned int iface0, 
-				  std::vector<CETet>& tet,
-				  std::vector<CEPo3D>& node);
+bool FaceSwapTet
+ (const unsigned int itet0,
+  const unsigned int iface0,
+  std::vector<CETet>& tet,
+  std::vector<CEPo3D>& node);
 
 
+/*
 bool DelaunayAroundPointTet(const unsigned int ipoin,
 						 std::vector<CEPo3D>& aPo3D,
 						 std::vector<CETet>& aTet);
-
+ */
 
 /*
 bool DelaunayAroundPointTri(unsigned int itri, 
@@ -579,24 +609,30 @@ bool DelaunayAroundPointTri(unsigned int itri,
 bool FlipEdgeTri( const unsigned int itri0, const unsigned int ied0,
 			   std::vector<STri3D>& tri );
 */
-////////////////////////////////////////////////////////////////
-						 
-bool ReconnectCap(const unsigned int itet0,
-					std::vector<CETet>& tet,
-					std::vector<CEPo3D>& node);
+// ------------------------------
 
-bool ReconnectSliver(const unsigned int itet0,
-					std::vector<CETet>& tet,
-					std::vector<CEPo3D>& node);
+/*
+bool ReconnectCap
+ (const unsigned int itet0,
+  std::vector<CETet>& tet,
+  std::vector<CEPo3D>& node);
+*/
+/*
+bool ReconnectSliver
+ (const unsigned int itet0,
+  std::vector<CETet>& tet,
+  std::vector<CEPo3D>& node);
+*/
+/*
+bool Reconnect
+ (std::vector<CETet>& tet,
+  std::vector<CEPo3D>& node);
+*/
 
-bool Reconnect(std::vector<CETet>& tet,
-			   std::vector<CEPo3D>& node);
 
 
 
-
-
-////////////////////////////////////////////////////////////////
+// ---------------------------------------------
 
 //! volume of tetrahedra
 inline double TetVolume
@@ -965,4 +1001,11 @@ inline double DetDelaunay3D
 	return DetDelaunay3D(node[v1],node[v2],node[v3],node[v4],node[v5]);
 }
 
-//! @}
+} // namespace delfem2
+
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/dtet_v3.cpp"
+#endif
+
+#endif

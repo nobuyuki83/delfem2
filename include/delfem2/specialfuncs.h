@@ -5,13 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef MATHFUNCS_H
-#define MATHFUNCS_H
-
+#ifndef DFM2_SPECIALFUNCS_H
+#define DFM2_SPECIALFUNCS_H
+#include "delfem2/dfm2_inline.h"
 #include <cassert>
 #include <complex>
 #include <iostream>
 #include <vector>
+
+namespace delfem2 {
 
 #ifndef COMPLEX
 typedef std::complex<double> COMPLEX;
@@ -119,6 +121,12 @@ inline void makeArrayAssociatedLegendre
   }
   if (n==3) return;
 }
+
+}
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/specialfuncs.cpp"
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////////

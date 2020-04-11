@@ -81,7 +81,671 @@ const unsigned int sup2Noel5[nSupSwap5][nTriInSwap5][3] = {
 	{ { 0, 1, 2 },{ 0, 2, 3 },{ 0, 3, 4 } },
 };
 
-bool MakeTetSurTet(std::vector<CETet>& tet)
+namespace delfem2{
+namespace dtet{
+
+class CNew
+{
+public:
+  CNew(int it_old, int ift_old){
+    this->it_old = it_old;
+    this->ift_old = ift_old;
+    iold = -1;
+    it_new = -1;
+    inewsur[0] = -1;
+    inewsur[1] = -1;
+    inewsur[2] = -1;
+  }
+public:
+  int it_old; // tri index old
+  int ift_old; // tri face index old
+               //
+  int iv[3];
+  int inewsur[3];
+  int irelsur[3];
+  //
+  int iold;
+  int it_new; // tri index new
+};
+
+class COld
+{
+public:
+  COld(int it_old, const CETet& stet){
+    this->it_old = it_old;
+    this->stet = stet;
+  }
+public:
+  CETet stet;
+  int it_old;
+};
+
+bool Swap3Elared
+(const ElemAroundEdge& elared,
+ const int ptn,
+ std::vector<CETet>& tet,
+ std::vector<CEPo3D>& node )
+{
+  assert( elared.size() == 3 );
+  
+  const int iold0 = elared.e[0].first;
+  const int iold1 = elared.e[1].first;
+  const int iold2 = elared.e[2].first;
+  
+  const CETet old0 = tet[ iold0 ];
+  const CETet old1 = tet[ iold1 ];
+  const CETet old2 = tet[ iold2 ];
+  
+  const unsigned int noel0d = tetRel[elared.e[0].second][0];
+  const unsigned int noel0u = tetRel[elared.e[0].second][1];
+  const unsigned int noel1d = tetRel[elared.e[1].second][0];
+  const unsigned int noel1u = tetRel[elared.e[1].second][1];
+  const unsigned int noel2d = tetRel[elared.e[2].second][0];
+  const unsigned int noel2u = tetRel[elared.e[2].second][1];
+  
+  const unsigned int nod = tet[iold0].v[noel0d];
+  const unsigned int nou = tet[iold0].v[noel0u];
+  
+  assert( nod == tet[iold1].v[noel1d] );
+  assert( nou == tet[iold1].v[noel1u] );
+  assert( nod == tet[iold2].v[noel2d] );
+  assert( nou == tet[iold2].v[noel2u] );
+  
+  const int inew0 = iold0;
+  const int inew1 = iold1;
+  
+  CETet& tet_u = tet[inew0];
+  CETet& tet_d = tet[inew1];
+  
+  {
+    tet_u.v[0] = nou;
+    tet_u.v[1] = elared.n[0];
+    tet_u.v[2] = elared.n[2];
+    tet_u.v[3] = elared.n[1];
+    
+    tet_u.s[0] = inew1;
+    tet_u.s[1] = old1.s[noel1d];
+    tet_u.s[2] = old0.s[noel0d];
+    tet_u.s[3] = old2.s[noel2d];
+    
+    tet_u.g[0] = -2;
+    tet_u.g[1] = old1.g[noel1d];
+    tet_u.g[2] = old0.g[noel0d];
+    tet_u.g[3] = old2.g[noel2d];
+    
+    tet_u.f[0] = 0;
+    if( old1.g[noel1d] == -2 ){
+      const unsigned int* rel1 = tetRel[ old1.f[noel1d] ];
+      tet_u.f[1] = noel2Rel[ rel1[noel1u]*4+rel1[noel1d] ];
+      tet[ old1.s[noel1d] ].s[ rel1[noel1d] ] = inew0;
+      tet[ old1.s[noel1d] ].f[ rel1[noel1d] ] = invTetRel[tet_u.f[1]];
+    }
+    if( old0.g[noel0d] == -2 ){
+      const unsigned int* rel1 = tetRel[ old0.f[noel0d] ];
+      tet_u.f[2] = noel2Rel[ rel1[noel0u]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
+      tet[ old0.s[noel0d] ].s[ rel1[noel0d] ] = inew0;
+      tet[ old0.s[noel0d] ].f[ rel1[noel0d] ] = invTetRel[tet_u.f[2]];
+    }
+    if( old2.g[noel2d] == -2 ){
+      const unsigned int* rel1 = tetRel[ old2.f[noel2d] ];
+      tet_u.f[3] = noel2Rel[ rel1[noel2u]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
+      tet[ old2.s[noel2d] ].s[ rel1[noel2d] ] = inew0;
+      tet[ old2.s[noel2d] ].f[ rel1[noel2d] ] = invTetRel[tet_u.f[3]];
+    }
+  }
+  
+  {
+    tet_d.v[0] = nod;
+    tet_d.v[1] = elared.n[0];
+    tet_d.v[2] = elared.n[1];
+    tet_d.v[3] = elared.n[2];
+    
+    tet_d.s[0] = inew0;
+    tet_d.s[1] = old1.s[noel1u];
+    tet_d.s[2] = old2.s[noel2u];
+    tet_d.s[3] = old0.s[noel0u];
+    
+    tet_d.g[0] = -2;
+    tet_d.g[1] = old1.g[noel1u];
+    tet_d.g[2] = old2.g[noel2u];
+    tet_d.g[3] = old0.g[noel0u];
+    
+    tet_d.f[0] = 0;
+    if( old1.g[noel1u] == -2 ){
+      const unsigned int* rel1 = tetRel[ old1.f[noel1u] ];
+      tet_d.f[1] = noel2Rel[ rel1[noel1d]*4+rel1[noel1u] ];
+      tet[ old1.s[noel1u] ].s[ rel1[noel1u] ] = inew1;
+      tet[ old1.s[noel1u] ].f[ rel1[noel1u] ] = invTetRel[tet_d.f[1]];
+    }
+    if( old2.g[noel2u] == -2 ){
+      const unsigned int* rel1 = tetRel[ old2.f[noel2u] ];
+      tet_d.f[2] = noel2Rel[ rel1[noel2d]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
+      tet[ old2.s[noel2u] ].s[ rel1[noel2u] ] = inew1;
+      tet[ old2.s[noel2u] ].f[ rel1[noel2u] ] = invTetRel[tet_d.f[2]];
+    }
+    if( old0.g[noel0u] == -2 ){
+      const unsigned int* rel1 = tetRel[ old0.f[noel0u] ];
+      tet_d.f[3] = noel2Rel[ rel1[noel0d]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
+      tet[ old0.s[noel0u] ].s[ rel1[noel0u] ] = inew1;
+      tet[ old0.s[noel0u] ].f[ rel1[noel0u] ] = invTetRel[tet_d.f[3]];
+    }
+  }
+  
+  node[nod].e = inew1;  node[nod].poel = 0;
+  node[nou].e = inew0;  node[nou].poel = 0;
+  node[ elared.n[0] ].e = inew0;  node[ elared.n[0] ].poel = 1;
+  node[ elared.n[1] ].e = inew0;  node[ elared.n[1] ].poel = 3;
+  node[ elared.n[2] ].e = inew0;  node[ elared.n[2] ].poel = 2;
+  
+  const int idist = iold2;
+  {
+    const int iend0 = tet.size()-1;
+    if( idist != iend0 ){
+      tet[idist] = tet[iend0];
+      CETet& dist = tet[idist];
+      if( dist.g[0] == -2 ){  tet[ dist.s[0] ].s[ tetRel[dist.f[0]][0] ] = idist;  }
+      if( dist.g[1] == -2 ){  tet[ dist.s[1] ].s[ tetRel[dist.f[1]][1] ] = idist;  }
+      if( dist.g[2] == -2 ){  tet[ dist.s[2] ].s[ tetRel[dist.f[2]][2] ] = idist;  }
+      if( dist.g[3] == -2 ){  tet[ dist.s[3] ].s[ tetRel[dist.f[3]][3] ] = idist;  }
+      node[ dist.v[0] ].e = idist;  node[ dist.v[0] ].poel = 0;
+      node[ dist.v[1] ].e = idist;  node[ dist.v[1] ].poel = 1;
+      node[ dist.v[2] ].e = idist;  node[ dist.v[2] ].poel = 2;
+      node[ dist.v[3] ].e = idist;  node[ dist.v[3] ].poel = 3;
+    }
+  }
+  tet.resize( tet.size()-1 );
+  
+  return true;
+}
+
+
+bool Swap5Elared
+(const ElemAroundEdge& elared,
+ const int ptn,
+ std::vector<CETet>& tet,
+ std::vector<CEPo3D>& node)
+{
+  assert( elared.size() == 5 );
+  assert( ptn >= 0 && ptn < 5 );
+  
+  CETet old_tet[5];
+  old_tet[0] = tet[ elared.e[0].first ];
+  old_tet[1] = tet[ elared.e[1].first ];
+  old_tet[2] = tet[ elared.e[2].first ];
+  old_tet[3] = tet[ elared.e[3].first ];
+  old_tet[4] = tet[ elared.e[4].first ];
+  
+  const int inew_tet[nTriInSwap5][2] = {
+    { (int)elared.e[0].first, (int)elared.e[1].first },
+    { (int)elared.e[2].first, (int)elared.e[3].first },
+    { (int)elared.e[4].first, (int)tet.size()        }
+  };
+  /*
+   std::cout << inew_tet[0][0] << " " << inew_tet[0][1] << std::endl;
+   std::cout << inew_tet[1][0] << " " << inew_tet[1][1] << std::endl;
+   std::cout << inew_tet[2][0] << " " << inew_tet[2][1] << std::endl;
+   */
+  //  std::cout << " Pattern 5 " << ptn << std::endl;
+  
+  tet.resize( tet.size()+1 );
+  
+  const int isup_swap = swap2SupSwapRot[ptn][0];
+  const unsigned int* rot = indexRot5[ swap2SupSwapRot[ptn][1] ];
+  
+  for(unsigned int itri=0;itri<nTriInSwap5;itri++){
+    tet[ inew_tet[itri][0] ].v[0] = elared.nod;
+    tet[ inew_tet[itri][0] ].v[1] = elared.n[ rot[sup2Noel5[isup_swap][itri][0]] ];
+    tet[ inew_tet[itri][0] ].v[2] = elared.n[ rot[sup2Noel5[isup_swap][itri][1]] ];
+    tet[ inew_tet[itri][0] ].v[3] = elared.n[ rot[sup2Noel5[isup_swap][itri][2]] ];
+    
+    tet[ inew_tet[itri][1] ].v[0] = elared.nou;
+    tet[ inew_tet[itri][1] ].v[1] = elared.n[ rot[sup2Noel5[isup_swap][itri][0]] ];
+    tet[ inew_tet[itri][1] ].v[2] = elared.n[ rot[sup2Noel5[isup_swap][itri][2]] ];
+    tet[ inew_tet[itri][1] ].v[3] = elared.n[ rot[sup2Noel5[isup_swap][itri][1]] ];
+  }
+  
+  ////////////////
+  const int onetetsurpo[5][2] = {
+    { 0, 1 },
+    { 0, 2 },
+    { 0, 3 },
+    { 1, 3 },
+    { 2, 3 }
+  };
+  node[ elared.nod ].e = inew_tet[0][0];  node[ elared.nod ].poel = 0;
+  node[ elared.nou ].e = inew_tet[0][1];  node[ elared.nou ].poel = 0;
+  for(int ipo=0;ipo<5;ipo++){
+    node[ elared.n[ rot[ipo] ] ].e = inew_tet[ onetetsurpo[ipo][0] ][0];
+    node[ elared.n[ rot[ipo] ] ].poel = onetetsurpo[ipo][1];
+  }
+  
+  ////////////////
+  const int outer[5][5] = {
+    { 0, 3, 2, 3, 3 },
+    { 0, 1, 1, 1, 0 },
+    { 1, 1, 1, 1, 0 },
+    { 2, 1, 1, 1, 0 },
+    { 2, 2, 3, 2, 2 }
+  };
+  for(int isout=0;isout<5;isout++){
+    const int ilout = rot[isout];
+    const int* souter = outer[isout];
+    const int old_noelu = tetRel[elared.e[ilout].second][1];
+    const int old_noeld = tetRel[elared.e[ilout].second][0];
+    
+    // downer tri
+    const int inew_tetd = inew_tet[souter[0]][0];
+    tet[inew_tetd].s[souter[1]] = old_tet[ilout].s[old_noelu];
+    tet[inew_tetd].g[souter[1]] = old_tet[ilout].g[old_noelu];
+    if( old_tet[ilout].g[old_noelu] == -2 ){
+      assert( old_tet[ilout].s[old_noelu] >= 0 && old_tet[ilout].s[old_noelu] < tet.size() );
+      const unsigned int* rel1 = tetRel[ old_tet[ilout].f[old_noelu] ];
+      tet[inew_tetd].f[souter[1]] = noel2Rel[ rel1[old_noeld]*4 + rel1[tetRel[elared.e[ilout].second][souter[3]]] ];
+      tet[old_tet[ilout].s[old_noelu]].s[rel1[old_noelu]] = inew_tetd;
+      tet[old_tet[ilout].s[old_noelu]].f[rel1[old_noelu]] = invTetRel[ tet[inew_tetd].f[souter[1]] ];
+    }
+    
+    // upper tri
+    const int inew_tetu = inew_tet[souter[0]][1];
+    tet[inew_tetu].s[souter[2]] = old_tet[ilout].s[old_noeld];
+    tet[inew_tetu].g[souter[2]] = old_tet[ilout].g[old_noeld];
+    if( old_tet[ilout].g[old_noeld] == -2 ){
+      assert( old_tet[ilout].s[old_noeld] >= 0 && old_tet[ilout].s[old_noeld] < tet.size() );
+      const unsigned int* rel1 = tetRel[ old_tet[ilout].f[old_noeld] ];
+      tet[inew_tetu].f[souter[2]] = noel2Rel[ rel1[old_noelu]*4 + rel1[tetRel[elared.e[ilout].second][souter[4]]] ];
+      tet[old_tet[ilout].s[old_noeld]].s[rel1[old_noeld]] = inew_tetu;
+      tet[old_tet[ilout].s[old_noeld]].f[rel1[old_noeld]] = invTetRel[ tet[inew_tetu].f[souter[2]] ];
+    }
+  }
+  
+  const int inner[4][6] = {
+    { 0, 2, 3, 1, 0, 0 },
+    { 1, 2, 3, 2, 0, 0 },
+    { 1, 3, 2, 0, 0, 0 },
+    { 2, 3, 2, 1, 0, 0 }
+  };
+  
+  for(int iin=0;iin<4;iin++){
+    const int* linner = inner[iin];
+    const int inew_tetd = inew_tet[linner[0]][0];
+    const int inew_tetu = inew_tet[linner[0]][1];
+    
+    tet[inew_tetd].s[linner[1]] = inew_tet[linner[3]][0];
+    tet[inew_tetd].g[linner[1]] = -2;
+    tet[inew_tetd].f[linner[1]] = linner[4];
+    
+    tet[inew_tetu].s[linner[2]] = inew_tet[linner[3]][1];
+    tet[inew_tetu].g[linner[2]] = -2;
+    tet[inew_tetu].f[linner[2]] = linner[5];
+  }
+  
+  for(unsigned int itri=0;itri<nTriInSwap5;itri++){
+    const int inew_tetd = inew_tet[itri][0];
+    const int inew_tetu = inew_tet[itri][1];
+    
+    tet[inew_tetd].s[0] = inew_tetu;
+    tet[inew_tetd].g[0] = -2;
+    tet[inew_tetd].f[0] = 0;
+    
+    tet[inew_tetu].s[0] = inew_tetd;
+    tet[inew_tetu].g[0] = -2;
+    tet[inew_tetu].f[0] = 0;
+  }
+  
+  return true;
+}
+
+bool Swap4Elared
+(const ElemAroundEdge& elared,
+ const int ptn,
+ std::vector<CETet>& tet,
+ std::vector<CEPo3D>& node )
+{
+  assert( elared.size() == 4 );
+  
+  const int iold0 = elared.e[0].first;
+  const int iold1 = elared.e[1].first;
+  const int iold2 = elared.e[2].first;
+  const int iold3 = elared.e[3].first;
+  
+  const CETet old0 = tet[ iold0 ];
+  const CETet old1 = tet[ iold1 ];
+  const CETet old2 = tet[ iold2 ];
+  const CETet old3 = tet[ iold3 ];
+  
+  const unsigned int noel0d = tetRel[elared.e[0].second][0];
+  const unsigned int noel0u = tetRel[elared.e[0].second][1];
+  const unsigned int noel1d = tetRel[elared.e[1].second][0];
+  const unsigned int noel1u = tetRel[elared.e[1].second][1];
+  const unsigned int noel2d = tetRel[elared.e[2].second][0];
+  const unsigned int noel2u = tetRel[elared.e[2].second][1];
+  const unsigned int noel3d = tetRel[elared.e[3].second][0];
+  const unsigned int noel3u = tetRel[elared.e[3].second][1];
+  
+  const unsigned int nod = elared.nod;
+  const unsigned int nou = elared.nou;
+  
+  assert( (int)nod == tet[iold0].v[noel0d] );
+  assert( (int)nou == tet[iold0].v[noel0u] );
+  assert( (int)nod == tet[iold1].v[noel1d] );
+  assert( (int)nou == tet[iold1].v[noel1u] );
+  assert( (int)nod == tet[iold2].v[noel2d] );
+  assert( (int)nou == tet[iold2].v[noel2u] );
+  assert( (int)nod == tet[iold3].v[noel3d] );
+  assert( (int)nou == tet[iold3].v[noel3u] );
+  
+  const int inew_u0 = iold0;
+  const int inew_d0 = iold1;
+  const int inew_u1 = iold2;
+  const int inew_d1 = iold3;
+  /*
+   std::cout << iold0 << " " << tet[iold0].s[noel0d] << " " << tet[iold0].s[noel0u] << std::endl;
+   std::cout << iold1 << " " << tet[iold1].s[noel1d] << " " << tet[iold1].s[noel1u] << std::endl;
+   std::cout << iold2 << " " << tet[iold2].s[noel2d] << " " << tet[iold2].s[noel2u] << std::endl;
+   std::cout << iold3 << " " << tet[iold3].s[noel3d] << " " << tet[iold3].s[noel3u] << std::endl;
+   std::cout << " pattern " << ptn << std::endl;
+   */
+  if( ptn == 0 ){
+    {
+      CETet& new_tet = tet[inew_u0];
+      
+      new_tet.v[0]=nou;
+      new_tet.v[1]=elared.n[0];
+      new_tet.v[2]=elared.n[2];
+      new_tet.v[3]=elared.n[1];
+      
+      new_tet.s[0]=inew_d0;
+      new_tet.s[1]=old1.s[noel1d];
+      new_tet.s[2]=old0.s[noel0d];
+      new_tet.s[3]=inew_u1;
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=old1.g[noel1d];
+      new_tet.g[2]=old0.g[noel0d];
+      new_tet.g[3]=-2;
+      
+      new_tet.f[0] = 0;
+      if( old1.g[noel1d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old1.f[noel1d] ];
+        new_tet.f[1] = noel2Rel[ rel1[noel1u]*4+rel1[noel1d] ];
+        tet[ old1.s[noel1d] ].s[ rel1[noel1d] ] = inew_u0;
+        tet[ old1.s[noel1d] ].f[ rel1[noel1d] ] = invTetRel[new_tet.f[1]];
+      }
+      if( old0.g[noel0d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old0.f[noel0d] ];
+        new_tet.f[2] = noel2Rel[ rel1[noel0u]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
+        tet[ old0.s[noel0d] ].s[ rel1[noel0d] ] = inew_u0;
+        tet[ old0.s[noel0d] ].f[ rel1[noel0d] ] = invTetRel[new_tet.f[2]];
+      }
+      new_tet.f[3] = 0;
+    }
+    
+    {
+      CETet& new_tet = tet[inew_d0];
+      
+      new_tet.v[0]=nod;
+      new_tet.v[1]=elared.n[0];
+      new_tet.v[2]=elared.n[1];
+      new_tet.v[3]=elared.n[2];
+      
+      new_tet.s[0]=inew_u0;
+      new_tet.s[1]=old1.s[noel1u];
+      new_tet.s[2]=inew_d1;
+      new_tet.s[3]=old0.s[noel0u];
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=old1.g[noel1u];
+      new_tet.g[2]=-2;
+      new_tet.g[3]=old0.g[noel0u];
+      
+      new_tet.f[0] = 0;
+      if( old1.g[noel1u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old1.f[noel1u] ];
+        new_tet.f[1] = noel2Rel[ rel1[noel1d]*4+rel1[noel1u] ];
+        tet[ old1.s[noel1u] ].s[ rel1[noel1u] ] = inew_d0;
+        tet[ old1.s[noel1u] ].f[ rel1[noel1u] ] = invTetRel[new_tet.f[1]];
+      }
+      new_tet.f[2] = 0;
+      if( old0.g[noel0u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old0.f[noel0u] ];
+        new_tet.f[3] = noel2Rel[ rel1[noel0d]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
+        tet[ old0.s[noel0u] ].s[ rel1[noel0u] ] = inew_d0;
+        tet[ old0.s[noel0u] ].f[ rel1[noel0u] ] = invTetRel[new_tet.f[3]];
+      }
+    }
+    
+    {
+      CETet& new_tet = tet[inew_u1];
+      
+      new_tet.v[0]=nou;
+      new_tet.v[1]=elared.n[0];
+      new_tet.v[2]=elared.n[3];
+      new_tet.v[3]=elared.n[2];
+      
+      new_tet.s[0]=inew_d1;
+      new_tet.s[1]=old2.s[noel2d];
+      new_tet.s[2]=inew_u0;
+      new_tet.s[3]=old3.s[noel3d];
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=old2.g[noel2d];
+      new_tet.g[2]=-2;
+      new_tet.g[3]=old3.g[noel3d];
+      
+      new_tet.f[0] = 0;
+      if( old2.g[noel2d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old2.f[noel2d] ];
+        new_tet.f[1] = noel2Rel[ rel1[noel2u]*4+rel1[noel2d] ];
+        tet[ old2.s[noel2d] ].s[ rel1[noel2d] ] = inew_u1;
+        tet[ old2.s[noel2d] ].f[ rel1[noel2d] ] = invTetRel[new_tet.f[1]];
+      }
+      new_tet.f[2] = 0;
+      if( old3.g[noel3d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old3.f[noel3d] ];
+        new_tet.f[3] = noel2Rel[ rel1[noel3u]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
+        tet[ old3.s[noel3d] ].s[ rel1[noel3d] ] = inew_u1;
+        tet[ old3.s[noel3d] ].f[ rel1[noel3d] ] = invTetRel[new_tet.f[3]];
+      }
+    }
+    
+    {
+      CETet& new_tet = tet[inew_d1];
+      
+      new_tet.v[0]=nod;
+      new_tet.v[1]=elared.n[0];
+      new_tet.v[2]=elared.n[2];
+      new_tet.v[3]=elared.n[3];
+      
+      new_tet.s[0]=inew_u1;
+      new_tet.s[1]=old2.s[noel2u];
+      new_tet.s[2]=old3.s[noel3u];
+      new_tet.s[3]=inew_d0;
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=old2.g[noel2u];
+      new_tet.g[2]=old3.g[noel3u];
+      new_tet.g[3]=-2;
+      
+      new_tet.f[0] = 0;
+      if( old2.g[noel2u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old2.f[noel2u] ];
+        new_tet.f[1] = noel2Rel[ rel1[noel2d]*4+rel1[noel2u] ];
+        tet[ old2.s[noel2u] ].s[ rel1[noel2u] ] = inew_d1;
+        tet[ old2.s[noel2u] ].f[ rel1[noel2u] ] = invTetRel[new_tet.f[1]];
+      }
+      if( old3.g[noel3u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old3.f[noel3u] ];
+        new_tet.f[2] = noel2Rel[ rel1[noel3d]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
+        tet[ old3.s[noel3u] ].s[ rel1[noel3u] ] = inew_d1;
+        tet[ old3.s[noel3u] ].f[ rel1[noel3u] ] = invTetRel[new_tet.f[2]];
+      }
+      new_tet.f[3] = 0;
+    }
+    node[nod].e = inew_d0;  node[nod].poel = 0;
+    node[nou].e = inew_u0;  node[nou].poel = 0;
+    node[ elared.n[0] ].e = inew_u0;  node[ elared.n[0] ].poel = 1;
+    node[ elared.n[1] ].e = inew_u0;  node[ elared.n[1] ].poel = 3;
+    node[ elared.n[2] ].e = inew_u0;  node[ elared.n[2] ].poel = 2;
+    node[ elared.n[3] ].e = inew_u1;  node[ elared.n[3] ].poel = 2;
+  }
+  else if( ptn == 1 ){
+    {
+      CETet& new_tet = tet[inew_u0];
+      
+      new_tet.v[0]=nou;
+      new_tet.v[1]=elared.n[0];
+      new_tet.v[2]=elared.n[3];
+      new_tet.v[3]=elared.n[1];
+      
+      new_tet.s[0]=inew_d0;
+      new_tet.s[1]=inew_u1;
+      new_tet.s[2]=old0.s[noel0d];
+      new_tet.s[3]=old3.s[noel3d];
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=-2;
+      new_tet.g[2]=old0.g[noel0d];
+      new_tet.g[3]=old3.g[noel3d];
+      
+      new_tet.f[0] = 0;
+      new_tet.f[1] = 2;
+      if( old0.g[noel0d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old0.f[noel0d] ];
+        new_tet.f[2] = noel2Rel[ rel1[noel0u]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
+        tet[ old0.s[noel0d] ].s[ rel1[noel0d] ] = inew_u0;
+        tet[ old0.s[noel0d] ].f[ rel1[noel0d] ] = invTetRel[new_tet.f[2]];
+      }
+      if( old3.g[noel3d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old3.f[noel3d] ];
+        new_tet.f[3] = noel2Rel[ rel1[noel3u]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
+        tet[ old3.s[noel3d] ].s[ rel1[noel3d] ] = inew_u0;
+        tet[ old3.s[noel3d] ].f[ rel1[noel3d] ] = invTetRel[new_tet.f[3]];
+      }
+    }
+    
+    {
+      CETet& new_tet = tet[inew_d0];
+      
+      new_tet.v[0]=nod;
+      new_tet.v[1]=elared.n[0];
+      new_tet.v[2]=elared.n[1];
+      new_tet.v[3]=elared.n[3];
+      
+      new_tet.s[0]=inew_u0;
+      new_tet.s[1]=inew_d1;
+      new_tet.s[2]=old3.s[noel3u];
+      new_tet.s[3]=old0.s[noel0u];
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=-2;
+      new_tet.g[2]=old3.g[noel3u];
+      new_tet.g[3]=old0.g[noel0u];
+      
+      new_tet.f[0] = 0;
+      new_tet.f[1] = 1;
+      if( old3.g[noel3u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old3.f[noel3u] ];
+        new_tet.f[2] = noel2Rel[ rel1[noel3d]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
+        tet[ old3.s[noel3u] ].s[ rel1[noel3u] ] = inew_d0;
+        tet[ old3.s[noel3u] ].f[ rel1[noel3u] ] = invTetRel[new_tet.f[2]];
+      }
+      if( old0.g[noel0u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old0.f[noel0u] ];
+        new_tet.f[3] = noel2Rel[ rel1[noel0d]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
+        tet[ old0.s[noel0u] ].s[ rel1[noel0u] ] = inew_d0;
+        tet[ old0.s[noel0u] ].f[ rel1[noel0u] ] = invTetRel[new_tet.f[3]];
+      }
+    }
+    
+    {
+      CETet& new_tet = tet[inew_u1];
+      
+      new_tet.v[0]=nou;
+      new_tet.v[1]=elared.n[3];
+      new_tet.v[2]=elared.n[2];
+      new_tet.v[3]=elared.n[1];
+      
+      new_tet.s[0]=inew_d1;
+      new_tet.s[1]=old1.s[noel1d];
+      new_tet.s[2]=inew_u0;
+      new_tet.s[3]=old2.s[noel2d];
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=old1.g[noel1d];
+      new_tet.g[2]=-2;
+      new_tet.g[3]=old2.g[noel2d];
+      
+      new_tet.f[0] = 0;
+      if( old1.g[noel1d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old1.f[noel1d] ];
+        new_tet.f[1] = noel2Rel[ rel1[noel1u]*4+rel1[noel1d] ];
+        tet[ old1.s[noel1d] ].s[ rel1[noel1d] ] = inew_u1;
+        tet[ old1.s[noel1d] ].f[ rel1[noel1d] ] = invTetRel[new_tet.f[1]];
+      }
+      new_tet.f[2] = 2;
+      if( old2.g[noel2d] == -2 ){
+        const unsigned int* rel1 = tetRel[ old2.f[noel2d] ];
+        new_tet.f[3] = noel2Rel[ rel1[noel2u]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
+        tet[ old2.s[noel2d] ].s[ rel1[noel2d] ] = inew_u1;
+        tet[ old2.s[noel2d] ].f[ rel1[noel2d] ] = invTetRel[new_tet.f[3]];
+      }
+    }
+    
+    {
+      CETet& new_tet = tet[inew_d1];
+      
+      new_tet.v[0]=nod;
+      new_tet.v[1]=elared.n[3];
+      new_tet.v[2]=elared.n[1];
+      new_tet.v[3]=elared.n[2];
+      
+      new_tet.s[0]=inew_u1;
+      new_tet.s[1]=old1.s[noel1u];
+      new_tet.s[2]=old2.s[noel2u];
+      new_tet.s[3]=inew_d0;
+      
+      new_tet.g[0]=-2;
+      new_tet.g[1]=old1.g[noel1u];
+      new_tet.g[2]=old2.g[noel2u];
+      new_tet.g[3]=-2;
+      
+      new_tet.f[0] = 0;
+      if( old1.g[noel1u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old1.f[noel1u] ];
+        new_tet.f[1] = noel2Rel[ rel1[noel1d]*4+rel1[noel1u] ];
+        tet[ old1.s[noel1u] ].s[ rel1[noel1u] ] = inew_d1;
+        tet[ old1.s[noel1u] ].f[ rel1[noel1u] ] = invTetRel[new_tet.f[1]];
+      }
+      if( old2.g[noel2u] == -2 ){
+        const unsigned int* rel1 = tetRel[ old2.f[noel2u] ];
+        new_tet.f[2] = noel2Rel[ rel1[noel2d]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
+        tet[ old2.s[noel2u] ].s[ rel1[noel2u] ] = inew_d1;
+        tet[ old2.s[noel2u] ].f[ rel1[noel2u] ] = invTetRel[new_tet.f[2]];
+      }
+      new_tet.f[3] = 1;
+    }
+    node[nod].e = inew_d0;  node[nod].poel = 0;
+    node[nou].e = inew_u0;  node[nou].poel = 0;
+    node[ elared.n[0] ].e = inew_u0;  node[ elared.n[0] ].poel = 1;
+    node[ elared.n[1] ].e = inew_u0;  node[ elared.n[1] ].poel = 3;
+    node[ elared.n[2] ].e = inew_u1;  node[ elared.n[2] ].poel = 2;
+    node[ elared.n[3] ].e = inew_u0;  node[ elared.n[3] ].poel = 2;
+    return false;
+  }
+  else{
+    return false;
+  }
+  
+  return true;
+}
+
+} // namespace dtet
+} // namespace delfem2
+
+// =====================================================================
+
+
+bool dfm2::MakeTetSurTet(std::vector<CETet>& tet)
 {
 	unsigned int ntetsuno;
 	unsigned int* tetsuno_ind = 0;
@@ -213,8 +877,9 @@ bool MakeTetSurTet(std::vector<CETet>& tet)
 	return true;
 }
 
-bool MakeOneTetSurNo(const std::vector<CETet>& tet,
-					 std::vector<CEPo3D>& point)
+bool dfm2::MakeOneTetSurNo
+ (const std::vector<CETet>& tet,
+  std::vector<CEPo3D>& point)
 {
 	assert( !point.empty() );
 	assert( !tet.empty() );
@@ -235,7 +900,8 @@ bool MakeOneTetSurNo(const std::vector<CETet>& tet,
 	return true;
 }
 
-bool MakeTetSurNo(const std::vector<CETet>& tet,
+bool dfm2::MakeTetSurNo
+ (const std::vector<CETet>& tet,
 	const unsigned int npoin,
 	unsigned int& ntetsupo,
 	unsigned int*& tetsupo_ind,
@@ -538,7 +1204,7 @@ bool MakeOuterBoundTet
 */ 
  
  
-bool MakeEdgeTet
+bool dfm2::MakeEdgeTet
 (unsigned int& nedge,
  unsigned int*& edge_ind,
  unsigned int*& edge,
@@ -1013,8 +1679,9 @@ bool CheckTri(const std::vector<STri3D>& tri )
  */
 
 
-bool CheckTet(const std::vector<CETet>& aSTet,
-			  const std::vector<CEPo3D>& aPo3D)
+bool dfm2::CheckTet
+ (const std::vector<CETet>& aSTet,
+  const std::vector<CEPo3D>& aPo3D)
 {
 	std::cout << " *** CheckTet *** ";
 
@@ -1086,7 +1753,7 @@ bool CheckTet(const std::vector<CETet>& aSTet,
 }
 
 
-bool CheckTet(const std::vector<CETet>& tet)
+bool dfm2::CheckTet(const std::vector<CETet>& tet)
 {
 	std::cout << " *** CheckTet *** ";
 	
@@ -1136,43 +1803,7 @@ bool CheckTet(const std::vector<CETet>& tet)
 
 // --------------------------------------------------------------
 
-class CNew
-{
-public:
-  CNew(int it_old, int ift_old){
-    this->it_old = it_old;
-    this->ift_old = ift_old;
-    iold = -1;
-    it_new = -1;
-    inewsur[0] = -1;
-    inewsur[1] = -1;
-    inewsur[2] = -1;
-  }
-public:
-  int it_old; // tri index old
-  int ift_old; // tri face index old
-  ////
-  int iv[3];
-  int inewsur[3];
-  int irelsur[3];
-  ///
-  int iold;
-  int it_new; // tri index new
-};
-
-class COld
-{
-public:
-  COld(int it_old, const CETet& stet){
-    this->it_old = it_old;
-    this->stet = stet;
-  }
-public:
-  CETet stet;
-  int it_old;
-};
-
-void AddPointTetDelaunay
+void dfm2::AddPointTetDelaunay
 (int ip_ins,
  int itet_ins,
 std::vector<CEPo3D>& aPo3D,
@@ -1198,11 +1829,9 @@ std::vector<int>& tmp_buffer)
     2,	// 8 22
   };
 
-  ////////////////////////////////////////////////////////////////
-
-  ////
-  std::vector<CNew> aNew; // faces outside
-  std::vector<COld> aOld;
+  // ----------------------------------------
+  std::vector<dtet::CNew> aNew; // faces outside
+  std::vector<dtet::COld> aOld;
   {
     tmp_buffer.resize(aSTet.size()*4, -1);
     const dfm2::CVec3d& p_ins = aPo3D[ip_ins].p;
@@ -1224,7 +1853,7 @@ std::vector<int>& tmp_buffer)
         else if( tmp_buffer[it0*4+3] != -1 ){ iold0 = tmp_buffer[it0*4+3]; }
         else{
           iold0 = (int)aOld.size();
-          aOld.push_back(COld(it0,aSTet[it0]));
+          aOld.push_back(dtet::COld(it0,aSTet[it0]));
         }
       }
       if (tmp_buffer[it0*4+ift0]>=0) continue;
@@ -1237,7 +1866,7 @@ std::vector<int>& tmp_buffer)
         else if (!aSTet[jt0].isInside(p_ins, aPo3D)){ is_out = true; }
       }
       if (is_out){
-        CNew newtet(it0, ift0);
+        dtet::CNew newtet(it0, ift0);
         newtet.iold = iold0;
         aNew.push_back(newtet);
         continue;
@@ -1462,9 +2091,9 @@ std::vector<int>& tmp_buffer)
   }
 }
 
-/////////////////////////////////////////////////////////////////////////
+// -------------------------------
 
-bool MakeElemAroundEdge
+bool dfm2::MakeElemAroundEdge
 ( ElemAroundEdge& elared,
  const int itet0,
  const int idedge0,
@@ -1562,624 +2191,7 @@ double MaxCrtElemAroundEdge(const ElemAroundEdge& elared,
 }
  */
 
-bool Swap3Elared
-(const ElemAroundEdge& elared,
- const int ptn,
- std::vector<CETet>& tet,
- std::vector<CEPo3D>& node )
-{
-	assert( elared.size() == 3 );
 
-	const int iold0 = elared.e[0].first;
-	const int iold1 = elared.e[1].first;
-	const int iold2 = elared.e[2].first;
-
-	const CETet old0 = tet[ iold0 ];
-	const CETet old1 = tet[ iold1 ];
-	const CETet old2 = tet[ iold2 ];
-  
-  const unsigned int noel0d = tetRel[elared.e[0].second][0];
-  const unsigned int noel0u = tetRel[elared.e[0].second][1];
-  const unsigned int noel1d = tetRel[elared.e[1].second][0];
-  const unsigned int noel1u = tetRel[elared.e[1].second][1];
-  const unsigned int noel2d = tetRel[elared.e[2].second][0];
-  const unsigned int noel2u = tetRel[elared.e[2].second][1];
-  
-  const unsigned int nod = tet[iold0].v[noel0d];
-  const unsigned int nou = tet[iold0].v[noel0u];
-  
-	assert( nod == tet[iold1].v[noel1d] );
-	assert( nou == tet[iold1].v[noel1u] );
-	assert( nod == tet[iold2].v[noel2d] );
-	assert( nou == tet[iold2].v[noel2u] );
-
-	const int inew0 = iold0;
-	const int inew1 = iold1;
-
-	CETet& tet_u = tet[inew0];
-	CETet& tet_d = tet[inew1];
-
-	{
-		tet_u.v[0] = nou;
-		tet_u.v[1] = elared.n[0];
-		tet_u.v[2] = elared.n[2];
-		tet_u.v[3] = elared.n[1];
-
-		tet_u.s[0] = inew1;
-		tet_u.s[1] = old1.s[noel1d];
-		tet_u.s[2] = old0.s[noel0d];
-		tet_u.s[3] = old2.s[noel2d];
-
-		tet_u.g[0] = -2;
-		tet_u.g[1] = old1.g[noel1d];
-		tet_u.g[2] = old0.g[noel0d];
-		tet_u.g[3] = old2.g[noel2d];
-
-		tet_u.f[0] = 0;
-		if( old1.g[noel1d] == -2 ){
-			const unsigned int* rel1 = tetRel[ old1.f[noel1d] ];
-			tet_u.f[1] = noel2Rel[ rel1[noel1u]*4+rel1[noel1d] ];
-			tet[ old1.s[noel1d] ].s[ rel1[noel1d] ] = inew0;
-			tet[ old1.s[noel1d] ].f[ rel1[noel1d] ] = invTetRel[tet_u.f[1]];
-		}
-		if( old0.g[noel0d] == -2 ){
-			const unsigned int* rel1 = tetRel[ old0.f[noel0d] ];
-			tet_u.f[2] = noel2Rel[ rel1[noel0u]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
-			tet[ old0.s[noel0d] ].s[ rel1[noel0d] ] = inew0;
-			tet[ old0.s[noel0d] ].f[ rel1[noel0d] ] = invTetRel[tet_u.f[2]];
-		}
-		if( old2.g[noel2d] == -2 ){
-			const unsigned int* rel1 = tetRel[ old2.f[noel2d] ];
-			tet_u.f[3] = noel2Rel[ rel1[noel2u]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
-			tet[ old2.s[noel2d] ].s[ rel1[noel2d] ] = inew0;
-			tet[ old2.s[noel2d] ].f[ rel1[noel2d] ] = invTetRel[tet_u.f[3]];
-		}
-	}
-
-	{
-		tet_d.v[0] = nod;
-		tet_d.v[1] = elared.n[0];
-		tet_d.v[2] = elared.n[1];
-		tet_d.v[3] = elared.n[2];
-
-		tet_d.s[0] = inew0;
-		tet_d.s[1] = old1.s[noel1u];
-		tet_d.s[2] = old2.s[noel2u];
-		tet_d.s[3] = old0.s[noel0u];
-
-		tet_d.g[0] = -2;
-		tet_d.g[1] = old1.g[noel1u];
-		tet_d.g[2] = old2.g[noel2u];
-		tet_d.g[3] = old0.g[noel0u];
-
-		tet_d.f[0] = 0;
-		if( old1.g[noel1u] == -2 ){
-			const unsigned int* rel1 = tetRel[ old1.f[noel1u] ];
-			tet_d.f[1] = noel2Rel[ rel1[noel1d]*4+rel1[noel1u] ];
-			tet[ old1.s[noel1u] ].s[ rel1[noel1u] ] = inew1;
-			tet[ old1.s[noel1u] ].f[ rel1[noel1u] ] = invTetRel[tet_d.f[1]];
-		}
-		if( old2.g[noel2u] == -2 ){
-			const unsigned int* rel1 = tetRel[ old2.f[noel2u] ];
-			tet_d.f[2] = noel2Rel[ rel1[noel2d]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
-			tet[ old2.s[noel2u] ].s[ rel1[noel2u] ] = inew1;
-			tet[ old2.s[noel2u] ].f[ rel1[noel2u] ] = invTetRel[tet_d.f[2]];
-		}
-		if( old0.g[noel0u] == -2 ){
-			const unsigned int* rel1 = tetRel[ old0.f[noel0u] ];
-			tet_d.f[3] = noel2Rel[ rel1[noel0d]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
-			tet[ old0.s[noel0u] ].s[ rel1[noel0u] ] = inew1;
-			tet[ old0.s[noel0u] ].f[ rel1[noel0u] ] = invTetRel[tet_d.f[3]];
-		}
-	}
-
-	node[nod].e = inew1;	node[nod].poel = 0;
-	node[nou].e = inew0;	node[nou].poel = 0;
-	node[ elared.n[0] ].e = inew0;	node[ elared.n[0] ].poel = 1;
-	node[ elared.n[1] ].e = inew0;	node[ elared.n[1] ].poel = 3;
-	node[ elared.n[2] ].e = inew0;	node[ elared.n[2] ].poel = 2;
-
-	const int idist = iold2;
-	{
-		const int iend0 = tet.size()-1;
-		if( idist != iend0 ){
-			tet[idist] = tet[iend0];
-			CETet& dist = tet[idist];
-			if( dist.g[0] == -2 ){  tet[ dist.s[0] ].s[ tetRel[dist.f[0]][0] ] = idist;  }
-			if( dist.g[1] == -2 ){  tet[ dist.s[1] ].s[ tetRel[dist.f[1]][1] ] = idist;  }
-			if( dist.g[2] == -2 ){  tet[ dist.s[2] ].s[ tetRel[dist.f[2]][2] ] = idist;  }
-			if( dist.g[3] == -2 ){  tet[ dist.s[3] ].s[ tetRel[dist.f[3]][3] ] = idist;  }
-			node[ dist.v[0] ].e = idist;	node[ dist.v[0] ].poel = 0;
-			node[ dist.v[1] ].e = idist;	node[ dist.v[1] ].poel = 1;
-			node[ dist.v[2] ].e = idist;	node[ dist.v[2] ].poel = 2;
-			node[ dist.v[3] ].e = idist;	node[ dist.v[3] ].poel = 3;
-		}
-	}
-	tet.resize( tet.size()-1 );
-
-	return true;
-}
-
-
-bool Swap5Elared
-(const ElemAroundEdge& elared,
- const int ptn,
- std::vector<CETet>& tet,
- std::vector<CEPo3D>& node)
-{
-	assert( elared.size() == 5 );
-	assert( ptn >= 0 && ptn < 5 );
-
-	CETet old_tet[5];
-	old_tet[0] = tet[ elared.e[0].first ];
-	old_tet[1] = tet[ elared.e[1].first ];
-	old_tet[2] = tet[ elared.e[2].first ];
-	old_tet[3] = tet[ elared.e[3].first ];
-	old_tet[4] = tet[ elared.e[4].first ];
-
-	const int inew_tet[nTriInSwap5][2] = {
-		{ (int)elared.e[0].first, (int)elared.e[1].first },
-		{ (int)elared.e[2].first, (int)elared.e[3].first },
-		{ (int)elared.e[4].first, (int)tet.size()        }
-	};
-/*
-	std::cout << inew_tet[0][0] << " " << inew_tet[0][1] << std::endl;
-	std::cout << inew_tet[1][0] << " " << inew_tet[1][1] << std::endl;
-	std::cout << inew_tet[2][0] << " " << inew_tet[2][1] << std::endl;
-*/
-//	std::cout << " Pattern 5 " << ptn << std::endl;
-
-	tet.resize( tet.size()+1 );
-
-	const int isup_swap = swap2SupSwapRot[ptn][0];
-	const unsigned int* rot = indexRot5[ swap2SupSwapRot[ptn][1] ];
-
-    for(unsigned int itri=0;itri<nTriInSwap5;itri++){
-		tet[ inew_tet[itri][0] ].v[0] = elared.nod;
-		tet[ inew_tet[itri][0] ].v[1] = elared.n[ rot[sup2Noel5[isup_swap][itri][0]] ];
-		tet[ inew_tet[itri][0] ].v[2] = elared.n[ rot[sup2Noel5[isup_swap][itri][1]] ];
-		tet[ inew_tet[itri][0] ].v[3] = elared.n[ rot[sup2Noel5[isup_swap][itri][2]] ];
-
-		tet[ inew_tet[itri][1] ].v[0] = elared.nou;
-		tet[ inew_tet[itri][1] ].v[1] = elared.n[ rot[sup2Noel5[isup_swap][itri][0]] ];
-		tet[ inew_tet[itri][1] ].v[2] = elared.n[ rot[sup2Noel5[isup_swap][itri][2]] ];
-		tet[ inew_tet[itri][1] ].v[3] = elared.n[ rot[sup2Noel5[isup_swap][itri][1]] ];
-	}
-
-	////////////////
-	const int onetetsurpo[5][2] = {
-		{ 0, 1 },
-		{ 0, 2 },
-		{ 0, 3 },
-		{ 1, 3 },
-		{ 2, 3 }
-	};
-	node[ elared.nod ].e = inew_tet[0][0];	node[ elared.nod ].poel = 0;
-	node[ elared.nou ].e = inew_tet[0][1];	node[ elared.nou ].poel = 0;
-	for(int ipo=0;ipo<5;ipo++){
-		node[ elared.n[ rot[ipo] ] ].e = inew_tet[ onetetsurpo[ipo][0] ][0];
-		node[ elared.n[ rot[ipo] ] ].poel = onetetsurpo[ipo][1];
-	}
-
-	////////////////
-	const int outer[5][5] = {
-		{ 0, 3, 2, 3, 3 },
-		{ 0, 1, 1, 1, 0 },
-		{ 1, 1, 1, 1, 0 },
-		{ 2, 1, 1, 1, 0 },
-		{ 2, 2, 3, 2, 2 }
-	};
-	for(int isout=0;isout<5;isout++){
-		const int ilout = rot[isout];
-		const int* souter = outer[isout];
-		const int old_noelu = tetRel[elared.e[ilout].second][1];
-		const int old_noeld = tetRel[elared.e[ilout].second][0];
-
-		// downer tri
-		const int inew_tetd = inew_tet[souter[0]][0];
-		tet[inew_tetd].s[souter[1]] = old_tet[ilout].s[old_noelu];
-		tet[inew_tetd].g[souter[1]] = old_tet[ilout].g[old_noelu];
-		if( old_tet[ilout].g[old_noelu] == -2 ){
-			assert( old_tet[ilout].s[old_noelu] >= 0 && old_tet[ilout].s[old_noelu] < tet.size() );
-			const unsigned int* rel1 = tetRel[ old_tet[ilout].f[old_noelu] ];
-			tet[inew_tetd].f[souter[1]] = noel2Rel[ rel1[old_noeld]*4 + rel1[tetRel[elared.e[ilout].second][souter[3]]] ];
-			tet[old_tet[ilout].s[old_noelu]].s[rel1[old_noelu]] = inew_tetd;
-			tet[old_tet[ilout].s[old_noelu]].f[rel1[old_noelu]] = invTetRel[ tet[inew_tetd].f[souter[1]] ];
-		}
-
-		// upper tri
-		const int inew_tetu = inew_tet[souter[0]][1];
-		tet[inew_tetu].s[souter[2]] = old_tet[ilout].s[old_noeld];
-		tet[inew_tetu].g[souter[2]] = old_tet[ilout].g[old_noeld];
-		if( old_tet[ilout].g[old_noeld] == -2 ){
-			assert( old_tet[ilout].s[old_noeld] >= 0 && old_tet[ilout].s[old_noeld] < tet.size() );
-			const unsigned int* rel1 = tetRel[ old_tet[ilout].f[old_noeld] ];
-			tet[inew_tetu].f[souter[2]] = noel2Rel[ rel1[old_noelu]*4 + rel1[tetRel[elared.e[ilout].second][souter[4]]] ];
-			tet[old_tet[ilout].s[old_noeld]].s[rel1[old_noeld]] = inew_tetu;
-			tet[old_tet[ilout].s[old_noeld]].f[rel1[old_noeld]] = invTetRel[ tet[inew_tetu].f[souter[2]] ];
-		}
-	}
-
-	const int inner[4][6] = {
-		{ 0, 2, 3, 1, 0, 0 },
-		{ 1, 2, 3, 2, 0, 0 },
-		{ 1, 3, 2, 0, 0, 0 },
-		{ 2, 3, 2, 1, 0, 0 }
-	};
-
-	for(int iin=0;iin<4;iin++){
-		const int* linner = inner[iin];
-		const int inew_tetd = inew_tet[linner[0]][0];
-		const int inew_tetu = inew_tet[linner[0]][1];
-
-		tet[inew_tetd].s[linner[1]] = inew_tet[linner[3]][0];
-		tet[inew_tetd].g[linner[1]] = -2;
-		tet[inew_tetd].f[linner[1]] = linner[4];
-		
-		tet[inew_tetu].s[linner[2]] = inew_tet[linner[3]][1];
-		tet[inew_tetu].g[linner[2]] = -2;
-		tet[inew_tetu].f[linner[2]] = linner[5];
-	}
-
-	for(unsigned int itri=0;itri<nTriInSwap5;itri++){
-		const int inew_tetd = inew_tet[itri][0];
-		const int inew_tetu = inew_tet[itri][1];
-
-		tet[inew_tetd].s[0] = inew_tetu;
-		tet[inew_tetd].g[0] = -2;
-		tet[inew_tetd].f[0] = 0;
-
-		tet[inew_tetu].s[0] = inew_tetd;
-		tet[inew_tetu].g[0] = -2;
-		tet[inew_tetu].f[0] = 0;
-	}
-
-	return true;
-}
-
-bool Swap4Elared
-(const ElemAroundEdge& elared,
- const int ptn,
- std::vector<CETet>& tet,
- std::vector<CEPo3D>& node )
-{
-	assert( elared.size() == 4 );
-
-	const int iold0 = elared.e[0].first;
-	const int iold1 = elared.e[1].first;
-	const int iold2 = elared.e[2].first;
-	const int iold3 = elared.e[3].first;
-
-	const CETet old0 = tet[ iold0 ];
-	const CETet old1 = tet[ iold1 ];
-	const CETet old2 = tet[ iold2 ];
-  const CETet old3 = tet[ iold3 ];
-  
-  const unsigned int noel0d = tetRel[elared.e[0].second][0];
-  const unsigned int noel0u = tetRel[elared.e[0].second][1];
-  const unsigned int noel1d = tetRel[elared.e[1].second][0];
-  const unsigned int noel1u = tetRel[elared.e[1].second][1];
-  const unsigned int noel2d = tetRel[elared.e[2].second][0];
-  const unsigned int noel2u = tetRel[elared.e[2].second][1];
-  const unsigned int noel3d = tetRel[elared.e[3].second][0];
-  const unsigned int noel3u = tetRel[elared.e[3].second][1];
-  
-  const unsigned int nod = elared.nod;
-  const unsigned int nou = elared.nou;
-
-	assert( (int)nod == tet[iold0].v[noel0d] );
-	assert( (int)nou == tet[iold0].v[noel0u] );
-	assert( (int)nod == tet[iold1].v[noel1d] );
-	assert( (int)nou == tet[iold1].v[noel1u] );
-	assert( (int)nod == tet[iold2].v[noel2d] );
-	assert( (int)nou == tet[iold2].v[noel2u] );
-	assert( (int)nod == tet[iold3].v[noel3d] );
-	assert( (int)nou == tet[iold3].v[noel3u] );
-
-	const int inew_u0 = iold0;
-	const int inew_d0 = iold1;
-	const int inew_u1 = iold2;
-	const int inew_d1 = iold3;
-/*
-	std::cout << iold0 << " " << tet[iold0].s[noel0d] << " " << tet[iold0].s[noel0u] << std::endl;
-	std::cout << iold1 << " " << tet[iold1].s[noel1d] << " " << tet[iold1].s[noel1u] << std::endl;
-	std::cout << iold2 << " " << tet[iold2].s[noel2d] << " " << tet[iold2].s[noel2u] << std::endl;
-	std::cout << iold3 << " " << tet[iold3].s[noel3d] << " " << tet[iold3].s[noel3u] << std::endl;
-	std::cout << " pattern " << ptn << std::endl;
-*/
-	if( ptn == 0 ){
-		{
-			CETet& new_tet = tet[inew_u0];
-
-			new_tet.v[0]=nou;			
-			new_tet.v[1]=elared.n[0];	
-			new_tet.v[2]=elared.n[2];	
-			new_tet.v[3]=elared.n[1];
-
-			new_tet.s[0]=inew_d0;
-			new_tet.s[1]=old1.s[noel1d];
-			new_tet.s[2]=old0.s[noel0d];
-			new_tet.s[3]=inew_u1;
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=old1.g[noel1d];
-			new_tet.g[2]=old0.g[noel0d];
-			new_tet.g[3]=-2;
-
-			new_tet.f[0] = 0;
-			if( old1.g[noel1d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old1.f[noel1d] ];
-				new_tet.f[1] = noel2Rel[ rel1[noel1u]*4+rel1[noel1d] ];
-				tet[ old1.s[noel1d] ].s[ rel1[noel1d] ] = inew_u0;
-				tet[ old1.s[noel1d] ].f[ rel1[noel1d] ] = invTetRel[new_tet.f[1]];
-			}
-			if( old0.g[noel0d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old0.f[noel0d] ];
-				new_tet.f[2] = noel2Rel[ rel1[noel0u]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
-				tet[ old0.s[noel0d] ].s[ rel1[noel0d] ] = inew_u0;
-				tet[ old0.s[noel0d] ].f[ rel1[noel0d] ] = invTetRel[new_tet.f[2]];
-			}
-			new_tet.f[3] = 0;
-		}
-
-		{
-			CETet& new_tet = tet[inew_d0];
-
-			new_tet.v[0]=nod;			
-			new_tet.v[1]=elared.n[0];	
-			new_tet.v[2]=elared.n[1];	
-			new_tet.v[3]=elared.n[2];
-
-			new_tet.s[0]=inew_u0;
-			new_tet.s[1]=old1.s[noel1u];
-			new_tet.s[2]=inew_d1;
-			new_tet.s[3]=old0.s[noel0u];
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=old1.g[noel1u];
-			new_tet.g[2]=-2;
-			new_tet.g[3]=old0.g[noel0u];
-
-			new_tet.f[0] = 0;
-			if( old1.g[noel1u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old1.f[noel1u] ];
-				new_tet.f[1] = noel2Rel[ rel1[noel1d]*4+rel1[noel1u] ];
-				tet[ old1.s[noel1u] ].s[ rel1[noel1u] ] = inew_d0;
-				tet[ old1.s[noel1u] ].f[ rel1[noel1u] ] = invTetRel[new_tet.f[1]];
-			}
-			new_tet.f[2] = 0;
-			if( old0.g[noel0u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old0.f[noel0u] ];
-				new_tet.f[3] = noel2Rel[ rel1[noel0d]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
-				tet[ old0.s[noel0u] ].s[ rel1[noel0u] ] = inew_d0;
-				tet[ old0.s[noel0u] ].f[ rel1[noel0u] ] = invTetRel[new_tet.f[3]];
-			}
-		}
-
-		{
-			CETet& new_tet = tet[inew_u1];
-
-			new_tet.v[0]=nou;			
-			new_tet.v[1]=elared.n[0];	
-			new_tet.v[2]=elared.n[3];	
-			new_tet.v[3]=elared.n[2];
-
-			new_tet.s[0]=inew_d1;
-			new_tet.s[1]=old2.s[noel2d];
-			new_tet.s[2]=inew_u0;
-			new_tet.s[3]=old3.s[noel3d];
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=old2.g[noel2d];
-			new_tet.g[2]=-2;
-			new_tet.g[3]=old3.g[noel3d];
-
-			new_tet.f[0] = 0;
-			if( old2.g[noel2d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old2.f[noel2d] ];
-				new_tet.f[1] = noel2Rel[ rel1[noel2u]*4+rel1[noel2d] ];
-				tet[ old2.s[noel2d] ].s[ rel1[noel2d] ] = inew_u1;
-				tet[ old2.s[noel2d] ].f[ rel1[noel2d] ] = invTetRel[new_tet.f[1]];
-			}
-			new_tet.f[2] = 0;
-			if( old3.g[noel3d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old3.f[noel3d] ];
-				new_tet.f[3] = noel2Rel[ rel1[noel3u]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
-				tet[ old3.s[noel3d] ].s[ rel1[noel3d] ] = inew_u1;
-				tet[ old3.s[noel3d] ].f[ rel1[noel3d] ] = invTetRel[new_tet.f[3]];
-			}
-		}
-
-		{
-			CETet& new_tet = tet[inew_d1];
-
-			new_tet.v[0]=nod;			
-			new_tet.v[1]=elared.n[0];	
-			new_tet.v[2]=elared.n[2];	
-			new_tet.v[3]=elared.n[3];
-
-			new_tet.s[0]=inew_u1;
-			new_tet.s[1]=old2.s[noel2u];
-			new_tet.s[2]=old3.s[noel3u];
-			new_tet.s[3]=inew_d0;
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=old2.g[noel2u];
-			new_tet.g[2]=old3.g[noel3u];
-			new_tet.g[3]=-2;
-
-			new_tet.f[0] = 0;
-			if( old2.g[noel2u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old2.f[noel2u] ];
-				new_tet.f[1] = noel2Rel[ rel1[noel2d]*4+rel1[noel2u] ];
-				tet[ old2.s[noel2u] ].s[ rel1[noel2u] ] = inew_d1;
-				tet[ old2.s[noel2u] ].f[ rel1[noel2u] ] = invTetRel[new_tet.f[1]];
-			}
-			if( old3.g[noel3u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old3.f[noel3u] ];
-				new_tet.f[2] = noel2Rel[ rel1[noel3d]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
-				tet[ old3.s[noel3u] ].s[ rel1[noel3u] ] = inew_d1;
-				tet[ old3.s[noel3u] ].f[ rel1[noel3u] ] = invTetRel[new_tet.f[2]];
-			}
-			new_tet.f[3] = 0;
-		}
-		node[nod].e = inew_d0;	node[nod].poel = 0;
-		node[nou].e = inew_u0;	node[nou].poel = 0;
-		node[ elared.n[0] ].e = inew_u0;	node[ elared.n[0] ].poel = 1;
-		node[ elared.n[1] ].e = inew_u0;	node[ elared.n[1] ].poel = 3;
-		node[ elared.n[2] ].e = inew_u0;	node[ elared.n[2] ].poel = 2;
-		node[ elared.n[3] ].e = inew_u1;	node[ elared.n[3] ].poel = 2;
-	}
-	else if( ptn == 1 ){
-		{
-			CETet& new_tet = tet[inew_u0];
-
-			new_tet.v[0]=nou;			
-			new_tet.v[1]=elared.n[0];	
-			new_tet.v[2]=elared.n[3];	
-			new_tet.v[3]=elared.n[1];
-
-			new_tet.s[0]=inew_d0;
-			new_tet.s[1]=inew_u1;
-			new_tet.s[2]=old0.s[noel0d];
-			new_tet.s[3]=old3.s[noel3d];
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=-2;
-			new_tet.g[2]=old0.g[noel0d];
-			new_tet.g[3]=old3.g[noel3d];
-
-			new_tet.f[0] = 0;
-			new_tet.f[1] = 2;
-			if( old0.g[noel0d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old0.f[noel0d] ];
-				new_tet.f[2] = noel2Rel[ rel1[noel0u]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
-				tet[ old0.s[noel0d] ].s[ rel1[noel0d] ] = inew_u0;
-				tet[ old0.s[noel0d] ].f[ rel1[noel0d] ] = invTetRel[new_tet.f[2]];
-			}
-			if( old3.g[noel3d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old3.f[noel3d] ];
-				new_tet.f[3] = noel2Rel[ rel1[noel3u]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
-				tet[ old3.s[noel3d] ].s[ rel1[noel3d] ] = inew_u0;
-				tet[ old3.s[noel3d] ].f[ rel1[noel3d] ] = invTetRel[new_tet.f[3]];
-			}
-		}
-
-		{
-			CETet& new_tet = tet[inew_d0];
-
-			new_tet.v[0]=nod;			
-			new_tet.v[1]=elared.n[0];	
-			new_tet.v[2]=elared.n[1];	
-			new_tet.v[3]=elared.n[3];
-
-			new_tet.s[0]=inew_u0;
-			new_tet.s[1]=inew_d1;
-			new_tet.s[2]=old3.s[noel3u];
-			new_tet.s[3]=old0.s[noel0u];
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=-2;
-			new_tet.g[2]=old3.g[noel3u];
-			new_tet.g[3]=old0.g[noel0u];
-
-			new_tet.f[0] = 0;
-			new_tet.f[1] = 1;
-			if( old3.g[noel3u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old3.f[noel3u] ];
-				new_tet.f[2] = noel2Rel[ rel1[noel3d]*4+rel1[ tetRel[elared.e[3].second][2] ] ];
-				tet[ old3.s[noel3u] ].s[ rel1[noel3u] ] = inew_d0;
-				tet[ old3.s[noel3u] ].f[ rel1[noel3u] ] = invTetRel[new_tet.f[2]];
-			}
-			if( old0.g[noel0u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old0.f[noel0u] ];
-				new_tet.f[3] = noel2Rel[ rel1[noel0d]*4+rel1[ tetRel[elared.e[0].second][3] ] ];
-				tet[ old0.s[noel0u] ].s[ rel1[noel0u] ] = inew_d0;
-				tet[ old0.s[noel0u] ].f[ rel1[noel0u] ] = invTetRel[new_tet.f[3]];
-			}
-		}
-
-		{
-			CETet& new_tet = tet[inew_u1];
-
-			new_tet.v[0]=nou;			
-			new_tet.v[1]=elared.n[3];	
-			new_tet.v[2]=elared.n[2];	
-			new_tet.v[3]=elared.n[1];
-
-			new_tet.s[0]=inew_d1;
-			new_tet.s[1]=old1.s[noel1d];
-			new_tet.s[2]=inew_u0;
-			new_tet.s[3]=old2.s[noel2d];
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=old1.g[noel1d];
-			new_tet.g[2]=-2;
-			new_tet.g[3]=old2.g[noel2d];
-
-			new_tet.f[0] = 0;
-			if( old1.g[noel1d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old1.f[noel1d] ];
-				new_tet.f[1] = noel2Rel[ rel1[noel1u]*4+rel1[noel1d] ];
-				tet[ old1.s[noel1d] ].s[ rel1[noel1d] ] = inew_u1;
-				tet[ old1.s[noel1d] ].f[ rel1[noel1d] ] = invTetRel[new_tet.f[1]];
-			}
-			new_tet.f[2] = 2;
-			if( old2.g[noel2d] == -2 ){
-				const unsigned int* rel1 = tetRel[ old2.f[noel2d] ];
-				new_tet.f[3] = noel2Rel[ rel1[noel2u]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
-				tet[ old2.s[noel2d] ].s[ rel1[noel2d] ] = inew_u1;
-				tet[ old2.s[noel2d] ].f[ rel1[noel2d] ] = invTetRel[new_tet.f[3]];
-			}
-		}
-
-		{
-			CETet& new_tet = tet[inew_d1];
-
-			new_tet.v[0]=nod;			
-			new_tet.v[1]=elared.n[3];	
-			new_tet.v[2]=elared.n[1];	
-			new_tet.v[3]=elared.n[2];
-
-			new_tet.s[0]=inew_u1;
-			new_tet.s[1]=old1.s[noel1u];
-			new_tet.s[2]=old2.s[noel2u];
-			new_tet.s[3]=inew_d0;
-
-			new_tet.g[0]=-2;
-			new_tet.g[1]=old1.g[noel1u];
-			new_tet.g[2]=old2.g[noel2u];
-			new_tet.g[3]=-2;
-
-			new_tet.f[0] = 0;
-			if( old1.g[noel1u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old1.f[noel1u] ];
-				new_tet.f[1] = noel2Rel[ rel1[noel1d]*4+rel1[noel1u] ];
-				tet[ old1.s[noel1u] ].s[ rel1[noel1u] ] = inew_d1;
-				tet[ old1.s[noel1u] ].f[ rel1[noel1u] ] = invTetRel[new_tet.f[1]];
-			}
-			if( old2.g[noel2u] == -2 ){
-				const unsigned int* rel1 = tetRel[ old2.f[noel2u] ];
-				new_tet.f[2] = noel2Rel[ rel1[noel2d]*4+rel1[ tetRel[elared.e[2].second][2] ] ];
-				tet[ old2.s[noel2u] ].s[ rel1[noel2u] ] = inew_d1;
-				tet[ old2.s[noel2u] ].f[ rel1[noel2u] ] = invTetRel[new_tet.f[2]];
-			}
-			new_tet.f[3] = 1;
-		}
-		node[nod].e = inew_d0;	node[nod].poel = 0;
-		node[nou].e = inew_u0;	node[nou].poel = 0;
-		node[ elared.n[0] ].e = inew_u0;	node[ elared.n[0] ].poel = 1;
-		node[ elared.n[1] ].e = inew_u0;	node[ elared.n[1] ].poel = 3;
-		node[ elared.n[2] ].e = inew_u1;	node[ elared.n[2] ].poel = 2;
-		node[ elared.n[3] ].e = inew_u0;	node[ elared.n[3] ].poel = 2;
-		return false;
-	}
-	else{
-		return false;
-	}
-
-	return true;
-}
 
 /*
 bool GetEdgeSwapPtnCrt5Elared
@@ -2284,7 +2296,7 @@ bool GetEdgeSwapPtnCrt5Elared
  */
 
 
-bool MakeElemAroundPoint
+bool dfm2::MakeElemAroundPoint
 ( ElemAroundPoint& elarpo,
  const int itet0,
  const int inoel0,
@@ -2660,7 +2672,7 @@ bool GetAddPointEdgeCrt(const ElemAroundEdge& elared,
 }
 */
 
-bool AddPointTet_Elem
+bool dfm2::AddPointTet_Elem
 (const unsigned int itet_ins,
  const unsigned int ipo_ins,
  std::vector<CEPo3D>& aPo,
@@ -2767,7 +2779,7 @@ bool AddPointTet_Elem
 }
 
 
-bool AddPointTet_Face
+bool dfm2::AddPointTet_Face
 (const unsigned int itet_ins,
  const unsigned int ifatet_ins,
  const unsigned int ipo_ins,
@@ -3184,7 +3196,7 @@ bool AddPointTri_Edge( const unsigned int ipo_ins,
 }
  */
 
-bool AddPointTet_Edge
+bool dfm2::AddPointTet_Edge
 (const ElemAroundEdge& elared,
  const unsigned int ino_ins,
  std::vector<CEPo3D>& node,
@@ -3501,7 +3513,7 @@ bool GetEdgeSwapPtnCrt
 }
 */
  
-bool FaceSwapTet
+bool dfm2::FaceSwapTet
 (const unsigned int itet0,
  const unsigned int iface0,
  std::vector<CETet>& tet,
@@ -3734,19 +3746,20 @@ bool MakeTriSurNo(unsigned int& ntrisuno,
 }
  */
 
-bool EdgeSwapTet(const ElemAroundEdge& elared,
-		  const int ptn,
-		  std::vector<CETet>& tet,
-		  std::vector<CEPo3D>& point )
+bool dfm2::EdgeSwapTet
+ (const ElemAroundEdge& elared,
+  const int ptn,
+  std::vector<CETet>& tet,
+  std::vector<CEPo3D>& point )
 {
 	if( elared.size() == 3 ){
-		return Swap3Elared(elared,ptn,tet,point);
+		return dtet::Swap3Elared(elared,ptn,tet,point);
 	}
 	if( elared.size() == 4 ){
-		return Swap4Elared(elared,ptn,tet,point);
+		return dtet::Swap4Elared(elared,ptn,tet,point);
 	}
 	if( elared.size() == 5 ){
-		return Swap5Elared(elared,ptn,tet,point);
+		return dtet::Swap5Elared(elared,ptn,tet,point);
 	}
 	return true;
 }
