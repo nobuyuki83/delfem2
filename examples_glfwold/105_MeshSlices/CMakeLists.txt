@@ -40,8 +40,6 @@ if(NOT USE_HEADERONLY)
 endif()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/slice.h                  ${DELFEM2_INC}/slice.cpp
-  ${SRC_DFM2}
   main.cpp
 )
 

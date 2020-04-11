@@ -9,6 +9,7 @@
 #ifndef DFM2_SLICE_H
 #define DFM2_SLICE_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <set>
 #include <stack>
@@ -176,5 +177,9 @@ void MakeReebGraph
 }
 
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/slice.cpp"
+#endif
 
 #endif /* SLICE_H */

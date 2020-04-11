@@ -27,14 +27,14 @@ namespace dfm2 = delfem2;
 
 void Inactivate
 (int it,
- std::vector<CETet>& aSTet)
+ std::vector<dfm2::CETet>& aSTet)
 {
   for(int ift=0;ift<4;++ift){
     int jt0 = aSTet[it].s[ift];
     if( jt0 == -1 ){
     }
     else{
-      int jft0 = tetRel[ aSTet[it].f[ift] ][ift];
+      int jft0 = dfm2::tetRel[ aSTet[it].f[ift] ][ift];
       assert( aSTet[jt0].s[jft0] == it );
       aSTet[jt0].s[jft0] = -1;
       aSTet[it].s[ift] = -1;
@@ -48,8 +48,8 @@ void Inactivate
 
 //　-------------------------------------
 
-std::vector<CEPo3D> aPo3D;
-std::vector<CETet> aSTet;
+std::vector<dfm2::CEPo3D> aPo3D;
+std::vector<dfm2::CETet> aSTet;
 
 int imode_display = 0;
 bool is_animation = true;
@@ -265,7 +265,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
 //        edge.SetEdgeOfElem(aTri, (int)aTri.size()/3, 3, (int)aXYZ.size()/3, false);
         for(int ixyz=0;ixyz<(int)aXYZ.size()/3;++ixyz){
           int ip0 = ixyz+4;
-          ElemAroundPoint elarpo;
+          dfm2::ElemAroundPoint elarpo;
           {
             int itet0 = aPo3D[ip0].e;
             if( itet0 == -1 ){
