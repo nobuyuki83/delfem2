@@ -34,24 +34,13 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 #################
 
-IF(NOT USE_HEADERONLY)
+if(NOT USE_HEADERONLY)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  set(SRC_DFM2
-      ${DELFEM2_INC}/quat.h                     ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h                   ${DELFEM2_INC}/camera.cpp
-      ${DELFEM2_INC}/primitive.h                ${DELFEM2_INC}/primitive.cpp
-      ${DELFEM2_INC}/mshtopo.h               ${DELFEM2_INC}/mshtopo.cpp
-      ${DELFEM2_INC}/mshmisc.h               ${DELFEM2_INC}/mshmisc.cpp
-          
-      ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
-      ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
-      )
-ENDIF()
+  set(DFM2_LIB
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
+endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/opengl/gl_funcs.h        ${DELFEM2_INC}/opengl/gl_funcs.cpp
-    ${DELFEM2_INC}/opengl/glnew_funcs.h     ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-    ${DELFEM2_INC}/opengl/glnew_mshcolor.h  ${DELFEM2_INC}/opengl/glnew_mshcolor.cpp
     ${3RD_PARTY}/glad4/include/glad/glad.h  ${3RD_PARTY}/glad4/src/glad.c
     ${SRC_DFM2}
     main.cpp
@@ -75,6 +64,7 @@ if (NOT EMSCRIPTEN)
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
     target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIB}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY}

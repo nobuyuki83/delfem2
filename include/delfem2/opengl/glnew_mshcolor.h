@@ -7,14 +7,16 @@
 
 #ifndef GL4_MSHCOLOR_H
 #define GL4_MSHCOLOR_H
-
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
 #include "delfem2/color.h"
-
 #include "delfem2/opengl/glnew_funcs.h" // CGL4_VAO_Mesh
 
 // -------------------------------------
+
+namespace delfem2 {
+namespace opengl {
 
 class CShader_Points{
 public:
@@ -147,5 +149,12 @@ public:
   int Loc_MatrixModelView;
   int Loc_Texture;
 };
+
+}
+}
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/glnew_mshcolor.cpp"
+#endif
 
 #endif /* gl4_msh_hpp */

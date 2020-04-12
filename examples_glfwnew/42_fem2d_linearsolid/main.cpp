@@ -176,7 +176,7 @@ std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double> ilu_A;
 
 dfm2::opengl::CViewer_GLFW viewer;
-CShader_TriMesh_Disp shdr0;
+dfm2::opengl::CShader_TriMesh_Disp shdr0;
 
 
 // -----------------------------

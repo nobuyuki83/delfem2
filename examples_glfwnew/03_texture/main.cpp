@@ -32,7 +32,7 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------
-CShader_TriMesh_Tex shdr;
+dfm2::opengl::CShader_TriMesh_Tex shdr;
 delfem2::opengl::CViewer_GLFW viewer;
 GLuint m_texName = -1;
 

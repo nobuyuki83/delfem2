@@ -11,23 +11,34 @@
  * compile with -USE_GLEW if you want to use GLEW, otherwise it use GLAD
  */
 
-#ifndef GL24_FUNCS_H
-#define GL24_FUNCS_H
+#ifndef DFM2_GL_FUNCS_H
+#define DFM2_GL_FUNCS_H
 
+#include "delfem2/dfm2_inline.h"
 #include <string>
 #include <vector>
 
-int GL24_CompileShader(const char *vert, const char* frag);
+namespace delfem2 {
+namespace opengl {
 
-int compileShader(const std::string& str_glsl_vert,
-                  int shaderType);
+DFM2_INLINE int GL24_CompileShader(const char *vert, const char* frag);
+
+DFM2_INLINE int compileShader(const std::string& str_glsl_vert,
+                              int shaderType);
 
 /**
  * @function compile vertex and fragment shader
  * @return id of the shader program
  */
-int setUpGLSL(const std::string& str_glsl_vert,
-              const std::string& str_glsl_frag);
+DFM2_INLINE int setUpGLSL(const std::string& str_glsl_vert,
+                          const std::string& str_glsl_frag);
+
+}
+}
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/gl_funcs.cpp"
+#endif
 
 
 #endif /* GL24_FUNCS_H */

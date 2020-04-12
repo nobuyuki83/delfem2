@@ -18,6 +18,8 @@
 //#include "delfem2/opengl/glnew_funcs.h"
 //#include "delfem2/opengl/glfw/glfw_cam.h"
 
+namespace dfm2 = delfem2;
+
 static void callback_error(int error, const char* description)
 {
     fputs(description, stderr);
@@ -140,8 +142,8 @@ int main()
       0, 1, 3,  // first Triangle
       1, 2, 3   // second Triangle
     };
-    GL4_VAO_Pos(VAO, VBO_Tri,
-                      vertices,4,3);
+    dfm2::opengl::GL4_VAO_Pos(VAO, VBO_Tri,
+                              vertices,4,3);
     {
       glBindVertexArray(VAO); // opengl4
       glGenBuffers(1, &EBO_Tri);
@@ -165,14 +167,14 @@ int main()
     "  FragColor = vec4(1.0f, 0.5f, 0.5f, 1.0f);\n"
     "}\n\0";
 #ifdef EMSCRIPTEN
-    shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
-                                        glslvrt_simplest).c_str(),
-                                       (std::string("#version 300 es\n")+
-                                        std::string("precision highp float;\n")+
-                                        glslfrg_simplest).c_str());
+    shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 300 es\n")+
+                                                      glslvrt_simplest).c_str(),
+                                                     (std::string("#version 300 es\n")+
+                                                      std::string("precision highp float;\n")+
+                                                      glslfrg_simplest).c_str());
 #else
-    shaderProgram = GL24_CompileShader(("#version 330 core\n"+glslvrt_simplest).c_str(),
-                                       ("#version 330 core\n"+glslfrg_simplest).c_str());
+    shaderProgram = dfm2::opengl::GL24_CompileShader(("#version 330 core\n"+glslvrt_simplest).c_str(),
+                                                     ("#version 330 core\n"+glslfrg_simplest).c_str());
 #endif
   }
   

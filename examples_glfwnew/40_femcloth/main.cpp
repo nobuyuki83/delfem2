@@ -71,7 +71,7 @@ class CInput_ContactSphere: public dfm2::CInput_Contact
 // ---------------------------------------------------------
 
 dfm2::opengl::CViewer_GLFW viewer;
-CShader_TriMesh shdr_trimsh;
+dfm2::opengl::CShader_TriMesh shdr_trimsh;
 
 std::vector<double> aXYZ0; // (out) undeformed vertex positions
 std::vector<double> aXYZ; // deformed vertex positions

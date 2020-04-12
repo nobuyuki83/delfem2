@@ -33,14 +33,14 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 ##########################
 
+if(NOT USE_HEADERONLY)
+  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+  set(DFM2_LIB
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
+endif()
+
 add_executable(${PROJECT_NAME}
-
-    ${DELFEM2_INC}/opengl/gl_funcs.h          ${DELFEM2_INC}/opengl/gl_funcs.cpp
-    ${DELFEM2_INC}/opengl/glnew_funcs.h       ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-
-    ${3RD_PARTY}/glad4/include/glad/glad.h
-    ${3RD_PARTY}/glad4/src/glad.c
-
+    ${3RD_PARTY}/glad4/include/glad/glad.h    ${3RD_PARTY}/glad4/src/glad.c
     main.cpp
 )
 
@@ -62,6 +62,7 @@ if (NOT EMSCRIPTEN)
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
     target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIB}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY}

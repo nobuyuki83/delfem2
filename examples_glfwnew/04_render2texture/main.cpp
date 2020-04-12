@@ -32,8 +32,8 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------
-CShader_TriMesh shdr0;
-CShader_TriMesh_Tex shdr;
+dfm2::opengl::CShader_TriMesh shdr0;
+dfm2::opengl::CShader_TriMesh_Tex shdr;
 delfem2::opengl::CViewer_GLFW viewer;
 unsigned int idTexColor = 0;
 unsigned int idTexDepth = 0;

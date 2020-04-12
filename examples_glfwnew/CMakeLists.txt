@@ -10,6 +10,7 @@ ELSE()
   message("$$$$$$$$$$$$$$$$$$$$$")
   message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
   project(examples_glfwnew_static)
+  add_subdirectory(dfm2_static_glfwnew)
 ENDIF()
 
 add_subdirectory(00_openwin)

@@ -22,8 +22,10 @@
 #include "delfem2/opengl/glfw/cam_glfw.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
+namespace dfm2 = delfem2;
+
 // ---------------------------
-CShader_TriMesh shdr;
+dfm2::opengl::CShader_TriMesh shdr;
 delfem2::opengl::CViewer_GLFW viewer;
 // ---------------------------
 

@@ -21,7 +21,7 @@
 
 // ---------------------------------------------------------
 
-void GL4_VAO_Pos
+DFM2_INLINE void delfem2::opengl::GL4_VAO_Pos
 (unsigned int& VAO,
  unsigned int& VBO,
  const float* aP, int nP, int nDim)
@@ -41,7 +41,7 @@ void GL4_VAO_Pos
 }
 
 
-void GL4_VAO_PosNrm
+DFM2_INLINE void delfem2::opengl::GL4_VAO_PosNrm
 (unsigned int& VAO,
  unsigned int& VBO_pos,
  unsigned int& VBO_nrm,
@@ -81,7 +81,8 @@ void GL4_VAO_PosNrm
 }
 
 
-void CGL4_VAO_Mesh::Draw(unsigned int iel) const {
+DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Draw
+ (unsigned int iel) const {
   if( iel >= aEBO.size() ){ assert(0); return; }
   glBindVertexArray(VAO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, aEBO[iel].EBO);
@@ -92,7 +93,7 @@ void CGL4_VAO_Mesh::Draw(unsigned int iel) const {
 }
 
 
-void CGL4_VAO_Mesh::ADD_VBO
+DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::ADD_VBO
 (unsigned int ivbo,
  const std::vector<float>& aXY0f)
 {
@@ -106,7 +107,7 @@ void CGL4_VAO_Mesh::ADD_VBO
 }
 
 
-void CGL4_VAO_Mesh::Add_EBO
+DFM2_INLINE void delfem2::opengl::CGL4_VAO_Mesh::Add_EBO
  (const std::vector<unsigned int>& aElem,
   int GL_MODE)
 {

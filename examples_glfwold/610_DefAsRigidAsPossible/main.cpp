@@ -129,9 +129,9 @@ int main(int argc,char* argv[])
   while (true){
     const double weight_bc = 100.0;
     int iframe = 0;
-    {
-      dfm2::CDef_ARAPLinearDisponly def0(aXYZ0, aTri, weight_bc, aBCFlag);
-      glfwSetWindowTitle(viewer.window, "Linear Disponly");
+    { // arap edge linear disponly
+      dfm2::CDef_ArapEdgeLinearDisponly def0(aXYZ0, aTri, weight_bc, aBCFlag);
+      glfwSetWindowTitle(viewer.window, "ARAP Edge Linear Disponly");
       for(;iframe<50;++iframe)
       {
         SetPositionAtFixedBoundary(aXYZ1,
@@ -148,9 +148,9 @@ int main(int argc,char* argv[])
     } // end linear disponly
     // -------------------------------------------------------
     { // begin lienar disprot without preconditioner
-      glfwSetWindowTitle(viewer.window, "Linear Disprot without Prec");
+      glfwSetWindowTitle(viewer.window, "Arap Edge Linear Disprot without Prec");
       unsigned int np = aXYZ0.size()/3;
-      dfm2::CDef_ARAP def1;
+      dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, false);
       std::vector<double> aQuat(np*4); // array of quaternion
       for(;iframe<100;++iframe){
@@ -170,9 +170,9 @@ int main(int argc,char* argv[])
     } // end linear disprot without preconditioner
     // -------------------------------
     { // begin lienar disprot with preconditioner
-      glfwSetWindowTitle(viewer.window, "Linear Disprot with Prec");
+      glfwSetWindowTitle(viewer.window, "Arap Edge Linear Disprot with Prec");
       const unsigned int np = aXYZ0.size()/3;
-      dfm2::CDef_ARAP def1;
+      dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
       std::vector<double> aQuat(np*4);
       for(;iframe<200;++iframe){
@@ -195,9 +195,9 @@ int main(int argc,char* argv[])
     } // end linear disprot with preconditioner
     // -------------------------------
     { // begin nonlienar disprot with preconditioner
-      glfwSetWindowTitle(viewer.window, "NonLinear Disprot with Prec");
+      glfwSetWindowTitle(viewer.window, "Arap Edge NonLinear Disprot with Prec");
       const unsigned int np = aXYZ0.size()/3;
-      dfm2::CDef_ARAP def1;
+      dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
       std::vector<double> aQuat(np*4);
       for(int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); }

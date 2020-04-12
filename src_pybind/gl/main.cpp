@@ -211,7 +211,7 @@ PYBIND11_MODULE(c_gl, m) {
   // ----------------
   // gl misc
   m.def("setSomeLighting",  &dfm2::opengl::setSomeLighting, "set some lighting that looks good for me");
-  m.def("setup_glsl",       &setUpGLSL, "compile shader program");
+  m.def("setup_glsl",       &dfm2::opengl::setUpGLSL, "compile shader program");
   m.def("glew_init",        &PyGLExtensionInit);
   
   m.def("cppDrawSphere",      &dfm2::opengl::DrawSphereAt );
