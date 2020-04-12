@@ -16,31 +16,99 @@
 
 namespace delfem2 {
 
-class CDef_SingleLaplacian
+class CDef_SingleLaplacianDisponly
 {
 public:
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri);
-  void Solve(std::vector<double>& aXYZ1,
-             const std::vector<double>& aXYZ0,
-             const std::vector<int>& aBCFlag);
+  void Deform(std::vector<double>& aXYZ1,
+              const std::vector<double>& aXYZ0,
+              const std::vector<int>& aBCFlag);
 public:
   CMatrixSparse<double> mat_A;
   std::vector<double> aRhs0, aRhs1;
   std::vector<double> aHistConv;
 };
 
-class CDef_LaplacianLinear{
+class CDef_LaplacianDisponly{
 public:
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri,
             bool is_preconditioner);
-  void Solve(std::vector<double>& aXYZ1,
-             const std::vector<double>& aXYZ0,
-             const std::vector<int>& aBCFlag);
+  void Deform(std::vector<double>& aXYZ1,
+              const std::vector<double>& aXYZ0,
+              const std::vector<int>& aBCFlag);
+  void MatVec(double* y,
+              double alpha, const double* vec,  double beta) const;
+  void Solve(double* v) const;
+private:
+  void MakeLinearSystem();
 public:
   CMatrixSparse<double> mat_A;
   bool is_preconditioner;
+  double weight_bc;
+  std::vector<double> aDiaInv;
+  mutable std::vector<double> vec_tmp;
+  std::vector<int> aBCFlag;
+};
+
+class CDef_ARAPLinearDisponly {
+public:
+  CDef_ARAPLinearDisponly(const std::vector<double>& aXYZ0,
+                          const std::vector<unsigned int>& aTri,
+                          double weight_bc0,
+                          const std::vector<int>& aBCFlag0);
+  void Deform(std::vector<double>& aXYZ1,
+              const std::vector<double>& aXYZ0);
+  void MatVec(double* y,
+              double alpha, const double* vec,  double beta) const;
+private:
+  void MakeLinearSystem(double* aRhs,
+                        const double* aXYZ0,
+                        const double* aXYZ1) const;
+  void JacobiTVecTmp(double*y ,
+                     double alpha, double beta) const;
+public:
+  std::vector<unsigned int> psup_ind;
+  std::vector<unsigned int> psup;
+  const double weight_bc;
+  const std::vector<int> aBCFlag;
+  // -------------
+  std::vector<double> aMatEdge;
+  mutable std::vector<double> vec_tmp;
+};
+
+class CDef_ARAP {
+public:
+  CDef_ARAP(){}
+  void Init(const std::vector<double>& aXYZ0,
+            const std::vector<unsigned int>& aTri,
+            double weight_bc0,
+            const std::vector<int>& aBCFlag,
+            bool is_preconditioner);
+  void Deform(std::vector<double>& aXYZ1,
+              std::vector<double>& aQuat,
+              const std::vector<double>& aXYZ0);
+  void MatVec(double* y,
+              double alpha, const double* vec,  double beta) const;
+  void Solve(double* v) const;
+private:
+  void JacobiTVecTmp(double*y,
+                     double alpha, double beta) const;
+  void MakeLinearSystem(double* aRhs,
+                        const double* aXYZ0,
+                        const double* aXYZ1,
+                        const double* aQuat);
+  void MakePreconditionerJacobi();
+public:
+  std::vector<unsigned int> psup_ind, psup;
+  double weight_bc;
+  std::vector<int> aBCFlag;
+  bool is_preconditioner;
+  // -------------
+  std::vector<double> aMatEdge;
+  std::vector<double> aDiaInv; // for jacobi preconditining
+  mutable std::vector<double> vec_tmp;
 };
 
 } // namespace delfem2

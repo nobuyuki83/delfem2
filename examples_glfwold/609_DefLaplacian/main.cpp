@@ -130,12 +130,12 @@ int main(int argc,char* argv[])
   {
     {
       glfwSetWindowTitle(viewer.window, "Direct Constraint");
-      dfm2::CDef_SingleLaplacian def;
+      dfm2::CDef_SingleLaplacianDisponly def;
       def.Init(aXYZ0, aTri);
       for(;iframe<100;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
-        def.Solve(aXYZ1,
+        def.Deform(aXYZ1,
                   aXYZ0, aBCFlag);
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
@@ -145,12 +145,12 @@ int main(int argc,char* argv[])
     }
     {
       glfwSetWindowTitle(viewer.window, "Energy-based Constraint without Preconditioner");
-      dfm2::CDef_LaplacianLinear def;
+      dfm2::CDef_LaplacianDisponly def;
       def.Init(aXYZ0, aTri, false);
       for(;iframe<200;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
-        def.Solve(aXYZ1,
+        def.Deform(aXYZ1,
                   aXYZ0, aBCFlag);
 //        LapDef_LinearEnergyDisponly(aXYZ1,mat_A,
 //                                    iframe,false, aXYZ0,aTri,aBCFlag);
@@ -161,13 +161,13 @@ int main(int argc,char* argv[])
       }
     }
     {
-      dfm2::CDef_LaplacianLinear def;
+      dfm2::CDef_LaplacianDisponly def;
       def.Init(aXYZ0, aTri, true);
       glfwSetWindowTitle(viewer.window, "Energy-based Constraint with Preconditioner");
       for(;iframe<300;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
-        def.Solve(aXYZ1,
+        def.Deform(aXYZ1,
                   aXYZ0, aBCFlag);
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
