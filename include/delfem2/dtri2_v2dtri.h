@@ -324,7 +324,7 @@ public:
 
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/dtri_v2.cpp"
+#  include "delfem2/dtri2_v2dtri.cpp"
 #endif
 
 

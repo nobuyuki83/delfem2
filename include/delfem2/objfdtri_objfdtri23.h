@@ -10,9 +10,7 @@
 #define DFM2_OBJFUNC_V23DTRI_h
 
 #include "delfem2/dfm2_inline.h"
-#include <vector>
-#include "delfem2/dtri.h"
-#include "delfem2/dtri_v2.h"
+#include "delfem2/dtri2_v2dtri.h"
 
 // ------------------------------
 
@@ -32,7 +30,7 @@ void PBD_Bend(double* aXYZt,
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/objf_dtriv23m34q.cpp"
+#  include "delfem2/objfdtri_objfdtri23.cpp"
 #endif
 
 #endif /* pbd_v23_h */

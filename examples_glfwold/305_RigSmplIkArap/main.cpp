@@ -14,20 +14,16 @@
 #include <random>
 #include <time.h>
 #include <GLFW/glfw3.h>
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/mat4.h"
-#include "delfem2/quat.h"
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
 //
-#include "delfem2/v23m34q.h"
-#include "delfem2/objf_v23m34q.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/objf_geo3.h"
 //
 #include "delfem2/cnpy/smpl_cnpy.h"
 
-#include "delfem2/rig_v3q.h"
+#include "delfem2/rig_geo3.h"
 #include "delfem2/opengl/rigv3_glold.h"
 
 #include "delfem2/opengl/funcs_glold.h"

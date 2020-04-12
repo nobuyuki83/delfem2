@@ -10,14 +10,12 @@
 #include <iostream>
 #include <vector>
 #include <complex>
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
+#include "delfem2/cad2_dtri2.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
-//
-#include "delfem2/dtri_v2.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/fem_emats.h"
-#include "delfem2/cad2d_v2dtri.h"
 
 // ---------------
 #include <GLFW/glfw3.h>

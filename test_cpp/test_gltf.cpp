@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 #include "delfem2/quat.h"
-#include "delfem2/v23m34q.h"
+#include "delfem2/geo3_v23m34q.h"
 
 // Define these only in *one* .cc file.
 //#define TINYGLTF_IMPLEMENTATION
@@ -19,7 +19,7 @@
 // #define TINYGLTF_NOEXCEPTION // optional. disable exception handling.
 #include "tinygltf/tiny_gltf.h"
 
-#include "delfem2/rig_v3q.h"
+#include "delfem2/rig_geo3.h"
 #include "io_gltf.h"
 
 namespace dfm2 = delfem2;

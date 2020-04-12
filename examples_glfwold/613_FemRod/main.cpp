@@ -6,17 +6,12 @@
  */
 
 
-#include <cstdlib>
-#include <vector>
-#include <set>
-#include <random>
-#include "delfem2/mat3.h"
+#include "delfem2/objf_geo3.h"
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/objf_v23m34q.h"
 //
-#include "delfem2/v23m34q.h"
+#include "delfem2/geo3_v23m34q.h"
 
 // --------------
 #include <GLFW/glfw3.h>

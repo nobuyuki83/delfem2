@@ -41,7 +41,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/vecxitrsol.h               ${DELFEM2_INC}/vecxitrsol.cpp
       
       ${DELFEM2_INC}/ilu_mats.h                 ${DELFEM2_INC}/ilu_mats.cpp
-      ${DELFEM2_INC}/dtri_v2.h                  ${DELFEM2_INC}/dtri_v2.cpp
+      ${DELFEM2_INC}/dtri2_v2dtri.h             ${DELFEM2_INC}/dtri2_v2dtri.cpp
       ${DELFEM2_INC}/fem_emats.h                ${DELFEM2_INC}/fem_emats.cpp
       
       ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h  ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp

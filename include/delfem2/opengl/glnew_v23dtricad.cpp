@@ -6,7 +6,7 @@
  */
 
 #include <stdio.h>
-#include "delfem2/cad2d_v2dtri.h"
+#include "delfem2/cad2_dtri2.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

@@ -11,12 +11,8 @@
 #include <cassert>
 #include <sstream>
 #include <fstream>
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/mat4.h"
-#include "delfem2/quat.h"
-#include "delfem2/v23m34q.h"
-#include "delfem2/rig_v3q.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/rig_geo3.h"
 
 #ifndef M_PI 
 #  define M_PI 3.1415926535

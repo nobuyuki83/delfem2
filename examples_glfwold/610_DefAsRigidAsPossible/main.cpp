@@ -25,7 +25,7 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------
 
-void SetDisplacementAtFixedBoundary(
+void SetPositionAtFixedBoundary(
     std::vector<double>& aRhs,
     unsigned int iframe,
     const std::vector<double>& aXYZ0,
@@ -433,7 +433,7 @@ int main(int argc,char* argv[])
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
         std::vector<double> aGoal(np*3);
-        SetDisplacementAtFixedBoundary(aGoal,
+        SetPositionAtFixedBoundary(aGoal,
                                        iframe,aXYZ0,aBCFlag);
         std::vector<double> aRhs(np*3,0.0);
         def0.MakeLinearSystem(aRhs.data(),
@@ -463,7 +463,7 @@ int main(int argc,char* argv[])
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
         std::vector<double> aGoal(np*3);
-        SetDisplacementAtFixedBoundary(aGoal,
+        SetPositionAtFixedBoundary(aGoal,
                                        iframe,aXYZ0,aBCFlag);
         std::vector<double> aRhs(np*6,0.0);
         def1.MakeLinearSystem(aRhs.data(),
@@ -500,7 +500,7 @@ int main(int argc,char* argv[])
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
         std::vector<double> aGoal(np*3);
-        SetDisplacementAtFixedBoundary(aGoal,
+        SetPositionAtFixedBoundary(aGoal,
                                        iframe,aXYZ0,aBCFlag);
         std::vector<double> aRhs(np*6,0.0);
         def1.MakeLinearSystem(aRhs.data(),
@@ -540,7 +540,7 @@ int main(int argc,char* argv[])
         }
          */
         std::vector<double> aGoal(np*3);
-        SetDisplacementAtFixedBoundary(aGoal,
+        SetPositionAtFixedBoundary(aGoal,
                                        iframe,aXYZ0,aBCFlag);
         std::vector<double> aRhs(np * 6, 0.0);
         def1.MakeLinearSystem(aRhs.data(),

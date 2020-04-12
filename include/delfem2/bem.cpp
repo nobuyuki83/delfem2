@@ -6,7 +6,7 @@
  */
 
 #include "delfem2/bem.h"
-#include "delfem2/v23m34q.h"
+#include "delfem2/geo3_v23m34q.h"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793

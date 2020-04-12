@@ -5,10 +5,11 @@
 //  Created by Nobuyuki Umetani on 2020-04-06.
 //
 
-#ifndef rigoptim_h
-#define rigoptim_h
+#ifndef DFM2_RIGOPT_H
+#define DFM2_RIGOPT_H
+
+#include "delfem2/rig_geo3.h"
 #include "delfem2/quat.h"
-#include "delfem2/rig_v3q.h"
 #include "delfem2/vecxitrsol.h"
 
 namespace delfem2 {

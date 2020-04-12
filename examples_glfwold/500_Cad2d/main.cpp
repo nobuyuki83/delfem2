@@ -5,11 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/cad2_dtri2.h"
 #include <cmath>
 #include <stack>
-//
-#include "delfem2/cad2d_v2dtri.h"
-
 // --------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"

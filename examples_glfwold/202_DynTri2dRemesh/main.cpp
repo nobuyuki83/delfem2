@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 #include <vector>
-#include "delfem2/dtri_v2.h"
+#include "delfem2/dtri2_v2dtri.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"

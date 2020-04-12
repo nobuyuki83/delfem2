@@ -24,8 +24,8 @@
 #include "delfem2/slice.h"
 #include "delfem2/evalmathexp.h"
 
-#include "delfem2/cad2d_v2dtri.h"
-#include "delfem2/rig_v3q.h"
+#include "delfem2/cad2_dtri2.h"
+#include "delfem2/rig_geo3.h"
 
 #include "tinygltf/tiny_gltf.h"
 #include "io_gltf.h"

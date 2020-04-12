@@ -9,9 +9,8 @@
 #define DFM2_CAD2DTRIV2_GLOLD_H
 
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/cad2_dtri2.h"
 #include <vector>
-#include "delfem2/dtri.h"
-#include "delfem2/cad2d_v2dtri.h"
 
 // ---------------------------
 

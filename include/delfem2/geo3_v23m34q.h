@@ -230,7 +230,7 @@ DFM2_INLINE void UpdateRotationsByMatchingCluster
 
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/v23m34q.cpp"
+#  include "delfem2/geo3_v23m34q.cpp"
 #endif
 
 #endif /* vec23mat3quat_hpp */

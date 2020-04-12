@@ -4,8 +4,8 @@
 #include <vector>
 #include <map>
 #include <deque>
-#include "delfem2/dtri_v2.h"
-#include "delfem2/dtriv3.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/mshtopo.h"
 
 // -------------------------

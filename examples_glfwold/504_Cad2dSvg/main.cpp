@@ -9,7 +9,7 @@
 #include <cmath>
 #include <stack>
 #include "delfem2/funcs.h"
-#include "delfem2/cad2d_v2dtri.h"
+#include "delfem2/cad2_dtri2.h"
 
 // --------------
 #include <GLFW/glfw3.h>

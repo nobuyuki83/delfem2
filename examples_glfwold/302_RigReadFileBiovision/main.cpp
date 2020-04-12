@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/rig_geo3.h"
 #include <iostream>
 #include <vector>
 #include <set>
-#include "delfem2/rig_v3q.h"
 
 // ---------------
 #include <GLFW/glfw3.h>

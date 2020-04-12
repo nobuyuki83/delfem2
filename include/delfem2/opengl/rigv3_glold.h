@@ -15,8 +15,7 @@
 #include <string>
 #include <cassert>
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/vec3.h"
-#include "delfem2/rig_v3q.h"
+#include "delfem2/rig_geo3.h"
 
 namespace delfem2 {
 namespace opengl{

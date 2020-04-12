@@ -8,10 +8,9 @@
 #ifndef DFM2_GARMENT_H
 #define DFM2_GARMENT_H
 
-#include "delfem2/vec2.h"
+#include "delfem2/cad2_dtri2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
-#include "delfem2/cad2d_v2dtri.h"
 
 namespace delfem2 {
 

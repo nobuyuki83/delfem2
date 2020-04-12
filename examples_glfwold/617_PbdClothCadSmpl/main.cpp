@@ -13,8 +13,9 @@
 #include <vector>
 #include <set>
 #include "delfem2/garment.h"
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
+#include "delfem2/objf_geo3.h"
+#include "delfem2/geo3_v23m34q.h"
+
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
@@ -22,13 +23,10 @@
 #include "delfem2/bvh.h"
 #include "delfem2/color.h"
 //
-#include "delfem2/v23m34q.h"
-#include "delfem2/objf_v23m34q.h"
-#include "delfem2/objf_dtriv23m34q.h"
-#include "delfem2/dtri_v2.h"
-#include "delfem2/cad2d_v2dtri.h"
+#include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/cad2_dtri2.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
-#include "delfem2/rig_v3q.h"
+#include "delfem2/rig_geo3.h"
 //
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "inputs_garment.h"
