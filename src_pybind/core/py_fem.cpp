@@ -22,9 +22,9 @@
 
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
-#include "delfem2/objf_v23m34q.h"
-#include "delfem2/dtri_v2.h"
-#include "delfem2/objf_dtriv23m34q.h"
+#include "delfem2/objf_geo3.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/objfdtri_objfdtri23.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;

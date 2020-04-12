@@ -6,15 +6,12 @@
  */
 
 
+#include "delfem2/cad2_dtri2.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/funcs.h"
 #include <cstdio>
 #include <deque>
 #include <cstdlib>
-#include "delfem2/funcs.h"
-#include "delfem2/vec2.h"
-#include "delfem2/dtri.h"
-//
-#include "delfem2/dtri_v2.h"
-#include "delfem2/cad2d_v2dtri.h"
 
 namespace dfm2 = delfem2;
 

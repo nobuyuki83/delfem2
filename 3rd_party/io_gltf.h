@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <memory>
 
-#include "delfem2/rig_v3q.h" // CRigBone is defined here
+#include "delfem2/rig_geo3.h" // CRigBone is defined here
 
 namespace tinygltf{
   class Model;

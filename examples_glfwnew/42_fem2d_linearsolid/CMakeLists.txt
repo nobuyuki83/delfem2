@@ -46,7 +46,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mats.h                     ${DELFEM2_INC}/mats.cpp
       ${DELFEM2_INC}/emat.h                     ${DELFEM2_INC}/emat.cpp
       
-      ${DELFEM2_INC}/dtri_v2.h                  ${DELFEM2_INC}/dtri_v2.cpp
+      ${DELFEM2_INC}/dtri2_v2dtri.h             ${DELFEM2_INC}/dtri2_v2dtri.cpp
       ${DELFEM2_INC}/ilu_mats.h                 ${DELFEM2_INC}/ilu_mats.cpp
       ${DELFEM2_INC}/fem_emats.h                ${DELFEM2_INC}/fem_emats.cpp
 

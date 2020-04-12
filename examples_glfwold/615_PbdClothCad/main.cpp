@@ -12,8 +12,6 @@
 #include <limits>
 #include <vector>
 #include <set>
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
 #include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
 #include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
@@ -21,11 +19,11 @@
 #include "delfem2/bvh.h"
 #include "delfem2/primitive.h"
 
-#include "delfem2/objf_v23m34q.h"
-#include "delfem2/objf_dtriv23m34q.h"
-#include "delfem2/v23m34q.h"
-#include "delfem2/dtri_v2.h"
-#include "delfem2/cad2d_v2dtri.h"
+#include "delfem2/objf_geo3.h"
+#include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/cad2_dtri2.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 
 // ---------------

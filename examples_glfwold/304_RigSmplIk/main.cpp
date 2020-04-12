@@ -15,7 +15,8 @@
 #include <ctime>
 #include <GLFW/glfw3.h>
 #include "delfem2/rigopt.h"
-#include "delfem2/rig_v3q.h"
+#include "delfem2/rig_geo3.h"
+
 #include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"

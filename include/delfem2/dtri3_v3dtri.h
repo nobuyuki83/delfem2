@@ -121,7 +121,7 @@ public:
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/dtriv3.cpp"
+#  include "delfem2/dtri3_v3dtri.cpp"
 #endif
 
 #endif // #endif SURFACE_MESH_H

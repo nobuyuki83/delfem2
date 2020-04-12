@@ -231,7 +231,7 @@ DFM2_INLINE void GetConstConstDiff_Bend
 }
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/objf_v23m34q.cpp"
+#  include "delfem2/objf_geo3.cpp"
 #endif
 
 #endif /* pbd_v23_h */

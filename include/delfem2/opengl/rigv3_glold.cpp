@@ -6,7 +6,7 @@
  */
 
 
-#include "delfem2/rig_v3q.h"
+#include "delfem2/rig_geo3.h"
 
 // -------------------------
 #if defined(__APPLE__) // Mac

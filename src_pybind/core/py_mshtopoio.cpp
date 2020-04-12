@@ -16,8 +16,8 @@
 #include "delfem2/primitive.h"
 #include "delfem2/dtri.h"
 
-#include "delfem2/dtri_v2.h"
-#include "delfem2/dtriv3.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/dtri3_v3dtri.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;

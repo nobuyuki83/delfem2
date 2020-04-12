@@ -11,7 +11,7 @@
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec2.h"
 #include "delfem2/cadtopo.h"
-#include "delfem2/dtri_v2.h"
+#include "delfem2/dtri2_v2dtri.h"
 
 namespace delfem2 {
 
@@ -248,7 +248,7 @@ public:
 } // namespace delfem2
 
 #ifndef DFM2_STATIC_LIBRARY
-#  include "delfem2/cad2d_v2dtri.cpp"
+#  include "delfem2/cad2_dtri2.cpp"
 #endif
 
 #endif

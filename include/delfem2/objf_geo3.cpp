@@ -5,11 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/vec2.h"
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/v23m34q.h"
-#include "delfem2/objf_v23m34q.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/objf_geo3.h"
 
 namespace dfm2 = delfem2;
 

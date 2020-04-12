@@ -8,7 +8,7 @@
 #include <set>
 #include <algorithm>
 
-#include "delfem2/dtri_v2.h"
+#include "delfem2/dtri2_v2dtri.h"
 
 namespace dfm2 = delfem2;
 
