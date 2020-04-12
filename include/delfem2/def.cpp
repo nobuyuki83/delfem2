@@ -225,7 +225,7 @@ void delfem2::CDef_LaplacianDisponly::Solve(double* v) const
 
 // ======================================
 
-delfem2::CDef_ARAPLinearDisponly::CDef_ARAPLinearDisponly
+delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
   double weight_bc0,
@@ -254,7 +254,7 @@ aBCFlag(aBCFlag0)
   vec_tmp.resize(ne*3);
 }
 
-void delfem2::CDef_ARAPLinearDisponly::JacobiTVecTmp
+void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp
  (double*y ,
   double alpha, double beta) const
 {
@@ -275,7 +275,7 @@ void delfem2::CDef_ARAPLinearDisponly::JacobiTVecTmp
   }
 }
 
-void delfem2::CDef_ARAPLinearDisponly::MakeLinearSystem
+void delfem2::CDef_ArapEdgeLinearDisponly::MakeLinearSystem
  (double* aRhs,
   const double* aXYZ0,
   const double* aXYZ1) const
@@ -304,7 +304,7 @@ void delfem2::CDef_ARAPLinearDisponly::MakeLinearSystem
    */
 }
 
-void delfem2::CDef_ARAPLinearDisponly::MatVec
+void delfem2::CDef_ArapEdgeLinearDisponly::MatVec
  (double* y,
   double alpha,
   const double* vec,
@@ -334,7 +334,7 @@ void delfem2::CDef_ARAPLinearDisponly::MatVec
   }
 }
 
-void delfem2::CDef_ARAPLinearDisponly::Deform
+void delfem2::CDef_ArapEdgeLinearDisponly::Deform
 (std::vector<double>& aXYZ1,
  const std::vector<double>& aXYZ0)
 {
@@ -351,7 +351,7 @@ void delfem2::CDef_ARAPLinearDisponly::Deform
 
 // ======================================================
 
-void delfem2::CDef_ARAP::Init
+void delfem2::CDef_ArapEdge::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
   double weight_bc0,
@@ -382,7 +382,7 @@ void delfem2::CDef_ARAP::Init
   vec_tmp.resize(ne*3);
 }
 
-void delfem2::CDef_ARAP::JacobiTVecTmp
+void delfem2::CDef_ArapEdge::JacobiTVecTmp
  (double*y ,
   double alpha,
   double beta) const
@@ -408,7 +408,7 @@ void delfem2::CDef_ARAP::JacobiTVecTmp
   }
 }
 
-void delfem2::CDef_ARAP::MatVec
+void delfem2::CDef_ArapEdge::MatVec
  (double* y,
   double alpha,
   const double* vec,
@@ -443,7 +443,7 @@ void delfem2::CDef_ARAP::MatVec
   }
 }
 
-void delfem2::CDef_ARAP::MakeLinearSystem
+void delfem2::CDef_ArapEdge::MakeLinearSystem
  (double* aRhs,
   const double* aXYZ0,
   const double* aXYZ1,
@@ -479,7 +479,7 @@ void delfem2::CDef_ARAP::MakeLinearSystem
    */
 }
 
-void delfem2::CDef_ARAP::MakePreconditionerJacobi()
+void delfem2::CDef_ArapEdge::MakePreconditionerJacobi()
 {
   const unsigned int np = psup_ind.size()-1;
   aDiaInv.assign(np*2*9, 0.0);
@@ -511,7 +511,7 @@ void delfem2::CDef_ARAP::MakePreconditionerJacobi()
   }
 }
 
-void delfem2::CDef_ARAP::Solve(double* v) const
+void delfem2::CDef_ArapEdge::Solve(double* v) const
 {
   const unsigned int np = psup_ind.size()-1;
   for(int ip=0;ip<np*2;++ip){
@@ -524,7 +524,7 @@ void delfem2::CDef_ARAP::Solve(double* v) const
 }
 
 
-void delfem2::CDef_ARAP::Deform(std::vector<double>& aXYZ1,
+void delfem2::CDef_ArapEdge::Deform(std::vector<double>& aXYZ1,
                                 std::vector<double>& aQuat,
                                 const std::vector<double>& aXYZ0)
 {

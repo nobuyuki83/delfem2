@@ -6,12 +6,15 @@
  */
 
 
-#ifndef GL4_FUNCS_H
-#define GL4_FUNCS_H
-
+#ifndef DFM2_GLNEW_FUNCS_H
+#define DFM2_GLNEW_FUNCS_H
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <assert.h>
 #include <iostream> // this must be delated in future
+
+namespace delfem2 {
+namespace opengl {
 
 /**
  * @details the OpenGL ES 2.0 only accept float array. So there is no "double" version of this file
@@ -96,7 +99,12 @@ const std::string glsl33frag =
 "  FragColor = abs(nrmPrj.z)*vec4(color.x, color.y, color.z, 1.0f);\n"
 "}\n\0";
 
+}
+}
 
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/glnew_funcs.cpp"
+#endif
 
 #endif /* utility_glew_h */
 

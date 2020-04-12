@@ -53,32 +53,24 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
 )
 
-IF(NOT USE_HEADERONLY)
+if(NOT USE_HEADERONLY)
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  set(SRC_DFM2
-      ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-      ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
-      )
-ENDIF()
+  set(DFM2_LIB
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
+endif()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/opengl/gl_funcs.h    ${DELFEM2_INC}/opengl/gl_funcs.cpp
-    ${DELFEM2_INC}/opengl/glnew_funcs.h     ${DELFEM2_INC}/opengl/glnew_funcs.cpp
-  
-    ${IMGUI_DIR}/imgui.h
-    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui.h                    ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
     ${IMGUI_DIR}/imgui_widgets.cpp
     ${IMGUI_DIR}/examples/imgui_impl_opengl3.cpp
     ${IMGUI_DIR}/examples/imgui_impl_opengl3.h
     ${IMGUI_DIR}/examples/imgui_impl_glfw.cpp
     ${IMGUI_DIR}/examples/imgui_impl_glfw.h
-  
-    ${3RD_PARTY}/glad4/include/glad/glad.h
-    ${3RD_PARTY}/glad4/src/glad.c
-        ${SRC_DFM2}
-        main.cpp
-        )
+    ${3RD_PARTY}/glad4/include/glad/glad.h  ${3RD_PARTY}/glad4/src/glad.c
+    ${SRC_DFM2}
+    main.cpp
+)
 
 ###########################
 
@@ -88,6 +80,7 @@ if (NOT EMSCRIPTEN)
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
     target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIB}
       ${OPENGL_LIBRARY}
       ${COCOA_LIBRARY}
       ${IOKIT_LIBRARY}
@@ -96,6 +89,7 @@ if (NOT EMSCRIPTEN)
     )
   ELSEIF(UNIX)
     target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIB}
       ${OPENGL_LIBRARY}
       ${GLEW_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a

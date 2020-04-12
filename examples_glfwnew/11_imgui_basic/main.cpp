@@ -24,6 +24,8 @@
 //
 #include "delfem2/opengl/glfw/cam_glfw.h"
 
+namespace dfm2 = delfem2;
+
 class CShader
 {
 public:
@@ -48,16 +50,16 @@ public:
     "}\n\0";
     
 #ifdef EMSCRIPTEN
-    shaderProgram = GL24_CompileShader((std::string("#version 300 es\n")+
-                                        glsl33vert_projection).c_str(),
-                                       (std::string("#version 300 es\n")+
-                                        std::string("precision highp float;\n")+
-                                        glsl33frag).c_str());
+    shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 300 es\n")+
+                                                      glsl33vert_projection).c_str(),
+                                                     (std::string("#version 300 es\n")+
+                                                      std::string("precision highp float;\n")+
+                                                      glsl33frag).c_str());
 #else
-    shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                        glsl33vert_projection).c_str(),
-                                       (std::string("#version 330 core\n")+
-                                        glsl33frag).c_str());
+    shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                      glsl33vert_projection).c_str(),
+                                                     (std::string("#version 330 core\n")+
+                                                      glsl33frag).c_str());
 #endif
     
     if( !glIsProgram(shaderProgram) ){

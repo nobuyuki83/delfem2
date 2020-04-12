@@ -30,7 +30,7 @@ cd ../../
 cd examples_glfwnew
 mkdir buildEm
 cd buildEm
-cmake -DEMSCRIPTEN=ON ..
+cmake -DEMSCRIPTEN=ON -DUSE_HEADERONLY=ON ..
 make
 cd ../../
 
@@ -38,20 +38,6 @@ cd ../../
 echo "################################"
 echo "build examples_glfwold"
 echo "################################"
-
-cd examples_glfwold
-mkdir buildMakeHdronly 
-cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make
-cd ../../
-
-cd examples_glfwold
-mkdir buildMakeStatic 
-cd buildMakeStatic
-cmake -DUSE_HEADERONLY=OFF ..
-make
-cd ../../
 
 cd examples_glfwold
 mkdir buildXcodeHdronly
@@ -65,6 +51,20 @@ mkdir buildXcodeStatic
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 # cmake --build . # skip build to save time
+cd ../../
+
+cd examples_glfwold
+mkdir buildMakeHdronly 
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make
+cd ../../
+
+cd examples_glfwold
+mkdir buildMakeStatic 
+cd buildMakeStatic
+cmake -DUSE_HEADERONLY=OFF ..
+make
 cd ../../
 
 echo "################################"

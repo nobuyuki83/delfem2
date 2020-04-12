@@ -60,9 +60,8 @@ void setShaderProgram(int isp){
     glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_simpletexture.vert");
     glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_simpletexture.frag");
   }
-  id_shader_program = setUpGLSL(glslVert, glslFrag);
-  ////
-  
+  id_shader_program = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
+  //  
   glUseProgram(id_shader_program);
   {
     GLint texLoc = glGetUniformLocation(id_shader_program, "myTexColor");

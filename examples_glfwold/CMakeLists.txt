@@ -10,7 +10,7 @@ ELSE()
 	message("$$$$$$$$$$$$$$$$$$$$$")
 	message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
 	project(examples_glfwold_static)
-  add_subdirectory(dfm2_static_glfwold)
+    add_subdirectory(dfm2_static_glfwold)
 ENDIF()
 
 # simple examples without delfem2 

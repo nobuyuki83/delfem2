@@ -13,6 +13,7 @@
 #ifndef gl4_v23dtricad_h
 #define gl4_v23dtricad_h
 
+#include "delfem2/dfm2_inline.h"
 #include "glnew_funcs.h" // for CGL4_VAO_Mesh
 
 namespace delfem2 {
@@ -78,5 +79,9 @@ public:
 } // namespace opnegl
   
 } // namespace delfem2
+
+#ifndef DFM2_STATIC_LIBRARY
+#  include "delfem2/opengl/glnew_v23dtricad.cpp"
+#endif
 
 #endif /* gl4_v23dtricad_h */

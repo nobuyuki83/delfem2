@@ -29,15 +29,15 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------
 
-void CShader_Points::Initialize(std::vector<double>& aXYZd)
+void delfem2::opengl::CShader_Points::Initialize(std::vector<double>& aXYZd)
 {
   if( !::glIsVertexArray(vao.VAO) ){ ::glGenVertexArrays(1, &vao.VAO); }  // opengl ver >= 3.0
   vao.Delete_EBOs();
   this->UpdateVertex(aXYZd);
 }
 
-void CShader_Points::UpdateVertex
-    (std::vector<double>& aXYZd)
+void delfem2::opengl::CShader_Points::UpdateVertex
+(std::vector<double>& aXYZd)
 {
   ::glBindVertexArray(vao.VAO); // opengl ver >= 3.0
   vao.ADD_VBO(0,aXYZd);
@@ -46,7 +46,7 @@ void CShader_Points::UpdateVertex
   nPoint = aXYZd.size()/3;
 }
 
-void CShader_Points::Compile()
+void delfem2::opengl::CShader_Points::Compile()
 {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
@@ -78,10 +78,10 @@ void CShader_Points::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 330 core\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                    glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n")+
+                                                    glsl33frag).c_str());
 #endif
 
   if( !::glIsProgram(shaderProgram) ){
@@ -94,7 +94,7 @@ void CShader_Points::Compile()
 }
 
 
-void CShader_Points::Draw(float mP[16], float mMV[16]) const
+void delfem2::opengl::CShader_Points::Draw(float mP[16], float mMV[16]) const
 {
   ::glUseProgram(shaderProgram);
   ::glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
@@ -109,7 +109,7 @@ void CShader_Points::Draw(float mP[16], float mMV[16]) const
 // ------------------------------------------
 
 
-void CShader_TriMesh::Initialize
+void delfem2::opengl::CShader_TriMesh::Initialize
  (std::vector<double>& aXYZd,
   std::vector<unsigned int>& aTri)
 {
@@ -125,7 +125,7 @@ void CShader_TriMesh::Initialize
   this->UpdateVertex(aXYZd, aTri);
 }
 
-void CShader_TriMesh::UpdateVertex
+void delfem2::opengl::CShader_TriMesh::UpdateVertex
  (std::vector<double>& aXYZd,
   std::vector<unsigned int>& aTri)
 {
@@ -146,7 +146,7 @@ void CShader_TriMesh::UpdateVertex
 }
 
 
-void CShader_TriMesh::Compile()
+void delfem2::opengl::CShader_TriMesh::Compile()
 {
   const std::string glsl33vert_projection =
   "uniform mat4 matrixProjection;\n"
@@ -181,10 +181,10 @@ void CShader_TriMesh::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 330 core\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                    glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n")+
+                                                    glsl33frag).c_str());
 #endif
   
   if( !glIsProgram(shaderProgram) ){
@@ -197,7 +197,7 @@ void CShader_TriMesh::Compile()
 }
 
 
-void CShader_TriMesh::Draw(float mP[16], float mMV[16]) const
+void delfem2::opengl::CShader_TriMesh::Draw(float mP[16], float mMV[16]) const
 {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
@@ -212,7 +212,7 @@ void CShader_TriMesh::Draw(float mP[16], float mMV[16]) const
 
 // ----------------------------------------------------------------
 
-void CShader_LineMesh::Initialize
+void delfem2::opengl::CShader_LineMesh::Initialize
     (std::vector<double>& aXYZd,
      std::vector<unsigned int>& aLine)
 {
@@ -222,7 +222,7 @@ void CShader_LineMesh::Initialize
   this->UpdateVertex(aXYZd, aLine);
 }
 
-void CShader_LineMesh::UpdateVertex
+void delfem2::opengl::CShader_LineMesh::UpdateVertex
     (std::vector<double>& aXYZd,
      std::vector<unsigned int>& aLine)
 {
@@ -234,7 +234,7 @@ void CShader_LineMesh::UpdateVertex
 }
 
 
-void CShader_LineMesh::Compile()
+void delfem2::opengl::CShader_LineMesh::Compile()
 {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
@@ -266,10 +266,10 @@ void CShader_LineMesh::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 330 core\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                    glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n")+
+                                                    glsl33frag).c_str());
 #endif
 
   if( !glIsProgram(shaderProgram) ){
@@ -282,7 +282,7 @@ void CShader_LineMesh::Compile()
 }
 
 
-void CShader_LineMesh::Draw(float mP[16], float mMV[16]) const
+void delfem2::opengl::CShader_LineMesh::Draw(float mP[16], float mMV[16]) const
 {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
@@ -293,7 +293,7 @@ void CShader_LineMesh::Draw(float mP[16], float mMV[16]) const
 
 // ----------------------------------------------------------------
 
-void CShader_TriMesh_Scalar::Initialize
+void delfem2::opengl::CShader_TriMesh_Scalar::Initialize
 (std::vector<double>& aPosD,
  unsigned int ndim,
  std::vector<unsigned int>& aTri,
@@ -314,7 +314,7 @@ void CShader_TriMesh_Scalar::Initialize
   this->UpdateVertex(aPosD, ndim, aValD);
 }
 
-void CShader_TriMesh_Scalar::UpdateVertex
+void delfem2::opengl::CShader_TriMesh_Scalar::UpdateVertex
 (std::vector<double>& aPosD,
  unsigned int ndim,
  std::vector<double>& aValD)
@@ -329,7 +329,7 @@ void CShader_TriMesh_Scalar::UpdateVertex
 }
 
 
-void CShader_TriMesh_Scalar::Compile()
+void delfem2::opengl::CShader_TriMesh_Scalar::Compile()
 {
   const std::string glsl33vert_projection =
   "uniform mat4 matrixProjection;\n"
@@ -364,10 +364,10 @@ void CShader_TriMesh_Scalar::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 330 core\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                    glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n")+
+                                                    glsl33frag).c_str());
 #endif
   
   if( !glIsProgram(shaderProgram) ){
@@ -383,7 +383,7 @@ void CShader_TriMesh_Scalar::Compile()
 }
 
 
-void CShader_TriMesh_Scalar::Draw(float mP[16], float mMV[16])
+void delfem2::opengl::CShader_TriMesh_Scalar::Draw(float mP[16], float mMV[16])
 {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
@@ -400,7 +400,7 @@ void CShader_TriMesh_Scalar::Draw(float mP[16], float mMV[16])
 
 // ---------------------------------------
 
-void CShader_TriMesh_Disp::Initialize
+void delfem2::opengl::CShader_TriMesh_Disp::Initialize
  (std::vector<double>& aPosD,
   unsigned int ndim,
   std::vector<unsigned int>& aTri,
@@ -421,7 +421,7 @@ void CShader_TriMesh_Disp::Initialize
   this->UpdateVertex(aPosD, ndim, aDispD);
 }
 
-void CShader_TriMesh_Disp::UpdateVertex
+void delfem2::opengl::CShader_TriMesh_Disp::UpdateVertex
  (std::vector<double>& aPosD,
   unsigned int ndim,
   std::vector<double>& aDispD)
@@ -436,7 +436,7 @@ void CShader_TriMesh_Disp::UpdateVertex
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0); // gl24
 }
 
-void CShader_TriMesh_Disp::Compile()
+void delfem2::opengl::CShader_TriMesh_Disp::Compile()
 {
   const std::string glsl33vert_projection =
   "uniform mat4 matrixProjection;\n"
@@ -464,10 +464,10 @@ void CShader_TriMesh_Disp::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 330 core\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                    glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n")+
+                                                    glsl33frag).c_str());
 #endif
   
   if( !glIsProgram(shaderProgram) ){
@@ -482,7 +482,7 @@ void CShader_TriMesh_Disp::Compile()
   Loc_ValMax           = glGetUniformLocation(shaderProgram, "val_max");
 }
 
-void CShader_TriMesh_Disp::Draw(float mP[16], float mMV[16])
+void delfem2::opengl::CShader_TriMesh_Disp::Draw(float mP[16], float mMV[16])
 {
   glUseProgram(shaderProgram);
   glUniformMatrix4fv(Loc_MatrixProjection, 1, GL_FALSE, mP);
@@ -495,7 +495,7 @@ void CShader_TriMesh_Disp::Draw(float mP[16], float mMV[16])
 
 // ------------------------------------------------
 
-void CShader_TriMesh_Tex::Initialize(
+void delfem2::opengl::CShader_TriMesh_Tex::Initialize(
     std::vector<double>& aXYZd,
     std::vector<unsigned int>& aTri,
     std::vector<double>& aTex)
@@ -506,7 +506,7 @@ void CShader_TriMesh_Tex::Initialize(
   this->UpdateVertex(aXYZd, aTri, aTex);
 }
 
-void CShader_TriMesh_Tex::UpdateVertex(
+void delfem2::opengl::CShader_TriMesh_Tex::UpdateVertex(
     std::vector<double>& aXYZd,
     std::vector<unsigned int>& aTri,
     std::vector<double>& aTex)
@@ -525,7 +525,7 @@ void CShader_TriMesh_Tex::UpdateVertex(
 }
 
 
-void CShader_TriMesh_Tex::Compile()
+void delfem2::opengl::CShader_TriMesh_Tex::Compile()
 {
   const std::string glsl33vert_projection =
       "uniform mat4 matrixProjection;\n"
@@ -556,10 +556,10 @@ void CShader_TriMesh_Tex::Compile()
                                       std::string("precision highp float;\n")+
                                       glsl33frag).c_str());
 #else
-  shaderProgram = GL24_CompileShader((std::string("#version 330 core\n")+
-                                      glsl33vert_projection).c_str(),
-                                     (std::string("#version 330 core\n")+
-                                      glsl33frag).c_str());
+  shaderProgram = dfm2::opengl::GL24_CompileShader((std::string("#version 330 core\n")+
+                                                    glsl33vert_projection).c_str(),
+                                                   (std::string("#version 330 core\n")+
+                                                    glsl33frag).c_str());
 #endif
 
   if( !glIsProgram(shaderProgram) ){
@@ -573,7 +573,7 @@ void CShader_TriMesh_Tex::Compile()
 }
 
 
-void CShader_TriMesh_Tex::Draw(
+void delfem2::opengl::CShader_TriMesh_Tex::Draw(
     float mP[16],
     float mMV[16]) const
 {

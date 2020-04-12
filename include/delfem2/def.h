@@ -52,9 +52,9 @@ public:
   std::vector<int> aBCFlag;
 };
 
-class CDef_ARAPLinearDisponly {
+class CDef_ArapEdgeLinearDisponly {
 public:
-  CDef_ARAPLinearDisponly(const std::vector<double>& aXYZ0,
+  CDef_ArapEdgeLinearDisponly(const std::vector<double>& aXYZ0,
                           const std::vector<unsigned int>& aTri,
                           double weight_bc0,
                           const std::vector<int>& aBCFlag0);
@@ -78,9 +78,9 @@ public:
   mutable std::vector<double> vec_tmp;
 };
 
-class CDef_ARAP {
+class CDef_ArapEdge {
 public:
-  CDef_ARAP(){}
+  CDef_ArapEdge(){}
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri,
             double weight_bc0,

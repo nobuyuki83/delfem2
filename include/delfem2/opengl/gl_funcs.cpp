@@ -43,7 +43,8 @@
 // ---------------------------------------------------------------------------
 
 
-int GL24_CompileShader(const char *vert, const char* frag)
+DFM2_INLINE int delfem2::opengl::GL24_CompileShader
+ (const char *vert, const char* frag)
 { // build and compile our shader program
   // ------------------------------------
   // vertex shader
@@ -88,7 +89,7 @@ int GL24_CompileShader(const char *vert, const char* frag)
 
 
 
-int compileShader
+DFM2_INLINE int delfem2::opengl::compileShader
 (const std::string& str_glsl_vert,
  int shaderType)
 {
@@ -114,7 +115,7 @@ int compileShader
 
 // compile vertex and fragment shader
 // return shader program
-int setUpGLSL
+DFM2_INLINE int delfem2::opengl::setUpGLSL
 (const std::string& str_glsl_vert,
  const std::string& str_glsl_frag)
 {
