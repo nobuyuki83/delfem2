@@ -316,7 +316,7 @@ void WdWddW_PlateBendingMITC3(double& W,
     double myu);
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/emat.cpp"
 #endif
   

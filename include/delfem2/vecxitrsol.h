@@ -757,7 +757,7 @@ std::vector<double> Solve_PCOCG
 
 } // delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/vecxitrsol.cpp"
 #endif
   

@@ -30,9 +30,10 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
 
-if(NOT USE_HEADERONLY)
-  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  set(DFM2_LIB
+if(USE_HEADERONLY)
+  add_definitions(-DDFM2_HEADER_ONLY=ON)
+else()
+  set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
 endif()
 
@@ -60,7 +61,7 @@ if (NOT EMSCRIPTEN)
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
     target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIB}
+      ${DFM2_LIBRARY}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY}

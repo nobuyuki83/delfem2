@@ -194,7 +194,7 @@ DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight
 
 } // delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/mats.cpp"
 #endif
   

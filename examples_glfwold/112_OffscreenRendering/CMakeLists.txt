@@ -38,11 +38,12 @@ include_directories(
     ${DELFEM2_INCLUDE_DIR}
 )
 
-if(NOT USE_HEADERONLY)
-  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-  set(DFM2_LIB
+IF(USE_HEADERONLY)
+  add_definitions(-DDFM2_HEADER_ONLY=ON)            
+else()
+  set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
-endif()
+ENDIF()
 
 add_executable(${PROJECT_NAME}
     ${3RD_PARTY}/glad3/include/glad/glad.h    ${3RD_PARTY}/glad3/src/glad.c
@@ -56,7 +57,7 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIB}
+      ${DFM2_LIBRARY}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       ${COCOA_LIBRARY}
@@ -65,7 +66,7 @@ IF(APPLE)
       )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIB}
+      ${DFM2_LIBRARY}
       ${OPENGL_LIBRARY}
       ${GLFW_DIR}/src/libglfw3.a
       -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp

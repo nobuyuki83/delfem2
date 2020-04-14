@@ -116,7 +116,7 @@ public:
 };
 
 /**
- * @brief Edge based As-Rigid-As-Possible shape deformation
+ * @brief As-Rigid-As-Possible shape deformation
  */
 class CDef_Arap {
 public:
@@ -129,9 +129,6 @@ public:
               std::vector<double>& aQuat,
               const std::vector<double>& aXYZ0,
               const std::vector<int>& aBCFlag);
-  void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
-  void Solve(double* v) const;
 public:
   std::vector<unsigned int> psup_ind, psup;
   std::vector<double> Precomp;
@@ -144,7 +141,7 @@ public:
 
 } // namespace delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/def.cpp"
 #endif
 

@@ -36,7 +36,7 @@ DFM2_INLINE int setUpGLSL(const std::string& str_glsl_vert,
 }
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/opengl/gl_funcs.cpp"
 #endif
 

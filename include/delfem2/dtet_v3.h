@@ -1004,7 +1004,7 @@ inline double DetDelaunay3D
 } // namespace delfem2
 
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/dtet_v3.cpp"
 #endif
 

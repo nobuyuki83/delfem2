@@ -139,7 +139,7 @@ DFM2_INLINE void Draw_QuaternionsCoordinateAxes(
 } // end namespace opengl
 } // end namespace delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/opengl/v3q_glold.cpp"
 #endif
 

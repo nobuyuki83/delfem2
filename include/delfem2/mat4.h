@@ -208,7 +208,7 @@ using CMat4f = CMat4<float>;
 
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/mat4.cpp"
 #endif
 

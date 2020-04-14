@@ -716,7 +716,7 @@ aDispEdge[ipo*3+2] = vecUpd.GetValue(ipo+ncorner,2);
  }
  */
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/fem_emats.cpp"
 #endif
 

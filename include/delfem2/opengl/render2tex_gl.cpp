@@ -54,7 +54,7 @@ template <typename T>
 static T MyDot3(const T a[3], const T b[3]){
   return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template float MyDot3(const float a[3], const float b[3]);
 template double MyDot3(const double a[3], const double b[3]);
 #endif
@@ -65,7 +65,7 @@ void MyCross3(T r[3], const T v1[3], const T v2[3]){
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template void MyCross3(float r[3], const float v1[3], const float v2[3]);
 template void MyCross3(double r[3], const double v1[3], const double v2[3]);
 #endif

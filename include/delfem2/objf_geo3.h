@@ -230,7 +230,7 @@ DFM2_INLINE void GetConstConstDiff_Bend
 
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/objf_geo3.cpp"
 #endif
 
