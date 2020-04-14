@@ -16,7 +16,7 @@ ENDIF()
 
 ###########################################
 
-project(611_Fem2d)
+project(621_Fem2d)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
 set(DELFEM2_INC         "../../include/delfem2")

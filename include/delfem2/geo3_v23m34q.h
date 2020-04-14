@@ -226,7 +226,9 @@ DFM2_INLINE void UpdateRotationsByMatchingCluster
  const std::vector<double>& aXYZ1,
  const std::vector<unsigned int>& psup_ind,
  const std::vector<unsigned int>& psup);
-}
+
+
+} // 
 
 
 #ifndef DFM2_STATIC_LIBRARY

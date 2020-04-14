@@ -78,6 +78,10 @@ public:
   mutable std::vector<double> vec_tmp;
 };
 
+
+/**
+ * @brief Edge based As-Rigid-As-Possible shape deformation
+ */
 class CDef_ArapEdge {
 public:
   CDef_ArapEdge(){}
@@ -109,6 +113,32 @@ public:
   std::vector<double> aMatEdge;
   std::vector<double> aDiaInv; // for jacobi preconditining
   mutable std::vector<double> vec_tmp;
+};
+
+/**
+ * @brief Edge based As-Rigid-As-Possible shape deformation
+ */
+class CDef_Arap {
+public:
+  CDef_Arap(){}
+  void Init(const std::vector<double>& aXYZ0,
+            const std::vector<unsigned int>& aTri,
+            double weight_bc0,
+            const std::vector<int>& aBCFlag,
+            bool is_preconditioner);
+  void Deform(std::vector<double>& aXYZ1,
+              std::vector<double>& aQuat,
+              const std::vector<double>& aXYZ0,
+              const std::vector<int>& aBCFlag);
+  void MatVec(double* y,
+              double alpha, const double* vec,  double beta) const;
+  void Solve(double* v) const;
+public:
+  std::vector<unsigned int> psup_ind, psup;
+  CMatrixSparse<double> Mat;
+  double weight_bc;
+  std::vector<int> aBCFlag;
+  bool is_preconditioner;
 };
 
 } // namespace delfem2

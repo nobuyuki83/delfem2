@@ -10,6 +10,8 @@
 #include "delfem2/quat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
+#include "delfem2/objf_geo3.h" // ddW_ArapEnergy
+#include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
 #include <cstdio>
 
 namespace delfem2 {
@@ -524,9 +526,10 @@ void delfem2::CDef_ArapEdge::Solve(double* v) const
 }
 
 
-void delfem2::CDef_ArapEdge::Deform(std::vector<double>& aXYZ1,
-                                std::vector<double>& aQuat,
-                                const std::vector<double>& aXYZ0)
+void delfem2::CDef_ArapEdge::Deform
+ (std::vector<double>& aXYZ1,
+  std::vector<double>& aQuat,
+  const std::vector<double>& aXYZ0)
 {
   const unsigned int np = psup_ind.size()-1;
   std::vector<double> aRhs(np*6,0.0);
@@ -548,5 +551,78 @@ void delfem2::CDef_ArapEdge::Deform(std::vector<double>& aXYZ1,
     double q0[4]; Quat_CartesianAngle(q0, aUpd.data()+np*3+ip*3);
     double q1[4]; QuatQuat(q1, q0, aQuat.data()+ip*4);
     Copy_Quat(aQuat.data()+ip*4, q1);
+  }
+}
+
+
+// ===========================================================
+
+
+void delfem2::CDef_Arap::Init
+ (const std::vector<double>& aXYZ0,
+  const std::vector<unsigned int>& aTri,
+  double weight_bc0,
+  const std::vector<int>& aBCFlag,
+  bool is_preconditioner)
+{
+  const unsigned int np = aXYZ0.size()/3;
+  JArray_PSuP_MeshElem(psup_ind, psup,
+                       aTri.data(), aTri.size()/3, 3,
+                       (int)aXYZ0.size()/3);
+  JArray_Sort(psup_ind, psup);
+  {
+    std::vector<unsigned int> psup_ind1, psup1;
+    JArray_Extend(psup_ind1, psup1,
+                        psup_ind, psup);
+    JArray_Sort(psup_ind1, psup1);
+    Mat.Initialize(np, 3, true);
+    assert( psup_ind1.size() == np+1 );
+    Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
+  }
+  
+}
+
+
+void delfem2::CDef_Arap::Deform
+(std::vector<double>& aXYZ1,
+ std::vector<double>& aQuat1,
+ const std::vector<double>& aXYZ0,
+ const std::vector<int>& aBCFlag)
+{
+  const unsigned int np = aXYZ0.size()/3;
+  Mat.SetZero();
+  std::vector<int> tmp_buffer;
+  for(unsigned int ip=0;ip<np;++ip){
+    std::vector<unsigned int> aIP;
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      aIP.push_back(psup[ipsup]);
+    }
+    aIP.push_back(ip);
+    std::vector<double> eM;
+    ddW_ArapEnergy(eM,
+                   aIP,aXYZ0,aQuat1);
+    Mat.Mearge(aIP.size(), aIP.data(),
+               aIP.size(), aIP.data(),
+               9, eM.data(),
+               tmp_buffer);
+  }
+//  Mat.AddDia(1.0e-10);
+  
+  std::vector<double> aRes1;
+  dW_ArapEnergy(aRes1,
+                      aXYZ0, aXYZ1, aQuat1, psup_ind, psup);
+  
+  Mat.SetFixedBC(aBCFlag.data());
+  setRHS_Zero(aRes1, aBCFlag, 0);
+  
+  std::vector<double> aUpd(aRes1.size());
+  std::vector<double> aConvHist = Solve_CG(aRes1.data(), aUpd.data(),
+                                           aRes1.size(), 1.0e-7, 300, Mat);
+  
+  std::cout << aConvHist.size() << std::endl;
+  for(int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd[i]; }
+  for(int itr=0;itr<10;++itr){
+    UpdateRotationsByMatchingCluster(aQuat1,
+                                     aXYZ0,aXYZ1,psup_ind,psup);
   }
 }
