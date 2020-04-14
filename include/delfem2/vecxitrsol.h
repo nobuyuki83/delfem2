@@ -423,7 +423,7 @@ std::vector<double> Solve_PBiCGStab
   for(unsigned int iitr=1;iitr<max_niter;iitr++){
     // {Mp_vec} = [M^-1]*{p}
     Mp_vec = p_vec;
-    ilu.Solve(Mp_vec.data());
+    ilu.SolvePrecond(Mp_vec.data());
     // calc (r,r0*)
     const double r_r2 = DotX(r_vec,r0_vec.data(),ndof);
     // calc {AMp_vec} = [A]*{Mp_vec}
@@ -436,7 +436,7 @@ std::vector<double> Solve_PBiCGStab
     AXPY(-alpha,AMp_vec,s_vec);
     // {Ms_vec} = [M^-1]*{s}
     Ms_vec = s_vec;
-    ilu.Solve(Ms_vec.data());
+    ilu.SolvePrecond(Ms_vec.data());
     // calc {AMs_vec} = [A]*{Ms_vec}
     mat.MatVec(AMs_vec.data(),
                1.0,Ms_vec.data(),0.0);
@@ -514,7 +514,7 @@ std::vector<double> Solve_PBiCGStab_Complex
   for(unsigned int itr=0;itr<max_niter;itr++){
     // {Mp_vec} = [M^-1]*{p}
     Mp_vec.assign(p_vec.begin(),p_vec.end());
-    ilu.Solve(Mp_vec);
+    ilu.SolvePrecond(Mp_vec);
     // calc {AMp_vec} = [A]*{Mp_vec}
     mat.MatVec(AMp_vec.data(),
                COMPLEX(1,0), Mp_vec.data(), COMPLEX(0,0));
@@ -525,7 +525,7 @@ std::vector<double> Solve_PBiCGStab_Complex
     AXPY(-alpha,AMp_vec,s_vec);
     // {Ms_vec} = [M^-1]*{s}
     Ms_vec.assign(s_vec.begin(),s_vec.end());
-    ilu.Solve(Ms_vec);
+    ilu.SolvePrecond(Ms_vec);
     // calc {AMs_vec} = [A]*{Ms_vec}
     mat.MatVec(AMs_vec.data(),
                COMPLEX(1,0),Ms_vec.data(), COMPLEX(0,0));
@@ -579,7 +579,7 @@ std::vector<double> Solve_PCG(
   
   // {Pr} = [P]{r}
   std::vector<double> Pr_vec(r_vec, r_vec + N);
-  ilu.Solve(Pr_vec.data());
+  ilu.SolvePrecond(Pr_vec.data());
   // {p} = {Pr}
   std::vector<double> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
@@ -605,7 +605,7 @@ std::vector<double> Solve_PCG(
     {  // calc beta
        // {Pr} = [P]{r}
       for (unsigned int i = 0; i < N; i++) { Pr_vec[i] = r_vec[i]; }
-      ilu.Solve(Pr_vec.data());
+      ilu.SolvePrecond(Pr_vec.data());
       // rPr1 = ({r},{Pr})
       const double rPr1 = DotX(r_vec, Pr_vec.data(), N);
       // beta = rPr1/rPr
@@ -650,7 +650,7 @@ std::vector<double> Solve_PCG_Complex
   
   // {Pr} = [P]{r}
   std::vector<COMPLEX> Pr_vec(r_vec, r_vec + ndof);
-  ilu.Solve(Pr_vec);
+  ilu.SolvePrecond(Pr_vec);
   // {p} = {Pr}
   std::vector<COMPLEX> p_vec = Pr_vec;
   // rPr = ({r},{Pr})
@@ -676,7 +676,7 @@ std::vector<double> Solve_PCG_Complex
     {  // calc beta
        // {Pr} = [P]{r}
       for (unsigned int i = 0; i < ndof; i++) { Pr_vec[i] = r_vec[i]; }
-      ilu.Solve(Pr_vec);
+      ilu.SolvePrecond(Pr_vec);
       // rPr1 = ({r},{Pr})
       const COMPLEX rPr1 = Dot(r_vec, Pr_vec.data(), ndof);
       // beta = rPr1/rPr
@@ -725,7 +725,7 @@ std::vector<double> Solve_PCOCG
   
   std::vector<COMPLEX> Ap_vec(ndof);
   std::vector<COMPLEX> w_vec(r_vec,r_vec+ndof);
-  ilu.Solve(w_vec.data());
+  ilu.SolvePrecond(w_vec.data());
   
   std::vector<COMPLEX> p_vec = w_vec;  // {p} = {w}
   COMPLEX r_w = MultSumX(r_vec,w_vec.data(),ndof);
@@ -743,7 +743,7 @@ std::vector<double> Solve_PCOCG
       if( conv_ratio < conv_ratio_tol ){ return aResHistry; }
     }
     w_vec.assign(r_vec,r_vec+ndof);
-    ilu.Solve(w_vec.data());
+    ilu.SolvePrecond(w_vec.data());
     COMPLEX beta;
     {  // calc beta
       const COMPLEX tmp1 = MultSumX(r_vec,w_vec.data(),ndof);

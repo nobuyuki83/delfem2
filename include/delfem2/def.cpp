@@ -17,6 +17,7 @@
 namespace delfem2 {
 namespace def {
 
+// original code is at vec3.cpp
 template <typename REAL>
 DFM2_INLINE void Add3
  (REAL vo[3],
@@ -212,7 +213,7 @@ void delfem2::CDef_LaplacianDisponly::MatVec
 }
 
 // for preconditioner
-void delfem2::CDef_LaplacianDisponly::Solve(double* v) const
+void delfem2::CDef_LaplacianDisponly::SolvePrecond(double* v) const
 {
   const unsigned int np = aBCFlag.size()/3;
   for(int ip=0;ip<np;++ip){
@@ -513,7 +514,7 @@ void delfem2::CDef_ArapEdge::MakePreconditionerJacobi()
   }
 }
 
-void delfem2::CDef_ArapEdge::Solve(double* v) const
+void delfem2::CDef_ArapEdge::SolvePrecond(double* v) const
 {
   const unsigned int np = psup_ind.size()-1;
   for(int ip=0;ip<np*2;++ip){

@@ -24,7 +24,7 @@ public:
   void Initialize_ILU0(const CMatrixSparse<T>& m);
   void Initialize_ILUk(const CMatrixSparse<T>& m, int fill_level);
   void SetValueILU(const CMatrixSparse<T>& m);
-  void Solve(T* vec) const{
+  void SolvePrecond(T* vec) const{
 		this->ForwardSubstitution(vec);
 		this->BackwardSubstitution(vec);
   }
