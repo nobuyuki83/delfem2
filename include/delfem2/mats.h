@@ -25,10 +25,18 @@ public:
   CMatrixSparse() : nblk_col(0), nblk_row(0), len_col(0), len_row(0) {}
 
   virtual ~CMatrixSparse() {
+    this->Clear();
+  }
+  
+  void Clear(){
     colInd.clear();
     rowPtr.clear();
     valCrs.clear();
     valDia.clear();
+    this->nblk_col = 0;
+    this->len_col = 0;
+    this->nblk_row = 0;
+    this->len_row = 0;
   }
 
   void Initialize(unsigned int nblk, unsigned int len, bool is_dia) {

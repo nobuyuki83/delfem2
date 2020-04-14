@@ -105,7 +105,7 @@ int main(int argc,char* argv[])
   {
     dfm2::MeshTri3D_CylinderClosed(aXYZ0, aTri,
                                    0.2, 1.6,
-                                   16, 16);
+                                   32, 32);
     const unsigned int np = aXYZ0.size() / 3;
     aBCFlag.assign(np * 3, 0);
     for(unsigned int ip=0;ip<np;++ip) {
@@ -122,20 +122,39 @@ int main(int argc,char* argv[])
       }
     }
   }
-  std::vector<double> aXYZ1 = aXYZ0;
-  std::vector<double> aQuat1(aXYZ0.size()/3*4);
-  for(int ip=0;ip<aXYZ0.size()/3;++ip){
-    dfm2::Quat_Identity(aQuat1.data()+4*ip);
-  }
   
   while (true){
     const double weight_bc = 100.0;
+    std::vector<double> aXYZ1 = aXYZ0;
+    std::vector<double> aQuat1(aXYZ0.size()/3*4);
+    for(int ip=0;ip<aXYZ0.size()/3;++ip){
+      dfm2::Quat_Identity(aQuat1.data()+4*ip);
+    }
     int iframe = 0;
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
-      def0.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
-      glfwSetWindowTitle(viewer.window, "ARAP Edge Linear Disponly");
+      def0.Init(aXYZ0, aTri, weight_bc, false);
+      glfwSetWindowTitle(viewer.window, "ARAP w.o. Preconditioner");
       for(;iframe<200;++iframe)
+      {
+        SetPositionAtFixedBoundary(aXYZ1,
+                                   iframe,aXYZ0,aBCFlag);
+        def0.Deform(aXYZ1,aQuat1,
+                    aXYZ0,aBCFlag);
+        // --------------------
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay_Mesh(aXYZ0,aXYZ1,aTri);
+        dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat1,0.04);
+        Draw_BCFlag(aXYZ1,aBCFlag);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+      }
+    } // end linear disponly
+    { // arap edge linear disponly
+      dfm2::CDef_Arap def0;
+      def0.Init(aXYZ0, aTri, weight_bc, true);
+      glfwSetWindowTitle(viewer.window, "ARAP with Preconditioner");
+      for(;iframe<400;++iframe)
       {
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe,aXYZ0,aBCFlag);

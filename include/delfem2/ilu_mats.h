@@ -21,6 +21,10 @@ public:
   CPreconditionerILU(){}
   CPreconditionerILU(const CPreconditionerILU&); // copy
   ~CPreconditionerILU(){ m_diaInd.clear(); }
+  void Clear(){
+    mat.Clear();
+    m_diaInd.clear();
+  }
   void Initialize_ILU0(const CMatrixSparse<T>& m);
   void Initialize_ILUk(const CMatrixSparse<T>& m, int fill_level);
   void SetValueILU(const CMatrixSparse<T>& m);

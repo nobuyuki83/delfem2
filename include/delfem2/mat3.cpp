@@ -636,6 +636,10 @@ dfm2::CMat3<T>::CMat3(T x, T y, T z):
 template <typename T>
 dfm2::CMat3<T>::CMat3(const T m[9]):
  mat{m[0],m[1],m[2], m[3],m[4],m[5], m[6],m[7],m[8]} {}
+template dfm2::CMat3d::CMat3(const double m[9]);
+template dfm2::CMat3f::CMat3(const float m[9]);
+
+
 
 template <typename T>
 void dfm2::CMat3<T>::MatVec(const double vec0[], double vec1[]) const

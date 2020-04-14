@@ -49,6 +49,58 @@ void SetLinSys_LaplaceGraph_MeshTri3
   }
 }
 
+DFM2_INLINE void dWddW_ArapEnergy
+(std::vector<double>& eM,
+ std::vector<double>& eR,
+ const double* Minv,
+ const std::vector<unsigned int>& aIP,
+ const std::vector<double>& aXYZ0,
+ const std::vector<double>& aXYZ1,
+ const std::vector<double>& aQuat1)
+{
+  const unsigned int nIP = aIP.size();
+  const unsigned int nNg = nIP-1; // number of neighbor
+  unsigned int ip = aIP[nNg];
+  const CVec3d Pi(aXYZ0.data()+ip*3);
+  const CMat3d LMi(Minv);
+  const CMat3d Mrot = CMat3d::Quat(aQuat1.data()+ip*4);
+  eM.assign(nIP*nIP*9, 0.0);
+  for(unsigned int jjp=0;jjp<nNg;++jjp){
+    for(unsigned int kkp=0;kkp<nNg;++kkp){
+      const CVec3d vj = (CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
+      const CVec3d vk = (CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
+      CMat3d L1 = Mrot*CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p)*Mrot.Trans();
+      L1.AddToScale(eM.data()+(kkp*nIP+jjp)*9, -1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, -1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, +1.0);
+      L1.AddToScale(eM.data()+(kkp*nIP+nNg)*9, +1.0);
+    }
+    {
+      CMat3d L1 = CMat3d::Identity();
+      L1.AddToScale(eM.data()+(jjp*nIP+jjp)*9, +1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, +1.0);
+      L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, -1.0);
+      L1.AddToScale(eM.data()+(jjp*nIP+nNg)*9, -1.0);
+    }
+  }
+  
+  //
+  eR.assign(nIP*3, 0.0);
+  const CVec3d pi(aXYZ1.data()+ip*3);
+  CMat3d LM; LM.SetZero();
+  for(unsigned int jjp=0;jjp<nNg;++jjp){
+    const unsigned int jp = aIP[jjp];
+    const CVec3d v0 = Mrot*(CVec3d(aXYZ0.data()+jp*3)-Pi);
+    CVec3d pj(aXYZ1.data()+jp*3);
+    const CVec3d v1 = pj-pi;
+    const CVec3d r = -(v1-v0);
+    r.AddToScale(eR.data()+nNg*3, +1);
+    r.AddToScale(eR.data()+jjp*3, -1);
+  }
+}
+  
+  
+
 }
 }
  
@@ -563,9 +615,9 @@ void delfem2::CDef_Arap::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
   double weight_bc0,
-  const std::vector<int>& aBCFlag,
   bool is_preconditioner)
 {
+  this->is_preconditioner = is_preconditioner;
   const unsigned int np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
@@ -581,6 +633,24 @@ void delfem2::CDef_Arap::Init
     Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
   }
   
+  Precomp.resize(np*9);
+  for(int ip=0;ip<np;++ip){
+    const CVec3d Pi(aXYZ0.data()+ip*3);
+    CMat3d LM; LM.SetZero();
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      const unsigned int jp = psup[ipsup];
+      const CVec3d v0 = (CVec3d(aXYZ0.data()+jp*3)-Pi);
+      LM += Mat3_CrossCross(v0);
+    }
+    CMat3d LMi = LM.Inverse();
+    LMi.CopyTo(Precomp.data()+ip*9);
+  }
+  
+  this->Prec.Clear();
+  if( is_preconditioner ){
+    this->Prec.Initialize_ILU0(Mat);
+  }
+  
 }
 
 
@@ -592,6 +662,7 @@ void delfem2::CDef_Arap::Deform
 {
   const unsigned int np = aXYZ0.size()/3;
   Mat.SetZero();
+  this->aRes1.assign(np*3, 0.0);
   std::vector<int> tmp_buffer;
   for(unsigned int ip=0;ip<np;++ip){
     std::vector<unsigned int> aIP;
@@ -599,30 +670,43 @@ void delfem2::CDef_Arap::Deform
       aIP.push_back(psup[ipsup]);
     }
     aIP.push_back(ip);
-    std::vector<double> eM;
-    ddW_ArapEnergy(eM,
-                   aIP,aXYZ0,aQuat1);
+    std::vector<double> eM, eR;
+    def::dWddW_ArapEnergy(eM,eR,
+                          Precomp.data()+ip*9,
+                          aIP,aXYZ0,aXYZ1,aQuat1);
     Mat.Mearge(aIP.size(), aIP.data(),
                aIP.size(), aIP.data(),
                9, eM.data(),
                tmp_buffer);
+    for(unsigned int iip=0;iip<aIP.size();++iip){
+      int ip = aIP[iip];
+      aRes1[ip*3+0] += eR[iip*3+0];
+      aRes1[ip*3+1] += eR[iip*3+1];
+      aRes1[ip*3+2] += eR[iip*3+2];
+    }
   }
-//  Mat.AddDia(1.0e-10);
-  
-  std::vector<double> aRes1;
-  dW_ArapEnergy(aRes1,
-                      aXYZ0, aXYZ1, aQuat1, psup_ind, psup);
+  Mat.AddDia(1.0e-8);
   
   Mat.SetFixedBC(aBCFlag.data());
   setRHS_Zero(aRes1, aBCFlag, 0);
   
-  std::vector<double> aUpd(aRes1.size());
-  std::vector<double> aConvHist = Solve_CG(aRes1.data(), aUpd.data(),
-                                           aRes1.size(), 1.0e-7, 300, Mat);
+  aUpd1.resize(aRes1.size());
+  std::vector<double> aConvHist;
+  
+  if( is_preconditioner ){
+    this->Prec.SetValueILU(Mat);
+    this->Prec.DoILUDecomp();
+    aConvHist = Solve_PCG(aRes1.data(), aUpd1.data(),
+                         aRes1.size(), 1.0e-7, 300, Mat, Prec);
+  }
+  else{
+    aConvHist = Solve_CG(aRes1.data(), aUpd1.data(),
+                         aRes1.size(), 1.0e-7, 300, Mat);
+  }
   
   std::cout << aConvHist.size() << std::endl;
-  for(int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd[i]; }
-  for(int itr=0;itr<10;++itr){
+  for(int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd1[i]; }
+  for(int itr=0;itr<1;++itr){
     UpdateRotationsByMatchingCluster(aQuat1,
                                      aXYZ0,aXYZ1,psup_ind,psup);
   }
