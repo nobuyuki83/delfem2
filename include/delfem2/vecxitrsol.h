@@ -71,15 +71,21 @@ void AXPY(
     T *y,
     unsigned int n);
 
+/**
+ * @brief set zero to the element if the flag is equal to some value at that position
+ * @param aBCFlag vector of flag
+ * @param iflag_nonzero the value of flag 
+ */
 template<typename T>
 void setRHS_Zero(
     std::vector<T> &vec_b,
     const std::vector<int> &aBCFlag,
     int iflag_nonzero);
 
-std::complex<double> MultSumX(const std::complex<double> *va,
-                              const std::complex<double> *vb,
-                              unsigned int n);
+std::complex<double> MultSumX
+ (const std::complex<double> *va,
+  const std::complex<double> *vb,
+  unsigned int n);
 
 void XPlusAYBZ(std::vector<double> &X,
                const int nDoF,

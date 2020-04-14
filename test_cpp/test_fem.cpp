@@ -632,7 +632,7 @@ TEST(objfunc_v23, arap)
   {
     double dw = dfm2::DotX(aRes1.data(),dXYZ12.data(),aRes1.size());
     double val2 = (w2-w1)/eps;
-    EXPECT_LT(fabs(dw-val2)/(fabs(dw)+1.0), 1.0e-5 );
+    EXPECT_NEAR(dw, val2, 1.0e-5*(fabs(dw)+1.0) );
   }
   
   // ---------------------------------
@@ -671,7 +671,8 @@ TEST(objfunc_v23, arap)
     for(int i=0;i<np*3;++i){
       double val0 = (aRes2[i]-aRes1[i])/eps;
       double val1 = aRes12[i];
-      EXPECT_LT( fabs(val0-val1)/(1+fabs(val1)), 1.0e-5 );
+//      std::cout << i << " " << val0 << " " << val1 << std::endl;
+      EXPECT_NEAR( val0, val1, 1.0e-5*(1+fabs(val1)) );
     }
   }
     

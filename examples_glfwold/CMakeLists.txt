@@ -74,8 +74,8 @@ add_subdirectory(606_PbdGrid2D)
 add_subdirectory(607_PbdCloth)
 add_subdirectory(608_FdmFluid2D)
 add_subdirectory(609_DefLaplacian)
-add_subdirectory(610_DefAsRigidAsPossible)
-add_subdirectory(611_Fem2D)
+add_subdirectory(610_DefArapEdge)
+add_subdirectory(611_DefArap)
 add_subdirectory(612_BemPotentialFlow3D)
 add_subdirectory(613_FemRod)
 add_subdirectory(614_FemMitc3Eigen)
@@ -85,6 +85,7 @@ add_subdirectory(617_PbdClothCadSmpl)
 add_subdirectory(618_Fem3d)
 add_subdirectory(619_Sph2d)
 add_subdirectory(620_FemClothSelfCollision)
+add_subdirectory(621_Fem2D)
 
 
 
