@@ -10,7 +10,7 @@
 #define DFM2_DEF_H
 
 #include "delfem2/dfm2_inline.h"
-#include "delfem2/mats.h"
+#include "delfem2/ilu_mats.h"
 
 // ---------------------------
 
@@ -124,7 +124,6 @@ public:
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri,
             double weight_bc0,
-            const std::vector<int>& aBCFlag,
             bool is_preconditioner);
   void Deform(std::vector<double>& aXYZ1,
               std::vector<double>& aQuat,
@@ -135,10 +134,12 @@ public:
   void Solve(double* v) const;
 public:
   std::vector<unsigned int> psup_ind, psup;
+  std::vector<double> Precomp;
   CMatrixSparse<double> Mat;
   double weight_bc;
-  std::vector<int> aBCFlag;
+  std::vector<double> aRes1, aUpd1;
   bool is_preconditioner;
+  CPreconditionerILU<double> Prec;
 };
 
 } // namespace delfem2
