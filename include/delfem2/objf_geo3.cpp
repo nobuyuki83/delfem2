@@ -1070,14 +1070,14 @@ DFM2_INLINE void dfm2::ddW_ArapEnergy
     LM += dfm2::Mat3_CrossCross(v0);
   }
   dfm2::CMat3d LMi = LM.Inverse();
-  dfm2::CMat3d R = dfm2::CMat3d::Quat(aQuat1.data()+ip*4);
+  dfm2::CMat3d Mrot = dfm2::CMat3d::Quat(aQuat1.data()+ip*4);
   //    LMi = R*LMi*R.Trans();
   eM.assign(nIP*nIP*9, 0.0);
   for(unsigned int jjp=0;jjp<nNg;++jjp){
     for(unsigned int kkp=0;kkp<nNg;++kkp){
       const dfm2::CVec3d vj = (dfm2::CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
       const dfm2::CVec3d vk = (dfm2::CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
-      dfm2::CMat3d L1 = R*dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p)*R.Trans();
+      dfm2::CMat3d L1 = Mrot*dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p)*Mrot.Trans();
       //        L1 = dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p);
       L1.AddToScale(eM.data()+(kkp*nIP+jjp)*9, -1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, -1.0);

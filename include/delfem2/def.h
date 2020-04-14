@@ -40,7 +40,7 @@ public:
               const std::vector<int>& aBCFlag);
   void MatVec(double* y,
               double alpha, const double* vec,  double beta) const;
-  void Solve(double* v) const;
+  void SolvePrecond(double* v) const;
 private:
   void MakeLinearSystem();
 public:
@@ -95,7 +95,7 @@ public:
               const std::vector<double>& aXYZ0);
   void MatVec(double* y,
               double alpha, const double* vec,  double beta) const;
-  void Solve(double* v) const;
+  void SolvePrecond(double* v) const;
 private:
   void JacobiTVecTmp(double*y,
                      double alpha, double beta) const;
