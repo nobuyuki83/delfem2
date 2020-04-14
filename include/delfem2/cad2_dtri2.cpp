@@ -11,7 +11,6 @@
 #include "delfem2/funcs.h"
 #include <cstdio>
 #include <deque>
-#include <cstdlib>
 
 namespace dfm2 = delfem2;
 

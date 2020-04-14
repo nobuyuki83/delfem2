@@ -10,7 +10,6 @@
 #include "delfem2/quat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
-#include "delfem2/objf_geo3.h" // ddW_ArapEnergy
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
 #include <cstdio>
 
@@ -27,7 +26,7 @@ DFM2_INLINE void Add3
   vo[1] += vi[1];
   vo[2] += vi[2];
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template void Add3(float vo[3], const float vi[3]);
 template void Add3(double vo[3], const double vi[3]);
 #endif

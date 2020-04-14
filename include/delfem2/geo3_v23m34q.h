@@ -231,7 +231,7 @@ DFM2_INLINE void UpdateRotationsByMatchingCluster
 } // 
 
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/geo3_v23m34q.cpp"
 #endif
 

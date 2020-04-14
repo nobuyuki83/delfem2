@@ -152,7 +152,7 @@ DFM2_INLINE bool isNumeric(int iascii);
 
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/funcs.cpp"
 #endif
 

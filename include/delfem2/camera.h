@@ -127,7 +127,7 @@ std::istream &operator>>(std::istream &input, CCamera<REAL>& c);
 
 } // namespace delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/camera.cpp"
 #endif
 

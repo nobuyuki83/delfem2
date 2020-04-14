@@ -52,7 +52,7 @@ DFM2_INLINE void myGlVertex2
 } // end namespace opengl
 } // end namespace delfem2
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/opengl/v2_glold.cpp"
 #endif
 

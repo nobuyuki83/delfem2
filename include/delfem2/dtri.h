@@ -152,7 +152,7 @@ DFM2_INLINE void extractHoles
 }
 
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/dtri.cpp"
 #endif
 

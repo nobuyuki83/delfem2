@@ -484,7 +484,7 @@ template <typename REAL>
 void dfm2::CCamera<REAL>::Scale(double s){
   scale *= s;
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template void dfm2::CCamera<double>::Scale(double s);
 #endif
   
@@ -510,7 +510,7 @@ void dfm2::CCamera<REAL>::Rot_Camera(double dx, double dy){
       }
     }
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template void dfm2::CCamera<double>::Rot_Camera(double dx, double dy);
 #endif
 
@@ -524,7 +524,7 @@ void dfm2::CCamera<REAL>::Pan_Camera(double dx, double dy){
     trans[2] += s*0.0;
   
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template void dfm2::CCamera<double>::Pan_Camera(double dx, double dy);
 #endif
 

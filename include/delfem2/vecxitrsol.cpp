@@ -27,7 +27,7 @@ T dfm2::Dot(
   for(unsigned int i=0;i<n;i++){ r += r_vec[i]*u_vec[i]; }
   return r;
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template float dfm2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
 template double dfm2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
 #endif

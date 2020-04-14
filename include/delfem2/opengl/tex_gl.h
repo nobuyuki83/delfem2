@@ -176,7 +176,7 @@ public:
 }
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/opengl/tex_gl.cpp"
 #endif
 

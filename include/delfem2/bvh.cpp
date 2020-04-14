@@ -285,7 +285,7 @@ DFM2_INLINE std::uint32_t delfem2::MortonCode(REAL x, REAL y, REAL z)
   std::uint32_t ixyz = ix * 4 + iy * 2 + iz;
   return ixyz;
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template std::uint32_t delfem2::MortonCode(float x, float y, float z);
 template std::uint32_t delfem2::MortonCode(double x, double y, double z);
 #endif
@@ -408,7 +408,7 @@ DFM2_INLINE void dfm2::SortedMortenCode_Points3(
       //        std::cout << std::bitset<32>(aNodeBVH[ino].imtc) << "  " << clz(aNodeBVH[ino].imtc) << "   " << ino << std::endl;
   }
 }
-#ifdef DFM2_STATIC_LIBRARY
+#ifndef DFM2_HEADER_ONLY
 template void dfm2::SortedMortenCode_Points3(
     std::vector<unsigned int>& aSortedId,
     std::vector<std::uint32_t>& aSortedMc,

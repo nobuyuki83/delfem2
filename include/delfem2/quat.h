@@ -212,8 +212,8 @@ using CQuatf = CQuat<float>;
   
 }
 
-#ifndef DFM2_STATIC_LIBRARY
-#include "delfem2/quat.cpp"
+#ifdef DFM2_HEADER_ONLY
+#  include "delfem2/quat.cpp"
 #endif
 
 #endif // !defined(DFM2_QUAT_H)

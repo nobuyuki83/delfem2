@@ -32,7 +32,6 @@ set(PYBIND11_DIR ${3RD_PARTY}/pybind11)
 add_subdirectory(${PYBIND11_DIR} pybind11)
 
 if(NOT USE_HEADERONLY)
-  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
       ${DELFEM2_INC}/quat.h                    ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/vec2.h                    ${DELFEM2_INC}/vec2.cpp
@@ -53,6 +52,8 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp    
       ${DELFEM2_INC}/opengl/cad2dtriv2_glold.h   ${DELFEM2_INC}/opengl/cad2dtriv2_glold.cpp
       )
+else()
+  add_definitions(-DDFM2_HEADER_ONLY=ON)
 endif()
 
 set(INPUT_SRC

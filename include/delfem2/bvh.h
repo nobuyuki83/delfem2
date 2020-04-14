@@ -566,7 +566,7 @@ void delfem2::BVH_GetIndElem_IntersectLine
   BVH_GetIndElem_IntersectLine(aIndElem, src,dir, ichild1,aBVH,aBB);
 }
   
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/bvh.cpp"
 #endif
 

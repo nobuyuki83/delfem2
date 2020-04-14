@@ -48,7 +48,7 @@ DFM2_INLINE bool LoadTGAFile(
 
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/imgio.cpp"
 #endif
 

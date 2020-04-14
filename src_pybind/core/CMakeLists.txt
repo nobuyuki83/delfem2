@@ -40,7 +40,6 @@ include_directories(
 )
 
 if(NOT USE_HEADERONLY)
-  add_definitions(-DDFM2_STATIC_LIBRARY=ON)
   set(SRC_DFM2
       ${DELFEM2_INC}/vec2.h               ${DELFEM2_INC}/vec2.cpp
       ${DELFEM2_INC}/vec3.h               ${DELFEM2_INC}/vec3.cpp
@@ -73,6 +72,8 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/objfdtri_objfdtri23.h   ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
       ${DELFEM2_INC}/srch_v3bvhmshtopo.h
       )
+else()
+  add_definitions(-DDFM2_HEADER_ONLY=ON)
 endif()
 
 set(INPUT_SRC

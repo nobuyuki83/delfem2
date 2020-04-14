@@ -389,7 +389,7 @@ CMat3<T> Mat3_Identity(T alpha){
 
 }
 
-#ifndef DFM2_STATIC_LIBRARY
+#ifdef DFM2_HEADER_ONLY
 #  include "delfem2/mat3.cpp"
 #endif
 
