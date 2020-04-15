@@ -10,87 +10,86 @@
 
 #include "delfem2/dtri2_v2dtri.h"
 
-namespace dfm2 = delfem2;
+// ===========================================
+// unexposed functions
 
-// --------------------------------------------------------
+namespace delfem2 {
+namespace dtri2 {
 
 DFM2_INLINE bool LaplacianArroundPoint
- (std::vector<dfm2::CVec2d>& aVec2,
-  int ipoin,
-  const std::vector<dfm2::CDynPntSur>& aPo,
-  const std::vector<dfm2::CDynTri>& aTri)
-{
-  assert( aVec2.size() == aPo.size() );
+    (std::vector<CVec2d> &aVec2,
+     int ipoin,
+     const std::vector<CDynPntSur> &aPo,
+     const std::vector<CDynTri> &aTri) {
+  assert(aVec2.size() == aPo.size());
   const unsigned int itri_ini = aPo[ipoin].e;
   const unsigned int inoel_c_ini = aPo[ipoin].d;
-  assert( itri_ini < aTri.size() );
-  assert( inoel_c_ini < 3 );
-  assert( aTri[itri_ini].v[inoel_c_ini] == ipoin );
+  assert(itri_ini < aTri.size());
+  assert(inoel_c_ini < 3);
+  assert(aTri[itri_ini].v[inoel_c_ini] == ipoin);
   unsigned int itri0 = itri_ini;
   unsigned int inoel_c0 = inoel_c_ini;
-  unsigned int inoel_b0 = (inoel_c0+1)%3;
+  unsigned int inoel_b0 = (inoel_c0 + 1) % 3;
   bool is_bound_flg = false;
-  dfm2::CVec2d vec_delta = aVec2[ipoin];
+  CVec2d vec_delta = aVec2[ipoin];
   unsigned int ntri_around = 1;
-  for(;;){
-    assert( itri0 <  aTri.size() );
-    assert( inoel_c0 < 3 );
-    assert( aTri[itri0].v[inoel_c0] == ipoin );
+  for (;;) {
+    assert(itri0 < aTri.size());
+    assert(inoel_c0 < 3);
+    assert(aTri[itri0].v[inoel_c0] == ipoin);
     {
-      vec_delta.p[0] += aVec2[ aTri[itri0].v[inoel_b0] ].x();
-      vec_delta.p[1] += aVec2[ aTri[itri0].v[inoel_b0] ].y();
+      vec_delta.p[0] += aVec2[aTri[itri0].v[inoel_b0]].x();
+      vec_delta.p[1] += aVec2[aTri[itri0].v[inoel_b0]].y();
       ntri_around++;
     }
-    if( aTri[itri0].s2[inoel_b0] >= 0 ){
+    if (aTri[itri0].s2[inoel_b0] >= 0) {
       const int itri1 = aTri[itri0].s2[inoel_b0];
-      const int rel01 = (int)aTri[itri0].r2[inoel_b0];
-      const unsigned int inoel_c1 = dfm2::relTriTri[rel01][inoel_c0];
-      unsigned int inoel_b1 = dfm2::relTriTri[rel01][ (inoel_c0+2)%3 ];
-      assert( itri1 < (int)aTri.size() );
-      assert( aTri[itri1].s2[ dfm2::relTriTri[rel01][inoel_b0] ] == (int)itri0 );
-      assert( aTri[itri1].v[inoel_c1] == ipoin );
-      if( itri1 == (int)itri_ini ) break;
+      const int rel01 = (int) aTri[itri0].r2[inoel_b0];
+      const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
+      unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0 + 2) % 3];
+      assert(itri1 < (int) aTri.size());
+      assert(aTri[itri1].s2[ relTriTri[rel01][inoel_b0] ] == (int) itri0);
+      assert(aTri[itri1].v[inoel_c1] == ipoin);
+      if (itri1 == (int) itri_ini) break;
       itri0 = itri1;
       inoel_c0 = inoel_c1;
       inoel_b0 = inoel_b1;
-    }
-    else{
+    } else {
       is_bound_flg = true;
       break;
     }
   }
-  if( is_bound_flg ) return false;
+  if (is_bound_flg) return false;
   aVec2[ipoin].p[0] = vec_delta.x() / ntri_around;
   aVec2[ipoin].p[1] = vec_delta.y() / ntri_around;
   return true;
 }
 
 DFM2_INLINE bool FindEdgePoint_AcrossEdge
- (unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double& ratio,
-  int ipo0, int ipo1,
-  const std::vector<dfm2::CDynPntSur>& po,
-  const std::vector<dfm2::CDynTri>& tri,
-  const std::vector<dfm2::CVec2d>& aVec2)
-{
+    (unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double &ratio,
+     int ipo0, int ipo1,
+     const std::vector<CDynPntSur> &po,
+     const std::vector<CDynTri> &tri,
+     const std::vector<CVec2d> &aVec2) {
   const unsigned int itri_ini = po[ipo0].e;
   const unsigned int inotri_ini = po[ipo0].d;
   unsigned int inotri_cur = inotri_ini;
   unsigned int itri_cur = itri_ini;
-  for(;;){
-    assert( tri[itri_cur].v[inotri_cur] == ipo0 );
+  for (;;) {
+    assert(tri[itri_cur].v[inotri_cur] == ipo0);
     {
-      const unsigned int inotri2 = (inotri_cur+1)%3;
-      const unsigned int inotri3 = (inotri_cur+2)%3;
+      const unsigned int inotri2 = (inotri_cur + 1) % 3;
+      const unsigned int inotri3 = (inotri_cur + 2) % 3;
       double area0 = Area_Tri(aVec2[ipo0],
-                             aVec2[ tri[itri_cur].v[inotri2] ],
-                             aVec2[ipo1] );
-      if( area0 > -1.0e-20 ){
-        double area1 =  Area_Tri(aVec2[ipo0],
+                              aVec2[tri[itri_cur].v[inotri2]],
+                              aVec2[ipo1]);
+      if (area0 > -1.0e-20) {
+        double area1 = Area_Tri(aVec2[ipo0],
                                 aVec2[ipo1],
-                                aVec2[ tri[itri_cur].v[inotri3] ] );
-        if( area1 > -1.0e-20 ){
-          assert( area0 + area1 > 1.0e-20 );
-          ratio = area0 / ( area0 + area1 );
+                                aVec2[tri[itri_cur].v[inotri3]]);
+        if (area1 > -1.0e-20) {
+          assert(area0 + area1 > 1.0e-20);
+          ratio = area0 / (area0 + area1);
           itri0 = itri_cur;
           inotri0 = inotri2;
           inotri1 = inotri3;
@@ -99,17 +98,18 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge
       }
     }
     {
-      const unsigned int inotri2 = (inotri_cur+1)%3;
+      const unsigned int inotri2 = (inotri_cur + 1) % 3;
       const int itri_nex = tri[itri_cur].s2[inotri2];
-      if( itri_nex == -1 ){ break; }
-      const unsigned int* rel = dfm2::relTriTri[ tri[itri_cur].r2[inotri2] ];
+      if (itri_nex == -1) { break; }
+      const unsigned int *rel = relTriTri[tri[itri_cur].r2[inotri2]];
       const unsigned int inotri3 = rel[inotri_cur];
-      assert( itri_nex < (int)tri.size() );
-      assert( itri_nex >= 0 );
-      assert( tri[itri_nex].v[inotri3] == ipo0 );
-      if( itri_nex == (int)itri_ini ){
+      assert(itri_nex < (int) tri.size());
+      assert(itri_nex >= 0);
+      assert(tri[itri_nex].v[inotri3] == ipo0);
+      if (itri_nex == (int) itri_ini) {
         itri0 = 0;
-        inotri0 = 0; inotri1 = 0;
+        inotri0 = 0;
+        inotri1 = 0;
         ratio = 0.0;
         return false;
       }
@@ -117,24 +117,24 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge
       inotri_cur = inotri3;
     }
   }
-  
+
   inotri_cur = inotri_ini;
   itri_cur = itri_ini;
-  for(;;){
-    assert( tri[itri_cur].v[inotri_cur] == ipo0 );
+  for (;;) {
+    assert(tri[itri_cur].v[inotri_cur] == ipo0);
     {
-      const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
-      const unsigned int inotri3 = (inotri_cur+2)%3; // indexRot3[2][inotri_cur];
+      const unsigned int inotri2 = (inotri_cur + 1) % 3; // indexRot3[1][inotri_cur];
+      const unsigned int inotri3 = (inotri_cur + 2) % 3; // indexRot3[2][inotri_cur];
       double area0 = Area_Tri(aVec2[ipo0],
-                             aVec2[ tri[itri_cur].v[inotri2] ],
-                             aVec2[ipo1] );
-      if( area0 > -1.0e-20 ){
-        double area1 =  Area_Tri(aVec2[ipo0],
+                              aVec2[tri[itri_cur].v[inotri2]],
+                              aVec2[ipo1]);
+      if (area0 > -1.0e-20) {
+        double area1 = Area_Tri(aVec2[ipo0],
                                 aVec2[ipo1],
-                                aVec2[ tri[itri_cur].v[inotri3] ] );
-        if( area1 > -1.0e-20 ){
-          assert( area0 + area1 > 1.0e-20 );
-          ratio = area0 / ( area0 + area1 );
+                                aVec2[tri[itri_cur].v[inotri3]]);
+        if (area1 > -1.0e-20) {
+          assert(area0 + area1 > 1.0e-20);
+          ratio = area0 / (area0 + area1);
           itri0 = itri_cur;
           inotri0 = inotri2;
           inotri1 = inotri3;
@@ -143,32 +143,38 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge
       }
     }
     {
-      const unsigned int inotri2 = (inotri_cur+2)%3; // indexRot3[2][inotri_cur];
-                                                     //      if( tri[itri_cur].g2[inotri2] != -2 && tri[itri_cur].g2[inotri2] != -3 ){
-                                                     //        break;
-                                                     //      }
+      const unsigned int inotri2 = (inotri_cur + 2) % 3; // indexRot3[2][inotri_cur];
+      //      if( tri[itri_cur].g2[inotri2] != -2 && tri[itri_cur].g2[inotri2] != -3 ){
+      //        break;
+      //      }
       unsigned int itri_nex = tri[itri_cur].s2[inotri2];
-      const unsigned int* rel = dfm2::relTriTri[ tri[itri_cur].r2[inotri2] ];
+      const unsigned int *rel = relTriTri[tri[itri_cur].r2[inotri2]];
       const unsigned int inotri3 = rel[inotri_cur];
-      assert( tri[itri_nex].v[inotri3] == ipo0 );
-      if( itri_nex == itri_ini ){
+      assert(tri[itri_nex].v[inotri3] == ipo0);
+      if (itri_nex == itri_ini) {
         assert(0);  // àÍé¸ÇµÇ»Ç¢ÇÕÇ∏
       }
       itri_cur = itri_nex;
       inotri_cur = inotri3;
     }
   }
-  
+
   itri0 = 0;
-  inotri0 = 0; inotri1 = 0;
+  inotri0 = 0;
+  inotri1 = 0;
   ratio = 0.0;
-  
+
   return false;
 }
 
-// --------------------------------------------------------
+} // cad2
+} // delfem2
 
-DFM2_INLINE bool dfm2::CheckTri
+// unexposed functions
+// --------------------------------------------------------
+// exposed functions
+
+DFM2_INLINE bool delfem2::CheckTri
 (const std::vector<CDynPntSur>& aPo3D,
  const std::vector<CDynTri>& aSTri,
  const std::vector<CVec2d>& aXYZ)
@@ -190,7 +196,7 @@ DFM2_INLINE bool dfm2::CheckTri
   return true;
 }
 
-DFM2_INLINE bool dfm2::DelaunayAroundPoint
+DFM2_INLINE bool delfem2::DelaunayAroundPoint
 (int ipo0,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri,
@@ -288,7 +294,7 @@ DFM2_INLINE bool dfm2::DelaunayAroundPoint
   return true;
 }
 
-DFM2_INLINE void dfm2::MeshingInside
+DFM2_INLINE void delfem2::MeshingInside
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
  std::vector<CVec2d>& aVec2,
@@ -330,7 +336,7 @@ DFM2_INLINE void dfm2::MeshingInside
       nadd++;
     }
     for(std::size_t ip=nPointFix;ip<aVec2.size();++ip){
-      LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
+      dtri2::LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     }
     if( nadd != 0 ){ ratio *= 0.8; }
     else{ ratio *= 0.5; }
@@ -338,13 +344,13 @@ DFM2_INLINE void dfm2::MeshingInside
   }
 
   for(std::size_t ip=nPointFix;ip<aVec2.size();++ip){
-    LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
+    dtri2::LaplacianArroundPoint(aVec2, ip, aPo2D,aTri);
     DelaunayAroundPoint(ip, aPo2D, aTri, aVec2);
   }
 }
 
 
-DFM2_INLINE void dfm2::MakeSuperTriangle
+DFM2_INLINE void delfem2::MakeSuperTriangle
 (std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
@@ -399,7 +405,7 @@ DFM2_INLINE void dfm2::MakeSuperTriangle
   tri.r2[2] =  0;
 }
 
-DFM2_INLINE void dfm2::AddPointsMesh
+DFM2_INLINE void delfem2::AddPointsMesh
 (const std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
@@ -464,7 +470,7 @@ DFM2_INLINE void dfm2::AddPointsMesh
   }
 }
 
-DFM2_INLINE void dfm2::EnforceEdge
+DFM2_INLINE void delfem2::EnforceEdge
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
  int i0, int i1,
@@ -493,9 +499,9 @@ DFM2_INLINE void dfm2::EnforceEdge
     }
     else{ // this edge is devided from connection outer triangle
       double ratio;
-      if( !FindEdgePoint_AcrossEdge(itri0,inotri0,inotri1,ratio,
-                                    i0,i1,
-                                    aPo2D,aTri,aVec2) ){ assert(0); }
+      if( !dtri2::FindEdgePoint_AcrossEdge(itri0,inotri0,inotri1,ratio,
+          i0,i1,
+          aPo2D,aTri,aVec2) ){ assert(0); }
       assert( ratio > -1.0e-20 && ratio < 1.0+1.0e-20 );
       assert( Area_Tri( aVec2[i0], aVec2[ aTri[itri0].v[inotri0] ], aVec2[i1] ) > 1.0e-20 );
       assert( Area_Tri( aVec2[i0], aVec2[i1], aVec2[ aTri[itri0].v[inotri1] ] ) > 1.0e-20 );
@@ -527,7 +533,7 @@ DFM2_INLINE void dfm2::EnforceEdge
   }
 }
 
-DFM2_INLINE void dfm2::FlagConnected
+DFM2_INLINE void delfem2::FlagConnected
 (std::vector<int>& inout_flg,
  const std::vector<CDynTri>& aTri_in,
  unsigned int itri0_ker,
@@ -556,7 +562,7 @@ DFM2_INLINE void dfm2::FlagConnected
   }
 }
 
-DFM2_INLINE void dfm2::DeleteTriFlag
+DFM2_INLINE void delfem2::DeleteTriFlag
 (std::vector<CDynTri>& aTri1,
  std::vector<int>& aFlg1,
  int iflag)
@@ -598,7 +604,7 @@ DFM2_INLINE void dfm2::DeleteTriFlag
 }
 
 
-DFM2_INLINE void dfm2::DeleteUnrefPoints
+DFM2_INLINE void delfem2::DeleteUnrefPoints
 (std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri_in,
@@ -643,7 +649,7 @@ DFM2_INLINE void dfm2::DeleteUnrefPoints
 }
 
 
-DFM2_INLINE void dfm2::DeletePointsFlag
+DFM2_INLINE void delfem2::DeletePointsFlag
 (std::vector<CVec2d>& aVec1,
  std::vector<CDynPntSur>& aPo1,
  std::vector<CDynTri>& aTri,
@@ -691,7 +697,7 @@ DFM2_INLINE void dfm2::DeletePointsFlag
   }
 }
 
-DFM2_INLINE void dfm2::Meshing_Initialize
+DFM2_INLINE void delfem2::Meshing_Initialize
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri,
  std::vector<CVec2d>& aVec2)
@@ -766,7 +772,7 @@ DFM2_INLINE void dfm2::Meshing_Initialize
  }
  */
 
-DFM2_INLINE void dfm2::MeshTri2D_Export
+DFM2_INLINE void delfem2::MeshTri2D_Export
 (std::vector<double>& aXY_out,
  std::vector<unsigned int>& aTri_out,
  const std::vector<CVec2d>& aVec2,
@@ -950,7 +956,7 @@ void PrepareInput
  */
 
 
-DFM2_INLINE void dfm2::Meshing_SingleConnectedShape2D
+DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CVec2d>& aVec2,
  std::vector<CDynTri>& aETri,
@@ -996,7 +1002,7 @@ DFM2_INLINE void dfm2::Meshing_SingleConnectedShape2D
 
 // -----------------------------------------
 
-DFM2_INLINE void dfm2::CMeshTri2D
+DFM2_INLINE void delfem2::CMeshTri2D
 (std::vector<double>& aXY,
  std::vector<unsigned int>& aTri,
  std::vector<CVec2d>& aVec2,
@@ -1016,7 +1022,7 @@ DFM2_INLINE void dfm2::CMeshTri2D
 }
 
 
-DFM2_INLINE void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
+DFM2_INLINE void delfem2::RefinementPlan_EdgeLongerThan_InsideCircle
 (CCmdRefineMesh& aCmd,
  double elen,
  double px, double py, double rad,
@@ -1048,7 +1054,7 @@ DFM2_INLINE void dfm2::RefinementPlan_EdgeLongerThan_InsideCircle
 
 
 // TODO: implement this function
-DFM2_INLINE void dfm2::RefineMesh
+DFM2_INLINE void delfem2::RefineMesh
 (std::vector<CDynPntSur>& aEPo2,
  std::vector<CDynTri>& aSTri,
  std::vector<CVec2d>& aVec2,
@@ -1087,7 +1093,7 @@ DFM2_INLINE void dfm2::RefineMesh
 }
 
 
-DFM2_INLINE void dfm2::MakeInvMassLumped_Tri
+DFM2_INLINE void delfem2::MakeInvMassLumped_Tri
 (std::vector<double>& aInvMassLumped,
  double rho,
  const std::vector<CVec2d>& aVec2,
@@ -1112,7 +1118,7 @@ DFM2_INLINE void dfm2::MakeInvMassLumped_Tri
   }
 }
 
-DFM2_INLINE void dfm2::MinMaxTriArea
+DFM2_INLINE void delfem2::MinMaxTriArea
 (double& min_area,
  double& max_area,
  const std::vector<CVec2d>& aVec2,
@@ -1137,7 +1143,7 @@ DFM2_INLINE void dfm2::MinMaxTriArea
 }
 
 
-DFM2_INLINE void dfm2::GenMesh
+DFM2_INLINE void delfem2::GenMesh
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aETri,
  std::vector<CVec2d>& aVec2,

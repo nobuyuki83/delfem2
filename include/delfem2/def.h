@@ -123,7 +123,6 @@ public:
   CDef_Arap(){}
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri,
-            double weight_bc0,
             bool is_preconditioner);
   void Deform(std::vector<double>& aXYZ1,
               std::vector<double>& aQuat,
@@ -133,7 +132,6 @@ public:
   std::vector<unsigned int> psup_ind, psup;
   std::vector<double> Precomp;
   CMatrixSparse<double> Mat;
-  double weight_bc;
   std::vector<double> aRes1, aUpd1;
   bool is_preconditioner;
   CPreconditionerILU<double> Prec;

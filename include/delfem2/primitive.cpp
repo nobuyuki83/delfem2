@@ -9,8 +9,6 @@
 #include <cmath>
 #include "delfem2/primitive.h"
 
-namespace dfm2 = delfem2;
-
 /*
 static void Cross3D(double r[3], const double v1[3], const double v2[3]){
 	r[0] = v1[1]*v2[2] - v2[1]*v1[2];
@@ -146,7 +144,7 @@ const double e[3]) // end
 */
 
 
-DFM2_INLINE void dfm2::MeshQuad2D_Grid
+DFM2_INLINE void delfem2::MeshQuad2D_Grid
  (std::vector<double>& aXYZ,
   std::vector<unsigned int>& aQuad,
   int nx, int ny)
@@ -172,7 +170,7 @@ DFM2_INLINE void dfm2::MeshQuad2D_Grid
   }
 }
 
-DFM2_INLINE void dfm2::MeshTri3D_Disk
+DFM2_INLINE void delfem2::MeshTri3D_Disk
  (std::vector<double>& aXYZ,
   std::vector<unsigned int> &aTri,
   double r, int nr, int nth)
@@ -220,7 +218,7 @@ DFM2_INLINE void dfm2::MeshTri3D_Disk
   }
 }
 
-DFM2_INLINE void dfm2::MeshTri3D_CylinderOpen
+DFM2_INLINE void delfem2::MeshTri3D_CylinderOpen
  (std::vector<double>& aXYZ,
   std::vector<unsigned int> &aTri,
   double r, double l,
@@ -263,7 +261,7 @@ DFM2_INLINE void dfm2::MeshTri3D_CylinderOpen
   }
 }
 
-DFM2_INLINE void dfm2::MeshTri3D_CylinderClosed
+DFM2_INLINE void delfem2::MeshTri3D_CylinderClosed
  (std::vector<double>& aXYZ,
   std::vector<unsigned int>& aTri,
   double r, double l,
@@ -340,7 +338,7 @@ DFM2_INLINE void dfm2::MeshTri3D_CylinderClosed
    */
 }
 
-DFM2_INLINE void dfm2::MeshTri3D_Sphere
+DFM2_INLINE void delfem2::MeshTri3D_Sphere
  (std::vector<double>& aXYZ,
   std::vector<unsigned int>& aTri,
   double radius,
@@ -395,7 +393,7 @@ DFM2_INLINE void dfm2::MeshTri3D_Sphere
 }
 
 template <typename T>
-DFM2_INLINE void dfm2::MeshTri3D_Cube
+DFM2_INLINE void delfem2::MeshTri3D_Cube
 (std::vector<T>& aXYZ,
  std::vector<unsigned int>& aTri,
  unsigned int n)
@@ -529,10 +527,10 @@ DFM2_INLINE void dfm2::MeshTri3D_Cube
     }
   }
 }
-template void dfm2::MeshTri3D_Cube(std::vector<float>& aXYZ,
+template void delfem2::MeshTri3D_Cube(std::vector<float>& aXYZ,
                                    std::vector<unsigned int>& aTri,
                                    unsigned int n);
-template void dfm2::MeshTri3D_Cube(std::vector<double>& aXYZ,
+template void delfem2::MeshTri3D_Cube(std::vector<double>& aXYZ,
                                    std::vector<unsigned int>& aTri,
                                    unsigned int n);
 
@@ -552,7 +550,7 @@ template void dfm2::MeshTri3D_Cube(std::vector<double>& aXYZ,
 // f3: +y
 // f4: -z
 // f5: +z
-DFM2_INLINE void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
+DFM2_INLINE void delfem2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 {
   aQuad.resize(6*4);
   aQuad[0*4+0] = 0;    aQuad[0*4+1] = 4;   aQuad[0*4+2] = 6;   aQuad[0*4+3] = 2;
@@ -564,7 +562,7 @@ DFM2_INLINE void dfm2::SetTopoQuad_CubeVox(std::vector<unsigned int>& aQuad)
 }
 
 template<typename REAL>
-void dfm2::MeshQuad3_CubeVox
+void delfem2::MeshQuad3_CubeVox
 (std::vector<REAL>& aXYZ,
  std::vector<unsigned int>& aQuad,
  const REAL bbmin[3], const REAL bbmax[3])
@@ -581,16 +579,16 @@ void dfm2::MeshQuad3_CubeVox
   aXYZ.push_back(bbmax[0]);    aXYZ.push_back(bbmax[1]);    aXYZ.push_back(bbmax[2]);
   SetTopoQuad_CubeVox(aQuad);
 }
-template void dfm2::MeshQuad3_CubeVox(std::vector<double>& aXYZ,
+template void delfem2::MeshQuad3_CubeVox(std::vector<double>& aXYZ,
                                       std::vector<unsigned int>& aQuad,
                                       const double bbmin[3], const double bbmax[3]);
-template void dfm2::MeshQuad3_CubeVox(std::vector<float>& aXYZ,
+template void delfem2::MeshQuad3_CubeVox(std::vector<float>& aXYZ,
                                       std::vector<unsigned int>& aQuad,
                                       const float bbmin[3], const float bbmax[3]);
 
 
 /*
- void dfm2::MeshTri3D_Cube
+ void delfem2::MeshTri3D_Cube
  (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  int n)
@@ -726,7 +724,7 @@ template void dfm2::MeshQuad3_CubeVox(std::vector<float>& aXYZ,
  }
  */
 
-DFM2_INLINE void dfm2::MeshTri3D_Icosahedron
+DFM2_INLINE void delfem2::MeshTri3D_Icosahedron
  (std::vector<double>& aXYZ,
   std::vector<unsigned int>& aTri)
 {
@@ -774,7 +772,7 @@ DFM2_INLINE void dfm2::MeshTri3D_Icosahedron
 // ------------------------------------------------------------
 
 template <typename T>
-DFM2_INLINE void dfm2::MeshTri3_Torus
+DFM2_INLINE void delfem2::MeshTri3_Torus
  (std::vector<T>& aXYZ,
   std::vector<unsigned int>& aTri,
   double radius_,
@@ -807,12 +805,12 @@ DFM2_INLINE void dfm2::MeshTri3_Torus
     }
   }
 }
-template void dfm2::MeshTri3_Torus(
+template void delfem2::MeshTri3_Torus(
                                    std::vector<float>& aXYZ,
                                    std::vector<unsigned int>& aTri,
                                    double radius_, double radius_tube_,
                                    unsigned int nr, unsigned int nl);
-template void dfm2::MeshTri3_Torus(
+template void delfem2::MeshTri3_Torus(
                                    std::vector<double>& aXYZ,
                                    std::vector<unsigned int>& aTri,
                                    double radius_, double radius_tube_,
@@ -821,7 +819,7 @@ template void dfm2::MeshTri3_Torus(
 // =========================================================================
 
 template <typename REAL>
-dfm2::CPlane<REAL>::CPlane(const double n[3], const double o[3])
+delfem2::CPlane<REAL>::CPlane(const double n[3], const double o[3])
 {
   normal_[0] = n[0];
 	normal_[1] = n[1];
@@ -833,7 +831,7 @@ dfm2::CPlane<REAL>::CPlane(const double n[3], const double o[3])
 }
 
 template <typename REAL>
-double dfm2::CPlane<REAL>::Projection
+double delfem2::CPlane<REAL>::Projection
 (double n[3],
  double px, double py, double pz) const // normal
 {
@@ -846,7 +844,7 @@ double dfm2::CPlane<REAL>::Projection
 // -------------------------------------------------------
 
 template <typename REAL>
-dfm2::CSphere<REAL>::CSphere
+delfem2::CSphere<REAL>::CSphere
  (double r, const std::vector<double>& c, bool is_out)
 {
   cent_.resize(3);
@@ -856,14 +854,14 @@ dfm2::CSphere<REAL>::CSphere
 	radius_ = r;
 	this->is_out_ = is_out;
 }
-template dfm2::CSphere<double>::CSphere
+template delfem2::CSphere<double>::CSphere
  (double r, const std::vector<double>& c, bool is_out);
 
 // ----------------
 
 // return penetration depth (inside is positive)
 template <typename REAL>
-double dfm2::CSphere<REAL>::Projection
+double delfem2::CSphere<REAL>::Projection
 (double n[3],
  double px, double py, double pz) const // normal outward
 {
@@ -881,14 +879,14 @@ double dfm2::CSphere<REAL>::Projection
 	n[2] = dir[2]*invlen;	
 	return radius_-len;
 }
-template double dfm2::CSphere<double>::Projection
+template double delfem2::CSphere<double>::Projection
  (double n[3],
   double px, double py, double pz) const; // normal outward
 
 // -----------------------------------------
 
 template <typename REAL>
-unsigned int dfm2::CSphere<REAL>::FindInOut(double px, double py, double pz) const
+unsigned int delfem2::CSphere<REAL>::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	double pd = this->Projection(n, px, py, pz);
@@ -898,7 +896,7 @@ unsigned int dfm2::CSphere<REAL>::FindInOut(double px, double py, double pz) con
 }
 
 template <typename REAL>
-bool dfm2::CSphere<REAL>::IntersectionPoint
+bool delfem2::CSphere<REAL>::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -919,7 +917,7 @@ bool dfm2::CSphere<REAL>::IntersectionPoint
 // --------------------------------------------------
 
 template <typename REAL>
-dfm2::CCylinder<REAL>::CCylinder
+delfem2::CCylinder<REAL>::CCylinder
 (double r, const double cnt[3], const double dir[3], bool is_out){
 	cent_[0] = cnt[0];
 	cent_[1] = cnt[1];
@@ -934,7 +932,7 @@ dfm2::CCylinder<REAL>::CCylinder
 
 // return penetration depth (inside is positive)
 template <typename REAL>
-double dfm2::CCylinder<REAL>::Projection
+double delfem2::CCylinder<REAL>::Projection
 (double n[3],
  double px, double py, double pz) const // normal outward
 {
@@ -958,7 +956,7 @@ double dfm2::CCylinder<REAL>::Projection
 }
 
 template <typename REAL>
-unsigned int dfm2::CCylinder<REAL>::FindInOut(double px, double py, double pz) const
+unsigned int delfem2::CCylinder<REAL>::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	double pd = this->Projection(n,
@@ -969,7 +967,7 @@ unsigned int dfm2::CCylinder<REAL>::FindInOut(double px, double py, double pz) c
 }
 
 template <typename REAL>
-bool dfm2::CCylinder<REAL>::IntersectionPoint
+bool delfem2::CCylinder<REAL>::IntersectionPoint
 (double p[3], 
  const double o[3], const double d[3]) const 
 {
@@ -990,7 +988,7 @@ bool dfm2::CCylinder<REAL>::IntersectionPoint
 
 // return penetration depth (inside is positive)
 template <typename REAL>
-double dfm2::CTorus<REAL>::Projection
+double delfem2::CTorus<REAL>::Projection
 (double n[3],
  double px, double py, double pz) const // normal outward
 {
@@ -1020,14 +1018,14 @@ double dfm2::CTorus<REAL>::Projection
 	//		std::cout << len << " " << len2 << std::endl;
 	return radius_tube_-len2;
 }
-template double dfm2::CTorus<double>::Projection
+template double delfem2::CTorus<double>::Projection
  (double n[3],
   double px, double py, double pz) const; // normal outward
 
 // ------------------
 	
 template <typename REAL>
-unsigned int dfm2::CTorus<REAL>::FindInOut(double px, double py, double pz) const
+unsigned int delfem2::CTorus<REAL>::FindInOut(double px, double py, double pz) const
 {
 	double n[3];
 	const double pd = this->Projection(n,

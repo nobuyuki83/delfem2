@@ -13,12 +13,10 @@
 #  define M_PI 3.141592
 #endif
 
-namespace dfm2 = delfem2;
-
 // ----------------------------------
 
 template <typename T>
-DFM2_INLINE void dfm2::Normalize_Quat(T q[])
+DFM2_INLINE void delfem2::Normalize_Quat(T q[])
 {
   const double len = sqrt(q[0]*q[0]+q[1]*q[1]+q[2]*q[2]+q[3]*q[3]);
   double invlen = 1.0/len;
@@ -28,22 +26,22 @@ DFM2_INLINE void dfm2::Normalize_Quat(T q[])
   q[3] *= invlen;
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::Normalize_Quat(float q[]);
-template void dfm2::Normalize_Quat(double q[]);
+template void delfem2::Normalize_Quat(float q[]);
+template void delfem2::Normalize_Quat(double q[]);
 #endif
 
 // -----------------------------------
 
 template <typename T>
-DFM2_INLINE void dfm2::Quat_Identity(T q[4]){
+DFM2_INLINE void delfem2::Quat_Identity(T q[4]){
   q[0] = 1;
   q[1] = 0;
   q[2] = 0;
   q[3] = 0;
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::Quat_Identity(float q[4]);
-template void dfm2::Quat_Identity(double q[4]);
+template void delfem2::Quat_Identity(float q[4]);
+template void delfem2::Quat_Identity(double q[4]);
 #endif
 
 // ----------------------------------
@@ -52,7 +50,7 @@ template void dfm2::Quat_Identity(double q[4]);
  * @details for the relationship between quaternion and rotation matrix, take a look at https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
  */
 template <typename T>
-DFM2_INLINE void dfm2::QuatVec(
+DFM2_INLINE void delfem2::QuatVec(
     T vo[3],
     const T q[4],
     const T vi[3])
@@ -74,15 +72,15 @@ DFM2_INLINE void dfm2::QuatVec(
 //  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::QuatVec(float vo[3], const float q[4], const float vi[3]);
-template void dfm2::QuatVec(double vo[3], const double q[4], const double vi[3]);
+template void delfem2::QuatVec(float vo[3], const float q[4], const float vi[3]);
+template void delfem2::QuatVec(double vo[3], const double q[4], const double vi[3]);
 #endif
 
 // -------------------------------------
 
 // multiply two quaternions
 template <typename REAL>
-DFM2_INLINE void dfm2::QuatQuat(
+DFM2_INLINE void delfem2::QuatQuat(
     REAL r[],
     const REAL p[],
     const REAL q[])
@@ -93,15 +91,15 @@ DFM2_INLINE void dfm2::QuatQuat(
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::QuatQuat(float r[], const float p[], const float q[]);
-template void dfm2::QuatQuat(double r[], const double p[], const double q[]);
+template void delfem2::QuatQuat(float r[], const float p[], const float q[]);
+template void delfem2::QuatQuat(double r[], const double p[], const double q[]);
 #endif
 
 
 // ----------------------------------------
 
 // transform vector with conjugate of quaternion
-DFM2_INLINE void dfm2::QuatConjVec(
+DFM2_INLINE void delfem2::QuatConjVec(
     double vo[],
     const double q[],
     const double vi[])
@@ -127,7 +125,7 @@ DFM2_INLINE void dfm2::QuatConjVec(
 
 // copy quaternion
 template <typename REAL>
-DFM2_INLINE void dfm2::Copy_Quat(
+DFM2_INLINE void delfem2::Copy_Quat(
     REAL r[],
     const REAL p[])
 {
@@ -137,8 +135,8 @@ DFM2_INLINE void dfm2::Copy_Quat(
   r[3] = p[3];
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::Copy_Quat(float r[], const float p[]);
-template void dfm2::Copy_Quat(double r[], const double p[]);
+template void delfem2::Copy_Quat(float r[], const float p[]);
+template void delfem2::Copy_Quat(double r[], const double p[]);
 #endif
 
 // -------------------------
@@ -154,8 +152,8 @@ DFM2_INLINE void Quat_Bryant
   const double dqy[4] = {cos(y * 0.5), 0.0, sin(y * 0.5), 0.0};
   const double dqz[4] = {cos(z * 0.5), 0.0, 0.0, sin(z * 0.5)};
   double qtmp_yx[4];
-  dfm2::QuatQuat(qtmp_yx, dqy, dqx);
-  dfm2::QuatQuat(q, dqz, qtmp_yx);
+  delfem2::QuatQuat(qtmp_yx, dqy, dqx);
+  delfem2::QuatQuat(q, dqz, qtmp_yx);
 }
 
 template<>
@@ -166,8 +164,8 @@ DFM2_INLINE void Quat_Bryant(
   const float dqy[4] = {cosf(y * 0.5f), 0.f, sinf(y * 0.5f), 0.f};
   const float dqz[4] = {cosf(z * 0.5f), 0.f, 0.f, sinf(z * 0.5f)};
   float qtmp_yx[4];
-  dfm2::QuatQuat(qtmp_yx, dqy, dqx);
-  dfm2::QuatQuat(q, dqz, qtmp_yx);
+  delfem2::QuatQuat(qtmp_yx, dqy, dqx);
+  delfem2::QuatQuat(q, dqz, qtmp_yx);
 }
 
 }
@@ -228,8 +226,8 @@ CQuat::CQuat(const CVector3D& a_vector, const CVector3D& b_vector){
 // --------------------------------------------------------------------------------------------
 // CQuat from here
 
-//template class dfm2::CQuat<double>;
-//template class dfm2::CQuat<float>;
+//template class delfem2::CQuat<double>;
+//template class delfem2::CQuat<float>;
 
 namespace delfem2{
   

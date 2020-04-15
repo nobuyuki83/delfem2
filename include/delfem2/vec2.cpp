@@ -8,12 +8,29 @@
 #include <cstdlib>
 #include "delfem2/vec2.h"
 
-namespace dfm2 = delfem2;
+namespace delfem2 {
+namespace vec2 {
 
-// ------------------------------------------
+DFM2_INLINE bool IsCrossLines(const double po_s0[], const double po_e0[],
+                         const double po_s1[], const double po_e1[]) {
+  const double area1 = Area_Tri2(po_s0, po_e0, po_s1);
+  const double area2 = Area_Tri2(po_s0, po_e0, po_e1);
+  if (area1 * area2 > 0.0) return false;
+  const double area3 = Area_Tri2(po_s1, po_e1, po_s0);
+  const double area4 = Area_Tri2(po_s1, po_e1, po_e0);
+  if (area3 * area4 > 0.0) return false;
+  return true;
+}
+
+}
+}
+
+
+
+// ================================================
 
 template <typename T>
-T dfm2::Area_Tri2(
+T delfem2::Area_Tri2(
     const T v1[2],
     const T v2[2],
     const T v3[2])
@@ -21,22 +38,27 @@ T dfm2::Area_Tri2(
   T v0 = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
   return 0.5*v0;
 }
-template float dfm2::Area_Tri2(const float v1[2], const float v2[2], const float v3[2]);
-template double dfm2::Area_Tri2(const double v1[2], const double v2[2], const double v3[2]);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::Area_Tri2(const float v1[2], const float v2[2], const float v3[2]);
+template double delfem2::Area_Tri2(const double v1[2], const double v2[2], const double v3[2]);
+#endif
 
 // --------------------------------------
 
 template <typename T>
-T dfm2::Dot2(const T w[2], const T v[2])
+T delfem2::Dot2(const T w[2], const T v[2])
 {
   return w[0]*v[0]+w[1]*v[1];
 }
-template float dfm2::Dot2(const float v1[2], const float v2[2]);
-template double dfm2::Dot2(const double v1[2], const double v2[2]);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::Dot2(const float v1[2], const float v2[2]);
+template double delfem2::Dot2(const double v1[2], const double v2[2]);
+#endif
 
 // --------------------------------------
 
-namespace delfem2 { // template specialization need to be done in the namespace
+// template specialization need to be done in the namespace
+namespace delfem2 {
   
 template <>
 DFM2_INLINE double Length2
@@ -56,7 +78,8 @@ DFM2_INLINE float Length2
 
 // --------------------------------------
 
-namespace delfem2 { // template specialization need to be done in the namespace
+// template specialization need to be done in the namespace
+namespace delfem2 {
 
 template <>
 DFM2_INLINE double Distance2
@@ -79,47 +102,56 @@ DFM2_INLINE float Distance2
 // -------------------------------------
 
 template <typename T>
-void dfm2::MatVec2(T w[2], const T A[4], const T v[2])
+void delfem2::MatVec2(T w[2], const T A[4], const T v[2])
 {
   w[0] = A[0*2+0]*v[0]+A[0*2+1]*v[1];
   w[1] = A[1*2+0]*v[0]+A[1*2+1]*v[1];
 }
-template void dfm2::MatVec2(float w[2], const float A[4], const float v[2]);
-template void dfm2::MatVec2(double w[2], const double A[4], const double v[2]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatVec2(float w[2], const float A[4], const float v[2]);
+template void delfem2::MatVec2(double w[2], const double A[4], const double v[2]);
+#endif
 
 // -------------------------------------
 
 template <typename T>
-void dfm2::MatMat2(T AB[4], const T A[4], const T B[4])
+void delfem2::MatMat2(T AB[4], const T A[4], const T B[4])
 {
   AB[0*2+0] = A[0*2+0]*B[0*2+0]+A[0*2+1]*B[1*2+0];
   AB[0*2+1] = A[0*2+0]*B[0*2+1]+A[0*2+1]*B[1*2+1];
   AB[1*2+0] = A[1*2+0]*B[0*2+0]+A[1*2+1]*B[1*2+0];
   AB[1*2+1] = A[1*2+0]*B[0*2+1]+A[1*2+1]*B[1*2+1];
 }
-template void dfm2::MatMat2(float AB[4], const float A[4], const float B[4]);
-template void dfm2::MatMat2(double AB[4], const double A[4], const double B[4]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatMat2(float AB[4], const float A[4], const float B[4]);
+template void delfem2::MatMat2(double AB[4], const double A[4], const double B[4]);
+#endif
 
 // --------------------------------------------------
 
 template <typename T>
-T dfm2::SquareLength2(const T v[2]){
+T delfem2::SquareLength2(const T v[2]){
   return v[0]*v[0]+v[1]*v[1];
 }
-template float dfm2::SquareLength2(const float v[2]);
-template double dfm2::SquareLength2(const double v[2]);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::SquareLength2(const float v[2]);
+template double delfem2::SquareLength2(const double v[2]);
+#endif
 
 // ------------------------------------------------
 
 template <typename T>
-T dfm2::SquareDistance2(const T v1[2], const T v2[2]){
+T delfem2::SquareDistance2(const T v1[2], const T v2[2]){
   return (v1[0]-v2[0])*(v1[0]-v2[0]) + (v1[1]-v2[1])*(v1[1]-v2[1]);
 }
-template float dfm2::SquareDistance2(const float v1[2], const float v2[2]);
-template double dfm2::SquareDistance2(const double v1[2], const double v2[2]);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::SquareDistance2(const float v1[2], const float v2[2]);
+template double delfem2::SquareDistance2(const double v1[2], const double v2[2]);
+#endif
 
 // ------------------------------------------------
 
+// specification of template requires namespace
 namespace delfem2 {
   
 template <>
@@ -145,31 +177,21 @@ DFM2_INLINE void GaussianDistribution2(double noise[2])
 // ------------------------------------------------
 
 template <typename T>
-void dfm2::Normalize2(T w[2])
+void delfem2::Normalize2(T w[2])
 {
   double l = Length2(w);
   double invl = 1.0/l;
   w[0] *= invl;
   w[1] *= invl;
 }
-template void dfm2::Normalize2(float w[2]);
-template void dfm2::Normalize2(double w[2]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Normalize2(float w[2]);
+template void delfem2::Normalize2(double w[2]);
+#endif
 
 // --------------------------------------------------------------
 
-static bool IsCrossLines(const double po_s0[], const double po_e0[],
-                         const double po_s1[], const double po_e1[] )
-{
-  const double area1 = dfm2::Area_Tri2(po_s0,po_e0,po_s1);
-  const double area2 = dfm2::Area_Tri2(po_s0,po_e0,po_e1);
-  if( area1 * area2 > 0.0 ) return false;
-  const double area3 = dfm2::Area_Tri2(po_s1,po_e1,po_s0);
-  const double area4 = dfm2::Area_Tri2(po_s1,po_e1,po_e0);
-  if( area3 * area4 > 0.0 ) return false;
-  return true;
-}
-
-DFM2_INLINE bool InverseMat2
+DFM2_INLINE bool delfem2::InverseMat2
  (double invB[4],
   const double B[4])
 {
@@ -183,7 +205,7 @@ DFM2_INLINE bool InverseMat2
   return true;
 }
 
-DFM2_INLINE void gramian2
+DFM2_INLINE void delfem2::gramian2
  (double AtA[3],
   const double A[4])
 {
@@ -193,7 +215,7 @@ DFM2_INLINE void gramian2
   AtA[3] = A[0*2+1]*A[0*2+1]+A[1*2+1]*A[1*2+1];
 }
 
-DFM2_INLINE void VLVt2
+DFM2_INLINE void delfem2::VLVt2
  (double A[4],
   double l0,
   double l1,
@@ -206,7 +228,7 @@ DFM2_INLINE void VLVt2
 }
 
 
-DFM2_INLINE void RotationalComponentOfMatrix2
+DFM2_INLINE void delfem2::RotationalComponentOfMatrix2
  (double R[4], const double M[4])
 {
   const double eps = 1.0e-20;
@@ -244,10 +266,10 @@ DFM2_INLINE void RotationalComponentOfMatrix2
       l1 = 0.5*(b-d);
       v0[0] = G[1];
       v0[1] = G[3]-l1;
-      if (dfm2::SquareLength2(v0)>eps){ dfm2::Normalize2(v0); }
+      if (SquareLength2(v0)>eps){ Normalize2(v0); }
       v1[0] = G[0]-l0;
       v1[1] = G[2];
-      if (dfm2::SquareLength2(v1)>eps){ dfm2::Normalize2(v1); }
+      if (SquareLength2(v1)>eps){ Normalize2(v1); }
     }
   }
   double V[4] = { v0[0], v1[0], v0[1], v1[1] };
@@ -256,11 +278,11 @@ DFM2_INLINE void RotationalComponentOfMatrix2
   double il0 = 1.0/sqrt(l0);
   double il1 = 1.0/sqrt(l1);
   double invS[4]; VLVt2(invS, il0, il1, V);
-  dfm2::MatMat2(R, A, invS);
+  MatMat2(R, A, invS);
 }
 
 
-DFM2_INLINE void makeSplineLoop
+DFM2_INLINE void delfem2::makeSplineLoop
 (const std::vector<double>& aCV,
  std::vector<double>& aVecCurve)
 {
@@ -286,7 +308,7 @@ DFM2_INLINE void makeSplineLoop
 }
 
 
-DFM2_INLINE void dfm2::MeanValueCoordinate2D
+DFM2_INLINE void delfem2::MeanValueCoordinate2D
 (double *aW,
  double px, double py,
  const double *aXY,
@@ -335,10 +357,12 @@ DFM2_INLINE void dfm2::MeanValueCoordinate2D
 }
 
 // ------------------------------------------------------------------------
+
+// definining operator requires defining namespace
 namespace delfem2 {
   
 template <typename T>
-std::ostream &operator<<(std::ostream &output, const dfm2::CVec2<T>& v)
+std::ostream &operator<<(std::ostream &output, const CVec2<T>& v)
 {
   output.setf(std::ios::scientific);
   output<<v.p[0]<<" "<<v.p[1];
@@ -346,45 +370,53 @@ std::ostream &operator<<(std::ostream &output, const dfm2::CVec2<T>& v)
 }
 
 template <typename T>
-std::istream &operator>>(std::istream &input, dfm2::CVec2<T>& v)
+std::istream &operator>>(std::istream &input, CVec2<T>& v)
 {
   input>>v.p[0]>>v.p[1];
   return input;
 }
 
 template <typename T>
-dfm2::CVec2<T> operator*(double c, const dfm2::CVec2<T>& v0)
+delfem2::CVec2<T> operator*(double c, const CVec2<T>& v0)
 {
-  return dfm2::CVec2<T>(v0.p[0]*c, v0.p[1]*c);
+  return CVec2<T>(v0.p[0]*c, v0.p[1]*c);
 }
-template dfm2::CVec2d operator*(double c, const dfm2::CVec2d& v0);
+#ifndef DFM2_HEADER_ONLY
+template CVec2d operator*(double c, const CVec2d& v0);
+#endif
   
 //  ---------------------
 
 template <typename T>
-dfm2::CVec2<T> operator*(const dfm2::CVec2<T>& v0, double c)
+delfem2::CVec2<T> operator*(const CVec2<T>& v0, double c)
 {
-  return dfm2::CVec2<T>(v0.p[0]*c, v0.p[1]*c);
+  return CVec2<T>(v0.p[0]*c, v0.p[1]*c);
 }
-template dfm2::CVec2d operator*(const dfm2::CVec2d& v0, double c);
+#ifndef DFM2_HEADER_ONLY
+template CVec2d operator*(const CVec2d& v0, double c);
+#endif
 
 //  ---------------------
 
 template <typename T>
-double operator * (const dfm2::CVec2<T>& lhs, const dfm2::CVec2<T>& rhs)
+double operator * (const CVec2<T>& lhs, const CVec2<T>& rhs)
 {
-  return dfm2::Dot2(lhs.p, rhs.p);// lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
+  return Dot2(lhs.p, rhs.p);// lhs.p[0]*rhs.p[0] + lhs.p[1]*rhs.p[1];
 }
-template double operator * (const dfm2::CVec2d& lhs, const dfm2::CVec2d& rhs);
+#ifndef DFM2_HEADER_ONLY
+template double operator * (const CVec2d& lhs, const CVec2d& rhs);
+#endif
   
 //  ---------------------
 
 template <typename T>
-double operator ^ (const dfm2::CVec2<T>& lhs, const dfm2::CVec2<T>& rhs)
+double operator ^ (const CVec2<T>& lhs, const CVec2<T>& rhs)
 {
   return lhs.p[0]*rhs.p[1] - lhs.p[1]*rhs.p[0];
 }
-double operator ^ (const dfm2::CVec2d& lhs, const dfm2::CVec2d& rhs);
+#ifndef DFM2_HEADER_ONLY
+double operator ^ (const CVec2d& lhs, const CVec2d& rhs);
+#endif
   
 // -------------------
 
@@ -396,17 +428,19 @@ CVec2<T> operator / (const CVec2<T>& vec, double d)
   temp /= d;
   return temp;
 }
+#ifndef DFM2_HEADER_ONLY
 template CVec2d operator / (const CVec2d& vec, double d);
+#endif
   
 } // namespace delfem2
 
 // -----------------------------------------------------------------
 
 template <typename T>
-dfm2::CVec2<T> dfm2::rotate
+delfem2::CVec2<T> delfem2::rotate
  (const CVec2<T>& p0, double theta)
 {
-  dfm2::CVec2<T> p1;
+  CVec2<T> p1;
   double c = cos(theta), s = sin(theta);
   p1.p[0] = c*p0.p[0] - s*p0.p[1];
   p1.p[1] = s*p0.p[0] + c*p0.p[1];
@@ -414,7 +448,7 @@ dfm2::CVec2<T> dfm2::rotate
 }
 
 template <typename T>
-dfm2::CVec2<T> dfm2::rotate90
+delfem2::CVec2<T> delfem2::rotate90
  (const CVec2<T>& p0)
 {
   return CVec2<T>(-p0.p[1], p0.p[0]);
@@ -423,79 +457,91 @@ dfm2::CVec2<T> dfm2::rotate90
 // ---------------------------------------------------------------
 
 template <typename T>
-dfm2::CVec2<T> dfm2::Mat2Vec(const double A[4], const CVec2<T>& v)
+delfem2::CVec2<T> delfem2::Mat2Vec(const double A[4], const CVec2<T>& v)
 {
   CVec2<T> w;
-  dfm2::MatVec2(w.p, A, v.p);
+  MatVec2(w.p, A, v.p);
   return w;
   //  w.p[0] = A[0]*v.p[0]+A[1]*v.p[1];
   //  w.p[1] = A[2]*v.p[0]+A[3]*v.p[1];
 }
-template dfm2::CVec2d dfm2::Mat2Vec(const double A[4], const CVec2d& v);
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CVec2d delfem2::Mat2Vec(const double A[4], const CVec2d& v);
+#endif
 
 // --------------------------------
 
 //! Area of the Triangle
 template <typename T>
-double dfm2::Area_Tri
+double delfem2::Area_Tri
 (const CVec2<T>& v1,
  const CVec2<T>& v2,
  const CVec2<T>& v3)
 {
   return 0.5*( (v2.p[0]-v1.p[0])*(v3.p[1]-v1.p[1]) - (v3.p[0]-v1.p[0])*(v2.p[1]-v1.p[1]) );
 }
-template double dfm2::Area_Tri(const CVec2d& v1, const CVec2d& v2, const CVec2d& v3);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::Area_Tri(const CVec2d& v1, const CVec2d& v2, const CVec2d& v3);
+#endif
 
 
 template <typename T>
-double dfm2::Cross(const CVec2<T>& v1, const CVec2<T>& v2){
+double delfem2::Cross(const CVec2<T>& v1, const CVec2<T>& v2){
   return v1.p[0]*v2.p[1] - v2.p[0]*v1.p[1];
 }
-template double dfm2::Cross(const CVec2d& v1, const CVec2d& v2);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::Cross(const CVec2d& v1, const CVec2d& v2);
+#endif
 
 
 template <typename T>
-double dfm2::SquareLength(const CVec2<T>& point)
+double delfem2::SquareLength(const CVec2<T>& point)
 {
   return  point.p[0]*point.p[0] + point.p[1]*point.p[1];
 }
-template double dfm2::SquareLength(const CVec2d& point);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::SquareLength(const CVec2d& point);
+#endif
 
 // --------------------
 
 template <typename T>
-double dfm2::Length(const CVec2<T>& point)
+double delfem2::Length(const CVec2<T>& point)
 {
-  return dfm2::Length2(point.p);
+  return Length2(point.p);
 }
-template double dfm2::Length(const CVec2d& point);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::Length(const CVec2d& point);
+#endif
 
 // ---------------------
 
 // Distance between two points
 template <typename T>
-double dfm2::Distance
+double delfem2::Distance
 (const CVec2<T>& ipo0,
  const CVec2<T>& ipo1)
 {
-  return dfm2::Distance2(ipo0.p, ipo1.p);
+  return Distance2(ipo0.p, ipo1.p);
 }
-template double dfm2::Distance(const CVec2d& ipo0, const CVec2d& ipo1);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::Distance(const CVec2d& ipo0, const CVec2d& ipo1);
+#endif
 
 // ---------------------
 
 // Distance between two points
 template <typename T>
-double dfm2::SquareDistance
+double delfem2::SquareDistance
 (const CVec2<T>& ipo0,
  const CVec2<T>& ipo1)
 {
-  return dfm2::SquareDistance2(ipo0.p, ipo1.p);
+  return delfem2::SquareDistance2(ipo0.p, ipo1.p);
 }
 
 // Hight of a triangle : between v1 and line of v2-v3
 template <typename T>
-double dfm2::TriHeight(const CVec2<T>& v1, const CVec2<T>& v2, const CVec2<T>& v3){
+double delfem2::TriHeight(const CVec2<T>& v1, const CVec2<T>& v2, const CVec2<T>& v3){
   const double area = Area_Tri(v1,v2,v3);
   const double len = sqrt( SquareDistance(v2,v3) );
   return area*2.0/len;
@@ -503,16 +549,18 @@ double dfm2::TriHeight(const CVec2<T>& v1, const CVec2<T>& v2, const CVec2<T>& v
 
 // compute dot product
 template <typename T>
-double dfm2::Dot(const CVec2<T>& ipo0, const CVec2<T>& ipo1)
+double delfem2::Dot(const CVec2<T>& ipo0, const CVec2<T>& ipo1)
 {
-  return dfm2::Dot2(ipo0.p, ipo1.p);
+  return Dot2(ipo0.p, ipo1.p);
 }
-template double dfm2::Dot(const CVec2d& ipo0, const CVec2d& ipo1);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::Dot(const CVec2d& ipo0, const CVec2d& ipo1);
+#endif
 
 // get parameter 't' of the line against point. t=0 is po_s, t=1 is po_e
 // this one has implementation in header because GetDist_LineSeg_Point below refers this
 template <typename T>
-double dfm2::FindNearestPointParameter_Line_Point
+double delfem2::FindNearestPointParameter_Line_Point
 (const CVec2<T>& po_c,
  const CVec2<T>& po_s, const CVec2<T>& po_e)
 {
@@ -526,7 +574,7 @@ double dfm2::FindNearestPointParameter_Line_Point
 // --------------------------------------
 
 template <typename T>
-dfm2::CVec2<T> dfm2::GetNearest_LineSeg_Point
+delfem2::CVec2<T> delfem2::GetNearest_LineSeg_Point
 (const CVec2<T>& po_c,
  const CVec2<T>& po_s, const CVec2<T>& po_e)
 {
@@ -535,23 +583,29 @@ dfm2::CVec2<T> dfm2::GetNearest_LineSeg_Point
   if (t > 1){ return po_e; }
   return po_s+t*(po_e-po_s);
 }
-template dfm2::CVec2d dfm2::GetNearest_LineSeg_Point(const CVec2d& po_c, const CVec2d& po_s, const CVec2d& po_e);
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CVec2d delfem2::GetNearest_LineSeg_Point(
+    const CVec2d& po_c, const CVec2d& po_s, const CVec2d& po_e);
+#endif
 
 // --------------------------------------
 
 template <typename T>
-double dfm2::GetDist_LineSeg_Point
+double delfem2::GetDist_LineSeg_Point
 (const CVec2<T>& po_c,
  const CVec2<T>& po_s, const CVec2<T>& po_e)
 {
   CVec2<T> p = GetNearest_LineSeg_Point(po_c, po_s,po_e);
   return Distance(p, po_c);
 }
-template double dfm2::GetDist_LineSeg_Point(const CVec2d& po_c, const CVec2d& po_s, const CVec2d& po_e);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::GetDist_LineSeg_Point(
+    const CVec2d& po_c, const CVec2d& po_s, const CVec2d& po_e);
+#endif
 
 
 template <typename T>
-bool dfm2::IsCross_LineSeg_LineSeg
+bool delfem2::IsCross_LineSeg_LineSeg
 (const CVec2<T>& po_s0, const CVec2<T>& po_e0,
  const CVec2<T>& po_s1, const CVec2<T>& po_e1 )
 {
@@ -582,7 +636,7 @@ bool dfm2::IsCross_LineSeg_LineSeg
 }
 
 template <typename T>
-double dfm2::GetDist_LineSeg_LineSeg
+double delfem2::GetDist_LineSeg_LineSeg
 (const CVec2<T>& po_s0, const CVec2<T>& po_e0,
  const CVec2<T>& po_s1, const CVec2<T>& po_e1)
 {
@@ -600,7 +654,7 @@ double dfm2::GetDist_LineSeg_LineSeg
 
 // square root of circumradius
 template <typename T>
-double dfm2::SquareCircumradius
+double delfem2::SquareCircumradius
 (const CVec2<T>& p0,
  const CVec2<T>& p1,
  const CVec2<T>& p2 )
@@ -616,7 +670,7 @@ double dfm2::SquareCircumradius
 
 //! center of the circumcircle
 template <typename T>
-bool dfm2::CenterCircumcircle
+bool delfem2::CenterCircumcircle
 (const CVec2<T>& p0,
  const CVec2<T>& p1,
  const CVec2<T>& p2,
@@ -645,7 +699,7 @@ bool dfm2::CenterCircumcircle
 // 1 :       on
 // 2 :       outsdie
 template <typename T>
-int dfm2::DetDelaunay
+int delfem2::DetDelaunay
 (const CVec2<T>& p0,
  const CVec2<T>& p1,
  const CVec2<T>& p2,
@@ -682,43 +736,50 @@ int dfm2::DetDelaunay
 	}
 	return 0;
 }
-template int dfm2::DetDelaunay(const CVec2d& p0, const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);
+#ifndef DFM2_HEADER_ONLY
+template int delfem2::DetDelaunay(const CVec2d& p0, const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);
+#endif
 
 
 
 template <typename T>
-dfm2::CVec2<T> dfm2::pointCurve_BezierCubic
+delfem2::CVec2<T> delfem2::pointCurve_BezierCubic
 (double t,
  const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3, const CVec2<T>& p4)
 {
   double tp = 1.0-t;
   return t*t*t*p4 + 3*t*t*tp*p3 + 3*t*tp*tp*p2 + tp*tp*tp*p1;
 }
-template dfm2::CVec2d dfm2::pointCurve_BezierCubic(double t,
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CVec2d delfem2::pointCurve_BezierCubic(double t,
                                                    const CVec2d& p1,
                                                    const CVec2d& p2,
                                                    const CVec2d& p3,
                                                    const CVec2d& p4);
+#endif
 
 template <typename T>
-dfm2::CVec2<T> dfm2::pointCurve_BezierQuadratic
+delfem2::CVec2<T> delfem2::pointCurve_BezierQuadratic
  (double t,
   const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3)
 {
   double tp = 1.0-t;
   return (t*t)*p3 + (2*t*tp)*p2 + (tp*tp)*p1;
 }
-template dfm2::CVec2d dfm2::pointCurve_BezierQuadratic(double t,
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CVec2d delfem2::pointCurve_BezierQuadratic(double t,
                                                        const CVec2d& p1,
                                                        const CVec2d& p2,
                                                        const CVec2d& p3);
+#endif
+
 
 // ----------------------------------------------------------------------------------
 // std::vector starts from here
 
 //! Area of the Triangle (3 indexes and vertex array)
 template <typename T>
-double dfm2::Area_Tri
+double delfem2::Area_Tri
 (const int iv1, const int iv2, const int iv3,
  const std::vector<CVec2<T>>& point )
 {
@@ -726,7 +787,7 @@ double dfm2::Area_Tri
 }
 
 template <typename T>
-void dfm2::Polyline_CubicBezierCurve
+void delfem2::Polyline_CubicBezierCurve
 (std::vector<CVec2<T>>& aP,
  const int n, 
  const std::vector<CVec2<T>>& aCP)
@@ -741,13 +802,15 @@ void dfm2::Polyline_CubicBezierCurve
   }
   aP[ns*n] = aCP[ns*3];
 }
-template void dfm2::Polyline_CubicBezierCurve(std::vector<CVec2d>& aP, const int n, const std::vector<CVec2d>& aCP);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Polyline_CubicBezierCurve(std::vector<CVec2d>& aP, const int n, const std::vector<CVec2d>& aCP);
+#endif
 
 
 // ------------------------------
 
 template <typename T>
-void dfm2::Polyline_BezierCubic
+void delfem2::Polyline_BezierCubic
 (std::vector<CVec2<T>>& aP,
  const unsigned int n,
  const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3, const CVec2<T>& p4)
@@ -759,7 +822,7 @@ void dfm2::Polyline_BezierCubic
                                    p1, p2, p3, p4);
   }
 }
-template void dfm2::Polyline_BezierCubic
+template void delfem2::Polyline_BezierCubic
  (std::vector<CVec2d>& aP,
   const unsigned int n,
   const CVec2d& p1, const CVec2d& p2, const CVec2d& p3, const CVec2d& p4);
@@ -767,7 +830,7 @@ template void dfm2::Polyline_BezierCubic
 // --------------
 
 template <typename T>
-void dfm2::Polyline_BezierQuadratic
+void delfem2::Polyline_BezierQuadratic
  (std::vector<CVec2<T>>& aP,
   const unsigned int n,
   const CVec2<T>& p1, const CVec2<T>& p2, const CVec2<T>& p3)
@@ -779,15 +842,17 @@ void dfm2::Polyline_BezierQuadratic
                                        p1, p2, p3);
   }
 }
-template void dfm2::Polyline_BezierQuadratic
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Polyline_BezierQuadratic
 (std::vector<CVec2d>& aP,
  const unsigned int n,
  const CVec2d& p1, const CVec2d& p2, const CVec2d& p3);
+#endif
 
 // --------------
 
 template <typename T>
-double dfm2::Length_Polygon
+double delfem2::Length_Polygon
 (const std::vector<CVec2<T>>& aP)
 {
   if( aP.size() < 2 ){ return 0; }
@@ -798,12 +863,14 @@ double dfm2::Length_Polygon
   }
   return len;
 }
-template double dfm2::Length_Polygon(const std::vector<CVec2d>& aP);
+#ifndef DFM2_HEADER_ONLY
+template double delfem2::Length_Polygon(const std::vector<CVec2d>& aP);
+#endif
 
 // ---------------------------------------
 
 template <typename T>
-double dfm2::Area_Polygon(const std::vector<CVec2<T>>& aP)
+double delfem2::Area_Polygon(const std::vector<CVec2<T>>& aP)
 {
   CVec2<T> vtmp(0,0);
   const int ne = aP.size();
@@ -815,7 +882,7 @@ double dfm2::Area_Polygon(const std::vector<CVec2<T>>& aP)
 }
 
 template <typename T>
-void dfm2::MeanValueCoordinate
+void delfem2::MeanValueCoordinate
 (std::vector<double>& aW,
  CVec2<T>& p,
  std::vector<CVec2<T>>& aVtx)
@@ -869,7 +936,7 @@ void makeRandomLoop
 }
 
 template <typename T>
-void dfm2::Translate
+void delfem2::Translate
 (std::vector<CVec2<T>>& aP,
  double dx, double dy)
 {
@@ -878,7 +945,9 @@ void dfm2::Translate
     ip.p[1] += dy;
   }
 }
-template void dfm2::Translate(std::vector<CVec2d>& aP, double dx, double dy);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Translate(std::vector<CVec2d>& aP, double dx, double dy);
+#endif
 
 // ----------------------------
 
@@ -899,7 +968,7 @@ DFM2_INLINE void Rotate(std::vector<CVec2d> &aP, double dt) {
 // ----------------------------
 
 template <typename T>
-std::vector<dfm2::CVec2<T>> dfm2::Polyline_Resample_Polyline
+std::vector<delfem2::CVec2<T>> delfem2::Polyline_Resample_Polyline
 (const std::vector<CVec2<T>>& stroke0,
  double l)
 {
@@ -930,12 +999,15 @@ std::vector<dfm2::CVec2<T>> dfm2::Polyline_Resample_Polyline
   //  stroke.push_back( stroke0.back() );
   return stroke;
 }
-template std::vector<dfm2::CVec2d> dfm2::Polyline_Resample_Polyline(const std::vector<CVec2d>& stroke0, double l);
+#ifndef DFM2_HEADER_ONLY
+template std::vector<delfem2::CVec2d> delfem2::Polyline_Resample_Polyline(
+    const std::vector<CVec2d>& stroke0, double l);
+#endif
 
 // ------------------------------------------------------------
 
 template <typename T>
-std::vector<dfm2::CVec2<T>> dfm2::Polygon_Resample_Polygon
+std::vector<delfem2::CVec2<T>> delfem2::Polygon_Resample_Polygon
 (const std::vector<CVec2<T>>& stroke0,
  double l)
 {
@@ -968,7 +1040,7 @@ std::vector<dfm2::CVec2<T>> dfm2::Polygon_Resample_Polygon
 
 
 template <typename T>
-void dfm2::SecondMomentOfArea_Polygon
+void delfem2::SecondMomentOfArea_Polygon
 (CVec2<T>& cg,  double& area,
  CVec2<T>& pa1, double& I1,
  CVec2<T>& pa2, double& I2,
@@ -1017,15 +1089,17 @@ void dfm2::SecondMomentOfArea_Polygon
   I1 = 0.5*(Ix+Iy)+0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
   I2 = 0.5*(Ix+Iy)-0.5*sqrt( (Ix-Iy)*(Ix-Iy) + 4*Ixy*Ixy );
 }
-template void dfm2::SecondMomentOfArea_Polygon(CVec2d& cg,  double& area,
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::SecondMomentOfArea_Polygon(CVec2d& cg,  double& area,
                                                CVec2d& pa1, double& I1,
                                                CVec2d& pa2, double& I2,
                                                const std::vector<CVec2d>& aVec2D);
+#endif
 
 // ----------------------------------------
 
 template <typename T>
-void dfm2::JArray_FromVecVec_XY
+void delfem2::JArray_FromVecVec_XY
 (std::vector<int>& aIndXYs,
  std::vector<int>& loopIP0,
  std::vector<CVec2<T>>& aXY,
@@ -1055,13 +1129,16 @@ void dfm2::JArray_FromVecVec_XY
     loopIP0[ip] = ip;
   }
 }
-template void dfm2::JArray_FromVecVec_XY(std::vector<int>& aIndXYs, std::vector<int>& loopIP0, std::vector<CVec2d>& aXY,
-                                         const std::vector< std::vector<double> >& aVecAry0);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::JArray_FromVecVec_XY(
+    std::vector<int>& aIndXYs, std::vector<int>& loopIP0, std::vector<CVec2d>& aXY,
+    const std::vector< std::vector<double> >& aVecAry0);
+#endif
 
 // --------------------------
 
 template <typename T>
-void dfm2::ResamplingLoop
+void delfem2::ResamplingLoop
 (std::vector<int>& loopIP1_ind,
  std::vector<int>& loopIP1,
  std::vector<CVec2<T>>& aVec2,
@@ -1125,12 +1202,16 @@ void dfm2::ResamplingLoop
   assert( loopIP1.size() == aVec2.size() );
   assert( loopIP1.size() == ivtx0 );
 }
-template void dfm2::ResamplingLoop(std::vector<int>& loopIP1_ind, std::vector<int>& loopIP1, std::vector<CVec2d>& aVec2,
-                                   double max_edge_length);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::ResamplingLoop(
+    std::vector<int>& loopIP1_ind, std::vector<int>& loopIP1,
+    std::vector<CVec2d>& aVec2,
+    double max_edge_length);
+#endif
 
 
 template <typename T>
-void dfm2::MakeMassMatrixTri
+void delfem2::MakeMassMatrixTri
 (double M[9],
  double rho,
  const unsigned int aIP[3],
@@ -1143,7 +1224,7 @@ void dfm2::MakeMassMatrixTri
     {aVec2[aIP[0]].p[0],aVec2[aIP[0]].p[1]},
     {aVec2[aIP[1]].p[0],aVec2[aIP[1]].p[1]},
     {aVec2[aIP[2]].p[0],aVec2[aIP[2]].p[1]} };
-  const double Area = dfm2::Area_Tri2(P[0], P[1], P[2]);
+  const double Area = delfem2::Area_Tri2(P[0], P[1], P[2]);
   {
     const double tmp = rho*Area/3.0;
     M[0] = M[4] = M[8] = tmp;
@@ -1157,7 +1238,7 @@ void dfm2::MakeMassMatrixTri
 }
 
 template <typename T>
-bool dfm2::IsInclude_Loop
+bool delfem2::IsInclude_Loop
 (const double co[],
  const int ixy_stt, const int ixy_end,
  const std::vector<CVec2<T>>& aXY)
@@ -1174,8 +1255,8 @@ bool dfm2::IsInclude_Loop
       if( ipo1 == ixy_end ){ ipo1 = ixy_stt; }
       const double p0[2] = {aXY[ipo0].p[0],aXY[ipo0].p[1]};
       const double p1[2] = {aXY[ipo1].p[0],aXY[ipo1].p[1]};
-      const double area0 = dfm2::Area_Tri2(co,codir,p0);
-      const double area1 = dfm2::Area_Tri2(co,p1,codir);
+      const double area0 = delfem2::Area_Tri2(co,codir,p0);
+      const double area1 = delfem2::Area_Tri2(co,p1,codir);
       double r1 =  area0 / (area0+area1);
       double r0 =  area1 / (area0+area1);
       if( fabs(area0+area1) < 1.0e-20 ){
@@ -1202,7 +1283,7 @@ bool dfm2::IsInclude_Loop
 }
 
 template <typename T>
-bool dfm2::CheckInputBoundaryForTriangulation
+bool delfem2::CheckInputBoundaryForTriangulation
 (const std::vector<int>& loopIP_ind,
  const std::vector<CVec2<T>>& aXY)
 {
@@ -1266,7 +1347,7 @@ bool dfm2::CheckInputBoundaryForTriangulation
           const double ymin_j = ( pj1[1] < pj0[1] ) ? pj1[1] : pj0[1];
           if( xmin_j > xmax_i || xmax_j < xmin_i ){ continue; }
           if( ymin_j > ymax_i || ymax_j < ymin_i ){ continue; }
-          if( IsCrossLines(pi0,pi1,  pj0,pj1) ){
+          if( vec2::IsCrossLines(pi0,pi1,  pj0,pj1) ){
             is_intersect = true;
             break;
           }
@@ -1286,7 +1367,7 @@ bool dfm2::CheckInputBoundaryForTriangulation
             const double ymin_j = ( pj1[1] < pj0[1] ) ? pj1[1] : pj0[1];
             if( xmin_j > xmax_i || xmax_j < xmin_i ) continue;  // åçˆÇ™Ç†ÇËÇ¶Ç»Ç¢ÉpÉ^Å[ÉìÇèúäO
             if( ymin_j > ymax_i || ymax_j < ymin_i ) continue;  // è„Ç…ìØÇ∂
-            if( IsCrossLines(pi0,pi1,  pj0,pj1) ){
+            if( vec2::IsCrossLines(pi0,pi1,  pj0,pj1) ){
               is_intersect = true;
               break;
             }
@@ -1302,12 +1383,15 @@ bool dfm2::CheckInputBoundaryForTriangulation
   // end of input check section
   return true;
 }
-template bool dfm2::CheckInputBoundaryForTriangulation(const std::vector<int>& loopIP_ind, const std::vector<CVec2d>& aXY);
+#ifndef DFM2_HEADER_ONLY
+template bool delfem2::CheckInputBoundaryForTriangulation(
+    const std::vector<int>& loopIP_ind, const std::vector<CVec2d>& aXY);
+#endif
 
 // -------------------------------------------
 
 template <typename T>
-std::vector<dfm2::CVec2<T>> dfm2::Polygon_Invert
+std::vector<delfem2::CVec2<T>> delfem2::Polygon_Invert
  (const std::vector<CVec2<T>>& aP)
 {
   std::vector<CVec2<T>> res;
@@ -1318,7 +1402,7 @@ std::vector<dfm2::CVec2<T>> dfm2::Polygon_Invert
 }
 
 template <typename T>
-std::vector<double> dfm2::XY_Polygon
+std::vector<double> delfem2::XY_Polygon
  (const std::vector<CVec2<T>>& aP)
 {
   std::vector<double> res;
@@ -1331,7 +1415,7 @@ std::vector<double> dfm2::XY_Polygon
 }
 
 template <typename T>
-void dfm2::FixLoopOrientation
+void delfem2::FixLoopOrientation
 (std::vector<int>& loopIP,
  const std::vector<int>& loopIP_ind,
  const std::vector<CVec2<T>>& aXY)
@@ -1372,8 +1456,11 @@ void dfm2::FixLoopOrientation
     }
   }
 }
-template void dfm2::FixLoopOrientation(std::vector<int>& loopIP,
-                                       const std::vector<int>& loopIP_ind, const std::vector<CVec2d>& aXY);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::FixLoopOrientation(
+    std::vector<int>& loopIP,
+    const std::vector<int>& loopIP_ind, const std::vector<CVec2d>& aXY);
+#endif
 
 
 
