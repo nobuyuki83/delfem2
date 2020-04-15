@@ -8,8 +8,9 @@
 #ifndef DFM2_DTRI_H
 #define DFM2_DTRI_H
 
-#include <vector>
 #include "delfem2/dfm2_inline.h"
+#include <vector>
+
 
 // ------------------------------------------------------------------
 

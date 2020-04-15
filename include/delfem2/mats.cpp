@@ -6,13 +6,9 @@
  */
 
 #include <cassert>
-#include <cmath>
 #include <vector>
 #include <complex>
 #include "delfem2/mats.h"
-
-typedef std::complex<double> COMPLEX;
-namespace dfm2 = delfem2;
 
 namespace delfem2 {
 namespace mats {
@@ -72,7 +68,7 @@ DFM2_INLINE double MatNorm_Assym(
 // Calc Matrix Vector Product
 // {y} = alpha*[A]{x} + beta*{y}
 template <typename T>
-void dfm2::CMatrixSparse<T>::MatVec
+void delfem2::CMatrixSparse<T>::MatVec
 (T* y,
  T alpha,
  const T* x,
@@ -208,16 +204,20 @@ void dfm2::CMatrixSparse<T>::MatVec
 		}
 	}
 }
+#ifndef DFM2_HEADER_ONLY
 template void delfem2::CMatrixSparse<float>::MatVec(float *y, float alpha, const float *x, float beta) const;
 template void delfem2::CMatrixSparse<double>::MatVec(double *y, double alpha, const double *x, double beta) const;
-template void delfem2::CMatrixSparse<COMPLEX>::MatVec(COMPLEX *y, COMPLEX alpha, const COMPLEX *x, COMPLEX beta) const;
+template void delfem2::CMatrixSparse<std::complex<double>>::MatVec(
+    std::complex<double> *y, std::complex<double> alpha,
+    const std::complex<double> *x, std::complex<double> beta) const;
+#endif
 
 // -------------------------------------------------------
 
 // Calc Matrix Vector Product
 // {y} = alpha*[A]^T{x} + beta*{y}
 template <typename T>
-void dfm2::CMatrixSparse<T>::MatTVec
+void delfem2::CMatrixSparse<T>::MatTVec
  (T* y,
   T alpha,
   const T* x,
@@ -366,9 +366,15 @@ void dfm2::CMatrixSparse<T>::MatTVec
     }
   }
 }
-template void delfem2::CMatrixSparse<float>::MatTVec(float *y, float alpha, const float *x, float beta) const;
-template void delfem2::CMatrixSparse<double>::MatTVec(double *y, double alpha, const double *x, double beta) const;
-template void delfem2::CMatrixSparse<COMPLEX>::MatTVec(COMPLEX *y, COMPLEX alpha, const COMPLEX *x, COMPLEX beta) const;
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMatrixSparse<float>::MatTVec(
+    float *y, float alpha, const float *x, float beta) const;
+template void delfem2::CMatrixSparse<double>::MatTVec(
+    double *y, double alpha, const double *x, double beta) const;
+template void delfem2::CMatrixSparse<std::complex<double>>::MatTVec(
+    std::complex<double> *y, std::complex<double> alpha,
+    const std::complex<double> *x, std::complex<double> beta) const;
+#endif
 
 
 // ----------------------------------
@@ -425,18 +431,23 @@ bool delfem2::CMatrixSparse<T>::Mearge
   }
   return true;
 }
-template bool delfem2::CMatrixSparse<float>::Mearge(unsigned int nblkel_col, const unsigned int *blkel_col,
-                                                    unsigned int nblkel_row, const unsigned int *blkel_row,
-                                                    unsigned int blksize, const float *emat,
-                                                    std::vector<int> &marge_buffer);
-template bool delfem2::CMatrixSparse<double>::Mearge(unsigned int nblkel_col, const unsigned int *blkel_col,
-                                                     unsigned int nblkel_row, const unsigned int *blkel_row,
-                                                     unsigned int blksize, const double *emat,
-                                                     std::vector<int> &marge_buffer);
-template bool delfem2::CMatrixSparse<COMPLEX>::Mearge(unsigned int nblkel_col, const unsigned int *blkel_col,
-                                                      unsigned int nblkel_row, const unsigned int *blkel_row,
-                                                      unsigned int blksize, const COMPLEX *emat,
-                                                      std::vector<int> &marge_buffer);
+#ifndef DFM2_HEADER_ONLY
+template bool delfem2::CMatrixSparse<float>::Mearge(
+    unsigned int nblkel_col, const unsigned int *blkel_col,
+    unsigned int nblkel_row, const unsigned int *blkel_row,
+    unsigned int blksize, const float *emat,
+    std::vector<int> &marge_buffer);
+template bool delfem2::CMatrixSparse<double>::Mearge(
+    unsigned int nblkel_col, const unsigned int *blkel_col,
+    unsigned int nblkel_row, const unsigned int *blkel_row,
+    unsigned int blksize, const double *emat,
+    std::vector<int> &marge_buffer);
+template bool delfem2::CMatrixSparse<std::complex<double>>::Mearge(
+    unsigned int nblkel_col, const unsigned int *blkel_col,
+    unsigned int nblkel_row, const unsigned int *blkel_row,
+    unsigned int blksize, const std::complex<double> *emat,
+    std::vector<int> &marge_buffer);
+#endif
 
 // -----------------------------------------------------------------
 
@@ -460,9 +471,12 @@ void delfem2::CMatrixSparse<T>::SetFixedBC_Dia(
     }
   }
 }
+#ifndef DFM2_HEADER_ONLY
 template void delfem2::CMatrixSparse<float>::SetFixedBC_Dia(const int *bc_flag, float val_dia);
 template void delfem2::CMatrixSparse<double>::SetFixedBC_Dia(const int *bc_flag, double val_dia);
-template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Dia(const int *bc_flag, COMPLEX val_dia);
+template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Dia(
+    const int *bc_flag, std::complex<double> val_dia);
+#endif
 
 
 template<typename T>
@@ -483,9 +497,11 @@ void delfem2::CMatrixSparse<T>::SetFixedBC_Row(const int *bc_flag)
     }
   }
 }
+#ifndef DFM2_HEADER_ONLY
 template void delfem2::CMatrixSparse<float>::SetFixedBC_Row(const int *bc_flag);
 template void delfem2::CMatrixSparse<double>::SetFixedBC_Row(const int *bc_flag);
-template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Row(const int *bc_flag);
+template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Row(const int *bc_flag);
+#endif
 
 template<typename T>
 void delfem2::CMatrixSparse<T>::SetFixedBC_Col(const int *bc_flag)
@@ -504,14 +520,16 @@ void delfem2::CMatrixSparse<T>::SetFixedBC_Col(const int *bc_flag)
     }
   }
 }
+#ifndef DFM2_HEADER_ONLY
 template void delfem2::CMatrixSparse<float>::SetFixedBC_Col(const int *bc_flag);
 template void delfem2::CMatrixSparse<double>::SetFixedBC_Col(const int *bc_flag);
-template void delfem2::CMatrixSparse<COMPLEX>::SetFixedBC_Col(const int *bc_flag);
+template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Col(const int *bc_flag);
+#endif
 
 // -----------------------------------------------------------------
 
-DFM2_INLINE void dfm2::SetMasterSlave
-(dfm2::CMatrixSparse<double>& mat,
+DFM2_INLINE void delfem2::SetMasterSlave
+(delfem2::CMatrixSparse<double>& mat,
  const int* aMSFlag)
 {
   assert( !mat.valDia.empty() );
@@ -662,8 +680,8 @@ DFM2_INLINE void dfm2::SetMasterSlave
   }
 }
 
-DFM2_INLINE void dfm2::MatSparse_ScaleBlk_LeftRight
-(dfm2::CMatrixSparse<double>& mat,
+DFM2_INLINE void delfem2::MatSparse_ScaleBlk_LeftRight
+(delfem2::CMatrixSparse<double>& mat,
  const double* scale)
 {
   assert( mat.nblk_row == mat.nblk_col );
@@ -686,8 +704,8 @@ DFM2_INLINE void dfm2::MatSparse_ScaleBlk_LeftRight
   }
 }
 
-DFM2_INLINE void dfm2::MatSparse_ScaleBlkLen_LeftRight
-(dfm2::CMatrixSparse<double>& mat,
+DFM2_INLINE void delfem2::MatSparse_ScaleBlkLen_LeftRight
+(delfem2::CMatrixSparse<double>& mat,
  const double* scale)
 {
   assert( mat.nblk_row == mat.nblk_col );
@@ -716,8 +734,8 @@ DFM2_INLINE void dfm2::MatSparse_ScaleBlkLen_LeftRight
   }
 }
 
-DFM2_INLINE double dfm2::CheckSymmetry
- (const dfm2::CMatrixSparse<double>& mat)
+DFM2_INLINE double delfem2::CheckSymmetry
+ (const delfem2::CMatrixSparse<double>& mat)
 {
   assert( mat.nblk_row == mat.nblk_col );
   assert( mat.len_row == mat.len_col );

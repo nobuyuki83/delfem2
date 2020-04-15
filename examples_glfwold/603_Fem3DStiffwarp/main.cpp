@@ -5,14 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cassert>
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <set>
-#include <stack>
-#include <algorithm>
 #include <cstdlib>
 #include <math.h>
 #include <time.h>

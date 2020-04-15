@@ -51,13 +51,15 @@ T Area_Tri2(const T v1[2], const T v2[2], const T v3[2]);
   
 template <typename T>
 DFM2_INLINE void GaussianDistribution2(T noise[2]);
+
+DFM2_INLINE void makeSplineLoop(
+    const std::vector<double>& aCV,
+    std::vector<double>& aVecCurve);
   
 DFM2_INLINE void MeanValueCoordinate2D
  (double *aW,
   double px, double py,
   const double *aXY, unsigned int nXY);
-  
-} // end namespace delfem2
 
 DFM2_INLINE bool InverseMat2
  (double invB[4],
@@ -76,9 +78,7 @@ DFM2_INLINE void RotationalComponentOfMatrix2
  (double R[4],
   const double M[4]);
 
-// -----------------------------------------------------
-
-namespace delfem2 {
+// ----------------------
 
 template <typename T>
 class CVec2;
@@ -152,11 +152,13 @@ public:
   }
 	inline CVec2 operator+(const CVec2& rhs) const {
 		CVec2 v = *this;
-		return v += rhs;
+		v += rhs;
+		return v;
 	}
 	inline CVec2 operator-(const CVec2& rhs) const {
 		CVec2 v = *this;
-		return v -= rhs;
+		v -= rhs;
+		return v;
 	}
   inline double operator[](int i) const{
     if (i==0) return p[0];

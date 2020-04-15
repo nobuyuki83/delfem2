@@ -14,11 +14,9 @@
 
 #include "delfem2/mshtopo.h"
 
-namespace dfm2 = delfem2;
-
 // ---------------------------------------------
 
-DFM2_INLINE void dfm2::JArray_Print
+DFM2_INLINE void delfem2::JArray_Print
 (const std::vector<int>& index,
  const std::vector<int>& array)
 {
@@ -33,7 +31,7 @@ DFM2_INLINE void dfm2::JArray_Print
   }
 }
 
-DFM2_INLINE void dfm2::JArray_Sort
+DFM2_INLINE void delfem2::JArray_Sort
 (const std::vector<unsigned int>& index,
  std::vector<unsigned int>& array)
 {
@@ -57,7 +55,7 @@ DFM2_INLINE void dfm2::JArray_Sort
   }
 }
 
-DFM2_INLINE void dfm2::JArray_Sort(
+DFM2_INLINE void delfem2::JArray_Sort(
     const unsigned int* index,
     const unsigned int size,
     unsigned int* array)
@@ -82,7 +80,7 @@ DFM2_INLINE void dfm2::JArray_Sort(
   }
 }
 
-DFM2_INLINE void dfm2::JArray_AddDiagonal
+DFM2_INLINE void delfem2::JArray_AddDiagonal
 (std::vector<unsigned int> &psup_ind1,
  std::vector<unsigned int> &psup1,
  const unsigned int *psup_ind0, int npsup_ind0,
@@ -131,7 +129,7 @@ DFM2_INLINE void dfm2::JArray_AddDiagonal
 }
 
 // in the edge ip -> jp, it holds (ip < jp)
-DFM2_INLINE void dfm2::JArrayEdgeUnidir_PointSurPoint
+DFM2_INLINE void delfem2::JArrayEdgeUnidir_PointSurPoint
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
  //
@@ -171,7 +169,7 @@ DFM2_INLINE void dfm2::JArrayEdgeUnidir_PointSurPoint
   edge_ind[0] = 0;
 }
 
-DFM2_INLINE void dfm2::JArray_ElSuP_MeshElem
+DFM2_INLINE void delfem2::JArray_ElSuP_MeshElem
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ----------
@@ -210,7 +208,7 @@ DFM2_INLINE void dfm2::JArray_ElSuP_MeshElem
 /**
  * @details compute 2-ring neighborhood from 1-ring neighborhood
  */
-DFM2_INLINE void dfm2::JArray_Extend
+DFM2_INLINE void delfem2::JArray_Extend
 (std::vector<unsigned int>& psup_ind1,
  std::vector<unsigned int>& psup1,
  const std::vector<unsigned int>& psup_ind0,
@@ -260,7 +258,7 @@ DFM2_INLINE void dfm2::JArray_Extend
 // -----------------------------------------------------------------
 // Elem
 
-DFM2_INLINE void dfm2::ElemQuad_DihedralTri
+DFM2_INLINE void delfem2::ElemQuad_DihedralTri
  (std::vector<unsigned int>& aQuad,
  const unsigned int* aTri, int nTri,
  int np)
@@ -268,7 +266,7 @@ DFM2_INLINE void dfm2::ElemQuad_DihedralTri
   std::vector<int> aElemSurRel;
   ElSuEl_MeshElem(aElemSurRel,
                               aTri, nTri,
-                              dfm2::MESHELEM_TRI, np);
+                              MESHELEM_TRI, np);
   for(int itri=0; itri<nTri; ++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
       int jtri = aElemSurRel[itri*6+iedtri*2+0];
@@ -292,7 +290,7 @@ DFM2_INLINE void dfm2::ElemQuad_DihedralTri
 
 // ---------------------------------
 
-DFM2_INLINE void dfm2::convert2Tri_Quad
+DFM2_INLINE void delfem2::convert2Tri_Quad
 (std::vector<unsigned int>& aTri,
  const std::vector<unsigned int>& aQuad)
 {
@@ -308,12 +306,12 @@ DFM2_INLINE void dfm2::convert2Tri_Quad
   }
 }
 
-DFM2_INLINE void dfm2::Convert2Tri_MeshMix
+DFM2_INLINE void delfem2::Convert2Tri_MeshMix
 (std::vector<unsigned int>& aTri,
  //
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
+ const std::vector<MESHELEM_TYPE>& aElemType)
 {
   const std::size_t nElem0 = aElemInd.size()-1;
   aTri.clear();
@@ -333,7 +331,7 @@ DFM2_INLINE void dfm2::Convert2Tri_MeshMix
   }
 }
 
-DFM2_INLINE void dfm2::FlipElement_Tri(std::vector<unsigned int>& aTri)
+DFM2_INLINE void delfem2::FlipElement_Tri(std::vector<unsigned int>& aTri)
 {
   for (std::size_t itri = 0; itri<aTri.size()/3; itri++){
     //    int i0 = aTri[itri*3+0];
@@ -344,12 +342,12 @@ DFM2_INLINE void dfm2::FlipElement_Tri(std::vector<unsigned int>& aTri)
   }
 }
 
-DFM2_INLINE void dfm2::FlipElement_MeshMix
+DFM2_INLINE void delfem2::FlipElement_MeshMix
 (std::vector<int>& aElem_Flip,
  // ----------
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE>& aElemType)
+ const std::vector<MESHELEM_TYPE>& aElemType)
 {
   aElem_Flip.resize(aElem.size());
   assert(!aElemInd.empty());
@@ -368,13 +366,13 @@ DFM2_INLINE void dfm2::FlipElement_MeshMix
 
 // -------------------------------------
 
-DFM2_INLINE void dfm2::AddElement
-(const dfm2::MESHELEM_TYPE& femelem_type,
+DFM2_INLINE void delfem2::AddElement
+(const delfem2::MESHELEM_TYPE& femelem_type,
  const std::vector<int>& aElemIn,
  //
  std::vector<unsigned int>& aElemInd,
  std::vector<unsigned int>& aElem,
- std::vector<dfm2::MESHELEM_TYPE>& aElemType)
+ std::vector<MESHELEM_TYPE>& aElemType)
 {
   const int nnoel = nNodeElem(femelem_type);
   const std::size_t nElemIn = aElemIn.size()/nnoel;
@@ -394,7 +392,7 @@ DFM2_INLINE void dfm2::AddElement
 // --------------------------------------
 
 
-DFM2_INLINE void dfm2::JArray_ElSuP_MeshTri
+DFM2_INLINE void delfem2::JArray_ElSuP_MeshTri
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // --
@@ -405,7 +403,7 @@ DFM2_INLINE void dfm2::JArray_ElSuP_MeshTri
                            aTri.data(), aTri.size()/3, 3, nXYZ);
 }
 
-DFM2_INLINE void dfm2::JArray_ElSuP_MeshMix
+DFM2_INLINE void delfem2::JArray_ElSuP_MeshMix
 (std::vector<unsigned int> &elsup_ind,
  std::vector<unsigned int> &elsup,
  // ---
@@ -444,7 +442,7 @@ DFM2_INLINE void dfm2::JArray_ElSuP_MeshMix
 
 // ----------------------------------------------------------------------------------------------------------
 
-DFM2_INLINE void dfm2::ElSuEl_MeshElem
+DFM2_INLINE void delfem2::ElSuEl_MeshElem
 (std::vector<int>& aElSurRel,
  const unsigned int* aEl, unsigned int nEl, int nNoEl,
  const std::vector<unsigned int> &elsup_ind,
@@ -518,35 +516,35 @@ void makeSurroundingRelationship
 }
  */
 
-DFM2_INLINE void dfm2::ElSuEl_MeshElem
+DFM2_INLINE void delfem2::ElSuEl_MeshElem
 (std::vector<int>& aElemSurRel,
  const unsigned int* aElem, unsigned int nElem,
- dfm2::MESHELEM_TYPE type,
+ MESHELEM_TYPE type,
  const unsigned int nXYZ)
 {
   const int nNoEl = nNodeElem(type);
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
+  JArray_ElSuP_MeshElem(elsup_ind, elsup,
       aElem, nElem, nNoEl, nXYZ);
   const int nfael = nFaceElem(type);
   const int nnofa = nNodeElemFace(type, 0);
-  dfm2::ElSuEl_MeshElem(aElemSurRel,
+  ElSuEl_MeshElem(aElemSurRel,
       aElem, nElem, nNoEl,
       elsup_ind,elsup,
-      nfael, nnofa, dfm2::noelElemFace(type));
+      nfael, nnofa, noelElemFace(type));
 }
 
 
-DFM2_INLINE void dfm2::ElSuEl_MeshMix
+DFM2_INLINE void delfem2::ElSuEl_MeshMix
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  const int nXYZ)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArray_ElSuP_MeshMix(elsup_ind, elsup,
+  JArray_ElSuP_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,
                            nXYZ);
   ElSuEl_MeshMix(aElemFaceInd,aElemFaceRel,
@@ -554,13 +552,13 @@ DFM2_INLINE void dfm2::ElSuEl_MeshMix
                               elsup_ind,elsup);
 }
 
-DFM2_INLINE void dfm2::ElSuEl_MeshMix
+DFM2_INLINE void delfem2::ElSuEl_MeshMix
 (std::vector<int>& aElemFaceInd,
  std::vector<int>& aElemFaceRel,
  //
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE> &aElemType,
+ const std::vector<MESHELEM_TYPE> &aElemType,
  const std::vector<unsigned int> &elsup_ind,
  const std::vector<unsigned int> &elsup)
 {
@@ -579,14 +577,14 @@ DFM2_INLINE void dfm2::ElSuEl_MeshMix
   aElemFaceRel.assign(nface*2,-1);
   std::vector<int> aFlg(np,-1);
   for(unsigned int ielem=0;ielem<nelem;++ielem){
-    const dfm2::MESHELEM_TYPE type_i = aElemType[ielem];
+    const MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem] == nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
       const int iface = iiface-aElemFaceInd[ielem];
       const int nnofa_i = nNodeElemFace(type_i,iface);
       int ip0=-1;
       for(int inofa=0;inofa<nnofa_i;++inofa){
-        const int ino0 = dfm2::noelElemFace(type_i)[iface][inofa];
+        const int ino0 = noelElemFace(type_i)[iface][inofa];
         assert(ino0!=-1);
         ip0 = aElem[ aElemInd[ielem]+ino0 ];
         assert(ip0>=0&&ip0<(int)np);
@@ -595,14 +593,14 @@ DFM2_INLINE void dfm2::ElSuEl_MeshMix
       for(unsigned int jelsup=elsup_ind[ip0];jelsup<elsup_ind[ip0+1];++jelsup){
         const int je0 = elsup[jelsup];
         if( (int)ielem == je0 ) continue;
-        const dfm2::MESHELEM_TYPE type_j = aElemType[je0];
+        const MESHELEM_TYPE type_j = aElemType[je0];
         for(int ijface=aElemFaceInd[je0];ijface<aElemFaceInd[je0+1];++ijface){
           const int jface = ijface-aElemFaceInd[je0];
           const int nnofa_j = nNodeElemFace(type_j,jface);
           if( nnofa_i != nnofa_j ) continue;
           bool is_ok = true;
           for(int jnofa=0;jnofa<nnofa_j;++jnofa){
-            const int jno0 = dfm2::noelElemFace(type_j)[jface][jnofa];
+            const int jno0 = noelElemFace(type_j)[jface][jnofa];
             int jp0 = aElem[ aElemInd[je0]+jno0 ];
             if( aFlg[jp0] != 1 ){ is_ok=false; break; }
           }
@@ -614,7 +612,7 @@ DFM2_INLINE void dfm2::ElSuEl_MeshMix
         if( aElemFaceRel[iiface*2+0] != -1 ) break;
       }
       for(int inofa=0;inofa<nnofa_i;++inofa){
-        const int ino0 = dfm2::noelElemFace(type_i)[iface][inofa];
+        const int ino0 = noelElemFace(type_i)[iface][inofa];
         ip0 = aElem[ aElemInd[ielem]+ino0 ];
         aFlg[ip0] = -1;
       }
@@ -622,14 +620,14 @@ DFM2_INLINE void dfm2::ElSuEl_MeshMix
   }
 }
 
-DFM2_INLINE void dfm2::Boundary_MeshMix
+DFM2_INLINE void delfem2::Boundary_MeshMix
 (std::vector<unsigned int>& aElemInd_Bound,
  std::vector<unsigned int>& aElem_Bound,
- std::vector<dfm2::MESHELEM_TYPE>& aElemType_Bound,
+ std::vector<MESHELEM_TYPE>& aElemType_Bound,
  //
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  const std::vector<int>& aElemFaceInd,
  const std::vector<int>& aElemFaceRel)
 {
@@ -639,14 +637,14 @@ DFM2_INLINE void dfm2::Boundary_MeshMix
   aElemInd_Bound.push_back(0);
   const std::size_t nelem = aElemInd.size()-1;
   for(unsigned int ielem=0;ielem<nelem;++ielem){
-    const dfm2::MESHELEM_TYPE type_i = aElemType[ielem];
+    const MESHELEM_TYPE type_i = aElemType[ielem];
     assert( aElemFaceInd[ielem+1]-aElemFaceInd[ielem]==nFaceElem(type_i) );
     for(int iiface=aElemFaceInd[ielem];iiface<aElemFaceInd[ielem+1];++iiface){
       if( aElemFaceRel[iiface*2+0] != -1 ) continue;
       const int iface = iiface-aElemFaceInd[ielem];
       const int nnofa_i = nNodeElemFace(type_i,iface);
-      if(      nnofa_i == 3 ){ aElemType_Bound.push_back(dfm2::MESHELEM_TRI ); }
-      else if( nnofa_i == 4 ){ aElemType_Bound.push_back(dfm2::MESHELEM_QUAD); }
+      if(      nnofa_i == 3 ){ aElemType_Bound.push_back(MESHELEM_TRI ); }
+      else if( nnofa_i == 4 ){ aElemType_Bound.push_back(MESHELEM_QUAD); }
       aElemInd_Bound.push_back(nnofa_i);
       for(int inofa=0;inofa<nnofa_i;++inofa){
         const int ino0 = noelElemFace(type_i)[iface][inofa];
@@ -664,7 +662,7 @@ DFM2_INLINE void dfm2::Boundary_MeshMix
 
 // -------------------------------------------------------------------------
 
-DFM2_INLINE void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
+DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
     std::vector<unsigned int>& psup_ind,
     std::vector<unsigned int>& psup,
     //
@@ -716,7 +714,7 @@ DFM2_INLINE void dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(
   psup_ind[0] = 0;
 }
 
-DFM2_INLINE void dfm2::JArray_PSuP_MeshElem
+DFM2_INLINE void delfem2::JArray_PSuP_MeshElem
 (std::vector<unsigned int>& psup_ind,
  std::vector<unsigned int>& psup,
  //
@@ -726,13 +724,13 @@ DFM2_INLINE void dfm2::JArray_PSuP_MeshElem
  unsigned int nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
+  JArray_ElSuP_MeshElem(elsup_ind, elsup,
       pElem, nEl, nPoEl, nPo);
-  dfm2::JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
+  JArrayPointSurPoint_MeshOneRingNeighborhood(psup_ind, psup,
                           pElem, elsup_ind,elsup, nPoEl, nPo);
 }
 
-DFM2_INLINE void dfm2::makeOneRingNeighborhood_TriFan
+DFM2_INLINE void delfem2::makeOneRingNeighborhood_TriFan
 (std::vector<int>& psup_ind,
  std::vector<int>& psup,
  // ----------------------
@@ -776,18 +774,18 @@ DFM2_INLINE void dfm2::makeOneRingNeighborhood_TriFan
   }
 }
 
-DFM2_INLINE void dfm2::JArrayEdge_MeshElem
+DFM2_INLINE void delfem2::JArrayEdge_MeshElem
 (std::vector<unsigned int> &edge_ind,
  std::vector<unsigned int> &edge,
  //
  const unsigned int* aElm0,
- dfm2::MESHELEM_TYPE elem_type,
+ MESHELEM_TYPE elem_type,
  const std::vector<unsigned int> &elsup_ind,
  const std::vector<unsigned int> &elsup,
  bool is_bidirectional)
 {
-  const int neElm = dfm2::mapMeshElemType2NEdgeElem[elem_type];
-  const int nnoelElm = dfm2::mapMeshElemType2NNodeElem[elem_type];
+  const int neElm = mapMeshElemType2NEdgeElem[elem_type];
+  const int nnoelElm = mapMeshElemType2NNodeElem[elem_type];
   const int (*aNoelEdge)[2] = noelElemEdge(elem_type);
   const std::size_t nPoint0 = elsup_ind.size()-1;
   edge_ind.resize(nPoint0+1);
@@ -818,7 +816,7 @@ DFM2_INLINE void dfm2::JArrayEdge_MeshElem
 }
 
 
-DFM2_INLINE void dfm2::MeshLine_JArrayEdge
+DFM2_INLINE void delfem2::MeshLine_JArrayEdge
 (std::vector<unsigned int>& aLine,
  //
  const std::vector<unsigned int> &psup_ind,
@@ -835,30 +833,30 @@ DFM2_INLINE void dfm2::MeshLine_JArrayEdge
   }
 }
 
-DFM2_INLINE void dfm2::MeshLine_MeshElem
+DFM2_INLINE void delfem2::MeshLine_MeshElem
 (std::vector<unsigned int>& aLine,
  const unsigned int* aElm0,
  unsigned int nElem,
- dfm2::MESHELEM_TYPE elem_type,
+ MESHELEM_TYPE elem_type,
  unsigned int nPo)
 {
   std::vector<unsigned int> elsup_ind,elsup;
-  const unsigned int nPoEl = dfm2::mapMeshElemType2NNodeElem[elem_type];
-  dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
-                           aElm0, nElem, nPoEl, nPo);
+  const unsigned int nPoEl = mapMeshElemType2NNodeElem[elem_type];
+  JArray_ElSuP_MeshElem(elsup_ind, elsup,
+      aElm0, nElem, nPoEl, nPo);
   std::vector<unsigned int> edge_ind, edge;
   JArrayEdge_MeshElem(edge_ind, edge,
-                      aElm0,
-                      elem_type,
-                      elsup_ind,elsup,false);
+      aElm0,
+      elem_type,
+      elsup_ind,elsup,false);
   MeshLine_JArrayEdge(aLine,
-                      edge_ind,edge);
+      edge_ind,edge);
 }
 
 
 // -----------------------------------------
 
-DFM2_INLINE void dfm2::JArray_AddMasterSlavePattern
+DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern
 (std::vector<unsigned int> &index,
  std::vector<unsigned int> &array,
  const int* aMSFlag,
@@ -976,7 +974,7 @@ DFM2_INLINE void dfm2::JArray_AddMasterSlavePattern
 
 // ---------------------------------------
 
-DFM2_INLINE void dfm2::MarkConnectedElements
+DFM2_INLINE void delfem2::MarkConnectedElements
 (std::vector<int>& aIndGroup,
  int itri_ker,
  int igroup,
@@ -1000,7 +998,7 @@ DFM2_INLINE void dfm2::MarkConnectedElements
   }
 }
 
-DFM2_INLINE void dfm2::MarkConnectedElements
+DFM2_INLINE void delfem2::MarkConnectedElements
 (std::vector<int>& aIndGroup,
  unsigned int itri_ker,
  int igroup,
@@ -1026,7 +1024,7 @@ DFM2_INLINE void dfm2::MarkConnectedElements
   }
 }
 
-DFM2_INLINE void dfm2::MakeGroupElem
+DFM2_INLINE void delfem2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  const std::vector<int>& aTri,
@@ -1049,7 +1047,7 @@ DFM2_INLINE void dfm2::MakeGroupElem
   ngroup = igroup+1;
 }
 
-DFM2_INLINE void dfm2::MakeGroupElem_Tri
+DFM2_INLINE void delfem2::MakeGroupElem_Tri
 (int& ngroup,
  std::vector<int>& aIndGroup,
  const std::vector<int>& aTri,
@@ -1059,7 +1057,7 @@ DFM2_INLINE void dfm2::MakeGroupElem_Tri
                 aTri,aTriSurRel,3,3);
 }
 
-DFM2_INLINE void dfm2::MakeGroupElem
+DFM2_INLINE void delfem2::MakeGroupElem
 (int& ngroup,
  std::vector<int>& aIndGroup,
  // -----------
@@ -1088,34 +1086,34 @@ DFM2_INLINE void dfm2::MakeGroupElem
 }
 
 
-DFM2_INLINE void dfm2::MakeGroupElem_MeshMix
+DFM2_INLINE void delfem2::MakeGroupElem_MeshMix
 (int& ngroup,
  std::vector<int>& aIndGroup,
  //
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
- const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
+ const std::vector<MESHELEM_TYPE>& aElemType,
  int nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArray_ElSuP_MeshMix(elsup_ind, elsup,
+  JArray_ElSuP_MeshMix(elsup_ind, elsup,
                            aElemInd,aElem,nPo);
   std::vector<int> aElemFaceInd, aElemFaceRel;
-  dfm2::ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
+  ElSuEl_MeshMix(aElemFaceInd, aElemFaceRel,
       aElemInd,aElem,aElemType,
       elsup_ind, elsup);
   MakeGroupElem(ngroup, aIndGroup,
                 aElemInd,aElem,aElemFaceInd,aElemFaceRel);
 }
 
-DFM2_INLINE void dfm2::ClipGroup_MeshMix
+DFM2_INLINE void delfem2::ClipGroup_MeshMix
  (std::vector<unsigned int>& aElemInd1,
   std::vector<unsigned int>& aElem1,
-  std::vector<dfm2::MESHELEM_TYPE>& aElemType1,
+  std::vector<MESHELEM_TYPE>& aElemType1,
   //
   const std::vector<unsigned int>& aElemInd,
   const std::vector<unsigned int>& aElem,
-  const std::vector<dfm2::MESHELEM_TYPE>& aElemType,
+  const std::vector<MESHELEM_TYPE>& aElemType,
   int igroup,
   const std::vector<int>& aIndGroup)
 {
@@ -1127,7 +1125,7 @@ DFM2_INLINE void dfm2::ClipGroup_MeshMix
   std::size_t nelem = aElemInd.size()-1;
   for(std::size_t ie=0;ie<nelem;++ie){
     if( aIndGroup[ie] != igroup ) continue;
-    dfm2::MESHELEM_TYPE type = aElemType[ie];
+    MESHELEM_TYPE type = aElemType[ie];
     aElemType1.push_back(type);
     aElemInd1.push_back( nNodeElem(type) );
     for(unsigned int iip=aElemInd[ie];iip<aElemInd[ie+1];++iip){
@@ -1144,7 +1142,7 @@ DFM2_INLINE void dfm2::ClipGroup_MeshMix
 
 // ----------------------------------------------------
 
-DFM2_INLINE int dfm2::findEdge
+DFM2_INLINE int delfem2::findEdge
 (unsigned int ip0, unsigned int ip1,
  const std::vector<unsigned int> &psup_ind,
  const std::vector<unsigned int> &psup)
@@ -1164,7 +1162,7 @@ DFM2_INLINE int dfm2::findEdge
   return -1;
 }
 
-DFM2_INLINE int dfm2::findFace(
+DFM2_INLINE int delfem2::findFace(
     unsigned int ip0,
     unsigned int ip1,
     unsigned int ip2,
@@ -1190,7 +1188,7 @@ DFM2_INLINE int dfm2::findFace(
 }
 
 // new points is in the order of [old points], [edge points], [face points]
-DFM2_INLINE void dfm2::SubdivTopo_MeshQuad
+DFM2_INLINE void delfem2::SubdivTopo_MeshQuad
 (std::vector<unsigned int>& aQuad1,
  std::vector<unsigned int> &psup_ind,
  std::vector<unsigned int> &psup,
@@ -1203,7 +1201,7 @@ DFM2_INLINE void dfm2::SubdivTopo_MeshQuad
   JArray_ElSuP_MeshElem(elsup_ind,elsup,
                               aQuad0,nQuad0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
-                       aQuad0, dfm2::MESHELEM_QUAD, elsup_ind, elsup,
+                       aQuad0, MESHELEM_QUAD, elsup_ind, elsup,
                        false); // is_bidirectional = false
   const unsigned int ne0 = (int)psup.size();
   aEdgeFace0.resize(0);
@@ -1258,7 +1256,7 @@ DFM2_INLINE void dfm2::SubdivTopo_MeshQuad
 
 
 // new points is in the order of [old points], [edge points]
-DFM2_INLINE void dfm2::SubdivTopo_MeshTet
+DFM2_INLINE void delfem2::SubdivTopo_MeshTet
 (std::vector<unsigned int>& aTet1,
  std::vector<unsigned int> &psup_ind,
  std::vector<unsigned int> &psup,
@@ -1267,10 +1265,10 @@ DFM2_INLINE void dfm2::SubdivTopo_MeshTet
 {
   const int nt0 = nTet0;
   std::vector<unsigned int> elsup_ind, elsup;
-  dfm2::JArray_ElSuP_MeshElem(elsup_ind,elsup,
+  JArray_ElSuP_MeshElem(elsup_ind,elsup,
       aTet0,nTet0,4,nPoint0);
   JArrayEdge_MeshElem(psup_ind,psup,
-                       aTet0, dfm2::MESHELEM_TET, elsup_ind, elsup,
+                       aTet0, MESHELEM_TET, elsup_ind, elsup,
                        false);
   aTet1.resize(0);
   aTet1.reserve(nTet0*4);
@@ -1458,7 +1456,7 @@ void VoxSubdiv
 
 // -------------------------------------
 
-void dfm2::SubdivTopo_MeshHex
+void delfem2::SubdivTopo_MeshHex
 (std::vector<unsigned int>& aHex1,
  std::vector<unsigned int> &psupIndHex0,
  std::vector<unsigned int> &psupHex0,
@@ -1469,13 +1467,13 @@ void dfm2::SubdivTopo_MeshHex
 {
   //  int nhp0 = (int)aHexPoint0.size(); // hex point
   std::vector<unsigned int> elsupIndHex0, elsupHex0;
-  dfm2::JArray_ElSuP_MeshElem(elsupIndHex0, elsupHex0,
-                           aHex0,nHex0,8,nhp0);
+  JArray_ElSuP_MeshElem(elsupIndHex0, elsupHex0,
+      aHex0,nHex0,8,nhp0);
   
   //edge
   JArrayEdge_MeshElem(psupIndHex0, psupHex0,
-                       aHex0, dfm2::MESHELEM_HEX, elsupIndHex0,elsupHex0,
-                       false); // is_directional = false
+      aHex0, MESHELEM_HEX, elsupIndHex0,elsupHex0,
+      false); // is_directional = false
   
   //face
   aQuadHex0.clear();
@@ -1484,15 +1482,15 @@ void dfm2::SubdivTopo_MeshHex
     ElSuEl_MeshElem(aHexSurRel0,
                                 aHex0,nHex0,8,
                                 elsupIndHex0,elsupHex0,
-                                nFaceElem(dfm2::MESHELEM_HEX),
-                                nNodeElemFace(dfm2::MESHELEM_HEX, 0),
-                                noelElemFace(dfm2::MESHELEM_HEX));
+                                nFaceElem(MESHELEM_HEX),
+                                nNodeElemFace(MESHELEM_HEX, 0),
+                                noelElemFace(MESHELEM_HEX));
     for(unsigned int ih=0;ih<(unsigned int)nHex0;++ih){
       for(int ifh=0;ifh<6;++ifh){
         int jh0 = aHexSurRel0[ih*6*2+ifh*2+0];
         if( jh0!=-1 && (int)ih>jh0 ) continue;
         for(int inofa=0;inofa<4;++inofa){
-          int inoel0 = dfm2::noelElemFace_Hex[ifh][inofa];
+          int inoel0 = noelElemFace_Hex[ifh][inofa];
           unsigned int igp0 = aHex0[ih*8+inoel0];
           aQuadHex0.push_back(igp0);
         }
@@ -1500,7 +1498,7 @@ void dfm2::SubdivTopo_MeshHex
     }
   }
   std::vector<unsigned int> elsupIndQuadHex0, elsupQuadHex0;
-  dfm2::JArray_ElSuP_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
+  JArray_ElSuP_MeshElem(elsupIndQuadHex0,elsupQuadHex0,
       aQuadHex0.data(),aQuadHex0.size()/4,4,nhp0);
   
   const int neh0 = (int)psupHex0.size();

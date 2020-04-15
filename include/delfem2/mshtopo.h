@@ -13,9 +13,10 @@
 #ifndef DFM2_MSHTOPO_H
 #define DFM2_MSHTOPO_H
 
+#include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
-#include "delfem2/dfm2_inline.h"
+
 
 namespace delfem2 {
 

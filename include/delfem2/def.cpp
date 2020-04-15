@@ -11,25 +11,9 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
-#include <cstdio>
 
 namespace delfem2 {
 namespace def {
-
-// original code is at vec3.cpp
-template <typename REAL>
-DFM2_INLINE void Add3
- (REAL vo[3],
-  const REAL vi[3])
-{
-  vo[0] += vi[0];
-  vo[1] += vi[1];
-  vo[2] += vi[2];
-}
-#ifndef DFM2_HEADER_ONLY
-template void Add3(float vo[3], const float vi[3]);
-template void Add3(double vo[3], const double vi[3]);
-#endif
 
 void SetLinSys_LaplaceGraph_MeshTri3
 (CMatrixSparse<double>& mat_A)
@@ -149,9 +133,9 @@ void delfem2::CDef_SingleLaplacianDisponly::Deform
 void delfem2::CDef_LaplacianDisponly::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
-  bool is_preconditioner)
+  bool is_preconditioner0)
 {
-  this->is_preconditioner = is_preconditioner;
+  this->is_preconditioner = is_preconditioner0;
   std::vector<unsigned int> psup_ind, psup;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
@@ -199,10 +183,10 @@ void delfem2::CDef_LaplacianDisponly::MakeLinearSystem()
 void delfem2::CDef_LaplacianDisponly::Deform
  (std::vector<double>& aXYZ1,
   const std::vector<double>& aXYZ0,
-  const std::vector<int>& aBCFlag)
+  const std::vector<int>& aBCFlag0)
 {
   weight_bc = 100.0;
-  this->aBCFlag = aBCFlag;
+  this->aBCFlag = aBCFlag0;
   this->MakeLinearSystem();
   // ----------
   std::vector<double> aRhs(aXYZ0.size(),0.0);
@@ -409,12 +393,12 @@ void delfem2::CDef_ArapEdge::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
   double weight_bc0,
-  const std::vector<int>& aBCFlag,
+  const std::vector<int>& aBCFlag0,
   bool is_preconditioner0)
 {
   this->weight_bc = weight_bc0;
   this->is_preconditioner = is_preconditioner0;
-  this->aBCFlag = aBCFlag;
+  this->aBCFlag = aBCFlag0;
   const unsigned int np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
@@ -599,7 +583,9 @@ void delfem2::CDef_ArapEdge::Deform
                          np*6, 1.0e-4, 400, *this);
   }
   for(int ip=0;ip<np;++ip){
-    def::Add3(aXYZ1.data()+ip*3, aUpd.data()+ip*3);
+    aXYZ1[ip*3+0] += aUpd[ip*3+0];
+    aXYZ1[ip*3+1] += aUpd[ip*3+1];
+    aXYZ1[ip*3+2] += aUpd[ip*3+2];
     double q0[4]; Quat_CartesianAngle(q0, aUpd.data()+np*3+ip*3);
     double q1[4]; QuatQuat(q1, q0, aQuat.data()+ip*4);
     Copy_Quat(aQuat.data()+ip*4, q1);
@@ -609,14 +595,12 @@ void delfem2::CDef_ArapEdge::Deform
 
 // ===========================================================
 
-
 void delfem2::CDef_Arap::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
-  double weight_bc0,
-  bool is_preconditioner)
+  bool is_preconditioner0)
 {
-  this->is_preconditioner = is_preconditioner;
+  this->is_preconditioner = is_preconditioner0;
   const unsigned int np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
@@ -678,10 +662,10 @@ void delfem2::CDef_Arap::Deform
                9, eM.data(),
                tmp_buffer);
     for(unsigned int iip=0;iip<aIP.size();++iip){
-      int ip = aIP[iip];
-      aRes1[ip*3+0] += eR[iip*3+0];
-      aRes1[ip*3+1] += eR[iip*3+1];
-      aRes1[ip*3+2] += eR[iip*3+2];
+      const int jp0 = aIP[iip];
+      aRes1[jp0*3+0] += eR[iip*3+0];
+      aRes1[jp0*3+1] += eR[iip*3+1];
+      aRes1[jp0*3+2] += eR[iip*3+2];
     }
   }
   Mat.AddDia(1.0e-8);

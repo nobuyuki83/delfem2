@@ -7,15 +7,12 @@
 
 #include "delfem2/def.h"
 #include "delfem2/mat4.h"
-#include "delfem2/mshtopo.h"
 #include "delfem2/primitive.h"
-#include <iostream>
 #include <cmath>
 
 // ----------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
@@ -124,7 +121,6 @@ int main(int argc,char* argv[])
   }
   
   while (true){
-    const double weight_bc = 100.0;
     std::vector<double> aXYZ1 = aXYZ0;
     std::vector<double> aQuat1(aXYZ0.size()/3*4);
     for(int ip=0;ip<aXYZ0.size()/3;++ip){
@@ -133,7 +129,7 @@ int main(int argc,char* argv[])
     int iframe = 0;
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
-      def0.Init(aXYZ0, aTri, weight_bc, false);
+      def0.Init(aXYZ0, aTri, false);
       glfwSetWindowTitle(viewer.window, "ARAP w.o. Preconditioner");
       for(;iframe<200;++iframe)
       {
@@ -152,7 +148,7 @@ int main(int argc,char* argv[])
     } // end linear disponly
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
-      def0.Init(aXYZ0, aTri, weight_bc, true);
+      def0.Init(aXYZ0, aTri, true);
       glfwSetWindowTitle(viewer.window, "ARAP with Preconditioner");
       for(;iframe<400;++iframe)
       {

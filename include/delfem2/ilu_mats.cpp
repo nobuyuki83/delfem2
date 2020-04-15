@@ -13,98 +13,129 @@
 
 #include "delfem2/ilu_mats.h"
 
-typedef std::complex<double> COMPLEX;
-namespace dfm2 = delfem2;
-
 // ----------------------------------------------------
 
-static void CalcMatPr(double* out, const double* d, double* tmp,
-                      const unsigned int ni, const unsigned int nj )
+namespace delfem2 {
+namespace ilu {
+
+DFM2_INLINE void CalcMatPr(
+    double *out, const double *d, double *tmp,
+    const unsigned int ni, const unsigned int nj)
 {
-	unsigned int i,j,k;
-	for(i=0;i<ni;i++){
-		for(j=0;j<nj;j++){
-			tmp[i*nj+j] = 0.0;
-			for(k=0;k<ni;k++){
-				tmp[i*nj+j] += d[i*ni+k]*out[k*nj+j];
-			}
-		}
-	}
-	for(i=0;i<ni*nj;i++){
-		out[i] = tmp[i];
-	}
+  unsigned int i, j, k;
+  for (i = 0; i < ni; i++) {
+    for (j = 0; j < nj; j++) {
+      tmp[i * nj + j] = 0.0;
+      for (k = 0; k < ni; k++) {
+        tmp[i * nj + j] += d[i * ni + k] * out[k * nj + j];
+      }
+    }
+  }
+  for (i = 0; i < ni * nj; i++) {
+    out[i] = tmp[i];
+  }
 }
 
-static void CalcSubMatPr(double* out, const double* a, const double* b,
-                         const int ni, const int nk, const int nj )
+DFM2_INLINE void CalcSubMatPr(
+    double *out, const double *a, const double *b,
+    const int ni, const int nk, const int nj)
 {
-	int i,j,k;
-	for(i=0;i<ni;i++){
-		for(j=0;j<nj;j++){
-			for(k=0;k<nk;k++){
-				out[i*nj+j] -= a[i*nk+k]*b[k*nj+j];
-			}
-		}
-	}
+  int i, j, k;
+  for (i = 0; i < ni; i++) {
+    for (j = 0; j < nj; j++) {
+      for (k = 0; k < nk; k++) {
+        out[i * nj + j] -= a[i * nk + k] * b[k * nj + j];
+      }
+    }
+  }
 }
 
 
-static void CalcInvMat(
-    double* a,
+DFM2_INLINE void CalcInvMat(
+    double *a,
     const unsigned int n,
-    int& info )
+    int &info)
 {
-	double tmp1;
-  
-	info = 0;
-	unsigned int i,j,k;
-	for(i=0;i<n;i++){
-		if( fabs(a[i*n+i]) < 1.0e-30 ){
-			info = 1;
-			return;
-		}
-		if( a[i*n+i] < 0.0 ){
-			info--;
-		}
-		tmp1 = 1.0 / a[i*n+i];
-		a[i*n+i] = 1.0;
-		for(k=0;k<n;k++){
-			a[i*n+k] *= tmp1;
-		}
-		for(j=0;j<n;j++){
-			if( j!=i ){
-				tmp1 = a[j*n+i];
-				a[j*n+i] = 0.0;
-				for(k=0;k<n;k++){
-					a[j*n+k] -= tmp1*a[i*n+k];
-				}
-			}
-		}
-	}
+  double tmp1;
+
+  info = 0;
+  unsigned int i, j, k;
+  for (i = 0; i < n; i++) {
+    if (fabs(a[i * n + i]) < 1.0e-30) {
+      info = 1;
+      return;
+    }
+    if (a[i * n + i] < 0.0) {
+      info--;
+    }
+    tmp1 = 1.0 / a[i * n + i];
+    a[i * n + i] = 1.0;
+    for (k = 0; k < n; k++) {
+      a[i * n + k] *= tmp1;
+    }
+    for (j = 0; j < n; j++) {
+      if (j != i) {
+        tmp1 = a[j * n + i];
+        a[j * n + i] = 0.0;
+        for (k = 0; k < n; k++) {
+          a[j * n + k] -= tmp1 * a[i * n + k];
+        }
+      }
+    }
+  }
 }
 
 // t is a tmporary buffer size of 9
-static inline void CalcInvMat3(double a[], double t[] )
+DFM2_INLINE void CalcInvMat3(double a[], double t[])
 {
-	const double det =
-  + a[0]*a[4]*a[8] + a[3]*a[7]*a[2] + a[6]*a[1]*a[5]
-  - a[0]*a[7]*a[5] - a[6]*a[4]*a[2] - a[3]*a[1]*a[8];
-	const double inv_det = 1.0/det;
-  
-  for(int i=0;i<9;i++){ t[i] = a[i]; }
-  
-	a[0] = inv_det*(t[4]*t[8]-t[5]*t[7]);
-	a[1] = inv_det*(t[2]*t[7]-t[1]*t[8]);
-	a[2] = inv_det*(t[1]*t[5]-t[2]*t[4]);
-  
-	a[3] = inv_det*(t[5]*t[6]-t[3]*t[8]);
-	a[4] = inv_det*(t[0]*t[8]-t[2]*t[6]);
-	a[5] = inv_det*(t[2]*t[3]-t[0]*t[5]);
-  
-	a[6] = inv_det*(t[3]*t[7]-t[4]*t[6]);
-	a[7] = inv_det*(t[1]*t[6]-t[0]*t[7]);
-	a[8] = inv_det*(t[0]*t[4]-t[1]*t[3]);
+  const double det =
+      +a[0] * a[4] * a[8] + a[3] * a[7] * a[2] + a[6] * a[1] * a[5]
+      - a[0] * a[7] * a[5] - a[6] * a[4] * a[2] - a[3] * a[1] * a[8];
+  const double inv_det = 1.0 / det;
+
+  for (int i = 0; i < 9; i++) { t[i] = a[i]; }
+
+  a[0] = inv_det * (t[4] * t[8] - t[5] * t[7]);
+  a[1] = inv_det * (t[2] * t[7] - t[1] * t[8]);
+  a[2] = inv_det * (t[1] * t[5] - t[2] * t[4]);
+
+  a[3] = inv_det * (t[5] * t[6] - t[3] * t[8]);
+  a[4] = inv_det * (t[0] * t[8] - t[2] * t[6]);
+  a[5] = inv_det * (t[2] * t[3] - t[0] * t[5]);
+
+  a[6] = inv_det * (t[3] * t[7] - t[4] * t[6]);
+  a[7] = inv_det * (t[1] * t[6] - t[0] * t[7]);
+  a[8] = inv_det * (t[0] * t[4] - t[1] * t[3]);
 }
+
+class CRowLev {
+public:
+  CRowLev() : row(0), lev(0) {}
+
+  CRowLev(int row, int lev) : row(row), lev(lev) {}
+
+  bool operator<(const CRowLev &rhs) const {
+    if (row != rhs.row) {
+      return (row < rhs.row);
+    }
+    return (lev < rhs.lev);
+  }
+
+public:
+  int row;
+  int lev;
+};
+
+class CRowLevNext {
+public:
+  unsigned int row;
+  unsigned int lev;
+  int next;
+};
+
+} // ilu
+} // delfem2
+
 
 // -----------------------------------------------------------------
 
@@ -298,7 +329,7 @@ bool CPreconditionerILU<double>::DoILUDecomp()
         + vii[0]*vii[4]*vii[8] + vii[3]*vii[7]*vii[2] + vii[6]*vii[1]*vii[5]
         - vii[0]*vii[7]*vii[5] - vii[6]*vii[4]*vii[2] - vii[3]*vii[1]*vii[8];
 				if( fabs(det) > 1.0e-30 ){
-					CalcInvMat3(vii,tmpBlk);
+					ilu::CalcInvMat3(vii,tmpBlk);
 				}
 				else{
 					std::cout << "frac false 3 " << iblk << std::endl;
@@ -355,13 +386,13 @@ bool CPreconditionerILU<double>::DoILUDecomp()
             vij = &vdia[iblk *blksize];
           }
 					assert( vij != nullptr );
-          CalcSubMatPr(vij,vik,vkj, len,len,len);
+          ilu::CalcSubMatPr(vij,vik,vkj, len,len,len);
 				}
 			}
 			{
 				double* vii = &vdia[iblk*blksize];
 				int info = 0;
-				CalcInvMat(vii,len,info);
+				ilu::CalcInvMat(vii,len,info);
 				if( info==1 ){
 					std::cout << "frac false" << iblk << std::endl;
 					icnt_sing++;
@@ -376,7 +407,7 @@ bool CPreconditionerILU<double>::DoILUDecomp()
         assert( ijcrs<m_ncrs );
 				double* vij = &vcrs[ijcrs*blksize];
 				const double* pVal_ii = &vdia[iblk *blksize];
-        CalcMatPr(vij,pVal_ii,pTmpBlk,  len,len);
+        ilu::CalcMatPr(vij,pVal_ii,pTmpBlk,  len,len);
 			}
       for(unsigned int ijcrs=colind[iblk];ijcrs<colind[iblk+1];ijcrs++){
         assert( ijcrs<m_ncrs );
@@ -391,8 +422,9 @@ bool CPreconditionerILU<double>::DoILUDecomp()
 
 // numerical factorization
 template <>
-bool CPreconditionerILU<COMPLEX>::DoILUDecomp()
+bool CPreconditionerILU<std::complex<double>>::DoILUDecomp()
 {
+  typedef std::complex<double> COMPLEX;
 //  const int nmax_sing = 10;
 //  int icnt_sing = 0;
   
@@ -614,8 +646,12 @@ void delfem2::CPreconditionerILU<T>::ForwardSubstitution
     }
   }
 }
-template void dfm2::CPreconditionerILU<double>::ForwardSubstitution( double* vec ) const;
-template void dfm2::CPreconditionerILU<COMPLEX>::ForwardSubstitution( COMPLEX* vec ) const;
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CPreconditionerILU<double>::ForwardSubstitution(
+    double* vec ) const;
+template void delfem2::CPreconditionerILU<std::complex<double>>::ForwardSubstitution(
+    std::complex<double>* vec ) const;
+#endif
 
 template <typename T>
 void delfem2::CPreconditionerILU<T>::BackwardSubstitution
@@ -756,31 +792,12 @@ void delfem2::CPreconditionerILU<T>::BackwardSubstitution
     }
   }
 }
-template void dfm2::CPreconditionerILU<double>::BackwardSubstitution(  double* vec ) const;
-template void dfm2::CPreconditionerILU<COMPLEX>::BackwardSubstitution( COMPLEX* vec ) const;
-
-class CRowLev{
-public:
-  CRowLev() :row(0), lev(0) {}
-  CRowLev(int row, int lev) : row(row), lev(lev) {}
-  bool operator < (const CRowLev& rhs) const {
-    if ( row!=rhs.row ){
-      return (row < rhs.row);
-    }
-    return (lev < rhs.lev);
-  }
-public:
-  int row;
-  int lev;
-};
-
-class CRowLevNext{
-public:
-  unsigned int row;
-  unsigned int lev;
-  int next;
-};
-
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CPreconditionerILU<double>::BackwardSubstitution(
+    double* vec ) const;
+template void delfem2::CPreconditionerILU<std::complex<double>>::BackwardSubstitution(
+    std::complex<double>* vec ) const;
+#endif
 
 // if(lev_fill == -1){ take all the fills }
 template <typename T>
@@ -797,7 +814,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
   //  std::cout << "hoe" << m.nblk_col << " " << m.len_col << " " << m.rowPtr.size() << std::endl;
   //  std::cout << "fua" << mat.nblk_col << " " << mat.len_col << " " << mat.rowPtr.size() << std::endl;
   
-  std::vector<CRowLev> aRowLev;
+  std::vector<ilu::CRowLev> aRowLev;
   aRowLev.reserve(m.rowPtr.size()*4);
   
   assert(m.nblk_col==m.nblk_row);
@@ -811,7 +828,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
   m_diaInd.resize(nblk);
   
   for(unsigned int iblk=0; iblk<nblk; ++iblk){
-    std::vector<CRowLevNext> listNonzero;
+    std::vector<ilu::CRowLevNext> listNonzero;
     {  // copy row pattern of input matrix into listNonzero
       listNonzero.resize(m.colInd[iblk+1]-m.colInd[iblk]);
       int inz = 0;
@@ -919,9 +936,12 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
     //    std::cout<<"ncrs: "<<ncrs<<" "<<m.rowPtr.size()<<std::endl;
   }
 }
-
-template void dfm2::CPreconditionerILU<double>::Initialize_ILUk(const CMatrixSparse<double>& m, int lev_fill);
-template void dfm2::CPreconditionerILU<COMPLEX>::Initialize_ILUk(const CMatrixSparse<COMPLEX>& m, int lev_fill);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CPreconditionerILU<double>::Initialize_ILUk(
+    const CMatrixSparse<double>& m, int lev_fill);
+template void delfem2::CPreconditionerILU<std::complex<double>>::Initialize_ILUk(
+    const CMatrixSparse<std::complex<double>>& m, int lev_fill);
+#endif
 
 
 template <typename T>
@@ -966,8 +986,12 @@ void delfem2::CPreconditionerILU<T>::SetValueILU
   }
   for(unsigned int i=0;i<nblk*blksize;i++){ mat.valDia[i] = rhs.valDia[i]; }
 }
-template void dfm2::CPreconditionerILU<double>::SetValueILU(const CMatrixSparse<double>& rhs);
-template void dfm2::CPreconditionerILU<COMPLEX>::SetValueILU(const CMatrixSparse<COMPLEX>& rhs);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CPreconditionerILU<double>::SetValueILU(
+    const CMatrixSparse<double>& rhs);
+template void delfem2::CPreconditionerILU<std::complex<double>>::SetValueILU(
+    const CMatrixSparse<std::complex<double>>& rhs);
+#endif
 
 
 template <typename T>
@@ -990,6 +1014,10 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILU0
     }
   }
 }
-template void dfm2::CPreconditionerILU<double>::Initialize_ILU0(const CMatrixSparse<double>& m);
-template void dfm2::CPreconditionerILU<COMPLEX>::Initialize_ILU0(const CMatrixSparse<COMPLEX>& m);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CPreconditionerILU<double>::Initialize_ILU0(
+    const CMatrixSparse<double>& m);
+template void delfem2::CPreconditionerILU<std::complex<double>>::Initialize_ILU0(
+    const CMatrixSparse<std::complex<double>>& m);
+#endif
 
