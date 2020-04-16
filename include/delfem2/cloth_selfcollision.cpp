@@ -30,8 +30,7 @@ void SelfCollisionImpulse_Proximity
  const std::vector<unsigned int>& aTri,
  const std::vector<dfm2::CContactElement>& aContactElem)
 {
-  for(int ice=0;ice<aContactElem.size();ice++){
-    const dfm2::CContactElement& ce = aContactElem[ice];
+  for(const auto & ce : aContactElem){
     const int ino0 = ce.ino0;
     const int ino1 = ce.ino1;
     const int ino2 = ce.ino2;

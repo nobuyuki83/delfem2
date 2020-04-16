@@ -7,15 +7,12 @@
 
 
 #include <iostream>
-#include <cmath>
-#include <ctime>
 #include "delfem2/bem.h"
 #include "delfem2/primitive.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 
 namespace dfm2 = delfem2;
@@ -65,7 +62,7 @@ void SetProblem()
     aSol.assign(aTri.size()/3,0.0);
     double conv_ratio = 1.0e-8;
     int iteration = 1000;
-    Solve_BiCGSTAB(conv_ratio, iteration, aSol,
+    dfm2::Solve_BiCGSTAB(conv_ratio, iteration, aSol,
                    A, f);
     std::cout << conv_ratio << " " << iteration << std::endl;
     min_sol = max_sol = aSol[0];

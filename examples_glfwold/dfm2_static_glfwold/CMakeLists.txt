@@ -55,6 +55,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/mats.h                      ${DELFEM2_INC}/mats.cpp
     ${DELFEM2_INC}/iss.h                       ${DELFEM2_INC}/iss.cpp
     ${DELFEM2_INC}/adf.h                       ${DELFEM2_INC}/adf.cpp
+    ${DELFEM2_INC}/bem.h                       ${DELFEM2_INC}/bem.cpp
     ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/bv.h
     ${DELFEM2_INC}/pgeo.h
@@ -66,6 +67,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/dtet_v3.h                   ${DELFEM2_INC}/dtet_v3.cpp
     ${DELFEM2_INC}/ilu_mats.h                  ${DELFEM2_INC}/ilu_mats.cpp
     ${DELFEM2_INC}/cad2_dtri2.h                ${DELFEM2_INC}/cad2_dtri2.cpp
+    ${DELFEM2_INC}/cad3d.h                     ${DELFEM2_INC}/cad3d.cpp
     ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
     ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
     ${DELFEM2_INC}/def.h                       ${DELFEM2_INC}/def.cpp    

@@ -42,7 +42,6 @@ else()
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-  ${DELFEM2_INC}/cad3d.h                    ${DELFEM2_INC}/cad3d.cpp
   main.cpp
 )
 

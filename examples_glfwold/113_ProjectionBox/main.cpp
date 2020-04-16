@@ -5,18 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <cmath>
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "delfem2/opengl/render2tex_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/render2tex_glold.h"
 //
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

@@ -11,7 +11,7 @@
 
 #include "delfem2/iss.h"
 
-namespace dfm2 = delfem2;
+//namespace dfm2 = delfem2;
 
 // ---------------------------------------------------------
 
@@ -472,10 +472,10 @@ bool isEdgeCenterPoint
  */
 
 void makeLatticeCoasestLevel
-(std::vector<dfm2::CPointLattice>& aPoint,
+(std::vector<CPointLattice>& aPoint,
  std::vector<CCell>& aCell,
  //
- const dfm2::CInput_IsosurfaceStuffing& input,
+ const CInput_IsosurfaceStuffing& input,
  double elen, int  ndiv, const double org[3])
 {
   aPoint.clear();
@@ -488,7 +488,7 @@ void makeLatticeCoasestLevel
         double cy = iy*elen+org[1];
         double cz = iz*elen+org[2];
         double sdf = input.SignedDistance(cx,cy,cz);
-        aPoint[icrnr0] = dfm2::CPointLattice(cx,cy,cz,sdf);
+        aPoint[icrnr0] = CPointLattice(cx,cy,cz,sdf);
       }
     }
   }
@@ -500,7 +500,7 @@ void makeLatticeCoasestLevel
         double cy = (iy+0.5)*elen+org[1];
         double cz = (iz+0.5)*elen+org[2];
         double sdf = input.SignedDistance(cx,cy,cz);
-        aPoint[ip0] = dfm2::CPointLattice(cx,cy,cz,sdf);
+        aPoint[ip0] = CPointLattice(cx,cy,cz,sdf);
       }
     }
   }
@@ -532,8 +532,8 @@ void makeLatticeCoasestLevel
 }
 
 void makeChild
-(std::vector<CCell>& aCell, std::vector<dfm2::CPointLattice>& aPoint,
- const dfm2::CInput_IsosurfaceStuffing& input, unsigned int icell, int ichild)
+(std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
+ const CInput_IsosurfaceStuffing& input, unsigned int icell, int ichild)
 {
   assert( icell < aCell.size() );
   assert( ichild >=0 && ichild < 8 );
@@ -560,7 +560,7 @@ void makeChild
   CCell cc(size0*0.5,ilevel0+1,icell,ichild);
   {
     cc.aIP[26] = (int)aPoint.size();
-    dfm2::CPointLattice p(ccx,ccy,ccz,input.SignedDistance(ccx, ccy, ccz));
+    CPointLattice p(ccx,ccy,ccz,input.SignedDistance(ccx, ccy, ccz));
     aPoint.push_back(p);
   }
   aCell.push_back(cc);
@@ -568,8 +568,8 @@ void makeChild
 }
 
 void makeChild_Face
-(std::vector<CCell>& aCell, std::vector<dfm2::CPointLattice>& aPoint,
- const dfm2::CInput_IsosurfaceStuffing& input, int icell, int iface)
+(std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
+ const CInput_IsosurfaceStuffing& input, int icell, int iface)
 {
   assert( icell >= 0 && icell < (int)aCell.size() );
   const int faceHex[6][4] = {
@@ -587,8 +587,8 @@ void makeChild_Face
 }
 
 void Continuation
-(std::vector<dfm2::CPointLattice>& aPoint,std::vector<CCell>& aCell,
- const dfm2::CInput_IsosurfaceStuffing& input)
+(std::vector<CPointLattice>& aPoint,std::vector<CCell>& aCell,
+ const CInput_IsosurfaceStuffing& input)
 {
   const int faceHex[6][4] = {
     {0,4,6,2},
@@ -844,10 +844,10 @@ void CheckContinuation(const std::vector<CCell>& aCell)
  */
 
 void addEdgeFacePoints
-(std::vector<dfm2::CPointLattice>& aPoint,
+(std::vector<CPointLattice>& aPoint,
  std::vector<CCell>& aCell,
  //
- const dfm2::CInput_IsosurfaceStuffing& input)
+ const CInput_IsosurfaceStuffing& input)
 {
   std::vector<int> orderCell;
   orderCell.reserve(aCell.size());
@@ -1576,7 +1576,7 @@ void makeTetLattice
 }
 
 void WarpLattice
-(std::vector<dfm2::CPointLattice>& aPointLattice,
+(std::vector<CPointLattice>& aPointLattice,
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup)
 {
@@ -1632,7 +1632,7 @@ void MakeCutPoint
  std::vector<int>& mapLat2Out,
  std::vector<int>& lat2cut_ind,
  std::vector<int>& lat2cut,
- const std::vector<dfm2::CPointLattice>& aPointLattice,
+ const std::vector<CPointLattice>& aPointLattice,
  const std::vector<int>& psup_ind,
  const std::vector<int>& psup)
 {
@@ -1715,7 +1715,7 @@ void MakeCutPoint
 
 void cutoutTetFromLattice
 (std::vector<unsigned int>& aTet,
- const std::vector<dfm2::CPointLattice>& aPointLattice,
+ const std::vector<CPointLattice>& aPointLattice,
  const std::vector<unsigned int>& aTetLattice,
  const std::vector<int>& mapLat2Out,
  const std::vector<int>& lat2cut_ind,
@@ -1758,10 +1758,10 @@ void cutoutTetFromLattice
 /**
  * @brief internal function for debug
  */
-void dfm2::makeBackgroundLattice
-(std::vector<dfm2::CPointLattice>& aPointLattice,
+void delfem2::makeBackgroundLattice
+(std::vector<CPointLattice>& aPointLattice,
  std::vector<unsigned int>& aTetLattice,
- const dfm2::CInput_IsosurfaceStuffing& input,
+ const CInput_IsosurfaceStuffing& input,
  double elen, int  ndiv, const double org[3])
 {
   std::vector<iss::CCell> aCell;
@@ -1802,7 +1802,7 @@ void dfm2::makeBackgroundLattice
         iss::CCell cc(size_parent*0.5,ilevel_parent+1,icell,ichild);
         {
           cc.aIP[26] = (int)aPointLattice.size();
-          dfm2::CPointLattice p(ccx,ccy,ccz,sdf0);
+          CPointLattice p(ccx,ccy,ccz,sdf0);
           aPointLattice.push_back(p);
         }
         aCell.push_back(cc);
@@ -1822,11 +1822,11 @@ void dfm2::makeBackgroundLattice
                  aCell);
 }
 
-bool dfm2::IsoSurfaceStuffing
+bool delfem2::IsoSurfaceStuffing
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTet,
  std::vector<int>& aIsOnSurfXYZ,
- const dfm2::CInput_IsosurfaceStuffing& input,
+ const CInput_IsosurfaceStuffing& input,
  double elen_in, double width, const double center[3])
 {
   if( elen_in <= 0 ) return false;
@@ -1836,9 +1836,9 @@ bool dfm2::IsoSurfaceStuffing
   double elen = width/(double)ndiv;
   const double org[3] = { center[0]-0.5*elen*ndiv, center[1]-0.5*elen*ndiv, center[2]-0.5*elen*ndiv };
 
-  std::vector<dfm2::CPointLattice> aPointLattice;
+  std::vector<CPointLattice> aPointLattice;
   std::vector<unsigned int> aTetLattice;
-  dfm2::makeBackgroundLattice(aPointLattice, aTetLattice, input, elen, ndiv, org);
+  makeBackgroundLattice(aPointLattice, aTetLattice, input, elen, ndiv, org);
   
   std::vector<int> mapLat2Out;
   std::vector<int> lat2cut_ind, lat2cut;

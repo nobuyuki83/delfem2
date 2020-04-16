@@ -25,7 +25,7 @@
 #endif
 #include "delfem2/opengl/render2tex_gl.h"
 
-namespace dfm2 = delfem2;
+//namespace dfm2 = delfem2;
 
 // ---------------------------------------------
 
@@ -121,20 +121,20 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::AffMatT3f_MVP
   }
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex::Start()
+DFM2_INLINE void delfem2::opengl::CRender2Tex::Start()
 {
   glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0, nResX, nResY);
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex::End()
+DFM2_INLINE void delfem2::opengl::CRender2Tex::End()
 {
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
   ::glViewport(view[0], view[1], view[2], view[3]);  
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex::ExtractFromTexture_Depth
+DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_Depth
  (std::vector<float>& aZ)
 {
 #ifdef EMSCRIPTEN
@@ -151,7 +151,7 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex::ExtractFromTexture_Depth
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex::ExtractFromTexture_RGBA8UI
+DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_RGBA8UI
 (std::vector<std::uint8_t>& aRGBA)
 {
 #ifdef EMSCRIPTEN
@@ -167,7 +167,7 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex::ExtractFromTexture_RGBA8UI
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex::ExtractFromTexture_RGBA32F
+DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_RGBA32F
  (std::vector<float>& aRGBA)
 {
 #ifdef EMSCRIPTEN
@@ -184,7 +184,7 @@ DFM2_INLINE void dfm2::opengl::CRender2Tex::ExtractFromTexture_RGBA32F
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-DFM2_INLINE void dfm2::opengl::CRender2Tex::InitGL()
+DFM2_INLINE void delfem2::opengl::CRender2Tex::InitGL()
 {
   ::glEnable(GL_TEXTURE_2D);
   ::glActiveTexture(GL_TEXTURE0);

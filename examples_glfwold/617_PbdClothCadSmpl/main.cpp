@@ -8,19 +8,14 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include <fstream>
-#include <limits>
 #include <vector>
 #include <set>
 #include "delfem2/garment.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/geo3_v23m34q.h"
-
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
-#include "delfem2/bvh.h"
 #include "delfem2/color.h"
 //
 #include "delfem2/objfdtri_objfdtri23.h"
@@ -35,7 +30,6 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/caddtri_v3_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

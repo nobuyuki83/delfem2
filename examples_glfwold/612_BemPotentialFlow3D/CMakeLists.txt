@@ -43,7 +43,6 @@ else()
 ENDIF()
 
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/bem.cpp                    ${DELFEM2_INC}/bem.h
 		main.cpp
 )
 

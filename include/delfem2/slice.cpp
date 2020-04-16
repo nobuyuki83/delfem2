@@ -9,7 +9,7 @@
 
 #include "delfem2/slice.h"
 
-namespace dfm2 = delfem2;
+//namespace dfm2 = delfem2;
 
 // ---------------------------------------------
 
@@ -45,7 +45,7 @@ DFM2_INLINE void IndexElement_OverlapLevels_MeshTri3D
 }
 
 DFM2_INLINE bool TraverseBoundaryLoop
-(dfm2::CSliceTriMesh& cs,
+(CSliceTriMesh& cs,
  std::vector<int>& aFlgSeg,
  int iseg_ker, int ih,
  const std::vector<int>& Tri2Seg,
@@ -61,7 +61,7 @@ DFM2_INLINE bool TraverseBoundaryLoop
     assert( aFlgSeg[iseg_next] == 0 );
     int jtri0 = aCST[iseg_next];
     aFlgSeg[iseg_next] = 1;
-    dfm2::CSegInfo info;
+    CSegInfo info;
     info.Initialize(jtri0,
                     aTri.data(),aTri.size()/3,
                     aLevelVtx.data(),height);
@@ -115,7 +115,7 @@ DFM2_INLINE bool TraverseBoundaryLoop
 
 // ----------------------------------------------
 
-void dfm2::CSegInfo::Initialize
+void delfem2::CSegInfo::Initialize
 (int jtri0,
  const unsigned int* aTri,
  unsigned int nTri,
@@ -158,7 +158,7 @@ void dfm2::CSegInfo::Initialize
   }
 }
 
-void dfm2::CSegInfo::Pos3D(
+void delfem2::CSegInfo::Pos3D(
     double pA[3],
     double pB[3],
     //
@@ -180,7 +180,7 @@ void dfm2::CSegInfo::Pos3D(
   pB[2] = (1.0-this->r0B)*aP[(this->iedB+1)%3][2] + (this->r0B)*aP[(this->iedB+2)%3][2];
 }
 
-void dfm2::CSegInfo::Pos2D(
+void delfem2::CSegInfo::Pos2D(
     double pA[2],
     double pB[2],
     //
@@ -200,8 +200,8 @@ void dfm2::CSegInfo::Pos2D(
   pB[1] = (1.0-this->r0B)*aP[(this->iedB+1)%3][1] + (this->r0B)*aP[(this->iedB+2)%3][1];
 }
 
-void dfm2::AddContour(
-    std::vector<dfm2::CSegInfo>& aSeg,
+void delfem2::AddContour(
+    std::vector<CSegInfo>& aSeg,
     double thres,
     const unsigned int* aTri,
     unsigned int nTri,
@@ -229,8 +229,8 @@ void dfm2::AddContour(
 
 
 
-void dfm2::Slice_MeshTri3D_Heights
-(std::vector<dfm2::CSliceTriMesh>& aCS,
+void delfem2::Slice_MeshTri3D_Heights
+(std::vector<CSliceTriMesh>& aCS,
  ////
  const std::vector<double>& aLevel,
  const std::vector<double>& aLevelVtx,
@@ -261,7 +261,7 @@ void dfm2::Slice_MeshTri3D_Heights
         if( aFlgSeg[iseg_ker] == 0 ){ break; }
       }
       if( iseg_ker == aCST[ih].size() ) break;
-      dfm2::CSliceTriMesh cs(ih);
+      CSliceTriMesh cs(ih);
       const bool is_closed = slice::TraverseBoundaryLoop(cs, aFlgSeg,
                                                          iseg_ker, ih, Tri2Seg,
                                                          aCST[ih], aLevel[ih],

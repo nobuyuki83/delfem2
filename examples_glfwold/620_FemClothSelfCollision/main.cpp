@@ -3,16 +3,13 @@
 #include "delfem2/vec3.h"
 #include "delfem2/bvh.h"
 #include "delfem2/mshtopo.h"
-
-#include "delfem2/srchbi_v3bvh.h"
+//
 #include "delfem2/cloth_internal.h"
 #include "delfem2/cloth_selfcollision.h"
 
 // ------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;

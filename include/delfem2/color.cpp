@@ -7,8 +7,6 @@
 
 #include "delfem2/color.h"
 
-using namespace delfem2;
-
 DFM2_INLINE void delfem2::GetRGB_HSV
 (float&r, float& g, float& b,
  float h, float s, float v)
@@ -95,7 +93,7 @@ DFM2_INLINE void delfem2::heatmap(double input,double* color)
   }
 }
 
-DFM2_INLINE CColor delfem2::getColor
+DFM2_INLINE delfem2::CColor delfem2::getColor
  (double input, const std::vector<std::pair<double, CColor> >& colorMap)
 {
   if (colorMap.empty()) return CColor::Black();

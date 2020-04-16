@@ -10,15 +10,12 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <cassert>
 #include <cstdlib>
 
 #include "delfem2/imgio.h"
 
-namespace dfm2 = delfem2;
-
 // https://en.wikipedia.org/wiki/Netpbm_format
-bool dfm2::LoadImage_PPMBinary
+bool delfem2::LoadImage_PPMBinary
 (const std::string& filename,
  std::vector<unsigned char>& image,
  int& width, int& height)
@@ -69,7 +66,7 @@ bool dfm2::LoadImage_PPMBinary
 }
 
 // https://en.wikipedia.org/wiki/Netpbm_format
-int dfm2::LoadImage_PPMAscii(
+int delfem2::LoadImage_PPMAscii(
     unsigned int& width, unsigned int& height,
     std::vector<unsigned char>& image,
     const std::string& fname)
@@ -118,9 +115,9 @@ int dfm2::LoadImage_PPMAscii(
 }
 
 
-bool dfm2::LoadTGAFile(
+bool delfem2::LoadTGAFile(
     const std::string& filename,
-    dfm2::SFile_TGA *tgaFile)
+    SFile_TGA *tgaFile)
 {
   FILE *filePtr;
   unsigned char ucharBad;

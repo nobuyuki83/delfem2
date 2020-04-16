@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-
 #include "delfem2/vec3.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -21,12 +19,10 @@
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"
 
-namespace dfm2 = delfem2;
-
 // -------------------------------------------------
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aVec3)
 {
@@ -64,7 +60,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm
  (const std::vector<CDynTri>& aSTri,
   const double* aXYZ)
 {
@@ -99,7 +95,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aVec3)
 {
@@ -129,7 +125,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_Edge
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshDynTri3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri3D_Edge
 (const std::vector<double>& aXYZ,
  const std::vector<CDynTri>& aSTri)
 {

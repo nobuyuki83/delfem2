@@ -117,7 +117,7 @@ static void drawShphere_Radius
 const int nl = 10;
 int l=0;
 int m=0;
-std::vector<dfm2::COMPLEX> aDecmpSH;
+std::vector<std::complex<double>> aDecmpSH;
 std::vector<double> aDecmpSHReal;
 
 // -------------------------------

@@ -8,13 +8,12 @@
 #include <random>
 #include "delfem2/mat3.h"
 
-namespace dfm2 = delfem2;
-
+namespace delfem2 {
+namespace mat3 {
 
 // https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
 // row major matrix
-DFM2_INLINE void SetMatrix3_Quaternion(double r[], const double q[])
-{
+DFM2_INLINE void SetMatrix3_Quaternion(double r[], const double q[]) {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
   double z2 = q[3] * q[3] * 2.0;
@@ -35,24 +34,26 @@ DFM2_INLINE void SetMatrix3_Quaternion(double r[], const double q[])
   r[8] = 1.0 - x2 - y2;
 }
 
-DFM2_INLINE double estimationMaxEigenValue(const double mtm[6])
-{
+DFM2_INLINE double estimationMaxEigenValue(const double mtm[6]) {
   double maxl = 1;
   {  // estimation of maximum eigen value using Gerschgorin's circle theorem
-    maxl = mtm[0] + fabs(mtm[3])+fabs(mtm[5]);
-    const double tmp2 = mtm[1] + fabs(mtm[3])+fabs(mtm[4]);
-    maxl = ( tmp2 > maxl ) ? tmp2 : maxl;
-    const double tmp3 = mtm[2] + fabs(mtm[5])+fabs(mtm[4]);
-    maxl = ( tmp3 > maxl ) ? tmp3 : maxl;
+    maxl = mtm[0] + fabs(mtm[3]) + fabs(mtm[5]);
+    const double tmp2 = mtm[1] + fabs(mtm[3]) + fabs(mtm[4]);
+    maxl = (tmp2 > maxl) ? tmp2 : maxl;
+    const double tmp3 = mtm[2] + fabs(mtm[5]) + fabs(mtm[4]);
+    maxl = (tmp3 > maxl) ? tmp3 : maxl;
   }
   return maxl;
+}
+
+}
 }
 
 // ------------------------
 
 // t is a tmporary buffer size of 9
 template <typename T>
-void dfm2::Transpose_Mat3(T t[9],
+void delfem2::Transpose_Mat3(T t[9],
                           const T a[9])
 {
   t[0] = a[0];
@@ -65,13 +66,15 @@ void dfm2::Transpose_Mat3(T t[9],
   t[7] = a[5];
   t[8] = a[8];
 }
-template void dfm2::Transpose_Mat3(float t[], const float a[]);
-template void dfm2::Transpose_Mat3(double t[], const double a[]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Transpose_Mat3(float t[], const float a[]);
+template void delfem2::Transpose_Mat3(double t[], const double a[]);
+#endif
 
 // --------------------------------------
 
 template <typename REAL>
-void dfm2::Inverse_Mat3
+void delfem2::Inverse_Mat3
 (REAL Ainv[9],
  const REAL A[9])
 {
@@ -89,14 +92,16 @@ void dfm2::Inverse_Mat3
   Ainv[7] = inv_det*(A[1]*A[6]-A[0]*A[7]);
   Ainv[8] = inv_det*(A[0]*A[4]-A[1]*A[3]);
 }
-template void dfm2::Inverse_Mat3(float Ainv[9], const float A[9]);
-template void dfm2::Inverse_Mat3(double Ainv[9], const double A[9]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Inverse_Mat3(float Ainv[9], const float A[9]);
+template void delfem2::Inverse_Mat3(double Ainv[9], const double A[9]);
+#endif
 
 
 // --------------------------------------
 
 template <typename REAL>
-void dfm2::Inverse_Mat3
+void delfem2::Inverse_Mat3
  (REAL A[9])
 {
   const REAL B[9] = {
@@ -117,13 +122,15 @@ void dfm2::Inverse_Mat3
   A[7] = inv_det*(B[1]*B[6]-B[0]*B[7]);
   A[8] = inv_det*(B[0]*B[4]-B[1]*B[3]);
 }
-template void dfm2::Inverse_Mat3(float Ainv[9]);
-template void dfm2::Inverse_Mat3(double Ainv[9]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Inverse_Mat3(float Ainv[9]);
+template void delfem2::Inverse_Mat3(double Ainv[9]);
+#endif
 
 // -----------------------------------
 
 template <typename REAL>
-void dfm2::Mat3_Spin(
+void delfem2::Mat3_Spin(
     REAL* mat,
     const REAL* v)
 {
@@ -131,13 +138,15 @@ void dfm2::Mat3_Spin(
   mat[3] = +v[2];  mat[4] = 0;       mat[5] = -v[0];
   mat[6] = -v[1];  mat[7] = +v[0];   mat[8] = 0;
 }
-template void dfm2::Mat3_Spin(float* mat, const float* v);
-template void dfm2::Mat3_Spin(double* mat, const double* v);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_Spin(float* mat, const float* v);
+template void delfem2::Mat3_Spin(double* mat, const double* v);
+#endif
 
 // ---------------------------------------------------------
 
 template <typename REAL>
-void dfm2::Mat3_Spin_ScaleAdd(
+void delfem2::Mat3_Spin_ScaleAdd(
     REAL* m,
     const REAL* v,
     REAL alpha, REAL beta)
@@ -152,13 +161,15 @@ void dfm2::Mat3_Spin_ScaleAdd(
   m[7] = beta*m[7] + v[0]*alpha;
   m[8] = beta*m[8];
 }
-template void dfm2::Mat3_Spin_ScaleAdd(float* mat, const float* v, float alpha, float beta);
-template void dfm2::Mat3_Spin_ScaleAdd(double* mat, const double* v, double alpha, double beta);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_Spin_ScaleAdd(float* mat, const float* v, float alpha, float beta);
+template void delfem2::Mat3_Spin_ScaleAdd(double* mat, const double* v, double alpha, double beta);
+#endif
 
 // ---------------------------------------------------------
 
 template <typename REAL>
-void dfm2::Mat3_Identity_ScaleAdd(
+void delfem2::Mat3_Identity_ScaleAdd(
     REAL* mat,
     REAL alpha, REAL beta)
 {
@@ -172,11 +183,13 @@ void dfm2::Mat3_Identity_ScaleAdd(
   mat[7] = beta*mat[7];
   mat[8] = beta*mat[8] + alpha;
 }
-template void dfm2::Mat3_Identity_ScaleAdd(float* mat, float alpha, float beta);
-template void dfm2::Mat3_Identity_ScaleAdd(double* mat, double alpha, double beta);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_Identity_ScaleAdd(float* mat, float alpha, float beta);
+template void delfem2::Mat3_Identity_ScaleAdd(double* mat, double alpha, double beta);
+#endif
 
 template <typename REAL>
-void dfm2::Mat3_Identity(REAL* mat,
+void delfem2::Mat3_Identity(REAL* mat,
                    REAL alpha)
 {
   mat[0] = alpha;
@@ -189,14 +202,16 @@ void dfm2::Mat3_Identity(REAL* mat,
   mat[7] = 0;
   mat[8] = alpha;
 }
-template void dfm2::Mat3_Identity(float* mat, float alpha);
-template void dfm2::Mat3_Identity(double* mat, double alpha);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_Identity(float* mat, float alpha);
+template void delfem2::Mat3_Identity(double* mat, double alpha);
+#endif
 
 // --------------------------------------------------------
 
 
 template <typename T>
-void dfm2::MatVec3
+void delfem2::MatVec3
 (T y[3],
  const T m[9], const T x[3])
 {
@@ -204,13 +219,15 @@ void dfm2::MatVec3
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
-template void dfm2::MatVec3(float y[3], const float m[9], const float x[3]);
-template void dfm2::MatVec3(double y[3], const double m[9], const double x[3]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatVec3(float y[3], const float m[9], const float x[3]);
+template void delfem2::MatVec3(double y[3], const double m[9], const double x[3]);
+#endif
 
 // ----------------------------
 
 template <typename T>
-void dfm2::MatVec3_ScaleAdd(
+void delfem2::MatVec3_ScaleAdd(
     T y[3],
     const T m[9], const T x[3],
     T alpha, T beta)
@@ -219,13 +236,17 @@ void dfm2::MatVec3_ScaleAdd(
   y[1] = beta*y[1] + alpha*(m[3]*x[0] + m[4]*x[1] + m[5]*x[2]);
   y[2] = beta*y[2] + alpha*(m[6]*x[0] + m[7]*x[1] + m[8]*x[2]);
 }
-template void dfm2::MatVec3_ScaleAdd(float y[3],
-                                     const float m[9], const float x[3], float alpha, float beta);
-template void dfm2::MatVec3_ScaleAdd(double y[3],
-                                     const double m[9], const double x[3], double alpha, double beta);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatVec3_ScaleAdd(
+    float y[3],
+    const float m[9], const float x[3], float alpha, float beta);
+template void delfem2::MatVec3_ScaleAdd(
+    double y[3],
+    const double m[9], const double x[3], double alpha, double beta);
+#endif
 
 
-DFM2_INLINE void dfm2::VecMat3
+DFM2_INLINE void delfem2::VecMat3
  (double y[3],
   const double x[3], const double m[9])
 {
@@ -234,7 +255,7 @@ DFM2_INLINE void dfm2::VecMat3
   y[2] = m[2]*x[0] + m[5]*x[1] + m[8]*x[2];
 }
 
-DFM2_INLINE void dfm2::MatTVec3
+DFM2_INLINE void delfem2::MatTVec3
  (double y[3],
   const double m[9], const double x[3])
 {
@@ -245,7 +266,7 @@ DFM2_INLINE void dfm2::MatTVec3
 
 
 template <typename T>
-void dfm2::MatTVec3_ScaleAdd(
+void delfem2::MatTVec3_ScaleAdd(
     T y[3],
     const T m[9], const T x[3],
     T alpha, T beta)
@@ -254,13 +275,15 @@ void dfm2::MatTVec3_ScaleAdd(
   y[1] = beta*y[1] + alpha*(m[1]*x[0] + m[4]*x[1] + m[7]*x[2]);
   y[2] = beta*y[2] + alpha*(m[2]*x[0] + m[5]*x[1] + m[8]*x[2]);
 }
-template void dfm2::MatTVec3_ScaleAdd(float y[3], const float m[9], const float x[3], float alpha, float beta);
-template void dfm2::MatTVec3_ScaleAdd(double y[3], const double m[9], const double x[3], double alpha, double beta);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatTVec3_ScaleAdd(float y[3], const float m[9], const float x[3], float alpha, float beta);
+template void delfem2::MatTVec3_ScaleAdd(double y[3], const double m[9], const double x[3], double alpha, double beta);
+#endif
 
 // ------------------------------------
 
 template <typename T>
-void dfm2::MatMat3
+void delfem2::MatMat3
 (T* C,
  const T* A, const T* B)
 {
@@ -270,13 +293,15 @@ void dfm2::MatMat3
     }
   }
 }
-template void dfm2::MatMat3(float* C, const float* A, const float* B);
-template void dfm2::MatMat3(double* C, const double* A, const double* B);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatMat3(float* C, const float* A, const float* B);
+template void delfem2::MatMat3(double* C, const double* A, const double* B);
+#endif
 
 // ---------------------------------------
 
 template <typename T>
-void dfm2::MatMatT3(
+void delfem2::MatMatT3(
     T* C,
     const T* A,
     const T* B)
@@ -287,13 +312,15 @@ void dfm2::MatMatT3(
     }
   }
 }
-template void dfm2::MatMatT3(float* C, const float* A, const float* B);
-template void dfm2::MatMatT3(double* C, const double* A, const double* B);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatMatT3(float* C, const float* A, const float* B);
+template void delfem2::MatMatT3(double* C, const double* A, const double* B);
+#endif
 
 // ---------------------------------------
 
 template <typename T>
-void dfm2::MatTMat3(
+void delfem2::MatTMat3(
     T* C,
     const T* A, const T* B)
 {
@@ -303,13 +330,15 @@ void dfm2::MatTMat3(
     }
   }
 }
-template void dfm2::MatTMat3(float* C, const float* A, const float* B);
-template void dfm2::MatTMat3(double* C, const double* A, const double* B);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatTMat3(float* C, const float* A, const float* B);
+template void delfem2::MatTMat3(double* C, const double* A, const double* B);
+#endif
 
 // --------------------------------------
 
 template <typename T>
-void dfm2::MatTMat3_ScaleAdd(
+void delfem2::MatTMat3_ScaleAdd(
     T* C,
     const T* A, const T* B,
     T alpha, T beta)
@@ -320,35 +349,41 @@ void dfm2::MatTMat3_ScaleAdd(
     }
   }
 }
-template void dfm2::MatTMat3_ScaleAdd(float* C, const float* A, const float* B, float alpha, float beta);
-template void dfm2::MatTMat3_ScaleAdd(double* C, const double* A, const double* B, double alpha, double beta);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatTMat3_ScaleAdd(float* C, const float* A, const float* B, float alpha, float beta);
+template void delfem2::MatTMat3_ScaleAdd(double* C, const double* A, const double* B, double alpha, double beta);
+#endif
 
 // ---------------------------------------
 
 template <typename T>
-T dfm2::Det_Mat3(const T U[9])
+T delfem2::Det_Mat3(const T U[9])
 {
   return + U[0]*U[4]*U[8] + U[3]*U[7]*U[2] + U[6]*U[1]*U[5]
   - U[0]*U[7]*U[5] - U[6]*U[4]*U[2] - U[3]*U[1]*U[8];
 }
-template float dfm2::Det_Mat3(const float U[9]);
-template double dfm2::Det_Mat3(const double U[9]);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::Det_Mat3(const float U[9]);
+template double delfem2::Det_Mat3(const double U[9]);
+#endif
 
 // ---------------------------------------
 
 template <typename T>
-T dfm2::SquareNormFrobenius_SymMat3
+T delfem2::SquareNormFrobenius_SymMat3
 (const T sm[6])
 {
   return sm[0]*sm[0] + sm[1]*sm[1] + sm[2]*sm[2] + 2*(sm[3]*sm[3] + sm[4]*sm[4] + sm[5]*sm[5]);
 }
-template float dfm2::SquareNormFrobenius_SymMat3(const float sm[6]);
-template double dfm2::SquareNormFrobenius_SymMat3(const double sm[6]);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::SquareNormFrobenius_SymMat3(const float sm[6]);
+template double delfem2::SquareNormFrobenius_SymMat3(const double sm[6]);
+#endif
 
 // ---------------------------------------
 
 template <typename REAL>
-void dfm2::Mat3_Rotation_Cartesian(
+void delfem2::Mat3_Rotation_Cartesian(
     REAL mat[9],
     const REAL vec[3])
 {
@@ -374,8 +409,10 @@ void dfm2::Mat3_Rotation_Cartesian(
   mat[2*3+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
   mat[2*3+2] = c0        +(1-c0)*n[2]*n[2];
 }
-template void dfm2::Mat3_Rotation_Cartesian(float mat[9], const float vec[3]);
-template void dfm2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_Rotation_Cartesian(float mat[9], const float vec[3]);
+template void delfem2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
+#endif
 
 
 // ---------------------------------------
@@ -384,7 +421,7 @@ template void dfm2::Mat3_Rotation_Cartesian(double mat[9], const double vec[3]);
 // sm[6] = (M_00,M_11,M_22,M_12,M_20,M_01)
 // M = ULU^T
 // u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
-DFM2_INLINE bool dfm2::eigenSym3
+DFM2_INLINE bool delfem2::eigenSym3
 (double u[9], double l[3],
  const double sm[6],
  int nitr)
@@ -473,7 +510,7 @@ DFM2_INLINE bool dfm2::eigenSym3
   return true;
 }
 
-DFM2_INLINE void dfm2::svd3
+DFM2_INLINE void delfem2::svd3
 (double U[9], double G[3], double V[9],
  const double m[9],
  int nitr)
@@ -522,7 +559,7 @@ DFM2_INLINE void dfm2::svd3
   }
 }
 
-DFM2_INLINE void dfm2::GetRotPolarDecomp
+DFM2_INLINE void delfem2::GetRotPolarDecomp
 (double R[9],
  //
  const double am[9],
@@ -547,7 +584,9 @@ CMat3<T> operator* (double d, const CMat3<T>& rhs){
   temp *= d;
   return temp;
 }
+#ifndef DFM2_HEADER_ONLY
 template CMat3<double> operator* (double d, const CMat3<double>& rhs);
+#endif
 
 template <typename T>
 CMat3<T> operator* (const CMat3<T>& m, double d){
@@ -555,7 +594,9 @@ CMat3<T> operator* (const CMat3<T>& m, double d){
   t *= d;
   return t;
 }
+#ifndef DFM2_HEADER_ONLY
 template CMat3<double> operator* (const CMat3<double>& m, double d);
+#endif
 
 template <typename T>
 CMat3<T> operator/ (const CMat3<T>& m, double d){
@@ -570,13 +611,19 @@ CMat3<T> operator+ (const CMat3<T>& lhs, const CMat3<T>& rhs){
   temp += rhs;
   return temp;
 }
+#ifndef DFM2_HEADER_ONLY
 template CMat3<double> operator+ (const CMat3<double>& lhs, const CMat3<double>& rhs);
+#endif
+
+// ------------------
 
 template <typename T>
 CMat3<T> operator* (const CMat3<T>& lhs, const CMat3<T>& rhs){
   return lhs.MatMat(rhs);
 }
+#ifndef DFM2_HEADER_ONLY
 template CMat3<double> operator* (const CMat3<double>& lhs, const CMat3<double>& rhs);
+#endif
   
 // ------------------------------
 
@@ -586,7 +633,9 @@ CMat3<T> operator- (const CMat3<T>& lhs, const CMat3<T>& rhs){
   temp -= rhs;
   return temp;
 }
+#ifndef DFM2_HEADER_ONLY
 template CMat3<double> operator- (const CMat3<double>& lhs, const CMat3<double>& rhs);
+#endif
   
 // ------------------------------
 
@@ -614,63 +663,71 @@ std::istream &operator>>(std::istream &input, CMat3<T>& m)
 // -------------------------------------------------------------------
   
 template <typename T>
-dfm2::CMat3<T>::CMat3(): mat{0.,0.,0., 0.,0.,0., 0.,0.,0.} {}
-template dfm2::CMat3<double>::CMat3();
+delfem2::CMat3<T>::CMat3(): mat{0.,0.,0., 0.,0.,0., 0.,0.,0.} {}
+template delfem2::CMat3<double>::CMat3();
   
 // ---------------------
 
 template <typename T>
-dfm2::CMat3<T>::CMat3(const T s): mat{s,0,0, 0,s,0, 0,0,s} {}
+delfem2::CMat3<T>::CMat3(const T s): mat{s,0,0, 0,s,0, 0,0,s} {}
 
 template <typename T>
-dfm2::CMat3<T>::CMat3(double v00, double v01, double v02,
+delfem2::CMat3<T>::CMat3(double v00, double v01, double v02,
                       double v10, double v11, double v12,
                       double v20, double v21, double v22):
  mat{v00,v01,v02, v10,v11,v12, v20,v21,v22}
 {}
 
 template <typename T>
-dfm2::CMat3<T>::CMat3(T x, T y, T z):
+delfem2::CMat3<T>::CMat3(T x, T y, T z):
   mat{x,0,0, 0,y,0, 0,0,z} {}
 
 template <typename T>
-dfm2::CMat3<T>::CMat3(const T m[9]):
+delfem2::CMat3<T>::CMat3(const T m[9]):
  mat{m[0],m[1],m[2], m[3],m[4],m[5], m[6],m[7],m[8]} {}
-template dfm2::CMat3d::CMat3(const double m[9]);
-template dfm2::CMat3f::CMat3(const float m[9]);
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3d::CMat3(const double m[9]);
+template delfem2::CMat3f::CMat3(const float m[9]);
+#endif
 
 
 
 template <typename T>
-void dfm2::CMat3<T>::MatVec(const double vec0[], double vec1[]) const
+void delfem2::CMat3<T>::MatVec(const double vec0[], double vec1[]) const
 {
-  ::dfm2::MatVec3(vec1, mat, vec0);
+  ::delfem2::MatVec3(vec1, mat, vec0);
 }
-template void dfm2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::MatVec(const double vec0[], double vec1[]) const;
+#endif
 
 template <typename T>
-void dfm2::CMat3<T>::MatVecTrans(const double vec0[], double vec1[]) const
+void delfem2::CMat3<T>::MatVecTrans(const double vec0[], double vec1[]) const
 {
   vec1[0] = mat[0]*vec0[0] + mat[3]*vec0[1] + mat[6]*vec0[2];
   vec1[1] = mat[1]*vec0[0] + mat[4]*vec0[1] + mat[7]*vec0[2];
   vec1[2] = mat[2]*vec0[0] + mat[5]*vec0[1] + mat[8]*vec0[2];
 }
-template void dfm2::CMat3<double>::MatVecTrans(const double vec0[], double vec1[]) const;
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::MatVecTrans(const double vec0[], double vec1[]) const;
+#endif
 
 
 template <typename T>
-dfm2::CMat3<T> dfm2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
+delfem2::CMat3<T> delfem2::CMat3<T>::MatMat(const CMat3<T>& mat0) const{
   CMat3 m;
-  ::dfm2::MatMat3(m.mat,
+  ::delfem2::MatMat3(m.mat,
                   this->mat, mat0.mat);
   return m;
 }
-template dfm2::CMat3<double> dfm2::CMat3<double>::MatMat(const CMat3<double>& mat0) const;
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3<double> delfem2::CMat3<double>::MatMat(const CMat3<double>& mat0) const;
+#endif
   
 // --------------------------------
 
 template <typename T>
-dfm2::CMat3<T> dfm2::CMat3<T>::MatMatTrans(const CMat3<T>& mat0) const
+delfem2::CMat3<T> delfem2::CMat3<T>::MatMatTrans(const CMat3<T>& mat0) const
 {
   CMat3 m;
   for(unsigned int i=0;i<3;i++){
@@ -685,28 +742,32 @@ dfm2::CMat3<T> dfm2::CMat3<T>::MatMatTrans(const CMat3<T>& mat0) const
 }
 
 template <typename T>
-dfm2::CMat3<T> dfm2::CMat3<T>::Inverse() const
+delfem2::CMat3<T> delfem2::CMat3<T>::Inverse() const
 {
   CMat3 mi = *this;
   mi.SetInverse();
   return mi;
 }
-template dfm2::CMat3<double> dfm2::CMat3<double>::Inverse() const;
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3<double> delfem2::CMat3<double>::Inverse() const;
+#endif
 
 // ------------------------------------------------------------------
 
 template <typename T>
-void dfm2::CMat3<T>::SetInverse()
+void delfem2::CMat3<T>::SetInverse()
 {
-  ::dfm2::Inverse_Mat3(mat);
+  ::delfem2::Inverse_Mat3(mat);
 }
-template void dfm2::CMat3<double>::SetInverse();
-template void dfm2::CMat3<float>::SetInverse();
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::SetInverse();
+template void delfem2::CMat3<float>::SetInverse();
+#endif
 
 
 
 template <typename T>
-void dfm2::CMat3<T>::SetSymetric(const double sm[6])
+void delfem2::CMat3<T>::SetSymetric(const double sm[6])
 {
   mat[0] = sm[0];
   mat[1] = sm[5];
@@ -718,17 +779,21 @@ void dfm2::CMat3<T>::SetSymetric(const double sm[6])
   mat[7] = sm[3];
   mat[8] = sm[2];
 }
-template void dfm2::CMat3<float>::SetSymetric(const double sm[6]);
-template void dfm2::CMat3<double>::SetSymetric(const double sm[6]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<float>::SetSymetric(const double sm[6]);
+template void delfem2::CMat3<double>::SetSymetric(const double sm[6]);
+#endif
 
 // --------------------------------
 
 template <typename T>
-void dfm2::CMat3<T>::SetZero()
+void delfem2::CMat3<T>::SetZero()
 {
   for(double & i : mat){ i = 0.0; }
 }
-template void dfm2::CMat3<double>::SetZero();
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::SetZero();
+#endif
   
 // --------------------
 
@@ -749,7 +814,7 @@ DFM2_INLINE void CMat3<double>::SetRandom() {
 // -----------------------------------------
 
 template <typename T>
-void dfm2::CMat3<T>::SetRotMatrix_Cartesian(const double vec[])
+void delfem2::CMat3<T>::SetRotMatrix_Cartesian(const double vec[])
 {
   double sqt = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   if( sqt < 1.0e-20 ){ // infinitesmal rotation approximation
@@ -773,21 +838,25 @@ void dfm2::CMat3<T>::SetRotMatrix_Cartesian(const double vec[])
   mat[2*3+1] =   +n[0]*s0+(1-c0)*n[2]*n[1];
   mat[2*3+2] = c0        +(1-c0)*n[2]*n[2];
 }
-template void dfm2::CMat3<double>::SetRotMatrix_Cartesian(const double vec[]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(const double vec[]);
+#endif
   
 // -------------------------------
 
 template <typename T>
-void dfm2::CMat3<T>::SetRotMatrix_Cartesian(double x, double y, double z){
+void delfem2::CMat3<T>::SetRotMatrix_Cartesian(double x, double y, double z){
   const double vec[3] = { x, y, z };
   this->SetRotMatrix_Cartesian(vec);
 }
-template void dfm2::CMat3<double>::SetRotMatrix_Cartesian(double x, double y, double z);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::SetRotMatrix_Cartesian(double x, double y, double z);
+#endif
   
 // ----------------------------------
 
 template <typename T>
-void dfm2::CMat3<T>::SetRotMatrix_Rodrigues(const double vec[])
+void delfem2::CMat3<T>::SetRotMatrix_Rodrigues(const double vec[])
 {
   const double sqlen = vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2];
   const double tmp1 = 1.0/(1+0.25*sqlen);
@@ -803,7 +872,7 @@ void dfm2::CMat3<T>::SetRotMatrix_Rodrigues(const double vec[])
 }
 
 template <typename T>
-void dfm2::CMat3<T>::SetRotMatrix_CRV(const double crv[])
+void delfem2::CMat3<T>::SetRotMatrix_CRV(const double crv[])
 {
   const double c0 = 0.125*( 16.0 - crv[0]*crv[0] - crv[1]*crv[1] - crv[2]*crv[2] );
   const double tmp = 1.0/( (4.0-c0)*(4.0-c0) );
@@ -819,13 +888,15 @@ void dfm2::CMat3<T>::SetRotMatrix_CRV(const double crv[])
 }
 
 template <typename T>
-void dfm2::CMat3<T>::SetRotMatrix_Quaternion(const double quat[]){
-  SetMatrix3_Quaternion(mat, quat);
+void delfem2::CMat3<T>::SetRotMatrix_Quaternion(const double quat[]){
+  mat3::SetMatrix3_Quaternion(mat, quat);
 }
-template void dfm2::CMat3<double>::SetRotMatrix_Quaternion(const double quat[]);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::SetRotMatrix_Quaternion(const double quat[]);
+#endif
 
 template <typename T>
-void dfm2::CMat3<T>::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
+void delfem2::CMat3<T>::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
 {
   CMat3 mx; double rvx[3] = {rx,0,0}; mx.SetRotMatrix_Cartesian(rvx);
   CMat3 my; double rvy[3] = {0,ry,0}; my.SetRotMatrix_Cartesian(rvy);
@@ -835,10 +906,12 @@ void dfm2::CMat3<T>::SetRotMatrix_BryantAngle(double rx, double ry, double rz)
   m = m.MatMat(mx);
   *this = m;
 }
-template void dfm2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, double rz);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3d::SetRotMatrix_BryantAngle(double rx, double ry, double rz);
+#endif
 
 template <typename T>
-void dfm2::CMat3<T>::GetQuat_RotMatrix(double quat[]) const{
+void delfem2::CMat3<T>::GetQuat_RotMatrix(double quat[]) const{
   const double smat[16] = {
     1+mat[0*3+0]+mat[1*3+1]+mat[2*3+2],
     mat[2*3+1]-mat[1*3+2],
@@ -869,10 +942,12 @@ void dfm2::CMat3<T>::GetQuat_RotMatrix(double quat[]) const{
     quat[k] = smat[imax*4+k]*0.25/quat[imax];
   }
 }
-template void dfm2::CMat3<double>::GetQuat_RotMatrix(double quat[]) const;
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::GetQuat_RotMatrix(double quat[]) const;
+#endif
 
 template <typename T>
-void dfm2::CMat3<T>::GetCRV_RotMatrix(double crv[]) const{
+void delfem2::CMat3<T>::GetCRV_RotMatrix(double crv[]) const{
   double eparam2[4];
   this->GetQuat_RotMatrix(eparam2);
   crv[0] = 4*eparam2[1]/(1+eparam2[0]);
@@ -881,12 +956,14 @@ void dfm2::CMat3<T>::GetCRV_RotMatrix(double crv[]) const{
 }
 
 template <typename T>
-void dfm2::CMat3<T>::SetIdentity(double scale)
+void delfem2::CMat3<T>::SetIdentity(double scale)
 {
   mat[0] = scale; mat[1] = 0;     mat[2] = 0;
   mat[3] = 0;     mat[4] = scale; mat[5] = 0;
   mat[6] = 0;     mat[7] = 0;     mat[8] = scale;
 }
-template void dfm2::CMat3<double>::SetIdentity(double scale);
-template void dfm2::CMat3<float>::SetIdentity(double scale);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMat3<double>::SetIdentity(double scale);
+template void delfem2::CMat3<float>::SetIdentity(double scale);
+#endif
 

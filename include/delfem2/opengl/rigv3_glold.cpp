@@ -28,37 +28,37 @@
 #  define M_PI 3.1415926535
 #endif
 
-namespace dfm2 = delfem2;
+//namespace dfm2 = delfem2;
 
 // -------------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::Draw_RigBone
+DFM2_INLINE void delfem2::opengl::Draw_RigBone
 (int ibone,
  bool is_selected,
  int ielem_selected,
- const std::vector<dfm2::CRigBone>& aBone,
+ const std::vector<CRigBone>& aBone,
  double rad_bone_sphere,
  double rad_rot_hndlr)
 {
   { // draw point
     if(is_selected){ ::glColor3d(0,1,1); }
     else{            ::glColor3d(1,0,0); }
-    const dfm2::CVec3d pos = aBone[ibone].Pos();
+    const CVec3d pos = aBone[ibone].Pos();
     delfem2::opengl::DrawSphereAt(32, 32, rad_bone_sphere, pos.x(),pos.y(),pos.z());
   }
   if(is_selected){
-    dfm2::opengl::DrawHandlerRotation_Mat4(aBone[ibone].affmat3Global, rad_rot_hndlr, ielem_selected);
+    opengl::DrawHandlerRotation_Mat4(aBone[ibone].affmat3Global, rad_rot_hndlr, ielem_selected);
     int ibone_parent = aBone[ibone].ibone_parent;
     if( ibone_parent>=0&&ibone_parent<(int)aBone.size() ){
-      const dfm2::CVec3d pp(aBone[ibone_parent].Pos());
+      const CVec3d pp(aBone[ibone_parent].Pos());
     }
     else{
     }
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawBone
-(const std::vector<dfm2::CRigBone>& aBone,
+DFM2_INLINE void delfem2::opengl::DrawBone
+(const std::vector<CRigBone>& aBone,
  int ibone_selected,
  int ielem_selected,
  double rad_bone_sphere,
@@ -74,21 +74,21 @@ DFM2_INLINE void dfm2::opengl::DrawBone
   }
   // draw edges whilte
   for( int ibone=0;ibone<(int)aBone.size();++ibone){
-    const dfm2::CRigBone& bone = aBone[ibone];
+    const CRigBone& bone = aBone[ibone];
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
-    const dfm2::CRigBone& bone_p = aBone[ibone_p];
+    const CRigBone& bone_p = aBone[ibone_p];
     bool is_selected_p = (ibone_p == ibone_selected);
     if(is_selected_p){ ::glColor3d(1.0,1.0,1.0); }
     else{              ::glColor3d(0.0,0.0,0.0); }
     ::glBegin(GL_LINES);
-    dfm2::opengl::myGlVertex(bone.Pos());
-    dfm2::opengl::myGlVertex(bone_p.Pos());
+    opengl::myGlVertex(bone.Pos());
+    opengl::myGlVertex(bone_p.Pos());
     ::glEnd();
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawJoints(
+DFM2_INLINE void delfem2::opengl::DrawJoints(
     const std::vector<double>& aJntPos,
     const std::vector<int>& aIndBoneParent)
 {
@@ -97,7 +97,7 @@ DFM2_INLINE void dfm2::opengl::DrawJoints(
     ::glColor3d(0,0,1);
     ::glDisable(GL_LIGHTING);
     ::glDisable(GL_DEPTH_TEST);
-    dfm2::opengl::DrawSphereAt(8, 8, 0.01, p[0], p[1], p[2]);
+    opengl::DrawSphereAt(8, 8, 0.01, p[0], p[1], p[2]);
     int ibp = aIndBoneParent[ib];
     if( ibp == -1 ){ continue; }
     const double* pp = aJntPos.data()+ibp*3;

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_PARAMGEO_V23_H
-#define DFM2_PARAMGEO_V23_H
+#ifndef DFM2_PGEO_H
+#define DFM2_PGEO_H
 
 #include <stdio.h>
 #include "delfem2/vec3.h"

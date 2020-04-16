@@ -8,24 +8,22 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/objf_geo3.h"
 
-namespace dfm2 = delfem2;
-
 namespace delfem2 {
-namespace objf_v23m34q{
+namespace objf{
 
 DFM2_INLINE void AddDiff_DotFrames
- (dfm2::CVec3d dV_dP[3],
+ (CVec3d dV_dP[3],
   double dV_dt[2],
   //
   double c,
   unsigned int i,
   unsigned int j,
-  const dfm2::CVec3d Frm0[3],
-  const dfm2::CVec3d Frm1[3],
-  const dfm2::CMat3d dF0_dv[3],
-  const dfm2::CVec3d dF0_dt[3],
-  const dfm2::CMat3d dF1_dv[3],
-  const dfm2::CVec3d dF1_dt[3])
+  const CVec3d Frm0[3],
+  const CVec3d Frm1[3],
+  const CMat3d dF0_dv[3],
+  const CVec3d dF0_dt[3],
+  const CMat3d dF1_dv[3],
+  const CVec3d dF1_dt[3])
 {
   dV_dt[0] += c*Frm1[j]*dF0_dt[i];
   dV_dt[1] += c*Frm0[i]*dF1_dt[j];
@@ -36,24 +34,24 @@ DFM2_INLINE void AddDiff_DotFrames
 }
 
 DFM2_INLINE void AddDiffDiff_DotFrames
-(dfm2::CMat3d ddV_ddP[3][3],
- dfm2::CVec3d ddV_dtdP[2][3],
+(CMat3d ddV_ddP[3][3],
+ CVec3d ddV_dtdP[2][3],
  double ddV_ddt[2][2],
  //
  double c,
  unsigned int i,
  unsigned int j,
- const dfm2::CVec3d P[3],
- const dfm2::CVec3d F0[3],
- const dfm2::CVec3d F1[3],
- const dfm2::CMat3d dF0_dv[3],
- const dfm2::CVec3d dF0_dt[3],
- const dfm2::CMat3d dF1_dv[3],
- const dfm2::CVec3d dF1_dt[3])
+ const CVec3d P[3],
+ const CVec3d F0[3],
+ const CVec3d F1[3],
+ const CMat3d dF0_dv[3],
+ const CVec3d dF0_dt[3],
+ const CMat3d dF1_dv[3],
+ const CVec3d dF1_dt[3])
 {
   {
-    dfm2::CMat3d ddW_ddv;
-    dfm2::CVec3d ddW_dvdt;
+    CMat3d ddW_ddv;
+    CVec3d ddW_dvdt;
     double ddW_ddt;
     DifDifFrameRod(ddW_ddv, ddW_dvdt, ddW_ddt, i, (P[1]-P[0]).Length(), F1[j], F0);
     ddV_dtdP[0][0] += c*(-ddW_dvdt);
@@ -61,7 +59,7 @@ DFM2_INLINE void AddDiffDiff_DotFrames
     ddV_dtdP[0][2] += c*(+dF0_dt[i]*dF1_dv[j]);
     ddV_ddt[0][0] += c*ddW_ddt;
     ddV_ddt[0][1] += c*dF0_dt[i]*dF1_dt[j];
-    const dfm2::CMat3d T = dF0_dv[i].Trans()*dF1_dv[j];
+    const CMat3d T = dF0_dv[i].Trans()*dF1_dv[j];
     ddV_ddP[0][0] += c*ddW_ddv;
     ddV_ddP[0][1] += c*(-ddW_ddv + T);
     ddV_ddP[0][2] += c*(-T);
@@ -70,8 +68,8 @@ DFM2_INLINE void AddDiffDiff_DotFrames
     ddV_ddP[1][2] += c*(+T);
   }
   {
-    dfm2::CMat3d ddW_ddv;
-    dfm2::CVec3d ddW_dvdt;
+    CMat3d ddW_ddv;
+    CVec3d ddW_dvdt;
     double ddW_ddt;
     DifDifFrameRod(ddW_ddv, ddW_dvdt, ddW_ddt, j, (P[2]-P[1]).Length(), F0[i], F1);
     ddV_dtdP[1][0] += c*-dF1_dt[j]*dF0_dv[i];
@@ -79,7 +77,7 @@ DFM2_INLINE void AddDiffDiff_DotFrames
     ddV_dtdP[1][2] += c*+ddW_dvdt;
     ddV_ddt[1][0] += c*dF0_dt[i]*dF1_dt[j];
     ddV_ddt[1][1] += c*ddW_ddt;
-    const dfm2::CMat3d T = dF1_dv[j].Trans()*dF0_dv[i];
+    const CMat3d T = dF1_dv[j].Trans()*dF0_dv[i];
     ddV_ddP[1][0] += c*+T;
     ddV_ddP[1][1] += c*(+ddW_ddv - T);
     ddV_ddP[1][2] += c*(-ddW_ddv);
@@ -90,19 +88,19 @@ DFM2_INLINE void AddDiffDiff_DotFrames
 }
 
 DFM2_INLINE void AddOuterProduct
- (dfm2::CMat3d ddV_ddP[3][3],
-  dfm2::CVec3d ddV_dtdP[2][3],
+ (CMat3d ddV_ddP[3][3],
+  CVec3d ddV_dtdP[2][3],
   double ddV_ddt[2][2],
   //
   double c,
-  const dfm2::CVec3d dA_dP[3],
+  const CVec3d dA_dP[3],
   const double dA_dt[2],
-  const dfm2::CVec3d dB_dP[3],
+  const CVec3d dB_dP[3],
   const double dB_dt[2])
 {
   for(int i=0;i<3;++i){
     for(int j=0;j<3;++j){
-      ddV_ddP[i][j] += c*dfm2::Mat3_OuterProduct(dA_dP[i], dB_dP[j]);
+      ddV_ddP[i][j] += c*Mat3_OuterProduct(dA_dP[i], dB_dP[j]);
     }
   }
   for(int i=0;i<2;++i){
@@ -122,7 +120,7 @@ DFM2_INLINE void AddOuterProduct
 
 // =======================================
 
-DFM2_INLINE void dfm2::PBD_Post
+DFM2_INLINE void delfem2::PBD_Post
 (std::vector<double>& aXYZ,
  std::vector<double>& aUVW,
  double dt,
@@ -144,7 +142,7 @@ DFM2_INLINE void dfm2::PBD_Post
   }
 }
 
-DFM2_INLINE void dfm2::PBD_Pre3D
+DFM2_INLINE void delfem2::PBD_Pre3D
 (std::vector<double>& aXYZt,
  double dt,
  const double gravity[3],
@@ -170,7 +168,7 @@ DFM2_INLINE void dfm2::PBD_Pre3D
 }
 
 
-DFM2_INLINE void dfm2::PBD_Update_Const3
+DFM2_INLINE void delfem2::PBD_Update_Const3
 (double* aXYZt,
  const int np,
  const int ndim,
@@ -205,7 +203,7 @@ DFM2_INLINE void dfm2::PBD_Update_Const3
     A[2*3+2] += MinvC[2*np*ndim+i]*dCdp[2*np*ndim+i];
   }
   double Ainv[nc*nc]; Inverse_Mat3(Ainv, A);
-  double lmd[nc]; dfm2::MatVec3(lmd, Ainv, C);
+  double lmd[nc]; MatVec3(lmd, Ainv, C);
   for(int ine=0;ine<np;++ine){
     const int ip0 = aIP[ine];
     for(int ic=0;ic<nc;++ic){
@@ -217,7 +215,7 @@ DFM2_INLINE void dfm2::PBD_Update_Const3
   }
 }
 
-DFM2_INLINE void dfm2::PBD_ConstProj_Rigid3D
+DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D
 (double* aXYZt,
  double stiffness,
  const int* clstr_ind, int nclstr_ind,
@@ -266,7 +264,7 @@ DFM2_INLINE void dfm2::PBD_ConstProj_Rigid3D
   }  
 }
 
-DFM2_INLINE void dfm2::PBD_ConstProj_Rigid2D
+DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D
 (double* aXYt,
  double stiffness,
  const unsigned int *clstr_ind, unsigned int nclstr_ind,
@@ -309,7 +307,7 @@ DFM2_INLINE void dfm2::PBD_ConstProj_Rigid2D
   }
 }
 
-DFM2_INLINE void dfm2::PBD_CdC_TriStrain2D3D
+DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D
 (double C[3],
  double dCdp[3][9],
  const double P[3][2], // (in) undeformed triangle vertex positions
@@ -361,16 +359,16 @@ DFM2_INLINE void dfm2::PBD_CdC_TriStrain2D3D
   dC2dp2.CopyTo(dCdp[2]+2*3);
 }
 
-DFM2_INLINE void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
+DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTri2D3D
 (double C[3],
  double dCdp[3][9],
  const double P[3][2], // (in) undeformed triangle vertex positions
  const double p[3][3] // (in) deformed triangle vertex positions
 )
 {
-  const double L12 = dfm2::Distance2(P[1],P[2]);
-  const double L20 = dfm2::Distance2(P[2],P[0]);
-  const double L01 = dfm2::Distance2(P[0],P[1]);
+  const double L12 = Distance2(P[1],P[2]);
+  const double L20 = Distance2(P[2],P[0]);
+  const double L01 = Distance2(P[0],P[1]);
   CVec3d v12(p[1][0]-p[2][0], p[1][1]-p[2][1], p[1][2]-p[2][2]);
   CVec3d v20(p[2][0]-p[0][0], p[2][1]-p[0][1], p[2][2]-p[0][2]);
   CVec3d v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
@@ -389,7 +387,7 @@ DFM2_INLINE void dfm2::PBD_ConstraintProjection_DistanceTri2D3D
   v01.CopyTo(dCdp[2]+3*0);  v01.CopyToScale(dCdp[2]+3*1,-1.0);
 }
 
-DFM2_INLINE void dfm2::PBD_ConstraintProjection_EnergyStVK
+DFM2_INLINE void delfem2::PBD_ConstraintProjection_EnergyStVK
 (double& C, // (out) energy
  double dCdp[9], // (out) 1st derivative of energy
  ////
@@ -472,19 +470,19 @@ DFM2_INLINE void dfm2::PBD_ConstraintProjection_EnergyStVK
 }
 
 
-DFM2_INLINE void dfm2::PBD_ConstraintProjection_DistanceTet
+DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet
 (double C[6],
  double dCdp[6][12],
  const double P[4][3], // (in) undeformed triangle vertex positions
  const double p[4][3] // (in) deformed triangle vertex positions
 )
 {
-  const double L01 = dfm2::Distance3(P[0],P[1]);
-  const double L02 = dfm2::Distance3(P[0],P[2]);
-  const double L03 = dfm2::Distance3(P[0],P[3]);
-  const double L12 = dfm2::Distance3(P[1],P[2]);
-  const double L13 = dfm2::Distance3(P[1],P[3]);
-  const double L23 = dfm2::Distance3(P[2],P[3]);
+  const double L01 = Distance3(P[0],P[1]);
+  const double L02 = Distance3(P[0],P[2]);
+  const double L03 = Distance3(P[0],P[3]);
+  const double L12 = Distance3(P[1],P[2]);
+  const double L13 = Distance3(P[1],P[3]);
+  const double L23 = Distance3(P[2],P[3]);
   CVec3d v01(p[0][0]-p[1][0], p[0][1]-p[1][1], p[0][2]-p[1][2]);
   CVec3d v02(p[0][0]-p[2][0], p[0][1]-p[2][1], p[0][2]-p[2][2]);
   CVec3d v03(p[0][0]-p[3][0], p[0][1]-p[3][1], p[0][2]-p[3][2]);
@@ -521,15 +519,15 @@ DFM2_INLINE void dfm2::PBD_ConstraintProjection_DistanceTet
 }
 
 
-DFM2_INLINE void dfm2::PBD_CdC_QuadBend
+DFM2_INLINE void delfem2::PBD_CdC_QuadBend
 (double C[3],
  double dCdp[3][12],
  const double P[4][3],
  const double p[4][3])
 {
-  const double A0 = dfm2::Area_Tri3(P[0],P[2],P[3]);
-  const double A1 = dfm2::Area_Tri3(P[1],P[3],P[2]);
-  const double L = dfm2::Distance3(P[2],P[3]);
+  const double A0 = Area_Tri3(P[0],P[2],P[3]);
+  const double A1 = Area_Tri3(P[1],P[3],P[2]);
+  const double L = Distance3(P[2],P[3]);
   const double H0 = 2.0*A0/L;
   const double H1 = 2.0*A1/L;
   const CVec3d e23(P[3][0]-P[2][0], P[3][1]-P[2][1], P[3][2]-P[2][2]);
@@ -560,7 +558,7 @@ DFM2_INLINE void dfm2::PBD_CdC_QuadBend
 }
 
 
-DFM2_INLINE void dfm2::PBD_Seam
+DFM2_INLINE void delfem2::PBD_Seam
 (double* aXYZt,
  unsigned int nXYZ,
  const unsigned int* aLine,
@@ -572,11 +570,11 @@ DFM2_INLINE void dfm2::PBD_Seam
     const double p[2][3] = {
       {aXYZt[ip0*3+0], aXYZt[ip0*3+1], aXYZt[ip0*3+2]},
       {aXYZt[ip1*3+0], aXYZt[ip1*3+1], aXYZt[ip1*3+2]} };
-    double d0 = dfm2::Distance3(p[0], p[1]);
+    double d0 = Distance3(p[0], p[1]);
     double dLen = 0.01;
     if( d0 > dLen ){
       double n01[3] = {p[1][0]-p[0][0], p[1][1]-p[0][1], p[1][2]-p[0][2]};
-      const double l01 = dfm2::Length3(n01);
+      const double l01 = Length3(n01);
       const double invl01 = 1.0/l01;
       n01[0] *= invl01;
       n01[1] *= invl01;
@@ -600,7 +598,7 @@ DFM2_INLINE void dfm2::PBD_Seam
 }
 
 
-DFM2_INLINE void dfm2::WdWddW_MIPS
+DFM2_INLINE void delfem2::WdWddW_MIPS
  (double& E, double dE[3][3], double ddE[3][3][3][3],
   const double c[3][3],
   const double C[3][3])
@@ -661,7 +659,7 @@ DFM2_INLINE void dfm2::WdWddW_MIPS
   dE[1][0]=dECd1.x(); dE[1][1]=dECd1.y(); dE[1][2]=dECd1.z();
   dE[2][0]=dECd2.x(); dE[2][1]=dECd2.y(); dE[2][2]=dECd2.z();
   
-  CMat3d (*op)(const CVec3d&, const CVec3d&) = dfm2::Mat3_OuterProduct;
+  CMat3d (*op)(const CVec3d&, const CVec3d&) = Mat3_OuterProduct;
   
   double tmp1 = 0.25/area;
   CVec3d dad0 = ((v20*v12)*v01-(v01*v12)*v20)*tmp1;
@@ -719,52 +717,52 @@ DFM2_INLINE void dfm2::WdWddW_MIPS
  * @brief energy W and its derivative dW and second derivative ddW
  * where W = a^T R(dn) b(theta)
  */
-DFM2_INLINE void dfm2::RodFrameTrans
- (dfm2::CVec3d frm[3],
-  const dfm2::CVec3d& S0,
-  const dfm2::CVec3d& V01,
-  const dfm2::CVec3d& du,
+DFM2_INLINE void delfem2::RodFrameTrans
+ (CVec3d frm[3],
+  const CVec3d& S0,
+  const CVec3d& V01,
+  const CVec3d& du,
   double dtheta)
 {
   //  std::cout << "      "  << S0.Length() << std::endl;
   assert( fabs(S0.Length() - 1.0) < 1.0e-3 );
   assert( fabs(S0*V01) < 1.0e-3 );
-  const dfm2::CVec3d U0 = V01.Normalize();
-  const dfm2::CVec3d T0 = U0^S0;
+  const CVec3d U0 = V01.Normalize();
+  const CVec3d T0 = U0^S0;
   frm[2] = (V01+du).Normalize();
-  dfm2::CMat3d R = dfm2::Mat3_MinimumRotation(U0, frm[2]);
+  CMat3d R = Mat3_MinimumRotation(U0, frm[2]);
   frm[0] = R*(cos(dtheta)*S0 + sin(dtheta)*T0);
   frm[1] = R*(cos(dtheta)*T0 - sin(dtheta)*S0);
 }
 
-DFM2_INLINE void dfm2::DiffFrameRod
- (dfm2::CMat3d dF_dv[3], // first-order derivative
-  dfm2::CVec3d dF_dt[3],
+DFM2_INLINE void delfem2::DiffFrameRod
+ (CMat3d dF_dv[3], // first-order derivative
+  CVec3d dF_dt[3],
   //
   double l01,
-  const dfm2::CVec3d Frm[3])
+  const CVec3d Frm[3])
 {
   dF_dt[0] = +Frm[1];
   dF_dt[1] = -Frm[0];
   dF_dt[2].SetZero();
-  dF_dv[0] = (-1.0/l01)*dfm2::Mat3_OuterProduct(Frm[2],Frm[0]);
-  dF_dv[1] = (-1.0/l01)*dfm2::Mat3_OuterProduct(Frm[2],Frm[1]);
-  dF_dv[2] = (+1.0/l01)*(dfm2::Mat3_Identity(1.0) - dfm2::Mat3_OuterProduct(Frm[2], Frm[2]) );
+  dF_dv[0] = (-1.0/l01)*Mat3_OuterProduct(Frm[2],Frm[0]);
+  dF_dv[1] = (-1.0/l01)*Mat3_OuterProduct(Frm[2],Frm[1]);
+  dF_dv[2] = (+1.0/l01)*(Mat3_Identity(1.0) - Mat3_OuterProduct(Frm[2], Frm[2]) );
 }
 
 /**
  * @brief energy W and its derivative dW and second derivative ddW
  * where W = a^T R(dn) b(theta)
  */
-DFM2_INLINE void dfm2::DifDifFrameRod
- (dfm2::CMat3d& ddW_ddv,
-  dfm2::CVec3d& ddW_dvdt, // second-order derrivative
+DFM2_INLINE void delfem2::DifDifFrameRod
+ (CMat3d& ddW_ddv,
+  CVec3d& ddW_dvdt, // second-order derrivative
   double& ddW_dtt,
   //
   unsigned int iaxis,
   double l01,
-  const dfm2::CVec3d& Q,
-  const dfm2::CVec3d Frm[3])
+  const CVec3d& Q,
+  const CVec3d Frm[3])
 {
   if( iaxis == 0 ){
     ddW_dtt = -Frm[0]*Q;
@@ -776,54 +774,54 @@ DFM2_INLINE void dfm2::DifDifFrameRod
   }
   else if( iaxis == 2 ){
     ddW_dtt = 0.0;
-    ddW_dvdt = dfm2::CVec3d(0,0,0);
+    ddW_dvdt = CVec3d(0,0,0);
   }
   {
-    dfm2::CMat3d S = dfm2::Mat3_Spin(Frm[2]);
-    dfm2::CMat3d A = dfm2::Mat3_Spin(Frm[iaxis])*dfm2::Mat3_Spin(Q);
-    dfm2::CMat3d M0a = -S*(A*S);
-    dfm2::CVec3d b0 = (-A+A.Trans())*Frm[2];
-    dfm2::CMat3d M1 = dfm2::Mat3_OuterProduct(Frm[2], b0);
-    dfm2::CMat3d M3 = (b0*Frm[2])*(3*dfm2::Mat3_OuterProduct(Frm[2], Frm[2])-dfm2::Mat3_Identity(1.0));
+    CMat3d S = Mat3_Spin(Frm[2]);
+    CMat3d A = Mat3_Spin(Frm[iaxis])*Mat3_Spin(Q);
+    CMat3d M0a = -S*(A*S);
+    CVec3d b0 = (-A+A.Trans())*Frm[2];
+    CMat3d M1 = Mat3_OuterProduct(Frm[2], b0);
+    CMat3d M3 = (b0*Frm[2])*(3*Mat3_OuterProduct(Frm[2], Frm[2])-Mat3_Identity(1.0));
     ddW_ddv = (1.0/(l01*l01))*( M0a + M1 + M1.Trans() + M3 );
   }
 }
 
-DFM2_INLINE double dfm2::WdWddW_DotFrame
- (dfm2::CVec3d dV_dP[3],
+DFM2_INLINE double delfem2::WdWddW_DotFrame
+ (CVec3d dV_dP[3],
   double dV_dt[2],
-  dfm2::CMat3d ddV_ddP[3][3],
-  dfm2::CVec3d ddV_dtdP[2][3],
+  CMat3d ddV_ddP[3][3],
+  CVec3d ddV_dtdP[2][3],
   double ddV_ddt[2][2],
   //
-  const dfm2::CVec3d P[3],
-  const dfm2::CVec3d S[2],
+  const CVec3d P[3],
+  const CVec3d S[2],
   const double off[3])
 {
-  namespace lcl = dfm2::objf_v23m34q;
+  namespace lcl = objf;
   assert( fabs(S[0].Length() - 1.0) < 1.0e-10 );
   assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-10 );
   assert( fabs(S[1].Length() - 1.0) < 1.0e-10 );
   assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-10 );
-  dfm2::CVec3d Frm0[3];
+  CVec3d Frm0[3];
   {
     Frm0[2] = (P[1]-P[0]).Normalize();
     Frm0[0] = S[0];
-    Frm0[1] = dfm2::Cross(Frm0[2],Frm0[0]);
+    Frm0[1] = Cross(Frm0[2],Frm0[0]);
   }
-  dfm2::CVec3d Frm1[3];
+  CVec3d Frm1[3];
   {
     Frm1[2] = (P[2]-P[1]).Normalize();
     Frm1[0] = S[1];
-    Frm1[1] = dfm2::Cross(Frm1[2],Frm1[0]);
+    Frm1[1] = Cross(Frm1[2],Frm1[0]);
   }
   // ----------
-  dfm2::CMat3d dF0_dv[3];
-  dfm2::CVec3d dF0_dt[3];
+  CMat3d dF0_dv[3];
+  CVec3d dF0_dt[3];
   DiffFrameRod(dF0_dv, dF0_dt,
                (P[1]-P[0]).Length(), Frm0);
-  dfm2::CMat3d dF1_dv[3];
-  dfm2::CVec3d dF1_dt[3];
+  CMat3d dF1_dv[3];
+  CVec3d dF1_dt[3];
   DiffFrameRod(dF1_dv, dF1_dt,
                (P[2]-P[1]).Length(), Frm1);
   double V = 0;
@@ -847,43 +845,43 @@ DFM2_INLINE double dfm2::WdWddW_DotFrame
 }
 
 
-DFM2_INLINE double dfm2::WdWddW_Rod
- (dfm2::CVec3d dV_dP[3],
+DFM2_INLINE double delfem2::WdWddW_Rod
+ (CVec3d dV_dP[3],
   double dV_dt[2],
-  dfm2::CMat3d ddV_ddP[3][3],
-  dfm2::CVec3d ddV_dtdP[2][3],
+  CMat3d ddV_ddP[3][3],
+  CVec3d ddV_dtdP[2][3],
   double ddV_ddt[2][2],
   //
-  const dfm2::CVec3d P[3],
-  const dfm2::CVec3d S[2],
+  const CVec3d P[3],
+  const CVec3d S[2],
   const double off[3],
   bool is_exact)
 {
-  namespace lcl = dfm2::objf_v23m34q;
+  namespace lcl = objf;
   //  std::cout << S[0].Length() << std::endl;
   assert( fabs(S[0].Length() - 1.0) < 1.0e-5 );
   assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-5 );
   assert( fabs(S[1].Length() - 1.0) < 1.0e-5 );
   assert( fabs(S[1]*(P[2]-P[1]).Normalize()) < 1.0e-5 );
-  dfm2::CVec3d F0[3];
+  CVec3d F0[3];
   {
     F0[2] = (P[1]-P[0]).Normalize();
     F0[0] = S[0];
-    F0[1] = dfm2::Cross(F0[2],F0[0]);
+    F0[1] = Cross(F0[2],F0[0]);
   }
-  dfm2::CVec3d F1[3];
+  CVec3d F1[3];
   {
     F1[2] = (P[2]-P[1]).Normalize();
     F1[0] = S[1];
-    F1[1] = dfm2::Cross(F1[2],F1[0]);
+    F1[1] = Cross(F1[2],F1[0]);
   }
   // ----------
-  dfm2::CMat3d dF0_dv[3];
-  dfm2::CVec3d dF0_dt[3];
+  CMat3d dF0_dv[3];
+  CVec3d dF0_dt[3];
   DiffFrameRod(dF0_dv, dF0_dt,
                (P[1]-P[0]).Length(), F0);
-  dfm2::CMat3d dF1_dv[3];
-  dfm2::CVec3d dF1_dt[3];
+  CMat3d dF1_dv[3];
+  CVec3d dF1_dt[3];
   DiffFrameRod(dF1_dv, dF1_dt,
                (P[2]-P[1]).Length(), F1);
   for(int i=0;i<3;++i){ dV_dP[i].SetZero(); }
@@ -892,7 +890,7 @@ DFM2_INLINE double dfm2::WdWddW_Rod
   for(int i=0;i<6;++i){ (&ddV_dtdP[0][0])[i].SetZero(); }
   for(int i=0;i<9;++i){ (&ddV_ddP[0][0])[i].SetZero(); }
   const double Y = 1 + F0[0]*F1[0] + F0[1]*F1[1] + F0[2]*F1[2];
-  dfm2::CVec3d dY_dp[3]; double dY_dt[2];
+  CVec3d dY_dp[3]; double dY_dt[2];
   {
     dY_dp[0].SetZero();  dY_dp[1].SetZero();  dY_dp[2].SetZero();
     dY_dt[0] = 0.0;  dY_dt[1] = 0.0;
@@ -912,14 +910,14 @@ DFM2_INLINE double dfm2::WdWddW_Rod
   for(unsigned int iaxis=0;iaxis<3;++iaxis){
     const unsigned int jaxis = (iaxis+1)%3;
     const unsigned int kaxis = (iaxis+2)%3;
-    dfm2::CVec3d dX_dP[3]; double dX_dt[2];
+    CVec3d dX_dP[3]; double dX_dt[2];
     {
       dX_dP[0].SetZero();  dX_dP[1].SetZero();  dX_dP[2].SetZero();
       dX_dt[0] = 0.0;  dX_dt[1] = 0.0;
       lcl::AddDiff_DotFrames(dX_dP, dX_dt, +1, jaxis, kaxis, F0, F1, dF0_dv, dF0_dt, dF1_dv, dF1_dt);
       lcl::AddDiff_DotFrames(dX_dP, dX_dt, -1, kaxis, jaxis, F0, F1, dF0_dv, dF0_dt, dF1_dv, dF1_dt);
     }
-    dfm2::CVec3d dR0_P[3]; double dR0_t[2];
+    CVec3d dR0_P[3]; double dR0_t[2];
     {
       const double t0 = 1.0/Y;
       const double t1 = - X[iaxis]/(Y*Y);
@@ -973,21 +971,21 @@ DFM2_INLINE double dfm2::WdWddW_Rod
 
 
 
-DFM2_INLINE double dfm2::WdWddW_SquareLengthLineseg3D
- (dfm2::CVec3d dW_dP[2],
-  dfm2::CMat3d ddW_ddP[2][2],
+DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D
+ (CVec3d dW_dP[2],
+  CMat3d ddW_ddP[2][2],
   //
-  const dfm2::CVec3d P[2],
+  const CVec3d P[2],
   double L0)
 {
   double l  = sqrt(+ (P[0][0]-P[1][0])*(P[0][0]-P[1][0])
                    + (P[0][1]-P[1][1])*(P[0][1]-P[1][1])
                    + (P[0][2]-P[1][2])*(P[0][2]-P[1][2]));
-  dfm2::CVec3d v = P[0]-P[1];
+  CVec3d v = P[0]-P[1];
   double R = L0-l;
   dW_dP[0] = (-R/l)*v;
   dW_dP[1] = (+R/l)*v;
-  dfm2::CMat3d m = L0/(l*l*l)*dfm2::Mat3_OuterProduct(v, v) + (l-L0)/l*dfm2::Mat3_Identity(1.0);
+  CMat3d m = L0/(l*l*l)*Mat3_OuterProduct(v, v) + (l-L0)/l*Mat3_Identity(1.0);
   ddW_ddP[0][0] = m;
   ddW_ddP[0][1] = -m;
   ddW_ddP[1][0] = -m;
@@ -995,7 +993,7 @@ DFM2_INLINE double dfm2::WdWddW_SquareLengthLineseg3D
   return 0.5*R*R;
 }
 
-DFM2_INLINE double dfm2::W_ArapEnergy
+DFM2_INLINE double delfem2::W_ArapEnergy
 (const std::vector<double>& aXYZ0,
  const std::vector<double>& aXYZ1,
  const std::vector<double>& aQuat1,
@@ -1008,15 +1006,15 @@ DFM2_INLINE double dfm2::W_ArapEnergy
   assert( psup_ind.size() == np+1 );
   double w = 0.0;
   for(unsigned int ip=0;ip<np;++ip){
-    dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
-    dfm2::CVec3d pi(aXYZ1.data()+ip*3);
-    dfm2::CQuatd Qi(aQuat1.data()+4*ip);
+    CVec3d Pi(aXYZ0.data()+ip*3);
+    CVec3d pi(aXYZ1.data()+ip*3);
+    CQuatd Qi(aQuat1.data()+4*ip);
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const unsigned int jp = psup[ipsup];
-      const dfm2::CVec3d v0 = Qi*(dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
-      dfm2::CVec3d pj(aXYZ1.data()+jp*3);
-      const dfm2::CVec3d v1 = pj-pi;
-      dfm2::CVec3d v = v0-v1;
+      const CVec3d v0 = Qi*(CVec3d(aXYZ0.data()+jp*3)-Pi);
+      CVec3d pj(aXYZ1.data()+jp*3);
+      const CVec3d v1 = pj-pi;
+      CVec3d v = v0-v1;
       w += v*v;
       //      w += v1*v1;
     }
@@ -1024,7 +1022,7 @@ DFM2_INLINE double dfm2::W_ArapEnergy
   return 0.5*w;
 }
 
-DFM2_INLINE void dfm2::dW_ArapEnergy
+DFM2_INLINE void delfem2::dW_ArapEnergy
 (std::vector<double>& aRes,
  const std::vector<double>& aXYZ0,
  const std::vector<double>& aXYZ1,
@@ -1036,24 +1034,24 @@ DFM2_INLINE void dfm2::dW_ArapEnergy
   assert( aXYZ1.size() == np*3 );
   aRes.assign(np*3, 0.0);
   for(unsigned int ip=0;ip<np;++ip){
-    const dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
-    const dfm2::CVec3d pi(aXYZ1.data()+ip*3);
-    const dfm2::CQuatd Qi(aQuat1.data()+ip*4);
-    dfm2::CMat3d LM; LM.SetZero();
+    const CVec3d Pi(aXYZ0.data()+ip*3);
+    const CVec3d pi(aXYZ1.data()+ip*3);
+    const CQuatd Qi(aQuat1.data()+ip*4);
+    CMat3d LM; LM.SetZero();
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       const unsigned int jp = psup[ipsup];
-      const dfm2::CVec3d v0 = Qi*(dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
-      dfm2::CVec3d pj(aXYZ1.data()+jp*3);
-      const dfm2::CVec3d v1 = pj-pi;
-      const dfm2::CVec3d r = -(v1-v0);
-      //      const dfm2::CVec3d r = -v1;
+      const CVec3d v0 = Qi*(CVec3d(aXYZ0.data()+jp*3)-Pi);
+      CVec3d pj(aXYZ1.data()+jp*3);
+      const CVec3d v1 = pj-pi;
+      const CVec3d r = -(v1-v0);
+      //      const CVec3d r = -v1;
       r.AddToScale(aRes.data()+ip*3, +1);
       r.AddToScale(aRes.data()+jp*3, -1);
     }
   }
 }
 
-DFM2_INLINE void dfm2::ddW_ArapEnergy
+DFM2_INLINE void delfem2::ddW_ArapEnergy
  (std::vector<double>& eM,
   const std::vector<unsigned int>& aIP,
   const std::vector<double>& aXYZ0,
@@ -1062,30 +1060,30 @@ DFM2_INLINE void dfm2::ddW_ArapEnergy
   const unsigned int nIP = aIP.size();
   const unsigned int nNg = nIP-1; // number of neighbor
   unsigned int ip = aIP[nNg];
-  const dfm2::CVec3d Pi(aXYZ0.data()+ip*3);
-  dfm2::CMat3d LM; LM.SetZero();
+  const CVec3d Pi(aXYZ0.data()+ip*3);
+  CMat3d LM; LM.SetZero();
   for(unsigned int iip=0;iip<nNg;++iip){
     const unsigned int jp = aIP[iip];
-    const dfm2::CVec3d v0 = (dfm2::CVec3d(aXYZ0.data()+jp*3)-Pi);
-    LM += dfm2::Mat3_CrossCross(v0);
+    const CVec3d v0 = (CVec3d(aXYZ0.data()+jp*3)-Pi);
+    LM += Mat3_CrossCross(v0);
   }
-  dfm2::CMat3d LMi = LM.Inverse();
-  dfm2::CMat3d Mrot = dfm2::CMat3d::Quat(aQuat1.data()+ip*4);
+  CMat3d LMi = LM.Inverse();
+  CMat3d Mrot = CMat3d::Quat(aQuat1.data()+ip*4);
   //    LMi = R*LMi*R.Trans();
   eM.assign(nIP*nIP*9, 0.0);
   for(unsigned int jjp=0;jjp<nNg;++jjp){
     for(unsigned int kkp=0;kkp<nNg;++kkp){
-      const dfm2::CVec3d vj = (dfm2::CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
-      const dfm2::CVec3d vk = (dfm2::CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
-      dfm2::CMat3d L1 = Mrot*dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p)*Mrot.Trans();
-      //        L1 = dfm2::CMat3d::Spin(vk.p)*LMi*dfm2::CMat3d::Spin(vj.p);
+      const CVec3d vj = (CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
+      const CVec3d vk = (CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
+      CMat3d L1 = Mrot*CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p)*Mrot.Trans();
+      //        L1 = CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p);
       L1.AddToScale(eM.data()+(kkp*nIP+jjp)*9, -1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, -1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, +1.0);
       L1.AddToScale(eM.data()+(kkp*nIP+nNg)*9, +1.0);
     }
     {
-      dfm2::CMat3d L1 = dfm2::CMat3d::Identity();
+      CMat3d L1 = CMat3d::Identity();
       L1.AddToScale(eM.data()+(jjp*nIP+jjp)*9, +1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, +1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, -1.0);
@@ -1097,7 +1095,7 @@ DFM2_INLINE void dfm2::ddW_ArapEnergy
 
 
 template <typename T>
-DFM2_INLINE void dfm2::GetConstConstDiff_Bend
+DFM2_INLINE void delfem2::GetConstConstDiff_Bend
  (double& C, CVec3<T> dC[4],
   const CVec3<T>& p0,
   const CVec3<T>& p1,
@@ -1127,7 +1125,7 @@ DFM2_INLINE void dfm2::GetConstConstDiff_Bend
   dC[2] = (v03^tmpBA) + (tmpAB^v13);
   dC[3] = (tmpBA^v02) + (v12^tmpAB);
 }
-template void dfm2::GetConstConstDiff_Bend(double& C, CVec3d dC[4],
+template void delfem2::GetConstConstDiff_Bend(double& C, CVec3d dC[4],
                                            const CVec3d& p0,
                                            const CVec3d& p1,
                                            const CVec3d& p2,

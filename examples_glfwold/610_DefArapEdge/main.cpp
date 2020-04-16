@@ -7,15 +7,12 @@
 
 #include "delfem2/def.h"
 #include "delfem2/mat4.h"
-#include "delfem2/mshtopo.h"
 #include "delfem2/primitive.h"
-#include <iostream>
 #include <cmath>
 
 // ----------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 

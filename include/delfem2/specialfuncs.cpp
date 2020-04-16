@@ -8,31 +8,37 @@
 #include <cmath>
 #include "delfem2/specialfuncs.h"
 
-namespace dfm2 = delfem2;
+//namespace dfm2 = delfem2;
 
 //const double pi = 3.1415926535;
 //const double invpi = 1.0/pi;
 
-inline double normalize(double& x, double& z, double& y){
-  double r = sqrt(x*x+y*y+z*z);
-  double invr = 1.0/r;
+namespace delfem2 {
+namespace specialfuncs {
+
+DFM2_INLINE double normalize(double &x, double &z, double &y) {
+  double r = sqrt(x * x + y * y + z * z);
+  double invr = 1.0 / r;
   x *= invr;
   y *= invr;
   z *= invr;
   return r;
 }
 
+}
+}
+
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
 // https://ciks.cbt.nist.gov/~garbocz/paper134/node10.html
-void dfm2::makeArray_SphericalHarmonics
+void delfem2::makeArray_SphericalHarmonics
 (double* Y,
  int n,
  double x, double y, double z)
 {
   const double pi = 3.1415926535;
   const double invpi = 1.0/pi;
-  COMPLEX ep = COMPLEX(+x,y);
+  std::complex<double> ep = std::complex<double>(+x,y);
   ////
   { // 0
     Y[ 0] =+0.5*sqrt(invpi);
@@ -47,7 +53,7 @@ void dfm2::makeArray_SphericalHarmonics
     Y[ 3] =v1*r1;
   }
   if( n == 1 ) return;
-  COMPLEX ep2 = ep*ep;
+  std::complex<double> ep2 = ep*ep;
   double r2 = real(ep2);
   double i2 = imag(ep2);
   double z2 = z*z;
@@ -76,7 +82,7 @@ void dfm2::makeArray_SphericalHarmonics
     Y[15] = v3*r3;
   }
   if( n == 3 ) return;
-  COMPLEX ep4 = ep2*ep2;
+  std::complex<double> ep4 = ep2*ep2;
   double r4 = real(ep4);
   double i4 = imag(ep4);
   double z4 = z2*z2;
@@ -168,7 +174,7 @@ void dfm2::makeArray_SphericalHarmonics
     Y[63] = v7*r7;
   }
   if( n == 7 ) return;
-  COMPLEX ep8 = ep4*ep4;
+  std::complex<double> ep8 = ep4*ep4;
   double r8 = real(ep8);
   double i8 = imag(ep8);
   double z8 = z4*z4;  
@@ -237,9 +243,9 @@ void dfm2::makeArray_SphericalHarmonics
 
 
 
-void dfm2::makeArray_CoeffSphericalHankelFirst(int n, COMPLEX* h, double x)
+void delfem2::makeArray_CoeffSphericalHankelFirst(int n, std::complex<double>* h, double x)
 {
-  COMPLEX i = COMPLEX(0, 1);
+  std::complex<double> i = std::complex<double>(0, 1);
   const double y = 1.0/x;
   //  COMPLEX eixy = y*exp(COMPLEX(0, x));
   

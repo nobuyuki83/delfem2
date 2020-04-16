@@ -11,27 +11,30 @@
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 
-namespace dfm2 = delfem2;
-
 // -------------------------------------
 
+namespace delfem2 {
+namespace objfdtri {
+
 static void FetchData
-(double* val_to,
- int nno, int ndim,
- const int* aIP,
- const double* val_from,
- int nstride)
-{
-  assert( nstride >= ndim );
-  for(int ino=0;ino<nno;++ino){
+    (double *val_to,
+     int nno, int ndim,
+     const int *aIP,
+     const double *val_from,
+     int nstride) {
+  assert(nstride >= ndim);
+  for (int ino = 0; ino < nno; ++ino) {
     int ip = aIP[ino];
-    for(int idim=0;idim<ndim;++idim){
-      val_to[ino*ndim+idim] = val_from[ip*nstride+idim];
+    for (int idim = 0; idim < ndim; ++idim) {
+      val_to[ino * ndim + idim] = val_from[ip * nstride + idim];
     }
   }
 }
 
-void dfm2::PBD_TriStrain
+}
+}
+
+void delfem2::PBD_TriStrain
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,
@@ -46,7 +49,7 @@ void dfm2::PBD_TriStrain
       {aVec2[aIP[0]].x(),aVec2[aIP[0]].y()},
       {aVec2[aIP[1]].x(),aVec2[aIP[1]].y()},
       {aVec2[aIP[2]].x(),aVec2[aIP[2]].y()} };
-    double p[3][3]; FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
+    double p[3][3]; objfdtri::FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
     double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
     double m[3] = {1,1,1};
     PBD_Update_Const3(aXYZt,
@@ -54,7 +57,7 @@ void dfm2::PBD_TriStrain
   }
 }
 
-void dfm2::PBD_Bend
+void delfem2::PBD_Bend
 (double* aXYZt,
  unsigned int nXYZ,
  const std::vector<delfem2::CDynTri>& aETri,
@@ -79,7 +82,7 @@ void dfm2::PBD_Bend
         {aVec2[aIP[1]].x(),aVec2[aIP[1]].y(), 0.0},
         {aVec2[aIP[2]].x(),aVec2[aIP[2]].y(), 0.0},
         {aVec2[aIP[3]].x(),aVec2[aIP[3]].y(), 0.0} };
-      double p[4][3]; FetchData(&p[0][0], 4, 3, aIP, aXYZt, 3);
+      double p[4][3]; objfdtri::FetchData(&p[0][0], 4, 3, aIP, aXYZt, 3);
       double C[3], dCdp[3][12];
       PBD_CdC_QuadBend(C, dCdp,
                        P, p);

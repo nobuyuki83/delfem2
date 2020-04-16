@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #ifndef DFM2_CAD3D_H
 #define DFM2_CAD3D_H
 
@@ -442,6 +449,10 @@ public:
 };
 
 } // namespace delfem2;
+
+#ifdef DFM2_HEADER_ONLY
+#  include "delfem2/cad3d.cpp"
+#endif
 
 
 #endif /* cad3d_h */

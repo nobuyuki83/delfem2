@@ -7,15 +7,15 @@
 
 
 #include <cmath>
-#include <cstdio> // memcpy
 #include <cstring>
 #include <iostream>
 
 #include "delfem2/camera.h"
 
-namespace dfm2 = delfem2;
-
 // -----------------------------------------------------------------------
+
+namespace delfem2 {
+namespace camera {
 
 //! @brief multiply two quaternion
 DFM2_INLINE void QuatQuat(double r[], const double p[], const double q[])
@@ -25,9 +25,6 @@ DFM2_INLINE void QuatQuat(double r[], const double p[], const double q[])
   r[2] = p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1];
   r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
 }
-
-namespace delfem2 {
-namespace camera {
 
 //! @brief transform vector with quaternion
 DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
@@ -47,8 +44,6 @@ DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
   vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
 
-}
-}
 
 //! @brief transform vector with conjugate of quaternion
 DFM2_INLINE void QuatConjVec(double vo[], const double q[], const double vi[])
@@ -257,10 +252,14 @@ DFM2_INLINE void MultiplyMatrices4by4OpenGL_FLOAT
   result[15]=m1[3]*m2[12]+   m1[7]*m2[13]+  m1[11]*m2[14]+  m1[15]*m2[15];
 }
 
+
+}
+}
+
 // static functions ends here
 // =====================================================
 
-DFM2_INLINE void dfm2::glhFrustumf2
+DFM2_INLINE void delfem2::glhFrustumf2
 (float *matrix,
  float left, float right,
  float bottom, float top,
@@ -292,7 +291,7 @@ DFM2_INLINE void dfm2::glhFrustumf2
 //matrix will receive the calculated perspective matrix.
 //You would have to upload to your shader
 // or use glLoadMatrixf if you aren't using shaders.
-DFM2_INLINE void dfm2::glhPerspectivef2
+DFM2_INLINE void delfem2::glhPerspectivef2
 (float *matrix,
  float fovyInDegrees, float aspectRatio,
  float znear, float zfar)
@@ -307,7 +306,7 @@ DFM2_INLINE void dfm2::glhPerspectivef2
 }
 
 
-DFM2_INLINE void dfm2::glhTranslatef2
+DFM2_INLINE void delfem2::glhTranslatef2
 (float *matrix,
  float x, float y, float z)
 {
@@ -318,7 +317,7 @@ DFM2_INLINE void dfm2::glhTranslatef2
 }
 
 
-DFM2_INLINE void dfm2::glhLookAtf2
+DFM2_INLINE void delfem2::glhLookAtf2
 ( float *matrix,
  float eyex, float eyey, float eyez,
  float cntx, float cnty, float cntz,
@@ -334,16 +333,16 @@ DFM2_INLINE void dfm2::glhLookAtf2
   forward[0] = center3D[0] - eyePosition3D[0];
   forward[1] = center3D[1] - eyePosition3D[1];
   forward[2] = center3D[2] - eyePosition3D[2];
-  Normalize3D(forward);
+  camera::Normalize3D(forward);
   //------------------
   //Side = forward x up
   float side[3] = {1,0,0};
-  Cross3D(side, forward, upVector3D);
-  Normalize3D(side);
+  camera::Cross3D(side, forward, upVector3D);
+  camera::Normalize3D(side);
   //------------------
   //Recompute up as: up = side x forward
   float up[3] = {0,1,0};
-  Cross3D(up, side, forward);
+  camera::Cross3D(up, side, forward);
   //------------------
   float matrix2[16];
   matrix2[0] = side[0];
@@ -365,8 +364,8 @@ DFM2_INLINE void dfm2::glhLookAtf2
   matrix2[15] = 1.0;
   //------------------
   float resultMatrix[16];
-  MultiplyMatrices4by4OpenGL_FLOAT(resultMatrix, matrix, matrix2);
-  dfm2::glhTranslatef2(resultMatrix,
+  camera::MultiplyMatrices4by4OpenGL_FLOAT(resultMatrix, matrix, matrix2);
+  delfem2::glhTranslatef2(resultMatrix,
                  -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
   //------------------
   memcpy(matrix, resultMatrix, 16*sizeof(float));
@@ -374,7 +373,7 @@ DFM2_INLINE void dfm2::glhLookAtf2
 
 
 
-DFM2_INLINE void dfm2::screenUnProjection
+DFM2_INLINE void delfem2::screenUnProjection
  (float vout[3],
   const float v[3],
   const float mMV[16],
@@ -383,15 +382,15 @@ DFM2_INLINE void dfm2::screenUnProjection
   const float D = mPj[11] + mPj[15]; // z is 1 after model view
   const float v0[3] = { D*v[0], D*v[1], 0.0 };
   float v1[3];
-  ::solve_GlAffineMatrix(v1,
+  camera::solve_GlAffineMatrix(v1,
                          mPj, v0);
   v1[2] = 1;
-  ::solve_GlAffineMatrix(vout,
+  camera::solve_GlAffineMatrix(vout,
                          mMV, v1);
 }
 
 
-void dfm2::screenUnProjectionDirection
+void delfem2::screenUnProjectionDirection
 (float vo[3],
  const float vi[3],
  const float mMV[16],
@@ -402,12 +401,12 @@ void dfm2::screenUnProjectionDirection
 //  v1.SetNormalizedVector();
 //  return v1;
   float v1[3];
-  ::solve_GlAffineMatrixDirection(v1,
+  camera::solve_GlAffineMatrixDirection(v1,
                                   mPj, vi);
   v1[2] = 1;
-  ::solve_GlAffineMatrixDirection(vo,
+  camera::solve_GlAffineMatrixDirection(vo,
                                   mMV, v1);
-  Normalize3D(vo);
+  camera::Normalize3D(vo);
 }
 
 
@@ -415,14 +414,14 @@ void dfm2::screenUnProjectionDirection
 // implementation of CCamera class starts here
 
 template <typename REAL>
-void dfm2::CCamera<REAL>::Affine4f_Projection
+void delfem2::CCamera<REAL>::Affine4f_Projection
 (float mP[16], double asp, double depth) const 
 {
   if( is_pars ){
     glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
   }
   else{
-    glhOrthof2(mP,
+    camera::glhOrthof2(mP,
                -view_height/scale*asp,
                +view_height/scale*asp,
                -view_height/scale,
@@ -431,13 +430,13 @@ void dfm2::CCamera<REAL>::Affine4f_Projection
                +depth*10);
   }
 }
-template void dfm2::CCamera<double>::Affine4f_Projection
+template void delfem2::CCamera<double>::Affine4f_Projection
 (float mP[16], double asp, double depth) const;
 
 // ----------------------------
 
 template <typename REAL>
-void dfm2::CCamera<REAL>::Affine4f_ModelView
+void delfem2::CCamera<REAL>::Affine4f_ModelView
 (float mMV[16]) const
 {
   /*
@@ -453,7 +452,7 @@ void dfm2::CCamera<REAL>::Affine4f_ModelView
     0.f, 0.f, 1.f, 0.f,
     (float)trans[0], (float)trans[1], (float)trans[2], 1.f};
   float A[16];
-  Mat4f_Identity(A);
+  camera::Mat4f_Identity(A);
   if(      camera_rot_mode == CAMERA_ROT_YTOP  ){
     double x = sin(theta);
     double z = cos(theta);
@@ -471,27 +470,27 @@ void dfm2::CCamera<REAL>::Affine4f_ModelView
     glhLookAtf2(A, x,y,z, 0,0,0, 0,0,1);
   }
   else if( camera_rot_mode == CAMERA_ROT_TBALL ){
-    Mat4f_Quat(A,Quat_tball);
+    camera::Mat4f_Quat(A,Quat_tball);
   }
-  MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
+  camera::MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
 }
-template void dfm2::CCamera<double>::Affine4f_ModelView
+template void delfem2::CCamera<double>::Affine4f_ModelView
  (float mMV[16]) const;
 
 // -------------------------
 
 template <typename REAL>
-void dfm2::CCamera<REAL>::Scale(double s){
+void delfem2::CCamera<REAL>::Scale(double s){
   scale *= s;
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::CCamera<double>::Scale(double s);
+template void delfem2::CCamera<double>::Scale(double s);
 #endif
   
 // --------------------------
 
 template <typename REAL>
-void dfm2::CCamera<REAL>::Rot_Camera(double dx, double dy){
+void delfem2::CCamera<REAL>::Rot_Camera(double dx, double dy){
     if(      camera_rot_mode == CAMERA_ROT_YTOP ){
       theta -= dx;
       psi   -= dy;
@@ -505,19 +504,19 @@ void dfm2::CCamera<REAL>::Rot_Camera(double dx, double dy){
       double ar = a*0.5; // angle
       double dq[4] = { cos(ar), -dy*sin(ar)/a, dx*sin(ar)/a, 0.0 };
       if (a != 0.0) {
-        double qtmp[4]; QuatQuat(qtmp, dq, Quat_tball);
-        CopyQuat(Quat_tball,qtmp);
+        double qtmp[4]; camera::QuatQuat(qtmp, dq, Quat_tball);
+        camera::CopyQuat(Quat_tball,qtmp);
       }
     }
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::CCamera<double>::Rot_Camera(double dx, double dy);
+template void delfem2::CCamera<double>::Rot_Camera(double dx, double dy);
 #endif
 
 // ------------------------
 
 template <typename REAL>
-void dfm2::CCamera<REAL>::Pan_Camera(double dx, double dy){
+void delfem2::CCamera<REAL>::Pan_Camera(double dx, double dy){
     double s = view_height/scale;
     trans[0] += s*dx;
     trans[1] += s*dy;
@@ -525,13 +524,13 @@ void dfm2::CCamera<REAL>::Pan_Camera(double dx, double dy){
   
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::CCamera<double>::Pan_Camera(double dx, double dy);
+template void delfem2::CCamera<double>::Pan_Camera(double dx, double dy);
 #endif
 
 // ------------------------
 
 template <typename REAL>
-std::ostream &operator<<(std::ostream &output, dfm2::CCamera<REAL>& c)
+std::ostream &operator<<(std::ostream &output, delfem2::CCamera<REAL>& c)
 {
   output.setf(std::ios::scientific);
   output << c.is_pars << std::endl;
@@ -546,7 +545,7 @@ std::ostream &operator<<(std::ostream &output, dfm2::CCamera<REAL>& c)
 }
 
 template <typename REAL>
-std::istream &operator>>(std::istream &input, dfm2::CCamera<REAL>& c)
+std::istream &operator>>(std::istream &input, delfem2::CCamera<REAL>& c)
 {
   {
     int is0; input >> is0; c.is_pars = (bool)is0;
@@ -556,7 +555,7 @@ std::istream &operator>>(std::istream &input, dfm2::CCamera<REAL>& c)
   input >> c.view_height;
   input >> c.trans[0] >> c.trans[1] >> c.trans[2];
   {
-    int imode; input >> imode; c.camera_rot_mode = (dfm2::CAMERA_ROT_MODE)imode;
+    int imode; input >> imode; c.camera_rot_mode = (delfem2::CAMERA_ROT_MODE)imode;
   }
   input >> c.theta >> c.psi;
   input >> c.Quat_tball[0] >> c.Quat_tball[1] >> c.Quat_tball[2] >> c.Quat_tball[3];
