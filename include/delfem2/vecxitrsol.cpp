@@ -11,13 +11,10 @@
 #include <complex>
 #include "delfem2/vecxitrsol.h"
 
-typedef std::complex<double> COMPLEX;
-namespace dfm2 = delfem2;
-
 // ----------------------------------------------------------------------
 
 template <typename T>
-T dfm2::Dot(
+T delfem2::Dot(
     const std::vector<T>& r_vec,
     const std::vector<T>& u_vec)
 {
@@ -28,23 +25,23 @@ T dfm2::Dot(
   return r;
 }
 #ifndef DFM2_HEADER_ONLY
-template float dfm2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
-template double dfm2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
+template float delfem2::Dot(const std::vector<float>& r_vec, const std::vector<float>& u_vec);
+template double delfem2::Dot(const std::vector<double>& r_vec, const std::vector<double>& u_vec);
 #endif
 
 namespace delfem2 {
 
 template <>
-COMPLEX Dot(
-    const std::vector<COMPLEX>& va,
-    const std::vector<COMPLEX>& vb)
+std::complex<double> Dot(
+    const std::vector<std::complex<double>>& va,
+    const std::vector<std::complex<double>>& vb)
 {
   const std::size_t n = va.size();
   assert( vb.size() == n );
   double sr = 0.0, si = 0.0;
   for(unsigned int i=0;i<n;++i){
-    const COMPLEX& a = va[i];
-    const COMPLEX& b = vb[i];
+    const std::complex<double>& a = va[i];
+    const std::complex<double>& b = vb[i];
     sr += a.real()*b.real() + a.imag()*b.imag();
     si += a.imag()*b.real() - a.real()*b.imag();
   }
@@ -57,7 +54,7 @@ COMPLEX Dot(
 // dotx
 
 template<typename T>
-T dfm2::DotX(
+T delfem2::DotX(
     const T* va,
     const T* vb,
     unsigned int n)
@@ -66,22 +63,25 @@ T dfm2::DotX(
   for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
   return r;
 }
-template float dfm2::DotX(const float* va, const float* vb, unsigned int n);
-template double dfm2::DotX(const double* va, const double* vb, unsigned int n);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::DotX(const float* va, const float* vb, unsigned int n);
+template double delfem2::DotX(const double* va, const double* vb, unsigned int n);
+#endif
+
 
 namespace delfem2 {
 
 template <>
-COMPLEX DotX
- (const COMPLEX* va,
-  const COMPLEX* vb,
+std::complex<double> DotX
+ (const std::complex<double>* va,
+  const std::complex<double>* vb,
   unsigned int n)
 {
   double sr = 0.0;
   double si = 0.0;
   for(unsigned int i=0;i<n;i++){
-    const COMPLEX& a = va[i];
-    const COMPLEX& b = vb[i];
+    const std::complex<double>& a = va[i];
+    const std::complex<double>& b = vb[i];
     sr += a.real()*b.real() + a.imag()*b.imag();
     si += a.imag()*b.real() - a.real()*b.imag();
   }
@@ -95,7 +95,7 @@ COMPLEX DotX
 // distance
 
 template<typename T>
-T dfm2::Distance(const std::vector<T>& va,
+T delfem2::Distance(const std::vector<T>& va,
                  const std::vector<T>& vb)
 {
   const unsigned int n = va.size();
@@ -103,8 +103,10 @@ T dfm2::Distance(const std::vector<T>& va,
   for(unsigned int i=0;i<n;i++){ r += (va[i]-vb[i])*(va[i]-vb[i]); }
   return r;
 }
-template float dfm2::Distance(const std::vector<float>& va, const std::vector<float>& vb);
-template double dfm2::Distance(const std::vector<double>& va, const std::vector<double>& vb);
+#ifndef DFM2_HEADER_ONLY
+template float delfem2::Distance(const std::vector<float>& va, const std::vector<float>& vb);
+template double delfem2::Distance(const std::vector<double>& va, const std::vector<double>& vb);
+#endif
 
 
 
@@ -123,9 +125,14 @@ void AXPY(
   assert(y.size() == n);
   for (unsigned int i = 0; i < n; i++) { y[i] += a * x[i]; }
 }
+#ifndef DFM2_HEADER_ONLY
 template void AXPY( float a, const std::vector<float> &x, std::vector<float> &y);
 template void AXPY( double a, const std::vector<double> &x, std::vector<double> &y);
-template void AXPY( COMPLEX a, const std::vector<COMPLEX> &x, std::vector<COMPLEX> &y);
+template void AXPY(
+    std::complex<double> a,
+    const std::vector<std::complex<double>> &x,
+    std::vector<std::complex<double>> &y);
+#endif
 
 }
 
@@ -143,9 +150,15 @@ void AXPY(
 {
   for(unsigned int i=0;i<n;i++){ y[i] += a*x[i]; }
 }
+#ifndef DFM2_HEADER_ONLY
 template void AXPY(float a, const float* x, float* y, unsigned int n);
 template void AXPY(double a, const double* x, double* y, unsigned int n);
-template void AXPY(COMPLEX a, const COMPLEX* x, COMPLEX* y, unsigned int n);
+template void AXPY(
+    std::complex<double> a,
+    const std::complex<double>* x,
+    std::complex<double>* y,
+    unsigned int n);
+#endif
 
 }
 
@@ -153,15 +166,17 @@ template void AXPY(COMPLEX a, const COMPLEX* x, COMPLEX* y, unsigned int n);
 // --------
 
 template <typename VAL>
-void dfm2::ScaleX(
+void delfem2::ScaleX(
     VAL* p0,
     VAL s,
     unsigned int n)
 {
   for(unsigned int i=0;i<n;++i){ p0[i] *= s; }
 }
-template void dfm2::ScaleX(float* p0, float s, unsigned int n);
-template void dfm2::ScaleX(double* p0, double s, unsigned int n);
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::ScaleX(float* p0, float s, unsigned int n);
+template void delfem2::ScaleX(double* p0, double s, unsigned int n);
+#endif
 
 
 
@@ -169,33 +184,33 @@ template void dfm2::ScaleX(double* p0, double s, unsigned int n);
 
 
 
-void dfm2::NormalizeX
+void delfem2::NormalizeX
  (double* p0,
   unsigned int n)
 {
-  const double ss = dfm2::DotX(p0,p0,n);
+  const double ss = delfem2::DotX(p0,p0,n);
   ScaleX(p0,1.0/sqrt(ss),n);
 }
 
-void dfm2::OrthogonalizeToUnitVectorX
+void delfem2::OrthogonalizeToUnitVectorX
  (double* p1,
   const double* p0,
   unsigned int n)
 {
-  double d = dfm2::DotX(p0, p1, n);
+  double d = delfem2::DotX(p0, p1, n);
   for(unsigned int i=0;i<n;++i){ p1[i] -= d*p0[i]; }
 }
 
 
-COMPLEX dfm2::MultSumX
-(const COMPLEX* va,
- const COMPLEX* vb,
+std::complex<double> delfem2::MultSumX
+(const std::complex<double>* va,
+ const std::complex<double>* vb,
  unsigned int n)
 {
-  COMPLEX s(0,0);
+  std::complex<double> s(0,0);
   for(unsigned int i=0;i<n;++i){
-    const COMPLEX& a = va[i];
-    const COMPLEX& b = vb[i];
+    const std::complex<double>& a = va[i];
+    const std::complex<double>& b = vb[i];
     s += a*b;
   }
   return s;
@@ -254,7 +269,7 @@ void setRHS_Zero
 
 template<>
 void setRHS_Zero
-(std::vector<COMPLEX> &vec_b,
+(std::vector<std::complex<double>> &vec_b,
  const std::vector<int> &aBCFlag,
  int iflag_nonzero)
 {
@@ -267,7 +282,7 @@ void setRHS_Zero
 
 }
 
-void dfm2::XPlusAYBZ
+void delfem2::XPlusAYBZ
  (std::vector<double>& X,
   const int nDoF,
   const std::vector<int>& aBCFlag,
@@ -282,7 +297,7 @@ void dfm2::XPlusAYBZ
   }
 }
 
-void dfm2::XPlusAYBZCW
+void delfem2::XPlusAYBZCW
  (std::vector<double>& X,
   const int nDoF,
   const std::vector<int>& aBCFlag,
@@ -303,7 +318,7 @@ void dfm2::XPlusAYBZCW
 
 
 
-void dfm2::setRHS_MasterSlave
+void delfem2::setRHS_MasterSlave
  (double* vec_b,
   int nDoF,
   const int* aMSFlag)
@@ -319,7 +334,7 @@ void dfm2::setRHS_MasterSlave
 
 
 
-void dfm2::MatVec
+void delfem2::MatVec
  (double* y,
   const double* A, unsigned int ncol, unsigned int nrow,
   const double* x)
@@ -334,7 +349,7 @@ void dfm2::MatVec
 
 
 
-void dfm2::MatTVec
+void delfem2::MatTVec
  (double* y,
   const double* A, unsigned int ncol, unsigned int nrow,
   const double* x)

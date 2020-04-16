@@ -5,12 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <set>
 #include <algorithm>
 #include "delfem2/dtri3_v3dtri.h"
 
-namespace dfm2 = delfem2;
+//namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
@@ -21,19 +19,19 @@ DFM2_INLINE int InsertPoint_Mesh
  (const int itri0,
   double& r0,
   double& r1,
-  std::vector<dfm2::CDynPntSur>& aPo3D,
-  std::vector<dfm2::CDynTri>& aSTri,
-  std::vector<dfm2::CVec3d>& aXYZ)
+  std::vector<CDynPntSur>& aPo3D,
+  std::vector<CDynTri>& aSTri,
+  std::vector<CVec3d>& aXYZ)
 {
   if (itri0==-1) return -1;
-  dfm2::CVec3d pos;
+  CVec3d pos;
   {
     const int i0 = aSTri[itri0].v[0];
     const int i1 = aSTri[itri0].v[1];
     const int i2 = aSTri[itri0].v[2];
-    const dfm2::CVec3d& p0 = aXYZ[i0];
-    const dfm2::CVec3d& p1 = aXYZ[i1];
-    const dfm2::CVec3d& p2 = aXYZ[i2];
+    const CVec3d& p0 = aXYZ[i0];
+    const CVec3d& p1 = aXYZ[i1];
+    const CVec3d& p2 = aXYZ[i2];
     pos = r0*p0 + r1*p1 + (1-r0-r1)*p2;
   }
   int ipo_ins = (int)aPo3D.size();
@@ -45,16 +43,16 @@ DFM2_INLINE int InsertPoint_Mesh
 
 
 DFM2_INLINE bool pickMesh
- (dfm2::CVec3d& p,
+ (CVec3d& p,
   int& itriOut,
   double& r0Out,
   double& r1Out,
   //
-  const dfm2::CVec3d& org,
-  const dfm2::CVec3d& dir,
+  const CVec3d& org,
+  const CVec3d& dir,
   int itri_start, // starting triangle
-  const std::vector<dfm2::CDynTri>& aSTri,
-  const std::vector<dfm2::CVec3d>& aXYZ)
+  const std::vector<CDynTri>& aSTri,
+  const std::vector<CVec3d>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -62,9 +60,9 @@ DFM2_INLINE bool pickMesh
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const dfm2::CVec3d& tp0 = aXYZ[ip0];
-    const dfm2::CVec3d& p1 = aXYZ[ip1];
-    const dfm2::CVec3d& p2 = aXYZ[ip2];
+    const CVec3d& tp0 = aXYZ[ip0];
+    const CVec3d& p1 = aXYZ[ip1];
+    const CVec3d& p2 = aXYZ[ip2];
     const double v0 = Volume_Tet(p1, p2, org, org+dir);
     const double v1 = Volume_Tet(p2, tp0, org, org+dir);
     const double v2 = Volume_Tet(tp0, p1, org, org+dir);
@@ -114,12 +112,12 @@ DFM2_INLINE bool pickMesh
 
 
 DFM2_INLINE int pickTriangle
- (dfm2::CVec3d& p,
-  const dfm2::CVec3d& org,
-  const dfm2::CVec3d& dir,
+ (CVec3d& p,
+  const CVec3d& org,
+  const CVec3d& dir,
   int itri_start, // starting triangle
-  const std::vector<dfm2::CDynTri>& aSTri,
-  const std::vector<dfm2::CVec3d>& aXYZ)
+  const std::vector<CDynTri>& aSTri,
+  const std::vector<CVec3d>& aXYZ)
 {
   int itri1 = itri_start;
   for (int itr = 0; itr<50; itr++){
@@ -127,9 +125,9 @@ DFM2_INLINE int pickTriangle
     int ip0 = aSTri[itri1].v[0];
     int ip1 = aSTri[itri1].v[1];
     int ip2 = aSTri[itri1].v[2];
-    const dfm2::CVec3d& tp0 = aXYZ[ip0];
-    const dfm2::CVec3d& p1 = aXYZ[ip1];
-    const dfm2::CVec3d& p2 = aXYZ[ip2];
+    const CVec3d& tp0 = aXYZ[ip0];
+    const CVec3d& p1 = aXYZ[ip1];
+    const CVec3d& p2 = aXYZ[ip2];
     double v0 = Volume_Tet(p1, p2, org, org+dir);
     double v1 = Volume_Tet(p2, tp0, org, org+dir);
     double v2 = Volume_Tet(tp0, p1, org, org+dir);
@@ -155,14 +153,14 @@ DFM2_INLINE int pickTriangle
 
 
 DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
- (dfm2::CVec3d &intersectionPoint,
-  const dfm2::CVec3d &line0,
-  const dfm2::CVec3d &line1,
-  const std::vector<dfm2::CDynTri>& aTri,
-  const std::vector<dfm2::CVec3d>& aVec3,
-  const dfm2::CVec3d &targetPoint)
+ (CVec3d &intersectionPoint,
+  const CVec3d &line0,
+  const CVec3d &line1,
+  const std::vector<CDynTri>& aTri,
+  const std::vector<CVec3d>& aVec3,
+  const CVec3d &targetPoint)
 {
-  std::vector<dfm2::CVec3d> intersectionPoints;
+  std::vector<CVec3d> intersectionPoints;
   if (!FindRayTriangleMeshIntersections(intersectionPoints,
                                         line0, line1,
                                         aTri, aVec3))
@@ -195,7 +193,7 @@ DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
 // --------------------------------------------------------------------------
 // expose functions
 
-dfm2::CVec3d dfm2::normalTri
+delfem2::CVec3d delfem2::normalTri
 (int itri0,
  const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aXYZ)
@@ -208,7 +206,7 @@ dfm2::CVec3d dfm2::normalTri
 }
 
 
-bool dfm2::CheckTri
+bool delfem2::CheckTri
 (const std::vector<CDynPntSur>& aPo3D,
  const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aXYZ)
@@ -232,7 +230,7 @@ bool dfm2::CheckTri
 
 
 
-bool dfm2::FindRayTriangleMeshIntersections
+bool delfem2::FindRayTriangleMeshIntersections
 (std::vector<CVec3d> &intersectionPoints,
  const CVec3d &line0,
  const CVec3d &line1,
@@ -259,7 +257,7 @@ bool dfm2::FindRayTriangleMeshIntersections
 
 // -----------------------------------------------------------------
 
-bool dfm2::DelaunayAroundPoint
+bool delfem2::DelaunayAroundPoint
 (int ipo0,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri,

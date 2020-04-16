@@ -15,7 +15,8 @@
 
 #include "delfem2/dtet_v3.h"
 
-namespace dfm2 = delfem2;
+namespace delfem2{
+namespace dtet{
 
 const unsigned int nTri5 = 10;
 const unsigned int tri5[nTri5][3] = {
@@ -80,9 +81,6 @@ const unsigned int nTriInSwap5 = 3;
 const unsigned int sup2Noel5[nSupSwap5][nTriInSwap5][3] = {
 	{ { 0, 1, 2 },{ 0, 2, 3 },{ 0, 3, 4 } },
 };
-
-namespace delfem2{
-namespace dtet{
 
 class CNew
 {
@@ -745,7 +743,7 @@ bool Swap4Elared
 // =====================================================================
 
 
-bool dfm2::MakeTetSurTet(std::vector<CETet>& tet)
+bool delfem2::MakeTetSurTet(std::vector<CETet>& tet)
 {
 	unsigned int ntetsuno;
 	unsigned int* tetsuno_ind = 0;
@@ -877,7 +875,7 @@ bool dfm2::MakeTetSurTet(std::vector<CETet>& tet)
 	return true;
 }
 
-bool dfm2::MakeOneTetSurNo
+bool delfem2::MakeOneTetSurNo
  (const std::vector<CETet>& tet,
   std::vector<CEPo3D>& point)
 {
@@ -900,7 +898,7 @@ bool dfm2::MakeOneTetSurNo
 	return true;
 }
 
-bool dfm2::MakeTetSurNo
+bool delfem2::MakeTetSurNo
  (const std::vector<CETet>& tet,
 	const unsigned int npoin,
 	unsigned int& ntetsupo,
@@ -1204,7 +1202,7 @@ bool MakeOuterBoundTet
 */ 
  
  
-bool dfm2::MakeEdgeTet
+bool delfem2::MakeEdgeTet
 (unsigned int& nedge,
  unsigned int*& edge_ind,
  unsigned int*& edge,
@@ -1679,7 +1677,7 @@ bool CheckTri(const std::vector<STri3D>& tri )
  */
 
 
-bool dfm2::CheckTet
+bool delfem2::CheckTet
  (const std::vector<CETet>& aSTet,
   const std::vector<CEPo3D>& aPo3D)
 {
@@ -1753,7 +1751,7 @@ bool dfm2::CheckTet
 }
 
 
-bool dfm2::CheckTet(const std::vector<CETet>& tet)
+bool delfem2::CheckTet(const std::vector<CETet>& tet)
 {
 	std::cout << " *** CheckTet *** ";
 	
@@ -1803,7 +1801,7 @@ bool dfm2::CheckTet(const std::vector<CETet>& tet)
 
 // --------------------------------------------------------------
 
-void dfm2::AddPointTetDelaunay
+void delfem2::AddPointTetDelaunay
 (int ip_ins,
  int itet_ins,
 std::vector<CEPo3D>& aPo3D,
@@ -1834,7 +1832,7 @@ std::vector<int>& tmp_buffer)
   std::vector<dtet::COld> aOld;
   {
     tmp_buffer.resize(aSTet.size()*4, -1);
-    const dfm2::CVec3d& p_ins = aPo3D[ip_ins].p;
+    const CVec3d& p_ins = aPo3D[ip_ins].p;
     std::stack< std::pair<int, int> > stackFace;
     stackFace.push(std::make_pair(itet_ins, 0));
     stackFace.push(std::make_pair(itet_ins, 1));
@@ -2048,10 +2046,10 @@ std::vector<int>& tmp_buffer)
       int i1 = aSTet[it_new].v[1];
       int i2 = aSTet[it_new].v[2];
       int i3 = aSTet[it_new].v[3];
-      const dfm2::CVec3d& p0 = aPo3D[i0].p;
-      const dfm2::CVec3d& p1 = aPo3D[i1].p;
-      const dfm2::CVec3d& p2 = aPo3D[i2].p;
-      const dfm2::CVec3d& p3 = aPo3D[i3].p;
+      const delfem2::CVec3d& p0 = aPo3D[i0].p;
+      const CVec3d& p1 = aPo3D[i1].p;
+      const CVec3d& p2 = aPo3D[i2].p;
+      const CVec3d& p3 = aPo3D[i3].p;
       double vol = Volume_Tet(p0, p1, p2, p3);
       assert(vol>1.0e-10);
 //      std::cout<<"   inew:" << inew << "  it_new:" << it_new<<" "<<vol<<"  "<< i0 << " " << i1<<" "<<i2<< " " << i3<<std::endl;
@@ -2093,7 +2091,7 @@ std::vector<int>& tmp_buffer)
 
 // -------------------------------
 
-bool dfm2::MakeElemAroundEdge
+bool delfem2::MakeElemAroundEdge
 ( ElemAroundEdge& elared,
  const int itet0,
  const int idedge0,
@@ -2296,7 +2294,7 @@ bool GetEdgeSwapPtnCrt5Elared
  */
 
 
-bool dfm2::MakeElemAroundPoint
+bool delfem2::MakeElemAroundPoint
 ( ElemAroundPoint& elarpo,
  const int itet0,
  const int inoel0,
@@ -2672,7 +2670,7 @@ bool GetAddPointEdgeCrt(const ElemAroundEdge& elared,
 }
 */
 
-bool dfm2::AddPointTet_Elem
+bool delfem2::AddPointTet_Elem
 (const unsigned int itet_ins,
  const unsigned int ipo_ins,
  std::vector<CEPo3D>& aPo,
@@ -2779,7 +2777,7 @@ bool dfm2::AddPointTet_Elem
 }
 
 
-bool dfm2::AddPointTet_Face
+bool delfem2::AddPointTet_Face
 (const unsigned int itet_ins,
  const unsigned int ifatet_ins,
  const unsigned int ipo_ins,
@@ -3196,7 +3194,7 @@ bool AddPointTri_Edge( const unsigned int ipo_ins,
 }
  */
 
-bool dfm2::AddPointTet_Edge
+bool delfem2::AddPointTet_Edge
 (const ElemAroundEdge& elared,
  const unsigned int ino_ins,
  std::vector<CEPo3D>& node,
@@ -3513,7 +3511,7 @@ bool GetEdgeSwapPtnCrt
 }
 */
  
-bool dfm2::FaceSwapTet
+bool delfem2::FaceSwapTet
 (const unsigned int itet0,
  const unsigned int iface0,
  std::vector<CETet>& tet,
@@ -3746,7 +3744,7 @@ bool MakeTriSurNo(unsigned int& ntrisuno,
 }
  */
 
-bool dfm2::EdgeSwapTet
+bool delfem2::EdgeSwapTet
  (const ElemAroundEdge& elared,
   const int ptn,
   std::vector<CETet>& tet,

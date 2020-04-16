@@ -90,6 +90,12 @@ DFM2_INLINE void GetVertical2Vector3D
   double vec_x[3],
   double vec_y[3]);
 
+DFM2_INLINE void GetNearest_LineSegPoint3D
+    (double pn[3],
+     const double p[3], // point
+     const double s[3], // source
+     const double e[3]); // end
+
 DFM2_INLINE void GetNearest_TrianglePoint3D
  (double pn[3],
   double& r0, double& r1,
@@ -97,7 +103,6 @@ DFM2_INLINE void GetNearest_TrianglePoint3D
   const double q0[3],
   const double q1[3],
   const double q2[3]);
-
 
 // -------------------------------------------------------------
 
@@ -429,7 +434,21 @@ bool intersection_Plane_Line(CVec3<T>& p0, double& r0, double& r1, double& r2,
 template <typename T>
 bool intersection_Point_Quad(CVec3<T>& psec, double& s0, double& s1,
                              const CVec3<T>& src, const CVec3<T>& dir,
-                             const CVec3<T>& q0, const CVec3<T>& q1, const CVec3<T>& q2, const CVec3<T>& q3);
+                             const CVec3<T>& q0,
+                             const CVec3<T>& q1,
+                             const CVec3<T>& q2,
+                             const CVec3<T>& q3);
+
+template <typename T>
+void iteration_intersection_Line_Quad
+    (double& t0, double& t1,
+     const CVec3<T>& src,
+     const CVec3<T>& u,
+     const CVec3<T>& v,
+     const CVec3<T>& q0,
+     const CVec3<T>& q1,
+     const CVec3<T>& q2,
+     const CVec3<T>& q3);
   
 template <typename T>
 CVec3<T> intersection_Plane_Line(const CVec3<T>& o, // one point on plane

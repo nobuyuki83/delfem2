@@ -11,8 +11,6 @@
 
 #include "delfem2/bvh.h"
 
-namespace dfm2 = delfem2;
-
 // ------------------------------------
 
 namespace delfem2 {
@@ -25,7 +23,7 @@ DFM2_INLINE double DetSide(const double p[3], const double org[3], const double 
 DFM2_INLINE void DevideElemAryConnex
 (int iroot_node,
  std::vector<int>& aElem2Node,
- std::vector<dfm2::CNodeBVH2>& aNodeBVH,
+ std::vector<CNodeBVH2>& aNodeBVH,
  //
  const std::vector<int>& list,
  const int nfael,
@@ -231,7 +229,7 @@ public:
 
 DFM2_INLINE void mark_child(std::vector<int>& aFlg,
                        unsigned int inode0,
-                       const std::vector<dfm2::CNodeBVH2>& aNode)
+                       const std::vector<CNodeBVH2>& aNode)
 {
   assert( inode0 < aNode.size() );
   if( aNode[inode0].ichild[1] == -1 ){ // leaf
@@ -251,8 +249,8 @@ DFM2_INLINE void mark_child(std::vector<int>& aFlg,
 
 // ===========================================================
 
-DFM2_INLINE int dfm2::BVHTopology_TopDown_MeshElem
-(std::vector<dfm2::CNodeBVH2>& aNodeBVH,
+DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
+(std::vector<CNodeBVH2>& aNodeBVH,
  const int nfael,
  const std::vector<int>& aElemSur,
  const std::vector<double>& aElemCenter)
@@ -376,7 +374,7 @@ DFM2_INLINE int delfem2::MortonCode_FindSplit
 }
 
 template <typename REAL>
-DFM2_INLINE void dfm2::SortedMortenCode_Points3(
+DFM2_INLINE void delfem2::SortedMortenCode_Points3(
     std::vector<unsigned int> &aSortedId,
     std::vector<std::uint32_t> &aSortedMc,
     const std::vector<REAL> &aXYZ,
@@ -396,7 +394,7 @@ DFM2_INLINE void dfm2::SortedMortenCode_Points3(
     const REAL x = (aXYZ[ip*3+0]-x_min)/(x_max-x_min);
     const REAL y = (aXYZ[ip*3+1]-y_min)/(y_max-y_min);
     const REAL z = (aXYZ[ip*3+2]-z_min)/(z_max-z_min);
-    aNodeBVH[ip].imtc = dfm2::MortonCode(x,y,z);
+    aNodeBVH[ip].imtc = MortonCode(x,y,z);
     aNodeBVH[ip].iobj = ip;
   }
   std::sort(aNodeBVH.begin(), aNodeBVH.end());
@@ -409,13 +407,13 @@ DFM2_INLINE void dfm2::SortedMortenCode_Points3(
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void dfm2::SortedMortenCode_Points3(
+template void delfem2::SortedMortenCode_Points3(
     std::vector<unsigned int>& aSortedId,
     std::vector<std::uint32_t>& aSortedMc,
     const std::vector<float>& aXYZ,
     const float min_xyz[3],
     const float max_xyz[3]);
-template void dfm2::SortedMortenCode_Points3(
+template void delfem2::SortedMortenCode_Points3(
     std::vector<unsigned int>& aSortedId,
     std::vector<std::uint32_t>& aSortedMc,
     const std::vector<double>& aXYZ,
@@ -425,8 +423,8 @@ template void dfm2::SortedMortenCode_Points3(
 
 // ----------------------------------
 
-DFM2_INLINE void dfm2::BVHTopology_Morton
-(std::vector<dfm2::CNodeBVH2>& aNodeBVH,
+DFM2_INLINE void delfem2::BVHTopology_Morton
+(std::vector<CNodeBVH2>& aNodeBVH,
  const std::vector<unsigned int>& aSortedId,
  const std::vector<unsigned int>& aSortedMc)
 {
@@ -434,8 +432,8 @@ DFM2_INLINE void dfm2::BVHTopology_Morton
   aNodeBVH[0].iroot = -1;
   const unsigned int nni = aSortedMc.size()-1; // number of internal node
   for(unsigned int ini=0;ini<nni;++ini){
-    const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
-    int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
+    const std::pair<int,int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
+    int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
     assert( isplit != -1 );
     if( range.first == isplit ){
       const int inlA = nni+isplit;
@@ -466,7 +464,7 @@ DFM2_INLINE void dfm2::BVHTopology_Morton
 }
 
 
-DFM2_INLINE void dfm2::Check_MortonCode_Sort
+DFM2_INLINE void delfem2::Check_MortonCode_Sort
 (const std::vector<unsigned int>& aSortedId,
  const std::vector<std::uint32_t>& aSortedMc,
  const std::vector<double> aXYZ,
@@ -486,7 +484,7 @@ DFM2_INLINE void dfm2::Check_MortonCode_Sort
     double x1 = (x0-bbmin[0])/(bbmax[0]-bbmin[0]);
     double y1 = (y0-bbmin[1])/(bbmax[1]-bbmin[1]);
     double z1 = (z0-bbmin[2])/(bbmax[2]-bbmin[2]);
-    std::uint32_t mc1 = dfm2::MortonCode(x1,y1,z1);
+    std::uint32_t mc1 = MortonCode(x1,y1,z1);
     assert( mc0 == mc1 );
   }
   /*
@@ -497,15 +495,15 @@ DFM2_INLINE void dfm2::Check_MortonCode_Sort
    */
 }
 
-DFM2_INLINE void dfm2::Check_MortonCode_RangeSplit
+DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit
 (const std::vector<std::uint32_t>& aSortedMc)
 {
   assert(aSortedMc.size()>0);
   for(unsigned int ini=0;ini<aSortedMc.size()-1;++ini){
-    const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
-    int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
-    const std::pair<int,int> rangeA = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
-    const std::pair<int,int> rangeB = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
+    const std::pair<int,int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
+    int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
+    const std::pair<int,int> rangeA = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
+    const std::pair<int,int> rangeB = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
     assert( range.first == rangeA.first );
     assert( range.second == rangeB.second );
     {
@@ -516,8 +514,8 @@ DFM2_INLINE void dfm2::Check_MortonCode_RangeSplit
   }
 }
 
-DFM2_INLINE void dfm2::Check_BVH
-(const std::vector<dfm2::CNodeBVH2>& aNodeBVH,
+DFM2_INLINE void delfem2::Check_BVH
+(const std::vector<CNodeBVH2>& aNodeBVH,
  unsigned int N)
 {
   std::vector<int> aFlg(N,0);

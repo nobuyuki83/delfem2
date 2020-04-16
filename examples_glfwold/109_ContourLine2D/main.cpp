@@ -19,8 +19,6 @@
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
-namespace dfm2 = delfem2;
-
 // -------------------------
 
 std::vector<double> aXY;
@@ -102,10 +100,10 @@ int main(int argc,char* argv[])
       static int iframe = 0;
       double thres = 0.9*sin(iframe*0.001);
       aSeg.clear();
-      dfm2::AddContour(aSeg,
-                       thres,
-                       aTri.data(), aTri.size()/3,
-                       aVal.data());
+      delfem2::AddContour(aSeg,
+          thres,
+          aTri.data(), aTri.size()/3,
+          aVal.data());
       iframe += 1;
     }
     // ------------------

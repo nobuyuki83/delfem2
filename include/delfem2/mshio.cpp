@@ -16,36 +16,41 @@
 #include <cstdlib>
 #include "delfem2/mshio.h"
 
-namespace dfm2 = delfem2;
+namespace delfem2 {
+namespace mshio {
 
-static void myUnitNormalAreaTri3D
-(double n[3], double& a,
- const double v1[3], const double v2[3], const double v3[3])
-{
-  n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-  n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-  n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-  a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-  const double invlen = 0.5/a;
-  n[0]*=invlen;  n[1]*=invlen;  n[2]*=invlen;
+DFM2_INLINE void myUnitNormalAreaTri3D
+    (double n[3], double &a,
+     const double v1[3], const double v2[3], const double v3[3]) {
+  n[0] = (v2[1] - v1[1]) * (v3[2] - v1[2]) - (v3[1] - v1[1]) * (v2[2] - v1[2]);
+  n[1] = (v2[2] - v1[2]) * (v3[0] - v1[0]) - (v3[2] - v1[2]) * (v2[0] - v1[0]);
+  n[2] = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
+  a = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]) * 0.5;
+  const double invlen = 0.5 / a;
+  n[0] *= invlen;
+  n[1] *= invlen;
+  n[2] *= invlen;
 }
 
 // probably std::stroi is safer to use but it is only for C++11
-static int myStoi(const std::string& str){
-  char* e;
-  long d = std::strtol(str.c_str(),&e,0);
-  return (int)d;
+DFM2_INLINE int myStoi(const std::string &str) {
+  char *e;
+  long d = std::strtol(str.c_str(), &e, 0);
+  return (int) d;
 }
 
-static double myStod(const std::string& str){
-  char* e;
-  double d = std::strtod(str.c_str(),&e);
+DFM2_INLINE double myStod(const std::string &str) {
+  char *e;
+  double d = std::strtod(str.c_str(), &e);
   return d;
+}
+
+}
 }
 
 // ----------------------------------------------------
 
-void Write_STL
+void delfem2::Write_STL
 (const std::string& str,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
@@ -59,7 +64,7 @@ void Write_STL
     double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
     double p1[3] = { aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2] };
     double p2[3] = { aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2] };
-    double n[3]; double a; myUnitNormalAreaTri3D(n, a, p0, p1, p2);
+    double n[3]; double a; mshio::myUnitNormalAreaTri3D(n, a, p0, p1, p2);
     fout<<"  facet normal "<<n[0]<<" "<<n[1]<<" "<<n[2]<<std::endl;
     fout<<"    outer loop"<<std::endl;
     fout<<"      vertex "<<p0[0]<<" "<<p0[1]<<" "<<p0[2]<<std::endl;
@@ -67,11 +72,10 @@ void Write_STL
     fout<<"      vertex "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<std::endl;
     fout<<"    endloop"<<std::endl;
     fout<<"  endfacet"<<std::endl;
-  }
-  fout<<"endsolid"<<std::endl;
+  }  fout<<"endsolid"<<std::endl;
 }
 
-void dfm2::Read_Ply
+void delfem2::Read_Ply
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
@@ -126,7 +130,7 @@ void dfm2::Read_Ply
   //  if( is_norm_ ){ this->MakeNormal(); }
 }
 
-void dfm2::Write_Ply
+void delfem2::Write_Ply
 (const std::string& fname,
  unsigned int nXYZ, double* paXYZ,
  unsigned int nTri, unsigned int* paTri)
@@ -157,7 +161,7 @@ void dfm2::Write_Ply
 }
 
 
-void dfm2::Write_Ply
+void delfem2::Write_Ply
 (const std::string& fname,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri)
@@ -190,7 +194,7 @@ void dfm2::Write_Ply
 }
 
 
-void dfm2::Read_Ply
+void delfem2::Read_Ply
 (const std::string& fname,
  int& nnode_, double*& pXYZs_,
  int& ntri_, unsigned int*& aTri_)
@@ -259,7 +263,7 @@ void dfm2::Read_Ply
 
 // ----------------------------------------------
 
-void dfm2::Write_Obj
+void delfem2::Write_Obj
 (const std::string& str,
  const double* aXYZ, int nXYZ,
  const unsigned int* aTri, int nTri)
@@ -275,7 +279,7 @@ void dfm2::Write_Obj
   }
 }
 
-void dfm2::Write_Obj_Quad
+void delfem2::Write_Obj_Quad
 (const std::string& str,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aQuad)
@@ -291,7 +295,7 @@ void dfm2::Write_Obj_Quad
   }
 }
 
-void dfm2::Write_Obj
+void delfem2::Write_Obj
 (const std::string& str,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aElemInd,
@@ -317,7 +321,7 @@ void dfm2::Write_Obj
 }
 
 
-void dfm2::Write_Obj
+void delfem2::Write_Obj
 (const std::string& str,
  const std::vector< std::pair< std::vector<double>, std::vector<int> > >& aMesh)
 {
@@ -341,7 +345,7 @@ void dfm2::Write_Obj
   }
 }
 
-void dfm2::Read_Obj
+void delfem2::Read_Obj
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
@@ -377,7 +381,7 @@ void dfm2::Read_Obj
   }
 }
 
-void dfm2::Read_Obj_Quad
+void delfem2::Read_Obj_Quad
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aQuad)
@@ -414,7 +418,7 @@ void dfm2::Read_Obj_Quad
   }
 }
 
-void dfm2::Read_Obj2
+void delfem2::Read_Obj2
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -457,7 +461,7 @@ void dfm2::Read_Obj2
   }
 }
 
-void dfm2::Read_Obj
+void delfem2::Read_Obj
 (std::stringstream& ssobj,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -488,7 +492,7 @@ void dfm2::Read_Obj
   }
 }
 
-void dfm2::Read_Obj3
+void delfem2::Read_Obj3
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri)
@@ -594,12 +598,12 @@ void ParseVtx
   }
 }
 
-void dfm2::Load_Obj
+void delfem2::Load_Obj
 (const std::string& fname,
  std::string& fname_mtl,
  std::vector<double>& aXYZ,
  std::vector<double>& aNorm,
- std::vector<dfm2::CTriGroup>& aTriGroup)
+ std::vector<CTriGroup>& aTriGroup)
 {
   std::ifstream fin;
   fin.open(fname.c_str());
@@ -685,7 +689,7 @@ void dfm2::Load_Obj
 
 // ------------------------------------------------------------------------
 
-void dfm2::Read_MeshTet3D_TetGen
+void delfem2::Read_MeshTet3D_TetGen
 (const std::string& fname,
  std::vector<double>& aXYZ,
  std::vector<int>& aTet,
@@ -752,7 +756,7 @@ void dfm2::Read_MeshTet3D_TetGen
 
 // --------------------------------------------
 
-void dfm2::Write_MeshTri3D
+void delfem2::Write_MeshTri3D
 (std::ofstream& fout,
  const std::vector<double>& aXYZ,
  const std::vector<int>& aTri,
@@ -771,7 +775,7 @@ void dfm2::Write_MeshTri3D
   }
 }
 
-void dfm2::Read_MeshTri3D
+void delfem2::Read_MeshTri3D
 (std::ifstream& fin,
  std::vector<double>& aXYZ,
  std::vector<int>& aTri)
@@ -788,7 +792,7 @@ void dfm2::Read_MeshTri3D
   }
 }
 
-void dfm2::WriteVTK_Points
+void delfem2::WriteVTK_Points
 (std::ofstream& fout,
  const std::string& name,
  const double* aXYZ,
@@ -822,7 +826,7 @@ void dfm2::WriteVTK_Points
 // 12: VTK_HEXAHEDRON
 // 13: VTK_WEDGE
 // 14: VTK_PYRAMD
-void dfm2::WriteVTK_Cells
+void delfem2::WriteVTK_Cells
 (std::ofstream& fout,
  int vtk_elem_type,
  const int* aElem,
@@ -871,7 +875,7 @@ void dfm2::WriteVTK_Cells
   }
 }
 
-void dfm2::WriteVTK_Cells
+void delfem2::WriteVTK_Cells
 (std::ofstream& fout,
  const std::vector<int>& aTet,
  const std::vector<int>& aPyrm,
@@ -913,7 +917,7 @@ void dfm2::WriteVTK_Cells
 }
 
 
-void dfm2::WriteVTK_Data_PointVec
+void delfem2::WriteVTK_Data_PointVec
 (std::ofstream& fout,
  const double* aVal,
  int np,
@@ -937,7 +941,7 @@ void dfm2::WriteVTK_Data_PointVec
   }
 }
 
-void dfm2::WriteVTK_Data_PointScalar
+void delfem2::WriteVTK_Data_PointScalar
 (std::ofstream& fout,
  const double* aVal,
  int np,
@@ -1098,7 +1102,7 @@ void dfm2::WriteVTK_Data_PointScalar
  }
  */
 
-void dfm2::WriteVTK_MapTriScalar
+void delfem2::WriteVTK_MapTriScalar
 (const std::string& fpath,
  const std::string& name,
  const std::vector<double>& aXYZ,
@@ -1139,7 +1143,7 @@ void dfm2::WriteVTK_MapTriScalar
 }
 
 
-void dfm2::ReadVTK
+void delfem2::ReadVTK
 (std::vector<double>& aXYZ,
  int& ielemtype,
  std::vector<int>& aElem,
@@ -1159,32 +1163,32 @@ void dfm2::ReadVTK
   fin >> str0 >> str1 >> str2;
   //  std::cout << str0 << " " << str1 << " " << str2 << std::endl;
   
-  int np = myStoi(str1);
+  int np = mshio::myStoi(str1);
   aXYZ.resize(np*3);
   for(int ip=0;ip<np;++ip){
     fin >> str0 >> str1 >> str2;
-    aXYZ[ip*3+0] = myStod(str0);
-    aXYZ[ip*3+1] = myStod(str1);
-    aXYZ[ip*3+2] = myStod(str2);
+    aXYZ[ip*3+0] = mshio::myStod(str0);
+    aXYZ[ip*3+1] = mshio::myStod(str1);
+    aXYZ[ip*3+2] = mshio::myStod(str2);
   }
   
   fin >> str0 >> str1 >> str2;
   //  std::cout << str0 << " " << str1 << " " << str2 << std::endl;
-  int nelem = myStoi(str1);
-  int nbuffelem = myStoi(str2);
+  int nelem = mshio::myStoi(str1);
+  int nbuffelem = mshio::myStoi(str2);
   std::vector<int> aElembuff(nbuffelem);
   for(int i=0;i<nbuffelem;++i){ fin >> aElembuff[i]; }
   
   fin >> str0 >> str1;
   //  std::cout << str0 << " " << str1 << std::endl;
-  int nelem1 = myStoi(str1);
+  int nelem1 = mshio::myStoi(str1);
   std::vector<int> aElemType(nelem1);
   for(int i=0;i<nelem1;++i){ fin >> aElemType[i]; }
   
   fin >> str0 >> str1;
   if( !fin.eof() ){
     //  std::cout << str0 << " " << str1 << std::endl;
-    int np1 = myStoi(str1);
+    int np1 = mshio::myStoi(str1);
     assert(np1 == np);
     fin >> str0;
     if( str0 == "VECTORS" ){
@@ -1225,7 +1229,7 @@ void dfm2::ReadVTK
 
 
 
-void dfm2::Read_MeshTri3D_Nas
+void delfem2::Read_MeshTri3D_Nas
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
  const char* path)

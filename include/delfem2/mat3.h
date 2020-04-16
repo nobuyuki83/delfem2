@@ -13,12 +13,13 @@
 #ifndef DFM2_MAT3_H
 #define DFM2_MAT3_H
 
+#include "delfem2/dfm2_inline.h"
 #include <vector>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <limits> // using NaN Check
-#include "delfem2/dfm2_inline.h"
+
 
 #define NEARLY_ZERO 1.e-16
 

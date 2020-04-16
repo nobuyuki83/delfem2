@@ -5,10 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
 #include <cmath>
 #include <stack>
-#include "delfem2/funcs.h"
 #include "delfem2/cad2_dtri2.h"
 
 // --------------

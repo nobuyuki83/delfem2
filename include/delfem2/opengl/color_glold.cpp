@@ -6,7 +6,6 @@
  */
 
 #include <cstring>
-#include <cstdlib>
 #include "delfem2/color.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -21,8 +20,6 @@
 #endif
 
 #include "delfem2/opengl/color_glold.h"
-
-namespace dfm2 = delfem2;
 
 // header ends here
 // -------------------------------------------------
@@ -53,7 +50,7 @@ DFM2_INLINE void DrawSingleTri3D_Scalar_Vtx
  (const double* aXYZ,
   const unsigned int* tri,
   const double* aValVtx,
-  const std::vector<std::pair<double, dfm2::CColor> >& colorMap)
+  const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const int i0 = tri[0];
   const int i1 = tri[1];
@@ -75,16 +72,16 @@ DFM2_INLINE void DrawSingleTri3D_Scalar_Vtx
   const double vt0 = aValVtx[i0];
   const double vt1 = aValVtx[i1];
   const double vt2 = aValVtx[i2];
-  dfm2::opengl::heatmap(vt0, colorMap); glVertex3dv(p0);
-  dfm2::opengl::heatmap(vt1, colorMap); glVertex3dv(p1);
-  dfm2::opengl::heatmap(vt2, colorMap); glVertex3dv(p2);
+  heatmap(vt0, colorMap); glVertex3dv(p0);
+  heatmap(vt1, colorMap); glVertex3dv(p1);
+  heatmap(vt2, colorMap); glVertex3dv(p2);
 }
 
 DFM2_INLINE void DrawSingleQuad3D_Scalar_Vtx
  (const std::vector<double>& aXYZ,
   const unsigned int* quad,
   const double* aValVtx,
-  const std::vector<std::pair<double, dfm2::CColor> >& colorMap)
+  const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const unsigned int i0 = quad[0];
   const unsigned int i1 = quad[1];
@@ -106,10 +103,10 @@ DFM2_INLINE void DrawSingleQuad3D_Scalar_Vtx
   const double vt1 = aValVtx[i1];
   const double vt2 = aValVtx[i2];
   const double vt3 = aValVtx[i3];
-  dfm2::opengl::heatmap(vt0, colorMap); glVertex3dv(p0);
-  dfm2::opengl::heatmap(vt1, colorMap); glVertex3dv(p1);
-  dfm2::opengl::heatmap(vt2, colorMap); glVertex3dv(p2);
-  dfm2::opengl::heatmap(vt3, colorMap); glVertex3dv(p3);
+  heatmap(vt0, colorMap); glVertex3dv(p0);
+  heatmap(vt1, colorMap); glVertex3dv(p1);
+  heatmap(vt2, colorMap); glVertex3dv(p2);
+  heatmap(vt3, colorMap); glVertex3dv(p3);
 }
 
 
@@ -124,7 +121,7 @@ DFM2_INLINE void DrawMeshTri3DFlag_FaceNorm
  (const std::vector<double>& aXYZ,
   const std::vector<unsigned int>& aTri,
   const std::vector<int>& aIndGroup,
-  std::vector< std::pair<int,dfm2::CColor> >& aColor)
+  std::vector< std::pair<int,CColor> >& aColor)
 {
   const unsigned int nTri = aTri.size()/3;
   for(unsigned int itri=0;itri<nTri;++itri){
@@ -238,13 +235,13 @@ DFM2_INLINE void delfem2::opengl::DrawBackground()
 
 DFM2_INLINE void delfem2::opengl::heatmap_glColor(double input)
 {
-  double c[3]; dfm2::heatmap(input,c);
+  double c[3]; ::delfem2::heatmap(input,c);
   ::glColor3dv(c);
 }
 
 DFM2_INLINE void delfem2::opengl::heatmap_glDiffuse(double input)
 {
-  double c[3]; dfm2::heatmap(input,c);
+  double c[3]; ::delfem2::heatmap(input,c);
   float cf[4] = {(float)c[0],(float)c[1],(float)c[2],1.f};
   glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,cf);
 }
@@ -284,7 +281,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP1
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_ScalarP0
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP0
 (std::vector<int>& aTri,
  std::vector<double>& aXY,
  std::vector<double>& aVal,
@@ -338,7 +335,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1
 }
 
 // vetex value
-DFM2_INLINE void dfm2::opengl::DrawMeshElem3D_Scalar_Vtx
+DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_Scalar_Vtx
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
@@ -407,7 +404,7 @@ DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0
 
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_VtxColor
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  std::vector<CColor>& aColor)
@@ -445,7 +442,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_VtxColor
 // tet from here
 
 // 3D value
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_ScalarP1
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_ScalarP1
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTet, unsigned int nTet,
  const double* aValSrf,
@@ -491,7 +488,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_ScalarP1
 
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_Cut
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Cut
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTet,
  const std::vector<CColor>& aColor,

@@ -20,12 +20,11 @@
 #include "delfem2/fem_emats.h"
 
 typedef std::complex<double> COMPLEX;
-namespace dfm2 = delfem2;
 
 namespace delfem2 {
 namespace fem_emats {
 
-static void FetchData(
+DFM2_INLINE void FetchData(
     double* val_to,
     int nno, int ndim,
     const unsigned int* aIP,
@@ -44,11 +43,11 @@ static void FetchData(
 
 
 // area of a triangle
-static double TriArea2D(const double p0[], const double p1[], const double p2[]){
+DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double p2[]){
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
-static double TetVolume3D
+DFM2_INLINE double TetVolume3D
 (const double v1[3],
  const double v2[3],
  const double v3[3],
@@ -61,10 +60,10 @@ static double TetVolume3D
    ) * 0.16666666666666666666666666666667;
 }
 
-
 // caluculate Derivative of Area Coord
-static inline void TetDlDx(double dldx[][3], double a[],
-                           const double p0[], const double p1[], const double p2[], const double p3[])
+DFM2_INLINE void TetDlDx(
+    double dldx[][3], double a[],
+    const double p0[], const double p1[], const double p2[], const double p3[])
 {
   const double vol = TetVolume3D(p0, p1, p2, p3);
   const double dtmp1 = 1.0/(vol * 6.0);
@@ -109,7 +108,7 @@ static void MatVec3
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
 
-static void MatMat3
+DFM2_INLINE void MatMat3
 (double* C,
  const double* A, const double* B)
 {
@@ -120,7 +119,7 @@ static void MatMat3
   }
 }
 
-static void MatMatTrans3
+DFM2_INLINE void MatMatTrans3
 (double* C,
  const double* A, const double* B)
 {
@@ -136,7 +135,7 @@ static void MatMatTrans3
 
 // ==================================================
 
-void dfm2::MergeLinSys_Poission_MeshTri2D(
+void delfem2::MergeLinSys_Poission_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -147,7 +146,7 @@ void dfm2::MergeLinSys_Poission_MeshTri2D(
     int nTri,
     const double* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int nDoF = np;
   //
   std::vector<int> tmp_buffer(nDoF, -1);
@@ -173,7 +172,7 @@ void dfm2::MergeLinSys_Poission_MeshTri2D(
   }
 }
 
-void dfm2::MergeLinSys_Helmholtz_MeshTri2D(
+void delfem2::MergeLinSys_Helmholtz_MeshTri2D(
     CMatrixSparse<COMPLEX>& mat_A,
     COMPLEX* vec_b,
     const double wave_length,
@@ -183,7 +182,7 @@ void dfm2::MergeLinSys_Helmholtz_MeshTri2D(
     unsigned int nTri,
     const COMPLEX* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
   for (unsigned int iel = 0; iel<nTri; ++iel){
@@ -207,7 +206,7 @@ void dfm2::MergeLinSys_Helmholtz_MeshTri2D(
   }
 }
 
-void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
+void delfem2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     CMatrixSparse <COMPLEX> &mat_A,
     COMPLEX* vec_b,
     const double wave_length,
@@ -217,7 +216,7 @@ void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
     unsigned int nIPPolyline,
     const COMPLEX* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
   assert( nIPPolyline >= 2 );
@@ -239,7 +238,7 @@ void dfm2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
   }
 }
 
-void dfm2::MergeLinSys_Poission_MeshTet3D(
+void delfem2::MergeLinSys_Poission_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -248,7 +247,7 @@ void dfm2::MergeLinSys_Poission_MeshTet3D(
     const unsigned int* aTet, int nTet,
     const double* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (int itet = 0; itet<nTet; ++itet){
@@ -272,7 +271,7 @@ void dfm2::MergeLinSys_Poission_MeshTet3D(
   }
 }
 
-void dfm2::MergeLinSys_Diffusion_MeshTri2D(
+void delfem2::MergeLinSys_Diffusion_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -289,7 +288,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTri2D(
   ////
 //  mat_A.SetZero();
 //  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   std::vector<int> tmp_buffer(nXY, -1);
   for (int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -315,7 +314,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTri2D(
   }
 }
 
-void dfm2::MergeLinSys_Diffusion_MeshTet3D(
+void delfem2::MergeLinSys_Diffusion_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double alpha,
@@ -330,7 +329,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTet3D(
     const double* aVal,
     const double* aVelo)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
@@ -357,7 +356,7 @@ void dfm2::MergeLinSys_Diffusion_MeshTet3D(
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
+void delfem2::MergeLinSys_SolidLinear_Static_MeshTri2D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -369,7 +368,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
  const unsigned int* aTri1, int nTri,
  const double* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
   for(int iel=0; iel<nTri; ++iel){
@@ -394,7 +393,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTri2D
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
+void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -411,7 +410,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aVelo,
     const double* aAcc)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*2;
   ////
@@ -447,7 +446,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
   }
 }
 
-void dfm2::MergeLinSys_StokesStatic2D(
+void delfem2::MergeLinSys_StokesStatic2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -457,7 +456,7 @@ void dfm2::MergeLinSys_StokesStatic2D(
     const unsigned int* aTri1, int nTri,
     const double* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*3;
   ////
@@ -487,7 +486,7 @@ void dfm2::MergeLinSys_StokesStatic2D(
   }
 }
 
-void dfm2::MergeLinSys_StokesDynamic2D(
+void delfem2::MergeLinSys_StokesDynamic2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -501,7 +500,7 @@ void dfm2::MergeLinSys_StokesDynamic2D(
     const double* aVal,
     const double* aVelo)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*3;
   ////
@@ -534,7 +533,7 @@ void dfm2::MergeLinSys_StokesDynamic2D(
   }
 }
 
-void dfm2::MergeLinSys_NavierStokes2D(
+void delfem2::MergeLinSys_NavierStokes2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -548,7 +547,7 @@ void dfm2::MergeLinSys_NavierStokes2D(
     const double* aVal, // vx,vy,press
     const double* aDtVal) // ax,ay,apress
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
 //  const int nDoF = np*3;
   ////
@@ -581,7 +580,7 @@ void dfm2::MergeLinSys_NavierStokes2D(
 
 
 // compute total energy and its first and second derivatives
-double dfm2::MergeLinSys_Cloth
+double delfem2::MergeLinSys_Cloth
 (CMatrixSparse<double>& ddW, // (out) second derivative of energy
  double* dW, // (out) first derivative of energy
  ////
@@ -646,7 +645,7 @@ double dfm2::MergeLinSys_Cloth
 
 
 
-double dfm2::MergeLinSys_Contact(
+double delfem2::MergeLinSys_Contact(
     CMatrixSparse<double>& ddW,
     double* dW,
     //
@@ -784,7 +783,7 @@ double dfm2::MergeLinSys_Contact(
  */
 
 
-void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
+void delfem2::MergeLinSys_SolidLinear_Static_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -795,7 +794,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
     const unsigned int* aTet, unsigned int nTet,
     const double* aDisp)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (unsigned int iel = 0; iel<nTet; ++iel){
@@ -832,7 +831,7 @@ void dfm2::MergeLinSys_SolidLinear_Static_MeshTet3D(
   }
 }
 
-void dfm2::MergeLinSys_LinearSolid3D_Static_Q1(
+void delfem2::MergeLinSys_LinearSolid3D_Static_Q1(
     CMatrixSparse<double>& mat_A,
     std::vector<double>& vec_b,
     const double myu,
@@ -845,7 +844,7 @@ void dfm2::MergeLinSys_LinearSolid3D_Static_Q1(
     const std::vector<int>& aHex,
     const std::vector<double>& aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
   //
@@ -882,7 +881,7 @@ void dfm2::MergeLinSys_LinearSolid3D_Static_Q1(
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
+void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -898,7 +897,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double* aVelo,
     const double* aAcc)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (int iel = 0; iel<nTet; ++iel){
@@ -929,7 +928,7 @@ void dfm2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
   }
 }
 
-void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
+void delfem2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double myu,
@@ -944,7 +943,7 @@ void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
     const double* aDisp,
     const double* aVelo)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTet; ++iel){
@@ -995,7 +994,7 @@ void dfm2::MergeLinSys_SolidLinear_BEuler_MeshTet3D(
 }
 
 
-void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
+void delfem2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
 (CMatrixSparse<double>& mat_A,
  double* vec_b,
  const double myu,
@@ -1009,7 +1008,7 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
  const double* aVelo,
  const std::vector<double>& aR)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXYZ;
   assert((int)aR.size()==np*9);
   // ----------------------------
@@ -1079,7 +1078,7 @@ void dfm2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
   }
 }
 
-void dfm2::MergeLinSys_Stokes3D_Static
+void delfem2::MergeLinSys_Stokes3D_Static
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -1092,7 +1091,7 @@ void dfm2::MergeLinSys_Stokes3D_Static
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
   ////
@@ -1126,7 +1125,7 @@ void dfm2::MergeLinSys_Stokes3D_Static
   }
 }
 
-void dfm2::MergeLinSys_Stokes3D_Dynamic
+void delfem2::MergeLinSys_Stokes3D_Dynamic
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -1141,7 +1140,7 @@ void dfm2::MergeLinSys_Stokes3D_Dynamic
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
   //
@@ -1175,7 +1174,7 @@ void dfm2::MergeLinSys_Stokes3D_Dynamic
   }
 }
 
-void dfm2::MergeLinSys_NavierStokes3D_Dynamic
+void delfem2::MergeLinSys_NavierStokes3D_Dynamic
 (CMatrixSparse<double>& mat_A,
  std::vector<double>& vec_b,
  const double myu,
@@ -1190,7 +1189,7 @@ void dfm2::MergeLinSys_NavierStokes3D_Dynamic
  const std::vector<double>& aVal,
  const std::vector<double>& aVelo)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
   ////
@@ -1518,7 +1517,7 @@ void dfm2::MergeLinSys_NavierStokes3D_Dynamic
  */
 
 
-void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
+void delfem2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     CMatrixSparse<double>& mat_A,
     double* vec_b,
     const double thick,
@@ -1532,7 +1531,7 @@ void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     unsigned int nTri,
     const double* aVal)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTri; ++iel){
@@ -1566,13 +1565,13 @@ void dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
   }
 }
 
-void dfm2::MassLumped_ShellPlateBendingMITC3
+void delfem2::MassLumped_ShellPlateBendingMITC3
 (double* aM,
  double rho, double thick,
  const double* aXY, unsigned int nXY,
  const unsigned int* aTri, unsigned int nTri)
 {
-  namespace lcl = ::dfm2::fem_emats;
+  namespace lcl = ::delfem2::fem_emats;
   const unsigned int nDoF = nXY*3;
   for(unsigned int i=0;i<nDoF;++i){ aM[i] = 0.0; }
   for(unsigned int it=0;it<nTri;++it){

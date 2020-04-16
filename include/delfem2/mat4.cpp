@@ -125,8 +125,12 @@ DFM2_INLINE void delfem2::Mat4_AffineTranslation
   A[2*4+3] = dz;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Mat4_AffineTranslation(float A[16],  float dx, float dy, float dz);
-template void delfem2::Mat4_AffineTranslation(double A[16],  double dx, double dy, double dz);
+template void delfem2::Mat4_AffineTranslation(
+    float A[16],
+    float dx, float dy, float dz);
+template void delfem2::Mat4_AffineTranslation(
+    double A[16],
+    double dx, double dy, double dz);
 #endif
   
 // --------------------------
@@ -161,10 +165,12 @@ DFM2_INLINE void delfem2::Mat4_AffineRotationRodriguez
   A[3*4+3] = 1.0;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Mat4_AffineRotationRodriguez(float A[16],
-                                                 float dx, float dy, float dz);
-template void delfem2::Mat4_AffineRotationRodriguez(double A[16],
-                                                 double dx, double dy, double dz);
+template void delfem2::Mat4_AffineRotationRodriguez(
+    float A[16],
+    float dx, float dy, float dz);
+template void delfem2::Mat4_AffineRotationRodriguez(
+    double A[16],
+    double dx, double dy, double dz);
 #endif
 
 // ------------------------------------------------

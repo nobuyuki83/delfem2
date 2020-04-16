@@ -5,13 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
 #include <cstdlib>
 #include <cassert>
 #include <math.h>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <vector>
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
@@ -25,8 +21,6 @@
   #include <GL/gl.h>
 #endif
 #include "delfem2/opengl/funcs_glold.h"
-
-namespace dfm2 = delfem2;
 
 // -----------------------------------------------------------
 
@@ -373,7 +367,7 @@ DFM2_INLINE void DrawMeshTri3D_FaceEdge
 // =====================================================
 //
 
-DFM2_INLINE void dfm2::opengl::DrawAxis(double s)
+DFM2_INLINE void delfem2::opengl::DrawAxis(double s)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
@@ -391,13 +385,13 @@ DFM2_INLINE void dfm2::opengl::DrawAxis(double s)
   if( is_lighting ){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void dfm2::opengl::CAxisXYZ::Draw() const{
+DFM2_INLINE void delfem2::opengl::CAxisXYZ::Draw() const{
   glLineWidth(line_width);
   DrawAxis(len);
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawSphere
+DFM2_INLINE void delfem2::opengl::DrawSphere
 (int nla, int nlo)
 {
   if( nla <= 1 || nlo <= 2 ){ return; }
@@ -424,7 +418,7 @@ DFM2_INLINE void dfm2::opengl::DrawSphere
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawSphereAt
+DFM2_INLINE void delfem2::opengl::DrawSphereAt
  (int nla, int nlo, double rad, double x, double y, double z)
 {
   ::glTranslated(+x,+y,+z);
@@ -434,7 +428,7 @@ DFM2_INLINE void dfm2::opengl::DrawSphereAt
   ::glTranslated(-x,-y,-z);
 }
 
-DFM2_INLINE void dfm2::opengl::DrawSphere_Edge
+DFM2_INLINE void delfem2::opengl::DrawSphere_Edge
 (double radius_)
 {
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -477,7 +471,7 @@ DFM2_INLINE void dfm2::opengl::DrawSphere_Edge
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawTorus_Edge
+DFM2_INLINE void delfem2::opengl::DrawTorus_Edge
 (double radius_, double radius_tube_)
 {
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -518,7 +512,7 @@ DFM2_INLINE void dfm2::opengl::DrawTorus_Edge
 
 
 
-DFM2_INLINE void dfm2::opengl::DrawCylinder_Face
+DFM2_INLINE void delfem2::opengl::DrawCylinder_Face
 (const double* dir_, double radius_, const double* cent_)
 {
   const bool is_texture = ::glIsEnabled(GL_TEXTURE_2D);
@@ -615,7 +609,7 @@ DFM2_INLINE void dfm2::opengl::DrawCylinder_Face
   if(is_texture ){ glEnable(GL_TEXTURE_2D); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawCylinder_Edge
+DFM2_INLINE void delfem2::opengl::DrawCylinder_Edge
 (const double* dir_, double radius_, const double* cent_)
 {
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -682,7 +676,7 @@ DFM2_INLINE void dfm2::opengl::DrawCylinder_Edge
   if(is_texture ){ glEnable(GL_TEXTURE_2D); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawPlane_Edge
+DFM2_INLINE void delfem2::opengl::DrawPlane_Edge
 (const double* origin_, const double* normal_)
 {
   const bool is_lighting = ::glIsEnabled(GL_LIGHTING);
@@ -724,7 +718,7 @@ DFM2_INLINE void dfm2::opengl::DrawPlane_Edge
 
 // -------------------------------------
 
-DFM2_INLINE void dfm2::opengl::setSomeLighting()
+DFM2_INLINE void delfem2::opengl::setSomeLighting()
 {
   glEnable(GL_LIGHTING);
   //  glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
@@ -748,7 +742,7 @@ DFM2_INLINE void dfm2::opengl::setSomeLighting()
   }
 }
 
-DFM2_INLINE void dfm2::opengl::setSomeLighting2()
+DFM2_INLINE void delfem2::opengl::setSomeLighting2()
 {
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
@@ -767,7 +761,7 @@ DFM2_INLINE void dfm2::opengl::setSomeLighting2()
   }
 }
 
-DFM2_INLINE void dfm2::opengl::setSomeLighting3()
+DFM2_INLINE void delfem2::opengl::setSomeLighting3()
 {
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0.0);
   {
@@ -789,7 +783,7 @@ DFM2_INLINE void dfm2::opengl::setSomeLighting3()
 }
 
 
-DFM2_INLINE void dfm2::opengl::drawFloorShadow(void (*DrawObject)(), float yfloor, float wfloor)
+DFM2_INLINE void delfem2::opengl::drawFloorShadow(void (*DrawObject)(), float yfloor, float wfloor)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   {
@@ -928,7 +922,7 @@ static int Ptn9[]={   /* 9 */
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
-DFM2_INLINE void dfm2::opengl::DrawCharacter
+DFM2_INLINE void delfem2::opengl::DrawCharacter
 (int* pChr,
  double ax, double bx,
  double ay, double by)
@@ -953,7 +947,7 @@ DFM2_INLINE void dfm2::opengl::DrawCharacter
 
 // x = ax*[x] + bx
 // y = ay*[y] + by
-DFM2_INLINE void dfm2::opengl::DrawCharacter
+DFM2_INLINE void delfem2::opengl::DrawCharacter
 (char ic,
  double ax, double bx,
  double ay, double by)
@@ -994,7 +988,7 @@ DFM2_INLINE void dfm2::opengl::DrawCharacter
 
 // -----------------------------------------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawPoints2D_Vectors
+DFM2_INLINE void delfem2::opengl::DrawPoints2D_Vectors
 (const double* aXY, int nXY,
  const double* aVal,
  int nstride,
@@ -1013,7 +1007,7 @@ DFM2_INLINE void dfm2::opengl::DrawPoints2D_Vectors
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawPoints2d_Points(const std::vector<double>& aXY)
+DFM2_INLINE void delfem2::opengl::DrawPoints2d_Points(const std::vector<double>& aXY)
 {
   const unsigned int nxys = aXY.size()/2;
   ::glBegin(GL_POINTS);
@@ -1024,7 +1018,7 @@ DFM2_INLINE void dfm2::opengl::DrawPoints2d_Points(const std::vector<double>& aX
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawPoints3d_Points(const std::vector<double>& aXYZ)
+DFM2_INLINE void delfem2::opengl::DrawPoints3d_Points(const std::vector<double>& aXYZ)
 {
   const unsigned int nxyz = aXYZ.size()/3;
   ::glBegin(GL_POINTS);
@@ -1035,7 +1029,7 @@ DFM2_INLINE void dfm2::opengl::DrawPoints3d_Points(const std::vector<double>& aX
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawPoints3d_NormVtx(const std::vector<double>& aXYZ,
+DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(const std::vector<double>& aXYZ,
                                         const std::vector<double>& aNrm,
                                         double scale)
 {
@@ -1057,7 +1051,7 @@ DFM2_INLINE void dfm2::opengl::DrawPoints3d_NormVtx(const std::vector<double>& a
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawAABB3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawAABB3D_Edge
  (double cx, double cy, double cz, double wx, double wy, double wz)
 {
   const double pxyz[3] = {cx-0.5*wx,cy-0.5*wy,cz-0.5*wz};
@@ -1087,12 +1081,12 @@ DFM2_INLINE void dfm2::opengl::DrawAABB3D_Edge
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawAABB3D_Edge(const double cw[6])
+DFM2_INLINE void delfem2::opengl::DrawAABB3D_Edge(const double cw[6])
 {
   DrawAABB3D_Edge(cw[0], cw[1], cw[2], cw[3],cw[4], cw[5]);
 }
 
-DFM2_INLINE void dfm2::opengl::Draw_AABB3D_MinMaxXYZ_Edge
+DFM2_INLINE void delfem2::opengl::Draw_AABB3D_MinMaxXYZ_Edge
 (double x_min, double x_max,
  double y_min, double y_max,
  double z_min, double z_max)
@@ -1125,7 +1119,7 @@ DFM2_INLINE void dfm2::opengl::Draw_AABB3D_MinMaxXYZ_Edge
 
 // -----------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
 (const double* paXYZ,
  const unsigned int* paTri,
  unsigned int nTri)
@@ -1137,7 +1131,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
 {
@@ -1145,7 +1139,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm_TexVtx
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexVtx
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aTex)
@@ -1169,7 +1163,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm_TexVtx
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm_TexFace
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexFace
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aTex)
@@ -1185,7 +1179,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm_TexFace
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshElem3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem)
@@ -1207,7 +1201,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshElem3D_FaceNorm
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshElem3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
@@ -1235,7 +1229,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshElem3D_FaceNorm
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl
+DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem,
@@ -1264,7 +1258,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm_XYsym
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_XYsym
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
 {
@@ -1291,7 +1285,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm_XYsym
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNormEdge
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNormEdge
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
 {
@@ -1329,7 +1323,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNormEdge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aTri, unsigned int nTri)
 {
@@ -1356,7 +1350,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri)
 {
@@ -1364,7 +1358,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_Edge
                      aTri.data(), aTri.size()/3);
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTri,
  const std::vector<double>& aNorm)
@@ -1383,7 +1377,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTriVtx,
  const std::vector<double>& aNorm,
@@ -1423,7 +1417,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri3D_FaceNorm
 
 // ------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_Face
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face
 (const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXY)
 {
@@ -1444,7 +1438,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_Face
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_FaceDisp2D
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceDisp2D
 (const double* aXY, int nXY,
  const unsigned int* aTri, int nTri,
  const double* aDisp, int nstride)
@@ -1484,7 +1478,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_FaceDisp2D
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
 (const double* aXY, unsigned int nXY,
  const unsigned int* aTri, unsigned int nTri)
 {
@@ -1505,7 +1499,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_Edge
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
 (const std::vector<unsigned int>& aTri,
  const std::vector<double>& aXY)
 {
@@ -1518,7 +1512,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTri2D_Edge
 // ----------------------------------
 // Quad
 
-DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge
 (const double* aXYZ, unsigned int nXYZ,
  const unsigned int* aQuad, unsigned int nQuad)
 {
@@ -1549,7 +1543,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aQuad)
 {
@@ -1558,7 +1552,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_Edge
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm
 (const double* aXYZ,
  const unsigned int* aQuad, const unsigned int nQuad)
 {
@@ -1569,7 +1563,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aQuad)
 {
@@ -1577,7 +1571,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshQuad3D_FaceNorm
 }
 
 
-DFM2_INLINE void dfm2::opengl::DrawMeshQuad2D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge
 (const double* aXY, unsigned int nXY,
  const unsigned int* aQuad, unsigned int nQuad)
 {
@@ -1608,7 +1602,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshQuad2D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshQuad2D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshQuad2D_Edge
 (const std::vector<double>& aXY,
  const std::vector<unsigned int>& aQuad)
 {
@@ -1618,7 +1612,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshQuad2D_Edge
 
 // ----------------------------------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3DSurface_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3DSurface_FaceNorm
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTet,
  const std::vector<unsigned int>& aTetFace)
@@ -1658,7 +1652,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTet3DSurface_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3DSurface_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3DSurface_Edge
 (const std::vector<double>& aXYZ,
  const std::vector<unsigned int>& aTet,
  const std::vector<unsigned int>& aTetFace)
@@ -1698,7 +1692,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTet3DSurface_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Edge
 (const double* aXYZ,
  int nXYZ,
  const unsigned int* aTet,
@@ -1725,7 +1719,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_Edge
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshLine3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshLine3D_Edge
 (const double* aXYZ,
  int nXYZ,
  const unsigned int* aLine,
@@ -1743,7 +1737,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshLine3D_Edge
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_EdgeDisp(
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_EdgeDisp(
     const double* aXYZ,
     const unsigned int* aTet,
     unsigned int nTet,
@@ -1774,7 +1768,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_EdgeDisp(
   }
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshTet3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNorm
 (const double* aXYZ,
  const unsigned int* aTet, unsigned int nTet)
 {
@@ -1833,7 +1827,7 @@ void opengl::DrawMeshTet3D_FaceNormDisp
 
 // ---------------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawMeshHex3D_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_FaceNorm
 (const double* aXYZ,
  const unsigned int* aHex, unsigned int nHex)
 {
@@ -1878,7 +1872,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshHex3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawHex3D_FaceNormDisp
+DFM2_INLINE void delfem2::opengl::DrawHex3D_FaceNormDisp
 (const std::vector<double>& aXYZ,
  const std::vector<int>& aHex,
  const std::vector<double>& aDisp)
@@ -1933,7 +1927,7 @@ DFM2_INLINE void dfm2::opengl::DrawHex3D_FaceNormDisp
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshHex3D_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_Edge
 (const double* aXYZ, int nXYZ,
  const unsigned int* aHex, int nHex)
 {
@@ -2000,7 +1994,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNormDisp
 
 // ----------------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawBox_MinMaxXYZ
+DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
 (double x_min, double x_max,
  double y_min, double y_max,
  double z_min, double z_max)
@@ -2021,7 +2015,7 @@ DFM2_INLINE void dfm2::opengl::DrawBox_MinMaxXYZ
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawBox_MinMaxXYZ
+DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
 (double aabbMinMaxXYZ[6])
 {// show bounding box
   DrawBox_MinMaxXYZ(aabbMinMaxXYZ[0], aabbMinMaxXYZ[1],
@@ -2030,7 +2024,7 @@ DFM2_INLINE void dfm2::opengl::DrawBox_MinMaxXYZ
 }
 
 
-DFM2_INLINE void dfm2::opengl::showdepth()
+DFM2_INLINE void delfem2::opengl::showdepth()
 {
   GLint view[4]; glGetIntegerv(GL_VIEWPORT, view); // get viewport size
   GLubyte* buffer = (GLubyte *)malloc(view[2] * view[3]); // get buffer with view port size
@@ -2049,7 +2043,7 @@ DFM2_INLINE void dfm2::opengl::showdepth()
 
 // --------------------------
 
-DFM2_INLINE void dfm2::opengl::getPosOnScreen_Camera2D
+DFM2_INLINE void delfem2::opengl::getPosOnScreen_Camera2D
 (double& x, double& y,
  int i, int j)
 {
@@ -2062,7 +2056,7 @@ DFM2_INLINE void dfm2::opengl::getPosOnScreen_Camera2D
   y = (hh-j)/hh;
 }
 
-DFM2_INLINE void dfm2::opengl::setGL_Camera2D()
+DFM2_INLINE void delfem2::opengl::setGL_Camera2D()
 {
   int viewport[8];
   glGetIntegerv(GL_VIEWPORT, viewport);

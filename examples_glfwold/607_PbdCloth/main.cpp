@@ -9,7 +9,6 @@
 #include <vector>
 #include <set>
 #include "delfem2/dtri.h"
-
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/dtri2_v2dtri.h"

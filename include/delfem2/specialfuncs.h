@@ -15,23 +15,23 @@
 
 namespace delfem2 {
 
-#ifndef COMPLEX
-typedef std::complex<double> COMPLEX;
-#endif
+//#ifndef COMPLEX
+//typedef std::complex<double> COMPLEX;
+//#endif
 
 // n <= 9
 // size(Y) = (n+1)*(n+1)
 // Y_l^m = Y[l*(l+1)+m]
 void makeArray_SphericalHarmonics(double* a, int norder, double x, double y, double z);
 
-void makeArray_CoeffSphericalHankelFirst(int n, COMPLEX* h, double x);
+void makeArray_CoeffSphericalHankelFirst(int n, std::complex<double>* h, double x);
 
 
 // size(h) = (n+1)
-inline void makeArray_SphericalHankelFirst(int n, COMPLEX* h, double x){
+inline void makeArray_SphericalHankelFirst(int n, std::complex<double>* h, double x){
   makeArray_CoeffSphericalHankelFirst(n, h, x);
   const double y = 1.0/x;
-  COMPLEX eixy = y*exp(COMPLEX(0, x));
+  std::complex<double> eixy = y*exp(std::complex<double>(0, x));
   for(int i=0;i<n+1;i++){
     h[i] *= eixy;
   }

@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <set>
 #include <map>
 #include <cassert>
 #include <sstream>
@@ -17,8 +15,6 @@
 #ifndef M_PI 
 #  define M_PI 3.1415926535
 #endif
-
-namespace dfm2 = delfem2;
 
 // ------------------------------------------------------------
 
@@ -167,29 +163,59 @@ DFM2_INLINE  void MyMatMatTX
   }
 }
 
+DFM2_INLINE void PickBone
+    (int& ibone_selected,
+     int& ielem_selected,
+     const std::vector<CRigBone>& aBone,
+     const CVec3d& src,
+     const CVec3d& dir,
+     double rad_hndlr,
+     double tol)
+{
+  if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
+    const CRigBone& bone = aBone[ibone_selected];
+    ielem_selected = bone.PickHandler(src,dir,rad_hndlr,tol);
+  }
+  else{
+    ielem_selected = -1;
+  }
+  if( ielem_selected == -1 ){
+    ibone_selected = -1;
+    for(int ibone=0;ibone<(int)aBone.size();++ibone){
+      delfem2::CVec3d pos(aBone[ibone].Pos());
+      double distance = Distance(nearest_Line_Point(pos, src, dir),pos);
+      if( distance < tol ){
+        ibone_selected = ibone;
+        break;
+      }
+    }
+  }
+}
+
+
 }
 }
 
 // ------------------------------------------------------------
 
-DFM2_INLINE int dfm2::CRigBone::PickHandler
-(const dfm2::CVec3d& org,
- const dfm2::CVec3d& dir,
+DFM2_INLINE int delfem2::CRigBone::PickHandler
+(const CVec3d& org,
+ const CVec3d& dir,
  double rad_handlr,
  double tol) const
 {
-  return dfm2::PickHandlerRotation_Mat4(org,dir,
+  return PickHandlerRotation_Mat4(org,dir,
                                         affmat3Global, rad_handlr,
                                         tol);
 }
 
-DFM2_INLINE void dfm2::CRigBone::SetRotationBryant
+DFM2_INLINE void delfem2::CRigBone::SetRotationBryant
 (double rx, double ry, double rz)
 {
-  dfm2::Quat_Bryant(quatRelativeRot, rx, ry, rz);
+  Quat_Bryant(quatRelativeRot, rx, ry, rz);
 }
 
-DFM2_INLINE void dfm2::CRigBone::DeformSkin(double pos2[3],
+DFM2_INLINE void delfem2::CRigBone::DeformSkin(double pos2[3],
                                 const double pos0[3]) const 
 {
   const double pos0a[4] = {pos0[0], pos0[1], pos0[2], 1.0};
@@ -200,7 +226,7 @@ DFM2_INLINE void dfm2::CRigBone::DeformSkin(double pos2[3],
   pos2[2] = pos2a[2];
 }
 
-DFM2_INLINE void dfm2::CRigBone::SetTranslation
+DFM2_INLINE void delfem2::CRigBone::SetTranslation
 (double tx, double ty, double tz)
 {
   this->transRelative[0] = tx;
@@ -208,32 +234,32 @@ DFM2_INLINE void dfm2::CRigBone::SetTranslation
   this->transRelative[2] = tz;
 }
 
-DFM2_INLINE void dfm2::UpdateBoneRotTrans
-(std::vector<dfm2::CRigBone>& aBone)
+DFM2_INLINE void delfem2::UpdateBoneRotTrans
+(std::vector<CRigBone>& aBone)
 {
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
-    dfm2::CMat4d m01 = CMat4d::Translate(aBone[ibone].transRelative);
+    CMat4d m01 = CMat4d::Translate(aBone[ibone].transRelative);
     m01 = m01 * CMat4d::Quat(aBone[ibone].quatRelativeRot);
     m01 = m01 * CMat4d::Scale(aBone[ibone].scale);
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ // root bone
-      dfm2::Copy_Mat4( aBone[ibone].affmat3Global, m01.mat );
+      Copy_Mat4( aBone[ibone].affmat3Global, m01.mat );
       continue;
     }
-    dfm2::MatMat4(aBone[ibone].affmat3Global,
+    MatMat4(aBone[ibone].affmat3Global,
                   aBone[ibone_p].affmat3Global, m01.mat);
   }
 }
 
 
 
-DFM2_INLINE void dfm2::Skinning_LBS_LocalWeight
+DFM2_INLINE void delfem2::Skinning_LBS_LocalWeight
 (double* aXYZ,
  const double* aXYZ0,
  unsigned int nXYZ,
  const unsigned int* aTri,
  unsigned int nTri,
- const std::vector<dfm2::CRigBone>& aBone,
+ const std::vector<CRigBone>& aBone,
  const double* aRigWeight,
  const unsigned int* aRigJoint)
 {
@@ -247,8 +273,8 @@ DFM2_INLINE void dfm2::Skinning_LBS_LocalWeight
       unsigned int ij = aRigJoint[ip*4+iij];
       sum_w += w;
       assert (ij<aBone.size());
-      double pos0a[4]; dfm2::MatVec4(pos0a,aBone[ij].invBindMat,pos0);
-      double pos0b[4]; dfm2::MatVec4(pos0b,aBone[ij].affmat3Global,pos0a);
+      double pos0a[4]; MatVec4(pos0a,aBone[ij].invBindMat,pos0);
+      double pos0b[4]; MatVec4(pos0b,aBone[ij].affmat3Global,pos0a);
       pos1[0] += w*pos0b[0];
       pos1[1] += w*pos0b[1];
       pos1[2] += w*pos0b[2];
@@ -264,10 +290,10 @@ DFM2_INLINE void dfm2::Skinning_LBS_LocalWeight
 }
 
 
-DFM2_INLINE void dfm2::Skinning_LBS
+DFM2_INLINE void delfem2::Skinning_LBS
  (std::vector<double>& aXYZ1,
   const std::vector<double>& aXYZ0,
-  const std::vector<dfm2::CRigBone>& aBone,
+  const std::vector<CRigBone>& aBone,
   const std::vector<double>& aW)
 {
   const unsigned int nBone = aBone.size();
@@ -292,9 +318,9 @@ DFM2_INLINE void dfm2::Skinning_LBS
 // ------------------------------------
 // from here BioVisionHierarchy
 
-DFM2_INLINE void dfm2::Read_BioVisionHierarchy
-(std::vector<dfm2::CRigBone>& aBone,
- std::vector<dfm2::CChannel_BioVisionHierarchy>& aChannelRotTransBone,
+DFM2_INLINE void delfem2::Read_BioVisionHierarchy
+(std::vector<CRigBone>& aBone,
+ std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  int& nframe,
  std::vector<double>& aValueRotTransBone,
  const std::string& path_bvh)
@@ -321,7 +347,7 @@ DFM2_INLINE void dfm2::Read_BioVisionHierarchy
     }
     else if( aToken[0] == "ROOT" ){
       assert(aBone.size()==0);
-      dfm2::CRigBone br;
+      CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
@@ -374,14 +400,14 @@ DFM2_INLINE void dfm2::Read_BioVisionHierarchy
       }
     }
     else if( aToken[0] == "JOINT" ){
-      dfm2::CRigBone br;
+      CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
     }
     else if( aToken[0] == "End" ){
       assert(aToken[1] == "Site");
-      dfm2::CRigBone br;
+      CRigBone br;
       assert( aToken.size() == 2 );
       br.name = aToken[1];
       aBone.push_back(br);
@@ -418,7 +444,7 @@ DFM2_INLINE void dfm2::Read_BioVisionHierarchy
   }
   // ---------------
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
-    dfm2::CRigBone& bone = aBone[ibone];
+    CRigBone& bone = aBone[ibone];
     bone.scale = 1.0;
     bone.quatRelativeRot[0] = 1.0;
     bone.quatRelativeRot[1] = 0.0;
@@ -428,7 +454,7 @@ DFM2_INLINE void dfm2::Read_BioVisionHierarchy
     bone.transRelative[1] = 0.0;
     bone.transRelative[2] = 0.0;
     if( bone.ibone_parent != -1 ){
-      const dfm2::CRigBone& bone_p = aBone[bone.ibone_parent];
+      const CRigBone& bone_p = aBone[bone.ibone_parent];
       bone.transRelative[0] = (-bone.invBindMat[ 3])-(-bone_p.invBindMat[ 3]);
       bone.transRelative[1] = (-bone.invBindMat[ 7])-(-bone_p.invBindMat[ 7]);
       bone.transRelative[2] = (-bone.invBindMat[11])-(-bone_p.invBindMat[11]);
@@ -441,9 +467,9 @@ DFM2_INLINE void dfm2::Read_BioVisionHierarchy
 }
 
 
-DFM2_INLINE void dfm2::SetPose_BioVisionHierarchy
-(std::vector<dfm2::CRigBone>& aBone,
- const std::vector<dfm2::CChannel_BioVisionHierarchy>& aChannelRotTransBone,
+DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy
+(std::vector<CRigBone>& aBone,
+ const std::vector<CChannel_BioVisionHierarchy>& aChannelRotTransBone,
  const double *aVal)
 {
   for(auto & bone : aBone){
@@ -468,18 +494,18 @@ DFM2_INLINE void dfm2::SetPose_BioVisionHierarchy
       double v0[3] = {0,0,0};
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
-      double qtmp[4]; dfm2::QuatQuat(qtmp,
+      double qtmp[4]; QuatQuat(qtmp,
                                      aBone[ibone].quatRelativeRot, dq);
-      dfm2::Copy_Quat(aBone[ibone].quatRelativeRot,qtmp);
+      Copy_Quat(aBone[ibone].quatRelativeRot,qtmp);
     }
   }
-  dfm2::UpdateBoneRotTrans(aBone);
+  UpdateBoneRotTrans(aBone);
 }
 
 // ----------------------------------
 
-DFM2_INLINE void dfm2::Smpl2Rig(
-              std::vector<dfm2::CRigBone>& aBone,
+DFM2_INLINE void delfem2::Smpl2Rig(
+              std::vector<CRigBone>& aBone,
               const std::vector<int>& aIndBoneParent,
               const std::vector<double>& aXYZ0,
               const std::vector<double>& aJntRgrs)
@@ -519,44 +545,16 @@ DFM2_INLINE void dfm2::Smpl2Rig(
       aBone[ib].transRelative[2] = +aJntPos0[ib*3+2];
     }
   }
-  dfm2::UpdateBoneRotTrans(aBone);
+  UpdateBoneRotTrans(aBone);
 }
 
 // -------------------------------------------
 
 
-DFM2_INLINE void PickBone
-(int& ibone_selected,
- int& ielem_selected,
- const std::vector<dfm2::CRigBone>& aBone,
- const dfm2::CVec3d& src,
- const dfm2::CVec3d& dir,
- double rad_hndlr,
- double tol)
-{
-  if( ibone_selected>=0 && ibone_selected<(int)aBone.size() ){
-    const dfm2::CRigBone& bone = aBone[ibone_selected];
-    ielem_selected = bone.PickHandler(src,dir,rad_hndlr,tol);
-  }
-  else{
-    ielem_selected = -1;
-  }
-  if( ielem_selected == -1 ){
-    ibone_selected = -1;
-    for(int ibone=0;ibone<(int)aBone.size();++ibone){
-      delfem2::CVec3d pos(aBone[ibone].Pos());
-      double distance = Distance(nearest_Line_Point(pos, src, dir),pos);
-      if( distance < tol ){
-        ibone_selected = ibone;
-        break;
-      }
-    }
-  }
-}
 
 
 
-DFM2_INLINE void dfm2::SetMat4AffineBone_FromJointRelativeRotation
+DFM2_INLINE void delfem2::SetMat4AffineBone_FromJointRelativeRotation
  (std::vector<double>& aMat4AffineBone,
   const double trans_root[3],
   const std::vector<double>& aQuatRelativeRot,
@@ -566,30 +564,30 @@ DFM2_INLINE void dfm2::SetMat4AffineBone_FromJointRelativeRotation
   const unsigned int nBone = aIndBoneParent.size();
   assert( nBone >= 1 );
   assert( aMat4AffineBone.size() == nBone*16 );
-  dfm2::Mat4_ScaleRotTrans(aMat4AffineBone.data(),
+  Mat4_ScaleRotTrans(aMat4AffineBone.data(),
                            1.0, aQuatRelativeRot.data(), trans_root);
   for(unsigned int ibone=1;ibone<nBone;++ibone){
     int ibp = aIndBoneParent[ibone];
     assert( ibp >= 0 && ibp < (int)nBone );
     // inv binding mat
     double p1[3] = {aJntPos0[ibone*3+0], aJntPos0[ibone*3+1], aJntPos0[ibone*3+2]};
-    dfm2::CMat4<double> M0, M1, M2;
+    CMat4<double> M0, M1, M2;
     M0.Set_AffineTranslate(-p1[0], -p1[1], -p1[2]);
-    dfm2::Mat4_Quat(M1.mat,
+    Mat4_Quat(M1.mat,
                     aQuatRelativeRot.data()+ibone*4);
     M2.Set_AffineTranslate(+p1[0], +p1[1], +p1[2]);
-    dfm2::CMat4<double> M3 = M1.MatMat(M0);
-    dfm2::CMat4<double> M4 = M2.MatMat(M3);
-    dfm2::MatMat4(aMat4AffineBone.data()+ibone*16,
+    CMat4<double> M3 = M1.MatMat(M0);
+    CMat4<double> M4 = M2.MatMat(M3);
+    MatMat4(aMat4AffineBone.data()+ibone*16,
                   aMat4AffineBone.data()+ibp*16,
                   M4.mat);
   }
 }
 
 
-DFM2_INLINE void dfm2::Rig_SkinReferncePositionsBoneWeighted
+DFM2_INLINE void delfem2::Rig_SkinReferncePositionsBoneWeighted
  (std::vector<double>& aRefPosAff,  // [ np, nBone*4 ]
-  const std::vector<dfm2::CRigBone> aBone1,
+  const std::vector<delfem2::CRigBone> aBone1,
   const std::vector<double>& aXYZ0,
   const std::vector<double>& aW)
 {
@@ -599,7 +597,7 @@ DFM2_INLINE void dfm2::Rig_SkinReferncePositionsBoneWeighted
   for(unsigned int ip=0;ip<np;++ip){
     double p0a[4] = {aXYZ0[ip*3+0], aXYZ0[ip*3+1], aXYZ0[ip*3+2], 1.0};
     for(unsigned int ib=0;ib<nb;++ib){
-      double p0b[4]; dfm2::MatVec4(p0b,
+      double p0b[4]; delfem2::MatVec4(p0b,
                                    aBone1[ib].invBindMat, p0a);
       aRefPosAff[ip*(nb*4)+ib*4+0] = aW[ip*nb+ib]*p0b[0];
       aRefPosAff[ip*(nb*4)+ib*4+1] = aW[ip*nb+ib]*p0b[1];
@@ -616,13 +614,13 @@ DFM2_INLINE void dfm2::Rig_SkinReferncePositionsBoneWeighted
 // --------------------------------------
 
 
-DFM2_INLINE void dfm2::CTarget::WdW
+DFM2_INLINE void delfem2::CTarget::WdW
  (std::vector<double>& aW,
   std::vector<double>& adW,
-  const std::vector<dfm2::CRigBone>& aBone,
+  const std::vector<CRigBone>& aBone,
   std::vector<double>& aL) const // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
 {
-  const dfm2::CVec3d p0 = aBone[ib].Pos();
+  const CVec3d p0 = aBone[ib].Pos();
   const unsigned int ncnst = 2;
   {
     double sqx = pos.x()-p0.x();
@@ -644,30 +642,30 @@ DFM2_INLINE void dfm2::CTarget::WdW
   }
 }
 
-DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform
+DFM2_INLINE void delfem2::Rig_SensitivityBoneTransform
 (double* aL, // [ ndim(3), nBone, ndim(4) ]
  unsigned int ib_s,
  unsigned int idim_s,
- const std::vector<dfm2::CRigBone> aBone1)
+ const std::vector<CRigBone> aBone1)
 {
   const unsigned int nb = aBone1.size();
   std::vector<double> aM(nb*16);
   {
     for(std::size_t ibone=0;ibone<aBone1.size();++ibone){
-      dfm2::CMat4d m01 = dfm2::CMat4d::Scale(aBone1[ibone].scale);
-      m01 = dfm2::CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
+      CMat4d m01 = CMat4d::Scale(aBone1[ibone].scale);
+      m01 = CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
       if( ibone == ib_s ){
-        dfm2::CMat3d dn1 = dfm2::CMat3d::Spin(dfm2::CVec3d::Axis(idim_s).p) + dfm2::CMat3d::Identity();
-        dfm2::CMat4d dm1 = dfm2::CMat4d::Mat3(dn1.mat);
+        CMat3d dn1 = CMat3d::Spin(CVec3d::Axis(idim_s).p) + CMat3d::Identity();
+        CMat4d dm1 = CMat4d::Mat3(dn1.mat);
         m01 = dm1 * m01;
       }
-      m01 = dfm2::CMat4d::Translate(aBone1[ibone].transRelative) * m01;
+      m01 = CMat4d::Translate(aBone1[ibone].transRelative) * m01;
       const int ibone_p = aBone1[ibone].ibone_parent;
       if( ibone_p < 0 || ibone_p >= (int)aBone1.size() ){ // root bone
-        dfm2::Copy_Mat4( aM.data()+ibone*16, m01.mat );
+        Copy_Mat4( aM.data()+ibone*16, m01.mat );
         continue;
       }
-      dfm2::MatMat4(aM.data()+ibone*16,
+      MatMat4(aM.data()+ibone*16,
                     aM.data()+ibone_p*16, m01.mat);
     }
   }
@@ -681,14 +679,14 @@ DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform
 }
 
 
-DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform_Eigen
+DFM2_INLINE void delfem2::Rig_SensitivityBoneTransform_Eigen
 (std::vector<double>& Lx, // [ nsns, nBone*4 ]
  std::vector<double>& Ly, // [ nsns, nBone*4 ]
  std::vector<double>& Lz, // [ nsns, nBone*4 ]
  unsigned int ib_s,
  double idim_s,
  bool is_rot,
- const std::vector<dfm2::CRigBone> aBone1)
+ const std::vector<CRigBone> aBone1)
 {
   const unsigned int nb = aBone1.size();
   unsigned int istat = Lx.size();
@@ -700,23 +698,23 @@ DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform_Eigen
   std::vector<double> aM(nb*16);
   
   for(std::size_t ibone=0;ibone<aBone1.size();++ibone){
-    dfm2::CMat4d m01 = dfm2::CMat4d::Scale(aBone1[ibone].scale);
-    m01 = dfm2::CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
+    CMat4d m01 = CMat4d::Scale(aBone1[ibone].scale);
+    m01 = CMat4d::Quat(aBone1[ibone].quatRelativeRot) * m01;
     if( ibone == ib_s && is_rot ){
-      dfm2::CMat3d dn1 = dfm2::CMat3d::Spin(dfm2::CVec3d::Axis(idim_s).p) + dfm2::CMat3d::Identity();
-      dfm2::CMat4d dm1 = dfm2::CMat4d::Mat3(dn1.mat);
+      CMat3d dn1 = CMat3d::Spin(CVec3d::Axis(idim_s).p) + CMat3d::Identity();
+      CMat4d dm1 = CMat4d::Mat3(dn1.mat);
       m01 = dm1 * m01;
     }
-    m01 = dfm2::CMat4d::Translate(aBone1[ibone].transRelative) * m01;
+    m01 = CMat4d::Translate(aBone1[ibone].transRelative) * m01;
     if( ibone == ib_s && !is_rot ){
-      m01 = dfm2::CMat4d::Translate(dfm2::CVec3d::Axis(idim_s).p) * m01;
+      m01 = CMat4d::Translate(CVec3d::Axis(idim_s).p) * m01;
     }
     const int ibone_p = aBone1[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone1.size() ){ // root bone
-      dfm2::Copy_Mat4( aM.data()+ibone*16, m01.mat );
+      Copy_Mat4( aM.data()+ibone*16, m01.mat );
       continue;
     }
-    dfm2::MatMat4(aM.data()+ibone*16,
+    MatMat4(aM.data()+ibone*16,
                   aM.data()+ibone_p*16, m01.mat);
   }
   for(std::size_t ib=0;ib<nb;++ib){
@@ -732,9 +730,9 @@ DFM2_INLINE void dfm2::Rig_SensitivityBoneTransform_Eigen
 
 
 
-DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation
+DFM2_INLINE void delfem2::Rig_SensitivitySkin_BoneRotation
  (std::vector<double>& aSns, // [nb*3, np*ndim(3)]
-  const std::vector<dfm2::CRigBone> aBone1,
+  const std::vector<CRigBone> aBone1,
   const std::vector<double>& aXYZ0,
   const std::vector<double>& aW,
   const std::vector<double>& aL) // [ [3, nb],  ndim(3),  [nBone, ndim(4)]] ]
@@ -761,9 +759,9 @@ DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation
 }
 
 /*
- void dfm2::Rig_SkinReferncePositionsBoneWeighted_Eigen
+ void Rig_SkinReferncePositionsBoneWeighted_Eigen
  (Eigen::MatrixXd& emRefPosAff,
- const std::vector<dfm2::CRigBone> aBone1,
+ const std::vector<CRigBone> aBone1,
  const std::vector<double>& aXYZ0,
  const std::vector<double>& aW)
  {
@@ -773,7 +771,7 @@ DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation
  for(int ip=0;ip<np;++ip){
  double p0a[4] = {aXYZ0[ip*3+0], aXYZ0[ip*3+1], aXYZ0[ip*3+2], 1.0};
  for(int ib=0;ib<nb;++ib){
- double p0b[4]; dfm2::MatVec4(p0b,
+ double p0b[4]; MatVec4(p0b,
  aBone1[ib].invBindMat, p0a);
  emRefPosAff(ip, ib*4+0) = aW[ip*nb+ib]*p0b[0];
  emRefPosAff(ip, ib*4+1) = aW[ip*nb+ib]*p0b[1];
@@ -786,11 +784,11 @@ DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation
 
 
 
-DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
+DFM2_INLINE void delfem2::Rig_SensitivitySkin_BoneRotation_Eigen
 (std::vector<double>& dSkinX, // [ np, nsns ]
  std::vector<double>& dSkinY, // [ np, nsns ]
  std::vector<double>& dSkinZ, // [ np, nsns ]
- const std::vector<dfm2::CRigBone>& aBone1,
+ const std::vector<CRigBone>& aBone1,
  const std::vector<double>& aXYZ0,
  const std::vector<double>& aW,
  const std::vector<double>& Lx, // [ nsns, nBone*4 ]
@@ -820,11 +818,11 @@ DFM2_INLINE void dfm2::Rig_SensitivitySkin_BoneRotation_Eigen
 }
 
 
-DFM2_INLINE void dfm2::Rig_WdW_Target_Eigen
+DFM2_INLINE void delfem2::Rig_WdW_Target_Eigen
  (std::vector<double>& aW,
   std::vector<double>& adW,
-  const std::vector<dfm2::CRigBone>& aBone,
-  const dfm2::CTarget& target,
+  const std::vector<CRigBone>& aBone,
+  const CTarget& target,
   const std::vector<double>& Lx, // [ nsns, nBone*4 ]
   const std::vector<double>& Ly, // [ nsns, nBone*4 ]
   const std::vector<double>& Lz) // [ nsns, nBone*4 ]
@@ -836,9 +834,9 @@ DFM2_INLINE void dfm2::Rig_WdW_Target_Eigen
   assert( Lz.size() == nsns*nb*4 );
   // --------
   unsigned int ib = target.ib;
-  const dfm2::CVec3d pos = target.pos;
+  const CVec3d pos = target.pos;
   // ---------------
-  const dfm2::CVec3d p0 = aBone[ib].Pos();
+  const CVec3d p0 = aBone[ib].Pos();
   const unsigned int ncnst = 2;
   {
     double sqx = pos.x()-p0.x();

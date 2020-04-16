@@ -43,7 +43,6 @@ void Write_STL(const std::string &str,
                const std::vector<double> &aXYZ,
                const std::vector<int> &aTri);
 
-
 // -----
 // PLY
 

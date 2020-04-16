@@ -7,17 +7,10 @@
 
 
 #include <cassert>
-#include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
-#include <set>
-#include <stack>
 #include <algorithm>
 #include <cstdlib>
 #include <math.h>
-#include <time.h>
-#include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/primitive.h"

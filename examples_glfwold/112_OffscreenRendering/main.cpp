@@ -6,7 +6,6 @@
  */
 
 #include <iostream>
-#include <cmath>
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 

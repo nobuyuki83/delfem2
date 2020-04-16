@@ -9,15 +9,54 @@
 #include "delfem2/geo3_v23m34q.h"
 
 #ifndef M_PI
-#define M_PI 3.141592653589793
+#  define M_PI 3.141592653589793
 #endif
 
-namespace dfm2 = delfem2;
+namespace delfem2 {
+namespace bem {
+
+// vai*conj(vbi)
+DFM2_INLINE double dot(
+    const std::vector<double> &va,
+    const std::vector<double> &vb)
+{
+  const int n = (int) va.size();
+  double s = 0;
+  for (int i = 0; i < n; ++i) { s += va[i] * vb[i]; }
+  return s;
+}
+
+void normalize(std::vector<double> &v) {
+  const int n = (int) v.size();
+  double sqlen = squaredNorm(v);
+  double leninv = 1.0 / sqrt(sqlen);
+  for (int i = 0; i < n; ++i) { v[i] *= leninv; }
+}
+
+
+CVec3d NormalTri(
+    int itri,
+    const std::vector<unsigned int> &aTri,
+    const std::vector<double> &aXYZ) {
+  int i0 = aTri[itri * 3 + 0];
+  int i1 = aTri[itri * 3 + 1];
+  int i2 = aTri[itri * 3 + 2];
+  CVec3d v0(aXYZ[i0 * 3 + 0], aXYZ[i0 * 3 + 1], aXYZ[i0 * 3 + 2]);
+  CVec3d v1(aXYZ[i1 * 3 + 0], aXYZ[i1 * 3 + 1], aXYZ[i1 * 3 + 2]);
+  CVec3d v2(aXYZ[i2 * 3 + 0], aXYZ[i2 * 3 + 1], aXYZ[i2 * 3 + 2]);
+  CVec3d n;
+  Normal(n, v0, v1, v2);
+  return n;
+}
+
+}
+}
+
 
 // ---------------------------
 // linear algebra
 
-double squaredNorm(const std::vector<double>& v)
+double delfem2::squaredNorm(const std::vector<double>& v)
 {
   const int n = (int)v.size();
   double s = 0;
@@ -25,25 +64,9 @@ double squaredNorm(const std::vector<double>& v)
   return s;
 }
 
-// vai*conj(vbi)
-double dot(const std::vector<double>& va, const std::vector<double>& vb)
-{
-  const int n = (int)va.size();
-  double s = 0;
-  for (int i = 0; i<n; ++i){ s += va[i]*vb[i]; }
-  return s;
-}
-
-void normalize(std::vector<double>& v)
-{
-  const int n = (int)v.size();
-  double sqlen = squaredNorm(v);
-  double leninv = 1.0/sqrt(sqlen);
-  for (int i = 0; i<n; ++i){ v[i] *= leninv; }
-}
 
 // {y} = [A]{x}
-void matVec
+void delfem2::matVec
 (std::vector<double>& y,
 const std::vector<double>& A,
 const std::vector<double>& x)
@@ -63,7 +86,7 @@ const std::vector<double>& x)
 // /////////////////////////////////////////////////////////////
 // Solve Matrix with BiCGSTAB Methods
 // /////////////////////////////////////////////////////////////
-bool Solve_BiCGSTAB
+bool delfem2::Solve_BiCGSTAB
 (double& conv_ratio, int& iteration,
 std::vector<double>& u_vec,
 const std::vector<double>& A,
@@ -108,7 +131,7 @@ const std::vector<double>& y_vec)
   p_vec = r_vec;
 
   // calc (r,r0*)
-  double r_r0conj = dot(r_vec, r0);
+  double r_r0conj = bem::dot(r_vec, r0);
 
   iteration = mx_iter;
   for (int iitr = 1; iitr<mx_iter; iitr++){
@@ -119,7 +142,7 @@ const std::vector<double>& y_vec)
     // calc alpha
     double alpha;
     {
-      const double den = dot(Ap_vec, r0);
+      const double den = bem::dot(Ap_vec, r0);
       alpha = r_r0conj/den;
     }
 
@@ -133,7 +156,7 @@ const std::vector<double>& y_vec)
     double omega;
     {
       const double den = squaredNorm(As_vec);
-      const double num = dot(As_vec, s_vec);
+      const double num = bem::dot(As_vec, s_vec);
       omega = num/den;
     }
 
@@ -157,7 +180,7 @@ const std::vector<double>& y_vec)
     // calc beta
     double beta;
     {
-      const double tmp1 = dot(r_vec, r0);
+      const double tmp1 = bem::dot(r_vec, r0);
       beta = (tmp1/r_r0conj) * (alpha/omega);
       r_r0conj = tmp1;
     }
@@ -173,20 +196,6 @@ const std::vector<double>& y_vec)
 
 // -----------------------------
 
-dfm2::CVec3d NormalTri(
-    int itri,
-    const std::vector<unsigned int> &aTri,
-    const std::vector<double>& aXYZ)
-{
-  int i0 = aTri[itri*3+0];
-  int i1 = aTri[itri*3+1];
-  int i2 = aTri[itri*3+2];
-  dfm2::CVec3d v0(aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]);
-  dfm2::CVec3d v1(aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]);
-  dfm2::CVec3d v2(aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]);
-  dfm2::CVec3d n; Normal(n, v0, v1, v2);
-  return n;
-}
 
 
 const static unsigned int NIntTriGauss[6] = { 1, 3, 7, 12, 13, 16 };
@@ -266,29 +275,29 @@ const static double TriGauss[6][16][3] =
   }
 };
 
-void makeLinearSystem_PotentialFlow_Order1st
-(std::vector<double>& A,
-std::vector<double>& f,
-//
-const dfm2::CVec3d& velo,
-int ngauss,
-const std::vector<double>& aXYZ,
-const std::vector<int>& aTri,
-const std::vector<double>& aSolidAngle)
+void delfem2::makeLinearSystem_PotentialFlow_Order1st(
+    std::vector<double>& A,
+    std::vector<double>& f,
+    //
+    const CVec3d& velo,
+    int ngauss,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTri,
+    const std::vector<double>& aSolidAngle)
 {
   const int np = (int)aXYZ.size()/3;
   A.assign(np*np, 0.0);
   f.assign(np, 0.0);
   for (int ip = 0; ip<np; ip++){
-    dfm2::CVec3d p(aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
+    CVec3d p(aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
     for (int jtri = 0; jtri<(int)aTri.size()/3; ++jtri){
       const int jq0 = aTri[jtri*3+0];
       const int jq1 = aTri[jtri*3+1];
       const int jq2 = aTri[jtri*3+2];
-      const dfm2::CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
-      const dfm2::CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
-      const dfm2::CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-      dfm2::CVec3d n = Normal(q0, q1, q2);
+      const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
+      const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
+      const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
+      CVec3d n = Normal(q0, q1, q2);
       const double area = n.Length()*0.5; // area
       n.SetNormalizedVector(); // unit normal
       n *= -1; // outward pointing vector
@@ -300,8 +309,8 @@ const std::vector<double>& aSolidAngle)
         double r1 = TriGauss[ngauss][iint][1];
         double r2 = 1.0-r0-r1;
         double wb = TriGauss[ngauss][iint][2];
-        dfm2::CVec3d yb = r0*q0+r1*q1+r2*q2;
-        dfm2::CVec3d v = (p-yb);
+        CVec3d yb = r0*q0+r1*q1+r2*q2;
+        CVec3d v = (p-yb);
         double len = v.Length();
         double G = 1.0/(4*M_PI*len);
         double dGdn = (v*n)/(4*M_PI*len*len*len);
@@ -327,28 +336,28 @@ const std::vector<double>& aSolidAngle)
   }
 }
 
-dfm2::CVec3d evaluateField_PotentialFlow_Order1st
-(double& phi_pos,
-const dfm2::CVec3d& pos,
-const dfm2::CVec3d& velo_inf,
-int ngauss,
-const std::vector<double>& aValSrf,
-const std::vector<double>& aXYZ,
-const std::vector<int>& aTri)
+delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
+    double& phi_pos,
+    const CVec3d& pos,
+    const CVec3d& velo_inf,
+    int ngauss,
+    const std::vector<double>& aValSrf,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTri)
 {
   const int np = (int)aXYZ.size()/3;
-  if (aValSrf.size()!=np){ return dfm2::CVec3d(0, 0, 0); }
-  dfm2::CVec3d gradphi_pos = dfm2::CVec3d(0, 0, 0);
+  if (aValSrf.size()!=np){ return CVec3d(0, 0, 0); }
+  CVec3d gradphi_pos = CVec3d(0, 0, 0);
   phi_pos = 0;
   for (int jtri = 0; jtri<(int)aTri.size()/3; ++jtri){
     const int jq0 = aTri[jtri*3+0];
     const int jq1 = aTri[jtri*3+1];
     const int jq2 = aTri[jtri*3+2];
-    const dfm2::CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
-    const dfm2::CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
-    const dfm2::CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
+    const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
+    const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
+    const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
     assert(ngauss>=0&&ngauss<6);
-    dfm2::CVec3d n = Normal(q0, q1, q2);
+    CVec3d n = Normal(q0, q1, q2);
     const double area = n.Length()*0.5; // area
     n.SetNormalizedVector(); // unit normal
     n *= -1; // outward normal 
@@ -358,21 +367,21 @@ const std::vector<int>& aTri)
       double r1 = TriGauss[ngauss][iint][1];
       double r2 = 1.0-r0-r1;
       double wb = TriGauss[ngauss][iint][2];
-      dfm2::CVec3d yb = r0*q0+r1*q1+r2*q2;
+      CVec3d yb = r0*q0+r1*q1+r2*q2;
       double phiyb = r0*aValSrf[jq0]+r1*aValSrf[jq1]+r2*aValSrf[jq2];
-      dfm2::CVec3d v = (pos-yb);
+      CVec3d v = (pos-yb);
       double len = v.Length();
       double G = 1.0/(4*M_PI*len);
       double dGdn = (v*n)/(4*M_PI*len*len*len);
-      dfm2::CVec3d dGdx = -v/(4*M_PI*len*len*len);
-      dfm2::CVec3d dGdndx = (1/(4*M_PI*len*len*len))*n-(3*(v*n)/(4*M_PI*len*len*len*len*len))*v;
+      CVec3d dGdx = -v/(4*M_PI*len*len*len);
+      CVec3d dGdndx = (1/(4*M_PI*len*len*len))*n-(3*(v*n)/(4*M_PI*len*len*len*len*len))*v;
       double vnyb = -n*velo_inf;
       {
         double phyx = dGdn*phiyb-G*vnyb;
         phi_pos -= wb*area*phyx;
       }
       {
-        dfm2::CVec3d gradphyx = dGdndx*phiyb-dGdx*vnyb;
+        CVec3d gradphyx = dGdndx*phiyb-dGdx*vnyb;
         gradphi_pos -= wb*area*gradphyx;
       }
     }
@@ -382,11 +391,11 @@ const std::vector<int>& aTri)
 }
 
 
-void makeLinearSystem_PotentialFlow_Order0th(
+void delfem2::makeLinearSystem_PotentialFlow_Order0th(
     std::vector<double>& A,
     std::vector<double>& f,
     //
-    const dfm2::CVec3d& velo_inf,
+    const CVec3d& velo_inf,
     int ngauss,
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int> &aTri)
@@ -395,16 +404,16 @@ void makeLinearSystem_PotentialFlow_Order0th(
   A.assign(nt*nt, 0.0);
   f.assign(nt, 0.0);
   for (std::size_t it = 0; it<nt; it++){
-    const dfm2::CVec3d pm = MidPoint(it, aTri, aXYZ);
+    const CVec3d pm = MidPoint(it, aTri, aXYZ);
     for (std::size_t jt = 0; jt<nt; ++jt){
       if (it==jt) continue;
       const unsigned int jq0 = aTri[jt*3+0];
       const unsigned int jq1 = aTri[jt*3+1];
       const unsigned int jq2 = aTri[jt*3+2];
-      const dfm2::CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
-      const dfm2::CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
-      const dfm2::CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-      dfm2::CVec3d ny = Normal(q0, q1, q2);
+      const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
+      const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
+      const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
+      CVec3d ny = Normal(q0, q1, q2);
       const double area = ny.Length()*0.5; // area
       ny.SetNormalizedVector(); // unit normal
       ny *= -1; // it is pointing outward to the domain
@@ -416,8 +425,8 @@ void makeLinearSystem_PotentialFlow_Order0th(
         double r1 = TriGauss[ngauss][iint][1];
         double r2 = 1.0-r0-r1;
         double wb = TriGauss[ngauss][iint][2];
-        dfm2::CVec3d yb = r0*q0+r1*q1+r2*q2;
-        dfm2::CVec3d r = (pm-yb);
+        CVec3d yb = r0*q0+r1*q1+r2*q2;
+        CVec3d r = (pm-yb);
         double len = r.Length();
         double G = 1.0/(4*M_PI*len);
         double dGdn = (r*ny)/(4*M_PI*len*len*len);
@@ -453,12 +462,12 @@ void makeLinearSystem_PotentialFlow_Order0th(
 }
 
 
-void evaluateField_PotentialFlow_Order0th(
+void delfem2::evaluateField_PotentialFlow_Order0th(
     double& phi_pos,
-    dfm2::CVec3d& gradphi_pos,
+    CVec3d& gradphi_pos,
     //
-    const dfm2::CVec3d& pos,
-    const dfm2::CVec3d& velo_inf,
+    const CVec3d& pos,
+    const CVec3d& velo_inf,
     int ngauss,
     const std::vector<double>& aValTri,
     const std::vector<double>& aXYZ,
@@ -466,21 +475,21 @@ void evaluateField_PotentialFlow_Order0th(
 {
   const int nt = (int)aTri.size()/3;
   if (aValTri.size()!=nt){
-    gradphi_pos = dfm2::CVec3d(0,0,0);
+    gradphi_pos = CVec3d(0,0,0);
     return;
   }
-  gradphi_pos = dfm2::CVec3d(0, 0, 0);
+  gradphi_pos = CVec3d(0, 0, 0);
   phi_pos = 0;
   for (int jtri = 0; jtri<nt; ++jtri){
     const int jq0 = aTri[jtri*3+0];
     const int jq1 = aTri[jtri*3+1];
     const int jq2 = aTri[jtri*3+2];
-    const dfm2::CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
-    const dfm2::CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
-    const dfm2::CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-    dfm2::CVec3d ny = Normal(q0, q1, q2);
+    const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
+    const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
+    const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
+    CVec3d ny = Normal(q0, q1, q2);
     const double area = ny.Length()*0.5; // area
-    const double elen = sqrt(area*2)*0.5;
+//    const double elen = sqrt(area*2)*0.5;
     ny.SetNormalizedVector(); // unit normal
     ny *= -1; // normal pointing outward
     const double phiy = aValTri[jtri];
@@ -490,13 +499,13 @@ void evaluateField_PotentialFlow_Order0th(
       const double r1 = TriGauss[ngauss][iint][1];
       const double r2 = 1.0-r0-r1;
       const double wb = TriGauss[ngauss][iint][2];
-      const dfm2::CVec3d yb = r0*q0+r1*q1+r2*q2;
-      const dfm2::CVec3d r = (pos-yb);
+      const CVec3d yb = r0*q0+r1*q1+r2*q2;
+      const CVec3d r = (pos-yb);
       const double len = r.Length();
       double G = 1.0/(4*M_PI*len);
       double dGdny = (r*ny)/(4*M_PI*len*len*len);
-      dfm2::CVec3d dGdx = -r/(4*M_PI*len*len*len);
-      dfm2::CVec3d dGdnydx = (1/(4*M_PI*len*len*len))*ny-(3*(r*ny)/(4*M_PI*len*len*len*len*len))*r;
+      CVec3d dGdx = -r/(4*M_PI*len*len*len);
+      CVec3d dGdnydx = (1/(4*M_PI*len*len*len))*ny-(3*(r*ny)/(4*M_PI*len*len*len*len*len))*r;
       ///
 //      const double reg = 1.0-exp(-(len*len*len)/(elen*elen*elen));
 //      G *= reg;
@@ -510,7 +519,7 @@ void evaluateField_PotentialFlow_Order0th(
         phi_pos += wb*area*phyx; // should be plus
       }
       {
-        dfm2::CVec3d gradphyx = -dGdnydx*phiy+dGdx*vnyb;
+        CVec3d gradphyx = -dGdnydx*phiy+dGdx*vnyb;
         gradphi_pos += wb*area*gradphyx; // should be plus
       }
     }
@@ -520,28 +529,28 @@ void evaluateField_PotentialFlow_Order0th(
 
 // ---------------------------------------------
 
-void BEM_VortexSheet_Coeff_0th
+void delfem2::BEM_VortexSheet_Coeff_0th
 (double aC[4], 
-const dfm2::CVec3d& x0, const dfm2::CVec3d& x1, const dfm2::CVec3d& x2,
-const dfm2::CVec3d& y0, const dfm2::CVec3d& y1, const dfm2::CVec3d& y2,
-const dfm2::CVec3d& velo,
+const CVec3d& x0, const CVec3d& x1, const CVec3d& x2,
+const CVec3d& y0, const CVec3d& y1, const CVec3d& y2,
+const CVec3d& velo,
 int ngauss)
 {
   assert(ngauss>=0&&ngauss<6);
   const int nint = NIntTriGauss[ngauss]; // number of integral points
   //
-  dfm2::CVec3d xm = (x0+x1+x2)*0.3333333333333333333;
-  dfm2::CVec3d nx = Normal(x0, x1, x2);
+  CVec3d xm = (x0+x1+x2)*0.3333333333333333333;
+  CVec3d nx = Normal(x0, x1, x2);
 //  const double areax = nx.Length()*0.5; // area
   nx.SetNormalizedVector(); // unit normal
-  const dfm2::CVec3d ux = (x1-x0).Normalize();
-  const dfm2::CVec3d vx = nx^ux;
+  const CVec3d ux = (x1-x0).Normalize();
+  const CVec3d vx = nx^ux;
   //
-  dfm2::CVec3d ny = Normal(y0, y1, y2);
+  CVec3d ny = Normal(y0, y1, y2);
   const double areay = ny.Length()*0.5; // area
   ny.SetNormalizedVector(); // unit normal
-  const dfm2::CVec3d uy = (y1-y0).Normalize();
-  const dfm2::CVec3d vy = ny^uy;
+  const CVec3d uy = (y1-y0).Normalize();
+  const CVec3d vy = ny^uy;
   //
   aC[0] = aC[1] = aC[2] = aC[3] = 0.0;
   for (int iint = 0; iint<nint; iint++){
@@ -549,14 +558,14 @@ int ngauss)
     double r1 = TriGauss[ngauss][iint][1];
     double r2 = 1.0-r0-r1;
     double wb = TriGauss[ngauss][iint][2];
-    dfm2::CVec3d yb = r0*y0+r1*y1+r2*y2;
-    dfm2::CVec3d r = (xm-yb);
+    CVec3d yb = r0*y0+r1*y1+r2*y2;
+    CVec3d r = (xm-yb);
     double len = r.Length();
 //    double G = -1.0/(4*M_PI*len);
 //    double dGdn = -(r*ny)/(4*M_PI*len*len*len);
-    dfm2::CVec3d dGdy = -r/(4*M_PI*len*len*len);
-    dfm2::CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
-    dfm2::CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
+    CVec3d dGdy = -r/(4*M_PI*len*len*len);
+    CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
+    CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
     {
       aC[0] += wb*areay*(pvycdGdy*ux);
       aC[1] += wb*areay*(muycdGdy*ux);
@@ -566,14 +575,14 @@ int ngauss)
   }
 }
 
-void makeLinearSystem_VortexSheet_Order0th
-(std::vector<double>& A,
-std::vector<double>& f,
-/////
-const dfm2::CVec3d& velo,
-int ngauss,
-const std::vector<double>& aXYZ,
-const std::vector<int>& aTri)
+void delfem2::makeLinearSystem_VortexSheet_Order0th(
+    std::vector<double>& A,
+    std::vector<double>& f,
+    // --
+    const CVec3d& velo,
+    int ngauss,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTri)
 {
   const int nt = (int)aTri.size()/3;
   A.assign(4*nt*nt, 0.0);
@@ -582,13 +591,13 @@ const std::vector<int>& aTri)
     const int ip0 = aTri[it*3+0];
     const int ip1 = aTri[it*3+1];
     const int ip2 = aTri[it*3+2];
-    const dfm2::CVec3d p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
-    const dfm2::CVec3d p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
-    const dfm2::CVec3d p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
+    const CVec3d p0(aXYZ[ip0*3+0], aXYZ[ip0*3+1], aXYZ[ip0*3+2]);
+    const CVec3d p1(aXYZ[ip1*3+0], aXYZ[ip1*3+1], aXYZ[ip1*3+2]);
+    const CVec3d p2(aXYZ[ip2*3+0], aXYZ[ip2*3+1], aXYZ[ip2*3+2]);
     {
-      const dfm2::CVec3d nx = Normal(p0, p1, p2).Normalize();
-      const dfm2::CVec3d ux = (p1-p0).Normalize();
-      const dfm2::CVec3d vx = (nx^ux);
+      const CVec3d nx = Normal(p0, p1, p2).Normalize();
+      const CVec3d ux = (p1-p0).Normalize();
+      const CVec3d vx = (nx^ux);
       f[it*2+0] = ux*velo;
       f[it*2+1] = vx*velo;
     }
@@ -597,9 +606,9 @@ const std::vector<int>& aTri)
       const int jq0 = aTri[jt*3+0];
       const int jq1 = aTri[jt*3+1];
       const int jq2 = aTri[jt*3+2];
-      const dfm2::CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
-      const dfm2::CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
-      const dfm2::CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
+      const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
+      const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
+      const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
       double aC[4];
       BEM_VortexSheet_Coeff_0th(aC, 
         p0, p1, p2,
@@ -617,8 +626,8 @@ const std::vector<int>& aTri)
   }
 }
 
-dfm2::CVec3d evaluateField_VortexSheet_Order0th
-(const dfm2::CVec3d& pos,
+delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
+(const CVec3d& pos,
  const std::vector<double>& aValSrf,
  //
  int ngauss,
@@ -628,34 +637,34 @@ dfm2::CVec3d evaluateField_VortexSheet_Order0th
 {
   assert(ngauss>=0&&ngauss<6);
   const int nt = (int)aTri.size()/3;
-  dfm2::CVec3d velo_res(0,0,0);
+  CVec3d velo_res(0,0,0);
   for (int jt = 0; jt<nt; ++jt){
     if (jt==jtri_exclude){ continue; }
     const int jq0 = aTri[jt*3+0];
     const int jq1 = aTri[jt*3+1];
     const int jq2 = aTri[jt*3+2];
-    const dfm2::CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
-    const dfm2::CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
-    const dfm2::CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
-    dfm2::CVec3d ny = Normal(q0, q1, q2);
+    const CVec3d q0(aXYZ[jq0*3+0], aXYZ[jq0*3+1], aXYZ[jq0*3+2]);
+    const CVec3d q1(aXYZ[jq1*3+0], aXYZ[jq1*3+1], aXYZ[jq1*3+2]);
+    const CVec3d q2(aXYZ[jq2*3+0], aXYZ[jq2*3+1], aXYZ[jq2*3+2]);
+    CVec3d ny = Normal(q0, q1, q2);
     const double areay = ny.Length()*0.5; // area
     ny.SetNormalizedVector(); // unit normal
-    const dfm2::CVec3d uy = (q1-q0).Normalize();
-    const dfm2::CVec3d vy = ny^uy;
+    const CVec3d uy = (q1-q0).Normalize();
+    const CVec3d vy = ny^uy;
     const int nint = NIntTriGauss[ngauss]; // number of integral points
     for (int iint = 0; iint<nint; iint++){
       const double r0 = TriGauss[ngauss][iint][0];
       const double r1 = TriGauss[ngauss][iint][1];
       const double r2 = 1.0-r0-r1;
       const double wb = TriGauss[ngauss][iint][2];
-      dfm2::CVec3d yb = r0*q0+r1*q1+r2*q2;
-      dfm2::CVec3d r = (pos-yb);
+      CVec3d yb = r0*q0+r1*q1+r2*q2;
+      CVec3d r = (pos-yb);
       const double len = r.Length();
       //    double G = -1.0/(4*M_PI*len);
       //    double dGdn = -(r*ny)/(4*M_PI*len*len*len);
-      //    dfm2::CVector3 dGdy = -r/(4*M_PI*len*len*len);
-      dfm2::CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
-      dfm2::CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
+      //    CVector3 dGdy = -r/(4*M_PI*len*len*len);
+      CVec3d pvycdGdy = -(vy^r)/(4*M_PI*len*len*len); // +vy ^ dGdy = (ny^uy)^dGdy
+      CVec3d muycdGdy = +(uy^r)/(4*M_PI*len*len*len); // -uy ^ dGdy = (ny^vy)^dGdy
       velo_res -= wb*areay*(pvycdGdy*aValSrf[jt*2+0]+muycdGdy*aValSrf[jt*2+1]);
     }
   }
@@ -665,49 +674,49 @@ dfm2::CVec3d evaluateField_VortexSheet_Order0th
 
 // -------------------------------------------------
 
-dfm2::CVec3d veloVortexParticle
-(const dfm2::CVec3d& pos_eval,
- const dfm2::CVec3d& pos_vp,
- const dfm2::CVec3d& circ_vp,
+delfem2::CVec3d delfem2::veloVortexParticle
+(const CVec3d& pos_eval,
+ const CVec3d& pos_vp,
+ const CVec3d& circ_vp,
  double rad_vp)
 {
-  dfm2::CVec3d v = pos_eval-pos_vp;
+  CVec3d v = pos_eval-pos_vp;
   double len = v.Length();
   double ratio = len/rad_vp;
   double f0 = 1.0-exp(-ratio*ratio*ratio);
 //  double f0 = 1.0;
   double g0 = f0/(4*M_PI*len*len*len);
-  dfm2::CVec3d k0 = g0*(circ_vp^v);
+  CVec3d k0 = g0*(circ_vp^v);
   return g0*(circ_vp^v);
 }
 
-dfm2::CMat3d gradveloVortexParticle
-(dfm2::CVec3d& velo_eval,
-const dfm2::CVec3d& pos_eval,
-const dfm2::CVec3d& pos_vp,
-const dfm2::CVec3d& circ_vp,
+delfem2::CMat3d delfem2::gradveloVortexParticle
+(CVec3d& velo_eval,
+const CVec3d& pos_eval,
+const CVec3d& pos_vp,
+const CVec3d& circ_vp,
 double rad_vp)
 {
-  dfm2::CVec3d v = pos_eval-pos_vp;
+  CVec3d v = pos_eval-pos_vp;
   double len = v.Length();
   double ratio = len/rad_vp;
   double f0 = 1.0-exp(-ratio*ratio*ratio);
   double g0 = f0/(4*M_PI*len*len*len);
   velo_eval = g0*(circ_vp^v);
   ///
-  dfm2::CVec3d dlen = v.Normalize();
-  dfm2::CVec3d dratio = dlen/rad_vp;
-  dfm2::CVec3d df0 = (exp(-ratio*ratio*ratio)*3*ratio*ratio)*dratio;
-  dfm2::CVec3d dg0 = (1.0/(4*M_PI*len*len*len))*df0-(3*f0/(4*M_PI*len*len*len*len))*dlen;
-  return dfm2::Mat3_OuterProduct(circ_vp^v, dg0)+g0*dfm2::Mat3_Spin(circ_vp);
+  CVec3d dlen = v.Normalize();
+  CVec3d dratio = dlen/rad_vp;
+  CVec3d df0 = (exp(-ratio*ratio*ratio)*3*ratio*ratio)*dratio;
+  CVec3d dg0 = (1.0/(4*M_PI*len*len*len))*df0-(3*f0/(4*M_PI*len*len*len*len))*dlen;
+  return Mat3_OuterProduct(circ_vp^v, dg0)+g0*Mat3_Spin(circ_vp);
 }
 
-dfm2::CVec3d veloVortexParticles
-(const dfm2::CVec3d& p0,
+delfem2::CVec3d delfem2::veloVortexParticles
+(const CVec3d& p0,
 const std::vector<CVortexParticle>& aVortexParticle,
 int ivp_self)
 {
-  dfm2::CVec3d velo_res(0, 0, 0);
+  CVec3d velo_res(0, 0, 0);
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     if (ivp==ivp_self) continue;
     const CVortexParticle& vp = aVortexParticle[ivp];
@@ -716,25 +725,25 @@ int ivp_self)
   return velo_res;
 }
 
-dfm2::CMat3d gradveloVortexParticles
-(dfm2::CVec3d& velo,
-const dfm2::CVec3d& p0,
+delfem2::CMat3d delfem2::gradveloVortexParticles
+(CVec3d& velo,
+const CVec3d& p0,
 const std::vector<CVortexParticle>& aVortexParticle,
 int ivp_self)
 {
-  dfm2::CMat3d m_res; m_res.SetZero();
-  velo = dfm2::CVec3d(0, 0, 0);
+  CMat3d m_res; m_res.SetZero();
+  velo = CVec3d(0, 0, 0);
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     if (ivp==ivp_self) continue;
     const CVortexParticle& vp = aVortexParticle[ivp];
-    dfm2::CVec3d dv;
+    CVec3d dv;
     m_res += gradveloVortexParticle(dv, p0, vp.pos, vp.circ, vp.rad);
     velo += dv;
   }
   return m_res;
 }
 
-void setGradVeloVortexParticles
+void delfem2::setGradVeloVortexParticles
 (std::vector<CVortexParticle>& aVortexParticle)
 {
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
@@ -743,9 +752,9 @@ void setGradVeloVortexParticles
     vp.gradvelo_pre = vp.gradvelo;
   }
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
-//    dfm2::CVector3 velo = veloVortexParticles(aVortexParticle[ivp].pos, aVortexParticle, ivp);
-    dfm2::CVec3d velo;
-    dfm2::CMat3d grad_velo = gradveloVortexParticles(velo, aVortexParticle[ivp].pos, aVortexParticle, ivp);
+//    CVector3 velo = veloVortexParticles(aVortexParticle[ivp].pos, aVortexParticle, ivp);
+    CVec3d velo;
+    CMat3d grad_velo = gradveloVortexParticles(velo, aVortexParticle[ivp].pos, aVortexParticle, ivp);
     aVortexParticle[ivp].velo = velo;
     aVortexParticle[ivp].gradvelo = grad_velo;
     /*
@@ -789,7 +798,7 @@ void CGrid_Vortex::drawBoundingBox() const
  */
 
 
-void viscousityVortexParticleGrid
+void delfem2::viscousityVortexParticleGrid
 (std::vector<CVortexParticle>& aVortexParticle, CGrid_Vortex& grid, double resolution)
 {
   grid.h = resolution;
@@ -799,14 +808,14 @@ void viscousityVortexParticleGrid
   double min_z, max_z;
   if (aVortexParticle.size()==0){
     grid.nx = 0; grid.ny = 0; grid.nz = 0;
-    grid.cnt = dfm2::CVec3d(0, 0, 0);
+    grid.cnt = CVec3d(0, 0, 0);
     return;
   }
   min_x = max_x = aVortexParticle[0].pos.x();
   min_y = max_y = aVortexParticle[0].pos.y();
   min_z = max_z = aVortexParticle[0].pos.z();
   for (int ivp = 1; ivp<aVortexParticle.size(); ++ivp){
-    dfm2::CVec3d p = aVortexParticle[ivp].pos;
+    CVec3d p = aVortexParticle[ivp].pos;
     if (p.x()<min_x){ min_x = p.x(); }
     if (p.x()>max_x){ max_x = p.x(); }
     if (p.y()<min_y){ min_y = p.y(); }
@@ -814,7 +823,7 @@ void viscousityVortexParticleGrid
     if (p.z()<min_z){ min_z = p.z(); }
     if (p.z()>max_z){ max_z = p.z(); }
   }
-  grid.cnt = dfm2::CVec3d(min_x+max_x, min_y+max_y, min_z+max_z)*0.5;
+  grid.cnt = CVec3d(min_x+max_x, min_y+max_y, min_z+max_z)*0.5;
   max_x += h; 
   max_y += h;
   max_z += h;
@@ -837,7 +846,7 @@ void viscousityVortexParticleGrid
     grid.aDataVtx[igp].circ.SetZero();
   }
   for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
-    dfm2::CVec3d p = aVortexParticle[ivp].pos;
+    CVec3d p = aVortexParticle[ivp].pos;
     int ix = (p.x()-(grid.cnt.x()-h*nx*0.5))/h;
     int iy = (p.y()-(grid.cnt.y()-h*ny*0.5))/h;
     int iz = (p.z()-(grid.cnt.z()-h*nz*0.5))/h;
@@ -908,10 +917,10 @@ void viscousityVortexParticleGrid
 
 // -----------------------------------
 
-COMPLEX evaluateField_Helmholtz_Order0th(
-    const std::vector<COMPLEX>& aSol,
-    const dfm2::CVec3d& p,
-    const dfm2::CVec3d& pos_source,
+std::complex<double> delfem2::evaluateField_Helmholtz_Order0th(
+    const std::vector<std::complex<double>>& aSol,
+    const CVec3d& p,
+    const CVec3d& pos_source,
     double k, // wave number
     //
     double Adm, // admittance
@@ -919,21 +928,23 @@ COMPLEX evaluateField_Helmholtz_Order0th(
     const std::vector<double>& aXYZ,
     bool is_inverted_norm)
 {
-  COMPLEX c1;
+  using COMPLEX = std::complex<double>;
+  const COMPLEX IMG(0.0, 1.0);
+  std::complex<double> c1;
   {
     double rs = (p-pos_source).Length();
     c1 = exp(rs*k*IMG)/(4*M_PI*rs);
   }
   int ntri = (int)aTri.size()/3;
   for (int jtri = 0; jtri<ntri; jtri++){
-    dfm2::CVec3d pmj = MidPoint(jtri, aTri, aXYZ);
+    CVec3d pmj = MidPoint(jtri, aTri, aXYZ);
     double rm = (p-pmj).Length();
-    dfm2::CVec3d n = NormalTri(jtri, aTri, aXYZ);
+    CVec3d n = bem::NormalTri(jtri, aTri, aXYZ);
     if (is_inverted_norm){ n *= -1; }
     double area = n.Length()*0.5;
     n.SetNormalizedVector();
-    COMPLEX G = exp(rm*k*IMG)/(4*M_PI*rm);
-    COMPLEX dGdr = G*(IMG*k-1.0/rm);
+    std::complex<double> G = exp(rm*k*IMG)/(4*M_PI*rm);
+    std::complex<double> dGdr = G*(IMG*k-1.0/rm);
     double drdn = (1.0/rm)*((p-pmj)*n);
     c1 -= area*aSol[jtri]*(dGdr*drdn-IMG*k*Adm*G);
   }
@@ -942,16 +953,18 @@ COMPLEX evaluateField_Helmholtz_Order0th(
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-void Helmholtz_TransferOrder1st_PntTri
-(COMPLEX aC[3],
-const dfm2::CVec3d& p0,
-const dfm2::CVec3d& q0, const dfm2::CVec3d& q1, const dfm2::CVec3d& q2,
+void delfem2::Helmholtz_TransferOrder1st_PntTri
+(std::complex<double> aC[3],
+const CVec3d& p0,
+const CVec3d& q0, const CVec3d& q1, const CVec3d& q2,
 double k, double beta,
 int ngauss)
-{  
+{
+  using COMPLEX = std::complex<double>;
+  const COMPLEX IMG(0.0, 1.0);
   assert(ngauss>=0&&ngauss<3);
   const int nint = NIntTriGauss[ngauss]; // number of integral points
-  dfm2::CVec3d n = Normal(q0, q1, q2);
+  CVec3d n = Normal(q0, q1, q2);
   const double a = n.Length()*0.5; // area
   n.SetNormalizedVector(); // unit normal
   aC[0] = aC[1] = aC[2] = COMPLEX(0, 0);
@@ -960,7 +973,7 @@ int ngauss)
     double r1 = TriGauss[ngauss][iint][1];
     double r2 = 1.0-r0-r1;
     double w = TriGauss[ngauss][iint][2];
-    dfm2::CVec3d v = p0-(r0*q0+r1*q1+r2*q2);
+    CVec3d v = p0-(r0*q0+r1*q1+r2*q2);
     double d = v.Length();  
     COMPLEX G = exp(COMPLEX(0, k*d))/(4.0*M_PI*d);
     COMPLEX val = G*(-IMG*k*beta+v*n/(d*d)*COMPLEX(1.0, -k*d));
@@ -971,10 +984,10 @@ int ngauss)
   }
 }
 
-COMPLEX evaluateField_Helmholtz_Order1st
-(const std::vector<COMPLEX>& aSol,
-const dfm2::CVec3d& p,
-const dfm2::CVec3d& pos_source,
+std::complex<double> delfem2::evaluateField_Helmholtz_Order1st
+(const std::vector<std::complex<double>>& aSol,
+const CVec3d& p,
+const CVec3d& pos_source,
 double k, // wave number
 double beta, // admittance
 const std::vector<int>& aTri,
@@ -982,6 +995,8 @@ const std::vector<double>& aXYZ,
 bool is_inverted_norm,
 int ngauss)
 {
+  using COMPLEX = std::complex<double>;
+  const COMPLEX IMG(0.0, 1.0);
   COMPLEX c1;
   {
     double rs = (p-pos_source).Length();
@@ -992,9 +1007,9 @@ int ngauss)
     const int jn0 = aTri[jtri*3+0];
     const int jn1 = aTri[jtri*3+1];
     const int jn2 = aTri[jtri*3+2];
-    dfm2::CVec3d q0(aXYZ[jn0*3+0], aXYZ[jn0*3+1], aXYZ[jn0*3+2]);
-    dfm2::CVec3d q1(aXYZ[jn1*3+0], aXYZ[jn1*3+1], aXYZ[jn1*3+2]);
-    dfm2::CVec3d q2(aXYZ[jn2*3+0], aXYZ[jn2*3+1], aXYZ[jn2*3+2]);
+    CVec3d q0(aXYZ[jn0*3+0], aXYZ[jn0*3+1], aXYZ[jn0*3+2]);
+    CVec3d q1(aXYZ[jn1*3+0], aXYZ[jn1*3+1], aXYZ[jn1*3+2]);
+    CVec3d q2(aXYZ[jn2*3+0], aXYZ[jn2*3+1], aXYZ[jn2*3+2]);
     COMPLEX aC[3];  Helmholtz_TransferOrder1st_PntTri(aC, p, q0, q1, q2, k, beta, ngauss);
     c1 -= aC[0]*aSol[jn0]+aC[1]*aSol[jn1]+aC[2]*aSol[jn2];
   }
@@ -1017,14 +1032,14 @@ int ngauss)
   Eigen::MatrixXcd A(nno, nno);
   A.setZero();
   for (int ino = 0; ino<nno; ino++){
-    dfm2::CVector3 p(aXYZ[ino*3+0], aXYZ[ino*3+1], aXYZ[ino*3+2]);
+    CVector3 p(aXYZ[ino*3+0], aXYZ[ino*3+1], aXYZ[ino*3+2]);
     for (int jtri = 0; jtri<ntri; jtri++){
       const int jn0 = aTri[jtri*3+0]; if (jn0==ino){ continue; }
       const int jn1 = aTri[jtri*3+1]; if (jn1==ino){ continue; }
       const int jn2 = aTri[jtri*3+2]; if (jn2==ino){ continue; }
-      dfm2::CVector3 q0(aXYZ[jn0*3+0], aXYZ[jn0*3+1], aXYZ[jn0*3+2]);
-      dfm2::CVector3 q1(aXYZ[jn1*3+0], aXYZ[jn1*3+1], aXYZ[jn1*3+2]);
-      dfm2::CVector3 q2(aXYZ[jn2*3+0], aXYZ[jn2*3+1], aXYZ[jn2*3+2]);
+      CVector3 q0(aXYZ[jn0*3+0], aXYZ[jn0*3+1], aXYZ[jn0*3+2]);
+      CVector3 q1(aXYZ[jn1*3+0], aXYZ[jn1*3+1], aXYZ[jn1*3+2]);
+      CVector3 q2(aXYZ[jn2*3+0], aXYZ[jn2*3+1], aXYZ[jn2*3+2]);
       COMPLEX aC[3];  Helmholtz_TransferOrder1st_PntTri(aC, p, q0, q1, q2, k, beta, ngauss);
       A(ino, jn0) += aC[0];
       A(ino, jn1) += aC[1];
@@ -1039,19 +1054,19 @@ int ngauss)
 }
 */
 
-dfm2::CVec3d evaluateField_PotentialFlow
+delfem2::CVec3d delfem2::evaluateField_PotentialFlow
 (const std::vector<double>& aSol,
- const dfm2::CVec3d& p,
+ const CVec3d& p,
  const std::vector<unsigned int> &aTri,
  const std::vector<double>& aXYZ)
 {
   int ntri = (int)aTri.size()/3;
-  dfm2::CVec3d c(0, 0, 0);
+  CVec3d c(0, 0, 0);
   for (int jtri = 0; jtri<ntri; jtri++){
-    dfm2::CVec3d pmj = MidPoint(jtri, aTri, aXYZ);
-    dfm2::CVec3d nj = NormalTri(jtri, aTri, aXYZ);
+    CVec3d pmj = MidPoint(jtri, aTri, aXYZ);
+    CVec3d nj = bem::NormalTri(jtri, aTri, aXYZ);
     double areaj = nj.Length()*0.5;
-    dfm2::CVec3d v = p-pmj;
+    CVec3d v = p-pmj;
     double lenv = v.Length();
     c -= areaj*aSol[jtri]/(lenv*lenv*lenv)*v;
   }
@@ -1061,23 +1076,23 @@ dfm2::CVec3d evaluateField_PotentialFlow
 /*
 void MakeMatrix_PotentialFlow
 (Eigen::PartialPivLU<Eigen::MatrixXd>& solver,
-const dfm2::CVector3& Velo,
-const dfm2::CVector3& Omg,
+const CVector3& Velo,
+const CVector3& Omg,
 const std::vector<int>& aTri,
 const std::vector<double>& aXYZ)
 {
   int ntri = (int)aTri.size()/3;
   Eigen::MatrixXd A(ntri, ntri);
   for (int itri = 0; itri<ntri; itri++){
-    dfm2::CVector3 pmi = MidPoint(itri, aTri, aXYZ);
-    dfm2::CVector3 ni = NormalTri(itri, aTri, aXYZ);
+    CVector3 pmi = MidPoint(itri, aTri, aXYZ);
+    CVector3 ni = NormalTri(itri, aTri, aXYZ);
     ni.SetNormalizedVector();
     for (int jtri = 0; jtri<ntri; jtri++){
-      dfm2::CVector3 pmj = MidPoint(jtri, aTri, aXYZ);
-      dfm2::CVector3 nj = NormalTri(jtri, aTri, aXYZ);
+      CVector3 pmj = MidPoint(jtri, aTri, aXYZ);
+      CVector3 nj = NormalTri(jtri, aTri, aXYZ);
       double areaj = nj.Length()*0.5;
       if (itri==jtri){ continue; }
-      dfm2::CVector3 v = pmi-pmj;
+      CVector3 v = pmi-pmj;
       double lenv = v.Length();
       A(itri, jtri) = areaj/(lenv*lenv*lenv)*(v*ni);
     }

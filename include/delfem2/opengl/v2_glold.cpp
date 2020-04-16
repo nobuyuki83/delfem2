@@ -6,7 +6,6 @@
  */
 
 #include <cstdio>
-#include <cassert>
 
 #if defined(__APPLE__) && defined(__MACH__) // mac
   #include <OpenGL/gl.h>
@@ -21,8 +20,6 @@
 
 #include "delfem2/vec2.h"
 #include "delfem2/opengl/v2_glold.h"
-
-namespace dfm2 = delfem2;
 
 //----------------------------------------------------
 

@@ -6,17 +6,12 @@
  */
 
 
-#include <stdlib.h>
-#include <math.h>
-#include <iostream>
-#include <limits>
+#include <cstdlib>
 #include <vector>
 #include <set>
 #include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
-#include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
-#include "delfem2/bvh.h"
 #include "delfem2/primitive.h"
 
 #include "delfem2/objf_geo3.h"
