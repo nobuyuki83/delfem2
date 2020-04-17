@@ -64,10 +64,12 @@ public:
                   const double pos0[3]) const;
   void SetRotationBryant(double rx, double ry, double rz);
   void SetTranslation(double tx, double ty, double tz);
+  /*
   int PickHandler(const delfem2::CVec3d& org,
                   const delfem2::CVec3d& dir,
                   double rad_handlr,
                   double tol) const;
+   */
   void AffineJoint(const double a[16]) const;
 public:
   std::string name; // initialized and stay constant

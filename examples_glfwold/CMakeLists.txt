@@ -55,6 +55,9 @@ add_subdirectory(305_RigSmplIkArap)
 add_subdirectory(306_RigSmplIkImage)
 add_subdirectory(307_RigSmplIkImageCloth)
 
+# ui
+add_subdirectory(400_UiGizmoRot)
+
 # cad
 add_subdirectory(500_Cad2d)
 add_subdirectory(501_Cad2dEdit)

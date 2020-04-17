@@ -82,7 +82,7 @@ void Hoge(){
   delfem2::Normalize_Points3(aXYZ);
   std::vector<int> aTriSurRel;
   ElSuEl_MeshElem(aTriSurRel,
-                              aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
+                  aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
   
   
   std::vector<double> aHeight;
