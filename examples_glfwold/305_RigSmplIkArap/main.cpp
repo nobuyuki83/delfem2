@@ -12,22 +12,18 @@
 
 #include <cstdlib>
 #include <random>
-#include <GLFW/glfw3.h>
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
-//
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/objf_geo3.h"
-//
-#include "delfem2/cnpy/smpl_cnpy.h"
-
 #include "delfem2/rig_geo3.h"
+#include <GLFW/glfw3.h>
 #include "delfem2/opengl/rigv3_glold.h"
-
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 
 namespace dfm2 = delfem2;
 

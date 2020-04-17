@@ -184,14 +184,7 @@ std::vector<dfm2::CDynPntSur> aPo2D;
 std::vector<dfm2::CVec2d> aVec2;
 std::vector<dfm2::CDynTri> aETri;
 std::vector<int> loopIP_ind, loopIP;
-
-int idp_nearest = -1;
-
-int press_button = -1;
-double mov_begin_x, mov_begin_y;
 bool is_animation = true;
-double mag = 1.0;
-
 // --------------------------
 
 void GenMesh(){
@@ -227,7 +220,7 @@ void GenMesh(){
 
 // --------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glPointSize(5);
   ::glLineWidth(1);

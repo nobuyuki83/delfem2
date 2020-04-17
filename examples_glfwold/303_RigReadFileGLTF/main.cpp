@@ -8,9 +8,7 @@
 #include <vector>
 #include <set>
 #include "delfem2/rig_geo3.h"
-//
 #include "io_gltf.h"
-
 // ------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
