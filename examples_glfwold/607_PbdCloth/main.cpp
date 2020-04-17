@@ -12,7 +12,6 @@
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/dtri2_v2dtri.h"
-
 // --------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/caddtri_v3_glold.h"

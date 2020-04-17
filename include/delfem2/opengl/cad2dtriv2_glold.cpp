@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-
 #if defined(__APPLE__) && defined(__MACH__)
   #include <OpenGL/gl.h>
 #elif defined(_WIN32) // windows
@@ -20,11 +18,9 @@
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/cad2dtriv2_glold.h"
 
-namespace dfm2 = delfem2;
-
 // -------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_FaceNorm
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec2d>& aVec2)
 {
@@ -49,7 +45,7 @@ DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_Edge
+DFM2_INLINE void delfem2::opengl::DrawMeshDynTri_Edge
 (const std::vector<CDynTri>& aSTri,
  const std::vector<CVec2d>& aVec2)
 {
@@ -77,23 +73,23 @@ DFM2_INLINE void dfm2::opengl::DrawMeshDynTri_Edge
 
 // -------------------------------------------------------------------------
 
-DFM2_INLINE void dfm2::opengl::Draw_CCad2DEdge
- (const dfm2::CCad2D_EdgeGeo& edge,
+DFM2_INLINE void delfem2::opengl::Draw_CCad2DEdge
+ (const CCad2D_EdgeGeo& edge,
   bool is_selected,
   int ipicked_elem)
 {
   if( is_selected ){ ::glColor3d(1,1,0); }
   else{ ::glColor3d(0,0,0); }
   ::glBegin(GL_LINE_STRIP);
-  dfm2::opengl::myGlVertex( edge.p0 );
+  myGlVertex( edge.p0 );
   for(const auto & ip : edge.aP){
-    dfm2::opengl::myGlVertex( ip );
+    myGlVertex( ip );
   }
-  dfm2::opengl::myGlVertex( edge.p1 );
+  myGlVertex( edge.p1 );
   ::glEnd();
   //
   if( is_selected ){
-    if( edge.type_edge == dfm2::CCad2D_EdgeGeo::BEZIER_CUBIC ){
+    if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_CUBIC ){
       assert( edge.param.size() == 4 );
       const CVec2d lx = (edge.p1 - edge.p0);
       const CVec2d ly = CVec2d(lx.y(),-lx.x());
@@ -101,48 +97,48 @@ DFM2_INLINE void dfm2::opengl::Draw_CCad2DEdge
       const CVec2d q1 = edge.p0 + edge.param[2]*lx + edge.param[3]*ly;
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
-      dfm2::opengl::myGlVertex(edge.p0);
-      dfm2::opengl::myGlVertex(q0);
-      dfm2::opengl::myGlVertex(edge.p1);
-      dfm2::opengl::myGlVertex(q1);
+      myGlVertex(edge.p0);
+      myGlVertex(q0);
+      myGlVertex(edge.p1);
+      myGlVertex(q1);
       ::glEnd();
       if( ipicked_elem == 1 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
       else{ ::glColor3d(0.0, 0.8, 0.0 ); }
       ::glBegin(GL_POINTS);
-      dfm2::opengl::myGlVertex(q0);
+      myGlVertex(q0);
       ::glEnd();
       if( ipicked_elem == 2 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
       else{ ::glColor3d(0.0, 0.8, 0.0 ); }
       ::glBegin(GL_POINTS);
-      dfm2::opengl::myGlVertex(q1);
+      myGlVertex(q1);
       ::glEnd();
     }
-    else if( edge.type_edge == dfm2::CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
+    else if( edge.type_edge == CCad2D_EdgeGeo::BEZIER_QUADRATIC ){
       assert( edge.param.size() == 2 );
       const CVec2d lx = (edge.p1 - edge.p0);
       const CVec2d ly = CVec2d(lx.y(),-lx.x());
       const CVec2d q0 = edge.p0 + edge.param[0]*lx + edge.param[1]*ly;
       ::glColor3d(0,1,0);
       ::glBegin(GL_LINES);
-      dfm2::opengl::myGlVertex(edge.p0);
-      dfm2::opengl::myGlVertex(q0);
-      dfm2::opengl::myGlVertex(edge.p1);
-      dfm2::opengl::myGlVertex(q0);
+      myGlVertex(edge.p0);
+      myGlVertex(q0);
+      myGlVertex(edge.p1);
+      myGlVertex(q0);
       ::glEnd();
       if( ipicked_elem == 1 ){ ::glColor3d(0.8, 0.0, 0.0 ); }
       else{ ::glColor3d(0.0, 0.8, 0.0 ); }
       ::glBegin(GL_POINTS);
-      dfm2::opengl::myGlVertex(q0);
+      myGlVertex(q0);
       ::glEnd();
     }
   }
 }
 
-DFM2_INLINE void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
+DFM2_INLINE void delfem2::opengl::Draw_CCad2D(const CCad2D& cad2d)
 {
-  const std::vector<dfm2::CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
-  const std::vector<dfm2::CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;
-  const std::vector<dfm2::CCad2D_FaceGeo>& aFace = cad2d.aFace;
+  const std::vector<CCad2D_VtxGeo>& aVtx = cad2d.aVtx;
+  const std::vector<CCad2D_EdgeGeo>& aEdge = cad2d.aEdge;
+  const std::vector<CCad2D_FaceGeo>& aFace = cad2d.aFace;
   int ivtx_picked = cad2d.ivtx_picked;
   int iedge_picked = cad2d.iedge_picked;
   int iface_picked = cad2d.iface_picked;
@@ -170,12 +166,12 @@ DFM2_INLINE void dfm2::opengl::Draw_CCad2D(const dfm2::CCad2D& cad2d)
     ::glLineWidth(1);
     glTranslated(0,0,-0.2);
     for(size_t iface=0;iface<aFace.size();++iface){
-      const dfm2::CCad2D_FaceGeo& face = aFace[iface];
+      const CCad2D_FaceGeo& face = aFace[iface];
       if( (int)iface == iface_picked ){ ::glColor3d(1,1,0); }
       else{ ::glColor3d(0.8,0.8,0.8); }
-      dfm2::opengl::Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
+      Draw_MeshTri(cad2d.aVec2_Tessellation, face.aTri);
       ::glColor3d(0.0,0.0,0.0);
-      dfm2::opengl::Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
+      Draw_MeshTri_Edge(cad2d.aVec2_Tessellation, face.aTri);
     }
     glTranslated(0,0,+0.2);
   }

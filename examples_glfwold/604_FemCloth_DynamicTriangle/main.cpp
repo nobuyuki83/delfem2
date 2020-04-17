@@ -6,19 +6,13 @@
  */
 
 #include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <limits>
 #include <vector>
-#include <set>
-#include "delfem2/mshtopo.h"
-#include "delfem2/mats.h"
-#include "delfem2/emat.h"
-
 #include "delfem2/ilu_mats.h"
 #include "delfem2/cloth_internal.h"
 #include "delfem2/dtri2_v2dtri.h"
-
+#include "delfem2/mshtopo.h"
+#include "delfem2/mats.h"
+#include "delfem2/emat.h"
 // ------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"

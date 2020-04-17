@@ -10,12 +10,7 @@
 #include <assert.h>
 #include <complex>
 
-typedef std::complex<double> COMPLEX;
-
 #include "delfem2/emat.h"
-
-namespace dfm2 = delfem2;
-
 
 // --------------------------------------------------------
 
@@ -400,7 +395,7 @@ DFM2_INLINE void MakeCurvetureDKT
   
   double dldx[3][2];
   double const_term[3];
-  dfm2::TriDlDx(dldx,const_term,coord0,coord1,coord2);
+  TriDlDx(dldx,const_term,coord0,coord1,coord2);
   
   for(unsigned int i=0;i<3;i++){
     B1[0][i] =  dldx[1][0]*H1[2][i]+dldx[2][0]*H1[3][i];
@@ -423,7 +418,7 @@ DFM2_INLINE void MakeCurvetureDKT
 // =======================================================================
 
 // derivative of a shape function of a triangle and constant compornent 
-DFM2_INLINE void dfm2::TriDlDx
+DFM2_INLINE void delfem2::TriDlDx
  (double dldx[][2], double const_term[],
   const double p0[], const double p1[], const double p2[])
 {
@@ -493,7 +488,7 @@ const static double TriGauss[3][7][3] =
 
 
 
-DFM2_INLINE void dfm2::EMat_Poisson_Tri2D
+DFM2_INLINE void delfem2::EMat_Poisson_Tri2D
 (double eres[3], double emat[3][3],
  const double alpha, const double source,
  const double coords[3][2],
@@ -524,7 +519,7 @@ DFM2_INLINE void dfm2::EMat_Poisson_Tri2D
 }
 
 
-DFM2_INLINE void dfm2::EMat_Helmholtz_Tri2D
+DFM2_INLINE void delfem2::EMat_Helmholtz_Tri2D
 (std::complex<double> eres[3],
  std::complex<double> emat[3][3],
  const double wave_length,
@@ -560,18 +555,18 @@ DFM2_INLINE void dfm2::EMat_Helmholtz_Tri2D
   }
 }
 
-DFM2_INLINE void dfm2::EMat_SommerfeltRadiationBC_Line2D
-(COMPLEX eres[2],
- COMPLEX emat[2][2],
+DFM2_INLINE void delfem2::EMat_SommerfeltRadiationBC_Line2D
+(std::complex<double> eres[2],
+ std::complex<double> emat[2][2],
  double wave_length,
  const double P[2][2],
- const COMPLEX val[2])
+ const std::complex<double> val[2])
 {
   const double elen = sqrt( (P[0][0]-P[1][0])*(P[0][0]-P[1][0]) + (P[0][1]-P[1][1])*(P[0][1]-P[1][1]) );
   {
     const double k = 2*3.1416/wave_length;
-    COMPLEX tmp_val1 = (k/6.0*elen)*COMPLEX(0,1);
-    COMPLEX tmp_val2 = -1/(2.0*elen*k)*COMPLEX(0,1);
+    std::complex<double> tmp_val1 = (k/6.0*elen)*std::complex<double>(0,1);
+    std::complex<double> tmp_val2 = -1/(2.0*elen*k)*std::complex<double>(0,1);
     //      Com::Complex tmp_val2 = 0.0;
     emat[0][0] = tmp_val1*2.0+tmp_val2;
     emat[0][1] = tmp_val1    -tmp_val2;
@@ -587,7 +582,7 @@ DFM2_INLINE void dfm2::EMat_SommerfeltRadiationBC_Line2D
 }
 
 
-DFM2_INLINE void dfm2::EMat_Diffusion_Tri2D
+DFM2_INLINE void delfem2::EMat_Diffusion_Tri2D
 (double eres[3],
  double emat[3][3],
  const double alpha, const double source,
@@ -641,7 +636,7 @@ DFM2_INLINE void dfm2::EMat_Diffusion_Tri2D
   }
 }
 
-DFM2_INLINE void dfm2::EMat_SolidStaticLinear_Tri2D
+DFM2_INLINE void delfem2::EMat_SolidStaticLinear_Tri2D
 (double eres[3][2],
  double emat[3][3][2][2],
  const double myu, const double lambda,
@@ -683,7 +678,7 @@ DFM2_INLINE void dfm2::EMat_SolidStaticLinear_Tri2D
 }
 
 
-DFM2_INLINE void dfm2::EMat_SolidDynamicLinear_Tri2D
+DFM2_INLINE void delfem2::EMat_SolidDynamicLinear_Tri2D
 (double eres[3][2],
  double emat[3][3][2][2],
  const double myu, const double lambda,
@@ -771,7 +766,7 @@ DFM2_INLINE void dfm2::EMat_SolidDynamicLinear_Tri2D
 }
 
 
-DFM2_INLINE void dfm2::MakeMat_Stokes2D_Static_P1P1
+DFM2_INLINE void delfem2::MakeMat_Stokes2D_Static_P1P1
 (double alpha, double g_x, double g_y,
  const double coords[][2],
  const double velo[3][2], const double press[3],
@@ -784,7 +779,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes2D_Static_P1P1
   const double area = emat::TriArea2D(coords[0],coords[1],coords[2]);
   
   double dldx[nno][ndim], const_term[nno];
-  dfm2::TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
+  TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   
   // -------------------------
   
@@ -852,7 +847,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes2D_Static_P1P1
   }
 }
 
-DFM2_INLINE void dfm2::EMat_Stokes2D_Static_P1
+DFM2_INLINE void delfem2::EMat_Stokes2D_Static_P1
 (double alpha, double g_x, double g_y,
  const double coords[][2],
  const double velo_press[3][3],
@@ -895,7 +890,7 @@ DFM2_INLINE void dfm2::EMat_Stokes2D_Static_P1
 }
 
 
-DFM2_INLINE void dfm2::EMat_Stokes2D_Dynamic_P1
+DFM2_INLINE void delfem2::EMat_Stokes2D_Dynamic_P1
 (double alpha, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[][2],
@@ -977,7 +972,7 @@ DFM2_INLINE void dfm2::EMat_Stokes2D_Dynamic_P1
   }
 }
 
-DFM2_INLINE void dfm2::EMat_NavierStokes2D_Dynamic_P1
+DFM2_INLINE void delfem2::EMat_NavierStokes2D_Dynamic_P1
 (double myu, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[][2],
@@ -1451,7 +1446,7 @@ static bool AddLinearSystem_Poisson2D_P1(
 */
 
 // compute energy and its 1st and 2nd derivative for cloth bending
-DFM2_INLINE void dfm2::WdWddW_Bend
+DFM2_INLINE void delfem2::WdWddW_Bend
 (double& W,  // (out) strain energy
  double dW[4][3], // (out) 1st derivative of energy
  double ddW[4][4][3][3], // (out) 2nd derivative of energy
@@ -1512,7 +1507,7 @@ DFM2_INLINE void dfm2::WdWddW_Bend
   }
 }
 
-DFM2_INLINE void dfm2::WdWddW_CST
+DFM2_INLINE void delfem2::WdWddW_CST
 (double& W, // (out) energy
  double dW[3][3], // (out) 1st derivative of energy
  double ddW[3][3][3][3], // (out) 2nd derivative of energy
@@ -1621,7 +1616,7 @@ DFM2_INLINE void dfm2::WdWddW_CST
 
 
 // compute energy and its 1st and 2nd derivative for contact against object
-DFM2_INLINE void dfm2::WdWddW_Contact
+DFM2_INLINE void delfem2::WdWddW_Contact
 (double& W,  // (out) energy
  double dW[3], // (out) 1st derivative of energy
  double ddW[3][3], // (out) 2nd derivative of energy
@@ -1709,7 +1704,7 @@ const static double TetGauss[4][16][4] =
 };
 
 
-DFM2_INLINE void dfm2::ddW_SolidLinear_Tet3D
+DFM2_INLINE void delfem2::ddW_SolidLinear_Tet3D
 (double* eKmat,
  double lambda, double myu,
  double vol, double dldx[4][3],
@@ -1739,7 +1734,7 @@ DFM2_INLINE void dfm2::ddW_SolidLinear_Tet3D
   }
 }
 
-DFM2_INLINE void dfm2::ddW_MassConsistentVal3D_Tet3D
+DFM2_INLINE void delfem2::ddW_MassConsistentVal3D_Tet3D
 (double* eMmat,
  double rho, double vol,
  bool is_add,
@@ -1765,7 +1760,7 @@ DFM2_INLINE void dfm2::ddW_MassConsistentVal3D_Tet3D
   }
 }
 
-DFM2_INLINE void dfm2::EMat_Poisson_Tet3D
+DFM2_INLINE void delfem2::EMat_Poisson_Tet3D
 (double eres[4],
  double emat[4][4],
  const double alpha, const double source,
@@ -1797,7 +1792,7 @@ DFM2_INLINE void dfm2::EMat_Poisson_Tet3D
   }
 }
 
-DFM2_INLINE void dfm2::EMat_Diffusion_Newmark_Tet3D
+DFM2_INLINE void delfem2::EMat_Diffusion_Newmark_Tet3D
 (double eres[4],
  double emat[4][4],
  const double alpha, const double source,
@@ -1852,7 +1847,7 @@ DFM2_INLINE void dfm2::EMat_Diffusion_Newmark_Tet3D
 }
 
 
-DFM2_INLINE void dfm2::stress_LinearSolid_TetP2
+DFM2_INLINE void delfem2::stress_LinearSolid_TetP2
 (double stress[3][3],
 const double l0, const double l1, const double l2, const double l3,
 const double vol, const double lambda, const double myu,
@@ -1912,7 +1907,7 @@ const double disp[10][3])
 }
 
 
-DFM2_INLINE void dfm2::matRes_LinearSolid_TetP2
+DFM2_INLINE void delfem2::matRes_LinearSolid_TetP2
 (double emat[10][10][3][3],
 double eres[10][3],
 const double vol, const double lambda, const double myu,
@@ -1999,7 +1994,7 @@ const double disp[10][3])
 }
 
 
-DFM2_INLINE void dfm2::EMat_SolidLinear_Static_Tet
+DFM2_INLINE void delfem2::EMat_SolidLinear_Static_Tet
 (double emat[4][4][3][3],
  double eres[4][3],
  const double myu, const double lambda,
@@ -2028,7 +2023,7 @@ DFM2_INLINE void dfm2::EMat_SolidLinear_Static_Tet
   }
 }
 
-DFM2_INLINE void dfm2::MakeMat_LinearSolid3D_Static_Q1
+DFM2_INLINE void delfem2::MakeMat_LinearSolid3D_Static_Q1
 (const double myu, const double lambda,
  const double rho, const double g_x, const double g_y, const double g_z,
  const double coords[8][3],
@@ -2090,7 +2085,7 @@ DFM2_INLINE void dfm2::MakeMat_LinearSolid3D_Static_Q1
 
 
 
-DFM2_INLINE void dfm2::EMat_SolidLinear_NewmarkBeta_MeshTet3D
+DFM2_INLINE void delfem2::EMat_SolidLinear_NewmarkBeta_MeshTet3D
 (double eres[4][3],
  double emat[4][4][3][3],
  const double myu, const double lambda,
@@ -2164,7 +2159,7 @@ DFM2_INLINE void dfm2::EMat_SolidLinear_NewmarkBeta_MeshTet3D
   }
 }
 
-DFM2_INLINE void dfm2::MakeMat_Stokes3D_Static_P1P1
+DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1P1
 (double alpha, double g_x, double g_y, double g_z,
  const double coords[4][3],
  const double velo[4][3], const double press[4],
@@ -2255,7 +2250,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes3D_Static_P1P1
 
 
 
-DFM2_INLINE void dfm2::MakeMat_Stokes3D_Static_P1
+DFM2_INLINE void delfem2::MakeMat_Stokes3D_Static_P1
 (double alpha, double g_x, double g_y, double g_z,
  const double coords[4][3],
  const double velo_press[4][4],
@@ -2313,7 +2308,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes3D_Static_P1
 
 
 
-DFM2_INLINE void dfm2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1
+DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1
 (double alpha, double rho, double g_x, double g_y, double g_z,
  const double dt_timestep, const double gamma_newmark,
  const double coords[4][3],
@@ -2469,7 +2464,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes3D_Dynamic_Newmark_P1P1
   }
 }
 
-DFM2_INLINE void dfm2::MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
+DFM2_INLINE void delfem2::MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
 (double rho, double myu, double g_x, double g_y,
  double dt, double gamma,
  const double coords[][2],
@@ -2699,7 +2694,7 @@ DFM2_INLINE void dfm2::MakeMat_NavierStokes2D_Dynamic_Newmark_P1P1
   }
 }
 
-DFM2_INLINE void dfm2::MakeMat_Stokes2D_Dynamic_Newmark_P1P1
+DFM2_INLINE void delfem2::MakeMat_Stokes2D_Dynamic_Newmark_P1P1
 (double alpha, double rho, double g_x, double g_y,
  const double dt_timestep, const double gamma_newmark,
  const double coords[3][2],
@@ -2715,7 +2710,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes2D_Dynamic_Newmark_P1P1
   ////
   const double area = emat::TriArea2D(coords[0],coords[1],coords[2]);
   double dldx[nno][ndim], const_term[nno];
-  dfm2::TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
+  TriDlDx(dldx, const_term,   coords[0], coords[1], coords[2]);
   
   double eCmat_uu[3][3][2][2];
   for(int ino=0;ino<nno;ino++){
@@ -2837,7 +2832,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes2D_Dynamic_Newmark_P1P1
   }
 }
 
-DFM2_INLINE void dfm2::MakeMat_Stokes3D_Dynamic_P1
+DFM2_INLINE void delfem2::MakeMat_Stokes3D_Dynamic_P1
 (double alpha, double rho, double g_x, double g_y, double g_z,
  const double dt_timestep, const double gamma_newmark,
  const double coords[4][3],
@@ -2914,7 +2909,7 @@ DFM2_INLINE void dfm2::MakeMat_Stokes3D_Dynamic_P1
 }
 
 
-DFM2_INLINE void dfm2::MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1
+DFM2_INLINE void delfem2::MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1
 (double rho, double myu, double g_x, double g_y, double g_z,
  double dt, double gamma,
  const double coords[4][3],
@@ -3265,7 +3260,7 @@ DFM2_INLINE void dfm2::MakeMat_NavierStokes3D_Dynamic_Newmark_P1P1
 }
 
 
-DFM2_INLINE void dfm2::MakeMat_NavierStokes3D_Dynamic_P1
+DFM2_INLINE void delfem2::MakeMat_NavierStokes3D_Dynamic_P1
 (double myu, double rho, double g_x, double g_y, double g_z,
  const double dt_timestep, const double gamma_newmark,
  const double coords[4][3],
@@ -3334,7 +3329,7 @@ DFM2_INLINE void dfm2::MakeMat_NavierStokes3D_Dynamic_P1
 // ------------------------------
 
 
-DFM2_INLINE void dfm2::MakeMat_PlateBendingDKT
+DFM2_INLINE void delfem2::MakeMat_PlateBendingDKT
 (double emat_ww[3][3],
  double emat_wr[3][3][2],
  double emat_rw[3][3][2],
@@ -3410,7 +3405,7 @@ DFM2_INLINE void dfm2::MakeMat_PlateBendingDKT
 
 
 
-DFM2_INLINE void dfm2::WdWddW_PlateBendingMITC3
+DFM2_INLINE void delfem2::WdWddW_PlateBendingMITC3
 (double& W,
  double dW[3][3],
  double ddW[3][3][3][3],

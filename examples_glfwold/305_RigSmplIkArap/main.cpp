@@ -12,7 +12,6 @@
 
 #include <cstdlib>
 #include <random>
-#include <time.h>
 #include <GLFW/glfw3.h>
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
