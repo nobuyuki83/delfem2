@@ -152,7 +152,7 @@ int main(int argc,char* argv[])
       static int iframe = 0;
       if( iframe == 0 ){
         for(unsigned int i=0;i<10;i++){
-          unsigned int itri0 = (unsigned int)((rand()/(RAND_MAX+1.0))*aTri.size());
+          auto itri0 = (unsigned int)((rand()/(RAND_MAX+1.0))*aTri.size());
           assert( itri0 < aTri.size() );
           Collapse_ElemEdge(itri0, 0, aPo, aTri);
           CheckTri(aPo, aTri);
