@@ -20,7 +20,7 @@ static delfem2::opengl::CViewer_GLFW* pViewer = 0;
 
 static void callback_error(int error, const char* description)
 {
-    fputs(description, stderr);
+  fputs(description, stderr);
 }
 
 static void glfw_callback_error(int error, const char* description)
@@ -30,8 +30,9 @@ static void glfw_callback_error(int error, const char* description)
 
 static void glfw_callback_key(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
     glfwSetWindowShouldClose(window, GL_TRUE);
+  }
 }
 
 static void glfw_callback_resize(GLFWwindow* window, int width, int height)
@@ -48,6 +49,7 @@ static void glfw_callback_mouse_button(GLFWwindow* window, int button, int actio
     pViewer->nav.MouseRay(src, dir,
                           pViewer->window);
     pViewer->mouse_press(src,dir);
+    
   }
 }
 

@@ -33,6 +33,18 @@ void Copy_Mat4(REAL M0[16],
   for(int i=0;i<16;++i){ M0[i] = M1[i]; }
 }
 
+template <typename REAL>
+void Transpose_Mat4(REAL M0[16],
+                    const REAL M1[16])
+{
+  for(int i=0;i<4;++i){
+  for(int j=0;j<4;++j){
+    M0[i*4+j] = M1[j*4+i];
+  }
+  }
+}
+
+
 template <typename T>
 void MatMat4(
     T* C,

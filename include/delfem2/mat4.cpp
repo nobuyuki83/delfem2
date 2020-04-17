@@ -285,7 +285,6 @@ DFM2_INLINE void delfem2::Mat4_QuatConj(
   double xw = q[1] * q[0] * 2.0;
   double yw = q[2] * q[0] * 2.0;
   double zw = q[3] * q[0] * 2.0;
-
   r[ 0] = 1.0 - y2 - z2;
   r[ 1] = xy + zw;
   r[ 2] = zx - yw;

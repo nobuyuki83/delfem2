@@ -3,6 +3,7 @@ language: cpp
 branches:
   only: 
     - master
+    - dev
 
 env:
 - PYTHON_BUILD_VERSION=3.7
@@ -38,9 +39,16 @@ script: |
   cd ../../
 
   cd test_cpp
-  mkdir buildMake
-  cd buildMake
-  cmake ..
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=OFF ..
+  make
+  make test 
+  ./runUnitTests
+  cd ../../
+
+  cd test_cpp
+  mkdir buildMakeStatic && cd buildMakeStatic
+  cmake -DUSE_HEADERONLY=ON ..
   make
   make test 
   ./runUnitTests
@@ -63,16 +71,26 @@ script: |
   cd ../..
 
   cd examples_glfwold
-  mkdir buildMake
-  cd buildMake
-  cmake ..
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=ON ..
+  make -i
+  cd ../..
+
+  cd examples_glfwold
+  mkdir buildMakeStatic && cd buildMakeStatic
+  cmake -DUSE_HEADERONLY=OFF ..
   make -i
   cd ../..
 
   cd examples_glfwnew
-  mkdir buildMake
-  cd buildMake
-  cmake ..
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=ON ..
+  make -i
+  cd ../..
+
+  cd examples_glfwnew
+  mkdir buildMakeStatic && cd buildMakeStatic
+  cmake -DUSE_HEADERONLY=OFF ..
   make -i
   cd ../..
 
