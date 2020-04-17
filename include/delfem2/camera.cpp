@@ -396,16 +396,11 @@ void delfem2::screenUnProjectionDirection
  const float mMV[16],
  const float mPj[16])
 {
-//  CVector3 v0 = solve_GlAffineMatrixDirection(mPj, v);
-//  CVector3 v1 = solve_GlAffineMatrixDirection(mMV, v0);
-//  v1.SetNormalizedVector();
-//  return v1;
   float v1[3];
   camera::solve_GlAffineMatrixDirection(v1,
-                                  mPj, vi);
-  v1[2] = 1;
+                                        mPj, vi);
   camera::solve_GlAffineMatrixDirection(vo,
-                                  mMV, v1);
+                                        mMV, v1);
   camera::Normalize3D(vo);
 }
 

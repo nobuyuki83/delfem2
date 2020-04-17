@@ -163,6 +163,7 @@ DFM2_INLINE  void MyMatMatTX
   }
 }
 
+/*
 DFM2_INLINE void PickBone
     (int& ibone_selected,
      int& ielem_selected,
@@ -191,6 +192,7 @@ DFM2_INLINE void PickBone
     }
   }
 }
+ */
 
 
 }
@@ -198,6 +200,7 @@ DFM2_INLINE void PickBone
 
 // ------------------------------------------------------------
 
+/*
 DFM2_INLINE int delfem2::CRigBone::PickHandler
 (const CVec3d& org,
  const CVec3d& dir,
@@ -208,6 +211,7 @@ DFM2_INLINE int delfem2::CRigBone::PickHandler
                                         affmat3Global, rad_handlr,
                                         tol);
 }
+ */
 
 DFM2_INLINE void delfem2::CRigBone::SetRotationBryant
 (double rx, double ry, double rz)
