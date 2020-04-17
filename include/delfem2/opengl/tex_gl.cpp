@@ -24,11 +24,9 @@
 
 #include "delfem2/opengl/tex_gl.h"
 
-namespace dfm2 = delfem2;
-
 // ------------------------
 
-void dfm2::opengl::SaveViewportAsImagePpm
+void delfem2::opengl::SaveViewportAsImagePpm
  (const std::string& path)
 {
   static unsigned int inum = 0;
@@ -65,7 +63,7 @@ void dfm2::opengl::SaveViewportAsImagePpm
   inum++;
 }
 
-int dfm2::opengl::SetTexture_RGB
+int delfem2::opengl::SetTexture_RGB
  (unsigned int w, unsigned int h,
   const std::vector<unsigned char>& image)
 {
@@ -80,7 +78,7 @@ int dfm2::opengl::SetTexture_RGB
 }
 
 
-GLuint dfm2::opengl::LoadTexture
+GLuint delfem2::opengl::LoadTexture
  (const unsigned char* image,
   const int width, const int height, const int bpp)
 {
@@ -136,7 +134,7 @@ void DrawRectangle_FullCanvas_oldGL()
 
 // ================================================================
 
-void dfm2::opengl::CTexRGB::InitGL()
+void delfem2::opengl::CTexRGB::InitGL()
 {
   if( id_tex == 0 ){ ::glGenTextures(1, &id_tex); }
   std::cout << "initialize gl ctexrgb" << id_tex << std::endl;
@@ -162,7 +160,7 @@ void dfm2::opengl::CTexRGB::InitGL()
 // --------------------------------------------------
 
 
-void dfm2::opengl::CTexRGB_Rect2D::Draw_oldGL()
+void delfem2::opengl::CTexRGB_Rect2D::Draw_oldGL()
 {
   if( id_tex == 0 ){ return; }
 #ifdef GL_LIGHTING
@@ -236,7 +234,7 @@ void DrawTextureBackground
 }
  */
 
-void dfm2::opengl::CTexManager::Clear(){
+void delfem2::opengl::CTexManager::Clear(){
   for(auto & itex : aTexInfo){
     unsigned int id_tex_gl = itex.id_tex_gl;
     if( glIsTexture(id_tex_gl) ){
@@ -246,7 +244,7 @@ void dfm2::opengl::CTexManager::Clear(){
   aTexInfo.clear();
 }
 
-void dfm2::opengl::CTexManager::BindTexturePath(const std::string& path) const {
+void delfem2::opengl::CTexManager::BindTexturePath(const std::string& path) const {
   for(const auto & itex : aTexInfo){
     if( itex.full_path != path ) continue;
     glBindTexture(GL_TEXTURE_2D, itex.id_tex_gl );

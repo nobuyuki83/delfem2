@@ -12,12 +12,10 @@
 
 #include <cstdlib>
 #include <random>
-#include <ctime>
 #include <GLFW/glfw3.h>
 #include "delfem2/rigopt.h"
 #include "delfem2/garment.h"
 #include "delfem2/bv.h"
-#include "delfem2/bvh.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/objf_geo3.h"
@@ -31,7 +29,6 @@
 #include "inputs_garment.h"
 
 #include "delfem2/rig_geo3.h"
-#include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/tex_gl.h"
 
@@ -99,8 +96,8 @@ void Draw
   ::glDisable(GL_LIGHTING);
   ::glPointSize(10);
   ::glBegin(GL_POINTS);
-  for(int it=0;it<aTarget.size();++it){
-    const unsigned int ib = aTarget[it].ib;
+  for(const auto & it : aTarget){
+    const unsigned int ib = it.ib;
     ::glColor3d(1,0,0);
     dfm2::opengl::myGlVertex(aBone[ib].Pos());
   }
@@ -109,8 +106,8 @@ void Draw
   ::glEnable(GL_DEPTH_TEST);
   ::glBegin(GL_LINES);
   ::glColor3d(1,0,0);
-  for(int it=0;it<aTarget.size();++it){
-    dfm2::CVec3d p = aTarget[it].pos;
+  for(const auto & it : aTarget){
+    dfm2::CVec3d p = it.pos;
     dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
     dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
   }
@@ -189,11 +186,11 @@ int main()
       tex.z = -0.5;
     }
     aTarget.clear();
-    for(int it=0;it<aBoneLoc.size();++it){
+    for(auto & it : aBoneLoc){
       dfm2::CTarget t;
-      t.ib = aBoneLoc[it].first;
-      int iw = aBoneLoc[it].second.x();
-      int ih = aBoneLoc[it].second.y();
+      t.ib = it.first;
+      int iw = it.second.x();
+      int ih = it.second.y();
       t.pos.p[0] = (double)iw/width-0.5;
       t.pos.p[1] = 0.5*height/width - (double)ih/height;
       aTarget.push_back(t);
@@ -225,9 +222,9 @@ int main()
                        aXYZ0_Body, aBone, aW_Body);
   }
   std::vector< std::pair<dfm2::CVec3d,dfm2::CVec3d> > aTargetOriginPos;
-  for(int it=0;it<aTarget.size();++it){
-    unsigned int ib = aTarget[it].ib;
-    aTargetOriginPos.push_back( std::make_pair(aTarget[it].pos,
+  for(auto & it : aTarget){
+    unsigned int ib = it.ib;
+    aTargetOriginPos.push_back( std::make_pair(it.pos,
                                                aBone[ib].Pos()) );
   }
   std::vector<double> aNorm_Body(aXYZ1_Body.size());
@@ -312,8 +309,8 @@ int main()
       ::glEnable(GL_DEPTH_TEST);
       ::glBegin(GL_LINES);
       ::glColor3d(1,0,0);
-      for(int it=0;it<aTarget.size();++it){
-        dfm2::CVec3d p = aTarget[it].pos;
+      for(auto & it : aTarget){
+        dfm2::CVec3d p = it.pos;
         dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
         dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
       }

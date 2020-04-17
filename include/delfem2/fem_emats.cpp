@@ -19,8 +19,6 @@
 //
 #include "delfem2/fem_emats.h"
 
-typedef std::complex<double> COMPLEX;
-
 namespace delfem2 {
 namespace fem_emats {
 
@@ -173,15 +171,16 @@ void delfem2::MergeLinSys_Poission_MeshTri2D(
 }
 
 void delfem2::MergeLinSys_Helmholtz_MeshTri2D(
-    CMatrixSparse<COMPLEX>& mat_A,
-    COMPLEX* vec_b,
+    CMatrixSparse<std::complex<double>>& mat_A,
+    std::complex<double>* vec_b,
     const double wave_length,
     const double* aXY1,
     unsigned int np,
     const unsigned int* aTri1,
     unsigned int nTri,
-    const COMPLEX* aVal)
+    const std::complex<double>* aVal)
 {
+  using COMPLEX = std::complex<double>;
   namespace lcl = ::delfem2::fem_emats;
   const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
@@ -193,8 +192,8 @@ void delfem2::MergeLinSys_Helmholtz_MeshTri2D(
     double coords[3][2]; lcl::FetchData(&coords[0][0],3,2,aIP, aXY1);
     const COMPLEX value[3] = { aVal[i0], aVal[i1], aVal[i2] };
     ////
-    std::complex<double> eres[3];
-    std::complex<double> emat[3][3];
+    COMPLEX eres[3];
+    COMPLEX emat[3][3];
     EMat_Helmholtz_Tri2D(eres,emat,
                          wave_length,
                          coords, value);
@@ -207,15 +206,16 @@ void delfem2::MergeLinSys_Helmholtz_MeshTri2D(
 }
 
 void delfem2::MergeLinSys_SommerfeltRadiationBC_Polyline2D(
-    CMatrixSparse <COMPLEX> &mat_A,
-    COMPLEX* vec_b,
+    CMatrixSparse <std::complex<double>> &mat_A,
+    std::complex<double>* vec_b,
     const double wave_length,
     const double* aXY1,
     unsigned int np,
     const unsigned int* aIPPolyline,
     unsigned int nIPPolyline,
-    const COMPLEX* aVal)
+    const std::complex<double>* aVal)
 {
+  using COMPLEX = std::complex<double>;
   namespace lcl = ::delfem2::fem_emats;
   const unsigned int nDoF = np;
   std::vector<int> tmp_buffer(nDoF, -1);
