@@ -116,9 +116,9 @@ public:
                          sp0, mMV,mP);
     }
     {
-      const float dir0[3] = {0.0, 0.0, -1.0};
+      const float dir0[3] = {0.0, 0.0, +1.0};
       delfem2::screenUnProjectionDirection(dir,
-                                  dir0, mMV,mP);
+                                           dir0, mMV,mP);
     }
   }
   void RayMouseMove(float src0[3], float src1[3], float dir[3],

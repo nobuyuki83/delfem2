@@ -7,6 +7,7 @@
 
 #include <deque>
 #include <set>
+#include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/geo3_v23m34q.h"

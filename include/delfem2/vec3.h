@@ -388,14 +388,19 @@ void nearest_Line_Line(double& D, CVec3<T>& Da, CVec3<T>& Db,
                          const CVec3<T>& pa_, const CVec3<T>& va,
                          const CVec3<T>& pb_, const CVec3<T>& vb);
   
+/**
+ * @param p0 (out)  nearest point on line
+ * @param q0 (out)  nearest point on circle
+ */
 template <typename T>
-void Nearest_Line_Circle(CVec3<T>& p0,
-                         CVec3<T>& q0,
-                         const CVec3<T>& src,
-                         const CVec3<T>& dir,
-                         const CVec3<T>& org,
-                         const CVec3<T>& normal,
-                         double rad);
+void Nearest_Line_Circle
+ (CVec3<T>& p0,
+  CVec3<T>& q0,
+  const CVec3<T>& src,
+  const CVec3<T>& dir,
+  const CVec3<T>& org,
+  const CVec3<T>& normal,
+  double rad);
 
 template <typename T>
 CVec3<T> nearst_Origin_Quad(double& s0,

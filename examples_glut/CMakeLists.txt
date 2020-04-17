@@ -9,7 +9,6 @@ add_subdirectory(shader)
 
 # geometry
 add_subdirectory(edit_cubes)
-add_subdirectory(transform_handler)
 
 # fem
 add_subdirectory(rigidbody3d_rotation)
