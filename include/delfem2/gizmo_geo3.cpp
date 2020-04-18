@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include "delfem2/vec3.h"
 #include "delfem2/gizmo_geo3.h"
 
 DFM2_INLINE bool delfem2::isPickCircle
@@ -87,6 +88,8 @@ template int delfem2::PickHandlerRotation_PosQuat
   double tol);
 #endif
 
+// -------------------------------------------------
+
 DFM2_INLINE int delfem2::PickHandlerRotation_Mat4
 (const CVec3d& src, const CVec3d& dir,
  const double mat[16], double rad,
@@ -156,6 +159,8 @@ bool delfem2::DragHandlerRot_Mat4
   }
   return false;
 }
+
+// -------------------------------------------------
 
 DFM2_INLINE bool delfem2::isPick_AxisHandler
 (const delfem2::CVec2d& sp,
@@ -243,3 +248,165 @@ DFM2_INLINE bool delfem2::isPickCircle
 }
 
 
+// ================================================
+
+template <typename REAL>
+void delfem2::CGizmo_Rotation<REAL>::Pick
+ (bool is_down,
+  const REAL src[3],
+  const REAL dir[3], REAL tol)
+{
+  if( !is_down ){
+    ielem_picked = -1;
+    return;
+  }
+  ielem_picked = PickHandlerRotation_PosQuat(CVec3<REAL>(src),
+                                             CVec3<REAL>(dir),
+                                             pos, quat,size, tol);
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CGizmo_Rotation<float>::Pick
+ (bool is_down,
+  const float src[3],
+  const float dir[3], float tol);
+template void delfem2::CGizmo_Rotation<double>::Pick
+(bool is_down,
+ const double src[3],
+ const double dir[3], double tol);
+#endif
+
+// --------------------------
+
+template <typename REAL>
+void delfem2::CGizmo_Rotation<REAL>::Drag
+ (const REAL src0[3],
+  const REAL src1[3],
+  const REAL dir[3])
+{
+  using CV3 = CVec3<REAL>;
+  using CQ = CQuat<REAL>;
+  int ielem = ielem_picked;
+  if( ielem>=0 && ielem<3 ){
+    CV3 va = (CQ(quat)*CV3::Axis(ielem)).Normalize();
+    CV3 pz0,qz0; Nearest_Line_Circle(pz0,qz0,
+                                     CV3(src0), CV3(dir),
+                                     pos,va, size);
+    CV3 pz1,qz1; Nearest_Line_Circle(pz1,qz1,
+                                     CV3(src1), CV3(dir),
+                                     pos,va, size);
+    CV3 a0 = (qz0-pos)/size;
+    CV3 a1 = (qz1-pos)/size;
+    const double ar = atan2((a0^a1)*va, a0*a1);
+    const REAL dq[4] = {
+      (REAL)cos(ar*0.5),
+      (REAL)(va.x()*sin(ar*0.5)),
+      (REAL)(va.y()*sin(ar*0.5)),
+      (REAL)(va.z()*sin(ar*0.5)) };
+    REAL qtmp[4]; QuatQuat(qtmp, dq, quat);
+    Copy_Quat(quat,qtmp);
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CGizmo_Rotation<float>::Drag
+(const float src0[3],
+ const float src1[3],
+ const float dir[3]);
+template void delfem2::CGizmo_Rotation<double>::Drag
+ (const double src0[3],
+  const double src1[3],
+  const double dir[3]);
+#endif
+
+// ------------------------------------------------
+
+template <typename REAL>
+void delfem2::CGizmo_Transl<REAL>::Pick
+ (bool is_down,
+  const REAL src[3],
+  const REAL dir[3],
+  REAL tol)
+{
+  if( !is_down ){
+    ielem_picked = -1;
+    return;
+  }
+  {
+    CVec3<REAL> pls, pl;
+    ::delfem2::nearest_LineSeg_Line(pls,pl,
+                                    pos-size*CVec3<REAL>::Axis(0),
+                                    pos+size*CVec3<REAL>::Axis(0),
+                                    CVec3<REAL>(src), CVec3<REAL>(dir));
+    if( (pls-pl).Length() < tol ){
+      ielem_picked = 0;
+      return;
+    }
+  }
+  {
+    CVec3<REAL> pls, pl;
+    ::delfem2::nearest_LineSeg_Line(pls,pl,
+                                    pos-size*CVec3<REAL>::Axis(1),
+                                    pos+size*CVec3<REAL>::Axis(1),
+                                    CVec3<REAL>(src), CVec3<REAL>(dir));
+    if( (pls-pl).Length() < tol ){
+      ielem_picked = 1;
+      return;
+    }
+  }
+  {
+    CVec3<REAL> pls, pl;
+    ::delfem2::nearest_LineSeg_Line(pls,pl,
+                                    pos-size*CVec3<REAL>::Axis(2),
+                                    pos+size*CVec3<REAL>::Axis(2),
+                                    CVec3<REAL>(src), CVec3<REAL>(dir));
+    if( (pls-pl).Length() < tol ){
+      ielem_picked = 2;
+      return;
+    }
+  }
+  ielem_picked = -1;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CGizmo_Transl<float>::Pick
+(bool is_down,
+ const float src[3],
+ const float dir[3],
+ float tol);
+template void delfem2::CGizmo_Transl<double>::Pick
+(bool is_down,
+ const double src[3],
+ const double dir[3],
+ double tol);
+#endif
+
+// -----------------
+
+template <typename REAL>
+void delfem2::CGizmo_Transl<REAL>::Drag
+ (const REAL src0[3],
+  const REAL src1[3],
+  const REAL dir[3])
+{
+  if( this->ielem_picked < 0 || this->ielem_picked >= 3 ){ return; }
+  using CV3 = CVec3<REAL>;
+  REAL D0;
+  CV3 Da0, Db0;
+  nearest_Line_Line(D0, Da0, Db0,
+                    this->pos, CV3::Axis(ielem_picked),
+                    CV3(src0), CV3(dir) );
+  REAL D1;
+  CV3 Da1, Db1;
+  nearest_Line_Line(D1, Da1, Db1,
+                    this->pos, CV3::Axis(ielem_picked),
+                    CV3(src1), CV3(dir) );
+  if( fabs(D0) > 1.0e-10 ){
+    pos += (Da1-Da0)/D0;
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CGizmo_Transl<float>::Drag(const float src0[3],
+                                                  const float src1[3],
+                                                  const float dir[3]);
+template void delfem2::CGizmo_Transl<double>::Drag(const double src0[3],
+                                                   const double src1[3],
+                                                   const double dir[3]);
+#endif

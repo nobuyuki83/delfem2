@@ -102,45 +102,28 @@ public:
     ielem_picked = -1;
     pos = CVec3<REAL>(0,0,0);
   }
-  void Pick(bool is_down, const REAL src[3], const REAL dir[3], REAL tol){
-    if( !is_down ){
-      ielem_picked = -1;
-      return;
-    }
-    ielem_picked = PickHandlerRotation_PosQuat(CVec3<REAL>(src),
-                                               CVec3<REAL>(dir),
-                                               pos, quat,size, tol);
-  }
-  void Drag(const REAL src0[3], const REAL src1[3], const REAL dir[3]){
-    using CV3 = CVec3<REAL>;
-    using CQ = CQuat<REAL>;
-    int ielem = ielem_picked;
-    if( ielem>=0 && ielem<3 ){
-      CV3 va = (CQ(quat)*CV3::Axis(ielem)).Normalize();
-      CV3 pz0,qz0; Nearest_Line_Circle(pz0,qz0,
-                                       CV3(src0), CV3(dir),
-                                       pos,va, size);
-      CV3 pz1,qz1; Nearest_Line_Circle(pz1,qz1,
-                                       CV3(src1), CV3(dir),
-                                       pos,va, size);
-      CV3 a0 = (qz0-pos)/size;
-      CV3 a1 = (qz1-pos)/size;
-      double cos01 = a0*a1;
-      double sin01 = (a0^a1)*va;
-      double ar = atan2(sin01, cos01);
-      REAL dq[4] = {
-        (REAL)cos(ar*0.5),
-        (REAL)(va.x()*sin(ar*0.5)),
-        (REAL)(va.y()*sin(ar*0.5)),
-        (REAL)(va.z()*sin(ar*0.5)) };
-      REAL qtmp[4]; QuatQuat(qtmp, dq, quat);
-      Copy_Quat(quat,qtmp);
-    }
-  }
+  void Pick(bool is_down, const REAL src[3], const REAL dir[3], REAL tol);
+  void Drag(const REAL src0[3], const REAL src1[3], const REAL dir[3]);
 public:
   REAL size;
   CVec3<REAL> pos;
   REAL quat[4];
+  int ielem_picked;
+};
+
+template <typename REAL>
+class CGizmo_Transl{
+public:
+  CGizmo_Transl(){
+    size = 1.1;
+    ielem_picked = -1;
+    pos = CVec3<REAL>(0,0,0);
+  }
+  void Pick(bool is_down, const REAL src[3], const REAL dir[3], REAL tol);
+  void Drag(const REAL src0[3], const REAL src1[3], const REAL dir[3]);
+public:
+  REAL size;
+  CVec3<REAL> pos;
   int ielem_picked;
 };
 

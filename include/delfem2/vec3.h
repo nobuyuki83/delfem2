@@ -377,16 +377,44 @@ CVec3<T> nearst_Origin_Quad(double& s0, double& s1,
                             const CVec3<T>& q2,
                             const CVec3<T>& q3);
 
+// --------------------------------
+
 template <typename T>
-void nearest_Line_Line(double& D, CVec3<T>& Da, CVec3<T>& Db,
-                         const CVec3<T>& pa_, const CVec3<T>& va,
-                         const CVec3<T>& pb_, const CVec3<T>& vb);
+void nearest_LineSeg_Line
+(CVec3<T>& a, CVec3<T>& b,
+ const CVec3<T>& ps, const CVec3<T>& pe,
+ const CVec3<T>& pb_, const CVec3<T>& vb);
+
+// --------------------------------
+
+/**
+ *  @param D (out) scaling factor
+ *  @param Da (out) nearest point scaled by D on line A
+ *  @param Db (out) nearest point scaled by D on line B
+ */
+template <typename T>
+void nearest_Line_Line
+ (T& D, CVec3<T>& Da, CVec3<T>& Db,
+  const CVec3<T>& pa_, const CVec3<T>& va,
+  const CVec3<T>& pb_, const CVec3<T>& vb);
+
+// ------------------------------------
   
+/**
+ *  @param D (out) scaling factor
+ *  @param Da (out) nearest point scaled by D on line A
+ *  @param Db (out) nearest point scaled by D on line B
+ *  @param Dta (out) parameter for nearest pont one line A. Da = D*pa_ + Dta*va
+ *  @param Dtb (out) parameter for nearest pont one line B. Db = D*pb_ + Dtb*vb
+ */
 template <typename T>
-void nearest_Line_Line(double& D, CVec3<T>& Da, CVec3<T>& Db,
-                         double& ta, double& tb,
-                         const CVec3<T>& pa_, const CVec3<T>& va,
-                         const CVec3<T>& pb_, const CVec3<T>& vb);
+void nearest_Line_Line
+ (T& D, CVec3<T>& Da, CVec3<T>& Db,
+  T& Dta, T& Dtb,
+  const CVec3<T>& pa_, const CVec3<T>& va,
+  const CVec3<T>& pb_, const CVec3<T>& vb);
+
+// ------------------------------------
   
 /**
  * @param p0 (out)  nearest point on line

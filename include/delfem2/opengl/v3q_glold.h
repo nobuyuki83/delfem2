@@ -22,8 +22,12 @@ namespace opengl
 template <typename REAL>
 DFM2_INLINE void myGlVertex(const CVec3<REAL>& v);
 
-DFM2_INLINE void myGlTranslate(const CVec3d& v);
-DFM2_INLINE void myGlNormal(const CVec3d& n);
+template <typename REAL>
+DFM2_INLINE void myGlTranslate(const CVec3<REAL>& v);
+
+template <typename REAL>
+DFM2_INLINE void myGlNormal(const CVec3<REAL>& n);
+
 DFM2_INLINE void myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c);
 DFM2_INLINE void myGlVertex(int i, const std::vector<CVec3d>& aV);
 DFM2_INLINE void myGlVertex3(unsigned int i, const std::vector<double>& vec);
@@ -40,9 +44,10 @@ DFM2_INLINE void DrawArcSolid
   double rads,
   double rade);
 
+template <typename REAL>
 DFM2_INLINE void DrawArrow
- (const CVec3d& p0,
-  const CVec3d& d,
+ (const CVec3<REAL>& p0,
+  const CVec3<REAL>& d,
   int ndivt=16);
 
 DFM2_INLINE void DrawCircleArrow
@@ -92,8 +97,6 @@ void DrawGridOutside(int ndivx, int ndivy, int ndivz,
                      double elen,
                      const CVec3d& org);
   
-DFM2_INLINE void DrawAxisHandler(double s, const CVec3d& p);
-
 // ------------
 // mesh from here
 DFM2_INLINE void DrawPoint3D(const std::vector<CVec3d>& aPoint);
@@ -129,16 +132,26 @@ DFM2_INLINE void DrawHandlerRotation_Mat4
 // --------------------------------------------------------------------
 // CQuaternion
 
-template <typename REAL>
-DFM2_INLINE void DrawHandlerRotation_PosQuat
- (const CVec3<REAL>& pos, const REAL quat[4],
-  REAL size, int ielem_picked);
-
-
 DFM2_INLINE void Draw_QuaternionsCoordinateAxes(
     const std::vector<double>& aXYZ1,
     const std::vector<double>& aQuat,
     double l);
+
+// CQuaternion
+// ----------------------------------------------------------------
+// Gizmo
+
+template <typename REAL>
+DFM2_INLINE void DrawHandlerRotation_PosQuat
+(const CVec3<REAL>& pos, const REAL quat[4],
+ REAL size, int ielem_picked);
+
+
+template <typename REAL>
+DFM2_INLINE void DrawAxisHandler
+ (REAL s, const CVec3<REAL>& p,
+  int ielem_picked);
+
 
   
 } // end namespace opengl
