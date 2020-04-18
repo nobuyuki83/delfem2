@@ -26,19 +26,21 @@
 //----------------------------------------------------
 
 namespace delfem2 {
+namespace opengl {
 
 template <>
-DFM2_INLINE void opengl::myGlVertex(const CVec3d& v)
+DFM2_INLINE void myGlVertex(const CVec3d& v)
 {
   ::glVertex3d(v.x(),v.y(),v.z());
 }
 
 template <>
-DFM2_INLINE void opengl::myGlVertex(const CVec3f& v)
+DFM2_INLINE void myGlVertex(const CVec3f& v)
 {
   ::glVertex3f(v.x(),v.y(),v.z());
 }
 
+}
 }
 
 
@@ -266,10 +268,10 @@ DFM2_INLINE void delfem2::opengl::DrawCircleWire
 {
   const REAL pi = 3.1415926535;
   int n = 32; REAL dt = 2*pi/n;
-  CVec3<REAL> h,v; GetVertical2Vector(axis, h, v);
+  CVec3<REAL> vh,vw; GetVertical2Vector(axis, vh, vw);
   ::glBegin(GL_LINE_STRIP);
   for(int i=0;i<n+1;i++) {
-    CVec3<REAL> p  = org + (r*sin(dt*i))*h + (r*cos(dt*i))*v;
+    CVec3<REAL> p  = org + (REAL)(r*sin(dt*i))*vh + (REAL)(r*cos(dt*i))*vw;
     myGlVertex(p);
   }
   ::glEnd();
