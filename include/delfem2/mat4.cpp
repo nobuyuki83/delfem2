@@ -245,9 +245,10 @@ DFM2_INLINE void delfem2::Mat4_ScaleRotTrans(
   m[2*4+3] = trans[2];
 }
 
+template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_Quat(
-    double r[],
-    const double q[])
+    REAL r[],
+    const REAL q[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -270,6 +271,10 @@ DFM2_INLINE void delfem2::Mat4_Quat(
   r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
   r[15] = 1.0;
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_Quat(float r[], const float q[]);
+template void delfem2::Mat4_Quat(double r[], const double q[]);
+#endif
 
 // return transpose matrix of Mat4_Quat
 DFM2_INLINE void delfem2::Mat4_QuatConj(

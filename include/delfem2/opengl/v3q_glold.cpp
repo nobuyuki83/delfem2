@@ -25,10 +25,23 @@
 
 //----------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::myGlVertex(const CVec3d& v)
+namespace delfem2 {
+
+template <>
+DFM2_INLINE void opengl::myGlVertex(const CVec3d& v)
 {
   ::glVertex3d(v.x(),v.y(),v.z());
 }
+
+template <>
+DFM2_INLINE void opengl::myGlVertex(const CVec3f& v)
+{
+  ::glVertex3f(v.x(),v.y(),v.z());
+}
+
+}
+
+
 
 DFM2_INLINE void delfem2::opengl::myGlTranslate(const CVec3d& v)
 {
@@ -243,23 +256,34 @@ DFM2_INLINE void delfem2::opengl::DrawCircleArrow
   }
 }
 
-//--------------------------------------------------------
+// --------------------------------------------------------
 
+template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawCircleWire
-(const CVec3d& axis,
- const CVec3d& org,
- double r)
+(const CVec3<REAL>& axis,
+ const CVec3<REAL>& org,
+ REAL r)
 {
-  const double pi = 3.1415926535;
-  int n = 32; double dt = 2*pi/n;
-  CVec3d h,v; GetVertical2Vector(axis, h, v);
+  const REAL pi = 3.1415926535;
+  int n = 32; REAL dt = 2*pi/n;
+  CVec3<REAL> h,v; GetVertical2Vector(axis, h, v);
   ::glBegin(GL_LINE_STRIP);
   for(int i=0;i<n+1;i++) {
-    CVec3d p  = org + (r*sin(dt*i))*h + (r*cos(dt*i))*v;
+    CVec3<REAL> p  = org + (r*sin(dt*i))*h + (r*cos(dt*i))*v;
     myGlVertex(p);
   }
   ::glEnd();
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::DrawCircleWire(const CVec3f& axis,
+                                              const CVec3f& org,
+                                              float r);
+template void delfem2::opengl::DrawCircleWire(const CVec3d& axis,
+                                              const CVec3d& org,
+                                              double r);
+#endif
+
+// -------------------------
 
 DFM2_INLINE void delfem2::opengl::DrawCircleSolid
 (const CVec3d& axis,
@@ -513,16 +537,16 @@ DFM2_INLINE void delfem2::opengl::DrawGrid2D
  const CVec3d& ex, const CVec3d& ey, const CVec3d& org)
 {
   const CVec3d& p00 = org;
-  const CVec3d& p10 = org + ex*ndivx;
-  const CVec3d& p01 = org + ey*ndivy;
+  const CVec3d& p10 = org + ex*(double)ndivx;
+  const CVec3d& p01 = org + ey*(double)ndivy;
   ::glBegin(GL_LINES);
   for(int ix=0;ix<ndivx+1;++ix){
-    const CVec3d& dx = ix*ex;
+    const CVec3d& dx = (double)ix*ex;
     myGlVertex(p00+dx);
     myGlVertex(p01+dx);
   }
   for(int iy=0;iy<ndivy+1;++iy){
-    const CVec3d& dy = iy*ey;
+    const CVec3d& dy = (double)iy*ey;
     myGlVertex(p00+dy);
     myGlVertex(p10+dy);
   }
@@ -563,29 +587,42 @@ DFM2_INLINE void delfem2::opengl::DrawAxisHandler(double s, const CVec3d& p)
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
+template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat
-(const CVec3d& pos,
- const double quat[4],
- double size,
+(const CVec3<REAL>& pos,
+ const REAL quat[4],
+ REAL size,
  int ielem_picked)
 {
   ::glDisable(GL_LIGHTING);
   {
     if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
-    const CVec3d& ax = QuatVec(quat,CVec3d(1,0,0));
+    const CVec3<REAL>& ax = QuatVec(quat,CVec3<REAL>(1,0,0));
     opengl::DrawCircleWire(ax, pos, size);
   }
   {
     if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
-    const CVec3d& ay = QuatVec(quat,CVec3d(0,1,0));
+    const CVec3<REAL>& ay = QuatVec(quat,CVec3<REAL>(0,1,0));
     opengl::DrawCircleWire(ay, pos, size);
   }
   {
     if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
-    const CVec3d& az = QuatVec(quat,CVec3d(0,0,1));
+    const CVec3<REAL>& az = QuatVec(quat,CVec3<REAL>(0,0,1));
     opengl::DrawCircleWire(az, pos, size);
   }
 }
+#ifndef DFM2_HEADER_ONLY
+template DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat
+ (const CVec3d& pos,
+  const double quat[4],
+  double size,
+  int ielem_picked);
+template DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat
+(const CVec3f& pos,
+ const float quat[4],
+ float size,
+ int ielem_picked);
+#endif
 
 DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_Mat4
 (const double Mat[16],

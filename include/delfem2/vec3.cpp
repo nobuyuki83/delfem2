@@ -15,7 +15,8 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
-// ---------------------------------------------------------------
+// =====================================
+// below: unexposed 
 
 namespace delfem2 {
 namespace vec3 {
@@ -59,34 +60,49 @@ DFM2_INLINE double FindRootCubic
 
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
+template <typename REAL>
 DFM2_INLINE void MyQuatVec
- (double vo[],
-  const double q[],
-  const double vi[])
+ (REAL vo[],
+  const REAL q[],
+  const REAL vi[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
+  REAL x2 = q[1] * q[1] * 2.0;
+  REAL y2 = q[2] * q[2] * 2.0;
+  REAL z2 = q[3] * q[3] * 2.0;
+  REAL xy = q[1] * q[2] * 2.0;
+  REAL yz = q[2] * q[3] * 2.0;
+  REAL zx = q[3] * q[1] * 2.0;
+  REAL xw = q[1] * q[0] * 2.0;
+  REAL yw = q[2] * q[0] * 2.0;
+  REAL zw = q[3] * q[0] * 2.0;
   vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
   vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
   vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
 }
+#ifndef DFM2_HEADER_ONLY
+template void MyQuatVec(float vo[], const float q[], const float vi[]);
+template void MyQuatVec(double vo[], const double q[], const double vi[]);
+#endif
 
+// ----------------------
 
+template <typename REAL>
 DFM2_INLINE void MyMat4Vec3
- (double vo[3],
-  const double M[16], const double vi[3])
+ (REAL vo[3],
+  const REAL M[16], const REAL vi[3])
 {
   vo[0] = M[0*4+0]*vi[0] + M[0*4+1]*vi[1] + M[0*4+2]*vi[2];
   vo[1] = M[1*4+0]*vi[0] + M[1*4+1]*vi[1] + M[1*4+2]*vi[2];
   vo[2] = M[2*4+0]*vi[0] + M[2*4+1]*vi[1] + M[2*4+2]*vi[2];
 }
+#ifndef DFM2_HEADER_ONLY
+template void MyMat4Vec3(float vo[3],
+                         const float M[16], const float vi[3]);
+template void MyMat4Vec3(double vo[3],
+                         const double M[16], const double vi[3]);
+#endif
+
+// ----------------------
 
 // there is formal implementation in quat.cpp so this is static to avoid dumplicated
 template <typename REAL>
@@ -115,6 +131,8 @@ DFM2_INLINE void MyQuatConjVec(
 template void MyQuatConjVec(float vo[3], const float q[4], const float vi[3]);
 template void MyQuatConjVec(double vo[3], const double q[4], const double vi[3]);
 #endif
+
+// --------------------------
 
 template <typename REAL>
 DFM2_INLINE void MyInverse_Mat3
@@ -231,8 +249,14 @@ T delfem2::Volume_Tet3
    ) * 0.16666666666666666666666666666667;
 }
 #ifndef DFM2_HEADER_ONLY
-template float delfem2::Volume_Tet3(const float v1[3], const float v2[3], const float v3[3], const float v4[3]);
-template double delfem2::Volume_Tet3(const double v1[3], const double v2[3], const double v3[3], const double v4[3]);
+template float delfem2::Volume_Tet3(const float v1[3],
+                                    const float v2[3],
+                                    const float v3[3],
+                                    const float v4[3]);
+template double delfem2::Volume_Tet3(const double v1[3],
+                                     const double v2[3],
+                                     const double v3[3],
+                                     const double v4[3]);
 #endif
 
 // ---------------------------------
@@ -466,11 +490,12 @@ DFM2_INLINE void delfem2::GetVertical2Vector3D
 // ---------------------------------------------------------------------------
 
 template <typename T>
-double delfem2::Dot(const CVec3<T>& arg1, const CVec3<T>& arg2)
+T delfem2::Dot(const CVec3<T>& arg1, const CVec3<T>& arg2)
 {
   return Dot3(arg1.p,arg2.p);
 }
 #ifndef DFM2_HEADER_ONLY
+template float delfem2::Dot(const CVec3f& arg1, const CVec3f& arg2);
 template double delfem2::Dot(const CVec3d& arg1, const CVec3d& arg2);
 #endif
  
@@ -551,6 +576,7 @@ CVec3<T> operator+ (const CVec3<T>& lhs, const CVec3<T>& rhs){
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
+template CVec3f operator+ (const CVec3f& lhs, const CVec3f& rhs);
 template CVec3d operator+ (const CVec3d& lhs, const CVec3d& rhs);
 #endif
   
@@ -573,23 +599,25 @@ template CVec3d operator - (const CVec3d& lhs, const CVec3d& rhs);
 
 //! scale
 template <typename T>
-CVec3<T> operator* (double d, const CVec3<T>& rhs){
+CVec3<T> operator* (T d, const CVec3<T>& rhs){
   CVec3<T> temp = rhs;
   temp *= d;
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
+template CVec3f operator* (float d, const CVec3f& rhs);
 template CVec3d operator* (double d, const CVec3d& rhs);
 #endif
 
 //! scale
 template <typename T>
-CVec3<T> operator* (const CVec3<T>& vec, double d){
+CVec3<T> operator* (const CVec3<T>& vec, T d){
   CVec3<T> temp = vec;
   temp *= d;
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
+template CVec3f operator* (const CVec3f& vec, float d);
 template CVec3d operator* (const CVec3d& vec, double d);
 #endif
   
@@ -597,22 +625,24 @@ template CVec3d operator* (const CVec3d& vec, double d);
 
 //! mult
 template <typename T>
-double operator* (const CVec3<T>& lhs, const CVec3<T>& rhs){
+T operator* (const CVec3<T>& lhs, const CVec3<T>& rhs){
   return Dot(lhs,rhs);
 }
 #ifndef DFM2_HEADER_ONLY
+template float operator* (const CVec3f& lhs, const CVec3f& rhs);
 template double operator* (const CVec3d& lhs, const CVec3d& rhs);
 #endif
 
 
 //! divide by real number
 template <typename T>
-CVec3<T> operator/ (const CVec3<T>& vec, double d){
+CVec3<T> operator/ (const CVec3<T>& vec, T d){
   CVec3<T> temp = vec;
   temp /= d;
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
+template CVec3f operator/ (const CVec3f& vec, float d);
 template CVec3d operator/ (const CVec3d& vec, double d);
 #endif
   
@@ -624,7 +654,8 @@ CVec3<T> operator^ (const CVec3<T>& lhs, const CVec3<T>& rhs){
   return Cross(lhs,rhs);
 }
 #ifndef DFM2_HEADER_ONLY
-template CVec3<double> operator^ (const CVec3<double>& lhs, const CVec3<double>& rhs);
+template CVec3f operator^ (const CVec3f& lhs, const CVec3f& rhs);
+template CVec3d operator^ (const CVec3d& lhs, const CVec3d& rhs);
 #endif
   
 // ------------------
@@ -689,13 +720,14 @@ template delfem2::CVec3<double> delfem2::Mat3Vec(const double mat[9], const CVec
 // -------------------------
 
 template <typename T>
-delfem2::CVec3<T> delfem2::Mat4Vec(const double mat[16], const CVec3<T>& v)
+delfem2::CVec3<T> delfem2::Mat4Vec(const T mat[16], const CVec3<T>& v)
 {
   CVec3<T> u;
-  ::delfem2::vec3::MyMat4Vec3(u.p, mat, v.p);
+  vec3::MyMat4Vec3(u.p, mat, v.p);
   return u;
 }
 #ifndef DFM2_HEADER_ONLY
+template delfem2::CVec3f delfem2::Mat4Vec(const float mat[16], const CVec3f& v);
 template delfem2::CVec3d delfem2::Mat4Vec(const double mat[16], const CVec3d& v);
 #endif
   
@@ -703,13 +735,14 @@ template delfem2::CVec3d delfem2::Mat4Vec(const double mat[16], const CVec3d& v)
 
 template <typename T>
 DFM2_INLINE delfem2::CVec3<T> delfem2::QuatVec
-(const double quat[4],
+(const T quat[4],
  const CVec3<T>& v0)
 {
-  double v1a[3]; vec3::MyQuatVec(v1a,quat,v0.p);
+  T v1a[3]; vec3::MyQuatVec(v1a,quat,v0.p);
   return CVec3<T>(v1a[0],v1a[1],v1a[2]);
 }
 #ifndef DFM2_HEADER_ONLY
+template delfem2::CVec3f delfem2::QuatVec (const float quat[4], const CVec3f& v0);
 template delfem2::CVec3d delfem2::QuatVec (const double quat[4], const CVec3d& v0);
 #endif
   
@@ -726,7 +759,7 @@ delfem2::CVec3<REAL> delfem2::QuatConjVec
   return CVec3<REAL>(v1a[0],v1a[1],v1a[2]);
 }
 #ifndef DFM2_HEADER_ONLY
-//template delfem2::CVec3f delfem2::QuatConjVec(const float quat[4], const CVec3f& v0);
+template delfem2::CVec3f delfem2::QuatConjVec(const float quat[4], const CVec3f& v0);
 template delfem2::CVec3d delfem2::QuatConjVec(const double quat[4], const CVec3d& v0);
 #endif
 
@@ -742,6 +775,8 @@ double delfem2::ScalarTripleProduct
 //  return a.x*(b.y*c.z - b.z*c.y) + a.y*(b.z*c.x - b.x*c.z) + a.z*(b.x*c.y - b.y*c.x);
   return a.p[0]*(b.p[1]*c.p[2] - b.p[2]*c.p[1]) + a.p[1]*(b.p[2]*c.p[0] - b.p[0]*c.p[2]) + a.p[2]*(b.p[0]*c.p[1] - b.p[1]*c.p[0]);
 }
+
+// --------------------------
 
 namespace delfem2 {
   
@@ -772,6 +807,7 @@ void delfem2::CVec3<T>::SetNormalizedVector()
   p[2] *= invmag;
 }
 #ifndef DFM2_HEADER_ONLY
+template void delfem2::CVec3<float>::SetNormalizedVector();
 template void delfem2::CVec3<double>::SetNormalizedVector();
 #endif
   
@@ -785,6 +821,7 @@ void delfem2::CVec3<T>::SetZero()
   p[2] = 0.0;
 }
 #ifndef DFM2_HEADER_ONLY
+template void delfem2::CVec3<float>::SetZero();
 template void delfem2::CVec3<double>::SetZero();
 #endif
 
@@ -799,6 +836,7 @@ void delfem2::CVec3<T>::SetRandom()
   p[2] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
 }
 #ifndef DFM2_HEADER_ONLY
+template void delfem2::CVec3<float>::SetRandom();
 template void delfem2::CVec3<double>::SetRandom();
 #endif
   
@@ -812,15 +850,20 @@ double delfem2::Height
  const CVec3<T>& v3,
  const CVec3<T>& v4)
 {
-  double n[3]; NormalTri3(n, v1.p,v2.p,v3.p);
+  T n[3]; NormalTri3(n,
+                     v1.p,v2.p,v3.p);
   Normalize3(n);
   return (v4.p[0]-v1.p[0])*n[0]+(v4.p[1]-v1.p[1])*n[1]+(v4.p[2]-v1.p[2])*n[2];
 }
 #ifndef DFM2_HEADER_ONLY
+template double delfem2::Height(const CVec3f& v1,
+                                const CVec3f& v2,
+                                const CVec3f& v3,
+                                const CVec3f& v4);
 template double delfem2::Height(const CVec3d& v1,
-                             const CVec3d& v2,
-                             const CVec3d& v3,
-                             const CVec3d& v4);
+                                const CVec3d& v2,
+                                const CVec3d& v3,
+                                const CVec3d& v4);
 #endif
 
 // -------------------------------------------------------------------------
@@ -845,9 +888,12 @@ void delfem2::GetVertical2Vector
   }
 }
 #ifndef DFM2_HEADER_ONLY
+template void delfem2::GetVertical2Vector(const CVec3f& vec_n,
+                                          CVec3f& vec_x,
+                                          CVec3f& vec_y);
 template void delfem2::GetVertical2Vector(const CVec3d& vec_n,
-                                       CVec3d& vec_x,
-                                       CVec3d& vec_y);
+                                          CVec3d& vec_x,
+                                          CVec3d& vec_y);
 #endif
 
 // --------------------
@@ -1274,12 +1320,12 @@ void delfem2::Nearest_Line_Circle
  const CVec3<T>& dir,
  const CVec3<T>& org, // center of the circle
  const CVec3<T>& normal, // normal of the circle
- double rad)
+ T rad)
 {
   const int nitr = 4;
   // ---------------------------------------
   CVec3<T> ex,ey; GetVertical2Vector(normal, ex, ey);
-  double u0;
+  T u0;
   {
     if( fabs(dir*normal)>fabs((org-src)*normal)*1.0e-4 ){
       u0 = ((org-src)*normal)/(dir*normal);
@@ -1291,18 +1337,25 @@ void delfem2::Nearest_Line_Circle
   for(int itr=0;itr<nitr;++itr){
     p0 = src+u0*dir;
     double t0 = atan2(ey*(p0-org),ex*(p0-org));
-    q0 = (rad*cos(t0))*ex + (rad*sin(t0))*ey + org;
+    q0 = (T)(rad*cos(t0))*ex + (T)(rad*sin(t0))*ey + org;
     u0 = (q0-src)*dir/(dir*dir);
   }
 }
 #ifndef DFM2_HEADER_ONLY
+template void delfem2::Nearest_Line_Circle(CVec3f& p0,
+                                           CVec3f& q0,
+                                           const CVec3f& src,
+                                           const CVec3f& dir,
+                                           const CVec3f& org, // center of the circle
+                                           const CVec3f& normal, // normal of the circle
+                                           float rad);
 template void delfem2::Nearest_Line_Circle(CVec3d& p0,
-                                        CVec3d& q0,
-                                        const CVec3d& src,
-                                        const CVec3d& dir,
-                                        const CVec3d& org, // center of the circle
-                                        const CVec3d& normal, // normal of the circle
-                                        double rad);
+                                           CVec3d& q0,
+                                           const CVec3d& src,
+                                           const CVec3d& dir,
+                                           const CVec3d& org, // center of the circle
+                                           const CVec3d& normal, // normal of the circle
+                                           double rad);
 #endif
 
 // -----------------------------------------------------

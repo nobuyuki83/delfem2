@@ -108,8 +108,8 @@ void Draw
   ::glColor3d(1,0,0);
   for(const auto & it : aTarget){
     dfm2::CVec3d p = it.pos;
-    dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
-    dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
+    dfm2::opengl::myGlVertex(p+10.0*dfm2::CVec3d(0,0,1));
+    dfm2::opengl::myGlVertex(p-10.0*dfm2::CVec3d(0,0,1));
   }
   ::glEnd();
   /*
@@ -311,8 +311,8 @@ int main()
       ::glColor3d(1,0,0);
       for(auto & it : aTarget){
         dfm2::CVec3d p = it.pos;
-        dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
-        dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
+        dfm2::opengl::myGlVertex(p+10.0*dfm2::CVec3d(0,0,1));
+        dfm2::opengl::myGlVertex(p-10.0*dfm2::CVec3d(0,0,1));
       }
       ::glEnd();
     }

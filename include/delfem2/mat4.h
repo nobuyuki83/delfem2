@@ -116,8 +116,9 @@ void Vec3_Mat4Vec3_Affine(T y0[3],
 // ------------------------------------
 // function with mat4 and quarternion
 
+template <typename REAL>
 DFM2_INLINE void Mat4_Quat(
-    double r[], const double q[]);
+    REAL r[], const REAL q[]);
 
 DFM2_INLINE void Mat4_QuatConj(
     double r[], const double q[]);
