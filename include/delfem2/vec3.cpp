@@ -931,9 +931,9 @@ delfem2::CVec3<T> delfem2::nearest_Line_Point
 {
   assert( Dot(d,d) > 1.0e-20 );
   const CVec3<T> ps = s-p;
-  double a = Dot(d,d);
-  double b = Dot(d,s-p);
-  double t = -b/a;
+  T a = Dot(d,d);
+  T b = Dot(d,s-p);
+  T t = -b/a;
   return s+t*d;
 }
 #ifndef DFM2_HEADER_ONLY
@@ -1038,42 +1038,119 @@ delfem2::CVec3<T> delfem2::nearest_LineSeg_Point
   return s+t*d;
 }
 
-// Da,Db is nearest point scaled by D
+// ---------------------------------------------
+
 template <typename T>
-void delfem2::nearest_Line_Line
-(double& D, CVec3<T>& Da, CVec3<T>& Db,
- const CVec3<T>& pa_, const CVec3<T>& va,
- const CVec3<T>& pb_, const CVec3<T>& vb)
+void delfem2::nearest_LineSeg_Line
+ (CVec3<T>& a, CVec3<T>& b,
+  const CVec3<T>& ps, const CVec3<T>& pe,
+  const CVec3<T>& pb_, const CVec3<T>& vb)
 {
-  double xaa = va*va;
-  double xab = vb*va;
-  double xbb = vb*vb;
-  D = (xaa*xbb-xab*xab);
-  double xac = va*(pb_-pa_);
-  double xbc = vb*(pb_-pa_);
-  double da = xbb*xac-xab*xbc;
-  double db = xab*xac-xaa*xbc;
-  Da = D*pa_+da*va;
-  Db = D*pb_+db*vb;
+  T D0, Dta0, Dtb0;
+  CVec3<T> Da0, Db0;
+  nearest_Line_Line(D0, Da0, Db0, Dta0, Dtb0,
+                    ps, pe-ps,
+                    pb_, vb);
+  if( abs(D0) < 1.0e-10 ){ // pararell
+    a = (ps+pe)*(T)0.5;
+    b = ::delfem2::nearest_Line_Point(a, pb_, vb);
+    return;
+  }
+  T ta = Dta0/D0;
+  if( ta > 0 && ta < 1 ){ // nearst point is inside the segment
+    a = Da0/D0;
+    b = Db0/D0;
+    return;
+  }
+  //
+  CVec3<T> p1 = nearest_Line_Point(ps,  pb_, vb);
+  CVec3<T> p2 = nearest_Line_Point(pe,  pb_, vb);
+  T Dist1 = (p1-ps).Length();
+  T Dist2 = (p2-pe).Length();
+  if( Dist1 < Dist2 ){
+    a = ps;
+    b = p1;
+    return;
+  }
+  a = pe;
+  b = p2;
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::nearest_LineSeg_Line
+ (CVec3f& a, CVec3f& b,
+ const CVec3f& ps, const CVec3f& pe,
+  const CVec3f& pb_, const CVec3f& vb);
+template void delfem2::nearest_LineSeg_Line
+(CVec3d& a, CVec3d& b,
+ const CVec3d& ps, const CVec3d& pe,
+ const CVec3d& pb_, const CVec3d& vb);
+#endif
+
+// ---------------------------------------------
 
 template <typename T>
 void delfem2::nearest_Line_Line
-(double& D, CVec3<T>& Da, CVec3<T>& Db, double& ta, double& tb,
+(T& D, CVec3<T>& Da, CVec3<T>& Db,
  const CVec3<T>& pa_, const CVec3<T>& va,
  const CVec3<T>& pb_, const CVec3<T>& vb)
 {
-  double xaa = va*va;
-  double xab = vb*va;
-  double xbb = vb*vb;
+  T xaa = va*va;
+  T xab = vb*va;
+  T xbb = vb*vb;
   D = (xaa*xbb-xab*xab);
-  double xac = va*(pb_-pa_);
-  double xbc = vb*(pb_-pa_);
-  ta = xbb*xac-xab*xbc;
-  tb = xab*xac-xaa*xbc;
-  Da = D*pa_+ta*va;
-  Db = D*pb_+tb*vb;
+  T xac = va*(pb_-pa_);
+  T xbc = vb*(pb_-pa_);
+  T da = xbb*xac-xab*xbc;
+  T db = xab*xac-xaa*xbc;
+  Da = D*pa_+da*va;
+  Db = D*pb_+db*vb;
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::nearest_Line_Line
+ (float& D, CVec3f& Da, CVec3f& Db,
+  const CVec3f& pa_, const CVec3f& va,
+  const CVec3f& pb_, const CVec3f& vb);
+template void delfem2::nearest_Line_Line
+ (double& D, CVec3d& Da, CVec3d& Db,
+  const CVec3d& pa_, const CVec3d& va,
+  const CVec3d& pb_, const CVec3d& vb);
+#endif
+
+// ---------------------------------------------
+
+template <typename T>
+void delfem2::nearest_Line_Line
+(T& D, CVec3<T>& Da, CVec3<T>& Db,
+ T& Dta, T& Dtb,
+ //
+ const CVec3<T>& pa_, const CVec3<T>& va,
+ const CVec3<T>& pb_, const CVec3<T>& vb)
+{
+  T xaa = va*va;
+  T xab = vb*va;
+  T xbb = vb*vb;
+  D = (xaa*xbb-xab*xab);
+  T xac = va*(pb_-pa_);
+  T xbc = vb*(pb_-pa_);
+  Dta = xbb*xac-xab*xbc;
+  Dtb = xab*xac-xaa*xbc;
+  Da = D*pa_+Dta*va;
+  Db = D*pb_+Dtb*vb;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::nearest_Line_Line
+ (float& D, CVec3f& Da, CVec3f& Db,
+  float& Dta, float& Dtb,
+  const CVec3f& pa_, const CVec3f& va,
+  const CVec3f& pb_, const CVec3f& vb);
+template void delfem2::nearest_Line_Line
+(double& D, CVec3d& Da, CVec3d& Db,
+ double& Dta, double& Dtb,
+ const CVec3d& pa_, const CVec3d& va,
+ const CVec3d& pb_, const CVec3d& vb);
+#endif
+
+// ------------------------------------------
 
 template <typename T>
 delfem2::CVec3<T> delfem2::nearest_Plane_Point
@@ -2450,8 +2527,11 @@ void delfem2::UnitNormal
   vnorm.p[2] *= dtmp1;
 }
 #ifndef DFM2_HEADER_ONLY
+template void delfem2::UnitNormal(CVec3f& vnorm, const CVec3f& v1, const CVec3f& v2, const CVec3f& v3);
 template void delfem2::UnitNormal(CVec3d& vnorm, const CVec3d& v1, const CVec3d& v2, const CVec3d& v3);
 #endif
+
+// ---------------------------------------
 
 template <typename T>
 delfem2::CVec3<T> delfem2::UnitNormal
@@ -2469,6 +2549,16 @@ const CVec3<T>& v3)
   vnorm.p[2] *= dtmp1;
   return vnorm;
 }
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CVec3f delfem2::UnitNormal
+ (const CVec3f& v1,
+  const CVec3f& v2,
+  const CVec3f& v3);
+template delfem2::CVec3d delfem2::UnitNormal
+(const CVec3d& v1,
+ const CVec3d& v2,
+ const CVec3d& v3);
+#endif
 
 // ---------------------------------------------------
 

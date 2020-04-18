@@ -16,9 +16,10 @@ endif()
 
 #########################
 
-project(400_UiGizmoRot)
+project(401_UiGizmoTransl)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
+set(DELFEM2_INC         "../../include/delfem2")
 set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -30,6 +31,8 @@ ENDIF()
 get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
 set(GLFW_INCLUDE_DIR  ${3RD_PARTY}/glfw/include)
 
+find_package(OpenGL REQUIRED)
+
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
 else()
@@ -37,9 +40,8 @@ else()
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
 ENDIF()
 
-################################################
+#########################
 
-find_package(OpenGL REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}

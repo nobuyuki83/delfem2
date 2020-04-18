@@ -6,6 +6,8 @@
  */
 
 #include <cassert>
+#include "delfem2/vec3.h"
+#include "delfem2/quat.h"
 
 #if defined(__APPLE__) && defined(__MACH__) // mac
   #include <OpenGL/gl.h>
@@ -17,10 +19,6 @@
 #else // linux
   #include <GL/gl.h>
 #endif
-
-#include "delfem2/vec3.h"
-#include "delfem2/quat.h"
-
 #include "delfem2/opengl/v3q_glold.h"
 
 //----------------------------------------------------
@@ -29,31 +27,44 @@ namespace delfem2 {
 namespace opengl {
 
 template <>
-DFM2_INLINE void myGlVertex(const CVec3d& v)
-{
-  ::glVertex3d(v.x(),v.y(),v.z());
-}
+DFM2_INLINE void myGlVertex(const CVec3d& v){ ::glVertex3d(v.x(),v.y(),v.z()); }
 
 template <>
-DFM2_INLINE void myGlVertex(const CVec3f& v)
-{
-  ::glVertex3f(v.x(),v.y(),v.z());
+DFM2_INLINE void myGlVertex(const CVec3f& v){ ::glVertex3f(v.x(),v.y(),v.z()); }
+
 }
+}
+
+// -------------------------
+
+namespace delfem2 {
+namespace opengl {
+
+template <>
+DFM2_INLINE void myGlTranslate(const CVec3f& v){ ::glTranslatef(v.x(),v.y(),v.z()); }
+
+template <>
+DFM2_INLINE void myGlTranslate(const CVec3d& v){ ::glTranslated(v.x(),v.y(),v.z()); }
+
+}
+}
+
+// ----------------------------
+
+namespace delfem2{
+namespace opengl{
+
+template <>
+DFM2_INLINE void myGlNormal(const CVec3d& n){ ::glNormal3d(n.x(),n.y(),n.z()); }
+
+template <>
+DFM2_INLINE void myGlNormal(const CVec3f& n){ ::glNormal3f(n.x(),n.y(),n.z()); }
 
 }
 }
 
 
-
-DFM2_INLINE void delfem2::opengl::myGlTranslate(const CVec3d& v)
-{
-  ::glTranslated(v.x(),v.y(),v.z());
-}
-
-DFM2_INLINE void delfem2::opengl::myGlNormal(const CVec3d& n)
-{
-  ::glNormal3d(n.x(),n.y(),n.z());
-}
+// ----------------------------
 
 DFM2_INLINE void delfem2::opengl::myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c)
 {
@@ -165,37 +176,40 @@ DFM2_INLINE void delfem2::opengl::DrawCylinder
   }
 }
 
-
+template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawArrow
-(const CVec3d& p0,
- const CVec3d& d,
+(const CVec3<REAL>& p0,
+ const CVec3<REAL>& d,
  int ndivt)
 {
-  CVec3d z = d; z.SetNormalizedVector();
-  CVec3d x,y; GetVertical2Vector(z,x,y);
-  double dt = 3.1415*2.0 / ndivt;
-  double r0 = d.Length()*0.05;
-  double r1 = d.Length()*0.10;
+  using CV3 = CVec3<REAL>;
+  CV3 z = d; z.SetNormalizedVector();
+  CV3 x,y; GetVertical2Vector(z,x,y);
+  REAL dt = 3.1415*2.0 / ndivt;
+  REAL r0 = d.Length()*0.05;
+  REAL r1 = d.Length()*0.10;
   //  double l = d.Length();
   { // cylinder
     ::glBegin(GL_QUADS);
     for(int idiv=0;idiv<ndivt;idiv++){
-      CVec3d n = cos((idiv+0.5)*dt)*y + sin((idiv+0.5)*dt)*x;
+      CV3 n = (REAL)cos((idiv+0.5)*dt)*y + (REAL)sin((idiv+0.5)*dt)*x;
       myGlNormal(n);
-      myGlVertex(p0      +r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
-      myGlVertex(p0+d*0.8+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
-      myGlVertex(p0+d*0.8+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
-      myGlVertex(p0      +r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
+      CV3 p1 = p0+d*(REAL)0.8;
+      myGlVertex(p0+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
+      myGlVertex(p1+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
+      myGlVertex(p1+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
+      myGlVertex(p0+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
     }
     ::glEnd();
   }
   { // cone
     ::glBegin(GL_TRIANGLES);
     for(int idiv=0;idiv<ndivt;idiv++){
-      CVec3d v0 = p0+d*0.8 + (r1*sin((idiv+0)*dt))*x + (r1*cos((idiv+0)*dt))*y;
-      CVec3d v1 = p0+d*0.8 + (r1*sin((idiv+1)*dt))*x + (r1*cos((idiv+1)*dt))*y;
-      CVec3d v2 = p0+d;
-      CVec3d n; UnitNormal(n, v1, v0, v2);
+      CV3 p1 = p0+d*(REAL)0.8;
+      CV3 v0 = p1 + (r1*sin((idiv+0)*dt))*x + (r1*cos((idiv+0)*dt))*y;
+      CV3 v1 = p1 + (r1*sin((idiv+1)*dt))*x + (r1*cos((idiv+1)*dt))*y;
+      CV3 v2 = p0+d;
+      CV3 n; UnitNormal(n, v1, v0, v2);
       myGlNormal(n);
       myGlVertex(v0);
       myGlVertex(v2);
@@ -569,25 +583,39 @@ DFM2_INLINE void delfem2::opengl::DrawGridOutside
 }
 
 // -----------------------------------------------------------------
+// below: gizmo
 
-DFM2_INLINE void delfem2::opengl::DrawAxisHandler(double s, const CVec3d& p)
+template <typename REAL>
+DFM2_INLINE void delfem2::opengl::DrawAxisHandler
+ (REAL s, const CVec3<REAL>& p,
+  int ielem_picked)
 {
   GLboolean is_lighting = ::glIsEnabled(GL_LIGHTING);
   ::glDisable(GL_LIGHTING);
-  ::glColor3d(1, 0, 0);
-  opengl::DrawArrow(p,CVec3d(+s, 0, 0));
-  opengl::DrawArrow(p,CVec3d(-s, 0, 0));
-  
-  ::glColor3d(0, 1, 0);
-  opengl::DrawArrow(p, CVec3d(0, +s, 0));
-  opengl::DrawArrow(p, CVec3d(0, -s, 0));
-  
-  ::glColor3d(0, 0, 1);
-  opengl::DrawArrow(p, CVec3d(0, 0, +s));
-  opengl::DrawArrow(p, CVec3d(0, 0, -s));
+  if( ielem_picked == 0 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(1,0,0); }
+  opengl::DrawArrow(p,CVec3<REAL>(+s, 0, 0));
+  opengl::DrawArrow(p,CVec3<REAL>(-s, 0, 0));
+  //
+  if( ielem_picked == 1 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,1,0); }
+  opengl::DrawArrow(p, CVec3<REAL>(0, +s, 0));
+  opengl::DrawArrow(p, CVec3<REAL>(0, -s, 0));
+  //
+  if( ielem_picked == 2 ){ ::glColor3d(1,1,0); }   else{ ::glColor3d(0,0,1); }
+  opengl::DrawArrow(p, CVec3<REAL>(0, 0, +s));
+  opengl::DrawArrow(p, CVec3<REAL>(0, 0, -s));
   
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::opengl::DrawAxisHandler
+(float s, const CVec3f& p,
+ int ielem_picked);
+template void delfem2::opengl::DrawAxisHandler
+ (double s, const CVec3d& p,
+  int ielem_picked);
+#endif
+
+// ------------------------------------------
 
 template <typename REAL>
 DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_PosQuat
@@ -652,7 +680,9 @@ DFM2_INLINE void delfem2::opengl::DrawHandlerRotation_Mat4
   }
 }
 
+// above: gizmo
 // -------------------------------------------------------
+// below: quaternion coord
 
 DFM2_INLINE void delfem2::opengl::Draw_QuaternionsCoordinateAxes
  (const std::vector<double>& aXYZ1,
