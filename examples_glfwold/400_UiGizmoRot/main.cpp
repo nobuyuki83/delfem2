@@ -36,22 +36,20 @@ int main(int argc,char* argv[])
     }
     //
     virtual void mouse_press(const float src[3], const float dir[3]){
-      const double dsrc[3] = {src[0],src[1],src[2]};
-      const double ddir[3] = {dir[0],dir[1],dir[2]};
-      hndlr_rot.Pick(true, dsrc, ddir, 0.1);
+      gizmo_rot.Pick(true, src, dir, 0.1);
     }
     virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
-      hndlr_rot.Drag(src0, src1, dir);
+      gizmo_rot.Drag(src0, src1, dir);
     }
     //
     void Draw(){
       DrawBegin_oldGL();
       {
-        double r[16]; dfm2::Mat4_Quat(r, hndlr_rot.quat);
-        double r0[16]; dfm2::Transpose_Mat4(r0, r);
+        float r[16]; dfm2::Mat4_Quat(r, gizmo_rot.quat);
+        float r0[16]; dfm2::Transpose_Mat4(r0, r);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPushMatrix();
-        ::glMultMatrixd(r0);
+        ::glMultMatrixf(r0);
         ::glEnable(GL_LIGHTING);
         ::glColor3d(0,0,0);
         delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
@@ -61,14 +59,14 @@ int main(int argc,char* argv[])
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }
-      dfm2::opengl::DrawHandlerRotation_PosQuat(hndlr_rot.pos,
-                                                hndlr_rot.quat,
-                                                hndlr_rot.size,
-                                                hndlr_rot.ielem_picked);
+      dfm2::opengl::DrawHandlerRotation_PosQuat(gizmo_rot.pos,
+                                                gizmo_rot.quat,
+                                                gizmo_rot.size,
+                                                gizmo_rot.ielem_picked);
       DrawEnd_oldGL();
     }
   public:
-    dfm2::CGizmo_Rotation<double> hndlr_rot;
+    dfm2::CGizmo_Rotation<float> gizmo_rot;
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
   } viewer;

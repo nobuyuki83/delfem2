@@ -341,13 +341,20 @@ DFM2_INLINE void delfem2::Mat4_ScaleMatTransl
 
 namespace delfem2 {
 
-DFM2_INLINE CVec3d operator* (const CQuatd& q, const CVec3d& v)
+template <typename REAL>
+DFM2_INLINE CVec3<REAL> operator*
+ (const CQuat<REAL>& q,
+  const CVec3<REAL>& v)
 {
-  CVec3d p;
+  CVec3<REAL> p;
   QuatVec(p.p,
           q.q, v.p);
   return p;
 }
+#ifndef DFM2_HEADER_ONLY
+template CVec3f operator* (const CQuatf& q, const CVec3f& v);
+template CVec3d operator* (const CQuatd& q, const CVec3d& v);
+#endif
 
 }
 

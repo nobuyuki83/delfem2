@@ -130,8 +130,8 @@ int main(int argc,char* argv[])
         ::glEnd();
       }
       {
-        dfm2::CVec3d p0 = src + 10*dir;
-        dfm2::CVec3d p1 = src - 10*dir;
+        dfm2::CVec3d p0 = src + 10.0*dir;
+        dfm2::CVec3d p1 = src - 10.0*dir;
         ::glLineWidth(1);
         ::glBegin(GL_LINES);
         ::glVertex3d(p0.x(), p0.y(), p0.z());

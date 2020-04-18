@@ -664,12 +664,21 @@ std::istream &operator>>(std::istream &input, CMat3<T>& m)
   
 template <typename T>
 delfem2::CMat3<T>::CMat3(): mat{0.,0.,0., 0.,0.,0., 0.,0.,0.} {}
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3<float>::CMat3();
 template delfem2::CMat3<double>::CMat3();
+#endif
   
 // ---------------------
 
 template <typename T>
 delfem2::CMat3<T>::CMat3(const T s): mat{s,0,0, 0,s,0, 0,0,s} {}
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3<float>::CMat3(float);
+template delfem2::CMat3<double>::CMat3(double);
+#endif
+
+// ----------------------
 
 template <typename T>
 delfem2::CMat3<T>::CMat3(double v00, double v01, double v02,
@@ -678,9 +687,17 @@ delfem2::CMat3<T>::CMat3(double v00, double v01, double v02,
  mat{v00,v01,v02, v10,v11,v12, v20,v21,v22}
 {}
 
+// ----------------------
+
 template <typename T>
 delfem2::CMat3<T>::CMat3(T x, T y, T z):
   mat{x,0,0, 0,y,0, 0,0,z} {}
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3<float>::CMat3(float,float,float);
+template delfem2::CMat3<double>::CMat3(double,double,double);
+#endif
+
+// ----------------------
 
 template <typename T>
 delfem2::CMat3<T>::CMat3(const T m[9]):

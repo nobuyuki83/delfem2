@@ -19,7 +19,9 @@ namespace opengl
 // ------------------------------------------------------------------------------------
 // vec3 starts here
 
-DFM2_INLINE void myGlVertex(const CVec3d& v);
+template <typename REAL>
+DFM2_INLINE void myGlVertex(const CVec3<REAL>& v);
+
 DFM2_INLINE void myGlTranslate(const CVec3d& v);
 DFM2_INLINE void myGlNormal(const CVec3d& n);
 DFM2_INLINE void myGlNormal(const CVec3d& a, const CVec3d& b, const CVec3d& c);
@@ -76,9 +78,11 @@ DFM2_INLINE void DrawSingleHex_Edge
 
 DFM2_INLINE void drawPolyLine3D(const std::vector<CVec3d>& aP);
 
-DFM2_INLINE void DrawCircleWire(const CVec3d& axis,
-                    const CVec3d& org,
-                    double r);
+template <typename REAL>
+DFM2_INLINE void DrawCircleWire(const CVec3<REAL>& axis,
+                                const CVec3<REAL>& org,
+                                REAL r);
+
 DFM2_INLINE void DrawCircleSolid(const CVec3d& axis,
                      const CVec3d& org,
                      double r);
@@ -125,9 +129,10 @@ DFM2_INLINE void DrawHandlerRotation_Mat4
 // --------------------------------------------------------------------
 // CQuaternion
 
+template <typename REAL>
 DFM2_INLINE void DrawHandlerRotation_PosQuat
- (const CVec3d& pos, const double quat[4],
-  double size, int ielem_picked);
+ (const CVec3<REAL>& pos, const REAL quat[4],
+  REAL size, int ielem_picked);
 
 
 DFM2_INLINE void Draw_QuaternionsCoordinateAxes(

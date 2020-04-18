@@ -116,16 +116,16 @@ template <typename T>
 CVec3<T> operator - (const CVec3<T>& lhs, const CVec3<T>& rhs);
   
 template <typename T>
-CVec3<T> operator * (double d, const CVec3<T>& rhs);
+CVec3<T> operator * (T d, const CVec3<T>& rhs);
   
 template <typename T>
-CVec3<T> operator * (const CVec3<T>& vec, double d);
+CVec3<T> operator * (const CVec3<T>& vec, T d);
   
 template <typename T>
-double operator * (const CVec3<T>& lhs, const CVec3<T>& rhs);
+T operator * (const CVec3<T>& lhs, const CVec3<T>& rhs);
   
 template <typename T>
-CVec3<T> operator / (const CVec3<T>& vec, double d);
+CVec3<T> operator / (const CVec3<T>& vec, T d);
   
 template <typename T>
 CVec3<T> operator ^ (const CVec3<T>& lhs, const CVec3<T>& rhs);
@@ -149,7 +149,7 @@ template <typename T>
 class CVec3
 {
 public:
-  CVec3(double vx, double vy, double vz) : p{vx,vy,vz} {}
+  CVec3(T vx, T vy, T vz) : p{vx,vy,vz} {}
   CVec3(): p{0.0, 0.0, 0.0} {}
 	CVec3(const CVec3& rhs){ p[0] = rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
   CVec3(const double* prhs){ p[0] = prhs[0]; p[1] = prhs[1]; p[2] = prhs[2]; }
@@ -203,7 +203,7 @@ public:
     if( i == 2 ) return p[2];
     return 0;
   }
-  inline double& operator[](int i){
+  inline T& operator[](int i){
     if( i == 0 ) return p[0];
     if( i == 1 ) return p[1];
     if( i == 2 ) return p[2];
@@ -254,7 +254,7 @@ using CVec3f = CVec3<float>;
 // ------------------------------
   
 template <typename T>
-double Dot(const CVec3<T>& arg1, const CVec3<T>& arg2);
+T Dot(const CVec3<T>& arg1, const CVec3<T>& arg2);
 
 template <typename T>
 CVec3<T> Cross(const CVec3<T>& arg1, const CVec3<T>& arg2);
@@ -279,11 +279,11 @@ template <typename T>
 CVec3<T> Mat3Vec(const double M[ 9], const CVec3<T>& v);
   
 template <typename T>
-CVec3<T> Mat4Vec(const double M[16], const CVec3<T>& v);
+CVec3<T> Mat4Vec(const T M[16], const CVec3<T>& v);
   
 template <typename T>
 DFM2_INLINE CVec3<T> QuatVec
- (const double quat[4],
+ (const T quat[4],
   const CVec3<T>& v0);
   
 template <typename REAL>
@@ -400,7 +400,7 @@ void Nearest_Line_Circle
   const CVec3<T>& dir,
   const CVec3<T>& org,
   const CVec3<T>& normal,
-  double rad);
+  T rad);
 
 template <typename T>
 CVec3<T> nearst_Origin_Quad(double& s0,
