@@ -195,10 +195,14 @@ DFM2_INLINE void delfem2::opengl::DrawArrow
       CV3 n = (REAL)cos((idiv+0.5)*dt)*y + (REAL)sin((idiv+0.5)*dt)*x;
       myGlNormal(n);
       CV3 p1 = p0+d*(REAL)0.8;
-      myGlVertex(p0+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
-      myGlVertex(p1+r0*sin((idiv+0)*dt)*x+r0*cos((idiv+0)*dt)*y);
-      myGlVertex(p1+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
-      myGlVertex(p0+r0*sin((idiv+1)*dt)*x+r0*cos((idiv+1)*dt)*y);
+      REAL s0 = (REAL)(r0*sin((idiv+0)*dt));
+      REAL s1 = (REAL)(r0*sin((idiv+1)*dt));
+      REAL c0 = (REAL)(r0*cos((idiv+0)*dt));
+      REAL c1 = (REAL)(r0*cos((idiv+1)*dt));
+      myGlVertex(p0 + s0*x + c0*y);
+      myGlVertex(p1 + s0*x + c0*y);
+      myGlVertex(p1 + s1*x + c1*y);
+      myGlVertex(p0 + s1*x + c1*y);
     }
     ::glEnd();
   }
@@ -206,8 +210,12 @@ DFM2_INLINE void delfem2::opengl::DrawArrow
     ::glBegin(GL_TRIANGLES);
     for(int idiv=0;idiv<ndivt;idiv++){
       CV3 p1 = p0+d*(REAL)0.8;
-      CV3 v0 = p1 + (r1*sin((idiv+0)*dt))*x + (r1*cos((idiv+0)*dt))*y;
-      CV3 v1 = p1 + (r1*sin((idiv+1)*dt))*x + (r1*cos((idiv+1)*dt))*y;
+      REAL s0 = (REAL)(r1*sin((idiv+0)*dt));
+      REAL s1 = (REAL)(r1*sin((idiv+1)*dt));
+      REAL c0 = (REAL)(r1*cos((idiv+0)*dt));
+      REAL c1 = (REAL)(r1*cos((idiv+1)*dt));
+      CV3 v0 = p1 + s0*x + c0*y;
+      CV3 v1 = p1 + s1*x + c1*y;
       CV3 v2 = p0+d;
       CV3 n; UnitNormal(n, v1, v0, v2);
       myGlNormal(n);
