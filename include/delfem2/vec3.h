@@ -276,7 +276,7 @@ CVec3<T> solve_GlAffineMatrixDirection(const float* m,
                                        const CVec3<T>& v);
 
 template <typename T>
-CVec3<T> Mat3Vec(const double M[ 9], const CVec3<T>& v);
+CVec3<T> Mat3Vec(const T M[ 9], const CVec3<T>& v);
   
 template <typename T>
 CVec3<T> Mat4Vec(const T M[16], const CVec3<T>& v);
