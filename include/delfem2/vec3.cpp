@@ -97,9 +97,9 @@ DFM2_INLINE void MyMat4Vec3
 }
 #ifndef DFM2_HEADER_ONLY
 template void MyMat4Vec3(float vo[3],
-                         const float M[16], const float vi[3]);
+    const float M[16], const float vi[3]);
 template void MyMat4Vec3(double vo[3],
-                         const double M[16], const double vi[3]);
+    const double M[16], const double vi[3]);
 #endif
 
 // ----------------------
@@ -373,9 +373,9 @@ void delfem2::UnitNormalAreaTri3(
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::UnitNormalAreaTri3(float n[3], float& a,
-                                       const float v1[3], const float v2[3], const float v3[3]);
+    const float v1[3], const float v2[3], const float v3[3]);
 template void delfem2::UnitNormalAreaTri3(double n[3], double& a,
-                                       const double v1[3], const double v2[3], const double v3[3]);
+    const double v1[3], const double v2[3], const double v3[3]);
 #endif
 
 // ------------------------------------------
@@ -510,6 +510,7 @@ delfem2::CVec3<T> delfem2::Cross(const CVec3<T>& arg1, const CVec3<T>& arg2)
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
+template delfem2::CVec3f delfem2::Cross(const CVec3f& arg1, const CVec3f& arg2);
 template delfem2::CVec3d delfem2::Cross(const CVec3d& arg1, const CVec3d& arg2);
 #endif
 
@@ -542,9 +543,9 @@ void delfem2::AverageFour3(
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::AverageFour3(float po[3],
-                                 const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
+    const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
 template void delfem2::AverageFour3(double po[3],
-                                 const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
+    const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
 #endif
 
 
@@ -669,6 +670,7 @@ std::ostream &operator<<(std::ostream &output, const CVec3<T>& v)
 }
 #ifndef DFM2_HEADER_ONLY
 template std::ostream &operator<<(std::ostream &output, const CVec3d& v);
+template std::ostream &operator<<(std::ostream &output, const CVec3f& v);
 #endif
   
 // ---------------------
@@ -681,6 +683,7 @@ std::istream &operator>>(std::istream &input, CVec3<T>& v)
 }
 #ifndef DFM2_HEADER_ONLY
 template std::istream &operator>>(std::istream &input, CVec3d& v);
+template std::istream &operator>>(std::istream &input, CVec3f& v);
 #endif
   
 // ----------------------
