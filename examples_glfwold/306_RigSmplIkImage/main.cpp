@@ -56,8 +56,8 @@ void Draw
   ::glColor3d(1,0,0);
   for(int it=0;it<aTarget.size();++it){
     dfm2::CVec3d p = aTarget[it].pos;
-    dfm2::opengl::myGlVertex(p+10*dfm2::CVec3d(0,0,1));
-    dfm2::opengl::myGlVertex(p-10*dfm2::CVec3d(0,0,1));
+    dfm2::opengl::myGlVertex(p+10.0*dfm2::CVec3d(0,0,1));
+    dfm2::opengl::myGlVertex(p-10.0*dfm2::CVec3d(0,0,1));
   }
   ::glEnd();
   /*

@@ -59,8 +59,10 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/bvh.h                       ${DELFEM2_INC}/bvh.cpp
     ${DELFEM2_INC}/bv.h
     ${DELFEM2_INC}/pgeo.h
+    ${DELFEM2_INC}/sdf.h
         
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
+    ${DELFEM2_INC}/gizmo_geo3.h                ${DELFEM2_INC}/gizmo_geo3.cpp
     ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
     ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp
     ${DELFEM2_INC}/dtri3_v3dtri.h              ${DELFEM2_INC}/dtri3_v3dtri.cpp
