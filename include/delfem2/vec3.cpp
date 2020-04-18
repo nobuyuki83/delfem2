@@ -714,7 +714,10 @@ delfem2::CVec3<T> delfem2::Mat3Vec(const double mat[9], const CVec3<T>& v){
   return u;
 }
 #ifndef DFM2_HEADER_ONLY
-template delfem2::CVec3<double> delfem2::Mat3Vec(const double mat[9], const CVec3<double>& v);
+template delfem2::CVec3<float> delfem2::Mat3Vec(
+    const float mat[9], const CVec3<float>& v);
+template delfem2::CVec3<double> delfem2::Mat3Vec(
+    const double mat[9], const CVec3<double>& v);
 #endif
   
 // -------------------------
