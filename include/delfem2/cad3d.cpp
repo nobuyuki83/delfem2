@@ -13,6 +13,7 @@
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad3d.h"
+#include "delfem2/pgeo.h"
 
 // -------
 #include "delfem2/opengl/v3q_glold.h"

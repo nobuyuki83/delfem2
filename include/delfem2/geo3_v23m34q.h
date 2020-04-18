@@ -144,7 +144,8 @@ CMat3d Mat3_CrossCross(const CVec3d& v);
 // -----------------------------------------------------------
 // quaternion
 
-DFM2_INLINE CVec3d operator* (const CQuatd& v, const CVec3d& m);
+template <typename REAL>
+DFM2_INLINE CVec3<REAL> operator* (const CQuat<REAL>& v, const CVec3<REAL>& m);
 
 DFM2_INLINE CQuatd Quat_CartesianAngle(const CVec3d& p);
 
