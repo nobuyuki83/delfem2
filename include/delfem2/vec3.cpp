@@ -96,9 +96,9 @@ DFM2_INLINE void MyMat4Vec3
 }
 #ifndef DFM2_HEADER_ONLY
 template void MyMat4Vec3(float vo[3],
-                         const float M[16], const float vi[3]);
+    const float M[16], const float vi[3]);
 template void MyMat4Vec3(double vo[3],
-                         const double M[16], const double vi[3]);
+    const double M[16], const double vi[3]);
 #endif
 
 // ----------------------
@@ -372,9 +372,9 @@ void delfem2::UnitNormalAreaTri3(
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::UnitNormalAreaTri3(float n[3], float& a,
-                                       const float v1[3], const float v2[3], const float v3[3]);
+    const float v1[3], const float v2[3], const float v3[3]);
 template void delfem2::UnitNormalAreaTri3(double n[3], double& a,
-                                       const double v1[3], const double v2[3], const double v3[3]);
+    const double v1[3], const double v2[3], const double v3[3]);
 #endif
 
 // ------------------------------------------
@@ -509,6 +509,7 @@ delfem2::CVec3<T> delfem2::Cross(const CVec3<T>& arg1, const CVec3<T>& arg2)
   return temp;
 }
 #ifndef DFM2_HEADER_ONLY
+template delfem2::CVec3f delfem2::Cross(const CVec3f& arg1, const CVec3f& arg2);
 template delfem2::CVec3d delfem2::Cross(const CVec3d& arg1, const CVec3d& arg2);
 #endif
 
@@ -541,9 +542,9 @@ void delfem2::AverageFour3(
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::AverageFour3(float po[3],
-                                 const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
+    const float p0[3], const float p1[3], const float p2[3], const float p3[3]);
 template void delfem2::AverageFour3(double po[3],
-                                 const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
+    const double p0[3], const double p1[3], const double p2[3], const double p3[3]);
 #endif
 
 
@@ -668,6 +669,7 @@ std::ostream &operator<<(std::ostream &output, const CVec3<T>& v)
 }
 #ifndef DFM2_HEADER_ONLY
 template std::ostream &operator<<(std::ostream &output, const CVec3d& v);
+template std::ostream &operator<<(std::ostream &output, const CVec3f& v);
 #endif
   
 // ---------------------
@@ -680,6 +682,7 @@ std::istream &operator>>(std::istream &input, CVec3<T>& v)
 }
 #ifndef DFM2_HEADER_ONLY
 template std::istream &operator>>(std::istream &input, CVec3d& v);
+template std::istream &operator>>(std::istream &input, CVec3f& v);
 #endif
   
 // ----------------------
@@ -707,13 +710,16 @@ std::istream &operator>>(std::istream &input, std::vector<CVec3<T>>& aV){
 // ------------------------------------------------------------------------------------------------------------------------------
 
 template <typename T>
-delfem2::CVec3<T> delfem2::Mat3Vec(const double mat[9], const CVec3<T>& v){
+delfem2::CVec3<T> delfem2::Mat3Vec(const T mat[9], const CVec3<T>& v){
   CVec3<T> u;
   vec3::MyMatVec3(u.p, mat, v.p);
   return u;
 }
 #ifndef DFM2_HEADER_ONLY
-template delfem2::CVec3<double> delfem2::Mat3Vec(const double mat[9], const CVec3<double>& v);
+template delfem2::CVec3<float> delfem2::Mat3Vec(
+    const float mat[9], const CVec3<float>& v);
+template delfem2::CVec3<double> delfem2::Mat3Vec(
+    const double mat[9], const CVec3<double>& v);
 #endif
   
 // -------------------------
@@ -915,9 +921,13 @@ bool delfem2::IntersectRay_Tri3(
 }
 #ifndef DFM2_HEADER_ONLY
 template bool delfem2::IntersectRay_Tri3(double& r0, double& r1,
-                                      const CVec3d& org, const CVec3d& dir,
-                                      const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
-                                      double eps);
+    const CVec3d& org, const CVec3d& dir,
+    const CVec3d& p0,  const CVec3d& p1, const CVec3d& p2,
+    double eps);
+template bool delfem2::IntersectRay_Tri3(float& r0, float& r1,
+    const CVec3f& org, const CVec3f& dir,
+    const CVec3f& p0,  const CVec3f& p1, const CVec3f& p2,
+    float eps);
 #endif
 
 // --------------------------------------------------------
@@ -936,9 +946,14 @@ delfem2::CVec3<T> delfem2::nearest_Line_Point
   return s+t*d;
 }
 #ifndef DFM2_HEADER_ONLY
-template delfem2::CVec3d delfem2::nearest_Line_Point(const CVec3d& p, // point
-                                               const CVec3d& s, // source
-                                               const CVec3d& d); // direction
+template delfem2::CVec3d delfem2::nearest_Line_Point(
+    const CVec3d& p, // point
+    const CVec3d& s, // source
+    const CVec3d& d); // direction
+template delfem2::CVec3f delfem2::nearest_Line_Point(
+    const CVec3f& p, // point
+    const CVec3f& s, // source
+    const CVec3f& d); // direction
 #endif
 
 // -------------------------------------------------------
