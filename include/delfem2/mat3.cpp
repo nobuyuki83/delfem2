@@ -703,8 +703,8 @@ template <typename T>
 delfem2::CMat3<T>::CMat3(const T m[9]):
  mat{m[0],m[1],m[2], m[3],m[4],m[5], m[6],m[7],m[8]} {}
 #ifndef DFM2_HEADER_ONLY
-template delfem2::CMat3d::CMat3(const double m[9]);
-template delfem2::CMat3f::CMat3(const float m[9]);
+template delfem2::CMat3<double>::CMat3(const double m[9]);
+template delfem2::CMat3<float>::CMat3(const float m[9]);
 #endif
 
 

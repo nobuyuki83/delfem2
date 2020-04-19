@@ -63,12 +63,12 @@ void Solve_MinEnergyArap
     void MatVec(double* y,
                 double alpha, const double* x, double beta) const
     {
-      for(int isns=0;isns<nsns;++isns){
+      for(unsigned int isns=0;isns<nsns;++isns){
         y[isns] = beta*y[isns];
       }
       // ----
-      for(int isns=0;isns<nsns;++isns){
-        for(int jsns=0;jsns<nsns;++jsns){
+      for(unsigned int isns=0;isns<nsns;++isns){
+        for(unsigned int jsns=0;jsns<nsns;++jsns){
           y[isns] += alpha*K[isns*nsns+jsns]*x[jsns];
         }
       }
@@ -77,7 +77,7 @@ void Solve_MinEnergyArap
                    adC.data(), nc, nsns, x);
       dfm2::MatTVec(tmpM0.data(),
                     adC.data(), nc, nsns, tmpC0.data());
-      for(int isns=0;isns<nsns;++isns){
+      for(unsigned int isns=0;isns<nsns;++isns){
         y[isns] += alpha*weight_rig*tmpM0[isns];
       }
     }
@@ -141,15 +141,15 @@ void Solve_MinEnergyArap
     std::vector<double> tx(nb*4, 0.0);
     std::vector<double> ty(nb*4, 0.0);
     std::vector<double> tz(nb*4, 0.0);
-    for(int ip=0;ip<np;++ip){
-      for(int j=0;j<nb*4;++j){
+    for(unsigned int ip=0;ip<np;++ip){
+      for(unsigned int j=0;j<nb*4;++j){
         tx[j] += aRefPos[ip*(nb*4)+j]*aResP[ip*3+0];
         ty[j] += aRefPos[ip*(nb*4)+j]*aResP[ip*3+1];
         tz[j] += aRefPos[ip*(nb*4)+j]*aResP[ip*3+2];
       }
     }
-    for(int isns=0;isns<nsns;++isns){
-      for(int j=0;j<nb*4;++j){
+    for(unsigned int isns=0;isns<nsns;++isns){
+      for(unsigned int j=0;j<nb*4;++j){
         r[isns]
         += Lx[isns*(nb*4)+j]*tx[j]
         +  Ly[isns*(nb*4)+j]*ty[j]
@@ -263,7 +263,7 @@ int main()
   { // initialize rotation
     const unsigned int np = aXYZ1.size()/3;
     aQuat1.resize(np*4);
-    for(int ip=0;ip<np;++ip){
+    for(unsigned int ip=0;ip<np;++ip){
       dfm2::Quat_Identity(aQuat1.data()+4*ip);
     }
   }
@@ -324,10 +324,10 @@ int main()
       assert( Ly.size() == nsns*nb*4 );
       assert( Lz.size() == nsns*nb*4 );
       dSkin.resize( nsns * (np*3) );
-      for(int isns=0;isns<nsns;++isns){
-       for(int ip=0;ip<np;++ip){
+      for(unsigned int isns=0;isns<nsns;++isns){
+       for(unsigned int ip=0;ip<np;++ip){
           double dx = 0.0, dy = 0.0, dz = 0.0;
-          for(int j=0;j<nb*4;++j){
+          for(unsigned int j=0;j<nb*4;++j){
             dx += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
             dy += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
             dz += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
@@ -341,12 +341,12 @@ int main()
     
     const unsigned int nsns = dSkin.size()/(np*3);
     K.resize( nsns*nsns );
-    for(int isns=0;isns<nsns;++isns){
+    for(unsigned int isns=0;isns<nsns;++isns){
       const std::vector<double> vi(dSkin.data()+isns*(np*3), dSkin.data()+(isns+1)*(np*3));
       std::vector<double> t0(np*3);
       Mat.MatVec(t0.data(), 1.0, vi.data(), 0.0);
       // -----
-      for(int jsns=0;jsns<nsns;++jsns){
+      for(unsigned int jsns=0;jsns<nsns;++jsns){
 //        if( jsns > isns ){ continue; }
         const std::vector<double> vj(dSkin.data()+jsns*(np*3), dSkin.data()+(jsns+1)*(np*3));
         // -----
@@ -354,11 +354,11 @@ int main()
         K[jsns*nsns+isns] = K[isns*nsns+jsns];
       }
     }
-    for(int isns=0;isns<nsns;++isns){
+    for(unsigned int isns=0;isns<nsns;++isns){
       std::cout << isns << " " << K[isns*nsns+isns] << std::endl;
     }
-    for(int isns=0;isns<nsns;++isns){
-      for(int jsns=0;jsns<nsns;++jsns){
+    for(unsigned int isns=0;isns<nsns;++isns){
+      for(unsigned int jsns=0;jsns<nsns;++jsns){
         std::cout << isns << " " << jsns << " " <<  K[jsns*nsns+isns] << " " << K[isns*nsns+jsns] << std::endl;
       }
     }

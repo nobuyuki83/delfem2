@@ -71,11 +71,13 @@ ELSEIF(MSVC)
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     target_link_libraries(${PROJECT_NAME} 
       ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
+      ${OPENGL_LIBRARY}
+    )
   else()
-    target_link_libraries(${PROJECT_NAME} 
+    target_link_libraries(${PROJECT_NAME}
       ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
+      ${OPENGL_LIBRARY}
+    )
   endif()
 ENDIF()
 

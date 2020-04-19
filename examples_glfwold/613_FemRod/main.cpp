@@ -32,7 +32,7 @@ void myGlutDisplay
   ::glColor3d(1,0,0);
   ::glPointSize(10);
   ::glBegin(GL_POINTS);
-  for(int ip=0;ip<aP.size();++ip){
+  for(unsigned int ip=0;ip<aP.size();++ip){
     ::glVertex3d(aP[ip].x(), aP[ip].y(), aP[ip].z());
   }
   ::glEnd();
@@ -40,7 +40,7 @@ void myGlutDisplay
   ::glColor3d(0,0,0);
   ::glLineWidth(3);
   ::glBegin(GL_LINES);
-  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+  for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
     unsigned int i0 = aElemSeg[iseg*2+0]; assert( i0 < aP.size() );
     unsigned int i1 = aElemSeg[iseg*2+1]; assert( i1 < aP.size() );
     ::glVertex3d(aP[i0].x(), aP[i0].y(), aP[i0].z());
@@ -49,7 +49,7 @@ void myGlutDisplay
   ::glEnd();
   // --------------
   ::glBegin(GL_LINES);
-  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+  for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
     unsigned int i0 = aElemSeg[iseg*2+0]; assert( i0 < aP.size() );
     unsigned int i1 = aElemSeg[iseg*2+1]; assert( i1 < aP.size() );
     dfm2::CVec3d p01 = 0.5*(aP[i0]+aP[i1]);
@@ -75,7 +75,7 @@ void Solve
   vec_r.assign(nNode*3, 0.0);
   std::vector<int> tmp_buffer;
   double W = 0;
-  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+  for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
     const unsigned int i0 = aElemSeg[iseg*2+0];
     const unsigned int i1 = aElemSeg[iseg*2+1];
     const unsigned int* aINoel = aElemSeg.data()+iseg*2;
@@ -104,7 +104,7 @@ void Solve
       }
     }
   }
-  for(int irod=0;irod<aElemRod.size()/5;++irod){
+  for(unsigned int irod=0;irod<aElemRod.size()/5;++irod){
     const unsigned int* aINoel = aElemRod.data()+irod*5;
     const unsigned int nP = aP.size();
     const dfm2::CVec3d aPE[3] = { aP[aINoel[0]], aP[aINoel[1]], aP[aINoel[2]] };
@@ -192,7 +192,7 @@ void Solve
   //      std::cout << i << " " << vec_x[i] << std::endl;
   //    }
   assert( aS.size() == aElemSeg.size()/2 );
-  for(int is=0;is<aS.size();++is){
+  for(unsigned int is=0;is<aS.size();++is){
     unsigned int i0 = aElemSeg[is*2+0];
     unsigned int i1 = aElemSeg[is*2+1];
     dfm2::CVec3d V01 = aP[i1]-aP[i0];
@@ -206,12 +206,12 @@ void Solve
                   aS[is],V01,du,dtheta);
     aS[is] = frm[0];
   }
-  for(int ip=0;ip<aP.size();++ip){
+  for(unsigned int ip=0;ip<aP.size();++ip){
     aP[ip].p[0] += vec_x[ip*3+0];
     aP[ip].p[1] += vec_x[ip*3+1];
     aP[ip].p[2] += vec_x[ip*3+2];
   }
-  for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+  for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
     const unsigned int i0 = aElemSeg[iseg*2+0];
     const unsigned int i1 = aElemSeg[iseg*2+1];
     const dfm2::CVec3d& p0 = aP[i0];
@@ -232,18 +232,18 @@ void MakeProblemSetting
 {
   double elen = 2.0/np;
   aP0.resize(np);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     aP0[ip] = dfm2::CVec3d(-1.0+ip*elen, 0.0, 0.0);
   };
   unsigned int ns = np-1;
   aElemSeg.resize(ns*2);
-  for(int is=0;is<ns;++is){
+  for(unsigned int is=0;is<ns;++is){
     aElemSeg[is*2+0] = is+0;
     aElemSeg[is*2+1] = is+1;
   }
   unsigned int nr = ns-1;
   aElemRod.resize(nr*5);
-  for(int ir=0;ir<nr;++ir){
+  for(unsigned int ir=0;ir<nr;++ir){
     aElemRod[ir*5+0] = ir+0;
     aElemRod[ir*5+1] = ir+1;
     aElemRod[ir*5+2] = ir+2;
@@ -257,7 +257,7 @@ void MakeProblemSetting
     aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
     aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
     aBCFlag[(np+0)*3+0] = 1;
-    for(int is=0;is<ns;++is){
+    for(unsigned int is=0;is<ns;++is){
       aBCFlag[(np+is)*3+1] = 1;
       aBCFlag[(np+is)*3+2] = 1;
     }
