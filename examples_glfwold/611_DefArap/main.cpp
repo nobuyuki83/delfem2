@@ -123,7 +123,7 @@ int main(int argc,char* argv[])
   while (true){
     std::vector<double> aXYZ1 = aXYZ0;
     std::vector<double> aQuat1(aXYZ0.size()/3*4);
-    for(int ip=0;ip<aXYZ0.size()/3;++ip){
+    for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip){
       dfm2::Quat_Identity(aQuat1.data()+4*ip);
     }
     int iframe = 0;

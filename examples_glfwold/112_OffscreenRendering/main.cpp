@@ -37,7 +37,7 @@ void DrawObject(){
 
 void myGlutDisplay(const dfm2::opengl::CRender2Tex_DrawOldGL& sampler)
 {
-  dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
+  dfm2::opengl::DrawBackground( dfm2::CColor(0.2f,0.7f,0.7f) );
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1,1,1);
   DrawObject();

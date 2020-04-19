@@ -320,9 +320,9 @@ DFM2_INLINE void ElSuEl_MeshElem(
 
 DFM2_INLINE void ElSuEl_MeshElem(
     std::vector<int> &aElemSurRel,
-    const unsigned int *aElem, unsigned int nElem,
+    const unsigned int *aElem, size_t nElem,
     delfem2::MESHELEM_TYPE type,
-    const unsigned int nXYZ);
+    const size_t nXYZ);
 
 DFM2_INLINE void ElSuEl_MeshMix(
     std::vector<int> &aElemFaceInd,
@@ -384,9 +384,9 @@ DFM2_INLINE void JArray_PSuP_MeshElem(
     std::vector<unsigned int>& psup,
     //
     const unsigned int* pElem,
-    unsigned int nEl,
-    int nPoEl,
-    unsigned int nPo);
+    size_t nEl,
+    unsigned int nPoEl,
+    size_t nPo);
 
 DFM2_INLINE void makeOneRingNeighborhood_TriFan(
     std::vector<int>& psup_ind,

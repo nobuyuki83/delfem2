@@ -86,7 +86,7 @@ TEST(objfunc_v23, Bend)
       GetConstConstDiff_Bend(C1, dC1, p1[0],p1[1],p1[2],p1[3]);
       double val0 = (C1-C)/eps;
       double val1 = dC[ino][idim];
-      EXPECT_LT( fabs(val0-val1)/fabs(val1), 1.0e-4 );
+      EXPECT_NEAR( val0, val1, fabs(val1)*1.0e-3 );
     }
   }
 }
@@ -569,13 +569,13 @@ TEST(objfunc_v23, arap)
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri;
   dfm2::MeshTri3D_Cube(aXYZ0, aTri, 10);
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   
   std::vector<unsigned int> psup_ind, psup;
   {
     dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
                                aTri.data(), aTri.size()/3, 3,
-                               (int)aXYZ0.size()/3);
+                               aXYZ0.size()/3);
     dfm2::JArray_Sort(psup_ind, psup);
   }
   
@@ -589,9 +589,9 @@ TEST(objfunc_v23, arap)
   
   std::vector<double> aQuat1;
   { // initialize rotation
-    const unsigned int np = aXYZ1.size()/3;
+    const size_t np = aXYZ1.size()/3;
     aQuat1.resize(np*4);
-    for(int ip=0;ip<np;++ip){
+    for(unsigned int ip=0;ip<np;++ip){
       dfm2::Quat_Identity(aQuat1.data()+4*ip);
     }
     for(int itr=0;itr<40;++itr){

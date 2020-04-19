@@ -9,7 +9,7 @@ if(MSVC)
   # GTest is static compiled by default
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")  
-  set(CMAKE_CXX_FLAGS "/wd4267")
+  set(CMAKE_CXX_FLAGS "/wd4267 /wd4267")
 endif()
 
 ################################

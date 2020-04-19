@@ -65,9 +65,9 @@ void SetProblem(int iprob)
                          double px, double py, double pz) const
       {
         sdf = this->SignedDistance(px,py,pz);
-        const double rad0 = sp.radius_;
-        const double rad1 = sqrt(px*px+py*py+pz*pz);
-        if( rad1 > rad0*0.5 ){ ilevel_vol = 0; }
+        const double radius0 = sp.radius_;
+        const double radius2 = sqrt(px*px+py*py+pz*pz);
+        if( radius2 > radius0*0.5 ){ ilevel_vol = 0; }
         else{ ilevel_vol = 1; }
         ilevel_srf = 1;
         nlayer = 1;
