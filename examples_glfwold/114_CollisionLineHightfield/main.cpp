@@ -19,19 +19,10 @@
 
 namespace dfm2 = delfem2;
 
-// ------------------------------------------------------
-
-std::vector<double> aXYZ;
-std::vector<unsigned int> aTri;
-
-// ------------------------------------------------------
-
-void DrawObject(){
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
-}
-
 int main(int argc,char* argv[])
 {
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
   dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/rollsRoyce.obj",
                  aXYZ,aTri);
   dfm2::Normalize_Points3(aXYZ,4.0);
@@ -75,7 +66,7 @@ int main(int argc,char* argv[])
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    DrawObject();
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     sampler.End();
     sampler.GetDepth();
     sampler.GetColor();
@@ -140,7 +131,7 @@ int main(int argc,char* argv[])
       }
       // ----------
       ::glEnable(GL_LIGHTING);
-      DrawObject();
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
       glPointSize(1);
       sampler.Draw();
       viewer.DrawEnd_oldGL();
