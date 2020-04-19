@@ -9,6 +9,7 @@
 #define DFM2_V3Q_GLOLD_H
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/vec3.h"
+#include "delfem2/mat4.h"
 #include "delfem2/quat.h"
 #include <vector>
 
@@ -124,6 +125,9 @@ DFM2_INLINE void DrawQuad3D_Edge
 // --------------------------------------------------------------------
 // CMat4
 
+template <typename REAL>
+DFM2_INLINE void MyGlMultMat(const delfem2::CMat4<REAL>& m);
+
 DFM2_INLINE void DrawHandlerRotation_Mat4
  (const double Mat[16],
   double size, int ielem_picked);
@@ -136,22 +140,6 @@ DFM2_INLINE void Draw_QuaternionsCoordinateAxes(
     const std::vector<double>& aXYZ1,
     const std::vector<double>& aQuat,
     double l);
-
-// CQuaternion
-// ----------------------------------------------------------------
-// Gizmo
-
-template <typename REAL>
-DFM2_INLINE void DrawHandlerRotation_PosQuat
-(const CVec3<REAL>& pos, const REAL quat[4],
- REAL size, int ielem_picked);
-
-
-template <typename REAL>
-DFM2_INLINE void DrawAxisHandler
- (REAL s, const CVec3<REAL>& p,
-  int ielem_picked);
-
 
   
 } // end namespace opengl

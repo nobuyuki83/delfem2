@@ -52,14 +52,14 @@ void Smooth4RotSym
  const std::vector<unsigned int>& psup_ind,
  const std::vector<unsigned int>& psup)
 {
-  for(int iip=0;iip<aOdir.size()/3;++iip){
+  for(unsigned int iip=0;iip<aOdir.size()/3;++iip){
     const unsigned int ip0 = iip;
     assert( ip0 < psup_ind.size() );
     const unsigned int npj = psup_ind[ip0+1] - psup_ind[ip0+0];
     const dfm2::CVec3d n0 = dfm2::CVec3d(aNorm.data()+ip0*3);
     dfm2::CVec3d o_new = dfm2::CVec3d(aOdir.data()+ip0*3);
     double weight = 0.0;
-    for(int jjp=0;jjp<npj;++jjp){
+    for(unsigned int jjp=0;jjp<npj;++jjp){
       unsigned int jp1 = psup[psup_ind[ip0]+jjp];
       const dfm2::CVec3d n1 = dfm2::CVec3d(aNorm.data()+jp1*3);
       const dfm2::CVec3d o1 = dfm2::CVec3d(aOdir.data()+jp1*3);
@@ -119,7 +119,7 @@ void InitializeTangentField
 {
   unsigned int np = aNorm.size()/3;
   aOdir.resize(np*3);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     dfm2::CVec3d o = dfm2::CVec3d::Random();
     dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).Normalize();
     o = (o - (o*n)*n).Normalize();
@@ -175,7 +175,7 @@ int main()
       double len = 0.03;
       ::glLineWidth(3);
       unsigned int np = aXYZ.size()/3;
-      for(int ip=0;ip<np;++ip){
+      for(unsigned int ip=0;ip<np;++ip){
         const dfm2::CVec3d p = dfm2::CVec3d(aXYZ.data()+ip*3);
         const dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).Normalize();
         const dfm2::CVec3d o = dfm2::CVec3d(aOdir.data()+ip*3).Normalize();

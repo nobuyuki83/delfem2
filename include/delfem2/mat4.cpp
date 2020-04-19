@@ -333,6 +333,7 @@ delfem2::CMat4<T> delfem2::CMat4<T>::MatMat(const CMat4<T>& mat0) const{
   return m;
 }
 #ifndef DFM2_HEADER_ONLY
+template delfem2::CMat4<float> delfem2::CMat4<float>::MatMat(const CMat4<float>& mat0) const;
 template delfem2::CMat4<double> delfem2::CMat4<double>::MatMat(const CMat4<double>& mat0) const;
 #endif
 
@@ -342,15 +343,15 @@ template <typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL* q)
 {
   CMat4<REAL> m;
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
+  REAL x2 = q[1] * q[1] * 2.0;
+  REAL y2 = q[2] * q[2] * 2.0;
+  REAL z2 = q[3] * q[3] * 2.0;
+  REAL xy = q[1] * q[2] * 2.0;
+  REAL yz = q[2] * q[3] * 2.0;
+  REAL zx = q[3] * q[1] * 2.0;
+  REAL xw = q[1] * q[0] * 2.0;
+  REAL yw = q[2] * q[0] * 2.0;
+  REAL zw = q[3] * q[0] * 2.0;
   m.SetZero();
   m.mat[0*4+0] = 1.0 - y2 - z2; m.mat[0*4+1] = xy - zw;         m.mat[0*4+2] = zx + yw;
   m.mat[1*4+0] = xy + zw;       m.mat[1*4+1] = 1.0 - z2 - x2;   m.mat[1*4+2] = yz - xw;
@@ -359,6 +360,7 @@ delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL* q)
   return m;
 }
 #ifndef DFM2_HEADER_ONLY
+template delfem2::CMat4<float> delfem2::CMat4<float>::Quat(const float* q);
 template delfem2::CMat4<double> delfem2::CMat4<double>::Quat(const double* q);
 #endif
 

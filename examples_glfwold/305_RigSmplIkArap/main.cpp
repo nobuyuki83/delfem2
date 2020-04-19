@@ -168,7 +168,7 @@ void Solve_MinEnergyArap
   
   std::cout << "convergence: " << reshist.size() << std::endl;
   assert( u.size() == (nb+1)*3 );
-  for(int ib=0;ib<aBone.size();++ib){
+  for(unsigned int ib=0;ib<aBone.size();++ib){
     dfm2::CVec3d vec_rot(u.data()+ib*3);
     dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(-vec_rot);
     dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone[ib].quatRelativeRot);
@@ -206,7 +206,7 @@ void Draw
     ::glDisable(GL_LIGHTING);
     ::glPointSize(20);
     ::glBegin(GL_POINTS);
-    for(int it=0;it<aTarget.size();++it){
+    for(unsigned int it=0;it<aTarget.size();++it){
       const unsigned int ib = aTarget[it].ib;
       ::glColor3d(0,1,0);
       dfm2::opengl::myGlVertex(aBone[ib].Pos());
@@ -306,7 +306,7 @@ int main()
       
       std::vector<double> Lx, Ly, Lz; // [ nsns, nbone*4 ]
       { // make sensitivity of bone transformations
-        for(int ibs=0;ibs<aBone.size();++ibs){
+        for(unsigned int ibs=0;ibs<aBone.size();++ibs){
           for(int idims=0;idims<3;++idims){
             dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
                                                      ibs,idims,true,
@@ -383,7 +383,7 @@ int main()
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
     aTargetOriginPos.push_back(aTarget[it].pos);
   }
  

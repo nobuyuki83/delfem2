@@ -27,8 +27,20 @@ public:
   
   void Init_newGL();
   
-  virtual void mouse_press(const float src[3], const float dir[3]) {} // for function override. Do nothing here
-  virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {} // for function override. Do nothing here
+  /**
+   * @details for function override. Do nothing here
+   */
+  virtual void mouse_press(const float src[3], const float dir[3]) {}
+  
+  /**
+   * @details for function override. Do nothing here
+   */
+  virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {}
+  
+  
+  virtual void key_press(int key, int mods) {}
+  
+  virtual void key_release(int key, int mods) {}
   
 public:
   GLFWwindow* window;

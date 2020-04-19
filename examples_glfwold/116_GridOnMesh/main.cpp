@@ -119,8 +119,8 @@ void UpdateProblem() {
     dfm2::CVec3d n1 = aPES0[1].UNorm_Tri(aXYZ,aTri,aNorm);
     dfm2::CVec3d n2 = aPES0[2].UNorm_Tri(aXYZ,aTri,aNorm);
     dfm2::CVec3d n3 = aPES0[3].UNorm_Tri(aXYZ,aTri,aNorm);
-    for(int i=0;i<ndiv+1;++i){
-      for(int j=0;j<ndiv+1;++j) {
+    for(unsigned int i=0;i<ndiv+1;++i){
+      for(unsigned int j=0;j<ndiv+1;++j) {
         double ri = (double)i/ndiv;
         double rj = (double)j/ndiv;
         double r0 = (1-ri)*(1-rj);
