@@ -57,15 +57,15 @@ template<typename T>
 T delfem2::DotX(
     const T* va,
     const T* vb,
-    unsigned int n)
+    size_t n)
 {
   T r = 0.0;
   for(unsigned int i=0;i<n;i++){ r += va[i]*vb[i]; }
   return r;
 }
 #ifndef DFM2_HEADER_ONLY
-template float delfem2::DotX(const float* va, const float* vb, unsigned int n);
-template double delfem2::DotX(const double* va, const double* vb, unsigned int n);
+template float delfem2::DotX(const float* va, const float* vb, size_t n);
+template double delfem2::DotX(const double* va, const double* vb, size_t n);
 #endif
 
 
@@ -75,7 +75,7 @@ template <>
 std::complex<double> DotX
  (const std::complex<double>* va,
   const std::complex<double>* vb,
-  unsigned int n)
+  size_t n)
 {
   double sr = 0.0;
   double si = 0.0;

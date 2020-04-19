@@ -518,9 +518,9 @@ void makeSurroundingRelationship
 
 DFM2_INLINE void delfem2::ElSuEl_MeshElem
 (std::vector<int>& aElemSurRel,
- const unsigned int* aElem, unsigned int nElem,
+ const unsigned int* aElem, size_t nElem,
  MESHELEM_TYPE type,
- const unsigned int nXYZ)
+ const size_t nXYZ)
 {
   const int nNoEl = nNodeElem(type);
   std::vector<unsigned int> elsup_ind, elsup;
@@ -719,9 +719,9 @@ DFM2_INLINE void delfem2::JArray_PSuP_MeshElem
  std::vector<unsigned int>& psup,
  //
  const unsigned int* pElem,
- unsigned int nEl,
- int nPoEl,
- unsigned int nPo)
+ size_t nEl,
+ unsigned int nPoEl,
+ size_t nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
   JArray_ElSuP_MeshElem(elsup_ind, elsup,
