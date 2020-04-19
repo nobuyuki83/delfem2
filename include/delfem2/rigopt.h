@@ -19,7 +19,7 @@ void Solve_MinRigging
   const std::vector<CTarget>& aTarget)
 {
   std::vector<double> Lx, Ly, Lz; // [nsns, nb*4]
-  for(int ibs=0;ibs<aBone.size();++ibs){
+  for(unsigned int ibs=0;ibs<aBone.size();++ibs){
     for(int idims=0;idims<3;++idims){
        Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
                                                ibs,idims,true,
@@ -36,7 +36,7 @@ void Solve_MinRigging
   
   std::vector<double> aC0; // [nC]
   std::vector<double> adC0; // [nC, nb*3 ]
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
      Rig_WdW_Target_Eigen(aC0,adC0,
                                aBone,aTarget[it],Lx,Ly,Lz);
   }
@@ -62,7 +62,7 @@ void Solve_MinRigging
                          adC.data(), nC, nsns, x);
        MatTVec(y,
                     adC.data(), nC, nsns, tmpC0.data());
-      for(int i=0;i<nsns;++i){ y[i] += (beta+0.01)*x[i]; }
+      for(unsigned int i=0;i<nsns;++i){ y[i] += (beta+0.01)*x[i]; }
     }
   public:
     const std::vector<double>& adC;
@@ -79,7 +79,7 @@ void Solve_MinRigging
   std::vector<double> reshist =  Solve_CG(r.data(), u.data(),
                                                nsns, 1.0e-3, 100, mat);
   //  std::cout << "convergence" << reshist.size() << std::endl;
-  for(int ib=0;ib<aBone.size();++ib){
+  for(unsigned int ib=0;ib<aBone.size();++ib){
      CVec3d vec_rot(u.data()+ib*3);
       CQuatd dq; Quat_CartesianAngle(dq.q, (-vec_rot).p);
      CQuatd q0 = dq* CQuatd(aBone[ib].quatRelativeRot);

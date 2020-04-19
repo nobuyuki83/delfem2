@@ -16,6 +16,7 @@
 #include "delfem2/geo3_v23m34q.h"
 // ---
 #include <GLFW/glfw3.h>
+#include "delfem2/opengl/gizmo_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"

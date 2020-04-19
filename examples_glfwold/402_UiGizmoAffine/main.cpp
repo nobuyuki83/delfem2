@@ -37,37 +37,43 @@ int main(int argc,char* argv[])
     }
     //
     virtual void mouse_press(const float src[3], const float dir[3]){
-      gizmo_rot.Pick(true, src, dir, 0.1);
+      ga.Pick(src, dir);
     }
     virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
-      gizmo_rot.Drag(src0, src1, dir);
+      ga.Drag(src0, src1, dir);
+    }
+    virtual void key_release(int key, int mods){
+    }
+    virtual void key_press(int key, int mods){
+      if( key == GLFW_KEY_R ){ ga.igizmo_mode = 1; }
+      if( key == GLFW_KEY_G ){ ga.igizmo_mode = 0; }
     }
     //
     void Draw(){
       DrawBegin_oldGL();
+      delfem2::opengl::DrawAxis(1);
       {
-        float r[16]; dfm2::Mat4_Quat(r, gizmo_rot.quat);
-        float r0[16]; dfm2::Transpose_Mat4(r0, r);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPushMatrix();
-        ::glMultMatrixf(r0);
+        const auto m0 = ga.Affine();
+        const auto m1 = m0.Transpose();
+        delfem2::opengl::MyGlMultMat(m1);
+        // ------
         ::glEnable(GL_LIGHTING);
         ::glColor3d(0,0,0);
         delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
                                             aTri.data(), aTri.size()/3);
         delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(),
                                                 aTri.data(), aTri.size()/3);
+        // -------
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }
-      dfm2::opengl::DrawHandlerRotation_PosQuat(gizmo_rot.pos,
-                                                gizmo_rot.quat,
-                                                gizmo_rot.size,
-                                                gizmo_rot.ielem_picked);
+      delfem2::opengl::Draw(ga);
       DrawEnd_oldGL();
     }
   public:
-    dfm2::CGizmo_Rotation<float> gizmo_rot;
+    delfem2::CGizmo_Affine<float> ga;
     std::vector<double> aXYZ;
     std::vector<unsigned int> aTri;
   } viewer;

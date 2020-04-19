@@ -141,8 +141,8 @@ bool Swap3Elared
   const unsigned int noel2d = tetRel[elared.e[2].second][0];
   const unsigned int noel2u = tetRel[elared.e[2].second][1];
   
-  const unsigned int nod = tet[iold0].v[noel0d];
-  const unsigned int nou = tet[iold0].v[noel0u];
+  const int nod = tet[iold0].v[noel0d];
+  const int nou = tet[iold0].v[noel0u];
   
   assert( nod == tet[iold1].v[noel1d] );
   assert( nou == tet[iold1].v[noel1u] );
@@ -336,7 +336,7 @@ bool Swap5Elared
     tet[inew_tetd].s[souter[1]] = old_tet[ilout].s[old_noelu];
     tet[inew_tetd].g[souter[1]] = old_tet[ilout].g[old_noelu];
     if( old_tet[ilout].g[old_noelu] == -2 ){
-      assert( old_tet[ilout].s[old_noelu] >= 0 && old_tet[ilout].s[old_noelu] < tet.size() );
+      assert( old_tet[ilout].s[old_noelu] >= 0 && old_tet[ilout].s[old_noelu] < (int)tet.size() );
       const unsigned int* rel1 = tetRel[ old_tet[ilout].f[old_noelu] ];
       tet[inew_tetd].f[souter[1]] = noel2Rel[ rel1[old_noeld]*4 + rel1[tetRel[elared.e[ilout].second][souter[3]]] ];
       tet[old_tet[ilout].s[old_noelu]].s[rel1[old_noelu]] = inew_tetd;
@@ -348,7 +348,7 @@ bool Swap5Elared
     tet[inew_tetu].s[souter[2]] = old_tet[ilout].s[old_noeld];
     tet[inew_tetu].g[souter[2]] = old_tet[ilout].g[old_noeld];
     if( old_tet[ilout].g[old_noeld] == -2 ){
-      assert( old_tet[ilout].s[old_noeld] >= 0 && old_tet[ilout].s[old_noeld] < tet.size() );
+      assert( old_tet[ilout].s[old_noeld] >= 0 && old_tet[ilout].s[old_noeld] < (int)tet.size() );
       const unsigned int* rel1 = tetRel[ old_tet[ilout].f[old_noeld] ];
       tet[inew_tetu].f[souter[2]] = noel2Rel[ rel1[old_noelu]*4 + rel1[tetRel[elared.e[ilout].second][souter[4]]] ];
       tet[old_tet[ilout].s[old_noeld]].s[rel1[old_noeld]] = inew_tetu;
@@ -915,7 +915,7 @@ bool delfem2::MakeTetSurNo
 	}
 	for(unsigned int itet=0;itet<tet.size();itet++){
 		for(unsigned int inoel=0;inoel<npotet;inoel++){
-			assert( tet[itet].v[inoel] < npoin );
+			assert( tet[itet].v[inoel] < (int)npoin );
 			tetsupo_ind[ tet[itet].v[inoel]+1 ]++;
 		}
 	}
@@ -1688,7 +1688,7 @@ bool delfem2::CheckTet
 			if( aPo3D[ip].e < 0 || aPo3D[ip].e >= (int)aSTet.size() ){
 				std::cout << ip << " " << aPo3D[ip].e << " " << aSTet.size() << std::endl;
 			}
-			if( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] != ip ){
+			if( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] != (int)ip ){
 				std::cout << "error: point2elem mismatch:" << ip << " " << aPo3D[ip].e << " " << (int)aPo3D[ip].poel << " " << aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] << std::endl;
 			}
 		}
@@ -1701,7 +1701,7 @@ bool delfem2::CheckTet
 	
 	std::cout << "p ";
 
-	for(int itet=0;itet<aSTet.size();itet++){
+	for(unsigned int itet=0;itet<aSTet.size();itet++){
     if( !aSTet[itet].isActive() ) continue;
 		for(int inotet=0;inotet<4;inotet++){
 			int ino = aSTet[itet].v[inotet];
@@ -3210,7 +3210,7 @@ bool delfem2::AddPointTet_Edge
 
 	std::vector< std::pair<int,int> > inew_tet;
 	inew_tet.resize( elared.size() );
-    for(unsigned int ielared=0;ielared<elared.size();ielared++){
+	for(unsigned int ielared=0;ielared<elared.size();ielared++){
 		inew_tet[ielared].first = elared.e[ielared].first;
 		inew_tet[ielared].second = tet.size()+ielared;
 //		std::cout << ielared << "    " << elared.n[ielared] << "     " << inew_tet[ielared].first << "     " << inew_tet[ielared].second << std::endl;
@@ -3365,8 +3365,8 @@ bool delfem2::AddPointTet_Edge
 		const int itet_u = inew_tet[ilast].second;
 		const int noel_d = edge_rel[0];
 		const int noel_u = edge_rel[1];
-		assert( old.v[ edge_rel[0] ] == inod );
-		assert( old.v[ edge_rel[1] ] == inou );
+		assert( old.v[ edge_rel[0] ] == (int)inod );
+		assert( old.v[ edge_rel[1] ] == (int)inou );
 		{	
 			CETet& ref_tet = tet[itet_d];
 			ref_tet.v[0] = ino_ins;

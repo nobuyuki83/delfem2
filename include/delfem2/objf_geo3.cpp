@@ -687,15 +687,15 @@ DFM2_INLINE void delfem2::WdWddW_MIPS
     dE[1][idim]=EC*dEA*dad1[idim]+EA*dECd1[idim];
     dE[2][idim]=EC*dEA*dad2[idim]+EA*dECd2[idim];
   }
-  CMat3d ddEd0d0 = EC*dEA*ddad0d0 + EC*ddEA*op(dad0,dad0) + EA*CMat3d::Identity(t00) + dEA*op(dad0,dECd0)*2;
+  CMat3d ddEd0d0 = EC*dEA*ddad0d0 + EC*ddEA*op(dad0,dad0) + EA*CMat3d::Identity(t00) + dEA*op(dad0,dECd0)*2.0;
   CMat3d ddEd0d1 = EC*dEA*ddad0d1 + EC*ddEA*op(dad0,dad1) + EA*CMat3d::Identity(t01) + dEA*op(dad0,dECd1) + dEA*op(dad1,dECd0);
   CMat3d ddEd0d2 = EC*dEA*ddad0d2 + EC*ddEA*op(dad0,dad2) + EA*CMat3d::Identity(t02) + dEA*op(dad0,dECd2) + dEA*op(dad2,dECd0);
   CMat3d ddEd1d0 = EC*dEA*ddad1d0 + EC*ddEA*op(dad1,dad0) + EA*CMat3d::Identity(t01) + dEA*op(dad1,dECd0) + dEA*op(dad0,dECd1);
-  CMat3d ddEd1d1 = EC*dEA*ddad1d1 + EC*ddEA*op(dad1,dad1) + EA*CMat3d::Identity(t11) + dEA*op(dad1,dECd1)*2;
+  CMat3d ddEd1d1 = EC*dEA*ddad1d1 + EC*ddEA*op(dad1,dad1) + EA*CMat3d::Identity(t11) + dEA*op(dad1,dECd1)*2.0;
   CMat3d ddEd1d2 = EC*dEA*ddad1d2 + EC*ddEA*op(dad1,dad2) + EA*CMat3d::Identity(t12) + dEA*op(dad1,dECd2) + dEA*op(dad2,dECd1);
   CMat3d ddEd2d0 = EC*dEA*ddad2d0 + EC*ddEA*op(dad2,dad0) + EA*CMat3d::Identity(t02) + dEA*op(dad2,dECd0) + dEA*op(dad0,dECd2);
   CMat3d ddEd2d1 = EC*dEA*ddad2d1 + EC*ddEA*op(dad2,dad1) + EA*CMat3d::Identity(t12) + dEA*op(dad2,dECd1) + dEA*op(dad1,dECd2);
-  CMat3d ddEd2d2 = EC*dEA*ddad2d2 + EC*ddEA*op(dad2,dad2) + EA*CMat3d::Identity(t22) + dEA*op(dad2,dECd2)*2;
+  CMat3d ddEd2d2 = EC*dEA*ddad2d2 + EC*ddEA*op(dad2,dad2) + EA*CMat3d::Identity(t22) + dEA*op(dad2,dECd2)*2.0;
   
   for(int idim=0;idim<3;++idim){
     for(int jdim=0;jdim<3;++jdim){

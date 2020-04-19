@@ -55,7 +55,7 @@ int main()
   {
     iframe = (iframe+1)%50;
     if( iframe ==0 ){
-      for(int ibone=0;ibone<aBone.size();++ibone){
+      for(unsigned int ibone=0;ibone<aBone.size();++ibone){
         dfm2::CQuatd::Random(0.2).CopyTo(aBone[ibone].quatRelativeRot);
       }
       dfm2::CVec3d::Random().CopyToScale(aBone[0].transRelative, 0.2);
