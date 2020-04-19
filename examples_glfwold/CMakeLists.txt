@@ -58,6 +58,7 @@ add_subdirectory(307_RigSmplIkImageCloth)
 # ui
 add_subdirectory(400_UiGizmoRot)
 add_subdirectory(401_UiGizmoTransl)
+add_subdirectory(402_UiGizmoAffine)
 
 # cad
 add_subdirectory(500_Cad2d)

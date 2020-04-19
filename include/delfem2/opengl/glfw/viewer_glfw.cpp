@@ -33,6 +33,8 @@ static void glfw_callback_key(GLFWwindow* window, int key, int scancode, int act
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
+  if(      action == GLFW_PRESS ){   pViewer->key_press(key,mods);   }
+  else if( action == GLFW_RELEASE ){ pViewer->key_release(key,mods); }
 }
 
 static void glfw_callback_resize(GLFWwindow* window, int width, int height)

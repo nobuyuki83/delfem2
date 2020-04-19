@@ -266,7 +266,7 @@ void delfem2::BVHGeometry_Points(
     const REAL* aXYZ, unsigned int nXYZ)
 {
   aBB.resize( aNodeBVH.size() );
-  assert( ibvh < (int)aNodeBVH.size() );
+  assert( ibvh < aNodeBVH.size() );
   const int ichild0 = aNodeBVH[ibvh].ichild[0];
   const int ichild1 = aNodeBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf node
@@ -278,8 +278,8 @@ void delfem2::BVHGeometry_Points(
     return;
   }
   // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iroot == ibvh );
-  assert( aNodeBVH[ichild1].iroot == ibvh );
+  assert( aNodeBVH[ichild0].iroot == (int)ibvh );
+  assert( aNodeBVH[ichild1].iroot == (int)ibvh );
   delfem2::BVHGeometry_Points(aBB,  ichild0,aNodeBVH, aXYZ,nXYZ);
   delfem2::BVHGeometry_Points(aBB,  ichild1,aNodeBVH, aXYZ,nXYZ);
   BBOX& bb = aBB[ibvh];

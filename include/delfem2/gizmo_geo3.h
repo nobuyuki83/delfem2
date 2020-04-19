@@ -127,6 +127,38 @@ public:
   int ielem_picked;
 };
 
+template <typename REAL>
+class CGizmo_Affine {
+public:
+  void Pick(const float src[3], const float dir[3]){
+    if( this->igizmo_mode == 1 ){
+      gizmo_rot.Pick(true, src, dir, 0.1);
+    }
+    else if( this->igizmo_mode == 0 ){
+      gizmo_trnsl.Pick(true, src, dir, 0.1);
+    }
+  }
+  void Drag(const float src0[3], const float src1[3], const float dir[3])
+  {
+    if( this->igizmo_mode == 1 ){
+      gizmo_rot.Drag(src0,src1,dir);
+    }
+    else if( this->igizmo_mode == 0 ){
+      gizmo_trnsl.Drag(src0,src1,dir);
+      gizmo_rot.pos = gizmo_trnsl.pos;
+    }
+  }
+  CMat4<REAL> Affine() const {
+    CMat4<REAL> m0 = delfem2::CMat4<REAL>::Quat(gizmo_rot.quat);
+    CMat4<REAL> m1 = delfem2::CMat4<REAL>::Translate(gizmo_trnsl.pos.p);
+    return m1*m0;
+  }
+public:
+  int igizmo_mode = -1;
+  CGizmo_Transl<REAL> gizmo_trnsl;
+  CGizmo_Rotation<REAL> gizmo_rot;
+};
+
 }
 
 #ifdef DFM2_HEADER_ONLY

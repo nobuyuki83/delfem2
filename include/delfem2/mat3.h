@@ -184,13 +184,13 @@ template <typename T>
 CMat3<T> operator* (double d, const CMat3<T>& rhs);
 
 template <typename T>
-CMat3<T> operator* (const CMat3<T>& m, double d);
+CMat3<T> operator* (const CMat3<T>& m, T d);
   
 template <typename T>
 CMat3<T> operator* (const CMat3<T>& lhs, const CMat3<T>& rhs);
 
 template <typename T>
-CMat3<T> operator/ (const CMat3<T>& m, double d);
+CMat3<T> operator/ (const CMat3<T>& m, T d);
 
 template <typename T>
 std::ostream &operator<<(std::ostream &output, const CMat3<T>& m);
@@ -209,17 +209,17 @@ class CMat3
 public:
   CMat3();
   CMat3(const REAL s);
-  CMat3(double v00, double v01, double v02,
-           double v10, double v11, double v12,
-           double v20, double v21, double v22);
+  CMat3(REAL v00, REAL v01, REAL v02,
+        REAL v10, REAL v11, REAL v12,
+        REAL v20, REAL v21, REAL v22);
   CMat3(REAL x, REAL y, REAL z);
   CMat3(const REAL m[9]);
   // ---------------
   REAL* data() { return mat; }
   const REAL* data() const { return mat; }
   // ---------------
-  void GetElements(double m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
-  void AffineMatrixTrans(double m[16]) const {
+  void GetElements(REAL m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
+  void AffineMatrixTrans(REAL m[16]) const {
     m[0*4+0] = mat[0];  m[1*4+0] = mat[1];  m[2*4+0] = mat[2];  m[3*4+0] = 0;
     m[0*4+1] = mat[3];  m[1*4+1] = mat[4];  m[2*4+1] = mat[5];  m[3*4+1] = 0;
     m[0*4+2] = mat[6];  m[1*4+2] = mat[7];  m[2*4+2] = mat[8];  m[3*4+2] = 0;
@@ -237,8 +237,8 @@ public:
   }
   // ---------------
 //  CVector3 MatVec(const CVector3& vec0) const;
-  void MatVec(const double vec0[], double vec1[]) const;
-  void MatVecTrans(const double vec0[], double vec1[]) const;
+  void MatVec(const REAL vec0[], REAL vec1[]) const;
+  void MatVecTrans(const REAL vec0[], REAL vec1[]) const;
 //  CVector3 MatVecTrans(const CVector3& vec0) const;
   CMat3 MatMat(const CMat3& mat0) const;
   CMat3 MatMatTrans(const CMat3& mat0) const;
@@ -262,13 +262,13 @@ public:
     for(unsigned int i=0;i<9;i++){ mat[i] -= rhs.mat[i]; }
 		return *this;
 	}    
-	inline CMat3& operator*=(double d){
-    for(unsigned int i=0;i<9;i++){ mat[i] *= d; }
+	inline CMat3& operator*=(REAL d){
+    for(auto& m : mat){ m *= d; }
 		return *this;
 	}
-	inline CMat3& operator/=(double d){
-    double invd = 1.0/d;
-    for(unsigned int i=0;i<9;i++){ mat[i] *= invd; }
+	inline CMat3& operator/=(REAL d){
+    REAL invd = (REAL)1.0/d;
+    for(auto& m : mat){ m *= invd; }
 		return *this;
 	}
   inline double operator[](int i) const{
@@ -281,19 +281,19 @@ public:
   CMat3 Inverse() const;
   // -------------------------
   void SetInverse();
-  void SetSymetric(const double sm[6]);
+  void SetSymetric(const REAL sm[6]);
   void SetZero();
   void SetRandom();
-  void SetRotMatrix_Cartesian(const double vec[]);
-  void SetRotMatrix_Cartesian(double x, double y, double z);
-  void SetRotMatrix_Rodrigues(const double vec[]);
-  void SetRotMatrix_CRV(const double crv[]);
-  void SetRotMatrix_Quaternion(const double quat[]);
-  void SetRotMatrix_BryantAngle(double rx, double ry, double rz);
-  void SetIdentity(double scale = 1);
+  void SetRotMatrix_Cartesian(const REAL vec[]);
+  void SetRotMatrix_Cartesian(REAL x, REAL y, REAL z);
+  void SetRotMatrix_Rodrigues(const REAL vec[]);
+  void SetRotMatrix_CRV(const REAL crv[]);
+  void SetRotMatrix_Quaternion(const REAL quat[]);
+  void SetRotMatrix_BryantAngle(REAL rx, REAL ry, REAL rz);
+  void SetIdentity(REAL scale = 1);
   // ------------------------
-  void GetCRV_RotMatrix(double crv[]) const;
-  void GetQuat_RotMatrix(double quat[]) const;
+  void GetCRV_RotMatrix(REAL crv[]) const;
+  void GetQuat_RotMatrix(REAL quat[]) const;
   // ------------------------
   CMat3 Trans() const {
     CMat3 m;
@@ -337,7 +337,7 @@ public:
   }
   // --------------------
   // static functions
-  static CMat3 Identity(double scale = 1){
+  static CMat3 Identity(REAL scale = 1){
     CMat3 m;
     m.SetIdentity(scale);
     return m;

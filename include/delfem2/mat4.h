@@ -171,6 +171,15 @@ public:
     mat[3*4+3] = 1;
   }
   CMat4<REAL> MatMat(const CMat4<REAL>& mat0) const;
+  CMat4<REAL> Transpose() const{
+    CMat4<REAL> m1;
+    for(int i=0;i<4;++i){
+      for(int j=0;j<4;++j){
+        m1.mat[i*4+j] = mat[j*4+i];
+      }
+    }
+    return m1;
+  }
   // -------------
   static CMat4<REAL> Identity(){
     CMat4<REAL> m;
@@ -213,6 +222,7 @@ public:
     m.mat[3*4+3] = 1.0;
     return m;
   }
+
 public:
   REAL mat[16];
 };
