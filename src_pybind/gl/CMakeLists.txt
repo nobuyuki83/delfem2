@@ -4,16 +4,21 @@ option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
 
 #########################################################
 
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 if(MSVC)
   set(CMAKE_CXX_FLAGS "/W4  -O2 \
     /wd4530 /wd4577 /wd4100 /wd4458 /wd4244 /wd4701 \
     /wd4267 /wd4305 /wd4389 /wd4456 /wd4702 /wd4996 \
-    /wd4505 /wd4245 /wd4457 /wd4800 /wd4838")
+    /wd4505 /wd4245 /wd4457 /wd4800 /wd4838 /wd4055 \
+    /wd4054")
 else()
-  set(PYBIND11_CPP_STANDARD -std=c++11)
   set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra \
     -Wno-deprecated-declarations \
-    -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable")
+    -Wno-unused-parameter \
+    -Wno-unused-function \
+    -Wno-unused-variable")
 endif()
 
 ################################

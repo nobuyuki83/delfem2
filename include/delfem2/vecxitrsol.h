@@ -28,7 +28,7 @@ template<typename T>
 T DotX
  (const T *va,
   const T *vb,
-  unsigned int n);
+  size_t n);
 
 template<typename T>
 T Dot

@@ -10,12 +10,12 @@ cmake -A x64 -Dgtest_force_shared_crt=ON ..
 cmake --build . --config Release
 cd ../../..
 
-cd 3rd_party/googletest
-mkdir buildVS32
-cd buildVS32
-cmake -A Win32 -Dgtest_force_shared_crt=ON .. 
-cmake --build . --config Release
-cd ../../..
+: cd 3rd_party/googletest
+: mkdir buildVS32
+: cd buildVS32
+: cmake -A Win32 -Dgtest_force_shared_crt=ON .. 
+: cmake --build . --config Release
+: cd ../../..
 
 cd test_cpp
 mkdir buildVS64
@@ -25,24 +25,20 @@ cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
 
-cd test_cpp
-mkdir buildVS32
-cd buildVS32
-cmake -A Win32 ..
-cmake --build . --config Release
-"Release/runUnitTests.exe"
-cd ../../
+: cd test_cpp
+: mkdir buildVS32
+: cd buildVS32
+: cmake -A Win32 ..
+: cmake --build . --config Release
+: "Release/runUnitTests.exe"
+: cd ../../
 
 : ################################
 : build glfw
 
 cd 3rd_party/glfw
-rem mkdir buildVS64 
-rem cd buildVS64
-rem cmake .. -A x64 
 cmake . -A x64
 cmake --build . --config Release
-rem cd ../../..
 cd ../..
 
 : ##############################
@@ -55,25 +51,23 @@ cmake -A x64 ..
 cmake --build . --config Release
 cd ../../
 
-goto :eof
-
-cd examples_glfwold
-mkdir buildVS32
-cd buildVS32
-cmake -A Win32 ..
-cmake --build . --config Release
-cd ../../
+: cd examples_glfwold
+: mkdir buildVS32
+: cd buildVS32
+: cmake -A Win32 ..
+: cmake --build . --config Release
+: cd ../../
 
 
 : ##############################
 : glfw_newgl
 
-cd examples_glfwnew
-mkdir buildVS32
-cd buildVS32
-cmake -A Win32 ..
-cmake --build . --config Release
-cd ../../
+: cd examples_glfwnew
+: mkdir buildVS32
+: cd buildVS32
+: cmake -A Win32 ..
+: cmake --build . --config Release
+: cd ../../
 
 cd examples_glfwnew
 mkdir buildVS64
@@ -90,14 +84,14 @@ cd ../../
 cd src_pybind/core
 mkdir buildVS64
 cd buildVS64
-cmake -A x64 ..
+cmake -A x64 -DUSE_HEADERONLY=OFF ..
 cmake --build . --config Release
 cd ../../../
 
 cd src_pybind/gl
 mkdir buildVS64
 cd buildVS64
-cmake -A x64 ..
+cmake -A x64 -DUSE_HEADERONLY=OFF ..
 cmake --build . --config Release
 cd ../../../
 

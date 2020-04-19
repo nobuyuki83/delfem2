@@ -48,7 +48,7 @@ int imode_draw = 0;
 void SetProblem()
 {
   dfm2::MeshTri3D_Cube(aXYZ, aTri, 10);
-  for(int i=0;i<aXYZ.size();++i){ aXYZ[i] *= 0.3; }
+  for(unsigned int i=0;i<aXYZ.size();++i){ aXYZ[i] *= 0.3; }
   Velo.SetZero();
   Velo[0] = 1.0;
   {
@@ -66,7 +66,7 @@ void SetProblem()
                    A, f);
     std::cout << conv_ratio << " " << iteration << std::endl;
     min_sol = max_sol = aSol[0];
-    for (int itri = 0; itri<aTri.size()/3; itri++){
+    for (unsigned int itri = 0; itri<aTri.size()/3; itri++){
       double v = aSol[itri];
       min_sol = (v<min_sol) ? v : min_sol;
       max_sol = (v>max_sol) ? v : max_sol;
@@ -105,7 +105,7 @@ void myGlutDisplay(void)
       for (int itri = 0; itri<nTri; itri++){
         {
 //          double v = (aSol[itri]-min_sol)/(max_sol-min_sol);
-          double v = aSol[itri]+0.5;
+//          double v = aSol[itri]+0.5;
 //          double c[4]; dfm2::opengl::heatmap(v, c);
           double c[4] = {1,0,0,0};
           ::glColor3dv(c);

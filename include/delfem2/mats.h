@@ -62,8 +62,8 @@ public:
     valDia = m.valDia; // copy value
   }
 
-  void SetPattern(const unsigned int *colind, unsigned int ncolind,
-                  const unsigned int *rowptr, unsigned int nrowptr) {
+  void SetPattern(const unsigned int *colind, size_t ncolind,
+                  const unsigned int *rowptr, size_t nrowptr) {
     assert(rowPtr.empty());
     assert(ncolind == nblk_col + 1);
     for (unsigned int iblk = 0; iblk < nblk_col + 1; iblk++) { colInd[iblk] = colind[iblk]; }

@@ -62,20 +62,22 @@ IF(APPLE)
 			)
 ELSEIF(UNIX)
 	target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-			${OPENGL_LIBRARY}
-			${GLFW_DIR}/src/libglfw3.a
-			-lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-			)
+      	${DFM2_LIBRARY}
+		${OPENGL_LIBRARY}
+		${GLFW_DIR}/src/libglfw3.a
+		-lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+		)
 ELSEIF(MSVC)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		target_link_libraries(${PROJECT_NAME}
-				${GLFW_DIR}/src/Release/glfw3.lib
-				${OPENGL_LIBRARY})
+		${DFM2_LIBRARY}
+		${GLFW_DIR}/src/Release/glfw3.lib
+		${OPENGL_LIBRARY})
 	else()
 		target_link_libraries(${PROJECT_NAME}
-				${GLFW_DIR}/src/Release/glfw3.lib
-				${OPENGL_LIBRARY})
+		${DFM2_LIBRARY}
+		${GLFW_DIR}/src/Release/glfw3.lib
+		${OPENGL_LIBRARY})
 	endif()
 ENDIF()
 
