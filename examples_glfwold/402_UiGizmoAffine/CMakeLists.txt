@@ -18,21 +18,21 @@ endif()
 
 project(402_UiGizmoAffine)
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
-set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
+# glfw
 IF(MSVC)
-  set(GLFW_LIBRARY    ${3RD_PARTY}/glfw/src/Release/glfw3.lib)
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
 ELSE()
-  set(GLFW_LIBRARY    ${3RD_PARTY}/glfw/src/libglfw3.a)
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
 ENDIF()
 get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
-set(GLFW_INCLUDE_DIR  ${3RD_PARTY}/glfw/include)
+get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
+# opengl
 find_package(OpenGL REQUIRED)
 
+# dfm2
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
 else() 
@@ -44,6 +44,7 @@ else()
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
   endif()
 ENDIF()
+set(DELFEM2_INCLUDE_DIR "../../include")
 
 #########################
 

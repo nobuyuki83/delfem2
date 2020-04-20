@@ -230,7 +230,7 @@ void delfem2::CDef_LaplacianDisponly::Deform
                                         aRhs.size(), 1.0e-7, 300, *this);
     std::cout << "cg: " << aRes.size() << std::endl;
   }
-  for(int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
+  for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
 }
 
 void delfem2::CDef_LaplacianDisponly::MatVec
@@ -241,7 +241,7 @@ void delfem2::CDef_LaplacianDisponly::MatVec
   mat_A.MatTVec(y,
                 alpha, vec_tmp.data(), beta);
   // add diagonal for fixed boundary condition
-  for(int i=0;i<aBCFlag.size();++i){
+  for(unsigned int i=0;i<aBCFlag.size();++i){
     if( aBCFlag[i] == 0 ){ continue; }
     y[i] += weight_bc*vec[i];
   }
@@ -251,7 +251,7 @@ void delfem2::CDef_LaplacianDisponly::MatVec
 void delfem2::CDef_LaplacianDisponly::SolvePrecond(double* v) const
 {
   const unsigned int np = aBCFlag.size()/3;
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     double tmp[3];
     MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);
     v[ip*3+0] = tmp[0];
@@ -297,7 +297,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp
   double alpha, double beta) const
 {
   const unsigned int np = aBCFlag.size()/3;
-  for(int i=0;i<np*3;++i){ y[i] *= beta; }
+  for(unsigned int i=0;i<np*3;++i){ y[i] *= beta; }
   for(unsigned int ip=0;ip<np;++ip){
     for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int jp0 = psup[ipsup];
@@ -351,7 +351,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MatVec
   const unsigned int np = aBCFlag.size()/3;
   std::fill(vec_tmp.begin(),vec_tmp.end(), 0.0);
   for(unsigned int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int jp0 = psup[ipsup];
       MatVec3_ScaleAdd(vec_tmp.data()+ipsup*3,
                        aMatEdge.data()+ipsup*18,
@@ -366,7 +366,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MatVec
   this->JacobiTVecTmp(y,
                       alpha, beta);
   // add diagonal for fixed boundary condition
-  for(int i=0;i<aBCFlag.size();++i){
+  for(unsigned int i=0;i<aBCFlag.size();++i){
     if( aBCFlag[i] == 0 ){ continue; }
     y[i] += weight_bc*vec[i];
   }
@@ -384,7 +384,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform
   std::vector<double> aRes = Solve_CG(aRhs.data(), aUpd.data(),
                                       np*3, 1.0e-4, 300, *this);
 //  std::cout << "iframe: " << iframe << "   nitr:" << aRes.size() << std::endl;
-  for(int i=0;i<np*3;++i){ aXYZ1[i] += aUpd[i]; }
+  for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] += aUpd[i]; }
 }
 
 // ======================================================
@@ -426,9 +426,9 @@ void delfem2::CDef_ArapEdge::JacobiTVecTmp
   double beta) const
 {
   const unsigned int np = psup_ind.size()-1;
-  for(int i=0;i<np*6;++i){ y[i] *= beta; }
+  for(unsigned int i=0;i<np*6;++i){ y[i] *= beta; }
   for(unsigned int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int jp0 = psup[ipsup];
       MatTVec3_ScaleAdd(y+ip*3,
                         aMatEdge.data()+ipsup*27+0,
@@ -455,7 +455,7 @@ void delfem2::CDef_ArapEdge::MatVec
   const unsigned int np = psup_ind.size()-1;
   std::fill(vec_tmp.begin(),vec_tmp.end(), 0.0);
   for(unsigned int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int jp0 = psup[ipsup];
       MatVec3_ScaleAdd(vec_tmp.data()+ipsup*3,
                        aMatEdge.data()+ipsup*27+0,
@@ -474,7 +474,7 @@ void delfem2::CDef_ArapEdge::MatVec
   this->JacobiTVecTmp(y,
                       alpha, beta);
   // add diagonal for fixed boundary condition
-  for(int i=0;i<aBCFlag.size();++i){
+  for(unsigned int i=0;i<aBCFlag.size();++i){
     if( aBCFlag[i] == 0 ){ continue; }
     y[i] += weight_bc*vec[i];
     //      y[np*3+i] += weight_bc*vec[np*3+i];
@@ -552,7 +552,7 @@ void delfem2::CDef_ArapEdge::MakePreconditionerJacobi()
 void delfem2::CDef_ArapEdge::SolvePrecond(double* v) const
 {
   const unsigned int np = psup_ind.size()-1;
-  for(int ip=0;ip<np*2;++ip){
+  for(unsigned int ip=0;ip<np*2;++ip){
     double tmp[3];
     MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);
     v[ip*3+0] = tmp[0];
@@ -582,7 +582,7 @@ void delfem2::CDef_ArapEdge::Deform
     aConvHist = Solve_CG(aRhs.data(), aUpd.data(),
                          np*6, 1.0e-4, 400, *this);
   }
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     aXYZ1[ip*3+0] += aUpd[ip*3+0];
     aXYZ1[ip*3+1] += aUpd[ip*3+1];
     aXYZ1[ip*3+2] += aUpd[ip*3+2];
@@ -617,7 +617,7 @@ void delfem2::CDef_Arap::Init
   }
   
   Precomp.resize(np*9);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const CVec3d Pi(aXYZ0.data()+ip*3);
     CMat3d LM; LM.SetZero();
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
@@ -688,7 +688,7 @@ void delfem2::CDef_Arap::Deform
   }
   
   std::cout << aConvHist.size() << std::endl;
-  for(int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd1[i]; }
+  for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd1[i]; }
   for(int itr=0;itr<1;++itr){
     UpdateRotationsByMatchingCluster(aQuat1,
                                      aXYZ0,aXYZ1,psup_ind,psup);

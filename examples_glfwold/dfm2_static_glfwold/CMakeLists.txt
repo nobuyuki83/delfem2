@@ -18,23 +18,24 @@ ENDIF()
 set(PROJ_NAME dfm2_static_glfwold)
 project(${PROJ_NAME})
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
-set(3RD_PARTY           "../../3rd_party")
+# glfw
+get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
-set(GLFW_DIR "${3RD_PARTY}/glfw")
-get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
+# glad
+get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+set(DELFEM2_INCLUDE_DIR "../../include")
 
 find_package(OpenGL REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLFW_DIR}/include
+  ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}/glad3/include
+  ${GLAD_INCLUDE_DIR}
 )
 
+set(DELFEM2_INC         "../../include/delfem2")
 add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
