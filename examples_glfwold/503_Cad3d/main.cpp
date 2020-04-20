@@ -225,8 +225,8 @@ void DrawVtxEdgeHandler
     ::glEnd();
       ////
     ::glLineWidth(5);
-    if( cad.ielem_edge_picked == 1 ){ dfm2::opengl::myGlColorDiffuse(dfm2::CColor(1.0, 0.0, 0.0, 0.9)); }
-    else{                             dfm2::opengl::myGlColorDiffuse(dfm2::CColor(0.0, 0.0, 1.0, 0.9)); }
+    if( cad.ielem_edge_picked == 1 ){ dfm2::opengl::myGlColorDiffuse(dfm2::CColor(1.f, 0.f, 0.f, 0.9f)); }
+    else{                             dfm2::opengl::myGlColorDiffuse(dfm2::CColor(0.f, 0.f, 1.f, 0.9f)); }
     dfm2::opengl::DrawCylinder(p0, p1, view_height*0.01);
     dfm2::opengl::DrawCylinder(p1, p2, view_height*0.01);
     dfm2::opengl::DrawCylinder(p2, p3, view_height*0.01);

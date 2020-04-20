@@ -18,23 +18,24 @@ ENDIF()
 set(PROJ_NAME dfm2_static_glfwold)
 project(${PROJ_NAME})
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
-set(3RD_PARTY           "../../3rd_party")
+# glfw
+get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
-set(GLFW_DIR "${3RD_PARTY}/glfw")
-get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
+# glad
+get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+set(DELFEM2_INCLUDE_DIR "../../include")
 
 find_package(OpenGL REQUIRED)
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLFW_DIR}/include
+  ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}/glad3/include
+  ${GLAD_INCLUDE_DIR}
 )
 
+set(DELFEM2_INC         "../../include/delfem2")
 add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/vec2.h                      ${DELFEM2_INC}/vec2.cpp
     ${DELFEM2_INC}/vec3.h                      ${DELFEM2_INC}/vec3.cpp
@@ -101,11 +102,13 @@ file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)
 file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}" NATIVE_PROJECT_SOURCE_DIR)
 
 if(WIN32)
+    message("copy lib from: ${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\dfm2_static_glfwold.lib")
+    message("copy lib to: ${NATIVE_PROJECT_SOURCE_DIR}")
     add_custom_command(TARGET ${PROJ_NAME}
         POST_BUILD
         COMMAND copy
-        "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"
-        ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
+        "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\dfm2_static_glfwold.lib"
+        ${NATIVE_PROJECT_SOURCE_DIR}
         COMMENT "Post Event"
         )
 else()

@@ -288,12 +288,12 @@ int main()
     tex.Draw_oldGL();
     {
       ::glEnable(GL_LIGHTING);
-      dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8) );
+      dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8f) );
       //    delfem2::opengl::DrawMeshTri3D_Edge(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
       //                                        aTri_Contact.data(), aTri_Contact.size()/3);
       // draw body
       ::glEnable(GL_LIGHTING);
-      dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8) );
+      dfm2::opengl::myGlColorDiffuse( dfm2::CColor::Gray(0.8f) );
       delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1_Body.data(),
                                               aTri_Body.data(), aTri_Body.size()/3);
       // draw cloth
