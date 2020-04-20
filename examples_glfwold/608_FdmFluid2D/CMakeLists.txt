@@ -34,9 +34,14 @@ include_directories(
 
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)            
-else()
-  set(DFM2_LIBRARY
+else() 
+  if(MSVC)
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
+  else()
+    set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
+  endif()
 ENDIF()
 
 add_executable(${PROJECT_NAME}
@@ -70,13 +75,9 @@ ELSEIF(WIN32)
   set(CMAKE_CXX_FLAGS "/W4 -O2 \ 
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")    
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  else()
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  endif()
+  target_link_libraries(${PROJECT_NAME} 
+    ${DFM2_LIBRARY}
+    ${GLFW_DIR}/src/Release/glfw3.lib
+    ${OPENGL_LIBRARY}
+  )
 ENDIF()

@@ -9,6 +9,10 @@
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
+#ifndef M_PI
+#  define M_PI 3.141592653589793
+#endif
+
 namespace dfm2 = delfem2;
 
 // -----------------------------
@@ -396,8 +400,8 @@ public:
       sID =  dfm2::Get_Parentheses(sID, "()");
       std::vector<std::string> at = dfm2::Split(sID,',');
       for(int i=0;i<at.size();++i){
-        const int id = stoi(std::string(at[i].begin()+1,at[i].end()));
-        aIdCP.push_back(id);
+        const int id0 = stoi(std::string(at[i].begin()+1,at[i].end()));
+        aIdCP.push_back(id0);
       }
     }
     {

@@ -78,8 +78,8 @@ int main()
     }
     unsigned int nch = aChannelRotTransBone.size();
     unsigned int nfrm = aValueChanelHistoryRotTrans.size()/nch;
-    for(int ifrm=0;ifrm<nfrm;++ifrm){
-      for(int ich=0;ich<nch;++ich){
+    for(unsigned int ifrm=0;ifrm<nfrm;++ifrm){
+      for(unsigned int ich=0;ich<nch;++ich){
         if( aChannelRotTransBone[ich].isrot ){ continue; }
         aValueChanelHistoryRotTrans[ifrm*nch+ich] *= scale;
       }
@@ -117,10 +117,10 @@ int main()
   {
     const unsigned int nBone = aBone.size();
     std::vector<double> aQuat0(nBone*4);
-    for(int ibone=0;ibone<nBone;++ibone){
+    for(unsigned int ibone=0;ibone<nBone;++ibone){
       dfm2::Quat_Identity(aQuat0.data()+ibone*4);
     }
-    for(int ib=0;ib<nBone;++ib){
+    for(unsigned int ib=0;ib<nBone;++ib){
       if( !aMapBoneTrg2Src[ib].is_adjust_orientation_parent ){ continue; }
       int jb = aMapBoneTrg2Src[ib].ibone_dist;
       if( jb == -1 ) continue;
@@ -158,7 +158,7 @@ int main()
     
     {
       const unsigned int nBone = aBone.size();
-      for(int ibone=0;ibone<nBone;++ibone){
+      for(unsigned int ibone=0;ibone<nBone;++ibone){
         double* q = aBone[ibone].quatRelativeRot;
         q[0] = 1.0;
         q[1] = 0.00;
@@ -166,7 +166,7 @@ int main()
         q[3] = 0.00;
         dfm2::Normalize_Quat(q);
       }
-      for(int ibs=0;ibs<nBone;++ibs){
+      for(unsigned int ibs=0;ibs<nBone;++ibs){
         int ibt = aMapBoneTrg2Src[ibs].ibone_dist;
         if( ibt == -1 ) continue;
         double q0[4];
@@ -189,7 +189,7 @@ int main()
         const double* p0 = aXYZ0.data()+ip*3;
         double* p1 = aXYZ1.data()+ip*3;
         p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
-        for(int ibone=0;ibone<nbone;++ibone){
+        for(unsigned int ibone=0;ibone<nbone;++ibone){
           double p2[3];
           aBone[ibone].DeformSkin(p2, p0);
           p1[0] += aW[ip*nbone+ibone]*p2[0];
