@@ -19,14 +19,23 @@ ENDIF()
 
 project(000_OpenWin)
 
-set(3RD_PARTY           "../../3rd_party")
-set(GLFW_DIR "${3RD_PARTY}/glfw")
-get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
+# glfw
+IF(MSVC)
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
+ELSE()
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
+ENDIF()
+get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
+get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
+# opengl
 find_package(OpenGL REQUIRED)
+
+######################################################
+
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLFW_DIR}/include
+  ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
 )
 
@@ -43,7 +52,7 @@ IF(APPLE)
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
+    ${GLFW_LIBRARY}
     ${COCOA_LIBRARY}
     ${IOKIT_LIBRARY}
     ${COREVIDEO_LIBRARY}
@@ -52,17 +61,12 @@ ELSEIF(UNIX)
   set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
   target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
+    ${GLFW_LIBRARY}
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(WIN32)    
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  else()
-    target_link_libraries(${PROJECT_NAME}     
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  endif()
+  target_link_libraries(${PROJECT_NAME}     
+    ${GLFW_LIBRARY}
+    ${OPENGL_LIBRARY}
+  )
 ENDIF()

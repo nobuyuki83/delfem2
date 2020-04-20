@@ -19,21 +19,21 @@ ENDIF()
 
 project(502_Cad2dMeshEdit)
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
-set(3RD_PARTY           "../../3rd_party")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
-set(GLFW_DIR "${3RD_PARTY}/glfw")
-get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
+# glfw
+IF(MSVC)
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
+ELSE()
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
+ENDIF()
+get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
+get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
+# opengl
 find_package(OpenGL REQUIRED)
-include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_DIR}/include
-  ${DELFEM2_INCLUDE_DIR}
-)
 
+# dfm2
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)            
 else() 
@@ -45,6 +45,15 @@ else()
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
   endif()
 ENDIF()
+set(DELFEM2_INCLUDE_DIR "../../include")
+
+####################################
+
+include_directories(
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_INCLUDE_DIR}
+  ${DELFEM2_INCLUDE_DIR}
+)
 
 add_executable(${PROJECT_NAME}
   main.cpp
@@ -59,7 +68,7 @@ IF(APPLE)
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
+    ${GLFW_LIBRARY}
     ${COCOA_LIBRARY}
     ${IOKIT_LIBRARY}
     ${COREVIDEO_LIBRARY}
@@ -68,13 +77,13 @@ ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
+    ${GLFW_LIBRARY}
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
-    ${GLFW_DIR}/src/Release/glfw3.lib
+    ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
   )
 ENDIF()

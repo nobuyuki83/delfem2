@@ -258,7 +258,9 @@ class CStep_Curve: public CStep_Elem
 {
 public:
   virtual double GetParameter(const dfm2::CVec3d& p) const = 0;
-  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine, double r1, double r2, int nsmpl) const = 0;
+  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
+                           double r1, double r2,
+                           unsigned int nsmpl) const = 0;
 };
 
 class CStep_Line: public CStep_Curve
@@ -303,12 +305,14 @@ class CStep_Line: public CStep_Curve
     const dfm2::CVec3d v = l*d;
     return (p-cp)*v/v.DLength();
   }
-  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine, double r1, double r2, int nsmpl) const{
+  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
+                           double r1, double r2,
+                           unsigned int nsmpl) const{
     const dfm2::CVec3d& cp = pCP->p;
     const dfm2::CVec3d& d = pVec->pDir->dir;
     const double l = pVec->len;
     polyLine.clear();
-    for(int is=0;is<nsmpl;++is){
+    for(unsigned int is=0;is<nsmpl;++is){
       double r = (r2-r1)/(nsmpl-1)*is + r1;
       dfm2::CVec3d p = cp + r*l*d;
       polyLine.push_back(p);
@@ -356,14 +360,17 @@ public:
     const dfm2::CVec3d ey = Cross(n,ex).Normalize();
     return atan2( (p-c)*ey, (p-c)*ex );
   }
-  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine, double r1, double r2, int nsmpl) const{
+  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
+                           double r1, double r2,
+                           unsigned int nsmpl) const
+  {
     const dfm2::CVec3d& c = pA2P3D->pCP->p;
     const dfm2::CVec3d& n = pA2P3D->pDir1->dir;
     const dfm2::CVec3d ex = (pA2P3D->pDir2->dir).Normalize();
     const dfm2::CVec3d ey = Cross(n,ex).Normalize();
     if( r1 > r2 ){ r2 += M_PI*2; }
     polyLine.clear();
-    for(int is=0;is<nsmpl;++is){
+    for(unsigned int is=0;is<nsmpl;++is){
       double r = (r2-r1)/(nsmpl-1)*is + r1;
       dfm2::CVec3d p = c + radius*cos(r)*ex + radius*sin(r)*ey;
       polyLine.push_back(p);
@@ -399,7 +406,7 @@ public:
       std::string sID = aToken[2];
       sID =  dfm2::Get_Parentheses(sID, "()");
       std::vector<std::string> at = dfm2::Split(sID,',');
-      for(int i=0;i<at.size();++i){
+      for(unsigned int i=0;i<at.size();++i){
         const int id0 = stoi(std::string(at[i].begin()+1,at[i].end()));
         aIdCP.push_back(id0);
       }
@@ -408,7 +415,7 @@ public:
       std::string sKM = aToken[6];
       sKM =  dfm2::Get_Parentheses(sKM, "()");
       std::vector<std::string> at = dfm2::Split(sKM,',');
-      for(int i=0;i<at.size();++i){
+      for(unsigned int i=0;i<at.size();++i){
         const int ikm = stoi(std::string(at[i].begin(),at[i].end()));
         aKnotMulti.push_back(ikm);
       }
@@ -417,7 +424,7 @@ public:
       std::string sK = aToken[7];
       sK =  dfm2::Get_Parentheses(sK, "()");
       std::vector<std::string> at = dfm2::Split(sK,',');
-      for(int i=0;i<at.size();++i){
+      for(unsigned int i=0;i<at.size();++i){
         const double k = stod(std::string(at[i].begin(),at[i].end()));
         aKnot.push_back(k);
       }
@@ -427,7 +434,7 @@ public:
   virtual void SetPtr(const std::vector<CStep_Elem*>& apStepElem,
                       const std::vector<int>& mapId2Ind){
     apCP.clear();
-    for(int iicp=0;iicp<aIdCP.size();++iicp){
+    for(unsigned int iicp=0;iicp<aIdCP.size();++iicp){
       int idcp = aIdCP[iicp];
       int icp = mapId2Ind[idcp];
       assert( apStepElem[icp]->stype == "CARTESIAN_POINT" );
@@ -437,9 +444,12 @@ public:
   virtual void Draw() const {}
   /////
   virtual double GetParameter(const dfm2::CVec3d& p) const{ return 0; }
-  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine, double r1, double r2, int nsmpl) const{
+  virtual void SampleCurve(std::vector<dfm2::CVec3d>& polyLine,
+                           double r1, double r2,
+                           unsigned int nsmpl) const
+  {
     std::vector<dfm2::CVec3d> aPosCP;
-    for(int iicp=0;iicp<apCP.size();++iicp){
+    for(unsigned int iicp=0;iicp<apCP.size();++iicp){
       aPosCP.push_back( apCP[iicp]->p );
     }
     SampleBSpline(polyLine, nsmpl, ndegree, aKnotFlat, aPosCP);
@@ -573,7 +583,7 @@ public:
     s =  dfm2::Get_Parentheses(s, "()" );
     std::vector<std::string> aToken = dfm2::Split(s,',');
     aIdOE.clear();
-    for(int ioe=0;ioe<aIdOE.size();++ioe){
+    for(unsigned int ioe=0;ioe<aIdOE.size();++ioe){
       int idOE = std::stoi( std::string(aToken[ioe].begin()+1,aToken[ioe].end()) );
       aIdOE.push_back(idOE);
     }
@@ -581,7 +591,7 @@ public:
   virtual void SetPtr(const std::vector<CStep_Elem*>& apStepElem,
                       const std::vector<int>& mapId2Ind){
     apOE.clear();
-    for(int iioe=0;iioe<aIdOE.size();++iioe){
+    for(unsigned int iioe=0;iioe<aIdOE.size();++iioe){
       int idOE = aIdOE[iioe];
       const int iOE = mapId2Ind[idOE];
       assert( iOE != -1 );
@@ -708,7 +718,7 @@ public:
     {
       std::string s0 = dfm2::Get_Parentheses(s, "()");
       aToken = dfm2::Split_Parentheses(s0,',', "()");
-      for(int it=0;it<aToken.size();++it){
+      for(unsigned int it=0;it<aToken.size();++it){
         std::cout << it << " " << aToken[it] << "   " << arg << " " << s << std::endl;
       }
     }
@@ -722,7 +732,7 @@ public:
       s =  dfm2::Get_Parentheses(aToken[1], "()");
       aToken = dfm2::Split(s,',');
       aIdFOB.clear();
-      for(int it=0;it<aToken.size();++it){
+      for(unsigned int it=0;it<aToken.size();++it){
         s = std::string(aToken[it].begin()+1,aToken[it].end());
         int idFOB = std::stoi(s);
         aIdFOB.push_back(idFOB);
@@ -732,7 +742,7 @@ public:
   virtual void SetPtr(const std::vector<CStep_Elem*>& apStepElem,
                       const std::vector<int>& mapId2Ind){
     apFOB.clear();
-    for(int ifob=0;ifob<aIdFOB.size();++ifob){
+    for(unsigned int ifob=0;ifob<aIdFOB.size();++ifob){
       int idFOB = aIdFOB[ifob];
       const int iFOB = mapId2Ind[idFOB];
       if( iFOB == -1 ){ apFOB.push_back(0); continue; }
@@ -793,17 +803,17 @@ void LoadStep
   ////////////////////////////////////////////////
   { // id 2 ind
     std::vector<int> mapId2Ind;
-    for(int ise=0;ise<apStepElem.size();++ise){
+    for(unsigned int ise=0;ise<apStepElem.size();++ise){
       int id = apStepElem[ise]->id;
       if( id >= mapId2Ind.size() ){
         mapId2Ind.resize(id+1,-1);
       }
       mapId2Ind[id] = ise;
     }
-    for(int ise=0;ise<apStepElem.size();++ise){
+    for(unsigned int ise=0;ise<apStepElem.size();++ise){
       apStepElem[ise]->SetPtr(apStepElem,mapId2Ind);
     }
-    for(int ise=0;ise<apStepElem.size();++ise){
+    for(unsigned int ise=0;ise<apStepElem.size();++ise){
       if( apStepElem[ise]->stype == "EDGE_CURVE" ){
         ((CStep_EdgeCurve*)apStepElem[ise])->Sample();
 //        std::cout << "sample " << ise << std::endl;
@@ -853,7 +863,7 @@ int main(int argc, char* argv[])
   
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.DrawBegin_oldGL();
-    for(int ipse=0;ipse<apStepElem.size();++ipse){
+    for(unsigned int ipse=0;ipse<apStepElem.size();++ipse){
       apStepElem[ipse]->Draw();
     }
     viewer.DrawEnd_oldGL();
