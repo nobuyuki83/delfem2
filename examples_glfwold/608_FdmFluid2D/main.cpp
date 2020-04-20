@@ -30,10 +30,10 @@ double ClampedFetch(
 void GaussSeidelSolver(
     double* p,
     const double* d,
-    int n, int t )
+    int n, unsigned int K0 )
 {
 	double h2 = 1.0/(n*n);
-	for(unsigned int k=0; k<t; k++ ){
+	for(unsigned int k=0; k<K0; k++ ){
     double t = 0;
 		for(int i=0; i<n; i++ ){
     for(int j=0; j<n; j++ ){

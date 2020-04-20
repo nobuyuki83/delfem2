@@ -253,7 +253,6 @@ void MakeProblemSetting
   const unsigned int nNode = np+ns;
   aBCFlag.assign(nNode*3, 0);
   {
-    unsigned int np = aP0.size();
     aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
     aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
     aBCFlag[(np+0)*3+0] = 1;
@@ -306,7 +305,7 @@ int main(int argc,char* argv[])
         if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
       }
       unsigned int ns = aS.size();
-      for(int is=0;is<ns;++is){
+      for(unsigned int is=0;is<ns;++is){
         aS[is] = dfm2::CVec3d(0,1,0);
         auto rnd = dfm2::CVec3d::Random()*3.0;
         const unsigned int np = aP.size();
