@@ -115,7 +115,7 @@ void myGlutDisplay()
   ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   
   ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1, 4.0 );
+  ::glPolygonOffset( 1.1f, 4.0f );
   
   ::glMatrixMode(GL_MODELVIEW);
   ::glLoadIdentity();
