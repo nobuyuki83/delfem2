@@ -19,6 +19,7 @@ void Inputs_SmplTshirt
  double& mesher_edge_length,
  std::vector<CRigidTrans_2DTo3D>& aRT23)
 {
+  const double pi = 3.141592653589793;
   name_cad_in_test_input = "tshirt.svg";
   mesher_edge_length = 0.015;
   scale_adjust = 1.7;
@@ -52,14 +53,14 @@ void Inputs_SmplTshirt
       CRigidTrans_2DTo3D& rt23 = aRT23[2];
       rt23.org2 = CVec2d(0.833,-0.45)*scale_adjust;
       rt23.org3 = CVec3d(+0.3, 0.3, +0.0);
-      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, +M_PI*0.5, 0.0);
+      rt23.R.SetRotMatrix_BryantAngle(-pi*0.5, +pi*0.5, 0.0);
       rt23.radinv_x = 13;
     }
     { // front body
       CRigidTrans_2DTo3D& rt23 = aRT23[3];
       rt23.org2 = CVec2d(1.148,-0.45)*scale_adjust;
       rt23.org3 = CVec3d(-0.3, 0.3, +0.0);
-      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, -M_PI*0.5, 0.0);
+      rt23.R.SetRotMatrix_BryantAngle(-pi*0.5, -pi*0.5, 0.0);
       rt23.radinv_x = 13;
     }
   }
@@ -71,7 +72,8 @@ void Inputs_SmplLtshirt
  std::vector<unsigned int>& aIESeam,
  double& mesher_edge_length,
  std::vector<CRigidTrans_2DTo3D>& aRT23)
-{
+{  
+  const double pi = 3.141592653589793;
   name_cad_in_test_input = "ltshirt.svg";
   scale_adjust = 1.7;
   aIESeam = {
@@ -105,14 +107,14 @@ void Inputs_SmplLtshirt
       CRigidTrans_2DTo3D& rt23 = aRT23[2];
       rt23.org2 = CVec2d(0.833-0.04553,-0.45+0.34009)*scale_adjust;
       rt23.org3 = CVec3d(+0.3, 0.3, +0.0);
-      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, +M_PI*0.5, -0.1);
+      rt23.R.SetRotMatrix_BryantAngle(-pi*0.5, +pi*0.5, -0.1);
       rt23.radinv_x = 13;
     }
     { // front body
       CRigidTrans_2DTo3D& rt23 = aRT23[3];
       rt23.org2 = CVec2d(1.148-0.04553,-0.45+0.34009)*scale_adjust;
       rt23.org3 = CVec3d(-0.3, 0.3, +0.0);
-      rt23.R.SetRotMatrix_BryantAngle(-M_PI*0.5, -M_PI*0.5, +0.1);
+      rt23.R.SetRotMatrix_BryantAngle(-pi*0.5, -pi*0.5, +0.1);
       rt23.radinv_x = 13;
     }
   }

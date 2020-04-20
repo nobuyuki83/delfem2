@@ -126,7 +126,7 @@ void SolveProblem_Poisson()
 
 void InitializeProblem_Diffusion()
 {
-  double len = 1.1;
+  //double len = 1.1;
   const int np = (int)aXYZ.size()/3;
   aVal.assign(np, 0.0);
   aVelo.assign(np, 0.0);
@@ -756,9 +756,9 @@ void Solve(bool is_next)
 
 static void myGlVertex3d
 (unsigned int ixyz,
- const std::vector<double>& aXYZ )
+ const std::vector<double>& aXYZ1 )
 {
-  ::glVertex3d(aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] );
+  ::glVertex3d(aXYZ1[ixyz*3+0], aXYZ1[ixyz*3+1], aXYZ1[ixyz*3+2] );
 }
 
 //static void myGlVertex3d(const CVec3& v){

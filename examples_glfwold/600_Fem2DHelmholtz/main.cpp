@@ -149,7 +149,7 @@ void myGlutDisplay()
   
   std::vector< std::pair<double,dfm2::CColor> > colorMap;
 //  makeHeatMap_BlueGrayRed(colorMap, -0.2, +0.2);
-  dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2, +0.2);
+  dfm2::ColorMap_BlueCyanGreenYellowRed(colorMap, -0.2f, +0.2f);
   dfm2::opengl::DrawMeshTri2D_ScalarP1(aXY1.data(),aXY1.size()/2,
                                  aTri1.data(),aTri1.size()/3,
                                  aVal.data(),1,colorMap);

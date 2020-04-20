@@ -315,7 +315,7 @@ void myGlutDisplay(void)
     double grid_x_max = +10;
     double grid_y_min = -10;
     double grid_y_max = +10;
-    int ndiv_grid = 30;
+    const unsigned int ndiv_grid = 30;
     for(unsigned int ix=0;ix<ndiv_grid+1;ix++){
       double x0 = (grid_x_max-grid_x_min) / ndiv_grid * ix + grid_x_min;
       ::glVertex3d(x0,grid_y_min,-0.5);

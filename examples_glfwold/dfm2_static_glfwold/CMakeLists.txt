@@ -101,11 +101,13 @@ file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}" NATIVE_PROJECT_BINARY_DIR)
 file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}" NATIVE_PROJECT_SOURCE_DIR)
 
 if(WIN32)
+    message("copy lib from: ${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\dfm2_static_glfwold.lib")
+    message("copy lib to: ${NATIVE_PROJECT_SOURCE_DIR}")
     add_custom_command(TARGET ${PROJ_NAME}
         POST_BUILD
         COMMAND copy
-        "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"
-        ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
+        "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\dfm2_static_glfwold.lib"
+        ${NATIVE_PROJECT_SOURCE_DIR}
         COMMENT "Post Event"
         )
 else()

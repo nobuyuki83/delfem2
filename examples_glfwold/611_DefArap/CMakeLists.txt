@@ -37,9 +37,14 @@ include_directories(
   
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)            
-else()
-  set(DFM2_LIBRARY
+else() 
+  if(MSVC)
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
+  else()
+    set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
+  endif()
 ENDIF()
 
 add_executable(${PROJECT_NAME}
@@ -68,16 +73,10 @@ ELSEIF(UNIX)
 		-lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
 		)
 ELSEIF(MSVC)
-	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		target_link_libraries(${PROJECT_NAME}
-		${DFM2_LIBRARY}
-		${GLFW_DIR}/src/Release/glfw3.lib
-		${OPENGL_LIBRARY})
-	else()
-		target_link_libraries(${PROJECT_NAME}
-		${DFM2_LIBRARY}
-		${GLFW_DIR}/src/Release/glfw3.lib
-		${OPENGL_LIBRARY})
-	endif()
+  target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIBRARY}
+    ${GLFW_DIR}/src/Release/glfw3.lib
+	${OPENGL_LIBRARY}
+  )
 ENDIF()
 

@@ -47,9 +47,9 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
                                           rho, thickness,
                                           aXY, nXY,
                                           aTri, nTri);
-  for(int i=0;i<nDoF;++i){ aMassLumpedSqrt[i] = sqrt(aMassLumpedSqrt[i]); }
+  for(unsigned int i=0;i<nDoF;++i){ aMassLumpedSqrt[i] = sqrt(aMassLumpedSqrt[i]); }
   {
-    for(int i=0;i<nDoF*3;++i){ aModesKer[i] = 0.0; }
+    for(unsigned int i=0;i<nDoF*3;++i){ aModesKer[i] = 0.0; }
     double* p0 = aModesKer+nDoF*0;
     double* p1 = aModesKer+nDoF*1;
     double* p2 = aModesKer+nDoF*2;
@@ -70,7 +70,7 @@ void SetValue_ShellPBMITC3Eigen_MassLumpedSqrtInv_KernelModes3
     dfm2::OrthogonalizeToUnitVectorX(p2, p1, nDoF);
     dfm2::NormalizeX(p2,nDoF);
   }
-  for(int i=0;i<nDoF;++i){ aMassLumpedSqrtInv[i] = 1.0/aMassLumpedSqrt[i]; }
+  for(unsigned int i=0;i<nDoF;++i){ aMassLumpedSqrtInv[i] = 1.0/aMassLumpedSqrt[i]; }
 }
 
 void RemoveKernel(std::vector<double>& aTmp0,

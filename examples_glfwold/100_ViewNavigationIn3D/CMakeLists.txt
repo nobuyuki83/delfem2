@@ -27,19 +27,26 @@ set(GLFW_DIR "${3RD_PARTY}/glfw")
 get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
 find_package(OpenGL REQUIRED)
+
+if(USE_HEADERONLY)
+  add_definitions(-DDFM2_HEADER_ONLY=ON)      
+else()
+  if(MSVC)
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib)
+  else()
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
+  endif()
+endif()
+
+#######################################################
+
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_DIR}/include
   ${DELFEM2_INCLUDE_DIR}
 )
-
-if(USE_HEADERONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)      
-else()
-  set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a)
-endif()
-
 
 add_executable(${PROJECT_NAME}
   main.cpp
@@ -67,13 +74,8 @@ ELSEIF(UNIX)
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  else()
-    target_link_libraries(${PROJECT_NAME} 
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${OPENGL_LIBRARY})
-  endif()  
+  target_link_libraries(${PROJECT_NAME} 
+    ${DFM2_LIBRARY}
+    ${GLFW_DIR}/src/Release/glfw3.lib
+    ${OPENGL_LIBRARY})
 ENDIF()
