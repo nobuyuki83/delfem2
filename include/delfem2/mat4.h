@@ -149,8 +149,9 @@ CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 template <typename REAL>
 class CMat4 {
 public:
-  CMat4 (){
-  };
+  CMat4 (){};
+  CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
+  CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
 public:
   void Set_AffineTranslate(REAL x, REAL y, REAL z){
     Mat4_AffineTranslation(mat,
@@ -169,6 +170,9 @@ public:
     mat[1*4+1] = 1;
     mat[2*4+2] = 1;
     mat[3*4+3] = 1;
+  }
+  CMat4<double> Double() const {
+    return CMat4<double>(mat);
   }
   CMat4<REAL> MatMat(const CMat4<REAL>& mat0) const;
   CMat4<REAL> Transpose() const{
