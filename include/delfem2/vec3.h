@@ -166,7 +166,7 @@ public:
   void CopyToScale(double* v, double s) const { v[0]=p[0]*s; v[1]=p[1]*s; v[2]=p[2]*s; }
   void AddToScale(double* v, double s) const { v[0]+=p[0]*s; v[1]+=p[1]*s; v[2]+=p[2]*s; }
 
-	inline const CVec3 operator-() const{ return -1.0*(*this); }
+	inline const CVec3 operator-() const{ return ((T)(-1))*(*this); }
 	inline const CVec3 operator+() const{ return *this; }
 	inline CVec3& operator=(const CVec3& rhs){
 		if( this != &rhs ){ p[0]= rhs.p[0]; p[1] = rhs.p[1]; p[2] = rhs.p[2]; }
@@ -220,6 +220,12 @@ public:
     CVec3 r = (*this);
     r.SetNormalizedVector();
     return r;
+  }
+  CVec3<float> Float() const {
+    return CVec3<float>((float)p[0], (float)p[1], (float)p[2]);
+  }
+  CVec3<double> Double() const {
+    return CVec3<double>((double)p[0], (double)p[1], (double)p[2]);
   }
 	inline double Length()  const{ return sqrt( p[0]*p[0]+p[1]*p[1]+p[2]*p[2] ); }
 	inline double DLength() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
