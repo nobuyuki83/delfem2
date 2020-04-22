@@ -193,20 +193,20 @@ DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
 // --------------------------------------------------------------------------
 // expose functions
 
-delfem2::CVec3d delfem2::normalTri
+delfem2::CVec3d delfem2::UnitNormal_DTri3
 (int itri0,
  const std::vector<CDynTri>& aSTri,
- const std::vector<CVec3d>& aXYZ)
+ const std::vector<CVec3d>& aP3)
 {
   int i0 = aSTri[itri0].v[0];
   int i1 = aSTri[itri0].v[1];
   int i2 = aSTri[itri0].v[2];
-  CVec3d n = Normal(aXYZ[i0], aXYZ[i1], aXYZ[i2]);
+  const CVec3d n = Normal(aP3[i0], aP3[i1], aP3[i2]);
   return n.Normalize();
 }
 
 
-bool delfem2::CheckTri
+bool delfem2::AssertMeshDTri2
 (const std::vector<CDynPntSur>& aPo3D,
  const std::vector<CDynTri>& aSTri,
  const std::vector<CVec3d>& aXYZ)
@@ -281,8 +281,8 @@ bool delfem2::DelaunayAroundPoint
       assert(aTri[itri_cur].v[inotri_cur]==ipo0);
       // check opposing element
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const unsigned int inotri_dia = rel_dia[inotri_cur];
+//      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
+      const unsigned int inotri_dia = FindAdjEdgeIndex(aTri[itri_cur],inotri_cur,aTri) ;// rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],
@@ -336,8 +336,8 @@ bool delfem2::DelaunayAroundPoint
     if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
       // check elements in opposing side
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const unsigned int inotri_dia = rel_dia[inotri_cur];
+//      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
+      const unsigned int inotri_dia = FindAdjEdgeIndex(aTri[itri_cur],inotri_cur,aTri); // rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],
@@ -359,8 +359,9 @@ bool delfem2::DelaunayAroundPoint
         return true;
       }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
-      const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const unsigned int inotri_nex = rel_nex[inotri_cur];
+//      const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
+      const unsigned int jno0 = FindAdjEdgeIndex(aTri[itri_cur], inotri2, aTri);
+      const unsigned int inotri_nex = (jno0+2)%3;// rel_nex[inotri_cur];
       assert(aTri[itri_nex].v[inotri_nex]==ipo0);
       assert(itri_nex!=itri0);  // finsih if reach starting elemnet
       itri_cur = itri_nex;

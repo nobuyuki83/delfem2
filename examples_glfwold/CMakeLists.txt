@@ -39,11 +39,12 @@ add_subdirectory(122_HashBvhSelfCollision)
 add_subdirectory(123_HashLbvh3D)
 add_subdirectory(124_4RotSymField)
 
-# meshing
+# dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)
 add_subdirectory(202_DynTri2dRemesh)
 add_subdirectory(203_DynTri3dEdgeCollapses)
 add_subdirectory(204_DynTetTetrahedralization)
+add_subdirectory(205_DynTri3SimpilfyQuadratic)
 
 # rigging
 add_subdirectory(300_RigSmplArticulated)

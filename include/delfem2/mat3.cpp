@@ -707,6 +707,15 @@ delfem2::CMat3<T>::CMat3
   T v20, T v21, T v22):
  mat{v00,v01,v02, v10,v11,v12, v20,v21,v22}
 {}
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat3<float>::CMat3(float v00, float v01, float v02,
+                                      float v10, float v11, float v12,
+                                      float v20, float v21, float v22);
+template delfem2::CMat3<double>::CMat3(double v00, double v01, double v02,
+                                       double v10, double v11, double v12,
+                                       double v20, double v21, double v22);
+#endif
+
 
 // ----------------------
 

@@ -224,8 +224,8 @@ public:
   }
   void Check()
   {
-    CheckTri(aETri);
-    CheckTri(aEPo, aETri);
+    AssertDTri(aETri);
+    AssertMeshDTri(aEPo, aETri);
     CheckTri(aEPo, aETri, aVec2);
   }
   std::vector<double> MinMax_XYZ() const {
@@ -313,7 +313,7 @@ public:
   }
   int nTri() const { return aETri.size(); }
   int nPoint() const { return aEPo.size(); }
-  void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
+  void DeleteTriEdge(int itri, int iedge){ CollapseElemEdge(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CDynPntSur> aEPo;
   std::vector<CDynTri> aETri;

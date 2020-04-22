@@ -22,11 +22,7 @@ DFM2_INLINE void delfem2::MakeInnerRelationTri
  const std::vector<int>& elsup_ind,
  const std::vector<int>& elsup)
 {
-  const unsigned int EdEd2Rel[3][3] = {
-    { 0, 2, 1 },
-    { 2, 1, 0 },
-    { 1, 0, 2 } };
-  
+ 
   std::vector<int> tmp_poin(npoin,0);
   unsigned int inpofa[2];
   
@@ -51,7 +47,7 @@ DFM2_INLINE void delfem2::MakeInnerRelationTri
           if( iflg ){
             //            aTri[itri].g2[iedtri] = -2;
             aTri[itri].s2[iedtri] = jtri0;
-            aTri[itri].r2[iedtri] = EdEd2Rel[iedtri][jedtri];
+//            aTri[itri].r2[iedtri] = EdEd2Rel[iedtri][jedtri];
             break;
           }
         }
@@ -152,22 +148,9 @@ DFM2_INLINE bool delfem2::InsertPoint_ElemEdge
   if (aTri[itri_ins].s2[ied_ins]==-1){
     assert(0);
   }
-  
-  // (node index opp to 0)*3+(node index opp to 1) -> relation index
-  const int noel2RelTriTri[9] = {
-    -1,  // 0 00
-    -1,  // 1 01
-    0,  // 2 02
-    2, // 3 10
-    -1, // 4 11
-    -1,  // 5 12
-    -1,  // 6 20
-    1,  // 7 21
-    -1, // 8 22
-  };
-  
+ 
   const int itri_adj = aTri[itri_ins].s2[ied_ins];
-  const int ied_adj = (int)relTriTri[(int)aTri[itri_ins].r2[ied_ins]][ied_ins];
+  const int ied_adj = FindAdjEdgeIndex(aTri[itri_ins],ied_ins,aTri);
   assert(itri_adj < (int)aTri.size());
   assert(ied_ins < 3);
   
@@ -178,94 +161,87 @@ DFM2_INLINE bool delfem2::InsertPoint_ElemEdge
   
   aTri.resize(aTri.size()+2);
   
-  CDynTri old0 = aTri[itri_ins];
-  CDynTri old1 = aTri[itri_adj];
+  CDynTri oldA = aTri[itri_ins];
+  CDynTri oldB = aTri[itri_adj];
   
-  const int ino0_0 = ied_ins;
-  const int ino1_0 = (ied_ins+1)%3; //noelTriEdge[ied_ins][0];
-  const int ino2_0 = (ied_ins+2)%3; //noelTriEdge[ied_ins][1];
+  const int inoA0 = ied_ins;
+  const int inoA1 = (ied_ins+1)%3;
+  const int inoA2 = (ied_ins+2)%3;
   
-  const int ino0_1 = ied_adj;
-  const int ino1_1 = (ied_adj+1)%3; //noelTriEdge[ied_adj][0];
-  const int ino2_1 = (ied_adj+2)%3; //noelTriEdge[ied_adj][1];
+  const int inoB0 = ied_adj;
+  const int inoB1 = (ied_adj+1)%3;
+  const int inoB2 = (ied_adj+2)%3;
   
-  assert(old0.v[ino1_0]==old1.v[ino2_1]);
-  assert(old0.v[ino2_0]==old1.v[ino1_1]);
-  assert(old0.s2[ino0_0]==itri1);
-  assert(old1.s2[ino0_1]==itri0);
+  assert(oldA.v[inoA1]==oldB.v[inoB2]);
+  assert(oldA.v[inoA2]==oldB.v[inoB1]);
+  assert(oldA.s2[inoA0]==itri1);
+  assert(oldB.s2[inoB0]==itri0);
   
   aPo[ipo_ins].e = itri0;         aPo[ipo_ins].d = 0;
-  aPo[old0.v[ino2_0]].e = itri0;  aPo[old0.v[ino2_0]].d = 1;
-  aPo[old0.v[ino0_0]].e = itri1;  aPo[old0.v[ino0_0]].d = 1;
-  aPo[old1.v[ino2_1]].e = itri2;  aPo[old1.v[ino2_1]].d = 1;
-  aPo[old1.v[ino0_1]].e = itri3;  aPo[old1.v[ino0_1]].d = 1;
+  aPo[oldA.v[inoA2]].e = itri0;  aPo[oldA.v[inoA2]].d = 1;
+  aPo[oldA.v[inoA0]].e = itri1;  aPo[oldA.v[inoA0]].d = 1;
+  aPo[oldB.v[inoB2]].e = itri2;  aPo[oldB.v[inoB2]].d = 1;
+  aPo[oldB.v[inoB0]].e = itri3;  aPo[oldB.v[inoB0]].d = 1;
   
   {
     CDynTri& ref_tri = aTri[itri0];
-    ref_tri.v[0] = ipo_ins;          ref_tri.v[1] = old0.v[ino2_0];  ref_tri.v[2] = old0.v[ino0_0];
-    ref_tri.s2[0] = old0.s2[ino1_0];  ref_tri.s2[1] = itri1;          ref_tri.s2[2] = itri3;
-    // -----------------------------
-    if (old0.s2[ino1_0]>=0&&old0.s2[ino1_0]<(int)aTri.size()){
-      assert(old0.r2[ino1_0] < 3);
-      const unsigned int* rel = relTriTri[old0.r2[ino1_0]];
-      ref_tri.r2[0] = noel2RelTriTri[rel[ino1_0]*3+rel[ino2_0]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old0.s2[ino1_0] < (int)aTri.size());
-      aTri[old0.s2[ino1_0]].s2[rel[ino1_0]] = itri0;
-      aTri[old0.s2[ino1_0]].r2[rel[ino1_0]] = invRelTriTri[ref_tri.r2[0]];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = oldA.v[inoA2];
+    ref_tri.v[2] = oldA.v[inoA0];
+    ref_tri.s2[0] = oldA.s2[inoA1];
+    ref_tri.s2[1] = itri1;
+    ref_tri.s2[2] = itri3;
+    if (oldA.s2[inoA1]>=0&&oldA.s2[inoA1]<(int)aTri.size()){
+      unsigned int jt0 = oldA.s2[inoA1];
+      assert( jt0 < (int)aTri.size());
+      unsigned int jno0 = FindAdjEdgeIndex(oldA, inoA1, aTri);
+      aTri[jt0].s2[jno0] = itri0;
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   {
     CDynTri& ref_tri = aTri[itri1];
-    ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old0.v[ino0_0];  ref_tri.v[2] = old0.v[ino1_0];
-    ref_tri.s2[0] = old0.s2[ino2_0];  ref_tri.s2[1] = itri2;      ref_tri.s2[2] = itri0;
-    // -------
-    if (old0.s2[ino2_0]>=0&&old0.s2[ino2_0]<(int)aTri.size()){
-      assert(old0.r2[ino2_0] < 3);
-      const unsigned int* rel = relTriTri[old0.r2[ino2_0]];
-      ref_tri.r2[0] = noel2RelTriTri[rel[ino2_0]*3+rel[ino0_0]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old0.s2[ino2_0] < (int)aTri.size());
-      aTri[old0.s2[ino2_0]].s2[rel[ino2_0]] = itri1;
-      aTri[old0.s2[ino2_0]].r2[rel[ino2_0]] = invRelTriTri[ref_tri.r2[0]];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = oldA.v[inoA0];
+    ref_tri.v[2] = oldA.v[inoA1];
+    ref_tri.s2[0] = oldA.s2[inoA2];
+    ref_tri.s2[1] = itri2;
+    ref_tri.s2[2] = itri0;
+    if (oldA.s2[inoA2]>=0&&oldA.s2[inoA2]<(int)aTri.size()){
+      unsigned int jt0 = oldA.s2[inoA2];
+      assert( jt0 < (int)aTri.size());
+      unsigned int jno0 = FindAdjEdgeIndex(oldA, inoA2, aTri);
+      aTri[jt0].s2[jno0] = itri1;
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   {
     CDynTri& ref_tri = aTri[itri2];
-    ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old1.v[ino2_1];  ref_tri.v[2] = old1.v[ino0_1];
-    ref_tri.s2[0] = old1.s2[ino1_1];  ref_tri.s2[1] = itri3;      ref_tri.s2[2] = itri1;
-    // ------------------
-    if (old1.s2[ino1_1]>=0&&old1.s2[ino1_1]<(int)aTri.size()){
-      assert(old1.r2[ino1_1] < 3);
-      const unsigned int* rel = relTriTri[old1.r2[ino1_1]];
-      ref_tri.r2[0] = noel2RelTriTri[rel[ino1_1]*3+rel[ino2_1]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old1.s2[ino1_1] < (int)aTri.size());
-      aTri[old1.s2[ino1_1]].s2[rel[ino1_1]] = itri2;
-      aTri[old1.s2[ino1_1]].r2[rel[ino1_1]] = invRelTriTri[ref_tri.r2[0]];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = oldB.v[inoB2];
+    ref_tri.v[2] = oldB.v[inoB0];
+    ref_tri.s2[0] = oldB.s2[inoB1];
+    ref_tri.s2[1] = itri3;
+    ref_tri.s2[2] = itri1;
+    if (oldB.s2[inoB1]>=0&&oldB.s2[inoB1]<(int)aTri.size()){
+      unsigned int jt0 = oldB.s2[inoB1];
+      assert( jt0 < (int)aTri.size());
+      unsigned int jno0 = FindAdjEdgeIndex(oldB, inoB1, aTri);
+      aTri[jt0].s2[jno0] = itri2;
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   {
     CDynTri& ref_tri = aTri[itri3];
-    ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old1.v[ino0_1];  ref_tri.v[2] = old1.v[ino1_1];
-    ref_tri.s2[0] = old1.s2[ino2_1];  ref_tri.s2[1] = itri0;      ref_tri.s2[2] = itri2;
-    if (old1.s2[ino2_1]>=0&&old1.s2[ino2_1]<(int)aTri.size()){
-      assert(old1.r2[ino2_1] < 3);
-      const unsigned int* rel = relTriTri[old1.r2[ino2_1]];
-      ref_tri.r2[0] = noel2RelTriTri[rel[ino2_1]*3+rel[ino0_1]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old1.s2[ino2_1] < (int)aTri.size());
-      aTri[old1.s2[ino2_1]].s2[rel[ino2_1]] = itri3;
-      aTri[old1.s2[ino2_1]].r2[rel[ino2_1]] = invRelTriTri[ref_tri.r2[0]];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = oldB.v[inoB0];
+    ref_tri.v[2] = oldB.v[inoB1];
+    ref_tri.s2[0] = oldB.s2[inoB2];
+    ref_tri.s2[1] = itri0;
+    ref_tri.s2[2] = itri2;
+    if (oldB.s2[inoB2]>=0&&oldB.s2[inoB2]<(int)aTri.size()){
+      unsigned int jt0 = oldB.s2[inoB2];
+      assert( jt0 < (int)aTri.size());
+      unsigned int jno0 = FindAdjEdgeIndex(oldB, inoB2, aTri);
+      aTri[jt0].s2[jno0] = itri3;
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   return true;
 }
@@ -281,186 +257,147 @@ DFM2_INLINE bool delfem2::InsertPoint_Elem
   assert(itri_ins < (int)aTri.size());
   assert(ipo_ins < (int)aPo.size());
   
-  // (node index opp to 0)*3+(node index opp to 1) -> relation index
-  const int noel2RelTriTri[9] = {
-    -1,  // 0 00
-    -1,  // 1 01
-    0,  // 2 02
-    2, // 3 10
-    -1, // 4 11
-    -1,  // 5 12
-    -1,  // 6 20
-    1,  // 7 21
-    -1, // 8 22
-  };
-  
-  const int itri0 = itri_ins;
-  const int itri1 = (int)aTri.size();
-  const int itri2 = (int)aTri.size()+1;
+  const int itA = itri_ins;
+  const int itB = (int)aTri.size();
+  const int itC = (int)aTri.size()+1;
   
   aTri.resize(aTri.size()+2);
   const CDynTri old_tri = aTri[itri_ins];
   
-  aPo[ipo_ins].e = itri0;        aPo[ipo_ins].d = 0;
-  aPo[old_tri.v[0]].e = itri1;  aPo[old_tri.v[0]].d = 2;
-  aPo[old_tri.v[1]].e = itri2;  aPo[old_tri.v[1]].d = 2;
-  aPo[old_tri.v[2]].e = itri0;  aPo[old_tri.v[2]].d = 2;
+  aPo[ipo_ins].e = itA;       aPo[ipo_ins].d = 0;
+  aPo[old_tri.v[0]].e = itB;  aPo[old_tri.v[0]].d = 2;
+  aPo[old_tri.v[1]].e = itC;  aPo[old_tri.v[1]].d = 2;
+  aPo[old_tri.v[2]].e = itA;  aPo[old_tri.v[2]].d = 2;
   
   {
-    CDynTri& ref_tri = aTri[itri0];
-    ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old_tri.v[1];  ref_tri.v[2] = old_tri.v[2];
-    ref_tri.s2[0] = old_tri.s2[0];  ref_tri.s2[1] = itri1;      ref_tri.s2[2] = itri2;
+    CDynTri& ref_tri = aTri[itA];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = old_tri.v[1];
+    ref_tri.v[2] = old_tri.v[2];
+    ref_tri.s2[0] = old_tri.s2[0];
+    ref_tri.s2[1] = itB;
+    ref_tri.s2[2] = itC;
     if (old_tri.s2[0]>=0&&old_tri.s2[0]<(int)aTri.size()){
-      assert(old_tri.r2[0] < 3);
-      const unsigned int* rel = &relTriTri[old_tri.r2[0]][0];
-      ref_tri.r2[0] = noel2RelTriTri[rel[0]*3+rel[1]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old_tri.s2[0] < (int)aTri.size());
-      aTri[old_tri.s2[0]].s2[rel[0]] = itri0;
-      aTri[old_tri.s2[0]].r2[rel[0]] = invRelTriTri[ref_tri.r2[0]];
+      const unsigned int jt0 = old_tri.s2[0];
+      const unsigned int jno0 = FindAdjEdgeIndex(old_tri, 0, aTri);
+      aTri[jt0].s2[jno0] = itA;
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   {
-    CDynTri& ref_tri = aTri[itri1];
-    ref_tri.v[0] = ipo_ins;      ref_tri.v[1] = old_tri.v[2];  ref_tri.v[2] = old_tri.v[0];
-    ref_tri.s2[0] = old_tri.s2[1];  ref_tri.s2[1] = itri2;      ref_tri.s2[2] = itri0;
+    CDynTri& ref_tri = aTri[itB];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = old_tri.v[2];
+    ref_tri.v[2] = old_tri.v[0];
+    ref_tri.s2[0] = old_tri.s2[1];
+    ref_tri.s2[1] = itC;
+    ref_tri.s2[2] = itA;
     if (old_tri.s2[1]>=0&&old_tri.s2[1]<(int)aTri.size()){
-      assert(old_tri.r2[1] < 3);
-      const unsigned int* rel = &relTriTri[old_tri.r2[1]][0];
-      ref_tri.r2[0] = noel2RelTriTri[rel[1]*3+rel[2]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old_tri.s2[1] < (int)aTri.size());
-      aTri[old_tri.s2[1]].s2[rel[1]] = itri1;
-      aTri[old_tri.s2[1]].r2[rel[1]] = invRelTriTri[ref_tri.r2[0]];
+      const unsigned int jt0 = old_tri.s2[1];
+      const unsigned int jno0 = FindAdjEdgeIndex(old_tri, 1, aTri);
+      aTri[jt0].s2[jno0] = itB;
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   {
-    CDynTri& ref_tri = aTri[itri2];
-    ref_tri.v[0] = ipo_ins;     ref_tri.v[1] = old_tri.v[0];  ref_tri.v[2] = old_tri.v[1];
-    ref_tri.s2[0] = old_tri.s2[2];  ref_tri.s2[1] = itri0;      ref_tri.s2[2] = itri1;
+    CDynTri& ref_tri = aTri[itC];
+    ref_tri.v[0] = ipo_ins;
+    ref_tri.v[1] = old_tri.v[0];
+    ref_tri.v[2] = old_tri.v[1];
+    ref_tri.s2[0] = old_tri.s2[2];
+    ref_tri.s2[1] = itA;
+    ref_tri.s2[2] = itB;
     if (old_tri.s2[2]>=0&&old_tri.s2[2]<(int)aTri.size()){
-      assert(old_tri.r2[2] < 3);
-      const unsigned int* rel = &relTriTri[old_tri.r2[2]][0];
-      ref_tri.r2[0] = noel2RelTriTri[rel[2]*3+rel[0]];
-      assert(ref_tri.r2[0]>=0&&ref_tri.r2[0] < 3);
-      assert(old_tri.s2[2] < (int)aTri.size());
-      aTri[old_tri.s2[2]].s2[rel[2]] = itri2;
-      aTri[old_tri.s2[2]].r2[rel[2]] = invRelTriTri[ref_tri.r2[0]];
+      const unsigned int jt0 = old_tri.s2[2];
+      const unsigned int jno0 = FindAdjEdgeIndex(old_tri, 2, aTri);
+      aTri[jt0].s2[jno0] = itC;
+      assert( jt0 < aTri.size() );
     }
-    ref_tri.r2[1] = 0;
-    ref_tri.r2[2] = 0;
   }
   return true;
 }
 
 
 DFM2_INLINE bool delfem2::FlipEdge(
-    unsigned int itri0,
+    unsigned int itriA,
     unsigned int ied0,
     std::vector<CDynPntSur>& aPo,
     std::vector<CDynTri>& aTri)
 {
-  assert(itri0 < aTri.size());
+  assert(itriA < aTri.size());
   assert(ied0 < 3);
-  assert(aTri[itri0].s2[ied0]>=0&&aTri[itri0].s2[ied0]<(int)aTri.size());
+  assert(aTri[itriA].s2[ied0]>=0&&aTri[itriA].s2[ied0]<(int)aTri.size());
   
-  const int itri1 = aTri[itri0].s2[ied0];
-  const unsigned int ied1 = relTriTri[aTri[itri0].r2[ied0]][ied0];
-  assert(itri1 < (int)aTri.size());
+  const int itriB = aTri[itriA].s2[ied0];
+  const unsigned int ied1 = FindAdjEdgeIndex(aTri[itriA], ied0, aTri);
+  assert(itriB < (int)aTri.size());
   assert(ied1 < 3);
-  assert(aTri[itri1].s2[ied1]>=0&&aTri[itri0].s2[ied0]<(int)aTri.size());
+  assert(aTri[itriB].s2[ied1]>=0&&aTri[itriA].s2[ied0]<(int)aTri.size());
   
-  // (node index opp to 0)*3+(node index opp to 1) -> relation index
-  const int noel2RelTriTri[9] = {
-    -1,  // 0 00
-    -1,  // 1 01
-    0,  // 2 02
-    2, // 3 10
-    -1, // 4 11
-    -1,  // 5 12
-    -1,  // 6 20
-    1,  // 7 21
-    -1, // 8 22
-  };
+  const CDynTri oldA = aTri[itriA];
+  const CDynTri oldB = aTri[itriB];
   
-  //  std::cout << itri0 << "-" << ied0 << "    " << itri1 << "-" << ied1 << std::endl;
+  const unsigned int noA0 = ied0;
+  const unsigned int noA1 = (ied0+1)%3;
+  const unsigned int noA2 = (ied0+2)%3;
   
-  CDynTri old0 = aTri[itri0];
-  CDynTri old1 = aTri[itri1];
-  
-  const unsigned int no0_0 = ied0;
-  const unsigned int no1_0 = (ied0+1)%3; //noelTriEdge[ied0][0];
-  const unsigned int no2_0 = (ied0+2)%3; //noelTriEdge[ied0][1];
-  
-  const unsigned int no0_1 = ied1;
-  const unsigned int no1_1 = (ied1+1)%3; //noelTriEdge[ied1][0];
-  const unsigned int no2_1 = (ied1+2)%3; //noelTriEdge[ied1][1];
+  const unsigned int noB0 = ied1;
+  const unsigned int noB1 = (ied1+1)%3;
+  const unsigned int noB2 = (ied1+2)%3;
 
-  assert(old0.v[no1_0]==old1.v[no2_1]);
-  assert(old0.v[no2_0]==old1.v[no1_1]);
+  assert(oldA.v[noA1]==oldB.v[noB2]);
+  assert(oldA.v[noA2]==oldB.v[noB1]);
   
-  aPo[old0.v[no1_0]].e = itri0;  aPo[old0.v[no1_0]].d = 0;
-  aPo[old0.v[no0_0]].e = itri0;  aPo[old0.v[no0_0]].d = 2;
-  aPo[old1.v[no1_1]].e = itri1;  aPo[old1.v[no1_1]].d = 0;
-  aPo[old1.v[no0_1]].e = itri1;  aPo[old1.v[no0_1]].d = 2;
+  aPo[oldA.v[noA1]].e = itriA;  aPo[oldA.v[noA1]].d = 0;
+  aPo[oldA.v[noA0]].e = itriA;  aPo[oldA.v[noA0]].d = 2;
+  aPo[oldB.v[noB1]].e = itriB;  aPo[oldB.v[noB1]].d = 0;
+  aPo[oldB.v[noB0]].e = itriB;  aPo[oldB.v[noB0]].d = 2;
   
   {
-    CDynTri& ref_tri = aTri[itri0];
+    CDynTri& ref_tri = aTri[itriA];
     // -------------------
-    ref_tri.v[0] = old0.v[no1_0];  ref_tri.v[1] = old1.v[no0_1];  ref_tri.v[2] = old0.v[no0_0];
-    ref_tri.s2[0] = itri1;      ref_tri.s2[1] = old0.s2[no2_0];  ref_tri.s2[2] = old1.s2[no1_1];
+    ref_tri.v[0] = oldA.v[noA1];
+    ref_tri.v[1] = oldB.v[noB0];
+    ref_tri.v[2] = oldA.v[noA0];
+    ref_tri.s2[0] = itriB;
+    ref_tri.s2[1] = oldA.s2[noA2];
+    ref_tri.s2[2] = oldB.s2[noB1];
     // -------------------
-    ref_tri.r2[0] = 0;
-    if (old0.s2[no2_0]>=0){
-      assert(old0.r2[no2_0] < 3);
-      const unsigned int* rel = relTriTri[old0.r2[no2_0]];
-      assert(old0.s2[no2_0] < (int)aTri.size());
-      assert(old0.s2[no2_0]!=(int)itri0);
-      assert(old0.s2[no2_0]!=itri1);
-      ref_tri.r2[1] = noel2RelTriTri[rel[no1_0]*3+rel[no2_0]];
-      assert(ref_tri.r2[1]>=0&&ref_tri.r2[1] < 3);
-      aTri[old0.s2[no2_0]].s2[rel[no2_0]] = (int)itri0;
-      aTri[old0.s2[no2_0]].r2[rel[no2_0]] = invRelTriTri[ref_tri.r2[1]];
+//    ref_tri.r2[0] = 0;
+    if (oldA.s2[noA2]>=0){
+      const unsigned int jt0 = oldA.s2[noA2];
+      assert( jt0 < aTri.size() && jt0 != itriB && jt0 != itriA );
+      const unsigned int jno0 = FindAdjEdgeIndex(oldA, noA2, aTri);
+      aTri[jt0].s2[jno0] = (int)itriA;
     }
-    if (old1.s2[no1_1]>=0){
-      assert(old1.r2[no1_1] < 3);
-      const unsigned int* rel = relTriTri[old1.r2[no1_1]];
-      assert(old1.s2[no1_1] < (int)aTri.size());
-      ref_tri.r2[2] = noel2RelTriTri[rel[no2_1]*3+rel[no0_1]];
-      assert(ref_tri.r2[2]>=0&&ref_tri.r2[2] < 3);
-      aTri[old1.s2[no1_1]].s2[rel[no1_1]] = (int)itri0;
-      aTri[old1.s2[no1_1]].r2[rel[no1_1]] = invRelTriTri[ref_tri.r2[2]];
+    if (oldB.s2[noB1]>=0){
+      const unsigned int jt0 = oldB.s2[noB1];
+      assert( jt0 < aTri.size() && jt0 != itriB && jt0 != itriA );
+      const unsigned int jno0 = FindAdjEdgeIndex(oldB, noB1, aTri);
+      aTri[jt0].s2[jno0] = (int)itriA;
     }
   }
   
   {
-    CDynTri& ref_tri = aTri[itri1];
+    CDynTri& ref_tri = aTri[itriB];
     // -------------------------
-    ref_tri.v[0] = old1.v[no1_1];  ref_tri.v[1] = old0.v[no0_0];    ref_tri.v[2] = old1.v[no0_1];
-    ref_tri.s2[0] = (int)itri0;    ref_tri.s2[1] = old1.s2[no2_1];  ref_tri.s2[2] = old0.s2[no1_0];
+    ref_tri.v[0] = oldB.v[noB1];
+    ref_tri.v[1] = oldA.v[noA0];
+    ref_tri.v[2] = oldB.v[noB0];
+    ref_tri.s2[0] = (int)itriA;
+    ref_tri.s2[1] = oldB.s2[noB2];
+    ref_tri.s2[2] = oldA.s2[noA1];
     // -----------------
-    ref_tri.r2[0] = 0;
-    if (old1.s2[no2_1]>=0){
-      assert(old1.r2[no2_1] < 3);
-      const unsigned int* rel = relTriTri[old1.r2[no2_1]];
-      assert(old1.s2[no2_1] < (int)aTri.size());
-      ref_tri.r2[1] = noel2RelTriTri[rel[no1_1]*3+rel[no2_1]];
-      assert(ref_tri.r2[1]>=0&&ref_tri.r2[1] < 3);
-      aTri[old1.s2[no2_1]].s2[rel[no2_1]] = itri1;
-      aTri[old1.s2[no2_1]].r2[rel[no2_1]] = invRelTriTri[ref_tri.r2[1]];
+//    ref_tri.r2[0] = 0;
+    if (oldB.s2[noB2]>=0){
+      const unsigned int jt0 = oldB.s2[noB2];
+      assert( jt0 < aTri.size());
+      const unsigned int jno0 = FindAdjEdgeIndex(oldB, noB2, aTri);
+      aTri[jt0].s2[jno0] = itriB;
     }
-    if (old0.s2[no1_0]>=0){
-      assert(old0.r2[no1_0] < 3);
-      const unsigned int* rel = relTriTri[old0.r2[no1_0]];
-      assert(old0.s2[no1_0] < (int)aTri.size());
-      ref_tri.r2[2] = noel2RelTriTri[rel[no2_0]*3+rel[no0_0]];
-      assert(ref_tri.r2[2]>=0&&ref_tri.r2[2] < 3);
-      aTri[old0.s2[no1_0]].s2[rel[no1_0]] = itri1;
-      aTri[old0.s2[no1_0]].r2[rel[no1_0]] = invRelTriTri[ref_tri.r2[2]];
+    if (oldA.s2[noA1]>=0){
+      const unsigned int jt0 = oldA.s2[noA1];
+      assert( jt0 < aTri.size() );
+      const unsigned int jno0 = FindAdjEdgeIndex(oldA, noA1, aTri);
+      aTri[jt0].s2[jno0] = itriB;
     }
   }
   return true;
@@ -495,8 +432,8 @@ DFM2_INLINE bool delfem2::FindEdge_LookAroundPoint
       const unsigned int inotri2 = (inotri_cur+2)%3; // indexRot3[2][inotri_cur];
       if (aTri[itri_cur].s2[inotri2]==-1){ break; }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
-      const unsigned int* rel = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const unsigned int inotri3 = rel[inotri_cur];
+      const unsigned int jno = FindAdjEdgeIndex(aTri[itri_cur], inotri2, aTri);
+      const unsigned int inotri3 = (jno+2)%3; // rel[inotri_cur];
       assert(aTri[itri_nex].v[inotri3]==ipo0);
       if (itri_nex==itri_ini) return false;
       itri_cur = itri_nex;
@@ -512,8 +449,8 @@ DFM2_INLINE bool delfem2::FindEdge_LookAroundPoint
       const unsigned int inotri2 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
       if (aTri[itri_cur].s2[inotri2]==-1){ break; }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
-      const unsigned int* rel = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const unsigned int inotri3 = rel[inotri_cur];
+      const unsigned int jno = FindAdjEdgeIndex(aTri[itri_cur], inotri2, aTri);
+      const unsigned int inotri3 = (jno+1)%3; // rel[inotri_cur];
       assert(aTri[itri_nex].v[inotri3]==ipo0);
       if (itri_nex==itri_ini){  // end if it goes around
         itri0 = 0;
@@ -560,106 +497,46 @@ DFM2_INLINE bool delfem2::FindEdge_LookAllTriangles
   return false;
 }
 
-DFM2_INLINE bool delfem2::CheckTri(
+DFM2_INLINE void delfem2::AssertDTri(
     const std::vector<CDynTri>& aTri )
 {
-	const int ntri = (int)aTri.size();
-	for(int itri=0;itri<ntri;itri++){
-		const CDynTri& ref_tri = aTri[itri];
-    /*		for(int inotri=0;inotri<nNoTri;inotri++){
-     assert( ref_tri.v[inotri] >= 0 );
-     }*/
-		for(int iedtri=0;iedtri<3;iedtri++){
-			if( ref_tri.s2[iedtri] >=0 && ref_tri.s2[iedtri]<(int)aTri.size() ){
-				const int itri_s = ref_tri.s2[iedtri];
-				const int irel = ref_tri.r2[iedtri];
-				assert( itri_s < ntri );
-				assert( irel < 3 );
-				// check sorounding
-        assert( aTri[itri_s].s2[relTriTri[irel][iedtri]] == itri );
-				// check relation 
-				for(int inoed=0;inoed<2;inoed++){
-					const int inoel = (iedtri+1+inoed)%3;
-          if( ref_tri.v[inoel] != aTri[itri_s].v[ (int)relTriTri[irel][inoel] ] ){
-						std::cout << itri << " " << iedtri << " " << itri_s << " " << ref_tri.v[inoel] << " " << aTri[itri_s].v[ (int)relTriTri[irel][inoel] ] << std::endl;
-					}
-          assert( ref_tri.v[inoel] == aTri[itri_s].v[ (int)relTriTri[irel][inoel] ] );
-				}
-			}
-		}
-	}
-  
-	return true;
-}
-
-DFM2_INLINE bool delfem2::CheckTri
-(const std::vector<CDynPntSur>& aPo3D,
- const std::vector<CDynTri>& aSTri,
- bool is_assert)
-{
-  const int npo = (int)aPo3D.size();
-  const int ntri = (int)aSTri.size();
-  
-  for (int itri = 0; itri<ntri; itri++){
-    const CDynTri& tri0 = aSTri[itri];
-    if( tri0.v[0] == -1 ){
-      assert(tri0.v[1] == -1);
-      assert(tri0.v[2] == -1);
+	const unsigned int ntri = aTri.size();
+	for(unsigned int itri=0;itri<ntri;itri++){
+    const CDynTri& tri = aTri[itri];
+    if( tri.v[0] == -1 ){
+      assert(tri.v[1] == -1);
+      assert(tri.v[2] == -1);
       continue;
     }
-    if (tri0.v[0]==tri0.v[1]){ //     assert(tri0.v[2]!=tri0.v[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if (tri0.v[1]==tri0.v[2]){ //     assert(tri0.v[2]!=tri0.v[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if (tri0.v[2]==tri0.v[0]){ //     assert(tri0.v[2]!=tri0.v[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    ////
-    if( (tri0.s2[0]==tri0.s2[1]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[0]!=tri0.s2[2]);
-      //      std::cout << tri0.s2[0] << " " << tri0.s2[1] << std::endl;
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if( (tri0.s2[1]==tri0.s2[2]) && tri0.s2[1] >= 0 ){ // assert(tri0.s2[1]!=tri0.s2[2]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    if( (tri0.s2[2]==tri0.s2[0]) && tri0.s2[0] >= 0 ){ // assert(tri0.s2[2]!=tri0.s2[0]);
-      if( is_assert ){ assert(0); }
-      return false;
-    }
-    /////
-    for (int inotri : tri0.v){
-      assert(inotri < npo);
-    }
-    for (int iedtri = 0; iedtri<3; iedtri++){
-      if (tri0.s2[iedtri]>=0&&tri0.s2[iedtri]<ntri){
-        const int itri_s = tri0.s2[iedtri];
-        const int irel = tri0.r2[iedtri];
-        assert(itri_s < ntri);
-        assert(irel < 3);
-        {
-          const unsigned int noel_dia = relTriTri[irel][iedtri];
-          assert(noel_dia < 3);
-          if (aSTri[itri_s].s2[noel_dia]!=itri){ // neibough relation broken
-            //            std::cout << itri << " " << itri_s << " " << noel_dia << std::endl;
-          }
-          assert(aSTri[itri_s].s2[noel_dia]==itri);
-        }
-        // check relation
-        for (int inoed = 0; inoed<2; inoed++){
-          const int inoel = (iedtri+1+inoed)%3;//noelTriEdge[iedtri][inoed];
-          if (tri0.v[inoel]!=aSTri[itri_s].v[(int)relTriTri[irel][inoel]]){
-          }
-          assert(tri0.v[inoel]==aSTri[itri_s].v[(int)relTriTri[irel][inoel]]);
-        }
-      }
-    }
+    assert( tri.v[0] != tri.v[1] );
+    assert( tri.v[1] != tri.v[2] );
+    assert( tri.v[2] != tri.v[0] );
+    assert( (tri.s2[0] != tri.s2[1]) || tri.s2[0] == -1 );
+    assert( (tri.s2[1] != tri.s2[2]) || tri.s2[1] == -1 );
+    assert( (tri.s2[2] != tri.s2[0]) || tri.s2[0] == -1 );
+		for(int iedtri=0;iedtri<3;iedtri++){
+      if( tri.s2[iedtri] == -1 ) continue;
+      assert( tri.s2[iedtri] >=0 && tri.s2[iedtri]<(int)aTri.size() );
+      const unsigned int jtri = tri.s2[iedtri]; assert( jtri < ntri );
+      const unsigned int jno = FindAdjEdgeIndex(aTri[itri], iedtri, aTri);
+      assert( aTri[jtri].s2[jno] == itri );
+      assert( aTri[itri].v[(iedtri+1)%3] == aTri[jtri].v[(jno+2)%3] );
+      assert( aTri[itri].v[(iedtri+2)%3] == aTri[jtri].v[(jno+1)%3] );
+		}
+	}
+}
+
+DFM2_INLINE void delfem2::AssertMeshDTri
+(const std::vector<CDynPntSur>& aPo3D,
+ const std::vector<CDynTri>& aSTri)
+{
+  const unsigned int npo = aPo3D.size();
+  const unsigned int ntri = aSTri.size();
+  for (unsigned int itri = 0; itri<ntri; itri++){
+    const CDynTri& tri0 = aSTri[itri];
+    assert( tri0.v[0] < npo);
+    assert( tri0.v[0] < npo);
+    assert( tri0.v[0] < npo);
   }
   for (int ipoin = 0; ipoin<npo; ++ipoin){
     const int itri0 = aPo3D[ipoin].e;
@@ -670,7 +547,6 @@ DFM2_INLINE bool delfem2::CheckTri
       assert(aSTri[itri0].v[inoel0]==ipoin);
     }
   }
-  return true;
 }
 
 
@@ -717,14 +593,14 @@ DFM2_INLINE void delfem2::MoveCCW
  unsigned int &inotri_cur,
  bool& flag_is_wall,
  //
- std::vector<CDynTri>& aTri)
+ const std::vector<CDynTri>& aTri)
 {
   const unsigned int inotri1 = (inotri_cur+1)%3; // indexRot3[1][inotri_cur];
   if (aTri[itri_cur].s2[inotri1]==-1){ flag_is_wall = true; return; }
   flag_is_wall = false;
   const int itri_nex = aTri[itri_cur].s2[inotri1];
-  const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri1]];
-  const unsigned int inotri_nex = rel_nex[inotri_cur];
+  unsigned int ino2 = FindAdjEdgeIndex(aTri[itri_cur],inotri1,aTri);
+  const unsigned int inotri_nex = (ino2+1)%3;
   itri_cur = itri_nex;
   inotri_cur = inotri_nex;
 }
@@ -751,9 +627,10 @@ DFM2_INLINE bool delfem2::DeleteTri
   for (int iedtri = 0; iedtri<3; iedtri++){
     if (aTri[itri_to].s2[iedtri]==-1) continue;
     const unsigned int itri_adj = aTri[itri_to].s2[iedtri];
+    const unsigned int iedtri_adj = FindAdjEdgeIndex(aTri[itri_to],iedtri,aTri);
     assert(itri_adj < aTri.size());
-    const unsigned int* rel = relTriTri[(int)aTri[itri_to].r2[iedtri]];
-    const unsigned int iedtri_adj = rel[iedtri];
+//    const unsigned int* rel = relTriTri[(int)aTri[itri_to].r2[iedtri]];
+//    const unsigned int iedtri_adj = rel[iedtri];
     assert(aTri[itri_adj].s2[iedtri_adj]==itri_from);
     aTri[itri_adj].s2[iedtri_adj] = itri_to;
   }
@@ -765,96 +642,123 @@ DFM2_INLINE bool delfem2::DeleteTri
   return true;
 }
 
+DFM2_INLINE unsigned int delfem2::FindAdjEdgeIndex
+ (const CDynTri& t0,
+  unsigned int ied0,
+  const std::vector<delfem2::CDynTri>& aTri)
+{
+  int iv0 = t0.v[(ied0+1)%3];
+  int iv1 = t0.v[(ied0+2)%3];
+  assert( iv0 >=0 && iv1 >= 0 && iv0 != iv1 );
+  assert( t0.s2[ied0] >= 0 );
+  unsigned int it1 = t0.s2[ied0];
+  if( aTri[it1].v[1] == iv1 && aTri[it1].v[2] == iv0 ){ return 0; }
+  if( aTri[it1].v[2] == iv1 && aTri[it1].v[0] == iv0 ){ return 1; }
+  if( aTri[it1].v[0] == iv1 && aTri[it1].v[1] == iv0 ){ return 2; }
+  assert(0);
+  return 0;
+}
 
-DFM2_INLINE bool delfem2::Collapse_ElemEdge
-(const int itri_del,
- const int ied_del,
+
+DFM2_INLINE bool delfem2::CollapseElemEdge
+(const unsigned int itri_del,
+ const unsigned int ied_del,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri)
 {
-  assert( itri_del >= 0 && itri_del < (int)aTri.size() );
-  assert( ied_del >= 0 && ied_del < 3 );
+  assert( itri_del < aTri.size() );
+  assert( ied_del < 3 );
   if (aTri[itri_del].s2[ied_del]==-1){
     std::cout<<"Error!-->Not Implemented: Mesh with hole"<<std::endl;
     assert(0);
   }
   
-  const int itri_adj = aTri[itri_del].s2[ied_del];
-  const int ied_adj = (int)relTriTri[(int)aTri[itri_del].r2[ied_del]][ied_del];
-  assert(itri_adj < (int)aTri.size());
+  const unsigned int itri_adj = aTri[itri_del].s2[ied_del];
+  const unsigned int ied_adj = FindAdjEdgeIndex(aTri[itri_del], ied_del, aTri); // relTriTri[(int)aTri[itri_del].r2[ied_del]][ied_del];
+  assert(itri_adj < aTri.size());
   assert(ied_adj < 3);
   assert(aTri[itri_adj].s2[ied_adj]==itri_del);
   
-  const int itri0 = itri_del;
-  const int itri1 = itri_adj;
-  const int itri2 = aTri[itri0].s2[(ied_del+1)%3];
-  const int itri3 = aTri[itri0].s2[(ied_del+2)%3];
-  const int itri4 = aTri[itri1].s2[(ied_adj+1)%3];
-  const int itri5 = aTri[itri1].s2[(ied_adj+2)%3];
-  if( itri2 == -1 ) return false;
-  if( itri3 == -1 ) return false;
-  if( itri4 == -1 ) return false;
-  if( itri5 == -1 ) return false;
+  // do nothing and return false if the collapsing edge is on the boundary
+  if( aTri[itri_del].s2[(ied_del+1)%3] == -1 ) return false;
+  if( aTri[itri_del].s2[(ied_del+2)%3] == -1 ) return false;
+  if( aTri[itri_adj].s2[(ied_adj+1)%3] == -1 ) return false;
+  if( aTri[itri_adj].s2[(ied_adj+2)%3] == -1 ) return false;
   
-  const int ino0_0 = ied_del;
-  const int ino1_0 = (ino0_0+1)%3;
-  const int ino2_0 = (ino0_0+2)%3;
+  const unsigned int itA = itri_del;
+  const unsigned int itB = itri_adj;
+  const unsigned int itC = aTri[itA].s2[(ied_del+1)%3];
+  const unsigned int itD = aTri[itA].s2[(ied_del+2)%3];
+  const unsigned int itE = aTri[itB].s2[(ied_adj+1)%3];
+  const unsigned int itF = aTri[itB].s2[(ied_adj+2)%3];
   
-  const int ino0_1 = ied_adj;
-  const int ino1_1 = (ino0_1+1)%3; // point to be deleted
-  const int ino2_1 = (ino0_1+2)%3;
+  const unsigned int inoA0 = ied_del;
+  const unsigned int inoA1 = (inoA0+1)%3;
+  const unsigned int inoA2 = (inoA0+2)%3; // point to be deleted
   
-  const int ino0_2 = relTriTri[(int)aTri[itri0].r2[ino1_0]][ino1_0];
-  const int ino1_2 = (ino0_2+1)%3;
-  const int ino2_2 = (ino0_2+2)%3;
+  const unsigned int inoB0 = ied_adj;
+  const unsigned int inoB1 = (inoB0+1)%3; // point to be deleted
+  const unsigned int inoB2 = (inoB0+2)%3;
   
-  const int ino0_3 = relTriTri[(int)aTri[itri0].r2[ino2_0]][ino2_0];
-  const int ino1_3 = (ino0_3+1)%3;
+  const unsigned int inoC0 = FindAdjEdgeIndex(aTri[itA], inoA1, aTri);
+  const unsigned int inoC1 = (inoC0+1)%3;
+  const unsigned int inoC2 = (inoC0+2)%3;
   
-  const int ino0_4 = relTriTri[(int)aTri[itri1].r2[ino1_1]][ino1_1];
-  const int ino1_4 = (ino0_4+1)%3;
-  const int ino2_4 = (ino0_4+2)%3;
+  const unsigned int inoD0 = FindAdjEdgeIndex(aTri[itA], inoA2, aTri);
+  const unsigned int inoD1 = (inoD0+1)%3;
   
-  const int ino0_5 = relTriTri[(int)aTri[itri1].r2[ino2_1]][ino2_1];
-  const int ino1_5 = (ino0_5+1)%3;
+  const unsigned int inoE0 = FindAdjEdgeIndex(aTri[itB], inoB1, aTri);
+  const unsigned int inoE1 = (inoE0+1)%3;
+  const unsigned int inoE2 = (inoE0+2)%3;
   
-  if (aTri[itri2].s2[ino2_2]==itri3) return false;
-  if (aTri[itri3].s2[ino1_3]==itri2) return false;
-  if (aTri[itri4].s2[ino2_4]==itri5) return false;
-  if (aTri[itri5].s2[ino1_5]==itri4) return false;
-  if (itri2==itri5 && itri3==itri4) return false;
+  const unsigned int inoF0 = FindAdjEdgeIndex(aTri[itB], inoB2, aTri);
+  const unsigned int inoF1 = (inoF0+1)%3;
   
-  const CDynTri old0 = aTri[itri0];
-  const CDynTri old1 = aTri[itri1];
+  if (aTri[itC].s2[inoC2]==itD){ // additinoal two triangles to be deleted
+    assert( aTri[itD].s2[inoD1]==itC );
+    // TODO: implement this collapse
+    return false;
+  }
   
-  int ipo0 = old0.v[ino0_0];
-  int ipo1 = old0.v[ino1_0];
-  int ipo2 = old1.v[ino0_1];
-  int ipo3 = old1.v[ino1_1];  // point to be deleted
+  if (aTri[itE].s2[inoE2]==itF){ // additinoal two triangles to be deleted
+    assert( aTri[itF].s2[inoF1]==itE );
+    // TODO: implement this collapse
+    return false;
+  }
   
-  assert(aTri[itri3].v[ino1_3]==ipo1);
-  assert(aTri[itri5].v[ino1_5]==ipo3);
+  if (itC==itF && itD==itE) return false;
   
-  {
+  const CDynTri oldA = aTri[itA];
+  const CDynTri oldB = aTri[itB];
+  
+  int ipoW = oldA.v[inoA0];
+  int ipoX = oldA.v[inoA1];
+  int ipoY = oldB.v[inoB0];
+  int ipoZ = oldB.v[inoB1];  // point to be deleted
+  
+  assert(aTri[itD].v[inoD1]==ipoX);
+  assert(aTri[itF].v[inoF1]==ipoZ);
+  
+  { // check if elements around ipX and elements around ipZ share common triangles
     std::vector<int> ring1;
     { // set triangle index from point 0 to point 1
-      int jtri = itri5;
-      int jnoel_c = ino1_5;
-      int jnoel_b = (jnoel_c+1)%3; // noelTriEdge[jnoel_c][0];
+      int jtri = itF;
+      int jnoel_c = inoF1;
+      int jnoel_b = (jnoel_c+1)%3;
       for (;;){
         assert(jtri < (int)aTri.size());
         assert(jnoel_c < 3);
-        assert(aTri[jtri].v[jnoel_c]==ipo3);
+        assert(aTri[jtri].v[jnoel_c]==ipoZ);
         ring1.push_back(aTri[jtri].v[(jnoel_c+2)%3]);
         const int ktri = aTri[jtri].s2[jnoel_b];
-        if( ktri == -1 ) return false;
+        if( ktri == -1 ) return false; // boundary
         assert(ktri>=0&&ktri<(int)aTri.size());
-        const int rel01 = aTri[jtri].r2[jnoel_b];
-        const unsigned int knoel_c = relTriTri[rel01][jnoel_c];
-        const unsigned int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
-        assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
-        assert(aTri[ktri].v[knoel_c]==ipo3);
-        if (ktri==itri2) break;
+        const unsigned int knoel_f = FindAdjEdgeIndex(aTri[jtri], jnoel_b, aTri);
+        const unsigned int knoel_c = (knoel_f+1)%3; // relTriTri[rel01][jnoel_c];
+        const unsigned int knoel_b = (knoel_f+2)%3; // relTriTri[rel01][(jnoel_c+2)%3];
+        assert(aTri[ktri].s2[knoel_f]==jtri);
+        assert(aTri[ktri].v[knoel_c]==ipoZ);
+        if (ktri==itC) break;
         jtri = ktri;
         jnoel_c = knoel_c;
         jnoel_b = knoel_b;
@@ -862,23 +766,24 @@ DFM2_INLINE bool delfem2::Collapse_ElemEdge
     }
     std::vector<int> ring2;
     { // set triangle index from point 0 to point 1
-      int jtri = itri3;
-      int jnoel_c = ino1_3;
+      int jtri = itD;
+      int jnoel_c = inoD1;
       int jnoel_b = (jnoel_c+1)%3; // noelTriEdge[jnoel_c][0];
       for (;;){
         assert(jtri < (int)aTri.size());
         assert(jnoel_c < 3);
-        assert(aTri[jtri].v[jnoel_c]==ipo1);
+        assert(aTri[jtri].v[jnoel_c]==ipoX);
         ring2.push_back(aTri[jtri].v[(jnoel_c+2)%3]);
         const int ktri = aTri[jtri].s2[jnoel_b];
-        if( ktri == -1 ) return false;
+        if( ktri == -1 ) return false; // boundary
         assert( ktri>=0 && ktri<(int)aTri.size());
-        const int rel01 = aTri[jtri].r2[jnoel_b];
-        const unsigned int knoel_c = relTriTri[rel01][jnoel_c];
-        const unsigned int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
-        assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
-        assert(aTri[ktri].v[knoel_c]==ipo1);
-        if (ktri==itri4) break;
+//        const int rel01 = aTri[jtri].r2[jnoel_b];
+        const unsigned int knoel_f = FindAdjEdgeIndex(aTri[jtri], jnoel_b, aTri);
+        const unsigned int knoel_c = (knoel_f+1)%3;//relTriTri[rel01][jnoel_c];
+        const unsigned int knoel_b = (knoel_f+2)%3; //relTriTri[rel01][(jnoel_c+2)%3];
+        assert(aTri[ktri].s2[knoel_f]==jtri);
+        assert(aTri[ktri].v[knoel_c]==ipoX);
+        if (ktri==itE) break;
         jtri = ktri;
         jnoel_c = knoel_c;
         jnoel_b = knoel_b;
@@ -890,134 +795,96 @@ DFM2_INLINE bool delfem2::Collapse_ElemEdge
     auto it = set_intersection(ring1.begin(), ring1.end(),
                                ring2.begin(), ring2.end(),
                                insc.begin());
-    if (it!=insc.begin()){ return  false; }
+    if (it!=insc.begin()){ return false; } // ring1 and ring2 have intersection
   }
+ 
+  assert(oldA.v[inoA1]==oldB.v[inoB2]);
+  assert(oldA.v[inoA2]==oldB.v[inoB1]);
+  assert(oldA.s2[inoA0]==itB);
+  assert(oldB.s2[inoB0]==itA);
   
-  /*
-   std::cout<<std::endl;
-   std::cout<<"stt"<<std::endl;
-   std::cout<<"tris : "<<itri0<<" "<<itri1<<" "<<itri2<<" "<<itri3<<" "<<itri4<<" "<<itri5<<std::endl;
-   std::cout<<"vtxs : "<<ipo0<<" "<<ipo1<<" "<<ipo2<<" "<<ipo3<<std::endl;
-   */
-  
-  assert(old0.v[ino1_0]==old1.v[ino2_1]);
-  assert(old0.v[ino2_0]==old1.v[ino1_1]);
-  assert(old0.s2[ino0_0]==itri1);
-  assert(old1.s2[ino0_1]==itri0);
+  // ---------------------------------
+  // change from there
   
   {
-    aPo[ipo0].e = itri2;  aPo[ipo0].d = ino1_2;
-    aPo[ipo2].e = itri4;  aPo[ipo2].d = ino1_4;
-    aPo[ipo1].e = itri3;  aPo[ipo1].d = ino1_3;
-    aPo[ipo3].e = -1;
+    aPo[ipoW].e = itC;  aPo[ipoW].d = inoC1;
+    aPo[ipoY].e = itE;  aPo[ipoY].d = inoE1;
+    aPo[ipoX].e = itD;  aPo[ipoX].d = inoD1;
+    aPo[ipoZ].e = -1;
   }
   
-  // (edge index)*3+(opp edge index) -> relation index
-  const int ed2RelTriTri[9] = {
-    0,  // 0 00
-    2,  // 1 01
-    1,  // 2 02
-    2,  // 3 10
-    1,  // 4 11
-    0,  // 5 12
-    1,  // 6 20
-    0,  // 7 21
-    2,  // 8 22
-  };
-  
-  { // change itri2
-    CDynTri& tri = aTri[itri2];
+  { // change itC
+    CDynTri& tri = aTri[itC];
     //    tri.g2[ino0_2] = old0.g2[ino2_0];
-    tri.s2[ino0_2] = old0.s2[ino2_0];
-    if (old0.s2[ino2_0]>=0&&old0.s2[ino2_0]<(int)aTri.size()){
-      assert(old0.r2[ino2_0] < 3);
-      assert(old0.s2[ino2_0] < (int)aTri.size());
-      tri.r2[ino0_2] = ed2RelTriTri[ino0_2*3+ino0_3];
-      assert(tri.r2[ino0_2]>=0&&tri.r2[ino0_2] < 3);
-      aTri[itri3].s2[ino0_3] = itri2;
-      aTri[itri3].r2[ino0_3] = invRelTriTri[tri.r2[ino0_2]];
+    tri.s2[inoC0] = oldA.s2[inoA2];
+    if (oldA.s2[inoA2]>=0&&oldA.s2[inoA2]<(int)aTri.size()){
+      assert(oldA.s2[inoA2] < (int)aTri.size());
+      aTri[itD].s2[inoD0] = itC;
     }
   }
   
-  { // change itri3
-    CDynTri& tri = aTri[itri3];
-    //    tri.g2[ino0_3] = old0.g2[ino1_0];
-    tri.s2[ino0_3] = old0.s2[ino1_0];
-    if (old0.s2[ino1_0]>=0&&old0.s2[ino1_0]<(int)aTri.size()){
-      //    if( old0.g2[ino1_0] == -2 || old0.g2[ino1_0] == -3 ){
-      assert(old0.r2[ino1_0] < 3);
-      assert(old0.s2[ino1_0] < (int)aTri.size());
-      tri.r2[ino0_3] = ed2RelTriTri[ino0_3*3+ino0_2];
-      assert(tri.r2[ino0_3]>=0&&tri.r2[ino0_3] < 3);
-      aTri[itri2].s2[ino0_2] = itri3;
-      aTri[itri2].r2[ino0_2] = invRelTriTri[tri.r2[ino0_3]];
+  { // change itriD
+    CDynTri& tri = aTri[itD];
+    tri.s2[inoD0] = oldA.s2[inoA1];
+    if (oldA.s2[inoA1]>=0&&oldA.s2[inoA1]<(int)aTri.size()){
+      assert(oldA.s2[inoA1] < (int)aTri.size());
+      aTri[itC].s2[inoC0] = itD;
     }
   }
   
-  { // change itri4
-    CDynTri& tri = aTri[itri4];
-    //    tri.g2[ino0_4] = old1.g2[ino2_1];
-    tri.s2[ino0_4] = old1.s2[ino2_1];
-    //    if( old1.g2[ino2_1] == -2 || old1.g2[ino2_1] == -3 ){
-    if (old1.s2[ino2_1]>=0&&old1.s2[ino2_1] < (int)aTri.size()){
-      assert(old1.r2[ino2_1] < 3);
-      assert(old1.s2[ino2_1] < (int)aTri.size());
-      tri.r2[ino0_4] = ed2RelTriTri[ino0_4*3+ino0_5];
-      assert(tri.r2[ino0_4]>=0&&tri.r2[ino0_4] < 3);
-      aTri[itri5].s2[ino0_5] = itri4;
-      aTri[itri5].r2[ino0_5] = invRelTriTri[tri.r2[ino0_4]];
-      assert((int)relTriTri[(int)aTri[itri4].r2[ino0_4]][ino0_4]==ino0_5);
-      assert((int)relTriTri[(int)aTri[itri5].r2[ino0_5]][ino0_5]==ino0_4);
+  { // change itriE
+    CDynTri& tri = aTri[itE];
+    tri.s2[inoE0] = oldB.s2[inoB2];
+    if (oldB.s2[inoB2]>=0&&oldB.s2[inoB2] < (int)aTri.size()){
+      assert(oldB.s2[inoB2] < (int)aTri.size());
+      aTri[itF].s2[inoF0] = itE;
     }
   }
   
-  { // change itri5
-    CDynTri& tri = aTri[itri5];
-    //    tri.g2[ino0_5] = old1.g2[ino1_1];
-    tri.s2[ino0_5] = old1.s2[ino1_1];
-    //    if( old1.g2[ino1_1] == -2 || old1.g2[ino1_1] == -3 ){
-    if (old1.s2[ino1_1]>=0&&old1.s2[ino1_1] < (int)aTri.size()){
-      assert(old1.r2[ino1_1] < 3);
-      assert(old1.s2[ino1_1] < (int)aTri.size());
-      tri.r2[ino0_5] = ed2RelTriTri[ino0_5*3+ino0_4];
-      assert(tri.r2[ino0_5]>=0&&tri.r2[ino0_5] < 3);
-      aTri[itri4].s2[ino0_4] = itri5;
-      aTri[itri4].r2[ino0_4] = invRelTriTri[tri.r2[ino0_5]];
-      assert((int)relTriTri[aTri[itri5].r2[ino0_5]][ino0_5]==ino0_4);
-      assert((int)relTriTri[aTri[itri4].r2[ino0_4]][ino0_4]==ino0_5);
+  { // change itriF
+    CDynTri& tri = aTri[itF];
+    tri.s2[inoF0] = oldB.s2[inoB1];
+    if (oldB.s2[inoB1]>=0&&oldB.s2[inoB1] < (int)aTri.size()){
+      assert(oldB.s2[inoB1] < (int)aTri.size());
+      aTri[itE].s2[inoE0] = itF;
     }
   }
   
-  { // set triangle index from point 0 to point 1
-    int jtri = itri5;
-    int jnoel_c = ino1_5;
+  { // set triangle vtx index from ipoZ to ipoX
+    std::vector< std::pair<unsigned int, unsigned int> > aItIn; // itri, inode
+    int jtri = itF;
+    int jnoel_c = inoF1;
     int jnoel_b = (jnoel_c+1)%3; // noelTriEdge[jnoel_c][0];
     for (;;){
+      aItIn.push_back( std::make_pair(jtri,jnoel_c) );
       assert(jtri < (int)aTri.size());
       assert(jnoel_c < 3);
-      assert(aTri[jtri].v[jnoel_c]==ipo3);
-      //      std::cout << " fan : " << jtri << "     " << aTri[jtri].v[0] << " " << aTri[jtri].v[1] << " " << aTri[jtri].v[2] << std::endl;
-      aTri[jtri].v[jnoel_c] = ipo1;
-      //      assert( aTri[jtri].g2[jnoel_b] == -2 );
+      assert(aTri[jtri].v[jnoel_c]==ipoZ);
       assert(aTri[jtri].s2[jnoel_b]>=0&&aTri[jtri].s2[jnoel_b]<(int)aTri.size());
       int ktri = aTri[jtri].s2[jnoel_b];
-      const int rel01 = aTri[jtri].r2[jnoel_b];
-      const unsigned int knoel_c = relTriTri[rel01][jnoel_c];
-      const unsigned int knoel_b = relTriTri[rel01][(jnoel_c+2)%3];
-      assert(itri1 < (int)aTri.size());
-      assert(aTri[ktri].s2[relTriTri[rel01][jnoel_b]]==jtri);
-      if (ktri==itri3||ktri==itri4) break;
+      if (ktri==itD||ktri==itE) break;
+      const unsigned int knoel_f = FindAdjEdgeIndex(aTri[jtri],jnoel_b,aTri);
+      const unsigned int knoel_c = (knoel_f+1)%3;
+      const unsigned int knoel_b = (knoel_f+2)%3;
+      assert(aTri[ktri].v[knoel_c]==ipoZ);
+      assert(itB < (int)aTri.size());
       jtri = ktri;
       jnoel_c = knoel_c;
       jnoel_b = knoel_b;
     }
+    for(auto itr=aItIn.begin();itr!=aItIn.end();++itr) {
+      unsigned int it0 = itr->first;
+      unsigned int in0 = itr->second;
+      assert(aTri[it0].v[in0] == ipoZ);
+      aTri[it0].v[in0] = ipoX;
+    }
   }
   
   {  // isolate two triangles to be deleted
-    aTri[itri0].s2[0] = -1;  aTri[itri0].s2[1] = -1;  aTri[itri0].s2[2] = -1;
-    aTri[itri1].s2[0] = -1;  aTri[itri1].s2[1] = -1;  aTri[itri1].s2[2] = -1;
-    const int itri_1st = (itri0 > itri1) ? itri0 : itri1;
-    const int itri_2nd = (itri0 < itri1) ? itri0 : itri1;
+    aTri[itA].s2[0] = -1;  aTri[itA].s2[1] = -1;  aTri[itA].s2[2] = -1;
+    aTri[itB].s2[0] = -1;  aTri[itB].s2[1] = -1;  aTri[itB].s2[2] = -1;
+    const int itri_1st = (itA > itB) ? itA : itB;
+    const int itri_2nd = (itA < itB) ? itA : itB;
     DeleteTri(itri_1st, aPo, aTri);
     DeleteTri(itri_2nd, aPo, aTri);
   }
@@ -1025,11 +892,12 @@ DFM2_INLINE bool delfem2::Collapse_ElemEdge
 }
 
 DFM2_INLINE void delfem2::GetTriArrayAroundPoint
-(std::vector< std::pair<int,int> >& aTriSurPo,
- int ipoin,
+(std::vector< std::pair<unsigned int,unsigned int> >& aTriSurPo,
+ unsigned int ipoin,
  const std::vector<CDynPntSur>& aPo,
  const std::vector<CDynTri>& aTri)
 {
+  std::cout << " %%%%%%%%%%%% " << std::endl;
   const int itri_ini = aPo[ipoin].e;
   const unsigned int inoel_c_ini = aPo[ipoin].d;
   assert(itri_ini < (int)aTri.size());
@@ -1043,15 +911,15 @@ DFM2_INLINE void delfem2::GetTriArrayAroundPoint
     assert(inoel_c0 < 3);
     assert(aTri[itri0].v[inoel_c0]==ipoin);
     aTriSurPo.emplace_back(itri0, inoel_c0);
-    /////
+    // ----------------------
     if (aTri[itri0].s2[inoel_b0]==-1){ break; }
     assert(aTri[itri0].s2[inoel_b0]>=0&&aTri[itri0].s2[inoel_b0] < (int)aTri.size());
     int itri1 = aTri[itri0].s2[inoel_b0];
-    const int rel01 = aTri[itri0].r2[inoel_b0];
-    const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
-    const unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0+2)%3];
+    const unsigned int inoel_f1 = FindAdjEdgeIndex(aTri[itri0],inoel_b0,aTri);
+    const unsigned int inoel_c1 = (inoel_f1+1)%3; // relTriTri[rel01][inoel_c0];
+    const unsigned int inoel_b1 = (inoel_f1+2)%3; // relTriTri[rel01][(inoel_c0+2)%3];
     assert(itri1 < (int)aTri.size());
-    assert(aTri[itri1].s2[relTriTri[rel01][inoel_b0]]==(int)itri0);
+    assert(aTri[itri1].s2[inoel_f1]==(int)itri0);
     assert(aTri[itri1].v[inoel_c1]==ipoin);
     if (itri1==itri_ini) return;
     itri0 = itri1;
