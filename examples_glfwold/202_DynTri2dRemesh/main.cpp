@@ -38,12 +38,12 @@ void Coarse(double px, double py)
   for(int ip=(int)aPo2D.size()-1;ip>=0;--ip){
     if( aPo2D[ip].e == -1 ){ continue; }
     if( Distance(aVec2[ip],dfm2::CVec2d(px,py)) > 0.1 ){ continue; }
-    std::vector< std::pair<int,int> > aTriSuP;
+    std::vector< std::pair<unsigned int,unsigned int> > aTriSuP;
     GetTriArrayAroundPoint(aTriSuP,
                            ip,aPo2D,aETri);
     std::vector<int> aPSuP(aTriSuP.size());
-    const int npsup = aPSuP.size();
-    for(int iit=0;iit<npsup;++iit){
+    const unsigned int npsup = aPSuP.size();
+    for(unsigned int iit=0;iit<npsup;++iit){
       const int itri0 = aTriSuP[iit].first;
       const int inotri0 = aTriSuP[iit].second;
       assert( ip == aETri[itri0].v[inotri0] );
@@ -71,7 +71,7 @@ void Coarse(double px, double py)
       if( dist0 < 0.05 ){
         const int itri0 = aTriSuP[iit0].first;
         const int inotri0 = aTriSuP[iit0].second;
-        Collapse_ElemEdge(itri0, (inotri0+1)%3, aPo2D, aETri);
+        CollapseElemEdge(itri0, (inotri0+1)%3, aPo2D, aETri);
         const int ip1 = aETri[itri0].v[ (inotri0+2)%3 ];
         DelaunayAroundPoint(ip1, aPo2D, aETri, aVec2);
       }
@@ -103,7 +103,6 @@ void GenMesh()
                      elen );
     }
   }
-  ////
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
@@ -120,12 +119,9 @@ void myGlutDisplay()
   ::glLineWidth(1);
   ::glPointSize(5);
   ::glColor3d(1,1,0);
-  
   delfem2::opengl::DrawMeshDynTri_Edge(aETri, aVec2);
   ::glColor3d(0.8, 0.8, 0.8);
   delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aVec2);
-  
-  
   ::glLineWidth(3);
   ::glColor3d(0,0,0);
   for(int iloop=0;iloop<(int)loopIP_ind.size()-1;iloop++){
@@ -152,17 +148,19 @@ int main(int argc,char* argv[])
       if( iframe == 0 ){
         GenMesh();
       }
-      if( iframe % 100 == 0 ){
+      else{
         double px = (rand()/(RAND_MAX+1.0))-0.5;
         double py = (rand()/(RAND_MAX+1.0))-0.5;
-        if( iframe < 2000 ){
+        if( iframe < 40 ){
+          std::cout << "hoge" << std::endl;
           Refine(px, py);
+          std::cout << "huga" << std::endl;
         }
         else{
           Coarse(px, py);
         }
       }
-      iframe = (iframe + 1)%4000;
+      iframe = (iframe + 1)%40;
     }
     // ----------
     viewer.DrawBegin_oldGL();

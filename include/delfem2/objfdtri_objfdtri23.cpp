@@ -69,8 +69,8 @@ void delfem2::PBD_Bend
       const int jt0 = aETri[it].s2[ie];
       if( jt0 == -1 ){ continue; }
       if( jt0 > (int)it ){ continue; }
-      const int rt0 = aETri[it].r2[ie];
-      const int je0 = (6-rt0-ie)%3;
+//      const int rt0 = aETri[it].r2[ie];
+      const int je0 = FindAdjEdgeIndex(aETri[jt0],ie,aETri);
       assert( aETri[jt0].s2[je0] == (int)it);
       const int aIP[4] = {
         aETri[it].v[ie],

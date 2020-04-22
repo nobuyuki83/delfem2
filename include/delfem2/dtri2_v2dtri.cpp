@@ -20,7 +20,8 @@ DFM2_INLINE bool LaplacianArroundPoint
     (std::vector<CVec2d> &aVec2,
      int ipoin,
      const std::vector<CDynPntSur> &aPo,
-     const std::vector<CDynTri> &aTri) {
+     const std::vector<CDynTri> &aTri)
+{
   assert(aVec2.size() == aPo.size());
   const unsigned int itri_ini = aPo[ipoin].e;
   const unsigned int inoel_c_ini = aPo[ipoin].d;
@@ -44,11 +45,14 @@ DFM2_INLINE bool LaplacianArroundPoint
     }
     if (aTri[itri0].s2[inoel_b0] >= 0) {
       const int itri1 = aTri[itri0].s2[inoel_b0];
-      const int rel01 = (int) aTri[itri0].r2[inoel_b0];
-      const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
-      unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0 + 2) % 3];
+      unsigned int inoel_f1 = FindAdjEdgeIndex(aTri[itri0],inoel_b0,aTri);
+//      const int rel01 = (int) aTri[itri0].r2[inoel_b0];
+//      const unsigned int inoel_c1 = relTriTri[rel01][inoel_c0];
+//      unsigned int inoel_b1 = relTriTri[rel01][(inoel_c0 + 2) % 3];
+      unsigned int inoel_c1 = (inoel_f1+1)%3;
+      unsigned int inoel_b1 = (inoel_f1+2)%3;
       assert(itri1 < (int) aTri.size());
-      assert(aTri[itri1].s2[ relTriTri[rel01][inoel_b0] ] == (int) itri0);
+      assert(aTri[itri1].s2[ inoel_f1 ] == (int) itri0);
       assert(aTri[itri1].v[inoel_c1] == ipoin);
       if (itri1 == (int) itri_ini) break;
       itri0 = itri1;
@@ -65,12 +69,13 @@ DFM2_INLINE bool LaplacianArroundPoint
   return true;
 }
 
-DFM2_INLINE bool FindEdgePoint_AcrossEdge
-    (unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double &ratio,
-     int ipo0, int ipo1,
-     const std::vector<CDynPntSur> &po,
-     const std::vector<CDynTri> &tri,
-     const std::vector<CVec2d> &aVec2) {
+DFM2_INLINE bool FindEdgePoint_AcrossEdge(
+    unsigned int &itri0, unsigned int &inotri0, unsigned &inotri1, double &ratio,
+    int ipo0, int ipo1,
+    const std::vector<CDynPntSur> &po,
+    const std::vector<CDynTri> &tri,
+    const std::vector<CVec2d> &aVec2)
+{
   const unsigned int itri_ini = po[ipo0].e;
   const unsigned int inotri_ini = po[ipo0].d;
   unsigned int inotri_cur = inotri_ini;
@@ -101,8 +106,9 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge
       const unsigned int inotri2 = (inotri_cur + 1) % 3;
       const int itri_nex = tri[itri_cur].s2[inotri2];
       if (itri_nex == -1) { break; }
-      const unsigned int *rel = relTriTri[tri[itri_cur].r2[inotri2]];
-      const unsigned int inotri3 = rel[inotri_cur];
+      const unsigned int jnob = FindAdjEdgeIndex(tri[itri_nex],inotri2,tri);
+//      const unsigned int *rel = relTriTri[tri[itri_cur].r2[inotri2]];
+      const unsigned int inotri3 = (jnob+1)%3; // rel[inotri_cur];
       assert(itri_nex < (int) tri.size());
       assert(itri_nex >= 0);
       assert(tri[itri_nex].v[inotri3] == ipo0);
@@ -148,8 +154,9 @@ DFM2_INLINE bool FindEdgePoint_AcrossEdge
       //        break;
       //      }
       unsigned int itri_nex = tri[itri_cur].s2[inotri2];
-      const unsigned int *rel = relTriTri[tri[itri_cur].r2[inotri2]];
-      const unsigned int inotri3 = rel[inotri_cur];
+      unsigned int jnob = FindAdjEdgeIndex(tri[itri_cur],inotri2,tri);
+//      const unsigned int *rel = relTriTri[tri[itri_cur].r2[inotri2]];
+      const unsigned int inotri3 = (jnob+1)%3; // rel[inotri_cur];
       assert(tri[itri_nex].v[inotri3] == ipo0);
       if (itri_nex == itri_ini) {
         assert(0);  // àÍé¸ÇµÇ»Ç¢ÇÕÇ∏
@@ -221,8 +228,8 @@ DFM2_INLINE bool delfem2::DelaunayAroundPoint
       assert(aTri[itri_cur].v[inotri_cur]==ipo0);
       // check opposing element
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const unsigned int inotri_dia = rel_dia[inotri_cur];
+//      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
+      const unsigned int inotri_dia = FindAdjEdgeIndex(aTri[itri_cur],inotri_cur,aTri); // rel_dia[inotri_cur];
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec2[aTri[itri_cur].v[0]],
@@ -258,10 +265,8 @@ DFM2_INLINE bool delfem2::DelaunayAroundPoint
     assert(aTri[itri_cur].v[inotri_cur]==ipo0);
     
     if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
-      // check elements in opposing side
       const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const unsigned int inotri_dia = rel_dia[inotri_cur];
+      const unsigned int inotri_dia = FindAdjEdgeIndex(aTri[itri_cur],inotri_cur,aTri);
       assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
       const int ipo_dia = aTri[itri_dia].v[inotri_dia];
       if (DetDelaunay(aVec2[aTri[itri_cur].v[0]],
@@ -283,8 +288,8 @@ DFM2_INLINE bool delfem2::DelaunayAroundPoint
         return true;
       }
       const int itri_nex = aTri[itri_cur].s2[inotri2];
-      const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const unsigned int inotri_nex = rel_nex[inotri_cur];
+      unsigned int jno = FindAdjEdgeIndex(aTri[itri_cur],inotri2,aTri);
+      const unsigned int inotri_nex = (jno+2)%3;
       assert(aTri[itri_nex].v[inotri_nex]==ipo0);
       assert(itri_nex!=itri0);	// finsih if reach starting elemnet
       itri_cur = itri_nex;
@@ -400,9 +405,9 @@ DFM2_INLINE void delfem2::MakeSuperTriangle
   tri.s2[0] =  -1;
   tri.s2[1] =  -1;
   tri.s2[2] =  -1;
-  tri.r2[0] =  0;
-  tri.r2[1] =  0;
-  tri.r2[2] =  0;
+//  tri.r2[0] =  0;
+//  tri.r2[1] =  0;
+//  tri.r2[2] =  0;
 }
 
 DFM2_INLINE void delfem2::AddPointsMesh
@@ -420,14 +425,13 @@ DFM2_INLINE void delfem2::AddPointsMesh
   int iflg1 = 0, iflg2 = 0;
   for(int itri=0;itri<(int)aTri.size();itri++){
     iflg1 = 0; iflg2 = 0;
-    const CDynTri& ref_tri = aTri[itri];
-    if( Area_Tri(po_add, aVec2[ref_tri.v[1]], aVec2[ref_tri.v[2]] ) > MIN_TRI_AREA ){
+    if( Area_Tri(po_add, aVec2[aTri[itri].v[1]], aVec2[aTri[itri].v[2]] ) > MIN_TRI_AREA ){
       iflg1++; iflg2 += 0;
     }
-    if( Area_Tri(po_add, aVec2[ref_tri.v[2]], aVec2[ref_tri.v[0]] ) > MIN_TRI_AREA ){
+    if( Area_Tri(po_add, aVec2[aTri[itri].v[2]], aVec2[aTri[itri].v[0]] ) > MIN_TRI_AREA ){
       iflg1++; iflg2 += 1;
     }
-    if( Area_Tri(po_add, aVec2[ref_tri.v[0]], aVec2[ref_tri.v[1]] ) > MIN_TRI_AREA ){
+    if( Area_Tri(po_add, aVec2[aTri[itri].v[0]], aVec2[aTri[itri].v[1]] ) > MIN_TRI_AREA ){
       iflg1++; iflg2 += 2;
     }
     if( iflg1 == 3 ){ // add in triangle
@@ -436,14 +440,15 @@ DFM2_INLINE void delfem2::AddPointsMesh
     }
     else if( iflg1 == 2 ){ // add in edge
       const int ied0 = 3-iflg2;
-      const int ipo_e0 = ref_tri.v[ (ied0+1)%3 ];
-      const int ipo_e1 = ref_tri.v[ (ied0+2)%3 ];
-      const unsigned int* rel = relTriTri[ ref_tri.r2[ied0] ];
-      const int itri_s = ref_tri.s2[ied0];
+      const int ipo_e0 = aTri[itri].v[ (ied0+1)%3 ];
+      const int ipo_e1 = aTri[itri].v[ (ied0+2)%3 ];
+//      const unsigned int* rel = relTriTri[ aTri[itri].r2[ied0] ];
+      const int itri_s = aTri[itri].s2[ied0];
       if( itri_s < 0 ){ return; }
-      assert( aTri[itri_s].v[ rel[ (ied0+1)%3 ] ] == ipo_e0 );
-      assert( aTri[itri_s].v[ rel[ (ied0+2)%3 ] ] == ipo_e1 );
-      const unsigned int inoel_d = rel[ied0];
+      const unsigned int jno0 = FindAdjEdgeIndex(aTri[itri],ied0,aTri);
+      assert( aTri[itri_s].v[ (jno0+2)%3 ] == ipo_e0 );
+      assert( aTri[itri_s].v[ (jno0+1)%3 ] == ipo_e1 );
+      const unsigned int inoel_d = jno0;
       assert( aTri[itri_s].s2[inoel_d] == itri );
       const int ipo_d = aTri[itri_s].v[inoel_d];
       assert( Area_Tri( po_add, aVec2[ipo_e1], aVec2[ aTri[itri].v[ied0] ] ) > MIN_TRI_AREA );
@@ -490,7 +495,8 @@ DFM2_INLINE void delfem2::EnforceEdge
       const int ied0 = 3 - inotri0 - inotri1;
       {
         const int itri1 = aTri[itri0].s2[ied0];
-        const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+//        const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+        unsigned int ied1 = FindAdjEdgeIndex(aTri[itri0],ied0,aTri);
         assert( aTri[itri1].s2[ied1] == (int)itri0 );
         aTri[itri1].s2[ied1] = -1;
         aTri[itri0].s2[ied0] = -1;
@@ -517,9 +523,9 @@ DFM2_INLINE void delfem2::EnforceEdge
       else{
         const int ied0 = 3 - inotri0 - inotri1;
         assert( aTri[itri0].s2[ied0] >= 0 );
-#ifndef NDEBUG
+#if !defined(NDEBUG)
         const int itri1 = aTri[itri0].s2[ied0];
-        const unsigned int ied1 = relTriTri[ aTri[itri0].r2[ied0] ][ied0];
+        const unsigned int ied1 = FindAdjEdgeIndex(aTri[itri0],ied0,aTri);
         assert( aTri[itri1].s2[ied1] >= (int)itri0 );
 #endif
         bool res = FlipEdge(itri0,ied0,aPo2D,aTri);
@@ -963,7 +969,6 @@ DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
  const std::vector<int>& loopIP_ind,
  const std::vector<int>& loopIP)
 {
-  /////
   std::vector<int> aPoDel;
   {
     const int npo = (int)aVec2.size();
