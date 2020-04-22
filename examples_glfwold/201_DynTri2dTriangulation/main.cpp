@@ -176,8 +176,6 @@ void drawMesh
   
 }
 
-
-
 // --------------------------------
 
 std::vector<dfm2::CDynPntSur> aPo2D;
@@ -190,10 +188,10 @@ bool is_animation = true;
 void GenMesh(){
   std::vector<double> aCV0; MakeRandomCV(8,aCV0); // current cv
   std::vector<double> aVecCurve0;  MakeCurveSpline(aCV0,aVecCurve0); // current curve
-  ////
+  //
   std::vector< std::vector<double> > aaXY;
   aaXY.push_back( aVecCurve0 );
-  /////
+  //
   const double elen = 0.03;
   {
     JArray_FromVecVec_XY(loopIP_ind,loopIP, aVec2,
@@ -210,12 +208,18 @@ void GenMesh(){
   }
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
+  AssertDTri(aETri);
+  AssertMeshDTri(aPo2D,aETri);
+  CheckTri(aPo2D,aETri,aVec2);
   if( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                   aVec2.size(), 0, elen, param);
   }
+  AssertDTri(aETri);
+  AssertMeshDTri(aPo2D,aETri);
+  CheckTri(aPo2D,aETri,aVec2);
 }
 
 // --------------------------------------
@@ -230,8 +234,7 @@ void myGlutDisplay()
   delfem2::opengl::DrawMeshDynTri_Edge(aETri, aVec2);
   ::glColor3d(0.8, 0.8, 0.8);
   delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aVec2);
-  
-  
+    
   ::glLineWidth(3);
   ::glColor3d(0,0,0);
   for(int iloop=0;iloop<(int)loopIP_ind.size()-1;iloop++){
@@ -249,21 +252,12 @@ int main(int argc,char* argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  
   while (!glfwWindowShouldClose(viewer.window))
   {
-    {
-      static int iframe = 0;
-      if( iframe == 0 ){
-        GenMesh();
-      }
-      iframe = (iframe + 1)%300;
-    }
-    
+    GenMesh();
+    // ---------
     viewer.DrawBegin_oldGL();
-    
     myGlutDisplay();
-    
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }
