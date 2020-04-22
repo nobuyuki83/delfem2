@@ -18,24 +18,28 @@
 
 namespace delfem2 {
 
-CVec3d normalTri(int itri0,
-                   const std::vector<CDynTri>& aSTri,
-                   const std::vector<CVec3d>& aVec3);
+CVec3d UnitNormal_DTri3
+ (int itri0,
+  const std::vector<CDynTri>& aSTri,
+  const std::vector<CVec3d>& aVec3);
 
-bool CheckTri(const std::vector<CDynPntSur>& aPo3D,
-              const std::vector<CDynTri>& aSTri,
-              const std::vector<CVec3d>& aVec3);
+bool AssertMeshDTri2
+ (const std::vector<CDynPntSur>& aPo3D,
+  const std::vector<CDynTri>& aSTri,
+  const std::vector<CVec3d>& aVec3);
 
-bool FindRayTriangleMeshIntersections(std::vector<CVec3d> &intersectionPoints,
-                                      const CVec3d &line0,
-                                      const CVec3d &line1,
-                                      const std::vector<CDynTri>& aTri,
-                                      const std::vector<CVec3d>& aVec3);
+bool FindRayTriangleMeshIntersections
+ (std::vector<CVec3d> &intersectionPoints,
+  const CVec3d &line0,
+  const CVec3d &line1,
+  const std::vector<CDynTri>& aTri,
+  const std::vector<CVec3d>& aVec3);
 
-bool DelaunayAroundPoint(int ipo0,
-                         std::vector<CDynPntSur>& aPo,
-                         std::vector<CDynTri>& aTri,
-                         const std::vector<CVec3d>& aVec3);
+bool DelaunayAroundPoint
+ (int ipo0,
+  std::vector<CDynPntSur>& aPo,
+  std::vector<CDynTri>& aTri,
+  const std::vector<CVec3d>& aVec3);
 
 // -------------------------------------------------------
 
@@ -63,9 +67,9 @@ public:
   }
   void Check()
   {
-    CheckTri(aETri);
-    CheckTri(aEPo, aETri);
-    CheckTri(aEPo, aETri, aVec3);
+    AssertDTri(aETri);
+    AssertMeshDTri(aEPo, aETri);
+    AssertMeshDTri2(aEPo, aETri, aVec3);
   }
   std::vector<double> MinMax_XYZ() const {
     double x_min,x_max, y_min,y_max, z_min,z_max;
@@ -111,7 +115,7 @@ public:
   }
   int nTri() const { return aETri.size(); }
   int nPoint() const { return aEPo.size(); }
-  void DeleteTriEdge(int itri, int iedge){ Collapse_ElemEdge(itri, iedge, aEPo, aETri); }
+  void DeleteTriEdge(int itri, int iedge){ CollapseElemEdge(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CDynPntSur> aEPo;
   std::vector<CDynTri> aETri;
