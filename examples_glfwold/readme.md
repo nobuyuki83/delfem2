@@ -186,6 +186,9 @@
 ### [616_PbdClothCadGltf](616_PbdClothCadGltf)
 <img src="../docs/imgs/glfwold_616_PbdClothCadGltf.png" width=200>
 
+### [617_PbdClothCadSmpl](617_PbdClothCadSmpl)
+<img src="../docs/imgs/glfwold_617_PbdClothCadSmpl.png" width=200>
+
 ### [618_Fem3d](618_Fem3d)
 <img src="../docs/imgs/glfwold_618_Fem3d.png" width=200>
 
