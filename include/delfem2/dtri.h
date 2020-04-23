@@ -11,26 +11,14 @@
 #include "delfem2/dfm2_inline.h"
 #include <vector>
 
-
 // ------------------------------------------------------------------
 
 namespace delfem2 {
-
-/*
-// (6-i-j)%3;
-static const unsigned int relTriTri[3][3] = {
-	{ 0, 2, 1 }, //  0
-	{ 2, 1, 0 }, //  1 
-	{ 1, 0, 2 }, //  2
-};
-static const unsigned int invRelTriTri[3] = { 0, 1, 2 };
- */
 
 class CDynTri{
 public:
 	int v[3];	//!< index of vertex
 	int s2[3];	//!< index of face that is adjacent to ith edge; The 0th edge is the edge facing 0th vertex
-//  int r2[3];	//!< relationship of vertex index between two adjacent faces
 };
 
 class CDynPntSur{
@@ -145,7 +133,7 @@ DFM2_INLINE bool DeleteTri
 /**
  * @brief delete a point aETri[itri_del].v[(ied_del+2)%3]
  */
-DFM2_INLINE bool CollapseElemEdge
+DFM2_INLINE bool CollapseEdge_MeshDTri
  (const unsigned int itri_del,
   const unsigned int ied_del,
   std::vector<CDynPntSur>& aEPo2,
