@@ -313,7 +313,7 @@ public:
   }
   int nTri() const { return aETri.size(); }
   int nPoint() const { return aEPo.size(); }
-  void DeleteTriEdge(int itri, int iedge){ CollapseElemEdge(itri, iedge, aEPo, aETri); }
+  void DeleteTriEdge(int itri, int iedge){ CollapseEdge_MeshDTri(itri, iedge, aEPo, aETri); }
 public:
   std::vector<CDynPntSur> aEPo;
   std::vector<CDynTri> aETri;
