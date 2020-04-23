@@ -97,11 +97,11 @@
 ### [305_RigSmplIkArap](305_RigSmplIkArap)
 <img src="../docs/imgs/glfwold_305_RigSmplIkArap.png" width=200>
 
-### [306_RigSmplIklmage](306_RigSmplIkImage)
-<img src="../docs/imgs/glfwold_306_RigSmplIklmage.png" width=200>
+### [306_RigSmplIkImage](306_RigSmplIkImage)
+<img src="../docs/imgs/glfwold_306_RigSmplIkImage.png" width=200>
 
-### [307_RigSmplIklmageCloth](307_RigSmplIkImageCloth)
-<img src="../docs/imgs/glfwold_307_RigSmplIklmageCloth.png" width=200>
+### [307_RigSmplIkImageCloth](307_RigSmplIkImageCloth)
+<img src="../docs/imgs/glfwold_307_RigSmplIkImageCloth.png" width=200>
 
 ## User Interface
 
