@@ -58,6 +58,9 @@
 ### 120_Adf3
 ![](../docs/imgs/glfwold_120_Adf3.png)
 
+### 121_IsoSurfaceStuffing
+![](../docs/imgs/glfwold_121_IsoSurfaceStuffing.png)
+
 ### 122_HashBvhSelfCollision
 ![](../docs/imgs/glfwold_122_HashBvhSelfCollision.png)
 
