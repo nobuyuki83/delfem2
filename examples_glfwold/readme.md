@@ -126,7 +126,7 @@
 ### [603_Fem3StiffWarp](603_Fem3DStiffwarp)
 ![](../docs/imgs/glfwold_603_Fem3StiffWarp.png)
 
-### [604_FemClothDTri](FemCloth_DynamicTriangle)
+### [604_FemClothDTri](604_FemCloth_DynamicTriangle)
 ![](../docs/imgs/glfwold_604_FemClothDTri.png)
 
 ### [605_FemClothInternal](605_FemClothInternal)
