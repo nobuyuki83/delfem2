@@ -107,7 +107,7 @@ int main(int argc,char* argv[])
     for(unsigned int i=0;i<10;i++){
       auto itri0 = (unsigned int)((rand()/(RAND_MAX+1.0))*aTri.size());
       assert( itri0 < aTri.size() );
-      CollapseElemEdge(itri0, 0, aPo, aTri);
+      CollapseEdge_MeshDTri(itri0, 0, aPo, aTri);
       AssertDTri(aTri);
       AssertMeshDTri(aPo, aTri);
       if( aTri.size() <= 100 ) break;

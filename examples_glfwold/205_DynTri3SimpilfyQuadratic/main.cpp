@@ -89,7 +89,7 @@ double MinimizeQuad(double* pos,
 }
 
 
-void QuadMetric
+void QuadErrorMetric_MeshDTri3
  (std::vector<double>& aSymMat4,
   std::vector<dfm2::CDynPntSur>& aDP,
   std::vector<dfm2::CDynTri>& aDTri,
@@ -125,8 +125,84 @@ void QuadMetric
     double err = MinimizeQuad(pos, aSymMat4.data()+ip*10);
     std::cout << ip << " ### " << err << " ### " << dfm2::CVec3d(pos)-aVec3[ip] << std::endl;
   }
-  
 }
+
+class CollapseSchedule {
+public:
+  CollapseSchedule(unsigned int iv1,
+                   unsigned int iv2,
+                   const double pos[3]): iv1(iv1), iv2(iv2)
+  {
+    p[0] = pos[0];
+    p[1] = pos[1];
+    p[2] = pos[2];
+  }
+public:
+  unsigned int iv1, iv2;
+  double p[3];
+};
+
+void RemoveOnePoint
+ (std::vector<dfm2::CDynPntSur>& aDP,
+  std::vector<dfm2::CDynTri>& aDTri,
+  std::vector<dfm2::CVec3d>& aVec3,
+  std::map<double, CollapseSchedule>& cost2edge,
+  std::map<std::pair<unsigned int, unsigned int>,double>& edge2cost,
+  std::vector<double> aSymMat4)
+{
+  unsigned int itri0;
+  int ied0 = -1;
+  dfm2::CVec3d pos;
+  while(!cost2edge.empty()){
+    int iv1=-1, iv2=-1;
+    double err0;
+    {
+      auto itr_c2e = cost2edge.begin();
+      iv1 = itr_c2e->second.iv1;
+      iv2 = itr_c2e->second.iv2;
+      pos = dfm2::CVec3d(itr_c2e->second.p);
+      assert( iv1 < iv2 && iv1 < aDP.size() && iv2 < aDP.size() );
+      cost2edge.erase(itr_c2e);
+      err0 = itr_c2e->first;
+    }
+    if( aDP[iv1].e == -1 ){ continue; } // deleted vtx
+    if( aDP[iv2].e == -1 ){ continue; } // deleted vtx
+    {
+      auto v12 = std::make_pair(iv1,iv2);
+      auto itr_e2c = edge2cost.find(v12);
+      double err1 = itr_e2c->second;
+      if( fabs(err1-err0) > 1.0e-20 ){ continue; } // this edge is updated
+      edge2cost.erase(itr_e2c);
+    }
+    unsigned int ino0, ino1;
+    bool res = dfm2::FindEdge_LookAroundPoint(itri0, ino0, ino1,
+                                              iv1, iv2, aDP, aDTri);
+    if( !res ){ continue; }
+    assert( aDTri[itri0].v[ino0] == iv1 );
+    assert( aDTri[itri0].v[ino1] == iv2 );
+    ied0 = 3-ino0-ino1;
+    break;
+  }
+  if( ied0 == -1 ) return;
+  // --------
+  const int ip_sty = aDTri[itri0].v[(ied0+1)%3];
+  const int ip_del = aDTri[itri0].v[(ied0+2)%3];
+  bool res = CollapseEdge_MeshDTri(itri0, ied0, aDP, aDTri);
+#if !defined(NDEBUG)
+  if( res ){ assert( aDP[ip_del].e == -1 ); }
+  AssertDTri(aDTri);
+  AssertMeshDTri(aDP, aDTri);
+#endif
+  aVec3[ip_sty] = pos;
+  {
+    const double* Q1 = aSymMat4.data()+ip_sty*10;
+    const double* Q2 = aSymMat4.data()+ip_del*10;
+    double Q12[10];
+    for(int i=0;i<10;++i){ Q12[i] = Q1[i] + Q2[i]; }
+    for(int i=0;i<10;++i){ aSymMat4[ip_sty*10+i] = Q12[i]; }
+  }
+}
+
 
 int main(int argc,char* argv[])
 {
@@ -156,27 +232,39 @@ int main(int argc,char* argv[])
 #endif
   }
   std::vector<double> aSymMat4;
-  QuadMetric(aSymMat4,
+  QuadErrorMetric_MeshDTri3(aSymMat4,
              aDP,aDTri,aVec3);
+  std::map<double, CollapseSchedule> cost2edge;
+  std::map<std::pair<unsigned int, unsigned int>,double> edge2cost;
+  {
+    for(unsigned int itri=0;itri<aDTri.size();++itri){
+      for(unsigned int ied=0;ied<3;++ied){
+        unsigned int iv1 = aDTri[itri].v[(ied+1)%3];
+        unsigned int iv2 = aDTri[itri].v[(ied+2)%3];
+        if( iv1 > iv2 ){ continue; }
+        const double* Q1 = aSymMat4.data()+iv1*10;
+        const double* Q2 = aSymMat4.data()+iv2*10;
+        double Q12[10];
+        for(unsigned int i=0;i<10;++i){ Q12[i] = Q1[i] + Q2[i]; }
+        double pos[3];
+        double err = MinimizeQuad(pos, Q12);
+        auto v12 = std::make_pair(iv1,iv2);
+        CollapseSchedule cs(iv1,iv2,pos);
+        cost2edge.insert(std::make_pair(err,cs));
+        edge2cost.insert(std::make_pair(v12,err));
+      }
+    }
+  }
   // -----------
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.5;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    for(unsigned int i=0;i<10;i++){
-      auto itri0 = (unsigned int)((rand()/(RAND_MAX+1.0))*aDTri.size());
-      assert( itri0 < aDTri.size() );
-      const int ip_del = aDTri[itri0].v[2];
-      bool res = CollapseElemEdge(itri0, 0, aDP, aDTri);
-#if !defined(NDEBUG)
-      if( res ){
-        assert( aDP[ip_del].e == -1 );
-      }
-      AssertMeshDTri(aDP, aDTri);
-#endif
-      if( aDTri.size() <= 100 ) break;
-    }
+    RemoveOnePoint(aDP,aDTri,aVec3,
+                   cost2edge,edge2cost,
+                   aSymMat4);
+    // --------
     viewer.DrawBegin_oldGL();
     myGlutDisplay(aDP,aDTri,aVec3);
     viewer.DrawEnd_oldGL();
