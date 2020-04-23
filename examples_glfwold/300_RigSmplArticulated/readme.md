@@ -1,5 +1,7 @@
+### 300_RigSmplArticulated
+![](../../docs/imgs/glfwold_300_RigSmplArticulated.png) 
 
-# Model Preparation
+Model Preparation
 
 + Downlaod zip model file```SMPL_python_v.1.0.0.zip``` from https://smpl.is.tue.mpg.de/downloads
 
