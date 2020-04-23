@@ -10,13 +10,6 @@ cmake -A x64 -Dgtest_force_shared_crt=ON ..
 cmake --build . --config Release
 cd ../../..
 
-: cd 3rd_party/googletest
-: mkdir buildVS32
-: cd buildVS32
-: cmake -A Win32 -Dgtest_force_shared_crt=ON .. 
-: cmake --build . --config Release
-: cd ../../..
-
 cd test_cpp
 mkdir buildVS64
 cd buildVS64
@@ -24,14 +17,6 @@ cmake -A x64 ..
 cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
-
-: cd test_cpp
-: mkdir buildVS32
-: cd buildVS32
-: cmake -A Win32 ..
-: cmake --build . --config Release
-: "Release/runUnitTests.exe"
-: cd ../../
 
 : ################################
 : build glfw
@@ -51,23 +36,9 @@ cmake -A x64 ..
 cmake --build . --config Release
 cd ../../
 
-: cd examples_glfwold
-: mkdir buildVS32
-: cd buildVS32
-: cmake -A Win32 ..
-: cmake --build . --config Release
-: cd ../../
-
 
 : ##############################
 : glfw_newgl
-
-: cd examples_glfwnew
-: mkdir buildVS32
-: cd buildVS32
-: cmake -A Win32 ..
-: cmake --build . --config Release
-: cd ../../
 
 cd examples_glfwnew
 mkdir buildVS64
@@ -75,7 +46,6 @@ cd buildVS64
 cmake -A x64 ..
 cmake --build . --config Release
 cd ../../
-
 
 
 : ###############################
@@ -95,19 +65,9 @@ cmake -A x64 -DUSE_HEADERONLY=OFF ..
 cmake --build . --config Release
 cd ../../../
 
-
-
-: cd examples_cpp
-: mkdir buildVS64
-: cd buildVS64
-: cmake -A x64 -DCMAKE_PREFIX_PATH="C:/Program Files/glew;C:/Program Files/freeglut" ..
-: cmake --build .
-: cd ../../
-
-
-: pip uninstall PyDelFEM2 -y
-: pip uninstall PyDelFEM2 -y
-: python setup.py install
-: python setup.py test
+pip uninstall PyDelFEM2 -y
+pip uninstall PyDelFEM2 -y
+pip3 install -e .
+python setup.py test
 
 
