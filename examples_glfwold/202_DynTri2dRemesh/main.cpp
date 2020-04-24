@@ -152,9 +152,7 @@ int main(int argc,char* argv[])
         double px = (rand()/(RAND_MAX+1.0))-0.5;
         double py = (rand()/(RAND_MAX+1.0))-0.5;
         if( iframe < 40 ){
-          std::cout << "hoge" << std::endl;
           Refine(px, py);
-          std::cout << "huga" << std::endl;
         }
         else{
           Coarse(px, py);

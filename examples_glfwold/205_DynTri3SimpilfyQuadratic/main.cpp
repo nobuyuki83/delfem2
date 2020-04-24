@@ -188,6 +188,7 @@ void RemoveOnePoint
   const int ip_sty = aDTri[itri0].v[(ied0+1)%3];
   const int ip_del = aDTri[itri0].v[(ied0+2)%3];
   bool res = CollapseEdge_MeshDTri(itri0, ied0, aDP, aDTri);
+  if( !res ){ return; }
 #if !defined(NDEBUG)
   if( res ){ assert( aDP[ip_del].e == -1 ); }
   AssertDTri(aDTri);
@@ -200,6 +201,32 @@ void RemoveOnePoint
     double Q12[10];
     for(int i=0;i<10;++i){ Q12[i] = Q1[i] + Q2[i]; }
     for(int i=0;i<10;++i){ aSymMat4[ip_sty*10+i] = Q12[i]; }
+  }
+  std::vector<unsigned int> aIP;
+  dfm2::FindPointAroundPoint(aIP,
+                             ip_sty,aDP,aDTri);
+  for(int iip=0;iip<aIP.size();++iip){
+    unsigned int jp0 = aIP[iip];
+    unsigned int iv1, iv2;
+    if( ip_sty < jp0 ){
+      iv1 = ip_sty;
+      iv2 = jp0;
+    }
+    else{
+      iv1 = jp0;
+      iv2 = ip_sty;
+    }
+    assert( iv1 < iv2 );
+    const double* Q1 = aSymMat4.data()+iv1*10;
+    const double* Q2 = aSymMat4.data()+iv2*10;
+    double Q12[10];
+    for(unsigned int i=0;i<10;++i){ Q12[i] = Q1[i] + Q2[i]; }
+    double pos[3];
+    double err = MinimizeQuad(pos, Q12);
+    auto v12 = std::make_pair(iv1,iv2);
+    CollapseSchedule cs(iv1,iv2,pos);
+    cost2edge.insert(std::make_pair(err,cs));
+    edge2cost.insert(std::make_pair(v12,err));
   }
 }
 
