@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ######################################################
 
