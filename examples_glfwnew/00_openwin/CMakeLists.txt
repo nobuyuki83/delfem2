@@ -22,6 +22,21 @@ project(00_openwin)
 
 set(3RD_PARTY           "../../3rd_party")
 
+# glfw
+set(GLFW_DIR "${3RD_PARTY}/glfw")
+get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE) # get absolute path
+
+# opengl
+find_package(OpenGL REQUIRED)
+
+#########################################
+
+include_directories(
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_DIR}/include
+  ${DELFEM2_INCLUDE_DIR}
+)
+
 add_executable(${PROJECT_NAME}
   main.cpp
 )
@@ -29,28 +44,28 @@ add_executable(${PROJECT_NAME}
 ########################################
 
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "${3RD_PARTY}/glfw")
-  get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE) # get absolute path
-  find_package(OpenGL REQUIRED)
-  include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_DIR}/include
-    ${DELFEM2_INCLUDE_DIR}
-  )
   IF(APPLE)
     find_library( COCOA_LIBRARY Cocoa )
     find_library( OpenGL_LIBRARY OpenGL )
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
-    SET( EXTRA_LIBS ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY} )
+    target_link_libraries(${PROJECT_NAME} 
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/libglfw3.a
+      ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY} 
+    )
   ELSEIF(UNIX)
-    SET( EXTRA_LIBS   -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp )
+    target_link_libraries(${PROJECT_NAME} 
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/libglfw3.a
+      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp 
+    )  
+  ELSEIF(MSVC)
+    target_link_libraries(${PROJECT_NAME}
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/Release/glfw3.lib
+    ) 
   ENDIF()
-  target_link_libraries(${PROJECT_NAME} 
-    ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
-    ${EXTRA_LIBS}
-  )
 else()
     set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
