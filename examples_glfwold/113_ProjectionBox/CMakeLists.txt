@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-option(WITH_HEADERLESS "BUILD_CODE_WITH_HEADERLESS" ON)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ###################################
 

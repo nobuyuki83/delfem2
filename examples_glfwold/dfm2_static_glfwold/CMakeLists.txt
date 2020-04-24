@@ -18,16 +18,18 @@ ENDIF()
 set(PROJ_NAME dfm2_static_glfwold)
 project(${PROJ_NAME})
 
+add_definitions(-DDFM2_STATIC_LIBRARY=ON)
+
 # glfw
 get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
-add_definitions(-DDFM2_STATIC_LIBRARY=ON)
-set(DELFEM2_INCLUDE_DIR "../../include")
-
+# opengl
 find_package(OpenGL REQUIRED)
+
+set(DELFEM2_INCLUDE_DIR "../../include")
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
