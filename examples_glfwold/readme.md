@@ -5,6 +5,9 @@
 ### [000_OpenWin](000_OpenWindowWithGLFW)
 <img src="../docs/imgs/glfwold_000_OpenWin.png" width=200px>
 
+
+
+
 ## Basic Demo
 
 ### [100_Nav3D](100_ViewNavigationIn3D)
@@ -70,6 +73,10 @@
 ### [124_4RotSymField](124_4RotSymField)
 <img src="../docs/imgs/glfwold_124_4RotSymField.png" width=200>
 
+
+
+## Dynamic Triangle
+
 ### [201_DynTri2Triangulation](201_DynTri2dTriangulation)
 <img src="../docs/imgs/glfwold_201_DynTri2Triangulation.png" width=200>
 
@@ -81,6 +88,13 @@
 
 ### [204_DynTet_Tetrahedralization](204_DynTetTetrahedralization)
 <img src="../docs/imgs/glfwold_204_DynTet_Tetrahedralization.png" width=200>
+
+### [205_DynTri3SimpilfyQuadratic](205_DynTri3SimpilfyQuadratic)
+<img src="../docs/imgs/glfwold_205_DynTri3SimpilfyQuadratic.png" width=200>
+
+
+
+## Demo Using SMPL Model
 
 ### [300_RigSmplArticulated](300_RigSmplArticulated)
 <img src="../docs/imgs/glfwold_300_RigSmplArticulated.png" width=200>
@@ -103,6 +117,8 @@
 ### [307_RigSmplIkImageCloth](307_RigSmplIkImageCloth)
 <img src="../docs/imgs/glfwold_307_RigSmplIkImageCloth.png" width=200>
 
+
+
 ## User Interface
 
 ### [400_UiGizmoRot](400_UiGizmoRot)
@@ -116,6 +132,10 @@
 
 ### [403_UiArap](403_UiArap)
 <img src="../docs/imgs/glfwold_403_UiArap.png" width=200>
+
+
+
+## CAD
 
 ### [500_Cad2d](500_Cad2d)
 <img src="../docs/imgs/glfwold_500_Cad2d.png" width=200>
@@ -134,6 +154,10 @@
 
 ### [505_Cad3ReadStep](505_Cad3ReadStep)
 <img src="../docs/imgs/glfwold_505_Cad3ReadStep.png" width=200>
+
+
+
+## Simulation (FEM,FDM,PBD,BEM,SPH,Arap)
 
 ### [600_Fem2Helmholtz](600_Fem2DHelmholtz)
 <img src="../docs/imgs/glfwold_600_Fem2Helmholtz.png" width=200>

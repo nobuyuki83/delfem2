@@ -249,9 +249,7 @@ DFM2_INLINE bool delfem2::DelaunayAroundPoint
         }
       }
     }
-    MoveCCW(itri_cur, inotri_cur, flag_is_wall,
-            aTri);
-    if( flag_is_wall ) break;
+    if( !MoveCCW(itri_cur, inotri_cur, -1, aTri) ){ break; }
     if( itri_cur == itri0 ) break;
   }
   if (!flag_is_wall) return true;
