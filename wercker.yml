@@ -10,6 +10,7 @@ build:
     - script:
         name: install packages
         code: |
+          export DEBIAN_FRONTEND=noninteractive
           sudo apt-get clean && apt-get update
           sudo apt-get install -y git cmake build-essential 
           sudo apt-get install -y libxmu-dev libxi-dev xorg-dev
