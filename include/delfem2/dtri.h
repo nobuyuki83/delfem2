@@ -79,6 +79,13 @@ DFM2_INLINE bool FindEdge_LookAroundPoint
   const std::vector<CDynPntSur>& aPo,
   const std::vector<CDynTri>& aTri);
 
+DFM2_INLINE bool FindPointAroundPoint
+(std::vector<unsigned int>& aIP,
+ const int ipo0,
+ const std::vector<CDynPntSur>& aPo,
+ const std::vector<CDynTri>& aTri);
+
+
 DFM2_INLINE bool FindEdge_LookAllTriangles
  (int& itri0, int& iedtri0,
   //
@@ -91,12 +98,17 @@ DFM2_INLINE void GetTriArrayAroundPoint
   const std::vector<CDynPntSur>& aEPo2,
   const std::vector<CDynTri>& aETri);
 
-DFM2_INLINE void MoveCCW
+DFM2_INLINE bool MoveCCW
  (int& itri_cur,
   unsigned int &inotri_cur,
-  bool& flag_is_wall,
-  //
+  unsigned int itri_adj,
   const std::vector<CDynTri>& aTri);
+
+DFM2_INLINE bool MoveCW
+(int& itri_cur,
+ unsigned int &inotri_cur,
+ unsigned int itri_adj,
+ const std::vector<CDynTri>& aTri);
 
 // ---------------
 // topology edit

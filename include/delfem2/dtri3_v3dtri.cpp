@@ -302,26 +302,8 @@ bool delfem2::DelaunayAroundPoint
         }
       }
     }
-    MoveCCW(itri_cur, inotri_cur, flag_is_wall,
-            aTri);
-    if( flag_is_wall ) break;
+    if( !MoveCCW(itri_cur, inotri_cur, -1, aTri) ){ break; }
     if( itri_cur == itri0 ) break;
-    /*
-     {  // next element
-     const int inotri1 = indexRot3[1][inotri_cur];
-     if (aTri[itri_cur].s2[inotri1]==-1){
-     flag_is_wall = true;
-     break;
-     }
-     const int itri_nex = aTri[itri_cur].s2[inotri1];
-     const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri1]];
-     const int inotri_nex = rel_nex[inotri_cur];
-     assert(aTri[itri_nex].v[inotri_nex]==ipo0);
-     if (itri_nex==itri0) break;  // finish if we reach starting elemnt
-     itri_cur = itri_nex;
-     inotri_cur = inotri_nex;
-     }
-     */
   }
   if (!flag_is_wall) return true;
   
