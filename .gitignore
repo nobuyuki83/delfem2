@@ -20,6 +20,7 @@
 *.so
 *.a
 *.vcxproj
+*.sln
 *.pyc
 *.dll
 *.lib
@@ -30,6 +31,7 @@
 CMakeFiles
 cmake-build-debug
 cmake-build-release
+CMakeCache.txt
 .idea
 .ipynb_checkpoints
 .vscode
@@ -46,6 +48,8 @@ buildMakeStatic
 buildVS
 buildVS32
 buildVS64
+buildVS64Static
+buildVS64Hdronly
 buildEm
 build
 trash

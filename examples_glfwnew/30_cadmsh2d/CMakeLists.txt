@@ -14,7 +14,7 @@ IF(NOT EMSCRIPTEN)
     set(CMAKE_CXX_FLAGS "-O2 -std=c++11 /W4 \
     /wd4100 /wd4458 /wd4577 \
     /wd4267 /wd4244 /wd4800 /wd4996 /wd4530 /wd4245 \
-    /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
+    /wd4505 /wd4838 /wd4305 /wd4505 /wd4456 /wd4055")
   ELSE()
     set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
   ENDIF()
@@ -26,35 +26,45 @@ project(30_cadmsh2d)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
-set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
-set(3RD_PARTY           "../../3rd_party")
+# glfw
+set(GLFW_DIR "../../3rd_party/glfw")
+get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
 
+# opengl
+find_package(OpenGL REQUIRED)
+
+# dfm2
 if(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
 else()
   set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
 endif()
+set(DELFEM2_INCLUDE_DIR "../../include")
 
+# glad
+set(GLAD_INCLUDE_DIR "../../3rd_party/glad4/include")
+get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
+
+################################################
+
+include_directories(
+  ${OPENGL_INCLUDE_DIR}
+  ${GLAD_INCLUDE_DIR}
+  ${GLFW_DIR}/include
+  ${DELFEM2_INCLUDE_DIR}
+)
+
+set(3RD_PARTY "../../3rd_party")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/glad4/include/glad/glad.h   ${3RD_PARTY}/glad4/src/glad.c
+  ${3RD_PARTY}/glad4/include/glad/glad.h   
+  ${3RD_PARTY}/glad4/src/glad.c
   main.cpp
 )
 
-set(GLAD_INCLUDE_DIR "${3RD_PARTY}/glad4/include")
-get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
+#################################################
 
 if (NOT EMSCRIPTEN)
-  set(GLFW_DIR "${3RD_PARTY}/glfw")
-  get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
-  find_package(OpenGL REQUIRED)
-  include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLAD_INCLUDE_DIR}
-    ${GLFW_DIR}/include
-    ${DELFEM2_INCLUDE_DIR}
-  )
   IF(APPLE)
     find_library( COCOA_LIBRARY Cocoa )
     find_library( OpenGL_LIBRARY OpenGL )
@@ -74,19 +84,10 @@ if (NOT EMSCRIPTEN)
       -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
     )
   ELSEIF(MSVC)
-    if(CMAKE_CL_64)
-      target_link_libraries(${PROJECT_NAME}
-        ${OPENGL_LIBRARY}
-        ${GLFW_DIR}/buildVS64/src/Release/glfw3.lib
-        ${EXTRA_LIBS}
-      )
-    else()
-        target_link_libraries(${PROJECT_NAME}
-        ${OPENGL_LIBRARY}
-        ${GLFW_DIR}/buildVS32/src/Release/glfw3.lib
-        ${EXTRA_LIBS}
-      )
-    endif()
+    target_link_libraries(${PROJECT_NAME}
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/Release/glfw3.lib    
+    )    
   endif()
 else()
   set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
