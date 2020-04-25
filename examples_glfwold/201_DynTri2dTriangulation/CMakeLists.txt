@@ -47,7 +47,6 @@ else()
 endif()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-
 ##############################################
 
 include_directories(
