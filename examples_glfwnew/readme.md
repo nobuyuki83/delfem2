@@ -15,7 +15,7 @@
 <img src="../docs/imgs/glfwnew_04_render2texture.png" width=200px>
 
 ### [05_OffScreenProjection](05_OffScreenProjection)
-<img src="../docs/imgs/glfwnew_05_OffScreenProjection.png" width=200px>
+<img src="../docs/imgs/glfwnew_05_offscreenprojection.png" width=200px>
 
 ### [11_imgui_basic](11_imgui_basic)
 <img src="../docs/imgs/glfwnew_11_imgui_basic.png" width=200px>
