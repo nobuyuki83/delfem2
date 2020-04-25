@@ -11,6 +11,8 @@
 #include "delfem2/funcs.h"
 #include <cstdio>
 #include <deque>
+#include <climits>
+
 
 // ------------------------------------------
 

@@ -11,6 +11,7 @@
 #include <stack>
 #include <iostream>
 #include <cassert>
+#include <climits>
 
 #include "delfem2/dtri.h"
 
