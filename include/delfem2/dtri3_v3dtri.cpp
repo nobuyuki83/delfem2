@@ -259,102 +259,75 @@ bool delfem2::FindRayTriangleMeshIntersections
 // -----------------------------------------------------------------
 
 bool delfem2::DelaunayAroundPoint
-(int ipo0,
+(const unsigned int ipo0,
  std::vector<CDynPntSur>& aPo,
  std::vector<CDynTri>& aTri,
  const std::vector<CVec3d>& aVec3)
 {
-  assert(ipo0 < (int)aPo.size());
-  if (aPo[ipo0].e==-1) return true;
+  assert( ipo0 < aPo.size() );
+  if ( aPo[ipo0].e==UINT_MAX ) return true;
   
-  assert(aPo[ipo0].e>=0&&(int)aPo[ipo0].e < (int)aTri.size());
-  assert(aTri[aPo[ipo0].e].v[aPo[ipo0].d]==ipo0);
+  assert( aPo[ipo0].e<aTri.size() );
+  assert( aTri[aPo[ipo0].e].v[aPo[ipo0].d]==ipo0 );
   
-  const int itri0 = aPo[ipo0].e;
-  unsigned int inotri0 = aPo[ipo0].d;
-  
-  unsigned int itri_cur = itri0;
-  unsigned int inotri_cur = aPo[ipo0].d;
+  unsigned int it0 = aPo[ipo0].e;
+  unsigned int in0 = aPo[ipo0].d;
   bool flag_is_wall = false;
   for (;;){
-    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-    if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
-      assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-      // check opposing element
-      const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-//      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const unsigned int inotri_dia = FindAdjEdgeIndex(aTri[itri_cur],inotri_cur,aTri) ;// rel_dia[inotri_cur];
-      assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
-      const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],
-                      aVec3[aTri[itri_cur].v[1]],
-                      aVec3[aTri[itri_cur].v[2]],
-                      aVec3[ipo_dia])==0)
-      {
-        bool res = FlipEdge(itri_cur, inotri_cur, aPo, aTri);
-        if( res ){
-          inotri_cur = 2;
-          assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-          if (itri_cur==itri0) inotri0 = inotri_cur;
-          continue;
-        }
-        else{
-          break;
-        }
-      }
-    }
-    if( !MoveCCW(itri_cur, inotri_cur, -1, aTri) ){ break; }
-    if( itri_cur == itri0 ) break;
-  }
-  if (!flag_is_wall) return true;
-  
-  // ----------------------------------
-  // rotate counter clock-wise
-  
-  itri_cur = itri0;
-  inotri_cur = inotri0;
-  for (;;){
-    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-    
-    if (aTri[itri_cur].s2[inotri_cur]>=0&&aTri[itri_cur].s2[inotri_cur]<(int)aTri.size()){
-      // check elements in opposing side
-      const int itri_dia = aTri[itri_cur].s2[inotri_cur];
-//      const unsigned int* rel_dia = relTriTri[aTri[itri_cur].r2[inotri_cur]];
-      const unsigned int inotri_dia = FindAdjEdgeIndex(aTri[itri_cur],inotri_cur,aTri); // rel_dia[inotri_cur];
-      assert(aTri[itri_dia].s2[inotri_dia]==itri_cur);
-      const int ipo_dia = aTri[itri_dia].v[inotri_dia];
-      if (DetDelaunay(aVec3[aTri[itri_cur].v[0]],
-                      aVec3[aTri[itri_cur].v[1]],
-                      aVec3[aTri[itri_cur].v[2]],
-                      aVec3[ipo_dia])==0)  // Delaunay condition is not satisfiled
-      {
-        FlipEdge(itri_cur, inotri_cur, aPo, aTri);
-        itri_cur = itri_dia;
-        inotri_cur = 1;
-        assert(aTri[itri_cur].v[inotri_cur]==ipo0);
+    assert(aTri[it0].v[in0]==ipo0);
+    if ( aTri[it0].s2[in0]<aTri.size() ){
+      assert(aTri[it0].v[in0]==ipo0);
+      const unsigned int jt0 = aTri[it0].s2[in0];
+      const unsigned int jn0 = FindAdjEdgeIndex(aTri[it0],in0,aTri);
+      assert(aTri[jt0].s2[jn0]==it0);
+      const unsigned int jp0 = aTri[jt0].v[jn0];
+      const int ires = DetDelaunay(aVec3[aTri[it0].v[0]],
+                                   aVec3[aTri[it0].v[1]],
+                                   aVec3[aTri[it0].v[2]],
+                                   aVec3[jp0]);
+      if( ires == 0 ){
+        FlipEdge(it0, in0, aPo, aTri);
+        in0 = 2;
+        assert(aTri[it0].v[in0]==ipo0);
         continue;
       }
     }
-    
-    {
-      const unsigned int inotri2 = (inotri_cur+2)%3; //  indexRot3[2][inotri_cur];
-      if (aTri[itri_cur].s2[inotri2]==-1){
-        return true;
+    if( !MoveCCW(it0, in0, UINT_MAX, aTri) ){ flag_is_wall = true; break; }
+    if( it0 == aPo[ipo0].e ) break;
+  }
+  if (!flag_is_wall) return true;
+  
+  // move couner-clock-wise
+  // ----------------------------------
+  // move clock-wise
+  
+  it0 = aPo[ipo0].e;
+  in0 = aPo[ipo0].d;
+  for (;;){
+    assert( aTri[it0].v[in0]==ipo0 );
+    if ( aTri[it0].s2[in0]<aTri.size() ){
+      const unsigned int jt0 = aTri[it0].s2[in0];
+      const unsigned int jn0 = FindAdjEdgeIndex(aTri[it0],in0,aTri);
+      assert( aTri[jt0].s2[jn0]==it0 );
+      const unsigned int jp0 = aTri[jt0].v[jn0];
+      int ires = DetDelaunay(aVec3[aTri[it0].v[0]],
+                             aVec3[aTri[it0].v[1]],
+                             aVec3[aTri[it0].v[2]],
+                             aVec3[jp0]);
+      if( ires == 0 ){ // Delaunay condition is not satisfiled
+        FlipEdge(it0, in0, aPo, aTri);
+        it0 = jt0;
+        in0 = 1;
+        assert(aTri[it0].v[in0]==ipo0);
+        continue;
       }
-      const int itri_nex = aTri[itri_cur].s2[inotri2];
-//      const unsigned int* rel_nex = relTriTri[aTri[itri_cur].r2[inotri2]];
-      const unsigned int jno0 = FindAdjEdgeIndex(aTri[itri_cur], inotri2, aTri);
-      const unsigned int inotri_nex = (jno0+2)%3;// rel_nex[inotri_cur];
-      assert(aTri[itri_nex].v[inotri_nex]==ipo0);
-      assert(itri_nex!=itri0);  // finsih if reach starting elemnet
-      itri_cur = itri_nex;
-      inotri_cur = inotri_nex;
     }
+    if( !MoveCW(it0, in0, UINT_MAX, aTri) ){ return  true; }
   }
   return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------
 /*
 template <typename TYPE>
 void GetTriAryAroundPoint

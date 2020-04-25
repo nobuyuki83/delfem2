@@ -67,7 +67,8 @@ DFM2_INLINE void DeleteTriFlag(
 DFM2_INLINE void EnforceEdge(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri,
-    int i0, int i1,
+    unsigned int ip0,
+    unsigned int ip1,
     const std::vector<CVec2d>& aVec2);
 
 DFM2_INLINE void Meshing_SingleConnectedShape2D(

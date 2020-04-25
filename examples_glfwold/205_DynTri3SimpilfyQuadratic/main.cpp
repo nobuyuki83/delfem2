@@ -9,6 +9,7 @@
 #include <string>
 #include <cassert>
 #include <cstdlib>
+#include <climits>
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/mshmisc.h"
@@ -151,10 +152,10 @@ void RemoveOnePoint
   std::vector<double> aSymMat4)
 {
   unsigned int itri0;
-  int ied0 = -1;
+  unsigned int ied0 = UINT_MAX;
   dfm2::CVec3d pos;
   while(!cost2edge.empty()){
-    int iv1=-1, iv2=-1;
+    unsigned int iv1=UINT_MAX, iv2=UINT_MAX;
     double err0;
     {
       auto itr_c2e = cost2edge.begin();
@@ -165,8 +166,8 @@ void RemoveOnePoint
       cost2edge.erase(itr_c2e);
       err0 = itr_c2e->first;
     }
-    if( aDP[iv1].e == -1 ){ continue; } // deleted vtx
-    if( aDP[iv2].e == -1 ){ continue; } // deleted vtx
+    if( aDP[iv1].e == UINT_MAX ){ continue; } // deleted vtx
+    if( aDP[iv2].e == UINT_MAX ){ continue; } // deleted vtx
     {
       auto v12 = std::make_pair(iv1,iv2);
       auto itr_e2c = edge2cost.find(v12);
@@ -183,14 +184,14 @@ void RemoveOnePoint
     ied0 = 3-ino0-ino1;
     break;
   }
-  if( ied0 == -1 ) return;
+  if( ied0 == UINT_MAX ) return;
   // --------
-  const int ip_sty = aDTri[itri0].v[(ied0+1)%3];
-  const int ip_del = aDTri[itri0].v[(ied0+2)%3];
+  const unsigned int ip_sty = aDTri[itri0].v[(ied0+1)%3];
+  const unsigned int ip_del = aDTri[itri0].v[(ied0+2)%3];
   bool res = CollapseEdge_MeshDTri(itri0, ied0, aDP, aDTri);
   if( !res ){ return; }
 #if !defined(NDEBUG)
-  if( res ){ assert( aDP[ip_del].e == -1 ); }
+  if( res ){ assert( aDP[ip_del].e == UINT_MAX ); }
   AssertDTri(aDTri);
   AssertMeshDTri(aDP, aDTri);
 #endif
@@ -205,7 +206,7 @@ void RemoveOnePoint
   std::vector<unsigned int> aIP;
   dfm2::FindPointAroundPoint(aIP,
                              ip_sty,aDP,aDTri);
-  for(int iip=0;iip<aIP.size();++iip){
+  for(unsigned int iip=0;iip<aIP.size();++iip){
     unsigned int jp0 = aIP[iip];
     unsigned int iv1, iv2;
     if( ip_sty < jp0 ){
