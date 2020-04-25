@@ -1014,9 +1014,9 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
           cad.topo,cad.aVtx,aEdgeGeo);
       const unsigned int ntri0 = dmsh.aETri.size();
       for(auto & it : aETri){
-        if( it.s2[0]>=0){ it.s2[0] += ntri0; }
-        if( it.s2[1]>=0){ it.s2[1] += ntri0; }
-        if( it.s2[2]>=0){ it.s2[2] += ntri0; }
+        if( it.s2[0]!=UINT_MAX){ it.s2[0] += ntri0; }
+        if( it.s2[1]!=UINT_MAX){ it.s2[1] += ntri0; }
+        if( it.s2[2]!=UINT_MAX){ it.s2[2] += ntri0; }
         dmsh.aETri.push_back(it);
       }
       aFlgTri.resize(dmsh.aETri.size(),ifc);

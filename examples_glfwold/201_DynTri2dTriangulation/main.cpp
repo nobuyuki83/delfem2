@@ -150,7 +150,7 @@ void drawMesh
     ::glVertex2d( aXY[ino2*2+0], aXY[ino2*2+1] );
   }
   ::glEnd();
-  ////////////////
+  //
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
   for(unsigned int itri=0;itri<ntri;itri++){

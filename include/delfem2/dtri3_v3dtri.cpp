@@ -272,7 +272,7 @@ bool delfem2::DelaunayAroundPoint
   const int itri0 = aPo[ipo0].e;
   unsigned int inotri0 = aPo[ipo0].d;
   
-  int itri_cur = itri0;
+  unsigned int itri_cur = itri0;
   unsigned int inotri_cur = aPo[ipo0].d;
   bool flag_is_wall = false;
   for (;;){

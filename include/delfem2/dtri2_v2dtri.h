@@ -24,16 +24,20 @@
 namespace delfem2 {
 
 /**
- * @brief check whether the dynamic triangulation data is broken or not
- * @return return "true" if it is not broken
+ * @brief assert whether the dynamic triangulation data is broken or not
+ * @brief this function do nothing if the code is compiled with NDEBUG
  */
-DFM2_INLINE bool CheckTri(
+DFM2_INLINE void CheckTri(
     const std::vector<CDynPntSur>& aPo3D,
     const std::vector<CDynTri>& aSTri,
     const std::vector<CVec2d>& aXYZ);
 
-DFM2_INLINE bool DelaunayAroundPoint(
-    int ipo0,
+/**
+ * @brief compute delaunay trangulation around a point
+ * @param ipo0 point index
+ */
+DFM2_INLINE void DelaunayAroundPoint(
+    const unsigned int ipo0,
     std::vector<CDynPntSur>& aPo,
     std::vector<CDynTri>& aTri,
     const std::vector<CVec2d>& aVec2);

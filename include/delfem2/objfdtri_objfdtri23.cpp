@@ -19,7 +19,7 @@ namespace objfdtri {
 static void FetchData
     (double *val_to,
      int nno, int ndim,
-     const int *aIP,
+     const unsigned int *aIP,
      const double *val_from,
      int nstride) {
   assert(nstride >= ndim);
@@ -41,7 +41,7 @@ void delfem2::PBD_TriStrain
  const std::vector<CVec2d>& aVec2)
 {
   for(const auto & it : aETri){
-    const int aIP[3] = {
+    const unsigned int aIP[3] = {
       it.v[0],
       it.v[1],
       it.v[2]};
@@ -71,7 +71,7 @@ void delfem2::PBD_Bend
       if( jt0 > (int)it ){ continue; }
       const int je0 = FindAdjEdgeIndex(aETri[it],ie,aETri);
       assert( aETri[jt0].s2[je0] == (int)it);
-      const int aIP[4] = {
+      const unsigned int aIP[4] = {
         aETri[it].v[ie],
         aETri[jt0].v[je0],
         aETri[it].v[(ie+1)%3],

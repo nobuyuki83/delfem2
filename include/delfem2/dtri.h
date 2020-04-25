@@ -15,10 +15,22 @@
 
 namespace delfem2 {
 
+/**
+ * @brief dynamic triangle class
+ */
 class CDynTri{
 public:
-	int v[3];	//!< index of vertex
-	int s2[3];	//!< index of face that is adjacent to ith edge; The 0th edge is the edge facing 0th vertex
+  /**
+   * @brief index of vertex
+   */
+	unsigned int v[3];
+
+	/**
+	 * @brief index of face that is adjacent to ith edge;
+	 * @detail The i-th edge is the edge with (i+1)%3-th and (i+2)%3-th vertex.
+	 * if this edge is on the boundary, the value is set to UINT_MAX
+	 */
+	unsigned int s2[3];
 };
 
 class CDynPntSur{
@@ -29,7 +41,11 @@ public:
   CDynPntSur(int ielem, unsigned int idir)
     : e(ielem), d(idir) {}
 public:
-  int e;  //<! index of elements this can be zero
+  /**
+   * @brief index of elements
+   * @detail this point is isolated if it is UINT_MAX
+   */
+  unsigned int e;
   unsigned int d;
 };
 
@@ -67,8 +83,8 @@ DFM2_INLINE void AssertMeshDTri
 DFM2_INLINE void InitializeMesh
  (std::vector<CDynPntSur>& aEPo2,
   std::vector<CDynTri>& aETri,
-  const unsigned int* aTri,  int nTri,
-  int nXYZ);
+  const unsigned int* aTri,  const unsigned int nTri,
+  const unsigned int nXYZ);
 
 DFM2_INLINE bool FindEdge_LookAroundPoint
  (unsigned int &itri0,
@@ -81,7 +97,7 @@ DFM2_INLINE bool FindEdge_LookAroundPoint
 
 DFM2_INLINE bool FindPointAroundPoint
 (std::vector<unsigned int>& aIP,
- const int ipo0,
+ const unsigned int ipo0,
  const std::vector<CDynPntSur>& aPo,
  const std::vector<CDynTri>& aTri);
 
@@ -99,13 +115,13 @@ DFM2_INLINE void GetTriArrayAroundPoint
   const std::vector<CDynTri>& aETri);
 
 DFM2_INLINE bool MoveCCW
- (int& itri_cur,
+ (unsigned int& itri_cur,
   unsigned int &inotri_cur,
   unsigned int itri_adj,
   const std::vector<CDynTri>& aTri);
 
 DFM2_INLINE bool MoveCW
-(int& itri_cur,
+(unsigned int& itri_cur,
  unsigned int &inotri_cur,
  unsigned int itri_adj,
  const std::vector<CDynTri>& aTri);
@@ -113,34 +129,44 @@ DFM2_INLINE bool MoveCW
 // ---------------
 // topology edit
 
-DFM2_INLINE bool FlipEdge
- (unsigned int itri0, unsigned int ied0,
-  std::vector<CDynPntSur>& aPo,
-  std::vector<CDynTri>& aTri);
+/**
+ * @brief flip edge of a triangle mesh
+ * @details after the flip, itri0 will have the point that were previously aTri[itri0].v[(ied0+1)%3]
+ * aDPo[aDTri[itri0].v[ied0]].e stays itri0
+ * @param itri0 trinangle index 0<=itri0<aTri.size()
+ * @param ied0 edge index. 0<=ied0<3
+ * @return return false if the edge is on the boundary
+ */
+DFM2_INLINE bool FlipEdge (
+		unsigned int itri0,
+ 		unsigned int ied0,
+  	std::vector<CDynPntSur>& aDPo,
+  	std::vector<CDynTri>& aDTri);
+
 
 // ----------------------
 // insert point
 
 DFM2_INLINE bool InsertPoint_ElemEdge
- (const int ipo_ins,  //!< the index of the new point
-  const int itri_ins, //!< triangle index
-  const int ied_ins,  //!< edge index
+ (const unsigned int ipo_ins,  //!< the index of the new point
+  const unsigned int itri_ins, //!< triangle index
+  const unsigned int ied_ins,  //!< edge index
   std::vector<CDynPntSur>& aEPo2,
   std::vector<CDynTri>& aETri );
 
 DFM2_INLINE bool InsertPoint_Elem
- (const int ipo_ins,
-  const int itri_ins,
+ (const unsigned int ipo_ins,
+  const unsigned int itri_ins,
   std::vector<CDynPntSur>& aEPo2,
   std::vector<CDynTri>& aETri);
 
 // -----------------
 // delete point
 
-DFM2_INLINE bool DeleteTri
- (int itri_to,
-  std::vector<CDynPntSur>& aEPo2,
-  std::vector<CDynTri>& aETri);
+DFM2_INLINE bool DeleteTri(
+    unsigned int itri_to,
+    std::vector<CDynPntSur>& aEPo2,
+    std::vector<CDynTri>& aETri);
 
 /**
  * @brief delete a point aETri[itri_del].v[(ied_del+2)%3]
