@@ -175,7 +175,7 @@ DFM2_INLINE void delfem2::PBD_Update_Const3
  const double* m,
  const double* C,
  const double* dCdp,
- const int* aIP,
+ const unsigned int* aIP,
  double ratio)
 {
   std::vector<double> mi(np);
