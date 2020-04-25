@@ -7,6 +7,7 @@
 
 #include <set>
 #include <algorithm>
+#include <climits>
 
 #include "delfem2/dtri2_v2dtri.h"
 
