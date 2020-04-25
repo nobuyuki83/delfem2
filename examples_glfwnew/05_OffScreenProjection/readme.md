@@ -1,2 +1,2 @@
-### [05_OffScreenProjection](05_OffScreenProjection)
-<img src="../../docs/imgs/glfwnew_05_OffScreenProjection.png" width=200px>
+### 05_offscreenprojection
+<img src="../../docs/imgs/glfwnew_05_offscreenprojection.png" width=200px>
