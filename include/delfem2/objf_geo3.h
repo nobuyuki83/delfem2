@@ -45,7 +45,7 @@ DFM2_INLINE void PBD_Update_Const3(
     const double* m,
     const double* C,
     const double* dCdp,
-    const int* aIP,
+    const unsigned int* aIP,
     double ratio);
 
 DFM2_INLINE void PBD_ConstProj_Rigid2D(

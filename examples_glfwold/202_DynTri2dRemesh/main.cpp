@@ -72,7 +72,7 @@ void Coarse(double px, double py)
         const int itri0 = aTriSuP[iit0].first;
         const int inotri0 = aTriSuP[iit0].second;
         CollapseEdge_MeshDTri(itri0, (inotri0+1)%3, aPo2D, aETri);
-        const int ip1 = aETri[itri0].v[ (inotri0+2)%3 ];
+        const unsigned int ip1 = aETri[itri0].v[ (inotri0+2)%3 ];
         DelaunayAroundPoint(ip1, aPo2D, aETri, aVec2);
       }
     }
