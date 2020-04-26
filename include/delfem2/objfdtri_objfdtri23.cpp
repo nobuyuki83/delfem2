@@ -70,7 +70,7 @@ void delfem2::PBD_Bend
       if( jt0 == -1 ){ continue; }
       if( jt0 > (int)it ){ continue; }
       const int je0 = FindAdjEdgeIndex(aETri[it],ie,aETri);
-      assert( aETri[jt0].s2[je0] == (int)it);
+      assert( aETri[jt0].s2[je0] == it);
       const unsigned int aIP[4] = {
         aETri[it].v[ie],
         aETri[jt0].v[je0],

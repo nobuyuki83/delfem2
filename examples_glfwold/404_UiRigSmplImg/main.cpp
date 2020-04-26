@@ -88,7 +88,7 @@ int main()
         gizmo_rot.pos = aBone[ipicked_bone].Pos().Float();
         gizmo_rot.Drag(src0, src1, dir);
         {
-          unsigned int ibp = aBone[ipicked_bone].ibone_parent;
+          const int ibp = aBone[ipicked_bone].ibone_parent;
           dfm2::CMat3d m3;
           if( ibp == -1 ){ m3.SetIdentity(); }
           else{ m3.SetMat4(aBone[ibp].affmat3Global); }
