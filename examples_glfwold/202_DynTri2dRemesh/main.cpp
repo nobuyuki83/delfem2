@@ -35,8 +35,8 @@ void Refine(double px, double py)
 
 void Coarse(double px, double py)
 {
-  for(int ip=(int)aPo2D.size()-1;ip>=0;--ip){
-    if( aPo2D[ip].e == -1 ){ continue; }
+  for(unsigned int ip=aPo2D.size();ip-->0;){ // iterate ip-1 to 0
+    if( aPo2D[ip].e == UINT_MAX ){ continue; }
     if( Distance(aVec2[ip],dfm2::CVec2d(px,py)) > 0.1 ){ continue; }
     std::vector< std::pair<unsigned int,unsigned int> > aTriSuP;
     GetTriArrayAroundPoint(aTriSuP,
@@ -50,7 +50,7 @@ void Coarse(double px, double py)
       aPSuP[iit] = aETri[itri0].v[ (inotri0+2)%3 ];
     }
     std::map<double,int> mapDistTri;
-    for(int iit=0;iit<npsup;++iit){
+    for(unsigned int iit=0;iit<npsup;++iit){
       int ip1 = aPSuP[iit];
       double d01 = Distance(aVec2[ip],aVec2[ip1]);
       double min_area = 0.0;
