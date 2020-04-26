@@ -466,7 +466,7 @@ DFM2_INLINE void delfem2::FlagConnected
   assert( itri0_ker<inout_flg.size() );
 #endif
   inout_flg[itri0_ker] = iflag;
-  std::stack<int> ind_stack;
+  std::stack<unsigned int> ind_stack;
   ind_stack.push(itri0_ker);
   for(;;){
     if( ind_stack.empty() ) break;
@@ -489,7 +489,7 @@ DFM2_INLINE void delfem2::DeleteTriFlag
 {
   assert(aFlg1.size()==aTri1.size());
   const unsigned int ntri0 = aTri1.size();
-  std::vector<int> map01(ntri0,-1);
+  std::vector<unsigned int> map01(ntri0,UINT_MAX);
   unsigned int ntri1 = 0;
   for(unsigned int itri=0;itri<ntri0;++itri){
     if( aFlg1[itri] != iflag ){
@@ -503,9 +503,9 @@ DFM2_INLINE void delfem2::DeleteTriFlag
   aTri1.resize( ntri1 );
   aFlg1.resize( ntri1 );
   for(unsigned int itri0=0;itri0<aTri0.size();itri0++){
-    if( map01[itri0] != -1 ){
-      int itri1 = map01[itri0];
-      assert( itri1 >= 0 && (int)itri1 < ntri1 );
+    if( map01[itri0] != UINT_MAX ){
+      const unsigned int itri1 = map01[itri0];
+      assert( itri1 < ntri1 );
       aTri1[itri1] = aTri0[itri0];
       aFlg1[itri1] = aFlg0[itri0];
       assert(aFlg1[itri1] != iflag );
@@ -528,19 +528,19 @@ DFM2_INLINE void delfem2::DeleteUnrefPoints
 (std::vector<CVec2d>& aVec2,
  std::vector<CDynPntSur>& aPo2D,
  std::vector<CDynTri>& aTri_in,
- const std::vector<int>& aPoDel)
+ const std::vector<unsigned int>& aPoDel)
 {
   assert( aPo2D.size() == aVec2.size() );
-  std::vector<int> map_po_del;
-  int npo_pos;
+  std::vector<unsigned int> map_po_del;
+  unsigned int npo_pos;
   {
-    map_po_del.resize( aPo2D.size(), -1 );
-    for(int ipo : aPoDel){
-      map_po_del[ ipo ] = -2;
+    map_po_del.resize( aPo2D.size(), UINT_MAX-1 );
+    for(unsigned int ipo : aPoDel){
+      map_po_del[ ipo ] = UINT_MAX;
     }
     npo_pos = 0;
     for(unsigned int ipo=0;ipo<aPo2D.size();ipo++){
-      if( map_po_del[ipo] == -2 ) continue;
+      if( map_po_del[ipo] == UINT_MAX ) continue;
       map_po_del[ipo] = npo_pos;
       npo_pos++;
     }
@@ -551,16 +551,16 @@ DFM2_INLINE void delfem2::DeleteUnrefPoints
     aPo2D.resize( npo_pos );
     aVec2.resize( npo_pos );
     for(unsigned int ipo=0;ipo<map_po_del.size();ipo++){
-      if( map_po_del[ipo] == -2 ) continue;
-      int ipo1 = map_po_del[ipo];
+      if( map_po_del[ipo] == UINT_MAX ) continue;
+      unsigned int ipo1 = map_po_del[ipo];
       aPo2D[ipo1] = aPo_tmp[ipo];
       aVec2[ipo1] = aVec2_tmp[ipo];
     }
   }
   for(unsigned int itri=0;itri<aTri_in.size();itri++){
     for(int ifatri=0;ifatri<3;ifatri++){
-      assert( aTri_in[itri].v[ifatri] != -2 );
       const unsigned int ipo = aTri_in[itri].v[ifatri];
+      assert( map_po_del[ipo] != UINT_MAX );
       aTri_in[itri].v[ifatri] = map_po_del[ipo];
       aPo2D[ipo].e = itri;
       aPo2D[ipo].d = ifatri;
@@ -878,42 +878,43 @@ void PrepareInput
 DFM2_INLINE void delfem2::Meshing_SingleConnectedShape2D
 (std::vector<CDynPntSur>& aPo2D,
  std::vector<CVec2d>& aVec2,
- std::vector<CDynTri>& aETri,
+ std::vector<CDynTri>& aDTri,
  const std::vector<int>& loopIP_ind,
  const std::vector<int>& loopIP)
 {
-  std::vector<int> aPoDel;
+  std::vector<unsigned int> aPoDel;
   {
-    const int npo = (int)aVec2.size();
+    const unsigned int npo = aVec2.size();
     aPoDel.push_back( npo+0 );
     aPoDel.push_back( npo+1 );
     aPoDel.push_back( npo+2 );
   }
-  Meshing_Initialize(aPo2D,aETri,aVec2);
+  Meshing_Initialize(aPo2D,aDTri,aVec2);
   for(size_t iloop=0;iloop<loopIP_ind.size()-1;++iloop){
     const int np0 = loopIP_ind[iloop+1]-loopIP_ind[iloop];
     for(int iip=loopIP_ind[iloop];iip<loopIP_ind[iloop+1];++iip){
       const int ip0 = loopIP[loopIP_ind[iloop]+(iip+0)%np0];
       const int ip1 = loopIP[loopIP_ind[iloop]+(iip+1)%np0];
-      EnforceEdge(aPo2D,aETri,
+      EnforceEdge(aPo2D,aDTri,
                   ip0,ip1,aVec2);
     }
   }
-  {
-    std::vector<int> aflg(aETri.size(),0);
-    int itri0_ker;
+  { // delete triangles
+    std::vector<int> aflg(aDTri.size(),0);
+    unsigned int itri0_ker=UINT_MAX;
     {
-      int iedtri;
+      unsigned int iedtri;
       FindEdge_LookAllTriangles(itri0_ker, iedtri,
-                                loopIP[0], loopIP[1], aETri);
-      assert(itri0_ker>=0&&itri0_ker<(int)aETri.size());
+                                loopIP[0], loopIP[1], aDTri);
+      assert( itri0_ker < aDTri.size() );
       FlagConnected(aflg,
-                    aETri, itri0_ker,1);
+                    aDTri, itri0_ker,1);
     }
-    DeleteTriFlag(aETri,
+    DeleteTriFlag(aDTri,
                   aflg, 0);
   }
-  DeleteUnrefPoints(aVec2,aPo2D,aETri,
+  // delete points
+  DeleteUnrefPoints(aVec2,aPo2D,aDTri,
                     aPoDel);
 }
 
