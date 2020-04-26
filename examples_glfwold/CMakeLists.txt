@@ -61,6 +61,7 @@ add_subdirectory(400_UiGizmoRot)
 add_subdirectory(401_UiGizmoTransl)
 add_subdirectory(402_UiGizmoAffine)
 add_subdirectory(403_UiArap)
+add_subdirectory(404_UiRigSmplImg)
 
 # cad
 add_subdirectory(500_Cad2d)

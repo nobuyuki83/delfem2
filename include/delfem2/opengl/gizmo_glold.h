@@ -58,6 +58,15 @@ void Draw(const CGizmo_Affine<REAL>& ga)
   }
 }
 
+template <typename REAL>
+void Draw(const CGizmo_Rotation<REAL>& gizmo_rot)
+{
+  DrawHandlerRotation_PosQuat(gizmo_rot.pos,
+                              gizmo_rot.quat,
+                              gizmo_rot.size,
+                              gizmo_rot.ielem_picked);
+}
+
 }
 }
 

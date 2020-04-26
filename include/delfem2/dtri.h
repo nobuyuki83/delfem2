@@ -89,9 +89,10 @@ DFM2_INLINE void InitializeMesh
 DFM2_INLINE bool FindEdge_LookAroundPoint
  (unsigned int &itri0,
   unsigned int &inotri0,
-  unsigned &inotri1,
+  unsigned int &inotri1,
   //
-  const int ipo0, const int ipo1,
+  const unsigned int ipo0,
+  const unsigned int ipo1,
   const std::vector<CDynPntSur>& aPo,
   const std::vector<CDynTri>& aTri);
 
@@ -102,10 +103,15 @@ DFM2_INLINE bool FindPointAroundPoint
  const std::vector<CDynTri>& aTri);
 
 
-DFM2_INLINE bool FindEdge_LookAllTriangles
- (int& itri0, int& iedtri0,
+/**
+ * @details itir0 stays the same if the edge of the traingle is not found
+ */
+DFM2_INLINE void FindEdge_LookAllTriangles
+ (unsigned int& itri0,
+  unsigned int& iedtri0,
   //
-  const int ipo0, const int ipo1,
+  const unsigned int ipo0,
+  const unsigned int ipo1,
   const std::vector<CDynTri>& aETri);
 
 DFM2_INLINE void GetTriArrayAroundPoint

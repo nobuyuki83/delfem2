@@ -142,10 +142,10 @@ DFM2_INLINE void GenMeshCadFace
       ip1 = (np == 0) ? topo.aEdge[ie0].iv1 : aEdgeGeo[ie0].ip0;
     }
     assert(ip0 != -1 && ip1 != -1);
-    int itri0_ker, iedtri;
+    unsigned int itri0_ker=UINT_MAX, iedtri;
     FindEdge_LookAllTriangles(itri0_ker, iedtri,
                               ip0, ip1, aETri);
-    assert(itri0_ker >= 0 && itri0_ker < (int) aETri.size());
+    assert( itri0_ker < aETri.size() );
     FlagConnected(aFlgTri,
                   aETri, itri0_ker, (int) iface0);
   }
