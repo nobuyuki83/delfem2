@@ -13,13 +13,19 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
-#define max(i,j) (i>j?i:j)
-#define min(i,j) (i>j?j:i)
+unsigned int max(unsigned int i, unsigned int j) {
+  return (i>j?i:j);
+}
+
+unsigned int min(unsigned int i,unsigned int j){
+  return (i>j?j:i);
+}
 
 // Clamped Fetch
 double ClampedFetch(
     double* x,
-    int i, int j, unsigned int nw, unsigned int nh)
+    unsigned int i, 
+    unsigned int j, unsigned int nw, unsigned int nh)
 {
 	i = min(max(0,i),nw-1);
 	j = min(max(0,j),nh-1);

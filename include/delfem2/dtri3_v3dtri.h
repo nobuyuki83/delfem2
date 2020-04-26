@@ -36,7 +36,7 @@ bool FindRayTriangleMeshIntersections
   const std::vector<CVec3d>& aVec3);
 
 bool DelaunayAroundPoint
- (int ipo0,
+ (const unsigned int ipo0,
   std::vector<CDynPntSur>& aPo,
   std::vector<CDynTri>& aTri,
   const std::vector<CVec3d>& aVec3);

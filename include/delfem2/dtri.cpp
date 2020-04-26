@@ -158,8 +158,8 @@ DFM2_INLINE bool delfem2::InsertPoint_ElemEdge
   
   aTri.resize(aTri.size()+2);
   
-  CDynTri oldA = aTri[itri_ins];
-  CDynTri oldB = aTri[itri_adj];
+  const CDynTri oldA = aTri[itri_ins];
+  const CDynTri oldB = aTri[itri_adj];
   
   const unsigned int inoA0 = ied_ins;
   const unsigned int inoA1 = (ied_ins+1)%3;
@@ -418,46 +418,45 @@ DFM2_INLINE bool delfem2::FindPointAroundPoint
 DFM2_INLINE bool delfem2::FindEdge_LookAroundPoint
 (unsigned int &itri0,
  unsigned int &inotri0,
- unsigned &inotri1,
+ unsigned int &inotri1,
  //
- const int ipo0, const int ipo1,
+ const unsigned int ipo0,
+ const unsigned int ipo1,
  const std::vector<CDynPntSur>& aPo,
  const std::vector<CDynTri>& aTri)
 {
-  const int itri_ini = aPo[ipo0].e;
-  const unsigned int inotri_ini = aPo[ipo0].d;
-  // ----------
-  unsigned int inotri_cur = inotri_ini;
-  unsigned int itri_cur = itri_ini;
+  unsigned int itc = aPo[ipo0].e;
+  unsigned int inc = aPo[ipo0].d;
   for (;;){  // serch clock-wise
-    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-    const unsigned int inotri2 = (inotri_cur+1)%3;
-    if (aTri[itri_cur].v[inotri2]==ipo1){
-      itri0 = itri_cur;
-      inotri0 = inotri_cur;
+    assert(aTri[itc].v[inc]==ipo0);
+    const unsigned int inotri2 = (inc+1)%3;
+    if (aTri[itc].v[inotri2]==ipo1){
+      itri0 = itc;
+      inotri0 = inc;
       inotri1 = inotri2;
       assert(aTri[itri0].v[inotri0]==ipo0);
       assert(aTri[itri0].v[inotri1]==ipo1);
       return true;
     }
-    if( !MoveCW(itri_cur,inotri_cur,UINT_MAX,aTri) ){ break; }
-    if (itri_cur==itri_ini) return false;
+    if( !MoveCW(itc,inc,UINT_MAX,aTri) ){ break; }
+    if (itc==aPo[ipo0].e) return false;
   }
   // -------------
-  inotri_cur = inotri_ini;
-  itri_cur = itri_ini;
+  inc = aPo[ipo0].d;
+  itc = aPo[ipo0].e;
   for (;;){ // search counter clock-wise
-    assert(aTri[itri_cur].v[inotri_cur]==ipo0);
-    if( !MoveCCW(itri_cur,inotri_cur,UINT_MAX,aTri) ){ break; }
-    if (itri_cur==itri_ini){  // end if it goes around
+    assert(aTri[itc].v[inc]==ipo0);
+    if( !MoveCCW(itc,inc,UINT_MAX,aTri) ){ break; }
+    if (itc==aPo[ipo0].e){  // end if it goes around
       itri0 = 0;
-      inotri0 = 0; inotri1 = 0;
+      inotri0 = 0;
+      inotri1 = 0;
       return false;
     }
-    const unsigned int inotri2 = (inotri_cur+1)%3;
-    if (aTri[itri_cur].v[inotri2]==ipo1){
-      itri0 = itri_cur;
-      inotri0 = inotri_cur;
+    const unsigned int inotri2 = (inc+1)%3;
+    if (aTri[itc].v[inotri2]==ipo1){
+      itri0 = itc;
+      inotri0 = inc;
       inotri1 = inotri2;
       assert(aTri[itri0].v[inotri0]==ipo0);
       assert(aTri[itri0].v[inotri1]==ipo1);
@@ -469,24 +468,25 @@ DFM2_INLINE bool delfem2::FindEdge_LookAroundPoint
 
 
 
-DFM2_INLINE bool delfem2::FindEdge_LookAllTriangles
-(int& itri0, int& iedtri0,
+DFM2_INLINE void delfem2::FindEdge_LookAllTriangles
+(unsigned int& itri0,
+ unsigned int& iedtri0,
  //
- const int ipo0, const int ipo1,
+ const unsigned int ipo0,
+ const unsigned int ipo1,
  const std::vector<CDynTri>& aTri)
 {
   for(size_t itri=0;itri<aTri.size();++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
-      int jpo0 = aTri[itri].v[(iedtri+0)%3];
-      int jpo1 = aTri[itri].v[(iedtri+1)%3];
+      unsigned int jpo0 = aTri[itri].v[(iedtri+0)%3];
+      unsigned int jpo1 = aTri[itri].v[(iedtri+1)%3];
       if( jpo0 == ipo0 && jpo1 == ipo1 ){
         itri0 = itri;
         iedtri0 = iedtri;
-        return true;
+        return;
       }
     }
   }
-  return false;
 }
 
 DFM2_INLINE void delfem2::AssertDTri(
@@ -496,9 +496,9 @@ DFM2_INLINE void delfem2::AssertDTri(
 	const unsigned int ntri = aTri.size();
 	for(unsigned int itri=0;itri<ntri;itri++){
     const CDynTri& tri = aTri[itri];
-    if( tri.v[0] == -1 ){
-      assert(tri.v[1] == -1);
-      assert(tri.v[2] == -1);
+    if( tri.v[0] == UINT_MAX ){
+      assert(tri.v[1] == UINT_MAX );
+      assert(tri.v[2] == UINT_MAX );
       continue;
     }
     assert( tri.v[0]!=tri.v[1] );
@@ -509,7 +509,7 @@ DFM2_INLINE void delfem2::AssertDTri(
     assert( (tri.s2[2]!=tri.s2[0]) || tri.s2[0]==UINT_MAX );
 		for(int iedtri=0;iedtri<3;iedtri++){
       if( tri.s2[iedtri]==UINT_MAX ) continue;
-      assert( tri.s2[iedtri] >=0 && tri.s2[iedtri]<(int)aTri.size() );
+      assert( tri.s2[iedtri]<aTri.size() );
       const unsigned int jtri = tri.s2[iedtri]; assert( jtri < ntri );
       const unsigned int jno = FindAdjEdgeIndex(aTri[itri], iedtri, aTri);
       assert( aTri[jtri].s2[jno] == itri );
@@ -626,12 +626,11 @@ DFM2_INLINE bool delfem2::DeleteTri(
 {
   if (itri_to>=aTri.size()) return true;
   // -------------
-  {
-    assert(aTri[itri_to].s2[0]==UINT_MAX);
-    assert(aTri[itri_to].s2[1]==UINT_MAX);
-    assert(aTri[itri_to].s2[2]==UINT_MAX);
-  }
-  const int itri_from = (int)aTri.size()-1;
+  assert(aTri[itri_to].s2[0]==UINT_MAX);
+  assert(aTri[itri_to].s2[1]==UINT_MAX);
+  assert(aTri[itri_to].s2[2]==UINT_MAX);
+  assert(aTri.size()>0);
+  const unsigned int itri_from = aTri.size()-1;
   if (itri_to==itri_from){
     aTri.resize(aTri.size()-1);
     return true;
@@ -854,7 +853,7 @@ DFM2_INLINE void delfem2::GetTriArrayAroundPoint
  const std::vector<CDynPntSur>& aPo,
  const std::vector<CDynTri>& aTri)
 {
-  const int itri_ini = aPo[ipoin].e;
+  const unsigned int itri_ini = aPo[ipoin].e;
   unsigned int inoel_c0 = aPo[ipoin].d;
   assert( itri_ini<aTri.size() && inoel_c0<3 && aTri[itri_ini].v[inoel_c0]==ipoin );
   unsigned int itri0 = itri_ini;

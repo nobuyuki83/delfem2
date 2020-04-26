@@ -291,6 +291,13 @@ public:
   void SetRotMatrix_Quaternion(const REAL quat[]);
   void SetRotMatrix_BryantAngle(REAL rx, REAL ry, REAL rz);
   void SetIdentity(REAL scale = 1);
+  void SetMat4(const REAL m[16]){
+    for(int i=0;i<3;++i){
+      for(int j=0;j<3;++j){
+        this->mat[i*3+j] = m[i*4+j];
+      }
+    }
+  }
   // ------------------------
   void GetCRV_RotMatrix(REAL crv[]) const;
   void GetQuat_RotMatrix(REAL quat[]) const;

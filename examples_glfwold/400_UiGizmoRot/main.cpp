@@ -34,6 +34,7 @@ int main(int argc,char* argv[])
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
                         aXYZ,aTri);
       delfem2::Normalize_Points3(aXYZ);
+      gizmo_rot.size = 0.7;
     }
     //
     virtual void mouse_press(const float src[3], const float dir[3]){
@@ -60,10 +61,7 @@ int main(int argc,char* argv[])
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }
-      dfm2::opengl::DrawHandlerRotation_PosQuat(gizmo_rot.pos,
-                                                gizmo_rot.quat,
-                                                gizmo_rot.size,
-                                                gizmo_rot.ielem_picked);
+      delfem2::opengl::Draw(gizmo_rot);
       DrawEnd_oldGL();
     }
   public:

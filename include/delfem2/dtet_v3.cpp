@@ -1856,7 +1856,7 @@ std::vector<int>& tmp_buffer)
       }
       if (tmp_buffer[it0*4+ift0]>=0) continue;
       tmp_buffer[it0*4+ift0] = iold0;
-      ////
+      //
       const int jt0 = aSTet[it0].s[ift0];
       bool is_out = false;
       {
