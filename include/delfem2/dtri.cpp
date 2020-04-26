@@ -468,24 +468,25 @@ DFM2_INLINE bool delfem2::FindEdge_LookAroundPoint
 
 
 
-DFM2_INLINE bool delfem2::FindEdge_LookAllTriangles
-(int& itri0, int& iedtri0,
+DFM2_INLINE void delfem2::FindEdge_LookAllTriangles
+(unsigned int& itri0,
+ unsigned int& iedtri0,
  //
- const int ipo0, const int ipo1,
+ const unsigned int ipo0,
+ const unsigned int ipo1,
  const std::vector<CDynTri>& aTri)
 {
   for(size_t itri=0;itri<aTri.size();++itri){
     for(int iedtri=0;iedtri<3;++iedtri){
-      int jpo0 = aTri[itri].v[(iedtri+0)%3];
-      int jpo1 = aTri[itri].v[(iedtri+1)%3];
+      unsigned int jpo0 = aTri[itri].v[(iedtri+0)%3];
+      unsigned int jpo1 = aTri[itri].v[(iedtri+1)%3];
       if( jpo0 == ipo0 && jpo1 == ipo1 ){
         itri0 = itri;
         iedtri0 = iedtri;
-        return true;
+        return;
       }
     }
   }
-  return false;
 }
 
 DFM2_INLINE void delfem2::AssertDTri(

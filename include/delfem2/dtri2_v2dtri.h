@@ -59,6 +59,11 @@ DFM2_INLINE void FlagConnected
   unsigned int itri0_ker,
   int iflag);
 
+
+/**
+ * @brief delete triangle where flag is raised
+ * @details aFlg.size() == aTri_in.size() needs to hold.
+ */
 DFM2_INLINE void DeleteTriFlag(
     std::vector<CDynTri>& aTri_in,
     std::vector<int>& aFlg,
@@ -82,7 +87,7 @@ DFM2_INLINE void DeleteUnrefPoints(
     std::vector<CVec2d>& aVec2,
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri_in,
-    const std::vector<int>& aPoDel);
+    const std::vector<unsigned int>& aPoDel);
 
 DFM2_INLINE void DeletePointsFlag(
     std::vector<CVec2d>& aVec1,

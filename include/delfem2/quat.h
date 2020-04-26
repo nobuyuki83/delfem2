@@ -159,8 +159,23 @@ public:
     Normalize_Quat(q.q);
     return q;
   }
-  void CopyTo(T* v) const {
-    Copy_Quat(v, q);
+  void CopyTo(float* q1) const {
+    q1[0] = q[0];
+    q1[1] = q[1];
+    q1[2] = q[2];
+    q1[3] = q[3];
+  }
+  void CopyTo(double* q1) const {
+    q1[0] = q[0];
+    q1[1] = q[1];
+    q1[2] = q[2];
+    q1[3] = q[3];
+  }
+  CQuat<double> Double() const {
+    return CQuat<double>((double)q[0], (double)q[1], (double)q[2], (double)q[3]);
+  }
+  CQuat<T> Conjugate() const {
+    return CQuat<T>(q[0], -q[1], -q[2], -q[3]);
   }
   /*
 	CQuaternion(const CQuaternion& rhs)
