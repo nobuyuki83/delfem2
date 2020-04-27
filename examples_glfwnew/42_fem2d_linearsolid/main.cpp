@@ -217,7 +217,8 @@ void MakeMesh(){
                                    loopIP_ind,loopIP);
     if( elen > 1.0e-10 ){
       dfm2::CInputTriangulation_Uniform param(1.0);
-      std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
+      std::vector<int> aFlgPnt(aPo2D.size());
+      std::vector<unsigned int> aFlgTri(aETri.size(),0);
       MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                     aVec2.size(),0,elen, param);
     }
@@ -229,10 +230,10 @@ void MakeMesh(){
 
 void InitializeProblem()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*2;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*2;
   aBCFlag.assign(nDoF, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
 //    const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(py-len) < 0.0001 ){

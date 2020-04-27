@@ -238,7 +238,7 @@ DFM2_INLINE void delfem2::MeshingInside
  std::vector<CDynTri>& aTri,
  std::vector<CVec2d>& aVec2,
  std::vector<int>& aFlagPnt,
- std::vector<int>& aFlagTri,
+ std::vector<unsigned int>& aFlagTri,
  const int nPointFix,
  const unsigned int nflgpnt_offset,
  const double len,
@@ -1090,7 +1090,7 @@ DFM2_INLINE void delfem2::GenMesh
   if( resolution_face > 1.0e-10 ){
     CInputTriangulation_Uniform param(1.0);
     std::vector<int> flg_pnt(aVec2.size());
-    std::vector<int> flg_tri(aETri.size());
+    std::vector<unsigned int> flg_tri(aETri.size(),0);
     MeshingInside(aPo2D,aETri,aVec2, flg_pnt,flg_tri,
                   aVec2.size(), 0, resolution_face, param);
   }
