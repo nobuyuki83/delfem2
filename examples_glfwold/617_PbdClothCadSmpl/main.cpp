@@ -163,7 +163,8 @@ int main(int argc,char* argv[])
     delfem2::CCad2D cad;
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
     // -------
-    dfm2::MeshingPattern(aETri,aVec2,aXYZ,aLine,
+    dfm2::CMesher_Cad2D mesher;
+    dfm2::MeshingPattern(aETri,aVec2,aXYZ,aLine,mesher,
                          aRT23,cad,aIESeam,mesher_edge_length);
   }
   std::vector<double> aXYZt = aXYZ;

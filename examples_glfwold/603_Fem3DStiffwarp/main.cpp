@@ -57,7 +57,7 @@ void GenMesh
   if( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
     std::vector<int> aFlgPnt(aVec2.size());
-    std::vector<int> aFlgTri(aETri.size());
+    std::vector<unsigned int> aFlgTri(aETri.size(),0);
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                   aVec2.size(), 0, elen, param);
   }

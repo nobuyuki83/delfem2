@@ -74,12 +74,12 @@ void GenMesh(const std::vector< std::vector<double> >& aaXY)
                      elen );
     }
   }
-  ////
   Meshing_SingleConnectedShape2D(aPo2D, aVec2, aETri,
                                  loopIP_ind,loopIP);
   if( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
-    std::vector<int> aFlgPnt(aPo2D.size()), aFlgTri(aETri.size());
+    std::vector<int> aFlgPnt(aPo2D.size());
+    std::vector<unsigned int> aFlgTri(aETri.size(),0);
     MeshingInside(aPo2D,aETri,aVec2, aFlgPnt,aFlgTri,
                   aVec2.size(),0, elen, param);
   }

@@ -236,14 +236,27 @@ public:
                                              bool is_end_point,
                                              const CCad2D& cad2d);
 public:
+  // inputs for meshing
   double edge_length;
+  /**
+   * @brief specifiation of how many divisions in the cad edge.
+   * @details this specification has more priority than the this->edge_length
+   */
   std::map<unsigned int, unsigned int> mapIdEd_NDiv;
-  //
+  
+  // --------------
+  // output for meshing
+  
   unsigned int nvtx;
   unsigned int nedge;
   unsigned int nface;
   std::vector<int> aFlgPnt;
-  std::vector<int> aFlgTri;
+  
+  /**
+   * @brief map triangle index to cad face index
+   * @details after calling "this->Meshing()", the size of "this->aFlgTri" should be equal to the number of all the triangles
+   */
+  std::vector<unsigned int> aFlgTri;
 };
 
 } // namespace delfem2
