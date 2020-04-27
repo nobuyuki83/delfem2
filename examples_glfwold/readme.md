@@ -6,8 +6,6 @@
 <img src="../docs/imgs/glfwold_000_OpenWin.png" width=200px>
 
 
-
-
 ## Basic Demo
 
 ### [100_Nav3D](100_ViewNavigationIn3D)
@@ -132,6 +130,10 @@
 
 ### [403_UiArap](403_UiArap)
 <img src="../docs/imgs/glfwold_403_UiArap.png" width=200>
+
+
+### [404_UiRigSmplImg](404_UiRigSmplImg)
+<img src="../docs/imgs/glfwold_404_UiRigSmplImg.png" width=200>
 
 
 
