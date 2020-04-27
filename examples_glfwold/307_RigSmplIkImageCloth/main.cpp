@@ -152,7 +152,8 @@ int main()
     delfem2::CCad2D cad;
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
     // -------
-    dfm2::MeshingPattern(aETri_Cloth,aVec2_Cloth,aXYZ_Cloth,aLine_Cloth,
+    dfm2::CMesher_Cad2D mesher;
+    dfm2::MeshingPattern(aETri_Cloth,aVec2_Cloth,aXYZ_Cloth,aLine_Cloth,mesher,
                          aRT23,cad,aIESeam,mesher_edge_length);
   }
   std::vector<double> aXYZt_Cloth = aXYZ_Cloth;
