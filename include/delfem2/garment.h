@@ -11,6 +11,10 @@
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
+#include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/objf_geo3.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
+#include "delfem2/bv.h"
 
 namespace delfem2 {
 
@@ -52,15 +56,15 @@ void MeshingPattern
   std::vector<CVec2d>& aVec2,
   std::vector<double>& aXYZ, // deformed vertex positions
   std::vector<unsigned int>& aLine,
+  CMesher_Cad2D& mesher,
   const std::vector<CRigidTrans_2DTo3D>& aRT23,
   const delfem2::CCad2D& cad,
   const std::vector<unsigned int>& aIESeam,
   const double mesher_edge_length)
 {
-  delfem2::CMesher_Cad2D mesher;
   mesher.edge_length = mesher_edge_length;
   const double el = mesher.edge_length;
-  for(int ie=0;ie<aIESeam.size()/2;++ie){
+  for(unsigned int ie=0;ie<aIESeam.size()/2;++ie){
     const unsigned int ie0 = aIESeam[ie*2+0];
     const unsigned int ie1 = aIESeam[ie*2+1];
     const double l0 = cad.aEdge[ie0].LengthMesh();
@@ -76,29 +80,67 @@ void MeshingPattern
   aETri = dmesh.aETri;
   aVec2 = dmesh.aVec2;
   // ---
-  const int np = aVec2.size();
+  const unsigned int np = aVec2.size();
   aXYZ.resize(np*3);
-  for(int ifc=0;ifc<cad.aFace.size();++ifc){
+  for(unsigned int ifc=0;ifc<cad.aFace.size();++ifc){
     const CRigidTrans_2DTo3D& rt23 = aRT23[ifc];
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,ifc), cad);
     for(int ip : aIP){
       rt23.Transform(aVec2[ip]).CopyTo(aXYZ.data()+ip*3);
     }
   }
-  for(int ie=0;ie<aIESeam.size()/2;++ie){
+  for(unsigned int ie=0;ie<aIESeam.size()/2;++ie){
     unsigned int ie0 = aIESeam[ie*2+0];
     unsigned int ie1 = aIESeam[ie*2+1];
     std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(ie0, true, cad);
     std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(ie1, true, cad);
-    const int npe = aIP0.size();
+    const unsigned int npe = aIP0.size();
     assert( aIP1.size() == npe );
-    for(int iip=0;iip<npe;++iip){
+    for(unsigned int iip=0;iip<npe;++iip){
       int ip0 = aIP0[iip];
       int ip1 = aIP1[npe-iip-1];
       aLine.push_back(ip0);
       aLine.push_back(ip1);
     }
   }
+}
+
+void StepTime
+(std::vector<double>& aXYZ, // deformed vertex positions
+ std::vector<double>& aXYZt,
+ std::vector<double>& aUVW, // deformed vertex velocity
+ std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
+ std::vector<CInfoNearest<double>>& aInfoNearest,
+ const std::vector<CDynTri>& aETri,
+ const std::vector<CVec2d>& aVec2,
+ const std::vector<unsigned int>& aLine,
+ //
+ std::vector<double>& aXYZ_Contact,
+ std::vector<unsigned int>& aTri_Contact,
+ std::vector<double>& aNorm_Contact,
+ CBVH_MeshTri3D<CBV3d_Sphere,double>& bvh,
+ //
+ const double dt,
+ const double gravity[3],
+ const double contact_clearance,
+ const double rad_explore)
+{
+  PBD_Pre3D(aXYZt,
+            dt, gravity, aXYZ, aUVW, aBCFlag);
+  PBD_TriStrain(aXYZt.data(),
+                aXYZt.size()/3, aETri, aVec2);
+  PBD_Bend(aXYZt.data(),
+           aXYZt.size()/3, aETri, aVec2, 0.5);
+  PBD_Seam(aXYZt.data(),
+           aXYZt.size()/3, aLine.data(), aLine.size()/2);
+  Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
+                                            aXYZt.size()/3,
+                                            contact_clearance,bvh,
+                                            aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+                                            aTri_Contact.data(), aTri_Contact.size()/3,
+                                            aNorm_Contact.data(), rad_explore);
+  PBD_Post(aXYZ, aUVW,
+           dt, aXYZt, aBCFlag);
 }
 
 }

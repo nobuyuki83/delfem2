@@ -151,12 +151,16 @@ public:
   double elen;
 };
 
+
+/**
+ * @param aFlagTri a map from triangle index to cad face indeix
+ */
 void MeshingInside(
     std::vector<CDynPntSur>& aPo2D,
     std::vector<CDynTri>& aTri,
     std::vector<CVec2d>& aVec2,
     std::vector<int>& aFlagPnt,
-    std::vector<int>& aFlagTri,
+    std::vector<unsigned int>& aFlagTri,
     //
     const int nPointFix,
     const unsigned int nflgpnt_offset,
@@ -298,8 +302,8 @@ public:
                                    loopIP_ind,loopIP);
     if( edge_length > 1.0e-10 ){
       CInputTriangulation_Uniform param(1.0);
-      std::vector<int> aFlgTri(aETri.size(),0);
       std::vector<int> aFlgPnt(aVec2.size(),0);
+      std::vector<unsigned int> aFlgTri(aETri.size(),0);
       MeshingInside(aEPo,aETri,aVec2, aFlgPnt,aFlgTri,
                     aVec2.size(),0, edge_length, param);
     }

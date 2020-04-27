@@ -75,8 +75,8 @@ DFM2_INLINE void GenMeshCadFace
   {
     aPo2D.resize(aVec2.size());
     for (size_t ixys = 0; ixys < aVec2.size(); ixys++) {
-      aPo2D[ixys].e = -1;
-      aPo2D[ixys].d = -1;
+      aPo2D[ixys].e = UINT_MAX;
+      aPo2D[ixys].d = 0;
     }
   }
   {
@@ -137,7 +137,7 @@ DFM2_INLINE void GenMeshCadFace
       const int il0 = topo.aFace[iface0].aIL[0];
       const std::vector<std::pair<int, bool> > &aIE = topo.aLoop[il0].aIE;
       unsigned int ie0 = aIE[0].first;
-      const int np = aEdgeGeo[ie0].aP.size();
+      const unsigned int np = aEdgeGeo[ie0].aP.size();
       ip0 = topo.aEdge[ie0].iv0;
       ip1 = (np == 0) ? topo.aEdge[ie0].iv1 : aEdgeGeo[ie0].ip0;
     }
@@ -414,7 +414,6 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPolygonPoints
   for (size_t ip = 0; ip < np; ++ip) {
     aP.emplace_back(myStod(aS[ip * 2 + 0]), myStod(aS[ip * 2 + 1]));
   }
-  //  std::cout << "np  " << np << std::endl;
   for (size_t ie = 0; ie < np; ++ie) {
     CCad2D_EdgeGeo e;
     e.p0 = aP[(ie + 0) % np];
@@ -965,8 +964,10 @@ DFM2_INLINE void delfem2::CCad2D::Tessellation()
   }
 }
 
-// ---------------------------------------------------------------------------------------
 
+// above: CCad2
+// ======================================================================
+// below: CMesher_Cad2
 
 DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
 (CMeshDynTri2D& dmsh,
@@ -1002,27 +1003,19 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
   }
   //
   aFlgTri.clear();
-  { // add inital face
-    { // face 0
-      cad2::GenMeshCadFace(dmsh.aVec2, dmsh.aETri,
-          cad.aFace[0], 0,
-          cad.topo,cad.aVtx,aEdgeGeo);
-      aFlgTri.resize(dmsh.aETri.size(),0);
+  for(size_t ifc=0;ifc<cad.aFace.size();++ifc){ // add face to dmsh
+    std::vector<CDynTri> aDTri;
+    cad2::GenMeshCadFace(dmsh.aVec2, aDTri,
+        cad.aFace[ifc], ifc,
+        cad.topo,cad.aVtx,aEdgeGeo);
+    const unsigned int ntri0 = dmsh.aETri.size();
+    for(auto & tri : aDTri){
+      if( tri.s2[0]!=UINT_MAX ){ tri.s2[0] += ntri0; }
+      if( tri.s2[1]!=UINT_MAX ){ tri.s2[1] += ntri0; }
+      if( tri.s2[2]!=UINT_MAX ){ tri.s2[2] += ntri0; }
+      dmsh.aETri.push_back(tri);
     }
-    for(size_t ifc=1;ifc<cad.aFace.size();++ifc){ // face index bigger than 0
-      std::vector<CDynTri> aETri;
-      cad2::GenMeshCadFace(dmsh.aVec2, aETri,
-          cad.aFace[ifc], ifc,
-          cad.topo,cad.aVtx,aEdgeGeo);
-      const unsigned int ntri0 = dmsh.aETri.size();
-      for(auto & it : aETri){
-        if( it.s2[0]!=UINT_MAX){ it.s2[0] += ntri0; }
-        if( it.s2[1]!=UINT_MAX){ it.s2[1] += ntri0; }
-        if( it.s2[2]!=UINT_MAX){ it.s2[2] += ntri0; }
-        dmsh.aETri.push_back(it);
-      }
-      aFlgTri.resize(dmsh.aETri.size(),ifc);
-    }
+    aFlgTri.resize(dmsh.aETri.size(),ifc);
   }
   { // make EPo
     dmsh.aEPo.resize(dmsh.aVec2.size());
