@@ -44,14 +44,14 @@ int main(int argc,char* argv[])
       
       const int nv = 4;
       std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      const int nXY = aXY.size()/2;
+      const unsigned int nXY = aXY.size()/2;
       aW.resize(nXY*nv);
-      for(int ip=0;ip<nXY;++ip){
+      for(unsigned int ip=0;ip<nXY;++ip){
         dfm2::MeanValueCoordinate2D(aW.data()+nv*ip,
                                     aXY[ip*2+0], aXY[ip*2+1],
                                     aXY_bound.data(), aXY_bound.size()/2);
         double sum = 0.0;
-        for(int ipb=0;ipb<aXY_bound.size()/2;++ipb){
+        for(unsigned int ipb=0;ipb<aXY_bound.size()/2;++ipb){
           sum += aW[nv*ip+ipb];
         }
         assert( fabs(sum-1)<1.0e-10 );
@@ -63,12 +63,12 @@ int main(int argc,char* argv[])
     virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
       std::vector<double> aXY_bound = cad.XY_VtxCtrl_Face(0);
-      int npb = aXY_bound.size()/2;
-      int np = aXY.size()/2;
-      for(int ip=0;ip<np;++ip){
+      unsigned int npb = aXY_bound.size()/2;
+      unsigned int np = aXY.size()/2;
+      for(unsigned int ip=0;ip<np;++ip){
         aXY[ip*2+0] = 0.0;
         aXY[ip*2+1] = 0.0;
-        for(int ipb=0;ipb<npb;++ipb){
+        for(unsigned int ipb=0;ipb<npb;++ipb){
           aXY[ip*+2+0] += aW[ip*npb+ipb]*aXY_bound[ipb*2+0];
           aXY[ip*+2+1] += aW[ip*npb+ipb]*aXY_bound[ipb*2+1];
         }

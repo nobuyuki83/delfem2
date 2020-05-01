@@ -154,7 +154,7 @@ int main(int argc,char* argv[])
     rt23.org3 = dfm2::CVec3d(0.0, 0.0, 0.5);
     rt23.R.SetRotMatrix_Cartesian(0.0, 3.1415, 0.0);
     std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,1), cad);
-    for(int iip=0;iip<aIP.size();++iip){
+    for(unsigned int iip=0;iip<aIP.size();++iip){
       const int ip = aIP[iip];
       dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
       dfm2::CVec3d p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
@@ -168,7 +168,7 @@ int main(int argc,char* argv[])
       rt23.org3 = dfm2::CVec3d(0.0, 0.0, -0.5);
       rt23.R.SetIdentity();
       std::vector<int> aIP = mesher.IndPoint_IndFaceArray(std::vector<int>(1,0), cad);
-      for(int iip=0;iip<aIP.size();++iip){
+      for(unsigned int iip=0;iip<aIP.size();++iip){
         const int ip = aIP[iip];
         dfm2::CVec3d p0(aVec2[ip].x()-rt23.org2.x(), aVec2[ip].y()-rt23.org2.y(),0.0);
         dfm2::CVec3d p1 = rt23.org3+dfm2::MatVec(rt23.R,p0);
@@ -181,7 +181,7 @@ int main(int argc,char* argv[])
     {
       std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(1, true, cad);
       std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
-      const int npe = aIP0.size();
+      const unsigned int npe = aIP0.size();
       assert( aIP1.size() == npe );
       for(int iip=0;iip<npe;++iip){
         int ip0 = aIP0[iip];
@@ -193,7 +193,7 @@ int main(int argc,char* argv[])
     {
       std::vector<unsigned int> aIP0 = mesher.IndPoint_IndEdge(3, true, cad);
       std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(5, true, cad);
-      const int npe = aIP0.size();
+      const unsigned int npe = aIP0.size();
       assert( aIP1.size() == npe );
       for(int iip=0;iip<npe;++iip){
         int ip0 = aIP0[iip];
