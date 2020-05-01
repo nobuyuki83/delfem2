@@ -68,7 +68,7 @@ int main()
   
   {
     double scale = (1.0/0.45)*2.54/100.0;
-    for(int ibone=0;ibone<aBone_MotionSrc.size();++ibone){
+    for(unsigned int ibone=0;ibone<aBone_MotionSrc.size();++ibone){
       aBone_MotionSrc[ibone].invBindMat[ 3] *= scale;
       aBone_MotionSrc[ibone].invBindMat[ 7] *= scale;
       aBone_MotionSrc[ibone].invBindMat[11] *= scale;
@@ -87,7 +87,7 @@ int main()
   }
   UpdateBoneRotTrans(aBone_MotionSrc);
   std::cout << "nBone:" << aBone_MotionSrc.size() << "   aCh:" << aChannelRotTransBone.size() << std::endl;
-  for(int ibone=0;ibone<aBone_MotionSrc.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone_MotionSrc.size();++ibone){
     std::cout << ibone << " " << aBone_MotionSrc[ibone].name << std::endl;
   }
   // ----------------------------------
@@ -124,7 +124,7 @@ int main()
       if( !aMapBoneTrg2Src[ib].is_adjust_orientation_parent ){ continue; }
       int jb = aMapBoneTrg2Src[ib].ibone_dist;
       if( jb == -1 ) continue;
-      assert( jb < aBone_MotionSrc.size() );
+      assert( jb < (int)aBone_MotionSrc.size() );
       int jbp = aBone_MotionSrc[jb].ibone_parent;
       dfm2::CVec3d vj = aBone_MotionSrc[jb].Pos() - aBone_MotionSrc[jbp].Pos();
       int ibp = aBone[ib].ibone_parent;
@@ -185,7 +185,7 @@ int main()
     
     { // surface rigging
       const unsigned int nbone = aBone.size();
-      for(int ip=0;ip<aXYZ0.size()/3;++ip){
+      for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip){
         const double* p0 = aXYZ0.data()+ip*3;
         double* p1 = aXYZ1.data()+ip*3;
         p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
@@ -214,7 +214,7 @@ int main()
     dfm2::opengl::DrawBone(aBone_MotionSrc,
                            -1, -1,
                            0.02, 1.0);
-    for(int ibs=0;ibs<aBone.size();++ibs){
+    for(unsigned int ibs=0;ibs<aBone.size();++ibs){
       int ibt = aMapBoneTrg2Src[ibs].ibone_dist;
       if( ibt < 0 ){ continue; }
       ::glLineWidth(3);

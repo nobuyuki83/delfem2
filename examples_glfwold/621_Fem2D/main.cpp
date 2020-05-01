@@ -97,7 +97,7 @@ void MakeRandomCV(unsigned int nCV, std::vector<double>& aCV)
 }
 
 
-void MakeCurveSpline(const std::vector<double>& aCV, std::vector<double>& aVecCurve, int ndiv=5)
+void MakeCurveSpline(const std::vector<double>& aCV, std::vector<double>& aVecCurve, unsigned int ndiv=5)
 {
   aVecCurve.resize(0);
   const unsigned int nCV = aCV.size()/2;
@@ -329,7 +329,7 @@ void InitializeProblem_Solid()
   const int nDoF = np*2;
   // ----------------
   aBCFlag.assign(nDoF, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(py-len) > 0.0001 ){ continue; }
@@ -633,7 +633,7 @@ void SolveProblem_Stokes_Static()
   // ------------------------------
   dfm2::XPlusAY(aVal, nDoF, aBCFlag, 1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
-    for(int idof=0;idof<nDoF;++idof){
+    for(unsigned int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
       if( jdof == -1 ) continue;
       assert( jdof >= 0 && jdof < nDoF );
@@ -687,7 +687,7 @@ void SolveProblem_Stokes_Dynamic()
   dfm2::XPlusAY(aVelo, nDoF, aBCFlag,
                 1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
-    for(int idof=0;idof<nDoF;++idof){
+    for(unsigned int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
       if( jdof == -1 ) continue;
       assert( jdof >= 0 && jdof < nDoF );
@@ -697,7 +697,7 @@ void SolveProblem_Stokes_Dynamic()
   }
 }
 
-//////////////////////////////////////////////////////////
+// ------------------------
 // iprob: 6
 void SolveProblem_NavierStokes_Dynamic()
 {
@@ -741,7 +741,7 @@ void SolveProblem_NavierStokes_Dynamic()
   dfm2::XPlusAY(aVelo, nDoF, aBCFlag,
           1.0, vec_x);
   if( aMSFlag.size() == nDoF ){
-    for(int idof=0;idof<nDoF;++idof){
+    for(unsigned int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
       if( jdof == -1 ) continue;
       assert( jdof >= 0 && jdof < nDoF );

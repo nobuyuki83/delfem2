@@ -108,9 +108,9 @@ DFM2_INLINE void Mat4_ScaleMatTransl(double m[16],
  * @param v (in) rotation to
  */
 template <typename REAL>
-CMat3<REAL> Mat3_MinimumRotation(
-                                 const CVec3<REAL>& V,
-                                 const CVec3<REAL>& v);
+CMat3<REAL> Mat3_MinimumRotation
+ (const CVec3<REAL>& V,
+  const CVec3<REAL>& v);
 
 // ----------------------
 // below: inertia tensor

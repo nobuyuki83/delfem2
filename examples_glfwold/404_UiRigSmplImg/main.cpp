@@ -61,7 +61,7 @@ int main()
       //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
       //    dfm2::opengl::DrawJoints(aJntPos0, aIndBoneParent);
       if( ipicked_bone != -1 ){
-        assert( ipicked_bone >= 0 && ipicked_bone < aBone.size() );
+        assert( ipicked_bone >= 0 && ipicked_bone < (int)aBone.size() );
         gizmo_rot.pos = aBone[ipicked_bone].Pos().Float();
         { // set quaternion
           dfm2::CMat3<double> m3;
@@ -84,7 +84,7 @@ int main()
     }
     virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {
       if( ipicked_bone != -1 ){
-        assert( ipicked_bone >= 0 && ipicked_bone < aBone.size() );
+        assert( ipicked_bone >= 0 && ipicked_bone < (int)aBone.size() );
         gizmo_rot.pos = aBone[ipicked_bone].Pos().Float();
         gizmo_rot.Drag(src0, src1, dir);
         {

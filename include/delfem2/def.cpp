@@ -21,7 +21,7 @@ void SetLinSys_LaplaceGraph_MeshTri3
   mat_A.SetZero();
   for(unsigned int ip=0;ip<mat_A.nblk_col;++ip){
     unsigned int n1r = mat_A.colInd[ip+1] - mat_A.colInd[ip];
-    for(int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
+    for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
       mat_A.valCrs[icrs*9+0*3+0] = -1;
       mat_A.valCrs[icrs*9+1*3+1] = -1;
       mat_A.valCrs[icrs*9+2*3+2] = -1;
@@ -116,7 +116,7 @@ void delfem2::CDef_SingleLaplacianDisponly::Deform
   const std::vector<int>& aBCFlag)
 {    // ----------
   aRhs1 = aRhs0;
-  for(int i=0;i<aBCFlag.size();++i){
+  for(unsigned int i=0;i<aBCFlag.size();++i){
     if( aBCFlag[i] == 0 ){ continue; }
     aRhs1[i] = aXYZ1[i];
   }
@@ -169,7 +169,7 @@ void delfem2::CDef_LaplacianDisponly::MakeLinearSystem()
                         1.0, 0.0); // del. prev. value and set new vaue
     }
   }
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     for(int i=0;i<3;++i){
       if( aBCFlag[ip*3+i] == 0 ){ continue; }
       aDiaInv[ip*9+i*3+i] += weight_bc;
@@ -299,7 +299,7 @@ void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp
   const unsigned int np = aBCFlag.size()/3;
   for(unsigned int i=0;i<np*3;++i){ y[i] *= beta; }
   for(unsigned int ip=0;ip<np;++ip){
-    for(int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int jp0 = psup[ipsup];
       MatTVec3_ScaleAdd(y+ip*3,
                         aMatEdge.data()+ipsup*18,

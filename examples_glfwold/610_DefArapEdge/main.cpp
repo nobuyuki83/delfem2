@@ -151,7 +151,7 @@ int main(int argc,char* argv[])
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, false);
       std::vector<double> aQuat(np*4); // array of quaternion
       for(;iframe<100;++iframe){
-        for(int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); } // Initialize
+        for(unsigned int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); } // Initialize
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe,aXYZ0,aBCFlag);
         def1.Deform(aXYZ1, aQuat,
@@ -173,8 +173,8 @@ int main(int argc,char* argv[])
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
       std::vector<double> aQuat(np*4);
       for(;iframe<200;++iframe){
-        for(int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); } // initialize
-        for(int i=0;i<np*3;++i){ // adding noise for debuggng purpose
+        for(unsigned int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); } // initialize
+        for(unsigned int i=0;i<np*3;++i){ // adding noise for debuggng purpose
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
         SetPositionAtFixedBoundary(aXYZ1,
@@ -197,9 +197,9 @@ int main(int argc,char* argv[])
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
       std::vector<double> aQuat(np*4);
-      for(int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); }
+      for(unsigned int ip=0;ip<np;++ip){ dfm2::Quat_Identity(aQuat.data()+ip*4); }
       for(;iframe<400;++iframe){
-        for(int i=0;i<np*3;++i){ // adding noise for debuggng purpose
+        for(unsigned int i=0;i<np*3;++i){ // adding noise for debuggng purpose
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
         SetPositionAtFixedBoundary(aXYZ1,

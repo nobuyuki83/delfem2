@@ -65,6 +65,7 @@ void Solve
  std::vector<dfm2::CVec3d>& aS,
  dfm2::CMatrixSparse<double>& mats,
  const std::vector<dfm2::CVec3d>& aP0,
+ const std::vector<dfm2::CVec3d>& aDarboux0,
  const std::vector<unsigned int>& aElemSeg,
  const std::vector<unsigned int>& aElemRod,
  const std::vector<int>& aBCFlag)
@@ -111,7 +112,6 @@ void Solve
     const dfm2::CVec3d aSE[2] = {
       aS[aINoel[3]-nP],
       aS[aINoel[4]-nP] };
-    const double off[3] = {0,0,0};
     // ------
     dfm2::CVec3d dW_dP[3];
     double dW_dt[2];
@@ -119,29 +119,20 @@ void Solve
     dfm2::CVec3d ddW_dtdP[2][3];
     double ddW_ddt[2][2];
     W +=  WdWddW_Rod(dW_dP,dW_dt,ddW_ddP,ddW_dtdP,ddW_ddt,
-                     aPE,aSE,off, false);
+                     aPE,aSE,aDarboux0[irod], false);
     {
       double eM[5][5][3][3];
       for(int i=0;i<5*5*3*3;++i){ (&eM[0][0][0][0])[i] = 0.0; }
       for(int in=0;in<3;++in){
         for(int jn=0;jn<3;++jn){
-//          dfm2::CMat3d t = ddW_ddP[in][jn].Trans();
-//          t.CopyValueToPtr(&eM[in][jn][0][0]);
           ddW_ddP[in][jn].CopyTo(&eM[in][jn][0][0]);
-        }
-      }
-      for(int in=0;in<2;++in){
-        for(int jn=0;jn<3;++jn){
-          eM[3+in][jn][0][0] = ddW_dtdP[in][jn].x();
-          eM[3+in][jn][0][1] = ddW_dtdP[in][jn].y();
-          eM[3+in][jn][0][2] = ddW_dtdP[in][jn].z();
         }
       }
       for(int in=0;in<3;++in){
         for(int jn=0;jn<2;++jn){
-          eM[in][jn+3][0][0] = ddW_dtdP[jn][in].x();
-          eM[in][jn+3][1][0] = ddW_dtdP[jn][in].y();
-          eM[in][jn+3][2][0] = ddW_dtdP[jn][in].z();
+          eM[3+jn][in][0][0] = eM[in][jn+3][0][0] = ddW_dtdP[jn][in].x();
+          eM[3+jn][in][0][1] = eM[in][jn+3][1][0] = ddW_dtdP[jn][in].y();
+          eM[3+jn][in][0][2] = eM[in][jn+3][2][0] = ddW_dtdP[jn][in].z();
         }
       }
       for(int in=0;in<2;++in){
@@ -165,7 +156,7 @@ void Solve
     }
   }
 //  std::cout << dfm2::CheckSymmetry(mats) << std::endl;
-//  mats.AddDia(0.1);
+//  mats.AddDia(0.00001);
   std::cout << "energy:" << W << std::endl;
   //    std::cout << "sym: " << dfm2::CheckSymmetry(mats) << std::endl;
   mats.SetFixedBC(aBCFlag.data());
@@ -174,7 +165,7 @@ void Solve
   vec_x.assign(nNode*3, 0.0);
  {
    auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
-   vec_r.size(), 1.0e-4, 100, mats);
+   vec_r.size(), 1.0e-4, 300, mats);
    if( aConvHist.size() > 0 ){
      std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
    }
@@ -223,25 +214,43 @@ void Solve
 }
 
 
-void MakeProblemSetting
-(std::vector<dfm2::CVec3d>& aP0,
- std::vector<unsigned int>& aElemSeg,
- std::vector<unsigned int>& aElemRod,
- std::vector<int>& aBCFlag, // if value this is not 0, it is fixed boundary condition
- unsigned int np)
+void MakeProblemSetting_Spiral
+ (std::vector<dfm2::CVec3d>& aP0,
+  std::vector<dfm2::CVec3d>& aS0,
+  std::vector<dfm2::CVec3d>& aDarboux0,
+  std::vector<unsigned int>& aElemSeg,
+  std::vector<unsigned int>& aElemRod,
+  std::vector<int>& aBCFlag, // if value this is not 0, it is fixed boundary condition
+  unsigned int np,
+  double pitch,
+  double rad0,
+  double dangle)
 {
-  double elen = 2.0/np;
+  std::cout << pitch << " " << rad0 << " " << dangle << std::endl;
   aP0.resize(np);
   for(unsigned int ip=0;ip<np;++ip){
-    aP0[ip] = dfm2::CVec3d(-1.0+ip*elen, 0.0, 0.0);
+    aP0[ip] = dfm2::CVec3d(-1.0+ip*pitch, rad0*cos(dangle*ip), rad0*sin(dangle*ip));
   };
-  unsigned int ns = np-1;
+  // -------------------------
+  // below: par segment data
+  const unsigned int ns = np-1;
   aElemSeg.resize(ns*2);
   for(unsigned int is=0;is<ns;++is){
     aElemSeg[is*2+0] = is+0;
     aElemSeg[is*2+1] = is+1;
   }
-  unsigned int nr = ns-1;
+  { // initial director vector
+    aS0.resize(ns,dfm2::CVec3d(1,0,0));
+    for(unsigned int is=0;is<ns;++is){
+      unsigned int ip0 = aElemSeg[is*2+0];
+      unsigned int ip1 = aElemSeg[is*2+1];
+      const dfm2::CVec3d v = (aP0[ip1] - aP0[ip0]).Normalize();
+      aS0[is] = (aS0[is]-(aS0[is]*v)*v).Normalize();
+    }
+  }
+  // --------------------------
+  // below: par rod element data
+  const unsigned int nr = ns-1;
   aElemRod.resize(nr*5);
   for(unsigned int ir=0;ir<nr;++ir){
     aElemRod[ir*5+0] = ir+0;
@@ -250,15 +259,40 @@ void MakeProblemSetting
     aElemRod[ir*5+3] = np+ir+0;
     aElemRod[ir*5+4] = np+ir+1;
   };
+  // smoothing
+  for(int itr=0;itr<10;++itr){
+    for(unsigned int ir=0;ir<nr;++ir){
+      const unsigned int ip0 = aElemRod[ir*5+0];
+      const unsigned int ip1 = aElemRod[ir*5+1];
+      const unsigned int ip2 = aElemRod[ir*5+2];
+      const unsigned int is0 = aElemRod[ir*5+3]-np; assert( is0 < ns );
+      const unsigned int is1 = aElemRod[ir*5+4]-np; assert( is1 < ns );
+      const dfm2::CMat3d CMat3 = dfm2::Mat3_MinimumRotation(aP0[ip1]-aP0[ip0], aP0[ip2]-aP0[ip1]);
+      dfm2::CVec3d s1 = CMat3*aS0[is0] + aS0[is1];
+      const dfm2::CVec3d v = (aP0[ip2] - aP0[ip1]).Normalize();
+      aS0[is1] = (s1-(s1*v)*v).Normalize();
+    }
+  }
+  // computing the darboux vector
+  aDarboux0.resize(nr);
+  for(unsigned int ir=0;ir<nr;++ir){
+    const unsigned int* aINoel = aElemRod.data()+ir*5;
+    const unsigned int nP = aP0.size();
+    const dfm2::CVec3d aEP[3] = { aP0[aINoel[0]], aP0[aINoel[1]], aP0[aINoel[2]] };
+    const dfm2::CVec3d aES[2] = { aS0[aINoel[3]-nP], aS0[aINoel[4]-nP] };
+    Darboux_Rod(aDarboux0[ir],
+                aEP,aES);
+  }
+  // -------------------
   const unsigned int nNode = np+ns;
   aBCFlag.assign(nNode*3, 0);
   {
     aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
     aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
-    aBCFlag[(np+0)*3+0] = 1;
+    aBCFlag[(np+0)*3+0] = 1; //
     for(unsigned int is=0;is<ns;++is){
-      aBCFlag[(np+is)*3+1] = 1;
-      aBCFlag[(np+is)*3+2] = 1;
+      aBCFlag[(np+is)*3+1] = 1; // fix the unused dof
+      aBCFlag[(np+is)*3+2] = 1; // fix the unused dof
     }
   }
 }
@@ -272,48 +306,58 @@ int main(int argc,char* argv[])
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
   // -----
-  std::vector<dfm2::CVec3d> aP0;
+  std::random_device rd;
+  std::mt19937 reng(rd());
+  std::uniform_real_distribution<double> dist(0.0, 1.0);
+  // ------
+  std::vector<dfm2::CVec3d> aP0, aS0, aDarboux0;
   std::vector<unsigned int> aElemSeg, aElemRod;
   std::vector<int> aBCFlag;
-  MakeProblemSetting(aP0,aElemSeg,aElemRod, aBCFlag,
-                     30);
   dfm2::CMatrixSparse<double> mats;
-  {
-    unsigned int nNode = aElemSeg.size()/2 + aP0.size();
-    std::vector<unsigned int> psup_ind, psup;
-    dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                               aElemRod.data(), aElemRod.size()/5, 5, nNode);
-    dfm2::JArray_Sort(psup_ind, psup);
-    mats.Initialize(nNode, 3, true);
-    mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
-  }
-  // -----------------
-  std::vector<dfm2::CVec3d> aP = aP0;
-  std::vector<dfm2::CVec3d> aS(aElemSeg.size()/2);
-  assert( aP.size() == aP0.size() );
-  assert( aS.size() == aElemSeg.size()/2);
-  // ------
+  std::vector<dfm2::CVec3d> aS, aP;
+  // -------
   int iframe = 0;
   while (true)
   {
-    if( iframe % 200 == 0 ){
-      for(int ip=0;ip<aP.size();++ip){
+    if( iframe % 70 == 0 ){
+      MakeProblemSetting_Spiral(aP0,aS0,aDarboux0,
+                                aElemSeg,aElemRod, aBCFlag,
+                                30,
+                                0.1,
+                                dist(reng),
+                                dist(reng));
+      {
+        unsigned int nNode = aElemSeg.size()/2 + aP0.size();
+        std::vector<unsigned int> psup_ind, psup;
+        dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                                   aElemRod.data(), aElemRod.size()/5, 5, nNode);
+        dfm2::JArray_Sort(psup_ind, psup);
+        mats.Initialize(nNode, 3, true);
+        mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
+      }
+      // -----------------
+      aP = aP0;
+      aS = aS0;
+      assert( aP.size() == aP0.size() );
+      assert( aS.size() == aElemSeg.size()/2);
+      // apply random deviation
+      for(unsigned int ip=0;ip<aP.size();++ip){
         aP[ip] = aP0[ip];
         auto rnd = dfm2::CVec3d::Random()*3.0;
         if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
         if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
         if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
       }
-      unsigned int ns = aS.size();
+      const unsigned int ns = aS.size();
       for(unsigned int is=0;is<ns;++is){
-        aS[is] = dfm2::CVec3d(0,1,0);
+        aS[is] = aS0[is];
         auto rnd = dfm2::CVec3d::Random()*3.0;
         const unsigned int np = aP.size();
         if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x(); }
         if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y(); }
         if( aBCFlag[(np+is)*3+2] == 0 ){ aS[is].p[2] += rnd.z(); }
       }
-      for(int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+      for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
         const unsigned int i0 = aElemSeg[iseg*2+0];
         const unsigned int i1 = aElemSeg[iseg*2+1];
         const dfm2::CVec3d& p0 = aP[i0];
@@ -326,7 +370,7 @@ int main(int argc,char* argv[])
     }
     {
       Solve(aP, aS, mats,
-            aP0, aElemSeg, aElemRod, aBCFlag);
+            aP0, aDarboux0, aElemSeg, aElemRod, aBCFlag);
     }
     iframe = iframe+1;
     // -------------
