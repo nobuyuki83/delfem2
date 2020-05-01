@@ -23,6 +23,8 @@
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
+#include "delfem2/femrod.h"
+
 namespace dfm2 = delfem2;
 
 // --------------------------------------
