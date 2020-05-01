@@ -186,7 +186,7 @@ int main(int argc,char* argv[])
       std::vector<unsigned int> aIP1 = mesher.IndPoint_IndEdge(7, true, cad);
       const unsigned int npe = aIP0.size();
       assert( aIP1.size() == npe );
-      for(int iip=0;iip<npe;++iip){
+      for(unsigned int iip=0;iip<npe;++iip){
         int ip0 = aIP0[iip];
         int ip1 = aIP1[npe-iip-1];
         aLine.push_back(ip0);

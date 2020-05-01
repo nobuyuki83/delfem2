@@ -218,7 +218,7 @@ void myGlutDisplay(void)
     assert( aMode.size()/3 == aXY0.size()/2 );
     ::glColor3d(1,0,0);
     ::glBegin(GL_LINES);
-    for(int itri=0;itri<aTri.size()/3;itri++){
+    for(unsigned int itri=0;itri<aTri.size()/3;itri++){
       const unsigned int i0 = aTri[itri*3+0];
       const unsigned int i1 = aTri[itri*3+1];
       const unsigned int i2 = aTri[itri*3+2];
@@ -232,7 +232,7 @@ void myGlutDisplay(void)
       ::glVertex3dv( p2 );
       ::glVertex3dv( p0 );
     }
-    for(int ip=0;ip<aXY0.size()/2;++ip){
+    for(unsigned int ip=0;ip<aXY0.size()/2;++ip){
       const double p0[3] = { aXY0[ip*2+0], aXY0[ip*2+1], aMode[ip*3+0]*scale };
       double rx = aMode[ip*3+1]*scale;
       double ry = aMode[ip*3+2]*scale;
@@ -263,7 +263,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
     }
     case 'r':
     {
-      for(int ip=0;ip<aXY0.size()/2;++ip){
+      for(unsigned int ip=0;ip<aXY0.size()/2;++ip){
         aTmp0[ip*3+0] = (rand()+1.0)/(RAND_MAX+1.0);
         aTmp0[ip*3+1] = (rand()+1.0)/(RAND_MAX+1.0);
         aTmp0[ip*3+2] = (rand()+1.0)/(RAND_MAX+1.0);

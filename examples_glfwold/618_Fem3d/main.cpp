@@ -359,13 +359,13 @@ void SolveProblem_LinearSolid_Dynamic()
 void InitializeProblem_Stokes_Static()
 {
   // set boundary condition
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   //
   aVal.assign(np*4, 0.0);
   aBCFlag.assign(nDoF, 0);
   assert(aIsSurf.size() == np);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
     const double pz = aXYZ[ip*3+2];
@@ -386,7 +386,6 @@ void InitializeProblem_Stokes_Static()
     }
      */
   }
-  //////
   /*
   CJaggedArray crs;
   crs.SetEdgeOfElem(aTet, (int)aTet.size()/4, 4, (int)aXYZ.size()/3, false);
@@ -408,9 +407,9 @@ void InitializeProblem_Stokes_Static()
 
 void SolveProblem_Stokes_Static()
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
-  /////////////////////////////
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
+  // -------------
   double myu = 1.0;
   double rho = 1.0;
   double g_x = 0.0;
@@ -442,14 +441,13 @@ void SolveProblem_Stokes_Static()
 void InitializeProblem_Stokes_Dynamic()
 {
   // set boundary condition
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
-  ///////
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   aVal.assign(nDoF, 0.0);
   aVelo.assign(nDoF, 0.0);
   aBCFlag.assign(nDoF, 0);
   assert(aIsSurf.size() == np);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
     const double pz = aXYZ[ip*3+2];
@@ -492,9 +490,8 @@ void InitializeProblem_Stokes_Dynamic()
 
 void SolveProblem_Stokes_Dynamic()
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
-  /////////////////////////////
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   double myu = 1;
   double rho = 100.0;
   double g_x = 0.0;
@@ -532,14 +529,14 @@ void SolveProblem_Stokes_Dynamic()
 void InitializeProblem_NavierStokes_Dynamic()
 {
   // set boundary condition
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
-  ///////
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
+  // ----------
   aVal.assign(np*4, 0.0);
   aVelo.assign(np*4, 0.0);
   aBCFlag.assign(nDoF, 0);
   assert(aIsSurf.size() == np);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
     const double pz = aXYZ[ip*3+2];
@@ -586,8 +583,8 @@ void InitializeProblem_NavierStokes_Dynamic()
 
 void SolveProblem_NavierStokes_Dynamic()
 {
-  const int np = (int)aXYZ.size()/3;
-  const int nDoF = np*4;
+  const unsigned int np = aXYZ.size()/3;
+  const unsigned int nDoF = np*4;
   //
   double myu = 1;
   double rho = 1000.0;

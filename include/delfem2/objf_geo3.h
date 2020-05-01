@@ -116,55 +116,32 @@ DFM2_INLINE void RodFrameTrans
   const CVec3d& du,
   double dtheta);
 
+
+/**
+ * @param dF_dv (out) how i-th frame axis moves w.r.t the movement of the edge
+ * @param dF_dt (out) how i-th frame axis moves w.r.t the rotation along 2nd axis
+ * @param l01 (in) length of the edge
+ * @param Frm (in) frame axis vectors
+ */
 DFM2_INLINE void DiffFrameRod
- (CMat3d dF_dv[3], // first-order derivative
+ (CMat3d dF_dv[3],
   CVec3d dF_dt[3],
   //
   double l01,
   const CVec3d Frm[3]);
 
 /**
- * @brief energy W and its derivative dW and second derivative ddW
- * where W = a^T R(dn) b(theta)
+ * @brief second derivative (ddW) of W, where W = Q^T Frm[iaxis]
  */
 DFM2_INLINE void DifDifFrameRod
  (CMat3d& ddW_ddv,
-  CVec3d& ddW_dvdt, // second-order derrivative
+  CVec3d& ddW_dvdt,
   double& ddW_dtt,
   //
   unsigned int iaxis,
   double l01,
   const CVec3d& Q,
   const CVec3d Frm[3]);
-/*
-void AddDiff_DotFrames(CVec3d dV_dP[3],
-                       double dV_dt[2],
-                       //
-                       double c,
-                       unsigned int i,
-                       unsigned int j,
-                       const CVec3d Frm0[3],
-                       const CVec3d Frm1[3],
-                       const CMat3d dF0_dv[3],
-                       const CVec3d dF0_dt[3],
-                       const CMat3d dF1_dv[3],
-                       const CVec3d dF1_dt[3]);
-
-void AddDiffDiff_DotFrames(CMat3d ddV_ddP[3][3],
-                           CVec3d ddV_dtdP[2][3],
-                           double ddV_ddt[2][2],
-                           //
-                           double c,
-                           unsigned int i,
-                           unsigned int j,
-                           const CVec3d P[3],
-                           const CVec3d F0[3],
-                           const CVec3d F1[3],
-                           const CMat3d dF0_dv[3],
-                           const CVec3d dF0_dt[3],
-                           const CMat3d dF1_dv[3],
-                           const CVec3d dF1_dt[3]);
-*/
 
 DFM2_INLINE double WdWddW_DotFrame
  (CVec3d dV_dP[3],
@@ -177,16 +154,28 @@ DFM2_INLINE double WdWddW_DotFrame
   const CVec3d S[2],
   const double off[3]);
 
+DFM2_INLINE void Darboux_Rod
+ (CVec3d& darboux,
+  //
+  const CVec3d P[3],
+  const CVec3d S[2]);
+
+/**
+ * @param P[3] (in) point of rod
+ * @param S[2] (in) director vectors on the edges
+ * @param off[3] (in) Daboux vector in the material frame
+ * @param is_eaxct
+ */
 DFM2_INLINE double WdWddW_Rod
- (CVec3d dV_dP[3],
-  double dV_dt[2],
-  CMat3d ddV_ddP[3][3],
-  CVec3d ddV_dtdP[2][3],
-  double ddV_ddt[2][2],
+ (CVec3d dW_dP[3],
+  double dW_dt[2],
+  CMat3d ddW_ddP[3][3],
+  CVec3d ddW_dtdP[2][3],
+  double ddW_ddt[2][2],
   //
   const CVec3d P[3],
   const CVec3d S[2],
-  const double off[3],
+  const CVec3d& darboux0,
   bool is_exact);
 
 DFM2_INLINE double WdWddW_SquareLengthLineseg3D
