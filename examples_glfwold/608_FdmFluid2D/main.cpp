@@ -147,8 +147,8 @@ static double linear_interpolate (double* d, unsigned int ndim, unsigned int idi
 
 void CompAdvectionSemiLagrangian()
 {  
-  for(int jg=0;jg<ngrid+0;jg++){
-  for(int ig=0;ig<ngrid+1;ig++){    
+  for(unsigned int jg=0;jg<ngrid+0;jg++){
+  for(unsigned int ig=0;ig<ngrid+1;ig++){
 		velou_tmp[(ig+jg*(ngrid+1))*2+0] = velou[ig+jg*(ngrid+1)];
 		velou_tmp[(ig+jg*(ngrid+1))*2+1] = ( ClampedFetch(velov.data(), ig-1,jg,   ngrid,ngrid+1)
                                         +ClampedFetch(velov.data(), ig,  jg,   ngrid,ngrid+1)
@@ -157,8 +157,8 @@ void CompAdvectionSemiLagrangian()
   }
 	}
   
-  for(int jg=0;jg<ngrid+1;jg++){    
-  for(int ig=0;ig<ngrid+0;ig++){    
+  for(unsigned int jg=0;jg<ngrid+1;jg++){
+  for(unsigned int ig=0;ig<ngrid+0;ig++){
     velov_tmp[(ig+jg*ngrid)*2+0] = ( ClampedFetch(velou.data(), ig,  jg-1,ngrid+1,ngrid)
                                     +ClampedFetch(velou.data(), ig+1,jg-1,ngrid+1,ngrid)
                                     +ClampedFetch(velou.data(), ig,  jg,  ngrid+1,ngrid)
@@ -184,8 +184,8 @@ void CompAdvectionSemiLagrangian()
     }
   }
   
-  for(int jg=0;jg<ngrid+0;jg++){
-  for(int ig=0;ig<ngrid+1;ig++){    
+  for(unsigned int jg=0;jg<ngrid+0;jg++){
+  for(unsigned int ig=0;ig<ngrid+1;ig++){
     const double* velo = velou_tmp.data()+(ig+jg*(ngrid+1))*2;
     const double p[2] = {ig-velo[0]*dt*ngrid,jg-velo[1]*dt*ngrid};    
     const double u = linear_interpolate(velou_tmp.data(),2,0,ngrid+1,ngrid,p[0],p[1]);
@@ -193,8 +193,8 @@ void CompAdvectionSemiLagrangian()
   }
   }
 
-  for(int jg=0;jg<ngrid+1;jg++){
-  for(int ig=0;ig<ngrid+0;ig++){    
+  for(unsigned int jg=0;jg<ngrid+1;jg++){
+  for(unsigned int ig=0;ig<ngrid+0;ig++){
     const double* velo = velov_tmp.data()+(ig+jg*ngrid)*2;
     const double p[2] = {ig-velo[0]*dt*ngrid,jg-velo[1]*dt*ngrid};    
     const double v = linear_interpolate(velov_tmp.data(),2,1,ngrid,ngrid+1,p[0],p[1]);
@@ -205,14 +205,14 @@ void CompAdvectionSemiLagrangian()
 
 
 void AssignGravity(){
-  for(int jg=0;jg<ngrid+0;jg++){
-    for(int ig=0;ig<ngrid+1;ig++){    
+  for(unsigned int jg=0;jg<ngrid+0;jg++){
+    for(unsigned int ig=0;ig<ngrid+1;ig++){
       velou[ig+jg*(ngrid+1)] += gravity[0]*dt;
     }
   }
   
-  for(int jg=0;jg<ngrid+1;jg++){
-    for(int ig=0;ig<ngrid+0;ig++){        
+  for(unsigned int jg=0;jg<ngrid+1;jg++){
+    for(unsigned int ig=0;ig<ngrid+0;ig++){        
       velov[ig+jg*ngrid] += gravity[1]*dt;
     }
   }  

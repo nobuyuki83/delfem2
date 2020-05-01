@@ -99,7 +99,7 @@ void Solve_MinEnergyArap
   // --------------
   std::vector<double> Lx, Ly, Lz; // [ nsns, nbone*4 ]
   {
-    for(int ibs=0;ibs<aBone.size();++ibs){
+    for(unsigned int ibs=0;ibs<aBone.size();++ibs){
       for(int idims=0;idims<3;++idims){
         dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
                                                  ibs,idims,true,
@@ -118,7 +118,7 @@ void Solve_MinEnergyArap
     
   std::vector<double> aC0; // [nC]
   std::vector<double> adC0; // [nC, nsns ]
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
     dfm2::Rig_WdW_Target_Eigen(aC0, adC0,
                                aBone, aTarget[it], Lx, Ly, Lz);
   }
@@ -159,7 +159,7 @@ void Solve_MinEnergyArap
     std::vector<double> rC(nsns,0.0);
     dfm2::MatTVec(rC.data(),
                   adC0.data(), nc, nsns, aC0.data());
-    for(int i=0;i<rC.size();++i){ r[i] += weight_rig*rC[i]; }
+    for(unsigned int i=0;i<rC.size();++i){ r[i] += weight_rig*rC[i]; }
   }
   
   std::vector<double> u(nsns,0.0);

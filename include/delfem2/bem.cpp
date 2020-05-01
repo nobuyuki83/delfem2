@@ -71,21 +71,23 @@ void delfem2::matVec
 const std::vector<double>& A,
 const std::vector<double>& x)
 {
-  const int n = (int)x.size();
+  const unsigned int n = x.size();
   assert(A.size()==n*n);
   y.resize(n);
-  for (int i = 0; i<n; ++i){
+  for (unsigned int i = 0; i<n; ++i){
     double s = 0;
-    for (int j = 0; j<n; ++j){ s += A[i*n+j]*x[j]; }
+    for (unsigned int j = 0; j<n; ++j){
+      s += A[i*n+j]*x[j];
+    }
     y[i] = s;
   }
 }
 
 
 
-// /////////////////////////////////////////////////////////////
+// ---------------------------------------
 // Solve Matrix with BiCGSTAB Methods
-// /////////////////////////////////////////////////////////////
+// ---------------------------------------
 bool delfem2::Solve_BiCGSTAB
 (double& conv_ratio, int& iteration,
 std::vector<double>& u_vec,
@@ -96,9 +98,9 @@ const std::vector<double>& y_vec)
   //	std::cout.precision(18);
 
   const double conv_ratio_tol = conv_ratio;
-  const int mx_iter = iteration;
+  const unsigned int mx_iter = iteration;
 
-  const int n = (int)y_vec.size();
+  const unsigned int n = y_vec.size();
 
   u_vec.assign(n, 0);
 
@@ -147,7 +149,7 @@ const std::vector<double>& y_vec)
     }
 
     // calc s_vector
-    for (int i = 0; i<n; ++i){ s_vec[i] = r_vec[i]-alpha*Ap_vec[i]; }
+    for (unsigned int i = 0; i<n; ++i){ s_vec[i] = r_vec[i]-alpha*Ap_vec[i]; }
 
     // calc {As} = [A]*{s}
     matVec(As_vec, A, s_vec);
@@ -161,10 +163,10 @@ const std::vector<double>& y_vec)
     }
 
     // update solution
-    for (int i = 0; i<n; ++i){ u_vec[i] += alpha*p_vec[i]+omega*s_vec[i]; }
+    for (unsigned int i = 0; i<n; ++i){ u_vec[i] += alpha*p_vec[i]+omega*s_vec[i]; }
 
     // update residual
-    for (int i = 0; i<n; ++i){ r_vec[i] = s_vec[i]-omega*As_vec[i]; }
+    for (unsigned int i = 0; i<n; ++i){ r_vec[i] = s_vec[i]-omega*As_vec[i]; }
 
     {
       const double sq_norm_res = squaredNorm(r_vec);
@@ -186,7 +188,7 @@ const std::vector<double>& y_vec)
     }
 
     // update p_vector
-    for (int i = 0; i<n; ++i){
+    for (unsigned int i = 0; i<n; ++i){
       p_vec[i] = beta*p_vec[i]+r_vec[i]-(beta*omega)*Ap_vec[i];
     }
   }
@@ -345,11 +347,11 @@ delfem2::CVec3d delfem2::evaluateField_PotentialFlow_Order1st(
     const std::vector<double>& aXYZ,
     const std::vector<int>& aTri)
 {
-  const int np = (int)aXYZ.size()/3;
+  const unsigned int np = aXYZ.size()/3;
   if (aValSrf.size()!=np){ return CVec3d(0, 0, 0); }
   CVec3d gradphi_pos = CVec3d(0, 0, 0);
   phi_pos = 0;
-  for (int jtri = 0; jtri<(int)aTri.size()/3; ++jtri){
+  for (unsigned int jtri = 0; jtri<aTri.size()/3; ++jtri){
     const int jq0 = aTri[jtri*3+0];
     const int jq1 = aTri[jtri*3+1];
     const int jq2 = aTri[jtri*3+2];
@@ -473,7 +475,7 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int> &aTri)
 {
-  const int nt = (int)aTri.size()/3;
+  const unsigned int nt = aTri.size()/3;
   if (aValTri.size()!=nt){
     gradphi_pos = CVec3d(0,0,0);
     return;
@@ -636,7 +638,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
  int jtri_exclude)
 {
   assert(ngauss>=0&&ngauss<6);
-  const int nt = (int)aTri.size()/3;
+  const unsigned int nt = aTri.size()/3;
   CVec3d velo_res(0,0,0);
   for (int jt = 0; jt<nt; ++jt){
     if (jt==jtri_exclude){ continue; }
@@ -703,7 +705,7 @@ double rad_vp)
   double f0 = 1.0-exp(-ratio*ratio*ratio);
   double g0 = f0/(4*M_PI*len*len*len);
   velo_eval = g0*(circ_vp^v);
-  ///
+  //
   CVec3d dlen = v.Normalize();
   CVec3d dratio = dlen/rad_vp;
   CVec3d df0 = (exp(-ratio*ratio*ratio)*3*ratio*ratio)*dratio;
@@ -717,7 +719,7 @@ const std::vector<CVortexParticle>& aVortexParticle,
 int ivp_self)
 {
   CVec3d velo_res(0, 0, 0);
-  for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     if (ivp==ivp_self) continue;
     const CVortexParticle& vp = aVortexParticle[ivp];
     velo_res += veloVortexParticle(p0, vp.pos, vp.circ, vp.rad);
@@ -733,7 +735,7 @@ int ivp_self)
 {
   CMat3d m_res; m_res.SetZero();
   velo = CVec3d(0, 0, 0);
-  for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     if (ivp==ivp_self) continue;
     const CVortexParticle& vp = aVortexParticle[ivp];
     CVec3d dv;
@@ -746,12 +748,12 @@ int ivp_self)
 void delfem2::setGradVeloVortexParticles
 (std::vector<CVortexParticle>& aVortexParticle)
 {
-  for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     CVortexParticle& vp = aVortexParticle[ivp];
     vp.velo_pre = vp.velo;
     vp.gradvelo_pre = vp.gradvelo;
   }
-  for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
 //    CVector3 velo = veloVortexParticles(aVortexParticle[ivp].pos, aVortexParticle, ivp);
     CVec3d velo;
     CMat3d grad_velo = gradveloVortexParticles(velo, aVortexParticle[ivp].pos, aVortexParticle, ivp);
@@ -814,7 +816,7 @@ void delfem2::viscousityVortexParticleGrid
   min_x = max_x = aVortexParticle[0].pos.x();
   min_y = max_y = aVortexParticle[0].pos.y();
   min_z = max_z = aVortexParticle[0].pos.z();
-  for (int ivp = 1; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 1; ivp<aVortexParticle.size(); ++ivp){
     CVec3d p = aVortexParticle[ivp].pos;
     if (p.x()<min_x){ min_x = p.x(); }
     if (p.x()>max_x){ max_x = p.x(); }
@@ -839,13 +841,13 @@ void delfem2::viscousityVortexParticleGrid
   const int nx = grid.nx;
   const int ny = grid.ny;
   const int nz = grid.nz;
-  ///////
+  // ------------------------
   grid.aDataVtx.resize((nx+1)*(ny+1)*(nz+1));
-  for (int igp = 0; igp<grid.aDataVtx.size(); ++igp){
+  for (unsigned int igp = 0; igp<grid.aDataVtx.size(); ++igp){
     grid.aDataVtx[igp].aPairPtcleWeight.clear();
     grid.aDataVtx[igp].circ.SetZero();
   }
-  for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     CVec3d p = aVortexParticle[ivp].pos;
     int ix = (p.x()-(grid.cnt.x()-h*nx*0.5))/h;
     int iy = (p.y()-(grid.cnt.y()-h*ny*0.5))/h;
@@ -859,14 +861,14 @@ void delfem2::viscousityVortexParticleGrid
     assert(rx>=-1.0e-5&&rx<=1.0+1.0e-5);
     assert(ry>=-1.0e-5&&ry<=1.0+1.0e-5);
     assert(rz>=-1.0e-5&&rz<=1.0+1.0e-5);
-    int igp0 = (ix+0)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+0); double w0 = (1.0-rx)*(1.0-ry)*(1.0-rz);
-    int igp1 = (ix+1)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+0); double w1 = (rx+0.0)*(1.0-ry)*(1.0-rz);
-    int igp2 = (ix+1)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+0); double w2 = (rx+0.0)*(ry+0.0)*(1.0-rz);
-    int igp3 = (ix+0)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+0); double w3 = (1.0-rx)*(ry+0.0)*(1.0-rz);
-    int igp4 = (ix+0)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+1); double w4 = (1.0-rx)*(1.0-ry)*(rz+0.0);
-    int igp5 = (ix+1)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+1); double w5 = (rx+0.0)*(1.0-ry)*(rz+0.0);
-    int igp6 = (ix+1)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+1); double w6 = (rx+0.0)*(ry+0.0)*(rz+0.0);
-    int igp7 = (ix+0)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+1); double w7 = (1.0-rx)*(ry+0.0)*(rz+0.0);
+    unsigned int igp0 = (ix+0)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+0); double w0 = (1.0-rx)*(1.0-ry)*(1.0-rz);
+    unsigned int igp1 = (ix+1)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+0); double w1 = (rx+0.0)*(1.0-ry)*(1.0-rz);
+    unsigned int igp2 = (ix+1)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+0); double w2 = (rx+0.0)*(ry+0.0)*(1.0-rz);
+    unsigned int igp3 = (ix+0)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+0); double w3 = (1.0-rx)*(ry+0.0)*(1.0-rz);
+    unsigned int igp4 = (ix+0)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+1); double w4 = (1.0-rx)*(1.0-ry)*(rz+0.0);
+    unsigned int igp5 = (ix+1)*(ny+1)*(nz+1)+(iy+0)*(nz+1)+(iz+1); double w5 = (rx+0.0)*(1.0-ry)*(rz+0.0);
+    unsigned int igp6 = (ix+1)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+1); double w6 = (rx+0.0)*(ry+0.0)*(rz+0.0);
+    unsigned int igp7 = (ix+0)*(ny+1)*(nz+1)+(iy+1)*(nz+1)+(iz+1); double w7 = (1.0-rx)*(ry+0.0)*(rz+0.0);
     assert(igp0>=0&&igp0<grid.aDataVtx.size());
     assert(igp1>=0&&igp1<grid.aDataVtx.size());
     assert(igp2>=0&&igp2<grid.aDataVtx.size());
@@ -893,22 +895,22 @@ void delfem2::viscousityVortexParticleGrid
     grid.aDataVtx[igp7].aPairPtcleWeight.push_back(std::make_pair(ivp, w7));
   }
   double damp_ratio = 1.0;
-  for (int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
+  for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
     aVortexParticle[ivp].circ *= (1.0-damp_ratio);
   }
-  for (int igp = 0; igp<grid.aDataVtx.size(); ++igp){
+  for (unsigned int igp = 0; igp<grid.aDataVtx.size(); ++igp){
     const CGrid_Vortex::CDataVtx& data = grid.aDataVtx[igp];
     if (data.aPairPtcleWeight.empty()) continue;
     double sum_w = 0;
-    for (int iivp = 0; iivp<data.aPairPtcleWeight.size(); ++iivp){
+    for (unsigned int iivp = 0; iivp<data.aPairPtcleWeight.size(); ++iivp){
       sum_w += data.aPairPtcleWeight[iivp].second;
     }
     if (sum_w<1.0e-5) continue;
     double inv_sum_w = 1.0/sum_w;    
-    for (int iivp = 0; iivp<data.aPairPtcleWeight.size(); ++iivp){    
+    for (unsigned int iivp = 0; iivp<data.aPairPtcleWeight.size(); ++iivp){
       int ivp0 = data.aPairPtcleWeight[iivp].first;
       double w = data.aPairPtcleWeight[iivp].second*inv_sum_w;
-      assert(ivp0>=0&&ivp0<aVortexParticle.size());
+      assert(ivp0>=0&&ivp0<(int)aVortexParticle.size());
       aVortexParticle[ivp0].circ += damp_ratio*w*grid.aDataVtx[igp].circ;
     }
   }
