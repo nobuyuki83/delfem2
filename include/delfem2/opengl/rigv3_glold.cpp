@@ -67,13 +67,13 @@ DFM2_INLINE void delfem2::opengl::DrawBone
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
   ::glPointSize(3);
-  for( int iskel=0;iskel<(int)aBone.size();++iskel){
+  for(unsigned int iskel=0;iskel<aBone.size();++iskel){
     Draw_RigBone(iskel,
                  (iskel==ibone_selected),ielem_selected,aBone,
                  rad_bone_sphere,rad_rot_hndlr);
   }
   // draw edges whilte
-  for( int ibone=0;ibone<(int)aBone.size();++ibone){
+  for(unsigned int ibone=0;ibone<aBone.size();++ibone){
     const CRigBone& bone = aBone[ibone];
     const int ibone_p = aBone[ibone].ibone_parent;
     if( ibone_p < 0 || ibone_p >= (int)aBone.size() ){ continue; }
@@ -92,7 +92,7 @@ DFM2_INLINE void delfem2::opengl::DrawJoints(
     const std::vector<double>& aJntPos,
     const std::vector<int>& aIndBoneParent)
 {
-  for(int ib=0;ib<aJntPos.size()/3;++ib){
+  for(unsigned int ib=0;ib<aJntPos.size()/3;++ib){
     const double* p = aJntPos.data()+ib*3;
     ::glColor3d(0,0,1);
     ::glDisable(GL_LIGHTING);
