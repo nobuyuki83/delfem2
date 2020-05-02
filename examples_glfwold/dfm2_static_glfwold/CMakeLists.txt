@@ -80,6 +80,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/def.h                       ${DELFEM2_INC}/def.cpp    
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
     ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
+    ${DELFEM2_INC}/femrod.h                    ${DELFEM2_INC}/femrod.cpp    
     ${DELFEM2_INC}/srchbi_v3bvh.h
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
     ${DELFEM2_INC}/cloth_internal.h
