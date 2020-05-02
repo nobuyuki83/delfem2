@@ -6,12 +6,9 @@
  */
 
 #include "delfem2/femrod.h"
-#include "delfem2/objf_geo3.h"
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/geo3_v23m34q.h"
-
-
 // --------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
@@ -59,6 +56,63 @@ void myGlutDisplay
   ::glEnd();
 }
 
+void MakeProblemSetting_Spiral
+(std::vector<dfm2::CVec3d>& aP0,
+ std::vector<dfm2::CVec3d>& aS0,
+ std::vector<unsigned int>& aElemSeg,
+ std::vector<unsigned int>& aElemRod,
+ unsigned int np,
+ double pitch,
+ double rad0,
+ double dangle)
+{
+  aP0.resize(np);
+  for(unsigned int ip=0;ip<np;++ip){
+    aP0[ip] = dfm2::CVec3d(-1.0+ip*pitch, rad0*cos(dangle*ip), rad0*sin(dangle*ip));
+  };
+  // -------------------------
+  // below: par segment data
+  const unsigned int ns = np-1;
+  aElemSeg.resize(ns*2);
+  for(unsigned int is=0;is<ns;++is){
+    aElemSeg[is*2+0] = is+0;
+    aElemSeg[is*2+1] = is+1;
+  }
+  { // initial director vector
+    aS0.resize(ns,dfm2::CVec3d(1,0,0));
+    for(unsigned int is=0;is<ns;++is){
+      unsigned int ip0 = aElemSeg[is*2+0];
+      unsigned int ip1 = aElemSeg[is*2+1];
+      const dfm2::CVec3d v = (aP0[ip1] - aP0[ip0]).Normalize();
+      aS0[is] = (aS0[is]-(aS0[is]*v)*v).Normalize();
+    }
+  }
+  // --------------------------
+  // below: par rod element data
+  const unsigned int nr = ns-1;
+  aElemRod.resize(nr*5);
+  for(unsigned int ir=0;ir<nr;++ir){
+    aElemRod[ir*5+0] = ir+0;
+    aElemRod[ir*5+1] = ir+1;
+    aElemRod[ir*5+2] = ir+2;
+    aElemRod[ir*5+3] = np+ir+0;
+    aElemRod[ir*5+4] = np+ir+1;
+  };
+  // smoothing
+  for(int itr=0;itr<10;++itr){
+    for(unsigned int ir=0;ir<nr;++ir){
+      const unsigned int ip0 = aElemRod[ir*5+0];
+      const unsigned int ip1 = aElemRod[ir*5+1];
+      const unsigned int ip2 = aElemRod[ir*5+2];
+      const unsigned int is0 = aElemRod[ir*5+3]-np; assert( is0 < ns );
+      const unsigned int is1 = aElemRod[ir*5+4]-np; assert( is1 < ns );
+      const dfm2::CMat3d CMat3 = dfm2::Mat3_MinimumRotation(aP0[ip1]-aP0[ip0], aP0[ip2]-aP0[ip1]);
+      dfm2::CVec3d s1 = CMat3*aS0[is0] + aS0[is1];
+      const dfm2::CVec3d v = (aP0[ip2] - aP0[ip1]).Normalize();
+      aS0[is1] = (s1-(s1*v)*v).Normalize();
+    }
+  }
+}
 
 
 int main(int argc,char* argv[])
@@ -74,7 +128,7 @@ int main(int argc,char* argv[])
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist(0.0, 1.0);
   // ------
-  std::vector<dfm2::CVec3d> aP0, aS0, aDarboux0;
+  std::vector<dfm2::CVec3d> aP0, aS0;
   std::vector<unsigned int> aElemSeg, aElemRod;
   std::vector<int> aBCFlag;
   dfm2::CMatrixSparse<double> mats;
@@ -84,12 +138,27 @@ int main(int argc,char* argv[])
   while (true)
   {
     if( iframe % 70 == 0 ){
-      MakeProblemSetting_Spiral(aP0,aS0,aDarboux0,
-                                aElemSeg,aElemRod, aBCFlag,
+      MakeProblemSetting_Spiral(aP0,aS0,
+                                aElemSeg,aElemRod,
                                 30,
-                                0.1,
-                                dist(reng),
-                                dist(reng));
+                                0.1, // np
+                                dist(reng), // rad0
+                                dist(reng)); // dangle
+      {
+        const unsigned int np = aP0.size();
+        const unsigned int ns = aS0.size();
+        const unsigned int nNode = np+ns;
+        aBCFlag.assign(nNode*3, 0);
+        {
+          aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
+          aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
+          aBCFlag[(np+0)*3+0] = 1; //
+          for(unsigned int is=0;is<ns;++is){
+            aBCFlag[(np+is)*3+1] = 1; // fix the unused dof
+            aBCFlag[(np+is)*3+2] = 1; // fix the unused dof
+          }
+        }
+      }
       {
         unsigned int nNode = aElemSeg.size()/2 + aP0.size();
         std::vector<unsigned int> psup_ind, psup;
@@ -132,9 +201,9 @@ int main(int argc,char* argv[])
         aS[iseg].SetNormalizedVector();
       }
     }
-    {
+    { // DispRotSeparate
       Solve_DispRotSeparate(aP, aS, mats,
-            aP0, aDarboux0, aElemSeg, aElemRod, aBCFlag);
+                            aP0, aS0, aElemSeg, aElemRod, aBCFlag);
     }
     iframe = iframe+1;
     // -------------

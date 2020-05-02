@@ -63,10 +63,8 @@ DFM2_INLINE double WdWddW_DotFrame
  const CVec3d S[2],
  const double off[3]);
 
-DFM2_INLINE void Darboux_Rod
-(CVec3d& darboux,
- //
- const CVec3d P[3],
+DFM2_INLINE CVec3d Darboux_Rod
+(const CVec3d P[3],
  const CVec3d S[2]);
 
 /**
@@ -106,18 +104,14 @@ DFM2_INLINE void Solve_DispRotSeparate
   const std::vector<unsigned int>& aElemRod,
   const std::vector<int>& aBCFlag);
 
-
-DFM2_INLINE void MakeProblemSetting_Spiral
-(std::vector<CVec3d>& aP0,
- std::vector<CVec3d>& aS0,
- std::vector<CVec3d>& aDarboux0,
- std::vector<unsigned int>& aElemSeg,
- std::vector<unsigned int>& aElemRod,
- std::vector<int>& aBCFlag, // if value this is not 0, it is fixed boundary condition
- unsigned int np,
- double pitch,
- double rad0,
- double dangle);
+DFM2_INLINE void Solve_DispRotCombined
+ (std::vector<CVec3d>& aP,
+  std::vector<CVec3d>& aS,
+  CMatrixSparse<double>& mats,
+  const std::vector<CVec3d>& aP0,
+  const std::vector<CVec3d>& aDarboux0,
+  const std::vector<int>& aBCFlag,
+  const std::vector<unsigned int>& aIP_HairRoot);
 
 } // namespace delfem2
 
