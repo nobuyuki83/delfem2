@@ -228,7 +228,9 @@ delfem2::CMat3<REAL> delfem2::Mat3_MinimumRotation
   m.mat[8] = ct         +(1.f-ct)*n.z()*n.z();
   return m;
 }
+#if !defined(DFM2_HEADER_ONLY)
 template delfem2::CMat3d delfem2::Mat3_MinimumRotation(const CVec3d& V, const CVec3d& v);
+#endif
 
 
 // --------------------------
