@@ -219,13 +219,19 @@ public:
   const REAL* data() const { return mat; }
   // ---------------
   void GetElements(REAL m[9]) const { for(unsigned int i=0;i<9;i++){ m[i]=mat[i]; } }
+  double Get(int i, int j) const { return mat[i*3+j]; }
+  // ---------
   void AffineMatrixTrans(REAL m[16]) const {
     m[0*4+0] = mat[0];  m[1*4+0] = mat[1];  m[2*4+0] = mat[2];  m[3*4+0] = 0;
     m[0*4+1] = mat[3];  m[1*4+1] = mat[4];  m[2*4+1] = mat[5];  m[3*4+1] = 0;
     m[0*4+2] = mat[6];  m[1*4+2] = mat[7];  m[2*4+2] = mat[8];  m[3*4+2] = 0;
     m[0*4+3] = 0;       m[1*4+3] = 0;       m[2*4+3] = 0;       m[3*4+3] = 1;
   }
-  double Get(int i, int j) const { return mat[i*3+j]; }
+  void CopyToMat4(REAL m[16]) const {
+    m[0*4+0] = mat[0];  m[0*4+1] = mat[1];  m[0*4+2] = mat[2];
+    m[1*4+0] = mat[3];  m[1*4+1] = mat[4];  m[1*4+2] = mat[5];
+    m[2*4+0] = mat[6];  m[2*4+1] = mat[7];  m[2*4+2] = mat[8];
+  }
   void CopyTo(REAL* ptr) const {
     for(int i=0;i<9;++i){ ptr[i] = mat[i]; }
   }
