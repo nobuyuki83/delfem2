@@ -56,13 +56,13 @@ int main(int argc,char* argv[])
         std::vector<dfm2::CVec3d> aCntBC;
         aCntBC.assign(nbc, dfm2::CVec3d(0,0,0) );
         std::vector<unsigned int> aW(nbc, 0);
-        for(int ip=0;ip<np;++ip){
+        for(unsigned int ip=0;ip<np;++ip){
           if( aBCFlag[ip*3+0] <= 0 ){ continue; }
           unsigned int ibc = aBCFlag[ip*3+0]-1;
           aCntBC[ibc] += dfm2::CVec3d(aXYZ0.data()+ip*3);
           aW[ibc] += 1;
         }
-        for(int ibc=0;ibc<nbc;++ibc){
+        for(unsigned int ibc=0;ibc<nbc;++ibc){
           aCntBC[ibc] /= (double)aW[ibc];
         }
         giz1.pivot0 = aCntBC[1].Float();

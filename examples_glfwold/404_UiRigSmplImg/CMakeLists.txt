@@ -14,7 +14,8 @@ IF(MSVC)
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g \
   -Wno-deprecated-declarations \
-  -Wno-unused-variable")
+  -Wno-unused-variable \
+  -Wno-unused-but-set-variable")
 ENDIF()
 
 ####################################

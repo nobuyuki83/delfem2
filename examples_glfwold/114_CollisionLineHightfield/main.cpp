@@ -114,7 +114,7 @@ int main(int argc,char* argv[])
         ::glVertex3d(src.x(), src.y(), src.z());
         ::glEnd();
       }
-      for(int ixyz=0;ixyz<aXYZ1.size()/3;++ixyz){
+      for(unsigned int ixyz=0;ixyz<aXYZ1.size()/3;++ixyz){
         ::glBegin(GL_POINTS);
         ::glColor3d(0,0,1);
         ::glVertex3d(aXYZ1[ixyz*3+0], aXYZ1[ixyz*3+1], aXYZ1[ixyz*3+2]);

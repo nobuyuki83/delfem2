@@ -39,7 +39,7 @@ void Draw
     ::glDisable(GL_LIGHTING);
     ::glPointSize(10);
     ::glBegin(GL_POINTS);
-    for(int it=0;it<aTarget.size();++it){
+    for(unsigned int it=0;it<aTarget.size();++it){
       const unsigned int ib = aTarget[it].ib;
       ::glColor3d(1,0,0);
       dfm2::opengl::myGlVertex(aBone[ib].Pos());
@@ -108,7 +108,7 @@ int main()
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
     aTargetOriginPos.push_back(aTarget[it].pos);
   }
       
