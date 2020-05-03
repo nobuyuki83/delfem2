@@ -28,6 +28,25 @@ DFM2_INLINE void DrawHandlerRotation_PosQuat
 
 
 template <typename REAL>
+void Draw(const CGizmo_Rotation<REAL>& gizmo_rot)
+{
+  DrawHandlerRotation_PosQuat(gizmo_rot.pos,
+                              gizmo_rot.quat,
+                              gizmo_rot.size,
+                              gizmo_rot.ielem_picked);
+}
+
+template <typename REAL>
+void Draw(const CGizmo_Transl<REAL>& gizmo_trnsl)
+{
+  DrawAxisHandler(gizmo_trnsl.size,
+                  gizmo_trnsl.pos,
+                  gizmo_trnsl.ielem_picked);
+}
+
+
+
+template <typename REAL>
 void Draw(const CGizmo_Affine<REAL>& ga)
 {
   if( ga.igizmo_mode == 0 ){
@@ -58,14 +77,7 @@ void Draw(const CGizmo_Affine<REAL>& ga)
   }
 }
 
-template <typename REAL>
-void Draw(const CGizmo_Rotation<REAL>& gizmo_rot)
-{
-  DrawHandlerRotation_PosQuat(gizmo_rot.pos,
-                              gizmo_rot.quat,
-                              gizmo_rot.size,
-                              gizmo_rot.ielem_picked);
-}
+
 
 }
 }
