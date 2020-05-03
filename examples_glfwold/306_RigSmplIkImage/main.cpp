@@ -44,7 +44,7 @@ void Draw
   ::glDisable(GL_LIGHTING);
   ::glPointSize(10);
   ::glBegin(GL_POINTS);
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
     const unsigned int ib = aTarget[it].ib;
     ::glColor3d(1,0,0);
     dfm2::opengl::myGlVertex(aBone[ib].Pos());
@@ -54,7 +54,7 @@ void Draw
   ::glEnable(GL_DEPTH_TEST);
   ::glBegin(GL_LINES);
   ::glColor3d(1,0,0);
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
     dfm2::CVec3d p = aTarget[it].pos;
     dfm2::opengl::myGlVertex(p+10.0*dfm2::CVec3d(0,0,1));
     dfm2::opengl::myGlVertex(p-10.0*dfm2::CVec3d(0,0,1));
@@ -100,7 +100,7 @@ int main()
       tex.z = -0.5;
     }
     aTarget.clear();
-    for(int it=0;it<aBoneLoc.size();++it){
+    for(unsigned int it=0;it<aBoneLoc.size();++it){
       dfm2::CTarget t;
       t.ib = aBoneLoc[it].first;
       int iw = aBoneLoc[it].second.x();
@@ -136,7 +136,7 @@ int main()
                        aXYZ0, aBone, aW);
   }
   std::vector< std::pair<dfm2::CVec3d,dfm2::CVec3d> > aTargetOriginPos;
-  for(int it=0;it<aTarget.size();++it){
+  for(unsigned int it=0;it<aTarget.size();++it){
     unsigned int ib = aTarget[it].ib;
     aTargetOriginPos.push_back( std::make_pair(aTarget[it].pos,
                                                aBone[ib].Pos()) );
@@ -159,7 +159,7 @@ int main()
     {
       double r = iframe*0.01;
       if( r > 1 ){ r = 1; }
-      for(int it=0;it<aTarget.size();++it){
+      for(unsigned int it=0;it<aTarget.size();++it){
         aTarget[it].pos = r*aTargetOriginPos[it].first + (1-r)*aTargetOriginPos[it].second;
       }
       Solve_MinRigging(aBone, aTarget);
@@ -167,11 +167,11 @@ int main()
                    aXYZ0, aBone, aW);
     }
     if( iframe > 200 ){
-      for(int ib=0;ib<aBone.size();++ib){
+      for(unsigned int ib=0;ib<aBone.size();++ib){
         dfm2::Quat_Identity(aBone[ib].quatRelativeRot);
       }
       dfm2::UpdateBoneRotTrans(aBone);
-      for(int it=0;it<aTarget.size();++it){
+      for(unsigned int it=0;it<aTarget.size();++it){
         aTarget[it].pos = aTargetOriginPos[it].second;
       }
       Solve_MinRigging(aBone, aTarget);

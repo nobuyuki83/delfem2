@@ -68,8 +68,9 @@ DFM2_INLINE void delfem2::opengl::DrawBone
   glDisable(GL_TEXTURE_2D);
   ::glPointSize(3);
   for(unsigned int iskel=0;iskel<aBone.size();++iskel){
+    const bool is_selected = (int)iskel==ibone_selected;
     Draw_RigBone(iskel,
-                 (iskel==ibone_selected),ielem_selected,aBone,
+                 is_selected,ielem_selected,aBone,
                  rad_bone_sphere,rad_rot_hndlr);
   }
   // draw edges whilte
