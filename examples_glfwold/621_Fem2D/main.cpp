@@ -325,8 +325,8 @@ void SolveProblem_Diffusion()
 // iproblem: 2, 3
 void InitializeProblem_Solid()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*2;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*2;
   // ----------------
   aBCFlag.assign(nDoF, 0);
   for(unsigned int ip=0;ip<np;++ip){
@@ -339,7 +339,7 @@ void InitializeProblem_Solid()
   aMSFlag.assign(nDoF, -1);
   { // master slave
     int iseed = -1;
-    for(int ip=0;ip<np;++ip){
+    for(unsigned int ip=0;ip<np;++ip){
 //      const double px = aXY1[ip*2+0];
       const double py = aXY1[ip*2+1];
       if( fabs(py+len) > 0.0001 ){ continue; }
@@ -598,8 +598,8 @@ void InitializeProblem_Fluid2()
 // iproblem: 4
 void SolveProblem_Stokes_Static()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*3;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*3;
   // ---------------------
   double myu = 1.0;
   double g_x = 0.0;
@@ -646,8 +646,8 @@ void SolveProblem_Stokes_Static()
 // iprob:5
 void SolveProblem_Stokes_Dynamic()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*3;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*3;
   // --------------------
   double myu = 1.0;
   double rho = 10;
@@ -701,8 +701,8 @@ void SolveProblem_Stokes_Dynamic()
 // iprob: 6
 void SolveProblem_NavierStokes_Dynamic()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*3;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*3;
   // ----------------------
   double myu = 0.01;
   double rho = 1;
