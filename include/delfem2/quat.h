@@ -86,6 +86,12 @@ DFM2_INLINE void QuatConjVec(
     const double q[],
     const double vi[]);
 
+template <typename REAL>
+DFM2_INLINE double Dot_Quat(
+    const REAL p[],
+    const REAL q[]);
+
+
 // ----------
 
 
@@ -121,9 +127,6 @@ CQuat<T> operator+(const CQuat<T>&, const CQuat<T>&);
 
 template <typename T>
 CQuat<T> operator-(const CQuat<T>&, const CQuat<T>&);
-
-template <typename T>
-CQuat<T> operator*(double, const CQuat<T>&);	//!< multiply scalar
   
 template <typename T>
 CQuat<T> operator*(const CQuat<T>&, T);	//!< multiply scalar
@@ -136,6 +139,13 @@ CQuat<T> operator*(const CQuat<T>&, const CQuat<T>&);
 
 template <typename T>
 CQuat<T> SphericalLinearInterp(const CQuat<T>&, const CQuat<T>&, T);
+
+
+template <typename T>
+CQuat<T> operator*(T, const CQuat<T>&);  //!< multiply scalar
+
+template <typename T>
+CQuat<T> operator * (const CQuat<T>& vec, T d);
 
   
 /**
@@ -177,6 +187,13 @@ public:
   CQuat<T> Conjugate() const {
     return CQuat<T>(q[0], -q[1], -q[2], -q[3]);
   }
+  
+  void SetNormalized();
+  void SetSmallerRotation();
+  
+  static CQuat<T> Identity() {
+    return CQuat<T>(1,0,0,0);
+  }
   /*
 	CQuaternion(const CQuaternion& rhs)
 		:vector( rhs.vector ){
@@ -193,7 +210,6 @@ public:
 	CVector3D GetVector(){ return vector; }	//!< get imaginary part
 
 	//! normalization
-	void Normalize();
 	//! set unit quaternion
 	void SetUnit(){ real = 1.0; vector.SetZero(); }
 	//! initialize from axial rotation vector
