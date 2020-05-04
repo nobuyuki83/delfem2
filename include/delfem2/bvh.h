@@ -12,7 +12,7 @@
 #include <stack>
 #include <vector>
 #include <set>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 namespace delfem2 {
@@ -363,12 +363,12 @@ void delfem2::BuildBoundingBoxesBVH_Dynamic
  std::vector<BBOX>& aBB)
 {
   double eps = 1.0e-10;
-  assert( ibvh < aNodeBVH.size() );
+  assert( ibvh < (int)aNodeBVH.size() );
   int ichild0 = aNodeBVH[ibvh].ichild[0];
   int ichild1 = aNodeBVH[ibvh].ichild[1];
   if( ichild1 == -1 ){ // leaf
     const int itri = ichild0;
-    assert( itri < aTri.size() );
+    assert( itri < (int)aTri.size() );
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
     const int ino2 = aTri[itri*3+2];

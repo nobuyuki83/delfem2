@@ -231,7 +231,7 @@ void MakeRigidImpactZone
           ind_inc.insert(iriz);
         }
         else{
-          for(int iedge=psup_ind[ino];iedge<psup_ind[ino+1];iedge++){
+          for(unsigned int iedge=psup_ind[ino];iedge<psup_ind[ino+1];iedge++){
             int jno = psup[iedge];
             if( aRIZ[iriz].find(jno) != aRIZ[iriz].end() ){
               ind_inc.insert(iriz);  break;
@@ -266,7 +266,7 @@ void MakeRigidImpactZone
       aRIZ1.resize(ind0+1);
       for(std::set<int>::iterator itr=ind_inc.begin();itr!=ind_inc.end();itr++){
         int ind1 = *itr;
-        assert( ind1 < aRIZ.size() );
+        assert( ind1 < (int)aRIZ.size() );
         for(std::set<int>::iterator jtr=aRIZ[ind1].begin();jtr!=aRIZ[ind1].end();jtr++){
           aRIZ1[ind0].insert(*jtr);
         }

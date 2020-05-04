@@ -333,7 +333,7 @@ void myGlutDisplay(void)
     ::glLineWidth(1);
     ::glColor3d(1,0,0);    
     ::glPushMatrix();
-    const double radius = 3.0;
+//    const double radius = 3.0;
     ::glTranslated(0.5, 0.0, +2.0);
 //    ::glutWireSphere(radius, 16, 16);
     ::glPopMatrix();
