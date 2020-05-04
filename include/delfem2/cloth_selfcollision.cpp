@@ -125,7 +125,7 @@ void SelfCollisionImpulse_CCD
  const std::vector<unsigned int>& aTri,
  const std::vector<dfm2::CContactElement>& aContactElem)
 {
-  for(int ice=0;ice<aContactElem.size();ice++){
+  for(unsigned int ice=0;ice<aContactElem.size();ice++){
     const dfm2::CContactElement& ce = aContactElem[ice];
     const int ino0 = ce.ino0;
     const int ino1 = ce.ino1;
@@ -212,10 +212,7 @@ void SelfCollisionImpulse_CCD
   }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------
 
 // RIZを更新する
 void MakeRigidImpactZone
@@ -229,7 +226,7 @@ void MakeRigidImpactZone
     const int n[4] = {ce.ino0, ce.ino1, ce.ino2, ce.ino3};
     std::set<int> ind_inc; // 接触要素が接するRIZの集合
     for(int ino : n){
-      for(int iriz=0;iriz<aRIZ.size();iriz++){
+      for(unsigned int iriz=0;iriz<aRIZ.size();iriz++){
         if( aRIZ[iriz].find(ino) != aRIZ[iriz].end() ){
           ind_inc.insert(iriz);
         }
@@ -246,15 +243,21 @@ void MakeRigidImpactZone
     if( ind_inc.empty() ){ // 接触要素はどのRIZにも属していない
       int ind0 = (int)aRIZ.size();
       aRIZ.resize(ind0+1);
-      aRIZ[ind0].insert(n[0]); aRIZ[ind0].insert(n[1]); aRIZ[ind0].insert(n[2]); aRIZ[ind0].insert(n[3]);
+      aRIZ[ind0].insert(n[0]);
+      aRIZ[ind0].insert(n[1]);
+      aRIZ[ind0].insert(n[2]);
+      aRIZ[ind0].insert(n[3]);
     }
     else if( ind_inc.size() == 1 ){ // 接触要素は一つのRIZに接する
       int ind0 = *(ind_inc.begin());
-      aRIZ[ind0].insert(n[0]); aRIZ[ind0].insert(n[1]); aRIZ[ind0].insert(n[2]); aRIZ[ind0].insert(n[3]);
+      aRIZ[ind0].insert(n[0]);
+      aRIZ[ind0].insert(n[1]);
+      aRIZ[ind0].insert(n[2]);
+      aRIZ[ind0].insert(n[3]);
     }
     else{ // overlapping two reagion，接触要素が複数のRIZに接するー＞接する複数のRIZをマージする
       std::vector< std::set<int> > aRIZ1; // マージされた後のRIZの配列
-      for(int iriz=0;iriz<aRIZ.size();iriz++){ // 接さないRIZをコピー
+      for(unsigned int iriz=0;iriz<aRIZ.size();iriz++){ // 接さないRIZをコピー
         if( ind_inc.find(iriz) != ind_inc.end() ) continue;
         aRIZ1.push_back( aRIZ[iriz] );
       }
@@ -446,7 +449,7 @@ void GetIntermidiateVelocityContactResolved
 //      }
     }
     int nnode_riz = 0;
-    for(int iriz=0;iriz<aRIZ.size();iriz++){
+    for(unsigned int iriz=0;iriz<aRIZ.size();iriz++){
       nnode_riz += aRIZ[iriz].size();
     }
     std::cout << "  RIZ iter: " << itr << "    Contact Elem Size: " << aContactElem.size() << "   NNode In RIZ: " << nnode_riz << std::endl;

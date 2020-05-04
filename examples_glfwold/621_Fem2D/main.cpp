@@ -330,7 +330,7 @@ void InitializeProblem_Solid()
   // ----------------
   aBCFlag.assign(nDoF, 0);
   for(unsigned int ip=0;ip<np;++ip){
-    const double px = aXY1[ip*2+0];
+//    const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];
     if( fabs(py-len) > 0.0001 ){ continue; }
     aBCFlag[ip*2+0] = 1;
@@ -636,7 +636,7 @@ void SolveProblem_Stokes_Static()
     for(unsigned int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
       if( jdof == -1 ) continue;
-      assert( jdof >= 0 && jdof < nDoF );
+      assert( jdof >= 0 && jdof < (int)nDoF );
       aVal[ idof] = aVal[ jdof];
     }
   }
@@ -690,7 +690,7 @@ void SolveProblem_Stokes_Dynamic()
     for(unsigned int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
       if( jdof == -1 ) continue;
-      assert( jdof >= 0 && jdof < nDoF );
+      assert( jdof >= 0 && jdof < (int)nDoF );
       aVal[ idof] = aVal[ jdof];
       aVelo[idof] = aVelo[jdof];
     }
@@ -744,7 +744,7 @@ void SolveProblem_NavierStokes_Dynamic()
     for(unsigned int idof=0;idof<nDoF;++idof){
       int jdof = aMSFlag[idof];
       if( jdof == -1 ) continue;
-      assert( jdof >= 0 && jdof < nDoF );
+      assert( jdof >= 0 && jdof < (int)nDoF );
       aVal[ idof] = aVal[ jdof];
       aVelo[idof] = aVelo[jdof];
     }
