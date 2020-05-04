@@ -6,8 +6,6 @@
  */
 
 #include "delfem2/def.h"
-#include "delfem2/mat3.h"
-#include "delfem2/quat.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/geo3_v23m34q.h" // update rotation by matching cluster
