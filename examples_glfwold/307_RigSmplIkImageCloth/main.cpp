@@ -20,15 +20,14 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
+#include "inputs_garment.h"
 
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"
-#include "delfem2/cnpy/smpl_cnpy.h"
-#include "inputs_garment.h"
-
-#include "delfem2/rig_geo3.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/tex_gl.h"
 
