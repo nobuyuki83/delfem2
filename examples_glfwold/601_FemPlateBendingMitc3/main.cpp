@@ -17,52 +17,18 @@ namespace dfm2 = delfem2;
 
 // ------------------------
 
-std::vector<unsigned int> aTri;
-std::vector<double> aXY0;
-
-std::vector<double> aVal;
-std::vector<int> aBCFlag; // boundary condition flag
-std::vector<int> aMSFlag; // master slave flag
-
-dfm2::CMatrixSparse<double> mat_A;
-std::vector<double> vec_b;
-dfm2::CPreconditionerILU<double> ilu_A;
-
-const double lenx = 1.0;
-const double leny = 0.2;
-const double thickness = 0.05;
-const double myu = 10000.0;
-const double lambda = 0.0;
-const double rho = 1.0;
-const double gravity_z = -10.0;
-
-
-// -------------------------
-
-void MakeMesh(){
-  std::vector< std::vector<double> > aaXY;
-  {
-    aaXY.resize(1);
-    aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(-leny*0.5);
-    aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(-leny*0.5);
-    aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(+leny*0.5);
-    aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
-  }
-  std::vector<dfm2::CDynPntSur> aPo2D;
-  std::vector<dfm2::CDynTri> aETri;
-  std::vector<dfm2::CVec2d> aVec2;
-  GenMesh(aPo2D, aETri, aVec2,
-          aaXY, 0.03, 0.03);
-  MeshTri2D_Export(aXY0,aTri,
-                   aVec2,aETri);
-  std::cout<<"  ntri;"<<aTri.size()/3<<"  nXY:"<<aXY0.size()/2<<std::endl;
-}
-
-void InitializeProblem_PlateBendingMITC3()
+void InitializeProblem_PlateBendingMITC3
+(dfm2::CMatrixSparse<double>& mat_A,
+ dfm2::CPreconditionerILU<double>& ilu_A,
+ std::vector<int>& aBCFlag,
+ const double lenx,
+ const double leny,
+ const std::vector<double>& aXY0,
+ const std::vector<unsigned int>& aTri)
 {
   const std::size_t np = aXY0.size()/2;
   aBCFlag.assign(np*3, 0);
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     const double px = aXY0[ip*2+0];
 //    const double py = aXY0[ip*2+1];
     if( fabs(px-(-lenx*0.5)) < 0.0001 ){
@@ -74,8 +40,8 @@ void InitializeProblem_PlateBendingMITC3()
   //
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                                                    aTri.data(), aTri.size()/3, 3,
-                                                    (int)aXY0.size()/2);
+                             aTri.data(), aTri.size()/3, 3,
+                             (int)aXY0.size()/2);
   dfm2::JArray_Sort(psup_ind, psup);
   //
   mat_A.Initialize(np, 3, true);
@@ -84,7 +50,20 @@ void InitializeProblem_PlateBendingMITC3()
     ilu_A.Initialize_ILUk(mat_A,0);
 }
 
-void SolveProblem_PlateBendingMITC3()
+void SolveProblem_PlateBendingMITC3
+(std::vector<double>& aVal,
+ std::vector<double>& vec_b,
+ std::vector<int>& aMSFlag,
+ dfm2::CMatrixSparse<double>& mat_A,
+ dfm2::CPreconditionerILU<double>& ilu_A,
+ const std::vector<int>& aBCFlag,
+ const double thickness,
+ const double myu,
+ const double lambda,
+ const double rho,
+ const double gravity_z,
+ const std::vector<double>& aXY0,
+ const std::vector<unsigned int>& aTri)
 {
   const std::size_t np = aXY0.size()/2;
   const std::size_t nDoF = np*3;
@@ -117,7 +96,10 @@ void SolveProblem_PlateBendingMITC3()
                 1.0,vec_x);
 }
 
-void myGlutDisplay()
+void myGlutDisplay
+(const std::vector<double>& aXY0,
+ const std::vector<unsigned int>& aTri,
+ const std::vector<double>& aVal)
 {
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
@@ -144,29 +126,48 @@ void myGlutDisplay()
   }
 }
 
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key)
-  {
-    default:
-      break;
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'c':
-    {
-    }
-  }
-}
-
-
 int main(int argc,char* argv[])
 {
-  MakeMesh();
-  aVal.assign(aXY0.size()/2*3, 0.0);
-  InitializeProblem_PlateBendingMITC3();
-  SolveProblem_PlateBendingMITC3();
+  const double lenx = 1.0;
+  const double leny = 0.2;
+  std::vector<unsigned int> aTri;
+  std::vector<double> aXY0;
+  {
+    std::vector< std::vector<double> > aaXY;
+    {
+      aaXY.resize(1);
+      aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(-leny*0.5);
+      aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(-leny*0.5);
+      aaXY[0].push_back(+lenx*0.5); aaXY[0].push_back(+leny*0.5);
+      aaXY[0].push_back(-lenx*0.5); aaXY[0].push_back(+leny*0.5);
+    }
+    std::vector<dfm2::CDynPntSur> aPo2D;
+    std::vector<dfm2::CDynTri> aETri;
+    std::vector<dfm2::CVec2d> aVec2;
+    GenMesh(aPo2D, aETri, aVec2,
+            aaXY, 0.03, 0.03);
+    MeshTri2D_Export(aXY0,aTri,
+                     aVec2,aETri);
+    std::cout<<"  ntri;"<<aTri.size()/3<<"  nXY:"<<aXY0.size()/2<<std::endl;
+  }
+  // -------------
+  std::vector<double> aVal(aXY0.size()/2*3, 0.0);
+  std::vector<int> aBCFlag; // boundary condition flag
+  dfm2::CMatrixSparse<double> mat_A;
+  dfm2::CPreconditionerILU<double> ilu_A;
+  InitializeProblem_PlateBendingMITC3(mat_A,ilu_A,aBCFlag,
+                                      lenx,leny,aXY0,aTri);
+  // -----------
+  const double thickness = 0.05;
+  const double myu = 10000.0;
+  const double lambda = 0.0;
+  const double rho = 1.0;
+  const double gravity_z = -10.0;
+  std::vector<double> vec_b;
+  std::vector<int> aMSFlag; // master slave flag
+  SolveProblem_PlateBendingMITC3(aVal,vec_b,aMSFlag,mat_A,ilu_A,aBCFlag,
+                                 thickness,myu,lambda,rho,gravity_z,
+                                 aXY0,aTri);
  
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
@@ -193,7 +194,7 @@ int main(int argc,char* argv[])
   
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.DrawBegin_oldGL();
-    myGlutDisplay();
+    myGlutDisplay(aXY0, aTri, aVal);
     viewer.DrawEnd_oldGL();
   }
   glfwDestroyWindow(viewer.window);

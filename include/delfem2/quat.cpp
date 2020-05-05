@@ -15,6 +15,16 @@
 
 // ----------------------------------
 
+template <typename REAL>
+DFM2_INLINE double delfem2::Dot_Quat
+(const REAL p[],
+ const REAL q[])
+{
+  return p[0]*q[0] + p[1]*q[1] + p[2]*q[2] + p[3]*q[3];
+}
+
+// ---------------------
+
 template <typename T>
 DFM2_INLINE void delfem2::Normalize_Quat(T q[])
 {
@@ -256,8 +266,86 @@ CQuat<T> operator * (const CQuat<T>& lhs, const CQuat<T>& rhs)
 template CQuat<double> operator * (const CQuat<double>& lhs, const CQuat<double>& rhs);
 template CQuat<float> operator * (const CQuat<float>& lhs, const CQuat<float>& rhs);
 #endif
+
+template <typename T>
+CQuat<T> operator * (const CQuat<T>& lhs, const T rhs)
+{
+  CQuat<T> q(lhs.q[0]*rhs,
+             lhs.q[1]*rhs,
+             lhs.q[2]*rhs,
+             lhs.q[3]*rhs);
+  return q;
+}
+#ifndef DFM2_HEADER_ONLY
+template CQuat<double> operator * (const CQuat<double>& lhs, double rhs);
+template CQuat<float> operator * (const CQuat<float>& lhs, float rhs);
+#endif
   
 } // end namespace delfem2
+
+template <typename T>
+void delfem2::CQuat<T>::SetNormalized()
+{
+  const T len = (T)sqrt(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
+  q[0] /= len;
+  q[1] /= len;
+  q[2] /= len;
+  q[3] /= len;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CQuat<double>::SetNormalized();
+template void delfem2::CQuat<float>::SetNormalized();
+#endif
+
+// ------------------------
+
+template <typename T>
+void delfem2::CQuat<T>::SetSmallerRotation()
+{
+  if( q[0] > 0 ){ return; }
+  q[0] = -q[0];
+  q[1] = -q[1];
+  q[2] = -q[2];
+  q[3] = -q[3];
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CQuat<double>::SetSmallerRotation();
+template void delfem2::CQuat<float>::SetSmallerRotation();
+#endif
+
+// member function of CQuat
+// ======================================================================
+
+template <typename T>
+delfem2::CQuat<T> delfem2::SphericalLinearInterp
+ (const delfem2::CQuat<T>& q0,
+  const delfem2::CQuat<T>& q1,
+  T t)
+{
+  T qr = Dot_Quat(q0.q, q1.q);
+  double ss = 1.0 - qr * qr;
+  
+  if (ss == 0.0) { return q0; }
+  double sp = sqrt(ss);
+  double ph = acos(qr);
+  double pt = ph * t;
+  double t1 = sin(pt) / sp;
+  double t0 = sin(ph - pt) / sp;
+  CQuat<T> q;
+  q.q[0] = t0*q0.q[0] + t1*q1.q[0];
+  q.q[1] = t0*q0.q[1] + t1*q1.q[1];
+  q.q[2] = t0*q0.q[2] + t1*q1.q[2];
+  q.q[3] = t0*q0.q[3] + t1*q1.q[3];
+  return q;
+}
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CQuat<double> delfem2::SphericalLinearInterp(const delfem2::CQuat<double>& q0,
+                                                               const delfem2::CQuat<double>& q1,
+                                                               double t);
+template delfem2::CQuat<float> delfem2::SphericalLinearInterp(const delfem2::CQuat<float>& q0,
+                                                              const delfem2::CQuat<float>& q1,
+                                                              float t);
+#endif
 
 /*
 CQuat operator-(const CQuat& lhs, const CQuat& rhs){
@@ -408,12 +496,7 @@ void CQuat::RotMatrix33(double* m) const
 	m[8] = 1.0 - 2.0 * ( vy * vy + vx * vx );
 }
 
-void CQuat::Normalize()
-{	
-	const double len = ( real * real + vector.DLength() );
-	real /= len;
-	vector /= len;
-}
+
 
 void CQuat::AxisToQuat(const CVector3D &axis )
 {
@@ -453,23 +536,6 @@ double CQuat::Length() const
 	return sqrt( real*real + vector.DLength() );
 }
 
-CQuat SphericalLinearInterp(const CQuat& q0, const CQuat& q1, double t)
-{  
-  
-  double qr = q0.real * q1.real + Dot(q0.vector,q1.vector);
-  double ss = 1.0 - qr * qr;
-  
-  if (ss == 0.0) { return q0; }
-  double sp = sqrt(ss);
-  double ph = acos(qr);
-  double pt = ph * t;
-  double t1 = sin(pt) / sp;
-  double t0 = sin(ph - pt) / sp;    
-  CQuat q;
-  q.real = t0*q0.real + t1*q1.real;
-  q.vector = t0*q0.vector + t1*q1.vector;
-  return q;
-}
 
 */
 

@@ -19,17 +19,17 @@ void Solve_MinRigging
   const std::vector<CTarget>& aTarget)
 {
   std::vector<double> Lx, Ly, Lz; // [nsns, nb*4]
-  for(unsigned int ibs=0;ibs<aBone.size();++ibs){
+  for(unsigned int ibs=0;ibs<aBone.size();++ibs){ // add rotation of bone
     for(int idims=0;idims<3;++idims){
        Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               ibs,idims,true,
-                                               aBone);
+                                          ibs,idims,true,
+                                          aBone);
     }
   }
-  for(int idims=0;idims<3;++idims){
+  for(int idims=0;idims<3;++idims){ // add translation of root bone
      Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                             0,idims,false,
-                                             aBone);
+                                        0,idims,false,
+                                        aBone);
   }
   
   // -----------------------

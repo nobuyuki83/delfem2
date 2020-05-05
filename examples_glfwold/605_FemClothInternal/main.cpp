@@ -143,7 +143,7 @@ void myGlutDisplay(void)
     ::glPointSize(5);
     ::glColor3d(0,0,1);
     ::glBegin(GL_POINTS);
-    for(int ip=0;ip<aXYZ.size()/3;ip++){
+    for(unsigned int ip=0;ip<aXYZ.size()/3;ip++){
       if( aBCFlag[ip*3+0] == 0 && aBCFlag[ip*3+1] == 0 && aBCFlag[ip*3+2] == 0 ) continue;
       ::glVertex3d(aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2]);
     }
@@ -159,7 +159,7 @@ void myGlutDisplay(void)
     double grid_x_max = +10;
     double grid_y_min = -10;
     double grid_y_max = +10;
-    int ndiv_grid = 30;
+    const unsigned int ndiv_grid = 30;
     for(unsigned int ix=0;ix<ndiv_grid+1;ix++){
       double x0 = (grid_x_max-grid_x_min) / ndiv_grid * ix + grid_x_min;
       ::glVertex3d(x0,grid_y_min,-0.5);

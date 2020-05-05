@@ -68,8 +68,9 @@ DFM2_INLINE void delfem2::opengl::DrawBone
   glDisable(GL_TEXTURE_2D);
   ::glPointSize(3);
   for(unsigned int iskel=0;iskel<aBone.size();++iskel){
+    const bool is_selected = (int)iskel==ibone_selected;
     Draw_RigBone(iskel,
-                 (iskel==ibone_selected),ielem_selected,aBone,
+                 is_selected,ielem_selected,aBone,
                  rad_bone_sphere,rad_rot_hndlr);
   }
   // draw edges whilte
@@ -106,5 +107,32 @@ DFM2_INLINE void delfem2::opengl::DrawJoints(
     ::glVertex3dv(p);
     ::glVertex3dv(pp);
     ::glEnd();
+  }
+}
+
+
+DFM2_INLINE void delfem2::opengl::Draw
+(CGizmo_Rig<float>& giz,
+ const std::vector<CRigBone>& aBone)
+{
+  if( giz.mode_edit == CGizmo_Rig<float>::MODE_EDIT::TRNSL ){ // translation
+    giz.gizmo_trnsl.pos[0] = aBone[0].transRelative[0];
+    giz.gizmo_trnsl.pos[1] = aBone[0].transRelative[1];
+    giz.gizmo_trnsl.pos[2] = aBone[0].transRelative[2];
+    opengl::Draw(giz.gizmo_trnsl);
+  }
+  else if( giz.mode_edit == CGizmo_Rig<float>::MODE_EDIT::ROT ){ // translation
+    if( giz.ipicked_bone != -1 ){
+      assert( giz.ipicked_bone >= 0 && giz.ipicked_bone < (int)aBone.size() );
+      giz.gizmo_rot.pos = aBone[giz.ipicked_bone].Pos().Float();
+      { // set quaternion
+        CMat3<double> m3;
+        m3.SetMat4(aBone[giz.ipicked_bone].affmat3Global);
+        CQuat<double> qj;
+        m3.GetQuat_RotMatrix(qj.q);
+        qj.CopyTo(giz.gizmo_rot.quat);
+      }
+      opengl::Draw(giz.gizmo_rot);
+    }
   }
 }
