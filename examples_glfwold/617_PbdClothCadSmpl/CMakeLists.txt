@@ -47,7 +47,7 @@ else()
   else()
     set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
-  endif()
+  endif()  
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
@@ -94,7 +94,7 @@ ELSEIF(UNIX)
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
