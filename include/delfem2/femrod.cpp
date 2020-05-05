@@ -682,7 +682,7 @@ DFM2_INLINE void delfem2::Solve_DispRotCombined
   vec_r.assign(np*4, 0.0);
   std::vector<int> tmp_buffer;
   double W = 0;
-  for(int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
     unsigned int ips = aIP_HairRoot[ihair];
     unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
     for(unsigned int is=0;is<ns;++is){
@@ -714,7 +714,7 @@ DFM2_INLINE void delfem2::Solve_DispRotCombined
     }
   }
   // --------------------------
-  for(int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
     const unsigned int ips = aIP_HairRoot[ihair];
     const unsigned int nr = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] - 2;
     for(unsigned int ir=0;ir<nr;++ir){
@@ -801,7 +801,7 @@ DFM2_INLINE void delfem2::Solve_DispRotCombined
   //      std::cout << i << " " << vec_x[i] << std::endl;
   //    }
   
-  for(int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
     unsigned int ips = aIP_HairRoot[ihair];
     unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
     for(unsigned int is=0;is<ns;++is){
@@ -823,7 +823,7 @@ DFM2_INLINE void delfem2::Solve_DispRotCombined
     aP[ip].p[1] += vec_x[ip*4+1];
     aP[ip].p[2] += vec_x[ip*4+2];
   }
-  for(int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
     unsigned int ips = aIP_HairRoot[ihair];
     unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
     for(unsigned int is=0;is<ns;++is){

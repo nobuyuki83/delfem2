@@ -333,7 +333,7 @@ void myGlutDisplay(void)
     ::glLineWidth(1);
     ::glColor3d(1,0,0);    
     ::glPushMatrix();
-    const double radius = 3.0;
+//    const double radius = 3.0;
     ::glTranslated(0.5, 0.0, +2.0);
 //    ::glutWireSphere(radius, 16, 16);
     ::glPopMatrix();
@@ -347,75 +347,6 @@ void myGlutDisplay(void)
   
 //  ::glutSwapBuffers();
 }
-
-/*
-void myGlutIdle(){
-    
-  if( is_animation ){
-    StepTime();
-  }
-  
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  glViewport(0,0, w, h);
-	::glutPostRedisplay();
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-	::glutPostRedisplay();
-}
-
-
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x,y);
-	::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-	switch(Key)
-	{
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  // '\033' ? ESC ? ASCII ???
-    case 'a':
-      is_animation = !is_animation;
-      break;
-    case 'd': // change draw mode
-      imode_draw++;
-      if( imode_draw >= 2 ){
-        imode_draw = 0;
-      }
-      break;
-    case 't':
-      StepTime();
-      break;
-    case ' ':
-      imode_contact++;
-      aXYZ = aXYZ0;
-      aUVW.assign(aUVW.size(),0.0);
-      if( imode_contact >= 2 ){
-        imode_contact = 0;
-      }
-      break;
-  }
-	::glutPostRedisplay();
-}
- */
 
 int main(int argc,char* argv[])
 {

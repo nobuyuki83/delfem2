@@ -136,7 +136,7 @@ const std::vector<double>& y_vec)
   double r_r0conj = bem::dot(r_vec, r0);
 
   iteration = mx_iter;
-  for (int iitr = 1; iitr<mx_iter; iitr++){
+  for (unsigned int iitr = 1; iitr<mx_iter; iitr++){
 
     // calc {Ap} = [A]*{p}
     matVec(Ap_vec, A, p_vec);
@@ -482,7 +482,7 @@ void delfem2::evaluateField_PotentialFlow_Order0th(
   }
   gradphi_pos = CVec3d(0, 0, 0);
   phi_pos = 0;
-  for (int jtri = 0; jtri<nt; ++jtri){
+  for (unsigned int jtri = 0; jtri<nt; ++jtri){
     const int jq0 = aTri[jtri*3+0];
     const int jq1 = aTri[jtri*3+1];
     const int jq2 = aTri[jtri*3+2];
@@ -640,7 +640,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
   assert(ngauss>=0&&ngauss<6);
   const unsigned int nt = aTri.size()/3;
   CVec3d velo_res(0,0,0);
-  for (int jt = 0; jt<nt; ++jt){
+  for (unsigned int jt = 0; jt<nt; ++jt){
     if (jt==jtri_exclude){ continue; }
     const int jq0 = aTri[jt*3+0];
     const int jq1 = aTri[jt*3+1];
@@ -720,7 +720,7 @@ int ivp_self)
 {
   CVec3d velo_res(0, 0, 0);
   for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
-    if (ivp==ivp_self) continue;
+    if ((int)ivp==ivp_self) continue;
     const CVortexParticle& vp = aVortexParticle[ivp];
     velo_res += veloVortexParticle(p0, vp.pos, vp.circ, vp.rad);
   }
@@ -736,7 +736,7 @@ int ivp_self)
   CMat3d m_res; m_res.SetZero();
   velo = CVec3d(0, 0, 0);
   for (unsigned int ivp = 0; ivp<aVortexParticle.size(); ++ivp){
-    if (ivp==ivp_self) continue;
+    if ((int)ivp==ivp_self) continue;
     const CVortexParticle& vp = aVortexParticle[ivp];
     CVec3d dv;
     m_res += gradveloVortexParticle(dv, p0, vp.pos, vp.circ, vp.rad);

@@ -54,7 +54,7 @@ void Coarse(double px, double py)
       int ip1 = aPSuP[iit];
       double d01 = Distance(aVec2[ip],aVec2[ip1]);
       double min_area = 0.0;
-      for(int jjt=0;jjt<npsup-2;++jjt){
+      for(unsigned int jjt=0;jjt<npsup-2;++jjt){
         const int ip2 = aPSuP[(iit+jjt+1)%npsup];
         const int ip3 = aPSuP[(iit+jjt+2)%npsup];
         double area = Area_Tri(aVec2[ip1],aVec2[ip2],aVec2[ip3]);

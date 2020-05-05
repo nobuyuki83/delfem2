@@ -14,7 +14,8 @@ IF(MSVC)
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g\
   -Wno-unused-variable \
-  -Wno-deprecated-declarations")
+  -Wno-deprecated-declarations \
+  -Wno-unused-but-set-variable")
 ENDIF()
 
 ####################################
@@ -89,7 +90,7 @@ ELSEIF(UNIX)
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME} 

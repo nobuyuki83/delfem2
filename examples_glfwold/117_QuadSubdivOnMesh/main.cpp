@@ -50,7 +50,7 @@ void InitializeProblem() {
                             bbmin, bbmax);
   }
   
-  for(int ip=0;ip<aXYZ_Quad.size()/3;++ip){
+  for(unsigned int ip=0;ip<aXYZ_Quad.size()/3;++ip){
     dfm2::CVec3d p0(aXYZ_Quad[ip*3+0], aXYZ_Quad[ip*3+1], aXYZ_Quad[ip*3+2]);
     dfm2::CPointElemSurf<double> pes0 = Nearest_Point_MeshTri3D(p0,
                                                                 aXYZ, aTri);

@@ -20,15 +20,14 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
+#include "inputs_garment.h"
 
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"
-#include "delfem2/cnpy/smpl_cnpy.h"
-#include "inputs_garment.h"
-
-#include "delfem2/rig_geo3.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/tex_gl.h"
 
@@ -248,7 +247,7 @@ int main()
   dfm2::opengl::setSomeLighting();
   tex.InitGL();
 
-  int iframe = 0;
+  unsigned int iframe = 0;
   while (true)
   {
     const unsigned int iframe0 = 300;
@@ -263,7 +262,7 @@ int main()
     else if( iframe < iframe1 ){
       double r = (double)(iframe-iframe0)/(iframe1-iframe0);
       if( r > 1 ){ r = 1; }
-      for(int it=0;it<aTarget.size();++it){
+      for(unsigned int it=0;it<aTarget.size();++it){
         aTarget[it].pos = r*aTargetOriginPos[it].first + (1-r)*aTargetOriginPos[it].second;
       }
       Solve_MinRigging(aBone, aTarget);

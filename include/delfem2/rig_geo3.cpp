@@ -858,3 +858,5 @@ DFM2_INLINE void delfem2::Rig_WdW_Target_Eigen
     adW[istat+1*nsns+isns] = -dy;
   }
 }
+
+
