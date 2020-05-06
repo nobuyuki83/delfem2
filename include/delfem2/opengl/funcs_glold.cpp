@@ -474,7 +474,6 @@ DFM2_INLINE void delfem2::opengl::DrawSphere_Edge
     ::glEnd();
   }
   //   ::glutWireSphere(radius_,32,32);
-  ////
   if(is_lighting){ glEnable(GL_LIGHTING); }
   if(is_texture ){ glEnable(GL_TEXTURE_2D); }
 }
@@ -1710,7 +1709,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Edge(
     const unsigned int* aTet,
     unsigned int nTet)
 {
-  for (int itet = 0; itet<nTet; itet++){
+  for (unsigned int itet = 0; itet<nTet; itet++){
     const unsigned int i0 = aTet[itet*4+0];
     const unsigned int i1 = aTet[itet*4+1];
     const unsigned int i2 = aTet[itet*4+2];
@@ -1733,9 +1732,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Edge(
 
 DFM2_INLINE void delfem2::opengl::DrawMeshLine3D_Edge
 (const double* aXYZ,
- int nXYZ,
+ unsigned int nXYZ,
  const unsigned int* aLine,
- int nLine)
+ unsigned int nLine)
 {
   for (int il = 0; il<nLine; il++){
     const unsigned int i0 = aLine[il*2+0];
@@ -1782,7 +1781,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_EdgeDisp(
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNorm
 (const double* aXYZ,
- const unsigned int* aTet, unsigned int nTet)
+ const unsigned int* aTet,
+ unsigned int nTet)
 {
   for (unsigned  itet = 0; itet<nTet; itet++){
     const unsigned int i0 = aTet[itet*4+0];

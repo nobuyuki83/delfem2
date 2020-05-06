@@ -118,9 +118,9 @@ DFM2_INLINE void DrawPoints3d_NormVtx
 // Draw Line
 DFM2_INLINE void DrawMeshLine3D_Edge
  (const double* aXYZ,
-  int nXYZ,
+  unsigned int nXYZ,
   const unsigned int* aLine,
-  int nLine);
+  unsigned int nLine);
 
 // ------------
 // Draw Tri
