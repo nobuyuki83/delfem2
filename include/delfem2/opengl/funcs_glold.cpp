@@ -28,6 +28,15 @@ namespace delfem2{
 namespace opengl{
 namespace funcs_glold{
 
+const int noelElemFace_Hex[8][4] = { // this numbering is corresponds to VTK_HEX
+    { 0, 4, 7, 3 }, // -x
+    { 1, 2, 6, 5 }, // +x
+    { 0, 1, 5, 4 }, // -y
+    { 3, 7, 6, 2 }, // +y
+    { 0, 3, 2, 1 }, // -z
+    { 4, 5, 6, 7 }  // +z
+};
+
 DFM2_INLINE void UnitNormalAreaTri3D
  (double n[3], double& a,
   const double v1[3], const double v2[3], const double v3[3])
@@ -988,15 +997,16 @@ DFM2_INLINE void delfem2::opengl::DrawCharacter
 
 // -----------------------------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawPoints2D_Vectors
-(const double* aXY, int nXY,
- const double* aVal,
- int nstride,
- int noffset,
- double mag)
+DFM2_INLINE void delfem2::opengl::DrawPoints2D_Vectors(
+    const double* aXY,
+    unsigned int nXY,
+    const double* aVal,
+    int nstride,
+    int noffset,
+    double mag)
 {
   ::glBegin(GL_LINES);
-  for(int ino=0;ino<nXY;ino++){
+  for(unsigned int ino=0;ino<nXY;ino++){
     const double vx = aVal[ino*nstride+noffset+0]*mag;
     const double vy = aVal[ino*nstride+noffset+1]*mag;
     const double p0[2] = { aXY[ino*2+0],    aXY[ino*2+1]    };
@@ -1029,9 +1039,10 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_Points(const std::vector<double>&
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(const std::vector<double>& aXYZ,
-                                        const std::vector<double>& aNrm,
-                                        double scale)
+DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aNrm,
+    double scale)
 {
   const unsigned int np = aXYZ.size()/3;
   ::glBegin(GL_LINES);
@@ -1041,9 +1052,9 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(const std::vector<double>
       aXYZ[ip*3+1],
       aXYZ[ip*3+2] };
     const double p1[3] = {
-      aXYZ[ip*3+0]+aNrm[ip*3+0],
-      aXYZ[ip*3+1]+aNrm[ip*3+1],
-      aXYZ[ip*3+2]+aNrm[ip*3+2] };
+      aXYZ[ip*3+0]+scale*aNrm[ip*3+0],
+      aXYZ[ip*3+1]+scale*aNrm[ip*3+1],
+      aXYZ[ip*3+2]+scale*aNrm[ip*3+2] };
     ::glVertex3dv( p0 );
     ::glVertex3dv( p1 );
   }
@@ -1438,16 +1449,17 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Face
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceDisp2D
-(const double* aXY, int nXY,
- const unsigned int* aTri, int nTri,
- const double* aDisp, int nstride)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceDisp2D(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aDisp,
+    int nstride)
 {
-  //  const int nxys = (int)aXY.size()/2;
   ::glColor3d(1,1,1);
   ::glBegin(GL_TRIANGLES);
-  for(int itri=0;itri<nTri;itri++){
-    //      double color[3];
+  for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
@@ -1463,7 +1475,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceDisp2D
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
   ::glBegin(GL_LINES);
-  for(int itri=0;itri<nTri;itri++){
+  for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int i0 = aTri[itri*3+0];
     const unsigned int i1 = aTri[itri*3+1];
     const unsigned int i2 = aTri[itri*3+2];
@@ -1692,11 +1704,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3DSurface_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Edge
-(const double* aXYZ,
- int nXYZ,
- const unsigned int* aTet,
- int nTet)
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_Edge(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet)
 {
   for (int itet = 0; itet<nTet; itet++){
     const unsigned int i0 = aTet[itet*4+0];
@@ -1831,14 +1843,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_FaceNorm
 (const double* aXYZ,
  const unsigned int* aHex, unsigned int nHex)
 {
-  const int noelElemFace_Hex[8][4] = { // this is corresponds to VTK_VOXEL
-    { 0, 4, 7, 3 }, // -x
-    { 1, 2, 6, 5 }, // +x
-    { 0, 1, 5, 4 }, // -y
-    { 3, 7, 6, 2 }, // +y
-    { 0, 3, 2, 1 }, // -z
-    { 4, 5, 6, 7 }  // +z
-  };
+  namespace lcl = ::delfem2::opengl::funcs_glold;
   ::glBegin(GL_TRIANGLES);
   for (unsigned int ihex = 0; ihex<nHex; ihex++){
     const unsigned int i0 = aHex[ihex*8+0];
@@ -1859,10 +1864,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_FaceNorm
     const double p7[3] = { aXYZ[i7*3+0], aXYZ[i7*3+1], aXYZ[i7*3+2] };
     const double* aP[8] = {p0,p1,p2,p3,p4,p5,p6,p7};
     for(int iface=0;iface<6;++iface){
-      const double* q0 = aP[ noelElemFace_Hex[iface][0] ];
-      const double* q1 = aP[ noelElemFace_Hex[iface][1] ];
-      const double* q2 = aP[ noelElemFace_Hex[iface][2] ];
-      const double* q3 = aP[ noelElemFace_Hex[iface][3] ];
+      const double* q0 = aP[ lcl::noelElemFace_Hex[iface][0] ];
+      const double* q1 = aP[ lcl::noelElemFace_Hex[iface][1] ];
+      const double* q2 = aP[ lcl::noelElemFace_Hex[iface][2] ];
+      const double* q3 = aP[ lcl::noelElemFace_Hex[iface][3] ];
       double un0[3], a0; funcs_glold::UnitNormalAreaTri3D(un0,a0, q0,q1,q2);
       ::glNormal3dv(un0); ::glVertex3dv(q0); ::glVertex3dv(q1); ::glVertex3dv(q2);
       double un1[3], a1; funcs_glold::UnitNormalAreaTri3D(un1,a1, q0,q2,q3);
@@ -1877,14 +1882,7 @@ DFM2_INLINE void delfem2::opengl::DrawHex3D_FaceNormDisp
  const std::vector<int>& aHex,
  const std::vector<double>& aDisp)
 {
-  const int noelElemFace_Hex[8][4] = { // this is corresponds to VTK_VOXEL
-    { 0, 4, 7, 3 }, // -x
-    { 1, 2, 6, 5 }, // +x
-    { 0, 1, 5, 4 }, // -y
-    { 3, 7, 6, 2 }, // +y
-    { 0, 3, 2, 1 }, // -z
-    { 4, 5, 6, 7 }  // +z
-  };
+  namespace lcl = ::delfem2::opengl::funcs_glold;
   ::glBegin(GL_TRIANGLES);
   for (unsigned int ihex = 0; ihex<aHex.size()/8; ihex++){
     const int i0 = aHex[ihex*8+0];
@@ -1914,10 +1912,10 @@ DFM2_INLINE void delfem2::opengl::DrawHex3D_FaceNormDisp
     const double r7[3] = { p7[0]+aDisp[i7*3+0], p7[1]+aDisp[i7*3+1], p7[2]+aDisp[i7*3+2] };
     const double* aR[8] = {r0,r1,r2,r3,r4,r5,r6,r7};
     for(int iface=0;iface<6;++iface){
-      const double* q0 = aR[ noelElemFace_Hex[iface][0] ];
-      const double* q1 = aR[ noelElemFace_Hex[iface][1] ];
-      const double* q2 = aR[ noelElemFace_Hex[iface][2] ];
-      const double* q3 = aR[ noelElemFace_Hex[iface][3] ];
+      const double* q0 = aR[ lcl::noelElemFace_Hex[iface][0] ];
+      const double* q1 = aR[ lcl::noelElemFace_Hex[iface][1] ];
+      const double* q2 = aR[ lcl::noelElemFace_Hex[iface][2] ];
+      const double* q3 = aR[ lcl::noelElemFace_Hex[iface][3] ];
       double un0[3], a0; funcs_glold::UnitNormalAreaTri3D(un0,a0, q0,q1,q2);
       ::glNormal3dv(un0); ::glVertex3dv(q0); ::glVertex3dv(q1); ::glVertex3dv(q2);
       double un1[3], a1; funcs_glold::UnitNormalAreaTri3D(un1,a1, q0,q2,q3);

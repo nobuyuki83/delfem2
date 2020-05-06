@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2019 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 #include "delfem2/femrod.h"
 #include "delfem2/mat3.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/geo3_v23m34q.h"
-
-
+#include "delfem2/mshtopo.h"
 
 namespace delfem2 {
 namespace femrod{
@@ -661,6 +666,111 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
 }
 
 
+// ========================================
+// RodHair
+
+DFM2_INLINE void delfem2::ParallelTransport_RodHair(
+    std::vector<CVec3d>& aP0,
+    std::vector<CVec3d>& aS0,
+    const std::vector<unsigned int>& aIP_HairRoot)
+{
+  assert( aP0.size() == aS0.size() );
+  assert( !aIP_HairRoot.empty() && aIP_HairRoot[0] == 0 );
+  assert( aP0.size() == aIP_HairRoot[aIP_HairRoot.size()-1]);
+  for(unsigned int ih=0;ih<aIP_HairRoot.size()-1;++ih){
+    const unsigned int ip_r = aIP_HairRoot[ih];
+    const unsigned int np = aIP_HairRoot[ih+1]-ip_r;
+    for(unsigned int ir=0;ir<np-2;++ir){
+      const unsigned int ip0 = ip_r+ir+0;
+      const unsigned int ip1 = ip_r+ir+1;
+      const unsigned int ip2 = ip_r+ir+2;
+      const unsigned int is0 = ip_r+ir+0;
+      const unsigned int is1 = ip_r+ir+1;
+      const CMat3d CMat3 = Mat3_MinimumRotation(aP0[ip1]-aP0[ip0], aP0[ip2]-aP0[ip1]);
+      CVec3d s1 = CMat3*aS0[is0] + aS0[is1];
+      const CVec3d v = (aP0[ip2] - aP0[ip1]).Normalize();
+      aS0[is1] = (s1-(s1*v)*v).Normalize();
+    }
+  }
+}
+
+DFM2_INLINE void delfem2::MakeBCFlag_RodHair(
+    std::vector<int>& aBCFlag,
+    const std::vector<unsigned int>& aIP_HairRoot)
+{
+  assert( !aIP_HairRoot.empty() && aIP_HairRoot[0] == 0 );
+  const unsigned int np = aIP_HairRoot[aIP_HairRoot.size()-1];
+  aBCFlag.assign(np*4, 0);
+  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+    assert( aIP_HairRoot[ihair+1] > aIP_HairRoot[ihair] );
+    unsigned int ips0 = aIP_HairRoot[ihair]+0;
+    unsigned int ips1 = aIP_HairRoot[ihair]+1;
+    unsigned int ipe1 = aIP_HairRoot[ihair+1]-1;
+    aBCFlag[ips0*4+0] = 1; aBCFlag[ips0*4+1] = 1; aBCFlag[ips0*4+2] = 1;
+    aBCFlag[ips1*4+0] = 1; aBCFlag[ips1*4+1] = 1; aBCFlag[ips1*4+2] = 1;
+    aBCFlag[ips0*4+3] = 1;
+    aBCFlag[ipe1*4+3] = 1;
+  }
+}
+
+DFM2_INLINE void delfem2::MakeSparseMatrix_RodHair(
+    CMatrixSparse<double>& mats,
+    const std::vector<unsigned int>& aIP_HairRoot)
+{
+  assert( !aIP_HairRoot.empty() && aIP_HairRoot[0] == 0 );
+  const unsigned int np = aIP_HairRoot[aIP_HairRoot.size()-1];
+  std::vector<unsigned int> psup_ind, psup;
+  {
+    std::vector<unsigned int> aElemRod;
+    for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+      unsigned int ip0 = aIP_HairRoot[ihair];
+      unsigned int nr = aIP_HairRoot[ihair+1]-ip0-2; // number of rod elements
+      for (unsigned int ir = 0; ir < nr; ++ir) {
+        aElemRod.push_back(ip0 + ir + 0);
+        aElemRod.push_back(ip0 + ir + 1);
+        aElemRod.push_back(ip0 + ir + 2);
+      }
+    }
+    JArray_PSuP_MeshElem(psup_ind, psup,
+                               aElemRod.data(), aElemRod.size()/3, 3, np);
+  }
+  JArray_Sort(psup_ind, psup);
+  mats.Initialize(np, 4, true);
+  mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
+}
+
+
+DFM2_INLINE void delfem2::MakeDirectorOrthogonal_RodHair(
+    std::vector<CVec3d>& aS,
+    const std::vector<CVec3d>& aP)
+{
+  for(unsigned int is=0;is<aP.size()-1;++is){
+    assert( is < aS.size() );
+    const unsigned int ip0 = is+0;
+    const unsigned int ip1 = is+1;
+    const CVec3d& p0 = aP[ip0];
+    const CVec3d& p1 = aP[ip1];
+    const CVec3d e01 = (p1-p0).Normalize();
+    aS[is] -= (aS[is]*e01)*e01;
+    aS[is].SetNormalizedVector();
+  }
+  /*
+  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
+    unsigned int ips = aIP_HairRoot[ihair];
+    unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
+    for(unsigned int is=0;is<ns;++is){
+      const unsigned int ip0 = ips+is+0;
+      const unsigned int ip1 = ips+is+1;
+      const CVec3d& p0 = aP[ip0];
+      const CVec3d& p1 = aP[ip1];
+      const CVec3d e01 = (p1-p0).Normalize();
+      aS[ip0] -= (aS[ip0]*e01)*e01;
+      aS[ip0].SetNormalizedVector();
+    }
+  }
+  */
+}
+
 DFM2_INLINE void delfem2::Solve_DispRotCombined
 (std::vector<CVec3d>& aP,
  std::vector<CVec3d>& aS,
@@ -823,19 +933,7 @@ DFM2_INLINE void delfem2::Solve_DispRotCombined
     aP[ip].p[1] += vec_x[ip*4+1];
     aP[ip].p[2] += vec_x[ip*4+2];
   }
-  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
-    unsigned int ips = aIP_HairRoot[ihair];
-    unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
-    for(unsigned int is=0;is<ns;++is){
-      const unsigned int ip0 = ips+is+0;
-      const unsigned int ip1 = ips+is+1;
-      const CVec3d& p0 = aP[ip0];
-      const CVec3d& p1 = aP[ip1];
-      const CVec3d e01 = (p1-p0).Normalize();
-      aS[ip0] -= (aS[ip0]*e01)*e01;
-      aS[ip0].SetNormalizedVector();
-    }
-  }
+  MakeDirectorOrthogonal_RodHair(aS,aP);
 }
 
 

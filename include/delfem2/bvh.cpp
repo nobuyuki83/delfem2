@@ -20,8 +20,8 @@ DFM2_INLINE double DetSide(const double p[3], const double org[3], const double 
 }
 
 DFM2_INLINE void DevideElemAryConnex
-(int iroot_node,
- std::vector<int>& aElem2Node,
+(unsigned int iroot_node,
+ std::vector<unsigned int>& aElem2Node,
  std::vector<CNodeBVH2>& aNodeBVH,
  //
  const std::vector<int>& list,
@@ -258,7 +258,7 @@ DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
   const unsigned int nelem = aElemCenter.size()/3;
   std::vector<int> list(nelem);
   for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
-  std::vector<int> aElem2Node;
+  std::vector<unsigned int> aElem2Node;
   aElem2Node.resize(nelem,0);
   aNodeBVH.resize(1);
   aNodeBVH[0].iparent = UINT_MAX;

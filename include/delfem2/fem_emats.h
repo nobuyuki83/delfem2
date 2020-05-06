@@ -32,8 +32,10 @@ DFM2_INLINE void MergeLinSys_Poission_MeshTri2D(
     double* vec_b,
     const double alpha,
     const double source,
-    const double* aXY1, int np,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int np,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal);
 
 DFM2_INLINE void MergeLinSys_Poission_MeshTet3D(
@@ -73,8 +75,10 @@ DFM2_INLINE void MergeLinSys_Diffusion_MeshTri2D(
     const double source,
     const double dt_timestep,
     const double gamma_newmark,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal,
     const double* aVelo);
 
@@ -101,8 +105,10 @@ DFM2_INLINE void MergeLinSys_SolidLinear_Static_MeshTri2D(
     const double rho,
     const double g_x,
     const double g_y,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal);
 
 DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
@@ -116,8 +122,10 @@ DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double dt_timestep,
     const double gamma_newmark,
     const double beta_newmark,
-    const double* aXY1, int nXY1,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY1,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal,
     const double* aVelo,
     const double* aAcc);
@@ -128,8 +136,10 @@ DFM2_INLINE void MergeLinSys_StokesStatic2D(
     const double myu,
     const double g_x,
     const double g_y,
-    const double* aXY1, int nXY1,
-    const unsigned int* aTri1, int nTri1,
+    const double* aXY1,
+    unsigned int nXY1,
+    const unsigned int* aTri1,
+    unsigned int nTri1,
     const double* aVal);
 
 DFM2_INLINE void MergeLinSys_StokesDynamic2D(
@@ -141,8 +151,10 @@ DFM2_INLINE void MergeLinSys_StokesDynamic2D(
     const double g_y,
     const double dt_timestep,
     const double gamma_newmark,
-    const double* aXY1, int nXY1,
-    const unsigned int* aTri1, int nTri1,
+    const double* aXY1,
+    unsigned int nXY1,
+    const unsigned int* aTri1,
+    unsigned int nTri1,
     const double* aVal,
     const double* aVelo);
 
@@ -155,8 +167,10 @@ DFM2_INLINE void MergeLinSys_NavierStokes2D(
     const double g_y,
     const double dt_timestep,
     const double gamma_newmark,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal,
     const double* aVelo);
 
@@ -215,8 +229,10 @@ DFM2_INLINE void MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double dt_timestep,
     const double gamma_newmark,
     const double beta_newmark,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
     const double* aVal,
     const double* aVelo,
     const double* aAcc);

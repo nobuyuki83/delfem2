@@ -170,7 +170,7 @@ public:
    */
   std::vector<unsigned int> colInd;
   /**
-   * @param row index of CRS data structure
+   * @param rowPtr index of CRS data structure
    */
   std::vector<unsigned int> rowPtr;
   std::vector<T> valCrs;

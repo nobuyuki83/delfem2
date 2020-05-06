@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 

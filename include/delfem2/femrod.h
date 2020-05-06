@@ -104,6 +104,27 @@ DFM2_INLINE void Solve_DispRotSeparate
   const std::vector<unsigned int>& aElemRod,
   const std::vector<int>& aBCFlag);
 
+
+// --------------
+// below: rod hair
+
+DFM2_INLINE void ParallelTransport_RodHair(
+    std::vector<CVec3d>& aP0,
+    std::vector<CVec3d>& aS0,
+    const std::vector<unsigned int>& aIP_HairRoot);
+
+DFM2_INLINE void MakeBCFlag_RodHair(
+    std::vector<int>& aBCFlag,
+    const std::vector<unsigned int>& aIP_HairRoot);
+
+DFM2_INLINE void MakeSparseMatrix_RodHair(
+    CMatrixSparse<double>& mats,
+    const std::vector<unsigned int>& aIP_HairRoot);
+
+DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
+    std::vector<CVec3d>& aS,
+    const std::vector<CVec3d>& aP);
+
 DFM2_INLINE void Solve_DispRotCombined
  (std::vector<CVec3d>& aP,
   std::vector<CVec3d>& aS,

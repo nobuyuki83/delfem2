@@ -223,12 +223,12 @@ namespace delfem2 {
 template<>
 void XPlusAY
 (std::vector<double> &X,
- const int nDoF,
+ const unsigned int nDoF,
  const std::vector<int> &aBCFlag,
  double alpha,
  const std::vector<double> &Y)
 {
-  for (int i = 0; i < nDoF; ++i) {
+  for (unsigned int i = 0; i < nDoF; ++i) {
     if (aBCFlag[i] != 0) continue;
     X[i] += alpha * Y[i];
   }
@@ -237,12 +237,12 @@ void XPlusAY
 template<>
 void XPlusAY
 (std::vector<std::complex<double> > &X,
- const int nDoF,
+ const unsigned int nDoF,
  const std::vector<int> &aBCFlag,
  std::complex<double> alpha,
  const std::vector<std::complex<double> > &Y)
 {
-  for (int i = 0; i < nDoF; ++i) {
+  for (unsigned int i = 0; i < nDoF; ++i) {
     if (aBCFlag[i] != 0) continue;
     X[i] += alpha * Y[i];
   }
@@ -282,41 +282,39 @@ void setRHS_Zero
 
 }
 
-void delfem2::XPlusAYBZ
- (std::vector<double>& X,
-  const int nDoF,
-  const std::vector<int>& aBCFlag,
-  double alpha,
-  const std::vector<double>& Y,
-  double beta,
-  const std::vector<double>& Z)
+void delfem2::XPlusAYBZ(
+    std::vector<double>& X,
+    const unsigned int nDoF,
+    const std::vector<int>& aBCFlag,
+    double alpha,
+    const std::vector<double>& Y,
+    double beta,
+    const std::vector<double>& Z)
 {
-  for(int i=0;i<nDoF;++i ){
+  for(unsigned int i=0;i<nDoF;++i){
     if( aBCFlag[i] !=0 ) continue;
     X[i] += alpha*Y[i] + beta*Z[i];
   }
 }
 
-void delfem2::XPlusAYBZCW
- (std::vector<double>& X,
-  const int nDoF,
-  const std::vector<int>& aBCFlag,
-  double alpha,
-  const std::vector<double>& Y,
-  double beta,
-  const std::vector<double>& Z,
-  double gamma,
-  const std::vector<double>& W)
+void delfem2::XPlusAYBZCW(
+    std::vector<double>& X,
+    const unsigned int nDoF,
+    const std::vector<int>& aBCFlag,
+    double alpha,
+    const std::vector<double>& Y,
+    double beta,
+    const std::vector<double>& Z,
+    double gamma,
+    const std::vector<double>& W)
 {
-  for(int i=0;i<nDoF;++i ){
+  for(unsigned int i=0;i<nDoF;++i){
     if( aBCFlag[i] !=0 ) continue;
     X[i] += alpha*Y[i] + beta*Z[i] + gamma*W[i];
   }
 }
 
 // -------------------------------------------------------------------
-
-
 
 void delfem2::setRHS_MasterSlave
  (double* vec_b,
