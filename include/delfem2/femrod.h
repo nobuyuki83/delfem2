@@ -1,9 +1,9 @@
-//
-//  femrod.h
-//  examples_glfwold_hdronly
-//
-//  Created by Nobuyuki Umetani on 2020-05-01.
-//
+/*
+ * Copyright (c) 2020 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 #ifndef DFM2_FEMROD_H
 #define DFM2_FEMROD_H
@@ -71,7 +71,7 @@ DFM2_INLINE CVec3d Darboux_Rod
  * @param P[3] (in) point of rod
  * @param S[2] (in) director vectors on the edges
  * @param off[3] (in) Daboux vector in the material frame
- * @param is_eaxct
+ * @param is_eaxct (in) whether the hessian is exact or not
  */
 DFM2_INLINE double WdWddW_Rod
 (CVec3d dW_dP[3],
