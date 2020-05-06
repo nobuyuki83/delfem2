@@ -31,7 +31,7 @@ int main(int argc,char* argv[])
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
-  int iframe = 0;
+  unsigned int iframe = 0;
   const unsigned int nframe_interval = 10;
   while(true){
     if( iframe % nframe_interval == 0 ){

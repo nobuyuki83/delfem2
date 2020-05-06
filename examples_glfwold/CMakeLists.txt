@@ -95,6 +95,6 @@ add_subdirectory(619_Sph2d)
 add_subdirectory(620_FemClothSelfCollision)
 add_subdirectory(621_Fem2D)
 add_subdirectory(622_FemRodHair)
-
+add_subdirectory(623_FemRodHairDynamic)
 
 

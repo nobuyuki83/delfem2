@@ -6,13 +6,12 @@
  */
 
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 #include <iostream>
-#include <limits>
 #include <vector>
+#include <random>
 #include "delfem2/mshtopo.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/dtri.h"
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
@@ -58,6 +57,9 @@ double AreaCGCurve(const std::vector<double>& aCV, double cg[2])
 
 void MakeRandomCV(unsigned int nCV, std::vector<double>& aCV)
 {
+  std::random_device rd;
+  std::mt19937 rdeng(rd());
+  std::uniform_real_distribution<double> dist(0,1.0);
   aCV.clear();
   for(unsigned int icv=0;icv<nCV;icv++){
     /*
@@ -68,7 +70,7 @@ void MakeRandomCV(unsigned int nCV, std::vector<double>& aCV)
      */
     {
       double tht = icv*3.1415*2.0/nCV;
-      double r = (double)rand()/(RAND_MAX+1.0);
+      double r = dist(rdeng);
       double px = r*sin(tht);
       double py = r*cos(tht);
       aCV.push_back(px);
@@ -124,6 +126,7 @@ void myGlVertex2D(const std::vector<double>& vec, unsigned int i)
   ::glVertex3d(vec[i*2],vec[i*2+1],+0.5);
 }
 
+/*
 void drawCurve
 (const std::vector<double>& vec,
  const std::vector<double>& aVecCurve0)
@@ -144,6 +147,7 @@ void drawCurve
   }
   ::glEnd();
 }
+ */
 
 // ------------------------------------------
 
@@ -158,6 +162,7 @@ std::vector<double> aAcc;
 std::vector<int> aBCFlag; // master slave flag
 std::vector<int> aMSFlag; // master slave flag
 
+// TODO: make variables non-global
 dfm2::CMatrixSparse<double> mat_A;
 std::vector<double> vec_b;
 dfm2::CPreconditionerILU<double> ilu_A;
@@ -344,7 +349,7 @@ void InitializeProblem_Solid()
       const double py = aXY1[ip*2+1];
       if( fabs(py+len) > 0.0001 ){ continue; }
       if( iseed == -1 ){
-        iseed = ip;
+        iseed = (int)ip;
       }
       else{
         aMSFlag[ip*2+0] = iseed*2+0;
@@ -774,7 +779,8 @@ void DrawVelocityField(){
                                           aTri1.data(),aTri1.size()/3,
                                           aVal.data()+2,3,colorMap);
   ::glColor3d(0,0,0);
-  delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2, aVal.data(),3,0, 0.1);
+  delfem2::opengl::DrawPoints2D_Vectors(aXY1.data(),aXY1.size()/2,
+      aVal.data(),3,0, 0.1);
   ::glPointSize(2);
   ::glColor3d(0,0,0);
   delfem2::opengl::DrawPoints2d_Points(aXY1);
