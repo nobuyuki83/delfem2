@@ -28,8 +28,8 @@ void myGlutDisplay
   ::glColor3d(1,0,0);
   ::glPointSize(10);
   ::glBegin(GL_POINTS);
-  for(unsigned int ip=0;ip<aP.size();++ip){
-    ::glVertex3d(aP[ip].x(), aP[ip].y(), aP[ip].z());
+  for(const auto & p : aP){
+    ::glVertex3d(p.x(), p.y(), p.z());
   }
   ::glEnd();
   // ------------
@@ -117,7 +117,6 @@ void MakeProblemSetting_Spiral
 
 int main(int argc,char* argv[])
 {
-  // -----
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.5;
@@ -126,91 +125,89 @@ int main(int argc,char* argv[])
   // -----
   std::random_device rd;
   std::mt19937 reng(rd());
-  std::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   // ------
-  std::vector<dfm2::CVec3d> aP0, aS0;
-  std::vector<unsigned int> aElemSeg, aElemRod;
-  std::vector<int> aBCFlag;
-  dfm2::CMatrixSparse<double> mats;
-  std::vector<dfm2::CVec3d> aS, aP;
-  // -------
-  int iframe = 0;
   while (true)
   {
-    if( iframe % 70 == 0 ){
-      MakeProblemSetting_Spiral(aP0,aS0,
-                                aElemSeg,aElemRod,
-                                30,
-                                0.1, // np
-                                dist(reng), // rad0
-                                dist(reng)); // dangle
+    std::vector<dfm2::CVec3d> aP0, aS0;
+    std::vector<unsigned int> aElemSeg, aElemRod;
+    MakeProblemSetting_Spiral(aP0, aS0,
+                              aElemSeg, aElemRod,
+                              30,
+                              0.1, // np
+                              dist01(reng), // rad0
+                              dist01(reng)); // dangle
+    std::vector<int> aBCFlag;
+    {
+      const unsigned int np = aP0.size();
+      const unsigned int ns = aS0.size();
+      const unsigned int nNode = np+ns;
+      aBCFlag.assign(nNode*3, 0);
       {
-        const unsigned int np = aP0.size();
-        const unsigned int ns = aS0.size();
-        const unsigned int nNode = np+ns;
-        aBCFlag.assign(nNode*3, 0);
-        {
-          aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
-          aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
-          aBCFlag[(np+0)*3+0] = 1; //
-          for(unsigned int is=0;is<ns;++is){
-            aBCFlag[(np+is)*3+1] = 1; // fix the unused dof
-            aBCFlag[(np+is)*3+2] = 1; // fix the unused dof
-          }
+        aBCFlag[0*3+0] = 1; aBCFlag[0*3+1] = 1; aBCFlag[0*3+2] = 1;
+        aBCFlag[1*3+0] = 1; aBCFlag[1*3+1] = 1; aBCFlag[1*3+2] = 1;
+        aBCFlag[(np+0)*3+0] = 1; //
+        for(unsigned int is=0;is<ns;++is){
+          aBCFlag[(np+is)*3+1] = 1; // fix the unused dof
+          aBCFlag[(np+is)*3+2] = 1; // fix the unused dof
         }
       }
-      {
-        unsigned int nNode = aElemSeg.size()/2 + aP0.size();
-        std::vector<unsigned int> psup_ind, psup;
-        dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                                   aElemRod.data(), aElemRod.size()/5, 5, nNode);
-        dfm2::JArray_Sort(psup_ind, psup);
-        mats.Initialize(nNode, 3, true);
-        mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
-      }
-      // -----------------
-      aP = aP0;
-      aS = aS0;
-      assert( aP.size() == aP0.size() );
-      assert( aS.size() == aElemSeg.size()/2);
-      // apply random deviation
-      for(unsigned int ip=0;ip<aP.size();++ip){
-        aP[ip] = aP0[ip];
-        auto rnd = dfm2::CVec3d::Random()*3.0;
-        if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
-        if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
-        if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
-      }
-      const unsigned int ns = aS.size();
-      for(unsigned int is=0;is<ns;++is){
-        aS[is] = aS0[is];
-        auto rnd = dfm2::CVec3d::Random()*3.0;
-        const unsigned int np = aP.size();
-        if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x(); }
-        if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y(); }
-        if( aBCFlag[(np+is)*3+2] == 0 ){ aS[is].p[2] += rnd.z(); }
-      }
-      for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
-        const unsigned int i0 = aElemSeg[iseg*2+0];
-        const unsigned int i1 = aElemSeg[iseg*2+1];
-        const dfm2::CVec3d& p0 = aP[i0];
-        const dfm2::CVec3d& p1 = aP[i1];
-        const dfm2::CVec3d e01 = (p1-p0).Normalize();
-        assert( iseg < aS.size() );
-        aS[iseg] -= (aS[iseg]*e01)*e01;
-        aS[iseg].SetNormalizedVector();
-      }
     }
-    { // DispRotSeparate
-      Solve_DispRotSeparate(aP, aS, mats,
-                            aP0, aS0, aElemSeg, aElemRod, aBCFlag);
+    dfm2::CMatrixSparse<double> mats;
+    {
+      unsigned int nNode = aElemSeg.size()/2 + aP0.size();
+      std::vector<unsigned int> psup_ind, psup;
+      dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
+                                 aElemRod.data(), aElemRod.size()/5, 5, nNode);
+      dfm2::JArray_Sort(psup_ind, psup);
+      mats.Initialize(nNode, 3, true);
+      mats.SetPattern(psup_ind.data(), psup_ind.size(), psup.data(),psup.size());
     }
-    iframe = iframe+1;
-    // -------------
-    viewer.DrawBegin_oldGL();
-    myGlutDisplay(aP,aS,aElemSeg);
-    viewer.DrawEnd_oldGL();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    // -----------------
+    std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
+    assert( aS.size() == aElemSeg.size()/2);
+    // apply random deviation
+    for(unsigned int ip=0;ip<aP.size();++ip){
+      aP[ip] = aP0[ip];
+      auto rnd = dfm2::CVec3d::Random()*3.0;
+      if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
+      if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
+      if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
+    }
+    const unsigned int ns = aS.size();
+    for(unsigned int is=0;is<ns;++is){
+      aS[is] = aS0[is];
+      auto rnd = dfm2::CVec3d::Random()*3.0;
+      const unsigned int np = aP.size();
+      if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x(); }
+      if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y(); }
+      if( aBCFlag[(np+is)*3+2] == 0 ){ aS[is].p[2] += rnd.z(); }
+    }
+    for(unsigned int iseg=0;iseg<aElemSeg.size()/2;++iseg){
+      const unsigned int i0 = aElemSeg[iseg*2+0];
+      const unsigned int i1 = aElemSeg[iseg*2+1];
+      const dfm2::CVec3d& p0 = aP[i0];
+      const dfm2::CVec3d& p1 = aP[i1];
+      const dfm2::CVec3d e01 = (p1-p0).Normalize();
+      assert( iseg < aS.size() );
+      aS[iseg] -= (aS[iseg]*e01)*e01;
+      aS[iseg].SetNormalizedVector();
+    }
+    const double stiff_stretch = dist01(reng)+1.;
+    const double stiff_bendtwist[3] = {
+        dist01(reng)+1.,
+        dist01(reng)+1.,
+        dist01(reng)+1. };
+    for(int iframe=0;iframe<70;++iframe) {
+      Solve_DispRotSeparate(
+          aP, aS, mats,
+          stiff_stretch, stiff_bendtwist,
+          aP0, aS0, aElemSeg, aElemRod, aBCFlag);
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(aP, aS, aElemSeg);
+      viewer.DrawEnd_oldGL();
+      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+   }
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

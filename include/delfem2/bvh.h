@@ -13,6 +13,7 @@
 #include <vector>
 #include <set>
 #include <cassert>
+#include <climits>
 #include <iostream>
 
 namespace delfem2 {
@@ -23,8 +24,8 @@ namespace delfem2 {
 class CNodeBVH2
 {
 public:
-  int iroot; // -1: root, else: parent
-  int ichild[2]; // if ichild[1] == -1, then this is leaf and ichild[0] is the stored number
+  unsigned int iparent; // UINT_MAX: root, else: parent
+  unsigned int ichild[2]; // if ichild[1] == UINTMAX, then this is leaf and ichild[0] is the stored number
 };
 
 /**
@@ -32,7 +33,7 @@ public:
  */
 int BVHTopology_TopDown_MeshElem(
     std::vector<CNodeBVH2>& aNodeBVH,
-    const int nfael,
+    const unsigned int nfael,
     const std::vector<int>& aElemSur,
     const std::vector<double>& aElemCenter);
 
@@ -60,9 +61,10 @@ int MortonCode_FindSplit(const std::uint32_t* sortedMC,
  * @details find range in parallel BVH construction
  * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
  */
-std::pair<int,int> MortonCode_DeterminRange(const std::uint32_t* sortedMC,
-                                  int nMC,
-                                  int i);
+std::pair<int,int> MortonCode_DeterminRange
+ (const std::uint32_t* sortedMC,
+  int nMC,
+  int i);
 
 /**
  * @brief compute morton code for 3d coordinates of a point. Each coordinate must be within the range of [0,1]
@@ -109,7 +111,7 @@ void Check_MortonCode_Sort(
 template <typename BBOX, typename REAL>
 void BVH_BuildBVHGeometry_Mesh(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<CNodeBVH2>& aNodeBVH,
     REAL margin,
     const REAL* aXYZ, unsigned int nXYZ,
@@ -134,12 +136,12 @@ void BVHGeometry_Points(
 template <typename BBOX>
 void BVH_BuildGeometryBranch(
     std::vector<BBOX>& aBB,
-    int ibvh_root,
+    unsigned int ibvh_root,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH);
 
 template <typename BBOX>
 void BuildBoundingBoxesBVH_Dynamic(
-    int ibvh,
+    unsigned int ibvh,
     double dt,
     const std::vector<double>& aXYZ,
     const std::vector<double>& aUVW,
@@ -152,7 +154,7 @@ void BVH_GetIndElem_IncludePoint(
     std::vector<int>& aIndElem,
     //
     double px, double py, double pz,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<CNodeBVH2>& aBVH,
     const std::vector<BBOX>& aBB);
   
@@ -190,7 +192,7 @@ void BVH_GetIndElem_IntersectRay(
     std::vector<int>& aIndElem,
     //
     const double src[3], const double dir[3],
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BBOX>& aBB);
 
@@ -199,7 +201,7 @@ void BVH_GetIndElem_IntersectLine(
     std::vector<int>& aIndElem,
     //
     const double src[3], const double dir[3],
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BBOX>& aBB);
 
@@ -209,7 +211,7 @@ void BVH_GetIndElem_InsideRange(
     //
     double min, double max,
     double px, double py, double pz,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BBOX>& aBB);
   
@@ -225,17 +227,17 @@ void BVH_GetIndElem_InsideRange(
 template <typename BBOX, typename REAL>
 void delfem2::BVH_BuildBVHGeometry_Mesh(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
     REAL margin,
     const REAL* aXYZ, unsigned int nXYZ,
     const unsigned int* aElem, unsigned int nnoel, unsigned int nElem)
 {
   aBB.resize( aNodeBVH.size() );
-  assert( ibvh < (int)aNodeBVH.size() );
-  const int ichild0 = aNodeBVH[ibvh].ichild[0];
-  const int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf node
+  assert( ibvh < aNodeBVH.size() );
+  const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf node
     assert( ichild0 >= 0 );
     const unsigned int ielem = ichild0;
     assert( ielem < nElem );
@@ -248,8 +250,8 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
     return;
   }
   // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iroot == ibvh );
-  assert( aNodeBVH[ichild1].iroot == ibvh );
+  assert( aNodeBVH[ichild0].iparent == ibvh );
+  assert( aNodeBVH[ichild1].iparent == ibvh );
   BVH_BuildBVHGeometry_Mesh(aBB, ichild0,aNodeBVH, margin,aXYZ,nXYZ,aElem,nnoel,nElem);
   BVH_BuildBVHGeometry_Mesh(aBB, ichild1,aNodeBVH, margin,aXYZ,nXYZ,aElem,nnoel,nElem);
   BBOX& bb = aBB[ibvh];
@@ -267,9 +269,9 @@ void delfem2::BVHGeometry_Points(
 {
   aBB.resize( aNodeBVH.size() );
   assert( ibvh < aNodeBVH.size() );
-  const int ichild0 = aNodeBVH[ibvh].ichild[0];
-  const int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf node
+  const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf node
     assert( ichild0 >= 0 );
     const unsigned int ip = ichild0;
     assert( ip < nXYZ );
@@ -278,8 +280,8 @@ void delfem2::BVHGeometry_Points(
     return;
   }
   // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iroot == (int)ibvh );
-  assert( aNodeBVH[ichild1].iroot == (int)ibvh );
+  assert( aNodeBVH[ichild0].iparent == ibvh );
+  assert( aNodeBVH[ichild1].iparent == ibvh );
   delfem2::BVHGeometry_Points(aBB,  ichild0,aNodeBVH, aXYZ,nXYZ);
   delfem2::BVHGeometry_Points(aBB,  ichild1,aNodeBVH, aXYZ,nXYZ);
   BBOX& bb = aBB[ibvh];
@@ -291,19 +293,19 @@ void delfem2::BVHGeometry_Points(
 template <typename BBOX>
 void delfem2::BVH_BuildGeometryBranch(
     std::vector<BBOX>& aBB,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH)
 {
   aBB.resize( aNodeBVH.size() );
-  assert( ibvh < (int)aNodeBVH.size() );
-  const int ichild0 = aNodeBVH[ibvh].ichild[0];
-  const int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf node
+  assert( ibvh < aNodeBVH.size() );
+  const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf node
     return;
   }
   // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iroot == ibvh );
-  assert( aNodeBVH[ichild1].iroot == ibvh );
+  assert( aNodeBVH[ichild0].iparent == ibvh );
+  assert( aNodeBVH[ichild1].iparent == ibvh );
   BVH_BuildGeometryBranch(aBB, ichild0,aNodeBVH);
   BVH_BuildGeometryBranch(aBB, ichild1,aNodeBVH);
   BBOX& bb = aBB[ibvh];
@@ -354,7 +356,7 @@ void BuildBoundingBoxesBVH
 
 template <typename BBOX>
 void delfem2::BuildBoundingBoxesBVH_Dynamic
-(int ibvh,
+(unsigned int ibvh,
  double dt,
  const std::vector<double>& aXYZ,
  const std::vector<double>& aUVW,
@@ -363,17 +365,18 @@ void delfem2::BuildBoundingBoxesBVH_Dynamic
  std::vector<BBOX>& aBB)
 {
   double eps = 1.0e-10;
-  assert( ibvh < (int)aNodeBVH.size() );
-  int ichild0 = aNodeBVH[ibvh].ichild[0];
-  int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  assert( ibvh < aNodeBVH.size() );
+  const int unsigned ichild0 = aNodeBVH[ibvh].ichild[0];
+  const int unsigned ichild1 = aNodeBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
     const int itri = ichild0;
     assert( itri < (int)aTri.size() );
     const int ino0 = aTri[itri*3+0];
     const int ino1 = aTri[itri*3+1];
     const int ino2 = aTri[itri*3+2];
     BBOX& bb = aBB[ibvh];
-    bb.bbmin[0] = +1; bb.bbmax[0] = -1;
+    bb.bbmin[0] = +1;
+    bb.bbmax[0] = -1;
     bb.AddPoint(aXYZ.data()+ino0*3, eps);
     bb.AddPoint(aXYZ.data()+ino1*3, eps);
     bb.AddPoint(aXYZ.data()+ino2*3, eps);
@@ -386,12 +389,13 @@ void delfem2::BuildBoundingBoxesBVH_Dynamic
     return;
   }
   // internal node,内部ノードは子ノードのBounding Volume
-  assert( aNodeBVH[ichild0].iroot == ibvh );
-  assert( aNodeBVH[ichild1].iroot == ibvh );
+  assert( aNodeBVH[ichild0].iparent == ibvh );
+  assert( aNodeBVH[ichild1].iparent == ibvh );
   BuildBoundingBoxesBVH_Dynamic(ichild0,dt, aXYZ,aUVW,aTri,aNodeBVH,aBB);
   BuildBoundingBoxesBVH_Dynamic(ichild1,dt, aXYZ,aUVW,aTri,aNodeBVH,aBB);
   BBOX& bb = aBB[ibvh];
-  bb.bbmin[0] = +1; bb.bbmax[0] = -1;
+  bb.bbmin[0] = +1;
+  bb.bbmax[0] = -1;
   bb  = aBB[ichild0];
   bb += aBB[ichild1];
   return;
@@ -405,14 +409,14 @@ void delfem2::BVH_GetIndElem_IncludePoint
 (std::vector<int>& aIndElem,
  //
  double px, double py, double pz,
- int ibvh,
+ unsigned int ibvh,
  const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<BBOX>& aBB)
 {
   if( !aBB[ibvh].isInclude_Point(px,py,pz) ){ return; }
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
     aIndElem.push_back(ichild0);
     return;
   }
@@ -438,9 +442,9 @@ void delfem2::BVH_Range_DistToNearestPoint
   if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
   //
   if( max>=min && min0>max ){ return; } // current range [min,max] is valid and nearer than [min0,min0].
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
     if( max<min ){ // current range is inactive
       max = max0;
       min = min0;
@@ -474,9 +478,9 @@ void delfem2::BVH_IndPoint_NearestPoint
   aBB[ibvh].Range_DistToPoint(min0,max0, p[0],p[1],p[2]);
   if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
   if( cur_dist > 0 && min0>cur_dist ){ return; } // current range [min,max] is valid and nearer than [min0,min0].
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
     assert( min0 == max0 ); // because this is point
     if( cur_dist < 0 || max0 < cur_dist ){ // current range is inactive
       cur_dist = max0;
@@ -495,7 +499,7 @@ void delfem2::BVH_GetIndElem_InsideRange
  //
  double min, double max,
  double px, double py, double pz,
- int ibvh,
+ unsigned int ibvh,
  const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<BBOX>& aBB)
 {
@@ -506,14 +510,13 @@ void delfem2::BVH_GetIndElem_InsideRange
     if( max0<min ){ return; }
     if( min0>max ){ return; }
   }
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
-    assert( ichild0 >= 0 && ichild0 < aBB.size() );
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
+    assert( ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
   }
-  //
   BVH_GetIndElem_InsideRange(aIndElem, min,max, px,py,pz, ichild0,aBVH,aBB);
   BVH_GetIndElem_InsideRange(aIndElem, min,max, px,py,pz, ichild1,aBVH,aBB);
 }
@@ -523,18 +526,18 @@ void delfem2::BVH_GetIndElem_IntersectRay
 (std::vector<int>& aIndElem,
  //
  const double src[3], const double dir[3],
- int ibvh,
+ unsigned int ibvh,
  const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<BBOX>& aBB)
 {
-  assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
+  assert( ibvh < aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectRay(src,dir);
   if( !is_intersect ) return;
   //
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
-    assert( ichild0 >= 0 && ichild0 < (int)aBB.size() );
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
+    assert( ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
   }
@@ -546,19 +549,20 @@ template <typename BBOX>
 void delfem2::BVH_GetIndElem_IntersectLine
 (std::vector<int>& aIndElem,
  //
- const double src[3], const double dir[3],
- int ibvh,
+ const double src[3],
+ const double dir[3],
+ unsigned int ibvh,
  const std::vector<delfem2::CNodeBVH2>& aBVH,
  const std::vector<BBOX>& aBB)
 {
-  assert( ibvh >= 0 && ibvh < (int)aBVH.size() );
+  assert( ibvh < aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectLine(src,dir);
   if( !is_intersect ) return;
   //
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
-    assert( ichild0 >= 0 && ichild0 < aBB.size() );
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
+    assert( ichild0 < aBB.size() );
     aIndElem.push_back(ichild0);
     return;
   }

@@ -5,10 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdio>
 #include <cmath>
 #include <algorithm>
-
+#include <climits> // UNINT_MAX
 #include "delfem2/bvh.h"
 
 // ------------------------------------
@@ -21,8 +20,8 @@ DFM2_INLINE double DetSide(const double p[3], const double org[3], const double 
 }
 
 DFM2_INLINE void DevideElemAryConnex
-(int iroot_node,
- std::vector<int>& aElem2Node,
+(unsigned int iroot_node,
+ std::vector<unsigned int>& aElem2Node,
  std::vector<CNodeBVH2>& aNodeBVH,
  //
  const std::vector<int>& list,
@@ -118,11 +117,11 @@ DFM2_INLINE void DevideElemAryConnex
       break;
     }
   }
-  int inode_ch0 = (int)aNodeBVH.size();
-  int inode_ch1 = (int)aNodeBVH.size()+1;
+  unsigned int inode_ch0 = aNodeBVH.size();
+  unsigned int inode_ch1 = aNodeBVH.size()+1;
   aNodeBVH.resize(aNodeBVH.size()+2);
-  aNodeBVH[inode_ch0].iroot = iroot_node;
-  aNodeBVH[inode_ch1].iroot = iroot_node;
+  aNodeBVH[inode_ch0].iparent = iroot_node;
+  aNodeBVH[inode_ch1].iparent = iroot_node;
   aNodeBVH[iroot_node].ichild[0] = inode_ch0;
   aNodeBVH[iroot_node].ichild[1] = inode_ch1;
   std::vector<int> list_ch0;
@@ -160,7 +159,7 @@ DFM2_INLINE void DevideElemAryConnex
   // ---------------------------
   if( list_ch0.size() == 1 ){
     aNodeBVH[inode_ch0].ichild[0] = list_ch0[0];
-    aNodeBVH[inode_ch0].ichild[1] = -1;
+    aNodeBVH[inode_ch0].ichild[1] = UINT_MAX;
   }
   else{ // 子ノード0にある三角形を再度分割
     DevideElemAryConnex(inode_ch0,aElem2Node,aNodeBVH,
@@ -170,7 +169,7 @@ DFM2_INLINE void DevideElemAryConnex
   // -----------------------------
   if( list_ch1.size() == 1 ){
     aNodeBVH[inode_ch1].ichild[0] = list_ch1[0];
-    aNodeBVH[inode_ch1].ichild[1] = -1;
+    aNodeBVH[inode_ch1].ichild[1] = UINT_MAX;
   }
   else{ // 子ノード1にある三角形を再度分割
     DevideElemAryConnex(inode_ch1,aElem2Node,aNodeBVH,
@@ -232,7 +231,7 @@ DFM2_INLINE void mark_child(std::vector<int>& aFlg,
                        const std::vector<CNodeBVH2>& aNode)
 {
   assert( inode0 < aNode.size() );
-  if( aNode[inode0].ichild[1] == -1 ){ // leaf
+  if( aNode[inode0].ichild[1] == UINT_MAX ){ // leaf
     const unsigned int in0 = aNode[inode0].ichild[0];
     assert( in0 < aFlg.size() );
     aFlg[in0] += 1;
@@ -251,7 +250,7 @@ DFM2_INLINE void mark_child(std::vector<int>& aFlg,
 
 DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
 (std::vector<CNodeBVH2>& aNodeBVH,
- const int nfael,
+ const unsigned int nfael,
  const std::vector<int>& aElemSur,
  const std::vector<double>& aElemCenter)
 {
@@ -259,10 +258,10 @@ DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
   const unsigned int nelem = aElemCenter.size()/3;
   std::vector<int> list(nelem);
   for(unsigned int ielem=0;ielem<nelem;ielem++){ list[ielem] = ielem; }
-  std::vector<int> aElem2Node;
+  std::vector<unsigned int> aElem2Node;
   aElem2Node.resize(nelem,0);
   aNodeBVH.resize(1);
-  aNodeBVH[0].iroot = -1;
+  aNodeBVH[0].iparent = UINT_MAX;
   bvh::DevideElemAryConnex(0,aElem2Node,aNodeBVH,
                       list,nfael,aElemSur,aElemCenter);
   return 0;
@@ -429,7 +428,7 @@ DFM2_INLINE void delfem2::BVHTopology_Morton
  const std::vector<unsigned int>& aSortedMc)
 {
   aNodeBVH.resize(aSortedMc.size()*2-1);
-  aNodeBVH[0].iroot = -1;
+  aNodeBVH[0].iparent = UINT_MAX;
   const unsigned int nni = aSortedMc.size()-1; // number of internal node
   for(unsigned int ini=0;ini<nni;++ini){
     const std::pair<int,int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
@@ -438,27 +437,27 @@ DFM2_INLINE void delfem2::BVHTopology_Morton
     if( range.first == isplit ){
       const int inlA = nni+isplit;
       aNodeBVH[ini].ichild[0] = inlA;
-      aNodeBVH[inlA].iroot = ini;
+      aNodeBVH[inlA].iparent = ini;
       aNodeBVH[inlA].ichild[0] = aSortedId[isplit];
-      aNodeBVH[inlA].ichild[1] = -1;
+      aNodeBVH[inlA].ichild[1] = UINT_MAX;
     }
     else{
       const int iniA = isplit;
       aNodeBVH[ini].ichild[0] = iniA;
-      aNodeBVH[iniA].iroot = ini;
+      aNodeBVH[iniA].iparent = ini;
     }
     // ----
     if( range.second == isplit+1 ){
       const int inlB = nni+isplit+1;
       aNodeBVH[ini].ichild[1] = inlB;
-      aNodeBVH[inlB].iroot = ini;
+      aNodeBVH[inlB].iparent = ini;
       aNodeBVH[inlB].ichild[0] = aSortedId[isplit+1];
-      aNodeBVH[inlB].ichild[1] = -1;
+      aNodeBVH[inlB].ichild[1] = UINT_MAX;
     }
     else{
       const int iniB = isplit+1;
       aNodeBVH[ini].ichild[1] = iniB;
-      aNodeBVH[iniB].iroot = ini;
+      aNodeBVH[iniB].iparent = ini;
     }
   }
 }

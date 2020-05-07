@@ -20,7 +20,6 @@
 #include "delfem2/srch_v3bvhmshtopo.h"
 
 // ---------
-
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
@@ -53,16 +52,17 @@ void SetProblem(int iprob)
     class CInSphere : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
-      CInSphere(double rad){
+      explicit CInSphere(double rad){
         sp.radius_ = rad;
       }
-      virtual double SignedDistance(double px, double py, double pz) const{
+      double SignedDistance(double px, double py, double pz) const override {
         double n[3];
         return sp.Projection(n,
                              px,py,pz);
       }
-      virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
-                         double px, double py, double pz) const
+      void Level(
+          int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
+          double px, double py, double pz) const override
       {
         sdf = this->SignedDistance(px,py,pz);
         const double radius0 = sp.radius_;
@@ -91,13 +91,14 @@ void SetProblem(int iprob)
         bx.hwy = hwy;
         bx.hwz = hwz;
       }
-      virtual double SignedDistance(double px, double py, double pz) const{
+      double SignedDistance(double px, double py, double pz) const override {
         double n[3];
         return bx.Projection(n,
                              px,py,pz);
       }
-      virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
-                         double px, double py, double pz) const
+      void Level(
+          int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
+          double px, double py, double pz) const override
       {
         sdf = this->SignedDistance(px,py,pz);
         ilevel_vol = -1;
@@ -130,7 +131,7 @@ void SetProblem(int iprob)
         const double rad = 0.2;
         sphere.radius_ = rad;
       }
-      virtual double SignedDistance(double x, double y, double z ) const {
+      double SignedDistance(double x, double y, double z ) const override {
         double n[3];
         double dist0 = -sphere.Projection(n,
                                           x, y, z);
@@ -141,8 +142,9 @@ void SetProblem(int iprob)
                                       x-cx, y-cy, z-cz);
         return (dist0<dist1) ? dist0 : dist1;
       }
-      virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
-                         double px, double py, double pz) const
+      void Level(
+          int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
+          double px, double py, double pz) const override
       {
         sdf = this->SignedDistance(px,py,pz);
         double dist0 = sqrt(px*px+py*py+pz*pz);
@@ -163,13 +165,14 @@ void SetProblem(int iprob)
     class CMesh : public dfm2::CInput_IsosurfaceStuffing
     {
     public:
-      virtual double SignedDistance(double x, double y, double z) const {
+      double SignedDistance(double x, double y, double z) const override {
         dfm2::CVec3d n0;
         return obj.SignedDistanceFunction(n0,
                                           dfm2::CVec3d(x,y,z), aXYZ_Tri, aTri, aNorm);
       }
-      virtual void Level(int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
-                         double px, double py, double pz) const
+      void Level(
+          int& ilevel_vol, int& ilevel_srf, int& nlayer, double& sdf,
+          double px, double py, double pz) const override
       {
         sdf = this->SignedDistance(px,py,pz);
         ilevel_vol = 0;
@@ -222,7 +225,7 @@ void SetProblem(int iprob)
   aTetColor1.clear();
 }
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glEnable(GL_LIGHTING);
   if( imode_draw == 0 ){

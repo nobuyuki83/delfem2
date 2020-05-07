@@ -30,8 +30,8 @@ void SetClothShape_Square
  double cloth_size_z) // (in) size of square cloth，一辺の長さ
 {
   // make vertex potision array 頂点位置配列を作る
-  const int ndiv_x = cloth_size_x/elem_length; // size of an element
-  const int ndiv_z = cloth_size_z/elem_length; // size of an element
+  const int ndiv_x = (int)(cloth_size_x/elem_length); // size of an element
+  const int ndiv_z = (int)(cloth_size_z/elem_length); // size of an element
   const int nxyz =(ndiv_x+1)*(ndiv_z+1); // number of points
   aXYZ0.reserve( nxyz*3 );
   for(int ix=0;ix<ndiv_x+1;ix++){
@@ -121,6 +121,7 @@ const double contact_clearance = 0.01;
 int imode_contact; // mode of contacting object
 double mass_point; // mass for a point
 
+// TODO: make variables non-global
 dfm2::CMatrixSparse<double> mat_A;
 dfm2::CPreconditionerILU<double>  ilu_A;
 
@@ -172,7 +173,7 @@ void MakeNormal()
 class CInput_ContactPlane: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const
+                           double px, double py, double pz) const override
   {
     nx = 0.0;  ny = 0.0;  nz = 1.0; // normal of the plane
     return -0.5-pz; // penetration depth
@@ -182,7 +183,7 @@ class CInput_ContactPlane: public dfm2::CInput_Contact
 class CInput_ContactSphere: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const
+                           double px, double py, double pz) const override
   {
     const double center[3] = { 0.5, 0.0, +2 };
     const double radius = 3.0;
@@ -245,7 +246,7 @@ void StepTime()
 }
 
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
  
   bool is_lighting = glIsEnabled(GL_LIGHTING);

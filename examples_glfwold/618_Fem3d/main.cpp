@@ -317,7 +317,7 @@ void SolveProblem_LinearSolid_Dynamic()
 {
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*3;
-  /////////////////////////////
+  // --------
   double myu = 1.0;
   double lambda = 1.0;
   double rho = 1.0;
@@ -366,9 +366,9 @@ void InitializeProblem_Stokes_Static()
   aBCFlag.assign(nDoF, 0);
   assert(aIsSurf.size() == np);
   for(unsigned int ip=0;ip<np;++ip){
-    const double px = aXYZ[ip*3+0];
+//    const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
-    const double pz = aXYZ[ip*3+2];
+//    const double pz = aXYZ[ip*3+2];
     if( aIsSurf[ip] == 1 ){
       aBCFlag[ip*4+0] = 1;
       aBCFlag[ip*4+1] = 1;
@@ -448,9 +448,9 @@ void InitializeProblem_Stokes_Dynamic()
   aBCFlag.assign(nDoF, 0);
   assert(aIsSurf.size() == np);
   for(unsigned int ip=0;ip<np;++ip){
-    const double px = aXYZ[ip*3+0];
+//    const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
-    const double pz = aXYZ[ip*3+2];
+//    const double pz = aXYZ[ip*3+2];
     if( aIsSurf[ip] == 1 ){
       aBCFlag[ip*4+0] = 1;
       aBCFlag[ip*4+1] = 1;
@@ -646,7 +646,8 @@ public:
 class CInBox : public dfm2::CInput_IsosurfaceStuffing
 {
 public:
-  virtual double SignedDistance(double x, double y, double z) const {
+  virtual double SignedDistance(double x, double y, double z) const override
+  {
     double n[3];
     return sdf.Projection(n,
                           x, y, z);
@@ -694,7 +695,7 @@ void SetMesh(int ishape)
         sphere.sdf.radius_ = rad;
         sphere.sdf.is_out_ = true;
       }
-      virtual double SignedDistance(double x, double y, double z ) const {
+      virtual double SignedDistance(double x, double y, double z ) const override {
         double dist0 = -sphere.SignedDistance(x, y, z);
         double cx = 0.0;
         double cy = 0.0;
@@ -789,7 +790,9 @@ void myGlutDisplay(int iphysics)
     glShadeModel(GL_SMOOTH);
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
-    delfem2::opengl::DrawMeshTet3D_Edge(aXYZ.data(),aXYZ.size()/3, aTet.data(),aTet.size()/4);
+    delfem2::opengl::DrawMeshTet3D_Edge(
+        aXYZ.data(),aXYZ.size()/3,
+        aTet.data(),aTet.size()/4);
     {
       std::vector< std::pair<double,delfem2::CColor> > colorMap;
       delfem2::ColorMap_BlueGrayRed(colorMap, 0, 1.0);

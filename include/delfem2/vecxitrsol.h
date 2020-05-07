@@ -53,7 +53,7 @@ void ScaleX
 template<typename T>
 void XPlusAY(
     std::vector<T> &X,
-    const int nDoF,
+    const unsigned int nDoF,
     const std::vector<int> &aBCFlag,
     T alpha,
     const std::vector<T> &Y);
@@ -87,24 +87,25 @@ std::complex<double> MultSumX
   const std::complex<double> *vb,
   unsigned int n);
 
-void XPlusAYBZ(std::vector<double> &X,
-               const int nDoF,
-               const std::vector<int> &aBCFlag,
-               double alpha,
-               const std::vector<double> &Y,
-               double beta,
-               const std::vector<double> &Z);
+void XPlusAYBZ(
+    std::vector<double> &X,
+    const unsigned int nDoF,
+    const std::vector<int> &aBCFlag,
+    double alpha,
+    const std::vector<double> &Y,
+    double beta,
+    const std::vector<double> &Z);
 
-void XPlusAYBZCW(std::vector<double> &X,
-                 const int nDoF,
-                 const std::vector<int> &aBCFlag,
-                 double alpha,
-                 const std::vector<double> &Y,
-                 double beta,
-                 const std::vector<double> &Z,
-                 double gamma,
-                 const std::vector<double> &W);
-
+void XPlusAYBZCW(
+    std::vector<double> &X,
+    const unsigned int nDoF,
+    const std::vector<int> &aBCFlag,
+    double alpha,
+    const std::vector<double> &Y,
+    double beta,
+    const std::vector<double> &Z,
+    double gamma,
+    const std::vector<double> &W);
 
 void NormalizeX(double *p0, unsigned int n);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2020 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,14 +11,14 @@
 #include <cmath>
 #include <cstdlib>
 #include <queue>
+#include <random>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/imgio.h"
-
-// gl related includes
+//
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/tex_gl.h"
 #include "delfem2/opengl/funcs_glold.h"
@@ -54,7 +54,7 @@ public:
     return this->mesh_dist < lhs.mesh_dist;
   }
 public:
-  int ino;
+  unsigned int ino;
   double mesh_dist;
 };
 
@@ -400,7 +400,10 @@ int main(int argc,char* argv[])
   while (!glfwWindowShouldClose(viewer.window))
   {
     if( iframe % 100 == 0 ){
-      iker = (int)((aXYZ.size()/3.0)*(double)rand()/(1.0+RAND_MAX));
+      std::random_device rd;
+      std::mt19937 rdeng(rd());
+      std::uniform_int_distribution<int> dist(0,aXYZ.size()/3-1);
+      iker = dist(rdeng);
       MakeExpMap_Point
           (aTex,aLocCoord,
            iker,

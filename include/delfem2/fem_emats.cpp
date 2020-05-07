@@ -139,9 +139,9 @@ void delfem2::MergeLinSys_Poission_MeshTri2D(
     const double alpha,
     const double source,
     const double* aXY1,
-    int np,
+    unsigned int np,
     const unsigned int* aTri1,
-    int nTri,
+    unsigned int nTri,
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
@@ -279,8 +279,10 @@ void delfem2::MergeLinSys_Diffusion_MeshTri2D(
     const double source,
     const double dt_timestep,
     const double gamma_newmark,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal,
     const double* aVelo)
 {
@@ -364,8 +366,10 @@ void delfem2::MergeLinSys_SolidLinear_Static_MeshTri2D
  const double rho,
  const double g_x,
  const double g_y,
- const double* aXY1, int nXY,
- const unsigned int* aTri1, int nTri,
+ const double* aXY1,
+ unsigned int nXY,
+ const unsigned int* aTri1,
+ unsigned int nTri,
  const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
@@ -404,8 +408,10 @@ void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double dt_timestep,
     const double gamma_newmark,
     const double beta_newmark,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal,
     const double* aVelo,
     const double* aAcc)
@@ -452,8 +458,10 @@ void delfem2::MergeLinSys_StokesStatic2D(
     const double myu,
     const double g_x,
     const double g_y,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
@@ -495,8 +503,10 @@ void delfem2::MergeLinSys_StokesDynamic2D(
     const double g_y,
     const double dt_timestep,
     const double gamma_newmark,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal,
     const double* aVelo)
 {
@@ -542,8 +552,10 @@ void delfem2::MergeLinSys_NavierStokes2D(
     const double g_y,
     const double dt_timestep,
     const double gamma_newmark,
-    const double* aXY1, int nXY,
-    const unsigned int* aTri1, int nTri,
+    const double* aXY1,
+    unsigned int nXY,
+    const unsigned int* aTri1,
+    unsigned int nTri,
     const double* aVal, // vx,vy,press
     const double* aDtVal) // ax,ay,apress
 {
@@ -891,16 +903,18 @@ void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     const double dt_timestep,
     const double gamma_newmark,
     const double beta_newmark,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
     const double* aVal,
     const double* aVelo,
     const double* aAcc)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXYZ;
+  const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTet; ++iel){
+  for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
@@ -910,7 +924,7 @@ void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTet3D(
     double disps[4][3]; lcl::FetchData(&disps[0][0], 4,3,aIP, aVal);
     double velos[4][3]; lcl::FetchData(&velos[0][0], 4,3,aIP, aVelo);
     double accs[4][3];  lcl::FetchData(&accs[0][0],  4,3,aIP, aAcc);
-    ////
+    //
     double eres[4][3], emat[4][4][3][3];
     EMat_SolidLinear_NewmarkBeta_MeshTet3D(eres,emat,
                                                   myu, lambda,
@@ -1094,7 +1108,7 @@ void delfem2::MergeLinSys_Stokes3D_Static
   namespace lcl = ::delfem2::fem_emats;
   const int np = (int)aXYZ.size()/3;
   const int nDoF = np*4;
-  ////
+  //
   mat_A.SetZero();
   vec_b.assign(nDoF, 0.0);
   std::vector<int> tmp_buffer(np, -1);
@@ -1106,10 +1120,8 @@ void delfem2::MergeLinSys_Stokes3D_Static
     const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ.data());
     double velo_press[4][4]; lcl::FetchData(&velo_press[0][0],4,4,aIP, aVal.data());
-    ////
     double eres[4][4];
     double emat[4][4][4][4];
-    ////
     MakeMat_Stokes3D_Static_P1(myu, g_x, g_y, g_z,
                                coords, velo_press,
                                emat, eres);
