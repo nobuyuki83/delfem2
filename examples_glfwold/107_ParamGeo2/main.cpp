@@ -18,11 +18,6 @@
 namespace dfm2 = delfem2;
 
 // ---------------------------------------------
-
-int ipoint_picked;
-double pos_down[2];
-double pos_cur[2];
-
 int ndegree = 2;
 std::vector<int> aKnotMulti;
 std::vector<double> aKnot;

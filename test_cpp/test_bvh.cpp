@@ -45,8 +45,8 @@ TEST(bvh,inclusion_sphere)
   {
     EXPECT_EQ(bvh.aNodeBVH.size(), bvh.aBB_BVH.size());
     for (unsigned int ibb = 0; ibb < bvh.aBB_BVH.size(); ++ibb) {
-      int iroot = bvh.aNodeBVH[ibb].iroot;
-      if (iroot == -1) { continue; }
+      unsigned int iroot = bvh.aNodeBVH[ibb].iparent;
+      if (iroot == UINT_MAX) { continue; }
       EXPECT_TRUE(bvh.aNodeBVH[iroot].ichild[0] == ibb || bvh.aNodeBVH[iroot].ichild[1] == ibb);
       const dfm2::CBV3d_Sphere &aabbp = bvh.aBB_BVH[iroot];
       const dfm2::CBV3d_Sphere &aabbc = bvh.aBB_BVH[ibb];
@@ -332,7 +332,7 @@ TEST(bvh,lineintersection)
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectLine(ps0,pd0);
-      if( !is_intersect && node.ichild[1] != -1 ){ // branch
+      if( !is_intersect && node.ichild[1] != UINT_MAX ){ // branch
         const int ichild0 = node.ichild[0];
         const int ichild1 = node.ichild[1];
         EXPECT_FALSE( bvh.aBB_BVH[ichild0].IsIntersectLine(ps0,pd0) );
@@ -394,7 +394,7 @@ TEST(bvh,rayintersection)
       const dfm2::CBV3d_Sphere& bv = bvh.aBB_BVH[ibvh];
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectRay(ps0,pd0);
-      if( !is_intersect && node.ichild[1] != -1 ){ // branch
+      if( !is_intersect && node.ichild[1] != UINT_MAX ){ // branch
         const int ichild0 = node.ichild[0];
         const int ichild1 = node.ichild[1];
         EXPECT_FALSE( bvh.aBB_BVH[ichild0].IsIntersectRay(ps0,pd0) );

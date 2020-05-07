@@ -96,12 +96,13 @@ DFM2_INLINE void Draw_AABB3D_MinMaxXYZ_Edge
 // -------------
 // Draw Point
 
-DFM2_INLINE void DrawPoints2D_Vectors
- (const double* aXY, int nXY,
-  const double* aVal,
-  int nstride,
-  int noffset,
-  double mag);
+DFM2_INLINE void DrawPoints2D_Vectors(
+    const double* aXY,
+    unsigned int nXY,
+    const double* aVal,
+    int nstride,
+    int noffset,
+    double mag);
 
 DFM2_INLINE void DrawPoints2d_Points(const std::vector<double>& aXY);
 
@@ -117,9 +118,9 @@ DFM2_INLINE void DrawPoints3d_NormVtx
 // Draw Line
 DFM2_INLINE void DrawMeshLine3D_Edge
  (const double* aXYZ,
-  int nXYZ,
+  unsigned int nXYZ,
   const unsigned int* aLine,
-  int nLine);
+  unsigned int nLine);
 
 // ------------
 // Draw Tri
@@ -128,10 +129,13 @@ DFM2_INLINE void DrawMeshTri2D_Face
  (const std::vector<unsigned int>& aTri,
   const std::vector<double>& aXY);
 
-DFM2_INLINE void DrawMeshTri2D_FaceDisp2D
- (const double* aXY, int nXY,
-  const unsigned int* aTri, int nTri,
-  const double* aDisp, int nstride);
+DFM2_INLINE void DrawMeshTri2D_FaceDisp2D(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aDisp,
+    int nstride);
 
 DFM2_INLINE void DrawMeshTri2D_Edge
  (const double* aXY, unsigned int nXY,
@@ -228,8 +232,12 @@ DFM2_INLINE void DrawMeshQuad3D_FaceNorm
 // -------------------
 // Draw Tet
 
-DFM2_INLINE void DrawMeshTet3D_Edge(const double* aXYZ, int nXYZ,
-                        const unsigned int* aTet, int nTet);
+DFM2_INLINE void DrawMeshTet3D_Edge(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet);
+
 DFM2_INLINE void DrawMeshTet3D_EdgeDisp(const double* aXYZ,
                             const unsigned int* aTet, unsigned int nTet,
                             const double* aDisp,

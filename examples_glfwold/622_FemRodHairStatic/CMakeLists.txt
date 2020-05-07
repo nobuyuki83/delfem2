@@ -4,7 +4,6 @@ option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 ######################################################
 
-enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 IF(MSVC)
@@ -12,12 +11,12 @@ IF(MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
 ENDIF()
 
-####################################
+##########################################################
 
-project(122_HashBvhSelfCollision)
+project(622_FemRodHairStatic)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -36,7 +35,7 @@ find_package(OpenGL REQUIRED)
 # dfm2
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)            
-else()
+else() 
   if(MSVC)
     set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
@@ -47,7 +46,7 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-##########################################
+############################################
 
 include_directories(
   ${OPENGL_INCLUDE_DIR}
@@ -59,7 +58,7 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-###########################################
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
@@ -81,10 +80,9 @@ ELSEIF(UNIX)
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME} 
+  target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
   )
 ENDIF()
-
