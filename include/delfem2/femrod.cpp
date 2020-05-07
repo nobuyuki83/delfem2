@@ -330,7 +330,7 @@ DFM2_INLINE double delfem2::WdWddW_Rod
  CMat3d ddW_ddP[3][3],
  CVec3d ddW_dtdP[2][3],
  double ddW_ddt[2][2],
- //
+ const double stiff_bendtwist[3],
  const CVec3d P[3],
  const CVec3d S[2],
  const CVec3d& darboux0,
@@ -400,6 +400,7 @@ DFM2_INLINE double delfem2::WdWddW_Rod
     X[1]/Y-darboux0.y(),
     X[2]/Y-darboux0.z() };
   for(unsigned int iaxis=0;iaxis<3;++iaxis){
+    const double stfa = stiff_bendtwist[iaxis];
     const unsigned int jaxis = (iaxis+1)%3;
     const unsigned int kaxis = (iaxis+2)%3;
     CVec3d dX_dp[3];
@@ -428,25 +429,25 @@ DFM2_INLINE double delfem2::WdWddW_Rod
         dR_dt[0] = t0*dX_dt[0] + t1*dY_dt[0];
         dR_dt[1] = t0*dX_dt[1] + t1*dY_dt[1];
       }
-      dW_dP[0] += R[iaxis]*dR_dp[0];
-      dW_dP[1] += R[iaxis]*dR_dp[1];
-      dW_dP[2] += R[iaxis]*dR_dp[2];
-      dW_dt[0] += R[iaxis]*dR_dt[0];
-      dW_dt[1] += R[iaxis]*dR_dt[1];
+      dW_dP[0] += stfa*R[iaxis]*dR_dp[0];
+      dW_dP[1] += stfa*R[iaxis]*dR_dp[1];
+      dW_dP[2] += stfa*R[iaxis]*dR_dp[2];
+      dW_dt[0] += stfa*R[iaxis]*dR_dt[0];
+      dW_dt[1] += stfa*R[iaxis]*dR_dt[1];
       // [dR/dp][dR/dq]
       femrod::AddOuterProduct_FrameRod(ddW_ddP, ddW_dtdP, ddW_ddt,
-                                     1.0, dR_dp, dR_dt, dR_dp, dR_dt);
+                                       stfa, dR_dp, dR_dt, dR_dp, dR_dt);
     }
     { // -Ri/(Y*Y) { [dY/dq][dXi/dp] + [dY/dp][dXi/dq] }
-      const double t0 = -R[iaxis]/(Y*Y);
+      const double t0 = -stfa*R[iaxis]/(Y*Y);
       femrod::AddOuterProduct_FrameRod(ddW_ddP, ddW_dtdP, ddW_ddt,
-                                     t0, dX_dp, dX_dt, dY_dp, dY_dt);
+                                       t0, dX_dp, dX_dt, dY_dp, dY_dt);
       femrod::AddOuterProduct_FrameRod(ddW_ddP, ddW_dtdP, ddW_ddt,
-                                     t0, dY_dp, dY_dt, dX_dp, dX_dt);
+                                       t0, dY_dp, dY_dt, dX_dp, dX_dt);
     }
     // -------------
     if( is_exact ){ // (Ri/Y) [[dXi/dpdq]]
-      const double t0 = R[iaxis]/Y;
+      const double t0 = stfa*R[iaxis]/Y;
       femrod::AddDiffDiff_DotFrameRod(ddW_ddP, ddW_dtdP,ddW_ddt,
                                     +t0,P,
                                     jaxis,F0, dF0_dv, dF0_dt,
@@ -459,7 +460,10 @@ DFM2_INLINE double delfem2::WdWddW_Rod
   }
   // ---------------
   if( is_exact ){ // -(R0*X0+R1*X1+R2*X2)/(Y*Y) [[ddY/dpdq]]
-    const double t0 = -(R[0]*X[0]+R[1]*X[1]+R[2]*X[2])/(Y*Y);
+    const double stf0 = stiff_bendtwist[0];
+    const double stf1 = stiff_bendtwist[1];
+    const double stf2 = stiff_bendtwist[2];
+    const double t0 = -(stf0*R[0]*X[0] + stf1*R[1]*X[1] + stf2*R[2]*X[2])/(Y*Y);
     femrod::AddDiffDiff_DotFrameRod(ddW_ddP, ddW_dtdP,ddW_ddt,
                                   t0,P,
                                   0,F0, dF0_dv, dF0_dt,
@@ -474,11 +478,17 @@ DFM2_INLINE double delfem2::WdWddW_Rod
                                   2,F1,dF1_dv, dF1_dt);
   }
   { // 2*(R0*X0+R1*X1+R2*X2)/(Y*Y*Y) [dY/dp] * [dY/dq]
-    const double t0 = +(R[0]*X[0]+R[1]*X[1]+R[2]*X[2])*2.0/(Y*Y*Y);
+    const double stf0 = stiff_bendtwist[0];
+    const double stf1 = stiff_bendtwist[1];
+    const double stf2 = stiff_bendtwist[2];
+    const double t0 = +(stf0*R[0]*X[0] + stf1*R[1]*X[1] + stf2*R[2]*X[2])*2.0/(Y*Y*Y);
     femrod::AddOuterProduct_FrameRod(ddW_ddP, ddW_dtdP, ddW_ddt,
                                    t0, dY_dp, dY_dt, dY_dp, dY_dt);
   }
-  return 0.5*(R[0]*R[0]+R[1]*R[1]+R[2]*R[2]);
+  return
+  0.5*stiff_bendtwist[0]*R[0]*R[0] +
+  0.5*stiff_bendtwist[1]*R[1]*R[1] +
+  0.5*stiff_bendtwist[2]*R[2]*R[2];
 }
 
 
@@ -486,23 +496,23 @@ DFM2_INLINE double delfem2::WdWddW_Rod
 DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D
 (CVec3d dW_dP[2],
  CMat3d ddW_ddP[2][2],
- //
+ const double stiff,
  const CVec3d P[2],
  double L0)
 {
-  double l  = sqrt(+ (P[0][0]-P[1][0])*(P[0][0]-P[1][0])
-                   + (P[0][1]-P[1][1])*(P[0][1]-P[1][1])
-                   + (P[0][2]-P[1][2])*(P[0][2]-P[1][2]));
-  CVec3d v = P[0]-P[1];
-  double R = L0-l;
-  dW_dP[0] = (-R/l)*v;
-  dW_dP[1] = (+R/l)*v;
-  CMat3d m = L0/(l*l*l)*Mat3_OuterProduct(v, v) + (l-L0)/l*Mat3_Identity(1.0);
+  const double l  = sqrt(+ (P[0][0]-P[1][0])*(P[0][0]-P[1][0])
+                         + (P[0][1]-P[1][1])*(P[0][1]-P[1][1])
+                         + (P[0][2]-P[1][2])*(P[0][2]-P[1][2]));
+  const CVec3d v = P[0]-P[1];
+  const double R = L0-l;
+  dW_dP[0] = (-R*stiff/l)*v;
+  dW_dP[1] = (+R*stiff/l)*v;
+  const CMat3d m = (stiff*L0/(l*l*l))*Mat3_OuterProduct(v, v) + (stiff*(l-L0)/l)*Mat3_Identity(1.0);
   ddW_ddP[0][0] = m;
   ddW_ddP[0][1] = -m;
   ddW_ddP[1][0] = -m;
   ddW_ddP[1][1] = m;
-  return 0.5*R*R;
+  return 0.5*stiff*R*R;
 }
 
 
@@ -510,6 +520,8 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
  (std::vector<CVec3d>& aP,
   std::vector<CVec3d>& aS,
   CMatrixSparse<double>& mats,
+  const double stiff_stretch,
+  const double stiff_bendtwist[3],
   const std::vector<CVec3d>& aP0,
   const std::vector<CVec3d>& aS0,
   const std::vector<unsigned int>& aElemSeg,
@@ -535,7 +547,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
     CVec3d dW_dP[2];
     CMat3d ddW_ddP[2][2];
     W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
-                                      aPE, L0);
+                                      stiff_stretch, aPE, L0);
     {
       double eM[2*2*3*3];
       for(int in=0;in<2;++in){
@@ -572,6 +584,7 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
     CVec3d ddW_dtdP[2][3];
     double ddW_ddt[2][2];
     W +=  WdWddW_Rod(dW_dP,dW_dt,ddW_ddP,ddW_dtdP,ddW_ddt,
+                     stiff_bendtwist,
                      aPE,aSE, Darboux0, false);
     {
       double eM[5][5][3][3];
@@ -632,13 +645,10 @@ DFM2_INLINE void delfem2::Solve_DispRotSeparate
    }
    }
    */
-  //    for(int i=0;i<vec_x.size();++i){
-  //      std::cout << i << " " << vec_x[i] << std::endl;
-  //    }
   assert( aS.size() == aElemSeg.size()/2 );
   for(unsigned int is=0;is<aS.size();++is){
-    unsigned int i0 = aElemSeg[is*2+0];
-    unsigned int i1 = aElemSeg[is*2+1];
+    const unsigned int i0 = aElemSeg[is*2+0];
+    const unsigned int i1 = aElemSeg[is*2+1];
     CVec3d V01 = aP[i1]-aP[i0];
     CVec3d du(vec_x[i1*3+0]-vec_x[i0*3+0],
                     vec_x[i1*3+1]-vec_x[i0*3+1],
@@ -772,181 +782,18 @@ DFM2_INLINE void delfem2::MakeDirectorOrthogonal_RodHair(
   */
 }
 
-DFM2_INLINE void delfem2::Solve_RodHairStatic
-(std::vector<CVec3d>& aP,
- std::vector<CVec3d>& aS,
- CMatrixSparse<double>& mats,
- const std::vector<CVec3d>& aP0,
- const std::vector<CVec3d>& aS0,
- const std::vector<int>& aBCFlag,
- const std::vector<unsigned int>& aIP_HairRoot)
-{
-  assert( mats.len_col == 4 );
-  assert( mats.len_row == 4 );
-  const unsigned int np = aP.size();
-  assert( aP0.size() == np );
-  assert( aS0.size() == np );
-  assert( aP.size() == np );
-  assert( aS.size() == np );
-  mats.SetZero();
-  std::vector<double> vec_r;
-  vec_r.assign(np*4, 0.0);
-  std::vector<int> tmp_buffer;
-  double W = 0;
-  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
-    unsigned int ips = aIP_HairRoot[ihair];
-    unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
-    for(unsigned int is=0;is<ns;++is){
-      const unsigned int ip0 = ips+is+0;
-      const unsigned int ip1 = ips+is+1;
-      const unsigned int aINoel[2] = {ip0,ip1};
-      const double L0 = (aP0[ip0]-aP0[ip1]).Length();
-      const CVec3d aPE[2] = { aP[ip0], aP[ip1] };
-      // --------------
-      CVec3d dW_dP[2];
-      CMat3d ddW_ddP[2][2];
-      W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
-                                        aPE, L0);
-      {
-        double eM[2*2*4*4]; for(auto& m : eM){ m = 0.0; }
-        for(int in=0;in<2;++in){
-          for(int jn=0;jn<2;++jn){
-            ddW_ddP[in][jn].CopyToMat4( eM+(in*2+jn)*16 );
-          }
-        }
-        mats.Mearge(2, aINoel, 2, aINoel, 16, eM, tmp_buffer);
-      }
-      for (int in=0; in<2; in++){
-        const unsigned int ip = aINoel[in];
-        vec_r[ip*4+0] -= dW_dP[in].x();
-        vec_r[ip*4+1] -= dW_dP[in].y();
-        vec_r[ip*4+2] -= dW_dP[in].z();
-      }
-    }
-  }
-  // --------------------------
-  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
-    const unsigned int ips = aIP_HairRoot[ihair];
-    const unsigned int nr = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] - 2;
-    for(unsigned int ir=0;ir<nr;++ir){
-      const unsigned int ip0 = ips+ir+0;
-      const unsigned int ip1 = ips+ir+1;
-      const unsigned int ip2 = ips+ir+2;
-      const unsigned int aINoel[3] = {ip0,ip1,ip2};
-      const CVec3d aPE[3] = { aP[ip0], aP[ip1], aP[ip2] };
-      const CVec3d aSE[2] = { aS[ip0], aS[ip1] };
-      CVec3d Darboux0;
-      {
-        const CVec3d aPE0[3] = { aP0[ip0], aP0[ip1], aP0[ip2] };
-        const CVec3d aSE0[2] = { aS0[ip0], aS0[ip1] };
-        Darboux0 = Darboux_Rod(aPE0, aSE0);
-      }
-      // ------
-      CVec3d dW_dP[3];
-      double dW_dt[2];
-      CMat3d ddW_ddP[3][3];
-      CVec3d ddW_dtdP[2][3];
-      double ddW_ddt[2][2];
-      W +=  WdWddW_Rod(dW_dP,dW_dt,ddW_ddP,ddW_dtdP,ddW_ddt,
-                       aPE,aSE,Darboux0, false);
-      {
-        double eM[3*3*4*4]; for(auto& m: eM){ m = 0.0; }
-        for(int in=0;in<3;++in){
-          for(int jn=0;jn<3;++jn){
-            ddW_ddP[in][jn].CopyToMat4(eM+(in*3+jn)*16);
-          }
-        }
-        for(int in=0;in<3;++in){
-          for(int jn=0;jn<2;++jn){
-            eM[(in*3+jn)*16+0*4+3] = eM[(jn*3+in)*16+3*4+0] = ddW_dtdP[jn][in].x();
-            eM[(in*3+jn)*16+1*4+3] = eM[(jn*3+in)*16+3*4+1] = ddW_dtdP[jn][in].y();
-            eM[(in*3+jn)*16+2*4+3] = eM[(jn*3+in)*16+3*4+2] = ddW_dtdP[jn][in].z();
-          }
-        }
-        for(int in=0;in<2;++in){
-          for(int jn=0;jn<2;++jn){
-            eM[(in*3+jn)*16+4*3+3] = ddW_ddt[in][jn];
-          }
-        }
-        mats.Mearge(3, aINoel, 3, aINoel, 16, eM, tmp_buffer);
-      }
-      {
-        for (int ino=0; ino<3; ino++){
-          const unsigned int ip = aINoel[ino];
-          vec_r[ip*4+0] -= dW_dP[ino].x();
-          vec_r[ip*4+1] -= dW_dP[ino].y();
-          vec_r[ip*4+2] -= dW_dP[ino].z();
-        }
-        for (int in=0; in<2; in++){
-          const unsigned int in0 = aINoel[in];
-          vec_r[in0*4+3] -= dW_dt[in];
-        }
-      }
-    }
-  }
-  //  mats.AddDia(0.00001);
-  std::cout << "energy:" << W << std::endl;
-  //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
-  assert( aBCFlag.size() == np*4 );
-  mats.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_r, aBCFlag,0);
-  std::vector<double> vec_x;
-  vec_x.assign(np*4, 0.0);
-  {
-    auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
-                              vec_r.size(), 1.0e-4, 300, mats);
-    if( aConvHist.size() > 0 ){
-      std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
-    }
-  }
-  /*
-   {
-   auto aConvHist = Solve_BiCGStab(vec_r,vec_x,
-   1.0e-4, 300, mats);
-   if( aConvHist.size() > 0 ){
-   std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
-   }
-   }
-   */
-  //    for(int i=0;i<vec_x.size();++i){
-  //      std::cout << i << " " << vec_x[i] << std::endl;
-  //    }
-  
-  for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
-    unsigned int ips = aIP_HairRoot[ihair];
-    unsigned int ns = aIP_HairRoot[ihair+1] - aIP_HairRoot[ihair] -1;
-    for(unsigned int is=0;is<ns;++is){
-      const unsigned int ip0 = ips+is+0;
-      const unsigned int ip1 = ips+is+1;
-      CVec3d V01 = aP[ip1]-aP[ip0];
-      CVec3d du(vec_x[ip1*4+0]-vec_x[ip0*4+0],
-                vec_x[ip1*4+1]-vec_x[ip0*4+1],
-                vec_x[ip1*4+2]-vec_x[ip0*4+2]);
-      const double dtheta = vec_x[ip0*4+3];
-      CVec3d frm[3];
-      RodFrameTrans(frm,
-                    aS[ip0],V01,du,dtheta);
-      aS[ip0] = frm[0];
-    }
-  }
-  for(unsigned int ip=0;ip<aP.size();++ip){
-    aP[ip].p[0] += vec_x[ip*4+0];
-    aP[ip].p[1] += vec_x[ip*4+1];
-    aP[ip].p[2] += vec_x[ip*4+2];
-  }
-  MakeDirectorOrthogonal_RodHair(aS,aP);
-}
-
 // TODO: extract common function shared with Static one.
-DFM2_INLINE void delfem2::Solve_RodHairDynamic
-    (std::vector<CVec3d>& aP,
-     std::vector<CVec3d>& aS,
-     CMatrixSparse<double>& mats,
-     double mdtt,
-     const std::vector<CVec3d>& aP0,
-     const std::vector<CVec3d>& aS0,
-     const std::vector<int>& aBCFlag,
-     const std::vector<unsigned int>& aIP_HairRoot)
+DFM2_INLINE void delfem2::Solve_RodHair(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    CMatrixSparse<double>& mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    double mdtt,
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aS0,
+    const std::vector<int>& aBCFlag,
+    const std::vector<unsigned int>& aIP_HairRoot)
 {
   assert( mats.len_col == 4 );
   assert( mats.len_row == 4 );
@@ -973,7 +820,7 @@ DFM2_INLINE void delfem2::Solve_RodHairDynamic
       CVec3d dW_dP[2];
       CMat3d ddW_ddP[2][2];
       W += WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
-                                        aPE, L0);
+                                        stiff_stretch, aPE, L0);
       {
         double eM[2*2*4*4]; for(auto& m : eM){ m = 0.0; }
         for(int in=0;in<2;++in){
@@ -1015,6 +862,7 @@ DFM2_INLINE void delfem2::Solve_RodHairDynamic
       CVec3d ddW_dtdP[2][3];
       double ddW_ddt[2][2];
       W +=  WdWddW_Rod(dW_dP,dW_dt,ddW_ddP,ddW_dtdP,ddW_ddt,
+                       stiff_bendtwist,
                        aPE,aSE,Darboux0, false);
       {
         double eM[3*3*4*4]; for(auto& m: eM){ m = 0.0; }

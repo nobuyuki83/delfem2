@@ -113,7 +113,7 @@ int main(int argc,char* argv[])
   // ----------------
   std::random_device rd;
   std::mt19937 reng(rd());
-  std::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   // --------------
   while (true)
   {
@@ -121,13 +121,13 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aIP_HairRoot;
     {
       std::vector<CHairShape> aHairShape;
-      double rad0 = dist(reng);
-      double dangle = dist(reng);
+      double rad0 = dist01(reng);
+      double dangle = dist01(reng);
       for(int ihair=0;ihair<10;++ihair){
         CHairShape hs{30, 0.1, rad0, dangle,
                       {-1.0,
-                       (dist(reng)-0.5)*2.0,
-                       (dist(reng)-0.5)*2.0}};
+                       (dist01(reng)-0.5)*2.0,
+                       (dist01(reng)-0.5)*2.0}};
         aHairShape.push_back(hs);
       }
       MakeProblemSetting_Spiral(aP0,aS0,aIP_HairRoot,
@@ -160,11 +160,17 @@ int main(int argc,char* argv[])
       }
     }
     dfm2::MakeDirectorOrthogonal_RodHair(aS,aP);
+    const double stiff_stretch = dist01(reng)+1.0;
+    const double stiff_bendtwist[3] = {
+      dist01(reng)+1.0,
+      dist01(reng)+1.0,
+      dist01(reng)+1.0 };
     // --------------
     for(int iframe=0;iframe<100;++iframe) {
       // static minimization of the rod deformation
-      Solve_RodHairStatic(aP, aS, mats,
-                          aP0, aS0, aBCFlag, aIP_HairRoot);
+      Solve_RodHair(aP, aS, mats,
+                    stiff_stretch, stiff_bendtwist, 0.0,
+                    aP0, aS0, aBCFlag, aIP_HairRoot);
       // ----------
       viewer.DrawBegin_oldGL();
       myGlutDisplay(aP, aS, aIP_HairRoot);

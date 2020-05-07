@@ -79,7 +79,7 @@ DFM2_INLINE double WdWddW_Rod
  CMat3d ddW_ddP[3][3],
  CVec3d ddW_dtdP[2][3],
  double ddW_ddt[2][2],
- //
+ const double stiff_bendtwist[3],
  const CVec3d P[3],
  const CVec3d S[2],
  const CVec3d& darboux0,
@@ -89,6 +89,7 @@ DFM2_INLINE double WdWddW_SquareLengthLineseg3D
 (CVec3d dW_dP[2],
  CMat3d ddW_ddP[2][2],
  //
+ const double stiff,
  const CVec3d P[2],
  double L0);
 
@@ -98,6 +99,8 @@ DFM2_INLINE void Solve_DispRotSeparate
  (std::vector<CVec3d>& aP,
   std::vector<CVec3d>& aS,
   CMatrixSparse<double>& mats,
+  const double stiff_stretch,
+  const double stiff_bendtwist[3],
   const std::vector<CVec3d>& aP0,
   const std::vector<CVec3d>& aDarboux0,
   const std::vector<unsigned int>& aElemSeg,
@@ -135,20 +138,12 @@ DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
  * @param aBCFlag (in) boundary condition flag. Non zero value means fixed value
  * @param aIP_HairRoot (in) indeces of the root points
  */
-DFM2_INLINE void Solve_RodHairStatic(
+DFM2_INLINE void Solve_RodHair(
     std::vector<CVec3d>& aP,
     std::vector<CVec3d>& aS,
     CMatrixSparse<double>& mats,
-    const std::vector<CVec3d>& aP0,
-    const std::vector<CVec3d>& aS0,
-    const std::vector<int>& aBCFlag,
-    const std::vector<unsigned int>& aIP_HairRoot);
-
-
-DFM2_INLINE void Solve_RodHairDynamic(
-    std::vector<CVec3d>& aP,
-    std::vector<CVec3d>& aS,
-    CMatrixSparse<double>& mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
     double mdtt,
     const std::vector<CVec3d>& aP0,
     const std::vector<CVec3d>& aS0,

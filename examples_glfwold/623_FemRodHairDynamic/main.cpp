@@ -112,7 +112,7 @@ int main(int argc,char* argv[])
   // -----
   std::random_device rd;
   std::mt19937 reng(rd());
-  std::uniform_real_distribution<double> dist(0.0, 1.0);
+  std::uniform_real_distribution<double> dist01(0.0, 1.0);
   // -------
   while (true)
   {
@@ -121,12 +121,15 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aIP_HairRoot; // indexes of root point
     { // make the un-deformed shape of hair
       std::vector<CHairShape> aHairShape;
-      double rad0 = dist(reng);
-      double dangle = dist(reng);
+      double rad0 = dist01(reng);
+      double dangle = dist01(reng);
       const int nhair = 10;
       for(int ihair=0;ihair<nhair;++ihair){
+        const double px = -1.;
+        const double py = (dist01(reng)-0.5)*2.0;
+        const double pz = (dist01(reng)-0.5)*2.0;
         const CHairShape hs{30, 0.1, rad0, dangle,
-                            {-1, (dist(reng)-0.5)*2.0, (dist(reng)-0.5)*2.0}};
+                            {px, py, pz } };
         aHairShape.push_back(hs);
       }
       MakeProblemSetting_Spiral(aP0,aS0,aIP_HairRoot,
@@ -149,19 +152,24 @@ int main(int argc,char* argv[])
     std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
     std::vector<dfm2::CVec3d> aPV (aP0.size(), dfm2::CVec3d(0,0,0)); // velocity
     std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
-    double dt = 0.001;
-    double mass = 1.0e-7;
-    dfm2::CVec3d gravity(0,-0.01,0);
+    double dt = 0.01;
+    double mass = 1.0e-2;
+    dfm2::CVec3d gravity(0,-10,0);
+    const double stiff_stretch = 10000*(dist01(reng)+1.);
+    const double stiff_bendtwist[3] = {
+        1000*(dist01(reng)+1.),
+        1000*(dist01(reng)+1.),
+        1000*(dist01(reng)+1.) };
     for(int iframe=0;iframe<100;++iframe) {
       for(unsigned int ip=0;ip<aP.size();++ip){
-        if( aBCFlag[ip*4+0] != 0 ){ continue; }
-        aPt[ip] = aP[ip] + dt * aPV[ip] + (dt*dt/mass) * gravity;
+        if( aBCFlag[ip*4+0] ==0 ) {
+          aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
+        }
       }
       dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
-      Solve_RodHairDynamic(aPt, aS, mats,
-                          mass/(dt*dt),
-                          aP0, aS0, aBCFlag, aIP_HairRoot);
-//      dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
+      Solve_RodHair(aPt, aS, mats,
+          stiff_stretch, stiff_bendtwist, mass/(dt*dt),
+          aP0, aS0, aBCFlag, aIP_HairRoot);
       for(unsigned int ip=0;ip<aP.size();++ip){
         if( aBCFlag[ip*4+0] != 0 ){ continue; }
         aPV[ip] = (aPt[ip] - aP[ip])/dt;
