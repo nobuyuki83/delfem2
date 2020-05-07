@@ -125,14 +125,37 @@ DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
     std::vector<CVec3d>& aS,
     const std::vector<CVec3d>& aP);
 
-DFM2_INLINE void Solve_DispRotCombined
- (std::vector<CVec3d>& aP,
-  std::vector<CVec3d>& aS,
-  CMatrixSparse<double>& mats,
-  const std::vector<CVec3d>& aP0,
-  const std::vector<CVec3d>& aDarboux0,
-  const std::vector<int>& aBCFlag,
-  const std::vector<unsigned int>& aIP_HairRoot);
+/**
+ * @brief static minimization of the deformation energy
+ * @param aP (in&out) position of the vertices of the rods
+ * @param aS (in&out) director vectors
+ * @param mats (in&out) sparse matrix
+ * @param aP0 (in) initial positions of the vertices of the rods
+ * @param aS0 (in) initial darboux vectors
+ * @param aBCFlag (in) boundary condition flag. Non zero value means fixed value
+ * @param aIP_HairRoot (in) indeces of the root points
+ */
+DFM2_INLINE void Solve_RodHairStatic(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    CMatrixSparse<double>& mats,
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aS0,
+    const std::vector<int>& aBCFlag,
+    const std::vector<unsigned int>& aIP_HairRoot);
+
+
+DFM2_INLINE void Solve_RodHairDynamic(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    CMatrixSparse<double>& mats,
+    double mdtt,
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aS0,
+    const std::vector<int>& aBCFlag,
+    const std::vector<unsigned int>& aIP_HairRoot);
+
+
 
 } // namespace delfem2
 

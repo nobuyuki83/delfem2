@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2020 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -8,7 +8,6 @@
 #include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/mats.h"
-#include "delfem2/mshtopo.h"
 // --------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
@@ -111,83 +110,67 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 1.5;
   viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
   delfem2::opengl::setSomeLighting();
-  // -----
+  // ----------------
   std::random_device rd;
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist(0.0, 1.0);
-  // ------
-  std::vector<dfm2::CVec3d> aP0, aS0;
-  std::vector<unsigned int> aIP_HairRoot;
-  std::vector<int> aBCFlag;
-  dfm2::CMatrixSparse<double> mats;
-  std::vector<dfm2::CVec3d> aS, aP;
-  // -------
-  int iframe = 0;
+  // --------------
   while (true)
   {
-    if( iframe % 70 == 0 ){
-      {
-        std::vector<CHairShape> aHairShape;
-        double rad0 = dist(reng);
-        double dangle = dist(reng);
-        for(int ihair=0;ihair<10;++ihair){
-          CHairShape hs{30, 0.1, rad0, dangle,
-                        {-1.0,
-                         (dist(reng)-0.5)*2.0,
-                         (dist(reng)-0.5)*2.0}};
-          aHairShape.push_back(hs);
-        }
-        MakeProblemSetting_Spiral(aP0,aS0,aIP_HairRoot,
-                                  aHairShape); // dangle
+    std::vector<dfm2::CVec3d> aP0, aS0;
+    std::vector<unsigned int> aIP_HairRoot;
+    {
+      std::vector<CHairShape> aHairShape;
+      double rad0 = dist(reng);
+      double dangle = dist(reng);
+      for(int ihair=0;ihair<10;++ihair){
+        CHairShape hs{30, 0.1, rad0, dangle,
+                      {-1.0,
+                       (dist(reng)-0.5)*2.0,
+                       (dist(reng)-0.5)*2.0}};
+        aHairShape.push_back(hs);
       }
-      for(int itr=0;itr<10;++itr){
-        dfm2::ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
-      }
-      dfm2::MakeBCFlag_RodHair(
-          aBCFlag,
-          aIP_HairRoot);
-      dfm2::MakeSparseMatrix_RodHair(
-          mats,
-          aIP_HairRoot);
-      // -----------------
-      aP = aP0;
-      aS = aS0;
-      assert( aS.size() == aS0.size() );
-      assert( aP.size() == aP0.size() );
-      assert( aS.size() == aP.size() );
-      // apply random deviation
-      for(unsigned int ip=0;ip<aP.size();++ip){
-        aP[ip] = aP0[ip];
-        auto rnd = dfm2::CVec3d::Random()*0.1;
-        if( aBCFlag[ip*4+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
-        if( aBCFlag[ip*4+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
-        if( aBCFlag[ip*4+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
-        if( aBCFlag[ip*4+3] == 0 ){
-          assert( ip != aP.size()-1 );
-          aS[ip] += dfm2::CVec3d::Random()*0.1;
-        }
-      }
-      for(unsigned int is=0;is<aP.size()-1;++is){
-        assert( is < aS.size() );
-        const unsigned int ip0 = is+0;
-        const unsigned int ip1 = is+1;
-        const dfm2::CVec3d& p0 = aP[ip0];
-        const dfm2::CVec3d& p1 = aP[ip1];
-        const dfm2::CVec3d e01 = (p1-p0).Normalize();
-        aS[is] -= (aS[is]*e01)*e01;
-        aS[is].SetNormalizedVector();
+      MakeProblemSetting_Spiral(aP0,aS0,aIP_HairRoot,
+                                aHairShape); // dangle
+      assert( aS0.size() == aP0.size() );
+    }
+    for(int itr=0;itr<10;++itr){
+      dfm2::ParallelTransport_RodHair(aP0, aS0, aIP_HairRoot);
+    }
+    std::vector<int> aBCFlag;
+    dfm2::MakeBCFlag_RodHair(
+        aBCFlag,
+        aIP_HairRoot);
+    dfm2::CMatrixSparse<double> mats;
+    dfm2::MakeSparseMatrix_RodHair(
+        mats,
+        aIP_HairRoot);
+    // -----------------
+    std::vector<dfm2::CVec3d> aS = aS0, aP = aP0;
+    // apply random deviation
+    for(unsigned int ip=0;ip<aP.size();++ip){
+      aP[ip] = aP0[ip];
+      auto rnd = dfm2::CVec3d::Random()*0.1;
+      if( aBCFlag[ip*4+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
+      if( aBCFlag[ip*4+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
+      if( aBCFlag[ip*4+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
+      if( aBCFlag[ip*4+3] == 0 ){
+        assert( ip != aP.size()-1 );
+        aS[ip] += dfm2::CVec3d::Random()*0.1;
       }
     }
-    { // DispRotSeparate
-      Solve_DispRotCombined(aP, aS, mats,
-                            aP0, aS0, aBCFlag, aIP_HairRoot);
+    dfm2::MakeDirectorOrthogonal_RodHair(aS,aP);
+    // --------------
+    for(int iframe=0;iframe<100;++iframe) {
+      // static minimization of the rod deformation
+      Solve_RodHairStatic(aP, aS, mats,
+                          aP0, aS0, aBCFlag, aIP_HairRoot);
+      // ----------
+      viewer.DrawBegin_oldGL();
+      myGlutDisplay(aP, aS, aIP_HairRoot);
+      viewer.DrawEnd_oldGL();
+      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
-    iframe = iframe+1;
-    // -------------
-    viewer.DrawBegin_oldGL();
-    myGlutDisplay(aP,aS,aIP_HairRoot);
-    viewer.DrawEnd_oldGL();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
 EXIT:
   glfwDestroyWindow(viewer.window);
