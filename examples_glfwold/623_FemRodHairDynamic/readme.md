@@ -1,5 +1,5 @@
 # 613_FemRodHairDynamic
-![](../../docs/imgs/glfwold_613_FemRod.png)
+![](../../docs/imgs/glfwold_623_FemRodDynamic.png)
 
 ## About 
 
@@ -7,8 +7,12 @@ This program demonstrates the dynamic deformation of hairs.
 
 The elastic energy is given by the frames defined on the polyline segment.
 See the demo [622_FemRodHair](../622_FemRodHair/readme.md) for the demonstration of this elastic energy.
-     
-Time integration is solved using the variational implicit Euler integration.  
+
+
+
+Time integration is solved using the variational implicit Euler integration.
+
+
 
 
 

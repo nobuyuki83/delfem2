@@ -402,7 +402,15 @@ TEST(objfunc_v23, WdWddW_DotFrame)
 
 TEST(objfunc_v23, WdWddW_Rod)
 {
+  std::random_device rd;
+  std::mt19937 rndeng(rd());
+  std::uniform_real_distribution<double> distm11(-1,+2);
+  std::uniform_real_distribution<double> dist12(+1,+2);
   for(int itr=0;itr<100;++itr){
+    const double stiff_bendtwist[3] = {
+      dist12(rndeng),
+      dist12(rndeng),
+      dist12(rndeng) };
     dfm2::CVec3d P[3];
     P[0].SetRandom();
     P[1].SetRandom();
@@ -423,9 +431,9 @@ TEST(objfunc_v23, WdWddW_Rod)
       S[1].SetNormalizedVector();
     }
     const double off[3] = {
-      2.0*rand()/(RAND_MAX+1.0)-1.0,
-      2.0*rand()/(RAND_MAX+1.0)-1.0,
-      2.0*rand()/(RAND_MAX+1.0)-1.0 };
+      distm11(rndeng),
+      distm11(rndeng),
+      distm11(rndeng) };
     // ------------------------
     dfm2::CVec3d dW_dP[3];
     double dW_dt[2];
@@ -434,7 +442,7 @@ TEST(objfunc_v23, WdWddW_Rod)
     double ddW_ddt[2][2];
     double W = WdWddW_Rod(dW_dP,dW_dt,
                           ddW_ddP, ddW_dtdP,ddW_ddt,
-                          P, S, off, true);
+                          stiff_bendtwist, P, S, off, true);
     // -----------------------
     double eps = 1.0e-7;
     dfm2::CVec3d dP[3];
@@ -460,7 +468,7 @@ TEST(objfunc_v23, WdWddW_Rod)
       double ddw_ddt[2][2];
       w = WdWddW_Rod(dw_dP, dw_dt,
                      ddw_ddP, ddw_dtdP, ddw_ddt,
-                     p, s, off, true);
+                     stiff_bendtwist, p, s, off, true);
     }
     {
       const double val0 = (w-W)/eps;
@@ -522,9 +530,11 @@ TEST(objfunc_v23, WdWddW_Rod)
 TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
 {
   std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_real_distribution<double> dist(-1,+1);
+  std::mt19937 rndeng(rd());
+  std::uniform_real_distribution<double> dist0(-1,+1);
+  std::uniform_real_distribution<double> dist1(+1,+2);
   for(int itr=0;itr<100;++itr){
+    const double stiff_stretch = dist1(rndeng);
     dfm2::CVec3d P[2];
     P[0].SetRandom();
     P[1].SetRandom();
@@ -533,7 +543,7 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
     dfm2::CMat3d ddW_ddP[2][2];
     const double L0 = 1.0;
     double W = WdWddW_SquareLengthLineseg3D(dW_dP, ddW_ddP,
-                                            P, L0);
+                                            stiff_stretch, P, L0);
     // -----
     double eps = 1.0e-5;
     dfm2::CVec3d dP[2];
@@ -546,7 +556,7 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
       dfm2::CMat3d ddw_ddP[2][2];
       const double L0 = 1.0;
       w = WdWddW_SquareLengthLineseg3D(dw_dP, ddw_ddP,
-                                       p, L0);
+                                       stiff_stretch, p, L0);
     }
     {
       const double val0 = (w-W)/eps;

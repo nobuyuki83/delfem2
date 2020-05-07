@@ -1,5 +1,5 @@
 # 622_FemRodHair
-![](../../docs/imgs/glfwold_613_FemRod.png)
+![](../../docs/imgs/glfwold_622_FemRodStatic.png)
 
 
 
