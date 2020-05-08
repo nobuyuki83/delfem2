@@ -250,15 +250,23 @@ DFM2_INLINE void DrawMeshTet3DSurface_FaceNorm(const std::vector<double>& aXYZ,
 DFM2_INLINE void DrawMeshTet3DSurface_Edge(const std::vector<double>& aXYZ,
                            const std::vector<unsigned int>& aTet,
                            const std::vector<unsigned int>& aTetFace);
-DFM2_INLINE void DrawMeshTet3D_FaceNormDisp(const double* aXYZ, int nXYZ,
-                                const unsigned int* aTet, int nTet,
-                                const double* aDisp);
+
+DFM2_INLINE void DrawMeshTet3D_FaceNormDisp(
+    const double* aXYZ,
+    const unsigned int nXYZ,
+    const unsigned int* aTet,
+    const unsigned int nTet,
+    const double* aDisp);
 
 // -------------
 // Draw Hex
 
-DFM2_INLINE void DrawMeshHex3D_Edge(const double* aXYZ, int nXYZ,
-                        const unsigned int* aHex, int nHex);
+DFM2_INLINE void DrawMeshHex3D_Edge(
+    const double* aXYZ,
+    const unsigned int nXYZ,
+    const unsigned int* aHex,
+    const unsigned int nHex);
+
 DFM2_INLINE void DrawMeshHex3D_FaceNorm(const double* aXYZ,
                             const unsigned int* aHex, unsigned int nHex);
 DFM2_INLINE void DrawHex3D_FaceNormDisp(const std::vector<double>& aXYZ,

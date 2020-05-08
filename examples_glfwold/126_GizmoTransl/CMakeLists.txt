@@ -16,7 +16,7 @@ endif()
 
 #########################
 
-project(403_UiArap)
+project(126_GizmoTransl)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

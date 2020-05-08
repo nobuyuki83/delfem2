@@ -71,6 +71,16 @@
 ### [124_4RotSymField](124_4RotSymField)
 <img src="../docs/imgs/glfwold_124_4RotSymField.png" width=200>
 
+### [125_GizmoRot](125_UiGizmoRot)
+<img src="../docs/imgs/glfwold_400_UiGizmoRot.png" width=200>
+
+### [126_GizmoTransl](126_UiGizmoTransl)
+<img src="../docs/imgs/glfwold_401_UiGizmoTransl.png" width=200>
+
+### [127_GizmoAffine](127_UiGizmoAffine)
+<img src="../docs/imgs/glfwold_402_UiGizmoAffine.png" width=200>
+
+
 
 
 ## Dynamic Triangle
@@ -92,7 +102,7 @@
 
 
 
-## Demo Using SMPL Model
+## Demo Using Rigging (e.g., Biovision, SMPL Model)
 
 ### [300_RigSmplArticulated](300_RigSmplArticulated)
 <img src="../docs/imgs/glfwold_300_RigSmplArticulated.png" width=200>
@@ -115,25 +125,9 @@
 ### [307_RigSmplIkImageCloth](307_RigSmplIkImageCloth)
 <img src="../docs/imgs/glfwold_307_RigSmplIkImageCloth.png" width=200>
 
-
-
-## User Interface
-
-### [400_UiGizmoRot](400_UiGizmoRot)
-<img src="../docs/imgs/glfwold_400_UiGizmoRot.png" width=200>
-
-### [401_UiGizmoTransl](401_UiGizmoTransl)
-<img src="../docs/imgs/glfwold_401_UiGizmoTransl.png" width=200>
-
-### [402_UiGizmoAffine](402_UiGizmoAffine)
-<img src="../docs/imgs/glfwold_402_UiGizmoAffine.png" width=200>
-
-### [403_UiArap](403_UiArap)
-<img src="../docs/imgs/glfwold_403_UiArap.png" width=200>
-
-
-### [404_UiRigSmplImg](404_UiRigSmplImg)
+### [308_RigSmplUi](308_RigSmplUi)
 <img src="../docs/imgs/glfwold_404_UiRigSmplImg.png" width=200>
+
 
 
 
@@ -235,3 +229,11 @@
 
 ### [623_FemRodHairDynamic](623_FemRodHairDynamic)
 <img src="../docs/imgs/glfwold_623_FemRodHairDynamic.png" width=200 alt="622_FemRodHairDynamic">
+
+### [624_DefArapUi](624_DefArapUi)
+<img src="../docs/imgs/glfwold_403_UiArap.png" width=200>
+
+
+
+
+

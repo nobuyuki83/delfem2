@@ -1736,7 +1736,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshLine3D_Edge
  const unsigned int* aLine,
  unsigned int nLine)
 {
-  for (int il = 0; il<nLine; il++){
+  for (unsigned int il = 0; il<nLine; il++){
     const unsigned int i0 = aLine[il*2+0];
     const unsigned int i1 = aLine[il*2+1];
     const double p0[3] = { aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2] };
@@ -1839,9 +1839,10 @@ void opengl::DrawMeshTet3D_FaceNormDisp
 
 // ---------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_FaceNorm
-(const double* aXYZ,
- const unsigned int* aHex, unsigned int nHex)
+DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_FaceNorm(
+    const double* aXYZ,
+    const unsigned int* aHex,
+    unsigned int nHex)
 {
   namespace lcl = ::delfem2::opengl::funcs_glold;
   ::glBegin(GL_TRIANGLES);
@@ -1925,16 +1926,18 @@ DFM2_INLINE void delfem2::opengl::DrawHex3D_FaceNormDisp
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_Edge
-(const double* aXYZ, int nXYZ,
- const unsigned int* aHex, int nHex)
+DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_Edge(
+    const double* aXYZ,
+    const unsigned int nXYZ,
+    const unsigned int* aHex,
+    const unsigned int nHex)
 {
   const int noelEdge_Hex[12][2] = {
     {0,1},{3,2},{4,5},{7,6},
     {0,3},{1,2},{4,7},{5,6},
     {0,4},{1,5},{3,7},{2,6} };
   ::glBegin(GL_LINES);
-  for (int ihex = 0; ihex<nHex; ihex++){
+  for (unsigned int ihex = 0; ihex<nHex; ihex++){
     const unsigned int i0 = aHex[ihex*8+0];
     const unsigned int i1 = aHex[ihex*8+1];
     const unsigned int i2 = aHex[ihex*8+2];
@@ -1962,12 +1965,14 @@ DFM2_INLINE void delfem2::opengl::DrawMeshHex3D_Edge
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNormDisp
-(const double* aXYZ, int nXYZ,
- const unsigned int* aTet, int nTet,
- const double* aDisp)
+DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNormDisp(
+    const double* aXYZ,
+    const unsigned int nXYZ,
+    const unsigned int* aTet,
+    const unsigned int nTet,
+    const double* aDisp)
 {
-  for (int itet = 0; itet<nTet; itet++){
+  for (unsigned int itet = 0; itet<nTet; itet++){
     const unsigned int i0 = aTet[itet*4+0];
     const unsigned int i1 = aTet[itet*4+1];
     const unsigned int i2 = aTet[itet*4+2];
@@ -1980,7 +1985,6 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNormDisp
     double un1[3], a1; funcs_glold::UnitNormalAreaTri3D(un1,a1, p2,p0,p3);
     double un2[3], a2; funcs_glold::UnitNormalAreaTri3D(un2,a2, p3,p0,p1);
     double un3[3], a3; funcs_glold::UnitNormalAreaTri3D(un3,a3, p0,p2,p1);
-    //    ::glColor3d(0, 0, 0);
     ::glBegin(GL_TRIANGLES);
     ::glNormal3dv(un0); ::glVertex3dv(p1); ::glVertex3dv(p2); ::glVertex3dv(p3);
     ::glNormal3dv(un1); ::glVertex3dv(p2); ::glVertex3dv(p3); ::glVertex3dv(p0);
