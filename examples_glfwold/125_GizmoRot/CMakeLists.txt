@@ -16,7 +16,7 @@ endif()
 
 #########################
 
-project(400_UiGizmoRot)
+project(125_GizmoRot)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

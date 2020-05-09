@@ -1,5 +1,5 @@
 ### 300_RigSmplArticulated
-![](../../docs/imgs/glfwold_300_RigSmplArticulated.png) 
+![](thumbnail.png) 
 
 
 

@@ -38,6 +38,9 @@ add_subdirectory(121_IsoSurfaceStuffing)
 add_subdirectory(122_HashBvhSelfCollision)
 add_subdirectory(123_HashLbvh3D)
 add_subdirectory(124_4RotSymField)
+add_subdirectory(125_GizmoRot)
+add_subdirectory(126_GizmoTransl)
+add_subdirectory(127_GizmoAffine)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)
@@ -55,13 +58,7 @@ add_subdirectory(304_RigSmplIk)
 add_subdirectory(305_RigSmplIkArap)
 add_subdirectory(306_RigSmplIkImage)
 add_subdirectory(307_RigSmplIkImageCloth)
-
-# ui
-add_subdirectory(400_UiGizmoRot)
-add_subdirectory(401_UiGizmoTransl)
-add_subdirectory(402_UiGizmoAffine)
-add_subdirectory(403_UiArap)
-add_subdirectory(404_UiRigSmplImg)
+add_subdirectory(308_RigSmplUi)
 
 # cad
 add_subdirectory(500_Cad2d)
@@ -96,5 +93,4 @@ add_subdirectory(620_FemClothSelfCollision)
 add_subdirectory(621_Fem2D)
 add_subdirectory(622_FemRodHairStatic)
 add_subdirectory(623_FemRodHairDynamic)
-
-
+add_subdirectory(624_DefArapUi)

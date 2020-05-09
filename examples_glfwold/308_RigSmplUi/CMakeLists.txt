@@ -2,21 +2,25 @@ cmake_minimum_required(VERSION 2.8)
 
 option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
-#########################
+######################################################
 
+enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-if(MSVC)
-set(CMAKE_CXX_FLAGS "/W4  -O2 \
-  /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4456 \
-  /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505")
-else()
-set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
-endif()
+IF(MSVC)
+  set(CMAKE_CXX_FLAGS "/W4 -O2 \
+    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
+    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
+ELSE()
+  set(CMAKE_CXX_FLAGS "-Wall -g \
+  -Wno-deprecated-declarations \
+  -Wno-unused-variable \
+  -Wno-unused-but-set-variable")
+ENDIF()
 
-#########################
+####################################
 
-project(402_UiGizmoAffine)
+project(308_RigSmplUi)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -34,8 +38,8 @@ find_package(OpenGL REQUIRED)
 
 # dfm2
 IF(USE_HEADERONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)
-else() 
+  add_definitions(-DDFM2_HEADER_ONLY=ON)            
+else()
   if(MSVC)
     set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
@@ -46,24 +50,32 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-#########################
+#########################################
 
+set(3RD_PARTY           "../../3rd_party")
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
+  ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}
 )
 
+set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
+  ${3RD_PARTY}/cnpy/cnpy.h                  
+  ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${DELFEM2_INC}/cnpy/smpl_cnpy.h           
+  ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
   main.cpp
 )
 
-###############################################
+################################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
+  find_library( ZIP_LIBRARY Z )
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
@@ -71,18 +83,19 @@ IF(APPLE)
     ${COCOA_LIBRARY}
     ${IOKIT_LIBRARY}
     ${COREVIDEO_LIBRARY}
+    ${ZIP_LIBRARY}
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
-  )
+  )  
 ENDIF()
