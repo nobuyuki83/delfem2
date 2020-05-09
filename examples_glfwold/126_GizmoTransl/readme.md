@@ -1,5 +1,5 @@
 # 126_UiGizmoTransl
-![](../../docs/imgs/glfwold_401_UiGizmoTransl.png)
+![](thumbnail.png)
 
 
 ## About

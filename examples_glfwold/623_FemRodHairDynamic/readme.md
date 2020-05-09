@@ -1,5 +1,5 @@
 # 623_FemRodHairDynamic
-![](../../docs/imgs/glfwold_623_FemRodHairDynamic.png)
+![](thumbnail.png)
 
 ## About
 
