@@ -21,13 +21,13 @@
 <img src="103_Noise2/thumbnail.png" width=200px>
 
 ### [104_Noise3](104_Noise3)
-<img src="104_noise3/thumbnail.png" width=200px>
+<img src="104_Noise3/thumbnail.png" width=200px>
 
 ### [105_MeshSlice](105_MeshSlices)
 <img src="105_MeshSlices/thumbnail.png" width=200px>
 
 ### [106_SphericalHarmonics](106_SphericalHarmonics)
-<img src="106_sphericalharmonics/thumbnail.png" width=200px>
+<img src="106_SphericalHarmonics/thumbnail.png" width=200px>
 
 ### [107_ParamGeo2d](107_ParamGeo2)
 <img src="107_ParamGeo2/thumbnail.png" width=200px>
@@ -71,13 +71,13 @@
 ### [124_4RotSymField](124_4RotSymField)
 <img src="124_4RotSymField/thumbnail.png" width=200>
 
-### [125_GizmoRot](125_UiGizmoRot)
+### [125_GizmoRot](125_GizmoRot)
 <img src="125_GizmoRot/thumbnail.png" width=200>
 
-### [126_GizmoTransl](126_UiGizmoTransl)
+### [126_GizmoTransl](126_GizmoTransl)
 <img src="126_GizmoTransl/thumbnail.png" width=200>
 
-### [127_GizmoAffine](127_UiGizmoAffine)
+### [127_GizmoAffine](127_GizmoAffine)
 <img src="127_GizmoAffine/thumbnail.png" width=200>
 
 
@@ -220,7 +220,7 @@
 
 
 ### [621_Fem2d](621_Fem2D)
-<img src="621_Fem2d/thumbnail.png" width=200 alt="621_Fem2d">
+<img src="621_Fem2D/thumbnail.png" width=200 alt="621_Fem2d">
 
 
 ### [622_FemRodHairStatic](622_FemRodHairStatic)
