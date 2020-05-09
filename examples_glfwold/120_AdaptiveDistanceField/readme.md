@@ -1,5 +1,5 @@
 # 120_Adf3
-![](../../docs/imgs/glfwold_120_Adf3.png)
+![](thumbnail.png)
 
 ## About 
 
@@ -12,4 +12,4 @@ In Proceedings of the 27th annual conference on Computer graphics and interactiv
 DOI:https://doi.org/10.1145/344779.344899 
 https://dl.acm.org/doi/10.1145/344779.344899
 ```
-   
+

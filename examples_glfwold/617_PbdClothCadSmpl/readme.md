@@ -1,2 +1,2 @@
-# 616_PbdClothCadSmpl
-![](../../docs/imgs/glfwold_617_PbdClothCadSmpl.png)
+# 617_PbdClothCadSmpl
+![](thumbnail.png)
