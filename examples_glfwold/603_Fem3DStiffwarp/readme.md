@@ -1,2 +1,2 @@
-### 603_Fem3StiffWarp
-![](../../docs/imgs/glfwold_603_Fem3StiffWarp.png)
+# 603_Fem3StiffWarp
+![](thumbnail.png)

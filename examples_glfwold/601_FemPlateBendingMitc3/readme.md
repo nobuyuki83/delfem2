@@ -1,5 +1,5 @@
 # 601_FemPlateBendingMitc3
-![](../../docs/imgs/glfwold_601_FemPlateBendingMitc3.png)
+![](thumbnail.png)
 
 ## About 
 This program demonstrates the MITC3 plate bending element.

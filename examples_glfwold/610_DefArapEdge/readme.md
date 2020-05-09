@@ -1,2 +1,2 @@
-### 610_DefArapEdge
-![](../../docs/imgs/glfwold_610_DefArapEdge.png)
+# 610_DefArapEdge
+![](thumbnail.png)

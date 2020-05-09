@@ -1,2 +1,2 @@
-### 606_PbdDeform2D
-![](../../docs/imgs/glfwold_606_PbdDeform2D.png)
+# 606_PbdDeform2D
+![](thumbnail.png)

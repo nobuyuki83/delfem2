@@ -1,5 +1,5 @@
 # 622_FemRodHair
-![](../../docs/imgs/glfwold_622_FemRodStatic.png)
+![](thumbnail.png)
 
 
 
@@ -22,11 +22,11 @@ Miklós Bergou, Basile Audoly, Etienne Vouga, Max Wardetzky, Eitan Grinspun
 ACM Transactions on Graphics (SIGGRAPH) 2010
 http://www.cs.columbia.edu/cg/threads/
 ```
-   
+
 ```   
 "Efficient Yarn-based Cloth with Adaptive Contact Linearization"
 Jonathan M. Kaldor, Doug L. James, Steve Marschner
 ACM SIGGRAPH 2010
 https://research.cs.cornell.edu/YarnCloth/   
 ```
- 
+

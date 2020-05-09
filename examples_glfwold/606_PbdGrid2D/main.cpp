@@ -79,8 +79,8 @@ void myGlutDisplay()
   {
     int viewport[8];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    double w = (double)viewport[2];
-    double h = (double)viewport[3];
+    auto w = (double)viewport[2];
+    auto h = (double)viewport[3];
     double asp = w/h;
     const double win_size = 10.0;
     ::glMatrixMode(GL_PROJECTION);

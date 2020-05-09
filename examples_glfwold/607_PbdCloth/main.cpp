@@ -30,7 +30,7 @@ std::vector<double> aXYZ; // deformed vertex positions
 std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
-const double mass_point = 0.01;
+//const double mass_point = 0.01;
 const double dt = 0.01;
 const double gravity[3] = {0.0, 0.0, -10.0};
 bool is_animation = false;
