@@ -28,6 +28,7 @@ class Test_PBD():
 
   def test_pbd_hex(self,request):
     voxelgrid = dfm2.VoxelGrid()
+    voxelgrid.initialize(3,2,1)
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
     voxelgrid.add(2, 0, 0)

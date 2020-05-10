@@ -47,6 +47,7 @@ class Test_Mesh():
 
   def test4(self,request):
     voxelgrid = dfm2.VoxelGrid()
+    voxelgrid.initialize(2,2,1)
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
     voxelgrid.add(0, 1, 0)
@@ -60,6 +61,7 @@ class Test_Mesh():
 
   def test5(self,request):
     voxelgrid = dfm2.VoxelGrid()
+    voxelgrid.initialize(2,2,1)
     voxelgrid.add(0, 0, 0)
     voxelgrid.add(1, 0, 0)
     voxelgrid.add(0, 1, 0)

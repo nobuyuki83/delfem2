@@ -9,7 +9,7 @@
 #define DFM2_GRIDVOXEL_H
 
 #include <vector>
-
+#include "delfem2/dfm2_inline.h"
 
 namespace delfem2 {
 
@@ -23,34 +23,40 @@ void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
 
 // -----------------------------------------------
 
-void MeshQuad3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
-                          int ndivx, int ndivy, int ndivz,
-                          int iorgx, int iorgy, int iorgz,
-                          const std::vector<int>& aIsVox);
-void MeshHex3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aQuad,
-                         int ndivx, int ndivy, int ndivz,
-                         int ioffx, int ioffy, int ioffz,
-                         const std::vector<int>& aIsVox);
-void MeshTet3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aTet,
-                         int ndivx, int ndivy, int ndivz,
-                         int ioffx, int ioffy, int ioffz,
-                         const std::vector<int>& aIsVox);
+void MeshQuad3D_VoxelGrid
+ (std::vector<double>& aXYZ,
+  std::vector<unsigned int>& aQuad,
+  int ndivx, int ndivy, int ndivz,
+  const std::vector<int>& aIsVox);
 
-class CVoxelGrid3D
+
+void MeshHex3D_VoxelGrid
+ (std::vector<double>& aXYZ,
+  std::vector<int>& aQuad,
+  int ndivx, int ndivy, int ndivz,
+  const std::vector<int>& aIsVox);
+
+void MeshTet3D_VoxelGrid
+ (std::vector<double>& aXYZ,
+  std::vector<int>& aTet,
+  int ndivx, int ndivy, int ndivz,
+  const std::vector<int>& aIsVox);
+
+
+template <typename VAL>
+class CGrid3
 {
 public:
-  CVoxelGrid3D(){
+  CGrid3(){
     ndivx = ndivy = ndivz = 0;
-    iorgx = iorgy = iorgz = 0;
     aIsVox.clear();
   }
-  void Init_AABB(const int aabb[6]){
-    ndivx = aabb[1]-aabb[0];
-    ndivy = aabb[3]-aabb[2];
-    ndivz = aabb[5]-aabb[4];
-    iorgx = aabb[0];
-    iorgy = aabb[2];
-    iorgz = aabb[4];
+  void Initialize(const unsigned int ndivx_,
+                  const unsigned int ndivy_,
+                  const unsigned int ndivz_){
+    ndivx = ndivx_;
+    ndivy = ndivy_;
+    ndivz = ndivz_;
     const int nvoxel = ndivx*ndivy*ndivz;
     aIsVox.assign(nvoxel,0);
   }
@@ -62,76 +68,55 @@ public:
         for(int igvz=0;igvz<ndivz;++igvz){
           const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
           if( aIsVox [ivoxel] ==0 ){ continue; }
-          Add_AABB(aabb, igvx+iorgx, igvy+iorgy, igvz+iorgz);
+          Add_AABB(aabb, igvx, igvy, igvz);
         }
       }
     }
   }
   bool IsInclude(int ivx, int ivy, int ivz){
-    int igvx = ivx-iorgx;
-    int igvy = ivy-iorgy;
-    int igvz = ivz-iorgz;
-    if( igvx<0 || igvx>=ndivx ){ return false; }
-    if( igvy<0 || igvy>=ndivy ){ return false; }
-    if( igvz<0 || igvz>=ndivz ){ return false; }
+    if( ivx<0 || ivx>=ndivx ){ return false; }
+    if( ivy<0 || ivy>=ndivy ){ return false; }
+    if( ivz<0 || ivz>=ndivz ){ return false; }
     return true;
-  }
-  void Add(int ivx, int ivy, int ivz){
-    if( this->IsInclude(ivx, ivy, ivz) ){
-      Set(ivx,ivy,ivz,1);
-    }
-    else{
-      int aabb[8]; this->AABB(aabb);
-      Add_AABB(aabb,ivx,ivy,ivz);
-      CVoxelGrid3D vg0 = (*this);
-      this->Init_AABB(aabb);
-      Set(ivx,ivy,ivz,1);
-      for(int igvx0=0;igvx0<vg0.ndivx;++igvx0){
-      for(int igvy0=0;igvy0<vg0.ndivy;++igvy0){
-      for(int igvz0=0;igvz0<vg0.ndivz;++igvz0){
-        const int ivoxel0 = igvx0*(vg0.ndivy*vg0.ndivz)+igvy0*vg0.ndivz+igvz0;
-        if( vg0.aIsVox[ivoxel0] == 0 ) continue;
-        int ivx1 = igvx0+vg0.iorgx;
-        int ivy1 = igvy0+vg0.iorgy;
-        int ivz1 = igvz0+vg0.iorgz;
-        assert( IsInclude(ivx1,ivy1,ivz1) );
-        Set(ivx1,ivy1,ivz1,1);
-      }
-      }
-      }
-    }
   }
   void Set(int ivx, int ivy, int ivz, int isVox){
     if( !this->IsInclude(ivx,ivy,ivz) ){ return; }
-    const int igvx = ivx-iorgx;
-    const int igvy = ivy-iorgy;
-    const int igvz = ivz-iorgz;
-    const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+    const int ivoxel = ivx*(ndivy*ndivz)+ivy*ndivz+ivz;
     aIsVox[ivoxel] = isVox;
-  }
-  void GetQuad(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad) const {
-    MeshQuad3D_VoxelGrid(aXYZ, aQuad,
-                      ndivx, ndivy, ndivz,
-                      iorgx, iorgy, iorgz,
-                      aIsVox);
-  }
-  void GetHex(std::vector<double>& aXYZ, std::vector<int>& aHex) const {
-    MeshHex3D_VoxelGrid(aXYZ, aHex,
-                      ndivx, ndivy, ndivz,
-                      iorgx, iorgy, iorgz,
-                      aIsVox);
-  }
-  void GetTet(std::vector<double>& aXYZ, std::vector<int>& aTet) const {
-    MeshTet3D_VoxelGrid(aXYZ, aTet,
-                        ndivx, ndivy, ndivz,
-                        iorgx, iorgy, iorgz,
-                        aIsVox);
   }
 public:
   int ndivx, ndivy, ndivz;
-  int iorgx, iorgy, iorgz;
-  std::vector<int> aIsVox;
+  std::vector<VAL> aIsVox;
 };
+
+
+/*
+void Add(int ivx, int ivy, int ivz){
+  if( this->IsInclude(ivx, ivy, ivz) ){
+    Set(ivx,ivy,ivz,1);
+  }
+  else{ // size change
+    int aabb[8]; this->AABB(aabb);
+    Add_AABB(aabb,ivx,ivy,ivz);
+    CVoxelGrid3D vg0 = (*this);
+    this->Init_AABB(aabb);
+    Set(ivx,ivy,ivz,1);
+    for(int igvx0=0;igvx0<vg0.ndivx;++igvx0){
+      for(int igvy0=0;igvy0<vg0.ndivy;++igvy0){
+        for(int igvz0=0;igvz0<vg0.ndivz;++igvz0){
+          const int ivoxel0 = igvx0*(vg0.ndivy*vg0.ndivz)+igvy0*vg0.ndivz+igvz0;
+          if( vg0.aIsVox[ivoxel0] == 0 ) continue;
+          int ivx1 = igvx0+vg0.iorgx;
+          int ivy1 = igvy0+vg0.iorgy;
+          int ivz1 = igvz0+vg0.iorgz;
+          assert( IsInclude(ivx1,ivy1,ivz1) );
+          Set(ivx1,ivy1,ivz1,1);
+        }
+      }
+    }
+  }
+}
+ */
   
 }
 

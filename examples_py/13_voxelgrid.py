@@ -39,6 +39,7 @@ def show_quad(voxelgrid):
 
 def main():
   grid3d = dfm2.VoxelGrid()
+  grid3d.initialize(3,2,1)
   grid3d.add(0, 0, 0)
   grid3d.add(1, 0, 0)
   grid3d.add(2, 0, 0)
