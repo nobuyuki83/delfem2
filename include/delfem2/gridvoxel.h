@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef DFM2_VOXEL_H
-#define DFM2_VOXEL_H
+#ifndef DFM2_GRIDVOXEL_H
+#define DFM2_GRIDVOXEL_H
 
 #include <vector>
 
@@ -15,6 +15,13 @@ namespace delfem2 {
 
 int Adj_Grid(int ivox_picked, int iface_picked,
              int ndivx, int ndivy, int ndivz);
+
+bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz);
+void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
+
+// ------------------------------
+
+// -----------------------------------------------
 
 void MeshQuad3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
                           int ndivx, int ndivy, int ndivz,
@@ -28,56 +35,6 @@ void MeshTet3D_VoxelGrid(std::vector<double>& aXYZ, std::vector<int>& aTet,
                          int ndivx, int ndivy, int ndivz,
                          int ioffx, int ioffy, int ioffz,
                          const std::vector<int>& aIsVox);
-
-bool IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz);
-void Add_AABB(int aabb[8], int ivx, int ivy, int ivz);
-
-// ------------------------------
-
-class CCubeGrid
-{
-public:
-  CCubeGrid(){
-    this->ivx = 0;
-    this->ivy = 0;
-    this->ivz = 0;
-    is_active = true;
-  }
-  CCubeGrid(int i, int j, int k){
-    this->ivx = i;
-    this->ivy = j;
-    this->ivz = k;
-    is_active = true;
-  }
-  bool operator<(const CCubeGrid& rhs) const
-  {
-    if( this->ivx != rhs.ivx ){ return this->ivx < rhs.ivx; }
-    if( this->ivy != rhs.ivy ){ return this->ivy < rhs.ivy; }
-    if( this->ivz != rhs.ivz ){ return this->ivz < rhs.ivz; }
-    return false;
-  }
-public:
-  int ivx, ivy, ivz;
-  bool is_active;
-};
-
-
-void Pick_CubeGrid(int& icube_pic, int& iface_pic,
-                   const double src_pic[3], const double dir_pic_[3],
-                   double elen,
-                   const double org[3],
-                   const std::vector<CCubeGrid>& aCube);
-void Adj_CubeGrid(int& ivx, int& ivy, int& ivz,
-                  int ivox, int iface,
-                  std::vector<CCubeGrid>& aCube);
-void Add_CubeGrid(std::vector<CCubeGrid>& aVox,
-                  int ivx1, int ivy1, int ivz1);
-void Del_CubeGrid(std::vector<CCubeGrid>& aCube,
-                  int i1, int j1, int k1);
-void AABB_CubeGrid(int aabb[6],
-                   const std::vector<CCubeGrid>& aCube);
-
-// -----------------------------------------------
 
 class CVoxelGrid3D
 {
@@ -177,5 +134,9 @@ public:
 };
   
 }
+
+#ifdef DFM2_HEADER_ONLY
+#  include "delfem2/gridvoxel.cpp"
+#endif
 
 #endif

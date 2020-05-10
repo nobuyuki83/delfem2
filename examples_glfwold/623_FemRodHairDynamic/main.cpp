@@ -16,7 +16,7 @@
 
 namespace dfm2 = delfem2;
 
-// -------------------------------------
+// -------------------------------------t
 
 void myGlutDisplay
 (const std::vector<dfm2::CVec3d>& aP,
