@@ -60,12 +60,14 @@ void dfm2::Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 void dfm2::MeshQuad3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
  int ndivx, int ndivy, int ndivz,
- int ioffx, int ioffy, int ioffz,
  const std::vector<int>& aIsVox)
 {
+  int ioffx=0;
+  int ioffy=0;
+  int ioffz=0;
   aQuad.clear();
   aXYZ.clear();
-  //////
+  //
   const int mdivx = ndivx+1;
   const int mdivy = ndivy+1;
   const int mdivz = ndivz+1;
@@ -78,7 +80,7 @@ void dfm2::MeshQuad3D_VoxelGrid
       }
     }
   }
-  //////
+  //
   assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
   for(int igvx=0;igvx<ndivx;++igvx){
     for(int igvy=0;igvy<ndivy;++igvy){
@@ -122,9 +124,11 @@ void dfm2::MeshQuad3D_VoxelGrid
 void dfm2::MeshHex3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<int>& aHex,
  int ndivx, int ndivy, int ndivz,
- int ioffx, int ioffy, int ioffz,
  const std::vector<int>& aIsVox)
 {
+  int ioffx=0;
+  int ioffy=0;
+  int ioffz=0;
   aHex.clear();
   aXYZ.clear();
   //////
@@ -178,9 +182,11 @@ void dfm2::MeshHex3D_VoxelGrid
 void dfm2::MeshTet3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<int>& aTet,
  int ndivx, int ndivy, int ndivz,
- int ioffx, int ioffy, int ioffz,
  const std::vector<int>& aIsVox)
 {
+  int ioffx=0;
+  int ioffy=0;
+  int ioffz=0;
   aTet.clear();
   aXYZ.clear();
   //////

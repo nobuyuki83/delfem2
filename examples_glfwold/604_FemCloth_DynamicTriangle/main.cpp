@@ -90,7 +90,7 @@ void StepTime()
   const double lambda = 1.0; // Lame's 1st parameter
   const double myu    = 4.0; // Lame's 2nd parameter
   const double stiff_bend = 0.0e-3; // bending stiffness
-  const double areal_density = 1.0; // areal density of a cloth
+//  const double areal_density = 1.0; // areal density of a cloth
   const double gravity[3] = {0,-1,0}; // gravitatinal accereration
   double time_step_size = 0.03; // size of time step
   const double stiff_contact = 1.0e+3;

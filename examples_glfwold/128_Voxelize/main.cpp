@@ -59,14 +59,18 @@ int main(int argc,char* argv[])
     smplr.End();
     smplr.GetDepth();
   }
+  
+  
 
-  while (!glfwWindowShouldClose(viewer.window))
+  while (true)
   {
     viewer.DrawBegin_oldGL();
     sampler_box.Draw();
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
+    if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
   }
+EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
