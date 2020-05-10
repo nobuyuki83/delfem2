@@ -167,6 +167,7 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_RGBA8UI
   ::glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+
 DFM2_INLINE void delfem2::opengl::CRender2Tex::ExtractFromTexture_RGBA32F
  (std::vector<float>& aRGBA)
 {

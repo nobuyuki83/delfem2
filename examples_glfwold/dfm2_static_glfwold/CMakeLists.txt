@@ -80,6 +80,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/def.h                       ${DELFEM2_INC}/def.cpp    
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
     ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
+    ${DELFEM2_INC}/gridvoxel.h                 ${DELFEM2_INC}/gridvoxel.cpp
+    ${DELFEM2_INC}/gridcube.h                  ${DELFEM2_INC}/gridcube.cpp
     ${DELFEM2_INC}/femrod.h                    ${DELFEM2_INC}/femrod.cpp    
     ${DELFEM2_INC}/srchbi_v3bvh.h
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
@@ -97,6 +99,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/colorv3_glold.h      ${DELFEM2_INC}/opengl/colorv3_glold.cpp
     ${DELFEM2_INC}/opengl/render2tex_gl.h      ${DELFEM2_INC}/opengl/render2tex_gl.cpp
     ${DELFEM2_INC}/opengl/render2tex_glold.h   ${DELFEM2_INC}/opengl/render2tex_glold.cpp
+    ${DELFEM2_INC}/opengl/gridcube_glold.h     ${DELFEM2_INC}/opengl/gridcube_glold.cpp
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
     ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
 )

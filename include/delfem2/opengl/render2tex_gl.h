@@ -40,20 +40,23 @@ public:
     return mm;
   }
   // ----------------------
-  void AffMatT3f_MVP(float mMV[16], float p[16]) const;
-  std::vector<double> getGPos(int ix, int iy) const;
-  void SaveDepthCSV(const std::string& path) const;
-  void SetCoord(double elen, double depth_max,
-                const std::vector<double>& orgPrj,
-                const std::vector<double>& dirPrj,
-                const std::vector<double>& dirWidth);
-  void SetTextureProperty(unsigned int nw, unsigned int nh, bool is_rgba_8ui)
+  void AffMatT3f_MVP(
+      float mMV[16],
+      float p[16]) const;
+  void SaveDepthCSV(
+      const std::string& path) const;
+  void SetCoord(
+      double elen, double depth_max,
+      const std::vector<double>& orgPrj,
+      const std::vector<double>& dirPrj,
+      const std::vector<double>& dirWidth);
+  void SetTextureProperty(unsigned int nw, unsigned int nh, bool is_rgba_8ui_)
   {
     this->nResX = nw;
     this->nResY = nh;
-    this->is_rgba_8ui = is_rgba_8ui;
+    this->is_rgba_8ui = is_rgba_8ui_;
   }
-  void Start();
+  virtual void Start();
   void End();
   void ExtractFromTexture_Depth(std::vector<float>& aZ);
   void ExtractFromTexture_RGBA8UI(std::vector<std::uint8_t>& aRGBA);
@@ -75,7 +78,8 @@ public:
 protected:
   int view[4]; // viewport information
 };
-  
+
+
 } // opengl
 } // delfem2
 

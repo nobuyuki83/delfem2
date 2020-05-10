@@ -7,6 +7,7 @@
 
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/gridvoxel.h"
 //
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -22,23 +23,20 @@ int main(int argc,char* argv[])
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
-  dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/rollsRoyce.obj",
-    aXYZ,aTri);
+
+  dfm2::Read_Obj(
+      std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
+      aXYZ,aTri);
   dfm2::Normalize_Points3(aXYZ,4.0);
   // ---------------------------------------
 
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
-  sampler_box.Initialize(128, 128, 256, 0.02);
+  sampler_box.Initialize(64, 64, 64, 0.07);
 
-  for(auto& smplr : sampler_box.aSampler){
-    smplr.draw_len_axis = 0.2;
-    smplr.isDrawTex = false;
-    smplr.isDrawOnlyHitPoints = true;
-  }
   // ---------------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 2.0;
+  viewer.nav.camera.view_height = 3.0;
   viewer.nav.camera.camera_rot_mode = dfm2::CAMERA_ROT_TBALL;
   viewer.nav.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
@@ -48,8 +46,7 @@ int main(int argc,char* argv[])
 
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
-
-  sampler_box.Draw();
+  
   for(auto& smplr: sampler_box.aSampler){
     smplr.InitGL(); // move the sampled image to a texture
     smplr.Start();
@@ -61,7 +58,6 @@ int main(int argc,char* argv[])
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     smplr.End();
     smplr.GetDepth();
-    smplr.GetColor();
   }
 
   while (!glfwWindowShouldClose(viewer.window))

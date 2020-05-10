@@ -58,6 +58,8 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/emat.h               ${DELFEM2_INC}/emat.cpp
       ${DELFEM2_INC}/iss.h                ${DELFEM2_INC}/iss.cpp      
       ${DELFEM2_INC}/vecxitrsol.h         ${DELFEM2_INC}/vecxitrsol.cpp
+      ${DELFEM2_INC}/gridvoxel.h          ${DELFEM2_INC}/gridvoxel.cpp
+      ${DELFEM2_INC}/gridcube.h           ${DELFEM2_INC}/gridcube.cpp            
       ${DELFEM2_INC}/bv.h
       
       ${DELFEM2_INC}/geo3_v23m34q.h       ${DELFEM2_INC}/geo3_v23m34q.cpp
@@ -77,7 +79,6 @@ else()
 endif()
 
 set(INPUT_SRC
-    ${DELFEM2_INC}/voxel.h              ${DELFEM2_INC}/voxel.cpp
     ${DELFEM2_INC}/evalmathexp.h        ${DELFEM2_INC}/evalmathexp.cpp
     ${DELFEM2_INC}/slice.h              ${DELFEM2_INC}/slice.cpp
     ${DELFEM2_INC}/mshtopoio.h          ${DELFEM2_INC}/mshtopoio.cpp
