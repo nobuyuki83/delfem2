@@ -343,14 +343,14 @@ TEST(vec2,second_moment_of_area)
 TEST(meshtopo,quad_subdiv0)
 {
   dfm2::CGrid3<int> vg;
-  vg.Initialize(1,1,1);
+  vg.Initialize(1,1,1, 0);
   vg.Set(0,0,0, 1);
   {
     std::vector<double> aXYZ0;
     std::vector<unsigned int> aQuad0;
     dfm2::MeshQuad3D_VoxelGrid(aXYZ0, aQuad0,
                                vg.ndivx, vg.ndivy, vg.ndivz,
-                               vg.aIsVox);
+                               vg.aVal);
     EXPECT_EQ(aXYZ0.size(),8*3);
     EXPECT_EQ(aQuad0.size(),6*4);
     {
@@ -364,7 +364,7 @@ TEST(meshtopo,quad_subdiv0)
 TEST(meshtopo,quad_subdiv1)
 {
   dfm2::CGrid3<int> vg;
-  vg.Initialize(2,2,1);
+  vg.Initialize(2,2,1, 0);
   vg.Set(0,0,0, 1);
   vg.Set(1,0,0, 1);
   vg.Set(1,1,0, 1);
@@ -372,7 +372,7 @@ TEST(meshtopo,quad_subdiv1)
   std::vector<unsigned int> aQuad0;
   dfm2::MeshQuad3D_VoxelGrid(aXYZ0, aQuad0,
                              vg.ndivx, vg.ndivy, vg.ndivz,
-                             vg.aIsVox);
+                             vg.aVal);
   EXPECT_EQ(aXYZ0.size(),18*3);
   EXPECT_EQ(aQuad0.size(),14*4);
   std::vector<double> aXYZ0a;

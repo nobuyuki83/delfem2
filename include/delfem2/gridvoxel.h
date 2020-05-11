@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "delfem2/dfm2_inline.h"
+#include "delfem2/mat4.h"
 
 namespace delfem2 {
 
@@ -49,29 +50,17 @@ class CGrid3
 public:
   CGrid3(){
     ndivx = ndivy = ndivz = 0;
-    aIsVox.clear();
+    aVal.clear();
   }
   void Initialize(const unsigned int ndivx_,
                   const unsigned int ndivy_,
-                  const unsigned int ndivz_){
+                  const unsigned int ndivz_,
+                  const VAL v){
     ndivx = ndivx_;
     ndivy = ndivy_;
     ndivz = ndivz_;
     const int nvoxel = ndivx*ndivy*ndivz;
-    aIsVox.assign(nvoxel,0);
-  }
-  void AABB(int aabb[8]) const {
-    aabb[0] = +1;
-    aabb[1] = -1;
-    for(int igvx=0;igvx<ndivx;++igvx){
-      for(int igvy=0;igvy<ndivy;++igvy){
-        for(int igvz=0;igvz<ndivz;++igvz){
-          const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
-          if( aIsVox [ivoxel] ==0 ){ continue; }
-          Add_AABB(aabb, igvx, igvy, igvz);
-        }
-      }
-    }
+    aVal.assign(nvoxel,v);
   }
   bool IsInclude(int ivx, int ivy, int ivz){
     if( ivx<0 || ivx>=ndivx ){ return false; }
@@ -82,11 +71,12 @@ public:
   void Set(int ivx, int ivy, int ivz, int isVox){
     if( !this->IsInclude(ivx,ivy,ivz) ){ return; }
     const int ivoxel = ivx*(ndivy*ndivz)+ivy*ndivz+ivz;
-    aIsVox[ivoxel] = isVox;
+    aVal[ivoxel] = isVox;
   }
 public:
   int ndivx, ndivy, ndivz;
-  std::vector<VAL> aIsVox;
+  std::vector<VAL> aVal;
+  CMat4d am; // affine matrix
 };
 
 

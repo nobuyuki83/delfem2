@@ -274,7 +274,7 @@ class VoxelGrid:
     self.vg.add(ix,iy,iz, 1)
 
   def initialize(self, nx,ny,nz):
-    self.vg.initialize(nx,ny,nz)
+    self.vg.initialize(nx,ny,nz,0)
 
   def mesh_quad(self) -> Mesh:
     list_xyz, list_tri = meshquad3d_voxelgrid(self.vg)
