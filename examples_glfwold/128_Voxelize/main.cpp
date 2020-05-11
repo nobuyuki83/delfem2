@@ -125,11 +125,11 @@ int main(int argc,char* argv[])
     grid.am.mat[ 7] = -(ny*el*0.5);
     grid.am.mat[11] = -(nz*el*0.5);
     grid.Initialize(nx,ny,nz, 1);
-    for(int iy=0;iy<ny;++iy){
-      for(int iz=0;iz<nz;++iz){
+    for(unsigned int iy=0;iy<ny;++iy){
+      for(unsigned int iz=0;iz<nz;++iz){
         double d0 = sampler_box.aSampler[0].aZ[iz*ny+iy];
         const unsigned int nd = floor(-d0/el+1.0e-5);
-        for(int id=0;id<nd;id++){
+        for(unsigned int id=0;id<nd;id++){
           const unsigned int ix0 = nx-1-id;
           const unsigned int iy0 = iy;
           const unsigned int iz0 = iz;
@@ -137,11 +137,11 @@ int main(int argc,char* argv[])
         }
       }
     }
-    for(int iy=0;iy<ny;++iy){
-      for(int iz=0;iz<nz;++iz){
+    for(unsigned int iy=0;iy<ny;++iy){
+      for(unsigned int iz=0;iz<nz;++iz){
         double d0 = sampler_box.aSampler[1].aZ[iz*ny+iy];
         const unsigned int nd = floor(-d0/el+1.0e-5);
-        for(int id=0;id<nd;id++){
+        for(unsigned int id=0;id<nd;id++){
           const unsigned int ix0 = id;
           const unsigned int iy0 = iy;
           const unsigned int iz0 = nz-1-iz;
@@ -149,11 +149,11 @@ int main(int argc,char* argv[])
         }
       }
     }
-    for(int ix=0;ix<nx;++ix){
-      for(int iz=0;iz<nz;++iz){
+    for(unsigned int ix=0;ix<nx;++ix){
+      for(unsigned int iz=0;iz<nz;++iz){
         double d0 = sampler_box.aSampler[2].aZ[iz*nx+ix];
         const unsigned int nd = floor(-d0/el+1.0e-5);
-        for(int id=0;id<nd;id++){
+        for(unsigned int id=0;id<nd;id++){
           const unsigned int ix0 = ix;
           const unsigned int iy0 = ny-1-id;
           const unsigned int iz0 = nz-1-iz;
@@ -161,11 +161,11 @@ int main(int argc,char* argv[])
         }
       }
     }
-    for(int ix=0;ix<nx;++ix){
-      for(int iz=0;iz<nz;++iz){
+    for(unsigned int ix=0;ix<nx;++ix){
+      for(unsigned int iz=0;iz<nz;++iz){
         double d0 = sampler_box.aSampler[3].aZ[iz*nx+ix];
         const unsigned int nd = floor(-d0/el+1.0e-5);
-        for(int id=0;id<nd;id++){
+        for(unsigned int id=0;id<nd;id++){
           const unsigned int ix0 = ix;
           const unsigned int iy0 = id;
           const unsigned int iz0 = iz;
@@ -173,11 +173,11 @@ int main(int argc,char* argv[])
         }
       }
     }
-    for(int ix=0;ix<nx;++ix){
-      for(int iy=0;iy<ny;++iy){
+    for(unsigned int ix=0;ix<nx;++ix){
+      for(unsigned int iy=0;iy<ny;++iy){
         double d0 = sampler_box.aSampler[4].aZ[iy*nx+ix];
         const unsigned int nd = floor(-d0/el+1.0e-5);
-        for(int id=0;id<nd;id++){
+        for(unsigned int id=0;id<nd;id++){
           const unsigned int ix0 = ix;
           const unsigned int iy0 = iy;
           const unsigned int iz0 = nz-1-id;
@@ -185,11 +185,11 @@ int main(int argc,char* argv[])
         }
       }
     }
-    for(int ix=0;ix<nx;++ix){
-      for(int iy=0;iy<ny;++iy){
+    for(unsigned int ix=0;ix<nx;++ix){
+      for(unsigned int iy=0;iy<ny;++iy){
         double d0 = sampler_box.aSampler[5].aZ[iy*nx+ix];
         const unsigned int nd = floor(-d0/el+1.0e-5);
-        for(int id=0;id<nd;id++){
+        for(unsigned int id=0;id<nd;id++){
           const unsigned int ix0 = ix;
           const unsigned int iy0 = ny-1-iy;
           const unsigned int iz0 = id;

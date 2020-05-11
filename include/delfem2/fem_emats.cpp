@@ -243,12 +243,14 @@ void delfem2::MergeLinSys_Poission_MeshTet3D(
     double* vec_b,
     const double alpha,
     const double source,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXYZ;
+  const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
   for (unsigned int itet = 0; itet<nTet; ++itet){
     const unsigned int i0 = aTet[itet*4+0];
@@ -258,7 +260,7 @@ void delfem2::MergeLinSys_Poission_MeshTet3D(
     const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ);
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
-    ////
+    //
     double eres[4], emat[4][4];
     EMat_Poisson_Tet3D(eres,emat,
                        alpha, source,
@@ -591,13 +593,17 @@ void delfem2::MergeLinSys_NavierStokes2D(
 double delfem2::MergeLinSys_Cloth
 (CMatrixSparse<double>& ddW, // (out) second derivative of energy
  double* dW, // (out) first derivative of energy
- ////
+ //
  double lambda, // (in) Lame's 1st parameter
  double myu,  // (in) Lame's 2nd parameter
  double stiff_bend, // (in) bending stiffness
- const double* aPosIni, int np, int ndim,
- const unsigned int* aTri, int nTri, // (in) triangle index
- const unsigned int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
+ const double* aPosIni,
+ unsigned int np,
+ unsigned int ndim,
+ const unsigned int* aTri,
+ unsigned int nTri, // (in) triangle index
+ const unsigned int* aQuad,
+ unsigned int nQuad, // (in) index of 4 vertices required for bending
  const double* aXYZ
  )
 {

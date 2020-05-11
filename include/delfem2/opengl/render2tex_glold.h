@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <cmath>
+#include <cassert>
 #include "delfem2/opengl/render2tex_gl.h"
 
 namespace delfem2 {
