@@ -22,7 +22,7 @@
 #include "delfem2/opengl/caddtri_v3_glold.h"
 #include "delfem2/opengl/v2_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glold_voxbv.h"
+#include "delfem2/opengl/gridcube_glold.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;

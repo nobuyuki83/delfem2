@@ -43,8 +43,10 @@ DFM2_INLINE void MergeLinSys_Poission_MeshTet3D(
     double* vec_b,
     const double alpha,
     const double source,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
     const double* aVal);
 
 DFM2_INLINE void MergeLinSys_Helmholtz_MeshTri2D(
@@ -91,9 +93,9 @@ DFM2_INLINE void MergeLinSys_Diffusion_MeshTet3D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXYZ,
-    int nXYZ,
+    unsigned int nXYZ,
     const unsigned int* aTet,
-    int nTet,
+    unsigned int nTet,
     const double* aVal,
     const double* aVelo);
 
@@ -181,9 +183,13 @@ DFM2_INLINE double MergeLinSys_Cloth(
     double lambda, // (in) Lame's 1st parameter
     double myu,  // (in) Lame's 2nd parameter
     double stiff_bend, // (in) bending stiffness
-    const double* aPosIni, int np, int ndim,
-    const unsigned int* aTri, int nTri, // (in) triangle index
-    const unsigned int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
+    const double* aPosIni,
+    unsigned int np,
+    unsigned int ndim,
+    const unsigned int* aTri,
+    unsigned int nTri, // (in) triangle index
+    const unsigned int* aQuad,
+    unsigned int nQuad, // (in) index of 4 vertices required for bending
     const double* aXYZ);
 
 DFM2_INLINE double MergeLinSys_Contact(

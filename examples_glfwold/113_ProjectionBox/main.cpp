@@ -7,102 +7,30 @@
 
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
-
+//
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/render2tex_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
-//
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-std::vector<double> aXYZ;
-std::vector<unsigned int> aTri;
-
-// ------------------------------------------------------
-
-void DrawObject(){
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
-}
-
-void myGlutDisplay(const std::vector<dfm2::opengl::CRender2Tex_DrawOldGL>& aSampler)
-{
-  dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
-  ::glEnable(GL_LIGHTING);
-  ::glColor3d(1,1,1);
-  DrawObject();
-
-  glPointSize(3);
-  float mMV[16]; glGetFloatv(GL_MODELVIEW, mMV);
-  float mP[16]; glGetFloatv(GL_PROJECTION, mP);
-  for(auto& smplr: aSampler){
-    smplr.Draw();
-  }
-}
-
 int main(int argc,char* argv[])
 {
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
   dfm2::Read_Obj(std::string(PATH_INPUT_DIR)+"/rollsRoyce.obj",
     aXYZ,aTri);
   dfm2::Normalize_Points3(aXYZ,4.0);
   // ---------------------------------------
-  
-  std::vector<dfm2::opengl::CRender2Tex_DrawOldGL> aSampler;
-  {
-    unsigned int nresX = 128;
-    unsigned int nresY = 128;
-    unsigned int nresZ = 256;
-    double elen = 0.02;
-    
-    aSampler.resize(6);
-    aSampler[0].SetTextureProperty(nresY, nresZ, true);
-    aSampler[0].SetCoord(elen, elen*nresX,
-                         dfm2::CVec3d(+0.5*elen*nresX,-0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
-                         dfm2::CVec3d(+1,  0, 0).stlvec(),
-                         dfm2::CVec3d( 0, +1, 0).stlvec() );
-    aSampler[0].SetPointColor(1.0, 0.0, 0.0);
-    //
-    aSampler[1].SetTextureProperty(nresY, nresZ, true);
-    aSampler[1].SetCoord(elen, elen*nresX,
-                         dfm2::CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
-                         dfm2::CVec3d(-1,  0, 0).stlvec(),
-                         dfm2::CVec3d( 0, +1, 0).stlvec() );
-    aSampler[1].SetPointColor(1.0, 0.5, 0.5);
-    //
-    aSampler[2].SetTextureProperty(nresX, nresZ, true);
-    aSampler[2].SetCoord(elen, elen*nresY,
-                         dfm2::CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
-                         dfm2::CVec3d(0,+1,0).stlvec(),
-                         dfm2::CVec3d(1,+0,0).stlvec() );
-    aSampler[2].SetPointColor(0.0, 1.0, 0.0);
-    //
-    aSampler[3].SetTextureProperty(nresX, nresZ, true);
-    aSampler[3].SetCoord(elen, elen*nresY,
-                         dfm2::CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
-                         dfm2::CVec3d(0,-1,0).stlvec(),
-                         dfm2::CVec3d(1,+0,0).stlvec() );
-    aSampler[3].SetPointColor(0.5, 1.0, 0.5);
-    //
-    aSampler[4].SetTextureProperty(nresX, nresY, true);
-    aSampler[4].SetCoord(elen, elen*nresZ,
-                         dfm2::CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
-                         dfm2::CVec3d(0,0,+1).stlvec(),
-                         dfm2::CVec3d(1,0,0).stlvec() );
-    aSampler[4].SetPointColor(0.0, 0.0, 1.0);
-    //
-    aSampler[5].SetTextureProperty(nresX, nresY, true);
-    aSampler[5].SetCoord(elen, elen*nresZ,
-                         dfm2::CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
-                         dfm2::CVec3d(0,0,-1).stlvec(),
-                         dfm2::CVec3d(1,0,0).stlvec() );
-    aSampler[5].SetPointColor(0.5, 0.5, 1.0);
-  }
-  for(auto& smplr : aSampler){
+
+  dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
+  sampler_box.Initialize(128, 128, 256, 0.02);
+
+  for(auto& smplr : sampler_box.aSampler){
     smplr.draw_len_axis = 0.2;
     smplr.isDrawTex = false;
     smplr.isDrawOnlyHitPoints = true;
@@ -120,8 +48,9 @@ int main(int argc,char* argv[])
 
   dfm2::opengl::setSomeLighting();
   ::glEnable(GL_DEPTH_TEST);
-  
-  for(auto& smplr: aSampler){
+
+  sampler_box.Draw();
+  for(auto& smplr: sampler_box.aSampler){
     smplr.InitGL(); // move the sampled image to a texture
     smplr.Start();
     ::glClearColor(1.0, 1.0, 1.0, 1.0 );
@@ -129,7 +58,7 @@ int main(int argc,char* argv[])
     ::glEnable(GL_DEPTH_TEST);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LIGHTING);
-    DrawObject();
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
     smplr.End();
     smplr.GetDepth();
     smplr.GetColor();
@@ -137,9 +66,8 @@ int main(int argc,char* argv[])
 
   while (!glfwWindowShouldClose(viewer.window))
   {
-    // ----
     viewer.DrawBegin_oldGL();
-    myGlutDisplay(aSampler);
+    sampler_box.Draw();
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }

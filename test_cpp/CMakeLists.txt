@@ -70,6 +70,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/objf_geo3.h            ${DELFEM2_INC}/objf_geo3.cpp
       ${DELFEM2_INC}/femrod.h               ${DELFEM2_INC}/femrod.cpp
       ${DELFEM2_INC}/srchuni_v3.h           ${DELFEM2_INC}/srchuni_v3.cpp
+      ${DELFEM2_INC}/gridvoxel.h            ${DELFEM2_INC}/gridvoxel.cpp
+      ${DELFEM2_INC}/gridcube.h             ${DELFEM2_INC}/gridcube.cpp            
       ${DELFEM2_INC}/srchbi_v3bvh.h
       ${DELFEM2_INC}/srch_v3bvhmshtopo.h
       )
@@ -79,7 +81,6 @@ ELSE()
 ENDIF()
 
 add_executable(${MY_BINARY_NAME}
-  ${DELFEM2_INC}/voxel.h                ${DELFEM2_INC}/voxel.cpp
   ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp
   ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
   

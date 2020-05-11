@@ -994,7 +994,8 @@ DFM2_INLINE void delfem2::opengl::DrawCharacter
   }
 }
 
-// -----------------------------------------------------------------------------------
+// ==================================================================
+// Points
 
 DFM2_INLINE void delfem2::opengl::DrawPoints2D_Vectors(
     const double* aXY,
@@ -1061,34 +1062,97 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(
 }
 
 
+// ================================================================
+// Axis-aligned box
+
+DFM2_INLINE void delfem2::opengl::DrawBox3_Edge
+(const double* p0,
+ const double* p1)
+{
+  ::glBegin(GL_LINES);
+  ::glVertex3d(p1[0],p0[1],p1[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
+  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p0[2]);
+  ::glVertex3d(p1[0],p1[1],p1[2]); ::glVertex3d(p0[0],p1[1],p1[2]);
+  ::glVertex3d(p1[0],p1[1],p0[2]); ::glVertex3d(p0[0],p1[1],p0[2]);
+  //
+  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p0[1],p1[2]);
+  ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
+  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p0[1],p1[2]);
+  ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
+  //
+  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p0[1],p1[2]);
+  ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
+  ::glVertex3d(p1[0],p1[1],p0[2]); ::glVertex3d(p1[0],p1[1],p1[2]);
+  ::glVertex3d(p0[0],p1[1],p0[2]); ::glVertex3d(p0[0],p1[1],p1[2]);
+  ::glEnd();
+}
+
+DFM2_INLINE void delfem2::opengl::DrawBox3_Face
+ (const double* p0,
+  const double* p1)
+{
+  const double p[8][3] = {
+    { p0[0],p0[1],p0[2] },
+    { p1[0],p0[1],p0[2] },
+    { p0[0],p1[1],p0[2] },
+    { p1[0],p1[1],p0[2] },
+    { p0[0],p0[1],p1[2] },
+    { p1[0],p0[1],p1[2] },
+    { p0[0],p1[1],p1[2] },
+    { p1[0],p1[1],p1[2] }
+  };
+  const int elfc[6][4] = { // this numbering is corresponds to VTK_VOX
+    { 0, 4, 6, 2 }, // -x
+    { 1, 3, 7, 5 }, // +x
+    { 0, 1, 5, 4 }, // -y
+    { 2, 6, 7, 3 }, // +y
+    { 0, 2, 3, 1 }, // -z
+    { 4, 5, 7, 6 }  // +z
+  };
+  const double an[6][3] = {
+    {-1, 0, 0},
+    {+1, 0, 0},
+    { 0,-1, 0},
+    { 0,+1, 0},
+    { 0, 0,-1},
+    { 0, 0,+1}
+  };
+  ::glBegin(GL_QUADS);
+  for(int ifc=0;ifc<6;++ifc){
+    ::glNormal3dv(an[ifc]);
+    ::glVertex3dv(p[elfc[ifc][0]]);
+    ::glVertex3dv(p[elfc[ifc][1]]);
+    ::glVertex3dv(p[elfc[ifc][2]]);
+    ::glVertex3dv(p[elfc[ifc][3]]);
+  }
+  ::glEnd();
+}
+
+
+DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
+ (double x_min, double x_max,
+  double y_min, double y_max,
+  double z_min, double z_max)
+{
+  const double min3[3] = {x_min,y_min,z_min};
+  const double max3[3] = {x_max,y_max,z_max};
+  DrawBox3_Edge(min3, max3);
+}
+
+DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
+ (double aabbMinMaxXYZ[6])
+{// show bounding box
+  DrawBox_MinMaxXYZ(aabbMinMaxXYZ[0], aabbMinMaxXYZ[1],
+                    aabbMinMaxXYZ[2], aabbMinMaxXYZ[3],
+                    aabbMinMaxXYZ[4], aabbMinMaxXYZ[5]);
+}
+
 DFM2_INLINE void delfem2::opengl::DrawAABB3D_Edge
  (double cx, double cy, double cz, double wx, double wy, double wz)
 {
   const double pxyz[3] = {cx-0.5*wx,cy-0.5*wy,cz-0.5*wz};
-  const double pxyZ[3] = {cx-0.5*wx,cy-0.5*wy,cz+0.5*wz};
-  const double pxYz[3] = {cx-0.5*wx,cy+0.5*wy,cz-0.5*wz};
-  const double pxYZ[3] = {cx-0.5*wx,cy+0.5*wy,cz+0.5*wz};
-  const double pXyz[3] = {cx+0.5*wx,cy-0.5*wy,cz-0.5*wz};
-  const double pXyZ[3] = {cx+0.5*wx,cy-0.5*wy,cz+0.5*wz};
-  const double pXYz[3] = {cx+0.5*wx,cy+0.5*wy,cz-0.5*wz};
   const double pXYZ[3] = {cx+0.5*wx,cy+0.5*wy,cz+0.5*wz};
-  //
-  ::glBegin(GL_LINES);
-  ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
-  ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
-  ::glVertex3dv(pXyz); ::glVertex3dv(pXyZ);
-  ::glVertex3dv(pXYz); ::glVertex3dv(pXYZ);
-  //
-  ::glVertex3dv(pxyz); ::glVertex3dv(pXyz);
-  ::glVertex3dv(pxyZ); ::glVertex3dv(pXyZ);
-  ::glVertex3dv(pxYz); ::glVertex3dv(pXYz);
-  ::glVertex3dv(pxYZ); ::glVertex3dv(pXYZ);
-  //
-  ::glVertex3dv(pxyz); ::glVertex3dv(pxYz);
-  ::glVertex3dv(pxyZ); ::glVertex3dv(pxYZ);
-  ::glVertex3dv(pXyz); ::glVertex3dv(pXYz);
-  ::glVertex3dv(pXyZ); ::glVertex3dv(pXYZ);
-  ::glEnd();
+  DrawBox3_Edge(pxyz, pXYZ);
 }
 
 DFM2_INLINE void delfem2::opengl::DrawAABB3D_Edge(const double cw[6])
@@ -1096,38 +1160,9 @@ DFM2_INLINE void delfem2::opengl::DrawAABB3D_Edge(const double cw[6])
   DrawAABB3D_Edge(cw[0], cw[1], cw[2], cw[3],cw[4], cw[5]);
 }
 
-DFM2_INLINE void delfem2::opengl::Draw_AABB3D_MinMaxXYZ_Edge
-(double x_min, double x_max,
- double y_min, double y_max,
- double z_min, double z_max)
-{
-  const double pxyz[3] = {x_min,y_min,z_min};
-  const double pxyZ[3] = {x_min,y_min,z_max};
-  const double pxYz[3] = {x_min,y_max,z_min};
-  const double pxYZ[3] = {x_min,y_max,z_max};
-  const double pXyz[3] = {x_max,y_min,z_min};
-  const double pXyZ[3] = {x_max,y_min,z_max};
-  const double pXYz[3] = {x_max,y_max,z_min};
-  const double pXYZ[3] = {x_max,y_max,z_max};
-  ::glBegin(GL_LINES);
-  ::glVertex3dv(pxyz); ::glVertex3dv(pxyZ);
-  ::glVertex3dv(pxYz); ::glVertex3dv(pxYZ);
-  ::glVertex3dv(pXyz); ::glVertex3dv(pXyZ);
-  ::glVertex3dv(pXYz); ::glVertex3dv(pXYZ);
-  ////
-  ::glVertex3dv(pxyz); ::glVertex3dv(pXyz);
-  ::glVertex3dv(pxyZ); ::glVertex3dv(pXyZ);
-  ::glVertex3dv(pxYz); ::glVertex3dv(pXYz);
-  ::glVertex3dv(pxYZ); ::glVertex3dv(pXYZ);
-  ////
-  ::glVertex3dv(pxyz); ::glVertex3dv(pxYz);
-  ::glVertex3dv(pxyZ); ::glVertex3dv(pxYZ);
-  ::glVertex3dv(pXyz); ::glVertex3dv(pXYz);
-  ::glVertex3dv(pXyZ); ::glVertex3dv(pXYZ);
-  ::glEnd();
-}
 
-// -----------------------------------------------------
+// =====================================================
+// MeshTri3D
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
 (const double* paXYZ,
@@ -1520,8 +1555,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
 
 
 
-// ----------------------------------
-// Quad
+// ===============================================================
+// MeshQuad
 
 DFM2_INLINE void delfem2::opengl::DrawMeshQuad3D_Edge
 (const double* aXYZ, unsigned int nXYZ,
@@ -1995,36 +2030,6 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTet3D_FaceNormDisp(
 }
 
 // ----------------------------------------------------------
-
-DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
-(double x_min, double x_max,
- double y_min, double y_max,
- double z_min, double z_max)
-{// show bounding box
-  ::glBegin(GL_LINES);
-  ::glVertex3d(x_max,y_min,z_max); ::glVertex3d(x_min,y_min,z_max);
-  ::glVertex3d(x_max,y_min,z_min); ::glVertex3d(x_min,y_min,z_min);
-  ::glVertex3d(x_max,y_max,z_max); ::glVertex3d(x_min,y_max,z_max);
-  ::glVertex3d(x_max,y_max,z_min); ::glVertex3d(x_min,y_max,z_min);
-  ::glVertex3d(x_max,y_min,z_max); ::glVertex3d(x_max,y_max,z_max);
-  ::glVertex3d(x_min,y_min,z_max); ::glVertex3d(x_min,y_max,z_max);
-  ::glVertex3d(x_max,y_min,z_min); ::glVertex3d(x_max,y_max,z_min);
-  ::glVertex3d(x_min,y_min,z_min); ::glVertex3d(x_min,y_max,z_min);
-  ::glVertex3d(x_max,y_min,z_min); ::glVertex3d(x_max,y_min,z_max);
-  ::glVertex3d(x_min,y_min,z_min); ::glVertex3d(x_min,y_min,z_max);
-  ::glVertex3d(x_max,y_max,z_min); ::glVertex3d(x_max,y_max,z_max);
-  ::glVertex3d(x_min,y_max,z_min); ::glVertex3d(x_min,y_max,z_max);
-  ::glEnd();
-}
-
-DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
-(double aabbMinMaxXYZ[6])
-{// show bounding box
-  DrawBox_MinMaxXYZ(aabbMinMaxXYZ[0], aabbMinMaxXYZ[1],
-                    aabbMinMaxXYZ[2], aabbMinMaxXYZ[3],
-                    aabbMinMaxXYZ[4], aabbMinMaxXYZ[5]);
-}
-
 
 DFM2_INLINE void delfem2::opengl::showdepth()
 {

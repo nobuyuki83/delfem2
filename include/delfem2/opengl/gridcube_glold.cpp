@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2020 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -9,19 +9,13 @@
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
 #include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#elif defined(__MINGW32__) // probably I'm using Qt and don't want to use GLUT
-#include <GL/glu.h>
 #elif defined(_WIN32) // windows
 #include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+  #include <GL/gl.h>
 #else // linux
-#include <GL/gl.h>
-#include <GL/glu.h>
+  #include <GL/gl.h>
 #endif
-
-#include "delfem2/opengl/glold_voxbv.h"
+#include "delfem2/opengl/gridcube_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 
 namespace dfm2 = delfem2;
@@ -55,7 +49,7 @@ const dfm2::CVec3d normalHexFace[6] = {
   dfm2::CVec3d( 0, 0,+1)
 };
 
-void Draw_CubeGrid
+void delfem2::opengl::Draw_CubeGrid
 (bool is_picked, int iface_picked,
  double elen, const dfm2::CVec3d& org,
  const dfm2::CCubeGrid& cube)

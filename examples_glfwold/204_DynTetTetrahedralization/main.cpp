@@ -276,7 +276,7 @@ void myGlutKeyboard(unsigned char Key, int x, int y)
           }
           for(int ie=edge_ind[ixyz];ie<edge_ind[ixyz+1];++ie){
             int jxyz = edge[ie];
-            int jp0 = jxyz+3;
+//            int jp0 = jxyz+3;
           }
         }
       }
