@@ -91,9 +91,9 @@ DFM2_INLINE void MergeLinSys_Diffusion_MeshTet3D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXYZ,
-    int nXYZ,
+    unsigned int nXYZ,
     const unsigned int* aTet,
-    int nTet,
+    unsigned int nTet,
     const double* aVal,
     const double* aVelo);
 

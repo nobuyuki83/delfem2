@@ -68,7 +68,7 @@ std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
   std::vector<unsigned int> aQuad;
   dfm2::MeshQuad3D_VoxelGrid(aXYZ,aQuad,
                              vg.ndivx, vg.ndivy, vg.ndivz,
-                             vg.aIsVox);
+                             vg.aVal);
   return std::make_tuple(aXYZ,aQuad);
 }
 
@@ -79,7 +79,7 @@ std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
   std::vector<int> aHex;
   dfm2::MeshHex3D_VoxelGrid(aXYZ,aHex,
                             vg.ndivx, vg.ndivy, vg.ndivz,
-                            vg.aIsVox);
+                            vg.aVal);
   return std::make_tuple(aXYZ,aHex);
 }
 

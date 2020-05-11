@@ -11,6 +11,7 @@
 #include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
+#include <cmath>
 #include "delfem2/opengl/render2tex_gl.h"
 
 namespace delfem2 {
@@ -50,9 +51,7 @@ public:
 };
   
 class CRender2Tex_DrawOldGL_BOX {
-public:
-  std::vector<CRender2Tex_DrawOldGL> aSampler;
-  
+ 
 public:
   void Draw() const {
     for(auto& smplr: aSampler){
@@ -64,6 +63,39 @@ public:
                   unsigned int nresZ,
                   double elen);
   
+  unsigned int nDivX() const {
+    const unsigned int n0 = aSampler[2].nResX;
+    assert( aSampler[3].nResX == n0 );
+    assert( aSampler[4].nResX == n0 );
+    assert( aSampler[5].nResX == n0 );
+    return n0;
+  }
+  unsigned int nDivY() const {
+    const unsigned int n0 = aSampler[0].nResX;
+    assert( aSampler[1].nResX == n0 );
+    assert( aSampler[4].nResY == n0 );
+    assert( aSampler[5].nResY == n0 );
+    return n0;
+  }
+  unsigned int nDivZ() const {
+    const unsigned int n0 = aSampler[0].nResY;
+    assert( aSampler[1].nResY == n0 );
+    assert( aSampler[2].nResY == n0 );
+    assert( aSampler[3].nResY == n0 );
+    return n0;
+  }
+  double edgeLen() const {
+    double l0 = aSampler[0].lengrid;
+    assert( fabs(aSampler[1].lengrid-l0) < 1.0e-10 );
+    assert( fabs(aSampler[2].lengrid-l0) < 1.0e-10 );
+    assert( fabs(aSampler[3].lengrid-l0) < 1.0e-10 );
+    assert( fabs(aSampler[4].lengrid-l0) < 1.0e-10 );
+    assert( fabs(aSampler[5].lengrid-l0) < 1.0e-10 );
+    return l0;
+  }
+  
+public:
+  std::vector<CRender2Tex_DrawOldGL> aSampler;
 };
 
 }
