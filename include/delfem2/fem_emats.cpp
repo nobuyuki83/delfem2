@@ -604,9 +604,9 @@ double delfem2::MergeLinSys_Cloth
  unsigned int nTri, // (in) triangle index
  const unsigned int* aQuad,
  unsigned int nQuad, // (in) index of 4 vertices required for bending
- const double* aXYZ
- )
+ const double* aXYZ)
 {
+  assert( ndim == 2 || ndim == 3 );
   double W = 0;
   std::vector<int> tmp_buffer(np,-1);
   // marge element in-plane strain energy
@@ -616,7 +616,7 @@ double delfem2::MergeLinSys_Cloth
     double c[3][3];
     for(int ino=0;ino<3;ino++){
       const unsigned int ip = aIP[ino];
-      for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
+      for(unsigned int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ[ip*3+i]; }
     }
     double e, de[3][3], dde[3][3][3][3];
@@ -632,13 +632,13 @@ double delfem2::MergeLinSys_Cloth
   }
 //  std::cout << "cst:" << W << std::endl;
   // marge element bending energy
-  for(int iq=0;iq<nQuad;iq++){
+  for(unsigned int iq=0;iq<nQuad;iq++){
     const unsigned int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
     double C[4][3] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
     double c[4][3];
     for(int ino=0;ino<4;ino++){
       const unsigned int ip = aIP[ino];
-      for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
+      for(unsigned int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
     }
     double e, de[4][3], dde[4][4][3][3];
