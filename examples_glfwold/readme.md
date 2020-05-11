@@ -80,7 +80,11 @@
 ### [127_GizmoAffine](127_GizmoAffine)
 <img src="127_GizmoAffine/thumbnail.png" width=200>
 
+### [128_Voxelize](128_Voxelize)
+<img src="128_Voxelize/thumbnail.png" width=200 alt="128_Voxelize">
 
+### [129_CubeGridEdit](129_CubeGridEdit)
+<img src="129_CubeGridEdit/thumbnail.png" width=200 alt="128_CubeVoxelEdit">
 
 
 ## Dynamic Triangle
