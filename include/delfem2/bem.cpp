@@ -641,7 +641,7 @@ delfem2::CVec3d delfem2::evaluateField_VortexSheet_Order0th
   const unsigned int nt = aTri.size()/3;
   CVec3d velo_res(0,0,0);
   for (unsigned int jt = 0; jt<nt; ++jt){
-    if (jt==jtri_exclude){ continue; }
+    if ((int)jt==jtri_exclude){ continue; }
     const int jq0 = aTri[jt*3+0];
     const int jq1 = aTri[jt*3+1];
     const int jq2 = aTri[jt*3+2];

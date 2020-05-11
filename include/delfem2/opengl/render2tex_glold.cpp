@@ -127,7 +127,9 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::Draw_BoundingBox() const
   ::glPushMatrix();
   delfem2::opengl::ModelTransformation(x_axis, z_axis, origin);
   ::glLineWidth(3);
-  delfem2::opengl::Draw_AABB3D_MinMaxXYZ_Edge(0.0, lengrid*nResX, 0.0, lengrid*nResY, 0.0, -z_range);
+  const double pmin[3] = {0.0, 0.0, 0.0};
+  const double pmax[3] = {lengrid*nResX, lengrid*nResY, -z_range};
+  delfem2::opengl::DrawBox3_Edge(pmin, pmax);
   ::glPopMatrix();
 }
 
@@ -174,50 +176,51 @@ std::vector<double> delfem2::opengl::CRender2Tex_DrawOldGL::getGPos(int ix, int 
 
 // --------------------------------------------------------
 
-void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize(unsigned int nresX,
-                                                         unsigned int nresY,
-                                                         unsigned int nresZ,
-                                                         double elen)
+void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize
+ (unsigned int nresX_,
+  unsigned int nresY_,
+  unsigned int nresZ_,
+  double elen_)
 {
   aSampler.resize(6);
-  aSampler[0].SetTextureProperty(nresY, nresZ, true); // +x
-  aSampler[0].SetCoord(elen, elen*nresX,
-                       CVec3d(+0.5*elen*nresX,-0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
+  aSampler[0].SetTextureProperty(nresY_, nresZ_, true); // +x
+  aSampler[0].SetCoord(elen_, elen_*nresX_,
+                       CVec3d(+0.5*elen_*nresX_,-0.5*elen_*nresY_,-0.5*elen_*nresZ_).stlvec(),
                        CVec3d(+1,  0, 0).stlvec(),
                        CVec3d( 0, +1, 0).stlvec() );
   aSampler[0].SetPointColor(1.0, 0.0, 0.0);
   //
-  aSampler[1].SetTextureProperty(nresY, nresZ, true); // -x
-  aSampler[1].SetCoord(elen, elen*nresX,
-                       CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
+  aSampler[1].SetTextureProperty(nresY_, nresZ_, true); // -x
+  aSampler[1].SetCoord(elen_, elen_*nresX_,
+                       CVec3d(-0.5*elen_*nresX_,-0.5*elen_*nresY_,+0.5*elen_*nresZ_).stlvec(),
                        CVec3d(-1,  0, 0).stlvec(),
                        CVec3d( 0, +1, 0).stlvec() );
   aSampler[1].SetPointColor(1.0, 0.5, 0.5);
   //
-  aSampler[2].SetTextureProperty(nresX, nresZ, true); // +y
-  aSampler[2].SetCoord(elen, elen*nresY,
-                       CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
+  aSampler[2].SetTextureProperty(nresX_, nresZ_, true); // +y
+  aSampler[2].SetCoord(elen_, elen_*nresY_,
+                       CVec3d(-0.5*elen_*nresX_,+0.5*elen_*nresY_,+0.5*elen_*nresZ_).stlvec(),
                        CVec3d(0,+1,0).stlvec(),
                        CVec3d(1,+0,0).stlvec() );
   aSampler[2].SetPointColor(0.0, 1.0, 0.0);
   //
-  aSampler[3].SetTextureProperty(nresX, nresZ, true); // -y
-  aSampler[3].SetCoord(elen, elen*nresY,
-                       CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
+  aSampler[3].SetTextureProperty(nresX_, nresZ_, true); // -y
+  aSampler[3].SetCoord(elen_, elen_*nresY_,
+                       CVec3d(-0.5*elen_*nresX_,-0.5*elen_*nresY_,-0.5*elen_*nresZ_).stlvec(),
                        CVec3d(0,-1,0).stlvec(),
                        CVec3d(1,+0,0).stlvec() );
   aSampler[3].SetPointColor(0.5, 1.0, 0.5);
   //
-  aSampler[4].SetTextureProperty(nresX, nresY, true);
-  aSampler[4].SetCoord(elen, elen*nresZ,
-                       CVec3d(-0.5*elen*nresX,-0.5*elen*nresY,+0.5*elen*nresZ).stlvec(),
+  aSampler[4].SetTextureProperty(nresX_, nresY_, true);
+  aSampler[4].SetCoord(elen_, elen_*nresZ_,
+                       CVec3d(-0.5*elen_*nresX_,-0.5*elen_*nresY_,+0.5*elen_*nresZ_).stlvec(),
                        CVec3d(0,0,+1).stlvec(),
                        CVec3d(1,0,0).stlvec() );
   aSampler[4].SetPointColor(0.0, 0.0, 1.0);
   //
-  aSampler[5].SetTextureProperty(nresX, nresY, true);
-  aSampler[5].SetCoord(elen, elen*nresZ,
-                       CVec3d(-0.5*elen*nresX,+0.5*elen*nresY,-0.5*elen*nresZ).stlvec(),
+  aSampler[5].SetTextureProperty(nresX_, nresY_, true);
+  aSampler[5].SetCoord(elen_, elen_*nresZ_,
+                       CVec3d(-0.5*elen_*nresX_,+0.5*elen_*nresY_,-0.5*elen_*nresZ_).stlvec(),
                        CVec3d(0,0,-1).stlvec(),
                        CVec3d(1,0,0).stlvec() );
   aSampler[5].SetPointColor(0.5, 0.5, 1.0);

@@ -5,8 +5,8 @@
 //  Created by Nobuyuki Umetani on 2020-03-11.
 //
 
-#ifndef smplio_hpp
-#define smplio_hpp
+#ifndef DFM2_SMPL_CNPY_H
+#define DFM2_SMPL_CNPY_H
 
 #include <stdio.h>
 

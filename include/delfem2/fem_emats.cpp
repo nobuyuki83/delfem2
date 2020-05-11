@@ -148,7 +148,7 @@ void delfem2::MergeLinSys_Poission_MeshTri2D(
   const int nDoF = np;
   //
   std::vector<int> tmp_buffer(nDoF, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -243,14 +243,16 @@ void delfem2::MergeLinSys_Poission_MeshTet3D(
     double* vec_b,
     const double alpha,
     const double source,
-    const double* aXYZ, int nXYZ,
-    const unsigned int* aTet, int nTet,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTet,
+    unsigned int nTet,
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXYZ;
+  const unsigned int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
-  for (int itet = 0; itet<nTet; ++itet){
+  for (unsigned int itet = 0; itet<nTet; ++itet){
     const unsigned int i0 = aTet[itet*4+0];
     const unsigned int i1 = aTet[itet*4+1];
     const unsigned int i2 = aTet[itet*4+2];
@@ -258,7 +260,7 @@ void delfem2::MergeLinSys_Poission_MeshTet3D(
     const unsigned int aIP[4] = {i0,i1,i2,i3};
     double coords[4][3]; lcl::FetchData(&coords[0][0],4,3,aIP, aXYZ);
     const double value[4] = { aVal[i0], aVal[i1], aVal[i2], aVal[i3] };
-    ////
+    //
     double eres[4], emat[4][4];
     EMat_Poisson_Tet3D(eres,emat,
                        alpha, source,
@@ -292,7 +294,7 @@ void delfem2::MergeLinSys_Diffusion_MeshTri2D(
 //  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   namespace lcl = ::delfem2::fem_emats;
   std::vector<int> tmp_buffer(nXY, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -325,16 +327,16 @@ void delfem2::MergeLinSys_Diffusion_MeshTet3D(
     const double dt_timestep,
     const double gamma_newmark,
     const double* aXYZ,
-    int nXYZ,
+    unsigned int nXYZ,
     const unsigned int* aTet,
-    int nTet,
+    unsigned int nTet,
     const double* aVal,
     const double* aVelo)
 {
   namespace lcl = ::delfem2::fem_emats;
   const int np = nXYZ;
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTet; ++iel){
+  for (unsigned int iel = 0; iel<nTet; ++iel){
     const unsigned int i0 = aTet[iel*4+0];
     const unsigned int i1 = aTet[iel*4+1];
     const unsigned int i2 = aTet[iel*4+2];
@@ -375,7 +377,7 @@ void delfem2::MergeLinSys_SolidLinear_Static_MeshTri2D
   namespace lcl = ::delfem2::fem_emats;
   const int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
-  for(int iel=0; iel<nTri; ++iel){
+  for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -423,7 +425,7 @@ void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
 //  mat_A.SetZero();
 //  for(int idof=0;idof<nDoF;idof++){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -471,7 +473,7 @@ void delfem2::MergeLinSys_StokesStatic2D(
 //  mat_A.SetZero();
 //  for(int idof=0;idof<nDoF;++idof){ vec_b[idof] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -517,7 +519,7 @@ void delfem2::MergeLinSys_StokesDynamic2D(
 //  mat_A.SetZero();
 //  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -560,13 +562,9 @@ void delfem2::MergeLinSys_NavierStokes2D(
     const double* aDtVal) // ax,ay,apress
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXY;
-//  const int nDoF = np*3;
-  ////
-//  mat_A.SetZero();
-//  for(int i=0;i<nDoF;++i){ vec_b[i] = 0.0; }
+  const unsigned int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
-  for (int iel = 0; iel<nTri; ++iel){
+  for (unsigned int iel = 0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
     const unsigned int i1 = aTri1[iel*3+1];
     const unsigned int i2 = aTri1[iel*3+2];
@@ -595,27 +593,30 @@ void delfem2::MergeLinSys_NavierStokes2D(
 double delfem2::MergeLinSys_Cloth
 (CMatrixSparse<double>& ddW, // (out) second derivative of energy
  double* dW, // (out) first derivative of energy
- ////
+ //
  double lambda, // (in) Lame's 1st parameter
  double myu,  // (in) Lame's 2nd parameter
  double stiff_bend, // (in) bending stiffness
- const double* aPosIni, int np, int ndim,
- const unsigned int* aTri, int nTri, // (in) triangle index
- const unsigned int* aQuad, int nQuad, // (in) index of 4 vertices required for bending
- const double* aXYZ
- )
+ const double* aPosIni,
+ unsigned int np,
+ unsigned int ndim,
+ const unsigned int* aTri,
+ unsigned int nTri, // (in) triangle index
+ const unsigned int* aQuad,
+ unsigned int nQuad, // (in) index of 4 vertices required for bending
+ const double* aXYZ)
 {
+  assert( ndim == 2 || ndim == 3 );
   double W = 0;
   std::vector<int> tmp_buffer(np,-1);
-  
   // marge element in-plane strain energy
-  for(int itri=0;itri<nTri;itri++){
+  for(unsigned int itri=0;itri<nTri;itri++){
     const unsigned int aIP[3] = { aTri[itri*3+0], aTri[itri*3+1], aTri[itri*3+2] };
     double C[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
     double c[3][3];
     for(int ino=0;ino<3;ino++){
       const unsigned int ip = aIP[ino];
-      for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
+      for(unsigned int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ[ip*3+i]; }
     }
     double e, de[3][3], dde[3][3][3][3];
@@ -631,13 +632,13 @@ double delfem2::MergeLinSys_Cloth
   }
 //  std::cout << "cst:" << W << std::endl;
   // marge element bending energy
-  for(int iq=0;iq<nQuad;iq++){
+  for(unsigned int iq=0;iq<nQuad;iq++){
     const unsigned int aIP[4] = { aQuad[iq*4+0], aQuad[iq*4+1], aQuad[iq*4+2], aQuad[iq*4+3] };
     double C[4][3] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
     double c[4][3];
     for(int ino=0;ino<4;ino++){
       const unsigned int ip = aIP[ino];
-      for(int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
+      for(unsigned int i=0;i<ndim;i++){ C[ino][i] = aPosIni[ip*ndim+i]; }
       for(int i=0;i<3;i++){ c[ino][i] = aXYZ [ip*3+i]; }
     }
     double e, de[4][3], dde[4][4][3][3];

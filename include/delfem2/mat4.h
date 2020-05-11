@@ -171,6 +171,13 @@ public:
     mat[2*4+2] = 1;
     mat[3*4+3] = 1;
   }
+  void SetScale(REAL x, REAL y, REAL z){
+    this->SetZero();
+    mat[0*4+0] = x;
+    mat[1*4+1] = y;
+    mat[2*4+2] = z;
+    mat[3*4+3] = 1;
+  }
   CMat4<double> Double() const {
     return CMat4<double>(mat);
   }

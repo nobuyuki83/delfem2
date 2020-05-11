@@ -41,6 +41,8 @@ add_subdirectory(124_4RotSymField)
 add_subdirectory(125_GizmoRot)
 add_subdirectory(126_GizmoTransl)
 add_subdirectory(127_GizmoAffine)
+add_subdirectory(128_Voxelize)
+add_subdirectory(129_CubeGridEdit)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)

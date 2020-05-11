@@ -89,7 +89,7 @@ const int noelElemFace_Quad[4][4] = {
   { 2, 3,-1,-1 },
   { 3, 0,-1,-1 },
 };
-const int noelElemFace_Vox[8][4] = { // this numbering is corresponds to VTK_VOX
+const int noelElemFace_Vox[6][4] = { // this numbering is corresponds to VTK_VOX
   { 0, 4, 6, 2 }, // -x
   { 1, 3, 7, 5 }, // +x
   { 0, 1, 5, 4 }, // -y
@@ -97,7 +97,7 @@ const int noelElemFace_Vox[8][4] = { // this numbering is corresponds to VTK_VOX
   { 0, 2, 3, 1 }, // -z
   { 4, 5, 7, 6 }  // +z
 };
-const int noelElemFace_Hex[8][4] = { // this numbering is corresponds to VTK_HEX
+const int noelElemFace_Hex[6][4] = { // this numbering is corresponds to VTK_HEX
   { 0, 4, 7, 3 }, // -x
   { 1, 2, 6, 5 }, // +x
   { 0, 1, 5, 4 }, // -y
@@ -153,6 +153,7 @@ const int noelElemEdge_Hex[12][2] = {
   {4,5},{5,6},{6,7},{7,4},
   {0,4},{1,5},{2,6},{3,7}
 };
+// TODO: this looks wrong...
 const int noelElemEdge_Vox[12][2] = {
   {0,1},{3,2},{4,5},{7,6},
   {0,3},{1,2},{4,7},{5,6},

@@ -18,7 +18,8 @@
 #include "delfem2/mat3.h"
 #include "delfem2/primitive.h"
 #include "delfem2/mshtopoio.h"
-#include "delfem2/voxel.h"
+#include "delfem2/gridvoxel.h"
+#include "delfem2/gridcube.h"
 #include "delfem2/bv.h"
 #include "delfem2/iss.h"
 #include "delfem2/slice.h"
@@ -61,20 +62,24 @@ py::array_t<unsigned char> PyImRead(const std::string& d)
 // voxel related
 
 std::tuple<std::vector<double>,std::vector<unsigned int>> PyMeshQuad3D_VoxelGrid
-(const dfm2::CVoxelGrid3D& vg)
+(const dfm2::CGrid3<int>& vg)
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aQuad;
-  vg.GetQuad(aXYZ, aQuad);
+  dfm2::MeshQuad3D_VoxelGrid(aXYZ,aQuad,
+                             vg.ndivx, vg.ndivy, vg.ndivz,
+                             vg.aVal);
   return std::make_tuple(aXYZ,aQuad);
 }
 
 std::tuple<std::vector<double>,std::vector<int>> PyMeshHex3D_VoxelGrid
-(const dfm2::CVoxelGrid3D& vg)
+(const dfm2::CGrid3<int>& vg)
 {
   std::vector<double> aXYZ;
   std::vector<int> aHex;
-  vg.GetHex(aXYZ, aHex);
+  dfm2::MeshHex3D_VoxelGrid(aXYZ,aHex,
+                            vg.ndivx, vg.ndivy, vg.ndivz,
+                            vg.aVal);
   return std::make_tuple(aXYZ,aHex);
 }
 
@@ -310,9 +315,10 @@ PYBIND11_MODULE(c_core, m) {
   
   // --------
   // voxel
-  py::class_<dfm2::CVoxelGrid3D>(m, "CppVoxelGrid", "voxel grid class")
+  py::class_<dfm2::CGrid3<int>>(m, "CppVoxelGrid", "voxel grid class")
   .def(py::init<>())
-  .def("add",&dfm2::CVoxelGrid3D::Add,"add voxel at the integer coordinate");
+  .def("add",&dfm2::CGrid3<int>::Set,"add voxel at the integer coordinate")
+  .def("initialize",&dfm2::CGrid3<int>::Initialize,"add voxel at the integer coordinate");
   
   m.def("meshquad3d_voxelgrid",&PyMeshQuad3D_VoxelGrid);
   m.def("meshhex3d_voxelgrid", &PyMeshHex3D_VoxelGrid);

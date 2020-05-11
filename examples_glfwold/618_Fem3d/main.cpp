@@ -10,13 +10,12 @@
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
-#include <math.h>
+#include <cmath>
 #include "delfem2/mshtopo.h"
 #include "delfem2/mats.h"
 #include "delfem2/primitive.h"
 #include "delfem2/iss.h"
 #include "delfem2/vecxitrsol.h"
-// ---
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 
@@ -60,9 +59,9 @@ void InitializeProblem_Poisson()
   aVal.assign(np, 0.0);
   aBCFlag.assign(np, 0);
   for(int ip=0;ip<np;++ip){
-    const double px = aXYZ[ip*3+0];
+//    const double px = aXYZ[ip*3+0];
     const double py = aXYZ[ip*3+1];
-    const double pz = aXYZ[ip*3+2];
+//    const double pz = aXYZ[ip*3+2];
     if( py > +0.4 ){
       aBCFlag[ip] = 1;
       aVal[ip] = 1.0;

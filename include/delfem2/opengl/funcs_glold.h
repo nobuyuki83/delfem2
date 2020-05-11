@@ -53,8 +53,8 @@ DFM2_INLINE void getPosOnScreen_Camera2D
 DFM2_INLINE void setGL_Camera2D();
 
 
-// -------------------
-// draw functions
+// ===============================================
+// draw primitives
 
 DFM2_INLINE void DrawAxis(double s);
 
@@ -75,6 +75,9 @@ DFM2_INLINE void DrawCylinder_Edge
 DFM2_INLINE void DrawPlane_Edge
  (const double* origin_, const double* normal_);
 
+// ========================================
+// Draw Axis-Aligned Box
+
 DFM2_INLINE void DrawBox_MinMaxXYZ
  (double x_min, double x_max,
   double y_min, double y_max,
@@ -88,12 +91,15 @@ DFM2_INLINE void DrawAABB3D_Edge
 DFM2_INLINE void DrawAABB3D_Edge
  (const double cw[6]);
 
-DFM2_INLINE void Draw_AABB3D_MinMaxXYZ_Edge
- (double x_min, double x_max,
-  double y_min, double y_max,
-  double z_min, double z_max);
+DFM2_INLINE void DrawBox3_Edge
+ (const double* pmin,
+  const double* pmax);
 
-// -------------
+DFM2_INLINE void DrawBox3_Face
+(const double* pmin,
+ const double* pmax);
+
+// ========================================
 // Draw Point
 
 DFM2_INLINE void DrawPoints2D_Vectors(
@@ -104,9 +110,11 @@ DFM2_INLINE void DrawPoints2D_Vectors(
     int noffset,
     double mag);
 
-DFM2_INLINE void DrawPoints2d_Points(const std::vector<double>& aXY);
+DFM2_INLINE void DrawPoints2d_Points
+ (const std::vector<double>& aXY);
 
-DFM2_INLINE void DrawPoints3d_Points(const std::vector<double>& aXYZ);
+DFM2_INLINE void DrawPoints3d_Points
+ (const std::vector<double>& aXYZ);
 
 DFM2_INLINE void DrawPoints3d_NormVtx
  (const std::vector<double>& aXYZ,
@@ -114,16 +122,17 @@ DFM2_INLINE void DrawPoints3d_NormVtx
   double scale);
 
 
-// --------------
+// =====================================
 // Draw Line
+
 DFM2_INLINE void DrawMeshLine3D_Edge
  (const double* aXYZ,
   unsigned int nXYZ,
   const unsigned int* aLine,
   unsigned int nLine);
 
-// ------------
-// Draw Tri
+// =====================================
+// Draw Triangle Mesh
 
 DFM2_INLINE void DrawMeshTri2D_Face
  (const std::vector<unsigned int>& aTri,
@@ -202,8 +211,8 @@ DFM2_INLINE void DrawMeshTriMap3D_Edge(const std::vector<double>& aXYZ,
                            const std::vector<unsigned int>& aTri,
                            const std::vector<int>& map);
 
-// -----------------
-// Draw Quad
+// =====================================
+// Draw Quad Mesh
 
 DFM2_INLINE void DrawMeshQuad3D_Edge
  (const double* aXYZ, unsigned int nXYZ,
