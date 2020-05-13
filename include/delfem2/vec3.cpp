@@ -2171,7 +2171,7 @@ delfem2::CVec3<T> delfem2::screenProjection
 {
   CVec3<T> v0 = mult_GlAffineMatrix(mMV, v );
   CVec3<T> v1 = mult_GlAffineMatrix(mPj, v0);
-  float w1 = mPj[11]*v0.p[2] + mPj[15];
+  float w1 = mPj[11]*(float)v0.p[2] + mPj[15];
   return CVec3<T>(v1.p[0]/w1, v1.p[1]/w1, 0.0);
 }
 #ifndef DFM2_HEADER_ONLY
