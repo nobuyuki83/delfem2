@@ -31,7 +31,7 @@ private:
   public:
     bool IsValid(const std::vector<double>& sol, double tol=1.0e-20) const {
       double sum = -rhs;
-      for(int ic=0;ic<aCoeff.size();++ic){ sum += aCoeff[ic]*sol[ic]; }
+      for(unsigned int ic=0;ic<aCoeff.size();++ic){ sum += aCoeff[ic]*sol[ic]; }
       if( itype == EQ ){
         if( fabs(sum)<tol ){ return true; }
         else{

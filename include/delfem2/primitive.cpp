@@ -780,8 +780,8 @@ DFM2_INLINE void delfem2::MeshTri3_Torus
   unsigned int nlg,
   unsigned int nlt)
 {
-  const double rlg = 6.28/nlg;  // longtitude
-  const double rlt = 6.28/nlt;  // latitude
+  const T rlg = 6.28/nlg;  // longtitude
+  const T rlt = 6.28/nlt;  // latitude
   aXYZ.resize(nlg*nlt*3);
   for(unsigned int ilg=0;ilg<nlg;ilg++){
     for(unsigned int ilt=0;ilt<nlt;ilt++){

@@ -568,7 +568,7 @@ void ParseVtx
   ip = -1;
   it = -1;
   in = -1;
-  int n = strlen(str);
+  size_t n = strlen(str);
   int icnt = 0;
   int aloc[3];
   for(int i=0;i<n;++i){

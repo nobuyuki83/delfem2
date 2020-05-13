@@ -30,8 +30,13 @@ add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 find_package(OpenGL REQUIRED)
 
 # glfw
-set(GLFW_DIR "../../3rd_party/glfw")
-get_filename_component(GLFW_DIR ${GLFW_DIR} ABSOLUTE)
+IF(MSVC)
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
+ELSE()
+  set(GLFW_LIBRARY    ../../3rd_party/glfw/src/libglfw3.a)
+ENDIF()
+get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
+get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
 # imgui
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
@@ -45,8 +50,13 @@ get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 if(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)
 else()
-  set(DFM2_LIBRARY
+  if(MSVC)
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
+  else()
+    set(DFM2_LIBRARY
       ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
+  endif()
 endif()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
@@ -55,7 +65,7 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 
 include_directories(
   ${OPENGL_INCLUDE_DIR}
-  ${GLFW_DIR}/include
+  ${GLFW_INCLUDE_DIR}
   ${IMGUI_DIR}
   ${IMGUI_DIR}/examples
   ${GLAD_INCLUDE_DIR}
@@ -95,14 +105,14 @@ if (NOT EMSCRIPTEN)
       ${DFM2_LIBRARY}
       ${OPENGL_LIBRARY}
       ${GLEW_LIBRARY}
-      ${GLFW_DIR}/src/libglfw3.a
+      ${GLFW_LIBRARY}
       -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
     )
   ELSEIF(MSVC)
     target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIBRARY}    
       ${OPENGL_LIBRARY}
-      ${GLFW_DIR}/src/Release/glfw3.lib
-      ${EXTRA_LIBS}
+      ${GLFW_LIBRARY}
     )    
   ENDIF()
 else()
