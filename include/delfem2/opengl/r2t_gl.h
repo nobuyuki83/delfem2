@@ -84,7 +84,7 @@ protected:
 } // delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/opengl/render2tex_gl.cpp"
+#  include "delfem2/opengl/r2t_gl.cpp"
 #endif
 
 #endif /* depth_hpp */

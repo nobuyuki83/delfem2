@@ -38,7 +38,7 @@ DFM2_INLINE void updateMinMaxXYZ
  * @details implemented for "float" and "double"
  */
 template<typename T>
-DFM2_INLINE void Min3Max3_Points3(
+DFM2_INLINE void BoundingBox3_Points3(
     T min3[3],
     T max3[3],
     const T* aXYZ,
