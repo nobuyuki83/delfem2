@@ -92,7 +92,7 @@ DFM2_INLINE  std::string MyReplace
   const char cf,
   const char ct)
 {
-  const int n = str.size();
+  const size_t n = str.size();
   //
   std::string ss(str);
   for(int i=0;i<n;++i){
@@ -300,8 +300,8 @@ DFM2_INLINE void delfem2::Skinning_LBS
   const std::vector<CRigBone>& aBone,
   const std::vector<double>& aW)
 {
-  const unsigned int nBone = aBone.size();
-  const unsigned int nP = aXYZ0.size()/3;
+  const size_t nBone = aBone.size();
+  const size_t nP = aXYZ0.size()/3;
   aXYZ1.resize(aXYZ0.size());
   assert( aW.size() == nBone*nP );
   for(unsigned int ip=0;ip<nP;++ip){

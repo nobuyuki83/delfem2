@@ -6,14 +6,14 @@ git submodule update --init --recursive
 cd 3rd_party/googletest
 mkdir buildVS64
 cd buildVS64
-cmake -A x64 -Dgtest_force_shared_crt=ON .. 
+cmake -A x64 -Dgtest_force_shared_crt=ON ..
 cmake --build . --config Release
 cd ../../..
 
 cd test_cpp
 mkdir buildVS64Hdronly
 cd buildVS64Hdronly
-cmake -A -DUSE_HEADERONLY=ON x64 ..
+cmake -A x64 -DUSE_HEADERONLY=ON ..
 cmake --build . --config Release
 "Release/runUnitTests.exe"
 cd ../../
@@ -21,7 +21,7 @@ cd ../../
 cd test_cpp
 mkdir buildVS64Static
 cd buildVS64Static
-cmake -A -DUSE_HEADERONLY=OFF x64 ..
+cmake -A x64 -DUSE_HEADERONLY=OFF ..
 cd ../../
 
 : ################################

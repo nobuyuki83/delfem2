@@ -78,7 +78,7 @@ void MakeReebGraph
  const std::vector<int>& aTriSur)
 {
   const unsigned int ntri = (unsigned int)aTri.size()/3;
-  const unsigned int nCS = aCrossSection.size();
+  const size_t nCS = aCrossSection.size();
   aConnectivity.clear();
   aConnectivity.resize(nCS);
   std::vector<int> Tri2HCS;
