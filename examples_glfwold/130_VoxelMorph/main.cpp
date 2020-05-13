@@ -130,7 +130,7 @@ int main(int argc,char* argv[])
 
   while (true)
   {
-    for(int itr=0;itr<5;++itr){
+    for(int itr=0;itr<5;++itr){ // dilation
       dfm2::Grid3Voxel_Dilation(grid);
       viewer.DrawBegin_oldGL();
       sampler_box.Draw();
@@ -139,7 +139,7 @@ int main(int argc,char* argv[])
       glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
     }
-    for(int itr=0;itr<5;++itr){
+    for(int itr=0;itr<5;++itr){ // erosion
       dfm2::Grid3Voxel_Erosion(grid);
       viewer.DrawBegin_oldGL();
       sampler_box.Draw();

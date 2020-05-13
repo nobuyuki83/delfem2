@@ -173,8 +173,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::BoundingBox3
  (double* pmin,
   double* pmax) const
 {
-  for(int ix=0;ix<nResX;++ix){
-    for(int iy=0;iy<nResY;++iy){
+  for(unsigned int ix=0;ix<nResX;++ix){
+    for(unsigned int iy=0;iy<nResY;++iy){
       CVec3d vp;
       {
         const CVec3d& dx = x_axis;
