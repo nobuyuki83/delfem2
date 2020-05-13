@@ -157,10 +157,10 @@ namespace delfem2 {
 template <>
 DFM2_INLINE void GaussianDistribution2(float noise[2])
 {
-  float a0 = rand()/(RAND_MAX+1.0);
-  float a1 = rand()/(RAND_MAX+1.0);
-  noise[0] = sqrtf(-2.0*logf(a0))*cosf(3.1415*2*a1);
-  noise[1] = sqrtf(-2.0*logf(a0))*sinf(3.1415*2*a1);
+  float a0 = (float)(rand()/(RAND_MAX+1.0));
+  float a1 = (float)(rand()/(RAND_MAX+1.0));
+  noise[0] = (float)(sqrtf(-2.f*logf(a0))*cosf(3.1415*2*a1));
+  noise[1] = (float)(sqrtf(-2.f*logf(a0))*sinf(3.1415*2*a1));
 }
 
 template <>
@@ -1047,7 +1047,7 @@ void delfem2::SecondMomentOfArea_Polygon
  const std::vector<CVec2<T>>& aVec2D)
 {
   area = 0;
-  const unsigned int nseg = aVec2D.size();
+  const size_t nseg = aVec2D.size();
   cg = CVec2<T>(0.0, 0.0);
   for(unsigned int iseg=0;iseg<nseg;iseg++){
     unsigned int ip0 = (iseg+0)%nseg;
@@ -1165,7 +1165,7 @@ void delfem2::ResamplingLoop
         for(int iadd=0;iadd<nadd;++iadd){
           double r2 = (double)(iadd+1)/(nadd+1);
           CVec2<T> v2 = (1-r2)*po0 + r2*po1;
-          const int ipo2 = aVec2.size();
+          const size_t ipo2 = aVec2.size();
           aVec2.push_back(v2);
           assert( iipo0>=0 && iipo0<(int)aPoInEd.size() );
           aPoInEd[ iipo0 ].push_back(ipo2);
@@ -1291,7 +1291,7 @@ bool delfem2::CheckInputBoundaryForTriangulation
   // enter Input check section
 
   assert( loopIP_ind.size() >= 2 );
-  const unsigned int nloop = loopIP_ind.size()-1;
+  const size_t nloop = loopIP_ind.size()-1;
   
   { // make sure every loop has at least 3 points
     for(unsigned int iloop=0;iloop<nloop;iloop++){

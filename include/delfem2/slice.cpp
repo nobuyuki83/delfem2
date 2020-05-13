@@ -23,8 +23,8 @@ DFM2_INLINE void IndexElement_OverlapLevels_MeshTri3D
  const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri)
 {
-  const unsigned int ntri = aTri.size()/3;
-  const unsigned int nH = aH.size();
+  const size_t ntri = aTri.size()/3;
+  const size_t nH = aH.size();
   aCST.resize(nH);
   for(unsigned int itri=0;itri<ntri;itri++){
     const double ah[3] = {

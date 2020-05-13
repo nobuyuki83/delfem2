@@ -175,13 +175,13 @@ TEST(gltf,io_gltf_skin_sensitivity)
       dfm2::Skinning_LBS(aXYZ2,
                          aXYZ0, aBone2, aW);
       const unsigned int np = aXYZ0.size()/3;
-      for(int ip=0;ip<np;++ip){
+      for(unsigned int ip=0;ip<np;++ip){
         const double val0[3] = {
           (aXYZ2[ip*3+0] - aXYZ1[ip*3+0])/eps,
           (aXYZ2[ip*3+1] - aXYZ1[ip*3+1])/eps,
           (aXYZ2[ip*3+2] - aXYZ1[ip*3+2])/eps };
         double val1[3] =  { 0, 0, 0 };
-        for(int j=0;j<nb*4;++j){
+        for(unsigned int j=0;j<nb*4;++j){
           val1[0] += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
           val1[1] += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
           val1[2] += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
@@ -203,7 +203,7 @@ TEST(gltf,io_gltf_skin_sensitivity)
     srand(0);
     for(int itr=0;itr<5;++itr){
       dfm2::CTarget t;
-      t.ib = aBone.size()*(rand()/(RAND_MAX+1.0));
+      t.ib = (unsigned int)(aBone.size()*(rand()/(RAND_MAX+1.0)));
       t.pos = aBone[t.ib].Pos() + dfm2::CVec3d::Random();
       aTarget.push_back(t);
     }
@@ -217,7 +217,7 @@ TEST(gltf,io_gltf_skin_sensitivity)
     
     const unsigned int nsns = Lx.size()/(nb*4);
     assert( nsns==(nb+1)*3 );
-    for(int isns=0;isns<nsns;++isns){
+    for(unsigned int isns=0;isns<nsns;++isns){
       unsigned int ib_s = isns/3;
       bool is_rot = true;
       unsigned int idim_s = isns - ib_s*3;

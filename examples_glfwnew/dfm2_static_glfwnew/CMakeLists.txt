@@ -96,10 +96,10 @@ if(WIN32)
     add_custom_command(TARGET ${PROJ_NAME}
         POST_BUILD
         COMMAND copy
-        "${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\c_core.*.pyd"
-        ${NATIVE_PROJECT_SOURCE_DIR}\\..\\..\\PyDelFEM2\\
+        ${NATIVE_PROJECT_BINARY_DIR}\\${CMAKE_CFG_INTDIR}\\dfm2_static_glfwnew.lib
+        ${NATIVE_PROJECT_SOURCE_DIR}
         COMMENT "Post Event"
-        )
+    )
 else()
     add_custom_command(TARGET ${PROJ_NAME}
         POST_BUILD
@@ -107,5 +107,5 @@ else()
         ${PROJECT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libdfm2_static_glfwnew.*
         ${PROJECT_SOURCE_DIR}
         COMMENT "Post Event"
-        )
+    )
 endif()
