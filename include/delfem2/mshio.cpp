@@ -568,7 +568,7 @@ void ParseVtx
   ip = -1;
   it = -1;
   in = -1;
-  size_t n = strlen(str);
+  std::size_t n = strlen(str);
   int icnt = 0;
   int aloc[3];
   for(int i=0;i<n;++i){
@@ -881,19 +881,19 @@ void delfem2::WriteVTK_Cells
  const std::vector<int>& aPyrm,
  const std::vector<int>& aPrsm)
 {
-  const size_t ntet = aTet.size()/4;
-  const size_t npyrm = aPyrm.size()/5;
-  const size_t nprsm = aPrsm.size()/6;
-  size_t nelem = ntet + npyrm + nprsm;
+  const std::size_t ntet = aTet.size()/4;
+  const std::size_t npyrm = aPyrm.size()/5;
+  const std::size_t nprsm = aPrsm.size()/6;
+  std::size_t nelem = ntet + npyrm + nprsm;
   fout << "CELLS " << nelem << " " << ntet*5+npyrm*6+nprsm*7 << std::endl;
-  for(size_t it=0;it<ntet;++it){
+  for(std::size_t it=0;it<ntet;++it){
     fout << 4 << " ";
     fout << aTet[it*4+0] << " ";
     fout << aTet[it*4+1] << " ";
     fout << aTet[it*4+2] << " ";
     fout << aTet[it*4+3] << std::endl;
   }
-  for(size_t ipyrm=0;ipyrm<npyrm;++ipyrm){
+  for(std::size_t ipyrm=0;ipyrm<npyrm;++ipyrm){
     fout << 5 << " ";
     fout << aPyrm[ipyrm*5+0] << " ";
     fout << aPyrm[ipyrm*5+1] << " ";
@@ -901,7 +901,7 @@ void delfem2::WriteVTK_Cells
     fout << aPyrm[ipyrm*5+3] << " ";
     fout << aPyrm[ipyrm*5+4] << std::endl;
   }
-  for(size_t iprsm=0;iprsm<nprsm;++iprsm){
+  for(std::size_t iprsm=0;iprsm<nprsm;++iprsm){
     fout << 6 << " ";
     fout << aPrsm[iprsm*6+0] << " ";
     fout << aPrsm[iprsm*6+1] << " ";
@@ -911,9 +911,9 @@ void delfem2::WriteVTK_Cells
     fout << aPrsm[iprsm*6+5] << std::endl;
   }
   fout << "CELL_TYPES " << nelem << std::endl;
-  for(size_t ie=0;ie<ntet; ++ie){ fout << "10" << std::endl; }
-  for(size_t ie=0;ie<npyrm;++ie){ fout << "14" << std::endl; }
-  for(size_t ie=0;ie<nprsm;++ie){ fout << "13" << std::endl; }
+  for(std::size_t ie=0;ie<ntet; ++ie){ fout << "10" << std::endl; }
+  for(std::size_t ie=0;ie<npyrm;++ie){ fout << "14" << std::endl; }
+  for(std::size_t ie=0;ie<nprsm;++ie){ fout << "13" << std::endl; }
 }
 
 
@@ -1287,7 +1287,7 @@ void delfem2::Read_MeshTri3D_Nas
   }
   np1 += 1;
   std::vector<int> map10(np1,-1);
-  for(size_t ip0=0;ip0<map01.size();++ip0){
+  for(std::size_t ip0=0;ip0<map01.size();++ip0){
     int ip1 = map01[ip0];
     map10[ip1] = ip0;
   }
