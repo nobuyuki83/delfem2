@@ -182,9 +182,9 @@ int LinPro_SolveTable
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////
 
 
 std::vector<double> CLinPro::GetValid() const
@@ -194,7 +194,7 @@ std::vector<double> CLinPro::GetValid() const
   const int nrow = 1+1+nvar+nslk;
 //  Print(A, ncol, nrow, map_col2row);
   assert(A.size()==ncol*nrow);
-  for(int icol=0;icol<neq;++icol){
+  for(unsigned int icol=0;icol<neq;++icol){
     int jrow = map_col2row[icol];
     if( jrow >= 2 && jrow < 2+nvar ){
       double rhs = A[icol*nrow];
@@ -276,7 +276,7 @@ int CLinPro::Precomp(int& nitr)
   nart = 0;
   std::vector<int> mapEq2Slk(neq,-1);
   std::vector<int> mapEq2Art(neq,-1);
-  for(int ieq=0;ieq<aEq.size();++ieq){
+  for(unsigned int ieq=0;ieq<aEq.size();++ieq){
     const int nv = aEq[ieq].aCoeff.size();
     if( nvar < nv ){ nvar = nv; }
     if( aEq[ieq].itype == LE || aEq[ieq].itype == GE ){ mapEq2Slk[ieq] = nslk; nslk++; }
