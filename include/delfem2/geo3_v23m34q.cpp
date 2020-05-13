@@ -377,7 +377,7 @@ DFM2_INLINE void delfem2::UpdateRotationsByMatchingCluster
   const std::vector<unsigned int>& psup_ind,
   const std::vector<unsigned int>& psup)
 {
-  const unsigned int np = aXYZ0.size()/3;
+  const size_t np = aXYZ0.size()/3;
   for(unsigned int ip=0;ip<np;++ip){
     const CVec3d Pi(aXYZ0.data()+ip*3);
     const CVec3d pi(aXYZ1.data()+ip*3);

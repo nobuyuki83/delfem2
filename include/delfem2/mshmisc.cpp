@@ -313,7 +313,7 @@ void delfem2::GetCenterWidthGroup
  int igroup,
  const std::vector<int>& aIndGroup)
 {
-  const unsigned int nelem = aElem.size()/nnoel;
+  const std::size_t nelem = aElem.size()/nnoel;
   assert( aElem.size() == nelem*nnoel );
   assert( aIndGroup.size() == nelem );
   bool is_ini = true;
@@ -349,7 +349,7 @@ void delfem2::GetCenterWidthGroup
   const std::vector<int>& aIndGroup)
 {
   assert(!aElemInd.empty());
-  const unsigned int nelem = aElemInd.size()-1;
+  const std::size_t nelem = aElemInd.size()-1;
   assert( aIndGroup.size() == nelem );
   bool is_ini = true;
   double x_min=0, x_max=0, y_min=0, y_max=0, z_min=0, z_max=0;
@@ -461,7 +461,7 @@ void delfem2::Scale_PointsX
 (std::vector<T>& aXYZ,
  T s)
 {
-  const unsigned int n = aXYZ.size();
+  const std::size_t n = aXYZ.size();
   for (unsigned int i = 0; i<n; ++i){ aXYZ[i] *= s; }
 }
 #ifndef DFM2_HEADER_ONLY
@@ -495,7 +495,7 @@ void delfem2::Translate_Points3
 (std::vector<T>& aXYZ,
 T tx, T ty, T tz)
 {
-  const unsigned int nXYZ = aXYZ.size()/3;
+  const std::size_t nXYZ = aXYZ.size()/3;
   for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
     aXYZ[ixyz*3+0] += tx;
     aXYZ[ixyz*3+1] += ty;
