@@ -84,7 +84,7 @@ if (NOT EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME}
       ${DFM2_LIBRARY}
       ${OPENGL_LIBRARY}
-      ${GLFW_DIR_LIBRARY}
+      ${GLFW_LIBRARY}
       ${COCOA_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} ${COREVIDEO_LIBRARY}
     )
   ELSEIF(UNIX)

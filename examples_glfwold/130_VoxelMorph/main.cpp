@@ -70,6 +70,7 @@ void Draw_CGrid3
   ::glPopMatrix();
 }
 
+
 // ------------------------------------------------------
 
 int main(int argc,char* argv[])
@@ -129,12 +130,24 @@ int main(int argc,char* argv[])
 
   while (true)
   {
-    viewer.DrawBegin_oldGL();
-    sampler_box.Draw();
-    Draw_CGrid3(grid);
-    glfwSwapBuffers(viewer.window);
-    glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    for(int itr=0;itr<5;++itr){
+      dfm2::Grid3Voxel_Dilation(grid);
+      viewer.DrawBegin_oldGL();
+      sampler_box.Draw();
+      Draw_CGrid3(grid);
+      glfwSwapBuffers(viewer.window);
+      glfwPollEvents();
+      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    }
+    for(int itr=0;itr<5;++itr){
+      dfm2::Grid3Voxel_Erosion(grid);
+      viewer.DrawBegin_oldGL();
+      sampler_box.Draw();
+      Draw_CGrid3(grid);
+      glfwSwapBuffers(viewer.window);
+      glfwPollEvents();
+      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    }
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

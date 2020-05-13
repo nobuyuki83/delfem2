@@ -80,6 +80,11 @@ public:
 };
 
 
+void Grid3Voxel_Dilation(CGrid3<int>& grid);
+
+void Grid3Voxel_Erosion(CGrid3<int>& grid);
+
+
 /*
 void Add(int ivx, int ivy, int ivz){
   if( this->IsInclude(ivx, ivy, ivz) ){
