@@ -571,7 +571,7 @@ void ParseVtx
   std::size_t n = strlen(str);
   int icnt = 0;
   int aloc[3];
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     if(str[i]!='/'){ continue; }
     str[i] = '\0';
     aloc[icnt] = i;
