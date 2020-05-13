@@ -97,8 +97,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/opengl/caddtri_v3_glold.h   ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
     ${DELFEM2_INC}/opengl/rigv3_glold.h        ${DELFEM2_INC}/opengl/rigv3_glold.cpp
     ${DELFEM2_INC}/opengl/colorv3_glold.h      ${DELFEM2_INC}/opengl/colorv3_glold.cpp
-    ${DELFEM2_INC}/opengl/render2tex_gl.h      ${DELFEM2_INC}/opengl/render2tex_gl.cpp
-    ${DELFEM2_INC}/opengl/render2tex_glold.h   ${DELFEM2_INC}/opengl/render2tex_glold.cpp
+    ${DELFEM2_INC}/opengl/r2t_gl.h             ${DELFEM2_INC}/opengl/r2t_gl.cpp
+    ${DELFEM2_INC}/opengl/r2tglo_glold.h       ${DELFEM2_INC}/opengl/r2tglo_glold.cpp
     ${DELFEM2_INC}/opengl/gridcube_glold.h     ${DELFEM2_INC}/opengl/gridcube_glold.cpp
     ${DELFEM2_INC}/opengl/glfw/viewer_glfw.h   ${DELFEM2_INC}/opengl/glfw/viewer_glfw.cpp
     ${DELFEM2_INC}/opengl/glfw/cam_glfw.h
