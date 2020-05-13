@@ -98,7 +98,7 @@ if (NOT EMSCRIPTEN)
       ${COCOA_LIBRARY}
       ${IOKIT_LIBRARY}
       ${COREVIDEO_LIBRARY}
-      ${GLFW_DIR}/src/libglfw3.a
+      ${GLFW_LIBRARY}
     )
   ELSEIF(UNIX)
     target_link_libraries(${PROJECT_NAME}
