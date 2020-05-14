@@ -1,6 +1,7 @@
 ![](docs/imgs/social_preview.png)
 
-<a href="http://doge.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg"></a> [![wercker status](https://app.wercker.com/status/03b6d924ec82270e22a04c3584fbf4de/s/master "wercker status")](https://app.wercker.com/project/byKey/03b6d924ec82270e22a04c3584fbf4de)  [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2)
+<a href="http://doge.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg"></a> [![wercker status](https://app.wercker.com/status/03b6d924ec82270e22a04c3584fbf4de/s/master "wercker status")](https://app.wercker.com/project/byKey/03b6d924ec82270e22a04c3584fbf4de)  [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2) ![](https://github.com/nobuyuki83/delfem2/workflows/CI/badge.svg)
+
 
 
 # DelFEM2
