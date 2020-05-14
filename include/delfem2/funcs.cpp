@@ -228,7 +228,7 @@ DFM2_INLINE std::string delfem2::Replace
   const size_t n = str.size();
   //
   std::string ss(str);
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     if( ss[i] != cf ){ continue; }
     ss[i] = ct;
   }
@@ -295,16 +295,16 @@ DFM2_INLINE std::string Remove_Quote
   const size_t n = str.size();
   {
     int nq = 0;
-    for(int i=0;i<n;++i){
+    for(unsigned int i=0;i<n;++i){
       if( str[i] == quat ){ ++nq; }
     }
     if( nq < 2 ){ return str;}
   }
-  int istat = 0;
+  unsigned int istat = 0;
   for(;istat<n;++istat){
     if( str[istat] == quat ){ break; }
   }
-  int iend = n-1;
+  int iend = (int)n-1;
   for(;iend>=0;--iend){
     if( str[iend] == quat ){ break; }
   }
@@ -376,9 +376,9 @@ DFM2_INLINE void delfem2::ReadVector_CSV
 {
   const size_t n = strIn.length();
   const char* p = strIn.data();
-  int ipos0 = 0;
+  unsigned int ipos0 = 0;
   double val;
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     if( p[i] == ',' ){
       std::string sval(p+ipos0,p+i);
       sscanf(sval.c_str(),"%lf",&val);

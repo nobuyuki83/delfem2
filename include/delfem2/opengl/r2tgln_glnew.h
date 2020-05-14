@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <vector>
 #include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/render2tex_gl.h"
+#include "delfem2/opengl/r2t_gl.h"
 
 namespace delfem2{
 namespace opengl{
@@ -44,7 +44,7 @@ public:
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/opengl/render2tex_glnew.cpp"
+#  include "delfem2/opengl/r2tgln_glnew.cpp"
 #endif
 
 #endif /* depth_hpp */

@@ -138,7 +138,7 @@ DFM2_INLINE  void Mat3_Bryant
 }
 
 // static function above
-// -----------------------------------------------------------------
+// ==============================================
 // exposed function below
 
 template <typename T>
@@ -196,7 +196,7 @@ template void delfem2::updateMinMaxXYZ(
 // -----------------------------
 
 template<typename T>
-void delfem2::Min3Max3_Points3(
+void delfem2::BoundingBox3_Points3(
     T min3[3],
     T max3[3],
     const T* aXYZ,
@@ -205,15 +205,17 @@ void delfem2::Min3Max3_Points3(
   min3[0] = +1;
   max3[0] = -1;
   for(unsigned int ixyz=0;ixyz<nXYZ;++ixyz){
-    updateMinMaxXYZ(min3[0], max3[0], min3[1], max3[1], min3[2], max3[2],
+    updateMinMaxXYZ(min3[0], max3[0],
+                    min3[1], max3[1],
+                    min3[2], max3[2],
                     aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Min3Max3_Points3(
+template void delfem2::BoundingBox3_Points3(
     double min3[3], double max3[3],
     const double* aXYZ, const unsigned int nXYZ);
-template void delfem2::Min3Max3_Points3(
+template void delfem2::BoundingBox3_Points3(
     float min3[3], float max3[3],
     const float* aXYZ, const unsigned int nXYZ);
 #endif

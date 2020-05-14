@@ -3,7 +3,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
-#include "delfem2/opengl/render2tex_glold.h"
+#include "delfem2/opengl/r2tglo_glold.h"
 
 namespace py = pybind11;
 namespace dfm2 = delfem2;

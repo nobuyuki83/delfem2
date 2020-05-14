@@ -24,7 +24,7 @@
 #endif
 
 #include "delfem2/opengl/glnew_mshcolor.h"
-#include "delfem2/opengl/render2tex_glnew.h"
+#include "delfem2/opengl/r2tgln_glnew.h"
 //
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/glfw/cam_glfw.h"

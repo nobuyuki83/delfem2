@@ -12,7 +12,6 @@
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
 #include "delfem2/primitive.h"
-//
 #include "delfem2/srchuni_v3.h"
 
 // --------------------

@@ -43,6 +43,7 @@ add_subdirectory(126_GizmoTransl)
 add_subdirectory(127_GizmoAffine)
 add_subdirectory(128_Voxelize)
 add_subdirectory(129_CubeGridEdit)
+add_subdirectory(130_VoxelMorph)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)

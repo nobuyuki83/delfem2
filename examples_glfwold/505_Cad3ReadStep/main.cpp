@@ -23,12 +23,12 @@ int getEntity
  const std::string& s)
 {
   int is;
-  for(is=0;is<s.size()-1;++is){
+  for(is=0;is<(int)s.size()-1;++is){
     if( s[is] == '#' ) break;
   }
   if( s[is] != '#' ) return -1;
   int ie;
-  for(ie=is+1;ie<s.size();++ie){
+  for(ie=is+1;ie<(int)s.size();++ie){
     int iascii = (int)s[ie]-48;
     if( iascii < 0 || iascii > 9 ) break;
   }
@@ -39,13 +39,13 @@ int getEntity
     sdist[ie-is-1] = '\0';
     ID0 = std::stoi(sdist);
   }
-  ////
+  //
   int ic;
-  for(ic=ie;ic<s.size();++ic){
+  for(ic=ie;ic<(int)s.size();++ic){
     if( s[ic] != ' ' && s[ic] != '=' ) break;
   }
   int id;
-  for(id=ic;id<s.size();++id){
+  for(id=ic;id<(int)s.size();++id){
     int iascii = (int)s[id];
     if( !dfm2::isAlphabetUpper(iascii) && !dfm2::isNumeric(iascii) && (iascii != 95)  ) break;
 //    if( s[id] == '(' ) break;
@@ -321,7 +321,7 @@ class CStep_Line: public CStep_Curve
 public:
   int idCP;
   int idVec;
-  ////
+  //
   const CStep_CartesianPoint* pCP;
   const CStep_Vector* pVec;
 };
@@ -800,12 +800,12 @@ void LoadStep
       }
     }
   }
-  ////////////////////////////////////////////////
+  // ---------------------------------------
   { // id 2 ind
     std::vector<int> mapId2Ind;
     for(unsigned int ise=0;ise<apStepElem.size();++ise){
       int id = apStepElem[ise]->id;
-      if( id >= mapId2Ind.size() ){
+      if( id >= (int)mapId2Ind.size() ){
         mapId2Ind.resize(id+1,-1);
       }
       mapId2Ind[id] = ise;

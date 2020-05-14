@@ -59,7 +59,7 @@ public:
     ndivx = ndivx_;
     ndivy = ndivy_;
     ndivz = ndivz_;
-    const int nvoxel = ndivx*ndivy*ndivz;
+    const unsigned int nvoxel = ndivx*ndivy*ndivz;
     aVal.assign(nvoxel,v);
   }
   bool IsInclude(int ivx, int ivy, int ivz){
@@ -74,10 +74,15 @@ public:
     aVal[ivoxel] = isVox;
   }
 public:
-  int ndivx, ndivy, ndivz;
+  unsigned int ndivx, ndivy, ndivz;
   std::vector<VAL> aVal;
   CMat4d am; // affine matrix
 };
+
+
+void Grid3Voxel_Dilation(CGrid3<int>& grid);
+
+void Grid3Voxel_Erosion(CGrid3<int>& grid);
 
 
 /*

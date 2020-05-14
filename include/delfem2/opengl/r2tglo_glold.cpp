@@ -19,7 +19,7 @@
 #endif
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/render2tex_glold.h"
+#include "delfem2/opengl/r2tglo_glold.h"
 
 // --------------------------------------------
 
@@ -162,15 +162,48 @@ std::vector<double> delfem2::opengl::CRender2Tex_DrawOldGL::getGPos(int ix, int 
   const CVec3d& dx = x_axis;
   const CVec3d& dz = z_axis;
   const CVec3d& dy = Cross(dz,dx);
-  double lz = -aZ[iy*nResX+ix]*z_range;
+  double lz = -aZ[iy*nResX+ix];
   double lx = (ix+0.5)*lengrid;
   double ly = (iy+0.5)*lengrid;
   CVec3d vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);
-    //  std::vector<double> res;
-    //  res.push_back(vp.x());
-    //  res.push_back(vp.y());
-    //  res.push_back(vp.z());
   return vp.stlvec();
+}
+
+void delfem2::opengl::CRender2Tex_DrawOldGL::BoundingBox3
+ (double* pmin,
+  double* pmax) const
+{
+  for(unsigned int ix=0;ix<nResX;++ix){
+    for(unsigned int iy=0;iy<nResY;++iy){
+      CVec3d vp;
+      {
+        const CVec3d& dx = x_axis;
+        const CVec3d& dz = z_axis;
+        const CVec3d& dy = Cross(dz,dx);
+        double lz = aZ[iy*nResX+ix];
+        double lx = (ix+0.5)*lengrid;
+        double ly = (iy+0.5)*lengrid;
+        vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);
+        if( -lz > z_range*0.99 ) continue;
+      }
+      // ----------
+      if( pmin[0] > pmax[0] ){
+        pmin[0] = pmax[0] = vp.x();
+        pmin[1] = pmax[1] = vp.y();
+        pmin[2] = pmax[2] = vp.z();
+        continue;
+      }
+      const double x0 = vp.x();
+      if( x0 < pmin[0] ){ pmin[0] = x0; }
+      if( x0 > pmax[0] ){ pmax[0] = x0; }
+      const double y0 = vp.y();
+      if( y0 < pmin[1] ){ pmin[1] = y0; }
+      if( y0 > pmax[1] ){ pmax[1] = y0; }
+      const double z0 = vp.z();
+      if( z0 < pmin[2] ){ pmin[2] = z0; }
+      if( z0 > pmax[2] ){ pmax[2] = z0; }
+    }
+  }
 }
 
 
@@ -229,5 +262,90 @@ void delfem2::opengl::CRender2Tex_DrawOldGL_BOX::Initialize
     smplr.draw_len_axis = 0.2;
     smplr.isDrawTex = false;
     smplr.isDrawOnlyHitPoints = true;
+  }
+}
+
+
+void delfem2::opengl::CarveVoxelByDepth
+ (std::vector<int>& aVal,
+  const CRender2Tex_DrawOldGL_BOX& sampler_box)
+{
+  const unsigned int nx = sampler_box.nDivX();
+  const unsigned int ny = sampler_box.nDivY();
+  const unsigned int nz = sampler_box.nDivZ();
+  const double el = sampler_box.edgeLen();
+  // ------
+  aVal.assign(nz*ny*nx,1);
+  for(unsigned int iy=0;iy<ny;++iy){
+    for(unsigned int iz=0;iz<nz;++iz){
+      double d0 = sampler_box.aSampler[0].aZ[iz*ny+iy];
+      const unsigned int nd = floor(-d0/el+1.0e-5);
+      for(unsigned int id=0;id<nd;id++){
+        const unsigned int ix0 = nx-1-id;
+        const unsigned int iy0 = iy;
+        const unsigned int iz0 = iz;
+        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+      }
+    }
+  }
+  for(unsigned int iy=0;iy<ny;++iy){
+    for(unsigned int iz=0;iz<nz;++iz){
+      double d0 = sampler_box.aSampler[1].aZ[iz*ny+iy];
+      const unsigned int nd = floor(-d0/el+1.0e-5);
+      for(unsigned int id=0;id<nd;id++){
+        const unsigned int ix0 = id;
+        const unsigned int iy0 = iy;
+        const unsigned int iz0 = nz-1-iz;
+        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+      }
+    }
+  }
+  for(unsigned int ix=0;ix<nx;++ix){
+    for(unsigned int iz=0;iz<nz;++iz){
+      double d0 = sampler_box.aSampler[2].aZ[iz*nx+ix];
+      const unsigned int nd = floor(-d0/el+1.0e-5);
+      for(unsigned int id=0;id<nd;id++){
+        const unsigned int ix0 = ix;
+        const unsigned int iy0 = ny-1-id;
+        const unsigned int iz0 = nz-1-iz;
+        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+      }
+    }
+  }
+  for(unsigned int ix=0;ix<nx;++ix){
+    for(unsigned int iz=0;iz<nz;++iz){
+      double d0 = sampler_box.aSampler[3].aZ[iz*nx+ix];
+      const unsigned int nd = floor(-d0/el+1.0e-5);
+      for(unsigned int id=0;id<nd;id++){
+        const unsigned int ix0 = ix;
+        const unsigned int iy0 = id;
+        const unsigned int iz0 = iz;
+        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+      }
+    }
+  }
+  for(unsigned int ix=0;ix<nx;++ix){
+    for(unsigned int iy=0;iy<ny;++iy){
+      double d0 = sampler_box.aSampler[4].aZ[iy*nx+ix];
+      const unsigned int nd = floor(-d0/el+1.0e-5);
+      for(unsigned int id=0;id<nd;id++){
+        const unsigned int ix0 = ix;
+        const unsigned int iy0 = iy;
+        const unsigned int iz0 = nz-1-id;
+        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+      }
+    }
+  }
+  for(unsigned int ix=0;ix<nx;++ix){
+    for(unsigned int iy=0;iy<ny;++iy){
+      double d0 = sampler_box.aSampler[5].aZ[iy*nx+ix];
+      const unsigned int nd = floor(-d0/el+1.0e-5);
+      for(unsigned int id=0;id<nd;id++){
+        const unsigned int ix0 = ix;
+        const unsigned int iy0 = ny-1-iy;
+        const unsigned int iz0 = id;
+        aVal[iz0*ny*nx+iy0*nx+ix0] = 0;
+      }
+    }
   }
 }

@@ -278,3 +278,70 @@ int dfm2::Adj_Grid
 }
 
 // ---------------------------------------------------------------------
+
+
+void delfem2::Grid3Voxel_Dilation
+ (dfm2::CGrid3<int>& grid)
+{
+  const int nx = (int)grid.ndivx;
+  const int ny = (int)grid.ndivy;
+  const int nz = (int)grid.ndivz;
+  for(int iz1=0;iz1<nz;++iz1){
+    for(int iy1=0;iy1<ny;++iy1){
+      for(int ix1=0;ix1<nx;++ix1){
+        int flgx0 = ix1-1>=0 ? grid.aVal[iz1*ny*nx + iy1*nx + (ix1-1)] : 0;
+        int flgx2 = ix1+1<nx ? grid.aVal[iz1*ny*nx + iy1*nx + (ix1+1)] : 0;
+        int flgy0 = iy1-1>=0 ? grid.aVal[iz1*ny*nx + (iy1-1)*nx + ix1] : 0;
+        int flgy2 = iy1+1<ny ? grid.aVal[iz1*ny*nx + (iy1+1)*nx + ix1] : 0;
+        int flgz0 = iz1-1>=0 ? grid.aVal[(iz1-1)*ny*nx + iy1*nx + ix1] : 0;
+        int flgz2 = iz1+1<nz ? grid.aVal[(iz1+1)*ny*nx + iy1*nx + ix1] : 0;
+        const int ivox = iz1*ny*nx + iy1*nx + ix1;
+        if( grid.aVal[ivox] != 0 ) continue;
+        if( flgx0 == 1 ){ grid.aVal[ivox] = 2; }
+        if( flgx2 == 1 ){ grid.aVal[ivox] = 2; }
+        if( flgy0 == 1 ){ grid.aVal[ivox] = 2; }
+        if( flgy2 == 1 ){ grid.aVal[ivox] = 2; }
+        if( flgz0 == 1 ){ grid.aVal[ivox] = 2; }
+        if( flgz2 == 1 ){ grid.aVal[ivox] = 2; }
+      }
+    }
+  }
+  const int nvox = nx*ny*nz;
+  for(int ivox=0;ivox<nvox;++ivox){
+    if( grid.aVal[ivox] == 0 ){ continue; }
+    grid.aVal[ivox] = 1;
+  }
+}
+
+void delfem2::Grid3Voxel_Erosion
+(dfm2::CGrid3<int>& grid)
+{
+  const int nx = (int)grid.ndivx;
+  const int ny = (int)grid.ndivy;
+  const int nz = (int)grid.ndivz;
+  for(int iz1=0;iz1<nz;++iz1){
+    for(int iy1=0;iy1<ny;++iy1){
+      for(int ix1=0;ix1<nx;++ix1){
+        int flgx0 = ix1-1>=0 ? grid.aVal[iz1*ny*nx + iy1*nx + (ix1-1)] : 0;
+        int flgx2 = ix1+1<nx ? grid.aVal[iz1*ny*nx + iy1*nx + (ix1+1)] : 0;
+        int flgy0 = iy1-1>=0 ? grid.aVal[iz1*ny*nx + (iy1-1)*nx + ix1] : 0;
+        int flgy2 = iy1+1<ny ? grid.aVal[iz1*ny*nx + (iy1+1)*nx + ix1] : 0;
+        int flgz0 = iz1-1>=0 ? grid.aVal[(iz1-1)*ny*nx + iy1*nx + ix1] : 0;
+        int flgz2 = iz1+1<nz ? grid.aVal[(iz1+1)*ny*nx + iy1*nx + ix1] : 0;
+        const int ivox = iz1*ny*nx + iy1*nx + ix1;
+        if( grid.aVal[ivox] == 0 ) continue;
+        if( flgx0 == 0 ){ grid.aVal[ivox] = 2; }
+        if( flgx2 == 0 ){ grid.aVal[ivox] = 2; }
+        if( flgy0 == 0 ){ grid.aVal[ivox] = 2; }
+        if( flgy2 == 0 ){ grid.aVal[ivox] = 2; }
+        if( flgz0 == 0 ){ grid.aVal[ivox] = 2; }
+        if( flgz2 == 0 ){ grid.aVal[ivox] = 2; }
+      }
+    }
+  }
+  const int nvox = nx*ny*nz;
+  for(int ivox=0;ivox<nvox;++ivox){
+    if( grid.aVal[ivox] != 2 ){ continue; }
+    grid.aVal[ivox] = 0;
+  }
+}
