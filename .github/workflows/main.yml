@@ -28,6 +28,7 @@ jobs:
         git branch -a
         git submodule update --init --recursive    
 
+    - name: running test_cpp
         echo "###################"
         echo "## build googletest"
         cd 3rd_party/googletest
@@ -44,7 +45,7 @@ jobs:
         cd buildVS64Hdronly
         cmake -A x64 -DUSE_HEADERONLY=ON ..
         cmake --build . --config Release
-        "Release/runUnitTests.exe"
+        "Release\\runUnitTests.exe"
         cd ../../
 
         erho "############################"
