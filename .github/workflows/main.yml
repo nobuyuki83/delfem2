@@ -29,6 +29,7 @@ jobs:
         git submodule update --init --recursive    
 
     - name: running test_cpp
+      run: |
         echo "###################"
         echo "## build googletest"
         cd 3rd_party/googletest
