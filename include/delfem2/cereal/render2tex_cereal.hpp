@@ -12,7 +12,7 @@
 #include "cereal/archives/json.hpp"
 #include "cereal/types/vector.hpp"
 //
-#include "delfem2/opengl/render2tex_glold.h" // header itself doesn't depend on OpenGLa
+#include "delfem2/opengl/r2tglo_glold.h" // header itself doesn't depend on OpenGLa
 
 namespace cereal{
 

@@ -1075,10 +1075,10 @@ DFM2_INLINE void delfem2::opengl::DrawBox3_Edge
   ::glVertex3d(p1[0],p1[1],p1[2]); ::glVertex3d(p0[0],p1[1],p1[2]);
   ::glVertex3d(p1[0],p1[1],p0[2]); ::glVertex3d(p0[0],p1[1],p0[2]);
   //
-  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p0[1],p1[2]);
-  ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
-  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p0[1],p1[2]);
-  ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
+  ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p1[1],p0[2]);
+  ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p1[1],p0[2]);
+  ::glVertex3d(p1[0],p0[1],p1[2]); ::glVertex3d(p1[0],p1[1],p1[2]);
+  ::glVertex3d(p0[0],p0[1],p1[2]); ::glVertex3d(p0[0],p1[1],p1[2]);
   //
   ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p1[0],p0[1],p1[2]);
   ::glVertex3d(p0[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p1[2]);

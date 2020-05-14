@@ -211,22 +211,12 @@ void SetNewProblem()
   static unsigned int iprob = 0;
   
   {
-    delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_2k.ply",
-                      aXYZ, aTri);
-    {
-      double cx,cy,cz, wx,wy,wz;
-      delfem2::CenterWidth_Points3(cx,cy,cz,
-                                   wx,wy,wz,
-                                   aXYZ);
-      delfem2::Translate_Points3(aXYZ,
-                                 -cx,-cy,-cz);
-      double wm = wx;
-      wm = ( wx > wm ) ? wx : wm;
-      wm = ( wy > wm ) ? wy : wm;
-      wm = ( wz > wm ) ? wz : wm;
-      delfem2::Scale_PointsX(aXYZ,
-                             2.0/wm);
-    }
+    dfm2::Read_Ply(
+        std::string(PATH_INPUT_DIR)+"/bunny_2k.ply",
+        aXYZ, aTri);
+    dfm2::Normalize_Points3(
+        aXYZ,
+        2.0);
   }
   {
     std::vector<unsigned int> elsup_ind, elsup;
@@ -397,12 +387,12 @@ int main(int argc,char* argv[])
   }
 
   int iframe = 0;
+  std::random_device rd;
+  std::mt19937 rdeng(rd());
+  std::uniform_int_distribution<int> dist(0,aXYZ.size()/3-1);
   while (!glfwWindowShouldClose(viewer.window))
   {
     if( iframe % 100 == 0 ){
-      std::random_device rd;
-      std::mt19937 rdeng(rd());
-      std::uniform_int_distribution<int> dist(0,aXYZ.size()/3-1);
       iker = dist(rdeng);
       MakeExpMap_Point
           (aTex,aLocCoord,

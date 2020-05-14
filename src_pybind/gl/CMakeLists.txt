@@ -59,8 +59,8 @@ if(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp    
       ${DELFEM2_INC}/opengl/cad2dtriv2_glold.h   ${DELFEM2_INC}/opengl/cad2dtriv2_glold.cpp
       ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
-      ${DELFEM2_INC}/opengl/render2tex_gl.h      ${DELFEM2_INC}/opengl/render2tex_gl.cpp
-      ${DELFEM2_INC}/opengl/render2tex_glold.h   ${DELFEM2_INC}/opengl/render2tex_glold.cpp
+      ${DELFEM2_INC}/opengl/r2t_gl.h             ${DELFEM2_INC}/opengl/r2t_gl.cpp
+      ${DELFEM2_INC}/opengl/r2tglo_glold.h       ${DELFEM2_INC}/opengl/r2tglo_glold.cpp
       ${DELFEM2_INC}/opengl/gridcube_glold.h     ${DELFEM2_INC}/opengl/gridcube_glold.cpp
       ${DELFEM2_INC}/opengl/caddtri_v3_glold.h   ${DELFEM2_INC}/opengl/caddtri_v3_glold.cpp
       )

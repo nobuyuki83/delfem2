@@ -376,9 +376,9 @@ void dfm2::opengl::CShader_MeshDTri2D::MakeBuffer
       int i0 = it.v[0];
       int i1 = it.v[1];
       int i2 = it.v[2];
-      if( it.s2[0] == -1 || i2 > i1 ){ aLine.push_back(i1); aLine.push_back(i2); }
-      if( it.s2[1] == -1 || i0 > i2 ){ aLine.push_back(i2); aLine.push_back(i0); }
-      if( it.s2[2] == -1 || i1 > i0 ){ aLine.push_back(i0); aLine.push_back(i1); }
+      if( it.s2[0] == UINT_MAX || i2 > i1 ){ aLine.push_back(i1); aLine.push_back(i2); }
+      if( it.s2[1] == UINT_MAX || i0 > i2 ){ aLine.push_back(i2); aLine.push_back(i0); }
+      if( it.s2[2] == UINT_MAX || i1 > i0 ){ aLine.push_back(i0); aLine.push_back(i1); }
     }
   }
   // ----------

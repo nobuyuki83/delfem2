@@ -1,19 +1,23 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2020 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @file definition of render to texture class CRender2Tex_DrawOldGL
+ */
 
-#ifndef DFM2_RENDER2TEX_GLOLD_H
-#define DFM2_RENDER2TEX_GLOLD_H
+#ifndef DFM2_OPENGL_R2TGLO_GLOLD_H
+#define DFM2_OPENGL_R2TGLO_GLOLD_H
+
 #include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <vector>
 #include <cmath>
 #include <cassert>
-#include "delfem2/opengl/render2tex_gl.h"
+#include "delfem2/opengl/r2t_gl.h"
 
 namespace delfem2 {
 namespace opengl {
@@ -25,18 +29,25 @@ public:
   CRender2Tex_DrawOldGL(){}
   virtual ~CRender2Tex_DrawOldGL(){}
   // ------------
-  virtual void InitGL(); // override function
-  virtual void Start(); // override function
+  virtual void InitGL() override; // override function
+  virtual void Start() override; // override function
   // ----------
   void Draw() const;
   void Draw_Axis() const;
   void Draw_Point() const;
   void Draw_BoundingBox() const;
-  void SetView();
+  std::vector<double> getGPos(int ix, int iy) const;
+  /**
+   * @brief update the bounding box by adding points
+   * @param pmin (in/out) lower coner
+   * @param pmax (in/out) upper corner
+   * @details if( pmin[0] > pmax[0] ) this bounding box is empty
+   */
+  void BoundingBox3(double* pmin, double* pmax) const;
   // ------------
+  void SetView();
   void SetPointColor(double r, double g, double b);
   void SetZeroToDepth(){ for(unsigned int i=0;i<aZ.size();++i){ aZ[i] = 0.0; } }
-  std::vector<double> getGPos(int ix, int iy) const;
   void GetDepth();
   void GetColor();
 public:
@@ -50,9 +61,11 @@ public:
   bool isDrawOnlyHitPoints = false;
   std::vector<double> colorPoint = {1,1,1,1};
 };
+
+
   
-class CRender2Tex_DrawOldGL_BOX {
- 
+class CRender2Tex_DrawOldGL_BOX
+{
 public:
   void Draw() const {
     for(auto& smplr: aSampler){
@@ -94,16 +107,25 @@ public:
     assert( fabs(aSampler[5].lengrid-l0) < 1.0e-10 );
     return l0;
   }
+  void BoundingBox3(double* pmin, double* pmax) const{
+    for(const auto& smplr : aSampler ){
+      smplr.BoundingBox3(pmin, pmax);
+    }
+  }
   
 public:
   std::vector<CRender2Tex_DrawOldGL> aSampler;
 };
 
+void CarveVoxelByDepth
+ (std::vector<int>& aVal,
+  const CRender2Tex_DrawOldGL_BOX& sampler_box);
+
 }
 }
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/opengl/render2tex_glold.cpp"
+#  include "delfem2/opengl/r2tglo_glold.cpp"
 #endif
 
 #endif /* depth_hpp */
