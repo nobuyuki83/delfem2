@@ -27,3 +27,30 @@ jobs:
       run: |
         git branch -a
         git submodule update --init --recursive    
+
+        echo "###################"
+        echo "## build googletest"
+        cd 3rd_party/googletest
+        mkdir buildVS64
+        cd buildVS64
+        cmake -A x64 -Dgtest_force_shared_crt=ON ..
+        cmake --build . --config Release
+        cd ../../..
+
+        echo "#############################"
+        echo "## build test hdronly and run"
+        cd test_cpp
+        mkdir buildVS64Hdronly
+        cd buildVS64Hdronly
+        cmake -A x64 -DUSE_HEADERONLY=ON ..
+        cmake --build . --config Release
+        "Release/runUnitTests.exe"
+        cd ../../
+
+        erho "############################"
+        echo "## build test static and run" 
+        cd test_cpp        
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake -A x64 -DUSE_HEADERONLY=OFF ..
+        cd ../../
