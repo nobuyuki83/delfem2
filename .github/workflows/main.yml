@@ -46,14 +46,11 @@ jobs:
         cd buildVS64Hdronly
         cmake -A x64 -DUSE_HEADERONLY=ON ..
         cmake --build . --config Release
-        cd Release
-        dir
-        cd ..
         ./Release/runUnitTests.exe 
         cd ../../
 
-        erho "############################"
-        echo "## build test static and run" 
+        echo "############################"
+        echo "## build test static" 
         cd test_cpp        
         mkdir buildVS64Static
         cd buildVS64Static
