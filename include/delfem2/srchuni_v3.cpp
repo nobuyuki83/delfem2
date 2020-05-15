@@ -558,11 +558,13 @@ DFM2_INLINE void delfem2::IntersectionLine_Hightfield(
     double hmin, double hmax,
     const double src[3],
     const double dir[3],
-    double nx, double ny, double elen,
+    unsigned int nx,
+    unsigned int ny,
+    double elen,
     const std::vector<float>& aH)
 {
-  for(int iey=0;iey<ny-1;++iey){
-    for(int iex=0;iex<nx-1;++iex){
+  for(unsigned int iey=0;iey<ny-1;++iey){
+    for(unsigned int iex=0;iex<nx-1;++iex){
       const double h00 = aH[(iey+0)*nx+(iex+0)];
       const double h10 = aH[(iey+0)*nx+(iex+1)];
       const double h01 = aH[(iey+1)*nx+(iex+0)];

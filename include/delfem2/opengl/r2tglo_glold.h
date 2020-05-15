@@ -36,7 +36,8 @@ public:
   void Draw_Axis() const;
   void Draw_Point() const;
   void Draw_BoundingBox() const;
-  std::vector<double> getGPos(int ix, int iy) const;
+  void getGPos(double* p, 
+               int ix, int iy) const;
   /**
    * @brief update the bounding box by adding points
    * @param pmin (in/out) lower coner
