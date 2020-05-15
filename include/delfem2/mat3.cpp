@@ -356,9 +356,10 @@ void delfem2::MatTMat3_ScaleAdd(
     const T* A, const T* B,
     T alpha, T beta)
 {
+  for(int i=0;i<9;++i){ C[i] *= beta; }
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
-      C[i*3+j] = beta*C[i*3+j] + alpha*(A[0*3+i]*B[0*3+j] + A[1*3+i]*B[1*3+j] + A[2*3+i]*B[2*3+j]);
+      C[i*3+j] += alpha*(A[0*3+i]*B[0*3+j] + A[1*3+i]*B[1*3+j] + A[2*3+i]*B[2*3+j]);
     }
   }
 }

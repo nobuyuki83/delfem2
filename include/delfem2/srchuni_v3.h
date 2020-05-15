@@ -154,7 +154,9 @@ DFM2_INLINE void IntersectionLine_Hightfield(
     double hmin, double hmax,
     const double src[3],
     const double dir[3],
-    double nx, double ny, double elen,
+    unsigned int nx,
+    unsigned int ny,
+    double elen,
     const std::vector<float>& aH);
 
 // above functions for ray interesection
