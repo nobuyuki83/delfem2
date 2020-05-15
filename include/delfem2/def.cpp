@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstring> // memcpy
 #include "delfem2/def.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
@@ -352,7 +353,7 @@ void delfem2::CDef_LaplacianLinear::Deform
   vec_tmp1.resize(aXYZ0.size());
   //
   std::vector<double>& aRhs = vec_tmp0;
-  memcpy(aRhs.data(), aRes0.data(), aRes0.size()*sizeof(double) );
+  std::memcpy(aRhs.data(), aRes0.data(), aRes0.size()*sizeof(double) );
   Mat.MatVec(aRhs.data(),
              -1.0, aXYZ1.data(), -1.0);
   std::vector<double>& aUpd = vec_tmp1;
