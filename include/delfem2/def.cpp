@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstring> // memcpy
 #include "delfem2/def.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vecxitrsol.h"
@@ -18,15 +19,15 @@ void SetLinSys_LaplaceGraph_MeshTri3
 {
   mat_A.SetZero();
   for(unsigned int ip=0;ip<mat_A.nblk_col;++ip){
-    unsigned int n1r = mat_A.colInd[ip+1] - mat_A.colInd[ip];
+    const double dn = (double)(mat_A.colInd[ip+1] - mat_A.colInd[ip]);
     for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
-      mat_A.valCrs[icrs*9+0*3+0] = -1;
-      mat_A.valCrs[icrs*9+1*3+1] = -1;
-      mat_A.valCrs[icrs*9+2*3+2] = -1;
+      mat_A.valCrs[icrs*9+0*3+0] = -1.0;
+      mat_A.valCrs[icrs*9+1*3+1] = -1.0;
+      mat_A.valCrs[icrs*9+2*3+2] = -1.0;
     }
-    mat_A.valDia[ip*9+0*3+0] = n1r;
-    mat_A.valDia[ip*9+1*3+1] = n1r;
-    mat_A.valDia[ip*9+2*3+2] = n1r;
+    mat_A.valDia[ip*9+0*3+0] = dn;
+    mat_A.valDia[ip*9+1*3+1] = dn;
+    mat_A.valDia[ip*9+2*3+2] = dn;
   }
 }
 
@@ -79,24 +80,21 @@ DFM2_INLINE void dWddW_ArapEnergy
     r.AddToScale(eR.data()+jjp*3, -1);
   }
 }
-  
-  
 
 }
 }
  
+// ==================================================
 
-
-// ============================================
-
-void delfem2::CDef_SingleLaplacianDisponly::Init
+void delfem2::CDef_LaplacianLinearAsym::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri)
 {
   std::vector<unsigned int> psup_ind, psup;
   JArray_PSuP_MeshElem(psup_ind, psup,
-                       aTri.data(), aTri.size()/3, 3,
-                       (int)aXYZ0.size()/3);
+                       aTri.data(),
+                       aTri.size()/3, 3,
+                       aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   mat_A.Initialize(aXYZ0.size()/3, 3, true);
   mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
@@ -108,7 +106,7 @@ void delfem2::CDef_SingleLaplacianDisponly::Init
                1.0, aXYZ0.data(), 0.0);
 }
 
-void delfem2::CDef_SingleLaplacianDisponly::Deform
+void delfem2::CDef_LaplacianLinearAsym::Deform
  (std::vector<double>& aXYZ1,
   const std::vector<double>& aXYZ0,
   const std::vector<int>& aBCFlag)
@@ -126,9 +124,10 @@ void delfem2::CDef_SingleLaplacianDisponly::Deform
 }
 
 
-// ----------------------------
+// ===================================================
+// below: implementation of CDef_LaplacianLinearGram
 
-void delfem2::CDef_LaplacianDisponly::Init
+void delfem2::CDef_LaplacianLinearGram::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
   bool is_preconditioner0)
@@ -137,34 +136,40 @@ void delfem2::CDef_LaplacianDisponly::Init
   std::vector<unsigned int> psup_ind, psup;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
-                       (int)aXYZ0.size()/3);
+                       aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
-  mat_A.Initialize(aXYZ0.size()/3, 3, true);
-  mat_A.SetPattern(psup_ind.data(), psup_ind.size(),
-                   psup.data(),     psup.size());
-  def::SetLinSys_LaplaceGraph_MeshTri3(mat_A);
+  Mat.Initialize(aXYZ0.size()/3, 3, true);
+  Mat.SetPattern(psup_ind.data(), psup_ind.size(),
+                 psup.data(),     psup.size());
+  def::SetLinSys_LaplaceGraph_MeshTri3(Mat);
+  const unsigned int np = Mat.nblk_col;
+  aRes0.assign(np*3,0.0);
+  Mat.MatVec(aRes0.data(),
+             -1.0, aXYZ0.data(), 0.0);
 }
 
-void delfem2::CDef_LaplacianDisponly::MakeLinearSystem()
+void delfem2::CDef_LaplacianLinearGram::SetBoundaryCondition
+(const std::vector<int>& aBCFlag_)
 {
-  const unsigned int np = mat_A.nblk_col;
-  vec_tmp.resize(np*3);
-  
+  this->aBCFlag = aBCFlag_;
+  if( !is_preconditioner ){ return; }
+  // ---------
   // make jacobi preconditioner
+  const unsigned int np = Mat.nblk_col;
   aDiaInv.assign(np*9,0.0);
   for(unsigned int ip=0;ip<np;++ip){
-    for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
-      unsigned int jp0 = mat_A.rowPtr[icrs];
+    for(unsigned int icrs=Mat.colInd[ip];icrs<Mat.colInd[ip+1];++icrs){
+      unsigned int jp0 = Mat.rowPtr[icrs];
       MatTMat3_ScaleAdd(aDiaInv.data()+jp0*9,
-                        mat_A.valCrs.data()+icrs*9,
-                        mat_A.valCrs.data()+icrs*9,
-                        1.0, 0.0); // del. prev. value and set new vaue
+                        Mat.valCrs.data()+icrs*9,
+                        Mat.valCrs.data()+icrs*9,
+                        1.0, 1.0); // del. prev. value and set new vaue
     }
     {
       MatTMat3_ScaleAdd(aDiaInv.data()+ip*9,
-                        mat_A.valDia.data()+ip*9,
-                        mat_A.valDia.data()+ip*9,
-                        1.0, 0.0); // del. prev. value and set new vaue
+                        Mat.valDia.data()+ip*9,
+                        Mat.valDia.data()+ip*9,
+                        1.0, 1.0); // del. prev. value and set new vaue
     }
   }
   for(unsigned int ip=0;ip<np;++ip){
@@ -178,66 +183,43 @@ void delfem2::CDef_LaplacianDisponly::MakeLinearSystem()
   }
 }
 
-void delfem2::CDef_LaplacianDisponly::Deform
+void delfem2::CDef_LaplacianLinearGram::Deform
  (std::vector<double>& aXYZ1,
-  const std::vector<double>& aXYZ0,
-  const std::vector<int>& aBCFlag0)
+  const std::vector<double>& aXYZ0) const
 {
-  weight_bc = 100.0;
-  this->aBCFlag = aBCFlag0;
-  this->MakeLinearSystem();
-  // ----------
-  std::vector<double> aRhs(aXYZ0.size(),0.0);
+  vec_tmp0.resize(aXYZ0.size());
+  vec_tmp1.resize(aXYZ0.size());
+  vec_tmp2.resize(aXYZ0.size());
+  //
+  std::vector<double>& aRhs = vec_tmp0;
   { // making RHS vector for elastic deformation
-    const unsigned int np = aXYZ0.size()/3;
-    std::vector<double> aTmp(np*3,0.0);
-    for(unsigned int ip=0;ip<np;++ip){
-      double* tmp = aTmp.data()+ip*3;
-      for(unsigned int icrs=mat_A.colInd[ip];icrs<mat_A.colInd[ip+1];++icrs){
-        unsigned int jp0 = mat_A.rowPtr[icrs];
-        const double d0[3] = { aXYZ0[jp0*3+0]-aXYZ0[ip*3+0], aXYZ0[jp0*3+1]-aXYZ0[ip*3+1], aXYZ0[jp0*3+2]-aXYZ0[ip*3+2] };
-        const double d1[3] = { aXYZ1[jp0*3+0]-aXYZ1[ip*3+0], aXYZ1[jp0*3+1]-aXYZ1[ip*3+1], aXYZ1[jp0*3+2]-aXYZ1[ip*3+2] };
-        tmp[0] += +(d0[0] - d1[0]);
-        tmp[1] += +(d0[1] - d1[1]);
-        tmp[2] += +(d0[2] - d1[2]);
-      }
-    }
-    mat_A.MatTVec(aRhs.data(),
-                  -1.0, aTmp.data(), 0.0);
+    vec_tmp2 = aRes0;
+    Mat.MatVec(vec_tmp2.data(),
+                 +1.0, aXYZ1.data(), 1.0);
+    Mat.MatTVec(aRhs.data(),
+                -1.0, vec_tmp2.data(), 0.0);
   }
-  /*
-   { // making RHS vector for fixed boundary condition
-   const unsigned int np = aXYZ0.size()/3;
-   std::vector<double> aGoal(np*3);
-   SetPositionAtFixedBoundary(aGoal,
-   iframe,aXYZ0,aBCFlag);
-   for(int i=0;i<np*3;++i){
-   if( aBCFlag[i] == 0 ){ continue; }
-   aRhs[i] += (aGoal[i]-aXYZ1[i])*weight_bc;
-   }
-   }
-   */
-  std::vector<double> aUpd(aXYZ0.size(),0.0);
+  std::vector<double>& aUpd = vec_tmp1;
+  aUpd.assign(aXYZ0.size(),0.0);
   if( is_preconditioner ){
-    std::vector<double> aRes = Solve_PCG(aRhs.data(), aUpd.data(),
-                                         aRhs.size(), 1.0e-7, 300, *this, *this);
-    std::cout << "pcg: " << aRes.size() << std::endl;
+    aConvHist = Solve_PCG(aRhs.data(), aUpd.data(),
+                          aRhs.size(), 1.0e-7, 300, *this, *this);
   }
   else{
-    std::vector<double> aRes = Solve_CG(aRhs.data(), aUpd.data(),
-                                        aRhs.size(), 1.0e-7, 300, *this);
-    std::cout << "cg: " << aRes.size() << std::endl;
+    aConvHist = Solve_CG(aRhs.data(), aUpd.data(),
+                         aRhs.size(), 1.0e-7, 300, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
 }
 
-void delfem2::CDef_LaplacianDisponly::MatVec
+void delfem2::CDef_LaplacianLinearGram::MatVec
  (double* y,
-  double alpha, const double* vec,  double beta) const {
-  mat_A.MatVec(vec_tmp.data(),
+  double alpha, const double* vec,  double beta) const
+{
+  Mat.MatVec(vec_tmp2.data(),
                1, vec, 0.0);
-  mat_A.MatTVec(y,
-                alpha, vec_tmp.data(), beta);
+  Mat.MatTVec(y,
+              alpha, vec_tmp2.data(), beta);
   // add diagonal for fixed boundary condition
   for(unsigned int i=0;i<aBCFlag.size();++i){
     if( aBCFlag[i] == 0 ){ continue; }
@@ -246,7 +228,7 @@ void delfem2::CDef_LaplacianDisponly::MatVec
 }
 
 // for preconditioner
-void delfem2::CDef_LaplacianDisponly::SolvePrecond(double* v) const
+void delfem2::CDef_LaplacianLinearGram::SolvePrecond(double* v) const
 {
   const unsigned int np = aBCFlag.size()/3;
   for(unsigned int ip=0;ip<np;++ip){
@@ -258,8 +240,168 @@ void delfem2::CDef_LaplacianDisponly::SolvePrecond(double* v) const
   }
 }
 
+// above: delfem2::CDef_LaplacianLinearGram
+// =========================================================================
+// below: delfem2::CDef_LaplacianLinear
 
-// ======================================
+
+namespace delfem2 {
+
+void Hoge
+(std::vector<double>& eM,
+ const std::vector<unsigned int>& aIP,
+ const std::vector<double>& aXYZ0)
+{
+  const unsigned int nIP = aIP.size();
+  const unsigned int nNg = nIP-1; // number of neighbor
+  double dn = (double)nNg;
+  eM.assign(nIP*nIP*9, 0.0);
+  const CMat3d L1 = CMat3d::Identity();
+  L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, +dn*dn);
+  for(unsigned int jjp=0;jjp<nNg;++jjp){
+    L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, -dn);
+    L1.AddToScale(eM.data()+(jjp*nIP+nNg)*9, -dn);
+    for(unsigned int kkp=0;kkp<nNg;++kkp){
+      L1.AddToScale(eM.data()+(jjp*nIP+kkp)*9, +1.0);
+    }
+  }
+}
+
+}
+
+void delfem2::CDef_LaplacianLinear::Init
+(const std::vector<double>& aXYZ0,
+ const std::vector<unsigned int>& aTri,
+ bool is_preconditioner_)
+{
+  const unsigned int np = aXYZ0.size()/3;
+  this->is_preconditioner = is_preconditioner_;
+  std::vector<unsigned int> psup_ind, psup;
+  JArray_PSuP_MeshElem(psup_ind, psup,
+                       aTri.data(), aTri.size()/3, 3,
+                       np);
+  JArray_Sort(psup_ind, psup);
+  {
+    std::vector<unsigned int> psup_ind1, psup1;
+    JArray_Extend(psup_ind1, psup1,
+                  psup_ind, psup);
+    JArray_Sort(psup_ind1, psup1);
+    Mat.Initialize(np, 3, true);
+    assert( psup_ind1.size() == np+1 );
+    Mat.SetPattern(psup_ind1.data(), psup_ind1.size(),
+                   psup1.data(), psup1.size());
+  }
+    
+  std::vector<int> tmp_buffer;
+  Mat.SetZero();
+  for(unsigned int ip=0;ip<np;++ip){
+    std::vector<unsigned int> aIP;
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      aIP.push_back(psup[ipsup]);
+    }
+    aIP.push_back(ip);
+    std::vector<double> eM;
+    delfem2::Hoge(eM, aIP, aXYZ0);
+    Mat.Mearge(aIP.size(), aIP.data(),
+               aIP.size(), aIP.data(),
+               9, eM.data(),
+               tmp_buffer);
+  }
+  
+  aRes0.resize(aXYZ0.size());
+  Mat.MatVec(aRes0.data(),
+             -1.0, aXYZ0.data(), 0.0);
+  
+  this->Prec.Clear();
+  if( is_preconditioner ){
+    this->Prec.Initialize_ILU0(Mat);
+  }
+}
+
+
+void delfem2::CDef_LaplacianLinear::SetBoundaryCondition(const std::vector<int> &aBCFlag_)
+{
+  this->aBCFlag = aBCFlag_;
+  if( !is_preconditioner ){ return; }
+  //
+  const unsigned int np = Mat.nblk_col;
+  assert( aBCFlag.size() == np*3 );
+  for(int ip=0;ip<np;++ip){
+    for(int idim=0;idim<3;++idim){
+      if( aBCFlag[ip*3+idim] == 0 ){ continue; }
+      Mat.valDia[ip*9+idim*3+idim] += weight_bc;
+    }
+  }
+  this->Prec.SetValueILU(Mat);
+  this->Prec.DoILUDecomp();
+  for(int ip=0;ip<np;++ip){
+    for(int idim=0;idim<3;++idim){
+      if( aBCFlag[ip*3+idim] == 0 ){ continue; }
+      Mat.valDia[ip*9+idim*3+idim] -= weight_bc;
+    }
+  }
+}
+
+
+
+void delfem2::CDef_LaplacianLinear::Deform
+(std::vector<double>& aXYZ1,
+ const std::vector<double>& aXYZ0) const
+{
+  // ----------
+  vec_tmp0.resize(aXYZ0.size());
+  vec_tmp1.resize(aXYZ0.size());
+  //
+  std::vector<double>& aRhs = vec_tmp0;
+  std::memcpy(aRhs.data(), aRes0.data(), aRes0.size()*sizeof(double) );
+  Mat.MatVec(aRhs.data(),
+             -1.0, aXYZ1.data(), -1.0);
+  std::vector<double>& aUpd = vec_tmp1;
+  aUpd.assign(aXYZ0.size(),0.0);
+  if( is_preconditioner ){
+    aConvHist = Solve_PCG(aRhs.data(), aUpd.data(),
+                          aRhs.size(), 1.0e-7, 300, *this, Prec);
+  }
+  else{
+    aConvHist = Solve_CG(aRhs.data(), aUpd.data(),
+                         aRhs.size(), 1.0e-7, 300, *this);
+  }
+  for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
+}
+
+void delfem2::CDef_LaplacianLinear::MatVec(
+    double* y,
+    double alpha, const double* vec,  double beta) const
+{
+  Mat.MatTVec(y,
+              alpha, vec, beta);
+  // add diagonal for fixed boundary condition
+  for(unsigned int i=0;i<aBCFlag.size();++i){
+    if( aBCFlag[i] == 0 ){ continue; }
+    y[i] += weight_bc*vec[i];
+  }
+}
+
+// for preconditioner
+void delfem2::CDef_LaplacianLinear::SolvePrecond(double* v) const
+{
+  /*
+  const unsigned int np = aBCFlag.size()/3;
+  for(unsigned int ip=0;ip<np;++ip){
+    double tmp[3];
+    MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);
+    v[ip*3+0] = tmp[0];
+    v[ip*3+1] = tmp[1];
+    v[ip*3+2] = tmp[2];
+  }
+   */
+}
+
+
+
+
+
+// ============================================
 
 delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly
  (const std::vector<double>& aXYZ0,
@@ -592,26 +734,28 @@ void delfem2::CDef_ArapEdge::Deform
 
 
 // ===========================================================
+// below: implementation of CDef_Arap class
 
 void delfem2::CDef_Arap::Init
  (const std::vector<double>& aXYZ0,
   const std::vector<unsigned int>& aTri,
-  bool is_preconditioner0)
+  bool is_preconditioner_)
 {
-  this->is_preconditioner = is_preconditioner0;
+  this->is_preconditioner = is_preconditioner_;
   const unsigned int np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(psup_ind, psup,
                        aTri.data(), aTri.size()/3, 3,
-                       (int)aXYZ0.size()/3);
+                       aXYZ0.size()/3);
   JArray_Sort(psup_ind, psup);
   {
     std::vector<unsigned int> psup_ind1, psup1;
     JArray_Extend(psup_ind1, psup1,
-                        psup_ind, psup);
+                  psup_ind, psup);
     JArray_Sort(psup_ind1, psup1);
     Mat.Initialize(np, 3, true);
     assert( psup_ind1.size() == np+1 );
-    Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());
+    Mat.SetPattern(psup_ind1.data(), psup_ind1.size(),
+                   psup1.data(), psup1.size());
   }
   
   Precomp.resize(np*9);

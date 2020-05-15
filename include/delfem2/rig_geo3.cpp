@@ -95,7 +95,7 @@ DFM2_INLINE  std::string MyReplace
   const size_t n = str.size();
   //
   std::string ss(str);
-  for(int i=0;i<n;++i){
+  for(unsigned int i=0;i<n;++i){
     if( ss[i] != cf ){ continue; }
     ss[i] = ct;
   }
