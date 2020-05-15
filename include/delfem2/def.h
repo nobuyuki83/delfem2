@@ -16,7 +16,7 @@
 
 namespace delfem2 {
 
-class CDef_SingleLaplacianDisponly
+class CDef_LaplacianLinearAsym
 {
 public:
   void Init(const std::vector<double>& aXYZ0,
@@ -30,27 +30,68 @@ public:
   std::vector<double> aHistConv;
 };
 
-class CDef_LaplacianDisponly{
+// =====================================
+
+/**
+ * @brief deformation classs where the matrix is computed as L^TL
+ */
+class CDef_LaplacianLinearGram{
 public:
   void Init(const std::vector<double>& aXYZ0,
             const std::vector<unsigned int>& aTri,
             bool is_preconditioner);
   void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0,
-              const std::vector<int>& aBCFlag);
+              const std::vector<double>& aXYZ0) const;
+  void SetBoundaryCondition(const std::vector<int>& aBCFlag);
+  // -----------
+  // called from solver
   void MatVec(double* y,
               double alpha, const double* vec,  double beta) const;
   void SolvePrecond(double* v) const;
-private:
-  void MakeLinearSystem();
 public:
-  CMatrixSparse<double> mat_A;
+  CMatrixSparse<double> Mat;
   bool is_preconditioner;
-  double weight_bc;
-  std::vector<double> aDiaInv;
-  mutable std::vector<double> vec_tmp;
+  double weight_bc = 100.0;
   std::vector<int> aBCFlag;
+  std::vector<double> aRes0;
+  // preconditioner
+  std::vector<double> aDiaInv;
+  // temprary vectors for solver
+  mutable std::vector<double> vec_tmp0, vec_tmp1, vec_tmp2;
+  mutable std::vector<double> aConvHist;
 };
+
+// =====================================
+
+/**
+ * @brief deformation classs where the matrix is computed as L^TL
+ */
+class CDef_LaplacianLinear{
+public:
+  void Init(const std::vector<double>& aXYZ0,
+            const std::vector<unsigned int>& aTri,
+            bool is_preconditioner);
+  void Deform(std::vector<double>& aXYZ1,
+              const std::vector<double>& aXYZ0) const;
+  void SetBoundaryCondition(const std::vector<int>& aBCFlag);
+  // -----------
+  void MatVec(double* y,
+              double alpha, const double* vec,  double beta) const;
+  void SolvePrecond(double* v) const;
+public:
+  CMatrixSparse<double> Mat;
+  double weight_bc = 100;
+  std::vector<double> aRes0;
+  std::vector<int> aBCFlag;
+  // 
+  bool is_preconditioner;
+  CPreconditionerILU<double> Prec;
+  // 
+  mutable std::vector<double> vec_tmp0, vec_tmp1;
+  mutable std::vector<double> aConvHist;
+};
+
+// =====================================
 
 class CDef_ArapEdgeLinearDisponly {
 public:
@@ -114,6 +155,8 @@ public:
   std::vector<double> aDiaInv; // for jacobi preconditining
   mutable std::vector<double> vec_tmp;
 };
+
+// =============================================
 
 /**
  * @brief As-Rigid-As-Possible shape deformation

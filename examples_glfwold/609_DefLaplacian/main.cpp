@@ -91,7 +91,7 @@ int main(int argc,char* argv[])
   { // set problem
     dfm2::MeshTri3D_CylinderClosed(aXYZ0, aTri,
                                    0.2, 1.6,
-                                   16, 16);
+                                   24, 24);
     aBCFlag.assign(aXYZ0.size(), 0);
     for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip) {
       double y0 = aXYZ0[ip*3+1];
@@ -108,7 +108,7 @@ int main(int argc,char* argv[])
     }
   }
   std::vector<double> aXYZ1 = aXYZ0;
-  
+    
   // ------------------------
   
   dfm2::opengl::CViewer_GLFW viewer;
@@ -122,13 +122,15 @@ int main(int argc,char* argv[])
   {
     {
       glfwSetWindowTitle(viewer.window, "Direct Constraint");
-      dfm2::CDef_SingleLaplacianDisponly def;
+      dfm2::CDef_LaplacianLinearAsym def;
       def.Init(aXYZ0, aTri);
       for(;iframe<100;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
         def.Deform(aXYZ1,
                   aXYZ0, aBCFlag);
+        std::cout << "   bicgstab" << def.aHistConv.size() << std::endl;
+        // -----
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.DrawEnd_oldGL();
@@ -136,16 +138,17 @@ int main(int argc,char* argv[])
       }
     }
     {
-      glfwSetWindowTitle(viewer.window, "Energy-based Constraint without Preconditioner");
-      dfm2::CDef_LaplacianDisponly def;
+      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinearGram without Preconditioner");
+      dfm2::CDef_LaplacianLinearGram def;
       def.Init(aXYZ0, aTri, false);
+      def.SetBoundaryCondition(aBCFlag);
       for(;iframe<200;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
         def.Deform(aXYZ1,
-                  aXYZ0, aBCFlag);
-//        LapDef_LinearEnergyDisponly(aXYZ1,mat_A,
-//                                    iframe,false, aXYZ0,aTri,aBCFlag);
+                   aXYZ0);
+        std::cout << "  cg nitr:" << def.aConvHist.size() << std::endl;
+        // -------
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.DrawEnd_oldGL();
@@ -153,14 +156,53 @@ int main(int argc,char* argv[])
       }
     }
     {
-      dfm2::CDef_LaplacianDisponly def;
+      dfm2::CDef_LaplacianLinearGram def;
       def.Init(aXYZ0, aTri, true);
-      glfwSetWindowTitle(viewer.window, "Energy-based Constraint with Preconditioner");
+      def.SetBoundaryCondition(aBCFlag);
+      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinearGram with Preconditioner");
       for(;iframe<300;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
         def.Deform(aXYZ1,
-                  aXYZ0, aBCFlag);
+                   aXYZ0);
+        std::cout << "  pcg nitr:" << def.aConvHist.size() << std::endl;
+        // -------
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      }
+    }
+    {
+      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinear without Preconditioner");
+      dfm2::CDef_LaplacianLinear def;
+      def.Init(aXYZ0, aTri, false);
+      def.SetBoundaryCondition(aBCFlag);
+      for(;iframe<400;++iframe){
+        SetPositionAtFixedBoundary(aXYZ1,
+                                   iframe, aXYZ0, aBCFlag);
+        def.Deform(aXYZ1,
+                   aXYZ0);
+        std::cout << "  cg nitr:" << def.aConvHist.size() << std::endl;
+        // -------
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      }
+    }
+    {
+      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinear with Preconditioner");
+      dfm2::CDef_LaplacianLinear def;
+      def.Init(aXYZ0, aTri, true);
+      def.SetBoundaryCondition(aBCFlag);
+      for(;iframe<500;++iframe){
+        SetPositionAtFixedBoundary(aXYZ1,
+                                   iframe, aXYZ0, aBCFlag);
+        def.Deform(aXYZ1,
+                   aXYZ0);
+        std::cout << "  pcg nitr:" << def.aConvHist.size() << std::endl;
+        // -------
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.DrawEnd_oldGL();

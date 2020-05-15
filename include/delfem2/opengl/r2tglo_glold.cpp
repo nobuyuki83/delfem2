@@ -157,16 +157,18 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::Draw_Point() const
   ::glEnd();
 }
 
-std::vector<double> delfem2::opengl::CRender2Tex_DrawOldGL::getGPos(int ix, int iy) const
+void delfem2::opengl::CRender2Tex_DrawOldGL::getGPos
+ (double* p,
+  int ix, int iy) const
 {
   const CVec3d& dx = x_axis;
   const CVec3d& dz = z_axis;
   const CVec3d& dy = Cross(dz,dx);
-  double lz = -aZ[iy*nResX+ix];
+  double lz = aZ[iy*nResX+ix];
   double lx = (ix+0.5)*lengrid;
   double ly = (iy+0.5)*lengrid;
   CVec3d vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);
-  return vp.stlvec();
+  vp.CopyTo(p);
 }
 
 void delfem2::opengl::CRender2Tex_DrawOldGL::BoundingBox3
