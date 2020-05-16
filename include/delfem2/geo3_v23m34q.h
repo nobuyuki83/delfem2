@@ -153,13 +153,19 @@ DFM2_INLINE CQuatd Quat_CartesianAngle(const CVec3d& p);
 /**
  * @discussion interface doesn't have CQuat, CMat3, CVec3, but the implementation has it.
  */
-DFM2_INLINE void UpdateRotationsByMatchingCluster
+DFM2_INLINE void UpdateRotationsByMatchingCluster_Linear
 (std::vector<double>& aQuat1,
  const std::vector<double>& aXYZ0,
  const std::vector<double>& aXYZ1,
  const std::vector<unsigned int>& psup_ind,
  const std::vector<unsigned int>& psup);
 
+DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD
+ (std::vector<double>& aQuat1,
+  const std::vector<double>& aXYZ0,
+  const std::vector<double>& aXYZ1,
+  const std::vector<unsigned int>& psup_ind,
+  const std::vector<unsigned int>& psup);
 
 } // 
 

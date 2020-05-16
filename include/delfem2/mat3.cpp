@@ -55,6 +55,25 @@ DFM2_INLINE double estimationMaxEigenValue(const double mtm[6]) {
   return maxl;
 }
 
+DFM2_INLINE void Cross3(double r[3], const double v1[3], const double v2[3]){
+  r[0] = v1[1]*v2[2] - v2[1]*v1[2];
+  r[1] = v1[2]*v2[0] - v2[2]*v1[0];
+  r[2] = v1[0]*v2[1] - v2[0]*v1[1];
+}
+
+DFM2_INLINE void Normalize3(double v[3])
+{
+  double len = sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] );
+  v[0] /= len;
+  v[1] /= len;
+  v[2] /= len;
+}
+
+DFM2_INLINE double SqLength3(double v[3])
+{
+  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+}
+
 }
 }
 
@@ -444,8 +463,7 @@ DFM2_INLINE bool delfem2::eigenSym3
  const double sm[6],
  int nitr)
 {
-//  const double eps = 1.0e-100;
-  //  double tol = 1.0e-5;
+  // initialize u as identity matrix
   u[0]=u[4]=u[8]=1.0;
   u[1]=u[2]=u[3]=u[5]=u[6]=u[7]=0.0;
   l[0]=l[1]=l[2]=0.0;
@@ -460,14 +478,11 @@ DFM2_INLINE bool delfem2::eigenSym3
     const double a12 = fabs(sms[3]);
     const double a20 = fabs(sms[4]);
     const double a01 = fabs(sms[5]);
-//    std::cout << a12 << " " << a20 << " " << a01 << std::endl;
-//    std::cout << m[0] << " " << m[1] << " " << m[2] << " " << m[3] << " " << m[4] << " " << m[5] << std::endl;
-    if( a12 >= a20 && a12 >= a01 ){ // a12 sms[3] is biggest
+    if( a12 >= a20 && a12 >= a01 ){
+      // when a12 sms[3] is the biggest
       const double t = 0.5*atan2(2*m[3],m[2]-m[1]);
       const double ct = cos(t);
       const double st = sin(t);
-//      std::cout << "hoge0 " << m[2]-m[1] << " " << (ct*ct-st*st)*m[3]+st*ct*(m[1]-m[2]) << std::endl;
-//      if( fabs(t)< eps ){ return true; }
       sms[1] = ct*ct*m[1]+st*st*m[2]-2*st*ct*m[3];
       sms[2] = ct*ct*m[2]+st*st*m[1]+2*st*ct*m[3];
       sms[3] = 0; // (ct*ct-st*st)*m[3]+st*ct*(m[1]-m[2]);
@@ -481,19 +496,18 @@ DFM2_INLINE bool delfem2::eigenSym3
       u[7] = +ct*v[7]-st*v[8];
       u[8] = +st*v[7]+ct*v[8];
     }
-    else if( a20 >= a01 && a20 >= a12 ){ // a20 sms[4] is biggest
+    else if( a20 >= a01 && a20 >= a12 ){
+      // when a20 sms[4] is the biggest
       // the above condition statement shoud pass exactly once for each iteration.
       const double t = 0.5*atan2(2*m[4],m[2]-m[0]);
       const double ct = cos(t);
       const double st = sin(t);
-//      std::cout << "hoge1 " << m[2]-m[0] << "   " << (ct*ct-st*st)*m[4]+st*ct*(m[0]-m[2]) << std::endl;
-//      if( fabs(t)< eps ){ return true; }
       sms[0] = ct*ct*m[0]+st*st*m[2]-2*st*ct*m[4];
       sms[2] = ct*ct*m[2]+st*st*m[0]+2*st*ct*m[4];
       sms[3] = st*m[5]+ct*m[3];
       sms[4] = 0; // (ct*ct-st*st)*m[4]+st*ct*(m[0]-m[2]);
       sms[5] = ct*m[5]-st*m[3];
-      ////
+      //
       u[0] = +ct*v[0]-st*v[2];
       u[2] = +st*v[0]+ct*v[2];
       u[3] = +ct*v[3]-st*v[5];
@@ -501,13 +515,12 @@ DFM2_INLINE bool delfem2::eigenSym3
       u[6] = +ct*v[6]-st*v[8];
       u[8] = +st*v[6]+ct*v[8];
     }
-//    if( a01 >= a12 && a01 >= a20 ){ // a01 sms[5] is biggest
-    else{ // the condition statement shoud pass exactly once for each iteration.
+    else{
+      // when a01 sms[5] is the biggest
+      // the condition statement shoud pass exactly once for each iteration.
       const double t = 0.5*atan2(2*m[5],m[1]-m[0]);
       const double ct = cos(t);
       const double st = sin(t);
-//      std::cout << "hoge2 " << m[1]-m[0] << " " << (ct*ct-st*st)*m[5]+st*ct*(m[0]-m[1]) << std::endl;
-//      if( fabs(t)< eps ){ return true; }
       sms[0] = ct*ct*m[0]+st*st*m[1]-2*st*ct*m[5];
       sms[1] = ct*ct*m[1]+st*st*m[0]+2*st*ct*m[5];
       sms[3] = st*m[4]+ct*m[3];
@@ -528,11 +541,37 @@ DFM2_INLINE bool delfem2::eigenSym3
   return true;
 }
 
+DFM2_INLINE void SortEigen3
+ (double G[3], double V[9])
+{
+  double t;
+  if( G[1] > G[0] ){ // swap 01
+    t=G[0]; G[0]=G[1]; G[1] = t;
+    t=V[0]; V[0]=V[1]; V[1] = t;
+    t=V[3]; V[3]=V[4]; V[4] = t;
+    t=V[6]; V[6]=V[7]; V[7] = t;
+  }
+  if( G[2] > G[1] ){
+    t=G[1]; G[1]=G[2]; G[2] = t;
+    t=V[1]; V[1]=V[2]; V[2] = t;
+    t=V[4]; V[4]=V[5]; V[5] = t;
+    t=V[7]; V[7]=V[8]; V[8] = t;
+  }
+  if( G[1] > G[0] ){ // swap 01
+    t=G[0]; G[0]=G[1]; G[1] = t;
+    t=V[0]; V[0]=V[1]; V[1] = t;
+    t=V[3]; V[3]=V[4]; V[4] = t;
+    t=V[6]; V[6]=V[7]; V[7] = t;
+  }
+}
+
+// m = UGV^T
 DFM2_INLINE void delfem2::svd3
 (double U[9], double G[3], double V[9],
  const double m[9],
  int nitr)
 {
+  // M^TM = VGGV^T
   const double mtm[6] = {
     m[0]*m[0]+m[3]*m[3]+m[6]*m[6],
     m[1]*m[1]+m[4]*m[4]+m[7]*m[7],
@@ -540,41 +579,75 @@ DFM2_INLINE void delfem2::svd3
     m[1]*m[2]+m[4]*m[5]+m[7]*m[8],
     m[2]*m[0]+m[5]*m[3]+m[8]*m[6],
     m[0]*m[1]+m[3]*m[4]+m[6]*m[7] };
-  double lv[3]; eigenSym3(V,lv,
-                          mtm,nitr);
+  double lv[3];
+  eigenSym3(V,lv,
+            mtm,nitr);
+  SortEigen3(lv, V);
+  if( lv[0] < 0 ){ lv[0] = 0.0; }
+  if( lv[1] < 0 ){ lv[1] = 0.0; }
+  if( lv[2] < 0 ){ lv[2] = 0.0; }
   G[0] = sqrt(lv[0]);
   G[1] = sqrt(lv[1]);
   G[2] = sqrt(lv[2]);
-  if( G[0]>1.e-20 && G[1]>1.e-20 && G[2]>1.e-20 ){
-    const double invG[3] = { 1.0/G[0], 1.0/G[1], 1.0/G[2] };
-    U[0] = (m[0]*V[0]+m[1]*V[3]+m[2]*V[6])*invG[0];
-    U[1] = (m[0]*V[1]+m[1]*V[4]+m[2]*V[7])*invG[1];
-    U[2] = (m[0]*V[2]+m[1]*V[5]+m[2]*V[8])*invG[2];
-    U[3] = (m[3]*V[0]+m[4]*V[3]+m[5]*V[6])*invG[0];
-    U[4] = (m[3]*V[1]+m[4]*V[4]+m[5]*V[7])*invG[1];
-    U[5] = (m[3]*V[2]+m[4]*V[5]+m[5]*V[8])*invG[2];
-    U[6] = (m[6]*V[0]+m[7]*V[3]+m[8]*V[6])*invG[0];
-    U[7] = (m[6]*V[1]+m[7]*V[4]+m[8]*V[7])*invG[1];
-    U[8] = (m[6]*V[2]+m[7]*V[5]+m[8]*V[8])*invG[2];
+
+  double u0[3] = {
+    m[0]*V[0]+m[1]*V[3]+m[2]*V[6],
+    m[3]*V[0]+m[4]*V[3]+m[5]*V[6],
+    m[6]*V[0]+m[7]*V[3]+m[8]*V[6] };
+  double u1[3] = {
+    m[0]*V[1]+m[1]*V[4]+m[2]*V[7],
+    m[3]*V[1]+m[4]*V[4]+m[5]*V[7],
+    m[6]*V[1]+m[7]*V[4]+m[8]*V[7] };
+  double u2[3] = {
+    m[0]*V[2]+m[1]*V[5]+m[2]*V[8],
+    m[3]*V[2]+m[4]*V[5]+m[5]*V[8],
+    m[6]*V[2]+m[7]*V[5]+m[8]*V[8] };
+  
+  if( Det_Mat3(V) < 0 ){ // making right hand coordinate
+    V[0*3+2]*=-1;
+    V[1*3+2]*=-1;
+    V[2*3+2]*=-1;
+    G[    2]*=-1;
+    U[0*3+2]*=-1;
+    U[1*3+2]*=-1;
+    U[2*3+2]*=-1;
+  }
+  
+  const double sql0 = mat3::SqLength3(u0);
+  if( sql0 > 1.0e-20 ){
+    mat3::Normalize3(u0);
+    const double sql1 = mat3::SqLength3(u1);
+    if( sql1 < 1.0e-20 ){
+      u1[0] = 1.0-fabs(u0[0]);
+      u1[1] = 1.0-fabs(u0[1]);
+      u1[2] = 1.0-fabs(u0[2]);
+    }
+    else{
+      mat3::Normalize3(u1);
+    }
+    const double d01 = u0[0]*u1[0] + u0[1]*u1[1] + u0[2]*u1[2];
+    u1[0] -= d01*u0[0];
+    u1[1] -= d01*u0[1];
+    u1[2] -= d01*u0[2];
+    mat3::Normalize3(u1);
+    double s2[3];
+    mat3::Cross3(s2, u0,u1);
+    const double d22 = u2[0]*s2[0] + u2[1]*s2[1] + u2[2]*s2[2];
+    u2[0] = s2[0];
+    u2[1] = s2[1];
+    u2[2] = s2[2];
+    if( d22 < 0 ){
+      G[2] *= -1;
+    }
   }
   else{
-    const double mmt[6] = {
-      m[0]*m[0]+m[3]*m[3]+m[6]*m[6],
-      m[1]*m[1]+m[4]*m[4]+m[7]*m[7],
-      m[2]*m[2]+m[5]*m[5]+m[8]*m[8],
-      m[3]*m[6]+m[4]*m[7]+m[5]*m[8],
-      m[6]*m[0]+m[7]*m[1]+m[8]*m[2],
-      m[0]*m[3]+m[1]*m[4]+m[2]*m[5] };
-    double lu[3]; eigenSym3(U,lu,
-                            mmt,nitr);
+    u0[0]=1; u0[1]=0; u0[2]=0;
+    u1[0]=0; u1[1]=1; u1[2]=0;
+    u2[0]=0; u2[1]=0; u2[2]=1;
   }
-  const double detU = Det_Mat3(U);
-  if( detU < 0 ){
-    U[2]=-U[2];
-    U[5]=-U[5];
-    U[8]=-U[8];
-    G[2]=-G[2];
-  }
+  U[0]=u0[0]; U[1]=u1[0]; U[2]=u2[0];
+  U[3]=u0[1]; U[4]=u1[1]; U[5]=u2[1];
+  U[6]=u0[2]; U[7]=u1[2]; U[8]=u2[2];
 }
 
 DFM2_INLINE void delfem2::GetRotPolarDecomp
@@ -584,9 +657,12 @@ DFM2_INLINE void delfem2::GetRotPolarDecomp
  int nitr)
 {
   double U[9], G[3], V[9];
+  // am = UGV^T
   svd3(U,G,V,
        am,nitr);
-  MatMatT3(R,U,V);
+  // R = UV^T
+  MatMatT3(R,
+           U,V);
 }
 
 
@@ -839,7 +915,7 @@ template void delfem2::CMat3<double>::SetSymetric(const double sm[6]);
 template <typename T>
 void delfem2::CMat3<T>::SetZero()
 {
-  for(T & i : mat){ i = 0.0; }
+  for(auto& v : mat){ v = 0.0; }
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CMat3<float>::SetZero();
@@ -854,10 +930,8 @@ template <>
 DFM2_INLINE void CMat3<double>::SetRandom() {
   std::random_device rd;
   std::mt19937 mt(rd());
-  std::uniform_real_distribution<double> score(-50.0, 50.0);
-  for (double &v : mat) {
-    v = score(mt);
-  }
+  std::uniform_real_distribution<double> dist(-50.0, 50.0);
+  for (double &v : mat) { v = dist(mt); }
 }
 
 }

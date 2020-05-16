@@ -486,7 +486,7 @@ TEST(objfunc_v23, WdWddW_Rod)
                            +ddW_dtdP[0][0]*dP[0]
                            +ddW_dtdP[0][1]*dP[1]
                            +ddW_dtdP[0][2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 1.0e-3*(1+fabs(val1)) );
+      EXPECT_NEAR(val0, val1, 2.5e-3*(1+fabs(val1)) );
     }
     {
       const double val0 = (dw_dt[1]-dW_dt[1])/eps;
@@ -607,8 +607,8 @@ TEST(objfunc_v23, arap)
       dfm2::Quat_Identity(aQuat1.data()+4*ip);
     }
     for(int itr=0;itr<40;++itr){
-      dfm2::UpdateRotationsByMatchingCluster(aQuat1,
-                                             aXYZ0,aXYZ1,psup_ind,psup);
+      dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
+                                                    aXYZ0,aXYZ1,psup_ind,psup);
     }
   }
   
@@ -627,8 +627,8 @@ TEST(objfunc_v23, arap)
   for(int i=0;i<aXYZ2.size();++i){ aXYZ2[i] += eps*dXYZ12[i]; }
   
   std::vector<double> aQuat2 = aQuat1;
-  dfm2::UpdateRotationsByMatchingCluster(aQuat2,
-                                         aXYZ0, aXYZ2, psup_ind, psup);
+  dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat2,
+                                                aXYZ0, aXYZ2, psup_ind, psup);
   
   double w2 = dfm2::W_ArapEnergy(aXYZ0, aXYZ2, aQuat2, psup_ind, psup);
   std::vector<double> aRes2;

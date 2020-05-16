@@ -77,13 +77,12 @@ public:
   // -----------
   void MatVec(double* y,
               double alpha, const double* vec,  double beta) const;
-  void SolvePrecond(double* v) const;
 public:
   CMatrixSparse<double> Mat;
   double weight_bc = 100;
   std::vector<double> aRes0;
   std::vector<int> aBCFlag;
-  // 
+  //
   bool is_preconditioner;
   CPreconditionerILU<double> Prec;
   // 
@@ -172,11 +171,13 @@ public:
               const std::vector<double>& aXYZ0,
               const std::vector<int>& aBCFlag);
 public:
+  mutable std::vector<double> aConvHist;
   std::vector<unsigned int> psup_ind, psup;
+private:
+  bool is_preconditioner;
   std::vector<double> Precomp;
   CMatrixSparse<double> Mat;
   std::vector<double> aRes1, aUpd1;
-  bool is_preconditioner;
   CPreconditionerILU<double> Prec;
 };
 
