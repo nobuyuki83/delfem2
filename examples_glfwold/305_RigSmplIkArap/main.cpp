@@ -184,7 +184,7 @@ void Solve_MinEnergyArap
   dfm2::Skinning_LBS(aXYZ1,
                      aXYZ0, aBone, aW);
   for(int itr=0;itr<5;++itr){
-    dfm2::UpdateRotationsByMatchingCluster(aQuat1,
+    dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
                                            aXYZ0,aXYZ1,psup_ind,psup);
   }
 }

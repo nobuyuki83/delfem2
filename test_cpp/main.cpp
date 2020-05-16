@@ -197,7 +197,7 @@ TEST(mat3, eigen3)
     double l[3];
     dfm2::CMat3d U;
     dfm2::eigenSym3(U.mat, l,
-              sm,20);
+                    sm,20);
     {
       double diffU = (U.Trans()*U-dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-10);
@@ -221,7 +221,7 @@ TEST(mat3, svd3)
     double g[3];
     dfm2::CMat3d U,V;
     dfm2::svd3(U.mat,g,V.mat,
-         M.mat,20);
+               M.mat,20);
     {
       double diffU = (U.Trans()*U-dfm2::CMat3d::Identity()).SqNorm_Frobenius();
       EXPECT_NEAR(diffU, 0.0, 1.0e-6);

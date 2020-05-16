@@ -607,8 +607,8 @@ TEST(objfunc_v23, arap)
       dfm2::Quat_Identity(aQuat1.data()+4*ip);
     }
     for(int itr=0;itr<40;++itr){
-      dfm2::UpdateRotationsByMatchingCluster(aQuat1,
-                                             aXYZ0,aXYZ1,psup_ind,psup);
+      dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
+                                                    aXYZ0,aXYZ1,psup_ind,psup);
     }
   }
   
@@ -627,8 +627,8 @@ TEST(objfunc_v23, arap)
   for(int i=0;i<aXYZ2.size();++i){ aXYZ2[i] += eps*dXYZ12[i]; }
   
   std::vector<double> aQuat2 = aQuat1;
-  dfm2::UpdateRotationsByMatchingCluster(aQuat2,
-                                         aXYZ0, aXYZ2, psup_ind, psup);
+  dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat2,
+                                                aXYZ0, aXYZ2, psup_ind, psup);
   
   double w2 = dfm2::W_ArapEnergy(aXYZ0, aXYZ2, aQuat2, psup_ind, psup);
   std::vector<double> aRes2;

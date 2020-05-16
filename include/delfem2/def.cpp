@@ -48,7 +48,7 @@ DFM2_INLINE void dWddW_ArapEnergy
   const CMat3d Mrot = CMat3d::Quat(aQuat1.data()+ip*4);
   eM.assign(nIP*nIP*9, 0.0);
   for(unsigned int jjp=0;jjp<nNg;++jjp){
-    for(unsigned int kkp=0;kkp<nNg;++kkp){
+    for(unsigned int kkp=0;kkp<nNg;++kkp){ // nonlinear component
       const CVec3d vj = (CVec3d(aXYZ0.data()+aIP[jjp]*3)-Pi);
       const CVec3d vk = (CVec3d(aXYZ0.data()+aIP[kkp]*3)-Pi);
       CMat3d L1 = Mrot*CMat3d::Spin(vk.p)*LMi*CMat3d::Spin(vj.p)*Mrot.Trans();
@@ -57,7 +57,7 @@ DFM2_INLINE void dWddW_ArapEnergy
       L1.AddToScale(eM.data()+(nNg*nIP+jjp)*9, +1.0);
       L1.AddToScale(eM.data()+(kkp*nIP+nNg)*9, +1.0);
     }
-    {
+    { // linear component
       CMat3d L1 = CMat3d::Identity();
       L1.AddToScale(eM.data()+(jjp*nIP+jjp)*9, +1.0);
       L1.AddToScale(eM.data()+(nNg*nIP+nNg)*9, +1.0);
@@ -314,12 +314,13 @@ void delfem2::CDef_LaplacianLinear::Init
   
   this->Prec.Clear();
   if( is_preconditioner ){
-    this->Prec.Initialize_ILU0(Mat);
+    this->Prec.Initialize_ILUk(Mat,0);
   }
 }
 
 
-void delfem2::CDef_LaplacianLinear::SetBoundaryCondition(const std::vector<int> &aBCFlag_)
+void delfem2::CDef_LaplacianLinear::SetBoundaryCondition
+ (const std::vector<int> &aBCFlag_)
 {
   this->aBCFlag = aBCFlag_;
   if( !is_preconditioner ){ return; }
@@ -342,16 +343,13 @@ void delfem2::CDef_LaplacianLinear::SetBoundaryCondition(const std::vector<int> 
   }
 }
 
-
-
 void delfem2::CDef_LaplacianLinear::Deform
 (std::vector<double>& aXYZ1,
  const std::vector<double>& aXYZ0) const
 {
-  // ----------
   vec_tmp0.resize(aXYZ0.size());
   vec_tmp1.resize(aXYZ0.size());
-  //
+  // ------------------------------
   std::vector<double>& aRhs = vec_tmp0;
   std::memcpy(aRhs.data(), aRes0.data(), aRes0.size()*sizeof(double) );
   Mat.MatVec(aRhs.data(),
@@ -382,25 +380,7 @@ void delfem2::CDef_LaplacianLinear::MatVec(
   }
 }
 
-// for preconditioner
-void delfem2::CDef_LaplacianLinear::SolvePrecond(double* v) const
-{
-  /*
-  const unsigned int np = aBCFlag.size()/3;
-  for(unsigned int ip=0;ip<np;++ip){
-    double tmp[3];
-    MatVec3(tmp, aDiaInv.data()+ip*9, v+ip*3);
-    v[ip*3+0] = tmp[0];
-    v[ip*3+1] = tmp[1];
-    v[ip*3+2] = tmp[2];
-  }
-   */
-}
-
-
-
-
-
+// above: delfem2::CDef_LaplacianLinear
 // ============================================
 
 delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly
@@ -783,7 +763,7 @@ void delfem2::CDef_Arap::Deform
 (std::vector<double>& aXYZ1,
  std::vector<double>& aQuat1,
  const std::vector<double>& aXYZ0,
- const std::vector<int>& aBCFlag)
+ const std::vector<int>& aBCFlag) 
 {
   const unsigned int np = aXYZ0.size()/3;
   Mat.SetZero();
@@ -815,9 +795,7 @@ void delfem2::CDef_Arap::Deform
   Mat.SetFixedBC(aBCFlag.data());
   setRHS_Zero(aRes1, aBCFlag, 0);
   
-  aUpd1.resize(aRes1.size());
-  std::vector<double> aConvHist;
-  
+  aUpd1.resize(aRes1.size());  
   if( is_preconditioner ){
     this->Prec.SetValueILU(Mat);
     this->Prec.DoILUDecomp();
@@ -828,11 +806,15 @@ void delfem2::CDef_Arap::Deform
     aConvHist = Solve_CG(aRes1.data(), aUpd1.data(),
                          aRes1.size(), 1.0e-7, 300, Mat);
   }
-  
-  std::cout << aConvHist.size() << std::endl;
+
   for(unsigned int i=0;i<np*3;++i){ aXYZ1[i] -= aUpd1[i]; }
+  // ----
+  /*
   for(int itr=0;itr<1;++itr){
-    UpdateRotationsByMatchingCluster(aQuat1,
-                                     aXYZ0,aXYZ1,psup_ind,psup);
+    UpdateRotationsByMatchingCluster_Linear(aQuat1,
+                                            aXYZ0,aXYZ1,psup_ind,psup);
   }
+   */
+  UpdateRotationsByMatchingCluster_SVD(aQuat1,
+                                       aXYZ0,aXYZ1,psup_ind,psup);
 }
