@@ -327,7 +327,7 @@ void delfem2::CDef_LaplacianLinear::SetBoundaryCondition
   //
   const unsigned int np = Mat.nblk_col;
   assert( aBCFlag.size() == np*3 );
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
       if( aBCFlag[ip*3+idim] == 0 ){ continue; }
       Mat.valDia[ip*9+idim*3+idim] += weight_bc;
@@ -335,7 +335,7 @@ void delfem2::CDef_LaplacianLinear::SetBoundaryCondition
   }
   this->Prec.SetValueILU(Mat);
   this->Prec.DoILUDecomp();
-  for(int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
       if( aBCFlag[ip*3+idim] == 0 ){ continue; }
       Mat.valDia[ip*9+idim*3+idim] -= weight_bc;
