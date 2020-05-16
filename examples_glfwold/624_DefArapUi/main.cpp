@@ -108,7 +108,7 @@ int main(int argc,char* argv[])
           }
         }
         for(int itr=0;itr<2;++itr){
-          dfm2::UpdateRotationsByMatchingCluster(aQuat1,
+          dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
                                                  aXYZ0,aXYZ1,
                                                  def0.psup_ind,def0.psup);
         }
