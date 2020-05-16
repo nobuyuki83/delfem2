@@ -3,7 +3,6 @@ language: cpp
 branches:
   only: 
     - master
-    - dev
 
 env:
 - PYTHON_BUILD_VERSION=3.7
