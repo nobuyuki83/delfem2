@@ -11,14 +11,12 @@
  */
 
 #include <cstdlib>
+#include <fstream>
 #include "delfem2/rig_geo3.h"
-#include "delfem2/quat.h"
 #include "delfem2/mat4.h"
-#include "delfem2/gizmo_geo3.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
 
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gizmo_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/tex_gl.h"
@@ -60,7 +58,7 @@ int main()
       dfm2::opengl::Draw(gizmo,aBone);
 
     }
-    virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
       bool is_edited = gizmo.Drag(aBone,
                                   src0, src1, dir);
       if( is_edited ){
@@ -68,12 +66,23 @@ int main()
                            aXYZ0, aBone, aW);
       }
     }
-    virtual void mouse_press(const float src[3], const float dir[3]) {
+    void mouse_press(const float src[3], const float dir[3]) override {
       gizmo.Pick(src, dir, aBone);
     }
-    virtual void key_press(int key, int mods){
+    void key_press(int key, int mods) override{
       if( key == GLFW_KEY_G ){ gizmo.SetMode(dfm2::CGizmo_Rig<float>::MODE_EDIT::TRNSL); }
       if( key == GLFW_KEY_R ){ gizmo.SetMode(dfm2::CGizmo_Rig<float>::MODE_EDIT::ROT); }
+      if( key == GLFW_KEY_S ){
+        std::ofstream fout("pose.txt");
+        for(const auto & bone: aBone){
+          const double* q = bone.quatRelativeRot;
+          fout << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
+        }
+        {
+          const double* t = aBone[0].transRelative;
+          fout << t[0] << " " << t[1] << " " << t[2] << std::endl;
+        }
+      }
     }
   public:
     std::vector<double> aXYZ0, aXYZ1;

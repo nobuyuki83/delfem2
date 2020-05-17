@@ -249,7 +249,7 @@ int main(int argc,char* argv[])
   // ---------------------
   
   nav.camera.view_height = 1.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;

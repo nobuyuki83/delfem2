@@ -296,7 +296,7 @@ int main(int argc,char* argv[])
 
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.nav.camera.view_height = 2.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
 
