@@ -203,7 +203,7 @@ int main(int argc,char* argv[])
   
   // -------------------------
   nav.camera.view_height = 2.0;
-  nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   
   dfm2::SFile_TGA tga_color;  LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_color.tga",  &tga_color);
   dfm2::SFile_TGA tga_normal; LoadTGAFile(std::string(PATH_INPUT_DIR)+"/rock_normal.tga", &tga_normal);

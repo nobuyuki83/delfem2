@@ -101,7 +101,7 @@ int main()
   sampler.SetDepth();
   //
   viewer.nav.camera.view_height = 2.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);
