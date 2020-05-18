@@ -448,7 +448,7 @@ void delfem2::CCamera<REAL>::Affine4f_ModelView
     (float)trans[0], (float)trans[1], (float)trans[2], 1.f};
   float A[16];
   camera::Mat4f_Identity(A);
-  if(      camera_rot_mode == CAMERA_ROT_YTOP  ){
+  if(      camera_rot_mode == CAMERA_ROT_MODE::YTOP  ){
     double x = sin(theta);
     double z = cos(theta);
     double y = sin(psi);
@@ -456,7 +456,7 @@ void delfem2::CCamera<REAL>::Affine4f_ModelView
     z *= cos(psi);
     glhLookAtf2(A, x,y,z, 0,0,0, 0,1,0);
   }
-  else if( camera_rot_mode == CAMERA_ROT_ZTOP  ){
+  else if( camera_rot_mode == CAMERA_ROT_MODE::ZTOP  ){
     double x = sin(theta);
     double y = cos(theta);
     double z = sin(psi);
@@ -464,7 +464,7 @@ void delfem2::CCamera<REAL>::Affine4f_ModelView
     y *= cos(psi);
     glhLookAtf2(A, x,y,z, 0,0,0, 0,0,1);
   }
-  else if( camera_rot_mode == CAMERA_ROT_TBALL ){
+  else if( camera_rot_mode == CAMERA_ROT_MODE::TBALL ){
     camera::Mat4f_Quat(A,Quat_tball);
   }
   camera::MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
@@ -486,23 +486,23 @@ template void delfem2::CCamera<double>::Scale(double s);
 
 template <typename REAL>
 void delfem2::CCamera<REAL>::Rot_Camera(double dx, double dy){
-    if(      camera_rot_mode == CAMERA_ROT_YTOP ){
-      theta -= dx;
-      psi   -= dy;
+  if(      camera_rot_mode == CAMERA_ROT_MODE::YTOP ){
+    theta -= dx;
+    psi   -= dy;
+  }
+  else if( camera_rot_mode == CAMERA_ROT_MODE::ZTOP ){
+    theta += dx;
+    psi   -= dy;
+  }
+  else if( camera_rot_mode == CAMERA_ROT_MODE::TBALL ){
+    double a = sqrt(dx * dx + dy * dy);
+    double ar = a*0.5; // angle
+    double dq[4] = { cos(ar), -dy*sin(ar)/a, dx*sin(ar)/a, 0.0 };
+    if (a != 0.0) {
+      double qtmp[4]; camera::QuatQuat(qtmp, dq, Quat_tball);
+      camera::CopyQuat(Quat_tball,qtmp);
     }
-    else if( camera_rot_mode == CAMERA_ROT_ZTOP ){
-      theta += dx;
-      psi   -= dy;
-    }
-    else if( camera_rot_mode == CAMERA_ROT_TBALL ){
-      double a = sqrt(dx * dx + dy * dy);
-      double ar = a*0.5; // angle
-      double dq[4] = { cos(ar), -dy*sin(ar)/a, dx*sin(ar)/a, 0.0 };
-      if (a != 0.0) {
-        double qtmp[4]; camera::QuatQuat(qtmp, dq, Quat_tball);
-        camera::CopyQuat(Quat_tball,qtmp);
-      }
-    }
+  }
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CCamera<double>::Rot_Camera(double dx, double dy);
@@ -523,6 +523,8 @@ template void delfem2::CCamera<double>::Pan_Camera(double dx, double dy);
 #endif
 
 // ------------------------
+
+namespace delfme2 {
 
 template <typename REAL>
 std::ostream &operator<<(std::ostream &output, delfem2::CCamera<REAL>& c)
@@ -550,10 +552,13 @@ std::istream &operator>>(std::istream &input, delfem2::CCamera<REAL>& c)
   input >> c.view_height;
   input >> c.trans[0] >> c.trans[1] >> c.trans[2];
   {
-    int imode; input >> imode; c.camera_rot_mode = (delfem2::CAMERA_ROT_MODE)imode;
+    int imode;
+    input >> imode;
+    c.camera_rot_mode = imode;//(delfem2::CCamera<REAL>::CAMERA_ROT_MODE)imode;
   }
   input >> c.theta >> c.psi;
   input >> c.Quat_tball[0] >> c.Quat_tball[1] >> c.Quat_tball[2] >> c.Quat_tball[3];
   return input;
 }
 
+}

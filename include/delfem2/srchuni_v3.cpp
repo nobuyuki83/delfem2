@@ -815,6 +815,8 @@ template double delfem2::SDFNormal_NearestPoint
   const unsigned int* aTri, unsigned int nTri,
   const double* aNorm);
 
+// ------------------------------------------------------
+
 template <typename T>
 double delfem2::SDFNormal_NearestPoint
 (CVec3<T>& n0,

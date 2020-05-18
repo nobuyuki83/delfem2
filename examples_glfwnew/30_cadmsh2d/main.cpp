@@ -77,7 +77,7 @@ public:
     shdr_cad.is_show_face = false;
     
     nav.camera.view_height = 1.5;
-    nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+    nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   }
   virtual void mouse_press(const float src[3], const float dir[3]) {
     float px, py; nav.PosMouse2D(px, py, window);

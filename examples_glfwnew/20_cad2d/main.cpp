@@ -76,7 +76,7 @@ int main(void)
 {
   viewer.Init_newGL();
   viewer.nav.camera.view_height = 2.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   
   // glad: load all OpenGL function pointers
   // ---------------------------------------
