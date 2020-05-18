@@ -115,13 +115,14 @@ void MeshingPattern
 /**
  * @param aXYZ_Contact (in) the array of 3D coordinate of the contact target
  * @param dt (in) time step
+ * @param bend_stiff_ratio (in) bending stiffness ratio of the clothing minimium:0 maximum:1
  */
 void StepTime_PbdClothSim
 (std::vector<double>& aXYZ, // deformed vertex positions
  std::vector<double>& aXYZt,
  std::vector<double>& aUVW, // deformed vertex velocity
- const std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
  std::vector<CInfoNearest<double>>& aInfoNearest,
+ const std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
  const std::vector<CDynTri>& aETri,
  const std::vector<CVec2d>& aVec2,
  const std::vector<unsigned int>& aLine,
@@ -134,14 +135,15 @@ void StepTime_PbdClothSim
  const double dt,
  const double gravity[3],
  const double contact_clearance,
- const double rad_explore)
+ const double rad_explore,
+ const double bend_stiff_ratio)
 {
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
   PBD_TriStrain(aXYZt.data(),
                 aXYZt.size()/3, aETri, aVec2);
   PBD_Bend(aXYZt.data(),
-           aXYZt.size()/3, aETri, aVec2, 0.5);
+           aXYZt.size()/3, aETri, aVec2, bend_stiff_ratio);
   PBD_Seam(aXYZt.data(),
            aXYZt.size()/3, aLine.data(), aLine.size()/2);
   Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,

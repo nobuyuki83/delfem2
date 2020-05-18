@@ -79,6 +79,13 @@ void Draw
 
 int main(int argc,char* argv[])
 {
+  // physics parameter
+  const double dt = 0.01;
+  const double gravity[3] = {0.0, -0.1, 0.0};
+  const double contact_clearance = 0.0001;
+  const double rad_explore = 0.1;
+  const double bend_stiff_ratio = 0.1;
+  
   // -----------------------------
   // below: input data
   std::vector<dfm2::CDynTri> aETri;
@@ -142,13 +149,7 @@ int main(int argc,char* argv[])
                    aTri_Contact.data(), aTri_Contact.size()/3,
                    0.01);
   std::vector<dfm2::CInfoNearest<double>> aInfoNearest_Contact;
-  
-  // physics parameter
-  const double dt = 0.01;
-  const double gravity[3] = {0.0, -0.1, 0.0};
-  const double contact_clearance = 0.0001;
-  const double rad_explore = 0.1;
-  
+    
   // above: data preparation (derived)
   // ----------------------------------------------
   // below: opengl and UI
@@ -160,10 +161,10 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   while (true)
   {
-    dfm2::StepTime_PbdClothSim(aXYZ, aXYZt, aUVW, aBCFlag, aInfoNearest_Contact,
+    dfm2::StepTime_PbdClothSim(aXYZ, aXYZt, aUVW, aInfoNearest_Contact, aBCFlag, 
                                aETri,aVec2,aLine,
                                aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh_Contact,
-                               dt,gravity,contact_clearance,rad_explore);
+                               dt,gravity,contact_clearance,rad_explore,bend_stiff_ratio);
     // ------------
     viewer.DrawBegin_oldGL();
     Draw(aETri,aXYZ,
