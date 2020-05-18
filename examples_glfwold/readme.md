@@ -136,7 +136,8 @@
 ### [308_RigSmplUi](308_RigSmplUi)
 <img src="308_RigSmplUi/thumbnail.png" width=200>
 
-
+### [309_RigSmplCloth](309_RigSmplCloth)
+<img src="309_RigSmplCloth/thumbnail.png" width=200>
 
 
 ## CAD
@@ -214,8 +215,6 @@
 ### [616_PbdClothCadGltf](616_PbdClothCadGltf)
 <img src="616_PbdClothCadGltf/thumbnail.png" width=200>
 
-### [617_PbdClothCadSmpl](617_PbdClothCadSmpl)
-<img src="617_PbdClothCadSmpl/thumbnail.png" width=200>
 
 ### [618_Fem3d](618_Fem3d)
 <img src="618_Fem3d/thumbnail.png" width=200>
