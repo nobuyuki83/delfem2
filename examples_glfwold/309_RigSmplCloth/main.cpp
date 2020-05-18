@@ -40,66 +40,6 @@
 namespace dfm2 = delfem2;
 
 // --------------------------------------------
-const double dt = 0.01;
-const double gravity[3] = {0.0, -0.1, 0.0};
-const double contact_clearance = 0.0001;
-const double rad_explore = 0.1;
-
-// ------------------------------------
-
-void StepTime
- (std::vector<double>& aXYZ, // deformed vertex positions
- std::vector<double>& aXYZt,
- std::vector<double>& aUVW, // deformed vertex velocity
- std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
- std::vector<dfm2::CInfoNearest<double>>& aInfoNearest,
- const std::vector<dfm2::CDynTri>& aETri,
- const std::vector<dfm2::CVec2d>& aVec2,
- const std::vector<unsigned int>& aLine,
- //
- std::vector<double>& aXYZ_Contact,
- std::vector<unsigned int>& aTri_Contact,
- std::vector<double>& aNorm_Contact,
- dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double>& bvh)
-{
-  dfm2::PBD_Pre3D(aXYZt,
-                  dt, gravity, aXYZ, aUVW, aBCFlag);
-  dfm2::PBD_TriStrain(aXYZt.data(),
-                      aXYZt.size()/3, aETri, aVec2);
-  dfm2::PBD_Bend(aXYZt.data(),
-                 aXYZt.size()/3, aETri, aVec2, 0.5);
-  dfm2::PBD_Seam(aXYZt.data(),
-                 aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
-                                                  aXYZt.size()/3,
-                                                  contact_clearance,bvh,
-                                                  aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                                                  aTri_Contact.data(), aTri_Contact.size()/3,
-                                                  aNorm_Contact.data(), rad_explore);
-  dfm2::PBD_Post(aXYZ, aUVW,
-                 dt, aXYZt, aBCFlag);
-}
-
-// ---------------------------------------
-
-/*
-namespace cereal{
-
-template<class Archive>
-void serialize(Archive & archive, dfm2::CRigidTrans_2DTo3D &rt23)
-{
-  archive( cereal::make_nvp("radinv_x", rt23.radinv_x) );
-  archive( cereal::make_nvp("org2",     rt23.org2.p) );
-  archive( cereal::make_nvp("org3",     rt23.org3.p) );
-  archive( cereal::make_nvp("R",        rt23.R.mat) );
-}
-
-}
- */
-
-
-
-
 
 void Draw
 (const std::vector<dfm2::CDynTri>& aETri,
@@ -139,6 +79,13 @@ void Draw
 
 int main(int argc,char* argv[])
 {
+  // physics parameter
+  const double dt = 0.01;
+  const double gravity[3] = {0.0, -0.1, 0.0};
+  const double contact_clearance = 0.0001;
+  const double rad_explore = 0.1;
+  const double bend_stiff_ratio = 0.1;
+  
   // -----------------------------
   // below: input data
   std::vector<dfm2::CDynTri> aETri;
@@ -202,8 +149,7 @@ int main(int argc,char* argv[])
                    aTri_Contact.data(), aTri_Contact.size()/3,
                    0.01);
   std::vector<dfm2::CInfoNearest<double>> aInfoNearest_Contact;
-  
-  
+    
   // above: data preparation (derived)
   // ----------------------------------------------
   // below: opengl and UI
@@ -211,13 +157,14 @@ int main(int argc,char* argv[])
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   while (true)
   {
-    StepTime(aXYZ, aXYZt, aUVW, aBCFlag, aInfoNearest_Contact,
-             aETri,aVec2,aLine,
-             aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh_Contact);
+    dfm2::StepTime_PbdClothSim(aXYZ, aXYZt, aUVW, aInfoNearest_Contact, aBCFlag, 
+                               aETri,aVec2,aLine,
+                               aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh_Contact,
+                               dt,gravity,contact_clearance,rad_explore,bend_stiff_ratio);
     // ------------
     viewer.DrawBegin_oldGL();
     Draw(aETri,aXYZ,
@@ -226,7 +173,7 @@ int main(int argc,char* argv[])
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
-  EXIT:
+EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

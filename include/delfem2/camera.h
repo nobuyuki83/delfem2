@@ -57,16 +57,12 @@ DFM2_INLINE void screenUnProjectionDirection
 // ----------------------------------------------------
 
 
-enum CAMERA_ROT_MODE
-{
-  CAMERA_ROT_YTOP,
-  CAMERA_ROT_ZTOP,
-  CAMERA_ROT_TBALL
-};
-
 template <typename REAL>
 class CCamera
 {
+public:
+  enum class CAMERA_ROT_MODE { YTOP, ZTOP, TBALL };
+
 public:
   CCamera(){
     is_pars = false;
@@ -79,7 +75,7 @@ public:
     trans[1] = 0;
     trans[2] = 0;
     
-    camera_rot_mode = CAMERA_ROT_YTOP;
+    camera_rot_mode =  CAMERA_ROT_MODE::YTOP;
 
     psi = 0;
     theta = 0;

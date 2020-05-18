@@ -91,7 +91,7 @@ int main(int argc,char* argv[])
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 3.0;
-  viewer.nav.camera.camera_rot_mode = dfm2::CAMERA_ROT_TBALL;
+  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
 //  viewer.nav.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");

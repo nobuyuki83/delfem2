@@ -342,6 +342,22 @@ public:
   bool is_active;
 };
 
+/**
+ *
+ * @tparam BV
+ * @tparam REAL
+ * @param aXYZt
+ * @param aInfoNearest
+ * @param nXYZt
+ * @param cc (in) contact clearance
+ * @param bvh
+ * @param pXYZ0
+ * @param nXYZ0
+ * @param pTri0
+ * @param nTri0
+ * @param pNorm0
+ * @param rad_explore
+ */
 template <typename BV, typename REAL>
 void delfem2::Project_PointsIncludedInBVH_Outside_Cache(
     double* aXYZt,

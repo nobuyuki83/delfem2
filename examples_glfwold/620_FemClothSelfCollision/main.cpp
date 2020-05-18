@@ -397,7 +397,7 @@ int main(int argc,char* argv[])
   
   
   delfem2::opengl::CViewer_GLFW viewer;
-  viewer.nav.camera.camera_rot_mode = delfem2::CAMERA_ROT_ZTOP;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::ZTOP;
   viewer.nav.camera.psi = 3.1415*0.2;
   viewer.nav.camera.theta = 3.1415*0.1;
   viewer.nav.camera.view_height = 2.0;

@@ -18,6 +18,10 @@
 
 namespace delfem2 {
 
+
+/**
+ * @brief Rigid Transformation from 2D to 3D
+ */
 class CRigidTrans_2DTo3D
 {
 public:
@@ -51,6 +55,9 @@ public:
 };
 
 
+/**
+ * @brief meshing clothing pattern such that the opposing sides of the cloth panel have the same number of discretization
+ */
 void MeshingPattern
  (std::vector<CDynTri>& aETri,
   std::vector<CVec2d>& aVec2,
@@ -105,32 +112,38 @@ void MeshingPattern
   }
 }
 
-void StepTime
+/**
+ * @param aXYZ_Contact (in) the array of 3D coordinate of the contact target
+ * @param dt (in) time step
+ * @param bend_stiff_ratio (in) bending stiffness ratio of the clothing minimium:0 maximum:1
+ */
+void StepTime_PbdClothSim
 (std::vector<double>& aXYZ, // deformed vertex positions
  std::vector<double>& aXYZt,
  std::vector<double>& aUVW, // deformed vertex velocity
- std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
  std::vector<CInfoNearest<double>>& aInfoNearest,
+ const std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
  const std::vector<CDynTri>& aETri,
  const std::vector<CVec2d>& aVec2,
  const std::vector<unsigned int>& aLine,
  //
- std::vector<double>& aXYZ_Contact,
- std::vector<unsigned int>& aTri_Contact,
- std::vector<double>& aNorm_Contact,
- CBVH_MeshTri3D<CBV3d_Sphere,double>& bvh,
+ const std::vector<double>& aXYZ_Contact,
+ const std::vector<unsigned int>& aTri_Contact,
+ const std::vector<double>& aNorm_Contact,
+ const CBVH_MeshTri3D<CBV3d_Sphere,double>& bvh,
  //
  const double dt,
  const double gravity[3],
  const double contact_clearance,
- const double rad_explore)
+ const double rad_explore,
+ const double bend_stiff_ratio)
 {
   PBD_Pre3D(aXYZt,
             dt, gravity, aXYZ, aUVW, aBCFlag);
   PBD_TriStrain(aXYZt.data(),
                 aXYZt.size()/3, aETri, aVec2);
   PBD_Bend(aXYZt.data(),
-           aXYZt.size()/3, aETri, aVec2, 0.5);
+           aXYZt.size()/3, aETri, aVec2, bend_stiff_ratio);
   PBD_Seam(aXYZt.data(),
            aXYZt.size()/3, aLine.data(), aLine.size()/2);
   Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
