@@ -128,11 +128,30 @@ DFM2_INLINE void MakeDirectorOrthogonal_RodHair(
     std::vector<CVec3d>& aS,
     const std::vector<CVec3d>& aP);
 
+
+DFM2_INLINE double MergeLinSys_Hair(
+    std::vector<double>& vec_r,
+    CMatrixSparse<double>& mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    const std::vector<unsigned int>& aIP_HairRoot,
+    const std::vector<CVec3d>& aP,
+    const std::vector<CVec3d>& aS,
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aS0);
+
+DFM2_INLINE void UpdateSolutionHair(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    const std::vector<double>& vec_x,
+    const std::vector<unsigned int>& aIP_HairRoot);
+
 /**
  * @brief static minimization of the deformation energy
  * @param aP (in&out) position of the vertices of the rods
  * @param aS (in&out) director vectors
  * @param mats (in&out) sparse matrix
+ * @param mdtt (in) mass divided by square of timestep (mass/dt/dt)
  * @param aP0 (in) initial positions of the vertices of the rods
  * @param aS0 (in) initial darboux vectors
  * @param aBCFlag (in) boundary condition flag. Non zero value means fixed value
@@ -149,6 +168,31 @@ DFM2_INLINE void Solve_RodHair(
     const std::vector<CVec3d>& aS0,
     const std::vector<int>& aBCFlag,
     const std::vector<unsigned int>& aIP_HairRoot);
+
+
+class CContactHair{
+public:
+  unsigned int ip0,ip1;
+  double s;
+  unsigned int iq0,iq1;
+  double t;
+  CVec3d norm;
+};
+
+
+DFM2_INLINE void Solve_RodHairContact(
+    std::vector<CVec3d>& aP,
+    std::vector<CVec3d>& aS,
+    CMatrixSparse<double>& mats,
+    const double stiff_stretch,
+    const double stiff_bendtwist[3],
+    double mdtt,
+    const std::vector<CVec3d>& aP0,
+    const std::vector<CVec3d>& aS0,
+    const std::vector<int>& aBCFlag,
+    const std::vector<unsigned int>& aIP_HairRoot,
+    const double clearance,
+    const std::vector<CContactHair>& aContact);
 
 
 

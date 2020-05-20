@@ -264,10 +264,9 @@ void MakeRigidImpactZone
       // マージしたRIZを，aRIZ1の最後に追加
       int ind0 = (int)aRIZ1.size();
       aRIZ1.resize(ind0+1);
-      for(std::set<int>::iterator itr=ind_inc.begin();itr!=ind_inc.end();itr++){
-        int ind1 = *itr;
+      for(auto ind1 : ind_inc){
         assert( ind1 < (int)aRIZ.size() );
-        for(std::set<int>::iterator jtr=aRIZ[ind1].begin();jtr!=aRIZ[ind1].end();jtr++){
+        for(auto jtr=aRIZ[ind1].begin();jtr!=aRIZ[ind1].end();jtr++){
           aRIZ1[ind0].insert(*jtr);
         }
       }
@@ -419,8 +418,8 @@ void GetIntermidiateVelocityContactResolved
 //      }
     }
       std::cout << "  CCD iter: " << itr << "    Contact Elem Size: " << aContactElem.size() << std::endl;    
-    if( aContactElem.size() == 0 ){ return; }
-    is_impulse_applied = is_impulse_applied || (aContactElem.size() > 0);    
+    if( aContactElem.empty() ){ return; }
+    is_impulse_applied = is_impulse_applied || (!aContactElem.empty());
     SelfCollisionImpulse_CCD(aUVWm,
                               contact_clearance,
                               cloth_contact_stiffness,
@@ -449,11 +448,11 @@ void GetIntermidiateVelocityContactResolved
 //      }
     }
     int nnode_riz = 0;
-    for(unsigned int iriz=0;iriz<aRIZ.size();iriz++){
-      nnode_riz += aRIZ[iriz].size();
+    for(const auto & riz : aRIZ){
+      nnode_riz += riz.size();
     }
     std::cout << "  RIZ iter: " << itr << "    Contact Elem Size: " << aContactElem.size() << "   NNode In RIZ: " << nnode_riz << std::endl;
-    if( aContactElem.size() == 0 ){
+    if( aContactElem.empty() ){
       std::cout << "Resolved All Collisions : " << std::endl;
       break;
     }
