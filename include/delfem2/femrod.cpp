@@ -1026,6 +1026,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     const std::vector<int>& aBCFlag,
     const std::vector<unsigned int>& aIP_HairRoot,
     const double clearance,
+    const double stiff_contact,
     const std::vector<CContactHair>& aContact)
 {
   assert( mats.len_col == 4 );
@@ -1054,30 +1055,33 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   setRHS_Zero(vec_r, aBCFlag,0);
   std::vector<double> vec_x;
   vec_x.assign(np*4, 0.0);
-  const double stiff_cntct = 1.0e+8;
   for(const auto& ch : aContact){
     const unsigned int aIP[4] = {ch.ip0, ch.ip1, ch.iq0, ch.iq1};
     const double aW[4] = {1-ch.s, ch.s, -(1-ch.t), -ch.t};
     CVec3d a = aW[0]*aP[aIP[0]] + aW[1]*aP[aIP[1]] + aW[2]*aP[aIP[2]] + aW[3]*aP[aIP[3]];
     double r0 = a*ch.norm - clearance;
-    std::cout << "contact: " << r0 << std::endl;
+//    std::cout << "contact: " << r0 << std::endl;
     for(int iip=0;iip<4;++iip){
       unsigned int ip0 = aIP[iip];
-      vec_r[ip0*4+0] -= stiff_cntct*r0*aW[iip]*ch.norm.x();
-      vec_r[ip0*4+1] -= stiff_cntct*r0*aW[iip]*ch.norm.y();
-      vec_r[ip0*4+2] -= stiff_cntct*r0*aW[iip]*ch.norm.z();
+      vec_r[ip0*4+0] -= stiff_contact*r0*aW[iip]*ch.norm.x();
+      vec_r[ip0*4+1] -= stiff_contact*r0*aW[iip]*ch.norm.y();
+      vec_r[ip0*4+2] -= stiff_contact*r0*aW[iip]*ch.norm.z();
     }
   }
-  femrod::CMatContact mc(mats,aContact,stiff_cntct);
+  femrod::CMatContact mc(mats,aContact,stiff_contact);
   {
     auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
                               vec_r.size(), 1.0e-6, 3000, mc);
+    /*
     if( aConvHist.size() > 0 ){
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
     }
+     */
   }
   UpdateSolutionHair(aP,aS,
                      vec_x,aIP_HairRoot);
+  /*
+  std::cout << "hogehoge " << aContact.size() << std::endl;
   for(const auto& ch : aContact){
     const unsigned int aIP[4] = {ch.ip0, ch.ip1, ch.iq0, ch.iq1};
     const double aW[4] = {1-ch.s, ch.s, -(1-ch.t), -ch.t};
@@ -1085,5 +1089,6 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     double r0 = a*ch.norm - clearance;
     std::cout << "       contact: " << r0 << " " << clearance << std::endl;
   }
+   */
 }
 

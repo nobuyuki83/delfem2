@@ -117,7 +117,59 @@ void MakeProblemSetting_Spiral
   }
 }
 
-double IterateEdgeEdgeIntersection(
+
+double FindMinimumDistance_EdgeEdge(
+    double p[3],
+    const dfm2::CVec3d& p0s,
+    const dfm2::CVec3d& p0e,
+    const dfm2::CVec3d& p1s,
+    const dfm2::CVec3d& p1e,
+    const dfm2::CVec3d& q0s,
+    const dfm2::CVec3d& q0e,
+    const dfm2::CVec3d& q1s,
+    const dfm2::CVec3d& q1e,
+    unsigned int nitr )
+{
+  dfm2::CVec3d v0;
+  for(unsigned int itr=0;itr<nitr;++itr) {
+    const double s0 = p[0], t0 = p[1], u0 = p[2];
+    v0 =
+        + ((1 - s0) * (1 - u0)) * p0s + ((1 - s0) * u0) * p0e + (s0 * (1 - u0)) * p1s + (s0 * u0) * p1e
+        - ((1 - t0) * (1 - u0)) * q0s - ((1 - t0) * u0) * q0e - (t0 * (1 - u0)) * q1s - (t0 * u0) * q1e;
+    const dfm2::CVec3d ds = -(1 - u0) * p0s - u0 * p0e + (1 - u0) * p1s + u0 * p1e;
+    const dfm2::CVec3d dt = +(1 - u0) * q0s + u0 * q0e - (1 - u0) * q1s - u0 * q1e;
+    const dfm2::CVec3d du =
+        - (1 - s0) * p0s + (1 - s0) * p0e - s0 * p1s + s0 * p1e
+        + (1 - t0) * q0s - (1 - t0) * q0e + t0 * q1s - t0 * q1e;
+    const dfm2::CVec3d dsu = + p0s - p0e - p1s + p1e;
+    const dfm2::CVec3d dtu = - q0s + q0e + q1s - q1e;
+    double R[3] = { v0*ds, v0*dt, v0*du };
+    double A[9] = {
+        ds*ds,        ds*dt,        ds*du+v0*dsu,
+        dt*ds,        dt*dt,        dt*du*v0*dtu,
+        du*ds+v0*dsu, du*dt+v0*dtu, du*du };
+    {
+      double eps = (A[0] + A[4] + A[8]) * 1.0e-10 + 1.0e-20;
+      A[0] += eps;
+      A[4] += eps;
+      A[8] += eps;
+    }
+    dfm2::Inverse_Mat3(A);
+    double D[3];
+    dfm2::MatVec3(D, A, R);
+    p[0] -= D[0];
+    p[1] -= D[1];
+    p[2] -= D[2];
+    if (p[0] < 0) { p[0] = 0.0; } else if (p[0] > 1) { p[0] = 1.0; }
+    if (p[1] < 0) { p[1] = 0.0; } else if (p[1] > 1) { p[1] = 1.0; }
+    if (p[2] < 0) { p[2] = 0.0; } else if (p[2] > 1) { p[2] = 1.0; }
+  }
+  return v0.Length();
+}
+
+
+
+double FindIntersection_LinesegLineseg(
     double p[3],
     const dfm2::CVec3d& p0s,
     const dfm2::CVec3d& p0e,
@@ -169,10 +221,9 @@ void SolveSelfCollisionRod(
     std::vector<dfm2::CContactHair>& aCollision,
     const double clearance,
     const std::vector<dfm2::CVec3d>& aP,
-    const std::vector<unsigned int>& aIP_HairRoot, // indexes of root point
-    bool is_project)
+    const std::vector<unsigned int>& aIP_HairRoot) // indexes of root point
+//    bool is_project)
 {
-  aCollision.clear();
   const unsigned int nr = aP.size();
   assert( aPt.size() == nr );
   std::vector<bool> aIsRod(nr,true);
@@ -211,16 +262,74 @@ void SolveSelfCollisionRod(
       const dfm2::CVec3d q0e = aPt[jr+0];
       const dfm2::CVec3d q1e = aPt[jr+1];
       // collision
-      double p[3] = {0.5, 0.5, -0.5};
-      double len = IterateEdgeEdgeIntersection(p,
-          p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 3);
-      if( len >= clearance ){ continue; }
-      double s1 = p[0], t1 = p[1];
+      bool is_near = false;
+      double p[3] = {0.5, 0.5, 0.5};
+      {
+        double len0 = FindMinimumDistance_EdgeEdge(p,
+                                                   p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
+//        if( len0 < clearance*2.0 ) {
+//          std::cout << ir << " " << jr << " " << len0 << " " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+//        }
+        if( len0 < clearance ){ is_near = true; }
+      }
+      /*
+      if( !is_near ){
+        p[0] = 0.5;
+        p[1] = 0.5;
+        p[2] = 0.0;
+        double len0 = FindMinimumDistance_EdgeEdge(p,
+                                                   p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
+        if( len0 < clearance*2.0 ) {
+          std::cout << ir << " " << jr << " " << len0 << " " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+        }
+        if( len0 < clearance ){ is_near = true; }
+      }
+      if( !is_near ){
+        p[0] = 0.5;
+        p[1] = 0.5;
+        p[2] = 1.0;
+        double len0 = FindMinimumDistance_EdgeEdge(p,
+                                                   p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
+        if( len0 < clearance*2.0 ) {
+          std::cout << ir << " " << jr << " " << len0 << " " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+        }
+        if( len0 < clearance ){ is_near = true; }
+      }
+      if( !is_near ){
+        p[0] = 0.0;
+        p[1] = 1.0;
+        p[2] = 0.0;
+        double len0 = FindMinimumDistance_EdgeEdge(p,
+                                                   p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
+        if( len0 < clearance*2.0 ) {
+          std::cout << ir << " " << jr << " " << len0 << " " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+        }
+        if( len0 < clearance ){ is_near = true; }
+      }
+      if( !is_near ){
+        p[0] = 1.0;
+        p[1] = 0.0;
+        p[2] = 0.0;
+        double len0 = FindMinimumDistance_EdgeEdge(p,
+                                                   p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
+        if( len0 < clearance*2.0 ) {
+          std::cout << ir << " " << jr << " " << len0 << " " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+        }
+        if( len0 < clearance ){ is_near = true; }
+      }
+       */
+      if( !is_near ){ continue; }
+      double s1 = p[0], t1 = p[1], u1 = p[2];
       dfm2::CVec3d vs = (1-s1)*p0s + s1*p1s - (1-t1)*q0s - t1*q1s;
+      dfm2::CVec3d vm =
+          + ((1 - s1) * (1 - u1)) * p0s + ((1 - s1) * u1) * p0e + (s1 * (1 - u1)) * p1s + (s1 * u1) * p1e
+          - ((1 - t1) * (1 - u1)) * q0s - ((1 - t1) * u1) * q0e - (t1 * (1 - u1)) * q1s - (t1 * u1) * q1e;
       dfm2::CContactHair ch{ir + 0, ir + 1, s1,
                             jr + 0, jr + 1, t1,
                             vs.Normalize()};
+//      std::cout << "         contact founded " << ir << " " << jr << " " << p[0] << " " << p[1] << " " << p[2] << "   " << ch.norm << std::endl;
       aCollision.push_back(ch);
+      /*
       if( is_project ) {
         dfm2::CVec3d ve = (1 - s1) * p0e + s1 * p1e - (1 - t1) * q0e - t1 * q1e;
         dfm2::CVec3d dv1 = vs.Normalize() * clearance - ve;
@@ -230,12 +339,10 @@ void SolveSelfCollisionRod(
         aPt[jr + 0] -= dv1 * W * (1 - t1);
         aPt[jr + 1] -= dv1 * W * t1;
       }
+       */
     } // jr
   } // ir
 }
-
-
-
 
 int main(int argc,char* argv[])
 {
@@ -282,21 +389,22 @@ int main(int argc,char* argv[])
   std::vector<dfm2::CVec3d> aP = aP0, aS = aS0;
   std::vector<dfm2::CVec3d> aPV (aP0.size(), dfm2::CVec3d(0,0,0)); // velocity
   std::vector<dfm2::CVec3d> aPt = aP; // temporally positions
-  std::vector<dfm2::CContactHair> aCollision; // collision in the previous time-step
+  std::vector<dfm2::CContactHair> aContact; // collision in the previous time-step
   double dt = 0.01;
   double mass = 1.0e-2;
   dfm2::CVec3d gravity(0,-10,0);
   const double stiff_stretch = 10000;
   const double stiff_bendtwist[3] = { 2000, 2000, 2000 };
-  // -------
+  const double stiff_contact = 1.0e+4;
   const double clearance = 0.01;
   double time_cur = 0.0;
   while (true)
   {
+//    std::cout << "####################" << std::endl;
     time_cur += dt;
     { // set fixed boundary condition
       unsigned int ip0 = aIP_HairRoot[1];
-      double z0 = 0.4*sin(2.0*time_cur);
+      double z0 = 0.4*sin(2.0*time_cur+0.5);
       aP[ip0].p[2] = aP[ip0+1].p[2] = z0;
       aPt[ip0].p[2] = aPt[ip0+1].p[2] = z0;
     }
@@ -304,53 +412,62 @@ int main(int argc,char* argv[])
       if( aBCFlag[ip*4+0] !=0 ) { continue; } // this is not fixed boundary
       aPt[ip] = aP[ip] + dt * aPV[ip] + (dt * dt / mass) * gravity;
     }
-    SolveSelfCollisionRod(aPt,aCollision,
-                          clearance,
-                          aP, aIP_HairRoot,
-                          false);
-    std::cout << "####################" << std::endl;
-    for(auto& ch: aCollision){
+    // -----------
+    std::vector<dfm2::CContactHair> aContactOld = aContact;
+    aContact.clear();
+    for(const auto& chold : aContactOld){
+      if( chold.Direction(aP) * chold.norm > clearance ){ continue; }
+      aContact.push_back(chold);
+    }
+    /*
+    for(auto& ch: aContact){
+      std::cout << "      $$$" << std::endl;
+      std::cout << "     " << ch.norm.Length() << " " << ch.Direction(aP) * ch.norm << std::endl;
       std::cout << "     " << ch.ip0 << " " << ch.ip1 << " " << ch.s << std::endl;
       std::cout << "     " << ch.iq0 << " " << ch.iq1 << " " << ch.t << std::endl;
-      std::cout << "     " << ch.norm << " " << ch.norm.Length() << std::endl;
     }
-//    if( time_cur > 3.3 ){
-    {
-      aCollision.resize(1);
-      dfm2::CContactHair& ch = aCollision[0];
-      ch.ip0 = 4;
-      ch.ip1 = 5;
-      ch.s = 0.5;
-      ch.iq0 = 43;
-      ch.iq1 = 44;
-      ch.t = 0.5;
-      ch.norm = dfm2::CVec3d(0,0,1);
-      const unsigned int aIP[4] = {ch.ip0, ch.ip1, ch.iq0, ch.iq1};
-      const double aW[4] = {1-ch.s, ch.s, -(1-ch.t), -ch.t};
-      dfm2::CVec3d a = aW[0]*aP[aIP[0]] + aW[1]*aP[aIP[1]] + aW[2]*aP[aIP[2]] + aW[3]*aP[aIP[3]];
-      double r0 = a*ch.norm - clearance;
-      if( r0 > 0 ){
-        aCollision.clear();
+     */
+    std::vector<dfm2::CContactHair> aContactNew;
+    SolveSelfCollisionRod(aPt,aContactNew,
+                          clearance,
+                          aP, aIP_HairRoot);
+    for(auto& chn: aContactNew){
+      bool is_included = false;
+      for(auto& cho: aContact){
+        if( cho.ip0 == chn.ip0 && cho.iq0 == chn.iq1 ){ is_included = true; break; }
       }
+      if( is_included ) continue;
+      aContact.push_back(chn);
+      /*
+      std::cout << "      ###" << std::endl;
+      std::cout << "     " << chn.norm.Length() << " " << chn.Direction(aP) * chn.norm << std::endl;
+      std::cout << "     " << chn.ip0 << " " << chn.ip1 << " " << chn.s << std::endl;
+      std::cout << "     " << chn.iq0 << " " << chn.iq1 << " " << chn.t << std::endl;
+       */
     }
-
     dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
     Solve_RodHairContact(
         aPt, aS, mats,
         stiff_stretch, stiff_bendtwist, mass/(dt*dt),
         aP0, aS0, aBCFlag, aIP_HairRoot,
-        clearance, aCollision);
+        clearance, stiff_contact, aContact);
+
     /*
-    SolveSelfCollisionRod(aPt,aCollision,
-                          clearance,
-                          aP, aIP_HairRoot,
-                          false);
     for(auto& ch: aCollision){
-      std::cout << "     #" << ch.ip0 << " " << ch.ip1 << " " << ch.s << std::endl;
-      std::cout << "     #" << ch.iq0 << " " << ch.iq1 << " " << ch.t << std::endl;
-      std::cout << "     #" << ch.norm << " " << ch.norm.Length() << std::endl;
+      dfm2::CVec3d ve = ch.Direction(aPt);
+      if( ve*ch.norm > 0 ){ continue; }
+      dfm2::CVec3d dv1 = ch.norm * (clearance-ve*ch.norm);
+      double s1 = ch.s;
+      double t1 = ch.t;
+      double W = 1.0 / ((1 - s1) * (1 - s1) + s1 * s1 + (1 - t1) * (1 - t1) + t1 * t1);
+      aPt[ch.ip0] += dv1 * W * (1 - s1);
+      aPt[ch.ip1] += dv1 * W * s1;
+      aPt[ch.iq0] -= dv1 * W * (1 - t1);
+      aPt[ch.iq1] -= dv1 * W * t1;
     }
      */
+
+    // --------------
     for(unsigned int ip=0;ip<aP.size();++ip){
       if( aBCFlag[ip*4+0] != 0 ){ continue; }
       aPV[ip] = (aPt[ip] - aP[ip])/dt;
