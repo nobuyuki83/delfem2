@@ -139,6 +139,9 @@
 ### [309_RigSmplCloth](309_RigSmplCloth)
 <img src="309_RigSmplCloth/thumbnail.png" width=200>
 
+### [310_RigSmplClothPose](310_RigSmplClothPose)
+<img src="310_RigSmplClothPose/thumbnail.png" width=200>
+
 
 ## CAD
 

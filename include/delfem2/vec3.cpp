@@ -1883,7 +1883,7 @@ template bool delfem2::IsContact_EE_Proximity
    const double delta);
 #endif
 
-// ４つの点が同一平面上にならぶような補間係数を探す
+// compute time where four points gets coplaner
 template <typename T>
 double delfem2::FindCoplanerInterp
 (const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
@@ -1895,7 +1895,7 @@ double delfem2::FindCoplanerInterp
   const CVec3<T> v1 = e1-e0-x1;
   const CVec3<T> v2 = e2-e0-x2;
   const CVec3<T> v3 = e3-e0-x3;
-  // 三次関数の係数の計算
+  // compute coefficient for cubic function
   const double k0 = ScalarTripleProduct(x3,x1,x2);
   const double k1 = ScalarTripleProduct(v3,x1,x2)+ScalarTripleProduct(x3,v1,x2)+ScalarTripleProduct(x3,x1,v2);
   const double k2 = ScalarTripleProduct(v3,v1,x2)+ScalarTripleProduct(v3,x1,v2)+ScalarTripleProduct(x3,v1,v2);
