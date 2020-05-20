@@ -177,6 +177,10 @@ public:
   unsigned int iq0,iq1;
   double t;
   CVec3d norm;
+public:
+  CVec3d Direction(const std::vector<CVec3d>& aP) const {
+    return (1-s)*aP[ip0] + s*aP[ip1] - (1-t)*aP[iq0] - t*aP[iq1];
+  }
 };
 
 
@@ -192,6 +196,7 @@ DFM2_INLINE void Solve_RodHairContact(
     const std::vector<int>& aBCFlag,
     const std::vector<unsigned int>& aIP_HairRoot,
     const double clearance,
+    const double stiff_contact,
     const std::vector<CContactHair>& aContact);
 
 
