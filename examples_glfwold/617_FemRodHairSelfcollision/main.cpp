@@ -117,7 +117,7 @@ void MakeProblemSetting_Spiral
   }
 }
 
-void SolveSelfCollisionRod(
+void FindRodHairContactCCD(
     std::vector<dfm2::CVec3d>& aPt,
     std::vector<dfm2::CContactHair>& aCollision,
     const double clearance,
@@ -196,8 +196,8 @@ int main(int argc,char* argv[])
   std::vector<unsigned int> aIP_HairRoot; // indexes of root point
   { // make the un-deformed shape of hair
     std::vector<CHairShape> aHairShape;
-    double rad0 = 0.0;
-    double dangle = 0.0;
+    double rad0 = 0.2;
+    double dangle = 0.2;
     const int nhair = 2;
     for(int ihair=0;ihair<nhair;++ihair){
       const double px = -1.0-ihair*0.2;
@@ -241,7 +241,7 @@ int main(int argc,char* argv[])
     time_cur += dt;
     { // set fixed boundary condition
       unsigned int ip0 = aIP_HairRoot[1];
-      double z0 = 0.4*sin(2.0*time_cur+0.5);
+      double z0 = 1.0*sin(2.0*time_cur+0.5);
       aP[ip0].p[2] = aP[ip0+1].p[2] = z0;
       aPt[ip0].p[2] = aPt[ip0+1].p[2] = z0;
     }
@@ -254,12 +254,12 @@ int main(int argc,char* argv[])
       std::vector<dfm2::CContactHair> aContactOld = aContact;
       aContact.clear();
       for (const auto &chold : aContactOld) { // if contact is violated, hold the contact
-        if (chold.Direction(aP) * chold.norm > clearance) { continue; }
+        if (chold.Direction(aP) * chold.norm > +clearance) { continue; }
         aContact.push_back(chold);
       }
       // compute new contacts
       std::vector<dfm2::CContactHair> aContactNew;
-      SolveSelfCollisionRod(aPt, aContactNew,
+      FindRodHairContactCCD(aPt, aContactNew,
                             clearance,
                             aP, aIP_HairRoot);
       for (auto &chn: aContactNew) { // add new contacts if it is missing.
