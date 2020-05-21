@@ -1102,6 +1102,58 @@ template void delfem2::nearest_LineSeg_Line
 
 // ---------------------------------------------
 
+DFM2_INLINE double delfem2::Nearest_LineSeg_LineSeg_CCD_Iteration(
+    double p[3],
+    const CVec3d& p0s,
+    const CVec3d& p0e,
+    const CVec3d& p1s,
+    const CVec3d& p1e,
+    const CVec3d& q0s,
+    const CVec3d& q0e,
+    const CVec3d& q1s,
+    const CVec3d& q1e,
+    unsigned int nitr )
+{
+  CVec3d v0;
+  for(unsigned int itr=0;itr<nitr;++itr) {
+    const double s0 = p[0], t0 = p[1], u0 = p[2];
+    v0 =
+        + ((1 - s0) * (1 - u0)) * p0s + ((1 - s0) * u0) * p0e + (s0 * (1 - u0)) * p1s + (s0 * u0) * p1e
+        - ((1 - t0) * (1 - u0)) * q0s - ((1 - t0) * u0) * q0e - (t0 * (1 - u0)) * q1s - (t0 * u0) * q1e;
+    const CVec3d ds = -(1 - u0) * p0s - u0 * p0e + (1 - u0) * p1s + u0 * p1e;
+    const CVec3d dt = +(1 - u0) * q0s + u0 * q0e - (1 - u0) * q1s - u0 * q1e;
+    const CVec3d du =
+        - (1 - s0) * p0s + (1 - s0) * p0e - s0 * p1s + s0 * p1e
+        + (1 - t0) * q0s - (1 - t0) * q0e + t0 * q1s - t0 * q1e;
+    const CVec3d dsu = + p0s - p0e - p1s + p1e;
+    const CVec3d dtu = - q0s + q0e + q1s - q1e;
+    double R[3] = { v0*ds, v0*dt, v0*du };
+    double A[9] = {
+        ds*ds,        ds*dt,        ds*du+v0*dsu,
+        dt*ds,        dt*dt,        dt*du*v0*dtu,
+        du*ds+v0*dsu, du*dt+v0*dtu, du*du };
+    {
+      double eps = (A[0] + A[4] + A[8]) * 1.0e-10 + 1.0e-20;
+      A[0] += eps;
+      A[4] += eps;
+      A[8] += eps;
+    }
+    double Ainv[9];
+    vec3::MyInverse_Mat3(Ainv, A);
+    double D[3];
+    vec3::MyMatVec3(D, Ainv, R);
+    p[0] -= D[0];
+    p[1] -= D[1];
+    p[2] -= D[2];
+    if (p[0] < 0) { p[0] = 0.0; } else if (p[0] > 1) { p[0] = 1.0; }
+    if (p[1] < 0) { p[1] = 0.0; } else if (p[1] > 1) { p[1] = 1.0; }
+    if (p[2] < 0) { p[2] = 0.0; } else if (p[2] > 1) { p[2] = 1.0; }
+  }
+  return v0.Length();
+}
+
+// ---------------------------------------------
+
 template <typename T>
 void delfem2::nearest_Line_Line
 (T& D, CVec3<T>& Da, CVec3<T>& Db,
@@ -1883,7 +1935,7 @@ template bool delfem2::IsContact_EE_Proximity
    const double delta);
 #endif
 
-// ４つの点が同一平面上にならぶような補間係数を探す
+// compute time where four points gets coplaner
 template <typename T>
 double delfem2::FindCoplanerInterp
 (const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
@@ -1895,7 +1947,7 @@ double delfem2::FindCoplanerInterp
   const CVec3<T> v1 = e1-e0-x1;
   const CVec3<T> v2 = e2-e0-x2;
   const CVec3<T> v3 = e3-e0-x3;
-  // 三次関数の係数の計算
+  // compute coefficient for cubic function
   const double k0 = ScalarTripleProduct(x3,x1,x2);
   const double k1 = ScalarTripleProduct(v3,x1,x2)+ScalarTripleProduct(x3,v1,x2)+ScalarTripleProduct(x3,x1,v2);
   const double k2 = ScalarTripleProduct(v3,v1,x2)+ScalarTripleProduct(v3,x1,v2)+ScalarTripleProduct(x3,v1,v2);

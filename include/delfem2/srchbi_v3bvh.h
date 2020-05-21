@@ -13,7 +13,6 @@
 #define DFM2_SRCHBI_V3BVH_H
 
 #include <stdio.h>
-
 #include "delfem2/bvh.h"
 #include "delfem2/vec3.h"
 
@@ -26,6 +25,11 @@ bool IsContact_FV_Proximity(
     const BBOX& bb,
     const double delta);
 
+/**
+ * @brief check two edge elements collide or not in the continuous time
+ * @tparam BBOX bounding box class must equipp with AddPoint and IsIntersect
+ * @return whether this element collide or not
+ */
 template <typename BBOX>
 bool IsContact_EE_CCD(
     int ino0,         int ino1,         int jno0,         int jno1,
@@ -142,7 +146,7 @@ bool delfem2::IsContact_FV_Proximity
   return true;
 }
 
-// CCDのEEで接触する要素を検出
+// check if two edge elements collide or not
 template <typename BBOX>
 bool delfem2::IsContact_EE_CCD
 (int ino0,         int ino1,         int jno0,         int jno1,

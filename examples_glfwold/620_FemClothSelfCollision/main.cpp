@@ -206,7 +206,7 @@ void StepTime()
   dfm2::CInput_Contact* ic = 0;
   if(      imode_contact == 0 ){ ic = &c0; }
   if(      imode_contact == 1 ){ ic = &c1; }
-  /////
+  //
   std::vector<double> aXYZ1 = aXYZ;
   ::StepTime_InternalDynamicsILU(aXYZ, aUVW, mat_A, ilu_A,
                                  aXYZ0, aBCFlag,
@@ -215,7 +215,7 @@ void StepTime()
                                  lambda, myu, stiff_bend,
                                  gravity, mass_point,
                                  stiff_contact,contact_clearance,*ic);
-  ////
+  //
   bool is_impulse_applied;
   GetIntermidiateVelocityContactResolved(aUVW,
                                          is_impulse_applied,

@@ -168,6 +168,7 @@ int main(int argc,char* argv[])
     // --------------
     for(int iframe=0;iframe<100;++iframe) {
       // static minimization of the rod deformation
+      dfm2::MakeDirectorOrthogonal_RodHair(aS,aP);
       Solve_RodHair(aP, aS, mats,
                     stiff_stretch, stiff_bendtwist, 0.0,
                     aP0, aS0, aBCFlag, aIP_HairRoot);
