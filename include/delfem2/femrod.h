@@ -144,7 +144,8 @@ DFM2_INLINE void UpdateSolutionHair(
     std::vector<CVec3d>& aP,
     std::vector<CVec3d>& aS,
     const std::vector<double>& vec_x,
-    const std::vector<unsigned int>& aIP_HairRoot);
+    const std::vector<unsigned int>& aIP_HairRoot,
+    const std::vector<int>& aBCFlag);
 
 /**
  * @brief static minimization of the deformation energy
