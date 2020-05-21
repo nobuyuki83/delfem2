@@ -219,6 +219,10 @@
 <img src="616_PbdClothCadGltf/thumbnail.png" width=200>
 
 
+### [617_FemRodHairSelfcollision](617_FemRodHairSelfcollision)
+<img src="617_FemRodHairSelfcollision/thumbnail.png" width=200>
+
+
 ### [618_Fem3d](618_Fem3d)
 <img src="618_Fem3d/thumbnail.png" width=200>
 
