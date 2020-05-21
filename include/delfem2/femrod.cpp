@@ -894,7 +894,8 @@ DFM2_INLINE void delfem2::UpdateSolutionHair(
     std::vector<CVec3d>& aP,
     std::vector<CVec3d>& aS,
     const std::vector<double>& vec_x,
-    const std::vector<unsigned int>& aIP_HairRoot)
+    const std::vector<unsigned int>& aIP_HairRoot,
+    const std::vector<int>& aBCFlag)
 {
   for(unsigned int ihair=0;ihair<aIP_HairRoot.size()-1;++ihair){
     unsigned int ips = aIP_HairRoot[ihair];
@@ -914,6 +915,7 @@ DFM2_INLINE void delfem2::UpdateSolutionHair(
     }
   }
   for(unsigned int ip=0;ip<aP.size();++ip){
+    if( aBCFlag[ip*4+0] != 0 ) continue; 
     aP[ip].p[0] += vec_x[ip*4+0];
     aP[ip].p[1] += vec_x[ip*4+1];
     aP[ip].p[2] += vec_x[ip*4+2];
@@ -966,7 +968,7 @@ DFM2_INLINE void delfem2::Solve_RodHair(
     }
   }
   UpdateSolutionHair(aP,aS,
-      vec_x,aIP_HairRoot);
+      vec_x,aIP_HairRoot,aBCFlag);
 }
 
 namespace delfem2 {
@@ -1039,7 +1041,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   mats.SetZero();
   std::vector<double> vec_r;
   vec_r.assign(np*4, 0.0);
-  const double W = MergeLinSys_Hair(
+  double W = MergeLinSys_Hair(
       vec_r,mats,
       stiff_stretch,stiff_bendtwist,
       aIP_HairRoot,aP,aS,aP0,aS0);
@@ -1050,11 +1052,6 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
   }
 //  std::cout << "energy:" << W << std::endl;
   //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
-  assert( aBCFlag.size() == np*4 );
-  mats.SetFixedBC(aBCFlag.data());
-  setRHS_Zero(vec_r, aBCFlag,0);
-  std::vector<double> vec_x;
-  vec_x.assign(np*4, 0.0);
   for(const auto& ch : aContact){
     const unsigned int aIP[4] = {ch.ip0, ch.ip1, ch.iq0, ch.iq1};
     const double aW[4] = {1-ch.s, ch.s, -(1-ch.t), -ch.t};
@@ -1068,6 +1065,13 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
       vec_r[ip0*4+2] -= stiff_contact*r0*aW[iip]*ch.norm.z();
     }
   }
+  // --------------
+  W = 0.0; // to remove warning
+  assert( aBCFlag.size() == np*4 );
+  mats.SetFixedBC(aBCFlag.data());
+  std::vector<double> vec_x;
+  vec_x.assign(np*4, 0.0);
+  setRHS_Zero(vec_r, aBCFlag,0);
   femrod::CMatContact mc(mats,aContact,stiff_contact);
   {
     auto aConvHist = Solve_CG(vec_r.data(),vec_x.data(),
@@ -1079,7 +1083,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
      */
   }
   UpdateSolutionHair(aP,aS,
-                     vec_x,aIP_HairRoot);
+                     vec_x,aIP_HairRoot,aBCFlag);
   /*
   std::cout << "hogehoge " << aContact.size() << std::endl;
   for(const auto& ch : aContact){
