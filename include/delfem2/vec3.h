@@ -405,6 +405,20 @@ void nearest_Line_Line
   const CVec3<T>& pb_, const CVec3<T>& vb);
 
 // ------------------------------------
+
+DFM2_INLINE double Nearest_LineSeg_LineSeg_CCD_Iteration(
+    double p[3],
+    const CVec3d& p0s,
+    const CVec3d& p0e,
+    const CVec3d& p1s,
+    const CVec3d& p1e,
+    const CVec3d& q0s,
+    const CVec3d& q0e,
+    const CVec3d& q1s,
+    const CVec3d& q1e,
+    unsigned int nitr );
+
+// ------------------------------------
   
 /**
  *  @param D (out) scaling factor

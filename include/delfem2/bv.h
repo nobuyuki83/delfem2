@@ -110,25 +110,25 @@ public:
     this->bbmax[1] = bbvec[3];
     this->bbmax[2] = bbvec[5];
   }
-  void Add_MinMax(const std::vector<REAL>& bbmin,
-                  const std::vector<REAL>& bbmax)
+  void Add_MinMax(const std::vector<REAL>& bbmin_,
+                  const std::vector<REAL>& bbmax_)
   {
-    assert(bbmin.size()==3);
-    assert(bbmax.size()==3);
-    CBV3_AABB aabb0(bbmin.data(), bbmax.data());
+    assert(bbmin_.size()==3);
+    assert(bbmax_.size()==3);
+    CBV3_AABB aabb0(bbmin_.data(), bbmax_.data());
     (*this) += aabb0;
   }
-  void Set_MinMax(const std::vector<REAL>& bbmin,
-                  const std::vector<REAL>& bbmax)
+  void Set_MinMax(const std::vector<REAL>& bbmin_,
+                  const std::vector<REAL>& bbmax_)
   {
-    assert(bbmin.size()==3);
-    assert(bbmax.size()==3);
-    this->bbmin[0] = bbmin[0];
-    this->bbmin[1] = bbmin[1];
-    this->bbmin[2] = bbmin[2];
-    this->bbmax[0] = bbmax[0];
-    this->bbmax[1] = bbmax[1];
-    this->bbmax[2] = bbmax[2];
+    assert(bbmin_.size()==3);
+    assert(bbmax_.size()==3);
+    this->bbmin[0] = bbmin_[0];
+    this->bbmin[1] = bbmin_[1];
+    this->bbmin[2] = bbmin_[2];
+    this->bbmax[0] = bbmax_[0];
+    this->bbmax[1] = bbmax_[1];
+    this->bbmax[2] = bbmax_[2];
   }
   bool IsIntersect(const CBV3_AABB<REAL>& bb) const
   {
@@ -359,6 +359,28 @@ public:
     min0 = L-r;
     max0 = L+r;
   }
+  void SetPoints4(
+      const REAL p0[3],
+      const REAL p1[3],
+      const REAL p2[3],
+      const REAL p3[4],
+      REAL cc)
+  {
+    assert(cc>=0);
+    // the center of the gravity
+    c[0] = (p0[0]+p1[0]+p2[0]+p3[0])*0.25;
+    c[1] = (p0[1]+p1[1]+p2[1]+p3[1])*0.25;
+    c[2] = (p0[2]+p1[2]+p2[2]+p3[2])*0.25;
+    // distance to input points
+    const REAL r0 = CBV3_Sphere<REAL>::Distance3(c,p0)+cc;
+    const REAL r1 = CBV3_Sphere<REAL>::Distance3(c,p1)+cc;
+    const REAL r2 = CBV3_Sphere<REAL>::Distance3(c,p2)+cc;
+    const REAL r3 = CBV3_Sphere<REAL>::Distance3(c,p3)+cc;
+    // pick the maximum distance
+    r = (r1>r0)?r1:r0;
+    r = (r2>r)?r2:r;
+    r = (r3>r)?r3:r;
+  }
 public:
   // the order of this declarations should not be changed since it is used by cuda BVH.
   REAL r;
@@ -373,12 +395,12 @@ private:
   }
    */
 };
-using CBV3f_Sphere = CBV3_Sphere<float>;
 
-/**
- * @brief 3D bounding volume of sphere with "double" precision
- */
+//! @brief 3D bounding volume of sphere with "float" precision
+using CBV3f_Sphere = CBV3_Sphere<float>;
+//! @brief 3D bounding volume of sphere with "double" precision
 using CBV3d_Sphere = CBV3_Sphere<double>;
+
   
 } // namespace delfem2
 
