@@ -1,17 +1,15 @@
-# 623_FemRodHairDynamic
+# 617_FemRodHairSelfcollision
 ![](thumbnail.png)
 
 ## About
 
-This program demonstrates the dynamic deformation of hairs.
+This program demonstrates the dynamic deformation of hairs include contacts.
 
 The elastic energy is given by the frames defined on the polyline segment.
-See the demo [622_FemRodHair](../622_FemRodHair/readme.md) for the demonstration of this elastic energy.
-
+See the demo [622_FemRodHairStatic](../622_FemRodHairStatic/readme.md) for the demonstration of this elastic energy, [623_FemRodHairDynamic](../623_FemRodHairDynamic/readme.md) for the dynamic deformation without contact.
 
 
 Time integration is solved using the variational implicit Euler integration.
-
 
 
 
