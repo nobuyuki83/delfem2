@@ -66,6 +66,15 @@ DFM2_INLINE void DrawSphere_Edge(double radius_);
 DFM2_INLINE void DrawTorus_Edge
  (double radius_, double radius_tube_);
 
+/**
+ * @param rad_longtitude longer radius of doughnuts
+ * @param rad_meridian shoter radius of  doughnuts
+ */
+DFM2_INLINE void DrawTorus_Solid
+ (double rad_longtitude,
+  double rad_meridian,
+  double scale_tex);
+
 DFM2_INLINE void DrawCylinder_Face
  (const double* dir_, double radius_, const double* cent_);
 
