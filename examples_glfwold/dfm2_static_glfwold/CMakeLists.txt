@@ -88,6 +88,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/cloth_internal.h
     ${DELFEM2_INC}/rigopt.h
     
+    ${DELFEM2_INC}/opengl/gl_funcs.h           ${DELFEM2_INC}/opengl/gl_funcs.cpp
     ${DELFEM2_INC}/opengl/tex_gl.h             ${DELFEM2_INC}/opengl/tex_gl.cpp
     ${DELFEM2_INC}/opengl/v2_glold.h           ${DELFEM2_INC}/opengl/v2_glold.cpp
     ${DELFEM2_INC}/opengl/v3q_glold.h          ${DELFEM2_INC}/opengl/v3q_glold.cpp
