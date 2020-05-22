@@ -9,7 +9,7 @@ vec3 ADSLightModel(
   vec3 ambient = myMaterial.ambient.xyz * gl_LightSource[indexLight].ambient.xyz;
   vec3 specular = vec3(0.0, 0.0, 0.0);
   {
-    vec3 viewv  = normalize( -myPosition ); 
+    vec3 viewv  = normalize( myPosition ); 
     vec3 refl   = reflect(-lightv,norm); 
     if( dot(lightv,viewv) > 0.0 ){
       float sh0 = myMaterial.shininess;

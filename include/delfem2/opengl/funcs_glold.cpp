@@ -479,6 +479,8 @@ DFM2_INLINE void delfem2::opengl::DrawSphere_Edge
 }
 
 
+// -----------------------------------------------------------
+
 DFM2_INLINE void delfem2::opengl::DrawTorus_Edge
 (double radius_, double radius_tube_)
 {
@@ -486,7 +488,6 @@ DFM2_INLINE void delfem2::opengl::DrawTorus_Edge
   const bool is_texture = ::glIsEnabled(GL_TEXTURE_2D);
   ::glDisable(GL_LIGHTING);
   ::glDisable(GL_TEXTURE_2D);
-  
   const unsigned int nlg = 32;
   const unsigned int nlt = 18;
   const double rlg = 6.28/nlg;  // longtitude
@@ -513,12 +514,66 @@ DFM2_INLINE void delfem2::opengl::DrawTorus_Edge
     }
     ::glEnd();
   }
-  ////
   if(is_lighting){ ::glEnable(GL_LIGHTING); }
   if(is_texture) { ::glEnable(GL_TEXTURE_2D); }
 }
 
 
+// -----------------------------------------------
+
+DFM2_INLINE void delfem2::opengl::DrawTorus_Solid
+ (double rl, // radius of longtitude
+  double rm,
+  double scale_tex) // radius of meridian
+{
+  const unsigned int nl = 32;
+  const double dl = M_PI*2.0/nl;  // longtitude
+  const unsigned int nm = 32;
+  const double dm = M_PI*2.0/nm;
+  ::glBegin(GL_QUADS);
+  for(unsigned int i=0;i<nl;i++){
+    for(unsigned int j=0;j<nm;j++){
+      ::glTexCoord2d(scale_tex*(i+0.0)/nl,
+                     scale_tex*(j+0.0)/nm);
+      ::glNormal3d( cos((j+0)*dm)*sin((i+0)*dl),
+                    cos((j+0)*dm)*cos((i+0)*dl),
+                    sin((j+0)*dm) );
+      ::glVertex3d((rm*cos((j+0)*dm)+rl )*sin((i+0)*dl),
+                   (rm*cos((j+0)*dm)+rl )*cos((i+0)*dl),
+                    rm*sin((j+0)*dm) );
+      // -------
+      ::glTexCoord2d(scale_tex*(i+1.0)/nl,
+                     scale_tex*(j+0.0)/nm);
+      ::glNormal3d( cos((j+0)*dm)*sin((i+1)*dl),
+                    cos((j+0)*dm)*cos((i+1)*dl),
+                    sin((j+0)*dm) );
+      ::glVertex3d((rm*cos((j+0)*dm)+rl )*sin((i+1)*dl),
+                   (rm*cos((j+0)*dm)+rl )*cos((i+1)*dl),
+                    rm*sin((j+0)*dm) );
+      // ------
+      ::glTexCoord2d(scale_tex*(i+1.0)/nl,
+                     scale_tex*(j+1.0)/nm);
+      ::glNormal3d( cos((j+1)*dm)*sin((i+1)*dl),
+                    cos((j+1)*dm)*cos((i+1)*dl),
+                    sin((j+1)*dm) );
+      ::glVertex3d((rm*cos((j+1)*dm)+rl )*sin((i+1)*dl),
+                   (rm*cos((j+1)*dm)+rl )*cos((i+1)*dl),
+                    rm*sin((j+1)*dm) );
+      // ----
+      ::glTexCoord2d(scale_tex*(i+0.0)/nl,
+                     scale_tex*(j+1.0)/nm);
+      ::glNormal3d( cos((j+1)*dm)*sin((i+0)*dl),
+                    cos((j+1)*dm)*cos((i+0)*dl),
+                    sin((j+1)*dm) );
+      ::glVertex3d((rm*cos((j+1)*dm)+rl )*sin((i+0)*dl),
+                   (rm*cos((j+1)*dm)+rl )*cos((i+0)*dl),
+                    rm*sin((j+1)*dm) );
+    }
+  }
+  ::glEnd();
+}
+
+// ---------------------------------------------------
 
 DFM2_INLINE void delfem2::opengl::DrawCylinder_Face
 (const double* dir_, double radius_, const double* cent_)

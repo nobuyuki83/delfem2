@@ -10,7 +10,7 @@ vec3 ADSLightModel(
   vec3 lightv = normalize( light_pos0 - myPosition ); 
   vec3 specular = vec3(0.0, 0.0, 0.0);
   {
-    vec3 viewv  = normalize( -myPosition ); 
+    vec3 viewv  = normalize( myPosition ); 
     vec3 refl   = reflect(-lightv,norm); 
     if( dot(lightv,viewv) > 0.0 ){
       float sh0 = myMaterial.shininess;
@@ -24,6 +24,7 @@ vec3 ADSLightModel(
 void main(){ 
   gl_Position = ftransform();
   vec3 myNormal   = vec3(gl_NormalMatrix    * gl_Normal);
-  vec3 myPosition = vec3(gl_ModelViewMatrix * gl_Vertex);
+//  vec3 myPosition = vec3(gl_ModelViewMatrix * gl_Vertex);
+  vec3 myPosition = vec3(0,0,1);
   LightIntensity  = ADSLightModel(myNormal,myPosition,gl_FrontMaterial,0);
 }
