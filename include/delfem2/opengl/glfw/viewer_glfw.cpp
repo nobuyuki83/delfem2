@@ -82,6 +82,9 @@ void delfem2::opengl::CViewer_GLFW::Init_oldGL()
   if (!glfwInit()){
     exit(EXIT_FAILURE);
   }
+  // shader version #120
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   window = glfwCreateWindow(640, 480, "Simple example", nullptr, nullptr);
   if (!window)
   {

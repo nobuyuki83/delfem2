@@ -1,3 +1,5 @@
+#version 120
+
 varying vec2 vST;
 varying vec3 lightVec; 
 varying vec3 eyeVec;
