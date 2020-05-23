@@ -90,8 +90,10 @@
 <img src="130_VoxelMorph/thumbnail.png" width=200 alt="130_VoxelMorph">
 
 ### [131_Shader](131_Shader)
-<img src="131_Shader/thumbnail.png" width=200 alt="121_Shadder">
+<img src="131_Shader/thumbnail.png" width=200 alt="131_Shadder">
 
+### [132_ShaderTexLaplace](132_ShaderTexLaplace)
+<img src="132_ShaderTexLaplace/thumbnail.png" width=200 alt="132_ShadderTexLaplace">
 
 
 

@@ -20,9 +20,7 @@
 
 namespace dfm2 = delfem2;
 
-// -----------------------------
-
-int id_shader_program = 0;
+// ----------------------------
 
 // -----------------------------
 
@@ -35,7 +33,10 @@ std::string LoadFile
   return std::string(vdataBegin,vdataEnd);
 }
 
-void setShaderProgram(int isp){
+void setShaderProgram(
+    int& id_shader_program,
+    int isp)
+{
   std::string glslVert, glslFrag;
   glUseProgram(0);
   glDeleteProgram(id_shader_program);
@@ -71,7 +72,8 @@ void setShaderProgram(int isp){
 
 // ------------------------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay(
+    int id_shader_program)
 {
   ::glEnable(GL_LIGHTING);
   {
@@ -152,41 +154,42 @@ int main(int argc,char* argv[])
   
   while (!glfwWindowShouldClose(viewer.window))
   {
+    int id_shapder_program;
     glfwSetWindowTitle(viewer.window, "phong");
-    setShaderProgram(0);
+    setShaderProgram(id_shapder_program, 0);
     for(int iframe=0;iframe<100;++iframe){
       viewer.DrawBegin_oldGL();
-      myGlutDisplay();
+      myGlutDisplay(id_shapder_program);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
     }
     // ----
     glfwSetWindowTitle(viewer.window, "gouraud");
-    setShaderProgram(1);
+    setShaderProgram(id_shapder_program, 1);
     for(int iframe=0;iframe<100;++iframe){
       viewer.DrawBegin_oldGL();
-      myGlutDisplay();
+      myGlutDisplay(id_shapder_program);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
     }
     // -----
     glfwSetWindowTitle(viewer.window, "toon");
-    setShaderProgram(2);
+    setShaderProgram(id_shapder_program, 2);
     for(int iframe=0;iframe<100;++iframe){
       viewer.DrawBegin_oldGL();
-      myGlutDisplay();
+      myGlutDisplay(id_shapder_program);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
     }
     // -----
     glfwSetWindowTitle(viewer.window, "texture");
-    setShaderProgram(3);
+    setShaderProgram(id_shapder_program, 3);
     for(int iframe=0;iframe<100;++iframe){
       viewer.DrawBegin_oldGL();
-      myGlutDisplay();
+      myGlutDisplay(id_shapder_program);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
