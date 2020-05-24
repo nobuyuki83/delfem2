@@ -35,27 +35,11 @@ std::string LoadFile
 
 void setShaderProgram(
     int& id_shader_program,
-    int isp)
+    std::string glslVert,
+    std::string glslFrag)
 {
-  std::string glslVert, glslFrag;
   glUseProgram(0);
   glDeleteProgram(id_shader_program);
-  if( isp == 0 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_adsphong.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_adsphong.frag");
-  }
-  else if( isp == 1 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_adsgouraud.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_adsgouraud.frag");
-  }
-  else if( isp == 2 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_toon.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_toon.frag");
-  }
-  else if( isp == 3 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_simpletexture.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_simpletexture.frag");
-  }
   id_shader_program = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
   //  
   glUseProgram(id_shader_program);
@@ -63,7 +47,6 @@ void setShaderProgram(
     GLint texLoc = glGetUniformLocation(id_shader_program, "myTexColor");
     glUniform1i(texLoc, 0); // GL_TEXTURE0
   }
-  
   {
     GLint texLoc = glGetUniformLocation(id_shader_program, "myTexNormal");
     glUniform1i(texLoc, 1); // GL_TEXTURE1
@@ -152,47 +135,56 @@ int main(int argc,char* argv[])
   ::glEnable(GL_TEXTURE_2D);
   
   
-  while (!glfwWindowShouldClose(viewer.window))
+  while (true)
   {
     int id_shapder_program;
-    glfwSetWindowTitle(viewer.window, "phong");
-    setShaderProgram(id_shapder_program, 0);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(id_shapder_program);
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "phong");
+      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsphong.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsphong.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
-    // ----
-    glfwSetWindowTitle(viewer.window, "gouraud");
-    setShaderProgram(id_shapder_program, 1);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(id_shapder_program);
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "gouraud");
+      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsgouraud.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsgouraud.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
-    // -----
-    glfwSetWindowTitle(viewer.window, "toon");
-    setShaderProgram(id_shapder_program, 2);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(id_shapder_program);
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "toon");
+      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_toon.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_toon.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
-    // -----
-    glfwSetWindowTitle(viewer.window, "texture");
-    setShaderProgram(id_shapder_program, 3);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      myGlutDisplay(id_shapder_program);
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "texture");
+      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_simpletexture.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_simpletexture.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
   }
 EXIT:
