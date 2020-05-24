@@ -99,6 +99,10 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [132_ShaderTexLaplace](132_ShaderTexLaplace)
 <img src="132_ShaderTexLaplace/thumbnail.png" width=200 alt="132_ShadderTexLaplace">
 
+### [133_ShaderContour](132_ShaderContour)
+<img src="133_ShaderContour/thumbnail.png" width=200 alt="132_ShadderContour">
+
+
 
 
 ## Dynamic Triangle

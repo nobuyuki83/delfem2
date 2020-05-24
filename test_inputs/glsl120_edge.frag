@@ -23,8 +23,11 @@ void main()
 
   vec3 lap = 8*clr11-clr00-clr01-clr02-clr10-clr12-clr20-clr21-clr22;
   vec3 tmpV = vec3(1.0);
-  float d = dot(abs(lap),tmpV)/3.0;
+  float d = abs(dot(lap,tmpV))/3.0;
   if( d > 1){ d = 1; }
+////  gl_FragColor = vec4(clr11, 1.0);
+////  gl_FragColor = vec4(clr, 1.0);
   gl_FragColor = vec4((1.0-d)*clr, 1.0);
+//   gl_FragColor = vec4(1-d,1-d,1-d, 1.0);
 //  gl_FragColor = vec4(lap, 1.0);
 }
