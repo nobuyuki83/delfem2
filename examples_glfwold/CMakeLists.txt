@@ -46,6 +46,7 @@ add_subdirectory(129_CubeGridEdit)
 add_subdirectory(130_VoxelMorph)
 add_subdirectory(131_Shader)
 add_subdirectory(132_ShaderTexLaplace)
+add_subdirectory(133_ShaderEdge)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)

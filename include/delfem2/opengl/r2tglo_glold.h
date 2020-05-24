@@ -36,6 +36,10 @@ public:
   void Draw_Axis() const;
   void Draw_Point() const;
   void Draw_BoundingBox() const;
+  /**
+   * @details before calling this function, bound texture by "glBindTexture" by yourself.
+   */
+  void Draw_Texture() const;
   void getGPos(double* p, 
                int ix, int iy) const;
   /**

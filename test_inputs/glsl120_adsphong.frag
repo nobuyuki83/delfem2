@@ -1,3 +1,5 @@
+#version 120
+
 vec3 ADSLightModel(
   vec3 myNormal, vec3 myPosition, 
   gl_MaterialParameters myMaterial,

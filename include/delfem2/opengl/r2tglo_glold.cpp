@@ -77,6 +77,28 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::GetColor()
   }
 }
 
+void delfem2::opengl::CRender2Tex_DrawOldGL::Draw_Texture() const {
+  const CVec3d& dx = x_axis;
+  const CVec3d& dy = CVec3d(z_axis)^dx;
+  const double lx = lengrid*nResX;
+  const double ly = lengrid*nResY;
+  CVec3d p0 = origin;
+  CVec3d p1 = p0 + lx*dx;
+  CVec3d p2 = p0 + lx*dx + ly*dy;
+  CVec3d p3 = p0 + ly*dy;
+  ::glEnable(GL_TEXTURE_2D);
+  ::glDisable(GL_LIGHTING);
+  ::glColor3d(1,1,1);
+  ::glBegin(GL_QUADS);
+  ::glTexCoord2d(0.0, 0.0); opengl::myGlVertex(p0);
+  ::glTexCoord2d(1.0, 0.0); opengl::myGlVertex(p1);
+  ::glTexCoord2d(1.0, 1.0); opengl::myGlVertex(p2);
+  ::glTexCoord2d(0.0, 1.0); opengl::myGlVertex(p3);
+  ::glEnd();
+  ::glBindTexture(GL_TEXTURE_2D, 0);
+  ::glDisable(GL_TEXTURE_2D);
+}
+
 void delfem2::opengl::CRender2Tex_DrawOldGL::Draw() const {
   ::glPointSize(this->pointSize);
   this->Draw_Point();
@@ -89,26 +111,8 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::Draw() const {
   this->Draw_BoundingBox();
   // -----------
   if( id_tex_color > 0 && this->isDrawTex ){
-    const CVec3d& dx = x_axis;
-    const CVec3d& dy = CVec3d(z_axis)^dx;
-    const double lx = lengrid*nResX;
-    const double ly = lengrid*nResY;
-    CVec3d p0 = origin;
-    CVec3d p1 = p0 + lx*dx;
-    CVec3d p2 = p0 + lx*dx + ly*dy;
-    CVec3d p3 = p0 + ly*dy;
-    ::glEnable(GL_TEXTURE_2D);
-    ::glDisable(GL_LIGHTING);
     ::glBindTexture(GL_TEXTURE_2D, id_tex_color);
-    ::glColor3d(1,1,1);
-    ::glBegin(GL_QUADS);
-    ::glTexCoord2d(0.0, 0.0); opengl::myGlVertex(p0);
-    ::glTexCoord2d(1.0, 0.0); opengl::myGlVertex(p1);
-    ::glTexCoord2d(1.0, 1.0); opengl::myGlVertex(p2);
-    ::glTexCoord2d(0.0, 1.0); opengl::myGlVertex(p3);
-    ::glEnd();
-    ::glBindTexture(GL_TEXTURE_2D, 0);
-    ::glDisable(GL_TEXTURE_2D);
+    this->Draw_Texture();
   }
 }
 

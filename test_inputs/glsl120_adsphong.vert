@@ -1,4 +1,6 @@
-varying vec3 vNormal; 
+#version 120
+
+varying vec3 vNormal;
 varying vec3 vPosition;
 
 void main(){ 

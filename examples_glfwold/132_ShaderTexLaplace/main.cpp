@@ -36,27 +36,14 @@ std::string LoadFile
 
 void setShaderProgram(
     int& id_shader_program,
-    int isp,
     unsigned int nTexWidth,
-    unsigned int nTexHeight)
+    unsigned int nTexHeight,
+    std::string glslVert,
+    std::string glslFrag)
 {
-  std::string glslVert, glslFrag;
   glUseProgram(0);
   glDeleteProgram(id_shader_program);
-  if( isp == 0 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_tex.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_tex.frag");
-  }
-  else if( isp == 1 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_tex.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_tex_diffx.frag");
-  }
-  else if( isp == 2 ){
-    glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_tex.vert");
-    glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl_tex_sobel.frag");
-  }
   id_shader_program = delfem2::opengl::setUpGLSL(glslVert, glslFrag);
-  //  
   glUseProgram(id_shader_program);
   {
     GLint texLoc = glGetUniformLocation(id_shader_program, "ourTexture");
@@ -92,7 +79,7 @@ int main(int argc,char* argv[])
     tex.min_x = +scale*width*0.5;
     tex.max_y = -scale*height*0.5;
     tex.min_y = +scale*height*0.5;
-    tex.z = -0.5;
+    tex.z = 0.0;
   }
   // -------------------
   
@@ -117,40 +104,68 @@ int main(int argc,char* argv[])
   int id_shader_program;
   while (!glfwWindowShouldClose(viewer.window))
   {
-    glfwSetWindowTitle(viewer.window, "naive");
-    setShaderProgram(id_shader_program, 0,width,height);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
-      glUseProgram(id_shader_program);
-      tex.Draw_oldGL();
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "naive");
+      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.frag");
+      setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        glUseProgram(id_shader_program);
+        tex.Draw_oldGL();
+        glfwSwapBuffers(viewer.window);
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
     // -------
-    glfwSetWindowTitle(viewer.window, "diffx");
-    setShaderProgram(id_shader_program, 1,width,height);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
-      glUseProgram(id_shader_program);
-      tex.Draw_oldGL();
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "diffx");
+      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex_diffx.frag");
+      setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        glUseProgram(id_shader_program);
+        tex.Draw_oldGL();
+        glfwSwapBuffers(viewer.window);
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
     // -------
-    glfwSetWindowTitle(viewer.window, "sobel");
-    setShaderProgram(id_shader_program, 2,width,height);
-    for(int iframe=0;iframe<100;++iframe){
-      viewer.DrawBegin_oldGL();
-      ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
-      glUseProgram(id_shader_program);
-      tex.Draw_oldGL();
-      glfwSwapBuffers(viewer.window);
-      glfwPollEvents();
-      if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+    {
+      glfwSetWindowTitle(viewer.window, "sobel");
+      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex_sobel.frag");
+      setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        glUseProgram(id_shader_program);
+        tex.Draw_oldGL();
+        glfwSwapBuffers(viewer.window);
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
+    }
+    // -------
+    {
+      glfwSetWindowTitle(viewer.window, "laplace");
+      std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex.vert");
+      std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_tex_laplace.frag");
+      setShaderProgram(id_shader_program, width,height, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        ::glBindTexture(GL_TEXTURE_2D, tex.id_tex);
+        glUseProgram(id_shader_program);
+        tex.Draw_oldGL();
+        glfwSwapBuffers(viewer.window);
+        glfwPollEvents();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
     }
   }
 EXIT:
