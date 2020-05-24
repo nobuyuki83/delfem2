@@ -16,7 +16,7 @@ endif()
 
 #######################
 
-project(133_ShaderEdge)
+project(133_ShaderContour)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

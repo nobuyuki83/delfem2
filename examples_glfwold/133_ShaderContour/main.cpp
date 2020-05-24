@@ -107,7 +107,7 @@ int main(int argc,char* argv[])
   unsigned int id_tex_norm;
   { // normal information to norm tex
     sampler.Start();
-    ::glClearColor(1.0, 1.0, 1.0, 1.0);
+    ::glClearColor(0.0, 0.0, 0.0, 1.0);
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ::glEnable(GL_DEPTH_TEST);
     ::glUseProgram(id_shader_normal);
@@ -120,8 +120,8 @@ int main(int argc,char* argv[])
     ::glBindTexture(GL_TEXTURE_2D, id_tex_norm);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // ---------
     ::glTexImage2D(GL_TEXTURE_2D,
         0, GL_RGBA,
@@ -150,12 +150,10 @@ int main(int argc,char* argv[])
     {
       GLint texLoc0 = glGetUniformLocation(id_shader_edge, "TexOrg");
       glUniform1i(texLoc0, 0); // GL_TEXTURE0
-      std::cout << "hoge" << texLoc0 << std::endl;
     }
     {
       GLint texLoc0 = glGetUniformLocation(id_shader_edge, "TexNrm");
       glUniform1i(texLoc0, 1); // GL_TEXTURE0
-      std::cout << "hoge" << texLoc0 << std::endl;
     }
     {
       GLint texLoc0 = glGetUniformLocation(id_shader_edge, "nTexWidth");
@@ -185,7 +183,6 @@ int main(int argc,char* argv[])
       ::glUseProgram(id_shader_edge);
       ::glActiveTexture(GL_TEXTURE0);
       ::glBindTexture(GL_TEXTURE_2D, sampler.id_tex_color);
-
       ::glActiveTexture(GL_TEXTURE1);
       ::glBindTexture(GL_TEXTURE_2D, id_tex_norm);
       sampler.Draw_Texture();

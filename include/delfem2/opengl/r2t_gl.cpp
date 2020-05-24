@@ -123,9 +123,10 @@ DFM2_INLINE void delfem2::opengl::CRender2Tex::AffMatT3f_MVP
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::Start()
 {
-  glGetIntegerv(GL_VIEWPORT, view); // current viewport
+  ::glGetIntegerv(GL_VIEWPORT, view); // current viewport
   ::glViewport(0, 0, nResX, nResY);
   ::glBindFramebuffer(GL_FRAMEBUFFER, id_framebuffer);
+  ::glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 DFM2_INLINE void delfem2::opengl::CRender2Tex::End()
