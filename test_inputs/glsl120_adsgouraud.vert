@@ -1,3 +1,5 @@
+#version 120
+
 varying vec3 LightIntensity; 
 
 vec3 ADSLightModel(
