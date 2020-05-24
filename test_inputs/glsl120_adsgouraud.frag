@@ -1,3 +1,5 @@
+#version 120
+
 varying vec3 LightIntensity; 
 void main() 
 { 

@@ -1,3 +1,5 @@
+#version 120
+
 varying vec3 vLightDir; 
 varying vec3 vNormal;
 void main() 

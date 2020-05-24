@@ -1,4 +1,8 @@
-# DelFEM2 C++ Examples using Legacy OpenGL 
+# DelFEM2 C++ Examples using Legacy OpenGL
+
+These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricated in many environment. But still it is convenient to use legacy functions such as glBegin(), glEnd(). We will eventually consider porting these demo into newer OpenGL >= 3.3 in the examples_glfwnew folder.
+
+
 
 ## Simple Example without DelFEM2
 
@@ -90,7 +94,13 @@
 <img src="130_VoxelMorph/thumbnail.png" width=200 alt="130_VoxelMorph">
 
 ### [131_Shader](131_Shader)
-<img src="131_Shader/thumbnail.png" width=200 alt="121_Shadder">
+<img src="131_Shader/thumbnail.png" width=200 alt="131_Shadder">
+
+### [132_ShaderTexLaplace](132_ShaderTexLaplace)
+<img src="132_ShaderTexLaplace/thumbnail.png" width=200 alt="132_ShadderTexLaplace">
+
+### [133_ShaderContour](132_ShaderContour)
+<img src="133_ShaderContour/thumbnail.png" width=200 alt="132_ShadderContour">
 
 
 
