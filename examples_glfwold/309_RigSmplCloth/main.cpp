@@ -28,6 +28,7 @@
 
 // ----------------------------
 #include <GLFW/glfw3.h>
+#include "delfem2/opengl/cad2dtriv2_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
@@ -76,7 +77,6 @@ void Draw
   delfem2::opengl::DrawMeshDynTri_FaceNorm(aETri, aXYZ.data());
 }
 
-
 int main(int argc,char* argv[])
 {
   // physics parameter
@@ -92,6 +92,7 @@ int main(int argc,char* argv[])
   std::vector<dfm2::CVec2d> aVec2;
   std::vector<double> aXYZ; // deformed vertex positions
   std::vector<unsigned int> aLine;
+  delfem2::CCad2D cad;
   {
     std::string name_cad_in_test_input;
     double scale_adjust = 0.0;
@@ -100,6 +101,7 @@ int main(int argc,char* argv[])
     std::vector<dfm2::CRigidTrans_2DTo3D> aRT23;
     // -------
 //    Inputs_SmplTshirt(name_cad_in_test_input,
+//    Inputs_SmplRaglan(name_cad_in_test_input,
     Inputs_SmplLtshirt(name_cad_in_test_input,
                            scale_adjust,
                            aIESeam,
@@ -107,7 +109,6 @@ int main(int argc,char* argv[])
                            aRT23);
     std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
     std::cout << "open svg: " << path_svg << std::endl;
-    delfem2::CCad2D cad;
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
     // -------
     dfm2::CMesher_Cad2D mesher;
@@ -167,6 +168,7 @@ int main(int argc,char* argv[])
                                dt,gravity,contact_clearance,rad_explore,bend_stiff_ratio);
     // ------------
     viewer.DrawBegin_oldGL();
+//    dfm2::opengl::Draw_CCad2D(cad);
     Draw(aETri,aXYZ,
          aXYZ_Contact,aTri_Contact);
     glfwSwapBuffers(viewer.window);

@@ -74,6 +74,7 @@ void MeshingPattern
   for(unsigned int ie=0;ie<aIESeam.size()/2;++ie){
     const unsigned int ie0 = aIESeam[ie*2+0];
     const unsigned int ie1 = aIESeam[ie*2+1];
+    if( ie0 >= cad.aEdge.size() || ie1 >= cad.aEdge.size() ) continue;
     const double l0 = cad.aEdge[ie0].LengthMesh();
     const double l1 = cad.aEdge[ie1].LengthMesh();
     const unsigned int ndiv = (int)(0.5*(l0+l1)/el+1);

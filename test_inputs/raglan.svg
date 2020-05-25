@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="lagran.svg"
+   xml:space="preserve"
+   style="enable-background:new 0 0 1238 399.8;"
+   viewBox="0 0 1238 399.8"
+   y="0px"
+   x="0px"
+   id="Layer_1"
+   version="1.1"><metadata
+   id="metadata53"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title>tshirt</dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs51" /><sodipodi:namedview
+   inkscape:current-layer="Layer_1"
+   inkscape:window-maximized="0"
+   inkscape:window-y="26"
+   inkscape:window-x="0"
+   inkscape:cy="199.9"
+   inkscape:cx="619"
+   inkscape:zoom="1.0379645"
+   showgrid="false"
+   id="namedview49"
+   inkscape:window-height="874"
+   inkscape:window-width="1440"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0"
+   guidetolerance="10"
+   gridtolerance="10"
+   objecttolerance="10"
+   borderopacity="1"
+   bordercolor="#666666"
+   pagecolor="#ffffff" />
+<style
+   id="style36"
+   type="text/css">
+	.st0{fill:none;stroke:#FF0000;stroke-width:2;stroke-miterlimit:10;}
+</style>
+<title
+   id="title38">tshirt</title>
+<path
+   sodipodi:nodetypes="ccccccccccsssc"
+   id="path40"
+   d="M 86.4,1.2345349 84.266537,45.449553 C 59.375875,132.02269 26.946304,144.19601 1,160.48047 L 19.674588,281.27362 27.975875,397.5 H 258.5607 L 264.91692,272.76211 286.5,165.57874 C 258.84397,145.13194 214.807,127.18682 199.57004,47.293921 L 198.6,1.2345349 C 192.34443,5.2058811 179.87582,2.4306053 173.01926,11.968231 161.29897,28.271409 155.57769,58.197932 143.48047,58.737873 129.83689,59.346833 120.91876,30.7879 109.02619,14.059639 102.34966,4.6683348 92.908512,5.5593128 86.4,1.2345349 Z"
+   class="st0" />
+<path
+   sodipodi:nodetypes="ccccccccccc"
+   id="path42"
+   d="M 377.43463,2.8680934 C 376.80506,80.165759 329.59494,63.460311 322.59027,113.59222 L 326.70079,236.02713 318.7,398.8 H 602.9 L 592.94224,232.1966 600.7,110.70195 C 587.79533,60.179767 547.05097,75.656031 545.88249,4.8315175 L 501.14864,45.490661 c -27.83424,7.079767 -20.42607,20.675098 -76.21673,-1 z"
+   class="st0" />
+<path
+   id="path44"
+   d="M695.4,347l-43.6-236.5c53.1-8.2,49.2-74,136-68c73.5,4.2,91.9,54.9,132,69.3L868.7,347L695.4,347z"
+   class="st0" />
+<path
+   id="path46"
+   d="M1017.6,347L968.7,113c48.7-4.5,53.5-71.7,134-69.2c77.5,0,82.5,47.5,134,70.5L1193.6,347H1017.6z"
+   class="st0" />
+</svg>

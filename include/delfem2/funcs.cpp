@@ -177,7 +177,6 @@ DFM2_INLINE std::vector<std::string> delfem2::Split_Parentheses
   return aToken;
 }
 
-// "'a,b',c,'d,e'" - > 'a,b' + 'c' + 'd,e'
 DFM2_INLINE std::vector<std::string> delfem2::Split_Quote
 (const std::string& str,
  char delimiter,
@@ -192,7 +191,9 @@ DFM2_INLINE std::vector<std::string> delfem2::Split_Quote
     }
     if( str[ie] == quote ){ is_in = !is_in; }
     if( str[ie] == delimiter && !is_in ){
-      aToken.emplace_back(str.data()+is,str.data()+ie );
+      if( str[is] != delimiter ) { // skip the sequence of the delimiter
+        aToken.emplace_back(str.data() + is, str.data() + ie);
+      }
       is = ie+1;
     }
   }
@@ -689,9 +690,14 @@ DFM2_INLINE void delfem2::ParseAttributes
  const std::string& input)
 {
   std::vector<std::string> aS = Split_Quote(input, ' ', '\"' );
+  /*
+  for(int is=0;is<aS.size();++is){
+    std::cout << is << " " << aS[is] << std::endl;
+  }
+   */
   for(const auto & is : aS){
     std::vector<std::string> aS1 = Split(is, '=');
-    assert( aS1.size() == 2 );
+    if( aS1.size() != 2 ) continue;
     std::string s1 = Remove_Quote(aS1[1], '\"');
     mapAttr.insert( std::make_pair(aS1[0],s1) );
   }
