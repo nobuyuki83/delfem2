@@ -32,7 +32,7 @@ int main(int argc,char* argv[])
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
   unsigned int iframe = 0;
-  const unsigned int nframe_interval = 10;
+  const unsigned int nframe_interval = 30;
   while(true){
     if( iframe % nframe_interval == 0 ){
       std::string path_svg;
@@ -40,6 +40,8 @@ int main(int argc,char* argv[])
       if( iframe == nframe_interval*1 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape1.svg"; }
       if( iframe == nframe_interval*2 ){ path_svg = std::string(PATH_INPUT_DIR)+"/shape2.svg"; }
       if( iframe == nframe_interval*3 ){ path_svg = std::string(PATH_INPUT_DIR)+"/tshirt.svg"; }
+      if( iframe == nframe_interval*4 ){ path_svg = std::string(PATH_INPUT_DIR)+"/ltshirt.svg"; }
+      if( iframe == nframe_interval*5 ){ path_svg = std::string(PATH_INPUT_DIR)+"/raglan.svg"; }
       dfm2::ReadSVG_Cad2D(cad,
                           path_svg, 1.0);
 //      std::cout << Str_SVGPolygon(cad.XY_VtxCtrl_Face(0),1) << std::endl;
@@ -51,7 +53,7 @@ int main(int argc,char* argv[])
       viewer.nav.camera.scale = 1.0;
       cad.iedge_picked = 22;
     }
-    iframe = (iframe+1)%(nframe_interval*4);
+    iframe = (iframe+1)%(nframe_interval*6);
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     // --------------------
     viewer.DrawBegin_oldGL();

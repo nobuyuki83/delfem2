@@ -160,7 +160,16 @@ TEST(funcs,split_quote){
     EXPECT_EQ(aS[1],"c");
     EXPECT_EQ(aS[2],"\"d,e\"");
   }
+  {
+    std::string str = "\"a,b\",,c,\"d,e\"";
+    std::vector<std::string> aS = dfm2::Split_Quote(str, ',', '\"' );
+    EXPECT_EQ(aS.size(), 3);
+    EXPECT_EQ(aS[0],"\"a,b\"");
+    EXPECT_EQ(aS[1],"c");
+    EXPECT_EQ(aS[2],"\"d,e\"");
+  }
 }
+
 
 TEST(mat3, eigen3)
 {

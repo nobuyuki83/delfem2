@@ -71,9 +71,13 @@ DFM2_INLINE std::vector<std::string> Split(const std::string& str,
 DFM2_INLINE std::vector<std::string> Split_Parentheses(const std::string& str,
                                                        char delimiter,
                                                        const std::string& par);
-DFM2_INLINE std::vector<std::string> Split_Quote(const std::string& str,
-                                     char delimiter,
-                                     char quote);
+
+// "'a,b',c,'d,e'" - > 'a,b' + 'c' + 'd,e' when delimitar is ',' and quote is '\''
+DFM2_INLINE std::vector<std::string> Split_Quote(
+    const std::string& str,
+    char delimiter,
+    char quote);
+
 DFM2_INLINE std::string Get_Parentheses(const std::string& str,
                                         const std::string& par);
 DFM2_INLINE std::string Replace(const std::string& str,

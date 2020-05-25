@@ -167,7 +167,14 @@ DFM2_INLINE std::vector<std::string> SVG_Split_Path_d
     if (s0[i] == ',') {
       std::string s1(s0.begin() + imark, s0.begin() + i);
       aS.push_back(s1);
-      imark = i + 1;
+      imark = i + 1;  // mark shoud be the begining position of the string so move next
+    }
+    if (s0[i] == ' ') { // sometimes the space act as delimiter in the SVG (inkscape version)
+      if (i > imark) {
+        std::string s1(s0.begin() + imark, s0.begin() + i);
+        aS.push_back(s1);
+      }
+      imark = i+1; // mark shoud be the begining position of the string so move next
     }
     if (s0[i] == '-') {
       if (i > imark) {
@@ -181,7 +188,7 @@ DFM2_INLINE std::vector<std::string> SVG_Split_Path_d
         std::string s1(s0.begin() + imark, s0.begin() + i);
         aS.push_back(s1);
       }
-      char s2[2] = {s0[i], '\0'};
+      const char s2[2] = {s0[i], '\0'};
       aS.emplace_back(s2);
       imark = i + 1;
     }
@@ -1044,13 +1051,14 @@ DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdge
  bool is_end_point,
  const CCad2D& cad2d)
 {
+  std::vector<unsigned int> res;
+  if( iedge >= cad2d.aEdge.size() ){ return res; }
   //    std::cout << nvtx << " " << nedge << " " << nface << std::endl;
   std::vector<int> aflg(nvtx+nedge+nface,0);
   {
     aflg[nvtx+iedge] = 1;
   }
   std::vector<int> aIP_E = cad2d.Ind_Vtx_Edge(iedge);
-  std::vector<unsigned int> res;
   if( is_end_point ){ res.push_back(aIP_E[0]); }
   for(size_t ip=0;ip<this->aFlgPnt.size();++ip){
     int iflg = aFlgPnt[ip]; assert(iflg<int(nvtx+nedge+nface));
@@ -1243,7 +1251,7 @@ DFM2_INLINE void delfem2::ReadSVG_LoopEdgeCCad2D
   std::cout << "svg file content: ";
   for(unsigned int ic=0;ic<aC.size();++ic){ std::cout << aC[ic]; }
   std::cout << std::endl;
-   */
+  */
   // ----
   
   std::vector< std::string > aStrTagContent;
@@ -1252,18 +1260,24 @@ DFM2_INLINE void delfem2::ReadSVG_LoopEdgeCCad2D
   
   { // get path
     for(auto & sTagContent : aStrTagContent){
+//      std::cout << "tagcontent: " << sTagContent << std::endl;
       std::string str_path;
-      if( sTagContent.compare(0,5,"path ") == 0 ){
+      if( sTagContent.compare(0,4,"path") == 0 || // adobe illustrator
+          sTagContent.compare(0,5,"path\r") == 0){ // inkscape
         str_path = std::string(sTagContent.begin()+5,sTagContent.end());
       }
       if( str_path == "" ){ continue; }
+      // remove new line codes as inkscape svg has new line in side path tag
+      // don't remove spaces here as inkscape svg uses space for the delimiter
+      str_path = Remove(str_path, "\n\r");
 //      std::cout << "str_path: " << str_path << std::endl;
       std::map< std::string, std::string > mapAttr;
       ParseAttributes(mapAttr,
                       str_path);
       std::string str_path_d = mapAttr["d"];
 //      std::cout << "str_path_d: " << str_path_d << std::endl;
-      str_path_d = Remove(str_path_d, " \n");
+      if( str_path_d.empty() ){ continue; }
+//      std::cout << "str_path_d: " << str_path_d << std::endl;
       std::vector<std::string> aStr1 = cad2::SVG_Split_Path_d(str_path_d);
       /*
       for(unsigned int is=0;is<aStr1.size();++is){
