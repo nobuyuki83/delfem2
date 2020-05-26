@@ -44,11 +44,14 @@ DFM2_INLINE void MeshTri3D_CylinderOpen(
  * @param nr number of division for circumference
  * @param nl number of division in axis direction
  */
+template <typename T>
 DFM2_INLINE void MeshTri3D_CylinderClosed(
-    std::vector<double>& aXYZ,
+    std::vector<T>& aXYZ,
     std::vector<unsigned int>& aTri,
-    double r, double l,
-    int nr, int nl);
+    T r,
+    T l,
+    unsigned int nr,
+    unsigned int nl);
 
 template <typename T>
 DFM2_INLINE void MeshTri3D_Cube(
@@ -93,6 +96,19 @@ DFM2_INLINE void MeshQuad3_CubeVox(
     const REAL bbmax[3]);
   
 // above: cube
+// -----------
+// below: capsule
+
+template <typename T>
+void MeshTri3_Capsule(
+    std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    T r,
+    T l,
+    unsigned int nc,
+    unsigned int nr,
+    unsigned int nl);
+
 // above: 3D primitives
 // --------------------------------------------------------------------------------------------------------------
 // below: 2D primitives
