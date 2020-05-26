@@ -59,7 +59,9 @@ void dfm2::Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 
 void dfm2::MeshQuad3D_VoxelGrid
 (std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
- int ndivx, int ndivy, int ndivz,
+ unsigned int ndivx,
+ unsigned int ndivy,
+ unsigned int ndivz,
  const std::vector<int>& aIsVox)
 {
   int ioffx=0;
