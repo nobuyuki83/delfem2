@@ -196,10 +196,11 @@ DFM2_INLINE std::vector<std::string> SVG_Split_Path_d
   return aS;
 }
 
-DFM2_INLINE void LoopEdgeCad2D_SVGPathD
-    (std::vector<CCad2D_EdgeGeo> &aEdge,
-     std::vector<std::string> &aStr1) {
-  assert(aStr1[0] == "M");
+DFM2_INLINE void LoopEdgeCad2D_SVGPathD(
+    std::vector<CCad2D_EdgeGeo> &aEdge,
+    std::vector<std::string> &aStr1)
+{
+  assert(aStr1[0] == "M" || aStr1[0] == "m" );
   assert(aStr1[aStr1.size() - 1] == "Z" || aStr1[aStr1.size() - 1] == "z");
   CVec2d pos_cur;
   for (int is = 0;;) {
@@ -213,6 +214,20 @@ DFM2_INLINE void LoopEdgeCad2D_SVGPathD
         e.p0 = pos_cur;
         e.p1.p[0] = myStod(aStr1[is + 0]);
         e.p1.p[1] = myStod(aStr1[is + 1]);
+        pos_cur = e.p1;
+        aEdge.push_back(e);
+        is += 2;
+      }
+    } else if (aStr1[is] == "m") {
+      pos_cur.p[0] = myStod(aStr1[is + 1]);
+      pos_cur.p[1] = myStod(aStr1[is + 2]);
+      is += 3;
+      for (;;) {
+        if (isAlphabet(aStr1[is][0])) { break; }
+        CCad2D_EdgeGeo e;
+        e.p0 = pos_cur;
+        e.p1.p[0] = pos_cur.x() + myStod(aStr1[is + 0]);
+        e.p1.p[1] = pos_cur.y() + myStod(aStr1[is + 1]);
         pos_cur = e.p1;
         aEdge.push_back(e);
         is += 2;

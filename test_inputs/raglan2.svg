@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1238 399.8"
+   style="enable-background:new 0 0 1238 399.8;"
+   xml:space="preserve"
+   sodipodi:docname="raglan2.svg"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"><metadata
+   id="metadata53"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title>tshirt</dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs51"><inkscape:perspective
+     id="perspective24"
+     inkscape:persp3d-origin="619 : 133.26667 : 1"
+     inkscape:vp_z="1238 : 199.9 : 1"
+     inkscape:vp_y="0 : 1000 : 0"
+     inkscape:vp_x="0 : 199.9 : 1"
+     sodipodi:type="inkscape:persp3d" /></defs><sodipodi:namedview
+   inkscape:document-rotation="0"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1440"
+   inkscape:window-height="779"
+   id="namedview49"
+   showgrid="false"
+   inkscape:zoom="1.0379645"
+   inkscape:cx="607.43891"
+   inkscape:cy="200.86342"
+   inkscape:window-x="0"
+   inkscape:window-y="23"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<style
+   type="text/css"
+   id="style36">
+	.st0{fill:none;stroke:#FF0000;stroke-width:2;stroke-miterlimit:10;}
+</style>
+<title
+   id="title38">tshirt</title>
+
+
+
+
+<path
+   sodipodi:nodetypes="ccccccccc"
+   id="path20"
+   d="M 97.305833,2.7256422 46.244356,25.571631 C 32.848543,75.129662 40.384343,164.17072 1.9268482,166.45523 31.245891,243.56044 26.248641,320.66565 26.01245,397.77086 l 238.92918,1.90383 c 2.53963,-79.21361 -3.93141,-159.2366 25.04902,-236.07521 C 243.24434,151.3537 243.7391,75.760868 230.25836,18.908218 L 181.12373,1.7737261 C 153.18443,27.136923 125.24513,25.577775 97.305833,2.7256422 Z"
+   style="fill:none;stroke:#000000;stroke-width:0.99401px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /><path
+   sodipodi:nodetypes="ccccccccc"
+   id="path22"
+   d="M 407.74708,3.0820976 348.68871,21.191823 c 9.00581,57.937927 -19.57109,97.084497 -33.64903,143.480547 14.89093,104.70711 3.26881,165.2258 -3.89027,233.18288 h 284.2 c -8.08318,-75.45456 -11.98038,-153.30111 -2.2,-238.96342 -13.64016,-47.19186 -37.1427,-92.974801 -34.5856,-142.480551 L 498.41517,2.1552494 C 466.82629,80.336456 436.76905,71.214738 407.74708,3.0820976 Z"
+   style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /><path
+   sodipodi:nodetypes="cccccc"
+   id="path35"
+   d="m 648.90972,113.39027 43.6,236.5 h 173.3 l 51.1,-235.2 C 877.70366,93.347726 842.69586,43.265474 776.51981,42.39066 716.35962,39.055086 687.93629,101.29058 648.90972,113.39027 Z"
+   style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /><path
+   sodipodi:nodetypes="cccccc"
+   id="path47"
+   d="m 942.68755,117.81712 48.90005,234.00001 h 176 l 43.1,-232.70001 c -45.7241,-15.12964 -47.0041,-60.981913 -133.5794,-71.90934 -65.0545,-2.82191 -75.3209,48.606779 -134.42065,70.60934 z"
+   style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" /></svg>

@@ -153,7 +153,7 @@ TEST(funcs,split_parentheses){
 
 TEST(funcs,split_quote){
   {
-    std::string str = "\"a,b\",c,\"d,e\"";
+    std::string str = R"("a,b",c,"d,e")";
     std::vector<std::string> aS = dfm2::Split_Quote(str, ',', '\"' );
     EXPECT_EQ(aS.size(), 3);
     EXPECT_EQ(aS[0],"\"a,b\"");
@@ -161,7 +161,7 @@ TEST(funcs,split_quote){
     EXPECT_EQ(aS[2],"\"d,e\"");
   }
   {
-    std::string str = "\"a,b\",,c,\"d,e\"";
+    std::string str = R"("a,b",,c,"d,e")";
     std::vector<std::string> aS = dfm2::Split_Quote(str, ',', '\"' );
     EXPECT_EQ(aS.size(), 3);
     EXPECT_EQ(aS[0],"\"a,b\"");
@@ -176,8 +176,8 @@ TEST(mat3, eigen3)
 
   for(int itr=0;itr<10000;itr++){
     double sm[6];
-    for(int i=0;i<6;i++){
-      sm[i] = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+    for(double & v : sm){
+      v = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
     }
     double l[3];
     dfm2::CMat3d U;
@@ -199,8 +199,8 @@ TEST(mat3, eigen3)
   // -----------------------------
   for(int itr=0;itr<100;itr++){
     double sm[6];
-    for(int i=0;i<6;i++){
-      sm[i] = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
+    for(double & v : sm){
+      v = ((double)std::rand()/(RAND_MAX+1.0))*100-50;
     }
     sm[5] = -sm[4];
     double l[3];
@@ -275,7 +275,7 @@ TEST(mat3, rot_comp)
 TEST(mat3, quat)
 {
   std::uniform_real_distribution<double> dist(-50.0, +50.0);
-  std::mt19937 mtd;
+  std::mt19937 mtd(0);
   for(int itr=0;itr<10000;itr++){
     double quat0[4] = { dist(mtd), dist(mtd), dist(mtd), dist(mtd) };
     dfm2::Normalize_Quat(quat0);
@@ -324,10 +324,10 @@ TEST(vec2,second_moment_of_area)
     double b = a*(3*r1+1);
     std::vector<dfm2::CVec2d> aVec2;
     {
-      aVec2.push_back( dfm2::CVec2d(-a*0.5,-b*0.5) );
-      aVec2.push_back( dfm2::CVec2d(+a*0.5,-b*0.5) );
-      aVec2.push_back( dfm2::CVec2d(+a*0.5,+b*0.5) );
-      aVec2.push_back( dfm2::CVec2d(-a*0.5,+b*0.5) );
+      aVec2.emplace_back(-a*0.5,-b*0.5 );
+      aVec2.emplace_back(+a*0.5,-b*0.5 );
+      aVec2.emplace_back(+a*0.5,+b*0.5 );
+      aVec2.emplace_back(-a*0.5,+b*0.5 );
       double theta0 = r4*3.1415*2.0;
       dfm2::Rotate(aVec2,theta0);
       dfm2::Translate(aVec2, r2*10-5,r3*10-5);
