@@ -8,7 +8,6 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include "delfem2/imgio.h"
 #include "delfem2/primitive.h"
 
 #include <glad/glad.h>
@@ -38,8 +37,8 @@ void setShaderProgram(
     int& id_shader_program,
     unsigned int nTexWidth,
     unsigned int nTexHeight,
-    std::string glslVert,
-    std::string glslFrag)
+    std::string& glslVert,
+    std::string& glslFrag)
 {
   glUseProgram(0);
   glDeleteProgram(id_shader_program);

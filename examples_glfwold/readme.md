@@ -102,6 +102,8 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [133_ShaderContour](133_ShaderContour)
 <img src="133_ShaderContour/thumbnail.png" width=200 alt="133_ShadderContour">
 
+### [134_Primitives](134_Primitives)
+<img src="134_Primitives/thumbnail.png" width=200 alt="134_Primitives">
 
 
 

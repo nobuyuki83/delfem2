@@ -56,6 +56,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/mshmisc.h              ${DELFEM2_INC}/mshmisc.cpp
       ${DELFEM2_INC}/mshio.h                ${DELFEM2_INC}/mshio.cpp
       ${DELFEM2_INC}/dtri.h                 ${DELFEM2_INC}/dtri.cpp
+      ${DELFEM2_INC}/cad2_dtri2.h           ${DELFEM2_INC}/cad2_dtri2.cpp
       ${DELFEM2_INC}/funcs.h                ${DELFEM2_INC}/funcs.cpp
       ${DELFEM2_INC}/mats.h                 ${DELFEM2_INC}/mats.cpp
       ${DELFEM2_INC}/vecxitrsol.h           ${DELFEM2_INC}/vecxitrsol.cpp

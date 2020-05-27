@@ -44,11 +44,14 @@ DFM2_INLINE void MeshTri3D_CylinderOpen(
  * @param nr number of division for circumference
  * @param nl number of division in axis direction
  */
+template <typename T>
 DFM2_INLINE void MeshTri3D_CylinderClosed(
-    std::vector<double>& aXYZ,
+    std::vector<T>& aXYZ,
     std::vector<unsigned int>& aTri,
-    double r, double l,
-    int nr, int nl);
+    T r,
+    T l,
+    unsigned int nr,
+    unsigned int nl);
 
 template <typename T>
 DFM2_INLINE void MeshTri3D_Cube(
@@ -69,21 +72,28 @@ DFM2_INLINE void MeshTri3D_Icosahedron(
 // below: cube
   
 /**
- * @brief triangle mesh of torus. This function is defiend for "flaot" and "double"
+ * @brief triangle mesh of torus.
+ * @tparam REAL defined for "flaot" and "double" when DFM_HEADER_ONY is not defined.
+ * @param len_latitude (in) length of the latitude.
+ * @param len_merdician (in) length of the meridian. smaller length
+ * @param ndiv_latitude (in) number of division in latitude
+ * @param ndiv_meridian (in) number of division in meridian
  */
 template <typename REAL>
 DFM2_INLINE void MeshTri3_Torus(
     std::vector<REAL>& aXYZ,
     std::vector<unsigned int>& aTri,
-    double r, double l,
-    unsigned int nr, unsigned int nl);
+    double len_latitutde,
+    double len_meridian,
+    unsigned int ndiv_latittude,
+    unsigned int ndiv_meridian);
                               
 DFM2_INLINE void SetTopoQuad_CubeVox(
     std::vector<unsigned int>& aQuad);
     
 /**
  * @brief making a quad mesh of a cube. The order of the vertex is same as voxel element
- * @details defined for "float" and "double"
+ * @tparam REAL in the static compile, the REAL is defined for "float" and "double"
  */
 template<typename REAL>
 DFM2_INLINE void MeshQuad3_CubeVox(
@@ -93,6 +103,19 @@ DFM2_INLINE void MeshQuad3_CubeVox(
     const REAL bbmax[3]);
   
 // above: cube
+// -----------
+// below: capsule
+
+template <typename T>
+void MeshTri3_Capsule(
+    std::vector<T>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    T r,
+    T l,
+    unsigned int nc,
+    unsigned int nr,
+    unsigned int nl);
+
 // above: 3D primitives
 // --------------------------------------------------------------------------------------------------------------
 // below: 2D primitives
@@ -102,7 +125,7 @@ DFM2_INLINE void MeshQuad2D_Grid(
     std::vector<unsigned int>& aQuad,
     int nx, int ny);
 
-// -------------------------------------------------------------
+// ========================================
 // primivive classes from here
 
 template <typename REAL>
@@ -116,6 +139,8 @@ public:
 	double normal_[3] = {0,0,1};
   double origin_[3] = {0,0,0};
 };
+
+// ----------
 
 template <typename REAL>
 class CSphere: public CSDF3
@@ -134,6 +159,8 @@ public:
 	double radius_ = 1.0;
 	bool is_out_ = true;	// true:normal points outward
 };
+
+// ------------
 
 template <typename REAL>
 class CCylinder: public CSDF3
