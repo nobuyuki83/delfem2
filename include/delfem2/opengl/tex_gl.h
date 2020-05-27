@@ -54,14 +54,17 @@ public:
   }
    */
   
-  virtual void Initialize(int w_, int h_,
-                  const unsigned char *pD,
-                  const std::string &typeData){
+  virtual void Initialize(
+      unsigned int w_,
+      unsigned int h_,
+      const unsigned char *pD,
+      const std::string &typeData)
+  {
     this->h = h_;
     this->w = w_;
     this->aRGB.assign(pD, pD + h * w * 3);
     if (typeData == "bgr") {
-      for (int i = 0; i < h * w; ++i) { // rgb -> bgr
+      for (unsigned int i = 0; i < h * w; ++i) { // rgb -> bgr
         unsigned char b0 = aRGB[i * 3 + 0];
         unsigned char r0 = aRGB[i * 3 + 2];
         aRGB[i * 3 + 0] = r0;
