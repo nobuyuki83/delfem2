@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cmath>
+#include <cassert>
 #include "delfem2/primitive.h"
 
 /*

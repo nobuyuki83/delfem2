@@ -57,12 +57,13 @@ void dfm2::Add_AABB(int aabb[8], int ivx, int ivy, int ivz)
 }
 
 
-void dfm2::MeshQuad3D_VoxelGrid
-(std::vector<double>& aXYZ, std::vector<unsigned int>& aQuad,
- unsigned int ndivx,
- unsigned int ndivy,
- unsigned int ndivz,
- const std::vector<int>& aIsVox)
+void dfm2::MeshQuad3D_VoxelGrid(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aQuad,
+    unsigned int ndivx,
+    unsigned int ndivy,
+    unsigned int ndivz,
+    const std::vector<int>& aIsVox)
 {
   int ioffx=0;
   int ioffy=0;
@@ -70,12 +71,12 @@ void dfm2::MeshQuad3D_VoxelGrid
   aQuad.clear();
   aXYZ.clear();
   //
-  const int mdivx = ndivx+1;
-  const int mdivy = ndivy+1;
-  const int mdivz = ndivz+1;
-  for(int igpx=0;igpx<mdivx;++igpx){
-    for(int igpy=0;igpy<mdivy;++igpy){
-      for(int igpz=0;igpz<mdivz;++igpz){
+  const unsigned int mdivx = ndivx+1;
+  const unsigned int mdivy = ndivy+1;
+  const unsigned int mdivz = ndivz+1;
+  for(unsigned int igpx=0;igpx<mdivx;++igpx){
+    for(unsigned int igpy=0;igpy<mdivy;++igpy){
+      for(unsigned int igpz=0;igpz<mdivz;++igpz){
         aXYZ.push_back( igpx+ioffx );
         aXYZ.push_back( igpy+ioffy );
         aXYZ.push_back( igpz+ioffz );
@@ -83,14 +84,14 @@ void dfm2::MeshQuad3D_VoxelGrid
     }
   }
   //
-  assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
-  for(int igvx=0;igvx<ndivx;++igvx){
-    for(int igvy=0;igvy<ndivy;++igvy){
-      for(int igvz=0;igvz<ndivz;++igvz){
-        const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
-        assert( ivoxel < (int)aIsVox.size() );
+  assert( aIsVox.size() == ndivx*ndivy*ndivz );
+  for(unsigned int igvx=0;igvx<ndivx;++igvx){
+    for(unsigned int igvy=0;igvy<ndivy;++igvy){
+      for(unsigned int igvz=0;igvz<ndivz;++igvz){
+        const unsigned int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+        assert( ivoxel < aIsVox.size() );
         if( aIsVox[ivoxel] == 0 ){ continue; }
-        /////
+        //
         int aIGP_Vox[8] = {0,0,0,0, 0,0,0,0};
         {
           aIGP_Vox[0] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
@@ -108,7 +109,7 @@ void dfm2::MeshQuad3D_VoxelGrid
             assert( jgv0 < (int)aIsVox.size() );
             if( aIsVox[jgv0] == 1 ){ continue; } // facing to adjacent voxel -> no outward face.
           }
-          /////
+          //
           const int aIGP0 = aIGP_Vox[ noelElemFace_Vox[iface][0] ];
           const int aIGP1 = aIGP_Vox[ noelElemFace_Vox[iface][1] ];
           const int aIGP2 = aIGP_Vox[ noelElemFace_Vox[iface][2] ];
@@ -123,23 +124,26 @@ void dfm2::MeshQuad3D_VoxelGrid
   }
 }
 
-void dfm2::MeshHex3D_VoxelGrid
-(std::vector<double>& aXYZ, std::vector<int>& aHex,
- int ndivx, int ndivy, int ndivz,
- const std::vector<int>& aIsVox)
+void dfm2::MeshHex3D_VoxelGrid(
+    std::vector<double>& aXYZ,
+    std::vector<int>& aHex,
+    unsigned int ndivx,
+    unsigned int ndivy,
+    unsigned int ndivz,
+    const std::vector<int>& aIsVox)
 {
   int ioffx=0;
   int ioffy=0;
   int ioffz=0;
   aHex.clear();
   aXYZ.clear();
-  //////
-  const int mdivx = ndivx+1;
-  const int mdivy = ndivy+1;
-  const int mdivz = ndivz+1;
-  for(int igpx=0;igpx<mdivx;++igpx){
-    for(int igpy=0;igpy<mdivy;++igpy){
-      for(int igpz=0;igpz<mdivz;++igpz){
+  //
+  const unsigned int mdivx = ndivx+1;
+  const unsigned int mdivy = ndivy+1;
+  const unsigned int mdivz = ndivz+1;
+  for(unsigned int igpx=0;igpx<mdivx;++igpx){
+    for(unsigned int igpy=0;igpy<mdivy;++igpy){
+      for(unsigned int igpz=0;igpz<mdivz;++igpz){
         aXYZ.push_back( igpx+ioffx );
         aXYZ.push_back( igpy+ioffy );
         aXYZ.push_back( igpz+ioffz );
@@ -147,14 +151,14 @@ void dfm2::MeshHex3D_VoxelGrid
     }
   }
   //////
-  assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
-  for(int igvx=0;igvx<ndivx;++igvx){
-    for(int igvy=0;igvy<ndivy;++igvy){
-      for(int igvz=0;igvz<ndivz;++igvz){
-        const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
-        assert( ivoxel < (int)aIsVox.size() );
+  assert( aIsVox.size() == ndivx*ndivy*ndivz );
+  for(unsigned int igvx=0;igvx<ndivx;++igvx){
+    for(unsigned int igvy=0;igvy<ndivy;++igvy){
+      for(unsigned int igvz=0;igvz<ndivz;++igvz){
+        const unsigned int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+        assert( ivoxel < aIsVox.size() );
         if( aIsVox[ivoxel] == 0 ){ continue; }
-        /////
+        //
         int aIGP_Hex[8] = {0,0,0,0, 0,0,0,0};
         {
           aIGP_Hex[0] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);
@@ -181,38 +185,41 @@ void dfm2::MeshHex3D_VoxelGrid
 
 
 
-void dfm2::MeshTet3D_VoxelGrid
-(std::vector<double>& aXYZ, std::vector<int>& aTet,
- int ndivx, int ndivy, int ndivz,
- const std::vector<int>& aIsVox)
+void dfm2::MeshTet3D_VoxelGrid(
+    std::vector<double>& aXYZ,
+    std::vector<int>& aTet,
+    unsigned int ndivx,
+    unsigned int ndivy,
+    unsigned int ndivz,
+    const std::vector<int>& aIsVox)
 {
   int ioffx=0;
   int ioffy=0;
   int ioffz=0;
   aTet.clear();
   aXYZ.clear();
-  //////
-  const int mdivx = ndivx+1;
-  const int mdivy = ndivy+1;
-  const int mdivz = ndivz+1;
-  for(int igpx=0;igpx<mdivx;++igpx){
-    for(int igpy=0;igpy<mdivy;++igpy){
-      for(int igpz=0;igpz<mdivz;++igpz){
+  //
+  const unsigned int mdivx = ndivx+1;
+  const unsigned int mdivy = ndivy+1;
+  const unsigned int mdivz = ndivz+1;
+  for(unsigned int igpx=0;igpx<mdivx;++igpx){
+    for(unsigned int igpy=0;igpy<mdivy;++igpy){
+      for(unsigned int igpz=0;igpz<mdivz;++igpz){
         aXYZ.push_back( igpx+ioffx );
         aXYZ.push_back( igpy+ioffy );
         aXYZ.push_back( igpz+ioffz );
       }
     }
   }
-  //////
-  assert( (int)aIsVox.size() == ndivx*ndivy*ndivz );
-  for(int igvx=0;igvx<ndivx;++igvx){
-    for(int igvy=0;igvy<ndivy;++igvy){
-      for(int igvz=0;igvz<ndivz;++igvz){
-        const int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
-        assert( ivoxel < (int)aIsVox.size() );
+  //
+  assert( aIsVox.size() == ndivx*ndivy*ndivz );
+  for(unsigned int igvx=0;igvx<ndivx;++igvx){
+    for(unsigned int igvy=0;igvy<ndivy;++igvy){
+      for(unsigned int igvz=0;igvz<ndivz;++igvz){
+        const unsigned int ivoxel = igvx*(ndivy*ndivz)+igvy*ndivz+igvz;
+        assert( ivoxel < aIsVox.size() );
         if( aIsVox[ivoxel] == 0 ){ continue; }
-        /////
+        //
         int aIP[8] = {0,0,0,0, 0,0,0,0};
         {
           aIP[0] = (igvx+0)*(mdivy*mdivz)+(igvy+0)*mdivz+(igvz+0);

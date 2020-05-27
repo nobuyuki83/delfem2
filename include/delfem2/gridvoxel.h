@@ -32,17 +32,20 @@ void MeshQuad3D_VoxelGrid
   unsigned int ndivz,
   const std::vector<int>& aIsVox);
 
-
 void MeshHex3D_VoxelGrid
  (std::vector<double>& aXYZ,
   std::vector<int>& aQuad,
-  int ndivx, int ndivy, int ndivz,
+  unsigned int ndivx,
+  unsigned int ndivy,
+  unsigned int ndivz,
   const std::vector<int>& aIsVox);
 
 void MeshTet3D_VoxelGrid
  (std::vector<double>& aXYZ,
   std::vector<int>& aTet,
-  int ndivx, int ndivy, int ndivz,
+  unsigned int ndivx,
+  unsigned int ndivy,
+  unsigned int ndivz,
   const std::vector<int>& aIsVox);
 
 
