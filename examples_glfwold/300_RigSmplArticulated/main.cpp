@@ -55,13 +55,13 @@ int main()
   {
     iframe = (iframe+1)%50;
     if( iframe ==0 ){
-      for(unsigned int ibone=0;ibone<aBone.size();++ibone){
-        dfm2::CQuatd::Random(0.2).CopyTo(aBone[ibone].quatRelativeRot);
+      for(auto & bone : aBone){
+        dfm2::CQuatd::Random(0.2).CopyTo(bone.quatRelativeRot);
       }
       dfm2::CVec3d::Random().CopyToScale(aBone[0].transRelative, 0.2);
       dfm2::UpdateBoneRotTrans(aBone);
       dfm2::Skinning_LBS(aXYZ1,
-                         aXYZ0, aBone, aW);
+          aXYZ0, aBone, aW);
     }
     
     // -------------------
@@ -71,8 +71,8 @@ int main()
     dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
     ::glDisable(GL_DEPTH_TEST);
     delfem2::opengl::DrawBone(aBone,
-                              -1, -1,
-                              0.01, 1.0);
+        -1, -1,
+        0.01, 1.0);
 //    dfm2::opengl::DrawJoints(aJntPos1, aIndBoneParent);
 //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
 //    dfm2::opengl::DrawJoints(aJntPos0, aIndBoneParent);
