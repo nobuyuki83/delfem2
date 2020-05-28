@@ -158,6 +158,10 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [310_RigSmplClothPose](310_RigSmplClothPose)
 <img src="310_RigSmplClothPose/thumbnail.png" width=200>
 
+### [311_RigBendCapsule](311_RigBendCapsule)
+<img src="311_RigBendCapsule/thumbnail.png" width=200>
+
+
 
 ## CAD
 
