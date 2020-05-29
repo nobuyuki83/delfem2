@@ -1062,7 +1062,7 @@ DFM2_INLINE void delfem2::CMesher_Cad2D::Meshing
 
 
 DFM2_INLINE std::vector<unsigned int> delfem2::CMesher_Cad2D::IndPoint_IndEdge
-(const int iedge,
+(const unsigned int iedge,
  bool is_end_point,
  const CCad2D& cad2d)
 {

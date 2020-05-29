@@ -100,6 +100,10 @@ DFM2_INLINE void DrawAABB3D_Edge
 DFM2_INLINE void DrawAABB3D_Edge
  (const double cw[6]);
 
+/**
+ * @brief draw bounding box with edge
+ * @details this function do nothing when pmin[0]  > pmin[1] 
+ */
 DFM2_INLINE void DrawBox3_Edge
  (const double* pmin,
   const double* pmax);

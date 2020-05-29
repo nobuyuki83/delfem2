@@ -17,6 +17,7 @@
 #include <vector>
 #include <cmath>
 #include <cassert>
+#include "delfem2/vec3.h"
 #include "delfem2/opengl/r2t_gl.h"
 
 namespace delfem2 {
@@ -122,9 +123,18 @@ public:
   std::vector<CRender2Tex_DrawOldGL> aSampler;
 };
 
-void CarveVoxelByDepth
- (std::vector<int>& aVal,
-  const CRender2Tex_DrawOldGL_BOX& sampler_box);
+void CarveVoxelByDepth(
+    std::vector<int>& aVal,
+    const CRender2Tex_DrawOldGL_BOX& sampler_box);
+
+/**
+ * @brief project input point to the depth surface
+ */
+bool GetProjectedPoint(
+    CVec3d& p0,
+    CVec3d& n0,
+    const CVec3d& ps,
+    const CRender2Tex_DrawOldGL& smplr);
 
 }
 }

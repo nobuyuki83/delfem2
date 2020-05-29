@@ -232,7 +232,7 @@ public:
                                                   const CCad2D& cad2d);
   std::vector<int> IndPoint_IndFaceArray(const std::vector<int>& aIndFc,
                                          const CCad2D& cad2d);
-  std::vector<unsigned int> IndPoint_IndEdge(const int ie,
+  std::vector<unsigned int> IndPoint_IndEdge(const unsigned int ie,
                                              bool is_end_point,
                                              const CCad2D& cad2d);
 public:
