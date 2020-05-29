@@ -13,7 +13,7 @@ ENDIF()
 
 ####################################
 
-project(625_DefArapFitProj)
+project(625_DefLaplacianFitProj)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}")
 

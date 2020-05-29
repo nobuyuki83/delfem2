@@ -177,7 +177,8 @@ int main(int argc,char* argv[])
       glfwSetWindowTitle(viewer.window, "Def_LaplacianLinear without Preconditioner");
       dfm2::CDef_LaplacianLinear def;
       def.Init(aXYZ0, aTri, false);
-      def.SetBoundaryCondition(aBCFlag);
+      def.aBCFlag = aBCFlag;
+      def.SetValueToPreconditioner();
       for(;iframe<400;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
@@ -195,7 +196,8 @@ int main(int argc,char* argv[])
       glfwSetWindowTitle(viewer.window, "Def_LaplacianLinear with Preconditioner");
       dfm2::CDef_LaplacianLinear def;
       def.Init(aXYZ0, aTri, true);
-      def.SetBoundaryCondition(aBCFlag);
+      def.aBCFlag = aBCFlag;
+      def.SetValueToPreconditioner();
       for(;iframe<500;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);

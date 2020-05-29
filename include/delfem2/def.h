@@ -11,6 +11,7 @@
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/ilu_mats.h"
+#include "delfem2/vec3.h"
 
 // ---------------------------
 
@@ -64,7 +65,7 @@ public:
 // =====================================
 
 /**
- * @brief deformation classs where the matrix is computed as L^TL
+ * @brief Laplacian deformation classs
  */
 class CDef_LaplacianLinear{
 public:
@@ -73,15 +74,24 @@ public:
             bool is_preconditioner);
   void Deform(std::vector<double>& aXYZ1,
               const std::vector<double>& aXYZ0) const;
-  void SetBoundaryCondition(const std::vector<int>& aBCFlag);
+  void SetValueToPreconditioner();
   // -----------
   void MatVec(double* y,
               double alpha, const double* vec,  double beta) const;
 public:
-  CMatrixSparse<double> Mat;
+  // sliding condition
+  double weight_nrm = 100;
+  std::vector< std::pair<unsigned int, CVec3d> > aIdpNrm;
+
+  // fixing condition
   double weight_bc = 100;
-  std::vector<double> aRes0;
   std::vector<int> aBCFlag;
+  //
+  CMatrixSparse<double> Mat;
+  std::vector<double> aRes0;
+  //
+  unsigned int max_itr = 300;
+  double conv_tol = 1.0e-5;
   //
   bool is_preconditioner;
   CPreconditionerILU<double> Prec;

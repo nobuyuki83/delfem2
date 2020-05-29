@@ -267,6 +267,8 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [624_DefArapUi](624_DefArapUi)
 <img src="624_DefArapUi/thumbnail.png" width=200>
 
+### [625_DefLaplacianFitProj](625_DefLaplacianFitProj)
+<img src="625_DefLaplacianFitProj/thumbnail.png" width=200>
 
 
 

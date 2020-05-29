@@ -168,10 +168,10 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::getGPos
   const CVec3d& dx = x_axis;
   const CVec3d& dz = z_axis;
   const CVec3d& dy = Cross(dz,dx);
-  double lz = aZ[iy*nResX+ix];
-  double lx = (ix+0.5)*lengrid;
-  double ly = (iy+0.5)*lengrid;
-  CVec3d vp = lx*dx+ly*dy+lz*dz + CVec3d(origin);
+  const double lz = aZ[iy*nResX+ix];
+  const double lx = (ix+0.5)*lengrid;
+  const double ly = (iy+0.5)*lengrid;
+  CVec3d vp =  CVec3d(origin) + lx*dx + ly*dy + lz*dz;
   vp.CopyTo(p);
 }
 
@@ -355,4 +355,45 @@ void delfem2::opengl::CarveVoxelByDepth
       }
     }
   }
+}
+
+
+bool delfem2::opengl::GetProjectedPoint(
+    CVec3d& p0,
+    CVec3d& n0,
+    const CVec3d& ps,
+    const CRender2Tex_DrawOldGL& smplr)
+{
+  const unsigned int nx = smplr.nResX;
+  const unsigned int ny = smplr.nResY;
+  const CVec3d& dx = smplr.x_axis;
+  const CVec3d& dz = smplr.z_axis;
+  const CVec3d& dy = Cross(dz,dx);
+  const CVec3d& org = CVec3d(smplr.origin);
+  const double el = smplr.lengrid;
+  const double lx = (ps-org)*dx;
+  const double ly = (ps-org)*dy;
+  const int ix0 = (int)floor(lx/el-0.5);
+  const int iy0 = (int)floor(ly/el-0.5);
+  const int ix1 = ix0+1;
+  const int iy1 = iy0+1;
+  if( ix0 < 0 && ix0 >= nx ){ return false; }
+  if( ix1 < 0 && ix1 >= nx ){ return false; }
+  if( iy0 < 0 && iy0 >= ny ){ return false; }
+  if( iy1 < 0 && iy1 >= ny ){ return false; }
+  if( smplr.aZ[iy0*nx+ix0] < -smplr.z_range*0.99 ) return false;
+  if( smplr.aZ[iy0*nx+ix1] < -smplr.z_range*0.99 ) return false;
+  if( smplr.aZ[iy1*nx+ix0] < -smplr.z_range*0.99 ) return false;
+  if( smplr.aZ[iy1*nx+ix1] < -smplr.z_range*0.99 ) return false;
+  const CVec3d p00 = org + (ix0*el)*dx + (iy0*el)*dy + (double)smplr.aZ[iy0*nx+ix0]*dz;
+  const CVec3d p01 = org + (ix0*el)*dx + (iy1*el)*dy + (double)smplr.aZ[iy1*nx+ix0]*dz;
+  const CVec3d p10 = org + (ix1*el)*dx + (iy0*el)*dy + (double)smplr.aZ[iy0*nx+ix1]*dz;
+  const CVec3d p11 = org + (ix1*el)*dx + (iy1*el)*dy + (double)smplr.aZ[iy1*nx+ix1]*dz;
+  const double rx = lx/smplr.lengrid-ix0;
+  const double ry = ly/smplr.lengrid-iy0;
+  p0 = (1-rx)*(1-ry)*p00 + rx*(1-ry)*p10 + (1-rx)*ry*p01 + rx*ry*p11;
+  CVec3d dpx = (ry-1)*p00 + (1-ry)*p10 - ry*p01 + ry*p11;
+  CVec3d dpy = (rx-1)*p00 - rx*p10 + (1-rx)*p01 + rx*p11;
+  n0 = Cross(dpx,dpy).Normalize();
+  return true;
 }
