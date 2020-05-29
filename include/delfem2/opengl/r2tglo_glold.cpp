@@ -179,6 +179,7 @@ void delfem2::opengl::CRender2Tex_DrawOldGL::BoundingBox3
  (double* pmin,
   double* pmax) const
 {
+  if( aZ.size() != nResX*nResY ){ return; }
   for(unsigned int ix=0;ix<nResX;++ix){
     for(unsigned int iy=0;iy<nResY;++iy){
       CVec3d vp;
