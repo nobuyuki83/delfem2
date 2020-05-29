@@ -1121,9 +1121,10 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(
 // Axis-aligned box
 
 DFM2_INLINE void delfem2::opengl::DrawBox3_Edge
-(const double* p0,
- const double* p1)
+(const double* p0, // pmin
+ const double* p1) // pmax
 {
+  if( p0[0] > p1[0] ){ return; } // this bounding box is empty
   ::glBegin(GL_LINES);
   ::glVertex3d(p1[0],p0[1],p1[2]); ::glVertex3d(p0[0],p0[1],p1[2]);
   ::glVertex3d(p1[0],p0[1],p0[2]); ::glVertex3d(p0[0],p0[1],p0[2]);
