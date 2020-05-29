@@ -312,17 +312,17 @@ void delfem2::CDef_LaplacianLinear::Init
   Mat.MatVec(aRes0.data(),
              -1.0, aXYZ0.data(), 0.0);
   
+  aBCFlag.assign(aXYZ0.size(), 0);
+  
   this->Prec.Clear();
   if( is_preconditioner ){
-    this->Prec.Initialize_ILUk(Mat,0);
+    this->Prec.Initialize_ILUk(Mat,20);
   }
 }
 
 
-void delfem2::CDef_LaplacianLinear::SetBoundaryCondition
- (const std::vector<int> &aBCFlag_)
+void delfem2::CDef_LaplacianLinear::SetValueToPreconditioner()
 {
-  this->aBCFlag = aBCFlag_;
   if( !is_preconditioner ){ return; }
   //
   const unsigned int np = Mat.nblk_col;
@@ -333,8 +333,36 @@ void delfem2::CDef_LaplacianLinear::SetBoundaryCondition
       Mat.valDia[ip*9+idim*3+idim] += weight_bc;
     }
   }
+  for(unsigned int iip=0;iip<aIdpNrm.size();++iip){
+    const unsigned int ip0 = aIdpNrm[iip].first;
+    const double* n0 = aIdpNrm[iip].second.p;
+    Mat.valDia[ip0*9+0*3+0] += weight_nrm*n0[0]*n0[0];
+    Mat.valDia[ip0*9+0*3+1] += weight_nrm*n0[0]*n0[1];
+    Mat.valDia[ip0*9+0*3+2] += weight_nrm*n0[0]*n0[2];
+    Mat.valDia[ip0*9+1*3+0] += weight_nrm*n0[1]*n0[0];
+    Mat.valDia[ip0*9+1*3+1] += weight_nrm*n0[1]*n0[1];
+    Mat.valDia[ip0*9+1*3+2] += weight_nrm*n0[1]*n0[2];
+    Mat.valDia[ip0*9+2*3+0] += weight_nrm*n0[2]*n0[0];
+    Mat.valDia[ip0*9+2*3+1] += weight_nrm*n0[2]*n0[1];
+    Mat.valDia[ip0*9+2*3+2] += weight_nrm*n0[2]*n0[2];
+  }
+  // --------
   this->Prec.SetValueILU(Mat);
   this->Prec.DoILUDecomp();
+  // -------
+  for(unsigned int iip=0;iip<aIdpNrm.size();++iip){
+    const unsigned int ip0 = aIdpNrm[iip].first;
+    const double* n0 = aIdpNrm[iip].second.p;
+    Mat.valDia[ip0*9+0*3+0] -= weight_nrm*n0[0]*n0[0];
+    Mat.valDia[ip0*9+0*3+1] -= weight_nrm*n0[0]*n0[1];
+    Mat.valDia[ip0*9+0*3+2] -= weight_nrm*n0[0]*n0[2];
+    Mat.valDia[ip0*9+1*3+0] -= weight_nrm*n0[1]*n0[0];
+    Mat.valDia[ip0*9+1*3+1] -= weight_nrm*n0[1]*n0[1];
+    Mat.valDia[ip0*9+1*3+2] -= weight_nrm*n0[1]*n0[2];
+    Mat.valDia[ip0*9+2*3+0] -= weight_nrm*n0[2]*n0[0];
+    Mat.valDia[ip0*9+2*3+1] -= weight_nrm*n0[2]*n0[1];
+    Mat.valDia[ip0*9+2*3+2] -= weight_nrm*n0[2]*n0[2];
+  }
   for(unsigned int ip=0;ip<np;++ip){
     for(int idim=0;idim<3;++idim){
       if( aBCFlag[ip*3+idim] == 0 ){ continue; }
@@ -358,11 +386,11 @@ void delfem2::CDef_LaplacianLinear::Deform
   aUpd.assign(aXYZ0.size(),0.0);
   if( is_preconditioner ){
     aConvHist = Solve_PCG(aRhs.data(), aUpd.data(),
-                          aRhs.size(), 1.0e-7, 300, *this, Prec);
+                          aRhs.size(), this->conv_tol, this->max_itr, *this, Prec);
   }
   else{
     aConvHist = Solve_CG(aRhs.data(), aUpd.data(),
-                         aRhs.size(), 1.0e-7, 300, *this);
+                         aRhs.size(), this->conv_tol, this->max_itr, *this);
   }
   for(unsigned int i=0;i<aBCFlag.size();++i){ aXYZ1[i] += aUpd[i]; }
 }
@@ -373,6 +401,15 @@ void delfem2::CDef_LaplacianLinear::MatVec(
 {
   Mat.MatTVec(y,
               alpha, vec, beta);
+  //
+  for(unsigned int iip=0;iip<aIdpNrm.size();++iip){
+    const unsigned int ip0 = aIdpNrm[iip].first;
+    const double* n0 = aIdpNrm[iip].second.p;
+    const double d = Dot3(n0, vec+ip0*3);
+    y[ip0*3+0] += weight_nrm*alpha*d*n0[0];
+    y[ip0*3+1] += weight_nrm*alpha*d*n0[1];
+    y[ip0*3+2] += weight_nrm*alpha*d*n0[2];
+  }
   // add diagonal for fixed boundary condition
   for(unsigned int i=0;i<aBCFlag.size();++i){
     if( aBCFlag[i] == 0 ){ continue; }
