@@ -18,6 +18,7 @@
 namespace delfem2{
 namespace dtet{
 
+/*
 const unsigned int nTri5 = 10;
 const unsigned int tri5[nTri5][3] = {
 	{ 0, 1, 2 }, // 0
@@ -81,43 +82,42 @@ const unsigned int nTriInSwap5 = 3;
 const unsigned int sup2Noel5[nSupSwap5][nTriInSwap5][3] = {
 	{ { 0, 1, 2 },{ 0, 2, 3 },{ 0, 3, 4 } },
 };
+ */
 
-class CNew
+class CTriNew
 {
 public:
-  CNew(int it_old, int ift_old){
-    this->it_old = it_old;
-    this->ift_old = ift_old;
-    iold = -1;
-    it_new = -1;
-    inewsur[0] = -1;
-    inewsur[1] = -1;
-    inewsur[2] = -1;
+  CTriNew(unsigned int it_old, unsigned int ift_old){
+    this->itet_old = it_old;
+    this->itfc_old = ift_old;
+    iold = UINT_MAX;
+    itet_new = UINT_MAX;
+    inew_sur[0] = UINT_MAX;
+    inew_sur[1] = UINT_MAX;
+    inew_sur[2] = UINT_MAX;
   }
 public:
-  int it_old; // tri index old
-  int ift_old; // tri face index old
-               //
-  int iv[3];
-  int inewsur[3];
-  int irelsur[3];
-  //
-  int iold;
-  int it_new; // tri index new
+  unsigned int itet_old; // tet index old
+  unsigned int itfc_old; // tet face index old
+  unsigned int v[3]; // vertex index
+  unsigned int inew_sur[3]; // adjacent index of CNew
+  unsigned int iold; // index of COld
+  unsigned int itet_new; // tet index new
 };
 
-class COld
+class CTetOld
 {
 public:
-  COld(int it_old, const CETet& stet){
+  CTetOld(int it_old, const CDynTet& stet){
     this->it_old = it_old;
     this->stet = stet;
   }
 public:
-  CETet stet;
+  CDynTet stet;
   int it_old;
 };
 
+/*
 bool Swap3Elared
 (const ElemAroundEdge& elared,
  const int ptn,
@@ -278,11 +278,11 @@ bool Swap5Elared
     { (int)elared.e[2].first, (int)elared.e[3].first },
     { (int)elared.e[4].first, (int)tet.size()        }
   };
-  /*
-   std::cout << inew_tet[0][0] << " " << inew_tet[0][1] << std::endl;
-   std::cout << inew_tet[1][0] << " " << inew_tet[1][1] << std::endl;
-   std::cout << inew_tet[2][0] << " " << inew_tet[2][1] << std::endl;
-   */
+
+//   std::cout << inew_tet[0][0] << " " << inew_tet[0][1] << std::endl;
+//   std::cout << inew_tet[1][0] << " " << inew_tet[1][1] << std::endl;
+//   std::cout << inew_tet[2][0] << " " << inew_tet[2][1] << std::endl;
+
   //  std::cout << " Pattern 5 " << ptn << std::endl;
   
   tet.resize( tet.size()+1 );
@@ -436,13 +436,13 @@ bool Swap4Elared
   const int inew_d0 = iold1;
   const int inew_u1 = iold2;
   const int inew_d1 = iold3;
-  /*
-   std::cout << iold0 << " " << tet[iold0].s[noel0d] << " " << tet[iold0].s[noel0u] << std::endl;
-   std::cout << iold1 << " " << tet[iold1].s[noel1d] << " " << tet[iold1].s[noel1u] << std::endl;
-   std::cout << iold2 << " " << tet[iold2].s[noel2d] << " " << tet[iold2].s[noel2u] << std::endl;
-   std::cout << iold3 << " " << tet[iold3].s[noel3d] << " " << tet[iold3].s[noel3u] << std::endl;
-   std::cout << " pattern " << ptn << std::endl;
-   */
+
+//   std::cout << iold0 << " " << tet[iold0].s[noel0d] << " " << tet[iold0].s[noel0u] << std::endl;
+//   std::cout << iold1 << " " << tet[iold1].s[noel1d] << " " << tet[iold1].s[noel1u] << std::endl;
+//   std::cout << iold2 << " " << tet[iold2].s[noel2d] << " " << tet[iold2].s[noel2u] << std::endl;
+//   std::cout << iold3 << " " << tet[iold3].s[noel3d] << " " << tet[iold3].s[noel3u] << std::endl;
+//   std::cout << " pattern " << ptn << std::endl;
+
   if( ptn == 0 ){
     {
       CETet& new_tet = tet[inew_u0];
@@ -737,32 +737,34 @@ bool Swap4Elared
   return true;
 }
 
+ */
+
 } // namespace dtet
 } // namespace delfem2
 
 // =====================================================================
 
 
-bool delfem2::MakeTetSurTet(std::vector<CETet>& tet)
+bool delfem2::MakeTetSurTet(std::vector<CDynTet>& tet)
 {
 	unsigned int ntetsuno;
 	unsigned int* tetsuno_ind = 0;
 	unsigned int* tetsuno = 0;
 
 	unsigned int nnode;
-	{	// 四面体に参照されている節点でもっとも番号の大きいもの＋１を探す
+	{	// find the maximum index of the vertex and plus one
 		nnode = 0;
 		for(unsigned int itet=0;itet<tet.size();itet++){
-		for(unsigned int inotet=0;inotet<4;inotet++){
-			nnode = ( tet[itet].v[inotet] > (int)nnode ) ? tet[itet].v[inotet] : nnode;
-		}
+      for(unsigned int inotet=0;inotet<4;inotet++){
+        nnode = ( tet[itet].v[inotet] > nnode ) ? tet[itet].v[inotet] : nnode;
+      }
 		}
 		nnode += 1;
 	}
 
 	MakeTetSurNo(tet,nnode,ntetsuno,tetsuno_ind,tetsuno);
 
-	const unsigned int nelem = (int)tet.size();
+	const unsigned int nelem = tet.size();
 	const unsigned int nfael = 4;
 	const unsigned int nnofa = 3;
 	const unsigned int nnoel = 4;
@@ -779,17 +781,16 @@ bool delfem2::MakeTetSurTet(std::vector<CETet>& tet)
 
 	for(unsigned int ielem=0;ielem<nelem;ielem++){
 		for(unsigned int ifael=0;ifael<nfael;ifael++){
-			tet[ielem].g[ifael] = -1;
-			tet[ielem].s[ifael] = 0;
-			tet[ielem].f[ifael] = 0;
+			tet[ielem].s[ifael] = UINT_MAX;
+//			tet[ielem].f[ifael] = 0;
 		}
 	}
 
 	for(unsigned int inode=0;inode<nnode;inode++){ help_node[inode] = 0; }
 	for(unsigned int ielem=0;ielem<nelem;ielem++){
 		for(unsigned int ifael=0;ifael<nfael;ifael++){
-			if( tet[ielem].g[ifael] != -1 ){
-				assert( tet[ielem].g[ifael] == -2 );
+			if( tet[ielem].s[ifael] != UINT_MAX ){
+				assert( tet[ielem].s[ifael] < tet.size() );
 				continue;
 			}
 			for(unsigned int inofa=0;inofa<nnofa;inofa++){
@@ -850,12 +851,10 @@ bool delfem2::MakeTetSurTet(std::vector<CETet>& tet)
 						assert( tet[ielem].v[noelTetFace[ifael][2]] == tet[jelem1].v[tetRel[irel1][noelTetFace[ifael][2]]] );
 
 						tet[ielem].s[ifael] = jelem1;
-						tet[ielem].f[ifael] = irel1;
-						tet[ielem].g[ifael] = -2;
+//						tet[ielem].f[ifael] = irel1;
 
 						tet[jelem1].s[jfael] = ielem;
-						tet[jelem1].f[jfael] = jrel1;
-						tet[jelem1].g[jfael] = -2;
+//						tet[jelem1].f[jfael] = jrel1;
 
 						iflag = true;
 						break;
@@ -876,7 +875,7 @@ bool delfem2::MakeTetSurTet(std::vector<CETet>& tet)
 }
 
 bool delfem2::MakeOneTetSurNo
- (const std::vector<CETet>& tet,
+ (const std::vector<CDynTet>& tet,
   std::vector<CEPo3D>& point)
 {
 	assert( !point.empty() );
@@ -899,7 +898,7 @@ bool delfem2::MakeOneTetSurNo
 }
 
 bool delfem2::MakeTetSurNo
- (const std::vector<CETet>& tet,
+ (const std::vector<CDynTet>& tet,
 	const unsigned int npoin,
 	unsigned int& ntetsupo,
 	unsigned int*& tetsupo_ind,
@@ -1206,7 +1205,7 @@ bool delfem2::MakeEdgeTet
 (unsigned int& nedge,
  unsigned int*& edge_ind,
  unsigned int*& edge,
- const std::vector<CETet>& tet,
+ const std::vector<CDynTet>& tet,
  const unsigned int nnode)
 {
 //	const unsigned int nnoel = 4;
@@ -1676,9 +1675,40 @@ bool CheckTri(const std::vector<STri3D>& tri )
 }
  */
 
+int delfem2::GetRelationshipTet(const unsigned int* aIP,
+                                const unsigned int* aJP)
+{
+  for(int irel=0;irel<12;++irel){
+    int score = 0;
+    if( aIP[0] == aJP[ tetRel[irel][0] ] ){ score++; }
+    if( aIP[1] == aJP[ tetRel[irel][1] ] ){ score++; }
+    if( aIP[2] == aJP[ tetRel[irel][2] ] ){ score++; }
+    if( aIP[3] == aJP[ tetRel[irel][3] ] ){ score++; }
+    if( score == 3 ){ return irel; }
+  }
+  return -1;
+}
+
+bool delfem2::IsInsideCircumSphere(
+                          const delfem2::CVec3d& p,
+                          const delfem2::CDynTet t,
+                          const delfem2::CVec3d& c,
+                          const std::vector<CEPo3D>& aPo3D)
+{
+  const unsigned int i0 = t.v[0];
+  const unsigned int i1 = t.v[1];
+  const unsigned int i2 = t.v[2];
+  const unsigned int i3 = t.v[3];
+  const delfem2::CVec3d& p0 = aPo3D[i0].p;
+  const delfem2::CVec3d& p1 = aPo3D[i1].p;
+  const delfem2::CVec3d& p2 = aPo3D[i2].p;
+  const delfem2::CVec3d& p3 = aPo3D[i3].p;
+  double sqrad = SquareDistance(p0,c)+SquareDistance(p1,c)+SquareDistance(p2,c)+SquareDistance(p3,c);
+  return sqrad > SquareDistance(p,c)*4.0;
+}
 
 bool delfem2::CheckTet
- (const std::vector<CETet>& aSTet,
+ (const std::vector<CDynTet>& aSTet,
   const std::vector<CEPo3D>& aPo3D)
 {
 	std::cout << " *** CheckTet *** ";
@@ -1704,9 +1734,9 @@ bool delfem2::CheckTet
 	for(unsigned int itet=0;itet<aSTet.size();itet++){
     if( !aSTet[itet].isActive() ) continue;
 		for(int inotet=0;inotet<4;inotet++){
-			int ino = aSTet[itet].v[inotet];
-      if( ino == -1 ) continue;
-			assert( ino < (int)aPo3D.size() );
+			const unsigned int ino = aSTet[itet].v[inotet];
+      if( ino == UINT_MAX ) continue;
+			assert( ino < aPo3D.size() );
 		}
 		if( TetVolume(itet,aSTet,aPo3D) < 1.0e-15 ){
 			std::cout << " negative " << itet << " " << TetVolume(itet,aSTet,aPo3D) << std::endl;
@@ -1718,30 +1748,16 @@ bool delfem2::CheckTet
 	
 	for(unsigned int itet=0;itet<aSTet.size();itet++){
 		for(int ifatet=0;ifatet<4;ifatet++){
-			if( aSTet[itet].s[ifatet] == -1 ){ continue; }
-			const int adj = aSTet[itet].s[ifatet];
-			assert( adj >= 0 && adj < (int)aSTet.size() );
-			if( aSTet[itet].f[ifatet] < 0 || aSTet[itet].f[ifatet] >= 12 ){
-				std::cout << itet << " " << ifatet << " " << (int)aSTet[itet].f[ifatet] << std::endl;
-			}
-			assert( aSTet[itet].f[ifatet] >= 0 && aSTet[itet].f[ifatet] < 12 );
-			const unsigned int* rel1 = tetRel[ aSTet[itet].f[ifatet] ];
-			if( aSTet[adj].s[ rel1[ifatet] ] != itet ){
-				std::cout << itet << " " << ifatet << "   " << adj << " " << (int)rel1[ifatet] << std::endl;
-			}
-			if( aSTet[itet].v[ noelTetFace[ifatet][0] ] != aSTet[adj].v[ rel1[ noelTetFace[ifatet][0] ] ] ){
-				std::cout << itet << " " << ifatet << " --> 0 " << std::endl;
-			}
-			if( aSTet[itet].v[ noelTetFace[ifatet][1] ] != aSTet[adj].v[ rel1[ noelTetFace[ifatet][1] ] ] ){
-				std::cout << itet << " " << ifatet << " --> 1 " << std::endl;
-			}
-			if( aSTet[itet].v[ noelTetFace[ifatet][2] ] != aSTet[adj].v[ rel1[ noelTetFace[ifatet][2] ] ] ){
-				std::cout << itet << " " << ifatet << " --> 2 " << std::endl;
-			}
-			assert( aSTet[adj].s[ rel1[ifatet] ] == itet );
+			if( aSTet[itet].s[ifatet] == UINT_MAX ){ continue; }
+			const unsigned int adj = aSTet[itet].s[ifatet];
+			assert( adj < aSTet.size() );
+      const int irel0 = GetRelationshipTet(aSTet[itet].v, aSTet[adj].v );
+			assert( irel0 >= 0 && irel0 < 12 );
+			const unsigned int* rel1 = tetRel[irel0];
 			assert( aSTet[itet].v[ noelTetFace[ifatet][0] ] == aSTet[adj].v[ rel1[ noelTetFace[ifatet][0] ] ] );
 			assert( aSTet[itet].v[ noelTetFace[ifatet][1] ] == aSTet[adj].v[ rel1[ noelTetFace[ifatet][1] ] ] );
 			assert( aSTet[itet].v[ noelTetFace[ifatet][2] ] == aSTet[adj].v[ rel1[ noelTetFace[ifatet][2] ] ] );
+      assert( aSTet[adj].s[ rel1[ifatet] ] == itet );
 		}
 	}
 	
@@ -1751,41 +1767,28 @@ bool delfem2::CheckTet
 }
 
 
-bool delfem2::CheckTet(const std::vector<CETet>& tet)
+bool delfem2::CheckTet(const std::vector<CDynTet>& tet)
 {
 	std::cout << " *** CheckTet *** ";
 	
 	const unsigned int nfatet = 4;
 	for(unsigned int itet=0;itet<tet.size();itet++){
 		for(unsigned int ifatet=0;ifatet<nfatet;ifatet++){
-			if( tet[itet].g[ifatet] != -2 ){
-				if( tet[itet].g[ifatet] == 0 ){
-					std::cout << "ILLEGAL GROUP " << std::endl;
-					std::cout << itet << " " << ifatet << " " << tet[itet].g[ifatet] << std::endl;
+			if( tet[itet].s[ifatet] != UINT_MAX ){
+				if( tet[itet].s[ifatet] >= tet.size() ){
+					std::cout << "ILLEGAL NEIGHBOR INDEX " << std::endl;
+					std::cout << itet << " " << ifatet << " " << tet[itet].s[ifatet] << std::endl;
 					getchar();
 				}
 //				std::cout << itet << " " << ifatet << "-->" << tet[itet].g[ifatet] << std::endl;
-				continue;
+//				continue;
 			}
-			const int adj = tet[itet].s[ifatet];
-			assert( adj >= 0 && (unsigned int)adj < tet.size() );
-			if( tet[itet].f[ifatet] < 0 || tet[itet].f[ifatet] >= 12 ){
-				std::cout << itet << " " << ifatet << " " << (int)tet[itet].f[ifatet] << std::endl;
-			}
-			assert( tet[itet].f[ifatet] >= 0 && tet[itet].f[ifatet] < 12 );
-			const unsigned int* rel1 = tetRel[ tet[itet].f[ifatet] ];
-			if( tet[adj].s[ rel1[ifatet] ] != itet ){
-				std::cout << itet << " " << ifatet << "   " << adj << " " << (int)rel1[ifatet] << std::endl;
-			}
-			if( tet[itet].v[ noelTetFace[ifatet][0] ] != tet[adj].v[ rel1[ noelTetFace[ifatet][0] ] ] ){
-				std::cout << itet << " " << ifatet << " --> 0 " << std::endl;
-			}
-			if( tet[itet].v[ noelTetFace[ifatet][1] ] != tet[adj].v[ rel1[ noelTetFace[ifatet][1] ] ] ){
-				std::cout << itet << " " << ifatet << " --> 1 " << std::endl;
-			}
-			if( tet[itet].v[ noelTetFace[ifatet][2] ] != tet[adj].v[ rel1[ noelTetFace[ifatet][2] ] ] ){
-				std::cout << itet << " " << ifatet << " --> 2 " << std::endl;
-			}
+      if( tet[itet].s[ifatet] == UINT_MAX ){ continue; }
+			const unsigned int adj = tet[itet].s[ifatet];
+			assert( adj < tet.size() );
+      const int irel0 = GetRelationshipTet(tet[itet].v, tet[adj].v);
+			assert( irel0 >= 0 && irel0 < 12 );
+			const unsigned int* rel1 = tetRel[ irel0 ];
 			assert( tet[adj].s[ rel1[ifatet] ] == itet );
 			assert( tet[itet].v[ noelTetFace[ifatet][0] ] == tet[adj].v[ rel1[ noelTetFace[ifatet][0] ] ] );
 			assert( tet[itet].v[ noelTetFace[ifatet][1] ] == tet[adj].v[ rel1[ noelTetFace[ifatet][1] ] ] );
@@ -1801,108 +1804,94 @@ bool delfem2::CheckTet(const std::vector<CETet>& tet)
 
 // --------------------------------------------------------------
 
-void delfem2::AddPointTetDelaunay
-(int ip_ins,
- int itet_ins,
-std::vector<CEPo3D>& aPo3D,
-std::vector<CETet>& aSTet,
-std::vector<int>& tmp_buffer)
+void delfem2::AddPointTetDelaunay(
+    unsigned int ip_ins,
+    unsigned int itet_ins,
+    std::vector<CEPo3D>& aPo3D,
+    std::vector<CDynTet>& aSTet,
+    std::vector<CVec3d>& aCent,
+    std::vector<int>& tmp_buffer)
 {
-  const int relTriTri[3][3] = {
-    { 0, 2, 1 }, //  0
-    { 2, 1, 0 }, //  1 
-    { 1, 0, 2 }, //  2
-  };
-  
-  // (edge index)*3+(opp edge index) -> relation index
-  const int ed2RelTriTri[9] = {
-    0,	// 0 00
-    2,	// 1 01
-    1,	// 2 02
-    2,	// 3 10
-    1,	// 4 11
-    0,	// 5 12
-    1,	// 6 20
-    0,	// 7 21
-    2,	// 8 22
-  };
-
+  assert( aSTet.size() == aCent.size() );
   // ----------------------------------------
-  std::vector<dtet::CNew> aNew; // faces outside
-  std::vector<dtet::COld> aOld;
+  std::vector<dtet::CTriNew> aNew; // faces outside
+  std::vector<dtet::CTetOld> aOld;
   {
     tmp_buffer.resize(aSTet.size()*4, -1);
     const CVec3d& p_ins = aPo3D[ip_ins].p;
-    std::stack< std::pair<int, int> > stackFace;
+    std::stack< std::pair<unsigned int, unsigned int> > stackFace;
     stackFace.push(std::make_pair(itet_ins, 0));
     stackFace.push(std::make_pair(itet_ins, 1));
     stackFace.push(std::make_pair(itet_ins, 2));
     stackFace.push(std::make_pair(itet_ins, 3));
     for (;;){
       if (stackFace.empty()) break;
-      int it0 = stackFace.top().first;
-      int ift0 = stackFace.top().second;
+      const unsigned int itet0 = stackFace.top().first;
+      const unsigned int itfc0 = stackFace.top().second;
       stackFace.pop();
-      int iold0 = -1;
+      unsigned int iold0 = UINT_MAX;
       {
-        if(      tmp_buffer[it0*4+0] != -1 ){ iold0 = tmp_buffer[it0*4+0]; }
-        else if( tmp_buffer[it0*4+1] != -1 ){ iold0 = tmp_buffer[it0*4+1]; }
-        else if( tmp_buffer[it0*4+2] != -1 ){ iold0 = tmp_buffer[it0*4+2]; }
-        else if( tmp_buffer[it0*4+3] != -1 ){ iold0 = tmp_buffer[it0*4+3]; }
+        if(      tmp_buffer[itet0*4+0] != -1 ){ iold0 = tmp_buffer[itet0*4+0]; }
+        else if( tmp_buffer[itet0*4+1] != -1 ){ iold0 = tmp_buffer[itet0*4+1]; }
+        else if( tmp_buffer[itet0*4+2] != -1 ){ iold0 = tmp_buffer[itet0*4+2]; }
+        else if( tmp_buffer[itet0*4+3] != -1 ){ iold0 = tmp_buffer[itet0*4+3]; }
         else{
-          iold0 = (int)aOld.size();
-          aOld.push_back(dtet::COld(it0,aSTet[it0]));
+          iold0 = aOld.size();
+          aOld.push_back(dtet::CTetOld(itet0,aSTet[itet0]));
         }
       }
-      if (tmp_buffer[it0*4+ift0]>=0) continue;
-      tmp_buffer[it0*4+ift0] = iold0;
+      if (tmp_buffer[itet0*4+itfc0]>=0) continue; // already examined
+      tmp_buffer[itet0*4+itfc0] = iold0;
       //
-      const int jt0 = aSTet[it0].s[ift0];
-      bool is_out = false;
-      {
-        if (jt0==-1){ is_out = true; }
-        else if (!aSTet[jt0].isInside(p_ins, aPo3D)){ is_out = true; }
-      }
-      if (is_out){
-        dtet::CNew newtet(it0, ift0);
-        newtet.iold = iold0;
-        aNew.push_back(newtet);
-        continue;
+      const unsigned int jtet0 = aSTet[itet0].s[itfc0];
+      { // skip triangle jt0 if it is outside
+        bool is_out = false;
+        if (jtet0==UINT_MAX){ is_out = true; }
+        else if ( !IsInsideCircumSphere(p_ins,aSTet[jtet0],aCent[jtet0],aPo3D) ){ is_out = true; }
+        //
+        if (is_out){
+          dtet::CTriNew trinew(itet0, itfc0);
+          trinew.iold = iold0;
+          aNew.push_back(trinew);
+          continue;
+        }
       }
       // this is inside
-      int ift1 = noelTetFace[ift0][0];
-      int ift2 = noelTetFace[ift0][1];
-      int ift3 = noelTetFace[ift0][2];
-      int jtf1 = tetRel[aSTet[it0].f[ift0]][ift1];
-      int jtf2 = tetRel[aSTet[it0].f[ift0]][ift2];
-      int jtf3 = tetRel[aSTet[it0].f[ift0]][ift3];
-      stackFace.push(std::make_pair(jt0, jtf1));
-      stackFace.push(std::make_pair(jt0, jtf2));
-      stackFace.push(std::make_pair(jt0, jtf3));
+      int ift1 = noelTetFace[itfc0][0];
+      int ift2 = noelTetFace[itfc0][1];
+      int ift3 = noelTetFace[itfc0][2];
+      int irel0 = GetRelationshipTet( aSTet[itet0].v, aSTet[jtet0].v );
+      assert( irel0 >= 0 && irel0 < 12 );
+      const unsigned int jtf1 = tetRel[irel0][ift1];
+      const unsigned int jtf2 = tetRel[irel0][ift2];
+      const unsigned int jtf3 = tetRel[irel0][ift3];
+      stackFace.push(std::make_pair(jtet0, jtf1));
+      stackFace.push(std::make_pair(jtet0, jtf2));
+      stackFace.push(std::make_pair(jtet0, jtf3));
     }
 #ifndef NDEBUG
     { // assertion new is on the boundary
-      for (auto & inew : aNew){
-        int it0 = inew.it_old;
-        int ift0 = inew.ift_old;
-        assert(aSTet[it0].isInside(p_ins, aPo3D));
+      for (const auto & tetnew : aNew){
+        int it0 = tetnew.itet_old;
+        int ift0 = tetnew.itfc_old;
+        assert( IsInsideCircumSphere(p_ins,aSTet[it0],aCent[it0],aPo3D) );
         const int jt0 = aSTet[it0].s[ift0];
         if (jt0==-1) continue;
-        assert(!aSTet[jt0].isInside(p_ins, aPo3D));
+        assert( !IsInsideCircumSphere(p_ins,aSTet[jt0],aCent[jt0],aPo3D) );
       }
     }
 #endif
   }
   { // put vertex index new
-    for (auto & inew : aNew){
-      const int it0 = inew.it_old;
-      const int ift0 = inew.ift_old;
-      const int ift1 = noelTetFace[ift0][0];
-      const int ift2 = noelTetFace[ift0][1];
-      const int ift3 = noelTetFace[ift0][2];
-      inew.iv[0] = aSTet[it0].v[ift1];
-      inew.iv[1] = aSTet[it0].v[ift2];
-      inew.iv[2] = aSTet[it0].v[ift3];
+    for (auto & trinew : aNew){
+      const unsigned int itet0 = trinew.itet_old;
+      const unsigned int itfc0 = trinew.itfc_old;
+      const int ift1 = noelTetFace[itfc0][0];
+      const int ift2 = noelTetFace[itfc0][1];
+      const int ift3 = noelTetFace[itfc0][2];
+      trinew.v[0] = aSTet[itet0].v[ift1];
+      trinew.v[1] = aSTet[itet0].v[ift2];
+      trinew.v[2] = aSTet[itet0].v[ift3];
     }
   }
 #ifndef NDEBUG
@@ -1910,13 +1899,13 @@ std::vector<int>& tmp_buffer)
     for(unsigned int it=0;it<aSTet.size();++it){
       if( !aSTet[it].isActive() ) continue;
       bool is_old = false;
-      for(auto & iold : aOld){
-        if( it == iold.it_old ){
+      for(auto & old : aOld){
+        if( it == old.it_old ){
           is_old = true;
           break;
         }
       }
-      bool res = aSTet[it].isInside(aPo3D[ip_ins].p, aPo3D);
+      bool res = IsInsideCircumSphere(aPo3D[ip_ins].p, aSTet[it], aCent[it], aPo3D);
       if( is_old != res ){
         std::cout << it << " " << TetVolume(aSTet[it],aPo3D) << std::endl;
         assert(is_old==res);
@@ -1925,127 +1914,126 @@ std::vector<int>& tmp_buffer)
   }
 #endif
   { // find adjancy of new
-    for (size_t inew = 0; inew<aNew.size(); ++inew){
+    for (size_t itetnew = 0; itetnew<aNew.size(); ++itetnew){
       for (int iedtri = 0; iedtri<3; ++iedtri){
-        int i0 = aNew[inew].iv[(iedtri+1)%3];
-        int i1 = aNew[inew].iv[(iedtri+2)%3];
-        aNew[inew].inewsur[iedtri] = -1;
-        for (size_t jnew = 0; jnew<aNew.size(); ++jnew){
+        const unsigned int i0 = aNew[itetnew].v[(iedtri+1)%3];
+        const unsigned int i1 = aNew[itetnew].v[(iedtri+2)%3];
+        aNew[itetnew].inew_sur[iedtri] = UINT_MAX;
+        for (size_t jtrinew = 0; jtrinew<aNew.size(); ++jtrinew){
           for (int jedtri = 0; jedtri<3; ++jedtri){
-            if (inew==jnew && iedtri==jedtri) continue;
-            int j0 = aNew[jnew].iv[(jedtri+1)%3];
-            int j1 = aNew[jnew].iv[(jedtri+2)%3];
+            if (itetnew==jtrinew && iedtri==jedtri) continue;
+            const unsigned int j0 = aNew[jtrinew].v[(jedtri+1)%3];
+            const unsigned int j1 = aNew[jtrinew].v[(jedtri+2)%3];
             assert(i0!=j0||i1!=j1); // consistent face orientatoin
-            if (i0==j1&&i1==j0){
-              aNew[inew].inewsur[iedtri] = jnew;
-              aNew[inew].irelsur[iedtri] = ed2RelTriTri[iedtri*3+jedtri];
+            if ( i0==j1 && i1==j0 ){
+              aNew[itetnew].inew_sur[iedtri] = jtrinew;
               break;
             }
           }
-          if (aNew[inew].inewsur[iedtri]!=-1)break;
+          if ( aNew[itetnew].inew_sur[iedtri] != UINT_MAX ){ break; }
         }
-        assert(aNew[inew].inewsur[iedtri]!=-1);
+        assert( aNew[itetnew].inew_sur[iedtri] != UINT_MAX );
       }
     }
 #ifndef NDEBUG
     {// assertion relations between news
-      for (size_t inew = 0; inew<aNew.size(); ++inew){
-        for (int iedtri = 0; iedtri<3; ++iedtri){
-          int iv0 = aNew[inew].iv[(iedtri+1)%3];
-          int iv1 = aNew[inew].iv[(iedtri+2)%3];
-          int jnew = aNew[inew].inewsur[iedtri];
-          int irel = aNew[inew].irelsur[iedtri];
-          int jedtri = relTriTri[irel][iedtri];
-          assert(aNew[jnew].inewsur[jedtri]==inew);
-          int jv0 = aNew[jnew].iv[(jedtri+1)%3];
-          int jv1 = aNew[jnew].iv[(jedtri+2)%3];
+      for (size_t inew=0; inew<aNew.size(); ++inew){
+        for (int iedtri=0; iedtri<3; ++iedtri){
+          const unsigned int iv0 = aNew[inew].v[(iedtri+1)%3];
+          const unsigned int iv1 = aNew[inew].v[(iedtri+2)%3];
+          const unsigned int jtrinew = aNew[inew].inew_sur[iedtri];
+          assert( jtrinew < aNew.size() );
+          int jedtri = 0;
+          for(; jedtri<3; ++jedtri){
+            if(aNew[jtrinew].inew_sur[jedtri]==inew){ break; }
+          }
+          assert( jedtri != 3 );
+          const unsigned int jv0 = aNew[jtrinew].v[(jedtri+1)%3];
+          const unsigned int jv1 = aNew[jtrinew].v[(jedtri+2)%3];
           assert(iv0==jv1&&iv1==jv0);
         }
       }
     }
 #endif
   } // end of find adjacency
-  ////
 
-  const int ntet_old = (int)aOld.size();
-  const int ntet_new = (int)aNew.size();
-  if( ntet_new >= ntet_old ){
-    aSTet.resize(aSTet.size()+ntet_new-ntet_old);
-    for (int it=0; it<ntet_old; ++it){
-      aNew[it].it_new = aOld[it].it_old;
-    }
-    for (int it=0; it<ntet_new-ntet_old; ++it){
-      aNew[it+ntet_old].it_new = (int)aSTet.size()-(ntet_new-ntet_old)+it;
+  { // set CNew.itet_new
+    const int ntet_old = (int) aOld.size();
+    const int ntet_new = (int) aNew.size();
+    if (ntet_new >= ntet_old) {
+      aSTet.resize(aSTet.size() + ntet_new - ntet_old);
+      aCent.resize(aCent.size() + ntet_new - ntet_old);
+      for (int it = 0; it < ntet_old; ++it) {
+        aNew[it].itet_new = aOld[it].it_old;
+      }
+      for (int it = 0; it < ntet_new - ntet_old; ++it) {
+        aNew[it + ntet_old].itet_new = (int) aSTet.size() - (ntet_new - ntet_old) + it;
+      }
+    } else {
+      //    std::cout<<"ntet_cur:"<<aSTet.size()<<"  ntet_del:"<<ntet_old<<"  ntet_new:"<<ntet_new<<std::endl;
+      for (int it = 0; it < ntet_new; ++it) {
+        aNew[it].itet_new = aOld[it].it_old;
+      }
+      for (int it = 0; it < ntet_old - ntet_new; ++it) {
+        int it0 = aOld[it + ntet_new].it_old;
+        // inactivate unused tetrahedron
+        aSTet[it0].v[0] = UINT_MAX;
+        aSTet[it0].v[1] = UINT_MAX;
+        aSTet[it0].v[2] = UINT_MAX;
+        aSTet[it0].v[3] = UINT_MAX;
+        aSTet[it0].s[0] = UINT_MAX;
+        aSTet[it0].s[1] = UINT_MAX;
+        aSTet[it0].s[2] = UINT_MAX;
+        aSTet[it0].s[3] = UINT_MAX;
+      }
     }
   }
-  else{
-//    std::cout<<"ntet_cur:"<<aSTet.size()<<"  ntet_del:"<<ntet_old<<"  ntet_new:"<<ntet_new<<std::endl;
-    for (int it=0; it<ntet_new; ++it){
-      aNew[it].it_new = aOld[it].it_old;
-    }
-    for (int it=0; it<ntet_old-ntet_new; ++it){
-      int it0 = aOld[it+ntet_new].it_old;
-      // inactivate unused tetrahedron
-      aSTet[it0].v[0] = -1; aSTet[it0].v[1] = -1; aSTet[it0].v[2] = -1; aSTet[it0].v[3] = -1;
-      aSTet[it0].s[0] = -1; aSTet[it0].s[1] = -1; aSTet[it0].s[2] = -1; aSTet[it0].s[3] = -1;
-    }
-  }
-  ///////////////////////////
+
+  // ------------------------------------
   for (unsigned int inew = 0; inew<aNew.size(); ++inew){
-    int it_new = aNew[inew].it_new;
+    const unsigned int it_new = aNew[inew].itet_new;
     assert(it_new<aSTet.size());
     int iold = aNew[inew].iold;
-    const CETet& tet_old = aOld[iold].stet;
-    const int ift0 = aNew[inew].ift_old;
+    const CDynTet& tet_old = aOld[iold].stet;
+    const unsigned int ift0 = aNew[inew].itfc_old;
     const int ift1 = noelTetFace[ift0][0];
     const int ift2 = noelTetFace[ift0][1];
     const int ift3 = noelTetFace[ift0][2];
     aSTet[it_new].v[0] = ip_ins;
-    aSTet[it_new].v[1] = tet_old.v[ift1]; assert(tet_old.v[ift1]==aNew[inew].iv[0]);
-    aSTet[it_new].v[2] = tet_old.v[ift2]; assert(tet_old.v[ift2]==aNew[inew].iv[1]);
-    aSTet[it_new].v[3] = tet_old.v[ift3]; assert(tet_old.v[ift3]==aNew[inew].iv[2]);
+    aSTet[it_new].v[1] = tet_old.v[ift1]; assert(tet_old.v[ift1]==aNew[inew].v[0]);
+    aSTet[it_new].v[2] = tet_old.v[ift2]; assert(tet_old.v[ift2]==aNew[inew].v[1]);
+    aSTet[it_new].v[3] = tet_old.v[ift3]; assert(tet_old.v[ift3]==aNew[inew].v[2]);
     { // make relation 0 face
-      int jt0 = tet_old.s[ift0];
+      const unsigned int jt0 = tet_old.s[ift0];
       aSTet[it_new].s[0] = jt0;
-      if (jt0!=-1){
-        int jft0 = tetRel[tet_old.f[ift0]][ift0];
-        int jft1 = tetRel[tet_old.f[ift0]][ift1];
-        aSTet[it_new].f[0] = noel2Rel[jft0*4+jft1];       
+      if (jt0!=UINT_MAX){
+        int irel0 = GetRelationshipTet(tet_old.v, aSTet[jt0].v);
+        assert( irel0 >=0  && irel0 < 12 );
+        int jft0 = tetRel[irel0][ift0];
         aSTet[jt0].s[jft0] = it_new;
-        aSTet[jt0].f[jft0] = invTetRel[aSTet[it_new].f[0]];
-        //std::cout << "fixed surr" << jt0 << " " << jft0 << std::endl;
       }
     }
     { // make relation 1 face
-      int jnew = aNew[inew].inewsur[0];
-      assert(jnew>=0&&jnew<aNew.size());
-      aSTet[it_new].s[1] = aNew[jnew].it_new;
-      int jft0 = 0;
-      int jft1 = relTriTri[aNew[inew].irelsur[0]][0]+1;
-      aSTet[it_new].f[1] = noel2Rel[jft0*4+jft1];
+      const unsigned int jnew = aNew[inew].inew_sur[0];
+      assert( jnew<aNew.size() );
+      aSTet[it_new].s[1] = aNew[jnew].itet_new;
     }
     { // make relation 2 face
-      int jnew = aNew[inew].inewsur[1];
-      assert(jnew>=0&&jnew<aNew.size());
-      aSTet[it_new].s[2] = aNew[jnew].it_new;
-      int jft0 = 0;
-      int jft1 = relTriTri[aNew[inew].irelsur[1]][0]+1;
-      aSTet[it_new].f[2] = noel2Rel[jft0*4+jft1];
+      const unsigned int jnew = aNew[inew].inew_sur[1];
+      assert( jnew<aNew.size() );
+      aSTet[it_new].s[2] = aNew[jnew].itet_new;
     }
     { // make relation 2 face
-      int jnew = aNew[inew].inewsur[2];
-      assert(jnew>=0&&jnew<aNew.size());
-      aSTet[it_new].s[3] = aNew[jnew].it_new;
-      int jft0 = 0;
-      int jft1 = relTriTri[aNew[inew].irelsur[2]][0]+1;
-      aSTet[it_new].f[3] = noel2Rel[jft0*4+jft1];
+      const unsigned int jnew = aNew[inew].inew_sur[2];
+      assert( jnew<aNew.size() );
+      aSTet[it_new].s[3] = aNew[jnew].itet_new;
     }
 #ifndef NDEBUG
     { // assert volume is positive
-      int i0 = aSTet[it_new].v[0];
-      int i1 = aSTet[it_new].v[1];
-      int i2 = aSTet[it_new].v[2];
-      int i3 = aSTet[it_new].v[3];
+      const unsigned int i0 = aSTet[it_new].v[0];
+      const unsigned int i1 = aSTet[it_new].v[1];
+      const unsigned int i2 = aSTet[it_new].v[2];
+      const unsigned int i3 = aSTet[it_new].v[3];
       const delfem2::CVec3d& p0 = aPo3D[i0].p;
       const CVec3d& p1 = aPo3D[i1].p;
       const CVec3d& p2 = aPo3D[i2].p;
@@ -2055,11 +2043,17 @@ std::vector<int>& tmp_buffer)
 //      std::cout<<"   inew:" << inew << "  it_new:" << it_new<<" "<<vol<<"  "<< i0 << " " << i1<<" "<<i2<< " " << i3<<std::endl;
     }
 #endif
-    aSTet[it_new].setCircumCenter(aPo3D);
+    {
+      const unsigned int i0 = aSTet[it_new].v[0];
+      const unsigned int i1 = aSTet[it_new].v[1];
+      const unsigned int i2 = aSTet[it_new].v[2];
+      const unsigned int i3 = aSTet[it_new].v[3];
+      aCent[it_new] = CircumCenter(aPo3D[i0].p,aPo3D[i1].p,aPo3D[i2].p,aPo3D[i3].p);
+    }
   }
 
-  for (auto & inew : aNew){
-    int it_new = inew.it_new;
+  for (auto & trinew : aNew){
+    int it_new = trinew.itet_new;
     for (int ivtet = 0; ivtet<4; ++ivtet){
       int ip = aSTet[it_new].v[ivtet];
       aPo3D[ip].e = it_new;
@@ -2078,8 +2072,8 @@ std::vector<int>& tmp_buffer)
     assert( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] == ip );
   }
 #endif
-  
-  /////
+
+
   for (auto & iold : aOld){
     const int it0 = iold.it_old;
     tmp_buffer[it0*4+0] = -1;
@@ -2095,7 +2089,7 @@ bool delfem2::MakeElemAroundEdge
 ( ElemAroundEdge& elared,
  const int itet0,
  const int idedge0,
- const std::vector<CETet>& tet )
+ const std::vector<CDynTet>& tet )
 {
 //	std::cout << "Make Elared " << itet0 << " " << idedge0  << std::endl;
 	elared.clear();
@@ -2121,13 +2115,14 @@ bool delfem2::MakeElemAroundEdge
         assert( tet[itet0].v[ tetRel[irel0][0] ] == elared.nod );
         assert( tet[itet0].v[ tetRel[irel0][1] ] == elared.nou );
 		const int inoel0 = tetRel[iedrel_pre][3];
-		if( tet[itet_pre].g[inoel0] != -2 ){
+		if( tet[itet_pre].s[inoel0] == UINT_MAX ){ // outside
 			elared.clear();
 			elared.is_inner = false;
 			return true;
 		}
-		const int irel_pre = tet[itet_pre].f[inoel0];
-		const int itet_cur = tet[itet_pre].s[inoel0];
+//		const int irel_pre = tet[itet_pre].f[inoel0];
+    const int itet_cur = tet[itet_pre].s[inoel0];
+    const int irel_pre = GetRelationshipTet(tet[itet_pre].v, tet[itet_cur].v);
 		if( itet_cur == itet0 ) break;
 		const int iedrel_cur = noel2Rel[ tetRel[irel_pre][ tetRel[iedrel_pre][0] ]*4 + tetRel[irel_pre][ tetRel[iedrel_pre][1] ] ];
     assert( tet[itet_cur].v[ tetRel[iedrel_cur][0] ] == elared.nod );
@@ -2298,7 +2293,7 @@ bool delfem2::MakeElemAroundPoint
 ( ElemAroundPoint& elarpo,
  const int itet0,
  const int inoel0,
- const std::vector<CETet>& tet )
+ const std::vector<CDynTet>& tet )
 {
   assert( itet0 < tet.size() );
   assert( inoel0 < 4 );
@@ -2349,7 +2344,8 @@ bool delfem2::MakeElemAroundPoint
       const int icur_noel_cnt = itr_map_ic->second;
       assert( (int)tet[icur_tet].v[icur_noel_cnt] == cnt_point );
       
-      const unsigned int* rel_curadj = tetRel[ tet[icur_tet].f[icur_noel_adj] ];
+      const int ireladj = GetRelationshipTet(tet[icur_tet].v, tet[iadj_tet].v );
+      const unsigned int* rel_curadj = tetRel[ireladj];
       
       const int iadj_noel_cnt = rel_curadj[icur_noel_cnt];
       assert( (int)tet[iadj_tet].v[iadj_noel_cnt] == cnt_point );
@@ -2670,11 +2666,12 @@ bool GetAddPointEdgeCrt(const ElemAroundEdge& elared,
 }
 */
 
+/*
 bool delfem2::AddPointTet_Elem
 (const unsigned int itet_ins,
  const unsigned int ipo_ins,
  std::vector<CEPo3D>& aPo,
- std::vector<CETet>& tet)
+ std::vector<CDynTet>& tet)
 {	
 	assert( itet_ins < tet.size() );
 	assert( ipo_ins < aPo.size() );
@@ -2686,7 +2683,7 @@ bool delfem2::AddPointTet_Elem
 
 	tet.resize( tet.size()+3 );
 
-	const CETet old_tet = tet[itet_ins];
+	const CDynTet old_tet = tet[itet_ins];
 
 	aPo[ipo_ins].e = itet0;			aPo[ipo_ins].poel = 0;
 	aPo[ old_tet.v[0] ].e = itet1;	aPo[ old_tet.v[0] ].poel = 0;
@@ -2695,47 +2692,47 @@ bool delfem2::AddPointTet_Elem
 	aPo[ old_tet.v[3] ].e = itet0;	aPo[ old_tet.v[3] ].poel = 3;
 
 	{
-		CETet& ref_tet = tet[itet0];
+		CDynTet& ref_tet = tet[itet0];
 
 		ref_tet.v[0] = ipo_ins;			ref_tet.v[1] = old_tet.v[1];	ref_tet.v[2] = old_tet.v[2];	ref_tet.v[3] = old_tet.v[3];
 //		ref_tet.g[0] = old_tet.g[0];	ref_tet.g[1] = -2;				ref_tet.g[2] = -2;				ref_tet.g[3] = -2;
 		ref_tet.s[0] = old_tet.s[0];	ref_tet.s[1] = itet1;			ref_tet.s[2] = itet2;			ref_tet.s[3] = itet3;
 
-		if( old_tet.s[0] != -1 ){
-			assert( old_tet.f[0] < 12 );
-			const unsigned int* rel = tetRel[ old_tet.f[0] ];
-			ref_tet.f[0] = noel2Rel[ rel[0]*4 + rel[1] ];
-			assert( ref_tet.f[0] >= 0 && ref_tet.f[0] < 12 );
-			assert( old_tet.s[0] < tet.size() );
+		if( old_tet.s[0] != UINT_MAX ){
+//			assert( old_tet.f[0] < 12 );
+//			const unsigned int* rel = tetRel[ old_tet.f[0] ];
+//			ref_tet.f[0] = noel2Rel[ rel[0]*4 + rel[1] ];
+//			assert( ref_tet.f[0] >= 0 && ref_tet.f[0] < 12 );
+//			assert( old_tet.s[0] < tet.size() );
 			tet[ old_tet.s[0] ].s[ rel[0] ] = itet0;
-			tet[ old_tet.s[0] ].f[ rel[0] ] = invTetRel[ ref_tet.f[0] ];
+//			tet[ old_tet.s[0] ].f[ rel[0] ] = invTetRel[ ref_tet.f[0] ];
 		}
-		ref_tet.f[1] = 3;
-		ref_tet.f[2] = 8;
-		ref_tet.f[3] = 10;
+//		ref_tet.f[1] = 3;
+//		ref_tet.f[2] = 8;
+//		ref_tet.f[3] = 10;
 	}
 	{
-		CETet& ref_tet = tet[itet1];
+		CDynTet& ref_tet = tet[itet1];
 
 		ref_tet.v[0] = old_tet.v[0];	ref_tet.v[1] = ipo_ins;			ref_tet.v[2] = old_tet.v[2];	ref_tet.v[3] = old_tet.v[3];
 //		ref_tet.g[0] = -2;				ref_tet.g[1] = old_tet.g[1];	ref_tet.g[2] = -2;				ref_tet.g[3] = -2;
 		ref_tet.s[0] = itet0;			ref_tet.s[1] = old_tet.s[1];	ref_tet.s[2] = itet2;			ref_tet.s[3] = itet3;
 
-		ref_tet.f[0] = 3;
-		if( old_tet.s[1] != -1 ){
-			assert( old_tet.f[1] < 12 );
-			const unsigned int* rel = tetRel[ old_tet.f[1] ];
-			ref_tet.f[1] = noel2Rel[ rel[0]*4 + rel[1] ];
-			assert( ref_tet.f[1] >= 0 && ref_tet.f[1] < 12 );
+//		ref_tet.f[0] = 3;
+		if( old_tet.s[1] != UINT_MAX ){
+//			assert( old_tet.f[1] < 12 );
+//			const unsigned int* rel = tetRel[ old_tet.f[1] ];
+//			ref_tet.f[1] = noel2Rel[ rel[0]*4 + rel[1] ];
+//			assert( ref_tet.f[1] >= 0 && ref_tet.f[1] < 12 );
 			assert( old_tet.s[1] < tet.size() );
 			tet[ old_tet.s[1] ].s[ rel[1] ] = itet1;
-			tet[ old_tet.s[1] ].f[ rel[1] ] = invTetRel[ ref_tet.f[1] ];
+//			tet[ old_tet.s[1] ].f[ rel[1] ] = invTetRel[ ref_tet.f[1] ];
 		}
-		ref_tet.f[2] = 2;
-		ref_tet.f[3] = 1;
+//		ref_tet.f[2] = 2;
+//		ref_tet.f[3] = 1;
 	}
 	{
-		CETet& ref_tet = tet[itet2];
+		CDynTet& ref_tet = tet[itet2];
 		ref_tet.v[0] = old_tet.v[0];	ref_tet.v[1] = old_tet.v[1];	ref_tet.v[2] = ipo_ins;			ref_tet.v[3] = old_tet.v[3];
 //		ref_tet.g[0] = -2;				ref_tet.g[1] = -2;				ref_tet.g[2] = old_tet.g[2];	ref_tet.g[3] = -2;
 		ref_tet.s[0] = itet0;			ref_tet.s[1] = itet1;			ref_tet.s[2] = old_tet.s[2];	ref_tet.s[3] = itet3;
@@ -2754,7 +2751,7 @@ bool delfem2::AddPointTet_Elem
 		ref_tet.f[3] = 0;
 	}
 	{
-		CETet& ref_tet = tet[itet3];
+		CDynTet& ref_tet = tet[itet3];
 		ref_tet.v[0] = old_tet.v[0];	ref_tet.v[1] = old_tet.v[1];	ref_tet.v[2] = old_tet.v[2];	ref_tet.v[3] = ipo_ins;
 //		ref_tet.g[0] = -2;				ref_tet.g[1] = -2;				ref_tet.g[2] = -2;				ref_tet.g[3] = old_tet.g[3];
 		ref_tet.s[0] = itet0;			ref_tet.s[1] = itet1;			ref_tet.s[2] = itet2;			ref_tet.s[3] = old_tet.s[3];
@@ -2775,8 +2772,9 @@ bool delfem2::AddPointTet_Elem
 
 	return true;
 }
+ */
 
-
+/*
 bool delfem2::AddPointTet_Face
 (const unsigned int itet_ins,
  const unsigned int ifatet_ins,
@@ -2787,7 +2785,7 @@ bool delfem2::AddPointTet_Face
 	assert( itet_ins < aTet.size() );
 	assert( ifatet_ins < 4 );
 	assert( ipo_ins < aPo.size() );
-	assert( aTet[itet_ins].g[ifatet_ins] == -2 );
+	assert( aTet[itet_ins].s[ifatet_ins] != UINT_MAX ); // not on the boundary
 	
 	const unsigned int ino0_i = ifatet_ins;
 	const unsigned int ino1_i = noelTetFace[ifatet_ins][0];
@@ -2947,6 +2945,7 @@ bool delfem2::AddPointTet_Face
 
 	return true;
 }
+ */
 
 /*
 bool AddPointTri_Face(const unsigned int ipo_ins,
@@ -3194,6 +3193,7 @@ bool AddPointTri_Edge( const unsigned int ipo_ins,
 }
  */
 
+/*
 bool delfem2::AddPointTet_Edge
 (const ElemAroundEdge& elared,
  const unsigned int ino_ins,
@@ -3440,6 +3440,7 @@ bool delfem2::AddPointTet_Edge
 	inew_tet.clear();
 	return true;
 }
+ */
 /*
 bool GetEdgeSwapPtnCrt
 (const ElemAroundEdge& elared,
@@ -3511,10 +3512,11 @@ bool GetEdgeSwapPtnCrt
 }
 */
  
+/*
 bool delfem2::FaceSwapTet
 (const unsigned int itet0,
  const unsigned int iface0,
- std::vector<CETet>& tet,
+ std::vector<CDynTet>& tet,
  std::vector<CEPo3D>& node)
 {
 	assert( itet0 < tet.size() );
@@ -3524,15 +3526,15 @@ bool delfem2::FaceSwapTet
 	const int itet1 = tet[itet0].s[iface0];
 	assert( itet1 >= 0 && (int)itet1 < tet.size() );
 
-	const CETet old_d = tet[itet0];
-	const CETet old_u = tet[itet1];
+	const CDynTet old_d = tet[itet0];
+	const CDynTet old_u = tet[itet1];
 
 	const int itet2 = (int)tet.size();
 	tet.resize( tet.size()+1 );
 
-	CETet& tet0 = tet[itet0];
-	CETet& tet1 = tet[itet1];
-	CETet& tet2 = tet[itet2];
+	CDynTet& tet0 = tet[itet0];
+	CDynTet& tet1 = tet[itet1];
+	CDynTet& tet2 = tet[itet2];
 
 	const unsigned int* rel_du = tetRel[ tet[itet0].f[iface0] ];
 
@@ -3660,6 +3662,7 @@ bool delfem2::FaceSwapTet
 
 	return true;
 }
+ */
 
 /*
 bool GetFaceSwapCrt(const int itet0,
@@ -3744,6 +3747,7 @@ bool MakeTriSurNo(unsigned int& ntrisuno,
 }
  */
 
+/*
 bool delfem2::EdgeSwapTet
  (const ElemAroundEdge& elared,
   const int ptn,
@@ -3761,6 +3765,7 @@ bool delfem2::EdgeSwapTet
 	}
 	return true;
 }
+ */
 
 /*
 bool FlipEdgeTri( const unsigned int itri0, const unsigned int ied0,

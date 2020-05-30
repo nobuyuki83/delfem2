@@ -52,10 +52,10 @@ public:
       unsigned int np = aXYZ0.size()/3;
       unsigned int nb = aBone.size();
       aW.resize(np*nb);
-      for(int ip=0;ip<aXYZ0.size()/3;++ip) {
+      for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip) {
         const double* p0 = aXYZ0.data()+ip*3;
         double w_tot = 0;
-        for(int ib=0;ib<nb;++ib){
+        for(unsigned int ib=0;ib<nb;++ib){
           double pb[3] = {
             -aBone[ib].invBindMat[3],
             -aBone[ib].invBindMat[7],
@@ -65,7 +65,7 @@ public:
           aW[ip*nb+ib] = wb;
           w_tot += wb;
         }
-        for(int ib=0;ib<nb;++ib) {
+        for(unsigned int ib=0;ib<nb;++ib) {
           aW[ip*nb+ib] /= w_tot;
         }
       }
@@ -135,6 +135,7 @@ int main(int argc,char* argv[])
     for(auto& smplr: sampler.aSampler){
       smplr.InitGL(); // move the sampled image to a texture
       smplr.Start();
+      ::glDisable(GL_POLYGON_OFFSET_FILL ); // the depth will be jazzy without this
       ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
       dfm2::opengl::DrawMeshTri3D_FaceNorm(trg.aXYZ1,trg.aElm);
       smplr.End();
