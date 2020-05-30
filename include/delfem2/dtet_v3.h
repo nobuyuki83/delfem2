@@ -387,7 +387,7 @@ bool MakeOneTetSurNo
 
 
 //! 四面体を囲む四面体を作る
-bool MakeTetSurTet(std::vector<CDynTet>& tet);
+//bool MakeTetSurTet(std::vector<CDynTet>& tet);
 
 
 //! ６面体を囲む６面体を作る
@@ -405,6 +405,7 @@ bool MakeHexSurNo(unsigned int& ntetsuno,
 				  const unsigned int nnode );
  */
 
+/*
 //! 点を囲む四面体のリストを作る
 bool MakeTetSurNo
  (const std::vector<CDynTet>& aTet,
@@ -412,6 +413,7 @@ bool MakeTetSurNo
   unsigned int& ntetsuno,
   unsigned int*& tetsuno_ind,
   unsigned int*& tetsuno );
+  */
 
 /*
 //! 点を囲む３角形のリストを作る
