@@ -108,13 +108,13 @@ public:
 class CTetOld
 {
 public:
-  CTetOld(int it_old, const CDynTet& stet){
+  CTetOld(unsigned int it_old, const CDynTet& stet){
     this->it_old = it_old;
     this->stet = stet;
   }
 public:
   CDynTet stet;
-  int it_old;
+  unsigned int it_old;
 };
 
 /*
@@ -744,7 +744,7 @@ bool Swap4Elared
 
 // =====================================================================
 
-
+/*
 bool delfem2::MakeTetSurTet(std::vector<CDynTet>& tet)
 {
 	unsigned int ntetsuno;
@@ -873,6 +873,7 @@ bool delfem2::MakeTetSurTet(std::vector<CDynTet>& tet)
 
 	return true;
 }
+ */
 
 bool delfem2::MakeOneTetSurNo
  (const std::vector<CDynTet>& tet,
@@ -897,6 +898,7 @@ bool delfem2::MakeOneTetSurNo
 	return true;
 }
 
+/*
 bool delfem2::MakeTetSurNo
  (const std::vector<CDynTet>& tet,
 	const unsigned int npoin,
@@ -907,14 +909,14 @@ bool delfem2::MakeTetSurNo
 	assert( tetsupo_ind == 0 );
 	assert( tetsupo == 0 );
 
-    const unsigned int npotet = 4;
+	const unsigned int npotet = 4;
 	tetsupo_ind = new unsigned int [npoin+1];
 	for(unsigned int ipoin=0;ipoin<npoin+1;ipoin++){
 		tetsupo_ind[ipoin] = 0;
 	}
 	for(unsigned int itet=0;itet<tet.size();itet++){
 		for(unsigned int inoel=0;inoel<npotet;inoel++){
-			assert( tet[itet].v[inoel] < (int)npoin );
+			assert( tet[itet].v[inoel] < npoin );
 			tetsupo_ind[ tet[itet].v[inoel]+1 ]++;
 		}
 	}
@@ -935,18 +937,19 @@ bool delfem2::MakeTetSurNo
 		tetsupo_ind[ipoin+1] = tetsupo_ind[ipoin];
 	}
 	tetsupo_ind[0] = 0;
-/*
-	std::cout << ntetsuno << std::endl;
-	for(int inode=0;inode<nnode;inode++){
-		std::cout << inode << "-->";
-		for(int itetsuno=tetsuno_ind[inode];itetsuno<tetsuno_ind[inode+1];itetsuno++){
-			std::cout << tetsuno[itetsuno] << " ";
-		}
-		std::cout << std::endl;
-	}
-*/
+
+//	std::cout << ntetsuno << std::endl;
+//	for(int inode=0;inode<nnode;inode++){
+//		std::cout << inode << "-->";
+//		for(int itetsuno=tetsuno_ind[inode];itetsuno<tetsuno_ind[inode+1];itetsuno++){
+//			std::cout << tetsuno[itetsuno] << " ";
+//		}
+//		std::cout << std::endl;
+//	}
+
 	return true;
 }
+ */
 
 
 /*
@@ -1200,7 +1203,8 @@ bool MakeOuterBoundTet
 }
 */ 
  
- 
+
+/*
 bool delfem2::MakeEdgeTet
 (unsigned int& nedge,
  unsigned int*& edge_ind,
@@ -1262,27 +1266,24 @@ bool delfem2::MakeEdgeTet
 		edge_ind[inode] = edge_ind[inode-1];
 	}
 	edge_ind[0] = 0;
-/*
-	for(int inode=0;inode<nnode;inode++){
-		std::cout << inode << " " << edge_ind[inode+1] - edge_ind[inode] << "-->";
-		for(int iedge=edge_ind[inode];iedge<edge_ind[inode+1];iedge++){
-			std::cout << edge[iedge] << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << "NEdge " << nedge << std::endl;
-*/
+
+//	for(int inode=0;inode<nnode;inode++){
+//		std::cout << inode << " " << edge_ind[inode+1] - edge_ind[inode] << "-->";
+//		for(int iedge=edge_ind[inode];iedge<edge_ind[inode+1];iedge++){
+//			std::cout << edge[iedge] << " ";
+//		}
+//		std::cout << std::endl;
+//	}
+//	std::cout << "NEdge " << nedge << std::endl;
 
 	delete[] tetsuno_ind;
 	delete[] tetsuno;
 
 	return true;
 }
+ */
 
-
-
-
-////////////////////////////////////////////////////////////////
+// ----------------------------------------------
 /*
 bool MakeHexSurNo(unsigned int& nhexsupo,
 				  unsigned int*& hexsupo_ind,
@@ -1958,24 +1959,25 @@ void delfem2::AddPointTetDelaunay(
   } // end of find adjacency
 
   { // set CNew.itet_new
-    const int ntet_old = (int) aOld.size();
-    const int ntet_new = (int) aNew.size();
+    const unsigned int ntet_old = aOld.size();
+    const unsigned int ntet_new = aNew.size();
     if (ntet_new >= ntet_old) {
       aSTet.resize(aSTet.size() + ntet_new - ntet_old);
       aCent.resize(aCent.size() + ntet_new - ntet_old);
-      for (int it = 0; it < ntet_old; ++it) {
+      for (unsigned int it = 0; it < ntet_old; ++it) {
         aNew[it].itet_new = aOld[it].it_old;
       }
-      for (int it = 0; it < ntet_new - ntet_old; ++it) {
+      for (unsigned int it = 0; it < ntet_new - ntet_old; ++it) {
         aNew[it + ntet_old].itet_new = (int) aSTet.size() - (ntet_new - ntet_old) + it;
       }
-    } else {
+    }
+    else {
       //    std::cout<<"ntet_cur:"<<aSTet.size()<<"  ntet_del:"<<ntet_old<<"  ntet_new:"<<ntet_new<<std::endl;
-      for (int it = 0; it < ntet_new; ++it) {
+      for (unsigned int it = 0; it < ntet_new; ++it) {
         aNew[it].itet_new = aOld[it].it_old;
       }
-      for (int it = 0; it < ntet_old - ntet_new; ++it) {
-        int it0 = aOld[it + ntet_new].it_old;
+      for (unsigned int it = 0; it < ntet_old - ntet_new; ++it) {
+        unsigned int it0 = aOld[it + ntet_new].it_old;
         // inactivate unused tetrahedron
         aSTet[it0].v[0] = UINT_MAX;
         aSTet[it0].v[1] = UINT_MAX;
@@ -1988,7 +1990,7 @@ void delfem2::AddPointTetDelaunay(
       }
     }
   }
-
+  
   // ------------------------------------
   for (unsigned int inew = 0; inew<aNew.size(); ++inew){
     const unsigned int it_new = aNew[inew].itet_new;
