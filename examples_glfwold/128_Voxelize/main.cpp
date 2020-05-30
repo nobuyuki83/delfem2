@@ -74,46 +74,21 @@ void Draw_CGrid3
 
 int main(int argc,char* argv[])
 {
-  std::vector<double> aXYZ;
+  std::vector<double> aXYZ1;
   std::vector<unsigned int> aTri;
 
   dfm2::Read_Obj(
       std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
-      aXYZ,aTri);
-  dfm2::Normalize_Points3(aXYZ,4.0);
+      aXYZ1, aTri);
+  dfm2::Normalize_Points3(aXYZ1, 4.0);
   // ---------------------------------------
 
+  // initialize sampler box
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
   sampler_box.Initialize(128, 128, 128, 0.04);
 
-  // ---------------------------------------
-  dfm2::opengl::CViewer_GLFW viewer;
-  viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 3.0;
-  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-//  viewer.nav.camera.Rot_Camera(+0.2, -0.2);
-  if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
-    printf("Something went wrong in loading OpenGL functions!\n");
-    exit(-1);
-  }
-  dfm2::opengl::setSomeLighting();
-  ::glEnable(GL_DEPTH_TEST);
-  // ------------
-  for(auto& smplr: sampler_box.aSampler){
-    smplr.InitGL(); // move the sampled image to a texture
-    smplr.Start();
-    ::glClearColor(1.0, 1.0, 1.0, 1.0 );
-    ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    ::glEnable(GL_DEPTH_TEST);
-    ::glDisable(GL_BLEND);
-    ::glEnable(GL_LIGHTING);
-    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
-    smplr.End();
-    smplr.GetDepth();
-  }
-  
   dfm2::CGrid3<int> grid;
-  {
+  { // initizlie grid
     const unsigned int nx = sampler_box.nDivX();
     const unsigned int ny = sampler_box.nDivY();
     const unsigned int nz = sampler_box.nDivZ();
@@ -124,16 +99,40 @@ int main(int argc,char* argv[])
     grid.am.mat[11] = -(nz*el*0.5);
     grid.Initialize(nx, ny, nz, 1);
   }
-  CarveVoxelByDepth(grid.aVal,
-                    sampler_box);
+
+  // ---------------------------------------
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 3.0;
+  viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+//  viewer.nav.camera.Rot_Camera(+0.2, -0.2);
+  if(!gladLoadGL()) { // glad: load all OpenGL function pointers
+    printf("Something went wrong in loading OpenGL functions!\n");
+    exit(-1);
+  }
+  dfm2::opengl::setSomeLighting();
+  ::glEnable(GL_DEPTH_TEST);
+
+  // ------------
 
   while (true)
   {
+    dfm2::Rotate_Points3(aXYZ1,0.1, 0.0,0.0);
+    for(auto& smplr: sampler_box.aSampler){
+      smplr.InitGL(); // move the sampled image to a texture
+      smplr.Start();
+      ::glDisable(GL_POLYGON_OFFSET_FILL );
+      ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1, aTri);
+      smplr.End();
+      smplr.GetDepth();
+    }
+    CarveVoxelByDepth(grid.aVal,
+                      sampler_box);
     viewer.DrawBegin_oldGL();
     sampler_box.Draw();
     Draw_CGrid3(grid);
-    glfwSwapBuffers(viewer.window);
-    glfwPollEvents();
+    viewer.DrawEnd_oldGL();
     if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
   }
 EXIT:
