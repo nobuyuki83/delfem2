@@ -1,28 +1,26 @@
 cmake_minimum_required(VERSION 2.8)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
-####################################
+#################################
 
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-IF(MSVC)
-  set(CMAKE_CXX_FLAGS "/W4 -O2 \
-    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
-    /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
-ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
-ENDIF()
+if(MSVC)
+  set(CMAKE_CXX_FLAGS "-O2 /W4 \
+    /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4800 /wd4996 \
+    /wd4530 /wd4245 /wd4505 /wd4838 /wd4305 /wd4505 /wd4456")
+else()
+  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g" )
+endif()
 
-####################################
+#################################
 
-project(625_DefLaplacianFitProj)
+project(626_RdgRotation)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}")
-
-# glad
-get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
+# opengl
+find_package(OpenGL REQUIRED)
 
 # glfw
 IF(MSVC)
@@ -32,9 +30,6 @@ ELSE()
 ENDIF()
 get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
 get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
-
-# opengl
-find_package(OpenGL REQUIRED)
 
 # dfm2
 IF(USE_HEADERONLY)
@@ -50,20 +45,16 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-#####################################################
+#################################
 
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLAD_INCLUDE_DIR}
-    ${GLFW_INCLUDE_DIR}
-    ${DELFEM2_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_INCLUDE_DIR}
+  ${DELFEM2_INCLUDE_DIR}
 )
-set(3RD_PARTY   "../../3rd_party")
+
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INCLUDE_DIR}/delfem2/cereal/render2tex_cereal.hpp
-    ${3RD_PARTY}/glad3/include/glad/glad.h
-    ${3RD_PARTY}/glad3/src/glad.c
-    main.cpp
+  main.cpp
 )
 
 #####################################
@@ -93,4 +84,3 @@ ELSEIF(MSVC)
       ${OPENGL_LIBRARY}
       ${DFM2_LIBRARY})
 ENDIF()
-
