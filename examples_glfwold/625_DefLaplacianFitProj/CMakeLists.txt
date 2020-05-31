@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+
+####################################
+
 enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -33,21 +37,29 @@ get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-add_definitions(-DDFM2_HEADER_ONLY=ON)
+IF(USE_HEADERONLY)
+  add_definitions(-DDFM2_HEADER_ONLY=ON)
+else() 
+  if(MSVC)
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
+  else()
+    set(DFM2_LIBRARY
+      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
+  endif()
+ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 #####################################################
 
-set(3RD_PARTY           "../../3rd_party")
 include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLAD_INCLUDE_DIR}
     ${GLFW_INCLUDE_DIR}
     ${DELFEM2_INCLUDE_DIR}
-    ${3RD_PARTY}/cereal/include
 )
+set(3RD_PARTY   "../../3rd_party")
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INCLUDE_DIR}/delfem2/cereal/render2tex_cereal.hpp
     ${3RD_PARTY}/glad3/include/glad/glad.h
     ${3RD_PARTY}/glad3/src/glad.c
     main.cpp
@@ -60,27 +72,26 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      )
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    ${COCOA_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${COREVIDEO_LIBRARY}
+    ${DFM2_LIBRARY}
+    )
 ELSEIF(UNIX)
+  message(STATUS "opengl: ${OPENGL_LIBRARY}")
+  message(STATUS "glfw: ${GLFW_LIBRARY}")
+  message(STATUS "dfm2: ${DFM2_LIBRARY}")
   target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-      )
+    ${DFM2_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+    )
 ELSEIF(MSVC)
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    target_link_libraries(${PROJECT_NAME}
-        ${GLFW_LIBRARY}
-        ${OPENGL_LIBRARY})
-  else()
-    target_link_libraries(${PROJECT_NAME}
-        ${GLFW_LIBRARY}
-        ${OPENGL_LIBRARY})
-  endif()
+  target_link_libraries(${PROJECT_NAME}
+      ${GLFW_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${DFM2_LIBRARY})
 ENDIF()
-

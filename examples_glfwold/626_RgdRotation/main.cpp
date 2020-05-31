@@ -6,20 +6,17 @@
 */
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/geo3_v23m34q.h"
+#include "delfem2/primitive.h"
 
 // ----------
-#if defined(__APPLE__) && defined(__MACH__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
+#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
-#include "../glut_cam.h"
 
 namespace dfm2 = delfem2;
 
@@ -114,9 +111,7 @@ CRigidBodyState StepTime_RungeKutta4
 
 // ------------------------------------------------
 
-bool is_animation;
-
-CNav3D_GLUT nav;
+bool is_animation = true;
 
 double dt;
 dfm2::CRigidBodyState rbs;
@@ -126,18 +121,10 @@ dfm2::CRigidBodyForceModel rbfm;
 // ------------------------------------------------
 
 
-void myGlutDisplay(void)
+void myGlutDisplay(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri)
 {
-  //	::glClearColor(0.2f, 0.7f, 0.7f ,1.0f);
-  ::glClearColor(1.0f, 1.0f, 1.0f ,1.0f);
-  ::glClearStencil(0);
-  ::glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-  ::glEnable(GL_DEPTH_TEST);
-  
-  ::glEnable(GL_POLYGON_OFFSET_FILL );
-  ::glPolygonOffset( 1.1f, 4.0f );
-  nav.SetGL_Camera();
-  
   delfem2::opengl::DrawBackground();
   
   ::glMatrixMode(GL_MODELVIEW);
@@ -150,108 +137,19 @@ void myGlutDisplay(void)
   ::glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
   ::glDisable(GL_LIGHTING);
   ::glColor3d(0,0,0);
-  ::glutWireTeapot(1.01);
+  dfm2::opengl::DrawMeshTri3D_Edge(aXYZ.data(),aXYZ.size()/3, aTri.data(), aTri.size()/3);
   ::glEnable(GL_LIGHTING);
   ::glColor3d(1,1,1);
-  ::glutSolidTeapot(1.0);
+  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
   ::glPopMatrix();
-  
-  ShowFPS();
-  ::glutSwapBuffers();
 }
-
-void myGlutIdle(){
-  
-  if( is_animation ){
-//    rbs = StepTime_ForwardEuler(dt, rbs, rbi, rbfm);
-    rbs = StepTime_RungeKutta4(dt, rbs, rbi, rbfm);
-  }
-  ::glutPostRedisplay();
-}
-
-
-void myGlutResize(int w, int h)
-{
-  ::glViewport(0,0,w,h);
-  ::glutPostRedisplay();
-}
-
-void myGlutSpecial(int Key, int x, int y)
-{
-  nav.glutSpecial(Key, x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMotion( int x, int y )
-{
-  nav.glutMotion(x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutMouse(int button, int state, int x, int y)
-{
-  nav.glutMouse(button, state, x, y);
-  ::glutPostRedisplay();
-}
-
-void myGlutKeyboard(unsigned char Key, int x, int y)
-{
-  switch(Key)
-  {
-    case 'q':
-    case 'Q':
-    case '\033':
-      exit(0);  /* '\033' ? ESC ? ASCII ??? */
-    case 'a':
-      is_animation = !is_animation;
-      break;
-      
-    case '1':
-      break;
-    case '2':
-      break;
-    case '3':
-      break;
-    case '4':
-      break;
-    case 'i': // one iteration
-      break;
-    case 'd': // change draw mode
-      break;
-    case 'f': //
-      break;
-    case 's': //
-      break;
-    case ' ':
-    {
-      static int ifile = 0;
-      ifile++;
-      if( ifile >= 8 ){ ifile=0; }
-    }
-  }
-  ::glutPostRedisplay();
-}
-
 
 int main(int argc,char* argv[])
 {
-  glutInit(&argc, argv);
-  
-  // Initialize GLUT window 3D
-  glutInitWindowPosition(200,200);
-  glutInitWindowSize(400, 300);
-  glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH|GLUT_STENCIL);
-  glutCreateWindow("3D View");
-  glutDisplayFunc(myGlutDisplay);
-  glutIdleFunc(myGlutIdle);
-  glutReshapeFunc(myGlutResize);
-  glutMotionFunc(myGlutMotion);
-  glutMouseFunc(myGlutMouse);
-  glutKeyboardFunc(myGlutKeyboard);
-  glutSpecialFunc(myGlutSpecial);
-  
-  // -------------
-  
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
+  dfm2::MeshTri3_Torus(aXYZ,aTri, 1.0, 0.2, 32, 8);
+
   rbi.mass = 1.0;
   {
     rbi.Irot = dfm2::CMat3d::Zero();
@@ -270,11 +168,27 @@ int main(int argc,char* argv[])
   dt = 0.05;
   
   // ---------------
-  
-  nav.camera.view_height = 2.0;
+  dfm2::opengl::CViewer_GLFW viewer;
+  viewer.Init_oldGL();
+  viewer.nav.camera.view_height = 1.5;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
+
+  rbs = StepTime_RungeKutta4(dt, rbs, rbi, rbfm);
   
-  glutMainLoop();
+  while(true){
+    rbs = StepTime_RungeKutta4(dt,rbs,rbi,rbfm);
+    //
+    viewer.DrawBegin_oldGL();
+    myGlutDisplay(aXYZ,aTri);
+    viewer.DrawEnd_oldGL();
+    if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+  }
+CLOSE:
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+
   return 0;
 }
 
