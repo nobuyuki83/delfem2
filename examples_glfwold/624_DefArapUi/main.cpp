@@ -6,7 +6,7 @@
 */
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/def.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
