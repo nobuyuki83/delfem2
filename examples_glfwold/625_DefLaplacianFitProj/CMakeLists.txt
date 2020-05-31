@@ -21,6 +21,9 @@ project(625_DefLaplacianFitProj)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}")
 
+# opengl
+find_package(OpenGL REQUIRED)
+
 # glad
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
 
@@ -32,9 +35,6 @@ ELSE()
 ENDIF()
 get_filename_component(GLFW_LIBRARY ${GLFW_LIBRARY} ABSOLUTE)
 get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
-
-# opengl
-find_package(OpenGL REQUIRED)
 
 # dfm2
 IF(USE_HEADERONLY)
@@ -73,20 +73,20 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      ${DFM2_LIBRARY}
-      )
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    ${COCOA_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${COREVIDEO_LIBRARY}
+    ${DFM2_LIBRARY}
+    )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${DFM2_LIBRARY}
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-      )
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    ${DFM2_LIBRARY}
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+    )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
       ${GLFW_LIBRARY}
