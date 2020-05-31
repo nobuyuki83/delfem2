@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-option(USE_HEADERONLY "USE_DFM2_HEADERONLY" OFF)
+option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 #########################
 
@@ -73,24 +73,25 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      ${DFM2_LIBRARY}
-      )
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    ${COCOA_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${COREVIDEO_LIBRARY}
+    ${DFM2_LIBRARY}
+    )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${DFM2_LIBRARY}
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-      )
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    ${DFM2_LIBRARY}
+    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+    )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
-      ${GLFW_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${DFM2_LIBRARY})
+    ${GLFW_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${DFM2_LIBRARY}
+    )
 ENDIF()
 
