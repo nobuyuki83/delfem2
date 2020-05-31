@@ -268,7 +268,7 @@ public:
 	CEPo3D( const CEPo3D& rhs ) 
         : e(rhs.e), poel(rhs.poel),p(rhs.p),old_p(rhs.old_p){}
 	CEPo3D(double x, double y, double z) 
-        : e(-1), poel(0), p(x,y,z), old_p(-1){}
+        : e(UINT_MAX), poel(0), p(x,y,z), old_p(-1){}
 	bool operator < (const CEPo3D& rhs){
 		if( fabs( this->p.x() - rhs.p.x() ) > 1.0e-5 ){
 			return this->p.x() < rhs.p.x();
@@ -282,8 +282,8 @@ public:
 		return false;
 	}
 public:
-	int e;		//< element nubmer
-	int poel;	// element point number
+	unsigned int e;		//< element nubmer
+	unsigned int poel;	// element point number
   //
   delfem2::CVec3d p;
   int old_p;	//!< 変更前の節点番号
@@ -560,8 +560,8 @@ double MaxCrtElemAroundPoint(const ElemAroundPoint& elarpo,
  */
 bool MakeElemAroundPoint
  ( ElemAroundPoint& elarpo,
-  const int itet0,
-  const int inoel0,
+  const unsigned int itet0,
+  const unsigned int inoel0,
   const std::vector<CDynTet>& tet );
 
 
