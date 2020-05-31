@@ -21,9 +21,6 @@ project(135_GlBuffer)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
-# opengl
-find_package(OpenGL REQUIRED)
-
 # glfw
 IF(MSVC)
   set(GLFW_LIBRARY    ../../3rd_party/glfw/src/Release/glfw3.lib)
@@ -35,6 +32,9 @@ get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 
 # glad
 get_filename_component(GLAD_INCLUDE_DIR ../../3rd_party/glad3/include ABSOLUTE)
+
+# opengl
+find_package(OpenGL REQUIRED)
 
 # dfm2
 IF(USE_HEADERONLY)
@@ -82,9 +82,9 @@ IF(APPLE)
     )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
+    ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARY}
-    ${DFM2_LIBRARY}
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
     )
 ELSEIF(MSVC)

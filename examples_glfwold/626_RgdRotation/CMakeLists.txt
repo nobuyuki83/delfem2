@@ -72,6 +72,9 @@ IF(APPLE)
       ${DFM2_LIBRARY}
       )
 ELSEIF(UNIX)
+  message(STATUS "opengl: ${OPENGL_LIBRARY}")
+  message(STATUS "glfw: ${GLFW_LIBRARY}")
+  message(STATUS "dfm2: ${DFM2_LIBRARY}")
   target_link_libraries(${PROJECT_NAME}
       ${OPENGL_LIBRARY}
       ${GLFW_LIBRARY}
