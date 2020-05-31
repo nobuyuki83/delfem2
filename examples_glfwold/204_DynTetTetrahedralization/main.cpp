@@ -157,7 +157,7 @@ static void myGlVertex3d(const dfm2::CVec3d& v)
 
 
 void myGlutDisplay(
-    const std::vector<dfm2::CEPo3D>& aPo3D,
+    const std::vector<dfm2::CDynPointTet>& aPo3D,
     const std::vector<dfm2::CDynTet>& aSTet)
 {
 
@@ -204,7 +204,7 @@ void myGlutDisplay(
 
 
 void MakeInitialSuperTet(
-    std::vector<dfm2::CEPo3D>& aPo3D,
+    std::vector<dfm2::CDynPointTet>& aPo3D,
     std::vector<dfm2::CDynTet>& aSTet,
     std::vector<dfm2::CVec3d>& aCent,
     double len)
@@ -235,7 +235,7 @@ void MakeInitialSuperTet(
 }
 
 void AddRandomPoint(
-    std::vector<dfm2::CEPo3D>& aPo3D,
+    std::vector<dfm2::CDynPointTet>& aPo3D,
     std::vector<dfm2::CDynTet>& aSTet,
     std::vector<dfm2::CVec3d>& aCent,
     double x0,
@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
   std::mt19937 mt(rd());
   std::uniform_real_distribution<> dist(-1.0, +1.0);
   while(true){
-    std::vector<dfm2::CEPo3D> aPo3D;
+    std::vector<dfm2::CDynPointTet> aPo3D;
     std::vector<dfm2::CDynTet> aSTet;
     std::vector<dfm2::CVec3d> aCent;
     MakeInitialSuperTet(aPo3D,aSTet,aCent,
