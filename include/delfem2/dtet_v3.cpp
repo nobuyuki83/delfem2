@@ -877,7 +877,7 @@ bool delfem2::MakeTetSurTet(std::vector<CDynTet>& tet)
 
 bool delfem2::MakeOneTetSurNo
  (const std::vector<CDynTet>& tet,
-  std::vector<CEPo3D>& point)
+  std::vector<CDynPointTet>& point)
 {
 	assert( !point.empty() );
 	assert( !tet.empty() );
@@ -1694,7 +1694,7 @@ bool delfem2::IsInsideCircumSphere(
                           const delfem2::CVec3d& p,
                           const delfem2::CDynTet t,
                           const delfem2::CVec3d& c,
-                          const std::vector<CEPo3D>& aPo3D)
+                          const std::vector<CDynPointTet>& aPo3D)
 {
   const unsigned int i0 = t.v[0];
   const unsigned int i1 = t.v[1];
@@ -1710,7 +1710,7 @@ bool delfem2::IsInsideCircumSphere(
 
 bool delfem2::CheckTet
  (const std::vector<CDynTet>& aSTet,
-  const std::vector<CEPo3D>& aPo3D)
+  const std::vector<CDynPointTet>& aPo3D)
 {
 	std::cout << " *** CheckTet *** ";
 
@@ -1808,7 +1808,7 @@ bool delfem2::CheckTet(const std::vector<CDynTet>& tet)
 void delfem2::AddPointTetDelaunay(
     unsigned int ip_ins,
     unsigned int itet_ins,
-    std::vector<CEPo3D>& aPo3D,
+    std::vector<CDynPointTet>& aPo3D,
     std::vector<CDynTet>& aSTet,
     std::vector<CVec3d>& aCent,
     std::vector<int>& tmp_buffer)

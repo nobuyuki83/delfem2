@@ -261,15 +261,19 @@ bool operator < (const CFlipCrtPrePosPtn& lhs, const CFlipCrtPrePosPtn& rhs);
 */
 
 
-//! ３次元の点クラス
-class CEPo3D{
+/**
+ * @brief 3D point class for dynamic tetrahedra mesh
+ */
+class CDynPointTet{
 public:
-	CEPo3D(){}
-	CEPo3D( const CEPo3D& rhs ) 
-        : e(rhs.e), poel(rhs.poel),p(rhs.p),old_p(rhs.old_p){}
-	CEPo3D(double x, double y, double z) 
-        : e(UINT_MAX), poel(0), p(x,y,z), old_p(-1){}
-	bool operator < (const CEPo3D& rhs){
+	CDynPointTet(){}
+	CDynPointTet( const CDynPointTet& rhs ) 
+        : e(rhs.e), poel(rhs.poel), p(rhs.p)//,old_p(rhs.old_p){}
+  {}
+	CDynPointTet(double x, double y, double z) 
+        : e(UINT_MAX), poel(0), p(x,y,z)//, old_p(-1){}
+  {}
+	bool operator < (const CDynPointTet& rhs){
 		if( fabs( this->p.x() - rhs.p.x() ) > 1.0e-5 ){
 			return this->p.x() < rhs.p.x();
 		}
@@ -286,11 +290,11 @@ public:
 	unsigned int poel;	// element point number
   //
   delfem2::CVec3d p;
-  int old_p;	//!< 変更前の節点番号
+//  int old_p;	//!< 変更前の節点番号
 };
 
 /**
- * @brief class of editable tetrahedra
+ * @brief class of dynamic tetrahedra
  */
 class CDynTet
 {
@@ -305,8 +309,6 @@ public:
    * @brief ndex of adjacent element
    */
 	unsigned int s[4];
-  
-//	int f[4]; // relationship
 };
 
 
@@ -317,7 +319,7 @@ bool IsInsideCircumSphere(
     const delfem2::CVec3d& p,
     const delfem2::CDynTet t,
     const delfem2::CVec3d& c,
-    const std::vector<CEPo3D>& aPo3D);
+    const std::vector<CDynPointTet>& aPo3D);
 
 /*
 //! ６面体要素構造体
@@ -360,7 +362,7 @@ struct SQuad3D{
 
 //! 四面体分割の整合性をチェック
 bool CheckTet(const std::vector<CDynTet>& tet,
-              const std::vector<CEPo3D>& vertex);
+              const std::vector<CDynPointTet>& vertex);
 
 //! 四面体分割の整合性をチェック
 bool CheckTet(const std::vector<CDynTet>& tet);
@@ -382,7 +384,7 @@ bool MakeEdgeTet
 //! 各ノードを囲む四面体の１つを作る
 bool MakeOneTetSurNo
  (const std::vector<CDynTet>& tet,
-  std::vector<CEPo3D>& point);
+  std::vector<CDynPointTet>& point);
 
 
 
@@ -499,10 +501,10 @@ bool AddPointTet_Edge
  * @breaf Add point inside tetrahedra and maintain delaunay
  * @param tmp_buffer should be an array of -1. (if input values are all -1, then output values are -1)
  */
-void AddPointTetDelaunay
- (unsigned int ip_ins,
+void AddPointTetDelaunay(
+  unsigned int ip_ins,
   unsigned int itet_ins,
-  std::vector<CEPo3D>& aPo3D,
+  std::vector<CDynPointTet>& aPo3D,
   std::vector<CDynTet>& aSTet,
   std::vector<CVec3d>& aCent,
   std::vector<int>& tmp_buffer);
@@ -648,7 +650,7 @@ bool Reconnect
 //! volume of tetrahedra
 inline double TetVolume
 (unsigned int iv1, unsigned int iv2, unsigned int iv3, unsigned int iv4,
- const std::vector<CEPo3D>& point)
+ const std::vector<CDynPointTet>& point)
 {
 	return Volume_Tet( point[iv1].p, point[iv2].p, point[iv3].p, point[iv4].p );
 }
@@ -656,7 +658,7 @@ inline double TetVolume
 //! volume of tetrahedra
 inline double TetVolume
 (const CDynTet& tet,
- const std::vector<CEPo3D>& node)
+ const std::vector<CDynPointTet>& node)
 {
 	return Volume_Tet(
 		node[ tet.v[0] ].p,
@@ -669,7 +671,7 @@ inline double TetVolume
 inline double TetVolume
 (int ielem,
  const std::vector<CDynTet>& tet,
- const std::vector<CEPo3D>& node)
+ const std::vector<CDynPointTet>& node)
 {
 	return TetVolume( tet[ielem], node );
 }
@@ -679,7 +681,7 @@ inline double TetVolume
 //! ３角形の面積
 inline double TriArea(const CDynTet& tet, 
 		const int iface, 
-		const std::vector<CEPo3D>& node )
+		const std::vector<CDynPointTet>& node )
 {
 	return Area_Tri(
         node[ tet.v[(int)noelTetFace[iface][0]] ].p,
@@ -691,7 +693,7 @@ inline double TriArea(const CDynTet& tet,
 inline double TriArea(const int itet,
 		const int iface,
 		const std::vector<CDynTet>& tet,
-		const std::vector<CEPo3D>& node )
+		const std::vector<CDynPointTet>& node )
 {
 	return TriArea(tet[itet],iface,node);
 }
@@ -699,7 +701,7 @@ inline double TriArea(const int itet,
 // ----------------
 
 inline double SquareLongestEdgeLength(const int itet,
-		const std::vector<CEPo3D>& node,
+		const std::vector<CDynPointTet>& node,
 		const std::vector<CDynTet>& tet )
 {
 	return SqareLongestEdgeLength(
@@ -712,7 +714,7 @@ inline double SquareLongestEdgeLength(const int itet,
 // -------------------------
 
 inline double LongestEdgeLength(const int itet,
-		const std::vector<CEPo3D>& node,
+		const std::vector<CDynPointTet>& node,
 		const std::vector<CDynTet>& tet )
 {
 	return sqrt( SqareLongestEdgeLength(
@@ -725,7 +727,7 @@ inline double LongestEdgeLength(const int itet,
 // ------------------------
 
 inline double SquareShortestEdgeLength(const int itet,
-		const std::vector<CEPo3D>& node,
+		const std::vector<CDynPointTet>& node,
 		const std::vector<CDynTet>& tet )
 {
 	return SqareShortestEdgeLength(
@@ -738,7 +740,7 @@ inline double SquareShortestEdgeLength(const int itet,
 // ------------------------
 
 inline double ShortestEdgeLength(const int itet,
-		const std::vector<CEPo3D>& node,
+		const std::vector<CDynPointTet>& node,
 		const std::vector<CDynTet>& tet )
 {
 	return sqrt( SqareShortestEdgeLength(
@@ -754,7 +756,7 @@ inline double ShortestEdgeLength(const int itet,
 inline void Normal(
 		delfem2::CVec3d& vnorm,
 		const unsigned int itet0, const unsigned int iface0, 
-		const std::vector<CDynTet>& tet, const std::vector<CEPo3D>& node)
+		const std::vector<CDynTet>& tet, const std::vector<CDynPointTet>& node)
 {
 	assert( itet0 < tet.size() );
 	assert( iface0 < 4 );
@@ -772,7 +774,7 @@ inline void UnitNormal(
 		const int itet0,
 		const int iface0,
 		const std::vector<CDynTet>& aTet,
-		const std::vector<CEPo3D>& aPo )
+		const std::vector<CDynPointTet>& aPo )
 {
 	UnitNormal(vnorm,
              aPo[ aTet[itet0].v[ (int)noelTetFace[iface0][0] ] ].p,
@@ -800,7 +802,7 @@ inline void UnitNormal(
 //! ３角形の外周円
 inline double Circumradius(
 		const int itet0, 
-		const std::vector<CEPo3D>& node,
+		const std::vector<CDynPointTet>& node,
 		const std::vector<CDynTet>& tet )
 {
 	return sqrt( SquareCircumradius(
@@ -830,7 +832,7 @@ inline double Criterion_Asp(
 }
 
 inline double Criterion_Asp(const CDynTet& tet,
-		const std::vector<CEPo3D>& node)
+		const std::vector<CDynPointTet>& node)
 {
 	return Criterion_Asp(
 		node[tet.v[0]].p,
@@ -840,7 +842,7 @@ inline double Criterion_Asp(const CDynTet& tet,
 }
 
 inline double Criterion_Asp(int ielem,
-		const std::vector<CEPo3D>& node,
+		const std::vector<CDynPointTet>& node,
 		const std::vector<CDynTet>& tet)
 {
 	return Criterion_Asp(tet[ielem],node);
