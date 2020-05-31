@@ -254,7 +254,7 @@ void AddRandomPoint(
     unsigned int j1 = aSTet[it].v[1];
     unsigned int j2 = aSTet[it].v[2];
     unsigned int j3 = aSTet[it].v[3];
-    if( j0 == -1 ) continue; // floating tet
+    if( j0 == UINT_MAX ) continue; // floating tet
     double v0 = TetVolume(ip_ins, j1, j2, j3, aPo3D);
     double v1 = TetVolume(j0, ip_ins, j2, j3, aPo3D);
     double v2 = TetVolume(j0, j1, ip_ins, j3, aPo3D);

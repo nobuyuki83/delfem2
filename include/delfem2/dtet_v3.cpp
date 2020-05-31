@@ -1715,17 +1715,17 @@ bool delfem2::CheckTet
 	std::cout << " *** CheckTet *** ";
 
 	for(unsigned int ip=0;ip<aPo3D.size();ip++){
-		if( aPo3D[ip].e!=-1 ){
-			if( aPo3D[ip].e < 0 || aPo3D[ip].e >= (int)aSTet.size() ){
+		if( aPo3D[ip].e!=UINT_MAX ){
+			if( aPo3D[ip].e >= aSTet.size() ){
 				std::cout << ip << " " << aPo3D[ip].e << " " << aSTet.size() << std::endl;
 			}
 			if( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] != ip ){
 				std::cout << "error: point2elem mismatch:" << ip << " " << aPo3D[ip].e << " " << (int)aPo3D[ip].poel << " " << aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] << std::endl;
 			}
 		}
-		if( aPo3D[ip].e!=-1 ){
-			assert( aPo3D[ip].e >= 0 && aPo3D[ip].e < (int)aSTet.size()    );
-			assert( aPo3D[ip].poel >= 0 && aPo3D[ip].poel < 4       );
+		if( aPo3D[ip].e!=UINT_MAX ){
+			assert( aPo3D[ip].e < aSTet.size() );
+			assert( aPo3D[ip].poel >= 0 && aPo3D[ip].poel < 4 );
 			assert( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] == ip );
 		}
 	}
@@ -2359,8 +2359,8 @@ bool delfem2::MakeElemAroundPoint(
       assert( (int)tet[iadj_tet].s[iadj_noel_adj] == icur_tet );
       const int irel0 = noel2Rel[ iadj_noel_cnt*4 + iadj_noel_adj ];
       
-      assert( tetRel[ irel0 ][0] == iadj_noel_cnt );
-      assert( tetRel[ irel0 ][1] == iadj_noel_adj );
+      assert( (int)tetRel[ irel0 ][0] == iadj_noel_cnt );
+      assert( (int)tetRel[ irel0 ][1] == iadj_noel_adj );
       
       const int jnoel0 = tetRel[ irel0 ][2];
       pair_ic.first = iadj_tet;
