@@ -1719,7 +1719,7 @@ bool delfem2::CheckTet
 			if( aPo3D[ip].e < 0 || aPo3D[ip].e >= (int)aSTet.size() ){
 				std::cout << ip << " " << aPo3D[ip].e << " " << aSTet.size() << std::endl;
 			}
-			if( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] != (int)ip ){
+			if( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] != ip ){
 				std::cout << "error: point2elem mismatch:" << ip << " " << aPo3D[ip].e << " " << (int)aPo3D[ip].poel << " " << aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] << std::endl;
 			}
 		}
@@ -1990,7 +1990,7 @@ void delfem2::AddPointTetDelaunay(
       }
     }
   }
-  
+
   // ------------------------------------
   for (unsigned int inew = 0; inew<aNew.size(); ++inew){
     const unsigned int it_new = aNew[inew].itet_new;
@@ -2065,12 +2065,12 @@ void delfem2::AddPointTetDelaunay(
   
 #ifndef NDEBUG
   for(unsigned int ip=0;ip<aPo3D.size();ip++){
-    if( aPo3D[ip].e==-1 ){ continue; }
-    if( aPo3D[ip].e < 0 || (int)aPo3D[ip].e >= aSTet.size() ){
+    if( aPo3D[ip].e == UINT_MAX ){ continue; }
+    if( aPo3D[ip].e >= aSTet.size() ){
       std::cout << aPo3D[ip].e << " " << aSTet.size() << "   " << ip << " " << aPo3D.size() << std::endl;
     }
-    assert( aPo3D[ip].e >= 0 && (int)aPo3D[ip].e < aSTet.size()    );
-    assert( aPo3D[ip].poel >= 0 && (int)aPo3D[ip].poel < 4       );
+    assert( aPo3D[ip].e < aSTet.size() );
+    assert( aPo3D[ip].poel < 4 );
     assert( aSTet[ aPo3D[ip].e ].v[ aPo3D[ip].poel ] == ip );
   }
 #endif
@@ -2291,11 +2291,11 @@ bool GetEdgeSwapPtnCrt5Elared
  */
 
 
-bool delfem2::MakeElemAroundPoint
-( ElemAroundPoint& elarpo,
- const int itet0,
- const int inoel0,
- const std::vector<CDynTet>& tet )
+bool delfem2::MakeElemAroundPoint(
+    ElemAroundPoint& elarpo,
+    const unsigned int itet0,
+    const unsigned int inoel0,
+    const std::vector<CDynTet>& tet )
 {
   assert( itet0 < tet.size() );
   assert( inoel0 < 4 );
@@ -2333,7 +2333,7 @@ bool delfem2::MakeElemAroundPoint
       const int icur_tet= itr_set_ic->first;
       const int icur_noel_adj = itr_set_ic->second;
       next.erase( itr_set_ic );
-      if( tet[icur_tet].s[icur_noel_adj] == -1 ){
+      if( tet[icur_tet].s[icur_noel_adj] == UINT_MAX ){
         elarpo.is_inner = false;
         continue;
       }
@@ -2379,13 +2379,13 @@ bool delfem2::MakeElemAroundPoint
     const int itet1 = itr_map_ic->first;
     const int inoel1 = itr_map_ic->second;
     assert( (int)tet[itet1].v[inoel1] == cnt_point );
-    if( tet[itet1].s[ noelTetFace[inoel1][0] ] != -1 ){
+    if( tet[itet1].s[ noelTetFace[inoel1][0] ] != UINT_MAX ){
       assert( elarpo.e.find( tet[itet1].s[ noelTetFace[inoel1][0] ] ) != elarpo.e.end() );
     }
-    if( tet[itet1].s[ noelTetFace[inoel1][1] ] != -1 ){
+    if( tet[itet1].s[ noelTetFace[inoel1][1] ] != UINT_MAX ){
       assert( elarpo.e.find( tet[itet1].s[ noelTetFace[inoel1][1] ] ) != elarpo.e.end() );
     }
-    if( tet[itet1].s[ noelTetFace[inoel1][2] ] != -1 ){
+    if( tet[itet1].s[ noelTetFace[inoel1][2] ] != UINT_MAX ){
       assert( elarpo.e.find( tet[itet1].s[ noelTetFace[inoel1][2] ] ) != elarpo.e.end() );
     }
   }
