@@ -33,7 +33,7 @@ public:
     std::vector<double> aXY = {-1,-1, +1,-1, +1,+1, -1,+1};
     cad.AddPolygon(aXY);
     {
-      double param[4] = {0.2, 0.3, -0.2, 0.3};
+      double param[4] = {0.2, 0.3, 0.8, +0.3};
       std::vector<double> vparam(param,param+4);
       cad.SetEdgeType( 0, delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
     }
@@ -74,19 +74,15 @@ void draw(GLFWwindow* window)
 
 int main(void)
 {
-  viewer.Init_newGL();
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  
-  // glad: load all OpenGL function pointers
-  // ---------------------------------------
+  viewer.Init_newGL();
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
+  { // glad: load all OpenGL function pointers
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
   viewer.shdr_cad.Compile();
-
   viewer.shdr_cad.MakeBuffer(viewer.cad);
   
 #ifdef EMSCRIPTEN

@@ -17,32 +17,15 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 // -----------------------------
-std::vector<double> aXYZ;
-std::vector<unsigned int> aTri;
-std::vector<int> aP;
-std::vector<double> aGrad;
-int nH, nW, nD;
-std::vector<unsigned char> aV;
-// -------------------------------
 
-void myGlutDisplay()
+void ComputePerlin(
+    unsigned int& nH,
+    unsigned int& nW,
+    unsigned int& nD,
+    std::vector<int>& aP,
+    std::vector<double>& aGrad,
+    std::vector<unsigned char>& aV)
 {
-  ::glEnable(GL_LIGHTING);
-  ::glEnable(GL_TEXTURE_3D);
-  glEnable(GL_TEXTURE_GEN_S);
-  glEnable(GL_TEXTURE_GEN_T);
-  glEnable(GL_TEXTURE_GEN_R);
-  delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
-//  ::glutSolidTeapot(1.0);
-  //    glutSolidSphere(1.0, 32, 16);
-  //  glutSolidDodecahedron();
-  ::glDisable(GL_TEXTURE_3D);
-  glDisable(GL_TEXTURE_GEN_S);
-  glDisable(GL_TEXTURE_GEN_T);
-  glDisable(GL_TEXTURE_GEN_R);
-}
-
-void ComputePerlin(){
   
   aP.resize(256);
   for(int i=0;i<256;++i){ aP[i]=i; }
@@ -76,8 +59,7 @@ void ComputePerlin(){
   aGrad.push_back(-1); aGrad.push_back(+0); aGrad.push_back(+1);
   aGrad.push_back(+1); aGrad.push_back(+0); aGrad.push_back(-1);
   aGrad.push_back(+1); aGrad.push_back(+0); aGrad.push_back(+1);
-  
-  
+
   nH = 128;
   nW = 128;
   nD = 128;
@@ -127,58 +109,71 @@ void ComputePerlin(){
 
 int main(int argc,char* argv[])
 {
+  std::vector<double> aXYZ;
+  std::vector<unsigned int> aTri;
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
-  
+
+  // -----
+  unsigned int nH, nW, nD;
+  std::vector<int> aP;
+  std::vector<double> aGrad;
+  std::vector<unsigned char> aV;
+  ComputePerlin(nH,nW,nD,
+      aP,aGrad,aV);
+
+  // -----------------
   delfem2::opengl::CViewer_GLFW viewer;
+  viewer.nav.camera.view_height = 1.0;
+  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();
-  
-  ComputePerlin();
-  
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
     printf("Something went wrong in loading OpenGL functions!\n");
     exit(-1);
   }
   printf("OpenGL version supported by this platform (%s): \n",
          glGetString(GL_VERSION));
-  
+  delfem2::opengl::setSomeLighting();
+
+  // --------
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-  static double genfunc[][4] = {
-    { 1.0, 0.0, 0.0, 0.0 },
-    { 0.0, 1.0, 0.0, 0.0 },
-    { 0.0, 0.0, 1.0, 0.0 },
-  };
-  glTexGendv(GL_S, GL_OBJECT_PLANE, genfunc[0]);
-  glTexGendv(GL_T, GL_OBJECT_PLANE, genfunc[1]);
-  glTexGendv(GL_R, GL_OBJECT_PLANE, genfunc[2]);
+  {
+    const double genfunc[][4] = {
+        {1.0, 0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0, 0.0},
+        {0.0, 0.0, 1.0, 0.0}};
+    glTexGendv(GL_S, GL_OBJECT_PLANE, genfunc[0]);
+    glTexGendv(GL_T, GL_OBJECT_PLANE, genfunc[1]);
+    glTexGendv(GL_R, GL_OBJECT_PLANE, genfunc[2]);
+  }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, nW, nH, nD, 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
-  
-  viewer.nav.camera.view_height = 1.0;
-  viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
-  
-  delfem2::opengl::setSomeLighting();
-  
+  glTexImage3D(GL_TEXTURE_3D,
+      0, GL_RGBA, nW, nH, nD, 0,
+      GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
 
-  
   while (!glfwWindowShouldClose(viewer.window))
   {
     viewer.DrawBegin_oldGL();
-    
-    myGlutDisplay();
-    
-    glfwSwapBuffers(viewer.window);
-    glfwPollEvents();
+    ::glEnable(GL_LIGHTING);
+    ::glEnable(GL_TEXTURE_3D);
+    ::glEnable(GL_TEXTURE_GEN_S);
+    ::glEnable(GL_TEXTURE_GEN_T);
+    ::glEnable(GL_TEXTURE_GEN_R);
+    delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aTri);
+    ::glDisable(GL_TEXTURE_3D);
+    ::glDisable(GL_TEXTURE_GEN_S);
+    ::glDisable(GL_TEXTURE_GEN_T);
+    ::glDisable(GL_TEXTURE_GEN_R);
+    viewer.DrawEnd_oldGL();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
