@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 
@@ -38,8 +39,6 @@ GLuint MakeVAO_Slice()
   glEnableVertexAttribArray(0); // enable the previous vertex attrib array
   return vao;
 }
-
-
 
 // making 3D volumetric texture
 GLuint MakeTex_Volume(GLint nW, GLint nH, GLint nD)
@@ -88,18 +87,16 @@ GLuint MakeTex_Volume(GLint nW, GLint nH, GLint nD)
   }
   
   // generate 3D texture and bind it
-  GLuint tex; glGenTextures(1, &tex);
-  glBindTexture(GL_TEXTURE_3D, tex);
+  GLuint idTexVol; glGenTextures(1, &idTexVol);
+  glBindTexture(GL_TEXTURE_3D, idTexVol);
   
   // send 3D texture data to GPU
   glTexImage3D(GL_TEXTURE_3D,
                0, GL_R8, nW, nH, nD, 0,
                GL_RED, GL_UNSIGNED_BYTE, aV.data());
-
-  // linear interplation
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+  
   // use border color outside texture range
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
   glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -110,7 +107,7 @@ GLuint MakeTex_Volume(GLint nW, GLint nH, GLint nD)
     glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, border_color);
   }
 
-  return tex;
+  return idTexVol;
 }
 
 std::string LoadFile
@@ -122,78 +119,12 @@ std::string LoadFile
   return std::string(vdataBegin,vdataEnd);
 }
 
-GLuint MakeTex_Gradient(GLuint idVAO,
-                        GLuint idTexVolume,
-                        GLint texWidth,
-                        GLint texHeight,
-                        GLint texDepth)
-{
-  GLuint idTex; glGenTextures(1, &idTex);
-  glBindTexture(GL_TEXTURE_3D, idTex);
-  
-  glTexImage3D(GL_TEXTURE_3D,
-               0, GL_RGBA, texWidth, texHeight, texDepth, 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, 0);
-  
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  
-  glBindTexture(GL_TEXTURE_3D, 0);
-  
-  // get viewport
-  GLint viewport[4]; glGetIntegerv(GL_VIEWPORT, viewport);
-  
-  // set up viewport
-  glViewport(0, 0, texWidth, texHeight);
-  
-  GLuint idFrameBuffer; glGenFramebuffers(1, &idFrameBuffer);
-  glBindFramebuffer(GL_FRAMEBUFFER, idFrameBuffer);
-  
-  static const GLenum bufs[] = { GL_COLOR_ATTACHMENT0 };
-  glDrawBuffers(1, bufs);
-  
-  glDepthMask(GL_FALSE); // don't use depth buffer
-  glDisable(GL_BLEND); // disable alpha blending
-  
-  GLuint idProgramGradient = 0;
-  {
-    std::string sgradv = LoadFile(std::string(PATH_SOURCE_DIR)+std::string("/glsl150gradient.vert"));
-    std::string sgradf = LoadFile(std::string(PATH_SOURCE_DIR)+std::string("/glsl150gradient.frag"));
-    idProgramGradient = dfm2::opengl::GL24_CompileShader(sgradv.c_str(),sgradf.c_str());
-  }
-  GLint locTex = glGetUniformLocation(idProgramGradient, "tex");
-  GLint locZ = glGetUniformLocation(idProgramGradient, "z");
-  
-  glUseProgram(idProgramGradient);
-  glUniform1i(locTex, 0);
-  
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_3D, idTexVolume);
-  glBindVertexArray(idVAO);
-  for (GLint z = 0; z < texDepth; ++z)
-  {
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, idTex, 0, z);
-    glUniform1f(locZ, (static_cast<GLfloat>(z) + 0.5f) / static_cast<GLfloat>(texDepth));
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-  }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  
-  glDrawBuffer(GL_BACK);
-  glDepthMask(GL_TRUE);
-  
-  // restore the original viewport
-  glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-  
-  return idTex;
-}
-
 int main(int argc, const char * argv[])
 {
   delfem2::opengl::CViewer_GLFW viewer;
+  viewer.nav.camera.view_height = 0.5;
+  viewer.nav.camera.Rot_Camera(-0.2, -0.2);
+  //
   viewer.Init_newGL();
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
   {
@@ -211,9 +142,6 @@ int main(int argc, const char * argv[])
   // making 3D texture
   const GLuint idTexVolume = MakeTex_Volume(texWidth, texHeight, texDepth);
 
-  // making grdient texture
-  const GLuint idTexGradient = MakeTex_Gradient(idVaoSlice, idTexVolume, texWidth, texHeight, texDepth);
-
   GLuint idProgramSlice = 0;
   { // compile slicing shader
     const std::string sslicev = LoadFile(std::string(PATH_SOURCE_DIR)+"/glsl150slice.vert");
@@ -221,8 +149,7 @@ int main(int argc, const char * argv[])
     idProgramSlice = dfm2::opengl::GL24_CompileShader(sslicev.c_str(),sslicef.c_str());
   }
   
-  const GLint locGradient = glGetUniformLocation(idProgramSlice, "gradient");
-  const GLint locVolume = glGetUniformLocation(idProgramSlice, "volume");
+  const GLint locVol = glGetUniformLocation(idProgramSlice, "volume");
   const GLint locMt = glGetUniformLocation(idProgramSlice, "mt");
   const GLint locMw = glGetUniformLocation(idProgramSlice, "mw");
   const GLint locMp = glGetUniformLocation(idProgramSlice, "mp");
@@ -255,21 +182,21 @@ int main(int argc, const char * argv[])
     const unsigned int nslice = 256;
 
     glUseProgram(idProgramSlice);
-    glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV);
+    glUniformMatrix4fv(locMt, 1, GL_TRUE, mMV); // apply rotation to texture. Transpose matrix here.
     glUniform1f(locSpacing, 1.0f / static_cast<GLfloat>(nslice - 1));
-    glUniform1f(locThreshold, 0.5);
+    glUniform1f(locThreshold, 0.5);  // threathold of surface
 
-    glUniform1i(locVolume, 0);
+    glUniform1i(locVol, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_3D, idTexVolume);
-    glUniform1i(locGradient, 1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_3D, idTexGradient);
 
     glBindVertexArray(idVaoSlice); // bind VAO
-    glUniformMatrix4fv(locMw, 1, GL_FALSE, mMV);
+    {
+      const float mati[16] = {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1};
+      glUniformMatrix4fv(locMw, 1, GL_FALSE, mati);
+    }
     glUniformMatrix4fv(locMp, 1, GL_FALSE, mP);
-    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw
+    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
     
     viewer.DrawEnd_oldGL();
     
