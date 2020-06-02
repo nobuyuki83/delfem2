@@ -143,21 +143,22 @@ int main(int argc,char* argv[])
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-  static double genfunc[][4] = {
-    { 1.0, 0.0, 0.0, 0.0 },
-    { 0.0, 1.0, 0.0, 0.0 },
-    { 0.0, 0.0, 1.0, 0.0 },
-  };
-  glTexGendv(GL_S, GL_OBJECT_PLANE, genfunc[0]);
-  glTexGendv(GL_T, GL_OBJECT_PLANE, genfunc[1]);
-  glTexGendv(GL_R, GL_OBJECT_PLANE, genfunc[2]);
+  {
+    const double genfunc[][4] = {
+        {1.0, 0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0, 0.0},
+        {0.0, 0.0, 1.0, 0.0}};
+    glTexGendv(GL_S, GL_OBJECT_PLANE, genfunc[0]);
+    glTexGendv(GL_T, GL_OBJECT_PLANE, genfunc[1]);
+    glTexGendv(GL_R, GL_OBJECT_PLANE, genfunc[2]);
+  }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, nW, nH, nD, 0,
-               GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
-
+  glTexImage3D(GL_TEXTURE_3D,
+      0, GL_RGBA, nW, nH, nD, 0,
+      GL_RGBA, GL_UNSIGNED_BYTE, aV.data());
 
   while (!glfwWindowShouldClose(viewer.window))
   {
