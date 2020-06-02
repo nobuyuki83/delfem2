@@ -102,6 +102,7 @@ int main()
   //
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
+  viewer.nav.camera.Rot_Camera(+0.8, -0.2);
   
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop_arg((em_arg_callback_func) draw, viewer.window, 60, 1);

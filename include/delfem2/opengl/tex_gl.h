@@ -91,9 +91,10 @@ public:
   
   void Draw_oldGL();
   
-  virtual void Initialize(int w, int h,
+  void Initialize(unsigned int w, unsigned int h,
                   const unsigned char *pD,
-                  const std::string &typeData){
+                  const std::string &typeData) override
+  {
     CTexRGB::Initialize(w, h, pD, typeData);
     this->min_x = 0.0;
     this->max_x = (double) w;
