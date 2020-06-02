@@ -19,6 +19,7 @@ add_subdirectory(02_nav3d)
 add_subdirectory(03_texture)
 add_subdirectory(04_render2texture)
 add_subdirectory(05_OffScreenProjection)
+add_subdirectory(06_VolumeRendering)
 
 add_subdirectory(10_imgui_sampledemo)
 add_subdirectory(11_imgui_basic)
