@@ -65,9 +65,9 @@ void ComputePerlin(
   nD = 128;
   aV.resize(nH*nW*nD*4);
   int nrep = 4;
-  for(int id=0;id<nD;++id){
-    for(int ih=0;ih<nH;++ih){
-      for(int iw=0;iw<nW;++iw){
+  for(unsigned int id=0;id<nD;++id){
+    for(unsigned int ih=0;ih<nH;++ih){
+      for(unsigned int iw=0;iw<nW;++iw){
         double x = (double)iw/nH*nrep;
         double y = (double)ih/nW*nrep;
         double z = (double)id/nD*nrep;
