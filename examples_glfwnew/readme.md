@@ -17,6 +17,9 @@
 ### [05_OffScreenProjection](05_OffScreenProjection)
 <img src="05_OffScreenProjection/thumbnail.png" width=200px>
 
+### [06_VolumeRendering](06_volumeRendering)
+<img src="06_VolumeRendering/thumbnail.png" width=200px>
+
 ### [11_imgui_basic](11_imgui_basic)
 <img src="11_imgui_basic/thumbnail.png" width=200px>
 

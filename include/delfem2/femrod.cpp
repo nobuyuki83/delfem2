@@ -1023,6 +1023,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     const double stiff_stretch,
     const double stiff_bendtwist[3],
     double mdtt,
+    const std::vector<CVec3d>& aPt0,
     const std::vector<CVec3d>& aP0,
     const std::vector<CVec3d>& aS0,
     const std::vector<int>& aBCFlag,
@@ -1050,6 +1051,12 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     mats.valDia[ip*16+1*4+1] += mdtt;
     mats.valDia[ip*16+2*4+2] += mdtt;
   }
+  for(unsigned int ip=0;ip<aP.size();++ip){ // this term has effect only in the second nonliear iteration
+    const CVec3d dp = aPt0[ip]-aP[ip];
+    vec_r[ip*4+0] += dp.x()*mdtt;
+    vec_r[ip*4+1] += dp.y()*mdtt;
+    vec_r[ip*4+2] += dp.z()*mdtt;
+  }
 //  std::cout << "energy:" << W << std::endl;
   //    std::cout << "sym: " << CheckSymmetry(mats) << std::endl;
   for(const auto& ch : aContact){
@@ -1057,7 +1064,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     const double aW[4] = {1-ch.s, ch.s, -(1-ch.t), -ch.t};
     CVec3d a = aW[0]*aP[aIP[0]] + aW[1]*aP[aIP[1]] + aW[2]*aP[aIP[2]] + aW[3]*aP[aIP[3]];
     double r0 = a*ch.norm - clearance;
-//    std::cout << "contact: " << r0 << std::endl;
+//    std::cout << "    contact: " << r0 << std::endl;
     for(int iip=0;iip<4;++iip){
       unsigned int ip0 = aIP[iip];
       vec_r[ip0*4+0] -= stiff_contact*r0*aW[iip]*ch.norm.x();
@@ -1081,6 +1088,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
       std::cout << "            conv: " << aConvHist.size() << " " << aConvHist[0] << " " << aConvHist[aConvHist.size()-1] << std::endl;
     }
      */
+//    std::cout << "  updates: " << DotX(vec_x.data(), vec_x.data(), vec_x.size()) << std::endl;
   }
   UpdateSolutionHair(aP,aS,
                      vec_x,aIP_HairRoot,aBCFlag);

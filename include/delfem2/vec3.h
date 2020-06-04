@@ -522,8 +522,9 @@ double DistanceEdgeEdge(const CVec3<T>& p0, const CVec3<T>& p1,
                         double& ratio_p, double& ratio_q);
 
 template <typename T>
-double FindCoplanerInterp(const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
-                          const CVec3<T>& e0, const CVec3<T>& e1, const CVec3<T>& e2, const CVec3<T>& e3);
+bool FindCoplanerInterp(double& r,
+                        const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
+                        const CVec3<T>& e0, const CVec3<T>& e1, const CVec3<T>& e2, const CVec3<T>& e3);
 
 template <typename T>
 bool IsContact_EE_Proximity(int ino0,        int ino1,        int jno0,        int jno1,
