@@ -162,8 +162,23 @@ void FindRodHairContactCCD(
       const dfm2::CVec3d q1s = aP[jr+1];
       const dfm2::CVec3d q0e = aPt[jr+0];
       const dfm2::CVec3d q1e = aPt[jr+1];
-      // collision
       double p[3] = {0.5, 0.5, 0.5};
+      {
+        double D;
+        dfm2::CVec3d Da,Db;
+        dfm2::nearest_Line_Line(D, Da, Db, p0s, p1s-p0s, q0s, q1s-q0s);
+        Da /= D;
+        Db /= D;
+        p[0] = (Da-p0s)*(p1s-p0s)/(p1s-p0s).DLength();
+        p[1] = (Db-q0s)*(q1s-q0s)/(q1s-q0s).DLength();
+//        std::cout << ir << " " << jr << " --> " << p[0] << " " << p[1] << " " << (Da-Db)*(p1s-p0s) << " " << (Da-Db)*(q1s-q0s) << " " << (Da-Db).Length() << std::endl;
+        if( p[0] > 1 ){ p[0] = 1; } else if( p[0] < 0 ){ p[0] = 0; }
+        if( p[1] > 1 ){ p[1] = 1; } else if( p[1] < 0 ){ p[1] = 0; }
+        p[2] = 0.0;
+      }
+      double ps0 = p[0];
+      double pt0 = p[1];
+      // space time collision
       {
         double len0 = dfm2::Nearest_LineSeg_LineSeg_CCD_Iteration(p,
                                                                   p0s, p0e, p1s, p1e, q0s, q0e, q1s, q1e, 10);
@@ -171,12 +186,15 @@ void FindRodHairContactCCD(
         if( len0 < clearance ){ is_near = true; }
         if( !is_near ){ continue; }
       }
-      double s1 = p[0], t1 = p[1];
+//      double s1 = p[0], t1 = p[1];
+      double s1 = ps0, t1 = pt0;
       dfm2::CVec3d vs = (1-s1)*p0s + s1*p1s - (1-t1)*q0s - t1*q1s; // difference of positions at the begining of a time step
       /*
+      double u1 = p[2];
       dfm2::CVec3d vm =
           + ((1 - s1) * (1 - u1)) * p0s + ((1 - s1) * u1) * p0e + (s1 * (1 - u1)) * p1s + (s1 * u1) * p1e
           - ((1 - t1) * (1 - u1)) * q0s - ((1 - t1) * u1) * q0e - (t1 * (1 - u1)) * q1s - (t1 * u1) * q1e;
+      std::cout << vm.Length () << " " << clearance << std::endl;
        */
       dfm2::CContactHair ch{ir + 0, ir + 1, s1,
                             jr + 0, jr + 1, t1,
@@ -193,9 +211,14 @@ int main(int argc,char* argv[])
       if( key == GLFW_KEY_A ){
         is_animation = !is_animation;
       }
+      if( key == GLFW_KEY_S ){
+        is_animation = true;
+        is_step = true;
+      }
     }
   public:
     bool is_animation = true;
+    bool is_step = false;
   } viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.5;
@@ -248,7 +271,7 @@ int main(int argc,char* argv[])
   const double stiff_stretch = 1000;
   const double stiff_bendtwist[3] = { 300, 300, 300 };
   const double stiff_contact = 1.0e+4;
-  const double clearance = 0.01;
+  const double clearance = 0.02;
   double time_cur = 0.0;
   //
 //  dfm2::CContactHair ch0 = {2,3,0.5, 40,41,0.5, dfm2::CVec3d(0,0,1)};
@@ -266,100 +289,53 @@ int main(int argc,char* argv[])
         if( aBCFlag[ip*4+0] !=0 ) { continue; } // this is not fixed boundary
         aPt[ip] = aP[ip] + dt * aPV[ip] + dt * dt * gravity;
       }
-      const std::vector<dfm2::CVec3d> aPt0 = aPt; // temporally positions
+      const std::vector<dfm2::CVec3d> aPt0 = aPt; // initial temporal positions
       // -----------
-      { // update contacts
-        /*
-        std::vector<dfm2::CContactHair> aContactOld = aContact;
-        for (const auto &chold : aContactOld) { // if contact is violated, hold the contact
-          if (chold.Direction(aP) * chold.norm > +clearance) { continue; }
-          aContact.push_back(chold);
-        }
-         */
-        /*
-        // compute new contacts
-        std::cout << std::endl;
-         */
-        {
-          std::vector<dfm2::CContactHair> aContactNew;
-          FindRodHairContactCCD(aContactNew,
-                                clearance,
-                                aP, aIP_HairRoot,aPt);
-          aContact = aContactNew;
-          //
-          /*
-          for (const auto &chn: aContactNew) {
-            bool is_included = false;
-            for (auto &ch: aContact) {
-              if ( ch.ip0 == chn.ip0 && ch.iq0 == chn.iq0) {
-                is_included = true;
-                if( ch.norm * chn.norm < 0 ){
-                  continue;
-                }
-                double ratio = 0.0;
-                ch.norm = (ratio*ch.norm+(1-ratio)*chn.norm).Normalize();
-                ch.s = ratio*ch.s+(1-ratio)*chn.s;
-                ch.t = ratio*ch.t+(1-ratio)*chn.t;
-              }
-            }
-            if( !is_included ){
-              aContact.push_back(chn);
-            }
-          }
-           */
-        }
-                  
-  //      aContact.insert(aContactNew.begin(),aContactNew.end());
-        /*
-        for (auto &cho: aContactOld) { // add new contacts if it is missing.
-          bool is_included = false;
-          for (auto &chn: aContactNew) {
-            if (cho.ip0 == chn.ip0 && cho.iq0 == chn.iq0) {
-              if( cho.norm * chn.norm < 0 ){
-                chn = cho;
-              }
-              is_included = true;
-              break;
-            }
-          }
-          if (is_included) continue;
-          aContact.push_back(cho);
-        }
-         */
-  //      ch0.norm = (ch0.Direction(aP) + ch0.norm).Normalize();
-  //      ch0.norm = ch0.Direction(aP).Normalize();
-  //      aContact.clear();
-  //      aContact.push_back(ch0);
-      }
-  //    std::cout << "   b: " << ch0.Direction(aP)*ch0.norm << "  " << ch0.Direction(aPt)*ch0.norm << std::endl;
-      for(const auto& ch : aContact) {
-        std::cout << " n: " << ch.ip0 << " " << ch.ip1 << " " << ch.iq0 << " " << ch.iq1 << " " << ch.norm << std::endl;
-      }
       aContact.clear();
-      dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
       for(int itr=0;itr<1;++itr){
-        std::cout << time_cur << " " << itr << std::endl;
+//        std::cout << " " << itr << " " << time_cur << std::endl;
+        std::vector<dfm2::CContactHair> aContactNew;
+        FindRodHairContactCCD(aContactNew,
+                              clearance,
+                              aP, aIP_HairRoot,aPt);
+        /*
+        for(const auto& ch : aContactNew) {
+          std::cout << " pre: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
+        }
+         */
+        aContact = aContactNew;
+        dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
         Solve_RodHairContact(aPt, aS, mats,
                              stiff_stretch, stiff_bendtwist, mass/(dt*dt),
                              aPt0, aP0, aS0, aBCFlag, aIP_HairRoot,
                              clearance, stiff_contact, aContact);
-      }
-      
-      { // remove pulled contact
-        for (const auto &cho : aContact) { // if contact is violated, hold the contact
-          std::cout << cho.ip0 << std::endl;
-          std::cout << "   norm: " << cho.norm << std::endl;
-          std::cout << "   length: " << cho.Direction(aPt).Length()  << " " <<  clearance << std::endl;
-          std::cout << "   pushed: " << cho.Direction(aP) * cho.norm  << " " <<  cho.Direction(aPt) * cho.norm << std::endl;
+        /*
+        for(const auto& ch : aContactNew) {
+          std::cout << " pos: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
         }
+         */
       }
   //    aContact.clear();
   //    std::vector<dfm2::CContactHair> aContactOld = aContact;
+      /*
+      aContact.clear();
+      FindRodHairContactCCD(aContact,
+                            clearance,
+                            aP, aIP_HairRoot,aPt);
+      for(const auto& ch : aContact) {
+        std::cout << " pos: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
+      }
+       */
+
       // --------------
       for(unsigned int ip=0;ip<aP.size();++ip){
         if( aBCFlag[ip*4+0] != 0 ){ continue; }
         aPV[ip] = (aPt[ip] - aP[ip])/dt;
         aP[ip] = aPt[ip];
+      }
+      if( viewer.is_step ){
+        viewer.is_step = false;
+        viewer.is_animation = false;
       }
     }
     // -------------------------------------
@@ -375,8 +351,8 @@ int main(int argc,char* argv[])
       const dfm2::CVec3d p = (1-s)*p0 + s*p1;
       const dfm2::CVec3d q = (1-t)*q0 + t*q1;
       ::glDisable(GL_LIGHTING);
-      ::glColor3d(1,0,0);
-      ::glLineWidth(2);
+      ::glColor3d(1,0,1);
+      ::glLineWidth(4);
       ::glBegin(GL_LINES);
       ::glVertex3dv(p.p);
       ::glVertex3dv(q.p);
