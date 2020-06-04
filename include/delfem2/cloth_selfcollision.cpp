@@ -139,8 +139,13 @@ void SelfCollisionImpulse_CCD
     dfm2::CVec3d v1( aUVWm[ino1*3+0], aUVWm[ino1*3+1], aUVWm[ino1*3+2] );
     dfm2::CVec3d v2( aUVWm[ino2*3+0], aUVWm[ino2*3+1], aUVWm[ino2*3+2] );
     dfm2::CVec3d v3( aUVWm[ino3*3+0], aUVWm[ino3*3+1], aUVWm[ino3*3+2] );
-    double t = FindCoplanerInterp(p0,p1,p2,p3, p0+v0,p1+v1,p2+v2,p3+v3);
-    if( t < 0 || t > 1 ) continue;
+    double t;
+    {
+      bool res = FindCoplanerInterp(t,
+                                    p0,p1,p2,p3, p0+v0,p1+v1,p2+v2,p3+v3);
+      if( !res ) continue;
+      assert( t >= 0 && t <= 1 );
+    }
     if( ce.is_fv ){ // face-vtx
       double w0,w1;
       {        

@@ -364,7 +364,7 @@ public:
       const REAL p1[3],
       const REAL p2[3],
       const REAL p3[4],
-      REAL cc)
+      REAL cc) // clearance
   {
     assert(cc>=0);
     // the center of the gravity
@@ -372,14 +372,15 @@ public:
     c[1] = (p0[1]+p1[1]+p2[1]+p3[1])*0.25;
     c[2] = (p0[2]+p1[2]+p2[2]+p3[2])*0.25;
     // distance to input points
-    const REAL r0 = CBV3_Sphere<REAL>::Distance3(c,p0)+cc;
-    const REAL r1 = CBV3_Sphere<REAL>::Distance3(c,p1)+cc;
-    const REAL r2 = CBV3_Sphere<REAL>::Distance3(c,p2)+cc;
-    const REAL r3 = CBV3_Sphere<REAL>::Distance3(c,p3)+cc;
+    const REAL r0 = CBV3_Sphere<REAL>::Distance3(c,p0);
+    const REAL r1 = CBV3_Sphere<REAL>::Distance3(c,p1);
+    const REAL r2 = CBV3_Sphere<REAL>::Distance3(c,p2);
+    const REAL r3 = CBV3_Sphere<REAL>::Distance3(c,p3);
     // pick the maximum distance
     r = (r1>r0)?r1:r0;
     r = (r2>r)?r2:r;
     r = (r3>r)?r3:r;
+    r += cc;
   }
 public:
   // the order of this declarations should not be changed since it is used by cuda BVH.

@@ -22,40 +22,41 @@ namespace vec3 {
 
 DFM2_INLINE bool MyIsnan(double x) { return x!=x; }
 
-// 三次関数を評価する関数
-DFM2_INLINE double EvaluateCubic
-    (double r2, // 入力の値
-     double k0, double k1, double k2, double k3) // 三次関数の係数
+// evaluate cubic function
+template <typename REAL>
+DFM2_INLINE REAL EvaluateCubic(
+    REAL x,
+    REAL k0, REAL k1, REAL k2, REAL k3) // coefficient of cubic function
 {
-  return k0 + k1*r2 + k2*r2*r2 + k3*r2*r2*r2;
+  return k0 + k1*x + k2*x*x + k3*x*x*x;
 }
+#ifndef DFM2_HEADER_ONLY
+template float EvaluateCubic(float r2, float k0, float k1, float k2, float k3);
+template double EvaluateCubic(double r2, double k0, double k1, double k2, double k3);
+#endif
 
-// 二分法における三次関数の根を探す範囲を狭める関数
-DFM2_INLINE void BisectRangeCubicRoot
-    (int& icnt,                  // (in out)何回幅を狭めたかというカウンタ
-     double& r0, double& r1, // (in,out)入力の範囲から階を探して、狭められた後の範囲を返す
-     double v0, double v1, // (in)入力の範囲の両端における値
-     double k0, double k1, double k2, double k3) // 三次関数の係数
-{
-  icnt--;
-  if( icnt <= 0 ) return;
-  double r2 = 0.5*(r0+r1); // r2はr0とr1の中点
-  double v2 = EvaluateCubic(r2, k0,k1,k2,k3); // v2はr2における値
-  if( v0*v2 < 0 ){ r1 = r2; } // r0とr2の間で符号が変化する
-  else{            r0 = r2; } // r1とr2の間で符号が変化する
-  BisectRangeCubicRoot(icnt,r0,r1,v0,v2,k0,k1,k2,k3); // r0とr1の間でさらに範囲を狭める
-}
 
-// 三次関数の根を探す関数
-DFM2_INLINE double FindRootCubic
-    (double r0, double r1,
-     double v0, double v1,
-     double k0, double k1, double k2, double k3)
+// find root of cubic function using bisection method
+DFM2_INLINE double FindRootCubic_Bisect(
+    double r0, double r1,
+    double v0, double v1,
+    double k0, double k1, double k2, double k3)
 {
-  int icnt=15; // １５回範囲を狭める
-  BisectRangeCubicRoot(icnt, r0,r1, v0,v1, k0,k1,k2,k3);
+  assert( v0*v1 <= 0 );
+  if( v0*v1 == 0 ){
+    if( v0 == 0 ){ return r0; }
+    else{ return r1; }
+  }
+  for(unsigned int itr=0;itr<15;itr++){
+    const double r2 = 0.5*(r0+r1);
+    const double v2 = EvaluateCubic(r2, k0,k1,k2,k3);
+    if( v2 == 0 ){ return r2; }
+    if( v0*v2 < 0 ){ r1 = r2; v1 = v2; }
+    else{            r0 = r2; v0 = v2; }
+  }
   return 0.5*(r0+r1);
 }
+
 
 // there is another impelemntation in quat.h so this is "static function"
 // transform vector with quaternion
@@ -1120,6 +1121,7 @@ DFM2_INLINE double delfem2::Nearest_LineSeg_LineSeg_CCD_Iteration(
     v0 =
         + ((1 - s0) * (1 - u0)) * p0s + ((1 - s0) * u0) * p0e + (s0 * (1 - u0)) * p1s + (s0 * u0) * p1e
         - ((1 - t0) * (1 - u0)) * q0s - ((1 - t0) * u0) * q0e - (t0 * (1 - u0)) * q1s - (t0 * u0) * q1e;
+//    std::cout << "   " << itr << " " << v0.Length() << "  " << p[0] << " " << p[1] << " " << p[2] << std::endl;
     const CVec3d ds = -(1 - u0) * p0s - u0 * p0e + (1 - u0) * p1s + u0 * p1e;
     const CVec3d dt = +(1 - u0) * q0s + u0 * q0e - (1 - u0) * q1s - u0 * q1e;
     const CVec3d du =
@@ -1937,8 +1939,9 @@ template bool delfem2::IsContact_EE_Proximity
 
 // compute time where four points gets coplaner
 template <typename T>
-double delfem2::FindCoplanerInterp
-(const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
+bool delfem2::FindCoplanerInterp
+(double& r,
+ const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
  const CVec3<T>& e0, const CVec3<T>& e1, const CVec3<T>& e2, const CVec3<T>& e3)
 {
   const CVec3<T> x1 = s1-s0;
@@ -1948,59 +1951,56 @@ double delfem2::FindCoplanerInterp
   const CVec3<T> v2 = e2-e0-x2;
   const CVec3<T> v3 = e3-e0-x3;
   // compute coefficient for cubic function
-  const double k0 = ScalarTripleProduct(x3,x1,x2);
-  const double k1 = ScalarTripleProduct(v3,x1,x2)+ScalarTripleProduct(x3,v1,x2)+ScalarTripleProduct(x3,x1,v2);
-  const double k2 = ScalarTripleProduct(v3,v1,x2)+ScalarTripleProduct(v3,x1,v2)+ScalarTripleProduct(x3,v1,v2);
-  const double k3 = ScalarTripleProduct(v3,v1,v2);
-  double r0=-0.0;
-  double r1=+1.0;
-  const double f0 = vec3::EvaluateCubic(r0,k0,k1,k2,k3);
-  const double f1 = vec3::EvaluateCubic(r1,k0,k1,k2,k3);
-  double det = k2*k2-3*k1*k3;
-  if( fabs(k3) < 1.0e-10 && fabs(k2) > 1.0e-10 ){ // quadric function、二次関数
-    double r2 = -k1/(2*k2); // 極値をとるr
-    const double f2 = vec3::EvaluateCubic(r2, k0,k1,k2,k3);
-    if( r2 > 0 && r2 < 1 ){
-      if(      f0*f2 < 0 ){
-        return vec3::FindRootCubic(r0,r2, f0,f2, k0,k1,k2,k3);
-        
-      }
-      else if( f2*f1 < 0 ){
-        return vec3::FindRootCubic(r2,r1, f2,f1, k0,k1,k2,k3);
-      }
-    }
+  const T k0 = ScalarTripleProduct(x3,x1,x2);
+  const T k1 = ScalarTripleProduct(v3,x1,x2)+ScalarTripleProduct(x3,v1,x2)+ScalarTripleProduct(x3,x1,v2);
+  const T k2 = ScalarTripleProduct(v3,v1,x2)+ScalarTripleProduct(v3,x1,v2)+ScalarTripleProduct(x3,v1,v2);
+  const T k3 = ScalarTripleProduct(v3,v1,v2);
+  // cubic funciton is f(x) = k0 + k1*x + k2*x^2 + k3*x^3
+  const T r0 = +0.0;
+  const T r1 = +1.0;
+  const T f0 = vec3::EvaluateCubic(r0,k0,k1,k2,k3);
+  const T f1 = vec3::EvaluateCubic(r1,k0,k1,k2,k3);
+  if( f0*f1 <= 0 ){
+    r = vec3::FindRootCubic_Bisect(r0,r1, f0,f1, k0,k1,k2,k3);
+    return true;
   }
-  if( det > 0 && fabs(k3) > 1.0e-10 ) // cubic function with two extream value、三次関数で極値がある場合
-  {
-    double r3 = (-k2-sqrt(det))/(3*k3); // 極値をとる小さい方のr
-    const double f3 = vec3::EvaluateCubic(r3, k0,k1,k2,k3);
+  if( fabs(k3) > 1.0e-30 ){ // cubic function
+    const double det = k2*k2-3*k1*k3; // if det > 0, the cubic function takes extreme value
+    if( det < 0 ){ return false; } // monotonus function
+    //
+    const double r3 = (-k2-sqrt(det))/(3*k3); // smaller extreme value
     if( r3 > 0 && r3 < 1 ){
+      const double f3 = vec3::EvaluateCubic(r3, k0,k1,k2,k3);
+      if( f3 == 0 ){ r = r3; return true; }
       if(      f0*f3 < 0 ){
-        return vec3::FindRootCubic(r0,r3, f0,f3, k0,k1,k2,k3);
-      }
-      else if( f3*f1 < 0 ){
-        return vec3::FindRootCubic(r3,r1, f3,f1, k0,k1,k2,k3);
+        r = vec3::FindRootCubic_Bisect(r0,r3, f0,f3, k0,k1,k2,k3);
+        return true;
       }
     }
-    double r4 = (-k2+sqrt(det))/(3*k3); // 極値をとる大きい方のr
-    const double f4 = vec3::EvaluateCubic(r4, k0,k1,k2,k3);
-    if( r3 > 0 && r3 < 1 && r4 > 0 && r4 < 1 ){
-      if( f3*f4 < 0 ){
-        return vec3::FindRootCubic(r3,r4, f3,f4, k0,k1,k2,k3);
-      }
-    }
+    const double r4 = (-k2+sqrt(det))/(3*k3); // larger extreme value
     if( r4 > 0 && r4 < 1 ){
+      const double f4 = vec3::EvaluateCubic(r4, k0,k1,k2,k3);
+      if( f4 == 0 ){ r = r4; return true; }
       if(      f0*f4 < 0 ){
-        return vec3::FindRootCubic(r0,r4, f0,f4, k0,k1,k2,k3);
-      }
-      else if( f4*f1 < 0 ){
-        return vec3::FindRootCubic(r4,r1, f4,f1, k0,k1,k2,k3);
+        r = vec3::FindRootCubic_Bisect(r0,r4, f0,f4, k0,k1,k2,k3);
+        return true;
       }
     }
+    return false;
   }
-  // monotonus function、0と１の間で短調増加関数
-  if( f0*f1 > 0 ){ return -1; } // 根がない場合
-  return vec3::FindRootCubic(r0,r1, f0,f1, k0,k1,k2,k3);
+  //
+  if( fabs(k2) > 1.0e-30 ){ // quadric function
+    const double r2 = -k1/(2*k2); // extreme valuse
+    if( r2 > 0 && r2 < 1 ){
+      const double f2 = vec3::EvaluateCubic(r2, k0,k1,k2,k3);
+      if(      f0*f2 < 0 ){
+        r = vec3::FindRootCubic_Bisect(r0,r2, f0,f2, k0,k1,k2,k3);
+        return true;
+      }
+    }
+    return false;
+  }
+  return false;
 }
 
 // CCDのFVで接触する要素を検出
@@ -2037,7 +2037,6 @@ bool delfem2::IsContact_FV_CCD2
     double vnt = ( vn0 > vn1 ) ? vn0 : vn1;
     vnt = ( vn2 > vnt ) ? vn2 : vnt;
     double max_app = (vnt+vn3);
-    ////
     const double r2 = 1-r0-r1;
     if( dist > max_app ) return false;
     if( r0 < 0 || r0 > 1 || r1 < 0 || r1 > 1 || r2 < 0 || r2 > 1 ){
@@ -2047,8 +2046,13 @@ bool delfem2::IsContact_FV_CCD2
       if( dist01 > max_app && dist12 > max_app && dist20 > max_app ){ return false; }
     }
   }
-  double t = FindCoplanerInterp(p0,p1,p2,p3, q0,q1,q2,q3);
-  if( t < 0 || t > 1 ) return false;
+  double t;
+  {
+    bool res = FindCoplanerInterp(t,
+                                  p0,p1,p2,p3, q0,q1,q2,q3);
+    if( !res ) return false;
+    assert( t >= 0 && t <= 1 );
+  }
   CVec3<T> p0m = (1-t)*p0 + t*q0;
   CVec3<T> p1m = (1-t)*p1 + t*q1;
   CVec3<T> p2m = (1-t)*p2 + t*q2;
