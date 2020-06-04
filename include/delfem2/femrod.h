@@ -192,6 +192,7 @@ DFM2_INLINE void Solve_RodHairContact(
     const double stiff_stretch,
     const double stiff_bendtwist[3],
     double mdtt,
+    const std::vector<CVec3d>& aPt0,
     const std::vector<CVec3d>& aP0,
     const std::vector<CVec3d>& aS0,
     const std::vector<int>& aBCFlag,

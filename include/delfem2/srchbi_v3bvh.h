@@ -168,8 +168,13 @@ bool delfem2::IsContact_EE_CCD
   bbp.AddPoint(p1e.data(), eps);
   if( !bbp.IsIntersect(bbq) ) return false;
   //
-  const double t = FindCoplanerInterp(p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
-  if( t < 0 || t > 1 ) return false;
+  double t;
+  {
+    const bool res = FindCoplanerInterp(t,
+                                        p0s,p1s,q0s,q1s, p0e,p1e,q0e,q1e);
+    if( !res ) return false;
+    assert( t >= 0 && t <= 1 );
+  }
   CVec3d p0m = (1-t)*p0s + t*p0e;
   CVec3d p1m = (1-t)*p1s + t*p1e;
   CVec3d q0m = (1-t)*q0s + t*q0e;
