@@ -77,7 +77,8 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/cad3d.h                     ${DELFEM2_INC}/cad3d.cpp
     ${DELFEM2_INC}/objf_geo3.h                 ${DELFEM2_INC}/objf_geo3.cpp
     ${DELFEM2_INC}/objfdtri_objfdtri23.h       ${DELFEM2_INC}/objfdtri_objfdtri23.cpp
-    ${DELFEM2_INC}/def.h                       ${DELFEM2_INC}/def.cpp    
+    ${DELFEM2_INC}/deflap.h                    ${DELFEM2_INC}/deflap.cpp    
+    ${DELFEM2_INC}/defarap.h                   ${DELFEM2_INC}/defarap.cpp        
     ${DELFEM2_INC}/rig_geo3.h                  ${DELFEM2_INC}/rig_geo3.cpp
     ${DELFEM2_INC}/srchuni_v3.h                ${DELFEM2_INC}/srchuni_v3.cpp
     ${DELFEM2_INC}/gridvoxel.h                 ${DELFEM2_INC}/gridvoxel.cpp

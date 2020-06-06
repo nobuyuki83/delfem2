@@ -212,6 +212,54 @@ template void delfem2::CMatrixSparse<std::complex<double>>::MatVec(
     const std::complex<double> *x, std::complex<double> beta) const;
 #endif
 
+
+// -------------------------------------------------------
+
+// Calc Matrix Vector Product
+// {y} = alpha*[A]{x} + beta*{y}
+// the 1x1 sparse matrix is expanded as the len x len sparse matrix
+template <typename T>
+void delfem2::CMatrixSparse<T>::MatVecDegenerate
+ (T* y,
+  unsigned int len,
+  T alpha,
+  const T* x,
+  T beta) const
+{
+  assert( len_col == 1 && len_row == 1 );
+  const unsigned int ndofcol = len*nblk_col;
+  for(unsigned int i=0;i<ndofcol;++i){ y[i] *= beta; }
+
+  const T* vcrs  = valCrs.data();
+  const T* vdia = valDia.data();
+  const unsigned int* colind = colInd.data();
+  const unsigned int* rowptr = rowPtr.data();
+  
+  for(unsigned int iblk=0;iblk<nblk_col;iblk++){
+    const unsigned int colind0 = colind[iblk];
+    const unsigned int colind1 = colind[iblk+1];
+    for(unsigned int icrs=colind0;icrs<colind1;icrs++){
+    assert( icrs < rowPtr.size() );
+      const unsigned int jblk0 = rowptr[icrs];
+      assert( jblk0 < nblk_row );
+      const T mval0 = alpha * vcrs[icrs];
+      for(unsigned int ilen=0;ilen<len;ilen++){
+        y[iblk*len+ilen] +=  mval0 * x[jblk0*len+ilen];
+      }
+    }
+    { // compute diagonal
+      const T mval0 = alpha * vdia[iblk];
+      for(unsigned int ilen=0;ilen<len;ilen++){
+        y[iblk*len+ilen] += mval0 * x[iblk*len+ilen];
+      }
+    }
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::CMatrixSparse<float>::MatVecDegenerate(float *y, unsigned int len, float alpha, const float *x, float beta) const;
+template void delfem2::CMatrixSparse<double>::MatVecDegenerate(double *y, unsigned int len, double alpha, const double *x, double beta) const;
+#endif
+
 // -------------------------------------------------------
 
 // Calc Matrix Vector Product
