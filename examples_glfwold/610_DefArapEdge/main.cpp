@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "delfem2/def.h"
+#include "delfem2/defarap.h"
 #include "delfem2/mat4.h"
 #include "delfem2/primitive.h"
 #include <cmath>
