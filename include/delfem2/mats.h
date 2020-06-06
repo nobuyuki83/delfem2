@@ -101,6 +101,16 @@ public:
   void MatVec(T *y,
               T alpha, const T *x,
               T beta) const;
+
+  /**
+   * @func Matrix vector product as: {y} = alpha * [A]{x} + beta * {y}.
+   *  the sparse matrix is regared as block sparse matrix where each blcok is diagonal
+   */
+  void MatVecDegenerate(T *y,
+                        unsigned nlen,
+                        T alpha, const T *x,
+                        T beta) const;
+  
   /**
    * @func Matrix vector product as: {y} = alpha * [A]^T{x} + beta * {y}
    */

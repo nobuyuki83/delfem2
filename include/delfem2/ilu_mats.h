@@ -14,6 +14,9 @@
 
 namespace delfem2 {
 
+/**
+ * @brief ILU decomposision preconditioner class
+ */
 template <typename T>
 class CPreconditionerILU
 {
@@ -33,9 +36,15 @@ public:
 		this->BackwardSubstitution(vec);
   }
   bool DoILUDecomp();
-private:
+  //
   void ForwardSubstitution(  T* vec ) const;
   void BackwardSubstitution( T* vec ) const;
+  
+  // treat 1x1 block space matrix as N*N block sparse matrix where the block matrix is diagonal
+  void ForwardSubstitutionDegenerate(  T* vec, unsigned int N) const;
+  
+  // treat 1x1 block space matrix as N*N block sparse matrix where the block matrix is diagonal
+  void BackwardSubstitutionDegenerate( T* vec, unsigned int N ) const;
 public:
   CMatrixSparse<T> mat;
   std::vector<unsigned int> m_diaInd;

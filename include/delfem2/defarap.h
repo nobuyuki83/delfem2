@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_DEF_H
-#define DFM2_DEF_H
+#ifndef DFM2_DEFARAP_H
+#define DFM2_DEFARAP_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/ilu_mats.h"
@@ -16,91 +16,6 @@
 // ---------------------------
 
 namespace delfem2 {
-
-class CDef_LaplacianLinearAsym
-{
-public:
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0,
-              const std::vector<int>& aBCFlag);
-public:
-  CMatrixSparse<double> mat_A;
-  std::vector<double> aRhs0, aRhs1;
-  std::vector<double> aHistConv;
-};
-
-// =====================================
-
-/**
- * @brief deformation classs where the matrix is computed as L^TL
- */
-class CDef_LaplacianLinearGram{
-public:
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri,
-            bool is_preconditioner);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0) const;
-  void SetBoundaryCondition(const std::vector<int>& aBCFlag);
-  // -----------
-  // called from solver
-  void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
-  void SolvePrecond(double* v) const;
-public:
-  CMatrixSparse<double> Mat;
-  bool is_preconditioner;
-  double weight_bc = 100.0;
-  std::vector<int> aBCFlag;
-  std::vector<double> aRes0;
-  // preconditioner
-  std::vector<double> aDiaInv;
-  // temprary vectors for solver
-  mutable std::vector<double> vec_tmp0, vec_tmp1, vec_tmp2;
-  mutable std::vector<double> aConvHist;
-};
-
-// =====================================
-
-/**
- * @brief Laplacian deformation classs
- */
-class CDef_LaplacianLinear{
-public:
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri,
-            bool is_preconditioner);
-  void Deform(std::vector<double>& aXYZ1,
-              const std::vector<double>& aXYZ0) const;
-  void SetValueToPreconditioner();
-  // -----------
-  void MatVec(double* y,
-              double alpha, const double* vec,  double beta) const;
-public:
-  // sliding condition
-  double weight_nrm = 100;
-  std::vector< std::pair<unsigned int, CVec3d> > aIdpNrm;
-
-  // fixing condition
-  double weight_bc = 100;
-  std::vector<int> aBCFlag;
-  //
-  CMatrixSparse<double> Mat;
-  std::vector<double> aRes0;
-  //
-  unsigned int max_itr = 300;
-  double conv_tol = 1.0e-5;
-  //
-  bool is_preconditioner;
-  CPreconditionerILU<double> Prec;
-  // 
-  mutable std::vector<double> vec_tmp0, vec_tmp1;
-  mutable std::vector<double> aConvHist;
-};
-
-// =====================================
 
 class CDef_ArapEdgeLinearDisponly {
 public:
@@ -194,7 +109,7 @@ private:
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/def.cpp"
+#  include "delfem2/defarap.cpp"
 #endif
 
 #endif /* def_h */

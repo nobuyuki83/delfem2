@@ -653,6 +653,41 @@ template void delfem2::CPreconditionerILU<std::complex<double>>::ForwardSubstitu
     std::complex<double>* vec ) const;
 #endif
 
+// ------------------------------------------------------------------
+
+template <typename T>
+void delfem2::CPreconditionerILU<T>::ForwardSubstitutionDegenerate(
+    T* vec,
+    const unsigned int N ) const
+{
+  assert( mat.len_col == 1 );
+  const unsigned int nblk = mat.nblk_col;
+  
+  const unsigned int* colind = mat.colInd.data();
+  const unsigned int* rowptr = mat.rowPtr.data();
+  const T* vcrs = mat.valCrs.data();
+  const T* vdia = mat.valDia.data();
+  // -------------------------
+  std::vector<T> buff(N);
+  for(unsigned int iblk=0;iblk<nblk;iblk++){
+    memcpy(buff.data(), vec+iblk*N, N*sizeof(T));
+    for(unsigned int ijcrs=colind[iblk];ijcrs<m_diaInd[iblk];ijcrs++){
+      assert( ijcrs<mat.rowPtr.size() );
+      const int jblk0 = rowptr[ijcrs];
+      assert( jblk0<(int)iblk );
+      for(unsigned int i=0;i<N;++i){
+        buff[i] -= vcrs[ijcrs]*vec[jblk0*N+i];
+      }
+    }
+    for(unsigned int i=0;i<N;++i){
+      vec[iblk*N+i] = vdia[iblk]*buff[i];
+    }
+  }
+}
+
+
+// --------------------------------------------------
+
 template <typename T>
 void delfem2::CPreconditionerILU<T>::BackwardSubstitution
 ( T* vec ) const
@@ -799,6 +834,40 @@ template void delfem2::CPreconditionerILU<std::complex<double>>::BackwardSubstit
     std::complex<double>* vec ) const;
 #endif
 
+// -----------------------------------------------------------------
+
+
+template <typename T>
+void delfem2::CPreconditionerILU<T>::BackwardSubstitutionDegenerate
+ ( T* vec, unsigned int N ) const
+{
+  assert( mat.len_col == 1 );
+  const int nblk = mat.nblk_col;
+  
+  const unsigned int* colind = mat.colInd.data();
+  const unsigned int* rowptr = mat.rowPtr.data();
+  const T* vcrs = mat.valCrs.data();
+  
+  std::vector<T> buff(N);
+  for(int iblk=nblk-1;iblk>=0;iblk--){
+    assert( (int)iblk < nblk );
+    memcpy(buff.data(), vec+iblk*N, N*sizeof(T));
+    for(unsigned int ijcrs=m_diaInd[iblk];ijcrs<colind[iblk+1];ijcrs++){
+      assert( ijcrs<mat.rowPtr.size() );
+      const int jblk0 = rowptr[ijcrs];
+      assert( jblk0>(int)iblk && jblk0<nblk );
+      for(unsigned int i=0;i<N;++i){
+        buff[i] -= vcrs[ijcrs]*vec[jblk0*N+i];
+      }
+    }
+    for(unsigned int i=0;i<N;++i){
+      vec[iblk*N+i] = buff[i];
+    }
+  }
+}
+  
+// --------------------------------------------------------------
+
 // if(lev_fill == -1){ take all the fills }
 template <typename T>
 void delfem2::CPreconditionerILU<T>::Initialize_ILUk
@@ -810,10 +879,7 @@ void delfem2::CPreconditionerILU<T>::Initialize_ILUk
     this->Initialize_ILU0(m);
     return;
   }
-  
-  //  std::cout << "hoe" << m.nblk_col << " " << m.len_col << " " << m.rowPtr.size() << std::endl;
-  //  std::cout << "fua" << mat.nblk_col << " " << mat.len_col << " " << mat.rowPtr.size() << std::endl;
-  
+    
   std::vector<ilu::CRowLev> aRowLev;
   aRowLev.reserve(m.rowPtr.size()*4);
   
