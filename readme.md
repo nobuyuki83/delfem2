@@ -11,7 +11,7 @@
 
 # DelFEM2
 
-DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, and visualization. DelFEM2 is aiming an interactive digital engineering and authoring tool. 
+DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, variational mesh deformer, and visualization. DelFEM2 is aiming to be an interactive digital engineering and authoring tool.
 
 Aside from the C++ implementation, python wrapper called PyDelFEM2 is provided. PyDelFEM2 can run various types of FEM simulation just a 10-20 lines of codes. Here is the example of solving the Poisson's equation in a square domain.
 
@@ -33,70 +33,115 @@ dfm2.gl._glfw.winDraw3d([field])
 The result of this code woud be the following window
 
 ![Poisson](docs/imgs/poisson.png)
- 
 
-The implementation is based on the [DelFEM](https://github.com/nobuyuki83/DelFEM) library
+
+The implementation is based on my old open source project [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
 Please find out more detail in this [project document](https://nobuyuki83.github.io/delfem2/)
 
-# Manual Tutorial
 
-Please look at the python exaxmples under  ```examples_cpp```, ```examples_py```, ```examples_pyqt```, and ```examples_jupyter```.
+***
+# Manual &  Tutorial
 
-Reading the test code under ```tests\``` also help understanding the code behaviour
+There are currently no tutorial available for this library. To understand the code, please look at the exaxmples and tests  under following directoris.
+
++ C++ examples
+ + [delfem2/examples_glfwold](delfem2/examples_glfwold]): examples with the legacy OpenGL
+ + [delfem2/examples_glfwnew](delfem2/examples_glfwnew):  examples with the modern OpenGL
+ + [delfem2/examples_cuda](delfem2/examples_cuda): examples using cuda
++ C++ test:
+ + [delfem2/test_cpp](delfem2/test_cpp): tests using C++
+ + [delfem2/test_cuda](delfem2/test_cuda) : test using cuda
++ Python examples
+ + [delfem2/examples_py](delfem2/examples_py) : examples using python
+ + [delfem2/examples_pyqt](delfem2/examples_pyqt) examples using PyQt gui library
+ + [delfem2/examples_jupyter](delfem2/examples_jupyter) : examples using Jupyter
+ + [delfem2/examples_blender](delfem2/examples_blender) : examples with Blender python scripting
++  Python tests
+ + [delfem2/test_py](delfem2/test_py) : test using python
 
 
-# Dependency
-
-PyDelFEM runs on Python3. Python2 is not supported.
-
-PyDelFEM2 depends on following python packages:
-- numpy
-- glfw
-- PyOpenGL  
-- PySide2
-
-These dependency is written in ```REQUIRED_PACKAGES``` in the setup.py, so they are automatically installed when installing the PyDelFEM2 pakage using the ```setup.py``` or ```pip3```.
 
 
+***
 # Install
 
-## from PyPl
+## C++
 
-PyDelFEM2 can be installed simply with 
+No installation is necessary to use DelFEM2. All the source code of DelFEM2 can be download using git using the following command:
+```
+git clone https://github.com/nobuyuki83/delfem2.git
+```
+
+DelFEM2 can be compiled either as a header-only library or as a static library. Nothing complicated is necessary if DelFEM2 is used as a header only library -- just by include header files and compile the code with option ```DFM2_HEADER_ONLY```. To use DelFEM2 as a static library, you may compiles  several dependent DelFEM2 source files and link them manually (this is not very complicated too).
+
+Most of the source code of DelFEM2 does not have any external dependency. However, for some advancd functionality OpenGL or Unit Test, you many need to download dependent repositories and compile them manually. One can download all the dependent C++ repositories with
+
+```
+git submodle update --init --recursive
+```
+
+This command downloads all the external third party codes into the directory ```delfem2/3rd_party```. Currently DelFEM have binding to the following C++ open source projects.
+
+- glfw
+- glad
+- cereal
+- googletest
+- cnpy
+- imgui
+- pybind11
+- tinygltf
+
+These projects are awesome and I would like to express huge  appreciation for contributers of these projects.
+
+
+
+## Python
+
+The most recommended way to install PyDelFEM2, which is the python binding of DelFEM2, is to build it from the source code. The following command down load the source code and its C++ dependencies and build python modules and download its python dependencies.
+
+```
+git clone https://github.com/nobuyuki83/delfem2.git
+git submodle update --init --recursive
+pip3 install -e .
+```
+
+Here are some trouble shooting tips: 
+- For Ubuntu if you don't have git install it with ```sudo apt-get install git```
+
+- For Ubuntu, if you don't have pip installed, get it with ```sudo apt-get install python3-pip```
+
+- The installation fails if OpenGL packages are missing. For Ubuntu, install them ```sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev```
+
+
+
+
+Alternatively, PyDelFEM2 can be also installed from the GitHub repository can be done with the command:
+```
+pip3 install git+https://github.com/nobuyuki83/delfem2
+```
+
+PyDelFEM2 can be installed from PyPL simply with the following command, however this is not recommended as the version in PyPL is not updated frequently.
 
 ```
 pip3 install PyDelFEM2
 ```
 
-For Ubuntu, if you don't have pip installed, get it with ```sudo apt-get install python3-pip```
 
-The installation fails if OpenGL packages are missing. For Ubuntu, install them ```sudo apt-get install freeglut3-dev libglfw3-dev libglew-dev```
+PyDelFEM runs on Python3. Python2 is not supported. PyDelFEM2 depends on following awesome python packages:
+- numpy
+- glfw
+- PyOpenGL
+- PySide2
 
-
-
-## from GitHub
-
-Installation from the GitHub repository can be done with the command:
-```
-pip3 install git+https://github.com/nobuyuki83/delfem2
-```
+These dependencies are written in ```REQUIRED_PACKAGES``` in the setup.py, so they are automatically installed when installing the PyDelFEM2 pakage using the ```setup.py``` or ```pip3```.
 
 
-## building from the source code
-
-```
-git clone https://github.com/nobuyuki83/delfem2.git
-git submodle update --init --recursive
-python3 setup.py install
-```
-
-For Ubuntu if you don't have git install it with ```sudo apt-get install git```
-
+***
 
 # Acknowledgement
 
-For the testing, DelFEM2 used following models:
+For the testing, DelFEM2 used following data, images and 3D models:
 
 - ```test_piputs/RiggedFigure.glb```from https://github.com/cx20/gltf-test/tree/master/sampleModels/RiggedFigure
 - ```test_inputs/CesiumMan.glb``` from https://github.com/cx20/gltf-test/tree/master/sampleModels/CesiumMan 

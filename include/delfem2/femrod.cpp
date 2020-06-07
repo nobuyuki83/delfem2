@@ -1066,7 +1066,7 @@ DFM2_INLINE void delfem2::Solve_RodHairContact(
     double r0 = a*ch.norm - clearance;
 //    std::cout << "    contact: " << r0 << std::endl;
     for(int iip=0;iip<4;++iip){
-      unsigned int ip0 = aIP[iip];
+      const unsigned int ip0 = aIP[iip];
       vec_r[ip0*4+0] -= stiff_contact*r0*aW[iip]*ch.norm.x();
       vec_r[ip0*4+1] -= stiff_contact*r0*aW[iip]*ch.norm.y();
       vec_r[ip0*4+2] -= stiff_contact*r0*aW[iip]*ch.norm.z();
