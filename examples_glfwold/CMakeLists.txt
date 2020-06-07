@@ -49,6 +49,8 @@ add_subdirectory(132_ShaderTexLaplace)
 add_subdirectory(133_ShaderContour)
 add_subdirectory(134_Primitives)
 add_subdirectory(135_GlBuffer)
+add_subdirectory(136_VoxelGeodesic)
+
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)
