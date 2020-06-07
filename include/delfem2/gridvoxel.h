@@ -89,8 +89,13 @@ void Grid3Voxel_Dilation(CGrid3<int>& grid);
 
 void Grid3Voxel_Erosion(CGrid3<int>& grid);
 
+/**
+ * @brief comute voxel geodesic distance from one seed voxel
+ * @param aDist (out) geodesic distance at the center of the voxle
+ * @param el (in) edge length of the voxel
+ */
 void VoxelGeodesic(std::vector<double>& aDist,
-                   unsigned int ivox0,
+                   const unsigned int ivox0,
                    const double el,
                    const CGrid3<int>& grid);
 

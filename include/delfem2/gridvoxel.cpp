@@ -359,7 +359,7 @@ void delfem2::Grid3Voxel_Erosion
 // dijkstra method
 void delfem2::VoxelGeodesic
  (std::vector<double>& aDist,
-  unsigned int ivox0,
+  const unsigned int ivox0,
   const double el,
   const CGrid3<int>& grid)
 {
