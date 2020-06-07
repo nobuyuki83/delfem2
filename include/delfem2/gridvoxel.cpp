@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#include <queue>
 #include "delfem2/vec3.h"
 #include "delfem2/gridvoxel.h"
 
@@ -352,5 +352,59 @@ void delfem2::Grid3Voxel_Erosion
   for(int ivox=0;ivox<nvox;++ivox){
     if( grid.aVal[ivox] != 2 ){ continue; }
     grid.aVal[ivox] = 0;
+  }
+}
+
+
+// dijkstra method
+void delfem2::VoxelGeodesic
+ (std::vector<double>& aDist,
+  unsigned int ivox0,
+  const double el,
+  const CGrid3<int>& grid)
+{
+  aDist.assign(grid.aVal.size(),-1.0);
+  const unsigned int nx = grid.ndivx;
+  const unsigned int ny = grid.ndivy;
+  const unsigned int nz = grid.ndivz;
+  const int aFace[6][3] = {
+    {-1,0,0},
+    {+1,0,0},
+    {0,-1,0},
+    {0,+1,0},
+    {0,0,-1},
+    {0,0,+1} };
+  using distIdvox = std::pair<double,unsigned int>;
+  std::priority_queue<distIdvox, std::vector<distIdvox>, std::greater<distIdvox>> aNext;
+  //    std::<double,unsigned int> aNext;
+  
+  aNext.push( std::make_pair(0.0,ivox0) );
+  aDist[ivox0] = 0.0;
+  while(!aNext.empty()){
+    auto itr = aNext.top();
+    const unsigned int ivox1 = itr.second;
+    const double dist1a = itr.first;
+    aNext.pop();
+    const double dist1b = aDist[ivox1];
+    if( dist1a > dist1b ){ continue; } // already fixed
+                                       //      std::cout << ivox1 << " " << dist1a << std::endl;
+    const double dist2 = dist1a + el;
+    const int iz1 = ivox1/(ny*nx);
+    const int iy1 = (ivox1-iz1*ny*nx)/nx;
+    const int ix1 = ivox1-iz1*ny*nx-iy1*nx;
+    for(unsigned int ifc=0;ifc<6;++ifc){
+      const int ix2 = ix1+aFace[ifc][0];
+      const int iy2 = iy1+aFace[ifc][1];
+      const int iz2 = iz1+aFace[ifc][2];
+      if( ix2 < 0 || ix2 >= nx ){ continue; }
+      if( iy2 < 0 || iy2 >= ny ){ continue; }
+      if( iz2 < 0 || iz2 >= nz ){ continue; }
+      const unsigned int ivox2 = iz2*ny*nx + iy2*nx + ix2;
+      if( grid.aVal[ivox2] == 0 ){ continue; }
+      if( aDist[ivox2] < 0 || aDist[ivox2] > dist2 ){
+        aDist[ivox2] = dist2;
+        aNext.push( std::make_pair(dist2,ivox2) );
+      }
+    }
   }
 }
