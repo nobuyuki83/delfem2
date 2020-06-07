@@ -46,19 +46,19 @@ Please find out more detail in this [project document](https://nobuyuki83.github
 There are currently no tutorial available for this library. To understand the code, please look at the exaxmples and tests  under following directoris.
 
 + C++ examples
- + [delfem2/examples_glfwold](delfem2/examples_glfwold]): examples with the legacy OpenGL
- + [delfem2/examples_glfwnew](delfem2/examples_glfwnew):  examples with the modern OpenGL
- + [delfem2/examples_cuda](delfem2/examples_cuda): examples using cuda
+  + [delfem2/examples_glfwold](examples_glfwold): examples with the legacy OpenGL
+  + [delfem2/examples_glfwnew](examples_glfwnew):  examples with the modern OpenGL
+  + [delfem2/examples_cuda](examples_cuda): examples using cuda
 + C++ test:
- + [delfem2/test_cpp](delfem2/test_cpp): tests using C++
- + [delfem2/test_cuda](delfem2/test_cuda) : test using cuda
+  + [delfem2/test_cpp](test_cpp): tests using C++
+  + [delfem2/test_cuda](test_cuda) : test using cuda
 + Python examples
- + [delfem2/examples_py](delfem2/examples_py) : examples using python
- + [delfem2/examples_pyqt](delfem2/examples_pyqt) examples using PyQt gui library
- + [delfem2/examples_jupyter](delfem2/examples_jupyter) : examples using Jupyter
- + [delfem2/examples_blender](delfem2/examples_blender) : examples with Blender python scripting
+  + [delfem2/examples_py](examples_py) : examples using python
+  + [delfem2/examples_pyqt](examples_pyqt) examples using PyQt gui library
+  + [delfem2/examples_jupyter](examples_jupyter) : examples using Jupyter
+  + [delfem2/examples_blender](examples_blender) : examples with Blender python scripting
 +  Python tests
- + [delfem2/test_py](delfem2/test_py) : test using python
+  + [delfem2/test_py](test_py) : test using python
 
 
 
@@ -91,6 +91,7 @@ This command downloads all the external third party codes into the directory ```
 - imgui
 - pybind11
 - tinygltf
+- stb_image.h
 
 These projects are awesome and I would like to express huge  appreciation for contributers of these projects.
 
