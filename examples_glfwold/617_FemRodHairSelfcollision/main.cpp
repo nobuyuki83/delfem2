@@ -294,8 +294,7 @@ int main(int argc,char* argv[])
       aContact.clear();
       for(int itr=0;itr<1;++itr){
 //        std::cout << " " << itr << " " << time_cur << std::endl;
-        std::vector<dfm2::CContactHair> aContactNew;
-        FindRodHairContactCCD(aContactNew,
+        FindRodHairContactCCD(aContact,
                               clearance,
                               aP, aIP_HairRoot,aPt);
         /*
@@ -303,7 +302,6 @@ int main(int argc,char* argv[])
           std::cout << " pre: " << ch.ip0 << " " << ch.iq0 << " " << ch.norm*ch.Direction(aP) << " " << ch.norm*ch.Direction(aPt) << std::endl;
         }
          */
-        aContact = aContactNew;
         dfm2::MakeDirectorOrthogonal_RodHair(aS,aPt);
         Solve_RodHairContact(aPt, aS, mats,
                              stiff_stretch, stiff_bendtwist, mass/(dt*dt),
