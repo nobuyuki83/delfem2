@@ -5,11 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
+#include <queue>
 #include "delfem2/vec3.h"
 #include "delfem2/gridvoxel.h"
 
 namespace dfm2 = delfem2;
+
+// ---------------
+
+namespace delfem2 {
+namespace gridvoxel {
 
 const unsigned int noelElemFace_Vox[6][4] = {
   { 0, 4, 6, 2 }, // -x
@@ -27,6 +32,9 @@ const dfm2::CVec3d normalHexFace[6] = {
   dfm2::CVec3d( 0, 0,-1),
   dfm2::CVec3d( 0, 0,+1)
 };
+
+}
+}
 
 bool dfm2::IsInclude_AABB(const int aabb[8], int igvx, int igvy, int igvz)
 {
@@ -110,10 +118,10 @@ void dfm2::MeshQuad3D_VoxelGrid(
             if( aIsVox[jgv0] == 1 ){ continue; } // facing to adjacent voxel -> no outward face.
           }
           //
-          const int aIGP0 = aIGP_Vox[ noelElemFace_Vox[iface][0] ];
-          const int aIGP1 = aIGP_Vox[ noelElemFace_Vox[iface][1] ];
-          const int aIGP2 = aIGP_Vox[ noelElemFace_Vox[iface][2] ];
-          const int aIGP3 = aIGP_Vox[ noelElemFace_Vox[iface][3] ];
+          const int aIGP0 = aIGP_Vox[ ::dfm2::gridvoxel::noelElemFace_Vox[iface][0] ];
+          const int aIGP1 = aIGP_Vox[ ::dfm2::gridvoxel::noelElemFace_Vox[iface][1] ];
+          const int aIGP2 = aIGP_Vox[ ::dfm2::gridvoxel::noelElemFace_Vox[iface][2] ];
+          const int aIGP3 = aIGP_Vox[ ::dfm2::gridvoxel::noelElemFace_Vox[iface][3] ];
           aQuad.push_back(aIGP0);
           aQuad.push_back(aIGP1);
           aQuad.push_back(aIGP2);
@@ -353,4 +361,146 @@ void delfem2::Grid3Voxel_Erosion
     if( grid.aVal[ivox] != 2 ){ continue; }
     grid.aVal[ivox] = 0;
   }
+}
+
+
+// dijkstra method
+void delfem2::VoxelGeodesic
+ (std::vector<double>& aDist,
+  const unsigned int ivox0,
+  const double el,
+  const CGrid3<int>& grid)
+{
+  aDist.assign(grid.aVal.size(),-1.0);
+  const unsigned int nx = grid.ndivx;
+  const unsigned int ny = grid.ndivy;
+  const unsigned int nz = grid.ndivz;
+  const int aFace[6][3] = {
+    {-1,0,0},
+    {+1,0,0},
+    {0,-1,0},
+    {0,+1,0},
+    {0,0,-1},
+    {0,0,+1} };
+  using distIdvox = std::pair<double,unsigned int>;
+  std::priority_queue<distIdvox, std::vector<distIdvox>, std::greater<distIdvox>> aNext;
+  //    std::<double,unsigned int> aNext;
+  
+  aNext.push( std::make_pair(0.0,ivox0) );
+  aDist[ivox0] = 0.0;
+  while(!aNext.empty()){
+    auto itr = aNext.top();
+    const unsigned int ivox1 = itr.second;
+    const double dist1a = itr.first;
+    aNext.pop();
+    const double dist1b = aDist[ivox1];
+    if( dist1a > dist1b ){ continue; } // already fixed
+                                       //      std::cout << ivox1 << " " << dist1a << std::endl;
+    const double dist2 = dist1a + el;
+    const int iz1 = ivox1/(ny*nx);
+    const int iy1 = (ivox1-iz1*ny*nx)/nx;
+    const int ix1 = ivox1-iz1*ny*nx-iy1*nx;
+    for(unsigned int ifc=0;ifc<6;++ifc){
+      const int ix2 = ix1+aFace[ifc][0];
+      const int iy2 = iy1+aFace[ifc][1];
+      const int iz2 = iz1+aFace[ifc][2];
+      if( ix2 < 0 || ix2 >= (int)nx ){ continue; }
+      if( iy2 < 0 || iy2 >= (int)ny ){ continue; }
+      if( iz2 < 0 || iz2 >= (int)nz ){ continue; }
+      const unsigned int ivox2 = iz2*ny*nx + iy2*nx + ix2;
+      if( grid.aVal[ivox2] == 0 ){ continue; }
+      if( aDist[ivox2] < 0 || aDist[ivox2] > dist2 ){
+        aDist[ivox2] = dist2;
+        aNext.push( std::make_pair(dist2,ivox2) );
+      }
+    }
+  }
+}
+
+namespace delfem2 {
+namespace gridvoxel {
+
+int signum(double x) {
+  return x > 0.0 ? 1 : x < 0.0 ? -1 : 0;
+}
+
+// Find the smallest positive t such that s+t*ds is an integer.
+double intbound(double s, double ds)
+{
+  if (ds < 0) {
+    return intbound(-s, -ds);
+  }
+  else {
+    return (ceil(s)-s)/ds;
+  }
+}
+
+}
+}
+
+/**
+ * @details this is the implementation of the following paper
+ * Amanatides, John, and Andrew Woo. "A fast voxel traversal algorithm for ray tracing." In Eurographics, vol. 87, no. 3, pp. 3-10. 1987.
+ * TODO: zero division might occur when (ps - pe ) is aligned to axis.
+ */
+void delfem2::Intersection_VoxelGrid_LinSeg
+(std::vector<unsigned int>& aIndVox,
+ const CGrid3<int>& grid,
+ const CVec3d& ps,
+ const CVec3d& pe)
+{
+  const unsigned int nx = grid.ndivx;
+  const unsigned int ny = grid.ndivy;
+  const unsigned int nz = grid.ndivz;
+  dfm2::CMat4d ami = grid.am.Inverse();
+  dfm2::CVec3d Ps; dfm2::Vec3_Mat4Vec3_Affine(Ps.p, ami.mat, ps.p); // local coordinate
+  dfm2::CVec3d Pe; dfm2::Vec3_Mat4Vec3_Affine(Pe.p, ami.mat, pe.p); // local coordinate
+  const int is[3] = {
+    static_cast<int>(floor(Ps.x())),
+    static_cast<int>(floor(Ps.y())),
+    static_cast<int>(floor(Ps.z())) };
+  const int ie[3] = {
+    static_cast<int>(floor(Pe.x())),
+    static_cast<int>(floor(Pe.y())),
+    static_cast<int>(floor(Pe.z())) };
+  int ic[3] = { is[0], is[1], is[2] };
+  const dfm2::CVec3d direction = Pe-Ps;
+  const double dx = direction[0];
+  const double dy = direction[1];
+  const double dz = direction[2];
+  const int stepX = dfm2::gridvoxel::signum(dx);
+  const int stepY = dfm2::gridvoxel::signum(dy);
+  const int stepZ = dfm2::gridvoxel::signum(dz);
+  const double tDeltaX = stepX/dx; assert( tDeltaX > 0 );
+  const double tDeltaY = stepY/dy; assert( tDeltaY > 0 );
+  const double tDeltaZ = stepZ/dz; assert( tDeltaZ > 0 );
+  double tMaxX = dfm2::gridvoxel::intbound(Ps.x(), dx); assert( tMaxX > 0 );
+  double tMaxY = dfm2::gridvoxel::intbound(Ps.y(), dy); assert( tMaxY > 0 );
+  double tMaxZ = dfm2::gridvoxel::intbound(Ps.z(), dz); assert( tMaxZ > 0 );
+  aIndVox.clear();
+  for(int itr=0;itr<1000;++itr){
+    if( ic[0] >= 0 && ic[1] >= 0 && ic[2] >= 0 &&
+       ic[0] < (int)nx && ic[1] < (int)ny && ic[2] < (int)nz ){
+      aIndVox.push_back( ic[2]*ny*nx + ic[1]*nx + ic[0] );
+    }
+    if( ic[0] == ie[0] && ic[1] == ie[1] && ic[2] == ie[2] ){ break; }
+    if(      tMaxX < tMaxY && tMaxX < tMaxZ ){
+      tMaxX = tMaxX + tDeltaX;
+      ic[0] += stepX;
+    }
+    else if( tMaxY < tMaxX && tMaxY < tMaxZ ){
+      tMaxY = tMaxY + tDeltaY;
+      ic[1] += stepY;
+    }
+    else if( tMaxZ < tMaxX && tMaxZ < tMaxY ){
+      tMaxZ = tMaxZ + tDeltaZ;
+      ic[2] += stepZ;
+    }
+  }
+  /*
+  std::cout << "hoge" << std::endl;
+  for(const auto& iv : aIndVox){
+    std::cout << iv << std::endl;
+  }
+   */
 }
