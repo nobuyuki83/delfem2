@@ -5,7 +5,51 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include <cstring>
 #include "delfem2/mat4.h"
+
+// ------------------------
+
+namespace delfem2 {
+namespace mat4 {
+
+template <typename REAL>
+DFM2_INLINE void CalcInvMat
+ (REAL *a,
+  const unsigned int n,
+  int &info)
+{
+  REAL tmp1;
+  
+  info = 0;
+  for (unsigned int i = 0; i < n; i++) {
+    if (fabs(a[i * n + i]) < 1.0e-30) {
+      info = 1;
+      return;
+    }
+    if (a[i * n + i] < 0.0) {
+      info--;
+    }
+    tmp1 = 1.0 / a[i * n + i];
+    a[i * n + i] = 1.0;
+    for (unsigned int k = 0; k < n; k++) {
+      a[i * n + k] *= tmp1;
+    }
+    for (unsigned int j = 0; j < n; j++) {
+      if (j != i) {
+        tmp1 = a[j * n + i];
+        a[j * n + i] = 0.0;
+        for (unsigned int k = 0; k < n; k++) {
+          a[j * n + k] -= tmp1 * a[i * n + k];
+        }
+      }
+    }
+  }
+}
+
+}
+}
+
 
 // ------------------------
 
@@ -407,3 +451,19 @@ template CMat4f operator + (const CMat4f& lhs, const CMat4f& rhs);
 #endif
 
 }
+
+// --------------------------------------------
+
+template <typename REAL>
+delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Inverse() const
+{
+  CMat4<REAL> m;
+  std::memcpy(m.mat, mat, sizeof(REAL)*16);
+  int info;
+  mat4::CalcInvMat(m.mat, 4, info);
+  return m;
+}
+#ifndef DFM2_HEADER_ONLY
+template delfem2::CMat4d delfem2::CMat4d::Inverse() const;
+template delfem2::CMat4f delfem2::CMat4f::Inverse() const;
+#endif
