@@ -75,13 +75,14 @@ void Draw_CGrid3
   {
     ::glDisable(GL_LIGHTING);
     ::glColor3d(1,0,0);
+    ::glDisable(GL_DEPTH_TEST);
     const unsigned int nx = grid.ndivx;
     const unsigned int ny = grid.ndivy;
 //    const unsigned int nz = grid.ndivz;
     const int iz0 = ivox0/(ny*nx);
     const int iy0 = (ivox0-iz0*ny*nx)/nx;
     const int ix0 = ivox0-iz0*ny*nx-iy0*nx;
-    dfm2::opengl::DrawSphereAt(32, 32, 5.0, ix0+0.5, iy0+0.5, iz0+0.5);
+    dfm2::opengl::DrawSphereAt(32, 32, 1.0, ix0+0.5, iy0+0.5, iz0+0.5);
   }
   
   // --------

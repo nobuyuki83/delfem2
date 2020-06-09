@@ -16,6 +16,7 @@ ENDIF()
 # simple examples without delfem2 
 add_subdirectory(000_OpenWindowWithGLFW)
 
+
 # basic funcs
 add_subdirectory(100_ViewNavigationIn3D)
 add_subdirectory(101_SubdivCatmull)
@@ -50,6 +51,7 @@ add_subdirectory(133_ShaderContour)
 add_subdirectory(134_Primitives)
 add_subdirectory(135_GlBuffer)
 add_subdirectory(136_VoxelGeodesic)
+add_subdirectory(137_VoxelLineIntersection)
 
 
 # dynamic meshing
