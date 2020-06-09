@@ -90,13 +90,16 @@ DFM2_INLINE void MatVec4(
 // --------------------------------
 // functions mat4 and vec3
 
+/**
+ * @details this is not affine transfromation. Translation part is ignored
+ */
 DFM2_INLINE void Mat4Vec3(
      double vo[3],
      const double M[16],
      const double vi[3]);
 
 /**
- * @func multiply translation affine matrix from left to an affine matrix in 3D
+ * @brief multiply translation affine matrix from left to an affine matrix in 3D
  */
 template <typename REAL>
 void Translate_Mat4Affine(
@@ -144,7 +147,7 @@ CMat4<T> operator + (const CMat4<T>& lhs, const CMat4<T>& rhs);
 /**
  * @brief 4x4 matrix class
  * @class 4x4 matrix class
- * @details Row major data storage. The template is defined for "float" and "double"
+ * @tparam REAL value type of the matrix. defiend for "double" and "float" for the static library.
  */
 template <typename REAL>
 class CMat4 {
@@ -153,6 +156,8 @@ public:
   CMat4 (const float* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
   CMat4 (const double* pm){ for(int i=0;i<16;++i){ mat[i] = (REAL)pm[i]; } }
 public:
+  // ------------------------
+  // below: "set" functions
   void Set_AffineTranslate(REAL x, REAL y, REAL z){
     Mat4_AffineTranslation(mat,
                            x, y, z);
@@ -178,6 +183,7 @@ public:
     mat[2*4+2] = z;
     mat[3*4+3] = 1;
   }
+  // -----------------------
   CMat4<double> Double() const {
     return CMat4<double>(mat);
   }
@@ -191,7 +197,9 @@ public:
     }
     return m1;
   }
-  // -------------
+  CMat4<REAL> Inverse() const;
+  // ----------------------
+  // below: static function
   static CMat4<REAL> Identity(){
     CMat4<REAL> m;
     m.SetIdentity();

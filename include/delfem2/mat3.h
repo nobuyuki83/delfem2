@@ -286,6 +286,7 @@ public:
   // -------------------------
   CMat3 Inverse() const;
   // -------------------------
+  // function whose name starts with "Set" changes itself
   void SetInverse();
   void SetSymetric(const REAL sm[6]);
   void SetZero();

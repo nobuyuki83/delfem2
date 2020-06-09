@@ -11,6 +11,7 @@
 #include <vector>
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/mat4.h"
+#include "delfem2/vec3.h"
 
 namespace delfem2 {
 
@@ -98,6 +99,18 @@ void VoxelGeodesic(std::vector<double>& aDist,
                    const unsigned int ivox0,
                    const double el,
                    const CGrid3<int>& grid);
+
+
+/**
+ * @details this is the implementation of the following paper
+ * Amanatides, John, and Andrew Woo. "A fast voxel traversal algorithm for ray tracing." In Eurographics, vol. 87, no. 3, pp. 3-10. 1987.
+ * TODO: zero division might occur when (ps - pe ) is aligned to axis.
+ */
+void Intersection_VoxelGrid_LinSeg
+ (std::vector<unsigned int>& aIndVox,
+  const CGrid3<int>& grid,
+  const CVec3d& ps,
+  const CVec3d& pe);
 
 
 /*
