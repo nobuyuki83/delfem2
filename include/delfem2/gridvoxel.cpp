@@ -367,7 +367,7 @@ void delfem2::Grid3Voxel_Erosion
 // dijkstra method
 void delfem2::VoxelGeodesic
  (std::vector<double>& aDist,
-  const unsigned int ivox0,
+  const std::vector< std::pair<unsigned int, double> >& aIdvoxDist,
   const double el,
   const CGrid3<int>& grid)
 {
@@ -386,8 +386,12 @@ void delfem2::VoxelGeodesic
   std::priority_queue<distIdvox, std::vector<distIdvox>, std::greater<distIdvox>> aNext;
   //    std::<double,unsigned int> aNext;
   
-  aNext.push( std::make_pair(0.0,ivox0) );
-  aDist[ivox0] = 0.0;
+  for(const auto& idvox_dist: aIdvoxDist){
+    const unsigned int ivox0 = idvox_dist.first;
+    const double dist0 = idvox_dist.second;
+    aNext.push( std::make_pair(dist0,ivox0) );
+    aDist[ivox0] = dist0;
+  }
   while(!aNext.empty()){
     auto itr = aNext.top();
     const unsigned int ivox1 = itr.second;
