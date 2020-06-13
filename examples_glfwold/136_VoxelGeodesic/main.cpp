@@ -25,7 +25,7 @@ void Draw_CGrid3
 (const dfm2::CGrid3<int>& grid,
  const std::vector<double>& aDist,
  const std::vector<std::pair<double, dfm2::CColor> >& colorMap,
- const unsigned int ivox0)
+ double thresh)
 {
   { // set-up transformation
     const dfm2::CMat4d& am = grid.am;
@@ -34,23 +34,6 @@ void Draw_CGrid3
     ::glPushMatrix();
     ::glMultMatrixd(amt.mat);
   }
-  // -----------
-  /*
-  {
-    ::glDisable(GL_LIGHTING);
-    const double x0 = (double)grid.ndivx;
-    const double y0 = (double)grid.ndivy;
-    const double z0 = (double)grid.ndivz;
-    double p[2][3] = {
-      { 0, 0, 0},
-      {x0, 0, 0},
-    };
-    ::glBegin(GL_LINES);
-    ::glVertex3dv(p[0]);
-    ::glVertex3dv(p[1]);
-    ::glEnd();
-  }
-   */
   {
     ::glEnable(GL_LIGHTING);
     ::glEnable(GL_NORMALIZE);
@@ -62,6 +45,7 @@ void Draw_CGrid3
         for(unsigned int ix=0;ix<nx;++ix){
           if( grid.aVal[iz*ny*nx+iy*nx+ix] == 0 ){ continue; }
           const double val = aDist[iz*ny*nx+iy*nx+ix];
+          if( val > thresh ){ continue; }
           dfm2::CColor c = dfm2::getColor(val, colorMap);
           dfm2::opengl::myGlMaterialDiffuse(c);
           const double pmin[3] = {(double)ix,(double)iy,(double)iz};
@@ -71,22 +55,6 @@ void Draw_CGrid3
       }
     }
   }
-  
-  {
-    ::glDisable(GL_LIGHTING);
-    ::glColor3d(1,0,0);
-    ::glDisable(GL_DEPTH_TEST);
-    const unsigned int nx = grid.ndivx;
-    const unsigned int ny = grid.ndivy;
-//    const unsigned int nz = grid.ndivz;
-    const int iz0 = ivox0/(ny*nx);
-    const int iy0 = (ivox0-iz0*ny*nx)/nx;
-    const int ix0 = ivox0-iz0*ny*nx-iy0*nx;
-    dfm2::opengl::DrawSphereAt(32, 32, 1.0, ix0+0.5, iy0+0.5, iz0+0.5);
-  }
-  
-  // --------
-  // end transformation
   ::glPopMatrix();
 }
 
@@ -101,16 +69,19 @@ int main(int argc,char* argv[])
   dfm2::Read_Obj(
       std::string(PATH_INPUT_DIR)+"/bunny_1k.obj",
       aXYZ,aTri);
-  dfm2::Normalize_Points3(aXYZ,4.0);
+  dfm2::Normalize_Points3(aXYZ,1.0);
   // ---------------------------------------
 
   dfm2::opengl::CRender2Tex_DrawOldGL_BOX sampler_box;
-  sampler_box.Initialize(128, 128, 128, 0.04);
+  {
+    unsigned int ndiv = 80;
+    sampler_box.Initialize(ndiv, ndiv, ndiv, 1.0/ndiv);
+  }
 
   // ---------------------------------------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 3.0;
+  viewer.nav.camera.view_height = 1.0;
   viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
 //  viewer.nav.camera.Rot_Camera(+0.2, -0.2);
   if(!gladLoadGL()) {     // glad: load all OpenGL function pointers
@@ -151,7 +122,9 @@ int main(int argc,char* argv[])
   
   std::random_device rd;
   std::mt19937 reng(rd());
-  std::uniform_int_distribution<unsigned int> dist(0,grid.aVal.size()-1);
+  std::uniform_int_distribution<unsigned int> dist0(0,grid.aVal.size()-1);
+  std::uniform_real_distribution<double> dist1(-0.5*sampler_box.nDivX()*sampler_box.edgeLen(),
+                                               +0.5*sampler_box.nDivX()*sampler_box.edgeLen());
      
   std::vector<std::pair<double, dfm2::CColor> > colorMap;
   {
@@ -166,23 +139,78 @@ int main(int argc,char* argv[])
   std::vector<double> aDist;
   while (true)
   {
-    unsigned int ivox0 = UINT_MAX;
-    for(int itr=0;itr<100;++itr){
-      ivox0 = dist(reng);
-      if( grid.aVal[ivox0] == 1 ){ break; }
+    { // distance from a point
+      unsigned int ivox0 = UINT_MAX;
+      for(int itr=0;itr<100;++itr){
+        ivox0 = dist0(reng);
+        if( grid.aVal[ivox0] == 1 ){ break; }
+      }
+      if( ivox0 == UINT_MAX ){ goto EXIT; }
+      std::vector< std::pair<unsigned int, double> > aIdvoxDist;
+      aIdvoxDist.emplace_back(ivox0, 0.0);
+      VoxelGeodesic(aDist,
+                    aIdvoxDist, sampler_box.edgeLen(), grid);
+      // ------
+      for(int iframe=0;iframe<16;++iframe){ // draw the result
+        viewer.DrawBegin_oldGL();
+        Draw_CGrid3(grid,aDist,colorMap,iframe*0.1);
+        { // set-up transformation
+          const dfm2::CMat4d& am = grid.am;
+          dfm2::CMat4d amt = am.Transpose();
+          ::glMatrixMode(GL_MODELVIEW);
+          ::glPushMatrix();
+          ::glMultMatrixd(amt.mat);
+          ::glDisable(GL_LIGHTING);
+          ::glColor3d(1,0,0);
+          ::glDisable(GL_DEPTH_TEST);
+          const unsigned int nx = grid.ndivx;
+          const unsigned int ny = grid.ndivy;
+          const int iz0 = ivox0/(ny*nx);
+          const int iy0 = (ivox0-iz0*ny*nx)/nx;
+          const int ix0 = ivox0-iz0*ny*nx-iy0*nx;
+          dfm2::opengl::DrawSphereAt(32, 32, 1.0, ix0+0.5, iy0+0.5, iz0+0.5);
+          ::glPopMatrix();
+        }
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      }
     }
-    if( ivox0 == UINT_MAX ){
-      glfwDestroyWindow(viewer.window);
-      glfwTerminate();
-      exit(EXIT_SUCCESS);
-    }
-    VoxelGeodesic(aDist,
-                  ivox0, sampler_box.edgeLen(), grid);
-    for(int iframe=0;iframe<10;++iframe){
-      viewer.DrawBegin_oldGL();
-      Draw_CGrid3(grid,aDist,colorMap,ivox0);
-      viewer.DrawEnd_oldGL();
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    { // distance from line
+      std::vector< std::pair<unsigned int, double> > aIdvoxDist;
+      dfm2::CVec3d ps(dist1(reng),dist1(reng),dist1(reng));
+      dfm2::CVec3d pe(dist1(reng),dist1(reng),dist1(reng));
+      {
+        std::vector<unsigned int> aIndvox;
+        Intersection_VoxelGrid_LinSeg(aIndvox,
+                                      grid, ps, pe);
+        const unsigned int nx = grid.ndivx;
+        const unsigned int ny = grid.ndivy;
+        for(unsigned int ivox0: aIndvox){
+          if( grid.aVal[ivox0] == 0 ){ continue; }
+          const int iz0 = ivox0/(ny*nx);
+          const int iy0 = (ivox0-iz0*ny*nx)/nx;
+          const int ix0 = ivox0-iz0*ny*nx-iy0*nx;
+          dfm2::CVec3d p0(ix0+0.5, iy0+0.5, iz0+0.5);
+          dfm2::CVec3d p1; dfm2::Vec3_Mat4Vec3_Affine(p1.p, grid.am.mat,p0.p);
+          dfm2::CVec3d p2 = dfm2::nearest_LineSeg_Point(p1, ps, pe);
+          double dist0 = (p2-p1).Length();
+          aIdvoxDist.emplace_back( ivox0, dist0 );
+        }
+      }
+      VoxelGeodesic(aDist,
+                    aIdvoxDist, sampler_box.edgeLen(), grid);
+      // ------
+      for(int iframe=0;iframe<16;++iframe){ // draw the result
+        viewer.DrawBegin_oldGL();
+        Draw_CGrid3(grid,aDist,colorMap,iframe*0.1);
+        ::glDisable(GL_DEPTH_TEST);
+        ::glDisable(GL_LIGHTING);
+        dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Red());
+        ::glColor3d(0,0,0);
+        dfm2::opengl::DrawCylinder(ps, pe, 0.005);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      }
     }
   }
 EXIT:
