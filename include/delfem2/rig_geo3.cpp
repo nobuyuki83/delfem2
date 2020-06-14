@@ -251,7 +251,7 @@ DFM2_INLINE void delfem2::UpdateBoneRotTrans
       continue;
     }
     MatMat4(aBone[ibone].affmat3Global,
-                  aBone[ibone_p].affmat3Global, m01.mat);
+            aBone[ibone_p].affmat3Global, m01.mat);
   }
 }
 

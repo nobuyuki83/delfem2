@@ -169,6 +169,8 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [311_RigBendCapsule](311_RigBendCapsule)
 <img src="311_RigBendCapsule/thumbnail.png" width=200>
 
+### [312_RigVoxelGeodesic](312_RigVoxelGeodesic)
+<img src="312_RigVoxelGeodesic/thumbnail.png" width=200>
 
 
 ## CAD
