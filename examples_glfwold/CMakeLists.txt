@@ -74,6 +74,7 @@ add_subdirectory(308_RigSmplUi)
 add_subdirectory(309_RigSmplCloth)
 add_subdirectory(310_RigSmplClothPose)
 add_subdirectory(311_RigBendCapsule)
+add_subdirectory(312_RigVoxelGeodesic)
 
 # cad
 add_subdirectory(500_Cad2d)

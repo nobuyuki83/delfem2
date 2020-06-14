@@ -504,7 +504,7 @@ void delfem2::Intersection_VoxelGrid_LinSeg
   /*
   std::cout << "hoge" << std::endl;
   for(const auto& iv : aIndVox){
-    std::cout << iv << std::endl;
+    std::cout << "    " << iv << std::endl;
   }
    */
 }
