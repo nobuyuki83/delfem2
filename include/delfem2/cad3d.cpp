@@ -1087,7 +1087,7 @@ void delfem2::DivideFace
 void delfem2::BuildTriMesh
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
- std::vector<int>& aTriSurRel,
+ std::vector<unsigned int>& aTriSuTri,
  std::vector<double>& aNorm,
  std::vector<CCad3D_Vertex>& aVertex,
  std::vector<CCad3D_Edge>& aEdge,
@@ -1223,10 +1223,10 @@ void delfem2::BuildTriMesh
       aXYZ[iq0*3+2] += (double)rand()/(RAND_MAX+1.0)*1.0e-5;
     }
   }
-  ElSuEl_MeshElem(aTriSurRel,
-                              aTri.data(),aTri.size()/3,
-                              delfem2::MESHELEM_TRI,
-                              (int)aXYZ.size()/3);
+  ElSuEl_MeshElem(aTriSuTri,
+                  aTri.data(),aTri.size()/3,
+                  delfem2::MESHELEM_TRI,
+                  (int)aXYZ.size()/3);
   aNorm.resize(aXYZ.size());
   delfem2::Normal_MeshTri3D(aNorm.data(),
                             aXYZ.data(), aXYZ.size()/3,
@@ -1566,7 +1566,7 @@ void delfem2::CCad3D::MouseDown
   if( imode_edit == EDIT_ADD_POINT_EDGE ){
     Pick(src_pick, dir_pick, sp0, mMV, mPj, view_height);
     AddPointEdge(iedge_picked, ratio_edge_picked, aVertex, aEdge, aFace, elen);
-    BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
+    BuildTriMesh(aXYZ,aTri,aTriSuTri,aNorm, aVertex,aEdge,aFace, isym);
     this->iedge_picked = -1;
     this->aIE_picked.clear();
     this->plane_inorm = -1;
@@ -1583,7 +1583,7 @@ void delfem2::CCad3D::MouseDown
         if( aFace[ifc].isPick(src_pick, dir_pick) ){
           DivideFace(ifc,plane_org,plane_inorm,
               aVertex,aEdge,aFace, elen);
-          BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
+          BuildTriMesh(aXYZ,aTri,aTriSuTri,aNorm, aVertex,aEdge,aFace, isym);
           return;
         }
       }
@@ -1677,7 +1677,7 @@ void delfem2::CCad3D::ReadFile(std::ifstream& fin)
   for(auto & ifc : aFace){
     ifc.Initialize(aVertex,aEdge, elen); // ie0+0
   }
-  BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
+  BuildTriMesh(aXYZ,aTri,aTriSuTri,aNorm, aVertex,aEdge,aFace, isym);
 }
 
 

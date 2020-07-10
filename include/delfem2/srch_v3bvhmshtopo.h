@@ -69,12 +69,12 @@ public:
         aElemCenter[itri*3+2] = z0;
       }
       {
-        std::vector<int> aTriSurRel;
-        ElSuEl_MeshElem(aTriSurRel,
-            pTri, nTri,
-            delfem2::MESHELEM_TRI, nXYZ);
+        std::vector<unsigned int> aTriSuTri;
+        ElSuEl_MeshElem(aTriSuTri,
+                        pTri, nTri,
+                        delfem2::MESHELEM_TRI, nXYZ);
         iroot_bvh = BVHTopology_TopDown_MeshElem(aNodeBVH,
-                                                 3,aTriSurRel,
+                                                 3,aTriSuTri,
                                                  aElemCenter);
       }
     }

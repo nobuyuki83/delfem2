@@ -26,7 +26,7 @@ DFM2_INLINE void DevideElemAryConnex
  //
  const std::vector<int>& list,
  const int nfael,
- const std::vector<int>& aElemSur,
+ const std::vector<unsigned int>& aElSuEl,
  const std::vector<double>& aElemCenter)
 {
   assert( list.size() > 1 );
@@ -134,8 +134,8 @@ DFM2_INLINE void DevideElemAryConnex
       int itri0 = stack.top();
       stack.pop();
       for(int ifael=0;ifael<nfael;ifael++){
-        int jtri = aElemSur[itri0*nfael*2+ifael*2+0];
-        if( jtri == -1 ) continue;
+        const unsigned int jtri = aElSuEl[itri0*nfael+ifael];
+        if( jtri == UINT_MAX ) continue;
         if( aElem2Node[jtri] != iroot_node ) continue;
         assert( jtri < (int)aElemCenter.size() );
         double det = DetSide(aElemCenter.data()+jtri*3,org,dir);
@@ -163,7 +163,7 @@ DFM2_INLINE void DevideElemAryConnex
   }
   else{ // 子ノード0にある三角形を再度分割
     DevideElemAryConnex(inode_ch0,aElem2Node,aNodeBVH,
-                       list_ch0,nfael,aElemSur,aElemCenter);
+                       list_ch0,nfael,aElSuEl,aElemCenter);
   }
   list_ch0.clear();
   // -----------------------------
@@ -173,7 +173,7 @@ DFM2_INLINE void DevideElemAryConnex
   }
   else{ // 子ノード1にある三角形を再度分割
     DevideElemAryConnex(inode_ch1,aElem2Node,aNodeBVH,
-                       list_ch1,nfael,aElemSur,aElemCenter);
+                        list_ch1,nfael,aElSuEl,aElemCenter);
   }
 }
 
@@ -251,7 +251,7 @@ DFM2_INLINE void mark_child(std::vector<int>& aFlg,
 DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
 (std::vector<CNodeBVH2>& aNodeBVH,
  const unsigned int nfael,
- const std::vector<int>& aElemSur,
+ const std::vector<unsigned int>& aElSuEl,
  const std::vector<double>& aElemCenter)
 {
   aNodeBVH.clear();
@@ -263,7 +263,7 @@ DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
   aNodeBVH.resize(1);
   aNodeBVH[0].iparent = UINT_MAX;
   bvh::DevideElemAryConnex(0,aElem2Node,aNodeBVH,
-                      list,nfael,aElemSur,aElemCenter);
+                           list,nfael,aElSuEl,aElemCenter);
   return 0;
 }
 

@@ -371,12 +371,12 @@ int main(int argc,char* argv[])
         aElemCenter[itri*3+1] = p.y();
         aElemCenter[itri*3+2] = p.z();
       }
-      std::vector<int> aTriSurRel;
-      dfm2::ElSuEl_MeshElem(aTriSurRel,
+      std::vector<unsigned int> aTriSuTri;
+      dfm2::ElSuEl_MeshElem(aTriSuTri,
                             aTri.data(), aTri.size()/3,
                             delfem2::MESHELEM_TRI, aXYZ.size()/3);
       iroot_bvh = dfm2::BVHTopology_TopDown_MeshElem(aNodeBVH,
-                                                     3,aTriSurRel,aElemCenter);
+                                                     3,aTriSuTri,aElemCenter);
     }
     std::cout << "aNodeBVH.size(): " << aNodeBVH.size() << std::endl;
 //    aEdge.SetEdgeOfElem(aTri,(int)aTri.size()/3,3, np,false);

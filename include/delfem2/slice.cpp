@@ -53,7 +53,7 @@ DFM2_INLINE bool TraverseBoundaryLoop
  double height,
  const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri,
- const std::vector<int>& aTriSur)
+ const std::vector<unsigned int>& aTriSuTri)
 {
   cs.aTriInfo.clear();
   unsigned int iseg_next = iseg_ker;
@@ -67,7 +67,7 @@ DFM2_INLINE bool TraverseBoundaryLoop
                     aLevelVtx.data(),height);
     cs.aTriInfo.push_back(info);
     unsigned int iedge_next = info.iedB;
-    int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
+    int itri_next1 = aTriSuTri[jtri0*3+iedge_next];
     if( itri_next1 == -1 ){ break; } // open loop discard
     int iseg_next1 = Tri2Seg[itri_next1];
     assert( iseg_next1 != -1 );
@@ -97,8 +97,8 @@ DFM2_INLINE bool TraverseBoundaryLoop
     if( iflg == 5 ){ iedge_next = 2; } // 02
     if( iflg == 6 ){ iedge_next = 1; } // 12
     assert( iedge_next != -1 );
-    int itri_next1 = aTriSur[jtri0*6+iedge_next*2+0];
-    if( itri_next1 == -1 ){ break; } // reached boundary
+    unsigned int itri_next1 = aTriSuTri[jtri0*3+iedge_next];
+    if( itri_next1 == UINT_MAX ){ break; } // reached boundary
     const int iseg_next1 = Tri2Seg[itri_next1];
     assert( iseg_next1 != -1 );
     if( iseg_next1 == iseg_ker ) break;
@@ -235,7 +235,7 @@ void delfem2::Slice_MeshTri3D_Heights
  const std::vector<double>& aLevel,
  const std::vector<double>& aLevelVtx,
  const std::vector<unsigned int>& aTri,
- const std::vector<int>& aTriSur)
+ const std::vector<unsigned int>& aTriSuTri)
 {
   const std::size_t ntri = aTri.size()/3;
   const std::size_t nH = aLevel.size();
@@ -266,7 +266,7 @@ void delfem2::Slice_MeshTri3D_Heights
                                                          iseg_ker, ih, Tri2Seg,
                                                          aCST[ih], aLevel[ih],
                                                          aLevelVtx,
-                                                         aTri, aTriSur);
+                                                         aTri, aTriSuTri);
       if( !is_closed ){ continue; }
       aCS.push_back(cs);
     }
