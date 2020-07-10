@@ -235,8 +235,15 @@ DFM2_INLINE void JArray_Extend(
 
 // ---------------------------------------------------
 
-DFM2_INLINE void convert2Tri_Quad(std::vector<unsigned int>& aTri,
-                      const std::vector<unsigned int>& aQuad);
+DFM2_INLINE unsigned FindAdjEdgeIndex(
+    unsigned int itri,
+    unsigned int ied,
+    unsigned int jtri,
+    const unsigned int* aTri);
+
+DFM2_INLINE void convert2Tri_Quad(
+    std::vector<unsigned int>& aTri,
+    const std::vector<unsigned int>& aQuad);
 
 DFM2_INLINE void Convert2Tri_MeshMix(
     std::vector<unsigned int>& aTri,
@@ -299,8 +306,8 @@ DFM2_INLINE void JArray_ElSuP_MeshMix(
 // elem sur elem
 
 /**
- *
- * @param aElSurRel neighbouring element index (-1 for boundary) and the relationship to them
+ * compute adjacent element index for mesh element
+ * @param aElSuEl neighbouring element index (UINT_MAX for boundary)
  * @param aEl array of connectivity
  * @param nEl number of elements
  * @param nNoEl number of nodes in a element
@@ -311,7 +318,7 @@ DFM2_INLINE void JArray_ElSuP_MeshMix(
  * @param noelElemFace
  */
 DFM2_INLINE void ElSuEl_MeshElem(
-    std::vector<int> &aElSurRel,
+    std::vector<unsigned int> &aElSuEl,
     const unsigned int *aEl, unsigned int nEl, int nNoEl,
     const std::vector<unsigned int> &elsup_ind,
     const std::vector<unsigned int> &elsup,
@@ -319,8 +326,16 @@ DFM2_INLINE void ElSuEl_MeshElem(
     const int nnofa,
     const int (*noelElemFace)[4]);
 
+/**
+ * compute adjacent element index for mesh element
+ * @param aElSuEl adjacent element index for element edge/face (UINT_MAX if face/edge is on the boundary)
+ * @param aElem elemnet index
+ * @param nElem number of elements
+ * @param type type of element
+ * @param nXYZ number of points
+ */
 DFM2_INLINE void ElSuEl_MeshElem(
-    std::vector<int> &aElemSurRel,
+    std::vector<unsigned int> &aElSuEl,
     const unsigned int *aElem, size_t nElem,
     delfem2::MESHELEM_TYPE type,
     const size_t nXYZ);

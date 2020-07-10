@@ -207,15 +207,15 @@ void SetProblem(int iprob)
     aTetColor[it].setRandomVividColor();
   }
   
-  std::vector<int> aTetSurRel;
-  ElSuEl_MeshElem(aTetSurRel,
-                              aTet.data(), aTet.size()/4,
-                              delfem2::MESHELEM_TET,
-                              aXYZ.size()/3);
+  std::vector<unsigned int> aTetSuTet;
+  ElSuEl_MeshElem(aTetSuTet,
+                  aTet.data(), aTet.size()/4,
+                  delfem2::MESHELEM_TET,
+                  aXYZ.size()/3);
   aTetSurface.clear();
   for(size_t it=0;it<aTet.size()/4;++it){
     for(int ift=0;ift<4;++ift){
-      if( aTetSurRel[it*8+ift*2+0] != -1 ){ continue; }
+      if( aTetSuTet[it*4+ift] != UINT_MAX ){ continue; }
       aTetSurface.push_back(it);
       aTetSurface.push_back(ift);
     }
