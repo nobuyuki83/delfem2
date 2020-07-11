@@ -11,6 +11,7 @@
 #include <stack>
 #include <set>
 #include <iostream>
+#include <climits>
 
 #include "delfem2/mshtopo.h"
 
