@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <climits>
 
 #include "delfem2/slice.h"
 
