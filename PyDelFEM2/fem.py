@@ -13,7 +13,10 @@ from .c_core import cppAddMasterSlavePattern, matrixSquareSparse_setPattern, \
   cppMatSparse_ScaleBlkLen_LeftRight
 from .c_core import cppPrecILU_SetPattern_ILUk
 from .c_core import \
-  linearSystem_setMasterSlave, linsys_solve_pcg, masterSlave_distributeValue, linsys_solve_bicgstab
+  linearSystem_setMasterSlave, \
+  linsys_solve_pcg, \
+  masterSlave_distributeValue, \
+  linsys_solve_bicgstab
 from .c_core import \
   cppFEM_Merge_PointMass, \
   cppFEM_Merge_PointContact, \
