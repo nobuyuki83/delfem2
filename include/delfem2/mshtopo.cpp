@@ -1508,7 +1508,7 @@ void delfem2::SubdivTopo_MeshHex
     for(unsigned int ih=0;ih<(unsigned int)nHex0;++ih){
       for(int ifh=0;ifh<6;++ifh){
         unsigned int jh0 = aHexSuHex0[ih*6+ifh];
-        if( jh0!=UINT_MAX && (int)ih>jh0 ) continue;
+        if( jh0!=UINT_MAX && ih>jh0 ) continue;
         for(int inofa=0;inofa<4;++inofa){
           int inoel0 = noelElemFace_Hex[ifh][inofa];
           unsigned int igp0 = aHex0[ih*8+inoel0];
