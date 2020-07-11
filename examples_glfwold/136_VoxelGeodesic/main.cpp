@@ -6,6 +6,7 @@
  */
 
 #include <random>
+#include <climits>
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridvoxel.h"

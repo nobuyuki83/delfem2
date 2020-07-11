@@ -80,8 +80,8 @@ void Hoge(){
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
-  std::vector<int> aTriSurRel;
-  ElSuEl_MeshElem(aTriSurRel,
+  std::vector<unsigned int> aTriSuTri;
+  ElSuEl_MeshElem(aTriSuTri,
                   aTri.data(), aTri.size()/3, delfem2::MESHELEM_TRI, aXYZ.size()/3);
   
   
@@ -106,10 +106,10 @@ void Hoge(){
     Slice_MeshTri3D_Heights(aCS,
                             aHeight,
                             aHeightVtx,
-                            aTri,aTriSurRel);
+                            aTri,aTriSuTri);
   }
   MakeReebGraph(ReebGraphCS,
-                aCS, aTri, aTriSurRel);
+                aCS, aTri, aTriSuTri);
   assert( aCS.size() == ReebGraphCS.size() );
   
   aCG_CS.resize(aCS.size());

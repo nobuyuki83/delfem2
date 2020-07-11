@@ -45,14 +45,14 @@ int main(int argc,char* argv[])
         aElemCenter[itri*3+1] = p0.y();
         aElemCenter[itri*3+2] = p0.z();
       }
-      std::vector<int> aTriSurRel;
+      std::vector<unsigned int> aTriSuTri;
       dfm2::ElSuEl_MeshElem(
-          aTriSurRel,
+          aTriSuTri,
           aTri.data(), aTri.size()/3,
           delfem2::MESHELEM_TRI, aXYZ.size()/3);
       iroot_bvh = dfm2::BVHTopology_TopDown_MeshElem(
           aNodeBVH,
-          3,aTriSurRel,
+          3,aTriSuTri,
           aElemCenter);
       std::cout << "aNodeBVH.size(): " << aNodeBVH.size() << std::endl;
     }

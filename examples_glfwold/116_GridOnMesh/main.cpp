@@ -32,7 +32,7 @@ namespace dfm2 = delfem2;
 std::vector<double> aXYZ;
 std::vector<unsigned int> aTri;
 std::vector<double> aNorm;
-std::vector<int> aElSurRel;
+std::vector<unsigned int> aElSuTri;
 
 double pos2d_org_corner[4][2] = {
     {-0.2, -0.4},
@@ -69,11 +69,11 @@ void InitializeProblem() {
     std::vector<unsigned int> elsup_ind, elsup;
     dfm2::JArray_ElSuP_MeshElem(elsup_ind, elsup,
                                       aTri.data(), aTri.size() / 3, 3, aXYZ.size() / 3);
-    dfm2::ElSuEl_MeshElem(aElSurRel,
-                                      aTri.data(), aTri.size() / 3, 3,
-                                      elsup_ind, elsup,
-                                      3, 2, dfm2::noelElemFace_Tri);
-    assert(aElSurRel.size() == aTri.size() / 3 * 6);
+    dfm2::ElSuEl_MeshElem(aElSuTri,
+                          aTri.data(), aTri.size() / 3, 3,
+                          elsup_ind, elsup,
+                          3, 2, dfm2::noelElemFace_Tri);
+    assert(aElSuTri.size() == aTri.size());
   }
 }
 
