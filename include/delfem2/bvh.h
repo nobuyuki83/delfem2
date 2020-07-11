@@ -34,7 +34,7 @@ public:
 int BVHTopology_TopDown_MeshElem(
     std::vector<CNodeBVH2>& aNodeBVH,
     const unsigned int nfael,
-    const std::vector<int>& aElemSur,
+    const std::vector<unsigned int>& aElSuEl,
     const std::vector<double>& aElemCenter);
 
 /**

@@ -300,9 +300,9 @@ void DivideFace
 void BuildTriMesh
 (std::vector<double>& aXYZ,
  std::vector<unsigned int>& aTri,
- std::vector<int>& aTriSurRel,
+ std::vector<unsigned int>& aTriSuTri,
  std::vector<double>& aNorm,
- ////
+ //
  std::vector<CCad3D_Vertex>& aVertex,
  std::vector<CCad3D_Edge>& aEdge,
  std::vector<CCad3D_Face>& aFace,
@@ -343,23 +343,23 @@ public:
     aXYZ.clear();
     aTri.clear();
     aNorm.clear();
-    aTriSurRel.clear();
+    aTriSuTri.clear();
   }
   void Initialize_Torus(){
     Clear();
     AddTorus_XSym(aVertex,aEdge,aFace,elen);
     isym = 0;
-    BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
+    BuildTriMesh(aXYZ,aTri,aTriSuTri,aNorm, aVertex,aEdge,aFace, isym);
   }
   void Initialize_Sphere(){
     Clear();
     AddSphere_XSym(aVertex,aEdge,aFace,elen);
-    BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
+    BuildTriMesh(aXYZ,aTri,aTriSuTri,aNorm, aVertex,aEdge,aFace, isym);
   }
   void Initialize_Cube(){
     Clear();
     AddCube(aVertex, aEdge, aFace, elen);
-    BuildTriMesh(aXYZ, aTri, aTriSurRel, aNorm, aVertex, aEdge, aFace, isym);
+    BuildTriMesh(aXYZ, aTri, aTriSuTri, aNorm, aVertex, aEdge, aFace, isym);
   }
   void Pick
   (const CVec3d& src_pick, const CVec3d& dir_pick,
@@ -396,25 +396,25 @@ public:
     for(unsigned int ifc=0;ifc<aFace.size();ifc++){
       aFace[ifc].Initialize(aVertex,aEdge, elen); // ie0+0
     }
-    BuildTriMesh(aXYZ,aTri,aTriSurRel,aNorm, aVertex,aEdge,aFace, isym);
+    BuildTriMesh(aXYZ,aTri,aTriSuTri,aNorm, aVertex,aEdge,aFace, isym);
   }
 public:
-  ////////////////////////////////
+  // ----------------
   // fundamental data
   int isym;
   std::vector<CCad3D_Vertex> aVertex;
   std::vector<CCad3D_Edge> aEdge;
   std::vector<CCad3D_Face> aFace;
 
-  ////////////////////////////////
+  // ---------
   // aux data
   double elen;
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   std::vector<double> aNorm;
-  std::vector<int> aTriSurRel;
+  std::vector<unsigned int> aTriSuTri;
 
-  ////////////////////////////////
+  // ---------------
   // pick related
   int ivtx_picked;
   int ielem_vtx_picked;
@@ -442,7 +442,7 @@ public:
     EDIT_ADD_CROSS_SECTION,
   } imode_edit;
   
-  ////////////////////////////////
+  // ------------
   // viz related
   delfem2::CColor color_face;
   delfem2::CColor color_face_selected;

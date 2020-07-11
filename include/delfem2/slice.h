@@ -59,12 +59,13 @@ class CSliceTriMesh
     std::vector<CSegInfo> aTriInfo;
 };
 
-void Slice_MeshTri3D_Heights(std::vector<CSliceTriMesh>& aCS,
-                             ////
-                             const std::vector<double>& aHeight,
-                             const std::vector<double>& aHeightVtx,
-                             const std::vector<unsigned int>& aTri,
-                             const std::vector<int>& aTriSur);
+void Slice_MeshTri3D_Heights(
+    std::vector<CSliceTriMesh>& aCS,
+    //
+    const std::vector<double>& aHeight,
+    const std::vector<double>& aHeightVtx,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<unsigned int>& aTriSuTri);
 
 // T must have following functions
 //     int IndHeight() const;
@@ -75,7 +76,7 @@ void MakeReebGraph
 (std::vector< std::set<unsigned int> >& aConnectivity,
  const std::vector<T>& aCrossSection,
  const std::vector<unsigned int>& aTri,
- const std::vector<int>& aTriSur)
+ const std::vector<unsigned int>& aTriSuTri)
 {
   const unsigned int ntri = (unsigned int)aTri.size()/3;
   const size_t nCS = aCrossSection.size();
@@ -105,7 +106,7 @@ void MakeReebGraph
     for(unsigned int iseg=0;iseg<cs0.NumSeg();iseg++){
       unsigned int itri0 = cs0.IndTri_Seg(iseg);
       for(unsigned int iedtri=0;iedtri<3;iedtri++){
-        unsigned int jtri0 = aTriSur[itri0*6+iedtri*2+0];
+        unsigned int jtri0 = aTriSuTri[itri0*3+iedtri];
         if( Tri2HCS[jtri0] == -1 ){ continue; }
         unsigned int jhcs = Tri2HCS[jtri0];
         const T& cs1 = aCrossSection[jhcs];
@@ -131,7 +132,7 @@ void MakeReebGraph
       if( Tri2HCS[jtri0] != -1 ) continue;
       Tri2HCS[jtri0] = -2;
       for(unsigned int jedtri=0;jedtri<3;jedtri++){
-        unsigned int ktri0 = aTriSur[jtri0*6+jedtri*2+0];
+        unsigned int ktri0 = aTriSuTri[jtri0*3+jedtri];
         if(      Tri2HCS[ktri0] == -2 ) continue; // already studied
         else if( Tri2HCS[ktri0] == -1 ){ stackTri.push(ktri0); }
         else{

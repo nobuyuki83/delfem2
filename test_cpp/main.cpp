@@ -43,9 +43,10 @@ TEST(slice,test1){
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
            aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
-  std::vector<int> aTriSurRel;
-  dfm2::ElSuEl_MeshElem(aTriSurRel,
-                        aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI, aXYZ.size()/3);
+  std::vector<unsigned int> aTriSuTri;
+  dfm2::ElSuEl_MeshElem(aTriSuTri,
+                        aTri.data(), aTri.size()/3, dfm2::MESHELEM_TRI,
+                        aXYZ.size()/3);
   // ----------------------
   std::vector<double> aHeight;
   aHeight.push_back(-0.3);
@@ -67,9 +68,9 @@ TEST(slice,test1){
   delfem2::Slice_MeshTri3D_Heights(aCS,
                                    aHeight,
                                    aHeightVtx,
-                                   aTri,aTriSurRel);
+                                   aTri,aTriSuTri);
   MakeReebGraph(ReebGraphCS,
-                aCS, aTri, aTriSurRel);
+                aCS, aTri, aTriSuTri);
   EXPECT_EQ( aCS.size(), ReebGraphCS.size() );
   for(int ics=0;ics<ReebGraphCS.size();++ics){
     for(auto itr = ReebGraphCS[ics].begin();itr!=ReebGraphCS[ics].end();++itr){
