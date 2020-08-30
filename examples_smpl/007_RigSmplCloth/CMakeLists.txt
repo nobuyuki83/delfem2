@@ -19,7 +19,7 @@ endif()
 
 ####################################
 
-project(309_RigSmplCloth)
+project(007_RigSmplCloth)
 
 set(TEST_INPUTS         "../../test_inputs")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")

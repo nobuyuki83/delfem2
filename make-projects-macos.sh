@@ -139,6 +139,8 @@ cd ../../../
 pip3 uninstall PyDelFEM2 -y
 pip3 uninstall PyDelFEM2 -y
 pip3 install -e .
+
+pip3 install -U pytest
 pytest -s 
 #python3 setup.py install
 #python3 setup.py test

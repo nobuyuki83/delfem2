@@ -20,7 +20,7 @@ ENDIF()
 
 ####################################
 
-project(305_RigSmplIkArap)
+project(003_RigSmplIkArap)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

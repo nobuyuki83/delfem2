@@ -20,7 +20,7 @@ ENDIF()
 
 ####################################
 
-project(306_RigSmplIkImage)
+project(004_RigSmplIkImage)
 
 set(TEST_INPUTS         "../../test_inputs")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
