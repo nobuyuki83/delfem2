@@ -114,6 +114,26 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [137_VoxelLineIntersection](137_VoxelLineIntersection)
 <img src="137_VoxelLineIntersection/thumbnail.png" width=200 alt="137_VoxleLineIntersection">
 
+### [138_RigReadFileBiovision](138_RigReadFileBiovision)
+<img src="138_RigReadFileBiovision/thumbnail.png" width=200>
+
+### [139_RigReadFileGLTF](138_RigReadFileGLTF)
+<img src="139_RigReadFileGLTF/thumbnail.png" width=200>
+
+### [140_RigVoxelGeodesic](140_RigVoxelGeodesic)
+<img src="140_RigVoxelGeodesic/thumbnail.png" width=200>
+
+### [141_RigBendCapsule](141_RigBendCapsule)
+<img src="141_RigBendCapsule/thumbnail.png" width=200>
+
+
+
+
+
+
+
+
+
 
 ## Dynamic Triangle
 
@@ -131,46 +151,6 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ### [205_DynTri3SimpilfyQuadratic](205_DynTri3SimpilfyQuadratic)
 <img src="205_DynTri3SimpilfyQuadratic/thumbnail.png" width=200>
-
-
-
-## Demo Using Rigging (e.g., Biovision, SMPL Model)
-
-### [300_RigSmplArticulated](300_RigSmplArticulated)
-<img src="300_RigSmplArticulated/thumbnail.png" width=200>
-
-### [301_RigSmplTransfer](301_RigSmplTransfer)
-<img src="301_RigSmplTransfer/thumbnail.png" width=200>
-
-### [302_RigReadFileBiovision](302_RigReadFileBiovision)
-<img src="302_RigReadFileBiovision/thumbnail.png" width=200>
-
-### [304_RigSmplIk](304_RigSmplIk)
-<img src="304_RigSmplIk/thumbnail.png" width=200>
-
-### [305_RigSmplIkArap](305_RigSmplIkArap)
-<img src="305_RigSmplIkArap/thumbnail.png" width=200>
-
-### [306_RigSmplIkImage](306_RigSmplIkImage)
-<img src="306_RigSmplIkImage/thumbnail.png" width=200>
-
-### [307_RigSmplIkImageCloth](307_RigSmplIkImageCloth)
-<img src="307_RigSmplIkImageCloth/thumbnail.png" width=200>
-
-### [308_RigSmplUi](308_RigSmplUi)
-<img src="308_RigSmplUi/thumbnail.png" width=200>
-
-### [309_RigSmplCloth](309_RigSmplCloth)
-<img src="309_RigSmplCloth/thumbnail.png" width=200>
-
-### [310_RigSmplClothPose](310_RigSmplClothPose)
-<img src="310_RigSmplClothPose/thumbnail.png" width=200>
-
-### [311_RigBendCapsule](311_RigBendCapsule)
-<img src="311_RigBendCapsule/thumbnail.png" width=200>
-
-### [312_RigVoxelGeodesic](312_RigVoxelGeodesic)
-<img src="312_RigVoxelGeodesic/thumbnail.png" width=200>
 
 
 ## CAD

@@ -503,9 +503,8 @@ void InitializeProblem_Fluid()
     aBCFlag[ip0*3+1] = 1;
   }
   aBCFlag[0*3+2] = 1;
-  //////
+  // -------
   aMSFlag.clear();
-  //////
   for(int ip=0;ip<np;++ip){
 //    const double px = aXY1[ip*2+0];
     const double py = aXY1[ip*2+1];

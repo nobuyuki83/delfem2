@@ -12,12 +12,14 @@ IF(MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated-declarations -g")
+  set(CMAKE_CXX_FLAGS "-Wall -g \
+  -Wno-deprecated-declarations \
+  -Wunused-but-set-variable")
 ENDIF()
 
 ####################################
 
-project(302_RigReadBiovision)
+project(139_RigReadGltf)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -33,7 +35,7 @@ get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 # opengl
 find_package(OpenGL REQUIRED)
 
-# glfw
+# dfm2
 IF(USE_HEADERONLY)
   add_definitions(-DDFM2_HEADER_ONLY=ON)            
 else()
@@ -47,16 +49,21 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-####################################################
+###############################################
+
+set(3RD_PARTY           "../../3rd_party")
 
 include_directories(
   ${OPENGL_INCLUDE_DIR}
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}
 )
 
 add_executable(${PROJECT_NAME}
-    main.cpp
+  ${3RD_PARTY}/io_gltf.h                     
+  ${3RD_PARTY}/io_gltf.cpp
+  main.cpp
 )
 
 ###############################################
@@ -81,9 +88,13 @@ ELSEIF(UNIX)
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME} 
+  target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
   )
 ENDIF()
+
+
+
+

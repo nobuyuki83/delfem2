@@ -67,6 +67,19 @@ cmake -DUSE_HEADERONLY=OFF ..
 make
 cd ../../
 
+
+echo "################################"
+echo "build examples_smpl"
+echo "################################"
+
+cd examples_smpl
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+# cmake --build . # skip build to save time
+cd ../../
+
+
 echo "################################"
 echo "build examples_glut"
 echo "################################"

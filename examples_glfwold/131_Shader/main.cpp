@@ -138,6 +138,7 @@ int main(int argc,char* argv[])
   while (true)
   {
     int id_shapder_program;
+    /*
     {
       glfwSetWindowTitle(viewer.window, "phong");
       const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_adsphong.vert");
@@ -174,6 +175,20 @@ int main(int argc,char* argv[])
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }
+     */
+    {
+      glfwSetWindowTitle(viewer.window, "normalmap");
+      const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_normalmap.vert");
+      const std::string glslFrag = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_normalmap.frag");
+      setShaderProgram(id_shapder_program, glslVert,glslFrag);
+      for(int iframe=0;iframe<100;++iframe){
+        viewer.DrawBegin_oldGL();
+        myGlutDisplay(id_shapder_program);
+        viewer.DrawEnd_oldGL();
+        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+      }
+    }
+    /*
     {
       glfwSetWindowTitle(viewer.window, "texture");
       const std::string glslVert = LoadFile(std::string(PATH_INPUT_DIR)+"/glsl120_simpletexture.vert");
@@ -186,6 +201,7 @@ int main(int argc,char* argv[])
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }
+     */
   }
 EXIT:
   glfwDestroyWindow(viewer.window);
