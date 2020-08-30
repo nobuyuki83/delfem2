@@ -3,9 +3,9 @@
 
 <a href="http://doge.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg"></a> 
 
-| Linux | Linux | Windows |
-|----|----|----|
-| [![wercker status](https://app.wercker.com/status/03b6d924ec82270e22a04c3584fbf4de/s/master "wercker status")](https://app.wercker.com/project/byKey/03b6d924ec82270e22a04c3584fbf4de) | [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2) | ![](https://github.com/nobuyuki83/delfem2/workflows/CI/badge.svg) |
+| Linux (Travis-CI) | Windows (GitHub Action) |
+|----|----|
+| [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2) | ![](https://github.com/nobuyuki83/delfem2/workflows/CI/badge.svg) |
 
 
 
@@ -29,7 +29,7 @@ fem.ls.bc[npIdP] = 1
 fem.solve()
 field = dfm2.VisFEM_ColorContour(fem,"value")
 dfm2.gl._glfw.winDraw3d([field])
- ```
+```
 The result of this code woud be the following window
 
 ![Poisson](docs/imgs/poisson.png)
@@ -48,6 +48,7 @@ There are currently no tutorial available for this library. To understand the co
 + C++ examples
   + [delfem2/examples_glfwold](examples_glfwold): examples with the legacy OpenGL
   + [delfem2/examples_glfwnew](examples_glfwnew):  examples with the modern OpenGL
+  + [delfem2/examples_smpl](delfem2/examples_smpl): example using SMPL model
   + [delfem2/examples_cuda](examples_cuda): examples using cuda
 + C++ test:
   + [delfem2/test_cpp](test_cpp): tests using C++

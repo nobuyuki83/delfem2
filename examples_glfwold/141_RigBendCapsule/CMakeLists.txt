@@ -16,7 +16,7 @@ ENDIF()
 
 ##########################################
 
-project(311_RigBendCapsule)
+project(141_RigBendCapsule)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

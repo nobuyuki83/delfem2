@@ -52,7 +52,10 @@ add_subdirectory(134_Primitives)
 add_subdirectory(135_GlBuffer)
 add_subdirectory(136_VoxelGeodesic)
 add_subdirectory(137_VoxelLineIntersection)
-
+add_subdirectory(138_RigReadFileBiovision)
+add_subdirectory(139_RigReadFileGLTF)
+add_subdirectory(140_RigVoxelGeodesic)
+add_subdirectory(141_RigBendCapsule)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)
@@ -60,21 +63,6 @@ add_subdirectory(202_DynTri2dRemesh)
 add_subdirectory(203_DynTri3dEdgeCollapses)
 add_subdirectory(204_DynTetTetrahedralization)
 add_subdirectory(205_DynTri3SimpilfyQuadratic)
-
-# rigging
-add_subdirectory(300_RigSmplArticulated)
-add_subdirectory(301_RigSmplTransfer)
-add_subdirectory(302_RigReadFileBiovision)
-add_subdirectory(303_RigReadFileGLTF)
-add_subdirectory(304_RigSmplIk)
-add_subdirectory(305_RigSmplIkArap)
-add_subdirectory(306_RigSmplIkImage)
-add_subdirectory(307_RigSmplIkImageCloth)
-add_subdirectory(308_RigSmplUi)
-add_subdirectory(309_RigSmplCloth)
-add_subdirectory(310_RigSmplClothPose)
-add_subdirectory(311_RigBendCapsule)
-add_subdirectory(312_RigVoxelGeodesic)
 
 # cad
 add_subdirectory(500_Cad2d)
