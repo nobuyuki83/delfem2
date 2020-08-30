@@ -107,7 +107,7 @@ class WindowGLFW:
     glfw.set_cursor_pos_callback(self.win, self.motion)
     glfw.set_key_callback(self.win, self.keyinput)
 #    glfw.set_window_size_callback(self.win, self.window_size)
-    iframe:int = 0
+    iframe = 0
     while not glfw.window_should_close(self.win):
       gl.glClearColor(self.color_bg[0], self.color_bg[1], self.color_bg[2], 1.0)
       gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
