@@ -96,8 +96,9 @@ script: |
   # ---------------------
   # build python module
   pyenv versions
-  pyenv global 3.7
-  python --version  
+  pyenv install 3.7.1
+  pyenv global 3.7.1
+  python3 --version  
 
   cd src_pybind/core
   mkdir buildMake
