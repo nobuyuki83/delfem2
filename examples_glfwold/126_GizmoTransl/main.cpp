@@ -5,20 +5,13 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <iostream>
-#include <math.h>
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/vec3.h"
-#include "delfem2/quat.h"
-#include "delfem2/mat4.h"
-#include "delfem2/geo3_v23m34q.h"
 // ---
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/gizmo_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
@@ -36,10 +29,10 @@ int main(int argc,char* argv[])
       delfem2::Normalize_Points3(aXYZ);
     }
     //
-    virtual void mouse_press(const float src[3], const float dir[3]){
+    void mouse_press(const float src[3], const float dir[3]) override{
       gizmo_trnsl.Pick(true, src, dir, 0.1);
     }
-    virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       gizmo_trnsl.Drag(src0, src1, dir);
     }
     //

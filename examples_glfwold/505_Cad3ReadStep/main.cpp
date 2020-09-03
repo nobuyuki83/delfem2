@@ -1,6 +1,5 @@
 #include <iostream>
-#include <fstream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/pgeo.h"
 #include "delfem2/funcs.h"
 

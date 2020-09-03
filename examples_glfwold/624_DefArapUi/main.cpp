@@ -5,11 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <iostream>
-#include <cmath>
 #include "delfem2/defarap.h"
 #include "delfem2/gizmo_geo3.h"
-#include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
 #include "delfem2/vec3.h"
@@ -20,8 +17,6 @@
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/gizmo_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/color_glold.h"
-#include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
@@ -78,15 +73,15 @@ int main(int argc,char* argv[])
       }
       def0.Init(aXYZ0, aTri, true);
     }
-    virtual void mouse_press(const float src[3], const float dir[3]){
+    void mouse_press(const float src[3], const float dir[3]) override{
       giz1.Pick(src, dir);
     }
-    virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       giz1.Drag(src0, src1, dir);
     }
-    virtual void key_release(int key, int mods){
+    void key_release(int key, int mods) override{
     }
-    virtual void key_press(int key, int mods){
+    void key_press(int key, int mods) override{
       if( key == GLFW_KEY_R ){ giz1.igizmo_mode = 1; }
       if( key == GLFW_KEY_G ){ giz1.igizmo_mode = 0; }
     }

@@ -5,8 +5,6 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <iostream>
-#include <cmath>
 #include "delfem2/vec3.h"
 #include "delfem2/mat3.h"
 #include "delfem2/geo3_v23m34q.h"
@@ -47,7 +45,7 @@ public:
 class CRigidBodyInertia
 {
 public:
-  double mass;
+  double mass = 1.0;
   CMat3d Irot;
   CMat3d invIrot;
 };

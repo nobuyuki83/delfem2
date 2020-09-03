@@ -54,7 +54,7 @@ void StepTime()
 
 // -------------------------------------
 
-void myGlutDisplay(void)
+void myGlutDisplay()
 {
   ::glPointSize(5);
   ::glLineWidth(1);
