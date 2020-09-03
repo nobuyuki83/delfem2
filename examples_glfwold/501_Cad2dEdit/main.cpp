@@ -29,10 +29,10 @@ int main(int argc,char* argv[])
       cad.AddPolygon(std::vector<double>(poly,poly+8));
     }
     //
-    virtual void mouse_press(const float src[3], const float dir[3]){
+    void mouse_press(const float src[3], const float dir[3]) override{
       cad.Pick(src[0], src[1], this->nav.camera.view_height);
     }
-    virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       cad.DragPicked(src1[0], src1[1], src0[0], src0[1]);
     }
     //

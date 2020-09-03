@@ -32,7 +32,7 @@ int main(int argc,char* argv[])
   std::vector<unsigned int> aTri1;
   std::vector<double> aXY1;
   std::vector< std::vector<unsigned int> > aaIP;
-  int ipCenter = -1;
+  int ipCenter;
   {
     dfm2::CCad2D cad2d;
     {
@@ -155,5 +155,4 @@ int main(int argc,char* argv[])
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);
-  return 0;
 }

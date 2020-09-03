@@ -35,12 +35,12 @@ void FindNearestOrientation(dfm2::CVec3d& d0,
   const dfm2::CVec3d ad0[4] = { o0, p0, -o0, -p0 };
   const dfm2::CVec3d ad1[2] = { o1, p1 };
   double dot_max = -2;
-  for(int j=0;j<2;++j){
-    for(int i=0;i<4;++i){
-      const double dot = ad0[i]*ad1[j];
+  for(const auto & j : ad1){
+    for(const auto & i : ad0){
+      const double dot = i*j;
       if( dot < dot_max ){ continue; }
-      d0 = ad0[i];
-      d1 = ad1[j];
+      d0 = i;
+      d1 = j;
       dot_max = dot;
     }
   }
