@@ -68,10 +68,10 @@ public:
     const unsigned int nvoxel = ndivx*ndivy*ndivz;
     aVal.assign(nvoxel,v);
   }
-  bool IsInclude(int ivx, int ivy, int ivz){
-    if( ivx<0 || ivx>=ndivx ){ return false; }
-    if( ivy<0 || ivy>=ndivy ){ return false; }
-    if( ivz<0 || ivz>=ndivz ){ return false; }
+  bool IsInclude(unsigned int ivx, unsigned int ivy, unsigned int ivz){
+    if( ivx>=ndivx ){ return false; }
+    if( ivy>=ndivy ){ return false; }
+    if( ivz>=ndivz ){ return false; }
     return true;
   }
   void Set(int ivx, int ivy, int ivz, int isVox){

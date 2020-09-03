@@ -137,7 +137,7 @@ DFM2_INLINE void DevideElemAryConnex
         const unsigned int jtri = aElSuEl[itri0*nfael+ifael];
         if( jtri == UINT_MAX ) continue;
         if( aElem2Node[jtri] != iroot_node ) continue;
-        assert( jtri < (int)aElemCenter.size() );
+        assert( jtri < aElemCenter.size() );
         double det = DetSide(aElemCenter.data()+jtri*3,org,dir);
         if( det < 0 ) continue;
         stack.push(jtri);
