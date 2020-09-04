@@ -24,6 +24,7 @@ jobs:
         curl -X POST \
         --header 'accept: application/vnd.github.v3+json' \
         --data '{"event_type": "foo"}' \
+        -u ${{ secrets.PERSONAL_ACCESS_TOKEN }} \
         https://api.github.com/repos/nobuyuki83/pydelfem2/dispatches
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
