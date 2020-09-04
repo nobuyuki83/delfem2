@@ -21,11 +21,10 @@ jobs:
     steps:
     - name: git setting
       run: |
-        curl -X POST \
+        curl -X POST https://api.github.com/repos/nobuyuki83/pydelfem2/dispatches \
         --header 'accept: application/vnd.github.v3+json' \
         --data '{"event_type": "foo"}' \
-        -u ${{ secrets.PERSONAL_ACCESS_TOKEN }} \
-        https://api.github.com/repos/nobuyuki83/pydelfem2/dispatches
+        -u ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: checkout python binding    
