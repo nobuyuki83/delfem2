@@ -28,8 +28,8 @@ jobs:
         
     - name: git setting
       run: |
-        git config --local user.email n.umetani@gmail.com
-        git config --local user.name nobuyuki83
+        git config --global user.email n.umetani@gmail.com
+        git config --global user.name nobuyuki83
 
     - name: build_python
       run: |
