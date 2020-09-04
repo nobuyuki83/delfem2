@@ -32,6 +32,8 @@ jobs:
         git config --global user.name nobuyuki83
 
     - name: build_python
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd pydelfem2
         git submodule update --init --recursive    
@@ -39,9 +41,11 @@ jobs:
         git pull origin master
         cd ..
         ls -al
+        echo ${GITHUB_REPOSITORY}
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/pydelfem2.git
         git status
         git add .
         git commit -m "updated cpp delfem2"
-        git push
+        git push 
 
 
