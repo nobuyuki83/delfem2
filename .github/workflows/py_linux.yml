@@ -42,7 +42,7 @@ jobs:
         cd ..
         ls -al
         echo ${GITHUB_REPOSITORY}
-        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/pydelfem2.git
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/nobuyuki83/pydelfem2
         git status
         git add .
         git commit -m "updated cpp delfem2"
