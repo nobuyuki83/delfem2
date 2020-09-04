@@ -17,6 +17,31 @@ DelFEM2 is a end-to-end framework for geometry processing and FEM simulation cov
 The implementation is based on my old open source project [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
 
+
+# Features
+
+- Built in mesh generation
+	- 2D triangle mesh (Delaunay triangulation)
+	- 3D tetrahedra mesh (Isosurface stuffing)
+	- Dynamic remesh
+- Built in sparse linar solver
+	- Congugate gradient method
+	- BiCGStab method
+	- ILU(0) preconditioner
+- Supports many equations on many types of mesh
+	- Poission's equation (Tri P1, Tet P1)
+	- Diffusion equation (Tri P1, Tet P1)
+	- Linear solid equation (Tri P1, Tet P1)
+	- Simulation of cloth (Tri P1)
+	- Storkes equation (Tri P1, Tet P1)
+	- Navier-Storkes equation with PSPG-SUPG stabilization (Tri P1)
+- Visualization
+	- color contour
+	- mesh displacement
+- IO
+	- VTK file output
+
+
 ***
 # Manual &  Tutorial
 
@@ -31,6 +56,7 @@ There are currently no tutorial available for this library. To understand the co
   + [delfem2/test_cpp](test_cpp): tests using C++
   + [delfem2/test_cuda](test_cuda) : test using cuda
 
+See [docs/coding.md](docs/coding.md) for the coding convention. 
 
 
 ***
@@ -64,12 +90,30 @@ This command downloads all the external third party codes into the directory ```
 These projects are awesome and I would like to express huge  appreciation for contributers of these projects.
 
 
+***
+# Use DelFEM2 from Python
 
-
+there is a python binding of DelFEM2 called [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
 
 
 ***
+# Licence & Copyright
 
+DelFEM2 is distributed under the [MIT licence](https://github.com/nobuyuki83/delfem2/blob/master/LICENSE). 
+
+In a nut shell, it is free to use/distribute this software commercially for any purpose. But please always keep the copyright notice below and the MIT lisence statement.
+
+
+	Copyright (C) Nobuyuki Umetani 2020
+
+
+***
+# Contact
+
+DelFEM2 is currently developed and maintained by [Nobuyuki Umetani](http://www.nobuyuki-umetani.com/). If you have questions or comments please [contact via email](mailto:n.umetani@gmail.com).
+
+
+***
 # Acknowledgement
 
 For the testing, DelFEM2 used following data, images and 3D models:
