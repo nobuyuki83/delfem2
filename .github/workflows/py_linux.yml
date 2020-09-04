@@ -25,6 +25,8 @@ jobs:
       with: 
         repository: nobuyuki83/pydelfem2
         path: pydelfem2
+
+    - name: build_python
       run: |
         cd pydelfem2
         git submodule update --init --recursive    
