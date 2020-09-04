@@ -5,7 +5,7 @@
 
 | Linux (Travis-CI) | Windows (GitHub Action) |
 |----|----|
-| [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2) | ![](https://github.com/nobuyuki83/delfem2/workflows/CI/badge.svg) |
+| [![travis_status](https://travis-ci.org/nobuyuki83/delfem2.svg?branch=master)](https://travis-ci.org/nobuyuki83/delfem2) | ![](https://github.com/nobuyuki83/delfem2/workflows/CI_Windows/badge.svg) |
 
 
 
