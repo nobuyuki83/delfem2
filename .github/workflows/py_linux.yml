@@ -25,6 +25,11 @@ jobs:
       with: 
         repository: nobuyuki83/pydelfem2
         path: pydelfem2
+        
+    - name: git setting
+      run: |
+        git config --local user.email n.umetani@gmail.com
+        git config --local user.name nobuyuki83
 
     - name: build_python
       run: |
