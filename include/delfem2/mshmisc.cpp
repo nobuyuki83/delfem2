@@ -19,10 +19,12 @@
 namespace delfem2 {
 namespace mshmisc {
 
+//! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
 DFM2_INLINE double Length3(const double p[3]){
   return sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
 
+//! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
 DFM2_INLINE double Length3(const float p[3]){
   return sqrtf(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 }
@@ -67,10 +69,12 @@ DFM2_INLINE void MatVec3(T y[3],
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
 }
 
+//! @details we have "float" and "double" versions Distance3 because of sqrtf and sqrt
 DFM2_INLINE double Distance3(const double p0[3], const double p1[3]) {
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
 
+//! @details we have "float" and "double" versions Distance3 because of sqrtf and sqrt
 DFM2_INLINE float Distance3(const float p0[3], const float p1[3]) {
   return sqrtf( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) + (p1[2]-p0[2])*(p1[2]-p0[2]) );
 }
@@ -79,7 +83,7 @@ DFM2_INLINE double Distance2D(const double p0[3], const double p1[3]){
   return sqrt( (p1[0]-p0[0])*(p1[0]-p0[0]) + (p1[1]-p0[1])*(p1[1]-p0[1]) );
 }
 
-DFM2_INLINE double Dot(const double p0[3], const double p1[3]){
+DFM2_INLINE double Dot3(const double p0[3], const double p1[3]){
   return p0[0]*p1[0] + p0[1]*p1[1] + p0[2]*p1[2];
 }
 
@@ -400,15 +404,15 @@ void delfem2::GetCenterWidthLocal(
   const int nno = (int)aXYZ.size()/3;
   if (nno==0){ lcx=lcy=lcz=0; lwx=lwy=lwz=1; return; }
   const double p0[3] = {aXYZ[0],aXYZ[1],aXYZ[2]};
-  double x_min = mshmisc::Dot(p0,lex); double x_max = x_min;
-  double y_min = mshmisc::Dot(p0,ley); double y_max = y_min;
-  double z_min = mshmisc::Dot(p0,lez); double z_max = z_min;
+  double x_min = mshmisc::Dot3(p0,lex); double x_max = x_min;
+  double y_min = mshmisc::Dot3(p0,ley); double y_max = y_min;
+  double z_min = mshmisc::Dot3(p0,lez); double z_max = z_min;
   for (int ino = 0; ino<nno; ++ino){
     const double pi[3] = {aXYZ[ino*3+0],aXYZ[ino*3+1],aXYZ[ino*3+2]};
     updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                    mshmisc::Dot(pi,lex),
-                    mshmisc::Dot(pi,ley),
-                    mshmisc::Dot(pi,lez));
+                    mshmisc::Dot3(pi,lex),
+                    mshmisc::Dot3(pi,ley),
+                    mshmisc::Dot3(pi,lez));
   }
   CenterWidth_MinMaxXYZ(lcx,lcy,lcz, lwx,lwy,lwz,
                            x_min,x_max, y_min,y_max, z_min,z_max);
@@ -1176,11 +1180,11 @@ DFM2_INLINE double delfem2::SolidAngleTri3D
   double l2 = mshmisc::Length3(v2);
   double l3 = mshmisc::Length3(v3);
   double crs_v1_v2[3]; mshmisc::Cross3D(crs_v1_v2,v1,v2);
-  double den = mshmisc::Dot(crs_v1_v2,v3);
+  double den = mshmisc::Dot3(crs_v1_v2,v3);
   double num = l1*l2*l3
-  +(mshmisc::Dot(v1,v2))*l3
-  +(mshmisc::Dot(v2,v3))*l1
-  +(mshmisc::Dot(v3,v1))*l2;
+  +(mshmisc::Dot3(v1,v2))*l3
+  +(mshmisc::Dot3(v2,v3))*l1
+  +(mshmisc::Dot3(v3,v1))*l2;
   double tho = den/num;
   double v = atan(tho);
   if (v<0){ v += 2*M_PI; }
@@ -1271,6 +1275,27 @@ void delfem2::MassPoint_Tri2D
     aMassMatrixLumped[i0] += rho*a012/3.0;
     aMassMatrixLumped[i1] += rho*a012/3.0;
     aMassMatrixLumped[i2] += rho*a012/3.0;
+  }
+}
+
+void delfem2::MassPoint_Tri3D(
+    double* aMass,
+    double rho,
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTri, unsigned int nTri)
+{
+  for(unsigned int ip=0;ip<nXYZ;++ip){ aMass[ip] = 0.0; }
+  for(unsigned int it=0;it<nTri;++it) {
+    const unsigned int i0 = aTri[it * 3 + 0];
+    const unsigned int i1 = aTri[it * 3 + 1];
+    const unsigned int i2 = aTri[it * 3 + 2];
+    const double a012 = mshmisc::TriArea3D(
+        aXYZ + i0 * 3,
+        aXYZ + i1 * 3,
+        aXYZ + i2 * 3);
+    aMass[i0] += rho * a012 / 3;
+    aMass[i1] += rho * a012 / 3;
+    aMass[i2] += rho * a012 / 3;
   }
 }
 
