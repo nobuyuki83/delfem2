@@ -3,6 +3,8 @@ echo "download & build submodules"
 echo "#################################"
 
 git submodule update --init --recursive
+git submodule foreach git pull origin master
+
 
 echo "################################"
 echo "build examples_glfwnew"

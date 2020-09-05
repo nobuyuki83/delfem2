@@ -128,7 +128,9 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
+### [142_BinaryClusteringPoints](142_BinaryClusteringPoints)
 
+<img src="142_BinaryClusteringPoints/thumbnail.png" width=200>
 
 
 

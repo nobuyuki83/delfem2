@@ -284,7 +284,7 @@ DFM2_INLINE void MassPoint_Tet3D(
 
 /**
  * @brief Compute mass of the points (lumped mass) for 2D triangle mesh
- * @param aMassMatrixLumped (out) this need to be allocated before in the size of nXY
+ * @param aMass (out) this need to be allocated before in the size of nXY
  * @details this is here because both "fem" and "pbd" use this function
  */
 DFM2_INLINE void MassPoint_Tri2D(
@@ -294,6 +294,16 @@ DFM2_INLINE void MassPoint_Tri2D(
     const double *aXY, unsigned int nXY,
     const unsigned int *aTri, unsigned int nTri);
 
+/**
+ * @brief Compute mass of the points (lumped mass) for 3D triangle mesh
+ * @param aMass (out) this need to be allocated before in the size of nXY
+ * @details this is here because both "fem" and "pbd" use this function
+ */
+DFM2_INLINE void MassPoint_Tri3D(
+    double* aMass,
+    double rho,
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTri, unsigned int nTri);
 
 DFM2_INLINE void LaplacianSmoothing
  (std::vector<double>& aXYZ,

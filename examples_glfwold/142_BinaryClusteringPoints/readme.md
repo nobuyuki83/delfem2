@@ -1,11 +1,12 @@
-### 124_4RotSymField
+### 142_BinaryClusteringPoints
+
 ![](thumbnail.png)
 
 
 
 
 
-This is implementation of a part of the following paper:
+The implementation of a part of the following paper:
 
 ```
 Wenzel Jakob, Marco Tarini, Daniele Panozzo, and Olga Sorkine-Hornung. 2015. 
