@@ -14,32 +14,10 @@
 DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, variational mesh deformer, and visualization. DelFEM2 is aiming to be an interactive digital engineering and authoring tool.
 
 
+There is a python binding available: [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
+
 The implementation is based on my old open source project [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
-
-
-# Features
-
-- Built in mesh generation
-	- 2D triangle mesh (Delaunay triangulation)
-	- 3D tetrahedra mesh (Isosurface stuffing)
-	- Dynamic remesh
-- Built in sparse linar solver
-	- Congugate gradient method
-	- BiCGStab method
-	- ILU(0) preconditioner
-- Supports many equations on many types of mesh
-	- Poission's equation (Tri P1, Tet P1)
-	- Diffusion equation (Tri P1, Tet P1)
-	- Linear solid equation (Tri P1, Tet P1)
-	- Simulation of cloth (Tri P1)
-	- Storkes equation (Tri P1, Tet P1)
-	- Navier-Storkes equation with PSPG-SUPG stabilization (Tri P1)
-- Visualization
-	- color contour
-	- mesh displacement
-- IO
-	- VTK file output
 
 
 ***
@@ -88,13 +66,6 @@ This command downloads all the external third party codes into the directory ```
 - stb_image.h
 
 These projects are awesome and I would like to express huge  appreciation for contributers of these projects.
-
-
-***
-# Use DelFEM2 from Python
-
-there is a python binding of DelFEM2 called [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
-
 
 ***
 # Licence & Copyright
