@@ -84,6 +84,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/gridvoxel.h                 ${DELFEM2_INC}/gridvoxel.cpp
     ${DELFEM2_INC}/gridcube.h                  ${DELFEM2_INC}/gridcube.cpp
     ${DELFEM2_INC}/femrod.h                    ${DELFEM2_INC}/femrod.cpp    
+    ${DELFEM2_INC}/clusterpoints.h             ${DELFEM2_INC}/clusterpoints.cpp    
     ${DELFEM2_INC}/srchbi_v3bvh.h
     ${DELFEM2_INC}/srch_v3bvhmshtopo.h
     ${DELFEM2_INC}/cloth_internal.h
