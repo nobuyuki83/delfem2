@@ -111,11 +111,11 @@ DFM2_INLINE void DrawSingleTri3D_FaceNorm
   const unsigned int* aIndXYZ,
   const double* pUV)
 {
-  const int i0 = aIndXYZ[0]; //assert( i0>=0&&i0<(int)aXYZ.size()/3 );
-  const int i1 = aIndXYZ[1]; //assert( i1>=0&&i1<(int)aXYZ.size()/3 );
-  const int i2 = aIndXYZ[2]; //assert( i2>=0&&i2<(int)aXYZ.size()/3 );
-  if( i0 == -1 ){
-    assert(i1==-1); assert(i2==-1);
+  const unsigned int i0 = aIndXYZ[0]; //assert( i0>=0&&i0<(int)aXYZ.size()/3 );
+  const unsigned int i1 = aIndXYZ[1]; //assert( i1>=0&&i1<(int)aXYZ.size()/3 );
+  const unsigned int i2 = aIndXYZ[2]; //assert( i2>=0&&i2<(int)aXYZ.size()/3 );
+  if( i0 == UINT_MAX ){
+    assert(i1==UINT_MAX); assert(i2==UINT_MAX);
     return;
   }
   const double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
@@ -123,11 +123,11 @@ DFM2_INLINE void DrawSingleTri3D_FaceNorm
   const double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
   double un[3], area; UnitNormalAreaTri3D(un,area, p0,p1,p2);
   ::glNormal3dv(un);
-  if( pUV != 0 ){ ::glTexCoord2d(pUV[0],pUV[1]); }
+  if( pUV != nullptr ){ ::glTexCoord2d(pUV[0],pUV[1]); }
   ::glVertex3dv(p0);
-  if( pUV != 0 ){ ::glTexCoord2d(pUV[2],pUV[3]); }
+  if( pUV != nullptr ){ ::glTexCoord2d(pUV[2],pUV[3]); }
   ::glVertex3dv(p1);
-  if( pUV != 0 ){ ::glTexCoord2d(pUV[4],pUV[5]); }
+  if( pUV != nullptr ){ ::glTexCoord2d(pUV[4],pUV[5]); }
   ::glVertex3dv(p2);
 }
 
@@ -136,12 +136,12 @@ DFM2_INLINE void DrawSingleQuad3D_FaceNorm
   const unsigned int* aIndXYZ,
   const double* pUV)
 {
-  const int i0 = aIndXYZ[0]; //assert( i0 >= 0 && i0 < (int)aXYZ.size()/3 );
-  const int i1 = aIndXYZ[1]; //assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
-  const int i2 = aIndXYZ[2]; //assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
-  const int i3 = aIndXYZ[3]; //assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
-  if( i0 == -1 ){
-    assert(i1==-1 && i2==-1 && i3 ==-1);
+  const unsigned int i0 = aIndXYZ[0]; //assert( i0 >= 0 && i0 < (int)aXYZ.size()/3 );
+  const unsigned int i1 = aIndXYZ[1]; //assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
+  const unsigned int i2 = aIndXYZ[2]; //assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
+  const unsigned int i3 = aIndXYZ[3]; //assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
+  if( i0 == UINT_MAX ){
+    assert(i1==UINT_MAX && i2==UINT_MAX && i3==UINT_MAX);
     return;
   }
   const double p0[3] = {aXYZ[i0*3+0], aXYZ[i0*3+1], aXYZ[i0*3+2]};
@@ -150,25 +150,25 @@ DFM2_INLINE void DrawSingleQuad3D_FaceNorm
   const double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
   {
     double un0[3], area; UnitNormalAreaTri3D(un0,area,  p0, p1, p3);
-    if( pUV != 0 ){ ::glTexCoord2d(pUV[0],pUV[1]); }
+    if( pUV != nullptr ){ ::glTexCoord2d(pUV[0],pUV[1]); }
     ::glNormal3dv(un0);
     ::glVertex3dv(p0);
   }
   {
     double un1[3], area; UnitNormalAreaTri3D(un1,area,  p0, p1, p2);
-    if( pUV != 0 ){ ::glTexCoord2d(pUV[2],pUV[3]); }
+    if( pUV != nullptr ){ ::glTexCoord2d(pUV[2],pUV[3]); }
     ::glNormal3dv(un1);
     ::glVertex3dv(p1);
   }
   {
     double un2[3], area; UnitNormalAreaTri3D(un2,area,  p1, p2, p3);
-    if( pUV != 0 ){ ::glTexCoord2d(pUV[4],pUV[5]); }
+    if( pUV != nullptr ){ ::glTexCoord2d(pUV[4],pUV[5]); }
     ::glNormal3dv(un2);
     ::glVertex3dv(p2);
   }
   {
     double un3[3], area; UnitNormalAreaTri3D(un3,area,  p2, p3, p0);
-    if( pUV != 0 ){ ::glTexCoord2d(pUV[6],pUV[7]); }
+    if( pUV != nullptr ){ ::glTexCoord2d(pUV[6],pUV[7]); }
     ::glNormal3dv(un3);
     ::glVertex3dv(p3);
   }
@@ -194,7 +194,6 @@ DFM2_INLINE void Draw_SurfaceMeshEdge
   }
   ::glEnd();
   ::glDisableClientState(GL_VERTEX_ARRAY);
-  return;
 }
 
 DFM2_INLINE void Draw_SurfaceMeshFace
@@ -205,8 +204,7 @@ DFM2_INLINE void Draw_SurfaceMeshFace
   ::glVertexPointer(3 , GL_DOUBLE , 0 , paXYZ);
   ::glDrawElements(GL_TRIANGLES , nTri*3 , GL_UNSIGNED_INT , paTri);
   ::glDisableClientState(GL_VERTEX_ARRAY);
-  return;
-  /*
+ /*
    /////
    ::glColor3d(1,1,1);
    ::glBegin(GL_TRIANGLES);
@@ -292,7 +290,7 @@ DFM2_INLINE void DrawMeshTriMap3D_Edge
 }
 
 
-DFM2_INLINE void ShadowMatrix(float m[16], float plane[4], float lpos[3])
+DFM2_INLINE void ShadowMatrix(float m[16], const float plane[4], float lpos[3])
 {
   float dot = plane[0]*lpos[0] + plane[1]*lpos[1] + plane[2]*lpos[2] + plane[3];
   for(int j=0; j<4;++j){
@@ -1285,7 +1283,8 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
  const std::vector<unsigned int>& aElemInd,
  const std::vector<unsigned int>& aElem)
 {
-  const int nelem = aElemInd.size()-1;
+  assert( !aElemInd.empty() );
+  const unsigned int nelem = aElemInd.size()-1;
   for(int ielem=0;ielem<nelem;++ielem){
     const int ielemind0 = aElemInd[ielem];
     const int ielemind1 = aElemInd[ielem+1];
@@ -1609,6 +1608,30 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
                      aTri.data(), aTri.size()/3);
 }
 
+
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceColor(
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXY,
+    const std::vector<double>& aColor)
+{
+  const std::size_t ntri = aTri.size()/3;
+  ::glBegin(GL_TRIANGLES);
+  for(unsigned int itri=0;itri<ntri;itri++){
+    const int i0 = aTri[itri*3+0];
+    const int i1 = aTri[itri*3+1];
+    const int i2 = aTri[itri*3+2];
+    const double p0[2] = { aXY[i0*2+0], aXY[i0*2+1] };
+    const double p1[2] = { aXY[i1*2+0], aXY[i1*2+1] };
+    const double p2[2] = { aXY[i2*2+0], aXY[i2*2+1] };
+    ::glColor3dv(aColor.data()+i0*3);
+    ::glVertex2dv( p0 );
+    ::glColor3dv(aColor.data()+i1*3);
+    ::glVertex2dv( p1 );
+    ::glColor3dv(aColor.data()+i2*3);
+    ::glVertex2dv( p2 );
+  }
+  ::glEnd();
+}
 
 
 // ===============================================================
