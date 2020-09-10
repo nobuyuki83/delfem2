@@ -134,6 +134,16 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
+### [143_Image2MeshInterpolation](143_Image2MeshInterpolation)
+
+<img src="143_Image2MeshInterpolation/thumbnail.png" width=200>
+
+
+
+
+
+
+
 
 
 
