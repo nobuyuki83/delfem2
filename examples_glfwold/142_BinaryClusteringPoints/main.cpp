@@ -21,9 +21,6 @@ namespace dfm2 = delfem2;
 
 // -----------------------------
 
-
-
-
 void DrawConnectedPoints(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& psup_ind,
