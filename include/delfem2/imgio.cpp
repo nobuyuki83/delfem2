@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <cmath>
 
 #include "delfem2/imgio.h"
 
@@ -187,4 +188,39 @@ bool delfem2::LoadTGAFile(
   
   fclose(filePtr);
   return true;
+}
+
+void delfem2::ImageInterpolation_Bilinear(
+    std::vector<double>& aColor,
+    int width,
+    int height,
+    const unsigned char* img,
+    const std::vector<double>& aXY)
+{
+  for(int ip=0;ip<aXY.size()/2;++ip){
+    double x = aXY[ip*2+0]*(width-1);
+    double y = (1.0-aXY[ip*2+1])*(height-1);
+    int ix0 = floor(x);
+    int iy0 = floor(y);
+    int ix1 = ix0+1; if( ix1 == width ){ ix1 = width-1; }
+    int iy1 = iy0+1; if( iy1 == height ){ iy1 = height-1; }
+    assert( ix0 >= 0 && ix0 < width );
+    assert( iy0 >= 0 && iy0 < height );
+    assert( ix1 >= 0 && ix1 < width );
+    assert( ix1 >= 0 && ix1 < width );
+    double rx = x-ix0;
+    double ry = y-iy0;
+
+    double w00 = 1.0/255.0*(1-rx)*(1-ry);
+    double w01 = 1.0/255.0*(1-rx)*ry;
+    double w10 = 1.0/255.0*rx*(1-ry);
+    double w11 = 1.0/255.0*rx*ry;
+    for(int i=0;i<3;++i) {
+      aColor[ip*3+i] =
+          + w00 * img[(ix0 + iy0 * width) * 3 + i]
+          + w01 * img[(ix0 + iy1 * width) * 3 + i]
+          + w10 * img[(ix1 + iy0 * width) * 3 + i]
+          + w11 * img[(ix1 + iy1 * width) * 3 + i];
+    }
+  }
 }

@@ -46,6 +46,13 @@ DFM2_INLINE bool LoadTGAFile(
     const std::string &filename,
     SFile_TGA *tgaFile);
 
+DFM2_INLINE void ImageInterpolation_Bilinear(
+    std::vector<double>& aColor,
+    int width,
+    int height,
+    const unsigned char* img,
+    const std::vector<double>& aXY);
+
 }
 
 #ifdef DFM2_HEADER_ONLY
