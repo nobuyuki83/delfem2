@@ -195,9 +195,11 @@ void delfem2::ImageInterpolation_Bilinear(
     int width,
     int height,
     const unsigned char* img,
-    const std::vector<double>& aXY)
+    const double* aXY,
+    unsigned int nXY)
 {
-  for(int ip=0;ip<aXY.size()/2;++ip){
+ aColor.resize(nXY*3);
+  for(unsigned int ip=0;ip<nXY;++ip){
     double x = aXY[ip*2+0]*(width-1);
     double y = (1.0-aXY[ip*2+1])*(height-1);
     int ix0 = floor(x);
