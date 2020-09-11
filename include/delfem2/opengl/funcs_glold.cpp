@@ -9,6 +9,7 @@
 #include <cassert>
 #include <math.h>
 #include <vector>
+#include <climits>
 
 #if defined(__APPLE__) && defined(__MACH__) // Mac
   #include <OpenGL/gl.h>
