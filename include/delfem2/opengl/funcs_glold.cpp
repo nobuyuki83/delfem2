@@ -1286,7 +1286,7 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
 {
   assert( !aElemInd.empty() );
   const unsigned int nelem = aElemInd.size()-1;
-  for(int ielem=0;ielem<nelem;++ielem){
+  for(unsigned int ielem=0;ielem<nelem;++ielem){
     const int ielemind0 = aElemInd[ielem];
     const int ielemind1 = aElemInd[ielem+1];
     if( ielemind1 - ielemind0 == 3 ){
@@ -1611,24 +1611,25 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_Edge
 
 
 DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_FaceColor(
-    const std::vector<unsigned int>& aTri,
-    const std::vector<double>& aXY,
-    const std::vector<double>& aColor)
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aXY,
+    unsigned int nXY,
+    const double* aColor)
 {
-  const std::size_t ntri = aTri.size()/3;
   ::glBegin(GL_TRIANGLES);
-  for(unsigned int itri=0;itri<ntri;itri++){
-    const int i0 = aTri[itri*3+0];
-    const int i1 = aTri[itri*3+1];
-    const int i2 = aTri[itri*3+2];
+  for(unsigned int itri=0;itri<nTri;itri++){
+    const unsigned int i0 = aTri[itri*3+0];
+    const unsigned int i1 = aTri[itri*3+1];
+    const unsigned int i2 = aTri[itri*3+2];
     const double p0[2] = { aXY[i0*2+0], aXY[i0*2+1] };
     const double p1[2] = { aXY[i1*2+0], aXY[i1*2+1] };
     const double p2[2] = { aXY[i2*2+0], aXY[i2*2+1] };
-    ::glColor3dv(aColor.data()+i0*3);
+    ::glColor3dv(aColor+i0*3);
     ::glVertex2dv( p0 );
-    ::glColor3dv(aColor.data()+i1*3);
+    ::glColor3dv(aColor+i1*3);
     ::glVertex2dv( p1 );
-    ::glColor3dv(aColor.data()+i2*3);
+    ::glColor3dv(aColor+i2*3);
     ::glVertex2dv( p2 );
   }
   ::glEnd();
