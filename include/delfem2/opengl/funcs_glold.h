@@ -175,9 +175,11 @@ DFM2_INLINE void DrawMeshTri2D_Edge
   const std::vector<double>& aXY);
 
 DFM2_INLINE void DrawMeshTri2D_FaceColor(
-    const std::vector<unsigned int>& aTri,
-    const std::vector<double>& aXY,
-    const std::vector<double>& aColor);
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* aXY,
+    unsigned int nXY,
+    const double* aColor);
 
 // above: MeshTri2D
 // --------------------

@@ -97,7 +97,8 @@ int main(int argc,char* argv[])
                                    &width, &height, &channels, 0);
     std::cout << width << " " << height << " " << channels << std::endl;
     dfm2::ImageInterpolation_Bilinear(aColor,
-        width,height,img,aXY);
+        width,height,img,
+        aXY.data(),aXY.size()/2);
   }
   std::cout << aXY.size()/2 << " " << 220*220 << std::endl;
 
@@ -114,7 +115,9 @@ int main(int argc,char* argv[])
     dfm2::opengl::DrawMeshTri2D_Edge(aTri,aXY);
 //    ::glColor3d(1,1,1);
 //    dfm2::opengl::DrawMeshTri2D_Face(aTri,aXY);
-    dfm2::opengl::DrawMeshTri2D_FaceColor(aTri,aXY,aColor);
+    dfm2::opengl::DrawMeshTri2D_FaceColor(aTri.data(),aTri.size()/3,
+                                          aXY.data(),aXY.size()/2,
+                                          aColor.data());
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }
