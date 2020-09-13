@@ -83,7 +83,7 @@ int main(int argc,char* argv[])
   std::vector<double> aXY;
   std::vector<unsigned int> aTri;
   MeshTri2D_Square(aXY, aTri,
-             0.01);
+             0.02);
   std::cout << "npoint: " << aXY.size()/2 << std::endl;
 
   std::vector<double> aColor;
