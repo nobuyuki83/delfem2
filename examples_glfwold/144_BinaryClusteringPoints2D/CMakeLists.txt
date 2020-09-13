@@ -17,7 +17,7 @@ ENDIF()
 
 ####################################
 
-project(142_BinaryClusteringPoints)
+project(144_BinaryClusteringPoints2D)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

@@ -128,9 +128,9 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
-### [142_BinaryClusteringPoints](142_BinaryClusteringPoints)
+### [142_BinaryClusteringPoints3D](142_BinaryClusteringPoints3D)
 
-<img src="142_BinaryClusteringPoints/thumbnail.png" width=200>
+<img src="142_BinaryClusteringPoints3D/thumbnail.png" width=200>
 
 
 
@@ -139,6 +139,10 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 <img src="143_Image2MeshInterpolation/thumbnail.png" width=200>
 
 
+
+### [144_BinaryClusteringPoints2D](144_BinaryClusteringPoints2D)
+
+<img src="144_BinaryClusteringPoints2D/thumbnail.png" width=200>
 
 
 

@@ -1071,13 +1071,32 @@ DFM2_INLINE void delfem2::opengl::DrawPoints2D_Vectors(
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawPoints2d_Points(const std::vector<double>& aXY)
+DFM2_INLINE void delfem2::opengl::DrawPoints2d_Points(
+    const std::vector<double>& aXY)
 {
   const unsigned int nxys = aXY.size()/2;
   ::glBegin(GL_POINTS);
   for(unsigned int ino=0;ino<nxys;ino++){
     const double p0[2] = { aXY[ino*2+0], aXY[ino*2+1] };
     ::glVertex2dv( p0 );
+  }
+  ::glEnd();
+}
+
+DFM2_INLINE void delfem2::opengl::DrawPoints2d_Psup(
+    const std::vector<double>& aXY,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup)
+{
+  const unsigned int np = aXY.size()/2;
+  assert(psup_ind.size()==np+1);
+  ::glBegin(GL_LINES);
+  for(unsigned int ip=0;ip<np;++ip){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      unsigned int jp = psup[ipsup];
+      ::glVertex2dv(aXY.data()+ip*2);
+      ::glVertex2dv(aXY.data()+jp*2);
+    }
   }
   ::glEnd();
 }
@@ -1111,6 +1130,24 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(
       aXYZ[ip*3+2]+scale*aNrm[ip*3+2] };
     ::glVertex3dv( p0 );
     ::glVertex3dv( p1 );
+  }
+  ::glEnd();
+}
+
+DFM2_INLINE void delfem2::opengl::DrawPoints3d_Psup(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup)
+{
+  unsigned int np = aXYZ.size()/3;
+  assert(psup_ind.size()==np+1);
+  ::glBegin(GL_LINES);
+  for(unsigned int ip=0;ip<np;++ip){
+    for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
+      unsigned int jp = psup[ipsup];
+      ::glVertex3dv(aXYZ.data()+ip*3);
+      ::glVertex3dv(aXYZ.data()+jp*3);
+    }
   }
   ::glEnd();
 }
