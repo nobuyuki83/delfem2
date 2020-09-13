@@ -25,6 +25,11 @@ VAL min(VAL a, VAL b) {
   return (a < b) ? a : b;
 }
 
+template<typename VAL>
+VAL max(VAL a, VAL b) {
+  return (a > b) ? a : b;
+}
+
 class CData{
 public:
   CData(double score0, unsigned int ipsup0): score(score0), ipsup(ipsup0) {}
@@ -55,7 +60,7 @@ unsigned int Find_IndexPoint_From_IndexPsup(
   return UINT_MAX;
 }
 
-DFM2_INLINE void delfem2::BinaryClusteringPoints(
+DFM2_INLINE void delfem2::BinaryClustering_Points3d(
     std::vector<double>& aXYZ1,
     std::vector<double>& aArea1,
     std::vector<double>& aNorm1,
@@ -78,13 +83,13 @@ DFM2_INLINE void delfem2::BinaryClusteringPoints(
       if (jp0 < ip0) { continue; }
       const double ai0 = aArea0[ip0];
       const double aj0 = aArea0[jp0];
-      const double dot0 = cp::Dot3(aNorm0.data() + ip0 * 3, aNorm0.data() + jp0 * 3);
-      const auto nvalencei = (double)(psup_ind0[ip0+1] - psup_ind0[ip0]);
-      const auto nvalencej = (double)(psup_ind0[jp0+1] - psup_ind0[jp0]);
+//      const double dot0 = cp::Dot3(aNorm0.data() + ip0 * 3, aNorm0.data() + jp0 * 3);
+//      const auto nvalencei = (double)(psup_ind0[ip0+1] - psup_ind0[ip0]);
+//      const auto nvalencej = (double)(psup_ind0[jp0+1] - psup_ind0[jp0]);
 //      const double score0 = dot0 * min(ai0 / aj0, aj0 / ai0)*nvalence;
-      const double score0 = cp::min(ai0 / aj0, aj0 / ai0) / cp::min(nvalencei,nvalencej);
+      const double score0 = cp::min(ai0 / aj0, aj0 / ai0);// * cp::max(nvalencei,nvalencej);
 //      const double score0 = min(ai0 / aj0, aj0 / ai0) / min(nvalencei/nvalencej, nvalencej/nvalencei);
-      aData.insert(clusterpoints::CData(-score0, ipsup0));
+      aData.insert(clusterpoints::CData(score0, ipsup0));
     }
   }
   {
@@ -139,6 +144,71 @@ DFM2_INLINE void delfem2::BinaryClusteringPoints(
     aNorm1.push_back(aNorm0[ip0*3+2]);
   }
 }
+
+DFM2_INLINE void delfem2::BinaryClustering_Points2d(
+    std::vector<double>& aXY1,
+    std::vector<double>& aArea1,
+    std::vector<unsigned int>& map01,
+    //
+    const std::vector<double>& aXY0,
+    const std::vector<double>& aArea0,
+    const std::vector<unsigned int>& psup_ind0,
+    const std::vector<unsigned int>& psup0)
+{
+  namespace cp = clusterpoints;
+  const unsigned int np0 = aXY0.size()/2;
+  assert( aArea0.size() == np0 );
+  std::set<clusterpoints::CData> aData;
+  for (unsigned int ip0 = 0; ip0 < np0; ++ip0) {
+    for (unsigned int ipsup0 = psup_ind0[ip0]; ipsup0 < psup_ind0[ip0 + 1]; ++ipsup0) {
+      const unsigned int jp0 = psup0[ipsup0];
+      if (jp0 < ip0) { continue; }
+      const double ai0 = aArea0[ip0];
+      const double aj0 = aArea0[jp0];
+//      const auto nvalencei = (double)(psup_ind0[ip0+1] - psup_ind0[ip0]);
+//      const auto nvalencej = (double)(psup_ind0[jp0+1] - psup_ind0[jp0]);
+//      const double score0 = dot0 * min(ai0 / aj0, aj0 / ai0)*nvalence;
+      const double score0 = cp::min(ai0 / aj0, aj0 / ai0);// * cp::max(nvalencei,nvalencej);
+//      const double score0 = min(ai0 / aj0, aj0 / ai0) / min(nvalencei/nvalencej, nvalencej/nvalencei);
+      aData.insert(clusterpoints::CData(score0, ipsup0));
+    }
+  }
+  {
+    aArea1.resize(0);
+    aXY1.resize(0);
+    const auto np1_guess = (unsigned int)(np0*0.7);
+    aArea1.reserve(np1_guess);
+    aXY1.reserve(np1_guess*2);
+  }
+  map01.assign(np0,UINT_MAX);
+  for (const auto &data: aData) {
+    const unsigned int ip0 = Find_IndexPoint_From_IndexPsup(data.ipsup, psup_ind0, psup0);
+    const unsigned int jp0 = psup0[data.ipsup];
+    assert( ip0 < jp0 );
+    const unsigned int ip1 = aXY1.size()/2; // index of new node
+    assert( aArea1.size() == ip1 );
+    if( map01[ip0] != UINT_MAX || map01[jp0] != UINT_MAX ) continue;
+    map01[ip0] = ip1;
+    map01[jp0] = ip1;
+    const double ai0 = aArea0[ip0];
+    const double aj0 = aArea0[jp0];
+    aArea1.push_back(ai0 + aj0);
+    { // average coordinates
+      aXY1.push_back((ai0 * aXY0[ip0 * 2 + 0] + aj0 * aXY0[jp0 * 2 + 0]) / (ai0 + aj0) );
+      aXY1.push_back((ai0 * aXY0[ip0 * 2 + 1] + aj0 * aXY0[jp0 * 2 + 1]) / (ai0 + aj0) );
+    }
+  }
+  for(unsigned int ip0=0;ip0<np0;++ip0){ // points that are not clustered
+    if( map01[ip0] != UINT_MAX ){ continue; }
+    const unsigned int ip1 = aXY1.size()/2; // index of new node
+    assert( aArea1.size() == ip1 );
+    map01[ip0] = ip1;
+    aXY1.push_back(aXY0[ip0*2+0]);
+    aXY1.push_back(aXY0[ip0*2+1]);
+    aArea1.push_back(aArea0[ip0]);
+  }
+}
+
 
 DFM2_INLINE void delfem2::BinaryClusteringPoints_FindConnection(
     std::vector<unsigned int>& psup_ind1,

@@ -56,8 +56,10 @@ add_subdirectory(138_RigReadFileBiovision)
 add_subdirectory(139_RigReadFileGLTF)
 add_subdirectory(140_RigVoxelGeodesic)
 add_subdirectory(141_RigBendCapsule)
-add_subdirectory(142_BinaryClusteringPoints)
+add_subdirectory(142_BinaryClusteringPoints3D)
 add_subdirectory(143_Image2MeshInterpolation)
+add_subdirectory(144_BinaryClusteringPoints2D)
+
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)
