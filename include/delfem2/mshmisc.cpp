@@ -1258,12 +1258,12 @@ void delfem2::MassPoint_Tet3D
 }
 
 void delfem2::MassPoint_Tri2D
-(double* aMassMatrixLumped,
+(double* aMass,
  double rho,
  const double* aXY, unsigned int nXY,
  const unsigned int* aTri, unsigned int nTri)
 {
-  for(unsigned int i=0;i<nXY;++i){ aMassMatrixLumped[i] = 0.0; }
+  for(unsigned int i=0;i<nXY;++i){ aMass[i] = 0.0; }
   for(unsigned int it=0;it<nTri;++it){
     const unsigned int i0 = aTri[it*3+0]; assert(i0<nXY);
     const unsigned int i1 = aTri[it*3+1]; assert(i1<nXY);
@@ -1272,9 +1272,9 @@ void delfem2::MassPoint_Tri2D
     const double* p1 = aXY+i1*2;
     const double* p2 = aXY+i2*2;
     const double a012 = mshmisc::TriArea2D(p0, p1, p2);
-    aMassMatrixLumped[i0] += rho*a012/3.0;
-    aMassMatrixLumped[i1] += rho*a012/3.0;
-    aMassMatrixLumped[i2] += rho*a012/3.0;
+    aMass[i0] += rho*a012/3.0;
+    aMass[i1] += rho*a012/3.0;
+    aMass[i2] += rho*a012/3.0;
   }
 }
 
