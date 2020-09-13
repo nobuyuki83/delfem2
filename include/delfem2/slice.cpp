@@ -10,8 +10,6 @@
 
 #include "delfem2/slice.h"
 
-//namespace dfm2 = delfem2;
-
 // ---------------------------------------------
 
 namespace delfem2 {

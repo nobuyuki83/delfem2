@@ -180,7 +180,7 @@ void MakeReebGraph
 } // namespace delfem2
 
 #ifdef DFM2_HEADER_ONLY
-#  include "delfem2/slice.cpp"
+# include "delfem2/slice.cpp"
 #endif
 
 #endif /* SLICE_H */

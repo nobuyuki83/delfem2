@@ -22,87 +22,107 @@ namespace delfem2 {
 // ---------------
 // IO functions
 
-void Write_MeshTri3D(std::ofstream &fout,
-                     const std::vector<double> &aXYZ,
-                     const std::vector<int> &aTri,
-                     int ndim = 3);
+DFM2_INLINE void Write_MeshTri3D(
+    std::ofstream &fout,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri,
+    int ndim = 3);
 
-void Read_MeshTri3D(std::ifstream &fin,
-                    std::vector<double> &aXYZ,
-                    std::vector<int> &aTri);
+DFM2_INLINE void Read_MeshTri3D(
+    std::ifstream &fin,
+    std::vector<double> &aXYZ,
+    std::vector<int> &aTri);
 
 // -------
 // TetGen
 
-void Read_MeshTet3D_TetGen(const std::string &fname,
-                           std::vector<double> &aXYZ,
-                           std::vector<int> &aTet,
-                           std::vector<int> &aTri);
+DFM2_INLINE void Read_MeshTet3D_TetGen(
+    const std::string &fname,
+    std::vector<double> &aXYZ,
+    std::vector<int> &aTet,
+    std::vector<int> &aTri);
 
 // -------
 // STL
 
-void Write_STL(const std::string &str,
-               const std::vector<double> &aXYZ,
-               const std::vector<int> &aTri);
+DFM2_INLINE void Write_STL(
+    const std::string &str,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri);
 
 // -----
 // PLY
 
-void Write_Ply(const std::string &fname,
-               const std::vector<double> &aXYZ,
-               const std::vector<int> &aTri);
+DFM2_INLINE void Write_Ply(
+    const std::string &fname,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aTri);
 
-void Write_Ply(const std::string &fname,
-               unsigned int nXYZ, double *paXYZ,
-               unsigned int nTri, unsigned int *paTri);
+DFM2_INLINE void Write_Ply(
+    const std::string &fname,
+    unsigned int nXYZ, double *paXYZ,
+    unsigned int nTri, unsigned int *paTri);
 
-void Read_Ply(const std::string &fname,
-              int &nnode_, double *&pXYZs_,
-              int &ntri_, unsigned int *&aTri_);
+DFM2_INLINE void Read_Ply(
+    const std::string &fname,
+    int &nnode_,
+    double *&pXYZs_,
+    int &ntri_,
+    unsigned int *&aTri_);
 
-void Read_Ply(const std::string &fname,
-              std::vector<double> &aXYZ,
-              std::vector<unsigned int> &aTri);
+DFM2_INLINE void Read_Ply(
+    const std::string &fname,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri);
 
 // ----------
 // Obj
 
-void Write_Obj(const std::string &str,
-               const double *aXYZ, int nXYZ,
-               const unsigned int *aTri, int nTri);
 
-void Write_Obj_Quad(const std::string &str,
-                    const std::vector<double> &aXYZ,
-                    const std::vector<int> &aQuad);
+DFM2_INLINE void Write_Obj(
+    const std::string &str,
+    const double *aXYZ, int nXYZ,
+    const unsigned int *aTri, int nTri);
 
-void Write_Obj(const std::string &str, // mixed elem
-               const std::vector<double> &aXYZ,
-               const std::vector<int> &aElemInd,
-               const std::vector<int> &aElem);
+DFM2_INLINE void Write_Obj_Quad(
+    const std::string &str,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aQuad);
 
-void Write_Obj(const std::string &str,
-               const std::vector<std::pair<std::vector<double>, std::vector<int> > > &aMesh);
+DFM2_INLINE void Write_Obj(
+    const std::string &str, // mixed elem
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &aElemInd,
+    const std::vector<int> &aElem);
 
-void Read_Obj(const std::string &fname,
-              std::vector<double> &aXYZ,
-              std::vector<unsigned int> &aTri);
+DFM2_INLINE void Write_Obj(
+    const std::string &str,
+    const std::vector<std::pair<std::vector<double>, std::vector<int> > > &aMesh);
 
-void Read_Obj_Quad(const std::string &fname,
-                   std::vector<double> &aXYZ,
-                   std::vector<int> &aQuad);
+DFM2_INLINE void Read_Obj(
+    const std::string &fname,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri);
 
-void Read_Obj(std::stringstream &ssobj,
-              std::vector<double> &aXYZ,
-              std::vector<int> &aTri);
+DFM2_INLINE void Read_Obj_Quad(
+    const std::string &fname,
+    std::vector<double> &aXYZ,
+    std::vector<int> &aQuad);
 
-void Read_Obj2(const std::string &fname,
-               std::vector<double> &aXYZ,
-               std::vector<int> &aTri);
+DFM2_INLINE void Read_Obj(
+    std::stringstream &ssobj,
+    std::vector<double> &aXYZ,
+    std::vector<int> &aTri);
 
-void Read_Obj3(const std::string &fname,
-               std::vector<double> &aXYZ,
-               std::vector<unsigned int> &aTri);
+DFM2_INLINE void Read_Obj2(
+    const std::string &fname,
+    std::vector<double> &aXYZ,
+    std::vector<int> &aTri);
+
+DFM2_INLINE void Read_Obj3(
+    const std::string &fname,
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri);
 
 class CTriGroup {
 public:
@@ -113,20 +133,22 @@ public:
   std::vector<unsigned int> aTriNrm;
 };
 
-void Load_Obj(const std::string &fname,
-              std::string &fname_mtl,
-              std::vector<double> &aXYZ,
-              std::vector<double> &aNorm,
-              std::vector<CTriGroup> &aTriGroup);
+DFM2_INLINE void Load_Obj(
+    const std::string &fname,
+    std::string &fname_mtl,
+    std::vector<double> &aXYZ,
+    std::vector<double> &aNorm,
+    std::vector<CTriGroup> &aTriGroup);
 
 // -----------
 // VTK
 
-void WriteVTK_Points(std::ofstream &fout,
-                     const std::string &name,
-                     const double *pXYZ,
-                     int nXYZ,
-                     int nDim);
+DFM2_INLINE void WriteVTK_Points(
+    std::ofstream &fout,
+    const std::string &name,
+    const double *pXYZ,
+    int nXYZ,
+    int nDim);
 
 
 // 5 : VTK_TRIANGLE
@@ -135,44 +157,51 @@ void WriteVTK_Points(std::ofstream &fout,
 // 12: VTK_HEXAHEDRON
 // 13: VTK_WEDGE
 // 14: VTK_PYRAMD
-void WriteVTK_Cells(std::ofstream &fout,
-                    int vtk_elem_type,
-                    const int *aElem,
-                    const int nElem);
+DFM2_INLINE void WriteVTK_Cells(
+    std::ofstream &fout,
+    int vtk_elem_type,
+    const int *aElem,
+    const int nElem);
 
-void WriteVTK_Cells(std::ofstream &fout,
-                    const std::vector<int> &aTet,
-                    const std::vector<int> &aPyrm,
-                    const std::vector<int> &aPrsm);
+DFM2_INLINE void WriteVTK_Cells(
+    std::ofstream &fout,
+    const std::vector<int> &aTet,
+    const std::vector<int> &aPyrm,
+    const std::vector<int> &aPrsm);
 
-void WriteVTK_Data_PointVec(std::ofstream &fout,
-                            const double *aVal,
-                            int np,
-                            int nStrideVal,
-                            int ndim);
+DFM2_INLINE void WriteVTK_Data_PointVec(
+    std::ofstream &fout,
+    const double *aVal,
+    int np,
+    int nStrideVal,
+    int ndim);
 
-void WriteVTK_Data_PointScalar(std::ofstream &fout,
-                               const double *aVal,
-                               int np,
-                               int nStrideVal = 1);
+DFM2_INLINE void WriteVTK_Data_PointScalar(
+    std::ofstream &fout,
+    const double *aVal,
+    int np,
+    int nStrideVal = 1);
 
-void WriteVTK_MapTriScalar(const std::string &fpath,
-                           const std::string &name,
-                           const std::vector<double> &aXYZ,
-                           const std::vector<int> &map,
-                           const std::vector<int> &aTri,
-                           const std::vector<double> &aVal,
-                           int nStrideVal, int nOffset);
+DFM2_INLINE void WriteVTK_MapTriScalar(
+    const std::string &fpath,
+    const std::string &name,
+    const std::vector<double> &aXYZ,
+    const std::vector<int> &map,
+    const std::vector<int> &aTri,
+    const std::vector<double> &aVal,
+    int nStrideVal, int nOffset);
 
-void ReadVTK(std::vector<double> &aXYZ,
-             int &type_elem,
-             std::vector<int> &aElem,
-             std::vector<double> &aPointVal,
-             const std::string &fpath);
+DFM2_INLINE void ReadVTK(
+    std::vector<double> &aXYZ,
+    int &type_elem,
+    std::vector<int> &aElem,
+    std::vector<double> &aPointVal,
+    const std::string &fpath);
 
-void Read_MeshTri3D_Nas(std::vector<double> &aXYZ,
-                        std::vector<unsigned int> &aTri,
-                        const char *path);
+DFM2_INLINE void Read_MeshTri3D_Nas(
+    std::vector<double> &aXYZ,
+    std::vector<unsigned int> &aTri,
+    const char *path);
 
 }
 
