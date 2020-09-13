@@ -194,10 +194,10 @@ DFM2_INLINE bool FindRayTriangleMeshIntersectionClosestToPoint
 // --------------------------------------------------------------------------
 // expose functions
 
-delfem2::CVec3d delfem2::UnitNormal_DTri3
-(int itri0,
- const std::vector<CDynTri>& aSTri,
- const std::vector<CVec3d>& aP3)
+DFM2_INLINE delfem2::CVec3d delfem2::UnitNormal_DTri3(
+    int itri0,
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec3d>& aP3)
 {
   int i0 = aSTri[itri0].v[0];
   int i1 = aSTri[itri0].v[1];
@@ -231,12 +231,12 @@ bool delfem2::AssertMeshDTri2
 
 
 
-bool delfem2::FindRayTriangleMeshIntersections
-(std::vector<CVec3d> &intersectionPoints,
- const CVec3d &line0,
- const CVec3d &line1,
- const std::vector<CDynTri>& aTri,
- const std::vector<CVec3d>& aVec3)
+DFM2_INLINE bool delfem2::FindRayTriangleMeshIntersections(
+    std::vector<CVec3d> &intersectionPoints,
+    const CVec3d &line0,
+    const CVec3d &line1,
+    const std::vector<CDynTri>& aTri,
+    const std::vector<CVec3d>& aVec3)
 {
 	intersectionPoints.clear();
   
@@ -258,11 +258,11 @@ bool delfem2::FindRayTriangleMeshIntersections
 
 // -----------------------------------------------------------------
 
-bool delfem2::DelaunayAroundPoint
-(const unsigned int ipo0,
- std::vector<CDynPntSur>& aPo,
- std::vector<CDynTri>& aTri,
- const std::vector<CVec3d>& aVec3)
+DFM2_INLINE bool delfem2::DelaunayAroundPoint(
+    const unsigned int ipo0,
+    std::vector<CDynPntSur>& aPo,
+    std::vector<CDynTri>& aTri,
+    const std::vector<CVec3d>& aVec3)
 {
   assert( ipo0 < aPo.size() );
   if ( aPo[ipo0].e==UINT_MAX ) return true;

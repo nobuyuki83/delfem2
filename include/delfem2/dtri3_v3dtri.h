@@ -18,28 +18,28 @@
 
 namespace delfem2 {
 
-CVec3d UnitNormal_DTri3
+DFM2_INLINE CVec3d UnitNormal_DTri3
  (int itri0,
   const std::vector<CDynTri>& aSTri,
   const std::vector<CVec3d>& aVec3);
 
-bool AssertMeshDTri2
- (const std::vector<CDynPntSur>& aPo3D,
-  const std::vector<CDynTri>& aSTri,
-  const std::vector<CVec3d>& aVec3);
+DFM2_INLINE bool AssertMeshDTri2(
+    const std::vector<CDynPntSur>& aPo3D,
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec3d>& aVec3);
 
-bool FindRayTriangleMeshIntersections
- (std::vector<CVec3d> &intersectionPoints,
-  const CVec3d &line0,
-  const CVec3d &line1,
-  const std::vector<CDynTri>& aTri,
-  const std::vector<CVec3d>& aVec3);
+DFM2_INLINE bool FindRayTriangleMeshIntersections(
+    std::vector<CVec3d> &intersectionPoints,
+    const CVec3d &line0,
+    const CVec3d &line1,
+    const std::vector<CDynTri>& aTri,
+    const std::vector<CVec3d>& aVec3);
 
-bool DelaunayAroundPoint
- (const unsigned int ipo0,
-  std::vector<CDynPntSur>& aPo,
-  std::vector<CDynTri>& aTri,
-  const std::vector<CVec3d>& aVec3);
+DFM2_INLINE bool DelaunayAroundPoint(
+    const unsigned int ipo0,
+    std::vector<CDynPntSur>& aPo,
+    std::vector<CDynTri>& aTri,
+    const std::vector<CVec3d>& aVec3);
 
 // -------------------------------------------------------
 

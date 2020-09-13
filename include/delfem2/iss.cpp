@@ -11,49 +11,16 @@
 
 #include "delfem2/iss.h"
 
-//namespace dfm2 = delfem2;
-
-// ---------------------------------------------------------
-
-/*
-static inline void  UnitNormalAreaTri3D(double n[3], double& a, const double v1[3], const double v2[3], const double v3[3]){
-	n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
-	n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
-	n[2] = ( v2[0] - v1[0] )*( v3[1] - v1[1] ) - ( v3[0] - v1[0] )*( v2[1] - v1[1] );
-	a = sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])*0.5;
-	const double invlen = 0.5/a;
-	n[0]*=invlen;	n[1]*=invlen;	n[2]*=invlen;
-}
-
-static inline double TetVolume3D
-(const double v1[3], const double v2[3], const double v3[3], const double v4[3] )
-{
-  return
-  (   ( v2[0] - v1[0] )*( ( v3[1] - v1[1] )*( v4[2] - v1[2] ) - ( v4[1] - v1[1] )*( v3[2] - v1[2] ) )
-   -	( v2[1] - v1[1] )*( ( v3[0] - v1[0] )*( v4[2] - v1[2] ) - ( v4[0] - v1[0] )*( v3[2] - v1[2] ) )
-   +	( v2[2] - v1[2] )*( ( v3[0] - v1[0] )*( v4[1] - v1[1] ) - ( v4[0] - v1[0] )*( v3[1] - v1[1] ) )
-   ) * 0.16666666666666666666666666666667;
-}
-
-static inline double SqLength3D(const double v[3]){
-  return v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
-}
-
-static double Distance3D(const double p0[3], const double p1[3]){
-  return sqrt((p1[0]-p0[0])*(p1[0]-p0[0])+(p1[1]-p0[1])*(p1[1]-p0[1])+(p1[2]-p0[2])*(p1[2]-p0[2]));
-}
- */
-
 namespace delfem2 {
 namespace iss {
 
-DFM2_INLINE void makeElemSurroundingPoint
-(std::vector<int>& elsup_ind,
- std::vector<int>& elsup,
- ////
- const std::vector<unsigned int>& aElem,
- int nPoEl,
- int nPo)
+DFM2_INLINE void makeElemSurroundingPoint(
+    std::vector<int>& elsup_ind,
+    std::vector<int>& elsup,
+    //
+    const std::vector<unsigned int>& aElem,
+    int nPoEl,
+    int nPo)
 {
   const int nElem = (int)aElem.size()/nPoEl;
   elsup_ind.assign(nPo+1,0);
@@ -84,15 +51,15 @@ DFM2_INLINE void makeElemSurroundingPoint
   elsup_ind[0] = 0;
 }
 
-void makeOneRingNeighborhood
-(std::vector<int>& psup_ind,
- std::vector<int>& psup,
- //
- const std::vector<unsigned int>& aElem,
- const std::vector<int>& elsup_ind,
- const std::vector<int>& elsup,
- int nnoel,
- int nnode)
+DFM2_INLINE void makeOneRingNeighborhood(
+    std::vector<int>& psup_ind,
+    std::vector<int>& psup,
+    //
+    const std::vector<unsigned int>& aElem,
+    const std::vector<int>& elsup_ind,
+    const std::vector<int>& elsup,
+    int nnoel,
+    int nnode)
 {
   std::vector<int> aflg(nnode,-1);
   psup_ind.assign(nnode+1,0);
@@ -139,8 +106,11 @@ void makeOneRingNeighborhood
 
 // ---------------------------------------------------------
 
-int GetCutNode(unsigned int iln0, unsigned int iln1,
-               const std::vector<int>& aCutInd, const std::vector<int>& aCut)
+DFM2_INLINE int GetCutNode(
+    unsigned int iln0,
+    unsigned int iln1,
+    const std::vector<int>& aCutInd,
+    const std::vector<int>& aCut)
 {
   for(int ind0=aCutInd[iln0];ind0<aCutInd[iln0+1];ind0++){
     if( aCut[ind0*2+0] != (int)iln1 ) continue;
@@ -149,12 +119,19 @@ int GetCutNode(unsigned int iln0, unsigned int iln1,
   return -1;
 }
 
-void FindCutNodeTet
-(int on[10], 
- unsigned int iln0, unsigned int iln1, unsigned int iln2, unsigned int iln3,
- int f0, int f1, int f2, int f3,
- const std::vector<int>& mapLat2Out,
- const std::vector<int>& aCutInd, const std::vector<int>& aCut)
+DFM2_INLINE void FindCutNodeTet(
+    int on[10],
+    unsigned int iln0,
+    unsigned int iln1,
+    unsigned int iln2,
+    unsigned int iln3,
+    int f0,
+    int f1,
+    int f2,
+    int f3,
+    const std::vector<int>& mapLat2Out,
+    const std::vector<int>& aCutInd,
+    const std::vector<int>& aCut)
 {
   on[0] = mapLat2Out[iln0];
   on[1] = mapLat2Out[iln1];
@@ -168,9 +145,11 @@ void FindCutNodeTet
   if( f2!=f3 && f2!=0 && f3!=0 ){ on[9]=GetCutNode(iln2,iln3,aCutInd,aCut); assert(on[9]!=-1); }
 }
 
-void GetClampTet
-(int tet[3][4], unsigned int& ntet, 
- unsigned int iflg, int on[10] )
+DFM2_INLINE void GetClampTet(
+    int tet[3][4],
+    unsigned int& ntet,
+    unsigned int iflg,
+    int on[10] )
 {  
   ntet = 0;
   if( iflg == 40 ){ return; }
@@ -471,12 +450,14 @@ bool isEdgeCenterPoint
 }
  */
 
-void makeLatticeCoasestLevel
-(std::vector<CPointLattice>& aPoint,
- std::vector<CCell>& aCell,
- //
- const CInput_IsosurfaceStuffing& input,
- double elen, int  ndiv, const double org[3])
+DFM2_INLINE void makeLatticeCoasestLevel(
+    std::vector<CPointLattice>& aPoint,
+    std::vector<CCell>& aCell,
+    //
+    const CInput_IsosurfaceStuffing& input,
+    double elen,
+    int  ndiv,
+    const double org[3])
 {
   aPoint.clear();
   aPoint.resize((ndiv+1)*(ndiv+1)*(ndiv+1)+ndiv*ndiv*ndiv);
@@ -531,9 +512,12 @@ void makeLatticeCoasestLevel
   }
 }
 
-void makeChild
-(std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInput_IsosurfaceStuffing& input, unsigned int icell, int ichild)
+DFM2_INLINE void makeChild(
+    std::vector<CCell>& aCell,
+    std::vector<CPointLattice>& aPoint,
+    const CInput_IsosurfaceStuffing& input,
+    unsigned int icell,
+    int ichild)
 {
   assert( icell < aCell.size() );
   assert( ichild >=0 && ichild < 8 );
@@ -567,9 +551,12 @@ void makeChild
   aCell[icell].setChildAdjRelation(aCell);
 }
 
-void makeChild_Face
-(std::vector<CCell>& aCell, std::vector<CPointLattice>& aPoint,
- const CInput_IsosurfaceStuffing& input, int icell, int iface)
+DFM2_INLINE void makeChild_Face(
+    std::vector<CCell>& aCell,
+    std::vector<CPointLattice>& aPoint,
+    const CInput_IsosurfaceStuffing& input,
+    int icell,
+    int iface)
 {
   assert( icell >= 0 && icell < (int)aCell.size() );
   const int faceHex[6][4] = {
@@ -586,9 +573,9 @@ void makeChild_Face
   }
 }
 
-void Continuation
-(std::vector<CPointLattice>& aPoint,std::vector<CCell>& aCell,
- const CInput_IsosurfaceStuffing& input)
+DFM2_INLINE void Continuation(
+    std::vector<CPointLattice>& aPoint,std::vector<CCell>& aCell,
+    const CInput_IsosurfaceStuffing& input)
 {
   const int faceHex[6][4] = {
     {0,4,6,2},
@@ -658,7 +645,7 @@ void Continuation
         }
       }
     }
-    ////
+    // -------------
     for(int icell=0;icell<(int)aCell.size();++icell){
       const int ipc = aCell[icell].iparent;
       if( ipc < 0 ){ continue; } // this cell is root (somebody will take care of this)
@@ -701,7 +688,7 @@ void Continuation
         }
       }
     }
-    /////
+    // -------
     for(int icell=0;icell<(int)aCell.size();++icell){
       for(int iface=0;iface<6;++iface){
         if( !aCell[icell].isHavingChild_Face(iface) ){ continue; }
@@ -732,7 +719,7 @@ void Continuation
         }
       }
     }
-    /////
+    // -------------
     // making adjacent to the neighboring cells
     for(int ic=0;ic<(int)aCell.size();++ic){
       for(int iface=0;iface<6;++iface){
@@ -843,11 +830,11 @@ void CheckContinuation(const std::vector<CCell>& aCell)
 }
  */
 
-void addEdgeFacePoints
-(std::vector<CPointLattice>& aPoint,
- std::vector<CCell>& aCell,
- //
- const CInput_IsosurfaceStuffing& input)
+DFM2_INLINE void addEdgeFacePoints(
+    std::vector<CPointLattice>& aPoint,
+    std::vector<CCell>& aCell,
+    //
+    const CInput_IsosurfaceStuffing& input)
 {
   std::vector<int> orderCell;
   orderCell.reserve(aCell.size());
@@ -1309,8 +1296,7 @@ void addEdgeFacePoints
         if( icaXYc4>=0 ){ aCell[icaXYc4].aIP[ 0] = ip0; }
       }
     }
-    
-    ////////////////////////////////////////////////////////////////////////////////
+    // ------------------------------------
     if( c.aIP[20] == -1 ){ // face point (20)
       int icaxc1=-1, icaxc3=-1, icaxc5=-1, icaxc7=-1;
       if( icax >=0 ){
@@ -1476,9 +1462,9 @@ void addEdgeFacePoints
   }
 }
 
-void makeTetLattice
-(std::vector<unsigned int>& aTet,
- const std::vector<CCell>& aCell)
+DFM2_INLINE void makeTetLattice(
+    std::vector<unsigned int>& aTet,
+    const std::vector<CCell>& aCell)
 {
   aTet.clear();
   const int faceHex[6][4] = {
@@ -1575,10 +1561,10 @@ void makeTetLattice
   }
 }
 
-void WarpLattice
-(std::vector<CPointLattice>& aPointLattice,
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
+DFM2_INLINE void WarpLattice(
+    std::vector<CPointLattice>& aPointLattice,
+    const std::vector<int>& psup_ind,
+    const std::vector<int>& psup)
 {
   for(unsigned int ip=0;ip<aPointLattice.size();++ip){
     if( aPointLattice[ip].sdf < 0 ){ aPointLattice[ip].iflg = 1; }  // outside
@@ -1627,19 +1613,19 @@ void WarpLattice
 }
 
 
-void MakeCutPoint
-(std::vector<double>& aXYZ,
- std::vector<int>& mapLat2Out,
- std::vector<int>& lat2cut_ind,
- std::vector<int>& lat2cut,
- const std::vector<CPointLattice>& aPointLattice,
- const std::vector<int>& psup_ind,
- const std::vector<int>& psup)
+DFM2_INLINE void MakeCutPoint(
+    std::vector<double>& aXYZ,
+    std::vector<int>& mapLat2Out,
+    std::vector<int>& lat2cut_ind,
+    std::vector<int>& lat2cut,
+    const std::vector<CPointLattice>& aPointLattice,
+    const std::vector<int>& psup_ind,
+    const std::vector<int>& psup)
 {
   const int nno_lat = (int)aPointLattice.size();
   aXYZ.clear();
   aXYZ.reserve(nno_lat*6);
-  /////
+  //
   mapLat2Out.assign(nno_lat,-1);
   int nno_out_lat = 0;
   for(int ino=0;ino<nno_lat;++ino){
@@ -1661,7 +1647,7 @@ void MakeCutPoint
       lat2cut_ind[ino0+1]++; // register cut point
     }
   }
-  /////
+  //
   for(int ino=0;ino<nno_lat;++ino){ lat2cut_ind[ino+1] += lat2cut_ind[ino]; }
   int icut_cur = nno_out_lat;
   int nno_cut = lat2cut_ind[nno_lat]/2;
@@ -1713,13 +1699,13 @@ void MakeCutPoint
   }
 }
 
-void cutoutTetFromLattice
-(std::vector<unsigned int>& aTet,
- const std::vector<CPointLattice>& aPointLattice,
- const std::vector<unsigned int>& aTetLattice,
- const std::vector<int>& mapLat2Out,
- const std::vector<int>& lat2cut_ind,
- const std::vector<int>& lat2cut)
+DFM2_INLINE void cutoutTetFromLattice(
+    std::vector<unsigned int>& aTet,
+    const std::vector<CPointLattice>& aPointLattice,
+    const std::vector<unsigned int>& aTetLattice,
+    const std::vector<int>& mapLat2Out,
+    const std::vector<int>& lat2cut_ind,
+    const std::vector<int>& lat2cut)
 {
   aTet.clear();
   aTet.reserve(aTetLattice.size());
@@ -1758,7 +1744,7 @@ void cutoutTetFromLattice
 /**
  * @brief internal function for debug
  */
-void delfem2::makeBackgroundLattice
+DFM2_INLINE void delfem2::makeBackgroundLattice
 (std::vector<CPointLattice>& aPointLattice,
  std::vector<unsigned int>& aTetLattice,
  const CInput_IsosurfaceStuffing& input,
@@ -1822,12 +1808,14 @@ void delfem2::makeBackgroundLattice
                  aCell);
 }
 
-bool delfem2::IsoSurfaceStuffing
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTet,
- std::vector<int>& aIsOnSurfXYZ,
- const CInput_IsosurfaceStuffing& input,
- double elen_in, double width, const double center[3])
+DFM2_INLINE bool delfem2::IsoSurfaceStuffing(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTet,
+    std::vector<int>& aIsOnSurfXYZ,
+    const CInput_IsosurfaceStuffing& input,
+    double elen_in,
+    double width,
+    const double center[3])
 {
   if( elen_in <= 0 ) return false;
   
@@ -1878,22 +1866,7 @@ bool delfem2::IsoSurfaceStuffing
   return true;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ------------------------------------------------
 // Legacy code for single level isosurface stuffing
 
 #if 0

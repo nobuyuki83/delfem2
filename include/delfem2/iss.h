@@ -28,7 +28,7 @@ public:
   }
 };
 
-bool IsoSurfaceStuffing
+DFM2_INLINE bool IsoSurfaceStuffing
  (std::vector<double>& aXYZ,
   std::vector<unsigned int>& aTet,
   std::vector<int>& aIsOnSurfXYZ,
