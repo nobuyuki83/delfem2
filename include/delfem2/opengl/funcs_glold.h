@@ -111,13 +111,13 @@ DFM2_INLINE void DrawAABB3D_Edge
  * @brief draw bounding box with edge
  * @details this function do nothing when pmin[0]  > pmin[1] 
  */
-DFM2_INLINE void DrawBox3_Edge
- (const double* pmin,
-  const double* pmax);
+DFM2_INLINE void DrawBox3_Edge(
+    const double* pmin,
+    const double* pmax);
 
-DFM2_INLINE void DrawBox3_Face
-(const double* pmin,
- const double* pmax);
+DFM2_INLINE void DrawBox3_Face(
+    const double* pmin,
+    const double* pmax);
 
 // ========================================
 // Draw Point
@@ -130,16 +130,29 @@ DFM2_INLINE void DrawPoints2D_Vectors(
     int noffset,
     double mag);
 
-DFM2_INLINE void DrawPoints2d_Points
- (const std::vector<double>& aXY);
+DFM2_INLINE void DrawPoints2d_Points(
+    const std::vector<double>& aXY);
 
-DFM2_INLINE void DrawPoints3d_Points
- (const std::vector<double>& aXYZ);
+DFM2_INLINE void DrawPoints2d_Psup(
+    const std::vector<double>& aXY,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup);
 
-DFM2_INLINE void DrawPoints3d_NormVtx
- (const std::vector<double>& aXYZ,
-  const std::vector<double>& aNrm,
-  double scale);
+// above: 2D
+// below: 3D
+
+DFM2_INLINE void DrawPoints3d_Points(
+    const std::vector<double>& aXYZ);
+
+DFM2_INLINE void DrawPoints3d_NormVtx(
+    const std::vector<double>& aXYZ,
+    const std::vector<double>& aNrm,
+    double scale);
+
+DFM2_INLINE void DrawPoints3d_Psup(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup);
 
 
 // =====================================

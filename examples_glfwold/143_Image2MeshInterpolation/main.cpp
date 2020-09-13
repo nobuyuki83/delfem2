@@ -20,9 +20,9 @@
 namespace dfm2 = delfem2;
 
 void MeshTri2D_Square(
-                      std::vector<double>& aXY,
-                      std::vector<unsigned int>& aTri,
-                      double elen)
+    std::vector<double>& aXY,
+    std::vector<unsigned int>& aTri,
+    double elen)
 {
   namespace dfm2 = delfem2;
   //
@@ -35,7 +35,7 @@ void MeshTri2D_Square(
     aXY0.push_back(0); aXY0.push_back(1);
     aaXY0.push_back(aXY0);
   }
-  
+
   std::vector<dfm2::CDynPntSur> aPo2D;
   std::vector<dfm2::CVec2d> aVec2;
   std::vector<dfm2::CDynTri> aETri;
@@ -58,7 +58,7 @@ void MeshTri2D_Square(
   AssertDTri(aETri);
   AssertMeshDTri(aPo2D,aETri);
   CheckTri(aPo2D,aETri,aVec2);
-  
+
   // filling inside
   if( elen > 1.0e-10 ){
     dfm2::CInputTriangulation_Uniform param(1.0);
@@ -70,7 +70,7 @@ void MeshTri2D_Square(
   AssertDTri(aETri);
   AssertMeshDTri(aPo2D,aETri);
   CheckTri(aPo2D,aETri,aVec2);
-  
+
   // export to stl array
   dfm2::MeshTri2D_Export(aXY,aTri, aVec2, aETri);
 }
