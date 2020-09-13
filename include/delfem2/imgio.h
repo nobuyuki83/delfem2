@@ -51,7 +51,8 @@ DFM2_INLINE void ImageInterpolation_Bilinear(
     int width,
     int height,
     const unsigned char* img,
-    const std::vector<double>& aXY);
+    const double* aXY,
+    unsigned int nXY);
 
 }
 
