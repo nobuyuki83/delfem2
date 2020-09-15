@@ -148,7 +148,8 @@ DFM2_INLINE void delfem2::BinaryClustering_Points3d(
   }
 }
 
-DFM2_INLINE unsigned int delfem2::BinaryClustering_Points2d(
+DFM2_INLINE unsigned int
+delfem2::BinaryClustering_Points2d(
     unsigned int* map01,
     //
     const unsigned int np0,
@@ -188,7 +189,8 @@ DFM2_INLINE unsigned int delfem2::BinaryClustering_Points2d(
 }
 
 
-DFM2_INLINE void delfem2::BinaryClusteringPoints_FindConnection(
+DFM2_INLINE void
+delfem2::BinaryClustering_FindConnection(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     //
@@ -200,9 +202,16 @@ DFM2_INLINE void delfem2::BinaryClusteringPoints_FindConnection(
 {
   std::vector<unsigned int> map10;
   { // inverse map of map01.
+    std::vector<unsigned int> cnt1(np1,0);
+    for(unsigned int ip0=0;ip0<np0;++ip0) {
+      const unsigned int ip1 = map01[ip0];
+      assert(ip1 < np1);
+      cnt1[ip1] += 1;
+    }
     map10.assign(np1*2, UINT_MAX);
     for(unsigned int ip0=0;ip0<np0;++ip0){
-      const unsigned int ip1 = map01[ip0]; assert( ip1 < np1 );
+      const unsigned int ip1 = map01[ip0];
+      assert( ip1 < np1 );
       if(map10[ip1 * 2 + 0] == UINT_MAX ){
         map10[ip1 * 2 + 0] = ip0;
       }

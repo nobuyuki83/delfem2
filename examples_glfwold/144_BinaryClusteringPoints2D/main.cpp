@@ -153,7 +153,7 @@ int main(int argc,char* argv[])
         pd1.aXY[ip1*2+1] *= a1inv;
       }
     }
-    dfm2::BinaryClusteringPoints_FindConnection(
+    dfm2::BinaryClustering_FindConnection(
         pd1.psup_ind,pd1.psup,
         pd1.aXY.size()/2,
         pd0.aXY.size()/2,map01.data(),pd0.psup_ind.data(),pd0.psup.data());
@@ -220,7 +220,9 @@ int main(int argc,char* argv[])
         //
         ::glColor3d(0, 0, 0);
         ::glTranslated(0,0,+0.01);
-        dfm2::opengl::DrawPoints2d_Psup(pd.aXY, pd.psup_ind, pd.psup);
+        dfm2::opengl::DrawPoints2d_Psup(
+            pd.aXY.size()/2, pd.aXY.data(),
+            pd.psup_ind.data(), pd.psup.data());
         ::glTranslated(0,0,-0.01);
         viewer.DrawEnd_oldGL();
       }

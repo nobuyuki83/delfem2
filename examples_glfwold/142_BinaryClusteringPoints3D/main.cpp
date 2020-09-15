@@ -88,8 +88,9 @@ int main(int argc,char* argv[])
     dfm2::BinaryClustering_Points3d(
         pd1.aXYZ, pd1.aArea, pd1.aNorm, map01,
         pd0.aXYZ, pd0.aArea, pd0.aNorm, pd0.psup_ind, pd0.psup);
-    dfm2::BinaryClusteringPoints_FindConnection(pd1.psup_ind,pd1.psup,
-        pd1.aXYZ.size()/3,map01,pd0.psup_ind,pd0.psup);
+    dfm2::BinaryClustering_FindConnection(pd1.psup_ind,pd1.psup,
+        pd1.aXYZ.size()/3,
+        pd0.aXYZ.size()/3,map01.data(),pd0.psup_ind.data(),pd0.psup.data());
     unsigned int np0 = aPointData[0].aXYZ.size()/3;
     pd1.map0c.resize(np0,UINT_MAX);
     for(unsigned int ip=0;ip<np0;++ip){
