@@ -17,12 +17,9 @@
 #include <string>
 #include <vector>
 
- /// <summary>
- /// test fix
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327950288
 #endif
-/// </summary>
 
 namespace delfem2{
 namespace opengl{
@@ -134,9 +131,10 @@ DFM2_INLINE void DrawPoints2d_Points(
     const std::vector<double>& aXY);
 
 DFM2_INLINE void DrawPoints2d_Psup(
-    const std::vector<double>& aXY,
-    const std::vector<unsigned int>& psup_ind,
-    const std::vector<unsigned int>& psup);
+    unsigned int nXY,
+    const double* aXY,
+    const unsigned int* psup_ind,
+    const unsigned int* psup);
 
 // above: 2D
 // below: 3D

@@ -132,12 +132,31 @@ int main(int argc,char* argv[])
     aPointData.resize(aPointData.size() + 1);
     const CClusterData& pd0 = aPointData[itr];
     CClusterData& pd1 = aPointData[itr + 1];
-    std::vector<unsigned int> map01;
-    dfm2::BinaryClustering_Points2d(
-        pd1.aXY, pd1.aArea, map01,
-        pd0.aXY, pd0.aArea, pd0.psup_ind, pd0.psup);
-    dfm2::BinaryClusteringPoints_FindConnection(pd1.psup_ind,pd1.psup,
-        pd1.aXY.size()/2,map01,pd0.psup_ind,pd0.psup);
+    std::vector<unsigned int> map01(pd0.aXY.size()/2);
+    unsigned int np1 = dfm2::BinaryClustering_Points2d(
+        map01.data(),
+        pd0.aXY.size()/2, pd0.aArea.data(), pd0.psup_ind.data(), pd0.psup.data());
+    {
+      const unsigned int np0 = pd0.aXY.size()/2;
+      pd1.aXY.assign(np1*2,0.0);
+      pd1.aArea.assign(np1,0.0);
+      for(unsigned int ip0=0;ip0<np0;++ip0){
+        const unsigned int ip1 = map01[ip0];
+        const double a0 = pd0.aArea[ip0];
+        pd1.aArea[ip1] += a0;
+        pd1.aXY[ip1*2+0] += a0*pd0.aXY[ip0*2+0];
+        pd1.aXY[ip1*2+1] += a0*pd0.aXY[ip0*2+1];
+      }
+      for(unsigned int ip1=0;ip1<np1;++ip1){
+        const double a1inv = 1.0/pd1.aArea[ip1];
+        pd1.aXY[ip1*2+0] *= a1inv;
+        pd1.aXY[ip1*2+1] *= a1inv;
+      }
+    }
+    dfm2::BinaryClusteringPoints_FindConnection(
+        pd1.psup_ind,pd1.psup,
+        pd1.aXY.size()/2,
+        pd0.aXY.size()/2,map01.data(),pd0.psup_ind.data(),pd0.psup.data());
     unsigned int np0 = aPointData[0].aXY.size()/2;
     pd1.map0c.resize(np0,UINT_MAX);
     for(unsigned int ip=0;ip<np0;++ip){
@@ -163,9 +182,11 @@ int main(int argc,char* argv[])
 
   // -----------
   delfem2::opengl::CViewer_GLFW viewer;
+  viewer.nav.camera.trans[0] = -0.5;
+  viewer.nav.camera.trans[1] = -0.5;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();
-  viewer.nav.camera.view_height = 1.5;
+  viewer.nav.camera.view_height = 0.7;
   while (!glfwWindowShouldClose(viewer.window) )
   {
     for(const auto& pd: aPointData) {

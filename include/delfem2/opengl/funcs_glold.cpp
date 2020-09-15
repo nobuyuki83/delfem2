@@ -1084,18 +1084,17 @@ DFM2_INLINE void delfem2::opengl::DrawPoints2d_Points(
 }
 
 DFM2_INLINE void delfem2::opengl::DrawPoints2d_Psup(
-    const std::vector<double>& aXY,
-    const std::vector<unsigned int>& psup_ind,
-    const std::vector<unsigned int>& psup)
+    unsigned int nXY,
+    const double* aXY,
+    const unsigned int* psup_ind,
+    const unsigned int* psup)
 {
-  const unsigned int np = aXY.size()/2;
-  assert(psup_ind.size()==np+1);
   ::glBegin(GL_LINES);
-  for(unsigned int ip=0;ip<np;++ip){
+  for(unsigned int ip=0;ip<nXY;++ip){
     for(unsigned int ipsup=psup_ind[ip];ipsup<psup_ind[ip+1];++ipsup){
       unsigned int jp = psup[ipsup];
-      ::glVertex2dv(aXY.data()+ip*2);
-      ::glVertex2dv(aXY.data()+jp*2);
+      ::glVertex2dv(aXY+ip*2);
+      ::glVertex2dv(aXY+jp*2);
     }
   }
   ::glEnd();
