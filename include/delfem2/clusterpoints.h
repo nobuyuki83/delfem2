@@ -16,7 +16,8 @@
 
 namespace delfem2{
 
-DFM2_INLINE unsigned int BinaryClustering_Points2d(
+DFM2_INLINE unsigned int
+BinaryClustering_Points2d(
     unsigned int* map01,
     //
     const unsigned int np0,
@@ -24,7 +25,8 @@ DFM2_INLINE unsigned int BinaryClustering_Points2d(
     const unsigned int* psup_ind0,
     const unsigned int* psup0);
 
-DFM2_INLINE void BinaryClustering_Points3d(
+DFM2_INLINE void
+BinaryClustering_Points3d(
     std::vector<double>& aXYZ1,
     std::vector<double>& aArea1,
     std::vector<double>& aNorm1,
@@ -36,7 +38,8 @@ DFM2_INLINE void BinaryClustering_Points3d(
     const std::vector<unsigned int>& psup_ind0,
     const std::vector<unsigned int>& psup0);
 
-DFM2_INLINE void BinaryClusteringPoints_FindConnection(
+DFM2_INLINE void
+BinaryClustering_FindConnection(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     //
