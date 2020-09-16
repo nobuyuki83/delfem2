@@ -12,6 +12,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cmath>
+#include <cassert>
 
 #include "delfem2/imgio.h"
 
