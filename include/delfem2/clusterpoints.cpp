@@ -190,7 +190,7 @@ delfem2::BinaryClustering_Points2d(
 
 
 DFM2_INLINE void
-delfem2::BinaryClustering_FindConnection(
+delfem2::Clustering_Psup(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     //
@@ -201,6 +201,7 @@ delfem2::BinaryClustering_FindConnection(
     const unsigned int* psup0)
 {
   std::vector<unsigned int> map10;
+  unsigned int ncnt = 0;
   { // inverse map of map01.
     std::vector<unsigned int> cnt1(np1,0);
     for(unsigned int ip0=0;ip0<np0;++ip0) {
@@ -208,41 +209,36 @@ delfem2::BinaryClustering_FindConnection(
       assert(ip1 < np1);
       cnt1[ip1] += 1;
     }
-    map10.assign(np1*2, UINT_MAX);
+    for(unsigned int ip1=0;ip1<np1;++ip1){
+      ncnt = ( cnt1[ip1] > ncnt ) ? cnt1[ip1] : ncnt;
+    }
+    cnt1.assign(np1,0);
+    map10.assign(np1*ncnt, UINT_MAX);
     for(unsigned int ip0=0;ip0<np0;++ip0){
       const unsigned int ip1 = map01[ip0];
       assert( ip1 < np1 );
-      if(map10[ip1 * 2 + 0] == UINT_MAX ){
-        map10[ip1 * 2 + 0] = ip0;
-      }
-      else{
-        assert(map10[ip1 * 2 + 1] == UINT_MAX );
-        map10[ip1 * 2 + 1] = ip0;
-      }
+      unsigned int icnt = cnt1[ip1];
+      cnt1[ip1]++;
+      assert(icnt<ncnt);
+      assert( map10[ip1 * ncnt + icnt ] == UINT_MAX );
+      map10[ip1 * ncnt + icnt] = ip0;
     }
   }
   psup_ind1.assign(np1+1,0);
   std::vector<unsigned int> aflag1(np1,UINT_MAX);
   for (unsigned int ip1 = 0; ip1 < np1; ++ip1) {
     aflag1[ip1] = ip1; // avoiding self-connection
-    const unsigned int ip0 = map10[ip1*2+0];
-    assert( map01[ip0] == ip1 );
-    for(unsigned int ipsup0 = psup_ind0[ip0]; ipsup0 < psup_ind0[ip0 + 1]; ++ipsup0){
-      const unsigned int kp0 = psup0[ipsup0];
-      const unsigned int kp1 = map01[kp0];
-      if( aflag1[kp1] == ip1 ){ continue; }
-      psup_ind1[ip1+1] += 1;
-      aflag1[kp1] = ip1;
-    }
-    const unsigned int jp0 = map10[ip1*2+1];
-    if( jp0 == UINT_MAX ){ continue; } // non-clustered point
-    assert( map01[ip0] == ip1 );
-    for(unsigned int ipsup0 = psup_ind0[jp0]; ipsup0 < psup_ind0[jp0 + 1]; ++ipsup0){
-      const unsigned int kp0 = psup0[ipsup0];
-      const unsigned int kp1 = map01[kp0];
-      if( aflag1[kp1] == ip1 ){ continue; }
-      psup_ind1[ip1+1] += 1;
-      aflag1[kp1] = ip1;
+    for(unsigned int icnt=0;icnt<ncnt;++icnt) {
+      const unsigned int ip0 = map10[ip1 * ncnt + icnt];
+      if ( ip0 == UINT_MAX) { break; } // non-clustered point
+      assert(map01[ip0] == ip1);
+      for (unsigned int ipsup0 = psup_ind0[ip0]; ipsup0 < psup_ind0[ip0 + 1]; ++ipsup0) {
+        const unsigned int kp0 = psup0[ipsup0];
+        const unsigned int kp1 = map01[kp0];
+        if (aflag1[kp1] == ip1) { continue; }
+        psup_ind1[ip1 + 1] += 1;
+        aflag1[kp1] = ip1;
+      }
     }
   }
   for(unsigned int ip1=0;ip1<np1;++ip1){
@@ -253,24 +249,17 @@ delfem2::BinaryClustering_FindConnection(
   aflag1.assign(np1,UINT_MAX);
   for (unsigned int ip1 = 0; ip1 < np1; ++ip1) {
     aflag1[ip1] = ip1; // avoiding self-connection
-    const unsigned int ip0 = map10[ip1*2+0];
-    for(unsigned int ipsup0 = psup_ind0[ip0]; ipsup0 < psup_ind0[ip0 + 1]; ++ipsup0){
-      const unsigned int kp0 = psup0[ipsup0];
-      const unsigned int kp1 = map01[kp0];
-      if( aflag1[kp1] == ip1 ){ continue; }
-      aflag1[kp1] = ip1;
-      psup1[ psup_ind1[ip1] ] = kp1;
-      psup_ind1[ip1] += 1;
-    }
-    const unsigned int jp0 = map10[ip1*2+1];
-    if( jp0 == UINT_MAX ){ continue; } // non-clustered point
-    for(unsigned int ipsup0 = psup_ind0[jp0]; ipsup0 < psup_ind0[jp0 + 1]; ++ipsup0){
-      const unsigned int kp0 = psup0[ipsup0];
-      const unsigned int kp1 = map01[kp0];
-      if( aflag1[kp1] == ip1 ){ continue; }
-      aflag1[kp1] = ip1;
-      psup1[ psup_ind1[ip1] ] = kp1;
-      psup_ind1[ip1] += 1;
+    for(unsigned int icnt=0;icnt<ncnt;++icnt) {
+      const unsigned int ip0 = map10[ip1 * ncnt + icnt];
+      if( ip0 == UINT_MAX ){ break; } // non-clustered point
+      for(unsigned int ipsup0 = psup_ind0[ip0]; ipsup0 < psup_ind0[ip0 + 1]; ++ipsup0){
+        const unsigned int kp0 = psup0[ipsup0];
+        const unsigned int kp1 = map01[kp0];
+        if( aflag1[kp1] == ip1 ){ continue; }
+        aflag1[kp1] = ip1;
+        psup1[ psup_ind1[ip1] ] = kp1;
+        psup_ind1[ip1] += 1;
+      }
     }
   }
   for(int ip1=(int)np1-1;ip1>0;--ip1){
