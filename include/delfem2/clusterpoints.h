@@ -39,7 +39,7 @@ BinaryClustering_Points3d(
     const std::vector<unsigned int>& psup0);
 
 DFM2_INLINE void
-BinaryClustering_FindConnection(
+Clustering_Psup(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
     //

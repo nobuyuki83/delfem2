@@ -153,7 +153,7 @@ int main(int argc,char* argv[])
         pd1.aXY[ip1*2+1] *= a1inv;
       }
     }
-    dfm2::BinaryClustering_FindConnection(
+    dfm2::Clustering_Psup(
         pd1.psup_ind,pd1.psup,
         pd1.aXY.size()/2,
         pd0.aXY.size()/2,map01.data(),pd0.psup_ind.data(),pd0.psup.data());
