@@ -96,19 +96,25 @@ DFM2_INLINE void DrawBox_MinMaxXYZ
   double y_min, double y_max,
   double z_min, double z_max);
 
-DFM2_INLINE void DrawBox_MinMaxXYZ(double aabbMinMaxXYZ[6]);
-DFM2_INLINE void DrawAABB3D_Edge
- (double cx, double cy, double cz,
-  double wx, double wy, double wz);
+DFM2_INLINE void DrawBox_MinMaxXYZ(
+    double aabbMinMaxXYZ[6]);
 
-DFM2_INLINE void DrawAABB3D_Edge
- (const double cw[6]);
+DFM2_INLINE void DrawAABB3D_Edge(
+    double cx, double cy, double cz,
+    double wx, double wy, double wz);
+
+DFM2_INLINE void DrawAABB3D_Edge(
+    const double cw[6]);
 
 /**
  * @brief draw bounding box with edge
  * @details this function do nothing when pmin[0]  > pmin[1] 
  */
 DFM2_INLINE void DrawBox3_Edge(
+    const double* pmin,
+    const double* pmax);
+
+DFM2_INLINE void DrawBox2_Edge(
     const double* pmin,
     const double* pmax);
 

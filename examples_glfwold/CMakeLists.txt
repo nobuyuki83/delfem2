@@ -59,7 +59,7 @@ add_subdirectory(141_RigBendCapsule)
 add_subdirectory(142_BinaryClusteringPoints3D)
 add_subdirectory(143_Image2MeshInterpolation)
 add_subdirectory(144_BinaryClusteringPoints2D)
-
+add_subdirectory(145_Lloyd)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)
