@@ -1219,6 +1219,19 @@ DFM2_INLINE void delfem2::opengl::DrawBox3_Face
   ::glEnd();
 }
 
+DFM2_INLINE void delfem2::opengl::DrawBox2_Edge
+    (const double* p0, // pmin
+     const double* p1) // pmax
+{
+  if( p0[0] > p1[0] ){ return; } // this bounding box is empty
+  ::glBegin(GL_LINES);
+  ::glVertex2d(p0[0],p0[1]); ::glVertex2d(p1[0],p0[1]);
+  ::glVertex2d(p1[0],p0[1]); ::glVertex2d(p1[0],p1[1]);
+  ::glVertex2d(p1[0],p1[1]); ::glVertex2d(p0[0],p1[1]);
+  ::glVertex2d(p0[0],p1[1]); ::glVertex2d(p0[0],p0[1]);
+  ::glEnd();
+}
+
 
 DFM2_INLINE void delfem2::opengl::DrawBox_MinMaxXYZ
  (double x_min, double x_max,
