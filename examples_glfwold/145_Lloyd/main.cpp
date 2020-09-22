@@ -6,79 +6,78 @@
  */
 
 #include <vector>
-#include <string>
 #include <cstdlib>
 #include <set>
 #include <random>
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/color.h"
-
+//
+#include "delfem2/sampler.h"
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "delfem2/../../3rd_party/stb_image.h"
+
 namespace dfm2 = delfem2;
 
-// -----------------------------
-
-void Step(
-    std::vector<double>& aXY,
-    const unsigned int ndiv,
-    const std::vector<double>& aD)
+void MakeDensity(
+  std::vector<double>& aDensity,
+  unsigned int imode,
+  const unsigned int ndiv)
 {
-  assert( aD.size() == ndiv*ndiv );
-  const unsigned int np = aXY.size()/2;
-  std::vector<unsigned int> aV; // Volonoi, index of point, distance for every pixels
-  aV.resize(ndiv*ndiv );
-  for(unsigned int ih=0; ih < ndiv; ++ih) {
-    for(unsigned int iw=0;iw<ndiv;++iw){
-      const double x0 = (iw + 0.5) / ndiv;
-      const double y0 = 1.0 - (ih + 0.5) / ndiv;
-      double min_dist = 4.0;
-      unsigned int min_ip = UINT_MAX;
-      for(unsigned int ip=0;ip<np;++ip){
-        const double x1 = aXY[ip*2+0];
-        const double y1 = aXY[ip*2+1];
-        const double d01 = (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1);
-        if( d01 > min_dist ){ continue; }
-        min_dist = d01;
-        min_ip = ip;
+  if( imode == 0 ){
+    aDensity.assign(ndiv*ndiv,500.0);
+  }
+  else if( imode == 1 ){
+    aDensity.resize(ndiv*ndiv);
+    for(unsigned int idiv=0;idiv<ndiv;++idiv){
+      for(unsigned int jdiv=0;jdiv<ndiv;++jdiv) {
+        double w0 = sin((double)idiv/ndiv*M_PI*2)*cos((double)jdiv/ndiv*M_PI*2);
+        aDensity[idiv*ndiv+jdiv] = 2000*w0*w0;
       }
-      aV[ih*ndiv+iw] = min_ip;
     }
   }
-
-  std::vector<double> awpw(np*3,1.0e-10);
-  for(unsigned int ih=0; ih < ndiv; ++ih) {
-    for (unsigned int iw = 0; iw < ndiv; ++iw) {
-      const double x0 = (iw + 0.5) / ndiv;
-      const double y0 = 1.0 - (ih + 0.5) / ndiv;
-      double w0 = aD[ih*ndiv+iw];
-      const unsigned int ip0 = aV[ih*ndiv+iw];
-      awpw[ip0*3+0] += w0*x0;
-      awpw[ip0*3+1] += w0*y0;
-      awpw[ip0*3+2] += w0;
+  else if( imode == 2 ){
+    int width, height;
+    std::string name_img_in_test_inputs = "tesla.png";
+    int channels;
+    unsigned char *img = stbi_load((std::string(PATH_INPUT_DIR)+"/"+name_img_in_test_inputs).c_str(),
+                                   &width, &height, &channels, 0);
+    assert( width == 128 && height == 128 && channels == 3 );
+    for(unsigned int ipix=0;ipix<ndiv*ndiv;++ipix){
+      double a = (double)img[ipix*3+0] + (double)img[ipix*3+1] + (double)img[ipix*3+2];
+      double d0 = 255.0*3 - a;
+      aDensity[ipix] = d0*d0*d0*0.00005;
     }
+    delete[] img;
   }
+}
 
-  for(unsigned int ip=0;ip<np;++ip){
-    aXY[ip*2+0] = awpw[ip*3+0] / awpw[ip*3+2];
-    aXY[ip*2+1] = awpw[ip*3+1] / awpw[ip*3+2];
-  }
+void Draw(
+    const delfem2::opengl::CViewer_GLFW& viewer,
+    const std::vector<double>& aXY,
+    const double min_xy[2],
+    const double max_xy[2])
+{
+  viewer.DrawBegin_oldGL();
+  ::glColor3d(0, 0, 0);
+  ::glPointSize(5);
+  dfm2::opengl::DrawPoints2d_Points(aXY);
+  dfm2::opengl::DrawBox2_Edge(min_xy,max_xy);
+  viewer.DrawEnd_oldGL();
 }
 
 int main(int argc,char* argv[])
 {
-  const unsigned int ndiv = 128;
-  const unsigned int np = 100;
   std::vector<double> aXY;
+  const unsigned int ndiv = 128;
   std::vector<double> aDensity;
+  const double min_xy[2] = {0,0};
+  const double max_xy[2] = {1,1};
   std::random_device rd;
   std::mt19937 rdeng(rd());
-  std::uniform_real_distribution<double> dist(0,1);
-
+  std::uniform_real_distribution<double> dist_x(min_xy[0], max_xy[0]);
+  std::uniform_real_distribution<double> dist_y(min_xy[1], max_xy[1]);
   // -----------
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.nav.camera.trans[0] = -0.5;
@@ -88,35 +87,45 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 0.7;
   while ( true )
   {
-    for(unsigned int istep=0;istep<200;++istep) {
-      if( istep % 100  == 0 ) {
-        aXY.resize(np*2);
-        for (unsigned int ip = 0; ip < np; ++ip) {
-          aXY[ip*2+0] = dist(rdeng);
-          aXY[ip*2+1] = dist(rdeng);
-        }
-      }
-      if( istep == 0 ){
-        aDensity.assign(ndiv*ndiv,1.0);
-      }
-      if( istep == 100 ){
-        aDensity.resize(ndiv*ndiv);
-        for(unsigned int idiv=0;idiv<ndiv;++idiv){
-          for(unsigned int jdiv=0;jdiv<ndiv;++jdiv) {
-            double w = sin((double)idiv/ndiv*M_PI*2)*cos((double)jdiv/ndiv*M_PI*2);
-            aDensity[idiv*ndiv+jdiv] = w*w;
+    for(unsigned int imode=0;imode<3;++imode){
+      MakeDensity(aDensity,imode,ndiv);
+      aXY.resize(0);
+      int icnt_fail = 0;
+      for(unsigned int idart=0;idart<1000;++idart){
+        for(int itr=0;itr<10;++itr) {
+          double x0 = dist_x(rdeng);
+          double y0 = dist_x(rdeng);
+          auto ix0 = (unsigned int) floor((x0 - min_xy[0]) / (max_xy[0] - min_xy[0]) * ndiv);
+          auto iy0 = (unsigned int) floor((y0 - min_xy[1]) / (max_xy[1] - min_xy[1]) * ndiv);
+          iy0 = ndiv - iy0;
+          double dist01 = 1.0 / aDensity[iy0 * ndiv + ix0];
+          bool flg_fail = false;
+          for (unsigned int ip = 0; ip < aXY.size() / 2; ++ip) {
+            const double x1 = aXY[ip * 2 + 0];
+            const double y1 = aXY[ip * 2 + 1];
+            const double d01 = (x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1);
+            if (d01 * d01 < dist01 * dist01) {
+              flg_fail = true;
+              icnt_fail++;
+              break;
+            }
+          }
+          if (!flg_fail) {
+            icnt_fail = 0;
+            aXY.push_back(x0);
+            aXY.push_back(y0);
           }
         }
+        Draw(viewer,aXY,min_xy,max_xy);
+        if( icnt_fail > 100 ){ break; }
+        if (glfwWindowShouldClose(viewer.window)) { break; }
       }
-      Step(aXY,
-           ndiv, aDensity);
-      viewer.DrawBegin_oldGL();
-      ::glColor3d(0, 0, 0);
-      ::glPointSize(5);
-      dfm2::opengl::DrawPoints2d_Points(aXY);
-      double p0[2] = {0,0}, p1[2] = {1,1};
-      dfm2::opengl::DrawBox2_Edge(p0,p1);
-      viewer.DrawEnd_oldGL();
+      for(int itr=0;itr<50;++itr){
+        dfm2::Step_Lloyd2(aXY,
+                          ndiv, aDensity, min_xy, max_xy);
+        Draw(viewer,aXY,min_xy,max_xy);
+        if (glfwWindowShouldClose(viewer.window)) { break; }
+      }
     }
     if (glfwWindowShouldClose(viewer.window)) { break; }
   }

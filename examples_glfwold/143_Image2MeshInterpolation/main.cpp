@@ -99,6 +99,7 @@ int main(int argc,char* argv[])
     dfm2::ImageInterpolation_Bilinear(aColor,
         width,height,img,
         aXY.data(),aXY.size()/2);
+    delete[] img;
   }
   std::cout << aXY.size()/2 << " " << 220*220 << std::endl;
 
