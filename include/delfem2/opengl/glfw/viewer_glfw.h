@@ -22,8 +22,8 @@ namespace opengl{
 class CViewer_GLFW{
 public:
   void Init_oldGL();
-  void DrawBegin_oldGL();
-  void DrawEnd_oldGL();
+  void DrawBegin_oldGL() const;
+  void DrawEnd_oldGL() const;
   
   void Init_newGL();
   
