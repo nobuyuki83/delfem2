@@ -230,8 +230,9 @@ DFM2_INLINE void JArray_AddMasterSlavePattern(
 DFM2_INLINE void JArray_Extend(
     std::vector<unsigned int>& psup_ind1,
     std::vector<unsigned int>& psup1,
-    const std::vector<unsigned int>& psup_ind0,
-    const std::vector<unsigned int>& psup0);
+    const unsigned int *psup_ind0,
+    unsigned int npsup_ind0,
+    const unsigned int *psup0);
 
 // ---------------------------------------------------
 
