@@ -212,19 +212,19 @@ DFM2_INLINE void delfem2::JArray_ElSuP_MeshElem
 DFM2_INLINE void delfem2::JArray_Extend
 (std::vector<unsigned int>& psup_ind1,
  std::vector<unsigned int>& psup1,
- const std::vector<unsigned int>& psup_ind0,
- const std::vector<unsigned int>& psup0)
+ const unsigned int *psup_ind0,
+ unsigned int npsup_ind0,
+ const unsigned int *psup0)
 {
-  assert( !psup_ind0.empty() );
-  const size_t np = psup_ind0.size()-1;
+  const size_t np = npsup_ind0-1;
   psup_ind1.assign(np+1, 0);
-  std::vector<int> aflg(np,-1);
+  std::vector<unsigned > aflg(np,UINT_MAX);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
       unsigned int jp0 = psup0[ipsup];
       for(unsigned int jpsup=psup_ind0[jp0];jpsup<psup_ind0[jp0+1];++jpsup){
         unsigned int kp0 = psup0[jpsup];
-        if( aflg[kp0] == (int)ip || kp0 == ip ){ continue; }
+        if( aflg[kp0] == ip || kp0 == ip ){ continue; }
         ++psup_ind1[ip+1];
         aflg[kp0] = ip;
       }
@@ -236,13 +236,13 @@ DFM2_INLINE void delfem2::JArray_Extend
   }
   psup1.resize(psup_ind1[np]);
   // ---------
-  aflg.assign(np,-1);
+  aflg.assign(np,UINT_MAX);
   for(unsigned int ip=0;ip<np;++ip){
     for(unsigned int ipsup=psup_ind0[ip];ipsup<psup_ind0[ip+1];++ipsup){
       unsigned int jp0 = psup0[ipsup];
       for(unsigned int jpsup=psup_ind0[jp0];jpsup<psup_ind0[jp0+1];++jpsup){
         unsigned int kp0 = psup0[jpsup];
-        if( aflg[kp0] == (int)ip || kp0 == ip ){ continue; }
+        if( aflg[kp0] == ip || kp0 == ip ){ continue; }
         unsigned int kpsup = psup_ind1[ip];
         ++psup_ind1[ip];
         psup1[kpsup] = kp0;

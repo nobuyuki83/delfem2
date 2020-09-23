@@ -233,7 +233,7 @@ void delfem2::CDef_LaplacianLinear::Init
   {
     std::vector<unsigned int> psup_ind1, psup1;
     JArray_Extend(psup_ind1, psup1,
-                  psup_ind, psup);
+                  psup_ind.data(), psup_ind.size(), psup.data());
     JArray_Sort(psup_ind1, psup1);
     Mat.Initialize(np, 3, true);
     assert( psup_ind1.size() == np+1 );
@@ -420,7 +420,7 @@ void delfem2::CDef_LaplacianLinearDegenerate::Init
   {
     std::vector<unsigned int> psup_ind1, psup1;
     JArray_Extend(psup_ind1, psup1,
-                  psup_ind, psup);
+                  psup_ind.data(), psup_ind.size(), psup.data());
     JArray_Sort(psup_ind1, psup1);
     Mat.Initialize(np, 1, true);
     assert( psup_ind1.size() == np+1 );
