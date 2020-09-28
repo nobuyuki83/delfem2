@@ -16,6 +16,7 @@
 #include "delfem2/sdf.h"
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/objf_geo3.h"

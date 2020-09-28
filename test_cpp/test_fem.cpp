@@ -15,6 +15,7 @@
 #include "delfem2/mats.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/primitive.h"
 
 #include "delfem2/geo3_v23m34q.h"

@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cmath>
 #include <vector>
+#include <random>
 #include "delfem2/mshmisc.h"
 
 #ifndef M_PI
@@ -138,21 +139,14 @@ DFM2_INLINE  void Mat3_Bryant
   m[8] = cosf(ry)*cosf(rx);
 }
 
-}
-}
-
-// static function above
-// ==============================================
-// exposed function below
-
 template <typename T>
 void CenterWidth_MinMaxXYZ
-(T& cx, T& cy, T& cz,
- T& wx, T& wy, T& wz,
- //
- T x_min, T x_max,
- T y_min, T y_max,
- T z_min, T z_max)
+    (T& cx, T& cy, T& cz,
+     T& wx, T& wy, T& wz,
+        //
+     T x_min, T x_max,
+     T y_min, T y_max,
+     T z_min, T z_max)
 {
   cx = (x_min+x_max)*0.5;
   cy = (y_min+y_max)*0.5;
@@ -162,10 +156,8 @@ void CenterWidth_MinMaxXYZ
   wz = z_max-z_min;
 }
 
-// -----------------------------------------------------------------------------
-
 template<typename T>
-void delfem2::updateMinMaxXYZ(
+void updateMinMaxXYZ(
     T& x_min, T& x_max,
     T& y_min, T& y_max,
     T& z_min, T& z_max,
@@ -185,129 +177,27 @@ void delfem2::updateMinMaxXYZ(
   z_max = (z_max > z) ? z_max : z;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::updateMinMaxXYZ(
+template void updateMinMaxXYZ(
     float& x_min, float& x_max,
     float& y_min, float& y_max,
     float& z_min, float& z_max,
     float X, float Y, float Z);
-template void delfem2::updateMinMaxXYZ(
+template void updateMinMaxXYZ(
     double& x_min, double& x_max,
     double& y_min, double& y_max,
     double& z_min, double& z_max,
     double X, double Y, double Z);
 #endif
 
-// -----------------------------
 
-template<typename T>
-void delfem2::BoundingBox3_Points3(
-    T min3[3],
-    T max3[3],
-    const T* aXYZ,
-    const unsigned int nXYZ)
-{
-  min3[0] = +1;
-  max3[0] = -1;
-  for(unsigned int ixyz=0;ixyz<nXYZ;++ixyz){
-    updateMinMaxXYZ(min3[0], max3[0],
-                    min3[1], max3[1],
-                    min3[2], max3[2],
-                    aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2]);
-  }
 }
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::BoundingBox3_Points3(
-    double min3[3], double max3[3],
-    const double* aXYZ, const unsigned int nXYZ);
-template void delfem2::BoundingBox3_Points3(
-    float min3[3], float max3[3],
-    const float* aXYZ, const unsigned int nXYZ);
-#endif
-
-// --------------------------------------------------------------------------------
-
-template <typename T>
-void delfem2::CenterWidth_Point3
-(T& cx, T& cy, T& cz,
- T& wx, T& wy, T& wz,
- const T* paXYZ, const unsigned int nXYZ)
-{
-  if( paXYZ == 0 ){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  T x_min=paXYZ[0], x_max=paXYZ[0];
-  T y_min=paXYZ[1], y_max=paXYZ[1];
-  T z_min=paXYZ[2], z_max=paXYZ[2];
-  for(unsigned int ino=0;ino<nXYZ;ino++){
-    updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                    paXYZ[ino*3+0], paXYZ[ino*3+1], paXYZ[ino*3+2]);
-  }
-  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
-                           x_min,x_max, y_min,y_max, z_min,z_max);
 }
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::CenterWidth_Point3 (
-    float& cx, float& cy, float& cz,
-    float& wx, float& wy, float& wz,
-    const float* paXYZ, const unsigned int nXYZ);
-template void delfem2::CenterWidth_Point3 (
-    double& cx, double& cy, double& cz,
-    double& wx, double& wy, double& wz,
-    const double* paXYZ, const unsigned int nXYZ);
-#endif
 
+// static function above
+// ==============================================
+// exposed function below
 
-// ---------------------------------
-
-template <typename T>
-void delfem2::CenterWidth_Points3
-(T& cx, T& cy, T& cz,
- T& wx, T& wy, T& wz,
- const std::vector<T>& aXYZ)
-{
-  const int np = (int)aXYZ.size()/3;
-  if(np==0){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  T x_min=aXYZ[0], x_max=aXYZ[0];
-  T y_min=aXYZ[1], y_max=aXYZ[1];
-  T z_min=aXYZ[2], z_max=aXYZ[2];
-  for (int ip=0; ip<np; ++ip){
-    updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                    aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
-  }
-  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
-                        x_min,x_max, y_min,y_max, z_min,z_max);
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::CenterWidth_Points3 (
-    float& cx, float& cy, float& cz,
-    float& wx, float& wy, float& wz,
-    const std::vector<float>& aXYZ);
-template void delfem2::CenterWidth_Points3 (
-    double& cx, double& cy, double& cz,
-    double& wx, double& wy, double& wz,
-    const std::vector<double>& aXYZ);
-#endif
-
-// -------------------------------------
-
-template <typename T>
-void delfem2::CenterWidth_Points3(T c[3],
-                               T w[3],
-                               const std::vector<T>& aXYZ)
-{
-  delfem2::CenterWidth_Points3(c[0],c[1],c[2],
-                            w[0],w[1],w[2],
-                            aXYZ);
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::CenterWidth_Points3(float c[3],
-                                        float w[3],
-                                        const std::vector<float>& aXYZ);
-template void delfem2::CenterWidth_Points3(double c[3],
-                                        double w[3],
-                                        const std::vector<double>& aXYZ);
-#endif
-
-
-// -------------------------------------
+// -----------------------------------------------------------------------------
 
 void delfem2::GetCenterWidthGroup
 (double& cx, double& cy, double& cz,
@@ -335,13 +225,13 @@ void delfem2::GetCenterWidthGroup
         is_ini = false;
         continue;
       }
-      updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
+      mshmisc::updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                       aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
     }
   }
   if (is_ini){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
-                           x_min,x_max, y_min,y_max, z_min,z_max);
+  mshmisc::CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
+      x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
 void delfem2::GetCenterWidthGroup
@@ -370,13 +260,13 @@ void delfem2::GetCenterWidthGroup
         is_ini = false;
         continue;
       }
-      updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
+      mshmisc::updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
                       aXYZ[ip*3+0], aXYZ[ip*3+1], aXYZ[ip*3+2]);
     }
   }
   if (is_ini){ cx=cy=cz=0; wx=wy=wz=1; return; }
-  CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
-                           x_min,x_max, y_min,y_max, z_min,z_max);
+  mshmisc::CenterWidth_MinMaxXYZ(cx,cy,cz, wx,wy,wz,
+      x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
 void delfem2::GetCenterWidth3DGroup
@@ -390,32 +280,6 @@ void delfem2::GetCenterWidth3DGroup
 {
   GetCenterWidthGroup(cw[0],cw[1],cw[2], cw[3],cw[4],cw[5],
                       aXYZ,aElemInd,aElem, igroup, aIndGroup);
-}
-
-
-void delfem2::GetCenterWidthLocal(
-    double& lcx, double& lcy, double& lcz,
-    double& lwx, double& lwy, double& lwz,
-    const std::vector<double>& aXYZ,
-    const double lex[3],
-    const double ley[3],
-    const double lez[3])
-{
-  const int nno = (int)aXYZ.size()/3;
-  if (nno==0){ lcx=lcy=lcz=0; lwx=lwy=lwz=1; return; }
-  const double p0[3] = {aXYZ[0],aXYZ[1],aXYZ[2]};
-  double x_min = mshmisc::Dot3(p0,lex); double x_max = x_min;
-  double y_min = mshmisc::Dot3(p0,ley); double y_max = y_min;
-  double z_min = mshmisc::Dot3(p0,lez); double z_max = z_min;
-  for (int ino = 0; ino<nno; ++ino){
-    const double pi[3] = {aXYZ[ino*3+0],aXYZ[ino*3+1],aXYZ[ino*3+2]};
-    updateMinMaxXYZ(x_min,x_max, y_min,y_max, z_min,z_max,
-                    mshmisc::Dot3(pi,lex),
-                    mshmisc::Dot3(pi,ley),
-                    mshmisc::Dot3(pi,lez));
-  }
-  CenterWidth_MinMaxXYZ(lcx,lcy,lcz, lwx,lwy,lwz,
-                           x_min,x_max, y_min,y_max, z_min,z_max);
 }
 
 // -------------------------------------
@@ -459,182 +323,6 @@ template double delfem2::CentsMaxRad_MeshTri3(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri);
 #endif
-
-// -------------------------------------
-
-template <typename T>
-void delfem2::Scale_PointsX
-(std::vector<T>& aXYZ,
- T s)
-{
-  const std::size_t n = aXYZ.size();
-  for (unsigned int i = 0; i<n; ++i){ aXYZ[i] *= s; }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Scale_PointsX(std::vector<float>& aXYZ, float s);
-template void delfem2::Scale_PointsX(std::vector<double>& aXYZ, double s);
-#endif
-
-// --------------
-
-template <typename T>
-void delfem2::Scale_Points3
- (T* pXYZs_,
-  const unsigned int nnode_,
-  T s)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] *= s;
-    pXYZs_[ino*3+1] *= s;
-    pXYZs_[ino*3+2] *= s;
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Scale_Points3(float* pXYZ, const unsigned int n, float s);
-template void delfem2::Scale_Points3(double* pXYZ, const unsigned int n, double s);
-#endif
-
-// --------------
-
-template <typename T>
-void delfem2::Translate_Points3
-(std::vector<T>& aXYZ,
-T tx, T ty, T tz)
-{
-  const std::size_t nXYZ = aXYZ.size()/3;
-  for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
-    aXYZ[ixyz*3+0] += tx;
-    aXYZ[ixyz*3+1] += ty;
-    aXYZ[ixyz*3+2] += tz;
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points3(std::vector<float>& aXYZ, float tx, float ty, float tz);
-template void delfem2::Translate_Points3(std::vector<double>& aXYZ, double tx, double ty, double tz);
-#endif
-
-// --------------
-
-template <typename T>
-void delfem2::Translate_Points3
-(T* pXYZs_,
- const unsigned int nnode_,
- // ----
- T tx, T ty, T tz)
-{
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] += tx;
-    pXYZs_[ino*3+1] += ty;
-    pXYZs_[ino*3+2] += tz;
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points3(float* pXYZ, unsigned int nN, float tx, float ty, float tz);
-template void delfem2::Translate_Points3(double* pXYZ, unsigned int nN, double tx, double ty, double tz);
-#endif
-
-// --------------
-
-template <typename T>
-void delfem2::Translate_Points2
- (std::vector<T>& aXY,
-  T tx, T ty)
-{
-  const unsigned int np = aXY.size()/2;
-  for (unsigned int ip = 0; ip<np; ip++){
-    aXY[ip*2+0] += tx;
-    aXY[ip*2+1] += ty;
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points2(std::vector<float>& aXYZ, float tx, float ty);
-template void delfem2::Translate_Points2(std::vector<double>& aXYZ, double tx, double ty);
-#endif
-
-// --------------
-
-template <typename T>
-void delfem2::Rotate_Points3
-(std::vector<T>& aXYZ,
-T radx, T rady, T radz)
-{
-  T mat[9]; mshmisc::Mat3_Bryant(mat, radx, rady, radz);
-  T* pXYZ = aXYZ.data();
-  const unsigned int nXYZ = aXYZ.size()/3;
-  for (unsigned int ixyz = 0; ixyz<nXYZ; ++ixyz){
-    const T p[3] = { aXYZ[ixyz*3+0], aXYZ[ixyz*3+1], aXYZ[ixyz*3+2] };
-    mshmisc::MatVec3(pXYZ+ixyz*3,  mat, p);
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Rotate_Points3 (
-    std::vector<float>& aXYZ,
-    float radx, float rady, float radz);
-template void delfem2::Rotate_Points3 (
-    std::vector<double>& aXYZ,
-    double radx, double rady, double radz);
-#endif
-
-// -----------------------------------------
-
-double delfem2::Size_Points3D_LongestAABBEdge
- (const std::vector<double>& aXYZ)
-{
-  double c[3], w[3];
-  CenterWidth_Points3(c, w,
-                      aXYZ);
-  return mshmisc::largest(w[0], w[1], w[2]);
-}
-
-
-// ---------------------------------------
-
-template <typename T>
-void delfem2::Normalize_Points3
-(std::vector<T>& aXYZ,
- T s)
-{
-  T c[3], w[3];
-  CenterWidth_Points3(c,w,
-                      aXYZ);
-  Translate_Points3(aXYZ,
-                    -c[0], -c[1], -c[2]);
-  T wmax = mshmisc::largest(w[0], w[1], w[2]);
-  Scale_PointsX(aXYZ,
-                s/wmax);
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Normalize_Points3 (std::vector<float>& aXYZ,  float s);
-template void delfem2::Normalize_Points3 (std::vector<double>& aXYZ,  double s);
-#endif
-
-// ---------------------------------------
-
-template <typename T>
-void delfem2::CG_Point3
- (T cg[3],
-  const std::vector<T>& aXYZ)
-{
-  cg[0] = cg[1] = cg[2] = 0;
-  unsigned int nXYZ = aXYZ.size()/3;
-  for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
-    cg[0] += aXYZ[ixyz*3+0];
-    cg[1] += aXYZ[ixyz*3+1];
-    cg[2] += aXYZ[ixyz*3+2];
-  }
-  cg[0] /= nXYZ;
-  cg[1] /= nXYZ;
-  cg[2] /= nXYZ;
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::CG_Point3(float cg[3], const std::vector<float>& aXYZ);
-template void delfem2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
-#endif
-
-// above: points3
-// --------------------------------------------------------------------------------------------------------------------
-// below: mesh
-
 
 void delfem2::RemoveUnreferencedPoints_MeshElem
  (std::vector<double>& aXYZ1,

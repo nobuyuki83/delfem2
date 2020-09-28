@@ -9,6 +9,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/gridvoxel.h"
+#include "delfem2/points.h"
 #include "delfem2/rig_geo3.h"
 //
 #include <glad/glad.h>

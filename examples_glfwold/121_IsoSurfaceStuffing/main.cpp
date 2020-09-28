@@ -13,6 +13,7 @@
 #include <ctime>
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/iss.h"

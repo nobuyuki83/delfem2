@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2020 Nobuyuki Umetani
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #include <iostream>
 #include <vector>
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
 #include "delfem2/primitive.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/srchbi_v3bvh.h"
 
