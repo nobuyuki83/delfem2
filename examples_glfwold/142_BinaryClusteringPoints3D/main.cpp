@@ -14,6 +14,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/color.h"
+#include "delfem2/points.h"
 #include "delfem2/clusterpoints.h"
 
 #include <GLFW/glfw3.h>
@@ -42,7 +43,7 @@ int main(int argc,char* argv[])
 
   std::vector<unsigned int> aTri0;
   aPointData.resize(1);
-  {
+  { // make level0
     {
       CClusterData &pd0 = aPointData[0];
       delfem2::Read_Ply(std::string(PATH_INPUT_DIR) + "/bunny_2k.ply",

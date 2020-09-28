@@ -54,6 +54,7 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/specialfuncs.h         ${DELFEM2_INC}/specialfuncs.cpp      
       ${DELFEM2_INC}/mshtopo.h              ${DELFEM2_INC}/mshtopo.cpp
       ${DELFEM2_INC}/mshmisc.h              ${DELFEM2_INC}/mshmisc.cpp
+      ${DELFEM2_INC}/points.h               ${DELFEM2_INC}/points.cpp
       ${DELFEM2_INC}/mshio.h                ${DELFEM2_INC}/mshio.cpp
       ${DELFEM2_INC}/dtri.h                 ${DELFEM2_INC}/dtri.cpp
       ${DELFEM2_INC}/cad2_dtri2.h           ${DELFEM2_INC}/cad2_dtri2.cpp

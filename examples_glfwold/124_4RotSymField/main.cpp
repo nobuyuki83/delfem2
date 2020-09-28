@@ -13,8 +13,10 @@
 #include <cstdlib>
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"
+#include "delfem2/4rotsym.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
@@ -23,133 +25,26 @@
 
 namespace dfm2 = delfem2;
 
-// ---------------
-
-void FindNearestOrientation(dfm2::CVec3d& d0,
-                            dfm2::CVec3d& d1,
-                            const dfm2::CVec3d& o0,
-                            const dfm2::CVec3d& p0,
-                            const dfm2::CVec3d& o1,
-                            const dfm2::CVec3d& p1)
-{
-  const dfm2::CVec3d ad0[4] = { o0, p0, -o0, -p0 };
-  const dfm2::CVec3d ad1[2] = { o1, p1 };
-  double dot_max = -2;
-  for(const auto & j : ad1){
-    for(const auto & i : ad0){
-      const double dot = i*j;
-      if( dot < dot_max ){ continue; }
-      d0 = i;
-      d1 = j;
-      dot_max = dot;
-    }
-  }
-}
-
-void Smooth4RotSym
-(std::vector<double>& aOdir,
- const std::vector<double>& aNorm,
- const std::vector<unsigned int>& psup_ind,
- const std::vector<unsigned int>& psup)
-{
-  for(unsigned int iip=0;iip<aOdir.size()/3;++iip){
-    const unsigned int ip0 = iip;
-    assert( ip0 < psup_ind.size() );
-    const unsigned int npj = psup_ind[ip0+1] - psup_ind[ip0+0];
-    const dfm2::CVec3d n0 = dfm2::CVec3d(aNorm.data()+ip0*3);
-    dfm2::CVec3d o_new = dfm2::CVec3d(aOdir.data()+ip0*3);
-    double weight = 0.0;
-    for(unsigned int jjp=0;jjp<npj;++jjp){
-      unsigned int jp1 = psup[psup_ind[ip0]+jjp];
-      const dfm2::CVec3d n1 = dfm2::CVec3d(aNorm.data()+jp1*3);
-      const dfm2::CVec3d o1 = dfm2::CVec3d(aOdir.data()+jp1*3);
-      dfm2::CVec3d d0, d1;
-      FindNearestOrientation(d0,d1,
-                             o_new,n0^o_new, o1,n1^o1);
-      o_new = d0 * weight + d1;
-      o_new = (o_new - (o_new*n0)*n0).Normalize();
-      weight += 1.0;
-    }
-    o_new.CopyTo(aOdir.data()+ip0*3);
-  }
-}
-
-/*
-void Smooth4RotSym_RandomPermutation
- (std::vector<double>& aOdir,
-  std::vector<unsigned int>& permutation0,
-  const std::vector<double>& aNorm,
-  const std::vector<unsigned int>& psup_ind,
-  const std::vector<unsigned int>& psup)
-{
-  std::vector<unsigned int> permutation1(10);
-  std::random_shuffle( permutation0.begin(), permutation0.end() );
-  for(int iip=0;iip<aOdir.size()/3;++iip){
-    const unsigned int ip0 = permutation0[iip];
-    assert( ip0 < psup_ind.size() );
-    const unsigned int npj = psup_ind[ip0+1] - psup_ind[ip0+0];
-    const dfm2::CVec3d n0 = dfm2::CVec3d(aNorm.data()+ip0*3);
-    dfm2::CVec3d o_new = dfm2::CVec3d(aOdir.data()+ip0*3);
-    double weight = 0.0;
-    {
-      permutation1.resize(npj);
-      for(int jjp=0;jjp<npj;++jjp){ permutation1[jjp] = jjp; }
-      std::random_shuffle( permutation1.begin(), permutation1.end() );
-    }
-    for(int jjp=0;jjp<npj;++jjp){
-      unsigned int jp1 = psup[psup_ind[ip0]+permutation1[jjp]];
-      const dfm2::CVec3d n1 = dfm2::CVec3d(aNorm.data()+jp1*3);
-      const dfm2::CVec3d o1 = dfm2::CVec3d(aOdir.data()+jp1*3);
-      dfm2::CVec3d d0, d1;
-      FindNearestOrientation(d0,d1,
-                             o_new,n0^o_new, o1,n1^o1);
-      o_new = d0 * weight + d1;
-      o_new = (o_new - (o_new*n0)*n0).Normalize();
-      weight += 1.0;
-    }
-    o_new.CopyTo(aOdir.data()+ip0*3);
-  }
-}
- */
-
-
-void InitializeTangentField
-(std::vector<double>& aOdir,
- const std::vector<double>& aNorm)
-{
-  unsigned int np = aNorm.size()/3;
-  aOdir.resize(np*3);
-  for(unsigned int ip=0;ip<np;++ip){
-    dfm2::CVec3d o = dfm2::CVec3d::Random();
-    dfm2::CVec3d n = dfm2::CVec3d(aNorm.data()+ip*3).Normalize();
-    o = (o - (o*n)*n).Normalize();
-    o.CopyTo(aOdir.data()+ip*3);
-  }
-}
-
-
-// ---------------
+// ------------------------------------------------
+// TODO: Add random permutation version in the demo
 
 int main()
 {
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-                    aXYZ,aTri);
+      aXYZ,aTri);
   delfem2::Normalize_Points3(aXYZ);
   std::vector<double> aNorm(aXYZ.size());
   dfm2::Normal_MeshTri3D(aNorm.data(),
-                         aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
+      aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
   
   std::vector<double> aOdir;
-  InitializeTangentField(aOdir,aNorm);
+  dfm2::InitializeTangentField(aOdir,aNorm);
   
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                             aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
-  
-//  std::vector<unsigned int> permutation0(aXYZ.size()/3);
-//  for(unsigned int i=0;i<aXYZ.size()/3;++i){ permutation0[i] = i; }
+      aTri.data(), aTri.size()/3, 3, aXYZ.size()/3);
   
   // ------------------
   delfem2::opengl::CViewer_GLFW viewer;
@@ -160,11 +55,11 @@ int main()
   while (true)
   {
     if( iframe == 0 ){
-        InitializeTangentField(aOdir,aNorm);
+        dfm2::InitializeTangentField(aOdir,aNorm);
     }
     if( iframe > 30 ){
-      Smooth4RotSym(aOdir,
-                    aNorm, psup_ind, psup);
+      dfm2::Smooth4RotSym(aOdir,
+          aNorm, psup_ind, psup);
     }
     // --------------------
     viewer.DrawBegin_oldGL();

@@ -7,7 +7,7 @@
 
 #include <cmath>
 #include "delfem2/mshio.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/srchuni_v3.h"
 
 #include <glad/glad.h>

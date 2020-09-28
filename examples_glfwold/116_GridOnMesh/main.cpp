@@ -7,9 +7,9 @@
 
 #include <vector>
 #include <string>
-#include <cmath>
 #include <cstdlib>
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/vec3.h"

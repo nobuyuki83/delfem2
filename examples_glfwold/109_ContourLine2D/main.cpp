@@ -6,9 +6,8 @@
  */
 
 #include <vector>
-#include <cmath>
 #include <cstdlib>
-#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/slice.h"
 #include "delfem2/primitive.h"

@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 
 // gl related includes
 #include <GLFW/glfw3.h>

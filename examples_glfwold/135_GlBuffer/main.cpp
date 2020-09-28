@@ -8,6 +8,7 @@
 #include "delfem2/mshio.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
 // ------
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>

@@ -10,10 +10,11 @@
 #include <cassert>
 #include <cstdlib>
 #include <climits>
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include "delfem2/mshio.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri3_v3dtri.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/mshio.h"
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"

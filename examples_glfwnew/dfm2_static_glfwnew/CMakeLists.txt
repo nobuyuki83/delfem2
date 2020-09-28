@@ -44,6 +44,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
     ${DELFEM2_INC}/mshmisc.h                   ${DELFEM2_INC}/mshmisc.cpp
+    ${DELFEM2_INC}/points.h                    ${DELFEM2_INC}/points.cpp
     ${DELFEM2_INC}/mshio.h                     ${DELFEM2_INC}/mshio.cpp
     ${DELFEM2_INC}/color.h                     ${DELFEM2_INC}/color.cpp
     ${DELFEM2_INC}/imgio.h                     ${DELFEM2_INC}/imgio.cpp
