@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2019 Nobuyuki Umetani
+ * Copyright (c) 2020 Nobuyuki Umetani
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-
 /**
+ * @file interfaces for functions that handle coordinates of points stored in a flat vector.
+ * @brief interfaces for functions that handle coordinates of points stored in a flat vector.
  * @details this file should not depends on anything except for  std::vector
  */
 
@@ -134,10 +135,16 @@ DFM2_INLINE void CG_Point3
   const std::vector<T>& aXYZ);
 
 
-DFM2_INLINE void InitializeTangentField(
+DFM2_INLINE void Points_RandomUniform(
+    std::vector<double>& aOdir,
+    unsigned int npo,
+    unsigned int ndim,
+    const double* minCoords,
+    const double* maxCoords);
+
+DFM2_INLINE void Tangent_Points3(
     std::vector<double>& aOdir,
     const std::vector<double>& aNorm);
-
 
 
 

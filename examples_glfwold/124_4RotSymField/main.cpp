@@ -40,7 +40,14 @@ int main()
       aXYZ.data(), aXYZ.size()/3, aTri.data(), aTri.size()/3);
   
   std::vector<double> aOdir;
-  dfm2::InitializeTangentField(aOdir,aNorm);
+  {
+    const double minCoords[3] =  {-1., -1., -1.};
+    const double maxCoords[3] =  {+1., +1., +1.};
+    dfm2::Points_RandomUniform(aOdir,
+        aXYZ.size() / 3, 3, minCoords, maxCoords);
+    dfm2::Tangent_Points3(aOdir,
+        aNorm);
+  }
   
   std::vector<unsigned int> psup_ind, psup;
   dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
@@ -55,7 +62,11 @@ int main()
   while (true)
   {
     if( iframe == 0 ){
-        dfm2::InitializeTangentField(aOdir,aNorm);
+      const double minCoords[3] =  {-1., -1., -1.};
+      const double maxCoords[3] =  {+1., +1., +1.};
+      dfm2::Points_RandomUniform(aOdir,
+                                 aXYZ.size() / 3, 3, minCoords, maxCoords);
+      dfm2::Tangent_Points3(aOdir,aNorm);
     }
     if( iframe > 30 ){
       dfm2::Smooth4RotSym(aOdir,
