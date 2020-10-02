@@ -86,7 +86,14 @@ int main()
     dfm2::Normal_MeshTri3D(aLayer[0].aNorm.data(),
                            aLayer[0].aXYZ.data(), aLayer[0].aXYZ.size() / 3,
                            aTri.data(), aTri.size() / 3);
-    dfm2::InitializeTangentField(aLayer[0].aOdir,aLayer[0].aNorm);
+    {
+      const double minCoords[3] = {-1, -1, -1};
+      const double maxCoords[3] = {+1, +1, +1};
+      dfm2::Points_RandomUniform(aLayer[0].aOdir,
+                                 aLayer[0].aXYZ.size() / 3, 3, minCoords, maxCoords);
+      dfm2::Tangent_Points3(aLayer[0].aOdir,
+                            aLayer[0].aNorm);
+    }
     aLayer[0].aArea.resize(aLayer[0].aXYZ.size() / 3);
     dfm2::MassPoint_Tri3D(aLayer[0].aArea.data(),
                           1.0,
@@ -122,7 +129,12 @@ int main()
   const unsigned int nlayer = aLayer.size();
   for(int ilayer=(int)aLayer.size()-1;ilayer>=0;--ilayer){
     if( ilayer == nlayer-1 ){
-      dfm2::InitializeTangentField(aLayer[ilayer].aOdir,aLayer[ilayer].aNorm);
+      const double minCoords[3] = {-1, -1, -1};
+      const double maxCoords[3] = {+1, +1, +1};
+      dfm2::Points_RandomUniform(aLayer[ilayer].aOdir,
+                                 aLayer[ilayer].aXYZ.size() / 3, 3, minCoords, maxCoords);
+      dfm2::Tangent_Points3(aLayer[ilayer].aOdir,
+          aLayer[ilayer].aNorm);
     }
     else{
       unsigned int np0 = aLayer[ilayer].aXYZ.size()/3; // this
@@ -151,6 +163,7 @@ int main()
   unsigned int iframe = 0;
   while (true)
   {
+    /*
     if( iframe == 0 ){
 //        dfm2::InitializeTangentField(aLayer[0].aOdir,aLayer[0].aNorm);
     }
@@ -158,7 +171,9 @@ int main()
 //      dfm2::Smooth4RotSym(aLayer[0].aOdir,
 //                          aLayer[0].aNorm, aLayer[0].psup_ind, aLayer[0].psup);
     }
+     */
     // --------------------
+
     viewer.DrawBegin_oldGL();
     Draw(aLayer[0].aXYZ,aLayer[0].aNorm,aLayer[0].aOdir,aTri);
     glfwSwapBuffers(viewer.window);

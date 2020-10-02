@@ -31,15 +31,15 @@ int main(int argc,char* argv[])
       delfem2::Normalize_Points3(aXYZ);
     }
     //
-    virtual void mouse_press(const float src[3], const float dir[3]){
+    void mouse_press(const float src[3], const float dir[3]) override{
       ga.Pick(src, dir);
     }
-    virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]){
+    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override{
       ga.Drag(src0, src1, dir);
     }
-    virtual void key_release(int key, int mods){
+    void key_release(int key, int mods) override{
     }
-    virtual void key_press(int key, int mods){
+    void key_press(int key, int mods) override{
       if( key == GLFW_KEY_R ){ ga.igizmo_mode = 1; }
       if( key == GLFW_KEY_G ){ ga.igizmo_mode = 0; }
     }

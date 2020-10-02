@@ -506,18 +506,41 @@ template void delfem2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
 #endif
 
 
-void delfem2::InitializeTangentField(
-    std::vector<double>& aOdir,
-    const std::vector<double>& aNorm)
+// -------------------------------------------------
+
+void delfem2::Points_RandomUniform(
+    std::vector<double>& aCoords,
+    unsigned int np,
+    unsigned int ndim,
+    const double* minCoords,
+    const double* maxCoords)
 {
   std::random_device rd;
   std::mt19937 rdeng(rd());
-  std::uniform_real_distribution<double> dist(-1,1);
+  std::vector< std::uniform_real_distribution<double>  > aDist;
+  for(unsigned int idim=0;idim<ndim;++idim){
+    aDist.emplace_back( minCoords[idim], maxCoords[idim] );
+  }
+  aCoords.resize(np*ndim);
+  for(unsigned int ip=0;ip<np;++ip) {
+    for(unsigned int idim=0;idim<ndim;++idim){
+      aCoords[ip*ndim+idim] = aDist[idim](rdeng);
+    }
+  }
+}
+
+// -------------------------------------------------
+
+void delfem2::Tangent_Points3(
+    std::vector<double>& aOdir,
+    const std::vector<double>& aNorm)
+{
+  assert(aOdir.size()==aNorm.size());
   const unsigned int np = aNorm.size()/3;
   aOdir.resize(np*3);
   for(unsigned int ip=0;ip<np;++ip){
-    double o0[3] = { dist(rdeng), dist(rdeng), dist(rdeng) };
     const double* n = aNorm.data()+ip*3;
+    const double* o0 = aOdir.data()+ip*3;
     const double on = points::Dot3(o0,n);
     const double o1[3] = { o0[0]-on*n[0], o0[1]-on*n[1], o0[2]-on*n[2] };
     const double leninv = points::Length3(o1);
