@@ -49,8 +49,11 @@ void Draw(
     ::glColor3d(0,0,0);
     dfm2::opengl::myGlVertex(p);
     dfm2::opengl::myGlVertex(p+len*n);
-    ::glColor3d(1,0,0);
+    ::glColor3d(0,0,1);
     dfm2::opengl::myGlVertex(p-len*o);
+    dfm2::opengl::myGlVertex(p);
+    ::glColor3d(1,0,0);
+    dfm2::opengl::myGlVertex(p);
     dfm2::opengl::myGlVertex(p+len*o);
     dfm2::opengl::myGlVertex(p-len*q);
     dfm2::opengl::myGlVertex(p+len*q);
@@ -89,9 +92,10 @@ int main()
     {
       const double minCoords[3] = {-1, -1, -1};
       const double maxCoords[3] = {+1, +1, +1};
-      dfm2::Points_RandomUniform(aLayer[0].aOdir,
+      aLayer[0].aOdir.resize(aLayer[0].aXYZ.size());
+      dfm2::Points_RandomUniform(aLayer[0].aOdir.data(),
                                  aLayer[0].aXYZ.size() / 3, 3, minCoords, maxCoords);
-      dfm2::Tangent_Points3(aLayer[0].aOdir,
+      dfm2::TangentVector_Points3(aLayer[0].aOdir,
                             aLayer[0].aNorm);
     }
     aLayer[0].aArea.resize(aLayer[0].aXYZ.size() / 3);
@@ -131,9 +135,10 @@ int main()
     if( ilayer == nlayer-1 ){
       const double minCoords[3] = {-1, -1, -1};
       const double maxCoords[3] = {+1, +1, +1};
-      dfm2::Points_RandomUniform(aLayer[ilayer].aOdir,
+      aLayer[ilayer].aOdir.resize(aLayer[ilayer].aXYZ.size());
+      dfm2::Points_RandomUniform(aLayer[ilayer].aOdir.data(),
                                  aLayer[ilayer].aXYZ.size() / 3, 3, minCoords, maxCoords);
-      dfm2::Tangent_Points3(aLayer[ilayer].aOdir,
+      dfm2::TangentVector_Points3(aLayer[ilayer].aOdir,
           aLayer[ilayer].aNorm);
     }
     else{

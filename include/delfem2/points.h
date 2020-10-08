@@ -43,7 +43,7 @@ DFM2_INLINE void BoundingBox3_Points3(
     T min3[3],
     T max3[3],
     const T* aXYZ,
-    const unsigned int nXYZ);
+    unsigned int nXYZ);
 
 // center & width
 template <typename T>
@@ -94,7 +94,7 @@ DFM2_INLINE void Translate_Points3
 template <typename T>
 DFM2_INLINE void Translate_Points3
  (T* pXYZs_,
-  const unsigned int nnode_,
+  unsigned int nnode_,
   T tx, T ty, T tz);
 
 template <typename T>
@@ -110,7 +110,7 @@ DFM2_INLINE void Scale_PointsX
 template <typename T>
 DFM2_INLINE void Scale_Points3
  (T* pXYZs_,
-  const unsigned int nnode_,
+  unsigned int nnode_,
   T s);
 
 
@@ -119,9 +119,22 @@ DFM2_INLINE void Scale_Points3
  * @param length_longest_aabb_edge length of longest edge of axis-aligned bounding box
  */
 template <typename REAL>
-DFM2_INLINE void Normalize_Points3
- (std::vector<REAL>& aXYZ,
-  REAL length_longest_aabb_edge = 1.0);
+DFM2_INLINE void Normalize_Points3(
+    std::vector<REAL>& aXYZ,
+    REAL length_longest_aabb_edge = 1.0);
+
+
+/**
+ * @brief scale each vector to make norm == 1
+ * @param aVec coordinates packed in a single std::vector array
+ * @param ndim dimension (must be either 2 or 3)
+ */
+template <typename REAL>
+DFM2_INLINE void NormalizeVector_Points(
+    REAL* aVec,
+    unsigned int np,
+    unsigned int ndim);
+
 
 DFM2_INLINE double Size_Points3D_LongestAABBEdge
  (const std::vector<double>& aXYZ);
@@ -134,15 +147,15 @@ DFM2_INLINE void CG_Point3
  (T cg[3],
   const std::vector<T>& aXYZ);
 
-
+template <typename T>
 DFM2_INLINE void Points_RandomUniform(
-    std::vector<double>& aOdir,
+    T* aOdir,
     unsigned int npo,
     unsigned int ndim,
-    const double* minCoords,
-    const double* maxCoords);
+    const T* minCoords,
+    const T* maxCoords);
 
-DFM2_INLINE void Tangent_Points3(
+DFM2_INLINE void TangentVector_Points3(
     std::vector<double>& aOdir,
     const std::vector<double>& aNorm);
 

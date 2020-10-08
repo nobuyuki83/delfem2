@@ -43,9 +43,10 @@ int main()
   {
     const double minCoords[3] =  {-1., -1., -1.};
     const double maxCoords[3] =  {+1., +1., +1.};
-    dfm2::Points_RandomUniform(aOdir,
+    aOdir.resize(aXYZ.size());
+    dfm2::Points_RandomUniform(aOdir.data(),
         aXYZ.size() / 3, 3, minCoords, maxCoords);
-    dfm2::Tangent_Points3(aOdir,
+    dfm2::TangentVector_Points3(aOdir,
         aNorm);
   }
   
@@ -64,9 +65,10 @@ int main()
     if( iframe == 0 ){
       const double minCoords[3] =  {-1., -1., -1.};
       const double maxCoords[3] =  {+1., +1., +1.};
-      dfm2::Points_RandomUniform(aOdir,
+      aOdir.resize(aXYZ.size());
+      dfm2::Points_RandomUniform(aOdir.data(),
                                  aXYZ.size() / 3, 3, minCoords, maxCoords);
-      dfm2::Tangent_Points3(aOdir,aNorm);
+      dfm2::TangentVector_Points3(aOdir,aNorm);
     }
     if( iframe > 30 ){
       dfm2::Smooth4RotSym(aOdir,
@@ -90,15 +92,18 @@ int main()
         ::glColor3d(0,0,0);
         dfm2::opengl::myGlVertex(p);
         dfm2::opengl::myGlVertex(p+len*n);
-        ::glColor3d(1,0,0);
+        ::glColor3d(0,0,1);
         dfm2::opengl::myGlVertex(p-len*o);
+        dfm2::opengl::myGlVertex(p);
+        ::glColor3d(1,0,0);
+        dfm2::opengl::myGlVertex(p);
         dfm2::opengl::myGlVertex(p+len*o);
         dfm2::opengl::myGlVertex(p-len*q);
         dfm2::opengl::myGlVertex(p+len*q);
         ::glEnd();
       }
     }
-    iframe = (iframe+1)%60;
+    iframe = (iframe+1)%100;
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
