@@ -21,26 +21,30 @@ namespace delfem2 {
 namespace points {
 
 //! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
-DFM2_INLINE double Length3(const double p[3]){
-  return sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
-}
+DFM2_INLINE double Length3( const double p[3] ) { return sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]); }
+DFM2_INLINE float Length3( const float p[3] ) { return sqrtf(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]); }
 
-//! @details we have "float" and "double" versions Length3 because of sqrtf and sqrt
-DFM2_INLINE double Length3(const float p[3]){
-  return sqrtf(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
-}
+//! @details we have "float" and "double" versions Length2 because of sqrtf and sqrt
+DFM2_INLINE double Length2( const double p[2] ) { return sqrt(p[0]*p[0] + p[1]*p[1]); }
+DFM2_INLINE float Length2( const float p[2] ) { return sqrtf(p[0]*p[0] + p[1]*p[1]); }
 
-DFM2_INLINE void Cross3D(double r[3], const double v1[3], const double v2[3]){
+DFM2_INLINE void Cross3D(
+    double r[3], const double v1[3], const double v2[3])
+{
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
 
-DFM2_INLINE double TriArea2D(const double p0[], const double p1[], const double p2[]){
+DFM2_INLINE double TriArea2D(
+    const double p0[], const double p1[], const double p2[])
+{
   return 0.5*((p1[0]-p0[0])*(p2[1]-p0[1])-(p2[0]-p0[0])*(p1[1]-p0[1]));
 }
 
-DFM2_INLINE double TriArea3D(const double v1[3], const double v2[3], const double v3[3]){
+DFM2_INLINE double TriArea3D(
+    const double v1[3], const double v2[3], const double v3[3])
+{
   double n[3];
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
@@ -49,9 +53,9 @@ DFM2_INLINE double TriArea3D(const double v1[3], const double v2[3], const doubl
 }
 
 template <typename T>
-DFM2_INLINE void UnitNormalAreaTri3
- (T n[3], T& a,
-  const T v1[3], const T v2[3], const T v3[3])
+DFM2_INLINE void UnitNormalAreaTri3(
+    T n[3], T& a,
+    const T v1[3], const T v2[3], const T v3[3])
 {
   n[0] = ( v2[1] - v1[1] )*( v3[2] - v1[2] ) - ( v3[1] - v1[1] )*( v2[2] - v1[2] );
   n[1] = ( v2[2] - v1[2] )*( v3[0] - v1[0] ) - ( v3[2] - v1[2] )*( v2[0] - v1[0] );
@@ -63,8 +67,10 @@ DFM2_INLINE void UnitNormalAreaTri3
 
 
 template <typename T>
-DFM2_INLINE void MatVec3(T y[3],
-                    const T m[9], const T x[3]){
+DFM2_INLINE void MatVec3(
+    T y[3],
+    const T m[9], const T x[3])
+{
   y[0] = m[0]*x[0] + m[1]*x[1] + m[2]*x[2];
   y[1] = m[3]*x[0] + m[4]*x[1] + m[5]*x[2];
   y[2] = m[6]*x[0] + m[7]*x[1] + m[8]*x[2];
@@ -259,10 +265,10 @@ template void delfem2::CenterWidth_Point3 (
 // ---------------------------------
 
 template <typename T>
-void delfem2::CenterWidth_Points3
-(T& cx, T& cy, T& cz,
- T& wx, T& wy, T& wz,
- const std::vector<T>& aXYZ)
+void delfem2::CenterWidth_Points3(
+    T& cx, T& cy, T& cz,
+    T& wx, T& wy, T& wz,
+    const std::vector<T>& aXYZ)
 {
   const int np = (int)aXYZ.size()/3;
   if(np==0){ cx=cy=cz=0; wx=wy=wz=1; return; }
@@ -290,9 +296,10 @@ template void delfem2::CenterWidth_Points3 (
 // -------------------------------------
 
 template <typename T>
-void delfem2::CenterWidth_Points3(T c[3],
-                               T w[3],
-                               const std::vector<T>& aXYZ)
+void delfem2::CenterWidth_Points3(
+    T c[3],
+    T w[3],
+    const std::vector<T>& aXYZ)
 {
   delfem2::CenterWidth_Points3(c[0],c[1],c[2],
                             w[0],w[1],w[2],
@@ -353,14 +360,14 @@ template void delfem2::Scale_PointsX(std::vector<double>& aXYZ, double s);
 
 template <typename T>
 void delfem2::Scale_Points3
- (T* pXYZs_,
-  const unsigned int nnode_,
+ (T* aXYZ,
+  const unsigned int npo,
   T s)
 {
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] *= s;
-    pXYZs_[ino*3+1] *= s;
-    pXYZs_[ino*3+2] *= s;
+  for(unsigned int ino=0;ino<npo;ino++){
+    aXYZ[ino*3+0] *= s;
+    aXYZ[ino*3+1] *= s;
+    aXYZ[ino*3+2] *= s;
   }
 }
 #ifndef DFM2_HEADER_ONLY
@@ -482,6 +489,44 @@ template void delfem2::Normalize_Points3 (std::vector<float>& aXYZ,  float s);
 template void delfem2::Normalize_Points3 (std::vector<double>& aXYZ,  double s);
 #endif
 
+
+// ---------------------------------------
+
+template <typename REAL>
+DFM2_INLINE void delfem2::NormalizeVector_Points(
+    REAL* aVec,
+    unsigned int np,
+    unsigned int ndim)
+{
+  if( ndim == 2 ){
+    for(unsigned int ip=0;ip<np;++ip){
+      REAL* p = aVec+ip*2;
+      const double len =points::Length2(p);
+      double linv = 1.0/len;
+      p[0] *= linv;
+      p[1] *= linv;
+    }
+  }
+  else if( ndim == 3 ){
+    for(unsigned int ip=0;ip<np;++ip){
+      REAL* p = aVec+ip*3;
+      const double len = points::Length3(p);
+      double linv = 1.0/len;
+      p[0] *= linv;
+      p[1] *= linv;
+      p[2] *= linv;
+    }
+  }
+  else{
+    assert(0);
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::NormalizeVector_Points(float* aVec, unsigned int np ,unsigned int ndim);
+template void delfem2::NormalizeVector_Points(double* aVec, unsigned int np, unsigned int ndim);
+#endif
+
+
 // ---------------------------------------
 
 template <typename T>
@@ -508,30 +553,42 @@ template void delfem2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
 
 // -------------------------------------------------
 
+template <typename T>
 void delfem2::Points_RandomUniform(
-    std::vector<double>& aCoords,
+    T* aCoords,
     unsigned int np,
     unsigned int ndim,
-    const double* minCoords,
-    const double* maxCoords)
+    const T* minCoords,
+    const T* maxCoords)
 {
   std::random_device rd;
   std::mt19937 rdeng(rd());
-  std::vector< std::uniform_real_distribution<double>  > aDist;
+  std::vector< std::uniform_real_distribution<T>  > aDist;
   for(unsigned int idim=0;idim<ndim;++idim){
     aDist.emplace_back( minCoords[idim], maxCoords[idim] );
   }
-  aCoords.resize(np*ndim);
   for(unsigned int ip=0;ip<np;++ip) {
     for(unsigned int idim=0;idim<ndim;++idim){
       aCoords[ip*ndim+idim] = aDist[idim](rdeng);
     }
   }
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Points_RandomUniform(float* aCoords,
+    unsigned int np,
+    unsigned int ndim,
+    const float* minCoords,
+    const float* maxCoords);
+template void delfem2::Points_RandomUniform(double* aCoords,
+    unsigned int np,
+    unsigned int ndim,
+    const double* minCoords,
+    const double* maxCoords);
+#endif
 
 // -------------------------------------------------
 
-void delfem2::Tangent_Points3(
+void delfem2::TangentVector_Points3(
     std::vector<double>& aOdir,
     const std::vector<double>& aNorm)
 {
