@@ -12,6 +12,8 @@
 #ifndef DFM2_4ROTSYM_H
 #define DFM2_4ROTSYM_H
 
+#include <climits>
+#include <random>
 #include "delfem2/vec3.h"
 
 namespace delfem2
@@ -105,8 +107,10 @@ void Smooth4RotSym_RandomPermutation(
     const std::vector<unsigned int>& psup_ind,
     const std::vector<unsigned int>& psup)
 {
+  std::random_device rd;
+  std::mt19937 g(rd());
   std::vector<unsigned int> permutation1(10);
-  std::random_shuffle( permutation0.begin(), permutation0.end() );
+  std::shuffle( permutation0.begin(), permutation0.end(), g);
   for(unsigned int iip=0;iip<aOdir.size()/3;++iip){
     const unsigned int ip0 = permutation0[iip];
     assert( ip0 < psup_ind.size() );
@@ -117,7 +121,7 @@ void Smooth4RotSym_RandomPermutation(
     {
       permutation1.resize(npj);
       for(unsigned int jjp=0;jjp<npj;++jjp){ permutation1[jjp] = jjp; }
-      std::random_shuffle( permutation1.begin(), permutation1.end() );
+      std::shuffle( permutation1.begin(), permutation1.end(), g);
     }
     for(unsigned int jjp=0;jjp<npj;++jjp){
       unsigned int jp1 = psup[psup_ind[ip0]+permutation1[jjp]];
