@@ -13,6 +13,7 @@
 #define DFM2_4ROTSYM_H
 
 #include <climits>
+#include <algorithm> // shuffle
 #include <random>
 #include "delfem2/vec3.h"
 
