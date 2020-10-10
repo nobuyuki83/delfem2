@@ -61,6 +61,7 @@ add_subdirectory(143_Image2MeshInterpolation)
 add_subdirectory(144_BinaryClusteringPoints2D)
 add_subdirectory(145_Lloyd)
 add_subdirectory(146_4RotSymFieldMultilevel)
+add_subdirectory(147_HashLbvh3RayTri)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)

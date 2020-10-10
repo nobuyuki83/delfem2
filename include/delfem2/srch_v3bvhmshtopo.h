@@ -88,13 +88,15 @@ public:
                       double margin)
   {
     assert( margin >= 0 );
-    BVH_BuildBVHGeometry_Mesh(
+    CLeafVolumeMaker_Mesh<BV,REAL> lvm(
+        margin,
+        pXYZ,nXYZ,
+        pTri,nTri,3);
+    BVH_BuildBVHGeometry(
         aBB_BVH,
         //
         iroot_bvh, aNodeBVH,
-        margin,
-        pXYZ,nXYZ,
-        pTri,3,nTri);
+        lvm);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
   double Nearest_Point_IncludedInBVH(CPointElemSurf<REAL>& pes,

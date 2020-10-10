@@ -5,6 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+
+/**
+ * @details this file is independent from any other delfem codes
+ */
+
 #ifndef DFM2_BVH_H
 #define DFM2_BVH_H
 
@@ -104,51 +109,103 @@ void Check_MortonCode_Sort(
 // above: code related to morton code
 // -------------------------------------------------------------------
 // below: template functions from here
-  
+
 /**
  * @brief build Bounding Box for AABB
  */
+template <typename BBOX, typename LEAF_VOLUME_MAKER>
+void BVH_BuildBVHGeometry(
+    std::vector<BBOX>& aBB,
+    unsigned int ibvh,
+    const std::vector<CNodeBVH2>& aNodeBVH,
+    const LEAF_VOLUME_MAKER& leafvolume);
+
 template <typename BBOX, typename REAL>
-void BVH_BuildBVHGeometry_Mesh(
-    std::vector<BBOX>& aBB,
-    unsigned int ibvh,
-    const std::vector<CNodeBVH2>& aNodeBVH,
-    REAL margin,
-    const REAL* aXYZ, unsigned int nXYZ,
-    const unsigned int* aElem, unsigned int nnoel, unsigned int nElem);
+class CLeafVolumeMaker_Mesh{
+public:
+  CLeafVolumeMaker_Mesh(
+      REAL margin,
+      const REAL* aXYZ,
+      unsigned int nXYZ,
+      const unsigned int* aElem,
+      unsigned int nElem,
+      unsigned int nnoel)
+      : margin(margin),
+      aXYZ(aXYZ), nXYZ(nXYZ),
+      aElem(aElem), nElem(nElem), nnoel(nnoel)
+      {}
+  void SetVolume(BBOX& bb,
+      unsigned ielem) const {
+    assert( ielem < nElem );
+    bb.Set_Inactive();
+    for(unsigned int inoel=0;inoel<nnoel;++inoel){
+      const unsigned int ino0 = aElem[ielem*nnoel+inoel];
+      bb.AddPoint(aXYZ+ino0*3, margin);
+    }
+  }
+public:
+  REAL margin;
+  const REAL* aXYZ;
+  unsigned int nXYZ;
+  const unsigned int* aElem;
+  unsigned int nElem;
+  unsigned int nnoel;
+};
 
-
-/**
- * @brief build geometry of BVH for point set
- */
 template <typename BBOX, typename REAL>
-void BVHGeometry_Points(
-    std::vector<BBOX>& aBB,
-    unsigned int ibvh,
-    const std::vector<CNodeBVH2>& aNodeBVH,
-    const REAL* aXYZ, unsigned int nXYZ);
+class CLeafVolumeMaker_Point {
+public:
+  CLeafVolumeMaker_Point(
+      const REAL* aXYZ,
+      unsigned int nXYZ) : aXYZ(aXYZ), nXYZ(nXYZ) {}
+  void SetVolume(BBOX& bb,
+      unsigned int ielem) const {
+    assert( ielem < nXYZ );
+    bb.AddPoint(aXYZ+ielem*3, 0.0);
+    return;
+  }
+public:
+  const REAL* aXYZ;
+  unsigned int nXYZ;
+};
 
-/**
- * @brief construct bounding volume of branch nodes under ibvh_root
- * @details the bounding volume for leaf nodes should be set beforehand.
- * construction is donw in the top-down manner
- */
-template <typename BBOX>
-void BVH_BuildGeometryBranch(
-    std::vector<BBOX>& aBB,
-    unsigned int ibvh_root,
-    const std::vector<delfem2::CNodeBVH2>& aNodeBVH);
+template <typename BBOX, typename REAL>
+class CLeafVolumeMaker_DynamicTriangle {
+public:
+  CLeafVolumeMaker_DynamicTriangle(
+      double dt,
+      const std::vector<double>& aXYZ,
+      const std::vector<double>& aUVW,
+      const std::vector<unsigned int>& aTri,
+      double eps)
+      : dt(dt), aXYZ(aXYZ), aUVW(aUVW), aTri(aTri), eps(eps) {}
+  void SetVolume(BBOX& bb,
+                 unsigned int itri) const {
+    assert( itri < aTri.size() );
+    const int ino0 = aTri[itri*3+0];
+    const int ino1 = aTri[itri*3+1];
+    const int ino2 = aTri[itri*3+2];
+    // bb.bbmin[0] = +1;
+    // bb.bbmax[0] = -1;
+    bb.Set_Inactive();
+    bb.AddPoint(aXYZ.data()+ino0*3, eps);
+    bb.AddPoint(aXYZ.data()+ino1*3, eps);
+    bb.AddPoint(aXYZ.data()+ino2*3, eps);
+    const double p0[3] = {aXYZ[ino0*3+0]+dt*aUVW[ino0*3+0], aXYZ[ino0*3+1]+dt*aUVW[ino0*3+1], aXYZ[ino0*3+2]+dt*aUVW[ino0*3+2]};
+    const double p1[3] = {aXYZ[ino1*3+0]+dt*aUVW[ino1*3+0], aXYZ[ino1*3+1]+dt*aUVW[ino1*3+1], aXYZ[ino1*3+2]+dt*aUVW[ino1*3+2]};
+    const double p2[3] = {aXYZ[ino2*3+0]+dt*aUVW[ino2*3+0], aXYZ[ino2*3+1]+dt*aUVW[ino2*3+1], aXYZ[ino2*3+2]+dt*aUVW[ino2*3+2]};
+    bb.AddPoint(p0, eps);
+    bb.AddPoint(p1, eps);
+    bb.AddPoint(p2, eps);
+  }
+public:
+  double dt;
+  const std::vector<double>& aXYZ;
+  const std::vector<double>& aUVW;
+  const std::vector<unsigned int>& aTri;
+  double eps;
+};
 
-template <typename BBOX>
-void BuildBoundingBoxesBVH_Dynamic(
-    unsigned int ibvh,
-    double dt,
-    const std::vector<double>& aXYZ,
-    const std::vector<double>& aUVW,
-    const std::vector<unsigned int>& aTri,
-    const std::vector<CNodeBVH2>& aNodeBVH,
-    std::vector<BBOX>& aBB);
-  
 template <typename BBOX>
 void BVH_GetIndElem_IncludePoint(
     std::vector<int>& aIndElem,
@@ -198,7 +255,7 @@ void BVH_GetIndElem_IntersectRay(
 
 template <typename BBOX>
 void BVH_GetIndElem_IntersectLine(
-    std::vector<int>& aIndElem,
+    std::vector<unsigned int>& aIndElem,
     //
     const double src[3], const double dir[3],
     unsigned int ibvh,
@@ -218,20 +275,19 @@ void BVH_GetIndElem_InsideRange(
 } // end namespace delfem2
 
 
-// --------------------------------------------------------------
-// below: implementation for template functions
+// -------------------------------------------------------------------------
+// below: building geometry
+
 
 /**
- * @brief build Bounding Box for AABB
+ * @brief build Bounding Box for BVH
  */
-template <typename BBOX, typename REAL>
-void delfem2::BVH_BuildBVHGeometry_Mesh(
+template <typename BBOX, typename LEAF_VOLUME_MAKER>
+void delfem2::BVH_BuildBVHGeometry(
     std::vector<BBOX>& aBB,
     unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
-    REAL margin,
-    const REAL* aXYZ, unsigned int nXYZ,
-    const unsigned int* aElem, unsigned int nnoel, unsigned int nElem)
+    const LEAF_VOLUME_MAKER& lvm)
 {
   aBB.resize( aNodeBVH.size() );
   assert( ibvh < aNodeBVH.size() );
@@ -240,168 +296,22 @@ void delfem2::BVH_BuildBVHGeometry_Mesh(
   if( ichild1 == UINT_MAX ){ // leaf node
     assert( ichild0 >= 0 );
     const unsigned int ielem = ichild0;
-    assert( ielem < nElem );
-    BBOX& bb = aBB[ibvh];
-    bb.Set_Inactive();
-    for(unsigned int inoel=0;inoel<nnoel;++inoel){
-      const unsigned int ino0 = aElem[ielem*nnoel+inoel];
-      bb.AddPoint(aXYZ+ino0*3, margin);
-    }
+    lvm.SetVolume(aBB[ibvh],
+        ielem);
     return;
   }
   // branch node is the bounding volume of child nodes
   assert( aNodeBVH[ichild0].iparent == ibvh );
   assert( aNodeBVH[ichild1].iparent == ibvh );
-  BVH_BuildBVHGeometry_Mesh(aBB, ichild0,aNodeBVH, margin,aXYZ,nXYZ,aElem,nnoel,nElem);
-  BVH_BuildBVHGeometry_Mesh(aBB, ichild1,aNodeBVH, margin,aXYZ,nXYZ,aElem,nnoel,nElem);
+  BVH_BuildBVHGeometry(aBB, ichild0,aNodeBVH, lvm);
+  BVH_BuildBVHGeometry(aBB, ichild1,aNodeBVH, lvm);
   BBOX& bb = aBB[ibvh];
   bb  = aBB[ichild0];
   bb += aBB[ichild1];
   return;
 }
 
-template <typename BBOX, typename REAL>
-void delfem2::BVHGeometry_Points(
-    std::vector<BBOX>& aBB,
-    unsigned int ibvh,
-    const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
-    const REAL* aXYZ, unsigned int nXYZ)
-{
-  aBB.resize( aNodeBVH.size() );
-  assert( ibvh < aNodeBVH.size() );
-  const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
-  const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == UINT_MAX ){ // leaf node
-    assert( ichild0 >= 0 );
-    const unsigned int ip = ichild0;
-    assert( ip < nXYZ );
-    BBOX& bb = aBB[ibvh];
-    bb.AddPoint(aXYZ+ip*3, 0.0);
-    return;
-  }
-  // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iparent == ibvh );
-  assert( aNodeBVH[ichild1].iparent == ibvh );
-  delfem2::BVHGeometry_Points(aBB,  ichild0,aNodeBVH, aXYZ,nXYZ);
-  delfem2::BVHGeometry_Points(aBB,  ichild1,aNodeBVH, aXYZ,nXYZ);
-  BBOX& bb = aBB[ibvh];
-  bb  = aBB[ichild0];
-  bb += aBB[ichild1];
-  return;
-}
-
-template <typename BBOX>
-void delfem2::BVH_BuildGeometryBranch(
-    std::vector<BBOX>& aBB,
-    unsigned int ibvh,
-    const std::vector<delfem2::CNodeBVH2>& aNodeBVH)
-{
-  aBB.resize( aNodeBVH.size() );
-  assert( ibvh < aNodeBVH.size() );
-  const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
-  const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == UINT_MAX ){ // leaf node
-    return;
-  }
-  // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iparent == ibvh );
-  assert( aNodeBVH[ichild1].iparent == ibvh );
-  BVH_BuildGeometryBranch(aBB, ichild0,aNodeBVH);
-  BVH_BuildGeometryBranch(aBB, ichild1,aNodeBVH);
-  BBOX& bb = aBB[ibvh];
-  bb  = aBB[ichild0];
-  bb += aBB[ichild1];
-  return;
-}
-
-/*
-// build Bounding Box for AABB
-template <typename BBOX>
-void BuildBoundingBoxesBVH
-(int ibvh,
- double delta,
- const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aElemInd,
- const std::vector<unsigned int>& aElem,
- const std::vector<CNodeBVH>& aNodeBVH,
- std::vector<BBOX>& aBB)
-{
-  aBB.resize( aNodeBVH.size() );
-  assert( ibvh < aNodeBVH.size() );
-  int ichild0 = aNodeBVH[ibvh].ichild[0];
-  int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf node
-    const int ielem = ichild0;
-    assert( ielem < aElemInd.size()-1 );
-    T& bb = aBB[ibvh];
-    bb.is_active = false;
-    for(int iip=aElemInd[ielem];iip<aElemInd[ielem+1];++iip){
-      const int ino0 = aElem[iip];
-      bb.AddPoint(aXYZ[ino0*3+0], aXYZ[ino0*3+1], aXYZ[ino0*3+2], delta*0.5);
-    }
-    return;
-  }
-  // branch node is the bounding volume of child nodes
-  assert( aNodeBVH[ichild0].iroot == ibvh );
-  assert( aNodeBVH[ichild1].iroot == ibvh );
-  BuildBoundingBoxesBVH(ichild0,delta, aXYZ,aElemInd,aElem,aNodeBVH,aBB);
-  BuildBoundingBoxesBVH(ichild1,delta, aXYZ,aElemInd,aElem,aNodeBVH,aBB);
-  T& bb = aBB[ibvh];
-  bb.is_active = false;
-  bb  = aBB[ichild0];
-  bb += aBB[ichild1];
-  return;
-}
- */
-
-template <typename BBOX>
-void delfem2::BuildBoundingBoxesBVH_Dynamic
-(unsigned int ibvh,
- double dt,
- const std::vector<double>& aXYZ,
- const std::vector<double>& aUVW,
- const std::vector<unsigned int>& aTri,
- const std::vector<delfem2::CNodeBVH2>& aNodeBVH,
- std::vector<BBOX>& aBB)
-{
-  double eps = 1.0e-10;
-  assert( ibvh < aNodeBVH.size() );
-  const int unsigned ichild0 = aNodeBVH[ibvh].ichild[0];
-  const int unsigned ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == UINT_MAX ){ // leaf
-    const int itri = ichild0;
-    assert( itri < (int)aTri.size() );
-    const int ino0 = aTri[itri*3+0];
-    const int ino1 = aTri[itri*3+1];
-    const int ino2 = aTri[itri*3+2];
-    BBOX& bb = aBB[ibvh];
-    bb.bbmin[0] = +1;
-    bb.bbmax[0] = -1;
-    bb.AddPoint(aXYZ.data()+ino0*3, eps);
-    bb.AddPoint(aXYZ.data()+ino1*3, eps);
-    bb.AddPoint(aXYZ.data()+ino2*3, eps);
-    const double p0[3] = {aXYZ[ino0*3+0]+dt*aUVW[ino0*3+0], aXYZ[ino0*3+1]+dt*aUVW[ino0*3+1], aXYZ[ino0*3+2]+dt*aUVW[ino0*3+2]};
-    const double p1[3] = {aXYZ[ino1*3+0]+dt*aUVW[ino1*3+0], aXYZ[ino1*3+1]+dt*aUVW[ino1*3+1], aXYZ[ino1*3+2]+dt*aUVW[ino1*3+2]};
-    const double p2[3] = {aXYZ[ino2*3+0]+dt*aUVW[ino2*3+0], aXYZ[ino2*3+1]+dt*aUVW[ino2*3+1], aXYZ[ino2*3+2]+dt*aUVW[ino2*3+2]};
-    bb.AddPoint(p0, eps);
-    bb.AddPoint(p1, eps);
-    bb.AddPoint(p2, eps);
-    return;
-  }
-  // internal node,内部ノードは子ノードのBounding Volume
-  assert( aNodeBVH[ichild0].iparent == ibvh );
-  assert( aNodeBVH[ichild1].iparent == ibvh );
-  BuildBoundingBoxesBVH_Dynamic(ichild0,dt, aXYZ,aUVW,aTri,aNodeBVH,aBB);
-  BuildBoundingBoxesBVH_Dynamic(ichild1,dt, aXYZ,aUVW,aTri,aNodeBVH,aBB);
-  BBOX& bb = aBB[ibvh];
-  bb.bbmin[0] = +1;
-  bb.bbmax[0] = -1;
-  bb  = aBB[ichild0];
-  bb += aBB[ichild1];
-  return;
-}
-
-// -------------------------------------------------
+// ------------------------------------------------------------------------
 
 
 template <typename BBOX>
@@ -547,7 +457,7 @@ void delfem2::BVH_GetIndElem_IntersectRay
 
 template <typename BBOX>
 void delfem2::BVH_GetIndElem_IntersectLine
-(std::vector<int>& aIndElem,
+(std::vector<unsigned int>& aIndElem,
  //
  const double src[3],
  const double dir[3],

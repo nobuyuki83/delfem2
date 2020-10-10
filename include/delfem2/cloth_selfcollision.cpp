@@ -375,12 +375,13 @@ void GetIntermidiateVelocityContactResolved
   {
     std::vector<dfm2::CContactElement> aContactElem;
     {
-      BVH_BuildBVHGeometry_Mesh(
-          aBB,
-          iroot_bvh,aNodeBVH,
+      dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3d_AABB, double> lvm(
           contact_clearance*0.5, // for tri to tri collision, we put half margin for both tri
           aXYZ.data(), aXYZ.size()/3,
-          aTri.data(), 3, aTri.size()/3);
+          aTri.data(), aTri.size()/3, 3);
+      BVH_BuildBVHGeometry(
+          aBB,
+          iroot_bvh,aNodeBVH, lvm);
       std::set<dfm2::CContactElement> setCE;
       dfm2::GetContactElement_Proximity(setCE,
                                         contact_clearance,
@@ -403,13 +404,14 @@ void GetIntermidiateVelocityContactResolved
                               aXYZ,aTri,
                               aContactElem);
   }
-  ////////
+  // -------------------------
   for(int itr=0;itr<5;itr++){
     std::vector<dfm2::CContactElement> aContactElem;
     {
-      BuildBoundingBoxesBVH_Dynamic(iroot_bvh,
-                                    dt,
-                                    aXYZ,aUVWm,aTri,aNodeBVH,aBB);
+      dfm2::CLeafVolumeMaker_DynamicTriangle<dfm2::CBV3d_AABB,double> lvm(
+          dt,aXYZ,aUVWm,aTri,1.0e-10);
+      dfm2::BVH_BuildBVHGeometry(aBB,
+          iroot_bvh, aNodeBVH, lvm);
       std::set<dfm2::CContactElement> setCE;
       GetContactElement_CCD(setCE,
                             dt,contact_clearance,
@@ -438,9 +440,10 @@ void GetIntermidiateVelocityContactResolved
   for(int itr=0;itr<100;itr++){
     std::vector<dfm2::CContactElement> aContactElem;
     {
-      BuildBoundingBoxesBVH_Dynamic(iroot_bvh,
-                                    dt,
-                                    aXYZ,aUVWm,aTri,aNodeBVH,aBB);
+      dfm2::CLeafVolumeMaker_DynamicTriangle<dfm2::CBV3d_AABB,double> lvm(
+          dt,aXYZ,aUVWm,aTri,1.0e-10);
+      dfm2::BVH_BuildBVHGeometry(aBB,
+          iroot_bvh, aNodeBVH, lvm);
       std::set<dfm2::CContactElement> setCE;
       GetContactElement_CCD(setCE,
                             dt,contact_clearance,

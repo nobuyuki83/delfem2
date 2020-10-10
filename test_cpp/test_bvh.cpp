@@ -340,7 +340,7 @@ TEST(bvh,lineintersection)
         EXPECT_FALSE( bvh.aBB_BVH[ichild1].IsIntersectLine(ps0,pd0) );
       }
     }
-    std::vector<int> aIndElem;
+    std::vector<unsigned int> aIndElem;
     BVH_GetIndElem_IntersectLine(aIndElem, ps0, pd0,
                                  bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
@@ -537,8 +537,10 @@ TEST(bvh,morton_code)
   }
   // ----------------
   std::vector<dfm2::CBV3_Sphere<double>> aAABB;
-  dfm2::BVHGeometry_Points(aAABB, 0, aNodeBVH,
-                           aXYZ.data(), aXYZ.size()/3);
+  dfm2::CLeafVolumeMaker_Point<dfm2::CBV3_Sphere<double>,double> lvm(
+      aXYZ.data(), aXYZ.size()/3);
+  dfm2::BVH_BuildBVHGeometry(aAABB,
+      0, aNodeBVH, lvm);
   for(int itr=0;itr<100;++itr){
     const double cur_time = itr*0.07 + 0.02;
     const  double p0[3] = {
