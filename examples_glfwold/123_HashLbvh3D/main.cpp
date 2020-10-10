@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <algorithm>
-#include <random>
+#include "delfem2/points.h" // random uniform
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
 // ---------------------------------
@@ -61,14 +61,9 @@ int main(int argc,char* argv[])
     {
       const unsigned int N = 1000;
       aXYZ.resize(N*3);
-      std::random_device dev;
-      std::mt19937 rng(dev());
-      std::uniform_real_distribution<> udist(0.0, 1.0);
-      for(unsigned int i=0;i<N;++i) {
-        aXYZ[i * 3 + 0] = (bb.bbmax[0] - bb.bbmin[0]) * udist(rng) + bb.bbmin[0];
-        aXYZ[i * 3 + 1] = (bb.bbmax[1] - bb.bbmin[1]) * udist(rng) + bb.bbmin[1];
-        aXYZ[i * 3 + 2] = (bb.bbmax[2] - bb.bbmin[2]) * udist(rng) + bb.bbmin[2];
-      }
+      dfm2::Points_RandomUniform(aXYZ.data(),
+          N,3,min_xyz,max_xyz);
+      // create duplicated points for debugging purpose
       srand(3);
       for(int iip=0;iip<10;++iip){ // hash collision
         const unsigned int ip = N*(rand()/(RAND_MAX+1.0));
@@ -86,11 +81,12 @@ int main(int argc,char* argv[])
     std::vector<unsigned int> aSortedId;
     std::vector<std::uint32_t> aSortedMc;
     dfm2::SortedMortenCode_Points3(aSortedId,aSortedMc,
-                                   aXYZ,min_xyz,max_xyz);
+        aXYZ,min_xyz,max_xyz);
     dfm2::BVHTopology_Morton(aNodeBVH,
-                             aSortedId,aSortedMc);
-    dfm2::BVHGeometry_Points(aAABB, 0, aNodeBVH,
-                             aXYZ.data(), aXYZ.size()/3);
+        aSortedId,aSortedMc);
+    dfm2::CLeafVolumeMaker_Point<dfm2::CBV3_Sphere<double>,double> lvm(aXYZ.data(), aXYZ.size()/3);
+    dfm2::BVH_BuildBVHGeometry(aAABB,
+        0, aNodeBVH, lvm);
     {
       dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aXYZ, bb.bbmin, bb.bbmax);
       dfm2::Check_MortonCode_RangeSplit(aSortedMc);

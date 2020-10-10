@@ -86,12 +86,14 @@ int main(int argc,char* argv[])
         aXYZ[ip*3+1] =  aXYZ0[ip*3+1] + aUVW[ip*3+1]*d;
         aXYZ[ip*3+2] =  aXYZ0[ip*3+2] + aUVW[ip*3+2]*d;
       }
-      dfm2::BVH_BuildBVHGeometry_Mesh(
-                                      aBB_BVH,
-                                      iroot_bvh,aNodeBVH,
-                                      1.0e-5,
-                                      aXYZ.data(),aXYZ.size()/3,
-                                      aTri.data(),3,aTri.size()/3);
+      dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3d_Sphere,double> lvm(
+          1.0e-5,
+          aXYZ.data(),aXYZ.size()/3,
+          aTri.data(),aTri.size()/3,3);
+      dfm2::BVH_BuildBVHGeometry(
+          aBB_BVH,
+          iroot_bvh,aNodeBVH,
+          lvm);
       aITP.clear();
       dfm2::GetIntersectTriPairs(aITP,
                                  aXYZ,aTri,

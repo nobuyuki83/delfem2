@@ -115,7 +115,8 @@ DFM2_INLINE void Scale_Points3
 
 
 /**
- * @brief uniformly scale the coordinate of opints such that the longest edge of axis-aligned boudning box is the scale.
+ * @brief uniformly scale & translate the coordinate of opints
+ * specifying the longest edge of AABB and the center of AABB is origin
  * @param length_longest_aabb_edge length of longest edge of axis-aligned bounding box
  */
 template <typename REAL>

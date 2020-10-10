@@ -563,13 +563,10 @@ void delfem2::Points_RandomUniform(
 {
   std::random_device rd;
   std::mt19937 rdeng(rd());
-  std::vector< std::uniform_real_distribution<T>  > aDist;
-  for(unsigned int idim=0;idim<ndim;++idim){
-    aDist.emplace_back( minCoords[idim], maxCoords[idim] );
-  }
+  std::uniform_real_distribution<T>  dist(0,1);
   for(unsigned int ip=0;ip<np;++ip) {
     for(unsigned int idim=0;idim<ndim;++idim){
-      aCoords[ip*ndim+idim] = aDist[idim](rdeng);
+      aCoords[ip*ndim+idim] = (maxCoords[idim]-minCoords[idim])*dist(rdeng) + minCoords[idim];
     }
   }
 }
