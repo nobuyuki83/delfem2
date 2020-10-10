@@ -19,7 +19,7 @@ namespace delfem2{
 class CCmd
 {
 public:
-  virtual ~CCmd(){} 
+  virtual ~CCmd() = default;
   virtual bool DoOperation(std::vector<double>& stack) = 0;
   virtual void SetValue(const double& val) = 0;
 };
@@ -31,7 +31,7 @@ public:
   ~COperand(){}
   COperand(const double val){ m_Value = val; }
   
-  bool DoOperation(std::vector<double>& stack){
+  bool DoOperation(std::vector<double>& stack) override{
     stack.push_back(m_Value);
     return true;
   }
@@ -46,7 +46,7 @@ public:
     return 0.0;
   }
   static int GetMaxOprInd(){ return 0; }
-  void SetValue(const double& val){ m_Value = val; }
+  void SetValue(const double& val) override { m_Value = val; }
   static int GetOprInd(const std::string& str1){
     if( str1 == "PI" ){ return 0; }
     else{ return -1; }
@@ -59,13 +59,13 @@ private:
 class CBinaryOperator : public dfm2::CCmd
 {
 public:
-  ~CBinaryOperator(){}
-  CBinaryOperator(const unsigned int iopr){
+  ~CBinaryOperator() override = default;
+  explicit CBinaryOperator(const unsigned int iopr){
     assert( iopr<5 );
     m_iOpr = iopr;
   }
   
-  bool DoOperation(std::vector<double>& stack){
+  bool DoOperation(std::vector<double>& stack) override{
     const double dright = stack.back();
     stack.pop_back();
     double& dleft = stack.back();
@@ -88,7 +88,7 @@ public:
     return false;
   }
   static int MaxOprInd(){ return 4; }
-  void SetValue(const double& val){
+  void SetValue(const double& val) override{
     assert(0);
   };
   int m_iOpr;
@@ -97,12 +97,12 @@ public:
 class CUnaryOperator : public dfm2::CCmd
 {
 public:
-  ~CUnaryOperator(){}
-  CUnaryOperator(const int iopr){
+  ~CUnaryOperator() override = default;
+  explicit CUnaryOperator(const int iopr){
     assert( iopr>=0 && iopr<=MaxOprInd() );
     m_iOpr = iopr;
   }
-  bool DoOperation(std::vector<double>& stack){
+  bool DoOperation(std::vector<double>& stack) override{
     const double dright = stack.back();
     double& dleft = stack.back();
     
@@ -139,15 +139,14 @@ public:
     else if( str1 == "log" )  return 7;
     return -1;
   }
-  void SetValue(const double& val){
+  void SetValue(const double& val) override{
     assert(0);
   }
 private:
   int m_iOpr;
 };
 
-///////////////////////////
-
+// -------------------------------------
 
 static void RemoveExpressionSpaceNewline( std::string& exp )
 {
@@ -456,10 +455,8 @@ bool MakeCmdAry
   return true;
 }
 
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+// ---------------------------------------------------------
+// ---------------------------------------------------------
 
 dfm2::CMathExpressionEvaluator::~CMathExpressionEvaluator(){
 	for(auto & icmd : m_apCmd){
@@ -473,9 +470,8 @@ void dfm2::CMathExpressionEvaluator::SetKey
 	for(auto & ikey : m_aKey){
 		if( ikey.m_Name == key_name){
 			ikey.m_Val = key_val;
-			for(unsigned int icmd=0;icmd<ikey.m_aiCmd.size();icmd++){	// このKeyをもっている全てのCmdに値をセット
-				const unsigned int icmd0 = ikey.m_aiCmd[icmd];
-				assert( icmd0 < m_apCmd.size() );
+			for(unsigned int icmd0 : ikey.m_aiCmd){	// このKeyをもっている全てのCmdに値をセット
+			  assert( icmd0 < m_apCmd.size() );
 				m_apCmd[icmd0]->SetValue( key_val );
 			}
 			return;
