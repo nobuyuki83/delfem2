@@ -114,9 +114,10 @@ void OrthogonalizeToUnitVectorX(double *p1,
 
 // set boundary condition
 
-void setRHS_MasterSlave(double *vec_b,
-                        int nDoF,
-                        const int *aMSFlag);
+void setRHS_MasterSlave(
+    double *vec_b,
+    unsigned int nDoF,
+    const unsigned int *aMSFlag);
 
 void MatVec(double* y,
             const double* A, unsigned int ncol, unsigned int nrow,

@@ -160,7 +160,7 @@ std::vector<double> aVal;
 std::vector<double> aVelo;
 std::vector<double> aAcc;
 std::vector<int> aBCFlag; // master slave flag
-std::vector<int> aMSFlag; // master slave flag
+std::vector<unsigned int> aMSFlag; // master slave flag
 
 // TODO: make variables non-global
 dfm2::CMatrixSparse<double> mat_A;
@@ -382,8 +382,8 @@ void InitializeProblem_Solid()
 // iproblem: 2
 void SolveProblem_LinearSolid_Static()
 {
-  const int np = (int)aXY1.size()/2;
-  const int nDoF = np*2;
+  const unsigned int np = aXY1.size()/2;
+  const unsigned int nDoF = np*2;
   // ----------------------
   double myu = 10.0;
   double lambda = 10.0;

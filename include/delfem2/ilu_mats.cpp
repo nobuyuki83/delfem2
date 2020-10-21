@@ -7,7 +7,6 @@
 
 #include <cstdlib>
 #include <cassert>
-#include <cmath>
 #include <vector>
 #include <complex>
 
@@ -158,7 +157,8 @@ namespace delfem2{
 
 // numerical factorization
 template <>
-bool CPreconditionerILU<double>::DoILUDecomp()
+DFM2_INLINE bool
+CPreconditionerILU<double>::DoILUDecomp()
 {
   const int nmax_sing = 10;
 	int icnt_sing = 0;
@@ -422,7 +422,8 @@ bool CPreconditionerILU<double>::DoILUDecomp()
 
 // numerical factorization
 template <>
-bool CPreconditionerILU<std::complex<double>>::DoILUDecomp()
+DFM2_INLINE bool
+CPreconditionerILU<std::complex<double>>::DoILUDecomp()
 {
   typedef std::complex<double> COMPLEX;
 //  const int nmax_sing = 10;

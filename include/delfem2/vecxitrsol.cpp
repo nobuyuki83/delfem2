@@ -316,21 +316,18 @@ void delfem2::XPlusAYBZCW(
 
 // -------------------------------------------------------------------
 
-void delfem2::setRHS_MasterSlave
- (double* vec_b,
-  int nDoF,
-  const int* aMSFlag)
+void delfem2::setRHS_MasterSlave(
+    double* vec_b,
+    unsigned int nDoF,
+    const unsigned int* aMSFlag)
 {
-  for(int idof=0;idof<nDoF;++idof){
-    int jdof = aMSFlag[idof];
-    if( jdof == -1 ) continue;
+  for(unsigned int idof=0;idof<nDoF;++idof){
+    unsigned int jdof = aMSFlag[idof];
+    if( jdof == UINT_MAX ) continue;
     vec_b[jdof] += vec_b[idof];
     vec_b[idof] = 0;
   }
 }
-
-
-
 
 void delfem2::MatVec
  (double* y,

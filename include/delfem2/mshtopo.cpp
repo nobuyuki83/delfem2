@@ -876,14 +876,15 @@ DFM2_INLINE void delfem2::MeshLine_MeshElem
 
 // -----------------------------------------
 
-DFM2_INLINE void delfem2::JArray_AddMasterSlavePattern
-(std::vector<unsigned int> &index,
- std::vector<unsigned int> &array,
- const int* aMSFlag,
- int ndim,
- const unsigned int *psup_ind0,
- int npsup_ind0,
- const unsigned int *psup0)
+DFM2_INLINE void
+delfem2::JArray_AddMasterSlavePattern(
+    std::vector<unsigned int> &index,
+    std::vector<unsigned int> &array,
+    const unsigned int* aMSFlag,
+    int ndim,
+    const unsigned int *psup_ind0,
+    int npsup_ind0,
+    const unsigned int *psup0)
 {
   assert(npsup_ind0>0);
   const int nno = npsup_ind0-1;
