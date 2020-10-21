@@ -347,7 +347,7 @@ DFM2_INLINE void delfem2::Write_Obj(
   assert( !aElemInd.empty() );
   const unsigned int np = aXYZ.size()/3;
   std::ofstream fout(str.c_str(), std::ofstream::out);
-  for (int ip = 0; ip<np; ip++){
+  for (unsigned int ip = 0; ip<np; ip++){
     fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
   }
   const unsigned int ne = aElemInd.size()-1;

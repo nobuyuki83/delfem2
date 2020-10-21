@@ -187,20 +187,20 @@ public:
   std::vector<T> valDia;
 };
 
-DFM2_INLINE double CheckSymmetry
- (const delfem2::CMatrixSparse<double> &mat);
+DFM2_INLINE double CheckSymmetry(
+    const delfem2::CMatrixSparse<double> &mat);
   
-DFM2_INLINE void SetMasterSlave
- (delfem2::CMatrixSparse<double> &mat,
-  const int *aMSFlag);
+DFM2_INLINE void SetMasterSlave(
+    delfem2::CMatrixSparse<double> &mat,
+    const unsigned int *aMSFlag);
 
-DFM2_INLINE void MatSparse_ScaleBlk_LeftRight
- (delfem2::CMatrixSparse<double> &mat,
-  const double *scale);
+DFM2_INLINE void MatSparse_ScaleBlk_LeftRight(
+    delfem2::CMatrixSparse<double> &mat,
+    const double *scale);
 
-DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight
- (delfem2::CMatrixSparse<double> &mat,
-  const double *scale);
+DFM2_INLINE void MatSparse_ScaleBlkLen_LeftRight(
+    delfem2::CMatrixSparse<double> &mat,
+    const double *scale);
 
 } // delfem2
 

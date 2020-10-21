@@ -576,9 +576,9 @@ template void delfem2::CMatrixSparse<std::complex<double>>::SetFixedBC_Col(const
 
 // -----------------------------------------------------------------
 
-DFM2_INLINE void delfem2::SetMasterSlave
-(delfem2::CMatrixSparse<double>& mat,
- const int* aMSFlag)
+DFM2_INLINE void delfem2::SetMasterSlave(
+    delfem2::CMatrixSparse<double>& mat,
+    const unsigned int* aMSFlag)
 {
   assert( !mat.valDia.empty() );
   assert( mat.nblk_row == mat.nblk_col );
@@ -658,7 +658,7 @@ DFM2_INLINE void delfem2::SetMasterSlave
       const unsigned int jno1 = mat.rowPtr[icrs1];
       assert( jno1 < nblk );
       for(unsigned int jlen1=0;jlen1<len;jlen1++){
-        if( aMSFlag[jno1*len+jlen1] == -1 ) continue;
+        if( aMSFlag[jno1*len+jlen1] == UINT_MAX ) continue;
         auto jdof0 = (unsigned int)aMSFlag[jno1*len+jlen1];
         unsigned int jno0 = jdof0/len;
         assert( jno0 < nblk );
@@ -686,7 +686,7 @@ DFM2_INLINE void delfem2::SetMasterSlave
   // --------------------------------------
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int ilen=0;ilen<len;ilen++){
-      if( aMSFlag[iblk*len+ilen] == -1 ) continue;
+      if( aMSFlag[iblk*len+ilen] == UINT_MAX ) continue;
       for(unsigned int jlen=0;jlen<len;jlen++){
         mat.valDia[iblk*blksize+ilen*len+jlen] = 0.0;
         mat.valDia[iblk*blksize+jlen*len+ilen] = 0.0;
@@ -698,7 +698,7 @@ DFM2_INLINE void delfem2::SetMasterSlave
   for(unsigned int iblk=0;iblk<nblk;iblk++){
     for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
       for(unsigned int idim=0;idim<len;idim++){
-        if( aMSFlag[iblk*len+idim] == -1 ) continue;
+        if( aMSFlag[iblk*len+idim] == UINT_MAX ) continue;
         auto idof0 = (unsigned int)aMSFlag[iblk*len+idim];
         unsigned int jblk = mat.rowPtr[icrs];
         for(unsigned int jdim=0;jdim<len;jdim++){
@@ -715,7 +715,7 @@ DFM2_INLINE void delfem2::SetMasterSlave
     for(unsigned int icrs=mat.colInd[iblk];icrs<mat.colInd[iblk+1];icrs++){
       const int jblk1 = mat.rowPtr[icrs];
       for(unsigned int jdim=0;jdim<len;jdim++){
-        if( aMSFlag[jblk1*len+jdim] == -1 ) continue;
+        if( aMSFlag[jblk1*len+jdim] == UINT_MAX ) continue;
         auto idof0 = (unsigned int)aMSFlag[jblk1*len+jdim];
         for(unsigned int idim=0;idim<len;idim++){
           unsigned int idof1 = iblk*len+idim;
