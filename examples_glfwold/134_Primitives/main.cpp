@@ -6,10 +6,8 @@
  */
 
 #include <vector>
-#include <cmath>
 #include <cstdlib>
 #include "delfem2/primitive.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 
 // gl related includes
@@ -53,7 +51,7 @@ int main(int argc,char* argv[])
     }
     // --------------
     dfm2::MeshQuad2D_Grid(aXYZ,aElm,16,8);
-    dfm2::Scale_Points3(aXYZ.data(),aXYZ.size()/3, 0.1);
+    dfm2::Scale_Points(aXYZ.data(),aXYZ.size()/3,3,0.1);
     for(int iframe=0;iframe<30;++iframe) {
       viewer.DrawBegin_oldGL();
       ::glColor3d(0,0,0);
@@ -109,8 +107,8 @@ int main(int argc,char* argv[])
     }
     // ----
     dfm2::MeshTri3D_Icosahedron(aXYZ,aElm);
-    dfm2::Scale_Points3(aXYZ.data(),
-        aXYZ.size()/2,0.5);
+    dfm2::Scale_Points(aXYZ.data(),
+        aXYZ.size()/3,3,0.5);
     for(int iframe=0;iframe<30;++iframe) {
       viewer.DrawBegin_oldGL();
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);

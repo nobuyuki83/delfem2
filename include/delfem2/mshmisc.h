@@ -20,40 +20,41 @@
 
 namespace delfem2{
 
+DFM2_INLINE void GetCenterWidthGroup(
+    double& cx, double& cy, double& cz,
+    double& wx, double& wy, double& wz,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElem,
+    const int nnoel,
+    int igroup,
+    const std::vector<int>& aIndGroup);
 
-DFM2_INLINE void GetCenterWidthGroup
- (double& cx, double& cy, double& cz,
-  double& wx, double& wy, double& wz,
-  const std::vector<double>& aXYZ,
-  const std::vector<unsigned int>& aElem,
-  const int nnoel,
-  int igroup,
-  const std::vector<int>& aIndGroup);
+DFM2_INLINE void GetCenterWidthGroup(
+    double& cx, double& cy, double& cz,
+    double& wx, double& wy, double& wz,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    int igroup,
+    const std::vector<int>& aIndGroup);
 
-DFM2_INLINE void GetCenterWidthGroup
- (double& cx, double& cy, double& cz,
-  double& wx, double& wy, double& wz,
-  const std::vector<double>& aXYZ,
-  const std::vector<unsigned int>& aElemInd,
-  const std::vector<unsigned int>& aElem,
-  int igroup,
-  const std::vector<int>& aIndGroup);
-
-DFM2_INLINE void GetCenterWidth3DGroup
- (double cw[6],
-                     //
-  const std::vector<double>& aXYZ,
-  const std::vector<unsigned int>& aElemInd,
-  const std::vector<unsigned int>& aElem,
-  int igroup,
-  const std::vector<int>& aIndGroup);
+DFM2_INLINE void GetCenterWidth3DGroup(
+    double cw[6],
+    //
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    int igroup,
+    const std::vector<int>& aIndGroup);
 
 
-DFM2_INLINE void CG_Tri
- (double& cgx, double& cgy, double& cgz,
-  int itri,
-  const std::vector<double>& aXYZ,
-  const std::vector<int>& aTri);
+DFM2_INLINE void CG_Tri(
+    double& cgx,
+    double& cgy,
+    double& cgz,
+    int itri,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTri);
 
 
 /**
@@ -62,55 +63,55 @@ DFM2_INLINE void CG_Tri
  * the aXYZ_c0 will be resized to aTri.size()/3
  */
 template <typename T>
-DFM2_INLINE T CentsMaxRad_MeshTri3
- (std::vector<T>& aXYZ_c0,
-  const std::vector<T>& aXYZ,
-  const std::vector<unsigned int>& aTri);
+DFM2_INLINE T CentsMaxRad_MeshTri3(
+    std::vector<T>& aXYZ_c0,
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri);
   
 template <typename T>
-DFM2_INLINE void CG_MeshTri3_Shell
- (T cg[3],
-  const std::vector<T>& aXYZ,
-  const std::vector<unsigned int>& aTri);
+DFM2_INLINE void CG_MeshTri3_Shell(
+    T cg[3],
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri);
   
 template <typename T>
-DFM2_INLINE T CG_TriMsh3Flg_Shell
- (T cg[3],
-  const std::vector<T>& aXYZ,
-  const std::vector<unsigned int>& aTri,
-  int iflg,
-  const std::vector<int>& aFlg);
+DFM2_INLINE T CG_TriMsh3Flg_Shell(
+    T cg[3],
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    int iflg,
+    const std::vector<int>& aFlg);
   
 template <typename T>
-DFM2_INLINE void CG_MeshTri3_Solid
- (T cg[3],
-  const std::vector<T>& aXYZ,
-  const std::vector<unsigned int>& aTri);
+DFM2_INLINE void CG_MeshTri3_Solid(
+    T cg[3],
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTri);
 
 template <typename T>
-DFM2_INLINE void CG_MeshTet3
- (T& v_tot,
-  T cg[3],
-  const std::vector<T>& aXYZ,
-  const std::vector<unsigned int>& aTet);
+DFM2_INLINE void CG_MeshTet3(
+    T& v_tot,
+    T cg[3],
+    const std::vector<T>& aXYZ,
+    const std::vector<unsigned int>& aTet);
   
 // ---------------------------------
   
-DFM2_INLINE void RemoveUnreferencedPoints_MeshElem
- (std::vector<double>& aXYZ1,
-  std::vector<unsigned int>& aElem1,
-  std::vector<int>& aMap01,
-  unsigned int ndim,
-  const std::vector<double>& aXYZ0,
-  const std::vector<unsigned int>& aElem0);
+DFM2_INLINE void RemoveUnreferencedPoints_MeshElem(
+    std::vector<double>& aXYZ1,
+    std::vector<unsigned int>& aElem1,
+    std::vector<int>& aMap01,
+    unsigned int ndim,
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aElem0);
 
 /**
  * @brief Normal at the vertex of a triangle mesh.
  */
-DFM2_INLINE void Normal_MeshTri3D
- (double *aNorm,
-  const double *aXYZ, unsigned int nXYZ,
-  const unsigned int *aTri, unsigned int nTri);
+DFM2_INLINE void Normal_MeshTri3D(
+    double *aNorm,
+    const double *aXYZ, unsigned int nXYZ,
+    const unsigned int *aTri, unsigned int nTri);
  
 /**
  * @brief Normal at the vertex of a quad mesh. Defined for "float" and "double"
@@ -142,10 +143,10 @@ DFM2_INLINE void ExtrudeTri2Tet(
     const std::vector<double> &aXY,
     const std::vector<unsigned int> &aTri);
 
-DFM2_INLINE double SolidAngleTri3D
- (const double v1[3],
-  const double v2[3],
-  const double v3[3]);
+DFM2_INLINE double SolidAngleTri3D(
+    const double v1[3],
+    const double v2[3],
+    const double v3[3]);
 
 DFM2_INLINE void makeSolidAngle(
     std::vector<double> &aSolidAngle,
@@ -189,39 +190,39 @@ DFM2_INLINE void MassPoint_Tri3D(
     const double* aXYZ, unsigned int nXYZ,
     const unsigned int* aTri, unsigned int nTri);
 
-DFM2_INLINE void LaplacianSmoothing
- (std::vector<double>& aXYZ,
-  const std::vector<int>& aTri,
-  const std::vector<int>& elsup_ind,
-  const std::vector<int> elsup);
+DFM2_INLINE void LaplacianSmoothing(
+    std::vector<double>& aXYZ,
+    const std::vector<int>& aTri,
+    const std::vector<int>& elsup_ind,
+    const std::vector<int> elsup);
 
 // ---------------------------------------------------------
 
-DFM2_INLINE void SubdivisionPoints_QuadCatmullClark
- (std::vector<double>& aXYZ1,
-  //
-  const std::vector<unsigned int>& aQuad1,
-  const std::vector<int>& aEdgeFace0,
-  const std::vector<unsigned int> &psupIndQuad0,
-  const std::vector<unsigned int> &psupQuad0,
-  const unsigned int* aQuad0, unsigned int nQuad0,
-  const double* aXYZ0, unsigned int nXYZ0);
+DFM2_INLINE void SubdivisionPoints_QuadCatmullClark(
+    std::vector<double>& aXYZ1,
+    //
+    const std::vector<unsigned int>& aQuad1,
+    const std::vector<int>& aEdgeFace0,
+    const std::vector<unsigned int> &psupIndQuad0,
+    const std::vector<unsigned int> &psupQuad0,
+    const unsigned int* aQuad0, unsigned int nQuad0,
+    const double* aXYZ0, unsigned int nXYZ0);
   
-DFM2_INLINE void SubdivPoints3_MeshQuad
- (std::vector<double>& aXYZ1,
-                            //
-  const std::vector<int>& aEdgeFace0,
-  const std::vector<unsigned int>& aQuad0,
-  const std::vector<double>& aXYZ0);
+DFM2_INLINE void SubdivPoints3_MeshQuad(
+    std::vector<double>& aXYZ1,
+    //
+    const std::vector<int>& aEdgeFace0,
+    const std::vector<unsigned int>& aQuad0,
+    const std::vector<double>& aXYZ0);
 
-DFM2_INLINE void SubdivisionPoints_Hex
- (std::vector<double>& aXYZ1,
-                          //
-  const std::vector<unsigned int> &psupIndHex0,
-  const std::vector<unsigned int> &psupHex0,
-  const std::vector<unsigned int>& aQuadHex0,
-  const unsigned int* aHex0, unsigned int nHex0,
-  const double* aXYZ0, unsigned int nXYZ0);
+DFM2_INLINE void SubdivisionPoints_Hex(
+    std::vector<double>& aXYZ1,
+    //
+    const std::vector<unsigned int> &psupIndHex0,
+    const std::vector<unsigned int> &psupHex0,
+    const std::vector<unsigned int>& aQuadHex0,
+    const unsigned int* aHex0, unsigned int nHex0,
+    const double* aXYZ0, unsigned int nXYZ0);
 
 } // delfem2
 

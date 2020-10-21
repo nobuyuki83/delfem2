@@ -115,9 +115,11 @@ DFM2_INLINE  T TetVolume3D
    ) * 0.16666666666666666666666666666667;
 }
 
-DFM2_INLINE void Mat3_Bryant
- (double m[9],
-  double rx, double ry, double rz)
+DFM2_INLINE void Mat3_Bryant(
+    double m[9],
+    double rx,
+    double ry,
+    double rz)
 {
   m[0] = cos(rz)*cos(ry);
   m[1] = cos(rz)*sin(ry)*sin(rx)-sin(rz)*cos(rx);
@@ -130,9 +132,11 @@ DFM2_INLINE void Mat3_Bryant
   m[8] = cos(ry)*cos(rx);
 }
 
-DFM2_INLINE  void Mat3_Bryant
- (float m[9],
-  float rx, float ry, float rz)
+DFM2_INLINE  void Mat3_Bryant(
+    float m[9],
+    float rx,
+    float ry,
+    float rz)
 {
   m[0] = cosf(rz)*cosf(ry);
   m[1] = cosf(rz)*sinf(ry)*sinf(rx)-sinf(rz)*cosf(rx);
@@ -306,12 +310,14 @@ void delfem2::CenterWidth_Points3(
                             aXYZ);
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CenterWidth_Points3(float c[3],
-                                        float w[3],
-                                        const std::vector<float>& aXYZ);
-template void delfem2::CenterWidth_Points3(double c[3],
-                                        double w[3],
-                                        const std::vector<double>& aXYZ);
+template void delfem2::CenterWidth_Points3(
+    float c[3],
+    float w[3],
+    const std::vector<float>& aXYZ);
+template void delfem2::CenterWidth_Points3(
+    double c[3],
+    double w[3],
+    const std::vector<double>& aXYZ);
 #endif
 
 
@@ -344,64 +350,43 @@ void delfem2::GetCenterWidthLocal(
 // -------------------------------------
 
 template <typename T>
-void delfem2::Scale_PointsX
-(std::vector<T>& aXYZ,
- T s)
+void delfem2::Scale_PointsX(
+    std::vector<T>& aXYZ,
+    const T s)
 {
   const std::size_t n = aXYZ.size();
   for (unsigned int i = 0; i<n; ++i){ aXYZ[i] *= s; }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Scale_PointsX(std::vector<float>& aXYZ, float s);
-template void delfem2::Scale_PointsX(std::vector<double>& aXYZ, double s);
+template void delfem2::Scale_PointsX(std::vector<float>&, float);
+template void delfem2::Scale_PointsX(std::vector<double>&, double);
 #endif
 
 // --------------
 
 template <typename T>
-void delfem2::Scale_Points3
- (T* aXYZ,
-  const unsigned int npo,
-  T s)
+void delfem2::Scale_Points(
+    T* aVec,
+    const unsigned int np,
+    const unsigned int ndim,
+    const T s)
 {
-  for(unsigned int ino=0;ino<npo;ino++){
-    aXYZ[ino*3+0] *= s;
-    aXYZ[ino*3+1] *= s;
-    aXYZ[ino*3+2] *= s;
-  }
+  const unsigned int n = np*ndim;
+  for(unsigned int i=0;i<n;i++){ aVec[i] *= s; }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Scale_Points3(float* pXYZ, const unsigned int n, float s);
-template void delfem2::Scale_Points3(double* pXYZ, const unsigned int n, double s);
+template void delfem2::Scale_Points(float*, unsigned int, unsigned int, float);
+template void delfem2::Scale_Points(double*, unsigned int, unsigned int, double);
 #endif
 
 // --------------
 
 template <typename T>
-void delfem2::Translate_Points3
-(std::vector<T>& aXYZ,
-T tx, T ty, T tz)
-{
-  const std::size_t nXYZ = aXYZ.size()/3;
-  for (unsigned int ixyz = 0; ixyz<nXYZ; ixyz++){
-    aXYZ[ixyz*3+0] += tx;
-    aXYZ[ixyz*3+1] += ty;
-    aXYZ[ixyz*3+2] += tz;
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points3(std::vector<float>& aXYZ, float tx, float ty, float tz);
-template void delfem2::Translate_Points3(std::vector<double>& aXYZ, double tx, double ty, double tz);
-#endif
-
-// --------------
-
-template <typename T>
-void delfem2::Translate_Points
-(T* pVec,
- const unsigned int np,
- const unsigned int ndim,
- const T* trns)
+void delfem2::Translate_Points(
+    T* pVec,
+    const unsigned int np,
+    const unsigned int ndim,
+    const T* trns)
 {
   for(unsigned int ip=0;ip<np;ip++){
     for(unsigned int idim=0;idim<ndim;++idim) {
@@ -417,27 +402,44 @@ template void delfem2::Translate_Points(double*, unsigned int, unsigned int, con
 // --------------
 
 template <typename T>
-void delfem2::Translate_Points2
- (std::vector<T>& aXY,
-  T tx, T ty)
+void delfem2::Translate_Points2(
+    std::vector<T>& aXY,
+    const T tx,
+    const T ty)
 {
-  const unsigned int np = aXY.size()/2;
-  for (unsigned int ip = 0; ip<np; ip++){
-    aXY[ip*2+0] += tx;
-    aXY[ip*2+1] += ty;
-  }
+  const T trns[2] = {tx,ty};
+  Translate_Points(aXY.data(),aXY.size()/2,2,trns);
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points2(std::vector<float>& aXYZ, float tx, float ty);
-template void delfem2::Translate_Points2(std::vector<double>& aXYZ, double tx, double ty);
+template void delfem2::Translate_Points2(std::vector<float>&, float, float);
+template void delfem2::Translate_Points2(std::vector<double>&, double, double);
 #endif
 
 // --------------
 
 template <typename T>
-void delfem2::Rotate_Points3
-(std::vector<T>& aXYZ,
-T radx, T rady, T radz)
+void delfem2::Translate_Points3 (
+    std::vector<T>& aXYZ,
+    const T tx,
+    const T ty,
+    const T tz)
+{
+  const T trns[3] = {tx,ty,tz};
+  Translate_Points(aXYZ.data(),aXYZ.size()/3,3,trns);
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Translate_Points3(std::vector<float>&, float, float, float);
+template void delfem2::Translate_Points3(std::vector<double>&, double, double, double);
+#endif
+
+// --------------
+
+template <typename T>
+void delfem2::Rotate_Points3(
+    std::vector<T>& aXYZ,
+    const T radx,
+    const T rady,
+    const T radz)
 {
   T mat[9]; points::Mat3_Bryant(mat, radx, rady, radz);
   T* pXYZ = aXYZ.data();
@@ -448,18 +450,14 @@ T radx, T rady, T radz)
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Rotate_Points3 (
-    std::vector<float>& aXYZ,
-    float radx, float rady, float radz);
-template void delfem2::Rotate_Points3 (
-    std::vector<double>& aXYZ,
-    double radx, double rady, double radz);
+template void delfem2::Rotate_Points3 (std::vector<float>&, float, float, float);
+template void delfem2::Rotate_Points3 (std::vector<double>&, double, double, double);
 #endif
 
 // -----------------------------------------
 
-double delfem2::Size_Points3D_LongestAABBEdge
- (const std::vector<double>& aXYZ)
+double delfem2::Size_Points3D_LongestAABBEdge(
+    const std::vector<double>& aXYZ)
 {
   double c[3], w[3];
   CenterWidth_Points3(c, w,
@@ -471,9 +469,9 @@ double delfem2::Size_Points3D_LongestAABBEdge
 // ---------------------------------------
 
 template <typename T>
-void delfem2::Normalize_Points3
-(std::vector<T>& aXYZ,
- T s)
+void delfem2::Normalize_Points3(
+    std::vector<T>& aXYZ,
+    const T s)
 {
   T c[3], w[3];
   CenterWidth_Points3(c,w,
@@ -485,8 +483,8 @@ void delfem2::Normalize_Points3
                 s/wmax);
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Normalize_Points3 (std::vector<float>& aXYZ,  float s);
-template void delfem2::Normalize_Points3 (std::vector<double>& aXYZ,  double s);
+template void delfem2::Normalize_Points3 (std::vector<float>&,  float);
+template void delfem2::Normalize_Points3 (std::vector<double>&,  double);
 #endif
 
 
@@ -522,17 +520,17 @@ DFM2_INLINE void delfem2::NormalizeVector_Points(
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::NormalizeVector_Points(float* aVec, unsigned int np ,unsigned int ndim);
-template void delfem2::NormalizeVector_Points(double* aVec, unsigned int np, unsigned int ndim);
+template void delfem2::NormalizeVector_Points(float*, unsigned int, unsigned int);
+template void delfem2::NormalizeVector_Points(double*, unsigned int, unsigned int);
 #endif
 
 
 // ---------------------------------------
 
 template <typename T>
-void delfem2::CG_Point3
- (T cg[3],
-  const std::vector<T>& aXYZ)
+void delfem2::CG_Point3(
+    T* cg,
+    const std::vector<T>& aXYZ)
 {
   cg[0] = cg[1] = cg[2] = 0;
   unsigned int nXYZ = aXYZ.size()/3;
@@ -546,8 +544,8 @@ void delfem2::CG_Point3
   cg[2] /= nXYZ;
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::CG_Point3(float cg[3], const std::vector<float>& aXYZ);
-template void delfem2::CG_Point3(double cg[3], const std::vector<double>& aXYZ);
+template void delfem2::CG_Point3(float*, const std::vector<float>&);
+template void delfem2::CG_Point3(double*, const std::vector<double>&);
 #endif
 
 
@@ -571,16 +569,18 @@ void delfem2::Points_RandomUniform(
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Points_RandomUniform(float* aCoords,
-    unsigned int np,
-    unsigned int ndim,
-    const float* minCoords,
-    const float* maxCoords);
-template void delfem2::Points_RandomUniform(double* aCoords,
-    unsigned int np,
-    unsigned int ndim,
-    const double* minCoords,
-    const double* maxCoords);
+template void delfem2::Points_RandomUniform(
+    float*,
+    unsigned int,
+    unsigned int,
+    const float*,
+    const float*);
+template void delfem2::Points_RandomUniform(
+    double*,
+    unsigned int,
+    unsigned int,
+    const double*,
+    const double*);
 #endif
 
 // -------------------------------------------------
