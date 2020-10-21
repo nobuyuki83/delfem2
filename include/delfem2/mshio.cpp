@@ -134,10 +134,10 @@ DFM2_INLINE void delfem2::Read_Ply(
     fin.getline(buff, nbuff);
     if (strncmp(buff, "comment ", 8)!=0){ break; }
   }
-  /////
+  // ----
   int nno;
   sscanf(buff, "%s %s %d", buff1, buff2, &nno);
-  ////
+  // ----
   for (;;){
     fin.getline(buff, nbuff);
     if (strncmp(buff, "property ", 9)!=0){ break; }
@@ -145,10 +145,10 @@ DFM2_INLINE void delfem2::Read_Ply(
   int ntri;
   sscanf(buff, "%s %s %d", buff1, buff2, &ntri);
   aTri.resize(ntri*3);
-  /////
+  // ----
   fin.getline(buff, nbuff);  // property list int int vertex_indices
   fin.getline(buff, nbuff);  // end header
-  ////
+  // ----
   aXYZ.resize(nno*3);
   for (int ino = 0; ino<nno; ++ino){
     double x, y, z;
@@ -225,7 +225,7 @@ DFM2_INLINE void delfem2::Write_Ply
   fout << "element face " << nTri << "\n";
   fout << "property list uchar int vertex_indices" << "\n";
   fout << "end_header\n";
-  ////
+  // ----
   for(int ixyz=0;ixyz<nXYZ;ixyz++){
     fout << aXYZ[ixyz*3+0] << " " << aXYZ[ixyz*3+1] << " " << aXYZ[ixyz*3+2] << "\n";
   }
@@ -344,13 +344,14 @@ DFM2_INLINE void delfem2::Write_Obj(
     const std::vector<int>& aElemInd,
     const std::vector<int>& aElem)
 {
-  int np = (int)aXYZ.size()/3;
+  assert( !aElemInd.empty() );
+  const unsigned int np = aXYZ.size()/3;
   std::ofstream fout(str.c_str(), std::ofstream::out);
   for (int ip = 0; ip<np; ip++){
     fout<<"v "<<aXYZ[ip*3+0]<<" "<<aXYZ[ip*3+1]<<" "<<aXYZ[ip*3+2]<<std::endl;
   }
-  const int ne = aElemInd.size()-1;
-  for (int ie=0; ie<ne; ie++){
+  const unsigned int ne = aElemInd.size()-1;
+  for (unsigned int ie=0; ie<ne; ie++){
     const int i0 = aElemInd[ie];
     const int nnoel = aElemInd[ie+1]-i0;
     assert( nnoel == 3 || nnoel == 4 );
@@ -1251,12 +1252,12 @@ DFM2_INLINE void delfem2::Read_MeshTri3D_Nas(
     printf("fail to open file");
     return;
   }
-  /////
+  // -----
   std::vector<int> map01;
   const int nbuff = 256;
   std::vector<char> buff(nbuff);
   char buff1[16], buff2[16], buff3[16], buff4[16], buff5[16];
-  while(1){
+  while(true){
     fin.getline(buff.data(),nbuff);
     if( fin.eof() ){ break; } // eof
     if( buff[0]=='G' && buff[1]=='R' && buff[2]=='I' && buff[3]=='D' ){

@@ -145,7 +145,7 @@ void delfem2::MergeLinSys_Poission_MeshTri2D(
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int nDoF = np;
+  const unsigned int nDoF = np;
   //
   std::vector<int> tmp_buffer(nDoF, -1);
   for (unsigned int iel = 0; iel<nTri; ++iel){
@@ -375,7 +375,7 @@ void delfem2::MergeLinSys_SolidLinear_Static_MeshTri2D
  const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXY;
+  const unsigned int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];
@@ -419,7 +419,7 @@ void delfem2::MergeLinSys_SolidLinear_NewmarkBeta_MeshTri2D(
     const double* aAcc)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXY;
+  const unsigned int np = nXY;
 //  const int nDoF = np*2;
   ////
 //  mat_A.SetZero();
@@ -467,7 +467,7 @@ void delfem2::MergeLinSys_StokesStatic2D(
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXY;
+  const unsigned int np = nXY;
 //  const int nDoF = np*3;
   ////
 //  mat_A.SetZero();
@@ -513,7 +513,7 @@ void delfem2::MergeLinSys_StokesDynamic2D(
     const double* aVelo)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXY;
+  const unsigned int np = nXY;
 //  const int nDoF = np*3;
   ////
 //  mat_A.SetZero();
@@ -1055,10 +1055,10 @@ void delfem2::MergeLinSys_SolidStiffwarp_BEuler_MeshTet3D
     }
     double eres[4][3];
     {
-      for(int ino=0;ino<4;++ino){
-        eres[ino][0] = vol*rho*g[0]*0.25;
-        eres[ino][1] = vol*rho*g[1]*0.25;
-        eres[ino][2] = vol*rho*g[2]*0.25;
+      for(auto & ere : eres){
+        ere[0] = vol*rho*g[0]*0.25;
+        ere[1] = vol*rho*g[1]*0.25;
+        ere[2] = vol*rho*g[2]*0.25;
       }
       double u0[4][3]; lcl::FetchData(&u0[0][0], 4, 3, aIP, aDisp);
       double v0[4][3]; lcl::FetchData(&v0[0][0], 4, 3, aIP, aVelo);
@@ -1545,7 +1545,7 @@ void delfem2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
     const double* aVal)
 {
   namespace lcl = ::delfem2::fem_emats;
-  const int np = nXY;
+  const unsigned int np = nXY;
   std::vector<int> tmp_buffer(np, -1);
   for(unsigned int iel=0; iel<nTri; ++iel){
     const unsigned int i0 = aTri1[iel*3+0];

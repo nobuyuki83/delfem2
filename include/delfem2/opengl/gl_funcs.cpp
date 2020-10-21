@@ -5,13 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
-#include <cstdlib>
-#include <cassert>
-#include <math.h>
-#include <fstream>
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 // need a function loader because this file cannot be compiled without loaders in linux

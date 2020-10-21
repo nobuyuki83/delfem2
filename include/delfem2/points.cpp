@@ -397,21 +397,21 @@ template void delfem2::Translate_Points3(std::vector<double>& aXYZ, double tx, d
 // --------------
 
 template <typename T>
-void delfem2::Translate_Points3
-(T* pXYZs_,
- const unsigned int nnode_,
- // ----
- T tx, T ty, T tz)
+void delfem2::Translate_Points
+(T* pVec,
+ const unsigned int np,
+ const unsigned int ndim,
+ const T* trns)
 {
-  for(unsigned int ino=0;ino<nnode_;ino++){
-    pXYZs_[ino*3+0] += tx;
-    pXYZs_[ino*3+1] += ty;
-    pXYZs_[ino*3+2] += tz;
+  for(unsigned int ip=0;ip<np;ip++){
+    for(unsigned int idim=0;idim<ndim;++idim) {
+      pVec[ip * ndim + idim] += trns[idim];
+    }
   }
 }
 #ifndef DFM2_HEADER_ONLY
-template void delfem2::Translate_Points3(float* pXYZ, unsigned int nN, float tx, float ty, float tz);
-template void delfem2::Translate_Points3(double* pXYZ, unsigned int nN, double tx, double ty, double tz);
+template void delfem2::Translate_Points(float*, unsigned int, unsigned int, const float*);
+template void delfem2::Translate_Points(double*, unsigned int, unsigned int, const double*);
 #endif
 
 // --------------

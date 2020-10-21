@@ -36,7 +36,7 @@ public:
 
 class CDynPntSur{
 public:
-	CDynPntSur(){ e = -1; d = 0; }
+	CDynPntSur(){ e = UINT_MAX; d = 0; }
 	CDynPntSur( const CDynPntSur& rhs )
 		: e(rhs.e), d(rhs.d) {}
   CDynPntSur(int ielem, unsigned int idir)

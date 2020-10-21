@@ -52,10 +52,10 @@ if(USE_HEADERONLY)
 else()
   if(MSVC)
     set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/dfm2_static_glfwnew.lib)
   else()
     set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
+        ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwnew/libdfm2_static_glfwnew.a )
   endif()
 endif()
 set(DELFEM2_INCLUDE_DIR "../../include")
@@ -64,26 +64,28 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 ##############################
 
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-  ${IMGUI_DIR}
-  ${IMGUI_DIR}/examples
-  ${GLAD_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+    ${GLAD_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
 )
 
 set(3RD_PARTY           "../../3rd_party")
 add_executable(${PROJECT_NAME}
-    ${IMGUI_DIR}/imgui.h                    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui.h
+    ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
     ${IMGUI_DIR}/imgui_widgets.cpp
-    ${IMGUI_DIR}/examples/imgui_impl_opengl3.cpp
-    ${IMGUI_DIR}/examples/imgui_impl_opengl3.h
-    ${IMGUI_DIR}/examples/imgui_impl_glfw.cpp
-    ${IMGUI_DIR}/examples/imgui_impl_glfw.h
-    ${3RD_PARTY}/glad4/include/glad/glad.h  ${3RD_PARTY}/glad4/src/glad.c
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.h
+    ${3RD_PARTY}/glad4/include/glad/glad.h
+    ${3RD_PARTY}/glad4/src/glad.c
     main.cpp
-)
+    )
 
 ###########################
 
@@ -93,27 +95,27 @@ if (NOT EMSCRIPTEN)
     find_library( IOKIT_LIBRARY IOKit )
     find_library( COREVIDEO_LIBRARY CoreVideo )
     target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      ${GLFW_LIBRARY}
-    )
+        ${DFM2_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${COCOA_LIBRARY}
+        ${IOKIT_LIBRARY}
+        ${COREVIDEO_LIBRARY}
+        ${GLFW_LIBRARY}
+        )
   ELSEIF(UNIX)
     target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLEW_LIBRARY}
-      ${GLFW_LIBRARY}
-      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-    )
+        ${DFM2_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${GLEW_LIBRARY}
+        ${GLFW_LIBRARY}
+        -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+        )
   ELSEIF(MSVC)
     target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}    
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-    )    
+        ${DFM2_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${GLFW_LIBRARY}
+        )
   ENDIF()
 else()
   set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
@@ -122,13 +124,13 @@ else()
   set(CMAKE_CXX_COMPILER "em++")
   target_compile_definitions(${PROJECT_NAME} PUBLIC -DEMSCRIPTEN=1)
   set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
-#  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s FULL_ES3=1")
+  #  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s FULL_ES3=1")
   include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_DIR}/include
-    ${GLAD_INCLUDE_DIR}
-    ${IMGUI_DIR}
-    ${IMGUI_DIR}/examples
-    ${DELFEM2_INCLUDE_DIR}
+      ${OPENGL_INCLUDE_DIR}
+      ${GLFW_DIR}/include
+      ${GLAD_INCLUDE_DIR}
+      ${IMGUI_DIR}
+      ${IMGUI_DIR}/examples
+      ${DELFEM2_INCLUDE_DIR}
   )
 endif()
