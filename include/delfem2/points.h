@@ -26,11 +26,11 @@ namespace delfem2{
  * @details implemented for "float" and "double"
  */
 template<typename T>
-DFM2_INLINE void updateMinMaxXYZ
- (T& x_min, T& x_max,
-  T& y_min, T& y_max,
-  T& z_min, T& z_max,
-  T x, T y, T z);
+DFM2_INLINE void updateMinMaxXYZ(
+    T& x_min, T& x_max,
+    T& y_min, T& y_max,
+    T& z_min, T& z_max,
+    T x, T y, T z);
 
 /**
  * @param bb3 (out) bounding box in the order of <minx, miny, minz, maxx, maxy, maxz>
@@ -47,31 +47,32 @@ DFM2_INLINE void BoundingBox3_Points3(
 
 // center & width
 template <typename T>
-DFM2_INLINE void CenterWidth_Point3
- (T& cx, T& cy, T& cz,
-  T& wx, T& wy, T& wz,
-  const T* paXYZ, unsigned int nXYZ);
+DFM2_INLINE void CenterWidth_Point3(
+    T& cx, T& cy, T& cz,
+    T& wx, T& wy, T& wz,
+    const T* paXYZ,
+    unsigned int nXYZ);
   
 template <typename T>
-DFM2_INLINE void CenterWidth_Points3
- (T& cx, T& cy, T& cz,
-  T& wx, T& wy, T& wz,
-  const std::vector<T>& aXYZ);
+DFM2_INLINE void CenterWidth_Points3(
+    T& cx, T& cy, T& cz,
+    T& wx, T& wy, T& wz,
+    const std::vector<T>& aXYZ);
   
 template <typename T>
-DFM2_INLINE void CenterWidth_Points3
- (T c[3],
-  T w[3],
-  const std::vector<T>& aXYZ);
+DFM2_INLINE void CenterWidth_Points3(
+    T c[3],
+    T w[3],
+    const std::vector<T>& aXYZ);
   
 // local coordinate
-DFM2_INLINE void GetCenterWidthLocal
- (double& lcx, double& lcy, double& lcz,
-  double& lwx, double& lwy, double& lwz,
-  const std::vector<double>& aXYZ,
-  const double lex[3],
-  const double ley[3],
-  const double lez[3]);
+DFM2_INLINE void GetCenterWidthLocal(
+    double& lcx, double& lcy, double& lcz,
+    double& lwx, double& lwy, double& lwz,
+    const std::vector<double>& aXYZ,
+    const double lex[3],
+    const double ley[3],
+    const double lez[3]);
 
 
 // ------------------------------------------
@@ -82,37 +83,47 @@ DFM2_INLINE void GetCenterWidthLocal
  * @details the angles are in the radian.
  */
 template <typename T>
-DFM2_INLINE void Rotate_Points3
- (std::vector<T>& aXYZ,
-  T radx, T rady, T radz);
+DFM2_INLINE void Rotate_Points3(
+    std::vector<T>& aXYZ,
+    T radx,
+    T rady,
+    T radz);
+
+// ----
 
 template <typename T>
-DFM2_INLINE void Translate_Points3
- (std::vector<T>& aXYZ,
-  T tx, T ty, T tz);
+DFM2_INLINE void Translate_Points(
+    T* paVec,
+    unsigned int np,
+    unsigned int ndim,
+    const T* trns);
 
 template <typename T>
-DFM2_INLINE void Translate_Points
- (T* paVec,
-  unsigned int np,
-  unsigned int ndim,
-  const T* trns);
+DFM2_INLINE void Translate_Points2(
+    std::vector<T>& aXY,
+    T tx,
+    T ty);
 
 template <typename T>
-DFM2_INLINE void Translate_Points2
- (std::vector<T>& aXY,
-  T tx, T ty);
+DFM2_INLINE void Translate_Points3(
+    std::vector<T>& aXYZ,
+    T tx,
+    T ty,
+    T tz);
+
+// ----
   
 template <typename T>
-DFM2_INLINE void Scale_PointsX
- (std::vector<T>& aXYZ,
-                   T s);
+DFM2_INLINE void Scale_PointsX(
+    std::vector<T>& aXYZ,
+    T s);
 
 template <typename T>
-DFM2_INLINE void Scale_Points3
- (T* pXYZs_,
-  unsigned int nnode_,
-  T s);
+DFM2_INLINE void Scale_Points(
+    T* pVec,
+    unsigned int np,
+    unsigned int ndim,
+    T s);
 
 
 /**
@@ -138,16 +149,16 @@ DFM2_INLINE void NormalizeVector_Points(
     unsigned int ndim);
 
 
-DFM2_INLINE double Size_Points3D_LongestAABBEdge
- (const std::vector<double>& aXYZ);
+DFM2_INLINE double Size_Points3D_LongestAABBEdge(
+    const std::vector<double>& aXYZ);
   
 /**
  * @details implemented for "float" and "double"
  */
 template <typename T>
-DFM2_INLINE void CG_Point3
- (T cg[3],
-  const std::vector<T>& aXYZ);
+DFM2_INLINE void CG_Point3(
+    T* cg,
+    const std::vector<T>& aXYZ);
 
 template <typename T>
 DFM2_INLINE void Points_RandomUniform(

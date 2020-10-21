@@ -314,13 +314,13 @@ T delfem2::CentsMaxRad_MeshTri3(
 }
 #ifndef DFM2_HEADER_ONLY
 template float delfem2::CentsMaxRad_MeshTri3(
-    std::vector<float>& aXYZ_c0,
-    const std::vector<float>& aXYZ,
-    const std::vector<unsigned int>& aTri);
+    std::vector<float>&,
+    const std::vector<float>&,
+    const std::vector<unsigned int>&);
 template double delfem2::CentsMaxRad_MeshTri3(
-    std::vector<double>& aXYZ_c0,
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aTri);
+    std::vector<double>&,
+    const std::vector<double>&,
+    const std::vector<unsigned int>&);
 #endif
 
 void delfem2::RemoveUnreferencedPoints_MeshElem
@@ -427,13 +427,13 @@ void delfem2::Normal_MeshQuad3
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Normal_MeshQuad3(
-    std::vector<float>& aNorm,
-    const std::vector<float>& aXYZ,
-    const std::vector<unsigned int>& aQuad);
+    std::vector<float>&,
+    const std::vector<float>&,
+    const std::vector<unsigned int>&);
 template void delfem2::Normal_MeshQuad3(
-    std::vector<double>& aNorm,
-    const std::vector<double>& aXYZ,
-    const std::vector<unsigned int>& aQuad);
+    std::vector<double>&,
+    const std::vector<double>&,
+    const std::vector<unsigned int>&);
 #endif
 
 
