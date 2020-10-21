@@ -46,9 +46,9 @@ void Draw(
     const dfm2::CVec3d o = dfm2::CVec3d(aOdir.data()+ip*3).Normalize();
     const dfm2::CVec3d q = dfm2::Cross(n,o);
     ::glBegin(GL_LINES);
-    ::glColor3d(0,0,0);
-    dfm2::opengl::myGlVertex(p);
-    dfm2::opengl::myGlVertex(p+len*n);
+//    ::glColor3d(0,0,0);
+//    dfm2::opengl::myGlVertex(p);
+//    dfm2::opengl::myGlVertex(p+len*n);
     ::glColor3d(0,0,1);
     dfm2::opengl::myGlVertex(p-len*o);
     dfm2::opengl::myGlVertex(p);
@@ -181,6 +181,12 @@ int main()
 
     viewer.DrawBegin_oldGL();
     Draw(aLayer[0].aXYZ,aLayer[0].aNorm,aLayer[0].aOdir,aTri);
+/*
+    ::glColor3d(0,0,0);
+    ::glLineWidth(2);
+    dfm2::opengl::DrawMeshTri3D_Edge(aLayer[0].aXYZ.data(),aLayer[0].aXYZ.size()/3,aTri.data(),aTri.size()/3);
+    dfm2::opengl::DrawMeshTri3D_FaceNorm(aLayer[0].aXYZ.data(),aTri.data(),aTri.size()/3);
+    */
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     iframe = (iframe+1)%60;

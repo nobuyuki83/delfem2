@@ -8,7 +8,6 @@
 #include <cassert>
 #include <cmath>
 #include <vector>
-#include <random>
 #include "delfem2/mshmisc.h"
 
 #ifndef M_PI

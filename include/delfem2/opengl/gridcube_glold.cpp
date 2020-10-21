@@ -16,7 +16,6 @@
   #include <GL/gl.h>
 #endif
 #include "delfem2/opengl/gridcube_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
 
 namespace dfm2 = delfem2;
 

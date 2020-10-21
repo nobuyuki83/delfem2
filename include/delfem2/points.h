@@ -92,10 +92,11 @@ DFM2_INLINE void Translate_Points3
   T tx, T ty, T tz);
 
 template <typename T>
-DFM2_INLINE void Translate_Points3
- (T* pXYZs_,
-  unsigned int nnode_,
-  T tx, T ty, T tz);
+DFM2_INLINE void Translate_Points
+ (T* paVec,
+  unsigned int np,
+  unsigned int ndim,
+  const T* trns);
 
 template <typename T>
 DFM2_INLINE void Translate_Points2

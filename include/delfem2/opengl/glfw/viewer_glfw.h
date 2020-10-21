@@ -45,6 +45,7 @@ public:
 public:
   GLFWwindow* window;
   CNav3D_GLFW nav;
+  double bgcolor[4] = {1,1,1,1};
 };
   
 }

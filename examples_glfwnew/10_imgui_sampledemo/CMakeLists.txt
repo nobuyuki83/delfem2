@@ -35,28 +35,28 @@ set(GLAD_INCLUDE_DIR "../../3rd_party/glad4/include")
 get_filename_component(GLAD_INCLUDE_DIR ${GLAD_INCLUDE_DIR} ABSOLUTE)
 
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_DIR}/include
-  ${IMGUI_DIR}
-  ${IMGUI_DIR}/examples
-  ${GLAD_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLFW_DIR}/include
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+    ${GLAD_INCLUDE_DIR}
 )
 
 set(3RD_PARTY "../../3rd_party")
 add_executable(${PROJECT_NAME}
-  ${IMGUI_DIR}/imgui.cpp
-  ${IMGUI_DIR}/imgui.h
-  ${IMGUI_DIR}/imgui_draw.cpp
-  ${IMGUI_DIR}/imgui_widgets.cpp
-  ${IMGUI_DIR}/imgui_demo.cpp
-  ${IMGUI_DIR}/examples/imgui_impl_opengl3.cpp
-  ${IMGUI_DIR}/examples/imgui_impl_opengl3.h
-  ${IMGUI_DIR}/examples/imgui_impl_glfw.cpp
-  ${IMGUI_DIR}/examples/imgui_impl_glfw.h
-  ${3RD_PARTY}/glad4/include/glad/glad.h
-  ${3RD_PARTY}/glad4/src/glad.c
-  main.cpp
-)
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui.h
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.h
+    ${3RD_PARTY}/glad4/include/glad/glad.h
+    ${3RD_PARTY}/glad4/src/glad.c
+    main.cpp
+    )
 
 #################################
 
@@ -65,22 +65,22 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-    ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-  )
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/libglfw3.a
+      ${COCOA_LIBRARY}
+      ${IOKIT_LIBRARY}
+      ${COREVIDEO_LIBRARY}
+      )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}    
-    ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/libglfw3.a
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
-  )
+      ${DFM2_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/libglfw3.a
+      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
+      )
 ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME} 
-    ${OPENGL_LIBRARY}
-    ${GLFW_DIR}/src/Release/glfw3.lib
-  )
+  target_link_libraries(${PROJECT_NAME}
+      ${OPENGL_LIBRARY}
+      ${GLFW_DIR}/src/Release/glfw3.lib
+      )
 ENDIF()
