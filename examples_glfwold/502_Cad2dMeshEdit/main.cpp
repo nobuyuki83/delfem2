@@ -82,7 +82,7 @@ int main(int argc,char* argv[])
       delfem2::opengl::DrawMeshTri2D_Face(aTri,aXY);
       ::glLineWidth(1);
       delfem2::opengl::DrawMeshTri2D_Edge(aTri,aXY);
-      this->DrawEnd_oldGL();
+      this->SwapBuffers();
     }
   public:
     std::vector<double> aXY;
@@ -99,6 +99,7 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

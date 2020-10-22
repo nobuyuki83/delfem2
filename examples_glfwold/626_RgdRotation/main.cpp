@@ -176,10 +176,10 @@ int main(int argc,char* argv[])
   
   while(true){
     rbs = StepTime_RungeKutta4(dt,rbs,rbi,rbfm);
-    //
     viewer.DrawBegin_oldGL();
     myGlutDisplay(aXYZ,aTri);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
   }
 CLOSE:

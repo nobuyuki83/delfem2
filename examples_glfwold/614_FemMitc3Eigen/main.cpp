@@ -312,7 +312,8 @@ int main(int argc,char* argv[])
     Solve();
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
   }
   

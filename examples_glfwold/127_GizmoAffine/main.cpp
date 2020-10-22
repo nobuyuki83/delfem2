@@ -65,7 +65,7 @@ int main(int argc,char* argv[])
         ::glPopMatrix();
       }
       delfem2::opengl::Draw(ga);
-      DrawEnd_oldGL();
+      SwapBuffers();
     }
   public:
     delfem2::CGizmo_Affine<float> ga;
@@ -80,6 +80,7 @@ int main(int argc,char* argv[])
   // --------------------
   while(true){
     viewer.Draw();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
 EXIT:

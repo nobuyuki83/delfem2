@@ -46,7 +46,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // --------------
@@ -56,7 +57,8 @@ int main(int argc,char* argv[])
       viewer.DrawBegin_oldGL();
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshQuad2D_Edge(aXYZ, aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // --------------
@@ -70,7 +72,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshQuad3D_FaceNorm(aXYZ.data(), aElm.data(), aElm.size()/4);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshQuad3D_Edge(aXYZ, aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // --------------
@@ -81,7 +84,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // ----
@@ -91,7 +95,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // ----
@@ -102,7 +107,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // ----
@@ -114,7 +120,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // ----
@@ -125,7 +132,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // -----
@@ -136,7 +144,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
     // -----
@@ -147,7 +156,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ, aElm);
       ::glColor3d(0,0,0);
       dfm2::opengl::DrawMeshTri3D_Edge(aXYZ,aElm);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
   }

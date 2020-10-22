@@ -101,12 +101,18 @@ int main(int argc,char* argv[])
       dfm2::Check_BVH(aNodeBVH,aCent.size()/3);
     }
   }
-  
+
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.nav.camera.view_height = 1.5;
   viewer.nav.camera.camera_rot_mode = dfm2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   viewer.Init_oldGL();
   delfem2::opengl::setSomeLighting();
+
+  GLFWwindow* window = glfwCreateWindow(640, 480, "pixels", nullptr, nullptr);
+  if ( !window ){
+    glfwTerminate();
+    return -1;
+  }
 
   double cur_time = 0.0;
   while (!glfwWindowShouldClose(viewer.window))
@@ -129,7 +135,12 @@ int main(int argc,char* argv[])
     viewer.DrawBegin_oldGL();
     myGlutDisplay(aXYZ,aTri,aIndElem,src0,dir0);
     viewer.SwapBuffers();
-    
+
+    ::glfwMakeContextCurrent(window);
+    ::glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    ::glClear(GL_COLOR_BUFFER_BIT);
+    ::glfwSwapBuffers(window);
+
     glfwPollEvents();
   }
   

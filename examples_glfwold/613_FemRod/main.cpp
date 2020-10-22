@@ -205,7 +205,8 @@ int main(int argc,char* argv[])
           aP0, aS0, aElemSeg, aElemRod, aBCFlag);
       viewer.DrawBegin_oldGL();
       myGlutDisplay(aP, aS, aElemSeg);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
    }
   }

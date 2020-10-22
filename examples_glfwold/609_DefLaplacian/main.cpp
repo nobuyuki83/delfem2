@@ -134,7 +134,8 @@ int main(int argc,char* argv[])
         // -----
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -153,7 +154,8 @@ int main(int argc,char* argv[])
         // -----
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -171,7 +173,8 @@ int main(int argc,char* argv[])
         // -------
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -190,7 +193,8 @@ int main(int argc,char* argv[])
         // -------
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -209,7 +213,8 @@ int main(int argc,char* argv[])
         // -------
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -228,7 +233,8 @@ int main(int argc,char* argv[])
         // -------
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -245,7 +251,8 @@ int main(int argc,char* argv[])
         // -----
         viewer.DrawBegin_oldGL();
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }

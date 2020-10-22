@@ -158,6 +158,7 @@ void delfem2::opengl::CViewer_GLFW::Init_newGL()
 
 void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
 {
+  ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
   ::glClearColor(this->bgcolor[0], this->bgcolor[1], this->bgcolor[2], this->bgcolor[3]);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -181,8 +182,7 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
   
 }
 
-void delfem2::opengl::CViewer_GLFW::DrawEnd_oldGL() const
+void delfem2::opengl::CViewer_GLFW::SwapBuffers() const
 {
   glfwSwapBuffers(this->window);
-  glfwPollEvents();
 }

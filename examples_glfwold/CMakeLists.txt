@@ -62,6 +62,7 @@ add_subdirectory(144_BinaryClusteringPoints2D)
 add_subdirectory(145_Lloyd)
 add_subdirectory(146_4RotSymFieldMultilevel)
 add_subdirectory(147_HashLbvh3RayTri)
+add_subdirectory(148_RayTracing)
 
 # dynamic meshing
 add_subdirectory(201_DynTri2dTriangulation)

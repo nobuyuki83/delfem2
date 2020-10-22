@@ -921,7 +921,8 @@ int main(int argc,char* argv[])
     for(;iframe<50;++iframe){ // poisson
       viewer.DrawBegin_oldGL();
       myGlutDisplay(0);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -932,7 +933,8 @@ int main(int argc,char* argv[])
       SolveProblem_Diffusion();
       viewer.DrawBegin_oldGL();
       myGlutDisplay(1);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -942,7 +944,8 @@ int main(int argc,char* argv[])
     for(;iframe<150;++iframe){
       viewer.DrawBegin_oldGL();
       myGlutDisplay(2);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -952,7 +955,8 @@ int main(int argc,char* argv[])
       SolveProblem_LinearSolid_Dynamic();
       viewer.DrawBegin_oldGL();
       myGlutDisplay(3);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -962,7 +966,8 @@ int main(int argc,char* argv[])
     for(;iframe<250;++iframe){
       viewer.DrawBegin_oldGL();
       myGlutDisplay(4);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -972,7 +977,8 @@ int main(int argc,char* argv[])
       SolveProblem_Stokes_Dynamic();
       viewer.DrawBegin_oldGL();
       myGlutDisplay(5);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -982,7 +988,8 @@ int main(int argc,char* argv[])
       SolveProblem_NavierStokes_Dynamic();
       viewer.DrawBegin_oldGL();
       myGlutDisplay(6);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
   }

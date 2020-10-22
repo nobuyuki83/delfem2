@@ -70,7 +70,8 @@ int main(int argc,char* argv[])
     // --------------------
     viewer.DrawBegin_oldGL();
     delfem2::opengl::Draw_CCad2D(cad);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

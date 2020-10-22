@@ -23,7 +23,7 @@ class CViewer_GLFW{
 public:
   void Init_oldGL();
   void DrawBegin_oldGL() const;
-  void DrawEnd_oldGL() const;
+  void SwapBuffers() const;
   
   void Init_newGL();
   

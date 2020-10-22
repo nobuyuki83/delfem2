@@ -337,7 +337,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawBone(aBone, -1, -1, 0.02, -0.2);
       dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Red());
       ::glColor3d(0,0,0);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
   }

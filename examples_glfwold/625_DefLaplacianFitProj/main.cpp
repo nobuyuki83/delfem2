@@ -224,7 +224,8 @@ int main(int argc,char* argv[])
         // drawing functions
         viewer.DrawBegin_oldGL();
         Draw(trg,aXYZ1,aTri,sampler);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }
@@ -260,7 +261,8 @@ int main(int argc,char* argv[])
         // drawing functions
         viewer.DrawBegin_oldGL();
         Draw(trg,aXYZ1,aTri,sampler);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }

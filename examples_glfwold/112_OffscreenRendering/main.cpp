@@ -106,7 +106,7 @@ int main(int argc,char* argv[])
     viewer.DrawBegin_oldGL();
     myGlutDisplay(sampler);
     glfwSwapBuffers(viewer.window);
-    glfwPollEvents();
+    glfwPollEvents();    
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

@@ -64,7 +64,8 @@ void Draw(
   ::glPointSize(5);
   dfm2::opengl::DrawPoints2d_Points(aXY);
   dfm2::opengl::DrawBox2_Edge(min_xy,max_xy);
-  viewer.DrawEnd_oldGL();
+  viewer.SwapBuffers();
+  glfwPollEvents();
 }
 
 int main(int argc,char* argv[])

@@ -295,7 +295,8 @@ int main(int argc, char* argv[])
       }
       viewer.DrawBegin_oldGL();
       myGlutDisplay(aPo3D, aSTet);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
   }

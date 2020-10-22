@@ -115,7 +115,9 @@ int main(int argc,char* argv[])
     }
     viewer.DrawBegin_oldGL();
     myGlutDisplay(aPo,aTri,aVec3);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

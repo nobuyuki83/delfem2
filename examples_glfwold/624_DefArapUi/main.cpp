@@ -141,7 +141,7 @@ int main(int argc,char* argv[])
       }
        */
       delfem2::opengl::Draw(giz1);
-      DrawEnd_oldGL();
+      SwapBuffers();
     }
   public:
     delfem2::CGizmo_Affine<float> giz1; // bcflag==2
@@ -159,6 +159,7 @@ int main(int argc,char* argv[])
   // --------------------
   while(true){
     viewer.Draw();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
 EXIT:

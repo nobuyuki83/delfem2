@@ -151,7 +151,8 @@ int main(int argc,char* argv[])
     ::glColor3d(0,0,0);
     dfm2::opengl::DrawCylinder(ps, pe, 0.001);
     dfm2::opengl::DrawAxis(1);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
 EXIT:

@@ -133,7 +133,8 @@ int main(int argc,char* argv[])
     viewer.DrawBegin_oldGL();
     sampler_box.Draw();
     Draw_CGrid3(grid);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
   }
 EXIT:

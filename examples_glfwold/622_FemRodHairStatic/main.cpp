@@ -175,7 +175,8 @@ int main(int argc,char* argv[])
       // ----------
       viewer.DrawBegin_oldGL();
       myGlutDisplay(aP, aS, aIP_HairRoot);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
     }
   }

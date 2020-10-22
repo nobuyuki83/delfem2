@@ -224,7 +224,8 @@ int main(int argc,char* argv[])
             pd.aXY.size()/2, pd.aXY.data(),
             pd.psup_ind.data(), pd.psup.data());
         ::glTranslated(0,0,-0.01);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
       }
     }
   }
