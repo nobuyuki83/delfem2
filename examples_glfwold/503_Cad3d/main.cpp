@@ -280,7 +280,7 @@ int main(int argc,char* argv[])
       this->DrawBegin_oldGL();
       DrawFace_RightSelected(cad,false);
       DrawVtxEdgeHandler(cad,nav.camera.view_height);
-      this->DrawEnd_oldGL();
+      this->SwapBuffers();
     }
     void mouse_press(const float src[3], const float dir[3]) override{
       const dfm2::CVec3d src_pick(src), dir_pick(dir);
@@ -306,6 +306,7 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

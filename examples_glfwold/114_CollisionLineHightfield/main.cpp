@@ -134,7 +134,8 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
       glPointSize(1);
       sampler.Draw();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
     }
     if( glfwWindowShouldClose(viewer.window) ){ break; }
   }

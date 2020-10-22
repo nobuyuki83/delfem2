@@ -173,7 +173,9 @@ int main(int argc,char* argv[])
     ::glDisable(GL_TEXTURE_GEN_S);
     ::glDisable(GL_TEXTURE_GEN_T);
     ::glDisable(GL_TEXTURE_GEN_R);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

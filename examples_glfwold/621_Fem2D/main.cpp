@@ -806,7 +806,8 @@ int main(int argc,char* argv[])
     for(;iframe<50;++iframe){ // poisson
       viewer.DrawBegin_oldGL();
       DrawScalar();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -820,7 +821,8 @@ int main(int argc,char* argv[])
       // -------
       viewer.DrawBegin_oldGL();
       DrawScalar();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -833,7 +835,8 @@ int main(int argc,char* argv[])
       delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
                                                 aTri1.data(), aTri1.size()/3,
                                                 aVal.data(), 2);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ---------------------------
@@ -849,7 +852,8 @@ int main(int argc,char* argv[])
       delfem2::opengl::DrawMeshTri2D_FaceDisp2D(aXY1.data(), aXY1.size()/2,
                                                 aTri1.data(), aTri1.size()/3,
                                                 aVal.data(), 2);
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ----------------------------
@@ -860,7 +864,8 @@ int main(int argc,char* argv[])
     for(;iframe<350;++iframe){
       viewer.DrawBegin_oldGL();
       DrawVelocityField();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ----------------------------
@@ -873,7 +878,8 @@ int main(int argc,char* argv[])
       //
       viewer.DrawBegin_oldGL();
       DrawVelocityField();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // -----------------------------
@@ -886,7 +892,8 @@ int main(int argc,char* argv[])
       //
       viewer.DrawBegin_oldGL();
       DrawVelocityField();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ----------------------------
@@ -898,7 +905,8 @@ int main(int argc,char* argv[])
     for(;iframe<600;++iframe){
       viewer.DrawBegin_oldGL();
       DrawVelocityField();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // ----------------------------
@@ -911,7 +919,8 @@ int main(int argc,char* argv[])
       //
       viewer.DrawBegin_oldGL();
       DrawVelocityField();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
     // -----------------------------
@@ -925,7 +934,8 @@ int main(int argc,char* argv[])
       //
       viewer.DrawBegin_oldGL();
       DrawVelocityField();
-      viewer.DrawEnd_oldGL();
+      viewer.SwapBuffers();
+      glfwPollEvents();
       if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
     }
   }

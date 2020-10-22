@@ -61,7 +61,8 @@ int main(int argc,char* argv[])
     dfm2::opengl::DrawBone(aBone,
                            -1, -1,
                            0.1, 1.0);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

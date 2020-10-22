@@ -174,7 +174,8 @@ int main(int argc,char* argv[])
           dfm2::opengl::DrawSphereAt(32, 32, 1.0, ix0+0.5, iy0+0.5, iz0+0.5);
           ::glPopMatrix();
         }
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }
@@ -211,7 +212,8 @@ int main(int argc,char* argv[])
         dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Red());
         ::glColor3d(0,0,0);
         dfm2::opengl::DrawCylinder(ps, pe, 0.005);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
       }
     }

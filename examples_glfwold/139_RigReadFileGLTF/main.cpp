@@ -68,7 +68,8 @@ int main(int argc,char* argv[])
                               -1, -1,
                               0.01, 1.0);
     ::glEnable(GL_DEPTH_TEST);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

@@ -55,7 +55,7 @@ int main(int argc,char* argv[])
         ::glPopMatrix();
       }
       delfem2::opengl::Draw(gizmo_rot);
-      DrawEnd_oldGL();
+      SwapBuffers();
     }
   public:
     dfm2::CGizmo_Rotation<float> gizmo_rot;
@@ -70,6 +70,7 @@ int main(int argc,char* argv[])
   // --------------------
   while(true){
     viewer.Draw();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
 EXIT:

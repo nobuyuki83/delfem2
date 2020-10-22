@@ -55,7 +55,7 @@ int main(int argc,char* argv[])
       dfm2::opengl::DrawAxisHandler(gizmo_trnsl.size,
                                     gizmo_trnsl.pos,
                                     gizmo_trnsl.ielem_picked);
-      DrawEnd_oldGL();
+      SwapBuffers();
     }
   public:
     dfm2::CGizmo_Transl<float> gizmo_trnsl;
@@ -70,6 +70,7 @@ int main(int argc,char* argv[])
   // --------------------
   while(true){
     viewer.Draw();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
 EXIT:

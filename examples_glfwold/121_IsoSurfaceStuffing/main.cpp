@@ -282,7 +282,7 @@ int main(int argc,char* argv[])
     // ------------
     viewer.DrawBegin_oldGL();
     myGlutDisplay();
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

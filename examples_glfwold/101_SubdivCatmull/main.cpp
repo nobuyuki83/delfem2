@@ -76,7 +76,9 @@ int main(int argc,char* argv[])
     ::glDisable(GL_LIGHTING);
     ::glColor3d(0,0,0);
     delfem2::opengl::DrawMeshQuad3D_Edge(aaXYZ[nlevel_subdiv],aaQuad[nlevel_subdiv]);
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

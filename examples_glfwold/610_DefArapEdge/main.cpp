@@ -139,7 +139,8 @@ int main(int argc,char* argv[])
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1,aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       }
     } // end linear disponly
@@ -161,7 +162,8 @@ int main(int argc,char* argv[])
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       } // end of frame loop
     } // end linear disprot without preconditioner
@@ -186,7 +188,8 @@ int main(int argc,char* argv[])
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       } // end of frame loop
     } // end linear disprot with preconditioner
@@ -211,7 +214,8 @@ int main(int argc,char* argv[])
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
         Draw_BCFlag(aXYZ1,aBCFlag);
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       } // end of frame loop
     } // end linear disprot with preconditioner

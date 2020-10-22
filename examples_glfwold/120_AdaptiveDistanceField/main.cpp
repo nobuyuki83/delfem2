@@ -240,7 +240,8 @@ int main(int argc,char* argv[])
 //      opengl::DrawMeshTri3D_FaceNorm(aXYZ,aTri);
       Draw(adf);
     }
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

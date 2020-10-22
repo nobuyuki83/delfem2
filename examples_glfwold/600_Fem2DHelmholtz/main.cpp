@@ -150,7 +150,8 @@ int main(int argc,char* argv[])
                                            aTri1.data(),aTri1.size()/3,
                                            aVal.data(),1,colorMap);
     }
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

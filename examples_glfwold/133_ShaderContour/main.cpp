@@ -196,7 +196,8 @@ int main(int argc,char* argv[])
       sampler.Draw_BoundingBox();
       sampler.Draw_Axis();
     }
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
   }
 EXIT:

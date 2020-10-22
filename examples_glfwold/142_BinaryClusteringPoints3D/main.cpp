@@ -148,7 +148,8 @@ int main(int argc,char* argv[])
                                          aPointData[0].aXYZ.size()/3,
                                          aTri0.data(),
                                          aTri0.size()/3);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
       }
     }
     for(const auto& pd: aPointData) {
@@ -156,7 +157,8 @@ int main(int argc,char* argv[])
         viewer.DrawBegin_oldGL();
         ::glColor3d(0, 0, 0);
         delfem2::opengl::DrawPoints3d_Psup(pd.aXYZ, pd.psup_ind, pd.psup);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
       }
     }
   }

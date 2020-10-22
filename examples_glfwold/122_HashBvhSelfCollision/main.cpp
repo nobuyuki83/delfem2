@@ -115,7 +115,8 @@ int main(int argc,char* argv[])
       glVertex3d(tp.P[1].x(), tp.P[1].y(), tp.P[1].z());
     }
     ::glEnd();
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   
   glfwDestroyWindow(viewer.window);

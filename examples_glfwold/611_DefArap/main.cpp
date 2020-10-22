@@ -142,7 +142,8 @@ int main(int argc,char* argv[])
         myGlutDisplay_Mesh(aXYZ0,aXYZ1,aTri);
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat1,0.04);
         Draw_BCFlag(aXYZ1,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       }
     } // end linear disponly
@@ -161,7 +162,8 @@ int main(int argc,char* argv[])
         myGlutDisplay_Mesh(aXYZ0,aXYZ1,aTri);
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat1,0.04);
         Draw_BCFlag(aXYZ1,aBCFlag);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
       }
     } // end linear disponly

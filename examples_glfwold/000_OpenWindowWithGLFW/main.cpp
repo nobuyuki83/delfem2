@@ -24,15 +24,16 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-int main(void)
+int main()
 {
-  GLFWwindow* window;
   glfwSetErrorCallback(error_callback);
-  if (!glfwInit())
+  if ( !glfwInit() ) {
     exit(EXIT_FAILURE);
-  window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
-  if (!window)
-  {
+  }
+  GLFWwindow* window = glfwCreateWindow(
+      640, 480, "Simple example",
+      nullptr, nullptr);
+  if (!window) {
     glfwTerminate();
     exit(EXIT_FAILURE);
   }
@@ -40,10 +41,9 @@ int main(void)
   glfwSetKeyCallback(window, key_callback);
   while (!glfwWindowShouldClose(window))
   {
-    float ratio;
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
-    ratio = width / (float) height;
+    const float ratio = (float)width / (float) height;
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);

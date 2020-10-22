@@ -865,7 +865,8 @@ int main(int argc, char* argv[])
     for(unsigned int ipse=0;ipse<apStepElem.size();++ipse){
       apStepElem[ipse]->Draw();
     }
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();

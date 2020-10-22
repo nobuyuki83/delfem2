@@ -184,7 +184,8 @@ int main(int argc,char* argv[])
       for(int iframe=0;iframe<100;++iframe){
         viewer.DrawBegin_oldGL();
         myGlutDisplay(id_shapder_program);
-        viewer.DrawEnd_oldGL();
+        viewer.SwapBuffers();
+        glfwPollEvents();
         if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
       }
     }

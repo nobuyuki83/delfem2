@@ -39,7 +39,7 @@ int main(int argc,char* argv[])
     void Draw(){
       DrawBegin_oldGL();
       delfem2::opengl::Draw_CCad2D(cad);
-      DrawEnd_oldGL();
+      SwapBuffers();
     }
     delfem2::CCad2D cad;
   };
@@ -51,6 +51,7 @@ int main(int argc,char* argv[])
   // --------------------
   while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
+    glfwPollEvents();
   }
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
