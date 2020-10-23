@@ -33,7 +33,7 @@ class CInput_ContactNothing: public dfm2::CInput_Contact
 {
 public:
   double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const
+                           double px, double py, double pz) const override
   {
     return -100;
   }
@@ -43,7 +43,7 @@ public:
 class CInput_ContactPlane: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const
+                           double px, double py, double pz) const override
   {
     nx = 0.0;  ny = 0.0;  nz = 1.0; // normal of the plane
     return -0.5 - pz; // penetration depth
@@ -53,7 +53,7 @@ class CInput_ContactPlane: public dfm2::CInput_Contact
 class CInput_ContactSphere: public dfm2::CInput_Contact
 {
   double penetrationNormal(double& nx, double &ny, double& nz,
-                           double px, double py, double pz) const
+                           double px, double py, double pz) const override
   {
     const double center[3] = { 0.1, 0.5, -0.8 };
     const double radius = 0.3;
@@ -101,7 +101,7 @@ void StepTime()
   CInput_ContactPlane c0;
   CInput_ContactNothing c1;
   CInput_ContactSphere c2;
-  dfm2::CInput_Contact* ic = 0;
+  dfm2::CInput_Contact* ic = nullptr;
   int imode_contact = 0;
   if(      imode_contact == 1 ){ ic = &c0; }
   if(      imode_contact == 0 ){ ic = &c1; }
@@ -133,15 +133,16 @@ void draw(GLFWwindow* window)
   viewer.nav.Matrix_MVP(mMV, mP, window);
   shdr_trimsh.Draw(mP,mMV);
   
-  viewer.DrawEnd_oldGL();
+  viewer.SwapBuffers();
+  glfwPollEvents();
 }
 
-int main(void)
+int main()
 {
   {
     SetClothShape_Square(aXYZ0,aBCFlag,aTri,aQuad,
                          ndiv,cloth_size);
-    const int np = aXYZ0.size()/3.0;
+    const unsigned int np = aXYZ0.size()/3;
     double total_area = cloth_size*cloth_size;
     mass_point = total_area*areal_density / (double)np;
       // initialize deformation

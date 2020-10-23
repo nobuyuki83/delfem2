@@ -198,7 +198,8 @@ int main(int argc, const char * argv[])
     glUniformMatrix4fv(locMp, 1, GL_FALSE, mP);
     glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, nslice); // draw idVaoSlice nslice-times
     
-    viewer.DrawEnd_oldGL();
+    viewer.SwapBuffers();
+    glfwPollEvents();
     
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }

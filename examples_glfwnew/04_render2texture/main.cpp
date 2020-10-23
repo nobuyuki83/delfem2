@@ -73,7 +73,8 @@ void draw(GLFWwindow* window)
     shdr.Draw(mP, mMV);
   }
   
-  viewer.DrawEnd_oldGL();
+  viewer.SwapBuffers();
+  glfwPollEvents();
 }
 
 int main()
