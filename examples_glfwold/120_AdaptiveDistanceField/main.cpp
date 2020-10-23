@@ -179,8 +179,8 @@ void SetProblem(int iprob)
       double sdf(double x, double y, double z) const override {
         dfm2::CVec3d n0;
         double sdf0 = obj.SignedDistanceFunction(n0,
-                                                 dfm2::CVec3d(x,y,z),
-                                                 aXYZ, aTri, aNorm);
+            dfm2::CVec3d(x,y,z),
+            aXYZ, aTri, aNorm);
         return sdf0;
       }
     public:

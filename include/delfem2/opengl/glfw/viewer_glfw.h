@@ -8,7 +8,7 @@
 #ifndef DFM2_VIEWER_GLFW_H
 #define DFM2_VIEWER_GLFW_H
 
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 
 #include "delfem2/opengl/glfw/cam_glfw.h" // for CNav3D_GLFW
@@ -43,9 +43,12 @@ public:
   virtual void key_release(int key, int mods) {}
   
 public:
-  GLFWwindow* window;
+  GLFWwindow* window = nullptr;
   CNav3D_GLFW nav;
   double bgcolor[4] = {1,1,1,1};
+  unsigned int width = 640;
+  unsigned int height = 480;
+
 };
   
 }

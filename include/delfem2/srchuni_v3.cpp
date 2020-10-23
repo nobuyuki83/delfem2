@@ -87,9 +87,9 @@ template delfem2::CVec3d delfem2::CPointElemSurf<double>::Pos_Tri
 // --------------------------------------------
 
 template <typename T>
-delfem2::CVec3<T> delfem2::CPointElemSurf<T>::Pos_Tri
-(const double* aXYZ, unsigned int nXYZ,
- const unsigned int* aTri, unsigned int nTri) const
+delfem2::CVec3<T> delfem2::CPointElemSurf<T>::Pos_Tri(
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTri, unsigned int nTri) const
 {
   assert(itri>=0&&itri<(int)nTri);
   const unsigned int i0 = aTri[itri*3+0];
@@ -361,12 +361,12 @@ void weightInTriangle
 
 template <typename T>
 std::vector<delfem2::CPointElemSurf<T>>
-delfem2::IntersectionLine_MeshTri3
-(const CVec3<T>& org,
- const CVec3<T>& dir,
- const std::vector<unsigned int>& aTri,
- const std::vector<T>& aXYZ,
- T eps)
+delfem2::IntersectionLine_MeshTri3(
+    const CVec3<T>& org,
+    const CVec3<T>& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<T>& aXYZ,
+    T eps)
 {
   std::vector<CPointElemSurf<T>> aPES;
   for(size_t itri=0;itri<aTri.size()/3;++itri){
@@ -429,7 +429,7 @@ void delfem2::IntersectionRay_MeshTri3DPart
  const CVec3<T>& org, const CVec3<T>& dir,
  const std::vector<unsigned int>& aTri,
  const std::vector<T>& aXYZ,
- const std::vector<int>& aIndTri,
+ const std::vector<unsigned int>& aIndTri,
  T eps)
 {
   mapDepthPES.clear();
@@ -452,13 +452,14 @@ void delfem2::IntersectionRay_MeshTri3DPart
     mapDepthPES.insert( std::make_pair(depth,CPointElemSurf<T>(itri,r0,r1)) );
   }
 }
-template void delfem2::IntersectionRay_MeshTri3DPart
- (std::map<double,CPointElemSurf<double>>& mapDepthPES,
-  const CVec3<double>& org, const CVec3<double>& dir,
-  const std::vector<unsigned int>& aTri,
-  const std::vector<double>& aXYZ,
-  const std::vector<int>& aIndTri,
-  double eps);
+template void delfem2::IntersectionRay_MeshTri3DPart(
+    std::map<double,CPointElemSurf<double>>&,
+    const CVec3<double>&,
+    const CVec3<double>&,
+    const std::vector<unsigned int>&,
+    const std::vector<double>&,
+    const std::vector<unsigned int>&,
+    double);
   
 // -----------------------------------------------
 
