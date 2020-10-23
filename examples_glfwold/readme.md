@@ -146,7 +146,7 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ### [148_RayTracingSimple](148_RayTracingSimple)
 
-<img src="148_RayTracingSimple/thumbnail.png" width=300>
+<img src="148_RayTracingSimple/thumbnail.png" width=200>
 
 
 

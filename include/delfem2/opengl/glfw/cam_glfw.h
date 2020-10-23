@@ -84,6 +84,11 @@ public:
     if( key ==  GLFW_KEY_PAGE_UP && action == GLFW_PRESS ){ camera.Scale(1.03); }
     if( key ==  GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS ){ camera.Scale(1.0/1.03); }
   }
+  /**
+   * @param[out] mMV modelview matrix (column major order)
+   * @param[out] mP  projection matrix (column major order)
+   * @param[in] window glfw window handler
+   */
   void Matrix_MVP(float mMV[16],
                   float mP[16],
                   GLFWwindow* window) const

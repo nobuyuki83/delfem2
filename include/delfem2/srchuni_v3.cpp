@@ -414,12 +414,12 @@ void delfem2::IntersectionRay_MeshTri3 (
     mapDepthPES.insert( std::make_pair(depth, pes) );
   }
 }
-template void delfem2::IntersectionRay_MeshTri3
- (std::map<double,CPointElemSurf<double>>& mapDepthPES,
-  const CVec3<double>& org, const CVec3<double>& dir,
-  const std::vector<unsigned int>& aTri,
-  const std::vector<double>& aXYZ,
-  double eps);
+template void delfem2::IntersectionRay_MeshTri3(
+    std::map<double,CPointElemSurf<double>>& mapDepthPES,
+    const CVec3<double>& org, const CVec3<double>& dir,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ,
+    double eps);
 
 // ----------------------
 

@@ -39,11 +39,11 @@ DFM2_INLINE void Normalize3(T v[3]);
 
 template <typename REAL>
 void AverageTwo3(REAL po[3],
-                 const REAL p0[3], const REAL p1[3]);
+    const REAL p0[3], const REAL p1[3]);
 
 template <typename REAL>
 void AverageFour3(REAL po[3],
-                  const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
+    const REAL p0[3], const REAL p1[3], const REAL p2[3], const REAL p3[3]);
 
 /**
  * @func add values for 3-array (vo += vi)
@@ -52,9 +52,9 @@ void AverageFour3(REAL po[3],
  * @param vi (in)
  */
 template <typename REAL>
-DFM2_INLINE void Add3
- (REAL vo[3],
-  const REAL vi[3]);
+DFM2_INLINE void Add3(
+    REAL vo[3],
+    const REAL vi[3]);
 
 // above: functions general for any dimensions
 // ------------------------------------------------
@@ -65,7 +65,7 @@ T Volume_Tet3(const T v1[3], const T v2[3], const T v3[3], const T v4[3]);
   
 template <typename T>
 void Cross3(T r[3],
-            const T v1[3], const T v2[3]);
+    const T v1[3], const T v2[3]);
 
 template <typename T>
 T Area_Tri3(const T v1[3], const T v2[3], const T v3[3]);
@@ -75,7 +75,7 @@ T ScalarTripleProduct3(const T a[], const T b[], const T c[]);
 
 template <typename T>
 void NormalTri3(T n[3],
-                const T v1[3], const T v2[3], const T v3[3]);
+    const T v1[3], const T v2[3], const T v3[3]);
 
 
 template <typename REAL>
@@ -85,24 +85,25 @@ void UnitNormalAreaTri3(
 
 // --------------------------------
   
-DFM2_INLINE void GetVertical2Vector3D
- (const double vec_n[3],
-  double vec_x[3],
-  double vec_y[3]);
+DFM2_INLINE void GetVertical2Vector3D(
+    const double vec_n[3],
+    double vec_x[3],
+    double vec_y[3]);
 
-DFM2_INLINE void GetNearest_LineSegPoint3D
-    (double pn[3],
-     const double p[3], // point
-     const double s[3], // source
-     const double e[3]); // end
+DFM2_INLINE void GetNearest_LineSegPoint3D(
+    double pn[3],
+    const double p[3], // point
+    const double s[3], // source
+    const double e[3]); // end
 
-DFM2_INLINE void GetNearest_TrianglePoint3D
- (double pn[3],
-  double& r0, double& r1,
-  const double ps[3], // origin point
-  const double q0[3],
-  const double q1[3],
-  const double q2[3]);
+DFM2_INLINE void GetNearest_TrianglePoint3D(
+    double pn[3],
+    double& r0,
+    double& r1,
+    const double ps[3], // origin point
+    const double q0[3],
+    const double q1[3],
+    const double q2[3]);
 
 // -------------------------------------------------------------
 
@@ -231,7 +232,6 @@ public:
 	inline double DLength() const{ return p[0]*p[0]+p[1]*p[1]+p[2]*p[2]; }
 	void SetNormalizedVector();
 	void SetZero();
-  void SetRandom();
   void Print() const {
     std::cout <<p[0]<< " " << p[1] << " " << p[2] << std::endl;
   }
@@ -244,13 +244,21 @@ public:
     if( idim >= 0 && idim < 3) { r[idim] = 1; }
     return r;
   }
-  static CVec3 Random(){
-    CVec3 v;
-    v.SetRandom();
-    return v;
-  }
   T* data() { return p; }
   const T* data() const { return p; }
+  //
+  template <typename DIST, typename ENG>
+  void SetRandom(DIST& dist, ENG& eng){
+    p[0] = dist(eng);
+    p[1] = dist(eng);
+    p[2] = dist(eng);
+  }
+  //
+  template <typename DIST, typename ENG>
+  static CVec3 Random(DIST& dist, ENG& eng){
+    return CVec3(dist(eng),dist(eng),dist(eng));
+  }
+//  void SetRandom();
 public:
   T p[3];
 };
@@ -512,35 +520,41 @@ CVec3<T> intersection_Plane_Line(const CVec3<T>& o, // one point on plane
 // ----------------------------------------------------------------------------------
 
 template <typename T>
-double DistanceFaceVertex(const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2,
-                          const CVec3<T>& p3,
-                          double& w0, double& w1);
+double DistanceFaceVertex(
+    const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2,
+    const CVec3<T>& p3,
+    double& w0, double& w1);
 
 template <typename T>
-double DistanceEdgeEdge(const CVec3<T>& p0, const CVec3<T>& p1,
-                        const CVec3<T>& q0, const CVec3<T>& q1,
-                        double& ratio_p, double& ratio_q);
+double DistanceEdgeEdge(
+    const CVec3<T>& p0, const CVec3<T>& p1,
+    const CVec3<T>& q0, const CVec3<T>& q1,
+    double& ratio_p, double& ratio_q);
 
 template <typename T>
-bool FindCoplanerInterp(double& r,
-                        const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
-                        const CVec3<T>& e0, const CVec3<T>& e1, const CVec3<T>& e2, const CVec3<T>& e3);
+bool FindCoplanerInterp(
+    double& r,
+    const CVec3<T>& s0, const CVec3<T>& s1, const CVec3<T>& s2, const CVec3<T>& s3,
+    const CVec3<T>& e0, const CVec3<T>& e1, const CVec3<T>& e2, const CVec3<T>& e3);
 
 template <typename T>
-bool IsContact_EE_Proximity(int ino0,        int ino1,        int jno0,        int jno1,
-                            const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& q0, const CVec3<T>& q1,
-                            const double delta);
+bool IsContact_EE_Proximity(
+    int ino0,        int ino1,        int jno0,        int jno1,
+    const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& q0, const CVec3<T>& q1,
+    const double delta);
 
 template <typename T>
-bool IsContact_FV_CCD2(int ino0,        int ino1,        int ino2,        int ino3,
-                       const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2, const CVec3<T>& p3,
-                       const CVec3<T>& q0, const CVec3<T>& q1, const CVec3<T>& q2, const CVec3<T>& q3);
+bool IsContact_FV_CCD2(
+    int ino0,        int ino1,        int ino2,        int ino3,
+    const CVec3<T>& p0, const CVec3<T>& p1, const CVec3<T>& p2, const CVec3<T>& p3,
+    const CVec3<T>& q0, const CVec3<T>& q1, const CVec3<T>& q2, const CVec3<T>& q3);
 
 template <typename T>
-bool isIntersectTriPair(CVec3<T>& P0, CVec3<T>& P1,
-                        int itri, int jtri,
-                        const std::vector<unsigned int>& aTri,
-                        const std::vector<double>& aXYZ);
+bool isIntersectTriPair(
+    CVec3<T>& P0, CVec3<T>& P1,
+    int itri, int jtri,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aXYZ);
 
 // ---------------------------------------------------------
 

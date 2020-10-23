@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
 #include <random>
 
 #include "gtest/gtest.h"
@@ -13,13 +12,11 @@
 #include "delfem2/vec3.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/sdf.h"
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 
 #include "delfem2/srchuni_v3.h"
-#include "delfem2/objf_geo3.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 
 #ifndef M_PI
@@ -236,6 +233,10 @@ TEST(bvh,nearest_range) // find global nearest from range
 
 TEST(bvh,nearest_point) // find global nearest directry
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(-5,5);
+  ///
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   { // make a unit sphere
@@ -248,12 +249,10 @@ TEST(bvh,nearest_point) // find global nearest directry
            aTri.data(), aTri.size()/3,
            0.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVec3d p0;
-    {
-      p0.p[0] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.p[1] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.p[2] = 10.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
+    const dfm2::CVec3d p0(
+      randomDist(randomEng),
+      randomDist(randomEng),
+      randomDist(randomEng) );
     dfm2::CPointElemSurf<double> pes1 = bvh.NearestPoint_Global(p0,aXYZ,aTri);
     EXPECT_TRUE( pes1.Check(aXYZ, aTri,1.0e-10) );
     dfm2::CVec3d q1 = pes1.Pos_Tri(aXYZ, aTri);
@@ -268,6 +267,10 @@ TEST(bvh,nearest_point) // find global nearest directry
 
 TEST(bvh,sdf) // find global nearest directry
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(-1.5,1.5);
+  // -----
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   { // make a unit sphere
@@ -283,12 +286,10 @@ TEST(bvh,sdf) // find global nearest directry
            aTri.data(), aTri.size()/3,
            0.0);
   for(int itr=0;itr<1000;++itr){
-    dfm2::CVec3d p0;
-    {
-      p0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      p0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-    }
+    const dfm2::CVec3d p0(
+      randomDist(randomEng),
+      randomDist(randomEng),
+      randomDist(randomEng) );
     if( (p0.Length()-1.0)<1.0e-3 ){ continue; }
     dfm2::CVec3d n0;
     double sdf = bvh.SignedDistanceFunction(n0,
@@ -301,6 +302,10 @@ TEST(bvh,sdf) // find global nearest directry
 
 TEST(bvh,lineintersection)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(-1.5,1.5);
+  // -----
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   { // make a unit sphere
@@ -316,16 +321,14 @@ TEST(bvh,lineintersection)
            aTri.data(), aTri.size()/3,
            1.0e-5);
   for(int itr=0;itr<100;++itr){
-    dfm2::CVec3d s0, d0;
-    {
-      s0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.SetNormalizedVector();
-    }
+    const dfm2::CVec3d s0(
+        randomDist(randomDevice),
+        randomDist(randomDevice),
+        randomDist(randomDevice) );
+    const dfm2::CVec3d d0 = dfm2::CVec3d(
+        randomDist(randomDevice),
+        randomDist(randomDevice),
+        randomDist(randomDevice) ).Normalize();
     double ps0[3]; s0.CopyTo(ps0);
     double pd0[3]; d0.CopyTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
@@ -361,6 +364,10 @@ TEST(bvh,lineintersection)
 
 TEST(bvh,rayintersection)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(-1.5,1.5);
+  // ----
   std::vector<double> aXYZ;
   std::vector<unsigned int> aTri;
   { // make a unit sphere
@@ -377,16 +384,14 @@ TEST(bvh,rayintersection)
            aTri.data(), aTri.size()/3,
            1.0e-5);
   for(int itr=0;itr<100;++itr){
-    dfm2::CVec3d s0, d0;
-    {
-      s0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      s0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.p[0] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.p[1] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.p[2] = 3.0*(rand()/(RAND_MAX+1.0)-0.5);
-      d0.SetNormalizedVector();
-    }
+    const dfm2::CVec3d s0(
+        randomDist(randomDevice),
+        randomDist(randomDevice),
+        randomDist(randomDevice) );
+    const dfm2::CVec3d d0 = dfm2::CVec3d(
+        randomDist(randomDevice),
+        randomDist(randomDevice),
+        randomDist(randomDevice) ).Normalize();
     double ps0[3]; s0.CopyTo(ps0);
     double pd0[3]; d0.CopyTo(pd0);
     for(int ibvh=0;ibvh<bvh.aNodeBVH.size();++ibvh){
@@ -476,18 +481,17 @@ TEST(bvh,morton_code)
   {
     const unsigned int N = 10000;
     aXYZ.resize(N*3);
-    std::random_device dev;
-    std::mt19937 rng(dev());
+    std::random_device randomDevice;
+    std::mt19937 randomEng(randomDevice());
     std::uniform_real_distribution<> udist(0.0, 1.0);
     for(int i=0;i<N;++i){
-      aXYZ[i*3+0] = (bb.bbmax[0] -  bb.bbmin[0]) * udist(rng) + bb.bbmin[0];
-      aXYZ[i*3+1] = (bb.bbmax[1] -  bb.bbmin[1]) * udist(rng) + bb.bbmin[1];
-      aXYZ[i*3+2] = (bb.bbmax[2] -  bb.bbmin[2]) * udist(rng) + bb.bbmin[2];
+      aXYZ[i*3+0] = (bb.bbmax[0] -  bb.bbmin[0]) * udist(randomEng) + bb.bbmin[0];
+      aXYZ[i*3+1] = (bb.bbmax[1] -  bb.bbmin[1]) * udist(randomEng) + bb.bbmin[1];
+      aXYZ[i*3+2] = (bb.bbmax[2] -  bb.bbmin[2]) * udist(randomEng) + bb.bbmin[2];
     }
-    srand(3);
     for(int iip=0;iip<3;++iip){ // hash collision
-      const unsigned int ip = N*(rand()/(RAND_MAX+1.0));
-      assert( N >= 0 && ip < N);
+      const auto ip = static_cast<unsigned int>(N*udist(randomEng));
+      assert( ip < N );
       const double x0 = aXYZ[ip*3+0];
       const double y0 = aXYZ[ip*3+1];
       const double z0 = aXYZ[ip*3+2];
