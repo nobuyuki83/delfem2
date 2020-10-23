@@ -66,8 +66,8 @@ TEST(bvh,inclusion_sphere)
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
-        const int ichild0 = node.ichild[0];
-        const int ichild1 = node.ichild[1];
+        const unsigned int ichild0 = node.ichild[0];
+        const unsigned int ichild1 = node.ichild[1];
         EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x(), p0.y(), p0.z()) );
         EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x(), p0.y(), p0.z()) );
       }
@@ -99,8 +99,8 @@ TEST(bvh,inclusion_aabb)
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.isInclude_Point(p0.x(), p0.y(), p0.z());
       if( !is_intersect && node.ichild[1] != -1 ){ // branch
-        const int ichild0 = node.ichild[0];
-        const int ichild1 = node.ichild[1];
+        const unsigned int ichild0 = node.ichild[0];
+        const unsigned int ichild1 = node.ichild[1];
         EXPECT_FALSE( bvh.aBB_BVH[ichild0].isInclude_Point(p0.x(), p0.y(), p0.z()) );
         EXPECT_FALSE( bvh.aBB_BVH[ichild1].isInclude_Point(p0.x(), p0.y(), p0.z()) );
       }
@@ -212,8 +212,7 @@ TEST(bvh,nearest_range) // find global nearest from range
                                bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     EXPECT_GT(aIndElem.size(), 0);
     std::vector<int> aFlg(aTri.size()/3,0);
-    for(int iit=0;iit<aIndElem.size();++iit){
-      int itri0 = aIndElem[iit];
+    for(int itri0 : aIndElem){
       aFlg[itri0] = 1;
     }
     for(int itri=0;itri<aTri.size()/3;++itri){
@@ -334,8 +333,8 @@ TEST(bvh,lineintersection)
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectLine(ps0,pd0);
       if( !is_intersect && node.ichild[1] != UINT_MAX ){ // branch
-        const int ichild0 = node.ichild[0];
-        const int ichild1 = node.ichild[1];
+        const unsigned int ichild0 = node.ichild[0];
+        const unsigned int ichild1 = node.ichild[1];
         EXPECT_FALSE( bvh.aBB_BVH[ichild0].IsIntersectLine(ps0,pd0) );
         EXPECT_FALSE( bvh.aBB_BVH[ichild1].IsIntersectLine(ps0,pd0) );
       }
@@ -344,8 +343,7 @@ TEST(bvh,lineintersection)
     BVH_GetIndElem_IntersectLine(aIndElem, ps0, pd0,
                                  bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
-    for(unsigned int iit=0;iit<aIndElem.size();++iit){
-      int itri0 = aIndElem[iit];
+    for(int itri0 : aIndElem){
       aFlg[itri0] = 1;
     }
     for(unsigned int itri=0;itri<aTri.size()/3;++itri){
@@ -396,15 +394,16 @@ TEST(bvh,rayintersection)
       const dfm2::CNodeBVH2& node = bvh.aNodeBVH[ibvh];
       bool is_intersect = bv.IsIntersectRay(ps0,pd0);
       if( !is_intersect && node.ichild[1] != UINT_MAX ){ // branch
-        const int ichild0 = node.ichild[0];
-        const int ichild1 = node.ichild[1];
+        const unsigned int ichild0 = node.ichild[0];
+        const unsigned int ichild1 = node.ichild[1];
         EXPECT_FALSE( bvh.aBB_BVH[ichild0].IsIntersectRay(ps0,pd0) );
         EXPECT_FALSE( bvh.aBB_BVH[ichild1].IsIntersectRay(ps0,pd0) );
       }
     }
-    std::vector<int> aIndElem;
-    BVH_GetIndElem_IntersectRay(aIndElem, ps0, pd0,
-                                bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+    std::vector<unsigned int> aIndElem;
+    BVH_GetIndElem_IntersectRay(aIndElem,
+        ps0, pd0,
+        bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
     for(int itri0 : aIndElem){
       aFlg[itri0] = 1;

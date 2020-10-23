@@ -246,7 +246,7 @@ void BVH_IndPoint_NearestPoint(
 
 template <typename BBOX>
 void BVH_GetIndElem_IntersectRay(
-    std::vector<int>& aIndElem,
+    std::vector<unsigned int>& aIndElem,
     //
     const double src[3], const double dir[3],
     unsigned int ibvh,
@@ -432,13 +432,14 @@ void delfem2::BVH_GetIndElem_InsideRange
 }
 
 template <typename BBOX>
-void delfem2::BVH_GetIndElem_IntersectRay
-(std::vector<int>& aIndElem,
- //
- const double src[3], const double dir[3],
- unsigned int ibvh,
- const std::vector<delfem2::CNodeBVH2>& aBVH,
- const std::vector<BBOX>& aBB)
+void delfem2::BVH_GetIndElem_IntersectRay(
+    std::vector<unsigned int>& aIndElem,
+    //
+    const double src[3],
+    const double dir[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB)
 {
   assert( ibvh < aBVH.size() );
   bool is_intersect = aBB[ibvh].IsIntersectRay(src,dir);

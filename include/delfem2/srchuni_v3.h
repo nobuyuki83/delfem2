@@ -49,7 +49,7 @@ public:
 template <typename T>
 class CPointElemSurf{
 public:
-  CPointElemSurf() : itri(-1), r0(0), r1(0) {}
+  CPointElemSurf() : itri(UINT_MAX), r0(0), r1(0) {}
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
   delfem2::CVec3<T> Pos_Tri(const std::vector<double>& aXYZ,
                    const std::vector<unsigned int>& aTri) const;
@@ -72,7 +72,7 @@ public:
              const std::vector<unsigned int>& aTri,
              double eps) const;
 public:
-  int itri; // can be -1
+  unsigned int itri; // can be -1
   double r0, r1;
 };
   
@@ -117,7 +117,7 @@ void IntersectionRay_MeshTri3DPart(
     const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<REAL>& aXYZ,
-    const std::vector<int>& aIndTri,
+    const std::vector<unsigned int>& aIndTri,
     REAL eps);
 
 /*

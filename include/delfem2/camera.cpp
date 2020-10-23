@@ -409,8 +409,10 @@ void delfem2::screenUnProjectionDirection
 // implementation of CCamera class starts here
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Affine4f_Projection
-(float mP[16], double asp, double depth) const 
+void delfem2::CCamera<REAL>::Affine4f_Projection(
+    float mP[16],
+    double asp,
+    double depth) const
 {
   if( is_pars ){
     glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
@@ -425,8 +427,10 @@ void delfem2::CCamera<REAL>::Affine4f_Projection
                +depth*10);
   }
 }
-template void delfem2::CCamera<double>::Affine4f_Projection
-(float mP[16], double asp, double depth) const;
+template void delfem2::CCamera<double>::Affine4f_Projection(
+    float mP[16],
+    double asp,
+    double depth) const;
 
 // ----------------------------
 

@@ -17,7 +17,7 @@ ENDIF()
 
 ####################################
 
-project(148_RayTracing)
+project(148_RayTracingSimple)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -49,10 +49,12 @@ set(DELFEM2_INCLUDE_DIR "../../include")
 
 #################################################
 
+set(3RD_PARTY           "../../3rd_party")
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
+    ${3RD_PARTY}
 )
 
 add_executable(${PROJECT_NAME}

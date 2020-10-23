@@ -85,7 +85,8 @@ void delfem2::opengl::CViewer_GLFW::Init_oldGL()
   // shader version #120
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-  window = glfwCreateWindow(640, 480, "Simple example", nullptr, nullptr);
+  // -------
+  window = glfwCreateWindow(width, height, "Simple example", nullptr, nullptr);
   if (!window)
   {
     glfwTerminate();
@@ -137,8 +138,8 @@ void delfem2::opengl::CViewer_GLFW::Init_newGL()
   
     // glfw window creation
     // --------------------
-  this->window = glfwCreateWindow(640,
-                                  480,
+  this->window = glfwCreateWindow(width,
+                                  height,
                                   "LearnOpenGL",
                                   nullptr,
                                   nullptr);
