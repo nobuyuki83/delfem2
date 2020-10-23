@@ -150,13 +150,13 @@ int main(int argc,char* argv[])
     // apply random deviation
     for(unsigned int ip=0;ip<aP.size();++ip){
       aP[ip] = aP0[ip];
-      auto rnd = dfm2::CVec3d::Random()*0.1;
+      auto rnd = dfm2::CVec3d::Random(dist01,reng)*0.1;
       if( aBCFlag[ip*4+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
       if( aBCFlag[ip*4+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
       if( aBCFlag[ip*4+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
       if( aBCFlag[ip*4+3] == 0 ){
         assert( ip != aP.size()-1 );
-        aS[ip] += dfm2::CVec3d::Random()*0.1;
+        aS[ip] += dfm2::CVec3d::Random(dist01,reng)*0.1;
       }
     }
     dfm2::MakeDirectorOrthogonal_RodHair(aS,aP);

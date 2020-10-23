@@ -1,10 +1,11 @@
-### 147_HashLbvh3RayTri
+### 148_RayTracingSimple
 ![](thumbnail.png)
 
-This demo finds nearest point from a point cloud using Bounding Volume (BVH) Hierarchy. 
+This demo compute image by shooting rays from sceren to an object.
 
 
-This demo implements following paper:
+
+This demo has an implementation of the following paper:
 
  ```
 "Fast parallel construction of high-quality bounding volume hierarchies",

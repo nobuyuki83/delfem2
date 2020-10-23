@@ -17,17 +17,18 @@ namespace opengl {
 
 void SaveViewportAsImagePpm(const std::string &path);
 
-int SetTexture_RGB
- (unsigned int w, unsigned int h,
-  const std::vector<unsigned char> &image);
+int SetTexture_RGB(
+    unsigned int w,
+    unsigned int h,
+    const std::vector<unsigned char> &image);
 
 /**
  * @param bpp byte par pixel
  * @return texture id
  */
-unsigned int LoadTexture
- (const unsigned char *image,
-  const int width, const int height, const int bpp);
+unsigned int LoadTexture(
+    const unsigned char *image,
+    const int width, const int height, const int bpp);
 
 // ----------------------------------
 
@@ -36,7 +37,6 @@ public:
   std::vector<unsigned char> aRGB;
   unsigned int id_tex;
   unsigned int h, w;
-//  double min_x, max_x, min_y, max_y;
 
 public:
   CTexRGB() {

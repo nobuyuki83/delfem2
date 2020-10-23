@@ -23,36 +23,36 @@
 
 namespace delfem2{
 
-DFM2_INLINE void glhFrustumf2
- (float *matrix, float left, float right, float bottom, float top,
-  float znear, float zfar);
-DFM2_INLINE void glhPerspectivef2
- (float *matrix, float fovyInDegrees, float aspectRatio,
-  float znear, float zfar);
+DFM2_INLINE void glhFrustumf2(
+    float *matrix, float left, float right, float bottom, float top,
+    float znear, float zfar);
+DFM2_INLINE void glhPerspectivef2(
+    float *matrix, float fovyInDegrees, float aspectRatio,
+    float znear, float zfar);
 
-DFM2_INLINE void glhTranslatef2
- (float *matrix, float x, float y, float z);
+DFM2_INLINE void glhTranslatef2(
+    float *matrix, float x, float y, float z);
 
-DFM2_INLINE void glhLookAtf2
- (float *matrix,
-  float eyex, float eyey, float eyez,
-  float cntx, float cnty, float cntz,
-  float upx, float upy, float upz );
+DFM2_INLINE void glhLookAtf2(
+    float *matrix,
+    float eyex, float eyey, float eyez,
+    float cntx, float cnty, float cntz,
+    float upx, float upy, float upz );
 
 // ----------------------------------------------------
 
 
-DFM2_INLINE void screenUnProjection
- (float vout[3],
-  const float v[3],
-  const float mMV[16],
-  const float mPj[16]);
+DFM2_INLINE void screenUnProjection(
+    float vout[3],
+    const float v[3],
+    const float mMV[16],
+    const float mPj[16]);
 
-DFM2_INLINE void screenUnProjectionDirection
- (float vo[3],
-  const float vi[3],
-  const float mMV[16],
-  const float mPj[16]);
+DFM2_INLINE void screenUnProjectionDirection(
+    float vo[3],
+    const float vi[3],
+    const float mMV[16],
+    const float mPj[16]);
 
 // ----------------------------------------------------
 

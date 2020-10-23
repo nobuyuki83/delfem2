@@ -155,38 +155,42 @@ DFM2_INLINE void Mat3Vec
   vo[2] = mat[6]*vi[0] + mat[7]*vi[1] + mat[8]*vi[2];
 }
 
-DFM2_INLINE void glhOrthof2
- (float mP[16],
-  double l, double r,
-  double b, double t,
-  double n, double f)
+/**
+ * @brief affine matrix
+ * @details column major order
+ */
+DFM2_INLINE void Mat4_AffineProjectionOrtho(
+    float mP[16],
+    double l, double r,
+    double b, double t,
+    double n, double f)
 {
   mP[0*4+0] = 2.0/(r-l);
   mP[0*4+1] = 0.0;
   mP[0*4+2] = 0.0;
-  mP[0*4+3] = -(l+r)/(r-l);
-  
+  mP[0*4+3] = 0.0;
+
   mP[1*4+0] = 0.0;
   mP[1*4+1] = 2.0/(t-b);
   mP[1*4+2] = 0.0;
-  mP[1*4+3] = -(t+b)/(t-b);
-  
+  mP[1*4+3] = 0.0;
+
   mP[2*4+0] = 0.0;
   mP[2*4+1] = 0.0;
   mP[2*4+2] = 2.0/(n-f);
-  mP[2*4+3] = -(n+f)/(n-f);
-  
-  mP[3*4+0] = 0.0;
-  mP[3*4+1] = 0.0;
-  mP[3*4+2] = 0.0;
+  mP[2*4+3] = 0.0;
+
+  mP[3*4+0] = -(l+r)/(r-l);
+  mP[3*4+1] = -(t+b)/(t-b);
+  mP[3*4+2] = -(n+f)/(n-f);
   mP[3*4+3] = 1.0;
 }
 
 
-DFM2_INLINE void solve_GlAffineMatrix
-(float vo[3],
- const float m[16],
- const float p[3])
+DFM2_INLINE void solve_GlAffineMatrix(
+    float vo[3],
+    const float m[16],
+    const float p[3])
 {
   const float v[3] = {p[0]-m[3*4+0], p[1]-m[3*4+1], p[2]-m[3*4+2]};
   const float M[9] = {
@@ -198,10 +202,10 @@ DFM2_INLINE void solve_GlAffineMatrix
           Minv,v);
 }
 
-DFM2_INLINE void solve_GlAffineMatrixDirection
- (float vo[3],
-  const float m[16],
-  const float vi[3])
+DFM2_INLINE void solve_GlAffineMatrixDirection(
+    float vo[3],
+    const float m[16],
+    const float vi[3])
 {
   const float M[9] = {
     m[0*4+0],m[1*4+0],m[2*4+0],
@@ -225,31 +229,19 @@ DFM2_INLINE void solve_GlAffineMatrixDirection
 }
 
 
-//PURPOSE:      For square matrices. This is column major for OpenGL
-DFM2_INLINE void MultiplyMatrices4by4OpenGL_FLOAT
-(float *result,
- const float *m1,
- const float *m2)
+DFM2_INLINE void Mult_MatMat4(
+    float *result,
+    const float *m1,
+    const float *m2)
 {
-  result[ 0]=m1[0]*m2[0]+  m1[4]*m2[1]+  m1[8]*m2[2]+  m1[12]*m2[3];
-  result[ 4]=m1[0]*m2[4]+  m1[4]*m2[5]+  m1[8]*m2[6]+  m1[12]*m2[7];
-  result[ 8]=m1[0]*m2[8]+  m1[4]*m2[9]+  m1[8]*m2[10]+  m1[12]*m2[11];
-  result[12]=m1[0]*m2[12]+   m1[4]*m2[13]+  m1[8]*m2[14]+  m1[12]*m2[15];
-  
-  result[ 1]=m1[1]*m2[0]+  m1[5]*m2[1]+  m1[9]*m2[2]+  m1[13]*m2[3];
-  result[ 5]=m1[1]*m2[4]+  m1[5]*m2[5]+  m1[9]*m2[6]+  m1[13]*m2[7];
-  result[ 9]=m1[1]*m2[8]+  m1[5]*m2[9]+  m1[9]*m2[10]+  m1[13]*m2[11];
-  result[13]=m1[1]*m2[12]+  m1[5]*m2[13]+  m1[9]*m2[14]+  m1[13]*m2[15];
-  
-  result[ 2]=m1[2]*m2[0]+  m1[6]*m2[1]+  m1[10]*m2[2]+  m1[14]*m2[3];
-  result[ 6]=m1[2]*m2[4]+  m1[6]*m2[5]+  m1[10]*m2[6]+  m1[14]*m2[7];
-  result[10]=m1[2]*m2[8]+  m1[6]*m2[9]+  m1[10]*m2[10]+  m1[14]*m2[11];
-  result[14]=m1[2]*m2[12]+   m1[6]*m2[13]+  m1[10]*m2[14]+  m1[14]*m2[15];
-  
-  result[ 3]=m1[3]*m2[0]+  m1[7]*m2[1]+  m1[11]*m2[2]+  m1[15]*m2[3];
-  result[ 7]=m1[3]*m2[4]+  m1[7]*m2[5]+  m1[11]*m2[6]+  m1[15]*m2[7];
-  result[11]=m1[3]*m2[8]+   m1[7]*m2[9]+  m1[11]*m2[10]+  m1[15]*m2[11];
-  result[15]=m1[3]*m2[12]+   m1[7]*m2[13]+  m1[11]*m2[14]+  m1[15]*m2[15];
+  for(unsigned int i=0;i<4;++i){
+    for(unsigned int j=0;j<4;++j){
+      result[i * 4 + j] = 0.0;
+      for(unsigned int k=0;k<4;++k) {
+        result[i * 4 + j] += m1[i * 4 + k] * m2[k * 4 + j];
+      }
+    }
+  }
 }
 
 
@@ -259,56 +251,75 @@ DFM2_INLINE void MultiplyMatrices4by4OpenGL_FLOAT
 // static functions ends here
 // =====================================================
 
-DFM2_INLINE void delfem2::glhFrustumf2
-(float *matrix,
- float left, float right,
- float bottom, float top,
- float znear, float zfar)
+/**
+ *
+ * @param[out] projection matrix (column major order)
+ * @param left
+ * @param right
+ * @param bottom
+ * @param top
+ * @param znear
+ * @param zfar
+ */
+DFM2_INLINE void delfem2::glhFrustumf2(
+    float *matrix,
+    float left,
+    float right,
+    float bottom,
+    float top,
+    float znear,
+    float zfar)
 {
   float temp, temp2, temp3, temp4;
   temp = 2.f * znear;
   temp2 = right - left;
   temp3 = top - bottom;
   temp4 = zfar - znear;
-  matrix[0] = temp / temp2;
-  matrix[1] = 0.0;
-  matrix[2] = 0.0;
-  matrix[3] = 0.0;
-  matrix[4] = 0.0;
-  matrix[5] = temp / temp3;
-  matrix[6] = 0.0;
-  matrix[7] = 0.0;
-  matrix[8] = (right + left) / temp2;
-  matrix[9] = (top + bottom) / temp3;
-  matrix[10] = (-zfar - znear) / temp4;
-  matrix[11] = -1.0;
-  matrix[12] = 0.0;
-  matrix[13] = 0.0;
-  matrix[14] = (-temp * zfar) / temp4;
-  matrix[15] = 0.0;
+  // column 0
+  matrix[0*4+0] = temp / temp2;
+  matrix[0*4+1] = 0.0;
+  matrix[0*4+2] = 0.0;
+  matrix[0*4+3] = 0.0;
+  // column 1
+  matrix[1*4+0] = 0.0;
+  matrix[1*4+1] = temp / temp3;
+  matrix[1*4+2] = 0.0;
+  matrix[1*4+3] = 0.0;
+  // column 2
+  matrix[2*4+0] = (right + left) / temp2;
+  matrix[2*4+1] = (top + bottom) / temp3;
+  matrix[2*4+2] = (-zfar - znear) / temp4;
+  matrix[2*4+3] = -1.0;
+  // column 3
+  matrix[3*4+0] = 0.0;
+  matrix[3*4+1] = 0.0;
+  matrix[3*4+2] = (-temp * zfar) / temp4;
+  matrix[3*4+3] = 0.0;
 }
 
 //matrix will receive the calculated perspective matrix.
 //You would have to upload to your shader
 // or use glLoadMatrixf if you aren't using shaders.
-DFM2_INLINE void delfem2::glhPerspectivef2
-(float *matrix,
- float fovyInDegrees, float aspectRatio,
- float znear, float zfar)
+DFM2_INLINE void delfem2::glhPerspectivef2(
+    float *matrix,
+    float fovyInDegrees,
+    float aspectRatio,
+    float znear,
+    float zfar)
 {
   float ymax, xmax;
-//  float temp, temp2, temp3, temp4;
   ymax = znear * tanf(fovyInDegrees * 3.14159 / 360.0);
-  //ymin = -ymax;
-  //xmin = -ymax * aspectRatio;
   xmax = ymax * aspectRatio;
-  glhFrustumf2(matrix, -xmax, xmax, -ymax, ymax, znear, zfar);
+  glhFrustumf2(matrix,
+      -xmax, xmax, -ymax, ymax, znear, zfar);
 }
 
 
-DFM2_INLINE void delfem2::glhTranslatef2
-(float *matrix,
- float x, float y, float z)
+DFM2_INLINE void delfem2::glhTranslatef2(
+    float *matrix,
+    float x,
+    float y,
+    float z)
 {
   matrix[12]=matrix[0]*x+matrix[4]*y+matrix[8]*z+matrix[12];
   matrix[13]=matrix[1]*x+matrix[5]*y+matrix[9]*z+matrix[13];
@@ -317,17 +328,16 @@ DFM2_INLINE void delfem2::glhTranslatef2
 }
 
 
-DFM2_INLINE void delfem2::glhLookAtf2
-( float *matrix,
- float eyex, float eyey, float eyez,
- float cntx, float cnty, float cntz,
- float upx, float upy, float upz )
+DFM2_INLINE void delfem2::glhLookAtf2(
+    float *matrix,
+    float eyex, float eyey, float eyez,
+    float cntx, float cnty, float cntz,
+    float upx, float upy, float upz )
 {
   float eyePosition3D[3] = {eyex, eyey, eyez};
   float center3D[3] = {cntx, cnty, cntz};
   float upVector3D[3] = {upx, upy, upz};
-  
-  
+
   //------------------
   float forward[3] = {0,0,1};
   forward[0] = center3D[0] - eyePosition3D[0];
@@ -364,7 +374,7 @@ DFM2_INLINE void delfem2::glhLookAtf2
   matrix2[15] = 1.0;
   //------------------
   float resultMatrix[16];
-  camera::MultiplyMatrices4by4OpenGL_FLOAT(resultMatrix, matrix, matrix2);
+  camera::Mult_MatMat4(resultMatrix, matrix2, matrix);
   delfem2::glhTranslatef2(resultMatrix,
                  -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
   //------------------
@@ -373,20 +383,20 @@ DFM2_INLINE void delfem2::glhLookAtf2
 
 
 
-DFM2_INLINE void delfem2::screenUnProjection
- (float vout[3],
-  const float v[3],
-  const float mMV[16],
-  const float mPj[16])
+DFM2_INLINE void delfem2::screenUnProjection(
+    float vout[3],
+    const float v[3],
+    const float mMV[16],
+    const float mPj[16])
 {
   const float D = mPj[11] + mPj[15]; // z is 1 after model view
   const float v0[3] = { D*v[0], D*v[1], 0.0 };
   float v1[3];
   camera::solve_GlAffineMatrix(v1,
-                         mPj, v0);
+      mPj, v0);
   v1[2] = 1;
   camera::solve_GlAffineMatrix(vout,
-                         mMV, v1);
+      mMV, v1);
 }
 
 
@@ -398,9 +408,9 @@ void delfem2::screenUnProjectionDirection
 {
   float v1[3];
   camera::solve_GlAffineMatrixDirection(v1,
-                                        mPj, vi);
+      mPj, vi);
   camera::solve_GlAffineMatrixDirection(vo,
-                                        mMV, v1);
+      mMV, v1);
   camera::Normalize3D(vo);
 }
 
@@ -418,7 +428,7 @@ void delfem2::CCamera<REAL>::Affine4f_Projection(
     glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
   }
   else{
-    camera::glhOrthof2(mP,
+    camera::Mat4_AffineProjectionOrtho(mP,
                -view_height/scale*asp,
                +view_height/scale*asp,
                -view_height/scale,
@@ -434,6 +444,12 @@ template void delfem2::CCamera<double>::Affine4f_Projection(
 
 // ----------------------------
 
+/**
+ *
+ * @tparam REAL
+ * @param mMV model view matrix (column major order)
+ * @detail column major
+ */
 template <typename REAL>
 void delfem2::CCamera<REAL>::Affine4f_ModelView
 (float mMV[16]) const
@@ -445,20 +461,20 @@ void delfem2::CCamera<REAL>::Affine4f_ModelView
     ::glTranslated(trans[0],trans[1],trans[2]);
   }
    */
-  const float B[16] =
+  const float Mt[16] =
   { 1.f, 0.f, 0.f, 0.f,
     0.f, 1.f, 0.f, 0.f,
     0.f, 0.f, 1.f, 0.f,
     (float)trans[0], (float)trans[1], (float)trans[2], 1.f};
-  float A[16];
-  camera::Mat4f_Identity(A);
+  float Mr[16];
+  camera::Mat4f_Identity(Mr);
   if(      camera_rot_mode == CAMERA_ROT_MODE::YTOP  ){
     double x = sin(theta);
     double z = cos(theta);
     double y = sin(psi);
     x *= cos(psi);
     z *= cos(psi);
-    glhLookAtf2(A, x,y,z, 0,0,0, 0,1,0);
+    glhLookAtf2(Mr, x,y,z, 0,0,0, 0,1,0);
   }
   else if( camera_rot_mode == CAMERA_ROT_MODE::ZTOP  ){
     double x = sin(theta);
@@ -466,12 +482,12 @@ void delfem2::CCamera<REAL>::Affine4f_ModelView
     double z = sin(psi);
     x *= cos(psi);
     y *= cos(psi);
-    glhLookAtf2(A, x,y,z, 0,0,0, 0,0,1);
+    glhLookAtf2(Mr, x,y,z, 0,0,0, 0,0,1);
   }
   else if( camera_rot_mode == CAMERA_ROT_MODE::TBALL ){
-    camera::Mat4f_Quat(A,Quat_tball);
+    camera::Mat4f_Quat(Mr,Quat_tball);
   }
-  camera::MultiplyMatrices4by4OpenGL_FLOAT(mMV, B,A);
+  camera::Mult_MatMat4(mMV, Mr,Mt);
 }
 template void delfem2::CCamera<double>::Affine4f_ModelView
  (float mMV[16]) const;

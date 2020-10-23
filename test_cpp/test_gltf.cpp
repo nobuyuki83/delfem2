@@ -78,6 +78,10 @@ TEST(gltf,formatcheck)
 
 TEST(gltf,io_gltf_skin_sensitivity)
 {
+  std::random_device rd;
+  std::mt19937 rndeng(rd());
+  std::uniform_real_distribution<double> dist_01(+0,+1);
+  //
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri;
   std::vector<dfm2::CRigBone> aBone;
@@ -204,15 +208,15 @@ TEST(gltf,io_gltf_skin_sensitivity)
     for(int itr=0;itr<5;++itr){
       dfm2::CTarget t;
       t.ib = (unsigned int)(aBone.size()*(rand()/(RAND_MAX+1.0)));
-      t.pos = aBone[t.ib].Pos() + dfm2::CVec3d::Random();
+      t.pos = aBone[t.ib].Pos() + dfm2::CVec3d::Random(dist_01,rndeng);
       aTarget.push_back(t);
     }
     
     std::vector<double> aO0; // [nC]
     std::vector<double> adO0; // [nC, nb*3 ]
-    for(int it=0;it<aTarget.size();++it){
+    for(auto & it : aTarget){
       dfm2::Rig_WdW_Target_Eigen(aO0,adO0,
-                                 aBone,aTarget[it],Lx,Ly,Lz);
+                                 aBone,it,Lx,Ly,Lz);
     }
     
     const unsigned int nsns = Lx.size()/(nb*4);
@@ -235,9 +239,9 @@ TEST(gltf,io_gltf_skin_sensitivity)
       // -------------
       std::vector<double> aO1; // [nC]
       std::vector<double> adO1; // [nC, nb*3 ]
-      for(int it=0;it<aTarget.size();++it){
+      for(auto & it : aTarget){
         dfm2::Rig_WdW_Target_Eigen(aO1,adO1,
-                                   aBone1,aTarget[it],Lx,Ly,Lz);
+            aBone1,it,Lx,Ly,Lz);
       }
       // -------------
       for(int io=0;io<aO0.size();++io){

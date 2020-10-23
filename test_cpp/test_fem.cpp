@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
 #include <random>
 #include "gtest/gtest.h"
 
@@ -31,28 +30,21 @@ namespace dfm2 = delfem2;
 // --------------------------------------
 
 TEST(objfunc_v23, Check_CdC_TriStrain){
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(-5,5);
+  // -----
   for(int itr=0;itr<200;++itr){
     const double P[3][2] = {
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-    };
+        { randomDist(randomEng), randomDist(randomEng) },
+        { randomDist(randomEng), randomDist(randomEng) },
+        { randomDist(randomEng), randomDist(randomEng) } };
     double a0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
     if( fabs(a0) < 0.2 ) continue;
     const double p[3][3] = {
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-      { 10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5),
-        10.0*(rand()/(RAND_MAX+1.0)-0.5) },
-    };
+        { randomDist(randomEng), randomDist(randomEng), randomDist(randomEng) },
+        { randomDist(randomEng), randomDist(randomEng), randomDist(randomEng) },
+        { randomDist(randomEng), randomDist(randomEng), randomDist(randomEng) } };
     const double eps = 1.0e-5;
     double C[3], dCdp[3][9];
     dfm2::PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
@@ -72,17 +64,21 @@ TEST(objfunc_v23, Check_CdC_TriStrain){
 
 TEST(objfunc_v23, Bend)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(0,1);
+  // ----
   dfm2::CVec3d p[4];
-  for(int ino=0;ino<4;++ino){
-    p[ino].p[0] = (double)rand()/(RAND_MAX+1.0);
-    p[ino].p[1] = (double)rand()/(RAND_MAX+1.0);
-    p[ino].p[2] = (double)rand()/(RAND_MAX+1.0);
+  for(auto & pi : p){
+    pi.p[0] = randomDist(randomEng);
+    pi.p[1] = randomDist(randomEng);
+    pi.p[2] = randomDist(randomEng);
   }
   double C; dfm2::CVec3d dC[4];
-  GetConstConstDiff_Bend(C, dC, p[0],p[1],p[2],p[3]);
+  GetConstConstDiff_Bend(C, dC, p[0], p[1], p[2], p[3]);
   for(int ino=0;ino<4;++ino){
     for(int idim=0;idim<3;++idim){
-      dfm2::CVec3d p1[4] = {p[0],p[1],p[2],p[3]};
+      dfm2::CVec3d p1[4] = {p[0], p[1], p[2], p[3]};
       double eps = 1.0e-5;
       p1[ino][idim] += eps;
       double C1; dfm2::CVec3d dC1[4];
@@ -97,11 +93,15 @@ TEST(objfunc_v23, Bend)
 
 TEST(objfunc_v23, MIPS)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(0,1);
+  //
   double C[3][3];
-  for(auto & ino : C){
-    ino[0] = (double)rand()/(RAND_MAX+1.0);
-    ino[1] = (double)rand()/(RAND_MAX+1.0);
-    ino[2] = (double)rand()/(RAND_MAX+1.0);
+  for(auto & Ci : C){
+    Ci[0] = randomDist(randomEng);
+    Ci[1] = randomDist(randomEng);
+    Ci[2] = randomDist(randomEng);
   }
   double c[3][3];
   dfm2::CMat3d m;
@@ -135,16 +135,20 @@ TEST(objfunc_v23, MIPS)
 
 TEST(objfunc_v23, distancetri2d3d)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(0,1);
+  //
   double P[3][2];  // undeformed triangle vertex positions
-  for(auto & P0 : P){
-    P0[0] = (double)rand()/(RAND_MAX+1.0);
-    P0[1] = (double)rand()/(RAND_MAX+1.0);
+  for(auto & Pi : P){
+    Pi[0] = randomDist(randomEng);
+    Pi[1] = randomDist(randomEng);
   }
   double p[3][3]; //  deformed triangle vertex positions)
-  for(auto & p0 : p){
-    p0[0] = (double)rand()/(RAND_MAX+1.0);
-    p0[1] = (double)rand()/(RAND_MAX+1.0);
-    p0[2] = (double)rand()/(RAND_MAX+1.0);
+  for(auto & pi : p){
+    pi[0] = randomDist(randomEng);
+    pi[1] = randomDist(randomEng);
+    pi[2] = randomDist(randomEng);
   }
    // --------------
   double C[3], dCdp[3][9];
@@ -166,22 +170,26 @@ TEST(objfunc_v23, distancetri2d3d)
 
 TEST(objfunc_v23, pbd_energy_stvk)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(0,1);
+  //
   for(int itr=0;itr<200;++itr){
     double P[3][2];  // undeformed triangle vertex positions
-    for(auto & P0 : P){
-      P0[0] = (double)rand()/(RAND_MAX+1.0);
-      P0[1] = (double)rand()/(RAND_MAX+1.0);
+    for(auto & Pi : P){
+      Pi[0] = randomDist(randomEng);
+      Pi[1] = randomDist(randomEng);
     }
     double A0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
     if( A0 < 0.1 ) continue;
     double p[3][3]; //  deformed triangle vertex positions)
-    for(auto & p0 : p){
-      p0[0] = (double)rand()/(RAND_MAX+1.0);
-      p0[1] = (double)rand()/(RAND_MAX+1.0);
-      p0[2] = (double)rand()/(RAND_MAX+1.0);
+    for(auto & pi : p){
+      pi[0] = randomDist(randomEng);
+      pi[1] = randomDist(randomEng);
+      pi[2] = randomDist(randomEng);
     }
-    const double lambda = (rand()+1.0)/(RAND_MAX+1.0);
-    const double myu = (rand()+1.0)/(RAND_MAX+1.0);
+    const double lambda = randomDist(randomEng);
+    const double myu = randomDist(randomEng);
     // ---------------------
     double C, dCdp[9];
     dfm2::PBD_ConstraintProjection_EnergyStVK(C, dCdp, P, p, lambda, myu);
@@ -200,19 +208,23 @@ TEST(objfunc_v23, pbd_energy_stvk)
 
 TEST(objfunc_v23, dWddW_RodFrameTrans)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> randomDist(0.0,1.0);
+  //
   for(int itr=0;itr<100;++itr){
     dfm2::CVec3d V01;
-    V01.SetRandom();
+    V01.SetRandom(randomDist,randomEng);
     dfm2::CVec3d Frm[3];
     {
       Frm[2] = V01;
       Frm[2].SetNormalizedVector();
-      Frm[0].SetRandom();
+      Frm[0].SetRandom(randomDist,randomEng);
       Frm[0] -= (Frm[0]*Frm[2])*Frm[2];
       Frm[0].SetNormalizedVector();
       Frm[1] = (Frm[2]^Frm[0]);
     }
-    dfm2::CVec3d Q; Q.SetRandom();
+    dfm2::CVec3d Q; Q.SetRandom(randomDist,randomEng);
     //  Q = Frm[2];
     // --------------------------------
     double W[3] = { Q*Frm[0], Q*Frm[1], Q*Frm[2] };
@@ -232,13 +244,13 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
     }
     // ---------
     const double eps = 1.0e-6;
-    dfm2::CVec3d du; du.SetRandom(); du *= eps;
+    dfm2::CVec3d du; du.SetRandom(randomDist,randomEng); du *= eps;
     const double dtheta = (2.0*rand()/(RAND_MAX+1.0)-1.0)*eps;
     // ------
     dfm2::CVec3d frm[3];
     RodFrameTrans(frm,
-                  Frm[0], V01,
-                  du, dtheta);
+        Frm[0], V01,
+        du, dtheta);
     const double w[3] = { Q*frm[0], Q*frm[1], Q*frm[2] };
     dfm2::CVec3d dw_dv[3];
     double dw_dt[3];
@@ -278,27 +290,31 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
                      i,V01.Length(),Q,Frm);
       dfm2::CVec3d vec0 = (dw_dv[i]-DW_Dv[i])/eps;
       dfm2::CVec3d vec1 = (DDW_DvDt*dtheta+DDW_DDv*du)/eps;
-      EXPECT_LT( (vec0-vec1).Length(), 1.0e-3);
+      EXPECT_LT( (vec0-vec1).Length(), 2.0e-3);
     }
   }
 }
 
 TEST(objfunc_v23, WdWddW_DotFrame)
 {
+  std::random_device randomDevice;
+  std::mt19937 randomEng(randomDevice());
+  std::uniform_real_distribution<double> dist_01(0,1);
+  //
   for(int itr=0;itr<100;++itr){
     dfm2::CVec3d P[3];
-    P[0].SetRandom();
-    P[1].SetRandom();
-    P[2].SetRandom();
+    P[0].SetRandom(dist_01,randomEng);
+    P[1].SetRandom(dist_01,randomEng);
+    P[2].SetRandom(dist_01,randomEng);
     dfm2::CVec3d S[2];
     {
-      S[0].SetRandom();
+      S[0].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U0 = (P[1]-P[0]).Normalize();
       S[0] -= (S[0]*U0)*U0;
       S[0].SetNormalizedVector();
     }
     {
-      S[1].SetRandom();
+      S[1].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U1 = (P[2]-P[1]).Normalize();
       S[1] -= (S[1]*U1)*U1;
       S[1].SetNormalizedVector();
@@ -319,9 +335,9 @@ TEST(objfunc_v23, WdWddW_DotFrame)
     // -----------------------
     double eps = 1.0e-7;
     dfm2::CVec3d dP[3];
-    dP[0].SetRandom(); dP[0] *= eps;
-    dP[1].SetRandom(); dP[1] *= eps;
-    dP[2].SetRandom(); dP[2] *= eps;
+    dP[0].SetRandom(dist_01,randomEng); dP[0] *= eps;
+    dP[1].SetRandom(dist_01,randomEng); dP[1] *= eps;
+    dP[2].SetRandom(dist_01,randomEng); dP[2] *= eps;
     const double dT[2] = {
       (2.0*rand()/(RAND_MAX+1.0)-1.0)*eps,
       (2.0*rand()/(RAND_MAX+1.0)-1.0)*eps };
@@ -404,37 +420,38 @@ TEST(objfunc_v23, WdWddW_DotFrame)
 TEST(objfunc_v23, WdWddW_Rod)
 {
   std::random_device rd;
-  std::mt19937 rndeng(rd());
-  std::uniform_real_distribution<double> distm11(-1,+2);
-  std::uniform_real_distribution<double> dist12(+1,+2);
+  std::mt19937 randomEng(rd());
+  std::uniform_real_distribution<double> dist_m1p1(-1, +1);
+  std::uniform_real_distribution<double> dist_12(+1, +2);
+  std::uniform_real_distribution<double> dist_01(+0, +1);
   for(int itr=0;itr<100;++itr){
     const double stiff_bendtwist[3] = {
-      dist12(rndeng),
-      dist12(rndeng),
-      dist12(rndeng) };
+        dist_12(randomEng),
+        dist_12(randomEng),
+        dist_12(randomEng) };
     dfm2::CVec3d P[3];
-    P[0].SetRandom();
-    P[1].SetRandom();
-    P[2].SetRandom();
+    P[0].SetRandom(dist_01,randomEng);
+    P[1].SetRandom(dist_01,randomEng);
+    P[2].SetRandom(dist_01,randomEng);
     if( dfm2::Distance(P[0],P[1]) < 0.1 ){ continue; }
     if( dfm2::Distance(P[1],P[2]) < 0.1 ){ continue; }
     dfm2::CVec3d S[2];
     {
-      S[0].SetRandom();
+      S[0].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U0 = (P[1]-P[0]).Normalize();
       S[0] -= (S[0]*U0)*U0;
       S[0].SetNormalizedVector();
     }
     {
-      S[1].SetRandom();
+      S[1].SetRandom(dist_01,randomEng);
       const dfm2::CVec3d U1 = (P[2]-P[1]).Normalize();
       S[1] -= (S[1]*U1)*U1;
       S[1].SetNormalizedVector();
     }
     const double off[3] = {
-      distm11(rndeng),
-      distm11(rndeng),
-      distm11(rndeng) };
+        dist_m1p1(randomEng),
+        dist_m1p1(randomEng),
+        dist_m1p1(randomEng) };
     // ------------------------
     dfm2::CVec3d dW_dP[3];
     double dW_dt[2];
@@ -447,9 +464,9 @@ TEST(objfunc_v23, WdWddW_Rod)
     // -----------------------
     double eps = 1.0e-7;
     dfm2::CVec3d dP[3];
-    dP[0].SetRandom(); dP[0] *= eps;
-    dP[1].SetRandom(); dP[1] *= eps;
-    dP[2].SetRandom(); dP[2] *= eps;
+    dP[0].SetRandom(dist_01,randomEng); dP[0] *= eps;
+    dP[1].SetRandom(dist_01,randomEng); dP[1] *= eps;
+    dP[2].SetRandom(dist_01,randomEng); dP[2] *= eps;
     const double dT[2] = {
       (2.0*rand()/(RAND_MAX+1.0)-1.0)*eps,
       (2.0*rand()/(RAND_MAX+1.0)-1.0)*eps };
@@ -478,7 +495,7 @@ TEST(objfunc_v23, WdWddW_Rod)
                            +dW_dP[0]*dP[0]
                            +dW_dP[1]*dP[1]
                            +dW_dP[2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 1.0e-3*(1+fabs(val1)) );
+      EXPECT_NEAR(val0, val1, 2.5e-3*(1+fabs(val1)) );
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;
@@ -532,13 +549,14 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
 {
   std::random_device rd;
   std::mt19937 rndeng(rd());
-  std::uniform_real_distribution<double> dist0(-1,+1);
-  std::uniform_real_distribution<double> dist1(+1,+2);
+  std::uniform_real_distribution<double> dist_m1p1(-1,+1);
+  std::uniform_real_distribution<double> dist_12(+1,+2);
+  std::uniform_real_distribution<double> dist_01(+0,+1);
   for(int itr=0;itr<100;++itr){
-    const double stiff_stretch = dist1(rndeng);
+    const double stiff_stretch = dist_12(rndeng);
     dfm2::CVec3d P[2];
-    P[0].SetRandom();
-    P[1].SetRandom();
+    P[0].SetRandom(dist_01,rndeng);
+    P[1].SetRandom(dist_01,rndeng);
     if( (P[0]-P[1]).Length() < 0.1 ){ continue; }
     dfm2::CVec3d dW_dP[2];
     dfm2::CMat3d ddW_ddP[2][2];
@@ -548,8 +566,8 @@ TEST(objfunc_v23, WdWddW_SquareLengthLineseg3D)
     // -----
     double eps = 1.0e-5;
     dfm2::CVec3d dP[2];
-    dP[0].SetRandom(); dP[0] *= eps;
-    dP[1].SetRandom(); dP[1] *= eps;
+    dP[0].SetRandom(dist_01,rndeng); dP[0] *= eps;
+    dP[1].SetRandom(dist_01,rndeng); dP[1] *= eps;
     const dfm2::CVec3d p[2] = { P[0]+dP[0], P[1]+dP[1] };
     double w;
     dfm2::CVec3d dw_dP[2];
@@ -602,7 +620,6 @@ TEST(objfunc_v23, arap)
   
   std::vector<double> aQuat1;
   { // initialize rotation
-    const size_t np = aXYZ1.size()/3;
     aQuat1.resize(np*4);
     for(unsigned int ip=0;ip<np;++ip){
       dfm2::Quat_Identity(aQuat1.data()+4*ip);

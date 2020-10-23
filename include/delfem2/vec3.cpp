@@ -833,18 +833,19 @@ template void delfem2::CVec3<double>::SetZero();
 
   
 // -----------------------
-  
-template <typename T>
-void delfem2::CVec3<T>::SetRandom()
+/*
+template <typename T, typename DIST>
+void delfem2::CVec3<T>::SetRandom(DIST dist)
 {
-  p[0] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
-  p[1] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
-  p[2] = 2.0*rand()/(RAND_MAX+1.0)-1.0;
+  p[0] = dist();
+  p[1] = dist();
+  p[2] = dist();
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::CVec3<float>::SetRandom();
 template void delfem2::CVec3<double>::SetRandom();
 #endif
+ */
   
 // --------------------------------
 

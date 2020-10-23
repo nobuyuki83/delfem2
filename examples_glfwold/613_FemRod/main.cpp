@@ -126,6 +126,7 @@ int main(int argc,char* argv[])
   std::random_device rd;
   std::mt19937 reng(rd());
   std::uniform_real_distribution<double> dist01(0.0, 1.0);
+  std::uniform_real_distribution<double> dist03(0.0, 3.0);
   // ------
   while (true)
   {
@@ -169,7 +170,7 @@ int main(int argc,char* argv[])
     // apply random deviation
     for(unsigned int ip=0;ip<aP.size();++ip){
       aP[ip] = aP0[ip];
-      auto rnd = dfm2::CVec3d::Random()*3.0;
+      auto rnd = dfm2::CVec3d::Random(dist03,reng);
       if( aBCFlag[ip*3+0] == 0 ){ aP[ip].p[0] += rnd.x(); }
       if( aBCFlag[ip*3+1] == 0 ){ aP[ip].p[1] += rnd.y(); }
       if( aBCFlag[ip*3+2] == 0 ){ aP[ip].p[2] += rnd.z(); }
@@ -177,7 +178,7 @@ int main(int argc,char* argv[])
     const unsigned int ns = aS.size();
     for(unsigned int is=0;is<ns;++is){
       aS[is] = aS0[is];
-      auto rnd = dfm2::CVec3d::Random()*3.0;
+      auto rnd = dfm2::CVec3d::Random(dist03,reng);
       const unsigned int np = aP.size();
       if( aBCFlag[(np+is)*3+0] == 0 ){ aS[is].p[0] += rnd.x(); }
       if( aBCFlag[(np+is)*3+1] == 0 ){ aS[is].p[1] += rnd.y(); }
