@@ -59,7 +59,8 @@ void draw(GLFWwindow* window)
   viewer.nav.Matrix_MVP(mMV, mP, window);
   shdr.Draw(mP, mMV);
   
-  viewer.DrawEnd_oldGL();
+  viewer.SwapBuffers();
+  glfwPollEvents();
 }
 
 int main()

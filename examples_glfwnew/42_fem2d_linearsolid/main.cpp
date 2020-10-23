@@ -5,16 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
 #include <iostream>
-#include <limits>
 #include <vector>
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/ilu_mats.h"
 #include "delfem2/fem_emats.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/mats.h"
 #include "delfem2/vecxitrsol.h"
 
@@ -340,10 +337,11 @@ void draw(GLFWwindow* window)
   viewer.nav.Matrix_MVP(mMV, mP, window);
   shdr0.Draw(mP,mMV);
   
-  viewer.DrawEnd_oldGL();
+  viewer.SwapBuffers();
+  glfwPollEvents();
 }
 
-int main(void)
+int main()
 {
   {
     MakeMesh();

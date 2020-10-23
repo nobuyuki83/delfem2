@@ -55,7 +55,8 @@ void draw(GLFWwindow* window)
   shdr0.Draw(mP, mMV);
   sampler.Draw(mP,mMV);
   
-  viewer.DrawEnd_oldGL();
+  viewer.SwapBuffers();
+  glfwPollEvents();
 }
 
 int main()
