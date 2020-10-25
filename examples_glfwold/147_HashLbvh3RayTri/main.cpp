@@ -122,9 +122,9 @@ int main(int argc,char* argv[])
         0.5*sin(cur_time*7) };
     // -----------
     std::vector<unsigned int> aIndElem;
-    dfm2::BVH_GetIndElem_IntersectLine(aIndElem,
-      src0, dir0,
-      0, aNodeBVH, aAABB);
+    dfm2::BVH_GetIndElem_Predicate(aIndElem,
+        dfm2::CIsBV_IntersectLine< dfm2::CBV3_Sphere<double> >(src0,dir0),
+        0, aNodeBVH, aAABB);
     // -----------
     viewer.DrawBegin_oldGL();
     myGlutDisplay(aXYZ,aTri,aIndElem,src0,dir0);

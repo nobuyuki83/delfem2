@@ -76,38 +76,76 @@ DFM2_INLINE void CopyQuat
   r[3] = p[3];
 }
 
-DFM2_INLINE void Mat4f_Quat(float r[], const double q[])
+template <typename REAL>
+DFM2_INLINE void Mat4_AffineTransQuat(
+    REAL r[],
+    const REAL q[])
 {
-  auto x2 = (float)(q[1] * q[1] * 2.0);
-  auto y2 = (float)(q[2] * q[2] * 2.0);
-  auto z2 = (float)(q[3] * q[3] * 2.0);
-  auto xy = (float)(q[1] * q[2] * 2.0);
-  auto yz = (float)(q[2] * q[3] * 2.0);
-  auto zx = (float)(q[3] * q[1] * 2.0);
-  auto xw = (float)(q[1] * q[0] * 2.0);
-  auto yw = (float)(q[2] * q[0] * 2.0);
-  auto zw = (float)(q[3] * q[0] * 2.0);
-  
-  r[ 0] = 1.f - y2 - z2;
+  REAL x2 = q[1] * q[1] * 2;
+  REAL y2 = q[2] * q[2] * 2;
+  REAL z2 = q[3] * q[3] * 2;
+  REAL xy = q[1] * q[2] * 2;
+  REAL yz = q[2] * q[3] * 2;
+  REAL zx = q[3] * q[1] * 2;
+  REAL xw = q[1] * q[0] * 2;
+  REAL yw = q[2] * q[0] * 2;
+  REAL zw = q[3] * q[0] * 2;
+  // column 0
+  r[ 0] = 1 - y2 - z2;
   r[ 1] = xy + zw;
   r[ 2] = zx - yw;
+  r[ 3] = 0;
+  // column 1
   r[ 4] = xy - zw;
-  r[ 5] = 1.f - z2 - x2;
+  r[ 5] = 1 - z2 - x2;
   r[ 6] = yz + xw;
+  r[ 7] = 0;
+  // column 2
   r[ 8] = zx + yw;
   r[ 9] = yz - xw;
-  r[10] = 1.f - x2 - y2;
-  r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
-  r[15] = 1.0;
+  r[10] = 1 - x2 - y2;
+  r[11] = 0;
+  // column 3
+  r[12] = 0;
+  r[13] = 0;
+  r[14] = 0;
+  r[15] = 1;
 }
 
-
-DFM2_INLINE void Mat4f_Identity(float r[])
+template <typename REAL>
+DFM2_INLINE void Mat4_AffineTransTranslate(
+                                      REAL r[],
+                                      const REAL t[])
 {
-  r[ 0] = 1.0;  r[ 1] = 0.0;  r[ 2] = 0.0;  r[ 3] = 0.0;
-  r[ 4] = 0.0;  r[ 5] = 1.0;  r[ 6] = 0.0;  r[ 7] = 0.0;
-  r[ 8] = 0.0;  r[ 9] = 0.0;  r[10] = 1.0;  r[11] = 0.0;
-  r[12] = 0.0;  r[13] = 0.0;  r[14] = 0.0;  r[15] = 1.0;
+  // column 0
+  r[ 0] = 1;
+  r[ 1] = 0;
+  r[ 2] = 0;
+  r[ 3] = 0;
+  // column 1
+  r[ 4] = 0;
+  r[ 5] = 1;
+  r[ 6] = 0;
+  r[ 7] = 0;
+  // column 2
+  r[ 8] = 0;
+  r[ 9] = 0;
+  r[10] = 1;
+  r[11] = 0;
+  // column 3
+  r[12] = t[0];
+  r[13] = t[1];
+  r[14] = t[2];
+  r[15] = 1;
+}
+
+template <typename REAL>
+DFM2_INLINE void Mat4_Identity(REAL r[])
+{
+  r[ 0] = 1;  r[ 1] = 0;  r[ 2] = 0;  r[ 3] = 0;
+  r[ 4] = 0;  r[ 5] = 1;  r[ 6] = 0;  r[ 7] = 0;
+  r[ 8] = 0;  r[ 9] = 0;  r[10] = 1;  r[11] = 0;
+  r[12] = 0;  r[13] = 0;  r[14] = 0;  r[15] = 1;
 }
 
 
@@ -159,27 +197,28 @@ DFM2_INLINE void Mat3Vec
  * @brief affine matrix
  * @details column major order
  */
-DFM2_INLINE void Mat4_AffineProjectionOrtho(
+DFM2_INLINE void Mat4_AffineTransProjectionOrtho(
     float mP[16],
     double l, double r,
     double b, double t,
     double n, double f)
 {
+  // column 0
   mP[0*4+0] = 2.0/(r-l);
   mP[0*4+1] = 0.0;
   mP[0*4+2] = 0.0;
   mP[0*4+3] = 0.0;
-
+  // column 1
   mP[1*4+0] = 0.0;
   mP[1*4+1] = 2.0/(t-b);
   mP[1*4+2] = 0.0;
   mP[1*4+3] = 0.0;
-
+  // column 2
   mP[2*4+0] = 0.0;
   mP[2*4+1] = 0.0;
   mP[2*4+2] = 2.0/(n-f);
   mP[2*4+3] = 0.0;
-
+  // collumn 3
   mP[3*4+0] = -(l+r)/(r-l);
   mP[3*4+1] = -(t+b)/(t-b);
   mP[3*4+2] = -(n+f)/(n-f);
@@ -244,6 +283,40 @@ DFM2_INLINE void Mult_MatMat4(
   }
 }
 
+DFM2_INLINE void CalcInvMat(
+                            double *a,
+                            const unsigned int n,
+                            int &info)
+{
+  double tmp1;
+  
+  info = 0;
+  unsigned int i, j, k;
+  for (i = 0; i < n; i++) {
+    if (fabs(a[i * n + i]) < 1.0e-30) {
+      info = 1;
+      return;
+    }
+    if (a[i * n + i] < 0.0) {
+      info--;
+    }
+    tmp1 = 1.0 / a[i * n + i];
+    a[i * n + i] = 1.0;
+    for (k = 0; k < n; k++) {
+      a[i * n + k] *= tmp1;
+    }
+    for (j = 0; j < n; j++) {
+      if (j != i) {
+        tmp1 = a[j * n + i];
+        a[j * n + i] = 0.0;
+        for (k = 0; k < n; k++) {
+          a[j * n + k] -= tmp1 * a[i * n + k];
+        }
+      }
+    }
+  }
+}
+
 
 }
 }
@@ -251,17 +324,47 @@ DFM2_INLINE void Mult_MatMat4(
 // static functions ends here
 // =====================================================
 
-/**
- *
- * @param[out] projection matrix (column major order)
- * @param left
- * @param right
- * @param bottom
- * @param top
- * @param znear
- * @param zfar
- */
-DFM2_INLINE void delfem2::glhFrustumf2(
+template <typename REAL>
+DFM2_INLINE void delfem2::Mult_MatVec4(
+    REAL *mv,
+    const REAL *m,
+    const REAL *v)
+{
+  for (unsigned int i = 0; i < 4; ++i) {
+    mv[i] = 0;
+    for (unsigned int j = 0; j < 4; ++j) {
+      mv[i] += m[i * 4 + j] * v[j];
+    }
+  }
+}
+
+template <typename REAL>
+void delfem2::Mult_VecMat4(
+    REAL *mv,
+    const REAL *v,
+    const REAL *m)
+{
+  for (unsigned int i = 0; i < 4; ++i) {
+    mv[i] = 0;
+    for (unsigned int j = 0; j < 4; ++j) {
+      mv[i] += v[j] * m[j * 4 + i];
+    }
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mult_VecMat4(double*, const double*, const double*);
+template void delfem2::Mult_VecMat4(float*, const float*, const float*);
+#endif
+
+DFM2_INLINE void delfem2::Inverse_Mat4(
+    double minv[16],
+    const double m[16])
+{
+  for(int i=0;i<16;++i){ minv[i] = m[i]; }
+  int info; camera::CalcInvMat(minv,4,info);
+}
+
+DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     float *matrix,
     float left,
     float right,
@@ -300,7 +403,7 @@ DFM2_INLINE void delfem2::glhFrustumf2(
 //matrix will receive the calculated perspective matrix.
 //You would have to upload to your shader
 // or use glLoadMatrixf if you aren't using shaders.
-DFM2_INLINE void delfem2::glhPerspectivef2(
+DFM2_INLINE void delfem2::Mat4_AffineTransProjectionPerspective(
     float *matrix,
     float fovyInDegrees,
     float aspectRatio,
@@ -310,12 +413,12 @@ DFM2_INLINE void delfem2::glhPerspectivef2(
   float ymax, xmax;
   ymax = znear * tanf(fovyInDegrees * 3.14159 / 360.0);
   xmax = ymax * aspectRatio;
-  glhFrustumf2(matrix,
+  Mat4_AffineTransProjectionFrustum(matrix,
       -xmax, xmax, -ymax, ymax, znear, zfar);
 }
 
 
-DFM2_INLINE void delfem2::glhTranslatef2(
+DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
     float *matrix,
     float x,
     float y,
@@ -328,60 +431,54 @@ DFM2_INLINE void delfem2::glhTranslatef2(
 }
 
 
-DFM2_INLINE void delfem2::glhLookAtf2(
-    float *matrix,
+DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
+    float* Mr,
     float eyex, float eyey, float eyez,
     float cntx, float cnty, float cntz,
     float upx, float upy, float upz )
 {
-  float eyePosition3D[3] = {eyex, eyey, eyez};
-  float center3D[3] = {cntx, cnty, cntz};
-  float upVector3D[3] = {upx, upy, upz};
-
-  //------------------
-  float forward[3] = {0,0,1};
-  forward[0] = center3D[0] - eyePosition3D[0];
-  forward[1] = center3D[1] - eyePosition3D[1];
-  forward[2] = center3D[2] - eyePosition3D[2];
+  const float eyePosition3D[3] = {eyex, eyey, eyez};
+  const float center3D[3] = {cntx, cnty, cntz};
+  const float upVector3D[3] = {upx, upy, upz};
+  // ------------------
+  float forward[3] = {
+    center3D[0] - eyePosition3D[0],
+    center3D[1] - eyePosition3D[1],
+    center3D[2] - eyePosition3D[2] };
   camera::Normalize3D(forward);
-  //------------------
-  //Side = forward x up
+  // ------------------
+  // Side = forward x up
   float side[3] = {1,0,0};
   camera::Cross3D(side, forward, upVector3D);
   camera::Normalize3D(side);
-  //------------------
+  // ------------------
   //Recompute up as: up = side x forward
   float up[3] = {0,1,0};
   camera::Cross3D(up, side, forward);
-  //------------------
-  float matrix2[16];
-  matrix2[0] = side[0];
-  matrix2[4] = side[1];
-  matrix2[8] = side[2];
-  matrix2[12] = 0.0;
-  //------------------
-  matrix2[1] = up[0];
-  matrix2[5] = up[1];
-  matrix2[9] = up[2];
-  matrix2[13] = 0.0;
-  //------------------
-  matrix2[2] = -forward[0];
-  matrix2[6] = -forward[1];
-  matrix2[10] = -forward[2];
-  matrix2[14] = 0.0;
-  //------------------
-  matrix2[3] = matrix2[7] = matrix2[11] = 0.0;
-  matrix2[15] = 1.0;
-  //------------------
-  float resultMatrix[16];
-  camera::Mult_MatMat4(resultMatrix, matrix2, matrix);
-  delfem2::glhTranslatef2(resultMatrix,
-                 -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
-  //------------------
-  memcpy(matrix, resultMatrix, 16*sizeof(float));
+  // ------------------
+  Mr[ 0] = side[0];
+  Mr[ 4] = side[1];
+  Mr[ 8] = side[2];
+  Mr[12] = 0.0;
+  // ------------------
+  Mr[ 1] = up[0];
+  Mr[ 5] = up[1];
+  Mr[ 9] = up[2];
+  Mr[13] = 0.0;
+  // ------------------
+  Mr[ 2] = -forward[0];
+  Mr[ 6] = -forward[1];
+  Mr[10] = -forward[2];
+  Mr[14] = 0.0;
+  // ------------------
+  Mr[ 3] = 0.0;
+  Mr[ 7] = 0.0;
+  Mr[11] = 0.0;
+  Mr[15] = 1.0;
+  // ------------------
+  delfem2::MultMat4AffineTransTranslateFromRight(Mr,
+      -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
 }
-
-
 
 DFM2_INLINE void delfem2::screenUnProjection(
     float vout[3],
@@ -400,11 +497,11 @@ DFM2_INLINE void delfem2::screenUnProjection(
 }
 
 
-void delfem2::screenUnProjectionDirection
-(float vo[3],
- const float vi[3],
- const float mMV[16],
- const float mPj[16])
+void delfem2::screenUnProjectionDirection(
+    float vo[3],
+    const float vi[3],
+    const float mMV[16],
+    const float mPj[16])
 {
   float v1[3];
   camera::solve_GlAffineMatrixDirection(v1,
@@ -419,25 +516,26 @@ void delfem2::screenUnProjectionDirection
 // implementation of CCamera class starts here
 
 template <typename REAL>
-void delfem2::CCamera<REAL>::Affine4f_Projection(
+void delfem2::CCamera<REAL>::Mat4_AffineTransProjection(
     float mP[16],
     double asp,
     double depth) const
 {
   if( is_pars ){
-    glhPerspectivef2(mP, fovy, asp, depth*0.01, depth*10);
+    Mat4_AffineTransProjectionPerspective(mP,
+                                          fovy, asp, depth*0.01, depth*10);
   }
   else{
-    camera::Mat4_AffineProjectionOrtho(mP,
-               -view_height/scale*asp,
-               +view_height/scale*asp,
-               -view_height/scale,
-               +view_height/scale,
+    camera::Mat4_AffineTransProjectionOrtho(mP,
+               -view_height*asp,
+               +view_height*asp,
+               -view_height,
+               +view_height,
                -depth*10,
                +depth*10);
   }
 }
-template void delfem2::CCamera<double>::Affine4f_Projection(
+template void delfem2::CCamera<double>::Mat4_AffineTransProjection(
     float mP[16],
     double asp,
     double depth) const;
@@ -451,46 +549,47 @@ template void delfem2::CCamera<double>::Affine4f_Projection(
  * @detail column major
  */
 template <typename REAL>
-void delfem2::CCamera<REAL>::Affine4f_ModelView
-(float mMV[16]) const
+void delfem2::CCamera<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
 {
-  /*
+  float Mt[16];
   {
-    ::glMatrixMode(GL_MODELVIEW);
-    ::glLoadIdentity();
-    ::glTranslated(trans[0],trans[1],trans[2]);
+    const float transd[3] = { (float)trans[0], (float)trans[1], (float)trans[2] };
+    camera::Mat4_AffineTransTranslate(Mt, transd);
   }
-   */
-  const float Mt[16] =
-  { 1.f, 0.f, 0.f, 0.f,
-    0.f, 1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    (float)trans[0], (float)trans[1], (float)trans[2], 1.f};
+  const float Ms[16] = {
+      (float)scale, 0, 0, 0,
+      0, (float)scale, 0, 0,
+      0, 0, (float)scale, 0,
+      0, 0, 0, 1 };
   float Mr[16];
-  camera::Mat4f_Identity(Mr);
-  if(      camera_rot_mode == CAMERA_ROT_MODE::YTOP  ){
-    double x = sin(theta);
-    double z = cos(theta);
-    double y = sin(psi);
-    x *= cos(psi);
-    z *= cos(psi);
-    glhLookAtf2(Mr, x,y,z, 0,0,0, 0,1,0);
+  {
+    if (camera_rot_mode == CAMERA_ROT_MODE::YTOP) {
+      double x = sin(theta);
+      double z = cos(theta);
+      double y = sin(psi);
+      x *= cos(psi);
+      z *= cos(psi);
+      Mat4_AffineTransLookAt(Mr, x, y, z, 0, 0, 0, 0, 1, 0);
+    } else if (camera_rot_mode == CAMERA_ROT_MODE::ZTOP) {
+      double x = sin(theta);
+      double y = cos(theta);
+      double z = sin(psi);
+      x *= cos(psi);
+      y *= cos(psi);
+      Mat4_AffineTransLookAt(Mr, x, y, z, 0, 0, 0, 0, 0, 1);
+    } else if (camera_rot_mode == CAMERA_ROT_MODE::TBALL) {
+      const float q[4] = {
+          static_cast<float>(Quat_tball[0]),
+          static_cast<float>(Quat_tball[1]),
+          static_cast<float>(Quat_tball[2]),
+          static_cast<float>(Quat_tball[3])};
+      camera::Mat4_AffineTransQuat(Mr, q);
+    }
   }
-  else if( camera_rot_mode == CAMERA_ROT_MODE::ZTOP  ){
-    double x = sin(theta);
-    double y = cos(theta);
-    double z = sin(psi);
-    x *= cos(psi);
-    y *= cos(psi);
-    glhLookAtf2(Mr, x,y,z, 0,0,0, 0,0,1);
-  }
-  else if( camera_rot_mode == CAMERA_ROT_MODE::TBALL ){
-    camera::Mat4f_Quat(Mr,Quat_tball);
-  }
-  camera::Mult_MatMat4(mMV, Mr,Mt);
+  float Mrt[16]; camera::Mult_MatMat4(Mrt, Mr,Mt);
+  camera::Mult_MatMat4(mMV, Mrt,Ms);
 }
-template void delfem2::CCamera<double>::Affine4f_ModelView
- (float mMV[16]) const;
+template void delfem2::CCamera<double>::Mat4_AffineTransModelView(float mMV[16]) const;
 
 // -------------------------
 

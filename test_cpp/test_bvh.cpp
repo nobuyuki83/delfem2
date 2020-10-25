@@ -178,7 +178,7 @@ TEST(bvh,nearest_range) // find global nearest from range
            0.0);
   std::random_device dev;
   std::mt19937 rng(dev());
-  std::uniform_real_distribution<> udist(-5.0, 5.0);
+  std::uniform_real_distribution<double> udist(-5.0, 5.0);
   for(int itr=0;itr<1000;++itr){
     const dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng)); // random points
     double dist_min=+1, dist_max = -1;
@@ -202,17 +202,15 @@ TEST(bvh,nearest_range) // find global nearest from range
       }
       EXPECT_TRUE( is_max );
     }
-    std::vector<int> aIndElem;
-    BVH_GetIndElem_InsideRange(aIndElem,
-                               dist_min,dist_max,
-                               p0.x(), p0.y(), p0.z(),
-                               bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+    std::vector<unsigned int> aIndElem;
+    dfm2::BVH_GetIndElem_Predicate(
+        aIndElem,
+        dfm2::CIsBV_InsideRange<dfm2::CBV3d_Sphere>(p0.p,dist_min,dist_max),
+        bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     EXPECT_GT(aIndElem.size(), 0);
     std::vector<int> aFlg(aTri.size()/3,0);
-    for(int itri0 : aIndElem){
-      aFlg[itri0] = 1;
-    }
-    for(int itri=0;itri<aTri.size()/3;++itri){
+    for(auto itri0 : aIndElem){ aFlg[itri0] = 1; }
+    for(unsigned int itri=0;itri<aTri.size()/3;++itri){
       dfm2::CBV3d_Sphere bb_tri;
       for(int inoel=0;inoel<3;++inoel){
         const int ino0 = aTri[itri*3+inoel];
@@ -343,8 +341,9 @@ TEST(bvh,lineintersection)
       }
     }
     std::vector<unsigned int> aIndElem;
-    BVH_GetIndElem_IntersectLine(aIndElem, ps0, pd0,
-                                 bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+    dfm2::BVH_GetIndElem_Predicate(aIndElem,
+        dfm2::CIsBV_IntersectLine<dfm2::CBV3d_Sphere>(ps0,pd0),
+        bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
     for(int itri0 : aIndElem){
       aFlg[itri0] = 1;
@@ -406,8 +405,8 @@ TEST(bvh,rayintersection)
       }
     }
     std::vector<unsigned int> aIndElem;
-    BVH_GetIndElem_IntersectRay(aIndElem,
-        ps0, pd0,
+    dfm2::BVH_GetIndElem_Predicate(aIndElem,
+        dfm2::CIsBV_IntersectRay<dfm2::CBV3d_Sphere>(ps0, pd0),
         bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     std::vector<int> aFlg(aTri.size()/3,0);
     for(int itri0 : aIndElem){
@@ -425,13 +424,13 @@ TEST(bvh,rayintersection)
     {
       std::map<double,dfm2::CPointElemSurf<double> > mapDepthPES0;
       IntersectionRay_MeshTri3(mapDepthPES0,
-                                s0, d0, aTri, aXYZ,
-                               0.0);
+          s0, d0, aTri, aXYZ,
+          0.0);
       std::map<double,dfm2::CPointElemSurf<double> > mapDepthPES1;
       IntersectionRay_MeshTri3DPart(mapDepthPES1,
-                                    s0, d0,
-                                    aTri, aXYZ, aIndElem,
-                                    0.0);
+          s0, d0,
+          aTri, aXYZ, aIndElem,
+          0.0);
       EXPECT_EQ(mapDepthPES0.size(),mapDepthPES1.size());
       int N = mapDepthPES0.size();
       auto itr0 = mapDepthPES0.begin();
@@ -440,8 +439,8 @@ TEST(bvh,rayintersection)
         EXPECT_FLOAT_EQ(itr0->first,itr1->first);
         dfm2::CPointElemSurf<double> pes0 = itr0->second;
         dfm2::CPointElemSurf<double> pes1 = itr1->second;
-        dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
-        dfm2::CVec3d q1 = pes1.Pos_Tri(aXYZ, aTri);
+        const dfm2::CVec3d q0 = pes0.Pos_Tri(aXYZ, aTri);
+        const dfm2::CVec3d q1 = pes1.Pos_Tri(aXYZ, aTri);
         EXPECT_NEAR(Distance(q0,q1), 0.0, 1.0e-10);
       }
     }

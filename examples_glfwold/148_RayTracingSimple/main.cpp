@@ -23,65 +23,6 @@ namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-void Mult_MatVec4(
-    float *mv,
-    const float *m,
-    const float *v) {
-  for (unsigned int i = 0; i < 4; ++i) {
-    mv[i] = 0.0;
-    for (unsigned int j = 0; j < 4; ++j) {
-      mv[i] += m[i * 4 + j] * v[j];
-    }
-  }
-}
-
-template <typename REAL>
-void Mult_VecMat4(
-    REAL *mv,
-    const REAL *v,
-    const REAL *m) {
-  for (unsigned int i = 0; i < 4; ++i) {
-    mv[i] = 0.0;
-    for (unsigned int j = 0; j < 4; ++j) {
-      mv[i] += v[j] * m[j * 4 + i];
-    }
-  }
-}
-
-DFM2_INLINE void CalcInvMat(
-    double *a,
-    const unsigned int n,
-    int &info)
-{
-  double tmp1;
-
-  info = 0;
-  unsigned int i, j, k;
-  for (i = 0; i < n; i++) {
-    if (fabs(a[i * n + i]) < 1.0e-30) {
-      info = 1;
-      return;
-    }
-    if (a[i * n + i] < 0.0) {
-      info--;
-    }
-    tmp1 = 1.0 / a[i * n + i];
-    a[i * n + i] = 1.0;
-    for (k = 0; k < n; k++) {
-      a[i * n + k] *= tmp1;
-    }
-    for (j = 0; j < n; j++) {
-      if (j != i) {
-        tmp1 = a[j * n + i];
-        a[j * n + i] = 0.0;
-        for (k = 0; k < n; k++) {
-          a[j * n + k] -= tmp1 * a[i * n + k];
-        }
-      }
-    }
-  }
-}
-
 
 void RayTracing(
     std::vector<unsigned char>& aRGB,
@@ -93,26 +34,33 @@ void RayTracing(
     const std::vector<double>& aXYZ, // 3d points
     const std::vector<unsigned int>& aTri )
 {
-  double mMVinv[16]; for(int i=0;i<16;++i){ mMVinv[i] = mMV[i]; }
-  int info; CalcInvMat(mMVinv,4,info);
+  double mMVd[16]; for(int i=0;i<16;++i){ mMVd[i] = mMV[i]; }
+  double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv,mMVd);
   //
   const double dir0[4] = {0,0,-1,0};
-  double dir1[4]; Mult_VecMat4(dir1,dir0,mMVinv);
+  double dir1[4];
+  {
+    dfm2::Mult_VecMat4(dir1,dir0,mMVinv);
+    double l1 = dfm2::Length3(dir1);
+    dir1[0] /= l1;
+    dir1[1] /= l1;
+    dir1[2] /= l1;
+  }
   // -----------
   std::vector<unsigned int> aIndElem;
   for(unsigned int ih=0;ih<nheight;++ih){
     for(unsigned int iw=0;iw<nwidth;++iw){
       const double src0[4] = {
-          (float)(-2.f + 4.f/nwidth*(iw+0.5)),
-          (float)(-2.f + 4.f/nheight*(ih+0.5)),
+          (float)(-2.f + 4.f/(float)nwidth*(iw+0.5)),
+          (float)(-2.f + 4.f/(float)nheight*(ih+0.5)),
           (float)(2),
           (float)(1),
       };
-      double src1[4]; Mult_VecMat4(src1,src0,mMVinv);
+      double src1[4]; dfm2::Mult_VecMat4(src1,src0,mMVinv);
       aIndElem.resize(0);
-      dfm2::BVH_GetIndElem_IntersectLine(aIndElem,
-                                         src1, dir1,
-                                         0, aNodeBVH, aAABB);
+      dfm2::BVH_GetIndElem_Predicate(aIndElem,
+          dfm2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>>(src1,dir1),
+          0, aNodeBVH, aAABB);
       delfem2::CPointElemSurf<double> pes;
       if( !aIndElem.empty() ) {
         std::map<double, delfem2::CPointElemSurf<double>> mapDepthPES;

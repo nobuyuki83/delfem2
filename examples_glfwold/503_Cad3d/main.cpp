@@ -66,6 +66,7 @@ void DrawFace_RightSelected
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
     glMaterialf(GL_FRONT, GL_SHININESS, shine);
   }
+  glEnable(GL_NORMALIZE);
   
   ::glEnable(GL_LIGHTING);
   for(std::size_t iface=0;iface<cad.aFace.size();++iface){

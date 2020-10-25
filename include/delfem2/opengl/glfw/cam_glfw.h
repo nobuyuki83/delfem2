@@ -89,19 +89,22 @@ public:
    * @param[out] mP  projection matrix (column major order)
    * @param[in] window glfw window handler
    */
-  void Matrix_MVP(float mMV[16],
-                  float mP[16],
-                  GLFWwindow* window) const
+  void Matrix_MVP(
+      float mMV[16],
+      float mP[16],
+      GLFWwindow* window) const
   {
     float asp;
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     asp = width / (float) height;
-    camera.Affine4f_Projection(mP, asp, 10);
-    camera.Affine4f_ModelView(mMV);
+    camera.Mat4_AffineTransProjection(mP, asp, 10);
+    camera.Mat4_AffineTransModelView(mMV);
   }
-  void PosMouse2D(float& x, float& y,
-                  GLFWwindow* window) const
+  void PosMouse2D(
+      float& x,
+      float& y,
+      GLFWwindow* window) const
   {
     float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
     const float sp0[3] = {(float)mouse_x, (float)mouse_y,0.0};
@@ -111,8 +114,10 @@ public:
     x = src_pick[0];
     y = src_pick[1];
   }
-  void MouseRay(float src[3], float dir[3],
-                GLFWwindow* window) const
+  void MouseRay(
+      float src[3],
+      float dir[3],
+      GLFWwindow* window) const
   {
     float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
     {
@@ -126,8 +131,11 @@ public:
                                            dir0, mMV,mP);
     }
   }
-  void RayMouseMove(float src0[3], float src1[3], float dir[3],
-                    GLFWwindow* window) const
+  void RayMouseMove(
+      float src0[3],
+      float src1[3],
+      float dir[3],
+      GLFWwindow* window) const
   {
     float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
     {
