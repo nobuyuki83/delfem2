@@ -228,14 +228,14 @@ public:
       ::glLoadIdentity();
       float mP[16];
       double depth = camera.view_height/(camera.scale*tan(0.5*camera.fovy*3.1415/180.0));
-      camera.Affine4f_Projection(mP, (double)win_w/win_h, depth);
+      camera.Mat4_AffineTransProjection(mP, (double)win_w/win_h, depth);
       ::glMultMatrixf(mP);
     }
     {
       ::glMatrixMode(GL_MODELVIEW);
       ::glLoadIdentity();
       float mMV[16];
-      camera.Affine4f_ModelView(mMV);
+      camera.Mat4_AffineTransModelView(mMV);
       ::glMultMatrixf(mMV);
     }
   }

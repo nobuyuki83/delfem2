@@ -135,7 +135,7 @@ void DrawRectangle_FullCanvas_oldGL()
 void delfem2::opengl::CTexRGB::InitGL()
 {
   if( id_tex == 0 ){ ::glGenTextures(1, &id_tex); }
-  std::cout << "initialize gl ctexrgb" << id_tex << std::endl;
+  // std::cout << "initialize gl ctexrgb" << id_tex << std::endl;
   glBindTexture(GL_TEXTURE_2D, id_tex);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

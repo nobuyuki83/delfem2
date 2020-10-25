@@ -156,10 +156,9 @@ public:
     CVec3<REAL> dir = (CG_Tri3(pes.itri, aTri, aXYZ)-p0).Normalize();
     if( (q0-p0)*n1 < 0 ){ dir = -dir; } // probaby outside so shoot ray outside
     std::vector<unsigned int> aIndElem;
-    double ps0[3]; p0.CopyTo(ps0);
-    double pd0[3]; dir.CopyTo(pd0);
-    BVH_GetIndElem_IntersectRay(aIndElem, ps0, pd0,
-                                iroot_bvh, aNodeBVH, aBB_BVH);
+    BVH_GetIndElem_Predicate(aIndElem,
+        CIsBV_IntersectRay<BV>(p0.p, dir.p),
+        iroot_bvh, aNodeBVH, aBB_BVH);
     std::map<double,CPointElemSurf<REAL>> mapDepthPES1;
     IntersectionRay_MeshTri3DPart(mapDepthPES1,
                                   p0, dir,

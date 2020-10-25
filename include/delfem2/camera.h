@@ -23,24 +23,40 @@
 
 namespace delfem2{
 
-DFM2_INLINE void glhFrustumf2(
+template <typename REAL>
+DFM2_INLINE void Mult_MatVec4(
+    REAL *mv,
+    const REAL *m,
+    const REAL *v);
+
+template <typename REAL>
+DFM2_INLINE void Mult_VecMat4(
+    REAL *mv,
+    const REAL *v,
+    const REAL *m);
+
+DFM2_INLINE void Inverse_Mat4(
+    double minv[16],
+    const double m[16]);
+
+DFM2_INLINE void Mat4_AffineTransProjectionFrustum(
     float *matrix, float left, float right, float bottom, float top,
     float znear, float zfar);
-DFM2_INLINE void glhPerspectivef2(
+
+DFM2_INLINE void Mat4_AffineTransProjectionPerspective(
     float *matrix, float fovyInDegrees, float aspectRatio,
     float znear, float zfar);
 
-DFM2_INLINE void glhTranslatef2(
+DFM2_INLINE void MultMat4AffineTransTranslateFromRight(
     float *matrix, float x, float y, float z);
 
-DFM2_INLINE void glhLookAtf2(
+DFM2_INLINE void Mat4_AffineTransLookAt(
     float *matrix,
     float eyex, float eyey, float eyez,
     float cntx, float cnty, float cntz,
     float upx, float upy, float upz );
 
 // ----------------------------------------------------
-
 
 DFM2_INLINE void screenUnProjection(
     float vout[3],
@@ -89,8 +105,8 @@ public:
   // -----------------------
   // cost methods from here
   
-  void Affine4f_Projection(float mP[16], double asp, double depth) const;
-  void Affine4f_ModelView(float mMV[16]) const;
+  void Mat4_AffineTransProjection(float mP[16], double asp, double depth) const;
+  void Mat4_AffineTransModelView(float mMV[16]) const;
   
   // ------------------------
   
