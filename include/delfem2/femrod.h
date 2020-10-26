@@ -19,12 +19,12 @@ namespace delfem2 {
  * @brief energy W and its derivative dW and second derivative ddW
  * where W = a^T R(dn) b(theta)
  */
-DFM2_INLINE void RodFrameTrans
-(CVec3d frm[3],
- const CVec3d& S0,
- const CVec3d& V01,
- const CVec3d& du,
- double dtheta);
+DFM2_INLINE void RodFrameTrans(
+    CVec3d frm[3],
+    const CVec3d& S0,
+    const CVec3d& V01,
+    const CVec3d& du,
+    double dtheta);
 
 /**
  * @param dF_dv (out) how i-th frame axis moves w.r.t the movement of the edge

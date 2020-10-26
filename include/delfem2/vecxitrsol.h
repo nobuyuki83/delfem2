@@ -25,30 +25,30 @@ namespace delfem2 {
  *@details defiend for "double", "float", "std::complex<double>". Inner product of complex value using conjugate value
  */
 template<typename T>
-T DotX
- (const T *va,
-  const T *vb,
-  size_t n);
+T DotX(
+    const T *va,
+    const T *vb,
+    size_t n);
 
 template<typename T>
-T Dot
- (const std::vector<T> &r_vec,
-  const std::vector<T> &u_vec);
+T Dot(
+    const std::vector<T> &r_vec,
+    const std::vector<T> &u_vec);
 
 /**
  * @brief Eucledian distance
  */
 template<typename T>
-T Distance
- (const std::vector<T> &r_vec,
-  const std::vector<T> &u_vec);
+T Distance(
+    const std::vector<T> &r_vec,
+    const std::vector<T> &u_vec);
 
 
 template <typename T>
-void ScaleX
- (T *p0,
-  T s,
-  unsigned int n);
+void ScaleX(
+    T *p0,
+    T s,
+    unsigned int n);
 
 template<typename T>
 void XPlusAY(
@@ -82,10 +82,10 @@ void setRHS_Zero(
     const std::vector<int> &aBCFlag,
     int iflag_nonzero);
 
-std::complex<double> MultSumX
- (const std::complex<double> *va,
-  const std::complex<double> *vb,
-  unsigned int n);
+std::complex<double> MultSumX(
+    const std::complex<double> *va,
+    const std::complex<double> *vb,
+    unsigned int n);
 
 void XPlusAYBZ(
     std::vector<double> &X,
@@ -107,10 +107,14 @@ void XPlusAYBZCW(
     double gamma,
     const std::vector<double> &W);
 
-void NormalizeX(double *p0, unsigned int n);
+void NormalizeX(
+    double *p0,
+    unsigned int n);
 
-void OrthogonalizeToUnitVectorX(double *p1,
-                                const double *p0, unsigned int n);
+void OrthogonalizeToUnitVectorX(
+    double *p1,
+    const double *p0,
+    unsigned int n);
 
 // set boundary condition
 
@@ -119,9 +123,10 @@ void setRHS_MasterSlave(
     unsigned int nDoF,
     const unsigned int *aMSFlag);
 
-void MatVec(double* y,
-            const double* A, unsigned int ncol, unsigned int nrow,
-            const double* x);
+void MatVec(
+    double* y,
+    const double* A, unsigned int ncol, unsigned int nrow,
+    const double* x);
 
 /**
  * @param y vector size of nrow

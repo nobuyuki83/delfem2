@@ -24,8 +24,7 @@ addons:
     - libglew-dev
 
 script: |
-  git submodule init
-  git submodule update
+  git submodule update --init --recursive
 
   # ----------------
   # test cpp
