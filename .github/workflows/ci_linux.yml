@@ -105,6 +105,8 @@ jobs:
         echo # --------------------------
         echo # build c++ glut examples
 
+        sudo apt-get install freeglut3-dev 
+
         cd examples_glut
         mkdir buildMake && cd buildMake
         cmake ..
