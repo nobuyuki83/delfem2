@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <climits>
 #include <set>
 #include <random>
 #include "delfem2/mshmisc.h"
