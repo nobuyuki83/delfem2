@@ -55,7 +55,7 @@ script: |
   mkdir buildMake
   cd buildMake
   cmake ..
-  make -i
+  make
   cd ../..
 
   # -------------------------
@@ -68,23 +68,23 @@ script: |
   cd examples_glfwold
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=ON ..
-  make -i
+  make
   cd ../..
 
   cd examples_glfwold
   mkdir buildMakeStatic && cd buildMakeStatic
   cmake -DUSE_HEADERONLY=OFF ..
-  make -i
+  make
   cd ../..
 
   cd examples_glfwnew
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=ON ..
-  make -i
+  make
   cd ../..
 
   cd examples_glfwnew
   mkdir buildMakeStatic && cd buildMakeStatic
   cmake -DUSE_HEADERONLY=OFF ..
-  make -i
+  make
   cd ../..

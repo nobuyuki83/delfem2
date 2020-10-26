@@ -622,7 +622,7 @@ delfem2::CPointElemSurf<T> delfem2::Nearest_Point_MeshTri3D
       pes = CPointElemSurf<T>((int)it,r0,r1);
     }
   }
-  assert( pes.itri != -1 );
+  assert( pes.itri != UINT_MAX );
   return pes;
 }
 template delfem2::CPointElemSurf<double> delfem2::Nearest_Point_MeshTri3D

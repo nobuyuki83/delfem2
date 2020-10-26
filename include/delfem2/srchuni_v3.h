@@ -10,7 +10,8 @@
 #define DFM2_SRCHUNI_V3_H
 
 #include "delfem2/dfm2_inline.h"
-#include <stdio.h>
+#include <cstdio>
+#include <climits>
 #include <map>
 #include "delfem2/vec3.h"
 
@@ -77,8 +78,9 @@ public:
 };
   
 template <typename T>
-std::ostream &operator << (std::ostream &output,
-                           const CPointElemSurf<T>& v)
+std::ostream &operator << (
+    std::ostream &output,
+    const CPointElemSurf<T>& v)
 {
   output.setf(std::ios::scientific);
   output << v.itri << " " << v.r0 << " " << v.r1;
@@ -86,8 +88,10 @@ std::ostream &operator << (std::ostream &output,
 }
 
 template <typename T>
-std::istream &operator >> (std::istream &input,
-                           CPointElemSurf<T>& v){
+std::istream &operator >> (
+    std::istream &input,
+    CPointElemSurf<T>& v)
+{
   input>>v.itri>>v.r0>>v.r1;
   return input;
 }
