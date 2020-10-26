@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <climits>
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/camera.h"
@@ -82,7 +83,7 @@ int main(int argc,char* argv[])
     std::vector<dfm2::CCubeGrid> aCubeGrid;
     const double elen = 1.0;
     dfm2::CVec3d org;
-    int icube_picked = -1;
+    unsigned int icube_picked = -1;
     int iface_picked = -1;
     enum EDIT_MODE {
       EDIT_NONE,

@@ -9,12 +9,14 @@
 #include "delfem2/vec3.h"
 #include "delfem2/gridcube.h"
 
-void delfem2::Pick_CubeGrid
- (int& icube_pic, int& iface_pic,
-  const double src_pic_[3], const double dir_pic_[3],
-  double elen,
-  const double org_[3],
-  const std::vector<CCubeGrid>& aCube)
+void delfem2::Pick_CubeGrid(
+    unsigned int& icube_pic,
+    int& iface_pic,
+    const double src_pic_[3],
+    const double dir_pic_[3],
+    double elen,
+    const double org_[3],
+    const std::vector<CCubeGrid>& aCube)
 {
   const int noelElemFace_Vox[8][4] = { // this numbering is corresponds to VTK_VOX
     { 0, 4, 6, 2 }, // -x

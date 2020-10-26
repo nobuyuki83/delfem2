@@ -40,9 +40,9 @@ DFM2_INLINE void DrawJoints(
     const std::vector<double>& aJntPos,
     const std::vector<int>& aIndBoneParent);
 
-DFM2_INLINE void Draw
- (CGizmo_Rig<float>& giz,
-  const std::vector<CRigBone>& aBone);
+DFM2_INLINE void Draw(
+    CGizmo_Rig<float>& giz,
+    const std::vector<CRigBone>& aBone);
 
 }
 }

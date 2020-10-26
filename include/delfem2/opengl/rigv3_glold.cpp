@@ -14,10 +14,8 @@
 #elif defined(_WIN32) // windows
 #  include <windows.h>
 #  include <GL/gl.h>
-#  include <GL/glu.h>
 #else
 #  include <GL/gl.h>
-#  include <GL/glu.h>
 #endif
 
 #include "delfem2/opengl/funcs_glold.h"
@@ -32,13 +30,13 @@
 
 // -------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::Draw_RigBone
-(int ibone,
- bool is_selected,
- int ielem_selected,
- const std::vector<CRigBone>& aBone,
- double rad_bone_sphere,
- double rad_rot_hndlr)
+DFM2_INLINE void delfem2::opengl::Draw_RigBone(
+    int ibone,
+    bool is_selected,
+    int ielem_selected,
+    const std::vector<CRigBone>& aBone,
+    double rad_bone_sphere,
+    double rad_rot_hndlr)
 {
   { // draw point
     if(is_selected){ ::glColor3d(0,1,1); }
@@ -57,12 +55,12 @@ DFM2_INLINE void delfem2::opengl::Draw_RigBone
   }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBone
-(const std::vector<CRigBone>& aBone,
- int ibone_selected,
- int ielem_selected,
- double rad_bone_sphere,
- double rad_rot_hndlr)
+DFM2_INLINE void delfem2::opengl::DrawBone(
+    const std::vector<CRigBone>& aBone,
+    int ibone_selected,
+    int ielem_selected,
+    double rad_bone_sphere,
+    double rad_rot_hndlr)
 {
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
@@ -111,9 +109,9 @@ DFM2_INLINE void delfem2::opengl::DrawJoints(
 }
 
 
-DFM2_INLINE void delfem2::opengl::Draw
-(CGizmo_Rig<float>& giz,
- const std::vector<CRigBone>& aBone)
+DFM2_INLINE void delfem2::opengl::Draw(
+    CGizmo_Rig<float>& giz,
+    const std::vector<CRigBone>& aBone)
 {
   if( giz.mode_edit == CGizmo_Rig<float>::MODE_EDIT::TRNSL ){ // translation
     giz.gizmo_trnsl.pos[0] = aBone[0].transRelative[0];

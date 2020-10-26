@@ -41,11 +41,14 @@ public:
 };
 
 
-void Pick_CubeGrid(int& icube_pic, int& iface_pic,
-                   const double src_pic[3], const double dir_pic_[3],
-                   double elen,
-                   const double org[3],
-                   const std::vector<CCubeGrid>& aCube);
+void Pick_CubeGrid(
+    unsigned int& icube_pic,
+    int& iface_pic,
+    const double src_pic[3],
+    const double dir_pic_[3],
+    double elen,
+    const double org[3],
+    const std::vector<CCubeGrid>& aCube);
 void Adj_CubeGrid(int& ivx, int& ivy, int& ivz,
                   int ivox, int iface,
                   std::vector<CCubeGrid>& aCube);
