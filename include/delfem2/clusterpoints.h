@@ -13,6 +13,7 @@
 #ifndef DFM2_CLUSTERPOINTS_H
 #define DFM2_CLUSTERPOINTS_H
 #include "delfem2/dfm2_inline.h"
+#include <vector>
 
 namespace delfem2{
 
