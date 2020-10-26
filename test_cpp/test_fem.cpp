@@ -68,12 +68,11 @@ TEST(objfunc_v23, Bend)
   std::mt19937 randomEng(randomDevice());
   std::uniform_real_distribution<double> randomDist(0,1);
   // ----
-  dfm2::CVec3d p[4];
-  for(auto & pi : p){
-    pi.p[0] = randomDist(randomEng);
-    pi.p[1] = randomDist(randomEng);
-    pi.p[2] = randomDist(randomEng);
-  }
+  const dfm2::CVec3d p[4] = {
+      dfm2::CVec3d::Random(randomDist,randomEng),
+      dfm2::CVec3d::Random(randomDist,randomEng),
+      dfm2::CVec3d::Random(randomDist,randomEng),
+      dfm2::CVec3d::Random(randomDist,randomEng) };
   double C; dfm2::CVec3d dC[4];
   GetConstConstDiff_Bend(C, dC, p[0], p[1], p[2], p[3]);
   for(int ino=0;ino<4;++ino){
@@ -85,7 +84,7 @@ TEST(objfunc_v23, Bend)
       GetConstConstDiff_Bend(C1, dC1, p1[0],p1[1],p1[2],p1[3]);
       double val0 = (C1-C)/eps;
       double val1 = dC[ino][idim];
-      EXPECT_NEAR( val0, val1, fabs(val1)*3.0e-3 );
+      EXPECT_NEAR( val0, val1, fabs(val1)*1.0e-2 );
     }
   }
 }
