@@ -59,7 +59,7 @@ jobs:
       run: |
         sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
         sudo apt-get install libxmu-dev xorg-dev
-        sudo apt-get libglfw3-dev 
+        sudo apt-get install libglfw3-dev 
         sudo apt-get install libopenal-dev
         sudo apt-get install libgl1-mesa-dev
 
