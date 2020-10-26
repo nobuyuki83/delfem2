@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <climits>
 #include <vector>
 #include <set>
 #include "delfem2/clusterpoints.h"

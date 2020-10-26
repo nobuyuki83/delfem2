@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <climits>
+#include <cassert>
 
 namespace delfem2 {
 

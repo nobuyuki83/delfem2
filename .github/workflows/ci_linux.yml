@@ -55,14 +55,19 @@ jobs:
         ./runUnitTests
         cd ../../    
 
-    - name: test_glfw_glold
+    - name: build_glfw
       run: |
-        echo # -------------------------
-        echo # build C++ glfw examples
+        sudo apt-get install libxrandr-dev
+        
         cd 3rd_party/glfw
         cmake .
         make
         cd ../..
+
+    - name: test_glfw_glold
+      run: |
+        echo # -------------------------
+        echo # build C++ glfw examples
 
         cd examples_glfwold
         mkdir buildMakeHdronly && cd buildMakeHdronly
