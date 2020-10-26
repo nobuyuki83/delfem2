@@ -128,11 +128,13 @@ public:
     return pes;
   }
     // inside positive
-  double SignedDistanceFunction(CVec3<REAL>& n0,
-                                const CVec3<REAL>& p0,
-                                const std::vector<double>& aXYZ,
-                                const std::vector<unsigned int>& aTri,
-                                const std::vector<double>& aNorm) const
+  double SignedDistanceFunction(
+      CVec3<REAL>& n0,
+      //
+      const CVec3<REAL>& p0,
+      const std::vector<double>& aXYZ,
+      const std::vector<unsigned int>& aTri,
+      const std::vector<double>& aNorm) const
   {
     assert( aBB_BVH.size() == aNodeBVH.size() );
     CPointElemSurf<REAL> pes;
@@ -180,12 +182,13 @@ public:
 };
   
 template <typename T, typename REAL>
-void Project_PointsIncludedInBVH_Outside(std::vector<double>& aXYZt,
-                                         double cc,
-                                         const CBVH_MeshTri3D<T,REAL>& bvh,
-                                         const std::vector<double>& aXYZ0,
-                                         const std::vector<unsigned int>& aTri0,
-                                         const std::vector<double>& aNorm0);
+void Project_PointsIncludedInBVH_Outside(
+    std::vector<double>& aXYZt,
+    double cc,
+    const CBVH_MeshTri3D<T,REAL>& bvh,
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri0,
+    const std::vector<double>& aNorm0);
   
 template <typename REAL>
 class CInfoNearest
@@ -233,16 +236,17 @@ void delfem2::BVH_NearestPoint_MeshTri3D(
   double min0, max0;
   aBB[ibvh].Range_DistToPoint(min0,max0, px,py,pz);
   assert( min0 >= 0 && max0 >= min0 );
-  ////
+  //
   if( dist_min>=0 && min0>dist_min ){ return; }
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == UINT_MAX ){ // leaf
     const unsigned int itri0 = ichild0;
     CPointElemSurf<REAL> pes_tmp;
-    double dist = DistanceToTri(pes_tmp,
-                                CVec3<REAL>(px,py,pz),
-                                itri0, aXYZ,aTri);
+    double dist = DistanceToTri(
+        pes_tmp,
+        CVec3<REAL>(px,py,pz),
+        itri0, aXYZ,aTri);
     if( dist_min<0 || dist < dist_min ){
       dist_min = dist;
       pes = pes_tmp;
@@ -273,18 +277,20 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
   aBB[ibvh].Range_DistToPoint(min0,max0,
                               px,py,pz);
   if( min0 > rad_exp ){ return; }
-  ////
-  const int ichild0 = aBVH[ibvh].ichild[0];
-  const int ichild1 = aBVH[ibvh].ichild[1];
+  //
+  const unsigned int ichild0 = aBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == UINT_MAX ){ // leaf
     if( min0 < dist_bv ){ dist_bv = min0; }
     if( min0 == 0.0 ){
       dist_bv = 0.0;
       const unsigned int itri0 = ichild0;
       CPointElemSurf<REAL> pes_tmp;
-      const double dist0 = DistanceToTri(pes_tmp,
-                                         CVec3<REAL>(px,py,pz),
-                                         itri0, aXYZ,nXYZ, aTri,nTri);
+      const double dist0 = DistanceToTri(
+          pes_tmp,
+          //
+          CVec3<REAL>(px,py,pz),
+          itri0, aXYZ,nXYZ, aTri,nTri);
       if( dist_tri<0 || dist0 < dist_tri ){
         dist_tri = dist0;
         pes = pes_tmp;
@@ -292,14 +298,18 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     }
     return;
   }
-  BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes,
-                                           px,py,pz,rad_exp,
-                                           aXYZ,nXYZ,aTri,nTri,
-                                           ichild0,aBVH,aBB);
-  BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri,dist_bv, pes,
-                                           px,py,pz,rad_exp,
-                                           aXYZ,nXYZ,aTri,nTri,
-                                           ichild1,aBVH,aBB);
+  BVH_NearestPoint_IncludedInBVH_MeshTri3D(
+      dist_tri,dist_bv, pes,
+      //
+      px,py,pz,rad_exp,
+      aXYZ,nXYZ,aTri,nTri,
+      ichild0,aBVH,aBB);
+  BVH_NearestPoint_IncludedInBVH_MeshTri3D(
+      dist_tri,dist_bv, pes,
+      //
+      px,py,pz,rad_exp,
+      aXYZ,nXYZ,aTri,nTri,
+      ichild1,aBVH,aBB);
 }
 
 // ----------------------
