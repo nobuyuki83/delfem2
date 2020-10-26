@@ -9,8 +9,8 @@
 #include <cstdlib>
 #include <set>
 #include <random>
-//
 #include "delfem2/sampler.h"
+//
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"

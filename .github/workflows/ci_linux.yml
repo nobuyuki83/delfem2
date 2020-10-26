@@ -20,7 +20,11 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: checkout repository
-      uses: actions/checkout@v2          
+      uses: actions/checkout@v2   
+
+    - name: download_dependencies
+      run: |
+        git submodule update --init --recursive       
 
     - name: test_cpp
       run: |

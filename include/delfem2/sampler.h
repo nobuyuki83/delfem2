@@ -8,6 +8,9 @@
 #ifndef DFM2_SAMPLER_H
 #define DFM2_SAMPLER_H
 
+#include <vector>
+#include <climits>
+
 namespace delfem2 {
 
 /**
