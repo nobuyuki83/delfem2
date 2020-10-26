@@ -402,7 +402,8 @@ void delfem2::CCad3D_Face::Initialize(
       aXYZ_B1.push_back(p0.z());
     }
     const unsigned nep = e0.aP.size();
-    for(int iep=0;iep<nep-1;++iep){
+    assert( nep > 0 );
+    for(unsigned int iep=0;iep<nep-1;++iep){
       unsigned int iep0 = (dir0) ? iep : nep-1-iep;
       double ratio = (double)iep0/(nep-1.0);
       CVec3d pep = (1-ratio)*e0.p0 + ratio*e0.p1;
@@ -611,20 +612,21 @@ void delfem2::CCad3D_Face::MovePoints
 
 // ---------------------------------------------
 
-int delfem2::AddPointEdge
-(int ie_div, double ratio_edge,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen)
+unsigned int delfem2::AddPointEdge(
+    unsigned int ie_div,
+    double ratio_edge,
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    double elen)
 {
-  if( ie_div < 0 || ie_div >= aEdge.size() ) return -1;
-  if (ratio_edge < 0.01||ratio_edge > 0.99) return -1;
-  const int iv_new = (int)aVertex.size();
+  if( ie_div >= aEdge.size() ) return UINT_MAX;
+  if (ratio_edge < 0.01 || ratio_edge > 0.99) return UINT_MAX;
+  const unsigned int iv_new = aVertex.size();
   {
     CVec3d nv;
     for (const auto & fc : aFace){
-      for (int ie = 0; ie<fc.aIE.size(); ++ie){
+      for (unsigned int ie = 0; ie<fc.aIE.size(); ++ie){
         if (fc.aIE[ie].first!=ie_div) continue;         
         CVec3d cg, nf;
         cad3d::FaceCenterNormal(cg, nf, fc.aIE, aEdge);
@@ -649,7 +651,7 @@ int delfem2::AddPointEdge
     aEdge[ie_div].iv1 = iv_new;
     aEdge[ie_div].Initialize(aVertex,elen);
   }
-  const int ie_new = (int)aEdge.size();
+  const unsigned int ie_new = aEdge.size();
   aEdge.emplace_back(iv_new,iv1,aEdge[ie_div].is_sim,aEdge[ie_div].inorm );
   aEdge[ie_new].Initialize(aVertex,elen);
   
@@ -911,13 +913,14 @@ void delfem2::AddSphere_XSym
 
 
 
-bool delfem2::FindFittingPoint
-(CVec2d& p2d_near,
- CVec2d& p2d_norm,
- const CVec2d& p2d_org,
- const std::vector<CVec2d>& aP2D,
- bool isConstX, bool isConstY,
- double half_view_height)
+bool delfem2::FindFittingPoint(
+    CVec2d& p2d_near,
+    CVec2d& p2d_norm,
+    const CVec2d& p2d_org,
+    const std::vector<CVec2d>& aP2D,
+    bool isConstX,
+    bool isConstY,
+    double half_view_height)
 {
   bool isHit = false;
   if( isConstX &&  isConstY ){ return false; }

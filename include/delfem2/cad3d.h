@@ -230,11 +230,13 @@ public:
   std::vector<CFacePointInfo> aPInfo;
 };
 
-int AddPointEdge(int ie_div, double ratio_edge,
-                 std::vector<CCad3D_Vertex>& aVertex,
-                 std::vector<CCad3D_Edge>& aEdge,
-                 std::vector<CCad3D_Face>& aFace,
-                 double elen);
+unsigned int AddPointEdge(
+    unsigned int ie_div,
+    double ratio_edge,
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    double elen);
 
 void ConectEdge(int iv0, int iv1, int iface_div, int inorm_new,
                 std::vector<CCad3D_Vertex>& aVertex,
@@ -270,12 +272,13 @@ void AddCube(std::vector<CCad3D_Vertex>& aVertex,
              std::vector<CCad3D_Face>& aFace,
              double elen);
 
-bool FindFittingPoint(CVec2d& p2d_near,
-                      CVec2d& p2d_norm,
-                      const CVec2d& p2d_org,
-                      const std::vector<CVec2d>& aP2D,
-                      bool isConstX, bool isConstY,
-                      double half_view_height);
+bool FindFittingPoint(
+    CVec2d& p2d_near,
+    CVec2d& p2d_norm,
+    const CVec2d& p2d_org,
+    const std::vector<CVec2d>& aP2D,
+    bool isConstX, bool isConstY,
+    double half_view_height);
 
 std::vector<int> getPointsInEdges(
     const std::vector< std::pair<unsigned int,bool > >& aIE_picked,
@@ -293,24 +296,24 @@ bool MovePointsAlongSketch(
     float mPj[16],
     double view_height);
 
-void DivideFace
-(int ifc,
- const CVec3d& org, int inorm,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- double elen);
+void DivideFace(
+    int ifc,
+    const CVec3d& org, int inorm,
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    double elen);
 
-void BuildTriMesh
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTri,
- std::vector<unsigned int>& aTriSuTri,
- std::vector<double>& aNorm,
- //
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- int isym);
+void BuildTriMesh(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    std::vector<unsigned int>& aTriSuTri,
+    std::vector<double>& aNorm,
+    //
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    int isym);
 
 void UpdateTriMesh
 (std::vector<double>& aXYZ,
