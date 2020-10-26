@@ -56,9 +56,9 @@ void DrawEdge(const dfm2::CCad3D_Face& cf)
   dfm2::opengl::DrawMeshTri3D_Edge(cf.aXYZ, cf.aTri);
 }
 
-void DrawFace_RightSelected
- (const dfm2::CCad3D& cad,
-  bool is_edge)
+void DrawFace_RightSelected(
+    const dfm2::CCad3D& cad,
+    bool is_edge)
 {
   {
     float specular[4] ={ 0.797357f, 0.723991f, 0.208006f, 1.0f};
@@ -194,7 +194,7 @@ void DrawVtxEdgeHandler
   {
     const std::vector<dfm2::CCad3D_Edge>& aEdge = cad.aEdge;
     dfm2::opengl::myGlColorDiffuse(dfm2::CColor::Blue());
-    for(int ie=0;ie<(int)aEdge.size();++ie){
+    for(unsigned int ie=0;ie<aEdge.size();++ie){
       bool is_loop0 = std::find(cad.aIE_picked.begin(), cad.aIE_picked.end(), std::make_pair(ie,true ) ) != cad.aIE_picked.end();
       bool is_loop1 = std::find(cad.aIE_picked.begin(), cad.aIE_picked.end(), std::make_pair(ie,false) ) != cad.aIE_picked.end();
       bool is_loop = is_loop0 || is_loop1;

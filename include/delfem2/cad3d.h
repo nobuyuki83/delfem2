@@ -246,10 +246,11 @@ void MakeItSmooth(std::vector<CCad3D_Vertex>& aVertex,
                   std::vector<CCad3D_Edge>& aEdge,
                   std::vector<CCad3D_Face>& aFace);
 
-void findEdgeGroup(std::vector< std::pair<int,bool> >& aIE,
-                   int iedge0,
-                   std::vector<CCad3D_Vertex>& aVertex,
-                   std::vector<CCad3D_Edge>& aEdge);
+void findEdgeGroup(
+    std::vector< std::pair<unsigned int,bool> >& aIE,
+    unsigned int iedge0,
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge);
 
 void AddSphere_XSym(std::vector<CCad3D_Vertex>& aVertex,
                     std::vector<CCad3D_Edge>& aEdge,
@@ -276,18 +277,21 @@ bool FindFittingPoint(CVec2d& p2d_near,
                       bool isConstX, bool isConstY,
                       double half_view_height);
 
-std::vector<int> getPointsInEdges
-(const std::vector< std::pair<int,bool > >& aIE_picked,
- const std::vector<CCad3D_Edge>& aEdge);
+std::vector<int> getPointsInEdges(
+    const std::vector< std::pair<unsigned int,bool > >& aIE_picked,
+    const std::vector<CCad3D_Edge>& aEdge);
 
-bool MovePointsAlongSketch
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- const std::vector<CVec2d>& aStroke,
- const std::vector< std::pair<int,bool > >& aIE_picked,
- const CVec3d& plane_org, int inorm,
- float mMV[16], float mPj[16], double view_height);
+bool MovePointsAlongSketch(
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    const std::vector<CVec2d>& aStroke,
+    const std::vector< std::pair<unsigned int,bool> >& aIE_picked,
+    const CVec3d& plane_org,
+    int inorm,
+    float mMV[16],
+    float mPj[16],
+    double view_height);
 
 void DivideFace
 (int ifc,
@@ -423,7 +427,7 @@ public:
   int iedge_picked;
   int ielem_edge_picked; // 0:JustPicked, 1:PlaneEdgePickedd, 2:BezierHandlerA, 3:BezierHandlerB
   double ratio_edge_picked;
-  std::vector< std::pair<int,bool > > aIE_picked;
+  std::vector< std::pair<unsigned int,bool > > aIE_picked;
   
   int plane_inorm; // if it is 0,1,2 it shouws plane
   CVec3d plane_org;
