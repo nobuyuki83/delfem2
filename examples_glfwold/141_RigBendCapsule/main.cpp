@@ -50,13 +50,13 @@ int main(int argc,char* argv[])
   }
   std::vector<double> aW;
   {
-    unsigned int np = aXYZ0.size()/3;
-    unsigned int nb = aBone.size();
+    const unsigned int np = aXYZ0.size()/3;
+    const unsigned int nb = aBone.size();
     aW.resize(np*nb);
-    for(int ip=0;ip<aXYZ0.size()/3;++ip) {
+    for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip) {
       const double* p0 = aXYZ0.data()+ip*3;
       double w_tot = 0;
-      for(int ib=0;ib<nb;++ib){
+      for(unsigned int ib=0;ib<nb;++ib){
         double pb[3] = {
             -aBone[ib].invBindMat[3],
             -aBone[ib].invBindMat[7],
@@ -66,14 +66,13 @@ int main(int argc,char* argv[])
         aW[ip*nb+ib] = wb;
         w_tot += wb;
       }
-      for(int ib=0;ib<nb;++ib) {
+      for(unsigned int ib=0;ib<nb;++ib) {
         aW[ip*nb+ib] /= w_tot;
       }
     }
   }
   // ------
   std::vector<double> aXYZ1 = aXYZ0;
-
 
   // ----------------
   dfm2::opengl::CViewer_GLFW viewer;
