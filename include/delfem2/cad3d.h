@@ -423,7 +423,7 @@ public:
 
   // ---------------
   // pick related
-  int ivtx_picked;
+  unsigned int ivtx_picked;
   int ielem_vtx_picked;
   
   // edge related pick
@@ -439,7 +439,7 @@ public:
   std::vector<CVec2d> aStroke;
   
   // face related pick
-  int iface_picked;
+  unsigned int iface_picked;
   
   enum EDIT_MODE {
     EDIT_NONE,

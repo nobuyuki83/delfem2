@@ -33,17 +33,18 @@ void BVH_NearestPoint_MeshTri3D (
   
 // potential maximum distance of the nearest point
 template <typename T, typename REAL>
-void BVH_NearestPoint_IncludedInBVH_MeshTri3D(double& dist_tri, // minimum distance to triangle
-                                              double& dist_bv, // minimum distance to leaf bounding volume
-                                              CPointElemSurf<REAL>& pes,
-                                              //
-                                              double px, double py, double pz,
-                                              double rad_exp, // exploring distance
-                                              const double* aXYZ, unsigned int nXYZ,
-                                              const unsigned int* aTri, unsigned int nTri,
-                                              int ibvh,
-                                              const std::vector<delfem2::CNodeBVH2>& aBVH,
-                                              const std::vector<T>& aBB);
+void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
+    double& dist_tri, // minimum distance to triangle
+    double& dist_bv, // minimum distance to leaf bounding volume
+    CPointElemSurf<REAL>& pes,
+    //
+    double px, double py, double pz,
+    double rad_exp, // exploring distance
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTri, unsigned int nTri,
+    int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<T>& aBB);
 
 template <typename BV, typename REAL>
 class CBVH_MeshTri3D
@@ -99,19 +100,20 @@ public:
         lvm);
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
-  double Nearest_Point_IncludedInBVH(CPointElemSurf<REAL>& pes,
-                                     const CVec3<REAL>& p0,
-                                     double rad_exp, // look leaf inside this radius
-                                     const double* aXYZ, unsigned int nXYZ,
-                                     const unsigned int* aTri, unsigned int nTri) const{
+  double Nearest_Point_IncludedInBVH(
+      CPointElemSurf<REAL>& pes,
+      const CVec3<REAL>& p0,
+      double rad_exp, // look leaf inside this radius
+      const double* aXYZ, unsigned int nXYZ,
+      const unsigned int* aTri, unsigned int nTri) const{
     assert( aBB_BVH.size() == aNodeBVH.size() );
     double dist = -1, dist_min = rad_exp;
-    pes.itri = -1;
+    pes.itri = UINT_MAX;
     delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist,dist_min, pes,
                                                       p0.x(), p0.y(), p0.z(), rad_exp,
                                                       aXYZ, nXYZ, aTri, nTri,
                                                       iroot_bvh, aNodeBVH, aBB_BVH);
-    if( pes.itri == -1 ){ return dist_min; }
+    if( pes.itri == UINT_MAX ){ return dist_min; }
     return dist;
   }
   CPointElemSurf<REAL> NearestPoint_Global(const CVec3<REAL>& p0,
@@ -235,7 +237,7 @@ void delfem2::BVH_NearestPoint_MeshTri3D(
   if( dist_min>=0 && min0>dist_min ){ return; }
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  if( ichild1 == UINT_MAX ){ // leaf
     const unsigned int itri0 = ichild0;
     CPointElemSurf<REAL> pes_tmp;
     double dist = DistanceToTri(pes_tmp,
@@ -274,7 +276,7 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
   ////
   const int ichild0 = aBVH[ibvh].ichild[0];
   const int ichild1 = aBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  if( ichild1 == UINT_MAX ){ // leaf
     if( min0 < dist_bv ){ dist_bv = min0; }
     if( min0 == 0.0 ){
       dist_bv = 0.0;
@@ -318,7 +320,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside(
                                     p0, 0.0,
                                     aXYZ0.data(),aXYZ0.size()/3,
                                     aTri0.data(),aTri0.size()/3);
-    if( pes.itri == -1 ){ continue; }
+    if( pes.itri == UINT_MAX ){ continue; }
     CVec3<REAL> n0;
     double sdf = SDFNormal_NearestPoint(n0,
                                         p0,pes,aXYZ0,aTri0,aNorm0);
@@ -386,7 +388,7 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache(
                                                    aInfoNearest[ip].pos, rad_explore,
                                                    pXYZ0, nXYZ0,
                                                    pTri0, nTri0);
-    if( aInfoNearest[ip].pes.itri == -1 ){
+    if( aInfoNearest[ip].pes.itri == UINT_MAX ){
       if( aInfoNearest[ip].is_active ){
         if( aInfoNearest[ip].sdf < 0 ){ aInfoNearest[ip].sdf = -dist0; }
         else{                           aInfoNearest[ip].sdf = +dist0; }

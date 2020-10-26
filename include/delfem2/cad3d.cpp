@@ -809,7 +809,7 @@ void delfem2::findEdgeGroup(
     int iv0 = deqIE.front().second ? aEdge[ie0].iv0 : aEdge[ie0].iv1;
     int ine0 = aEdge[ie0].inorm;
     assert( iv0 != aEdge[iedge0].iv1 ); // this should not be loop
-    int ndeqIE = (int)deqIE.size(); // prev
+    const unsigned int ndeqIE = deqIE.size(); // prev
     for(std::size_t ie=0;ie<aEdge.size();++ie){
       if( ie == ie0 ) continue;
       if(      aEdge[ie].iv0 == iv0 && aEdge[ie].inorm == ine0){
@@ -1140,13 +1140,13 @@ void delfem2::BuildTriMesh
     assert( iv0>=0 && iv0<(int)aVertex.size() );
     assert( iv1>=0 && iv1<(int)aVertex.size() );
     const std::size_t np = e.aP.size();
-    assert(np>=2);
     e.aIQ_RightLeft.resize(np*2);
     e.aIQ_RightLeft[0*2+0] = aVertex[iv0].iq_right;
     e.aIQ_RightLeft[0*2+1] = aVertex[iv0].iq_left;
     e.aIQ_RightLeft[(np-1)*2+0] = aVertex[iv1].iq_right;
     e.aIQ_RightLeft[(np-1)*2+1] = aVertex[iv1].iq_left;
-    for(int ip=1;ip<np-1;++ip){
+    assert(np>=2);
+    for(unsigned int ip=1;ip<np-1;++ip){
       int iq0 = (int)aXYZ.size()/3;
       aXYZ.push_back(+e.aP[ip].x());
       aXYZ.push_back(+e.aP[ip].y());

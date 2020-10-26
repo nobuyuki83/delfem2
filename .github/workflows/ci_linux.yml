@@ -58,6 +58,7 @@ jobs:
     - name: build_glfw
       run: |
         sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+        sudo apt-get install libgl1-mesa-dev
 
         cd 3rd_party/glfw
         cmake .
