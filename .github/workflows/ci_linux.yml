@@ -57,8 +57,8 @@ jobs:
 
     - name: build_glfw
       run: |
-        sudo apt-get install libxrandr-dev
-        
+        sudo apt-get install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+
         cd 3rd_party/glfw
         cmake .
         make

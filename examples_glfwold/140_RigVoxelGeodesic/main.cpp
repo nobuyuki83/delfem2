@@ -25,10 +25,10 @@ namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-void Draw_CGrid3
-(const dfm2::CGrid3<int>& grid,
- const std::vector<std::pair<double, dfm2::CColor> >& colorMap,
- double thresh)
+void Draw_CGrid3(
+    const dfm2::CGrid3<int>& grid,
+    const std::vector<std::pair<double, dfm2::CColor> >& colorMap,
+    double thresh)
 {
   { // set-up transformation
     const dfm2::CMat4d& am = grid.am;
@@ -70,7 +70,6 @@ int main(int argc,char* argv[])
       std::string(PATH_INPUT_DIR)+"/arm_16k.ply",
       aXYZ0,aTri);
   dfm2::Normalize_Points3(aXYZ0,1.0);
-  
   
   std::vector<dfm2::CRigBone> aBone;
   { // 0
@@ -285,13 +284,13 @@ int main(int argc,char* argv[])
   } // nbone
   {
     unsigned int nb = aBone.size();
-    for(int ip=0;ip<aXYZ0.size()/3;++ip){
+    for(unsigned int ip=0;ip<aXYZ0.size()/3;++ip){
       double w0 = 0.0;
-      for(int ib=0;ib<nb;++ib){
+      for(unsigned int ib=0;ib<nb;++ib){
         w0 += aW[ip*nb+ib];
       }
       w0 = 1.0/w0;
-      for(int ib=0;ib<nb;++ib){
+      for(unsigned int ib=0;ib<nb;++ib){
         aW[ip*nb+ib] *= w0;
 //        std::cout << "   " << aW[ip*nb+ib] << std::endl;
       }

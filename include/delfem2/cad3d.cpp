@@ -380,10 +380,10 @@ bool delfem2::CCad3D_Edge::isPick
 
 // -----------------------------------------------
 
-void delfem2::CCad3D_Face::Initialize
-(const std::vector<CCad3D_Vertex>& aVertex,
- const std::vector<CCad3D_Edge>& aEdge,
- double elen)
+void delfem2::CCad3D_Face::Initialize(
+    const std::vector<CCad3D_Vertex>& aVertex,
+    const std::vector<CCad3D_Edge>& aEdge,
+    double elen)
 {
   aPInfo.resize(0);
   std::vector<double> aXYZ_B0;
@@ -770,23 +770,23 @@ void delfem2::MakeItSmooth
   }
 }
 
-void delfem2::findEdgeGroup
-(std::vector< std::pair<int,bool> >& aIE,
- int iedge0,
- std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge)
+void delfem2::findEdgeGroup(
+    std::vector< std::pair<unsigned int,bool> >& aIE,
+    unsigned int iedge0,
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge)
 {
   aIE.clear();
-  if( iedge0 < 0 || iedge0 >= aEdge.size() ) return;
-  std::deque< std::pair<int,bool> > deqIE;
+  if( iedge0 >= aEdge.size() ) return;
+  std::deque< std::pair<unsigned int,bool> > deqIE;
   deqIE.emplace_back(iedge0,true );
   bool is_loop = false;
   for(;;){
-    const int ie0 = deqIE.back().first;
+    const unsigned int ie0 = deqIE.back().first;
     int iv0 = deqIE.back().second ? aEdge[ie0].iv1 : aEdge[ie0].iv0;
     int ine0 = aEdge[ie0].inorm;
     if( iv0 == aEdge[iedge0].iv0 ){ is_loop = true; break; }
-    int ndeqIE = (int)deqIE.size(); // prev
+    const unsigned int ndeqIE = deqIE.size(); // prev
     for(std::size_t ie=0;ie<aEdge.size();++ie){
       if( ie == ie0 ) continue;
       if(      aEdge[ie].iv0 == iv0 && aEdge[ie].inorm == ine0){
@@ -801,9 +801,9 @@ void delfem2::findEdgeGroup
     if( deqIE.size() == ndeqIE ) break; // couldn't find new one
   }
   if( is_loop ){ aIE.assign(deqIE.begin(), deqIE.end()); return; }
-  ///
+  //
   for(;;){
-    const int ie0 = deqIE.front().first;
+    const unsigned int ie0 = deqIE.front().first;
     int iv0 = deqIE.front().second ? aEdge[ie0].iv0 : aEdge[ie0].iv1;
     int ine0 = aEdge[ie0].inorm;
     assert( iv0 != aEdge[iedge0].iv1 ); // this should not be loop
@@ -969,9 +969,9 @@ bool delfem2::FindFittingPoint
   return true;
 }
 
-std::vector<int> delfem2::getPointsInEdges
-(const std::vector< std::pair<int,bool > >& aIE_picked,
- const std::vector<CCad3D_Edge>& aEdge)
+std::vector<int> delfem2::getPointsInEdges(
+    const std::vector< std::pair<unsigned int,bool> >& aIE_picked,
+    const std::vector<CCad3D_Edge>& aEdge)
 {
   std::vector<int> aIP;
   for(size_t iie=0;iie<aIE_picked.size()+1;++iie){
@@ -990,15 +990,17 @@ std::vector<int> delfem2::getPointsInEdges
   return aIP;
 }
 
-bool delfem2::MovePointsAlongSketch
-(std::vector<CCad3D_Vertex>& aVertex,
- std::vector<CCad3D_Edge>& aEdge,
- std::vector<CCad3D_Face>& aFace,
- // ------------
- const std::vector<CVec2d>& aStroke,
- const std::vector< std::pair<int,bool > >& aIE_picked,
- const CVec3d& plane_org, int inorm,
- float mMV[16], float mPj[16], double view_height)
+bool delfem2::MovePointsAlongSketch(
+    std::vector<CCad3D_Vertex>& aVertex,
+    std::vector<CCad3D_Edge>& aEdge,
+    std::vector<CCad3D_Face>& aFace,
+    // --
+    const std::vector<CVec2d>& aStroke,
+    const std::vector< std::pair<unsigned int,bool> >& aIE_picked,
+    const CVec3d& plane_org, int inorm,
+    float mMV[16],
+    float mPj[16],
+    double view_height)
 {
   // resampling
   std::vector<CVec2d> aStroke1 = Polyline_Resample_Polyline(aStroke,0.025);
@@ -1280,10 +1282,13 @@ void delfem2::UpdateTriMesh
 }
 
 
-void delfem2::CCad3D::Pick
-(const CVec3d& src_pick, const CVec3d& dir_pick,
- const CVec2d& sp0, float mMV[16], float mPj[16],
- double view_height)
+void delfem2::CCad3D::Pick(
+    const CVec3d& src_pick,
+    const CVec3d& dir_pick,
+    const CVec2d& sp0,
+    float mMV[16],
+    float mPj[16],
+    double view_height)
 {
   if (ivtx_picked>=0&&ivtx_picked<(int)aVertex.size()){
     ielem_vtx_picked = 0;
@@ -1362,7 +1367,7 @@ void delfem2::CCad3D::Pick
       }
     }
   }
-  /////
+  //
   plane_inorm = -1;
   iedge_picked = -1;
   aIE_picked.clear();
