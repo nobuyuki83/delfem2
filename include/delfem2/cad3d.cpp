@@ -1293,7 +1293,7 @@ void delfem2::CCad3D::Pick(
     float mPj[16],
     double view_height)
 {
-  if (ivtx_picked>=0&&ivtx_picked<(int)aVertex.size()){
+  if ( ivtx_picked<aVertex.size() ){
     ielem_vtx_picked = 0;
     for (int iaxis = 0; iaxis<3; iaxis++){
       if( aVertex[ivtx_picked].isConst[iaxis] ) continue;
@@ -1307,7 +1307,7 @@ void delfem2::CCad3D::Pick(
       }
     }
   }
-  if( ielem_vtx_picked == 0 || (ivtx_picked<0||ivtx_picked>=(int)aVertex.size()) ){
+  if( ielem_vtx_picked == 0 || ivtx_picked >= aVertex.size() ){
     ivtx_picked = -1;
     for(std::size_t icp=0;icp<aVertex.size();++icp){
       const CVec3d& pos = aVertex[icp].pos;
@@ -1319,7 +1319,7 @@ void delfem2::CCad3D::Pick(
       }
     }
   }
-  if( ivtx_picked>=0&&ivtx_picked<(int)aVertex.size() ){
+  if( ivtx_picked < aVertex.size() ){
     iedge_picked = -1;
     plane_inorm = -1;
     iface_picked = -1;
@@ -1501,7 +1501,7 @@ bool delfem2::CCad3D::MouseMotion
   if( imode_edit == EDIT_MOVE ){
     std::vector<int> aIsMoved_Vtx(aVertex.size(),0);
     std::vector<int> aIsMoved_Edge(aEdge.size(),0);
-    if( ivtx_picked>=0 && ivtx_picked < (int)aVertex.size() ){ // move vtx
+    if( ivtx_picked < aVertex.size() ){ // move vtx
       if( ielem_vtx_picked <= 0 || ielem_vtx_picked > 3 ){ return false; }
       int iaxis = ielem_vtx_picked-1;
       CVec3d axis(0, 0, 0); axis[iaxis] = 1;
