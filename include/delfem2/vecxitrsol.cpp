@@ -9,6 +9,7 @@
 #include <cmath>
 #include <vector>
 #include <complex>
+#include <climits>
 #include "delfem2/vecxitrsol.h"
 
 // ----------------------------------------------------------------------

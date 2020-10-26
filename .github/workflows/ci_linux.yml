@@ -20,4 +20,33 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: checkout repository
-      uses: actions/checkout@v2            
+      uses: actions/checkout@v2          
+
+    - name: test_cpp
+      run: |
+        echo "###################"
+        echo "## build googletest"
+        cd 3rd_party/googletest
+        cmake .
+        make
+        cd ../../
+
+        echo "#############################"
+        echo "## build test hdronly and run"
+        cd test_cpp
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake -DUSE_HEADERONLY=OFF ..
+        make
+        make test 
+        ./runUnitTests
+        cd ../../
+
+        echo "############################"
+        echo "## build test static" 
+        cd test_cpp
+        mkdir buildMakeStatic && cd buildMakeStatic
+        cmake -DUSE_HEADERONLY=ON ..
+        make
+        make test 
+        ./runUnitTests
+        cd ../../    
