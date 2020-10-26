@@ -49,15 +49,30 @@ void Pick_CubeGrid(
     double elen,
     const double org[3],
     const std::vector<CCubeGrid>& aCube);
-void Adj_CubeGrid(int& ivx, int& ivy, int& ivz,
-                  int ivox, int iface,
-                  std::vector<CCubeGrid>& aCube);
-void Add_CubeGrid(std::vector<CCubeGrid>& aVox,
-                  int ivx1, int ivy1, int ivz1);
-void Del_CubeGrid(std::vector<CCubeGrid>& aCube,
-                  int i1, int j1, int k1);
-void AABB_CubeGrid(int aabb[6],
-                   const std::vector<CCubeGrid>& aCube);
+
+void Adj_CubeGrid(
+    int& ivx,
+    int& ivy,
+    int& ivz,
+    int ivox,
+    int iface,
+    std::vector<CCubeGrid>& aCube);
+
+void Add_CubeGrid(
+    std::vector<CCubeGrid>& aVox,
+    int ivx1,
+    int ivy1,
+    int ivz1);
+
+void Del_CubeGrid(
+    std::vector<CCubeGrid>& aCube,
+    int i1,
+    int j1,
+    int k1);
+
+void AABB_CubeGrid(
+    int aabb[6],
+    const std::vector<CCubeGrid>& aCube);
 
 }
 

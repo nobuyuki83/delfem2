@@ -41,7 +41,6 @@ jobs:
         mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake -DUSE_HEADERONLY=OFF ..
         make
-        make test 
         ./runUnitTests
         cd ../../
 
@@ -51,7 +50,6 @@ jobs:
         mkdir buildMakeStatic && cd buildMakeStatic
         cmake -DUSE_HEADERONLY=ON ..
         make
-        make test 
         ./runUnitTests
         cd ../../    
 
@@ -70,8 +68,8 @@ jobs:
 
     - name: test_glfw_glold
       run: |
-        echo # -------------------------
-        echo # build C++ glfw examples
+        echo # -------------------------------------
+        echo # build C++ glfw legacy Opengl examples
 
         cd examples_glfwold
         mkdir buildMakeHdronly && cd buildMakeHdronly
@@ -85,3 +83,30 @@ jobs:
         make
         cd ../..
 
+    - name: test_glfw_glnew
+      run: |
+        echo # -------------------------------------
+        echo # build C++ glfw modern Opengl examples
+
+        cd examples_glfwnew
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake -DUSE_HEADERONLY=ON ..
+        make
+        cd ../..
+
+        cd examples_glfwnew
+        mkdir buildMakeStatic && cd buildMakeStatic
+        cmake -DUSE_HEADERONLY=OFF ..
+        make
+        cd ../..
+
+    - name: test_glut
+      run: |
+        echo # --------------------------
+        echo # build c++ glut examples
+
+        cd examples_glut
+        mkdir buildMake && cd buildMake
+        cmake ..
+        make
+        cd ../..

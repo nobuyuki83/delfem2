@@ -21,7 +21,9 @@ namespace dfm2 = delfem2;
 
 class CElemBuffObj{
 public:
-  void SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type);
+  void SetBuffer_Elem(
+      const std::vector<unsigned int>& aTri,
+      unsigned int gl_elem_type);
   void DrawBuffer() const ;
 public:
   unsigned int iebo;
@@ -31,9 +33,11 @@ public:
 };
 
 
-void CElemBuffObj::SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigned int gl_elem_type)
+void CElemBuffObj::SetBuffer_Elem(
+    const std::vector<unsigned int>& aTri,
+    unsigned int gl_elem_type_)
 {
-  this->gl_elem_type = gl_elem_type;
+  this->gl_elem_type = gl_elem_type_;
   size_elem = aTri.size();
   glGenBuffers(1,&iebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iebo);
@@ -47,7 +51,7 @@ void CElemBuffObj::SetBuffer_Elem(const std::vector<unsigned int>& aTri, unsigne
 void CElemBuffObj::DrawBuffer() const
 {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->iebo);
-  glDrawElements(gl_elem_type, size_elem, GL_UNSIGNED_INT, 0);
+  glDrawElements(gl_elem_type, size_elem, GL_UNSIGNED_INT, nullptr);
 }
 
 // ----------
@@ -63,7 +67,7 @@ public:
   void SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim);
   void SetBuffer_Nrm(const std::vector<double>& aNrm);
   void Draw_Start() const;
-  void Draw_End() const ;
+  static void Draw_End() ;
 public:
   
 public:
@@ -73,9 +77,11 @@ public:
 };
 
 
-void CGLBuffer::SetBuffer_Vtx(const std::vector<double>& aXYZ, int ndim)
+void CGLBuffer::SetBuffer_Vtx(
+    const std::vector<double>& aXYZ,
+    int ndim_)
 {
-  this->ndim = ndim;
+  this->ndim = ndim_;
   glGenBuffers(1,&vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER,
@@ -109,7 +115,7 @@ void CGLBuffer::Draw_Start() const
     glNormalPointer(GL_DOUBLE, 0, 0);
   }
 }
-void CGLBuffer::Draw_End() const
+void CGLBuffer::Draw_End()
 {
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);

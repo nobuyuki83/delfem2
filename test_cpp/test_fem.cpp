@@ -495,7 +495,7 @@ TEST(objfunc_v23, WdWddW_Rod)
                            +dW_dP[0]*dP[0]
                            +dW_dP[1]*dP[1]
                            +dW_dP[2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 2.5e-3*(1+fabs(val1)) );
+      EXPECT_NEAR(val0, val1, 5.0e-3*(1+fabs(val1)) );
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;
