@@ -54,3 +54,25 @@ jobs:
         make test 
         ./runUnitTests
         cd ../../    
+
+    - name: test_glfw_glold
+      run: |
+        echo # -------------------------
+        echo # build C++ glfw examples
+        cd 3rd_party/glfw
+        cmake .
+        make
+        cd ../..
+
+        cd examples_glfwold
+        mkdir buildMakeHdronly && cd buildMakeHdronly
+        cmake -DUSE_HEADERONLY=ON ..
+        make
+        cd ../..
+
+        cd examples_glfwold
+        mkdir buildMakeStatic && cd buildMakeStatic
+        cmake -DUSE_HEADERONLY=OFF ..
+        make
+        cd ../..
+

@@ -52,26 +52,32 @@ class CPointElemSurf{
 public:
   CPointElemSurf() : itri(UINT_MAX), r0(0), r1(0) {}
   CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
-  delfem2::CVec3<T> Pos_Tri(const std::vector<double>& aXYZ,
-                   const std::vector<unsigned int>& aTri) const;
-  delfem2::CVec3<T> Pos_Tri(const double* aXYZ, unsigned int nXYZ,
-                   const unsigned int* aTri, unsigned int nTri) const;
-  delfem2::CVec3<T> Pos_TetFace(const std::vector<double>& aXYZ,
-                       const std::vector<int>& aTet,
-                       const std::vector<int>& aTetFace) const;
+  delfem2::CVec3<T> Pos_Tri(
+      const std::vector<double>& aXYZ,
+      const std::vector<unsigned int>& aTri) const;
+  delfem2::CVec3<T> Pos_Tri(
+      const double* aXYZ, unsigned int nXYZ,
+      const unsigned int* aTri, unsigned int nTri) const;
+  delfem2::CVec3<T> Pos_TetFace(
+      const std::vector<double>& aXYZ,
+      const std::vector<int>& aTet,
+      const std::vector<int>& aTetFace) const;
   delfem2::CVec3<T> Pos_Grid(
       unsigned int nx, unsigned int ny,
       double el,
       std::vector<float>& aH) const;
-  delfem2::CVec3<T> UNorm_Tri(const std::vector<double>& aXYZ,
-                     const std::vector<unsigned int>& aTri,
-                     const std::vector<double>& aNorm) const;
-  delfem2::CVec3<T> UNorm_Tri(const double* aXYZ, unsigned int nXYZ,
-                     const unsigned int* aTri, unsigned int nTri,
-                     const double* aNorm) const;
-  bool Check(const std::vector<double>& aXYZ,
-             const std::vector<unsigned int>& aTri,
-             double eps) const;
+  delfem2::CVec3<T> UNorm_Tri(
+      const std::vector<double>& aXYZ,
+      const std::vector<unsigned int>& aTri,
+      const std::vector<double>& aNorm) const;
+  delfem2::CVec3<T> UNorm_Tri(
+      const double* aXYZ, unsigned int nXYZ,
+      const unsigned int* aTri, unsigned int nTri,
+      const double* aNorm) const;
+  bool Check(
+      const std::vector<double>& aXYZ,
+      const std::vector<unsigned int>& aTri,
+      double eps) const;
 public:
   unsigned int itri; // can be -1
   double r0, r1;
@@ -169,9 +175,10 @@ DFM2_INLINE void IntersectionLine_Hightfield(
 
 
 template <typename T>
-CPointElemSurf<T> Nearest_Point_MeshTri3D(const delfem2::CVec3<T>& q,
-                                       const std::vector<double>& aXYZ,
-                                       const std::vector<unsigned int>& aTri);
+CPointElemSurf<T> Nearest_Point_MeshTri3D(
+    const delfem2::CVec3<T>& q,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri);
 
 template <typename T>
 CPointElemSurf<T> Nearest_Point_MeshTri3DPart(const delfem2::CVec3<T>& q,
