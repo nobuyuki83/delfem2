@@ -493,17 +493,17 @@ DFM2_INLINE double delfem2::WdWddW_Rod
 
 
 
-DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D
-(CVec3d dW_dP[2],
- CMat3d ddW_ddP[2][2],
- const double stiff,
- const CVec3d P[2],
- double L0)
+DFM2_INLINE double delfem2::WdWddW_SquareLengthLineseg3D(
+    CVec3d dW_dP[2],
+    CMat3d ddW_ddP[2][2],
+    const double stiff,
+    const CVec3d p[2],
+    double L0)
 {
-  const double l  = sqrt(+ (P[0][0]-P[1][0])*(P[0][0]-P[1][0])
-                         + (P[0][1]-P[1][1])*(P[0][1]-P[1][1])
-                         + (P[0][2]-P[1][2])*(P[0][2]-P[1][2]));
-  const CVec3d v = P[0]-P[1];
+  const double l  = sqrt(+ (p[0][0]-p[1][0])*(p[0][0]-p[1][0])
+                         + (p[0][1]-p[1][1])*(p[0][1]-p[1][1])
+                         + (p[0][2]-p[1][2])*(p[0][2]-p[1][2]));
+  const CVec3d v = p[0]-p[1];
   const double R = L0-l;
   dW_dP[0] = (-R*stiff/l)*v;
   dW_dP[1] = (+R*stiff/l)*v;

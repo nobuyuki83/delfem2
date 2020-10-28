@@ -707,12 +707,12 @@ DFM2_INLINE void delfem2::ddW_ArapEnergy
 
 
 template <typename T>
-DFM2_INLINE void delfem2::GetConstConstDiff_Bend
- (double& C, CVec3<T> dC[4],
-  const CVec3<T>& p0,
-  const CVec3<T>& p1,
-  const CVec3<T>& p2,
-  const CVec3<T>& p3)
+DFM2_INLINE void delfem2::GetConstConstDiff_Bend(
+    double& C, CVec3<T> dC[4],
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3)
 {
   const CVec3<T> v02 = p2-p0;
   const CVec3<T> v03 = p3-p0;
@@ -737,8 +737,10 @@ DFM2_INLINE void delfem2::GetConstConstDiff_Bend
   dC[2] = (v03^tmpBA) + (tmpAB^v13);
   dC[3] = (tmpBA^v02) + (v12^tmpAB);
 }
-template void delfem2::GetConstConstDiff_Bend(double& C, CVec3d dC[4],
-                                           const CVec3d& p0,
-                                           const CVec3d& p1,
-                                           const CVec3d& p2,
-                                           const CVec3d& p3);
+template void delfem2::GetConstConstDiff_Bend(
+    double&,
+    CVec3d dC[4],
+    const CVec3d&,
+    const CVec3d&,
+    const CVec3d&,
+    const CVec3d&);
