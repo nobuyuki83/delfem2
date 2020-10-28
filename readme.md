@@ -61,11 +61,14 @@ This command downloads all the external third party codes into the directory ```
 - googletest
 - cnpy
 - imgui
-- pybind11
 - tinygltf
 - stb_image.h
 
-These projects are awesome and I would like to express huge  appreciation for contributers of these projects.
+These projects are awesome and I would like to express huge appreciation for contributers of these projects.
+
+Checkout these alternatives: 
+[CGAL](https://www.cgal.org/),
+[libIGL](https://github.com/libigl/libigl)
 
 ***
 # Licence & Copyright
@@ -77,6 +80,17 @@ In a nut shell, it is free to use/distribute this software commercially for any 
 
 	Copyright (C) Nobuyuki Umetani 2020
 
+If DelFEM2 contributes to an academic publication, cite it as:
+
+
+```
+@misc{delfem2,
+  title = {DelFEM2},
+  author = {Nobuyuki Umetani},
+  note = {https://github.com/nobuyuki83/delfem2},
+  year = {2019}
+}
+```
 
 ***
 # Contact
