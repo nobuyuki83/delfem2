@@ -95,7 +95,7 @@ void SortedMortenCode_Points3(
 void BVHTopology_Morton(
     std::vector<CNodeBVH2>& aNodeBVH,
     const std::vector<unsigned int>& aSortedId,
-    const std::vector<unsigned int>& aSortedMc);
+    const std::vector<std::uint32_t>& aSortedMc);
 
 void Check_MortonCode_RangeSplit(
     const std::vector<std::uint32_t>& aSortedMc);
