@@ -234,16 +234,16 @@ DFM2_INLINE void delfem2::DifDifFrameRod
   }
 }
 
-DFM2_INLINE double delfem2::WdWddW_DotFrame
-(CVec3d dV_dP[3],
- double dV_dt[2],
- CMat3d ddV_ddP[3][3],
- CVec3d ddV_dtdP[2][3],
- double ddV_ddt[2][2],
- //
- const CVec3d P[3],
- const CVec3d S[2],
- const double off[3])
+DFM2_INLINE double delfem2::WdWddW_DotFrame(
+    CVec3d dV_dP[3],
+    double dV_dt[2],
+    CMat3d ddV_ddP[3][3],
+    CVec3d ddV_dtdP[2][3],
+    double ddV_ddt[2][2],
+    //
+    const CVec3d P[3],
+    const CVec3d S[2],
+    const double off[3])
 {
   assert( fabs(S[0].Length() - 1.0) < 1.0e-10 );
   assert( fabs(S[0]*(P[1]-P[0]).Normalize()) < 1.0e-10 );

@@ -239,9 +239,9 @@ public:
     double s=p[0]+p[1]+p[2];
     return !(s > s-1.0);
   }
-  static CVec3 Axis(int idim){
+  static CVec3 Axis(unsigned int idim){
     CVec3 r(0,0,0);
-    if( idim >= 0 && idim < 3) { r[idim] = 1; }
+    if( idim < 3) { r[idim] = 1; }
     return r;
   }
   T* data() { return p; }

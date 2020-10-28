@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-
 #include "gtest/gtest.h"
 
 #include "delfem2/quat.h"
@@ -44,27 +42,26 @@ TEST(gltf,formatcheck)
     EXPECT_TRUE(ret);
     for(int in=0;in<model.nodes.size();++in){
       const tinygltf::Node& node = model.nodes[in];
-      EXPECT_TRUE( node.rotation.size() == 0 || node.rotation.size() == 4 );
-      EXPECT_TRUE( node.translation.size() == 0 || node.translation.size() == 3 );
-      EXPECT_TRUE( node.scale.size() == 0 || node.scale.size() == 3 );
-      EXPECT_TRUE( node.matrix.size() == 0 || node.matrix.size() == 16 );
-      EXPECT_FALSE( node.matrix.size() > 0 && node.scale.size() > 0 );      // if there is matrix, no scale
-      EXPECT_FALSE( node.matrix.size() > 0 && node.translation.size() > 0 );     // if there is matrix, no translation
-      EXPECT_FALSE( node.matrix.size() > 0 && node.rotation.size() > 0 );     // if there is matrix, no rotation
+      EXPECT_TRUE( node.rotation.empty() || node.rotation.size() == 4 );
+      EXPECT_TRUE( node.translation.empty() || node.translation.size() == 3 );
+      EXPECT_TRUE( node.scale.empty() || node.scale.size() == 3 );
+      EXPECT_TRUE( node.matrix.empty() || node.matrix.size() == 16 );
+      EXPECT_FALSE( !node.matrix.empty() && !node.scale.empty() );      // if there is matrix, no scale
+      EXPECT_FALSE( !node.matrix.empty() && !node.translation.empty() );     // if there is matrix, no translation
+      EXPECT_FALSE( !node.matrix.empty() && !node.rotation.empty() );     // if there is matrix, no rotation
       if( node.skin != -1 ){
         EXPECT_TRUE( node.skin>=0 && node.skin<model.skins.size() );
       }
       if( node.mesh != -1 ){
         EXPECT_TRUE( node.mesh>=0 && node.mesh<model.meshes.size() );
       }
-      for(int ic=0;ic<node.children.size();++ic){
-        EXPECT_TRUE( node.children[ic]>=0 && node.children[ic]<model.nodes.size() );
+      for(int ic : node.children){
+        EXPECT_TRUE( ic>=0 && ic<model.nodes.size() );
       }
     }
     for(int is=0;is<model.skins.size();++is){
       const tinygltf::Skin& skin = model.skins[is];
-      for(int ij=0;ij<skin.joints.size();++ij){
-        int inode = skin.joints[ij];
+      for(int inode : skin.joints){
         EXPECT_TRUE( inode>=0 && inode < model.nodes.size() );
       }
       EXPECT_TRUE( skin.inverseBindMatrices>=0 && skin.inverseBindMatrices<model.accessors.size() );
@@ -103,8 +100,8 @@ TEST(gltf,io_gltf_skin_sensitivity)
       gltf.GetBone(aBone, 0);
     }
     {
-      for(int ibone=0;ibone<aBone.size();++ibone){
-        dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
+      for(auto & bone : aBone){
+        dfm2::Quat_Identity(bone.quatRelativeRot);
       }
       UpdateBoneRotTrans(aBone);
       std::vector<double> aXYZ = aXYZ0;
@@ -146,8 +143,8 @@ TEST(gltf,io_gltf_skin_sensitivity)
   const double eps = 1.0e-4;
   
   { // Check Sensitivity Skin
-    for(int ibone=0;ibone<aBone.size();++ibone){
-      dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
+    for(auto & bone : aBone){
+      dfm2::Quat_Identity(bone.quatRelativeRot);
     }
     UpdateBoneRotTrans(aBone);
     std::vector<double> aRefPos; // [ np, nBone*4 ]
@@ -198,8 +195,8 @@ TEST(gltf,io_gltf_skin_sensitivity)
   }
   
   { // check sensitivity target
-    for(int ibone=0;ibone<aBone.size();++ibone){
-      dfm2::Quat_Identity(aBone[ibone].quatRelativeRot);
+    for(auto & bone : aBone){
+      dfm2::Quat_Identity(bone.quatRelativeRot);
     }
     dfm2::UpdateBoneRotTrans(aBone);
     // ----------------------
