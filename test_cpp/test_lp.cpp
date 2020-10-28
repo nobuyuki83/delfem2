@@ -51,7 +51,7 @@ TEST(linpro,test2)
   lp.AddEqn({ 3.0,  1.0}, 1500, CLinPro::LE);
   int nitr = 10;
   lp.Precomp(nitr);
-  //////////////////////////////
+  // --------
   std::vector<double> solution;
   double opt_val;
   nitr = 10;
@@ -77,8 +77,8 @@ TEST(linpro,test3)
   lp.Precomp(nitr);
   EXPECT_LT(nitr, 10);
   std::vector<double> sol = lp.GetValid();
-  for(int ieq=0;ieq<lp.aEq.size();++ieq){
-    EXPECT_TRUE(lp.aEq[ieq].IsValid(sol));
+  for(auto & ieq : lp.aEq){
+    EXPECT_TRUE(ieq.IsValid(sol));
   }
   double opt_val;
   nitr = 10;
@@ -102,12 +102,12 @@ TEST(linpro,test4)
   int nitr = 10;
   lp.Precomp(nitr);
   EXPECT_LT(nitr, 10);
-  ////
+  //
   std::vector<double> sol = lp.GetValid();
-  for(int ieq=0;ieq<lp.aEq.size();++ieq){
-    EXPECT_TRUE(lp.aEq[ieq].IsValid(sol));
+  for(auto & ieq : lp.aEq){
+    EXPECT_TRUE(ieq.IsValid(sol));
   }
-  ////
+  //
   double opt_val;
   nitr = 10;
   lp.Solve(sol,opt_val,nitr,
@@ -129,12 +129,12 @@ TEST(linpro,test5)
   int nitr = 10;
   lp.Precomp(nitr);
   EXPECT_LT(nitr, 10);
-  /////
+  //
   std::vector<double> sol = lp.GetValid();
-  for(int ieq=0;ieq<lp.aEq.size();++ieq){
-    EXPECT_TRUE(lp.aEq[ieq].IsValid(sol,1.0e-3));
+  for(auto & ieq : lp.aEq){
+    EXPECT_TRUE(ieq.IsValid(sol,1.0e-3));
   }
-  ////
+  //
   double opt_val;
   nitr = 10;
   lp.Solve(sol,opt_val,nitr,

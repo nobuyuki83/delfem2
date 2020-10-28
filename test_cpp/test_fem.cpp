@@ -97,7 +97,7 @@ TEST(objfunc_v23, Bend)
         GetConstConstDiff_Bend(C1, dC1, p1[0], p1[1], p1[2], p1[3]);
         const double val0 = (C1 - C) / eps;
         const double val1 = dC[ino][idim];
-        EXPECT_NEAR(val0, val1, (1.0+fabs(val1)) * 1.0e-2);
+        EXPECT_NEAR(val0, val1, (1.0+fabs(val1)) * 1.5e-2);
       }
     }
   }
@@ -151,7 +151,7 @@ TEST(objfunc_v23, MIPS)
           for (int jdim = 0; jdim < 3; ++jdim) {
             const double val0 = (dE1[jno][jdim] - dE[jno][jdim]) / eps;
             const double val1 = ddE[jno][ino][jdim][idim];
-            EXPECT_NEAR( val0, val1, 2.e-2*(1+fabs(val1)));
+            EXPECT_NEAR( val0, val1, 3.e-2*(1+fabs(val1)));
           }
         }
       }
@@ -203,24 +203,23 @@ TEST(objfunc_v23, pbd_energy_stvk)
 {
   std::random_device randomDevice;
   std::mt19937 randomEng(randomDevice());
-  std::uniform_real_distribution<double> randomDist(0,1);
+  std::uniform_real_distribution<double> dist_01(0,1);
+  std::uniform_real_distribution<double> dist_12(1,2);
+
   //
-  for(int itr=0;itr<200;++itr){
-    double P[3][2];  // undeformed triangle vertex positions
-    for(auto & Pi : P){
-      Pi[0] = randomDist(randomEng);
-      Pi[1] = randomDist(randomEng);
-    }
-    double A0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
+  for(int itr=0;itr<1000;++itr){
+    const double P[3][2] = {  // undeformed triangle vertex positions
+        { dist_01(randomEng), dist_01(randomEng) },
+        { dist_01(randomEng), dist_01(randomEng) },
+        { dist_01(randomEng), dist_01(randomEng) } };
+    const double A0 = dfm2::Area_Tri2(P[0], P[1], P[2]);
     if( A0 < 0.1 ) continue;
-    double p[3][3]; //  deformed triangle vertex positions)
-    for(auto & pi : p){
-      pi[0] = randomDist(randomEng);
-      pi[1] = randomDist(randomEng);
-      pi[2] = randomDist(randomEng);
-    }
-    const double lambda = randomDist(randomEng);
-    const double myu = randomDist(randomEng);
+    const double p[3][3] = { //  deformed triangle vertex positions)
+        { dist_01(randomEng),dist_01(randomEng), dist_01(randomEng) },
+        { dist_01(randomEng),dist_01(randomEng), dist_01(randomEng) },
+        { dist_01(randomEng),dist_01(randomEng), dist_01(randomEng) } };
+    const double lambda = dist_12(randomEng);
+    const double myu = dist_12(randomEng);
     // ---------------------
     double C, dCdp[9];
     dfm2::PBD_ConstraintProjection_EnergyStVK(C, dCdp, P, p, lambda, myu);
@@ -333,12 +332,15 @@ TEST(objfunc_v23, WdWddW_DotFrame)
   std::mt19937 randomEng(randomDevice());
   std::uniform_real_distribution<double> dist_01(0,1);
   std::uniform_real_distribution<double> dist_m1p1(-1,+1);
+  const double eps = 1.0e-5;
   //
   for(int itr=0;itr<10000;++itr){
     dfm2::CVec3d P[3] = {
         dfm2::CVec3d::Random(dist_01, randomEng),
         dfm2::CVec3d::Random(dist_01, randomEng),
         dfm2::CVec3d::Random(dist_01, randomEng) };
+    if( (P[1]-P[0]).Length() < 0.01 ){ continue; }
+    if( (P[2]-P[1]).Length() < 0.01 ){ continue; }
     dfm2::CVec3d S[2];
     {
       S[0].SetRandom(dist_01,randomEng);
@@ -366,7 +368,6 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                                ddW_ddP, ddW_dtdP,ddW_ddt,
                                P, S, off);
     // -----------------------
-    double eps = 1.0e-7;
     const dfm2::CVec3d dP[3] = {
         dfm2::CVec3d::Random(dist_01,randomEng)*eps,
         dfm2::CVec3d::Random(dist_01,randomEng)*eps,
@@ -399,7 +400,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                            +dW_dP[0]*dP[0]
                            +dW_dP[1]*dP[1]
                            +dW_dP[2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 1.0e-2);
+      EXPECT_NEAR(val0, val1, 1.0e-2*(1.0+fabs(val1)));
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;
@@ -408,7 +409,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                            +ddW_dtdP[0][0]*dP[0]
                            +ddW_dtdP[0][1]*dP[1]
                            +ddW_dtdP[0][2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 1.0e-2);
+      EXPECT_NEAR(val0, val1, 2.0e-2*(1.0+fabs(val1)));
     }
     {
       const double val0 = (dw_dt[1]-dW_dt[1])/eps;
@@ -417,7 +418,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                            +ddW_dtdP[1][0]*dP[0]
                            +ddW_dtdP[1][1]*dP[1]
                            +ddW_dtdP[1][2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 1.0e-2);
+      EXPECT_NEAR(val0, val1, 2.0e-2*(1.0+fabs(val1)));
     }
     {
       const dfm2::CVec3d val0 = (dw_dP[0]-dW_dP[0])/eps;
