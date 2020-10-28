@@ -422,11 +422,13 @@ template void delfem2::SortedMortenCode_Points3(
 
 // ----------------------------------
 
-DFM2_INLINE void delfem2::BVHTopology_Morton
-(std::vector<CNodeBVH2>& aNodeBVH,
- const std::vector<unsigned int>& aSortedId,
- const std::vector<unsigned int>& aSortedMc)
+DFM2_INLINE void delfem2::BVHTopology_Morton(
+    std::vector<CNodeBVH2>& aNodeBVH,
+    const std::vector<unsigned int>& aSortedId,
+    const std::vector<std::uint32_t>& aSortedMc)
 {
+  assert( aSortedId.size() == aSortedMc.size() );
+  assert( !aSortedMc.empty() );
   aNodeBVH.resize(aSortedMc.size()*2-1);
   aNodeBVH[0].iparent = UINT_MAX;
   const unsigned int nni = aSortedMc.size()-1; // number of internal node
@@ -463,11 +465,12 @@ DFM2_INLINE void delfem2::BVHTopology_Morton
 }
 
 
-DFM2_INLINE void delfem2::Check_MortonCode_Sort
-(const std::vector<unsigned int>& aSortedId,
- const std::vector<std::uint32_t>& aSortedMc,
- const std::vector<double> aXYZ,
- const double bbmin[3], const double bbmax[3])
+DFM2_INLINE void delfem2::Check_MortonCode_Sort(
+  const std::vector<unsigned int>& aSortedId,
+  const std::vector<std::uint32_t>& aSortedMc,
+  const std::vector<double> aXYZ,
+  const double bbmin[3],
+  const double bbmax[3])
 {
   for(unsigned int imc=1;imc<aSortedMc.size();++imc){
     std::uint32_t mc0 = aSortedMc[imc-1];
