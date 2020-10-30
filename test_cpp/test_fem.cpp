@@ -400,7 +400,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                            +dW_dP[0]*dP[0]
                            +dW_dP[1]*dP[1]
                            +dW_dP[2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 1.0e-2*(1.0+fabs(val1)));
+      EXPECT_NEAR(val0, val1, 2.0e-2*(1.0+fabs(val1)));
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;

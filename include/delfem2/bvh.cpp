@@ -177,29 +177,13 @@ DFM2_INLINE void DevideElemAryConnex
   }
 }
 
-inline unsigned int clz(uint32_t x){
-#ifdef __GNUC__ // GCC compiler
-  return __builtin_clz(x);
-#else
-  int y = x;
-  unsigned int n = 0;
-  if (y == 0) return sizeof(y) * 8;
-  while (1) {
-    if (y < 0) break;
-    n ++;
-    y <<= 1;
-  }
-  return n;
-#endif
-}
-
 DFM2_INLINE int delta(int i, int j, const unsigned int* sorted_morton_code, int length)
 {
   if (j<0 || j >= length){
     return -1;
   }
   else{
-    return clz(sorted_morton_code[i] ^ sorted_morton_code[j]);
+    return nbits_leading_zero(sorted_morton_code[i] ^ sorted_morton_code[j]);
   }
 }
 
@@ -248,6 +232,26 @@ DFM2_INLINE void mark_child(std::vector<int>& aFlg,
 
 // ===========================================================
 
+/**
+ * @brief compute number of leading zeros
+ * @function compute number of leading zeros
+ * @param x input
+ * @details clz(0) needs to be 32 to run BVH
+ */
+DFM2_INLINE unsigned int delfem2::nbits_leading_zero(uint32_t x){
+  // avoid using buit-in functions such as "__builtin_clz(x)",
+  // becuase application to 0 is typically undefiend.
+  int32_t y = x;
+  unsigned int n = 0;
+  if (y == 0){ return sizeof(y) * 8; }
+  while (true) {
+    if (y < 0){ break; }
+    n ++;
+    y <<= 1;
+  }
+  return n;
+}
+
 DFM2_INLINE int delfem2::BVHTopology_TopDown_MeshElem
 (std::vector<CNodeBVH2>& aNodeBVH,
  const unsigned int nfael,
@@ -289,12 +293,14 @@ template std::uint32_t delfem2::MortonCode(double x, double y, double z);
 
 
 
-DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange
-(const std::uint32_t* sortedMC,
- int nMC,
- int imc)
+DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange(
+    const std::uint32_t* sortedMC,
+    unsigned int nMC,
+    int imc)
 {
+  assert( nMC > 0 );
   if( imc == 0 ){ return std::make_pair(0,nMC-1); }
+  if( imc == nMC-1 ){ return std::make_pair(nMC-1,nMC-1); }
   // ----------------------
   const std::uint32_t mc0 = sortedMC[imc-1];
   const std::uint32_t mc1 = sortedMC[imc+0];
@@ -306,6 +312,9 @@ DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange
     }
     return std::make_pair(imc,jmc-1);
   }
+  // get direction
+  // (d==+1) -> imc is left-end, move forward
+  // (d==-1) -> imc is right-end, move backward
   int d = bvh::delta(imc, imc + 1, sortedMC, nMC) - bvh::delta(imc, imc - 1, sortedMC, nMC);
   d = d > 0 ? 1 : -1;
   
@@ -334,41 +343,34 @@ DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange
   return range;
 }
 
-DFM2_INLINE int delfem2::MortonCode_FindSplit
- (const std::uint32_t* sortedMC,
-  unsigned int iMC_start,
-  unsigned int iMC_last)
+DFM2_INLINE unsigned int delfem2::MortonCode_FindSplit(
+    const std::uint32_t* aMC,
+    unsigned int iMC_start,
+    unsigned int iMC_last)
 {
-  //return -1 if there is only
-  //one primitive under this node.
-  if (iMC_start == iMC_last) { return -1; }
+  if (iMC_start == iMC_last) { return UINT_MAX; }
+
+  const std::uint32_t mcStart = aMC[iMC_start];
+
+  const unsigned int nbitcommon0 = nbits_leading_zero(mcStart ^ aMC[iMC_last]);
   
-  // ------------------------------
-  const int common_prefix = bvh::clz(sortedMC[iMC_start] ^ sortedMC[iMC_last]);
-  
-  //handle duplicated morton code
-  if (common_prefix == 32 ){ return iMC_start; } // sizeof(std::uint32_t)*8
+  // handle duplicated morton code
+  if ( nbitcommon0 == 32 ){ return iMC_start; } // sizeof(std::uint32_t)*8
   
   // Use binary search to find where the next bit differs.
   // Specifically, we are looking for the highest object that
   // shares more than commonPrefix bits with the first one.
-  const std::uint32_t mcStart = sortedMC[iMC_start];
   unsigned int iMC_split = iMC_start; // initial guess
-  int step = iMC_last - iMC_start;
-  do
-  {
-    step = (step + 1) >> 1; // exponential decrease
-    const unsigned int newSplit = iMC_split + step; // proposed new position
-    if (newSplit < iMC_last)
-    {
-      std::uint32_t splitCode = sortedMC[newSplit];
-      int splitPrefix = bvh::clz(mcStart ^ splitCode);
-      if (splitPrefix > common_prefix){
-        iMC_split = newSplit; // accept proposal
-      }
+  unsigned int step = iMC_last - iMC_start;
+  while (step > 1){
+    step = (step + 1) / 2; // half step
+    const unsigned int iMC_new = iMC_split + step; // proposed new position
+    if ( iMC_new >= iMC_last ) { continue; }
+    const unsigned int nbitcommon1 = nbits_leading_zero(mcStart ^ aMC[iMC_new] );
+    if ( nbitcommon1 > nbitcommon0 ){
+      iMC_split = iMC_new; // accept proposal
     }
   }
-  while (step > 1);
   return iMC_split;
 }
 
@@ -497,13 +499,13 @@ DFM2_INLINE void delfem2::Check_MortonCode_Sort(
    */
 }
 
-DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit
-(const std::vector<std::uint32_t>& aSortedMc)
+DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
+    const std::vector<std::uint32_t>& aSortedMc)
 {
   assert(aSortedMc.size()>0);
   for(unsigned int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<int,int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
-    int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
+    const unsigned int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
     const std::pair<int,int> rangeA = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
     const std::pair<int,int> rangeB = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
     assert( range.first == rangeA.first );

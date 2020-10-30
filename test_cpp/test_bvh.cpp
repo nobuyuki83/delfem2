@@ -459,6 +459,11 @@ void mark_child(std::vector<int>& aFlgBranch,
   mark_child(aFlgBranch, aFlgLeaf, aFlgID, nID, in1, aNode);
 }
 
+TEST(bvh,clz) {
+  const unsigned int n0 = dfm2::nbits_leading_zero(0);
+  EXPECT_EQ(n0,32);
+}
+
 TEST(bvh,morton_code)
 {
   std::vector<double> aXYZ; // 3d points
@@ -470,14 +475,14 @@ TEST(bvh,morton_code)
     aXYZ.resize(N*3);
     std::random_device randomDevice;
     std::mt19937 randomEng(randomDevice());
-    std::uniform_real_distribution<> udist(0.0, 1.0);
+    std::uniform_real_distribution<> dist_01(0.0, 1.0);
     for(int i=0;i<N;++i){
-      aXYZ[i*3+0] = (bb.bbmax[0] -  bb.bbmin[0]) * udist(randomEng) + bb.bbmin[0];
-      aXYZ[i*3+1] = (bb.bbmax[1] -  bb.bbmin[1]) * udist(randomEng) + bb.bbmin[1];
-      aXYZ[i*3+2] = (bb.bbmax[2] -  bb.bbmin[2]) * udist(randomEng) + bb.bbmin[2];
+      aXYZ[i*3+0] = (bb.bbmax[0] -  bb.bbmin[0]) * dist_01(randomEng) + bb.bbmin[0];
+      aXYZ[i*3+1] = (bb.bbmax[1] -  bb.bbmin[1]) * dist_01(randomEng) + bb.bbmin[1];
+      aXYZ[i*3+2] = (bb.bbmax[2] -  bb.bbmin[2]) * dist_01(randomEng) + bb.bbmin[2];
     }
     for(int iip=0;iip<3;++iip){ // hash collision
-      const auto ip = static_cast<unsigned int>(N*udist(randomEng));
+      const auto ip = static_cast<unsigned int>(N * dist_01(randomEng));
       assert( ip < N );
       const double x0 = aXYZ[ip*3+0];
       const double y0 = aXYZ[ip*3+1];
@@ -494,9 +499,9 @@ TEST(bvh,morton_code)
   dfm2::SortedMortenCode_Points3(aSortedId,aSortedMc,
                                  aXYZ,
                                  min_xyz,max_xyz);
-  for(int ini=0;ini<aSortedMc.size()-1;++ini){
+  for(unsigned int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<int,int> range = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
-    int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
+    unsigned int isplit = dfm2::MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
     const std::pair<int,int> rangeA = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
     const std::pair<int,int> rangeB = dfm2::MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
     EXPECT_EQ( range.first, rangeA.first );
@@ -540,8 +545,9 @@ TEST(bvh,morton_code)
       1.5*(bb.bbmax[2]-bb.bbmin[2])*sin(cur_time*3)-(bb.bbmax[2]+bb.bbmin[2])*0.5 };
     double dist = -1;
     unsigned int ip_nearest = 0;
-    dfm2::BVH_IndPoint_NearestPoint(ip_nearest, dist, p0, 0,
-                                    aNodeBVH,aAABB);
+    dfm2::BVH_IndPoint_NearestPoint(
+        ip_nearest, dist, p0, 0,
+        aNodeBVH,aAABB);
     for(unsigned int ip=0;ip<aXYZ.size()/3;++ip){
       double dist0 = dfm2::Distance3(p0, aXYZ.data()+ip*3);
       EXPECT_GE(dist0,dist);
