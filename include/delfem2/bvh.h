@@ -34,6 +34,14 @@ public:
 };
 
 /**
+ * @brief compute number of leading zeros
+ * @function compute number of leading zeros
+ * @param x input
+ * @details clz(0) needs to be 32 to run BVH
+ */
+DFM2_INLINE unsigned int nbits_leading_zero(uint32_t x);
+
+/**
  * @details make BVH topology in a top-down manner
  */
 int BVHTopology_TopDown_MeshElem(
@@ -58,7 +66,7 @@ void Check_BVH(
  * @details find split in BVH construction
  * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
  */
-int MortonCode_FindSplit(
+unsigned int MortonCode_FindSplit(
     const std::uint32_t* sortedMC,
     unsigned int start,
     unsigned int last);
@@ -69,7 +77,7 @@ int MortonCode_FindSplit(
  */
 std::pair<int,int> MortonCode_DeterminRange(
     const std::uint32_t* sortedMC,
-    int nMC,
+    unsigned int nMC,
     int i);
 
 /**
