@@ -5,11 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdio>
+#include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/dtri3_v3dtri.h"
 #include "delfem2/objf_geo3.h"
-#include "delfem2/objfdtri_objfdtri23.h"
+#include <cstdio>
 
 // -------------------------------------
 
@@ -34,35 +34,35 @@ static void FetchData
 }
 }
 
-void delfem2::PBD_TriStrain
-(double* aXYZt,
- unsigned int nXYZ,
- const std::vector<delfem2::CDynTri>& aETri,
- const std::vector<CVec2d>& aVec2)
+void delfem2::PBD_TriStrain(
+    double* aXYZt,
+    unsigned int nXYZ,
+    const std::vector<delfem2::CDynTri>& aETri,
+    const std::vector<CVec2d>& aVec2)
 {
-  for(const auto & it : aETri){
-    const unsigned int aIP[3] = {
-      it.v[0],
-      it.v[1],
-      it.v[2]};
+  for(const auto & etri : aETri){
+    const unsigned int aIP[3] = { etri.v[0], etri.v[1], etri.v[2] };
     const double P[3][2] = {
       {aVec2[aIP[0]].x(),aVec2[aIP[0]].y()},
       {aVec2[aIP[1]].x(),aVec2[aIP[1]].y()},
       {aVec2[aIP[2]].x(),aVec2[aIP[2]].y()} };
-    double p[3][3]; objfdtri::FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
-    double C[3], dCdp[3][9];  PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
-    double m[3] = {1,1,1};
-    PBD_Update_Const3(aXYZt,
-                      3, 3, m, C, &dCdp[0][0], aIP, 1.0);
+    double p[3][3];
+    objfdtri::FetchData(&p[0][0], 3, 3, aIP, aXYZt, 3);
+    double C[3], dCdp[3][9];
+    PBD_CdC_TriStrain2D3D(C, dCdp, P, p);
+    const double mass[3] = {1,1,1};
+    PBD_Update_Const3(
+        aXYZt,
+        3, 3, mass, C, &dCdp[0][0], aIP, 1.0);
   }
 }
 
-void delfem2::PBD_Bend
-(double* aXYZt,
- unsigned int nXYZ,
- const std::vector<delfem2::CDynTri>& aETri,
- const std::vector<CVec2d>& aVec2,
- double ratio)
+void delfem2::PBD_Bend(
+    double* aXYZt,
+    unsigned int nXYZ,
+    const std::vector<delfem2::CDynTri>& aETri,
+    const std::vector<CVec2d>& aVec2,
+    double ratio)
 {
   for(size_t it=0;it<aETri.size();++it){
     for(int ie=0;ie<3;++ie){
@@ -84,10 +84,10 @@ void delfem2::PBD_Bend
       double p[4][3]; objfdtri::FetchData(&p[0][0], 4, 3, aIP, aXYZt, 3);
       double C[3], dCdp[3][12];
       PBD_CdC_QuadBend(C, dCdp,
-                       P, p);
-      double m[4] = {1,1,1,1};
+          P, p);
+      const double mass[4] = {1,1,1,1};
       PBD_Update_Const3(aXYZt,
-                        4,3, m, C, &dCdp[0][0], aIP, ratio);
+                        4,3, mass, C, &dCdp[0][0], aIP, ratio);
     }
   }
 }

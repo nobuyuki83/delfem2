@@ -121,6 +121,10 @@ int main(int argc,char* argv[])
                                    aCent,min_xyz,max_xyz);
     dfm2::BVHTopology_Morton(aNodeBVH,
                              aSortedId,aSortedMc);
+#ifndef NDEBUG
+    dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
+    dfm2::Check_MortonCode_RangeSplit(aSortedMc);
+#endif
     dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3_Sphere<double>,double> lvm(
         1.0e-10,
         aXYZ.data(), aXYZ.size()/3,
@@ -128,11 +132,9 @@ int main(int argc,char* argv[])
     dfm2::BVH_BuildBVHGeometry(aAABB,
         0, aNodeBVH,
         lvm);
-    { // assertion
-      dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
-      dfm2::Check_MortonCode_RangeSplit(aSortedMc);
+#ifndef NDEBUG
       dfm2::Check_BVH(aNodeBVH,aCent.size()/3);
-    }
+#endif
   }
 
   dfm2::opengl::CTexRGB_Rect2D tex;

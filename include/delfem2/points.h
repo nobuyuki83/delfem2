@@ -160,6 +160,10 @@ DFM2_INLINE void CG_Point3(
     T* cg,
     const std::vector<T>& aXYZ);
 
+DFM2_INLINE double EnergyKinetic(
+    const double* aUVW,
+    unsigned int np);
+
 template <typename T>
 DFM2_INLINE void Points_RandomUniform(
     T* aOdir,

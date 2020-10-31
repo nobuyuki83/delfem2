@@ -9,11 +9,11 @@
 #define DFM2_GARMENT_H
 
 #include "delfem2/cad2_dtri2.h"
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
 #include "delfem2/bv.h"
 
 namespace delfem2 {
@@ -114,47 +114,54 @@ void MeshingPattern
 }
 
 /**
- * @param aXYZ_Contact (in) the array of 3D coordinate of the contact target
- * @param dt (in) time step
- * @param bend_stiff_ratio (in) bending stiffness ratio of the clothing minimium:0 maximum:1
+ * @param[in] aXYZ_Contact the array of 3D coordinate of the contact target
+ * @param[in] dt time step
+ * @param[in] bend_stiff_ratio bending stiffness ratio of the clothing minimium:0 maximum:1
  */
-void StepTime_PbdClothSim
-(std::vector<double>& aXYZ, // deformed vertex positions
- std::vector<double>& aXYZt,
- std::vector<double>& aUVW, // deformed vertex velocity
- std::vector<CInfoNearest<double>>& aInfoNearest,
- const std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
- const std::vector<CDynTri>& aETri,
- const std::vector<CVec2d>& aVec2,
- const std::vector<unsigned int>& aLine,
- //
- const std::vector<double>& aXYZ_Contact,
- const std::vector<unsigned int>& aTri_Contact,
- const std::vector<double>& aNorm_Contact,
- const CBVH_MeshTri3D<CBV3d_Sphere,double>& bvh,
- //
- const double dt,
- const double gravity[3],
- const double contact_clearance,
- const double rad_explore,
- const double bend_stiff_ratio)
+void StepTime_PbdClothSim(
+    std::vector<double>& aXYZ, // deformed vertex positions
+    std::vector<double>& aXYZt,
+    std::vector<double>& aUVW, // deformed vertex velocity
+    std::vector<CInfoNearest<double>>& aInfoNearest,
+    const std::vector<int>& aBCFlag,  // boundary condition flag (0:free 1:fixed)
+    const std::vector<CDynTri>& aETri,
+    const std::vector<CVec2d>& aVec2,
+    const std::vector<unsigned int>& aLine,
+    //
+    const std::vector<double>& aXYZ_Contact,
+    const std::vector<unsigned int>& aTri_Contact,
+    const std::vector<double>& aNorm_Contact,
+    const CBVH_MeshTri3D<CBV3d_Sphere,double>& bvh,
+    //
+    const double dt,
+    const double gravity[3],
+    const double contact_clearance,
+    const double rad_explore,
+    const double bend_stiff_ratio)
 {
-  PBD_Pre3D(aXYZt,
-            dt, gravity, aXYZ, aUVW, aBCFlag);
-  PBD_TriStrain(aXYZt.data(),
-                aXYZt.size()/3, aETri, aVec2);
-  PBD_Bend(aXYZt.data(),
-           aXYZt.size()/3, aETri, aVec2, bend_stiff_ratio);
-  PBD_Seam(aXYZt.data(),
-           aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
-                                            aXYZt.size()/3,
-                                            contact_clearance,bvh,
-                                            aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                                            aTri_Contact.data(), aTri_Contact.size()/3,
-                                            aNorm_Contact.data(), rad_explore);
-  PBD_Post(aXYZ, aUVW,
-           dt, aXYZt, aBCFlag);
+  double W = 0.0;
+  PBD_Pre3D(
+      aXYZt,
+      dt, gravity, aXYZ, aUVW, aBCFlag);
+  PBD_TriStrain(
+      aXYZt.data(),
+      aXYZt.size()/3, aETri, aVec2);
+  PBD_Bend(
+      aXYZt.data(),
+      aXYZt.size()/3, aETri, aVec2, bend_stiff_ratio);
+  PBD_Seam(
+      aXYZt.data(),
+      aXYZt.size()/3, aLine.data(), aLine.size()/2);
+  Project_PointsIncludedInBVH_Outside_Cache(
+      aXYZt.data(),aInfoNearest,
+      aXYZt.size()/3,
+      contact_clearance,bvh,
+      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+      aTri_Contact.data(), aTri_Contact.size()/3,
+      aNorm_Contact.data(), rad_explore);
+  PBD_Post(
+      aXYZ, aUVW,
+      dt, aXYZt, aBCFlag);
 }
 
 }

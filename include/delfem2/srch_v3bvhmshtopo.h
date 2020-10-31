@@ -8,13 +8,12 @@
 #ifndef DFM2_SRCH_V3BVHMSHTOPO_H
 #define DFM2_SRCH_V3BVHMSHTOPO_H
 
-#include <math.h>
-#include <vector>
+#include "delfem2/srchuni_v3.h" // CPointElemSurf
 #include "delfem2/bvh.h"
 #include "delfem2/mshtopo.h" // sourrounding relationship
 #include "delfem2/vec3.h"
-//
-#include "delfem2/srchuni_v3.h" // CPointElemSurf
+#include <math.h>
+#include <vector>
 
 namespace delfem2 {
   

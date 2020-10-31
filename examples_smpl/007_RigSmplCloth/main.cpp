@@ -5,34 +5,31 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <set>
-#include "delfem2/garment.h"
-#include "delfem2/objf_geo3.h"
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/geo3_v23m34q.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/dtri.h"
-#include "delfem2/bv.h"
-#include "delfem2/color.h"
-//
-#include "delfem2/objfdtri_objfdtri23.h"
+#include "delfem2/garment.h"
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/rig_geo3.h"
-//
-#include "delfem2/cnpy/smpl_cnpy.h"
 #include "inputs_garment.h"
+//
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include "delfem2/dtri.h"
+#include "delfem2/bv.h"
+#include "delfem2/color.h"
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+#include <set>
 
 // ----------------------------
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/cad2dtriv2_glold.h"
 #include "delfem2/opengl/caddtri_v3_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <GLFW/glfw3.h>
 
 #ifndef M_PI
 #  define  M_PI 3.14159265359
@@ -42,11 +39,11 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------
 
-void Draw
-(const std::vector<dfm2::CDynTri>& aETri,
- const std::vector<double>& aXYZ,
- std::vector<double>& aXYZ_Contact,
- std::vector<unsigned int>& aTri_Contact)
+void Draw(
+    const std::vector<dfm2::CDynTri>& aETri,
+    const std::vector<double>& aXYZ,
+    std::vector<double>& aXYZ_Contact,
+    std::vector<unsigned int>& aTri_Contact)
 {
   //    myGlutDisplay(aETri,aVec2);
   /*
@@ -102,11 +99,12 @@ int main(int argc,char* argv[])
     // -------
 //    Inputs_SmplTshirt(name_cad_in_test_input,
 //    Inputs_SmplRaglan(name_cad_in_test_input,
-    Inputs_SmplLtshirt(name_cad_in_test_input,
-                           scale_adjust,
-                           aIESeam,
-                           mesher_edge_length,
-                           aRT23);
+    Inputs_SmplLtshirt(
+        name_cad_in_test_input,
+        scale_adjust,
+        aIESeam,
+        mesher_edge_length,
+        aRT23);
     std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
     std::cout << "open svg: " << path_svg << std::endl;
     dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
@@ -129,12 +127,13 @@ int main(int argc,char* argv[])
       std::vector<int> aIndBoneParent;
       std::vector<double> aJntRgrs0;
       std::vector<double> aRigWeight_Contact;
-      dfm2::cnpy::LoadSmpl(aXYZ0_Contact,
-                           aRigWeight_Contact,
-                           aTri_Contact,
-                           aIndBoneParent,
-                           aJntRgrs0,
-                           std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+      dfm2::cnpy::LoadSmpl(
+          aXYZ0_Contact,
+          aRigWeight_Contact,
+          aTri_Contact,
+          aIndBoneParent,
+          aJntRgrs0,
+          std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
       dfm2::Smpl2Rig(aBone,
                      aIndBoneParent, aXYZ0_Contact, aJntRgrs0);
       dfm2::UpdateBoneRotTrans(aBone);
@@ -142,14 +141,17 @@ int main(int argc,char* argv[])
   }
   std::vector<double> aXYZ_Contact = aXYZ0_Contact;
   std::vector<double> aNorm_Contact(aXYZ_Contact.size());
-  delfem2::Normal_MeshTri3D(aNorm_Contact.data(),
-                            aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                            aTri_Contact.data(), aTri_Contact.size()/3);
+  delfem2::Normal_MeshTri3D(
+      aNorm_Contact.data(),
+      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+      aTri_Contact.data(), aTri_Contact.size()/3);
   dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh_Contact;
-  bvh_Contact.Init(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                   aTri_Contact.data(), aTri_Contact.size()/3,
-                   0.01);
+  bvh_Contact.Init(
+      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+      aTri_Contact.data(), aTri_Contact.size()/3,
+      0.01);
   std::vector<dfm2::CInfoNearest<double>> aInfoNearest_Contact;
+  std::vector<double> aEnergyKinetic;
     
   // above: data preparation (derived)
   // ----------------------------------------------
@@ -162,13 +164,24 @@ int main(int argc,char* argv[])
   delfem2::opengl::setSomeLighting();
   while (true)
   {
-    dfm2::StepTime_PbdClothSim(aXYZ, aXYZt, aUVW, aInfoNearest_Contact, aBCFlag, 
-                               aETri,aVec2,aLine,
-                               aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh_Contact,
-                               dt,gravity,contact_clearance,rad_explore,bend_stiff_ratio);
+    dfm2::StepTime_PbdClothSim(
+        aXYZ, aXYZt, aUVW, aInfoNearest_Contact, aBCFlag,
+        aETri,aVec2,aLine,
+        aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh_Contact,
+        dt,gravity,contact_clearance,rad_explore,bend_stiff_ratio);
+    {
+      aEnergyKinetic.push_back(dfm2::EnergyKinetic(aUVW.data(), aUVW.size() / 3));
+      if (aEnergyKinetic.size() > 3 ) {
+        aEnergyKinetic.erase(aEnergyKinetic.begin());
+        const double g0 = aEnergyKinetic[1] - aEnergyKinetic[0];
+        const double g1 = aEnergyKinetic[2] - aEnergyKinetic[1];
+        if( g0 > 0 && g1 < 0 ){ std::cout << "zeroset"<<std::endl; aUVW.assign(aUVW.size(),0.0); }
+      }
+    }
     // ------------
     viewer.DrawBegin_oldGL();
 //    dfm2::opengl::Draw_CCad2D(cad);
+    ::glEnable(GL_NORMALIZE);
     Draw(aETri,aXYZ,
          aXYZ_Contact,aTri_Contact);
     glfwSwapBuffers(viewer.window);

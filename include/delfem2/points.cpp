@@ -524,6 +524,22 @@ template void delfem2::NormalizeVector_Points(float*, unsigned int, unsigned int
 template void delfem2::NormalizeVector_Points(double*, unsigned int, unsigned int);
 #endif
 
+// --------------------------------------
+
+
+double delfem2::EnergyKinetic(
+    const double* aUVW,
+    unsigned int np)
+{
+  double E = 0.0;
+  for(unsigned int ip=0;ip<np;++ip){
+    double u0 = aUVW[ip*3+0];
+    double v0 = aUVW[ip*3+1];
+    double w0 = aUVW[ip*3+2];
+    E += u0*u0 + v0*v0 + w0*w0;
+  }
+  return E;
+}
 
 // ---------------------------------------
 

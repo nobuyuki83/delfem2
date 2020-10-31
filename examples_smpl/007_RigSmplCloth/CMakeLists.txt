@@ -13,8 +13,7 @@ set(CMAKE_CXX_FLAGS "-O2 /W4\
 else()
   set(CMAKE_CXX_FLAGS "-Wall -std=c++11 \
   -Wno-deprecated-declarations\
-  -Wno-unused-variable \
-  -Wno-unused-but-set-variable")
+  -Wno-unused-variable")
 endif()
 
 ####################################
@@ -71,8 +70,6 @@ ENDIF()
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-    ${DELFEM2_INC}/cnpy/smpl_cnpy.h             
-    ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
     ${DELFEM2_INC}/garment.h
     ${3RD_PARTY}/cnpy/cnpy.h                    
     ${3RD_PARTY}/cnpy/cnpy.cpp

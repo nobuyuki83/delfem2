@@ -6,23 +6,24 @@
 */
 
 /**
- * @brief SMPL model
- * @details skinning
+ * @brief putting cloth on SMPL modl
+ * @details
  */
 
-#include <cstdlib>
-#include <random>
-#include <GLFW/glfw3.h>
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/garment.h"
-#include "delfem2/bv.h"
-#include "delfem2/mshmisc.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/rig_geo3.h"
-#include "delfem2/cnpy/smpl_cnpy.h"
+//
+#include "delfem2/bv.h"
+#include "delfem2/mshmisc.h"
 #include "inputs_garment.h"
-
+#include <cstdlib>
+#include <random>
+//
+#include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/color_glold.h"
@@ -30,47 +31,6 @@
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
-
-// ----------------------------------
-void Draw
-(const std::vector<double>& aXYZ1,
- const std::vector<unsigned int>& aTri,
- const std::vector<dfm2::CRigBone>& aBone,
- const std::vector<dfm2::CTarget>& aTarget)
-{
-  ::glEnable(GL_LIGHTING);
-  ::glEnable(GL_DEPTH_TEST);
-  dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
-  //    dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ0.data(), aTri.data(), aTri.size()/3);
-  ::glDisable(GL_DEPTH_TEST);
-  ::glDisable(GL_LIGHTING);
-  ::glPointSize(10);
-  ::glBegin(GL_POINTS);
-  for(const auto & it : aTarget){
-    const unsigned int ib = it.ib;
-    ::glColor3d(1,0,0);
-    dfm2::opengl::myGlVertex(aBone[ib].Pos());
-  }
-  ::glEnd();
-  // ------
-  ::glEnable(GL_DEPTH_TEST);
-  ::glBegin(GL_LINES);
-  ::glColor3d(1,0,0);
-  for(const auto & it : aTarget){
-    dfm2::CVec3d p = it.pos;
-    dfm2::opengl::myGlVertex(p+10.0*dfm2::CVec3d(0,0,1));
-    dfm2::opengl::myGlVertex(p-10.0*dfm2::CVec3d(0,0,1));
-  }
-  ::glEnd();
-  /*
-   ::glDisable(GL_DEPTH_TEST);
-   delfem2::opengl::DrawBone(aBone,
-   -1, -1,
-   0.01, 1.0);
-   */
-  ::glEnable(GL_DEPTH_TEST);
-  //    dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat1,0.02);
-}
 
 // --------------------
 int main()

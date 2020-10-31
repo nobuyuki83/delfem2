@@ -10,11 +10,11 @@
  * @details skinning
  */
 
-#include <cstdlib>
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/quat.h"
-//
-#include "delfem2/cnpy/smpl_cnpy.h"
+#include <cstdlib>
+#include <random>
 
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
@@ -50,6 +50,10 @@ int main()
   viewer.Init_oldGL();
   dfm2::opengl::setSomeLighting();
 
+  std::random_device rnd_dev;
+  std::mt19937 rnd_eng(rnd_dev());
+  std::uniform_real_distribution<double> dist_01(0,1);
+
   int iframe = 0;
   while (true)
   {
@@ -58,7 +62,7 @@ int main()
       for(auto & bone : aBone){
         dfm2::CQuatd::Random(0.2).CopyTo(bone.quatRelativeRot);
       }
-      dfm2::CVec3d::Random().CopyToScale(aBone[0].transRelative, 0.2);
+      dfm2::CVec3d::Random(dist_01,rnd_eng).CopyToScale(aBone[0].transRelative, 0.2);
       dfm2::UpdateBoneRotTrans(aBone);
       dfm2::Skinning_LBS(aXYZ1,
           aXYZ0, aBone, aW);
