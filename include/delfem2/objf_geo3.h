@@ -62,17 +62,31 @@ DFM2_INLINE void PBD_ConstProj_Rigid3D(
     const int* clstr,     int nclstr0,
     const double* aXYZ0,   int nXYZ0);
 
+/**
+ *
+ * @param C
+ * @param dCdp
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ */
 DFM2_INLINE void PBD_CdC_TriStrain2D3D(
     double C[3],
     double dCdp[3][9],
-    const double P[3][2], // (in) undeformed triangle vertex positions
-    const double p[3][3]); // (in) deformed triangle vertex positions
+    const double P[3][2],
+    const double p[3][3]);
 
+/**
+ *
+ * @param C
+ * @param dCdp
+ * @param[in] P undeformed triangle vertex positions
+ * @param[in] p deformed triangle vertex positions
+ */
 DFM2_INLINE void PBD_ConstraintProjection_DistanceTri2D3D(
     double C[3],
     double dCdp[3][9],
-    const double P[3][2], // (in) undeformed triangle vertex positions
-    const double p[3][3]); // (in) deformed triangle vertex positions
+    const double P[3][2],
+    const double p[3][3]);
 
 DFM2_INLINE void PBD_ConstraintProjection_EnergyStVK(
     double& C,
@@ -106,37 +120,37 @@ DFM2_INLINE void WdWddW_MIPS(
     const double C[3][3]);
   
 
-DFM2_INLINE double W_ArapEnergy
- (const std::vector<double>& aXYZ0,
-  const std::vector<double>& aXYZ1,
-  const std::vector<double>& aQuat1,
-  const std::vector<unsigned int>& psup_ind,
-  const std::vector<unsigned int>& psup);
+DFM2_INLINE double W_ArapEnergy(
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<double>& aQuat1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup);
 
-DFM2_INLINE void dW_ArapEnergy
- (std::vector<double>& aRes,
-  const std::vector<double>& aXYZ0,
-  const std::vector<double>& aXYZ1,
-  const std::vector<double>& aQuat1,
-  const std::vector<unsigned int>& psup_ind,
-  const std::vector<unsigned int>& psup);
+DFM2_INLINE void dW_ArapEnergy(
+    std::vector<double>& aRes,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<double>& aQuat1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup);
 
-DFM2_INLINE void ddW_ArapEnergy
- (std::vector<double>& eM,
-  const std::vector<unsigned int>& aIP,
-  const std::vector<double>& aXYZ0,
-  const std::vector<double>& aQuat1);
+DFM2_INLINE void ddW_ArapEnergy(
+    std::vector<double>& eM,
+    const std::vector<unsigned int>& aIP,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aQuat1);
 
 
 template <typename T>
-DFM2_INLINE void GetConstConstDiff_Bend
- (double& C,
-  CVec3<T> dC[4],
-  // -----
-  const CVec3<T>& p0,
-  const CVec3<T>& p1,
-  const CVec3<T>& p2,
-  const CVec3<T>& p3);
+DFM2_INLINE void GetConstConstDiff_Bend(
+    double& C,
+    CVec3<T> dC[4],
+    // -----
+    const CVec3<T>& p0,
+    const CVec3<T>& p1,
+    const CVec3<T>& p2,
+    const CVec3<T>& p3);
 
 }
 

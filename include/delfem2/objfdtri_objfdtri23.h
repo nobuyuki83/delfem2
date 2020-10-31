@@ -6,8 +6,8 @@
  */
 
 
-#ifndef DFM2_OBJFUNC_V23DTRI_h
-#define DFM2_OBJFUNC_V23DTRI_h
+#ifndef DFM2_OBJFDTRI_V23DTRI_H
+#define DFM2_OBJFDTRI_V23DTRI_H
 
 #include "delfem2/dfm2_inline.h"
 #include "delfem2/dtri2_v2dtri.h"
@@ -16,16 +16,33 @@
 
 namespace delfem2 {
 
-void PBD_TriStrain(double* aXYZt,
-                   unsigned int nXYZ,
-                   const std::vector<delfem2::CDynTri>& aETri,
-                   const std::vector<CVec2d>& aVec2);
+/**
+ *
+ * @param aXYZt
+ * @param nXYZ
+ * @param[in] aETri triangle index
+ * @param[in] aVec2 2D positions
+ */
+void PBD_TriStrain(
+    double* aXYZt,
+    unsigned int nXYZ,
+    const std::vector<delfem2::CDynTri>& aETri,
+    const std::vector<CVec2d>& aVec2);
 
-void PBD_Bend(double* aXYZt,
-              unsigned int nXYZ,
-              const std::vector<delfem2::CDynTri>& aETri,
-              const std::vector<CVec2d>& aVec2,
-              double ratio);
+/**
+ *
+ * @param aXYZt
+ * @param nXYZ
+ * @param aETri
+ * @param aVec2
+ * @param ratio
+ */
+void PBD_Bend(
+    double* aXYZt,
+    unsigned int nXYZ,
+    const std::vector<delfem2::CDynTri>& aETri,
+    const std::vector<CVec2d>& aVec2,
+    double ratio);
 
 } // namespace delfem2
 

@@ -276,7 +276,7 @@ int main()
       Mat.Initialize(np, 3, true);
       std::vector<unsigned int> psup_ind1, psup1;
       dfm2::JArray_Extend(psup_ind1, psup1,
-                          psup_ind, psup);
+          psup_ind.data(), psup_ind.size(), psup.data());
       dfm2::JArray_Sort(psup_ind1, psup1);
       assert( psup_ind1.size() == np+1 );
       Mat.SetPattern(psup_ind1.data(), psup_ind1.size(), psup1.data(), psup1.size());

@@ -81,6 +81,13 @@ cmake -G Xcode -DUSE_HEADERONLY=ON ..
 # cmake --build . # skip build to save time
 cd ../../
 
+cd examples_smpl
+mkdir buildMakeHdronly
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make 
+cd ../../
+
 
 echo "################################"
 echo "build examples_glut"

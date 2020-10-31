@@ -5,15 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/cnpy/smpl_cnpy.h"
+#include "cnpy/cnpy.h"
 #include <iostream>
 #include <vector>
-#include "cnpy/cnpy.h"
 
-#include "smpl_cnpy.h"
-
-namespace dfm2 = delfem2;
-
-void dfm2::cnpy::LoadSmpl(
+DFM2_INLINE void delfem2::cnpy::LoadSmpl(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,

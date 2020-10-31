@@ -154,12 +154,12 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid3D
   }  
 }
 
-DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D
-(double* aXYt,
- double stiffness,
- const unsigned int *clstr_ind, unsigned int nclstr_ind,
- const unsigned int *clstr, unsigned int nclstr0,
- const double* aXY0, unsigned int nXY0)
+DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D(
+    double* aXYt,
+    double stiffness,
+    const unsigned int *clstr_ind, unsigned int nclstr_ind,
+    const unsigned int *clstr, unsigned int nclstr0,
+    const double* aXY0, unsigned int nXY0)
 {
   const unsigned int nclstr = nclstr_ind-1;
   for(unsigned int iclstr=0;iclstr<nclstr;++iclstr){
@@ -197,11 +197,12 @@ DFM2_INLINE void delfem2::PBD_ConstProj_Rigid2D
   }
 }
 
-DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D
-(double C[3],
- double dCdp[3][9],
- const double P[3][2], // (in) undeformed triangle vertex positions
- const double p[3][3] // (in) deformed triangle vertex positions
+
+DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D(
+    double C[3],
+    double dCdp[3][9],
+    const double P[3][2], // (in) undeformed triangle vertex positions
+    const double p[3][3] // (in) deformed triangle vertex positions
 )
 {
   const CVec3d Gd0( P[1][0]-P[0][0], P[1][1]-P[0][1], 0.0 );
@@ -249,11 +250,11 @@ DFM2_INLINE void delfem2::PBD_CdC_TriStrain2D3D
   dC2dp2.CopyTo(dCdp[2]+2*3);
 }
 
-DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTri2D3D
-(double C[3],
- double dCdp[3][9],
- const double P[3][2], // (in) undeformed triangle vertex positions
- const double p[3][3] // (in) deformed triangle vertex positions
+DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTri2D3D(
+    double C[3],
+    double dCdp[3][9],
+    const double P[3][2], // (in) undeformed triangle vertex positions
+    const double p[3][3] // (in) deformed triangle vertex positions
 )
 {
   const double L12 = Distance2(P[1],P[2]);
@@ -409,11 +410,11 @@ DFM2_INLINE void delfem2::PBD_ConstraintProjection_DistanceTet
 }
 
 
-DFM2_INLINE void delfem2::PBD_CdC_QuadBend
-(double C[3],
- double dCdp[3][12],
- const double P[4][3],
- const double p[4][3])
+DFM2_INLINE void delfem2::PBD_CdC_QuadBend(
+    double C[3],
+    double dCdp[3][12],
+    const double P[4][3],
+    const double p[4][3])
 {
   const double A0 = Area_Tri3(P[0],P[2],P[3]);
   const double A1 = Area_Tri3(P[1],P[3],P[2]);
@@ -448,11 +449,11 @@ DFM2_INLINE void delfem2::PBD_CdC_QuadBend
 }
 
 
-DFM2_INLINE void delfem2::PBD_Seam
-(double* aXYZt,
- unsigned int nXYZ,
- const unsigned int* aLine,
- unsigned int nline)
+DFM2_INLINE void delfem2::PBD_Seam(
+    double* aXYZt,
+    unsigned int nXYZ,
+    const unsigned int* aLine,
+    unsigned int nline)
 {
   for(unsigned int il=0;il<nline;++il){
     const unsigned int ip0 = aLine[il*2+0];

@@ -14,8 +14,7 @@ IF(MSVC)
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g\
   -Wno-deprecated-declarations\
-  -Wno-unused-variable \
-  -Wno-unused-but-set-variable ")
+  -Wno-unused-variable")
 ENDIF()
 
 ####################################
@@ -64,7 +63,6 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
-    ### test
   ${ZLIB_INCLUDE_DIRS}
 )
 
@@ -72,8 +70,6 @@ set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
   ${3RD_PARTY}/cnpy/cnpy.h                     
   ${3RD_PARTY}/cnpy/cnpy.cpp
-  ${DELFEM2_INC}/cnpy/smpl_cnpy.h 
-  ${DELFEM2_INC}/cnpy/smpl_cnpy.cpp
   main.cpp
 )
 
