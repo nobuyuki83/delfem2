@@ -4,34 +4,33 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
-### [000_RigSmplArticulated](000_RigSmplArticulated)
-<img src="000_RigSmplArticulated/thumbnail.png" width=200>
+### [00_RigSmplArticulated](00_RigSmplArticulated)
+<img src="00_RigSmplArticulated/thumbnail.png" width=200>
 
-### [001_RigSmplTransfer](001_RigSmplTransfer)
-<img src="001_RigSmplTransfer/thumbnail.png" width=200>
+### [01_RigSmplTransfer](01_RigSmplTransfer)
+<img src="01_RigSmplTransfer/thumbnail.png" width=200>
 
-### [002_RigSmplIk](002_RigSmplIk)
-<img src="002_RigSmplIk/thumbnail.png" width=200>
+### [02_RigSmplIk](02_RigSmplIk)
+<img src="02_RigSmplIk/thumbnail.png" width=200>
 
-### [003_RigSmplIkArap](003_RigSmplIkArap)
-<img src="003_RigSmplIkArap/thumbnail.png" width=200>
+### [03_RigSmplIkArap](03_RigSmplIkArap)
+<img src="03_RigSmplIkArap/thumbnail.png" width=200>
 
-### [004_RigSmplIkImage](004_RigSmplIkImage)
-<img src="004_RigSmplIkImage/thumbnail.png" width=200>
+### [04_RigSmplIkImage](04_RigSmplIkImage)
+<img src="04_RigSmplIkImage/thumbnail.png" width=200>
 
-### [005_RigSmplIkImageCloth](005_RigSmplIkImageCloth)
-<img src="005_RigSmplIkImageCloth/thumbnail.png" width=200>
+### [05_RigSmplUi](05_RigSmplUi)
+<img src="05_RigSmplUi/thumbnail.png" width=200>
 
-### [006_RigSmplUi](006_RigSmplUi)
-<img src="006_RigSmplUi/thumbnail.png" width=200>
+### [10_RigSmplCloth](10_RigSmplCloth)
+<img src="10_RigSmplCloth/thumbnail.png" width=200>
 
-### [007_RigSmplCloth](007_RigSmplCloth)
-<img src="007_RigSmplCloth/thumbnail.png" width=200>
+### [11_RigSmplClothPose](11_RigSmplClothPose)
+<img src="11_RigSmplClothPose/thumbnail.png" width=200>
 
-### [008_RigSmplClothPose](008_RigSmplClothPose)
-<img src="008_RigSmplClothPose/thumbnail.png" width=200>
+### [12_RigSmplIkImageCloth](12_RigSmplIkImageCloth)
 
-
+<img src="12_RigSmplIkImageCloth/thumbnail.png" width=200>
 
 
 

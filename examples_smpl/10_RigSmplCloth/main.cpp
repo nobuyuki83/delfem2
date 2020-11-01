@@ -32,7 +32,7 @@
 #include <GLFW/glfw3.h>
 
 #ifndef M_PI
-#  define  M_PI 3.14159265359
+#  define M_PI 3.14159265359
 #endif
 
 namespace dfm2 = delfem2;
@@ -107,52 +107,40 @@ int main(int argc,char* argv[])
         aRT23);
     std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
     std::cout << "open svg: " << path_svg << std::endl;
-    dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
+    dfm2::ReadSVG_Cad2D(
+        cad, path_svg, 0.001*scale_adjust);
     // -------
     dfm2::CMesher_Cad2D mesher;
-    dfm2::MeshingPattern(aETri,aVec2,aXYZ,aLine,mesher,
-                         aRT23,cad,aIESeam,mesher_edge_length);
+    dfm2::MeshingPattern(
+        aETri,aVec2,aXYZ,aLine,mesher,
+        aRT23,cad,aIESeam,mesher_edge_length);
   }
   std::vector<double> aXYZt = aXYZ;
   std::vector<double> aUVW(aXYZ.size(), 0.0);
   std::vector<int> aBCFlag(aXYZ.size()/3, 0.0);
   
-  // ----------
-  
-  std::vector<double> aXYZ0_Contact;
-  std::vector<unsigned int> aTri_Contact;
+  // ---------
+  dfm2::CProjectorMesh projector;
   {
     std::vector<dfm2::CRigBone> aBone;
-    { // makineg aBone
-      std::vector<int> aIndBoneParent;
-      std::vector<double> aJntRgrs0;
-      std::vector<double> aRigWeight_Contact;
-      dfm2::cnpy::LoadSmpl(
-          aXYZ0_Contact,
-          aRigWeight_Contact,
-          aTri_Contact,
-          aIndBoneParent,
-          aJntRgrs0,
-          std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-      dfm2::Smpl2Rig(aBone,
-                     aIndBoneParent, aXYZ0_Contact, aJntRgrs0);
-      dfm2::UpdateBoneRotTrans(aBone);
-    }
+    std::vector<int> aIndBoneParent;
+    std::vector<double> aJntRgrs0;
+    std::vector<double> aSkinningWeight;
+    dfm2::cnpy::LoadSmpl(
+        projector.aXYZ_Body,
+        aSkinningWeight,
+        projector.aTri_Body,
+        aIndBoneParent,
+        aJntRgrs0,
+        std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+    dfm2::Smpl2Rig(
+        aBone,
+        aIndBoneParent, projector.aXYZ_Body, aJntRgrs0);
+    dfm2::UpdateBoneRotTrans(aBone);
+    projector.Init();
   }
-  std::vector<double> aXYZ_Contact = aXYZ0_Contact;
-  std::vector<double> aNorm_Contact(aXYZ_Contact.size());
-  delfem2::Normal_MeshTri3D(
-      aNorm_Contact.data(),
-      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-      aTri_Contact.data(), aTri_Contact.size()/3);
-  dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh_Contact;
-  bvh_Contact.Init(
-      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-      aTri_Contact.data(), aTri_Contact.size()/3,
-      0.01);
-  std::vector<dfm2::CInfoNearest<double>> aInfoNearest_Contact;
-  std::vector<double> aEnergyKinetic;
-    
+  dfm2::CKineticDamper damper;
+
   // above: data preparation (derived)
   // ----------------------------------------------
   // below: opengl and UI
@@ -165,25 +153,18 @@ int main(int argc,char* argv[])
   while (true)
   {
     dfm2::StepTime_PbdClothSim(
-        aXYZ, aXYZt, aUVW, aInfoNearest_Contact, aBCFlag,
+        aXYZ, aXYZt, aUVW, aBCFlag,
         aETri,aVec2,aLine,
-        aXYZ_Contact,aTri_Contact,aNorm_Contact,bvh_Contact,
-        dt,gravity,contact_clearance,rad_explore,bend_stiff_ratio);
-    {
-      aEnergyKinetic.push_back(dfm2::EnergyKinetic(aUVW.data(), aUVW.size() / 3));
-      if (aEnergyKinetic.size() > 3 ) {
-        aEnergyKinetic.erase(aEnergyKinetic.begin());
-        const double g0 = aEnergyKinetic[1] - aEnergyKinetic[0];
-        const double g1 = aEnergyKinetic[2] - aEnergyKinetic[1];
-        if( g0 > 0 && g1 < 0 ){ std::cout << "zeroset"<<std::endl; aUVW.assign(aUVW.size(),0.0); }
-      }
-    }
+        projector,
+        dt,gravity,bend_stiff_ratio);
+    damper.Damp(aUVW);
     // ------------
     viewer.DrawBegin_oldGL();
 //    dfm2::opengl::Draw_CCad2D(cad);
     ::glEnable(GL_NORMALIZE);
     Draw(aETri,aXYZ,
-         aXYZ_Contact,aTri_Contact);
+         projector.aXYZ_Body,
+         projector.aTri_Body);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
     if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
