@@ -49,10 +49,12 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
+# zlib
+find_package(ZLIB REQUIRED)
+
 ##########################################
 
 ### TEST fix
-find_package(ZLIB REQUIRED)
 message(WARNING "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(WARNING "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 ###
