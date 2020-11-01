@@ -49,6 +49,9 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
+# zlib
+find_package(ZLIB REQUIRED)
+
 #########################################
 
 set(3RD_PARTY           "../../3rd_party")
@@ -57,6 +60,7 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
+  ${ZLIB_INCLUDE_DIR}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
@@ -94,5 +98,6 @@ ELSEIF(MSVC)
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
+    ${ZLIB_LIBRARIES}
   )  
 ENDIF()

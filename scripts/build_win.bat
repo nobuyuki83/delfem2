@@ -66,24 +66,26 @@ cmake -A x64 -DUSE_HEADERONLY=OFF ..
 cmake --build . --config Release
 cd ../../
 
-: ###############################
-: pybind
+: ##############################
+: build zlib
 
-cd src_pybind/core
-mkdir buildVS64
-cd buildVS64
-cmake -A x64 -DUSE_HEADERONLY=OFF ..
+cd 3rd_party
+git clone https://github.com/madler/zlib.git
+cd zlib
+mkdir buildMake
+cd buildMake
+cmake -A x64 ..
 cmake --build . --config Release
 cd ../../../
+set zlib_library=%~dp0..\3rd_party\zlib\buildMake\Release\zlib.lib
+echo %zlib_library%
 
-cd src_pybind/gl
-mkdir buildVS64
-cd buildVS64
-cmake -A x64 -DUSE_HEADERONLY=OFF ..
+: ##############################
+: glfw_smpl
+
+cd examples_smpl
+mkdir buildVS64Hdronly
+cd buildVS64Hdronly
+cmake -A x64 -DUSE_HEADERONLY=ON -DZLIB_LIBRARY=%zlib_library% -DZLIB_INCLUDE_DIR="..\..\3rd_party\zlib;..\..\3rd_party\zlib\buildMake" ..
 cmake --build . --config Release
-cd ../../../
-
-pip uninstall PyDelFEM2 -y
-pip uninstall PyDelFEM2 -y
-pip3 install -e .
-python setup.py test
+cd ../../
