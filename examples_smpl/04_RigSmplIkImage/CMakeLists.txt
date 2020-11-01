@@ -14,14 +14,15 @@ IF(MSVC)
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g\
   -Wno-unused-variable \
-  -Wno-deprecated-declarations" )
+  -Wno-deprecated-declarations")
 ENDIF()
 
 ####################################
 
-project(000_RigSmplArticulated)
+project(04_RigSmplIkImage)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(TEST_INPUTS         "../../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 
 # glfw
 IF(MSVC)
@@ -49,10 +50,13 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-# zlib
-find_package(ZLIB REQUIRED)
+###############################################
 
-#########################################
+### TEST fix
+find_package(ZLIB REQUIRED)
+message(WARNING "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
+message(WARNING "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
+###
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
@@ -60,17 +64,20 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
-  ${ZLIB_INCLUDE_DIR}
+  ${TEST_INPUTS}
+    ### test
+  ${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
   ${3RD_PARTY}/cnpy/cnpy.h                  
   ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${TEST_INPUTS}/inputs_imgboneloc.h
   main.cpp
 )
 
-################################################
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
@@ -98,6 +105,7 @@ ELSEIF(MSVC)
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${ZLIB_LIBRARIES}
+	    ###test
+	${ZLIB_LIBRARIES}
   )  
 ENDIF()

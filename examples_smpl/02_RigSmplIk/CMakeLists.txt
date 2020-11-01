@@ -19,7 +19,7 @@ ENDIF()
 
 ####################################
 
-project(001_RigSmplTransfer)
+project(02_RigSmplIk)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -49,16 +49,13 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-# zlib
-find_package(ZLIB REQUIRED)
-
-##########################################
+##############################################
 
 ### TEST fix
+find_package(ZLIB REQUIRED)
 message(WARNING "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(WARNING "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 ###
-
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
@@ -71,7 +68,7 @@ include_directories(
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/cnpy/cnpy.h                
+  ${3RD_PARTY}/cnpy/cnpy.h                  
   ${3RD_PARTY}/cnpy/cnpy.cpp
   main.cpp
 )
@@ -100,11 +97,11 @@ ELSEIF(UNIX)
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME} 
+  target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
-	###test
+	   ###test
 	${ZLIB_LIBRARIES}
-  )
+  )  
 ENDIF()

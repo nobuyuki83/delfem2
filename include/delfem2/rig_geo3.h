@@ -135,6 +135,37 @@ DFM2_INLINE void Skinning_LBS(
     const std::vector<CRigBone>& aBone,
     const std::vector<double>& aW);
 
+/**
+ *
+ * @param[out] aWBone_RigSparse
+ * @param[out] aIdBone_RigSparse
+ * @param[in] aW
+ * @param[in] np
+ * @param[in] nb
+ * @param[in] thres
+ */
+DFM2_INLINE void SparsifySkinningWeight(
+    std::vector<double>& aWBone_RigSparse,
+    std::vector<unsigned int>& aIdBone_RigSparse,
+    const double* aW,
+    unsigned int np,
+    unsigned int nb,
+    double thres);
+
+/**
+ *
+ * @param[out] aXYZ1
+ * @param[in] aXYZ0
+ * @param[in] aBone
+ * @param[in] aWBoneSparse
+ * @param[in] aIdBoneSparse
+ */
+DFM2_INLINE void SkinningSparseLBS(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<CRigBone>& aBone,
+    const std::vector<double>& aWBoneSparse,
+    const std::vector<unsigned>& aIdBoneSparse);
 
 // --------------------------------------
 

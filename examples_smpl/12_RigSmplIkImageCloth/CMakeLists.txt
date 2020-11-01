@@ -13,15 +13,16 @@ IF(MSVC)
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g \
-  -Wno-deprecated-declarations \
-  -Wno-unused-variable")
+    -Wno-unused-variable \
+    -Wno-deprecated-declarations")
 ENDIF()
 
 ####################################
 
-project(006_RigSmplUi)
+project(12_RigSmplIkImageCloth)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(TEST_INPUTS         "../../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 
 # glfw
 IF(MSVC)
@@ -49,7 +50,7 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-#########################################
+######################################
 
 IF(MSVC)
 	find_package(ZLIB REQUIRED)
@@ -61,6 +62,7 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
+  ${TEST_INPUTS}
 IF(MSVC)
 	${ZLIB_INCLUDE_DIRS}
 ENDIF()
@@ -70,10 +72,11 @@ set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
   ${3RD_PARTY}/cnpy/cnpy.h                  
   ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${TEST_INPUTS}/inputs_imgboneloc.h
   main.cpp
 )
 
-################################################
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
@@ -102,5 +105,5 @@ ELSEIF(MSVC)
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
 	${ZLIB_LIBRARIES}
-  )  
+  )
 ENDIF()

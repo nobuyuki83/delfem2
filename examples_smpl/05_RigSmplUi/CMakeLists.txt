@@ -12,14 +12,14 @@ IF(MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g\
-  -Wno-unused-variable \
-  -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-Wall -g \
+  -Wno-deprecated-declarations \
+  -Wno-unused-variable")
 ENDIF()
 
 ####################################
 
-project(002_RigSmplIk)
+project(05_RigSmplUi)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -49,13 +49,11 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-##############################################
+#########################################
 
-### TEST fix
-find_package(ZLIB REQUIRED)
-message(WARNING "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
-message(WARNING "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
-###
+IF(MSVC)
+	find_package(ZLIB REQUIRED)
+ENDIF()
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
@@ -63,7 +61,9 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
-  ${ZLIB_INCLUDE_DIRS}
+IF(MSVC)
+	${ZLIB_INCLUDE_DIRS}
+ENDIF()
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
@@ -73,7 +73,7 @@ add_executable(${PROJECT_NAME}
   main.cpp
 )
 
-###############################################
+################################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
@@ -101,7 +101,6 @@ ELSEIF(MSVC)
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
-	   ###test
 	${ZLIB_LIBRARIES}
   )  
 ENDIF()
