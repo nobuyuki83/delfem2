@@ -272,6 +272,7 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BV>& aBB)
 {
+  assert(ibvh>=0&&ibvh<aBB.size());
   double min0,max0;
   aBB[ibvh].Range_DistToPoint(min0,max0,
                               px,py,pz);
@@ -409,11 +410,13 @@ void delfem2::Project_PointsIncludedInBVH_Outside_Cache(
       continue;
     }
     CVec3<REAL> n0;
-    double sdf = SDFNormal_NearestPoint(n0,
-                                        aInfoNearest[ip].pos, aInfoNearest[ip].pes,
-                                        pXYZ0, nXYZ0,
-                                        pTri0, nTri0,
-                                        pNorm0);
+    double sdf = SDFNormal_NearestPoint(
+        n0,
+        aInfoNearest[ip].pos,
+        aInfoNearest[ip].pes,
+        pXYZ0, nXYZ0,
+        pTri0, nTri0,
+        pNorm0);
     aInfoNearest[ip].sdf = sdf;
     aInfoNearest[ip].is_active = true;
     if( sdf+cc < 0 ) continue;

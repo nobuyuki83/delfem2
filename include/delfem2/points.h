@@ -177,6 +177,20 @@ DFM2_INLINE void TangentVector_Points3(
     const std::vector<double>& aNorm);
 
 
+class CKineticDamper{
+public:
+  void Damp(std::vector<double>& aUVW){
+    aEnergy.push_back(EnergyKinetic(aUVW.data(), aUVW.size() / 3));
+    if (aEnergy.size() > 3 ) {
+      aEnergy.erase(aEnergy.begin());
+      const double g0 = aEnergy[1] - aEnergy[0];
+      const double g1 = aEnergy[2] - aEnergy[1];
+      if( g0 > 0 && g1 < 0 ){ aUVW.assign(aUVW.size(),0.0); }
+    }
+  }
+public:
+  std::vector<double> aEnergy;
+};
 
 } // delfem2
 

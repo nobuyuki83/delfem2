@@ -294,11 +294,11 @@ DFM2_INLINE void delfem2::Skinning_LBS_LocalWeight
 }
 
 
-DFM2_INLINE void delfem2::Skinning_LBS
- (std::vector<double>& aXYZ1,
-  const std::vector<double>& aXYZ0,
-  const std::vector<CRigBone>& aBone,
-  const std::vector<double>& aW)
+DFM2_INLINE void delfem2::Skinning_LBS(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<CRigBone>& aBone,
+    const std::vector<double>& aW)
 {
   const size_t nBone = aBone.size();
   const size_t nP = aXYZ0.size()/3;
@@ -315,6 +315,69 @@ DFM2_INLINE void delfem2::Skinning_LBS
       p1[1] += aW[ip*nBone+ibone]*p2[1];
       p1[2] += aW[ip*nBone+ibone]*p2[2];
     }
+  }
+}
+
+// ---------
+
+DFM2_INLINE void delfem2::SkinningSparseLBS(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<CRigBone>& aBone,
+    const std::vector<double>& aWBoneSparse,
+    const std::vector<unsigned>& aIdBoneSparse)
+{
+//  const size_t nBone = aBone.size();
+  const size_t nP = aXYZ0.size()/3;
+  const unsigned int nBW = aWBoneSparse.size()/nP;
+  assert( aWBoneSparse.size() == nBW*nP );
+  assert( aIdBoneSparse.size() == nBW*nP );
+  aXYZ1.resize(aXYZ0.size());
+  for(unsigned int ip=0;ip<nP;++ip){
+    const double* p0 = aXYZ0.data()+ip*3;
+    double* p1 = aXYZ1.data()+ip*3;
+    p1[0] = 0.0;  p1[1] = 0.0;  p1[2] = 0.0;
+    for(unsigned int ibw=0;ibw<nBW;++ibw){
+      const unsigned int ib0 =aIdBoneSparse[ip*nBW+ibw];
+      const double w0 =aWBoneSparse[ip*nBW+ibw];
+      double p2[3]; aBone[ib0].DeformSkin(p2, p0);
+      p1[0] += w0*p2[0];
+      p1[1] += w0*p2[1];
+      p1[2] += w0*p2[2];
+    }
+  }
+}
+
+// -------
+
+void delfem2::SparsifySkinningWeight(
+    std::vector<double>& aWBone_RigSparse,
+    std::vector<unsigned int>& aIdBone_RigSparse,
+    const double* aW,
+    unsigned int np,
+    unsigned int nb,
+    double thres)
+{
+  unsigned int nbone_nonzeroweight = 0;
+  for(unsigned int ip=0;ip< np;++ip) {
+    unsigned icnt = 0;
+    for(unsigned int ib=0;ib<nb;++ib) {
+      if( aW[ip * nb + ib] < thres ){ continue; }
+      icnt++;
+    }
+    if( icnt > nbone_nonzeroweight ){ nbone_nonzeroweight = icnt; }
+  }
+  aWBone_RigSparse.resize(nbone_nonzeroweight*np);
+  aIdBone_RigSparse.resize(nbone_nonzeroweight*np);
+  for(unsigned int ip=0;ip< np;++ip) {
+    unsigned icnt = 0;
+    for(unsigned int ib=0;ib<nb;++ib) {
+      if( aW[ip * nb + ib] < thres ){ continue; }
+      aWBone_RigSparse[ip*nbone_nonzeroweight+icnt] = aW[ip * nb + ib];
+      aIdBone_RigSparse[ip*nbone_nonzeroweight+icnt] = ib;
+      icnt++;
+    }
+    if( icnt > nbone_nonzeroweight ){ nbone_nonzeroweight = icnt; }
   }
 }
 

@@ -10,17 +10,17 @@
  * @details rotation for each bone and translation for root bone
  */
 
-#include <cstdlib>
-#include <fstream>
+#include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mat4.h"
-#include "delfem2/cnpy/smpl_cnpy.h"
+#include <cstdlib>
+#include <fstream>
 
-#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/tex_gl.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -34,16 +34,22 @@ int main()
   class CMyViewer : public delfem2::opengl::CViewer_GLFW {
   public:
     CMyViewer(){
+      std::vector<double> aW;
       std::vector<int> aIndBoneParent;
       std::vector<double> aJntRgrs;
-      dfm2::cnpy::LoadSmpl(aXYZ0,
-                           aW,
-                           aTri,
-                           aIndBoneParent,
-                           aJntRgrs,
-                           std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+      dfm2::cnpy::LoadSmpl(
+          aXYZ0,
+          aW,
+          aTri,
+          aIndBoneParent,
+          aJntRgrs,
+          std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
       Smpl2Rig(aBone,
-               aIndBoneParent, aXYZ0, aJntRgrs);
+          aIndBoneParent, aXYZ0, aJntRgrs);
+      dfm2::SparsifySkinningWeight(
+          aWeightRigSparse, aIdBoneRigSparse,
+          aW.data(), aXYZ0.size()/3, aBone.size(),
+          1.0e-5);
       aXYZ1 = aXYZ0;
       gizmo.SetSize(0.3);
     }
@@ -62,8 +68,8 @@ int main()
       bool is_edited = gizmo.Drag(aBone,
                                   src0, src1, dir);
       if( is_edited ){
-        dfm2::Skinning_LBS(aXYZ1,
-                           aXYZ0, aBone, aW);
+        dfm2::SkinningSparseLBS(aXYZ1,
+            aXYZ0, aBone, aWeightRigSparse,aIdBoneRigSparse);
       }
     }
     void mouse_press(const float src[3], const float dir[3]) override {
@@ -86,8 +92,9 @@ int main()
     }
   public:
     std::vector<double> aXYZ0, aXYZ1;
-    std::vector<double> aW;
     std::vector<unsigned int> aTri;
+    std::vector<double> aWeightRigSparse;
+    std::vector<unsigned int> aIdBoneRigSparse;
     std::vector<dfm2::CRigBone> aBone;
     dfm2::CGizmo_Rig<float> gizmo;
   } viewer;

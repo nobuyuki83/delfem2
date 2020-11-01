@@ -12,17 +12,16 @@ IF(MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g \
-    -Wno-unused-variable \
-    -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-Wall -g\
+  -Wno-unused-variable \
+  -Wno-deprecated-declarations")
 ENDIF()
 
 ####################################
 
-project(005_RigSmplIkImageCloth)
+project(02_RigSmplIk)
 
-set(TEST_INPUTS         "../../test_inputs")
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
 # glfw
 IF(MSVC)
@@ -50,11 +49,13 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-######################################
+##############################################
 
-IF(MSVC)
-	find_package(ZLIB REQUIRED)
-ENDIF()
+### TEST fix
+find_package(ZLIB REQUIRED)
+message(WARNING "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
+message(WARNING "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
+###
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
@@ -62,17 +63,13 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
-  ${TEST_INPUTS}
-IF(MSVC)
-	${ZLIB_INCLUDE_DIRS}
-ENDIF()
+  ${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
   ${3RD_PARTY}/cnpy/cnpy.h                  
   ${3RD_PARTY}/cnpy/cnpy.cpp
-  ${TEST_INPUTS}/inputs_imgboneloc.h
   main.cpp
 )
 
@@ -104,6 +101,7 @@ ELSEIF(MSVC)
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
+	   ###test
 	${ZLIB_LIBRARIES}
-  )
+  )  
 ENDIF()
