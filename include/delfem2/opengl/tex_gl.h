@@ -89,7 +89,7 @@ public:
     z = 0;
   }
   
-  void Draw_oldGL();
+  void Draw_oldGL() const;
   
   void Initialize(unsigned int w, unsigned int h,
                   const unsigned char *pD,

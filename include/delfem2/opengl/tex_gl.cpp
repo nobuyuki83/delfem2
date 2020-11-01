@@ -158,7 +158,7 @@ void delfem2::opengl::CTexRGB::InitGL()
 // --------------------------------------------------
 
 
-void delfem2::opengl::CTexRGB_Rect2D::Draw_oldGL()
+void delfem2::opengl::CTexRGB_Rect2D::Draw_oldGL() const
 {
   if( id_tex == 0 ){ return; }
 #ifdef GL_LIGHTING
