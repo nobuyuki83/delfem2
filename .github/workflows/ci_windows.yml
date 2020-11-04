@@ -68,6 +68,7 @@ jobs:
         cd buildMake
         cmake -A x64 ..
         cmake --build . --config Release
-        cd ../../../        
-        set zlib_library=%~dp0..\..\3rd_party\zlib\buildMake\Release\zlib.lib
-        echo %zlib_library%
+        cd ../../../  
+        Convert-Path .      
+        $zlib_library=Convert-Path ..\..\3rd_party\zlib\buildMake\Release\zlib.lib
+        echo $zlib_library

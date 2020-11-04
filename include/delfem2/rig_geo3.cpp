@@ -371,8 +371,10 @@ void delfem2::SparsifySkinningWeight(
   aIdBone_RigSparse.resize(nbone_nonzeroweight*np);
   for(unsigned int ip=0;ip< np;++ip) {
     unsigned icnt = 0;
+    double w_sum = 0.0;
     for(unsigned int ib=0;ib<nb;++ib) {
       if( aW[ip * nb + ib] < thres ){ continue; }
+      w_sum += aW[ip * nb + ib];
       aWBone_RigSparse[ip*nbone_nonzeroweight+icnt] = aW[ip * nb + ib];
       aIdBone_RigSparse[ip*nbone_nonzeroweight+icnt] = ib;
       icnt++;
