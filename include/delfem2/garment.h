@@ -148,7 +148,7 @@ public:
 /**
  *
  */
-class CProjectorRiggedBody{
+class CProjector_RigMesh{
 public:
   void UpdatePose(bool isUpdateTopo){
     UpdateBoneRotTrans(aBone);

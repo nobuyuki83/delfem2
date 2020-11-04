@@ -23,5 +23,6 @@ add_subdirectory(05_RigSmplUi)
 add_subdirectory(10_RigSmplCloth)
 add_subdirectory(11_RigSmplClothPose)
 add_subdirectory(12_RigSmplIkImageCloth)
+add_subdirectory(13_RigSmplClothRig)
 
 

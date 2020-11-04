@@ -34,4 +34,10 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
+### [13_RigSmplClothRig](13_RigSmplClothRig)
+
+<img src="13_RigSmplClothRig/thumbnail.png" width=200>
+
+
+
 

@@ -108,16 +108,18 @@ public:
     assert( aBB_BVH.size() == aNodeBVH.size() );
     double dist = -1, dist_min = rad_exp;
     pes.itri = UINT_MAX;
-    delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist,dist_min, pes,
-                                                      p0.x(), p0.y(), p0.z(), rad_exp,
-                                                      aXYZ, nXYZ, aTri, nTri,
-                                                      iroot_bvh, aNodeBVH, aBB_BVH);
+    delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
+        dist,dist_min, pes,
+        p0.x(), p0.y(), p0.z(), rad_exp,
+        aXYZ, nXYZ, aTri, nTri,
+        iroot_bvh, aNodeBVH, aBB_BVH);
     if( pes.itri == UINT_MAX ){ return dist_min; }
     return dist;
   }
-  CPointElemSurf<REAL> NearestPoint_Global(const CVec3<REAL>& p0,
-                                           const std::vector<double>& aXYZ,
-                                           const std::vector<unsigned int>& aTri) const {
+  CPointElemSurf<REAL> NearestPoint_Global(
+      const CVec3<REAL>& p0,
+      const std::vector<double>& aXYZ,
+      const std::vector<unsigned int>& aTri) const {
     assert( aBB_BVH.size() == aNodeBVH.size() );
     CPointElemSurf<REAL> pes;
     double dist_min = -1;
