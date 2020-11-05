@@ -49,28 +49,26 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-##############################################
-
-### TEST fix
 find_package(ZLIB REQUIRED)
-message(WARNING "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
-message(WARNING "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
-###
+message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
+message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
+
+##############################################
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}
-  ${ZLIB_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
+    ${3RD_PARTY}
+    ${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/cnpy/cnpy.h                  
-  ${3RD_PARTY}/cnpy/cnpy.cpp
-  main.cpp
+    ${3RD_PARTY}/cnpy/cnpy.h
+    ${3RD_PARTY}/cnpy/cnpy.cpp
+    main.cpp
 )
 
 ###############################################
@@ -79,7 +77,6 @@ IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
-  find_library( ZIP_LIBRARY Z )
   target_link_libraries(${PROJECT_NAME}
     ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
@@ -87,7 +84,7 @@ IF(APPLE)
     ${COCOA_LIBRARY}
     ${IOKIT_LIBRARY}
     ${COREVIDEO_LIBRARY}
-    ${ZIP_LIBRARY}
+    ${ZLIB_LIBRARY}
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
@@ -101,7 +98,6 @@ ELSEIF(MSVC)
     ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
-	   ###test
-	${ZLIB_LIBRARIES}
+	  ${ZLIB_LIBRARIES}
   )  
 ENDIF()

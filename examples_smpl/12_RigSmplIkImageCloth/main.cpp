@@ -41,7 +41,7 @@ namespace dfm2 = delfem2;
 // ------------------------------------
 
 void Draw(
-    dfm2::CProjectorRiggedBody& projector,
+    dfm2::CProjector_RigMesh& projector,
     const std::vector<dfm2::CTarget>& aTarget,
     const dfm2::opengl::CTexRGB_Rect2D& tex,
     const std::vector<dfm2::CDynTri>& aETri_Cloth,
@@ -155,7 +155,7 @@ int main()
     }
   }
 
-  dfm2::CProjectorRiggedBody projector;
+  dfm2::CProjector_RigMesh projector;
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
