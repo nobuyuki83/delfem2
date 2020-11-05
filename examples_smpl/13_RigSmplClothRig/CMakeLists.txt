@@ -51,11 +51,11 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-######################################
+find_package(ZLIB REQUIRED)
+message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
+message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
-IF(MSVC)
-	find_package(ZLIB REQUIRED)
-ENDIF()
+######################################
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
@@ -64,9 +64,7 @@ include_directories(
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
   ${TEST_INPUTS}
-IF(MSVC)
 	${ZLIB_INCLUDE_DIRS}
-ENDIF()
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
@@ -83,28 +81,27 @@ IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
-  find_library( ZIP_LIBRARY Z )
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-    ${ZIP_LIBRARY}
+      ${DFM2_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${GLFW_LIBRARY}
+      ${COCOA_LIBRARY}
+      ${IOKIT_LIBRARY}
+      ${COREVIDEO_LIBRARY}
+      ${ZLIB_LIBRARY}
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
+      ${DFM2_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${GLFW_LIBRARY}
+      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${OPENGL_LIBRARY}
-	${ZLIB_LIBRARIES}
+      ${DFM2_LIBRARY}
+      ${GLFW_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${ZLIB_LIBRARIES}
   )
 ENDIF()

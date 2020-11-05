@@ -36,7 +36,7 @@ namespace dfm2 = delfem2;
 void Draw(
     const std::vector<dfm2::CDynTri>& aETri_Cloth,
     const std::vector<double>& aXYZ_Cloth,
-    const dfm2::CProjectorRiggedBody& projector_smpl,
+    const dfm2::CProjector_RigMesh& projector_smpl,
     dfm2::opengl::CViewer_GLFW& viewer)
 {
   viewer.DrawBegin_oldGL();
@@ -110,7 +110,7 @@ int main()
   const std::vector<int> aBCFlag_Cloth(aXYZ_Cloth.size()/3, 0);
 
   // ----------
-  dfm2::CProjectorRiggedBody projector_smpl;
+  dfm2::CProjector_RigMesh projector_smpl;
   {
     std::vector<double> aW_Body;
     std::vector<int> aIndBoneParent;
