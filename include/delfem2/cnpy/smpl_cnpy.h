@@ -11,6 +11,7 @@
 #include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <vector>
+#include <string>
 
 namespace delfem2{
 namespace cnpy{
