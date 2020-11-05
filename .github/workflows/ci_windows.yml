@@ -69,6 +69,14 @@ jobs:
         cmake -A x64 ..
         cmake --build . --config Release
         cd ../../../  
-        Convert-Path .      
-        $zlib_library=Convert-Path ..\..\3rd_party\zlib\buildMake\Release\zlib.lib
+        $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
         echo $zlib_library
+        
+        echo "##############################"
+        echo "glfw_smpl"
+        cd examples_smpl
+        mkdir buildVS64Hdronly
+        cd buildVS64Hdronly
+        cmake -A x64 -DUSE_HEADERONLY=ON -DZLIB_LIBRARY=$zlib_library -DZLIB_INCLUDE_DIR="..\..\3rd_party\zlib;..\..\3rd_party\zlib\buildMake" ..
+        cmake --build . --config Release
+        cd ../../
