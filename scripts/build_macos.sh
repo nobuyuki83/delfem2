@@ -1,19 +1,45 @@
-echo "#################################"
-echo "download & build submodules"
-echo "#################################"
 
-git submodule update --init --recursive
-git submodule foreach git pull origin master
+echo "################################"
+echo "build examples_glut"
+echo "################################"
+
+cd examples_glut
+mkdir buildMake
+cd buildMake
+cmake ..
+make
+cd ../../
+
+cd examples_glut
+mkdir buildXcode
+cd buildXcode
+cmake -G Xcode ..
+cmake --build .
+cd ../../
+
+
+echo "################################"
+echo "compile glfw"
+echo "################################"
+
+git submodule update --init -- 3rd_party/glfw
+cd 3rd_party/glfw
+git checkout master
+git pull origin master
+cmake .
+make
+cd ../..
 
 
 echo "################################"
 echo "build examples_glfwnew"
 echo "################################"
 
-cd 3rd_party/glfw
-cmake .
-make
-cd ../..
+git submodule update --init -- 3rd_party/imgui
+cd 3rd_party/imgui
+git checkout master
+git pull origin master
+cd ../../
 
 cd examples_glfwnew
 mkdir buildXcodeHdronly
@@ -40,6 +66,12 @@ cd ../../
 echo "################################"
 echo "build examples_glfwold"
 echo "################################"
+
+git submodule update --init -- 3rd_party/tinygltf
+cd 3rd_party/tinygltf
+git checkout master
+git pull origin master
+cd ../../
 
 cd examples_glfwold
 mkdir buildXcodeHdronly
@@ -74,6 +106,12 @@ echo "################################"
 echo "build examples_smpl"
 echo "################################"
 
+git submodule update --init -- 3rd_party/cnpy
+cd 3rd_party/cnpy
+git checkout master
+git pull origin master
+cd ../../
+
 cd examples_smpl
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
@@ -89,31 +127,14 @@ make
 cd ../../
 
 
-echo "################################"
-echo "build examples_glut"
-echo "################################"
-
-cd examples_glut
-mkdir buildMake
-cd buildMake
-cmake ..
-make
-cd ../../
-
-cd examples_glut
-mkdir buildXcode
-cd buildXcode
-cmake -G Xcode ..
-cmake --build .
-cd ../../
-
-
 echo "###############################"
 echo "test cpp"
 echo "###############################"
-# (this takes time so put it in the end)
 
-cd "3rd_party/googletest"
+git submodule update --init -- 3rd_party/googletest
+cd 3rd_party/googletest
+git checkout master
+git pull origin master
 cmake .
 make
 cd ../../
@@ -144,14 +165,4 @@ cmake -DUSE_HEADERONLY=OFF ..
 make
 ./runUnitTests
 cd ../../
-
-
-echo "################################"
-echo "# SMPL"
-echo "################################"
-pip3 install chumpy
-cd test_inputs
-python3 smpl_preprocess.py 
-pip3 uninstall chumpy -y
-
 
