@@ -1,3 +1,4 @@
+.DS_Store
 *.xcuserstate
 *.xcscheme
 *.plist
@@ -75,3 +76,4 @@ test_inputs/smpl_model_f.npz
 test_inputs/smpl_model_m.npz
 examples_blender/out
 3rd_party/zlib/
+
