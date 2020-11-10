@@ -19,7 +19,7 @@ cd ../../
 
 
 echo "################################"
-echo "compile glfw"
+echo "fetch latest glfw and compile it"
 echo "################################"
 
 git submodule update --init -- 3rd_party/glfw
@@ -32,7 +32,7 @@ cd ../..
 
 
 echo "################################"
-echo "build examples_glfwnew"
+echo "fetch latest imgui"
 echo "################################"
 
 git submodule update --init -- 3rd_party/imgui
@@ -40,6 +40,10 @@ cd 3rd_party/imgui
 git checkout master
 git pull origin master
 cd ../../
+
+echo "################################"
+echo "build examples_glfwnew"
+echo "################################"
 
 cd examples_glfwnew
 mkdir buildXcodeHdronly
@@ -55,16 +59,9 @@ cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 cmake --build .
 cd ../../
 
-cd examples_glfwnew
-mkdir buildEm
-cd buildEm
-cmake -DEMSCRIPTEN=ON -DUSE_HEADERONLY=ON ..
-make
-cd ../../
-
 
 echo "################################"
-echo "build examples_glfwold"
+echo "fetch latest tinygltf"
 echo "################################"
 
 git submodule update --init -- 3rd_party/tinygltf
@@ -72,6 +69,10 @@ cd 3rd_party/tinygltf
 git checkout master
 git pull origin master
 cd ../../
+
+echo "################################"
+echo "build examples_glfwold"
+echo "################################"
 
 cd examples_glfwold
 mkdir buildXcodeHdronly
@@ -103,7 +104,7 @@ cd ../../
 
 
 echo "################################"
-echo "build examples_smpl"
+echo "fetch latest cnpy"
 echo "################################"
 
 git submodule update --init -- 3rd_party/cnpy
@@ -111,6 +112,10 @@ cd 3rd_party/cnpy
 git checkout master
 git pull origin master
 cd ../../
+
+echo "################################"
+echo "build examples_smpl"
+echo "################################"
 
 cd examples_smpl
 mkdir buildXcodeHdronly
@@ -127,9 +132,9 @@ make
 cd ../../
 
 
-echo "###############################"
-echo "test cpp"
-echo "###############################"
+echo "######################################"
+echo "fetch latest googletest and compile it"
+echo "######################################"
 
 git submodule update --init -- 3rd_party/googletest
 cd 3rd_party/googletest
@@ -138,6 +143,10 @@ git pull origin master
 cmake .
 make
 cd ../../
+
+echo "###############################"
+echo "test cpp"
+echo "###############################"
 
 cd test_cpp
 mkdir buildXcodeStatic
