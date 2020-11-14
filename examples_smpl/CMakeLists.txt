@@ -24,5 +24,5 @@ add_subdirectory(10_Cloth)
 add_subdirectory(11_ClothPose)
 add_subdirectory(12_IkImageCloth)
 add_subdirectory(13_ClothPoseRig)
-
+add_subdirectory(14_ClothPoseTexture)
 

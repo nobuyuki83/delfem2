@@ -21,21 +21,26 @@ namespace delfem2{
 namespace opengl{
 
 
-DFM2_INLINE void DrawMeshDynTri_FaceNorm
- (const std::vector<CDynTri>& aSTri,
-  const std::vector<CVec3d>& aVec3);
+DFM2_INLINE void DrawMeshDynTri_FaceNorm(
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec3d>& aVec3);
 
-DFM2_INLINE void DrawMeshDynTri_FaceNorm
- (const std::vector<CDynTri>& aSTri,
-  const double* aXYZ);
+DFM2_INLINE void DrawMeshDynTri_FaceNorm(
+    const std::vector<CDynTri>& aSTri,
+    const double* aXYZ);
 
-DFM2_INLINE void DrawMeshDynTri_Edge
- (const std::vector<CDynTri>& aSTri,
-  const std::vector<CVec3d>& aVec3);
+DFM2_INLINE void DrawMeshDynTri_FaceNormTex(
+    const std::vector<CDynTri>& aSTri,
+    const double* aXYZ,
+    const std::vector<CVec2d>& aVec2);
 
-DFM2_INLINE void DrawMeshDynTri3D_Edge
- (const std::vector<double>& aXYZ,
-  const std::vector<CDynTri>& aSTri);
+DFM2_INLINE void DrawMeshDynTri_Edge(
+    const std::vector<CDynTri>& aSTri,
+    const std::vector<CVec3d>& aVec3);
+
+DFM2_INLINE void DrawMeshDynTri3D_Edge(
+    const std::vector<double>& aXYZ,
+    const std::vector<CDynTri>& aSTri);
 
 }
 }

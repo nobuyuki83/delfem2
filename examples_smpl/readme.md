@@ -24,39 +24,43 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ## Demos
 
-### [00_RigSmplArticulated](00_RigSmplArticulated)
-<img src="00_RigSmplArticulated/thumbnail.png" width=200>
+### [00_ArticulatedRigid](00_ArticulatedRigid)
+<img src="00_ArticulatedRigid/thumbnail.png" width=200>
 
-### [01_RigSmplTransfer](01_RigSmplTransfer)
-<img src="01_RigSmplTransfer/thumbnail.png" width=200>
+### [01_RigTransfer](01_RigTransfer)
+<img src="01_RigTransfer/thumbnail.png" width=200>
 
-### [02_RigSmplIk](02_RigSmplIk)
-<img src="02_RigSmplIk/thumbnail.png" width=200>
+### [02_Ik](02_Ik)
+<img src="02_Ik/thumbnail.png" width=200>
 
-### [03_RigSmplIkArap](03_RigSmplIkArap)
-<img src="03_RigSmplIkArap/thumbnail.png" width=200>
+### [03_IkArap](03_IkArap)
+<img src="03_IkArap/thumbnail.png" width=200>
 
-### [04_RigSmplIkImage](04_RigSmplIkImage)
-<img src="04_RigSmplIkImage/thumbnail.png" width=200>
+### [04_IkImage](04_IkImage)
+<img src="04_IkImage/thumbnail.png" width=200>
 
-### [05_RigSmplUi](05_RigSmplUi)
-<img src="05_RigSmplUi/thumbnail.png" width=200>
+### [05_Ui](05_Ui)
+<img src="05_Ui/thumbnail.png" width=200>
 
-### [10_RigSmplCloth](10_RigSmplCloth)
-<img src="10_RigSmplCloth/thumbnail.png" width=200>
+### [10_Cloth](10_Cloth)
+<img src="10_Cloth/thumbnail.png" width=200>
 
-### [11_RigSmplClothPose](11_RigSmplClothPose)
-<img src="11_RigSmplClothPose/thumbnail.png" width=200>
+### [11_ClothPose](11_ClothPose)
+<img src="11_ClothPose/thumbnail.png" width=200>
 
-### [12_RigSmplIkImageCloth](12_RigSmplIkImageCloth)
+### [12_IkImageCloth](12_IkImageCloth)
 
-<img src="12_RigSmplIkImageCloth/thumbnail.png" width=200>
+<img src="12_IkImageCloth/thumbnail.png" width=200>
+
+### [13_ClothPoseRig](13_ClothPoseRig)
+
+<img src="13_ClothPoseRig/thumbnail.png" width=200>
 
 
 
-### [13_RigSmplClothRig](13_RigSmplClothRig)
+### [14_ClothPoseTexture](14_ClothPoseTexture)
 
-<img src="13_RigSmplClothRig/thumbnail.png" width=200>
+<img src="14_ClothPoseTexture/thumbnail.png" width=200>
 
 
 
