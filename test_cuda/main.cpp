@@ -11,7 +11,7 @@
 #include <random>
 #include <bitset>
 #include "gtest/gtest.h"
-
+#include "delfem2/points.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/primitive.h"
 #include "delfem2/vec3.h"
@@ -30,7 +30,8 @@ TEST(matvec,vecscale)
 {
   std::uniform_int_distribution<unsigned int> distUI(1,2000);
   std::uniform_real_distribution <float> distF(-1.0, +1.0);
-  std::mt19937 engin(0);
+  std::random_device randomDevice;
+  std::mt19937 engin(randomDevice());
 
   for(int itr=0;itr<1000;++itr) {
     const int n = distUI(engin);
@@ -49,7 +50,8 @@ TEST(matvec,vecscale)
 
 TEST(matvec,dot)
 {
-  std::mt19937 engine(0);
+  std::random_device randomDevice;
+  std::mt19937 engine(randomDevice());
   std::uniform_int_distribution<unsigned int> dist0(1, 20000);
   std::uniform_real_distribution<float> dist1(-1.0, 1.0);
 
@@ -71,7 +73,8 @@ TEST(matvec,dot)
 }
 
 TEST(matvec,matmat) {
-  std::mt19937 engin(0);
+  std::random_device randomDevice;
+  std::mt19937 engin(randomDevice());
   std::uniform_int_distribution<unsigned int> dist0(1, 400);
   std::uniform_real_distribution<float> dist1(-1.0, 1.0);
   // ------------------------------
@@ -115,7 +118,8 @@ TEST(matvec,matmat) {
 
 TEST(bvh,minmax_po3d)
 {
-  std::mt19937 engine(0);
+  std::random_device randomDevice;
+  std::mt19937 engine(randomDevice());
   std::uniform_int_distribution<unsigned int> dist0(1, 20000);
   std::uniform_real_distribution<float> dist1(-1.0, 1.0);
   std::uniform_real_distribution<float> dist2(-2.0, 2.0);
@@ -133,7 +137,7 @@ TEST(bvh,minmax_po3d)
     }
 
     float min3A[3], max3A[3];
-    dfm2::Min3Max3_Points3(min3A,max3A,
+    dfm2::BoundingBox3_Points3(min3A,max3A,
         aXYZ.data(), aXYZ.size()/3);
 
     float min3B[3], max3B[3];
@@ -211,7 +215,8 @@ void FlagBVHMortonCode(
 TEST(bvh,morton_code) {
   std::uniform_real_distribution<> udist0(0.0, 1.0);
   std::uniform_int_distribution<> udist1(0, 100000);
-  std::mt19937 rng(0);
+  std::random_device randomDevice;
+  std::mt19937 rng(randomDevice());
   // -----------------------------------
   for(int itr=0;itr<10;++itr) {
     const float bbmin[3] = {0.f, 0.f, 0.f};
@@ -265,6 +270,7 @@ TEST(bvh,morton_code) {
         EXPECT_EQ( mc0, mc1 );
       }
     }
+
     std::vector<dfm2::CNodeBVH2> aNodeBVH(N*2-1);
     dfm2::cuda::cuda_MortonCode_BVHTopology(aNodeBVH.data(),
                                             aSortedId.data(), aSortedMc.data(), N);
@@ -274,15 +280,17 @@ TEST(bvh,morton_code) {
           aSortedId, aSortedMc);
       EXPECT_EQ(aNodeBVH.size(), aNodeBVH1.size());
       for(unsigned int ibb=0;ibb<aNodeBVH.size();++ibb) {
-        EXPECT_EQ( aNodeBVH[ibb].iroot, aNodeBVH1[ibb].iroot );
+        EXPECT_EQ( aNodeBVH[ibb].iparent, aNodeBVH1[ibb].iparent );
         EXPECT_EQ( aNodeBVH[ibb].ichild[0], aNodeBVH1[ibb].ichild[0] );
         EXPECT_EQ( aNodeBVH[ibb].ichild[1], aNodeBVH1[ibb].ichild[1] );
       }
       for(unsigned int ibb=0;ibb<aNodeBVH.size();++ibb) {
-        int iroot = aNodeBVH[ibb].iroot;
-        EXPECT_TRUE(aNodeBVH[iroot].ichild[0] == ibb || aNodeBVH[iroot].ichild[1] == ibb);
-        if( aNodeBVH[ibb].ichild[1] == -1 ){ // leaf
-          int itri = aNodeBVH[ibb].ichild[0];
+        const unsigned int iroot = aNodeBVH[ibb].iparent;
+        if( iroot != UINT_MAX ) {
+          EXPECT_TRUE(aNodeBVH[iroot].ichild[0] == ibb || aNodeBVH[iroot].ichild[1] == ibb);
+        }
+        if( aNodeBVH[ibb].ichild[1] == UINT_MAX ){ // leaf
+          const unsigned int itri = aNodeBVH[ibb].ichild[0];
           EXPECT_GE(itri,0);
           EXPECT_LT(itri, N);
         }
@@ -301,8 +309,8 @@ TEST(bvh,morton_code) {
     } // end checking bvh topology
     // ------------------------------------------------------
     std::vector<dfm2::CBV3_Sphere<float>> aAABB1;
-    dfm2::BVHGeometry_Points(aAABB1, 0, aNodeBVH,
-                                      aXYZ.data(), aXYZ.size()/3);
+    dfm2::BVH_BuildBVHGeometry(aAABB1, 0, aNodeBVH,
+                               dfm2::CLeafVolumeMaker_Point<dfm2::CBV3_Sphere<float>,float>( aXYZ.data(), aXYZ.size()/3) );
 
     { // compare nearest points
       const unsigned int npt = 100;
@@ -335,8 +343,10 @@ TEST(bvh,morton_code) {
 
 TEST(bvh,aabb_tri)
 {
-  std::mt19937 engin(0);
+  std::random_device randomDevice;
+  std::mt19937 engin(randomDevice());
   std::uniform_int_distribution<unsigned int> dist0(3, 30);
+  std::uniform_real_distribution<float> dist1(0, 1);
   std::vector<float> aXYZ;
   std::vector<unsigned int> aTri;
   //
@@ -346,9 +356,9 @@ TEST(bvh,aabb_tri)
     dfm2::MeshTri3_Torus(aXYZ, aTri,
                          0.5, 0.20, nr, nl);
     for (int ip = 0; ip < aXYZ.size() / 3; ++ip) {
-      aXYZ[ip * 3 + 0] += 0.05 * rand() / (RAND_MAX + 1.0);
-      aXYZ[ip * 3 + 1] += 0.05 * rand() / (RAND_MAX + 1.0);
-      aXYZ[ip * 3 + 2] += 0.05 * rand() / (RAND_MAX + 1.0);
+      aXYZ[ip * 3 + 0] += 0.05 * dist1(engin);
+      aXYZ[ip * 3 + 1] += 0.05 * dist1(engin);
+      aXYZ[ip * 3 + 2] += 0.05 * dist1(engin);
     }
     const unsigned int nTri = aTri.size() / 3;
     // -----------------------------------------------------
@@ -377,7 +387,7 @@ TEST(bvh,aabb_tri)
                                       aSortedId, aSortedMc);
         EXPECT_EQ(aNodeBVH.size(), aNodeBVH1.size());
         for (int ibb = 0; ibb < aNodeBVH.size(); ++ibb) {
-          EXPECT_EQ(aNodeBVH[ibb].iroot, aNodeBVH1[ibb].iroot);
+          EXPECT_EQ(aNodeBVH[ibb].iparent, aNodeBVH1[ibb].iparent);
           EXPECT_EQ(aNodeBVH[ibb].ichild[0], aNodeBVH1[ibb].ichild[0]);
           EXPECT_EQ(aNodeBVH[ibb].ichild[1], aNodeBVH1[ibb].ichild[1]);
         }
@@ -405,12 +415,13 @@ TEST(bvh,aabb_tri)
                                           aTri.data(), nTri);
       { // check gpu computed AABB is same as cpu computed AABB
         std::vector<dfm2::CBV3f_AABB> aAABB1(nTri * 2 - 1);
-        dfm2::BVH_BuildBVHGeometry_Mesh(
+        dfm2::BVH_BuildBVHGeometry(
             aAABB1,
             0, aNodeBVH,
-            0.f,
-            aXYZ.data(), aXYZ.size() / 3,
-            aTri.data(), 3, aTri.size() / 3);
+            dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3f_AABB,float>(
+                0.f,
+                aXYZ.data(), aXYZ.size() / 3,
+                aTri.data(), aTri.size() / 3, 3) );
         for (int ibb = 0; ibb < aAABB.size(); ++ibb) {
           EXPECT_FLOAT_EQ(aAABB[ibb].bbmin[0], aAABB1[ibb].bbmin[0]);
           EXPECT_FLOAT_EQ(aAABB[ibb].bbmin[1], aAABB1[ibb].bbmin[1]);
@@ -423,9 +434,9 @@ TEST(bvh,aabb_tri)
       // ---------------------------------------------
       EXPECT_EQ(aNodeBVH.size(), aAABB.size());
       for (int ibb = 0; ibb < aAABB.size(); ++ibb) {
-        int iroot = aNodeBVH[ibb].iroot;
+        const unsigned int iroot = aNodeBVH[ibb].iparent;
+        if (iroot == UINT_MAX) { continue; }
         EXPECT_TRUE(aNodeBVH[iroot].ichild[0] == ibb || aNodeBVH[iroot].ichild[1] == ibb);
-        if (iroot == -1) { continue; }
         const dfm2::CBV3f_AABB &aabbp = aAABB[iroot];
         const dfm2::CBV3f_AABB &aabbc = aAABB[ibb];
         EXPECT_TRUE(aabbp.IsActive());
@@ -441,13 +452,14 @@ TEST(bvh,aabb_tri)
                                           aTri.data(), nTri);
       {
         std::vector<dfm2::CBV3f_Sphere> aSphere1(nTri * 2 - 1);
-        dfm2::BVH_BuildBVHGeometry_Mesh(
+        dfm2::BVH_BuildBVHGeometry(
             aSphere1,
             0, aNodeBVH,
+            dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3f_Sphere,float>(
             0.f,
             aXYZ.data(), aXYZ.size() / 3,
-            aTri.data(), 3, aTri.size() / 3);
-        for (int ibb = 0; ibb < aSphere.size(); ++ibb) {
+            aTri.data(), aTri.size() / 3, 3) );
+        for (unsigned int ibb = 0; ibb < aSphere.size(); ++ibb) {
           EXPECT_NEAR(aSphere[ibb].r, aSphere1[ibb].r, 1.0e-6);
           EXPECT_NEAR(aSphere[ibb].c[0], aSphere1[ibb].c[0], 1.0e-6);
           EXPECT_NEAR(aSphere[ibb].c[1], aSphere1[ibb].c[1], 1.0e-6);
@@ -455,10 +467,10 @@ TEST(bvh,aabb_tri)
         }
         // ---------------------------------------------
         EXPECT_EQ(aNodeBVH.size(), aSphere.size());
-        for (int ibb = 0; ibb < aSphere.size(); ++ibb) {
-          int iroot = aNodeBVH[ibb].iroot;
+        for (unsigned int ibb = 0; ibb < aSphere.size(); ++ibb) {
+          const unsigned int iroot = aNodeBVH[ibb].iparent;
+          if (iroot == UINT_MAX) { continue; }
           EXPECT_TRUE(aNodeBVH[iroot].ichild[0] == ibb || aNodeBVH[iroot].ichild[1] == ibb);
-          if (iroot == -1) { continue; }
           const dfm2::CBV3f_Sphere &aabbp = aSphere1[iroot];
           const dfm2::CBV3f_Sphere &aabbc = aSphere1[ibb];
           EXPECT_TRUE(aabbp.IsActive());

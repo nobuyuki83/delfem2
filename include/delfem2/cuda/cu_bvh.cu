@@ -490,29 +490,29 @@ const unsigned int nMC)
 //  printf("%d --> %d %d  %d\n",ini, range.x, range.y, isplit);
   // -------------------------------
   if( range.x == isplit ){
-    const int inlA = nni+isplit;
+    const unsigned int inlA = nni+isplit;
     dNodeBVH[ini].ichild[0] = inlA;
-    dNodeBVH[inlA].iroot = ini;
+    dNodeBVH[inlA].iparent = ini;
     dNodeBVH[inlA].ichild[0] = dSortedId[isplit];
-    dNodeBVH[inlA].ichild[1] = -1;
+    dNodeBVH[inlA].ichild[1] = UINT_MAX;
   }
   else{
-    const int iniA = isplit;
+    const unsigned int iniA = isplit;
     dNodeBVH[ini].ichild[0] = iniA;
-    dNodeBVH[iniA].iroot = ini;
+    dNodeBVH[iniA].iparent = ini;
   }
   // ----
   if( range.y == isplit+1 ){
-    const int inlB = nni+isplit+1;
+    const unsigned int inlB = nni+isplit+1;
     dNodeBVH[ini].ichild[1] = inlB;
-    dNodeBVH[inlB].iroot = ini;
+    dNodeBVH[inlB].iparent = ini;
     dNodeBVH[inlB].ichild[0] = dSortedId[isplit+1];
-    dNodeBVH[inlB].ichild[1] = -1;
+    dNodeBVH[inlB].ichild[1] = UINT_MAX;
   }
   else{
-    const int iniB = isplit+1;
+    const unsigned int iniB = isplit+1;
     dNodeBVH[ini].ichild[1] = iniB;
-    dNodeBVH[iniB].iroot = ini;
+    dNodeBVH[iniB].iparent = ini;
   }
 }
 
@@ -540,7 +540,7 @@ void dfm2::cuda::cuda_MortonCode_BVHTopology(
       N);
   }
   thrust::copy(dNodeBVH.begin(), dNodeBVH.end(), hNodeBVH);
-  hNodeBVH[0].iroot = -1;
+  hNodeBVH[0].iparent = UINT_MAX;
 }
 
 // ------------------------------------------------------------------------
@@ -561,8 +561,8 @@ void kernel_BVHGeometry(
   if (ino >= nTri) return;
 
   { // make aabb for triangle
-    assert(dNodeBVH[nTri - 1 + ino].ichild[1] == -1);
-    assert(dNodeBVH[nTri - 1 + ino].iroot >= 0 && dNodeBVH[nTri - 1 + ino].iroot < nTri-1 );
+    assert( dNodeBVH[nTri - 1 + ino].ichild[1] == UINT_MAX );
+    assert( dNodeBVH[nTri - 1 + ino].iparent < nTri-1 );
     const int itri = dNodeBVH[nTri - 1 + ino].ichild[0];
     assert(itri >= 0 && itri < nTri);
     const unsigned int i0 = dTri[itri * 3 + 0];
@@ -577,15 +577,15 @@ void kernel_BVHGeometry(
     dBox[nTri-1+ino].AddPoint(p2,eps);
   }
   // ----------------------------------------------------
-  unsigned int ino0 = dNodeBVH[nTri-1+ino].iroot;
+  unsigned int ino0 = dNodeBVH[nTri-1+ino].iparent;
   while(true){
     assert( ino0 < nTri-1 );
-    assert( dNodeBVH[ino0].ichild[0] >= 0 );
-    assert( dNodeBVH[ino0].ichild[1] >= 0 );
+    //assert( dNodeBVH[ino0].ichild[0] >= 0 );
+    //assert( dNodeBVH[ino0].ichild[1] >= 0 );
     const unsigned int inoc0 = dNodeBVH[ino0].ichild[0];
     const unsigned int inoc1 = dNodeBVH[ino0].ichild[1];
-    assert( dNodeBVH[inoc0].iroot == ino0 );
-    assert( dNodeBVH[inoc1].iroot == ino0 );
+    assert( dNodeBVH[inoc0].iparent == ino0 );
+    assert( dNodeBVH[inoc1].iparent == ino0 );
     assert( inoc0 < nTri*2-1 );
     assert( inoc1 < nTri*2-1 );
     const int iflg_old = atomicCAS(dNum+ino0,0,1);
@@ -598,8 +598,8 @@ void kernel_BVHGeometry(
     dBox[ino0].Add(dBox[inoc0]);
     dBox[ino0].Add(dBox[inoc1]);
     // ----------------------------------------
-    if( dNodeBVH[ino0].iroot == -1 ){ assert(ino0==0); return; }
-    ino0 = dNodeBVH[ino0].iroot;
+    if( dNodeBVH[ino0].iparent == UINT_MAX ){ assert(ino0==0); return; }
+    ino0 = dNodeBVH[ino0].iparent;
   }
 }
 
@@ -699,9 +699,9 @@ void device_BVH_IndPoint_NearestPoint(
   //
   if( max0 < min0 ){ return; } // ibvh is a inactive bvh the children should be inactive too
   if( *cur_dist > 0 && min0> *cur_dist ){ return; } // current range [min,max] is valid and nearer than [min0,min0].
-  const int ichild0 = aNodeBVH[ibvh].ichild[0];
-  const int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == -1 ){ // leaf
+  const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
+  const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
+  if( ichild1 == UINT_MAX ){ // leaf
     assert( min0 == max0 ); // because this is point
     if( *cur_dist < 0 || max0 < *cur_dist ){ // current range is inactive
       *cur_dist = max0;

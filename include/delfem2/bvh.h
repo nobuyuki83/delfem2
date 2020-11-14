@@ -111,7 +111,7 @@ void Check_MortonCode_RangeSplit(
 void Check_MortonCode_Sort(
     const std::vector<unsigned int>& aSortedId,
     const std::vector<std::uint32_t>& aSortedMc,
-    const std::vector<double> aXYZ,
+    const std::vector<double>& aXYZ,
     const double bbmin[3],
     const double bbmax[3]);
 
@@ -353,8 +353,7 @@ void delfem2::BVH_BuildBVHGeometry(
   assert( ibvh < aNodeBVH.size() );
   const unsigned int ichild0 = aNodeBVH[ibvh].ichild[0];
   const unsigned int ichild1 = aNodeBVH[ibvh].ichild[1];
-  if( ichild1 == UINT_MAX ){ // leaf node
-    assert( ichild0 >= 0 );
+  if( ichild1 == UINT_MAX ){ // leaf node    
     const unsigned int ielem = ichild0;
     lvm.SetVolume(aBB[ibvh],
                   ielem);

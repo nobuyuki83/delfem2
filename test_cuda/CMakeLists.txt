@@ -13,12 +13,13 @@ enable_testing()
 
 add_definitions(-DDFM2_STATIC_LIBRARY=ON)
 add_executable(${PROJ_NAME}
-    ${DELFEM2_INC}/mshmisc.h      ${DELFEM2_INC}/mshmisc.cpp
-    ${DELFEM2_INC}/primitive.h    ${DELFEM2_INC}/primitive.cpp
-    ${DELFEM2_INC}/vec3.h         ${DELFEM2_INC}/vec3.cpp
-    ${DELFEM2_INC}/bvh.h          ${DELFEM2_INC}/bvh.cpp
-    ${DELFEM2_INC}/bv.h
-    main.cpp
+        ${DELFEM2_INC}/mshmisc.h      ${DELFEM2_INC}/mshmisc.cpp
+        ${DELFEM2_INC}/primitive.h    ${DELFEM2_INC}/primitive.cpp
+        ${DELFEM2_INC}/vec3.h         ${DELFEM2_INC}/vec3.cpp
+        ${DELFEM2_INC}/points.h       ${DELFEM2_INC}/points.cpp
+        ${DELFEM2_INC}/bvh.h          ${DELFEM2_INC}/bvh.cpp
+        ${DELFEM2_INC}/bv.h
+        main.cpp
 )
 
 include_directories(
