@@ -306,7 +306,7 @@ DFM2_INLINE std::pair<unsigned int,unsigned int> delfem2::MortonCode_DeterminRan
   const std::uint32_t mc1 = sortedMC[imc+0];
   const std::uint32_t mc2 = sortedMC[imc+1];
   if( mc0 == mc1 && mc1 == mc2 ){ // for hash value collision
-    int jmc=imc+1;
+    unsigned int jmc=imc+1;
     for(;jmc<nMC;++jmc){
       if( sortedMC[jmc] != mc1 ) break;
     }
@@ -435,31 +435,31 @@ DFM2_INLINE void delfem2::BVHTopology_Morton(
   aNodeBVH[0].iparent = UINT_MAX;
   const unsigned int nni = aSortedMc.size()-1; // number of internal node
   for(unsigned int ini=0;ini<nni;++ini){
-    const std::pair<int,int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
-    int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
-    assert( isplit != -1 );
+    const std::pair<unsigned int, unsigned int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
+    unsigned int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
+    assert( isplit != UINT_MAX );
     if( range.first == isplit ){
-      const int inlA = nni+isplit;
+      const unsigned int inlA = nni+isplit;
       aNodeBVH[ini].ichild[0] = inlA;
       aNodeBVH[inlA].iparent = ini;
       aNodeBVH[inlA].ichild[0] = aSortedId[isplit];
       aNodeBVH[inlA].ichild[1] = UINT_MAX;
     }
     else{
-      const int iniA = isplit;
+      const unsigned int iniA = isplit;
       aNodeBVH[ini].ichild[0] = iniA;
       aNodeBVH[iniA].iparent = ini;
     }
     // ----
     if( range.second == isplit+1 ){
-      const int inlB = nni+isplit+1;
+      const unsigned int inlB = nni+isplit+1;
       aNodeBVH[ini].ichild[1] = inlB;
       aNodeBVH[inlB].iparent = ini;
       aNodeBVH[inlB].ichild[0] = aSortedId[isplit+1];
       aNodeBVH[inlB].ichild[1] = UINT_MAX;
     }
     else{
-      const int iniB = isplit+1;
+      const unsigned int iniB = isplit+1;
       aNodeBVH[ini].ichild[1] = iniB;
       aNodeBVH[iniB].iparent = ini;
     }
@@ -470,7 +470,7 @@ DFM2_INLINE void delfem2::BVHTopology_Morton(
 DFM2_INLINE void delfem2::Check_MortonCode_Sort(
   const std::vector<unsigned int>& aSortedId,
   const std::vector<std::uint32_t>& aSortedMc,
-  const std::vector<double> aXYZ,
+  const std::vector<double>& aXYZ,
   const double bbmin[3],
   const double bbmax[3])
 {
@@ -502,12 +502,12 @@ DFM2_INLINE void delfem2::Check_MortonCode_Sort(
 DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
     const std::vector<std::uint32_t>& aSortedMc)
 {
-  assert(aSortedMc.size()>0);
+  assert(!aSortedMc.empty());
   for(unsigned int ini=0;ini<aSortedMc.size()-1;++ini){
-    const std::pair<int,int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
+    const std::pair<unsigned int,unsigned int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
     const unsigned int isplit = MortonCode_FindSplit(aSortedMc.data(), range.first, range.second);
-    const std::pair<int,int> rangeA = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
-    const std::pair<int,int> rangeB = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
+    const std::pair<unsigned int,unsigned int> rangeA = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit);
+    const std::pair<unsigned int,unsigned int> rangeB = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), isplit+1);
     assert( range.first == rangeA.first );
     assert( range.second == rangeB.second );
     {
