@@ -13,13 +13,13 @@ IF(MSVC)
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g\
-  -Wno-deprecated-declarations\
-  -Wno-unused-variable")
+  -Wno-unused-variable \
+  -Wno-deprecated-declarations")
 ENDIF()
 
 ####################################
 
-project(03_RigSmplIkArap)
+project(02_Ik)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -53,22 +53,22 @@ find_package(ZLIB REQUIRED)
 message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
-#############################################
+##############################################
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}
-  ${ZLIB_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
+    ${3RD_PARTY}
+    ${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/cnpy/cnpy.h                     
-  ${3RD_PARTY}/cnpy/cnpy.cpp
-  main.cpp
+    ${3RD_PARTY}/cnpy/cnpy.h
+    ${3RD_PARTY}/cnpy/cnpy.cpp
+    main.cpp
 )
 
 ###############################################
@@ -78,13 +78,13 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-      ${DFM2_LIBRARY}
-      ${OPENGL_LIBRARY}
-      ${GLFW_LIBRARY}
-      ${COCOA_LIBRARY}
-      ${IOKIT_LIBRARY}
-      ${COREVIDEO_LIBRARY}
-      ${ZLIB_LIBRARIES}
+    ${DFM2_LIBRARY}
+    ${OPENGL_LIBRARY}
+    ${GLFW_LIBRARY}
+    ${COCOA_LIBRARY}
+    ${IOKIT_LIBRARY}
+    ${COREVIDEO_LIBRARY}
+    ${ZLIB_LIBRARY}
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}

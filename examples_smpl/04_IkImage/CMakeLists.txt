@@ -19,9 +19,10 @@ ENDIF()
 
 ####################################
 
-project(01_RigSmplTransfer)
+project(04_IkImage)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(TEST_INPUTS         "../../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 
 # glfw
 IF(MSVC)
@@ -49,12 +50,11 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-# zlib
 find_package(ZLIB REQUIRED)
 message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
-##########################################
+###############################################
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
@@ -62,13 +62,15 @@ include_directories(
   ${GLFW_INCLUDE_DIR}
   ${DELFEM2_INCLUDE_DIR}
   ${3RD_PARTY}
+  ${TEST_INPUTS}
   ${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/cnpy/cnpy.h                
+  ${3RD_PARTY}/cnpy/cnpy.h                  
   ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${TEST_INPUTS}/inputs_imgboneloc.h
   main.cpp
 )
 
@@ -89,16 +91,16 @@ IF(APPLE)
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
+      ${DFM2_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${GLFW_LIBRARY}
+      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
-  target_link_libraries(${PROJECT_NAME} 
-    ${DFM2_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${OPENGL_LIBRARY}
-	  ${ZLIB_LIBRARIES}
-  )
+  target_link_libraries(${PROJECT_NAME}
+      ${DFM2_LIBRARY}
+      ${GLFW_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${ZLIB_LIBRARIES}
+  )  
 ENDIF()

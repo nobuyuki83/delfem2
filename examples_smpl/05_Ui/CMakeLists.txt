@@ -12,14 +12,14 @@ IF(MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g\
-  -Wno-unused-variable \
-  -Wno-deprecated-declarations")
+  set(CMAKE_CXX_FLAGS "-Wall -g \
+  -Wno-deprecated-declarations \
+  -Wno-unused-variable")
 ENDIF()
 
 ####################################
 
-project(02_RigSmplIk)
+project(05_Ui)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -53,51 +53,51 @@ find_package(ZLIB REQUIRED)
 message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
-##############################################
+#########################################
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_INCLUDE_DIR}
-    ${DELFEM2_INCLUDE_DIR}
-    ${3RD_PARTY}
-    ${ZLIB_INCLUDE_DIRS}
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_INCLUDE_DIR}
+  ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}
+	${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-    ${3RD_PARTY}/cnpy/cnpy.h
-    ${3RD_PARTY}/cnpy/cnpy.cpp
-    main.cpp
+  ${3RD_PARTY}/cnpy/cnpy.h                  
+  ${3RD_PARTY}/cnpy/cnpy.cpp
+  main.cpp
 )
 
-###############################################
+################################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-    ${ZLIB_LIBRARY}
+      ${DFM2_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${GLFW_LIBRARY}
+      ${COCOA_LIBRARY}
+      ${IOKIT_LIBRARY}
+      ${COREVIDEO_LIBRARY}
+      ${ZLIB_LIBRARY}
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GLFW_LIBRARY}
-    -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
+      ${DFM2_LIBRARY}
+      ${OPENGL_LIBRARY}
+      ${GLFW_LIBRARY}
+      -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp -lz
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
-    ${GLFW_LIBRARY}
-    ${OPENGL_LIBRARY}
-	  ${ZLIB_LIBRARIES}
+      ${DFM2_LIBRARY}
+      ${GLFW_LIBRARY}
+      ${OPENGL_LIBRARY}
+	    ${ZLIB_LIBRARIES}
   )  
 ENDIF()

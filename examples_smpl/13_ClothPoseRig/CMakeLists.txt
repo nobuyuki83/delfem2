@@ -19,10 +19,11 @@ ENDIF()
 
 ####################################
 
-project(12_RigSmplIkImageCloth)
+project(13_ClothPoseRig)
 
-set(TEST_INPUTS         "../../test_inputs")
+set(TEST_INPUTS "../../test_inputs")
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
+add_definitions(-DPATH_OUTPUT_DIR="${PROJECT_SOURCE_DIR}")
 
 # glfw
 IF(MSVC)
@@ -58,20 +59,20 @@ message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
-    ${OPENGL_INCLUDE_DIR}
-    ${GLFW_INCLUDE_DIR}
-    ${DELFEM2_INCLUDE_DIR}
-    ${3RD_PARTY}
-    ${TEST_INPUTS}
-    ${ZLIB_INCLUDE_DIRS}
+  ${OPENGL_INCLUDE_DIR}
+  ${GLFW_INCLUDE_DIR}
+  ${DELFEM2_INCLUDE_DIR}
+  ${3RD_PARTY}
+  ${TEST_INPUTS}
+	${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-    ${3RD_PARTY}/cnpy/cnpy.h
-    ${3RD_PARTY}/cnpy/cnpy.cpp
-    ${TEST_INPUTS}/inputs_imgboneloc.h
-    main.cpp
+  ${3RD_PARTY}/cnpy/cnpy.h                  
+  ${3RD_PARTY}/cnpy/cnpy.cpp
+  ${TEST_INPUTS}/inputs_imgboneloc.h
+  main.cpp
 )
 
 ###############################################
