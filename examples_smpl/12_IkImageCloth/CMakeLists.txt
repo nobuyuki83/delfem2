@@ -12,16 +12,17 @@ IF(MSVC)
     /wd4100 /wd4458 /wd4577 /wd4267 /wd4244 /wd4505 /wd4838 \
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
-  set(CMAKE_CXX_FLAGS "-Wall -g\
-  -Wno-unused-variable \
-  -Wno-deprecated-declarations" )
+  set(CMAKE_CXX_FLAGS "-Wall -g \
+    -Wno-unused-variable \
+    -Wno-deprecated-declarations")
 ENDIF()
 
 ####################################
 
-project(00_RigSmplArticulated)
+project(12_IkImageCloth)
 
-add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
+set(TEST_INPUTS         "../../test_inputs")
+add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/${TEST_INPUTS}")
 
 # glfw
 IF(MSVC)
@@ -49,30 +50,31 @@ else()
 ENDIF()
 set(DELFEM2_INCLUDE_DIR "../../include")
 
-# zlib
 find_package(ZLIB REQUIRED)
 message(STATUS "ZLIB_INCLUDE_DIRS:" ${ZLIB_INCLUDE_DIRS})
 message(STATUS "ZLIB_LIBRARIES:" ${ZLIB_LIBRARIES})
 
-#########################################
+######################################
 
 set(3RD_PARTY           "../../3rd_party")
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLFW_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
-  ${3RD_PARTY}
-  ${ZLIB_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${GLFW_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
+    ${3RD_PARTY}
+    ${TEST_INPUTS}
+    ${ZLIB_INCLUDE_DIRS}
 )
 
 set(DELFEM2_INC         "../../include/delfem2")
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/cnpy/cnpy.h                  
-  ${3RD_PARTY}/cnpy/cnpy.cpp
-  main.cpp
+    ${3RD_PARTY}/cnpy/cnpy.h
+    ${3RD_PARTY}/cnpy/cnpy.cpp
+    ${TEST_INPUTS}/inputs_imgboneloc.h
+    main.cpp
 )
 
-################################################
+###############################################
 
 IF(APPLE)
   find_library( COCOA_LIBRARY Cocoa )
@@ -85,8 +87,8 @@ IF(APPLE)
       ${COCOA_LIBRARY}
       ${IOKIT_LIBRARY}
       ${COREVIDEO_LIBRARY}
-      ${ZLIB_LIBRARIES}
-      )
+      ${ZLIB_LIBRARY}
+  )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
       ${DFM2_LIBRARY}
@@ -100,5 +102,5 @@ ELSEIF(MSVC)
       ${GLFW_LIBRARY}
       ${OPENGL_LIBRARY}
       ${ZLIB_LIBRARIES}
-  )  
+  )
 ENDIF()

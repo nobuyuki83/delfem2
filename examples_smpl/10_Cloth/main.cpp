@@ -79,49 +79,10 @@ int main(int argc,char* argv[])
   // physics parameter
   const double dt = 0.01;
   const double gravity[3] = {0.0, -0.1, 0.0};
-  const double contact_clearance = 0.0001;
-  const double rad_explore = 0.1;
   const double bend_stiff_ratio = 0.1;
-  
-  // -----------------------------
-  // below: input data
-  std::vector<dfm2::CDynTri> aETri;
-  std::vector<dfm2::CVec2d> aVec2;
-  std::vector<double> aXYZ; // deformed vertex positions
-  std::vector<unsigned int> aLine;
-  delfem2::CCad2D cad;
-  {
-    std::string name_cad_in_test_input;
-    double scale_adjust = 0.0;
-    std::vector<unsigned int> aIESeam;
-    double mesher_edge_length;
-    std::vector<dfm2::CRigidTrans_2DTo3D> aRT23;
-    // -------
-//    Inputs_SmplTshirt(name_cad_in_test_input,
-//    Inputs_SmplRaglan(name_cad_in_test_input,
-    Inputs_SmplLtshirt(
-        name_cad_in_test_input,
-        scale_adjust,
-        aIESeam,
-        mesher_edge_length,
-        aRT23);
-    std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
-    std::cout << "open svg: " << path_svg << std::endl;
-    dfm2::ReadSVG_Cad2D(
-        cad, path_svg, 0.001*scale_adjust);
-    // -------
-    dfm2::CMesher_Cad2D mesher;
-    dfm2::MeshingPattern(
-        aETri,aVec2,aXYZ,aLine,mesher,
-        aRT23,cad,aIESeam,mesher_edge_length);
-  }
-  std::vector<double> aXYZt = aXYZ;
-  std::vector<double> aUVW(aXYZ.size(), 0.0);
-  std::vector<int> aBCFlag(aXYZ.size()/3, 0.0);
-  
-  // ---------
+
   dfm2::CProjectorMesh projector;
-  {
+  { // prepare contact target
     std::vector<dfm2::CRigBone> aBone;
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs0;
@@ -139,35 +100,95 @@ int main(int argc,char* argv[])
     dfm2::UpdateBoneRotTrans(aBone);
     projector.Init();
   }
-  dfm2::CKineticDamper damper;
-
-  // above: data preparation (derived)
-  // ----------------------------------------------
-  // below: opengl and UI
+  
+  // -----------------------------
+  // below: input data
 
   delfem2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
   viewer.nav.camera.view_height = 1.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-  while (true)
+
+  for(int iproblem=0;iproblem<4;++iproblem)
   {
-    dfm2::StepTime_PbdClothSim(
-        aXYZ, aXYZt, aUVW, aBCFlag,
-        aETri,aVec2,aLine,
-        projector,
-        dt,gravity,bend_stiff_ratio);
-    damper.Damp(aUVW);
-    // ------------
-    viewer.DrawBegin_oldGL();
-//    dfm2::opengl::Draw_CCad2D(cad);
-    ::glEnable(GL_NORMALIZE);
-    Draw(aETri,aXYZ,
-         projector.aXYZ_Body,
-         projector.aTri_Body);
-    glfwSwapBuffers(viewer.window);
-    glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    std::vector<dfm2::CDynTri> aETri;
+    std::vector<dfm2::CVec2d> aVec2;
+    std::vector<double> aXYZ; // deformed vertex positions
+    std::vector<unsigned int> aLine;
+    {
+      delfem2::CCad2D cad;
+      std::string name_cad_in_test_input;
+      double scale_adjust = 0.0;
+      std::vector<unsigned int> aIESeam;
+      double mesher_edge_length;
+      std::vector<dfm2::CRigidTrans_2DTo3D> aRT23;
+      // -------
+      if( iproblem == 0 ) {
+        dfm2::Inputs_SmplTshirt(
+            name_cad_in_test_input,
+            scale_adjust,
+            aIESeam,
+            mesher_edge_length,
+            aRT23);
+      }
+      else if( iproblem == 1 ){
+        dfm2::Inputs_SmplTshirt2(
+            name_cad_in_test_input,
+            scale_adjust,
+            aIESeam,
+            mesher_edge_length,
+            aRT23);
+      }
+      else if( iproblem == 2 ) {
+        dfm2::Inputs_SmplLtshirt(
+            name_cad_in_test_input,
+            scale_adjust,
+            aIESeam,
+            mesher_edge_length,
+            aRT23);
+      }
+      else{
+        dfm2::Inputs_SmplRaglan(
+            name_cad_in_test_input,
+            scale_adjust,
+            aIESeam,
+            mesher_edge_length,
+            aRT23);
+      }
+      std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
+      std::cout << "open svg: " << path_svg << std::endl;
+      dfm2::ReadSVG_Cad2D(
+          cad, path_svg, 0.001*scale_adjust);
+      dfm2::CMesher_Cad2D mesher;
+      dfm2::MeshingPattern(
+          aETri,aVec2,aXYZ,aLine,mesher,
+          aRT23,cad,aIESeam,mesher_edge_length);
+    }
+    dfm2::CKineticDamper damper;
+
+    std::vector<double> aXYZt = aXYZ;
+    std::vector<double> aUVW(aXYZ.size(), 0.0);
+    std::vector<int> aBCFlag(aXYZ.size()/3, 0.0);
+    //
+    for(int iframe=0;iframe<200;++iframe) {
+      dfm2::StepTime_PbdClothSim(
+          aXYZ, aXYZt, aUVW, aBCFlag,
+          aETri, aVec2, aLine,
+          projector,
+          dt, gravity, bend_stiff_ratio);
+      damper.Damp(aUVW);
+      // ------------
+      viewer.DrawBegin_oldGL();
+      //    dfm2::opengl::Draw_CCad2D(cad);
+      ::glEnable(GL_NORMALIZE);
+      Draw(aETri, aXYZ,
+           projector.aXYZ_Body,
+           projector.aTri_Body);
+      glfwSwapBuffers(viewer.window);
+      glfwPollEvents();
+      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+    }
   }
 EXIT:
   glfwDestroyWindow(viewer.window);

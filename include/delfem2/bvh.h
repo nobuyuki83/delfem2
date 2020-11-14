@@ -75,10 +75,10 @@ unsigned int MortonCode_FindSplit(
  * @details find range in parallel BVH construction
  * https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
  */
-std::pair<int,int> MortonCode_DeterminRange(
+std::pair<unsigned int,unsigned int> MortonCode_DeterminRange(
     const std::uint32_t* sortedMC,
     unsigned int nMC,
-    int i);
+    unsigned int i);
 
 /**
  * @brief compute morton code for 3d coordinates of a point. Each coordinate must be within the range of [0,1]

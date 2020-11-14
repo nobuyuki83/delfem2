@@ -12,7 +12,7 @@
 
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/garment.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
+#include "delfem2/srchuni_v3.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/rig_geo3.h"
@@ -79,7 +79,7 @@ int main()
   // below: input data
   std::vector<dfm2::CDynTri> aETri_Cloth;
   std::vector<dfm2::CVec2d> aVec2_Cloth;
-  std::vector<double> aXYZ_Cloth; // deformed vertex positions
+  std::vector<double> aXYZ0_Cloth; // deformed vertex positions
   std::vector<unsigned int> aLine_Cloth;
   {
     dfm2::CMesher_Cad2D mesher;
@@ -99,46 +99,43 @@ int main()
     std::string path_svg = std::string(PATH_INPUT_DIR)+"/"+name_cad_in_test_input;
     std::cout << "open svg: " << path_svg << std::endl;
     delfem2::CCad2D cad;
-    dfm2::ReadSVG_Cad2D(cad, path_svg, 0.001*scale_adjust);
+    dfm2::ReadSVG_Cad2D(
+        cad, path_svg, 0.001*scale_adjust);
     // -------
     dfm2::MeshingPattern(
-        aETri_Cloth,aVec2_Cloth,aXYZ_Cloth,aLine_Cloth,mesher,
+        aETri_Cloth,aVec2_Cloth,aXYZ0_Cloth,aLine_Cloth,mesher,
         aRT23,cad,aIESeam,mesher_edge_length);
   }
-  std::vector<double> aXYZt_Cloth = aXYZ_Cloth;
-  std::vector<double> aUVW_Cloth(aXYZ_Cloth.size(), 0.0);
-  const std::vector<int> aBCFlag_Cloth(aXYZ_Cloth.size()/3, 0);
 
   // ----------
-  dfm2::CProjector_RigMesh projector_smpl;
+  dfm2::CProjector_RigMesh body;
   {
     std::vector<double> aW_Body;
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl(
-        projector_smpl.aXYZ0_Body,
+        body.aXYZ0_Body,
         aW_Body,
-        projector_smpl.aTri_Body,
+        body.aTri_Body,
         aIndBoneParent,
         aJntRgrs,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(projector_smpl.aBone,
-                   aIndBoneParent, projector_smpl.aXYZ0_Body, aJntRgrs);
+    dfm2::Smpl2Rig(
+        body.aBone,
+        aIndBoneParent, body.aXYZ0_Body, aJntRgrs);
     dfm2::SparsifySkinningWeight(
-        projector_smpl.aSkinningSparseWeight,
-        projector_smpl.aSkinningSparseIdBone,
+        body.aSkinningSparseWeight,
+        body.aSkinningSparseIdBone,
         aW_Body.data(),
-        projector_smpl.aXYZ0_Body.size()/3,
-        projector_smpl.aBone.size(),
+        body.aXYZ0_Body.size() / 3,
+        body.aBone.size(),
         1.0e-5);
   }
 
-  projector_smpl.UpdatePose(true);
-
   std::vector< dfm2::CQuatd > aQuatTarget;
   {
-    std::ifstream fin(std::string(PATH_OUTPUT_DIR)+"/pose.txt");
-    for(unsigned int ib=0;ib<projector_smpl.aBone.size();++ib){
+    std::ifstream fin(std::string(PATH_INPUT_DIR)+"/pose_smpl1.txt");
+    for(unsigned int ib=0; ib < body.aBone.size(); ++ib){
       double d0,d1,d2,d3;
       fin >> d0 >> d1 >> d2 >> d3;
       auto q = dfm2::CQuatd(d0,d1,d2,d3);
@@ -153,8 +150,6 @@ int main()
     }
   }
 
-  dfm2::CKineticDamper damper;
-
    // -----------
   dfm2::opengl::CViewer_GLFW viewer;
   viewer.Init_oldGL();
@@ -164,42 +159,89 @@ int main()
 
   while (true)
   {
-    for(int iframe = 0; iframe< 300; ++iframe){
+    { // pose initializeation
+      for(auto & ib : body.aBone){
+        dfm2::CQuatd::Identity().CopyTo(ib.quatRelativeRot);
+      }
+      body.UpdatePose(true);
+    }
+    std::vector<double> aXYZ_Cloth = aXYZ0_Cloth;
+    std::vector<double> aXYZt_Cloth = aXYZ0_Cloth;
+    std::vector<double> aUVW_Cloth(aXYZ0_Cloth.size(), 0.0);
+    const std::vector<int> aBCFlag_Cloth(aXYZ0_Cloth.size()/3, 0);
+    dfm2::CKineticDamper damper;
+    for(int iframe = 0; iframe< 100; ++iframe){
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
           aBCFlag_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
-          projector_smpl,
+          body,
           dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
-      Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
+      Draw(aETri_Cloth, aXYZ_Cloth, body, viewer);
       if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
-    for(int iframe = 0; iframe<1200; ++iframe){
-      double r = (double)(iframe)/1200;
+    std::vector<double> aSkinningSparseWeight_Cloth;
+    std::vector<unsigned int> aSkinningSparseIdBone_Cloth;
+    { // rigging the clothing mesh using the body's skeleton
+      const unsigned int nb = body.aBone.size();
+      const unsigned int npb = body.aXYZ0_Body.size() / 3;
+      const unsigned int npc = aXYZ_Cloth.size()/3;
+      std::vector<double> aW_Cloth;
+      aW_Cloth.assign(npc*nb, 0.0);
+      for(unsigned int ipc=0;ipc<npc;++ipc){
+        dfm2::CPointElemSurf<double> pesb = dfm2::Nearest_Point_MeshTri3D(
+            dfm2::CVec3d(aXYZ_Cloth.data()+ipc*3),
+            body.aXYZ1_Body,
+            body.aTri_Body );
+        const double aRb[3] = { pesb.r0, pesb.r1, 1-pesb.r0-pesb.r1 };
+        const unsigned int nbone_rigbody = body.aSkinningSparseWeight.size() / npb;
+        for(unsigned int inob=0;inob<3;++inob){
+          const unsigned int ipb0 = body.aTri_Body[pesb.itri * 3 + inob];
+          for(unsigned int iib=0;iib<nbone_rigbody;++iib){
+            const unsigned int ib0 = body.aSkinningSparseIdBone[ipb0 * nbone_rigbody + iib];
+            const double wb0 = body.aSkinningSparseWeight[ipb0 * nbone_rigbody + iib];
+            aW_Cloth[ipc*nb+ib0] += wb0*aRb[inob];
+          }
+        }
+      }
+      dfm2::SparsifySkinningWeight(
+          aSkinningSparseWeight_Cloth,
+          aSkinningSparseIdBone_Cloth,
+          aW_Cloth.data(),
+          aXYZ_Cloth.size() / 3,
+          body.aBone.size(),
+          1.0e-2);
+      std::cout << aSkinningSparseIdBone_Cloth.size() / (aXYZ_Cloth.size() / 3) << std::endl;
+    }
+    const std::vector<double> aXYZ1_Cloth = aXYZ_Cloth;
+    for(int iframe = 0; iframe<30; ++iframe){
+      double r = (double)(iframe)/30;
       if( r > 1 ){ r = 1; }
-      for(unsigned int ib=0;ib<projector_smpl.aBone.size();++ib){
+      for(unsigned int ib=0; ib < body.aBone.size(); ++ib){
         dfm2::CQuatd q = dfm2::SphericalLinearInterp( dfm2::CQuatd::Identity(), aQuatTarget[ib], r);
         q.SetNormalized();
-        q.CopyTo(projector_smpl.aBone[ib].quatRelativeRot);
+        q.CopyTo(body.aBone[ib].quatRelativeRot);
       }
-      projector_smpl.UpdatePose(iframe%100==0);
+      body.UpdatePose(iframe % 100 == 0);
+      SkinningSparseLBS(aXYZ_Cloth,
+                        aXYZ1_Cloth, body.aBone, aSkinningSparseWeight_Cloth, aSkinningSparseIdBone_Cloth);
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
           aBCFlag_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
-          projector_smpl,
-          dt, gravity,bend_stiffness_ratio);
+          body,
+          dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
-      Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
+      Draw(aETri_Cloth, aXYZ_Cloth, body, viewer);
       if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
-    for(int iframe=0;iframe<300;++iframe){
+    for(int iframe=0;iframe<100;++iframe){
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
           aBCFlag_Cloth, aETri_Cloth, aVec2_Cloth, aLine_Cloth,
-          projector_smpl,
-          dt,gravity,bend_stiffness_ratio);
+          body,
+          dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
-      Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
+      Draw(aETri_Cloth, aXYZ_Cloth, body, viewer);
       if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
   }

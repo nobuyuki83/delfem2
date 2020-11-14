@@ -293,10 +293,10 @@ template std::uint32_t delfem2::MortonCode(double x, double y, double z);
 
 
 
-DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange(
+DFM2_INLINE std::pair<unsigned int,unsigned int> delfem2::MortonCode_DeterminRange(
     const std::uint32_t* sortedMC,
     unsigned int nMC,
-    int imc)
+    unsigned int imc)
 {
   assert( nMC > 0 );
   if( imc == 0 ){ return std::make_pair(0,nMC-1); }
@@ -335,9 +335,9 @@ DFM2_INLINE std::pair<int,int> delfem2::MortonCode_DeterminRange(
       l = l + t;
     }
   }
-  int j = imc + l*d;
+  unsigned int j = imc + l*d;
   
-  std::pair<int,int> range;
+  std::pair<unsigned int, unsigned int> range;
   if (imc <= j) { range.first = imc; range.second = j; }
   else { range.first = j; range.second = imc; }
   return range;
@@ -511,8 +511,8 @@ DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
     assert( range.first == rangeA.first );
     assert( range.second == rangeB.second );
     {
-      const int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
-      const int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
+      const unsigned int last1 = ( isplit == range.first ) ? isplit : rangeA.second;
+      const unsigned int first1 = ( isplit+1 == range.second ) ? isplit+1 : rangeB.first;
       assert( last1+1 == first1 );
     }
   }
