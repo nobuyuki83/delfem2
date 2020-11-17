@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <stdio.h>
 #include "delfem2/vec3.h"
 #include "delfem2/gridcube.h"
+#include <cstdio>
+#include <climits>
 
 void delfem2::Pick_CubeGrid(
     unsigned int& icube_pic,
