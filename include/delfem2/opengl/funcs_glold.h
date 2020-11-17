@@ -158,6 +158,11 @@ DFM2_INLINE void DrawPoints3d_Psup(
     const std::vector<unsigned int>& psup_ind,
     const std::vector<unsigned int>& psup);
 
+DFM2_INLINE void DrawPoints2d_4RotSym(
+    const double* aXY,
+    const unsigned int nXY,
+    const double* aDir,
+    double vlen);
 
 // =====================================
 // Draw Line
