@@ -1100,7 +1100,9 @@ DFM2_INLINE void delfem2::opengl::DrawPoints2d_Psup(
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawPoints3d_Points(const std::vector<double>& aXYZ)
+DFM2_INLINE void
+delfem2::opengl::DrawPoints3d_Points(
+    const std::vector<double>& aXYZ)
 {
   const unsigned int nxyz = aXYZ.size()/3;
   ::glBegin(GL_POINTS);
@@ -1111,7 +1113,8 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_Points(const std::vector<double>&
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(
+DFM2_INLINE void
+delfem2::opengl::DrawPoints3d_NormVtx(
     const std::vector<double>& aXYZ,
     const std::vector<double>& aNrm,
     double scale)
@@ -1133,7 +1136,8 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_NormVtx(
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawPoints3d_Psup(
+DFM2_INLINE void
+delfem2::opengl::DrawPoints3d_Psup(
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& psup_ind,
     const std::vector<unsigned int>& psup)
@@ -1151,13 +1155,45 @@ DFM2_INLINE void delfem2::opengl::DrawPoints3d_Psup(
   ::glEnd();
 }
 
+DFM2_INLINE void
+delfem2::opengl::DrawPoints2d_4RotSym(
+    const double* aXY,
+    const unsigned int nXY,
+    const double* aDir,
+    double vlen)
+{
+  ::glBegin(GL_LINES);
+  for (unsigned int ip = 0; ip < nXY; ++ip) {
+    ::glColor3d(1, 0, 0);
+    ::glVertex2d(aXY[ip * 2 + 0], aXY[ip * 2 + 1]);
+    ::glVertex2d(
+        aXY[ip * 2 + 0] + vlen * aDir[ip * 2 + 0],
+        aXY[ip * 2 + 1] + vlen * aDir[ip * 2 + 1]);
+    //
+    ::glColor3d(0, 0, 1);
+    ::glVertex2d(aXY[ip * 2 + 0], aXY[ip * 2 + 1]);
+    ::glVertex2d(
+        aXY[ip * 2 + 0] - vlen * aDir[ip * 2 + 0],
+        aXY[ip * 2 + 1] - vlen * aDir[ip * 2 + 1]);
+    //
+    ::glVertex2d(
+        aXY[ip * 2 + 0] + vlen * aDir[ip * 2 + 1],
+        aXY[ip * 2 + 1] - vlen * aDir[ip * 2 + 0]);
+    ::glVertex2d(
+        aXY[ip * 2 + 0] - vlen * aDir[ip * 2 + 1],
+        aXY[ip * 2 + 1] + vlen * aDir[ip * 2 + 0]);
+  }
+  ::glEnd();
+}
+
 
 // ================================================================
 // Axis-aligned box
 
-DFM2_INLINE void delfem2::opengl::DrawBox3_Edge
-(const double* p0, // pmin
- const double* p1) // pmax
+DFM2_INLINE void
+delfem2::opengl::DrawBox3_Edge(
+    const double* p0, // pmin
+    const double* p1) // pmax
 {
   if( p0[0] > p1[0] ){ return; } // this bounding box is empty
   ::glBegin(GL_LINES);
@@ -1178,9 +1214,10 @@ DFM2_INLINE void delfem2::opengl::DrawBox3_Edge
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBox3_Face
- (const double* p0,
-  const double* p1)
+DFM2_INLINE void
+delfem2::opengl::DrawBox3_Face(
+    const double* p0,
+    const double* p1)
 {
   const double p[8][3] = {
     { p0[0],p0[1],p0[2] },
@@ -1219,7 +1256,8 @@ DFM2_INLINE void delfem2::opengl::DrawBox3_Face
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawBox2_Edge
+DFM2_INLINE void
+delfem2::opengl::DrawBox2_Edge
     (const double* p0, // pmin
      const double* p1) // pmax
 {

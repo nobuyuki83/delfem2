@@ -37,7 +37,7 @@ void delfem2::Pick_CubeGrid(
   
   CVec3d dir_pic(dir_pic_), org(org_), src_pic(src_pic_);
   //
-  icube_pic = -1;
+  icube_pic = UINT_MAX;
   double depth_min = 0;
   for(std::size_t ivox=0;ivox<aCube.size();++ivox){
     if( !aCube[ivox].is_active ) continue;
@@ -69,7 +69,7 @@ void delfem2::Pick_CubeGrid(
       const double r1 = (pi-p0)*(p3-p0)/(elen*elen);
       if( r0>0 && r0<1 && r1>0 && r1< 1 ){
         double depth = (pi-src_pic)*dir_pic/dir_pic.DLength();
-        if( icube_pic == -1 || depth < depth_min ){
+        if( icube_pic == UINT_MAX || depth < depth_min ){
           depth_min = depth;
           icube_pic = ivox;
           iface_pic = iface;
