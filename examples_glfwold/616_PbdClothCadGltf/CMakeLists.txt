@@ -58,8 +58,8 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/io_gltf.h                  
-  ${3RD_PARTY}/io_gltf.cpp
+  ${DELFEM2_INCLUDE_DIR}/delfem2/tinygltf/io_gltf.h
+  ${DELFEM2_INCLUDE_DIR}/delfem2/tinygltf/io_gltf.cpp
   main.cpp  
 )
 

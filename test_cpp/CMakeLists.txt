@@ -87,9 +87,7 @@ ENDIF()
 add_executable(${MY_BINARY_NAME}
   ${DELFEM2_INC}/evalmathexp.h          ${DELFEM2_INC}/evalmathexp.cpp
   ${DELFEM2_INC}/lp.h                   ${DELFEM2_INC}/lp.cpp
-  
- ${3RD_PARTY}/io_gltf.h                ${3RD_PARTY}/io_gltf.cpp
-  
+  ${DELFEM2_INC}/tinygltf/io_gltf.h     ${DELFEM2_INC}/tinygltf/io_gltf.cpp
   ${SRC_DFM2}
   test_bvh.cpp
   test_lp.cpp

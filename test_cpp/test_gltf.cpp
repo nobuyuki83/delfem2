@@ -18,7 +18,7 @@
 #include "tinygltf/tiny_gltf.h"
 
 #include "delfem2/rig_geo3.h"
-#include "io_gltf.h"
+#include "delfem2/tinygltf/io_gltf.h"
 
 namespace dfm2 = delfem2;
 
