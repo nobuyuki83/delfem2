@@ -1,5 +1,4 @@
 #include <vector>
-#include <string>
 #include <iostream>
 #include <map>
 
@@ -12,7 +11,6 @@
 #include "io_gltf.h"
 
 namespace dfm2 = delfem2;
-
 
 // -----------------------------------------------------
 
@@ -387,8 +385,9 @@ void dfm2::CGLTF::GetMeshInfo
  std::vector<unsigned int>& aRigJoint,
  int imesh, int iprimitive) const
 {
-  dfm2::GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint,
-                *model, imesh, iprimitive);
+  dfm2::GetMeshInfo(
+      aXYZ0, aTri, aRigWeight, aRigJoint,
+      *model, imesh, iprimitive);
 }
 
 void dfm2::CGLTF::GetBone
@@ -401,8 +400,10 @@ void dfm2::CGLTF::GetBone
     int inode = model->skins[0].joints[ij];
     mapNode2Bone[inode] = ij;
   }
-  SetBone(aBone,
-          *model, model->skins[0].skeleton, -1, mapNode2Bone);
-  GetBoneBinding(aBone,
-                 *model);
+  SetBone(
+      aBone,
+      *model, model->skins[0].skeleton, -1, mapNode2Bone);
+  GetBoneBinding(
+      aBone,
+      *model);
 }

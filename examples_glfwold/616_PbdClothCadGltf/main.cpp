@@ -6,16 +6,11 @@
  */
 
 #include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <limits>
 #include <vector>
 #include <set>
 #include "delfem2/mshmisc.h"
-#include "delfem2/mshtopo.h"
 #include "delfem2/dtri.h"
 #include "delfem2/bv.h"
-#include "delfem2/bvh.h"
 // ------
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/objf_geo3.h"
@@ -26,7 +21,7 @@
 #include "delfem2/rig_geo3.h"
 // -------
 #include "tinygltf/tiny_gltf.h"
-#include "io_gltf.h"
+#include "delfem2/tinygltf/io_gltf.h"
 
 // ----------------------------
 #include <GLFW/glfw3.h>

@@ -13,8 +13,7 @@ IF(MSVC)
     /wd4800 /wd4996 /wd4530 /wd4245 /wd4505 /wd4505 /wd4456 ")
 ELSE()
   set(CMAKE_CXX_FLAGS "-Wall -g \
-  -Wno-deprecated-declarations \
-  -Wunused-but-set-variable")
+  -Wno-deprecated-declarations")
 ENDIF()
 
 ####################################
@@ -61,8 +60,8 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME}
-  ${3RD_PARTY}/io_gltf.h                     
-  ${3RD_PARTY}/io_gltf.cpp
+  ${DELFEM2_INCLUDE_DIR}/delfem2/tinygltf/io_gltf.h
+  ${DELFEM2_INCLUDE_DIR}/delfem2/tinygltf/io_gltf.cpp
   main.cpp
 )
 
