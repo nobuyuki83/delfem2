@@ -88,7 +88,9 @@ public:
     max_x = max_y = 0;
     z = 0;
   }
-  
+  virtual ~CTexRGB_Rect2D() {}
+
+
   void Draw_oldGL() const;
   
   void Initialize(unsigned int w, unsigned int h,
