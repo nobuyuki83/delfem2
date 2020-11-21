@@ -53,7 +53,7 @@ int main()
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
-    dfm2::cnpy::LoadSmpl(
+    dfm2::cnpy::LoadSmpl_Bone(
         aXYZ0,
         aW,
         aTri,
@@ -81,7 +81,7 @@ int main()
 
   while (true)
   {
-    for(auto & bone : aBone){
+    for(auto& bone : aBone){
       dfm2::CQuatd::Random(0.2).CopyTo(bone.quatRelativeRot);
     }
     dfm2::CVec3d::Random(dist_01,rnd_eng).CopyToScale(aBone[0].transRelative, 0.2);

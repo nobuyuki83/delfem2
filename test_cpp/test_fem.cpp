@@ -319,9 +319,9 @@ TEST(objfunc_v23, dWddW_RodFrameTrans)
       double DDW_DDt;
       DifDifFrameRod(DDW_DDv, DDW_DvDt, DDW_DDt,
           i,V01.Length(),Q,Frm);
-      dfm2::CVec3d vec0 = (dw_dv[i]-DW_Dv[i])/eps;
-      dfm2::CVec3d vec1 = (DDW_DvDt*dtheta+DDW_DDv*du)/eps;
-      EXPECT_LT( (vec0-vec1).Length(), 3.0e-3);
+      const dfm2::CVec3d vec0 = (dw_dv[i]-DW_Dv[i])/eps;
+      const dfm2::CVec3d vec1 = (DDW_DvDt*dtheta+DDW_DDv*du)/eps;
+      EXPECT_LT( (vec0-vec1).Length(), 3.5e-3);
     }
   }
 }
@@ -667,10 +667,13 @@ TEST(objfunc_v23, arap)
   }
   
   // ------------------
-  
+
+  std::random_device rd;
+  std::mt19937 rndeng(rd());
+  std::uniform_real_distribution<double> dist_m1p1(-1,+1);
   std::vector<double> dXYZ12(np*3);
-  for(int i=0;i<np*3;++i){
-    dXYZ12[i] = (2.0*(double)rand()/(RAND_MAX)-1)*0.01;
+  for(unsigned int i=0;i<np*3;++i){
+    dXYZ12[i] = dist_m1p1(rndeng)*0.01;
   }
   assert( aXYZ1.size() == np*3 );
   assert( aQuat1.size() == np*4 );
@@ -804,6 +807,10 @@ TEST(fem,plate_bending_mitc3_emat)
 
 TEST(fem,plate_bending_mitc3_cantilever)
 {
+  std::random_device rd;
+  std::mt19937 rndeng(rd());
+  std::uniform_real_distribution<double> dist_12(1,+2);
+  //
   const double lambda = 0.0;
   const double lenx0 = 1.0;
   const double leny0 = 0.2;
@@ -813,13 +820,13 @@ TEST(fem,plate_bending_mitc3_cantilever)
   const double gravity_z0 = -10.0;
   const double elen0 = 0.03;
   for(int itr = 0;itr<10;++itr ){
-    const double lenx = lenx0*(1.0+rand()/(RAND_MAX+1.0));
-    const double leny = leny0*(1.0+rand()/(RAND_MAX+1.0));
-    const double thickness = thickness0*(1.0+rand()/(RAND_MAX+1.0));
-    const double myu = myu0*(1.0+rand()/(RAND_MAX+1.0));;
-    const double rho = rho0*(1.0+rand()/(RAND_MAX+1.0));
-    const double gravity_z = gravity_z0*(1.0+rand()/(RAND_MAX+1.0));
-    const double elen = elen0*(1.0+rand()/(RAND_MAX+1.0));
+    const double lenx = lenx0*dist_12(rndeng);
+    const double leny = leny0*dist_12(rndeng);
+    const double thickness = thickness0*dist_12(rndeng);
+    const double myu = myu0*dist_12(rndeng);
+    const double rho = rho0*dist_12(rndeng);
+    const double gravity_z = gravity_z0*dist_12(rndeng);
+    const double elen = elen0*dist_12(rndeng);
     std::vector<unsigned int> aTri;
     std::vector<double> aXY0;
     {

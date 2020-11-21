@@ -234,15 +234,16 @@ int main()
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
-    dfm2::cnpy::LoadSmpl(aXYZ0,
-                         aW,
-                         aTri,
-                         aIndBoneParent,
-                         aJntRgrs,
-                         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(aBone,
-                   aIndBoneParent, aXYZ0, aJntRgrs);
-    
+    dfm2::cnpy::LoadSmpl_Bone(
+        aXYZ0,
+        aW,
+        aTri,
+        aIndBoneParent,
+        aJntRgrs,
+        std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+    dfm2::Smpl2Rig(
+        aBone,
+        aIndBoneParent, aXYZ0, aJntRgrs);
   }
   std::vector<unsigned int> psup_ind, psup;
   {

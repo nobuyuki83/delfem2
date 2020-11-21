@@ -160,12 +160,13 @@ int main()
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     std::vector<double> aW_Body;
-    dfm2::cnpy::LoadSmpl(projector.aXYZ0_Body,
-                         aW_Body,
-                         projector.aTri_Body,
-                         aIndBoneParent,
-                         aJntRgrs,
-                         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+    dfm2::cnpy::LoadSmpl_Bone(
+        projector.aXYZ0_Body,
+        aW_Body,
+        projector.aTri_Body,
+        aIndBoneParent,
+        aJntRgrs,
+        std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
     dfm2::Smpl2Rig(projector.aBone,
         aIndBoneParent, projector.aXYZ0_Body, aJntRgrs);
     dfm2::SparsifySkinningWeight(

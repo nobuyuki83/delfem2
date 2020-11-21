@@ -187,3 +187,12 @@ void delfem2::opengl::CViewer_GLFW::SwapBuffers() const
 {
   glfwSwapBuffers(this->window);
 }
+
+void delfem2::opengl::CViewer_GLFW::ExitIfClosed() const
+{
+  if ( !glfwWindowShouldClose(this->window) ) { return; }
+  glfwDestroyWindow(this->window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+}
+

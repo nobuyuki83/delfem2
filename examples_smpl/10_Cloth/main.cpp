@@ -87,7 +87,7 @@ int main(int argc,char* argv[])
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs0;
     std::vector<double> aSkinningWeight;
-    dfm2::cnpy::LoadSmpl(
+    dfm2::cnpy::LoadSmpl_Bone(
         projector.aXYZ_Body,
         aSkinningWeight,
         projector.aTri_Body,

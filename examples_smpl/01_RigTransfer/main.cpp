@@ -52,8 +52,9 @@ int main()
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
-    dfm2::cnpy::LoadSmpl(aXYZ0, aW, aTri, aIndBoneParent, aJntRgrs,
-                         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+    dfm2::cnpy::LoadSmpl_Bone(
+        aXYZ0, aW, aTri, aIndBoneParent, aJntRgrs,
+        std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
     dfm2::Smpl2Rig(aBone, aIndBoneParent, aXYZ0, aJntRgrs);
   }
   
@@ -62,19 +63,20 @@ int main()
   std::vector<dfm2::CChannel_BioVisionHierarchy> aChannelRotTransBone;
   int nframe = 0;
   std::vector<double> aValueChanelHistoryRotTrans;
-  Read_BioVisionHierarchy(aBone_MotionSrc,aChannelRotTransBone,nframe,aValueChanelHistoryRotTrans,
-//                          std::string(PATH_INPUT_DIR)+"/walk.bvh");
-                          std::string(PATH_INPUT_DIR)+"/jump.bvh");
+  Read_BioVisionHierarchy(
+      aBone_MotionSrc,aChannelRotTransBone,nframe,aValueChanelHistoryRotTrans,
+//                      std::string(PATH_INPUT_DIR)+"/walk.bvh");
+std::string(PATH_INPUT_DIR)+"/jump.bvh");
   
   {
     double scale = (1.0/0.45)*2.54/100.0;
-    for(unsigned int ibone=0;ibone<aBone_MotionSrc.size();++ibone){
-      aBone_MotionSrc[ibone].invBindMat[ 3] *= scale;
-      aBone_MotionSrc[ibone].invBindMat[ 7] *= scale;
-      aBone_MotionSrc[ibone].invBindMat[11] *= scale;
-      aBone_MotionSrc[ibone].transRelative[0] *= scale;
-      aBone_MotionSrc[ibone].transRelative[1] *= scale;
-      aBone_MotionSrc[ibone].transRelative[2] *= scale;
+    for(auto & bone : aBone_MotionSrc){
+      bone.invBindMat[ 3] *= scale;
+      bone.invBindMat[ 7] *= scale;
+      bone.invBindMat[11] *= scale;
+      bone.transRelative[0] *= scale;
+      bone.transRelative[1] *= scale;
+      bone.transRelative[2] *= scale;
     }
     unsigned int nch = aChannelRotTransBone.size();
     unsigned int nfrm = aValueChanelHistoryRotTrans.size()/nch;

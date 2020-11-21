@@ -69,15 +69,16 @@ int main()
   {
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
-    dfm2::cnpy::LoadSmpl(aXYZ0,
-                         aW,
-                         aTri,
-                         aIndBoneParent,
-                         aJntRgrs,
-                         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(aBone,
-                   aIndBoneParent, aXYZ0, aJntRgrs);
-    
+    dfm2::cnpy::LoadSmpl_Bone(
+        aXYZ0,
+        aW,
+        aTri,
+        aIndBoneParent,
+        aJntRgrs,
+        std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+    dfm2::Smpl2Rig(
+        aBone,
+        aIndBoneParent, aXYZ0, aJntRgrs);
   }
   
   std::vector<double> aXYZ1 = aXYZ0;
@@ -108,8 +109,8 @@ int main()
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
-  for(unsigned int it=0;it<aTarget.size();++it){
-    aTargetOriginPos.push_back(aTarget[it].pos);
+  for(auto & it : aTarget){
+    aTargetOriginPos.push_back(it.pos);
   }
       
   // -----------
