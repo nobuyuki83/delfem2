@@ -41,7 +41,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     double rad_exp, // exploring distance
     const double* aXYZ, unsigned int nXYZ,
     const unsigned int* aTri, unsigned int nTri,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<T>& aBB);
 
@@ -270,11 +270,11 @@ void delfem2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     double rad_exp, // exploring distance
     const double* aXYZ, unsigned int nXYZ,
     const unsigned int* aTri, unsigned int nTri,
-    int ibvh,
+    unsigned int ibvh,
     const std::vector<delfem2::CNodeBVH2>& aBVH,
     const std::vector<BV>& aBB)
 {
-  assert(ibvh>=0&&ibvh<aBB.size());
+  assert( ibvh < aBB.size() );
   double min0,max0;
   aBB[ibvh].Range_DistToPoint(min0,max0,
                               px,py,pz);
