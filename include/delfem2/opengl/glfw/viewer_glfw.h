@@ -26,6 +26,8 @@ public:
   void SwapBuffers() const;
   
   void Init_newGL();
+
+  void ExitIfClosed() const;
   
   /**
    * @details for function override. Do nothing here

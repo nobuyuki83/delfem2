@@ -19,7 +19,7 @@ ENDIF()
 
 ####################################
 
-project(00_ArticulatedRigid)
+project(20_PoseBoneBlendshape)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 

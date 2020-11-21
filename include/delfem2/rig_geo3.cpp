@@ -574,16 +574,15 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy
 // ----------------------------------
 
 DFM2_INLINE void delfem2::Smpl2Rig(
-              std::vector<CRigBone>& aBone,
-              const std::vector<int>& aIndBoneParent,
-              const std::vector<double>& aXYZ0,
-              const std::vector<double>& aJntRgrs)
+    std::vector<CRigBone>& aBone,
+    const std::vector<int>& aIndBoneParent,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aJntRgrs)
 {
-  const unsigned int nbone = aIndBoneParent.size();
+  const unsigned int nBone = aIndBoneParent.size();
   std::vector<double> aJntPos0;
   {
     const unsigned int nP = aXYZ0.size()/3;
-    const unsigned int nBone = aIndBoneParent.size();
     aJntPos0.assign(nBone*3, 0.0);
     for(unsigned int ib=0;ib<nBone;++ib){
       aJntPos0[ib*3+0] = 0;
@@ -596,8 +595,8 @@ DFM2_INLINE void delfem2::Smpl2Rig(
       }
     }
   }
-  aBone.resize(nbone);
-  for(unsigned int ib=0;ib<nbone;++ib){
+  aBone.resize(nBone);
+  for(unsigned int ib=0;ib<nBone;++ib){
     int ibp = aIndBoneParent[ib];
     aBone[ib].ibone_parent = ibp;
     aBone[ib].invBindMat[ 3] = -aJntPos0[ib*3+0];

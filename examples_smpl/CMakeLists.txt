@@ -13,7 +13,7 @@ ELSE()
 	project(examples_smpl_hdronly)
 ENDIF()
 
-add_subdirectory(00_ArticulatedRigid)
+add_subdirectory(00_PoseBone)
 add_subdirectory(01_RigTransfer)
 add_subdirectory(02_Ik)
 add_subdirectory(03_IkArap)
@@ -25,4 +25,6 @@ add_subdirectory(11_ClothPose)
 add_subdirectory(12_IkImageCloth)
 add_subdirectory(13_ClothPoseRig)
 add_subdirectory(14_ClothPoseTexture)
+
+add_subdirectory(20_PoseBoneBlendshape)
 

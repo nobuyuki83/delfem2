@@ -147,7 +147,7 @@ int main()
     std::vector<double> aW_Body;
     std::vector<int> aIndBoneParent;
     std::vector<double> aJntRgrs;
-    dfm2::cnpy::LoadSmpl(
+    dfm2::cnpy::LoadSmpl_Bone(
         body_smpl.aXYZ0_Body,
         aW_Body,
         body_smpl.aTri_Body,

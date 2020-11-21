@@ -24,8 +24,8 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ## Demos
 
-### [00_ArticulatedRigid](00_ArticulatedRigid)
-<img src="00_ArticulatedRigid/thumbnail.png" width=200>
+### [00_PoseBone](00_PoseBone)
+<img src="00_PoseBone/thumbnail.png" width=200>
 
 ### [01_RigTransfer](01_RigTransfer)
 <img src="01_RigTransfer/thumbnail.png" width=200>
@@ -61,6 +61,12 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [14_ClothPoseTexture](14_ClothPoseTexture)
 
 <img src="14_ClothPoseTexture/thumbnail.png" width=200>
+
+
+
+### [20_PoseBoneBlendshape](20_PoseBoneBlendshape)
+
+<img src="20_PoseBoneBlendshape/thumbnail.png" width=200>
 
 
 

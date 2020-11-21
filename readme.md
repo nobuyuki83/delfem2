@@ -13,8 +13,7 @@
 
 DelFEM2 is a end-to-end framework for geometry processing and FEM simulation covering wide range of components including shape editing, meshing, FEM simulation, linear solver, variational mesh deformer, and visualization. DelFEM2 is aiming to be an interactive digital engineering and authoring tool.
 
-
-There is a python binding available: [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
+**There is a python binding available**: [PyDelFEM2](https://github.com/nobuyuki83/pydelfem2)
 
 The implementation is based on my old open source project [DelFEM](https://github.com/nobuyuki83/DelFEM) library
 
@@ -50,7 +49,7 @@ DelFEM2 can be compiled either as a header-only library or as a static library. 
 Most of the source code of DelFEM2 does not have any external dependency. However, for some advancd functionality OpenGL or Unit Test, you many need to download dependent repositories and compile them manually. One can download all the dependent C++ repositories with
 
 ```
-git submodle update --init --recursive
+git submodle update --init
 ```
 
 This command downloads all the external third party codes into the directory ```delfem2/3rd_party```. Currently DelFEM have binding to the following C++ open source projects.
@@ -66,12 +65,10 @@ This command downloads all the external third party codes into the directory ```
 
 These projects are awesome and I would like to express huge appreciation for contributers of these projects.
 
-Checkout these alternatives: 
-[CGAL](https://www.cgal.org/),
-[libIGL](https://github.com/libigl/libigl)
+Please also checkout  these alternative opensource projects [CGAL](https://www.cgal.org/), [libIGL](https://github.com/libigl/libigl).
 
 ***
-# Licence & Copyright
+# Licence, Copyright & Contact
 
 DelFEM2 is distributed under the [MIT licence](https://github.com/nobuyuki83/delfem2/blob/master/LICENSE). 
 
@@ -91,9 +88,6 @@ If DelFEM2 contributes to an academic publication, cite it as:
   year = {2019}
 }
 ```
-
-***
-# Contact
 
 DelFEM2 is currently developed and maintained by [Nobuyuki Umetani](http://www.nobuyuki-umetani.com/). If you have questions or comments please [contact via email](mailto:n.umetani@gmail.com).
 

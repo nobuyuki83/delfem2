@@ -91,6 +91,10 @@ DFM2_INLINE double Dot_Quat(
     const REAL p[],
     const REAL q[]);
 
+template <typename REAL>
+DFM2_INLINE void Mat3_Quat(
+    REAL r[],
+    const REAL q[]);
 
 // ----------
 

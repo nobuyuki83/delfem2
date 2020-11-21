@@ -37,7 +37,7 @@ int main()
       std::vector<double> aW;
       std::vector<int> aIndBoneParent;
       std::vector<double> aJntRgrs;
-      dfm2::cnpy::LoadSmpl(
+      dfm2::cnpy::LoadSmpl_Bone(
           aXYZ0,
           aW,
           aTri,
