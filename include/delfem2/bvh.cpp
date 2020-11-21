@@ -502,6 +502,9 @@ DFM2_INLINE void delfem2::Check_MortonCode_Sort(
 DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
     const std::vector<std::uint32_t>& aSortedMc)
 {
+#ifdef NDEBUG
+  return;
+#else
   assert(!aSortedMc.empty());
   for(unsigned int ini=0;ini<aSortedMc.size()-1;++ini){
     const std::pair<unsigned int,unsigned int> range = MortonCode_DeterminRange(aSortedMc.data(), aSortedMc.size(), ini);
@@ -516,6 +519,7 @@ DFM2_INLINE void delfem2::Check_MortonCode_RangeSplit(
       assert( last1+1 == first1 );
     }
   }
+#endif
 }
 
 DFM2_INLINE void delfem2::Check_BVH
