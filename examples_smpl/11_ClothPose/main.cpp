@@ -65,6 +65,7 @@ void Draw(
   }
   glfwSwapBuffers(viewer.window);
   glfwPollEvents();
+  viewer.ExitIfClosed();
 }
 
 // --------------------
@@ -122,9 +123,16 @@ int main()
         aIndBoneParent,
         aJntRgrs,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(projector_smpl.aBone,
-                   aIndBoneParent, projector_smpl.aXYZ0_Body, aJntRgrs);
-    dfm2::SparsifySkinningWeight(
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeighttranspPosition(
+          aJntPos0,
+          aJntRgrs, projector_smpl.aXYZ0_Body);
+      dfm2::InitBones_JointPosition(
+          projector_smpl.aBone,
+          aIndBoneParent, aJntPos0);
+    }
+    dfm2::SparsifyMatrixRow(
         projector_smpl.aSkinningSparseWeight,
         projector_smpl.aSkinningSparseIdBone,
         aW_Body.data(),
@@ -172,7 +180,6 @@ int main()
           dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
     for(int iframe = 0; iframe<1200; ++iframe){
       double r = (double)(iframe)/1200;
@@ -190,7 +197,6 @@ int main()
           dt, gravity,bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
     for(int iframe=0;iframe<300;++iframe){
       dfm2::StepTime_PbdClothSim(
@@ -200,11 +206,6 @@ int main()
           dt,gravity,bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth,aXYZ_Cloth,projector_smpl,viewer);
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
     }
   }
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }

@@ -60,10 +60,16 @@ int main()
         aIndBoneParent,
         aJntRgrs,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    Smpl2Rig(
-        aBone,
-        aIndBoneParent, aXYZ0, aJntRgrs);
-    dfm2::SparsifySkinningWeight(
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeighttranspPosition(
+          aJntPos0,
+          aJntRgrs, aXYZ0);
+      dfm2::InitBones_JointPosition(
+          aBone,
+          aIndBoneParent, aJntPos0);
+    }
+    dfm2::SparsifyMatrixRow(
         aSkinningSparseWeight, aSkinningSparseIdBone,
         aW.data(), aXYZ0.size()/3, aBone.size(),
         1.0e-5);
@@ -93,18 +99,14 @@ int main()
             aXYZ0, aBone, aW);
       }
       else{
-        dfm2::SkinningSparseLBS(aXYZ1,
+        dfm2::SkinningSparse_LBS(aXYZ1,
             aXYZ0, aBone, aSkinningSparseWeight, aSkinningSparseIdBone);
       }
       viewer.DrawBegin_oldGL();
       Draw(aBone,aXYZ1,aTri);
       glfwPollEvents();
       glfwSwapBuffers(viewer.window);
-      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+      viewer.ExitIfClosed();
     }
   }
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }

@@ -152,7 +152,7 @@ class CProjector_RigMesh{
 public:
   void UpdatePose(bool isUpdateTopo){
     UpdateBoneRotTrans(aBone);
-    SkinningSparseLBS(aXYZ1_Body,
+    SkinningSparse_LBS(aXYZ1_Body,
         aXYZ0_Body, aBone, aSkinningSparseWeight, aSkinningSparseIdBone);
     if( isUpdateTopo ){
       bvh_Body.Init(
