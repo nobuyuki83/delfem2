@@ -94,9 +94,15 @@ int main(int argc,char* argv[])
         aIndBoneParent,
         aJntRgrs0,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(
-        aBone,
-        aIndBoneParent, projector.aXYZ_Body, aJntRgrs0);
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeighttranspPosition(
+          aJntPos0,
+          aJntRgrs0, projector.aXYZ_Body);
+      dfm2::InitBones_JointPosition(
+          aBone,
+          aIndBoneParent, aJntPos0);
+    }
     dfm2::UpdateBoneRotTrans(aBone);
     projector.Init();
   }
@@ -187,11 +193,7 @@ int main(int argc,char* argv[])
            projector.aTri_Body);
       glfwSwapBuffers(viewer.window);
       glfwPollEvents();
-      if (glfwWindowShouldClose(viewer.window)) { goto EXIT; }
+      viewer.ExitIfClosed();
     }
   }
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }

@@ -52,9 +52,11 @@ int main()
   std::vector<double> aBlendShape;
   std::vector<double> aBlendPose;
   std::vector<int> aIndBoneParent;
-  std::vector<double> aJntRgrs;
+  std::vector<double> aJntRgrsSparseWeight;
+  std::vector<unsigned int> aJntRgrsSparseIdbone;
   {
     std::vector<double> aW;
+    std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl_BoneBlendshape(
         aXYZ0,
         aW,
@@ -64,13 +66,30 @@ int main()
         aBlendShape,
         aBlendPose,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    Smpl2Rig(
-        aBone,
-        aIndBoneParent, aXYZ0, aJntRgrs);
-    dfm2::SparsifySkinningWeight(
+    dfm2::SparsifyMatrixRow(
         aSkinningSparseWeight, aSkinningSparseIdBone,
-        aW.data(), aXYZ0.size()/3, aBone.size(),
+        aW.data(), aXYZ0.size()/3, aIndBoneParent.size(),
         1.0e-5);
+    {
+      std::vector<double> aJntRgrsT;
+      dfm2::Transpose_Mat(aJntRgrsT,
+          aJntRgrs, aXYZ0.size() / 3, aIndBoneParent.size());
+      dfm2::SparsifyMatrixRow(
+          aJntRgrsSparseWeight, aJntRgrsSparseIdbone,
+          aJntRgrsT.data(), aIndBoneParent.size(), aXYZ0.size() / 3,
+          1.0e-5);
+    }
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeightsparsePosition(
+          aJntPos0,
+          aIndBoneParent.size(), aJntRgrsSparseWeight,aJntRgrsSparseIdbone, aXYZ0);
+      std::cout << aJntRgrsSparseWeight.size()/aIndBoneParent.size() << std::endl;
+      dfm2::InitBones_JointPosition(
+          aBone,
+          aIndBoneParent, aJntPos0);
+      std::cout << aBone.size() << std::endl;
+    }
   }
   std::vector<double> aXYZ1, aXYZ2;
   // -----------
@@ -126,11 +145,17 @@ int main()
           }
         }
       }
-      Smpl2Rig(
-          aBone,
-          aIndBoneParent, aXYZ1, aJntRgrs);
+      {
+        std::vector<double> aJntPos0;
+        dfm2::Points3_WeightsparsePosition(
+            aJntPos0,
+            aIndBoneParent.size(), aJntRgrsSparseWeight,aJntRgrsSparseIdbone, aXYZ1);
+        dfm2::InitBones_JointPosition(
+            aBone,
+            aIndBoneParent, aJntPos0);
+      }
       dfm2::UpdateBoneRotTrans(aBone);
-      dfm2::SkinningSparseLBS(aXYZ2,
+      dfm2::SkinningSparse_LBS(aXYZ2,
           aXYZ1, aBone, aSkinningSparseWeight, aSkinningSparseIdBone);
       //
       viewer.DrawBegin_oldGL();

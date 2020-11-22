@@ -198,7 +198,103 @@ DFM2_INLINE void PickBone
 }
 }
 
+
+void delfem2::SparsifyMatrixRow(
+                                std::vector<double>& aWBone_RigSparse,
+                                std::vector<unsigned int>& aIdBone_RigSparse,
+                                const double* aW,
+                                unsigned int nrow,
+                                unsigned int ncol,
+                                double thres)
+{
+  unsigned int nbone_nonzeroweight = 0;
+  for(unsigned int ip=0;ip< nrow;++ip) {
+    unsigned icnt = 0;
+    for(unsigned int ib=0;ib<ncol;++ib) {
+      if( aW[ip * ncol + ib] < thres ){ continue; }
+      icnt++;
+    }
+    if( icnt > nbone_nonzeroweight ){ nbone_nonzeroweight = icnt; }
+  }
+  aWBone_RigSparse.resize(nbone_nonzeroweight*nrow);
+  aIdBone_RigSparse.resize(nbone_nonzeroweight*nrow);
+  for(unsigned int ip=0;ip< nrow;++ip) {
+    unsigned icnt = 0;
+    double w_sum = 0.0;
+    for(unsigned int ib=0;ib<ncol;++ib) {
+      if( aW[ip * ncol + ib] < thres ){ continue; }
+      w_sum += aW[ip * ncol + ib];
+      aWBone_RigSparse[ip*nbone_nonzeroweight+icnt] = aW[ip * ncol + ib];
+      aIdBone_RigSparse[ip*nbone_nonzeroweight+icnt] = ib;
+      icnt++;
+    }
+    if( icnt > nbone_nonzeroweight ){ nbone_nonzeroweight = icnt; }
+  }
+}
+
+
+DFM2_INLINE void delfem2::Transpose_Mat(
+                                        std::vector<double>& At,
+                                        const std::vector<double>& A,
+                                        unsigned int nrow,
+                                        unsigned int ncol)
+{
+  At.resize(A.size());
+  for(unsigned int i=0;i<nrow;++i){
+    for(unsigned int j=0;j<ncol;++j){
+      At[j*nrow+i] = A[i*ncol+j];
+    }
+  }
+}
+
+DFM2_INLINE void delfem2::Points3_WeighttranspPosition(
+                                                       std::vector<double>& aPos,
+                                                       const std::vector<double>& Weighttransp,
+                                                       const std::vector<double>& aXYZ0)
+{
+  const unsigned int nXYZ = aXYZ0.size()/3;
+  const unsigned int nPos = Weighttransp.size()/nXYZ;
+  aPos.assign(nPos*3, 0.0);
+  for(unsigned int ib=0;ib<nPos;++ib){
+    aPos[ib*3+0] = 0;
+    aPos[ib*3+1] = 0;
+    aPos[ib*3+2] = 0;
+    for(unsigned int ip=0;ip<nXYZ;++ip){
+      aPos[ib*3+0] += Weighttransp[ip*nPos+ib]*aXYZ0[ip*3+0];
+      aPos[ib*3+1] += Weighttransp[ip*nPos+ib]*aXYZ0[ip*3+1];
+      aPos[ib*3+2] += Weighttransp[ip*nPos+ib]*aXYZ0[ip*3+2];
+    }
+  }
+}
+
+DFM2_INLINE void delfem2::Points3_WeightsparsePosition(
+                                                       std::vector<double>& aPos0,
+                                                       unsigned int nPos,
+                                                       const std::vector<double>& aSparseW,
+                                                       const std::vector<unsigned int>& aSparseIdp,
+                                                       const std::vector<double>& aXYZ0)
+{
+  assert( aSparseW.size() == aSparseIdp.size() );
+  const unsigned int np_sparse = aSparseIdp.size()/nPos;
+  assert( aSparseIdp.size() % np_sparse == 0 );
+  aPos0.assign(nPos*3, 0.0);
+  for(unsigned int ib=0;ib<nPos;++ib){
+    aPos0[ib*3+0] = 0;
+    aPos0[ib*3+1] = 0;
+    aPos0[ib*3+2] = 0;
+    for(unsigned int ipb=0;ipb<np_sparse;++ipb){
+      const unsigned int ip = aSparseIdp[ib*np_sparse+ipb];
+      const double w0 = aSparseW[ib*np_sparse+ipb];
+      aPos0[ib*3+0] += w0*aXYZ0[ip*3+0];
+      aPos0[ib*3+1] += w0*aXYZ0[ip*3+1];
+      aPos0[ib*3+2] += w0*aXYZ0[ip*3+2];
+    }
+  }
+}
+
+// above: matrix operation
 // ------------------------------------------------------------
+// below: skinning
 
 /*
 DFM2_INLINE int delfem2::CRigBone::PickHandler
@@ -320,7 +416,7 @@ DFM2_INLINE void delfem2::Skinning_LBS(
 
 // ---------
 
-DFM2_INLINE void delfem2::SkinningSparseLBS(
+DFM2_INLINE void delfem2::SkinningSparse_LBS(
     std::vector<double>& aXYZ1,
     const std::vector<double>& aXYZ0,
     const std::vector<CRigBone>& aBone,
@@ -347,42 +443,6 @@ DFM2_INLINE void delfem2::SkinningSparseLBS(
     }
   }
 }
-
-// -------
-
-void delfem2::SparsifySkinningWeight(
-    std::vector<double>& aWBone_RigSparse,
-    std::vector<unsigned int>& aIdBone_RigSparse,
-    const double* aW,
-    unsigned int np,
-    unsigned int nb,
-    double thres)
-{
-  unsigned int nbone_nonzeroweight = 0;
-  for(unsigned int ip=0;ip< np;++ip) {
-    unsigned icnt = 0;
-    for(unsigned int ib=0;ib<nb;++ib) {
-      if( aW[ip * nb + ib] < thres ){ continue; }
-      icnt++;
-    }
-    if( icnt > nbone_nonzeroweight ){ nbone_nonzeroweight = icnt; }
-  }
-  aWBone_RigSparse.resize(nbone_nonzeroweight*np);
-  aIdBone_RigSparse.resize(nbone_nonzeroweight*np);
-  for(unsigned int ip=0;ip< np;++ip) {
-    unsigned icnt = 0;
-    double w_sum = 0.0;
-    for(unsigned int ib=0;ib<nb;++ib) {
-      if( aW[ip * nb + ib] < thres ){ continue; }
-      w_sum += aW[ip * nb + ib];
-      aWBone_RigSparse[ip*nbone_nonzeroweight+icnt] = aW[ip * nb + ib];
-      aIdBone_RigSparse[ip*nbone_nonzeroweight+icnt] = ib;
-      icnt++;
-    }
-    if( icnt > nbone_nonzeroweight ){ nbone_nonzeroweight = icnt; }
-  }
-}
-
 
 // ------------------------------------
 // from here BioVisionHierarchy
@@ -564,7 +624,7 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy
       v0[iaxis] = 1.0;
       double dq[4] = { cos(ar*0.5), v0[0]*sin(ar*0.5), v0[1]*sin(ar*0.5), v0[2]*sin(ar*0.5) };
       double qtmp[4]; QuatQuat(qtmp,
-                                     aBone[ibone].quatRelativeRot, dq);
+          aBone[ibone].quatRelativeRot, dq);
       Copy_Quat(aBone[ibone].quatRelativeRot,qtmp);
     }
   }
@@ -573,28 +633,12 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy
 
 // ----------------------------------
 
-DFM2_INLINE void delfem2::Smpl2Rig(
+DFM2_INLINE void delfem2::InitBones_JointPosition(
     std::vector<CRigBone>& aBone,
     const std::vector<int>& aIndBoneParent,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aJntRgrs)
+    const std::vector<double>& aJntPos0)
 {
   const unsigned int nBone = aIndBoneParent.size();
-  std::vector<double> aJntPos0;
-  {
-    const unsigned int nP = aXYZ0.size()/3;
-    aJntPos0.assign(nBone*3, 0.0);
-    for(unsigned int ib=0;ib<nBone;++ib){
-      aJntPos0[ib*3+0] = 0;
-      aJntPos0[ib*3+1] = 0;
-      aJntPos0[ib*3+2] = 0;
-      for(unsigned int ip=0;ip<nP;++ip){
-        aJntPos0[ib*3+0] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+0];
-        aJntPos0[ib*3+1] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+1];
-        aJntPos0[ib*3+2] += aJntRgrs[ip*nBone+ib]*aXYZ0[ip*3+2];
-      }
-    }
-  }
   aBone.resize(nBone);
   for(unsigned int ib=0;ib<nBone;++ib){
     int ibp = aIndBoneParent[ib];
@@ -653,11 +697,11 @@ DFM2_INLINE void delfem2::SetMat4AffineBone_FromJointRelativeRotation
 }
 
 
-DFM2_INLINE void delfem2::Rig_SkinReferncePositionsBoneWeighted
- (std::vector<double>& aRefPosAff,  // [ np, nBone*4 ]
-  const std::vector<delfem2::CRigBone> aBone1,
-  const std::vector<double>& aXYZ0,
-  const std::vector<double>& aW)
+DFM2_INLINE void delfem2::Rig_SkinReferncePositionsBoneWeighted(
+    std::vector<double>& aRefPosAff,  // [ np, nBone*4 ]
+    const std::vector<delfem2::CRigBone> aBone1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aW)
 {
   const unsigned int np = aXYZ0.size()/3;
   const unsigned int nb = aBone1.size();

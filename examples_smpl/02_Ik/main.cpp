@@ -76,9 +76,15 @@ int main()
         aIndBoneParent,
         aJntRgrs,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(
-        aBone,
-        aIndBoneParent, aXYZ0, aJntRgrs);
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeighttranspPosition(
+          aJntPos0,
+          aJntRgrs, aXYZ0);
+      dfm2::InitBones_JointPosition(
+          aBone,
+          aIndBoneParent, aJntPos0);
+    }
   }
   
   std::vector<double> aXYZ1 = aXYZ0;
@@ -136,10 +142,6 @@ int main()
     Draw(aXYZ1,aTri,aBone,aTarget);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    viewer.ExitIfClosed();
   }
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }

@@ -19,6 +19,43 @@
 
 namespace delfem2 {
 
+
+DFM2_INLINE void Transpose_Mat(
+                               std::vector<double>& At,
+                               const std::vector<double>& A,
+                               unsigned int ncol,
+                               unsigned int nrow);
+
+/**
+ *
+ * @param[out] aWBone_RigSparse
+ * @param[out] aIdBone_RigSparse
+ * @param[in] aW
+ * @param[in] np
+ * @param[in] nb
+ * @param[in] thres
+ */
+DFM2_INLINE void SparsifyMatrixRow(
+                                   std::vector<double>& aSparseA,
+                                   std::vector<unsigned int>& aSparseInd,
+                                   const double* pA,
+                                   unsigned int nrow,
+                                   unsigned int ncol,
+                                   double thres);
+
+
+DFM2_INLINE void Points3_WeighttranspPosition(
+                                              std::vector<double>& aPos0,
+                                              const std::vector<double>& aWeighttransp,
+                                              const std::vector<double>& aXYZ0);
+
+DFM2_INLINE void Points3_WeightsparsePosition(
+                                              std::vector<double>& aPos0,
+                                              unsigned int nPos0,
+                                              const std::vector<double>& aSparseW,
+                                              const std::vector<unsigned int>& aSparseIp,
+                                              const std::vector<double>& aXYZ0);
+
 /**
  * @brief Set 3D affine matrix that transfrom from intial position from the deformed poisition for each bones.
  * @details this funcition is for rigging without the class "CRigBone"
@@ -102,7 +139,8 @@ public:
 /**
  * @brief set "CRgidiBone.affmat3Global" based on "CRigidBone.quadRelativeRot"
  */
-DFM2_INLINE void UpdateBoneRotTrans(std::vector<CRigBone>& aBone);
+DFM2_INLINE void UpdateBoneRotTrans(
+    std::vector<CRigBone>& aBone);
 
 DFM2_INLINE void PickBone(
     int& ibone_selected,
@@ -137,30 +175,13 @@ DFM2_INLINE void Skinning_LBS(
 
 /**
  *
- * @param[out] aWBone_RigSparse
- * @param[out] aIdBone_RigSparse
- * @param[in] aW
- * @param[in] np
- * @param[in] nb
- * @param[in] thres
- */
-DFM2_INLINE void SparsifySkinningWeight(
-    std::vector<double>& aWBone_RigSparse,
-    std::vector<unsigned int>& aIdBone_RigSparse,
-    const double* aW,
-    unsigned int np,
-    unsigned int nb,
-    double thres);
-
-/**
- *
  * @param[out] aXYZ1
  * @param[in] aXYZ0
  * @param[in] aBone
  * @param[in] aWBoneSparse
  * @param[in] aIdBoneSparse
  */
-DFM2_INLINE void SkinningSparseLBS(
+DFM2_INLINE void SkinningSparse_LBS(
     std::vector<double>& aXYZ1,
     const std::vector<double>& aXYZ0,
     const std::vector<CRigBone>& aBone,
@@ -169,11 +190,10 @@ DFM2_INLINE void SkinningSparseLBS(
 
 // --------------------------------------
 
-DFM2_INLINE void Smpl2Rig(
+DFM2_INLINE void InitBones_JointPosition(
     std::vector<CRigBone>& aBone,
     const std::vector<int>& aIndBoneParent,
-    const std::vector<double>& aXYZ0,
-    const std::vector<double>& aJntRgrs);
+    const std::vector<double>& aJntPos0);
 
 // --------------------------------------
 
@@ -200,10 +220,11 @@ public:
    std::vector<double>& aL) const; // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
 };
 
-DFM2_INLINE void Rig_SensitivityBoneTransform(double* aL, // [ ndim(3), nBone, ndim(4) ]
-                                  unsigned int ib_s,
-                                  unsigned int idim_s,
-                                  const std::vector<CRigBone> aBone1);
+DFM2_INLINE void Rig_SensitivityBoneTransform(
+    double* aL, // [ ndim(3), nBone, ndim(4) ]
+    unsigned int ib_s,
+    unsigned int idim_s,
+    const std::vector<CRigBone> aBone1);
 
 DFM2_INLINE void Rig_SensitivityBoneTransform_Eigen(
     std::vector<double>& Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]

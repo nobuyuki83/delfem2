@@ -22,7 +22,7 @@ namespace cnpy{
  * @param[out] aW skinning weight
  * @param[out] aTri triangle index
  * @param[out] aIndBoneParent id of parent bone
- * @param[out] aJntRgrs wait of the body surface to obtain joint position
+ * @param[out] aJntRgrs weight of the body surface to obtain joint position (column-major)
  * @param[in] fpath path
  */
 DFM2_INLINE void LoadSmpl_Bone(
@@ -33,6 +33,17 @@ DFM2_INLINE void LoadSmpl_Bone(
     std::vector<double>& aJntRgrs,
     const std::string& fpath);
 
+/**
+ *
+ * @param aXYZ0
+ * @param aW
+ * @param aTri
+ * @param aIndBoneParent
+ * @param[out] aJntRgrs weight of the body surface to obtain joint position (column-major)
+ * @param aBlendShape
+ * @param aBlendPose
+ * @param fpath
+ */
 DFM2_INLINE void LoadSmpl_BoneBlendshape(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,

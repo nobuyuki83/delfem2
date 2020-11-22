@@ -120,10 +120,16 @@ int main()
         aIndBoneParent,
         aJntRgrs,
         std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-    dfm2::Smpl2Rig(
-        body.aBone,
-        aIndBoneParent, body.aXYZ0_Body, aJntRgrs);
-    dfm2::SparsifySkinningWeight(
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeighttranspPosition(
+          aJntPos0,
+          aJntRgrs, body.aXYZ0_Body);
+      dfm2::InitBones_JointPosition(
+          body.aBone,
+          aIndBoneParent, aJntPos0);
+    }
+    dfm2::SparsifyMatrixRow(
         body.aSkinningSparseWeight,
         body.aSkinningSparseIdBone,
         aW_Body.data(),
@@ -178,7 +184,7 @@ int main()
           dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth, aXYZ_Cloth, body, viewer);
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      viewer.ExitIfClosed();
     }
     std::vector<double> aSkinningSparseWeight_Cloth;
     std::vector<unsigned int> aSkinningSparseIdBone_Cloth;
@@ -204,7 +210,7 @@ int main()
           }
         }
       }
-      dfm2::SparsifySkinningWeight(
+      dfm2::SparsifyMatrixRow(
           aSkinningSparseWeight_Cloth,
           aSkinningSparseIdBone_Cloth,
           aW_Cloth.data(),
@@ -223,7 +229,7 @@ int main()
         q.CopyTo(body.aBone[ib].quatRelativeRot);
       }
       body.UpdatePose(iframe % 100 == 0);
-      SkinningSparseLBS(aXYZ_Cloth,
+      SkinningSparse_LBS(aXYZ_Cloth,
                         aXYZ1_Cloth, body.aBone, aSkinningSparseWeight_Cloth, aSkinningSparseIdBone_Cloth);
       dfm2::StepTime_PbdClothSim(
           aXYZ_Cloth, aXYZt_Cloth, aUVW_Cloth,
@@ -232,7 +238,7 @@ int main()
           dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth, aXYZ_Cloth, body, viewer);
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      viewer.ExitIfClosed();
     }
     for(int iframe=0;iframe<100;++iframe){
       dfm2::StepTime_PbdClothSim(
@@ -242,11 +248,7 @@ int main()
           dt, gravity, bend_stiffness_ratio);
       damper.Damp(aUVW_Cloth);
       Draw(aETri_Cloth, aXYZ_Cloth, body, viewer);
-      if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+      viewer.ExitIfClosed();
     }
   }
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }
