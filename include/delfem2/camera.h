@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// TODO: make this file dependent on mat4.h and quat.h
+
 /**
  * @file camera class that define projection and model-view transformation.
  * @details this file should be stand alone
@@ -22,12 +24,6 @@
 // ---------------------------------------------------
 
 namespace delfem2{
-
-template <typename REAL>
-DFM2_INLINE void MatMat4(
-    REAL *m0,
-    const REAL *m1,
-    const REAL *m2);
 
 template <typename REAL>
 DFM2_INLINE void Mult_MatVec4(

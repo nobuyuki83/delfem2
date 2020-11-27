@@ -32,6 +32,39 @@ cd ../..
 
 
 echo "################################"
+echo "build examples_glfwold"
+echo "################################"
+
+cd examples_glfwold
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+# cmake --build . # skip build to save time
+cd ../../
+
+cd examples_glfwold
+mkdir buildXcodeStatic
+cd buildXcodeStatic
+cmake -G Xcode -DUSE_HEADERONLY=OFF ..
+# cmake --build . # skip build to save time
+cd ../../
+
+cd examples_glfwold
+mkdir buildMakeHdronly 
+cd buildMakeHdronly
+cmake -DUSE_HEADERONLY=ON ..
+make
+cd ../../
+
+cd examples_glfwold
+mkdir buildMakeStatic 
+cd buildMakeStatic
+cmake -DUSE_HEADERONLY=OFF ..
+make
+cd ../../
+
+
+echo "################################"
 echo "fetch latest imgui"
 echo "################################"
 
@@ -71,35 +104,21 @@ git pull origin master
 cd ../../
 
 echo "################################"
-echo "build examples_glfwold"
+echo "compile demos using tinygltf"
 echo "################################"
 
-cd examples_glfwold
+cd examples_glfw_tinygltf_oldgl
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
-# cmake --build . # skip build to save time
+cmake --build .
 cd ../../
 
-cd examples_glfwold
+cd examples_glfw_tinygltf_oldgl
 mkdir buildXcodeStatic
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
-# cmake --build . # skip build to save time
-cd ../../
-
-cd examples_glfwold
-mkdir buildMakeHdronly 
-cd buildMakeHdronly
-cmake -DUSE_HEADERONLY=ON ..
-make
-cd ../../
-
-cd examples_glfwold
-mkdir buildMakeStatic 
-cd buildMakeStatic
-cmake -DUSE_HEADERONLY=OFF ..
-make
+cmake --build .
 cd ../../
 
 

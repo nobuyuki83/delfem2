@@ -14,13 +14,13 @@
 #ifndef DFM2_V23M34Q_H
 #define DFM2_V23M34Q_H
 
-#include "delfem2/dfm2_inline.h"
-#include <stdio.h>
 #include "vec2.h"
 #include "vec3.h"
 #include "mat3.h"
 #include "mat4.h"
 #include "quat.h"
+#include "delfem2/dfm2_inline.h"
+#include <stdio.h>
 
 namespace delfem2 {
 
@@ -31,26 +31,26 @@ namespace delfem2 {
 // --------------------------------------------------------
 // vec3
 
-DFM2_INLINE CVec2d screenXYProjection
- (const CVec3d& v,
-  const float* mMV,
-  const float* mPj);
+DFM2_INLINE CVec2d screenXYProjection(
+    const CVec3d& v,
+    const float* mMV,
+    const float* mPj);
 
 
 // -------------
 // vec3 and vec2
 
 
-DFM2_INLINE bool isPickQuad
- (const CVec3d& p0,
-  const CVec3d& p1,
-  const CVec3d& p2,
-  const CVec3d& p3,
-  const CVec2d& sp,
-  const CVec3d& pick_dir,
-  const float mMV[16],
-  const float mPj[16],
-  double eps);
+DFM2_INLINE bool isPickQuad(
+    const CVec3d& p0,
+    const CVec3d& p1,
+    const CVec3d& p2,
+    const CVec3d& p3,
+    const CVec2d& sp,
+    const CVec3d& pick_dir,
+    const float mMV[16],
+    const float mPj[16],
+    double eps);
 
 // ---------------------------------------------------
 // matrix 3
@@ -88,19 +88,28 @@ CMat3d Mat3_RotCartesian(const CVec3d& vec0);
  * @brief output outer product Vec0 * Vec1^T
  */
 CMat3d Mat3_OuterProduct(
-                         const CVec3d& vec0,
-                         const CVec3d& vec1 );
-CMat3d Mat3_Spin(const CVec3d& vec0);
-CMat3d Mat3_ParallelTransport(const CVec3d& p0,
-                              const CVec3d& p1,
-                              const CVec3d& q0,
-                              const CVec3d& q1);
+    const CVec3d& vec0,
+    const CVec3d& vec1 );
 
-void Mat4_MatTransl(double m[16],
-                    const CMat3d& mat, const CVec3d& trans);
+CMat3d Mat3_Spin(
+    const CVec3d& vec0);
 
-DFM2_INLINE void Mat4_ScaleMatTransl(double m[16],
-                         double scale, const CMat3d& mat, const CVec3d& trans);
+CMat3d Mat3_ParallelTransport(
+    const CVec3d& p0,
+    const CVec3d& p1,
+    const CVec3d& q0,
+    const CVec3d& q1);
+
+void Mat4_MatTransl(
+    double m[16],
+    const CMat3d& mat,
+    const CVec3d& trans);
+
+DFM2_INLINE void Mat4_ScaleMatTransl(
+    double m[16],
+    double scale,
+    const CMat3d& mat,
+    const CVec3d& trans);
 
 /**
  * @brief 3x3 Rotation matrix to rotate V into v with minimum rotation angle
@@ -132,40 +141,45 @@ CMat3d Mat3_IrotPoint(const CVec3d& d0);
 // above: inertia tensor
 // ----------------------
 
-CMat3d Mirror(const CVec3d& n);
+CMat3d Mirror(
+    const CVec3d& n);
 
 /**
  * @brief matrix for two cross products
  * @details Ma = v^(v^a)
  */
-CMat3d Mat3_CrossCross(const CVec3d& v);
+CMat3d Mat3_CrossCross(
+    const CVec3d& v);
 
 // mat3
 // -----------------------------------------------------------
 // quaternion
 
 template <typename REAL>
-DFM2_INLINE CVec3<REAL> operator* (const CQuat<REAL>& v, const CVec3<REAL>& m);
+DFM2_INLINE CVec3<REAL> operator* (
+    const CQuat<REAL>& v,
+    const CVec3<REAL>& m);
 
-DFM2_INLINE CQuatd Quat_CartesianAngle(const CVec3d& p);
+DFM2_INLINE CQuatd Quat_CartesianAngle(
+    const CVec3d& p);
 
 
 /**
  * @discussion interface doesn't have CQuat, CMat3, CVec3, but the implementation has it.
  */
-DFM2_INLINE void UpdateRotationsByMatchingCluster_Linear
-(std::vector<double>& aQuat1,
- const std::vector<double>& aXYZ0,
- const std::vector<double>& aXYZ1,
- const std::vector<unsigned int>& psup_ind,
- const std::vector<unsigned int>& psup);
+DFM2_INLINE void UpdateRotationsByMatchingCluster_Linear(
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup);
 
-DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD
- (std::vector<double>& aQuat1,
-  const std::vector<double>& aXYZ0,
-  const std::vector<double>& aXYZ1,
-  const std::vector<unsigned int>& psup_ind,
-  const std::vector<unsigned int>& psup);
+DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD(
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup);
 
 } // 
 

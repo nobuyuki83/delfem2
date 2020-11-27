@@ -16,7 +16,6 @@
 #include <random>
 #include "delfem2/dfm2_inline.h"
 
-
 namespace delfem2 {
 
 template <typename T>
@@ -29,7 +28,6 @@ DFM2_INLINE void Normalize_Quat(
 template <typename T>
 DFM2_INLINE void Quat_Identity(
     T q[4]);
-
 
 template <typename REAL>
 DFM2_INLINE void Quat_Bryant(
@@ -47,16 +45,6 @@ DFM2_INLINE void Quat_CartesianAngle(
     REAL q[4],
     const REAL a[3]);
 
-  
-/**
- * @func transform a 3D vector with quaternion vo  = q*vi*adj(q)
- * @tparam REAL float or double
- */
-template <typename REAL>
-DFM2_INLINE void QuatVec(
-    REAL vo[],
-    const REAL q[],
-    const REAL vi[]);
 
 /**
  * @func copy quaternion
@@ -81,20 +69,28 @@ DFM2_INLINE void QuatQuat(
     const REAL p[],
     const REAL q[]);
 
-DFM2_INLINE void QuatConjVec(
-    double vo[],
-    const double q[],
-    const double vi[]);
-
 template <typename REAL>
 DFM2_INLINE double Dot_Quat(
     const REAL p[],
     const REAL q[]);
 
+// -----------------------------
+// below: quaternion and vector
+
+/**
+ * @func transform a 3D vector with quaternion vo  = q*vi*adj(q)
+ * @tparam REAL float or double
+ */
 template <typename REAL>
-DFM2_INLINE void Mat3_Quat(
-    REAL r[],
-    const REAL q[]);
+DFM2_INLINE void QuatVec(
+    REAL vo[],
+    const REAL q[],
+    const REAL vi[]);
+
+DFM2_INLINE void QuatConjVec(
+    double vo[],
+    const double q[],
+    const double vi[]);
 
 // ----------
 

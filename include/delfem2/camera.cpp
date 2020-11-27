@@ -7,7 +7,6 @@
 
 
 #include <cmath>
-#include <cstring>
 #include <iostream>
 
 #include "delfem2/camera.h"
@@ -27,7 +26,10 @@ DFM2_INLINE void QuatQuat(double r[], const double p[], const double q[])
 }
 
 //! @brief transform vector with quaternion
-DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
+DFM2_INLINE void QuatVec(
+    double vo[],
+    const double q[],
+    const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -46,7 +48,10 @@ DFM2_INLINE void QuatVec(double vo[], const double q[], const double vi[])
 
 
 //! @brief transform vector with conjugate of quaternion
-DFM2_INLINE void QuatConjVec(double vo[], const double q[], const double vi[])
+DFM2_INLINE void QuatConjVec(
+    double vo[],
+    const double q[],
+    const double vi[])
 {
   double x2 = q[1] * q[1] * 2.0;
   double y2 = q[2] * q[2] * 2.0;
@@ -66,9 +71,9 @@ DFM2_INLINE void QuatConjVec(double vo[], const double q[], const double vi[])
 
 
 //! @brief copy quaternion
-DFM2_INLINE void CopyQuat
- (double r[],
-  const double p[])
+DFM2_INLINE void CopyQuat(
+    double r[],
+    const double p[])
 {
   r[0] = p[0];
   r[1] = p[1];
@@ -114,8 +119,8 @@ DFM2_INLINE void Mat4_AffineTransQuat(
 
 template <typename REAL>
 DFM2_INLINE void Mat4_AffineTransTranslate(
-                                      REAL r[],
-                                      const REAL t[])
+    REAL r[],
+    const REAL t[])
 {
   // column 0
   r[ 0] = 1;
@@ -323,27 +328,6 @@ DFM2_INLINE void CalcInvMat(
 
 // static functions ends here
 // =====================================================
-
-template <typename REAL>
-DFM2_INLINE void delfem2::MatMat4(
-    REAL *m0,
-    const REAL *m1,
-    const REAL *m2)
-{
-  for (unsigned int i = 0; i < 4; ++i) {
-    for (unsigned int j = 0; j < 4; ++j) {
-      m0[i * 4 + j]
-          = m1[i * 4 + 0] * m2[0 * 4 + j]
-          + m1[i * 4 + 1] * m2[1 * 4 + j]
-          + m1[i * 4 + 2] * m2[2 * 4 + j]
-          + m1[i * 4 + 3] * m2[3 * 4 + j];
-    }
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::MatMat4(double*, const double*, const double*);
-template void delfem2::MatMat4(float*, const float*, const float*);
-#endif
 
 template <typename REAL>
 DFM2_INLINE void delfem2::Mult_MatVec4(
