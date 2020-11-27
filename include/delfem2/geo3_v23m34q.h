@@ -176,6 +176,7 @@ DFM2_INLINE void UpdateRotationsByMatchingCluster_Linear(
 
 DFM2_INLINE void UpdateRotationsByMatchingCluster_SVD(
     std::vector<double>& aQuat1,
+    unsigned int ip,
     const std::vector<double>& aXYZ0,
     const std::vector<double>& aXYZ1,
     const std::vector<unsigned int>& psup_ind,

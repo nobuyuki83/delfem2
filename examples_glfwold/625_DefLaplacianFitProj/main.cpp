@@ -5,20 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-#include <cmath>
-#include "delfem2/mshmisc.h"
-#include "delfem2/deflap.h"
-#include "delfem2/primitive.h"
-#include "delfem2/rig_geo3.h"
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h> // this should come first
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/r2tglo_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/deflap.h"
+#include "delfem2/primitive.h"
+#include "delfem2/rig_geo3.h"
+#include <iostream>
+#include <cmath>
+#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -87,10 +86,10 @@ public:
   std::vector<double> aW;
 };
 
-void Project
- (std::vector< std::pair<unsigned int, dfm2::CVec3d> >& aIdpNrm,
-  std::vector<double>& aXYZ1,
-  const dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler)
+void Project(
+    std::vector< std::pair<unsigned int, dfm2::CVec3d> >& aIdpNrm,
+    std::vector<double>& aXYZ1,
+    const dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler)
 {
   aIdpNrm.clear();
   for(unsigned int ip=0;ip<aXYZ1.size()/3;++ip){
@@ -122,11 +121,11 @@ void Project
 }
 
 
-void Draw
- (const CCapsuleRigged trg,
-  const std::vector<double>& aXYZ1,
-  const std::vector<unsigned int>& aTri,
-  const dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler)
+void Draw(
+    const CCapsuleRigged trg,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& aTri,
+    const dfm2::opengl::CRender2Tex_DrawOldGL_BOX& sampler)
 {
   dfm2::opengl::DrawBackground( dfm2::CColor(0.2,0.7,0.7) );
   ::glEnable(GL_LIGHTING);
@@ -189,8 +188,7 @@ int main(int argc,char* argv[])
   const std::vector<double> aXYZ0 = aXYZ1; // initial src mesh vertex
 
   // ---------------------
-  while (true)
-  {
+  for(unsigned int itr=0;itr<3;++itr){
     int iframe = 0;
     {
       dfm2::CDef_LaplacianLinear def;
@@ -219,14 +217,13 @@ int main(int argc,char* argv[])
         def.SetValueToPreconditioner();
         def.Deform(aXYZ1, aXYZ0);
         std::cout << iframe << " nitr:" << def.aConvHist.size() << " nconst:" << def.aIdpNrm.size() << " np:" << aXYZ0.size()/3 << std::endl;
-        
-        // ----------------------------
+
         // drawing functions
         viewer.DrawBegin_oldGL();
         Draw(trg,aXYZ1,aTri,sampler);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+        viewer.ExitIfClosed();
       }
     }
     { // test degenerate deformer
@@ -263,14 +260,10 @@ int main(int argc,char* argv[])
         Draw(trg,aXYZ1,aTri,sampler);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ) goto EXIT;
+        viewer.ExitIfClosed();
       }
     }
   }
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }
 
 

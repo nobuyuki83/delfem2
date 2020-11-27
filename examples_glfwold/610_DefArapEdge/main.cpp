@@ -100,9 +100,10 @@ int main(int argc,char* argv[])
   std::vector<double> aXYZ0;
   std::vector<int> aBCFlag;
   {
-    dfm2::MeshTri3D_CylinderClosed(aXYZ0, aTri,
-                                   0.2, 1.6,
-                                   16, 16);
+    dfm2::MeshTri3D_CylinderClosed(
+        aXYZ0, aTri,
+        0.2, 1.6,
+        16, 16);
     {
       const unsigned int np = aXYZ0.size() / 3;
       aBCFlag.assign(np * 3, 0);
@@ -123,12 +124,12 @@ int main(int argc,char* argv[])
   }
   std::vector<double> aXYZ1 = aXYZ0;
 
-  while (true){
+  for(unsigned int itr=0;itr<3;++itr){
     const double weight_bc = 100.0;
     int iframe = 0;
     { // arap edge linear disponly
       dfm2::CDef_ArapEdgeLinearDisponly def0(aXYZ0, aTri, weight_bc, aBCFlag);
-      glfwSetWindowTitle(viewer.window, "ARAP Edge Linear Disponly");
+      glfwSetWindowTitle(viewer.window, "(1) ARAP Edge Linear Disponly");
       for(;iframe<50;++iframe)
       {
         SetPositionAtFixedBoundary(aXYZ1,
@@ -141,12 +142,12 @@ int main(int argc,char* argv[])
         Draw_BCFlag(aXYZ1,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+        viewer.ExitIfClosed();
       }
     } // end linear disponly
     // -------------------------------------------------------
     { // begin lienar disprot without preconditioner
-      glfwSetWindowTitle(viewer.window, "Arap Edge Linear Disprot without Prec");
+      glfwSetWindowTitle(viewer.window, "(2) Arap Edge Linear Disprot without Prec");
       unsigned int np = aXYZ0.size()/3;
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, false);
@@ -164,12 +165,12 @@ int main(int argc,char* argv[])
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+        viewer.ExitIfClosed();
       } // end of frame loop
     } // end linear disprot without preconditioner
     // -------------------------------
     { // begin lienar disprot with preconditioner
-      glfwSetWindowTitle(viewer.window, "Arap Edge Linear Disprot with Prec");
+      glfwSetWindowTitle(viewer.window, "(3) Arap Edge Linear Disprot with Prec");
       const unsigned int np = aXYZ0.size()/3;
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
@@ -179,10 +180,12 @@ int main(int argc,char* argv[])
         for(unsigned int i=0;i<np*3;++i){ // adding noise for debuggng purpose
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe,aXYZ0,aBCFlag);
-        def1.Deform(aXYZ1, aQuat,
-                    aXYZ0);
+        SetPositionAtFixedBoundary(
+            aXYZ1,
+            iframe,aXYZ0,aBCFlag);
+        def1.Deform(
+            aXYZ1, aQuat,
+            aXYZ0);
         // ------
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
@@ -190,12 +193,12 @@ int main(int argc,char* argv[])
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+        viewer.ExitIfClosed();
       } // end of frame loop
     } // end linear disprot with preconditioner
     // -------------------------------
     { // begin nonlienar disprot with preconditioner
-      glfwSetWindowTitle(viewer.window, "Arap Edge NonLinear Disprot with Prec");
+      glfwSetWindowTitle(viewer.window, "(4) Arap Edge NonLinear Disprot with Prec");
       const unsigned int np = aXYZ0.size()/3;
       dfm2::CDef_ArapEdge def1;
       def1.Init(aXYZ0, aTri, weight_bc, aBCFlag, true);
@@ -205,10 +208,12 @@ int main(int argc,char* argv[])
         for(unsigned int i=0;i<np*3;++i){ // adding noise for debuggng purpose
           aXYZ1[i] += 0.02*(double)rand()/(RAND_MAX+1.0)-0.01;
         }
-        SetPositionAtFixedBoundary(aXYZ1,
-                                   iframe,aXYZ0,aBCFlag);
-        def1.Deform(aXYZ1, aQuat,
-                    aXYZ0);
+        SetPositionAtFixedBoundary(
+            aXYZ1,
+            iframe,aXYZ0,aBCFlag);
+        def1.Deform(
+            aXYZ1, aQuat,
+            aXYZ0);
         // ------
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1, aTri);
@@ -216,15 +221,10 @@ int main(int argc,char* argv[])
         dfm2::opengl::Draw_QuaternionsCoordinateAxes(aXYZ1,aQuat,0.04);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto CLOSE; }
+        viewer.ExitIfClosed();
       } // end of frame loop
     } // end linear disprot with preconditioner
   }
-  
-CLOSE:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }
 
 

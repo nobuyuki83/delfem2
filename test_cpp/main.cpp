@@ -14,7 +14,6 @@
 #include "delfem2/mat3.h"
 #include "delfem2/quat.h"
 #include "delfem2/gridvoxel.h"
-#include "delfem2/gridcube.h"
 #include "delfem2/mshtopo.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"

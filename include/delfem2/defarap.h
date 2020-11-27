@@ -17,6 +17,9 @@
 
 namespace delfem2 {
 
+/**
+ * @brief Edge-based As-Rigid-As-Possible shape deformation wihtout rotation
+ */
 class CDef_ArapEdgeLinearDisponly {
 public:
   CDef_ArapEdgeLinearDisponly(const std::vector<double>& aXYZ0,
@@ -45,7 +48,7 @@ public:
 
 
 /**
- * @brief Edge based As-Rigid-As-Possible shape deformation
+ * @brief Edge-based As-Rigid-As-Possible shape deformation
  */
 class CDef_ArapEdge {
 public:
@@ -88,13 +91,19 @@ public:
 class CDef_Arap {
 public:
   CDef_Arap(){}
-  void Init(const std::vector<double>& aXYZ0,
-            const std::vector<unsigned int>& aTri,
-            bool is_preconditioner);
-  void Deform(std::vector<double>& aXYZ1,
-              std::vector<double>& aQuat,
-              const std::vector<double>& aXYZ0,
-              const std::vector<int>& aBCFlag);
+  void Init(
+      const std::vector<double>& aXYZ0,
+      const std::vector<unsigned int>& aTri,
+      bool is_preconditioner);
+  void Deform(
+      std::vector<double>& aXYZ1,
+      std::vector<double>& aQuat,
+      const std::vector<double>& aXYZ0,
+      const std::vector<int>& aBCFlag);
+  void UpdateQuats_SVD(
+      std::vector<double>& aXYZ1,
+      std::vector<double>& aQuat1,
+      const std::vector<double>& aXYZ0);
 public:
   mutable std::vector<double> aConvHist;
   std::vector<unsigned int> psup_ind, psup;

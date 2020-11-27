@@ -4,14 +4,14 @@ echo "build examples_glut"
 echo "################################"
 
 cd examples_glut
-mkdir buildMake
+mkdir buildMake 
 cd buildMake
 cmake ..
 make
 cd ../../
 
 cd examples_glut
-mkdir buildXcode
+mkdir buildXcode 
 cd buildXcode
 cmake -G Xcode ..
 cmake --build .
@@ -36,21 +36,21 @@ echo "build examples_glfwold"
 echo "################################"
 
 cd examples_glfwold
-mkdir buildXcodeHdronly
+mkdir buildXcodeHdronly 
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
 # cmake --build . # skip build to save time
 cd ../../
 
 cd examples_glfwold
-mkdir buildXcodeStatic
+mkdir buildXcodeStatic 
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 # cmake --build . # skip build to save time
 cd ../../
 
 cd examples_glfwold
-mkdir buildMakeHdronly 
+mkdir buildMakeHdronly
 cd buildMakeHdronly
 cmake -DUSE_HEADERONLY=ON ..
 make
@@ -61,6 +61,17 @@ mkdir buildMakeStatic
 cd buildMakeStatic
 cmake -DUSE_HEADERONLY=OFF ..
 make
+cd ../../
+
+echo "################################"
+echo "build examples_glfw_thread_oldgl"
+echo "################################"
+
+cd examples_glfw_thread_oldgl
+mkdir buildXcodeHdronly 
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+# cmake --build . # skip build to save time
 cd ../../
 
 

@@ -14,14 +14,14 @@
 namespace delfem2 {
 namespace deflap {
 
-DFM2_INLINE void dWddW_ArapEnergy
-(std::vector<double>& eM,
- std::vector<double>& eR,
- const double* Minv,
- const std::vector<unsigned int>& aIP,
- const std::vector<double>& aXYZ0,
- const std::vector<double>& aXYZ1,
- const std::vector<double>& aQuat1)
+DFM2_INLINE void dWddW_ArapEnergy(
+    std::vector<double>& eM,
+    std::vector<double>& eR,
+    const double* Minv,
+    const std::vector<unsigned int>& aIP,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<double>& aQuat1)
 {
   const unsigned int nIP = aIP.size();
   const unsigned int nNg = nIP-1; // number of neighbor
@@ -69,13 +69,13 @@ DFM2_INLINE void dWddW_ArapEnergy
  
 // ============================================
 
-delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly
- (const std::vector<double>& aXYZ0,
-  const std::vector<unsigned int>& aTri,
-  double weight_bc0,
-  const std::vector<int>& aBCFlag0) :
-weight_bc(weight_bc0),
-aBCFlag(aBCFlag0)
+delfem2::CDef_ArapEdgeLinearDisponly::CDef_ArapEdgeLinearDisponly (
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri,
+    double weight_bc0,
+    const std::vector<int>& aBCFlag0) :
+  weight_bc(weight_bc0),
+  aBCFlag(aBCFlag0)
 {
   const unsigned int np = aXYZ0.size()/3;
   JArray_PSuP_MeshElem(psup_ind, psup,
@@ -98,9 +98,9 @@ aBCFlag(aBCFlag0)
   vec_tmp.resize(ne*3);
 }
 
-void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp
- (double*y ,
-  double alpha, double beta) const
+void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp(
+    double*y ,
+    double alpha, double beta) const
 {
   const unsigned int np = aBCFlag.size()/3;
   for(unsigned int i=0;i<np*3;++i){ y[i] *= beta; }
@@ -119,10 +119,10 @@ void delfem2::CDef_ArapEdgeLinearDisponly::JacobiTVecTmp
   }
 }
 
-void delfem2::CDef_ArapEdgeLinearDisponly::MakeLinearSystem
- (double* aRhs,
-  const double* aXYZ0,
-  const double* aXYZ1) const
+void delfem2::CDef_ArapEdgeLinearDisponly::MakeLinearSystem(
+    double* aRhs,
+    const double* aXYZ0,
+    const double* aXYZ1) const
 {
   const unsigned int np = aBCFlag.size()/3;
   const unsigned int ne = psup.size();
@@ -148,11 +148,11 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MakeLinearSystem
    */
 }
 
-void delfem2::CDef_ArapEdgeLinearDisponly::MatVec
- (double* y,
-  double alpha,
-  const double* vec,
-  double beta) const
+void delfem2::CDef_ArapEdgeLinearDisponly::MatVec(
+    double* y,
+    double alpha,
+    const double* vec,
+    double beta) const
 {
   const unsigned int np = aBCFlag.size()/3;
   std::fill(vec_tmp.begin(),vec_tmp.end(), 0.0);
@@ -178,9 +178,9 @@ void delfem2::CDef_ArapEdgeLinearDisponly::MatVec
   }
 }
 
-void delfem2::CDef_ArapEdgeLinearDisponly::Deform
-(std::vector<double>& aXYZ1,
- const std::vector<double>& aXYZ0)
+void delfem2::CDef_ArapEdgeLinearDisponly::Deform(
+    std::vector<double>& aXYZ1,
+    const std::vector<double>& aXYZ0)
 {
   const unsigned int np = aBCFlag.size()/3;
   std::vector<double> aRhs(np*3,0.0);
@@ -195,12 +195,12 @@ void delfem2::CDef_ArapEdgeLinearDisponly::Deform
 
 // ======================================================
 
-void delfem2::CDef_ArapEdge::Init
- (const std::vector<double>& aXYZ0,
-  const std::vector<unsigned int>& aTri,
-  double weight_bc0,
-  const std::vector<int>& aBCFlag0,
-  bool is_preconditioner0)
+void delfem2::CDef_ArapEdge::Init(
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri,
+    double weight_bc0,
+    const std::vector<int>& aBCFlag0,
+    bool is_preconditioner0)
 {
   this->weight_bc = weight_bc0;
   this->is_preconditioner = is_preconditioner0;
@@ -226,10 +226,10 @@ void delfem2::CDef_ArapEdge::Init
   vec_tmp.resize(ne*3);
 }
 
-void delfem2::CDef_ArapEdge::JacobiTVecTmp
- (double*y ,
-  double alpha,
-  double beta) const
+void delfem2::CDef_ArapEdge::JacobiTVecTmp(
+    double*y ,
+    double alpha,
+    double beta) const
 {
   const unsigned int np = psup_ind.size()-1;
   for(unsigned int i=0;i<np*6;++i){ y[i] *= beta; }
@@ -252,11 +252,11 @@ void delfem2::CDef_ArapEdge::JacobiTVecTmp
   }
 }
 
-void delfem2::CDef_ArapEdge::MatVec
- (double* y,
-  double alpha,
-  const double* vec,
-  double beta) const
+void delfem2::CDef_ArapEdge::MatVec(
+    double* y,
+    double alpha,
+    const double* vec,
+    double beta) const
 {
   const unsigned int np = psup_ind.size()-1;
   std::fill(vec_tmp.begin(),vec_tmp.end(), 0.0);
@@ -287,11 +287,11 @@ void delfem2::CDef_ArapEdge::MatVec
   }
 }
 
-void delfem2::CDef_ArapEdge::MakeLinearSystem
- (double* aRhs,
-  const double* aXYZ0,
-  const double* aXYZ1,
-  const double* aQuat)
+void delfem2::CDef_ArapEdge::MakeLinearSystem(
+    double* aRhs,
+    const double* aXYZ0,
+    const double* aXYZ1,
+    const double* aQuat)
 {
   const unsigned int np = psup_ind.size()-1;
   const unsigned int ne = psup.size();
@@ -368,10 +368,10 @@ void delfem2::CDef_ArapEdge::SolvePrecond(double* v) const
 }
 
 
-void delfem2::CDef_ArapEdge::Deform
- (std::vector<double>& aXYZ1,
-  std::vector<double>& aQuat,
-  const std::vector<double>& aXYZ0)
+void delfem2::CDef_ArapEdge::Deform(
+    std::vector<double>& aXYZ1,
+    std::vector<double>& aQuat,
+    const std::vector<double>& aXYZ0)
 {
   const unsigned int np = psup_ind.size()-1;
   std::vector<double> aRhs(np*6,0.0);
@@ -402,10 +402,10 @@ void delfem2::CDef_ArapEdge::Deform
 // ===========================================================
 // below: implementation of CDef_Arap class
 
-void delfem2::CDef_Arap::Init
- (const std::vector<double>& aXYZ0,
-  const std::vector<unsigned int>& aTri,
-  bool is_preconditioner_)
+void delfem2::CDef_Arap::Init(
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri,
+    bool is_preconditioner_)
 {
   this->is_preconditioner = is_preconditioner_;
   const unsigned int np = aXYZ0.size()/3;
@@ -445,11 +445,11 @@ void delfem2::CDef_Arap::Init
 }
 
 
-void delfem2::CDef_Arap::Deform
-(std::vector<double>& aXYZ1,
- std::vector<double>& aQuat1,
- const std::vector<double>& aXYZ0,
- const std::vector<int>& aBCFlag) 
+void delfem2::CDef_Arap::Deform(
+    std::vector<double>& aXYZ1,
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<int>& aBCFlag)
 {
   const unsigned int np = aXYZ0.size()/3;
   Mat.SetZero();
@@ -501,6 +501,18 @@ void delfem2::CDef_Arap::Deform
                                             aXYZ0,aXYZ1,psup_ind,psup);
   }
    */
-  UpdateRotationsByMatchingCluster_SVD(aQuat1,
-                                       aXYZ0,aXYZ1,psup_ind,psup);
+
+}
+
+void delfem2::CDef_Arap::UpdateQuats_SVD(
+    std::vector<double>& aXYZ1,
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0)
+{
+  std::size_t np = aXYZ1.size()/3;
+  for(unsigned int ip=0;ip<np;++ip) {
+    UpdateRotationsByMatchingCluster_SVD(
+        aQuat1,
+        ip, aXYZ0, aXYZ1, psup_ind, psup);
+  }
 }

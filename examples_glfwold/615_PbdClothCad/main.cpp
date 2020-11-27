@@ -5,29 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-#include <cstdlib>
-#include <vector>
-#include <set>
-#include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
-#include "delfem2/points.h" // Rotate, NormalMeshTri3D
-#include "delfem2/dtri.h"
-#include "delfem2/bv.h"
-#include "delfem2/primitive.h"
-
+#include "delfem2/opengl/caddtri_v3_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/objf_geo3.h"
 #include "delfem2/objfdtri_objfdtri23.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dtri2_v2dtri.h"
 #include "delfem2/cad2_dtri2.h"
 #include "delfem2/srch_v3bvhmshtopo.h"
-
-// ---------------
-
+#include "delfem2/mshmisc.h" // Rotate, NormalMeshTri3D
+#include "delfem2/points.h" // Rotate, NormalMeshTri3D
+#include "delfem2/dtri.h"
+#include "delfem2/bv.h"
+#include "delfem2/primitive.h"
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/caddtri_v3_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cstdlib>
+#include <vector>
+#include <set>
 
 namespace dfm2 = delfem2;
 
@@ -42,7 +37,6 @@ std::vector<double> aXYZt;
 std::vector<double> aUVW; // deformed vertex velocity
 std::vector<int> aBCFlag;  // boundary condition flag (0:free 1:fixed)
 std::vector<dfm2::CInfoNearest<double>> aInfoNearest;
-
 
 std::vector<double> aXYZ_Contact;
 std::vector<unsigned int> aTri_Contact;
