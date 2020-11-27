@@ -56,19 +56,24 @@ void Mat3_Identity_ScaleAdd(
     REAL alpha=1, REAL beta=0);
 
 template <typename T>
-void Transpose_Mat3(T At[],
-                    const T A[]);
+void Transpose_Mat3(
+    T At[],
+    const T A[]);
 
 template <typename REAL>
-void Inverse_Mat3(REAL Ainv[],
-                  const REAL A[]);
+void Inverse_Mat3(
+    REAL Ainv[],
+    const REAL A[]);
 
 template <typename REAL>
-void Inverse_Mat3(REAL Ainv[9]);
+void Inverse_Mat3(
+    REAL Ainv[9]);
 
 template <typename T>
-void MatMat3(T* UL,
-             const T* U, const T* L);
+void MatMat3(
+    T* UL,
+    const T* U,
+    const T* L);
   
 template <typename T>
 void MatMatT3(
@@ -84,7 +89,8 @@ void MatMatT3(
 template <typename T>
 void MatTMat3(
     T* C,
-    const T* A, const T* B);
+    const T* A,
+    const T* B);
 
 /**
  * @func adding scaled product of a transposed 3x3 matrix and another 3x3 matrix.
@@ -94,15 +100,19 @@ void MatTMat3(
 template <typename T>
 void MatTMat3_ScaleAdd(
     T* C,
-    const T* A, const T* B,
-    T alpha, T beta);
+    const T* A,
+    const T* B,
+    T alpha,
+    T beta);
 
 
 template <typename T>
-T Det_Mat3(const T U[9]);
+T Det_Mat3(
+    const T U[9]);
   
 template <typename T>
-T SquareNormFrobenius_SymMat3(const T sm[6]);
+T SquareNormFrobenius_SymMat3(
+    const T sm[6]);
 
 template <typename REAL>
 void Mat3_Rotation_Cartesian(
@@ -116,26 +126,31 @@ void Mat3_Rotation_Cartesian(
  * M = ULU^T
  * u[9] = (U_00,U_01,U_02, U_10,U_11,U_12, U_20,U_21,U_22)
  */
-DFM2_INLINE bool eigenSym3
- (double u[9], double l[3],
-  const double sm[6],
-  int nitr);
+DFM2_INLINE bool eigenSym3(
+    double u[9],
+    double l[3],
+    const double sm[6],
+    int nitr);
 
-DFM2_INLINE void svd3
- (double U[9], double G[3], double V[9],
-  const double m[9],
-  int nitr);
+DFM2_INLINE void svd3(
+    double U[9],
+    double G[3],
+    double V[9],
+    const double m[9],
+    int nitr);
 
-DFM2_INLINE void GetRotPolarDecomp
- (double R[9],
-  const double am[9],
-  int nitr);
+DFM2_INLINE void GetRotPolarDecomp(
+    double R[9],
+    const double am[9],
+    int nitr);
 
 // ------------------------------------------------
+// below: mat3 and vec3
 
 DFM2_INLINE void MatTVec3(
     double y[3],
-    const double m[9], const double x[3]);
+    const double m[9],
+    const double x[3]);
 
 /**
  * @func {y} = beta*{y} + alpha*[M]^T{x}
@@ -143,33 +158,40 @@ DFM2_INLINE void MatTVec3(
 template <typename T>
 void MatTVec3_ScaleAdd(
     T y[3],
-    const T m[9], const T x[3],
-    T alpha, T beta);
+    const T m[9],
+    const T x[3],
+    T alpha,
+    T beta);
 
 /**
  * @func matrix vector product for 3x3 matrix {y} := [m]{x}
  */
 template <typename T>
-void MatVec3(T y[3],
-             const T m[9], const T x[3]);
+void MatVec3(
+    T y[3],
+    const T m[9],
+    const T x[3]);
 
 template <typename T>
-void MatVec3_ScaleAdd(T y[3],
-                      const T m[9], const T x[3],
-                      T alpha, T beta);
+void MatVec3_ScaleAdd(
+    T y[3],
+    const T m[9],
+    const T x[3],
+    T alpha,
+    T beta);
 
-DFM2_INLINE void VecMat3
- (double y[3],
-  const double x[3], const double m[9]);
-
-template <typename T>
-void Vec3_Mat4Vec3_AffineProjection(
-    T y0[3],
-    const T a[16],
-    const T x0[3]);
-
+DFM2_INLINE void VecMat3(
+    double y[3],
+    const double x[3],
+    const double m[9]);
 
 // --------------------------------
+// below: mat3 and quat
+
+template <typename REAL>
+DFM2_INLINE void Mat3_Quat(
+    REAL r[],
+    const REAL q[]);
   
 template <typename T>
 class CMat3; // this pre-definition is needed for following functions

@@ -66,6 +66,17 @@ jobs:
         cmake --build . --config Release
         cd ../..
 
+    - name: build tinygltf
+      run: |
+        echo "#############"
+        echo "## build tinygltf demo"
+        cd examples_glfw_tinygltf_oldgl
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake -A x64 -DUSE_HEADERONLY=ON ..
+        cmake --build .
+        cd ../../
+
     - name: build zlib
       run: |
         echo "##############################"

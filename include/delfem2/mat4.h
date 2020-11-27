@@ -27,15 +27,17 @@
 namespace delfem2 {
 
 template <typename REAL>
-void Copy_Mat4(REAL M0[16],
-               const REAL M1[16])
+void Copy_Mat4(
+    REAL M0[16],
+    const REAL M1[16])
 {
   for(int i=0;i<16;++i){ M0[i] = M1[i]; }
 }
 
 template <typename REAL>
-void Transpose_Mat4(REAL M0[16],
-                    const REAL M1[16])
+void Transpose_Mat4(
+    REAL M0[16],
+    const REAL M1[16])
 {
   for(int i=0;i<4;++i){
   for(int j=0;j<4;++j){
@@ -88,7 +90,7 @@ DFM2_INLINE void MatVec4(
     const T x[4]);
 
 // --------------------------------
-// functions mat4 and vec3
+// below: functions mat4 and vec3
 
 /**
  * @details this is not affine transfromation. Translation part is ignored
@@ -107,17 +109,19 @@ void Translate_Mat4Affine(
     const REAL v[3]);
 
 template <typename T>
-void Vec3_Mat4Vec3_AffineProjection(T y0[3],
-                                    const T a[16],
-                                    const T x0[3]);
+void Vec3_Mat4Vec3_AffineProjection(
+    T y0[3],
+    const T a[16],
+    const T x0[3]);
 
 template <typename T>
-void Vec3_Mat4Vec3_Affine(T y0[3],
-                          const T a[16],
-                          const T x0[3]);
+void Vec3_Mat4Vec3_Affine(
+    T y0[3],
+    const T a[16],
+    const T x0[3]);
 
 // ------------------------------------
-// function with mat4 and quarternion
+// below: function with mat4 and quarternion
 
 template <typename REAL>
 DFM2_INLINE void Mat4_Quat(

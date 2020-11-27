@@ -112,3 +112,15 @@ jobs:
         cmake ..
         make
         cd ../..
+
+    - name: test_tinygl
+      run: |
+        echo # -------------
+        echo # build tinygl
+
+        cd examples_glfw_tinygltf_oldgl
+        mkdir buildXcodeHdronly
+        cd buildXcodeHdronly
+        cmake -G Xcode -DUSE_HEADERONLY=ON ..
+        cmake --build .
+  cd ../../

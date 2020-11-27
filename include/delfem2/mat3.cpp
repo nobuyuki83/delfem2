@@ -312,7 +312,38 @@ template void delfem2::MatTVec3_ScaleAdd
   const double m[9], const double x[3], double alpha, double beta);
 #endif
 
+// above: mat3 and vec3
 // ------------------------------------
+// below: mat3 and quaternion
+
+template <typename REAL>
+DFM2_INLINE void delfem2::Mat3_Quat(
+    REAL r[],
+    const REAL q[])
+{
+  double x2 = q[1] * q[1] * 2.0;
+  double y2 = q[2] * q[2] * 2.0;
+  double z2 = q[3] * q[3] * 2.0;
+  double xy = q[1] * q[2] * 2.0;
+  double yz = q[2] * q[3] * 2.0;
+  double zx = q[3] * q[1] * 2.0;
+  double xw = q[1] * q[0] * 2.0;
+  double yw = q[2] * q[0] * 2.0;
+  double zw = q[3] * q[0] * 2.0;
+  r[ 0] = 1.0 - y2 - z2;
+  r[ 1] = xy - zw;
+  r[ 2] = zx + yw;
+  r[ 3] = xy + zw;
+  r[ 4] = 1.0 - z2 - x2;
+  r[ 5] = yz - xw;
+  r[ 6] = zx - yw;
+  r[ 7] = yz + xw;
+  r[ 8] = 1.0 - x2 - y2;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat3_Quat(float r[], const float q[]);
+template void delfem2::Mat3_Quat(double r[], const double q[]);
+#endif
 
 template <typename T>
 void delfem2::MatMat3

@@ -26,8 +26,17 @@ addons:
 script: |
   git submodule update --init --recursive
 
-  # ----------------
-  # test cpp
+  echo "# --------------------------"
+  echo "# build c++ glut examples"
+  cd examples_glut
+  mkdir buildMake
+  cd buildMake
+  cmake ..
+  make
+  cd ../..
+
+  echo "# ----------------"
+  echo "# test cpp"
   cd 3rd_party/googletest
   cmake .
   make
@@ -49,17 +58,10 @@ script: |
   ./runUnitTests
   cd ../../
 
-  # --------------------------
-  # build c++ glut examples
-  cd examples_glut
-  mkdir buildMake
-  cd buildMake
-  cmake ..
-  make
-  cd ../..
 
-  # -------------------------
-  # build C++ glfw examples
+
+  echo "# -------------------------"
+  echo "# build C++ glfw examples"
   cd 3rd_party/glfw
   cmake .
   make
@@ -88,3 +90,12 @@ script: |
   cmake -DUSE_HEADERONLY=OFF ..
   make
   cd ../..
+
+  echo "# -------------------------"
+  echo "# build tinyglfw examples"
+  cd examples_glfw_tinygltf_oldgl
+  mkdir buildXcodeHdronly
+  cd buildXcodeHdronly
+  cmake -G Xcode -DUSE_HEADERONLY=ON ..
+  cmake --build .
+  cd ../../
