@@ -325,6 +325,27 @@ DFM2_INLINE void CalcInvMat(
 // =====================================================
 
 template <typename REAL>
+DFM2_INLINE void delfem2::MatMat4(
+    REAL *m0,
+    const REAL *m1,
+    const REAL *m2)
+{
+  for (unsigned int i = 0; i < 4; ++i) {
+    for (unsigned int j = 0; j < 4; ++j) {
+      m0[i * 4 + j]
+          = m1[i * 4 + 0] * m2[0 * 4 + j]
+          + m1[i * 4 + 1] * m2[1 * 4 + j]
+          + m1[i * 4 + 2] * m2[2 * 4 + j]
+          + m1[i * 4 + 3] * m2[3 * 4 + j];
+    }
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatMat4(double*, const double*, const double*);
+template void delfem2::MatMat4(float*, const float*, const float*);
+#endif
+
+template <typename REAL>
 DFM2_INLINE void delfem2::Mult_MatVec4(
     REAL *mv,
     const REAL *m,
