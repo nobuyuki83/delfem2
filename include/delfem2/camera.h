@@ -24,6 +24,12 @@
 namespace delfem2{
 
 template <typename REAL>
+DFM2_INLINE void MatMat4(
+    REAL *m0,
+    const REAL *m1,
+    const REAL *m2);
+
+template <typename REAL>
 DFM2_INLINE void Mult_MatVec4(
     REAL *mv,
     const REAL *m,
