@@ -13,10 +13,6 @@ ELSE()
 	project(examples_glfwold_hdronly)
 ENDIF()
 
-# simple examples without delfem2 
-add_subdirectory(000_OpenWindowWithGLFW)
-
-
 # basic funcs
 add_subdirectory(00_RigReadFileGLTF)
 add_subdirectory(10_PbdClothCadGltf)

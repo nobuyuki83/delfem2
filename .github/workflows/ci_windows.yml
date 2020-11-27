@@ -68,7 +68,7 @@ jobs:
 
     - name: build tinygltf
       run: |
-        echo "#############"
+        echo "######################"
         echo "## build tinygltf demo"
         cd examples_glfw_tinygltf_oldgl
         mkdir buildVS64Static
