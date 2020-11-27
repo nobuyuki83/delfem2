@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#include "delfem2/thread/th.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
@@ -15,6 +16,22 @@
 #include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
+
+void UpdateRotationsByMatchingCluster_SVD(
+    std::vector<double>& aQuat1,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup)
+{
+  auto func_matchrot = [&aQuat1, &aXYZ0, & aXYZ1, &psup_ind, &psup](unsigned int ip)
+  {
+    dfm2::UpdateRotationsByMatchingCluster_SVD(
+        aQuat1,
+        ip,aXYZ0,aXYZ1,psup_ind,psup);
+  };
+  delfem2::parallel_for(aXYZ0.size()/3, func_matchrot);
+}
 
 // -------------------------------------
 
@@ -127,10 +144,9 @@ int main(int argc,char* argv[])
     int iframe = 0;
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
-      def0.Init(aXYZ0, aTri, false);
-      glfwSetWindowTitle(viewer.window, "(1) ARAP w.o. Preconditioner");
-      for(;iframe<200;++iframe)
-      {
+      def0.Init(aXYZ0, aTri, true);
+      glfwSetWindowTitle(viewer.window, "(1) ARAP thread off");
+      for(;iframe<200;++iframe){
         SetPositionAtFixedBoundary(
             aXYZ1,
             iframe,aXYZ0,aBCFlag);
@@ -153,7 +169,7 @@ int main(int argc,char* argv[])
     { // arap edge linear disponly
       dfm2::CDef_Arap def0;
       def0.Init(aXYZ0, aTri, true);
-      glfwSetWindowTitle(viewer.window, "(2) ARAP with Preconditioner");
+      glfwSetWindowTitle(viewer.window, "(2) ARAP thread on");
       for(;iframe<400;++iframe){
         SetPositionAtFixedBoundary(
             aXYZ1,
@@ -161,9 +177,9 @@ int main(int argc,char* argv[])
         def0.Deform(
             aXYZ1,aQuat1,
             aXYZ0,aBCFlag);
-        def0.UpdateQuats_SVD(
-            aXYZ1,aQuat1,
-            aXYZ0);
+        UpdateRotationsByMatchingCluster_SVD(
+            aQuat1,
+            aXYZ0,aXYZ1,def0.psup_ind,def0.psup);
         // --------------------
         viewer.DrawBegin_oldGL();
         myGlutDisplay_Mesh(aXYZ0,aXYZ1,aTri);

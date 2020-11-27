@@ -59,7 +59,6 @@ script: |
   cd ../../
 
 
-
   echo "# -------------------------"
   echo "# build C++ glfw examples"
   cd 3rd_party/glfw
@@ -94,8 +93,15 @@ script: |
   echo "# -------------------------"
   echo "# build tinyglfw examples"
   cd examples_glfw_tinygltf_oldgl
-  mkdir buildXcodeHdronly
-  cd buildXcodeHdronly
-  cmake -G Xcode -DUSE_HEADERONLY=ON ..
-  cmake --build .
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=ON ..
+  make
   cd ../../
+
+  echo "# --------------------------"
+  echo "# build glfw_thread examples"
+  cd examples_glfw_thread_oldgl
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=ON ..
+  make
+  cd ../../  

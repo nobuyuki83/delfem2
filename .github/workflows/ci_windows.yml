@@ -77,6 +77,17 @@ jobs:
         cmake --build .
         cd ../../
 
+    - name: build thread
+      run: |
+        echo "######################"
+        echo "## build thread demo"
+        cd examples_glfw_thread_oldgl
+        mkdir buildVS64Static
+        cd buildVS64Static
+        cmake -A x64 -DUSE_HEADERONLY=ON ..
+        cmake --build .
+        cd ../../        
+
     - name: build zlib
       run: |
         echo "##############################"

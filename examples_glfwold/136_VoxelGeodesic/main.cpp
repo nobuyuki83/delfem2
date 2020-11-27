@@ -5,30 +5,29 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <random>
-#include <climits>
-#include "delfem2/mshio.h"
-#include "delfem2/mshmisc.h"
-#include "delfem2/points.h"
-#include "delfem2/gridvoxel.h"
-//
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/color_glold.h"
 #include "delfem2/opengl/r2tglo_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/mshio.h"
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include "delfem2/gridvoxel.h"
+#include <GLFW/glfw3.h>
+#include <random>
+#include <climits>
 
 namespace dfm2 = delfem2;
 
 // ------------------------------------------------------
 
-void Draw_CGrid3
-(const dfm2::CGrid3<int>& grid,
- const std::vector<double>& aDist,
- const std::vector<std::pair<double, dfm2::CColor> >& colorMap,
- double thresh)
+void Draw_CGrid3(
+    const dfm2::CGrid3<int>& grid,
+    const std::vector<double>& aDist,
+    const std::vector<std::pair<double, dfm2::CColor> >& colorMap,
+    double thresh)
 {
   { // set-up transformation
     const dfm2::CMat4d& am = grid.am;

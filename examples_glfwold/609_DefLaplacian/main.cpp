@@ -19,11 +19,11 @@ namespace dfm2 = delfem2;
 
 // --------------------------------------------------
 
-void SetPositionAtFixedBoundary
-(std::vector<double>& aRhs,
- unsigned int iframe,
- const std::vector<double>& aXYZ0,
- const std::vector<int>& aBCFlag)
+void SetPositionAtFixedBoundary(
+    std::vector<double>& aRhs,
+    unsigned int iframe,
+    const std::vector<double>& aXYZ0,
+    const std::vector<int>& aBCFlag)
 {
   double A[16];
   {
@@ -54,11 +54,11 @@ void SetPositionAtFixedBoundary
 
 // ==================================
 
-void myGlutDisplay
- (const std::vector<double>& aXYZ0,
-  const std::vector<double>& aXYZ1,
-  const std::vector<unsigned int>& aTri,
-  const std::vector<int>& aBCFlag)
+void myGlutDisplay(
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aXYZ1,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<int>& aBCFlag)
 {
   ::glDisable(GL_LIGHTING);
   ::glColor3d(1,0,0);
@@ -116,12 +116,12 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 1.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
-  
-  int iframe = 0;
-  while (!glfwWindowShouldClose(viewer.window))
+
+  for(unsigned int itr=0;itr<3;++itr)
   {
+    int iframe = 0;
     {
-      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinearDegenrate without preconditioner");
+      glfwSetWindowTitle(viewer.window, "(1) Def_LaplacianLinearDegenrate without preconditioner");
       dfm2::CDef_LaplacianLinearDegenerate def;
       def.Init(aXYZ0, aTri, false);
       def.aBCFlag = aBCFlag;
@@ -136,11 +136,11 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
     {
-      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinearDegenrate with preconditioner");
+      glfwSetWindowTitle(viewer.window, "(2) Def_LaplacianLinearDegenrate with preconditioner");
       dfm2::CDef_LaplacianLinearDegenerate def;
       def.Init(aXYZ0, aTri, true);
       def.aBCFlag = aBCFlag;
@@ -156,11 +156,11 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
     {
-      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinearGram without Preconditioner");
+      glfwSetWindowTitle(viewer.window, "(3) Def_LaplacianLinearGram without Preconditioner");
       dfm2::CDef_LaplacianLinearGram def;
       def.Init(aXYZ0, aTri, false);
       def.aBCFlag = aBCFlag;
@@ -175,7 +175,7 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
     {
@@ -183,7 +183,7 @@ int main(int argc,char* argv[])
       def.Init(aXYZ0, aTri, true);
       def.aBCFlag = aBCFlag;
       def.SetBoundaryConditionToPreconditioner();
-      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinearGram with Preconditioner");
+      glfwSetWindowTitle(viewer.window, "(4) Def_LaplacianLinearGram with Preconditioner");
       for(;iframe<400;++iframe){
         SetPositionAtFixedBoundary(aXYZ1,
                                    iframe, aXYZ0, aBCFlag);
@@ -195,11 +195,11 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
     {
-      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinear without Preconditioner");
+      glfwSetWindowTitle(viewer.window, "(5) Def_LaplacianLinear without Preconditioner");
       dfm2::CDef_LaplacianLinear def;
       def.Init(aXYZ0, aTri, false);
       def.aBCFlag = aBCFlag;
@@ -215,11 +215,11 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
     {
-      glfwSetWindowTitle(viewer.window, "Def_LaplacianLinear with Preconditioner");
+      glfwSetWindowTitle(viewer.window, "(6) Def_LaplacianLinear with Preconditioner");
       dfm2::CDef_LaplacianLinear def;
       def.Init(aXYZ0, aTri, true);
       def.aBCFlag = aBCFlag;
@@ -235,11 +235,11 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
     {
-      glfwSetWindowTitle(viewer.window, "Direct Constraint");
+      glfwSetWindowTitle(viewer.window, "(7) Direct Constraint");
       dfm2::CDef_LaplacianLinearAsym def;
       def.Init(aXYZ0, aTri);
       for(;iframe<700;++iframe){
@@ -253,17 +253,10 @@ int main(int argc,char* argv[])
         myGlutDisplay(aXYZ0,aXYZ1,aTri,aBCFlag);
         viewer.SwapBuffers();
         glfwPollEvents();
-        if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+        viewer.ExitIfClosed();
       }
     }
-    // ------
-    iframe = 0;
   }
-  
-EXIT:
-  glfwDestroyWindow(viewer.window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }
 
 

@@ -18,7 +18,7 @@ ENDIF()
 
 ####################################
 
-project(139_RigReadGltf)
+project(00_RigReadFileGLTF)
 
 add_definitions(-DPATH_INPUT_DIR="${PROJECT_SOURCE_DIR}/../../test_inputs")
 
@@ -35,17 +35,7 @@ get_filename_component(GLFW_INCLUDE_DIR ../../3rd_party/glfw/include ABSOLUTE)
 find_package(OpenGL REQUIRED)
 
 # dfm2
-IF(USE_HEADERONLY)
-  add_definitions(-DDFM2_HEADER_ONLY=ON)            
-else()
-  if(MSVC)
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/dfm2_static_glfwold.lib )
-  else()
-    set(DFM2_LIBRARY
-      ${PROJECT_SOURCE_DIR}/../dfm2_static_glfwold/libdfm2_static_glfwold.a )
-  endif()
-ENDIF()
+add_definitions(-DDFM2_HEADER_ONLY=ON)            
 set(DELFEM2_INCLUDE_DIR "../../include")
 
 ###############################################
@@ -72,7 +62,6 @@ IF(APPLE)
   find_library( IOKIT_LIBRARY IOKit )
   find_library( COREVIDEO_LIBRARY CoreVideo )
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARY}
     ${COCOA_LIBRARY}
@@ -81,14 +70,12 @@ IF(APPLE)
   )
 ELSEIF(UNIX)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GLFW_LIBRARY}
     -lrt -lm -ldl -lX11 -lpthread -lxcb -lXau -lXdmcp
   )
 ELSEIF(MSVC)
   target_link_libraries(${PROJECT_NAME}
-    ${DFM2_LIBRARY}
     ${GLFW_LIBRARY}
     ${OPENGL_LIBRARY}
   )

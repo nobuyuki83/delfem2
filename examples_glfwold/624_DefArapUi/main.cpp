@@ -5,19 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/gizmo_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/defarap.h"
 #include "delfem2/gizmo_geo3.h"
-#include "delfem2/mshmisc.h"
+#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/primitive.h"
 #include "delfem2/vec3.h"
 #include "delfem2/quat.h"
 #include "delfem2/mat4.h"
-#include "delfem2/geo3_v23m34q.h"
-// ---
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gizmo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -28,9 +26,10 @@ int main(int argc,char* argv[])
   class CMyViewer : public delfem2::opengl::CViewer_GLFW {
   public:
     CMyViewer(){
-      dfm2::MeshTri3D_CylinderClosed(aXYZ0, aTri,
-                                     0.2, 1.6,
-                                     32, 32);
+      dfm2::MeshTri3D_CylinderClosed(
+          aXYZ0, aTri,
+          0.2, 1.6,
+          32, 32);
       const unsigned int np = aXYZ0.size() / 3;
       aBCFlag.assign(np * 3, 0);
       for(unsigned int ip=0;ip<np;++ip) {
@@ -108,8 +107,12 @@ int main(int argc,char* argv[])
                                                  def0.psup_ind,def0.psup);
         }
       }
-      def0.Deform(aXYZ1,aQuat1,
-                  aXYZ0,aBCFlag);
+      def0.Deform(
+          aXYZ1,aQuat1,
+          aXYZ0,aBCFlag);
+      def0.UpdateQuats_SVD(
+          aXYZ1, aQuat1,
+          aXYZ0);
       // -------------------------------
       DrawBegin_oldGL();
       delfem2::opengl::DrawAxis(1);
@@ -157,12 +160,11 @@ int main(int argc,char* argv[])
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
-  while(true){
+  while(!glfwWindowShouldClose(viewer.window)){
     viewer.Draw();
     glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
+    viewer.ExitIfClosed();
   }
-EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

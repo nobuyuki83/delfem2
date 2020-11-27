@@ -5,16 +5,14 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "delfem2/vec3.h"
-#include "delfem2/mat3.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/primitive.h"
-
-// ----------
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/color_glold.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/vec3.h"
+#include "delfem2/mat3.h"
+#include "delfem2/primitive.h"
+#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
@@ -59,10 +57,10 @@ public:
   }
 };
 
-std::vector<CVec3d> VelocityRigidBody
-(const CRigidBodyState& rbs,
- const CRigidBodyInertia& rbi,
- const CRigidBodyForceModel& rbfm)
+std::vector<CVec3d> VelocityRigidBody(
+    const CRigidBodyState& rbs,
+    const CRigidBodyInertia& rbi,
+    const CRigidBodyForceModel& rbfm)
 {
   CVec3d F,T;
   rbfm.GetForceTorque(F,T);
@@ -74,21 +72,21 @@ std::vector<CVec3d> VelocityRigidBody
   return V;
 }
 
-CRigidBodyState StepTime_ForwardEuler
-(double dt,
- const CRigidBodyState& rbIn, // current rigid body
- const CRigidBodyInertia& rbInertia,
- const CRigidBodyForceModel& rbForceModel)
+CRigidBodyState StepTime_ForwardEuler(
+    double dt,
+    const CRigidBodyState& rbIn, // current rigid body
+    const CRigidBodyInertia& rbInertia,
+    const CRigidBodyForceModel& rbForceModel)
 {
   const std::vector<CVec3d>& velo_vOpA = VelocityRigidBody(rbIn, rbInertia, rbForceModel);
   return rbIn.Step(dt, velo_vOpA);
 }
 
-CRigidBodyState StepTime_RungeKutta4
-(double dt,
- const CRigidBodyState& rb0, // current rigid body
- const CRigidBodyInertia& rbInertia,
- const CRigidBodyForceModel& rbForceModel)
+CRigidBodyState StepTime_RungeKutta4(
+    double dt,
+    const CRigidBodyState& rb0, // current rigid body
+    const CRigidBodyInertia& rbInertia,
+    const CRigidBodyForceModel& rbForceModel)
 {
   const std::vector<CVec3d>& vrb1 = VelocityRigidBody(rb0, rbInertia, rbForceModel);
   const CRigidBodyState& rb1 = rb0.Step(dt*0.5, vrb1);
