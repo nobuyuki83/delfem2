@@ -68,26 +68,16 @@ public:
   enum class CAMERA_ROT_MODE { YTOP, ZTOP, TBALL };
 
 public:
-  CCamera(){
+  CCamera() :
+  trans{0,0,0}, Quat_tball{1,0,0,0}
+  {
     is_pars = false;
     fovy = 60;
-    
     view_height = 1.0;
     scale = 1.0;
-    
-    trans[0] = 0;
-    trans[1] = 0;
-    trans[2] = 0;
-    
     camera_rot_mode =  CAMERA_ROT_MODE::YTOP;
-
     psi = 0;
     theta = 0;
-    
-    Quat_tball[0]=1;
-    Quat_tball[1]=0;
-    Quat_tball[2]=0;
-    Quat_tball[3]=0;
   }
   
   // -----------------------

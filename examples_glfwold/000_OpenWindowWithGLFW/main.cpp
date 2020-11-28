@@ -48,7 +48,7 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+    glOrtho(-ratio, ratio, -1.f, 1.f, -1.f, +1.f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);

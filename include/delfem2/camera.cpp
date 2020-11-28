@@ -85,7 +85,7 @@ DFM2_INLINE void Mat4_AffineTransProjectionOrtho(
   // column 2
   mP[2*4+0] = 0.0;
   mP[2*4+1] = 0.0;
-  mP[2*4+2] = 2.0/(n-f);
+  mP[2*4+2] = 2.0/(n-f); // draw range  Z=[-f,-n], view movel from +Z direction
   mP[2*4+3] = 0.0;
   // collumn 3
   mP[3*4+0] = -(l+r)/(r-l);
@@ -389,7 +389,7 @@ void delfem2::CCamera<REAL>::Mat4_AffineTransProjection(
 {
   if( is_pars ){
     Mat4_AffineTransProjectionPerspective(mP,
-                                          fovy, asp, depth*0.01, depth*10);
+        fovy, asp, depth*0.01, depth*10);
   }
   else{
     camera::Mat4_AffineTransProjectionOrtho(mP,

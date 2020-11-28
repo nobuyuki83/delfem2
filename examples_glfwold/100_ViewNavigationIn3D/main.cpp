@@ -10,10 +10,9 @@
  * @details this demo is for showing CViewer_GLFW funtinoalities
  */
 
-#include <cstdlib>
-
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <cstdlib>
+#include <GLFW/glfw3.h>
 
 int main()
 {
