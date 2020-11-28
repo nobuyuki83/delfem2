@@ -8,11 +8,10 @@
 #ifndef DFM2_VIEWER_GLFW_H
 #define DFM2_VIEWER_GLFW_H
 
-#include <cstdio>
-#include <iostream>
-
 #include "delfem2/opengl/glfw/cam_glfw.h" // for CNav3D_GLFW
 #include "delfem2/dfm2_inline.h"
+#include <cstdio>
+#include <iostream>
 
 // ------------------------------------------------------
 

@@ -9,12 +9,10 @@
 #ifndef DFM2_CAM_GLFW_H
 #define DFM2_CAM_GLFW_H
 
+#include "delfem2/camera.h"
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <GLFW/glfw3.h>
-
-#include "delfem2/camera.h"
 
 
 /**

@@ -19,16 +19,11 @@ endif()
 project(00_viewer3d)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
-set(DELFEM2_INC         "../../include/delfem2")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${GLUT_INCLUDE_DIR}
-  ${DELFEM2_INCLUDE_DIR}
-)
 
+set(DELFEM2_INC         "../../include/delfem2")
 IF(NOT USE_HEADERONLY)
   message("compile as STATIC libary: ${PROJECT_NAME} ${USE_HEADERONLY}")
   add_definitions(-DDFM2_STATIC_LIBRARY=ON)
@@ -36,7 +31,8 @@ IF(NOT USE_HEADERONLY)
       ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/camera.h               ${DELFEM2_INC}/camera.cpp
       ${DELFEM2_INC}/color.h                ${DELFEM2_INC}/color.cpp
-      
+      ${DELFEM2_INC}/mat4.h                 ${DELFEM2_INC}/mat4.cpp
+      ${DELFEM2_INC}/quat.h                 ${DELFEM2_INC}/quat.cpp
       ${DELFEM2_INC}/opengl/color_glold.h   ${DELFEM2_INC}/opengl/color_glold.cpp
       ${DELFEM2_INC}/opengl/funcs_glold.h   ${DELFEM2_INC}/opengl/funcs_glold.cpp
       )
@@ -47,6 +43,12 @@ ENDIF()
 add_executable(${PROJECT_NAME}
   ${SRC_DFM2}
   main.cpp
+)
+
+include_directories(
+    ${OPENGL_INCLUDE_DIR}
+    ${GLUT_INCLUDE_DIR}
+    ${DELFEM2_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} 

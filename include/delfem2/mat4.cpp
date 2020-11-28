@@ -78,6 +78,22 @@ DFM2_INLINE void delfem2::MatVec4
 template void delfem2::MatVec4(float v[4], const float A[16], const float x[4]);
 template void delfem2::MatVec4(double v[4], const double A[16], const double x[4]);
 #endif
+
+template <typename T>
+DFM2_INLINE void delfem2::VecMat4(
+    T v[4],
+    const T x[4],
+    const T A[16])
+{
+  v[0] = A[0*4+0]*x[0] + A[1*4+0]*x[1] + A[2*4+0]*x[2] + A[3*4+0]*x[3];
+  v[1] = A[0*4+1]*x[0] + A[1*4+1]*x[1] + A[2*4+1]*x[2] + A[3*4+1]*x[3];
+  v[2] = A[0*4+2]*x[0] + A[1*4+2]*x[1] + A[2*4+2]*x[2] + A[3*4+2]*x[3];
+  v[3] = A[0*4+3]*x[0] + A[1*4+3]*x[1] + A[2*4+3]*x[2] + A[3*4+3]*x[3];
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::VecMat4(float v[4], const float x[4], const float A[16]);
+template void delfem2::VecMat4(double v[4], const double x[4], const double A[16]);
+#endif
   
 // --------------------------
 
@@ -176,7 +192,39 @@ template void delfem2::Mat4_AffineTranslation(
     double A[16],
     double dx, double dy, double dz);
 #endif
-  
+
+template <typename REAL>
+DFM2_INLINE void delfem2::Mat4_AffineTransTranslate(
+    REAL r[],
+    const REAL t[])
+{
+  // column 0
+  r[ 0] = 1;
+  r[ 1] = 0;
+  r[ 2] = 0;
+  r[ 3] = 0;
+  // column 1
+  r[ 4] = 0;
+  r[ 5] = 1;
+  r[ 6] = 0;
+  r[ 7] = 0;
+  // column 2
+  r[ 8] = 0;
+  r[ 9] = 0;
+  r[10] = 1;
+  r[11] = 0;
+  // column 3
+  r[12] = t[0];
+  r[13] = t[1];
+  r[14] = t[2];
+  r[15] = 1;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_AffineTransTranslate(float r[], const float t[]);
+template void delfem2::Mat4_AffineTransTranslate(double r[], const double t[]);
+#endif
+
+
 // --------------------------
 
 template <typename T>
@@ -347,6 +395,47 @@ DFM2_INLINE void delfem2::Mat4_QuatConj(
   r[15] = 1.0;
 }
 
+template <typename REAL>
+DFM2_INLINE void delfem2::Mat4_AffineTransQuat(
+    REAL r[],
+    const REAL q[])
+{
+  REAL x2 = q[1] * q[1] * 2;
+  REAL y2 = q[2] * q[2] * 2;
+  REAL z2 = q[3] * q[3] * 2;
+  REAL xy = q[1] * q[2] * 2;
+  REAL yz = q[2] * q[3] * 2;
+  REAL zx = q[3] * q[1] * 2;
+  REAL xw = q[1] * q[0] * 2;
+  REAL yw = q[2] * q[0] * 2;
+  REAL zw = q[3] * q[0] * 2;
+  // column 0
+  r[ 0] = 1 - y2 - z2;
+  r[ 1] = xy + zw;
+  r[ 2] = zx - yw;
+  r[ 3] = 0;
+  // column 1
+  r[ 4] = xy - zw;
+  r[ 5] = 1 - z2 - x2;
+  r[ 6] = yz + xw;
+  r[ 7] = 0;
+  // column 2
+  r[ 8] = zx + yw;
+  r[ 9] = yz - xw;
+  r[10] = 1 - x2 - y2;
+  r[11] = 0;
+  // column 3
+  r[12] = 0;
+  r[13] = 0;
+  r[14] = 0;
+  r[15] = 1;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_AffineTransQuat(float r[], const float q[]);
+template void delfem2::Mat4_AffineTransQuat(double r[], const double q[]);
+#endif
+
+
 /*
 void delfem2::MatMat4(
     double m01[16],
@@ -366,6 +455,14 @@ void delfem2::Copy_Mat4(double m1[16], const double m0[16])
 }
  */
 
+
+DFM2_INLINE void delfem2::Inverse_Mat4(
+    double minv[16],
+    const double m[16])
+{
+  for(int i=0;i<16;++i){ minv[i] = m[i]; }
+  int info; mat4::CalcInvMat(minv,4,info);
+}
 
 // ------------------------------------------------------------------
 
