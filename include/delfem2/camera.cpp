@@ -381,6 +381,15 @@ void delfem2::screenUnProjectionDirection(
 // =================================================
 // implementation of CCamera class starts here
 
+/**
+ * Computer "projection matrix" for OpenGL.
+ * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
+ * The projection matrix will mirror the object Z.
+ * @tparam REAL
+ * @param mP
+ * @param asp
+ * @param depth
+ */
 template <typename REAL>
 void delfem2::CCamera<REAL>::Mat4_AffineTransProjection(
     float mP[16],
@@ -389,16 +398,16 @@ void delfem2::CCamera<REAL>::Mat4_AffineTransProjection(
 {
   if( is_pars ){
     Mat4_AffineTransProjectionPerspective(mP,
-                                          fovy, asp, depth*0.01, depth*10);
+        fovy, asp, depth*0.01, depth*10);
   }
   else{
     camera::Mat4_AffineTransProjectionOrtho(mP,
-               -view_height*asp,
-               +view_height*asp,
-               -view_height,
-               +view_height,
-               -depth*10,
-               +depth*10);
+        -view_height*asp,
+        +view_height*asp,
+        -view_height,
+        +view_height,
+        -depth*10,
+        +depth*10);
   }
 }
 template void delfem2::CCamera<double>::Mat4_AffineTransProjection(
