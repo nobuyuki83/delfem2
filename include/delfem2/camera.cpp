@@ -16,145 +16,8 @@
 namespace delfem2 {
 namespace camera {
 
-//! @brief multiply two quaternion
-DFM2_INLINE void QuatQuat(double r[], const double p[], const double q[])
-{
-  r[0] = p[0] * q[0] - p[1] * q[1] - p[2] * q[2] - p[3] * q[3];
-  r[1] = p[0] * q[1] + p[1] * q[0] + p[2] * q[3] - p[3] * q[2];
-  r[2] = p[0] * q[2] - p[1] * q[3] + p[2] * q[0] + p[3] * q[1];
-  r[3] = p[0] * q[3] + p[1] * q[2] - p[2] * q[1] + p[3] * q[0];
-}
-
-//! @brief transform vector with quaternion
-DFM2_INLINE void QuatVec(
-    double vo[],
-    const double q[],
-    const double vi[])
-{
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy + zw      )*vi[1] + (zx - yw      )*vi[2];
-  vo[1] = (xy - zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz + xw      )*vi[2];
-  vo[2] = (zx + yw      )*vi[0] + (yz - xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
-}
-
-
-//! @brief transform vector with conjugate of quaternion
-DFM2_INLINE void QuatConjVec(
-    double vo[],
-    const double q[],
-    const double vi[])
-{
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  
-  vo[0] = (1.0 - y2 - z2)*vi[0] + (xy - zw      )*vi[1] + (zx + yw      )*vi[2];
-  vo[1] = (xy + zw      )*vi[0] + (1.0 - z2 - x2)*vi[1] + (yz - xw      )*vi[2];
-  vo[2] = (zx - yw      )*vi[0] + (yz + xw      )*vi[1] + (1.0 - x2 - y2)*vi[2];
-}
-
-
-
-//! @brief copy quaternion
-DFM2_INLINE void CopyQuat(
-    double r[],
-    const double p[])
-{
-  r[0] = p[0];
-  r[1] = p[1];
-  r[2] = p[2];
-  r[3] = p[3];
-}
-
-template <typename REAL>
-DFM2_INLINE void Mat4_AffineTransQuat(
-    REAL r[],
-    const REAL q[])
-{
-  REAL x2 = q[1] * q[1] * 2;
-  REAL y2 = q[2] * q[2] * 2;
-  REAL z2 = q[3] * q[3] * 2;
-  REAL xy = q[1] * q[2] * 2;
-  REAL yz = q[2] * q[3] * 2;
-  REAL zx = q[3] * q[1] * 2;
-  REAL xw = q[1] * q[0] * 2;
-  REAL yw = q[2] * q[0] * 2;
-  REAL zw = q[3] * q[0] * 2;
-  // column 0
-  r[ 0] = 1 - y2 - z2;
-  r[ 1] = xy + zw;
-  r[ 2] = zx - yw;
-  r[ 3] = 0;
-  // column 1
-  r[ 4] = xy - zw;
-  r[ 5] = 1 - z2 - x2;
-  r[ 6] = yz + xw;
-  r[ 7] = 0;
-  // column 2
-  r[ 8] = zx + yw;
-  r[ 9] = yz - xw;
-  r[10] = 1 - x2 - y2;
-  r[11] = 0;
-  // column 3
-  r[12] = 0;
-  r[13] = 0;
-  r[14] = 0;
-  r[15] = 1;
-}
-
-template <typename REAL>
-DFM2_INLINE void Mat4_AffineTransTranslate(
-    REAL r[],
-    const REAL t[])
-{
-  // column 0
-  r[ 0] = 1;
-  r[ 1] = 0;
-  r[ 2] = 0;
-  r[ 3] = 0;
-  // column 1
-  r[ 4] = 0;
-  r[ 5] = 1;
-  r[ 6] = 0;
-  r[ 7] = 0;
-  // column 2
-  r[ 8] = 0;
-  r[ 9] = 0;
-  r[10] = 1;
-  r[11] = 0;
-  // column 3
-  r[12] = t[0];
-  r[13] = t[1];
-  r[14] = t[2];
-  r[15] = 1;
-}
-
-template <typename REAL>
-DFM2_INLINE void Mat4_Identity(REAL r[])
-{
-  r[ 0] = 1;  r[ 1] = 0;  r[ 2] = 0;  r[ 3] = 0;
-  r[ 4] = 0;  r[ 5] = 1;  r[ 6] = 0;  r[ 7] = 0;
-  r[ 8] = 0;  r[ 9] = 0;  r[10] = 1;  r[11] = 0;
-  r[12] = 0;  r[13] = 0;  r[14] = 0;  r[15] = 1;
-}
-
-
-DFM2_INLINE void Normalize3D(float vec[3])
+DFM2_INLINE void Normalize3D(
+    float vec[3])
 {
   float len = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
   float leninv = 1.0/len;
@@ -163,15 +26,16 @@ DFM2_INLINE void Normalize3D(float vec[3])
   vec[2] *= leninv;
 }
 
-DFM2_INLINE void Cross3D(float r[3], const float v1[3], const float v2[3]){
+DFM2_INLINE void Cross3D(
+    float r[3], const float v1[3], const float v2[3]){
   r[0] = v1[1]*v2[2] - v2[1]*v1[2];
   r[1] = v1[2]*v2[0] - v2[2]*v1[0];
   r[2] = v1[0]*v2[1] - v2[0]*v1[1];
 }
 
-DFM2_INLINE void InverseMat3
-(float Ainv[],
- const float A[])
+DFM2_INLINE void InverseMat3(
+    float Ainv[],
+    const float A[])
 {
   const float det =
   + A[0]*A[4]*A[8] + A[3]*A[7]*A[2] + A[6]*A[1]*A[5]
@@ -273,6 +137,7 @@ DFM2_INLINE void solve_GlAffineMatrixDirection(
 }
 
 
+/*
 DFM2_INLINE void Mult_MatMat4(
     float *result,
     const float *m1,
@@ -287,6 +152,7 @@ DFM2_INLINE void Mult_MatMat4(
     }
   }
 }
+*/
 
 DFM2_INLINE void CalcInvMat(
                             double *a,
@@ -329,6 +195,7 @@ DFM2_INLINE void CalcInvMat(
 // static functions ends here
 // =====================================================
 
+/*
 template <typename REAL>
 DFM2_INLINE void delfem2::Mult_MatVec4(
     REAL *mv,
@@ -360,14 +227,8 @@ void delfem2::Mult_VecMat4(
 template void delfem2::Mult_VecMat4(double*, const double*, const double*);
 template void delfem2::Mult_VecMat4(float*, const float*, const float*);
 #endif
+*/
 
-DFM2_INLINE void delfem2::Inverse_Mat4(
-    double minv[16],
-    const double m[16])
-{
-  for(int i=0;i<16;++i){ minv[i] = m[i]; }
-  int info; camera::CalcInvMat(minv,4,info);
-}
 
 DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
     float *matrix,
@@ -559,7 +420,7 @@ void delfem2::CCamera<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
   float Mt[16];
   {
     const float transd[3] = { (float)trans[0], (float)trans[1], (float)trans[2] };
-    camera::Mat4_AffineTransTranslate(Mt, transd);
+    Mat4_AffineTransTranslate(Mt, transd);
   }
   const float Ms[16] = {
       (float)scale, 0, 0, 0,
@@ -588,11 +449,11 @@ void delfem2::CCamera<REAL>::Mat4_AffineTransModelView(float mMV[16]) const
           static_cast<float>(Quat_tball[1]),
           static_cast<float>(Quat_tball[2]),
           static_cast<float>(Quat_tball[3])};
-      camera::Mat4_AffineTransQuat(Mr, q);
+      Mat4_AffineTransQuat(Mr, q);
     }
   }
-  float Mrt[16]; camera::Mult_MatMat4(Mrt, Mr,Mt);
-  camera::Mult_MatMat4(mMV, Mrt,Ms);
+  float Mrt[16]; MatMat4(Mrt, Mr,Mt);
+  MatMat4(mMV, Mrt,Ms);
 }
 template void delfem2::CCamera<double>::Mat4_AffineTransModelView(float mMV[16]) const;
 
@@ -623,8 +484,8 @@ void delfem2::CCamera<REAL>::Rot_Camera(double dx, double dy){
     double ar = a*0.5; // angle
     double dq[4] = { cos(ar), -dy*sin(ar)/a, dx*sin(ar)/a, 0.0 };
     if (a != 0.0) {
-      double qtmp[4]; camera::QuatQuat(qtmp, dq, Quat_tball);
-      camera::CopyQuat(Quat_tball,qtmp);
+      double qtmp[4]; QuatQuat(qtmp, dq, Quat_tball);
+      Copy_Quat(Quat_tball,qtmp);
     }
   }
 }

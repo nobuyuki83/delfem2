@@ -67,6 +67,11 @@ void Mat4_AffineTranslation(
     REAL A[16],
     REAL dx, REAL dy, REAL dz);
 
+template <typename REAL>
+DFM2_INLINE void Mat4_AffineTransTranslate(
+    REAL r[],
+    const REAL t[]);
+
 template <typename T>
 void Mat4_AffineRotationRodriguez(
     T A[16],
@@ -88,6 +93,12 @@ DFM2_INLINE void MatVec4(
     T v[4],
     const T A[16],
     const T x[4]);
+
+template <typename T>
+DFM2_INLINE void VecMat4(
+    T v[4],
+    const T x[4],
+    const T A[16]);
 
 // --------------------------------
 // below: functions mat4 and vec3
@@ -130,11 +141,20 @@ DFM2_INLINE void Mat4_Quat(
 DFM2_INLINE void Mat4_QuatConj(
     double r[], const double q[]);
 
+template <typename REAL>
+DFM2_INLINE void Mat4_AffineTransQuat(
+    REAL r[],
+    const REAL q[]);
+
 DFM2_INLINE void Mat4_ScaleRotTrans(
     double m[16],
     double scale,
     const double quat[4],
     const double trans[3]);
+
+DFM2_INLINE void Inverse_Mat4(
+    double minv[16],
+    const double m[16]);
 
 template<typename T>
 class CMat4;

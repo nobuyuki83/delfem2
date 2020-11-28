@@ -19,7 +19,7 @@
 #include "delfem2/evalmathexp.h"
 #include "delfem2/primitive.h"
 #include "delfem2/slice.h"
-#include <iostream>
+#include <cstring>
 #include <random>
 
 #ifndef M_PI

@@ -15,31 +15,17 @@
 #ifndef DFM2_CAMERA_H
 #define DFM2_CAMERA_H
 
-#include <ostream>
-#include <math.h>
-#include <stdio.h> // memcpy
-#include <string.h>
+#include "delfem2/quat.h"
+#include "delfem2/mat4.h"
 #include "delfem2/dfm2_inline.h"
+#include <ostream>
+#include <cmath>
+#include <cstdio> // memcpy
+#include <cstring>
 
 // ---------------------------------------------------
 
 namespace delfem2{
-
-template <typename REAL>
-DFM2_INLINE void Mult_MatVec4(
-    REAL *mv,
-    const REAL *m,
-    const REAL *v);
-
-template <typename REAL>
-DFM2_INLINE void Mult_VecMat4(
-    REAL *mv,
-    const REAL *v,
-    const REAL *m);
-
-DFM2_INLINE void Inverse_Mat4(
-    double minv[16],
-    const double m[16]);
 
 DFM2_INLINE void Mat4_AffineTransProjectionFrustum(
     float *matrix, float left, float right, float bottom, float top,

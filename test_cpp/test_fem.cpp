@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "gtest/gtest.h"
+#include "gtest/gtest.h" // need to be defiend in the beginning
 //
 #include "delfem2/femrod.h"
 #include "delfem2/geo3_v23m34q.h"

@@ -7,12 +7,13 @@
 
 #include <vector>
 #include <algorithm>
+#include "delfem2/srchuni_v3.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-#include "delfem2/srchuni_v3.h"
+#include "delfem2/mat4.h"
 // ---------------------------------
 #include <GLFW/glfw3.h>
 #include "delfem2/opengl/funcs_glold.h"
@@ -40,7 +41,7 @@ void RayTracing(
   const double dir0[4] = {0,0,-1,0};
   double dir1[4];
   {
-    dfm2::Mult_VecMat4(dir1,dir0,mMVinv);
+    dfm2::VecMat4(dir1,dir0,mMVinv);
     double l1 = dfm2::Length3(dir1);
     dir1[0] /= l1;
     dir1[1] /= l1;
@@ -56,7 +57,7 @@ void RayTracing(
           (float)(2),
           (float)(1),
       };
-      double src1[4]; dfm2::Mult_VecMat4(src1,src0,mMVinv);
+      double src1[4]; dfm2::VecMat4(src1,src0,mMVinv);
       aIndElem.resize(0);
       dfm2::BVH_GetIndElem_Predicate(aIndElem,
           dfm2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>>(src1,dir1),
