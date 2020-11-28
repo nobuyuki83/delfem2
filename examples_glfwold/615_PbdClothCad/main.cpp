@@ -53,22 +53,28 @@ bool is_animation = false;
 
 void StepTime()
 {
-  dfm2::PBD_Pre3D(aXYZt,
-                  dt, gravity, aXYZ, aUVW, aBCFlag);
-  dfm2::PBD_TriStrain(aXYZt.data(),
-                      aXYZt.size()/3,aETri, aVec2);
-  dfm2::PBD_Bend(aXYZt.data(),
-                 aXYZt.size()/3, aETri, aVec2, 1.0);
-  dfm2::PBD_Seam(aXYZt.data(),
-                 aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(), aInfoNearest,
-                                                  aXYZt.size()/3,
-                                                  contact_clearance,bvh,
-                                                  aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                                                  aTri_Contact.data(), aTri_Contact.size()/3,
-                                                  aNorm_Contact.data(), 0.1);
-  dfm2::PBD_Post(aXYZ, aUVW,
-                 dt, aXYZt, aBCFlag);
+  dfm2::PBD_Pre3D(
+      aXYZt,
+      dt, gravity, aXYZ, aUVW, aBCFlag);
+  dfm2::PBD_TriStrain(
+      aXYZt.data(),
+      aXYZt.size()/3,aETri, aVec2);
+  dfm2::PBD_Bend(
+      aXYZt.data(),
+      aXYZt.size()/3, aETri, aVec2, 1.0);
+  dfm2::PBD_Seam(
+      aXYZt.data(),
+      aXYZt.size()/3, aLine.data(), aLine.size()/2);
+  dfm2::Project_PointsIncludedInBVH_Outside_Cache(
+      aXYZt.data(), aInfoNearest,
+      aXYZt.size()/3,
+      contact_clearance,bvh,
+      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+      aTri_Contact.data(), aTri_Contact.size()/3,
+      aNorm_Contact.data(), 0.1);
+  dfm2::PBD_Post(
+      aXYZ, aUVW,
+      dt, aXYZt, aBCFlag);
 
 }
 

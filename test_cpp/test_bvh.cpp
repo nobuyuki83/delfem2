@@ -5,22 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <random>
+#include "gtest/gtest.h" // need to be defined in the beginning
 
-#include "gtest/gtest.h"
-
+#include "delfem2/srchuni_v3.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/vec3.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
 #include "delfem2/primitive.h"
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
-
-#include "delfem2/srchuni_v3.h"
-#include "delfem2/srch_v3bvhmshtopo.h"
+#include <random>
 
 #ifndef M_PI
-#define M_PI 3.14159265359
+#  define M_PI 3.14159265359
 #endif
 
 namespace dfm2 = delfem2;

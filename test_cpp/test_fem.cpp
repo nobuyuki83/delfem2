@@ -5,9 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <random>
 #include "gtest/gtest.h"
-
+//
+#include "delfem2/femrod.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/objf_geo3.h"
+#include "delfem2/dtri2_v2dtri.h"
+#include "delfem2/ilu_mats.h"
+#include "delfem2/fem_emats.h"
 #include "delfem2/vec2.h"
 #include "delfem2/vecxitrsol.h"
 #include "delfem2/emat.h"
@@ -16,14 +21,8 @@
 #include "delfem2/mshmisc.h"
 #include "delfem2/points.h"
 #include "delfem2/primitive.h"
+#include <random>
 
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/objf_geo3.h"
-#include "delfem2/dtri2_v2dtri.h"
-#include "delfem2/ilu_mats.h"
-#include "delfem2/fem_emats.h"
-
-#include "delfem2/femrod.h"
 
 namespace dfm2 = delfem2;
 
@@ -400,7 +399,7 @@ TEST(objfunc_v23, WdWddW_DotFrame)
                            +dW_dP[0]*dP[0]
                            +dW_dP[1]*dP[1]
                            +dW_dP[2]*dP[2])/eps;
-      EXPECT_NEAR(val0, val1, 2.0e-2*(1.0+fabs(val1)));
+      EXPECT_NEAR(val0, val1, 3.0e-2*(1.0+fabs(val1)));
     }
     {
       const double val0 = (dw_dt[0]-dW_dt[0])/eps;
@@ -684,13 +683,16 @@ TEST(objfunc_v23, arap)
   for(int i=0;i<aXYZ2.size();++i){ aXYZ2[i] += eps*dXYZ12[i]; }
   
   std::vector<double> aQuat2 = aQuat1;
-  dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat2,
-                                                aXYZ0, aXYZ2, psup_ind, psup);
+  dfm2::UpdateRotationsByMatchingCluster_Linear(
+      aQuat2,
+      aXYZ0, aXYZ2, psup_ind, psup);
   
-  double w2 = dfm2::W_ArapEnergy(aXYZ0, aXYZ2, aQuat2, psup_ind, psup);
+  double w2 = dfm2::W_ArapEnergy(
+      aXYZ0, aXYZ2, aQuat2, psup_ind, psup);
   std::vector<double> aRes2;
-  dfm2::dW_ArapEnergy(aRes2,
-                      aXYZ0, aXYZ2, aQuat2, psup_ind, psup);
+  dfm2::dW_ArapEnergy(
+      aRes2,
+      aXYZ0, aXYZ2, aQuat2, psup_ind, psup);
   
   // ---------------------------------
   
@@ -884,12 +886,13 @@ TEST(fem,plate_bending_mitc3_cantilever)
       // -------------------
       mat_A.SetZero();
       vec_b.assign(nDoF, 0.0);
-      dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(mat_A,vec_b.data(),
-                                                               thickness,lambda,myu,
-                                                               rho,gravity_z,
-                                                               aXY0.data(), aXY0.size()/2,
-                                                               aTri.data(), aTri.size()/3,
-                                                               aVal.data());
+      dfm2::MergeLinSys_ShellStaticPlateBendingMITC3_MeshTri2D(
+          mat_A,vec_b.data(),
+          thickness,lambda,myu,
+          rho,gravity_z,
+          aXY0.data(), aXY0.size()/2,
+          aTri.data(), aTri.size()/3,
+          aVal.data());
       mat_A.SetFixedBC(aBCFlag.data());
       dfm2::setRHS_Zero(vec_b, aBCFlag,0);
       // --------------------------
@@ -898,10 +901,11 @@ TEST(fem,plate_bending_mitc3_cantilever)
         ilu_A.SetValueILU(mat_A);
         ilu_A.DoILUDecomp();
         vec_x.resize(vec_b.size());
-        std::vector<double> conv = Solve_PCG(vec_b.data(), vec_x.data(),
-                                             vec_b.size(),
-                                             1.0e-5, 1000,
-                                             mat_A, ilu_A);
+        std::vector<double> conv = Solve_PCG(
+            vec_b.data(), vec_x.data(),
+            vec_b.size(),
+            1.0e-5, 1000,
+            mat_A, ilu_A);
 //        std::cout << "convergence   nitr:" << conv.size() << "    res:" << conv[conv.size()-1] << std::endl;
         EXPECT_LT( conv.size(), 1000 );
         EXPECT_LT( conv[conv.size()-1], 1.0e-5);
