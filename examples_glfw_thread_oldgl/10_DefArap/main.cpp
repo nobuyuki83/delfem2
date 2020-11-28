@@ -30,7 +30,7 @@ void UpdateRotationsByMatchingCluster_SVD(
         aQuat1,
         ip,aXYZ0,aXYZ1,psup_ind,psup);
   };
-  delfem2::parallel_for(aXYZ0.size()/3, func_matchrot);
+  delfem2::thread::parallel_for(aXYZ0.size()/3, func_matchrot);
 }
 
 // -------------------------------------

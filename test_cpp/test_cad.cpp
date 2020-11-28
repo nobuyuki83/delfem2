@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <string>
-
 #include "gtest/gtest.h"
+//
 #include "delfem2/cad2_dtri2.h"
+#include <string>
 
 namespace dfm2 = delfem2;
 

@@ -5,9 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <iostream>
-
-#include "gtest/gtest.h"
+#include "gtest/gtest.h" // need to be defined in the beginning
 #include "delfem2/lp.h"
 
 TEST(linpro,test1)
@@ -22,12 +20,12 @@ TEST(linpro,test1)
   int res = lp.Precomp(nitr);
   EXPECT_EQ(res,0);
   EXPECT_LT(nitr,10);
-  ////
+  //
   std::vector<double> sol = lp.GetValid();
-  for(int ieq=0;ieq<lp.aEq.size();++ieq){
-    EXPECT_TRUE(lp.aEq[ieq].IsValid(sol));
+  for(auto & eq : lp.aEq){
+    EXPECT_TRUE(eq.IsValid(sol));
   }
-  ////
+  //
   double opt_val;
   nitr = 10;
   res = lp.Solve(sol,opt_val,nitr,

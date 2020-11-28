@@ -76,7 +76,7 @@ public:
     dfm2::Quat_Bryant(aBone[1].quatRelativeRot,  0.,0.,angle);
     dfm2::UpdateBoneRotTrans(aBone);
     dfm2::Skinning_LBS(aXYZ1,
-                       aXYZ0, aBone, aW);
+        aXYZ0, aBone, aW);
   }
 public:
   std::vector<double> aXYZ0;
