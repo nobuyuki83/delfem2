@@ -96,7 +96,7 @@ public:
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     asp = width / (float) height;
-    camera.Mat4_AffineTransProjection(mP, asp, 10);
+    camera.Mat4_AffineTransProjection(mP, asp, 10); // project space into cube [-1,+1,-1,+1,-1,+1] and view from -Z
     camera.Mat4_AffineTransModelView(mMV);
   }
   void PosMouse2D(

@@ -117,10 +117,10 @@ template void delfem2::MatMat4(double* C, const double* A, const double* B);
 // ---------------------------
 
 template <typename T>
-DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection
-(T y0[3],
- const T a[16],
- const T x0[3])
+DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
+    T y0[3],
+    const T a[16],
+    const T x0[3])
 {
   const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
   T y1[4]; MatVec4(y1,a,x1);
@@ -131,6 +131,23 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(float y0[3], const float a[16], const float x0[3]);
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(double y0[3], const double a[16], const double x0[3]);
+#endif
+
+template <typename T>
+DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(
+    T y0[3],
+    const T x0[3],
+    const T a[16])
+{
+  const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
+  T y1[4]; VecMat4(y1,x1,a);
+  y0[0] = y1[0]/y1[3];
+  y0[1] = y1[1]/y1[3];
+  y0[2] = y1[2]/y1[3];
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Vec3_Vec3Mat4_AffineProjection(float y0[3], const float x0[3], const float a[16]);
+template void delfem2::Vec3_Vec3Mat4_AffineProjection(double y0[3], const double x0[3], const double a[16]);
 #endif
 
 // ----------------------

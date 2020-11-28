@@ -126,6 +126,12 @@ void Vec3_Mat4Vec3_AffineProjection(
     const T x0[3]);
 
 template <typename T>
+void Vec3_Vec3Mat4_AffineProjection(
+    T y0[3],
+    const T x0[3],
+    const T a[16]);
+
+template <typename T>
 void Vec3_Mat4Vec3_Affine(
     T y0[3],
     const T a[16],
