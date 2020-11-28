@@ -92,10 +92,9 @@ public:
       float mP[16],
       GLFWwindow* window) const
   {
-    float asp;
     int width, height;
     glfwGetWindowSize(window, &width, &height);
-    asp = width / (float) height;
+    float asp = (float)width / (float)height;
     camera.Mat4_AffineTransProjection(mP, asp, 10);
     camera.Mat4_AffineTransModelView(mMV);
   }

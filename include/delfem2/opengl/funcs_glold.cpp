@@ -785,12 +785,12 @@ DFM2_INLINE void delfem2::opengl::setSomeLighting()
   glEnable(GL_LIGHTING);
   //  glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0.0);
-//  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+  //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
   {
     glEnable(GL_LIGHT0);
     GLfloat light0_Kd[]  = {0.5f, 0.5f, 0.5f, 1.0f};
     GLfloat light0_Specular[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-    GLfloat light0_Pos[4] = {0.25f, 1.0f, +1.25f, 0.0f};
+    GLfloat light0_Pos[4] = {0.25f, 1.0f, 2.25f, 0.0f};
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_Kd);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light0_Specular);
     glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
@@ -798,7 +798,7 @@ DFM2_INLINE void delfem2::opengl::setSomeLighting()
   {
     glEnable(GL_LIGHT1);
     GLfloat light1_Kd[]  = {0.3f, 0.3f, 0.3f, 1.0f};
-    GLfloat light1_Pos[4] = {0.00f, 0.0f, +1.00f, 0.0f};
+    GLfloat light1_Pos[4] = {0.00f, 0.0f, 2.00f, 0.0f};
     glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_Kd);
     glLightfv(GL_LIGHT1, GL_POSITION, light1_Pos);
   }
