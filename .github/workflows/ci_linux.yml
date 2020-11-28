@@ -125,8 +125,8 @@ jobs:
 
         cd examples_glfw_tinygltf_oldgl
         mkdir buildXcodeHdronly && cd buildXcodeHdronly
-        cmake -G Xcode -DUSE_HEADERONLY=ON ..
-        cmake --build .
+        cmake -DUSE_HEADERONLY=ON ..
+        make .
         cd ../../
 
     - name: test_thread
@@ -136,6 +136,6 @@ jobs:
 
         cd examples_glfw_thread_oldgl
         mkdir buildXcodeHdronly && cd buildXcodeHdronly
-        cmake -G Xcode -DUSE_HEADERONLY=ON ..
-        cmake --build .
+        cmake -DUSE_HEADERONLY=ON ..
+        make .
         cd ../../
