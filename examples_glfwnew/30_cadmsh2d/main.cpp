@@ -79,18 +79,16 @@ public:
     nav.camera.view_height = 1.5;
     nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   }
-  virtual void mouse_press(const float src[3], const float dir[3]) {
-    float px, py; nav.PosMouse2D(px, py, window);
-    cad.Pick(px, py, nav.camera.view_height);
+  void mouse_press(const float src[3], const float dir[3]) override {
+    cad.Pick(src[0], src[1], nav.camera.view_height);
   }
-  virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {
+  void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
     if( nav.ibutton == 0 ){
-      float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1, window);
-      cad.DragPicked(px1,py1, px0,py0);
+      cad.DragPicked(src1[0],src1[1], src0[0],src0[1]);
       shdr_cad.MakeBuffer(cad);
         // --
       std::vector<double> aXYVtx = cad.XY_VtxCtrl_Face(0);
-      int nv = aXYVtx.size()/2;
+      unsigned int nv = aXYVtx.size()/2;
       int np = dmsh.aVec2.size();
       for(int ip=0;ip<np;++ip){
         dmsh.aVec2[ip].p[0] = 0.0;
@@ -125,7 +123,7 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  float mMV[16], mP[16]; viewer.nav.Matrix_MVP(mMV, mP, window);
+  float mMV[16], mP[16]; viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
   viewer.shdr_cad.Draw(mP, mMV, viewer.cad);
   viewer.shdr_dmsh.Draw(mP, mMV);
   
@@ -145,7 +143,7 @@ void callback_resize(GLFWwindow* window, int width, int height)
   glViewport(0, 0, width, height);
 }
 
-int main(void)
+int main()
 {
   viewer.Init_newGL();
     

@@ -334,7 +334,7 @@ void draw(GLFWwindow* window)
   ::glPolygonOffset( 1.1f, 4.0f );
   
   float mP[16], mMV[16];
-  viewer.nav.Matrix_MVP(mMV, mP, window);
+  viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
   shdr0.Draw(mP,mMV);
   
   viewer.SwapBuffers();

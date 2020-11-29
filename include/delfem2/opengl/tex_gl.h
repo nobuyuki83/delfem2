@@ -28,7 +28,7 @@ int SetTexture_RGB(
  */
 unsigned int LoadTexture(
     const unsigned char *image,
-    const int width, const int height, const int bpp);
+    int width, int height, int bpp);
 
 // ----------------------------------
 
@@ -88,7 +88,7 @@ public:
     max_x = max_y = 0;
     z = 0;
   }
-  virtual ~CTexRGB_Rect2D() {}
+  virtual ~CTexRGB_Rect2D() = default;
 
 
   void Draw_oldGL() const;

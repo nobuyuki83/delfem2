@@ -177,7 +177,7 @@ int main(int argc, const char * argv[])
     ::glPolygonOffset( 1.1f, 4.0f );
     
     float mP[16], mMV[16];
-    viewer.nav.Matrix_MVP(mMV, mP, viewer.window);
+    viewer.nav.Mat4_MVP_OpenGL(mMV, mP, viewer.window);
     
     const unsigned int nslice = 256;
 

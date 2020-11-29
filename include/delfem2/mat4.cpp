@@ -14,10 +14,10 @@ namespace delfem2 {
 namespace mat4 {
 
 template <typename REAL>
-DFM2_INLINE void CalcInvMat
- (REAL *a,
-  const unsigned int n,
-  int &info)
+DFM2_INLINE void CalcInvMat(
+    REAL *a,
+    const unsigned int n,
+    int &info)
 {
   REAL tmp1;
   
@@ -47,11 +47,200 @@ DFM2_INLINE void CalcInvMat
   }
 }
 
+DFM2_INLINE void Normalize3D(
+    float vec[3])
+{
+  float len = sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+  float leninv = 1.0/len;
+  vec[0] *= leninv;
+  vec[1] *= leninv;
+  vec[2] *= leninv;
+}
+
+DFM2_INLINE void Cross3D(
+    float r[3], const float v1[3], const float v2[3]){
+  r[0] = v1[1]*v2[2] - v2[1]*v1[2];
+  r[1] = v1[2]*v2[0] - v2[2]*v1[0];
+  r[2] = v1[0]*v2[1] - v2[0]*v1[1];
+}
+
 }
 }
 
 
 // ------------------------
+// below: mat4
+
+template <typename T>
+DFM2_INLINE void delfem2::MatMat4
+    (T* C,
+     const T* A, const T* B)
+{
+  for(int i=0;i<4;i++){
+    for(int j=0;j<4;j++){
+      C[i*4+j] = A[i*4+0]*B[0*4+j] + A[i*4+1]*B[1*4+j] + A[i*4+2]*B[2*4+j] + A[i*4+3]*B[3*4+j];
+    }
+  }
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::MatMat4(float* C, const float* A, const float* B);
+template void delfem2::MatMat4(double* C, const double* A, const double* B);
+#endif
+
+
+/**
+ * @brief affine matrix
+ * @details column major order
+ */
+DFM2_INLINE void delfem2::Mat4_AffineTransProjectionOrtho(
+    float mP[16],
+    double l, double r,
+    double b, double t,
+    double n, double f)
+{
+  // column 0
+  mP[0*4+0] = 2.0/(r-l);
+  mP[0*4+1] = 0.0;
+  mP[0*4+2] = 0.0;
+  mP[0*4+3] = 0.0;
+  // column 1
+  mP[1*4+0] = 0.0;
+  mP[1*4+1] = 2.0/(t-b);
+  mP[1*4+2] = 0.0;
+  mP[1*4+3] = 0.0;
+  // column 2
+  mP[2*4+0] = 0.0;
+  mP[2*4+1] = 0.0;
+  mP[2*4+2] = 2.0/(n-f); // draw range  Z=[-f,-n], view movel from +Z direction
+  mP[2*4+3] = 0.0;
+  // collumn 3
+  mP[3*4+0] = -(l+r)/(r-l);
+  mP[3*4+1] = -(t+b)/(t-b);
+  mP[3*4+2] = -(n+f)/(n-f);
+  mP[3*4+3] = 1.0;
+}
+
+
+
+DFM2_INLINE void delfem2::Mat4_AffineTransProjectionFrustum(
+    float *matrix,
+    float left,
+    float right,
+    float bottom,
+    float top,
+    float znear,
+    float zfar)
+{
+  float temp, temp2, temp3, temp4;
+  temp = 2.f * znear;
+  temp2 = right - left;
+  temp3 = top - bottom;
+  temp4 = zfar - znear;
+  // column 0
+  matrix[0*4+0] = temp / temp2;
+  matrix[0*4+1] = 0.0;
+  matrix[0*4+2] = 0.0;
+  matrix[0*4+3] = 0.0;
+  // column 1
+  matrix[1*4+0] = 0.0;
+  matrix[1*4+1] = temp / temp3;
+  matrix[1*4+2] = 0.0;
+  matrix[1*4+3] = 0.0;
+  // column 2
+  matrix[2*4+0] = (right + left) / temp2;
+  matrix[2*4+1] = (top + bottom) / temp3;
+  matrix[2*4+2] = (-zfar - znear) / temp4;
+  matrix[2*4+3] = -1.0;
+  // column 3
+  matrix[3*4+0] = 0.0;
+  matrix[3*4+1] = 0.0;
+  matrix[3*4+2] = (-temp * zfar) / temp4;
+  matrix[3*4+3] = 0.0;
+}
+
+//matrix will receive the calculated perspective matrix.
+//You would have to upload to your shader
+// or use glLoadMatrixf if you aren't using shaders.
+DFM2_INLINE void delfem2::Mat4_AffineTransProjectionPerspective(
+    float *matrix,
+    float fovyInDegrees,
+    float aspectRatio,
+    float znear,
+    float zfar)
+{
+  float ymax, xmax;
+  ymax = znear * tanf(fovyInDegrees * 3.14159 / 360.0);
+  xmax = ymax * aspectRatio;
+  Mat4_AffineTransProjectionFrustum(matrix,
+                                    -xmax, xmax, -ymax, ymax, znear, zfar);
+}
+
+
+DFM2_INLINE void delfem2::MultMat4AffineTransTranslateFromRight(
+    float *matrix,
+    float x,
+    float y,
+    float z)
+{
+  matrix[12]=matrix[0]*x+matrix[4]*y+matrix[8]*z+matrix[12];
+  matrix[13]=matrix[1]*x+matrix[5]*y+matrix[9]*z+matrix[13];
+  matrix[14]=matrix[2]*x+matrix[6]*y+matrix[10]*z+matrix[14];
+  matrix[15]=matrix[3]*x+matrix[7]*y+matrix[11]*z+matrix[15];
+}
+
+
+DFM2_INLINE void delfem2::Mat4_AffineTransLookAt(
+    float* Mr,
+    float eyex, float eyey, float eyez,
+    float cntx, float cnty, float cntz,
+    float upx, float upy, float upz )
+{
+  const float eyePosition3D[3] = {eyex, eyey, eyez};
+  const float center3D[3] = {cntx, cnty, cntz};
+  const float upVector3D[3] = {upx, upy, upz};
+  // ------------------
+  float forward[3] = {
+      center3D[0] - eyePosition3D[0],
+      center3D[1] - eyePosition3D[1],
+      center3D[2] - eyePosition3D[2] };
+  mat4::Normalize3D(forward);
+  // ------------------
+  // Side = forward x up
+  float side[3] = {1,0,0};
+  mat4::Cross3D(side, forward, upVector3D);
+  mat4::Normalize3D(side);
+  // ------------------
+  //Recompute up as: up = side x forward
+  float up[3] = {0,1,0};
+  mat4::Cross3D(up, side, forward);
+  // ------------------
+  Mr[ 0] = side[0];
+  Mr[ 4] = side[1];
+  Mr[ 8] = side[2];
+  Mr[12] = 0.0;
+  // ------------------
+  Mr[ 1] = up[0];
+  Mr[ 5] = up[1];
+  Mr[ 9] = up[2];
+  Mr[13] = 0.0;
+  // ------------------
+  Mr[ 2] = -forward[0];
+  Mr[ 6] = -forward[1];
+  Mr[10] = -forward[2];
+  Mr[14] = 0.0;
+  // ------------------
+  Mr[ 3] = 0.0;
+  Mr[ 7] = 0.0;
+  Mr[11] = 0.0;
+  Mr[15] = 1.0;
+  // ------------------
+  delfem2::MultMat4AffineTransTranslateFromRight(
+      Mr,
+      -eyePosition3D[0], -eyePosition3D[1], -eyePosition3D[2]);
+}
+
+// ------------------------
+// below: mat vec
 
 DFM2_INLINE void delfem2::Mat4Vec3(
     double vo[3],
@@ -95,32 +284,14 @@ template void delfem2::VecMat4(float v[4], const float x[4], const float A[16]);
 template void delfem2::VecMat4(double v[4], const double x[4], const double A[16]);
 #endif
   
-// --------------------------
 
-template <typename T>
-DFM2_INLINE void delfem2::MatMat4
-(T* C,
- const T* A, const T* B)
-{
-  for(int i=0;i<4;i++){
-    for(int j=0;j<4;j++){
-      C[i*4+j] = A[i*4+0]*B[0*4+j] + A[i*4+1]*B[1*4+j] + A[i*4+2]*B[2*4+j] + A[i*4+3]*B[3*4+j];
-    }
-  }
-}
-#ifndef DFM2_HEADER_ONLY
-template void delfem2::MatMat4(float* C, const float* A, const float* B);
-template void delfem2::MatMat4(double* C, const double* A, const double* B);
-#endif
-
-  
 // ---------------------------
 
 template <typename T>
-DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection
-(T y0[3],
- const T a[16],
- const T x0[3])
+DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection(
+    T y0[3],
+    const T a[16],
+    const T x0[3])
 {
   const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
   T y1[4]; MatVec4(y1,a,x1);
@@ -131,6 +302,23 @@ DFM2_INLINE void delfem2::Vec3_Mat4Vec3_AffineProjection
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(float y0[3], const float a[16], const float x0[3]);
 template void delfem2::Vec3_Mat4Vec3_AffineProjection(double y0[3], const double a[16], const double x0[3]);
+#endif
+
+template <typename T>
+DFM2_INLINE void delfem2::Vec3_Vec3Mat4_AffineProjection(
+    T y0[3],
+    const T x0[3],
+    const T a[16])
+{
+  const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
+  T y1[4]; VecMat4(y1,x1,a);
+  y0[0] = y1[0]/y1[3];
+  y0[1] = y1[1]/y1[3];
+  y0[2] = y1[2]/y1[3];
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Vec3_Vec3Mat4_AffineProjection(float y0[3], const float x0[3], const float a[16]);
+template void delfem2::Vec3_Vec3Mat4_AffineProjection(double y0[3], const double x0[3], const double a[16]);
 #endif
 
 // ----------------------
@@ -456,13 +644,18 @@ void delfem2::Copy_Mat4(double m1[16], const double m0[16])
  */
 
 
+template <typename REAL>
 DFM2_INLINE void delfem2::Inverse_Mat4(
-    double minv[16],
-    const double m[16])
+    REAL minv[16],
+    const REAL m[16])
 {
   for(int i=0;i<16;++i){ minv[i] = m[i]; }
   int info; mat4::CalcInvMat(minv,4,info);
 }
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Inverse_Mat4(float minv[], const float m[]);
+template void delfem2::Inverse_Mat4(double minv[], const double m[]);
+#endif
 
 // ------------------------------------------------------------------
 

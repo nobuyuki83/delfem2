@@ -168,8 +168,7 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  float mP[16], mMV[16];
-  nav.Matrix_MVP(mMV, mP, this->window);
+  float mMV[16], mP[16]; nav.Mat4_MVP_OpenGL(mMV,mP, this->window);
   
   // glnew will skip compilling following section
 #ifdef GL_PROJECTION

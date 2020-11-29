@@ -16,10 +16,8 @@
   #define GLFW_INCLUDE_ES3
 #endif
 
-#include "delfem2/opengl/gl_funcs.h"
 #include "delfem2/opengl/glnew_funcs.h"
 #include "delfem2/opengl/glnew_v23dtricad.h"
-//
 #include "delfem2/opengl/glfw/cam_glfw.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 
@@ -38,13 +36,13 @@ public:
       cad.SetEdgeType( 0, delfem2::CCad2D_EdgeGeo::BEZIER_CUBIC, vparam );
     }
   }
-  virtual void mouse_press(const float src[3], const float dir[3]) {
-    float px, py; nav.PosMouse2D(px, py, window);
-    cad.Pick(px, py, nav.camera.view_height);
+  void mouse_press(const float src[3], const float dir[3]) override {
+    // float src[3], dir[3]; nav.MouseRay(src, dir, window);
+    cad.Pick(src[0], src[1], nav.camera.view_height);
   }
-  virtual void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) {
-    float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1, window);
-    cad.DragPicked(px1,py1, px0,py0);
+  void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
+    //float px0,py0, px1,py1; nav.PosMove2D(px0,py0, px1,py1, window);
+    cad.DragPicked(src1[0],src1[1], src0[0],src0[1]);
     shdr_cad.MakeBuffer(cad);
   }
 public:
@@ -65,14 +63,14 @@ void draw(GLFWwindow* window)
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
   
-  float mMV[16], mP[16]; viewer.nav.Matrix_MVP(mMV, mP, window);
+  float mMV[16], mP[16]; viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
   viewer.shdr_cad.Draw(mP, mMV, viewer.cad);
   
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
 
-int main(void)
+int main()
 {
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;

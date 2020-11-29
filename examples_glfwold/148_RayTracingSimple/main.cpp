@@ -174,7 +174,7 @@ int main(int argc,char* argv[])
     }
     for(unsigned int i=0;i<10;++i) {
       float mMV[16], mP[16];
-      viewer.nav.Matrix_MVP(mMV,mP,viewer.window);
+      viewer.nav.Mat4_MVP_OpenGL(mMV,mP,viewer.window);
       RayTracing(tex.aRGB,
            tex.h,tex.w, mMV,
            aNodeBVH,aAABB,aXYZ,aTri);

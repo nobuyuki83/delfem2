@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// TODO: make this file dependent on mat4.h and quat.h
+// TODO: rename this file "cam3_m4q.h"
+// DONE(2020_11_29): make this file dependent on mat4.h and quat.h
 
 /**
  * @file camera class that define projection and model-view transformation.
@@ -26,37 +27,6 @@
 // ---------------------------------------------------
 
 namespace delfem2{
-
-DFM2_INLINE void Mat4_AffineTransProjectionFrustum(
-    float *matrix, float left, float right, float bottom, float top,
-    float znear, float zfar);
-
-DFM2_INLINE void Mat4_AffineTransProjectionPerspective(
-    float *matrix, float fovyInDegrees, float aspectRatio,
-    float znear, float zfar);
-
-DFM2_INLINE void MultMat4AffineTransTranslateFromRight(
-    float *matrix, float x, float y, float z);
-
-DFM2_INLINE void Mat4_AffineTransLookAt(
-    float *matrix,
-    float eyex, float eyey, float eyez,
-    float cntx, float cnty, float cntz,
-    float upx, float upy, float upz );
-
-// ----------------------------------------------------
-
-DFM2_INLINE void screenUnProjection(
-    float vout[3],
-    const float v[3],
-    const float mMV[16],
-    const float mPj[16]);
-
-DFM2_INLINE void screenUnProjectionDirection(
-    float vo[3],
-    const float vi[3],
-    const float mMV[16],
-    const float mPj[16]);
 
 // ----------------------------------------------------
 
@@ -81,9 +51,25 @@ public:
   }
   
   // -----------------------
-  // cost methods from here
+  // const methods from here
   
+  /**
+   * @brief Compute "projection matrix" for OpenGL.
+   * @detial OpenGL will draw the object in the cube [-1,+1, -1,+1, -1,+1] looking from -Z
+   * The projection matrix will mirror the object Z.
+   * @tparam REAL
+   * @param mP
+   * @param asp
+   * @param depth
+   */
   void Mat4_AffineTransProjection(float mP[16], double asp, double depth) const;
+  
+  /**
+   *
+   * @tparam REAL
+   * @param mMV model view matrix (column major order)
+   * @detail column major
+   */
   void Mat4_AffineTransModelView(float mMV[16]) const;
   
   // ------------------------

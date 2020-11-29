@@ -59,7 +59,7 @@ void draw(GLFWwindow* window)
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexColor);
     float mP[16], mMV[16];
-    viewer.nav.Matrix_MVP(mMV, mP, window);
+    viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
     mMV[3*4+0] -= 0.5;
     shdr.Draw(mP, mMV);
   }
@@ -68,7 +68,7 @@ void draw(GLFWwindow* window)
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, idTexDepth);
     float mP[16], mMV[16];
-    viewer.nav.Matrix_MVP(mMV, mP, window);
+    viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
     mMV[3*4+0] += 0.5;
     shdr.Draw(mP, mMV);
   }
