@@ -78,12 +78,10 @@ int main(int argc,char* argv[])
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
   // --------------------
-  while(true){
+  while( !glfwWindowShouldClose(viewer.window) ){
     viewer.Draw();
     glfwPollEvents();
-    if( glfwWindowShouldClose(viewer.window) ){ goto EXIT; }
   }
-EXIT:
   glfwDestroyWindow(viewer.window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

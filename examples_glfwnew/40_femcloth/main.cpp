@@ -1,8 +1,7 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "delfem2/mshmisc.h"
 #include "delfem2/mshtopo.h"
-#include "delfem2/primitive.h"
 #include "delfem2/cloth_internal.h"
 
 #if defined(_MSC_VER)
@@ -130,7 +129,7 @@ void draw(GLFWwindow* window)
   shdr_trimsh.UpdateVertex(aXYZ, aTri);
 
   float mP[16], mMV[16];
-  viewer.nav.Matrix_MVP(mMV, mP, window);
+  viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
   shdr_trimsh.Draw(mP,mMV);
   
   viewer.SwapBuffers();

@@ -5,15 +5,14 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/gizmo_glold.h"
+#include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/gizmo_geo3.h"
 #include "delfem2/mshio.h"
 #include "delfem2/points.h"
 #include "delfem2/mat4.h"
-// ---
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/gizmo_glold.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -24,8 +23,9 @@ int main(int argc,char* argv[])
   class CMyViewer : public delfem2::opengl::CViewer_GLFW {
   public:
     CMyViewer(){
-      delfem2::Read_Ply(std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
-                        aXYZ,aTri);
+      delfem2::Read_Ply(
+          std::string(PATH_INPUT_DIR)+"/bunny_1k.ply",
+          aXYZ,aTri);
       delfem2::Normalize_Points3(aXYZ);
       gizmo_rot.size = 0.7;
     }
@@ -47,10 +47,12 @@ int main(int argc,char* argv[])
         ::glMultMatrixf(r0);
         ::glEnable(GL_LIGHTING);
         ::glColor3d(0,0,0);
-        delfem2::opengl::DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
-                                            aTri.data(), aTri.size()/3);
-        delfem2::opengl::DrawMeshTri3D_FaceNorm(aXYZ.data(),
-                                                aTri.data(), aTri.size()/3);
+        delfem2::opengl::DrawMeshTri3D_Edge(
+            aXYZ.data(), aXYZ.size()/3,
+            aTri.data(), aTri.size()/3);
+        delfem2::opengl::DrawMeshTri3D_FaceNorm(
+            aXYZ.data(),
+            aTri.data(), aTri.size()/3);
         ::glMatrixMode(GL_MODELVIEW);
         ::glPopMatrix();
       }

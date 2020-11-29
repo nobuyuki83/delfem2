@@ -285,7 +285,7 @@ int main(int argc,char* argv[])
     }
     void mouse_press(const float src[3], const float dir[3]) override{
       const dfm2::CVec3d src_pick(src), dir_pick(dir);
-      float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
+      float mMV[16], mPrj[16]; nav.Mat4_MVP_OpenGL(mMV, mPrj, this->window);
       cad.MouseDown(src_pick, dir_pick,
                     dfm2::CVec2d(nav.mouse_x,nav.mouse_y),
                     mMV,mPrj,
@@ -295,7 +295,7 @@ int main(int argc,char* argv[])
       dfm2::CVec2d sp0(nav.mouse_x-nav.dx, nav.mouse_y-nav.dy);
       dfm2::CVec2d sp1(nav.mouse_x, nav.mouse_y);
       const dfm2::CVec3d src_pick(src1), dir_pick(dir);
-      float mMV[16], mPrj[16]; nav.Matrix_MVP(mMV, mPrj, this->window);
+      float mMV[16], mPrj[16]; nav.Mat4_MVP_OpenGL(mMV, mPrj, this->window);
       cad.MouseMotion(src_pick,dir_pick, sp0,sp1, mMV, mPrj);
     }
   public:

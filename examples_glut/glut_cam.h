@@ -187,37 +187,6 @@ public:
     }
     ::glutPostRedisplay();
   }
-  void PosMouse2D(float& x, float& y){
-//    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
-    float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
-    float mP[16]; glGetFloatv(GL_PROJECTION_MATRIX, mP);
-    const float sp0[3] = {(float)mouse_x, (float)mouse_y,0.0};
-    float src_pick[3];
-    delfem2::screenUnProjection(src_pick,
-                       sp0, mMV,mP);
-    x = src_pick[0];
-    y = src_pick[1];
-  }
-  void PosMove2D(float& x0, float& y0,
-                 float& x1, float& y1) const
-  {
-    float mMV[16]; glGetFloatv(GL_MODELVIEW_MATRIX, mMV);
-    float mP[16]; glGetFloatv(GL_PROJECTION_MATRIX, mP);
-    {
-      const float sp0[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy),0.0};
-      float src0[3];
-      delfem2::screenUnProjection(src0,
-                         sp0, mMV,mP);
-      x0 = src0[0]; y0 = src0[1];
-    }
-    {
-      const float sp1[3] = {(float)mouse_x, (float)mouse_y,0.0};
-      float src1[3];
-      delfem2::screenUnProjection(src1,
-                         sp1, mMV,mP);
-      x1 = src1[0]; y1 = src1[1];
-    }
-  }
   void SetGL_Camera()
   {
     GLint viewport[4]; ::glGetIntegerv(GL_VIEWPORT,viewport);

@@ -405,10 +405,10 @@ void DualLaplacianSymbolic_1x1
 }
 }
 
-void delfem2::CDef_LaplacianLinearDegenerate::Init
-    (const std::vector<double>& aXYZ0,
-     const std::vector<unsigned int>& aTri,
-     bool is_preconditioner_)
+void delfem2::CDef_LaplacianLinearDegenerate::Init(
+    const std::vector<double>& aXYZ0,
+    const std::vector<unsigned int>& aTri,
+    bool is_preconditioner_)
 {
   this->is_preconditioner = is_preconditioner_;
   const unsigned int np = aXYZ0.size()/3;
@@ -438,15 +438,16 @@ void delfem2::CDef_LaplacianLinearDegenerate::Init
     aIP.push_back(ip);
     std::vector<double> eM;
     delfem2::defarap::DualLaplacianSymbolic_1x1(eM, aIP);
-    Mat.Mearge(aIP.size(), aIP.data(),
-               aIP.size(), aIP.data(),
-               1, eM.data(),
-               tmp_buffer);
+    Mat.Mearge(
+        aIP.size(), aIP.data(),
+        aIP.size(), aIP.data(),
+        1, eM.data(),
+        tmp_buffer);
   }
 
   aRes0.resize(aXYZ0.size());
   Mat.MatVecDegenerate(aRes0.data(),
-                       3,-1.0, aXYZ0.data(), 0.0);
+      3,-1.0, aXYZ0.data(), 0.0);
   aBCFlag.assign(aXYZ0.size(), 0);
   
   this->aDiaInv.clear();

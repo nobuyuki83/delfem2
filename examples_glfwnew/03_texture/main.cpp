@@ -56,7 +56,7 @@ void draw(GLFWwindow* window)
   glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
   float mP[16], mMV[16];
-  viewer.nav.Matrix_MVP(mMV, mP, window);
+  viewer.nav.Mat4_MVP_OpenGL(mMV, mP, window);
   shdr.Draw(mP, mMV);
   
   viewer.SwapBuffers();

@@ -1318,18 +1318,18 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri)
 {
   DrawMeshTri3D_FaceNorm(aXYZ.data(), aTri.data(), aTri.size()/3);
 }
 
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexVtx
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aTex)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexVtx(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aTex)
 {
   const unsigned int nTri = aTri.size()/3;
   //
@@ -1350,10 +1350,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexVtx
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexFace
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aTex)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexFace(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aTex)
 {
   const unsigned int nTri = aTri.size()/3;
   //
@@ -1366,10 +1366,10 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_TexFace
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aElemInd,
- const std::vector<unsigned int>& aElem)
+DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem)
 {
   assert( !aElemInd.empty() );
   const unsigned int nelem = aElemInd.size()-1;
@@ -1389,11 +1389,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
   }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aElemInd,
- const std::vector<unsigned int>& aElem,
- const std::vector<double>& aUV)
+DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<double>& aUV)
 {
   assert( !aElemInd.empty() );
   const std::size_t nelem = aElemInd.size()-1;
@@ -1417,12 +1417,12 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_FaceNorm
   }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aElemInd,
- const std::vector<unsigned int>& aElem,
- const std::vector<int>& aIndElemPart,
- const std::vector<double>& aUV)
+DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const std::vector<int>& aIndElemPart,
+    const std::vector<double>& aUV)
 {
   const bool isUV = (aUV.size()==aElem.size()*2);
   for(int ielem : aIndElemPart){
@@ -1446,9 +1446,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElemPart3D_FaceNorm_TexPoEl
   }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_XYsym
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_XYsym(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri)
 {
   const unsigned int nTri = aTri.size()/3;
   //
@@ -1473,9 +1473,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNorm_XYsym
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNormEdge
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNormEdge(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   const unsigned int nTri = aTri.size()/3;
@@ -1511,9 +1511,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_FaceNormEdge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge
-(const double* aXYZ, unsigned int nXYZ,
- const unsigned int* aTri, unsigned int nTri)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge(
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri)
 {
   GLboolean is_lighting = glIsEnabled(GL_LIGHTING);
   //
@@ -1538,9 +1540,9 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge
   if (is_lighting){ ::glEnable(GL_LIGHTING); }
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_Edge(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri)
 {
   DrawMeshTri3D_Edge(aXYZ.data(), aXYZ.size()/3,
                      aTri.data(), aTri.size()/3);

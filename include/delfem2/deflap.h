@@ -116,6 +116,7 @@ public:
 
 /**
  * @brief Laplacian deformation classs lightweight system matrix
+ * @detail because the 3x3 block matrix in the sparse system matrix is diagonal,we just have non-block sparse matrix.
  */
 class CDef_LaplacianLinearDegenerate{
 public:

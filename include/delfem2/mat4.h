@@ -34,6 +34,7 @@ void Copy_Mat4(
   for(int i=0;i<16;++i){ M0[i] = M1[i]; }
 }
 
+
 template <typename REAL>
 void Transpose_Mat4(
     REAL M0[16],
@@ -46,12 +47,51 @@ void Transpose_Mat4(
   }
 }
 
+template <typename REAL>
+DFM2_INLINE void Inverse_Mat4(
+  REAL minv[16],
+  const REAL m[16]);
+
 
 template <typename T>
 void MatMat4(
     T* C,
     const T* A,
     const T* B);
+
+void Mat4_AffineTransProjectionOrtho(
+    float mP[16],
+    double l, double r,
+    double b, double t,
+    double n, double f);
+
+void Mat4_AffineTransLookAt(
+    float* Mr,
+    float eyex, float eyey, float eyez,
+    float cntx, float cnty, float cntz,
+    float upx, float upy, float upz );
+
+void MultMat4AffineTransTranslateFromRight(
+    float *matrix,
+    float x,
+    float y,
+    float z);
+
+void Mat4_AffineTransProjectionFrustum(
+    float *matrix,
+    float left,
+    float right,
+    float bottom,
+    float top,
+    float znear,
+    float zfar);
+
+void Mat4_AffineTransProjectionPerspective(
+    float *matrix,
+    float fovyInDegrees,
+    float aspectRatio,
+    float znear,
+    float zfar);
 
 template <typename REAL>
 void Mat4_Identity(
@@ -126,6 +166,12 @@ void Vec3_Mat4Vec3_AffineProjection(
     const T x0[3]);
 
 template <typename T>
+void Vec3_Vec3Mat4_AffineProjection(
+    T y0[3],
+    const T x0[3],
+    const T a[16]);
+
+template <typename T>
 void Vec3_Mat4Vec3_Affine(
     T y0[3],
     const T a[16],
@@ -152,9 +198,6 @@ DFM2_INLINE void Mat4_ScaleRotTrans(
     const double quat[4],
     const double trans[3]);
 
-DFM2_INLINE void Inverse_Mat4(
-    double minv[16],
-    const double m[16]);
 
 template<typename T>
 class CMat4;

@@ -216,9 +216,11 @@ template void delfem2::CMatrixSparse<std::complex<double>>::MatVec(
 
 // -------------------------------------------------------
 
-// Calc Matrix Vector Product
-// {y} = alpha*[A]{x} + beta*{y}
-// the 1x1 sparse matrix is expanded as the len x len sparse matrix
+/**
+ * @brief Calc Matrix Vector Product {y} = alpha*[A]{x} + beta*{y}
+ * the 1x1 sparse matrix is expanded as the len x len sparse matrix
+ */
+
 template <typename T>
 void delfem2::CMatrixSparse<T>::MatVecDegenerate(
     T* y,

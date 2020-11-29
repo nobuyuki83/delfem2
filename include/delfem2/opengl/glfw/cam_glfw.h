@@ -77,100 +77,94 @@ public:
     mouse_x = mov_end_x;
     mouse_y = mov_end_y;
   }
+
   void Key(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
     if( key ==  GLFW_KEY_PAGE_UP && action == GLFW_PRESS ){ camera.Scale(1.03); }
     if( key ==  GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS ){ camera.Scale(1.0/1.03); }
   }
+
   /**
+   * @brief make 4x4 affine matrix for view transformation.
+   * @details the matrix strage format is *column-major*. Applying trasformation need to multply vector from *left hand side*.
+   * A 3D point is transfromed with this affine matrix and then a cube [-1,+1, -1,+1, -1,+1] is looked from -Z directoin.
+   * To look from +Z direction, The transformation needs a mirror transformation in XY plane.
+   * We separate mMV and  mP because of the light (light position should not be affected by the modelview transform).
    * @param[out] mMV modelview matrix (column major order)
    * @param[out] mP  projection matrix (column major order)
    * @param[in] window glfw window handler
    */
-  void Matrix_MVP(
+  void Mat4_MVP_OpenGL(
       float mMV[16],
       float mP[16],
       GLFWwindow* window) const
   {
     int width, height;
     glfwGetWindowSize(window, &width, &height);
-    float asp = (float)width / (float)height;
-    camera.Mat4_AffineTransProjection(mP, asp, 10);
+    float asp = width / (float) height;
+    camera.Mat4_AffineTransProjection(mP, asp, 10); // project space into cube [-1,+1,-1,+1,-1,+1] and view from -Z
     camera.Mat4_AffineTransModelView(mMV);
   }
-  void PosMouse2D(
-      float& x,
-      float& y,
-      GLFWwindow* window) const
-  {
-    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
-    const float sp0[3] = {(float)mouse_x, (float)mouse_y,0.0};
-    float src_pick[3];
-    delfem2::screenUnProjection(src_pick,
-                       sp0, mMV,mP);
-    x = src_pick[0];
-    y = src_pick[1];
-  }
+
+
   void MouseRay(
       float src[3],
       float dir[3],
       GLFWwindow* window) const
   {
-    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
+    float mMVP_inv[16];
     {
-      const float sp0[3] = {(float)mouse_x, (float)mouse_y,0.0};
-      delfem2::screenUnProjection(src,
-                         sp0, mMV,mP);
+      float mMV[16], mP[16];
+      this->Mat4_MVP_OpenGL(mMV, mP, window);
+      float mMVP[16];
+      ::delfem2::MatMat4(mMVP, mMV,mP);
+      ::delfem2::Inverse_Mat4(mMVP_inv, mMVP);
     }
-    {
-      const float dir0[3] = {0.0, 0.0, +1.0};
-      delfem2::screenUnProjectionDirection(dir,
-                                           dir0, mMV,mP);
-    }
+    const float ps[3] = {(float)mouse_x, (float)mouse_y, -1.0}; 
+    const float pe[3] = {(float)mouse_x, (float)mouse_y, +1.0};
+    float qs[3]; ::delfem2::Vec3_Vec3Mat4_AffineProjection(qs, ps, mMVP_inv);
+    float qe[3]; ::delfem2::Vec3_Vec3Mat4_AffineProjection(qe, pe, mMVP_inv);
+    src[0] = qs[0];
+    src[1] = qs[1];
+    src[2] = qs[2];
+    dir[0] = qe[0] - qs[0];
+    dir[1] = qe[1] - qs[1];
+    dir[2] = qe[2] - qs[2];
   }
   void RayMouseMove(
       float src0[3],
       float src1[3],
-      float dir[3],
+      float dir0[3],
       GLFWwindow* window) const
   {
-    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
+    float mMVP_inv[16];
     {
-      const float sp0[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy),0.0};
-      delfem2::screenUnProjection(src0,
-                         sp0, mMV,mP);
+      float mMV[16], mP[16];
+      this->Mat4_MVP_OpenGL(mMV, mP, window);
+      float mMVP[16];
+      ::delfem2::MatMat4(mMVP, mMV,mP);
+      ::delfem2::Inverse_Mat4(mMVP_inv, mMVP);
     }
-    {
-      const float sp1[3] = {(float)mouse_x, (float)mouse_y,0.0};
-      delfem2::screenUnProjection(src1,
-                         sp1, mMV,mP);
-    }
-    {
-      const float dir0[3] = {0.0, 0.0, -1.0};
-      delfem2::screenUnProjectionDirection(dir,
-                                  dir0, mMV,mP);
-    }
+    const float p0s[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy), -1.0};
+    const float p0e[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy), +1.0};
+    const float p1s[3] = {(float)mouse_x, (float)mouse_y, -1.0};
+    const float p1e[3] = {(float)mouse_x, (float)mouse_y, +1.0};
+    float q0s[3]; ::delfem2::Vec3_Vec3Mat4_AffineProjection(q0s, p0s, mMVP_inv);
+    float q0e[3]; ::delfem2::Vec3_Vec3Mat4_AffineProjection(q0e, p0e, mMVP_inv);
+    float q1s[3]; ::delfem2::Vec3_Vec3Mat4_AffineProjection(q1s, p1s, mMVP_inv);
+    float q1e[3]; ::delfem2::Vec3_Vec3Mat4_AffineProjection(q1e, p1e, mMVP_inv);
+    //
+    src0[0] = q0s[0];
+    src0[1] = q0s[1];
+    src0[2] = q0s[2];
+    src1[0] = q1s[0];
+    src1[1] = q1s[1];
+    src1[2] = q1s[2];
+    dir0[0] = q0e[0] - q0s[0];
+    dir0[1] = q0e[1] - q0s[1];
+    dir0[2] = q0e[2] - q0s[2];
   }
-  void PosMove2D(float& x0, float& y0,
-                 float& x1, float& y1,
-                 GLFWwindow* window) const
-  {
-    float mMV[16], mP[16]; this->Matrix_MVP(mMV, mP, window);
-    {
-      const float sp0[3] = {(float)(mouse_x-dx), (float)(mouse_y-dy),0.0};
-      float src0[3];
-      delfem2::screenUnProjection(src0,
-                         sp0, mMV,mP);
-      x0 = src0[0]; y0 = src0[1];
-    }
-    {
-      const float sp1[3] = {(float)mouse_x, (float)mouse_y,0.0};
-      float src1[3];
-      delfem2::screenUnProjection(src1,
-                                  sp1, mMV,mP);
-      x1 = src1[0]; y1 = src1[1];
-    }
-  }
+
 public:
   int imodifier;
   int ibutton;
