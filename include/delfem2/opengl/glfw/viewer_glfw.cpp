@@ -167,9 +167,9 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  
+  ::glEnable(GL_NORMALIZE);
+
   float mMV[16], mP[16]; nav.Mat4_MVP_OpenGL(mMV,mP, this->window);
-  
   // glnew will skip compilling following section
 #ifdef GL_PROJECTION
   glMatrixMode(GL_PROJECTION);

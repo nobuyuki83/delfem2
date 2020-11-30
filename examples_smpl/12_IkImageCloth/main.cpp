@@ -157,7 +157,7 @@ int main()
 
   dfm2::CProjector_RigMesh projector;
   {
-    std::vector<int> aIndBoneParent;
+    std::vector<unsigned int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     std::vector<double> aW_Body;
     dfm2::cnpy::LoadSmpl_Bone(
@@ -174,7 +174,7 @@ int main()
           aJntRgrs, projector.aXYZ0_Body);
       dfm2::InitBones_JointPosition(
           projector.aBone,
-          aIndBoneParent, aJntPos0);
+          projector.aBone.size(), aIndBoneParent.data(), aJntPos0.data());
     }
 //    dfm2::Smpl2Rig(projector.aBone,
 //        aIndBoneParent, projector.aXYZ0_Body, aJntRgrs);

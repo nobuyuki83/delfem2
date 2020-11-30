@@ -111,7 +111,7 @@ int main()
   dfm2::CProjector_RigMesh body;
   {
     std::vector<double> aW_Body;
-    std::vector<int> aIndBoneParent;
+    std::vector<unsigned int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl_Bone(
         body.aXYZ0_Body,
@@ -127,7 +127,7 @@ int main()
           aJntRgrs, body.aXYZ0_Body);
       dfm2::InitBones_JointPosition(
           body.aBone,
-          aIndBoneParent, aJntPos0);
+          body.aBone.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::SparsifyMatrixRow(
         body.aSkinningSparseWeight,

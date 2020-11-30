@@ -10,16 +10,14 @@
  * @details skinning
  */
 
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/quat.h"
-#include <cstdlib>
 #include <random>
-
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/rigv3_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -51,7 +49,7 @@ int main()
   std::vector<double> aSkinningSparseWeight;
   std::vector<unsigned int> aSkinningSparseIdBone;
   {
-    std::vector<int> aIndBoneParent;
+    std::vector<unsigned int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl_Bone(
         aXYZ0,
@@ -67,7 +65,7 @@ int main()
           aJntRgrs, aXYZ0);
       dfm2::InitBones_JointPosition(
           aBone,
-          aIndBoneParent, aJntPos0);
+          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::SparsifyMatrixRow(
         aSkinningSparseWeight, aSkinningSparseIdBone,

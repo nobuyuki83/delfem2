@@ -84,7 +84,7 @@ int main(int argc,char* argv[])
   dfm2::CProjectorMesh projector;
   { // prepare contact target
     std::vector<dfm2::CRigBone> aBone;
-    std::vector<int> aIndBoneParent;
+    std::vector<unsigned int> aIndBoneParent;
     std::vector<double> aJntRgrs0;
     std::vector<double> aSkinningWeight;
     dfm2::cnpy::LoadSmpl_Bone(
@@ -101,7 +101,7 @@ int main(int argc,char* argv[])
           aJntRgrs0, projector.aXYZ_Body);
       dfm2::InitBones_JointPosition(
           aBone,
-          aIndBoneParent, aJntPos0);
+          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::UpdateBoneRotTrans(aBone);
     projector.Init();

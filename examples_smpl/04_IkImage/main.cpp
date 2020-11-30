@@ -115,7 +115,7 @@ int main()
   std::vector<dfm2::CRigBone> aBone;
   std::vector<unsigned int> aTri;
   {
-    std::vector<int> aIndBoneParent;
+    std::vector<unsigned int> aIndBoneParent;
     std::vector<double> aJntRgrs;
     dfm2::cnpy::LoadSmpl_Bone(
         aXYZ0,
@@ -131,7 +131,7 @@ int main()
           aJntRgrs, aXYZ0);
       dfm2::InitBones_JointPosition(
           aBone,
-          aIndBoneParent, aJntPos0);
+          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
     }
   }
   

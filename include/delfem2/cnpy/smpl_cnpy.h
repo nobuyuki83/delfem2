@@ -29,7 +29,7 @@ DFM2_INLINE void LoadSmpl_Bone(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
-    std::vector<int>& aIndBoneParent,
+    std::vector<unsigned int>& aIndBoneParent,
     std::vector<double>& aJntRgrs,
     const std::string& fpath);
 
@@ -48,7 +48,7 @@ DFM2_INLINE void LoadSmpl_BoneBlendshape(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
-    std::vector<int>& aIndBoneParent,
+    std::vector<unsigned int>& aIndBoneParent,
     std::vector<double>& aJntRgrs,
     std::vector<double>& aBlendShape,
     std::vector<double>& aBlendPose,
