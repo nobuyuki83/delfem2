@@ -51,7 +51,7 @@ int main()
   std::vector<unsigned int> aSkinningSparseIdBone;
   std::vector<double> aBlendShape;
   std::vector<double> aBlendPose;
-  std::vector<int> aIndBoneParent;
+  std::vector<unsigned int> aIndBoneParent;
   std::vector<double> aJntRgrsSparseWeight;
   std::vector<unsigned int> aJntRgrsSparseIdbone;
   {
@@ -87,7 +87,7 @@ int main()
       std::cout << aJntRgrsSparseWeight.size()/aIndBoneParent.size() << std::endl;
       dfm2::InitBones_JointPosition(
           aBone,
-          aIndBoneParent, aJntPos0);
+          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
       std::cout << aBone.size() << std::endl;
     }
   }
@@ -152,7 +152,7 @@ int main()
             aIndBoneParent.size(), aJntRgrsSparseWeight,aJntRgrsSparseIdbone, aXYZ1);
         dfm2::InitBones_JointPosition(
             aBone,
-            aIndBoneParent, aJntPos0);
+            aBone.size(), aIndBoneParent.data(), aJntPos0.data());
       }
       dfm2::UpdateBoneRotTrans(aBone);
       dfm2::SkinningSparse_LBS(aXYZ2,

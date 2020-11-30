@@ -46,9 +46,10 @@ static void CalcInvMat(double* a, const int n, int& info )
 }
 
 
-bool GetArray_UInt
-(std::vector<unsigned int>& res,
- const tinygltf::Model& model, int iacc)
+bool GetArray_UInt(
+    std::vector<unsigned int>& res,
+    const tinygltf::Model& model,
+    int iacc)
 {
   const tinygltf::Accessor& acc = model.accessors[iacc];
   const int ibv = acc.bufferView;
@@ -80,9 +81,10 @@ bool GetArray_UInt
   return false;
 }
 
-bool GetArray_Double
-(std::vector<double>& res,
- const tinygltf::Model& model, int iacc)
+bool GetArray_Double(
+    std::vector<double>& res,
+    const tinygltf::Model& model,
+    int iacc)
 {
   const tinygltf::Accessor& acc = model.accessors[iacc];
   const int ibv = acc.bufferView;
@@ -233,13 +235,14 @@ void dfm2::Print(const tinygltf::Model& model){
   }
 }
 
-void dfm2::GetMeshInfo
-(std::vector<double>& aXYZ,
- std::vector<unsigned int>& aTri,
- std::vector<double>& aRigWeight,
- std::vector<unsigned int>& aRigJoint,
- const tinygltf::Model& model,
- int imsh, int iprimitive)
+void dfm2::GetMeshInfo(
+    std::vector<double>& aXYZ,
+    std::vector<unsigned int>& aTri,
+    std::vector<double>& aRigWeight,
+    std::vector<unsigned int>& aRigJoint,
+    const tinygltf::Model& model,
+    int imsh,
+    int iprimitive)
 {
   aXYZ.clear();
   aTri.clear();
@@ -310,9 +313,9 @@ void dfm2::GetMeshInfo
   }
 }
 
-void dfm2::GetBoneBinding
-(std::vector<dfm2::CRigBone>& aBone,
- const tinygltf::Model& model)
+void dfm2::GetBoneBinding(
+    std::vector<dfm2::CRigBone>& aBone,
+    const tinygltf::Model& model)
 {
   const tinygltf::Skin& skin = model.skins[0];
   std::vector<double> M; GetArray_Double(M, model, skin.inverseBindMatrices);
@@ -328,11 +331,12 @@ void dfm2::GetBoneBinding
   }
 }
 
-void dfm2::SetBone
-(std::vector<dfm2::CRigBone>& aBone,
- const tinygltf::Model& model,
- int inode_cur, int ibone_p,
- const std::vector<int>& mapNode2Bone)
+void dfm2::SetBone(
+    std::vector<dfm2::CRigBone>& aBone,
+    const tinygltf::Model& model,
+    int inode_cur,
+    int ibone_p,
+    const std::vector<int>& mapNode2Bone)
 {
   assert( inode_cur >= 0 && inode_cur < (int)model.nodes.size() );
   const tinygltf::Node& node = model.nodes[inode_cur];
@@ -356,7 +360,8 @@ void dfm2::SetBone
 }
 
 
-bool dfm2::CGLTF::Read(const std::string& fpath)
+bool dfm2::CGLTF::Read(
+    const std::string& fpath)
 {
   std::string err;
   std::string warn;
@@ -378,21 +383,22 @@ void dfm2::CGLTF::Print() const
 }
 
 
-void dfm2::CGLTF::GetMeshInfo
-(std::vector<double>& aXYZ0,
- std::vector<unsigned int>& aTri,
- std::vector<double>& aRigWeight,
- std::vector<unsigned int>& aRigJoint,
- int imesh, int iprimitive) const
+void dfm2::CGLTF::GetMeshInfo(
+    std::vector<double>& aXYZ0,
+    std::vector<unsigned int>& aTri,
+    std::vector<double>& aRigWeight,
+    std::vector<unsigned int>& aRigJoint,
+    int imesh,
+    int iprimitive) const
 {
   dfm2::GetMeshInfo(
       aXYZ0, aTri, aRigWeight, aRigJoint,
       *model, imesh, iprimitive);
 }
 
-void dfm2::CGLTF::GetBone
-(std::vector<dfm2::CRigBone>& aBone,
- int iskin) const
+void dfm2::CGLTF::GetBone(
+    std::vector<dfm2::CRigBone>& aBone,
+    int iskin) const
 {
   aBone.resize( model->skins[0].joints.size() );
   std::vector<int> mapNode2Bone( model->nodes.size(), -1);

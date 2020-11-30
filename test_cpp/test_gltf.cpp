@@ -104,10 +104,10 @@ TEST(gltf,io_gltf_skin_sensitivity)
       }
       UpdateBoneRotTrans(aBone);
       std::vector<double> aXYZ = aXYZ0;
-      Skinning_LBS_LocalWeight(aXYZ.data(),
-                               aXYZ0.data(), aXYZ0.size()/3,
-                               aTri.data(), aTri.size()/3,
-                               aBone, aRigWeight.data(), aRigJoint.data());
+      Skinning_LBS_LocalWeight(
+          aXYZ.data(),
+          aXYZ0.data(), aXYZ0.size()/3,
+          aBone, aRigWeight.data(), aRigJoint.data());
     }
     const unsigned int np = aXYZ0.size()/3;
     const unsigned int nb = aBone.size();
@@ -241,7 +241,10 @@ TEST(gltf,io_gltf_skin_sensitivity)
       }
       // -------------
       for(int io=0;io<aO0.size();++io){
-        EXPECT_NEAR((aO1[io]-aO0[io])/eps, adO0[io*nsns+isns], 0.5*eps*(fabs(adO0[io*nsns+isns])+1.0));
+        EXPECT_NEAR(
+            (aO1[io]-aO0[io])/eps,
+            adO0[io*nsns+isns],
+            0.5*eps*(fabs(adO0[io*nsns+isns])+1.0));
       }
     }
   }

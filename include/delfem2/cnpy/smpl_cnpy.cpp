@@ -16,7 +16,7 @@ DFM2_INLINE void LoadSmpl_Pose_FromCnpy(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
-    std::vector<int>& aIndBoneParent,
+    std::vector<unsigned int>& aIndBoneParent,
     std::vector<double>& aJntRgrs,
     ::cnpy::npz_t& my_npz)
 {
@@ -61,7 +61,7 @@ DFM2_INLINE void delfem2::cnpy::LoadSmpl_Bone(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
-    std::vector<int>& aIndBoneParent,
+    std::vector<unsigned int>& aIndBoneParent,
     std::vector<double>& aJntRgrs,
     const std::string& fpath)
 {
@@ -76,7 +76,7 @@ DFM2_INLINE void delfem2::cnpy::LoadSmpl_BoneBlendshape(
     std::vector<double>& aXYZ0,
     std::vector<double>& aW,
     std::vector<unsigned int>& aTri,
-    std::vector<int>& aIndBoneParent,
+    std::vector<unsigned int>& aIndBoneParent,
     std::vector<double>& aJntRgrs,
     std::vector<double>& aBlendShape,
     std::vector<double>& aBlendPose,

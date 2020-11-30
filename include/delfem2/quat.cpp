@@ -154,9 +154,9 @@ template void delfem2::Copy_Quat(double r[], const double p[]);
 namespace delfem2 {
 
 template<>
-DFM2_INLINE void Quat_Bryant
-    (double q[4],
-     double x, double y, double z)
+DFM2_INLINE void Quat_Bryant(
+    double q[4],
+    double x, double y, double z)
 {
   const double dqx[4] = {cos(x * 0.5), sin(x * 0.5), 0.0, 0.0};
   const double dqy[4] = {cos(y * 0.5), 0.0, sin(y * 0.5), 0.0};

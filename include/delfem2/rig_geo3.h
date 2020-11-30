@@ -158,8 +158,6 @@ DFM2_INLINE void Skinning_LBS_LocalWeight(
     double* aXYZ,
     const double* aXYZ0,
     unsigned int nXYZ,
-    const unsigned int* aTri,
-    unsigned int nTri,
     const std::vector<CRigBone>& aBone,
     const double* aRigWeight,
     const unsigned int* aRigJoint);
@@ -192,8 +190,9 @@ DFM2_INLINE void SkinningSparse_LBS(
 
 DFM2_INLINE void InitBones_JointPosition(
     std::vector<CRigBone>& aBone,
-    const std::vector<int>& aIndBoneParent,
-    const std::vector<double>& aJntPos0);
+    unsigned int nb,
+    const unsigned int* aIndBoneParent,
+    const double* aJntPos0);
 
 // --------------------------------------
 

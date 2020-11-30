@@ -309,14 +309,15 @@ DFM2_INLINE int delfem2::CRigBone::PickHandler
 }
  */
 
-DFM2_INLINE void delfem2::CRigBone::SetRotationBryant
-(double rx, double ry, double rz)
+DFM2_INLINE void delfem2::CRigBone::SetRotationBryant(
+    double rx, double ry, double rz)
 {
   Quat_Bryant(quatRelativeRot, rx, ry, rz);
 }
 
-DFM2_INLINE void delfem2::CRigBone::DeformSkin(double pos2[3],
-                                const double pos0[3]) const 
+DFM2_INLINE void delfem2::CRigBone::DeformSkin(
+    double pos2[3],
+    const double pos0[3]) const
 {
   const double pos0a[4] = {pos0[0], pos0[1], pos0[2], 1.0};
   double pos1a[4]; MatVec4(pos1a,invBindMat,pos0a);
@@ -326,16 +327,16 @@ DFM2_INLINE void delfem2::CRigBone::DeformSkin(double pos2[3],
   pos2[2] = pos2a[2];
 }
 
-DFM2_INLINE void delfem2::CRigBone::SetTranslation
-(double tx, double ty, double tz)
+DFM2_INLINE void delfem2::CRigBone::SetTranslation(
+    double tx, double ty, double tz)
 {
   this->transRelative[0] = tx;
   this->transRelative[1] = ty;
   this->transRelative[2] = tz;
 }
 
-DFM2_INLINE void delfem2::UpdateBoneRotTrans
-(std::vector<CRigBone>& aBone)
+DFM2_INLINE void delfem2::UpdateBoneRotTrans(
+    std::vector<CRigBone>& aBone)
 {
   for(std::size_t ibone=0;ibone<aBone.size();++ibone){
     CMat4d m01 = CMat4d::Translate(aBone[ibone].transRelative);
@@ -353,15 +354,14 @@ DFM2_INLINE void delfem2::UpdateBoneRotTrans
 
 
 
-DFM2_INLINE void delfem2::Skinning_LBS_LocalWeight
-(double* aXYZ,
- const double* aXYZ0,
- unsigned int nXYZ,
- const unsigned int* aTri,
- unsigned int nTri,
- const std::vector<CRigBone>& aBone,
- const double* aRigWeight,
- const unsigned int* aRigJoint)
+DFM2_INLINE void
+delfem2::Skinning_LBS_LocalWeight(
+    double* aXYZ,
+    const double* aXYZ0,
+    unsigned int nXYZ,
+    const std::vector<CRigBone>& aBone,
+    const double* aRigWeight,
+    const unsigned int* aRigJoint)
 {
   for(unsigned int ip=0;ip<nXYZ;++ip){
     double pos0[4] = {aXYZ0[ip*3+0],aXYZ0[ip*3+1],aXYZ0[ip*3+2],1.0};
@@ -635,10 +635,10 @@ DFM2_INLINE void delfem2::SetPose_BioVisionHierarchy
 
 DFM2_INLINE void delfem2::InitBones_JointPosition(
     std::vector<CRigBone>& aBone,
-    const std::vector<int>& aIndBoneParent,
-    const std::vector<double>& aJntPos0)
+    unsigned int nBone,
+    const unsigned int* aIndBoneParent,
+    const double* aJntPos0)
 {
-  const unsigned int nBone = aIndBoneParent.size();
   aBone.resize(nBone);
   for(unsigned int ib=0;ib<nBone;++ib){
     int ibp = aIndBoneParent[ib];
