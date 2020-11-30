@@ -5,15 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <vector>
-#include <set>
-#include "delfem2/rig_geo3.h"
 #include "delfem2/tinygltf/io_gltf.h"
-// ------------------
-#include <GLFW/glfw3.h>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/rigv3_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/rig_geo3.h"
+#include <vector>
+#include <set>
+#include <GLFW/glfw3.h>
 
 namespace dfm2 = delfem2;
 
