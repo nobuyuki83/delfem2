@@ -249,3 +249,39 @@ TEST(gltf,io_gltf_skin_sensitivity)
     }
   }
 }
+
+
+TEST(gltf,set_default_rotation) {
+  dfm2::CGLTF gltf;
+  gltf.Read(std::string(PATH_INPUT_DIR) + "/CesiumMan.glb");
+  // -----
+  std::vector<double> aXYZ0;
+  std::vector<unsigned int> aTri;
+  std::vector<double> aSkinSparseW;
+  std::vector<unsigned int> aSkinSparseI;
+  std::vector<dfm2::CRigBone> aBone;
+  gltf.GetMeshInfo(
+      aXYZ0, aTri, aSkinSparseW, aSkinSparseI,
+      0,0);
+  gltf.GetBone(aBone, 0);
+  //
+  std::vector<double> aXYZ1(aXYZ0.size());
+  dfm2::Skinning_LBS_LocalWeight(
+      aXYZ1.data(),
+      aXYZ0.data(), aXYZ0.size()/3,
+      aBone, aSkinSparseW.data(), aSkinSparseI.data());
+  //
+  dfm2::SetCurrentBoneRotationAsDefault(aBone);
+  std::vector<double> aXYZ2(aXYZ0.size());
+  dfm2::Skinning_LBS_LocalWeight(
+      aXYZ2.data(),
+      aXYZ0.data(), aXYZ0.size()/3,
+      aBone, aSkinSparseW.data(), aSkinSparseI.data());
+  //
+  double d0 = 0.0, d1 = 0.0;
+  for(unsigned int i=0;i<aXYZ0.size();++i){
+    d0 += (aXYZ1[i]-aXYZ2[i])*(aXYZ1[i]-aXYZ2[i]);
+    d1 += aXYZ1[i]*aXYZ1[i];
+  }
+  EXPECT_LE(d0,d1*1.0e-5);
+}

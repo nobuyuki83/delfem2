@@ -130,7 +130,7 @@ int main()
           aJntRgrs, projector_smpl.aXYZ0_Body);
       dfm2::InitBones_JointPosition(
           projector_smpl.aBone,
-          projector_smpl.aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::SparsifyMatrixRow(
         projector_smpl.aSkinningSparseWeight,
@@ -170,7 +170,6 @@ int main()
   viewer.nav.camera.view_height = 1.0;
   dfm2::opengl::setSomeLighting();
 
-  while (true)
   {
     for(int iframe = 0; iframe< 300; ++iframe){
       dfm2::StepTime_PbdClothSim(

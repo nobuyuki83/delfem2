@@ -174,7 +174,7 @@ int main()
           aJntRgrs, projector.aXYZ0_Body);
       dfm2::InitBones_JointPosition(
           projector.aBone,
-          projector.aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
 //    dfm2::Smpl2Rig(projector.aBone,
 //        aIndBoneParent, projector.aXYZ0_Body, aJntRgrs);
@@ -206,7 +206,7 @@ int main()
   const double dt = 0.01;
   const double gravity[3] = {0.0, -0.1, 0.0};
   const double bend_stiff_ratio = 0.01;
-  while (true)
+
   {
     for(int iframe=0;iframe<300;++iframe){
       dfm2::StepTime_PbdClothSim(

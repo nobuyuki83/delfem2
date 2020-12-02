@@ -63,9 +63,12 @@ int main()
       dfm2::Points3_WeighttranspPosition(
           aJntPos0,
           aJntRgrs, aXYZ0);
+      for(unsigned int ij=0;ij<aJntPos0.size()/3;++ij){
+        std::cout << ij << " " << aIndBoneParent[ij] << " " << aJntPos0[ij*3+0] << " " << aJntPos0[ij*3+1] << " " << aJntPos0[ij*3+2] << std::endl;
+      }
       dfm2::InitBones_JointPosition(
           aBone,
-          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::SparsifyMatrixRow(
         aSkinningSparseWeight, aSkinningSparseIdBone,
@@ -83,7 +86,7 @@ int main()
   std::mt19937 rnd_eng(rnd_dev());
   std::uniform_real_distribution<double> dist_01(0,1);
 
-  while (true)
+  while ( !glfwWindowShouldClose(viewer.window) )
   {
     for(auto& bone : aBone){
       dfm2::CQuatd::Random(0.2).CopyTo(bone.quatRelativeRot);
@@ -107,4 +110,7 @@ int main()
       viewer.ExitIfClosed();
     }
   }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

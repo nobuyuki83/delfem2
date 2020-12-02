@@ -127,7 +127,7 @@ int main()
           aJntRgrs, body.aXYZ0_Body);
       dfm2::InitBones_JointPosition(
           body.aBone,
-          body.aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::SparsifyMatrixRow(
         body.aSkinningSparseWeight,
@@ -163,7 +163,6 @@ int main()
   viewer.nav.camera.view_height = 1.0;
   dfm2::opengl::setSomeLighting();
 
-  while (true)
   {
     { // pose initializeation
       for(auto & ib : body.aBone){

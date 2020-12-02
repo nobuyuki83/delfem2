@@ -68,8 +68,8 @@ DFM2_INLINE void delfem2::opengl::DrawBone(
   for(unsigned int iskel=0;iskel<aBone.size();++iskel){
     const bool is_selected = (int)iskel==ibone_selected;
     Draw_RigBone(iskel,
-                 is_selected,ielem_selected,aBone,
-                 rad_bone_sphere,rad_rot_hndlr);
+        is_selected,ielem_selected,aBone,
+        rad_bone_sphere,rad_rot_hndlr);
   }
   // draw edges whilte
   for(unsigned int ibone=0;ibone<aBone.size();++ibone){

@@ -108,6 +108,11 @@ void Mat4_AffineTranslation(
     REAL dx, REAL dy, REAL dz);
 
 template <typename REAL>
+void Mat4_AffineTranslation(
+    REAL A[16],
+    const REAL v[3]);
+
+template <typename REAL>
 DFM2_INLINE void Mat4_AffineTransTranslate(
     REAL r[],
     const REAL t[]);
