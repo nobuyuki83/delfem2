@@ -51,7 +51,7 @@ int main()
             aJntRgrs, aXYZ0);
         dfm2::InitBones_JointPosition(
             aBone,
-            aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+            aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
       }
       dfm2::SparsifyMatrixRow(
           aWeightRigSparse, aIdBoneRigSparse,
@@ -81,6 +81,7 @@ int main()
     }
     void mouse_press(const float src[3], const float dir[3]) override {
       gizmo.Pick(src, dir, aBone);
+      std::cout << "ib:" << gizmo.ipicked_bone << " " << aBone.size() << std::endl;
     }
     void key_press(int key, int mods) override{
       if( key == GLFW_KEY_G ){ gizmo.SetMode(dfm2::CGizmo_Rig<float>::MODE_EDIT::TRNSL); }
@@ -126,7 +127,7 @@ int main()
   viewer.Init_oldGL();
   tex.InitGL();
   dfm2::opengl::setSomeLighting();
-  while (true)
+  while ( !glfwWindowShouldClose(viewer.window) )
   {
     viewer.DrawBegin_oldGL();
     tex.Draw_oldGL();
@@ -134,4 +135,7 @@ int main()
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
   }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

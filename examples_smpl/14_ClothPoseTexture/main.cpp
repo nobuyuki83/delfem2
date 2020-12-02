@@ -156,7 +156,7 @@ int main()
           aJntRgrs, body_smpl.aXYZ0_Body);
       dfm2::InitBones_JointPosition(
           body_smpl.aBone,
-          body_smpl.aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
     dfm2::SparsifyMatrixRow(
         body_smpl.aSkinningSparseWeight,

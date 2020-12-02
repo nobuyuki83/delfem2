@@ -10,16 +10,15 @@
  * @details skinning
  */
 
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/quat.h"
+#include <GLFW/glfw3.h>
 #include <cstdlib>
 #include <random>
-
-#include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/rigv3_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
 
 namespace dfm2 = delfem2;
 
@@ -84,11 +83,9 @@ int main()
       dfm2::Points3_WeightsparsePosition(
           aJntPos0,
           aIndBoneParent.size(), aJntRgrsSparseWeight,aJntRgrsSparseIdbone, aXYZ0);
-      std::cout << aJntRgrsSparseWeight.size()/aIndBoneParent.size() << std::endl;
       dfm2::InitBones_JointPosition(
           aBone,
-          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
-      std::cout << aBone.size() << std::endl;
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
   }
   std::vector<double> aXYZ1, aXYZ2;
@@ -152,7 +149,7 @@ int main()
             aIndBoneParent.size(), aJntRgrsSparseWeight,aJntRgrsSparseIdbone, aXYZ1);
         dfm2::InitBones_JointPosition(
             aBone,
-            aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+            aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
       }
       dfm2::UpdateBoneRotTrans(aBone);
       dfm2::SkinningSparse_LBS(aXYZ2,

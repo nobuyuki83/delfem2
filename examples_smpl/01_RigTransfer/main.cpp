@@ -62,7 +62,7 @@ int main()
           aJntRgrs, aXYZ0);
       dfm2::InitBones_JointPosition(
           aBone,
-          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
   }
   
@@ -155,7 +155,7 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
     }
   }
 
-  while (true)
+  while ( !glfwWindowShouldClose(viewer.window) )
   {
     { // biovision
       static int iframe = 0;
@@ -240,4 +240,7 @@ std::string(PATH_INPUT_DIR)+"/jump.bvh");
     glfwPollEvents();
     viewer.ExitIfClosed();
   }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }

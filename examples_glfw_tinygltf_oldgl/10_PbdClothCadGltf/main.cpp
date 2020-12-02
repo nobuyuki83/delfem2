@@ -48,8 +48,8 @@ std::vector<unsigned int> aTri_Contact;
 std::vector<double> aNorm_Contact(aXYZ.size());
 dfm2::CBVH_MeshTri3D<dfm2::CBV3d_Sphere,double> bvh;
 std::vector<double> aXYZ0_Contact;
-std::vector<double> aRigWeight_Contact;
-std::vector<unsigned int> aRigJoint_Contact;
+std::vector<double> aRigSparseW_Contact;
+std::vector<unsigned int> aRigSparseI_Contact;
 std::vector<dfm2::CRigBone> aBone;
 
 const double dt = 0.01;
@@ -63,22 +63,28 @@ bool is_animation = false;
 
 void StepTime()
 {
-  dfm2::PBD_Pre3D(aXYZt,
-                  dt, gravity, aXYZ, aUVW, aBCFlag);
-  dfm2::PBD_TriStrain(aXYZt.data(),
-                      aXYZt.size()/3, aETri, aVec2);
-  dfm2::PBD_Bend(aXYZt.data(),
-                 aXYZt.size()/3, aETri, aVec2, 1.0);
-  dfm2::PBD_Seam(aXYZt.data(),
-                 aXYZt.size()/3, aLine.data(), aLine.size()/2);
-  dfm2::Project_PointsIncludedInBVH_Outside_Cache(aXYZt.data(),aInfoNearest,
-                                                  aXYZt.size()/3,
-                                                  contact_clearance,bvh,
-                                                  aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-                                                  aTri_Contact.data(), aTri_Contact.size()/3,
-                                                  aNorm_Contact.data(), rad_explore);
-  dfm2::PBD_Post(aXYZ, aUVW,
-                 dt, aXYZt, aBCFlag);
+  dfm2::PBD_Pre3D(
+      aXYZt,
+      dt, gravity, aXYZ, aUVW, aBCFlag);
+  dfm2::PBD_TriStrain(
+      aXYZt.data(),
+      aXYZt.size()/3, aETri, aVec2);
+  dfm2::PBD_Bend(
+      aXYZt.data(),
+      aXYZt.size()/3, aETri, aVec2, 1.0);
+  dfm2::PBD_Seam(
+      aXYZt.data(),
+      aXYZt.size()/3, aLine.data(), aLine.size()/2);
+  dfm2::Project_PointsIncludedInBVH_Outside_Cache(
+      aXYZt.data(),aInfoNearest,
+      aXYZt.size()/3,
+      contact_clearance,bvh,
+      aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+      aTri_Contact.data(), aTri_Contact.size()/3,
+      aNorm_Contact.data(), rad_explore);
+  dfm2::PBD_Post(
+      aXYZ, aUVW,
+      dt, aXYZt, aBCFlag);
 }
 
 // ---------------------------------------
@@ -204,45 +210,26 @@ int main(int argc,char* argv[])
   aXYZt = aXYZ;
   
   { // make a unit sphere
-//    MeshTri3D_Sphere(aXYZ_Contact, aTri_Contact, 0.3, 32, 32);
-//    Rotate(aXYZ_Contact, 0.2, 0.3, 0.4);
-    
     {
       tinygltf::Model model;
       tinygltf::TinyGLTF loader;
       std::string err;
       std::string warn;
-      
-      //std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.gltf";
-      //bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, path_gltf);
-      
       //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
-      //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
+      //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
       //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
       //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Monster.glb";
       std::string path_gltf = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
-      
       bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, path_gltf); // for binary glTF(.glb)
       if (!warn.empty()) { printf("Warn: %s\n", warn.c_str()); }
       if (!err.empty()) { printf("Err: %s\n", err.c_str()); }
       if (!ret) { printf("Failed to parse glTF\n"); return -1; }
-      
       dfm2::Print(model);
-      //
-      dfm2::GetMeshInfo(aXYZ0_Contact, aTri_Contact, aRigWeight_Contact, aRigJoint_Contact,
-                  model, 0, 0);
-      if( !model.skins.empty() ){
-        aBone.resize( model.skins[0].joints.size() );
-        std::vector<int> mapNode2Bone( model.nodes.size(), -1);
-        for(std::size_t ij=0;ij<model.skins[0].joints.size();++ij){
-          int inode = model.skins[0].joints[ij];
-          mapNode2Bone[inode] = ij;
-        }
-        SetBone(aBone,
-                model, model.skins[0].skeleton, -1, mapNode2Bone);
-        GetBoneBinding(aBone,
-                       model);
-      }
+      dfm2::GetMeshInfo(
+          aXYZ0_Contact, aTri_Contact,
+          aRigSparseW_Contact, aRigSparseI_Contact,
+          model, 0, 0);
+      dfm2::GetBone(aBone, model, 0);
       {
         dfm2::Quat_Bryant(aBone[0].quatRelativeRot, -90.0/180.0*3.1415, 0.0, 0.0);
         aBone[0].transRelative[2] -= 1.0;
@@ -253,16 +240,17 @@ int main(int argc,char* argv[])
       dfm2::Skinning_LBS_LocalWeight(
           aXYZ_Contact.data(),
           aXYZ0_Contact.data(), aXYZ0_Contact.size()/3,
-          aBone, aRigWeight_Contact.data(), aRigJoint_Contact.data());
+          aBone, aRigSparseW_Contact.data(), aRigSparseI_Contact.data());
     }
     aNorm_Contact.resize(aXYZ_Contact.size());
     delfem2::Normal_MeshTri3D(
         aNorm_Contact.data(),
         aXYZ_Contact.data(), aXYZ_Contact.size()/3,
         aTri_Contact.data(), aTri_Contact.size()/3);
-    bvh.Init(aXYZ_Contact.data(), aXYZ_Contact.size()/3,
-             aTri_Contact.data(), aTri_Contact.size()/3,
-             0.01);
+    bvh.Init(
+        aXYZ_Contact.data(), aXYZ_Contact.size()/3,
+        aTri_Contact.data(), aTri_Contact.size()/3,
+        0.01);
   }
 
   delfem2::opengl::CViewer_GLFW viewer;

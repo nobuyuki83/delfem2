@@ -72,9 +72,9 @@ DFM2_INLINE void Cross3D(
 // below: mat4
 
 template <typename T>
-DFM2_INLINE void delfem2::MatMat4
-    (T* C,
-     const T* A, const T* B)
+DFM2_INLINE void delfem2::MatMat4(
+    T* C,
+    const T* A, const T* B)
 {
   for(int i=0;i<4;i++){
     for(int j=0;j<4;j++){
@@ -253,10 +253,10 @@ DFM2_INLINE void delfem2::Mat4Vec3(
 }
 
 template <typename T>
-DFM2_INLINE void delfem2::MatVec4
-(T v[4],
- const T A[16],
- const T x[4])
+DFM2_INLINE void delfem2::MatVec4(
+    T v[4],
+    const T A[16],
+    const T x[4])
 {
   v[0] = A[0*4+0]*x[0] + A[0*4+1]*x[1] + A[0*4+2]*x[2] + A[0*4+3]*x[3];
   v[1] = A[1*4+0]*x[0] + A[1*4+1]*x[1] + A[1*4+2]*x[2] + A[1*4+3]*x[3];
@@ -324,10 +324,10 @@ template void delfem2::Vec3_Vec3Mat4_AffineProjection(double y0[3], const double
 // ----------------------
 
 template <typename T>
-DFM2_INLINE void delfem2::Vec3_Mat4Vec3_Affine
- (T y0[3],
-  const T a[16],
-  const T x0[3])
+DFM2_INLINE void delfem2::Vec3_Mat4Vec3_Affine(
+    T y0[3],
+    const T a[16],
+    const T x0[3])
 {
   const T x1[4] = {x0[0], x0[1], x0[2], 1.0};
   T y1[4]; MatVec4(y1,a,x1);
@@ -379,6 +379,27 @@ template void delfem2::Mat4_AffineTranslation(
 template void delfem2::Mat4_AffineTranslation(
     double A[16],
     double dx, double dy, double dz);
+#endif
+
+
+template <typename T>
+DFM2_INLINE void
+delfem2::Mat4_AffineTranslation(
+    T A[16],
+    const T v[3])
+{
+  A[0*4+0] = 1;  A[0*4+1] = 0;  A[0*4+2] = 0;  A[0*4+3] = v[0];
+  A[1*4+0] = 0;  A[1*4+1] = 1;  A[1*4+2] = 0;  A[1*4+3] = v[1];
+  A[2*4+0] = 0;  A[2*4+1] = 0;  A[2*4+2] = 1;  A[2*4+3] = v[2];
+  A[3*4+0] = 0;  A[3*4+1] = 0;  A[3*4+2] = 0;  A[3*4+3] = 1;
+}
+#ifndef DFM2_HEADER_ONLY
+template void delfem2::Mat4_AffineTranslation(
+    float A[16],
+    const float v[3]);
+template void delfem2::Mat4_AffineTranslation(
+    double A[16],
+    const double v[3]);
 #endif
 
 template <typename REAL>
@@ -530,26 +551,19 @@ DFM2_INLINE void delfem2::Mat4_Quat(
     REAL r[],
     const REAL q[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  r[ 0] = 1.0 - y2 - z2;
-  r[ 1] = xy - zw;
-  r[ 2] = zx + yw;
-  r[ 4] = xy + zw;
-  r[ 5] = 1.0 - z2 - x2;
-  r[ 6] = yz - xw;
-  r[ 8] = zx - yw;
-  r[ 9] = yz + xw;
-  r[10] = 1.0 - x2 - y2;
-  r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
-  r[15] = 1.0;
+  const double x2 = q[1] * q[1] * 2.0;
+  const double y2 = q[2] * q[2] * 2.0;
+  const double z2 = q[3] * q[3] * 2.0;
+  const double xy = q[1] * q[2] * 2.0;
+  const double yz = q[2] * q[3] * 2.0;
+  const double zx = q[3] * q[1] * 2.0;
+  const double xw = q[1] * q[0] * 2.0;
+  const double yw = q[2] * q[0] * 2.0;
+  const double zw = q[3] * q[0] * 2.0;
+  r[ 0] = 1.0 - y2 - z2;  r[ 1] = xy - zw;        r[ 2] = zx + yw;       r[ 3] = 0.0;
+  r[ 4] = xy + zw;        r[ 5] = 1.0 - z2 - x2;  r[ 6] = yz - xw;       r[ 7] = 0.0;
+  r[ 8] = zx - yw;        r[ 9] = yz + xw;        r[10] = 1.0 - x2 - y2; r[11] = 0.0;
+  r[12] = 0.0;            r[13] = 0.0;            r[14] = 0.0;           r[15] = 1.0;
 }
 #ifndef DFM2_HEADER_ONLY
 template void delfem2::Mat4_Quat(float r[], const float q[]);
@@ -561,28 +575,22 @@ DFM2_INLINE void delfem2::Mat4_QuatConj(
     double r[],
     const double q[])
 {
-  double x2 = q[1] * q[1] * 2.0;
-  double y2 = q[2] * q[2] * 2.0;
-  double z2 = q[3] * q[3] * 2.0;
-  double xy = q[1] * q[2] * 2.0;
-  double yz = q[2] * q[3] * 2.0;
-  double zx = q[3] * q[1] * 2.0;
-  double xw = q[1] * q[0] * 2.0;
-  double yw = q[2] * q[0] * 2.0;
-  double zw = q[3] * q[0] * 2.0;
-  r[ 0] = 1.0 - y2 - z2;
-  r[ 1] = xy + zw;
-  r[ 2] = zx - yw;
-  r[ 4] = xy - zw;
-  r[ 5] = 1.0 - z2 - x2;
-  r[ 6] = yz + xw;
-  r[ 8] = zx + yw;
-  r[ 9] = yz - xw;
-  r[10] = 1.0 - x2 - y2;
-  r[ 3] = r[ 7] = r[11] = r[12] = r[13] = r[14] = 0.0;
-  r[15] = 1.0;
+  const double x2 = q[1] * q[1] * 2.0;
+  const double y2 = q[2] * q[2] * 2.0;
+  const double z2 = q[3] * q[3] * 2.0;
+  const double xy = q[1] * q[2] * 2.0;
+  const double yz = q[2] * q[3] * 2.0;
+  const double zx = q[3] * q[1] * 2.0;
+  const double xw = q[1] * q[0] * 2.0;
+  const double yw = q[2] * q[0] * 2.0;
+  const double zw = q[3] * q[0] * 2.0;
+  r[ 0] = 1.0 - y2 - z2;  r[ 1] = xy + zw;        r[ 2] = zx - yw;        r[ 3] = 0;
+  r[ 4] = xy - zw;        r[ 5] = 1.0 - z2 - x2;  r[ 6] = yz + xw;        r[ 7] = 0;
+  r[ 8] = zx + yw;        r[ 9] = yz - xw;        r[10] = 1.0 - x2 - y2;  r[11] = 0;
+  r[12] = 0;              r[13] = 0;              r[14] = 0;              r[15] = 1.0;
 }
 
+// maybe same as above ?
 template <typename REAL>
 DFM2_INLINE void delfem2::Mat4_AffineTransQuat(
     REAL r[],
@@ -677,15 +685,15 @@ template <typename REAL>
 delfem2::CMat4<REAL> delfem2::CMat4<REAL>::Quat(const REAL* q)
 {
   CMat4<REAL> m;
-  REAL x2 = q[1] * q[1] * 2.0;
-  REAL y2 = q[2] * q[2] * 2.0;
-  REAL z2 = q[3] * q[3] * 2.0;
-  REAL xy = q[1] * q[2] * 2.0;
-  REAL yz = q[2] * q[3] * 2.0;
-  REAL zx = q[3] * q[1] * 2.0;
-  REAL xw = q[1] * q[0] * 2.0;
-  REAL yw = q[2] * q[0] * 2.0;
-  REAL zw = q[3] * q[0] * 2.0;
+  const REAL x2 = q[1] * q[1] * 2.0;
+  const REAL y2 = q[2] * q[2] * 2.0;
+  const REAL z2 = q[3] * q[3] * 2.0;
+  const REAL xy = q[1] * q[2] * 2.0;
+  const REAL yz = q[2] * q[3] * 2.0;
+  const REAL zx = q[3] * q[1] * 2.0;
+  const REAL xw = q[1] * q[0] * 2.0;
+  const REAL yw = q[2] * q[0] * 2.0;
+  const REAL zw = q[3] * q[0] * 2.0;
   m.SetZero();
   m.mat[0*4+0] = 1.0 - y2 - z2; m.mat[0*4+1] = xy - zw;         m.mat[0*4+2] = zx + yw;
   m.mat[1*4+0] = xy + zw;       m.mat[1*4+1] = 1.0 - z2 - x2;   m.mat[1*4+2] = yz - xw;

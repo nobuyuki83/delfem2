@@ -22,8 +22,8 @@ int main(int argc,char* argv[])
 {
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri;
-  std::vector<double> aRigWeight;
-  std::vector<unsigned int> aRigJoint;
+  std::vector<double> aSkinSparseW;
+  std::vector<unsigned int> aSkinSparseI;
   std::vector<double> aXYZ;
   std::vector<dfm2::CRigBone> aBone;
   {
@@ -37,21 +37,13 @@ int main(int argc,char* argv[])
     gltf.Read(path_glb);
     gltf.Print();
     gltf.GetMeshInfo(
-        aXYZ0, aTri, aRigWeight, aRigJoint,
-        0,0);
+        aXYZ0, aTri, aSkinSparseW, aSkinSparseI,
+        0, 0);
     gltf.GetBone(aBone, 0);
+    dfm2::SetCurrentBoneRotationAsDefault(aBone);
   }
   aXYZ = aXYZ0;
-  {
-    double dq[4]; dfm2::Quat_Bryant(dq,0.5,0.,0.);
-    double q0[4]; dfm2::Copy_Quat(q0, aBone[5].quatRelativeRot);
-    dfm2::QuatQuat(aBone[5].quatRelativeRot,q0,dq);
-    UpdateBoneRotTrans(aBone);
-    dfm2::Skinning_LBS_LocalWeight(
-        aXYZ.data(),
-        aXYZ0.data(), aXYZ0.size()/3,
-        aBone, aRigWeight.data(), aRigJoint.data());
-  }
+
   // --------------
   // opengl starts here
   delfem2::opengl::CViewer_GLFW viewer;
@@ -59,7 +51,19 @@ int main(int argc,char* argv[])
   viewer.nav.camera.view_height = 2.0;
   viewer.nav.camera.camera_rot_mode = delfem2::CCamera<double>::CAMERA_ROT_MODE::TBALL;
   delfem2::opengl::setSomeLighting();
+  int iframe = 0;
   while(!glfwWindowShouldClose(viewer.window)){
+    iframe++;
+    {
+      dfm2::Quat_Bryant(aBone[0].quatRelativeRot,0.0,-0.5*M_PI,-0.5*M_PI);
+      double dq[4]; dfm2::Quat_Bryant(dq,sin(iframe*0.1),0.0, 0.0);
+      dfm2::Copy_Quat(aBone[5].quatRelativeRot, dq);
+      UpdateBoneRotTrans(aBone);
+      dfm2::Skinning_LBS_LocalWeight(
+          aXYZ.data(),
+          aXYZ0.data(), aXYZ0.size()/3,
+          aBone, aSkinSparseW.data(), aSkinSparseI.data());
+    }
     // --------------------
     viewer.DrawBegin_oldGL();
     ::glEnable(GL_LIGHTING);

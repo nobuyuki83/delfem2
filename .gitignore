@@ -59,6 +59,7 @@ projects_sub
 site
 examples_cpp/bin
 private_examples
+private_example
 desktop.ini
 examples_py/*.vtk
 pyenv

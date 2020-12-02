@@ -83,7 +83,7 @@ int main()
           aJntRgrs, aXYZ0);
       dfm2::InitBones_JointPosition(
           aBone,
-          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
   }
   
