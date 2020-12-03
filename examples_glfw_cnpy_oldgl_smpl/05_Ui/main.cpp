@@ -11,15 +11,13 @@
  */
 
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/opengl/glfw/ViewRig.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/tex_gl.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/mat4.h"
 #include <cstdlib>
 #include <fstream>
-
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/rigv3_glold.h"
-#include "delfem2/opengl/tex_gl.h"
 #include <GLFW/glfw3.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -31,81 +29,39 @@ namespace dfm2 = delfem2;
 
 int main()
 {
-  class CMyViewer : public delfem2::opengl::CViewer_GLFW {
-  public:
-    CMyViewer(){
-      std::vector<double> aW;
-      std::vector<unsigned int> aIndBoneParent;
-      std::vector<double> aJntRgrs;
-      dfm2::cnpy::LoadSmpl_Bone(
-          aXYZ0,
-          aW,
-          aTri,
-          aIndBoneParent,
-          aJntRgrs,
-          std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
-      {
-        std::vector<double> aJntPos0;
-        dfm2::Points3_WeighttranspPosition(
-            aJntPos0,
-            aJntRgrs, aXYZ0);
-        dfm2::InitBones_JointPosition(
-            aBone,
-            aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
-      }
-      dfm2::SparsifyMatrixRow(
-          aWeightRigSparse, aIdBoneRigSparse,
-          aW.data(), aXYZ0.size()/3, aBone.size(),
-          1.0e-5);
-      aXYZ1 = aXYZ0;
-      gizmo.SetSize(0.3);
-    }
-    void Draw(){
-      ::glEnable(GL_LIGHTING);
-      ::glEnable(GL_DEPTH_TEST);
-      dfm2::opengl::DrawMeshTri3D_FaceNorm(aXYZ1.data(), aTri.data(), aTri.size()/3);
-      ::glDisable(GL_DEPTH_TEST);
-      delfem2::opengl::DrawBone(aBone,
-                                -1, -1,
-                                0.01, 1.0);
-      dfm2::opengl::Draw(gizmo,aBone);
-
-    }
-    void mouse_drag(const float src0[3], const float src1[3], const float dir[3]) override {
-      bool is_edited = gizmo.Drag(aBone,
-                                  src0, src1, dir);
-      if( is_edited ){
-        dfm2::SkinningSparse_LBS(aXYZ1,
-            aXYZ0, aBone, aWeightRigSparse,aIdBoneRigSparse);
-      }
-    }
-    void mouse_press(const float src[3], const float dir[3]) override {
-      gizmo.Pick(src, dir, aBone);
-      std::cout << "ib:" << gizmo.ipicked_bone << " " << aBone.size() << std::endl;
-    }
-    void key_press(int key, int mods) override{
-      if( key == GLFW_KEY_G ){ gizmo.SetMode(dfm2::CGizmo_Rig<float>::MODE_EDIT::TRNSL); }
-      if( key == GLFW_KEY_R ){ gizmo.SetMode(dfm2::CGizmo_Rig<float>::MODE_EDIT::ROT); }
-      if( key == GLFW_KEY_S ){
-        std::ofstream fout("pose.txt");
-        for(const auto & bone: aBone){
-          const double* q = bone.quatRelativeRot;
-          fout << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
-        }
-        {
-          const double* t = aBone[0].transRelative;
-          fout << t[0] << " " << t[1] << " " << t[2] << std::endl;
-        }
-      }
-    }
-  public:
+  dfm2::opengl::CViewerGlfw_RiggedMesh viewer;
+  {
     std::vector<double> aXYZ0, aXYZ1;
     std::vector<unsigned int> aTri;
     std::vector<double> aWeightRigSparse;
     std::vector<unsigned int> aIdBoneRigSparse;
     std::vector<dfm2::CRigBone> aBone;
-    dfm2::CGizmo_Rig<float> gizmo;
-  } viewer;
+    //
+    std::vector<double> aW;
+    std::vector<unsigned int> aIndBoneParent;
+    std::vector<double> aJntRgrs;
+    dfm2::cnpy::LoadSmpl_Bone(
+        aXYZ0,
+        aW,
+        aTri,
+        aIndBoneParent,
+        aJntRgrs,
+        std::string(PATH_INPUT_DIR)+"/smpl_model_f.npz");
+    {
+      std::vector<double> aJntPos0;
+      dfm2::Points3_WeighttranspPosition(
+          aJntPos0,
+          aJntRgrs, aXYZ0);
+      dfm2::InitBones_JointPosition(
+          aBone,
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
+    }
+    dfm2::SparsifyMatrixRow(
+        aWeightRigSparse, aIdBoneRigSparse,
+        aW.data(), aXYZ0.size()/3, aBone.size(),
+        1.0e-5);
+    viewer.SetRiggedMesh(aXYZ0,aTri,aWeightRigSparse,aIdBoneRigSparse,aBone);
+  }
   // -----------
   dfm2::opengl::CTexRGB_Rect2D tex;
   int width, height;
