@@ -5,8 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <vector>
-#include <algorithm>
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/tex_gl.h"
+#include "delfem2/srch_v3bvhmshtopo.h"
 #include "delfem2/srchuni_v3.h"
 #include "delfem2/points.h"
 #include "delfem2/mshio.h"
@@ -14,83 +16,54 @@
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
 #include "delfem2/mat4.h"
-// ---------------------------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
-#include "delfem2/opengl/tex_gl.h"
+#include <vector>
+#include <algorithm>
 
 namespace dfm2 = delfem2;
 
 // ----------------------------------------
 
-
-void RayTracing(
+void ShadingImageRayLambertian(
     std::vector<unsigned char>& aRGB,
     unsigned int nheight,
     unsigned int nwidth,
-    const float mMV[16],
-    const std::vector<dfm2::CNodeBVH2>& aNodeBVH,
-    const std::vector<dfm2::CBV3_Sphere<double>>& aAABB,
+    const float mMVPf[16],
+    const std::vector< delfem2::CPointElemSurf<double> >& aPointElemSurf,
     const std::vector<double>& aXYZ, // 3d points
-    const std::vector<unsigned int>& aTri )
+    const std::vector<unsigned int>& aTri)
 {
-  double mMVd[16]; for(int i=0;i<16;++i){ mMVd[i] = mMV[i]; }
-  double mMVinv[16]; dfm2::Inverse_Mat4(mMVinv,mMVd);
-  //
-  const double dir0[4] = {0,0,-1,0};
-  double dir1[4];
-  {
-    dfm2::VecMat4(dir1,dir0,mMVinv);
-    double l1 = dfm2::Length3(dir1);
-    dir1[0] /= l1;
-    dir1[1] /= l1;
-    dir1[2] /= l1;
-  }
-  // -----------
-  std::vector<unsigned int> aIndElem;
+  double mMVPd[16]; for(int i=0;i<16;++i){ mMVPd[i] = mMVPf[i]; }
+  double mMVPd_inv[16]; dfm2::Inverse_Mat4(mMVPd_inv,mMVPd);
+  aRGB.resize(nheight*nwidth*3);
   for(unsigned int ih=0;ih<nheight;++ih){
-    for(unsigned int iw=0;iw<nwidth;++iw){
-      const double src0[4] = {
-          (float)(-2.f + 4.f/(float)nwidth*(iw+0.5)),
-          (float)(-2.f + 4.f/(float)nheight*(ih+0.5)),
-          (float)(2),
-          (float)(1),
-      };
-      double src1[4]; dfm2::VecMat4(src1,src0,mMVinv);
-      aIndElem.resize(0);
-      dfm2::BVH_GetIndElem_Predicate(aIndElem,
-          dfm2::CIsBV_IntersectLine<dfm2::CBV3_Sphere<double>>(src1,dir1),
-          0, aNodeBVH, aAABB);
-      delfem2::CPointElemSurf<double> pes;
-      if( !aIndElem.empty() ) {
-        std::map<double, delfem2::CPointElemSurf<double>> mapDepthPES;
-        IntersectionRay_MeshTri3DPart(
-            mapDepthPES,
-            delfem2::CVec3d(src1),
-            delfem2::CVec3d(dir1),
-            aTri, aXYZ, aIndElem, 1.0e-10);
-        if( !mapDepthPES.empty() ) {
-          pes = mapDepthPES.begin()->second;
-        }
-      }
-      if( pes.itri == UINT_MAX ) {
+    for(unsigned int iw=0;iw<nwidth;++iw) {
+      const double ps[4] = { -1. + (2./nwidth)*(iw+0.5), -1. + (2./nheight)*(ih+0.5), -1., 1. };
+      const double pe[4] = { -1. + (2./nwidth)*(iw+0.5), -1. + (2./nheight)*(ih+0.5), +1., 1. };
+      double qs[3]; dfm2::Vec3_Vec3Mat4_AffineProjection(qs, ps,mMVPd_inv);
+      double qe[3]; dfm2::Vec3_Vec3Mat4_AffineProjection(qe, pe,mMVPd_inv);
+      const dfm2::CVec3d src1(qs);
+      const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
+      //
+      const delfem2::CPointElemSurf<double>& pes = aPointElemSurf[ih*nwidth+iw];
+      if (pes.itri == UINT_MAX) {
         aRGB[(ih * nwidth + iw) * 3 + 0] = 200;
         aRGB[(ih * nwidth + iw) * 3 + 1] = 255;
         aRGB[(ih * nwidth + iw) * 3 + 2] = 255;
-      }
-      else {
+      } else {
         const unsigned int itri = pes.itri;
-        assert( itri < aTri.size()/3 );
-        double n[3], area; delfem2::UnitNormalAreaTri3(
-            n,area,
-            aXYZ.data()+aTri[itri*3+0]*3,
-            aXYZ.data()+aTri[itri*3+1]*3,
-            aXYZ.data()+aTri[itri*3+2]*3);
-        const double dot = n[0]*dir1[0] + n[1]*dir1[1] + n[2]*dir1[2];
-        aRGB[(ih * nwidth + iw) * 3 + 0] = static_cast<unsigned char>(-dot*255);
-        aRGB[(ih * nwidth + iw) * 3 + 1] = static_cast<unsigned char>(-dot*255);
-        aRGB[(ih * nwidth + iw) * 3 + 2] = static_cast<unsigned char>(-dot*255);
+        assert(itri < aTri.size() / 3);
+        double n[3], area;
+        delfem2::UnitNormalAreaTri3(
+            n, area,
+            aXYZ.data() + aTri[itri * 3 + 0] * 3,
+            aXYZ.data() + aTri[itri * 3 + 1] * 3,
+            aXYZ.data() + aTri[itri * 3 + 2] * 3);
+        dfm2::CVec3d udir1 = dir1.Normalize();
+        const double dot = n[0] * udir1[0] + n[1] * udir1[1] + n[2] * udir1[2];
+        aRGB[(ih * nwidth + iw) * 3 + 0] = static_cast<unsigned char>(-dot * 255);
+        aRGB[(ih * nwidth + iw) * 3 + 1] = static_cast<unsigned char>(-dot * 255);
+        aRGB[(ih * nwidth + iw) * 3 + 2] = static_cast<unsigned char>(-dot * 255);
       }
     }
   }
@@ -111,7 +84,7 @@ int main(int argc,char* argv[])
   std::vector<dfm2::CBV3_Sphere<double>> aAABB;
   {
     std::vector<double> aCent;
-    double rad = dfm2::CentsMaxRad_MeshTri3(aCent,
+    dfm2::CentsMaxRad_MeshTri3(aCent,
         aXYZ,aTri);
     double min_xyz[3], max_xyz[3];
     delfem2::BoundingBox3_Points3(min_xyz,max_xyz,
@@ -140,14 +113,9 @@ int main(int argc,char* argv[])
 
   dfm2::opengl::CTexRGB_Rect2D tex;
   {
-    tex.w = 200;
-    tex.h = 200;
+    tex.w = 256;
+    tex.h = 256;
     tex.aRGB.resize(tex.w*tex.h*3);
-    tex.max_x = +1.0;
-    tex.min_x = -1.0;
-    tex.max_y = +1.0;
-    tex.min_y = -1.0;
-    tex.z = 0.0;
   }
 
   dfm2::opengl::CViewer_GLFW viewer;
@@ -173,11 +141,19 @@ int main(int argc,char* argv[])
       glfwPollEvents();
     }
     for(unsigned int i=0;i<10;++i) {
-      float mMV[16], mP[16];
-      viewer.nav.Mat4_MVP_OpenGL(mMV,mP,viewer.window);
-      RayTracing(tex.aRGB,
-           tex.h,tex.w, mMV,
+      float mMVP[16];
+      {
+        float mMV[16], mP[16];
+        viewer.nav.Mat4_MVP_OpenGL(mMV, mP, viewer.window);
+        dfm2::MatMat4(mMVP, mMV, mP);
+      }
+      std::vector< delfem2::CPointElemSurf<double> > aPointElemSurf;
+      Intersection_ImageRay_TriMesh3(aPointElemSurf,
+           tex.h,tex.w, mMVP,
            aNodeBVH,aAABB,aXYZ,aTri);
+      ShadingImageRayLambertian(tex.aRGB,
+          tex.h, tex.w, mMVP,
+          aPointElemSurf, aXYZ, aTri);
       tex.InitGL();
       //
       viewer.DrawBegin_oldGL();

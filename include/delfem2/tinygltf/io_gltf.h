@@ -59,7 +59,7 @@ public:
       std::vector<delfem2::CRigBone>& aBone,
       unsigned int iskin) const;
 public:
-  tinygltf::Model* model;
+  tinygltf::Model* pModel = nullptr;
 };
 
 }

@@ -404,8 +404,8 @@ bool dfm2::CGLTF::Read(
   std::string err;
   std::string warn;
   tinygltf::TinyGLTF loader;
-  model = new tinygltf::Model;
-  bool ret = loader.LoadBinaryFromFile(model, &err, &warn,
+  pModel = new tinygltf::Model;
+  bool ret = loader.LoadBinaryFromFile(pModel, &err, &warn,
                                        fpath); // for binary glTF(.glb)
   if (!warn.empty()) { printf("Warn: %s\n", warn.c_str()); }
   if (!err.empty()) { printf("Err: %s\n", err.c_str()); }
@@ -415,7 +415,7 @@ bool dfm2::CGLTF::Read(
 
 void dfm2::CGLTF::Print() const
 {
-  dfm2::Print(*model);
+  dfm2::Print(*pModel);
 }
 
 void dfm2::CGLTF::GetMeshInfo(
@@ -428,12 +428,12 @@ void dfm2::CGLTF::GetMeshInfo(
 {
   dfm2::GetMeshInfo(
       aXYZ0, aTri, aRigWeight, aRigJoint,
-      *model, imesh, iprimitive);
+      *pModel, imesh, iprimitive);
 }
 
 void dfm2::CGLTF::GetBone(
     std::vector<dfm2::CRigBone>& aBone,
     unsigned int iskin) const
 {
-  ::delfem2::GetBone(aBone,*model,iskin);
+  ::delfem2::GetBone(aBone,*pModel,iskin);
 }

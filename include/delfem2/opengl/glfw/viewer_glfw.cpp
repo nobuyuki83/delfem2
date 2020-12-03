@@ -161,17 +161,22 @@ void delfem2::opengl::CViewer_GLFW::DrawBegin_oldGL() const
 {
   ::glfwMakeContextCurrent(window);
   //::glClearColor(0.8f, 1.0f, 1.0f, 1.0f);
-  ::glClearColor(this->bgcolor[0], this->bgcolor[1], this->bgcolor[2], this->bgcolor[3]);
+  ::glClearColor(
+      this->bgcolor[0],
+      this->bgcolor[1],
+      this->bgcolor[2],
+      this->bgcolor[3]);
   ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   ::glEnable(GL_DEPTH_TEST);
   ::glDepthFunc(GL_LESS);
   ::glEnable(GL_POLYGON_OFFSET_FILL );
   ::glPolygonOffset( 1.1f, 4.0f );
-  ::glEnable(GL_NORMALIZE);
 
   float mMV[16], mP[16]; nav.Mat4_MVP_OpenGL(mMV,mP, this->window);
+  
   // glnew will skip compilling following section
 #ifdef GL_PROJECTION
+  ::glEnable(GL_NORMALIZE); // GL_NORMALIZE is not defiend on the modern OpenGLae
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMultMatrixf(mP);

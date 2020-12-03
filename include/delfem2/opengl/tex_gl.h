@@ -83,13 +83,8 @@ class CTexRGB_Rect2D :
 public CTexRGB
 {
 public:
-  CTexRGB_Rect2D() : CTexRGB() {
-    min_x = min_y = 0;
-    max_x = max_y = 0;
-    z = 0;
-  }
+  CTexRGB_Rect2D() : CTexRGB() {}
   virtual ~CTexRGB_Rect2D() = default;
-
 
   void Draw_oldGL() const;
   
@@ -124,8 +119,10 @@ public:
     z = (mmxy[4] + mmxy[5])*0.5;
   }
 public:
-  double min_x, max_x, min_y, max_y;
-  double z;
+  // this is a coordinate for OpenGL image plane (after ModelView and Projection)
+  double min_x = -1, max_x = +1;
+  double min_y = -1, max_y = +1;
+  double z = -1;
 };
 
 // ----------------------------------
