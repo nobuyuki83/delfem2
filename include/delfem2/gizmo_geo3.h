@@ -13,58 +13,63 @@
 
 namespace delfem2 {
 
-DFM2_INLINE bool DragHandlerRot_Mat4
-(double quat[4], int ielem,
- const CVec2d& sp0, const CVec2d& sp1, double mat[16],
- const float mMV[16], const float mPj[16]);
+DFM2_INLINE bool DragHandlerRot_Mat4(
+    double quat[4],
+    int ielem,
+    const CVec2d& sp0,
+    const CVec2d& sp1,
+    double mat[16],
+    const float mMV[16],
+    const float mPj[16]);
 
-DFM2_INLINE int PickHandlerRotation_Mat4
-(const CVec3d& src, const CVec3d& dir,
- const double mat[16], double rad,
- double tol);
-
-
-DFM2_INLINE bool isPickPoint
-(const CVec2d& sp,
- const CVec3d& p,
- const float* mMV,
- const float* mPj,
- double pick_tol);
-
-DFM2_INLINE bool isPickCircle
-(const CVec3d& axis,
- const CVec3d& org,
- double rad,
- const CVec3d& src,
- const CVec3d& dir,
- double pick_tol);
-
-DFM2_INLINE bool isPick_AxisHandler
-(const CVec2d& sp,
- const CVec3d& p,
- const CVec3d& axis,
- double len,
- const float* mMV,
- const float* mPj,
- double pick_tol);
+DFM2_INLINE int PickHandlerRotation_Mat4(
+    const CVec3d& src,
+    const CVec3d& dir,
+    const double mat[16],
+    double rad,
+    double tol);
 
 
-DFM2_INLINE double DragCircle
-(const CVec2d& sp0,
- const CVec2d& sp1,
- const CVec3d& p,
- const CVec3d& axis,
- const float* mMV,
- const float* mPj);
+DFM2_INLINE bool isPickPoint(
+    const CVec2d& sp,
+    const CVec3d& p,
+    const float* mMV,
+    const float* mPj,
+    double pick_tol);
 
-DFM2_INLINE bool isPickCircle
-(const CVec2d& sp,
- const CVec3d& p,
- const CVec3d& axis,
- double r,
- const float* mMV,
- const float* mPj,
- double pick_tol);
+DFM2_INLINE bool isPickCircle(
+    const CVec3d& axis,
+    const CVec3d& org,
+    double rad,
+    const CVec3d& src,
+    const CVec3d& dir,
+    double pick_tol);
+
+DFM2_INLINE bool isPick_AxisHandler(
+    const CVec2d& sp,
+    const CVec3d& p,
+    const CVec3d& axis,
+    double len,
+    const float* mMV,
+    const float* mPj,
+    double pick_tol);
+
+DFM2_INLINE double DragCircle(
+    const CVec2d& sp0,
+    const CVec2d& sp1,
+    const CVec3d& p,
+    const CVec3d& axis,
+    const float* mMV,
+    const float* mPj);
+
+DFM2_INLINE bool isPickCircle(
+    const CVec2d& sp,
+    const CVec3d& p,
+    const CVec3d& axis,
+    double r,
+    const float* mMV,
+    const float* mPj,
+    double pick_tol);
 
 /**
  * @details defiend for float and double for static library
