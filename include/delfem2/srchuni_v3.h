@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// TODO: rename "CPointElemSolid" -> CPtElm3
+// TODO: rename "CPointElemSurf" -> CPtElm2
 
 #ifndef DFM2_SRCHUNI_V3_H
 #define DFM2_SRCHUNI_V3_H
@@ -181,58 +183,68 @@ CPointElemSurf<T> Nearest_Point_MeshTri3D(
     const std::vector<unsigned int>& aTri);
 
 template <typename T>
-CPointElemSurf<T> Nearest_Point_MeshTri3DPart(const delfem2::CVec3<T>& q,
-                                           const std::vector<double>& aXYZ,
-                                           const std::vector<unsigned int>& aTri,
-                                           const std::vector<int>& aIndTri_Cand);
+CPointElemSurf<T> Nearest_Point_MeshTri3DPart(
+    const delfem2::CVec3<T>& q,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<int>& aIndTri_Cand);
 
 template <typename T>
-CPointElemSurf<T> Nearest_Point_MeshTetFace3D(const delfem2::CVec3<T>& p0,
-                                           const std::vector<double>& aXYZ,
-                                           const std::vector<int>& aTet,
-                                           const std::vector<int>& aTetFaceSrf);
+CPointElemSurf<T> Nearest_Point_MeshTetFace3D(
+    const delfem2::CVec3<T>& p0,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTet,
+    const std::vector<int>& aTetFaceSrf);
   
 template <typename T>
-CPointElemSolid<T> Nearest_Point_MeshTet3D(const delfem2::CVec3<T>& q,
-                                        const std::vector<double>& aXYZ,
-                                        const std::vector<int>& aTet);
+CPointElemSolid<T> Nearest_Point_MeshTet3D(
+    const delfem2::CVec3<T>& q,
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTet);
   
 template <typename T>
-CPointElemSolid<T> Nearest_Point_MeshTet3D(const delfem2::CVec3<T>& p,
-                                        int itet_start, // starting triangle
-                                        const std::vector<double>& aXYZ,
-                                        const std::vector<int>& aTet,
-                                        const std::vector<int>& aTetSurRel);
+CPointElemSolid<T> Nearest_Point_MeshTet3D(
+    const delfem2::CVec3<T>& p,
+    int itet_start, // starting triangle
+    const std::vector<double>& aXYZ,
+    const std::vector<int>& aTet,
+    const std::vector<int>& aTetSurRel);
 
 template <typename T>
-double SDFNormal_NearestPoint(delfem2::CVec3<T>& n0,
-                              const delfem2::CVec3<T>& p0,
-                              const CPointElemSurf<T>& pes,
-                              const std::vector<double>& aXYZ,
-                              const std::vector<unsigned int>& aTri,
-                              const std::vector<double>& aNorm);
+double SDFNormal_NearestPoint(
+    delfem2::CVec3<T>& n0,
+    const delfem2::CVec3<T>& p0,
+    const CPointElemSurf<T>& pes,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aNorm);
 
 template <typename T>
-double SDFNormal_NearestPoint(delfem2::CVec3<T>& n0,
-                              const delfem2::CVec3<T>& p0,
-                              const CPointElemSurf<T>& pes,
-                              const double* aXYZ, unsigned int nXYZ,
-                              const unsigned int* aTri, unsigned int nTri,
-                              const double* aNorm);
+double SDFNormal_NearestPoint(
+    delfem2::CVec3<T>& n0,
+    const delfem2::CVec3<T>& p0,
+    const CPointElemSurf<T>& pes,
+    const double* aXYZ, unsigned int nXYZ,
+    const unsigned int* aTri, unsigned int nTri,
+    const double* aNorm);
 
 template <typename T>
-double DistanceToTri(CPointElemSurf<T>& pes,
-                     const delfem2::CVec3<T>& p,
-                     unsigned int itri0,
-                     const std::vector<double>& aXYZ,
-                     const std::vector<unsigned int>& aTri);
+double DistanceToTri(
+    CPointElemSurf<T>& pes,
+    const delfem2::CVec3<T>& p,
+    unsigned int itri0,
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri);
 
 template <typename T>
-double DistanceToTri(CPointElemSurf<T>& pes,
-                     const delfem2::CVec3<T>& p,
-                     unsigned int itri0,
-                     const double* aXYZ, unsigned int nXYZ,
-                     const unsigned int* aTri, unsigned int nTri);
+double DistanceToTri(
+    CPointElemSurf<T>& pes,
+    const delfem2::CVec3<T>& p,
+    unsigned int itri0,
+    const double* aXYZ,
+    unsigned int nXYZ,
+    const unsigned int* aTri,
+    unsigned int nTri);
 
 }
 

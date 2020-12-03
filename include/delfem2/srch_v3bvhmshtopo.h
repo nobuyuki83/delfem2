@@ -17,7 +17,9 @@
 #include "delfem2/mshtopo.h" // sourrounding relationship
 #include "delfem2/vec3.h"
 #include "delfem2/mat4.h"
-#include <math.h>
+#include "delfem2/mshmisc.h"
+#include "delfem2/points.h"
+#include <cmath>
 #include <vector>
 
 namespace delfem2 {
@@ -121,7 +123,9 @@ template <typename BV, typename REAL>
 class CBVH_MeshTri3D
 {
 public:
-  CBVH_MeshTri3D(){}
+  CBVH_MeshTri3D() :
+  iroot_bvh(0)
+  {}
   void Init(const double* pXYZ, unsigned int nXYZ,
             const unsigned int* pTri, unsigned int nTri,
             double margin)
@@ -130,9 +134,9 @@ public:
     { // make BVH topology
       std::vector<double> aElemCenter(nTri*3);
       for(unsigned int itri=0;itri<nTri;++itri){
-        int i0 = pTri[itri*3+0];
-        int i1 = pTri[itri*3+1];
-        int i2 = pTri[itri*3+2];
+        const unsigned int i0 = pTri[itri*3+0];
+        const unsigned int i1 = pTri[itri*3+1];
+        const unsigned int i2 = pTri[itri*3+2];
         double x0 = (pXYZ[i0*3+0]+pXYZ[i1*3+0]+pXYZ[i2*3+0])/3.0;
         double y0 = (pXYZ[i0*3+1]+pXYZ[i1*3+1]+pXYZ[i2*3+1])/3.0;
         double z0 = (pXYZ[i0*3+2]+pXYZ[i1*3+2]+pXYZ[i2*3+2])/3.0;
@@ -285,9 +289,9 @@ template <typename REAL>
 class CInfoNearest
 {
   public:
-    CInfoNearest(){
-      is_active = false;
-    }
+    CInfoNearest() :
+    sdf(0.0), is_active(false){}
+
   public:
     CPointElemSurf<REAL> pes;
     CVec3<REAL> pos;
@@ -377,9 +381,9 @@ void Intersection_ImageRay_TriMesh3(
     const std::vector<double>& aXYZ, // 3d points
     const std::vector<unsigned int>& aTri )
 {
+  aPointElemSurf.resize(nheight*nwidth);
   double mMVPd[16]; for(int i=0;i<16;++i){ mMVPd[i] = mMVPf[i]; }
   double mMVPd_inv[16]; Inverse_Mat4(mMVPd_inv,mMVPd);
-  aPointElemSurf.resize(nheight*nwidth);
   std::vector<unsigned int> aIndElem;
   for(unsigned int ih=0;ih<nheight;++ih){
     for(unsigned int iw=0;iw<nwidth;++iw){
@@ -393,22 +397,60 @@ void Intersection_ImageRay_TriMesh3(
       //
       aIndElem.resize(0);
       BVH_GetIndElem_Predicate(aIndElem,
-                               CIsBV_IntersectLine<BV>(src1.p,dir1.p),
-                               0, aNodeBVH, aAABB);
-      delfem2::CPointElemSurf<double> pes;
-      if( !aIndElem.empty() ) {
-        std::map<double, delfem2::CPointElemSurf<double>> mapDepthPES;
-        IntersectionRay_MeshTri3DPart(
-            mapDepthPES,
-            src1,dir1,
-            aTri, aXYZ, aIndElem, 1.0e-10);
-        if( !mapDepthPES.empty() ) {
-          pes = mapDepthPES.begin()->second;
-        }
-      }
-      aPointElemSurf[ih*nwidth+iw] = pes;
+          CIsBV_IntersectLine<BV>(src1.p,dir1.p),
+          0, aNodeBVH, aAABB);
+      if( aIndElem.empty() ){ continue; } // no bv hit the ray
+      std::map<double, CPointElemSurf<double>> mapDepthPES;
+      IntersectionRay_MeshTri3DPart(
+          mapDepthPES,
+          src1,dir1,
+          aTri, aXYZ, aIndElem, 1.0e-10);
+      if( mapDepthPES.empty() ) { continue; }
+      aPointElemSurf[ih*nwidth+iw] = mapDepthPES.begin()->second;
     }
   }
+}
+
+template <typename BV>
+void BuildBVH_MeshTri3D_Morton(
+    std::vector<CNodeBVH2>& aNodeBVH,
+    std::vector<BV>& aAABB,
+    const std::vector<double>& aXYZ, // 3d points
+    const std::vector<unsigned int>& aTri)
+{
+  std::vector<double> aCent;
+  double rad = CentsMaxRad_MeshTri3(
+      aCent,
+      aXYZ,aTri);
+  double min_xyz[3], max_xyz[3];
+  BoundingBox3_Points3(min_xyz,max_xyz,
+      aCent.data(), aCent.size()/3);
+  min_xyz[0] -= 1.0e-3*rad;
+  min_xyz[1] -= 1.0e-3*rad;
+  min_xyz[2] -= 1.0e-3*rad;
+  max_xyz[0] += 1.0e-3*rad;
+  max_xyz[1] += 1.0e-3*rad;
+  max_xyz[2] += 1.0e-3*rad;
+  std::vector<unsigned int> aSortedId;
+  std::vector<std::uint32_t> aSortedMc;
+  SortedMortenCode_Points3(aSortedId,aSortedMc,
+      aCent,min_xyz,max_xyz);
+#ifndef NDEBUG
+  Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
+  Check_MortonCode_RangeSplit(aSortedMc);
+#endif
+  BVHTopology_Morton(aNodeBVH,
+      aSortedId,aSortedMc);
+#ifndef NDEBUG
+  Check_BVH(aNodeBVH,aCent.size()/3);
+#endif
+  CLeafVolumeMaker_Mesh<BV,double> lvm(
+      1.0e-10,
+      aXYZ.data(), aXYZ.size()/3,
+      aTri.data(), aTri.size()/3, 3);
+  BVH_BuildBVHGeometry(aAABB,
+      0, aNodeBVH,
+      lvm);
 }
   
 } // namespace delfem2
