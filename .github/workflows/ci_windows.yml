@@ -101,13 +101,13 @@ jobs:
         cmake --build . --config Release
         cd ../../../  
 
-    - name: build smpl_demo
+    - name: build examples_glfw_cnpy_oldgl_smpl
       run: |
         echo "##############################"
-        echo "## glfw_smpl"
+        echo "## examples_glfw_cnpy_oldgl_smpl"
         $zlib_library=Convert-Path 3rd_party\zlib\buildMake\Release\zlib.lib
         echo $zlib_library
-        cd examples_smpl
+        cd examples_glfw_cnpy_oldgl_smpl
         mkdir buildVS64Hdronly
         cd buildVS64Hdronly
         cmake -A x64 -DUSE_HEADERONLY=ON -DZLIB_LIBRARY="$zlib_library" -DZLIB_INCLUDE_DIR="..\..\3rd_party\zlib;..\..\3rd_party\zlib\buildMake" ..

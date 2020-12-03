@@ -147,14 +147,14 @@ echo "################################"
 echo "build examples_smpl"
 echo "################################"
 
-cd examples_smpl
+cd examples_glfw_cnpy_oldgl_smpl
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
 # cmake --build . # skip build to save time
 cd ../../
 
-cd examples_smpl
+cd examples_glfw_cnpy_oldgl_smpl
 mkdir buildMakeHdronly
 cd buildMakeHdronly
 cmake -DUSE_HEADERONLY=ON ..
