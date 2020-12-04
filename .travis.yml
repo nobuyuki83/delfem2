@@ -28,20 +28,22 @@ script: |
 
   echo "# --------------------------"
   echo "# build c++ glut examples"
-  cd examples_glut
-  mkdir buildMake
-  cd buildMake
+  cd examples_oldgl_glut
+  mkdir buildMake && cd buildMake
   cmake ..
   make
   cd ../..
 
   echo "# ----------------"
-  echo "# test cpp"
+  echo "# fetch googletext"
+  git submodule update --init -- 3rd_party/googletest
   cd 3rd_party/googletest
   cmake .
   make
   cd ../../
 
+  echo "# ----------------"
+  echo "# build test"
   cd test_cpp
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=OFF ..
@@ -60,31 +62,34 @@ script: |
 
 
   echo "# -------------------------"
-  echo "# build C++ glfw examples"
+  echo "# build C++ oldGL glfw examples"
+  git submodule update --init -- 3rd_party/glfw
   cd 3rd_party/glfw
   cmake .
   make
   cd ../..
 
-  cd examples_glfwold
+  cd examples_oldgl_glfw
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=ON ..
   make
   cd ../..
 
-  cd examples_glfwold
+  cd examples_oldgl_glfw
   mkdir buildMakeStatic && cd buildMakeStatic
   cmake -DUSE_HEADERONLY=OFF ..
   make
   cd ../..
 
-  cd examples_glfwnew
+  echo "# -------------------------"
+  echo "# build C++ newGL glfw examples"
+  cd examples_newgl_glfw
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=ON ..
   make
   cd ../..
 
-  cd examples_glfwnew
+  cd examples_newgl_glfw
   mkdir buildMakeStatic && cd buildMakeStatic
   cmake -DUSE_HEADERONLY=OFF ..
   make
@@ -92,7 +97,7 @@ script: |
 
   echo "# -------------------------"
   echo "# build tinyglfw examples"
-  cd examples_glfw_tinygltf_oldgl
+  cd examples_oldgl_glfw_tinygltf
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=ON ..
   make
@@ -100,7 +105,7 @@ script: |
 
   echo "# --------------------------"
   echo "# build glfw_thread examples"
-  cd examples_glfw_thread_oldgl
+  cd examples_oldgl_glfw_thread
   mkdir buildMakeHdronly && cd buildMakeHdronly
   cmake -DUSE_HEADERONLY=ON ..
   make

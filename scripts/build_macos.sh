@@ -3,14 +3,14 @@ echo "################################"
 echo "build examples_glut"
 echo "################################"
 
-cd examples_glut
+cd examples_oldgl_glut
 mkdir buildMake 
 cd buildMake
 cmake ..
 make
 cd ../../
 
-cd examples_glut
+cd examples_oldgl_glut
 mkdir buildXcode 
 cd buildXcode
 cmake -G Xcode ..
@@ -35,28 +35,28 @@ echo "################################"
 echo "build examples_glfwold"
 echo "################################"
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildXcodeHdronly 
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
 # cmake --build . # skip build to save time
 cd ../../
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildXcodeStatic 
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 # cmake --build . # skip build to save time
 cd ../../
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildMakeHdronly
 cd buildMakeHdronly
 cmake -DUSE_HEADERONLY=ON ..
 make
 cd ../../
 
-cd examples_glfwold
+cd examples_oldgl_glfw
 mkdir buildMakeStatic 
 cd buildMakeStatic
 cmake -DUSE_HEADERONLY=OFF ..
@@ -67,7 +67,7 @@ echo "################################"
 echo "build examples_glfw_thread_oldgl"
 echo "################################"
 
-cd examples_glfw_thread_oldgl
+cd examples_oldgl_glfw_thread
 mkdir buildXcodeHdronly 
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
@@ -89,14 +89,14 @@ echo "################################"
 echo "build examples_glfwnew"
 echo "################################"
 
-cd examples_glfwnew
+cd examples_newgl_glfw
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
 cmake --build .
 cd ../../
 
-cd examples_glfwnew
+cd examples_newgl_glfw
 mkdir buildXcodeStatic
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
@@ -118,14 +118,14 @@ echo "################################"
 echo "compile demos using tinygltf"
 echo "################################"
 
-cd examples_glfw_tinygltf_oldgl
+cd examples_oldgl_glfw_tinygltf
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
 cmake --build .
 cd ../../
 
-cd examples_glfw_tinygltf_oldgl
+cd examples_oldgl_glfw_tinygltf
 mkdir buildXcodeStatic
 cd buildXcodeStatic
 cmake -G Xcode -DUSE_HEADERONLY=OFF ..
@@ -147,14 +147,14 @@ echo "################################"
 echo "build examples_smpl"
 echo "################################"
 
-cd examples_glfw_cnpy_oldgl_smpl
+cd examples_oldgl_glfw_cnpy
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
 # cmake --build . # skip build to save time
 cd ../../
 
-cd examples_glfw_cnpy_oldgl_smpl
+cd examples_oldgl_glfw_cnpy
 mkdir buildMakeHdronly
 cd buildMakeHdronly
 cmake -DUSE_HEADERONLY=ON ..

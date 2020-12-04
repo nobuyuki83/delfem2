@@ -76,13 +76,13 @@ jobs:
         echo ########################################
         echo ## build C++ glfw legacy Opengl examples
 
-        cd examples_glfwold
+        cd examples_oldgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake -DUSE_HEADERONLY=ON ..
         make
         cd ../..
 
-        cd examples_glfwold
+        cd examples_oldgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
         cmake -DUSE_HEADERONLY=OFF ..
         make
@@ -93,13 +93,13 @@ jobs:
         echo ########################################
         echo ## build C++ glfw modern Opengl examples
 
-        cd examples_glfwnew
+        cd examples_newgl_glfw
         mkdir buildMakeHdronly && cd buildMakeHdronly
         cmake -DUSE_HEADERONLY=ON ..
         make
         cd ../..
 
-        cd examples_glfwnew
+        cd examples_newgl_glfw
         mkdir buildMakeStatic && cd buildMakeStatic
         cmake -DUSE_HEADERONLY=OFF ..
         make
@@ -112,7 +112,7 @@ jobs:
 
         sudo apt-get install freeglut3-dev 
 
-        cd examples_glut
+        cd examples_oldgl_glut
         mkdir buildMake && cd buildMake
         cmake ..
         make
@@ -123,7 +123,7 @@ jobs:
         echo ########################
         echo ## build tinygl examples
 
-        cd examples_glfw_tinygltf_oldgl
+        cd examples_oldgl_glfw_tinygltf
         mkdir buildXcodeHdronly && cd buildXcodeHdronly
         cmake -DUSE_HEADERONLY=ON ..
         make .
@@ -134,7 +134,7 @@ jobs:
         echo ########################
         echo ## build thread examples
 
-        cd examples_glfw_thread_oldgl
+        cd examples_oldgl_glfw_thread
         mkdir buildXcodeHdronly && cd buildXcodeHdronly
         cmake -DUSE_HEADERONLY=ON ..
         make .

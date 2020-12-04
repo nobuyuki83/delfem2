@@ -15,7 +15,7 @@
 #include <vector>
 #include <string>
 #include <cassert>
-#include "delfem2/gizmo_geo3.h"
+#include "delfem2/geo3_v23m34q.h"
 
 namespace delfem2 {
 
@@ -304,93 +304,6 @@ DFM2_INLINE void SetPose_BioVisionHierarchy(
     const std::vector<CChannel_BioVisionHierarchy> &aChannelInfo,
     const double *aVal);
 
-
-/**
- * @brief gizmo for rig
- */
-template<typename REAL>
-class CGizmo_Rig {
-public:
-  enum MODE_EDIT {
-    ROT, TRNSL
-  };
-public:
-  void Pick(const float src[3], const float dir[3],
-            const std::vector<CRigBone> &aBone) {
-    if (mode_edit == ROT) {
-      const CVec3d s0(src), d0(dir);
-      if (ipicked_bone != -1) {
-        gizmo_rot.Pick(true, src, dir, 0.03);
-        if (gizmo_rot.ielem_picked != -1) {
-          return;
-        }
-      }
-      ipicked_bone = -1;
-      for (unsigned int ib = 0; ib < aBone.size(); ++ib) {
-        CVec3d p0 = aBone[ib].Pos();
-        CVec3d p1 = nearest_Line_Point(p0, s0, d0);
-        double len01 = (p0 - p1).Length();
-        if (len01 < 0.03) {
-          ipicked_bone = ib;
-          gizmo_rot.quat[0] = aBone[ipicked_bone].quatRelativeRot[0];
-          gizmo_rot.quat[1] = aBone[ipicked_bone].quatRelativeRot[1];
-          gizmo_rot.quat[2] = aBone[ipicked_bone].quatRelativeRot[2];
-          gizmo_rot.quat[3] = aBone[ipicked_bone].quatRelativeRot[3];
-        }
-      }
-    } else if (mode_edit == TRNSL) {
-      gizmo_trnsl.pos[0] = aBone[0].transRelative[0];
-      gizmo_trnsl.pos[1] = aBone[0].transRelative[1];
-      gizmo_trnsl.pos[2] = aBone[0].transRelative[2];
-      gizmo_trnsl.Pick(true, src, dir, 0.03);
-    }
-  }
-
-  bool Drag(std::vector<CRigBone> &aBone,
-            const float src0[3], const float src1[3], const float dir[3]) {
-    if (mode_edit == ROT) {
-      if (ipicked_bone == -1) { return false; }
-      assert(ipicked_bone >= 0 && ipicked_bone < (int) aBone.size());
-      gizmo_rot.pos = aBone[ipicked_bone].Pos().Float();
-      gizmo_rot.Drag(src0, src1, dir);
-      {
-        const int ibp = aBone[ipicked_bone].ibone_parent;
-        CMat3d m3;
-        if (ibp == -1) { m3.SetIdentity(); }
-        else { m3.SetMat4(aBone[ibp].affmat3Global); }
-        CQuatd qp;
-        m3.GetQuat_RotMatrix(qp.q);
-        CQuatd qg = CQuatf(gizmo_rot.quat).Double();
-        CQuatd qj = qp.Conjugate() * qg;
-        qj.CopyTo(aBone[ipicked_bone].quatRelativeRot);
-      }
-      UpdateBoneRotTrans(aBone);
-      return true;
-    } else if (mode_edit == TRNSL) {
-      gizmo_trnsl.Drag(src0, src1, dir);
-      aBone[0].transRelative[0] = gizmo_trnsl.pos.x();
-      aBone[0].transRelative[1] = gizmo_trnsl.pos.y();
-      aBone[0].transRelative[2] = gizmo_trnsl.pos.z();
-      UpdateBoneRotTrans(aBone);
-      return true;
-    }
-    return false;
-  }
-
-  // --------
-  void SetSize(double size) {
-    gizmo_rot.size = size;
-    gizmo_trnsl.size = size;
-  }
-
-  void SetMode(MODE_EDIT mode) { mode_edit = mode; }
-
-public:
-  MODE_EDIT mode_edit = ROT; // 0:rot, 1:trnsl
-  int ipicked_bone = -1;
-  CGizmo_Transl<REAL> gizmo_trnsl;
-  CGizmo_Rotation<REAL> gizmo_rot;
-};
 
 } // namespace delfem2
 
