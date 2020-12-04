@@ -95,14 +95,6 @@ script: |
   make
   cd ../..
 
-  echo "# -------------------------"
-  echo "# build tinyglfw examples"
-  cd examples_oldgl_glfw_tinygltf
-  mkdir buildMakeHdronly && cd buildMakeHdronly
-  cmake -DUSE_HEADERONLY=ON ..
-  make
-  cd ../../
-
   echo "# --------------------------"
   echo "# build glfw_thread examples"
   cd examples_oldgl_glfw_thread
@@ -110,3 +102,25 @@ script: |
   cmake -DUSE_HEADERONLY=ON ..
   make
   cd ../../  
+
+
+  echo "# -------------------------"
+  echo "# build tinyglfw examples"
+  git submodule update --init -- 3rd_party/tinygltf
+  cd examples_oldgl_glfw_tinygltf
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=ON ..
+  make
+  cd ../../
+
+  echo "# -------------------------"
+  echo "# build imgui examples"
+  git submodule update --init -- 3rd_party/imgui
+  cd examples_newgl_glfw_imgui
+  mkdir buildMakeHdronly && cd buildMakeHdronly
+  cmake -DUSE_HEADERONLY=ON ..
+  make
+  cd ../../
+
+
+

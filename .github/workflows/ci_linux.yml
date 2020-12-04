@@ -122,7 +122,7 @@ jobs:
       run: |
         echo ########################
         echo ## build tinygl examples
-
+        git submodule update --init -- 3rd_party/tinygltf
         cd examples_oldgl_glfw_tinygltf
         mkdir buildXcodeHdronly && cd buildXcodeHdronly
         cmake -DUSE_HEADERONLY=ON ..
@@ -133,8 +133,18 @@ jobs:
       run: |
         echo ########################
         echo ## build thread examples
-
         cd examples_oldgl_glfw_thread
+        mkdir buildXcodeHdronly && cd buildXcodeHdronly
+        cmake -DUSE_HEADERONLY=ON ..
+        make .
+        cd ../../
+
+    - name: test_imgui
+      run: |
+        echo ########################
+        echo ## build imgui examples
+        git submodule update --init -- 3rd_party/imgui
+        cd examples_newgl_glfw_imgui
         mkdir buildXcodeHdronly && cd buildXcodeHdronly
         cmake -DUSE_HEADERONLY=ON ..
         make .

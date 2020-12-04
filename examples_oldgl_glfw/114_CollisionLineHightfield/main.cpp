@@ -86,7 +86,7 @@ int main(int argc,char* argv[])
         (src-dfm2::CVec3d(sampler.origin))*ey - 0.5*sampler.lengrid,
         (src-dfm2::CVec3d(sampler.origin))*ez };
       const double ldir[3] = { dir*ex, dir*ey, dir*ez };
-      std::vector<dfm2::CPointElemSurf<double>> aPES;
+      std::vector<dfm2::CPtElm2<double>> aPES;
       dfm2::IntersectionLine_Hightfield(aPES,
           -sampler.z_range*0.999, -sampler.z_range*0.001,
           lsrc, ldir,

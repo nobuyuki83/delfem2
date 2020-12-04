@@ -12,9 +12,10 @@
 #ifndef DFM2_SRCHBI_V3BVH_H
 #define DFM2_SRCHBI_V3BVH_H
 
-#include <stdio.h>
 #include "delfem2/bvh.h"
 #include "delfem2/vec3.h"
+#include <stdio.h>
+
 
 namespace delfem2 {
 

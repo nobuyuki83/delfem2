@@ -6,15 +6,13 @@
  */
 
 
-#include <stack>
-#include <map>
-
+#include "delfem2/cloth_selfcollision.h"
+#include "delfem2/srchbi_v3bvh.h"
 #include "delfem2/vec3.h"
 #include "delfem2/bv.h"
 #include "delfem2/bvh.h"
-
-#include "delfem2/srchbi_v3bvh.h"
-#include "delfem2/cloth_selfcollision.h"
+#include <stack>
+#include <map>
 
 namespace dfm2 = delfem2;
 

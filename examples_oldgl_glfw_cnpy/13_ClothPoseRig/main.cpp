@@ -194,7 +194,7 @@ int main()
       std::vector<double> aW_Cloth;
       aW_Cloth.assign(npc*nb, 0.0);
       for(unsigned int ipc=0;ipc<npc;++ipc){
-        dfm2::CPointElemSurf<double> pesb = dfm2::Nearest_Point_MeshTri3D(
+        dfm2::CPtElm2d pesb = dfm2::Nearest_Point_MeshTri3D(
             dfm2::CVec3d(aXYZ_Cloth.data()+ipc*3),
             body.aXYZ1_Body,
             body.aTri_Body );

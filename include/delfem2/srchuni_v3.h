@@ -5,27 +5,28 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// TODO: rename "CPointElemSolid" -> CPtElm3
-// TODO: rename "CPointElemSurf" -> CPtElm2
+// DONE(2020/12/5): rename "CPointElemSolid" -> CPtElm3
+// DONE(2020/12/5): rename "CPointElemSurf" -> CPtElm2
 
 #ifndef DFM2_SRCHUNI_V3_H
 #define DFM2_SRCHUNI_V3_H
 
+#include "delfem2/vec3.h"
 #include "delfem2/dfm2_inline.h"
 #include <cstdio>
 #include <climits>
 #include <map>
-#include "delfem2/vec3.h"
+
 
 // -----------------------------------
 
 namespace delfem2 {
   
 template <typename T>
-class CPointElemSolid{
+class CPtElm3{
 public:
-  CPointElemSolid(): ielem(-1), r0(0), r1(0), r2(0) {}
-  CPointElemSolid(int itet, double r0, double r1, double r2):ielem(itet),r0(r0),r1(r1),r2(r2) {}
+  CPtElm3(): ielem(-1), r0(0), r1(0), r2(0) {}
+  CPtElm3(int itet, double r0, double r1, double r2):ielem(itet),r0(r0),r1(r1),r2(r2) {}
   bool isInside(double eps) const {
     double r3 = (1-r0-r1-r2);
     if( r0 > eps && r1 > eps && r2 > eps &&  r3 > eps ){ return true; }
@@ -50,10 +51,10 @@ public:
 
 // class for point in a triangle
 template <typename T>
-class CPointElemSurf{
+class CPtElm2{
 public:
-  CPointElemSurf() : itri(UINT_MAX), r0(0), r1(0) {}
-  CPointElemSurf(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
+  CPtElm2() : itri(UINT_MAX), r0(0), r1(0) {}
+  CPtElm2(int itri, double r0, double r1):itri(itri), r0(r0),r1(r1) {}
   delfem2::CVec3<T> Pos_Tri(
       const std::vector<double>& aXYZ,
       const std::vector<unsigned int>& aTri) const;
@@ -84,11 +85,14 @@ public:
   unsigned int itri; // can be -1
   double r0, r1;
 };
+
+using CPtElm2d = CPtElm2<double>;
+using CPtElm2f = CPtElm2<float>;
   
 template <typename T>
 std::ostream &operator << (
     std::ostream &output,
-    const CPointElemSurf<T>& v)
+    const CPtElm2<T>& v)
 {
   output.setf(std::ios::scientific);
   output << v.itri << " " << v.r0 << " " << v.r1;
@@ -98,7 +102,7 @@ std::ostream &operator << (
 template <typename T>
 std::istream &operator >> (
     std::istream &input,
-    CPointElemSurf<T>& v)
+    CPtElm2<T>& v)
 {
   input>>v.itri>>v.r0>>v.r1;
   return input;
@@ -107,7 +111,7 @@ std::istream &operator >> (
 // ----------------------------------------------------------
 
 template <typename REAL>
-std::vector<CPointElemSurf<REAL>> IntersectionLine_MeshTri3(
+std::vector<CPtElm2<REAL>> IntersectionLine_MeshTri3(
     const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<REAL>& aXYZ,
@@ -116,7 +120,7 @@ std::vector<CPointElemSurf<REAL>> IntersectionLine_MeshTri3(
 
 template <typename REAL>
 void IntersectionRay_MeshTri3 (
-    std::map<REAL,CPointElemSurf<REAL>>& mapDepthPES,
+    std::map<REAL,CPtElm2<REAL>>& mapDepthPES,
     const delfem2::CVec3<REAL>& org,
     const delfem2::CVec3<REAL>& dir,
     const std::vector<unsigned int>& aTri,
@@ -125,7 +129,7 @@ void IntersectionRay_MeshTri3 (
   
 template <typename REAL>
 void IntersectionRay_MeshTri3DPart(
-    std::map<REAL,CPointElemSurf<REAL>>& mapDepthPES,
+    std::map<REAL,CPtElm2<REAL>>& mapDepthPES,
     const delfem2::CVec3<REAL>& org, const delfem2::CVec3<REAL>& dir,
     const std::vector<unsigned int>& aTri,
     const std::vector<REAL>& aXYZ,
@@ -161,7 +165,7 @@ CPointElemSurf intersect_Ray_MeshTriFlag3D(const delfem2::CVector3& org, const d
  */
 
 DFM2_INLINE void IntersectionLine_Hightfield(
-    std::vector<CPointElemSurf<double>>& aPos,
+    std::vector<CPtElm2<double>>& aPos,
     //
     double hmin, double hmax,
     const double src[3],
@@ -177,33 +181,33 @@ DFM2_INLINE void IntersectionLine_Hightfield(
 
 
 template <typename T>
-CPointElemSurf<T> Nearest_Point_MeshTri3D(
+CPtElm2<T> Nearest_Point_MeshTri3D(
     const delfem2::CVec3<T>& q,
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri);
 
 template <typename T>
-CPointElemSurf<T> Nearest_Point_MeshTri3DPart(
+CPtElm2<T> Nearest_Point_MeshTri3DPart(
     const delfem2::CVec3<T>& q,
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri,
     const std::vector<int>& aIndTri_Cand);
 
 template <typename T>
-CPointElemSurf<T> Nearest_Point_MeshTetFace3D(
+CPtElm2<T> Nearest_Point_MeshTetFace3D(
     const delfem2::CVec3<T>& p0,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aTet,
     const std::vector<int>& aTetFaceSrf);
   
 template <typename T>
-CPointElemSolid<T> Nearest_Point_MeshTet3D(
+CPtElm3<T> Nearest_Point_MeshTet3D(
     const delfem2::CVec3<T>& q,
     const std::vector<double>& aXYZ,
     const std::vector<int>& aTet);
   
 template <typename T>
-CPointElemSolid<T> Nearest_Point_MeshTet3D(
+CPtElm3<T> Nearest_Point_MeshTet3D(
     const delfem2::CVec3<T>& p,
     int itet_start, // starting triangle
     const std::vector<double>& aXYZ,
@@ -214,7 +218,7 @@ template <typename T>
 double SDFNormal_NearestPoint(
     delfem2::CVec3<T>& n0,
     const delfem2::CVec3<T>& p0,
-    const CPointElemSurf<T>& pes,
+    const CPtElm2<T>& pes,
     const std::vector<double>& aXYZ,
     const std::vector<unsigned int>& aTri,
     const std::vector<double>& aNorm);
@@ -223,14 +227,14 @@ template <typename T>
 double SDFNormal_NearestPoint(
     delfem2::CVec3<T>& n0,
     const delfem2::CVec3<T>& p0,
-    const CPointElemSurf<T>& pes,
+    const CPtElm2<T>& pes,
     const double* aXYZ, unsigned int nXYZ,
     const unsigned int* aTri, unsigned int nTri,
     const double* aNorm);
 
 template <typename T>
 double DistanceToTri(
-    CPointElemSurf<T>& pes,
+    CPtElm2<T>& pes,
     const delfem2::CVec3<T>& p,
     unsigned int itri0,
     const std::vector<double>& aXYZ,
@@ -238,7 +242,7 @@ double DistanceToTri(
 
 template <typename T>
 double DistanceToTri(
-    CPointElemSurf<T>& pes,
+    CPtElm2<T>& pes,
     const delfem2::CVec3<T>& p,
     unsigned int itri0,
     const double* aXYZ,
