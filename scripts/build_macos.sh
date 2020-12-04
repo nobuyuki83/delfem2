@@ -64,6 +64,24 @@ make
 cd ../../
 
 echo "################################"
+echo "build examples_glfwnew"
+echo "################################"
+
+cd examples_newgl_glfw
+mkdir buildXcodeHdronly
+cd buildXcodeHdronly
+cmake -G Xcode -DUSE_HEADERONLY=ON ..
+cmake --build .
+cd ../../
+
+cd examples_newgl_glfw
+mkdir buildXcodeStatic
+cd buildXcodeStatic
+cmake -G Xcode -DUSE_HEADERONLY=OFF ..
+cmake --build .
+cd ../../
+
+echo "################################"
 echo "build examples_glfw_thread_oldgl"
 echo "################################"
 
@@ -86,20 +104,13 @@ git pull origin master
 cd ../../
 
 echo "################################"
-echo "build examples_glfwnew"
+echo "build examples_newgl_glfw_imgui"
 echo "################################"
 
-cd examples_newgl_glfw
+cd examples_newgl_glfw_imgui
 mkdir buildXcodeHdronly
 cd buildXcodeHdronly
 cmake -G Xcode -DUSE_HEADERONLY=ON ..
-cmake --build .
-cd ../../
-
-cd examples_newgl_glfw
-mkdir buildXcodeStatic
-cd buildXcodeStatic
-cmake -G Xcode -DUSE_HEADERONLY=OFF ..
 cmake --build .
 cd ../../
 

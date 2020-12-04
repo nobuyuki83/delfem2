@@ -29,7 +29,7 @@ void ShadingImageRayLambertian(
     unsigned int nheight,
     unsigned int nwidth,
     const float mMVPf[16],
-    const std::vector< delfem2::CPointElemSurf<double> >& aPointElemSurf,
+    const std::vector< delfem2::CPtElm2<double> >& aPointElemSurf,
     const std::vector<double>& aXYZ, // 3d points
     const std::vector<unsigned int>& aTri)
 {
@@ -45,7 +45,7 @@ void ShadingImageRayLambertian(
       const dfm2::CVec3d src1(qs);
       const dfm2::CVec3d dir1 = dfm2::CVec3d(qe) - src1;
       //
-      const delfem2::CPointElemSurf<double>& pes = aPointElemSurf[ih*nwidth+iw];
+      const delfem2::CPtElm2<double>& pes = aPointElemSurf[ih*nwidth+iw];
       if (pes.itri == UINT_MAX) {
         aRGB[(ih * nwidth + iw) * 3 + 0] = 200;
         aRGB[(ih * nwidth + iw) * 3 + 1] = 255;
@@ -99,7 +99,7 @@ int main(int argc,char* argv[])
     dfm2::Check_MortonCode_Sort(aSortedId, aSortedMc, aCent, min_xyz, max_xyz);
     dfm2::Check_MortonCode_RangeSplit(aSortedMc);
 #endif
-    dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3_Sphere<double>,double> lvm(
+    dfm2::CLeafVolumeMaker_Mesh<dfm2::CBV3d_Sphere,double> lvm(
         1.0e-10,
         aXYZ.data(), aXYZ.size()/3,
         aTri.data(), aTri.size()/3, 3);
@@ -147,7 +147,7 @@ int main(int argc,char* argv[])
         viewer.nav.Mat4_MVP_OpenGL(mMV, mP, viewer.window);
         dfm2::MatMat4(mMVP, mMV, mP);
       }
-      std::vector< delfem2::CPointElemSurf<double> > aPointElemSurf;
+      std::vector< delfem2::CPtElm2<double> > aPointElemSurf;
       Intersection_ImageRay_TriMesh3(aPointElemSurf,
            tex.h,tex.w, mMVP,
            aNodeBVH,aAABB,aXYZ,aTri);

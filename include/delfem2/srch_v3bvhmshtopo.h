@@ -30,7 +30,7 @@ namespace delfem2 {
 template <typename BV, typename REAL>
 void BVH_NearestPoint_MeshTri3D (
     double& dist_min,
-    CPointElemSurf<REAL>& pes,
+    CPtElm2<REAL>& pes,
     //
     double px, double py, double pz,
     const std::vector<double>& aXYZ,
@@ -48,7 +48,7 @@ void BVH_NearestPoint_MeshTri3D (
   const unsigned int ichild1 = aBVH[ibvh].ichild[1];
   if( ichild1 == UINT_MAX ){ // leaf
     const unsigned int itri0 = ichild0;
-    CPointElemSurf<REAL> pes_tmp;
+    CPtElm2<REAL> pes_tmp;
     double dist = DistanceToTri(
         pes_tmp,
         CVec3<REAL>(px,py,pz),
@@ -69,7 +69,7 @@ template <typename BV, typename REAL>
 void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     double& dist_tri, // minimum distance to triangle
     double& dist_bv, // minimum distance to leaf bounding volume
-    CPointElemSurf<REAL>& pes,
+    CPtElm2<REAL>& pes,
     //
     double px, double py, double pz,
     double rad_exp, // exploring distance
@@ -92,7 +92,7 @@ void BVH_NearestPoint_IncludedInBVH_MeshTri3D(
     if( min0 == 0.0 ){
       dist_bv = 0.0;
       const unsigned int itri0 = ichild0;
-      CPointElemSurf<REAL> pes_tmp;
+      CPtElm2<REAL> pes_tmp;
       const double dist0 = DistanceToTri(
           pes_tmp,
           //
@@ -176,7 +176,7 @@ public:
     assert( aBB_BVH.size() == aNodeBVH.size() );
   }
   double Nearest_Point_IncludedInBVH(
-      CPointElemSurf<REAL>& pes,
+      CPtElm2<REAL>& pes,
       const CVec3<REAL>& p0,
       double rad_exp, // look leaf inside this radius
       const double* aXYZ, unsigned int nXYZ,
@@ -192,12 +192,12 @@ public:
     if( pes.itri == UINT_MAX ){ return dist_min; }
     return dist;
   }
-  CPointElemSurf<REAL> NearestPoint_Global(
+  CPtElm2<REAL> NearestPoint_Global(
       const CVec3<REAL>& p0,
       const std::vector<double>& aXYZ,
       const std::vector<unsigned int>& aTri) const {
     assert( aBB_BVH.size() == aNodeBVH.size() );
-    CPointElemSurf<REAL> pes;
+    CPtElm2<REAL> pes;
     double dist_min = -1;
     BVH_NearestPoint_MeshTri3D(dist_min, pes,
                                p0.x(), p0.y(), p0.z(),
@@ -214,7 +214,7 @@ public:
       const std::vector<double>& aNorm) const
   {
     assert( aBB_BVH.size() == aNodeBVH.size() );
-    CPointElemSurf<REAL> pes;
+    CPtElm2<REAL> pes;
     {
       double dist_min = -1;
       delfem2::BVH_NearestPoint_MeshTri3D(dist_min, pes,
@@ -240,7 +240,7 @@ public:
     BVH_GetIndElem_Predicate(aIndElem,
         CIsBV_IntersectRay<BV>(p0.p, dir.p),
         iroot_bvh, aNodeBVH, aBB_BVH);
-    std::map<double,CPointElemSurf<REAL>> mapDepthPES1;
+    std::map<double,CPtElm2<REAL>> mapDepthPES1;
     IntersectionRay_MeshTri3DPart(mapDepthPES1,
                                   p0, dir,
                                   aTri, aXYZ, aIndElem,
@@ -269,7 +269,7 @@ void Project_PointsIncludedInBVH_Outside(
 {
   for(unsigned int ip=0;ip<aXYZt.size()/3;++ip){
     CVec3<REAL> p0(aXYZt[ip*3+0], aXYZt[ip*3+1], aXYZt[ip*3+2] );
-    CPointElemSurf<REAL> pes;
+    CPtElm2<REAL> pes;
     bvh.Nearest_Point_IncludedInBVH(pes,
                                     p0, 0.0,
                                     aXYZ0.data(),aXYZ0.size()/3,
@@ -293,7 +293,7 @@ class CInfoNearest
     sdf(0.0), is_active(false){}
 
   public:
-    CPointElemSurf<REAL> pes;
+    CPtElm2<REAL> pes;
     CVec3<REAL> pos;
     double sdf;
     bool is_active;
@@ -372,7 +372,7 @@ void Project_PointsIncludedInBVH_Outside_Cache(
 
 template <typename BV>
 void Intersection_ImageRay_TriMesh3(
-    std::vector< delfem2::CPointElemSurf<double> >& aPointElemSurf,
+    std::vector< delfem2::CPtElm2<double> >& aPointElemSurf,
     unsigned int nheight,
     unsigned int nwidth,
     const float mMVPf[16],
@@ -400,7 +400,7 @@ void Intersection_ImageRay_TriMesh3(
           CIsBV_IntersectLine<BV>(src1.p,dir1.p),
           0, aNodeBVH, aAABB);
       if( aIndElem.empty() ){ continue; } // no bv hit the ray
-      std::map<double, CPointElemSurf<double>> mapDepthPES;
+      std::map<double, CPtElm2<double>> mapDepthPES;
       IntersectionRay_MeshTri3DPart(
           mapDepthPES,
           src1,dir1,

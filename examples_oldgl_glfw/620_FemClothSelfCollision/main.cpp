@@ -1,16 +1,16 @@
-#include <iostream>
-#include <vector>
+
+
+#include "delfem2/opengl/funcs_glold.h"
+#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include "delfem2/cloth_internal.h"
+#include "delfem2/cloth_selfcollision.h"
 #include "delfem2/vec3.h"
 #include "delfem2/bvh.h"
 #include "delfem2/mshtopo.h"
-//
-#include "delfem2/cloth_internal.h"
-#include "delfem2/cloth_selfcollision.h"
-
-// ------------------
 #include <GLFW/glfw3.h>
-#include "delfem2/opengl/funcs_glold.h"
-#include "delfem2/opengl/glfw/viewer_glfw.h"
+#include <iostream>
+#include <vector>
+
 
 namespace dfm2 = delfem2;
 

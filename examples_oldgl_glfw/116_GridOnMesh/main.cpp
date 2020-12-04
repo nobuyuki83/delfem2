@@ -40,10 +40,10 @@ double pos2d_org_corner[4][2] = {
     {+0.2, -0.0},
     {-0.2, -0.0},
 };
-std::vector<dfm2::CPointElemSurf<double>> aPES0;
+std::vector<dfm2::CPtElm2<double>> aPES0;
 
 const unsigned int ndiv = 8;
-std::vector<dfm2::CPointElemSurf<double>> aPES1;
+std::vector<dfm2::CPtElm2<double>> aPES1;
 
 // ---------------------------------------------------
 
@@ -83,7 +83,7 @@ void UpdateProblem() {
     dfm2::CVec3d dir(0,0,-1);
     for( auto o2d : pos2d_org_corner ) {
       const dfm2::CVec3d o3d(o2d[0],o2d[1],10);
-      std::map<double,dfm2::CPointElemSurf<double>> mapDepthPES;
+      std::map<double,dfm2::CPtElm2<double>> mapDepthPES;
       IntersectionRay_MeshTri3(mapDepthPES,
                                o3d,dir,aTri,aXYZ,
                                0.0);
@@ -129,10 +129,10 @@ void UpdateProblem() {
         double r3 = (1-ri)*rj;
         const dfm2::CVec3d pA = r0*p0 + r1*p1 + r2*p2 + r3*p3;
         const dfm2::CVec3d nA = r0*n0 + r1*n1 + r2*n2 + r3*n3;
-        const std::vector<dfm2::CPointElemSurf<double>> aPES = IntersectionLine_MeshTri3(pA, nA,
+        const std::vector<dfm2::CPtElm2<double>> aPES = IntersectionLine_MeshTri3(pA, nA,
                                                                                          aTri, aXYZ,
                                                                                          0.0);
-        std::map<double,dfm2::CPointElemSurf<double>> mapPES;
+        std::map<double,dfm2::CPtElm2<double>> mapPES;
         for(auto pes : aPES){
           dfm2::CVec3d p_intersec = pes.Pos_Tri(aXYZ,aTri);
           mapPES.insert( std::make_pair( Distance(p_intersec,pA), pes) );

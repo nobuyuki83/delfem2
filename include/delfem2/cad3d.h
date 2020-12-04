@@ -178,7 +178,7 @@ public:
                   const std::vector<CCad3D_Edge>& aEdge,
                   double elen);
   bool isPick(const CVec3d& org, const CVec3d& dir){
-    std::map<double,CPointElemSurf<double>> mapDepthPES;
+    std::map<double,CPtElm2<double>> mapDepthPES;
     IntersectionRay_MeshTri3(mapDepthPES,
                              org,dir, aTri,aXYZ,
                              0.0);
