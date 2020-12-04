@@ -39,7 +39,6 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/mat3.h                      ${DELFEM2_INC}/mat3.cpp
     ${DELFEM2_INC}/mat4.h                      ${DELFEM2_INC}/mat4.cpp
     ${DELFEM2_INC}/quat.h                      ${DELFEM2_INC}/quat.cpp
-    ${DELFEM2_INC}/camera.h                    ${DELFEM2_INC}/camera.cpp
     ${DELFEM2_INC}/primitive.h                 ${DELFEM2_INC}/primitive.cpp
     ${DELFEM2_INC}/specialfuncs.h              ${DELFEM2_INC}/specialfuncs.cpp
     ${DELFEM2_INC}/mshtopo.h                   ${DELFEM2_INC}/mshtopo.cpp
@@ -60,6 +59,7 @@ add_library(${PROJ_NAME} STATIC
     ${DELFEM2_INC}/bv.h
     ${DELFEM2_INC}/pgeo.h
         
+    ${DELFEM2_INC}/cam3_m4q.h                  ${DELFEM2_INC}/cam3_m4q.cpp
     ${DELFEM2_INC}/geo3_v23m34q.h              ${DELFEM2_INC}/geo3_v23m34q.cpp
     ${DELFEM2_INC}/fem_emats.h                 ${DELFEM2_INC}/fem_emats.cpp
     ${DELFEM2_INC}/dtri2_v2dtri.h              ${DELFEM2_INC}/dtri2_v2dtri.cpp

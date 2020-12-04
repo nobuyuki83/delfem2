@@ -9,7 +9,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "delfem2/camera.h"
+#include "delfem2/cam3_m4q.h"
 
 // =================================================
 // implementation of CCamera class starts here

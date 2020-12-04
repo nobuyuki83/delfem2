@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>  // for the format
 
-#include "delfem2/camera.h"
+#include "delfem2/cam3_m4q.h"
 
 #if defined(__APPLE__) && defined(__MACH__)
   #include <GLUT/glut.h>

@@ -9,7 +9,7 @@
 #include <climits>
 #include "delfem2/vec3.h"
 #include "delfem2/mshmisc.h"
-#include "delfem2/camera.h"
+#include "delfem2/cam3_m4q.h"
 #include "delfem2/gridcube.h"
 // -------
 #include <glad/glad.h>
