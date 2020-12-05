@@ -223,11 +223,11 @@ public:
   unsigned int ib;
   CVec3d pos;
 public:
-  void WdW
-      (std::vector<double> &aW,
-       std::vector<double> &adW,
-       const std::vector<CRigBone> &aBone,
-       std::vector<double> &aL) const; // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
+  void WdW(
+      std::vector<double> &aW,
+      std::vector<double> &adW,
+      const std::vector<CRigBone> &aBone,
+      std::vector<double> &aL) const; // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
 };
 
 DFM2_INLINE void Rig_SensitivityBoneTransform(
