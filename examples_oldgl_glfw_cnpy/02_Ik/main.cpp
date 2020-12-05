@@ -115,8 +115,8 @@ int main()
     }
   }
   std::vector< dfm2::CVec3d > aTargetOriginPos;
-  for(auto & it : aTarget){
-    aTargetOriginPos.push_back(it.pos);
+  for(auto & trg : aTarget){
+    aTargetOriginPos.push_back(trg.pos);
   }
       
   // -----------
@@ -126,7 +126,7 @@ int main()
   dfm2::opengl::setSomeLighting();
 
   int iframe = 0;
-  while (true)
+  while ( !glfwWindowShouldClose(viewer.window) )
   {
     iframe++;
     {
@@ -142,6 +142,8 @@ int main()
     Draw(aXYZ1,aTri,aBone,aTarget);
     glfwSwapBuffers(viewer.window);
     glfwPollEvents();
-    viewer.ExitIfClosed();
   }
+  glfwDestroyWindow(viewer.window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
 }
