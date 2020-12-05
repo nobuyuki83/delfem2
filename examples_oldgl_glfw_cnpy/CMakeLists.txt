@@ -1,16 +1,16 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.18)
 
 option(USE_HEADERONLY "USE_DFM2_HEADERONLY" ON)
 
 IF(NOT USE_HEADERONLY)
 	message("$$$$$$$$$$$$$$$$$$$$$")
 	message("generate project as STATIC library: USE_HEADERONLY=${USE_HEADERONLY}")
-	project(examples_smpl_static)
+	project(examples_oldgl_glfw_cnpy_static)
     add_subdirectory(dfm2_static_glfwold)
 ELSE()
 	message("$$$$$$$$$$$$$$$$$$$$$")
 	message("generate project as HEADER-ONLY library:  USE_HEADERONLY=${USE_HEADERONLY}")
-	project(examples_smpl_hdronly)
+	project(examples_oldgl_glfw_cnpy_hdronly)
 ENDIF()
 
 add_subdirectory(00_PoseBone)
