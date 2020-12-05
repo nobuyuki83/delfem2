@@ -734,14 +734,14 @@ DFM2_INLINE void delfem2::JArrayPointSurPoint_MeshOneRingNeighborhood(
   psup_ind[0] = 0;
 }
 
-DFM2_INLINE void delfem2::JArray_PSuP_MeshElem
-(std::vector<unsigned int>& psup_ind,
- std::vector<unsigned int>& psup,
- //
- const unsigned int* pElem,
- size_t nEl,
- unsigned int nPoEl,
- size_t nPo)
+DFM2_INLINE void delfem2::JArray_PSuP_MeshElem(
+    std::vector<unsigned int>& psup_ind,
+    std::vector<unsigned int>& psup,
+    //
+    const unsigned int* pElem,
+    size_t nEl,
+    unsigned int nPoEl,
+    size_t nPo)
 {
   std::vector<unsigned int> elsup_ind, elsup;
   JArray_ElSuP_MeshElem(elsup_ind, elsup,

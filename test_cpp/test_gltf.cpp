@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 
 #include "delfem2/tinygltf/io_gltf.h"
+#include "delfem2/rigopt.h"
 #include "delfem2/rig_geo3.h"
 #include "delfem2/geo3_v23m34q.h"
 #include "delfem2/quat.h"
@@ -124,18 +125,20 @@ TEST(gltf,io_gltf_skin_sensitivity)
   assert( aW.size() == aXYZ0.size()/3*nb );
   
   // ------------
-  std::vector<double> Lx, Ly, Lz;  // [ nsns, nb*4 ]
+  std::vector<double> L;  // [ nsns, nb*4 ]
   for(int ibs=0;ibs<aBone.size();++ibs){
     for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               ibs,idims,true,
-                                               aBone);
+      dfm2::Rig_SensitivityBoneTransform(
+          L,
+          ibs,idims,true,
+          aBone);
     }
   }
   for(int idims=0;idims<3;++idims){
-    dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                             0,idims,false,
-                                             aBone);
+    dfm2::Rig_SensitivityBoneTransform(
+        L,
+        0,idims,false,
+        aBone);
   }
   // ---------------
   
@@ -148,8 +151,8 @@ TEST(gltf,io_gltf_skin_sensitivity)
     UpdateBoneRotTrans(aBone);
     std::vector<double> aRefPos; // [ np, nBone*4 ]
     Rig_SkinReferncePositionsBoneWeighted(aRefPos,
-                                          aBone,aXYZ0,aW);
-    const unsigned int nsns = Lx.size()/(nb*4);
+        aBone,aXYZ0,aW);
+    const unsigned int nsns = L.size()/(nb*12);
     assert( nsns==(nb+1)*3 );
     for(int isns=0;isns<nsns;++isns){
       unsigned int ib_s = isns/3;
@@ -168,12 +171,12 @@ TEST(gltf,io_gltf_skin_sensitivity)
       std::vector<double> aXYZ1;
       dfm2::UpdateBoneRotTrans(aBone);
       dfm2::Skinning_LBS(aXYZ1,
-                         aXYZ0, aBone, aW);
+          aXYZ0, aBone, aW);
       // ----------------
       std::vector<double> aXYZ2;
       dfm2::UpdateBoneRotTrans(aBone2);
       dfm2::Skinning_LBS(aXYZ2,
-                         aXYZ0, aBone2, aW);
+          aXYZ0, aBone2, aW);
       const unsigned int np = aXYZ0.size()/3;
       for(unsigned int ip=0;ip<np;++ip){
         const double val0[3] = {
@@ -181,10 +184,12 @@ TEST(gltf,io_gltf_skin_sensitivity)
           (aXYZ2[ip*3+1] - aXYZ1[ip*3+1])/eps,
           (aXYZ2[ip*3+2] - aXYZ1[ip*3+2])/eps };
         double val1[3] =  { 0, 0, 0 };
-        for(unsigned int j=0;j<nb*4;++j){
-          val1[0] += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
-          val1[1] += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
-          val1[2] += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
+        for(unsigned int jb=0;jb<nb;++jb){
+          for(unsigned int jdim=0;jdim<4;++jdim) {
+            val1[0] += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+4*0+jdim];
+            val1[1] += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+4*1+jdim];
+            val1[2] += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+4*2+jdim];
+          }
         }
         for(int i=0;i<3;++i){
           EXPECT_NEAR(val0[i],val1[i], 1.0e-3*(fabs(val1[i])+1.0) );
@@ -211,11 +216,11 @@ TEST(gltf,io_gltf_skin_sensitivity)
     std::vector<double> aO0; // [nC]
     std::vector<double> adO0; // [nC, nb*3 ]
     for(auto & it : aTarget){
-      dfm2::Rig_WdW_Target_Eigen(aO0,adO0,
-                                 aBone,it,Lx,Ly,Lz);
+      dfm2::Rig_WdW_Target(aO0,adO0,
+          aBone,it,L);
     }
     
-    const unsigned int nsns = Lx.size()/(nb*4);
+    const unsigned int nsns = L.size()/(nb*12);
     assert( nsns==(nb+1)*3 );
     for(unsigned int isns=0;isns<nsns;++isns){
       unsigned int ib_s = isns/3;
@@ -236,8 +241,8 @@ TEST(gltf,io_gltf_skin_sensitivity)
       std::vector<double> aO1; // [nC]
       std::vector<double> adO1; // [nC, nb*3 ]
       for(auto & it : aTarget){
-        dfm2::Rig_WdW_Target_Eigen(aO1,adO1,
-            aBone1,it,Lx,Ly,Lz);
+        dfm2::Rig_WdW_Target(aO1,adO1,
+            aBone1,it,L);
       }
       // -------------
       for(int io=0;io<aO0.size();++io){

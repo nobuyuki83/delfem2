@@ -10,47 +10,49 @@
  * @details skinning
  */
 
-#include <cstdlib>
-#include <random>
-#include "delfem2/mats.h"
-#include "delfem2/mshtopo.h"
-#include "delfem2/vecxitrsol.h"
-#include "delfem2/geo3_v23m34q.h"
-#include "delfem2/objf_geo3.h"
-#include "delfem2/rig_geo3.h"
-#include <GLFW/glfw3.h>
 #include "delfem2/opengl/rigv3_glold.h"
 #include "delfem2/opengl/funcs_glold.h"
 #include "delfem2/opengl/v3q_glold.h"
 #include "delfem2/opengl/glfw/viewer_glfw.h"
 #include "delfem2/cnpy/smpl_cnpy.h"
+#include "delfem2/geo3_v23m34q.h"
+#include "delfem2/objf_geo3.h"
+#include "delfem2/rig_geo3.h"
+#include "delfem2/rigopt.h"
+#include "delfem2/mats.h"
+#include "delfem2/mshtopo.h"
+#include "delfem2/vecxitrsol.h"
+#include <GLFW/glfw3.h>
+#include <cstdlib>
+#include <random>
 
 namespace dfm2 = delfem2;
 
 // -------------------------------
 
-void Solve_MinEnergyArap
-(std::vector<double>& aXYZ1,
- std::vector<dfm2::CRigBone>& aBone,
- std::vector<double>& aQuat1,
- const std::vector<double>& KMat, // [nsns, nsns]
- //
- const std::vector<dfm2::CTarget>& aTarget,
- const std::vector<double>& aXYZ0,
- const std::vector<double>& aW,
- const std::vector<unsigned int>& psup_ind,
- const std::vector<unsigned int>& psup)
+void Solve_MinEnergyArap(
+    std::vector<double>& aXYZ1,
+    std::vector<dfm2::CRigBone>& aBone,
+    std::vector<double>& aQuat1,
+    const std::vector<double>& KMat, // [nsns, nsns]
+    //
+    const std::vector<dfm2::CTarget>& aTarget,
+    const std::vector<double>& aXYZ0,
+    const std::vector<double>& aW,
+    const std::vector<unsigned int>& psup_ind,
+    const std::vector<unsigned int>& psup)
 {
   
   const double weight_rig = 1000;
   
   class CSystemMatrix_Reduced{
   public:
-    CSystemMatrix_Reduced(unsigned int nsns_,
-                          const std::vector<double>& K_, // [ nsns, nsns ]
-                          unsigned int nC_,
-                          const std::vector<double>& adC_, // [ nc, nsns]
-                          double weight_rig_) :
+    CSystemMatrix_Reduced(
+        unsigned int nsns_,
+        const std::vector<double>& K_, // [ nsns, nsns ]
+        unsigned int nC_,
+        const std::vector<double>& adC_, // [ nc, nsns]
+        double weight_rig_) :
       nsns(nsns_), K(K_),
       nc(nC_), adC(adC_), weight_rig(weight_rig_)
     {
@@ -60,8 +62,9 @@ void Solve_MinEnergyArap
       tmpM0.resize(nsns);
     }
   public:
-    void MatVec(double* y,
-                double alpha, const double* x, double beta) const
+    void MatVec(
+        double* y,
+        double alpha, const double* x, double beta) const
     {
       for(unsigned int isns=0;isns<nsns;++isns){
         y[isns] = beta*y[isns];
@@ -73,10 +76,12 @@ void Solve_MinEnergyArap
         }
       }
       // ----
-      dfm2::MatVec(tmpC0.data(),
-                   adC.data(), nc, nsns, x);
-      dfm2::MatTVec(tmpM0.data(),
-                    adC.data(), nc, nsns, tmpC0.data());
+      dfm2::MatVec(
+          tmpC0.data(),
+          adC.data(), nc, nsns, x);
+      dfm2::MatTVec(
+          tmpM0.data(),
+          adC.data(), nc, nsns, tmpC0.data());
       for(unsigned int isns=0;isns<nsns;++isns){
         y[isns] += alpha*weight_rig*tmpM0[isns];
       }
@@ -97,30 +102,32 @@ void Solve_MinEnergyArap
   const unsigned int nb = aBone.size();
   
   // --------------
-  std::vector<double> Lx, Ly, Lz; // [ nsns, nbone*4 ]
+  std::vector<double> L; // [ nsns, nbone*4 ]
   {
     for(unsigned int ibs=0;ibs<aBone.size();++ibs){
       for(int idims=0;idims<3;++idims){
-        dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                                 ibs,idims,true,
-                                                 aBone);
+        dfm2::Rig_SensitivityBoneTransform(
+            L,
+            ibs,idims,true,
+            aBone);
       }
     }
     for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                               0,idims,false,
-                                               aBone);
+      dfm2::Rig_SensitivityBoneTransform(
+          L,
+          0,idims,false,
+          aBone);
     }
   }
   // --------------
   
-  const unsigned int nsns = Lx.size()/(nb*4);
+  const unsigned int nsns = L.size()/(nb*12);
     
   std::vector<double> aC0; // [nC]
   std::vector<double> adC0; // [nC, nsns ]
-  for(unsigned int it=0;it<aTarget.size();++it){
-    dfm2::Rig_WdW_Target_Eigen(aC0, adC0,
-                               aBone, aTarget[it], Lx, Ly, Lz);
+  for(const auto & trg : aTarget){
+    dfm2::Rig_WdW_Target(aC0, adC0,
+        aBone, trg, L);
   }
   const unsigned int nc = aC0.size();
   
@@ -149,22 +156,24 @@ void Solve_MinEnergyArap
       }
     }
     for(unsigned int isns=0;isns<nsns;++isns){
-      for(unsigned int j=0;j<nb*4;++j){
-        r[isns]
-        += Lx[isns*(nb*4)+j]*tx[j]
-        +  Ly[isns*(nb*4)+j]*ty[j]
-        +  Lz[isns*(nb*4)+j]*tz[j];
+      for(unsigned int jb=0;jb<nb;++jb){
+        for(unsigned int jdim=0;jdim<4;++jdim) {
+          r[isns]
+              += L[isns * (nb * 12) + jb*12+4*0+jdim] * tx[jb*4+jdim]
+              +  L[isns * (nb * 12) + jb*12+4*1+jdim] * ty[jb*4+jdim]
+              +  L[isns * (nb * 12) + jb*12+4*2+jdim] * tz[jb*4+jdim];
+        }
       }
     }
     std::vector<double> rC(nsns,0.0);
     dfm2::MatTVec(rC.data(),
-                  adC0.data(), nc, nsns, aC0.data());
+        adC0.data(), nc, nsns, aC0.data());
     for(unsigned int i=0;i<rC.size();++i){ r[i] += weight_rig*rC[i]; }
   }
   
   std::vector<double> u(nsns,0.0);
   std::vector<double> reshist = dfm2::Solve_CG(r.data(), u.data(),
-                                               nsns, 1.0e-3, 100, mat);
+      nsns, 1.0e-3, 100, mat);
   
   std::cout << "convergence: " << reshist.size() << std::endl;
   assert( u.size() == (nb+1)*3 );
@@ -182,10 +191,10 @@ void Solve_MinEnergyArap
   }
   dfm2::UpdateBoneRotTrans(aBone);
   dfm2::Skinning_LBS(aXYZ1,
-                     aXYZ0, aBone, aW);
+      aXYZ0, aBone, aW);
   for(int itr=0;itr<5;++itr){
     dfm2::UpdateRotationsByMatchingCluster_Linear(aQuat1,
-                                           aXYZ0,aXYZ1,psup_ind,psup);
+        aXYZ0,aXYZ1,psup_ind,psup);
   }
 }
 
@@ -248,14 +257,14 @@ int main()
           aJntRgrs, aXYZ0);
       dfm2::InitBones_JointPosition(
           aBone,
-          aBone.size(), aIndBoneParent.data(), aJntPos0.data());
+          aIndBoneParent.size(), aIndBoneParent.data(), aJntPos0.data());
     }
   }
   std::vector<unsigned int> psup_ind, psup;
   {
     dfm2::JArray_PSuP_MeshElem(psup_ind, psup,
-                               aTri.data(), aTri.size()/3, 3,
-                               (int)aXYZ0.size()/3);
+        aTri.data(), aTri.size()/3, 3,
+        aXYZ0.size()/3);
     dfm2::JArray_Sort(psup_ind, psup);
   }
     
@@ -263,7 +272,7 @@ int main()
   { // initalize pose
     dfm2::UpdateBoneRotTrans(aBone);
     dfm2::Skinning_LBS(aXYZ1,
-                       aXYZ0, aBone, aW);
+        aXYZ0, aBone, aW);
   }
   
   std::vector<double> aQuat1;
@@ -308,37 +317,48 @@ int main()
     std::vector<double> dSkin; // [nsns, np*3]
     {
       std::vector<double> aRefPos; // [ np, nBone*4 ]
-      Rig_SkinReferncePositionsBoneWeighted(aRefPos,
-                                            aBone,aXYZ0,aW);
-      
-      std::vector<double> Lx, Ly, Lz; // [ nsns, nbone*4 ]
+      Rig_SkinReferncePositionsBoneWeighted(
+          aRefPos,
+          aBone,aXYZ0,aW);
+      std::vector<double> L; // [ nsns, nbone*4 ]
       { // make sensitivity of bone transformations
         for(unsigned int ibs=0;ibs<aBone.size();++ibs){
           for(int idims=0;idims<3;++idims){
-            dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                                     ibs,idims,true,
-                                                     aBone);
+            dfm2::Rig_SensitivityBoneTransform(
+                L,
+                ibs,idims,true,
+                aBone);
           }
         }
         for(int idims=0;idims<3;++idims){
-          dfm2::Rig_SensitivityBoneTransform_Eigen(Lx,Ly,Lz,
-                                                   0,idims,false,
-                                                   aBone);
+          dfm2::Rig_SensitivityBoneTransform(
+              L,
+              0,idims,false,
+              aBone);
         }
       }
       const unsigned int nb = aBone.size();
-      const unsigned int nsns = Lx.size() / (nb*4);
-      assert( Ly.size() == nsns*nb*4 );
-      assert( Lz.size() == nsns*nb*4 );
+      const unsigned int nsns = L.size() / (nb*12);
       dSkin.resize( nsns * (np*3) );
       for(unsigned int isns=0;isns<nsns;++isns){
        for(unsigned int ip=0;ip<np;++ip){
           double dx = 0.0, dy = 0.0, dz = 0.0;
+/*
           for(unsigned int j=0;j<nb*4;++j){
             dx += aRefPos[ip*(nb*4)+j]*Lx[isns*(nb*4)+j];
             dy += aRefPos[ip*(nb*4)+j]*Ly[isns*(nb*4)+j];
             dz += aRefPos[ip*(nb*4)+j]*Lz[isns*(nb*4)+j];
           }
+*/
+
+          for(unsigned int jb=0;jb<nb;++jb){
+            for(unsigned int jdim=0;jdim<4;++jdim) {
+              dx += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+0*4+jdim];
+              dy += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+1*4+jdim];
+              dz += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+2*4+jdim];
+            }
+          }
+
           dSkin[ isns*(np*3) + ip*3+0 ] = dx;
           dSkin[ isns*(np*3) + ip*3+1 ] = dy;
           dSkin[ isns*(np*3) + ip*3+2 ] = dz;

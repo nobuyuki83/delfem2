@@ -96,7 +96,7 @@ int main()
      */
     dfm2::UpdateBoneRotTrans(aBone);
     dfm2::Skinning_LBS(aXYZ1,
-                       aXYZ0, aBone, aW);
+        aXYZ0, aBone, aW);
   }
   
   std::vector<dfm2::CTarget> aTarget;

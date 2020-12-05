@@ -9,13 +9,13 @@
 #ifndef DFM2_RIG_V3Q_H
 #define DFM2_RIG_V3Q_H
 
+#include "delfem2/geo3_v23m34q.h"
 #include "delfem2/dfm2_inline.h"
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cassert>
-#include "delfem2/geo3_v23m34q.h"
 
 namespace delfem2 {
 
@@ -213,65 +213,6 @@ DFM2_INLINE void Rig_SkinReferncePositionsBoneWeighted(
     const std::vector<CRigBone> aBone1,
     const std::vector<double> &aXYZ0,
     const std::vector<double> &aW);
-
-// ------------------------------------
-
-
-
-class CTarget {
-public:
-  unsigned int ib;
-  CVec3d pos;
-public:
-  void WdW(
-      std::vector<double> &aW,
-      std::vector<double> &adW,
-      const std::vector<CRigBone> &aBone,
-      std::vector<double> &aL) const; // [ [nb, 3],  [ndim(3), nBone, ndim(4)] ]
-};
-
-DFM2_INLINE void Rig_SensitivityBoneTransform(
-    double *aL, // [ ndim(3), nBone, ndim(4) ]
-    unsigned int ib_s,
-    unsigned int idim_s,
-    const std::vector<CRigBone> aBone1);
-
-DFM2_INLINE void Rig_SensitivityBoneTransform_Eigen(
-    std::vector<double> &Lx, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
-    std::vector<double> &Ly, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
-    std::vector<double> &Lz, // [ [nBone, ndim(3)], [nBone, ndim(4)] ]
-    unsigned int ib_s,
-    double idim_s,
-    bool is_rot,
-    const std::vector<CRigBone> aBone1);
-
-DFM2_INLINE void Rig_WdW_Target_Eigen(
-    std::vector<double> &aW,
-    std::vector<double> &adW,
-    const std::vector<CRigBone> &aBone,
-    const CTarget &target,
-    const std::vector<double> &Lx,  // [ nsns, nBone*4 ]
-    const std::vector<double> &Ly,  // [ nsns, nBone*4 ]
-    const std::vector<double> &Lz); // [ nsns, nBone*4 ]
-
-DFM2_INLINE void Rig_SensitivitySkin_BoneRotation_Eigen(
-    std::vector<double> &dSkinX,
-    std::vector<double> &dSkinY,
-    std::vector<double> &dSkinZ,
-    const std::vector<CRigBone> &aBone1,
-    const std::vector<double> &aXYZ0,
-    const std::vector<double> &aW,
-    const std::vector<double> &Lx, // [ nBone*3, nBone*4 ]
-    const std::vector<double> &Ly, // [ nBone*3, nBone*4 ]
-    const std::vector<double> &Lz); // [ nBone*3, nBone*4 ]
-
-DFM2_INLINE void Rig_SensitivitySkin_BoneRotation(
-    std::vector<double> &aSns, // np*ndim(3) * nb*3
-    const std::vector<CRigBone> aBone1,
-    const std::vector<double> &aXYZ0,
-    const std::vector<double> &aW,
-    const std::vector<double> &aL);
-
 
 // ------------------------------------
 

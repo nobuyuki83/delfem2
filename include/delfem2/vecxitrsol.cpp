@@ -15,7 +15,8 @@
 // ----------------------------------------------------------------------
 
 template <typename T>
-T delfem2::Dot(
+DFM2_INLINE T
+delfem2::Dot(
     const std::vector<T>& r_vec,
     const std::vector<T>& u_vec)
 {
@@ -33,7 +34,8 @@ template double delfem2::Dot(const std::vector<double>& r_vec, const std::vector
 namespace delfem2 {
 
 template <>
-std::complex<double> Dot(
+DFM2_INLINE std::complex<double>
+Dot(
     const std::vector<std::complex<double>>& va,
     const std::vector<std::complex<double>>& vb)
 {
@@ -55,7 +57,7 @@ std::complex<double> Dot(
 // dotx
 
 template<typename T>
-T delfem2::DotX(
+DFM2_INLINE T delfem2::DotX(
     const T* va,
     const T* vb,
     size_t n)
@@ -73,10 +75,10 @@ template double delfem2::DotX(const double* va, const double* vb, size_t n);
 namespace delfem2 {
 
 template <>
-std::complex<double> DotX
- (const std::complex<double>* va,
-  const std::complex<double>* vb,
-  size_t n)
+DFM2_INLINE std::complex<double> DotX(
+    const std::complex<double>* va,
+    const std::complex<double>* vb,
+    size_t n)
 {
   double sr = 0.0;
   double si = 0.0;
@@ -185,15 +187,15 @@ template void delfem2::ScaleX(double* p0, double s, unsigned int n);
 
 
 
-void delfem2::NormalizeX
- (double* p0,
-  unsigned int n)
+DFM2_INLINE void delfem2::NormalizeX(
+    double* p0,
+    unsigned int n)
 {
   const double ss = delfem2::DotX(p0,p0,n);
   ScaleX(p0,1.0/sqrt(ss),n);
 }
 
-void delfem2::OrthogonalizeToUnitVectorX
+DFM2_INLINE void delfem2::OrthogonalizeToUnitVectorX
  (double* p1,
   const double* p0,
   unsigned int n)
@@ -203,10 +205,11 @@ void delfem2::OrthogonalizeToUnitVectorX
 }
 
 
-std::complex<double> delfem2::MultSumX
-(const std::complex<double>* va,
- const std::complex<double>* vb,
- unsigned int n)
+DFM2_INLINE std::complex<double>
+delfem2::MultSumX(
+    const std::complex<double>* va,
+    const std::complex<double>* vb,
+    unsigned int n)
 {
   std::complex<double> s(0,0);
   for(unsigned int i=0;i<n;++i){
@@ -222,12 +225,13 @@ std::complex<double> delfem2::MultSumX
 namespace delfem2 {
 
 template<>
-void XPlusAY
-(std::vector<double> &X,
- const unsigned int nDoF,
- const std::vector<int> &aBCFlag,
- double alpha,
- const std::vector<double> &Y)
+DFM2_INLINE void
+XPlusAY(
+    std::vector<double> &X,
+    const unsigned int nDoF,
+    const std::vector<int> &aBCFlag,
+    double alpha,
+    const std::vector<double> &Y)
 {
   for (unsigned int i = 0; i < nDoF; ++i) {
     if (aBCFlag[i] != 0) continue;
@@ -236,12 +240,13 @@ void XPlusAY
 }
 
 template<>
-void XPlusAY
-(std::vector<std::complex<double> > &X,
- const unsigned int nDoF,
- const std::vector<int> &aBCFlag,
- std::complex<double> alpha,
- const std::vector<std::complex<double> > &Y)
+DFM2_INLINE void
+XPlusAY(
+    std::vector<std::complex<double> > &X,
+    const unsigned int nDoF,
+    const std::vector<int> &aBCFlag,
+    std::complex<double> alpha,
+    const std::vector<std::complex<double> > &Y)
 {
   for (unsigned int i = 0; i < nDoF; ++i) {
     if (aBCFlag[i] != 0) continue;
@@ -256,10 +261,10 @@ void XPlusAY
 namespace delfem2 {
 
 template<>
-void setRHS_Zero
-(std::vector<double> &vec_b,
- const std::vector<int> &aBCFlag,
- int iflag_nonzero)
+DFM2_INLINE void setRHS_Zero(
+    std::vector<double> &vec_b,
+    const std::vector<int> &aBCFlag,
+    int iflag_nonzero)
 {
   const std::size_t ndof = vec_b.size();
   for (unsigned int i = 0; i < ndof; ++i) {
@@ -269,7 +274,7 @@ void setRHS_Zero
 }
 
 template<>
-void setRHS_Zero
+DFM2_INLINE void setRHS_Zero
 (std::vector<std::complex<double>> &vec_b,
  const std::vector<int> &aBCFlag,
  int iflag_nonzero)
@@ -283,7 +288,8 @@ void setRHS_Zero
 
 }
 
-void delfem2::XPlusAYBZ(
+DFM2_INLINE void
+delfem2::XPlusAYBZ(
     std::vector<double>& X,
     const unsigned int nDoF,
     const std::vector<int>& aBCFlag,
@@ -298,7 +304,8 @@ void delfem2::XPlusAYBZ(
   }
 }
 
-void delfem2::XPlusAYBZCW(
+DFM2_INLINE void
+delfem2::XPlusAYBZCW(
     std::vector<double>& X,
     const unsigned int nDoF,
     const std::vector<int>& aBCFlag,
@@ -317,7 +324,8 @@ void delfem2::XPlusAYBZCW(
 
 // -------------------------------------------------------------------
 
-void delfem2::setRHS_MasterSlave(
+DFM2_INLINE void
+delfem2::setRHS_MasterSlave(
     double* vec_b,
     unsigned int nDoF,
     const unsigned int* aMSFlag)
@@ -330,10 +338,13 @@ void delfem2::setRHS_MasterSlave(
   }
 }
 
-void delfem2::MatVec
- (double* y,
-  const double* A, unsigned int ncol, unsigned int nrow,
-  const double* x)
+DFM2_INLINE void
+delfem2::MatVec(
+    double* y,
+    const double* A,
+    unsigned int ncol,
+    unsigned int nrow,
+    const double* x)
 {
   for(unsigned int i=0;i<ncol;++i){
     y[i] = 0;
@@ -345,10 +356,13 @@ void delfem2::MatVec
 
 
 
-void delfem2::MatTVec
- (double* y,
-  const double* A, unsigned int ncol, unsigned int nrow,
-  const double* x)
+DFM2_INLINE void
+delfem2::MatTVec(
+    double* y,
+    const double* A,
+    unsigned int ncol,
+    unsigned int nrow,
+    const double* x)
 {
   for(unsigned int j=0;j<nrow;++j){  y[j] = 0; }
   for(unsigned int i=0;i<ncol;++i){
@@ -360,12 +374,14 @@ void delfem2::MatTVec
 
 
 
-void MatMatX
- (double* M, // [ni, nj]
-  unsigned int ni, unsigned int nj,
-  const double*A, // [ni, nk]
-  unsigned int nk,
-  const double* B) // [nk, nj]
+DFM2_INLINE void
+MatMatX(
+    double* M, // [ni, nj]
+    unsigned int ni,
+    unsigned int nj,
+    const double* A, // [ni, nk]
+    unsigned int nk,
+    const double* B) // [nk, nj]
 {
   for(unsigned int i=0;i<ni;++i){
     for(unsigned int j=0;j<nj;++j){
@@ -377,12 +393,14 @@ void MatMatX
   }
 }
 
-void MatMatTX
-(double* M, // [ni, nj]
- unsigned int ni, unsigned int nj,
- const double*A, // [ni, nk]
- unsigned int nk,
- const double* B) // [nj, nk]
+DFM2_INLINE void
+MatMatTX(
+    double* M, // [ni, nj]
+    unsigned int ni,
+    unsigned int nj,
+    const double*A, // [ni, nk]
+    unsigned int nk,
+    const double* B) // [nj, nk]
 {
   for(unsigned int i=0;i<ni;++i){
     for(unsigned int j=0;j<nj;++j){
