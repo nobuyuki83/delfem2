@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.18)
 
 set(PROJ_NAME test_cuda)
 project(${PROJ_NAME})

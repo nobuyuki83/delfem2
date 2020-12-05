@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.18)
 project(003_vecdot)
 
 set(DELFEM2_INCLUDE_DIR "../../include")
