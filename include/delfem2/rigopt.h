@@ -89,6 +89,37 @@ Rig_Sensitivity_Skeleton(
   }
 }
 
+void Sensitivity_RigSkinPoint(
+    std::vector<double>& dP,
+    unsigned int ip,
+    const double* p0,
+    const std::vector<CRigBone>& aBone,
+    const std::vector<double>& L,  // [ nsns, nb*12 ]
+    unsigned int nb_par_pt, // number of bone par pointk
+    const std::vector<double>& aSkinSparseW,
+    const std::vector<unsigned int>& aSkinSparseI)
+{
+  assert( aSkinSparseI.size() == aSkinSparseW.size() );
+  const unsigned int nb = aBone.size();
+  const unsigned int nsns = L.size()/(nb*12);
+  dP.assign(3*nsns, 0.0);
+  const double p0a[4] = { p0[0], p0[1], p0[2], 1.0};
+  for (unsigned int jjb = 0; jjb < nb_par_pt; ++jjb) {
+    const unsigned int jb0 = aSkinSparseI[ip*nb_par_pt+jjb];
+    const double wb0 = aSkinSparseW[ip*nb_par_pt+jjb];
+    double p0b[4];
+    delfem2::MatVec4(p0b,
+                     aBone[jb0].invBindMat, p0a);
+    for(unsigned int isns=0;isns<nsns;++isns) {
+      for (unsigned int jdim = 0; jdim < 4; ++jdim) {
+        dP[0*nsns+isns] += wb0 * p0b[jdim] * L[isns * (nb * 12) + jb0 * 12 + 4 * 0 + jdim];
+        dP[1*nsns+isns] += wb0 * p0b[jdim] * L[isns * (nb * 12) + jb0 * 12 + 4 * 1 + jdim];
+        dP[2*nsns+isns] += wb0 * p0b[jdim] * L[isns * (nb * 12) + jb0 * 12 + 4 * 2 + jdim];
+      }
+    }
+  }
+}
+
 class CTarget {
 public:
   unsigned int ib;
