@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.18)
 
 # compile as "cmake -DEMSCRIPTEN=1 ."  to build with Emscripten
 option(EMSCRIPTEN "Use Emscripten:" OFF)
