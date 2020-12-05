@@ -103,22 +103,9 @@ void Solve_MinEnergyArap(
   
   // --------------
   std::vector<double> L; // [ nsns, nbone*4 ]
-  {
-    for(unsigned int ibs=0;ibs<aBone.size();++ibs){
-      for(int idims=0;idims<3;++idims){
-        dfm2::Rig_SensitivityBoneTransform(
-            L,
-            ibs,idims,true,
-            aBone);
-      }
-    }
-    for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform(
-          L,
-          0,idims,false,
-          aBone);
-    }
-  }
+  Rig_Sensitivity_Skeleton(
+      L,
+      aBone);
   // --------------
   
   const unsigned int nsns = L.size()/(nb*12);

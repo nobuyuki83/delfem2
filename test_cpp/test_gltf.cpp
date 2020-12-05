@@ -73,131 +73,126 @@ TEST(gltf,formatcheck)
   }
 }
 
-TEST(gltf,io_gltf_skin_sensitivity)
-{
+TEST(gltf, skin_sensitivity) {
   std::random_device rd;
   std::mt19937 rndeng(rd());
-  std::uniform_real_distribution<double> dist_01(+0,+1);
+  std::uniform_real_distribution<double> dist_01(+0, +1);
   //
   std::vector<double> aXYZ0;
   std::vector<unsigned int> aTri;
-  std::vector<dfm2::CRigBone> aBone;
-  std::vector<double> aW;
+  std::vector<dfm2::CRigBone> aBone0;
+  std::vector<double> aSkinSparseW; // [np, 4]
+  std::vector<unsigned int> aSkinSparseI; // [np, 4]
   {
-    std::vector<double> aRigWeight; // [np, 4]
-    std::vector<unsigned int> aRigJoint; // [np, 4]
-    {
-      //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/Duck.glb";
-      //    std::string path_glb = std::string(PATH_INPUT_DIR)+"/Monster.glb";
-      
-      //      std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedSimple.glb";
-      //    std::string path_gltf = std::string(PATH_INPUT_DIR)+"/RiggedFigure.glb";
-      std::string path_glb = std::string(PATH_INPUT_DIR)+"/CesiumMan.glb";
-      dfm2::CGLTF gltf;
-      gltf.Read(path_glb);
-  //    gltf.Print();
-      gltf.GetMeshInfo(aXYZ0, aTri, aRigWeight, aRigJoint, 0,0);
-      gltf.GetBone(aBone, 0);
-    }
-    {
-      for(auto & bone : aBone){
-        dfm2::Quat_Identity(bone.quatRelativeRot);
-      }
-      UpdateBoneRotTrans(aBone);
-      std::vector<double> aXYZ = aXYZ0;
-      Skinning_LBS_LocalWeight(
-          aXYZ.data(),
-          aXYZ0.data(), aXYZ0.size()/3,
-          aBone, aRigWeight.data(), aRigJoint.data());
-    }
-    const unsigned int np = aXYZ0.size()/3;
-    const unsigned int nb = aBone.size();
-    aW.assign(np*nb,0.0);
-    for(int ip=0;ip<np;++ip){
-      for(int iib=0;iib<4;++iib){
-        unsigned int ib = aRigJoint[ip*4+iib];
-        aW[ip*nb+ib] = aRigWeight[ip*4+iib];
-      }
-    }
+    std::string path_glb = std::string(PATH_INPUT_DIR) + "/CesiumMan.glb";
+    dfm2::CGLTF gltf;
+    gltf.Read(path_glb);
+    //    gltf.Print();
+    gltf.GetMeshInfo(aXYZ0, aTri, aSkinSparseW, aSkinSparseI, 0, 0);
+    gltf.GetBone(aBone0, 0);
+    dfm2::SetCurrentBoneRotationAsDefault(aBone0);
   }
-  
-  const unsigned int nb = aBone.size();
-  assert( aW.size() == aXYZ0.size()/3*nb );
-  
-  // ------------
-  std::vector<double> L;  // [ nsns, nb*4 ]
-  for(int ibs=0;ibs<aBone.size();++ibs){
-    for(int idims=0;idims<3;++idims){
-      dfm2::Rig_SensitivityBoneTransform(
-          L,
-          ibs,idims,true,
-          aBone);
-    }
-  }
-  for(int idims=0;idims<3;++idims){
-    dfm2::Rig_SensitivityBoneTransform(
-        L,
-        0,idims,false,
-        aBone);
-  }
-  // ---------------
-  
+  const unsigned int nb = aBone0.size();
+  const unsigned int np = aXYZ0.size() / 3;
+  assert( aSkinSparseI.size() == aSkinSparseW.size() );
+  assert( aSkinSparseI.size() % np == 0 );
+
+  // --------
+
   const double eps = 1.0e-4;
-  
-  { // Check Sensitivity Skin
-    for(auto & bone : aBone){
-      dfm2::Quat_Identity(bone.quatRelativeRot);
+
+  for(unsigned int itr=0;itr<3;++itr){ // Check Sensitivity Skin
+    // set random joint rotation to Bone1
+    std::vector<dfm2::CRigBone> aBone1 = aBone0;
+    for (auto &bone : aBone1) {
+      dfm2::CQuat<double>::Random(0.2).CopyTo(bone.quatRelativeRot);
+//      dfm2::Quat_Identity(bone.quatRelativeRot);
     }
-    UpdateBoneRotTrans(aBone);
-    std::vector<double> aRefPos; // [ np, nBone*4 ]
-    Rig_SkinReferncePositionsBoneWeighted(aRefPos,
-        aBone,aXYZ0,aW);
-    const unsigned int nsns = L.size()/(nb*12);
-    assert( nsns==(nb+1)*3 );
-    for(int isns=0;isns<nsns;++isns){
-      unsigned int ib_s = isns/3;
-      bool is_rot = true;
-      unsigned int idim_s = isns - ib_s*3;
-      if( ib_s == nb ){ ib_s = 0; is_rot = false; }
-      std::vector<dfm2::CRigBone> aBone2 = aBone;
-      if( is_rot ){
-        dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(eps*dfm2::CVec3d::Axis(idim_s));
-        dfm2::CQuatd q0 = dq*dfm2::CQuatd(aBone2[ib_s].quatRelativeRot);
-        q0.CopyTo(aBone2[ib_s].quatRelativeRot);
-      }
-      else{
-        aBone2[ib_s].transRelative[idim_s] += eps;
-      }
-      std::vector<double> aXYZ1;
-      dfm2::UpdateBoneRotTrans(aBone);
-      dfm2::Skinning_LBS(aXYZ1,
-          aXYZ0, aBone, aW);
-      // ----------------
-      std::vector<double> aXYZ2;
-      dfm2::UpdateBoneRotTrans(aBone2);
-      dfm2::Skinning_LBS(aXYZ2,
-          aXYZ0, aBone2, aW);
-      const unsigned int np = aXYZ0.size()/3;
-      for(unsigned int ip=0;ip<np;++ip){
-        const double val0[3] = {
-          (aXYZ2[ip*3+0] - aXYZ1[ip*3+0])/eps,
-          (aXYZ2[ip*3+1] - aXYZ1[ip*3+1])/eps,
-          (aXYZ2[ip*3+2] - aXYZ1[ip*3+2])/eps };
-        double val1[3] =  { 0, 0, 0 };
-        for(unsigned int jb=0;jb<nb;++jb){
-          for(unsigned int jdim=0;jdim<4;++jdim) {
-            val1[0] += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+4*0+jdim];
-            val1[1] += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+4*1+jdim];
-            val1[2] += aRefPos[ip * (nb * 4) + jb*4+jdim] * L[isns * (nb * 12) + jb*12+4*2+jdim];
-          }
+    UpdateBoneRotTrans(aBone1);
+    dfm2::UpdateBoneRotTrans(aBone1);
+    std::vector<double> aXYZ1;
+    dfm2::SkinningSparse_LBS(aXYZ1,
+        aXYZ0, aBone1, aSkinSparseW, aSkinSparseI);
+    // compute Bon rotation sensitivity
+    std::vector<double> L;  // [ nsns, nb*4 ]
+    Rig_Sensitivity_Skeleton(
+        L,
+        aBone1);
+    //
+    const unsigned int nsns = L.size() / (nb * 12);
+    assert(nsns == (nb + 1) * 3);
+    for (int isns = 0; isns < nsns; ++isns) {
+      std::vector<dfm2::CRigBone> aBone2 = aBone1;
+      { // aBone2 is perturbed aBone1
+        unsigned int ib_s = isns / 3;
+        bool is_rot = true;
+        unsigned int idim_s = isns - ib_s * 3;
+        if (ib_s == nb) {
+          ib_s = 0;
+          is_rot = false;
         }
-        for(int i=0;i<3;++i){
-          EXPECT_NEAR(val0[i],val1[i], 1.0e-3*(fabs(val1[i])+1.0) );
+        if (is_rot) {
+          dfm2::CQuatd dq = dfm2::Quat_CartesianAngle(eps * dfm2::CVec3d::Axis(idim_s));
+          dfm2::CQuatd q0 = dq * dfm2::CQuatd(aBone2[ib_s].quatRelativeRot);
+          q0.CopyTo(aBone2[ib_s].quatRelativeRot);
+        } else {
+          aBone2[ib_s].transRelative[idim_s] += eps;
+        }
+      }
+      // ----------------
+      dfm2::UpdateBoneRotTrans(aBone2);
+      std::vector<double> aXYZ2;
+      dfm2::SkinningSparse_LBS(aXYZ2,
+          aXYZ0, aBone2, aSkinSparseW, aSkinSparseI);
+      for (unsigned int ip = 0; ip < np; ++ip) {
+        const double val0[3] = {
+            (aXYZ2[ip * 3 + 0] - aXYZ1[ip * 3 + 0]) / eps,
+            (aXYZ2[ip * 3 + 1] - aXYZ1[ip * 3 + 1]) / eps,
+            (aXYZ2[ip * 3 + 2] - aXYZ1[ip * 3 + 2]) / eps};
+        double val1[3] = {0, 0, 0};
+        {
+          std::vector<double> dP;
+          Sensitivity_RigSkinPoint(dP,
+              ip, aXYZ0.data()+ip*3, aBone1, L,
+              aSkinSparseW.size()/np, aSkinSparseW, aSkinSparseI);
+          val1[0] = dP[0*nsns+isns];
+          val1[1] = dP[1*nsns+isns];
+          val1[2] = dP[2*nsns+isns];
+        }
+        for (int i = 0; i < 3; ++i) {
+          EXPECT_NEAR(val0[i], val1[i], 1.0e-3 * (fabs(val1[i]) + 1.0));
         }
       }
     }
   }
-  
+}
+
+
+TEST(gltf, constraint_sensitivity )
+{
+  std::vector<dfm2::CRigBone> aBone;
+  {
+    std::string path_glb = std::string(PATH_INPUT_DIR) + "/CesiumMan.glb";
+    dfm2::CGLTF gltf;
+    gltf.Read(path_glb);
+    //    gltf.Print();
+    gltf.GetBone(aBone, 0);
+    dfm2::SetCurrentBoneRotationAsDefault(aBone);
+  }
+  // ------------
+  const unsigned int nb = aBone.size();
+  std::vector<double> L;  // [ nsns, nb*4 ]
+  Rig_Sensitivity_Skeleton(
+      L,
+      aBone);
+  assert( L.size()==(nb+1)*3*nb*12 );
+
+  std::random_device rd;
+  std::mt19937 rndeng(rd());
+  std::uniform_real_distribution<double> dist_01(+0, +1);
+  std::uniform_int_distribution<unsigned int> rand_ib(+0, nb-1);
+  const double eps = 1.0e-4;
+
   { // check sensitivity target
     for(auto & bone : aBone){
       dfm2::Quat_Identity(bone.quatRelativeRot);
@@ -205,10 +200,9 @@ TEST(gltf,io_gltf_skin_sensitivity)
     dfm2::UpdateBoneRotTrans(aBone);
     // ----------------------
     std::vector<dfm2::CTarget> aTarget;
-    srand(0);
     for(int itr=0;itr<5;++itr){
       dfm2::CTarget t;
-      t.ib = (unsigned int)(aBone.size()*(rand()/(RAND_MAX+1.0)));
+      t.ib = rand_ib(rndeng);
       t.pos = aBone[t.ib].Pos() + dfm2::CVec3d::Random(dist_01,rndeng);
       aTarget.push_back(t);
     }
@@ -269,14 +263,19 @@ TEST(gltf,set_default_rotation) {
       aXYZ0, aTri, aSkinSparseW, aSkinSparseI,
       0,0);
   gltf.GetBone(aBone, 0);
-  //
+  // there is the offset rotation in the rig bone
   std::vector<double> aXYZ1(aXYZ0.size());
   dfm2::Skinning_LBS_LocalWeight(
       aXYZ1.data(),
       aXYZ0.data(), aXYZ0.size()/3,
       aBone, aSkinSparseW.data(), aSkinSparseI.data());
-  //
+
+  // remove offset rotation and make sure default mesh doesn't change
   dfm2::SetCurrentBoneRotationAsDefault(aBone);
+  for(auto & bone : aBone){
+    dfm2::Quat_Identity(bone.quatRelativeRot);
+  }
+  dfm2::UpdateBoneRotTrans(aBone);
   std::vector<double> aXYZ2(aXYZ0.size());
   dfm2::Skinning_LBS_LocalWeight(
       aXYZ2.data(),

@@ -190,7 +190,7 @@ TEST(objfunc_v23, distancetri2d3d)
         for (int jdim = 0; jdim < 3; ++jdim) {
           const double val0 = (C1[jdim] - C[jdim]) / eps;
           const double val1 = dCdp[jdim][ine * 3 + idim];
-          EXPECT_NEAR(val0, val1, 1.0e-2*(val1+1.0));
+          EXPECT_NEAR(val0, val1, 1.0e-2*(fabs(val1)+1.0));
         }
       }
     }

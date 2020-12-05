@@ -170,7 +170,7 @@ int main()
       }
       Solve_MinRigging(aBone, aTarget);
       Skinning_LBS(aXYZ1,
-                   aXYZ0, aBone, aW);
+          aXYZ0, aBone, aW);
     }
     if( iframe > 200 ){
       for(unsigned int ib=0;ib<aBone.size();++ib){
