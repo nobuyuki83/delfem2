@@ -25,13 +25,13 @@ namespace delfem2 {
  *@details defiend for "double", "float", "std::complex<double>". Inner product of complex value using conjugate value
  */
 template<typename T>
-T DotX(
+DFM2_INLINE T DotX(
     const T *va,
     const T *vb,
     size_t n);
 
 template<typename T>
-T Dot(
+DFM2_INLINE T Dot(
     const std::vector<T> &r_vec,
     const std::vector<T> &u_vec);
 
@@ -77,7 +77,7 @@ void AXPY(
  * @param iflag_nonzero the value of flag 
  */
 template<typename T>
-void setRHS_Zero(
+DFM2_INLINE void setRHS_Zero(
     std::vector<T> &vec_b,
     const std::vector<int> &aBCFlag,
     int iflag_nonzero);
@@ -107,18 +107,19 @@ void XPlusAYBZCW(
     double gamma,
     const std::vector<double> &W);
 
-void NormalizeX(
+DFM2_INLINE void NormalizeX(
     double *p0,
     unsigned int n);
 
-void OrthogonalizeToUnitVectorX(
+DFM2_INLINE void OrthogonalizeToUnitVectorX(
     double *p1,
     const double *p0,
     unsigned int n);
 
 // set boundary condition
 
-void setRHS_MasterSlave(
+DFM2_INLINE void
+setRHS_MasterSlave(
     double *vec_b,
     unsigned int nDoF,
     const unsigned int *aMSFlag);
@@ -133,9 +134,10 @@ void MatVec(
  * @param A a row-major matrix with size [ncol, nrow]
  * @param x vector size of ncol
  */
-void MatTVec(double* y,
-             const double* A, unsigned int ncol, unsigned int nrow,
-             const double* x);
+void MatTVec(
+    double* y,
+    const double* A, unsigned int ncol, unsigned int nrow,
+    const double* x);
 
 
 // ----------------------------------------------------------------------
