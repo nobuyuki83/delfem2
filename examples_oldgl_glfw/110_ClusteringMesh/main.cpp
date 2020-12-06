@@ -20,6 +20,7 @@
 #include <random>
 #include <set>
 #include <queue>
+#include <climits>
 
 namespace dfm2 = delfem2;
 
