@@ -116,45 +116,6 @@ DFM2_INLINE bool IsAbovePlane(const double p[3], const double org[3], const doub
   return dot > 0;
 }
 
-// 0: no, 1:lighting, 2:no-lighting
-DFM2_INLINE void DrawMeshTri3DFlag_FaceNorm
- (const std::vector<double>& aXYZ,
-  const std::vector<unsigned int>& aTri,
-  const std::vector<int>& aIndGroup,
-  std::vector< std::pair<int,CColor> >& aColor)
-{
-  const unsigned int nTri = aTri.size()/3;
-  for(unsigned int itri=0;itri<nTri;++itri){
-    const int ig0 = aIndGroup[itri];
-    if( ig0 < 0 || ig0 >= (int)aColor.size() ) continue;
-    const int imode = aColor[ig0].first;
-    if(      imode == 0 ) continue;
-    else if( imode == 1 ){ ::glEnable(GL_LIGHTING); }
-    else if( imode == 2 ){ ::glDisable(GL_LIGHTING); }
-    myGlColorDiffuse(aColor[ig0].second);
-    const int i1 = aTri[itri*3+0];
-    const int i2 = aTri[itri*3+1];
-    const int i3 = aTri[itri*3+2];
-    if( i1 == -1 ){
-      assert(i2==-1); assert(i3==-1);
-      continue;
-    }
-    ::glBegin(GL_TRIANGLES);
-    assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
-    assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
-    assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
-    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
-    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
-    double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
-    double un[3], area;
-    UnitNormalAreaTri3D(un,area, p1,p2,p3);
-    ::glNormal3dv(un);
-    myGlVertex3d(i1,aXYZ);
-    myGlVertex3d(i2,aXYZ);
-    myGlVertex3d(i3,aXYZ);
-    ::glEnd();
-  }
-}
 
 }
 }
@@ -255,12 +216,54 @@ DFM2_INLINE void delfem2::opengl::heatmap
 
 // -------------------------------------------------------------
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP1
-(const double* aXY, unsigned int nXY,
- const unsigned int* aTri, unsigned int nTri,
- const double* paVal,
- int nstride,
- const std::vector< std::pair<double,CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3DFlag_FaceNorm(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<unsigned int>& aFlgElm,
+    std::vector< std::pair<int,CColor> >& aColor)
+{
+  namespace lcl = delfem2::opengl::color_glold;
+  const unsigned int nTri = aTri.size()/3;
+  for(unsigned int itri=0;itri<nTri;++itri){
+    const int ig0 = aFlgElm[itri];
+    if( ig0 < 0 || ig0 >= (int)aColor.size() ) continue;
+    const int imode = aColor[ig0].first;
+    if(      imode == 0 ) continue;
+    else if( imode == 1 ){ ::glEnable(GL_LIGHTING); }
+    else if( imode == 2 ){ ::glDisable(GL_LIGHTING); }
+    myGlColorDiffuse(aColor[ig0].second);
+    const int i1 = aTri[itri*3+0];
+    const int i2 = aTri[itri*3+1];
+    const int i3 = aTri[itri*3+2];
+    if( i1 == -1 ){
+      assert(i2==-1); assert(i3==-1);
+      continue;
+    }
+    ::glBegin(GL_TRIANGLES);
+    assert( i1 >= 0 && i1 < (int)aXYZ.size()/3 );
+    assert( i2 >= 0 && i2 < (int)aXYZ.size()/3 );
+    assert( i3 >= 0 && i3 < (int)aXYZ.size()/3 );
+    double p1[3] = {aXYZ[i1*3+0], aXYZ[i1*3+1], aXYZ[i1*3+2]};
+    double p2[3] = {aXYZ[i2*3+0], aXYZ[i2*3+1], aXYZ[i2*3+2]};
+    double p3[3] = {aXYZ[i3*3+0], aXYZ[i3*3+1], aXYZ[i3*3+2]};
+    double un[3], area;
+    lcl::UnitNormalAreaTri3D(un,area, p1,p2,p3);
+    ::glNormal3dv(un);
+    lcl::myGlVertex3d(i1,aXYZ);
+    lcl::myGlVertex3d(i2,aXYZ);
+    lcl::myGlVertex3d(i3,aXYZ);
+    ::glEnd();
+  }
+}
+
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP1(
+    const double* aXY,
+    unsigned int nXY,
+    const unsigned int* aTri,
+    unsigned int nTri,
+    const double* paVal,
+    int nstride,
+    const std::vector< std::pair<double,CColor> >& colorMap)
 {
 //  const unsigned int ntri = (int)aTri.size()/3;
 //  const unsigned int nxys = (int)aXY.size()/2;
@@ -281,13 +284,13 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP1
   ::glEnd();
 }
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP0
-(std::vector<int>& aTri,
- std::vector<double>& aXY,
- std::vector<double>& aVal,
- int nstride,
- int noffset,
- const std::vector< std::pair<double,CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP0(
+    std::vector<int>& aTri,
+    std::vector<double>& aXY,
+    std::vector<double>& aVal,
+    int nstride,
+    int noffset,
+    const std::vector< std::pair<double,CColor> >& colorMap)
 {
   const unsigned int ntri = (int)aTri.size()/3;
   ::glColor3d(1,1,1);
@@ -306,11 +309,13 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri2D_ScalarP0
 }
 
 // vetex value
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1
-(const double* aXYZ, int nXYZ,
- const unsigned int* aTri, int nTri,
- const double* aValSrf,
- const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1(
+    const double* aXYZ,
+    int nXYZ,
+    const unsigned int* aTri,
+    int nTri,
+    const double* aValSrf,
+    const std::vector<std::pair<double, CColor> >& colorMap)
 {
   ::glBegin(GL_TRIANGLES);
   for (int itri = 0; itri<nTri; ++itri){
@@ -320,11 +325,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1
 }
 
 // vetex value
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const double* aValSrf,
- const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const double* aValSrf,
+    const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const int nTri = (int)aTri.size()/3;
   const int nXYZ = (int)aXYZ.size()/3;
@@ -335,12 +340,12 @@ DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_ScalarP1
 }
 
 // vetex value
-DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_Scalar_Vtx
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aElemInd,
- const std::vector<unsigned int>& aElem,
- const double* aValVtx,
- const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_Scalar_Vtx(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aElemInd,
+    const std::vector<unsigned int>& aElem,
+    const double* aValVtx,
+    const std::vector<std::pair<double, CColor> >& colorMap)
 {
   if( aElemInd.empty() ) return;
   //
@@ -367,11 +372,11 @@ DFM2_INLINE void delfem2::opengl::DrawMeshElem3D_Scalar_Vtx
 }
 
 // element-wise
-DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- const std::vector<double>& aValSrf,
- const std::vector<std::pair<double, CColor> >& colorMap)
+DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    const std::vector<double>& aValSrf,
+    const std::vector<std::pair<double, CColor> >& colorMap)
 {
   const unsigned int nTri = aTri.size()/3;
   if( aValSrf.size()!=nTri) return;
@@ -404,10 +409,10 @@ DFM2_INLINE void delfem2::opengl::drawMeshTri3D_ScalarP0
 
 
 
-DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor
-(const std::vector<double>& aXYZ,
- const std::vector<unsigned int>& aTri,
- std::vector<CColor>& aColor)
+DFM2_INLINE void delfem2::opengl::DrawMeshTri3D_VtxColor(
+    const std::vector<double>& aXYZ,
+    const std::vector<unsigned int>& aTri,
+    std::vector<CColor>& aColor)
 {
   const int nTri = (int)aTri.size()/3;
   /////

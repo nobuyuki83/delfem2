@@ -10,6 +10,9 @@
  * @details the functions only care about the topology. Geometry (coordinate) information is not handled in this file
  */
 
+
+// TODO: separate mixed elem
+
 #ifndef DFM2_MSHTOPO_H
 #define DFM2_MSHTOPO_H
 

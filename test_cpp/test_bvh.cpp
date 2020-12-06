@@ -149,11 +149,12 @@ TEST(bvh,nearestinc_sphere)
     {
       dfm2::CPtElm2d pes2;
       double dist_tri = -1, dist_bv = 0.1;
-      dfm2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(dist_tri, dist_bv, pes2,
-                                                     p0.x(), p0.y(), p0.z(), 0.1,
-                                                     aXYZ.data(), aXYZ.size()/3,
-                                                     aTri.data(), aXYZ.size()/3,
-                                                     bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+      dfm2::BVH_NearestPoint_IncludedInBVH_MeshTri3D(
+          dist_tri, dist_bv, pes2,
+          p0.x(), p0.y(), p0.z(), 0.1,
+          aXYZ.data(), aXYZ.size()/3,
+          aTri.data(), aXYZ.size()/3,
+          bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
       dfm2::CVec3d q2 = pes2.Pos_Tri(aXYZ, aTri);
       EXPECT_LT(Distance(q2,q1),1.0e-10);
     }
@@ -180,9 +181,10 @@ TEST(bvh,nearest_range) // find global nearest from range
   for(int itr=0;itr<1000;++itr){
     const dfm2::CVec3d p0(udist(rng), udist(rng), udist(rng)); // random points
     double dist_min=+1, dist_max = -1;
-    dfm2::BVH_Range_DistToNearestPoint(dist_min, dist_max,
-                                       p0.data(),
-                                       bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
+    dfm2::BVH_Range_DistToNearestPoint(
+        dist_min, dist_max,
+        p0.data(),
+        bvh.iroot_bvh, bvh.aNodeBVH, bvh.aBB_BVH);
     {
       bool is_max = false;
       for(int it=0;it<aTri.size()/3;++it){
@@ -192,8 +194,9 @@ TEST(bvh,nearest_range) // find global nearest from range
           bb_tri.AddPoint(aXYZ.data()+ino0*3, 0.0);
         }
         double min0, max0;
-        bb_tri.Range_DistToPoint(min0, max0,
-                                 p0.x(), p0.y(), p0.z());
+        bb_tri.Range_DistToPoint(
+            min0, max0,
+            p0.x(), p0.y(), p0.z());
         EXPECT_GE( max0, dist_max );
         EXPECT_GE( min0, dist_min );
         if( max0 < dist_max+1.0e-10 ){ is_max = true; }

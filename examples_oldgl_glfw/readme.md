@@ -1,6 +1,6 @@
 # DelFEM2 C++ Examples using Legacy OpenGL
 
-These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricated in many environment. But still it is convenient to use legacy functions such as glBegin(), glEnd(). We will eventually consider porting these demo into newer OpenGL >= 3.3 in the examples_glfwnew folder.
+These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricated in many environment. But still it is convenient to use legacy functions such as glBegin(), glEnd(). We will eventually consider porting these demo into newer OpenGL >= 3.3 in the [examples_newgl_glfw](../examples_newgl_glfw) folder.
 
 
 
@@ -8,6 +8,7 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ### [000_OpenWin](000_OpenWindowWithGLFW)
 <img src="000_OpenWindowWithGLFW/thumbnail.png" width=200px>
+
 
 
 ## Basic Demo
@@ -41,6 +42,9 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ### [109_ContourLine2D](109_ContourLine2D)
 <img src="109_ContourLine2D/thumbnail.png" width=200px>
+
+### [110_ClusteringMesh](110_ClusteringMesh)
+<img src="110_ClusteringMesh/thumbnail.png" width=200px>
 
 ### [112_OffscreenRendering](112_OffscreenRendering)
 <img src="112_OffscreenRendering/thumbnail.png" width=200px>
@@ -117,9 +121,6 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [138_RigReadFileBiovision](138_RigReadFileBiovision)
 <img src="138_RigReadFileBiovision/thumbnail.png" width=200>
 
-### [139_RigReadFileGLTF](138_RigReadFileGLTF)
-<img src="139_RigReadFileGLTF/thumbnail.png" width=200>
-
 ### [140_RigVoxelGeodesic](140_RigVoxelGeodesic)
 <img src="140_RigVoxelGeodesic/thumbnail.png" width=200>
 
@@ -150,13 +151,6 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 
 
-
-
-
-
-
-
-
 ## Dynamic Triangle
 
 ### [201_DynTri2Triangulation](201_DynTri2dTriangulation)
@@ -173,6 +167,7 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ### [205_DynTri3SimpilfyQuadratic](205_DynTri3SimpilfyQuadratic)
 <img src="205_DynTri3SimpilfyQuadratic/thumbnail.png" width=200>
+
 
 
 ## CAD
@@ -247,13 +242,8 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [615_PbdClothCad](615_PbdClothCad)
 <img src="615_PbdClothCad/thumbnail.png" width=200>
 
-### [616_PbdClothCadGltf](616_PbdClothCadGltf)
-<img src="616_PbdClothCadGltf/thumbnail.png" width=200>
-
-
 ### [617_FemRodHairSelfcollision](617_FemRodHairSelfcollision)
 <img src="617_FemRodHairSelfcollision/thumbnail.png" width=200>
-
 
 ### [618_Fem3d](618_Fem3d)
 <img src="618_Fem3d/thumbnail.png" width=200>
@@ -264,14 +254,11 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 ### [620_FemClothSelfCollision](620_FemClothSelfCollision)
 <img src="620_FemClothSelfCollision/thumbnail.png" width=200>
 
-
 ### [621_Fem2d](621_Fem2D)
 <img src="621_Fem2D/thumbnail.png" width=200 alt="621_Fem2d">
 
-
 ### [622_FemRodHairStatic](622_FemRodHairStatic)
 <img src="622_FemRodHairStatic/thumbnail.png" width=200 alt="622_FemRodHairStatic">
-
 
 ### [623_FemRodHairDynamic](623_FemRodHairDynamic)
 <img src="623_FemRodHairDynamic/thumbnail.png" width=200 alt="622_FemRodHairDynamic">
@@ -281,8 +268,6 @@ These demos use OpenGL version 2.1 and GLSL shaer version 1.2 which are depricat
 
 ### [625_DefLaplacianFitProj](625_DefLaplacianFitProj)
 <img src="625_DefLaplacianFitProj/thumbnail.png" width=200>
-
-
 
 ### [626_RgdRotation](626_RgdRotation)
 

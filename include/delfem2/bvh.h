@@ -291,8 +291,13 @@ template <typename BV>
 class CIsBV_InsideRange
 {
 public:
-  CIsBV_InsideRange(const double pos_[3], double min_, double max_) :
-    pos{pos_[0],pos_[1],pos_[2]}, min(min_), max(max_) {}
+  CIsBV_InsideRange(
+      const double pos_[3],
+      double min_,
+      double max_) :
+      pos{pos_[0],pos_[1],pos_[2]},
+      min(min_),
+      max(max_) {}
   bool IsTrue(unsigned int ibvh, const std::vector<BV>& aBB){
     double min0, max0;
     aBB[ibvh].Range_DistToPoint(min0,max0, pos[0],pos[1],pos[2]);
@@ -379,13 +384,13 @@ void delfem2::BVH_BuildBVHGeometry(
  * @details set some value with min > max for input  e.g,. min=+1, max=-1
  */
 template <typename BBOX>
-void delfem2::BVH_Range_DistToNearestPoint
-    (double& min, double& max,
-        //
-     const double p[3],
-     unsigned int ibvh,
-     const std::vector<delfem2::CNodeBVH2>& aBVH,
-     const std::vector<BBOX>& aBB)
+void delfem2::BVH_Range_DistToNearestPoint(
+    double& min, double& max,
+    //
+    const double p[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB)
 {
   double min0=+1.0, max0=-1.0;
   aBB[ibvh].Range_DistToPoint(min0,max0, p[0],p[1],p[2]);
@@ -414,14 +419,14 @@ void delfem2::BVH_Range_DistToNearestPoint
  * @details the cur_dist should be input as a negative value (e.g., cur_dist=-1)
  */
 template <typename BBOX, typename REAL>
-void delfem2::BVH_IndPoint_NearestPoint
-    (unsigned int& ip,
-     REAL& cur_dist,
-        //
-     const REAL p[3],
-     unsigned int ibvh,
-     const std::vector<delfem2::CNodeBVH2>& aBVH,
-     const std::vector<BBOX>& aBB)
+void delfem2::BVH_IndPoint_NearestPoint(
+    unsigned int& ip,
+    REAL& cur_dist,
+    //
+    const REAL p[3],
+    unsigned int ibvh,
+    const std::vector<delfem2::CNodeBVH2>& aBVH,
+    const std::vector<BBOX>& aBB)
 {
   assert( aBVH.size() == aBB.size() );
   REAL min0=+1.0, max0=-1.0;
