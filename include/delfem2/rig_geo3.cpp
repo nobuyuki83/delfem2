@@ -287,7 +287,7 @@ delfem2::UpdateBoneRotTrans(
       Copy_Mat4( aBone[ibone].affmat3Global, m01.mat );
       continue;
     }
-    assert( ibone_p < ibone );
+    assert( ibone_p < (int)ibone );
     MatMat4(aBone[ibone].affmat3Global,
         aBone[ibone_p].affmat3Global, m01.mat);
   }
@@ -306,7 +306,7 @@ void delfem2::SetCurrentBoneRotationAsDefault(
       continue;
     }
     else {
-      assert( ibp < ib );
+      assert( ibp < (int)ib );
       double R0[16]; Mat4_Quat(R0, aBone[ibp].quatRelativeRot);
       MatMat4(aRot.data()+ib*16, aRot.data()+ibp*16, R0);
     }
