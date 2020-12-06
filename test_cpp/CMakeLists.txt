@@ -95,6 +95,7 @@ add_executable(${MY_BINARY_NAME}
   test_fem.cpp
   test_geo.cpp
   test_cad.cpp
+  test_msh.cpp
   main.cpp  
 )
 
